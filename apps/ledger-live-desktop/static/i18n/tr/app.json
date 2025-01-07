@@ -442,6 +442,14 @@
       "cta" : "Uyumlu cihazları keşfedin",
       "changeProvider" : "Başka bir sağlayıcıyla takas edin"
     },
+    "incompatibility" : {
+      "ton_title" : "Ledger Nano S™, Ton takasını desteklemez",
+      "ton_description" : "Ton takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın.",
+      "spl_tokens_title" : "Ledger Nano S™, Solana token takasını desteklemez",
+      "spl_tokens_description" : "Solana token'larını takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın.",
+      "ada_title" : "Ledger Nano S™, Cardano takasını desteklemez",
+      "ada_description" : "Cardano takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın."
+    },
     "providers" : {
       "title" : "Kripto takası işlemleri için bir sağlayıcı seçin",
       "learnMore" : "Takas (Swap) nedir?",
@@ -1355,7 +1363,7 @@
     },
     "postOnboardingBanner" : {
       "title" : "{{productName}} cihazınız için sırada ne var?",
-      "description" : "Herhangi bir borsadaki veya cüzdandaki varlıklarınızı aktarın, kripto satın alın, kilitli ekranı özelleştirin veya Ledger Recover'a abone olun.",
+      "description" : "Bir borsadaki veya cüzdandaki varlıklarınızı aktarın, kripto satın alın, kilitli ekranı özelleştirin veya Ledger Recover'a abone olun.",
       "link" : "Sırada ne var?",
       "dismiss" : "Belki sonra"
     },
@@ -2057,7 +2065,7 @@
         "flash" : "Cihazınız hazırlanıyor..."
       },
       "confirmIdentifier" : "Tanımlayıcıyı doğrulayın",
-      "confirmIdentifierText" : "İşletim sistemi\ngüncellemesini başlatmak için\n“Yükle” seçeneğine dokunun",
+      "confirmIdentifierText" : "İşletim sistemi güncellemesini başlatmak için “Install” (Yükle) seçeneğine dokunun",
       "identifier" : "Tanımlayıcı",
       "newFirmware" : "Yeni donanım yazılımı {{version}}",
       "confirmUpdate" : "Lütfen cihazınızdaki güncellemeyi onaylayın",
@@ -3037,6 +3045,7 @@
         "validatorGroup" : {
           "title" : "Doğrulayıcı Grubu",
           "ledgerByFigmentTC" : "Ledger by Figment Hüküm ve Koşulları",
+          "ledgerByChorusOneTC" : "Ledger by Chorus One Hüküm ve Koşulları",
           "totalVotes" : "Toplam Oy",
           "commission" : "Komisyon"
         }
@@ -3626,6 +3635,7 @@
       "withdrawableTitle" : "Çekilebilir bakiye",
       "statusUpdateNotice" : "İşlem onaylandığında yetki devrinin durumu güncellenir.",
       "ledgerByFigmentTC" : "Ledger by Figment Hüküm ve Koşulları",
+      "ledgerByChorusOneTC" : "Ledger by Chorus One Hüküm ve Koşulları",
       "emptyState" : {
         "description" : "Varlıklarınızın yetkisini devrederek SOL ödülleri kazanabilirsiniz.",
         "info" : "Yetki Devri nasıl çalışır?",
@@ -3880,6 +3890,7 @@
           },
           "validator" : {
             "title" : "Doğrulayıcılar",
+            "ledgerByChorusOneTC" : "Ledger by Chorus One Hüküm ve Koşulları",
             "ledgerByFigmentTC" : "Ledger by Figment Hüküm ve Koşulları"
           },
           "connectDevice" : {
@@ -4147,6 +4158,7 @@
             "link" : "Bağlantı",
             "secondaryCta" : "İkincil Eylem Çağrısı",
             "cta" : "Eylem Çağrısı",
+            "tag" : "Etiket",
             "url" : "URL",
             "path" : "Yol"
           }
@@ -5678,17 +5690,17 @@
       "title" : "Üzgünüz, hesap bulunamadı",
       "description" : "Adres hesaplamasında bir hata oluştu; tekrar deneyin veya Ledger Destek ile iletişime geçin"
     },
-    "ElrondDecimalsLimitReached" : {
-      "title" : "Maksimum ondalık basamağı sınırına ulaşıldı",
+    "MultiversXDecimalsLimitReached" : {
+      "title" : "Maksimum ondalık basamak sınırına ulaşıldı",
       "description" : "Lütfen belirtilen tutarın 18 ondalık basamağının olduğundan emin olun."
     },
-    "ElrondMinDelegatedAmountError" : {
+    "MultiversXMinDelegatedAmountError" : {
       "title" : "Yetkisi devredilen miktar en az {{formattedAmount}} olmalıdır"
     },
-    "ElrondMinUndelegatedAmountError" : {
+    "MultiversXMinUndelegatedAmountError" : {
       "title" : "Yetki devri iptal edilen miktar en az {{formattedAmount}} olmalıdır"
     },
-    "ElrondDelegationBelowMinimumError" : {
+    "MultiversXDelegationBelowMinimumError" : {
       "title" : "Kalan yetki devri miktarı en az {{formattedAmount}} olmalıdır"
     },
     "NotEnoughEGLDForFees" : {
