@@ -41,7 +41,7 @@ describe("Aptos prepareTransaction", () => {
         useAllAmount: false,
         fees: new BigNumber(0),
         firstEmulation: true,
-        options: {},
+        //options: {},
       } as Transaction;
     });
 

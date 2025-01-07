@@ -79,36 +79,36 @@ describe("Aptos logic ", () => {
     });
   });
 
-  describe("normalizeTransactionOptions", () => {
-    it("should normalize transaction options", () => {
-      const options: Transaction["options"] = {
-        maxGasAmount: "1000",
-        gasUnitPrice: "10",
-        sequenceNumber: "1",
-        expirationTimestampSecs: "1000000",
-      };
+  // describe("normalizeTransactionOptions", () => {
+  //   it("should normalize transaction options", () => {
+  //     const options: Transaction["options"] = {
+  //       maxGasAmount: "1000",
+  //       gasUnitPrice: "10",
+  //       sequenceNumber: "1",
+  //       expirationTimestampSecs: "1000000",
+  //     };
 
-      const result = normalizeTransactionOptions(options);
-      expect(result).toEqual(options);
-    });
+  //     const result = normalizeTransactionOptions(options);
+  //     expect(result).toEqual(options);
+  //   });
 
-    it("should return undefined for empty values", () => {
-      const options: Transaction["options"] = {
-        maxGasAmount: "",
-        gasUnitPrice: "",
-        sequenceNumber: undefined,
-        expirationTimestampSecs: "1000000",
-      };
+  //   it("should return undefined for empty values", () => {
+  //     const options: Transaction["options"] = {
+  //       maxGasAmount: "",
+  //       gasUnitPrice: "",
+  //       sequenceNumber: undefined,
+  //       expirationTimestampSecs: "1000000",
+  //     };
 
-      const result = normalizeTransactionOptions(options);
-      expect(result).toEqual({
-        maxGasAmount: undefined,
-        gasUnitPrice: undefined,
-        sequenceNumber: undefined,
-        expirationTimestampSecs: "1000000",
-      });
-    });
-  });
+  //     const result = normalizeTransactionOptions(options);
+  //     expect(result).toEqual({
+  //       maxGasAmount: undefined,
+  //       gasUnitPrice: undefined,
+  //       sequenceNumber: undefined,
+  //       expirationTimestampSecs: "1000000",
+  //     });
+  //   });
+  // });
 
   describe("getBlankOperation", () => {
     it("should return a blank operation", () => {

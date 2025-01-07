@@ -9,10 +9,10 @@ const createTransaction = (): Transaction => ({
   recipient: "",
   useAllAmount: false,
   firstEmulation: true,
-  options: {
-    maxGasAmount: DEFAULT_GAS.toString(),
-    gasUnitPrice: DEFAULT_GAS_PRICE.toString(),
-  },
+  // options: {
+  //   maxGasAmount: DEFAULT_GAS.toString(),
+  //   gasUnitPrice: DEFAULT_GAS_PRICE.toString(),
+  // },
   estimate: {
     maxGasAmount: DEFAULT_GAS.toString(),
     gasUnitPrice: DEFAULT_GAS_PRICE.toString(),

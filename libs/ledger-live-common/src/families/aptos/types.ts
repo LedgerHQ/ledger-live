@@ -74,7 +74,7 @@ export type TransactionRaw = TransactionCommonRaw & {
   family: "aptos";
   mode: string;
   fees?: string | null;
-  options: string;
+  //options: string;
   estimate: string;
   firstEmulation: string;
   errors?: string;
