@@ -43,14 +43,15 @@ const prepareTransaction = async (
         BigNumber(estimate.gasUnitPrice),
       )
     : transaction.amount;
-  transaction.amount = amount;
+  transaction.amount = amount; // we change amount here so the fees should be also checked
 
   transaction.options = {
     ...transaction.options,
     maxGasAmount: estimate.maxGasAmount,
+    gasUnitPrice: estimate.gasUnitPrice,
   };
 
-  transaction.fees = fees;
+  transaction.fees = fees; // result of gas price * gas limit
   transaction.estimate = estimate;
   transaction.errors = errors;
   transaction.firstEmulation = false;
