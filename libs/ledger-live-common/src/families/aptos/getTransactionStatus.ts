@@ -50,13 +50,13 @@ const getTransactionStatus = async (a: Account, t: Transaction): Promise<Transac
     errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
   }
 
-  if (
-    t.options.maxGasAmount &&
-    t.estimate.maxGasAmount &&
-    +t.options.maxGasAmount < +t.estimate.maxGasAmount
-  ) {
-    errors.maxGasAmount = new GasLessThanEstimate();
-  }
+  // if (
+  //   t.options.maxGasAmount &&
+  //   t.estimate.maxGasAmount &&
+  //   +t.options.maxGasAmount < +t.estimate.maxGasAmount
+  // ) {
+  //   errors.maxGasAmount = new GasLessThanEstimate();
+  // }
 
   // if (
   //   t.options.gasUnitPrice &&

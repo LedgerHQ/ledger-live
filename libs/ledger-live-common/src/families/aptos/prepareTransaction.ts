@@ -45,11 +45,11 @@ const prepareTransaction = async (
     : transaction.amount;
   transaction.amount = amount; // we change amount here so the fees should be also checked
 
-  transaction.options = {
-    ...transaction.options,
-    maxGasAmount: estimate.maxGasAmount,
-    gasUnitPrice: estimate.gasUnitPrice,
-  };
+  // transaction.options = {
+  //   ...transaction.options,
+  //   maxGasAmount: estimate.maxGasAmount,
+  //   gasUnitPrice: estimate.gasUnitPrice,
+  // };
 
   transaction.fees = fees; // result of gas price * gas limit
   transaction.estimate = estimate;
