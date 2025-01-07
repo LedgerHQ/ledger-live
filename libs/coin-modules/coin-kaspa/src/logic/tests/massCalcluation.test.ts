@@ -4,8 +4,6 @@ import { BigNumber } from "bignumber.js";
 
 describe("Check storage mass calculation", () => {
   test("Storage mass for different in- and outputs", () => {
-    const mass: number = calcStorageMass([BigNumber(1_0000_0000)], [BigNumber(2000_0000)]);
-
     expect(
       calcStorageMass([BigNumber(1_0000_0000), BigNumber(1_0000_0000)], [BigNumber(9000_0000)]),
     ).toBe(0);

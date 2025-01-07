@@ -1,6 +1,6 @@
-import { scanOperations } from "../index";
 import expect from "expect";
 import { BigNumber } from "bignumber.js";
+import { scanOperations } from "../scanOperations";
 
 describe("scan transactions for multiple addresses", () => {
   it("One address", async () => {

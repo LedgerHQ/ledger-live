@@ -1,11 +1,9 @@
 import { API_BASE } from "./config";
+import { ApiResponseAddressActive } from "../types";
 
-type AddressActive = {
-  address: string;
-  active: boolean;
-};
-
-export const getAddressesActive = async (addresses: string[]): Promise<AddressActive[]> => {
+export const getAddressesActive = async (
+  addresses: string[],
+): Promise<ApiResponseAddressActive[]> => {
   try {
     const response = await fetch(`${API_BASE}/addresses/active`, {
       method: "POST",
@@ -22,7 +20,7 @@ export const getAddressesActive = async (addresses: string[]): Promise<AddressAc
       );
     }
 
-    return (await response.json()) as AddressActive[];
+    return (await response.json()) as ApiResponseAddressActive[];
   } catch (error) {
     throw new Error(`Error fetching AddressesActives: ${(error as Error).message}`);
   }

@@ -1,17 +1,10 @@
-/**
- * Calculates computeMass
- *
- * @param density - The density of the material
- * @param volume - The volume of the material
- * @returns The computed mass
- */
 import { BigNumber } from "bignumber.js";
 import { sumBigNumber } from "./utxoSelection/lib";
 
 const C: BigNumber = BigNumber(10 ** 12);
 
 // note: this is an easy version of computeMass for Ledger only.
-// it has usualy inputs with regular Script and one or two outputs
+// it has usual inputs with regular Script and one or two outputs
 export function calcComputeMass(
   inputCount: number,
   isChangeAddress: boolean,
@@ -49,9 +42,13 @@ export function calcStorageMass(inputs: BigNumber[], outputs: BigNumber[]): numb
   return Math.max(P - N, 0);
 }
 
-export function calcTotalMass(inputs: BigNumber[], outputs: BigNumber[]): number {
+export function calcTotalMass(
+  inputs: BigNumber[],
+  outputs: BigNumber[],
+  recipientIsECDSA: boolean = false,
+): number {
   return Math.max(
     calcStorageMass(inputs, outputs),
-    calcComputeMass(inputs.length, outputs.length === 2, false), // TODO: implement ECDSA
+    calcComputeMass(inputs.length, outputs.length === 2, recipientIsECDSA),
   );
 }

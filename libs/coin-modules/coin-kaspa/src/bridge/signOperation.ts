@@ -3,7 +3,7 @@ import { FeeNotLoaded } from "@ledgerhq/errors";
 import type { AccountBridge, SignOperationEvent } from "@ledgerhq/types-live";
 
 import { buildTransaction } from "./buildTransaction";
-import { KaspaAccount, Transaction } from "../types/bridge";
+import { KaspaAccount, Transaction } from "../types";
 import { KaspaSigner } from "../signer";
 import { SignerContext } from "@ledgerhq/coin-framework/lib/signer";
 import buildInitialOperation from "./buildInitialOperation";
@@ -28,17 +28,11 @@ export const buildSignOperation =
 
         const tx = await buildTransaction(account, transaction);
 
-        console.log("here", tx);
-
         // Sign by device
         await signerContext(deviceId, signer => signer.signTransaction(tx));
 
-        // console.log(tx.toApiJSON());
-
         o.next({ type: "device-signature-granted" });
-
         const operation = buildInitialOperation(account, tx);
-
         o.next({
           type: "signed",
           signedOperation: {

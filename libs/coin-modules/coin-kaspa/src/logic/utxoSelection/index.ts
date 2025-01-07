@@ -1,6 +1,6 @@
 import { BigNumber } from "bignumber.js";
-import { KaspaUtxo } from "../types/kaspaNetwork";
-import { selectUtxosFIFO } from "./utxoSelection/fifo";
+import { KaspaUtxo } from "../../types";
+import { selectUtxosFIFO } from "./fifo";
 
 const MAX_TX_INPUTS = 88; // floor (( 100_000 - 918 (def_size) ) / 1_118 (per_input))
 const MASS_PER_UTXO_INPUT = 1_118;

@@ -1,6 +1,6 @@
 import ecc from "@bitcoinerlab/secp256k1";
 import BIP32Factory, { BIP32API, BIP32Interface } from "bip32";
-import { publicKeyToAddress } from "./kaspa-util";
+import { publicKeyToAddress } from "./kaspaAddresses";
 
 const bip32: BIP32API = BIP32Factory(ecc);
 

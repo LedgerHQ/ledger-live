@@ -1,4 +1,4 @@
-import { Transaction } from "../types/bridge";
+import { Transaction } from "../types";
 
 /**
  * Apply patch to transaction

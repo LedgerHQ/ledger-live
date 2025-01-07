@@ -1,5 +1,5 @@
-import { parseExtendedPublicKey } from "../../lib/kaspa-util";
-import { scanUtxos } from "../index";
+import { parseExtendedPublicKey } from "../kaspaAddresses";
+import { scanUtxos } from "../scanUtxos";
 
 describe("scan UTXOs function", () => {
   it("Gets information about addresses being active or not", async () => {

@@ -1,7 +1,7 @@
 import type { AccountBridge } from "@ledgerhq/types-live";
 import { patchOperationWithHash } from "@ledgerhq/coin-framework/operation";
-import { Transaction } from "../types/bridge";
 import { submitTransaction } from "../network";
+import { Transaction } from "../types";
 
 /**
  * Broadcast a signed transaction

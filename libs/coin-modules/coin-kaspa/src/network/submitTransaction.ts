@@ -1,12 +1,9 @@
 import { API_BASE } from "./config";
-
-interface SubmitTransactionResponse {
-  txId: string;
-}
+import { ApiResponseSubmitTransaction } from "../types";
 
 export const submitTransaction = async (
   transactionJson: string,
-): Promise<SubmitTransactionResponse> => {
+): Promise<ApiResponseSubmitTransaction> => {
   try {
     const response = await fetch(`${API_BASE}/transactions`, {
       method: "POST",

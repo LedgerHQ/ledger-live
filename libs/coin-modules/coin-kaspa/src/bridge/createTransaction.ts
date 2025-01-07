@@ -1,4 +1,4 @@
-import { Transaction } from "../types/bridge";
+import { Transaction } from "../types";
 import { BigNumber } from "bignumber.js";
 
 export const createTransaction = (): Transaction => ({

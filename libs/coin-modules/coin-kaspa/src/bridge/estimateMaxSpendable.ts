@@ -1,5 +1,5 @@
 import type { AccountBridge } from "@ledgerhq/types-live";
-import { KaspaAccount, Transaction } from "../types/bridge";
+import { KaspaAccount, Transaction } from "../types";
 import { BigNumber } from "bignumber.js";
 import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
 

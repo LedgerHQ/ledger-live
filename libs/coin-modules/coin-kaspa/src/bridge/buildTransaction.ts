@@ -1,10 +1,9 @@
-import { scanUtxos } from "../network";
-import { addressToScriptPublicKey, parseExtendedPublicKey } from "../lib/kaspa-util";
-import { selectUtxos, UtxoStrategy } from "../lib/utxoSelection";
 import { BigNumber } from "bignumber.js";
 
 import { KaspaHwTransaction, KaspaHwTransactionInput, KaspaHwTransactionOutput } from "./kaspaHwTransaction";
-import { KaspaAccount, Transaction } from "../types/bridge";
+import { KaspaAccount, Transaction } from "../types";
+import { selectUtxos, UtxoStrategy } from "../logic/utxoSelection";
+import { addressToScriptPublicKey, parseExtendedPublicKey, scanUtxos } from "../logic";
 
 /**
  * Assembles a transaction for the Kaspa network.

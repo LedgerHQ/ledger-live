@@ -1,11 +1,9 @@
 import { API_BASE } from "./config";
+import { ApiResponseBalance } from "../types";
 
-interface BalanceResponse {
-  address: string;
-  balance: number;
-}
-
-export const getBalancesForAddresses = async (addresses: string[]): Promise<BalanceResponse[]> => {
+export const getBalancesForAddresses = async (
+  addresses: string[],
+): Promise<ApiResponseBalance[]> => {
   try {
     const response = await fetch(`${API_BASE}/addresses/balances`, {
       method: "POST",
@@ -22,7 +20,7 @@ export const getBalancesForAddresses = async (addresses: string[]): Promise<Bala
       );
     }
 
-    return (await response.json()) as BalanceResponse[];
+    return (await response.json()) as ApiResponseBalance[];
   } catch (error) {
     throw new Error(`Error fetching balance: ${(error as Error).message}`);
   }

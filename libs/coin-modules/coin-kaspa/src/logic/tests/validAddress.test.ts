@@ -1,4 +1,4 @@
-import { isValidKaspaAddress } from "../kaspa-util";
+import { isValidKaspaAddress } from "../kaspaAddresses";
 
 describe("isValidKaspaAddress", () => {
   const testCases = [
@@ -14,9 +14,24 @@ describe("isValidKaspaAddress", () => {
       input: "kaspa:qpc6twj20gxqpeyxvgqe3v4y2ng8t0tawfax89jkf8f24wazmcreu9ggw3crl",
       expected: true,
     },
+    // scripthash
     {
-      input: "kaspa:qpc6twj20gxqpeyxvgqe3v4y2ng8t0tawfax89jkf8f24wazmcreu9ggw3crl00", // ecdsa
+      input: "kaspa:pp6jt8u5hj3mnjy8v0kk5fg7a8ddnfu7ls7egmqspdtpy0708eervp47e6ls2",
       expected: true,
+    },
+    // wrong hash for Schnorr
+    {
+      input: "kaspa:qpc6twj20gxqpeyxvgqe3v4y2ng8t0tawfax89jkf8f24wazmcreu9ggw3crr",
+      expected: false,
+    },
+    {
+      input: "kaspa:qyp0r5mcq4rd5grj3652ra09u5dcgwqq9ntuswp247nama5quyj40eq03sc2dkx", // ecdsa
+      expected: true,
+    },
+    // wrong hash for ECDSA
+    {
+      input: "kaspa:qyp0r5mcq4rd5grj3652ra09u5dcgwqq9ntuswp247nama5quyj40eq03sc2dkk", // ecdsa
+      expected: false,
     },
     {
       input: "kaspa:qpc6twj20gxqpeyxvgqe3v4y2ng8t0tawfax89jkf8f24wazmcreu9ggw3crl0", // wrong size

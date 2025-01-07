@@ -1,12 +1,14 @@
-import { KaspaAccount, Transaction, TransactionStatus } from "../types/bridge";
-
-import { isValidKaspaAddress, parseExtendedPublicKey } from "../lib/kaspa-util";
-
 import { InvalidAddress } from "@ledgerhq/errors";
-import { scanUtxos } from "../network";
-import { selectUtxos, UtxoStrategy } from "../lib/utxoSelection";
 import { BigNumber } from "bignumber.js";
-import { calcMaxSpendableAmount } from "../lib/utxoSelection/lib";
+import {
+  calcMaxSpendableAmount,
+  isValidKaspaAddress,
+  parseExtendedPublicKey,
+  scanUtxos,
+  selectUtxos,
+  UtxoStrategy,
+} from "../logic";
+import { KaspaAccount, Transaction, TransactionStatus } from "../types";
 
 const getTransactionStatus = async (
   account: KaspaAccount,

@@ -1,6 +1,5 @@
-import { KaspaAccount, Transaction } from "../types/bridge";
+import { ApiResponseFeeEstimate, KaspaAccount, Transaction } from "../types";
 import { getFeeEstimate } from "../network";
-import { FeeEstimateResponse } from "../network/indexer-api/getFeeEstimate";
 import { BigNumber } from "bignumber.js";
 
 /**
@@ -15,7 +14,7 @@ import { BigNumber } from "bignumber.js";
  */
 export const prepareTransaction = async (account: KaspaAccount, transaction: Transaction) => {
   if (transaction.amount.gt(BigNumber(0))) {
-    const fees: FeeEstimateResponse = await getFeeEstimate();
+    const fees: ApiResponseFeeEstimate = await getFeeEstimate();
 
     switch (transaction.feesStrategy) {
       case "slow":

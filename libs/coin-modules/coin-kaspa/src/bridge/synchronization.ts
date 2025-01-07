@@ -1,12 +1,11 @@
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { type GetAccountShape, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { KaspaAccount } from "../types/bridge";
-import { parseExtendedPublicKey } from "../lib/kaspa-util";
-import { AccountAddresses, scanAddresses, scanOperations } from "../network/index";
+import { AccountAddresses, KaspaAccount } from "../types";
 import { Operation } from "@ledgerhq/types-live";
 import { SignerContext } from "@ledgerhq/coin-framework/lib/signer";
 import { KaspaSigner } from "../signer";
-import { getVirtualChainBlueScore } from "../network/indexer-api/getVirtualChainBlueScore";
+import { parseExtendedPublicKey, scanAddresses, scanOperations } from "../logic";
+import { getVirtualChainBlueScore } from "../network";
 
 export const makeGetAccountShape =
   (signerContext: SignerContext<KaspaSigner>): GetAccountShape<KaspaAccount> =>
