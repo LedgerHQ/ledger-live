@@ -292,7 +292,7 @@ function useWebView(
     currentAccountHistDb,
     tracking,
     initialAccountId: inputs?.accountId?.toString(),
-    mevProtected
+    mevProtected,
   });
 
   const handleMessage = useCallback(

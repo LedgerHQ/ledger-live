@@ -147,7 +147,7 @@ export function useWebView(
     postMessage: webviewHook.postMessage,
     tracking,
     initialAccountId: inputs?.accountId?.toString(),
-    mevProtected
+    mevProtected,
   });
 
   const onMessage = useCallback(
