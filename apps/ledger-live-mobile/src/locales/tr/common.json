@@ -971,6 +971,18 @@
       "title" : "Geçersiz Sağlayıcı",
       "description" : "\"My Ledger sağlayıcım\" ayarını değiştirmeniz gerekmektedir. Bunu değiştirmek için Ledger Live'da \"Ayarlar\"ı açın, \"Deneysel özellikler\"i seçin ve ardından farklı bir sağlayıcı seçin."
     },
+    "GasLessThanEstimate" : {
+      "title" : "Bu çok düşük olabilir. Lütfen arttırın"
+    },
+    "SequenceNumberTooNew" : {
+      "title" : "Sıra numarası çok yeni"
+    },
+    "SequenceNumberTooOld" : {
+      "title" : "Sıra numarası çok eski"
+    },
+    "TransactionExpired" : {
+      "title" : "İşlemin süresi doldu"
+    },
     "SequenceNumberError" : {
       "title" : "Sıra numarası hatası",
       "description" : "Lütfen pencereyi kapatıp daha sonra tekrar deneyin"
@@ -1287,20 +1299,20 @@
     "title" : "Bir Ledger'a ihtiyacınız var",
     "desc" : "Güvenliğiniz için Ledger Live yalnızca bir cihazla çalışır. Devam etmek için bir cihaza ihtiyacınız var.",
     "cta" : "Ledger'ınızı şimdi satın alın",
-    "footer" : "I already have a Ledger, set it up",
-    "bannerTitle" : "Top-notch security for your crypto and NFTs",
-    "bannerTitle2" : "You will need a Ledger to be able to trade",
-    "bannerSubtitle" : "with a Ledger Flex",
-    "bannerButtonTitle" : "Discover the Flex",
-    "bannerButtonTitle2" : "Buy a Ledger",
-    "setupCta" : "I already have a Ledger, set it up"
+    "footer" : "Zaten bir Ledger cihazım var, onu kuralım",
+    "bannerTitle" : "Kriptolarınız ve NFT'leriniz için birinci sınıf güvenlik",
+    "bannerTitle2" : "Ledger Flex ile işlem yapmak için",
+    "bannerSubtitle" : "bir Ledger cihazınızın olması gerekir",
+    "bannerButtonTitle" : "Flex'i keşfedin",
+    "bannerButtonTitle2" : "Ledger satın alın",
+    "setupCta" : "Zaten bir Ledger cihazım var, onu kuralım"
   },
   "postBuyDeviceSetupNanoWall" : {
-    "title" : "Did you get your Ledger yet?",
-    "desc" : "Once you have your Ledger, set it up to unlock all features of the Ledger Live app.",
-    "cta" : "Setup my Ledger",
-    "bannerTitle" : "Received your Ledger?",
-    "bannerCta" : "Begin setup",
+    "title" : "Ledger cihazınız elinize ulaştı mı?",
+    "desc" : "Ledger cihazınız elinize ulaştığında Ledger Live uygulamasının tüm özelliklerinin kilidini açmak için cihazınızın kurulumunu yapın.",
+    "cta" : "Ledger'ımı kur",
+    "bannerTitle" : "Ledger cihazınız elinize ulaştı mı?",
+    "bannerCta" : "Kurulumu başlatın",
     "continue" : "Devam"
   },
   "purchaseDevice" : {
@@ -1325,8 +1337,8 @@
   },
   "postBuyDevice" : {
     "headerTitle" : "Alım başarıyla gerçekleşti",
-    "title" : "Thanks for trusting Ledger",
-    "desc" : "Your order is being processed. \nPlease check your email for your order’s confirmation."
+    "title" : "Ledger'a güvendiğiniz için teşekkürler",
+    "desc" : "Siparişiniz işleniyor. \nSipariş onayınız için lütfen e-postanızı kontrol edin."
   },
   "discover" : {
     "title" : "Keşfedin",
@@ -2342,7 +2354,8 @@
       "seeMarket" : "Tümünü gör"
     },
     "walletBalance" : "Cüzdan bakiyesi",
-    "seelAllAssets" : "Tüm Varlıkları Gör",
+    "seeAllAssets" : "Tüm varlıkları gör",
+    "seeAllAccounts" : "Tüm hesapları gör",
     "marketPriceSection" : {
       "title" : "{{currencyTicker}} piyasa fiyatı",
       "currencyPrice" : "1 {{currencyTicker}} fiyatı",
@@ -2749,6 +2762,9 @@
       }
     }
   },
+  "assets" : {
+    "title" : "Varlıklar"
+  },
   "accounts" : {
     "title" : "Hesaplar",
     "cryptoAccountsTitle" : "{{currencyTicker}} hesapları",
@@ -3091,6 +3107,13 @@
       "desc" : "Geliştirici özelliklerini deneyip ne düşündüğünüzü bizimle paylaşın.",
       "customManifest" : {
         "title" : "Özel Platform Manifest Dosyası Yükle"
+      },
+      "exchangeDeveloperMode" : {
+        "title" : "Exchange Geliştirici Modu",
+        "description" : "Exchange sağlayıcısı bilgilerini ekleyin",
+        "placeholder" : "Exchange sağlayıcısının CAL formatındaki bilgileri",
+        "currentSetting" : "Mevcut Ayar",
+        "error" : "Geçersiz CAL değeri"
       }
     },
     "debug" : {
@@ -3460,6 +3483,16 @@
         "providers" : {
           "noProviders" : "Sonuç bulunamadı. Mevcut tercihlere uyan teklif yok."
         }
+      },
+      "incompatibility" : {
+        "explore_compatible_devices" : "Uyumlu cihazları keşfedin",
+        "contact_support" : "Müşteri destek ekibiyle iletişime geç",
+        "ton_title" : "Ledger Nano S™, Ton takasını desteklemez",
+        "ton_description" : "Ton takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın.",
+        "spl_tokens_title" : "Ledger Nano S™, Solana token takasını desteklemez",
+        "spl_tokens_description" : "Solana token'larını takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın.",
+        "ada_title" : "Ledger Nano S™, Cardano takasını desteklemez",
+        "ada_description" : "Cardano takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın."
       }
     },
     "lending" : {
@@ -3741,6 +3774,7 @@
       "to" : "Alıcı",
       "infoTotalTitle" : "Düşülecek tutar",
       "infoTotalDesc" : "İşlem miktarını ve seçilen ağın ücretlerini içerir",
+      "gasFee" : "Gas Ücreti",
       "gasLimit" : "Gas limiti",
       "gasPrice" : "Gas ücreti",
       "maxFee" : "Ücret üst limiti",
@@ -3954,6 +3988,7 @@
   },
   "addAccounts" : {
     "addNew" : "Yeni ekle",
+    "addNewOrExisting" : "Yeni veya mevcut bir hesabı ekleyin",
     "supportLinks" : {
       "segwit_or_native_segwit" : "Segwit mi yoksa Native Segwit mi?"
     },
@@ -6095,7 +6130,7 @@
     },
     "warning" : "Ledger cihazınızda gösterilen adres ile {{recipientWording}} tarafındaki adresin eşleştiğinden emin olun",
     "recipientWording" : {
-      "send" : "Cihazınızda görüntülenen adresin, alıcı tarafından size verilen adresle tam olarak eşleştiğini her zaman doğrulayın",
+      "send" : "Cihazınızda gösterilen adresin, alıcı tarafından size verilen adresle tam olarak eşleştiğini daima doğrulayın",
       "delegate" : "Cihazınızda görüntülenen adresin, doğrulayıcı tarafından sağlanan adresle tam olarak eşleştiğini her zaman doğrulayın",
       "undelegate" : "Cihazınızda görüntülenen adresin, doğrulayıcı tarafından sağlanan adresle tam olarak eşleştiğini her zaman doğrulayın",
       "freeze" : "Cihazınızda görüntülenen adresin, size sağlanan adresle tam olarak eşleştiğini her zaman doğrulayın",
@@ -6556,7 +6591,7 @@
     },
     "entryPointCard" : {
       "title" : "{{productName}} cihazınız için sırada ne var?",
-      "description" : "Herhangi bir borsadaki veya cüzdandaki varlıklarınızı aktarın, kripto satın alın, kilitli ekranı özelleştirin veya Ledger Recover'a abone olun.",
+      "description" : "Bir borsadaki veya cüzdandaki varlıklarınızı aktarın, kripto satın alın, kilitli ekranı özelleştirin veya Ledger Recover'a abone olun.",
       "buttonLabel" : "Sırada ne var?"
     },
     "actions" : {
@@ -6912,6 +6947,13 @@
         "title" : "Başka bir Ledger Live uygulamasıyla senkronize et",
         "description" : "Ledger Live'daki kripto hesaplarınızı farklı telefonlarda ve bilgisayarlarda senkronize edin."
       },
+      "unauthorizeMember" : {
+        "error" : {
+          "title" : "Bu uygulama artık senkronize değil",
+          "description" : "Ya bu Ledger Live'da ya da senkronize ettiğiniz Ledger Live'da Ledger Sync'i açın",
+          "cta" : "Ledger Sync'i Aç"
+        }
+      },
       "manageKey" : {
         "title" : "Senkronizasyonu Sil",
         "description" : "Farklı telefonlardaki ve bilgisayarlardaki kripto hesaplarınız artık senkronize olmayacaktır.",
@@ -6922,6 +6964,11 @@
           "cancel" : "Senkronizasyonu tut",
           "title" : "Senkronizasyonu silmek istediğinizden emin misiniz?",
           "desc" : "Farklı telefonlardaki ve bilgisayarlardaki kripto hesaplarınız artık senkronize olmayacaktır. Bu, fonlarınızı hiçbir şekilde etkilemez."
+        },
+        "error" : {
+          "title" : "Bu uygulama artık senkronize değil",
+          "description" : "Ya bu Ledger Live'da ya da senkronize ettiğiniz Ledger Live'da Ledger Sync'i açın",
+          "cta" : "Ledger Sync'i Aç"
         }
       },
       "manageInstances" : {
