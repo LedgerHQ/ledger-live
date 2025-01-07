@@ -565,7 +565,7 @@ export function useWalletAPIServer({
 
             if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
               try {
-                let broadcastConfig = config.mevProtected
+                const broadcastConfig = config.mevProtected
                   ? {
                       broadcastConfig: { mevProtected: config.mevProtected },
                     }

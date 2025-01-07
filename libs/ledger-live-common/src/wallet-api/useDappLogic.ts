@@ -491,7 +491,7 @@ export function useDappLogic({
 
               let optimisticOperation: Operation = signedTransaction.operation;
 
-              let broadcastConfig = mevProtected
+              const broadcastConfig = mevProtected
                 ? {
                     broadcastConfig: { mevProtected: mevProtected },
                   }
