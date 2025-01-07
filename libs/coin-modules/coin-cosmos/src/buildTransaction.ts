@@ -18,7 +18,6 @@ import { PubKey } from "@keplr-wallet/proto-types/cosmos/crypto/secp256k1/keys";
 import { AuthInfo, Fee } from "@keplr-wallet/proto-types/cosmos/tx/v1beta1/tx";
 import type { Account } from "@ledgerhq/types-live";
 import { Transaction } from "./types";
-import { Coin } from "@cosmjs/amino";
 
 type ProtoMsg = {
   typeUrl: string;
