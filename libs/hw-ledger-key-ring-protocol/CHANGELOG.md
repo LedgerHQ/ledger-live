@@ -1,5 +1,11 @@
 # @ledgerhq/live-wallet
 
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#8653](https://github.com/LedgerHQ/ledger-live/pull/8653) [`fbff5e4`](https://github.com/LedgerHQ/ledger-live/commit/fbff5e46c871d4f0d9d89a5638309408bb057197) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - HWLKRP - Pin tiny-secp256k1 version
+
 ## 0.2.1
 
 ### Patch Changes
