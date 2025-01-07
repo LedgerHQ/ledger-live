@@ -122,9 +122,8 @@ const buildTasks = args => [
       } else if (args.pre) {
         commands.push("--config");
         commands.push("electron-builder-pre.yml");
-      } else if (args.nosign) {
-        commands.push("--config");
-        commands.push("electron-builder-nosign.yml");
+      } else if (args.nonotarize) {
+        commands.push("--config", "electron-builder-nonotarize.yml");
         commands.push("-c.afterSign='lodash/noop'");
         commands.push("--publish", "never");
       }
@@ -242,7 +241,7 @@ yargs
           type: "boolean",
           describe: "make it a release build",
         })
-        .option("nosign", {
+        .option("nonotarize", {
           type: "boolean",
         })
         .option("dirty", {
