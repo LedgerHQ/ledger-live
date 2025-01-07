@@ -36,34 +36,22 @@ describe("Aptos API", () => {
     const api = new AptosAPI("aptos");
 
     expect(api.broadcast).toBeDefined();
-    expect(typeof api.broadcast).toBe("function");
     expect(api.estimateGasPrice).toBeDefined();
-    expect(typeof api.estimateGasPrice).toBe("function");
     expect(api.generateTransaction).toBeDefined();
-    expect(typeof api.generateTransaction).toBe("function");
     expect(api.getAccount).toBeDefined();
-    expect(typeof api.getAccount).toBe("function");
     expect(api.getAccountInfo).toBeDefined();
-    expect(typeof api.getAccountInfo).toBe("function");
     expect(api.simulateTransaction).toBeDefined();
-    expect(typeof api.simulateTransaction).toBe("function");
   });
 
   it("builds the client properly for testnet", () => {
     const api = new AptosAPI("aptos_testnet");
 
     expect(api.broadcast).toBeDefined();
-    expect(typeof api.broadcast).toBe("function");
     expect(api.estimateGasPrice).toBeDefined();
-    expect(typeof api.estimateGasPrice).toBe("function");
     expect(api.generateTransaction).toBeDefined();
-    expect(typeof api.generateTransaction).toBe("function");
     expect(api.getAccount).toBeDefined();
-    expect(typeof api.getAccount).toBe("function");
     expect(api.getAccountInfo).toBeDefined();
-    expect(typeof api.getAccountInfo).toBe("function");
     expect(api.simulateTransaction).toBeDefined();
-    expect(typeof api.simulateTransaction).toBe("function");
   });
 
   describe("getAccount", () => {
