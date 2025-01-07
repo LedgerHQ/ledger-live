@@ -8,7 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import { QueryKey } from "./type.hooks";
 import { useLifeCycle } from "./walletSync.hooks";
 import { useEffect } from "react";
-import { TrustchainEjected, TrustchainNotFound } from "@ledgerhq/ledger-key-ring-protocol/errors";
+import { TrustchainNotFound } from "@ledgerhq/ledger-key-ring-protocol/errors";
 
 export function useGetMembers() {
   const sdk = useTrustchainSdk();
@@ -43,17 +43,11 @@ export function useGetMembers() {
     enabled: !!trustchain && !!memberCredentials,
   });
 
-  const { isError, error, isPending, isLoading } = memberHook;
-
   useEffect(() => {
-    if (isError) {
-      handleError(error);
+    if (memberHook.isError) {
+      handleError(memberHook.error);
     }
-    if (isPending && !isError && !isLoading) {
-      // assuming that if getMembers returns undefined, it means the trustchain is ejected
-      handleError(new TrustchainEjected());
-    }
-  }, [handleError, error, isError, isLoading, isPending]);
+  }, [handleError, memberHook.error, memberHook.isError]);
 
   return memberHook;
 }

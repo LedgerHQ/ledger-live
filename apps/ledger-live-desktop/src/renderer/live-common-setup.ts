@@ -10,93 +10,121 @@ import { getUserId } from "~/helpers/user";
 import { setEnvOnAllThreads } from "./../helpers/env";
 import { IPCTransport } from "./IPCTransport";
 import logger from "./logger";
-import { currentMode, setDeviceMode } from "@ledgerhq/live-common/hw/actions/app";
+import { setDeviceMode } from "@ledgerhq/live-common/hw/actions/app";
 import { getFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { FeatureId } from "@ledgerhq/types-live";
 import { overriddenFeatureFlagsSelector } from "~/renderer/reducers/settings";
 import { State } from "./reducers";
 import { DeviceManagementKitTransport } from "@ledgerhq/live-dmk";
+import { getEnv } from "@ledgerhq/live-env";
 
 interface Store {
   getState: () => State;
 }
 
-const getFeatureWithOverrides = (key: FeatureId, store: Store) => {
+const isDeviceManagementKitEnabled = (store: Store) => {
   const state = store.getState();
   const localOverrides = overriddenFeatureFlagsSelector(state);
-  return getFeature({ key, localOverrides });
+  return getFeature({ key: "ldmkTransport", localOverrides })?.enabled;
 };
 
+enum RendererTransportModule {
+  DeviceManagementKit,
+  IPC,
+  Vault,
+}
+
+/**
+ * Register transport modules for the renderer process.
+ *
+ * NB: the order of the transport modules is important.
+ * Whenever calling `withDevice` in the renderer process, the first registered transport
+ * module that will return a truthy value from `open()` will be used.
+ *
+ * This logic allows all transports to be registered at initialization time,
+ * and then depending on a set of conditions, the right transport will be used.
+ */
 export function registerTransportModules(store: Store) {
   setEnvOnAllThreads("USER_ID", getUserId());
   const vaultTransportPrefixID = "vault-transport:";
-  const ldmkFeatureFlag = getFeatureWithOverrides("ldmkTransport", store);
 
   listenLogs(({ id, date, ...log }) => {
     if (log.type === "hid-frame") return;
     logger.debug(log);
   });
 
-  if (ldmkFeatureFlag.enabled) {
-    registerTransportModule({
-      id: "sdk",
-      open: (_id: string, timeoutMs?: number, context?: TraceContext) => {
-        trace({
-          type: "renderer-setup",
-          message: "Open called on registered module",
-          data: {
-            transport: "SDKTransport",
-            timeoutMs,
-          },
-          context: {
-            openContext: context,
-          },
-        });
-        return DeviceManagementKitTransport.open();
-      },
-
-      disconnect: () => Promise.resolve(),
-    });
-  } else {
-    // Register IPC Transport Module
-    registerTransportModule({
-      id: "ipc",
-      open: (id: string, timeoutMs?: number, context?: TraceContext) => {
-        const originalDeviceMode = currentMode;
-        // id could be another type of transport such as vault-transport
-        if (id.startsWith(vaultTransportPrefixID)) return;
-
-        if (originalDeviceMode !== currentMode) {
-          setDeviceMode(originalDeviceMode);
-        }
-
-        trace({
-          type: "renderer-setup",
-          message: "Open called on registered module",
-          data: {
-            transport: "IPCTransport",
-            timeoutMs,
-          },
-          context: {
-            openContext: context,
-          },
-        });
-
-        // Retries in the `renderer` process if the open failed. No retry is done in the `internal` process to avoid multiplying retries.
-        return retry(() => IPCTransport.open(id, timeoutMs, context), {
-          interval: 500,
-          maxRetry: 4,
-        });
-      },
-      disconnect: () => Promise.resolve(),
-    });
+  function whichTransportModuleToUse(deviceId: string): RendererTransportModule {
+    if (deviceId.startsWith(vaultTransportPrefixID)) return RendererTransportModule.Vault;
+    if (getEnv("SPECULOS_API_PORT")) return RendererTransportModule.IPC;
+    if (getEnv("DEVICE_PROXY_URL")) return RendererTransportModule.IPC;
+    if (isDeviceManagementKitEnabled(store)) return RendererTransportModule.DeviceManagementKit;
+    return RendererTransportModule.IPC;
   }
 
-  // Register Vault Transport Module
+  /**
+   * DeviceManagementKit Transport Module.
+   * It only supports regular USB devices.
+   */
+  registerTransportModule({
+    id: "deviceManagementKitTransport",
+    open: (id: string, timeoutMs?: number, context?: TraceContext) => {
+      if (whichTransportModuleToUse(id) !== RendererTransportModule.DeviceManagementKit) return;
+
+      trace({
+        type: "renderer-setup",
+        message: "Open called on registered module",
+        data: {
+          transport: "DeviceManagementKitTransport",
+          timeoutMs,
+        },
+        context: {
+          openContext: context,
+        },
+      });
+
+      return DeviceManagementKitTransport.open();
+    },
+
+    disconnect: () => Promise.resolve(),
+  });
+
+  /**
+   * IPC Transport Module.
+   * It acts as a bridge with transports registered in the internal process:
+   * Node HID as well as HTTP transports (Speculos & Proxy).
+   */
+  registerTransportModule({
+    id: "ipc",
+    open: (id: string, timeoutMs?: number, context?: TraceContext) => {
+      if (whichTransportModuleToUse(id) !== RendererTransportModule.IPC) return;
+
+      trace({
+        type: "renderer-setup",
+        message: "Open called on registered module",
+        data: {
+          transport: "IPCTransport",
+          timeoutMs,
+        },
+        context: {
+          openContext: context,
+        },
+      });
+
+      // Retries in the `renderer` process if the open failed. No retry is done in the `internal` process to avoid multiplying retries.
+      return retry(() => IPCTransport.open(id, timeoutMs, context), {
+        interval: 500,
+        maxRetry: 4,
+      });
+    },
+    disconnect: () => Promise.resolve(),
+  });
+
+  /**
+   * Vault Transport Module.
+   */
   registerTransportModule({
     id: "vault-transport",
     open: (id: string) => {
-      if (!id.startsWith(vaultTransportPrefixID)) return;
+      if (whichTransportModuleToUse(id) !== RendererTransportModule.Vault) return;
       setDeviceMode("polling");
       const params = new URLSearchParams(id.split(vaultTransportPrefixID)[1]);
       return retry(() =>

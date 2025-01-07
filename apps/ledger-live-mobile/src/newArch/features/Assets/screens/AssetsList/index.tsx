@@ -31,9 +31,9 @@ export default function AssetsList({ route }: Props) {
     <>
       <TrackScreen event="Accounts" />
       <ReactNavigationPerformanceView screenName={ScreenName.AssetsList} interactive>
-        <SafeAreaView edges={["left", "right"]} isFlex style={{ marginHorizontal: 16 }}>
+        <SafeAreaView edges={["left", "right", "bottom"]} isFlex style={{ marginHorizontal: 16 }}>
           {showHeader && (
-            <Text variant="h1Inter" fontSize={28} paddingY={2}>
+            <Text variant="h1Inter" fontWeight="semiBold" fontSize={28} paddingY={2}>
               {t("assets.title")}
             </Text>
           )}

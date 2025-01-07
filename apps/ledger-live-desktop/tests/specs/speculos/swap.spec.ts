@@ -4,7 +4,6 @@ import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { setExchangeDependencies } from "@ledgerhq/live-common/e2e/speculos";
 import { Fee } from "@ledgerhq/live-common/e2e/enum/Fee";
 import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
-import { Provider, Rate } from "@ledgerhq/live-common/e2e/enum/Swap";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { Application } from "tests/page";
@@ -14,168 +13,63 @@ const app: AppInfos = AppInfos.EXCHANGE;
 
 const swaps = [
   {
-    swap: new Swap(
-      Account.ETH_1,
-      Account.BTC_NATIVE_SEGWIT_1,
-      "0.02",
-      Fee.MEDIUM,
-      Provider.CHANGELLY,
-      Rate.FLOAT,
-    ),
+    swap: new Swap(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "0.02", Fee.MEDIUM),
     xrayTicket: "B2CQA-2750",
   },
   {
-    swap: new Swap(
-      Account.BTC_NATIVE_SEGWIT_1,
-      Account.ETH_1,
-      "0.00067",
-      Fee.MEDIUM,
-      Provider.CHANGELLY,
-      Rate.FLOAT,
-    ),
+    swap: new Swap(Account.BTC_NATIVE_SEGWIT_1, Account.ETH_1, "0.00067", Fee.MEDIUM),
     xrayTicket: "B2CQA-2744, B2CQA-2432",
   },
   {
-    swap: new Swap(
-      Account.ETH_USDT_1,
-      Account.ETH_1,
-      "40",
-      Fee.MEDIUM,
-      Provider.CHANGELLY,
-      Rate.FLOAT,
-    ),
+    swap: new Swap(Account.ETH_USDT_1, Account.ETH_1, "40", Fee.MEDIUM),
     xrayTicket: "B2CQA-2752, B2CQA-2048",
   },
   {
-    swap: new Swap(
-      Account.ETH_1,
-      Account.SOL_1,
-      "0.018",
-      Fee.MEDIUM,
-      Provider.CHANGELLY,
-      Rate.FLOAT,
-    ),
+    swap: new Swap(Account.ETH_1, Account.SOL_1, "0.018", Fee.MEDIUM),
     xrayTicket: "B2CQA-2748",
   },
   {
-    swap: new Swap(
-      Account.ETH_1,
-      Account.ETH_USDT_1,
-      "0.02",
-      Fee.MEDIUM,
-      Provider.CHANGELLY,
-      Rate.FLOAT,
-    ),
+    swap: new Swap(Account.ETH_1, Account.ETH_USDT_1, "0.02", Fee.MEDIUM),
     xrayTicket: "B2CQA-2749",
   },
   {
-    swap: new Swap(
-      Account.BTC_NATIVE_SEGWIT_1,
-      Account.SOL_1,
-      "0.0006",
-      Fee.MEDIUM,
-      Provider.CHANGELLY,
-      Rate.FLOAT,
-    ),
+    swap: new Swap(Account.BTC_NATIVE_SEGWIT_1, Account.SOL_1, "0.0006", Fee.MEDIUM),
     xrayTicket: "B2CQA-2747",
   },
   {
-    swap: new Swap(
-      Account.BTC_NATIVE_SEGWIT_1,
-      Account.ETH_USDT_1,
-      "0.0006",
-      Fee.MEDIUM,
-      Provider.CHANGELLY,
-      Rate.FLOAT,
-    ),
+    swap: new Swap(Account.BTC_NATIVE_SEGWIT_1, Account.ETH_USDT_1, "0.0006", Fee.MEDIUM),
     xrayTicket: "B2CQA-2746",
   },
   {
-    swap: new Swap(
-      Account.ETH_USDT_1,
-      Account.BTC_NATIVE_SEGWIT_1,
-      "40",
-      Fee.MEDIUM,
-      Provider.CHANGELLY,
-      Rate.FLOAT,
-    ),
+    swap: new Swap(Account.ETH_USDT_1, Account.BTC_NATIVE_SEGWIT_1, "40", Fee.MEDIUM),
     xrayTicket: "B2CQA-2753",
   },
   {
-    swap: new Swap(
-      Account.ETH_USDT_1,
-      Account.SOL_1,
-      "40",
-      Fee.MEDIUM,
-      Provider.CHANGELLY,
-      Rate.FLOAT,
-    ),
+    swap: new Swap(Account.ETH_USDT_1, Account.SOL_1, "40", Fee.MEDIUM),
     xrayTicket: "B2CQA-2751",
   },
   {
-    swap: new Swap(
-      Account.SOL_1,
-      Account.ETH_1,
-      "0.25",
-      Fee.MEDIUM,
-      Provider.CHANGELLY,
-      Rate.FLOAT,
-    ),
+    swap: new Swap(Account.SOL_1, Account.ETH_1, "0.25", Fee.MEDIUM),
     xrayTicket: "B2CQA-2775",
   },
   {
-    swap: new Swap(
-      Account.SOL_1,
-      Account.BTC_NATIVE_SEGWIT_1,
-      "0.25",
-      Fee.MEDIUM,
-      Provider.CHANGELLY,
-      Rate.FLOAT,
-    ),
+    swap: new Swap(Account.SOL_1, Account.BTC_NATIVE_SEGWIT_1, "0.25", Fee.MEDIUM),
     xrayTicket: "B2CQA-2776",
   },
   {
-    swap: new Swap(
-      Account.SOL_1,
-      Account.ETH_USDT_1,
-      "0.25",
-      Fee.MEDIUM,
-      Provider.CHANGELLY,
-      Rate.FLOAT,
-    ),
+    swap: new Swap(Account.SOL_1, Account.ETH_USDT_1, "0.25", Fee.MEDIUM),
     xrayTicket: "B2CQA-2777",
   },
   {
-    swap: new Swap(
-      Account.ETH_USDC_1,
-      Account.ETH_1,
-      "65",
-      Fee.MEDIUM,
-      Provider.EXODUS,
-      Rate.FLOAT,
-    ),
+    swap: new Swap(Account.ETH_USDC_1, Account.ETH_1, "65", Fee.MEDIUM),
     xrayTicket: "B2CQA-2830",
   },
   {
-    swap: new Swap(
-      Account.ETH_USDC_1,
-      Account.SOL_1,
-      "45",
-      Fee.MEDIUM,
-      Provider.EXODUS,
-      Rate.FLOAT,
-    ),
+    swap: new Swap(Account.ETH_USDC_1, Account.SOL_1, "45", Fee.MEDIUM),
     xrayTicket: "B2CQA-2831",
   },
   {
-    swap: new Swap(
-      Account.ETH_USDC_1,
-      Account.BTC_NATIVE_SEGWIT_1,
-      "65",
-      Fee.MEDIUM,
-      Provider.EXODUS,
-      Rate.FLOAT,
-    ),
+    swap: new Swap(Account.ETH_USDC_1, Account.BTC_NATIVE_SEGWIT_1, "65", Fee.MEDIUM),
     xrayTicket: "B2CQA-2832",
   },
 ];
@@ -229,8 +123,8 @@ for (const { swap, xrayTicket } of swaps) {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
         await performSwapUntilQuoteSelectionStep(app, electronApp, swap);
-        await app.swap.selectQuote(electronApp, swap.provider.name, swap.rate);
-        await performSwapUntilDeviceVerificationStep(app, electronApp, swap);
+        const selectedProvider = await app.swap.selectExchange(electronApp);
+        await performSwapUntilDeviceVerificationStep(app, electronApp, swap, selectedProvider);
         await app.speculos.verifyAmountsAndAcceptSwap(swap);
         await app.swapDrawer.verifyExchangeCompletedTextContent(swap.accountToCredit.currency.name);
       },
@@ -240,14 +134,7 @@ for (const { swap, xrayTicket } of swaps) {
 
 const rejectedSwaps = [
   {
-    swap: new Swap(
-      Account.ETH_1,
-      Account.BTC_NATIVE_SEGWIT_1,
-      "0.02",
-      Fee.MEDIUM,
-      Provider.CHANGELLY,
-      Rate.FLOAT,
-    ),
+    swap: new Swap(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "0.02", Fee.MEDIUM),
     xrayTicket: "B2CQA-600, B2CQA-2212",
   },
 ];
@@ -293,8 +180,8 @@ for (const { swap, xrayTicket } of rejectedSwaps) {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
         await performSwapUntilQuoteSelectionStep(app, electronApp, swap);
-        await app.swap.selectQuote(electronApp, swap.provider.name, swap.rate);
-        await performSwapUntilDeviceVerificationStep(app, electronApp, swap);
+        const selectedProvider = await app.swap.selectExchange(electronApp);
+        await performSwapUntilDeviceVerificationStep(app, electronApp, swap, selectedProvider);
         await app.speculos.verifyAmountsAndRejectSwap(swap);
         await app.swapDrawer.verifyExchangeErrorTextContent("Operation denied on device");
       },
@@ -304,40 +191,19 @@ for (const { swap, xrayTicket } of rejectedSwaps) {
 
 const tooLowAmountForQuoteSwaps = [
   {
-    swap: new Swap(
-      Account.ETH_1,
-      Account.BTC_NATIVE_SEGWIT_1,
-      "0.001",
-      Fee.MEDIUM,
-      Provider.CHANGELLY,
-      Rate.FLOAT,
-    ),
+    swap: new Swap(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "0.001", Fee.MEDIUM),
     xrayTicket: "B2CQA-2755",
   },
   {
-    swap: new Swap(
-      Account.BTC_NATIVE_SEGWIT_1,
-      Account.ETH_1,
-      "0.00001",
-      Fee.MEDIUM,
-      Provider.CHANGELLY,
-      Rate.FLOAT,
-    ),
+    swap: new Swap(Account.BTC_NATIVE_SEGWIT_1, Account.ETH_1, "0.00001", Fee.MEDIUM),
     xrayTicket: "B2CQA-2758",
   },
   {
-    swap: new Swap(
-      Account.ETH_USDT_1,
-      Account.ETH_1,
-      "150",
-      Fee.MEDIUM,
-      Provider.CHANGELLY,
-      Rate.FLOAT,
-    ),
+    swap: new Swap(Account.ETH_USDT_1, Account.ETH_1, "150", Fee.MEDIUM),
     xrayTicket: "B2CQA-2759",
   },
   {
-    swap: new Swap(Account.TRX_1, Account.ETH_1, "77", Fee.MEDIUM, Provider.CHANGELLY, Rate.FLOAT),
+    swap: new Swap(Account.TRX_1, Account.ETH_1, "77", Fee.MEDIUM),
     xrayTicket: "B2CQA-2739",
   },
 ];
@@ -422,14 +288,7 @@ for (const { swap, xrayTicket } of tooLowAmountForQuoteSwaps) {
 }
 
 const swapEntryPoint = {
-  swap: new Swap(
-    Account.BTC_NATIVE_SEGWIT_1,
-    Account.ETH_1,
-    "0.0006",
-    Fee.MEDIUM,
-    Provider.CHANGELLY,
-    Rate.FLOAT,
-  ),
+  swap: new Swap(Account.BTC_NATIVE_SEGWIT_1, Account.ETH_1, "0.0006", Fee.MEDIUM),
 };
 
 test.describe("Swap flow from different entry point", () => {
@@ -600,8 +459,9 @@ async function performSwapUntilDeviceVerificationStep(
   app: Application,
   electronApp: ElectronApplication,
   swap: Swap,
+  selectedProvider: any,
 ) {
-  await app.swap.clickExchangeButton(electronApp, swap.provider.uiName);
+  await app.swap.clickExchangeButton(electronApp, selectedProvider);
 
   const amountTo = await app.swapDrawer.getAmountToReceive();
   const fees = await app.swapDrawer.getFees();
@@ -613,5 +473,5 @@ async function performSwapUntilDeviceVerificationStep(
   await app.swapDrawer.verifyAmountSent(swap.amount, swap.accountToDebit.currency.ticker);
   await app.swapDrawer.verifySourceAccount(swap.accountToDebit.currency.name);
   await app.swapDrawer.verifyTargetCurrency(swap.accountToCredit.currency.name);
-  await app.swapDrawer.verifyProvider(swap.provider.name);
+  await app.swapDrawer.verifyProvider(selectedProvider);
 }

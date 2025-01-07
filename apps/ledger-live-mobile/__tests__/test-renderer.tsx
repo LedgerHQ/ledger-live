@@ -17,6 +17,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import reducers from "~/reducers";
 import StyleProvider from "~/StyleProvider";
 import { State } from "~/reducers/types";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import { INITIAL_STATE as ACCOUNTS_INITIAL_STATE } from "~/reducers/accounts";
 import { INITIAL_STATE as SETTINGS_INITIAL_STATE } from "~/reducers/settings";
@@ -36,7 +37,6 @@ import { INITIAL_STATE as WALLETSYNC_INITIAL_STATE } from "~/reducers/walletSync
 import { initialState as WALLET_INITIAL_STATE } from "@ledgerhq/live-wallet/store";
 import QueuedDrawersContextProvider from "LLM/components/QueuedDrawer/QueuedDrawersContextProvider";
 import { INITIAL_STATE as TRUSTCHAIN_INITIAL_STATE } from "@ledgerhq/ledger-key-ring-protocol/store";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const initialState = {
   accounts: ACCOUNTS_INITIAL_STATE,
@@ -134,10 +134,54 @@ const customRenderHook = <Result,>(
   return { store, ...rntlRenderHook(hook, { wrapper: ProvidersWrapper, ...renderOptions }) };
 };
 
+const renderWithReactQuery = (
+  ui: React.ReactElement,
+  {
+    overrideInitialState: overrideInitialState = state => state,
+    userEventOptions = {},
+    ...renderOptions
+  }: ExtraOptions = {},
+) => {
+  const store = configureStore({
+    reducer: reducers,
+    middleware: getDefaultMiddleware =>
+      getDefaultMiddleware({ serializableCheck: false, immutableCheck: false }),
+    preloadedState: overrideInitialState(initialState),
+    devTools: false,
+  });
+
+  const ProvidersWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+    const queryClient = new QueryClient();
+    return (
+      <QueryClientProvider client={queryClient}>
+        <Provider store={store}>
+          <StyleProvider selectedPalette="dark">
+            <FirebaseFeatureFlagsProvider getFeature={getFeature}>
+              <AnalyticsContextProvider>
+                <QueuedDrawersContextProvider>
+                  <I18nextProvider i18n={i18n}>
+                    <NavigationContainer>{children}</NavigationContainer>
+                  </I18nextProvider>
+                </QueuedDrawersContextProvider>
+              </AnalyticsContextProvider>
+            </FirebaseFeatureFlagsProvider>
+          </StyleProvider>
+        </Provider>
+      </QueryClientProvider>
+    );
+  };
+
+  return {
+    user: userEvent.setup(userEventOptions),
+    QueryClient,
+    ...rntlRender(ui, { wrapper: ProvidersWrapper, ...renderOptions }),
+  };
+};
+
 export const LONG_TIMEOUT = 30000;
 
 // re-export everything
 export * from "@testing-library/react-native";
 
 // override render method
-export { customRender as render, customRenderHook as renderHook };
+export { customRender as render, customRenderHook as renderHook, renderWithReactQuery };

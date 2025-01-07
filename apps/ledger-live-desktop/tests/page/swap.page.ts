@@ -2,9 +2,9 @@ import { AppPage } from "tests/page/abstractClasses";
 import { waitFor } from "../utils/waitFor";
 import { step } from "tests/misc/reporters/step";
 import { ElectronApplication, expect } from "@playwright/test";
-import { capitalizeFirstLetter } from "tests/utils/textParserUtils";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { ChooseAssetDrawer } from "tests/page/drawer/choose.asset.drawer";
+import { Provider } from "@ledgerhq/live-common/e2e/enum/Swap";
 
 export class SwapPage extends AppPage {
   private currencyByName = (accountName: string) => this.page.getByText(accountName); // TODO: this is rubbish. Changed this
@@ -34,12 +34,6 @@ export class SwapPage extends AppPage {
   private standardFeesSelector = this.page.getByTestId("standard-fee-mode-selector");
   private advancedFeesSelector = this.page.getByTestId("advanced-fee-mode-selector");
   private customFeeTextbox = this.page.getByTestId("currency-textbox");
-
-  // Quote Components
-  private quoteContainer = (providerName: string, exchangeType: string) =>
-    this.page.getByTestId(`quote-container-${providerName}-${exchangeType}`);
-  private quoteSelector = (providerName: string, rate: string) =>
-    `quote-container-${providerName}-${rate}`;
 
   // Exchange Button Component
   private exchangeButton = this.page.getByTestId("exchange-button");
@@ -116,16 +110,34 @@ export class SwapPage extends AppPage {
     await this.customFeeTextbox.fill(amount);
   }
 
-  @step("Select exchange quote $0 with rate $1")
-  async selectExchangeQuote(providerName: string, exchangeType: "fixed" | "float") {
-    await this.quoteContainer(providerName, exchangeType).click();
-  }
-
-  @step("Select exchange quote with provider $1")
-  async selectQuote(electronApp: ElectronApplication, providerName: string, rate: string) {
+  @step("Select available provider")
+  async selectExchange(electronApp: ElectronApplication) {
     const [, webview] = electronApp.windows();
-    await expect(webview.getByTestId(this.quoteSelector(providerName, rate))).toBeEnabled();
-    await webview.getByTestId(this.quoteSelector(providerName, rate)).click();
+    await expect(webview.getByTestId("number-of-quotes")).toBeVisible();
+    const providersList = await webview
+      .locator("//span[@data-testid='quote-card-provider-name']")
+      .allTextContents();
+
+    const providersWithoutKYC = providersList.filter(providerName => {
+      const provider = Object.values(Provider).find(p => p.uiName === providerName);
+      return provider && !provider.kyc;
+    });
+
+    for (const providerName of providersWithoutKYC) {
+      const provider = Object.values(Provider).find(p => p.uiName === providerName);
+      if (provider && provider.isNative) {
+        const providerLocator = webview
+          .locator(`//span[@data-testid='quote-card-provider-name' and text()='${providerName}']`)
+          .first();
+
+        await providerLocator.isVisible();
+        await providerLocator.click();
+
+        return providerName;
+      }
+    }
+
+    throw new Error("No valid providers found");
   }
 
   async waitForExchangeToBeAvailable() {
@@ -135,7 +147,7 @@ export class SwapPage extends AppPage {
   @step("Click Exchange button")
   async clickExchangeButton(electronApp: ElectronApplication, provider: string) {
     const [, webview] = electronApp.windows();
-    await webview.getByText(`Swap with ${capitalizeFirstLetter(provider)}`).click();
+    await webview.getByText(`Swap with ${provider}`).click();
   }
 
   async confirmExchange() {

@@ -507,7 +507,7 @@
     "type": "CryptoCurrency",
     "id": "rsk",
     "ticker": "RBTC",
-    "name": "RSK",
+    "name": "Rootstock",
     "family": "ethereum",
     "color": "#FF931E",
     "decimals": 18

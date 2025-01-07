@@ -188,7 +188,7 @@ describe("fetchAndMergeProviderData", () => {
         useInExchangeApp: false,
         mainUrl: "https://uniswap.org/",
         needsKYC: false,
-        supportUrl: "mailto:support@uniswap.org",
+        supportUrl: "https://support.uniswap.org/hc/en-us/requests/new",
         termsOfUseUrl:
           "https://support.uniswap.org/hc/en-us/articles/30935100859661-Uniswap-Labs-Terms-of-Service",
         type: "DEX",

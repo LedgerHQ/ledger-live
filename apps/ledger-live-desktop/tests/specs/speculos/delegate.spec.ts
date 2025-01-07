@@ -5,6 +5,7 @@ import { addTmsLink, addBugLink } from "tests/utils/allureUtils";
 import { getDescription } from "../../utils/customJsonReporter";
 import { CLI } from "tests/utils/cliUtils";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
+import { getEnv } from "@ledgerhq/live-env";
 
 const e2eDelegationAccounts = [
   {
@@ -106,9 +107,11 @@ test.describe("Delegate flows", () => {
           await app.delegateDrawer.amountValueIsVisible();
           await app.drawer.close();
 
-          await app.layout.syncAccounts();
-          await app.account.clickOnLastOperation();
-          await app.delegateDrawer.expectDelegationInfos(account.delegate);
+          if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
+            await app.layout.syncAccounts();
+            await app.account.clickOnLastOperation();
+            await app.delegateDrawer.expectDelegationInfos(account.delegate);
+          }
         },
       );
     });
