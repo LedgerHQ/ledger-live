@@ -442,6 +442,14 @@
       "cta" : "Совместимые устройства",
       "changeProvider" : "Поменять оператора"
     },
+    "incompatibility" : {
+      "ton_title" : "Ledger Nano S™ не поддерживает обмен TON",
+      "ton_description" : "Используйте другие совместимые устройства Ledger для обмена TON. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
+      "spl_tokens_title" : "Ledger Nano S™ не поддерживает обмен токенов сети Solana",
+      "spl_tokens_description" : "Используйте другие совместимые устройства Ledger для обмена токенов сети Solana. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
+      "ada_title" : "Ledger Nano S™ не поддерживает обмен Cardano",
+      "ada_description" : "Используйте другие совместимые устройства Ledger для обмена Cardano. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™."
+    },
     "providers" : {
       "title" : "Выберите поставщика услуг по обмену криптовалюты",
       "learnMore" : "Что такое Swap (обмен криптоактивов)?",
@@ -2442,7 +2450,7 @@
     },
     "firmwareUpdatePrompt" : {
       "title" : "Добавить {{language}} язык на устройство {{deviceName}}?",
-      "description" : "Теперь {{language}} язык доступен для {{deviceName}}. Можно установить его сейчас или поменять в любое удобное время в разделе «Мой Ledger»."
+      "description" : "Теперь {{language}} язык доступен для {{deviceName}}. Можно установить его сейчас или позже, в разделе «Мой Ledger»."
     },
     "allowLanguageInstallation" : "Нажмите «Разрешить»,\nчтобы установить язык",
     "languageInstalled" : "Новый язык устройства — {{language}}",
@@ -3037,6 +3045,7 @@
         "validatorGroup" : {
           "title" : "Группа валидаторов",
           "ledgerByFigmentTC" : "Положения и условия Ledger by Figment",
+          "ledgerByChorusOneTC" : "Положения и условия Ledger by Chorus One",
           "totalVotes" : "Всего голосов",
           "commission" : "Комиссия"
         }
@@ -3626,6 +3635,7 @@
       "withdrawableTitle" : "Доступно для вывода",
       "statusUpdateNotice" : "Статус делегирования обновится, когда транзакция будет подтверждена.",
       "ledgerByFigmentTC" : "Положения и условия Ledger by Figment",
+      "ledgerByChorusOneTC" : "Положения и условия Ledger by Chorus One",
       "emptyState" : {
         "description" : "Вы можете зарабатывать вознаграждения в токенах SOL, делегируя активы.",
         "info" : "Как работает делегирование",
@@ -3880,6 +3890,7 @@
           },
           "validator" : {
             "title" : "Валидаторы",
+            "ledgerByChorusOneTC" : "Положения и условия Ledger by Chorus One",
             "ledgerByFigmentTC" : "Положения и условия Ledger by Figment"
           },
           "connectDevice" : {
@@ -4147,6 +4158,7 @@
             "link" : "Ссылка",
             "secondaryCta" : "Вторичный CTA",
             "cta" : "CTA",
+            "tag" : "Тег",
             "url" : "URL",
             "path" : "Путь"
           }
@@ -5678,17 +5690,17 @@
       "title" : "К сожалению, счета не найдены",
       "description" : "При вычислении адреса что-то пошло не так. Повторите попытку или обратитесь в Поддержку"
     },
-    "ElrondDecimalsLimitReached" : {
+    "MultiversXDecimalsLimitReached" : {
       "title" : "Достигнут лимит десятичных знаков",
-      "description" : "Убедитесь, что у указанной суммы 18 десятичных знаков."
+      "description" : "Убедитесь, что в указанной сумме до 18 десятичных знаков."
     },
-    "ElrondMinDelegatedAmountError" : {
+    "MultiversXMinDelegatedAmountError" : {
       "title" : "Делегированная сумма должна быть не менее {{formattedAmount}}"
     },
-    "ElrondMinUndelegatedAmountError" : {
+    "MultiversXMinUndelegatedAmountError" : {
       "title" : "Неделегированных средств должно быть как минимум {{formattedAmount}}"
     },
-    "ElrondDelegationBelowMinimumError" : {
+    "MultiversXDelegationBelowMinimumError" : {
       "title" : "Остаток делегированных средств должен быть не менее {{formattedAmount}}"
     },
     "NotEnoughEGLDForFees" : {
