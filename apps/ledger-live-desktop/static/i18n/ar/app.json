@@ -442,6 +442,14 @@
       "cta" : "استكشف الأجهزة المتوافقة",
       "changeProvider" : "قم بالمبادلة مع مزود آخر"
     },
+    "incompatibility" : {
+      "ton_title" : "™Ledger Nano S لا تدعم مبادلة Ton",
+      "ton_description" : "لمبادلة Ton، استخدِم أي جهاز Ledger آخر متوافق مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
+      "spl_tokens_title" : "™Ledger Nano S لا تدعم مبادلة رموز سولانا (Solana)",
+      "spl_tokens_description" : "لمبادلة رموز سولانا (Solana)، استخدِم أي جهاز Ledger آخر متوافق مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
+      "ada_title" : "™Ledger Nano S لا تدعم مبادلة كاردانو (Cardano)",
+      "ada_description" : "لمبادلة كاردانو (Cardano)، استخدِم أي جهاز Ledger آخر متوافق مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax."
+    },
     "providers" : {
       "title" : "اختر أحد المزودين لمبادلة الأصول المشفرة",
       "learnMore" : "ما هي المبادلة؟",
@@ -1139,7 +1147,7 @@
       "send" : "إرسال",
       "swap" : "مبادلة",
       "stake" : "تكديس",
-      "earn" : "Earn",
+      "earn" : "اكسب",
       "yield" : "العائد",
       "buy" : "شراء",
       "sell" : "بيع",
@@ -1486,7 +1494,7 @@
       },
       "earn" : {
         "title" : "تكديس",
-        "description" : "Get rewards on your crypto"
+        "description" : "احصل على مكافآت على أصولك المشفرة"
       }
     },
     "recoverBanner" : {
@@ -3037,6 +3045,7 @@
         "validatorGroup" : {
           "title" : "مجموعة المدققين",
           "ledgerByFigmentTC" : "شروط وأحكام Ledger by Figment",
+          "ledgerByChorusOneTC" : "شروط وأحكام Ledger by Chorus One",
           "totalVotes" : "مجموع الأصوات",
           "commission" : "العمولة"
         }
@@ -3626,6 +3635,7 @@
       "withdrawableTitle" : "قابل للسحب",
       "statusUpdateNotice" : "ستُحدّث حالة التفويض عندما يتم تأكيد المعاملة.",
       "ledgerByFigmentTC" : "شروط وأحكام Ledger by Figment",
+      "ledgerByChorusOneTC" : "شروط وأحكام Ledger by Chorus One",
       "emptyState" : {
         "description" : "يمكنك كسب مكافآت SOL عن طريق تفويض أصولك.",
         "info" : "كيف يعمل التفويض",
@@ -3880,6 +3890,7 @@
           },
           "validator" : {
             "title" : "المدققون",
+            "ledgerByChorusOneTC" : "شروط وأحكام Ledger by Chorus One",
             "ledgerByFigmentTC" : "شروط وأحكام Ledger by Figment"
           },
           "connectDevice" : {
@@ -4147,6 +4158,7 @@
             "link" : "الرابط",
             "secondaryCta" : "CTA الثانوي",
             "cta" : "CTA",
+            "tag" : "علامة",
             "url" : "عنوان URL",
             "path" : "المسار"
           }
@@ -5678,17 +5690,17 @@
       "title" : "عذراً، لم يتم العثور على حسابات",
       "description" : "حدث خطأ ما في حساب العنوان، حاول مرة أخرى أو قم بالتواصل مع دعم Ledger"
     },
-    "ElrondDecimalsLimitReached" : {
+    "MultiversXDecimalsLimitReached" : {
       "title" : "تم الوصول إلى الحد الأقصى من الكسور العشرية",
       "description" : "يُرجى التأكد من أن المبلغ المُقدَّم به 18 كسراً عشرياً."
     },
-    "ElrondMinDelegatedAmountError" : {
+    "MultiversXMinDelegatedAmountError" : {
       "title" : "يجب أن يكون المبلغ المفوض على الأقل {{formattedAmount}}"
     },
-    "ElrondMinUndelegatedAmountError" : {
+    "MultiversXMinUndelegatedAmountError" : {
       "title" : "يجب أن يكون المبلغ غير المفوض على الأقل {{formattedAmount}}"
     },
-    "ElrondDelegationBelowMinimumError" : {
+    "MultiversXDelegationBelowMinimumError" : {
       "title" : "لا يمكن أن يكون التفويض المتبقي أقل من {{formattedAmount}}"
     },
     "NotEnoughEGLDForFees" : {
