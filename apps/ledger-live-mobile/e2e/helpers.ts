@@ -27,14 +27,18 @@ let portCounter = BASE_PORT; // Counter for generating unique ports
 const speculosDevices: [number, SpeculosDevice][] = [];
 
 export async function waitForElementById(id: string | RegExp, timeout: number = DEFAULT_TIMEOUT) {
-  return await waitFor(getElementById(id)).toBeVisible().withTimeout(timeout);
+  return await waitFor(element(by.id(id)))
+    .toBeVisible()
+    .withTimeout(timeout);
 }
 
 export async function waitForElementByText(
   text: string | RegExp,
   timeout: number = DEFAULT_TIMEOUT,
 ) {
-  return await waitFor(getElementByText(text)).toBeVisible().withTimeout(timeout);
+  return await waitFor(element(by.text(text)))
+    .toBeVisible()
+    .withTimeout(timeout);
 }
 
 export function getElementById(id: string | RegExp, index = 0) {
