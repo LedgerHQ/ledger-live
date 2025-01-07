@@ -65,12 +65,20 @@ describe("LedgerAccount Test", () => {
 
   it("Testing signTransaction method", async () => {
     const api = new AptosAPI("aptos");
-    const ledger_account = new LedgerAccount(Account.APTOS_1.address);
+    const account = createFixtureAccount();
+    const ledger_account = new LedgerAccount(account.freshAddressPath);
     const transport = {} as Transport;
     const mockSignTransaction = jest.fn().mockResolvedValue({
-      signature: Buffer.from("signature"),
+      signature: Buffer.from("0x13321ab5d9da6ea27ff47a89f55bb384f0cc0b04a755d5098fc5e0653179a1"), // random hex to fulfill expectation of 64 length
     });
     HwAptos.prototype.signTransaction = mockSignTransaction;
+
+    const mockGetAddress = jest.fn().mockResolvedValue({
+      address: account.freshAddress,
+      publicKey: Buffer.from("0x13321ab5d9da6ea27ff47a89f55bb8"), // random hex to fulfill expectations of 32 length
+      chainCode: Buffer.from(""),
+    });
+    HwAptos.prototype.getAddress = mockGetAddress;
 
     await ledger_account.init(transport);
     const payload = {
@@ -85,7 +93,7 @@ describe("LedgerAccount Test", () => {
       expirationTimestampSecs: "1735639799486",
     };
 
-    const rawTxn = await api.generateTransaction(Account.APTOS_1.address, payload, options);
+    const rawTxn = await api.generateTransaction(account.freshAddress, payload, options);
     const signedTxn = await ledger_account.signTransaction(rawTxn);
 
     expect(signedTxn).toBeInstanceOf(Uint8Array);
