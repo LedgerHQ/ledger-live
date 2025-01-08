@@ -1842,7 +1842,8 @@
       "withdrawUnbondedAmount": "Withdrawn Amount",
       "palletMethod": "Method",
       "transferAmount": "Transfer Amount",
-      "validatorsCount": "Validators ({{number}})"
+      "validatorsCount": "Validators ({{number}})",
+      "version": "Version"
     }
   },
   "operationList": {
@@ -5814,6 +5815,16 @@
     "SatStackDescriptorNotImported": {
       "title": "Account not scanned by full node",
       "description": "Please configure your full node to scan for the accounts associated with this device. Your full node must first scan the blockchain for this account before you can add it to your portfolio."
+    },
+    "SequenceNumberTooNew": {
+      "title": "Sequence number too new"
+    },
+    "SequenceNumberTooOld": {
+      "title": "Sequence number too old",
+      "description": "Sequence number too old"
+    },
+    "TransactionExpired": {
+      "title": "Transaction expired"
     },
     "SwapRateExpiredError": {
       "title": "Rate Expired",

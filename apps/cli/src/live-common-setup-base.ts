@@ -10,6 +10,8 @@ import { WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
 setWalletAPIVersion(WALLET_API_VERSION);
 
 setSupportedCurrencies([
+  "aptos",
+  "aptos_testnet",
   "bitcoin",
   "ethereum",
   "bsc",

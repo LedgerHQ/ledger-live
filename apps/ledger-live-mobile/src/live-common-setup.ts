@@ -118,6 +118,8 @@ setSupportedCurrencies([
   "casper",
   "neon_evm",
   "lukso",
+  "aptos",
+  "aptos_testnet",
   "linea",
   "linea_sepolia",
   "blast",

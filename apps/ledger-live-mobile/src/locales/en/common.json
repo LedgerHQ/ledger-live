@@ -971,6 +971,18 @@
       "title": "Invalid Provider",
       "description": "You have to change \"My Ledger provider\" setting. To change it, open Ledger Live \"Settings\", select \"Experimental features\", and then select a different provider."
     },
+    "GasLessThanEstimate": {
+      "title": "This may be too low. Please increase"
+    },
+    "SequenceNumberTooNew": {
+      "title": "Sequence number too new"
+    },
+    "SequenceNumberTooOld": {
+      "title": "Sequence number too old"
+    },
+    "TransactionExpired": {
+      "title": "Transaction expired"
+    },
     "SequenceNumberError": {
       "title": "Sequence number error",
       "description": "Please close the window and try again later"
@@ -3768,6 +3780,7 @@
       "to": "To",
       "infoTotalTitle": "Total debit",
       "infoTotalDesc": "Includes transaction amount and the selected network fees",
+      "gasFee": "Gas fee",
       "gasLimit": "Gas limit",
       "gasPrice": "Gas price",
       "maxFee": "Max fee",

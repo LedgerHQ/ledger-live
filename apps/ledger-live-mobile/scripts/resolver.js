@@ -13,6 +13,7 @@ module.exports = (path, options) => {
         "@solana/codecs-numbers",
         "@solana/codecs-strings",
         "@solana/options",
+        "@aptos-labs/aptos-client",
       ]);
 
       if (pkgNamesToTarget.has(pkg.name)) {

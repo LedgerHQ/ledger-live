@@ -1584,6 +1584,7 @@ exports[`sortCurrenciesByIds snapshot 1`] = `
   "ethereum/erc20/insurace",
   "ethereum/erc20/holotoken",
   "ethereum/erc20/etoro_euro",
+  "aptos",
   "near",
   "avalanche_c_chain",
   "banano",

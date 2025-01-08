@@ -28,6 +28,11 @@ permissions:
 
 jobs:
   generate-screenshots-linux:
+    permissions:
+      id-token: write
+      # Give the default GITHUB_TOKEN write permission to commit and push the
+      # added or changed files to the repository.
+      contents: write
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
@@ -78,6 +83,7 @@ jobs:
         id: update-snapshots
         with:
           os: ubuntu-22.04
+          token: ${{ secrets.GITHUB_TOKEN }}
 
   report-start:
     name: Report start

@@ -1,5 +1,5 @@
-import invariant from "invariant";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import invariant from "invariant";
 
 const EVM_DEAD_ADDRESS = "0x000000000000000000000000000000000000dEaD";
 
@@ -13,6 +13,8 @@ const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
   algorand: "PSHLIWQKDEETIIBQEOTLGCT5IF7BTTOKCUULONOGVGF2HYDT2IHW3H4CCI",
   // https://snowtrace.io/address/0x000000000000000000000000000000000000dead/tokens
   avalanche_c_chain: EVM_DEAD_ADDRESS,
+  aptos: EVM_DEAD_ADDRESS,
+  aptos_testnet: EVM_DEAD_ADDRESS,
   cosmos: "cosmos19rl4cm2hmr8afy4kldpxz3fka4jguq0auqdal4",
   ripple: "rHsMGQEkVNJmpGWs8XUBoTBiAAbwxZN5v3",
   stellar: "GDYPMQMYW2JTLPWAUAHIDY3E4VHP5SGTFC5SMA45L7ZPOTHWQ2PHEW3E",

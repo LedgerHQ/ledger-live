@@ -4,6 +4,9 @@ inputs:
   os:
     description: "name of the os (same as runs-on)"
     required: true
+  token:
+    description: "GitHub token"
+    required: true
 
 runs:
   using: "composite"
@@ -42,16 +45,29 @@ runs:
         echo "changes=$(git status -s)"
       shell: bash
 
-    - name: Commit snapshots
-      if: ${{ steps.status.outputs.status != 0 || steps.status-windows.outputs.status != 0 }}
+    - name: Add changed files
       run: |
-        git add ./apps/ledger-live-desktop/tests/specs &&
-        git commit -m "test(lld): update screenshots (${{ inputs.os }}) ${{ steps.changes.outputs.changes }} lld, test, screenshot" &&
-        git restore . &&
-        git pull --rebase &&
-        git push ||
-        echo ""
+        git stash -u
+        git pull --rebase
+        git stash pop
+        git add ./apps/ledger-live-desktop/tests/specs
       shell: bash
+
+    - name: Get current branch
+      id: get_branch
+      run: echo "branch=$(git rev-parse --abbrev-ref HEAD)" >> $GITHUB_ENV
+      shell: bash
+
+    - name: Commit snapshots
+      uses: planetscale/ghcommit-action@v0.1.6
+      if: ${{ steps.status.outputs.status != 0 || steps.status-windows.outputs.status != 0 }}
+      with:
+        commit_message: "test(lld): update screenshots (${{ inputs.os }}) ${{ steps.changes.outputs.changes }} lld, test, screenshot"
+        repo: ${{ github.repository }}
+        branch: ${{ env.branch }}
+        file_pattern: '*'
+      env:
+        GITHUB_TOKEN: ${{ inputs.token }}
 
     - name: Upload playwright results [On Failure]
       uses: actions/upload-artifact@v4
