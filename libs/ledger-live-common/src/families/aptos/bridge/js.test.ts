@@ -13,6 +13,7 @@ describe("Aptos bridge interface ", () => {
 
     it("should have a hydrate method that is a function", () => {
       expect(bridge.currencyBridge.hydrate).toBeDefined();
+      expect(typeof bridge.currencyBridge.hydrate).toBe("function");
       const cryptoCurrency = getCryptoCurrencyById("aptos");
       const result = bridge.currencyBridge.hydrate({}, cryptoCurrency);
       expect(result).toBeUndefined();
