@@ -11,9 +11,12 @@ const HorizontalSeparator = styled.div`
   width: 100%;
 `;
 
+const uniwapUniversalRouterAddr = "0x3fC91A3afd70395Cd496C647d5a6CC9D4B2b7FAD";
+
 const termsOfUse = new Map<string, string>([
   ["paraswap", "https://paraswap.io/tos"],
   ["1inch", "https://1inch.io/assets/1inch_network_terms_of_use.pdf"],
+  ["Uniswap", "https://support.uniswap.org/hc/en-us/requests/new"],
 ]);
 
 if (getEnv("PLAYWRIGHT_RUN")) {
@@ -23,12 +26,14 @@ if (getEnv("PLAYWRIGHT_RUN")) {
 type Props = {
   footer: React.ReactNode | undefined;
   manifestId?: string | null;
+  transaction?: Transaction | null;
   manifestName?: string | null;
 };
 
-const ConfirmFooter = ({ footer, manifestId, manifestName }: Props) => {
+const ConfirmFooter = ({ footer, transaction, manifestId, manifestName }: Props) => {
   if (!manifestId) return;
-  const termsOfUseUrl = termsOfUse.get(manifestId);
+  const appNameByAddr = transaction?.recipient === uniwapUniversalRouterAddr ? "Uniswap" : null;
+  const termsOfUseUrl = termsOfUse.get(appNameByAddr || manifestId);
   if (!termsOfUseUrl) return;
   return (
     <>
@@ -39,7 +44,7 @@ const ConfirmFooter = ({ footer, manifestId, manifestName }: Props) => {
         <Text marginTop={30} data-testid="confirm-footer-toc">
           <Trans
             i18nKey="TransactionConfirm.termsAndConditions"
-            values={{ appName: manifestName || manifestId }}
+            values={{ appName: appNameByAddr || manifestName || manifestId }}
             components={[
               <Text
                 key={manifestId}
