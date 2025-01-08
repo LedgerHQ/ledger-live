@@ -63,6 +63,17 @@ export function getWebElementByTag(tag: string, index = 0) {
   return web.element(by.web.tag(tag)).atIndex(index);
 }
 
+export async function IsIdVisible(id: string | RegExp) {
+  try {
+    await waitFor(element(by.id(id)))
+      .toBeVisible()
+      .withTimeout(1000);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 export async function tapById(id: string | RegExp, index = 0) {
   return getElementById(id, index).tap();
 }
@@ -180,6 +191,9 @@ export async function launchApp() {
       detoxURLBlacklistRegex:
         '\\(".*sdk.*.braze.*",".*.googleapis.com/.*",".*clients3.google.com.*"\\)',
       mock: getEnv("MOCK") ? getEnv("MOCK") : "0",
+      disable_broadcast: getEnv("DISABLE_TRANSACTION_BROADCAST")
+        ? getEnv("DISABLE_TRANSACTION_BROADCAST")
+        : "1",
     },
     languageAndLocale: {
       language: "en-US",
