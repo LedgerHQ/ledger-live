@@ -30,7 +30,7 @@
       "hideEmptyTokenAccounts": false,
       "sidebarCollapsed": false,
       "discreetMode": false,
-      "preferredDeviceModel": "nanoS",
+      "preferredDeviceModel": "nanoSP",
       "hasInstalledApps": true,
       "hasAcceptedSwapKYC": false,
       "lastSeenDevice": null,
@@ -43,16 +43,11 @@
       "starredAccountIds": [],
       "hasPassword": false,
       "overriddenFeatureFlags": {
-        "lldAnalyticsOptInPrompt": {
-          "enabled": true,
-          "params": {
-            "variant": "A",
-            "entryPoints": ["Onboarding"]
-          },
-          "overridesRemote": true
-        },
         "lldWalletSync": {
           "enabled": true,
+          "params": {
+            "environment": "STAGING"
+          },
           "overridesRemote": true
         }
       }
