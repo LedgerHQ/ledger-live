@@ -16,7 +16,7 @@ import {
   DIRECTION,
   TRANSFER_TYPES,
 } from "./constants";
-import type { AptosTransaction, TransactionOptions } from "./types";
+import type { AptosTransaction, TransactionEstimate } from "./types";
 
 export const DEFAULT_GAS = 200;
 export const DEFAULT_GAS_PRICE = 100;
@@ -38,13 +38,11 @@ export const getMaxSendBalance = (
   return amount.gt(totalGas) ? amount.minus(totalGas) : new BigNumber(0);
 };
 
-export function normalizeTransactionOptions(options: TransactionOptions): TransactionOptions {
+export function normalizeTransactionOptions(options: TransactionEstimate): TransactionEstimate {
   const check = (v: any) => ((v ?? "").toString().trim() ? v : undefined);
   return {
     maxGasAmount: check(options.maxGasAmount),
     gasUnitPrice: check(options.gasUnitPrice),
-    //sequenceNumber: check(options.sequenceNumber),
-    //expirationTimestampSecs: check(options.expirationTimestampSecs),
   };
 }
 
