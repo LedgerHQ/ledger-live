@@ -21,6 +21,7 @@ describe("Aptos bridge interface ", () => {
 
     it("should have a scanAccounts method that is a function", () => {
       expect(bridge.currencyBridge.scanAccounts).toBeDefined();
+      expect(typeof bridge.currencyBridge.scanAccounts).toBe("function");
       const cryptoCurrency = getCryptoCurrencyById("aptos");
       const deviceId = "test-device";
       const result = bridge.currencyBridge.scanAccounts({
