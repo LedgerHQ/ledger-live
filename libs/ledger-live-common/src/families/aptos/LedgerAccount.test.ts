@@ -29,7 +29,7 @@ describe("LedgerAccount Test", () => {
       address: account.freshAddress,
       publicKey: Buffer.from("publicKey"),
     });
-    HwAptos.mockImplementation(() => {
+    (HwAptos as jest.Mock).mockImplementation(() => {
       return {
         getAddress: mockGetAddress,
       };
@@ -61,7 +61,7 @@ describe("LedgerAccount Test", () => {
       address: account.freshAddress,
       publicKey: Buffer.from("publicKey"),
     });
-    HwAptos.mockImplementation(() => {
+    (HwAptos as jest.Mock).mockImplementation(() => {
       return {
         signTransaction: mockSignTransaction,
         getAddress: mockGetAddress,
@@ -91,7 +91,7 @@ describe("LedgerAccount Test", () => {
       chainCode: Buffer.from(""),
     });
 
-    HwAptos.mockImplementation(() => {
+    (HwAptos as jest.Mock).mockImplementation(() => {
       return {
         signTransaction: mockSignTransaction,
         getAddress: mockGetAddress,
