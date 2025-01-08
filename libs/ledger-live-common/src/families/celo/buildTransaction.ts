@@ -118,6 +118,7 @@ const buildTransaction = async (account: CeloAccount, transaction: Transaction) 
 
     celoTransaction = {
       ...celoTransaction,
+      value: value.toFixed(),
       gas,
     };
   }
