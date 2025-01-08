@@ -6,6 +6,7 @@ import { AptosAPI } from "./api";
 import buildTransaction from "./buildTransaction";
 import { DEFAULT_GAS, DEFAULT_GAS_PRICE, ESTIMATE_GAS_MUL } from "./logic";
 import type { Transaction, TransactionErrors } from "./types";
+import { string } from "zod";
 
 type IGetEstimatedGasReturnType = {
   fees: BigNumber;
@@ -18,7 +19,17 @@ type IGetEstimatedGasReturnType = {
   errors: TransactionErrors;
 };
 
-const CACHE = new Map();
+const CACHE = {
+  amount: BigNumber(0),
+  estimate: {
+    fees: new BigNumber(0),
+    estimate: {
+      maxGasAmount: "",
+      gasUnitPrice: "",
+    },
+    errors: {},
+  },
+};
 
 export const getFee = async (
   account: Account,
@@ -34,7 +45,6 @@ export const getFee = async (
     },
     errors: { ...transaction.errors },
   };
-  CACHE.delete(getCacheKey(transaction)); // this one deletes transaction that was in the begining of the function, cause we are not supposed to change transaction, so to be mmore clear, we should clear cache in the begining
 
   let gasPrice = DEFAULT_GAS_PRICE;
   try {
@@ -43,9 +53,19 @@ export const getFee = async (
   } catch (error: any) {
     log(`Failed to estimate gas price: ${error.message}`);
   }
-  res.estimate.gasUnitPrice = gasPrice.toString();// why don't use value from simulation
+  res.estimate.gasUnitPrice = gasPrice.toString(); // why don't use value from simulation
+
+  // pros:  we have default behaviour and have predictable results for all simulations
+  // const: if network parameters changes and our default parameters will not work, this cal lead to transaction rejection
+  // without possibility to change parameters
+  // what we should do: set only max gas amout to transaction, we don't expect default transactions gas will change a lot,
+  // but if it will, we can easily fix this, on the other hand if gas will change we will not be dependent on it
 
   let gasLimit = DEFAULT_GAS;
+  transaction.estimate = {
+    maxGasAmount: gasLimit.toString(),
+    gasUnitPrice: gasPrice.toString(),
+  };
   if (account.xpub) {
     try {
       const publicKeyEd = new Ed25519PublicKey(account.xpub as string);
@@ -53,7 +73,7 @@ export const getFee = async (
       const simulation = await aptosClient.simulateTransaction(publicKeyEd, tx);
       const completedTx = simulation[0];
 
-      const expectedGas = BigNumber(gasPrice).multipliedBy(BigNumber(gasLimit));
+      const expectedGas = BigNumber(gasPrice).multipliedBy(BigNumber(gasLimit)); // TODO: think about situation when expectedGas increases
       const isUnderMaxSpendable = transaction.amount
         .plus(expectedGas)
         .isLessThan(account.spendableBalance);
@@ -78,9 +98,7 @@ export const getFee = async (
         }
       }
 
-      // can we use estimation from simulation instead of separate request?
-      gasLimit = // inconsistency with gas_used
-        Number(completedTx.gas_used) * ESTIMATE_GAS_MUL || Number(transaction.estimate.maxGasAmount); // why use option here but not estimation
+      gasLimit = Number(completedTx.gas_used) * ESTIMATE_GAS_MUL || DEFAULT_GAS; // inconsistency with gas_used // make proper check and remove unnedded or condition
     } catch (error: any) {
       log(error.message);
       throw error;
@@ -100,23 +118,15 @@ export const getFee = async (
   return res;
 };
 
-const getCacheKey = (transaction: Transaction): string =>
-  JSON.stringify({
-    amount: transaction.amount,
-    //gasUnitPrice: transaction.options.gasUnitPrice,
-    //maxGasAmount: transaction.options.maxGasAmount,
-  });
-
 export const getEstimatedGas = async (
   account: Account,
   transaction: Transaction,
   aptosClient: AptosAPI,
 ): Promise<IGetEstimatedGasReturnType> => {
-  const key = getCacheKey(transaction);
-
-  if (!CACHE.has(key)) {
-    CACHE.set(key, await getFee(account, transaction, aptosClient));
+  if (!CACHE.amount.eq(transaction.amount)) {
+    CACHE.estimate = await getFee(account, transaction, aptosClient);
+    CACHE.amount = transaction.amount;
   }
 
-  return CACHE.get(key);
+  return CACHE.estimate;
 };
