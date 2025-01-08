@@ -4,16 +4,18 @@ import estimateMaxSpendable from "./estimateMaxSpendable";
 import BigNumber from "bignumber.js";
 
 jest.mock("./getFeesForTransaction", () => ({
-  getEstimatedGas: jest.fn(() => ({
-    fees: new BigNumber(0),
-    estimate: {
-      maxGasAmount: 1,
-      gasUnitPrice: 2,
-      sequenceNumber: "",
-      expirationTimestampSecs: "",
-    },
-    errors: {},
-  })),
+  getEstimatedGas: jest.fn(() =>
+    Promise.resolve({
+      fees: new BigNumber(0),
+      estimate: {
+        maxGasAmount: 1,
+        gasUnitPrice: 2,
+        sequenceNumber: "",
+        expirationTimestampSecs: "",
+      },
+      errors: {},
+    }),
+  ),
 }));
 
 describe("estimateMaxSpendable Test", () => {
