@@ -12,7 +12,7 @@ const buildTransaction = async (
   aptosClient: AptosAPI,
 ): Promise<RawTransaction> => {
   const txPayload = getPayload(transaction.recipient, transaction.amount);
-  const txOptions = normalizeTransactionOptions(transaction.estimate);
+  const txOptions = normalizeTransactionOptions(transaction.estimate); // TODO
   const tx = await aptosClient.generateTransaction(account.freshAddress, txPayload, txOptions);
 
   return tx;
