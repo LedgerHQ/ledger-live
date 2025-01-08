@@ -376,8 +376,6 @@ describe("Aptos API", () => {
         options: {
           maxGasAmount: Number(options.maxGasAmount),
           gasUnitPrice: Number(options.gasUnitPrice),
-          accountSequenceNumber: Number(options.sequenceNumber),
-          expireTimestamp: Number(options.expirationTimestampSecs),
         },
         sender: Account.APTOS_1.address,
       });
@@ -415,7 +413,6 @@ describe("Aptos API", () => {
         options: {
           maxGasAmount: Number(options.maxGasAmount),
           gasUnitPrice: Number(options.gasUnitPrice),
-          accountSequenceNumber: Number(options.sequenceNumber),
           expireTimestamp: 120,
         },
         sender: Account.APTOS_1.address,
