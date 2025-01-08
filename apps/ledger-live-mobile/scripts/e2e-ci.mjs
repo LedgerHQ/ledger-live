@@ -64,6 +64,7 @@ const test_android = async () => {
     --headless \\
     --retries 1 \\
     --runInBand \\
+    ledgerSync \\
     --cleanup \\
     --shard ${shard}`;
 };
