@@ -41,31 +41,18 @@ export type AptosAddress = {
 export interface TransactionEstimate {
   maxGasAmount: string;
   gasUnitPrice: string;
-  //sequenceNumber?: string;
-  //expirationTimestampSecs?: string;
 }
-
-export type TransactionOptions = {
-  maxGasAmount: string; // where we use it - to get tx status
-  gasUnitPrice: string; // where we use it - to get tx status, estimate used to calc max sendable
-  sequenceNumber?: string; // where we use it - to compose cache key
-  expirationTimestampSecs?: string; // where we use it - to compose cache key
-};
 
 export type TransactionErrors = {
   maxGasAmount?: string;
   gasUnitPrice?: string;
-  sequenceNumber?: string;
-  expirationTimestampSecs?: string;
 };
 
 export type Transaction = TransactionCommon & {
   mode: string;
   family: "aptos";
   fees?: BigNumber | null;
-  //options: TransactionOptions;
   estimate: TransactionEstimate;
-  firstEmulation: boolean;
   errors?: TransactionErrors;
   tag?: string;
 };
@@ -74,8 +61,6 @@ export type TransactionRaw = TransactionCommonRaw & {
   family: "aptos";
   mode: string;
   fees?: string | null;
-  //options: string;
   estimate: string;
-  firstEmulation: string;
   errors?: string;
 };
