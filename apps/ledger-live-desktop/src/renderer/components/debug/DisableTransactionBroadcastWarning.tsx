@@ -21,7 +21,7 @@ export const DisableTransactionBroadcastWarning: React.FC<
         left: "150px",
       }}
     >
-      DISABLE TRANSACTION BROADCAST APPLIED: {displayValue}
+      DISABLE TRANSACTION BROADCAST: {displayValue}
     </div>
   );
 };
