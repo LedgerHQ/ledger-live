@@ -47,7 +47,7 @@ test.describe(`[${app.name}] Sync Accounts`, () => {
   }
 
   test.use({
-    userdata: "skip-onboarding",
+    userdata: "ledgerSync",
     speculosApp: app,
     cliCommands: [
       async () => {
