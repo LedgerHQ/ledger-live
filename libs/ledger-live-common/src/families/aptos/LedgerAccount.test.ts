@@ -29,7 +29,11 @@ describe("LedgerAccount Test", () => {
       address: account.freshAddress,
       publicKey: Buffer.from("publicKey"),
     });
-    HwAptos.prototype.getAddress = mockGetAddress;
+    HwAptos.mockImplementation(() => {
+      return {
+        getAddress: mockGetAddress,
+      };
+    });
 
     await ledger_account.init(transport);
 
@@ -53,7 +57,16 @@ describe("LedgerAccount Test", () => {
     const mockSignTransaction = jest.fn().mockResolvedValue({
       signature: Buffer.from("signature"),
     });
-    HwAptos.prototype.signTransaction = mockSignTransaction;
+    const mockGetAddress = jest.fn().mockResolvedValue({
+      address: account.freshAddress,
+      publicKey: Buffer.from("publicKey"),
+    });
+    HwAptos.mockImplementation(() => {
+      return {
+        signTransaction: mockSignTransaction,
+        getAddress: mockGetAddress,
+      };
+    });
 
     await ledger_account.init(transport);
     const buffer = new Uint8Array([1, 2, 3]);
@@ -68,17 +81,22 @@ describe("LedgerAccount Test", () => {
     const account = createFixtureAccount();
     const ledger_account = new LedgerAccount(account.freshAddressPath);
     const transport = {} as Transport;
+
     const mockSignTransaction = jest.fn().mockResolvedValue({
       signature: Buffer.from("0x13321ab5d9da6ea27ff47a89f55bb384f0cc0b04a755d5098fc5e0653179a1"), // random hex to fulfill expectation of 64 length
     });
-    HwAptos.prototype.signTransaction = mockSignTransaction;
-
     const mockGetAddress = jest.fn().mockResolvedValue({
       address: account.freshAddress,
       publicKey: Buffer.from("0x13321ab5d9da6ea27ff47a89f55bb8"), // random hex to fulfill expectations of 32 length
       chainCode: Buffer.from(""),
     });
-    HwAptos.prototype.getAddress = mockGetAddress;
+
+    HwAptos.mockImplementation(() => {
+      return {
+        signTransaction: mockSignTransaction,
+        getAddress: mockGetAddress,
+      };
+    });
 
     await ledger_account.init(transport);
     const payload = {
