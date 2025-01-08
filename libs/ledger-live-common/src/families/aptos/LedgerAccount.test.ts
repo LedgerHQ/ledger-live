@@ -1,6 +1,6 @@
 import LedgerAccount from "./LedgerAccount";
 import { createFixtureAccount } from "../../mock/fixtures/cryptoCurrencies";
-import { AccountAddress, Hex } from "@aptos-labs/ts-sdk";
+import { AccountAddress, Hex, InputEntryFunctionData } from "@aptos-labs/ts-sdk";
 import HwAptos from "@ledgerhq/hw-app-aptos";
 import Transport from "@ledgerhq/hw-transport";
 import { AptosAPI } from "./api";
@@ -111,7 +111,11 @@ describe("LedgerAccount Test", () => {
       expirationTimestampSecs: "1735639799486",
     };
 
-    const rawTxn = await api.generateTransaction(account.freshAddress, payload, options);
+    const rawTxn = await api.generateTransaction(
+      account.freshAddress,
+      payload as InputEntryFunctionData,
+      options,
+    );
     const signedTxn = await ledger_account.signTransaction(rawTxn);
 
     expect(signedTxn).toBeInstanceOf(Uint8Array);
