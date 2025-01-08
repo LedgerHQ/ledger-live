@@ -25,15 +25,18 @@ import { useGroupedCurrenciesByProvider } from "@ledgerhq/live-common/deposit/in
 import { LoadingBasedGroupedCurrencies, LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { TrackingEvent } from "../../enums";
+import { parseBoolean } from "LLM/utils/parseBoolean";
 type Props = StackNavigatorProps<AccountsListNavigator, ScreenName.AccountsList>;
 
 export default function AccountsList({ route }: Props) {
   const { params } = route;
   const { t } = useTranslation();
-  const canAddAccount = params?.canAddAccount;
-  const showHeader = params?.showHeader;
+
+  const canAddAccount = params?.canAddAccount ? parseBoolean(params?.canAddAccount) : false;
+  const showHeader = params?.showHeader ? parseBoolean(params?.showHeader) : false;
+  const isSyncEnabled = params?.isSyncEnabled ? parseBoolean(params?.isSyncEnabled) : false;
   const sourceScreenName = params?.sourceScreenName;
-  const isSyncEnabled = params?.isSyncEnabled;
+
   const specificAccounts = params?.specificAccounts;
   const navigation = useNavigation();
   const llmNetworkBasedAddAccountFlow = useFeature("llmNetworkBasedAddAccountFlow");
