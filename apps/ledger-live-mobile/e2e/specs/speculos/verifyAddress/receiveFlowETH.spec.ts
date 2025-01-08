@@ -21,6 +21,7 @@ describe("Receive Flow", () => {
 
   $TmsLink("B2CQA-1858");
   $TmsLink("B2CQA-1860");
+  $Issue("LIVE-14453");
   it("Should display the number of account existing per networks", async () => {
     await openReceive();
     await app.receive.selectAsset("ETH");
