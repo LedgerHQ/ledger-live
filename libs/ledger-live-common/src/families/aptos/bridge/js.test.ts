@@ -34,16 +34,26 @@ describe("Aptos bridge interface ", () => {
   describe("accountBridge ", () => {
     it("should contain all methods", () => {
       expect(bridge.accountBridge.estimateMaxSpendable).toBeDefined();
+      expect(typeof bridge.accountBridge.estimateMaxSpendable).toBe("function");
       expect(bridge.accountBridge.createTransaction).toBeDefined();
+      expect(typeof bridge.accountBridge.createTransaction).toBe("function");
       expect(bridge.accountBridge.updateTransaction).toBeDefined();
+      expect(typeof bridge.accountBridge.updateTransaction).toBe("function");
       expect(bridge.accountBridge.getTransactionStatus).toBeDefined();
+      expect(typeof bridge.accountBridge.getTransactionStatus).toBe("function");
       expect(bridge.accountBridge.prepareTransaction).toBeDefined();
+      expect(typeof bridge.accountBridge.prepareTransaction).toBe("function");
       expect(bridge.accountBridge.sync).toBeDefined();
+      expect(typeof bridge.accountBridge.sync).toBe("function");
       expect(bridge.accountBridge.receive).toBeDefined();
+      expect(typeof bridge.accountBridge.receive).toBe("function");
       expect(bridge.accountBridge.signOperation).toBeDefined();
+      expect(typeof bridge.accountBridge.signOperation).toBe("function");
       expect(bridge.accountBridge.broadcast).toBeDefined();
+      expect(typeof bridge.accountBridge.broadcast).toBe("function");
     });
   });
+
   describe("updateTransaction", () => {
     it("should update the transaction with the given patch", () => {
       const initialTransaction = {
