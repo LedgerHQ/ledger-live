@@ -32,7 +32,7 @@ describe("Aptos bridge interface ", () => {
     });
   });
 
-  describe("accountBridge ", () => {
+  describe("accountBridge", () => {
     it("should contain all methods", () => {
       expect(bridge.accountBridge.estimateMaxSpendable).toBeDefined();
       expect(typeof bridge.accountBridge.estimateMaxSpendable).toBe("function");
