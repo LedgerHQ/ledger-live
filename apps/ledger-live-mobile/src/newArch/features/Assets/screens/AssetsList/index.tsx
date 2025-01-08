@@ -29,7 +29,7 @@ export default function AssetsList({ route }: Props) {
 
   return (
     <>
-      <TrackScreen event="Accounts" />
+      <TrackScreen name="Assets" source={sourceScreenName} />
       <ReactNavigationPerformanceView screenName={ScreenName.AssetsList} interactive>
         <SafeAreaView edges={["left", "right", "bottom"]} isFlex style={{ marginHorizontal: 16 }}>
           {showHeader && (

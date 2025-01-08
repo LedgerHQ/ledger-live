@@ -109,9 +109,6 @@ const AssetScreen = ({ route }: NavigationProps) => {
   );
 
   const onAddAccount = useCallback(() => {
-    track("button_clicked", {
-      button: "Add new",
-    });
     if (llmNetworkBasedAddAccountFlow?.enabled && currency) {
       if (provider && provider?.currenciesByNetwork.length > 1) {
         navigation.navigate(NavigatorName.AssetSelection, {
@@ -131,6 +128,9 @@ const AssetScreen = ({ route }: NavigationProps) => {
         });
       }
     } else {
+      track("button_clicked", {
+        button: "Add new",
+      });
       navigation.navigate(NavigatorName.AddAccounts, {
         screen: undefined,
         currency,
