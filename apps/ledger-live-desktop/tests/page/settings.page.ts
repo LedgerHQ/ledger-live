@@ -1,6 +1,7 @@
 import { AppPage } from "tests/page/abstractClasses";
 import { step } from "tests/misc/reporters/step";
 import { expect } from "@playwright/test";
+import axios from "axios";
 
 export class SettingsPage extends AppPage {
   private manageLedgerSyncButton = this.page.getByRole("button", { name: "Manage" });
@@ -12,6 +13,7 @@ export class SettingsPage extends AppPage {
   readonly experimentalTab = this.page.getByTestId("settings-experimental-tab");
   private developerTab = this.page.getByTestId("settings-developer-tab");
   private experimentalDevModeToggle = this.page.getByTestId("MANAGER_DEV_MODE-button");
+  private ledgerSupport = this.page.getByTestId("ledgerSupport-link");
 
   readonly counterValueSelector = this.page.locator(
     "[data-testid='setting-countervalue-dropDown'] .select__value-container",
@@ -105,5 +107,21 @@ export class SettingsPage extends AppPage {
   async clearCache() {
     await this.clearCacheButton.click();
     await this.confirmButton.click();
+  }
+
+  @step("expect Ledger Support URL to be correct")
+  async expectLedgerSupportUrlToBeCorrect() {
+    expect(this.ledgerSupport).toBeVisible();
+    const url = await this.ledgerSupport.getAttribute("href");
+    if (!url) {
+      throw new Error("The href attribute is missing or null");
+    }
+    try {
+      const response = await axios.get(url);
+      expect(response.status).toBe(200);
+    } catch (error) {
+      throw new Error(`Failed to fetch URL ${url}`);
+    }
+    expect(url).toBe("https://support.ledger.com/?redirect=false");
   }
 }
