@@ -52,6 +52,12 @@ describe("Aptos bridge interface ", () => {
       expect(typeof bridge.accountBridge.signOperation).toBe("function");
       expect(bridge.accountBridge.broadcast).toBeDefined();
       expect(typeof bridge.accountBridge.broadcast).toBe("function");
+      expect(bridge.currencyBridge.hydrate).toBeDefined();
+      expect(typeof bridge.currencyBridge.hydrate).toBe("function");
+      expect(bridge.currencyBridge.preload).toBeDefined();
+      expect(typeof bridge.currencyBridge.preload).toBe("function");
+      expect(bridge.currencyBridge.scanAccounts).toBeDefined();
+      expect(typeof bridge.currencyBridge.scanAccounts).toBe("function");
     });
   });
 
