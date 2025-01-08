@@ -24,7 +24,7 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useGroupedCurrenciesByProvider } from "@ledgerhq/live-common/deposit/index";
 import { LoadingBasedGroupedCurrencies, LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-
+import { TrackingEvent } from "../../enums";
 type Props = StackNavigatorProps<AccountsListNavigator, ScreenName.AccountsList>;
 
 export default function AccountsList({ route }: Props) {
@@ -103,10 +103,13 @@ export default function AccountsList({ route }: Props) {
   }, [currency, llmNetworkBasedAddAccountFlow?.enabled, navigation, provider, specificAccounts]);
 
   const onClick = specificAccounts ? onAddAccount : undefined;
-
+  const pageTrackingEvent = specificAccounts
+    ? TrackingEvent.AccountListSummary
+    : TrackingEvent.AccountsList;
+  const currencyToTrack = specificAccounts ? currency?.name : undefined;
   return (
     <>
-      <TrackScreen event="Accounts" />
+      <TrackScreen name={pageTrackingEvent} source={sourceScreenName} currency={currencyToTrack} />
       <ReactNavigationPerformanceView screenName={ScreenName.AccountsList} interactive>
         <SafeAreaView edges={["left", "right", "bottom"]} isFlex style={{ marginHorizontal: 16 }}>
           {showHeader && (
@@ -129,7 +132,8 @@ export default function AccountsList({ route }: Props) {
           {canAddAccount && (
             <AddAccountButton
               disabled={isAddAccountCtaDisabled}
-              sourceScreenName="Accounts"
+              sourceScreenName={pageTrackingEvent}
+              currency={currencyToTrack}
               onClick={onClick}
             />
           )}

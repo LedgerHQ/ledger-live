@@ -24,14 +24,15 @@ type Props = {
   sourceScreenName: string;
   onClick?: () => void;
   disabled?: boolean;
+  currency?: string;
 };
 
-const AddAccountButton: React.FC<Props> = ({ sourceScreenName, disabled, onClick }) => {
+const AddAccountButton: React.FC<Props> = ({ sourceScreenName, disabled, currency, onClick }) => {
   const { t } = useTranslation();
   const [isAddModalOpened, setAddModalOpened] = useState<boolean>(false);
 
   const openAddModal = () => {
-    track("button_clicked", { button: "Add a new account", page: sourceScreenName });
+    track("button_clicked", { button: "Add a new account", page: sourceScreenName, currency });
     if (onClick) {
       onClick();
       return;
