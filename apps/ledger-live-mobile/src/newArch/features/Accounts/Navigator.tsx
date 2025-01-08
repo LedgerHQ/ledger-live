@@ -14,7 +14,6 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import AccountsList from "LLM/features/Accounts/screens/AccountsList";
 import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
 import AddAccountsSuccess from "./screens/AddAccountSuccess";
-import AddAccountsWarning from "./screens/AddAccountWarning";
 import SelectAccounts from "./screens/SelectAccounts";
 
 export default function Navigator() {
