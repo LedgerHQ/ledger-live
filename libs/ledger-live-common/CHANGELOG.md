@@ -1,5 +1,50 @@
 ## 34.5.0-next.4
 
+## 34.17.0-nightly.2
+
+### Minor Changes
+
+- [#8396](https://github.com/LedgerHQ/ledger-live/pull/8396) [`d98a964`](https://github.com/LedgerHQ/ledger-live/commit/d98a96476c3d44eab1575f6c7c58ec03b5daf890) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Support for Aptos blockchain
+
+### Patch Changes
+
+- Updated dependencies [[`d98a964`](https://github.com/LedgerHQ/ledger-live/commit/d98a96476c3d44eab1575f6c7c58ec03b5daf890)]:
+  - @ledgerhq/cryptoassets@13.8.0-nightly.2
+  - @ledgerhq/hw-app-aptos@6.30.0-nightly.0
+  - @ledgerhq/crypto-icons-ui@1.7.0-nightly.1
+  - @ledgerhq/coin-framework@0.21.0-nightly.1
+  - @ledgerhq/live-env@2.5.0-nightly.0
+  - @ledgerhq/coin-algorand@0.5.16-nightly.1
+  - @ledgerhq/coin-bitcoin@0.8.11-nightly.2
+  - @ledgerhq/coin-cardano@0.3.0-nightly.1
+  - @ledgerhq/coin-cosmos@0.3.1-nightly.1
+  - @ledgerhq/coin-elrond@0.1.11-nightly.1
+  - @ledgerhq/coin-evm@2.7.1-nightly.1
+  - @ledgerhq/coin-filecoin@1.3.6-nightly.1
+  - @ledgerhq/coin-icon@0.4.13-nightly.1
+  - @ledgerhq/coin-near@0.5.16-nightly.1
+  - @ledgerhq/coin-polkadot@1.4.2-nightly.1
+  - @ledgerhq/coin-solana@0.9.1-nightly.1
+  - @ledgerhq/coin-stacks@0.3.1-nightly.1
+  - @ledgerhq/coin-stellar@0.4.2-nightly.1
+  - @ledgerhq/coin-tezos@0.7.2-nightly.1
+  - @ledgerhq/coin-ton@0.3.24-nightly.1
+  - @ledgerhq/coin-vechain@2.2.2-nightly.1
+  - @ledgerhq/coin-xrp@0.7.2-nightly.1
+  - @ledgerhq/live-countervalues@0.2.16-nightly.1
+  - @ledgerhq/live-countervalues-react@0.2.16-nightly.1
+  - @ledgerhq/live-nft@0.5.1-nightly.1
+  - @ledgerhq/live-wallet@0.7.8-nightly.1
+  - @ledgerhq/coin-hedera@1.1.4-nightly.1
+  - @ledgerhq/coin-internet_computer@1.4.0-nightly.6
+  - @ledgerhq/coin-tron@0.0.16-nightly.1
+  - @ledgerhq/hw-app-vet@0.2.11-nightly.2
+  - @ledgerhq/device-core@0.4.10-nightly.0
+  - @ledgerhq/hw-app-eth@6.42.2-nightly.0
+  - @ledgerhq/ledger-cal-service@0.1.1-nightly.0
+  - @ledgerhq/live-network@2.0.4-nightly.0
+  - @ledgerhq/speculos-transport@0.1.9-nightly.0
+
 ## 34.17.0-nightly.1
 
 ### Minor Changes

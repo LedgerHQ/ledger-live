@@ -166,7 +166,8 @@
     "@ledgerhq/ledger-cal-service": "0.0.1",
     "@ledgerhq/ledger-trust-service": "0.0.1",
     "@ledgerhq/hw-bolos": "6.31.4",
-    "@ledgerhq/coin-internet_computer": "1.3.2"
+    "@ledgerhq/coin-internet_computer": "1.3.2",
+    "@ledgerhq/hw-app-aptos": "6.29.4"
   },
   "changesets": [
     "afraid-actors-fry",
@@ -176,11 +177,13 @@
     "calm-waves-battle",
     "chatty-shirts-tickle",
     "chilled-coats-drive",
+    "cool-walls-look",
     "curvy-hornets-wink",
     "curvy-ladybugs-collect",
     "curvy-parents-push",
     "cyan-rabbits-return",
     "famous-mirrors-carry",
+    "fast-comics-talk",
     "fifty-toes-sit",
     "forty-turtles-mix",
     "fresh-needles-push",
