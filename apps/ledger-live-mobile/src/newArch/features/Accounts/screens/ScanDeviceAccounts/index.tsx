@@ -1,45 +1,31 @@
-import React, { memo } from "react";
+import React from "react";
 import { StyleSheet, View, SafeAreaView } from "react-native";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import Config from "react-native-config";
 import { useTheme } from "styled-components/native";
 
-import type { Account, DerivationMode } from "@ledgerhq/types-live";
+import type { DerivationMode } from "@ledgerhq/types-live";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 import { accountsSelector } from "~/reducers/accounts";
 import { blacklistedTokenIdsSelector } from "~/reducers/settings";
-import { Theme, withTheme } from "../../../../../colors";
-import { ScreenName } from "~/const";
 import { TrackScreen } from "~/analytics";
-import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 
 import Button from "~/components/Button";
 import PreventNativeBack from "~/components/PreventNativeBack";
-import Chevron from "~/icons/Chevron";
 import LText from "~/components/LText";
 import RetryButton from "~/components/RetryButton";
 import CancelButton from "~/components/CancelButton";
 import GenericErrorBottomModal from "~/components/GenericErrorBottomModal";
 import NavigationScrollView from "~/components/NavigationScrollView";
-import { Flex, Text } from "@ledgerhq/native-ui";
+import { Flex, Text, Icons } from "@ledgerhq/native-ui";
 
-import { NetworkBasedAddAccountNavigator } from "../AddAccount/types";
 import useScanDeviceAccountsViewModel from "./useScanDeviceAccountsViewModel";
 import AnimatedGradient from "./components/AnimatedGradient";
 import ScanDeviceAccountsFooter from "./components/ScanDeviceAccountsFooter";
 import AddressTypeTooltip from "./components/AddressTypeTooltip";
 import ScannedAccountsSection from "./components/ScannedAccountsSection";
-
-type NavigationProps = BaseComposite<
-  StackNavigatorProps<NetworkBasedAddAccountNavigator, ScreenName.ScanDeviceAccounts>
->;
-type Props = {
-  existingAccounts: Account[];
-  blacklistedTokenIds?: string[];
-  colors: Theme["colors"];
-} & NavigationProps;
 
 function ScanDeviceAccounts() {
   const { colors } = useTheme();
@@ -192,7 +178,7 @@ function ScanDeviceAccounts() {
                       type="secondary"
                       title={<Trans i18nKey="addAccounts.showMoreChainType" />}
                       onPress={viewAllCreatedAccounts}
-                      IconRight={Chevron}
+                      IconRight={() => <Icons.ChevronDown size="L" color="primary.c10" />}
                     />
                   )}
                 </View>
@@ -276,4 +262,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default withTheme(memo<Props>(ScanDeviceAccounts));
+export default ScanDeviceAccounts;

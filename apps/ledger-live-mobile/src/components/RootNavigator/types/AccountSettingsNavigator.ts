@@ -1,6 +1,6 @@
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account } from "@ledgerhq/types-live";
-import { ScreenName } from "~/const";
+import { NavigatorName, ScreenName } from "~/const";
 
 export type AccountSettingsNavigatorParamList = {
   [ScreenName.AccountSettingsMain]: {
@@ -26,4 +26,12 @@ export type AccountSettingsNavigatorParamList = {
     currency: CryptoCurrency;
   };
   [ScreenName.Accounts]: { currency?: string; search?: string } | undefined;
+
+  [NavigatorName.AccountSettings]: {
+    screen: string;
+    params: {
+      account?: Account;
+      onAccountNameChange?: (name: string, changedAccount: Account) => void;
+    };
+  };
 };

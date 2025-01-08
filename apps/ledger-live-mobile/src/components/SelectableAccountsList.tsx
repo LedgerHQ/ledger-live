@@ -28,7 +28,7 @@ import TouchHintCircle from "./TouchHintCircle";
 import Touchable from "./Touchable";
 import { AccountSettingsNavigatorParamList } from "./RootNavigator/types/AccountSettingsNavigator";
 import { AddAccountsNavigatorParamList } from "./RootNavigator/types/AddAccountsNavigator";
-import AccountItem from "~/newArch/features/Accounts/components/AccountsListView/components/AccountItem";
+import AccountItem from "LLM/features/Accounts/components/AccountsListView/components/AccountItem";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 const ANIMATION_DURATION = 200;
@@ -282,13 +282,16 @@ const SelectableAccount = ({
 
     swipedAccountSubject.next({ row: -1, list: -1 });
     if (llmNetworkBasedAddAccountFlow?.enabled) {
-      navigation.navigate(NavigatorName.AccountSettings, {
-        screen: ScreenName.EditAccountName,
-        params: {
-          onAccountNameChange,
-          account,
+      (navigation as StackNavigationProp<AccountSettingsNavigatorParamList>).navigate(
+        NavigatorName.AccountSettings,
+        {
+          screen: ScreenName.EditAccountName,
+          params: {
+            onAccountNameChange,
+            account,
+          },
         },
-      });
+      );
     } else {
       navigation.navigate(ScreenName.EditAccountName, {
         onAccountNameChange,

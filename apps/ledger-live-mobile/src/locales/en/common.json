@@ -4068,13 +4068,15 @@
       "scanningTitle": "Looking for any existing accounts on the Blockchain...",
       "sections": {
         "importable": {
-          "title": "We found {{count}} account"
+          "title": "We found {{count}} account",
+          "title_plural": "We found {{count}} accounts"
         },
         "creatable": {
           "title": "New account"
         },
         "imported": {
-          "title": "Accounts already in the Portfolio ({{length}})"
+          "title": "Account already in the Portfolio ({{length}})",
+          "title_plural": "Accounts already in the Portfolio ({{length}})"
         },
         "migrate": {
           "title": "Accounts to update"

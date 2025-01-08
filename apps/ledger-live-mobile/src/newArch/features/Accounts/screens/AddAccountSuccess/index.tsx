@@ -1,4 +1,4 @@
-import { Button, Flex, Icons } from "@ledgerhq/native-ui";
+import { Button, Flex, Icons, Text } from "@ledgerhq/native-ui";
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { FlatList, ListRenderItemInfo, StyleSheet, TouchableOpacity, View } from "react-native";
@@ -6,7 +6,6 @@ import { useTheme } from "@react-navigation/native";
 import { ScreenName } from "~/const";
 import { rgba } from "../../../../../colors";
 import { TrackScreen } from "~/analytics";
-import LText from "~/components/LText";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import AccountItem from "../../components/AccountsListView/components/AccountItem";
 import { AccountLikeEnhanced } from "../ScanDeviceAccounts/types";
@@ -61,9 +60,7 @@ export default function AddAccountsSuccess({ route }: Props) {
             <Icons.CheckmarkCircleFill size="L" color={colors.success} />
           </Circle>
         </View>
-        <LText semiBold style={styles.title}>
-          {t("addAccounts.added", { count: fundedAccounts.length })}
-        </LText>
+        <Text style={styles.title}>{t("addAccounts.added", { count: fundedAccounts.length })}</Text>
       </Flex>
       <FlatList
         testID="receive-header-step2-accounts"
