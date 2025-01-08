@@ -771,8 +771,8 @@ importers:
         specifier: 24.13.3
         version: 24.13.3(lodash@4.17.21)
       electron-devtools-installer:
-        specifier: 3.2.0
-        version: 3.2.0
+        specifier: 3.2.1
+        version: 3.2.1
       eslint-plugin-jest:
         specifier: 27.9.0
         version: 27.9.0(@typescript-eslint/eslint-plugin@6.21.0(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.4.3))(eslint@8.57.0)(typescript@5.4.3))(eslint@8.57.0)(jest@29.7.0(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3)))(typescript@5.4.3)
@@ -19648,8 +19648,8 @@ packages:
   electron-context-menu@3.6.1:
     resolution: {integrity: sha512-lcpO6tzzKUROeirhzBjdBWNqayEThmdW+2I2s6H6QMrwqTVyT3EK47jW3Nxm60KTxl5/bWfEoIruoUNn57/QkQ==}
 
-  electron-devtools-installer@3.2.0:
-    resolution: {integrity: sha512-t3UczsYugm4OAbqvdImMCImIMVdFzJAHgbwHpkl5jmfu1izVgUcP/mnrPqJIpEeCK1uZGpt+yHgWEN+9EwoYhQ==}
+  electron-devtools-installer@3.2.1:
+    resolution: {integrity: sha512-FaCi+oDCOBTw0gJUsuw5dXW32b2Ekh5jO8lI1NRCQigo3azh2VogsIi0eelMVrP1+LkN/bewyH3Xoo1USjO0eQ==}
 
   electron-dl@3.5.2:
     resolution: {integrity: sha512-i104cl+u8yJ0lhpRAtUWfeGuWuL1PL6TBiw2gLf0MMIBjfgE485Ags2mcySx4uWU9P9uj/vsD3jd7X+w1lzZxw==}
@@ -49915,7 +49915,7 @@ snapshots:
       electron-dl: 3.5.2
       electron-is-dev: 2.0.0
 
-  electron-devtools-installer@3.2.0:
+  electron-devtools-installer@3.2.1:
     dependencies:
       rimraf: 3.0.2
       semver: 7.5.4
