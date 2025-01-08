@@ -107,19 +107,15 @@ const buildTransaction = async (account: CeloAccount, transaction: Transaction) 
     };
   } else {
     // Send
-    const celoToken = await kit.contracts.getGoldToken();
-    celoTransaction = {
-      from: account.freshAddress,
-      to: celoToken.address,
-      data: celoToken.transfer(transaction.recipient, value.toFixed()).txo.encodeABI(),
-      // value: `0x${value.toString(16)}`, // NOTE: this breaks at the estimateGas just below
-    };
 
+    celoTransaction = {
+      to: transaction.recipient,
+      value: value.toFixed(),
+    };
     const gas = await kit.connection.estimateGasWithInflationFactor(celoTransaction);
 
     celoTransaction = {
       ...celoTransaction,
-      value: value.toFixed(),
       gas,
     };
   }
