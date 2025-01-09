@@ -1,7 +1,6 @@
 import { expect } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
 import { Drawer } from "tests/component/drawer.component";
-import { capitalizeFirstLetter } from "tests/utils/textParserUtils";
 
 export class SwapConfirmationDrawer extends Drawer {
   private amountSent = this.page.getByTestId("amountSent");
@@ -26,7 +25,7 @@ export class SwapConfirmationDrawer extends Drawer {
 
   @step("Verify provider: $0")
   async verifyProvider(provider: string) {
-    await expect(this.swapProvider).toHaveText(capitalizeFirstLetter(provider));
+    await expect(this.swapProvider).toHaveText(provider);
   }
 
   @step("Verify source currency: $0")

@@ -80,6 +80,55 @@ const ethereumUnits = (name, code) => [
 // to fix that we should always have the 'main' currency of the managerapp first in this list
 // e.g for Ethereum manager Ethereum is first in the list and other coin are in the bottom of the list
 export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
+  aptos: {
+    type: "CryptoCurrency",
+    id: "aptos",
+    coinType: CoinType.APTOS,
+    name: "Aptos",
+    managerAppName: "Aptos",
+    ticker: "APT",
+    scheme: "aptos",
+    color: "#231F20",
+    family: "aptos",
+    units: [
+      {
+        name: "APT",
+        code: "APT",
+        magnitude: 8,
+      },
+    ],
+    explorerViews: [
+      {
+        address: "https://explorer.aptoslabs.com/account/$address?network=mainnet",
+        tx: "https://explorer.aptoslabs.com/txn/$hash?network=mainnet",
+      },
+    ],
+  },
+  aptos_testnet: {
+    type: "CryptoCurrency",
+    id: "aptos_testnet",
+    coinType: CoinType.APTOS,
+    name: "Aptos (Testnet)",
+    managerAppName: "Aptos",
+    ticker: "APT",
+    scheme: "aptos_testnet",
+    color: "#FFCD29",
+    family: "aptos",
+    isTestnetFor: "aptos",
+    units: [
+      {
+        name: "APT",
+        code: "APT",
+        magnitude: 8,
+      },
+    ],
+    explorerViews: [
+      {
+        address: "https://explorer.aptoslabs.com/account/$address?network=testnet",
+        tx: "https://explorer.aptoslabs.com/txn/$hash?network=testnet",
+      },
+    ],
+  },
   near: {
     type: "CryptoCurrency",
     id: "near",
@@ -3658,7 +3707,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     type: "CryptoCurrency",
     id: "rsk",
     coinType: CoinType.ETH,
-    name: "RSK",
+    name: "Rootstock",
     managerAppName: "Ethereum",
     ticker: "RBTC",
     scheme: "rsk",
@@ -3670,9 +3719,9 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     },
     explorerViews: [
       {
-        tx: "https://explorer.rsk.co/tx/$hash",
-        address: "https://explorer.rsk.co/address/$address",
-        token: "https://explorer.rsk.co/address/$address",
+        tx: "https://explorer.rootstock.io/tx/$hash",
+        address: "https://explorer.rootstock.io/address/$address",
+        token: "https://explorer.rootstock.io/address/$address",
       },
     ],
   },

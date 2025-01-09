@@ -3037,6 +3037,7 @@
         "validatorGroup" : {
           "title" : "验证者组",
           "ledgerByFigmentTC" : "Figment 在 Ledger 的条款与条件",
+          "ledgerByChorusOneTC" : "Ledger by Chorus One 条款与条件",
           "totalVotes" : "总投票数",
           "commission" : "佣金"
         }
@@ -3626,6 +3627,7 @@
       "withdrawableTitle" : "可提取",
       "statusUpdateNotice" : "交易确认后，委托状态将更新。",
       "ledgerByFigmentTC" : "Figment 在 Ledger 的条款与条件",
+      "ledgerByChorusOneTC" : "Ledger by Chorus One 条款与条件",
       "emptyState" : {
         "description" : "您可以通过委托资产赚取 SOL 奖励。",
         "info" : "委托机制如何运作",
@@ -3880,6 +3882,7 @@
           },
           "validator" : {
             "title" : "验证者",
+            "ledgerByChorusOneTC" : "Ledger by Chorus One 条款与条件",
             "ledgerByFigmentTC" : "Figment 在 Ledger 的条款与条件"
           },
           "connectDevice" : {
@@ -4147,6 +4150,7 @@
             "link" : "链接",
             "secondaryCta" : "次要号召性用语",
             "cta" : "号召性用语",
+            "tag" : "标签",
             "url" : "网址",
             "path" : "路径"
           }

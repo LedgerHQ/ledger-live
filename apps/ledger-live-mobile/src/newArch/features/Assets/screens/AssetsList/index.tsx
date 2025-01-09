@@ -13,15 +13,16 @@ import { isUpToDateSelector } from "~/reducers/accounts";
 import { useGlobalSyncState } from "@ledgerhq/live-common/bridge/react/useGlobalSyncState";
 import { RefreshMedium } from "@ledgerhq/icons-ui/nativeLegacy";
 import Spinning from "~/components/Spinning";
+import { parseBoolean } from "LLM/utils/parseBoolean";
 
 type Props = StackNavigatorProps<AssetsListNavigator, ScreenName.AssetsList>;
 
 export default function AssetsList({ route }: Props) {
   const { params } = route;
   const { t } = useTranslation();
-  const showHeader = params?.showHeader;
+  const showHeader = params?.showHeader ? parseBoolean(params?.showHeader) : false;
+  const isSyncEnabled = params?.isSyncEnabled ? parseBoolean(params?.isSyncEnabled) : false;
   const sourceScreenName = params?.sourceScreenName;
-  const isSyncEnabled = params?.isSyncEnabled;
 
   const isUpToDate = useSelector(isUpToDateSelector);
   const globalSyncState = useGlobalSyncState();
@@ -29,11 +30,11 @@ export default function AssetsList({ route }: Props) {
 
   return (
     <>
-      <TrackScreen event="Accounts" />
+      <TrackScreen name="Assets" source={sourceScreenName} />
       <ReactNavigationPerformanceView screenName={ScreenName.AssetsList} interactive>
-        <SafeAreaView edges={["left", "right"]} isFlex style={{ marginHorizontal: 16 }}>
+        <SafeAreaView edges={["left", "right", "bottom"]} isFlex style={{ marginHorizontal: 16 }}>
           {showHeader && (
-            <Text variant="h1Inter" fontSize={28} paddingY={2}>
+            <Text variant="h1Inter" fontWeight="semiBold" fontSize={28} paddingY={2}>
               {t("assets.title")}
             </Text>
           )}

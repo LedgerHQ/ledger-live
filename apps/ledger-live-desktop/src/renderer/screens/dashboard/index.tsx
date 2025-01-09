@@ -28,7 +28,7 @@ import PostOnboardingHubBanner from "~/renderer/components/PostOnboardingHub/Pos
 import FeaturedButtons from "~/renderer/screens/dashboard/FeaturedButtons";
 import { ABTestingVariants, AccountLike, Operation } from "@ledgerhq/types-live";
 import ActionContentCards from "~/renderer/screens/dashboard/ActionContentCards";
-import MarketPerformanceWidget from "~/renderer/screens/dashboard/MarketPerformanceWidget";
+import MarketPerformanceWidget from "LLD/features/MarketPerformanceWidget";
 import { useMarketPerformanceFeatureFlag } from "~/renderer/actions/marketperformance";
 import { Grid } from "@ledgerhq/react-ui";
 import AnalyticsOptInPrompt from "LLD/features/AnalyticsOptInPrompt/screens";

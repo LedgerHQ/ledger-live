@@ -971,6 +971,18 @@
       "title": "Invalid Provider",
       "description": "You have to change \"My Ledger provider\" setting. To change it, open Ledger Live \"Settings\", select \"Experimental features\", and then select a different provider."
     },
+    "GasLessThanEstimate": {
+      "title": "This may be too low. Please increase"
+    },
+    "SequenceNumberTooNew": {
+      "title": "Sequence number too new"
+    },
+    "SequenceNumberTooOld": {
+      "title": "Sequence number too old"
+    },
+    "TransactionExpired": {
+      "title": "Transaction expired"
+    },
     "SequenceNumberError": {
       "title": "Sequence number error",
       "description": "Please close the window and try again later"
@@ -1019,6 +1031,12 @@
     "ScannedNewImportQrCode": {
       "title": "Update required",
       "description": "To sync your apps, please make sure both are updated to the latest version."
+    },
+    "AppManifestUnknownError": {
+      "title": "Swap Live App not found"
+    },
+    "AppManifestNotFoundError": {
+      "title": "Failed to load Swap Live App"
     }
   },
   "crash": {
@@ -3762,6 +3780,7 @@
       "to": "To",
       "infoTotalTitle": "Total debit",
       "infoTotalDesc": "Includes transaction amount and the selected network fees",
+      "gasFee": "Gas fee",
       "gasLimit": "Gas limit",
       "gasPrice": "Gas price",
       "maxFee": "Max fee",
@@ -3973,6 +3992,7 @@
   },
   "addAccounts": {
     "addNew": "Add new",
+    "seeAllAccounts": "See all accounts",
     "addNewOrExisting": "Add new or existing account",
     "supportLinks": {
       "segwit_or_native_segwit": "Segwit or Native segwit?"
@@ -7132,6 +7152,14 @@
           "name": "Add an account"
         }
       }
+    }
+  },
+  "assetSelection": {
+    "selectCrypto": {
+      "title": "Select Asset"
+    },
+    "selectNetwork": {
+      "title": "Select the blockchain network the asset belongs to"
     }
   }
 }

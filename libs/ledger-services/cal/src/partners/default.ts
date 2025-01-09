@@ -83,7 +83,7 @@ export const SWAP_DATA_CDN: Record<string, AdditionalProviderConfig> = {
     displayName: "Uniswap",
     termsOfUseUrl:
       "https://support.uniswap.org/hc/en-us/articles/30935100859661-Uniswap-Labs-Terms-of-Service",
-    supportUrl: "mailto:support@uniswap.org",
+    supportUrl: "https://support.uniswap.org/hc/en-us/requests/new",
     mainUrl: "https://uniswap.org/",
     needsKYC: false,
   },

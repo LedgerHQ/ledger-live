@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { Grid, IconsLegacy } from "@ledgerhq/react-ui";
+import { Grid, Icons } from "@ledgerhq/react-ui";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 import EntryButton from "~/renderer/components/EntryButton/EntryButton";
@@ -26,7 +26,7 @@ const FeaturedButtons = () => {
 
   const { enabled: bannerEnabled } = bannerFeatureFlag || { enabled: false };
 
-  const stakeDisabled = stakeProgramsFeatureFlag?.params?.list?.length === 0 ?? true;
+  const stakeDisabled = stakeProgramsFeatureFlag?.params?.list?.length === 0;
   const startStakeFlow = useStakeFlow();
 
   const handleClickExchange = useCallback(() => {
@@ -52,21 +52,21 @@ const FeaturedButtons = () => {
   return (
     <ButtonGrid>
       <EntryButton
-        Icon={() => <IconsLegacy.BuyCryptoAltMedium size={18} />}
+        Icon={() => <Icons.Dollar size="S" />}
         title={t("dashboard.featuredButtons.buySell.title")}
         body={t("dashboard.featuredButtons.buySell.description")}
         onClick={handleClickExchange}
         entryButtonTestId="buy-sell-entry-button"
       />
       <EntryButton
-        Icon={() => <IconsLegacy.BuyCryptoMedium size={18} />}
+        Icon={() => <Icons.Exchange size="S" />}
         title={t("dashboard.featuredButtons.swap.title")}
         body={t("dashboard.featuredButtons.swap.description")}
         onClick={handleClickSwap}
         entryButtonTestId="swap-entry-button"
       />
       <EntryButton
-        Icon={() => <IconsLegacy.LendMedium size={18} />}
+        Icon={() => <Icons.Percentage size="S" />}
         disabled={stakeDisabled}
         title={stakeLabel}
         body={t("dashboard.featuredButtons.earn.description")}

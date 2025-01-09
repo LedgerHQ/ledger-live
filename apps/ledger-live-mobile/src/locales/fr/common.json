@@ -1397,7 +1397,7 @@
       "noDevice" : "Pas encore d’appareil ?",
       "buy" : "Achetez un {{fullDeviceName}}.",
       "terms" : "En continuant, vous acceptez nos",
-      "termsLink" : "Conditions d’utilisation",
+      "termsLink" : "Conditions générales",
       "privacyLink" : "Politique de confidentialité",
       "and" : "et"
     },
@@ -2941,11 +2941,11 @@
     },
     "about" : {
       "title" : "À propos",
-      "desc" : "Informations, Conditions d’utilisation et Politique de confidentialité de l’app.",
+      "desc" : "Informations, Conditions générales et Politique de confidentialité de l’app.",
       "appDescription" : "Protégez, achetez, vendez, échangez, faites fructifier et gérez vos cryptos avec Ledger Live. La plateforme tout-en-un.",
       "appVersion" : "Version",
-      "termsConditions" : "Conditions d’utilisation",
-      "termsConditionsDesc" : "En utilisant Ledger Live, vous acceptez nos Conditions d’utilisation.",
+      "termsConditions" : "Conditions générales",
+      "termsConditionsDesc" : "En utilisant Ledger Live, vous acceptez nos Conditions générales.",
       "privacyPolicy" : "Politique de confidentialité",
       "privacyPolicyDesc" : "Découvrez les données personnelles que nous collectons, à quelles fins et comment nous les utilisons.",
       "liveReview" : {
@@ -3091,6 +3091,13 @@
       "desc" : "Essayez les fonctionnalités pour développeurs et donnez-nous votre avis.",
       "customManifest" : {
         "title" : "Charger un manifest personnalisé pour Platform"
+      },
+      "exchangeDeveloperMode" : {
+        "title" : "Mode développeur Exchange",
+        "description" : "Ajoutez les informations sur le prestataire d’Exchange.",
+        "placeholder" : "Infos prestataire Exchange (CAL)",
+        "currentSetting" : "Configuration actuelle",
+        "error" : "Valeur CAL non valide"
       }
     },
     "debug" : {
@@ -3363,9 +3370,9 @@
           "method" : "Taux",
           "fees" : "Frais maximaux",
           "disclaimer" : {
-            "title" : "Conditions d’utilisation",
-            "desc" : "En choisissant Accepter, je reconnais et accepte que ce service soit exclusivement soumis aux Conditions d’utilisation de <0>{{provider}}</0>.",
-            "tos" : "Conditions d’utilisation",
+            "title" : "Conditions générales",
+            "desc" : "En choisissant Accepter, je reconnais et accepte que ce service soit exclusivement soumis aux Conditions générales de <0>{{provider}}</0>.",
+            "tos" : "Conditions générales",
             "accept" : "Accepter",
             "reject" : "Fermer"
           }
@@ -3427,9 +3434,9 @@
         "to" : "À",
         "loading" : "Chargement...",
         "disclaimer" : {
-          "title" : "Conditions d’utilisation",
-          "desc" : "En choisissant Accepter, je reconnais et accepte que ce service soit exclusivement soumis aux Conditions d’utilisation de {{providerName}}.",
-          "tos" : "Conditions d’utilisation",
+          "title" : "Conditions générales",
+          "desc" : "En choisissant Accepter, je reconnais et accepte que ce service soit exclusivement soumis aux Conditions générales de {{providerName}}.",
+          "tos" : "Conditions générales",
           "accept" : "Accepter"
         },
         "notAvailable" : {
@@ -3746,7 +3753,7 @@
       "maxFee" : "Frais maximaux",
       "maxPriorityFee" : "Frais de priorité max.",
       "nextBlock" : "Bloc suivant",
-      "suggested" : "Suggérés",
+      "suggested" : "Suggéré",
       "maxFees" : "Frais maximaux",
       "validateGasLimit" : "Valider la limite de gaz",
       "fees" : "Frais",
@@ -4282,7 +4289,7 @@
       "modalDesc" : "Téléchargez Ledger Live sur votre ordinateur pour mettre à jour le micrologiciel de votre appareil.",
       "contactUs" : "Nous contacter"
     },
-    "myApps" : "Mes apps blockchain",
+    "myApps" : "Mes apps",
     "token" : {
       "title" : "Tokens {{appName}}",
       "noAppNeeded" : "{{tokenName}} est un token utilisant l’app {{appName}}. Aucune app supplémentaire à installer.",
@@ -4453,7 +4460,7 @@
         "titleInactive" : "Installer la mise à jour",
         "titleActive" : "Installation de la mise à jour",
         "description" : "Votre {{deviceName}} va redémarrer plusieurs fois.\n\nPour terminer la mise à jour, déverrouillez votre {{deviceName}} avec votre code PIN une fois l’installation terminée.",
-        "descriptionNanoXBle" : "Votre {{deviceName}} va redémarrer plusieurs fois.\n\nS’il s'éteint et ne redémarre pas automatiquement, veuillez le rallumer par vous-même.\n\nPour terminer la mise à jour, déverrouillez votre {{deviceName}} avec votre code PIN une fois l’installation terminée."
+        "descriptionNanoXBle" : "Votre {{deviceName}} va redémarrer plusieurs fois.\n\nS’il s’éteint et ne redémarre pas automatiquement, veuillez le rallumer par vous-même.\n\nPour terminer la mise à jour, déverrouillez votre {{deviceName}} avec votre code PIN une fois l’installation terminée."
       },
       "restoreSettings" : {
         "earlySecurityCheck" : {
@@ -5586,7 +5593,7 @@
     "feeAction" : "Mettre à jour les frais",
     "recommendedFee" : "Frais recommandés",
     "recommenndedFeeInfo" : "Vous pouvez émettre cette transaction avec des frais inférieurs à ceux recommandés, mais elle ne sera peut être pas traitée.",
-    "suggested" : "Suggérés",
+    "suggested" : "Suggéré",
     "networkCongestion" : "Activité sur le réseau",
     "networkCongestionLevel" : {
       "LOW" : "Basse",
@@ -6912,6 +6919,13 @@
         "title" : "Synchroniser avec une autre application Ledger Live",
         "description" : "Synchronisez vos comptes crypto Ledger Live sur différents téléphones et ordinateurs."
       },
+      "unauthorizeMember" : {
+        "error" : {
+          "title" : "Cette application n’est plus synchronisée",
+          "description" : "Activez Ledger Sync sur cette application Ledger Live ou sur celle avec laquelle vous effectuez une synchronisation.",
+          "cta" : "Activer Ledger Sync"
+        }
+      },
       "manageKey" : {
         "title" : "Supprimer la synchronisation",
         "description" : "Vos comptes crypto sur différents téléphones et ordinateurs ne seront plus synchronisés.",
@@ -6922,6 +6936,11 @@
           "cancel" : "Non, conserver",
           "title" : "Voulez-vous vraiment supprimer la synchronisation ?",
           "desc" : "Vos comptes crypto sur différents téléphones et ordinateurs ne seront plus synchronisés. Cela n’a absolument aucun impact sur vos actifs."
+        },
+        "error" : {
+          "title" : "Cette application n’est plus synchronisée",
+          "description" : "Activez Ledger Sync sur cette application Ledger Live ou sur celle avec laquelle vous effectuez une synchronisation.",
+          "cta" : "Activer Ledger Sync"
         }
       },
       "manageInstances" : {
