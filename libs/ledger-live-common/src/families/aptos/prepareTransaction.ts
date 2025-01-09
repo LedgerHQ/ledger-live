@@ -45,7 +45,7 @@ const prepareTransaction = async (
     );
   }
 
-  transaction.fees = fees; // result of gas price * gas limit
+  transaction.fees = fees;
   transaction.estimate = estimate;
   transaction.errors = errors;
 
