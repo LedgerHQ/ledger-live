@@ -1,5 +1,11 @@
-import { getElementById, openDeeplink, waitForElementByText } from "../../helpers";
-import { by, expect, log, web } from "detox";
+import {
+  getElementById,
+  getWebElementById,
+  getWebElementByTag,
+  openDeeplink,
+  waitForElementByText,
+} from "../../helpers";
+import { expect, log } from "detox";
 import jestExpect from "expect";
 
 const baseLink = "discover/";
@@ -51,16 +57,16 @@ export default class DiscoverPage {
   }
 
   async expect1inchParams() {
-    const title = await web.element(by.web.id("__next")).getTitle();
+    const title = await getWebElementById("__next").getTitle();
     jestExpect(title).toBe("Ledger Platform Apps");
 
-    const url = await web.element(by.web.id("__next")).getCurrentUrl();
+    const url = await getWebElementById("__next").getCurrentUrl();
     jestExpect(url).toContain("app.1inch.io");
     jestExpect(url).toContain("usdt");
     jestExpect(url).toContain("sourceTokenAmount%3D");
     jestExpect(url).toContain("currency%22%3A%22ethereum");
     jestExpect(url).toContain("accountId=d9d1d396-2081-53e1-9c67-f0623e0c4d3a");
 
-    await expect(web.element(by.web.tag("iframe"))).toExist();
+    await expect(getWebElementByTag("iframe")).toExist();
   }
 }

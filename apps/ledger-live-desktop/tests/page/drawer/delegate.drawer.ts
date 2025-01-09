@@ -1,9 +1,9 @@
 import { step } from "tests/misc/reporters/step";
 import { Drawer } from "tests/component/drawer.component";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
-import { Delegate } from "tests/models/Delegate";
+import { Delegate } from "@ledgerhq/live-common/e2e/models/Delegate";
 import { expect } from "@playwright/test";
-import { Transaction } from "tests/models/Transaction";
+import { Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
 
 export class DelegateDrawer extends Drawer {
   private provider = (provider: string) =>

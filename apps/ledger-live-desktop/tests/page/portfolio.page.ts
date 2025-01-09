@@ -40,6 +40,11 @@ export class PortfolioPage extends AppPage {
     await expect(this.swapEntryButton).toBeVisible();
   }
 
+  @step("Click on swap button")
+  async clickSwapButton() {
+    await this.swapEntryButton.click();
+  }
+
   @step("Check 'Stake' button visibility")
   async checkStakeButtonVisibility() {
     await expect(this.stakeEntryButton).toBeVisible();
@@ -72,6 +77,11 @@ export class PortfolioPage extends AppPage {
 
   async startBuyFlow() {
     await this.buySellEntryButton.click();
+  }
+
+  @step("Click on asset row $0")
+  async clickOnSelectedAssetRow(asset: string) {
+    await this.assetRow(asset).click();
   }
 
   @step("Click stake button")

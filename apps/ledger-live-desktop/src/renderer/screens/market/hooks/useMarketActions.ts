@@ -1,5 +1,5 @@
 import { CurrencyData } from "@ledgerhq/live-common/market/utils/types";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { openModal } from "~/renderer/actions/modals";
@@ -13,6 +13,7 @@ import { flattenAccounts } from "@ledgerhq/live-common/account/index";
 import { getAvailableAccountsById } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { isAvailableOnBuy, isAvailableOnSwap } from "../utils";
 
 export enum Page {
   Market = "Page Market",
@@ -37,6 +38,8 @@ export const useMarketActions = ({ currency, page, currenciesAll }: MarketAction
   const flattenedAccounts = flattenAccounts(allAccounts);
 
   const { isCurrencyAvailable } = useRampCatalog();
+
+  const currenciesForSwapAllSet = useMemo(() => new Set(currenciesAll), [currenciesAll]);
 
   const internalCurrency = currency?.internalCurrency;
 
@@ -100,6 +103,7 @@ export const useMarketActions = ({ currency, page, currenciesAll }: MarketAction
           state: {
             defaultCurrency: internalCurrency,
             defaultAccount,
+            defaultAmountFrom: "0",
             defaultParentAccount:
               "parentId" in defaultAccount && defaultAccount.parentId
                 ? flattenedAccounts.find(a => a.id === defaultAccount.parentId)
@@ -140,12 +144,9 @@ export const useMarketActions = ({ currency, page, currenciesAll }: MarketAction
     [internalCurrency, currency?.ticker, page, startStakeFlow],
   );
 
-  const availableOnBuy =
-    !!internalCurrency &&
-    !!internalCurrency?.id &&
-    isCurrencyAvailable(internalCurrency.id, "onRamp");
+  const availableOnBuy = isAvailableOnBuy(currency, isCurrencyAvailable);
+  const availableOnSwap = isAvailableOnSwap(currency, currenciesForSwapAllSet);
 
-  const availableOnSwap = !!internalCurrency && currenciesAll?.includes(internalCurrency.id);
   const stakeProgramsFeatureFlag = useFeature("stakePrograms");
   const listFlag = stakeProgramsFeatureFlag?.params?.list ?? [];
   const stakeProgramsEnabled = stakeProgramsFeatureFlag?.enabled ?? false;

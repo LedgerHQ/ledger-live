@@ -1,6 +1,5 @@
 import casper from "../families/casper/hw-getAddress";
 import celo from "../families/celo/hw-getAddress";
-import crypto_org from "../families/crypto_org/hw-getAddress";
 import { resolver as algorand } from "../families/algorand/setup";
 import { resolver as bitcoin } from "../families/bitcoin/setup";
 import { resolver as cardano } from "../families/cardano/setup";
@@ -25,7 +24,6 @@ import { resolver as xrp } from "../families/xrp/setup";
 export default {
   casper,
   celo,
-  crypto_org,
   algorand,
   bitcoin,
   cardano,

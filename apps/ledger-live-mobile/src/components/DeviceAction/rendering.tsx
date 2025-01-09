@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Platform, ScrollView } from "react-native";
+import { Image, Linking, Platform, ScrollView } from "react-native";
 import { useSelector } from "react-redux";
 import styled from "styled-components/native";
 import {
@@ -63,6 +63,7 @@ import { WalletState, accountNameWithDefaultSelector } from "@ledgerhq/live-wall
 import { SettingsState } from "~/reducers/types";
 import { RootStackParamList } from "../RootNavigator/types/RootNavigator";
 import { isSyncOnboardingSupported } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 
 export const Wrapper = styled(Flex).attrs({
   flex: 1,
@@ -884,11 +885,9 @@ export function renderLoading({
   return (
     <Wrapper>
       <SpinnerContainer>
-        <InfiniteLoader mock={Config.DETOX} />
+        <InfiniteLoader mock={Config.DETOX} testID="device-action-loading" />
       </SpinnerContainer>
-      <CenteredText testID="device-action-loading">
-        {description ?? t("DeviceAction.loading")}
-      </CenteredText>
+      <CenteredText>{description ?? t("DeviceAction.loading")}</CenteredText>
       {lockModal ? <ModalLock /> : null}
     </Wrapper>
   );
@@ -1082,5 +1081,59 @@ export const AutoRepair = ({
       <DeviceActionProgress progress={progress} />
       <DescriptionText>{t("FirmwareUpdate.pleaseWaitUpdate")}</DescriptionText>
     </Wrapper>
+  );
+};
+
+const HARDWARE_UPDATE_ASSETS: Partial<Record<DeviceModelId, number>> = {
+  nanoS: require("../../../assets/images/swap/nanoSBackdropFilter.png"),
+};
+
+export const HardwareUpdate = ({
+  t,
+  device,
+  i18nKeyTitle,
+  i18nKeyDescription,
+}: {
+  t: RawProps["t"];
+  device: Device;
+  i18nKeyTitle: string;
+  i18nKeyDescription: string;
+}) => {
+  const openUrl = (url: string) => Linking.openURL(url);
+
+  return (
+    <Flex flex={1} justifyContent="center" minHeight="160px">
+      <AnimationContainer height="200px">
+        <Image
+          source={HARDWARE_UPDATE_ASSETS[device.modelId]}
+          style={{ height: 200, width: 200 }}
+          resizeMode={"contain"}
+        />
+      </AnimationContainer>
+      <Text variant="h4" fontWeight="semiBold">
+        {t(i18nKeyTitle)}
+      </Text>
+      <Text pt={4} color="neutral.c70" variant={"body"} lineHeight={"150%"} fontWeight={"medium"}>
+        {t(i18nKeyDescription)}
+      </Text>
+      <Button
+        type="main"
+        outline={false}
+        onPress={() => openUrl("https://shop.ledger.com/pages/hardware-wallet")}
+        mt={8}
+        alignSelf="stretch"
+      >
+        {t("transfer.swap2.incompatibility.explore_compatible_devices")}
+      </Button>
+      <Button
+        type="shade"
+        outline
+        onPress={() => openUrl("https://support.ledger.com")}
+        mt={4}
+        alignSelf="stretch"
+      >
+        {t("transfer.swap2.incompatibility.contact_support")}
+      </Button>
+    </Flex>
   );
 };

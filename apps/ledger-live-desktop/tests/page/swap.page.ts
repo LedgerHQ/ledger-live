@@ -216,6 +216,12 @@ export class SwapPage extends AppPage {
     await this.chooseAssetDrawer.chooseFromAsset(accountToSwapFrom.currency.name);
   }
 
+  @step("Expect asset or account selected $0 to be displayed")
+  async expectSelectedAssetDisplayed(asset: string, electronApp: ElectronApplication) {
+    const [, webview] = electronApp.windows();
+    await expect(webview.getByTestId(this.fromAccountCoinSelector)).toContainText(asset);
+  }
+
   @step("Fill in amount: $1")
   async fillInOriginCurrencyAmount(electronApp: ElectronApplication, amount: string) {
     const [, webview] = electronApp.windows();
@@ -239,6 +245,8 @@ export class SwapPage extends AppPage {
   ) {
     const [, webview] = electronApp.windows();
     if (!accountToDebit.accountType) {
+      //error message is flickering and changing, so we need to wait for it to be stable
+      await this.page.waitForTimeout(1000);
       const errorSpan = await webview.locator('span[color*="error"]').textContent();
       expect(errorSpan).toMatch(message);
       //that specific amount error doesn't trigger quotes

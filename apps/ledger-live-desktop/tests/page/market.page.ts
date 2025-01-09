@@ -13,6 +13,7 @@ export class MarketPage extends AppPage {
   private buyButton = (ticker: string) => this.page.getByTestId(`market-${ticker}-buy-button`);
   readonly swapButton = (ticker: string) => this.page.getByTestId(`market-${ticker}-swap-button`);
   private stakeButton = (ticker: string) => this.page.getByTestId(`market-${ticker}-stake-button`);
+  private swapButtonOnAsset = this.page.getByTestId("market-coin-swap-button");
 
   @step("Search for $0")
   async search(query: string) {
@@ -41,7 +42,7 @@ export class MarketPage extends AppPage {
 
   @step("Open coin page for $0")
   async openCoinPage(ticker: string) {
-    await this.coinRow(ticker).click();
+    await this.coinRow(ticker.toLowerCase()).click();
     await this.coinPageContainer.waitFor({ state: "attached" });
     await this.loadingPlaceholder.first().waitFor({ state: "detached" });
   }
@@ -67,6 +68,16 @@ export class MarketPage extends AppPage {
   async waitForLoadingWithSwapbtn() {
     await this.loadingPlaceholder.first().waitFor({ state: "detached" });
     await this.swapButton("btc").waitFor({ state: "attached" }); // swap buttons are displayed few seconds after
+  }
+
+  @step("Click on swap button for $0")
+  async startSwapForSelectedTicker(ticker: string) {
+    await this.swapButton(ticker.toLowerCase()).click();
+  }
+
+  @step("Click on swap button on asset")
+  async clickOnSwapButtonOnAsset() {
+    await this.swapButtonOnAsset.click();
   }
 
   @step("Wait for search bar to be empty")

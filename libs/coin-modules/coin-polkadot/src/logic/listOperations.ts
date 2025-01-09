@@ -7,7 +7,11 @@ export type Operation = {
   type: string;
   value: bigint;
   fee: bigint;
-  blockHeight: number;
+  block: {
+    height: number;
+    hash?: string;
+    time?: Date;
+  };
   senders: string[];
   recipients: string[];
   date: Date;
@@ -43,7 +47,9 @@ const convertToCoreOperation = (address: string) => (operation: PolkadotOperatio
     type,
     value: BigInt(value.toString()),
     fee: BigInt(fee.toString()),
-    blockHeight: blockHeight ?? 0,
+    block: {
+      height: blockHeight ?? 0,
+    },
     senders,
     recipients,
     date,

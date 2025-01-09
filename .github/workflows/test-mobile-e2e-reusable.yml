@@ -207,10 +207,10 @@ jobs:
         shardIndex: [1, 2, 3]
         shardTotal: [3, 1]
         exclude:
-          - shardIndex: ${{ (github.event.inputs.speculos_tests == 'false' || github.event_name == 'push') && '2' }}
-          - shardIndex: ${{ (github.event.inputs.speculos_tests == 'false' || github.event_name == 'push') && '3' }}
-          - shardTotal: ${{ (github.event.inputs.speculos_tests == 'false' || github.event_name == 'push') && '3' }}
-          - shardTotal: ${{ github.event.inputs.speculos_tests != 'false' && github.event_name != 'push' && '1' }}
+          - shardIndex: ${{ (github.event.inputs.speculos_tests == 'false' || github.event_name == 'push' || github.event_name == 'pull_request') && '2' }}
+          - shardIndex: ${{ (github.event.inputs.speculos_tests == 'false' || github.event_name == 'push' || github.event_name == 'pull_request') && '3' }}
+          - shardTotal: ${{ (github.event.inputs.speculos_tests == 'false' || github.event_name == 'push' || github.event_name == 'pull_request') && '3' }}
+          - shardTotal: ${{ github.event.inputs.speculos_tests != 'false' && github.event_name != 'push' && github.event_name != 'pull_request' && '1' }}
 
     steps:
       - uses: actions/checkout@v4
@@ -418,14 +418,15 @@ jobs:
         with:
           script: |
             const fs = require("fs");
-            const workflowLink = `<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow run> for more informations`;
-            const text = `Detox tests finished: ${workflowLink}`;
+            const text = "Ledger Live Mobile E2E tests finished";
             const header = [
               {
                 "type": "header",
                 "text": {
                   "type": "plain_text",
-                  "text": ":ledger-logo: Ledger Live Mobile E2E nightly tests results on ${{ github.ref_name }}",
+                  "text": process.env.SPECULOS_RUN == 'false'
+                    ? "Ledger Live Mobile Mocked Tests on ${{ github.ref_name }}" 
+                    : ":ledger-logo: Ledger Live Mobile E2E nightly tests results on ${{ github.ref_name }}",
                   "emoji": true
                 }
               },
@@ -436,53 +437,47 @@ jobs:
 
             const iOSResult = [
               {
-                "type": "header",
-                "text": {
-                  "type": "plain_text",
-                  "text": `${process.env.IOS_STATUS !== 'success' ? '🍏 iOS Detox tests failed ❌' : '🍏 iOS Detox tests succeeded ✅'}`,
-                  "emoji": true
-                }
-              },
-              {
                 "type": "section",
                 "text": {
                   "type": "mrkdwn",
-                  "text": `${{ needs.allure-report-ios.outputs.result || 'No test results' }}`
-                }
-              },
-              {
-                "type": "section",
-                "text": {
-                  "type": "mrkdwn",
-                  "text": process.env.IOS_REPORT_URL ? `<${process.env.IOS_REPORT_URL}|Allure Report iOS>` : 'No Allure Report'
+                  "text": `- 🍏 iOS: ${process.env.IOS_STATUS !== 'success' ? '❌' : '✅'} ${{ needs.allure-report-ios.outputs.result || 'No test results' }}`
                 }
               }
             ];
 
             const androidResult = [
               {
-                "type": "header",
-                "text": {
-                  "type": "plain_text",
-                  "text": `${process.env.ANDROID_STATUS !== 'success' ? '🤖 Android Detox tests failed ❌' : '🤖 Android Detox tests succeeded ✅'}`,
-                  "emoji": true
-                }
-              },
-              {
                 "type": "section",
                 "text": {
                   "type": "mrkdwn",
-                  "text": `${{ needs.allure-report-android.outputs.result || 'No test results' }}`
-                }
-              },
-              {
-                "type": "section",
-                "text": {
-                  "type": "mrkdwn",
-                  "text": process.env.ANDROID_REPORT_URL ? `<${process.env.ANDROID_REPORT_URL}|Allure Report Android>` : 'No Allure Report'
+                  "text": `- 🤖 Android: ${process.env.ANDROID_STATUS !== 'success' ? '❌' : '✅'} ${{ needs.allure-report-android.outputs.result || 'No test results' }}`
                 }
               }
             ];
+
+            const iOSInfo = [
+              {
+                "type": "mrkdwn",
+                "text": process.env.IOS_REPORT_URL ? `*Allure Report iOS*\n<${process.env.IOS_REPORT_URL}|Allure Report iOS>` : '*Allure Report iOS*\nNo Allure Report'
+              }
+            ];
+
+            const androidInfo = [
+              {
+                "type": "mrkdwn",
+                "text": process.env.ANDROID_REPORT_URL ? `*Allure Report Android*\n<${process.env.ANDROID_REPORT_URL}|Allure Report Android>` : '*Allure Report Android*\nNo Allure Report'
+              }
+            ];
+
+            const infoFields = []
+              .concat(${{ env.SPECULOS_RUN == 'true' }} ? [] : iOSInfo)
+              .concat(androidInfo)
+              .concat([
+              {
+                "type": "mrkdwn",
+                "text": `*Workflow*\n<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow run>`
+              }
+            ]);
 
             const infoBlock = [
               {
@@ -490,23 +485,32 @@ jobs:
               },
               {
                 "type": "section",
-                "text": {
-                  "type": "mrkdwn",
-                  "text": workflowLink
-                }
+                "fields": infoFields
               }
             ];
 
             const blocks = []
-              .concat(${{ env.SPECULOS_RUN == 'false' }} ? [] : header)
+              .concat(header)
               .concat(${{ env.SPECULOS_RUN == 'true' }} ? [] : iOSResult)
               .concat(androidResult)
               .concat(infoBlock);
 
-            const result = {
-              text,
-              blocks
-            };
+            const result = process.env.SPECULOS_RUN === 'false'
+              ? {
+                  text,
+                  blocks,
+                }
+              : {
+                  attachments: [
+                    {
+                      color: process.env.ANDROID_STATUS !== 'success' 
+                        ? "#FF333C" 
+                        : "#33FF39",
+                      blocks,
+                    },
+                  ],
+                };
+
 
             fs.writeFileSync(`./payload-slack-content.json`, JSON.stringify(result, null, 2));
       - name: post to a Slack channel

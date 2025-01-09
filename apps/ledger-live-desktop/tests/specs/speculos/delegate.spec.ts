@@ -1,19 +1,19 @@
 import { test } from "../../fixtures/common";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { Delegate } from "../../models/Delegate";
-import { addTmsLink } from "tests/utils/allureUtils";
+import { Delegate } from "@ledgerhq/live-common/e2e/models/Delegate";
+import { addTmsLink, addBugLink } from "tests/utils/allureUtils";
 import { getDescription } from "../../utils/customJsonReporter";
 import { CLI } from "tests/utils/cliUtils";
-import { isRunningInScheduledWorkflow } from "tests/utils/githubUtils";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 
 const e2eDelegationAccounts = [
   {
     delegate: new Delegate(Account.ATOM_1, "0.001", "Ledger"),
     xrayTicket: "B2CQA-2740, B2CQA-2770",
+    bugTicket: "LIVE-14501",
   },
   {
-    delegate: new Delegate(Account.SOL_1, "0.001", "Ledger by Chorus One"),
+    delegate: new Delegate(Account.SOL_1, "0.001", "Ledger by Figment"),
     xrayTicket: "B2CQA-2742",
   },
   {
@@ -28,7 +28,7 @@ const validators = [
     xrayTicket: "B2CQA-2731, B2CQA-2763",
   },
   {
-    delegate: new Delegate(Account.SOL_2, "0.001", "Ledger by Chorus One"),
+    delegate: new Delegate(Account.SOL_2, "0.001", "Ledger by Figment"),
     xrayTicket: "B2CQA-2730, B2CQA-2764",
   },
   {
@@ -38,6 +38,7 @@ const validators = [
   {
     delegate: new Delegate(Account.ADA_1, "0.01", "LBF3 - Ledger by Figment 3"),
     xrayTicket: "B2CQA-2766",
+    bugTicket: "LIVE-15536",
   },
   {
     delegate: new Delegate(Account.MULTIVERS_X_1, "1", "Ledger by Figment"),
@@ -50,10 +51,6 @@ const validators = [
 ];
 
 test.describe("Delegate flows", () => {
-  test.beforeAll(async () => {
-    process.env.DISABLE_TRANSACTION_BROADCAST =
-      new Date().getDay() === 1 && isRunningInScheduledWorkflow() ? "0" : "1";
-  });
   for (const account of e2eDelegationAccounts) {
     test.describe("Delegate", () => {
       test.use({
@@ -74,10 +71,16 @@ test.describe("Delegate flows", () => {
       test(
         `[${account.delegate.account.currency.name}] Delegate`,
         {
-          annotation: { type: "TMS", description: account.xrayTicket },
+          annotation: [
+            { type: "TMS", description: account.xrayTicket },
+            { type: "BUG", description: account.bugTicket },
+          ],
         },
         async ({ app }) => {
           await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+          if (account.bugTicket) {
+            await addBugLink(getDescription(test.info().annotations, "BUG").split(", "));
+          }
 
           await app.layout.goToAccounts();
           await app.accounts.navigateToAccountByName(account.delegate.account.accountName);
@@ -131,10 +134,16 @@ test.describe("Delegate flows", () => {
       test(
         `[${validator.delegate.account.currency.name}] - Select validator`,
         {
-          annotation: { type: "TMS", description: validator.xrayTicket },
+          annotation: [
+            { type: "TMS", description: validator.xrayTicket },
+            { type: "BUG", description: validator.bugTicket },
+          ],
         },
         async ({ app }) => {
           await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+          if (validator.bugTicket) {
+            await addBugLink(getDescription(test.info().annotations, "BUG").split(", "));
+          }
 
           await app.layout.goToAccounts();
           await app.accounts.navigateToAccountByName(validator.delegate.account.accountName);
