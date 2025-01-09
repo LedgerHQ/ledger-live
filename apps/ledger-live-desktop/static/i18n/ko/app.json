@@ -119,7 +119,7 @@
     "addressCopied" : "주소 복사됨",
     "addressCopiedSuspicious" : "복사된 주소와 클립보드 주소가 일치하지 않습니다.",
     "experimentalFeature" : "실험",
-    "featureFlags" : "기능 플래그",
+    "featureFlags" : "Feature flag",
     "information" : "정보",
     "search" : "검색 중...",
     "searchWithoutEllipsis" : "검색",
@@ -441,6 +441,14 @@
       "description" : "Ledger Nano S는 THORChain과 호환되지 않습니다 Ledger Nano S Plus, Ledger Nano X, Ledger Stax, 또는 Ledger Flex로 Ledger Live를 통해 THORChain에서 크로스체인 스왑을 경험할 수 있습니다",
       "cta" : "호환 가능한 장치 탐색",
       "changeProvider" : "다른 공급자를 통해 스왑"
+    },
+    "incompatibility" : {
+      "ton_title" : "Ledger Nano S™는 Ton 스왑을 지원하지 않습니다",
+      "ton_description" : "Ton을 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요.",
+      "spl_tokens_title" : "Ledger Nano S™는 솔라나 토큰 스왑을 지원하지 않습니다.",
+      "spl_tokens_description" : "솔라노 토큰을 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요.",
+      "ada_title" : "Ledger Nano S™는 카르다노 스왑을 지원하지 않습니다.",
+      "ada_description" : "카르다노를 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요."
     },
     "providers" : {
       "title" : "암호화폐를 스왑할 공급자를 선택하세요",
@@ -1834,7 +1842,8 @@
       "withdrawUnbondedAmount" : "출금된 금액",
       "palletMethod" : "방법",
       "transferAmount" : "이전 금액",
-      "validatorsCount" : "검증인 ({{number}})"
+      "validatorsCount" : "검증인 ({{number}})",
+      "version" : "버전"
     }
   },
   "operationList" : {
@@ -5783,6 +5792,16 @@
     "SatStackDescriptorNotImported" : {
       "title" : "풀 노드로 계정을 스캔하지 않았습니다",
       "description" : "이 장치에 연결된 계정을 스캔하도록 풀 노드를 구성하세요. 우선 귀하의 풀 노드로 이 계정을 위한 블록체인을 스캔한 후 포트폴리오에 계정을 추가할 수 있습니다."
+    },
+    "SequenceNumberTooNew" : {
+      "title" : "예상 범위를 벗어난 최신 시퀀스 번호입니다"
+    },
+    "SequenceNumberTooOld" : {
+      "title" : "예상 범위를 벗어난 오래된 시퀀스 번호입니다",
+      "description" : "예상 범위를 벗어난 오래된 시퀀스 번호입니다"
+    },
+    "TransactionExpired" : {
+      "title" : "트랜잭션이 만료되었습니다"
     },
     "SwapRateExpiredError" : {
       "title" : "요율 만료",
