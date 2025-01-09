@@ -6,6 +6,7 @@ import { openModal } from "~/renderer/actions/modals";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
 import { useHistory } from "react-router";
+import { getWalletApiIdFromAccountId } from "@ledgerhq/live-common/wallet-api/converters";
 
 type Props = {
   account: AccountLike;
@@ -42,9 +43,11 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
         }),
       );
     } else if (account.type === "Account") {
+      const walletApiAccountId = getWalletApiIdFromAccountId(account.id);
+
       dispatch(
         openModal("MODAL_EVM_STAKE", {
-          account,
+          account: { ...account, id: walletApiAccountId },
         }),
       );
     }

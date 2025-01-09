@@ -20,6 +20,8 @@ const uuidToAccountId = new Map<string, string>();
 export const getAccountIdFromWalletAccountId = (walletAccountId: string): string | undefined =>
   uuidToAccountId.get(walletAccountId);
 
+export const getWalletApiIdFromAccountId = (id: string): string => uuidv5(id, NAMESPACE);
+
 export function accountToWalletAPIAccount(
   walletState: WalletState,
   account: AccountLike,
@@ -33,7 +35,8 @@ export function accountToWalletAPIAccount(
       throw new Error("No 'parentAccount' account provided for token account");
     }
 
-    const parentWalletApiId = uuidv5(parentAccount.id, NAMESPACE);
+    const parentWalletApiId = getWalletApiIdFromAccountId(parentAccount.id);
+
     uuidToAccountId.set(parentWalletApiId, parentAccount.id);
 
     const parentAccountName = accountNameWithDefaultSelector(walletState, parentAccount);
