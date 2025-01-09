@@ -109,6 +109,7 @@ const buildTransaction = async (account: CeloAccount, transaction: Transaction) 
     // Send
 
     celoTransaction = {
+      from: account.freshAddress,
       to: transaction.recipient,
       value: value.toFixed(),
     };
