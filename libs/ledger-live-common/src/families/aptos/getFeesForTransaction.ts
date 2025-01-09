@@ -44,7 +44,7 @@ export const getFee = async (
 
   let gasLimit = DEFAULT_GAS;
   let gasPrice = DEFAULT_GAS_PRICE;
-  transaction.estimate = {
+  transaction.options = {
     maxGasAmount: gasLimit.toString(),
     gasUnitPrice: gasPrice.toString(),
   };

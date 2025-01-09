@@ -33,7 +33,7 @@ export const fromTransactionRaw = (t: TransactionRaw): Transaction => {
     ...common,
     family: t.family,
     mode: t.mode,
-    estimate: JSON.parse(t.estimate),
+    options: JSON.parse(t.options),
     ...(t.fees && { fees: new BigNumber(t.fees) }),
     ...(t.errors && { errors: JSON.parse(t.errors) }),
   };
@@ -46,7 +46,7 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
     family: t.family,
     mode: t.mode,
     fees: t.fees ? t.fees.toString() : null,
-    estimate: JSON.stringify(t.estimate),
+    options: JSON.stringify(t.options),
     errors: JSON.stringify(t.errors),
   };
 };

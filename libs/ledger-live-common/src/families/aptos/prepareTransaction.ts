@@ -46,7 +46,7 @@ const prepareTransaction = async (
   }
 
   transaction.fees = fees;
-  transaction.estimate = estimate;
+  transaction.options = estimate;
   transaction.errors = errors;
 
   return transaction;
