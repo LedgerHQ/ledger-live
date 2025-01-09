@@ -421,7 +421,6 @@ for (const { swap, xrayTicket } of tooLowAmountForQuoteSwaps) {
   });
 }
 
-<<<<<<< HEAD
 const swapWithSendMax = [
   {
     swap: new Swap(
@@ -497,7 +496,6 @@ for (const { swap, xrayTicket } of swapWithSendMax) {
     );
   });
 }
-=======
 const swapEntryPoint = {
   swap: new Swap(
     Account.BTC_NATIVE_SEGWIT_1,
@@ -651,7 +649,6 @@ test.describe("Swap flow from different entry point", () => {
     },
   );
 });
->>>>>>> develop
 
 async function performSwapUntilQuoteSelectionStep(
   app: Application,
@@ -672,6 +669,29 @@ async function performSwapUntilQuoteSelectionStep(
   await app.swap.selectAssetTo(electronApp, swap.accountToCredit.currency.name);
   await app.swapDrawer.selectAccountByName(swap.accountToCredit);
   await app.swap.fillInOriginCurrencyAmount(electronApp, swap.amount);
+}
+
+
+//sendMax
+
+async function performSwapUntilQuoteSelectionStepWithSendMax(
+  app: Application,
+  electronApp: ElectronApplication,
+  swap: Swap,
+) {
+  await app.layout.goToAccounts();
+  await app.accounts.navigateToAccountByName(swap.accountToDebit.accountName);
+  await app.layout.waitForPageDomContentLoadedState();
+
+  await app.layout.waitForAccountsSyncToBeDone();
+  await app.swap.waitForPageNetworkIdleState();
+  await app.layout.goToSwap();
+  await app.swap.waitForPageNetworkIdleState();
+  await app.swap.selectAssetFrom(electronApp, swap.accountToDebit);
+  await app.swapDrawer.selectAccountByName(swap.accountToDebit);
+  await app.swap.selectAssetTo(electronApp, swap.accountToCredit.currency.name);
+  await app.swapDrawer.selectAccountByName(swap.accountToCredit);
+  await app.swap.sendMax()
 }
 
 async function performSwapUntilDeviceVerificationStep(
