@@ -96,5 +96,10 @@ export const getEstimatedGas = async (
     CACHE.amount = transaction.amount;
   }
 
+  // XXX: we await Promise form getFee() in this place to make cache work for asynchronous calls
+  // Example [if wee await getFee()]: thread 1 goes to getFee() and awaits there for transaction simulation.
+  // at this moment thread 2 will enter getEstimatedGas() CACHE is not set yet, it will call getFee() as well
+  // Current implementation: CACHE.estimate set immediately after getFee() is called, so thread 2 will not go under if clause
+  // and both treads will wait for promise resolve in return statement.
   return await CACHE.estimate;
 };
