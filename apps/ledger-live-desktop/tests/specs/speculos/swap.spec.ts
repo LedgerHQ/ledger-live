@@ -264,25 +264,11 @@ for (const { swap, xrayTicket } of tooLowAmountForQuoteSwaps) {
 
 const swapWithSendMax = [
   {
-    swap: new Swap(
-      Account.ETH_1,
-      Account.BTC_NATIVE_SEGWIT_1,
-      "0.02",
-      Fee.MEDIUM,
-      Provider.CHANGELLY,
-      Rate.FLOAT,
-    ),
+    swap: new Swap(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "0.02", Fee.MEDIUM),
     xrayTicket: "B2CQA-2110, QAA-292",
   },
   {
-    swap: new Swap(
-      Account.ETH_1,
-      Account.SOL_1,
-      "0.02",
-      Fee.MEDIUM,
-      Provider.CHANGELLY,
-      Rate.FLOAT,
-    ),
+    swap: new Swap(Account.ETH_1, Account.SOL_1, "0.02", Fee.MEDIUM),
     xrayTicket: "B2CQA-2110, QAA-292",
   }
 ];
