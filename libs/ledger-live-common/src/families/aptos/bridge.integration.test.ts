@@ -64,7 +64,7 @@ const aptos: CurrenciesData<Transaction> = {
             family: "aptos",
             mode: "send",
             fees: "1100",
-            estimate:
+            options:
               '{ "maxGasAmount": "11", "gasUnitPrice": "100", "sequenceNumber": "1", "expirationTimestampSecs": "1734535375" }',
             errors: "{}",
           }),
