@@ -1,6 +1,6 @@
 import Braze from "@braze/react-native-sdk";
 import { useCallback, useRef } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch, shallowEqual } from "react-redux";
 import { track } from "~/analytics";
 import { setDismissedContentCard } from "~/actions/settings";
 import { trackingEnabledSelector } from "~/reducers/settings";
@@ -8,7 +8,7 @@ import { mobileCardsSelector } from "~/reducers/dynamicContent";
 
 export const useBrazeContentCard = () => {
   const isTrackedUser = useSelector(trackingEnabledSelector);
-  const mobileCards = useSelector(mobileCardsSelector);
+  const mobileCards = useSelector(mobileCardsSelector, shallowEqual);
   const mobileCardRef = useRef(mobileCards);
   const dispatch = useDispatch();
 
