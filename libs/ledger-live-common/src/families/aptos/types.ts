@@ -38,7 +38,7 @@ export type AptosAddress = {
   path: string;
 };
 
-export interface TransactionEstimate {
+export interface TransactionOptions {
   maxGasAmount: string;
   gasUnitPrice: string;
 }
@@ -52,7 +52,7 @@ export type Transaction = TransactionCommon & {
   mode: string;
   family: "aptos";
   fees?: BigNumber | null;
-  estimate: TransactionEstimate;
+  estimate: TransactionOptions;
   errors?: TransactionErrors;
   tag?: string;
 };

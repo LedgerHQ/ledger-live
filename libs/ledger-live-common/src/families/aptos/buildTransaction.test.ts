@@ -4,7 +4,7 @@ import buildTransaction from "./buildTransaction";
 import { AptosAPI } from "./api";
 import { normalizeTransactionOptions } from "./logic";
 import { InputEntryFunctionData } from "@aptos-labs/ts-sdk";
-import { TransactionEstimate } from "./types";
+import { TransactionOptions } from "./types";
 
 const generateTransaction = jest.fn(() => "tx");
 
@@ -43,7 +43,7 @@ describe("buildTransaction Test", () => {
     expect(mockedNormalizeTransactionOptions).toHaveBeenCalledTimes(1);
     expect(generateTransaction).toHaveBeenCalledTimes(1);
 
-    const generateTransactionArgs: [string, InputEntryFunctionData, TransactionEstimate][] =
+    const generateTransactionArgs: [string, InputEntryFunctionData, TransactionOptions][] =
       generateTransaction.mock.calls[0];
 
     expect(mockedNormalizeTransactionOptions.mock.calls[0][0]).toEqual({
