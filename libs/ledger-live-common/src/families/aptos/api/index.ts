@@ -22,7 +22,7 @@ import BigNumber from "bignumber.js";
 import isUndefined from "lodash/isUndefined";
 import { APTOS_ASSET_ID } from "../constants";
 import { isTestnet } from "../logic";
-import type { AptosTransaction, TransactionEstimate } from "../types";
+import type { AptosTransaction, TransactionOptions } from "../types";
 import { GetAccountTransactionsData, GetAccountTransactionsDataGt } from "./graphql/queries";
 import {
   GetAccountTransactionsDataQuery,
@@ -85,7 +85,7 @@ export class AptosAPI {
   async generateTransaction(
     address: string,
     payload: InputEntryFunctionData,
-    options: TransactionEstimate,
+    options: TransactionOptions,
   ): Promise<RawTransaction> {
     const opts: Partial<InputGenerateTransactionOptions> = {};
     if (!isUndefined(options.maxGasAmount)) {
@@ -97,8 +97,8 @@ export class AptosAPI {
     }
 
     try {
-      const ts = (await this.aptosClient.getLedgerInfo()).ledger_timestamp;
-      opts.expireTimestamp = Number(Math.ceil(+ts / 1_000_000 + 2 * 60)); // in milliseconds
+      const { ledger_timestamp } = await this.aptosClient.getLedgerInfo();
+      opts.expireTimestamp = Number(Math.ceil(+ledger_timestamp / 1_000_000 + 2 * 60)); // in milliseconds
     } catch (_) {
       // skip
     }
