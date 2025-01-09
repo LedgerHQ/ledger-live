@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.60.0-next.1
+
+### Minor Changes
+
+- [#8856](https://github.com/LedgerHQ/ledger-live/pull/8856) [`2f95c55`](https://github.com/LedgerHQ/ledger-live/commit/2f95c55d027ec0315866e332ed352eb17198b011) Thanks [@KVNLS](https://github.com/KVNLS)! - Fix performance issue when opening LL on iOS
+
 ## 3.60.0-next.0
 
 ### Minor Changes
