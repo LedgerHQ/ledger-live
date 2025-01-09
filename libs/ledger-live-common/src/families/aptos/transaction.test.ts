@@ -161,7 +161,7 @@ with fees=0`;
       const expected = {
         family: "aptos",
         amount: new BigNumber("0.5"),
-        estimate: {},
+        options: {},
         mode: "send",
         recipient: "0xff00",
         recipientDomain: {},

@@ -16,7 +16,7 @@ describe("createTransaction Test", () => {
       amount: BigNumber(0),
       recipient: "",
       useAllAmount: false,
-      estimate: {
+      options: {
         maxGasAmount: "100",
         gasUnitPrice: "200",
       },
