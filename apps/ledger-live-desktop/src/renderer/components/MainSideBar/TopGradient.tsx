@@ -3,7 +3,7 @@ import styled from "styled-components";
 
 const TopGradientBox = styled.div`
   width: 100%;
-  height: 80px;
+  height: 70px;
   position: absolute;
   top: 0;
   left: 0;

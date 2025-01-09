@@ -24,6 +24,7 @@ type Props = {
   colors: Theme["colors"];
   preventBackdropClick?: boolean;
   iconMarginBottom?: number;
+  testID?: string;
 };
 
 class ConfirmationModal extends PureComponent<Props> {
@@ -92,6 +93,7 @@ class ConfirmationModal extends PureComponent<Props> {
               containerStyle={styles.confirmationButton}
               type="secondary"
               title={rejectButtonText || <Trans i18nKey="common.cancel" />}
+              testID="confirmation-modal-cancel-button"
               onPress={onClose}
             />
           )}
@@ -101,6 +103,7 @@ class ConfirmationModal extends PureComponent<Props> {
             containerStyle={[styles.confirmationButton, styles.confirmationLastButton]}
             type={alert ? "alert" : "primary"}
             title={confirmButtonText || <Trans i18nKey="common.confirm" />}
+            testID="confirmation-modal-confirm-button"
             onPress={onConfirm}
           />
         </View>

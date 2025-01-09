@@ -417,6 +417,7 @@ export default function Content({
           <DataList
             data={uniqueRecipients}
             title={<Trans i18nKey="operationDetails.to" />}
+            testID="operationDetails-recipient"
             rightComp={
               uniqueRecipients.length > 1 ? (
                 <View

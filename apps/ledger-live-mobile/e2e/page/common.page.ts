@@ -21,6 +21,7 @@ export default class CommonPage {
   searchBarId = "common-search-field";
   searchBar = () => getElementById(this.searchBarId);
   successCloseButtonId = "success-close-button";
+  successViewDetailsButtonId = "success-view-details-button";
   closeButton = () => getElementById("NavigationHeaderCloseButton");
 
   accoundCardId = (id: string) => "account-card-" + id;
@@ -51,6 +52,12 @@ export default class CommonPage {
   async successClose() {
     await waitForElementById(this.successCloseButtonId);
     await tapById(this.successCloseButtonId);
+  }
+
+  @Step("Tap on view details")
+  async successViewDetails() {
+    await waitForElementById(this.successViewDetailsButtonId);
+    await tapById(this.successViewDetailsButtonId);
   }
 
   async selectAccount(accountId: string) {

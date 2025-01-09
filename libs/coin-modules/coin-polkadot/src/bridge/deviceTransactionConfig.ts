@@ -26,7 +26,7 @@ const getSendFields = ({
     value: transaction && transaction.useAllAmount ? "Transfer" : "Transfer keep alive",
   });
   fields.push({
-    type: "text",
+    type: "amount",
     label: "Amount",
     value: formatCurrencyUnit(currency.units[0], amount, {
       showCode: true,

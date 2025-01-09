@@ -7,7 +7,7 @@ import styled from "styled-components";
 import { useDeviceHasUpdatesAvailable } from "@ledgerhq/live-common/manager/useDeviceHasUpdatesAvailable";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { FeatureToggle, useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { IconsLegacy, Tag as TagComponent } from "@ledgerhq/react-ui";
+import { Icons, Tag as TagComponent } from "@ledgerhq/react-ui";
 import { accountsSelector, starredAccountsSelector } from "~/renderer/reducers/accounts";
 import {
   sidebarCollapsedSelector,
@@ -20,9 +20,7 @@ import { openModal } from "~/renderer/actions/modals";
 import { setSidebarCollapsed } from "~/renderer/actions/settings";
 import useExperimental from "~/renderer/hooks/useExperimental";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
-import { darken, rgba } from "~/renderer/styles/helpers";
-import IconChevron from "~/renderer/icons/ChevronRightSmall";
-import IconExperimental from "~/renderer/icons/Experimental";
+import { darken } from "~/renderer/styles/helpers";
 import { SideBarList, SideBarListItem } from "~/renderer/components/SideBar";
 import Box from "~/renderer/components/Box";
 import Space from "~/renderer/components/Space";
@@ -56,12 +54,12 @@ const Tag = styled(Link)`
   font-family: "Inter";
   font-weight: bold;
   font-size: 10px;
-  padding: 2px ${p => p.theme.space[3] - 1}px;
-  min-height: 32px;
-  border-radius: 4px;
-  margin: ${p => p.theme.space[2]}px ${p => p.theme.space[3]}px;
+  min-height: 36px;
+  padding: 0 12px;
+  border-radius: 8px;
+  margin: 0px 16px 12px;
   color: ${p => p.theme.colors.palette.text.shade100};
-  background-color: ${p => p.theme.colors.palette.background.default};
+  background-color: ${p => p.theme.colors.palette.opacityPurple.c10};
   text-decoration: none;
   cursor: pointer;
   border: solid 1px rgba(0, 0, 0, 0);
@@ -87,7 +85,7 @@ const Collapser = styled(Box).attrs(() => ({
   collapsed?: boolean;
 }>`
   position: absolute;
-  top: ${58 - collapserSize / 2}px;
+  top: ${48 - collapserSize / 2}px;
   left: ${p => (p.collapsed ? collapsedWidth : MAIN_SIDEBAR_WIDTH) - collapserSize / 2}px;
 
   width: ${collapserSize}px;
@@ -95,24 +93,27 @@ const Collapser = styled(Box).attrs(() => ({
 
   cursor: pointer;
   border-radius: 50%;
-  background: ${p => p.theme.colors.palette.background.paper};
-  color: ${p => p.theme.colors.palette.text.shade80};
-  border-color: ${p => p.theme.colors.palette.divider};
+  background: linear-gradient(
+      ${p => p.theme.colors.palette.opacityDefault.c05} 0%,
+      ${p => p.theme.colors.palette.opacityDefault.c05} 100%
+    ),
+    ${p => p.theme.colors.palette.background.default};
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.05);
-  border: 1px solid;
+  border: 1px solid ${p => p.theme.colors.palette.opacityDefault.c05};
   transition: all 0.5s;
   z-index: 100;
 
   &:hover {
-    border-color: ${p => p.theme.colors.wallet};
-    color: ${p => p.theme.colors.wallet};
-    background: ${p => rgba(p.theme.colors.wallet, 0.1)};
+    background: linear-gradient(
+        ${p => p.theme.colors.palette.opacityDefault.c10} 0%,
+        ${p => p.theme.colors.palette.opacityDefault.c10} 100%
+      ),
+      ${p => p.theme.colors.palette.background.default};
   }
 
   & > * {
     transform: ${p => (p.collapsed ? "" : "rotate(180deg)")};
     margin-left: ${p => (p.collapsed ? "" : "-2px")};
-
     transition: transform 0.5s;
   }
 `;
@@ -150,7 +151,11 @@ const SideBar = styled(Box).attrs(() => ({
 }))`
   flex: 0 0 auto;
   width: auto;
-  background-color: ${p => p.theme.colors.palette.background.paper};
+  background: linear-gradient(
+      ${p => p.theme.colors.palette.opacityDefault.c05} 0%,
+      ${p => p.theme.colors.palette.opacityDefault.c05} 100%
+    ),
+    ${p => p.theme.colors.palette.background.default};
   transition: flex ${sideBarTransitionSpeed}ms;
   will-change: flex;
   transform: translate3d(0, 0, 10);
@@ -204,7 +209,7 @@ const TagContainerExperimental = ({ collapsed }: { collapsed: boolean }) => {
       }}
       onClick={() => setTrackingSource("sidebar")}
     >
-      <IconExperimental width={16} height={16} />
+      <Icons.Experiment size="S" color="primary.c80" />
       <TagText collapsed={collapsed}>{t("common.experimentalFeature")}</TagText>
     </Tag>
   ) : null;
@@ -224,7 +229,7 @@ const TagContainerFeatureFlags = ({ collapsed }: { collapsed: boolean }) => {
       }}
       onClick={() => setTrackingSource("sidebar")}
     >
-      <IconsLegacy.ChartNetworkMedium size={16} />
+      <Icons.Switch2 size="S" color="primary.c80" />
       <TagText collapsed={collapsed}>{t("common.featureFlags")}</TagText>
     </Tag>
   ) : null;
@@ -385,20 +390,20 @@ const MainSideBar = () => {
               onClick={handleCollapse}
               data-testid="drawer-collapse-button"
             >
-              <IconChevron size={16} />
+              <Icons.ChevronRight size="S" />
             </Collapser>
+
             <SideBarScrollContainer>
               {ldmkTransportFlag?.enabled && ldmkTransportFlag?.params?.warningVisible && (
                 <LDMKTransportFlag>{t("ldmkFeatureFlagWarning.title")}</LDMKTransportFlag>
               )}
               <TopGradient />
-              <Space of={70} />
-              <SideBarList title={t("sidebar.menu")} collapsed={secondAnim}>
+              <Space of={60} />
+              <SideBarList collapsed={secondAnim}>
                 <SideBarListItem
                   id={"dashboard"}
                   label={t("dashboard.title")}
-                  icon={IconsLegacy.HouseMedium}
-                  iconSize={20}
+                  icon={Icons.Home}
                   iconActiveColor="wallet"
                   onClick={handleClickDashboard}
                   isActive={location.pathname === "/" || location.pathname.startsWith("/asset/")}
@@ -408,8 +413,7 @@ const MainSideBar = () => {
                 <SideBarListItem
                   id={"market"}
                   label={t("sidebar.market")}
-                  icon={IconsLegacy.GraphGrowMedium}
-                  iconSize={20}
+                  icon={Icons.GraphAsc}
                   iconActiveColor="wallet"
                   onClick={handleClickMarket}
                   isActive={location.pathname.startsWith("/market")}
@@ -418,8 +422,7 @@ const MainSideBar = () => {
                 <SideBarListItem
                   id={"accounts"}
                   label={t("sidebar.accounts")}
-                  icon={IconsLegacy.WalletMedium}
-                  iconSize={20}
+                  icon={Icons.Wallet}
                   iconActiveColor="wallet"
                   isActive={location.pathname.startsWith("/account")}
                   onClick={handleClickAccounts}
@@ -429,8 +432,7 @@ const MainSideBar = () => {
                 <SideBarListItem
                   id={"catalog"}
                   label={t("sidebar.catalog")}
-                  icon={IconsLegacy.PlanetMedium}
-                  iconSize={20}
+                  icon={Icons.Globe}
                   iconActiveColor="wallet"
                   isActive={location.pathname.startsWith("/platform") && !isLiveAppTabSelected}
                   onClick={handleClickCatalog}
@@ -439,8 +441,7 @@ const MainSideBar = () => {
                 <SideBarListItem
                   id={"send"}
                   label={t("send.title")}
-                  icon={IconsLegacy.ArrowFromBottomMedium}
-                  iconSize={20}
+                  icon={Icons.ArrowUp}
                   iconActiveColor="wallet"
                   onClick={handleOpenSendModal}
                   disabled={noAccounts || navigationLocked}
@@ -449,8 +450,7 @@ const MainSideBar = () => {
                 <SideBarListItem
                   id={"receive"}
                   label={t("receive.title")}
-                  icon={IconsLegacy.ArrowToBottomMedium}
-                  iconSize={20}
+                  icon={Icons.ArrowDown}
                   iconActiveColor="wallet"
                   onClick={handleOpenReceiveModal}
                   disabled={noAccounts || navigationLocked}
@@ -459,8 +459,7 @@ const MainSideBar = () => {
                 <SideBarListItem
                   id={"earn"}
                   label={earnLabel}
-                  icon={IconsLegacy.LendMedium}
-                  iconSize={20}
+                  icon={Icons.Percentage}
                   iconActiveColor="wallet"
                   onClick={handleClickEarn}
                   isActive={location.pathname === "/earn"}
@@ -474,8 +473,7 @@ const MainSideBar = () => {
                 <SideBarListItem
                   id={"exchange"}
                   label={t("sidebar.exchange")}
-                  icon={IconsLegacy.BuyCryptoAltMedium}
-                  iconSize={20}
+                  icon={Icons.Dollar}
                   iconActiveColor="wallet"
                   onClick={handleClickExchange}
                   isActive={location.pathname === "/exchange"}
@@ -485,8 +483,7 @@ const MainSideBar = () => {
                 <SideBarListItem
                   id={"swap"}
                   label={t("sidebar.swap")}
-                  icon={IconsLegacy.BuyCryptoMedium}
-                  iconSize={20}
+                  icon={Icons.Exchange}
                   iconActiveColor="wallet"
                   onClick={handleClickSwap}
                   isActive={location.pathname.startsWith("/swap")}
@@ -497,8 +494,7 @@ const MainSideBar = () => {
                   <SideBarListItem
                     id={"refer"}
                     label={t("sidebar.refer")}
-                    icon={IconsLegacy.GiftCardMedium}
-                    iconSize={20}
+                    icon={Icons.Gift}
                     iconActiveColor="wallet"
                     onClick={handleClickRefer}
                     isActive={
@@ -522,8 +518,7 @@ const MainSideBar = () => {
                 <SideBarListItem
                   id={"card"}
                   label={t("sidebar.card")}
-                  icon={IconsLegacy.CardMedium}
-                  iconSize={20}
+                  icon={Icons.CreditCard}
                   iconActiveColor="wallet"
                   isActive={location.pathname === "/card"}
                   onClick={handleClickCard}
@@ -534,8 +529,7 @@ const MainSideBar = () => {
                   <SideBarListItem
                     id={"recover"}
                     label={t("sidebar.recover")}
-                    icon={IconsLegacy.ShieldCheckMedium}
-                    iconSize={20}
+                    icon={Icons.ShieldCheck}
                     iconActiveColor="wallet"
                     onClick={handleClickRecover}
                     collapsed={secondAnim}
@@ -551,15 +545,13 @@ const MainSideBar = () => {
                 <SideBarListItem
                   id={"manager"}
                   label={t("sidebar.manager")}
-                  icon={IconsLegacy.NanoXFoldedMedium}
-                  iconSize={20}
+                  icon={Icons.LedgerDevices}
                   iconActiveColor="wallet"
                   onClick={handleClickManager}
                   isActive={location.pathname === "/manager"}
                   NotifComponent={displayBlueDot ? <Dot collapsed={collapsed} /> : null}
                   collapsed={secondAnim}
                 />
-                <Space of={30} />
               </SideBarList>
               <Box>
                 <Space grow of={30} />
@@ -575,10 +567,11 @@ const MainSideBar = () => {
                   <Stars pathname={location.pathname} collapsed={secondAnim} />
                 </SideBarList>
               </Box>
-              <Space of={30} grow />
+            </SideBarScrollContainer>
+            <Box pt={4}>
               <TagContainerExperimental collapsed={!secondAnim} />
               <TagContainerFeatureFlags collapsed={!secondAnim} />
-            </SideBarScrollContainer>
+            </Box>
           </SideBar>
         );
       }}

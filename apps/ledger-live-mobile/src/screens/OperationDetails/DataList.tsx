@@ -10,9 +10,10 @@ type Props = {
   title?: React.ReactNode;
   rightComp?: React.ReactNode;
   colors: Theme["colors"];
+  testID?: string;
 };
 
-const DataList = ({ data, title, rightComp, colors }: Props) => {
+const DataList = ({ data, title, rightComp, colors, testID }: Props) => {
   const [showAll, setShowAll] = useState(false);
 
   const toggleShowAll = () => {
@@ -61,14 +62,14 @@ const DataList = ({ data, title, rightComp, colors }: Props) => {
           </Touchable>
         )}
       </View>
-      {(shouldShowMore ? data.slice(0, numToShow) : data).map(line => (
-        <LText style={styles.value} semiBold selectable key={line}>
+      {(shouldShowMore ? data.slice(0, numToShow) : data).map((line, index) => (
+        <LText style={styles.value} semiBold selectable key={line} testID={`${testID}${index}`}>
           {line}
         </LText>
       ))}
       {showAll &&
-        data.slice(numToShow).map(line => (
-          <LText style={styles.value} semiBold selectable key={line}>
+        data.slice(numToShow).map((line, index) => (
+          <LText style={styles.value} semiBold selectable key={line} testID={`${testID}${index}`}>
             {line}
           </LText>
         ))}

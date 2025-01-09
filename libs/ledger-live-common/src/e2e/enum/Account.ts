@@ -17,7 +17,7 @@ export class Account {
   static readonly APTOS_1 = new Account(
     Currency.APT,
     "Aptos 1",
-    "0x98739115d8ba968aa0870a1ce6a988a0cb5aeb2e5f0cb5a0f346c7a1bb7e4a27",
+    "0xb69a68cc64f7aa193705193f4dd598320a0a74baf7e4b50c9980c5bd60a82390",
     undefined,
     0,
   );
@@ -25,7 +25,7 @@ export class Account {
   static readonly APTOS_2 = new Account(
     Currency.APT,
     "Aptos 2",
-    "0xb69a68cc64f7aa193705193f4dd598320a0a74baf7e4b50c9980c5bd60a82390",
+    "0x98739115d8ba968aa0870a1ce6a988a0cb5aeb2e5f0cb5a0f346c7a1bb7e4a27",
     undefined,
     1,
   );

@@ -9,10 +9,13 @@ export default class AccountPage {
   accountAdvancedLogRow = () => getElementById("account-advanced-log-row");
   accountDeleteRow = () => getElementById("account-settings-delete-row");
   accountDeleteConfirm = () => getElementById("delete-account-confirmation-button");
-  operationHistorySectionId = (accountId: string) => `operations-history-${accountId}`;
+  operationHistorySection = "operations-history-";
+  operationHistorySectionRegexp = new RegExp(this.operationHistorySection + ".*");
+  operationHistorySectionId = (accountId: string) => this.operationHistorySection + accountId;
   accountScreenScrollView = "account-screen-scrollView";
   accountAdvancedLogsId = "account-advanced-logs";
   receiveButton = () => getElementById("account-quick-action-button-Receive");
+  sendButton = () => getElementById("account-quick-action-button-Send");
 
   @Step("Open account settings")
   async openAccountSettings() {
@@ -41,6 +44,11 @@ export default class AccountPage {
     await expect(getElementById(id)).toBeVisible();
   }
 
+  @Step("Scroll to transaction history")
+  async scrollToTransactions() {
+    await scrollToId(this.operationHistorySectionRegexp, this.accountScreenScrollView);
+  }
+
   @Step("Expect account balance to be visible")
   async expectAccountBalanceVisible(accountId: string) {
     await expect(this.accountGraph(accountId)).toBeVisible();
@@ -59,5 +67,10 @@ export default class AccountPage {
   @Step("Tap on receive button")
   async tapReceive() {
     await tapByElement(this.receiveButton());
+  }
+
+  @Step("Tap on send button")
+  async tapSend() {
+    await tapByElement(this.sendButton());
   }
 }

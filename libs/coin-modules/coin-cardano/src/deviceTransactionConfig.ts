@@ -82,7 +82,7 @@ function getDeviceTransactionConfig({
         value: decodeTokenName(assetName),
       });
       fields.push({
-        type: "text",
+        type: "amount",
         label: "Amount",
         value: formatCurrencyUnit(getAccountCurrency(account).units[0], transactionAmount, {
           showCode: true,
@@ -91,7 +91,7 @@ function getDeviceTransactionConfig({
       });
     } else if (account.type === "Account") {
       fields.push({
-        type: "text",
+        type: "amount",
         label: "Amount",
         value: formatCurrencyUnit(getAccountCurrency(account).units[0], transaction.amount, {
           showCode: true,

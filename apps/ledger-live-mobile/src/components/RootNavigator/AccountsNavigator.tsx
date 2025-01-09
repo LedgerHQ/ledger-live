@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTheme } from "styled-components/native";
 import { useSelector } from "react-redux";
@@ -25,16 +25,46 @@ import type { AccountsNavigatorParamList } from "./types/AccountsNavigator";
 import { hasNoAccountsSelector } from "~/reducers/accounts";
 import AccountsList from "LLM/features/Accounts/screens/AccountsList";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
+import { track } from "~/analytics";
+import { NavigationProp, NavigationState, useNavigation, useRoute } from "@react-navigation/native";
+import { TrackingEvent } from "LLM/features/Accounts/enums";
 
 const Stack = createStackNavigator<AccountsNavigatorParamList>();
+
+type NavType = Omit<NavigationProp<ReactNavigation.RootParamList>, "getState"> & {
+  getState(): NavigationState | undefined;
+};
+
+type ParamsType = {
+  params?: { specificAccounts?: object[] };
+};
 
 export default function AccountsNavigator() {
   const { colors } = useTheme();
   const stackNavConfig = useMemo(() => getStackNavigatorConfig(colors), [colors]);
   const accountListUIFF = useFeature("llmAccountListUI");
+  const route = useRoute();
+  const navigation = useNavigation();
 
   const hasNoAccounts = useSelector(hasNoAccountsSelector);
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector) && hasNoAccounts;
+
+  const onPressBack = useCallback(
+    (nav: NavType) => {
+      // Needed since we use the same screen for different purposes
+      const params: ParamsType = navigation.getState()?.routes[1].params || {};
+      const screenName = params?.params?.specificAccounts
+        ? TrackingEvent.AccountListSummary
+        : TrackingEvent.AccountsList;
+      track("button_clicked", {
+        button: "Back",
+        page: screenName || route.name,
+      });
+      nav.goBack();
+    },
+    [navigation, route.name],
+  );
 
   return (
     <Stack.Navigator screenOptions={stackNavConfig}>
@@ -84,6 +114,7 @@ export default function AccountsNavigator() {
           component={AccountsList}
           options={{
             headerTitle: "",
+            headerLeft: () => <NavigationHeaderBackButton onPress={onPressBack} />,
           }}
         />
       )}
