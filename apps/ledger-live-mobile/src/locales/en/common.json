@@ -3713,7 +3713,7 @@
     "highFeeModal": "Be careful, network fees are greater than <1>10%</1> of the amount. Do you want to continue?",
     "scan": {
       "title": "Scan QR code",
-      "descBottom": "Please center the QR code inside the square.",
+      "descBottom": "Scan QR code",
       "fallback": {
         "header": "Scan QR code",
         "title": "Enable camera",
