@@ -20,7 +20,7 @@ import {
   getBlankOperation,
   txsToOps,
 } from "./logic";
-import type { AptosTransaction, Transaction } from "./types";
+import type { AptosTransaction, TransactionOptions } from "./types";
 
 jest.mock("@ledgerhq/cryptoassets", () => ({
   getCryptoCurrencyById: jest.fn(),
@@ -81,7 +81,7 @@ describe("Aptos logic ", () => {
 
   describe("normalizeTransactionOptions", () => {
     it("should normalize transaction options", () => {
-      const options: Transaction["estimate"] = {
+      const options: TransactionOptions = {
         maxGasAmount: "1000",
         gasUnitPrice: "10",
       };
@@ -91,7 +91,7 @@ describe("Aptos logic ", () => {
     });
 
     it("should return undefined for empty values", () => {
-      const options: Transaction["estimate"] = {
+      const options: TransactionOptions = {
         maxGasAmount: "",
         gasUnitPrice: "",
       };

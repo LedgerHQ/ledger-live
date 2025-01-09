@@ -70,8 +70,6 @@ describe("Aptos bridge interface ", () => {
         mode: "send",
         family: "aptos" as const,
         options: { maxGasAmount: "", gasUnitPrice: "" },
-        estimate: { maxGasAmount: "", gasUnitPrice: "" },
-        firstEmulation: true,
       };
       const patch = { amount: new BigNumber(200) };
       const updatedTransaction = bridge.accountBridge.updateTransaction(initialTransaction, patch);
@@ -81,8 +79,6 @@ describe("Aptos bridge interface ", () => {
         mode: "send",
         family: "aptos" as const,
         options: { maxGasAmount: "", gasUnitPrice: "" },
-        estimate: { maxGasAmount: "", gasUnitPrice: "" },
-        firstEmulation: true,
       });
     });
 
@@ -93,8 +89,6 @@ describe("Aptos bridge interface ", () => {
         mode: "send",
         family: "aptos" as const,
         options: { maxGasAmount: "", gasUnitPrice: "" },
-        estimate: { maxGasAmount: "", gasUnitPrice: "" },
-        firstEmulation: true,
       };
       const patch = { amount: new BigNumber(200) };
       const updatedTransaction = bridge.accountBridge.updateTransaction(initialTransaction, patch);
@@ -104,8 +98,6 @@ describe("Aptos bridge interface ", () => {
         mode: "send",
         family: "aptos" as const,
         options: { maxGasAmount: "", gasUnitPrice: "" },
-        estimate: { maxGasAmount: "", gasUnitPrice: "" },
-        firstEmulation: true,
       });
       expect(updatedTransaction).not.toBe(initialTransaction);
     });
