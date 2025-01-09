@@ -17,7 +17,7 @@ type IGetEstimatedGasReturnType = {
 };
 
 const CACHE = {
-  amount: BigNumber(0),
+  amount: new BigNumber(0),
   estimate: Promise.resolve({
     fees: new BigNumber(0),
     estimate: {
@@ -34,7 +34,7 @@ export const getFee = async (
   aptosClient: AptosAPI,
 ): Promise<IGetEstimatedGasReturnType> => {
   const res = {
-    fees: new BigNumber(DEFAULT_GAS * DEFAULT_GAS_PRICE),
+    fees: new BigNumber(DEFAULT_GAS).multipliedBy(DEFAULT_GAS_PRICE),
     estimate: {
       maxGasAmount: DEFAULT_GAS.toString(),
       gasUnitPrice: DEFAULT_GAS_PRICE.toString(),
@@ -55,10 +55,10 @@ export const getFee = async (
       const simulation = await aptosClient.simulateTransaction(publicKeyEd, tx);
       const completedTx = simulation[0];
 
-      gasLimit = Number(completedTx.gas_used) * ESTIMATE_GAS_MUL;
-      gasPrice = Number(completedTx.gas_unit_price);
+      gasLimit = new BigNumber(completedTx.gas_used).multipliedBy(ESTIMATE_GAS_MUL);
+      gasPrice = new BigNumber(completedTx.gas_unit_price);
 
-      const expectedGas = BigNumber(gasPrice * gasLimit);
+      const expectedGas = gasPrice.multipliedBy(gasLimit);
 
       const isUnderMaxSpendable = transaction.amount
         .plus(expectedGas)
@@ -75,7 +75,7 @@ export const getFee = async (
           }
         }
       }
-      res.fees = BigNumber(gasPrice).multipliedBy(BigNumber(gasLimit));
+      res.fees = expectedGas;
       res.estimate.maxGasAmount = gasLimit.toString();
       res.estimate.gasUnitPrice = completedTx.gas_unit_price;
     } catch (error: any) {
