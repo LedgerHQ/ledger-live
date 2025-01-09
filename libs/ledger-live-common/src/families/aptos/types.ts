@@ -52,7 +52,7 @@ export type Transaction = TransactionCommon & {
   mode: string;
   family: "aptos";
   fees?: BigNumber | null;
-  estimate: TransactionOptions;
+  options: TransactionOptions;
   errors?: TransactionErrors;
   tag?: string;
 };
@@ -61,6 +61,6 @@ export type TransactionRaw = TransactionCommonRaw & {
   family: "aptos";
   mode: string;
   fees?: string | null;
-  estimate: string;
+  options: string;
   errors?: string;
 };

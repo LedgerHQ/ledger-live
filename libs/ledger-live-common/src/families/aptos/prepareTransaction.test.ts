@@ -67,7 +67,7 @@ describe("Aptos prepareTransaction", () => {
       const result = await prepareTransaction(account, transaction);
       expect(result.amount.isEqualTo(new BigNumber(900))).toBe(true);
       expect(result.fees?.isEqualTo(new BigNumber(2000))).toBe(true);
-      expect(new BigNumber(result.estimate.maxGasAmount).isEqualTo(new BigNumber(200))).toBe(true);
+      expect(new BigNumber(result.options.maxGasAmount).isEqualTo(new BigNumber(200))).toBe(true);
       expect(result.errors).toEqual({});
     });
 
@@ -83,7 +83,7 @@ describe("Aptos prepareTransaction", () => {
       const result = await prepareTransaction(account, transaction);
       expect(getEstimatedGas).toHaveBeenCalledWith(account, transaction, expect.any(AptosAPI));
       expect(result.fees?.isEqualTo(new BigNumber(10))).toBe(true);
-      expect(new BigNumber(result.estimate.maxGasAmount).isEqualTo(new BigNumber(200))).toBe(true);
+      expect(new BigNumber(result.options.maxGasAmount).isEqualTo(new BigNumber(200))).toBe(true);
       expect(result.errors).toEqual({});
     });
 
@@ -98,7 +98,7 @@ describe("Aptos prepareTransaction", () => {
 
       const result = await prepareTransaction(account, transaction);
       expect(result.fees?.isEqualTo(new BigNumber(2000))).toBe(true);
-      expect(new BigNumber(result.estimate.maxGasAmount).isEqualTo(new BigNumber(200))).toBe(true);
+      expect(new BigNumber(result.options.maxGasAmount).isEqualTo(new BigNumber(200))).toBe(true);
       expect(result.errors).toEqual({});
     });
 
@@ -112,7 +112,7 @@ describe("Aptos prepareTransaction", () => {
       });
 
       const result = await prepareTransaction(account, transaction);
-      expect(new BigNumber(result.estimate.maxGasAmount).isEqualTo(new BigNumber(200))).toBe(true);
+      expect(new BigNumber(result.options.maxGasAmount).isEqualTo(new BigNumber(200))).toBe(true);
     });
   });
 });
