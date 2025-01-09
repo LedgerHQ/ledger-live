@@ -37,7 +37,6 @@ function ScanDeviceAccounts() {
 
   const {
     alreadyEmptyAccount,
-    alreadyEmptyAccountName,
     cantCreateAccount,
     CustomNoAssociatedAccounts,
     error,
@@ -68,15 +67,7 @@ function ScanDeviceAccounts() {
 
   // Empty state same UI as ledger-live-mobile/src/screens/AddAccounts/03-Accounts.tsx
   const emptyTexts = {
-    creatable: alreadyEmptyAccount ? (
-      <LText style={styles.paddingHorizontal}>
-        <Trans i18nKey="addAccounts.cantCreateAccount">
-          {"PLACEHOLDER-1"}
-          <LText semiBold>{alreadyEmptyAccountName}</LText>
-          {"PLACEHOLDER-2"}
-        </Trans>
-      </LText>
-    ) : CustomNoAssociatedAccounts ? (
+    creatable: alreadyEmptyAccount ? null : CustomNoAssociatedAccounts ? (
       <CustomNoAssociatedAccounts style={styles} />
     ) : (
       <LText style={styles.paddingHorizontal}>

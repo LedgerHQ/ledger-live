@@ -3,10 +3,21 @@ import useAccountItemModel, { AccountItemProps } from "./useAccountItemModel";
 import { Flex, Tag, Text } from "@ledgerhq/native-ui";
 import CounterValue from "~/components/CounterValue";
 import ParentCurrencyIcon from "~/components/ParentCurrencyIcon";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import { Unit } from "@ledgerhq/types-cryptoassets";
 
 type ViewProps = ReturnType<typeof useAccountItemModel>;
 
-const View: React.FC<ViewProps> = ({ accountName, balance, formattedAddress, tag, currency }) => (
+const View: React.FC<ViewProps> = ({
+  accountName,
+  balance,
+  formattedAddress,
+  tag,
+  currency,
+  unit,
+  showUnit,
+  hideBalanceInfo,
+}) => (
   <>
     <Flex flex={1} rowGap={2} flexShrink={1} testID={`accountItem-${accountName}`}>
       <Flex flexDirection="row" columnGap={8} alignItems="center" maxWidth="70%">
@@ -32,11 +43,18 @@ const View: React.FC<ViewProps> = ({ accountName, balance, formattedAddress, tag
         <ParentCurrencyIcon forceIconScale={2} currency={currency} size={20} />
       </Flex>
     </Flex>
-    <Flex justifyContent="center" alignItems="flex-end">
-      <Text variant="large" fontWeight="semiBold" color="neutral.c100" testID="asset-balance">
-        <CounterValue currency={currency} value={balance} joinFragmentsSeparator="" />
-      </Text>
-    </Flex>
+    {!hideBalanceInfo && (
+      <Flex justifyContent="center" alignItems="flex-end">
+        <Text variant="large" fontWeight="semiBold" color="neutral.c100" testID="asset-balance">
+          <CounterValue currency={currency} value={balance} joinFragmentsSeparator="" />
+        </Text>
+        {showUnit && (
+          <Text variant="body" fontWeight="medium" color="neutral.c70">
+            <CurrencyUnitValue showCode unit={unit as Unit} value={balance} />
+          </Text>
+        )}
+      </Flex>
+    )}
   </>
 );
 

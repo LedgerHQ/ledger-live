@@ -1,7 +1,6 @@
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { ScreenName } from "~/const";
 import { Device } from "@ledgerhq/types-devices";
-import { AccountLikeEnhanced } from "../ScanDeviceAccounts/types";
 import { Account } from "@ledgerhq/types-live";
 
 type CommonParams = {
@@ -19,8 +18,12 @@ export type NetworkBasedAddAccountNavigator = {
   [ScreenName.SelectAccounts]: CommonParams & {
     createTokenAccount?: boolean;
   };
+
   [ScreenName.AddAccountsSuccess]: CommonParams & {
-    fundedAccounts: AccountLikeEnhanced[];
-    accountsWithZeroBalance: AccountLikeEnhanced[];
+    accountsToAdd: Account[];
+  };
+  [ScreenName.AddAccountsWarning]: CommonParams & {
+    emptyAccount?: Account;
+    emptyAccountName?: string;
   };
 };

@@ -4086,7 +4086,14 @@
     "addAccountsSuccess": {
       "ctaAddFunds": "Add funds to my account",
       "ctaClose": "Close"
-    }
+    },
+    "addAccountsWarning": {
+      "cantCreateAccount": {
+        "title": "We can’t add a new account",
+        "body": "A new account cannot be added before receiving assets on your {{accountName}} account."
+      }
+    },
+    "chooseAccountToFund": "Choose an account to add funds"
   },
   "DeviceAction": {
     "stayInTheAppPlz": "Stay in the Ledger Live app and keep your Ledger nearby.",
