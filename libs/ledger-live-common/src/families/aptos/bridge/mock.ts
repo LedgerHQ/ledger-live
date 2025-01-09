@@ -29,7 +29,7 @@ const createTransaction = (): Transaction => ({
   recipient: "",
   useAllAmount: false,
   fees: new BigNumber(0.0001),
-  estimate: {
+  options: {
     maxGasAmount: DEFAULT_GAS.toString(),
     gasUnitPrice: DEFAULT_GAS_PRICE.toString(),
   },
