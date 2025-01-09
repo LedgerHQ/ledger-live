@@ -81,11 +81,9 @@ describe("Aptos logic ", () => {
 
   describe("normalizeTransactionOptions", () => {
     it("should normalize transaction options", () => {
-      const options: Transaction["options"] = {
+      const options: Transaction["estimate"] = {
         maxGasAmount: "1000",
         gasUnitPrice: "10",
-        sequenceNumber: "1",
-        expirationTimestampSecs: "1000000",
       };
 
       const result = normalizeTransactionOptions(options);
@@ -93,19 +91,15 @@ describe("Aptos logic ", () => {
     });
 
     it("should return undefined for empty values", () => {
-      const options: Transaction["options"] = {
+      const options: Transaction["estimate"] = {
         maxGasAmount: "",
         gasUnitPrice: "",
-        sequenceNumber: undefined,
-        expirationTimestampSecs: "1000000",
       };
 
       const result = normalizeTransactionOptions(options);
       expect(result).toEqual({
         maxGasAmount: undefined,
         gasUnitPrice: undefined,
-        sequenceNumber: undefined,
-        expirationTimestampSecs: "1000000",
       });
     });
   });
