@@ -565,15 +565,10 @@ export function useWalletAPIServer({
 
             if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
               try {
-                const broadcastConfig = config.mevProtected
-                  ? {
-                      broadcastConfig: { mevProtected: config.mevProtected },
-                    }
-                  : {};
                 optimisticOperation = await bridge.broadcast({
                   account: mainAccount,
                   signedOperation,
-                  ...broadcastConfig,
+                  broadcastConfig: { mevProtected: !!config.mevProtected },
                 });
                 tracking.broadcastSuccess(manifest);
               } catch (error) {

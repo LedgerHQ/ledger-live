@@ -491,17 +491,11 @@ export function useDappLogic({
 
               let optimisticOperation: Operation = signedTransaction.operation;
 
-              const broadcastConfig = mevProtected
-                ? {
-                    broadcastConfig: { mevProtected: mevProtected },
-                  }
-                : {};
-
               if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
                 optimisticOperation = await bridge.broadcast({
                   account: mainAccount,
                   signedOperation: signedTransaction,
-                  ...broadcastConfig,
+                  broadcastConfig: { mevProtected: !!mevProtected },
                 });
               }
 
