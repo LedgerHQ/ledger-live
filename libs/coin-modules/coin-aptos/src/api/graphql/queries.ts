@@ -1,4 +1,5 @@
-import { gql } from "@apollo/client";
+// We need to target CJS for the CJS build of the lib
+import { gql } from "@apollo/client/main.cjs";
 
 export const GetDelegatedStakingActivities = gql`
   query getDelegatedStakingActivities($delegatorAddress: String) {

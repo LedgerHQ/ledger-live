@@ -12,9 +12,9 @@ import { withDevice } from "../hw/deviceAccess";
 import getAddress from "../hw/getAddress";
 
 export {
-  AccountShapeInfo,
-  GetAccountShape,
-  IterateResultBuilder,
+  type AccountShapeInfo,
+  type GetAccountShape,
+  type IterateResultBuilder,
   makeSync,
   mergeNfts,
   mergeOps,

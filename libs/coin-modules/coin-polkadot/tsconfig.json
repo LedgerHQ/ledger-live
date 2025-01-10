@@ -6,7 +6,6 @@
     "downlevelIteration": true,
     "lib": ["es2020", "dom"],
     "rootDir": "./src",
-    "outDir": "lib",
     "exactOptionalPropertyTypes": true,
     "module": "ESNext",
     "moduleResolution": "bundler"

@@ -14,7 +14,6 @@ export const useListenToHidDevices = () => {
   const deviceManagementKit = useDeviceManagementKit();
 
   useEffect(() => {
-    console.log("[[useListenToHidDevices]] init", deviceManagementKit);
     let sub: Subscription;
 
     function syncDevices() {
