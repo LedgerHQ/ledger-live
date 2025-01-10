@@ -183,7 +183,6 @@
     "@ledgerhq/live-config": "workspace:^",
     "@ledgerhq/live-countervalues": "workspace:^",
     "@ledgerhq/live-countervalues-react": "workspace:^",
-    "@ledgerhq/live-dmk": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-hooks": "workspace:*",
     "@ledgerhq/live-network": "workspace:^",

@@ -8,7 +8,7 @@
       "rootDir": "./src",
       "outDir": "lib",
       "exactOptionalPropertyTypes": true,
-      "module": "ESNext",
+      "module": "esnext",
       "moduleResolution": "bundler"
     },
     "include": ["src/**/*", "deviceTransactionConfig.ts", "transaction.ts"]

@@ -209,6 +209,7 @@
       "remove-flow-types-loader>loader-utils": "*",
       "@ledgerhq/devices": "workspace:*",
       "tslib": "2.6.2",
+      "@hashgraph/sdk>@hashgraph/cryptography": "1.1.2",
       "@hashgraph/sdk>@grpc/grpc-js": "1.6.7",
       "@ethersproject/providers>ws": "7.5.10"
     },
@@ -224,7 +225,8 @@
       "@changesets/get-github-info@0.6.0": "patches/@changesets__get-github-info@0.6.0.patch",
       "react-native-webview@13.10.3": "patches/react-native-webview@13.10.3.patch",
       "buffer@6.0.3": "patches/buffer@6.0.3.patch",
-      "react-native-fast-pbkdf2@0.3.1": "patches/react-native-fast-pbkdf2@0.3.1.patch"
+      "react-native-fast-pbkdf2@0.3.1": "patches/react-native-fast-pbkdf2@0.3.1.patch",
+      "@hashgraph/sdk@2.14.2": "patches/@hashgraph__sdk@2.14.2.patch"
     },
     "packageExtensions": {
       "eslint-config-next@*": {

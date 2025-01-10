@@ -6,8 +6,8 @@
     "jsx": "react",
     "lib": ["ES2021", "dom"],
     "target": "esnext",
-    "module": "nodenext",
-    "moduleResolution": "nodenext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
     "baseUrl": ".",
     "rootDir": ".",
     "paths": {
