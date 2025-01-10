@@ -61,6 +61,16 @@ export type APIDelegationType = CommonOperationType & {
 export function isAPIDelegationType(op: APIOperation): op is APIDelegationType {
   return op.type === "delegation";
 }
+
+// https://api.tzkt.io/#operation/Accounts_GetOperations
+export type AccountsGetOperationsOptions = {
+  lastId?: number; // used as a pagination cursor to fetch more transactions
+  limit?: number;
+  sort?: "Descending" | "Ascending";
+  // the minimum height of the block the operation is in
+  "level.ge": number;
+};
+
 export type APIOperation =
   | APITransactionType
   | (CommonOperationType & {
