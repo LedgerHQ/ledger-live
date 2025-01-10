@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.60.0-next.3
+
+### Minor Changes
+
+- [#8873](https://github.com/LedgerHQ/ledger-live/pull/8873) [`e8fe64f`](https://github.com/LedgerHQ/ledger-live/commit/e8fe64fbc14c692501bf57c2d79e2493675b7da0) Thanks [@thesan](https://github.com/thesan)! - Fix braze related performance issues
+
 ## 3.60.0-next.2
 
 ### Minor Changes
