@@ -351,8 +351,6 @@ describe("Aptos API", () => {
       const options = {
         maxGasAmount: "100",
         gasUnitPrice: "50",
-        sequenceNumber: "1",
-        expirationTimestampSecs: "1735639799486",
       };
 
       const mockSimple = jest.fn().mockImplementation(async () => ({
@@ -423,8 +421,6 @@ describe("Aptos API", () => {
       const options = {
         maxGasAmount: "100",
         gasUnitPrice: "50",
-        sequenceNumber: "1",
-        expirationTimestampSecs: "1735639799486",
       };
 
       const mockSimple = jest.fn().mockImplementation(async () => null);
