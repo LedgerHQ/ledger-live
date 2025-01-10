@@ -44,10 +44,10 @@ async function estimate(_addr: string, _amount: bigint): Promise<bigint> {
 }
 
 type PaginationState = {
-  pageSize: number; // must be large enough to avoid unnecessary calls to the underlying explorer
-  maxIterations: number; // a security to avoid infinite loop
+  readonly pageSize: number; // must be large enough to avoid unnecessary calls to the underlying explorer
+  readonly maxIterations: number; // a security to avoid infinite loop
   currentIteration: number;
-  minHeight: number;
+  readonly minHeight: number;
   continueIterations: boolean;
   apiNextCursor?: string;
   accumulator: XrpOperation[];
