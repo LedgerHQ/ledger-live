@@ -25,7 +25,7 @@ export const getWalletApiIdFromAccountId = (id: string): string => uuidv5(id, NA
 export function accountToWalletAPIAccount(
   walletState: WalletState,
   account: AccountLike,
-  parentAccount?: Account,
+  parentAccount?: Account | null,
 ): WalletAPIAccount {
   const walletApiId = uuidv5(account.id, NAMESPACE);
   uuidToAccountId.set(walletApiId, account.id);
