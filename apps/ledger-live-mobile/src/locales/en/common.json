@@ -974,15 +974,6 @@
     "GasLessThanEstimate": {
       "title": "This may be too low. Please increase"
     },
-    "SequenceNumberTooNew": {
-      "title": "Sequence number too new"
-    },
-    "SequenceNumberTooOld": {
-      "title": "Sequence number too old"
-    },
-    "TransactionExpired": {
-      "title": "Transaction expired"
-    },
     "SequenceNumberError": {
       "title": "Sequence number error",
       "description": "Please close the window and try again later"
