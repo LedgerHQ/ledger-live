@@ -210,7 +210,7 @@
     "chalk": "4.1.2",
     "cross-env": "7.0.3",
     "debug": "4.3.4",
-    "electron": "32.0.2",
+    "electron": "32.2.8",
     "electron-builder": "25.1.8",
     "electron-devtools-installer": "3.2.1",
     "eslint-plugin-jest": "27.9.0",
