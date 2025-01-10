@@ -119,7 +119,7 @@
     "addressCopied" : "Endereço Copiado",
     "addressCopiedSuspicious" : "Incompatibilidade entre o endereço copiado e o que está na área de transferência.",
     "experimentalFeature" : "Experimental",
-    "featureFlags" : "Incluir Marcadores",
+    "featureFlags" : "Feature flag",
     "information" : "Informações",
     "search" : "Pesquisar...",
     "searchWithoutEllipsis" : "Pesquisar",
@@ -441,6 +441,14 @@
       "description" : "A Ledger Nano S™ não é compatível com a THORChain Você pode usar a Ledger Nano S Plus, a Ledger Nano X, a Ledger Stax ou a Ledger Flex e realizar trocas cross-chain pela THORChain através do Ledger Live",
       "cta" : "Conheça os dispositivos compatíveis",
       "changeProvider" : "Trocar com outro provedor"
+    },
+    "incompatibility" : {
+      "ton_title" : "A Ledger Nano S™ não é compatível com a troca de Ton",
+      "ton_description" : "Para trocar Ton, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+      "spl_tokens_title" : "A Ledger Nano S™ não é compatível com a troca de tokens Solana",
+      "spl_tokens_description" : "Para trocar tokens Solana, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+      "ada_title" : "A Ledger Nano S™ não é compatível com a troca de Cardano",
+      "ada_description" : "Para trocar Cardano, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™."
     },
     "providers" : {
       "title" : "Escolha um provedor para trocar cripto",
@@ -1834,7 +1842,8 @@
       "withdrawUnbondedAmount" : "Quantia Sacada",
       "palletMethod" : "Método",
       "transferAmount" : "Transferir Quantia",
-      "validatorsCount" : "Validadores ({{number}})"
+      "validatorsCount" : "Validadores ({{number}})",
+      "version" : "Versão"
     }
   },
   "operationList" : {
