@@ -20,39 +20,66 @@
   "publishConfig": {
     "access": "public"
   },
-  "typesVersions": {
-    "*": {
-      "lib-es/*": [
-        "lib-es/*"
-      ],
-      "specs": [
-        "lib/test/bot-specs"
-      ],
-      "*": [
-        "lib-es/*",
-        "lib-es/api/*",
-        "lib-es/bridge/*",
-        "lib-es/common-logic/*",
-        "lib-es/signer/*",
-        "lib-es/test/*",
-        "lib-es/types/*"
-      ]
-    }
-  },
   "exports": {
-    "./lib-es/*": "./lib-es/*.js",
-    "./api": "./lib-es/api/index.js",
-    "./deviceTransactionConfig": "./lib-es/bridge/deviceTransactionConfig.js",
-    "./erc20": "./lib-es/erc20/tokenAccounts.js",
-    "./logic": "./lib-es/common-logic/index.js",
-    "./network": "./lib-es/network/index.js",
-    "./signer": "./lib-es/signer/index.js",
-    "./specs": "./lib-es/test/bot-specs.js",
-    "./transaction": "./lib-es/bridge/transaction.js",
-    "./types": "./lib-es/types/index.js",
-    "./*": "./lib-es/*.js",
-    ".": "./lib-es/index.js",
-    "./package.json": "./package.json"
+    "./api": {
+      "types": "./lib/types/api/index.d.ts",
+      "require": "./lib/cjs/api/index.js",
+      "default": "./lib/esm/api/index.js"
+    },
+    "./deviceTransactionConfig": {
+      "types": "./lib/types/bridge/deviceTransactionConfig.d.ts",
+      "require": "./lib/cjs/bridge/deviceTransactionConfig.js",
+      "default": "./lib/esm/bridge/deviceTransactionConfig.js"
+    },
+    "./erc20": {
+      "types": "./lib/types/erc20/tokenAccounts.d.ts",
+      "require": "./lib/cjs/erc20/tokenAccounts.js",
+      "default": "./lib/esm/erc20/tokenAccounts.js"
+    },
+    "./logic": {
+      "types": "./lib/types/common-logic/index.d.ts",
+      "require": "./lib/cjs/common-logic/index.js",
+      "default": "./lib/esm/common-logic/index.js"
+    },
+    "./network": {
+      "types": "./lib/types/network/index.d.ts",
+      "require": "./lib/cjs/network/index.js",
+      "default": "./lib/esm/network/index.js"
+    },
+    "./signer": {
+      "types": "./lib/types/signer/index.d.ts",
+      "require": "./lib/cjs/signer/index.js",
+      "default": "./lib/esm/signer/index.js"
+    },
+    "./specs": {
+      "types": "./lib/types/test/bot-specs.d.ts",
+      "require": "./lib/cjs/test/bot-specs.js",
+      "default": "./lib/esm/test/bot-specs.js"
+    },
+    "./transaction": {
+      "types": "./lib/types/bridge/transaction.d.ts",
+      "require": "./lib/cjs/bridge/transaction.js",
+      "default": "./lib/esm/bridge/transaction.js"
+    },
+    "./types": {
+      "types": "./lib/types/index.d.ts",
+      "require": "./lib/cjs/types/index.js",
+      "default": "./lib/esm/types/index.js"
+    },
+    "./*": {
+      "types": "./lib/types/*.js",
+      "require": "./lib/cjs/*.js",
+      "default": "./lib/esm/*.js"
+    },
+    ".": {
+      "types": "./lib/types/index.d.ts",
+      "require": "./lib/cjs/index.js",
+      "default": "./lib/esm/index.js"
+    },
+    "./package.json": {
+      "require": "./lib/cjs/package.json",
+      "default": "./lib/esm/package.json"
+    }
   },
   "license": "Apache-2.0",
   "dependencies": {
@@ -78,17 +105,19 @@
     "@types/jest": "^29.5.10",
     "@types/lodash": "^4.14.191",
     "@types/semver": "^7.5.8",
+    "axios": "1.7.7",
+    "esbuild": "0.24.2",
     "jest": "^29.7.0",
-    "ts-jest": "^29.1.1",
-    "axios": "1.7.7"
+    "ts-jest": "^29.1.1"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
-    "build": "tsc --outDir lib-es",
+    "build": "zx build.mjs",
     "coverage": "jest --coverage --testPathIgnorePatterns='/bridge.integration.test.ts|node_modules|lib-es|lib/' --passWithNoTests && mv coverage/coverage-final.json coverage/coverage-filecoin.json",
     "prewatch": "pnpm build",
-    "watch": "tsc --watch",
-    "watch:es": "tsc --watch -m esnext --moduleResolution bundler --outDir lib-es",
+    "watch": "zx watch.mjs",
+    "watch:es": "zx watch.mjs --platform esm",
+    "watch:cjs": "zx watch.mjs --platform cjs",
     "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",

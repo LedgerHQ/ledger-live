@@ -27,6 +27,7 @@ export type UseOnboardingStatePollingArgs = UseOnboardingStatePollingDependencie
   device: Device | null;
   pollingPeriodMs: number;
   stopPolling?: boolean;
+  allowedErrorChecks?: ((error: unknown) => boolean)[];
 };
 
 /**
@@ -49,6 +50,7 @@ export const useOnboardingStatePolling = ({
   device,
   pollingPeriodMs,
   stopPolling = false,
+  allowedErrorChecks = [],
 }: UseOnboardingStatePollingArgs): UseOnboardingStatePollingResult => {
   const [onboardingState, setOnboardingState] = useState<OnboardingState | null>(null);
   const [allowedError, setAllowedError] = useState<Error | null>(null);
@@ -64,6 +66,7 @@ export const useOnboardingStatePolling = ({
       onboardingStatePollingSubscription = getOnboardingStatePolling({
         deviceId: device.deviceId,
         pollingPeriodMs,
+        allowedErrorChecks,
       }).subscribe({
         next: (onboardingStatePollingResult: OnboardingStatePollingResult) => {
           if (onboardingStatePollingResult) {

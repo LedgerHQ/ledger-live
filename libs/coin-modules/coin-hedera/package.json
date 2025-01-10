@@ -20,61 +20,72 @@
   "publishConfig": {
     "access": "public"
   },
-  "typesVersions": {
-    "*": {
-      "lib-es/*": [
-        "lib-es/*"
-      ],
-      "specs": [
-        "lib/test/bot-specs"
-      ],
-      "*": [
-        "lib-es/*"
-      ]
-    }
-  },
   "exports": {
-    "./api": "./lib-es/api/index.js",
-    "./deviceTransactionConfig": "./lib-es/deviceTransactionConfig.js",
-    "./signer": "./lib-es/signer/index.js",
-    "./specs": "./lib-es/test/bot-specs.js",
-    "./transaction": "./lib-es/transaction.js",
-    "./types": "./lib-es/types/index.js",
-    "./*": "./lib-es/*.js",
-    ".": "./lib-es/index.js",
-    "./package.json": "./package.json"
+    "./lib/*": "./lib/cjs/*.js",
+    "./lib-es/*": "./lib/esm/*.js",
+    "./signer": {
+      "types": "./lib/types/signer/index.d.ts",
+      "import": "./lib/esm/signer/index.js",
+      "require": "./lib/cjs/signer/index.js"
+    },
+    "./specs": {
+      "types": "./lib/types/test/bot-specs.d.ts",
+      "import": "./lib/esm/test/bot-specs.js",
+      "require": "./lib/cjs/test/bot-specs.js"
+    },
+    "./types": {
+      "types": "./lib/types/types/index.d.ts",
+      "import": "./lib/esm/types/index.js",
+      "require": "./lib/cjs/types/index.js"
+    },
+    "./*": {
+      "types": "./lib/types/*.d.ts",
+      "import": "./lib/esm/*.js",
+      "require": "./lib/cjs/*.js"
+    },
+    ".": {
+      "types": "./lib/types/index.d.ts",
+      "import": "./lib/esm/index.js",
+      "require": "./lib/cjs/index.js"
+    },
+    "./package.json": {
+      "require": "./lib/cjs/package.json",
+      "default": "./lib/esm/package.json"
+    }
   },
   "license": "Apache-2.0",
   "dependencies": {
+    "@hashgraph/sdk": "2.14.2",
     "@ledgerhq/coin-framework": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/devices": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
+    "@ledgerhq/live-countervalues": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
-    "@ledgerhq/live-countervalues": "workspace:^",
-    "@hashgraph/sdk": "2.54.2",
+    "bignumber.js": "^9.1.2",
     "expect": "^27.4.6",
     "invariant": "^2.2.2",
     "lodash": "^4.17.21",
-    "bignumber.js": "^9.1.2",
     "rxjs": "^7.8.1"
   },
   "devDependencies": {
     "@types/invariant": "^2.2.2",
     "@types/jest": "^29.5.10",
     "@types/lodash": "^4.14.191",
+    "esbuild": "0.24.2",
     "jest": "^29.7.0",
     "ts-jest": "^29.1.1"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
-    "build": "tsc --outDir lib-es",
+    "build": "zx build.mjs",
     "coverage": "jest --coverage --testPathIgnorePatterns='/bridge.integration.test.ts|node_modules|lib-es|lib/' --passWithNoTests && mv coverage/coverage-final.json coverage/coverage-hedera.json",
     "prewatch": "pnpm build",
-    "watch": "tsc --watch",
-    "watch:es": "tsc --watch -m esnext --moduleResolution bundler --outDir lib-es",
+    "watch": "zx watch.mjs",
+    "watch:es": "zx watch.mjs --platform esm",
+    "watch:cjs": "zx watch.mjs --platform cjs",
     "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",

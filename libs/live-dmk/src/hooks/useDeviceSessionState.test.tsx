@@ -1,46 +1,43 @@
+import { render, act } from "@testing-library/react";
+import { type Mock } from "vitest";
 import React from "react";
-import { render, act, cleanup } from "@testing-library/react";
-import "@testing-library/jest-dom";
-import { BehaviorSubject, of } from "rxjs";
-import {
-  DeviceManagementKitProvider,
-  useDeviceSessionState,
-  useDeviceManagementKit,
-} from "./index";
+import { of } from "rxjs";
 import { DeviceStatus } from "@ledgerhq/device-management-kit";
+import { DeviceManagementKitProvider, useDeviceManagementKit } from "./useDeviceManagementKit";
+import { useDeviceSessionState } from "./useDeviceSessionState";
 
-jest.mock("@ledgerhq/device-management-kit", () => ({
-  DeviceManagementKitBuilder: jest.fn(() => ({
-    addLogger: jest.fn().mockReturnThis(),
-    addTransport: jest.fn().mockReturnThis(),
-    build: jest.fn().mockReturnValue({
-      getDeviceSessionState: jest.fn(),
-      startDiscovering: jest.fn(),
-      connect: jest.fn(),
-    }),
-  })),
-  BuiltinTransports: {
-    USB: "USB",
-  },
-  ConsoleLogger: jest.fn(),
-  LogLevel: { Debug: "debug" },
-  DeviceStatus: {
-    NOT_CONNECTED: "not_connected",
-    CONNECTED: "connected",
-  },
-}));
+vi.mock("@ledgerhq/device-management-kit", async importOriginal => {
+  const actual = await importOriginal<typeof import("@ledgerhq/device-management-kit")>();
+  return {
+    ...actual,
+    DeviceManagementKitBuilder: vi.fn(() => ({
+      addLogger: vi.fn().mockReturnThis(),
+      addTransport: vi.fn().mockReturnThis(),
+      build: vi.fn().mockReturnValue({
+        getDeviceSessionState: vi.fn(),
+        startDiscovering: vi.fn(),
+        connect: vi.fn(),
+      }),
+    })),
+    BuiltinTransports: {
+      USB: "USB",
+    },
+    ConsoleLogger: vi.fn(),
+    LogLevel: { Debug: "debug" },
+    DeviceStatus: {
+      NOT_CONNECTED: "not_connected",
+      CONNECTED: "connected",
+    },
+  };
+});
 
-const activeDeviceSessionSubjectMock = new BehaviorSubject<{
-  sessionId: string;
-  transport: { sessionId: string };
-} | null>(null);
-
-jest.mock("./index", () => ({
-  ...jest.requireActual("./index"),
-  useDeviceManagementKit: jest.fn(),
-}));
-
-afterEach(cleanup);
+vi.mock("./useDeviceManagementKit", async importOriginal => {
+  const actual = await importOriginal<typeof import("./useDeviceManagementKit")>();
+  return {
+    ...actual,
+    useDeviceManagementKit: vi.fn(),
+  };
+});
 
 const Wrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <DeviceManagementKitProvider>{children}</DeviceManagementKitProvider>
@@ -57,42 +54,31 @@ const TestComponent: React.FC = () => {
 
 describe("useDeviceSessionState", () => {
   let deviceManagementKitMock: {
-    getDeviceSessionState: jest.Mock;
+    getDeviceSessionState: Mock;
   };
 
   beforeEach(() => {
     deviceManagementKitMock = {
-      getDeviceSessionState: jest.fn(),
+      getDeviceSessionState: vi.fn(),
     };
-    (useDeviceManagementKit as jest.Mock).mockReturnValue(deviceManagementKitMock);
+    (useDeviceManagementKit as Mock).mockReturnValue(deviceManagementKitMock);
 
-    jest
-      .spyOn(deviceManagementKitMock, "getDeviceSessionState")
-      .mockImplementation(({ sessionId }: { sessionId: string }) => {
+    vi.spyOn(deviceManagementKitMock, "getDeviceSessionState").mockImplementation(
+      ({ sessionId }: { sessionId: string }) => {
         if (sessionId === "valid-session") {
           return of({
             deviceStatus: DeviceStatus.CONNECTED,
           });
-        } else {
-          return of({
-            deviceStatus: DeviceStatus.NOT_CONNECTED,
-          });
         }
-      });
+      },
+    );
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it("should display the device status when an active session is found", async () => {
-    activeDeviceSessionSubjectMock.next({
-      sessionId: "valid-session",
-      transport: {
-        sessionId: "",
-      },
-    });
-
     let result: ReturnType<typeof render> | undefined;
     await act(async () => {
       result = render(
@@ -103,7 +89,7 @@ describe("useDeviceSessionState", () => {
     });
 
     if (!result) {
-      throw new Error("Failed to render component");
+      throw new Error("Result is undefined");
     }
 
     const { getByTestId } = result!;
@@ -113,13 +99,6 @@ describe("useDeviceSessionState", () => {
   });
 
   it("should update the state when the device disconnects", async () => {
-    activeDeviceSessionSubjectMock.next({
-      sessionId: "valid-session",
-      transport: {
-        sessionId: "",
-      },
-    });
-
     let result: ReturnType<typeof render> | undefined;
     await act(async () => {
       result = render(
@@ -136,8 +115,6 @@ describe("useDeviceSessionState", () => {
 
     const statusElement = getByTestId("device-status");
     expect(statusElement).toHaveTextContent("connected");
-
-    activeDeviceSessionSubjectMock.next(null);
 
     await act(async () => {
       deviceManagementKitMock.getDeviceSessionState.mockReturnValueOnce(

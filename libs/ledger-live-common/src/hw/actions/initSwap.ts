@@ -15,7 +15,7 @@ import type { ConnectAppEvent, Input as ConnectAppInput } from "../connectApp";
 import type { AppRequest, AppState } from "./app";
 import { createAction as createAppAction } from "./app";
 import type { Action, Device } from "./types";
-import { TransactionStatus } from "../../generated/types";
+import type { TransactionStatus } from "../../generated/types";
 
 type State = {
   initSwapResult: InitSwapResult | null | undefined;
@@ -103,9 +103,6 @@ const reducer = (state: State, e: SwapRequestEvent) => {
         isLoading: false,
       };
   }
-
-  // FIXME it is supposed to be unreachable but it seems to be reached in swap flow. so we must preserve returning the state
-  return state;
 };
 
 function useFrozenValue<T>(value: T, frozen: boolean): T {

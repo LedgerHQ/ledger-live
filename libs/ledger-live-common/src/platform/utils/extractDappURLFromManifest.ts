@@ -12,6 +12,9 @@ export function extractDappURLFromManifest(manifest: LiveAppManifest): URL | und
   }
   if (manifest && manifest.dapp) {
     try {
+      if (manifest.url instanceof URL) {
+        return manifest.url;
+      }
       const url = new URL(manifest.url);
       return url;
     } catch (error) {
