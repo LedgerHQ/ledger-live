@@ -24,8 +24,6 @@ import { setDynamicContentMobileCards } from "~/actions/dynamicContent";
 
 const useDynamicContent = () => {
   const dispatch = useDispatch();
-  const { logClickCard, logDismissCard, logImpressionCard, refreshDynamicContent } =
-    useBrazeContentCard();
   const notificationCards = useSelector(notificationsCardsSelector);
   const assetsCards = useSelector(assetsCardsSelector);
   const walletCards = useSelector(walletCardsSelector);
@@ -34,6 +32,9 @@ const useDynamicContent = () => {
   const landingPageStickyCtaCards = useSelector(landingPageStickyCtaCardsSelector);
   const mobileCards = useSelector(mobileCardsSelector);
   const hiddenCards: string[] = useSelector(dismissedDynamicCardsSelector);
+
+  const { logClickCard, logDismissCard, logImpressionCard, refreshDynamicContent } =
+    useBrazeContentCard(mobileCards);
 
   const walletCardsDisplayed = useMemo(
     () => walletCards.filter((wc: WalletContentCard) => !hiddenCards.includes(wc.id)),
