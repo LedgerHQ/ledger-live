@@ -119,7 +119,7 @@
     "addressCopied" : "تم نسخ العنوان",
     "addressCopiedSuspicious" : "عدم تطابق العنوان المنسوخ والعنوان الموجود في ذاكرة النصوص.",
     "experimentalFeature" : "تجريبي",
-    "featureFlags" : "علامات الميزة",
+    "featureFlags" : "Feature flag",
     "information" : "معلومات",
     "search" : "جارٍ البحث...",
     "searchWithoutEllipsis" : "بحث",
@@ -200,7 +200,8 @@
       "STAKE" : "مُكدَّس",
       "UNSTAKE" : "غير مُكدَّس",
       "WITHDRAW_UNSTAKED" : "مسحوب",
-      "SENDING" : "إرسال"
+      "SENDING" : "إرسال",
+      "BURN" : "محروق"
     },
     "edit" : {
       "title" : "التسريع أو الإلغاء",
@@ -441,6 +442,14 @@
       "description" : "™Ledger Nano S ليست متوافقة مع THORChain. يمكنك استخدام Ledger Nano S Plus أو Ledger Nano X أو Ledger Stax أو Ledger Flex لتجربة المبادلات عبر سلاسل الكتل المختلفة على THORChain عن طريق Ledger Live",
       "cta" : "استكشف الأجهزة المتوافقة",
       "changeProvider" : "قم بالمبادلة مع مزود آخر"
+    },
+    "incompatibility" : {
+      "ton_title" : "™Ledger Nano S لا تدعم مبادلة Ton",
+      "ton_description" : "لمبادلة Ton، استخدِم أي جهاز Ledger آخر متوافق مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
+      "spl_tokens_title" : "™Ledger Nano S لا تدعم مبادلة رموز سولانا (Solana)",
+      "spl_tokens_description" : "لمبادلة رموز سولانا (Solana)، استخدِم أي جهاز Ledger آخر متوافق مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
+      "ada_title" : "™Ledger Nano S لا تدعم مبادلة كاردانو (Cardano)",
+      "ada_description" : "لمبادلة كاردانو (Cardano)، استخدِم أي جهاز Ledger آخر متوافق مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax."
     },
     "providers" : {
       "title" : "اختر أحد المزودين لمبادلة الأصول المشفرة",
@@ -1834,7 +1843,8 @@
       "withdrawUnbondedAmount" : "المبلغ المسحوب",
       "palletMethod" : "الطريقة",
       "transferAmount" : "مبلغ التحويل",
-      "validatorsCount" : "({{number}}) مدقق"
+      "validatorsCount" : "({{number}}) مدقق",
+      "version" : "الإصدار"
     }
   },
   "operationList" : {
@@ -3717,6 +3727,10 @@
           }
         }
       }
+    },
+    "token" : {
+      "frozenStateWarning" : "تمّ تجميد أصول الحساب!",
+      "transferWarning" : "للتحقق من عنوان المستلم لرموز سولانا (Solana) باستخدام ™Ledger Nano S، <0>يرجى اتباع هذه التعليمات.</0>"
     }
   },
   "ethereum" : {
@@ -5784,6 +5798,16 @@
       "title" : "لم يتم فحص الحساب بواسطة العقدة الكاملة",
       "description" : "يرجى تكوين العقدة الكاملة الخاصة بك للبحث عن الحسابات المرتبطة بهذا الجهاز. يجب أن تقوم العقدة الكاملة الخاصة بك أولاً بالبحث عن هذا الحساب في سلسلة الكتل (blockchain) قبل أن تتمكن من إضافته إلى محفظتك الاستثمارية."
     },
+    "SequenceNumberTooNew" : {
+      "title" : "رقم التسلسل حديث جداً"
+    },
+    "SequenceNumberTooOld" : {
+      "title" : "رقم التسلسل قديم جداً",
+      "description" : "رقم التسلسل قديم جداً"
+    },
+    "TransactionExpired" : {
+      "title" : "انتهت صلاحية المعاملة"
+    },
     "SwapRateExpiredError" : {
       "title" : "انتهت صلاحية المعدَّل",
       "description" : "انتهت صلاحية مُعدل الصرف. يُرجى التحديث وإعادة المحاولة."
@@ -6170,6 +6194,15 @@
     },
     "SolanaAccountNotFunded" : {
       "title" : "الحساب غير ممول"
+    },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "سيتمّ تمويل الحساب"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "تمّ تجميد رموز أصول الحساب"
+    },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "لم يتمّ بدء الحساب"
     },
     "SolanaMemoIsTooLong" : {
       "title" : "الملاحظة طويلة جداً. الحد الأقصى للطول هو {{maxLength}}"
