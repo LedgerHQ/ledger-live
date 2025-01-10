@@ -1,5 +1,16 @@
 # live-mobile
 
+## 3.60.0-nightly.4
+
+### Minor Changes
+
+- [#8855](https://github.com/LedgerHQ/ledger-live/pull/8855) [`29ffc56`](https://github.com/LedgerHQ/ledger-live/commit/29ffc563a6e7c07b64c34ee46cb484a8dde1fc60) Thanks [@KVNLS](https://github.com/KVNLS)! - Fix performance issue when opening LL on iOS
+
+### Patch Changes
+
+- Updated dependencies [[`ca55faf`](https://github.com/LedgerHQ/ledger-live/commit/ca55faf6009042a79ef1645a431901bdd813251e)]:
+  - @ledgerhq/live-common@34.17.0-nightly.3
+
 ## 3.60.0-nightly.3
 
 ### Minor Changes

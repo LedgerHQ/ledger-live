@@ -1,5 +1,11 @@
 ## 34.5.0-next.4
 
+## 34.17.0-nightly.3
+
+### Patch Changes
+
+- [#8840](https://github.com/LedgerHQ/ledger-live/pull/8840) [`ca55faf`](https://github.com/LedgerHQ/ledger-live/commit/ca55faf6009042a79ef1645a431901bdd813251e) Thanks [@Wozacosta](https://github.com/Wozacosta)! - bugfix: celo transfer displaying amount and recipient address properly
+
 ## 34.17.0-nightly.2
 
 ### Minor Changes
