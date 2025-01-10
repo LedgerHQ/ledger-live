@@ -17,9 +17,7 @@ import {
   sync,
   makeAccountBridgeReceive,
 } from "../../../bridge/mockHelpers";
-import { getEstimatedFees } from "./bridgeHelpers/fee";
 import { updateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { getAddress, isAddressValid } from "./bridgeHelpers/addresses";
 import { getMainAccount } from "../../../account";
 
 const receive = makeAccountBridgeReceive();
@@ -134,15 +132,36 @@ const estimateMaxSpendable = async ({
 
   return balance;
 };
+
 const preload = async () => ({});
 
 const hydrate = () => {};
+
+const getAddress = (
+  a: Account,
+): {
+  address: string;
+  derivationPath: string;
+} => ({ address: a.freshAddress, derivationPath: a.freshAddressPath });
+
+const isAddressValid = (): boolean => {
+  try {
+    return true;
+  } catch (err) {
+    return false;
+  }
+};
+
+const getEstimatedFees = (): BigNumber => {
+  return new BigNumber(0);
+};
 
 const currencyBridge: CurrencyBridge = {
   preload,
   hydrate,
   scanAccounts,
 };
+
 const accountBridge: AccountBridge<Transaction> = {
   getSerializedAddressParameters,
   createTransaction,
@@ -155,6 +174,7 @@ const accountBridge: AccountBridge<Transaction> = {
   broadcast,
   estimateMaxSpendable,
 };
+
 export default {
   currencyBridge,
   accountBridge,
