@@ -60,6 +60,7 @@ const test_ios = async () => {
       --headless \
       --retries 2 \
       --runInBand \
+      --reuse \
       --cleanup \
       ${filteredArgs}`;
 };
@@ -79,6 +80,7 @@ const test_android = async () => {
       --retries 2 \\
       --runInBand \\
       --cleanup \\
+      --reuse \\
       ${filteredArgs}`;
 };
 
