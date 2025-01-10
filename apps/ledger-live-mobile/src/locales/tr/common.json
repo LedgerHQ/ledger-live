@@ -790,6 +790,12 @@
     "SolanaAccountNotFunded" : {
       "title" : "Hesap daha önce fonlanmamış"
     },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "Hesap fonlanacak"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "Token hesabı varlıkları donduruldu"
+    },
     "SolanaAddressOfEd25519" : {
       "title" : "Adres ed25519 eğrisi dışında"
     },
@@ -971,6 +977,18 @@
       "title" : "Geçersiz Sağlayıcı",
       "description" : "\"My Ledger sağlayıcım\" ayarını değiştirmeniz gerekmektedir. Bunu değiştirmek için Ledger Live'da \"Ayarlar\"ı açın, \"Deneysel özellikler\"i seçin ve ardından farklı bir sağlayıcı seçin."
     },
+    "GasLessThanEstimate" : {
+      "title" : "Bu çok düşük olabilir. Lütfen arttırın"
+    },
+    "SequenceNumberTooNew" : {
+      "title" : "Sıra numarası çok yeni"
+    },
+    "SequenceNumberTooOld" : {
+      "title" : "Sıra numarası çok eski"
+    },
+    "TransactionExpired" : {
+      "title" : "İşlemin süresi doldu"
+    },
     "SequenceNumberError" : {
       "title" : "Sıra numarası hatası",
       "description" : "Lütfen pencereyi kapatıp daha sonra tekrar deneyin"
@@ -1019,6 +1037,12 @@
     "ScannedNewImportQrCode" : {
       "title" : "Güncelleme gerekli",
       "description" : "Uygulamalarınızı senkronize etmek için her ikisinin de en son sürüme güncellendiğinden emin olun."
+    },
+    "AppManifestUnknownError" : {
+      "title" : "Swap Live App not found"
+    },
+    "AppManifestNotFoundError" : {
+      "title" : "Failed to load Swap Live App"
     }
   },
   "crash" : {
@@ -2342,7 +2366,8 @@
       "seeMarket" : "Tümünü gör"
     },
     "walletBalance" : "Cüzdan bakiyesi",
-    "seelAllAssets" : "Tüm Varlıkları Gör",
+    "seeAllAssets" : "Tüm varlıkları gör",
+    "seeAllAccounts" : "Tüm hesapları gör",
     "marketPriceSection" : {
       "title" : "{{currencyTicker}} piyasa fiyatı",
       "currencyPrice" : "1 {{currencyTicker}} fiyatı",
@@ -2748,6 +2773,9 @@
         "cta" : "Stake etmeye başla"
       }
     }
+  },
+  "assets" : {
+    "title" : "Varlıklar"
   },
   "accounts" : {
     "title" : "Hesaplar",
@@ -3467,6 +3495,16 @@
         "providers" : {
           "noProviders" : "Sonuç bulunamadı. Mevcut tercihlere uyan teklif yok."
         }
+      },
+      "incompatibility" : {
+        "explore_compatible_devices" : "Uyumlu cihazları keşfedin",
+        "contact_support" : "Müşteri destek ekibiyle iletişime geç",
+        "ton_title" : "Ledger Nano S™, Ton takasını desteklemez",
+        "ton_description" : "Ton takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın.",
+        "spl_tokens_title" : "Ledger Nano S™, Solana token takasını desteklemez",
+        "spl_tokens_description" : "Solana token'larını takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın.",
+        "ada_title" : "Ledger Nano S™, Cardano takasını desteklemez",
+        "ada_description" : "Cardano takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın."
       }
     },
     "lending" : {
@@ -3505,7 +3543,7 @@
       },
       "howDoesLendingWork" : "Borç verme nasıl çalışır",
       "dashboard" : {
-        "tabTitle" : "Kontrol Paneli",
+        "tabTitle" : "Pano",
         "assetsTitle" : "Borç verilebilecek varlıklar",
         "accountsTitle" : "Onaylanmış hesaplar",
         "emptySateDescription" : "Ethereum hesaplarınızdaki varlıkları doğrudan borç olarak verebilir ve faiz kazanabilirsiniz.",
@@ -3748,6 +3786,7 @@
       "to" : "Alıcı",
       "infoTotalTitle" : "Düşülecek tutar",
       "infoTotalDesc" : "İşlem miktarını ve seçilen ağın ücretlerini içerir",
+      "gasFee" : "Gas Ücreti",
       "gasLimit" : "Gas limiti",
       "gasPrice" : "Gas ücreti",
       "maxFee" : "Ücret üst limiti",
@@ -3961,6 +4000,8 @@
   },
   "addAccounts" : {
     "addNew" : "Yeni ekle",
+    "seeAllAccounts" : "Tüm hesapları gör",
+    "addNewOrExisting" : "Yeni veya mevcut bir hesabı ekleyin",
     "supportLinks" : {
       "segwit_or_native_segwit" : "Segwit mi yoksa Native Segwit mi?"
     },
@@ -5912,6 +5953,10 @@
         "description" : "SOL varlıklarınızla bir doğrulayıcıya yetki devrederek ödüller kazanabilirsiniz."
       },
       "reserveWarning" : "Gelecekte staking'inizi durdurmak ve çekmek için gerekecek ağ ücretlerini karşılamak üzere cüzdanınızda en az {{amount}} SOL bulundurduğunuzdan lütfen emin olun"
+    },
+    "token" : {
+      "frozenStateWarning" : "Hesap varlıkları donduruldu!",
+      "transferWarning" : "Ledger Nano S™ kullanarak Solana token'ları için alıcı adresini doğrulamak üzere <0>bu yönergeleri uygulayın.</0>"
     }
   },
   "near" : {
@@ -6102,7 +6147,7 @@
     },
     "warning" : "Ledger cihazınızda gösterilen adres ile {{recipientWording}} tarafındaki adresin eşleştiğinden emin olun",
     "recipientWording" : {
-      "send" : "Cihazınızda görüntülenen adresin, alıcı tarafından size verilen adresle tam olarak eşleştiğini her zaman doğrulayın",
+      "send" : "Cihazınızda gösterilen adresin, alıcı tarafından size verilen adresle tam olarak eşleştiğini daima doğrulayın",
       "delegate" : "Cihazınızda görüntülenen adresin, doğrulayıcı tarafından sağlanan adresle tam olarak eşleştiğini her zaman doğrulayın",
       "undelegate" : "Cihazınızda görüntülenen adresin, doğrulayıcı tarafından sağlanan adresle tam olarak eşleştiğini her zaman doğrulayın",
       "freeze" : "Cihazınızda görüntülenen adresin, size sağlanan adresle tam olarak eşleştiğini her zaman doğrulayın",
@@ -6563,7 +6608,7 @@
     },
     "entryPointCard" : {
       "title" : "{{productName}} cihazınız için sırada ne var?",
-      "description" : "Herhangi bir borsadaki veya cüzdandaki varlıklarınızı aktarın, kripto satın alın, kilitli ekranı özelleştirin veya Ledger Recover'a abone olun.",
+      "description" : "Bir borsadaki veya cüzdandaki varlıklarınızı aktarın, kripto satın alın, kilitli ekranı özelleştirin veya Ledger Recover'a abone olun.",
       "buttonLabel" : "Sırada ne var?"
     },
     "actions" : {
@@ -7111,6 +7156,14 @@
           "name" : "Hesap ekleyin"
         }
       }
+    }
+  },
+  "assetSelection" : {
+    "selectCrypto" : {
+      "title" : "Varlık Seçin"
+    },
+    "selectNetwork" : {
+      "title" : "Varlığın ait olduğu blok zinciri ağını seçin"
     }
   }
 }
