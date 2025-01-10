@@ -5317,6 +5317,7 @@
     "verifyData": "Always verify the operation details on your device.",
     "doubleCheck": "Double-check the transaction details on your Ledger device before signing.",
     "termsAndConditions": "By signing this transaction, you accept <0>{{appName}}'s terms of use.</0>",
+    "termsAndConditionsWithPrivacy": "By signing this transaction, you accept <0>{{appName}}'s terms of use.</0> and <1>Privacy Policy.</1>",
     "warningWording": {},
     "titleWording": {
       "send": "Please confirm on your device to finalize the operation",
