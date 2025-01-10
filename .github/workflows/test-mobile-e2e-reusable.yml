@@ -109,7 +109,7 @@ jobs:
         id: detox-build
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator
-          key: ${{ runner.os }}-detox-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock', 'apps/ledger-live-mobile/ios/ledgerlivemobile.xcodeproj/project.pbxproj', 'apps/ledger-live-mobile/detox.config.js', 'apps/ledger-live-mobile/.env.mock') }}
+          key: ${{ runner.os }}-detox-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock', 'apps/ledger-live-mobile/ios/ledgerlivemobile.xcodeproj/project.pbxproj', 'apps/ledger-live-mobile/detox.config.js', 'apps/ledger-live-mobile/.env.mock', 'apps/ledger-live-mobile/ios/AppDelegate.mm') }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
           sessionToken: ${{ env.AWS_SESSION_TOKEN}}
@@ -457,7 +457,7 @@ jobs:
                 "text": {
                   "type": "plain_text",
                   "text": process.env.SPECULOS_RUN == 'false'
-                    ? "Ledger Live Mobile Mocked Tests on ${{ github.ref_name }}" 
+                    ? "Ledger Live Mobile Mocked Tests on ${{ github.ref_name }}"
                     : ":ledger-logo: Ledger Live Mobile E2E nightly tests results on ${{ github.ref_name }}",
                   "emoji": true
                 }
@@ -535,8 +535,8 @@ jobs:
               : {
                   attachments: [
                     {
-                      color: process.env.ANDROID_STATUS !== 'success' 
-                        ? "#FF333C" 
+                      color: process.env.ANDROID_STATUS !== 'success'
+                        ? "#FF333C"
                         : "#33FF39",
                       blocks,
                     },
