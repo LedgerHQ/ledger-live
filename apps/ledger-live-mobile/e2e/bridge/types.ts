@@ -62,6 +62,7 @@ export type MessageData =
     }
   | { type: "importBle"; id: string; payload: BleState }
   | { type: "setGlobals"; id: string; payload: { [key: string]: unknown } }
+  | { type: "resetApp"; id: string }
   | { type: "ACK"; id: string };
 
 export type MockDeviceEvent =

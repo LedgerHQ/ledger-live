@@ -211,6 +211,10 @@ export async function removeKnownSpeculos(id: string) {
   await postMessage({ type: "removeKnownSpeculos", id: uniqueId(), payload: id });
 }
 
+export async function resetApp() {
+  await postMessage({ type: "resetApp", id: uniqueId() });
+}
+
 function onMessage(messageStr: string) {
   const msg: ServerData = JSON.parse(messageStr);
   log(`Message received ${msg.type}`);

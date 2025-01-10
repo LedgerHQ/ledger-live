@@ -24,7 +24,7 @@ beforeAll(
   async () => {
     setEnv("DISABLE_APP_VERSION_REQUIREMENTS", true);
 
-    const port = await launchApp();
+    const port = await launchApp(true);
     await device.reverseTcpPort(8081);
     await device.reverseTcpPort(port);
     await device.reverseTcpPort(52619); // To allow the android emulator to access the dummy app

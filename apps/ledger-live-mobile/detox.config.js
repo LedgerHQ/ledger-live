@@ -18,7 +18,7 @@ module.exports = {
     level: process.env.DEBUG_DETOX ? "trace" : "info",
   },
   behavior: {
-    // NOTE: https://github.com/wix/Detox/blob/master/docs/APIRef.Configuration.md#behavior-configuration
+    // NOTE: https://github.com/wix/Detox/blob/master/docs/config/behavior.mdx
     init: {
       reinstallApp: true,
       exposeGlobals: false,

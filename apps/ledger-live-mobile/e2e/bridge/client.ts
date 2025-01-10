@@ -2,7 +2,11 @@ import { Platform } from "react-native";
 import invariant from "invariant";
 import { Subject } from "rxjs";
 import { store } from "~/context/store";
-import { importSettings, setLastConnectedDevice } from "~/actions/settings";
+import {
+  dangerouslyOverrideState,
+  importSettings,
+  setLastConnectedDevice,
+} from "~/actions/settings";
 import { importStore as importAccountsRaw } from "~/actions/accounts";
 import { acceptGeneralTerms } from "~/logic/terms";
 import { navigate } from "~/rootnavigation";
@@ -14,6 +18,7 @@ import { MessageData, ServerData, mockDeviceEventSubject } from "./types";
 import { getAllEnvs, setEnv } from "@ledgerhq/live-env";
 import { getAllFeatureFlags } from "@ledgerhq/live-common/e2e/index";
 import { DeviceModelId } from "@ledgerhq/devices";
+import { INITIAL_STATE as INITIAL_SETTINGS_STATE } from "~/reducers/settings";
 
 export const e2eBridgeClient = new Subject<MessageData>();
 
@@ -151,6 +156,14 @@ function onMessage(event: WebSocketMessageEvent) {
         const address = msg.payload;
         store.dispatch(removeKnownDevice(`httpdebug|ws://${address}`));
         setEnv("DEVICE_PROXY_URL", "");
+        break;
+      }
+      case "resetApp": {
+        store.dispatch(
+          dangerouslyOverrideState({
+            settings: INITIAL_SETTINGS_STATE,
+          }),
+        );
         break;
       }
       default:

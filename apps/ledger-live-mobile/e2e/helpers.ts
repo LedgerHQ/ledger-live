@@ -1,6 +1,6 @@
 import { by, element, waitFor, device, web } from "detox";
 import { Direction } from "detox/detox";
-import { findFreePort, close as closeBridge, init as initBridge } from "./bridge/server";
+import { findFreePort, close as closeBridge, init as initBridge, resetApp } from "./bridge/server";
 
 import { startSpeculos, stopSpeculos, specs } from "@ledgerhq/live-common/e2e/speculos";
 import { SpeculosDevice } from "@ledgerhq/speculos-transport";
@@ -181,7 +181,7 @@ export function isAndroid() {
   return device.getPlatform() === "android";
 }
 
-export async function launchApp() {
+export async function launchApp(reset = false) {
   const port = await findFreePort();
   closeBridge();
   initBridge(port);
@@ -203,6 +203,7 @@ export async function launchApp() {
       camera: "YES", // Give iOS permissions for the camera
     },
   });
+  if (reset) await resetApp();
   return port;
 }
 
