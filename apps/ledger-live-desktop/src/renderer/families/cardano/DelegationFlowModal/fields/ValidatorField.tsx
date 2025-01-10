@@ -73,7 +73,6 @@ const ValidatorField = ({ account, delegation, onChangeValidator, selectedPoolId
     if (selectedPool) {
       setCurrentPool([selectedPool]);
       if (pools.some(p => p.poolId === selectedPoolId)) {
-        console.log("onChangeValidator", selectedPool);
         onChangeValidator(selectedPool);
       }
     }
