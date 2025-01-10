@@ -78,6 +78,7 @@ export default class PortfolioPage {
     await scrollToId(this.seeAllTransactionButton, this.accountsListView);
   }
 
+  @Step("Expect Portfolio with accounts")
   async expectPortfolioWithAccounts() {
     await expect(getElementById(this.accountsListView)).toBeVisible();
   }
