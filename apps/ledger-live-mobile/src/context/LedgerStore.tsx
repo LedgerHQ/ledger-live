@@ -52,13 +52,35 @@ export default class LedgerStoreProvider extends Component<
   }
 
   async init() {
-    const bleData = await getBle();
-    this.props.store.dispatch(importBle(bleData));
-    const settingsData = await getSettings();
+    const startTime = Date.now();
 
-    const cachedCurrencyIds = await listCachedCurrencyIds();
-    // hydrate the store with the bridge/cache
-    // Promise.allSettled doesn't exist in RN
+    const logTime = (label: string) => {
+      const elapsed = Date.now() - startTime;
+      console.log(`${label} took ${elapsed}ms`);
+    };
+
+    const blePromise = getBle();
+    const settingsPromise = getSettings();
+    const cachedCurrencyIdsPromise = listCachedCurrencyIds();
+    const supportedFiatsPromise = listSupportedFiats();
+    const accountsPromise = getAccounts();
+    const postOnboardingStatePromise = getPostOnboardingState();
+    const marketStatePromise = getMarketState();
+    const trustchainStorePromise = getTrustchainState();
+    const walletStorePromise = getWalletExportState();
+    const protectPromise = getProtect();
+    const countervaluesPromise = getCountervalues();
+
+    const bleData = await blePromise;
+    logTime("getBle");
+    this.props.store.dispatch(importBle(bleData));
+
+    const settingsData = await settingsPromise;
+    logTime("getSettings");
+
+    const cachedCurrencyIds = await cachedCurrencyIdsPromise;
+    logTime("listCachedCurrencyIds");
+
     await Promise.all(
       cachedCurrencyIds
         .map(id => {
@@ -71,69 +93,78 @@ export default class LedgerStoreProvider extends Component<
             .catch((reason: unknown) => ({ status: "rejected", reason })),
         ),
     );
+    logTime("hydrateCurrency");
+
+    const supportedFiats = await supportedFiatsPromise;
+    logTime("listSupportedFiats");
+
     const bitcoin = getCryptoCurrencyById("bitcoin");
     const ethereum = getCryptoCurrencyById("ethereum");
     const possibleIntermediaries = [bitcoin, ethereum];
 
-    const getsupportedCountervalues = async () => {
-      const supportedFiats = await listSupportedFiats();
-      const supportedCounterValues = [...supportedFiats, ...possibleIntermediaries]
-        .map(currency => ({
-          value: currency.ticker,
-          ticker: currency.ticker,
-          label: `${currency.name} - ${currency.ticker}`,
-          currency,
-        }))
-        .sort((a, b) => (a.currency.name < b.currency.name ? -1 : 1));
+    const supportedCounterValues = [...supportedFiats, ...possibleIntermediaries]
+      .map(currency => ({
+        value: currency.ticker,
+        ticker: currency.ticker,
+        label: `${currency.name} - ${currency.ticker}`,
+        currency,
+      }))
+      .sort((a, b) => (a.currency.name < b.currency.name ? -1 : 1));
 
-      if (this.props?.store?.dispatch) {
-        this.props.store.dispatch(setSupportedCounterValues(supportedCounterValues));
-      }
-
-      return supportedCounterValues || [];
-    };
-
-    const supportedCV = await getsupportedCountervalues();
+    if (this.props?.store?.dispatch) {
+      this.props.store.dispatch(setSupportedCounterValues(supportedCounterValues));
+    }
+    logTime("getsupportedCountervalues");
 
     if (
       settingsData &&
       settingsData.counterValue &&
-      !supportedCV.find(({ ticker }) => ticker === settingsData.counterValue)
+      !supportedCounterValues.find(({ ticker }) => ticker === settingsData.counterValue)
     ) {
       settingsData.counterValue = settingsState.counterValue;
     }
 
     this.props.store.dispatch(importSettings(settingsData));
-    const accountsData = await getAccounts();
+    logTime("importSettings");
+
+    const accountsData = await accountsPromise;
+    logTime("getAccounts");
     this.props.store.dispatch(importAccountsRaw(accountsData));
 
-    const postOnboardingState = await getPostOnboardingState();
+    const postOnboardingState = await postOnboardingStatePromise;
+    logTime("getPostOnboardingState");
     if (postOnboardingState) {
       this.props.store.dispatch(importPostOnboardingState({ newState: postOnboardingState }));
     }
 
-    const marketState = await getMarketState();
+    const marketState = await marketStatePromise;
+    logTime("getMarketState");
     if (marketState) {
       this.props.store.dispatch(importMarket(marketState));
     }
 
-    const trustchainStore = await getTrustchainState();
+    const trustchainStore = await trustchainStorePromise;
+    logTime("getTrustchainState");
     if (trustchainStore) {
       this.props.store.dispatch(importTrustchainStoreState(trustchainStore));
     }
 
-    const walletStore = await getWalletExportState();
+    const walletStore = await walletStorePromise;
+    logTime("getWalletExportState");
     if (walletStore) {
       this.props.store.dispatch(importWalletState(walletStore));
     }
 
-    const protect = await getProtect();
+    const protect = await protectPromise;
+    logTime("getProtect");
     if (protect) {
       this.props.store.dispatch(updateProtectData(protect.data));
       this.props.store.dispatch(updateProtectStatus(protect.protectStatus));
     }
 
-    const initialCountervalues = await getCountervalues();
+    const initialCountervalues = await countervaluesPromise;
+    logTime("getCountervalues");
+
     this.setState(
       {
         ready: true,
@@ -141,6 +172,7 @@ export default class LedgerStoreProvider extends Component<
       },
       () => {
         this.props.onInitFinished();
+        logTime("onInitFinished");
       },
     );
   }
