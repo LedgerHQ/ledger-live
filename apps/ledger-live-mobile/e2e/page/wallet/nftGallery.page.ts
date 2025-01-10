@@ -47,15 +47,17 @@ export default class NftGalleryPage {
 
   @Step("Hide All Nft")
   async hideAllNft() {
+    // Get total number of NFTs given by the list identifier
     const nftNumber = Number.parseInt(
       (await getIdOfElement(this.nftListRegexp)).replace(this.nftListPrefix, ""),
     );
-    await tapByElement(this.selectAndHide());
 
-    for (let nb = nftNumber; nb > 0; nb--) {
-      await this.clickOnNft(nb - 1);
-    }
+    // Select all NFTs and confirm hidding
+    await tapByElement(this.selectAndHide());
+    for (let nb = nftNumber; nb > 0; nb--) await this.clickOnNft(nb - 1);
     await tapByElement(this.confirmHide());
+
+    // Expect no NFT displayed
     await expect(this.nftListItem()).not.toBeVisible();
   }
 
