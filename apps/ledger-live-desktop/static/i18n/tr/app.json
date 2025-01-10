@@ -119,7 +119,7 @@
     "addressCopied" : "Adres kopyalandı",
     "addressCopiedSuspicious" : "Kopyalanan adres ile panodaki adres arasında uyuşmazlık var.",
     "experimentalFeature" : "Deneysel",
-    "featureFlags" : "Özellik Bayrakları",
+    "featureFlags" : "Feature flag",
     "information" : "Bilgi",
     "search" : "Ara...",
     "searchWithoutEllipsis" : "Ara",
@@ -441,6 +441,14 @@
       "description" : "Ledger Nano S, THORChain ile uyumlu değildir. Ledger Live üzerinden THORChain'de zincirler arası takas işlemleri yapmak için Ledger Nano S Plus, Ledger Nano X, Ledger Stax veya Ledger Flex cihazlarını kullanabilirsiniz",
       "cta" : "Uyumlu cihazları keşfedin",
       "changeProvider" : "Başka bir sağlayıcıyla takas edin"
+    },
+    "incompatibility" : {
+      "ton_title" : "Ledger Nano S™, Ton takasını desteklemez",
+      "ton_description" : "Ton takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın.",
+      "spl_tokens_title" : "Ledger Nano S™, Solana token takasını desteklemez",
+      "spl_tokens_description" : "Solana token'larını takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın.",
+      "ada_title" : "Ledger Nano S™, Cardano takasını desteklemez",
+      "ada_description" : "Cardano takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın."
     },
     "providers" : {
       "title" : "Kripto takası işlemleri için bir sağlayıcı seçin",
@@ -878,7 +886,7 @@
   "lend" : {
     "title" : "Kripto borç verin",
     "tabs" : {
-      "dashboard" : "Kontrol Paneli",
+      "dashboard" : "Pano",
       "opened" : "Açılmış borçlar",
       "closed" : "Kapatılmış borçlar",
       "history" : "Geçmiş"
@@ -1355,7 +1363,7 @@
     },
     "postOnboardingBanner" : {
       "title" : "{{productName}} cihazınız için sırada ne var?",
-      "description" : "Herhangi bir borsadaki veya cüzdandaki varlıklarınızı aktarın, kripto satın alın, kilitli ekranı özelleştirin veya Ledger Recover'a abone olun.",
+      "description" : "Bir borsadaki veya cüzdandaki varlıklarınızı aktarın, kripto satın alın, kilitli ekranı özelleştirin veya Ledger Recover'a abone olun.",
       "link" : "Sırada ne var?",
       "dismiss" : "Belki sonra"
     },
@@ -1834,7 +1842,8 @@
       "withdrawUnbondedAmount" : "Çekilen Tutar",
       "palletMethod" : "Yöntem",
       "transferAmount" : "Transfer Tutarı",
-      "validatorsCount" : "Doğrulayıcılar ({{number}})"
+      "validatorsCount" : "Doğrulayıcılar ({{number}})",
+      "version" : "Sürüm"
     }
   },
   "operationList" : {
@@ -2057,7 +2066,7 @@
         "flash" : "Cihazınız hazırlanıyor..."
       },
       "confirmIdentifier" : "Tanımlayıcıyı doğrulayın",
-      "confirmIdentifierText" : "İşletim sistemi\ngüncellemesini başlatmak için\n“Yükle” seçeneğine dokunun",
+      "confirmIdentifierText" : "İşletim sistemi güncellemesini başlatmak için “Install” (Yükle) seçeneğine dokunun",
       "identifier" : "Tanımlayıcı",
       "newFirmware" : "Yeni donanım yazılımı {{version}}",
       "confirmUpdate" : "Lütfen cihazınızdaki güncellemeyi onaylayın",
@@ -5972,7 +5981,7 @@
       "description" : "Lütfen Ledger Destek ile iletişime geçin"
     },
     "MCUNotGenuineToDashboard" : {
-      "title" : "Güncellemek için kontrol paneline erişin",
+      "title" : "Güncellemek için panoya erişin",
       "description" : "",
       "list" : {
         "1" : "Herhangi bir tuşa basmadan USB kablosunun çıkartıp yeniden takın.",
