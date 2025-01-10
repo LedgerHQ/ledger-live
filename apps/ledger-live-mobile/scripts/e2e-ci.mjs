@@ -47,6 +47,7 @@ const test_ios = async () => {
     --headless \
     --retries 1 \
     --runInBand \
+    --reuse \
     --cleanup`;
 };
 
@@ -65,6 +66,7 @@ const test_android = async () => {
     --retries 1 \\
     --runInBand \\
     --cleanup \\
+    --reuse \\
     --shard ${shard}`;
 };
 
