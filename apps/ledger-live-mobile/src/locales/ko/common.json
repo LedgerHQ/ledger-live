@@ -1019,6 +1019,12 @@
     "ScannedNewImportQrCode" : {
       "title" : "업테이트가 필요합니다",
       "description" : "앱을 동기화하려면 두 앱 모두 최신 버전으로 업데이트되어 있는지 확인하세요."
+    },
+    "AppManifestUnknownError" : {
+      "title" : "Swap Live App not found"
+    },
+    "AppManifestNotFoundError" : {
+      "title" : "Failed to load Swap Live App"
     }
   },
   "crash" : {
@@ -2342,7 +2348,8 @@
       "seeMarket" : "모두 보기"
     },
     "walletBalance" : "지갑 잔액",
-    "seelAllAssets" : "모든 자산 보기",
+    "seeAllAssets" : "모든 자산 보기",
+    "seeAllAccounts" : "모든 계정 보기",
     "marketPriceSection" : {
       "title" : "{{currencyTicker}} 시장가",
       "currencyPrice" : "1 {{currencyTicker}} 가격",
@@ -2748,6 +2755,9 @@
         "cta" : "지금 스테이킹하기"
       }
     }
+  },
+  "assets" : {
+    "title" : "자산"
   },
   "accounts" : {
     "title" : "계정",
@@ -3467,6 +3477,16 @@
         "providers" : {
           "noProviders" : "결과를 찾을 수 없습니다 현재 설정에 사용할 수 있는 견적이 없습니다."
         }
+      },
+      "incompatibility" : {
+        "explore_compatible_devices" : "호환 가능한 장치 탐색",
+        "contact_support" : "고객 지원 문의",
+        "ton_title" : "Ledger Nano S™는 Ton 스왑을 지원하지 않습니다",
+        "ton_description" : "Ton을 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요.",
+        "spl_tokens_title" : "Ledger Nano S™는 솔라나 토큰 스왑을 지원하지 않습니다.",
+        "spl_tokens_description" : "솔라노 토큰을 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요.",
+        "ada_title" : "Ledger Nano S™는 카르다노 스왑을 지원하지 않습니다.",
+        "ada_description" : "카르다노를 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요."
       }
     },
     "lending" : {
@@ -3693,7 +3713,7 @@
     "highFeeModal" : "네트워크 수수료가 금액의 <1>10%</1>가 넘으니 주의하세요. 계속할까요?",
     "scan" : {
       "title" : "QR 코드 스캔",
-      "descBottom" : "QR 코드가 정사각형 칸 중앙에 위치하도록 해주세요.",
+      "descBottom" : "QR 코드 스캔",
       "fallback" : {
         "header" : "QR 코드 스캔",
         "title" : "카메라 활성화",
@@ -3961,6 +3981,8 @@
   },
   "addAccounts" : {
     "addNew" : "새로 추가하기",
+    "seeAllAccounts" : "모든 계정 보기",
+    "addNewOrExisting" : "기존 계정이나 신규 계정 추가",
     "supportLinks" : {
       "segwit_or_native_segwit" : "SegWit, 또는 Native SegWit?"
     },
@@ -6102,7 +6124,7 @@
     },
     "warning" : "Ledger에 표시된 주소가 {{recipientWording}}의 주소와 일치하는지 확인하세요",
     "recipientWording" : {
-      "send" : "언제나 장치 화면에 보이는 주소가 수령인이 제공한 주소와 정확히 일치하는지 확인하세요",
+      "send" : "항상 장치에 표시된 주소가 수신자가 제공한 주소와 정확히 일치하는지 확인하세요",
       "delegate" : "언제나 장치 화면에 보이는 주소가 검증인이 제공한 주소와 정확히 일치하는지 확인하세요",
       "undelegate" : "언제나 장치 화면에 보이는 주소가 검증인이 제공한 주소와 정확히 일치하는지 확인하세요",
       "freeze" : "언제나 장치 화면에 보이는 주소가 제공된 주소와 정확히 일치하는지 확인하세요",
@@ -7111,6 +7133,14 @@
           "name" : "계정 추가"
         }
       }
+    }
+  },
+  "assetSelection" : {
+    "selectCrypto" : {
+      "title" : "자산 선택"
+    },
+    "selectNetwork" : {
+      "title" : "자산이 속한 블록체인 네트워크를 선택하세요"
     }
   }
 }
