@@ -1,5 +1,6 @@
 import {
   IncorrectTypeError,
+  Operation,
   Pagination,
   type Api,
   type Transaction as ApiTransaction,
@@ -65,5 +66,48 @@ async function estimate(addr: string, amount: bigint): Promise<bigint> {
   return estimatedFees.estimatedFees;
 }
 
-const operations = (address: string, { limit, start }: Pagination) =>
-  listOperations(address, { limit, lastId: start });
+type PaginationState = {
+  pageSize: number;
+  heightLimit: number;
+  continueIterations: boolean;
+  apiNextCursor?: number;
+  accumulator: Operation[];
+};
+
+async function operations(address: string, { limit, start }: Pagination) {
+  if (start) {
+    // dump from height mode
+    async function fetchNextPage(state: PaginationState): Promise<PaginationState> {
+      const [operations, apiNextCursor] = await listOperations(address, {
+        limit: limit,
+        lastId: state.apiNextCursor,
+      });
+      const filteredOperations = operations.filter(op => op.block.height >= state.heightLimit);
+      const isTruncated = operations.length !== filteredOperations.length;
+      const continueIteration = !(apiNextCursor === -1 || isTruncated);
+      const accumulated = state.accumulator.concat(filteredOperations);
+      return {
+        ...state,
+        continueIterations: continueIteration,
+        apiNextCursor: apiNextCursor,
+        accumulator: accumulated,
+      };
+    }
+
+    const firstState: PaginationState = {
+      pageSize: 100,
+      heightLimit: start,
+      continueIterations: true,
+      accumulator: [],
+    };
+
+    let state = await fetchNextPage(firstState);
+    while (state.continueIterations) {
+      state = await fetchNextPage(state);
+    }
+    state.accumulator;
+  } else {
+    // pagination mode
+    listOperations(address, { limit: limit });
+  }
+}

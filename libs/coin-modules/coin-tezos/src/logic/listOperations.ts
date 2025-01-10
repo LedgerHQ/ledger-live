@@ -27,12 +27,18 @@ export async function listOperations(
   address: string,
   { lastId, limit }: { lastId?: number; limit?: number },
 ): Promise<[Operation[], number]> {
-  const operations = await tzkt.getAccountOperations(address, { lastId, limit });
+  const operations = await tzkt.getAccountOperations(address, {
+    lastId: lastId,
+    sort: 1,
+    limit: limit,
+  });
+  const lastOperation = operations.slice(-1)[0];
+  const nextLastId = lastOperation?.id ?? -1;
   return [
     operations
       .filter(op => isAPITransactionType(op) || isAPIDelegationType(op))
       .reduce((acc, op) => acc.concat(convertOperation(address, op)), [] as Operation[]),
-    operations.slice(-1)[0].id,
+    nextLastId,
   ];
 }
 
