@@ -2,7 +2,6 @@ import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { appendQueryParamsToDappURL } from "@ledgerhq/live-common/platform/utils/appendQueryParamsToDappURL";
 import { Flex, Text } from "@ledgerhq/react-ui";
-import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -18,6 +17,7 @@ import { ListProvider, ListProviders } from "./types";
 import { getTrackProperties } from "./utils/getTrackProperties";
 
 import ProviderItem from "./component/ProviderItem";
+import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
 
 const ethMagnitude = getCryptoCurrencyById("ethereum").units[0].magnitude;
 
@@ -33,7 +33,7 @@ export type StakeOnClickProps = {
 };
 
 interface Props {
-  account: Account;
+  account: WalletAPIAccount;
   singleProviderRedirectMode?: boolean;
   onClose?: () => void;
   hasCheckbox?: boolean;
@@ -87,13 +87,13 @@ export function EthStakingModalBody({
 
   const checkBoxOnChange = useCallback(() => {
     const value = !doNotShowAgain;
-    global.localStorage.setItem(`${LOCAL_STORAGE_KEY_PREFIX}${account?.currency?.id}`, `${value}`);
+    global.localStorage.setItem(`${LOCAL_STORAGE_KEY_PREFIX}${account?.id}`, `${value}`);
     setDoNotShowAgain(value);
     track("button_clicked2", {
       button: "not_show",
       ...getTrackProperties({ value, modal: source }),
     });
-  }, [doNotShowAgain, account?.currency?.id, source]);
+  }, [doNotShowAgain, account?.id, source]);
 
   const hasMinValidatorEth = account.spendableBalance.isGreaterThan(ETH_LIMIT);
 

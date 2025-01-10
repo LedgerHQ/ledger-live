@@ -11,7 +11,7 @@ import { walletSelector } from "~/renderer/reducers/wallet";
 
 type Props = {
   account: AccountLike;
-  parentAccount?: Account;
+  parentAccount?: Account | null;
 };
 
 const AccountHeaderActions = ({ account, parentAccount }: Props) => {
