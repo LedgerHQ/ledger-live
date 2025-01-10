@@ -2,6 +2,11 @@ name: "Build Mobile"
 
 on:
   workflow_call:
+    inputs:
+      trigger-event-type:
+        description: The event type that triggered the wrokflow
+        type: string
+        required: false
   workflow_dispatch:
     inputs:
       ref:
@@ -28,7 +33,7 @@ permissions:
 jobs:
   build-mobile-app-android:
     name: "Build LLM | Android"
-    runs-on: [ledger-live-4xlarge]
+    runs-on: "${{ inputs.trigger-event-type == 'merge_group' && 'ubuntu-22.04' || 'ledger-live-4xlarge' }}"
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
@@ -82,7 +87,8 @@ jobs:
           path: ${{ github.workspace }}/apps/ledger-live-mobile/android/app/build/outputs/apk/stagingRelease
 
   build-mobile-app-ios:
-    runs-on: [m1, ARM64]
+    # should provision an extra mac runner as the merge group runner because GH mac runners are extremely expensive
+    runs-on: "${{ inputs.trigger-event-type == 'merge_group' && 'macos-14' || '[m1, ARM64]' }}"
     name: "Build LLM | iOS"
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"

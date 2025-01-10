@@ -4,6 +4,11 @@ on:
   schedule:
     - cron: "0 3 * * 1-5"
   workflow_call:
+    inputs:
+      trigger-event-type:
+        description: The event type that triggered the wrokflow
+        type: string
+        required: false
   workflow_dispatch:
     inputs:
       ref:
@@ -11,14 +16,6 @@ on:
           If you run this manually, and want to run on a PR, the correct ref should be refs/pull/{PR_NUMBER}/merge to
           have the "normal" scenario involving checking out a merge commit between your branch and the base branch.
           If you want to run only on a branch or specific commit, you can use either the sha or the branch name instead (prefer the first verion for PRs).
-        type: string
-        required: false
-      login:
-        description: The GitHub username that triggered the workflow
-        type: string
-        required: false
-      base_ref:
-        description: The base branch to merge the head into when checking out the code
         type: string
         required: false
       export_to_xray:
@@ -72,7 +69,7 @@ env:
 jobs:
   detox-tests-ios:
     name: "LLM - iOS Detox Tests"
-    runs-on: [m1, ARM64]
+    runs-on: "${{ inputs.trigger-event-type == 'merge_group' && 'macos-14' || '[m1, ARM64]' }}"
     if: ${{ !inputs.speculos_tests && github.event_name != 'schedule' }}
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
@@ -167,7 +164,7 @@ jobs:
 
   allure-report-ios:
     name: "Allure Reports Export on Server"
-    runs-on: [ledger-live-medium]
+    runs-on: "${{ inputs.trigger-event-type == 'merge_group' && 'ubuntu-22.04' || 'ledger-live-medium' }}"
     if: ${{ !inputs.speculos_tests && (inputs.slack_notif || github.event_name == 'push') }}
     needs: [detox-tests-ios]
     outputs:
@@ -195,7 +192,7 @@ jobs:
 
   detox-tests-android:
     name: "Ledger Live Mobile - Android Detox Tests"
-    runs-on: [ledger-live-linux-8CPU-32RAM]
+    runs-on: "${{ inputs.trigger-event-type == 'merge_group' && 'ubuntu-22.04' || 'ledger-live-linux-8CPU-32RAM' }}"
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       LANG: en_US.UTF-8
@@ -343,7 +340,7 @@ jobs:
 
   allure-report-android:
     name: "Allure Reports Export on Server"
-    runs-on: [ledger-live-medium]
+    runs-on: "${{ inputs.trigger-event-type == 'merge_group' && 'ubuntu-22.04' || 'ledger-live-medium' }}"
     if: ${{ always() && (inputs.slack_notif || github.event_name == 'push' || github.event_name == 'schedule') }}
     outputs:
       report-url: ${{ steps.upload.outputs.report-url }}
@@ -388,7 +385,7 @@ jobs:
 
   upload-to-xray:
     name: "Upload to Xray"
-    runs-on: [ledger-live-medium]
+    runs-on: "${{ inputs.trigger-event-type == 'merge_group' && 'ubuntu-22.04' || 'ledger-live-medium' }}"
     strategy:
       matrix:
         platform:

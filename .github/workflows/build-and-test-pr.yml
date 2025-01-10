@@ -27,6 +27,8 @@ jobs:
     if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') && !github.event.pull_request.head.repo.fork }}
     uses: LedgerHQ/ledger-live/.github/workflows/build-desktop-reusable.yml@develop
     secrets: inherit
+    with:
+      trigger-event-type: ${{ github.event_name }}
 
   test-desktop:
     name: "Test Desktop"
@@ -34,6 +36,8 @@ jobs:
     if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') && !github.event.pull_request.head.repo.fork}}
     uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-reusable.yml@develop
     secrets: inherit
+    with:
+      trigger-event-type: ${{ github.event_name }}
 
   # LLM
   build-mobile:
@@ -42,6 +46,8 @@ jobs:
     if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile') && !github.event.pull_request.head.repo.fork}}
     uses: LedgerHQ/ledger-live/.github/workflows/build-mobile-reusable.yml@develop
     secrets: inherit
+    with:
+      trigger-event-type: ${{ github.event_name }}
 
   test-mobile:
     name: "Test Mobile"
@@ -56,6 +62,8 @@ jobs:
     if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile') && !github.event.pull_request.head.repo.fork}}
     uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-e2e-reusable.yml@develop
     secrets: inherit
+    with:
+      trigger-event-type: ${{ github.event_name }}
 
   # Tests
   test-libraries:
@@ -64,6 +72,8 @@ jobs:
     if: ${{contains(needs.determine-affected.outputs.paths, 'libs') && !github.event.pull_request.head.repo.fork}}
     uses: LedgerHQ/ledger-live/.github/workflows/test-libs-reusable.yml@develop
     secrets: inherit
+    with:
+      trigger-event-type: ${{ github.event_name }}
 
   test-design-system:
     name: "Test Design System"
