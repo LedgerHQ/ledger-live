@@ -31,7 +31,12 @@ const SectionHelp = () => {
             url={urls.chatbot}
           />
         ) : (
-          <RowItem title={t("settings.help.faq")} desc={t("settings.help.faqDesc")} url={urlFaq} />
+          <RowItem
+            title={t("settings.help.faq")}
+            desc={t("settings.help.faqDesc")}
+            url={urlFaq}
+            dataTestId={"ledgerSupport"}
+          />
         )}
         <Row
           title={t("settings.profile.softResetTitle")}

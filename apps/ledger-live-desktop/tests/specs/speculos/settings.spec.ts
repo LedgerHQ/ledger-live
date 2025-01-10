@@ -123,3 +123,27 @@ test.describe("counter value selection", () => {
     },
   );
 });
+
+test.describe("Ledger Support (web link)", () => {
+  test.use({
+    userdata: "skip-onboarding",
+  });
+
+  test(
+    "Verify that user can access to Ledger Support (Web Link)",
+    {
+      annotation: {
+        type: "TMS",
+        description: "B2CQA-820",
+      },
+    },
+    async ({ app }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
+      await app.layout.goToSettings();
+      await app.settings.goToHelpTab();
+
+      await app.settings.expectLedgerSupportUrlToBeCorrect();
+    },
+  );
+});

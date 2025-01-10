@@ -21,7 +21,7 @@ const AboutRowItem = ({ url, title, desc, dataTestId }: Props) => {
           cursor: "pointer",
         }}
       >
-        <IconExternalLink size={16} dataTestId={`${dataTestId}-link`} />
+        <IconExternalLink size={16} dataTestId={`${dataTestId}-link`} url={url} />
       </Tabbable>
     </SettingsSectionRow>
   );
