@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.60.0-next.2
+
+### Minor Changes
+
+- [#8857](https://github.com/LedgerHQ/ledger-live/pull/8857) [`a0dc7cf`](https://github.com/LedgerHQ/ledger-live/commit/a0dc7cf6f1f73e2747a39d2de454f916c4c73551) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - QR code scanning was failling to retrieve recipient's address in send flow
+
 ## 3.60.0-next.1
 
 ### Minor Changes
