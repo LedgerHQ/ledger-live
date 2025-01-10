@@ -13,16 +13,20 @@ import { DeviceModelId } from "@ledgerhq/devices";
 import { loadPKI } from "@ledgerhq/hw-bolos";
 import calService from "@ledgerhq/ledger-cal-service";
 import trustService from "@ledgerhq/ledger-trust-service";
-import { FirmwareOrAppUpdateRequired, TransportStatusError } from "@ledgerhq/errors";
+import { TransportStatusError, UpdateYourApp } from "@ledgerhq/errors";
 import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/setup";
+import { LatestFirmwareVersionRequired } from "../../errors";
 import type { Resolver } from "../../hw/getAddress/types";
 
 const TRUSTED_NAME_MIN_VERSION = "1.6.1";
+const MANAGER_APP_NAME = "Solana";
 
 async function checkVersion(app: Solana) {
   const { version } = await app.getAppConfiguration();
   if (semver.lt(version, TRUSTED_NAME_MIN_VERSION)) {
-    throw new FirmwareOrAppUpdateRequired();
+    throw new UpdateYourApp(undefined, {
+      managerAppName: MANAGER_APP_NAME,
+    });
   }
 }
 
@@ -49,7 +53,7 @@ const createSigner: CreateSigner<SolanaSigner> = (transport: Transport) => {
             await loadPKI(transport, "TRUSTED_NAME", descriptor, signature);
           } catch (err) {
             if (isPKIUnsupportedError(err)) {
-              throw new FirmwareOrAppUpdateRequired();
+              throw new LatestFirmwareVersionRequired("LatestFirmwareVersionRequired");
             }
           }
 
