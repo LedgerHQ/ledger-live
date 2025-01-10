@@ -790,6 +790,12 @@
     "SolanaAccountNotFunded" : {
       "title" : "자금이 입금되지 않은 계정"
     },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "계정에 자금이 지원됩니다"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "토큰 계정 자산이 동결되었습니다"
+    },
     "SolanaAddressOfEd25519" : {
       "title" : "주소 끄기 ed25519 곡선"
     },
@@ -971,6 +977,18 @@
       "title" : "유효하지 않은 공급자",
       "description" : "\"My Ledger 공급자\" 설정을 변경해야 합니다. 이를 변경하려면 Ledger Live \"설정\"을 열고 \"실험 기능\"을 선택한 다음 다른 공급자를 선택합니다."
     },
+    "GasLessThanEstimate" : {
+      "title" : "너무 낮은 것 같습니다. 조금 높여주세요"
+    },
+    "SequenceNumberTooNew" : {
+      "title" : "예상 범위를 벗어난 최신 시퀀스 번호입니다"
+    },
+    "SequenceNumberTooOld" : {
+      "title" : "예상 범위를 벗어난 오래된 시퀀스 번호입니다"
+    },
+    "TransactionExpired" : {
+      "title" : "트랜잭션이 만료되었습니다"
+    },
     "SequenceNumberError" : {
       "title" : "시퀀스 번호 오류",
       "description" : "창을 닫고 나중에 다시 시도하세요"
@@ -1019,6 +1037,12 @@
     "ScannedNewImportQrCode" : {
       "title" : "업테이트가 필요합니다",
       "description" : "앱을 동기화하려면 두 앱 모두 최신 버전으로 업데이트되어 있는지 확인하세요."
+    },
+    "AppManifestUnknownError" : {
+      "title" : "Swap Live App not found"
+    },
+    "AppManifestNotFoundError" : {
+      "title" : "Failed to load Swap Live App"
     }
   },
   "crash" : {
@@ -2342,7 +2366,8 @@
       "seeMarket" : "모두 보기"
     },
     "walletBalance" : "지갑 잔액",
-    "seelAllAssets" : "모든 자산 보기",
+    "seeAllAssets" : "모든 자산 보기",
+    "seeAllAccounts" : "모든 계정 보기",
     "marketPriceSection" : {
       "title" : "{{currencyTicker}} 시장가",
       "currencyPrice" : "1 {{currencyTicker}} 가격",
@@ -2748,6 +2773,9 @@
         "cta" : "지금 스테이킹하기"
       }
     }
+  },
+  "assets" : {
+    "title" : "자산"
   },
   "accounts" : {
     "title" : "계정",
@@ -3467,6 +3495,16 @@
         "providers" : {
           "noProviders" : "결과를 찾을 수 없습니다 현재 설정에 사용할 수 있는 견적이 없습니다."
         }
+      },
+      "incompatibility" : {
+        "explore_compatible_devices" : "호환 가능한 장치 탐색",
+        "contact_support" : "고객 지원 문의",
+        "ton_title" : "Ledger Nano S™는 Ton 스왑을 지원하지 않습니다",
+        "ton_description" : "Ton을 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요.",
+        "spl_tokens_title" : "Ledger Nano S™는 솔라나 토큰 스왑을 지원하지 않습니다.",
+        "spl_tokens_description" : "솔라노 토큰을 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요.",
+        "ada_title" : "Ledger Nano S™는 카르다노 스왑을 지원하지 않습니다.",
+        "ada_description" : "카르다노를 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요."
       }
     },
     "lending" : {
@@ -3748,6 +3786,7 @@
       "to" : "발신",
       "infoTotalTitle" : "총 인출",
       "infoTotalDesc" : "트랜잭션 금액과 선택된 네트워크 수수료가 포함됩니다",
+      "gasFee" : "가스비",
       "gasLimit" : "가스 한도(Gas limit)",
       "gasPrice" : "가스 가격(Gas price)",
       "maxFee" : "최대 비용",
@@ -3961,6 +4000,8 @@
   },
   "addAccounts" : {
     "addNew" : "새로 추가하기",
+    "seeAllAccounts" : "모든 계정 보기",
+    "addNewOrExisting" : "기존 계정이나 신규 계정 추가",
     "supportLinks" : {
       "segwit_or_native_segwit" : "SegWit, 또는 Native SegWit?"
     },
@@ -5912,6 +5953,10 @@
         "description" : "SOL 암호화폐를 검증인에게 위임하여 보상을 받을 수 있습니다."
       },
       "reserveWarning" : "지갑에 {{amount}}이상의 SOL을 확보하여 지분을 비활성화하고 인출하는 데 필요한 네트워크 수수료를 충당하세요."
+    },
+    "token" : {
+      "frozenStateWarning" : "계정 자산이 동결되었습니다!",
+      "transferWarning" : "Ledger Nano S™를 사용해 솔라나 토큰의 수령인 주소를 확인하려면 <0>다음 지침을 따르세요.</0>"
     }
   },
   "near" : {
@@ -6102,7 +6147,7 @@
     },
     "warning" : "Ledger에 표시된 주소가 {{recipientWording}}의 주소와 일치하는지 확인하세요",
     "recipientWording" : {
-      "send" : "언제나 장치 화면에 보이는 주소가 수령인이 제공한 주소와 정확히 일치하는지 확인하세요",
+      "send" : "항상 장치에 표시된 주소가 수신자가 제공한 주소와 정확히 일치하는지 확인하세요",
       "delegate" : "언제나 장치 화면에 보이는 주소가 검증인이 제공한 주소와 정확히 일치하는지 확인하세요",
       "undelegate" : "언제나 장치 화면에 보이는 주소가 검증인이 제공한 주소와 정확히 일치하는지 확인하세요",
       "freeze" : "언제나 장치 화면에 보이는 주소가 제공된 주소와 정확히 일치하는지 확인하세요",
@@ -7111,6 +7156,14 @@
           "name" : "계정 추가"
         }
       }
+    }
+  },
+  "assetSelection" : {
+    "selectCrypto" : {
+      "title" : "자산 선택"
+    },
+    "selectNetwork" : {
+      "title" : "자산이 속한 블록체인 네트워크를 선택하세요"
     }
   }
 }
