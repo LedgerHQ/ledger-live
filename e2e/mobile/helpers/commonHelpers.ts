@@ -1,4 +1,4 @@
-import { close as closeBridge, findFreePort, init as initBridge } from "../bridge/server";
+import { close as closeBridge, findFreePort, init as initBridge, resetApp } from "../bridge/server";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { exec } from "child_process";
 import { device, log } from "detox";
@@ -73,10 +73,27 @@ function createDetoxURLBlacklistRegex(): string {
   return `\\("${patterns.join('","')}"\\)`;
 }
 
-export async function launchApp() {
+export async function launchApp(reset = false) {
   const port = await findFreePort();
   closeBridge();
   initBridge(port);
+  await device.launchApp({
+    launchArgs: {
+      wsPort: port,
+      detoxURLBlacklistRegex: createDetoxURLBlacklistRegex(),
+      mock: "0",
+      disable_broadcast: getEnv("DISABLE_TRANSACTION_BROADCAST") ? 1 : 0,
+      IS_TEST: true,
+    },
+    languageAndLocale: {
+      language: "en-US",
+      locale: "en-US",
+    },
+    permissions: {
+      camera: "YES",
+    },
+  });
+  if (reset) await resetApp();
   await device.launchApp({
     launchArgs: {
       wsPort: port,

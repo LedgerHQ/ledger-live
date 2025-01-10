@@ -170,6 +170,10 @@ export async function removeKnownSpeculos(id: string) {
   postMessage({ type: "removeKnownSpeculos", id: uniqueId(), payload: id });
 }
 
+export async function resetApp() {
+  postMessage({ type: "resetApp", id: uniqueId() });
+}
+
 function onMessage(messageStr: string) {
   const msg: ServerData = JSON.parse(messageStr);
   log(`Message received ${msg.type}`);

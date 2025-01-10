@@ -1,11 +1,17 @@
 import { takeSpeculosScreenshot } from "./utils/speculosUtils";
 import { Circus } from "@jest/types";
 import { logMemoryUsage } from "./helpers/commonHelpers";
+import { device } from "detox";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const DetoxEnvironment = require("detox/runners/jest/testEnvironment");
 
 class TestEnvironment extends DetoxEnvironment {
+  async setup() {
+    await super.setup();
+    await device.installApp();
+  }
+
   async handleTestEvent(event: Circus.Event, state: Circus.State) {
     await super.handleTestEvent(event, state);
 

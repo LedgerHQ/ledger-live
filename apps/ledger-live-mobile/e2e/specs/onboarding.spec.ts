@@ -6,9 +6,7 @@ describe("Onboarding", () => {
 
   beforeEach(async () => {
     if (!isFirstTest) {
-      await device.uninstallApp();
-      await device.installApp();
-      await launchApp();
+      await launchApp(true);
     } else isFirstTest = false;
   });
 

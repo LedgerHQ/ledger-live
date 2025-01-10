@@ -204,6 +204,10 @@ function fetchData(message: MessageData, timeout = RESPONSE_TIMEOUT): Promise<st
   });
 }
 
+export async function resetApp() {
+  await postMessage({ type: "resetApp", id: uniqueId() });
+}
+
 function onMessage(messageStr: string) {
   const msg: ServerData = JSON.parse(messageStr);
   log(`Message received ${msg.type}`);

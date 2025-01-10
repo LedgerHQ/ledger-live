@@ -6,6 +6,7 @@ import {
   importSettings,
   setLastConnectedDevice,
   setOverriddenFeatureFlags,
+  dangerouslyOverrideState,
 } from "~/actions/settings";
 import { importStore as importAccountsRaw } from "~/actions/accounts";
 import { acceptGeneralTerms } from "~/logic/terms";
@@ -19,6 +20,7 @@ import { getAllEnvs, setEnv } from "@ledgerhq/live-env";
 import { getAllFeatureFlags } from "@ledgerhq/live-common/e2e/index";
 import Config from "react-native-config";
 import { SettingsSetOverriddenFeatureFlagsPlayload } from "~/actions/types";
+import { INITIAL_STATE as INITIAL_SETTINGS_STATE } from "~/reducers/settings";
 
 export const e2eBridgeClient = new Subject<MessageData>();
 
@@ -171,6 +173,14 @@ async function onMessage(event: WebSocketMessageEvent) {
         setEnv("SWAP_DISABLE_APPS_INSTALL", true);
         setEnv("SWAP_API_BASE", "https://swap-stg.ledger-test.com/v5");
         break;
+      case "resetApp": {
+        store.dispatch(
+          dangerouslyOverrideState({
+            settings: INITIAL_SETTINGS_STATE,
+          }),
+        );
+        break;
+      }
       default:
         break;
     }
