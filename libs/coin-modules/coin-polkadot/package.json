@@ -22,6 +22,9 @@
   },
   "typesVersions": {
     "*": {
+      "lib/*": [
+        "lib/*"
+      ],
       "lib-es/*": [
         "lib-es/*"
       ],
@@ -35,40 +38,80 @@
         "lib/test/bot-specs"
       ],
       "*": [
-        "lib-es/*",
-        "lib-es/api/*",
-        "lib-es/bridge/*",
-        "lib-es/logic/*",
-        "lib-es/signer/*",
-        "lib-es/test/*",
-        "lib-es/types/*"
+        "lib/*",
+        "lib/api/*",
+        "lib/bridge/*",
+        "lib/logic/*",
+        "lib/signer/*",
+        "lib/test/*",
+        "lib/types/*"
       ]
     }
   },
   "exports": {
+    "./lib/*": "./lib/*.js",
     "./lib-es/*": "./lib-es/*.js",
-    "./api": "./lib-es/api/index.js",
-    "./deviceTransactionConfig": "./lib-es/bridge/deviceTransactionConfig.js",
-    "./errors": "./lib-es/types/errors.js",
-    "./formatters": "./lib-es/bridge/formatters.js",
-    "./logic": "./lib-es/logic/index.js",
-    "./preload": "./lib-es/bridge/preload.js",
-    "./serialization": "./lib-es/bridge/serialization.js",
-    "./specs": "./lib-es/test/bot-specs.js",
-    "./transaction": "./lib-es/bridge/transaction.js",
-    "./types": "./lib-es/types/index.js",
-    "./utils": "./lib-es/bridge/utils.js",
-    "./*": "./lib-es/*.js",
-    ".": "./lib-es/index.js",
+    "./api": {
+      "require": "./lib/api/index.js",
+      "default": "./lib-es/api/index.js"
+    },
+    "./deviceTransactionConfig": {
+      "require": "./lib/bridge/deviceTransactionConfig.js",
+      "default": "./lib-es/bridge/deviceTransactionConfig.js"
+    },
+    "./errors": {
+      "require": "./lib/types/errors.js",
+      "default": "./lib-es/types/errors.js"
+    },
+    "./formatters": {
+      "require": "./lib/bridge/formatters.js",
+      "default": "./lib-es/bridge/formatters.js"
+    },
+    "./logic": {
+      "require": "./lib/logic/index.js",
+      "default": "./lib-es/logic/index.js"
+    },
+    "./preload": {
+      "require": "./lib/bridge/preload.js",
+      "default": "./lib-es/bridge/preload.js"
+    },
+    "./serialization": {
+      "require": "./lib/bridge/serialization.js",
+      "default": "./lib-es/bridge/serialization.js"
+    },
+    "./specs": {
+      "require": "./lib/test/bot-specs.js",
+      "default": "./lib-es/test/bot-specs.js"
+    },
+    "./transaction": {
+      "require": "./lib/bridge/transaction.js",
+      "default": "./lib-es/bridge/transaction.js"
+    },
+    "./types": {
+      "require": "./lib/types/index.js",
+      "default": "./lib-es/types/index.js"
+    },
+    "./utils": {
+      "require": "./lib/bridge/utils.js",
+      "default": "./lib-es/bridge/utils.js"
+    },
+    "./*": {
+      "require": "./lib/*.js",
+      "default": "./lib-es/*.js"
+    },
+    ".": {
+      "require": "./lib/index.js",
+      "default": "./lib-es/index.js"
+    },
     "./package.json": "./package.json"
   },
   "license": "Apache-2.0",
   "scripts": {
     "clean": "rimraf lib lib-es",
-    "build": "tsc --outDir lib-es",
+    "build": "tsc --outDir lib --module commonjs --moduleResolution node10 && tsc -m ES6 --outDir lib-es",
     "prewatch": "pnpm build",
     "watch": "tsc --watch",
-    "watch:es": "tsc --watch -m esnext --moduleResolution bundler --outDir lib-es",
+    "watch:es": "tsc --watch -m ES6 --outDir lib-es",
     "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",

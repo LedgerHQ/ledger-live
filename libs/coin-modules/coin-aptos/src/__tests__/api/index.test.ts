@@ -1,4 +1,4 @@
-import { ApolloClient } from "@apollo/client";
+import { ApolloClient } from "@apollo/client/main.cjs";
 import {
   AccountAddress,
   Aptos,
