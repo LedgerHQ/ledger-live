@@ -1,5 +1,11 @@
 ## 34.5.0-next.4
 
+## 34.17.0-nightly.4
+
+### Patch Changes
+
+- [#8829](https://github.com/LedgerHQ/ledger-live/pull/8829) [`108556d`](https://github.com/LedgerHQ/ledger-live/commit/108556d150ae1200e98077fecc2b6357969ecb4f) Thanks [@Wozacosta](https://github.com/Wozacosta)! - feat: use mev protection opt-in with wallet-api / wallet-connect
+
 ## 34.17.0-nightly.3
 
 ### Patch Changes
