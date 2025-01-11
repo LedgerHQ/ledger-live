@@ -202,7 +202,7 @@ const NftList = ({ data, hasNextPage, fetchNextPage, isLoading }: Props) => {
         initialNumToRender={6}
         windowSize={11}
         contentContainerStyle={{ marginTop: 0, marginHorizontal: space[6] }}
-        testID={"wallet-nft-gallery-list"}
+        testID={"wallet-nft-gallery-list-" + data.length}
         onEndReached={fetchNextPage}
         onEndReachedThreshold={0.2}
       />
