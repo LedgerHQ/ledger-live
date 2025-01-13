@@ -1,6 +1,5 @@
 import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import {
-  defaultUpdateTransaction,
   makeAccountBridgeReceive,
   makeScanAccounts,
   makeSync,
@@ -19,6 +18,7 @@ import { getTransactionStatus } from "./getTransactionStatus";
 import { prepareTransaction } from "./prepareTransaction";
 import { buildSignOperation } from "./signOperation";
 import { getAccountShape } from "./sync";
+import { updateTransaction } from "./updateTransaction";
 
 export function createBridges(
   signerContext: SignerContext<BoilerplateSigner>,
@@ -42,8 +42,9 @@ export function createBridges(
   const accountBridge: AccountBridge<Transaction> = {
     broadcast,
     createTransaction,
-    // TODO: maybe give example of updateTransaction and when it's required
-    updateTransaction: defaultUpdateTransaction<Transaction>,
+    updateTransaction,
+    // NOTE: use updateTransaction: defaultUpdateTransaction<Transaction>,
+    // if you don't need to update the transaction patch object
     prepareTransaction,
     getTransactionStatus,
     estimateMaxSpendable,
