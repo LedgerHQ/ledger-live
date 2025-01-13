@@ -147,6 +147,16 @@ export const dexProvidersContractAddress: { [key: string]: string } = {
   "0x3fC91A3afd70395Cd496C647d5a6CC9D4B2b7FAD": "Uniswap",
 };
 
+export const termsOfUse: { [key: string]: string } = {
+  paraswap: "https://paraswap.io/tos",
+  "1inch": "https://1inch.io/assets/1inch_network_terms_of_use.pdf",
+  Uniswap: "https://uniswap.org/terms-of-service",
+};
+
+export const privacyPolicy: { [key: string]: string } = {
+  Uniswap: "https://uniswap.org/privacy-policy",
+};
+
 type CurrencyData = {
   id: string;
   config: string;

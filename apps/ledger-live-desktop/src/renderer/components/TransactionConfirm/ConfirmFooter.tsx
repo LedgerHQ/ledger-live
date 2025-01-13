@@ -4,20 +4,17 @@ import { Trans, withTranslation } from "react-i18next";
 import { getEnv } from "@ledgerhq/live-env";
 import Text from "~/renderer/components/Text";
 import { openURL } from "~/renderer/linking";
-import { dexProvidersContractAddress } from "@ledgerhq/live-common/exchange/providers/swap";
+import {
+  dexProvidersContractAddress,
+  privacyPolicy,
+  termsOfUse,
+} from "@ledgerhq/live-common/exchange/providers/swap";
+
 const HorizontalSeparator = styled.div`
   height: 1px;
   background: ${p => p.theme.colors.palette.text.shade20};
   width: 100%;
 `;
-
-const termsOfUse = new Map<string, string>([
-  ["paraswap", "https://paraswap.io/tos"],
-  ["1inch", "https://1inch.io/assets/1inch_network_terms_of_use.pdf"],
-  ["Uniswap", "https://uniswap.org/terms-of-service"],
-]);
-
-const privacyPolicy = new Map<string, string>([["Uniswap", "https://uniswap.org/privacy-policy"]]);
 
 if (getEnv("PLAYWRIGHT_RUN")) {
   termsOfUse.set("dummy-live-app", "https://localhost.io/testtos");
@@ -33,8 +30,8 @@ type Props = {
 const ConfirmFooter = ({ footer, transaction, manifestId, manifestName }: Props) => {
   if (!manifestId) return;
   const appNameByAddr = dexProvidersContractAddress[transaction?.recipient || ""];
-  const termsOfUseUrl = termsOfUse.get(appNameByAddr || manifestId);
-  const privacyUrl = privacyPolicy.get(appNameByAddr || manifestId);
+  const termsOfUseUrl = termsOfUse[appNameByAddr || manifestId];
+  const privacyUrl = privacyPolicy[appNameByAddr || manifestId];
   if (!termsOfUseUrl) return;
   return (
     <>
