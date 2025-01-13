@@ -10,7 +10,7 @@ export type CasperGetAddrResponse = {
   errorMessage: string;
   returnCode: number;
   publicKey: Buffer;
-  Address: String;
+  Address: string;
 };
 
 export interface CasperSigner {
