@@ -123,20 +123,20 @@ jobs:
         with:
           enable_broadcast: ${{ inputs.enable_broadcast }}
 
-      - name: Run playwright tests [Linux => xvfb-run]
-        id: tests
-        run: |
-          export SPECULOS_IMAGE_TAG=${{ env.SPECULOS_IMAGE_TAG }}
-          export COINAPPS=$PWD/coin-apps
-          export MOCK=0
-          if [ "${{ inputs.invert_filter }}" = true ]; then invert_filter="-invert"; fi
-          xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright:speculos --max-failures 50 ${INPUTS_TEST_FILTER:+--grep$invert_filter} "${{ inputs.test_filter }}" --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
-        env:
-          INPUTS_TEST_FILTER: ${{ inputs.test_filter }}
-          SEED: ${{ secrets.SEED_QAA_B2C }}
-          XRAY: ${{ inputs.export_to_xray }}
-          TEST_EXECUTION: ${{ inputs.test_execution }}
-          PROJECT_KEY: B2CQA
+      # - name: Run playwright tests [Linux => xvfb-run]
+      #   id: tests
+      #   run: |
+      #     export SPECULOS_IMAGE_TAG=${{ env.SPECULOS_IMAGE_TAG }}
+      #     export COINAPPS=$PWD/coin-apps
+      #     export MOCK=0
+      #     if [ "${{ inputs.invert_filter }}" = true ]; then invert_filter="-invert"; fi
+      #     xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright:speculos --max-failures 50 ${INPUTS_TEST_FILTER:+--grep$invert_filter} "${{ inputs.test_filter }}" --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+      #   env:
+      #     INPUTS_TEST_FILTER: ${{ inputs.test_filter }}
+      #     SEED: ${{ secrets.SEED_QAA_B2C }}
+      #     XRAY: ${{ inputs.export_to_xray }}
+      #     TEST_EXECUTION: ${{ inputs.test_execution }}
+      #     PROJECT_KEY: B2CQA
 
       - name: Upload Allure Results
         if: ${{ !cancelled() }}

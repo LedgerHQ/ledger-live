@@ -13,8 +13,18 @@ runs:
       id: set-broadcast
       shell: bash
       run: |
-        if [[ "${{ inputs.enable_broadcast }}" == "true" || ( "${{ github.event_name }}" == "schedule" && "${{ github.event.schedule.cron }}" == "0 5 * * 1" ) ]]; then
+        enable_broadcast="${{ inputs.enable_broadcast }}"
+        event_name="${{ github.event_name }}"
+        cron_schedule="${{ github.event.schedule.cron }}"
+
+        echo "enable_broadcast: $enable_broadcast"
+        echo "event_name: $event_name"
+        echo "cron_schedule: $cron_schedule"
+
+        if [[ "$enable_broadcast" == "true" || ( "$event_name" == "schedule" && "$cron_schedule" == "0 5 * * 1" ) ]]; then
           echo "DISABLE_TRANSACTION_BROADCAST=0" >> $GITHUB_ENV
+          echo "DISABLE_TRANSACTION_BROADCAST is set to 0"
         else
           echo "DISABLE_TRANSACTION_BROADCAST=1" >> $GITHUB_ENV
+          echo "DISABLE_TRANSACTION_BROADCAST is set to 1"
         fi
