@@ -39,7 +39,11 @@ const convertToCoreOperation = (address: string) => (operation: any) => {
     type,
     value,
     fee: feeValue,
-    blockHeight: inLedger,
+    block: {
+      height: inLedger,
+      hash,
+      time: date,
+    },
     senders: [Account],
     recipients: [Destination],
     date: new Date(date),
