@@ -2,11 +2,14 @@ import invariant from "invariant";
 import React from "react";
 import type { Account } from "@ledgerhq/types-live";
 import type { DeviceTransactionField } from "@ledgerhq/live-common/transaction/index";
-import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/casper/types";
+import type {
+  Transaction,
+  TransactionStatus,
+  ExtraDeviceTransactionField,
+} from "@ledgerhq/live-common/families/casper/types";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { TextValueField } from "~/components/ValidateOnDeviceDataRow";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
-import { ExtraDeviceTransactionField } from "@ledgerhq/live-common/families/casper/deviceTransactionConfig";
 
 interface FieldProps {
   account: Account;
