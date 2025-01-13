@@ -115,7 +115,7 @@ test("Ethereum staking flows via portfolio, asset page and market page @smoke", 
   });
 
   await test.step("choose ethereum account", async () => {
-    await drawer.selectAccount("Ethereum", 1);
+    await drawer.selectAccount("Ethereum", 0);
     await expect.soft(page).toHaveScreenshot("choose-stake-provider-modal-from-portfolio-page.png");
   });
 
