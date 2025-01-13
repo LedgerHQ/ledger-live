@@ -1,5 +1,24 @@
 # ledger-live-desktop
 
+## 2.95.0-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`6d050fd`](https://github.com/LedgerHQ/ledger-live/commit/6d050fda707a63cff15cee797ea1167a0219aa32)]:
+  - @ledgerhq/types-live@6.56.0-next.1
+  - @ledgerhq/live-common@34.17.0-next.1
+  - @ledgerhq/coin-framework@0.21.0-next.1
+  - @ledgerhq/coin-bitcoin@0.9.0-next.1
+  - @ledgerhq/coin-cosmos@0.4.0-next.1
+  - @ledgerhq/coin-evm@2.8.0-next.1
+  - @ledgerhq/coin-filecoin@1.4.0-next.1
+  - @ledgerhq/domain-service@1.2.15-next.1
+  - @ledgerhq/live-countervalues@0.2.16-next.1
+  - @ledgerhq/live-countervalues-react@0.2.16-next.1
+  - @ledgerhq/live-nft@0.5.1-next.1
+  - @ledgerhq/live-nft-react@0.5.1-next.1
+  - @ledgerhq/live-wallet@0.8.0-next.1
+
 ## 2.95.0-next.0
 
 ### Minor Changes

@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.56.0-next.1
+
+### Minor Changes
+
+- [#8884](https://github.com/LedgerHQ/ledger-live/pull/8884) [`6d050fd`](https://github.com/LedgerHQ/ledger-live/commit/6d050fda707a63cff15cee797ea1167a0219aa32) Thanks [@CremaFR](https://github.com/CremaFR)! - fix: revert removal LLM FF
+
 ## 6.56.0-next.0
 
 ### Minor Changes

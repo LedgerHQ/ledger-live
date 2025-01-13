@@ -1,5 +1,42 @@
 ## 34.5.0-next.4
 
+## 34.17.0-next.1
+
+### Minor Changes
+
+- [#8884](https://github.com/LedgerHQ/ledger-live/pull/8884) [`6d050fd`](https://github.com/LedgerHQ/ledger-live/commit/6d050fda707a63cff15cee797ea1167a0219aa32) Thanks [@CremaFR](https://github.com/CremaFR)! - fix: revert removal LLM FF
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@0.21.0-next.1
+  - @ledgerhq/coin-algorand@0.6.0-next.1
+  - @ledgerhq/coin-bitcoin@0.9.0-next.1
+  - @ledgerhq/coin-cardano@0.3.0-next.1
+  - @ledgerhq/coin-cosmos@0.4.0-next.1
+  - @ledgerhq/coin-elrond@0.2.0-next.1
+  - @ledgerhq/coin-evm@2.8.0-next.1
+  - @ledgerhq/coin-filecoin@1.4.0-next.1
+  - @ledgerhq/coin-hedera@1.2.0-next.1
+  - @ledgerhq/coin-icon@0.5.0-next.1
+  - @ledgerhq/coin-internet_computer@1.4.0-next.1
+  - @ledgerhq/coin-near@0.6.0-next.1
+  - @ledgerhq/coin-polkadot@1.5.0-next.1
+  - @ledgerhq/coin-solana@0.10.0-next.1
+  - @ledgerhq/coin-stacks@0.4.0-next.1
+  - @ledgerhq/coin-stellar@0.5.0-next.1
+  - @ledgerhq/coin-tezos@0.8.0-next.1
+  - @ledgerhq/coin-ton@0.4.0-next.1
+  - @ledgerhq/coin-tron@0.1.0-next.1
+  - @ledgerhq/coin-vechain@2.3.0-next.1
+  - @ledgerhq/coin-xrp@0.8.0-next.1
+  - @ledgerhq/device-core@0.4.10-next.1
+  - @ledgerhq/hw-app-eth@6.42.2-next.1
+  - @ledgerhq/live-countervalues@0.2.16-next.1
+  - @ledgerhq/live-countervalues-react@0.2.16-next.1
+  - @ledgerhq/live-nft@0.5.1-next.1
+  - @ledgerhq/live-wallet@0.8.0-next.1
+
 ## 34.17.0-next.0
 
 ### Minor Changes

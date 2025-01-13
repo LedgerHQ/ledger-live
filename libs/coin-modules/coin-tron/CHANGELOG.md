@@ -1,5 +1,13 @@
 # @ledgerhq/coin-tron
 
+## 0.1.0-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`6d050fd`](https://github.com/LedgerHQ/ledger-live/commit/6d050fda707a63cff15cee797ea1167a0219aa32)]:
+  - @ledgerhq/types-live@6.56.0-next.1
+  - @ledgerhq/coin-framework@0.21.0-next.1
+
 ## 0.1.0-next.0
 
 ### Minor Changes
