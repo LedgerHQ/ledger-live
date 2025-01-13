@@ -347,7 +347,39 @@ describe("Aptos API", () => {
       functionArguments: ["0x13", 1],
     };
 
-    it("generates a transaction with the correct options", async () => {
+    it("generates a transaction without expireTimestamp", async () => {
+      const options = {
+        maxGasAmount: "100",
+        gasUnitPrice: "50",
+      };
+
+      const mockSimple = jest.fn().mockImplementation(async () => ({
+        rawTransaction: null,
+      }));
+      mockedAptos.mockImplementation(() => ({
+        transaction: {
+          build: {
+            simple: mockSimple,
+          },
+        },
+      }));
+
+      const mockSimpleSpy = jest.spyOn({ simple: mockSimple }, "simple");
+
+      const api = new AptosAPI("aptos");
+      await api.generateTransaction(Account.APTOS_1.address, payload, options);
+
+      expect(mockSimpleSpy).toHaveBeenCalledWith({
+        data: payload,
+        options: {
+          maxGasAmount: Number(options.maxGasAmount),
+          gasUnitPrice: Number(options.gasUnitPrice),
+        },
+        sender: Account.APTOS_1.address,
+      });
+    });
+
+    it("generates a transaction with default expireTimestamp", async () => {
       const options = {
         maxGasAmount: "100",
         gasUnitPrice: "50",
