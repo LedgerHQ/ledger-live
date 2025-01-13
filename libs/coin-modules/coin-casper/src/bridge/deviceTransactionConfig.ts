@@ -1,8 +1,8 @@
 import { log } from "@ledgerhq/logs";
 import { Account, AccountLike } from "@ledgerhq/types-live";
-import type { DeviceTransactionField } from "../../transaction";
-import { Transaction, TransactionStatus } from "./types";
-import { methodToString } from "./msc-utils";
+import type { CommonDeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
+import { Transaction, TransactionStatus } from "../types";
+import { methodToString } from "../common-logic";
 import BigNumber from "bignumber.js";
 
 export type ExtraDeviceTransactionField = {
@@ -10,6 +10,8 @@ export type ExtraDeviceTransactionField = {
   label: string;
   value: number | BigNumber;
 };
+
+type DeviceTransactionField = CommonDeviceTransactionField | ExtraDeviceTransactionField;
 
 function getDeviceTransactionConfig({
   transaction,

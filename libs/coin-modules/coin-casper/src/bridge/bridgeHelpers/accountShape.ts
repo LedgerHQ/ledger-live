@@ -1,8 +1,7 @@
 import flatMap from "lodash/flatMap";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
-import { encodeAccountId } from "../../../../account";
-
+import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { fetchBalance, fetchNetworkStatus, fetchTxs, fetchAccountStateInfo } from "../../api/index";
 import { mapTxToOps } from "./txn";

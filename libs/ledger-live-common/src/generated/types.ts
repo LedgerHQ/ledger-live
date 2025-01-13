@@ -27,7 +27,7 @@ import type {
   TransactionRaw as casperTransactionRaw,
   TransactionStatus as casperTransactionStatus,
   TransactionStatusRaw as casperTransactionStatusRaw,
-} from "../families/casper/types";
+} from "@ledgerhq/coin-casper/types/index";
 import type {
   Transaction as celoTransaction,
   TransactionRaw as celoTransactionRaw,

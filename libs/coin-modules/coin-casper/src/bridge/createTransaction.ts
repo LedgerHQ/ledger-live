@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { AccountBridge } from "@ledgerhq/types-live";
-import { Transaction } from "./types";
+import { Transaction } from "../types";
 
 export const createTransaction: AccountBridge<Transaction>["createTransaction"] = () => {
   // log("debug", "[createTransaction] creating base tx");

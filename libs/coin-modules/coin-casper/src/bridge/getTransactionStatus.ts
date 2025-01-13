@@ -7,16 +7,16 @@ import {
   NotEnoughBalance,
   RecipientRequired,
 } from "@ledgerhq/errors";
-import { getAddress, isAddressValid } from "./bridge/bridgeHelpers/addresses";
-import { CasperAccount, Transaction, TransactionStatus } from "./types";
-import { isTransferIdValid } from "./bridge/bridgeHelpers/transferId";
-import { CasperInvalidTransferId } from "./errors";
+import { getAddress, isAddressValid } from "./bridgeHelpers/addresses";
+import { CasperAccount, Transaction, TransactionStatus } from "../types";
+import { isTransferIdValid } from "./bridgeHelpers/transferId";
+import { CasperInvalidTransferId } from "../errors";
 import {
   CASPER_MINIMUM_VALID_AMOUNT_MOTES,
   CASPER_MAX_TRANSFER_ID,
   MayBlockAccountError,
   InvalidMinimumAmountError,
-} from "./consts";
+} from "../consts";
 
 export const getTransactionStatus: AccountBridge<
   Transaction,

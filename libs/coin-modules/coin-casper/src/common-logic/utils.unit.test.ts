@@ -1,5 +1,5 @@
 import { CLPublicKeyTag } from "casper-js-sdk";
-import { casperAddressFromPubKey, isAddressValid } from "./bridge/bridgeHelpers/addresses";
+import { casperAddressFromPubKey, isAddressValid } from "../bridge/bridgeHelpers/addresses";
 
 describe("Casper addresses", () => {
   const pubKeys = {
