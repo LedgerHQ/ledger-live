@@ -72,7 +72,7 @@ const ConfirmFooter = ({ footer, transaction, manifestId, manifestName }: Props)
               components={[
                 <Text
                   key={manifestId}
-                  onClick={() => openURL(termsOfUseUrl)}
+                  onClick={handleUrlClick(termsOfUseUrl)}
                   style={{
                     cursor: "pointer",
                     textDecoration: "underline",
