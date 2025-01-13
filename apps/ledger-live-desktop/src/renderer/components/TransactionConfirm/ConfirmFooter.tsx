@@ -4,7 +4,7 @@ import { Trans, withTranslation } from "react-i18next";
 import { getEnv } from "@ledgerhq/live-env";
 import Text from "~/renderer/components/Text";
 import { openURL } from "~/renderer/linking";
-import { uniwapUniversalRouterAddr } from "@ledgerhq/live-common/exchange/providers/swap";
+import { dexProvidersContractAddress } from "@ledgerhq/live-common/exchange/providers/swap";
 const HorizontalSeparator = styled.div`
   height: 1px;
   background: ${p => p.theme.colors.palette.text.shade20};
@@ -32,7 +32,7 @@ type Props = {
 
 const ConfirmFooter = ({ footer, transaction, manifestId, manifestName }: Props) => {
   if (!manifestId) return;
-  const appNameByAddr = transaction?.recipient === uniwapUniversalRouterAddr ? "Uniswap" : null;
+  const appNameByAddr = dexProvidersContractAddress[transaction?.recipient || ""];
   const termsOfUseUrl = termsOfUse.get(appNameByAddr || manifestId);
   const privacyUrl = privacyPolicy.get(appNameByAddr || manifestId);
   if (!termsOfUseUrl) return;

@@ -143,7 +143,9 @@ const DEFAULT_SWAP_PROVIDERS: Record<string, ProviderConfig & Partial<Additional
   },
 };
 
-export const uniwapUniversalRouterAddr = "0x3fC91A3afd70395Cd496C647d5a6CC9D4B2b7FAD";
+export const dexProvidersContractAddress: { [key: string]: string } = {
+  "0x3fC91A3afd70395Cd496C647d5a6CC9D4B2b7FAD": "Uniswap",
+};
 
 type CurrencyData = {
   id: string;
