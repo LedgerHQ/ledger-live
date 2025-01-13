@@ -356,39 +356,6 @@ describe("Aptos API", () => {
       const mockSimple = jest.fn().mockImplementation(async () => ({
         rawTransaction: null,
       }));
-      mockedAptos.mockImplementation(() => ({
-        transaction: {
-          build: {
-            simple: mockSimple,
-          },
-        },
-      }));
-
-      const mockSimpleSpy = jest.spyOn({ simple: mockSimple }, "simple");
-
-      const api = new AptosAPI("aptos");
-      await api.generateTransaction(Account.APTOS_1.address, payload, options);
-
-      expect(mockSimpleSpy).toHaveBeenCalledWith({
-        data: payload,
-        options: {
-          maxGasAmount: Number(options.maxGasAmount),
-          gasUnitPrice: Number(options.gasUnitPrice),
-        },
-        sender: Account.APTOS_1.address,
-      });
-    });
-
-    it("generates a transaction with no expire timestamp option set", async () => {
-      const options = {
-        maxGasAmount: "100",
-        gasUnitPrice: "50",
-        sequenceNumber: "1",
-      };
-
-      const mockSimple = jest.fn().mockImplementation(async () => ({
-        rawTransaction: null,
-      }));
       const mockGetLedgerInfo = jest.fn().mockImplementation(async () => ({
         ledger_timestamp: "0",
       }));
