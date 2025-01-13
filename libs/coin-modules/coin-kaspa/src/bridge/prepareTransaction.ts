@@ -13,29 +13,29 @@ import { BigNumber } from "bignumber.js";
  * @throws Will throw an error if the fee strategy type is unknown.
  */
 export const prepareTransaction = async (account: KaspaAccount, transaction: Transaction) => {
-  if (transaction.amount.gt(BigNumber(0))) {
-    const fees: ApiResponseFeeEstimate = await getFeeEstimate();
-
-    switch (transaction.feesStrategy) {
-      case "slow":
-        transaction.feerate = fees.lowBuckets[0].feerate;
-        break;
-
-      case "medium":
-        transaction.feerate = fees.normalBuckets[0].feerate;
-        break;
-      case "fast":
-        transaction.feerate = fees.priorityBucket.feerate;
-        break;
-      case "custom":
-        // transaction.fees = transaction.fees; // nothing to do here?
-        break;
-
-      default:
-        throw new Error("Unknown fee strategy type for transaction.");
-        break;
-    }
-  }
+  // if (transaction.amount.gt(BigNumber(0))) {
+  //   const fees: ApiResponseFeeEstimate = await getFeeEstimate();
+  //
+  //   switch (transaction.feesStrategy) {
+  //     case "slow":
+  //       transaction.feerate = fees.lowBuckets[0].feerate;
+  //       break;
+  //
+  //     case "medium":
+  //       transaction.feerate = fees.normalBuckets[0].feerate;
+  //       break;
+  //     case "fast":
+  //       transaction.feerate = fees.priorityBucket.feerate;
+  //       break;
+  //     case "custom":
+  //       // transaction.fees = transaction.fees; // nothing to do here?
+  //       break;
+  //
+  //     default:
+  //       throw new Error("Unknown fee strategy type for transaction.");
+  //       break;
+  //   }
+  // }
 
   return transaction;
 };

@@ -9,7 +9,7 @@ import type {
 
 export type KaspaAccount = Account & {
   xpub: string;
-  activeAddressCount: number; // good to approxmimate the fee
+  activeAddressCount: number; // good to approximate the fee
   nextChangeAddress: string;
   nextChangeAddressType: number;
   nextChangeAddressIndex: number;
