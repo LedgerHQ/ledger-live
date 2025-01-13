@@ -15,6 +15,8 @@ module.exports = {
   rules: {
     "no-console": ["error", { allow: ["warn", "error"] }],
     "@typescript-eslint/no-empty-function": "off",
+    "no-empty-pattern": "off",
     "@typescript-eslint/no-explicit-any": "warn",
+    "@typescript-eslint/no-unused-vars": "warn",
   },
 };

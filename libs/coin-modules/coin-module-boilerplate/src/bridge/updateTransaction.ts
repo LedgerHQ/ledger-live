@@ -8,6 +8,7 @@ import type { Transaction } from "../types";
 // NOTE: here is an example transaction updater function
 // in this case, it resets fee to null depending on the patch content
 export const updateTransaction: AccountBridge<Transaction>["updateTransaction"] = (tx, patch) => {
+  // eslint-disable-next-line no-constant-condition
   if (patch.recipient === "boilerplate1" || true) {
     patch = { ...patch, fee: null };
   }
