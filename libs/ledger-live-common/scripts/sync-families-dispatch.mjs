@@ -25,6 +25,7 @@ const familiesWPackage = [
   "aptos",
   "bitcoin",
   "cardano",
+  "casper",
   "cosmos",
   "elrond",
   "evm",

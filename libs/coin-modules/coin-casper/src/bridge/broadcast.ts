@@ -1,8 +1,8 @@
 import { DeployUtil } from "casper-js-sdk";
 import { AccountBridge } from "@ledgerhq/types-live";
 import { patchOperationWithHash } from "@ledgerhq/coin-framework/operation";
-import { Transaction } from "./types";
-import { broadcastTx } from "./api";
+import { Transaction } from "../types";
+import { broadcastTx } from "../api";
 
 export const broadcast: AccountBridge<Transaction>["broadcast"] = async ({
   signedOperation: { signature, operation },

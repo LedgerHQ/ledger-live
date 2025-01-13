@@ -1,7 +1,7 @@
-import type { DeviceAction } from "../../bot/types";
-import type { Transaction } from "./types";
-import { deviceActionFlow, SpeculosButton } from "../../bot/specs";
-import { casperAccountHashFromPublicKey, getCLPublicKey } from "./bridge/bridgeHelpers/addresses";
+import { deviceActionFlow, SpeculosButton } from "@ledgerhq/coin-framework/bot/specs";
+import { DeviceAction } from "@ledgerhq/coin-framework/bot/types";
+import { casperAccountHashFromPublicKey, getCLPublicKey } from "../bridge/bridgeHelpers/addresses";
+import type { Transaction } from "../types";
 
 export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
   steps: [
