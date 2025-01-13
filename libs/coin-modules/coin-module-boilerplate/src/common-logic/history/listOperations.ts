@@ -1,17 +1,17 @@
-import type { Operation } from "@ledgerhq/coin-framework/api/index";
+import type { Operation, Pagination } from "@ledgerhq/coin-framework/api/index";
 import { getTransactions } from "../../network/indexer";
 
 /**
  * Returns list of operations associated to an account.
  * @param address Account address
- * @param blockHeight Height to start searching for operations
+ * @param pagination Pagination options
  * @returns
  */
-export async function listOperations(address: string, blockHeight: number): Promise<Operation[]> {
-  const transactions = await getTransactions(address, {
-    from: blockHeight,
-    size: 100,
-  });
+export async function listOperations(
+  address: string,
+  { limit, start }: Pagination,
+): Promise<Operation[]> {
+  const transactions = await getTransactions(address, { from: start || 0, size: limit });
 
   return transactions.map(convertToCoreOperation(address));
 }
