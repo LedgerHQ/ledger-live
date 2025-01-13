@@ -19,6 +19,7 @@ const fetch = (path: string) => {
 export interface Account {
   accountId: AccountId;
   balance: BigNumber;
+  keyType: string;
 }
 
 export async function getAccountsForPublicKey(publicKey: string): Promise<Account[]> {
@@ -38,10 +39,23 @@ export async function getAccountsForPublicKey(publicKey: string): Promise<Accoun
     accounts.push({
       accountId: AccountId.fromString(raw.account),
       balance: accountBalance.balance,
+      keyType: raw.key._type,
     });
   }
 
   return accounts;
+}
+
+export async function getKeyTypeForAccount(accountId: string): Promise<string> {
+  let r;
+  try {
+    r = await fetch(`/api/v1/accounts/${accountId}`);
+  } catch (e: any) {
+    if (e.name === "LedgerAPI4xx") return "";
+    throw e;
+  }
+
+  return r.data.key._type;
 }
 
 interface HederaMirrorTransaction {

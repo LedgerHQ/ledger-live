@@ -4,8 +4,14 @@ import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { GetAddressOptions } from "@ledgerhq/coin-framework/derivation";
 
 const resolver = (signerContext: SignerContext<HederaSigner>): GetAddressFn => {
-  return async (deviceId: string, { path }: GetAddressOptions) => {
-    const publicKey = await signerContext(deviceId, signer => signer.getPublicKey(path));
+  return async (deviceId: string, { path, derivationMode }: GetAddressOptions) => {
+    let publicKey = "";
+    console.log(derivationMode);
+    if (derivationMode == "hederaBip44Ecdsa") {
+      publicKey = await signerContext(deviceId, signer => signer.getPublicKey(path, true));
+      console.log(publicKey);
+    }
+    publicKey = await signerContext(deviceId, signer => signer.getPublicKey(path));
 
     return {
       path,

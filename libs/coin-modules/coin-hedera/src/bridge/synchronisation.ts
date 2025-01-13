@@ -60,6 +60,7 @@ export const getAccountShape: GetAccountShape<Account> = async (
 };
 
 export const buildIterateResult: IterateResultBuilder = async ({ result: rootResult }) => {
+  console.log(rootResult.publicKey);
   const accounts = await getAccountsForPublicKey(rootResult.publicKey);
   const addresses = accounts.map(a => a.accountId.toString());
 

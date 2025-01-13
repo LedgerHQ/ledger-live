@@ -33,14 +33,25 @@ export default class Hedera {
    * @param path a path in BIP-32 format
    * @return the public key
    */
-  async getPublicKey(path: string): Promise<string> {
+  async getPublicKey(path: string, ecdsa?: boolean): Promise<string> {
+    console.log("path: " + path);
     const bipPath = BIPPath.fromString(path).toPathArray();
     const serializedPath = this._serializePath(bipPath);
 
+    //44/3030/0
+
     const p1 = 0x01;
-    const p2 = 0x00;
+    let p2 = 0x00;
+
+    if (ecdsa) {
+      p2 = 1;
+    }
+
+    console.log("getting key...");
 
     const response = await this.transport.send(CLA, INS.GET_PUBLIC_KEY, p1, p2, serializedPath);
+
+    console.log(response);
 
     const returnCodeBytes = response.slice(-2);
     const returnCode = (returnCodeBytes[0] << 8) | returnCodeBytes[1];
@@ -53,13 +64,17 @@ export default class Hedera {
   }
 
   // TODO: the BOLOS app does not support anything but index #0 for signing transactions
-  async signTransaction(transaction: Uint8Array): Promise<Uint8Array> {
+  async signTransaction(transaction: Uint8Array, ecdsa?: boolean): Promise<Uint8Array> {
     const payload = Buffer.alloc(4 + transaction.length);
     payload.writeUInt32LE(0);
     payload.fill(transaction, 4);
 
     const p1 = 0x00;
-    const p2 = 0x00;
+    let p2 = 0x00;
+
+    if (ecdsa) {
+      p2 = 1;
+    }
 
     const response = await this.transport.send(CLA, INS.SIGN_TRANSACTION, p1, p2, payload);
 
