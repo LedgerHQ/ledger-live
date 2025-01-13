@@ -12,5 +12,8 @@ export const estimateMaxSpendable: AccountBridge<
   if (!mainAccount) {
     return BigNumber(0);
   }
-  return mainAccount.spendableBalance.minus(506).minus(1118 * mainAccount.activeAddressCount);
+  const feeRate: number = transaction?.feerate || 1;
+  return mainAccount.spendableBalance
+    .minus(506)
+    .minus(1118 * mainAccount.activeAddressCount * feeRate);
 };

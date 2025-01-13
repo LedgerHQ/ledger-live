@@ -35,6 +35,7 @@ const getTransactionStatus = async (
       const maxSpendableAmount: BigNumber = calcMaxSpendableAmount(
         utxos,
         transaction.recipient.length > 67,
+        transaction.feerate || 1,
       );
 
       transaction.amount = maxSpendableAmount;
