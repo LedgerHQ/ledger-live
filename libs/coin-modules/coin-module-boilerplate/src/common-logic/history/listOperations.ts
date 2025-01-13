@@ -5,15 +5,17 @@ import { getTransactions } from "../../network/indexer";
  * Returns list of operations associated to an account.
  * @param address Account address
  * @param pagination Pagination options
- * @returns
+ * @returns Operations found and the next "id" or "index" to use for pagination (i.e. `start` property).\
+ * If `0` is returns, no pagination needed.
+ * This "id" or "index" value, thus it has functional meaning, is different for each blockchain.
  */
 export async function listOperations(
   address: string,
   { limit, start }: Pagination,
-): Promise<Operation[]> {
+): Promise<[Operation[], number]> {
   const transactions = await getTransactions(address, { from: start || 0, size: limit });
 
-  return transactions.map(convertToCoreOperation(address));
+  return [transactions.map(convertToCoreOperation(address)), transactions.length];
 }
 
 const convertToCoreOperation = (address: string) => (operation: any) => {
