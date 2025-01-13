@@ -27,6 +27,8 @@ type Props = {
   manifestName?: string | null;
 };
 
+const handleUrlClick = (url?: string) => () => url && openURL(url);
+
 const ConfirmFooter = ({ footer, transaction, manifestId, manifestName }: Props) => {
   if (!manifestId) return;
   const appNameByAddr = dexProvidersContractAddress[transaction?.recipient || ""];
@@ -47,7 +49,7 @@ const ConfirmFooter = ({ footer, transaction, manifestId, manifestName }: Props)
               components={[
                 <Text
                   key={manifestId}
-                  onClick={() => openURL(termsOfUseUrl)}
+                  onClick={handleUrlClick(termsOfUseUrl)}
                   style={{
                     cursor: "pointer",
                     textDecoration: "underline",
@@ -55,7 +57,7 @@ const ConfirmFooter = ({ footer, transaction, manifestId, manifestName }: Props)
                 />,
                 <Text
                   key={manifestId + "1"}
-                  onClick={() => openURL(privacyUrl)}
+                  onClick={handleUrlClick(privacyUrl)}
                   style={{
                     cursor: "pointer",
                     textDecoration: "underline",
