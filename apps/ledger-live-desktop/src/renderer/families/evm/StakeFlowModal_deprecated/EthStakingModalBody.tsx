@@ -87,13 +87,13 @@ export function EthStakingModalBody({
 
   const checkBoxOnChange = useCallback(() => {
     const value = !doNotShowAgain;
-    global.localStorage.setItem(`${LOCAL_STORAGE_KEY_PREFIX}${account?.id}`, `${value}`);
+    global.localStorage.setItem(`${LOCAL_STORAGE_KEY_PREFIX}${account?.currency}`, `${value}`);
     setDoNotShowAgain(value);
     track("button_clicked2", {
       button: "not_show",
       ...getTrackProperties({ value, modal: source }),
     });
-  }, [doNotShowAgain, account?.id, source]);
+  }, [doNotShowAgain, account?.currency, source]);
 
   const hasMinValidatorEth = account.spendableBalance.isGreaterThan(ETH_LIMIT);
 
