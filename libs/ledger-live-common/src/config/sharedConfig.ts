@@ -1,6 +1,7 @@
 import { ConfigSchema } from "@ledgerhq/live-config/LiveConfig";
 import { appConfig } from "../apps/config";
 import { algorandConfig } from "../families/algorand/config";
+import { aptosConfig } from "../families/aptos/config";
 import { bitcoinConfig } from "../families/bitcoin/config";
 import { cardanoConfig } from "../families/cardano/config";
 import { casperConfig } from "../families/casper/config";
@@ -42,6 +43,7 @@ export const liveConfig: ConfigSchema = {
   ...countervaluesConfig,
   ...liveCommonConfig,
   ...algorandConfig,
+  ...aptosConfig,
   ...bitcoinConfig,
   ...cardanoConfig,
   ...casperConfig,

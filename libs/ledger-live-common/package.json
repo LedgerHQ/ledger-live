@@ -121,7 +121,6 @@
   },
   "dependencies": {
     "@apollo/client": "^3.8.7",
-    "@aptos-labs/ts-sdk": "^1.33.1",
     "@blooo/hw-app-acre": "^1.1.1",
     "@cardano-foundation/ledgerjs-hw-app-cardano": "^7.1.2",
     "@celo/connect": "^6.0.2",
@@ -133,6 +132,7 @@
     "@dfinity/candid": "^0.21.0",
     "@dfinity/principal": "^0.15.6",
     "@ledgerhq/coin-algorand": "workspace:^",
+    "@ledgerhq/coin-aptos": "workspace:^",
     "@ledgerhq/coin-bitcoin": "workspace:^",
     "@ledgerhq/coin-cardano": "workspace:^",
     "@ledgerhq/coin-cosmos": "workspace:^",
