@@ -132,7 +132,7 @@ test("Ethereum staking flows via portfolio, asset page and market page @smoke", 
     });
     await delegate.chooseStakeProvider("kiln");
     await analyticsPromise;
-    await liveAppWebview.waitForCorrectTextInWebview("Ethereum 2");
+    await liveAppWebview.waitForCorrectTextInWebview("Ethereum 1");
     const dappURL = await liveAppWebview.getLiveAppDappURL();
     expect(await liveAppWebview.getLiveAppTitle()).toBe("Kiln");
     expect(dappURL).toContain("?focus=dedicated");
