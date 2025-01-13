@@ -17,7 +17,7 @@ const HorizontalSeparator = styled.div`
 `;
 
 if (getEnv("PLAYWRIGHT_RUN")) {
-  termsOfUse.set("dummy-live-app", "https://localhost.io/testtos");
+  termsOfUse["dummy-live-app"] = "https://localhost.io/testtos";
 }
 
 type Props = {
