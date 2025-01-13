@@ -49,8 +49,8 @@ export default {
   tron,
   xrp,
 };
-import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_casper } from "../families/casper/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_aptos } from "@ledgerhq/coin-aptos/bridge/deviceTransactionConfig";
+import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_casper } from "@ledgerhq/coin-casper/bridge/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_filecoin } from "@ledgerhq/coin-filecoin/bridge/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_stacks } from "@ledgerhq/coin-stacks/bridge/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_polkadot } from "@ledgerhq/coin-polkadot/bridge/deviceTransactionConfig";
@@ -58,6 +58,7 @@ import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_tron } from 
 
 export type ExtraDeviceTransactionField =
   | ExtraDeviceTransactionField_aptos
+  | ExtraDeviceTransactionField_casper
   | ExtraDeviceTransactionField_filecoin
   | ExtraDeviceTransactionField_stacks
   | ExtraDeviceTransactionField_polkadot

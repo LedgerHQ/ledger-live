@@ -7,6 +7,7 @@ import {
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
+import { ExtraDeviceTransactionField } from "../bridge/deviceTransactionConfig";
 
 type FamilyType = "casper";
 
@@ -33,3 +34,5 @@ export type TransactionRaw = TransactionCommonRaw & {
 export type TransactionStatus = TransactionStatusCommon;
 
 export type TransactionStatusRaw = TransactionStatusCommonRaw;
+
+export type { ExtraDeviceTransactionField };
