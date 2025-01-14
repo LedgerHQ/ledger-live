@@ -5,7 +5,7 @@
   "common" : {
     "cancel" : "Annuler",
     "apply" : "Appliquer",
-    "seeAll" : "Tout afficher",
+    "seeAll" : "Afficher tout",
     "seeAllWithNumber" : "Afficher tout ({{number}})",
     "back" : "Retour",
     "delete" : "Effacer",
@@ -971,6 +971,18 @@
       "title" : "Fournisseur non valide",
       "description" : "Vous devez modifier le paramètre \"Fournisseur de My Ledger\". Dans Ledger Live, accédez aux Paramètres, sélectionnez \"Fonctionnalités expérimentales\", puis choisissez un autre fournisseur."
     },
+    "GasLessThanEstimate" : {
+      "title" : "Les frais risquent d’être trop bas. Veuillez les augmenter."
+    },
+    "SequenceNumberTooNew" : {
+      "title" : "Numéro de séquence trop récent"
+    },
+    "SequenceNumberTooOld" : {
+      "title" : "Numéro de séquence trop ancien"
+    },
+    "TransactionExpired" : {
+      "title" : "Transaction expirée"
+    },
     "SequenceNumberError" : {
       "title" : "Erreur dans le numéro de séquence",
       "description" : "Veuillez fermer la fenêtre et réessayer plus tard."
@@ -1019,6 +1031,12 @@
     "ScannedNewImportQrCode" : {
       "title" : "Mise à jour nécessaire",
       "description" : "Pour synchroniser vos applications, assurez-vous qu’elles sont toutes deux mises à jour avec la dernière version."
+    },
+    "AppManifestUnknownError" : {
+      "title" : "App Live Swap introuvable"
+    },
+    "AppManifestNotFoundError" : {
+      "title" : "Échec du chargement de l’app Live Swap"
     }
   },
   "crash" : {
@@ -2339,10 +2357,11 @@
     },
     "topGainers" : {
       "title" : "Palmarès marché (24H)",
-      "seeMarket" : "Tout afficher"
+      "seeMarket" : "Afficher tout"
     },
     "walletBalance" : "Solde total",
-    "seelAllAssets" : "Afficher tous les actifs",
+    "seeAllAssets" : "Voir tous les actifs",
+    "seeAllAccounts" : "Voir tous les comptes",
     "marketPriceSection" : {
       "title" : "Cours du {{currencyTicker}}",
       "currencyPrice" : "Prix de 1 {{currencyTicker}}",
@@ -2497,7 +2516,7 @@
     "identifier" : "Identifiant de la transaction",
     "viewOperation" : "Voir dans l’explorateur",
     "whatIsThis" : "À quoi correspond cette opération ?",
-    "seeAll" : "Tout afficher",
+    "seeAll" : "Afficher tout",
     "seeLess" : "Afficher moins",
     "viewInExplorer" : "Voir dans l’explorateur",
     "sending" : "Envoi en cours…",
@@ -2602,7 +2621,7 @@
       },
       "stellar" : {
         "seeMore" : "Voir plus d’actifs",
-        "seeLess" : "Afficher moins d’actifs",
+        "seeLess" : "Voir moins d’actifs",
         "addTokens" : "Ajouter des actifs",
         "howTo" : "Vous pouvez ajouter des actifs à votre compte Stellar",
         "addAsset" : "Ajouter un actif"
@@ -2748,6 +2767,9 @@
         "cta" : "Staker maintenant"
       }
     }
+  },
+  "assets" : {
+    "title" : "Actifs"
   },
   "accounts" : {
     "title" : "Comptes",
@@ -3467,6 +3489,16 @@
         "providers" : {
           "noProviders" : "Aucun résultat. Il n’y a pas de résultat correspondant à ces préférences."
         }
+      },
+      "incompatibility" : {
+        "explore_compatible_devices" : "Voir les appareils compatibles",
+        "contact_support" : "Contacter l’Assistance",
+        "ton_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de TON",
+        "ton_description" : "Pour échanger des TON, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+        "spl_tokens_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de tokens Solana",
+        "spl_tokens_description" : "Pour échanger des tokens Solana, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+        "ada_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de Cardano",
+        "ada_description" : "Pour échanger des Cardano, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™."
       }
     },
     "lending" : {
@@ -3748,6 +3780,7 @@
       "to" : "À",
       "infoTotalTitle" : "Total débité",
       "infoTotalDesc" : "Comprend le montant de la transaction et les frais de réseau choisis",
+      "gasFee" : "Frais de gaz",
       "gasLimit" : "Limite de gaz",
       "gasPrice" : "Prix du gaz",
       "maxFee" : "Frais maximaux",
@@ -3961,6 +3994,8 @@
   },
   "addAccounts" : {
     "addNew" : "Ajouter",
+    "seeAllAccounts" : "Voir tous les comptes",
+    "addNewOrExisting" : "Ajouter un compte nouveau ou existant",
     "supportLinks" : {
       "segwit_or_native_segwit" : "SegWit ou Native SegWit ?"
     },
@@ -3969,6 +4004,8 @@
       "desc" : "Voulez-vous vraiment annuler l’ajout de comptes ?"
     },
     "imported" : "Actif bien ajouté",
+    "added" : "Compte ajouté à votre portefeuille",
+    "added_plural" : "{{count}} comptes ajoutés à votre portefeuille",
     "sections" : {
       "importable" : {
         "title" : "Ajouter un compte existant"
@@ -3986,9 +4023,9 @@
     "success" : {
       "desc" : "Accédez à vos comptes ou ajoutez d’autres comptes.",
       "secondaryCTA" : "Ajouter un nouvel actif",
-      "cta" : "Afficher votre actif"
+      "cta" : "Voir votre actif"
     },
-    "stopScanning" : "Mettre fin au balayage",
+    "stopScanning" : "Arrêter le balayage",
     "retryScanning" : "Réessayer le balayage",
     "retry" : "Réessayer",
     "done" : "Terminé",
@@ -4025,6 +4062,32 @@
         "title" : "Taproot",
         "desc" : "Nouvelle mise à niveau du réseau {{currency}}. Elle offrira une meilleure confidentialité et des frais moins élevés. Elle n’est pas encore prise en charge par tous les échanges et wallets."
       }
+    },
+    "scanDeviceAccounts" : {
+      "title" : "Sélectionnez le compte à ajouter",
+      "ctaStopScan" : "Arrêter le balayage",
+      "confirm" : "Confirmer",
+      "scanningTitle" : "Recherche des comptes existant déjà sur la blockchain...",
+      "sections" : {
+        "importable" : {
+          "title" : "{{count}} compte a été trouvé",
+          "title_plural" : "{{count}} comptes ont été trouvés"
+        },
+        "creatable" : {
+          "title" : "Nouveau compte"
+        },
+        "imported" : {
+          "title" : "Compte déjà dans votre portefeuille ({{length}})",
+          "title_plural" : "Comptes déjà dans votre portefeuille ({{length}})"
+        },
+        "migrate" : {
+          "title" : "Comptes à mettre à jour"
+        }
+      }
+    },
+    "addAccountsSuccess" : {
+      "ctaAddFunds" : "Ajouter des actifs à mon compte",
+      "ctaClose" : "Fermer"
     }
   },
   "DeviceAction" : {
@@ -6604,7 +6667,7 @@
         "select" : "Sélectionner",
         "filter" : "Filtrer",
         "blockchain" : "Blockchain",
-        "seeAll" : "Tout afficher",
+        "seeAll" : "Afficher tout",
         "selectAndHide" : "Sélectionner et masquer",
         "hide" : "Masquer {{count}} collection",
         "hiddenCollections" : "Collections masquées",
@@ -7111,6 +7174,16 @@
           "name" : "Ajouter un compte"
         }
       }
+    }
+  },
+  "assetSelection" : {
+    "selectCrypto" : {
+      "title" : "Sélectionner un actif"
+    },
+    "selectNetwork" : {
+      "title" : "Sélectionner le réseau de blockchain pour cet actif",
+      "detectedAccounts" : "{{count}} compte (détecté)",
+      "detectedAccounts_plural" : "{{count}} comptes (détectés)"
     }
   }
 }
