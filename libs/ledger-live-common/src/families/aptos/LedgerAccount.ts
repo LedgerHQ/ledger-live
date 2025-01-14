@@ -1,5 +1,4 @@
 import {
-  Account,
   AccountAddress,
   AccountAuthenticatorEd25519,
   Ed25519PublicKey,
