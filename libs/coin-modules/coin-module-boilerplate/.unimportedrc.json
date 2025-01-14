@@ -19,6 +19,8 @@
     "jest-matcher-utils",
     "jest-message-util"
   ],
-  "ignoreUnimported": [],
+  "ignoreUnimported": [
+    "src/network/mock-network.ts"
+  ],
   "ignoreUnused": []
 }
