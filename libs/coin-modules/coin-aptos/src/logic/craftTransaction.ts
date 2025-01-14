@@ -1,14 +1,13 @@
 import type { Transaction } from "@ledgerhq/coin-framework/api/index";
-import { log } from "@ledgerhq/logs";
 
 export async function craftTransaction(
+  // eslint-disable-next-line
   address: string,
+  // eslint-disable-next-line
   transaction: Transaction,
+  // eslint-disable-next-line
   pubkey?: string,
+  // @ts-expect-error to be implemented
 ): Promise<string> {
-  log("info", "address", address);
-  log("info", "transaction", transaction.amount.toString());
-  log("info", "pubkey", pubkey);
-
-  return "";
+  // TODO implement aptos craftTransaction
 }

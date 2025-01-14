@@ -1,8 +1,5 @@
-import { log } from "@ledgerhq/logs";
-
+// @ts-expect-error to be implemented
+// eslint-disable-next-line
 export async function estimateFees(addr: string, amount: bigint): Promise<bigint> {
-  log("info", "addr", addr);
-  log("info", "amount", amount.toString());
-
-  return amount;
+  // return BigInt(payment.partialFee);
 }

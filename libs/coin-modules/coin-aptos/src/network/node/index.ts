@@ -1,4 +1,4 @@
-import { AccountData, Aptos, AptosConfig } from "@aptos-labs/ts-sdk";
+import { Aptos, AptosConfig } from "@aptos-labs/ts-sdk";
 import aptosCoinConfig, { type AptosCoinConfig } from "../../config";
 
 let client: Aptos;
@@ -19,8 +19,4 @@ export default async function () {
   }
 
   return client;
-}
-
-export async function getAccount(accountAddress: string): Promise<AccountData> {
-  return client.getAccountInfo({ accountAddress });
 }

@@ -3,11 +3,8 @@ import { log } from "@ledgerhq/logs";
 import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import buildTransaction from "./buildTransaction";
-import { DEFAULT_GAS, DEFAULT_GAS_PRICE, ESTIMATE_GAS_MUL } from "./logic";
-import type { Transaction, TransactionErrors } from "../types";
-import { simulateTransaction } from "./simulateTransaction";
-import { estimateGasPrice } from "./estimateGasPrice";
-import { getAccount } from "./getAccount";
+import { DEFAULT_GAS, DEFAULT_GAS_PRICE, ESTIMATE_GAS_MUL } from "../logic";
+import type { Transaction, TransactionErrors } from "../../types";
 
 type IGetEstimatedGasReturnType = {
   fees: BigNumber;
@@ -43,7 +40,7 @@ export const getFee = async (
   let sequenceNumber = "";
 
   try {
-    const { gas_estimate } = await estimateGasPrice();
+    const { gas_estimate } = await aptosClient.estimateGasPrice();
     gasPrice = gas_estimate;
   } catch (err) {
     // skip
@@ -53,7 +50,7 @@ export const getFee = async (
     try {
       const publicKeyEd = new Ed25519PublicKey(account.xpub as string);
       const tx = await buildTransaction(account, transaction, aptosClient);
-      const simulation = await simulateTransaction(publicKeyEd, tx);
+      const simulation = await aptosClient.simulateTransaction(publicKeyEd, tx);
       const completedTx = simulation[0];
 
       const expectedGas = BigNumber(gasLimit * gasPrice);
@@ -84,17 +81,14 @@ export const getFee = async (
       gasLimit =
         Number(completedTx.gas_used) ||
         Math.floor(Number(transaction.options.maxGasAmount) / ESTIMATE_GAS_MUL);
-    } catch (error) {
-      if (error instanceof Error) {
-        log(error.message);
-      }
-
+    } catch (error: any) {
+      log(error.message);
       throw error;
     }
   }
 
   try {
-    const { sequence_number } = await getAccount(account.freshAddress);
+    const { sequence_number } = await aptosClient.getAccount(account.freshAddress);
     sequenceNumber = sequence_number;
   } catch (_) {
     // skip
@@ -123,7 +117,7 @@ const getCacheKey = (transaction: Transaction): string =>
 export const getEstimatedGas = async (
   account: Account,
   transaction: Transaction,
-  aptosClient: Aptos,
+  aptosClient: AptosAPI,
 ): Promise<IGetEstimatedGasReturnType> => {
   const key = getCacheKey(transaction);
 
