@@ -44,6 +44,11 @@ module.exports = {
       build: `export ENVFILE=.env.mock && xcodebuild ARCHS=${iosArch} ONLY_ACTIVE_ARCH=YES -workspace ios/ledgerlivemobile.xcworkspace -scheme ledgerlivemobile -configuration Release -sdk iphonesimulator -derivedDataPath ios/build`,
       binaryPath: "ios/build/Build/Products/Release-iphonesimulator/ledgerlivemobile.app",
     },
+    "ios.prerelease": {
+      type: "ios.app",
+      build: `export ENVFILE=.env.mock.prerelease && xcodebuild ARCHS=${iosArch} ONLY_ACTIVE_ARCH=YES -workspace ios/ledgerlivemobile.xcworkspace -scheme ledgerlivemobile -configuration Release -sdk iphonesimulator -derivedDataPath ios/build`,
+      binaryPath: "ios/build/Build/Products/Release-iphonesimulator/ledgerlivemobile.app",
+    },
     "android.debug": {
       type: "android.apk",
       build: `cd android && ENVFILE=.env.mock ./gradlew app:assembleDebug app:assembleAndroidTest -DtestBuildType=debug -PreactNativeArchitectures=${androidArch} && cd ..`,
@@ -55,6 +60,13 @@ module.exports = {
       build: `cd android && ENVFILE=.env.mock ./gradlew app:assembleDetox app:assembleAndroidTest -DtestBuildType=detox -PreactNativeArchitectures=${androidArch} && cd ..`,
       binaryPath: `android/app/build/outputs/apk/detox/app-${androidArch}-detox.apk`,
       testBinaryPath: "android/app/build/outputs/apk/androidTest/detox/app-detox-androidTest.apk",
+    },
+    "android.prerelease": {
+      type: "android.apk",
+      build: `cd android && ENVFILE=.env.mock.prerelease ./gradlew app:assembleDetoxPreRelease app:assembleAndroidTest -DtestBuildType=detoxPreRelease -PreactNativeArchitectures=${androidArch} && cd ..`,
+      binaryPath: `android/app/build/outputs/apk/detoxPreRelease/app-${androidArch}-detoxPreRelease.apk`,
+      testBinaryPath:
+        "android/app/build/outputs/apk/androidTest/detoxPreRelease/app-detoxPreRelease-androidTest.apk",
     },
   },
   devices: {
@@ -87,6 +99,10 @@ module.exports = {
       device: "simulator",
       app: "ios.release",
     },
+    "ios.sim.prerelease": {
+      device: "simulator",
+      app: "ios.prerelease",
+    },
     "android.emu.debug": {
       device: "emulator",
       app: "android.debug",
@@ -94,6 +110,10 @@ module.exports = {
     "android.emu.release": {
       device: "emulator",
       app: "android.release",
+    },
+    "android.emu.prerelease": {
+      device: "emulator",
+      app: "android.prerelease",
     },
   },
 };
