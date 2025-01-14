@@ -971,6 +971,18 @@
       "title" : "Geçersiz Sağlayıcı",
       "description" : "\"My Ledger sağlayıcım\" ayarını değiştirmeniz gerekmektedir. Bunu değiştirmek için Ledger Live'da \"Ayarlar\"ı açın, \"Deneysel özellikler\"i seçin ve ardından farklı bir sağlayıcı seçin."
     },
+    "GasLessThanEstimate" : {
+      "title" : "Bu çok düşük olabilir. Lütfen arttırın"
+    },
+    "SequenceNumberTooNew" : {
+      "title" : "Sıra numarası çok yeni"
+    },
+    "SequenceNumberTooOld" : {
+      "title" : "Sıra numarası çok eski"
+    },
+    "TransactionExpired" : {
+      "title" : "İşlemin süresi doldu"
+    },
     "SequenceNumberError" : {
       "title" : "Sıra numarası hatası",
       "description" : "Lütfen pencereyi kapatıp daha sonra tekrar deneyin"
@@ -1019,6 +1031,12 @@
     "ScannedNewImportQrCode" : {
       "title" : "Güncelleme gerekli",
       "description" : "Uygulamalarınızı senkronize etmek için her ikisinin de en son sürüme güncellendiğinden emin olun."
+    },
+    "AppManifestUnknownError" : {
+      "title" : "Takas Live Uygulaması bulunamadı"
+    },
+    "AppManifestNotFoundError" : {
+      "title" : "Takas Live Uygulaması yüklenemedi"
     }
   },
   "crash" : {
@@ -2342,7 +2360,8 @@
       "seeMarket" : "Tümünü gör"
     },
     "walletBalance" : "Cüzdan bakiyesi",
-    "seelAllAssets" : "Tüm Varlıkları Gör",
+    "seeAllAssets" : "Tüm varlıkları gör",
+    "seeAllAccounts" : "Tüm hesapları gör",
     "marketPriceSection" : {
       "title" : "{{currencyTicker}} piyasa fiyatı",
       "currencyPrice" : "1 {{currencyTicker}} fiyatı",
@@ -2748,6 +2767,9 @@
         "cta" : "Stake etmeye başla"
       }
     }
+  },
+  "assets" : {
+    "title" : "Varlıklar"
   },
   "accounts" : {
     "title" : "Hesaplar",
@@ -3467,6 +3489,16 @@
         "providers" : {
           "noProviders" : "Sonuç bulunamadı. Mevcut tercihlere uyan teklif yok."
         }
+      },
+      "incompatibility" : {
+        "explore_compatible_devices" : "Uyumlu cihazları keşfedin",
+        "contact_support" : "Müşteri destek ekibiyle iletişime geç",
+        "ton_title" : "Ledger Nano S™, Ton takasını desteklemez",
+        "ton_description" : "Ton takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın.",
+        "spl_tokens_title" : "Ledger Nano S™, Solana token takasını desteklemez",
+        "spl_tokens_description" : "Solana token'larını takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın.",
+        "ada_title" : "Ledger Nano S™, Cardano takasını desteklemez",
+        "ada_description" : "Cardano takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın."
       }
     },
     "lending" : {
@@ -3505,7 +3537,7 @@
       },
       "howDoesLendingWork" : "Borç verme nasıl çalışır",
       "dashboard" : {
-        "tabTitle" : "Kontrol Paneli",
+        "tabTitle" : "Pano",
         "assetsTitle" : "Borç verilebilecek varlıklar",
         "accountsTitle" : "Onaylanmış hesaplar",
         "emptySateDescription" : "Ethereum hesaplarınızdaki varlıkları doğrudan borç olarak verebilir ve faiz kazanabilirsiniz.",
@@ -3748,6 +3780,7 @@
       "to" : "Alıcı",
       "infoTotalTitle" : "Düşülecek tutar",
       "infoTotalDesc" : "İşlem miktarını ve seçilen ağın ücretlerini içerir",
+      "gasFee" : "Gas Ücreti",
       "gasLimit" : "Gas limiti",
       "gasPrice" : "Gas ücreti",
       "maxFee" : "Ücret üst limiti",
@@ -3961,6 +3994,8 @@
   },
   "addAccounts" : {
     "addNew" : "Yeni ekle",
+    "seeAllAccounts" : "Tüm hesapları gör",
+    "addNewOrExisting" : "Yeni veya mevcut bir hesabı ekleyin",
     "supportLinks" : {
       "segwit_or_native_segwit" : "Segwit mi yoksa Native Segwit mi?"
     },
@@ -3969,6 +4004,8 @@
       "desc" : "Hesap eklemeyi iptal etmek istediğinizden emin misiniz?"
     },
     "imported" : "Varlık başarıyla eklendi",
+    "added" : "Hesap, portföyünüze eklendi",
+    "added_plural" : "Portföyünüze {{count}} hesap eklendi",
     "sections" : {
       "importable" : {
         "title" : "Mevcut bir hesabı ekle"
@@ -4025,6 +4062,32 @@
         "title" : "Taproot",
         "desc" : "En son {{currency}} ağ yükseltmesi. Yaygınlaştıktan sonra daha iyi gizlilik ve daha ucuz ağ ücretleri sağlayacak. Cüzdan ve borsaların sunduğu destek hâlâ sınırlı."
       }
+    },
+    "scanDeviceAccounts" : {
+      "title" : "Eklemek istediğiniz hesapları seçin",
+      "ctaStopScan" : "Taramayı durdur",
+      "confirm" : "Onayla",
+      "scanningTitle" : "Blok Zincirindeki mevcut tüm hesaplar aranıyor...",
+      "sections" : {
+        "importable" : {
+          "title" : "{{count}} hesap bulundu",
+          "title_plural" : "{{count}} hesap bulundu"
+        },
+        "creatable" : {
+          "title" : "Yeni hesap"
+        },
+        "imported" : {
+          "title" : "Hesap zaten Portföyde mevcut ({{length}})",
+          "title_plural" : "Portföydeki hesaplar ({{length}})"
+        },
+        "migrate" : {
+          "title" : "Güncellenecek hesaplar"
+        }
+      }
+    },
+    "addAccountsSuccess" : {
+      "ctaAddFunds" : "Hesabınıza fon ekleyin",
+      "ctaClose" : "Kapat"
     }
   },
   "DeviceAction" : {
@@ -6102,7 +6165,7 @@
     },
     "warning" : "Ledger cihazınızda gösterilen adres ile {{recipientWording}} tarafındaki adresin eşleştiğinden emin olun",
     "recipientWording" : {
-      "send" : "Cihazınızda görüntülenen adresin, alıcı tarafından size verilen adresle tam olarak eşleştiğini her zaman doğrulayın",
+      "send" : "Cihazınızda gösterilen adresin, alıcı tarafından size verilen adresle tam olarak eşleştiğini daima doğrulayın",
       "delegate" : "Cihazınızda görüntülenen adresin, doğrulayıcı tarafından sağlanan adresle tam olarak eşleştiğini her zaman doğrulayın",
       "undelegate" : "Cihazınızda görüntülenen adresin, doğrulayıcı tarafından sağlanan adresle tam olarak eşleştiğini her zaman doğrulayın",
       "freeze" : "Cihazınızda görüntülenen adresin, size sağlanan adresle tam olarak eşleştiğini her zaman doğrulayın",
@@ -6563,7 +6626,7 @@
     },
     "entryPointCard" : {
       "title" : "{{productName}} cihazınız için sırada ne var?",
-      "description" : "Herhangi bir borsadaki veya cüzdandaki varlıklarınızı aktarın, kripto satın alın, kilitli ekranı özelleştirin veya Ledger Recover'a abone olun.",
+      "description" : "Bir borsadaki veya cüzdandaki varlıklarınızı aktarın, kripto satın alın, kilitli ekranı özelleştirin veya Ledger Recover'a abone olun.",
       "buttonLabel" : "Sırada ne var?"
     },
     "actions" : {
@@ -7111,6 +7174,16 @@
           "name" : "Hesap ekleyin"
         }
       }
+    }
+  },
+  "assetSelection" : {
+    "selectCrypto" : {
+      "title" : "Varlık Seçin"
+    },
+    "selectNetwork" : {
+      "title" : "Varlığın ait olduğu blok zinciri ağını seçin",
+      "detectedAccounts" : "{{count}} hesap (algılanan)",
+      "detectedAccounts_plural" : "{{count}} hesap (algılanan)"
     }
   }
 }
