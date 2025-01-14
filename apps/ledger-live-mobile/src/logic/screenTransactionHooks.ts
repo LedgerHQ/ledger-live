@@ -92,6 +92,8 @@ export const useSignWithDevice = ({
     const { deviceId, transaction } = route.params || {};
     const bridge = getAccountBridge(account, parentAccount);
     const mainAccount = getMainAccount(account, parentAccount);
+    const mevProtected = useSelector(mevProtectionSelector);
+
     navigation.setOptions({
       gestureEnabled: false,
     });
@@ -122,6 +124,7 @@ export const useSignWithDevice = ({
                   .broadcast({
                     account: mainAccount,
                     signedOperation: (e as { signedOperation: SignedOperation }).signedOperation,
+                    broadcastConfig: { mevProtected },
                   })
                   .then(operation => ({
                     type: "broadcasted",
