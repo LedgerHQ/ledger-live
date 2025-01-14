@@ -110,6 +110,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const zksyncSepolia = useFeature("currencyZkSyncSepolia");
   const mantra = useFeature("currencyMantra");
   const xion = useFeature("currencyXion");
+  const zenrock = useFeature("currencyZenrock");
 
   const featureFlaggedCurrencies = useMemo(
     (): Partial<Record<CryptoCurrencyId, Feature<unknown> | null>> => ({
@@ -166,6 +167,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       zksync_sepolia: zksyncSepolia,
       mantra,
       xion,
+      zenrock,
     }),
     [
       aptos,
@@ -221,6 +223,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       zksyncSepolia,
       mantra,
       xion,
+      zenrock,
     ],
   );
 

@@ -44,6 +44,11 @@ on:
         required: false
         type: boolean
         default: false
+      enable_broadcast:
+        description: "Enable transaction broadcast"
+        required: false
+        type: boolean
+        default: false
 
 # Uncomment to have log-level: trace on detox run and build
 # (cf: apps/ledger-live-mobile/detox.config.js)
@@ -303,6 +308,12 @@ jobs:
           speculos_tag: ${{ env.SPECULOS_IMAGE_TAG }}
           bot_id: ${{ secrets.GH_BOT_APP_ID }}
           bot_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+      - name: Set DISABLE_TRANSACTION_BROADCAST
+        if: ${{ env.SPECULOS_RUN == 'true' }}
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-broadcast@develop
+        with:
+          enable_broadcast: ${{ inputs.enable_broadcast }}
+          schedule_cron: ${{ github.event.schedule.cron }}
       - name: Run Android Tests
         id: detox
         run: pnpm mobile e2e:ci -p android -t $([[ "$INPUT_SPECULOS" == "true" ]] && printf %s '--speculos') --shard ${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
