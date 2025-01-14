@@ -24,17 +24,15 @@ export async function listOperations(
 ): Promise<[Operation[], number]> {
   // Fake accountId
   const accountId = "";
-  const operations = await fetchOperations({
+  const [operations, nextCursor] = await fetchOperations({
     accountId,
     addr: address,
     order: "desc",
     limit,
     cursor: cursor?.toString(),
   });
-  const lastOperation = operations.slice(-1)[0];
-  const nextCursor = lastOperation?.extra?.pagingToken ?? "0";
 
-  return [operations.map(convertToCoreOperation(address)), parseInt(nextCursor)];
+  return [operations.map(convertToCoreOperation(address)), nextCursor];
 }
 
 const convertToCoreOperation = (address: string) => (operation: StellarOperation) => {

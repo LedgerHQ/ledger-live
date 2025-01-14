@@ -277,9 +277,9 @@ export async function fetchOperations({
   order: "asc" | "desc";
   cursor: string | undefined;
   limit?: number | undefined;
-}): Promise<StellarOperation[]> {
+}): Promise<[StellarOperation[], number]> {
   if (!addr) {
-    return [];
+    return [[], 0];
   }
 
   const defaultFetchLimit = coinConfig.getCoinConfig().explorer.fetchLimit ?? FETCH_LIMIT;
@@ -296,17 +296,20 @@ export async function fetchOperations({
       .call();
 
     if (!rawOperations || !rawOperations.records.length) {
-      return [];
+      return [[], 0];
     }
 
-    return rawOperationsToOperations(rawOperations.records as RawOperation[], addr, accountId);
+    return [
+      await rawOperationsToOperations(rawOperations.records as RawOperation[], addr, accountId),
+      parseInt(rawOperations.records[rawOperations.records.length - 1].paging_token),
+    ];
   } catch (e: unknown) {
     // FIXME: terrible hacks, because Stellar SDK fails to cast network failures to typed errors in react-native...
     // (https://github.com/stellar/js-stellar-sdk/issues/638)
     const errorMsg = e ? String(e) : "";
 
     if (e instanceof NotFoundError || errorMsg.match(/status code 404/)) {
-      return [];
+      return [[], 0];
     }
 
     if (errorMsg.match(/status code 4[0-9]{2}/)) {

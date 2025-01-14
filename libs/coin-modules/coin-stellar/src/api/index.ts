@@ -103,7 +103,7 @@ async function operationsFromHeight(
     const filteredOperations = operations.filter(op => op.block.height >= state.heightLimit);
     state.accumulator.push(...filteredOperations);
     state.apiNextCursor = nextCursor;
-    state.continueIterations = nextCursor !== 0;
+    state.continueIterations = operations.length === filteredOperations.length;
   }
 
   return [state.accumulator, state.apiNextCursor ?? 0];
