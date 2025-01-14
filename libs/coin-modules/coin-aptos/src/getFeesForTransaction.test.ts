@@ -1,6 +1,5 @@
 import BigNumber from "bignumber.js";
-import { createFixtureAccount } from "../../mock/fixtures/cryptoCurrencies";
-import createTransaction from "./createTransaction";
+import { createFixtureAccount, createFixtureTransaction } from "./types/bridge.fixture";
 import * as getFeesForTransaction from "./getFeesForTransaction";
 import { AptosAPI } from "./api";
 
@@ -47,7 +46,7 @@ describe("getFeesForTransaction Test", () => {
         ]);
 
         const account = createFixtureAccount();
-        const transaction = createTransaction();
+        const transaction = createFixtureTransaction();
         const aptosClient = new AptosAPI(account.currency.id);
 
         transaction.amount = new BigNumber(1);
@@ -84,7 +83,7 @@ describe("getFeesForTransaction Test", () => {
         ]);
 
         const account = createFixtureAccount();
-        const transaction = createTransaction();
+        const transaction = createFixtureTransaction();
         const aptosClient = new AptosAPI(account.currency.id);
 
         transaction.amount = new BigNumber(1);
@@ -121,7 +120,7 @@ describe("getFeesForTransaction Test", () => {
         ]);
 
         const account = createFixtureAccount();
-        const transaction = createTransaction();
+        const transaction = createFixtureTransaction();
         const aptosClient = new AptosAPI(account.currency.id);
 
         transaction.amount = new BigNumber(1);
@@ -156,7 +155,7 @@ describe("getFeesForTransaction Test", () => {
         ]);
 
         const account = createFixtureAccount();
-        const transaction = createTransaction();
+        const transaction = createFixtureTransaction();
         const aptosClient = new AptosAPI(account.currency.id);
 
         transaction.amount = new BigNumber(1);
@@ -174,7 +173,7 @@ describe("getFeesForTransaction Test", () => {
     describe("when key not in cache", () => {
       it("should return cached fee", async () => {
         const account = createFixtureAccount();
-        const transaction = createTransaction();
+        const transaction = createFixtureTransaction();
         const aptosClient = new AptosAPI(account.currency.id);
 
         const result = await getFeesForTransaction.getEstimatedGas(
@@ -207,7 +206,7 @@ describe("getFeesForTransaction Test", () => {
         const mocked = jest.spyOn(getFeesForTransaction, "getFee");
 
         const account = createFixtureAccount();
-        const transaction = createTransaction();
+        const transaction = createFixtureTransaction();
         const aptosClient = new AptosAPI(account.currency.id);
 
         transaction.amount = new BigNumber(10);

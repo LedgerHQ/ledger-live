@@ -1,12 +1,11 @@
 import invariant from "invariant";
-import expect from "expect";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
-import { genericTestDestination, pickSiblings, botTest } from "../../bot/specs";
-import type { AppSpec } from "../../bot/types";
+import { botTest, genericTestDestination, pickSiblings } from "@ledgerhq/coin-framework/bot/specs";
+import type { AppSpec } from "@ledgerhq/coin-framework/bot/types";
 import { acceptTransaction } from "./speculos-deviceActions";
-import type { Transaction } from "./types";
+import type { Transaction } from "../types";
 
 const currency = getCryptoCurrencyById("aptos");
 const minBalanceNewAccount = parseCurrencyUnit(currency.units[0], "0.0001");

@@ -1,4 +1,4 @@
-import type { DeviceTransactionField } from "../../transaction";
+import type { CommonDeviceTransactionField as DeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
 import BigNumber from "bignumber.js";
 
 export const methodToString = (method: number): string => {

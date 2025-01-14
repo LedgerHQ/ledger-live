@@ -1,5 +1,4 @@
-import { createFixtureAccount } from "../../mock/fixtures/cryptoCurrencies";
-import createTransaction from "./createTransaction";
+import { createFixtureAccount, createFixtureTransaction } from "./types/bridge.fixture";
 import estimateMaxSpendable from "./estimateMaxSpendable";
 import BigNumber from "bignumber.js";
 
@@ -56,7 +55,7 @@ describe("estimateMaxSpendable Test", () => {
   describe("transaction spendable balance is higher than the total gas", () => {
     it("should return transaction spendable amount minus total gas", async () => {
       const account = createFixtureAccount();
-      const transaction = createTransaction();
+      const transaction = createFixtureTransaction();
 
       const spendableBalance = new BigNumber(1);
 
@@ -77,7 +76,7 @@ describe("estimateMaxSpendable Test", () => {
   describe("transaction spendable balance is higher than the total gas", () => {
     it("should return transaction spendable amount minus total gas", async () => {
       const account = createFixtureAccount();
-      const transaction = createTransaction();
+      const transaction = createFixtureTransaction();
 
       const spendableBalance = new BigNumber(100000);
 

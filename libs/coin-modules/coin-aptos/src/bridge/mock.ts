@@ -18,7 +18,7 @@ import {
   makeAccountBridgeReceive,
 } from "../../../bridge/mockHelpers";
 import { updateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { getMainAccount } from "../../../account";
+import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
 
 const receive = makeAccountBridgeReceive();
 

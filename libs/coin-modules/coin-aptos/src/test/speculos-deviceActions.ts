@@ -1,6 +1,10 @@
-import type { DeviceAction } from "../../bot/types";
-import type { Transaction } from "./types";
-import { deviceActionFlow, formatDeviceAmount, SpeculosButton } from "../../bot/specs";
+import type { DeviceAction } from "@ledgerhq/coin-framework/bot/types";
+import type { Transaction } from "../types";
+import {
+  deviceActionFlow,
+  formatDeviceAmount,
+  SpeculosButton,
+} from "@ledgerhq/coin-framework/bot/specs";
 import { State } from "@ledgerhq/coin-framework/bot/types";
 
 const typeWording = {
@@ -49,7 +53,7 @@ export const acceptTransaction: DeviceAction<Transaction, State<Transaction>> = 
       title: "Type",
       button: SpeculosButton.RIGHT,
       expectedValue: ({ transaction }) => {
-        return typeWording[transaction.mode];
+        return typeWording[transaction.mode as keyof typeof typeWording];
       },
     },
     {

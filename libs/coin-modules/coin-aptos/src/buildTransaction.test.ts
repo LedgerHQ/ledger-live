@@ -1,5 +1,4 @@
-import { createFixtureAccount } from "../../mock/fixtures/cryptoCurrencies";
-import createTransaction from "./createTransaction";
+import { createFixtureAccount, createFixtureTransaction } from "./types/bridge.fixture";
 import buildTransaction from "./buildTransaction";
 import { AptosAPI } from "./api";
 import { normalizeTransactionOptions } from "./logic";
@@ -30,7 +29,7 @@ jest.mock("./api", () => {
 describe("buildTransaction Test", () => {
   it("should return tx", async () => {
     const account = createFixtureAccount();
-    const transaction = createTransaction();
+    const transaction = createFixtureTransaction();
     const aptosClient = new AptosAPI(account.currency.id);
     const result = await buildTransaction(account, transaction, aptosClient);
 

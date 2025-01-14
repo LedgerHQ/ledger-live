@@ -1,7 +1,6 @@
 import { Observable } from "rxjs";
-import { createFixtureAccount } from "../../mock/fixtures/cryptoCurrencies";
-import createTransaction from "./createTransaction";
-import signOperation from "./signOperation";
+import { createFixtureAccount, createFixtureTransaction } from "./types/bridge.fixture";
+import { buildSignOperation } from "./signOperation";
 import BigNumber from "bignumber.js";
 
 jest.mock("./api", () => {
@@ -58,12 +57,12 @@ describe("signOperation Test", () => {
     };
 
     const account = createFixtureAccount();
-    const transaction = createTransaction();
+    const transaction = createFixtureTransaction();
 
     account.id = "js:2:aptos:0x000:";
     transaction.mode = "send";
 
-    const observable = await signOperation({
+    const observable = await buildSignOperation({
       account,
       deviceId: "1",
       transaction,
@@ -81,12 +80,12 @@ describe("signOperation Test", () => {
     jest.useFakeTimers().setSystemTime(date);
 
     const account = createFixtureAccount();
-    const transaction = createTransaction();
+    const transaction = createFixtureTransaction();
 
     account.id = "js:2:aptos:0x000:";
     transaction.mode = "send";
 
-    const observable = await signOperation({
+    const observable = await buildSignOperation({
       account,
       deviceId: "1",
       transaction,
@@ -133,7 +132,7 @@ describe("signOperation Test", () => {
     jest.useFakeTimers().setSystemTime(date);
 
     const account = createFixtureAccount();
-    const transaction = createTransaction();
+    const transaction = createFixtureTransaction();
 
     account.balance = new BigNumber(40);
     transaction.fees = new BigNumber(30);
@@ -142,7 +141,7 @@ describe("signOperation Test", () => {
     account.id = "js:2:aptos:0x000:";
     transaction.mode = "send";
 
-    const observable = await signOperation({
+    const observable = await buildSignOperation({
       account,
       deviceId: "1",
       transaction,

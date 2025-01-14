@@ -1,8 +1,8 @@
 import Aptos from "@ledgerhq/hw-app-aptos";
 import { firstValueFrom, from } from "rxjs";
-import { decodeAccountId, encodeAccountId } from "../../account";
-import type { GetAccountShape } from "../../bridge/jsHelpers";
-import { makeScanAccounts, makeSync, mergeOps } from "../../bridge/jsHelpers";
+import { decodeAccountId, encodeAccountId } from "@ledgerhq/coin-framework/account";
+import type { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { makeScanAccounts, makeSync, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { withDevice } from "../../hw/deviceAccess";
 import { AptosAPI } from "./api";
 import { txsToOps } from "./logic";

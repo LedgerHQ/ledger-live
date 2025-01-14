@@ -1,6 +1,5 @@
 import BigNumber from "bignumber.js";
-import { createFixtureAccount } from "../../mock/fixtures/cryptoCurrencies";
-import createTransaction from "./createTransaction";
+import { createFixtureAccount, createFixtureTransaction } from "./types/bridge.fixture";
 import { formatTransaction, fromTransactionRaw, toTransactionRaw } from "./transaction";
 import { Transaction, TransactionRaw } from "./types";
 
@@ -14,7 +13,7 @@ describe("transaction Test", () => {
     describe("when amount is 0 and fee is 0", () => {
       it("should return a transaction SEND to 0xff00 with fees=?", async () => {
         const account = createFixtureAccount();
-        const transaction = createTransaction();
+        const transaction = createFixtureTransaction();
 
         transaction.recipient = "0xff00";
         const result = formatTransaction(transaction, account);
@@ -31,7 +30,7 @@ with fees=?`;
     describe("when amount is 0 and fee is 0.0001", () => {
       it("should return a transaction SEND to 0xff00 with fees=0", async () => {
         const account = createFixtureAccount();
-        const transaction = createTransaction();
+        const transaction = createFixtureTransaction();
 
         transaction.recipient = "0xff00";
         transaction.fees = new BigNumber("0.0001");
@@ -49,7 +48,7 @@ with fees=0`;
     describe("when amount is 0 and fee is 0.1", () => {
       it("should return a transaction SEND to 0xff00 with fees=0", async () => {
         const account = createFixtureAccount();
-        const transaction = createTransaction();
+        const transaction = createFixtureTransaction();
 
         transaction.recipient = "0xff00";
         transaction.fees = new BigNumber("0.1");
@@ -67,7 +66,7 @@ with fees=0`;
     describe("when amount is 1 and fee is 0.1", () => {
       it("should return a transaction SEND to 0xff00 with fees=0", async () => {
         const account = createFixtureAccount();
-        const transaction = createTransaction();
+        const transaction = createFixtureTransaction();
 
         transaction.amount = new BigNumber("1");
         transaction.recipient = "0xff00";
@@ -86,7 +85,7 @@ with fees=0`;
     describe("when amount is 10 and fee is 1", () => {
       it("should return a transaction SEND to 0xff00 with fees=0", async () => {
         const account = createFixtureAccount();
-        const transaction = createTransaction();
+        const transaction = createFixtureTransaction();
 
         transaction.amount = new BigNumber("10");
         transaction.recipient = "0xff00";
@@ -105,7 +104,7 @@ with fees=0`;
     describe("when amount is 1000 and fee is 1", () => {
       it("should return a transaction SEND to 0xff00 with fees=0", async () => {
         const account = createFixtureAccount();
-        const transaction = createTransaction();
+        const transaction = createFixtureTransaction();
 
         transaction.amount = new BigNumber("1000");
         transaction.recipient = "0xff00";
@@ -124,7 +123,7 @@ with fees=0`;
     describe("when using MAX with amount is 1000 and fee is 1", () => {
       it("should return a transaction SEND to 0xff00 with fees=0", async () => {
         const account = createFixtureAccount();
-        const transaction = createTransaction();
+        const transaction = createFixtureTransaction();
 
         transaction.amount = new BigNumber("1000");
         transaction.useAllAmount = true;

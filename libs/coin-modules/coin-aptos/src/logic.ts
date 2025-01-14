@@ -8,7 +8,7 @@ import {
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { encodeOperationId } from "../../operation";
+import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import {
   APTOS_COIN_CHANGE,
   BATCH_TRANSFER_TYPES,

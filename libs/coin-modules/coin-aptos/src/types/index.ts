@@ -7,6 +7,7 @@ import type {
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
 import type { BigNumber } from "bignumber.js";
+export * from "./signer";
 
 export type AptosTransaction = UserTransactionResponse & {
   block: {

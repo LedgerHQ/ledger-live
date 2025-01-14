@@ -1,6 +1,5 @@
 import BigNumber from "bignumber.js";
-import { createFixtureAccount } from "../../mock/fixtures/cryptoCurrencies";
-import createTransaction from "./createTransaction";
+import { createFixtureAccount, createFixtureTransaction } from "./types/bridge.fixture";
 import getTransactionStatus from "./getTransactionStatus";
 import {
   AmountRequired,
@@ -20,7 +19,7 @@ import {
 describe("getTransactionStatus Test", () => {
   it("should return errors for AmountRequired", async () => {
     const account = createFixtureAccount();
-    const transaction = createTransaction();
+    const transaction = createFixtureTransaction();
 
     transaction.fees = new BigNumber(2);
     transaction.recipient = "0x" + "0".repeat(64);
@@ -42,7 +41,7 @@ describe("getTransactionStatus Test", () => {
 
   it("should return errors for FeeNotLoaded", async () => {
     const account = createFixtureAccount();
-    const transaction = createTransaction();
+    const transaction = createFixtureTransaction();
 
     transaction.fees = null;
     transaction.amount = new BigNumber(2);
@@ -65,7 +64,7 @@ describe("getTransactionStatus Test", () => {
 
   it("should return errors for NotEnoughBalance", async () => {
     const account = createFixtureAccount();
-    const transaction = createTransaction();
+    const transaction = createFixtureTransaction();
 
     account.balance = new BigNumber(1);
     transaction.recipient = "0x" + "0".repeat(64);
@@ -89,7 +88,7 @@ describe("getTransactionStatus Test", () => {
 
   it("should return errors for RecipientRequired", async () => {
     const account = createFixtureAccount();
-    const transaction = createTransaction();
+    const transaction = createFixtureTransaction();
 
     transaction.amount = new BigNumber(2);
     transaction.fees = new BigNumber(2);
@@ -111,7 +110,7 @@ describe("getTransactionStatus Test", () => {
 
   it("should return errors for InvalidAddress", async () => {
     const account = createFixtureAccount();
-    const transaction = createTransaction();
+    const transaction = createFixtureTransaction();
 
     transaction.amount = new BigNumber(2);
     transaction.fees = new BigNumber(2);
@@ -134,7 +133,7 @@ describe("getTransactionStatus Test", () => {
 
   it("should return errors for InvalidAddressBecauseDestinationIsAlsoSource", async () => {
     const account = createFixtureAccount();
-    const transaction = createTransaction();
+    const transaction = createFixtureTransaction();
 
     transaction.amount = new BigNumber(2);
     transaction.fees = new BigNumber(2);
@@ -158,7 +157,7 @@ describe("getTransactionStatus Test", () => {
 
   it("should return errors for GasLessThanEstimate", async () => {
     const account = createFixtureAccount();
-    const transaction = createTransaction();
+    const transaction = createFixtureTransaction();
 
     transaction.amount = new BigNumber(2);
     transaction.fees = new BigNumber(2);
@@ -184,7 +183,7 @@ describe("getTransactionStatus Test", () => {
 
   it("should return errors for GasLessThanEstimate", async () => {
     const account = createFixtureAccount();
-    const transaction = createTransaction();
+    const transaction = createFixtureTransaction();
 
     transaction.amount = new BigNumber(2);
     transaction.fees = new BigNumber(2);
@@ -210,7 +209,7 @@ describe("getTransactionStatus Test", () => {
 
   it("should return errors for SequenceNumberTooOldError", async () => {
     const account = createFixtureAccount();
-    const transaction = createTransaction();
+    const transaction = createFixtureTransaction();
 
     transaction.amount = new BigNumber(2);
     transaction.fees = new BigNumber(2);
@@ -236,7 +235,7 @@ describe("getTransactionStatus Test", () => {
 
   it("should return errors for SequenceNumberTooNewError", async () => {
     const account = createFixtureAccount();
-    const transaction = createTransaction();
+    const transaction = createFixtureTransaction();
 
     transaction.amount = new BigNumber(2);
     transaction.fees = new BigNumber(2);
@@ -262,7 +261,7 @@ describe("getTransactionStatus Test", () => {
 
   it("should return errors for TransactionExpiredError", async () => {
     const account = createFixtureAccount();
-    const transaction = createTransaction();
+    const transaction = createFixtureTransaction();
 
     transaction.amount = new BigNumber(2);
     transaction.fees = new BigNumber(2);

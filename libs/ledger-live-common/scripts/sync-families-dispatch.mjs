@@ -22,6 +22,7 @@ const targets = [
 // Coins using coin-framework
 const familiesWPackage = [
   "algorand",
+  "aptos",
   "bitcoin",
   "cardano",
   "cosmos",
