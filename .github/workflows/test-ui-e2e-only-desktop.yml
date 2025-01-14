@@ -119,7 +119,7 @@ jobs:
         shell: bash
 
       - name: Set DISABLE_TRANSACTION_BROADCAST
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-broadcast@support/qaa_429_fix_speculos_broadcast
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-broadcast@develop
         with:
           enable_broadcast: ${{ inputs.enable_broadcast }}
           schedule_cron: ${{ github.event.schedule.cron }}
