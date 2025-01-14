@@ -27,15 +27,14 @@ export async function listOperations(
   const operations = await fetchOperations({
     accountId,
     addr: address,
-    order: "asc",
+    order: "desc",
     limit,
     cursor: cursor?.toString(),
   });
+  const lastOperation = operations.slice(-1)[0];
+  const nextCursor = lastOperation?.extra?.pagingToken ?? "0";
 
-  return [
-    operations.map(convertToCoreOperation(address)),
-    parseInt(operations.slice(-1)[0].extra.pagingToken ?? "0"),
-  ];
+  return [operations.map(convertToCoreOperation(address)), parseInt(nextCursor)];
 }
 
 const convertToCoreOperation = (address: string) => (operation: StellarOperation) => {

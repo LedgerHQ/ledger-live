@@ -67,7 +67,44 @@ function compose(tx: string, signature: string, pubkey?: string): string {
   return combine(tx, signature, pubkey);
 }
 
-const operations = async (
+async function operations(
   address: string,
   { limit, start }: Pagination,
-): Promise<[Operation[], number]> => listOperations(address, { limit, cursor: start });
+): Promise<[Operation[], number]> {
+  return start || start === 0
+    ? operationsFromHeight(address, start)
+    : listOperations(address, { limit });
+}
+
+type PaginationState = {
+  pageSize: number;
+  heightLimit: number;
+  continueIterations: boolean;
+  apiNextCursor?: number;
+  accumulator: Operation[];
+};
+
+async function operationsFromHeight(
+  address: string,
+  start: number,
+): Promise<[Operation[], number]> {
+  const state: PaginationState = {
+    pageSize: 100,
+    heightLimit: start,
+    continueIterations: true,
+    accumulator: [],
+  };
+
+  while (state.continueIterations) {
+    const [operations, nextCursor] = await listOperations(address, {
+      limit: state.pageSize,
+      cursor: state.apiNextCursor,
+    });
+    const filteredOperations = operations.filter(op => op.block.height >= state.heightLimit);
+    state.accumulator.push(...filteredOperations);
+    state.apiNextCursor = nextCursor;
+    state.continueIterations = nextCursor !== 0;
+  }
+
+  return [state.accumulator, state.apiNextCursor ?? 0];
+}

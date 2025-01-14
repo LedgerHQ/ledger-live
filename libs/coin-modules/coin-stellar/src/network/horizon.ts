@@ -269,7 +269,7 @@ export async function fetchOperations({
   accountId,
   addr,
   order,
-  cursor = "0",
+  cursor,
   limit,
 }: {
   accountId: string;
@@ -290,7 +290,7 @@ export async function fetchOperations({
       .forAccount(addr)
       .limit(limit ?? defaultFetchLimit)
       .order(order)
-      .cursor(cursor)
+      .cursor(cursor ?? "")
       .includeFailed(true)
       .join("transactions")
       .call();
