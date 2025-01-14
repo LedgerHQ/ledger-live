@@ -458,7 +458,7 @@ jobs:
                 "text": {
                   "type": "plain_text",
                   "text": process.env.SPECULOS_RUN == 'false'
-                    ? "Ledger Live Mobile Mocked Tests on ${{ github.ref_name }}" 
+                    ? "Ledger Live Mobile Mocked Tests on ${{ github.ref_name }}"
                     : ":ledger-logo: Ledger Live Mobile E2E nightly tests results on ${{ github.ref_name }}",
                   "emoji": true
                 }
@@ -536,8 +536,8 @@ jobs:
               : {
                   attachments: [
                     {
-                      color: process.env.ANDROID_STATUS !== 'success' 
-                        ? "#FF333C" 
+                      color: process.env.ANDROID_STATUS !== 'success'
+                        ? "#FF333C"
                         : "#33FF39",
                       blocks,
                     },
