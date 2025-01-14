@@ -1,15 +1,16 @@
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { appendQueryParamsToDappURL } from "@ledgerhq/live-common/platform/utils/appendQueryParamsToDappURL";
 import { Flex } from "@ledgerhq/react-ui";
-import { Account, EthStakingProvider } from "@ledgerhq/types-live";
+import { EthStakingProvider } from "@ledgerhq/types-live";
 import React, { useCallback } from "react";
 import { useHistory } from "react-router-dom";
 import { track } from "~/renderer/analytics/segment";
 import { ProviderItem } from "./component/ProviderItem";
 import { getTrackProperties } from "./utils/getTrackProperties";
+import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
 
 type Props = {
-  account: Account;
+  account: WalletAPIAccount;
   onClose?: () => void;
   source?: string;
   providers: EthStakingProvider[];
