@@ -208,6 +208,7 @@ const TransactionConfirm = ({
       </Container>
       <ConfirmFooter
         footer={Footer ? <Footer transaction={transaction} /> : null}
+        transaction={transaction}
         manifestId={manifestId}
         manifestName={manifestName}
       />

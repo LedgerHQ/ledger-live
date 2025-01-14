@@ -86,6 +86,7 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyZkSyncSepolia: DEFAULT_FEATURE,
   currencyMantra: DEFAULT_FEATURE,
   currencyXion: DEFAULT_FEATURE,
+  currencyZenrock: DEFAULT_FEATURE,
 };
 
 /**

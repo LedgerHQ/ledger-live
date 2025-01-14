@@ -71,4 +71,5 @@ setSupportedCurrencies([
   "linea_sepolia",
   "mantra",
   "xion",
+  "zenrock",
 ]);

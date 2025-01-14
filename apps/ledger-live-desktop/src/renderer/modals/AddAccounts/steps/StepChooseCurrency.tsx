@@ -88,6 +88,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
   const zksyncSepolia = useFeature("currencyZkSyncSepolia");
   const mantra = useFeature("currencyMantra");
   const xion = useFeature("currencyXion");
+  const zenrock = useFeature("currencyZenrock");
 
   const featureFlaggedCurrencies = useMemo(
     (): Partial<Record<CryptoCurrencyId, Feature<unknown> | null>> => ({
@@ -144,6 +145,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       zksync_sepolia: zksyncSepolia,
       mantra,
       xion,
+      zenrock,
     }),
     [
       aptos,
@@ -199,6 +201,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       zksyncSepolia,
       mantra,
       xion,
+      zenrock,
     ],
   );
 
