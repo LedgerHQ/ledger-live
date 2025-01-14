@@ -442,6 +442,14 @@
       "cta" : "浏览兼容设备",
       "changeProvider" : "使用其他提供商进行互换"
     },
+    "incompatibility" : {
+      "ton_title" : "Ledger Nano S™ 不支持互换 TON",
+      "ton_description" : "要互换 TON，请使用任何其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
+      "spl_tokens_title" : "Ledger Nano S™ 不支持互换 Solana 代币",
+      "spl_tokens_description" : "要互换 Solana 代币，请使用任何其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
+      "ada_title" : "Ledger Nano S™ 不支持互换 Cardano",
+      "ada_description" : "要互换 Cardano，请使用任何其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。"
+    },
     "providers" : {
       "title" : "选择一个供应方来互换加密货币",
       "learnMore" : "什么是互换（Swap）？",
@@ -1834,7 +1842,8 @@
       "withdrawUnbondedAmount" : "已提取数额",
       "palletMethod" : "方法",
       "transferAmount" : "转移数额",
-      "validatorsCount" : "验证者 ({{number}})"
+      "validatorsCount" : "验证者 ({{number}})",
+      "version" : "版本"
     }
   },
   "operationList" : {
@@ -5288,6 +5297,7 @@
     "verifyData" : "总是验证您设备上的操作细节。",
     "doubleCheck" : "签署之前请仔细检查 Ledger 设备上的交易详情。",
     "termsAndConditions" : "签署此交易，即表示您接受 <0>{{appName}} 的使用条款</0>。",
+    "termsAndConditionsWithPrivacy" : "By signing this transaction, you accept <0>{{appName}}'s terms of use.</0> and <1>Privacy Policy.</1>",
     "warningWording" : {
     },
     "titleWording" : {
@@ -5783,6 +5793,16 @@
     "SatStackDescriptorNotImported" : {
       "title" : "账户未经完整节点扫描",
       "description" : "请配置您的完整节点以扫描与此设备相关联的账户。您的完整节点必须先扫描此账户的区块链，然后才能将其添加到您的资产组合中。"
+    },
+    "SequenceNumberTooNew" : {
+      "title" : "序列号太新"
+    },
+    "SequenceNumberTooOld" : {
+      "title" : "序列号太旧",
+      "description" : "序列号太旧"
+    },
+    "TransactionExpired" : {
+      "title" : "交易已过期"
     },
     "SwapRateExpiredError" : {
       "title" : "费率已过期",
