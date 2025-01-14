@@ -1,5 +1,15 @@
 # @ledgerhq/coin-tezos
 
+## 0.7.2-nightly.2
+
+### Patch Changes
+
+- Updated dependencies [[`5e01938`](https://github.com/LedgerHQ/ledger-live/commit/5e01938ece3dc1ccf7bea6c2805b6558c846db80), [`c2d24cd`](https://github.com/LedgerHQ/ledger-live/commit/c2d24cd0299ea04e39306279b6f833696bc4f4fb)]:
+  - @ledgerhq/coin-framework@0.21.0-nightly.2
+  - @ledgerhq/types-cryptoassets@7.18.0-nightly.2
+  - @ledgerhq/cryptoassets@13.8.0-nightly.3
+  - @ledgerhq/types-live@6.56.0-nightly.1
+
 ## 0.7.2-nightly.1
 
 ### Patch Changes

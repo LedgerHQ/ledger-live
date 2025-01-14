@@ -1,5 +1,11 @@
 # @ledgerhq/types-cryptoassets
 
+## 7.18.0-nightly.2
+
+### Minor Changes
+
+- [#8731](https://github.com/LedgerHQ/ledger-live/pull/8731) [`c2d24cd`](https://github.com/LedgerHQ/ledger-live/commit/c2d24cd0299ea04e39306279b6f833696bc4f4fb) Thanks [@Canestin](https://github.com/Canestin)! - Zenrock integration
+
 ## 7.18.0-nightly.1
 
 ### Minor Changes

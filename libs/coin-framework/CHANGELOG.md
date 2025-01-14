@@ -1,5 +1,20 @@
 # @ledgerhq/coin-framework
 
+## 0.21.0-nightly.2
+
+### Minor Changes
+
+- [#8731](https://github.com/LedgerHQ/ledger-live/pull/8731) [`c2d24cd`](https://github.com/LedgerHQ/ledger-live/commit/c2d24cd0299ea04e39306279b6f833696bc4f4fb) Thanks [@Canestin](https://github.com/Canestin)! - Zenrock integration
+
+### Patch Changes
+
+- [#8756](https://github.com/LedgerHQ/ledger-live/pull/8756) [`5e01938`](https://github.com/LedgerHQ/ledger-live/commit/5e01938ece3dc1ccf7bea6c2805b6558c846db80) Thanks [@qperrot](https://github.com/qperrot)! - fix solana earn on LLm
+
+- Updated dependencies [[`c2d24cd`](https://github.com/LedgerHQ/ledger-live/commit/c2d24cd0299ea04e39306279b6f833696bc4f4fb)]:
+  - @ledgerhq/types-cryptoassets@7.18.0-nightly.2
+  - @ledgerhq/cryptoassets@13.8.0-nightly.3
+  - @ledgerhq/types-live@6.56.0-nightly.1
+
 ## 0.21.0-nightly.1
 
 ### Minor Changes

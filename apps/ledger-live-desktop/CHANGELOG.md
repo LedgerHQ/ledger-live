@@ -1,5 +1,33 @@
 # ledger-live-desktop
 
+## 2.95.0-nightly.6
+
+### Minor Changes
+
+- [#8842](https://github.com/LedgerHQ/ledger-live/pull/8842) [`eb948eb`](https://github.com/LedgerHQ/ledger-live/commit/eb948ebab5339d6b7ff97e8590e1cea032ad4f67) Thanks [@CremaFR](https://github.com/CremaFR)! - feat: Uniswap's term's of use
+
+- [#8731](https://github.com/LedgerHQ/ledger-live/pull/8731) [`c2d24cd`](https://github.com/LedgerHQ/ledger-live/commit/c2d24cd0299ea04e39306279b6f833696bc4f4fb) Thanks [@Canestin](https://github.com/Canestin)! - Zenrock integration
+
+### Patch Changes
+
+- Updated dependencies [[`5e01938`](https://github.com/LedgerHQ/ledger-live/commit/5e01938ece3dc1ccf7bea6c2805b6558c846db80), [`c2d24cd`](https://github.com/LedgerHQ/ledger-live/commit/c2d24cd0299ea04e39306279b6f833696bc4f4fb)]:
+  - @ledgerhq/coin-framework@0.21.0-nightly.2
+  - @ledgerhq/types-cryptoassets@7.18.0-nightly.2
+  - @ledgerhq/cryptoassets@13.8.0-nightly.3
+  - @ledgerhq/types-live@6.56.0-nightly.1
+  - @ledgerhq/coin-cosmos@0.4.0-nightly.2
+  - @ledgerhq/live-common@34.17.0-nightly.5
+  - @ledgerhq/coin-bitcoin@0.8.11-nightly.3
+  - @ledgerhq/coin-evm@2.7.1-nightly.2
+  - @ledgerhq/coin-filecoin@1.3.6-nightly.2
+  - @ledgerhq/live-countervalues@0.2.16-nightly.2
+  - @ledgerhq/live-countervalues-react@0.2.16-nightly.2
+  - @ledgerhq/live-nft@0.5.1-nightly.2
+  - @ledgerhq/live-nft-react@0.5.1-nightly.2
+  - @ledgerhq/live-wallet@0.7.8-nightly.2
+  - @ledgerhq/domain-service@1.2.15-nightly.1
+  - @ledgerhq/react-ui@0.18.1-nightly.1
+
 ## 2.95.0-nightly.5
 
 ### Patch Changes
