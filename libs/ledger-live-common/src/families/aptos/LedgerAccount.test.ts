@@ -68,7 +68,7 @@ describe("LedgerAccount Test", () => {
       };
     });
     const buffer = new Uint8Array([1, 2, 3]);
-    expect(ledger_account.asyncSignBuffer(buffer)).toThrow();
+    expect(ledger_account.asyncSignBuffer(buffer)).rejects.toThrow();
   });
 
   it("Testing asyncSignBuffer method", async () => {
@@ -91,7 +91,7 @@ describe("LedgerAccount Test", () => {
 
     await ledger_account.init(transport);
     const buffer = new Uint8Array([1, 2, 3]);
-    const signature = await expect(ledger_account.asyncSignBuffer(buffer)).rejects.toThrow();
+    const signature = await ledger_account.asyncSignBuffer(buffer);
 
     expect(mockSignTransaction).toHaveBeenCalledWith(account.freshAddressPath, Buffer.from(buffer));
     expect(signature).toEqual(new Hex(new Uint8Array(Buffer.from("signature"))));
