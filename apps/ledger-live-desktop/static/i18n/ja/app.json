@@ -442,6 +442,14 @@
       "cta" : "対応デバイスを探す",
       "changeProvider" : "別のプロバイダーでスワップ"
     },
+    "incompatibility" : {
+      "ton_title" : "Ledger Nano S™はTonのスワップに対応していません",
+      "ton_description" : "Tonをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。",
+      "spl_tokens_title" : "Ledger Nano S™はSolanaトークンのスワップに対応していません",
+      "spl_tokens_description" : "Solanaトークンをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。",
+      "ada_title" : "Ledger Nano S™はCardanoのスワップに対応していません",
+      "ada_description" : "Cardanoをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。"
+    },
     "providers" : {
       "title" : "暗号資産のスワップに利用するプロバイダーを選択",
       "learnMore" : "スワップとは？",
@@ -1834,7 +1842,8 @@
       "withdrawUnbondedAmount" : "引き出し数量",
       "palletMethod" : "方法",
       "transferAmount" : "送付額",
-      "validatorsCount" : "バリデータ（{{number}}）"
+      "validatorsCount" : "バリデータ（{{number}}）",
+      "version" : "バージョン"
     }
   },
   "operationList" : {
@@ -5783,6 +5792,16 @@
     "SatStackDescriptorNotImported" : {
       "title" : "アカウントがフルノードによってスキャンされていません。",
       "description" : "このデバイスのアカウントがスキャンされるように、フルノードを設定してください。ポートフォリオに追加する前に、フルノードでこのアカウントのブロックチェーンをスキャンする必要があります。"
+    },
+    "SequenceNumberTooNew" : {
+      "title" : "シーケンス番号が新しすぎます"
+    },
+    "SequenceNumberTooOld" : {
+      "title" : "シーケンス番号が古すぎます",
+      "description" : "シーケンス番号が古すぎます"
+    },
+    "TransactionExpired" : {
+      "title" : "トランザクションの有効期限が切れました"
     },
     "SwapRateExpiredError" : {
       "title" : "レートの有効期限切れ",
