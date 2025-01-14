@@ -1,6 +1,7 @@
 import {
   makeAccountBridgeReceive,
   makeScanAccounts,
+  getSerializedAddressParameters,
   makeSync,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import resolver from "../signer";
@@ -13,8 +14,8 @@ import getTransactionStatus from "../getTransactionStatus";
 import estimateMaxSpendable from "../estimateMaxSpendable";
 import prepareTransaction from "../prepareTransaction";
 import createTransaction from "../createTransaction";
-import { getAccountShape } from "../common-logic/utils";
-import buildSignOperation from "../signOperation";
+import { getAccountShape } from "../synchronisation";
+import { signOperation as buildSignOperation } from "../signOperation";
 import broadcast from "../broadcast";
 
 function buildCurrencyBridge(signerContext: SignerContext<AptosSigner>): CurrencyBridge {
@@ -47,6 +48,7 @@ function buildAccountBridge(
     createTransaction,
     updateTransaction,
     getTransactionStatus,
+    getSerializedAddressParameters,
     prepareTransaction,
     sync,
     receive,

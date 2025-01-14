@@ -11,7 +11,7 @@ import { getAccountShape } from "./synchronisation";
 jest.mock("rxjs");
 let mockedFistValueFrom;
 
-jest.mock("../../account");
+jest.mock("@ledgerhq/coin-framework/account");
 let mockedDecodeAccountId;
 
 jest.mock("./api");
@@ -20,7 +20,7 @@ let mockedAptosAPI;
 jest.mock("./logic");
 jest.mocked(txsToOps);
 
-jest.mock("../../bridge/jsHelpers");
+jest.mock("@ledgerhq/coin-framework/bridge/jsHelpers");
 jest.mocked(makeScanAccounts);
 jest.mocked(makeSync);
 

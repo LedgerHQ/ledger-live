@@ -1,6 +1,6 @@
 import { Observable } from "rxjs";
 import { createFixtureAccount, createFixtureTransaction } from "./types/bridge.fixture";
-import { buildSignOperation } from "./signOperation";
+import signOperation from "./signOperation";
 import BigNumber from "bignumber.js";
 
 jest.mock("./api", () => {
@@ -62,7 +62,7 @@ describe("signOperation Test", () => {
     account.id = "js:2:aptos:0x000:";
     transaction.mode = "send";
 
-    const observable = await buildSignOperation({
+    const observable = await signOperation({
       account,
       deviceId: "1",
       transaction,
@@ -85,7 +85,7 @@ describe("signOperation Test", () => {
     account.id = "js:2:aptos:0x000:";
     transaction.mode = "send";
 
-    const observable = await buildSignOperation({
+    const observable = await signOperation({
       account,
       deviceId: "1",
       transaction,
@@ -141,7 +141,7 @@ describe("signOperation Test", () => {
     account.id = "js:2:aptos:0x000:";
     transaction.mode = "send";
 
-    const observable = await buildSignOperation({
+    const observable = await signOperation({
       account,
       deviceId: "1",
       transaction,

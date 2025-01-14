@@ -1,6 +1,9 @@
 import BigNumber from "bignumber.js";
-import bridge from "./js";
+import { createBridges } from "./";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+
+const signer = jest.fn();
+const bridge = createBridges(signer);
 
 describe("Aptos bridge interface ", () => {
   describe("currencyBridge", () => {

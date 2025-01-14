@@ -9,9 +9,8 @@ import LedgerAccount from "./LedgerAccount";
 
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { AptosSigner } from "./types";
-// import { getPath } from "../common-logic";
 
-export const buildSignOperation =
+export const signOperation =
   (
     signerContext: SignerContext<AptosSigner>,
   ): AccountBridge<Transaction, Account>["signOperation"] =>
