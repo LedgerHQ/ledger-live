@@ -8,6 +8,7 @@ import { TokenAccount } from "@ledgerhq/types-live";
 import { makeTokenAccount } from "../fixtures/common.fixtures";
 import * as etherscanAPI from "../../api/explorer/etherscan";
 import * as synchronization from "../../synchronization";
+import * as noneExplorer from "../../api/explorer/none";
 import * as nodeApi from "../../api/node/rpc.common";
 import {
   account,
@@ -102,9 +103,13 @@ describe("EVM Family", () => {
       });
 
       it("should throw for currency with unsupported explorer", async () => {
-        mockGetConfig.mockImplementationOnce((): any => {
+        mockGetConfig.mockImplementation((): any => {
           return {
             info: {
+              node: {
+                type: "external",
+                uri: "https://my-rpc.com",
+              },
               explorer: {
                 uri: "http://nope.com",
                 type: "unsupported" as any,
@@ -131,8 +136,48 @@ describe("EVM Family", () => {
           if (e instanceof AssertionError) {
             throw e;
           }
-          expect(e).toBeInstanceOf(UnknownNode);
+          expect(e).toBeInstanceOf(UnknownExplorer);
         }
+      });
+
+      it("shouldn't throw for none explorer config", async () => {
+        mockGetConfig.mockImplementation((): any => {
+          return {
+            info: {
+              node: {
+                type: "external",
+                uri: "https://my-rpc.com",
+              },
+              explorer: {
+                type: "none",
+              },
+            },
+          };
+        });
+        const spy = jest.spyOn(noneExplorer?.default, "getLastOperations");
+
+        await synchronization.getAccountShape(
+          {
+            ...getAccountShapeParameters,
+            currency: {
+              ...currency,
+              ethereumLikeInfo: {
+                chainId: 1,
+              } as any,
+            },
+          },
+          {} as any,
+        );
+
+        expect(spy).toHaveBeenCalledTimes(1);
+        expect(spy).toHaveReturnedWith(
+          Promise.resolve({
+            lastCoinOperations: [],
+            lastTokenOperations: [],
+            lastNftOperations: [],
+            lastInternalOperations: [],
+          }),
+        );
       });
 
       describe("With no transactions fetched", () => {
