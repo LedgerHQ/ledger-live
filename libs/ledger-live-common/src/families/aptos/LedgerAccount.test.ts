@@ -50,6 +50,27 @@ describe("LedgerAccount Test", () => {
     expect(authKey).toBeInstanceOf(AccountAddress);
   });
 
+  it("Account needs init before asyncSignBuffer method", async () => {
+    const account = createFixtureAccount();
+    const ledger_account = new LedgerAccount(account.freshAddressPath);
+
+    const mockSignTransaction = jest.fn().mockResolvedValue({
+      signature: Buffer.from("signature"),
+    });
+    const mockGetAddress = jest.fn().mockResolvedValue({
+      address: account.freshAddress,
+      publicKey: Buffer.from("publicKey"),
+    });
+    (HwAptos as jest.Mock).mockImplementation(() => {
+      return {
+        signTransaction: mockSignTransaction,
+        getAddress: mockGetAddress,
+      };
+    });
+    const buffer = new Uint8Array([1, 2, 3]);
+    expect(ledger_account.asyncSignBuffer(buffer)).toThrow();
+  });
+
   it("Testing asyncSignBuffer method", async () => {
     const account = createFixtureAccount();
     const ledger_account = new LedgerAccount(account.freshAddressPath);
@@ -70,7 +91,7 @@ describe("LedgerAccount Test", () => {
 
     await ledger_account.init(transport);
     const buffer = new Uint8Array([1, 2, 3]);
-    const signature = await ledger_account.asyncSignBuffer(buffer);
+    const signature = await expect(ledger_account.asyncSignBuffer(buffer)).rejects.toThrow();
 
     expect(mockSignTransaction).toHaveBeenCalledWith(account.freshAddressPath, Buffer.from(buffer));
     expect(signature).toEqual(new Hex(new Uint8Array(Buffer.from("signature"))));
