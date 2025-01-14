@@ -17,7 +17,6 @@ import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex/index";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import Swipeable from "react-native-gesture-handler/Swipeable";
 
-import { StackNavigationProp } from "@react-navigation/stack";
 import { NavigatorName, ScreenName } from "~/const";
 import { track } from "~/analytics";
 import AccountCard from "./AccountCard";
@@ -27,9 +26,9 @@ import Button from "./Button";
 import TouchHintCircle from "./TouchHintCircle";
 import Touchable from "./Touchable";
 import { AccountSettingsNavigatorParamList } from "./RootNavigator/types/AccountSettingsNavigator";
-import { AddAccountsNavigatorParamList } from "./RootNavigator/types/AddAccountsNavigator";
 import AccountItem from "LLM/features/Accounts/components/AccountsListView/components/AccountItem";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { BaseComposite, StackNavigatorProps } from "./RootNavigator/types/helpers";
 
 const ANIMATION_DURATION = 200;
 
@@ -57,6 +56,10 @@ type Props = FlexBoxProps & {
   useFullBalance?: boolean;
 };
 
+type NavigationProps = BaseComposite<
+  StackNavigatorProps<AccountSettingsNavigatorParamList, ScreenName.EditAccountName>
+>["navigation"];
+
 const SelectableAccountsList = ({
   accounts,
   onPressAccount,
@@ -73,10 +76,7 @@ const SelectableAccountsList = ({
   useFullBalance,
   ...props
 }: Props) => {
-  const navigation =
-    useNavigation<
-      StackNavigationProp<AccountSettingsNavigatorParamList | AddAccountsNavigatorParamList>
-    >();
+  const navigation = useNavigation<NavigationProps>();
 
   const onSelectAll = useCallback(() => {
     track("SelectAllAccounts");
@@ -201,9 +201,7 @@ type SelectableAccountProps = {
   showHint: boolean;
   rowIndex: number;
   listIndex: number;
-  navigation: StackNavigationProp<
-    AccountSettingsNavigatorParamList | AddAccountsNavigatorParamList
-  >;
+  navigation: NavigationProps;
   onAccountNameChange?: (name: string, changedAccount: Account) => void;
   useFullBalance?: boolean;
 };
@@ -282,16 +280,13 @@ const SelectableAccount = ({
 
     swipedAccountSubject.next({ row: -1, list: -1 });
     if (llmNetworkBasedAddAccountFlow?.enabled) {
-      (navigation as StackNavigationProp<AccountSettingsNavigatorParamList>).navigate(
-        NavigatorName.AccountSettings,
-        {
-          screen: ScreenName.EditAccountName,
-          params: {
-            onAccountNameChange,
-            account,
-          },
+      navigation.navigate(NavigatorName.AccountSettings, {
+        screen: ScreenName.EditAccountName,
+        params: {
+          onAccountNameChange,
+          account,
         },
-      );
+      });
     } else {
       navigation.navigate(ScreenName.EditAccountName, {
         onAccountNameChange,
@@ -358,7 +353,7 @@ const SelectableAccount = ({
           padding="8px"
           columnGap={8}
         >
-          <AccountItem account={account as Account} balance={account.spendableBalance} />
+          <AccountItem account={account} balance={account.spendableBalance} />
         </Flex>
       ) : (
         <Flex flex={1}>
