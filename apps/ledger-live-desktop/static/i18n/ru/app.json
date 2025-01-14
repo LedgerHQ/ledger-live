@@ -119,7 +119,7 @@
     "addressCopied" : "Адрес скопирован",
     "addressCopiedSuspicious" : "Скопированный адрес не совпадает с адресом в буфере обмена.",
     "experimentalFeature" : "Экспериментальный режим",
-    "featureFlags" : "Фича-флаги (Feature Flags)",
+    "featureFlags" : "Фича-флаг",
     "information" : "Информация",
     "search" : "Поиск...",
     "searchWithoutEllipsis" : "Поиск",
@@ -441,6 +441,14 @@
       "description" : "THORChain не поддерживается устройством Ledger Nano S™. Для проведения кроссчейн-обмена через THORChain внутри Ledger Live используйте Ledger Nano S Plus, Ledger Nano X, Ledger Stax или Ledger Flex.",
       "cta" : "Совместимые устройства",
       "changeProvider" : "Поменять оператора"
+    },
+    "incompatibility" : {
+      "ton_title" : "Ledger Nano S™ не поддерживает обмен TON",
+      "ton_description" : "Используйте другие совместимые устройства Ledger для обмена TON. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
+      "spl_tokens_title" : "Ledger Nano S™ не поддерживает обмен токенов сети Solana",
+      "spl_tokens_description" : "Используйте другие совместимые устройства Ledger для обмена токенов сети Solana. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
+      "ada_title" : "Ledger Nano S™ не поддерживает обмен Cardano",
+      "ada_description" : "Используйте другие совместимые устройства Ledger для обмена Cardano. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™."
     },
     "providers" : {
       "title" : "Выберите поставщика услуг по обмену криптовалюты",
@@ -1834,7 +1842,8 @@
       "withdrawUnbondedAmount" : "Выведенная сумма",
       "palletMethod" : "Метод",
       "transferAmount" : "Сумма",
-      "validatorsCount" : "Валидаторов: {{number}}"
+      "validatorsCount" : "Валидаторов: {{number}}",
+      "version" : "Версия приложения"
     }
   },
   "operationList" : {
@@ -2442,7 +2451,7 @@
     },
     "firmwareUpdatePrompt" : {
       "title" : "Добавить {{language}} язык на устройство {{deviceName}}?",
-      "description" : "Теперь {{language}} язык доступен для {{deviceName}}. Можно установить его сейчас или поменять в любое удобное время в разделе «Мой Ledger»."
+      "description" : "Теперь {{language}} язык доступен для {{deviceName}}. Можно установить его сейчас или позже, в разделе «Мой Ledger»."
     },
     "allowLanguageInstallation" : "Нажмите «Разрешить»,\nчтобы установить язык",
     "languageInstalled" : "Новый язык устройства — {{language}}",
@@ -5783,6 +5792,16 @@
     "SatStackDescriptorNotImported" : {
       "title" : "Счёт не просканирован полной нодой",
       "description" : "Настройте полную боду для сканирования счетов, связанных с этим устройством. Ваша полная нода должна сначала просканировать блокчейн на предмет наличия данного счёта, прежде чем вы сможете добавить его в Портфель."
+    },
+    "SequenceNumberTooNew" : {
+      "title" : "Порядковый номер слишком новый"
+    },
+    "SequenceNumberTooOld" : {
+      "title" : "Порядковый номер слишком старый",
+      "description" : "Порядковый номер слишком старый"
+    },
+    "TransactionExpired" : {
+      "title" : "Транзакция просрочена"
     },
     "SwapRateExpiredError" : {
       "title" : "Курс неактуален",
