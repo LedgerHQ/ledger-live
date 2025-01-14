@@ -54,7 +54,8 @@
     "SWAP_DISABLE_APPS_INSTALL",
     "SWAP_USER_IP",
     "SUPPLY_UPLOAD_MAX_RETRIES",
-    "VERBOSE"
+    "VERBOSE",
+    "BYPASS_CORS"
   ],
   "ui": "tui",
   "tasks": {
