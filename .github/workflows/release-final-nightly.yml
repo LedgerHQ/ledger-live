@@ -63,7 +63,9 @@ jobs:
       - name: commit
         run: |
           git add .
-          git commit -m "chore(nightly): :rocket: nightly release"
+          if [ "$(git status --porcelain --untracked-files=no)" ]; then 
+            git commit -m "chore(nightly): :rocket: nightly release"
+          fi
       - name: publish nightly
         run: pnpm changeset publish --no-git-tag
         env:
