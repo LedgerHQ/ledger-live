@@ -116,14 +116,8 @@ const ValidatorField = ({ account, delegation, onChangeValidator, selectedPoolId
               data={
                 showAll
                   ? [
-                      currentPool[0],
-                      ...defaultPool.filter(p => p !== currentPool[0]),
-                      ...pools.filter(
-                        p =>
-                          p &&
-                          !poolIdsToFilterFromAllPools.includes(p.poolId) &&
-                          p !== currentPool[0],
-                      ),
+                      ...defaultPool,
+                      ...pools.filter(p => p && !poolIdsToFilterFromAllPools.includes(p.poolId)),
                     ]
                   : currentPool
               }

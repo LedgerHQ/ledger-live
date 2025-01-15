@@ -51,7 +51,7 @@ test.describe("send NFT to ENS address", () => {
       await app.speculos.signSendNFTTransaction(transaction);
       await app.send.expectTxSent();
       await app.account.navigateToViewDetails();
-      await app.drawer.close();
+      await app.drawer.closeDrawer();
       await app.layout.goToAccounts();
       await app.accounts.navigateToAccountByName(transaction.accountToDebit.accountName);
       await app.account.navigateToNFTOperation();

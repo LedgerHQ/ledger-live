@@ -151,7 +151,7 @@ test("Ethereum staking flows via portfolio, asset page and market page @smoke", 
     await assetPage.startStakeFlow();
     await drawer.waitForDrawerToBeVisible();
     await expect.soft(page).toHaveScreenshot("stake-drawer-opened-from-asset-page.png");
-    await drawer.close();
+    await drawer.closeDrawer();
   });
 
   await test.step("start stake flow via Account page", async () => {
@@ -181,7 +181,7 @@ test("Ethereum staking flows via portfolio, asset page and market page @smoke", 
     await expect
       .soft(page)
       .toHaveScreenshot("stake-drawer-opened-from-market-page.png", maskPartOfItemsInMarket);
-    await drawer.close();
+    await drawer.closeDrawer();
   });
 
   await test.step("Go back to Market page and start stake from ETH coin detail page", async () => {
