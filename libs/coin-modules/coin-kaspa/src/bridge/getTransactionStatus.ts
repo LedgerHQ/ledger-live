@@ -1,4 +1,4 @@
-import { InvalidAddress } from "@ledgerhq/errors";
+import { AmountRequired, DustLimit, InvalidAddress, RecipientRequired } from "@ledgerhq/errors";
 import { BigNumber } from "bignumber.js";
 import {
   calcMaxSpendableAmount,
@@ -18,13 +18,25 @@ const getTransactionStatus = async (
 
   let estimateFee: BigNumber = BigNumber(0);
 
+  if (!transaction.recipient) {
+    errors.recipient = new RecipientRequired("");
+  }
+
   if (!!transaction.recipient && !isValidKaspaAddress(transaction.recipient)) {
     errors.recipient = new InvalidAddress("", {
       currencyName: account.currency.name,
     });
   }
 
-  if ((transaction.amount.gt(0) || transaction.useAllAmount) && !!transaction.recipient) {
+  if ((!transaction.amount || !transaction.amount.isGreaterThan(0)) && !transaction.useAllAmount) {
+    errors.amount = new AmountRequired("");
+  }
+
+  if (transaction.amount.gt(0) && transaction.amount.lt(20000000)) {
+    errors.dustLimit = new DustLimit("");
+  }
+
+  if ((transaction.amount.gte(20000000) || transaction.useAllAmount) && !!transaction.recipient) {
     const { compressedPublicKey, chainCode } = parseExtendedPublicKey(
       Buffer.from(account.xpub, "hex"),
     );
