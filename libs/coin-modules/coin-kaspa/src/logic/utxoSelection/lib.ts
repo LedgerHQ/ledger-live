@@ -74,6 +74,7 @@ export function calculateChangeAmount(
 export const calcMaxSpendableAmount = (
   utxos: KaspaUtxo[],
   isEcdsaRecipient: boolean,
+  feerate: number = 1,
 ): BigNumber => {
   const maxInputAmount = utxos
     .sort((a, b) =>
@@ -87,7 +88,7 @@ export const calcMaxSpendableAmount = (
   let maxSpendableAmount = maxInputAmount.minus(
     BigNumber(
       DEFAULT_MASS_1_OUTPUT + Math.min(MAX_UTXOS_PER_TX, utxos.length) * ADDITIONAL_MASS_PER_INPUT,
-    ),
+    ).times(feerate),
   );
   if (isEcdsaRecipient) {
     maxSpendableAmount = maxSpendableAmount.minus(BigNumber(11));
