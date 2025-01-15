@@ -30,6 +30,10 @@ export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlo
       button: SpeculosButton.RIGHT,
     },
     {
+      title: "Operation (0)",
+      button: SpeculosButton.RIGHT,
+    },
+    {
       title: "Confirm",
       button: SpeculosButton.RIGHT,
       expectedValue: ({ transaction }) => {
@@ -63,7 +67,7 @@ export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlo
       expectedValue: ({ transaction }) => transaction.recipient,
     },
     {
-      title: "Storage Limit",
+      title: "Storage limit",
       button: SpeculosButton.RIGHT,
       expectedValue: ({ transaction }) => transaction.storageLimit?.toString() || "",
     },
