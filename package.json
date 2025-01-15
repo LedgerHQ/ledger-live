@@ -200,6 +200,7 @@
       "blake2"
     ],
     "overrides": {
+      "@electron/rebuild": "3.7.1",
       "tiny-secp256k1": "1.1.7",
       "stellar-base>sodium-native": "^3.2.1",
       "remove-flow-types-loader>flow-remove-types": "^2",
