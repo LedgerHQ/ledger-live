@@ -117,7 +117,8 @@ function cosmosLikeMutations(minimalTransactionAmount: BigNumber): MutationSpec<
   return [
     {
       name: "send some",
-      maxRun: 2,
+      feature: "send",
+      maxRun: 1,
       testDestination: genericTestDestination,
       test: ({ account, accountBeforeTransaction, operation }) => {
         expect(account.balance.toString()).toBe(
@@ -148,6 +149,7 @@ function cosmosLikeMutations(minimalTransactionAmount: BigNumber): MutationSpec<
     },
     {
       name: "send max",
+      feature: "sendMax",
       maxRun: 1,
       testDestination: genericTestDestination,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
@@ -381,6 +383,7 @@ function cosmosLikeMutations(minimalTransactionAmount: BigNumber): MutationSpec<
     },
     {
       name: "claim rewards",
+      feature: "staking",
       maxRun: 1,
       transaction: ({ account, bridge, maxSpendable }) => {
         const { cosmosResources } = account as CosmosAccount;

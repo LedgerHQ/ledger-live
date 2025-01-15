@@ -109,6 +109,7 @@ const bitcoinLikeMutations = ({
 }: Arg = {}): MutationSpec<Transaction>[] => [
   {
     name: "move ~50%",
+    feature: "send",
     maxRun: 1,
     transaction: ({ account, siblings, bridge, maxSpendable }) => {
       invariant(maxSpendable.gt(minimalAmount), "balance is too low");
@@ -282,6 +283,7 @@ const bitcoinLikeMutations = ({
   },
   {
     name: "send max",
+    feature: "sendMax",
     maxRun: 1,
     transaction: ({ account, siblings, bridge, maxSpendable }) => {
       invariant(maxSpendable.gt(minimalAmount), "balance is too low");
