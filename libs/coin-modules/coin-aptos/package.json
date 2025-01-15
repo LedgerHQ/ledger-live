@@ -53,14 +53,6 @@
         "require": "./lib/bridge/deviceTransactionConfig.js",
         "default": "./lib-es/bridge/deviceTransactionConfig.js"
       },
-      "./logic": {
-        "require": "./lib/common-logic/index.js",
-        "default": "./lib-es/common-logic/index.js"
-      },
-      "./network": {
-        "require": "./lib/network/index.js",
-        "default": "./lib-es/network/index.js"
-      },
       "./signer": {
         "require": "./lib/signer/index.js",
         "default": "./lib-es/signer/index.js"
@@ -102,7 +94,8 @@
       "@apollo/client": "^3.8.7",
       "bignumber.js": "^9.1.2",
       "invariant": "^2.2.2",
-      "rxjs": "^7.8.1"
+      "rxjs": "^7.8.1",
+      "@noble/hashes": "1.6.1"
     },
     "devDependencies": {
       "@faker-js/faker": "^8.4.1",

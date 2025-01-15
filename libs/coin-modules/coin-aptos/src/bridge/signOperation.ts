@@ -17,7 +17,7 @@ export const getAddress = (
   derivationPath: string;
 } => ({ address: a.freshAddress, derivationPath: a.freshAddressPath });
 
-export default buildSignOperation =
+const buildSignOperation =
   (
     signerContext: SignerContext<AptosSigner>,
   ): AccountBridge<Transaction, Account>["signOperation"] =>
@@ -26,14 +26,14 @@ export default buildSignOperation =
       async function main() {
         o.next({ type: "device-signature-requested" });
 
-        // const aptosClient = new AptosAPI(account.currency.id);
+        const aptosClient = new AptosAPI(account.currency.id);
 
-        // const ledgerAccount = new LedgerAccount(account.freshAddressPath, account.xpub);
+        const ledgerAccount = new LedgerAccount(account.freshAddressPath, account.xpub);
         // await ledgerAccount.init(signerContext, deviceId);
 
-        // const rawTx = await buildTransaction(account, transaction, aptosClient);
-        // const txBytes = await ledgerAccount.signTransaction(rawTx);
-        // const signed = Buffer.from(txBytes).toString("hex");
+        const rawTx = await buildTransaction(account, transaction, aptosClient);
+        const txBytes = await ledgerAccount.signTransaction(rawTx);
+        const txPayload = Buffer.from(txBytes).toString("hex");
         const { derivationPath } = getAddress(account);
 
         const { r } = await signerContext(deviceId, async signer => {
@@ -42,6 +42,12 @@ export default buildSignOperation =
         });
 
         o.next({ type: "device-signature-granted" });
+
+        if (!r.signature_compact) {
+          throw new Error("Signature compact is null");
+        }
+        // build signature on the correct format
+        const signature = `${Buffer.from(r.signature_compact).toString("base64")}`;
 
         const hash = "";
         const accountId = account.id;
@@ -79,7 +85,7 @@ export default buildSignOperation =
           type: "signed",
           signedOperation: {
             operation,
-            signature: signed,
+            signature,
           },
         });
       }
@@ -89,3 +95,5 @@ export default buildSignOperation =
         e => o.error(e),
       );
     });
+
+export default buildSignOperation;

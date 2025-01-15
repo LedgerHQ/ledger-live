@@ -8,7 +8,7 @@ export type AptosSignature = {
   // return_code: number;
   // error_message: string;
   // signature_der: Uint8Array;
-  // signature_compact: Uint8Array;
+  signature_compact: Uint8Array;
 };
 
 export type AptosGetAddrResponse = {

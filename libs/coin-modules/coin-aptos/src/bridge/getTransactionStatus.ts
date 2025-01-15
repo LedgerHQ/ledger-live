@@ -19,8 +19,8 @@ import {
 import { AccountAddress } from "@aptos-labs/ts-sdk";
 
 const getTransactionStatus = async (a: Account, t: Transaction): Promise<TransactionStatus> => {
-  const errors: Record<string, any> = {};
-  const warnings: Record<string, any> = {};
+  const errors: Record<string, Error> = {};
+  const warnings = {};
   const useAllAmount = !!t.useAllAmount;
 
   if (!t.fees) {

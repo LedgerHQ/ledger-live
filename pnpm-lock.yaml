@@ -1905,6 +1905,9 @@ importers:
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
+      '@noble/hashes':
+        specifier: 1.6.1
+        version: 1.6.1
       bignumber.js:
         specifier: ^9.1.2
         version: 9.1.2
@@ -4149,9 +4152,6 @@ importers:
       '@ledgerhq/wallet-api-server':
         specifier: ^1.7.0
         version: 1.7.0(react@18.3.1)(rxjs@7.8.1)
-      '@noble/hashes':
-        specifier: 1.6.1
-        version: 1.6.1
       '@stricahq/typhonjs':
         specifier: ^2.0.0
         version: 2.0.0
@@ -34283,7 +34283,7 @@ snapshots:
       '@cosmjs/encoding': 0.31.3
       '@cosmjs/math': 0.31.3
       '@cosmjs/utils': 0.31.3
-      '@noble/hashes': 1.5.0
+      '@noble/hashes': 1.6.1
       bn.js: 5.2.1
       elliptic: 6.5.5
       libsodium-wrappers-sumo: 0.7.13
@@ -34523,7 +34523,7 @@ snapshots:
       '@dfinity/candid': 0.21.4(@dfinity/principal@0.15.7(@types/node@20.12.12)(typescript@5.1.3))
       '@dfinity/principal': 0.15.7(@types/node@20.12.12)(typescript@5.1.3)
       '@noble/curves': 1.6.0
-      '@noble/hashes': 1.5.0
+      '@noble/hashes': 1.6.1
       base64-arraybuffer: 0.2.0
       borc: 2.1.2
       buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
@@ -34534,7 +34534,7 @@ snapshots:
       '@dfinity/candid': 0.21.4(@dfinity/principal@0.15.7(typescript@5.4.3))
       '@dfinity/principal': 0.15.7(typescript@5.4.3)
       '@noble/curves': 1.6.0
-      '@noble/hashes': 1.5.0
+      '@noble/hashes': 1.6.1
       base64-arraybuffer: 0.2.0
       borc: 2.1.2
       buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
@@ -38790,7 +38790,7 @@ snapshots:
   '@polkadot/util-crypto@12.6.2(@polkadot/util@12.6.2)':
     dependencies:
       '@noble/curves': 1.6.0
-      '@noble/hashes': 1.5.0
+      '@noble/hashes': 1.6.1
       '@polkadot/networks': 12.6.2
       '@polkadot/util': 12.6.2
       '@polkadot/wasm-crypto': 7.3.2(@polkadot/util@12.6.2)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.3.2(@polkadot/util@12.6.2)))
@@ -41828,7 +41828,7 @@ snapshots:
     dependencies:
       '@babel/runtime': 7.25.0
       '@noble/curves': 1.6.0
-      '@noble/hashes': 1.5.0
+      '@noble/hashes': 1.6.1
       '@solana/buffer-layout': 4.0.1
       agentkeepalive: 4.5.0
       bigint-buffer: 1.1.5
@@ -47534,7 +47534,7 @@ snapshots:
 
   bip32@4.0.0:
     dependencies:
-      '@noble/hashes': 1.5.0
+      '@noble/hashes': 1.6.1
       '@scure/base': 1.1.6
       typeforce: 1.18.0
       wif: 2.0.6
@@ -47804,7 +47804,7 @@ snapshots:
 
   bs58check@3.0.1:
     dependencies:
-      '@noble/hashes': 1.5.0
+      '@noble/hashes': 1.6.1
       bs58: 5.0.0
 
   bser@2.1.1:
@@ -53578,7 +53578,7 @@ snapshots:
     dependencies:
       '@ipld/dag-cbor': 9.2.1
       '@noble/curves': 1.6.0
-      '@noble/hashes': 1.5.0
+      '@noble/hashes': 1.6.1
       '@scure/bip32': 1.4.0
       '@scure/bip39': 1.3.0
       bignumber.js: 9.1.2
@@ -63560,7 +63560,7 @@ snapshots:
       '@ethersproject/logger': 5.7.0
       '@ethersproject/properties': 5.7.0
       '@ethersproject/strings': 5.7.0
-      '@noble/hashes': 1.5.0
+      '@noble/hashes': 1.6.1
       '@noble/secp256k1': 1.7.1
       '@tronweb3/google-protobuf': 3.21.2
       aes-js: 3.1.2

@@ -10,10 +10,12 @@ import {
   generateSignedTransaction,
   generateSigningMessageForTransaction,
 } from "@aptos-labs/ts-sdk";
-import getAddress from "./signer";
+// import getAddress from "./signer";
 import { GetAddressFn } from "@ledgerhq/coin-framework/lib/bridge/getAddressWrapper";
-import { SignerContext } from "@ledgerhq/coin-framework/lib/signer";
-import { AptosSigner } from "./types";
+// import { SignerContext } from "@ledgerhq/coin-framework/lib/signer";
+// import { AptosSigner } from "./types";
+import { sha3_256 as sha3Hash } from "@noble/hashes/sha3";
+import resolver from "./signer";
 
 export default class LedgerAccount {
   private readonly hdPath: string;
@@ -36,19 +38,19 @@ export default class LedgerAccount {
     }
   }
 
-  async init(
-    signerContext: SignerContext<AptosSigner>,
-    deviceId: string,
-    display = false,
-  ): Promise<void> {
-    const resolver = getAddress(signerContext);
-    const address = await resolver(deviceId, {});
-    if (!resolver.publicKey.length && !display) {
-      const response = await this.client.getAddress(this.hdPath, display);
-      this.accountAddress = AccountAddress.from(response.address);
-      this.publicKey = response.publicKey;
-    }
-  }
+  // async init(
+  //   signerContext: SignerContext<AptosSigner>,
+  //   deviceId: string,
+  //   display = false,
+  // ): Promise<void> {
+  //   const resolver = getAddress(signerContext);
+  //   const address = await resolver(deviceId, {});
+  //   if (!resolver.publicKey.length && !display) {
+  //     const response = await this.client.getAddress(this.hdPath, display);
+  //     this.accountAddress = AccountAddress.from(response.address);
+  //     this.publicKey = response.publicKey;
+  //   }
+  // }
 
   hdWalletPath(): string {
     return this.hdPath;
@@ -77,12 +79,12 @@ export default class LedgerAccount {
     return new Hex(new Uint8Array(response.signature));
   }
 
-  async asyncSignHexString(hexString: AccountAddress): Promise<Hex> {
-    const isValidAddress = AccountAddress.isValid({ input: hexString });
-    if (!isValidAddress) throw new Error("Invalid account address");
-    const toSign = hexString.toUint8Array();
-    return this.asyncSignBuffer(toSign);
-  }
+  // async asyncSignHexString(hexString: AccountAddress): Promise<Hex> {
+  //   const isValidAddress = AccountAddress.isValid({ input: hexString });
+  //   if (!isValidAddress) throw new Error("Invalid account address");
+  //   const toSign = hexString.toUint8Array();
+  //   return this.asyncSignBuffer(toSign);
+  // }
 
   async signTransaction(rawTxn: RawTransaction): Promise<Uint8Array> {
     const signingMessage = generateSigningMessageForTransaction({
