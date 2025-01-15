@@ -8,9 +8,9 @@ import { useInitMemberCredentials } from "../../hooks/useInitMemberCredentials";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Linking } from "react-native";
 
-type Props = { onSyncMethodPress: () => void };
+type Props = { onSyncMethodPress: () => void; navigateToChooseSyncMethod: () => void };
 
-const Activation: React.FC<Props> = ({ onSyncMethodPress }) => {
+const Activation: React.FC<Props> = ({ onSyncMethodPress, navigateToChooseSyncMethod }) => {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const walletSyncFF = useFeature("llmWalletSync");
@@ -20,7 +20,7 @@ const Activation: React.FC<Props> = ({ onSyncMethodPress }) => {
 
   const onPressSyncAccounts = () => onSyncMethodPress();
 
-  const onPressHasAlreadyCreatedAKey = () => onSyncMethodPress();
+  const onPressHasAlreadyCreatedAKey = () => navigateToChooseSyncMethod();
 
   const onPressLearnMore = () => {
     if (learnMoreLink) {

@@ -21,7 +21,7 @@ function View() {
         marginTop: 114,
       }}
     >
-      <Activation onSyncMethodPress={onOpenDrawer} />
+      <Activation onSyncMethodPress={onOpenDrawer} navigateToChooseSyncMethod={onOpenDrawer} />
 
       <ActivationDrawer
         startingStep={Steps.ChooseSyncMethod}
