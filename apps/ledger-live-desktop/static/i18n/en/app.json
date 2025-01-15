@@ -6743,7 +6743,7 @@
           "description": "Sync with the Ledger Live app on another phone",
           "steps": {
             "step1": "Open the Ledger Live app you want to sync",
-            "step2": "Go to <0>Settings</0> > <0>General</0> > <0>Ledger Sync</0> > <0>Turn on sync</0> > <0>Show QR</0>",
+            "step2": "Go to <0>Settings</0> > <0>General</0> > <0>Ledger Sync</0> > <0>I already turned it on</0> > <0>Show QR</0>",
             "step3": "Scan QR code"
           }
         },
@@ -6751,7 +6751,7 @@
           "description": "Synchronize your accounts with another Ledger Live app",
           "steps": {
             "step1": "Open the Ledger Live app you want to sync",
-            "step2": "Go to <0>Settings</0> > <0>General</0> > <0>Ledger Sync</0> > <0>Turn on sync</0> > <0>Use your Ledger</0>",
+            "step2": "Go to <0>Settings</0> > <0>General</0> > <0>Ledger Sync</0> > <0>I already turned it on</0> > <0>Use your Ledger</0>",
             "step3": "Connect your Ledger"
           }
         }

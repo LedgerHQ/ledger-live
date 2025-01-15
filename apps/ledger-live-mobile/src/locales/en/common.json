@@ -7031,7 +7031,7 @@
             "title": "Scan and synchronize your accounts using another Ledger Live app",
             "steps": {
               "step1": "Open the Ledger Live app you want to sync",
-              "step2": "Go to <0>Settings</0> <1>></1> <0>General</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Turn on Ledger Sync</0> <1>></1> <0>Scan QR code</0>",
+              "step2": "Go to <0>Settings</0> <1>></1> <0>General</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>I already turned it on</0> <1>></1> <0>Scan QR code</0>",
               "step3": "Scan QR code"
             }
           }
@@ -7043,7 +7043,7 @@
             "title": "To sync with Ledger Live on another phone or computer...",
             "steps": {
               "step1": "Open the Ledger Live you want to sync with.",
-              "step2": "Go to <0>Settings</0> <1>></1> <0>General</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Turn on Ledger Sync</0> <1>></1> <0>Show QR</0>",
+              "step2": "Go to <0>Settings</0> <1>></1> <0>General</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>I already turned it on</0> <1>></1> <0>Show QR</0>",
               "step3": "Scan QR code"
             }
           }
