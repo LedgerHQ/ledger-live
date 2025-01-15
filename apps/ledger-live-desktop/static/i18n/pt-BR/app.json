@@ -442,6 +442,14 @@
       "cta" : "Conheça os dispositivos compatíveis",
       "changeProvider" : "Trocar com outro provedor"
     },
+    "incompatibility" : {
+      "ton_title" : "A Ledger Nano S™ não é compatível com a troca de Ton",
+      "ton_description" : "Para trocar Ton, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+      "spl_tokens_title" : "A Ledger Nano S™ não é compatível com a troca de tokens Solana",
+      "spl_tokens_description" : "Para trocar tokens Solana, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+      "ada_title" : "A Ledger Nano S™ não é compatível com a troca de Cardano",
+      "ada_description" : "Para trocar Cardano, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™."
+    },
     "providers" : {
       "title" : "Escolha um provedor para trocar cripto",
       "learnMore" : "O que é Troca (Swap)?",
@@ -1834,7 +1842,8 @@
       "withdrawUnbondedAmount" : "Quantia Sacada",
       "palletMethod" : "Método",
       "transferAmount" : "Transferir Quantia",
-      "validatorsCount" : "Validadores ({{number}})"
+      "validatorsCount" : "Validadores ({{number}})",
+      "version" : "Versão"
     }
   },
   "operationList" : {
@@ -5288,6 +5297,7 @@
     "verifyData" : "Sempre verifique os detalhes da operação no seu dispositivo.",
     "doubleCheck" : "Verifique os detalhes da transação com muita atenção em seu dispositivo Ledger antes de assinar.",
     "termsAndConditions" : "Ao validar esta transação, você aceita os <0>termos de uso do aplicativo {{appName}}</0>",
+    "termsAndConditionsWithPrivacy" : "Ao assinar esta transação, você aceita os Termos de uso do <0>{{appName}}</0> e a <1>Política de privacidade</1>.",
     "warningWording" : {
     },
     "titleWording" : {
@@ -5783,6 +5793,16 @@
     "SatStackDescriptorNotImported" : {
       "title" : "Conta não buscada pelo node completo",
       "description" : "Configure seu node completo para buscar as contas associadas a este dispositivo. Seu node completo deve primeiro buscar esta conta na blockchain para que você possa adicioná-la ao seu portfólio."
+    },
+    "SequenceNumberTooNew" : {
+      "title" : "Número de sequência muito novo"
+    },
+    "SequenceNumberTooOld" : {
+      "title" : "Número de sequência muito antigo",
+      "description" : "Número de sequência muito antigo"
+    },
+    "TransactionExpired" : {
+      "title" : "A transação expirou"
     },
     "SwapRateExpiredError" : {
       "title" : "Cotação Expirada",
