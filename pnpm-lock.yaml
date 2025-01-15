@@ -2190,9 +2190,6 @@ importers:
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/logs
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
@@ -2205,9 +2202,6 @@ importers:
       casper-js-sdk:
         specifier: ^2.15.2
         version: 2.15.4
-      expect:
-        specifier: ^27.4.6
-        version: 27.5.1
       invariant:
         specifier: ^2.2.2
         version: 2.2.4
@@ -2218,6 +2212,9 @@ importers:
         specifier: ^7.8.1
         version: 7.8.1
     devDependencies:
+      '@ledgerhq/types-cryptoassets':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/types-cryptoassets
       '@types/invariant':
         specifier: ^2.2.2
         version: 2.2.37
@@ -2233,6 +2230,9 @@ importers:
       axios:
         specifier: 1.7.7
         version: 1.7.7
+      expect:
+        specifier: ^27.4.6
+        version: 27.5.1
       jest:
         specifier: ^29.7.0
         version: 29.7.0
