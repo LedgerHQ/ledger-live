@@ -99,6 +99,7 @@ const getPtxAttributes = () => {
   if (!analyticsFeatureFlagMethod) return {};
   const fetchAdditionalCoins = analyticsFeatureFlagMethod("fetchAdditionalCoins");
   const stakingProviders = analyticsFeatureFlagMethod("ethStakingProviders");
+  const stakePrograms = analyticsFeatureFlagMethod("stakePrograms");
   const ptxCard = analyticsFeatureFlagMethod("ptxCard");
 
   const isBatch1Enabled: boolean =
@@ -113,6 +114,15 @@ const getPtxAttributes = () => {
     stakingProviders?.params?.listProvider?.length > 0
       ? stakingProviders?.params?.listProvider.length
       : "flag not loaded";
+  const stakingCurrenciesEnabled =
+    !stakePrograms?.params?.list?.length || !stakePrograms?.enabled
+      ? {}
+      : Object.fromEntries(
+          stakePrograms?.params?.list?.map((currencyId: string) => [
+            `feature_earn_${currencyId}_enabled`,
+            true,
+          ]),
+        );
 
   return {
     isBatch1Enabled,
@@ -120,6 +130,7 @@ const getPtxAttributes = () => {
     isBatch3Enabled,
     stakingProvidersEnabled,
     ptxCard,
+    ...stakingCurrenciesEnabled,
   };
 };
 
