@@ -1,8 +1,14 @@
+export type AptosAddress = {
+  publicKey: string;
+  address: string;
+};
+
 export type AptosSignature = {
-  return_code: number;
-  error_message: string;
-  signature_der: Uint8Array;
-  signature_compact: Uint8Array;
+  signature: null | Buffer;
+  // return_code: number;
+  // error_message: string;
+  // signature_der: Uint8Array;
+  // signature_compact: Uint8Array;
 };
 
 export type AptosGetAddrResponse = {
@@ -13,8 +19,9 @@ export type AptosGetAddrResponse = {
   error_message: string;
 };
 
+// The AptosSigner functions must have the same signature as the one defined in hw-app-aptos package.
 export interface AptosSigner {
-  showAddressAndPubKey(path: string): Promise<AptosGetAddrResponse>;
-  getAddressAndPubKey(path: string): Promise<AptosGetAddrResponse>;
-  sign(path: string, message: Uint8Array): Promise<AptosSignature>;
+  getAddress(path: string, display: boolean): Promise<AptosAddress>;
+  signTransaction(path: string, txBuffer: Buffer): Promise<{ signature: Buffer }>;
+  sign(path: string, message: string): Promise<AptosSignature>;
 }

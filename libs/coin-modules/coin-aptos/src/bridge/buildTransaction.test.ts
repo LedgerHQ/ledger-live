@@ -1,9 +1,9 @@
-import { createFixtureAccount, createFixtureTransaction } from "./types/bridge.fixture";
+import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
 import buildTransaction from "./buildTransaction";
-import { AptosAPI } from "./api";
-import { normalizeTransactionOptions } from "./logic";
+import { AptosAPI } from "../api";
+import { normalizeTransactionOptions } from "../logic";
 import { InputEntryFunctionData } from "@aptos-labs/ts-sdk";
-import { TransactionOptions } from "./types";
+import { TransactionOptions } from "../types";
 
 const generateTransaction = jest.fn(() => "tx");
 

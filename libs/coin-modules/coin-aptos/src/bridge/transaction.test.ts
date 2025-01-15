@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
-import { createFixtureAccount, createFixtureTransaction } from "./types/bridge.fixture";
+import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
 import { formatTransaction, fromTransactionRaw, toTransactionRaw } from "./transaction";
-import { Transaction, TransactionRaw } from "./types";
+import { Transaction, TransactionRaw } from "../types";
 
 jest.mock("./logic", () => ({
   DEFAULT_GAS: 100,

@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { faker } from "@faker-js/faker";
-import type { AptosAccount, AptosOperation, AptosOperationExtra, Transaction } from "./index";
+import type { AptosAccount, Transaction } from "./index";
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets/abandonseed";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { emptyHistoryCache } from "@ledgerhq/coin-framework/account/index";
@@ -37,80 +37,23 @@ export function createFixtureAccount(account?: Partial<AptosAccount>): AptosAcco
 }
 
 export function createFixtureTransaction(tx?: Partial<Transaction>): Transaction {
-  let transaction: Transaction = {
+  const transaction: Transaction = {
     amount: tx?.amount || new BigNumber(0),
     recipient: tx?.recipient || getAbandonSeedAddress("aptos"),
     useAllAmount: tx?.useAllAmount || false,
-
     family: "aptos",
     mode: tx?.mode || "send",
-    networkInfo: tx?.networkInfo || undefined,
     fees: tx?.fees || null,
-    baseReserve: tx?.baseReserve || null,
-    memoType: tx?.memoType || null,
-    memoValue: tx?.memoValue || null,
+    options: {
+      maxGasAmount: BigNumber(0).toString(), // TODO check this
+      gasUnitPrice: BigNumber(0).toString(), // TODO check this
+    },
+    estimate: {
+      maxGasAmount: BigNumber(0).toString(), // TODO check this
+      gasUnitPrice: BigNumber(0).toString(), // TODO check this
+    },
+    firstEmulation: false,
   };
-
-  if (tx?.assetCode) {
-    transaction = {
-      ...transaction,
-      assetCode: tx.assetCode,
-    };
-  }
-  if (tx?.assetIssuer) {
-    transaction = {
-      ...transaction,
-      assetIssuer: tx.assetIssuer,
-    };
-  }
 
   return transaction;
-}
-
-export function createFixtureOperation(operation?: Partial<AptosOperation>): AptosOperation {
-  let extra: AptosOperationExtra = {
-    assetAmount: operation?.extra?.assetAmount || undefined,
-    ledgerOpType: operation?.extra?.ledgerOpType || "IN",
-    blockTime: operation?.extra?.blockTime || faker.date.past(),
-  };
-  if (operation?.extra?.pagingToken) {
-    extra = {
-      ...extra,
-      pagingToken: operation.extra.pagingToken,
-    };
-  }
-  if (operation?.extra?.assetCode) {
-    extra = {
-      ...extra,
-      assetCode: operation.extra.assetCode,
-    };
-  }
-  if (operation?.extra?.assetIssuer) {
-    extra = {
-      ...extra,
-      assetIssuer: operation.extra.assetIssuer,
-    };
-  }
-  if (operation?.extra?.memo) {
-    extra = {
-      ...extra,
-      memo: operation.extra.memo,
-    };
-  }
-
-  return {
-    id: operation?.id || faker.string.uuid(),
-    hash: operation?.hash || faker.string.uuid(),
-    type: operation?.type || "ACTIVATE",
-    value: operation?.value || new BigNumber(faker.string.numeric()),
-    fee: operation?.fee || new BigNumber(0),
-    // senders & recipients addresses
-    senders: operation?.senders || [],
-    recipients: operation?.recipients || [],
-    blockHeight: operation?.blockHeight || undefined,
-    blockHash: operation?.blockHash || undefined,
-    accountId: operation?.accountId || faker.string.uuid(),
-    date: operation?.date || faker.date.past(),
-    extra,
-  };
 }

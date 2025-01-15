@@ -2,10 +2,10 @@ import { Ed25519PublicKey } from "@aptos-labs/ts-sdk";
 import { log } from "@ledgerhq/logs";
 import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { AptosAPI } from "./api";
+import { AptosAPI } from "../api";
 import buildTransaction from "./buildTransaction";
-import { DEFAULT_GAS, DEFAULT_GAS_PRICE, ESTIMATE_GAS_MUL } from "./logic";
-import type { Transaction, TransactionErrors } from "./types";
+import { DEFAULT_GAS, DEFAULT_GAS_PRICE, ESTIMATE_GAS_MUL } from "../logic";
+import type { Transaction, TransactionErrors } from "../types";
 
 type IGetEstimatedGasReturnType = {
   fees: BigNumber;

@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { createFixtureAccount, createFixtureTransaction } from "./types/bridge.fixture";
+import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
 import getTransactionStatus from "./getTransactionStatus";
 import {
   AmountRequired,
@@ -14,7 +14,7 @@ import {
   SequenceNumberTooNewError,
   SequenceNumberTooOldError,
   TransactionExpiredError,
-} from "./errors";
+} from "../errors";
 
 describe("getTransactionStatus Test", () => {
   it("should return errors for AmountRequired", async () => {

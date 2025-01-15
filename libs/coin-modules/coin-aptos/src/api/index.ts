@@ -17,7 +17,7 @@ import {
   PostRequestOptions,
 } from "@aptos-labs/ts-sdk";
 import { getEnv } from "@ledgerhq/live-env";
-import network from "@ledgerhq/live-network/network";
+import network from "@ledgerhq/live-network";
 import BigNumber from "bignumber.js";
 import isUndefined from "lodash/isUndefined";
 import { APTOS_ASSET_ID } from "../constants";

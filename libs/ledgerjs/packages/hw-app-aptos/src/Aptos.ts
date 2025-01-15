@@ -77,7 +77,6 @@ export interface AddressData {
  *     .then(signature => console.log(`Signature: ${signature}`))
  *     .catch(e => console.log(`An error occurred (${e.message})`));
  */
-
 export default class Aptos {
   transport: Transport;
 

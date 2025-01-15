@@ -1,4 +1,4 @@
-import { createFixtureAccount, createFixtureTransaction } from "./types/bridge.fixture";
+import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
 import estimateMaxSpendable from "./estimateMaxSpendable";
 import BigNumber from "bignumber.js";
 

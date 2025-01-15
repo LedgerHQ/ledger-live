@@ -9,13 +9,13 @@ import {
   AmountRequired,
 } from "@ledgerhq/errors";
 import type { Account } from "@ledgerhq/types-live";
-import type { Transaction, TransactionStatus } from "./types";
+import type { Transaction, TransactionStatus } from "../types";
 
 import {
   SequenceNumberTooNewError,
   SequenceNumberTooOldError,
   TransactionExpiredError,
-} from "./errors";
+} from "../errors";
 import { AccountAddress } from "@aptos-labs/ts-sdk";
 
 const getTransactionStatus = async (a: Account, t: Transaction): Promise<TransactionStatus> => {

@@ -1,6 +1,7 @@
 import type { UserTransactionResponse } from "@aptos-labs/ts-sdk";
 import type {
   Account,
+  Operation,
   TransactionCommon,
   TransactionCommonRaw,
   TransactionStatusCommon,
@@ -15,6 +16,8 @@ export type AptosTransaction = UserTransactionResponse & {
     hash: string;
   };
 };
+
+export type AptosOperation = Operation;
 
 export type AptosAccount = Account;
 

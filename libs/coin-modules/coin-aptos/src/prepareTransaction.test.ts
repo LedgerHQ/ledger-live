@@ -1,6 +1,6 @@
 import prepareTransaction from "./prepareTransaction";
 import { AptosAPI } from "./api";
-import { getEstimatedGas } from "./getFeesForTransaction";
+import { getEstimatedGas } from "./bridge/getFeesForTransaction";
 import { getMaxSendBalance } from "./logic";
 import BigNumber from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";

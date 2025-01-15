@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
-import { createFixtureAccount, createFixtureTransaction } from "./types/bridge.fixture";
+import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
 import * as getFeesForTransaction from "./getFeesForTransaction";
-import { AptosAPI } from "./api";
+import { AptosAPI } from "../api";
 
 let simulateTransaction = jest.fn();
 

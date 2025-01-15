@@ -1,5 +1,5 @@
 import broadcast from "./broadcast";
-import { AptosAPI } from "./api";
+import { AptosAPI } from "../api";
 import { patchOperationWithHash } from "@ledgerhq/coin-framework/operation";
 import type { Account, Operation, SignedOperation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";

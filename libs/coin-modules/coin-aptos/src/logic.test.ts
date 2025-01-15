@@ -96,7 +96,7 @@ describe("Aptos logic ", () => {
       const options: Transaction["options"] = {
         maxGasAmount: "",
         gasUnitPrice: "",
-        sequenceNumber: undefined,
+        sequenceNumber: "",
         expirationTimestampSecs: "1000000",
       };
 

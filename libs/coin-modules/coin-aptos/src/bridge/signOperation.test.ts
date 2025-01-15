@@ -1,5 +1,5 @@
 import { Observable } from "rxjs";
-import { createFixtureAccount, createFixtureTransaction } from "./types/bridge.fixture";
+import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
 import signOperation from "./signOperation";
 import BigNumber from "bignumber.js";
 

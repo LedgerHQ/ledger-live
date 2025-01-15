@@ -10,24 +10,25 @@ import {
   generateSignedTransaction,
   generateSigningMessageForTransaction,
 } from "@aptos-labs/ts-sdk";
-import HwAptos from "@ledgerhq/hw-app-aptos";
-import Transport from "@ledgerhq/hw-transport";
-import { sha3_256 as sha3Hash } from "@noble/hashes/sha3";
+import getAddress from "./signer";
+import { GetAddressFn } from "@ledgerhq/coin-framework/lib/bridge/getAddressWrapper";
+import { SignerContext } from "@ledgerhq/coin-framework/lib/signer";
+import { AptosSigner } from "./types";
 
 export default class LedgerAccount {
   private readonly hdPath: string;
 
-  private client?: HwAptos;
+  private client?: GetAddressFn;
   private publicKey: Buffer = Buffer.from([]);
   private accountAddress: AccountAddress = new AccountAddress(
     new Uint8Array(AccountAddress.LENGTH),
   );
 
-  static async fromLedgerConnection(transport: Transport, path: string): Promise<LedgerAccount> {
-    const account = new LedgerAccount(path);
-    await account.init(transport);
-    return account;
-  }
+  // static async fromLedgerConnection(transport: Transport, path: string): Promise<LedgerAccount> {
+  //   const account = new LedgerAccount(path);
+  //   await account.init(transport);
+  //   return account;
+  // }
 
   toAptosAccount(): Account {
     return this as unknown as Account;
@@ -41,9 +42,14 @@ export default class LedgerAccount {
     }
   }
 
-  async init(transport: Transport, display = false): Promise<void> {
-    this.client = new HwAptos(transport);
-    if (!this.publicKey.length && !display) {
+  async init(
+    signerContext: SignerContext<AptosSigner>,
+    deviceId: string,
+    display = false,
+  ): Promise<void> {
+    const resolver = getAddress(signerContext);
+    const address = await resolver(deviceId, {});
+    if (!resolver.publicKey.length && !display) {
       const response = await this.client.getAddress(this.hdPath, display);
       this.accountAddress = AccountAddress.from(response.address);
       this.publicKey = response.publicKey;

@@ -1,32 +1,45 @@
-import type { Transaction } from "./types";
+import type { Transaction } from "../types";
 import { Observable } from "rxjs";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import buildTransaction from "./buildTransaction";
 import BigNumber from "bignumber.js";
 import type { Account, AccountBridge, Operation, OperationType } from "@ledgerhq/types-live";
-import { AptosAPI } from "./api";
-import LedgerAccount from "./LedgerAccount";
+import { AptosAPI } from "../api";
+import LedgerAccount from "../LedgerAccount";
 
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import { AptosSigner } from "./types";
+import { AptosSigner } from "../types";
 
-export const signOperation =
+export const getAddress = (
+  a: Account,
+): {
+  address: string;
+  derivationPath: string;
+} => ({ address: a.freshAddress, derivationPath: a.freshAddressPath });
+
+export const buildSignOperation =
   (
     signerContext: SignerContext<AptosSigner>,
   ): AccountBridge<Transaction, Account>["signOperation"] =>
   ({ account, transaction, deviceId }) =>
     new Observable(o => {
       async function main() {
-        const aptosClient = new AptosAPI(account.currency.id);
-
         o.next({ type: "device-signature-requested" });
 
-        const ledgerAccount = new LedgerAccount(account.freshAddressPath, account.xpub as string);
-        await ledgerAccount.init(transport);
+        // const aptosClient = new AptosAPI(account.currency.id);
 
-        const rawTx = await buildTransaction(account, transaction, aptosClient);
-        const txBytes = await ledgerAccount.signTransaction(rawTx);
-        const signed = Buffer.from(txBytes).toString("hex");
+        // const ledgerAccount = new LedgerAccount(account.freshAddressPath, account.xpub);
+        // await ledgerAccount.init(signerContext, deviceId);
+
+        // const rawTx = await buildTransaction(account, transaction, aptosClient);
+        // const txBytes = await ledgerAccount.signTransaction(rawTx);
+        // const signed = Buffer.from(txBytes).toString("hex");
+        const { derivationPath } = getAddress(account);
+
+        const { r } = await signerContext(deviceId, async signer => {
+          const r = await signer.sign(derivationPath, txPayload);
+          return { r };
+        });
 
         o.next({ type: "device-signature-granted" });
 
