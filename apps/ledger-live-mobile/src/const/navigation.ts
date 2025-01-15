@@ -13,6 +13,8 @@ export enum ScreenName {
   AdvancedLogs = "AdvancedLogs",
   Asset = "Asset",
   Assets = "Assets",
+  AccountsList = "AccountsList",
+  AssetsList = "AssetsList",
   BenchmarkQRStream = "BenchmarkQRStream",
   BitcoinEditCustomFees = "BitcoinEditCustomFees",
   ClaimRewardsConnectDevice = "ClaimRewardsConnectDevice",
@@ -80,6 +82,7 @@ export enum ScreenName {
   Card = "Card",
   Exchange = "Exchange",
   ExchangeBuy = "ExchangeBuy",
+  ExchangeDeveloperMode = "ExchangeDeveloperMode",
   ExchangeHistory = "ExchangeHistory",
   ExchangeSelectAccount = "ExchangeSelectAccount",
   ExchangeSelectCurrency = "ExchangeSelectCurrency",
@@ -317,9 +320,6 @@ export enum ScreenName {
   // ton
   TonEditComment = "TonEditComment",
 
-  // crypto_org
-  CryptoOrgEditMemo = "CryptoOrgEditMemo",
-
   // Algorand
   AlgorandEditMemo = "AlgorandEditMemo",
   AlgorandClaimRewardsInfo = "AlgorandClaimRewardsInfo",
@@ -526,6 +526,7 @@ export enum ScreenName {
   LedgerSyncDeepLinkHandler = "LedgerSyncDeepLinkHandler",
 
   MockedAddAssetButton = "MockedAddAssetButton",
+  MockedWalletScreen = "MockedWalletScreen",
   GenericLandingPage = "GenericLandingPage",
 
   // Web3Hub
@@ -533,6 +534,13 @@ export enum ScreenName {
   Web3HubSearch = "Web3HubSearch",
   Web3HubTabs = "Web3HubTabs",
   Web3HubApp = "Web3HubApp",
+
+  // Add Accountv2 / Receive shared screens
+  ConnectDevice = "ConnectDevice",
+  SelectNetwork = "SelectNetwork",
+  SelectDevice = "SelectDevice",
+  SelectAccounts = "SelectAccounts",
+  ScanDeviceAccounts = "ScanDeviceAccounts",
 }
 
 export enum NavigatorName {
@@ -651,4 +659,7 @@ export enum NavigatorName {
   Web3HubTab = "Web3HubTab",
 
   WalletSync = "WalletSync",
+  AssetSelection = "AssetSelection",
+  DeviceSelection = "DeviceSelection",
+  Assets = "Assets",
 }

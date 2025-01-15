@@ -147,7 +147,7 @@
     "add" : "Ajouter",
     "or" : "OU",
     "clearAll" : "Tout effacer",
-    "buyLedger" : "Acheter un wallet Ledger",
+    "buyLedger" : "Acheter un wallet",
     "quote" : "Prix",
     "memoTag" : {
       "learnMore" : "En savoir plus sur les tags/mémos"
@@ -438,7 +438,7 @@
     },
     "wrongDevice" : {
       "title" : "Le Ledger Nano S™ n’est pas compatible avec THORChain",
-      "description" : "Le Ledger Nano S n’est pas compatible avec THORChain. Vous pouvez utiliser le Ledger Nano S Plus, Ledger Nano X, Ledger Stax ou Ledger Flex pour vos échanges inter-chaînes sur THORChain via Ledger Live",
+      "description" : "Le Ledger Nano S n’est pas compatible avec THORChain. Vous pouvez utiliser le Ledger Nano S Plus, Ledger Nano X, Ledger Stax ou Ledger Flex pour vos échanges inter-chaînes sur THORChain via Ledger Live",
       "cta" : "Voir les appareils compatibles",
       "changeProvider" : "Choisir un autre prestataire"
     },
@@ -502,7 +502,7 @@
           "to" : "À",
           "toExchange" : "Montant à envoyer",
           "toReceive" : "Montant à recevoir",
-          "terms" : "Conditions d’utilisation",
+          "terms" : "Conditions générales",
           "disclaimer" : {
             "description" : "En choisissant Confirmer, je reconnais et j’accepte que ce service soit exclusivement soumis aux Conditions d’utilisation de <0>{{provider}}</0>.",
             "acceptedDescription" : "Ce service est exclusivement soumis aux Conditions d’utilisation de <0>{{provider}}</0>."
@@ -1139,6 +1139,7 @@
       "send" : "Envoyer",
       "swap" : "Swap",
       "stake" : "Staker",
+      "earn" : "Gagner",
       "yield" : "Rendement",
       "buy" : "Acheter",
       "sell" : "Vendre",
@@ -1485,7 +1486,7 @@
       },
       "earn" : {
         "title" : "Staker",
-        "description" : "Stakez vos cryptos via Ledger."
+        "description" : "Obtenez des récompenses sur vos cryptos"
       }
     },
     "recoverBanner" : {
@@ -2343,7 +2344,7 @@
         "ethereumMaxFee" : "Frais maximaux ({{unitName}})",
         "ethereumPriorityFee" : "Frais de priorité maximaux ({{unitName}})",
         "nextBlock" : "Bloc suivant",
-        "suggested" : "Suggérés",
+        "suggested" : "Suggéré",
         "unitPerByte" : "{{unit}} par byte",
         "nft" : "NFT",
         "nftQuantity" : "Nombre"
@@ -3035,7 +3036,8 @@
         },
         "validatorGroup" : {
           "title" : "Groupe de validateurs",
-          "ledgerByFigmentTC" : "Conditions d’utilisation de Ledger by Figment",
+          "ledgerByFigmentTC" : "CG de Ledger by Figment",
+          "ledgerByChorusOneTC" : "CG de Ledger by Chorus One",
           "totalVotes" : "Total des votes",
           "commission" : "Commission"
         }
@@ -3624,7 +3626,8 @@
       "withdrawableInfoTooltip" : "Montant total pouvant être retiré des délégations",
       "withdrawableTitle" : "Disponible au retrait",
       "statusUpdateNotice" : "Le statut de la délégation sera mis à jour une fois la transaction confirmée.",
-      "ledgerByFigmentTC" : "Conditions d’utilisation de Ledger by Figment",
+      "ledgerByFigmentTC" : "CG de Ledger by Figment",
+      "ledgerByChorusOneTC" : "CG de Ledger by Chorus One",
       "emptyState" : {
         "description" : "Vous pouvez gagner des récompenses en SOL en déléguant vos actifs.",
         "info" : "Fonctionnement de la délégation",
@@ -3879,7 +3882,8 @@
           },
           "validator" : {
             "title" : "Validateurs",
-            "ledgerByFigmentTC" : "Conditions d’utilisation de Ledger by Figment"
+            "ledgerByChorusOneTC" : "CG de Ledger by Chorus One",
+            "ledgerByFigmentTC" : "CG de Ledger by Figment"
           },
           "connectDevice" : {
             "title" : "Appareil"
@@ -4146,6 +4150,7 @@
             "link" : "Lien",
             "secondaryCta" : "CTA secondaire",
             "cta" : "CTA",
+            "tag" : "Tag",
             "url" : "URL",
             "path" : "Chemin"
           }
@@ -4691,7 +4696,7 @@
         "noDevice" : "Pas encore d’appareil ?",
         "buyLink" : "Pas encore d’appareil ? Achetez un Ledger Nano X.",
         "byTapping" : "En appuyant sur Commencer, vous acceptez nos",
-        "termsAndConditions" : "Conditions d’utilisation",
+        "termsAndConditions" : "Conditions générales",
         "and" : "et",
         "privacyPolicy" : "Politique de confidentialité",
         "steps" : {
@@ -5379,7 +5384,7 @@
       "memoWarningText" : "Lorsque vous utilisez un mémo, vérifiez bien le type à utiliser auprès du bénéficiaire.",
       "fee" : "Frais",
       "feeInfoText" : "Des frais de transaction minimaux de 0,00001 XLM sont nécessaires pour effectuer une transaction sur Stellar.",
-      "suggested" : "Suggérés",
+      "suggested" : "Suggéré",
       "recommendedFee" : "Frais recommandés",
       "recommenndedFeeInfo" : "Vous pouvez émettre cette transaction avec des frais inférieurs à ceux recommandés, mais elle ne sera peut être pas traitée.",
       "networkCongestion" : "Activité sur le réseau",

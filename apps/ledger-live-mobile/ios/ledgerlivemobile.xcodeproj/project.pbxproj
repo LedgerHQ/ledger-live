@@ -13,7 +13,6 @@
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		17F58472269C64670070C475 /* RCTBluetoothHelperModule.m in Sources */ = {isa = PBXBuildFile; fileRef = 17F58471269C64670070C475 /* RCTBluetoothHelperModule.m */; };
 		2372D3D5180104DBED4E22EE /* libPods-ledgerlivemobile.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 31C4672E151A9F9D4A18DB00 /* libPods-ledgerlivemobile.a */; };
-		2A2FAB56B85E5D2BFF574A32 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BC9C5402323A57C5327727 /* ExpoModulesProvider.swift */; };
 		2EA091AF2C3FBD5900B6181E /* GoogleService-Info-Testing.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2EA091AE2C3FBD5900B6181E /* GoogleService-Info-Testing.plist */; };
 		3407D5D9215D2AB800C9D40B /* NeededForBLE.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3407D5D8215D2AB800C9D40B /* NeededForBLE.swift */; };
 		515E9C2C8C0049EC992210D9 /* Inter-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 3B6982A2E67F482A8069215B /* Inter-Medium.otf */; };
@@ -31,6 +30,7 @@
 		E55EFC09114D43B3AB041882 /* FontAwesome5_Pro_Solid.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 991AA9919E4840DBB799E117 /* FontAwesome5_Pro_Solid.ttf */; };
 		E85A22C62B17E835005A8E6D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E85A22C52B17E835005A8E6D /* LaunchScreen.storyboard */; };
 		E9558EFF2AF93CD200BBEB55 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = E9558F012AF93CD200BBEB55 /* InfoPlist.strings */; };
+		F45A09B01925C0C58A9D40CE /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6562F0F2E65142E04A9EDDEB /* ExpoModulesProvider.swift */; };
 		F837348722721A48009D747A /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F837348622721A48009D747A /* JavaScriptCore.framework */; };
 		F99BEAC629E8441C83104922 /* FontAwesome5_Pro_Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6D891D99F1084D459DBF667F /* FontAwesome5_Pro_Light.ttf */; };
 /* End PBXBuildFile section */
@@ -39,7 +39,6 @@
 		008F07F21AC5B25A0029DE68 /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* ledgerlivemobileTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ledgerlivemobileTests.m; sourceTree = "<group>"; };
-		09BC9C5402323A57C5327727 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-ledgerlivemobile/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 		0EC70FE4282B9CAA00E9E355 /* AdServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdServices.framework; path = System/Library/Frameworks/AdServices.framework; sourceTree = SDKROOT; };
 		0F189190C1964DD1B7E31BE6 /* FontAwesome5_Brands.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Brands.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Brands.ttf"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* ledgerlivemobile.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ledgerlivemobile.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -76,6 +75,7 @@
 		5F63C9E4AC284203A95B417E /* libz.tbd */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		612C2DE49D8C4046AE4FF442 /* Lottie.framework */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = wrapper.framework; name = Lottie.framework; path = System/Library/Frameworks/Lottie.framework; sourceTree = SDKROOT; };
 		61C9A3D5E8F7421487C85E86 /* Ionicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Ionicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf"; sourceTree = "<group>"; };
+		6562F0F2E65142E04A9EDDEB /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-ledgerlivemobile/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 		668E26194DD94B6D8F10D450 /* FontAwesome5_Pro_Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Pro_Regular.ttf; path = ../assets/fonts/FontAwesome5_Pro_Regular.ttf; sourceTree = "<group>"; };
 		68139B1F4BF967461F30D471 /* Pods-ledgerlivemobile-ledgerlivemobileTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ledgerlivemobile-ledgerlivemobileTests.debug.xcconfig"; path = "Target Support Files/Pods-ledgerlivemobile-ledgerlivemobileTests/Pods-ledgerlivemobile-ledgerlivemobileTests.debug.xcconfig"; sourceTree = "<group>"; };
 		6C1563DFEE064431AF4F8F6B /* FontAwesome.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome.ttf"; sourceTree = "<group>"; };
@@ -239,12 +239,20 @@
 			name = Resources;
 			sourceTree = "<group>";
 		};
-		6179FB29F63AFA468DD9E791 /* ExpoModulesProviders */ = {
+		3FFCC43AD858899EF1B5EEBC /* ExpoModulesProviders */ = {
 			isa = PBXGroup;
 			children = (
-				CC8AB426478BB87045DF18DA /* ledgerlivemobile */,
+				63E331B15C566A87BDB91DF1 /* ledgerlivemobile */,
 			);
 			name = ExpoModulesProviders;
+			sourceTree = "<group>";
+		};
+		63E331B15C566A87BDB91DF1 /* ledgerlivemobile */ = {
+			isa = PBXGroup;
+			children = (
+				6562F0F2E65142E04A9EDDEB /* ExpoModulesProvider.swift */,
+			);
+			name = ledgerlivemobile;
 			sourceTree = "<group>";
 		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
@@ -270,7 +278,7 @@
 				3F0372EE9483431D91FAB7D5 /* Resources */,
 				3407D5D7215D2AB800C9D40B /* ledgerlivemobile-Bridging-Header.h */,
 				07E26242AA68EF56DFCEFC67 /* Pods */,
-				6179FB29F63AFA468DD9E791 /* ExpoModulesProviders */,
+				3FFCC43AD858899EF1B5EEBC /* ExpoModulesProviders */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -295,14 +303,6 @@
 				F69BAEE5598632AB3E5F7706 /* libPods-ledgerlivemobile-ledgerlivemobileTests.a */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		CC8AB426478BB87045DF18DA /* ledgerlivemobile */ = {
-			isa = PBXGroup;
-			children = (
-				09BC9C5402323A57C5327727 /* ExpoModulesProvider.swift */,
-			);
-			name = ledgerlivemobile;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -468,6 +468,7 @@
 				"${PODS_CONFIGURATION_BUILD_DIR}/GoogleDataTransport/GoogleDataTransport_Privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/GoogleUtilities/GoogleUtilities_Privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/PromisesObjC/FBLPromises_Privacy.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/RCT-Folly/RCT-Folly_privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/RNCAsyncStorage/RNCAsyncStorage_resources.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/RNDeviceInfo/RNDeviceInfoPrivacyInfo.bundle",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf",
@@ -489,9 +490,12 @@
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Octicons.ttf",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Zocial.ttf",
-				"${PODS_CONFIGURATION_BUILD_DIR}/React-Core/RCTI18nStrings.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/React-Core/React-Core_privacy.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/React-cxxreact/React-cxxreact_privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/Sentry/Sentry.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/TOCropViewController/TOCropViewControllerBundle.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/boost/boost_privacy.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/glog/glog_privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/lottie-ios/LottiePrivacyInfo.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/lottie-react-native/Lottie_React_Native_Privacy.bundle",
 			);
@@ -506,6 +510,7 @@
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleDataTransport_Privacy.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleUtilities_Privacy.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FBLPromises_Privacy.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/RCT-Folly_privacy.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/RNCAsyncStorage_resources.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/RNDeviceInfoPrivacyInfo.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AntDesign.ttf",
@@ -527,9 +532,12 @@
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Octicons.ttf",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/SimpleLineIcons.ttf",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Zocial.ttf",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/RCTI18nStrings.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/React-Core_privacy.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/React-cxxreact_privacy.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Sentry.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/TOCropViewControllerBundle.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/boost_privacy.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/glog_privacy.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/LottiePrivacyInfo.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Lottie_React_Native_Privacy.bundle",
 			);
@@ -632,7 +640,7 @@
 				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
 				17F58472269C64670070C475 /* RCTBluetoothHelperModule.m in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
-				2A2FAB56B85E5D2BFF574A32 /* ExpoModulesProvider.swift in Sources */,
+				F45A09B01925C0C58A9D40CE /* ExpoModulesProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -966,6 +974,7 @@
 				OTHER_LDFLAGS = "$(inherited)";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
 				SWIFT_VERSION = 5.0;
 				USE_HERMES = true;
 			};

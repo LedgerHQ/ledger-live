@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState, useMemo, useRef } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { StyleSheet, View } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
@@ -20,7 +20,7 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { postSwapAccepted, postSwapCancelled } from "@ledgerhq/live-common/exchange/swap/index";
 import { InstalledItem } from "@ledgerhq/live-common/apps/types";
 import { useBroadcast } from "@ledgerhq/live-common/hooks/useBroadcast";
-import { renderLoading } from "~/components/DeviceAction/rendering";
+import { HardwareUpdate, renderLoading } from "~/components/DeviceAction/rendering";
 import { updateAccountWithUpdater } from "~/actions/accounts";
 import DeviceAction from "~/components/DeviceAction";
 import QueuedDrawer from "~/components/QueuedDrawer";
@@ -31,6 +31,8 @@ import { ScreenName } from "~/const";
 import type { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
 import { useInitSwapDeviceAction, useTransactionDeviceAction } from "~/hooks/deviceActions";
 import { BigNumber } from "bignumber.js";
+import { mevProtectionSelector } from "~/reducers/settings";
+import { DeviceModelId } from "@ledgerhq/devices";
 
 export type DeviceMeta = {
   result: { installed: InstalledItem[] } | null | undefined;
@@ -48,6 +50,43 @@ interface Props {
 }
 
 type NavigationProp = StackNavigatorNavigation<SwapNavigatorParamList>;
+type Keys = Record<string, { title: string; description: string }>;
+
+const INCOMPATIBLE_NANO_S_TOKENS_KEYS: Keys = {
+  solana: {
+    title: "transfer.swap2.incompatibility.spl_tokens_title",
+    description: "transfer.swap2.incompatibility.spl_tokens_description",
+  },
+};
+
+const INCOMPATIBLE_NANO_S_CURRENCY_KEYS: Keys = {
+  ton: {
+    title: "transfer.swap2.incompatibility.ton_title",
+    description: "transfer.swap2.incompatibility.ton_description",
+  },
+  cardano: {
+    title: "transfer.swap2.incompatibility.ada_title",
+    description: "transfer.swap2.incompatibility.ada_description",
+  },
+};
+
+const getIncompatibleCurrencyKeys = (exchange: ExchangeSwap) => {
+  const parentFrom =
+    (exchange?.fromAccount?.type === "TokenAccount" && exchange?.fromParentAccount?.currency?.id) ||
+    "";
+  const parentTo =
+    (exchange?.toAccount?.type === "TokenAccount" && exchange?.toParentAccount?.currency?.id) || "";
+  const from =
+    (exchange?.fromAccount.type === "Account" && exchange?.fromAccount?.currency?.id) || "";
+  const to = (exchange?.toAccount.type === "Account" && exchange?.toAccount?.currency?.id) || "";
+
+  return (
+    INCOMPATIBLE_NANO_S_TOKENS_KEYS[parentFrom] ||
+    INCOMPATIBLE_NANO_S_TOKENS_KEYS[parentTo] ||
+    INCOMPATIBLE_NANO_S_CURRENCY_KEYS[from] ||
+    INCOMPATIBLE_NANO_S_CURRENCY_KEYS[to]
+  );
+};
 
 export function Confirmation({
   swapTx: swapTxProp,
@@ -79,10 +118,12 @@ export function Confirmation({
 
   const [swapData, setSwapData] = useState<InitSwapResult | null>(null);
   const [signedOperation, setSignedOperation] = useState<SignedOperation | null>(null);
+  const mevProtected = useSelector(mevProtectionSelector);
   const dispatch = useDispatch();
   const broadcast = useBroadcast({
     account: fromAccount,
     parentAccount: fromParentAccount,
+    broadcastConfig: { mevProtected },
   });
   const tokenCurrency =
     fromAccount && fromAccount.type === "TokenAccount" ? fromAccount.token : null;
@@ -201,6 +242,27 @@ export function Confirmation({
   const swapAction = useInitSwapDeviceAction();
 
   const { t } = useTranslation();
+
+  const keys = getIncompatibleCurrencyKeys(exchange);
+
+  if (deviceMeta?.device?.modelId === DeviceModelId.nanoS && keys) {
+    return (
+      <QueuedDrawer isRequestingToBeOpened={isOpen} preventBackdropClick onClose={onCancel}>
+        <ModalBottomAction
+          footer={
+            <View style={styles.footerContainer}>
+              <HardwareUpdate
+                t={t}
+                device={deviceMeta.device}
+                i18nKeyTitle={keys.title}
+                i18nKeyDescription={keys.description}
+              />
+            </View>
+          }
+        />
+      </QueuedDrawer>
+    );
+  }
 
   return (
     <QueuedDrawer isRequestingToBeOpened={isOpen} preventBackdropClick onClose={onCancel}>

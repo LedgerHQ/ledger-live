@@ -38,6 +38,11 @@ on:
         required: false
         type: boolean
         default: false
+      enable_broadcast:
+        description: "Enable transaction broadcast"
+        required: false
+        type: boolean
+        default: false
 
 # Uncomment to have log-level: trace on detox run and build
 # (cf: apps/ledger-live-mobile/detox.config.js)

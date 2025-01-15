@@ -80,6 +80,55 @@ const ethereumUnits = (name, code) => [
 // to fix that we should always have the 'main' currency of the managerapp first in this list
 // e.g for Ethereum manager Ethereum is first in the list and other coin are in the bottom of the list
 export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
+  aptos: {
+    type: "CryptoCurrency",
+    id: "aptos",
+    coinType: CoinType.APTOS,
+    name: "Aptos",
+    managerAppName: "Aptos",
+    ticker: "APT",
+    scheme: "aptos",
+    color: "#231F20",
+    family: "aptos",
+    units: [
+      {
+        name: "APT",
+        code: "APT",
+        magnitude: 8,
+      },
+    ],
+    explorerViews: [
+      {
+        address: "https://explorer.aptoslabs.com/account/$address?network=mainnet",
+        tx: "https://explorer.aptoslabs.com/txn/$hash?network=mainnet",
+      },
+    ],
+  },
+  aptos_testnet: {
+    type: "CryptoCurrency",
+    id: "aptos_testnet",
+    coinType: CoinType.APTOS,
+    name: "Aptos (Testnet)",
+    managerAppName: "Aptos",
+    ticker: "APT",
+    scheme: "aptos_testnet",
+    color: "#FFCD29",
+    family: "aptos",
+    isTestnetFor: "aptos",
+    units: [
+      {
+        name: "APT",
+        code: "APT",
+        magnitude: 8,
+      },
+    ],
+    explorerViews: [
+      {
+        address: "https://explorer.aptoslabs.com/account/$address?network=testnet",
+        tx: "https://explorer.aptoslabs.com/txn/$hash?network=testnet",
+      },
+    ],
+  },
   near: {
     type: "CryptoCurrency",
     id: "near",
@@ -3143,7 +3192,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ticker: "CRO",
     scheme: "crypto_org",
     color: "#0e1c37",
-    family: "crypto_org",
+    family: "cosmos",
     units: [
       {
         name: "CRO",
@@ -3151,15 +3200,15 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
         magnitude: 8,
       },
       {
-        name: "baseCRO",
-        code: "baseCRO",
+        name: "basecro",
+        code: "basecro",
         magnitude: 0,
       },
     ],
     explorerViews: [
       {
-        tx: "https://cronos-pos.org/explorer/tx/$hash",
-        address: "https://cronos-pos.org/explorer/account/$address",
+        tx: "https://www.mintscan.io/crypto-org/tx/$hash",
+        address: "https://www.mintscan.io/crypto-org/validators/$address",
       },
     ],
   },
@@ -3282,11 +3331,11 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     id: "crypto_org_croeseid",
     coinType: CoinType.CRYPTO_ORG,
     name: "Cronos POS Chain Croeseid",
-    managerAppName: "Crypto.org Chain",
+    managerAppName: "Cronos POS Chain Croeseid",
     ticker: "CRO",
     scheme: "crypto_org_croeseid",
     color: "#0e1c37",
-    family: "crypto_org",
+    family: "cosmos",
     units: [
       {
         name: "TCRO",
@@ -3658,7 +3707,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     type: "CryptoCurrency",
     id: "rsk",
     coinType: CoinType.ETH,
-    name: "RSK",
+    name: "Rootstock",
     managerAppName: "Ethereum",
     ticker: "RBTC",
     scheme: "rsk",
@@ -3670,9 +3719,9 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     },
     explorerViews: [
       {
-        tx: "https://explorer.rsk.co/tx/$hash",
-        address: "https://explorer.rsk.co/address/$address",
-        token: "https://explorer.rsk.co/address/$address",
+        tx: "https://explorer.rootstock.io/tx/$hash",
+        address: "https://explorer.rootstock.io/address/$address",
+        token: "https://explorer.rootstock.io/address/$address",
       },
     ],
   },
@@ -4345,6 +4394,64 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       {
         tx: "https://www.mintscan.io/mantra/txs/$hash",
         address: "https://www.mintscan.io/mantra/validators/$address",
+      },
+    ],
+  },
+  xion: {
+    type: "CryptoCurrency",
+    id: "xion",
+    coinType: CoinType.ATOM,
+    name: "Xion",
+    managerAppName: "Cosmos",
+    ticker: "XION",
+    scheme: "xion",
+    color: "#000000",
+    family: "cosmos",
+    units: [
+      {
+        name: "Xion",
+        code: "XION",
+        magnitude: 6,
+      },
+      {
+        name: "Micro-XION",
+        code: "uxion",
+        magnitude: 0,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://www.mintscan.io/xion/txs/$hash",
+        address: "https://www.mintscan.io/xion/validators/$address",
+      },
+    ],
+  },
+  zenrock: {
+    type: "CryptoCurrency",
+    id: "zenrock",
+    coinType: CoinType.ATOM,
+    name: "Zenrock",
+    managerAppName: "Cosmos",
+    ticker: "ROCK",
+    scheme: "zenrock",
+    color: "#080c44",
+    family: "cosmos",
+    units: [
+      {
+        name: "Zenrock",
+        code: "ROCK",
+        magnitude: 6,
+      },
+      {
+        name: "Micro-Zenrock",
+        code: "urock",
+        magnitude: 0,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://explorer.diamond.zenrocklabs.io/transactions/$hash",
+        address: "https://explorer.diamond.zenrocklabs.io/validators/$address",
       },
     ],
   },

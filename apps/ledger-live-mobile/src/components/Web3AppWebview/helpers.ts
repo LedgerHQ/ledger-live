@@ -27,7 +27,7 @@ import { WebviewAPI, WebviewProps, WebviewState } from "./types";
 import prepareSignTransaction from "./liveSDKLogic";
 import { StackNavigatorNavigation } from "../RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
-import { trackingEnabledSelector } from "../../reducers/settings";
+import { mevProtectionSelector, trackingEnabledSelector } from "../../reducers/settings";
 import deviceStorage from "../../logic/storeWrapper";
 import { track } from "../../analytics";
 import getOrCreateUser from "../../user";
@@ -76,6 +76,7 @@ export function useWebView(
   );
 
   const accounts = useSelector(flattenAccountsSelector);
+  const mevProtected = useSelector(mevProtectionSelector);
 
   const uiHook = useUiHook();
   const trackingEnabled = useSelector(trackingEnabledSelector);
@@ -85,6 +86,7 @@ export function useWebView(
     userId,
     tracking: trackingEnabled,
     wallet,
+    mevProtected,
   });
 
   const webviewHook = useMemo(() => {
@@ -144,6 +146,8 @@ export function useWebView(
     uiHook,
     postMessage: webviewHook.postMessage,
     tracking,
+    initialAccountId: inputs?.accountId?.toString(),
+    mevProtected,
   });
 
   const onMessage = useCallback(
@@ -555,7 +559,8 @@ export function useSelectAccount({
   currentAccountHistDb?: CurrentAccountHistDB;
 }) {
   const currencies = useManifestCurrencies(manifest);
-  const { setCurrentAccountHist, currentAccount } = useDappCurrentAccount(currentAccountHistDb);
+  const { setCurrentAccountHist, setCurrentAccount, currentAccount } =
+    useDappCurrentAccount(currentAccountHistDb);
   const navigation = useNavigation();
 
   const onSelectAccount = useCallback(() => {
@@ -567,6 +572,7 @@ export function useSelectAccount({
           allowAddAccount: true,
           onSuccess: account => {
             setCurrentAccountHist(manifest.id, account);
+            setCurrentAccount(account);
           },
         },
       });
@@ -578,11 +584,12 @@ export function useSelectAccount({
           allowAddAccount: true,
           onSuccess: account => {
             setCurrentAccountHist(manifest.id, account);
+            setCurrentAccount(account);
           },
         },
       });
     }
-  }, [manifest.id, currencies, navigation, setCurrentAccountHist]);
+  }, [currencies, navigation, setCurrentAccountHist, manifest.id, setCurrentAccount]);
 
   return { onSelectAccount, currentAccount };
 }

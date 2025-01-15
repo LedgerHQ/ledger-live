@@ -5,7 +5,13 @@ import { useState, useCallback, useEffect, useRef } from "react";
 import { Platform } from "react-native";
 import { log } from "@ledgerhq/logs";
 import { useRoute, useNavigation } from "@react-navigation/native";
-import type { Account, AccountLike, SignedOperation, Operation } from "@ledgerhq/types-live";
+import type {
+  Account,
+  AccountLike,
+  SignedOperation,
+  Operation,
+  BroadcastConfig,
+} from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
@@ -22,7 +28,7 @@ import { formatTransaction } from "@ledgerhq/live-common/transaction/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { execAndWaitAtLeast } from "@ledgerhq/live-common/promise";
 import { getEnv } from "@ledgerhq/live-env";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { TransactionRefusedOnDevice } from "@ledgerhq/live-common/errors";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { updateAccountWithUpdater } from "../actions/accounts";
@@ -37,6 +43,7 @@ import type { SendFundsNavigatorStackParamList } from "../components/RootNavigat
 import type { SignTransactionNavigatorParamList } from "../components/RootNavigator/types/SignTransactionNavigator";
 import type { AlgorandClaimRewardsFlowParamList } from "~/families/algorand/Rewards/ClaimRewardsFlow/type";
 import type { StellarAddAssetFlowParamList } from "~/families/stellar/AddAssetFlow/types";
+import { mevProtectionSelector } from "~/reducers/settings";
 
 type Navigation =
   | StackNavigatorNavigation<SendFundsNavigatorStackParamList, ScreenName.SendSummary>
@@ -196,11 +203,13 @@ export const useSignWithDevice = ({
 type SignTransactionArgs = {
   account: AccountLike;
   parentAccount: Account | null | undefined;
+  broadcastConfig?: BroadcastConfig;
 };
 export const broadcastSignedTx = async (
   account: AccountLike,
   parentAccount: Account | null | undefined,
   signedOperation: SignedOperation,
+  broadcastConfig?: BroadcastConfig,
 ): Promise<Operation> => {
   invariant(account, "account not present");
   const mainAccount = getMainAccount(account, parentAccount);
@@ -215,6 +224,7 @@ export const broadcastSignedTx = async (
       .broadcast({
         account: mainAccount,
         signedOperation,
+        broadcastConfig,
       })
       .then(op => {
         log(
@@ -227,11 +237,11 @@ export const broadcastSignedTx = async (
 };
 
 // TODO move to live-common
-function useBroadcast({ account, parentAccount }: SignTransactionArgs) {
+function useBroadcast({ account, parentAccount, broadcastConfig }: SignTransactionArgs) {
   return useCallback(
     async (signedOperation: SignedOperation): Promise<Operation> =>
-      broadcastSignedTx(account, parentAccount, signedOperation),
-    [account, parentAccount],
+      broadcastSignedTx(account, parentAccount, signedOperation, broadcastConfig),
+    [account, parentAccount, broadcastConfig],
   );
 }
 
@@ -242,11 +252,13 @@ export function useSignedTxHandler({
   account: AccountLike;
   parentAccount: Account | null | undefined;
 }) {
+  const mevProtected = useSelector(mevProtectionSelector);
   const navigation = useNavigation();
   const route = useRoute();
   const broadcast = useBroadcast({
     account,
     parentAccount,
+    broadcastConfig: { mevProtected },
   });
   const dispatch = useDispatch();
   const mainAccount = getMainAccount(account, parentAccount);

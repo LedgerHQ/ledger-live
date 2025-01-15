@@ -441,7 +441,7 @@ const generateGenericCosmosTest = (
     currency: getCryptoCurrencyById(currencyId),
     appQuery: {
       model: DeviceModelId.nanoS,
-      appName: "Cosmos",
+      appName: currencyId == "crypto_org" ? "Cronos POS Chain" : "Cosmos",
     },
     genericDeviceAction: acceptTransaction,
     testTimeout: 2 * 60 * 1000,
@@ -599,6 +599,34 @@ const mantra = {
   }),
 };
 
+const cryptoOrgMinimalTransactionAmount = new BigNumber(1000000);
+const cryptoOrg = {
+  ...generateGenericCosmosTest("crypto_org", false, {
+    minViableAmount: cryptoOrgMinimalTransactionAmount,
+    mutations: cosmosLikeMutations(cryptoOrgMinimalTransactionAmount),
+    testTimeout: 8 * 60 * 1000,
+    skipOperationHistory: true,
+  }),
+};
+
+const xionMinimalTransactionAmount = new BigNumber(20000);
+const xion = {
+  ...generateGenericCosmosTest("xion", false, {
+    minViableAmount: xionMinimalTransactionAmount,
+    mutations: cosmosLikeMutations(xionMinimalTransactionAmount),
+    skipOperationHistory: true,
+  }),
+};
+
+const zenrockMinimalTransactionAmount = new BigNumber(20000);
+const zenrock = {
+  ...generateGenericCosmosTest("zenrock", false, {
+    minViableAmount: zenrockMinimalTransactionAmount,
+    mutations: cosmosLikeMutations(zenrockMinimalTransactionAmount),
+    skipOperationHistory: true,
+  }),
+};
+
 export default {
   axelar,
   cosmos,
@@ -615,4 +643,7 @@ export default {
   coreum,
   injective,
   mantra,
+  cryptoOrg,
+  xion,
+  zenrock,
 };

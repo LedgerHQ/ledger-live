@@ -119,7 +119,7 @@
     "addressCopied": "Address copied",
     "addressCopiedSuspicious": "Mismatch between the copied address and the one in the clipboard.",
     "experimentalFeature": "Experimental",
-    "featureFlags": "Feature Flags",
+    "featureFlags": "Feature flag",
     "information": "Information",
     "search": "Search...",
     "searchWithoutEllipsis": "Search",
@@ -441,6 +441,14 @@
       "description": "Ledger Nano S is not compatible with THORChain. You can use Ledger Nano S Plus, Ledger Nano X, Ledger Stax, or Ledger Flex to experience cross-chain swaps on THORChain via Ledger Live",
       "cta": "Explore compatible devices",
       "changeProvider": "Swap with another provider"
+    },
+    "incompatibility": {
+      "ton_title": "Ledger Nano S™ does not support swapping Ton",
+      "ton_description": "To swap Ton, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+      "spl_tokens_title": "Ledger Nano S™ does not support swapping Solana tokens",
+      "spl_tokens_description": "To swap Solana tokens, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+      "ada_title": "Ledger Nano S™ does not support swapping Cardano",
+      "ada_description": "To swap Cardano, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
     },
     "providers": {
       "title": "Choose a provider to swap crypto",
@@ -1834,7 +1842,8 @@
       "withdrawUnbondedAmount": "Withdrawn Amount",
       "palletMethod": "Method",
       "transferAmount": "Transfer Amount",
-      "validatorsCount": "Validators ({{number}})"
+      "validatorsCount": "Validators ({{number}})",
+      "version": "Version"
     }
   },
   "operationList": {
@@ -3045,6 +3054,7 @@
         "validatorGroup": {
           "title": "Validator Group",
           "ledgerByFigmentTC": "Ledger by Figment T&Cs",
+          "ledgerByChorusOneTC": "Ledger by Chorus One T&Cs",
           "totalVotes": "Total Votes",
           "commission": "Commission"
         }
@@ -3642,6 +3652,7 @@
       "withdrawableTitle": "Withdrawable",
       "statusUpdateNotice": "The status of the delegation will be updated when the transaction is confirmed.",
       "ledgerByFigmentTC": "Ledger by Figment T&Cs",
+      "ledgerByChorusOneTC": "Ledger by Chorus One T&Cs",
       "emptyState": {
         "description": "You can earn SOL rewards by delegating your assets.",
         "info": "How Delegation works",
@@ -3900,6 +3911,7 @@
           },
           "validator": {
             "title": "Validators",
+            "ledgerByChorusOneTC": "Ledger by Chorus One T&Cs",
             "ledgerByFigmentTC": "Ledger by Figment T&Cs"
           },
           "connectDevice": {
@@ -4167,6 +4179,7 @@
             "link": "Link",
             "secondaryCta": "Secondary CTA",
             "cta": "CTA",
+            "tag": "Tag",
             "url": "URL",
             "path": "Path"
           }
@@ -5304,6 +5317,7 @@
     "verifyData": "Always verify the operation details on your device.",
     "doubleCheck": "Double-check the transaction details on your Ledger device before signing.",
     "termsAndConditions": "By signing this transaction, you accept <0>{{appName}}'s terms of use.</0>",
+    "termsAndConditionsWithPrivacy": "By signing this transaction, you accept <0>{{appName}}'s terms of use.</0> and <1>Privacy Policy.</1>",
     "warningWording": {},
     "titleWording": {
       "send": "Please confirm on your device to finalize the operation",
@@ -5802,6 +5816,16 @@
     "SatStackDescriptorNotImported": {
       "title": "Account not scanned by full node",
       "description": "Please configure your full node to scan for the accounts associated with this device. Your full node must first scan the blockchain for this account before you can add it to your portfolio."
+    },
+    "SequenceNumberTooNew": {
+      "title": "Sequence number too new"
+    },
+    "SequenceNumberTooOld": {
+      "title": "Sequence number too old",
+      "description": "Sequence number too old"
+    },
+    "TransactionExpired": {
+      "title": "Transaction expired"
     },
     "SwapRateExpiredError": {
       "title": "Rate Expired",

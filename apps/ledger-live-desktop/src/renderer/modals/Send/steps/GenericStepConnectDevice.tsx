@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { Trans } from "react-i18next";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import DeviceAction from "~/renderer/components/DeviceAction";
 import StepProgress from "~/renderer/components/StepProgress";
@@ -12,6 +12,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import { DeviceBlocker } from "~/renderer/components/DeviceAction/DeviceBlocker";
 import { closeModal } from "~/renderer/actions/modals";
+import { mevProtectionSelector } from "~/renderer/reducers/settings";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
 const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectApp);
 const Result = (
@@ -55,10 +56,12 @@ export default function StepConnectDevice({
   onConfirmationHandler?: Function;
   onFailHandler?: Function;
 }) {
+  const mevProtected = useSelector(mevProtectionSelector);
   const dispatch = useDispatch();
   const broadcast = useBroadcast({
     account,
     parentAccount,
+    broadcastConfig: { mevProtected },
   });
   const tokenCurrency = (account && account.type === "TokenAccount" && account.token) || undefined;
   const request = useMemo(

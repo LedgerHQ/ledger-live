@@ -1,3 +1,4 @@
+import Braze from "@braze/react-native-sdk";
 import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -10,7 +11,6 @@ import {
   setIsDynamicContentLoading,
   setDynamicContentLandingPageStickyCtaCards,
 } from "../actions/dynamicContent";
-import { useBrazeContentCard } from "./brazeContentCard";
 import {
   filterByPage,
   filterByType,
@@ -31,7 +31,7 @@ import { clearDismissedContentCards } from "~/actions/settings";
 
 export const useDynamicContentLogic = () => {
   const dispatch = useDispatch();
-  const { Braze, refreshDynamicContent } = useBrazeContentCard();
+  const refreshDynamicContent = useCallback(() => Braze.requestContentCardsRefresh(), []);
   const dismissedContentCards = useSelector(dismissedContentCardsSelector) || {};
   const dismissedContentCardsIds = Object.keys(dismissedContentCards);
 
@@ -88,9 +88,9 @@ export const useDynamicContentLogic = () => {
     dispatch(setDynamicContentAssetsCards(assetCards));
     dispatch(setDynamicContentNotificationCards(notificationCards));
     dispatch(setDynamicContentLearnCards(learnCards));
-    dispatch(setIsDynamicContentLoading(false));
     dispatch(setDynamicContentLandingPageStickyCtaCards(landingPageStickyCtaCards));
-  }, [Braze, dismissedContentCardsIds, dispatch]);
+    dispatch(setIsDynamicContentLoading(false));
+  }, [dismissedContentCardsIds, dispatch]);
 
   const clearOldDismissedContentCards = () => {
     const oldCampaignIds = getOldCampaignIds(dismissedContentCards || {});

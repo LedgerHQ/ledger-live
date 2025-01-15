@@ -39,11 +39,6 @@ jobs:
         id: setup-caches
         with:
           install-proto: true
-          skip-turbo-cache: "false"
-          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
-          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
-          region: ${{ secrets.AWS_CACHE_REGION }}
-          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
       - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
         id: desktop-version
         with:
@@ -116,6 +111,10 @@ jobs:
           git add .
           git commit -m "chore(prerelease): :rocket: ${{ inputs.ref }} prerelease [LLD(${{ steps.post-desktop-version.outputs.version }}), LLM(${{ steps.post-mobile-version.outputs.version }})]" ||
           echo ""
+      - name: authenticate with npm
+        uses: actions/setup-node@v4
+        with:
+          registry-url: "https://registry.npmjs.org"
       - name: publish prerelease
         run: pnpm changeset publish --no-git-tag
         env:

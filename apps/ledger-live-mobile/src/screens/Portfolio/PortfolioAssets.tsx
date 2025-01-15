@@ -1,27 +1,32 @@
-import { Button, IconsLegacy } from "@ledgerhq/native-ui";
-import { useNavigation } from "@react-navigation/native";
 import React, { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { useStartProfiler } from "@shopify/react-native-performance";
 import { GestureResponderEvent } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { Button, IconsLegacy, Box } from "@ledgerhq/native-ui";
 import { useDistribution } from "~/actions/general";
-import { TrackScreen } from "~/analytics";
+import { track, TrackScreen } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
-import { Box } from "@ledgerhq/native-ui";
 import { blacklistedTokenIdsSelector, discreetModeSelector } from "~/reducers/settings";
 import Assets from "./Assets";
 import PortfolioQuickActionsBar from "./PortfolioQuickActionsBar";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import AddAccountButton from "LLM/features/Accounts/components/AddAccountButton";
+import useListsAnimation from "./useListsAnimation";
+import TabSection, { TAB_OPTIONS } from "./TabSection";
 
 type Props = {
   hideEmptyTokenAccount: boolean;
   openAddModal: () => void;
 };
 
-const maxAssetsToDisplay = 5;
+const maxItemsToDysplay = 5;
 
 const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
   const { t } = useTranslation();
+  const accountListFF = useFeature("llmAccountListUI");
+  const isAccountListUIEnabled = accountListFF?.enabled;
   const navigation = useNavigation();
   const startNavigationTTITimer = useStartProfiler();
   const distribution = useDistribution({
@@ -42,19 +47,54 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
             !blacklistedTokenIdsSet.has(asset.currency.id)
           );
         })
-        .slice(0, maxAssetsToDisplay),
+        .slice(0, maxItemsToDysplay),
     [distribution, blacklistedTokenIdsSet],
   );
 
-  const goToAssets = useCallback(
+  const { selectedTab, handleToggle, handleLayout, assetsAnimatedStyle, accountsAnimatedStyle } =
+    useListsAnimation(TAB_OPTIONS.Assets);
+
+  const showAssets = selectedTab === TAB_OPTIONS.Assets;
+  const showAccounts = selectedTab === TAB_OPTIONS.Accounts;
+
+  const onPressButton = useCallback(
     (uiEvent: GestureResponderEvent) => {
       startNavigationTTITimer({ source: ScreenName.Portfolio, uiEvent });
-      navigation.navigate(NavigatorName.Accounts, {
-        screen: ScreenName.Assets,
+      track("button_clicked", {
+        button: showAssets ? "See all assets" : "See all accounts",
+        page: "Wallet",
       });
+      if (!showAssets && isAccountListUIEnabled) {
+        navigation.navigate(NavigatorName.Accounts, {
+          screen: ScreenName.AccountsList,
+          params: {
+            sourceScreenName: ScreenName.Portfolio,
+            showHeader: true,
+            canAddAccount: true,
+            isSyncEnabled: true,
+          },
+        });
+        return;
+      }
+      if (isAccountListUIEnabled) {
+        navigation.navigate(NavigatorName.Assets, {
+          screen: ScreenName.AssetsList,
+          params: {
+            sourceScreenName: ScreenName.Portfolio,
+            showHeader: true,
+            isSyncEnabled: true,
+          },
+        });
+      } else {
+        navigation.navigate(NavigatorName.Accounts, {
+          screen: ScreenName.Assets,
+        });
+      }
     },
-    [startNavigationTTITimer, navigation],
+    [startNavigationTTITimer, showAssets, isAccountListUIEnabled, navigation],
   );
+
+  const showAddAccountButton = isAccountListUIEnabled && showAccounts;
 
   return (
     <>
@@ -63,25 +103,41 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
         accountsLength={distribution.list && distribution.list.length}
         discreet={discreetMode}
       />
-      <Box mb={24} mt={18}>
+      <Box my={24}>
         <PortfolioQuickActionsBar />
       </Box>
-      <Assets assets={assetsToDisplay} />
-      {distribution.list.length < maxAssetsToDisplay ? (
-        <Button
-          type="shade"
-          size="large"
-          outline
-          mt={6}
-          iconPosition="left"
-          Icon={IconsLegacy.PlusMedium}
-          onPress={openAddModal}
-        >
-          {t("account.emptyState.addAccountCta")}
-        </Button>
+      {isAccountListUIEnabled ? (
+        <TabSection
+          t={t}
+          handleToggle={handleToggle}
+          handleLayout={handleLayout}
+          assetsAnimatedStyle={assetsAnimatedStyle}
+          accountsAnimatedStyle={accountsAnimatedStyle}
+          maxItemsToDysplay={maxItemsToDysplay}
+        />
       ) : (
-        <Button type="shade" size="large" outline mt={6} onPress={goToAssets}>
-          {t("portfolio.seelAllAssets")}
+        <Assets assets={assetsToDisplay} />
+      )}
+      {showAddAccountButton ? (
+        <AddAccountButton sourceScreenName="Wallet" />
+      ) : (
+        distribution.list.length === 0 && (
+          <Button
+            type="shade"
+            size="large"
+            outline
+            mt={6}
+            iconPosition="left"
+            Icon={IconsLegacy.PlusMedium}
+            onPress={openAddModal}
+          >
+            {t("account.emptyState.addAccountCta")}
+          </Button>
+        )
+      )}
+      {distribution.list.length >= maxItemsToDysplay && (
+        <Button type="shade" size="large" outline onPress={onPressButton}>
+          {showAssets ? t("portfolio.seeAllAssets") : t("portfolio.seeAllAccounts")}
         </Button>
       )}
     </>

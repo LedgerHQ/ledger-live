@@ -43,7 +43,7 @@ export default function PortfolioContentCard({
         </Button>
       )}
       <StyleProvider selectedPalette="dark">
-        <CloseButton onClick={handleClose} />
+        <CloseButton data-testid="portfolio-card-close-button" onClick={handleClose} />
       </StyleProvider>
     </Wrapper>
   );
@@ -79,6 +79,7 @@ const Wrapper = styled.div<Pick<PortfolioContentCardProps, "image" | "tag" | "on
   padding: 16px;
   padding-top: ${p => (p.tag ? "16px" : "24px")};
   padding-right: 50%;
+  flex-basis: 100%;
 
   position: relative;
   display: flex;

@@ -1,14 +1,11 @@
 #import "AppDelegate.h"
-
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTLinkingManager.h>
 #import <React/RCTRootView.h>
 #import "RNCConfig.h"
-#import "RNSplashScreen.h"  // here
 #import <BrazeKit/BrazeKit-Swift.h>
 #import "BrazeReactUtils.h"
 #import "BrazeReactBridge.h"
-
 #import <Firebase.h>
 
 
@@ -22,30 +19,22 @@ static NSString *const iOSPushAutoEnabledKey = @"iOSPushAutoEnabled";
   // You can add your custom initial props in the dictionary below.
   // They will be passed down to the ViewController used by React Native.
   self.initialProps = @{};
-  
-  RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
-  RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
-                                               moduleName:@"ledgerlivemobile"
-                                               initialProperties:nil];
-
 
   // Retrieve the correct GoogleService-Info.plist file name for a given environment
   NSString *googleServiceInfoEnvName = [RNCConfig envFor:@"GOOGLE_SERVICE_INFO_NAME"];
   NSString *googleServiceInfoName = googleServiceInfoEnvName;
-  
   if ([googleServiceInfoName length] == 0) {
     googleServiceInfoName = @"GoogleService-Info";
   }
-  
+
   // Initialize Firebase with the correct GoogleService-Info.plist file
   NSString *filePath = [[NSBundle mainBundle] pathForResource:googleServiceInfoName ofType:@"plist"];
   FIROptions *options = [[FIROptions alloc] initWithContentsOfFile:filePath];
   [FIRApp configureWithOptions:options];
-  
+
   // Setup Braze
   NSString *brazeApiKeyFromEnv = [RNCConfig envFor:@"BRAZE_IOS_API_KEY"];
   NSString *brazeCustomEndpointFromEnv = [RNCConfig envFor:@"BRAZE_CUSTOM_ENDPOINT"];
-
   BRZConfiguration *configuration = [[BRZConfiguration alloc] initWithApiKey:brazeApiKeyFromEnv endpoint:brazeCustomEndpointFromEnv];
   configuration.triggerMinimumTimeInterval = 1;
   configuration.logger.level = BRZLoggerLevelInfo;
@@ -57,8 +46,7 @@ static NSString *const iOSPushAutoEnabledKey = @"iOSPushAutoEnabled";
   }
   if (pushAutoEnabled) {
     NSLog(@"iOS Push Auto enabled.");
-    configuration.push.automation =
-        [[BRZConfigurationPushAutomation alloc] initEnablingAllAutomations:YES];
+    configuration.push.automation = [[BRZConfigurationPushAutomation alloc] initEnablingAllAutomations:YES];
     configuration.push.automation.requestAuthorizationAtLaunch = NO;
   }
 
@@ -72,14 +60,28 @@ static NSString *const iOSPushAutoEnabledKey = @"iOSPushAutoEnabled";
   }
 
   [[BrazeReactUtils sharedInstance] populateInitialUrlFromLaunchOptions:launchOptions];
-    
-  [self.window makeKeyAndVisible];
-  UIStoryboard *sb = [UIStoryboard storyboardWithName:@"LaunchScreen" bundle:nil];
+
+  BOOL appLaunched = [super application:application didFinishLaunchingWithOptions:launchOptions];
+  // This condition is needed to prevent a crash since upgrading to React Native 0.75.4
+  // It may be fixed in a later version of React Native
+  // https://github.com/facebook/react-native/issues/47202
+  if (!appLaunched) {
+    return NO;
+  }
+
+  RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
+  RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge moduleName:@"ledgerlivemobile" initialProperties:nil];
+
+ if (rootView) {
+  UIStoryboard *sb = [UIStoryboard storyboardWithName:@"LaunchScreen" bundle:[NSBundle mainBundle]];
   UIViewController *vc = [sb instantiateInitialViewController];
   rootView.loadingView = vc.view;
-  
-  [super application:application didFinishLaunchingWithOptions:launchOptions];
-  
+  UIViewController *rootViewController = [UIViewController new];
+  rootViewController.view = rootView;
+  self.window.rootViewController = rootViewController;
+  [self.window makeKeyAndVisible];
+}
+
   return YES;
 }
 
@@ -147,23 +149,23 @@ static Braze *_braze;
   blurEffectView.frame = [self.window bounds];
   blurEffectView.tag = 12345;
   logoView.tag = 12346;
-  
+
   blurEffectView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
   [self.window addSubview:blurEffectView];
   [self.window addSubview:logoView];
   [self.window bringSubviewToFront:logoView];
-  
+
   [logoView setContentHuggingPriority:251 forAxis:UILayoutConstraintAxisHorizontal];
   [logoView setContentHuggingPriority:251 forAxis:UILayoutConstraintAxisVertical];
   logoView.frame = CGRectMake(0, 0, 128, 128);
-  
+
   logoView.center = CGPointMake(self.window.frame.size.width  / 2,self.window.frame.size.height / 2);
 }
 
 - (void) hideOverlay{
   UIView *blurEffectView = [self.window viewWithTag:12345];
   UIView *logoView = [self.window viewWithTag:12346];
-  
+
   [UIView animateWithDuration:0.5 animations:^{
     blurEffectView.alpha = 0;
     logoView.alpha = 0;
@@ -178,7 +180,7 @@ static Braze *_braze;
   [self hideOverlay];
 }
 
-- (void)applicationDidEnterBackground:(UIApplication *)application {
+- (void)applicationWillResignActive:(UIApplication *)application {
   [self showOverlay];
 }
 

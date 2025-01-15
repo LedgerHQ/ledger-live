@@ -1,6 +1,8 @@
 name: "Test Mobile E2E"
 
 on:
+  schedule:
+    - cron: "0 3 * * 1-5"
   workflow_call:
   workflow_dispatch:
     inputs:
@@ -42,6 +44,11 @@ on:
         required: false
         type: boolean
         default: false
+      enable_broadcast:
+        description: "Enable transaction broadcast"
+        required: false
+        type: boolean
+        default: false
 
 # Uncomment to have log-level: trace on detox run and build
 # (cf: apps/ledger-live-mobile/detox.config.js)
@@ -55,12 +62,13 @@ permissions:
 env:
   SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:0.11
   COINAPPS: ${{ github.workspace }}/coin-apps
+  SPECULOS_RUN: ${{ inputs.speculos_tests || github.event_name == 'schedule' }}
 
 jobs:
   detox-tests-ios:
     name: "LLM - iOS Detox Tests"
     runs-on: [m1, ARM64]
-    if: ${{ !inputs.speculos_tests }}
+    if: ${{ !inputs.speculos_tests && github.event_name != 'schedule' }}
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       LANG: en_US.UTF-8
@@ -88,19 +96,6 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
           aws-region: ${{ secrets.AWS_CACHE_REGION }}
-      - name: cache detox build
-        uses: tespkg/actions-cache@v1
-        if: steps.aws.conclusion == 'success'
-        id: detox-build
-        with:
-          path: ${{ github.workspace }}/apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator
-          key: ${{ runner.os }}-detox-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock', 'apps/ledger-live-mobile/ios/ledgerlivemobile.xcodeproj/project.pbxproj', 'apps/ledger-live-mobile/detox.config.js', 'apps/ledger-live-mobile/.env.mock') }}
-          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
-          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
-          sessionToken: ${{ env.AWS_SESSION_TOKEN}}
-          bucket: ll-gha-s3-cache
-          region: ${{ secrets.AWS_CACHE_REGION }}
-          use-fallback: false
       - uses: nick-fields/retry@v3
         name: install dependencies
         with:
@@ -108,6 +103,19 @@ jobs:
           timeout_minutes: 15
           command: pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --no-frozen-lockfile --unsafe-perm
           new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --no-frozen-lockfile --unsafe-perm
+      - name: cache detox build
+        uses: tespkg/actions-cache@v1
+        if: steps.aws.conclusion == 'success'
+        id: detox-build
+        with:
+          path: ${{ github.workspace }}/apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator
+          key: ${{ runner.os }}-detox-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock', 'apps/ledger-live-mobile/ios/ledgerlivemobile.xcodeproj/project.pbxproj', 'apps/ledger-live-mobile/detox.config.js', 'apps/ledger-live-mobile/.env.mock', 'apps/ledger-live-mobile/ios/ledgerlivemobile/AppDelegate.mm') }}
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN}}
+          bucket: ll-gha-s3-cache
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          use-fallback: false
       - name: Build dependencies
         run: |
           pnpm build:llm:deps --api="http://127.0.0.1:${{ steps.caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
@@ -127,7 +135,7 @@ jobs:
         if: steps.detox-build.outputs.cache-hit == 'true'
         run: pnpm mobile e2e:ci -p ios --bundle
       - name: Setup Speculos image and Coin Apps
-        if: ${{ inputs.speculos_tests }}
+        if: ${{ env.SPECULOS_RUN == 'true' }}
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-speculos_image@develop
         with:
           coinapps_path: ${{ env.COINAPPS }}
@@ -140,7 +148,7 @@ jobs:
         run: pnpm mobile e2e:ci -p ios -t $([[ "$INPUT_SPECULOS" == "true" ]] && printf %s '--speculos')
         env:
           SEED: ${{ secrets.SEED_QAA_B2C }}
-          INPUT_SPECULOS: ${{ inputs.speculos_tests }}
+          INPUT_SPECULOS: ${{ env.SPECULOS_RUN }}
       - name: Delete iOS simulator
         if: ${{ always() && steps.simulator.outputs.id }}
         run: |
@@ -155,7 +163,7 @@ jobs:
   allure-report-ios:
     name: "Allure Reports Export on Server"
     runs-on: [ledger-live-medium]
-    if: ${{ always() && (inputs.slack_notif || github.event_name == 'push') }}
+    if: ${{ !inputs.speculos_tests && (inputs.slack_notif || github.event_name == 'push') }}
     needs: [detox-tests-ios]
     outputs:
       report-url: ${{ steps.upload.outputs.report-url }}
@@ -197,7 +205,20 @@ jobs:
       AVD_RAM_SIZE: 4096M
       AVD_OPTIONS: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
     outputs:
-      status: ${{ steps.detox.outcome }}
+      status_1: ${{ steps.set-output.outputs.status_1 }}
+      status_2: ${{ steps.set-output.outputs.status_2 }}
+      status_3: ${{ steps.set-output.outputs.status_3 }}
+    strategy:
+      fail-fast: false
+      matrix:
+        shardIndex: [1, 2, 3]
+        shardTotal: [3, 1]
+        exclude:
+          - shardIndex: ${{ (github.event.inputs.speculos_tests == 'false' || github.event_name == 'push' || github.event_name == 'pull_request') && '2' }}
+          - shardIndex: ${{ (github.event.inputs.speculos_tests == 'false' || github.event_name == 'push' || github.event_name == 'pull_request') && '3' }}
+          - shardTotal: ${{ (github.event.inputs.speculos_tests == 'false' || github.event_name == 'push' || github.event_name == 'pull_request') && '3' }}
+          - shardTotal: ${{ github.event.inputs.speculos_tests != 'false' && github.event_name != 'push' && github.event_name != 'pull_request' && '1' }}
+
     steps:
       - uses: actions/checkout@v4
         with:
@@ -280,36 +301,46 @@ jobs:
           emulator-options: ${{ env.AVD_OPTIONS }}
           script: ./tools/scripts/wait_emulator_idle.sh
       - name: Setup Speculos image and Coin Apps
-        if: ${{ inputs.speculos_tests }}
+        if: ${{ env.SPECULOS_RUN == 'true' }}
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-speculos_image@develop
         with:
           coinapps_path: ${{ env.COINAPPS }}
           speculos_tag: ${{ env.SPECULOS_IMAGE_TAG }}
           bot_id: ${{ secrets.GH_BOT_APP_ID }}
           bot_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+      - name: Set DISABLE_TRANSACTION_BROADCAST
+        if: ${{ env.SPECULOS_RUN == 'true' }}
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-broadcast@develop
+        with:
+          enable_broadcast: ${{ inputs.enable_broadcast }}
+          schedule_cron: ${{ github.event.schedule.cron }}
       - name: Run Android Tests
         id: detox
-        run: pnpm mobile e2e:ci -p android -t $([[ "$INPUT_SPECULOS" == "true" ]] && printf %s '--speculos')
-        timeout-minutes: 45
+        run: pnpm mobile e2e:ci -p android -t $([[ "$INPUT_SPECULOS" == "true" ]] && printf %s '--speculos') --shard ${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+        timeout-minutes: ${{ env.SPECULOS_RUN && 120 || 45 }}
         env:
           DETOX_INSTALL_TIMEOUT: 120000
           SEED: ${{ secrets.SEED_QAA_B2C }}
-          INPUT_SPECULOS: ${{ inputs.speculos_tests }}
+          INPUT_SPECULOS: ${{ env.SPECULOS_RUN }}
       - name: Upload test artifacts
         uses: actions/upload-artifact@v4
         if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
         with:
-          name: "android-test-artifacts"
+          name: "android-test-artifacts-${{ matrix.shardIndex }}"
           path: apps/ledger-live-mobile/artifacts/
+      - name: Set job output based on detox result
+        id: set-output
+        if: always()
+        run: echo "status_${{ matrix.shardIndex }}=${{ steps.detox.outcome }}" >> $GITHUB_OUTPUT
 
   allure-report-android:
     name: "Allure Reports Export on Server"
     runs-on: [ledger-live-medium]
-    if: ${{ always() && (inputs.slack_notif || github.event_name == 'push') }}
+    if: ${{ always() && (inputs.slack_notif || github.event_name == 'push' || github.event_name == 'schedule') }}
     outputs:
       report-url: ${{ steps.upload.outputs.report-url }}
       result: ${{ steps.summary.outputs.test_result }}
-      status: ${{ needs.detox-tests-android.outputs.status }}
+      finalStatus: ${{ steps.aggregate.outputs.finalStatus }}
     needs: [detox-tests-android]
     steps:
       - name: checkout
@@ -330,6 +361,22 @@ jobs:
         with:
           allure-results-path: android-test-artifacts
           platform: android
+      - name: Aggregate test results
+        id: aggregate
+        run: |
+          if [ "${{ env.SPECULOS_RUN }}" == "true" ]; then
+            statuses=("${{ needs.detox-tests-android.outputs.status_1 }}" "${{ needs.detox-tests-android.outputs.status_2 }}" "${{ needs.detox-tests-android.outputs.status_3 }}")
+          else
+            statuses=("${{ needs.detox-tests-android.outputs.status_1 }}")
+          fi
+          finalStatus="success"
+          for status in "${statuses[@]}"; do
+            if [ "$status" != "success" ]; then
+              finalStatus="failure"
+              break
+            fi
+          done
+          echo "finalStatus=$finalStatus" >> $GITHUB_OUTPUT
 
   upload-to-xray:
     name: "Upload to Xray"
@@ -391,11 +438,11 @@ jobs:
   report-on-slack:
     runs-on: ubuntu-22.04
     needs: [allure-report-android, allure-report-ios]
-    if: ${{ (failure() && github.event_name == 'push') || (always() && inputs.slack_notif) }}
+    if: ${{ (failure() && github.event_name == 'push') || (always() && (inputs.slack_notif || github.event_name == 'schedule')) }}
     env:
       IOS_STATUS: ${{ needs.allure-report-ios.outputs.status }}
       IOS_REPORT_URL: ${{ needs.allure-report-ios.outputs.report-url }}
-      ANDROID_STATUS: ${{ needs.allure-report-android.outputs.status }}
+      ANDROID_STATUS: ${{ needs.allure-report-android.outputs.finalStatus }}
       ANDROID_REPORT_URL: ${{ needs.allure-report-android.outputs.report-url }}
     steps:
       - name: format message
@@ -404,57 +451,66 @@ jobs:
         with:
           script: |
             const fs = require("fs");
-            const workflowLink = `<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow run> for more informations`;
-            const text = `Detox tests finished: ${workflowLink}`;
-            const iOSResult = [
+            const text = "Ledger Live Mobile E2E tests finished";
+            const header = [
               {
                 "type": "header",
                 "text": {
                   "type": "plain_text",
-                  "text": `${process.env.IOS_STATUS !== 'success' ? '🍏 iOS Detox tests failed ❌' : '🍏 iOS Detox tests succeeded ✅'}`,
+                  "text": process.env.SPECULOS_RUN == 'false'
+                    ? "Ledger Live Mobile Mocked Tests on ${{ github.ref_name }}"
+                    : ":ledger-logo: Ledger Live Mobile E2E nightly tests results on ${{ github.ref_name }}",
                   "emoji": true
                 }
               },
               {
-                "type": "section",
-                "text": {
-                  "type": "mrkdwn",
-                  "text": `${{ needs.allure-report-ios.outputs.result || 'No test results' }}`
-                }
-              },
+                "type": "divider"
+              }
+            ];
+
+            const iOSResult = [
               {
                 "type": "section",
                 "text": {
                   "type": "mrkdwn",
-                  "text": process.env.IOS_REPORT_URL ? `<${process.env.IOS_REPORT_URL}|Allure Report iOS>` : 'No Allure Report'
+                  "text": `- 🍏 iOS: ${process.env.IOS_STATUS !== 'success' ? '❌' : '✅'} ${{ needs.allure-report-ios.outputs.result || 'No test results' }}`
                 }
               }
             ];
 
             const androidResult = [
               {
-                "type": "header",
-                "text": {
-                  "type": "plain_text",
-                  "text": `${process.env.ANDROID_STATUS !== 'success' ? '🤖 Android Detox tests failed ❌' : '🤖 Android Detox tests succeeded ✅'}`,
-                  "emoji": true
-                }
-              },
-              {
                 "type": "section",
                 "text": {
                   "type": "mrkdwn",
-                  "text": `${{ needs.allure-report-android.outputs.result || 'No test results' }}`
-                }
-              },
-              {
-                "type": "section",
-                "text": {
-                  "type": "mrkdwn",
-                  "text": process.env.ANDROID_REPORT_URL ? `<${process.env.ANDROID_REPORT_URL}|Allure Report Android>` : 'No Allure Report'
+                  "text": `- 🤖 Android: ${process.env.ANDROID_STATUS !== 'success' ? '❌' : '✅'} ${{ needs.allure-report-android.outputs.result || 'No test results' }}`
                 }
               }
             ];
+
+            const iOSInfo = [
+              {
+                "type": "mrkdwn",
+                "text": process.env.IOS_REPORT_URL ? `*Allure Report iOS*\n<${process.env.IOS_REPORT_URL}|Allure Report iOS>` : '*Allure Report iOS*\nNo Allure Report'
+              }
+            ];
+
+            const androidInfo = [
+              {
+                "type": "mrkdwn",
+                "text": process.env.ANDROID_REPORT_URL ? `*Allure Report Android*\n<${process.env.ANDROID_REPORT_URL}|Allure Report Android>` : '*Allure Report Android*\nNo Allure Report'
+              }
+            ];
+
+            const infoFields = []
+              .concat(${{ env.SPECULOS_RUN == 'true' }} ? [] : iOSInfo)
+              .concat(androidInfo)
+              .concat([
+              {
+                "type": "mrkdwn",
+                "text": `*Workflow*\n<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow run>`
+              }
+            ]);
 
             const infoBlock = [
               {
@@ -462,17 +518,32 @@ jobs:
               },
               {
                 "type": "section",
-                "text": {
-                  "type": "mrkdwn",
-                  "text": workflowLink
-                }
+                "fields": infoFields
               }
             ];
 
-            const result = {
-              text,
-              blocks: [...iOSResult, ...androidResult, ...infoBlock]
-            };
+            const blocks = []
+              .concat(header)
+              .concat(${{ env.SPECULOS_RUN == 'true' }} ? [] : iOSResult)
+              .concat(androidResult)
+              .concat(infoBlock);
+
+            const result = process.env.SPECULOS_RUN === 'false'
+              ? {
+                  text,
+                  blocks,
+                }
+              : {
+                  attachments: [
+                    {
+                      color: process.env.ANDROID_STATUS !== 'success'
+                        ? "#FF333C"
+                        : "#33FF39",
+                      blocks,
+                    },
+                  ],
+                };
+
 
             fs.writeFileSync(`./payload-slack-content.json`, JSON.stringify(result, null, 2));
       - name: post to a Slack channel
@@ -484,7 +555,7 @@ jobs:
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
       - name: post to a Slack channel
-        if: ${{ github.event_name == 'push' && contains(fromJson('["develop", "main"]'), github.ref_name) }}
+        if: ${{ github.event_name == 'push' && contains(fromJson('["develop", "main"]'), github.ref_name) || github.event_name == 'schedule' }}
         uses: slackapi/slack-github-action@v1.23.0
         with:
           channel-id: "C05FKJ7DFAP"

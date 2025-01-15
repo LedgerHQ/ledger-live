@@ -1,0 +1,128 @@
+{
+  "name": "@ledgerhq/coin-internet_computer",
+  "version": "1.3.2",
+  "description": "Ledger Internet Computer integration",
+  "keywords": [
+    "Ledger",
+    "LedgerWallet",
+    "ICP",
+    "Internet Computer"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LedgerHQ/ledger-live.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledger-live/issues"
+  },
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/coin-modules/coin-internet_computer",
+  "publishConfig": {
+    "access": "public"
+  },
+  "typesVersions": {
+    "*": {
+      "lib/*": [
+        "lib/*"
+      ],
+      "lib-es/*": [
+        "lib-es/*"
+      ],
+      "specs": [
+        "lib/test/bot-specs"
+      ],
+      "*": [
+        "lib/*",
+        "lib/api/*",
+        "lib/bridge/*",
+        "lib/common-logic/*",
+        "lib/signer/*",
+        "lib/test/*",
+        "lib/types/*"
+      ]
+    }
+  },
+  "exports": {
+    "./lib/*": "./lib/*.js",
+    "./lib-es/*": "./lib-es/*.js",
+    "./api": {
+      "require": "./lib/api/index.js",
+      "default": "./lib-es/api/index.js"
+    },
+    "./deviceTransactionConfig": {
+      "require": "./lib/bridge/deviceTransactionConfig.js",
+      "default": "./lib-es/bridge/deviceTransactionConfig.js"
+    },
+    "./logic": {
+      "require": "./lib/common-logic/index.js",
+      "default": "./lib-es/common-logic/index.js"
+    },
+    "./signer": {
+      "require": "./lib/signer/index.js",
+      "default": "./lib-es/signer/index.js"
+    },
+    "./specs": {
+      "require": "./lib/test/bot-specs.js",
+      "default": "./lib-es/test/bot-specs.js"
+    },
+    "./transaction": {
+      "require": "./lib/bridge/transaction.js",
+      "default": "./lib-es/bridge/transaction.js"
+    },
+    "./types": {
+      "require": "./lib/types/index.js",
+      "default": "./lib-es/types/index.js"
+    },
+    "./*": {
+      "require": "./lib/*.js",
+      "default": "./lib-es/*.js"
+    },
+    ".": {
+      "require": "./lib/index.js",
+      "default": "./lib-es/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@ledgerhq/coin-framework": "workspace:^",
+    "@ledgerhq/cryptoassets": "workspace:^",
+    "@ledgerhq/devices": "workspace:*",
+    "@ledgerhq/errors": "workspace:^",
+    "@ledgerhq/live-env": "workspace:^",
+    "@ledgerhq/live-network": "workspace:^",
+    "@ledgerhq/logs": "workspace:^",
+    "@ledgerhq/types-live": "workspace:^",
+    "@dfinity/agent": "^0.21.0",
+    "@dfinity/candid": "^0.21.0",
+    "@dfinity/principal": "^0.15.6",
+    "bignumber.js": "^9.1.2",
+    "invariant": "^2.2.2",
+    "lodash": "^4.17.21",
+    "simple-cbor": "^0.4.1",
+    "big-integer": "^1.6.51",
+    "rxjs": "^7.8.1",
+    "expect": "^27.4.6"
+  },
+  "devDependencies": {
+    "@types/invariant": "^2.2.2",
+    "@types/jest": "^29.5.10",
+    "@types/lodash": "^4.14.191",
+    "@types/semver": "^7.5.8",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.1",
+    "axios": "1.7.7"
+  },
+  "scripts": {
+    "clean": "rimraf lib lib-es",
+    "build": "tsc && tsc -m ES6 --outDir lib-es",
+    "coverage": "jest --coverage --testPathIgnorePatterns='/bridge.integration.test.ts|node_modules|lib-es|lib/' --passWithNoTests && mv coverage/coverage-final.json coverage/coverage-icp.json",
+    "prewatch": "pnpm build",
+    "watch": "tsc --watch",
+    "watch:es": "tsc --watch -m ES6 --outDir lib-es",
+    "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
+    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
+    "lint:fix": "pnpm lint --fix",
+    "test": "jest",
+    "unimported": "unimported"
+  }
+}

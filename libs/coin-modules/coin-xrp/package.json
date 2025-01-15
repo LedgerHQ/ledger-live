@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-xrp",
-  "version": "0.6.1",
+  "version": "0.7.1",
   "description": "Ledger XRP Coin integration",
   "keywords": [
     "Ledger",
@@ -134,6 +134,7 @@
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
+    "test-watch": "jest --watch",
     "test-integ": "DOTENV_CONFIG_PATH=.env.integ.test jest --config=jest.integ.config.js",
     "typecheck": "tsc --noEmit",
     "unimported": "unimported"

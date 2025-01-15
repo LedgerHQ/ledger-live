@@ -44,6 +44,12 @@ export function LiveApp({ route }: Props) {
       },
     };
   }
+  if (route.params.customDappURL && manifest && manifest.dapp) {
+    manifest = {
+      ...manifest,
+      url: route.params.customDappURL,
+    };
+  }
   return manifest ? (
     <>
       <TrackScreen category="Platform" name="App" />

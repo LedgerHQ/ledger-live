@@ -32,7 +32,7 @@ import { track } from "~/renderer/analytics/segment";
 import SelectAccountAndCurrencyDrawer from "~/renderer/drawers/DataSelector/SelectAccountAndCurrencyDrawer";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
-import { shareAnalyticsSelector } from "~/renderer/reducers/settings";
+import { mevProtectionSelector, shareAnalyticsSelector } from "~/renderer/reducers/settings";
 import { walletSelector } from "~/renderer/reducers/wallet";
 import { getStoreValue, setStoreValue } from "~/renderer/store";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
@@ -230,13 +230,15 @@ function useWebView(
     manifest,
     customHandlers,
     currentAccountHistDb,
-  }: Pick<WebviewProps, "manifest" | "customHandlers" | "currentAccountHistDb">,
+    inputs,
+  }: Pick<WebviewProps, "manifest" | "customHandlers" | "currentAccountHistDb" | "inputs">,
   webviewRef: RefObject<WebviewTag>,
   tracking: TrackingAPI,
   serverRef: React.MutableRefObject<WalletAPIServer | undefined>,
   customWebviewStyle?: React.CSSProperties,
 ) {
   const accounts = useSelector(flattenAccountsSelector);
+  const mevProtected = useSelector(mevProtectionSelector);
 
   const uiHook = useUiHook(manifest, tracking);
   const shareAnalytics = useSelector(shareAnalyticsSelector);
@@ -246,6 +248,7 @@ function useWebView(
     userId,
     tracking: shareAnalytics,
     wallet,
+    mevProtected,
   });
 
   const webviewHook = useMemo(() => {
@@ -288,6 +291,8 @@ function useWebView(
     postMessage: webviewHook.postMessage,
     currentAccountHistDb,
     tracking,
+    initialAccountId: inputs?.accountId?.toString(),
+    mevProtected,
   });
 
   const handleMessage = useCallback(
@@ -400,6 +405,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         manifest,
         customHandlers,
         currentAccountHistDb,
+        inputs,
       },
       webviewRef,
       tracking,

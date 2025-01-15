@@ -46,6 +46,7 @@ export function BalanceDiff({ valueChange, unit, isAvailable, ...boxProps }: Pro
   return (
     <Box horizontal {...boxProps}>
       <Box
+        data-testid="balance-diff"
         horizontal
         alignItems="center"
         style={{
@@ -167,6 +168,7 @@ export default function BalanceInfos({
       state: {
         from: history.location.pathname,
         defaultAccount,
+        defaultAmountFrom: "0",
         defaultParentAccount: parentAccount,
       },
     });

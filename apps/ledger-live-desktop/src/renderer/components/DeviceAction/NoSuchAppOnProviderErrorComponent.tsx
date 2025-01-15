@@ -51,7 +51,9 @@ const StyledLinkLearnMoreButton = styled(Link)`
 const NoSuchAppOnProviderErrorComponent: React.FC<{
   error: Error;
   productName: string;
-}> = ({ error, productName }) => {
+  learnMoreLink?: string;
+  learnMoreTextKey?: string;
+}> = ({ error, productName, learnMoreLink, learnMoreTextKey }) => {
   const theme = useTheme();
 
   const handleOnOpenExternalLink = useCallback(
@@ -95,12 +97,14 @@ const NoSuchAppOnProviderErrorComponent: React.FC<{
         >
           <Trans i18nKey="errors.NoSuchAppOnProvider.exploreCTA" />
         </StyledLinkExploreButton>
-        <StyledLinkLearnMoreButton
-          onClick={handleOnOpenExternalLink(urls.learnMoreLedgerSync)}
-          Icon={renderExploreIcon}
-        >
-          <Trans i18nKey="errors.NoSuchAppOnProvider.learnMoreCTA" />
-        </StyledLinkLearnMoreButton>
+        {learnMoreLink && learnMoreTextKey && (
+          <StyledLinkLearnMoreButton
+            onClick={handleOnOpenExternalLink(learnMoreLink)}
+            Icon={renderExploreIcon}
+          >
+            <Trans i18nKey={learnMoreTextKey} />
+          </StyledLinkLearnMoreButton>
+        )}
       </CtaContainer>
     </Wrapper>
   );

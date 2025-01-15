@@ -12,7 +12,7 @@ import useTheme from "~/renderer/hooks/useTheme";
 import { useDeepLinkListener } from "~/renderer/screens/earn/useDeepLinkListener";
 import { useDiscreetMode } from "~/renderer/components/Discreet";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
-import { getParsedSystemLocale } from "~/helpers/systemLocale";
+import { getParsedSystemDeviceLocale } from "~/helpers/systemLocale";
 
 const DEFAULT_EARN_APP_ID = "earn";
 
@@ -25,7 +25,7 @@ const Earn = () => {
   const manifest = localManifest || remoteManifest;
   const themeType = useTheme().colors.palette.type;
   const discreetMode = useDiscreetMode();
-  const countryLocale = getParsedSystemLocale().region;
+  const countryLocale = getParsedSystemDeviceLocale().region;
   useDeepLinkListener();
 
   return (

@@ -971,6 +971,18 @@
       "title": "Invalid Provider",
       "description": "You have to change \"My Ledger provider\" setting. To change it, open Ledger Live \"Settings\", select \"Experimental features\", and then select a different provider."
     },
+    "GasLessThanEstimate": {
+      "title": "This may be too low. Please increase"
+    },
+    "SequenceNumberTooNew": {
+      "title": "Sequence number too new"
+    },
+    "SequenceNumberTooOld": {
+      "title": "Sequence number too old"
+    },
+    "TransactionExpired": {
+      "title": "Transaction expired"
+    },
     "SequenceNumberError": {
       "title": "Sequence number error",
       "description": "Please close the window and try again later"
@@ -1019,6 +1031,12 @@
     "ScannedNewImportQrCode": {
       "title": "Update required",
       "description": "To sync your apps, please make sure both are updated to the latest version."
+    },
+    "AppManifestUnknownError": {
+      "title": "Swap Live App not found"
+    },
+    "AppManifestNotFoundError": {
+      "title": "Failed to load Swap Live App"
     }
   },
   "crash": {
@@ -2342,7 +2360,8 @@
       "seeMarket": "See all"
     },
     "walletBalance": "Wallet balance",
-    "seelAllAssets": "See All Assets",
+    "seeAllAssets": "See all assets",
+    "seeAllAccounts": "See all accounts",
     "marketPriceSection": {
       "title": "{{currencyTicker}} market price",
       "currencyPrice": "1 {{currencyTicker}} price",
@@ -2749,6 +2768,9 @@
       }
     }
   },
+  "assets": {
+    "title": "Assets"
+  },
   "accounts": {
     "title": "Accounts",
     "cryptoAccountsTitle": "{{currencyTicker}} accounts",
@@ -3091,6 +3113,13 @@
       "desc": "Try out the Developer features and let us know what you think.",
       "customManifest": {
         "title": "Load Custom Platform Manifest"
+      },
+      "exchangeDeveloperMode": {
+        "title": "Exchange Dev Mode",
+        "description": "Add exchange provider's info",
+        "placeholder": "Exchange provider's info in CAL format",
+        "currentSetting": "Current Setting",
+        "error": "Invalid CAL value"
       }
     },
     "debug": {
@@ -3460,6 +3489,16 @@
         "providers": {
           "noProviders": "No results found. There are no quotes available with the current preferences."
         }
+      },
+      "incompatibility": {
+        "explore_compatible_devices": "Explore compatible devices",
+        "contact_support": "Contact customer support",
+        "ton_title": "Ledger Nano S™ does not support swapping Ton",
+        "ton_description": "To swap Ton, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+        "spl_tokens_title": "Ledger Nano S™ does not support swapping Solana tokens",
+        "spl_tokens_description": "To swap Solana tokens, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+        "ada_title": "Ledger Nano S™ does not support swapping Cardano",
+        "ada_description": "To swap Cardano, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
       }
     },
     "lending": {
@@ -3686,7 +3725,7 @@
     "highFeeModal": "Be careful, network fees are greater than <1>10%</1> of the amount. Do you want to continue?",
     "scan": {
       "title": "Scan QR code",
-      "descBottom": "Please center the QR code inside the square.",
+      "descBottom": "Scan QR code",
       "fallback": {
         "header": "Scan QR code",
         "title": "Enable camera",
@@ -3741,6 +3780,7 @@
       "to": "To",
       "infoTotalTitle": "Total debit",
       "infoTotalDesc": "Includes transaction amount and the selected network fees",
+      "gasFee": "Gas fee",
       "gasLimit": "Gas limit",
       "gasPrice": "Gas price",
       "maxFee": "Max fee",
@@ -3952,6 +3992,8 @@
   },
   "addAccounts": {
     "addNew": "Add new",
+    "seeAllAccounts": "See all accounts",
+    "addNewOrExisting": "Add new or existing account",
     "supportLinks": {
       "segwit_or_native_segwit": "Segwit or Native segwit?"
     },
@@ -6097,7 +6139,7 @@
     },
     "warning": "Make sure the address displayed on your Ledger matches the {{recipientWording}}'s address",
     "recipientWording": {
-      "send": "Always verify the address displayed your device exactly matches the one given to you by the recipient",
+      "send": "Always verify that the address displayed on your device matches exactly with the one provided by the recipient",
       "delegate": "Always verify that your device displays the address exactly as provided by the validator",
       "undelegate": "Always verify that your device displays the address exactly as provided by the validator",
       "freeze": "Always verify that your device displays the address exactly as provided",
@@ -6918,6 +6960,13 @@
         "title": "Sync with another Ledger Live app",
         "description": "Sync your Ledger Live crypto accounts across different phones and computers."
       },
+      "unauthorizeMember": {
+        "error": {
+          "title": "This app is no longer synced",
+          "description": "Turn on Ledger Sync on either this Ledger Live or the one you're syncing with.",
+          "cta": "Turn on Ledger Sync"
+        }
+      },
       "manageKey": {
         "title": "Delete Sync",
         "description": "Your crypto accounts across different phones and computers will stop synching.",
@@ -6928,6 +6977,11 @@
           "cancel": "Keep sync",
           "title": "Sure you want delete sync?",
           "desc": "Your crypto accounts on different phones and computers will stop being in sync. This does not impact your funds in any way."
+        },
+        "error": {
+          "title": "This app is no longer synced",
+          "description": "Turn on Ledger Sync on either this Ledger Live or the one you're syncing with.",
+          "cta": "Turn on Ledger Sync"
         }
       },
       "manageInstances": {
@@ -7098,6 +7152,14 @@
           "name": "Add an account"
         }
       }
+    }
+  },
+  "assetSelection": {
+    "selectCrypto": {
+      "title": "Select Asset"
+    },
+    "selectNetwork": {
+      "title": "Select the blockchain network the asset belongs to"
     }
   }
 }

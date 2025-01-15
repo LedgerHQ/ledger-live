@@ -28,7 +28,7 @@ export const cosmosConfig: CosmosConfig = {
   config_currency_desmos: {
     type: "object",
     default: {
-      lcd: "https://desmos-api.ibs.team",
+      lcd: "https://api.mainnet.desmos.network/",
       minGasPrice: 0.0025,
     },
   },
@@ -163,6 +163,38 @@ export const cosmosConfig: CosmosConfig = {
     default: {
       lcd: "https://api.mantrachain.io",
       minGasPrice: 0.01,
+      ledgerValidator: "mantravaloper13cyn4zgugjz7pta8s7wkrxqp4cdrp7ygeem3fq",
+      status: {
+        type: "active",
+      },
+    },
+  },
+  config_currency_crypto_org: {
+    type: "object",
+    default: {
+      lcd: "https://cryptocom-api.polkachu.com",
+      minGasPrice: 0.025,
+      status: {
+        type: "active",
+      },
+    },
+  },
+  config_currency_xion: {
+    type: "object",
+    default: {
+      lcd: "https://xion-api.polkachu.com",
+      minGasPrice: 0.04,
+      ledgerValidator: "xionvaloper1t8ysd9cg6s38ak9xfadkjtvfv9uczvrn8wzv77",
+      status: {
+        type: "active",
+      },
+    },
+  },
+  config_currency_zenrock: {
+    type: "object",
+    default: {
+      lcd: "https://api.diamond.zenrocklabs.io",
+      minGasPrice: 0.1,
       status: {
         type: "active",
       },

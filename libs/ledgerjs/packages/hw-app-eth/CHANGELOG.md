@@ -1,5 +1,62 @@
 # @ledgerhq/hw-app-eth
 
+## 6.42.1
+
+### Patch Changes
+
+- Updated dependencies [[`40f1cd4`](https://github.com/LedgerHQ/ledger-live/commit/40f1cd4c22d17480dcf86c73e90a07866667b0ba), [`c45ee45`](https://github.com/LedgerHQ/ledger-live/commit/c45ee457a9f5500ae42f2a8fb7f0cfb7926f319b), [`322fd58`](https://github.com/LedgerHQ/ledger-live/commit/322fd58ffcde6d592eb27af1fd93f8c45d33205c), [`61aedb7`](https://github.com/LedgerHQ/ledger-live/commit/61aedb7bbd45e73d6bc2b53e55f562262d5c5fa7)]:
+  - @ledgerhq/types-live@6.55.0
+  - @ledgerhq/domain-service@1.2.14
+  - @ledgerhq/evm-tools@1.3.0
+
+## 6.42.1-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`61aedb7`](https://github.com/LedgerHQ/ledger-live/commit/61aedb7bbd45e73d6bc2b53e55f562262d5c5fa7)]:
+  - @ledgerhq/types-live@6.55.0-next.1
+  - @ledgerhq/domain-service@1.2.14-next.1
+  - @ledgerhq/evm-tools@1.3.0
+
+## 6.42.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`40f1cd4`](https://github.com/LedgerHQ/ledger-live/commit/40f1cd4c22d17480dcf86c73e90a07866667b0ba), [`c45ee45`](https://github.com/LedgerHQ/ledger-live/commit/c45ee457a9f5500ae42f2a8fb7f0cfb7926f319b), [`322fd58`](https://github.com/LedgerHQ/ledger-live/commit/322fd58ffcde6d592eb27af1fd93f8c45d33205c)]:
+  - @ledgerhq/types-live@6.55.0-next.0
+  - @ledgerhq/domain-service@1.2.14-next.0
+  - @ledgerhq/evm-tools@1.3.0
+
+## 6.42.0
+
+### Minor Changes
+
+- [#8430](https://github.com/LedgerHQ/ledger-live/pull/8430) [`abb25e1`](https://github.com/LedgerHQ/ledger-live/commit/abb25e1c0238b918824a9350ac29a425c2b19643) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for `SWEEP` command in Uniswap plugin
+
+- [#8473](https://github.com/LedgerHQ/ledger-live/pull/8473) [`4fc1d7a`](https://github.com/LedgerHQ/ledger-live/commit/4fc1d7a0d52839b7d57e1c81b99b8e6a2cfa69c8) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Force entries order in EIP-712 Structs when providing their implementation.
+
+### Patch Changes
+
+- Updated dependencies [[`724fa8b`](https://github.com/LedgerHQ/ledger-live/commit/724fa8b29cbda74a729c5756f91c5c9b745fdbdb)]:
+  - @ledgerhq/types-live@6.54.0
+  - @ledgerhq/domain-service@1.2.13
+  - @ledgerhq/evm-tools@1.3.0
+
+## 6.42.0-next.0
+
+### Minor Changes
+
+- [#8430](https://github.com/LedgerHQ/ledger-live/pull/8430) [`abb25e1`](https://github.com/LedgerHQ/ledger-live/commit/abb25e1c0238b918824a9350ac29a425c2b19643) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for `SWEEP` command in Uniswap plugin
+
+- [#8473](https://github.com/LedgerHQ/ledger-live/pull/8473) [`4fc1d7a`](https://github.com/LedgerHQ/ledger-live/commit/4fc1d7a0d52839b7d57e1c81b99b8e6a2cfa69c8) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Force entries order in EIP-712 Structs when providing their implementation.
+
+### Patch Changes
+
+- Updated dependencies [[`724fa8b`](https://github.com/LedgerHQ/ledger-live/commit/724fa8b29cbda74a729c5756f91c5c9b745fdbdb)]:
+  - @ledgerhq/types-live@6.54.0-next.0
+  - @ledgerhq/domain-service@1.2.13-next.0
+  - @ledgerhq/evm-tools@1.3.0
+
 ## 6.41.1
 
 ### Patch Changes

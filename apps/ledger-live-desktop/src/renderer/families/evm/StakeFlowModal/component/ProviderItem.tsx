@@ -79,8 +79,8 @@ export const ProviderItem = ({ provider, stakeOnClick }: Props) => {
     }
   }, [provider, stakeOnClick, manifest]);
 
-  const displayName = i18n.exists(`stake.ethereum.provider.${provider.id}.title`)
-    ? t(`stake.ethereum.provider.${provider.id}.title`)
+  const displayName = i18n.exists(`ethereum.stake.provider.${provider.id}.title`)
+    ? t(`ethereum.stake.provider.${provider.id}.title`)
     : provider.name;
 
   return (

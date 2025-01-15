@@ -7,7 +7,7 @@ import { useRefreshAccountsOrderingEffect } from "~/renderer/actions/general";
 import { Card } from "~/renderer/components/Box";
 import useActionCards from "~/renderer/hooks/useActionCards";
 import ActionCard from "~/renderer/components/ContentCards/ActionCard";
-import LogContentCardWrapper from "LLD/components/DynamicContent/LogContentCardWrapper";
+import LogContentCardWrapper from "LLD/features/DynamicContent/components/LogContentCardWrapper";
 
 const ActionVariantA = styled(Card)`
   background-color: ${p => p.theme.colors.opacityPurple.c10};

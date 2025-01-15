@@ -21,18 +21,28 @@ const useSelectAddAccountMethodViewModel = ({
 }: AddAccountScreenProps) => {
   const navigation = useNavigation<BaseNavigation>();
   const walletSyncFeatureFlag = useFeature("llmWalletSync");
-
+  const llmNetworkBasedAddAccountFlow = useFeature("llmNetworkBasedAddAccountFlow");
   const isReadOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const isWalletSyncEnabled = walletSyncFeatureFlag?.enabled;
   const hasCurrency = !!currency;
 
   const navigationParams = useMemo(() => {
-    return hasCurrency
-      ? currency.type === "TokenCurrency"
-        ? { token: currency }
-        : { currency }
-      : {};
-  }, [hasCurrency, currency]);
+    if (hasCurrency) {
+      if (currency?.type === "TokenCurrency") {
+        return {
+          token: currency,
+          ...(llmNetworkBasedAddAccountFlow?.enabled && { context: "addAccounts" }),
+        };
+      } else {
+        return {
+          currency,
+          ...(llmNetworkBasedAddAccountFlow?.enabled && { context: "addAccounts" }),
+        };
+      }
+    } else {
+      return llmNetworkBasedAddAccountFlow?.enabled ? { context: "addAccounts" } : {};
+    }
+  }, [hasCurrency, currency, llmNetworkBasedAddAccountFlow?.enabled]);
 
   const trackButtonClick = useCallback((button: string) => {
     track("button_clicked", {
@@ -55,8 +65,20 @@ const useSelectAddAccountMethodViewModel = ({
   const onClickAdd = useCallback(() => {
     trackButtonClick("With your Ledger");
     onClose?.();
-    navigation.navigate(NavigatorName.AddAccounts, navigationParams);
-  }, [navigation, navigationParams, trackButtonClick, onClose]);
+    const EntryNavigatorName = llmNetworkBasedAddAccountFlow?.enabled
+      ? NavigatorName.AssetSelection
+      : NavigatorName.AddAccounts;
+    // to delete after llmNetworkBasedAddAccountFlow is fully enabled (ts inference not working well based on navigationParams)
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    navigation.navigate(EntryNavigatorName, navigationParams);
+  }, [
+    navigation,
+    navigationParams,
+    trackButtonClick,
+    onClose,
+    llmNetworkBasedAddAccountFlow?.enabled,
+  ]);
 
   return {
     isWalletSyncEnabled,

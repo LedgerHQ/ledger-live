@@ -69,13 +69,15 @@ const SectionGeneral = () => {
           </Row>
         </FeatureToggle>
 
-        <Row
-          title={t("settings.display.marketPerformanceWidget")}
-          desc={t("settings.display.marketPerformanceWidgetDesc")}
-          dataTestId="setting-marketPerformanceWidget"
-        >
-          <MarketPerformanceWidgetRow />
-        </Row>
+        <FeatureToggle featureId="marketperformanceWidgetDesktop">
+          <Row
+            title={t("settings.display.marketPerformanceWidget")}
+            desc={t("settings.display.marketPerformanceWidgetDesc")}
+            dataTestId="setting-marketPerformanceWidget"
+          >
+            <MarketPerformanceWidgetRow />
+          </Row>
+        </FeatureToggle>
 
         <Row title={t("settings.profile.password")} desc={t("settings.profile.passwordDesc")}>
           <PasswordButton />

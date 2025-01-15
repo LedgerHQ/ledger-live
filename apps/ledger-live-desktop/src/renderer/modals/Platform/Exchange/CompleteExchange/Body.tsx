@@ -10,12 +10,20 @@ import { CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoa
 import { AccountLike, Operation, SignedOperation } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import styled from "styled-components";
+import { mevProtectionSelector } from "~/renderer/reducers/settings";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
-import { useIsSwapLiveFlagEnabled } from "~/renderer/screens/exchange/Swap2/hooks/useIsSwapLiveFlagEnabled";
+
 import { useRedirectToSwapHistory } from "~/renderer/screens/exchange/Swap2/utils";
 import { BodyContent } from "./BodyContent";
+
+export enum ExchangeModeEnum {
+  Sell = "sell",
+  Swap = "swap",
+}
+
+export type ExchangeMode = "sell" | "swap";
 
 export type Data = {
   provider: string;
@@ -31,13 +39,6 @@ export type Data = {
   amountExpectedTo?: number;
   magnitudeAwareRate?: BigNumber;
 };
-
-export enum ExchangeModeEnum {
-  Sell = "sell",
-  Swap = "swap",
-}
-
-export type ExchangeMode = "sell" | "swap";
 
 type ResultsState = {
   mode: ExchangeMode;
@@ -112,7 +113,8 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
     return null;
   }, [toAccount, getCurrencyByAccount]);
 
-  const broadcast = useBroadcast({ account, parentAccount });
+  const mevProtected = useSelector(mevProtectionSelector);
+  const broadcast = useBroadcast({ account, parentAccount, broadcastConfig: { mevProtected } });
   const [transaction, setTransaction] = useState<Transaction>();
   const [signedOperation, setSignedOperation] = useState<SignedOperation>();
   const [error, setError] = useState<Error>();
@@ -195,7 +197,6 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
   const handleSellTransaction = (operation: Operation, result: ResultsState) => {
     handleTransactionResult(result, operation);
   };
-  const isDemo3Enabled = useIsSwapLiveFlagEnabled("ptxSwapLiveAppDemoThree");
 
   const onBroadcastSuccess = useCallback(
     (operation: Operation) => {
@@ -209,7 +210,7 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
       const result = getResultByTransactionType(isSwapTransaction);
 
       if (getEnv("DISABLE_TRANSACTION_BROADCAST")) {
-        if (!isSwapTransaction || (isSwapTransaction && !isDemo3Enabled)) {
+        if (!isSwapTransaction) {
           const error = new DisabledTransactionBroadcastError();
           setError(error);
           onCancel(error);

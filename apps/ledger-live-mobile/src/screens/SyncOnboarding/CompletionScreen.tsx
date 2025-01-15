@@ -10,7 +10,7 @@ import { DeviceModelId } from "@ledgerhq/devices";
 import EuropaCompletionView from "./EuropaCompletionView";
 import StaxCompletionView from "./StaxCompletionView";
 import { useDispatch } from "react-redux";
-import { setHasBeenRedirectedToPostOnboarding } from "~/actions/settings";
+import { setHasBeenRedirectedToPostOnboarding, setHasBeenUpsoldProtect } from "~/actions/settings";
 
 type Props = BaseComposite<
   StackScreenProps<SyncOnboardingStackParamList, ScreenName.SyncOnboardingCompletion>
@@ -21,6 +21,7 @@ const CompletionScreen = ({ navigation, route }: Props) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    dispatch(setHasBeenUpsoldProtect(false));
     dispatch(setHasBeenRedirectedToPostOnboarding(false));
   }, [dispatch]);
 

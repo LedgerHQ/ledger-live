@@ -2,7 +2,7 @@ import { useValidators } from "@ledgerhq/live-common/families/solana/react";
 import { ValidatorsAppValidator } from "@ledgerhq/live-common/families/solana/staking";
 import { SolanaAccount } from "@ledgerhq/live-common/families/solana/types";
 
-import React, { useMemo, useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import Box from "~/renderer/components/Box";
@@ -23,18 +23,31 @@ type Props = {
 const ValidatorField = ({ account, onChangeValidator, chosenVoteAccAddr }: Props) => {
   const [search, setSearch] = useState("");
   const [showAll, setShowAll] = useState(false);
+  const [currentValidator, setCurrentValidator] = useState<ValidatorsAppValidator[]>([]);
+
   const unit = useAccountUnit(account);
   const validators = useValidators(account.currency, search);
-  const chosenValidator = useMemo(() => {
-    if (chosenVoteAccAddr !== null) {
-      return validators.find(v => v.voteAccount === chosenVoteAccAddr);
-    }
-  }, [validators, chosenVoteAccAddr]);
 
   const onSearch = useCallback(
     (evt: React.ChangeEvent<HTMLInputElement>) => setSearch(evt.target.value),
     [setSearch],
   );
+
+  useEffect(() => {
+    const selectedVoteAccAddr = validators.find(p => p.voteAccount === chosenVoteAccAddr);
+    if (selectedVoteAccAddr) {
+      const isDefault = validators.slice(0, 2).includes(selectedVoteAccAddr);
+      if (isDefault) {
+        setCurrentValidator([selectedVoteAccAddr]);
+      }
+      setCurrentValidator([
+        selectedVoteAccAddr,
+        ...validators.slice(0, 2).filter(v => v !== selectedVoteAccAddr),
+      ]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chosenVoteAccAddr]);
+
   const renderItem = (validator: ValidatorsAppValidator) => {
     return (
       <ValidatorRow
@@ -53,9 +66,15 @@ const ValidatorField = ({ account, onChangeValidator, chosenVoteAccAddr }: Props
       <ValidatorsFieldContainer>
         <Box p={1} data-testid="validator-list">
           <ScrollLoadingList
-            data={showAll ? validators : [chosenValidator ?? validators[0]]}
+            data={
+              showAll
+                ? validators
+                : currentValidator.length > 0
+                  ? currentValidator
+                  : validators.slice(0, 2)
+            }
             style={{
-              flex: showAll ? "1 0 240px" : "1 0 63px",
+              flex: showAll ? "1 0 240px" : "1 0 126px",
               marginBottom: 0,
               paddingLeft: 0,
             }}

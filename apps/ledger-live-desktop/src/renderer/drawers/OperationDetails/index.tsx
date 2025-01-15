@@ -371,7 +371,7 @@ const OperationD = (props: Props) => {
         <Box flex={1} mb={2} alignItems="center">
           <Skeleton show={show} width={160} barHeight={16} minHeight={32}>
             <Text
-              data-testId="nft-name-operationDrawer"
+              data-testid="nft-name-operationDrawer"
               ff="Inter|SemiBold"
               textAlign="center"
               fontSize={7}
@@ -424,6 +424,7 @@ const OperationD = (props: Props) => {
               <Box mr={2}>
                 {hasFailed ? null : (
                   <CounterValue
+                    data-testid="operation-amount"
                     alwaysShowSign
                     color="palette.text.shade60"
                     fontSize={3}
@@ -615,7 +616,9 @@ const OperationD = (props: Props) => {
               </Box>
 
               <TextEllipsis>
-                <Link onClick={goToMainAccount}>{name}</Link>
+                <Link data-testId="account-name" onClick={goToMainAccount}>
+                  {name}
+                </Link>
               </TextEllipsis>
               <AccountTagDerivationMode account={account} />
             </Box>
@@ -640,13 +643,13 @@ const OperationD = (props: Props) => {
       {isNftOperation ? <NFTOperationDetails operation={operation} /> : null}
       <OpDetailsSection>
         <OpDetailsTitle>{t("operationDetails.date")}</OpDetailsTitle>
-        <OpDetailsData>{dateFormatted}</OpDetailsData>
+        <OpDetailsData data-testid="operation-date">{dateFormatted}</OpDetailsData>
       </OpDetailsSection>
       <B />
       <OpDetailsSection>
         <OpDetailsTitle>{t("operationDetails.identifier")}</OpDetailsTitle>
         <OpDetailsData>
-          <HashContainer>
+          <HashContainer data-testid="operation-id">
             <SplitAddress value={hash} />
           </HashContainer>
           <GradientHover>

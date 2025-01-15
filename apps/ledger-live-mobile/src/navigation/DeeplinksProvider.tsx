@@ -155,84 +155,13 @@ const linkingOptions = () => ({
            * ie: "ledgerlive://discover/paraswap?theme=light" will open the catalog and the paraswap dapp with a light theme as parameter
            */
           [ScreenName.PlatformApp]: "discover/:platform",
-          [ScreenName.Recover]: "recover/:platform",
-          [NavigatorName.Main]: {
-            initialRouteName: ScreenName.Portfolio,
+          [NavigatorName.Card]: {
+            initialRouteName: ScreenName.Card,
             screens: {
-              /**
-               * ie: "ledgerlive://portfolio" -> will redirect to the portfolio
-               */
-
-              [NavigatorName.Portfolio]: {
-                screens: {
-                  [NavigatorName.PortfolioAccounts]: {
-                    screens: {
-                      /**
-                       * "ledgerlive://accounts" opens the main portfolio screen of accounts.
-                       */
-                      [ScreenName.Accounts]: "accounts",
-                    },
-                  },
-                  [NavigatorName.WalletTab]: {
-                    screens: {
-                      [ScreenName.Portfolio]: "portfolio",
-                      [ScreenName.WalletNftGallery]: "nftgallery",
-                      [NavigatorName.Market]: {
-                        screens: {
-                          /**
-                           * ie: "ledgerlive://market" will open the market screen
-                           */
-                          [ScreenName.MarketList]: "market",
-                        },
-                      },
-                    },
-                  },
-                },
-              },
-              [NavigatorName.Earn]: {
-                screens: {
-                  /**
-                   * ie: "ledgerlive://earn" will open earn dashboard page
-                   *
-                   * @params ?action: string
-                   * ie: "ledgerlive://earn?action=stake" will open staking flow
-                   *
-                   * * @params ?action: string
-                   * * @params &accountId: string
-                   * ie: "ledgerlive://earn?action=stake-account&accountId=XXXX" will open staking flow with specific account
-                   *
-                   * * @params ?action: string
-                   * * @params ?currencyId: string
-                   * ie: "ledgerlive://earn?action=get-funds&currencyId=ethereum" will open buy drawer with currency
-                   *
-                   */
-                  [ScreenName.Earn]: "earn",
-                },
-              },
-              [NavigatorName.Discover]: {
-                screens: {
-                  /**
-                   * ie: "ledgerlive://discover" will open the catalog
-                   */
-                  [ScreenName.PlatformCatalog]: "discover",
-                },
-              },
-              [NavigatorName.MyLedger]: {
-                screens: {
-                  /**
-                   * ie: "ledgerlive://myledger" will open MyLedger page
-                   *
-                   * @params ?installApp: string
-                   * ie: "ledgerlive://myledger?installApp=bitcoin" will open myledger with "bitcoin" prefilled in the search input
-                   *
-                   * * @params ?searchQuery: string
-                   * ie: "ledgerlive://myledger?searchQuery=bitcoin" will open myledger with "bitcoin" prefilled in the search input
-                   */
-                  [ScreenName.MyLedgerChooseDevice]: "myledger",
-                },
-              },
+              [ScreenName.Card]: "card",
             },
           },
+          [ScreenName.Recover]: "recover/:platform",
           [NavigatorName.PostOnboarding]: {
             screens: {
               /**
@@ -268,32 +197,6 @@ const linkingOptions = () => ({
               [ScreenName.SendCoin]: "send",
             },
           },
-          /** "ledgerlive://account" will open the list of all accounts, where the redirection logic is. */
-          [NavigatorName.Accounts]: {
-            screens: {
-              /**
-               * @params ?currency: string
-               * @params ?address: string
-               * ie: "ledgerlive://account?currency=ethereum&address={{eth_account_address}} will open that account's assets screen.
-               * Currency param alone e.g. "ledgerlive://account?currency=tezos" will open the Tezos Assets screen.
-               */
-              [ScreenName.Accounts]: "account",
-            },
-          },
-
-          [NavigatorName.AddAccounts]: {
-            screens: {
-              /**
-               * ie: "ledgerlive://add-account" will open the add account flow
-               *
-               * @params ?currency: string
-               * ie: "ledgerlive://add-account?currency=bitcoin" will open the add account flow with "bitcoin" prefilled in the search input
-               *
-               */
-              [ScreenName.AddAccountsSelectCrypto]: "add-account",
-            },
-          },
-
           /**
            * ie: "ledgerlive://buy" -> will redirect to the main exchange page
            */
@@ -439,13 +342,169 @@ export const DeeplinksProvider = ({
   const userAcceptedTerms = useGeneralTermsAccepted();
   const storylyContext = useStorylyContext();
   const buySellUiFlag = useFeature("buySellUi");
+  const llmNetworkBasedAddAccountFlow = useFeature("llmNetworkBasedAddAccountFlow");
+  const llmAccountListUI = useFeature("llmAccountListUI");
   const buySellUiManifestId = buySellUiFlag?.params?.manifestId;
+  const AddAccountNavigatorEntryPoint = llmNetworkBasedAddAccountFlow?.enabled
+    ? NavigatorName.AssetSelection
+    : NavigatorName.AddAccounts; // both navigators share the same ScreenName.AddAccountsSelectCrypto screen
+  const AccountsListScreenName = llmAccountListUI?.enabled
+    ? ScreenName.AccountsList
+    : ScreenName.Accounts;
 
   const linking = useMemo<LinkingOptions<ReactNavigation.RootParamList>>(
     () =>
       ({
         ...(hasCompletedOnboarding
-          ? linkingOptions()
+          ? {
+              ...linkingOptions(),
+              config: {
+                ...linkingOptions().config,
+                screens: {
+                  ...linkingOptions().config.screens,
+                  [NavigatorName.Base]: {
+                    ...linkingOptions().config.screens[NavigatorName.Base],
+                    screens: {
+                      ...linkingOptions().config.screens[NavigatorName.Base].screens,
+                      // Add account entry point navigator differ from the legacy to the new flow, when the deeplink is hit and the FF is enabled we should pass by the AssetSelection Feature
+                      [AddAccountNavigatorEntryPoint]: {
+                        screens: {
+                          /**
+                           * ie: "ledgerlive://add-account" will open the add account flow
+                           *
+                           * @params ?currency: string
+                           * ie: "ledgerlive://add-account?currency=bitcoin" will open the add account flow with "bitcoin" prefilled in the search input
+                           *
+                           */
+                          [ScreenName.AddAccountsSelectCrypto]: "add-account",
+                        },
+                      },
+                      /** "ledgerlive://assets will open assets screen. */
+                      ...(llmAccountListUI?.enabled && {
+                        [NavigatorName.Assets]: {
+                          screens: {
+                            /**
+                             * @params ?showHeader: boolean
+                             * @params ?isSyncEnabled: boolean
+                             * @params ?sourceScreenName: string
+                             * ie: "ledgerlive://assets?showHeader=true will open assets screen with header
+                             * ie "ledgerlive://assets?isSyncEnabled=true will open assets screen with sync enabled
+                             * ie "ledgerlive://assets?sourceScreenName=Portfolio will open assets screen with source screen name Portfolio for tracking inside the screen
+                             */
+                            [ScreenName.AssetsList]: "assets",
+                          },
+                        },
+                      }),
+                      [NavigatorName.Main]: {
+                        initialRouteName: ScreenName.Portfolio,
+                        screens: {
+                          /**
+                           * ie: "ledgerlive://portfolio" -> will redirect to the portfolio
+                           */
+
+                          [NavigatorName.Portfolio]: {
+                            screens: {
+                              ...(!llmAccountListUI?.enabled && {
+                                [NavigatorName.PortfolioAccounts]: {
+                                  screens: {
+                                    /**
+                                     * "ledgerlive://accounts" opens the main portfolio screen of accounts.
+                                     */
+                                    [ScreenName.Accounts]: "accounts",
+                                  },
+                                },
+                              }),
+                              [NavigatorName.WalletTab]: {
+                                screens: {
+                                  [ScreenName.Portfolio]: "portfolio",
+                                  [ScreenName.WalletNftGallery]: "nftgallery",
+                                  [NavigatorName.Market]: {
+                                    screens: {
+                                      /**
+                                       * ie: "ledgerlive://market" will open the market screen
+                                       */
+                                      [ScreenName.MarketList]: "market",
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                          },
+                          [NavigatorName.Earn]: {
+                            screens: {
+                              /**
+                               * ie: "ledgerlive://earn" will open earn dashboard page
+                               *
+                               * @params ?action: string
+                               * ie: "ledgerlive://earn?action=stake" will open staking flow
+                               *
+                               * * @params ?action: string
+                               * * @params &accountId: string
+                               * ie: "ledgerlive://earn?action=stake-account&accountId=XXXX" will open staking flow with specific account
+                               *
+                               * * @params ?action: string
+                               * * @params ?currencyId: string
+                               * ie: "ledgerlive://earn?action=get-funds&currencyId=ethereum" will open buy drawer with currency
+                               *
+                               */
+                              [ScreenName.Earn]: "earn",
+                            },
+                          },
+                          [NavigatorName.Discover]: {
+                            screens: {
+                              /**
+                               * ie: "ledgerlive://discover" will open the catalog
+                               */
+                              [ScreenName.PlatformCatalog]: "discover",
+                            },
+                          },
+                          [NavigatorName.MyLedger]: {
+                            screens: {
+                              /**
+                               * ie: "ledgerlive://myledger" will open MyLedger page
+                               *
+                               * @params ?installApp: string
+                               * ie: "ledgerlive://myledger?installApp=bitcoin" will open myledger with "bitcoin" prefilled in the search input
+                               *
+                               * * @params ?searchQuery: string
+                               * ie: "ledgerlive://myledger?searchQuery=bitcoin" will open myledger with "bitcoin" prefilled in the search input
+                               */
+                              [ScreenName.MyLedgerChooseDevice]: "myledger",
+                            },
+                          },
+                        },
+                      },
+                      [NavigatorName.Accounts]: {
+                        screens: {
+                          /**
+                           * "ledgerlive://accounts" opens the main portfolio screen of accounts.
+                           */
+                          /**
+                           * if llmAccountListUI is enabled
+                           * @params ?showHeader: boolean
+                           * @params ?canAddAccount: boolean
+                           * @params ?isSyncEnabled: boolean
+                           * @params ?sourceScreenName: string
+                           * ie: "ledgerlive://accounts?showHeader=true will open accounts screen with header
+                           * ie "ledgerlive://accounts?canAddAccount=true will open accounts screen with add account button
+                           * ie "ledgerlive://accounts?isSyncEnabled=true will open accounts screen with sync enabled
+                           * ie "ledgerlive://accounts?sourceScreenName=Portfolio will open accounts screen with source screen name Portfolio for tracking inside the screen
+                           */
+                          [AccountsListScreenName]: "accounts",
+                          /**
+                           * @params ?currency: string
+                           * @params ?address: string
+                           * ie: "ledgerlive://account?currency=ethereum&address={{eth_account_address}} will open that account's assets screen.
+                           * Currency param alone e.g. "ledgerlive://account?currency=tezos" will open the Tezos Assets screen.
+                           */
+                          [ScreenName.Accounts]: "account",
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            }
           : getOnboardingLinkingOptions(!!userAcceptedTerms)),
         subscribe(listener) {
           const sub = Linking.addEventListener("url", ({ url }) => {
@@ -479,7 +538,6 @@ export const DeeplinksProvider = ({
           const url = new URL(`ledgerlive://${path}`);
           const { hostname, searchParams, pathname } = url;
           const query = Object.fromEntries(searchParams);
-
           const {
             ajs_prop_campaign: ajsPropCampaign,
             ajs_prop_track_data: ajsPropTrackData,
@@ -579,12 +637,15 @@ export const DeeplinksProvider = ({
       }) as LinkingOptions<ReactNavigation.RootParamList>,
     [
       hasCompletedOnboarding,
+      llmAccountListUI?.enabled,
+      AddAccountNavigatorEntryPoint,
+      AccountsListScreenName,
       userAcceptedTerms,
+      buySellUiManifestId,
       dispatch,
       storylyContext,
       liveAppProviderInitialized,
       manifests,
-      buySellUiManifestId,
     ],
   );
   const [isReady, setIsReady] = React.useState(false);

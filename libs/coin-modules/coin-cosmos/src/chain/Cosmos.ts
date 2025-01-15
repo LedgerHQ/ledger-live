@@ -11,8 +11,7 @@ class Cosmos extends CosmosBase {
   constructor() {
     super();
     this.unbondingPeriod = 21;
-    this.stakingDocUrl =
-      "https://support.ledger.com/hc/en-us/articles/360014339340-Earn-Cosmos-ATOM-staking-rewards-in-Ledger-Live?docs=true";
+    this.stakingDocUrl = "https://support.ledger.com/article/360014339340-zd";
     this.prefix = "cosmos";
     this.validatorPrefix = this.prefix + "valoper";
   }

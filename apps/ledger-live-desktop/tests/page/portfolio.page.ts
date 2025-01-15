@@ -19,7 +19,11 @@ export class PortfolioPage extends AppPage {
   private showAllButton = this.page.getByText("Show all");
   private showMoreButton = this.page.getByText("Show more");
   private assetRow = (asset: string) => this.page.getByTestId(`asset-row-${asset.toLowerCase()}`);
+  private assetRowValue = (asset: string) =>
+    this.page.getByTestId(`asset-row-${asset.toLowerCase()}`).locator("//div[position()=5]");
   private operationRows = this.page.locator("[data-testid^='operation-row-']");
+  private totalBalance = this.page.getByTestId("total-balance");
+  private balanceDiff = this.page.getByTestId("balance-diff");
 
   @step("Open `Add account` modal")
   async openAddAccountModal() {
@@ -34,6 +38,11 @@ export class PortfolioPage extends AppPage {
   @step("Check 'Swap' button visibility")
   async checkSwapButtonVisibility() {
     await expect(this.swapEntryButton).toBeVisible();
+  }
+
+  @step("Click on swap button")
+  async clickSwapButton() {
+    await this.swapEntryButton.click();
   }
 
   @step("Check 'Stake' button visibility")
@@ -70,6 +79,11 @@ export class PortfolioPage extends AppPage {
     await this.buySellEntryButton.click();
   }
 
+  @step("Click on asset row $0")
+  async clickOnSelectedAssetRow(asset: string) {
+    await this.assetRow(asset).click();
+  }
+
   @step("Click stake button")
   async startStakeFlow() {
     await this.stakeEntryButton.click();
@@ -103,5 +117,51 @@ export class PortfolioPage extends AppPage {
       const numberOfOperationsAfter = await this.operationRows.count();
       expect(numberOfOperationsAfter).toBeGreaterThan(numberOfOperationsBefore);
     }
+  }
+
+  @step("Expect total balance to be visible")
+  async expectTotalBalanceToBeVisible() {
+    expect(this.totalBalance).toBeVisible();
+  }
+
+  @step("Expect total balance to have the correct counter value $0")
+  async expectTotalBalanceCounterValue(counterValue: string) {
+    await this.expectTotalBalanceToBeVisible();
+    expect(this.totalBalance).toContainText(counterValue);
+  }
+
+  @step("Expect balance diff to be visible")
+  async expectBalanceDiffToBeVisible() {
+    expect(this.balanceDiff).toBeVisible();
+  }
+
+  @step("Expect balance diff to have the correct counter value $0")
+  async expectBalanceDiffCounterValue(counterValue: string) {
+    await this.expectBalanceDiffToBeVisible();
+    expect(this.balanceDiff).toContainText(counterValue);
+  }
+
+  @step("Expect asset row $0 to be visible")
+  async expectAssetRowToBeVisible(asset: string) {
+    await this.assetRow(asset).isVisible();
+  }
+
+  @step("Expect asset row $0 to have the correct counter value $1")
+  async expectAssetRowCounterValue(asset: string, counterValue: string) {
+    await this.expectAssetRowToBeVisible(asset);
+    expect(this.assetRowValue(asset)).toContainText(counterValue);
+  }
+
+  @step("Expect operation row to be visible")
+  async expectOperationRowToBeVisible() {
+    const operationRow = this.operationRows.first();
+    await operationRow.isVisible();
+  }
+
+  @step("Expect operation to contain counter value $0")
+  async expectOperationCounterValue(counterValue: string) {
+    await this.expectOperationRowToBeVisible();
+    const operationRow = this.operationRows.first();
+    await expect(operationRow).toContainText(counterValue);
   }
 }

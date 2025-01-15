@@ -28,10 +28,6 @@ import {
   Transaction as CosmosTransaction,
 } from "@ledgerhq/live-common/families/cosmos/types";
 import {
-  CryptoOrgAccount,
-  Transaction as CryptoOrgTransaction,
-} from "@ledgerhq/live-common/families/crypto_org/types";
-import {
   SolanaAccount,
   Transaction as SolanaTransaction,
 } from "@ledgerhq/live-common/families/solana/types";
@@ -44,7 +40,9 @@ import type { Transaction as CasperTransaction } from "@ledgerhq/live-common/fam
 import type { Transaction as TonTransaction } from "@ledgerhq/live-common/families/ton/types";
 import BigNumber from "bignumber.js";
 import { Account, Operation } from "@ledgerhq/types-live";
-import { ScreenName } from "~/const";
+import { NavigatorName, ScreenName } from "~/const";
+import { NavigatorScreenParams } from "@react-navigation/core";
+import { AssetSelectionNavigatorParamsList } from "LLM/features/AssetSelection/types";
 
 type Target = "from" | "to";
 
@@ -208,20 +206,6 @@ export type SwapNavigatorParamList = {
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
   };
-  [ScreenName.CryptoOrgEditMemo]: {
-    accountId: string;
-    parentId?: string;
-    account: CryptoOrgAccount;
-    transaction: CryptoOrgTransaction;
-    currentNavigation:
-      | ScreenName.SignTransactionSummary
-      | ScreenName.SendSummary
-      | ScreenName.SwapForm;
-    nextNavigation:
-      | ScreenName.SignTransactionSelectDevice
-      | ScreenName.SendSelectDevice
-      | ScreenName.SwapForm;
-  };
   [ScreenName.HederaEditMemo]: {
     accountId: string;
     parentId?: string;
@@ -329,4 +313,7 @@ export type SwapNavigatorParamList = {
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
   };
+  [NavigatorName.AssetSelection]?: Partial<
+    NavigatorScreenParams<AssetSelectionNavigatorParamsList>
+  >;
 };

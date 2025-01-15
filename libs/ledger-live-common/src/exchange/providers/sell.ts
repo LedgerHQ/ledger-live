@@ -1,5 +1,5 @@
 import { ExchangeProviderNameAndSignature } from ".";
-import { getProvidersData } from "../../cal";
+import calService from "@ledgerhq/ledger-cal-service";
 
 const testSellProvider: ExchangeProviderNameAndSignature = {
   name: "SELL_TEST",
@@ -19,7 +19,7 @@ const testSellProvider: ExchangeProviderNameAndSignature = {
 
 export const fetchAndMergeProviderData = async env => {
   try {
-    const sellProvidersData = await getProvidersData({
+    const sellProvidersData = await calService.getProvidersData({
       type: "sell",
       ...env,
     });

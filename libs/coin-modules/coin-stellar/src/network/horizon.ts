@@ -4,25 +4,20 @@ import { LedgerAPI4xx, LedgerAPI5xx, NetworkDown } from "@ledgerhq/errors";
 import type { CacheRes } from "@ledgerhq/live-network/cache";
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import { log } from "@ledgerhq/logs";
-import type { Account, Operation } from "@ledgerhq/types-live";
+import type { Account } from "@ledgerhq/types-live";
 import {
   // @ts-expect-error stellar-sdk ts definition missing?
   AccountRecord,
   BASE_FEE,
   Horizon,
+  MuxedAccount,
   NetworkError,
   Networks,
   NotFoundError,
   Transaction as StellarSdkTransaction,
   StrKey,
-  MuxedAccount,
 } from "@stellar/stellar-sdk";
 import { BigNumber } from "bignumber.js";
-import {
-  getAccountSpendableBalance,
-  getReservedBalance,
-  rawOperationsToOperations,
-} from "../bridge/logic";
 import coinConfig from "../config";
 import {
   type BalanceAsset,
@@ -30,7 +25,13 @@ import {
   type RawOperation,
   type Signer,
   NetworkCongestionLevel,
+  StellarOperation,
 } from "../types";
+import {
+  getAccountSpendableBalance,
+  getReservedBalance,
+  rawOperationsToOperations,
+} from "./serialization";
 
 const FALLBACK_BASE_FEE = 100;
 const TRESHOLD_LOW = 0.5;
@@ -63,6 +64,14 @@ Horizon.AxiosClient.interceptors.request.use(config => {
   return config;
 });
 
+// This function allows to fix the URL, because the url returned by the Stellar SDK is not the correct one.
+// It replaces the host of the URL returned with the host of the explorer.
+function useConfigHost(url: string): string {
+  const u = new URL(url);
+  u.host = new URL(coinConfig.getCoinConfig().explorer.url).host;
+  return u.toString();
+}
+
 Horizon.AxiosClient.interceptors.response.use(response => {
   if (coinConfig.getCoinConfig().enableNetworkLogs) {
     const { url, method } = response.config;
@@ -72,13 +81,17 @@ Horizon.AxiosClient.interceptors.response.use(response => {
   // FIXME: workaround for the Stellar SDK not using the correct URL: the "next" URL
   // included in server responses points to the node itself instead of our reverse proxy...
   // (https://github.com/stellar/js-stellar-sdk/issues/637)
+
   const next_href = response?.data?._links?.next?.href;
 
   if (next_href) {
-    const next = new URL(next_href);
-    next.host = new URL(coinConfig.getCoinConfig().explorer.url).host;
-    response.data._links.next.href = next.toString();
+    response.data._links.next.href = useConfigHost(next_href);
   }
+
+  response?.data?._embedded?.records?.forEach((r: any) => {
+    const href = r.transaction?._links?.ledger?.href;
+    if (href) r.transaction._links.ledger.href = useConfigHost(href);
+  });
 
   return response;
 });
@@ -179,22 +192,22 @@ export async function fetchAccount(addr: string): Promise<{
  *
  * @return {Operation[]}
  */
-export async function fetchOperations({
+export async function fetchAllOperations({
   accountId,
   addr,
   order,
-  cursor,
+  cursor = "0",
 }: {
   accountId: string;
   addr: string;
   order: "asc" | "desc";
-  cursor: string;
-}): Promise<Operation[]> {
+  cursor: string | undefined;
+}): Promise<StellarOperation[]> {
   if (!addr) {
     return [];
   }
 
-  let operations: Operation[] = [];
+  let operations: StellarOperation[] = [];
 
   try {
     let rawOperations = await getServer()
@@ -223,6 +236,70 @@ export async function fetchOperations({
     }
 
     return operations;
+  } catch (e: unknown) {
+    // FIXME: terrible hacks, because Stellar SDK fails to cast network failures to typed errors in react-native...
+    // (https://github.com/stellar/js-stellar-sdk/issues/638)
+    const errorMsg = e ? String(e) : "";
+
+    if (e instanceof NotFoundError || errorMsg.match(/status code 404/)) {
+      return [];
+    }
+
+    if (errorMsg.match(/status code 4[0-9]{2}/)) {
+      throw new LedgerAPI4xx();
+    }
+
+    if (errorMsg.match(/status code 5[0-9]{2}/)) {
+      throw new LedgerAPI5xx();
+    }
+
+    if (
+      e instanceof NetworkError ||
+      errorMsg.match(/ECONNRESET|ECONNREFUSED|ENOTFOUND|EPIPE|ETIMEDOUT/) ||
+      errorMsg.match(/undefined is not an object/)
+    ) {
+      throw new NetworkDown();
+    }
+
+    throw e;
+  }
+}
+
+export async function fetchOperations({
+  accountId,
+  addr,
+  order,
+  cursor = "0",
+  limit,
+}: {
+  accountId: string;
+  addr: string;
+  order: "asc" | "desc";
+  cursor: string | undefined;
+  limit?: number | undefined;
+}): Promise<StellarOperation[]> {
+  if (!addr) {
+    return [];
+  }
+
+  const defaultFetchLimit = coinConfig.getCoinConfig().explorer.fetchLimit ?? FETCH_LIMIT;
+
+  try {
+    const rawOperations = await getServer()
+      .operations()
+      .forAccount(addr)
+      .limit(limit ?? defaultFetchLimit)
+      .order(order)
+      .cursor(cursor)
+      .includeFailed(true)
+      .join("transactions")
+      .call();
+
+    if (!rawOperations || !rawOperations.records.length) {
+      return [];
+    }
+
+    return rawOperationsToOperations(rawOperations.records as RawOperation[], addr, accountId);
   } catch (e: unknown) {
     // FIXME: terrible hacks, because Stellar SDK fails to cast network failures to typed errors in react-native...
     // (https://github.com/stellar/js-stellar-sdk/issues/638)

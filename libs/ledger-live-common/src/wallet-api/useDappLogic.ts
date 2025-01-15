@@ -1,4 +1,4 @@
-import { useMemo, useEffect, useRef, useCallback } from "react";
+import { useMemo, useEffect, useRef, useCallback, useState } from "react";
 import { Account, AccountLike, Operation, SignedOperation } from "@ledgerhq/types-live";
 import { atom, useAtom } from "jotai";
 import { AppManifest, WalletAPITransaction } from "./types";
@@ -89,11 +89,14 @@ function useDappAccountLogic({
   manifest,
   accounts,
   currentAccountHistDb,
+  initialAccountId,
 }: {
   manifest: AppManifest;
   accounts: AccountLike[];
   currentAccountHistDb?: CurrentAccountHistDB;
+  initialAccountId?: string;
 }) {
+  const [initialAccountSelected, setInitialAccountSelected] = useState(false);
   const { currencyIds } = usePermission(manifest);
   const { currentAccount, setCurrentAccount, setCurrentAccountHist } =
     useDappCurrentAccount(currentAccountHistDb);
@@ -136,10 +139,29 @@ function useDappAccountLogic({
     return accounts.find(account => account.id === currentAccountIdFromHist);
   }, [accounts, currentAccountIdFromHist]);
 
+  const initialAccount = useMemo(() => {
+    if (!initialAccountId) return;
+    return accounts.find(account => account.id === initialAccountId);
+  }, [accounts, initialAccountId]);
+
   useEffect(() => {
+    if (initialAccountSelected) {
+      return;
+    }
+
+    if (initialAccount && !initialAccountSelected) {
+      setCurrentAccount(initialAccount);
+      setCurrentAccountHist(manifest.id, initialAccount);
+      setInitialAccountSelected(true);
+      return;
+    }
+
     if (currentAccountFromHist) {
       setCurrentAccount(currentAccountFromHist);
-    } else if (!currentAccount || !(currentAccount && storedCurrentAccountIsPermitted())) {
+      return;
+    }
+
+    if (!currentAccount || !(currentAccount && storedCurrentAccountIsPermitted())) {
       // if there is no current account
       // OR if there is a current account but it is not permitted
       // set it to the first permitted account
@@ -149,7 +171,11 @@ function useDappAccountLogic({
     currentAccount,
     currentAccountFromHist,
     firstAccountAvailable,
+    initialAccount,
+    initialAccountSelected,
+    manifest.id,
     setCurrentAccount,
+    setCurrentAccountHist,
     storedCurrentAccountIsPermitted,
   ]);
 
@@ -180,6 +206,8 @@ export function useDappLogic({
   uiHook,
   tracking,
   currentAccountHistDb,
+  initialAccountId,
+  mevProtected,
 }: {
   manifest: AppManifest;
   postMessage: (message: string) => void;
@@ -187,15 +215,19 @@ export function useDappLogic({
   uiHook: UiHook;
   tracking: TrackingAPI;
   currentAccountHistDb?: CurrentAccountHistDB;
+  initialAccountId?: string;
+  mevProtected?: boolean;
 }) {
   const nanoApp = manifest.dapp?.nanoApp;
   const dependencies = manifest.dapp?.dependencies;
   const ws = useRef<SmartWebsocket>();
-  const { currentAccount, currentParentAccount, setCurrentAccountHist } = useDappAccountLogic({
-    manifest,
-    accounts,
-    currentAccountHistDb,
-  });
+  const { currentAccount, currentParentAccount, setCurrentAccount, setCurrentAccountHist } =
+    useDappAccountLogic({
+      manifest,
+      accounts,
+      currentAccountHistDb,
+      initialAccountId,
+    });
 
   const currentNetwork = useMemo(() => {
     if (!currentAccount) {
@@ -391,6 +423,7 @@ export function useDappLogic({
                 currencies: [getCryptoCurrencyById(requestedCurrency.currency)],
                 onSuccess: account => {
                   setCurrentAccountHist(manifest.id, account);
+                  setCurrentAccount(account);
                   resolve();
                 },
                 onCancel: () => {
@@ -462,6 +495,7 @@ export function useDappLogic({
                 optimisticOperation = await bridge.broadcast({
                   account: mainAccount,
                   signedOperation: signedTransaction,
+                  broadcastConfig: { mevProtected: !!mevProtected },
                 });
               }
 
@@ -615,6 +649,7 @@ export function useDappLogic({
       manifest,
       nanoApp,
       postMessage,
+      setCurrentAccount,
       setCurrentAccountHist,
       tracking,
       uiHook,

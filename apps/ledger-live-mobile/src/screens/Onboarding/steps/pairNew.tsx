@@ -6,7 +6,11 @@ import BaseStepperView, { PairNew, ConnectNano } from "./setupDevice/scenes";
 import { TrackScreen } from "~/analytics";
 import SeedWarning from "../shared/SeedWarning";
 import Illustration from "~/images/illustration/Illustration";
-import { completeOnboarding, setHasBeenRedirectedToPostOnboarding } from "~/actions/settings";
+import {
+  completeOnboarding,
+  setHasBeenRedirectedToPostOnboarding,
+  setHasBeenUpsoldProtect,
+} from "~/actions/settings";
 import { useNavigationInterceptor } from "../onboardingContext";
 import useNotifications from "~/logic/notifications";
 import {
@@ -47,7 +51,8 @@ export default memo(function () {
   const { triggerJustFinishedOnboardingNewDevicePushNotificationModal } = useNotifications();
   const { resetCurrentStep } = useNavigationInterceptor();
 
-  const { deviceModelId, showSeedWarning, next, isProtectFlow } = route.params;
+  const { deviceModelId, showSeedWarning, next, isProtectFlow, fromAccessExistingWallet } =
+    route.params;
 
   const metadata: Array<Metadata> = useMemo(
     () => [
@@ -105,16 +110,20 @@ export default memo(function () {
       screen: NavigatorName.Main,
     });
 
-    dispatch(setHasBeenRedirectedToPostOnboarding(false));
+    dispatch(setHasBeenUpsoldProtect(false));
+    if (!fromAccessExistingWallet) {
+      dispatch(setHasBeenRedirectedToPostOnboarding(false));
+    }
 
     triggerJustFinishedOnboardingNewDevicePushNotificationModal();
   }, [
+    next,
+    deviceModelId,
     dispatch,
     resetCurrentStep,
     navigation,
-    deviceModelId,
+    fromAccessExistingWallet,
     triggerJustFinishedOnboardingNewDevicePushNotificationModal,
-    next,
   ]);
 
   const nextPage = useCallback(() => {

@@ -1139,6 +1139,7 @@
       "send" : "전송",
       "swap" : "스왑",
       "stake" : "스테이킹",
+      "earn" : "수익 창출",
       "yield" : "이자",
       "buy" : "구매",
       "sell" : "판매",
@@ -1485,7 +1486,7 @@
       },
       "earn" : {
         "title" : "스테이킹",
-        "description" : "Ledger가 함께하는 안전한 암호화폐 스테이킹"
+        "description" : "암호화폐로 더 큰 혜택을 누려보세요"
       }
     },
     "recoverBanner" : {
@@ -3036,6 +3037,7 @@
         "validatorGroup" : {
           "title" : "검증인 그룹",
           "ledgerByFigmentTC" : "Ledger by Figment 이용약관",
+          "ledgerByChorusOneTC" : "Ledger by Chorus One 이용약관",
           "totalVotes" : "총 투표수",
           "commission" : "커미션"
         }
@@ -3625,6 +3627,7 @@
       "withdrawableTitle" : "출금 가능",
       "statusUpdateNotice" : "거래 확인 후 위임 상태가 업데이트됩니다.",
       "ledgerByFigmentTC" : "Ledger by Figment 이용약관",
+      "ledgerByChorusOneTC" : "Ledger by Chorus One 이용약관",
       "emptyState" : {
         "description" : "자산을 위임하여 SOL 보상을 받을 수 있습니다.",
         "info" : "위임은 어떤 원리인가요?",
@@ -3879,6 +3882,7 @@
           },
           "validator" : {
             "title" : "검증인",
+            "ledgerByChorusOneTC" : "Ledger by Chorus One 이용약관",
             "ledgerByFigmentTC" : "Ledger by Figment 이용약관"
           },
           "connectDevice" : {
@@ -4146,6 +4150,7 @@
             "link" : "링크",
             "secondaryCta" : "보조 CTA",
             "cta" : "CTA",
+            "tag" : "태그",
             "url" : "URL",
             "path" : "경로"
           }

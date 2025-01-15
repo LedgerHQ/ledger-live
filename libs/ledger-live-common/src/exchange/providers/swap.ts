@@ -1,6 +1,6 @@
 import { getEnv } from "@ledgerhq/live-env";
 import { getTestProviderInfo, type ExchangeProviderNameAndSignature } from ".";
-import { findCurrencyData, getProvidersCDNData, getProvidersData } from "../../cal";
+import calService, { SWAP_DATA_CDN } from "@ledgerhq/ledger-cal-service";
 import { isIntegrationTestEnv } from "../swap/utils/isIntegrationTestEnv";
 
 export type SwapProviderConfig = {
@@ -8,95 +8,19 @@ export type SwapProviderConfig = {
   needsBearerToken?: boolean;
 };
 
-type CEXProviderConfig = ExchangeProviderNameAndSignature & SwapProviderConfig & { type: "CEX" };
-type DEXProviderConfig = SwapProviderConfig & { type: "DEX" };
+export type CEXProviderConfig = ExchangeProviderNameAndSignature &
+  SwapProviderConfig & { type: "CEX" };
+export type DEXProviderConfig = SwapProviderConfig & { type: "DEX" };
 export type AdditionalProviderConfig = SwapProviderConfig & { type: "DEX" | "CEX" } & {
   version?: number;
   termsOfUseUrl: string;
   supportUrl: string;
   mainUrl: string;
+  useInExchangeApp: boolean;
   displayName: string;
 };
 
 export type ProviderConfig = CEXProviderConfig | DEXProviderConfig;
-
-export const SWAP_DATA_CDN: Record<string, AdditionalProviderConfig> = {
-  changelly: {
-    needsKYC: false,
-    needsBearerToken: false,
-    type: "CEX",
-    displayName: "Changelly",
-    termsOfUseUrl: "https://changelly.com/terms-of-use",
-    supportUrl: "https://support.changelly.com/en/support/home",
-    mainUrl: "https://changelly.com/",
-  },
-  exodus: {
-    type: "CEX",
-    displayName: "Exodus",
-    needsBearerToken: false,
-    termsOfUseUrl: "https://www.exodus.com/legal/exodus-tos-20240219-v29.pdf",
-    supportUrl: "https://www.exodus.com/contact-support/",
-    mainUrl: "https://www.exodus.com/",
-    needsKYC: false,
-    version: 2,
-  },
-  cic: {
-    needsKYC: false,
-    needsBearerToken: false,
-    displayName: "CIC",
-    type: "CEX",
-    termsOfUseUrl: "https://criptointercambio.com/terms-of-use",
-    supportUrl: "https://criptointercambio.com/en/about",
-    mainUrl: "https://criptointercambio.com/",
-  },
-  moonpay: {
-    needsKYC: true,
-    needsBearerToken: false,
-    displayName: "MoonPay",
-    type: "CEX",
-    version: 2,
-    termsOfUseUrl: "https://www.moonpay.com/legal/terms_of_use_row",
-    supportUrl: "https://support.moonpay.com/",
-    mainUrl: "https://www.moonpay.com/",
-  },
-  oneinch: {
-    type: "DEX",
-    needsKYC: false,
-    displayName: "1inch",
-    needsBearerToken: false,
-    termsOfUseUrl: "https://1inch.io/assets/1inch_network_terms_of_use.pdf",
-    supportUrl: "https://help.1inch.io/en/",
-    mainUrl: "https://1inch.io/",
-  },
-  paraswap: {
-    type: "DEX",
-    needsKYC: false,
-    displayName: "Paraswap",
-    needsBearerToken: false,
-    termsOfUseUrl: "https://files.paraswap.io/tos_v4.pdf",
-    supportUrl: "https://help.paraswap.io/en/",
-    mainUrl: "https://www.paraswap.io/",
-  },
-  thorswap: {
-    type: "CEX",
-    needsBearerToken: false,
-    displayName: "THORChain",
-    termsOfUseUrl: "https://docs.thorswap.finance/thorswap/resources/terms-of-service",
-    supportUrl: "mailto:support@thorswap.finance",
-    mainUrl: "https://www.thorswap.finance/",
-    needsKYC: false,
-  },
-  uniswap: {
-    type: "DEX",
-    needsBearerToken: false,
-    displayName: "Uniswap",
-    termsOfUseUrl:
-      "https://support.uniswap.org/hc/en-us/articles/30935100859661-Uniswap-Labs-Terms-of-Service",
-    supportUrl: "mailto:support@uniswap.org",
-    mainUrl: "https://uniswap.org/",
-    needsKYC: false,
-  },
-};
 
 const DEFAULT_SWAP_PROVIDERS: Record<string, ProviderConfig & Partial<AdditionalProviderConfig>> = {
   changelly: {
@@ -219,6 +143,20 @@ const DEFAULT_SWAP_PROVIDERS: Record<string, ProviderConfig & Partial<Additional
   },
 };
 
+export const dexProvidersContractAddress: { [key: string]: string } = {
+  "0x3fC91A3afd70395Cd496C647d5a6CC9D4B2b7FAD": "Uniswap",
+};
+
+export const termsOfUse: { [key: string]: string } = {
+  paraswap: "https://paraswap.io/tos",
+  "1inch": "https://1inch.io/assets/1inch_network_terms_of_use.pdf",
+  Uniswap: "https://uniswap.org/terms-of-service",
+};
+
+export const privacyPolicy: { [key: string]: string } = {
+  Uniswap: "https://uniswap.org/privacy-policy",
+};
+
 type CurrencyData = {
   id: string;
   config: string;
@@ -237,6 +175,7 @@ export const getSwapProvider = async (
   if (ledgerSignatureEnv === "test" && testProviderInfo) {
     return {
       needsKYC: false,
+      useInExchangeApp: true,
       needsBearerToken: false,
       type: "CEX",
       termsOfUseUrl: "https://example.com",
@@ -263,7 +202,7 @@ export const getSwapProvider = async (
  * @deprecated Use cal module `findCurrencyData` method.
  */
 export const findExchangeCurrencyData = async (currencyId: string): Promise<CurrencyData> =>
-  findCurrencyData(currencyId);
+  calService.findCurrencyData(currencyId);
 
 export const fetchAndMergeProviderData = async env => {
   if (providerDataCache) {
@@ -272,8 +211,8 @@ export const fetchAndMergeProviderData = async env => {
 
   try {
     const [providersData, providersExtraData] = await Promise.all([
-      getProvidersData({ type: "swap", ...env }),
-      getProvidersCDNData(),
+      calService.getProvidersData({ type: "swap", ...env }),
+      calService.getProvidersCDNData(),
     ]);
     const finalProvidersData = mergeProviderData(providersData, providersExtraData);
     providerDataCache = finalProvidersData;

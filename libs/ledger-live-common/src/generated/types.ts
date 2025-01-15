@@ -5,6 +5,12 @@ import type {
   TransactionStatusRaw as algorandTransactionStatusRaw,
 } from "@ledgerhq/coin-algorand/types";
 import type {
+  Transaction as aptosTransaction,
+  TransactionRaw as aptosTransactionRaw,
+  TransactionStatus as aptosTransactionStatus,
+  TransactionStatusRaw as aptosTransactionStatusRaw,
+} from "../families/aptos/types";
+import type {
   Transaction as bitcoinTransaction,
   TransactionRaw as bitcoinTransactionRaw,
   TransactionStatus as bitcoinTransactionStatus,
@@ -34,12 +40,6 @@ import type {
   TransactionStatus as cosmosTransactionStatus,
   TransactionStatusRaw as cosmosTransactionStatusRaw,
 } from "@ledgerhq/coin-cosmos/types/index";
-import type {
-  Transaction as crypto_orgTransaction,
-  TransactionRaw as crypto_orgTransactionRaw,
-  TransactionStatus as crypto_orgTransactionStatus,
-  TransactionStatusRaw as crypto_orgTransactionStatusRaw,
-} from "../families/crypto_org/types";
 import type {
   Transaction as elrondTransaction,
   TransactionRaw as elrondTransactionRaw,
@@ -75,7 +75,7 @@ import type {
   TransactionRaw as internet_computerTransactionRaw,
   TransactionStatus as internet_computerTransactionStatus,
   TransactionStatusRaw as internet_computerTransactionStatusRaw,
-} from "../families/internet_computer/types";
+} from "@ledgerhq/coin-internet_computer/types/index";
 import type {
   Transaction as nearTransaction,
   TransactionRaw as nearTransactionRaw,
@@ -139,12 +139,12 @@ import type {
 
 export type Transaction =
   | algorandTransaction
+  | aptosTransaction
   | bitcoinTransaction
   | cardanoTransaction
   | casperTransaction
   | celoTransaction
   | cosmosTransaction
-  | crypto_orgTransaction
   | elrondTransaction
   | evmTransaction
   | filecoinTransaction
@@ -164,12 +164,12 @@ export type Transaction =
 
 export type TransactionRaw =
   | algorandTransactionRaw
+  | aptosTransactionRaw
   | bitcoinTransactionRaw
   | cardanoTransactionRaw
   | casperTransactionRaw
   | celoTransactionRaw
   | cosmosTransactionRaw
-  | crypto_orgTransactionRaw
   | elrondTransactionRaw
   | evmTransactionRaw
   | filecoinTransactionRaw
@@ -189,12 +189,12 @@ export type TransactionRaw =
 
 export type TransactionStatus =
   | algorandTransactionStatus
+  | aptosTransactionStatus
   | bitcoinTransactionStatus
   | cardanoTransactionStatus
   | casperTransactionStatus
   | celoTransactionStatus
   | cosmosTransactionStatus
-  | crypto_orgTransactionStatus
   | elrondTransactionStatus
   | evmTransactionStatus
   | filecoinTransactionStatus
@@ -214,12 +214,12 @@ export type TransactionStatus =
 
 export type TransactionStatusRaw =
   | algorandTransactionStatusRaw
+  | aptosTransactionStatusRaw
   | bitcoinTransactionStatusRaw
   | cardanoTransactionStatusRaw
   | casperTransactionStatusRaw
   | celoTransactionStatusRaw
   | cosmosTransactionStatusRaw
-  | crypto_orgTransactionStatusRaw
   | elrondTransactionStatusRaw
   | evmTransactionStatusRaw
   | filecoinTransactionStatusRaw

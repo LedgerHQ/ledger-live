@@ -1139,6 +1139,7 @@
       "send" : "Отправить",
       "swap" : "Обмен",
       "stake" : "Стейкинг",
+      "earn" : "Приумножить",
       "yield" : "Доходность",
       "buy" : "Покупка",
       "sell" : "Продажа",
@@ -1485,7 +1486,7 @@
       },
       "earn" : {
         "title" : "Стейкинг",
-        "description" : "Стейкайте крипту с Ledger"
+        "description" : "Получайте вознаграждения с вашей крипты"
       }
     },
     "recoverBanner" : {
@@ -3036,6 +3037,7 @@
         "validatorGroup" : {
           "title" : "Группа валидаторов",
           "ledgerByFigmentTC" : "Положения и условия Ledger by Figment",
+          "ledgerByChorusOneTC" : "Положения и условия Ledger by Chorus One",
           "totalVotes" : "Всего голосов",
           "commission" : "Комиссия"
         }
@@ -3625,6 +3627,7 @@
       "withdrawableTitle" : "Доступно для вывода",
       "statusUpdateNotice" : "Статус делегирования обновится, когда транзакция будет подтверждена.",
       "ledgerByFigmentTC" : "Положения и условия Ledger by Figment",
+      "ledgerByChorusOneTC" : "Положения и условия Ledger by Chorus One",
       "emptyState" : {
         "description" : "Вы можете зарабатывать вознаграждения в токенах SOL, делегируя активы.",
         "info" : "Как работает делегирование",
@@ -3879,6 +3882,7 @@
           },
           "validator" : {
             "title" : "Валидаторы",
+            "ledgerByChorusOneTC" : "Положения и условия Ledger by Chorus One",
             "ledgerByFigmentTC" : "Положения и условия Ledger by Figment"
           },
           "connectDevice" : {
@@ -4146,6 +4150,7 @@
             "link" : "Ссылка",
             "secondaryCta" : "Вторичный CTA",
             "cta" : "CTA",
+            "tag" : "Тег",
             "url" : "URL",
             "path" : "Путь"
           }

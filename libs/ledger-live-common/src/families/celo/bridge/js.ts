@@ -1,5 +1,8 @@
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
-import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import {
+  getSerializedAddressParameters,
+  updateTransaction,
+} from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
 import { getPreloadStrategy, preload, hydrate } from "../preload";
 import { getTransactionStatus } from "../getTransactionStatus";
@@ -28,7 +31,7 @@ const currencyBridge: CurrencyBridge = {
 const accountBridge: AccountBridge<Transaction, CeloAccount, TransactionStatus> = {
   estimateMaxSpendable,
   createTransaction,
-  updateTransaction: defaultUpdateTransaction,
+  updateTransaction,
   getTransactionStatus,
   prepareTransaction,
   sync,
@@ -39,6 +42,7 @@ const accountBridge: AccountBridge<Transaction, CeloAccount, TransactionStatus> 
   assignToAccountRaw,
   fromOperationExtraRaw,
   toOperationExtraRaw,
+  getSerializedAddressParameters,
 };
 export default {
   currencyBridge,
