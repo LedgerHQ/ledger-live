@@ -18,20 +18,12 @@ function resolver(signerContext: SignerContext<CasperSigner>): GetAddressFn {
       return { r };
     });
 
-    if (!r.Address || !r.publicKey) {
-      console.error(`Failed to get address from device ${JSON.stringify(r)}`);
-      throw Error(`Failed to get address from device ${JSON.stringify(r)}`);
-    }
-
     return {
       path,
       address: r.Address.length
         ? r.Address.toString().toLowerCase()
-        : // Buffer.from(r.Address).toString("hex")
-          casperAddressFromPubKey(r.publicKey, CLPublicKeyTag.SECP256K1),
-      // : casperAddressFromPubKey(r.publicKey, CLPublicKeyTag.SECP256K1),
+        : casperAddressFromPubKey(r.publicKey, CLPublicKeyTag.SECP256K1),
       publicKey: r.publicKey.toString("hex"),
-      // publicKey: Buffer.from(r.publicKey).toString("hex"),
     };
   };
 }
