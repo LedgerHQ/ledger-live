@@ -2,6 +2,7 @@ import path from "path";
 
 import { importAsaTokens } from "./importers/asa";
 import { importCardanoNativeTokens } from "./importers/cardanoNative";
+import { importCasperTokens } from "./importers/casper";
 import { importEIP712, importEIP712v2 } from "./importers/eip712";
 import { importESDTTokens } from "./importers/esdt";
 import { importEVMTokens } from "./importers/evm";
@@ -28,6 +29,7 @@ const importTokens = async () => {
     importEVMTokens(outputFolder),
     importAsaTokens(outputFolder),
     importCardanoNativeTokens(outputFolder),
+    importCasperTokens(outputFolder),
     importESDTTokens(outputFolder),
     importSPLTokens(outputFolder),
     importStellarTokens(outputFolder),
