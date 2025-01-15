@@ -22,7 +22,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import { findAccountByCurrency } from "~/logic/deposit";
 
 import { useGroupedCurrenciesByProvider } from "@ledgerhq/live-common/deposit/index";
-import { GroupedCurrencies } from "@ledgerhq/live-common/deposit/type";
+import { LoadingBasedGroupedCurrencies, LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 
 const SEARCH_KEYS = getEnv("CRYPTO_ASSET_SEARCH_KEYS");
 
@@ -51,8 +51,10 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const { t } = useTranslation();
   const accounts = useSelector(flattenAccountsSelector);
 
-  const { currenciesByProvider, sortedCryptoCurrencies } =
-    useGroupedCurrenciesByProvider() as GroupedCurrencies;
+  const { result, loadingStatus: providersLoadingStatus } = useGroupedCurrenciesByProvider(
+    true,
+  ) as LoadingBasedGroupedCurrencies;
+  const { currenciesByProvider, sortedCryptoCurrencies } = result;
 
   const onPressItem = useCallback(
     (curr: CryptoCurrency | TokenCurrency) => {
@@ -100,11 +102,11 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
     if (paramsCurrency) {
       const selectedCurrency = findCryptoCurrencyByKeyword(paramsCurrency.toUpperCase());
 
-      if (selectedCurrency) {
+      if (selectedCurrency && providersLoadingStatus === LoadingStatus.Success) {
         onPressItem(selectedCurrency);
       }
     }
-  }, [onPressItem, paramsCurrency]);
+  }, [onPressItem, paramsCurrency, providersLoadingStatus]);
 
   const debounceTrackOnSearchChange = debounce((newQuery: string) => {
     track("asset_searched", { page: "Choose a crypto to secure", asset: newQuery });
@@ -133,27 +135,41 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
     [filterCurrencyIdsSet, sortedCryptoCurrencies],
   );
 
+  const renderListView = useCallback(() => {
+    switch (providersLoadingStatus) {
+      case LoadingStatus.Success:
+        return list.length > 0 ? (
+          <Flex flex={1} ml={6} mr={6} mt={3}>
+            <FilteredSearchBar
+              keys={SEARCH_KEYS}
+              list={list}
+              renderList={renderList}
+              renderEmptySearch={renderEmptyList}
+              onSearchChange={debounceTrackOnSearchChange}
+            />
+          </Flex>
+        ) : (
+          renderEmptyList()
+        );
+      case LoadingStatus.Error:
+        // TODO: in an improvement feature, when the network fetch status is on error, implement a clean error message with a retry CTA
+        return renderEmptyList();
+      default:
+        return (
+          <Flex flex={1} mt={6}>
+            <InfiniteLoader testID="loader" />
+          </Flex>
+        );
+    }
+  }, [providersLoadingStatus, list, renderList, debounceTrackOnSearchChange]);
+
   return (
     <SafeAreaView edges={["left", "right"]} isFlex>
       <TrackScreen category="Deposit" name="Choose a crypto to secure" />
       <Text variant="h4" fontWeight="semiBold" mx={6} testID="receive-header-step1-title">
         {t("transfer.receive.selectCrypto.title")}
       </Text>
-      {list.length > 0 ? (
-        <Flex flex={1} ml={6} mr={6} mt={3}>
-          <FilteredSearchBar
-            keys={SEARCH_KEYS}
-            list={list}
-            renderList={renderList}
-            renderEmptySearch={renderEmptyList}
-            onSearchChange={debounceTrackOnSearchChange}
-          />
-        </Flex>
-      ) : (
-        <Flex flex={1} mt={6}>
-          <InfiniteLoader />
-        </Flex>
-      )}
+      {renderListView()}
     </SafeAreaView>
   );
 }
