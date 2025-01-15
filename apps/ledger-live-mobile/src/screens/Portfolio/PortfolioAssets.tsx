@@ -94,8 +94,7 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
     [startNavigationTTITimer, showAssets, isAccountListUIEnabled, navigation],
   );
 
-  const showAddAccountButton =
-    isAccountListUIEnabled && showAccounts && distribution.list.length >= maxItemsToDysplay;
+  const showAddAccountButton = isAccountListUIEnabled && showAccounts;
 
   return (
     <>
@@ -119,20 +118,24 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
       ) : (
         <Assets assets={assetsToDisplay} />
       )}
-      {showAddAccountButton ? <AddAccountButton sourceScreenName="Wallet" /> : null}
-      {distribution.list.length < maxItemsToDysplay ? (
-        <Button
-          type="shade"
-          size="large"
-          outline
-          mt={6}
-          iconPosition="left"
-          Icon={IconsLegacy.PlusMedium}
-          onPress={openAddModal}
-        >
-          {t("account.emptyState.addAccountCta")}
-        </Button>
+      {showAddAccountButton ? (
+        <AddAccountButton sourceScreenName="Wallet" />
       ) : (
+        distribution.list.length === 0 && (
+          <Button
+            type="shade"
+            size="large"
+            outline
+            mt={6}
+            iconPosition="left"
+            Icon={IconsLegacy.PlusMedium}
+            onPress={openAddModal}
+          >
+            {t("account.emptyState.addAccountCta")}
+          </Button>
+        )
+      )}
+      {distribution.list.length >= maxItemsToDysplay && (
         <Button type="shade" size="large" outline onPress={onPressButton}>
           {showAssets ? t("portfolio.seeAllAssets") : t("portfolio.seeAllAccounts")}
         </Button>

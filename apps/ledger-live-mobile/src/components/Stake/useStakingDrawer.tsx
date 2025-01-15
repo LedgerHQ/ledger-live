@@ -4,6 +4,8 @@ import { ParamListBase, RouteProp } from "@react-navigation/native";
 import { Account } from "@ledgerhq/types-live";
 import { NavigatorName, ScreenName } from "~/const";
 import perFamilyAccountActions from "../../generated/accountActions";
+import { useSelector } from "react-redux";
+import { walletSelector } from "~/reducers/wallet";
 
 /** Open the stake flow for a given account from any navigator. Returns to parent route on completion. */
 export function useStakingDrawer({
@@ -17,6 +19,8 @@ export function useStakingDrawer({
   alwaysShowNoFunds?: boolean | undefined;
   entryPoint?: "get-funds" | undefined;
 }) {
+  const walletState = useSelector(walletSelector);
+
   return useCallback(
     (account: Account, parentAccount?: Account) => {
       if (alwaysShowNoFunds) {
@@ -43,6 +47,7 @@ export function useStakingDrawer({
         (decorators &&
           decorators.getMainActions &&
           decorators.getMainActions({
+            walletState,
             account,
             parentAccount,
             colors: {},
@@ -83,6 +88,6 @@ export function useStakingDrawer({
         },
       });
     },
-    [alwaysShowNoFunds, parentRoute, navigation, entryPoint],
+    [alwaysShowNoFunds, parentRoute, navigation, entryPoint, walletState],
   );
 }

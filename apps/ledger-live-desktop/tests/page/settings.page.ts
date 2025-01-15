@@ -14,6 +14,7 @@ export class SettingsPage extends AppPage {
   private developerTab = this.page.getByTestId("settings-developer-tab");
   private experimentalDevModeToggle = this.page.getByTestId("MANAGER_DEV_MODE-button");
   private ledgerSupport = this.page.getByTestId("ledgerSupport-link");
+  private resetAppButton = this.page.getByTestId("reset-button");
 
   readonly counterValueSelector = this.page.locator(
     "[data-testid='setting-countervalue-dropDown'] .select__value-container",
@@ -39,14 +40,17 @@ export class SettingsPage extends AppPage {
     await this.accountsTab.click();
   }
 
+  @step("Go to Settings About tab")
   async goToAboutTab() {
     await this.aboutTab.click();
   }
 
+  @step("Go to Settings Help tab")
   async goToHelpTab() {
     await this.helpTab.click();
   }
 
+  @step("Go to Settings Experimental tab")
   async goToExperimentalTab() {
     await this.experimentalTab.click();
   }
@@ -123,5 +127,10 @@ export class SettingsPage extends AppPage {
       throw new Error(`Failed to fetch URL ${url}`);
     }
     expect(url).toBe("https://support.ledger.com/?redirect=false");
+  }
+
+  @step("Reset App")
+  async resetApp() {
+    await this.resetAppButton.click();
   }
 }

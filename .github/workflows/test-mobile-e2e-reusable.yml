@@ -313,6 +313,7 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-broadcast@develop
         with:
           enable_broadcast: ${{ inputs.enable_broadcast }}
+          schedule_cron: ${{ github.event.schedule.cron }}
       - name: Run Android Tests
         id: detox
         run: pnpm mobile e2e:ci -p android -t $([[ "$INPUT_SPECULOS" == "true" ]] && printf %s '--speculos') --shard ${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
@@ -457,7 +458,7 @@ jobs:
                 "text": {
                   "type": "plain_text",
                   "text": process.env.SPECULOS_RUN == 'false'
-                    ? "Ledger Live Mobile Mocked Tests on ${{ github.ref_name }}" 
+                    ? "Ledger Live Mobile Mocked Tests on ${{ github.ref_name }}"
                     : ":ledger-logo: Ledger Live Mobile E2E nightly tests results on ${{ github.ref_name }}",
                   "emoji": true
                 }
@@ -535,8 +536,8 @@ jobs:
               : {
                   attachments: [
                     {
-                      color: process.env.ANDROID_STATUS !== 'success' 
-                        ? "#FF333C" 
+                      color: process.env.ANDROID_STATUS !== 'success'
+                        ? "#FF333C"
                         : "#33FF39",
                       blocks,
                     },

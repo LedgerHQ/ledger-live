@@ -56,7 +56,7 @@ describe("portfolioAssets", () => {
     // FIXME this is not visible in the test after the animation. It seems that the useSharedValue are not updated in the test environment so cronos 2 is always not visible even if it should be visible.
   });
 
-  it("should hide see all button and display add account button because there is less than 5 assets", async () => {
+  it("should hide see all button because there is less than 5 assets", async () => {
     const { user } = render(
       <TestNavigator>
         <PortfolioAssets hideEmptyTokenAccount={false} openAddModal={() => null} />
@@ -71,7 +71,8 @@ describe("portfolioAssets", () => {
 
     expect(await screen.getByTestId("AssetsList")).toBeVisible();
     expect(screen.queryByText(/see all assets/i)).toBeNull();
-    expect(screen.getByText(/add account/i)).toBeVisible();
+    expect(screen.queryByText(/add account/i)).toBeNull();
+    expect(screen.queryByText(/add new or existing account/i)).toBeNull();
 
     await user.press(screen.getByText(/accounts/i));
 
@@ -81,6 +82,8 @@ describe("portfolioAssets", () => {
     });
 
     expect(screen.queryByText(/see all accounts/i)).toBeNull();
+    expect(screen.queryByText(/add account/i)).toBeNull();
+    expect(screen.queryByText(/add new or existing account/i)).toBeVisible();
 
     await user.press(screen.getByText(/assets/i));
 

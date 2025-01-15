@@ -162,7 +162,13 @@ export function Welcome() {
       <LeftContainer>
         <Presentation>
           <Logos.LedgerLiveRegular color={colors.neutral.c100} />
-          <Text variant="h1" pt={10} pb={7} onClick={() => handleOpenFeatureFlagsDrawer("1")}>
+          <Text
+            data-testid="onbording-welcome-title"
+            variant="h1"
+            pt={10}
+            pb={7}
+            onClick={() => handleOpenFeatureFlagsDrawer("1")}
+          >
             {t("onboarding.screens.welcome.title")}
           </Text>
           <Description variant="body" onClick={() => handleOpenFeatureFlagsDrawer("2")}>
