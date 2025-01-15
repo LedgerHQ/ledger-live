@@ -7,13 +7,14 @@ import { ScreenName } from "~/const";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import { track } from "~/analytics";
 import type { NetworkBasedAddAccountNavigator } from "LLM/features/Accounts/screens/AddAccount/types";
-import SelectAccounts from "LLM/features/Accounts/screens/SelectAccounts";
 import { NavigationHeaderCloseButtonAdvanced } from "~/components/NavigationHeaderCloseButton";
 import ScanDeviceAccounts from "LLM/features/Accounts/screens/ScanDeviceAccounts";
 import { AccountsListNavigator } from "./screens/AccountsList/types";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import AccountsList from "LLM/features/Accounts/screens/AccountsList";
 import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
+import AddAccountsSuccess from "./screens/AddAccountSuccess";
+import SelectAccounts from "./screens/SelectAccounts";
 
 export default function Navigator() {
   const { colors } = useTheme();
@@ -51,6 +52,14 @@ export default function Navigator() {
         gestureEnabled: Platform.OS === "ios",
       }}
     >
+      {/* Scan accounts from device */}
+      <Stack.Screen
+        name={ScreenName.ScanDeviceAccounts}
+        component={ScanDeviceAccounts}
+        options={{
+          headerTitle: "",
+        }}
+      />
       {/* Select Accounts */}
       <Stack.Screen
         name={ScreenName.SelectAccounts}
@@ -59,15 +68,6 @@ export default function Navigator() {
           headerTitle: "",
         }}
         initialParams={route.params}
-      />
-
-      {/* Scan accounts from device */}
-      <Stack.Screen
-        name={ScreenName.ScanDeviceAccounts}
-        component={ScanDeviceAccounts}
-        options={{
-          headerTitle: "",
-        }}
       />
       {accountListUIFF?.enabled && (
         <Stack.Screen
@@ -79,6 +79,14 @@ export default function Navigator() {
           }}
         />
       )}
+      <Stack.Screen
+        name={ScreenName.AddAccountsSuccess}
+        component={AddAccountsSuccess}
+        options={{
+          headerTitle: "",
+          headerLeft: () => null,
+        }}
+      />
     </Stack.Navigator>
   );
 }
