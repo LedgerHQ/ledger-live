@@ -24,12 +24,6 @@ export default class LedgerAccount {
     new Uint8Array(AccountAddress.LENGTH),
   );
 
-  // static async fromLedgerConnection(transport: Transport, path: string): Promise<LedgerAccount> {
-  //   const account = new LedgerAccount(path);
-  //   await account.init(transport);
-  //   return account;
-  // }
-
   toAptosAccount(): Account {
     return this as unknown as Account;
   }

@@ -15,7 +15,7 @@ import estimateMaxSpendable from "./estimateMaxSpendable";
 import prepareTransaction from "../prepareTransaction";
 import createTransaction from "./createTransaction";
 import { getAccountShape } from "../synchronisation";
-import { buildSignOperation } from "./signOperation";
+import buildSignOperation from "./signOperation";
 import broadcast from "./broadcast";
 
 function buildCurrencyBridge(signerContext: SignerContext<AptosSigner>): CurrencyBridge {

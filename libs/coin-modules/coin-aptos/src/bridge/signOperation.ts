@@ -17,7 +17,7 @@ export const getAddress = (
   derivationPath: string;
 } => ({ address: a.freshAddress, derivationPath: a.freshAddressPath });
 
-export const buildSignOperation =
+export default buildSignOperation =
   (
     signerContext: SignerContext<AptosSigner>,
   ): AccountBridge<Transaction, Account>["signOperation"] =>

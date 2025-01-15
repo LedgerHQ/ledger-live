@@ -15,6 +15,7 @@ import {
   TransactionResponse,
   UserTransactionResponse,
   PostRequestOptions,
+  Block,
 } from "@aptos-labs/ts-sdk";
 import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network";
@@ -118,7 +119,7 @@ export class AptosAPI {
         options: opts,
       })
       .then(t => t.rawTransaction)
-      .catch((error: any) => {
+      .catch(error => {
         throw error;
       });
   }
@@ -163,7 +164,7 @@ export class AptosAPI {
       });
       const balance = parseInt(balanceStr, 10);
       return new BigNumber(balance);
-    } catch (e: any) {
+    } catch (_) {
       return new BigNumber(0);
     }
   }
@@ -214,7 +215,7 @@ export class AptosAPI {
   }
 
   private async getHeight(): Promise<number> {
-    const { data } = await network({
+    const { data } = await network<Block>({
       method: "GET",
       url: this.apiUrl,
     });
