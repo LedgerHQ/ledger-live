@@ -141,7 +141,7 @@ function ScanDeviceAccounts() {
                   data.length ? (
                     <Trans
                       values={{
-                        length: data.length,
+                        count: data.length,
                       }}
                       i18nKey={
                         llmNetworkBasedAddAccountFlow?.enabled
