@@ -2,8 +2,8 @@ import {
   EntryFunctionPayloadResponse,
   Event,
   InputEntryFunctionData,
+  MoveResource,
   WriteSetChange,
-  WriteSetChangeWriteResource,
 } from "@aptos-labs/ts-sdk";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
@@ -15,8 +15,9 @@ import {
   DELEGATION_POOL_TYPES,
   DIRECTION,
   TRANSFER_TYPES,
-} from "./constants";
-import type { AptosTransaction, TransactionOptions } from "./types";
+  WRITE_RESOURCE,
+} from "../constants";
+import type { AptosMoveResource, AptosTransaction, TransactionOptions } from "../types";
 
 export const DEFAULT_GAS = 200;
 export const DEFAULT_GAS_PRICE = 100;
@@ -39,6 +40,15 @@ export const getMaxSendBalance = (
 };
 
 export function normalizeTransactionOptions(options: TransactionOptions): TransactionOptions {
+  // FIXME: this is wrong. TransactionOptions is
+  // {
+  //     maxGasAmount: string;
+  //     gasUnitPrice: string;
+  //     sequenceNumber?: string;
+  //     expirationTimestampSecs?: string;
+  // }
+  // meaning we can't return undefined in check method.
+  // This method is useless, not deleting as it breaks code and this iteration is coin modularisation.
   const check = (v: any) => ((v ?? "").toString().trim() ? v : undefined);
   return {
     maxGasAmount: check(options.maxGasAmount),
@@ -177,23 +187,39 @@ function checkWriteSets(tx: AptosTransaction, event: Event, event_name: string):
   });
 }
 
-export function isChangeOfAptos(change: WriteSetChange, event: Event, event_name: string): boolean {
+export function isChangeOfAptos(
+  writeSetChange: WriteSetChange,
+  event: Event,
+  event_name: string,
+): boolean {
   // to validate the event is related to Aptos Tokens we need to find change of type "write_resource"
   // with the same guid as event
-  if (change.type == "write_resource") {
-    const change_data = (change as WriteSetChangeWriteResource).data;
-    if (change_data.type === APTOS_COIN_CHANGE) {
-      const change_event_data = change_data.data[event_name];
-      if (
-        change_event_data &&
-        change_event_data.guid.id.addr === event.guid.account_address &&
-        change_event_data.guid.id.creation_num === event.guid.creation_number
-      ) {
-        return true;
-      }
-    }
+  if (writeSetChange.type !== WRITE_RESOURCE) {
+    return false;
   }
-  return false;
+
+  if (!("data" in writeSetChange)) {
+    return false;
+  }
+
+  const change_data = writeSetChange.data;
+
+  if (!("type" in change_data)) {
+    return false;
+  }
+
+  const mr = change_data as MoveResource<AptosMoveResource>;
+
+  if (mr.type !== APTOS_COIN_CHANGE) {
+    return false;
+  }
+
+  const change_event_data = mr.data[event_name];
+
+  return (
+    change_event_data.guid.id.addr === event.guid.account_address &&
+    change_event_data.guid.id.creation_num === event.guid.creation_number
+  );
 }
 
 export function getAptosAmounts(

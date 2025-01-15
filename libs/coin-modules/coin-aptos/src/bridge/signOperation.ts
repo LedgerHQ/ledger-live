@@ -1,11 +1,10 @@
-import type { Transaction } from "../types";
+import type { AptosAccount, Transaction } from "../types";
 import { Observable } from "rxjs";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import buildTransaction from "./buildTransaction";
 import BigNumber from "bignumber.js";
 import type { Account, AccountBridge, Operation, OperationType } from "@ledgerhq/types-live";
 import { AptosAPI } from "../api";
-import LedgerAccount from "../LedgerAccount";
 
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { AptosSigner } from "../types";
@@ -20,7 +19,7 @@ export const getAddress = (
 const buildSignOperation =
   (
     signerContext: SignerContext<AptosSigner>,
-  ): AccountBridge<Transaction, Account>["signOperation"] =>
+  ): AccountBridge<Transaction, AptosAccount>["signOperation"] =>
   ({ account, transaction, deviceId }) =>
     new Observable(o => {
       async function main() {
@@ -28,16 +27,12 @@ const buildSignOperation =
 
         const aptosClient = new AptosAPI(account.currency.id);
 
-        const ledgerAccount = new LedgerAccount(account.freshAddressPath, account.xpub);
-        // await ledgerAccount.init(signerContext, deviceId);
-
         const rawTx = await buildTransaction(account, transaction, aptosClient);
-        const txBytes = await ledgerAccount.signTransaction(rawTx);
-        const txPayload = Buffer.from(txBytes).toString("hex");
+        const txPayload = Buffer.from(rawTx.bcsToBytes());
         const { derivationPath } = getAddress(account);
 
         const { r } = await signerContext(deviceId, async signer => {
-          const r = await signer.sign(derivationPath, txPayload);
+          const r = await signer.signTransaction(derivationPath, txPayload);
           return { r };
         });
 
@@ -46,14 +41,15 @@ const buildSignOperation =
         if (!r.signature_compact) {
           throw new Error("Signature compact is null");
         }
+
         // build signature on the correct format
         const signature = `${Buffer.from(r.signature_compact).toString("base64")}`;
 
-        const hash = "";
         const accountId = account.id;
+        const hash = "";
+        const type: OperationType = "OUT";
         const fee = transaction.fees || new BigNumber(0);
         const extra = {};
-        const type: OperationType = "OUT";
         const senders: string[] = [];
         const recipients: string[] = [];
 
@@ -62,7 +58,7 @@ const buildSignOperation =
           recipients.push(transaction.recipient);
         }
 
-        // build optimistic operation
+        // // build optimistic operation
         const operation: Operation = {
           id: encodeOperationId(accountId, hash, type),
           hash,

@@ -3,7 +3,7 @@ import invariant from "invariant";
 import flatMap from "lodash/flatMap";
 import type { Transaction } from "../types";
 import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
-import { AccountType } from "../bridge/utils";
+import { AccountType } from "../types";
 
 const options = [
   {
@@ -15,7 +15,7 @@ const options = [
 ];
 
 function inferAccounts(account: Account, opts: Record<string, any>): AccountLikeArray {
-  invariant(account.currency.family === "filecoin", "filecoin family");
+  invariant(account.currency.family === "aptos", "aptos family");
 
   if (!opts.token) {
     const accounts: Account[] = [account];

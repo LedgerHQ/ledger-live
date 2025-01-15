@@ -1,9 +1,9 @@
 import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 
-import { AptosAPI } from "./api";
-import { getEstimatedGas } from "./bridge/getFeesForTransaction";
-import type { Transaction } from "./types";
+import { AptosAPI } from "../api";
+import { getEstimatedGas } from "./getFeesForTransaction";
+import type { Transaction } from "../types";
 import { DEFAULT_GAS, DEFAULT_GAS_PRICE, getMaxSendBalance } from "./logic";
 
 const prepareTransaction = async (

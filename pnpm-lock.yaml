@@ -1874,7 +1874,7 @@ importers:
     dependencies:
       '@apollo/client':
         specifier: ^3.8.7
-        version: 3.12.4
+        version: 3.12.4(graphql@16.8.1)
       '@aptos-labs/ts-sdk':
         specifier: ^1.33.1
         version: 1.33.1
@@ -1905,12 +1905,12 @@ importers:
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
-      '@noble/hashes':
-        specifier: 1.6.1
-        version: 1.6.1
       bignumber.js:
         specifier: ^9.1.2
         version: 9.1.2
+      graphql:
+        specifier: ^16.8.1
+        version: 16.8.1
       invariant:
         specifier: ^2.2.2
         version: 2.2.4
@@ -4233,9 +4233,6 @@ importers:
       fuse.js:
         specifier: ^6.6.2
         version: 6.6.2
-      graphql:
-        specifier: ^16.8.1
-        version: 16.8.1
       invariant:
         specifier: ^2.2.2
         version: 2.2.4
@@ -30752,13 +30749,14 @@ snapshots:
       jsonpointer: 5.0.1
       leven: 3.1.0
 
-  '@apollo/client@3.12.4':
+  '@apollo/client@3.12.4(graphql@16.8.1)':
     dependencies:
-      '@graphql-typed-document-node/core': 3.2.0
+      '@graphql-typed-document-node/core': 3.2.0(graphql@16.8.1)
       '@wry/caches': 1.0.1
       '@wry/equality': 0.5.7
       '@wry/trie': 0.5.0
-      graphql-tag: 2.12.6
+      graphql: 16.8.1
+      graphql-tag: 2.12.6(graphql@16.8.1)
       hoist-non-react-statics: 3.3.2
       optimism: 0.18.1
       prop-types: 15.8.1
@@ -36440,11 +36438,13 @@ snapshots:
       '@formatjs/intl-localematcher': 0.5.4
       tslib: 2.6.2
 
-  '@graphql-typed-document-node/core@3.2.0': {}
-
   '@graphql-typed-document-node/core@3.2.0(graphql@15.8.0)':
     dependencies:
       graphql: 15.8.0
+
+  '@graphql-typed-document-node/core@3.2.0(graphql@16.8.1)':
+    dependencies:
+      graphql: 16.8.1
 
   '@grpc/grpc-js@1.6.7':
     dependencies:
@@ -52579,13 +52579,14 @@ snapshots:
 
   graphemer@1.4.0: {}
 
-  graphql-tag@2.12.6:
-    dependencies:
-      tslib: 2.6.2
-
   graphql-tag@2.12.6(graphql@15.8.0):
     dependencies:
       graphql: 15.8.0
+      tslib: 2.6.2
+
+  graphql-tag@2.12.6(graphql@16.8.1):
+    dependencies:
+      graphql: 16.8.1
       tslib: 2.6.2
 
   graphql@15.8.0: {}

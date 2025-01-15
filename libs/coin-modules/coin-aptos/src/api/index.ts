@@ -22,7 +22,7 @@ import network from "@ledgerhq/live-network";
 import BigNumber from "bignumber.js";
 import isUndefined from "lodash/isUndefined";
 import { APTOS_ASSET_ID } from "../constants";
-import { isTestnet } from "../logic";
+import { isTestnet } from "../bridge/logic";
 import type { AptosTransaction, TransactionOptions } from "../types";
 import { GetAccountTransactionsData, GetAccountTransactionsDataGt } from "./graphql/queries";
 import {

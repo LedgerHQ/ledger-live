@@ -4,7 +4,7 @@ import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { AptosAPI } from "../api";
 import buildTransaction from "./buildTransaction";
-import { DEFAULT_GAS, DEFAULT_GAS_PRICE, ESTIMATE_GAS_MUL } from "../logic";
+import { DEFAULT_GAS, DEFAULT_GAS_PRICE, ESTIMATE_GAS_MUL } from "./logic";
 import type { Transaction, TransactionErrors } from "../types";
 
 type IGetEstimatedGasReturnType = {
@@ -82,8 +82,10 @@ export const getFee = async (
       gasLimit =
         Number(completedTx.gas_used) ||
         Math.floor(Number(transaction.options.maxGasAmount) / ESTIMATE_GAS_MUL);
-    } catch (error: any) {
-      log(error.message);
+    } catch (error) {
+      if (error instanceof Error) {
+        log(error.message);
+      }
       throw error;
     }
   }

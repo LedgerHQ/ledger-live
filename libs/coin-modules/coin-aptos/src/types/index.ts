@@ -9,6 +9,7 @@ import type {
 } from "@ledgerhq/types-live";
 import type { BigNumber } from "bignumber.js";
 export * from "./signer";
+export * from "./bridge";
 
 export type AptosTransaction = UserTransactionResponse & {
   block: {
@@ -82,4 +83,8 @@ export type TransactionRaw = TransactionCommonRaw & {
   estimate: string;
   firstEmulation: string;
   errors?: string;
+};
+
+export type AptosMoveResource = {
+  [key: string]: { guid: { id: { addr: string; creation_num: string } } };
 };

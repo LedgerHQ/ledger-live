@@ -3,7 +3,7 @@ import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { AptosAPI } from "../api";
 import { APTOS_ASSET_ID } from "../constants";
-import { normalizeTransactionOptions } from "../logic";
+import { normalizeTransactionOptions } from "./logic";
 import type { Transaction } from "../types";
 
 const buildTransaction = async (

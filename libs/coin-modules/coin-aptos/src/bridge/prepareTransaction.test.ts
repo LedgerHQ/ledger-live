@@ -1,10 +1,10 @@
 import prepareTransaction from "./prepareTransaction";
-import { AptosAPI } from "./api";
-import { getEstimatedGas } from "./bridge/getFeesForTransaction";
+import { AptosAPI } from "../api";
+import { getEstimatedGas } from "./getFeesForTransaction";
 import { getMaxSendBalance } from "./logic";
 import BigNumber from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
-import type { Transaction } from "./types";
+import type { Transaction } from "../types";
 
 jest.mock("./api");
 jest.mock("./getFeesForTransaction");

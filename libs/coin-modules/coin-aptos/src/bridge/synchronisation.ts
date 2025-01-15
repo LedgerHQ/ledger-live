@@ -1,0 +1,68 @@
+import { encodeAccountId } from "@ledgerhq/coin-framework/account";
+import type { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { AptosAPI } from "../api";
+import { txsToOps } from "./logic";
+import type { AptosAccount } from "../types";
+
+export const getAccountShape: GetAccountShape = async info => {
+  const { address, initialAccount, currency, derivationMode } = info;
+  const accountId = encodeAccountId({
+    type: "js",
+    version: "2",
+    currencyId: currency.id,
+    xpubOrAddress: address,
+    derivationMode,
+  });
+
+  // "xpub" field is used to store publicKey to simulate transaction during sending tokens.
+  // We can't get access to the Nano X via bluetooth on the step of simulation
+  // but we need public key to simulate transaction.
+  // "xpub" field is used because this field exists in ledger operation type
+  const xpub = initialAccount?.xpub || "";
+  // if (!initialAccount?.xpub && typeof deviceId === "string") {
+  //   const result = await firstValueFrom(
+  //     withDevice(deviceId)(transport => from(new Aptos(transport).getAddress(derivationPath))),
+  //   );
+  //   xpub = Buffer.from(result.publicKey).toString("hex");
+  // }
+  // if (!xpub && initialAccount?.id) {
+  //   const { xpubOrAddress } = decodeAccountId(initialAccount.id);
+  //   xpub = xpubOrAddress;
+  // }
+  // if (!xpub) {
+  //   // This is the corner case. We don't expect this happens
+  //   throw new Error("Unable to retrieve public key");
+  // }
+
+  const oldOperations = initialAccount?.operations || [];
+  const startAt = (oldOperations[0]?.extra as any)?.version;
+
+  // const accountId = encodeAccountId({
+  //   type: "js",
+  //   version: "2",
+  //   currencyId: currency.id,
+  //   xpubOrAddress: address,
+  //   derivationMode,
+  // });
+
+  const aptosClient = new AptosAPI(currency.id);
+  const { balance, transactions, blockHeight } = await aptosClient.getAccountInfo(address, startAt);
+
+  const newOperations = txsToOps(info, accountId, transactions);
+  const operations = mergeOps(oldOperations, newOperations);
+
+  const shape: Partial<AptosAccount> = {
+    type: "Account",
+    id: accountId,
+    xpub,
+    balance: balance,
+    spendableBalance: balance,
+    operations,
+    operationsCount: operations.length,
+    blockHeight,
+    lastSyncDate: new Date(),
+  };
+
+  return shape;
+};

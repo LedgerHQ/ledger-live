@@ -221,7 +221,6 @@
     "date-fns": "^2.23.0",
     "expect": "^27.4.6",
     "fuse.js": "^6.6.2",
-    "graphql": "^16.8.1",
     "invariant": "^2.2.2",
     "isomorphic-ws": "^4.0.1",
     "jotai": "^2.10.1",
