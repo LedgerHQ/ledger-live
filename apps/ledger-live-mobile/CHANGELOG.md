@@ -1,5 +1,19 @@
 # live-mobile
 
+## 3.60.0-nightly.7
+
+### Minor Changes
+
+- [#8859](https://github.com/LedgerHQ/ledger-live/pull/8859) [`e3fe89d`](https://github.com/LedgerHQ/ledger-live/commit/e3fe89df0123f66080d5bcdbcac7229a4600aa52) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Change logic on portfolio assets to display add account button
+
+- [#8871](https://github.com/LedgerHQ/ledger-live/pull/8871) [`5f9ed1e`](https://github.com/LedgerHQ/ledger-live/commit/5f9ed1e9d15703552f0aa43373a1fce4d0e238f9) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix splashscreen flakiness with detox tests
+
+- [#8891](https://github.com/LedgerHQ/ledger-live/pull/8891) [`d494d5d`](https://github.com/LedgerHQ/ledger-live/commit/d494d5d0a9e893926886d04a71f79d56001c55dc) Thanks [@adammino-ledger](https://github.com/adammino-ledger)! - Added revolut to the LSApplicationQueriesSchemes to allow deeplinking to their app on iOS.
+
+- [#8858](https://github.com/LedgerHQ/ledger-live/pull/8858) [`040d394`](https://github.com/LedgerHQ/ledger-live/commit/040d39467c3c33f92e039f3457f4e3d172868da5) Thanks [@adammino-ledger](https://github.com/adammino-ledger)! - add handling for wallet api account on eth staking drawer for LLM and LLD
+
+- [#8801](https://github.com/LedgerHQ/ledger-live/pull/8801) [`21aec36`](https://github.com/LedgerHQ/ledger-live/commit/21aec36fa9efe9ea59d0b0defc50b98fa9b57430) Thanks [@themooneer](https://github.com/themooneer)! - the fix (like Add account v2) is using a loading mechanism with 4 state and plug it to the state so that we will be having the right screen order: SelectCrypto -> SelectNetwork -> SelectAccount
+
 ## 3.60.0-nightly.6
 
 ### Minor Changes

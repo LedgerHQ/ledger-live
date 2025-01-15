@@ -1,5 +1,13 @@
 # ledger-live-desktop
 
+## 2.95.0-nightly.7
+
+### Minor Changes
+
+- [#8858](https://github.com/LedgerHQ/ledger-live/pull/8858) [`a625dc8`](https://github.com/LedgerHQ/ledger-live/commit/a625dc8c400b9a0858139ff95cf591ef74beedb5) Thanks [@adammino-ledger](https://github.com/adammino-ledger)! - Convert account address to wallet api id which is the value expected by the dapp browser V2
+
+- [#8858](https://github.com/LedgerHQ/ledger-live/pull/8858) [`040d394`](https://github.com/LedgerHQ/ledger-live/commit/040d39467c3c33f92e039f3457f4e3d172868da5) Thanks [@adammino-ledger](https://github.com/adammino-ledger)! - add handling for wallet api account on eth staking drawer for LLM and LLD
+
 ## 2.95.0-nightly.6
 
 ### Minor Changes
