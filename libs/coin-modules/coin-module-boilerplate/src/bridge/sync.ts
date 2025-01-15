@@ -6,7 +6,7 @@ import { getTransactions } from "../network/indexer";
 import { getAccountInfo, getBlockHeight } from "../network/node";
 
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { XrplOperation } from "../network/types";
+import { BoilerplateOperation } from "../network/types";
 import coinConfig from "../config";
 
 const operationAdapter =
@@ -14,7 +14,7 @@ const operationAdapter =
   ({
     meta: { delivered_amount },
     tx: { Fee, hash, inLedger, date, Account, Destination, Sequence },
-  }: XrplOperation) => {
+  }: BoilerplateOperation) => {
     const type = Account === address ? "OUT" : "IN";
     let value =
       delivered_amount && typeof delivered_amount === "string"
@@ -47,10 +47,14 @@ const operationAdapter =
     return op;
   };
 
-const filterOperations = (transactions: XrplOperation[], accountId: string, address: string) => {
+const filterOperations = (
+  transactions: BoilerplateOperation[],
+  accountId: string,
+  address: string,
+) => {
   return transactions
     .filter(
-      ({ tx, meta }: XrplOperation) =>
+      ({ tx, meta }: BoilerplateOperation) =>
         tx.TransactionType === "Payment" && typeof meta.delivered_amount === "string",
     )
     .map(operationAdapter(accountId, address))

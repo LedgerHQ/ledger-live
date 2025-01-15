@@ -12,12 +12,12 @@ const currency = getCryptoCurrencyById("ripple");
 const minAmountCutoff = parseCurrencyUnit(currency.units[0], "0.1");
 const reserve = parseCurrencyUnit(currency.units[0], "20");
 
-const xrp: AppSpec<Transaction> = {
-  name: "XRP",
+const boilerplateSpec: AppSpec<Transaction> = {
+  name: "BOILERPLATE",
   currency,
   appQuery: {
     model: DeviceModelId.nanoS,
-    appName: "XRP",
+    appName: "BOILERPLATE_APP_NAME",
   },
   genericDeviceAction: acceptTransaction,
   minViableAmount: minAmountCutoff,
@@ -69,5 +69,5 @@ const xrp: AppSpec<Transaction> = {
   ],
 };
 export default {
-  xrp,
+  boilerplateSpec,
 };

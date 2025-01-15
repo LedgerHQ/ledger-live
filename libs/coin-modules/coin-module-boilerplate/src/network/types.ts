@@ -1,4 +1,4 @@
-export type XrplOperation = {
+export type BoilerplateOperation = {
   meta: {
     AffectedNodes: {
       ModifiedNode: {
@@ -80,7 +80,6 @@ export type AccountInfoResponse = {
     disallowIncomingNFTokenOffer: boolean;
     disallowIncomingPayChan: boolean;
     disallowIncomingTrustline: boolean;
-    disallowIncomingXRP: boolean;
     globalFreeze: boolean;
     noFreeze: boolean;
     passwordSpent: boolean;
@@ -129,10 +128,8 @@ export type ServerInfoResponse = {
     uptime: number;
     validated_ledger: {
       age: number;
-      base_fee_xrp: number;
+      base_fee: number;
       hash: string;
-      reserve_base_xrp: number;
-      reserve_inc_xrp: number;
       seq: number;
     };
     validation_quorum: number;
@@ -141,7 +138,7 @@ export type ServerInfoResponse = {
 
 export type AccountTxResponse = {
   account: string;
-  transactions: XrplOperation[];
+  transactions: BoilerplateOperation[];
 } & ResponseStatus;
 
 export type LedgerResponse = {
