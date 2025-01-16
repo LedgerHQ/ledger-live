@@ -56,7 +56,6 @@ test("Market", async ({ page }) => {
   }
 
   // Masks
-  const maskItems = { mask: createBaseMask(page) }; // Base mask with no exclusions
   const maskEverythingExceptBitcoinAndEthereum = {
     mask: createMaskExcluding(page, ["Bitcoin", "Ethereum"]),
   }; // Exclude all except Bitcoin and Ethereum
@@ -65,7 +64,9 @@ test("Market", async ({ page }) => {
   await test.step("go to market", async () => {
     await layout.goToMarket();
     await marketPage.waitForLoadingWithSwapbtn();
-    await expect.soft(page).toHaveScreenshot("market-page-no-scrollbar.png", maskItems);
+    await expect
+      .soft(page)
+      .toHaveScreenshot("market-page-no-scrollbar.png", maskEverythingExceptBitcoinAndEthereum);
   });
 
   await page.route(`${getEnv("LEDGER_COUNTERVALUES_API")}/v3/supported/fiat`, async route => {
