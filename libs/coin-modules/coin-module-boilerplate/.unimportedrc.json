@@ -20,7 +20,10 @@
     "jest-message-util"
   ],
   "ignoreUnimported": [
-    "src/network/mock-network.ts"
+    "src/network/mock-network.ts",
+    "src/test/bot-specs.ts"
   ],
-  "ignoreUnused": []
+  "ignoreUnused": [
+    "@ledgerhq/devices"
+  ]
 }
