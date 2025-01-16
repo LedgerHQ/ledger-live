@@ -73,7 +73,7 @@ test.describe("Password", () => {
       await app.settings.goToHelpTab();
       await app.settings.clearCache();
       await app.LockscreenPage.login("bad password");
-      await app.layout.checkInputErrorVisibibility("visible");
+      await app.LockscreenPage.checkInputErrorVisibility("visible");
       await app.LockscreenPage.login("SpeculosPassword");
       await app.layout.goToAccounts();
       const countAfterLock = await app.accounts.countAccounts();

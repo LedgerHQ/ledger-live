@@ -164,4 +164,9 @@ export class PortfolioPage extends AppPage {
     const operationRow = this.operationRows.first();
     await expect(operationRow).toContainText(counterValue);
   }
+
+  @step("Wait for balance to be visible")
+  async expectBalanceVisibility() {
+    await this.totalBalance.waitFor({ state: "visible" });
+  }
 }
