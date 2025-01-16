@@ -48,11 +48,6 @@ export function createFixtureTransaction(tx?: Partial<Transaction>): Transaction
       maxGasAmount: BigNumber(0).toString(), // TODO check this
       gasUnitPrice: BigNumber(0).toString(), // TODO check this
     },
-    estimate: {
-      maxGasAmount: BigNumber(0).toString(), // TODO check this
-      gasUnitPrice: BigNumber(0).toString(), // TODO check this
-    },
-    firstEmulation: false,
   };
 
   return transaction;

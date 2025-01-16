@@ -4,18 +4,18 @@
 // import { firstValueFrom } from "rxjs";
 // import { decodeAccountId } from "@ledgerhq/coin-framework/account";
 // import { makeScanAccounts, makeSync, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-// import { AptosAPI } from "./api";
+// import { AptosAPI } from "../api";
 // import { txsToOps } from "./logic";
 // import { getAccountShape } from "./synchronisation";
 
 // jest.mock("rxjs");
-// let mockedFistValueFrom;
+// let mockedFistValueFrom = jest.fn();
 
 // jest.mock("@ledgerhq/coin-framework/account");
-// let mockedDecodeAccountId;
+// let mockedDecodeAccountId = jest.fn();
 
 // jest.mock("./api");
-// let mockedAptosAPI;
+// let mockedAptosAPI = jest.mocked(AptosAPI);
 
 // jest.mock("./logic");
 // jest.mocked(txsToOps);
