@@ -7,6 +7,7 @@ export const getTransactions = async (
   params: { from: number; size: number },
 ): Promise<AccountTxResponse["transactions"]> => {
   const { data } = await network<AccountTxResponse>({
+    // NOTE: add INDEXER_BOILERPLATE to libs/env/src/env.ts
     // @ts-ignore
     url: `${getEnv("INDEXER_BOILERPLATE")}/account/${address}/transactions`,
     method: "GET",

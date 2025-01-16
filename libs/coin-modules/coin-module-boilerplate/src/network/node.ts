@@ -6,6 +6,8 @@ import { AccountInfoResponse, SubmitReponse } from "./types";
 
 const getNodeUrl = () => coinConfig.getCoinConfig().nodeUrl;
 
+// NOTE: add NODE_BOILERPLATE to libs/env/src/env.ts
+
 // txPayload needs to be unsigned
 export const simulate = async (serializedTx: string): Promise<number> => {
   // @ts-ignore
