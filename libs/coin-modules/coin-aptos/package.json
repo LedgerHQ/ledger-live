@@ -95,6 +95,7 @@
       "bignumber.js": "^9.1.2",
       "invariant": "^2.2.2",
       "rxjs": "^7.8.1",
+      "lodash": "^4.17.21",
       "graphql": "^16.8.1"
     },
     "devDependencies": {

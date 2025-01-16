@@ -8,7 +8,7 @@ const resolver = (signerContext: SignerContext<AptosSigner>): GetAddressFn => {
     const r = await signerContext(deviceId, signer => signer.getAddress(path, verify || false));
     return {
       address: r.address,
-      publicKey: r.publicKey,
+      publicKey: r.publicKey.toString("hex"),
       path,
     };
   };
