@@ -1,5 +1,5 @@
 ---
-"ledger-live-desktop": patch
+"ledger-live-desktop": minor
 ---
 
 fix: Continue Button Disabled by Default in Cardano Earn Flow
