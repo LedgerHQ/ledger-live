@@ -276,7 +276,7 @@ test.describe("Send flows", () => {
           await app.sendDrawer.addressValueIsVisible(
             transaction.transaction.accountToCredit.address,
           );
-          await app.drawer.close();
+          await app.drawer.closeDrawer();
           if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
             await app.layout.goToAccounts();
             await app.accounts.clickSyncBtnForAccount(

@@ -974,15 +974,6 @@
     "GasLessThanEstimate": {
       "title": "This may be too low. Please increase"
     },
-    "SequenceNumberTooNew": {
-      "title": "Sequence number too new"
-    },
-    "SequenceNumberTooOld": {
-      "title": "Sequence number too old"
-    },
-    "TransactionExpired": {
-      "title": "Transaction expired"
-    },
     "SequenceNumberError": {
       "title": "Sequence number error",
       "description": "Please close the window and try again later"
@@ -3725,7 +3716,7 @@
     "highFeeModal": "Be careful, network fees are greater than <1>10%</1> of the amount. Do you want to continue?",
     "scan": {
       "title": "Scan QR code",
-      "descBottom": "Please center the QR code inside the square.",
+      "descBottom": "Scan QR code",
       "fallback": {
         "header": "Scan QR code",
         "title": "Enable camera",
@@ -4002,6 +3993,8 @@
       "desc": "Are you sure you want to cancel adding accounts?"
     },
     "imported": "Asset added successfully",
+    "added": "Account added to your portfolio",
+    "added_plural": "{{count}} Accounts added to your portfolio",
     "sections": {
       "importable": {
         "title": "Add existing account"
@@ -4058,6 +4051,32 @@
         "title": "Taproot",
         "desc": "Latest {{currency}} network upgrade. Will provide better privacy and cheaper fees once widespread. Still limited support from wallet and exchanges."
       }
+    },
+    "scanDeviceAccounts": {
+      "title": "Select the accounts you want to add",
+      "ctaStopScan": "Stop scanning",
+      "confirm": "Confirm",
+      "scanningTitle": "Looking for any existing accounts on the Blockchain...",
+      "sections": {
+        "importable": {
+          "title": "We found {{count}} account",
+          "title_plural": "We found {{count}} accounts"
+        },
+        "creatable": {
+          "title": "New account"
+        },
+        "imported": {
+          "title": "Account already in the Portfolio ({{length}})",
+          "title_plural": "Accounts already in the Portfolio ({{length}})"
+        },
+        "migrate": {
+          "title": "Accounts to update"
+        }
+      }
+    },
+    "addAccountsSuccess": {
+      "ctaAddFunds": "Add funds to my account",
+      "ctaClose": "Close"
     }
   },
   "DeviceAction": {
@@ -7159,7 +7178,9 @@
       "title": "Select Asset"
     },
     "selectNetwork": {
-      "title": "Select the blockchain network the asset belongs to"
+      "title": "Select the blockchain network the asset belongs to",
+      "detectedAccounts": "{{count}} account (detected)",
+      "detectedAccounts_plural": "{{count}} accounts (detected)"
     }
   }
 }

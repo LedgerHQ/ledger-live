@@ -3,6 +3,7 @@ import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "../../utils/customJsonReporter";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { CLI } from "tests/utils/cliUtils";
+import { FileUtils } from "tests/utils/fileUtils";
 
 test.describe("Settings", () => {
   test.use({
@@ -120,6 +121,59 @@ test.describe("counter value selection", () => {
       await app.portfolio.expectBalanceDiffCounterValue("€");
       await app.portfolio.expectAssetRowCounterValue(account.currency.name, "€");
       await app.portfolio.expectOperationCounterValue("€");
+    },
+  );
+});
+
+test.describe("Ledger Support (web link)", () => {
+  test.use({
+    userdata: "skip-onboarding",
+  });
+
+  test(
+    "Verify that user can access to Ledger Support (Web Link)",
+    {
+      annotation: {
+        type: "TMS",
+        description: "B2CQA-820",
+      },
+    },
+    async ({ app }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
+      await app.layout.goToSettings();
+      await app.settings.goToHelpTab();
+
+      await app.settings.expectLedgerSupportUrlToBeCorrect();
+    },
+  );
+});
+
+test.describe("Reset app", () => {
+  test.use({
+    userdata: "1AccountBTC1AccountETH",
+  });
+
+  test(
+    "Verify that user can Reset app",
+    {
+      annotation: {
+        type: "TMS",
+        description: "B2CQA-821",
+      },
+    },
+    async ({ app, userdataFile }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
+      await app.layout.goToSettings();
+      const appJsonBefore = await FileUtils.getAppJsonSize(userdataFile);
+      await app.settings.goToHelpTab();
+      await app.settings.resetApp();
+      await app.settingsModal.checkResetModal();
+      await app.settingsModal.clickOnConfirmButton();
+      await app.onboarding.waitForLaunch();
+      const appJsonAfter = await FileUtils.getAppJsonSize(userdataFile);
+      await FileUtils.compareAppJsonSize(appJsonBefore, appJsonAfter);
     },
   );
 });

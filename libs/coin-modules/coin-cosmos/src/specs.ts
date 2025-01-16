@@ -618,6 +618,15 @@ const xion = {
   }),
 };
 
+const zenrockMinimalTransactionAmount = new BigNumber(20000);
+const zenrock = {
+  ...generateGenericCosmosTest("zenrock", false, {
+    minViableAmount: zenrockMinimalTransactionAmount,
+    mutations: cosmosLikeMutations(zenrockMinimalTransactionAmount),
+    skipOperationHistory: true,
+  }),
+};
+
 export default {
   axelar,
   cosmos,
@@ -636,4 +645,5 @@ export default {
   mantra,
   cryptoOrg,
   xion,
+  zenrock,
 };

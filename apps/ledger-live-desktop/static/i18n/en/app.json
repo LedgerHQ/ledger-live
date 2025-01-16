@@ -5317,6 +5317,7 @@
     "verifyData": "Always verify the operation details on your device.",
     "doubleCheck": "Double-check the transaction details on your Ledger device before signing.",
     "termsAndConditions": "By signing this transaction, you accept <0>{{appName}}'s terms of use.</0>",
+    "termsAndConditionsWithPrivacy": "By signing this transaction, you accept <0>{{appName}}'s terms of use.</0> and <1>Privacy Policy.</1>",
     "warningWording": {},
     "titleWording": {
       "send": "Please confirm on your device to finalize the operation",
@@ -5815,16 +5816,6 @@
     "SatStackDescriptorNotImported": {
       "title": "Account not scanned by full node",
       "description": "Please configure your full node to scan for the accounts associated with this device. Your full node must first scan the blockchain for this account before you can add it to your portfolio."
-    },
-    "SequenceNumberTooNew": {
-      "title": "Sequence number too new"
-    },
-    "SequenceNumberTooOld": {
-      "title": "Sequence number too old",
-      "description": "Sequence number too old"
-    },
-    "TransactionExpired": {
-      "title": "Transaction expired"
     },
     "SwapRateExpiredError": {
       "title": "Rate Expired",

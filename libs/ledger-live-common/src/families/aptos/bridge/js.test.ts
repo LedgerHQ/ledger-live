@@ -33,7 +33,7 @@ describe("Aptos bridge interface ", () => {
     });
   });
 
-  describe("accountBridge ", () => {
+  describe("accountBridge", () => {
     it("should contain all methods", () => {
       expect(bridge.accountBridge.estimateMaxSpendable).toBeDefined();
       expect(typeof bridge.accountBridge.estimateMaxSpendable).toBe("function");
@@ -53,8 +53,15 @@ describe("Aptos bridge interface ", () => {
       expect(typeof bridge.accountBridge.signOperation).toBe("function");
       expect(bridge.accountBridge.broadcast).toBeDefined();
       expect(typeof bridge.accountBridge.broadcast).toBe("function");
+      expect(bridge.currencyBridge.hydrate).toBeDefined();
+      expect(typeof bridge.currencyBridge.hydrate).toBe("function");
+      expect(bridge.currencyBridge.preload).toBeDefined();
+      expect(typeof bridge.currencyBridge.preload).toBe("function");
+      expect(bridge.currencyBridge.scanAccounts).toBeDefined();
+      expect(typeof bridge.currencyBridge.scanAccounts).toBe("function");
     });
   });
+
   describe("updateTransaction", () => {
     it("should update the transaction with the given patch", () => {
       const initialTransaction = {
@@ -63,8 +70,6 @@ describe("Aptos bridge interface ", () => {
         mode: "send",
         family: "aptos" as const,
         options: { maxGasAmount: "", gasUnitPrice: "" },
-        estimate: { maxGasAmount: "", gasUnitPrice: "" },
-        firstEmulation: true,
       };
       const patch = { amount: new BigNumber(200) };
       const updatedTransaction = bridge.accountBridge.updateTransaction(initialTransaction, patch);
@@ -74,8 +79,6 @@ describe("Aptos bridge interface ", () => {
         mode: "send",
         family: "aptos" as const,
         options: { maxGasAmount: "", gasUnitPrice: "" },
-        estimate: { maxGasAmount: "", gasUnitPrice: "" },
-        firstEmulation: true,
       });
     });
 
@@ -86,8 +89,6 @@ describe("Aptos bridge interface ", () => {
         mode: "send",
         family: "aptos" as const,
         options: { maxGasAmount: "", gasUnitPrice: "" },
-        estimate: { maxGasAmount: "", gasUnitPrice: "" },
-        firstEmulation: true,
       };
       const patch = { amount: new BigNumber(200) };
       const updatedTransaction = bridge.accountBridge.updateTransaction(initialTransaction, patch);
@@ -97,8 +98,6 @@ describe("Aptos bridge interface ", () => {
         mode: "send",
         family: "aptos" as const,
         options: { maxGasAmount: "", gasUnitPrice: "" },
-        estimate: { maxGasAmount: "", gasUnitPrice: "" },
-        firstEmulation: true,
       });
       expect(updatedTransaction).not.toBe(initialTransaction);
     });
