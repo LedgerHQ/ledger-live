@@ -1,5 +1,5 @@
 import { BehaviorSubject } from "rxjs";
-import { DeviceManagementKitTransport } from "src/transport/DeviceManagementKitTransport";
+import { DeviceManagementKitTransport } from "../transport/DeviceManagementKitTransport";
 
 export const activeDeviceSessionSubject: BehaviorSubject<{
   sessionId: string;
