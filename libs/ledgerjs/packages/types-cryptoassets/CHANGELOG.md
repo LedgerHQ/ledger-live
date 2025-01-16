@@ -1,5 +1,11 @@
 # @ledgerhq/types-cryptoassets
 
+## 7.18.0
+
+### Minor Changes
+
+- [#8704](https://github.com/LedgerHQ/ledger-live/pull/8704) [`1fa754d`](https://github.com/LedgerHQ/ledger-live/commit/1fa754deed730bb3dd8d05cb4e83e8c8d1b33ad1) Thanks [@Canestin](https://github.com/Canestin)! - add xion currency
+
 ## 7.18.0-next.0
 
 ### Minor Changes
