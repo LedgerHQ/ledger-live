@@ -40,8 +40,6 @@ describe("Aptos prepareTransaction", () => {
         recipient: "",
         useAllAmount: false,
         fees: new BigNumber(0),
-        firstEmulation: true,
-        options: {},
       } as Transaction;
     });
 
@@ -69,7 +67,7 @@ describe("Aptos prepareTransaction", () => {
       const result = await prepareTransaction(account, transaction);
       expect(result.amount.isEqualTo(new BigNumber(900))).toBe(true);
       expect(result.fees?.isEqualTo(new BigNumber(2000))).toBe(true);
-      expect(new BigNumber(result.estimate.maxGasAmount).isEqualTo(new BigNumber(200))).toBe(true);
+      expect(new BigNumber(result.options.maxGasAmount).isEqualTo(new BigNumber(200))).toBe(true);
       expect(result.errors).toEqual({});
     });
 
@@ -85,21 +83,8 @@ describe("Aptos prepareTransaction", () => {
       const result = await prepareTransaction(account, transaction);
       expect(getEstimatedGas).toHaveBeenCalledWith(account, transaction, expect.any(AptosAPI));
       expect(result.fees?.isEqualTo(new BigNumber(10))).toBe(true);
-      expect(new BigNumber(result.estimate.maxGasAmount).isEqualTo(new BigNumber(200))).toBe(true);
+      expect(new BigNumber(result.options.maxGasAmount).isEqualTo(new BigNumber(200))).toBe(true);
       expect(result.errors).toEqual({});
-    });
-
-    it("should set firstEmulation to false after the first call", async () => {
-      transaction.recipient = "test-recipient";
-      transaction.amount = new BigNumber(100);
-      (getEstimatedGas as jest.Mock).mockResolvedValue({
-        fees: new BigNumber(10),
-        estimate: { maxGasAmount: new BigNumber(200) },
-        errors: {},
-      });
-
-      const result = await prepareTransaction(account, transaction);
-      expect(result.firstEmulation).toBe(false);
     });
 
     it("should return the transaction with updated fees and estimate if recipient is set and amount is not zero", async () => {
@@ -113,14 +98,13 @@ describe("Aptos prepareTransaction", () => {
 
       const result = await prepareTransaction(account, transaction);
       expect(result.fees?.isEqualTo(new BigNumber(2000))).toBe(true);
-      expect(new BigNumber(result.estimate.maxGasAmount).isEqualTo(new BigNumber(200))).toBe(true);
+      expect(new BigNumber(result.options.maxGasAmount).isEqualTo(new BigNumber(200))).toBe(true);
       expect(result.errors).toEqual({});
     });
 
     it("should set maxGasAmount in options", async () => {
       transaction.recipient = "test-recipient";
       transaction.amount = new BigNumber(100);
-      transaction.firstEmulation = true;
       (getEstimatedGas as jest.Mock).mockResolvedValue({
         fees: new BigNumber(2000),
         estimate: { maxGasAmount: new BigNumber(200), gasUnitPrice: new BigNumber(10) },
@@ -128,8 +112,7 @@ describe("Aptos prepareTransaction", () => {
       });
 
       const result = await prepareTransaction(account, transaction);
-      expect(new BigNumber(result.estimate.maxGasAmount).isEqualTo(new BigNumber(200))).toBe(true);
-      expect(result.firstEmulation).toBe(false);
+      expect(new BigNumber(result.options.maxGasAmount).isEqualTo(new BigNumber(200))).toBe(true);
     });
   });
 });

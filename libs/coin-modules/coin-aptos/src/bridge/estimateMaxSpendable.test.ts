@@ -8,8 +8,6 @@ jest.mock("./getFeesForTransaction", () => ({
     estimate: {
       maxGasAmount: 1,
       gasUnitPrice: 2,
-      sequenceNumber: "",
-      expirationTimestampSecs: "",
     },
     errors: {},
   })),

@@ -43,25 +43,14 @@ export type AptosAddress = {
   path: string;
 };
 
-export interface TransactionEstimate {
+export interface TransactionOptions {
   maxGasAmount: string;
   gasUnitPrice: string;
-  sequenceNumber?: string;
-  expirationTimestampSecs?: string;
 }
-
-export type TransactionOptions = {
-  maxGasAmount: string;
-  gasUnitPrice: string;
-  sequenceNumber?: string;
-  expirationTimestampSecs?: string;
-};
 
 export type TransactionErrors = {
   maxGasAmount?: string;
   gasUnitPrice?: string;
-  sequenceNumber?: string;
-  expirationTimestampSecs?: string;
 };
 
 export type Transaction = TransactionCommon & {
@@ -69,8 +58,6 @@ export type Transaction = TransactionCommon & {
   family: "aptos";
   fees?: BigNumber | null;
   options: TransactionOptions;
-  estimate: TransactionEstimate;
-  firstEmulation: boolean;
   errors?: TransactionErrors;
   tag?: string;
 };
@@ -80,8 +67,6 @@ export type TransactionRaw = TransactionCommonRaw & {
   mode: string;
   fees?: string | null;
   options: string;
-  estimate: string;
-  firstEmulation: string;
   errors?: string;
 };
 
