@@ -12,13 +12,21 @@ type IGetEstimatedGasReturnType = {
   estimate: {
     maxGasAmount: string;
     gasUnitPrice: string;
-    sequenceNumber: string;
-    expirationTimestampSecs: string;
   };
   errors: TransactionErrors;
 };
 
-const CACHE = new Map();
+const CACHE = {
+  amount: new BigNumber(0),
+  estimate: Promise.resolve({
+    fees: new BigNumber(0),
+    estimate: {
+      maxGasAmount: "",
+      gasUnitPrice: "",
+    },
+    errors: {},
+  }),
+};
 
 export const getFee = async (
   account: Account,
@@ -26,27 +34,20 @@ export const getFee = async (
   aptosClient: AptosAPI,
 ): Promise<IGetEstimatedGasReturnType> => {
   const res = {
-    fees: new BigNumber(0),
+    fees: new BigNumber(DEFAULT_GAS).multipliedBy(DEFAULT_GAS_PRICE),
     estimate: {
-      maxGasAmount: transaction.estimate.maxGasAmount,
-      gasUnitPrice: transaction.estimate.gasUnitPrice,
-      sequenceNumber: transaction.options.sequenceNumber || "",
-      expirationTimestampSecs: transaction.options.expirationTimestampSecs || "",
+      maxGasAmount: DEFAULT_GAS.toString(),
+      gasUnitPrice: DEFAULT_GAS_PRICE.toString(),
     },
     errors: { ...transaction.errors },
   };
 
-  let gasPrice = DEFAULT_GAS_PRICE;
   let gasLimit = DEFAULT_GAS;
-  let sequenceNumber = "";
-
-  try {
-    const { gas_estimate } = await aptosClient.estimateGasPrice();
-    gasPrice = gas_estimate;
-  } catch (err) {
-    // skip
-  }
-
+  let gasPrice = DEFAULT_GAS_PRICE;
+  transaction.options = {
+    maxGasAmount: gasLimit.toString(),
+    gasUnitPrice: gasPrice.toString(),
+  };
   if (account.xpub) {
     try {
       const publicKeyEd = new Ed25519PublicKey(account.xpub as string);
@@ -54,77 +55,46 @@ export const getFee = async (
       const simulation = await aptosClient.simulateTransaction(publicKeyEd, tx);
       const completedTx = simulation[0];
 
-      const expectedGas = BigNumber(gasLimit * gasPrice);
-      const isUnderMaxSpendable = !transaction.amount
+      gasLimit = new BigNumber(completedTx.gas_used).multipliedBy(ESTIMATE_GAS_MUL);
+      gasPrice = new BigNumber(completedTx.gas_unit_price);
+
+      const expectedGas = gasPrice.multipliedBy(gasLimit);
+
+      const isUnderMaxSpendable = transaction.amount
         .plus(expectedGas)
-        .isGreaterThan(account.spendableBalance);
+        .isLessThan(account.spendableBalance);
 
       if (isUnderMaxSpendable && !completedTx.success) {
-        switch (true) {
-          case completedTx.vm_status.includes("SEQUENCE_NUMBER"): {
-            res.errors.sequenceNumber = completedTx.vm_status;
-            break;
-          }
-          case completedTx.vm_status.includes("TRANSACTION_EXPIRED"): {
-            res.errors.expirationTimestampSecs = completedTx.vm_status;
-            break;
-          }
-          case completedTx.vm_status.includes("INSUFFICIENT_BALANCE"): {
-            // skip, processed in getTransactionStatus
-            break;
-          }
-          default: {
-            throw Error(`Simulation failed with following error: ${completedTx.vm_status}`);
-          }
+        // we want to skip INSUFFICIENT_BALANCE error because it will be processed by getTransactionStatus
+        if (!completedTx.vm_status.includes("INSUFFICIENT_BALANCE")) {
+          throw Error(`Simulation failed with following error: ${completedTx.vm_status}`);
         }
       }
-
-      gasLimit =
-        Number(completedTx.gas_used) ||
-        Math.floor(Number(transaction.options.maxGasAmount) / ESTIMATE_GAS_MUL);
+      res.fees = expectedGas;
+      res.estimate.maxGasAmount = gasLimit.toString();
+      res.estimate.gasUnitPrice = completedTx.gas_unit_price;
     } catch (error: any) {
       log(error.message);
       throw error;
     }
   }
-
-  try {
-    const { sequence_number } = await aptosClient.getAccount(account.freshAddress);
-    sequenceNumber = sequence_number;
-  } catch (_) {
-    // skip
-  }
-
-  gasLimit = Math.ceil(gasLimit * ESTIMATE_GAS_MUL);
-
-  res.estimate.gasUnitPrice = gasPrice.toString();
-  res.estimate.sequenceNumber = sequenceNumber.toString();
-  res.estimate.maxGasAmount = gasLimit.toString();
-
-  res.fees = res.fees.plus(BigNumber(gasPrice)).multipliedBy(BigNumber(gasLimit));
-  CACHE.delete(getCacheKey(transaction));
   return res;
 };
-
-const getCacheKey = (transaction: Transaction): string =>
-  JSON.stringify({
-    amount: transaction.amount,
-    gasUnitPrice: transaction.options.gasUnitPrice,
-    maxGasAmount: transaction.options.maxGasAmount,
-    sequenceNumber: transaction.options.sequenceNumber,
-    expirationTimestampSecs: transaction.options.expirationTimestampSecs,
-  });
 
 export const getEstimatedGas = async (
   account: Account,
   transaction: Transaction,
   aptosClient: AptosAPI,
 ): Promise<IGetEstimatedGasReturnType> => {
-  const key = getCacheKey(transaction);
-
-  if (!CACHE.has(key)) {
-    CACHE.set(key, await getFee(account, transaction, aptosClient));
+  if (!CACHE.amount.eq(transaction.amount)) {
+    CACHE.estimate = getFee(account, transaction, aptosClient);
+    CACHE.amount = transaction.amount;
   }
 
-  return CACHE.get(key);
+  // XXX: we await Promise form getFee() in this place to make cache work for asynchronous calls
+  // Example [if wee await getFee()]: thread 1 goes to getFee() and awaits there for transaction simulation.
+  // at this moment thread 2 will enter getEstimatedGas() CACHE is not set yet, it will call getFee() as well
+  // Current implementation: CACHE.estimate set immediately after getFee() is called, so thread 2 will not go under if clause
+  // and both treads will wait for promise resolve in return statement.
+  return await CACHE.estimate;
 };

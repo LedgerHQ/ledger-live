@@ -347,12 +347,10 @@ describe("Aptos API", () => {
       functionArguments: ["0x13", 1],
     };
 
-    it("generates a transaction with the correct options", async () => {
+    it("generates a transaction without expireTimestamp", async () => {
       const options = {
         maxGasAmount: "100",
         gasUnitPrice: "50",
-        sequenceNumber: "1",
-        expirationTimestampSecs: "1735639799486",
       };
 
       const mockSimple = jest.fn().mockImplementation(async () => ({
@@ -376,18 +374,15 @@ describe("Aptos API", () => {
         options: {
           maxGasAmount: Number(options.maxGasAmount),
           gasUnitPrice: Number(options.gasUnitPrice),
-          accountSequenceNumber: Number(options.sequenceNumber),
-          expireTimestamp: Number(options.expirationTimestampSecs),
         },
         sender: Account.APTOS_1.address,
       });
     });
 
-    it("generates a transaction with no expire timestamp option set", async () => {
+    it("generates a transaction with default expireTimestamp", async () => {
       const options = {
         maxGasAmount: "100",
         gasUnitPrice: "50",
-        sequenceNumber: "1",
       };
 
       const mockSimple = jest.fn().mockImplementation(async () => ({
@@ -415,7 +410,6 @@ describe("Aptos API", () => {
         options: {
           maxGasAmount: Number(options.maxGasAmount),
           gasUnitPrice: Number(options.gasUnitPrice),
-          accountSequenceNumber: Number(options.sequenceNumber),
           expireTimestamp: 120,
         },
         sender: Account.APTOS_1.address,
@@ -426,8 +420,6 @@ describe("Aptos API", () => {
       const options = {
         maxGasAmount: "100",
         gasUnitPrice: "50",
-        sequenceNumber: "1",
-        expirationTimestampSecs: "1735639799486",
       };
 
       const mockSimple = jest.fn().mockImplementation(async () => null);

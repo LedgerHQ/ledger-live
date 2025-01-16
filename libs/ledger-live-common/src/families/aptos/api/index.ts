@@ -96,19 +96,11 @@ export class AptosAPI {
       opts.gasUnitPrice = Number(options.gasUnitPrice);
     }
 
-    if (!isUndefined(options.sequenceNumber)) {
-      opts.accountSequenceNumber = Number(options.sequenceNumber);
-    }
-
-    if (!isUndefined(options.expirationTimestampSecs)) {
-      opts.expireTimestamp = Number(options.expirationTimestampSecs);
-    } else {
-      try {
-        const ts = (await this.aptosClient.getLedgerInfo()).ledger_timestamp;
-        opts.expireTimestamp = Number(Math.ceil(+ts / 1_000_000 + 2 * 60)); // in milliseconds
-      } catch (_) {
-        // skip
-      }
+    try {
+      const { ledger_timestamp } = await this.aptosClient.getLedgerInfo();
+      opts.expireTimestamp = Number(Math.ceil(+ledger_timestamp / 1_000_000 + 2 * 60)); // in milliseconds
+    } catch (_) {
+      // skip
     }
 
     return this.aptosClient.transaction.build
