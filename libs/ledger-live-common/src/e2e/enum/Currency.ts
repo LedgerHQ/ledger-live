@@ -7,7 +7,10 @@ export class Currency {
     public readonly currencyId: string,
     public readonly speculosApp: AppInfos,
   ) {}
+
   static readonly BTC = new Currency("Bitcoin", "BTC", "bitcoin", AppInfos.BITCOIN);
+
+  static readonly APT = new Currency("Aptos", "APT", "aptos", AppInfos.APTOS);
 
   static readonly tBTC = new Currency(
     "Bitcoin Testnet",

@@ -4,7 +4,7 @@ import { Flex } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import { ScreenName } from "~/const";
 import { track } from "~/analytics";
-import SelectDevice2, { SetHeaderOptionsRequest } from "~/components/SelectDevice2";
+import DeviceSelector, { SetHeaderOptionsRequest } from "~/components/SelectDevice2";
 import DeviceActionModal from "~/components/DeviceActionModal";
 
 import {
@@ -16,6 +16,7 @@ import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackBut
 import { DeviceSelectionNavigatorParamsList } from "../../types";
 import { NetworkBasedAddAccountNavigator } from "LLM/features/Accounts/screens/AddAccount/types";
 import useSelectDeviceViewModel from "./useSelectDeviceViewModel";
+import SkipSelectDevice from "~/screens/SkipSelectDevice";
 
 // Defines some of the header options for this screen to be able to reset back to them.
 export const addAccountsSelectDeviceHeaderOptions = (
@@ -70,12 +71,9 @@ export default function SelectDevice({
         },
       ]}
     >
-      {/* 
-          TODO: should be rendered only on receive flow context -> TO BE DONE After delivering the add account flow
-          <SkipSelectDevice route={route} onResult={setDevice} />
-      */}
+      <SkipSelectDevice route={route} onResult={setDevice} />
       <Flex px={16} py={8} flex={1}>
-        <SelectDevice2
+        <DeviceSelector
           onSelect={setDevice}
           stopBleScanning={!!device || !isFocused}
           requestToSetHeaderOptions={requestToSetHeaderOptions}

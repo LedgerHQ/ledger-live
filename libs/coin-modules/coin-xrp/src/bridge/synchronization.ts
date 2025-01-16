@@ -63,7 +63,7 @@ async function filterOperations(
   address: string,
   blockHeight: number,
 ): Promise<Operation[]> {
-  const [operations, _] = await listOperations(address, { startAt: blockHeight });
+  const [operations, _] = await listOperations(address, { minHeight: blockHeight });
 
   return operations.map(
     op =>

@@ -54,11 +54,8 @@ const ValidatorField = ({ account, delegation, onChangeValidator, selectedPoolId
           setCurrentPool([apiRes.pools[0]]);
           const filteredPools = apiRes.pools.filter(pool => LEDGER_POOL_IDS.includes(pool.poolId));
           setDefaultPool(filteredPools);
-          const filteredLedgerPools = apiRes.pools.filter(
-            pool => pool.poolId === delegation?.poolId,
-          );
-          if (filteredLedgerPools.length) {
-            onChangeValidator(filteredLedgerPools[0]);
+          if (filteredPools.length) {
+            onChangeValidator(filteredPools[0]);
           }
         })
         .finally(() => {
@@ -119,14 +116,8 @@ const ValidatorField = ({ account, delegation, onChangeValidator, selectedPoolId
               data={
                 showAll
                   ? [
-                      currentPool[0],
-                      ...defaultPool.filter(p => p !== currentPool[0]),
-                      ...pools.filter(
-                        p =>
-                          p &&
-                          !poolIdsToFilterFromAllPools.includes(p.poolId) &&
-                          p !== currentPool[0],
-                      ),
+                      ...defaultPool,
+                      ...pools.filter(p => p && !poolIdsToFilterFromAllPools.includes(p.poolId)),
                     ]
                   : currentPool
               }

@@ -194,6 +194,10 @@ const transactionE2E = [
     transaction: new Transaction(Account.XRP_1, Account.XRP_2, "0.0001", undefined, "noTag"),
     xrayTicket: "B2CQA-2816",
   },
+  {
+    transaction: new Transaction(Account.APTOS_1, Account.APTOS_2, "0.0001"),
+    xrayTicket: "B2CQA-2920",
+  },
 ];
 
 const tokenTransactionInvalid = [
@@ -272,7 +276,7 @@ test.describe("Send flows", () => {
           await app.sendDrawer.addressValueIsVisible(
             transaction.transaction.accountToCredit.address,
           );
-          await app.drawer.close();
+          await app.drawer.closeDrawer();
           if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
             await app.layout.goToAccounts();
             await app.accounts.clickSyncBtnForAccount(

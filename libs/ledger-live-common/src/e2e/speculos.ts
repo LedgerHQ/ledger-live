@@ -26,6 +26,7 @@ import { sendTron } from "./families/tron";
 import { sendStellar } from "./families/stellar";
 import { sendCardano } from "./families/cardano";
 import { sendXRP } from "./families/xrp";
+import { sendAptos } from "./families/aptos";
 import { delegateNear } from "./families/near";
 import { delegateCosmos, sendCosmos } from "./families/cosmos";
 import { delegateSolana, sendSolana } from "./families/solana";
@@ -73,6 +74,14 @@ export const specs: Specs = {
     appQuery: {
       model: DeviceModelId.nanoSP,
       appName: "Bitcoin",
+    },
+    dependency: "",
+  },
+  Aptos: {
+    currency: getCryptoCurrencyById("aptos"),
+    appQuery: {
+      model: DeviceModelId.nanoSP,
+      appName: "Aptos",
     },
     dependency: "",
   },
@@ -360,7 +369,7 @@ export async function waitFor(text: string, maxAttempts: number = 10): Promise<s
     const responseData = response.data;
     const texts = responseData.events.map(event => event.text);
 
-    if (texts[0].includes(text)) {
+    if (texts?.[0]?.includes(text)) {
       textFound = true;
       return texts;
     }
@@ -518,6 +527,9 @@ export async function signSendTransaction(tx: Transaction) {
       break;
     case Currency.XRP:
       await sendXRP(tx);
+      break;
+    case Currency.APT:
+      await sendAptos();
       break;
     default:
       throw new Error(`Unsupported currency: ${currencyName}`);

@@ -1,13 +1,13 @@
 import React from "react";
-import { Account } from "@ledgerhq/types-live";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import Modal, { ModalBody } from "~/renderer/components/Modal";
 import { Flex } from "@ledgerhq/react-ui";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { EthStakingModalBody } from "./EthStakingModalBody";
+import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
 
 type Props = {
-  account: Account;
+  account: WalletAPIAccount;
   singleProviderRedirectMode?: boolean;
   /** Analytics source */
   source?: string;

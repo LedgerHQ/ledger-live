@@ -135,6 +135,8 @@ export type CryptoCurrencyId =
   | "songbird"
   | "moonbeam"
   | "near"
+  | "aptos"
+  | "aptos_testnet"
   | "rsk"
   | "bittorrent"
   | "optimism"
@@ -167,7 +169,8 @@ export type CryptoCurrencyId =
   | "zksync"
   | "zksync_sepolia"
   | "mantra"
-  | "xion";
+  | "xion"
+  | "zenrock";
 
 export type LedgerExplorerId =
   | "btc"

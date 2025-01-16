@@ -33,6 +33,7 @@ export default function useSelectDeviceViewModel(
         screen: ScreenName.ScanDeviceAccounts,
         params: {
           ...arg,
+          context,
         },
       });
     },

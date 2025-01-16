@@ -37,6 +37,8 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyArbitrumSepolia: DEFAULT_FEATURE,
   currencyAstar: DEFAULT_FEATURE,
   currencyAvalancheCChain: DEFAULT_FEATURE,
+  currencyAptos: DEFAULT_FEATURE,
+  currencyAptosTestnet: DEFAULT_FEATURE,
   currencyAxelar: DEFAULT_FEATURE,
   currencyBase: DEFAULT_FEATURE,
   currencyBaseSepolia: DEFAULT_FEATURE,
@@ -84,6 +86,7 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyZkSyncSepolia: DEFAULT_FEATURE,
   currencyMantra: DEFAULT_FEATURE,
   currencyXion: DEFAULT_FEATURE,
+  currencyZenrock: DEFAULT_FEATURE,
 };
 
 /**
@@ -506,6 +509,7 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
   llmRebornLP: { ...DEFAULT_FEATURE, params: { variant: ABTestingVariants.variantA } },
+  llmRebornFlex: DEFAULT_FEATURE,
   llmAccountListUI: DEFAULT_FEATURE,
 };
 

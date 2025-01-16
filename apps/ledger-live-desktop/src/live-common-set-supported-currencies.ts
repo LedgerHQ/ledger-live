@@ -56,6 +56,8 @@ setSupportedCurrencies([
   "songbird",
   "flare",
   "near",
+  "aptos",
+  "aptos_testnet",
   "icon",
   "icon_berlin_testnet",
   "optimism",
@@ -97,4 +99,5 @@ setSupportedCurrencies([
   "zksync_sepolia",
   "mantra",
   "xion",
+  "zenrock",
 ]);
