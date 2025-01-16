@@ -1,7 +1,18 @@
-export type AptosAddress = {
-  publicKey: string;
+export interface AptosAddress {
+  publicKey: Buffer;
+  chainCode: Buffer;
   address: string;
-};
+}
+
+export interface AptosSigner {
+  getAddress(path: string, display: boolean): Promise<AptosAddress>;
+  signTransaction(path: string, txBuffer: Buffer): Promise<{ signature: Buffer }>;
+}
+
+// export type AptosAddress = {
+//   publicKey: string;
+//   address: string;
+// };
 
 export type AptosSignature = {
   signature: null | Buffer;
@@ -20,7 +31,7 @@ export type AptosGetAddrResponse = {
 };
 
 // The AptosSigner functions must have the same signature as the one defined in hw-app-aptos package.
-export interface AptosSigner {
-  getAddress(path: string, display: boolean): Promise<AptosAddress>;
-  signTransaction(path: string, txBuffer: Buffer): Promise<AptosSignature>;
-}
+// export interface AptosSigner {
+//   getAddress(path: string, display: boolean): Promise<AptosAddress>;
+//   signTransaction(path: string, txBuffer: Buffer): Promise<AptosSignature>;
+// }

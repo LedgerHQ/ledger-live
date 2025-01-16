@@ -38,12 +38,12 @@ const buildSignOperation =
 
         o.next({ type: "device-signature-granted" });
 
-        if (!r.signature_compact) {
-          throw new Error("Signature compact is null");
-        }
+        // if (!r.signature_compact) {
+        //   throw new Error("Signature compact is null");
+        // }
 
         // build signature on the correct format
-        const signature = `${Buffer.from(r.signature_compact).toString("base64")}`;
+        const signature = r.signature.toString();
 
         const accountId = account.id;
         const hash = "";
