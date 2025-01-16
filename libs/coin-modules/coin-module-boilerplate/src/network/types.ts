@@ -1,36 +1,14 @@
 export type BoilerplateOperation = {
   meta: {
-    AffectedNodes: {
-      ModifiedNode: {
-        FinalFields: {
-          Account: string;
-          Balance: string;
-          Flags: number;
-          OwnerCount: number;
-          Sequence: number;
-        };
-        LedgerEntryType: string;
-        LedgerIndex: string;
-        PreviousFields: {
-          Balance: string;
-        };
-        PreviousTxnID: string;
-        PreviousTxnLgrSeq: number;
-      };
-    }[];
     TransactionIndex: number;
     TransactionResult: string;
-    delivered_amount: string;
+    delivered_amount: string; // keep
   };
   tx: {
     Account: string;
     Amount: string;
-    DeliverMax: string;
     Destination: string;
-    DestinationTag: number;
     Fee: string;
-    Flags: number;
-    LastLedgerSequence: number;
     Memos: {
       Memo: {
         MemoData: string;
@@ -43,7 +21,6 @@ export type BoilerplateOperation = {
     date: number;
     hash: string;
     inLedger: number;
-    ledger_index: number;
   };
   validated: boolean;
 };
