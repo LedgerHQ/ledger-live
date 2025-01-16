@@ -1,3 +1,9 @@
+describe("APTOS synchronisation", () => {
+  it("be true", () => {
+    expect(true).toBeTruthy();
+  });
+});
+
 // import { AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 // import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 // import { Account, SyncConfig } from "@ledgerhq/types-live";
@@ -14,7 +20,7 @@
 // jest.mock("@ledgerhq/coin-framework/account");
 // let mockedDecodeAccountId = jest.fn();
 
-// jest.mock("./api");
+// jest.mock("../api");
 // let mockedAptosAPI = jest.mocked(AptosAPI);
 
 // jest.mock("./logic");

@@ -3,12 +3,12 @@ import {
   makeScanAccounts,
   getSerializedAddressParameters,
   makeSync,
+  updateTransaction,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import resolver from "../signer";
 import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import type { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
-import { updateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import resolver from "../signer";
 import type { Transaction, TransactionStatus, AptosSigner } from "../types";
 import getTransactionStatus from "./getTransactionStatus";
 import estimateMaxSpendable from "./estimateMaxSpendable";

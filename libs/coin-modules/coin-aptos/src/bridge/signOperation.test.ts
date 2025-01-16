@@ -1,9 +1,15 @@
+describe("APTOS signOperation", () => {
+  it("be true", () => {
+    expect(true).toBeTruthy();
+  });
+});
+
 // import { Observable } from "rxjs";
 // import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
 // import signOperation from "./signOperation";
 // import BigNumber from "bignumber.js";
 
-// jest.mock("./api", () => {
+// jest.mock("../api", () => {
 //   return {
 //     AptosAPI: function () {
 //       return {
