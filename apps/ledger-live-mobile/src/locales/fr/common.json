@@ -971,6 +971,9 @@
       "title" : "Fournisseur non valide",
       "description" : "Vous devez modifier le paramètre \"Fournisseur de My Ledger\". Dans Ledger Live, accédez aux Paramètres, sélectionnez \"Fonctionnalités expérimentales\", puis choisissez un autre fournisseur."
     },
+    "GasLessThanEstimate" : {
+      "title" : "Les frais risquent d’être trop bas. Veuillez les augmenter."
+    },
     "SequenceNumberError" : {
       "title" : "Erreur dans le numéro de séquence",
       "description" : "Veuillez fermer la fenêtre et réessayer plus tard."
@@ -1291,7 +1294,7 @@
       "desc" : "Nos wallets physiques sont les seuls dont la sécurité a été certifiée par l’Agence nationale de la cybersécurité."
     },
     "title" : "Vous avez besoin d’un Ledger",
-    "desc" : "Pour votre sécurité, Ledger Live ne fonctionne qu’avec un appareil. Vous avez besoin d’un Ledger pour continuer. ",
+    "desc" : "For your security,\n Ledger Live only works with a Ledger.",
     "cta" : "Acheter votre wallet Ledger",
     "footer" : "J’ai un wallet Ledger, je le configure",
     "bannerTitle" : "Une sécurité de pointe pour vos cryptos et NFT",
@@ -2881,7 +2884,7 @@
       "analytics" : "Statistiques",
       "analyticsDesc" : "Autorisez Ledger à collecter les données d’utilisation pour nous aider à mesurer la performance de Ledger Live, à améliorer l’application et votre expérience.",
       "mevProtection" : "Protection MEV",
-      "mevProtectionDesc" : "Activez la protection MEV pour des transactions plus fiables sur Ethereum.",
+      "mevProtectionDesc" : "Activez la protection contre la MEV pour des transactions plus fiables sur Ethereum.",
       "personalizedRecommendations" : "Expérience personnalisée",
       "personalizedRecommendationsDesc" : "Autorisez Ledger à collecter les données sur l’utilisation de l’application pour nous aider à vous proposer des recommandations personnalisées, des contenus adaptés à vos préférences et à mesurer l’efficacité de nos campagnes marketing.",
       "analyticsModal" : {
@@ -3768,6 +3771,7 @@
       "to" : "À",
       "infoTotalTitle" : "Total débité",
       "infoTotalDesc" : "Comprend le montant de la transaction et les frais de réseau choisis",
+      "gasFee" : "Frais de gaz",
       "gasLimit" : "Limite de gaz",
       "gasPrice" : "Prix du gaz",
       "maxFee" : "Frais maximaux",
@@ -3991,6 +3995,8 @@
       "desc" : "Voulez-vous vraiment annuler l’ajout de comptes ?"
     },
     "imported" : "Actif bien ajouté",
+    "added" : "Compte ajouté à votre portefeuille",
+    "added_plural" : "{{count}} comptes ajoutés à votre portefeuille",
     "sections" : {
       "importable" : {
         "title" : "Ajouter un compte existant"
@@ -4047,6 +4053,32 @@
         "title" : "Taproot",
         "desc" : "Nouvelle mise à niveau du réseau {{currency}}. Elle offrira une meilleure confidentialité et des frais moins élevés. Elle n’est pas encore prise en charge par tous les échanges et wallets."
       }
+    },
+    "scanDeviceAccounts" : {
+      "title" : "Sélectionnez le compte à ajouter",
+      "ctaStopScan" : "Arrêter le balayage",
+      "confirm" : "Confirmer",
+      "scanningTitle" : "Recherche des comptes existant déjà sur la blockchain...",
+      "sections" : {
+        "importable" : {
+          "title" : "{{count}} compte a été trouvé",
+          "title_plural" : "{{count}} comptes ont été trouvés"
+        },
+        "creatable" : {
+          "title" : "Nouveau compte"
+        },
+        "imported" : {
+          "title" : "Compte déjà dans votre portefeuille ({{length}})",
+          "title_plural" : "Comptes déjà dans votre portefeuille ({{length}})"
+        },
+        "migrate" : {
+          "title" : "Comptes à mettre à jour"
+        }
+      }
+    },
+    "addAccountsSuccess" : {
+      "ctaAddFunds" : "Ajouter des actifs à mon compte",
+      "ctaClose" : "Fermer"
     }
   },
   "DeviceAction" : {
@@ -7140,7 +7172,9 @@
       "title" : "Sélectionner un actif"
     },
     "selectNetwork" : {
-      "title" : "Sélectionner le réseau de blockchain pour cet actif"
+      "title" : "Sélectionner le réseau de blockchain pour cet actif",
+      "detectedAccounts" : "{{count}} compte (détecté)",
+      "detectedAccounts_plural" : "{{count}} comptes (détectés)"
     }
   }
 }
