@@ -1,5 +1,15 @@
 # live-mobile
 
+## 3.60.0-nightly.8
+
+### Minor Changes
+
+- [#8802](https://github.com/LedgerHQ/ledger-live/pull/8802) [`b447baf`](https://github.com/LedgerHQ/ledger-live/commit/b447bafa2d4de2f1bf48db4fe8fe99fcbaae006a) Thanks [@themooneer](https://github.com/themooneer)! - Add account v2 : Device selection & Scan account step
+
+- [#8901](https://github.com/LedgerHQ/ledger-live/pull/8901) [`71ad483`](https://github.com/LedgerHQ/ledger-live/commit/71ad483d0982feb69d43c9e7af1b70513b9b2f3e) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - LLM Swap: fix the container for the webview
+
+- [#8850](https://github.com/LedgerHQ/ledger-live/pull/8850) [`08c82f9`](https://github.com/LedgerHQ/ledger-live/commit/08c82f96fc5f2aab7c689922b095da7945b61e4e) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - QR code scanning was failling to retrieve recipient's address in send flow
+
 ## 3.60.0-nightly.7
 
 ### Minor Changes

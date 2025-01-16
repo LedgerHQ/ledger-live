@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.95.0-nightly.8
+
+### Patch Changes
+
+- [#8885](https://github.com/LedgerHQ/ledger-live/pull/8885) [`24c3120`](https://github.com/LedgerHQ/ledger-live/commit/24c312052787a594f024cb1743730c42cdd0e165) Thanks [@qperrot](https://github.com/qperrot)! - fix place in list for selected validator cardano
+
 ## 2.95.0-nightly.7
 
 ### Minor Changes
