@@ -125,6 +125,7 @@ export default {
       name,
       apiBaseUrl,
     };
+    let latestUpdateEvent: UpdateEvent<LiveData> | null = null;
     const ledgerKeyRingProtocolSDK = getSdk(false, context, withDevice);
 
     const cloudSyncSDK = new CloudSyncSDK({
@@ -135,6 +136,7 @@ export default {
       getCurrentVersion: () => version || 1,
       saveNewUpdate: async (event: UpdateEvent<LiveData>) => {
         console.log(event);
+        latestUpdateEvent = event;
       },
     });
 
@@ -154,7 +156,7 @@ export default {
           { rootId, walletSyncEncryptionKey, applicationPath },
           { pubkey: pubKey, privatekey: privateKey },
         )
-        .then(result => JSON.stringify(result, null, 2));
+        .then(result => JSON.stringify({ result, updateEvent: latestUpdateEvent }, null, 2));
     }
 
     return "command does not exist";
