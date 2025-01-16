@@ -180,6 +180,21 @@ const AccountPage = ({
       >
         <AccountHeaderActions account={account} parentAccount={parentAccount} />
       </Box>
+      {currencyConfig?.status.type === "feature_unavailable" && (
+        <TopBanner
+          status="warning"
+          content={{
+            message: t("account.featureUnavailable.title", {
+              title: currencyConfig.status.title,
+              link: currencyConfig.status.link || localizedContactSupportURL,
+            }),
+          }}
+          link={{
+            text: t("account.featureUnavailable.support"),
+            href: localizedContactSupportURL,
+          }}
+        />
+      )}
       {currencyConfig?.status.type === "will_be_deprecated" && (
         <TopBanner
           status="warning"
