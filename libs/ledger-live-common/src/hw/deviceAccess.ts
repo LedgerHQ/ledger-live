@@ -46,6 +46,7 @@ let errorRemapping = e => throwError(() => e);
 export const setErrorRemapping = (f: (arg0: Error) => Observable<never>): void => {
   errorRemapping = f;
 };
+
 const never = new Promise(() => {});
 
 /**
