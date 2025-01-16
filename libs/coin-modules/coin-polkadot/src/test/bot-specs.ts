@@ -62,7 +62,8 @@ const polkadot: AppSpec<Transaction> = {
   mutations: [
     {
       name: "send 50%~",
-      maxRun: 4,
+      feature: "send",
+      maxRun: 1,
       testDestination: genericTestDestination,
       transaction: ({ account, siblings, bridge }) => {
         invariant((account as PolkadotAccount).polkadotResources, "polkadot resource");
@@ -107,6 +108,7 @@ const polkadot: AppSpec<Transaction> = {
     },
     {
       name: "send max",
+      feature: "sendMax",
       maxRun: 1,
       testDestination: genericTestDestination,
       transaction: ({ account, siblings, bridge }) => {
@@ -133,6 +135,7 @@ const polkadot: AppSpec<Transaction> = {
     },
     {
       name: "bond - bondExtra",
+      feature: "staking",
       maxRun: 1,
       transaction: ({ siblings, account, bridge }) => {
         expectSiblingsHaveSpendablePartGreaterThan(siblings, 0.5);
@@ -181,7 +184,8 @@ const polkadot: AppSpec<Transaction> = {
     },
     {
       name: "unbond",
-      maxRun: 2,
+      feature: "staking",
+      maxRun: 1,
       transaction: ({ account, bridge }) => {
         const { polkadotResources } = account as PolkadotAccount;
         invariant(polkadotResources, "polkadot");
@@ -205,6 +209,7 @@ const polkadot: AppSpec<Transaction> = {
     },
     {
       name: "rebond",
+      feature: "staking",
       maxRun: 1,
       transaction: ({ account, bridge }) => {
         const { polkadotResources } = account as PolkadotAccount;
@@ -230,6 +235,7 @@ const polkadot: AppSpec<Transaction> = {
     },
     {
       name: "nominate",
+      feature: "staking",
       maxRun: 1,
       transaction: ({ account, bridge }) => {
         invariant((account as PolkadotAccount).polkadotResources, "polkadot");
@@ -255,7 +261,8 @@ const polkadot: AppSpec<Transaction> = {
     },
     {
       name: "withdraw",
-      maxRun: 2,
+      feature: "staking",
+      maxRun: 1,
       transaction: ({ account, bridge }) => {
         const { polkadotResources } = account as PolkadotAccount;
         invariant(polkadotResources, "polkadot");

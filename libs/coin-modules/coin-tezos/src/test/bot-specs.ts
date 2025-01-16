@@ -43,6 +43,7 @@ const tezos: AppSpec<Transaction> = {
   mutations: [
     {
       name: "send unrevealed",
+      feature: "send",
       maxRun: 1,
       testDestination: genericTestDestination,
       transaction: ({ maxSpendable, account, siblings, bridge }) => {
@@ -61,7 +62,8 @@ const tezos: AppSpec<Transaction> = {
     },
     {
       name: "send revealed",
-      maxRun: 2,
+      feature: "send",
+      maxRun: 1,
       testDestination: genericTestDestination,
       transaction: ({ maxSpendable, account, siblings, bridge }) => {
         expectRevealed(account);
@@ -79,7 +81,8 @@ const tezos: AppSpec<Transaction> = {
     },
     {
       name: "send max (non delegating)",
-      maxRun: 3,
+      feature: "sendMax",
+      maxRun: 1,
       testDestination: genericTestDestination,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
         invariant(!isAccountDelegating(account), "account must not be delegating");
@@ -96,6 +99,7 @@ const tezos: AppSpec<Transaction> = {
     },
     {
       name: "delegate unrevealed",
+      feature: "staking",
       maxRun: 1,
       transaction: ({ account, bridge }) => {
         expectUnrevealed(account);
@@ -109,6 +113,7 @@ const tezos: AppSpec<Transaction> = {
     },
     {
       name: "delegate revealed",
+      feature: "staking",
       maxRun: 1,
       transaction: ({ account, bridge }) => {
         expectRevealed(account);
@@ -122,6 +127,7 @@ const tezos: AppSpec<Transaction> = {
     },
     {
       name: "undelegate unrevealed",
+      feature: "staking",
       maxRun: 1,
       transaction: ({ account, bridge }) => {
         invariant(getAccountDelegationSync(account), "account must be delegating");
@@ -134,6 +140,7 @@ const tezos: AppSpec<Transaction> = {
     },
     {
       name: "undelegate revealed",
+      feature: "staking",
       maxRun: 1,
       transaction: ({ account, bridge }) => {
         invariant(getAccountDelegationSync(account), "account must be delegating");

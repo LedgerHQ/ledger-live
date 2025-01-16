@@ -54,6 +54,7 @@ const tonSpecs: AppSpec<Transaction> = {
   mutations: [
     {
       name: "Send ~50%",
+      feature: "send",
       maxRun: 1,
       testDestination,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
@@ -90,6 +91,7 @@ const tonSpecs: AppSpec<Transaction> = {
     },
     {
       name: "Transfer Max",
+      feature: "sendMax",
       maxRun: 1,
       transaction: ({ account, siblings, bridge }) => {
         const updates: Array<Partial<Transaction>> = [
@@ -118,6 +120,7 @@ const tonSpecs: AppSpec<Transaction> = {
     },
     {
       name: "Send ~50% jUSDT",
+      feature: "tokens",
       maxRun: 1,
       deviceAction: generateDeviceActionFlow(BotScenario.TOKEN_TRANSFER),
       transaction: ({ account, bridge, maxSpendable, siblings }) => {
