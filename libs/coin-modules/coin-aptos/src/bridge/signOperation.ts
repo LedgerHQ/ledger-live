@@ -8,6 +8,7 @@ import { AptosAPI } from "../api";
 
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { AptosSigner } from "../types";
+import { signTransaction } from "../network";
 
 export const getAddress = (
   a: Account,
@@ -28,22 +29,10 @@ const buildSignOperation =
         const aptosClient = new AptosAPI(account.currency.id);
 
         const rawTx = await buildTransaction(account, transaction, aptosClient);
-        const txPayload = Buffer.from(rawTx.bcsToBytes());
-        const { derivationPath } = getAddress(account);
-
-        const { r } = await signerContext(deviceId, async signer => {
-          const r = await signer.signTransaction(derivationPath, txPayload);
-          return { r };
-        });
+        const txBytes = await signTransaction(signerContext, account, deviceId, rawTx);
+        const signature = Buffer.from(txBytes).toString("hex");
 
         o.next({ type: "device-signature-granted" });
-
-        // if (!r.signature_compact) {
-        //   throw new Error("Signature compact is null");
-        // }
-
-        // build signature on the correct format
-        const signature = r.signature.toString();
 
         const accountId = account.id;
         const hash = "";
