@@ -43,7 +43,7 @@ export default function SelectNetwork({
         onPress={onPressItem}
         subTitle={
           item.accounts.length > 0
-            ? t("transfer.receive.selectNetwork.account", { count: item.accounts.length })
+            ? t("assetSelection.selectNetwork.detectedAccounts", { count: item.accounts.length })
             : ""
         }
       />

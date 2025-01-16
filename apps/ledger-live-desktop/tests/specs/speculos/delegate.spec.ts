@@ -105,7 +105,7 @@ test.describe("Delegate flows", () => {
           await app.delegateDrawer.transactionTypeIsVisible();
           await app.delegateDrawer.providerIsVisible(account.delegate);
           await app.delegateDrawer.amountValueIsVisible();
-          await app.drawer.close();
+          await app.drawer.closeDrawer();
 
           if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
             await app.layout.syncAccounts();

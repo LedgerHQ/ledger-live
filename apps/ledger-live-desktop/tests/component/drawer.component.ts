@@ -35,7 +35,7 @@ export class Drawer extends Component {
   }
 
   @step("Close drawer")
-  async close() {
+  async closeDrawer() {
     await this.closeButton.click();
   }
 

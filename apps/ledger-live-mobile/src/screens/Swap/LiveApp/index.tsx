@@ -9,7 +9,6 @@ import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalL
 import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import GenericErrorView from "~/components/GenericErrorView";
-import TabBarSafeAreaView from "~/components/TabBar/TabBarSafeAreaView";
 import { initialWebviewState } from "~/components/Web3AppWebview/helpers";
 import { WebviewState } from "~/components/Web3AppWebview/types";
 import { WebView } from "./WebView";
@@ -46,10 +45,8 @@ export function SwapLiveApp() {
   }
 
   return (
-    <>
-      <TabBarSafeAreaView>
-        <WebView manifest={manifest} setWebviewState={setWebviewState} />
-      </TabBarSafeAreaView>
-    </>
+    <Flex flex={1} mb={10}>
+      <WebView manifest={manifest} setWebviewState={setWebviewState} />
+    </Flex>
   );
 }

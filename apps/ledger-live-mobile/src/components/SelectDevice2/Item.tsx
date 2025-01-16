@@ -19,6 +19,7 @@ const Item = ({ device, onPress }: Props) => {
 
   const wording = wired ? "usb" : available ? "available" : "unavailable";
   const color = wording === "unavailable" ? "neutral.c60" : "primary.c80";
+  const testID = `device-item-${device.deviceId}`;
 
   const onItemContextPress = useCallback(() => {
     setIsRemoveDeviceMenuOpen(true);
@@ -42,7 +43,8 @@ const Item = ({ device, onPress }: Props) => {
   return (
     <Touchable
       onPress={() => onPress(device)}
-      touchableTestID={"device-item-" + device.deviceId}
+      touchableTestID={testID}
+      testID={testID}
       accessibilityRole="button"
     >
       <Flex

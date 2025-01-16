@@ -93,6 +93,20 @@ export default function useSelectNetworkViewModel({
     [accounts, sortedCryptoCurrencies],
   );
 
+  const navigateToDevice = useCallback(
+    (currency: CryptoCurrency, createTokenAccount: boolean) => {
+      navigation.navigate(NavigatorName.DeviceSelection, {
+        screen: ScreenName.SelectDevice,
+        params: {
+          currency: currency,
+          createTokenAccount,
+          context,
+        },
+      });
+    },
+    [navigation, context],
+  );
+
   const processNetworkSelection = useCallback(
     (selectedCurrency: CryptoCurrency | TokenCurrency) => {
       track("network_clicked", {
@@ -107,10 +121,11 @@ export default function useSelectNetworkViewModel({
       );
 
       if (!cryptoToSend) return;
+      const isAddAccountContext = context === "addAccounts";
 
       const accs = findAccountByCurrency(accounts, cryptoToSend);
 
-      if (accs.length > 0) {
+      if (accs.length > 0 && !isAddAccountContext) {
         // if we found one or more accounts of the given currency we go to select account
         navigation.navigate(NavigatorName.AddAccounts, {
           screen: ScreenName.SelectAccounts,
@@ -120,43 +135,34 @@ export default function useSelectNetworkViewModel({
           },
         });
       } else if (cryptoToSend.type === "TokenCurrency") {
-        // cases for token currencies
-        const parentAccounts = findAccountByCurrency(accounts, cryptoToSend.parentCurrency);
-
-        if (parentAccounts.length > 0) {
-          // if we found one or more accounts of the parent currency we select account
-
-          navigation.navigate(NavigatorName.AddAccounts, {
-            screen: ScreenName.SelectAccounts,
-            params: {
-              currency: cryptoToSend,
-              createTokenAccount: true,
-              context,
-            },
-          });
+        if (isAddAccountContext) {
+          navigateToDevice(cryptoToSend.parentCurrency, true);
         } else {
-          // if we didn't find any account of the parent currency we add and create one
-          navigation.navigate(NavigatorName.DeviceSelection, {
-            screen: ScreenName.SelectDevice,
-            params: {
-              currency: cryptoToSend.parentCurrency,
-              createTokenAccount: true,
-              context,
-            },
-          });
+          // cases for token currencies
+          const parentAccounts = findAccountByCurrency(accounts, cryptoToSend.parentCurrency);
+
+          if (parentAccounts.length > 0) {
+            // if we found one or more accounts of the parent currency we select account
+
+            navigation.navigate(NavigatorName.AddAccounts, {
+              screen: ScreenName.SelectAccounts,
+              params: {
+                currency: cryptoToSend,
+                createTokenAccount: true,
+                context,
+              },
+            });
+          } else {
+            // if we didn't find any account of the parent currency we add and create one
+            navigateToDevice(cryptoToSend.parentCurrency, true);
+          }
         }
       } else {
         // else we create a currency account
-        navigation.navigate(NavigatorName.DeviceSelection, {
-          screen: ScreenName.SelectDevice,
-          params: {
-            currency: cryptoToSend,
-            context,
-          },
-        });
+        navigateToDevice(cryptoToSend, false);
       }
     },
-    [accounts, navigation, provider, context],
+    [accounts, navigation, provider, context, navigateToDevice],
   );
 
   const hideBanner = useCallback(() => {

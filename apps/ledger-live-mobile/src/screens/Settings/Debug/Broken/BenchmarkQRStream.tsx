@@ -87,7 +87,7 @@ class BenchmarkQRStream extends PureComponent<Props, State> {
           },
         ]}
       >
-        <Scanner onResult={this.onBarCodeRead} liveQrCode />
+        <Scanner onResult={this.onBarCodeRead} liveQRCode />
         <View style={[darkenStyle]} />
         <View style={[darkenStyle, styles.centered]}>
           <View style={styles.centered}>

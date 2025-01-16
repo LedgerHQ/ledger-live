@@ -541,6 +541,7 @@ export enum ScreenName {
   SelectDevice = "SelectDevice",
   SelectAccounts = "SelectAccounts",
   ScanDeviceAccounts = "ScanDeviceAccounts",
+  AddAccountsWarning = "AddAccountsWarning",
 }
 
 export enum NavigatorName {
