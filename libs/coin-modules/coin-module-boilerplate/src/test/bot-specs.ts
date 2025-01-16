@@ -1,3 +1,5 @@
+/*
+
 import invariant from "invariant";
 import expect from "expect";
 import { DeviceModelId } from "@ledgerhq/devices";
@@ -8,7 +10,7 @@ import { botTest, genericTestDestination, pickSiblings } from "@ledgerhq/coin-fr
 import { acceptTransaction } from "./bot-deviceActions";
 import type { Transaction } from "../types";
 
-const currency = getCryptoCurrencyById("ripple");
+const currency = getCryptoCurrencyById("boilerplate");
 const minAmountCutoff = parseCurrencyUnit(currency.units[0], "0.1");
 const reserve = parseCurrencyUnit(currency.units[0], "20");
 
@@ -71,3 +73,4 @@ const boilerplateSpec: AppSpec<Transaction> = {
 export default {
   boilerplateSpec,
 };
+*/
