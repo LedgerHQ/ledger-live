@@ -264,17 +264,17 @@ for (const { swap, xrayTicket } of tooLowAmountForQuoteSwaps) {
 
 const swapWithSendMax = [
   {
-    swap: new Swap(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "0.02", Fee.MEDIUM),
+    swap: new Swap(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "0", Fee.MEDIUM),
     xrayTicket: "B2CQA-2110, QAA-292",
   },
   {
-    swap: new Swap(Account.ETH_1, Account.SOL_1, "0.02", Fee.MEDIUM),
+    swap: new Swap(Account.ETH_1, Account.SOL_1, "0", Fee.MEDIUM),
     xrayTicket: "B2CQA-2110, QAA-292",
   }
 ];
 
 for (const { swap, xrayTicket } of swapWithSendMax) {
-  test.describe.only("Swap - Swap with Send Max", () => {
+  test.describe("Swap - Swap with Send Max", () => {
     test.beforeAll(async () => {
       process.env.SWAP_DISABLE_APPS_INSTALL = "true";
       process.env.SWAP_API_BASE = "https://swap-stg.ledger-test.com/v5";
@@ -316,7 +316,7 @@ for (const { swap, xrayTicket } of swapWithSendMax) {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
         await performSwapUntilQuoteSelectionStepWithSendMax(app, electronApp, swap);
         const selectedProvider = await app.swap.selectExchange(electronApp);
-        await performSwapUntilDeviceVerificationStep(app, electronApp, swap, selectedProvider);
+        await performSwapUntilDeviceVerificationStepSendMax(app, electronApp, swap, selectedProvider);
         await app.speculos.verifyAmountsAndAcceptSwap(swap);
         await app.swapDrawer.verifyExchangeCompletedTextContent(swap.accountToCredit.currency.name);
       },
@@ -519,6 +519,26 @@ async function performSwapUntilDeviceVerificationStep(
 
   await app.swapDrawer.verifyAmountToReceive(amountTo);
   await app.swapDrawer.verifyAmountSent(swap.amount, swap.accountToDebit.currency.ticker);
+  await app.swapDrawer.verifySourceAccount(swap.accountToDebit.currency.name);
+  await app.swapDrawer.verifyTargetCurrency(swap.accountToCredit.currency.name);
+  await app.swapDrawer.verifyProvider(selectedProvider);
+}
+
+async function performSwapUntilDeviceVerificationStepSendMax(
+  app: Application,
+  electronApp: ElectronApplication,
+  swap: Swap,
+  selectedProvider: any,
+) {
+  await app.swap.clickExchangeButton(electronApp, selectedProvider);
+
+  const amountTo = await app.swapDrawer.getAmountToReceive();
+  const fees = await app.swapDrawer.getFees();
+
+  swap.setAmountToReceive(amountTo);
+  swap.setFeesAmount(fees);
+
+  await app.swapDrawer.verifyAmountToReceive(amountTo);
   await app.swapDrawer.verifySourceAccount(swap.accountToDebit.currency.name);
   await app.swapDrawer.verifyTargetCurrency(swap.accountToCredit.currency.name);
   await app.swapDrawer.verifyProvider(selectedProvider);

@@ -143,7 +143,7 @@ export class SwapPage extends AppPage {
   @step("Click Exchange button")
   async clickExchangeButton(electronApp: ElectronApplication, provider: string) {
     const [, webview] = electronApp.windows();
-    await webview.getByText(`Swap with ${provider}`).click();
+    await webview.getByRole('button',{name: `Swap with ${provider}`}).click();
   }
 
   @step("Click Max spend toggle")
