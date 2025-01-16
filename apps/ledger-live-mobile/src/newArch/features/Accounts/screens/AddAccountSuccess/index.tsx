@@ -1,4 +1,4 @@
-import { Button, Flex, Icons, rgba, Text } from "@ledgerhq/native-ui";
+import { Flex, Icons, rgba, Text } from "@ledgerhq/native-ui";
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -25,6 +25,7 @@ import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { useNavigation } from "@react-navigation/core";
 import useAnimatedStyle from "../ScanDeviceAccounts/components/ScanDeviceAccountsFooter/useAnimatedStyle";
 import AddFundsButton from "../../components/AddFundsButton";
+import CloseWithConfirmation from "LLM/components/CloseWithConfirmation";
 
 type Props = BaseComposite<
   StackNavigatorProps<NetworkBasedAddAccountNavigator, ScreenName.AddAccountsSuccess>
@@ -46,7 +47,7 @@ export default function AddAccountsSuccess({ route }: Props) {
     [navigation],
   );
 
-  const { currency, accountsToAdd } = route.params || {};
+  const { currency, accountsToAdd, onCloseNavigation } = route.params || {};
 
   const renderItem = useCallback(
     ({ item }: ListRenderItemInfo<AccountLikeEnhanced>) => (
@@ -98,9 +99,11 @@ export default function AddAccountsSuccess({ route }: Props) {
       </Flex>
       <Flex mb={insets.bottom + 2} px={6} rowGap={6}>
         <AddFundsButton accounts={accountsToAdd} currency={currency} />
-        <Button size="large" testID="button-create-account">
-          {t("addAccounts.addAccountsSuccess.ctaClose")}
-        </Button>
+        <CloseWithConfirmation
+          showButton
+          buttonText={t("addAccounts.addAccountsSuccess.ctaClose")}
+          onClose={onCloseNavigation}
+        />
       </Flex>
     </SafeAreaView>
   );
