@@ -1,5 +1,12 @@
 # @ledgerhq/react-native-hw-transport-ble
 
+## 6.34.0-next.0
+
+### Minor Changes
+
+- [#8774](https://github.com/LedgerHQ/ledger-live/pull/8774) [`8cf98f7`](https://github.com/LedgerHQ/ledger-live/commit/8cf98f7a2f5afa857f761122ef2bc3743294a903) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Extract Ble plx instance in a specific class
+  Update react-native-ble-plx to 3.2.1
+
 ## 6.33.4
 
 ### Patch Changes
