@@ -19,8 +19,7 @@ const aptos: AppSpec<Transaction> = {
     appName: "Aptos",
   },
   genericDeviceAction: acceptTransaction,
-  testTimeout: 1000,
-  // testTimeout: 5 * 60 * 1000,
+  testTimeout: 5 * 60 * 1000,
   minViableAmount: minBalanceNewAccount,
   transactionCheck: ({ maxSpendable }) => {
     invariant(maxSpendable.gt(minBalanceNewAccount), "balance is too low");
@@ -56,6 +55,28 @@ const aptos: AppSpec<Transaction> = {
             accountBeforeTransaction.balance.minus(operation.value).toString(),
           ),
         );
+      },
+    },
+    {
+      name: "Send max",
+      maxRun: 2,
+      testDestination: genericTestDestination,
+      transaction: ({ account, siblings, bridge }) => {
+        const sibling = pickSiblings(siblings, 4);
+        const recipient = sibling.freshAddress;
+        const transaction = bridge.createTransaction(account);
+
+        return {
+          transaction,
+          updates: [{ recipient }, { useAllAmount: true }],
+        };
+      },
+      test: ({ account, accountBeforeTransaction, operation }) => {
+        botTest("Account balance should have decreased", () => {
+          expect(account.balance.toNumber()).toEqual(
+            accountBeforeTransaction.balance.minus(operation.value).toNumber(),
+          );
+        });
       },
     },
   ],

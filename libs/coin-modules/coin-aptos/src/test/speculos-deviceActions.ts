@@ -25,6 +25,13 @@ export const acceptTransaction: DeviceAction<Transaction, State<Transaction>> = 
       button: SpeculosButton.RIGHT,
     },
     {
+      title: "Type",
+      button: SpeculosButton.RIGHT,
+      expectedValue: ({ transaction }) => {
+        return typeWording[transaction.mode as keyof typeof typeWording];
+      },
+    },
+    {
       title: "Amount",
       button: SpeculosButton.RIGHT,
       expectedValue: ({ account, status }) =>
@@ -36,25 +43,6 @@ export const acceptTransaction: DeviceAction<Transaction, State<Transaction>> = 
       title: "Address",
       button: SpeculosButton.RIGHT,
       expectedValue: ({ transaction }) => transaction.recipient,
-    },
-    {
-      title: "Max Fees",
-      button: SpeculosButton.RIGHT,
-    },
-    {
-      title: "No Gateway Fee",
-      button: SpeculosButton.RIGHT,
-    },
-    {
-      title: "Validator",
-      button: SpeculosButton.RIGHT,
-    },
-    {
-      title: "Type",
-      button: SpeculosButton.RIGHT,
-      expectedValue: ({ transaction }) => {
-        return typeWording[transaction.mode as keyof typeof typeWording];
-      },
     },
     {
       title: "Accept",
