@@ -1,19 +1,13 @@
 export type BoilerplateOperation = {
   meta: {
-    TransactionIndex: number;
-    TransactionResult: string;
-    delivered_amount: string; // keep
+    delivered_amount: string;
   };
   tx: {
     Account: string;
     Amount: string;
     Destination: string;
     Fee: string;
-    Memos: {
-      Memo: {
-        MemoData: string;
-      };
-    }[];
+    Memo: string;
     Sequence: number;
     SigningPubKey: string;
     TransactionType: string;
