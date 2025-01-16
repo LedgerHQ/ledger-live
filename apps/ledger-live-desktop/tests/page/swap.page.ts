@@ -49,10 +49,6 @@ export class SwapPage extends AppPage {
     await this.maxSpendableToggle.waitFor({ state: "visible" });
   }
 
-  async sendMax() {
-    await this.maxSpendableToggle.click();
-  }
-
   async waitForCurrenciesToExist() {
     this.page.getByRole("option");
   }
@@ -148,6 +144,12 @@ export class SwapPage extends AppPage {
   async clickExchangeButton(electronApp: ElectronApplication, provider: string) {
     const [, webview] = electronApp.windows();
     await webview.getByText(`Swap with ${provider}`).click();
+  }
+
+  @step("Click Max spend toggle")
+  async sendMax(electronApp: ElectronApplication) {
+    const [, webview] = electronApp.windows();
+    await webview.getByTestId("from-account-max-toggle").click();
   }
 
   async confirmExchange() {

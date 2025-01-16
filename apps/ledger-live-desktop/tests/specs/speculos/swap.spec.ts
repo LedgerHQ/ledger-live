@@ -274,7 +274,7 @@ const swapWithSendMax = [
 ];
 
 for (const { swap, xrayTicket } of swapWithSendMax) {
-  test.describe("Swap - Swap with Send Max", () => {
+  test.describe.only("Swap - Swap with Send Max", () => {
     test.beforeAll(async () => {
       process.env.SWAP_DISABLE_APPS_INSTALL = "true";
       process.env.SWAP_API_BASE = "https://swap-stg.ledger-test.com/v5";
@@ -315,8 +315,8 @@ for (const { swap, xrayTicket } of swapWithSendMax) {
       async ({ app, electronApp }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
         await performSwapUntilQuoteSelectionStepWithSendMax(app, electronApp, swap);
-        await app.swap.selectQuote(electronApp, swap.provider.name, swap.rate);
-        await performSwapUntilDeviceVerificationStep(app, electronApp, swap);
+        const selectedProvider = await app.swap.selectExchange(electronApp);
+        await performSwapUntilDeviceVerificationStep(app, electronApp, swap, selectedProvider);
         await app.speculos.verifyAmountsAndAcceptSwap(swap);
         await app.swapDrawer.verifyExchangeCompletedTextContent(swap.accountToCredit.currency.name);
       },
@@ -483,9 +483,6 @@ async function performSwapUntilQuoteSelectionStep(
   await app.swap.fillInOriginCurrencyAmount(electronApp, swap.amount);
 }
 
-
-//sendMax
-
 async function performSwapUntilQuoteSelectionStepWithSendMax(
   app: Application,
   electronApp: ElectronApplication,
@@ -503,7 +500,7 @@ async function performSwapUntilQuoteSelectionStepWithSendMax(
   await app.swapDrawer.selectAccountByName(swap.accountToDebit);
   await app.swap.selectAssetTo(electronApp, swap.accountToCredit.currency.name);
   await app.swapDrawer.selectAccountByName(swap.accountToCredit);
-  await app.swap.sendMax()
+  await app.swap.sendMax(electronApp)
 }
 
 async function performSwapUntilDeviceVerificationStep(
