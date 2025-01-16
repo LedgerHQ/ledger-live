@@ -58,7 +58,7 @@ jobs:
         run: |
           cat apps/ledger-live-desktop/coverage/lld-sonar-executionTests-report.xml > ./lld-sonar-executionTests-report.xml
           cat apps/ledger-live-mobile/coverage/llm-sonar-executionTests-report.xml > ./llm-sonar-executionTests-report.xml
-      - uses: sonarsource/sonarqube-scan-action@master
+      - name: SonarQube Scan
+        uses: sonarsource/sonarcloud-github-action@master
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}

@@ -60,16 +60,6 @@ jest.mock("expo-camera/legacy", () => {
   };
 });
 
-jest.mock("expo-barcode-scanner", () => ({
-  BarCodeScanner: {
-    Constants: {
-      BarCodeType: {
-        qr: "qr",
-      },
-    },
-  },
-}));
-
 jest.mock("expo-camera", () => {
   return {
     CameraView: jest.fn(() => null),
@@ -116,6 +106,11 @@ jest.mock("react-native-reanimated", () => {
 
 // Silence the warning: Animated: `useNativeDriver` is not supported because the native animated module is missing
 jest.mock("react-native/Libraries/Animated/NativeAnimatedHelper");
+
+jest.mock("~/analytics", () => ({
+  ...jest.requireActual("~/analytics"),
+  track: jest.fn(),
+}));
 
 jest.mock("@react-native-firebase/messaging", () => ({
   messaging: jest.fn(() => ({

@@ -13,6 +13,12 @@ export async function addTmsLink(ids: string[]) {
   }
 }
 
+export async function addBugLink(ids: string[]) {
+  for (const id of ids) {
+    await allure.issue(id, `https://ledgerhq.atlassian.net/browse/${id}`);
+  }
+}
+
 export async function captureArtifacts(page: Page, testInfo: TestInfo) {
   const screenshot = await page.screenshot();
   await testInfo.attach("Screenshot", { body: screenshot, contentType: "image/png" });

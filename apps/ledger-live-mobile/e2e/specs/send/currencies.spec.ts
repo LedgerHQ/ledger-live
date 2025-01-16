@@ -36,7 +36,7 @@ $TmsLink("B2CQA-1823");
 describe("Send flow", () => {
   beforeAll(async () => {
     await app.init({
-      userdata: "onboardingcompleted",
+      userdata: "skip-onboarding",
       knownDevices: [knownDevice],
       testAccounts: testAccounts,
     });

@@ -7,7 +7,6 @@ import { getEnv } from "@ledgerhq/live-env";
 import { getNodeApi } from "@ledgerhq/coin-evm/api/node/index";
 import { getMainAccount, getParentAccount } from "@ledgerhq/live-common/account/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
-import { useSwapLiveConfig } from "@ledgerhq/live-common/exchange/swap/hooks/live-app-migration/useSwapLiveConfig";
 import { getAbandonSeedAddress } from "@ledgerhq/live-common/exchange/swap/hooks/useFromState";
 import {
   convertToAtomicUnit,
@@ -53,6 +52,7 @@ import {
 } from "../utils/index";
 import FeesDrawerLiveApp from "./FeesDrawerLiveApp";
 import WebviewErrorDrawer from "./WebviewErrorDrawer/index";
+
 export class UnableToLoadSwapLiveError extends Error {
   constructor(message: string) {
     const name = "UnableToLoadSwapLiveError";
@@ -101,6 +101,7 @@ function simplifyFromPath(path: string): string {
 }
 
 const SWAP_API_BASE = getEnv("SWAP_API_BASE");
+const SWAP_USER_IP = getEnv("SWAP_USER_IP");
 const getSegWitAbandonSeedAddress = (): string => "bc1qed3mqr92zvq2s782aqkyx785u23723w02qfrgs";
 
 const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
@@ -126,10 +127,9 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
   const { state } = useLocation<{
     defaultAccount?: AccountLike;
     defaultParentAccount?: Account;
+    defaultAmountFrom?: string;
     from?: string;
   }>();
-  const swapLiveEnabledFlag = useSwapLiveConfig();
-
   const { networkStatus } = useNetworkStatus();
   const isOffline = networkStatus === NetworkStatus.OFFLINE;
 
@@ -403,12 +403,12 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
                 state?.defaultAccount,
                 state?.defaultParentAccount,
               ).id,
+              amountFrom: state?.defaultAmountFrom || "",
             }
           : {}),
-        ...(state?.from ? { fromPath: simplifyFromPath(state?.from) } : {}),
-        ...(swapLiveEnabledFlag?.params && "variant" in swapLiveEnabledFlag.params
+        ...(state?.from
           ? {
-              ptxSwapCoreExperiment: swapLiveEnabledFlag.params?.variant as string,
+              fromPath: simplifyFromPath(state?.from),
             }
           : {}),
       }).toString(),
@@ -416,9 +416,9 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
       isOffline,
       state?.defaultAccount,
       state?.defaultParentAccount,
+      state?.defaultAmountFrom,
       state?.from,
       walletState,
-      swapLiveEnabledFlag,
     ],
   );
 
@@ -467,6 +467,7 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
             lang: locale,
             currencyTicker: fiatCurrency.ticker,
             swapApiBase: SWAP_API_BASE,
+            swapUserIp: SWAP_USER_IP,
             devMode,
             shareAnalytics,
           }}

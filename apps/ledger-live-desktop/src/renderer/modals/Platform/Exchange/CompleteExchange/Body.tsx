@@ -14,9 +14,16 @@ import { useSelector, useDispatch } from "react-redux";
 import styled from "styled-components";
 import { mevProtectionSelector } from "~/renderer/reducers/settings";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
-import { useIsSwapLiveFlagEnabled } from "~/renderer/screens/exchange/Swap2/hooks/useIsSwapLiveFlagEnabled";
+
 import { useRedirectToSwapHistory } from "~/renderer/screens/exchange/Swap2/utils";
 import { BodyContent } from "./BodyContent";
+
+export enum ExchangeModeEnum {
+  Sell = "sell",
+  Swap = "swap",
+}
+
+export type ExchangeMode = "sell" | "swap";
 
 export type Data = {
   provider: string;
@@ -32,13 +39,6 @@ export type Data = {
   amountExpectedTo?: number;
   magnitudeAwareRate?: BigNumber;
 };
-
-export enum ExchangeModeEnum {
-  Sell = "sell",
-  Swap = "swap",
-}
-
-export type ExchangeMode = "sell" | "swap";
 
 type ResultsState = {
   mode: ExchangeMode;
@@ -197,7 +197,6 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
   const handleSellTransaction = (operation: Operation, result: ResultsState) => {
     handleTransactionResult(result, operation);
   };
-  const isDemo3Enabled = useIsSwapLiveFlagEnabled("ptxSwapLiveAppDemoThree");
 
   const onBroadcastSuccess = useCallback(
     (operation: Operation) => {
@@ -211,7 +210,7 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
       const result = getResultByTransactionType(isSwapTransaction);
 
       if (getEnv("DISABLE_TRANSACTION_BROADCAST")) {
-        if (!isSwapTransaction || (isSwapTransaction && !isDemo3Enabled)) {
+        if (!isSwapTransaction) {
           const error = new DisabledTransactionBroadcastError();
           setError(error);
           onCancel(error);

@@ -83,6 +83,7 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyZkSync: DEFAULT_FEATURE,
   currencyZkSyncSepolia: DEFAULT_FEATURE,
   currencyMantra: DEFAULT_FEATURE,
+  currencyXion: DEFAULT_FEATURE,
 };
 
 /**
@@ -90,7 +91,6 @@ export const CURRENCY_DEFAULT_FEATURES = {
  */
 export const DEFAULT_FEATURES: Features = {
   ...CURRENCY_DEFAULT_FEATURES,
-
   brazeLearn: DEFAULT_FEATURE,
   portfolioExchangeBanner: DEFAULT_FEATURE,
   postOnboardingAssetsTransfer: DEFAULT_FEATURE,
@@ -172,8 +172,8 @@ export const DEFAULT_FEATURES: Features = {
           "ledgerlive://recover/protect-simu?redirectTo=restore&source=lld-restore",
         restoreInfoDrawer: {
           enabled: true,
-          manualStepsURI:
-            "https://support.ledger.com/hc/en-us/articles/360013349800-Update-Ledger-Nano-X-firmware?docs=true",
+          manualStepsURI: "https://support.ledger.com/article/360013349800-zd",
+
           supportLinkURI: "https://support.ledger.com",
         },
       },
@@ -325,8 +325,7 @@ export const DEFAULT_FEATURES: Features = {
           "ledgerlive://recover/protect-simu?redirectTo=restore&source=llm-restore-24&ajs_prop_source=llm-restore-24&ajs_prop_campaign=recover-launch",
         restoreInfoDrawer: {
           enabled: true,
-          manualStepsURI:
-            "https://support.ledger.com/hc/en-us/articles/360013349800-Update-Ledger-Nano-X-firmware?docs=true",
+          manualStepsURI: "https://support.ledger.com/article/360013349800-zd",
           supportLinkURI:
             "http://chat.abhishekpriyam.com/sprinklrlivechatv2.php?appId=63453067138a3f453db323b4_app_300078397&env=prod3",
         },
@@ -399,37 +398,12 @@ export const DEFAULT_FEATURES: Features = {
   },
   ptxCard: DEFAULT_FEATURE,
 
-  ptxSwapLiveAppDemoZero: {
-    enabled: false,
-    params: {
-      manifest_id: "swap-live-app-demo-0",
-    },
-  },
-
-  ptxSwapLiveAppDemoOne: {
-    enabled: false,
-    params: {
-      manifest_id: "swap-live-app-demo-1",
-    },
-  },
-
-  ptxSwapLiveAppDemoThree: {
-    enabled: false,
+  ptxSwapLiveApp: {
+    enabled: true,
     params: {
       manifest_id: "swap-live-app-demo-3",
     },
   },
-
-  ptxSwapCoreExperiment: {
-    enabled: false,
-    params: {
-      variant: "Demo0",
-      manifest_id: "swap-live-app-demo-0",
-    },
-  },
-
-  ptxSwapMoonpayProvider: DEFAULT_FEATURE,
-  ptxSwapExodusProvider: DEFAULT_FEATURE,
 
   llmAnalyticsOptInPrompt: {
     enabled: false,
@@ -453,6 +427,9 @@ export const DEFAULT_FEATURES: Features = {
       variant: ABTestingVariants.variantA,
     },
   },
+
+  ptxSwapMoonpayProvider: DEFAULT_FEATURE,
+  ptxSwapExodusProvider: DEFAULT_FEATURE,
 
   myLedgerDisplayAppDeveloperName: DEFAULT_FEATURE,
   nftsFromSimplehash: {
@@ -529,6 +506,7 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
   llmRebornLP: { ...DEFAULT_FEATURE, params: { variant: ABTestingVariants.variantA } },
+  llmAccountListUI: DEFAULT_FEATURE,
 };
 
 // Firebase SDK treat JSON values as strings

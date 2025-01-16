@@ -1,6 +1,7 @@
 import { DeviceUSB, ModelId, getUSBDevice, knownDevices } from "../models/devices";
 import {
   getElementById,
+  getTextOfElement,
   launchProxy,
   scrollToId,
   tapByElement,
@@ -9,6 +10,7 @@ import {
   waitForElementById,
 } from "../helpers";
 import { expect } from "detox";
+import jestExpect from "expect";
 import DeviceAction from "../models/DeviceAction";
 import * as bridge from "../bridge/server";
 
@@ -22,10 +24,15 @@ export default class CommonPage {
   closeButton = () => getElementById("NavigationHeaderCloseButton");
 
   accoundCardId = (id: string) => "account-card-" + id;
+  accountRowId = (accountId: string) => `account-row-${accountId}`;
+  baseAccountName = "account-row-name-";
+  accountNameRegExp = new RegExp(`${this.baseAccountName}.*`);
 
   addDeviceButton = () => getElementById("connect-with-bluetooth");
   scannedDeviceRow = (id: string) => `device-scanned-${id}`;
   pluggedDeviceRow = (nano: DeviceUSB) => `device-item-usb|${JSON.stringify(nano)}`;
+  blePairingLoadingId = "ble-pairing-loading";
+  deviceRowRegex = /device-item-.*/;
 
   @Step("Perform search")
   async performSearch(text: string) {
@@ -52,6 +59,27 @@ export default class CommonPage {
     await tapById(id);
   }
 
+  @Step("Go to the account")
+  async goToAccount(accountId: string) {
+    await scrollToId(this.accountNameRegExp);
+    await tapById(this.accountRowId(accountId));
+  }
+
+  @Step("Get the account name at index")
+  async getAccountName(index = 0) {
+    return await getTextOfElement(this.accountNameRegExp, index);
+  }
+
+  @Step("Expect the account name at index")
+  async expectAccountName(accountName: string, index = 0) {
+    jestExpect(await this.getAccountName(index)).toBe(accountName);
+  }
+
+  @Step("Go to the account with the name")
+  async goToAccountByName(name: string) {
+    await tapById(this.baseAccountName + name);
+  }
+
   async selectAddDevice() {
     await tapByElement(this.addDeviceButton());
   }
@@ -61,8 +89,8 @@ export default class CommonPage {
     await bridge.addDevicesBT(device);
     await waitForElementById(this.scannedDeviceRow(device.id));
     await tapById(this.scannedDeviceRow(device.id));
+    await waitForElementById(this.blePairingLoadingId);
     await bridge.open();
-    await deviceAction.waitForSpinner();
     await deviceAction.accessManager();
   }
 
@@ -86,5 +114,10 @@ export default class CommonPage {
   async removeSpeculos(proxyPort?: number) {
     await deleteSpeculos(proxyPort);
     proxyPort && (await bridge.removeKnownSpeculos(`${proxyAddress}:${proxyPort}`));
+  }
+
+  @Step("Select a known device")
+  async selectKnownDevice(index = 0) {
+    await tapById(this.deviceRowRegex, index);
   }
 }

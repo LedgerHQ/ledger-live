@@ -4,11 +4,9 @@ import { useSelector, useDispatch } from "react-redux";
 import { track } from "~/analytics";
 import { setDismissedContentCard } from "~/actions/settings";
 import { trackingEnabledSelector } from "~/reducers/settings";
-import { mobileCardsSelector } from "~/reducers/dynamicContent";
 
-export const useBrazeContentCard = () => {
+export const useBrazeContentCard = (mobileCards: Braze.ContentCard[]) => {
   const isTrackedUser = useSelector(trackingEnabledSelector);
-  const mobileCards = useSelector(mobileCardsSelector);
   const mobileCardRef = useRef(mobileCards);
   const dispatch = useDispatch();
 

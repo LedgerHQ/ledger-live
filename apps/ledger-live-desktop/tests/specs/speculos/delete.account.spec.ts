@@ -2,7 +2,7 @@ import { test } from "../../fixtures/common";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "../../utils/customJsonReporter";
-import { commandCLI } from "tests/utils/cliUtils";
+import { CLI } from "tests/utils/cliUtils";
 
 const accounts = [
   { account: Account.BTC_NATIVE_SEGWIT_1, xrayTicket: "B2CQA-2548" },
@@ -24,14 +24,13 @@ for (const account of accounts) {
     test.use({
       userdata: "skip-onboarding",
       cliCommands: [
-        {
-          command: commandCLI.liveData,
-          args: {
+        (appjsonPath: string) => {
+          return CLI.liveData({
             currency: account.account.currency.currencyId,
             index: account.account.index,
-            appjson: "",
             add: true,
-          },
+            appjson: appjsonPath,
+          });
         },
       ],
       speculosApp: account.account.currency.speculosApp,
@@ -46,7 +45,7 @@ for (const account of accounts) {
         },
       },
       async ({ app }) => {
-        await addTmsLink(getDescription(test.info().annotations).split(", "));
+        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
         await app.layout.goToAccounts();
         await app.accounts.navigateToAccountByName(account.account.accountName);

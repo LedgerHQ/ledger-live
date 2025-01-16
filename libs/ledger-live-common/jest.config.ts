@@ -42,8 +42,8 @@ const defaultConfig = {
   },
   testEnvironment: "node",
   reporters,
-  coveragePathIgnorePatterns: ["src/__tests__/test-helpers"],
   setupFiles: ["./jest.polyfills.js"],
+  coveragePathIgnorePatterns: ["src/__tests__/test-helpers"],
   modulePathIgnorePatterns: [
     "__tests__/fixtures",
     "__tests__/migration",

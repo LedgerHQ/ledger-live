@@ -68,6 +68,7 @@ export default function Navigator() {
           ),
           ...addAccountsSelectDeviceHeaderOptions(onClose),
         }}
+        initialParams={route.params}
       />
 
       {/* Select / Connect Device */}

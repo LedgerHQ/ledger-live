@@ -118,7 +118,7 @@ function ReadOnlyPortfolio({ navigation }: NavigationProps) {
       <Box background={colors.background.main} px={6} mt={6} key="Assets">
         <Assets assets={assetsToDisplay} />
         <Button type="shade" size="large" outline mt={6} onPress={goToAssets}>
-          {t("portfolio.seelAllAssets")}
+          {t("portfolio.seeAllAssets")}
         </Button>
       </Box>,
       ...(!hasOrderedNano

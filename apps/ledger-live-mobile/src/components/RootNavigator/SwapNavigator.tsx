@@ -41,9 +41,7 @@ export default function SwapNavigator(
           title: t("transfer.swap2.form.title"),
           headerLeft: () => null,
         }}
-        initialParams={{
-          ...params,
-        }}
+        initialParams={params as Partial<SwapNavigatorParamList[ScreenName.SwapTab]>}
       />
 
       <Stack.Screen

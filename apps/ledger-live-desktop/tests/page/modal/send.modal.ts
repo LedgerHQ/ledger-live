@@ -1,7 +1,7 @@
 import { expect } from "@playwright/test";
 import { Modal } from "../../component/modal.component";
 import { step } from "tests/misc/reporters/step";
-import { NFTTransaction, Transaction } from "../../models/Transaction";
+import { NFTTransaction, Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
 
 export class SendModal extends Modal {
   private drowdownAccount = this.page.locator('[data-testid="modal-content"] svg').nth(1);
@@ -92,7 +92,7 @@ export class SendModal extends Modal {
     expect(displayedReceiveAddress).toEqual(tx.accountToCredit.address);
 
     const displayedNftName = await this.nftNameDisplayed.innerText();
-    expect(displayedNftName).toEqual(expect.stringContaining(tx.nftName));
+    expect(displayedNftName).toEqual(expect.stringContaining(tx.nft.nftName));
     await this.continueButton.click();
   }
 

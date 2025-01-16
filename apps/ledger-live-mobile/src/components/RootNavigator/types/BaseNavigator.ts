@@ -74,8 +74,9 @@ import { AnalyticsOptInPromptNavigatorParamList } from "./AnalyticsOptInPromptNa
 import { LandingPagesNavigatorParamList } from "./LandingPagesNavigator";
 import { CustomErrorNavigatorParamList } from "./CustomErrorNavigator";
 import type { WalletSyncNavigatorStackParamList } from "./WalletSyncNavigator";
-import { DeviceSelectionNavigatorParamsList } from "~/newArch/features/DeviceSelection/types";
-import { AssetSelectionNavigatorParamsList } from "~/newArch/features/AssetSelection/types";
+import { DeviceSelectionNavigatorParamsList } from "LLM/features/DeviceSelection/types";
+import { AssetSelectionNavigatorParamsList } from "LLM/features/AssetSelection/types";
+import { AssetsNavigatorParamsList } from "LLM/features/Assets/types";
 
 export type NavigateInput<
   ParamList extends ParamListBase = ParamListBase,
@@ -303,6 +304,7 @@ export type BaseNavigatorStackParamList = {
 
   [NavigatorName.AnalyticsOptInPrompt]: NavigatorScreenParams<AnalyticsOptInPromptNavigatorParamList>;
   [ScreenName.MockedAddAssetButton]: undefined;
+  [ScreenName.MockedWalletScreen]: undefined;
 
   // WALLET SYNC
   [NavigatorName.WalletSync]: NavigatorScreenParams<WalletSyncNavigatorStackParamList>;
@@ -319,9 +321,13 @@ export type BaseNavigatorStackParamList = {
     NavigatorScreenParams<DeviceSelectionNavigatorParamsList>
   >;
   [NavigatorName.AssetSelection]?: Partial<
-    NavigatorScreenParams<AssetSelectionNavigatorParamsList>
-  > &
-    CommonAddAccountNavigatorParamsList;
+    NavigatorScreenParams<AssetSelectionNavigatorParamsList> & {
+      context?: "addAccounts" | "receiveFunds";
+      token?: string;
+      currency?: string;
+    } // in some cases we need to pass directly the context to the navigator and let it handle the logic
+  >;
+  [NavigatorName.Assets]?: Partial<NavigatorScreenParams<AssetsNavigatorParamsList>>;
 };
 
 declare global {

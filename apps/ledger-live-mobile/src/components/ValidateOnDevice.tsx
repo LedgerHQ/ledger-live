@@ -39,6 +39,7 @@ const AnimationContainer = styled(Flex).attrs({
   alignItems: "center",
   justifyContent: "center",
   height: "150px",
+  mb: 10,
 })``;
 
 function AmountField({ account, status, field }: FieldComponentProps) {
@@ -168,7 +169,7 @@ export default function ValidateOnDevice({
         <Flex alignItems="center">
           <AnimationContainer>
             <Animation
-              source={getDeviceAnimation({ device, key: "sign", theme })}
+              source={getDeviceAnimation({ modelId: device.modelId, key: "sign", theme })}
               style={getDeviceAnimationStyles(device.modelId)}
             />
           </AnimationContainer>

@@ -4,6 +4,7 @@ import {
   getElementByText,
   getTextOfElement,
   openDeeplink,
+  scrollToId,
   tapById,
   waitForElementById,
 } from "../../helpers";
@@ -32,9 +33,16 @@ export default class ReceivePage {
   step2HeaderTitle = () => getElementById(this.step2HeaderTitleId);
   titleReceiveConfirmationPageId = (t: string) => `receive-confirmation-title-${t}`;
   accountNameReceiveId = (t: string) => `receive-account-name-${t}`;
+  receivePageScrollViewId = "receive-screen-scrollView";
 
   step2Accounts = () => getElementById("receive-header-step2-accounts");
   step2Networks = () => getElementById("receive-header-step2-networks");
+
+  tronNewAddressWarningId = "tron-receive-newAddress-warning";
+  tronNewAddressWarningDescription = () =>
+    getElementById(`${this.tronNewAddressWarningId}-description`);
+  tronNewAddressWarningText =
+    "You first need to send at least 0.1 TRX to this address to activate it.";
 
   async openViaDeeplink() {
     await openDeeplink(baseLink);
@@ -83,6 +91,7 @@ export default class ReceivePage {
     await tapById(CurrencyRowId);
   }
 
+  @Step("Accept to verify address")
   async selectVerifyAddress() {
     await waitForElementById(this.buttonVerifyAddressId);
     await tapById(this.buttonVerifyAddressId);
@@ -96,6 +105,12 @@ export default class ReceivePage {
   async expectAddressIsDisplayed(address: string) {
     await waitForElementById(this.accountAddress);
     jestExpect(await getTextOfElement(this.accountAddress)).toEqual(address);
+  }
+
+  @Step("Get the fresh address displayed")
+  async getFreshAddressDisplayed() {
+    await waitForElementById(this.accountFreshAddress);
+    return await getTextOfElement(this.accountFreshAddress);
   }
 
   async expectNumberOfAccountInListIsDisplayed(currencyName: string, accountNumber: number) {
@@ -141,6 +156,7 @@ export default class ReceivePage {
     return tapById(this.noVerifyValidateButton);
   }
 
+  @Step("Expect account receive page is displayed")
   async expectReceivePageIsDisplayed(tickerName: string, accountName: string) {
     const receiveTitleTickerId = this.titleReceiveConfirmationPageId(tickerName);
     const accountNameId = this.accountNameReceiveId(accountName);
@@ -150,6 +166,21 @@ export default class ReceivePage {
     await expect(getElementById(accountNameId)).toBeVisible();
   }
 
+  @Step("Expect given address is displayed on receive page")
+  async expectAddressIsCorrect(address: string) {
+    await expect(getElementById(this.accountAddress)).toHaveText(address);
+  }
+
+  @Step("Expect tron new address warning")
+  async expectTronNewAddressWarning() {
+    await scrollToId(this.tronNewAddressWarningId, this.receivePageScrollViewId);
+    await expect(getElementById(this.tronNewAddressWarningId)).toBeVisible();
+    await expect(this.tronNewAddressWarningDescription()).toHaveText(
+      this.tronNewAddressWarningText,
+    );
+  }
+
+  @Step("Refuse to verify address")
   async doNotVerifyAddress() {
     await this.selectDontVerifyAddress();
     await this.selectReconfirmDontVerify();

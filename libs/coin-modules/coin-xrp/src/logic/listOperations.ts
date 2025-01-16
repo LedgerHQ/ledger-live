@@ -11,42 +11,89 @@ import { RIPPLE_EPOCH } from "./utils";
  */
 export async function listOperations(
   address: string,
-  blockHeight: number,
-): Promise<XrpOperation[]> {
+  {
+    limit,
+    mostRecentIndex,
+    startAt,
+  }: {
+    limit?: number;
+    mostRecentIndex?: number | undefined;
+    startAt?: number;
+  },
+): Promise<[XrpOperation[], number]> {
   const serverInfo = await getServerInfos();
   const ledgers = serverInfo.info.complete_ledgers.split("-");
   const minLedgerVersion = Number(ledgers[0]);
   const maxLedgerVersion = Number(ledgers[1]);
 
-  // if there is no ops, it might be after a clear and we prefer to pull from the oldest possible history
-  const startAt = Math.max(blockHeight, minLedgerVersion);
+  let options: {
+    ledger_index_min?: number;
+    ledger_index_max?: number;
+    limit?: number;
+    tx_type?: string;
+  } = {
+    ledger_index_max: mostRecentIndex ?? maxLedgerVersion,
+    tx_type: "Payment",
+  };
 
-  const transactions = await getTransactions(address, {
-    ledger_index_min: startAt,
-    ledger_index_max: maxLedgerVersion,
-  });
+  if (limit) {
+    options = {
+      ...options,
+      limit,
+    };
+  }
+  if (startAt) {
+    options = {
+      ...options,
+      // if there is no ops, it might be after a clear and we prefer to pull from the oldest possible history
+      ledger_index_min: Math.max(startAt, minLedgerVersion),
+    };
+  }
 
-  return transactions
-    .filter(op => op.tx.TransactionType === "Payment")
-    .map(convertToCoreOperation(address));
+  // We need to filter out the transactions that are not "Payment" type because the filter on "tx_type" of the node RPC
+  // is not working as expected. It returns all the transactions. We need to call the node RPC multiple times to get the
+  // desired number of transactions by the limiter.
+  let transactions: XrplOperation[] = [];
+  let needToStop = true;
+  do {
+    const newTransactions = await getTransactions(address, options);
+    const newPaymentsTxs = newTransactions.filter(tx => tx.tx_json.TransactionType === "Payment");
+    if (options.limit) {
+      needToStop = newTransactions.length < options.limit;
+      options.ledger_index_max = newTransactions.slice(-1)[0].tx_json.ledger_index - 1;
+    }
+    transactions = transactions.concat(newPaymentsTxs);
+  } while (
+    options.limit &&
+    !needToStop &&
+    transactions.length < options.limit &&
+    (options.limit -= transactions.length)
+  );
+
+  return [
+    transactions.map(convertToCoreOperation(address)),
+    transactions.slice(-1)[0].tx_json.ledger_index - 1, // Returns the next index to start from for pagination
+  ];
 }
 
 const convertToCoreOperation =
   (address: string) =>
   (operation: XrplOperation): XrpOperation => {
     const {
+      ledger_hash,
+      hash,
+      close_time_iso,
       meta: { delivered_amount },
-      tx: {
+      tx_json: {
         TransactionType,
         Fee,
-        hash,
-        inLedger,
         date,
         Account,
         Destination,
         DestinationTag,
         Sequence,
         Memos,
+        ledger_index,
       },
     } = operation;
 
@@ -90,13 +137,15 @@ const convertToCoreOperation =
     }
 
     let op: XrpOperation = {
+      blockTime: new Date(close_time_iso),
+      blockHash: ledger_hash,
       hash,
       address,
       type: TransactionType,
       simpleType: type,
       value,
       fee,
-      blockHeight: inLedger,
+      blockHeight: ledger_index,
       senders: [Account],
       recipients: [Destination],
       date: new Date(toEpochDate),

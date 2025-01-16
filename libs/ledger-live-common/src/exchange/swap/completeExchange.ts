@@ -1,7 +1,7 @@
 import {
   TransportStatusError,
-  WrongDeviceForAccountRefund,
   WrongDeviceForAccountPayout,
+  WrongDeviceForAccountRefund,
 } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import { firstValueFrom, from, Observable } from "rxjs";
@@ -10,18 +10,16 @@ import { getCurrencyExchangeConfig } from "../";
 import { getAccountCurrency, getMainAccount } from "../../account";
 import { getAccountBridge } from "../../bridge";
 import { TransactionRefusedOnDevice } from "../../errors";
-import perFamily from "../../generated/exchange";
 import { withDevice } from "../../hw/deviceAccess";
 import { delay } from "../../promise";
 import {
-  ExchangeTypes,
   createExchange,
+  ExchangeTypes,
   getExchangeErrorMessage,
   PayloadSignatureComputedFormat,
 } from "@ledgerhq/hw-app-exchange";
 import type { CompleteExchangeInputSwap, CompleteExchangeRequestEvent } from "../platform/types";
-import { getSwapProvider } from "../providers";
-import { convertToAppExchangePartnerKey } from "../providers";
+import { convertToAppExchangePartnerKey, getSwapProvider } from "../providers";
 import { CompleteExchangeStep, convertTransportError } from "../error";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import BigNumber from "bignumber.js";
@@ -59,6 +57,7 @@ const completeExchange = (
         const refundAccount = getMainAccount(fromAccount, fromParentAccount);
         const payoutAccount = getMainAccount(toAccount, toParentAccount);
         const accountBridge = getAccountBridge(refundAccount);
+        const payoutAccountBridge = getAccountBridge(payoutAccount);
         const mainPayoutCurrency = getAccountCurrency(payoutAccount);
         const payoutCurrency = getAccountCurrency(toAccount);
         const refundCurrency = getAccountCurrency(fromAccount);
@@ -128,14 +127,14 @@ const completeExchange = (
         await exchange.checkTransactionSignature(goodSign);
         if (unsubscribed) return;
 
-        const payoutAddressParameters = await perFamily[
-          mainPayoutCurrency.family
-        ].getSerializedAddressParameters(
-          payoutAccount.freshAddressPath,
-          payoutAccount.derivationMode,
+        const payoutAddressParameters = payoutAccountBridge.getSerializedAddressParameters(
+          payoutAccount,
           mainPayoutCurrency.id,
         );
         if (unsubscribed) return;
+        if (!payoutAddressParameters) {
+          throw new Error(`Family not supported: ${mainPayoutCurrency.family}`);
+        }
 
         //-- Special case of SPLToken
         //- NOT READY YET
@@ -160,7 +159,7 @@ const completeExchange = (
           await exchange.validatePayoutOrAsset(
             payoutAddressConfig,
             payoutAddressConfigSignature,
-            payoutAddressParameters.addressParameters,
+            payoutAddressParameters,
           );
         } catch (e) {
           if (e instanceof TransportStatusError && e.statusCode === 0x6a83) {
@@ -182,14 +181,14 @@ const completeExchange = (
 
         // Swap specific checks to confirm the refund address is correct.
         if (unsubscribed) return;
-        const refundAddressParameters = await perFamily[
-          mainRefundCurrency.family
-        ].getSerializedAddressParameters(
-          refundAccount.freshAddressPath,
-          refundAccount.derivationMode,
+        const refundAddressParameters = accountBridge.getSerializedAddressParameters(
+          refundAccount,
           mainRefundCurrency.id,
         );
         if (unsubscribed) return;
+        if (!refundAddressParameters) {
+          throw new Error(`Family not supported: ${mainRefundCurrency.family}`);
+        }
 
         const { config: refundAddressConfig, signature: refundAddressConfigSignature } =
           await getCurrencyExchangeConfig(refundCurrency);
@@ -200,7 +199,7 @@ const completeExchange = (
           await exchange.checkRefundAddress(
             refundAddressConfig,
             refundAddressConfigSignature,
-            refundAddressParameters.addressParameters,
+            refundAddressParameters,
           );
           log(COMPLETE_EXCHANGE_LOG, "checkrefund address");
         } catch (e) {

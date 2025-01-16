@@ -211,7 +211,7 @@
     "id": "crypto_org",
     "ticker": "CRO",
     "name": "Cronos POS Chain",
-    "family": "crypto_org",
+    "family": "cosmos",
     "color": "#0e1c37",
     "decimals": 8
   },
@@ -220,7 +220,7 @@
     "id": "crypto_org_croeseid",
     "ticker": "CRO",
     "name": "Cronos POS Chain Croeseid",
-    "family": "crypto_org",
+    "family": "cosmos",
     "color": "#0e1c37",
     "decimals": 8
   },
@@ -507,7 +507,7 @@
     "type": "CryptoCurrency",
     "id": "rsk",
     "ticker": "RBTC",
-    "name": "RSK",
+    "name": "Rootstock",
     "family": "ethereum",
     "color": "#FF931E",
     "decimals": 18
@@ -807,6 +807,15 @@
     "name": "Mantra",
     "family": "cosmos",
     "color": "#ffb386",
+    "decimals": 6
+  },
+  {
+    "type": "CryptoCurrency",
+    "id": "xion",
+    "ticker": "XION",
+    "name": "Xion",
+    "family": "cosmos",
+    "color": "#000000",
     "decimals": 6
   }
 ]

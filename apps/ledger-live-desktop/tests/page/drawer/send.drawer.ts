@@ -1,7 +1,8 @@
 import { step } from "tests/misc/reporters/step";
 import { Drawer } from "tests/component/drawer.component";
 import { expect } from "@playwright/test";
-import { NFTTransaction, Transaction } from "tests/models/Transaction";
+import { NFTTransaction, Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
+import { TransactionStatus } from "@ledgerhq/live-common/e2e/enum/TransactionStatus";
 
 export class SendDrawer extends Drawer {
   private addressValue = (address: string) =>
@@ -24,9 +25,9 @@ export class SendDrawer extends Drawer {
   @step("Verify Send NFT information")
   async expectNftInfos(tx: NFTTransaction) {
     const transactionType = await this.transactionType.textContent();
-    expect(transactionType).toMatch("Sending");
+    expect(transactionType).toMatch(TransactionStatus.SENDING);
     const NFTName = await this.nftName.textContent();
-    expect(NFTName).toBe(tx.nftName);
+    expect(NFTName).toBe(tx.nft.nftName);
     const address = await this.addressValue(tx.accountToCredit.address).textContent();
     expect(address).toBe(tx.accountToCredit.address);
   }

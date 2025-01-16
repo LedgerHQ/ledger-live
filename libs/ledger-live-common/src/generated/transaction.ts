@@ -1,7 +1,5 @@
 import casper from "../families/casper/transaction";
 import celo from "../families/celo/transaction";
-import crypto_org from "../families/crypto_org/transaction";
-import internet_computer from "../families/internet_computer/transaction";
 import algorand from "@ledgerhq/coin-algorand/transaction";
 import bitcoin from "@ledgerhq/coin-bitcoin/transaction";
 import cardano from "@ledgerhq/coin-cardano/transaction";
@@ -10,6 +8,7 @@ import elrond from "@ledgerhq/coin-elrond/transaction";
 import evm from "@ledgerhq/coin-evm/transaction";
 import hedera from "@ledgerhq/coin-hedera/transaction";
 import filecoin from "@ledgerhq/coin-filecoin/transaction";
+import internet_computer from "@ledgerhq/coin-internet_computer/transaction";
 import icon from "@ledgerhq/coin-icon/transaction";
 import near from "@ledgerhq/coin-near/transaction";
 import polkadot from "@ledgerhq/coin-polkadot/transaction";
@@ -25,8 +24,6 @@ import xrp from "@ledgerhq/coin-xrp/transaction";
 export default {
   casper,
   celo,
-  crypto_org,
-  internet_computer,
   algorand,
   bitcoin,
   cardano,
@@ -35,6 +32,7 @@ export default {
   evm,
   hedera,
   filecoin,
+  internet_computer,
   icon,
   near,
   polkadot,

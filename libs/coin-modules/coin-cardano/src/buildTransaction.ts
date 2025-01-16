@@ -5,13 +5,11 @@ import {
 } from "@stricahq/typhonjs";
 import BigNumber from "bignumber.js";
 import type { TokenAccount } from "@ledgerhq/types-live";
-import { RewardAddress } from "@stricahq/typhonjs/dist/address";
 import {
   getAccountStakeCredential,
   getBaseAddress,
   getTTL,
   mergeTokens,
-  isTestnet,
   isProtocolParamsValid,
 } from "./logic";
 import { decodeTokenAssetId, decodeTokenCurrencyId, getTokenAssetId } from "./buildSubAccounts";
@@ -44,28 +42,34 @@ function getTyphonInputFromUtxo(utxo: CardanoOutput): TyphonTypes.Input {
   };
 }
 
-function getRewardWithdrawalCertificate(account: CardanoAccount): TyphonTypes.Withdrawal | null {
-  if (!account.cardanoResources.delegation?.rewards.gt(0)) {
-    return null;
-  }
+function getRewardWithdrawalCertificate(_account: CardanoAccount): TyphonTypes.Withdrawal | null {
+  return null;
 
-  const stakeCredential = getAccountStakeCredential(account.xpub as string, account.index);
-  const stakeKeyHashCredential: TyphonTypes.HashCredential = {
-    hash: Buffer.from(stakeCredential.key, "hex"),
-    type: TyphonTypes.HashType.ADDRESS,
-    bipPath: stakeCredential.path,
-  };
+  /**
+   * Disable rewards withdraw certificate, as a work around for Chang 2 hard fork
+   */
 
-  const networkId = isTestnet(account.currency)
-    ? TyphonTypes.NetworkId.TESTNET
-    : TyphonTypes.NetworkId.MAINNET;
-  const rewardAddress = new RewardAddress(networkId, stakeKeyHashCredential);
-  const rewardsWithdrawalCertificate: TyphonTypes.Withdrawal = {
-    rewardAccount: rewardAddress,
-    amount: account.cardanoResources.delegation.rewards,
-  };
+  // if (!account.cardanoResources.delegation?.rewards.gt(0)) {
+  //   return null;
+  // }
 
-  return rewardsWithdrawalCertificate;
+  // const stakeCredential = getAccountStakeCredential(account.xpub as string, account.index);
+  // const stakeKeyHashCredential: TyphonTypes.HashCredential = {
+  //   hash: Buffer.from(stakeCredential.key, "hex"),
+  //   type: TyphonTypes.HashType.ADDRESS,
+  //   bipPath: stakeCredential.path,
+  // };
+
+  // const networkId = isTestnet(account.currency)
+  //   ? TyphonTypes.NetworkId.TESTNET
+  //   : TyphonTypes.NetworkId.MAINNET;
+  // const rewardAddress = new RewardAddress(networkId, stakeKeyHashCredential);
+  // const rewardsWithdrawalCertificate: TyphonTypes.Withdrawal = {
+  //   rewardAccount: rewardAddress,
+  //   amount: account.cardanoResources.delegation.rewards,
+  // };
+
+  // return rewardsWithdrawalCertificate;
 }
 
 const buildSendTokenTransaction = async ({

@@ -1,3 +1,4 @@
+import AssetAccountsPage from "./accounts/assetAccounts.page";
 import AccountPage from "./accounts/account.page";
 import AccountsPage from "./accounts/accounts.page";
 import AddAccountDrawer from "./accounts/addAccount.drawer";
@@ -8,6 +9,7 @@ import CustomLockscreenPage from "./stax/customLockscreen.page";
 import DiscoverPage from "./discover/discover.page";
 import DummyWalletApp from "./liveApps/dummyWalletApp.webView";
 import WalletAPIReceivePage from "./liveApps/walletAPIReceive";
+import LedgerSyncPage from "./settings/ledgerSync.page";
 import ManagerPage from "./manager/manager.page";
 import MarketPage from "./market/market.page";
 import NftGalleryPage from "./wallet/nftGallery.page";
@@ -20,6 +22,7 @@ import ReceivePage from "./trade/receive.page";
 import SendPage from "./trade/send.page";
 import SettingsGeneralPage from "./settings/settingsGeneral.page";
 import SettingsPage from "./settings/settings.page";
+import SpeculosPage from "./speculos.page";
 import StakePage from "./trade/stake.page";
 import SwapPage from "./trade/swap.page";
 import TransfertMenuDrawer from "./wallet/transferMenu.drawer";
@@ -49,6 +52,7 @@ export const getUserdataPath = (userdata: string) => {
 export class Application {
   public userdataSpeculos: string | undefined = undefined;
   public userdataPath: string | undefined = undefined;
+  public assetAccountsPage = new AssetAccountsPage();
   public account = new AccountPage();
   public accounts = new AccountsPage();
   public addAccount = new AddAccountDrawer();
@@ -59,6 +63,7 @@ export class Application {
   public discover = new DiscoverPage();
   public dummyWalletApp = new DummyWalletApp();
   public walletAPIReceive = new WalletAPIReceivePage();
+  public ledgerSync = new LedgerSyncPage();
   public manager = new ManagerPage();
   public market = new MarketPage();
   public nftGallery = new NftGalleryPage();
@@ -71,6 +76,7 @@ export class Application {
   public send = new SendPage();
   public settings = new SettingsPage();
   public settingsGeneral = new SettingsGeneralPage();
+  public speculos = new SpeculosPage();
   public stake = new StakePage();
   public swap = new SwapPage();
   public transfertMenu = new TransfertMenuDrawer();
@@ -79,7 +85,7 @@ export class Application {
   constructor() {
     if (!getEnv("MOCK")) {
       // Create a temporary userdata file for Speculos tests
-      const originalUserdata = "onboardingcompleted";
+      const originalUserdata = "skip-onboarding";
       this.userdataSpeculos = `temp-userdata-${Date.now()}`;
       this.userdataPath = getUserdataPath(this.userdataSpeculos);
       const originalFilePath = getUserdataPath(originalUserdata);

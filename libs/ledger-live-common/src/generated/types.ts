@@ -35,12 +35,6 @@ import type {
   TransactionStatusRaw as cosmosTransactionStatusRaw,
 } from "@ledgerhq/coin-cosmos/types/index";
 import type {
-  Transaction as crypto_orgTransaction,
-  TransactionRaw as crypto_orgTransactionRaw,
-  TransactionStatus as crypto_orgTransactionStatus,
-  TransactionStatusRaw as crypto_orgTransactionStatusRaw,
-} from "../families/crypto_org/types";
-import type {
   Transaction as elrondTransaction,
   TransactionRaw as elrondTransactionRaw,
   TransactionStatus as elrondTransactionStatus,
@@ -75,7 +69,7 @@ import type {
   TransactionRaw as internet_computerTransactionRaw,
   TransactionStatus as internet_computerTransactionStatus,
   TransactionStatusRaw as internet_computerTransactionStatusRaw,
-} from "../families/internet_computer/types";
+} from "@ledgerhq/coin-internet_computer/types/index";
 import type {
   Transaction as nearTransaction,
   TransactionRaw as nearTransactionRaw,
@@ -144,7 +138,6 @@ export type Transaction =
   | casperTransaction
   | celoTransaction
   | cosmosTransaction
-  | crypto_orgTransaction
   | elrondTransaction
   | evmTransaction
   | filecoinTransaction
@@ -169,7 +162,6 @@ export type TransactionRaw =
   | casperTransactionRaw
   | celoTransactionRaw
   | cosmosTransactionRaw
-  | crypto_orgTransactionRaw
   | elrondTransactionRaw
   | evmTransactionRaw
   | filecoinTransactionRaw
@@ -194,7 +186,6 @@ export type TransactionStatus =
   | casperTransactionStatus
   | celoTransactionStatus
   | cosmosTransactionStatus
-  | crypto_orgTransactionStatus
   | elrondTransactionStatus
   | evmTransactionStatus
   | filecoinTransactionStatus
@@ -219,7 +210,6 @@ export type TransactionStatusRaw =
   | casperTransactionStatusRaw
   | celoTransactionStatusRaw
   | cosmosTransactionStatusRaw
-  | crypto_orgTransactionStatusRaw
   | elrondTransactionStatusRaw
   | evmTransactionStatusRaw
   | filecoinTransactionStatusRaw

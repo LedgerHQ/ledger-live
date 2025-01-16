@@ -120,3 +120,11 @@ jobs:
               gh pr create --title ":rotating_light: Hotfix Release merge conflicts" -F .github/templates/hotfix-release-conflicts.md --base release --head support/hotfix-release-merge-conflicts
             fi
           fi
+
+  release-final:
+    name: "[Release] Publish packages and apps"
+    needs: prepare-release
+    uses: LedgerHQ/ledger-live/.github/workflows/release-final.yml@develop
+    with:
+      ref: hotfix
+    secrets: inherit

@@ -2,7 +2,7 @@ import { test } from "../../fixtures/common";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "../../utils/customJsonReporter";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { commandCLI } from "tests/utils/cliUtils";
+import { CLI } from "tests/utils/cliUtils";
 
 test.describe("Settings", () => {
   test.use({
@@ -12,13 +12,11 @@ test.describe("Settings", () => {
   test(
     `ERC20 token with 0 balance is hidden if 'hide empty token accounts' is ON`,
     {
-      annotation: {
-        type: "TMS",
-        description: "B2CQA-817",
-      },
+      annotation: [{ type: "TMS", description: "B2CQA-817" }],
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations).split(", "));
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
       await app.layout.goToAccounts();
       await app.accounts.showParentAccountTokens(Account.ETH_1.accountName);
       await app.accounts.verifyTokenVisibility(
@@ -43,14 +41,13 @@ test.describe("Password", () => {
   test.use({
     userdata: "skip-onboarding",
     cliCommands: [
-      {
-        command: commandCLI.liveData,
-        args: {
+      (appjsonPath: string) => {
+        return CLI.liveData({
           currency: account.currency.currencyId,
           index: account.index,
-          appjson: "",
           add: true,
-        },
+          appjson: appjsonPath,
+        });
       },
     ],
     speculosApp: account.currency.speculosApp,
@@ -65,7 +62,8 @@ test.describe("Password", () => {
       },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations).split(", "));
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
       await app.layout.goToAccounts();
       const countBeforeLock = await app.accounts.countAccounts();
       await app.layout.goToSettings();
@@ -89,14 +87,13 @@ test.describe("counter value selection", () => {
   test.use({
     userdata: "skip-onboarding",
     cliCommands: [
-      {
-        command: commandCLI.liveData,
-        args: {
+      (appjsonPath: string) => {
+        return CLI.liveData({
           currency: account.currency.currencyId,
           index: account.index,
-          appjson: "",
           add: true,
-        },
+          appjson: appjsonPath,
+        });
       },
     ],
     speculosApp: account.currency.speculosApp,
@@ -111,7 +108,8 @@ test.describe("counter value selection", () => {
       },
     },
     async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations).split(", "));
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
       await app.layout.goToSettings();
       await app.settings.changeCounterValue("euro");
       await app.settings.expectCounterValue("Euro - EUR");

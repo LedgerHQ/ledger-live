@@ -39,12 +39,14 @@ describe("listOperations", () => {
       const fee = 10;
       mockGetTransactions.mockResolvedValue([
         {
+          ledger_hash: "HASH_VALUE_BLOCK",
+          hash: "HASH_VALUE",
+          close_time_iso: "2000-01-01T00:00:01Z",
           meta: { delivered_amount: deliveredAmount.toString() },
-          tx: {
+          tx_json: {
             TransactionType: "Payment",
             Fee: fee.toString(),
-            hash: "HASH_VALUE",
-            inLedger: 1,
+            ledger_index: 1,
             date: 1000,
             Account: opSender,
             Destination: opDestination,
@@ -52,12 +54,14 @@ describe("listOperations", () => {
           },
         },
         {
+          ledger_hash: "HASH_VALUE_BLOCK",
+          hash: "HASH_VALUE",
+          close_time_iso: "2000-01-01T00:00:01Z",
           meta: { delivered_amount: deliveredAmount.toString() },
-          tx: {
+          tx_json: {
             TransactionType: "Payment",
             Fee: fee.toString(),
-            hash: "HASH_VALUE",
-            inLedger: 1,
+            ledger_index: 1,
             date: 1000,
             Account: opSender,
             Destination: opDestination,
@@ -66,12 +70,14 @@ describe("listOperations", () => {
           },
         },
         {
+          ledger_hash: "HASH_VALUE_BLOCK",
+          hash: "HASH_VALUE",
+          close_time_iso: "2000-01-01T00:00:01Z",
           meta: { delivered_amount: deliveredAmount.toString() },
-          tx: {
+          tx_json: {
             TransactionType: "Payment",
             Fee: fee.toString(),
-            hash: "HASH_VALUE",
-            inLedger: 1,
+            ledger_index: 1,
             date: 1000,
             Account: opSender,
             Destination: opDestination,
@@ -89,7 +95,7 @@ describe("listOperations", () => {
       ]);
 
       // When
-      const results = await listOperations(address, 0);
+      const [results, _] = await listOperations(address, { startAt: 0 });
 
       // Then
       expect(mockGetServerInfos).toHaveBeenCalledTimes(1);
@@ -106,6 +112,8 @@ describe("listOperations", () => {
           value: expectedValue,
           fee: BigInt(10),
           blockHeight: 1,
+          blockHash: "HASH_VALUE_BLOCK",
+          blockTime: new Date("2000-01-01T00:00:01Z"),
           senders: [opSender],
           recipients: [opDestination],
           date: new Date(1000000 + RIPPLE_EPOCH * 1000),
@@ -119,6 +127,8 @@ describe("listOperations", () => {
           value: expectedValue,
           fee: BigInt(10),
           blockHeight: 1,
+          blockHash: "HASH_VALUE_BLOCK",
+          blockTime: new Date("2000-01-01T00:00:01Z"),
           senders: [opSender],
           recipients: [opDestination],
           date: new Date(1000000 + RIPPLE_EPOCH * 1000),
@@ -135,6 +145,8 @@ describe("listOperations", () => {
           value: expectedValue,
           fee: BigInt(10),
           blockHeight: 1,
+          blockHash: "HASH_VALUE_BLOCK",
+          blockTime: new Date("2000-01-01T00:00:01Z"),
           senders: [opSender],
           recipients: [opDestination],
           date: new Date(1000000 + RIPPLE_EPOCH * 1000),
