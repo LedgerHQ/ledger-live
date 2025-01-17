@@ -790,6 +790,12 @@
     "SolanaAccountNotFunded" : {
       "title" : "الحساب غير ممول"
     },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "سيتمّ تمويل الحساب"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "تمّ تجميد رموز أصول الحساب"
+    },
     "SolanaAddressOfEd25519" : {
       "title" : "العنوان خارج منحنى ed25519"
     },
@@ -970,6 +976,9 @@
     "FirmwareNotRecognized" : {
       "title" : "مزوّد غير صالح",
       "description" : "يجب عليك تغيير إعداد \"My Ledger Provider (مزوّد جهازي Ledger)\". لتغييره، افتح \"Settings (إعدادات)\" في Ledger Live، واختر \"Experimental features (الميزات التجريبية)\"، ثم اختر مزوّداً آخر."
+    },
+    "GasLessThanEstimate" : {
+      "title" : "قد يكون هذا منخفضاً جداً. يرجى زيادته"
     },
     "SequenceNumberError" : {
       "title" : "خطأ في رقم التسلسل",
@@ -1291,7 +1300,7 @@
       "desc" : "منتجاتنا هي محافظ الأجهزة الوحيدة المعتمدة في السوق لأمانها من قِبل الهيئات الوطنية لأمن نظم المعلومات."
     },
     "title" : "أنت بحاجة إلى جهاز Ledger",
-    "desc" : "من أجل أمانك، Ledger Live يعمل فقط مع جهاز. أنت بحاجة إلى جهاز لتتمكن من المتابعة.",
+    "desc" : "For your security,\n Ledger Live only works with a Ledger.",
     "cta" : "اشترِ محفظتك Ledger الآن",
     "footer" : "لديّ جهاز Ledger بالفعل، لنعده",
     "bannerTitle" : "مستوى عالي التطور من الأمان لأصولك المشفرة ورموزك غير القابلة للاستبدال",
@@ -3768,6 +3777,7 @@
       "to" : "إلى",
       "infoTotalTitle" : "إجمالي الخصم",
       "infoTotalDesc" : "يشمل مبلغ المعاملة ورسوم الشبكة المحددة",
+      "gasFee" : "رسوم الغاز",
       "gasLimit" : "حد الغاز",
       "gasPrice" : "سعر الغاز",
       "maxFee" : "الحد الأقصى للرسوم",
@@ -3991,6 +4001,8 @@
       "desc" : "هل أنت متأكد أنك تريد إلغاء إضافة حسابات؟"
     },
     "imported" : "تمت إضافة الأصل بنجاح",
+    "added" : "تمت إضافة الحساب إلى محفظتك الاستثمارية",
+    "added_plural" : "تمت إضافة {{count}} حساب إلى محفظتك الاستثمارية",
     "sections" : {
       "importable" : {
         "title" : "إضافة حساب موجود"
@@ -4047,6 +4059,32 @@
         "title" : "Taproot",
         "desc" : "أحدث ترقية لشبكة {{currency}}. سوف توفر خصوصية أفضل ورسوم أرخص بمجرد انتشارها. لا يزال الدعم محدود من المحفظة ومنصات التداول."
       }
+    },
+    "scanDeviceAccounts" : {
+      "title" : "اختر الحسابات التي ترغب في إضافتها",
+      "ctaStopScan" : "إيقاف المسح الضوئي",
+      "confirm" : "تأكيد",
+      "scanningTitle" : "جارٍ البحث عن أي حسابات قائمة في سلسلة الكتل (Blockchain)...",
+      "sections" : {
+        "importable" : {
+          "title" : "وجدنا {{count}} حساب",
+          "title_plural" : "وجدنا {{count}} حساب"
+        },
+        "creatable" : {
+          "title" : "حساب جديد"
+        },
+        "imported" : {
+          "title" : "الحساب موجود بالفعل في المحفظة الاستثمارية ({{length}})",
+          "title_plural" : "الحسابات الموجودة بالفعل في المحفظة الاستثمارية ({{length}})"
+        },
+        "migrate" : {
+          "title" : "الحسابات المطلوب تحديثها"
+        }
+      }
+    },
+    "addAccountsSuccess" : {
+      "ctaAddFunds" : "إضافة أموال إلى حسابي",
+      "ctaClose" : "إغلاق"
     }
   },
   "DeviceAction" : {
@@ -5934,6 +5972,10 @@
         "description" : "يمكنك كسب المكافآت عن طريق تفويض أصولك SOL لمدقق."
       },
       "reserveWarning" : "يُرجى التأكد من أنك تحتفظ بـ {{amount}} SOL على الأقل في محفظتك لتغطية رسوم الشبكة المستقبلية من أجل إلغاء تنشيط وسحب حصتك"
+    },
+    "token" : {
+      "frozenStateWarning" : "تمّ تجميد أصول الحساب!",
+      "transferWarning" : "للتحقق من عنوان المستلم لرموز سولانا (Solana) باستخدام ™Ledger Nano S، <0>يرجى اتباع هذه التعليمات.</0>"
     }
   },
   "near" : {
@@ -6735,7 +6777,7 @@
       "category" : {
         "all" : {
           "name" : "الكل",
-          "description" : "كل مزودي تكديس إيثريوم المتاحين على Ledger Live."
+          "description" : "All Ethereum staking providers available on Ledger Live."
         },
         "liquid" : {
           "name" : "Liquid",
@@ -7140,7 +7182,9 @@
       "title" : "اختر أصل"
     },
     "selectNetwork" : {
-      "title" : "اختر شبكة سلسلة الكتل (blockchain) التي ينتمي الأصل إليها"
+      "title" : "اختر شبكة سلسلة الكتل (blockchain) التي ينتمي الأصل إليها",
+      "detectedAccounts" : "{{count}} حساب (تم اكتشافه)",
+      "detectedAccounts_plural" : "{{count}} حساب (تم اكتشافه)"
     }
   }
 }
