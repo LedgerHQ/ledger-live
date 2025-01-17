@@ -6773,7 +6773,7 @@
       "category": {
         "all": {
           "name": "All",
-          "description": "All ethereum staking providers available on Ledger Live."
+          "description": "All Ethereum staking providers available on Ledger Live."
         },
         "liquid": {
           "name": "Liquid",
