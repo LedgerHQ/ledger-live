@@ -30,15 +30,15 @@ const getTransactionStatus = async (a: Account, t: Transaction): Promise<Transac
 
   const totalSpent = BigNumber(t.amount).plus(estimatedFees);
 
-  if (totalSpent.gt(a.balance)) {
+  if (totalSpent.gt(a.balance) && !errors.amount) {
     errors.amount = new NotEnoughBalance();
   }
 
   if (!t.recipient) {
     errors.recipient = new RecipientRequired();
-  } else if (AccountAddress.isValid({ input: t.recipient }).valid === false) {
+  } else if (AccountAddress.isValid({ input: t.recipient }).valid === false && !errors.recipient) {
     errors.recipient = new InvalidAddress("", { currencyName: a.currency.name });
-  } else if (t.recipient === a.freshAddress) {
+  } else if (t.recipient === a.freshAddress && !errors.recipient) {
     errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
   }
 

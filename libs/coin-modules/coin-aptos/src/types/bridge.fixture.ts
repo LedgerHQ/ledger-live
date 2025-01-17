@@ -1,7 +1,6 @@
 import BigNumber from "bignumber.js";
 import { faker } from "@faker-js/faker";
 import type { AptosAccount, Transaction } from "./index";
-import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets/abandonseed";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { emptyHistoryCache } from "@ledgerhq/coin-framework/account/index";
 
@@ -9,7 +8,7 @@ const currency = getCryptoCurrencyById("aptos");
 
 export function createFixtureAccount(account?: Partial<AptosAccount>): AptosAccount {
   const freshAddress = {
-    address: "GD6QELUZPSKPRWVXOQ3F6GBF4OBRMCHO5PHREXH4ZRTPJAG7V5MD7JGX",
+    address: "address",
     derivationPath: "derivation_path",
   };
 
@@ -39,14 +38,14 @@ export function createFixtureAccount(account?: Partial<AptosAccount>): AptosAcco
 export function createFixtureTransaction(tx?: Partial<Transaction>): Transaction {
   const transaction: Transaction = {
     amount: tx?.amount || new BigNumber(0),
-    recipient: tx?.recipient || getAbandonSeedAddress("aptos"),
+    recipient: tx?.recipient || "",
     useAllAmount: tx?.useAllAmount || false,
     family: "aptos",
     mode: tx?.mode || "send",
     fees: tx?.fees || null,
     options: {
-      maxGasAmount: BigNumber(0).toString(), // TODO check this
-      gasUnitPrice: BigNumber(0).toString(), // TODO check this
+      maxGasAmount: BigNumber(0).toString(),
+      gasUnitPrice: BigNumber(0).toString(),
     },
   };
 
