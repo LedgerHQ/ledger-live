@@ -790,6 +790,12 @@
     "SolanaAccountNotFunded" : {
       "title" : "アカウントに資金がありません"
     },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "アカウントに入金されます"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "トークンアカウントの資産が凍結されています"
+    },
     "SolanaAddressOfEd25519" : {
       "title" : "アドレスオフed25519 curve"
     },
@@ -970,6 +976,9 @@
     "FirmwareNotRecognized" : {
       "title" : "プロバイダーが無効です",
       "description" : "「My Ledgerプロバイダー」の設定を変更する必要があります。変更するには、Ledger Liveの「設定」を開き、「試験的機能」を選択して、別のプロバイダーを選択します。"
+    },
+    "GasLessThanEstimate" : {
+      "title" : "低すぎる可能性があります。増やしてください"
     },
     "SequenceNumberError" : {
       "title" : "シーケンス番号エラー",
@@ -1291,7 +1300,7 @@
       "desc" : "当社の商品は、国家サイバーセキュリティ機関によってセキュリティが認定された、唯一のハードウェアウォレットです。"
     },
     "title" : "Ledgerが必要です",
-    "desc" : "セキュリティーの都合上、Ledger Liveはデバイス上でのみ機能します。継続にはデバイスが必要です。",
+    "desc" : "For your security,\n Ledger Live only works with a Ledger.",
     "cta" : "Ledgerを今すぐ購入",
     "footer" : "すでにLedgerを持っているので、セットアップします",
     "bannerTitle" : "暗号資産とNFTの一流のセキュリティ",
@@ -3768,6 +3777,7 @@
       "to" : "送付先",
       "infoTotalTitle" : "合計出金額",
       "infoTotalDesc" : "トランザクション数量と選択したネットワーク手数料を含みます。",
+      "gasFee" : "ガス代",
       "gasLimit" : "ガスリミット",
       "gasPrice" : "ガス価格",
       "maxFee" : "最大手数料",
@@ -3991,6 +4001,8 @@
       "desc" : "アカウントの追加をキャンセルしますか？"
     },
     "imported" : "資産が正常に追加されました",
+    "added" : "ポートフォリオにアカウントが追加されました",
+    "added_plural" : "{{count}}個のアカウントがポートフォリオに追加されました",
     "sections" : {
       "importable" : {
         "title" : "既存のアカウントを追加"
@@ -4047,6 +4059,32 @@
         "title" : "Taproot",
         "desc" : "最新の{{currency}}ネットワークアップグレード。より良いプライバシーや手数料が提供されます。現段階では、ウォレットと取引のサポートに制限があります。"
       }
+    },
+    "scanDeviceAccounts" : {
+      "title" : "追加したいアカウントを選択する",
+      "ctaStopScan" : "スキャン停止",
+      "confirm" : "確認",
+      "scanningTitle" : "ブロックチェーン上の既存のアカウントを探しています...",
+      "sections" : {
+        "importable" : {
+          "title" : "{{count}}個のアカウントが見つかりました",
+          "title_plural" : "{{count}}個のアカウントが見つかりました"
+        },
+        "creatable" : {
+          "title" : "新しいアカウント"
+        },
+        "imported" : {
+          "title" : "アカウントはポートフォリオに追加済みです ({{length}})",
+          "title_plural" : "ポートフォリオに既存のアカウント({{length}})"
+        },
+        "migrate" : {
+          "title" : "アカウントのアップデート"
+        }
+      }
+    },
+    "addAccountsSuccess" : {
+      "ctaAddFunds" : "資金をアカウントに追加する",
+      "ctaClose" : "閉じる"
     }
   },
   "DeviceAction" : {
@@ -5934,6 +5972,10 @@
         "description" : "SOL資産をバリデーターにデリゲートすることで報酬を得ることができます。"
       },
       "reserveWarning" : "今後ステーキングを無効化して引き出す際に必要となるネットワーク手数料として、ウォレットに少なくとも{{amount}}SOLを確保してください。"
+    },
+    "token" : {
+      "frozenStateWarning" : "アカウント資産が凍結されています！",
+      "transferWarning" : "Ledger Nano S™を使用してSolanaトークンの受取人アドレスを認証するには、<0>こちらの手順に従ってください。</0>"
     }
   },
   "near" : {
@@ -6735,7 +6777,7 @@
       "category" : {
         "all" : {
           "name" : "全て",
-          "description" : "Ledger Liveで利用できるすべてのイーサリアムステーキングプロバイダー。"
+          "description" : "All Ethereum staking providers available on Ledger Live."
         },
         "liquid" : {
           "name" : "リキッド",
@@ -7140,7 +7182,9 @@
       "title" : "「暗号資産」を選択"
     },
     "selectNetwork" : {
-      "title" : "暗号資産が属するブロックチェーンネットワークを選択"
+      "title" : "暗号資産が属するブロックチェーンネットワークを選択",
+      "detectedAccounts" : "{{count}}個のアカウント（検出済み）",
+      "detectedAccounts_plural" : "{{count}}個のアカウント（検出済み）"
     }
   }
 }
