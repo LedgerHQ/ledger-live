@@ -1,5 +1,17 @@
 ## 34.5.0-next.4
 
+## 34.18.0-nightly.0
+
+### Minor Changes
+
+- [#8848](https://github.com/LedgerHQ/ledger-live/pull/8848) [`7de2a5f`](https://github.com/LedgerHQ/ledger-live/commit/7de2a5f2ffdb31f0d08dfb04c7fa3048ceafaa44) Thanks [@may01](https://github.com/may01)! - Refactor cache logic of aptos estimated fees, removing unused aptos transaction parameters.
+
+### Patch Changes
+
+- [#8833](https://github.com/LedgerHQ/ledger-live/pull/8833) [`b472e45`](https://github.com/LedgerHQ/ledger-live/commit/b472e45b7491b08cf818eb3ae5b1d1a66f1c0918) Thanks [@joaoccmartins](https://github.com/joaoccmartins)! - Improved testing for LedgerLiveAccount on Aptos family.
+
+- [#8928](https://github.com/LedgerHQ/ledger-live/pull/8928) [`7315d69`](https://github.com/LedgerHQ/ledger-live/commit/7315d6978b70f5a0e86d707217a253ae7602c8a4) Thanks [@qperrot](https://github.com/qperrot)! - fix bakers error on tezos earn
+
 ## 34.17.0
 
 ### Minor Changes
