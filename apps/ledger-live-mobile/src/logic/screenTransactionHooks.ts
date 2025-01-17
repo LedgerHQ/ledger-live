@@ -88,11 +88,11 @@ export const useSignWithDevice = ({
   const [signing, setSigning] = useState(false);
   const [signed, setSigned] = useState(false);
   const subscription = useRef<null | Subscription>(null);
+  const mevProtected = useSelector(mevProtectionSelector);
   const signWithDevice = useCallback(() => {
     const { deviceId, transaction } = route.params || {};
     const bridge = getAccountBridge(account, parentAccount);
     const mainAccount = getMainAccount(account, parentAccount);
-    const mevProtected = useSelector(mevProtectionSelector);
 
     navigation.setOptions({
       gestureEnabled: false,
@@ -187,7 +187,15 @@ export const useSignWithDevice = ({
           );
         },
       });
-  }, [context, account, navigation, parentAccount, updateAccountWithUpdater, route.params]);
+  }, [
+    context,
+    account,
+    navigation,
+    parentAccount,
+    updateAccountWithUpdater,
+    route.params,
+    mevProtected,
+  ]);
   useEffect(() => {
     signWithDevice();
     return () => {
