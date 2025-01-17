@@ -1,5 +1,9 @@
 import type { BigNumber } from "bignumber.js";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type {
+  CryptoCurrency,
+  CryptoOrTokenCurrency,
+  TokenCurrency,
+} from "@ledgerhq/types-cryptoassets";
 import type { OperationRaw, Operation } from "./operation";
 import type { DerivationMode } from "./derivation";
 import type { SwapOperation, SwapOperationRaw } from "./swap";
@@ -226,3 +230,12 @@ export type AccountUserData = {
   // user's starred account ids: it can be more than the account.id because token accounts can also be starred
   starredIds: string[];
 };
+
+export function getCurrencyForAccount(account: AccountLike): CryptoOrTokenCurrency {
+  switch (account.type) {
+    case "Account":
+      return account.currency;
+    case "TokenAccount":
+      return account.token;
+  }
+}
