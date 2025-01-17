@@ -1,10 +1,11 @@
 import { getParentAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
-import { Account, AccountLike, SwapOperation } from "@ledgerhq/types-live";
+import { Account, AccountLike, SubAccount, SwapOperation } from "@ledgerhq/types-live";
 import { convertToAtomicUnit } from "../utils";
 import BigNumber from "bignumber.js";
 import { updateAccountWithUpdater } from "~/actions/accounts";
 import { Dispatch } from "redux";
+import { update } from "lodash";
 
 export type SwapProps = {
   provider: string;
@@ -70,22 +71,26 @@ export function saveSwapToHistory(accounts: AccountLike[], dispatch: Dispatch) {
     };
 
     dispatch(
-      updateAccountWithUpdater(accountId, (account: Account) => {
-        if (fromId === account.id) {
-          return { ...account, swapHistory: [...account.swapHistory, swapOperation] };
-        }
-        return {
-          ...account,
-          subAccounts: account.subAccounts?.map<SubAccount>((a: SubAccount) => {
-            const subAccount = {
-              ...a,
-              swapHistory: [...a.swapHistory, swapOperation],
-            };
-            return a.id === fromId ? subAccount : a;
-          }),
-        };
+      updateAccountWithUpdater({
+        accountId,
+        updater: account => {
+          if (fromId === account.id) {
+            return { ...account, swapHistory: [...account.swapHistory, swapOperation] };
+          }
+          return {
+            ...account,
+            subAccounts: account.subAccounts?.map<SubAccount>((a: SubAccount) => {
+              const subAccount = {
+                ...a,
+                swapHistory: [...a.swapHistory, swapOperation],
+              };
+              return a.id === fromId ? subAccount : a;
+            }),
+          };
+        },
       }),
     );
+
     return Promise.resolve();
   };
 }
