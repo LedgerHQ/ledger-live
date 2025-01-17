@@ -119,7 +119,7 @@
     "addressCopied" : "Adresse copiée",
     "addressCopiedSuspicious" : "Différence entre l’adresse copiée et celle dans le presse-papiers.",
     "experimentalFeature" : "Expérimental",
-    "featureFlags" : "Feature Flags",
+    "featureFlags" : "Feature flag",
     "information" : "Informations",
     "search" : "Rechercher...",
     "searchWithoutEllipsis" : "Rechercher",
@@ -200,7 +200,8 @@
       "STAKE" : "Staké",
       "UNSTAKE" : "Déstaké",
       "WITHDRAW_UNSTAKED" : "Retiré",
-      "SENDING" : "Envoi"
+      "SENDING" : "Envoi",
+      "BURN" : "Brûlé"
     },
     "edit" : {
       "title" : "Accélérer ou annuler",
@@ -441,6 +442,14 @@
       "description" : "Le Ledger Nano S n’est pas compatible avec THORChain. Vous pouvez utiliser le Ledger Nano S Plus, Ledger Nano X, Ledger Stax ou Ledger Flex pour vos échanges inter-chaînes sur THORChain via Ledger Live",
       "cta" : "Voir les appareils compatibles",
       "changeProvider" : "Choisir un autre prestataire"
+    },
+    "incompatibility" : {
+      "ton_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de TON",
+      "ton_description" : "Pour échanger des TON, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+      "spl_tokens_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de tokens Solana",
+      "spl_tokens_description" : "Pour échanger des tokens Solana, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+      "ada_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de Cardano",
+      "ada_description" : "Pour échanger des Cardano, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™."
     },
     "providers" : {
       "title" : "Choisir un prestataire pour le swap",
@@ -1834,7 +1843,8 @@
       "withdrawUnbondedAmount" : "Montant retiré",
       "palletMethod" : "Méthode",
       "transferAmount" : "Montant transféré",
-      "validatorsCount" : "Validateurs ({{number}})"
+      "validatorsCount" : "Validateurs ({{number}})",
+      "version" : "Version"
     }
   },
   "operationList" : {
@@ -3717,6 +3727,10 @@
           }
         }
       }
+    },
+    "token" : {
+      "frozenStateWarning" : "Les actifs du compte sont gelés",
+      "transferWarning" : "Pour vérifier l’adresse du bénéficiaire des tokens Solana avec un Ledger Nano S™, <0>suivez ces instructions</0>."
     }
   },
   "ethereum" : {
@@ -4078,7 +4092,7 @@
         "button" : "Terminé",
         "title" : "Scannez pour exporter vers Ledger Live mobile",
         "listTitle" : "Sur l’application Ledger Live pour le mobile :",
-        "step1" : "Sur l’onglet Wallet, appuyez sur <highlight>Ajouter un compte</highlight>, ou sur <highlight>Afficher tous les actifs</highlight> puis sur le bouton <highlight><icon>+</icon></highlight>.",
+        "step1" : "Sur l’onglet Wallet, appuyez sur <highlight>Ajouter un compte</highlight>, ou sur <highlight>Voir tous les actifs</highlight> puis sur le bouton <highlight><icon>+</icon></highlight>.",
         "step2" : "Appuyez sur <highlight>Importer les comptes de l’ordinateur</highlight>.",
         "step3" : "Scannez <highlight>le code QR</highlight> jusqu’à ce que la barre soit à 100 %."
       }
@@ -4097,7 +4111,7 @@
       "walletSync" : "Ledger Sync",
       "walletSyncDesc" : "Synchronisez vos comptes crypto Ledger Live sur différents téléphones et ordinateurs.",
       "mevProtection" : "Protection MEV",
-      "mevProtectionDesc" : "Activez la protection MEV pour des transactions plus fiables sur Ethereum.",
+      "mevProtectionDesc" : "Activez la protection contre la MEV pour des transactions plus fiables sur Ethereum.",
       "marketPerformanceWidget" : "Widget de suivi du marché",
       "marketPerformanceWidgetDesc" : "Activez cette fonctionnalité pour afficher sur la page Portefeuille le Top des hausses et le Top des baisses sur une période choisie."
     },
@@ -5288,6 +5302,7 @@
     "verifyData" : "Vérifiez toujours les détails de l’opération sur votre appareil.",
     "doubleCheck" : "Vérifiez attentivement les détails de la transaction sur votre appareil Ledger avant de signer.",
     "termsAndConditions" : "En signant cette transaction, vous acceptez les <0>Conditions d’utilisation de {{appName}}</0>.",
+    "termsAndConditionsWithPrivacy" : "En signant cette transaction, vous acceptez les <0>Conditions d’utilisation de {{appName}}</0> et sa <1>Politique de confidentialité</1>.",
     "warningWording" : {
     },
     "titleWording" : {
@@ -6170,6 +6185,15 @@
     },
     "SolanaAccountNotFunded" : {
       "title" : "Pas de fonds sur le compte"
+    },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "Le compte sera provisionné"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "Les actifs du compte de tokens sont gelés"
+    },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "Compte non configuré"
     },
     "SolanaMemoIsTooLong" : {
       "title" : "Mémo trop long. Longueur maximale : {{maxLength}}"
