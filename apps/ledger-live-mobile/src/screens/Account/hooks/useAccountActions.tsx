@@ -21,6 +21,7 @@ import { ActionButtonEvent } from "~/components/FabActions";
 import { useCanShowStake } from "./useCanShowStake";
 import { PtxToast } from "~/components/Toast/PtxToast";
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
+import { walletSelector } from "~/reducers/wallet";
 
 type Props = {
   account: AccountLike;
@@ -39,6 +40,7 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const route = useRoute();
   const { t } = useTranslation();
+  const walletState = useSelector(walletSelector);
 
   const ptxServiceCtaScreens = useFeature("ptxServiceCtaScreens");
 
@@ -191,6 +193,7 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
     (decorators &&
       decorators.getMainActions &&
       decorators.getMainActions({
+        walletState,
         account,
         parentAccount,
         colors,

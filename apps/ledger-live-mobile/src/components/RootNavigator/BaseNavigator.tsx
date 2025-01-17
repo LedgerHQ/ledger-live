@@ -209,7 +209,6 @@ export default function BaseNavigator() {
           options={{
             headerStyle: styles.headerNoShadow,
           }}
-          {...noNanoBuyNanoWallScreenOptions}
         />
         <Stack.Screen
           name={ScreenName.Recover}

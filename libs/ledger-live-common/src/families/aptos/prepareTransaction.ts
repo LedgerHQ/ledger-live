@@ -36,24 +36,18 @@ const prepareTransaction = async (
 
   const { fees, estimate, errors } = await getEstimatedGas(account, transaction, aptosClient);
 
-  const amount = transaction.useAllAmount
-    ? getMaxSendBalance(
-        account.spendableBalance,
-        BigNumber(estimate.maxGasAmount),
-        BigNumber(estimate.gasUnitPrice),
-      )
-    : transaction.amount;
-  transaction.amount = amount;
-
-  transaction.options = {
-    ...transaction.options,
-    maxGasAmount: estimate.maxGasAmount,
-  };
+  if (transaction.useAllAmount) {
+    // correct the transaction amount according to estimated fees
+    transaction.amount = getMaxSendBalance(
+      account.spendableBalance,
+      BigNumber(estimate.maxGasAmount),
+      BigNumber(estimate.gasUnitPrice),
+    );
+  }
 
   transaction.fees = fees;
-  transaction.estimate = estimate;
+  transaction.options = estimate;
   transaction.errors = errors;
-  transaction.firstEmulation = false;
 
   return transaction;
 };

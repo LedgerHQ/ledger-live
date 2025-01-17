@@ -1019,6 +1019,12 @@
     "ScannedNewImportQrCode" : {
       "title" : "需要更新",
       "description" : "要同步您的应用程序，请确保两个应用程序都已更新至最新版本。"
+    },
+    "AppManifestUnknownError" : {
+      "title" : "未找到 Swap Live 应用程序"
+    },
+    "AppManifestNotFoundError" : {
+      "title" : "无法加载 Swap Live 应用程序"
     }
   },
   "crash" : {
@@ -2342,7 +2348,8 @@
       "seeMarket" : "显示全部"
     },
     "walletBalance" : "钱包余额",
-    "seelAllAssets" : "查看所有资产",
+    "seeAllAssets" : "查看所有资产",
+    "seeAllAccounts" : "查看所有账户",
     "marketPriceSection" : {
       "title" : "{{currencyTicker}} 市场价格",
       "currencyPrice" : "1 {{currencyTicker}} 价格",
@@ -2748,6 +2755,9 @@
         "cta" : "立即进行权益质押"
       }
     }
+  },
+  "assets" : {
+    "title" : "多种资产"
   },
   "accounts" : {
     "title" : "账户",
@@ -3467,6 +3477,16 @@
         "providers" : {
           "noProviders" : "找不到结果。当前首选项没有可用的报价。"
         }
+      },
+      "incompatibility" : {
+        "explore_compatible_devices" : "浏览兼容设备",
+        "contact_support" : "联系客服",
+        "ton_title" : "Ledger Nano S™ 不支持互换 TON",
+        "ton_description" : "要互换 TON，请使用任何其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
+        "spl_tokens_title" : "Ledger Nano S™ 不支持互换 Solana 代币",
+        "spl_tokens_description" : "要互换 Solana 代币，请使用任何其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
+        "ada_title" : "Ledger Nano S™ 不支持互换 Cardano",
+        "ada_description" : "要互换 Cardano，请使用任何其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。"
       }
     },
     "lending" : {
@@ -3693,7 +3713,7 @@
     "highFeeModal" : "请注意，网络费用超过该数额的 <1>10%</1>。是否要继续？",
     "scan" : {
       "title" : "扫描二维码",
-      "descBottom" : "请将二维码对准在方框内。",
+      "descBottom" : "扫描二维码",
       "fallback" : {
         "header" : "扫描二维码",
         "title" : "启用摄像头",
@@ -3961,6 +3981,8 @@
   },
   "addAccounts" : {
     "addNew" : "添加新的",
+    "seeAllAccounts" : "查看所有账户",
+    "addNewOrExisting" : "添加新账户或现有账户",
     "supportLinks" : {
       "segwit_or_native_segwit" : "Segwit 或 Native Segwit 地址格式？"
     },
@@ -6102,7 +6124,7 @@
     },
     "warning" : "确保 Ledger 上显示的地址与 {{recipientWording}} 的地址相符",
     "recipientWording" : {
-      "send" : "每次都要核对您设备上显示的地址与接收方所提供给您的完全一致",
+      "send" : "每次都要核对您设备上显示的地址与接收方所提供的完全一致",
       "delegate" : "每次都要核对您设备上显示的地址与验证者所提供的地址完全一致",
       "undelegate" : "每次都要核对您设备上显示的地址与验证者所提供的地址完全一致",
       "freeze" : "每次都要核对您设备上显示的地址与所提供的完全一致",
@@ -7111,6 +7133,14 @@
           "name" : "添加账户"
         }
       }
+    }
+  },
+  "assetSelection" : {
+    "selectCrypto" : {
+      "title" : "选择资产"
+    },
+    "selectNetwork" : {
+      "title" : "选择该资产所属的区块链网络"
     }
   }
 }

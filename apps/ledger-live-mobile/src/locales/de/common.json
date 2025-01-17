@@ -1019,6 +1019,12 @@
     "ScannedNewImportQrCode" : {
       "title" : "Update erforderlich",
       "description" : "Damit du deine Apps synchronisieren kannst, musst du sicherstellen, dass beide auf die neueste Version aktualisiert sind."
+    },
+    "AppManifestUnknownError" : {
+      "title" : "Swap Live-App nicht gefunden"
+    },
+    "AppManifestNotFoundError" : {
+      "title" : "Fehler beim Laden der Swap Live-App"
     }
   },
   "crash" : {
@@ -1287,19 +1293,19 @@
     "title" : "Jeder sollte einen Ledger haben",
     "desc" : "Aus Sicherheitsgründen funktioniert Ledger Live nur mit einem Gerät. Daher brauchst du ein Gerät, um den Vorgang fortzusetzen.",
     "cta" : "Ledger jetzt kaufen",
-    "footer" : "Ich habe bereits ein Gerät, jetzt einrichten",
-    "bannerTitle" : "Bewahre Kryptowährungen und NFTs sicher auf",
-    "bannerTitle2" : "Zum Traden brauchst du eine Nano",
-    "bannerSubtitle" : "mit einem Ledger-Gerät",
-    "bannerButtonTitle" : "Nano kennenlernen",
-    "bannerButtonTitle2" : "Ein Gerät kaufen",
-    "setupCta" : "Ich habe bereits ein Gerät. Bitte Einrichtung starten."
+    "footer" : "Ich habe bereits ein Ledger-Gerät. Bitte Einrichtung starten.",
+    "bannerTitle" : "Überragende Sicherheit für deine Kryptos und NFTs",
+    "bannerTitle2" : "Du brauchst ein Ledger-Gerät zum Handeln",
+    "bannerSubtitle" : "mit einer Ledger Flex",
+    "bannerButtonTitle" : "Flex entdecken",
+    "bannerButtonTitle2" : "Ledger-Gerät kaufen",
+    "setupCta" : "Ich habe bereits ein Ledger-Gerät. Einrichtung starten."
   },
   "postBuyDeviceSetupNanoWall" : {
-    "title" : "Hast du dein Gerät erhalten?",
-    "desc" : "Sobald du dein Gerät erhalten hast, kannst du es über Ledger Live einrichten!",
-    "cta" : "Mein Gerät einrichten",
-    "bannerTitle" : "Ist dein Gerät angekommen?",
+    "title" : "Hast du deine Ledger schon bekommen?",
+    "desc" : "Sobald du dein Ledger-Gerät erhalten hast, richte es ein, um alle Funktionen der Ledger Live-App freizuschalten.",
+    "cta" : "Mein Ledger-Gerät einrichten",
+    "bannerTitle" : "Hast du dein Ledger-Gerät erhalten?",
     "bannerCta" : "Einrichtung starten",
     "continue" : "Weiter"
   },
@@ -1325,8 +1331,8 @@
   },
   "postBuyDevice" : {
     "headerTitle" : "Kauf erfolgreich",
-    "title" : "Glückwunsch!",
-    "desc" : "Deine Bestellung wird bearbeitet.\nDu erhältst dein Ledger-Gerät in Kürze. Bitte überprüfe deine E-Mails auf deine Auftragsbestätigung."
+    "title" : "Vielen Dank für dein Vertrauen in Ledger",
+    "desc" : "Deine Bestellung wird bearbeitet.\nEine Auftragsbestätigung erhältst du per E-Mail."
   },
   "discover" : {
     "title" : "Neues entdecken",
@@ -2342,7 +2348,8 @@
       "seeMarket" : "Alles anzeigen"
     },
     "walletBalance" : "Kontostand der Wallet",
-    "seelAllAssets" : "Alle Vermögenswerte anzeigen",
+    "seeAllAssets" : "Alle Vermögenswerte anzeigen",
+    "seeAllAccounts" : "Alle Konten anzeigen",
     "marketPriceSection" : {
       "title" : "Marktpreis für {{currencyTicker}}",
       "currencyPrice" : "Preis für 1 {{currencyTicker}}",
@@ -2750,6 +2757,9 @@
       }
     }
   },
+  "assets" : {
+    "title" : "Vermögenswerte"
+  },
   "accounts" : {
     "title" : "Konten",
     "cryptoAccountsTitle" : "{{currencyTicker}}-Konten",
@@ -3092,6 +3102,13 @@
       "desc" : "Probiere die experimentellen Entwicklerfunktionen aus und sag uns, wie sie dir gefallen.",
       "customManifest" : {
         "title" : "Benutzerdefiniertes Plattform-Manifest laden"
+      },
+      "exchangeDeveloperMode" : {
+        "title" : "Entwicklermodus für Börsen",
+        "description" : "Info des Börsenanbieters hinzufügen",
+        "placeholder" : "Info des Börsenanbieters im CAL-Format",
+        "currentSetting" : "Aktuelle Einstellung",
+        "error" : "Ungültiger CAL-Wert"
       }
     },
     "debug" : {
@@ -3461,6 +3478,16 @@
         "providers" : {
           "noProviders" : "Keine Ergebnisse gefunden. Mit den aktuellen Einstellungen sind keine Angebote verfügbar."
         }
+      },
+      "incompatibility" : {
+        "explore_compatible_devices" : "Kompatible Geräte entdecken",
+        "contact_support" : "Kundensupport kontaktieren",
+        "ton_title" : "Die Ledger Nano S™ unterstützt das Swappen von Ton nicht",
+        "ton_description" : "Zum Swappen von Ton kannst du jedes sonstige kompatible Ledger-Gerät nutzen, z. B. Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ oder Ledger Stax™.",
+        "spl_tokens_title" : "Die Ledger Nano S™ unterstützt das Swappen von Solana-Token nicht",
+        "spl_tokens_description" : "Zum Swappen von Solana-Token kannst du jedes sonstige kompatible Ledger-Gerät nutzen, z. B. Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ oder Ledger Stax™.",
+        "ada_title" : "Die Ledger Nano S™ unterstützt das Swappen von Cardano nicht",
+        "ada_description" : "Zum Swappen von Cardano kannst du jedes sonstige kompatible Ledger-Gerät nutzen, z. B. Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ oder Ledger Stax™."
       }
     },
     "lending" : {
@@ -3687,7 +3714,7 @@
     "highFeeModal" : "Achtung! Die Netzwerkgebühren sind höher als <1>10 %</1> des Betrags. Möchtest du den Vorgang fortsetzen?",
     "scan" : {
       "title" : "QR-Code scannen",
-      "descBottom" : "Bitte zentriere den QR-Code innerhalb des Quadrats.",
+      "descBottom" : "QR-Code scannen",
       "fallback" : {
         "header" : "QR-Code scannen",
         "title" : "Kamera einschalten",
@@ -3955,6 +3982,8 @@
   },
   "addAccounts" : {
     "addNew" : "Neu hinzufügen",
+    "seeAllAccounts" : "Alle Konten anzeigen",
+    "addNewOrExisting" : "Neues oder bestehendes Konto hinzufügen",
     "supportLinks" : {
       "segwit_or_native_segwit" : "Segwit oder Native Segwit?"
     },
@@ -6096,7 +6125,7 @@
     },
     "warning" : "Vergewissere dich, dass die auf deinem Ledger-Gerät angezeigte Adresse mit der Adresse des {{recipientWording}} übereinstimmt",
     "recipientWording" : {
-      "send" : "Vergewissere dich immer, dass die auf deinem Gerät angezeigte Adresse exakt mit derjenigen übereinstimmt, die dir der Empfänger mitgeteilt hat",
+      "send" : "Vergewissere dich immer, dass die auf deinem Gerät angezeigte Adresse genau mit der vom Empfänger angegebenen Adresse übereinstimmt.",
       "delegate" : "Vergewissere dich immer, dass dein Gerät die Adresse exakt so anzeigt, wie sie vom Validator angegeben wurde",
       "undelegate" : "Vergewissere dich immer, dass dein Gerät die Adresse exakt so anzeigt, wie sie vom Validator angegeben wurde",
       "freeze" : "Vergewissere dich immer, dass dein Gerät die Adresse exakt wie angegeben anzeigt",
@@ -6913,6 +6942,13 @@
         "title" : "Mit einer anderen Ledger Live-App synchronisieren",
         "description" : "Synchronisiere deine Ledger Live-Kryptokonten auf verschiedenen Smartphones und Computern."
       },
+      "unauthorizeMember" : {
+        "error" : {
+          "title" : "Diese App wird nicht mehr synchronisiert",
+          "description" : "Schalte Ledger Sync entweder in dieser Ledger Live-Instanz oder in derjenigen ein, mit der synchronisiert werden soll.",
+          "cta" : "Ledger Sync einschalten"
+        }
+      },
       "manageKey" : {
         "title" : "Sync löschen",
         "description" : "Deine Kryptokonten auf verschiedenen Smartphones und Computern werden dann nicht mehr synchronisiert.",
@@ -6923,6 +6959,11 @@
           "cancel" : "Sync behalten",
           "title" : "Möchtest du Sync wirklich löschen?",
           "desc" : "Deine Kryptokonten auf verschiedenen Smartphones und Computern werden dann nicht mehr synchronisiert. Das hat keinerlei Auswirkungen auf deine Vermögenswerte."
+        },
+        "error" : {
+          "title" : "Diese App wird nicht mehr synchronisiert",
+          "description" : "Schalte Ledger Sync entweder in dieser Ledger Live-Instanz oder in derjenigen ein, mit der synchronisiert werden soll.",
+          "cta" : "Ledger Sync einschalten"
         }
       },
       "manageInstances" : {
@@ -7093,6 +7134,14 @@
           "name" : "Konto hinzufügen"
         }
       }
+    }
+  },
+  "assetSelection" : {
+    "selectCrypto" : {
+      "title" : "Vermögenswert auswählen"
+    },
+    "selectNetwork" : {
+      "title" : "Blockchain-Netzwerk auswählen, zu dem der Vermögenswert gehört"
     }
   }
 }

@@ -4,14 +4,14 @@ import { Baker, Delegation } from "@ledgerhq/coin-tezos/types/index";
 import { bakers } from "@ledgerhq/coin-tezos/network/index";
 
 export function useBakers(whitelistAddresses: string[]): Baker[] {
-  const [bakers, setBakers] = useState<Baker[]>(() =>
+  const [whitelistedBakers, setWhitelistedBakers] = useState<Baker[]>(() =>
     bakers.listBakersWithDefault(whitelistAddresses),
   );
   useEffect(() => {
-    bakers.listBakers(whitelistAddresses).then(setBakers);
+    bakers.listBakers(whitelistAddresses).then(setWhitelistedBakers);
   }, [bakers, whitelistAddresses]);
 
-  return bakers;
+  return whitelistedBakers;
 }
 
 export function useDelegation(account: AccountLike): Delegation | null | undefined {

@@ -974,15 +974,6 @@
     "GasLessThanEstimate": {
       "title": "This may be too low. Please increase"
     },
-    "SequenceNumberTooNew": {
-      "title": "Sequence number too new"
-    },
-    "SequenceNumberTooOld": {
-      "title": "Sequence number too old"
-    },
-    "TransactionExpired": {
-      "title": "Transaction expired"
-    },
     "SequenceNumberError": {
       "title": "Sequence number error",
       "description": "Please close the window and try again later"
@@ -1303,7 +1294,7 @@
       "desc": "Our products are the only hardware wallets certified for their security by national cyber security agencies."
     },
     "title": "You need a Ledger",
-    "desc": "For your security, Ledger Live only works with a device. You need a device in order to continue.",
+    "desc": "For your security,\n Ledger Live only works with a Ledger.",
     "cta": "Buy your Ledger now",
     "footer": "I already have a Ledger, set it up",
     "bannerTitle": "Top-notch security for your crypto and NFTs",

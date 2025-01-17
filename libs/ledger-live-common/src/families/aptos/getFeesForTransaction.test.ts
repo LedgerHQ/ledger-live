@@ -36,80 +36,6 @@ jest.mock("./logic", () => {
 
 describe("getFeesForTransaction Test", () => {
   describe("when using getFee", () => {
-    describe("with vm_status as SEQUENCE_NUMBER", () => {
-      it("should return a fee estimation object", async () => {
-        simulateTransaction = jest.fn(() => [
-          {
-            success: false,
-            vm_status: ["SEQUENCE_NUMBER"],
-            expiration_timestamp_secs: 5,
-          },
-        ]);
-
-        const account = createFixtureAccount();
-        const transaction = createTransaction();
-        const aptosClient = new AptosAPI(account.currency.id);
-
-        transaction.amount = new BigNumber(1);
-        account.xpub = "xpub";
-        account.spendableBalance = new BigNumber(100000000);
-
-        const result = await getFeesForTransaction.getFee(account, transaction, aptosClient);
-
-        const expected = {
-          fees: new BigNumber(20301),
-          estimate: {
-            maxGasAmount: "201",
-            gasUnitPrice: "101",
-            sequenceNumber: "123",
-            expirationTimestampSecs: "",
-          },
-          errors: {
-            sequenceNumber: ["SEQUENCE_NUMBER"],
-          },
-        };
-
-        expect(result).toEqual(expected);
-      });
-    });
-
-    describe("with vm_status as TRANSACTION_EXPIRED", () => {
-      it("should return a fee estimation object", async () => {
-        simulateTransaction = jest.fn(() => [
-          {
-            success: false,
-            vm_status: ["TRANSACTION_EXPIRED"],
-            expiration_timestamp_secs: 5,
-          },
-        ]);
-
-        const account = createFixtureAccount();
-        const transaction = createTransaction();
-        const aptosClient = new AptosAPI(account.currency.id);
-
-        transaction.amount = new BigNumber(1);
-        account.xpub = "xpub";
-        account.spendableBalance = new BigNumber(100000000);
-
-        const result = await getFeesForTransaction.getFee(account, transaction, aptosClient);
-
-        const expected = {
-          fees: new BigNumber(20301),
-          estimate: {
-            maxGasAmount: "201",
-            gasUnitPrice: "101",
-            sequenceNumber: "123",
-            expirationTimestampSecs: "",
-          },
-          errors: {
-            expirationTimestampSecs: ["TRANSACTION_EXPIRED"],
-          },
-        };
-
-        expect(result).toEqual(expected);
-      });
-    });
-
     describe("with vm_status as INSUFFICIENT_BALANCE", () => {
       it("should return a fee estimation object", async () => {
         simulateTransaction = jest.fn(() => [
@@ -117,6 +43,8 @@ describe("getFeesForTransaction Test", () => {
             success: false,
             vm_status: ["INSUFFICIENT_BALANCE"],
             expiration_timestamp_secs: 5,
+            gas_used: "201",
+            gas_unit_price: "101",
           },
         ]);
 
@@ -135,8 +63,6 @@ describe("getFeesForTransaction Test", () => {
           estimate: {
             maxGasAmount: "201",
             gasUnitPrice: "101",
-            sequenceNumber: "123",
-            expirationTimestampSecs: "",
           },
           errors: {},
         };
@@ -152,6 +78,8 @@ describe("getFeesForTransaction Test", () => {
             success: false,
             vm_status: ["DUMMY_STATE"],
             expiration_timestamp_secs: 5,
+            gas_used: "9",
+            gas_unit_price: "100",
           },
         ]);
 
@@ -173,9 +101,23 @@ describe("getFeesForTransaction Test", () => {
   describe("when using getEstimatedGas", () => {
     describe("when key not in cache", () => {
       it("should return cached fee", async () => {
+        simulateTransaction = jest.fn(() => [
+          {
+            success: true,
+            vm_status: [],
+            expiration_timestamp_secs: 5,
+            gas_used: "9",
+            gas_unit_price: "102",
+          },
+        ]);
+
         const account = createFixtureAccount();
         const transaction = createTransaction();
         const aptosClient = new AptosAPI(account.currency.id);
+
+        transaction.amount = new BigNumber(1);
+        account.xpub = "xpub";
+        account.spendableBalance = new BigNumber(100000000);
 
         const result = await getFeesForTransaction.getEstimatedGas(
           account,
@@ -186,19 +128,17 @@ describe("getFeesForTransaction Test", () => {
         const expected = {
           errors: {},
           estimate: {
-            expirationTimestampSecs: "",
-            gasUnitPrice: "101",
-            maxGasAmount: "201",
-            sequenceNumber: "123",
+            gasUnitPrice: "102",
+            maxGasAmount: "9",
           },
-          fees: new BigNumber("20301"),
+          fees: new BigNumber("918"),
         };
 
         expect(result).toEqual(expected);
       });
     });
 
-    describe("when key is in cache 22", () => {
+    describe("when key is in cache", () => {
       beforeEach(() => {
         jest.clearAllMocks();
       });
@@ -211,6 +151,16 @@ describe("getFeesForTransaction Test", () => {
         const aptosClient = new AptosAPI(account.currency.id);
 
         transaction.amount = new BigNumber(10);
+
+        simulateTransaction = jest.fn(() => [
+          {
+            success: true,
+            vm_status: [],
+            expiration_timestamp_secs: 5,
+            gas_used: "9",
+            gas_unit_price: "100",
+          },
+        ]);
 
         const result1 = await getFeesForTransaction.getEstimatedGas(
           account,
@@ -228,10 +178,8 @@ describe("getFeesForTransaction Test", () => {
         const expected = {
           errors: {},
           estimate: {
-            expirationTimestampSecs: "",
             gasUnitPrice: "101",
             maxGasAmount: "201",
-            sequenceNumber: "123",
           },
           fees: new BigNumber("20301"),
         };

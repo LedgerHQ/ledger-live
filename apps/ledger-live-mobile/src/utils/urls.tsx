@@ -60,6 +60,8 @@ export const urls = {
   ratingsContact: "https://support.ledger.com/article/4423020306705-zd",
   buyNanoX:
     "https://shop.ledger.com/products/ledger-nano-x?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=onboarding",
+  buyFlex:
+    "https://shop.ledger.com/products/ledger-flex?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=onboarding",
   playstore: "https://play.google.com/store/apps/details?id=com.ledger.live",
   applestoreRate: "https://apps.apple.com/app/id1361671700?action=write-review",
   applestore:
