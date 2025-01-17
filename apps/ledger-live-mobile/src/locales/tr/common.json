@@ -790,6 +790,12 @@
     "SolanaAccountNotFunded" : {
       "title" : "Hesap daha önce fonlanmamış"
     },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "Hesap fonlanacak"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "Token hesabı varlıkları donduruldu"
+    },
     "SolanaAddressOfEd25519" : {
       "title" : "Adres ed25519 eğrisi dışında"
     },
@@ -970,6 +976,9 @@
     "FirmwareNotRecognized" : {
       "title" : "Geçersiz Sağlayıcı",
       "description" : "\"My Ledger sağlayıcım\" ayarını değiştirmeniz gerekmektedir. Bunu değiştirmek için Ledger Live'da \"Ayarlar\"ı açın, \"Deneysel özellikler\"i seçin ve ardından farklı bir sağlayıcı seçin."
+    },
+    "GasLessThanEstimate" : {
+      "title" : "Bu çok düşük olabilir. Lütfen arttırın"
     },
     "SequenceNumberError" : {
       "title" : "Sıra numarası hatası",
@@ -1291,7 +1300,7 @@
       "desc" : "Ürünlerimiz, güvenilirliği ulusal siber güvenlik kurumları tarafından onaylanmış olan tek donanım cüzdanlarıdır."
     },
     "title" : "Bir Ledger'a ihtiyacınız var",
-    "desc" : "Güvenliğiniz için Ledger Live yalnızca bir cihazla çalışır. Devam etmek için bir cihaza ihtiyacınız var.",
+    "desc" : "For your security,\n Ledger Live only works with a Ledger.",
     "cta" : "Ledger'ınızı şimdi satın alın",
     "footer" : "Zaten bir Ledger cihazım var, onu kuralım",
     "bannerTitle" : "Kriptolarınız ve NFT'leriniz için birinci sınıf güvenlik",
@@ -3768,6 +3777,7 @@
       "to" : "Alıcı",
       "infoTotalTitle" : "Düşülecek tutar",
       "infoTotalDesc" : "İşlem miktarını ve seçilen ağın ücretlerini içerir",
+      "gasFee" : "Gas Ücreti",
       "gasLimit" : "Gas limiti",
       "gasPrice" : "Gas ücreti",
       "maxFee" : "Ücret üst limiti",
@@ -3991,6 +4001,8 @@
       "desc" : "Hesap eklemeyi iptal etmek istediğinizden emin misiniz?"
     },
     "imported" : "Varlık başarıyla eklendi",
+    "added" : "Hesap, portföyünüze eklendi",
+    "added_plural" : "Portföyünüze {{count}} hesap eklendi",
     "sections" : {
       "importable" : {
         "title" : "Mevcut bir hesabı ekle"
@@ -4047,6 +4059,32 @@
         "title" : "Taproot",
         "desc" : "En son {{currency}} ağ yükseltmesi. Yaygınlaştıktan sonra daha iyi gizlilik ve daha ucuz ağ ücretleri sağlayacak. Cüzdan ve borsaların sunduğu destek hâlâ sınırlı."
       }
+    },
+    "scanDeviceAccounts" : {
+      "title" : "Eklemek istediğiniz hesapları seçin",
+      "ctaStopScan" : "Taramayı durdur",
+      "confirm" : "Onayla",
+      "scanningTitle" : "Blok Zincirindeki mevcut tüm hesaplar aranıyor...",
+      "sections" : {
+        "importable" : {
+          "title" : "{{count}} hesap bulundu",
+          "title_plural" : "{{count}} hesap bulundu"
+        },
+        "creatable" : {
+          "title" : "Yeni hesap"
+        },
+        "imported" : {
+          "title" : "Hesap zaten Portföyde mevcut ({{length}})",
+          "title_plural" : "Portföydeki hesaplar ({{length}})"
+        },
+        "migrate" : {
+          "title" : "Güncellenecek hesaplar"
+        }
+      }
+    },
+    "addAccountsSuccess" : {
+      "ctaAddFunds" : "Hesabınıza fon ekleyin",
+      "ctaClose" : "Kapat"
     }
   },
   "DeviceAction" : {
@@ -5934,6 +5972,10 @@
         "description" : "SOL varlıklarınızla bir doğrulayıcıya yetki devrederek ödüller kazanabilirsiniz."
       },
       "reserveWarning" : "Gelecekte staking'inizi durdurmak ve çekmek için gerekecek ağ ücretlerini karşılamak üzere cüzdanınızda en az {{amount}} SOL bulundurduğunuzdan lütfen emin olun"
+    },
+    "token" : {
+      "frozenStateWarning" : "Hesap varlıkları donduruldu!",
+      "transferWarning" : "Ledger Nano S™ kullanarak Solana token'ları için alıcı adresini doğrulamak üzere <0>bu yönergeleri uygulayın.</0>"
     }
   },
   "near" : {
@@ -7140,7 +7182,9 @@
       "title" : "Varlık Seçin"
     },
     "selectNetwork" : {
-      "title" : "Varlığın ait olduğu blok zinciri ağını seçin"
+      "title" : "Varlığın ait olduğu blok zinciri ağını seçin",
+      "detectedAccounts" : "{{count}} hesap (algılanan)",
+      "detectedAccounts_plural" : "{{count}} hesap (algılanan)"
     }
   }
 }
