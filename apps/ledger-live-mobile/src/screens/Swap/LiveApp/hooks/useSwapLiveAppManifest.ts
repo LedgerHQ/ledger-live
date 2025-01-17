@@ -6,13 +6,13 @@ import { useMemo } from "react";
 import { DEFAULT_SWAP_APP_ID } from "../consts";
 
 export function useSwapLiveAppManifest() {
-  const ptxSwapCoreExperiment = useFeature("ptxSwapCoreExperiment");
+  const ptxSwapLiveApp = useFeature("ptxSwapLiveApp");
 
   const manifestIdToUse = useMemo(() => {
-    return ptxSwapCoreExperiment?.enabled && ptxSwapCoreExperiment.params?.manifest_id
-      ? ptxSwapCoreExperiment.params?.manifest_id
+    return ptxSwapLiveApp?.enabled && ptxSwapLiveApp.params?.manifest_id
+      ? ptxSwapLiveApp.params?.manifest_id
       : DEFAULT_SWAP_APP_ID;
-  }, [ptxSwapCoreExperiment?.enabled, ptxSwapCoreExperiment?.params?.manifest_id]);
+  }, [ptxSwapLiveApp?.enabled, ptxSwapLiveApp?.params?.manifest_id]);
 
   const localManifest: LiveAppManifest | undefined = useLocalLiveAppManifest(manifestIdToUse);
   const remoteManifest: LiveAppManifest | undefined = useRemoteLiveAppManifest(manifestIdToUse);
