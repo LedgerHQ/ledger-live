@@ -200,7 +200,8 @@
       "STAKE" : "已权益质押",
       "UNSTAKE" : "已解除权益质押",
       "WITHDRAW_UNSTAKED" : "已提取",
-      "SENDING" : "发送"
+      "SENDING" : "发送",
+      "BURN" : "已销毁"
     },
     "edit" : {
       "title" : "加速或取消",
@@ -441,6 +442,14 @@
       "description" : "Ledger Nano S 不兼容 THORChain。您可以使用 Ledger Nano S Plus、Ledger Nano X、Ledger Stax 或 Ledger Flex 通过 Ledger Live 体验 THORChain 的跨链互换",
       "cta" : "浏览兼容设备",
       "changeProvider" : "使用其他提供商进行互换"
+    },
+    "incompatibility" : {
+      "ton_title" : "Ledger Nano S™ 不支持互换 TON",
+      "ton_description" : "要互换 TON，请使用任何其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
+      "spl_tokens_title" : "Ledger Nano S™ 不支持互换 Solana 代币",
+      "spl_tokens_description" : "要互换 Solana 代币，请使用任何其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
+      "ada_title" : "Ledger Nano S™ 不支持互换 Cardano",
+      "ada_description" : "要互换 Cardano，请使用任何其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。"
     },
     "providers" : {
       "title" : "选择一个供应方来互换加密货币",
@@ -1834,7 +1843,8 @@
       "withdrawUnbondedAmount" : "已提取数额",
       "palletMethod" : "方法",
       "transferAmount" : "转移数额",
-      "validatorsCount" : "验证者 ({{number}})"
+      "validatorsCount" : "验证者 ({{number}})",
+      "version" : "版本"
     }
   },
   "operationList" : {
@@ -3717,6 +3727,10 @@
           }
         }
       }
+    },
+    "token" : {
+      "frozenStateWarning" : "账户资产已冻结！",
+      "transferWarning" : "要使用 Ledger Nano S™ 验证 Solana 代币的接收人地址，<0>请按照以下说明操作。</0>"
     }
   },
   "ethereum" : {
@@ -3757,7 +3771,7 @@
       "category" : {
         "all" : {
           "name" : "全部",
-          "description" : "Ledger Live 支持所有以太坊权益质押服务提供商。"
+          "description" : "All Ethereum staking providers available on Ledger Live."
         },
         "liquid" : {
           "name" : "流动性质押",
@@ -5288,6 +5302,7 @@
     "verifyData" : "总是验证您设备上的操作细节。",
     "doubleCheck" : "签署之前请仔细检查 Ledger 设备上的交易详情。",
     "termsAndConditions" : "签署此交易，即表示您接受 <0>{{appName}} 的使用条款</0>。",
+    "termsAndConditionsWithPrivacy" : "签署此交易，即表示您接受 <0>{{appName}} 的使用条款</0>和<1>隐私政策</1>。",
     "warningWording" : {
     },
     "titleWording" : {
@@ -6170,6 +6185,15 @@
     },
     "SolanaAccountNotFunded" : {
       "title" : "账户没有资金"
+    },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "账户将获得资金"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "代币账户资产已冻结"
+    },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "账户未初始化"
     },
     "SolanaMemoIsTooLong" : {
       "title" : "Memo 标签太长。最大长度为 {{maxLength}}"
