@@ -1,0 +1,72 @@
+diff --git a/cli.js b/cli.js
+index 30228c5a84e07a54de75b1977b316dde6d7b6790..7583d901eebb2cedcaf6b2420e8caad3db93f602 100755
+--- a/cli.js
++++ b/cli.js
+@@ -23,6 +23,20 @@ const deprecated = () => {
+   );
+ };
+ 
++function findCommunityCli(startDir = process.cwd()) {
++  // In monorepos, we cannot make any assumptions on where
++  // `@react-native-community/cli` gets installed. The safest way to find it
++  // (barring adding an optional peer dependency) is to start from the project
++  // root.
++  //
++  // Note that we're assuming that the current working directory is the project
++  // root. This is also what `@react-native-community/cli` assumes (see
++  // https://github.com/react-native-community/cli/blob/14.x/packages/cli-tools/src/findProjectRoot.ts).
++  const options = { paths: [startDir] };
++  const rncli = require.resolve('@react-native-community/cli', options);
++  return require(rncli);
++}
++
+ function isMissingCliDependency(error) {
+   return (
+     error.code === 'MODULE_NOT_FOUND' &&
+@@ -217,7 +231,7 @@ async function main() {
+   }
+ 
+   try {
+-    return require('@react-native-community/cli').run(name);
++    return findCommunityCli().run(name);
+   } catch (e) {
+     if (isMissingCliDependency(e)) {
+       warnWithExplicitDependency();
+@@ -231,7 +245,7 @@ if (require.main === module) {
+   main();
+ } else {
+   try {
+-    cli = require('@react-native-community/cli');
++    cli = findCommunityCli();
+   } catch (e) {
+     // We silence @react-native-community/cli missing as it is no
+     // longer a dependency
+diff --git a/React/Base/RCTBridge.mm b/React/Base/RCTBridge.mm
+index 8a44d2ae74889e04ca6847181fab4c3287cd9e67..e6e7d6d2480ab8bdb99563a09e875ab4167dfc02 100644
+--- a/React/Base/RCTBridge.mm
++++ b/React/Base/RCTBridge.mm
+@@ -313,6 +313,7 @@ - (instancetype)initWithDelegate:(id<RCTBridgeDelegate>)delegate
+ 
+ - (void)dealloc
+ {
++  RCTBridge *batchedBridge = self.batchedBridge;
+   /**
+    * This runs only on the main thread, but crashes the subclass
+    * RCTAssertMainQueue();
+@@ -332,7 +333,15 @@ - (void)dealloc
+     RCTExecuteOnMainQueue(^{
+       facebook::react::jsinspector_modern::getInspectorInstance().removePage(*inspectorPageId);
+       inspectorPageId.reset();
+-      inspectorTarget.reset();
++      if (batchedBridge) {
++        [batchedBridge
++            dispatchBlock:^{
++              inspectorTarget.reset();
++            }
++                    queue:RCTJSThread];
++      } else {
++        inspectorTarget.reset();
++      }
+     });
+   }
+ }
