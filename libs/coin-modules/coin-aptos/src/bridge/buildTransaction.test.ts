@@ -4,7 +4,6 @@ import { AptosAPI } from "../api";
 import { normalizeTransactionOptions } from "./logic";
 import { InputEntryFunctionData } from "@aptos-labs/ts-sdk";
 import { TransactionOptions } from "../types";
-import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets/abandonseed";
 
 const generateTransaction = jest.fn(() => "tx");
 
@@ -55,7 +54,7 @@ describe("buildTransaction Test", () => {
     expect(generateTransactionArgs[1]).toEqual({
       function: "0x1::aptos_account::transfer_coins",
       typeArguments: ["0x1::aptos_coin::AptosCoin"],
-      functionArguments: [getAbandonSeedAddress("aptos"), "0"],
+      functionArguments: ["", "0"],
     });
     expect(generateTransactionArgs[2]).toEqual({ maxGasAmount: "100", gasUnitPrice: "200" });
   });
