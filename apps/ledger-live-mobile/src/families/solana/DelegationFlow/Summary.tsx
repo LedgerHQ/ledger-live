@@ -39,6 +39,7 @@ import TranslatedError from "../../../components/TranslatedError";
 import { useAccountUnit } from "~/hooks/useAccountUnit";
 import NotEnoughFundFeesAlert from "../../shared/StakingErrors/NotEnoughFundFeesAlert";
 import { NotEnoughBalance } from "@ledgerhq/errors";
+import Config from "react-native-config";
 
 type Props = StackNavigatorProps<SolanaDelegationFlowParamList, ScreenName.DelegationSummary>;
 
@@ -101,26 +102,28 @@ export default function DelegationSummary({ navigation, route }: Props) {
   const [rotateAnim] = useState(() => new Animated.Value(0));
 
   useEffect(() => {
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(rotateAnim, {
-          toValue: 1,
-          duration: 200,
-          useNativeDriver: true,
-        }),
-        Animated.timing(rotateAnim, {
-          toValue: -1,
-          duration: 300,
-          useNativeDriver: true,
-        }),
-        Animated.timing(rotateAnim, {
-          toValue: 0,
-          duration: 200,
-          useNativeDriver: true,
-        }),
-        Animated.delay(1000),
-      ]),
-    ).start();
+    if (!Config.DETOX) {
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(rotateAnim, {
+            toValue: 1,
+            duration: 200,
+            useNativeDriver: true,
+          }),
+          Animated.timing(rotateAnim, {
+            toValue: -1,
+            duration: 300,
+            useNativeDriver: true,
+          }),
+          Animated.timing(rotateAnim, {
+            toValue: 0,
+            duration: 200,
+            useNativeDriver: true,
+          }),
+          Animated.delay(1000),
+        ]),
+      ).start();
+    }
     return () => {
       rotateAnim.setValue(0);
     };
@@ -242,6 +245,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
           onPress={onContinue}
           disabled={bridgePending || !!bridgeError || hasErrors}
           pending={bridgePending}
+          testID="solana-summary-continue-button"
         />
       </View>
     </SafeAreaView>
@@ -463,7 +467,7 @@ function SummaryWords({
         </Words>
         {delegationAction.kind === "new" ? (
           <Touchable onPress={onChangeAmount}>
-            <Selectable name={formattedAmount} />
+            <Selectable name={formattedAmount} testID="solana-delegation-summary-amount" />
           </Touchable>
         ) : (
           <Selectable readOnly name={formattedAmount} />
@@ -479,7 +483,10 @@ function SummaryWords({
         </Words>
         {delegationAction.kind === "new" || delegationAction.stakeAction === "activate" ? (
           <Touchable onPress={onChangeValidator}>
-            <Selectable name={validator?.name ?? validator?.voteAccount ?? "-"} />
+            <Selectable
+              name={validator?.name ?? validator?.voteAccount ?? "-"}
+              testID="solana-delegation-summary-validator"
+            />
           </Touchable>
         ) : (
           <Selectable readOnly name={validator?.name ?? validator?.voteAccount ?? "-"} />
@@ -538,11 +545,25 @@ const Words = ({
   </Text>
 );
 
-const Selectable = ({ name, readOnly }: { name: string; readOnly?: boolean }) => {
+const Selectable = ({
+  name,
+  readOnly,
+  testID,
+}: {
+  name: string;
+  readOnly?: boolean;
+  testID?: string;
+}) => {
   const { colors } = useTheme();
   return (
     <View style={[styles.validatorSelection, { backgroundColor: rgba(colors.live, 0.2) }]}>
-      <Text fontWeight="bold" numberOfLines={1} style={styles.validatorSelectionText} color="live">
+      <Text
+        fontWeight="bold"
+        numberOfLines={1}
+        style={styles.validatorSelectionText}
+        color="live"
+        testID={testID}
+      >
         {name}
       </Text>
       {readOnly ? null : (
