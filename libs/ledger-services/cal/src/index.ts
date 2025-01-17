@@ -8,6 +8,7 @@ import { getCertificate } from "./certificate";
 import { findCurrencyData } from "./currencies";
 import { getProvidersCDNData, getProvidersData } from "./partners";
 
+export type { Device } from "./certificate";
 export type { CurrencyData } from "./currencies";
 export type { PartnerType, ExchangeProvider } from "./partners";
 export type { AdditionalProviderConfig } from "./partners/default";
