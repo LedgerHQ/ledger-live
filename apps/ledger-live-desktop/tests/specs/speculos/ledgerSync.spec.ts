@@ -4,8 +4,12 @@ import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "../../utils/customJsonReporter";
 import { CLI } from "tests/utils/cliUtils";
 import { activateLedgerSync } from "@ledgerhq/live-common/e2e/speculos";
+import { waitFor, waitForTimeOut } from "tests/utils/waitFor";
+import C from "~/renderer/modals/Receive/Body";
+import { expect } from "@playwright/test";
 
 const app: AppInfos = AppInfos.LS;
+const accountName = "Renamed Dogecoin 2";
 
 test.describe(`[${app.name}] Sync Accounts`, () => {
   const ledgerKeyRingProtocolArgs = {
@@ -19,12 +23,24 @@ test.describe(`[${app.name}] Sync Accounts`, () => {
     push: true,
     data: '{"accounts":[{"id":"mock:1:dogecoin:0.790010769447963:","currencyId":"dogecoin","index":1,"seedIdentifier":"mock","derivationMode":"","freshAddress":"1uVnrWAzycYqKUXSuNXt3XSjJ8"},{"id":"mock:1:bitcoin_gold:0.8027791663782486:","currencyId":"bitcoin_gold","index":1,"seedIdentifier":"mock","derivationMode":"","freshAddress":"1Y5T8JQqBKUS7cXbxUYCR4wg3YSbV9R"}],"accountNames":{"mock:1:dogecoin:0.790010769447963:":"Renamed Dogecoin 2","mock:1:bitcoin_gold:0.8027791663782486:":"Bitcoin Gold 2"}}',
   };
+  const ledgerSyncPullDataArgs = {
+    pubKey: "",
+    privateKey: "",
+    rootId: "",
+    walletSyncEncryptionKey: "",
+    applicationPath: "",
+    push: false,
+    pull: true,
+    data: "",
+  };
 
   async function initializeLedgerKeyRingProtocol() {
     return CLI.ledgerKeyRingProtocol({ initMemberCredentials: true }).then(output => {
       if (output && typeof output !== "string" && "pubkey" in output) {
         ledgerKeyRingProtocolArgs.pubKey = output.pubkey;
         ledgerKeyRingProtocolArgs.privateKey = output.privatekey;
+        ledgerSyncPullDataArgs.pubKey = output.pubkey;
+        ledgerSyncPullDataArgs.privateKey = output.privatekey;
       }
       return output;
     });
@@ -39,6 +55,9 @@ test.describe(`[${app.name}] Sync Accounts`, () => {
         ledgerSyncPushDataArgs.rootId = out.rootId;
         ledgerSyncPushDataArgs.walletSyncEncryptionKey = out.walletSyncEncryptionKey;
         ledgerSyncPushDataArgs.applicationPath = out.applicationPath;
+        ledgerSyncPullDataArgs.rootId = out.rootId;
+        ledgerSyncPullDataArgs.walletSyncEncryptionKey = out.walletSyncEncryptionKey;
+        ledgerSyncPullDataArgs.applicationPath = out.applicationPath;
       }
       return out;
     });
@@ -91,8 +110,26 @@ test.describe(`[${app.name}] Sync Accounts`, () => {
       await app.layout.goToAccounts();
       await app.accounts.expectAccountsCount(2);
 
-      await app.layout.goToSettings();
+      await app.accounts.navigateToAccountByName(accountName);
+      await app.account.expectAccountVisibility(accountName);
+      await app.account.deleteAccount();
+      await app.layout.syncAccounts();
+      await app.layout.waitForAccountsSyncToBeDone();
+      await app.accounts.expectAccountsCount(1);
+      await app.accounts.expectAccountAbsence(accountName);
+      await waitForTimeOut(10000);
 
+      const pulledData = CLI.ledgerSync({
+        ...ledgerKeyRingProtocolArgs,
+        ...ledgerSyncPullDataArgs,
+      });
+
+      let parsedData;
+      parsedData = typeof pulledData === "string" ? JSON.parse(pulledData) : pulledData;
+      const values = Object.values(parsedData);
+      expect(values).toContain(accountName);
+
+      await app.layout.goToSettings();
       await app.settings.openManageLedgerSync();
       await app.ledgerSync.destroyTrustchain();
       await app.ledgerSync.expectBackupDeletion();
