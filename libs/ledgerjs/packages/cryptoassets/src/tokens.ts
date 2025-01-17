@@ -468,35 +468,6 @@ function convertStellarTokens([
   };
 }
 
-function convertCasperTokens([
-  assetCode,
-  assetIssuer,
-  assetType,
-  name,
-  precision,
-  enableCountervalues,
-]: CasperToken): TokenCurrency {
-  const parentCurrency = getCryptoCurrencyById("casper");
-
-  return {
-    type: "TokenCurrency",
-    id: `casper/asset/${assetCode}:${assetIssuer}`,
-    contractAddress: assetIssuer,
-    parentCurrency,
-    tokenType: assetType,
-    name,
-    ticker: assetCode,
-    disableCountervalue: !enableCountervalues,
-    units: [
-      {
-        name,
-        code: assetCode,
-        magnitude: precision,
-      },
-    ],
-  };
-}
-
 export function convertJettonToken([address, name, ticker, magnitude, delisted]: TonJettonToken):
   | TokenCurrency
   | undefined {
