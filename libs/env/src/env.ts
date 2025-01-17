@@ -153,17 +153,17 @@ const envDefinitions = {
     desc: "bakers API for tezos",
   },
   API_TEZOS_BLOCKCHAIN_EXPLORER_API_ENDPOINT: {
-    def: "https://xtz-explorer.api.live.ledger.com/explorer",
+    def: "https://xtz-explorer.api-01.live.ledger-stg.com/explorer",
     parser: stringParser,
     desc: "Ledger explorer API for tezos",
   },
   API_TEZOS_TZKT_API: {
-    def: "https://xtz-tzkt-explorer.api.live.ledger.com",
+    def: "https://xtz-tzkt-explorer.api-01.live.ledger-stg.com",
     parser: stringParser,
     desc: "tzkt.io explorer",
   },
   API_TEZOS_NODE: {
-    def: "https://xtz-node.api.live.ledger.com",
+    def: "https://xtz-node.api-01.live.ledger-stg.com",
     parser: stringParser,
     desc: "node API for tezos (for broadcast only)",
   },
