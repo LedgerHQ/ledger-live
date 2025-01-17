@@ -115,7 +115,7 @@
     "build": "tsc && tsc -m ES6 --outDir lib-es",
     "coverage": "jest --coverage --testPathIgnorePatterns='/bridge.integration.test.ts|node_modules|lib-es|lib/' --passWithNoTests && mv coverage/coverage-final.json coverage/coverage-aptos.json",
     "coverage2": "jest --coverage --testPathIgnorePatterns='/bridge.integration.test.ts|api/index.test.ts|errors.test.ts|index.test.ts|node_modules|lib-es|lib/' --coverageReporters html --passWithNoTests",
-    "coverage3": "jest --coverage --testPathPattern='/api/index.test.ts'",
+    "coverage3": "jest --coverage --testPathPattern='broadcast.test.ts'",
     "prewatch": "pnpm build",
     "watch": "tsc --watch",
     "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
