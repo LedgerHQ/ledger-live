@@ -1,5 +1,4 @@
 import {
-  AccountAddress,
   AccountAuthenticatorEd25519,
   Ed25519PublicKey,
   Ed25519Signature,
@@ -25,7 +24,8 @@ export async function signTransaction(
   if (!account.xpub) {
     throw Error("Account must have a public signing key");
   }
-  const publicKey = Buffer.from(AccountAddress.from(account.xpub).toUint8Array());
+
+  const publicKey = Buffer.from(account.xpub);
   const hash = sha3Hash.create();
   hash.update(publicKey.toString("hex"));
   hash.update("\x00");
