@@ -6,7 +6,6 @@ import { tokens as sepoliaTokens } from "./data/evm/11155111";
 import stellarTokens, { StellarToken } from "./data/stellar";
 import vechainTokens, { Vip180Token } from "./data/vip180";
 import esdttokens, { ElrondESDTToken } from "./data/esdt";
-import casperTokens, { CasperToken } from "./data/casper";
 import asatokens, { AlgorandASAToken } from "./data/asa";
 import { tokens as polygonTokens } from "./data/evm/137";
 import trc10tokens, { TRC10Token } from "./data/trc10";
@@ -46,8 +45,6 @@ addTokens(esdttokens.map(convertElrondESDTTokens));
 addTokens(cardanoNativeTokens.map(convertCardanoNativeTokens));
 // Stellar tokens
 addTokens(stellarTokens.map(convertStellarTokens));
-// Casper tokens
-addTokens(casperTokens.map(convertCasperTokens));
 // VeChain tokens
 addTokens(vechainTokens.map(convertVechainToken));
 // Ton tokens
