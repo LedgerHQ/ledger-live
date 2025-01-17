@@ -10,12 +10,10 @@ import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { AptosSigner } from "../types";
 import { signTransaction } from "../network";
 
-export const getAddress = (
-  a: Account,
-): {
-  address: string;
-  derivationPath: string;
-} => ({ address: a.freshAddress, derivationPath: a.freshAddressPath });
+export const getAddress = (a: Account) => ({
+  address: a.freshAddress,
+  derivationPath: a.freshAddressPath,
+});
 
 const buildSignOperation =
   (

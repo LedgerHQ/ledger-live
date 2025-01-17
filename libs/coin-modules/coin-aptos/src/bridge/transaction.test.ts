@@ -3,11 +3,6 @@ import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.
 import { formatTransaction, fromTransactionRaw, toTransactionRaw } from "./transaction";
 import { Transaction, TransactionRaw } from "../types";
 
-jest.mock("./logic", () => ({
-  DEFAULT_GAS: 100,
-  DEFAULT_GAS_PRICE: 200,
-}));
-
 describe("transaction Test", () => {
   describe("when formatTransaction", () => {
     describe("when amount is 0 and fee is 0", () => {
@@ -33,7 +28,7 @@ with fees=?`;
         const transaction = createFixtureTransaction();
 
         transaction.recipient = "0xff00";
-        transaction.fees = new BigNumber("0.0001");
+        transaction.fees = BigNumber("0.0001");
         const result = formatTransaction(transaction, account);
 
         const expected = `
@@ -51,7 +46,7 @@ with fees=0`;
         const transaction = createFixtureTransaction();
 
         transaction.recipient = "0xff00";
-        transaction.fees = new BigNumber("0.1");
+        transaction.fees = BigNumber("0.1");
         const result = formatTransaction(transaction, account);
 
         const expected = `
@@ -68,9 +63,9 @@ with fees=0`;
         const account = createFixtureAccount();
         const transaction = createFixtureTransaction();
 
-        transaction.amount = new BigNumber("1");
+        transaction.amount = BigNumber("1");
         transaction.recipient = "0xff00";
-        transaction.fees = new BigNumber("0.1");
+        transaction.fees = BigNumber("0.1");
         const result = formatTransaction(transaction, account);
 
         const expected = `
@@ -87,9 +82,9 @@ with fees=0`;
         const account = createFixtureAccount();
         const transaction = createFixtureTransaction();
 
-        transaction.amount = new BigNumber("10");
+        transaction.amount = BigNumber("10");
         transaction.recipient = "0xff00";
-        transaction.fees = new BigNumber("1");
+        transaction.fees = BigNumber("1");
         const result = formatTransaction(transaction, account);
 
         const expected = `
@@ -106,9 +101,9 @@ with fees=0.00000001`;
         const account = createFixtureAccount();
         const transaction = createFixtureTransaction();
 
-        transaction.amount = new BigNumber("1000");
+        transaction.amount = BigNumber("1000");
         transaction.recipient = "0xff00";
-        transaction.fees = new BigNumber("1");
+        transaction.fees = BigNumber("1");
         const result = formatTransaction(transaction, account);
 
         const expected = `
@@ -125,10 +120,10 @@ with fees=0.00000001`;
         const account = createFixtureAccount();
         const transaction = createFixtureTransaction();
 
-        transaction.amount = new BigNumber("1000");
+        transaction.amount = BigNumber("1000");
         transaction.useAllAmount = true;
         transaction.recipient = "0xff00";
-        transaction.fees = new BigNumber("1");
+        transaction.fees = BigNumber("1");
         const result = formatTransaction(transaction, account);
 
         const expected = `
@@ -146,7 +141,6 @@ with fees=0.00000001`;
       const txRaw = {
         family: "aptos",
         mode: "send",
-        fees: null,
         options: "{}",
         amount: "0.5",
         recipient: "0xff00",
@@ -159,7 +153,39 @@ with fees=0.00000001`;
 
       const expected = {
         family: "aptos",
-        amount: new BigNumber("0.5"),
+        amount: BigNumber("0.5"),
+        options: {},
+        mode: "send",
+        recipient: "0xff00",
+        recipientDomain: {},
+        subAccountId: "0xff01",
+        useAllAmount: false,
+      };
+
+      expect(result).toEqual(expected);
+    });
+
+    it("should return the transaction object with fees and errors", () => {
+      const txRaw = {
+        family: "aptos",
+        mode: "send",
+        fees: "50",
+        errors: '{ "errors": "error" }',
+        options: "{}",
+        amount: "0.5",
+        recipient: "0xff00",
+        useAllAmount: false,
+        subAccountId: "0xff01",
+        recipientDomain: {},
+      } as TransactionRaw;
+
+      const result = fromTransactionRaw(txRaw);
+
+      const expected = {
+        family: "aptos",
+        amount: BigNumber("0.5"),
+        fees: BigNumber(50),
+        errors: { errors: "error" },
         options: {},
         mode: "send",
         recipient: "0xff00",
@@ -176,7 +202,7 @@ with fees=0.00000001`;
     it("should return the raw transaction object", () => {
       const tx = {
         family: "aptos",
-        amount: new BigNumber("0.5"),
+        amount: BigNumber("0.5"),
         options: {},
         mode: "send",
         recipient: "0xff00",
@@ -191,6 +217,36 @@ with fees=0.00000001`;
         family: "aptos",
         mode: "send",
         fees: null,
+        options: "{}",
+        amount: "0.5",
+        recipient: "0xff00",
+        useAllAmount: false,
+        subAccountId: "0xff01",
+        recipientDomain: {},
+      } as TransactionRaw;
+
+      expect(result).toEqual(expected);
+    });
+
+    it("should return the raw transaction object with fees", () => {
+      const tx = {
+        family: "aptos",
+        amount: BigNumber("0.5"),
+        options: {},
+        fees: BigNumber("0.1"),
+        mode: "send",
+        recipient: "0xff00",
+        recipientDomain: {},
+        subAccountId: "0xff01",
+        useAllAmount: false,
+      } as Transaction;
+
+      const result = toTransactionRaw(tx);
+
+      const expected = {
+        family: "aptos",
+        mode: "send",
+        fees: "0.1",
         options: "{}",
         amount: "0.5",
         recipient: "0xff00",
