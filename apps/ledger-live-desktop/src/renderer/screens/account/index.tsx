@@ -6,6 +6,7 @@ import { TFunction } from "i18next";
 import { Redirect } from "react-router";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
+import { Text } from "@ledgerhq/react-ui";
 import { isAddressPoisoningOperation } from "@ledgerhq/live-common/operation";
 import { getCurrencyColor } from "~/renderer/getCurrencyColor";
 import { accountSelector } from "~/renderer/reducers/accounts";
@@ -184,14 +185,17 @@ const AccountPage = ({
         <TopBanner
           status="warning"
           content={{
-            message: t("account.featureUnavailable.title", {
-              title: currencyConfig.status.title,
-              link: currencyConfig.status.link || localizedContactSupportURL,
-            }),
+            message: (
+              <Text fontFamily="Inter|Bold" color="black" flex={1}>
+                {t("account.featureUnavailable.title", {
+                  feature: t(`account.featureUnavailable.feature.${currencyConfig.status.feature}`),
+                })}
+              </Text>
+            ),
           }}
           link={{
             text: t("account.featureUnavailable.support"),
-            href: localizedContactSupportURL,
+            href: currencyConfig.status.link || localizedContactSupportURL,
           }}
         />
       )}

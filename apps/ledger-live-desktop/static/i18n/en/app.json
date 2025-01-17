@@ -761,18 +761,18 @@
       }
     },
     "featureUnavailable": {
-      "title": "{{feature}} is momentarily unavailable, please read {{link}} to know more.",
+      "title": "The following feature is momentarily unavailable : {{feature}}, to know more please refer to support.",
       "feature": {
-        "history": "history",
-        "swap": "swap",
-        "token_history": "token history",
-        "send_and_receive": "send & receive",
-        "send": "send",
-        "receive": "receive",
-        "sending_tokens": "sending tokens",
-        "receiving_tokens": "receiving tokens",
-        "staking": "staking",
-        "claiming_staking_rewards": "claiming staking rewards"
+        "history": "History",
+        "swap": "Swap",
+        "token_history": "Token history",
+        "send_and_receive": "Send & receive",
+        "send": "Send",
+        "receive": "Receive",
+        "sending_tokens": "Sending tokens",
+        "receiving_tokens": "Receiving tokens",
+        "staking": "Staking",
+        "claiming_staking_rewards": "Claiming staking rewards"
       },
       "support": "Support"
     },
