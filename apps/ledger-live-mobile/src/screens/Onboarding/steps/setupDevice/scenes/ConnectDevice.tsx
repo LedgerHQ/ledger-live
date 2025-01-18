@@ -6,7 +6,6 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Result } from "@ledgerhq/live-common/hw/actions/manager";
 import DeviceActionModal from "~/components/DeviceActionModal";
 import SelectDevice2 from "~/components/SelectDevice2";
-import { TrackScreen } from "~/analytics";
 import Button from "~/components/PreventDoubleClickButton";
 
 import {
@@ -17,7 +16,7 @@ import {
 } from "~/actions/settings";
 import { useManagerDeviceAction } from "~/hooks/deviceActions";
 
-const ConnectNanoScene = ({ onNext }: { onNext: () => void }) => {
+const ConnectDevice = ({ onSuccess }: { onSuccess: () => void }) => {
   const action = useManagerDeviceAction();
   const dispatch = useDispatch();
   const [device, setDevice] = useState<Device | undefined>();
@@ -52,15 +51,14 @@ const ConnectNanoScene = ({ onNext }: { onNext: () => void }) => {
         setDevice(undefined);
         dispatch(setReadOnlyMode(false));
         dispatch(setHasOrderedNano(false));
-        onNext();
+        onSuccess();
       }
     },
-    [dispatch, onNext],
+    [dispatch, onSuccess],
   );
 
   return (
     <>
-      <TrackScreen category="Onboarding" name="PairNew" />
       <Flex flex={1}>
         <SelectDevice2
           onSelect={onSelectDevice}
@@ -77,32 +75,22 @@ const ConnectNanoScene = ({ onNext }: { onNext: () => void }) => {
         action={action}
         request={null}
       />
+      {__DEV__ ? (
+        <Button
+          mt={7}
+          type="color"
+          outline
+          onPress={() => {
+            dispatch(setReadOnlyMode(false));
+            dispatch(setHasOrderedNano(false));
+            onSuccess();
+          }}
+        >
+          (DEV) SKIP THIS STEP
+        </Button>
+      ) : null}
     </>
   );
 };
 
-ConnectNanoScene.id = "ConnectNanoScene";
-ConnectNanoScene.contentContainerStyle = { padding: 16, flex: 1 };
-
-const Next = ({ onNext }: { onNext: () => void }) => {
-  const dispatch = useDispatch();
-
-  return __DEV__ ? (
-    <Button
-      mt={7}
-      type="color"
-      outline
-      onPress={() => {
-        dispatch(setReadOnlyMode(false));
-        dispatch(setHasOrderedNano(false));
-        onNext();
-      }}
-    >
-      (DEV) SKIP THIS STEP
-    </Button>
-  ) : null;
-};
-
-ConnectNanoScene.Next = Next;
-
-export default ConnectNanoScene;
+export default ConnectDevice;

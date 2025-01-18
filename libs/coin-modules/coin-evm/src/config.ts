@@ -19,6 +19,11 @@ type EvmConfig = {
     | {
         type: "ledger";
         explorerId: LedgerExplorerId;
+      }
+    | {
+        type: "none";
+        uri?: never;
+        explorerId?: never;
       };
   gasTracker?: {
     type: "ledger";

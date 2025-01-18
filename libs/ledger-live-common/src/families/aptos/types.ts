@@ -54,7 +54,6 @@ export type Transaction = TransactionCommon & {
   fees?: BigNumber | null;
   options: TransactionOptions;
   errors?: TransactionErrors;
-  tag?: string;
 };
 
 export type TransactionRaw = TransactionCommonRaw & {

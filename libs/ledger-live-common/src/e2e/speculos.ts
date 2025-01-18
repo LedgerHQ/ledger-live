@@ -498,6 +498,7 @@ export async function signSendTransaction(tx: Transaction) {
   switch (currencyName) {
     case Currency.sepETH:
     case Currency.POL:
+    case Currency.ETH:
       await sendEVM(tx);
       break;
     case Currency.DOGE:

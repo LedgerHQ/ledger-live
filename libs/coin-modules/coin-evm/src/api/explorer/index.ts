@@ -4,6 +4,7 @@ import { getCoinConfig } from "../../config";
 import etherscanLikeApi from "./etherscan";
 import ledgerExplorerApi from "./ledger";
 import { ExplorerApi } from "./types";
+import noExplorerAPI from "./none";
 
 /**
  * Switch to select one of the compatible explorer
@@ -20,6 +21,8 @@ export const getExplorerApi = (currency: CryptoCurrency): ExplorerApi => {
       return etherscanLikeApi;
     case "ledger":
       return ledgerExplorerApi;
+    case "none":
+      return noExplorerAPI;
 
     default:
       throw new UnknownExplorer(`Unknown explorer for currency: ${currency.id}`);

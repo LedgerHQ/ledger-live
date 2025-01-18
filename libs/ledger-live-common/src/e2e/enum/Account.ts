@@ -159,15 +159,7 @@ export class Account {
     "0x43047a5023D55a8658Fcb1c1Cea468311AdAA3Ad",
     undefined,
     1,
-  );
-
-  static readonly ETH_MC = new Account(
-    Currency.ETH,
-    "Ethereum MC",
-    "0x4258A05DBA420A398bcdFB389E4250759b4223ea",
-    undefined,
-    undefined,
-    "ldgrqamco.eth",
+    "speculos.eth",
   );
 
   static readonly ETH_3 = new Account(

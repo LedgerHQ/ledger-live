@@ -43,6 +43,11 @@ on:
         required: false
         type: boolean
         default: false
+      production_firebase:
+        description: "Target Production Firebase environment"
+        required: false
+        type: boolean
+        default: false
 
 # Uncomment to have log-level: trace on detox run and build
 # (cf: apps/ledger-live-mobile/detox.config.js)

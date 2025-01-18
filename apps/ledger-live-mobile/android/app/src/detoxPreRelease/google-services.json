@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "212042068804",
+    "project_id": "ledger-live-production",
+    "storage_bucket": "ledger-live-production.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:212042068804:android:cdf1f537910a5066b51d11",
+        "android_client_info": {
+          "package_name": "com.ledger.live"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "212042068804-drh6m4ulmedj9kd0q6337avsuuhhchmg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCe9QrkYnsxCfnBilRFxnpC-uqgoF5IIyA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "212042068804-drh6m4ulmedj9kd0q6337avsuuhhchmg.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "212042068804-n7rglq1e800k8fo9urt70etkbh2tia8l.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "ledgerlivemobile"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

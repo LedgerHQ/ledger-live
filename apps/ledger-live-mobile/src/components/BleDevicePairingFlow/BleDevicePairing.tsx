@@ -169,14 +169,14 @@ const BleDevicePairing = ({ deviceToPair, onPaired, onRetry }: BleDevicePairingP
         <Flex width="100%" py={16} alignItems="center">
           <Flex height={100} justifyContent="center">
             <BoxedIcon
-              Icon={
+              Icon={() => (
                 <InfiniteLoader
                   color="primary.c80"
                   size={32}
                   mock={Config.DETOX}
                   testID="ble-pairing-loading"
                 />
-              }
+              )}
               backgroundColor={colors.opacityDefault.c05}
               size={64}
               variant="circle"

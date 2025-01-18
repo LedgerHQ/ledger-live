@@ -166,9 +166,9 @@ export default function SelectDevice({
 
   useEffect(() => {
     const filter = ({ id }: { id: string }) => ["hid", "httpdebug"].includes(id);
+    const setDeviceFromId = (id: string) => (id.startsWith("usb") ? setUSBDevice : setProxyDevice);
     const sub = discoverDevices(filter).subscribe(e => {
-      const setDevice = e.id.startsWith("usb") ? setUSBDevice : setProxyDevice;
-
+      const setDevice = setDeviceFromId(e.id);
       if (e.type === "remove") setDevice(undefined);
       if (e.type === "add") {
         const { name, deviceModel, id, wired } = e;
@@ -316,6 +316,10 @@ export default function SelectDevice({
         retryRequestOnIssue={retryRequestOnIssue}
         cannotRetryRequest={cannotRetryRequest}
       />
+      {/* @Fixme Add a hidden text element to render screen correctly on ios sim release e2e test */}
+      <Text style={{ height: 0, opacity: 0 }}>
+        {"Hidden text element to pass detox ios release onboarding.spec"}
+      </Text>
       {isPairingDevices ? (
         <BleDevicePairingFlow
           onPairingSuccess={handleOnSelect}

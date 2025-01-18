@@ -3,7 +3,7 @@ import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Fee } from "@ledgerhq/live-common/e2e/enum/Fee";
 import { TransactionStatus } from "@ledgerhq/live-common/e2e/enum/TransactionStatus";
 import { Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
-import { addTmsLink, addBugLink } from "tests/utils/allureUtils";
+import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "../../utils/customJsonReporter";
 import { CLI } from "tests/utils/cliUtils";
 import { getEnv } from "@ledgerhq/live-env";
@@ -152,7 +152,6 @@ const transactionE2E = [
   {
     transaction: new Transaction(Account.POL_1, Account.POL_2, "0.001", Fee.SLOW),
     xrayTicket: "B2CQA-2807",
-    bugTicket: "BACK-8150",
   },
   {
     transaction: new Transaction(Account.DOGE_1, Account.DOGE_2, "0.01", Fee.SLOW),
@@ -248,16 +247,10 @@ test.describe("Send flows", () => {
       test(
         `Send from ${transaction.transaction.accountToDebit.accountName} to ${transaction.transaction.accountToCredit.accountName}`,
         {
-          annotation: [
-            { type: "TMS", description: transaction.xrayTicket },
-            { type: "BUG", description: transaction.bugTicket },
-          ],
+          annotation: { type: "TMS", description: transaction.xrayTicket },
         },
         async ({ app }) => {
           await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-          if (transaction.bugTicket) {
-            await addBugLink(getDescription(test.info().annotations, "BUG").split(", "));
-          }
 
           await app.layout.goToAccounts();
           await app.accounts.navigateToAccountByName(
@@ -604,4 +597,79 @@ test.describe("Send flows", () => {
       );
     });
   }
+
+  const originalValue = process.env.DISABLE_TRANSACTION_BROADCAST;
+
+  test.describe("User sends funds to ENS address", () => {
+    const transactionEnsAddress = new Transaction(
+      Account.ETH_1,
+      Account.ETH_2,
+      "0.0001",
+      Fee.MEDIUM,
+    );
+
+    test.beforeAll(async () => {
+      process.env.DISABLE_TRANSACTION_BROADCAST = "1";
+    });
+
+    test.use({
+      userdata: "skip-onboarding",
+      speculosApp: transactionEnsAddress.accountToDebit.currency.speculosApp,
+      cliCommands: [
+        (appjsonPath: string) => {
+          return CLI.liveData({
+            currency: transactionEnsAddress.accountToCredit.currency.currencyId,
+            index: transactionEnsAddress.accountToCredit.index,
+            add: true,
+            appjson: appjsonPath,
+          });
+        },
+        (appjsonPath: string) => {
+          return CLI.liveData({
+            currency: transactionEnsAddress.accountToDebit.currency.currencyId,
+            index: transactionEnsAddress.accountToDebit.index,
+            add: true,
+            appjson: appjsonPath,
+          });
+        },
+      ],
+    });
+    test(
+      `User sends funds to ENS address - ${transactionEnsAddress.accountToCredit.ensName}`,
+      {
+        annotation: {
+          type: "TMS",
+          description: "B2CQA-2202",
+        },
+      },
+      async ({ app }) => {
+        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
+        await app.layout.goToAccounts();
+        await app.accounts.navigateToAccountByName(
+          transactionEnsAddress.accountToDebit.accountName,
+        );
+
+        await app.account.clickSend();
+        await app.send.craftTx(transactionEnsAddress);
+        await app.send.countinueSendAmount();
+        await app.send.expectTxInfoValidity(transactionEnsAddress);
+        await app.send.clickContinueToDevice();
+
+        await app.speculos.signSendTransaction(transactionEnsAddress);
+        await app.send.expectTxSent();
+        await app.account.navigateToViewDetails();
+        await app.sendDrawer.addressValueIsVisible(transactionEnsAddress.accountToCredit.address);
+        await app.drawer.closeDrawer();
+      },
+    );
+
+    test.afterAll(() => {
+      if (originalValue !== undefined) {
+        process.env.DISABLE_TRANSACTION_BROADCAST = originalValue;
+      } else {
+        delete process.env.DISABLE_TRANSACTION_BROADCAST;
+      }
+    });
+  });
 });
