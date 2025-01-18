@@ -1,5 +1,16 @@
 ## 34.5.0-next.4
 
+## 34.18.0-nightly.1
+
+### Minor Changes
+
+- [#8932](https://github.com/LedgerHQ/ledger-live/pull/8932) [`a8e2a6d`](https://github.com/LedgerHQ/ledger-live/commit/a8e2a6df475cea22a70856412dd916d412f46fb8) Thanks [@may01](https://github.com/may01)! - Remove unused parameter from Aptos Transaction
+
+### Patch Changes
+
+- Updated dependencies [[`c62cec9`](https://github.com/LedgerHQ/ledger-live/commit/c62cec9a911f41d2383effeb2ea1f92756ce0a09)]:
+  - @ledgerhq/coin-evm@2.9.0-nightly.0
+
 ## 34.18.0-nightly.0
 
 ### Minor Changes

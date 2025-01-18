@@ -1,5 +1,11 @@
 # @ledgerhq/coin-evm
 
+## 2.9.0-nightly.0
+
+### Minor Changes
+
+- [#8899](https://github.com/LedgerHQ/ledger-live/pull/8899) [`c62cec9`](https://github.com/LedgerHQ/ledger-live/commit/c62cec9a911f41d2383effeb2ea1f92756ce0a09) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Prevent request on blockscout for ERC1155 NFTs as unsupported yet and add a `none` option for explorer's config to allow for node-only synchronization (will make token accounts disappear though)
+
 ## 2.8.0
 
 ### Minor Changes
