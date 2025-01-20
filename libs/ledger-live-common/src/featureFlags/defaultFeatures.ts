@@ -431,6 +431,9 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
 
+  ptxSwapMoonpayProvider: DEFAULT_FEATURE,
+  ptxSwapExodusProvider: DEFAULT_FEATURE,
+
   myLedgerDisplayAppDeveloperName: DEFAULT_FEATURE,
   nftsFromSimplehash: {
     ...DEFAULT_FEATURE,
@@ -506,6 +509,7 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
   llmRebornLP: { ...DEFAULT_FEATURE, params: { variant: ABTestingVariants.variantA } },
+  llmRebornFlex: DEFAULT_FEATURE,
   llmAccountListUI: DEFAULT_FEATURE,
 };
 

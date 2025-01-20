@@ -21,7 +21,6 @@ export default class OnboardingStepsPage {
   buyLedgerButton = () => getElementById("onboarding-noLedgerYetModal-buy");
   exploreWithoutDeviceButton = () => getElementById(this.exploreWithoutDeviceButtonId);
   connectLedgerButton = () => getElementById("Existing Wallet | Connect");
-  pairNanoButton = () => getElementById("Onboarding-PairNewNano");
   maybeLaterButton = () => getElementById("notifications-prompt-later");
 
   setupLedger = "onboarding-setupLedger";
@@ -155,10 +154,6 @@ export default class OnboardingStepsPage {
       await tapById(this.quizzCta);
     }
     await tapById(this.quizzFinalCta);
-  }
-
-  async selectPairMyNano() {
-    await tapByElement(this.pairNanoButton());
   }
 
   async declineNotifications() {

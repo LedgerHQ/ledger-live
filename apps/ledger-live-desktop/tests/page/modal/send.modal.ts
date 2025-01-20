@@ -50,7 +50,14 @@ export class SendModal extends Modal {
 
   @step("Enter recipient and tag")
   async fillRecipientInfo(transaction: Transaction) {
-    await this.fillRecipient(transaction.accountToCredit.address);
+    if (transaction.accountToCredit.ensName) {
+      await this.fillRecipient(transaction.accountToCredit.ensName);
+      const displayedAddress = await this.ENSAddressLabel.innerText();
+      expect(displayedAddress).toEqual(transaction.accountToCredit.address);
+    } else {
+      await this.fillRecipient(transaction.accountToCredit.address);
+    }
+
     if (transaction.memoTag && transaction.memoTag !== "noTag") {
       await this.tagInput.clear();
       await this.tagInput.fill(transaction.memoTag);
@@ -103,6 +110,10 @@ export class SendModal extends Modal {
 
     const displayedAmount = await this.amountDisplayedValue.innerText();
     expect(displayedAmount).toEqual(expect.stringContaining(tx.amount));
+    if (tx.accountToCredit.ensName) {
+      const displayedEns = await this.recipientEnsDisplayed.innerText();
+      expect(displayedEns).toEqual(tx.accountToCredit.ensName);
+    }
   }
 
   @step("Verify tx sent text")

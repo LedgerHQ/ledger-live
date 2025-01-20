@@ -143,6 +143,7 @@ export class SwapPage extends AppPage {
   @step("Click Exchange button")
   async clickExchangeButton(electronApp: ElectronApplication, provider: string) {
     const [, webview] = electronApp.windows();
+<<<<<<< HEAD
     await webview.getByRole('button',{name: `Swap with ${provider}`}).click();
   }
 
@@ -150,6 +151,9 @@ export class SwapPage extends AppPage {
   async sendMax(electronApp: ElectronApplication) {
     const [, webview] = electronApp.windows();
     await webview.getByTestId("from-account-max-toggle").click();
+=======
+    await webview.getByRole("button", { name: `Swap with ${provider}` }).click();
+>>>>>>> origin/develop
   }
 
   async confirmExchange() {
