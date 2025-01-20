@@ -126,7 +126,7 @@ jobs:
       - name: Create iOS simulator
         id: simulator
         run: |
-          ID=$(xcrun simctl create "iPhone 14" "iPhone 14")
+          ID=$(xcrun simctl create "iPhone 15" "iPhone 15")
           echo "id=$ID" >> $GITHUB_OUTPUT
       - name: Build iOS app for Detox test run
         if: steps.detox-build.outputs.cache-hit != 'true'
@@ -196,11 +196,11 @@ jobs:
       LANG: en_US.UTF-8
       LANGUAGE: en_US.UTF-8
       LC_ALL: en_US.UTF-8
-      AVD_API: 32
+      AVD_API: 35
       AVD_ARCH: x86_64
-      AVD_PROFILE: pixel_6_pro
+      AVD_PROFILE: pixel_7_pro
       AVD_TARGET: google_apis
-      AVD_NAME: "Pixel_6_Pro_API_32"
+      AVD_NAME: "Pixel_7_Pro_API_35"
       AVD_CORES: 4
       AVD_RAM_SIZE: 4096M
       AVD_OPTIONS: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
