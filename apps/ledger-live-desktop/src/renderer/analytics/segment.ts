@@ -114,15 +114,16 @@ const getPtxAttributes = () => {
     stakingProviders?.params?.listProvider?.length > 0
       ? stakingProviders?.params?.listProvider.length
       : "flag not loaded";
+
   const stakingCurrenciesEnabled =
-    !stakePrograms?.params?.list?.length || !stakePrograms?.enabled
-      ? {}
-      : Object.fromEntries(
-          stakePrograms?.params?.list?.map((currencyId: string) => [
+    stakePrograms?.enabled && stakePrograms?.params?.list?.length
+      ? Object.fromEntries(
+          stakePrograms.params.list.map((currencyId: string) => [
             `feature_earn_${currencyId}_enabled`,
             true,
           ]),
-        );
+        )
+      : {};
 
   return {
     isBatch1Enabled,

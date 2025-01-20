@@ -86,15 +86,16 @@ const getFeatureFlagProperties = () => {
       !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 3;
     const stakingProvidersEnabled =
       stakingProviders?.enabled && stakingProviders?.params?.listProvider.length;
+
     const stakingCurrenciesEnabled =
-      !stakePrograms?.params?.list?.length || !stakePrograms?.enabled
-        ? {}
-        : Object.fromEntries(
-            stakePrograms?.params?.list?.map((currencyId: string) => [
+      stakePrograms?.enabled && stakePrograms?.params?.list?.length
+        ? Object.fromEntries(
+            stakePrograms.params.list.map((currencyId: string) => [
               `feature_earn_${currencyId}_enabled`,
               true,
             ]),
-          );
+          )
+        : {};
 
     updateIdentify({
       isBatch1Enabled,
