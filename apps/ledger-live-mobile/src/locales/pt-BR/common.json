@@ -99,7 +99,8 @@
       "id" : "ID {{ value }}",
       "times" : "x{{ value }}"
     },
-    "quote" : "Cotação"
+    "quote" : "Cotação",
+    "tryAgain" : "Tente novamente"
   },
   "errors" : {
     "ReplacementTransactionUnderpriced" : {
@@ -790,6 +791,12 @@
     "SolanaAccountNotFunded" : {
       "title" : "Conta sem saldo"
     },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "A conta será financiada"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "Os ativos da conta de token estão congelados"
+    },
     "SolanaAddressOfEd25519" : {
       "title" : "Endereço fora da curva ed25519"
     },
@@ -970,6 +977,9 @@
     "FirmwareNotRecognized" : {
       "title" : "Provedor Inválido",
       "description" : "Você deve mudar a configuração em “Provedor da Minha Ledger”. Para desativá-la, abra as “Configurações” do Ledger Live, selecione “Recursos experimentais” e, em seguida, selecione um provedor diferente."
+    },
+    "GasLessThanEstimate" : {
+      "title" : "Isto pode ser baixo demais Por favor, aumente"
     },
     "SequenceNumberError" : {
       "title" : "Erro do número de sequência",
@@ -1291,7 +1301,7 @@
       "desc" : "Nossos produtos são as únicas carteiras hardware certificadas por agências nacionais de segurança cibernética."
     },
     "title" : "Tenha uma Ledger",
-    "desc" : "Para sua segurança, o Ledger Live só funciona com um dispositivo. Você precisa de um dispositivo para poder continuar.",
+    "desc" : "Para sua segurança,\no Ledger Live só funciona com uma Ledger.",
     "cta" : "Comprar sua Ledger agora",
     "footer" : "Já tenho uma Ledger, configurar agora",
     "bannerTitle" : "Segurança de alto nível para suas criptomoedas e NFTs",
@@ -3768,6 +3778,7 @@
       "to" : "Para",
       "infoTotalTitle" : "Débito Total",
       "infoTotalDesc" : "Inclui a quantia da transação e as taxas da rede selecionadas",
+      "gasFee" : "Taxa de gás",
       "gasLimit" : "Limite de gás",
       "gasPrice" : "Preço do gás",
       "maxFee" : "Taxa máxima",
@@ -3991,6 +4002,8 @@
       "desc" : "Você tem certeza de que quer cancelar a adição de contas?"
     },
     "imported" : "Ativos adicionados com sucesso",
+    "added" : "Conta adicionada ao seu portfólio",
+    "added_plural" : "{{count}} contas adicionadas ao seu portfólio",
     "sections" : {
       "importable" : {
         "title" : "Adicionar conta existente"
@@ -4047,7 +4060,44 @@
         "title" : "Taproot",
         "desc" : "Última atualização da rede {{currency}}. Proporcionará melhor privacidade e tarifas mais baratas, uma vez difundidas. Suporte ainda limitado das carteiras e exchanges."
       }
-    }
+    },
+    "scanDeviceAccounts" : {
+      "title" : "Selecione as contas que você deseja adicionar",
+      "ctaStopScan" : "Interromper varredura",
+      "confirm" : "Confirmar",
+      "scanningTitle" : "Procurando por contas existentes na blockchain...",
+      "sections" : {
+        "importable" : {
+          "title" : "Encontramos {{count}} conta",
+          "title_plural" : "Encontramos {{count}} contas"
+        },
+        "creatable" : {
+          "title" : "Nova conta"
+        },
+        "imported" : {
+          "title" : "Conta já no portfólio ({{count}})",
+          "title_plural" : "Contas já no Portfólio ({{count}})"
+        },
+        "migrate" : {
+          "title" : "Contas a atualizar"
+        }
+      },
+      "retryScanning" : "Tentar novamente"
+    },
+    "addAccountsSuccess" : {
+      "ctaAddFunds" : "Adicionar fundos à minha conta",
+      "ctaClose" : "Fechar"
+    },
+    "addAccountsWarning" : {
+      "cantCreateAccount" : {
+        "title" : "Não é possível adicionar uma nova conta",
+        "body" : "Não é possível adicionar uma nova conta antes de receber ativos em sua conta {{accountName}}."
+      },
+      "noAccountToCreate" : {
+        "title" : "Não foi possível adicionar a nova conta {{currency}}"
+      }
+    },
+    "chooseAccountToFund" : "Escolha uma conta para adicionar fundos"
   },
   "DeviceAction" : {
     "stayInTheAppPlz" : "Fique no aplicativo Ledger Live e mantenha a Ledger por perto.",
@@ -5934,6 +5984,10 @@
         "description" : "Você pode receber recompensas delegando seus ativos SOL a um validador."
       },
       "reserveWarning" : "Reserve sempre {{amount}} SOL em sua carteira para cobrir futuras taxas de rede na hora de retirar suas moedas do staking"
+    },
+    "token" : {
+      "frozenStateWarning" : "Os ativos da conta estão congelados!",
+      "transferWarning" : "Para verificar o endereço do destinatário para tokens Solana usando uma Ledger Nano S™, <0>siga essas instruções.</0>"
     }
   },
   "near" : {
@@ -6522,7 +6576,9 @@
     "name" : "hedera",
     "createHederaAccountHelp" : {
       "text" : "Consulte este artigo de suporte sobre",
-      "link" : "como criar uma conta Hedera"
+      "link" : "Como criar uma conta Hedera?",
+      "title" : "Não é possível criar uma nova conta Hedera",
+      "description" : "No ecossistema Hedera, apenas um pequeno número de serviços pode criar novas contas. Embora a Ledger não ofereça atualmente esse serviço de introdução, há alternativas disponíveis. Você poderá adicionar sua conta Hedera no Ledger Live depois que ela for criada."
     },
     "currentAddress" : {
       "messageIfVirtual" : "Seu endereço {{name}} não pode ser confirmado no seu dispositivo Ledger. Use por sua própria conta e risco."
@@ -6735,7 +6791,7 @@
       "category" : {
         "all" : {
           "name" : "Todos",
-          "description" : "Todos os provedores de staking na Ethereum disponíveis pelo Ledger Live."
+          "description" : "Todos os provedores de staking Ethereum disponíveis pelo Ledger Live."
         },
         "liquid" : {
           "name" : "Liquid",
@@ -7140,7 +7196,9 @@
       "title" : "Selecionar ativo"
     },
     "selectNetwork" : {
-      "title" : "Selecione a rede blockchain à qual o ativo pertence"
+      "title" : "Selecione a rede blockchain à qual o ativo pertence",
+      "detectedAccounts" : "{{count}} conta (detectada)",
+      "detectedAccounts_plural" : "{{count}} contas (detectadas)"
     }
   }
 }
