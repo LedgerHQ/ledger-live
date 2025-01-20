@@ -192,13 +192,13 @@ const AccountPage = ({
           status="warning"
           content={{
             message: (
-              <Text fontFamily="Inter|Bold" color="neutral.c900" flex={1}>
+              <Text fontFamily="Inter|Bold" color="neutral.c00" flex={1}>
                 {t("account.featureUnavailable.title", {
                   feature: t(`account.featureUnavailable.feature.${currencyConfig.status.feature}`),
                   support: "",
                 })}
                 <Link
-                  color="neutral.c900"
+                  color="neutral.c00"
                   alwaysUnderline
                   onClick={openFeatureUnvailableSupportLink}
                 >
