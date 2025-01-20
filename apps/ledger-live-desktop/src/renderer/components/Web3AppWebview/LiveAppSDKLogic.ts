@@ -1,5 +1,4 @@
 import { Dispatch } from "redux";
-import { useSelector } from "react-redux";
 import { TFunction } from "i18next";
 import { Account, AccountLike, Operation, SignedOperation } from "@ledgerhq/types-live";
 import { addPendingOperation, getMainAccount } from "@ledgerhq/live-common/account/index";
@@ -18,7 +17,6 @@ import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { track } from "~/renderer/analytics/segment";
 import { WalletState } from "@ledgerhq/live-wallet/store";
-import { mevProtectionSelector } from "~/renderer/reducers/settings";
 
 const trackingLiveAppSDKLogic = trackingWrapper(track);
 
@@ -27,6 +25,7 @@ type WebPlatformContext = {
   dispatch: Dispatch;
   accounts: AccountLike[];
   tracking: typeof trackingLiveAppSDKLogic;
+  mevProtected: boolean;
 };
 
 export type RequestAccountParams = {
@@ -55,7 +54,7 @@ export const requestAccountLogic = async (
 };
 
 export const broadcastTransactionLogic = (
-  { manifest, dispatch, accounts, tracking }: WebPlatformContext,
+  { manifest, dispatch, accounts, tracking, mevProtected }: WebPlatformContext,
   accountId: string,
   signedTransaction: RawPlatformSignedTransaction,
   pushToast: (data: ToastData) => void,
@@ -72,7 +71,6 @@ export const broadcastTransactionLogic = (
     ): Promise<string> => {
       const bridge = getAccountBridge(account, parentAccount);
       const mainAccount = getMainAccount(account, parentAccount);
-      const mevProtected = useSelector(mevProtectionSelector);
 
       let optimisticOperation: Operation = signedOperation.operation;
 
