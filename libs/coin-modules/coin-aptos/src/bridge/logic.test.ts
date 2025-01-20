@@ -21,6 +21,7 @@ import {
   txsToOps,
 } from "./logic";
 import type { AptosTransaction, TransactionOptions } from "../types";
+import { version } from "os";
 
 jest.mock("@ledgerhq/cryptoassets", () => ({
   getCryptoCurrencyById: jest.fn(),
@@ -111,6 +112,7 @@ describe("Aptos logic ", () => {
         block: { hash: "0xabc", height: 1 },
         timestamp: "1000000",
         sequence_number: "1",
+        version: "1",
       } as unknown as AptosTransaction;
 
       const id = "test-id";
@@ -124,6 +126,34 @@ describe("Aptos logic ", () => {
         fee: new BigNumber(0),
         blockHash: "0xabc",
         blockHeight: 1,
+        senders: [],
+        recipients: [],
+        accountId: id,
+        date: new Date(1000),
+        extra: { version: "1" },
+        transactionSequenceNumber: 1,
+        hasFailed: false,
+      });
+    });
+
+    it("should return a blank operation even when some transaction fields are missing", () => {
+      const tx: AptosTransaction = {
+        hash: "0x123",
+        timestamp: "1000000",
+        sequence_number: "1",
+      } as unknown as AptosTransaction;
+
+      const id = "test-id";
+      const result = getBlankOperation(tx, id);
+
+      expect(result).toEqual({
+        id: "",
+        hash: "0x123",
+        type: "",
+        value: new BigNumber(0),
+        fee: new BigNumber(0),
+        blockHash: undefined,
+        blockHeight: undefined,
         senders: [],
         recipients: [],
         accountId: id,
@@ -361,35 +391,34 @@ describe("Aptos sync logic ", () => {
       expect(result).toBe(false);
     });
 
-    // TODO: this test worsens the coverage, but it's a valid test
-    // it("should return false if no type in change data", () => {
-    //   const change = {
-    //     type: "write_resource",
-    //     data: {
-    //       data: {
-    //         withdraw_events: {
-    //           guid: {
-    //             id: {
-    //               addr: "0x11",
-    //               creation_num: "2",
-    //             },
-    //           },
-    //         },
-    //       },
-    //     },
-    //   } as unknown as WriteSetChange;
+    it("should return false if no type in change data", () => {
+      const change = {
+        type: "write_resource",
+        data: {
+          data: {
+            withdraw_events: {
+              guid: {
+                id: {
+                  addr: "0x11",
+                  creation_num: "2",
+                },
+              },
+            },
+          },
+        },
+      } as unknown as WriteSetChange;
 
-    //   const event = {
-    //     guid: {
-    //       account_address: "0x11",
-    //       creation_number: "2",
-    //     },
-    //     type: "0x1::coin::WithdrawEvent",
-    //   } as Event;
+      const event = {
+        guid: {
+          account_address: "0x11",
+          creation_number: "2",
+        },
+        type: "0x1::coin::WithdrawEvent",
+      } as Event;
 
-    //   const result = isChangeOfAptos(change, event, "withdraw_events");
-    //   expect(result).toBe(false);
-    // });
+      const result = isChangeOfAptos(change, event, "withdraw_events");
+      expect(result).toBe(false);
+    });
 
     it("should return false for a change with a different WriteSet Change type", () => {
       const change = {
