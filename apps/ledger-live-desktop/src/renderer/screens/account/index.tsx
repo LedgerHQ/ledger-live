@@ -151,6 +151,11 @@ const AccountPage = ({
   const displayOrdinals =
     isOrdinalsEnabled && isBitcoinBasedAccount(account) && isBitcoinAccount(account);
 
+  const openFeatureUnvailableSupportLink = () => {
+    currencyConfig?.status.type === "feature_unavailable" &&
+      openURL(currencyConfig?.status.link || localizedContactSupportURL);
+  };
+
   return (
     <Box key={account.id}>
       <TrackPage
@@ -200,7 +205,7 @@ const AccountPage = ({
                 <Link
                   style={{ color: theme.colors.neutral.c100 }}
                   alwaysUnderline
-                  onClick={() => openURL(currencyConfig.status.link || localizedContactSupportURL)}
+                  onClick={openFeatureUnvailableSupportLink}
                 >
                   {t("account.featureUnavailable.support")}
                 </Link>
