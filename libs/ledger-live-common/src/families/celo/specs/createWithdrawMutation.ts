@@ -9,7 +9,8 @@ const minimalAmount = parseCurrencyUnit(currency.units[0], "0.001");
 
 export const createWithdrawMutation = (): MutationSpec<Transaction> => ({
   name: "Celo: Withdraw",
-  maxRun: 5,
+  feature: "staking",
+  maxRun: 1,
   transaction: ({ account, bridge, maxSpendable }) => {
     const celoAccount = account as CeloAccount;
     const { celoResources } = celoAccount;

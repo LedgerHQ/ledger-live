@@ -29,6 +29,7 @@ const aptos: AppSpec<Transaction> = {
   mutations: [
     {
       name: "Send ~50%",
+      feature: "send",
       maxRun: 1,
       testDestination: genericTestDestination,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
