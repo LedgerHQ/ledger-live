@@ -10,15 +10,15 @@ export default class StakePage {
   delegationSummaryValidatorId = (currencyId: string) =>
     `${currencyId}-delegation-summary-validator`;
   delegationSummaryValidator = (currencyId: string) =>
-    getTextOfElement(`${currencyId}-delegation-summary-validator`);
+    getTextOfElement(this.delegationSummaryValidatorId(currencyId));
   delegationSummaryAmountId = (currencyId: string) => `${currencyId}-delegation-summary-amount`;
   delegationAmountValue = (currencyId: string) =>
     getTextOfElement(this.delegationSummaryAmountId(currencyId));
-  assestsRemainingId = (currencyId: string) => `${currencyId}-assets-remaining`;
+  assetsRemainingId = (currencyId: string) => `${currencyId}-assets-remaining`;
   delegatedRatioId = (currencyId: string, delegatedPercent: number) =>
     `${currencyId}-delegate-ratio-${delegatedPercent}%`;
   delegationAmountInput = (currencyId: string) => `${currencyId}-delegation-amount-input`;
-  allAssestsUsedText = (currencyId: string) => `${currencyId}-all-assets-used-text`;
+  allAssetsUsedText = (currencyId: string) => `${currencyId}-all-assets-used-text`;
   summaryContinueButtonId = (currencyId: string) => `${currencyId}-summary-continue-button`;
   delegationStartId = (currencyId: string) => `${currencyId}-delegation-start-button`;
   delegationAmountContinueId = (currencyId: string) => `${currencyId}-delegation-amount-continue`;
@@ -51,6 +51,7 @@ export default class StakePage {
     await typeTextById(this.delegationAmountInput(currencyId), amount);
   }
 
+  @Step("Set delegated amount percent")
   async setAmountPercent(currencyId: string, delegatedPercent: 25 | 50 | 75 | 100) {
     await waitForElementById(this.delegationSummaryAmountId(currencyId));
     await tapById(this.delegationSummaryAmountId(currencyId));
@@ -62,13 +63,14 @@ export default class StakePage {
     expect(await this.delegationSummaryValidator(currencyId)).toEqual(provider);
   }
 
+  @Step("Expect assets remaining after delegation")
   async expectRemainingAmount(
     currencyId: string,
     delegatedPercent: 25 | 50 | 75 | 100,
     remainingAmountFormated: string,
   ) {
     const max = delegatedPercent == 100;
-    const id = max ? this.allAssestsUsedText(currencyId) : this.assestsRemainingId(currencyId);
+    const id = max ? this.allAssetsUsedText(currencyId) : this.assetsRemainingId(currencyId);
     await waitForElementById(id);
     const assestsRemaining = max ? this.zeroAssetText : (await getTextOfElement(id)).split(": ")[1];
 
@@ -83,8 +85,8 @@ export default class StakePage {
 
   @Step("Expect delegated amount in summary")
   async expectDelegatedAmount(currencyId: string, delegatedAmountFormated: string) {
-    const assestsDelagated = await this.delegationAmountValue(currencyId);
-    expect(assestsDelagated).toEqual(delegatedAmountFormated);
+    const assetsDelagated = await this.delegationAmountValue(currencyId);
+    expect(assetsDelagated).toEqual(delegatedAmountFormated);
   }
 
   @Step("Click on continue button in summary")

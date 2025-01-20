@@ -65,11 +65,7 @@ function FeesField({ account, parentAccount, status, field }: FieldComponentProp
 function AddressField({ field }: FieldComponentProps) {
   invariant(field.type === "address", "AddressField invalid");
   return (
-    <TextValueField
-      label={field.label}
-      value={field.address}
-      testID={`device-validation-address`}
-    />
+    <TextValueField label={field.label} value={field.address} testID="device-validation-address" />
   );
 }
 
