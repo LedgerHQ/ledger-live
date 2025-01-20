@@ -5,9 +5,8 @@ import { getFee } from "./getFee";
 import { getTransactionByHash } from "./getTransactionByHash";
 import { saveSwapToHistory } from "./saveSwapToHistory";
 import { swapRedirectToHistory } from "./swapRedirectToHistory";
-import { NavigationProp, NavigationState } from "@react-navigation/core";
-import { BaseComposite, StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
-import { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
+
+import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
 import { SwapFormNavigatorParamList } from "~/components/RootNavigator/types/SwapFormNavigator";
 
 export const swapCustomHandlers = ({

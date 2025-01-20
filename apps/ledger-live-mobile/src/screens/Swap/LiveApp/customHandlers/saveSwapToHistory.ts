@@ -1,11 +1,10 @@
 import { getParentAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
-import { Account, AccountLike, SubAccount, SwapOperation } from "@ledgerhq/types-live";
+import { AccountLike, SubAccount, SwapOperation } from "@ledgerhq/types-live";
 import { convertToAtomicUnit } from "../utils";
 import BigNumber from "bignumber.js";
 import { updateAccountWithUpdater } from "~/actions/accounts";
 import { Dispatch } from "redux";
-import { update } from "lodash";
 
 export type SwapProps = {
   provider: string;
