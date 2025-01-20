@@ -125,6 +125,7 @@ for (const { swap, xrayTicket } of swaps) {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
         await performSwapUntilQuoteSelectionStep(app, electronApp, swap);
+        await app.swap.fillInOriginCurrencyAmount(electronApp, swap.amount);
         const selectedProvider = await app.swap.selectExchange(electronApp);
         await performSwapUntilDeviceVerificationStep(app, electronApp, swap, selectedProvider);
         await app.speculos.verifyAmountsAndAcceptSwap(swap);
@@ -159,6 +160,7 @@ test.describe("Swap - Rejected on device", () => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
       await performSwapUntilQuoteSelectionStep(app, electronApp, rejectedSwap);
+      await app.swap.fillInOriginCurrencyAmount(electronApp, rejectedSwap.amount);
       const selectedProvider = await app.swap.selectExchange(electronApp);
       await performSwapUntilDeviceVerificationStep(
         app,
@@ -224,6 +226,7 @@ for (const { swap, xrayTicket } of tooLowAmountForQuoteSwaps) {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
         await performSwapUntilQuoteSelectionStep(app, electronApp, swap);
+        await app.swap.fillInOriginCurrencyAmount(electronApp, swap.amount);
         const errorMessage = swap.accountToDebit.accountType
           ? "Not enough balance."
           : new RegExp(
@@ -314,7 +317,8 @@ for (const { swap, xrayTicket } of swapWithSendMax) {
       },
       async ({ app, electronApp }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-        await performSwapUntilQuoteSelectionStepWithSendMax(app, electronApp, swap);
+        await performSwapUntilQuoteSelectionStep(app, electronApp, swap);
+        await app.swap.sendMax(electronApp)
         const selectedProvider = await app.swap.selectExchange(electronApp);
         await performSwapUntilDeviceVerificationStepSendMax(app, electronApp, swap, selectedProvider);
         await app.speculos.verifyAmountsAndAcceptSwap(swap);
@@ -480,27 +484,6 @@ async function performSwapUntilQuoteSelectionStep(
   await app.swapDrawer.selectAccountByName(swap.accountToDebit);
   await app.swap.selectAssetTo(electronApp, swap.accountToCredit.currency.name);
   await app.swapDrawer.selectAccountByName(swap.accountToCredit);
-  await app.swap.fillInOriginCurrencyAmount(electronApp, swap.amount);
-}
-
-async function performSwapUntilQuoteSelectionStepWithSendMax(
-  app: Application,
-  electronApp: ElectronApplication,
-  swap: Swap,
-) {
-  await app.layout.goToAccounts();
-  await app.accounts.navigateToAccountByName(swap.accountToDebit.accountName);
-  await app.layout.waitForPageDomContentLoadedState();
-
-  await app.layout.waitForAccountsSyncToBeDone();
-  await app.swap.waitForPageNetworkIdleState();
-  await app.layout.goToSwap();
-  await app.swap.waitForPageNetworkIdleState();
-  await app.swap.selectAssetFrom(electronApp, swap.accountToDebit);
-  await app.swapDrawer.selectAccountByName(swap.accountToDebit);
-  await app.swap.selectAssetTo(electronApp, swap.accountToCredit.currency.name);
-  await app.swapDrawer.selectAccountByName(swap.accountToCredit);
-  await app.swap.sendMax(electronApp)
 }
 
 async function performSwapUntilDeviceVerificationStep(
