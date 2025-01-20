@@ -10,7 +10,7 @@ import { ReceiveFundsStackParamList } from "~/components/RootNavigator/types/Rec
 import { ScreenName } from "~/const";
 import { useDebouncedRequireBluetooth } from "~/components/RequiresBLE/hooks/useRequireBluetooth";
 import RequiresBluetoothDrawer from "~/components/RequiresBLE/RequiresBluetoothDrawer";
-import { DeviceSelectionNavigatorParamsList } from "~/newArch/features/DeviceSelection/types";
+import { DeviceSelectionNavigatorParamsList } from "LLM/features/DeviceSelection/types";
 
 type Navigation =
   | StackNavigatorProps<AddAccountsNavigatorParamList, ScreenName.AddAccountsSelectDevice>
