@@ -99,7 +99,8 @@
       "id" : "ID {{ value }}",
       "times" : "x{{ value }}"
     },
-    "quote" : "Cotización"
+    "quote" : "Cotización",
+    "tryAgain" : "Inténtalo de nuevo"
   },
   "errors" : {
     "ReplacementTransactionUnderpriced" : {
@@ -790,6 +791,12 @@
     "SolanaAccountNotFunded" : {
       "title" : "Cuenta sin fondos"
     },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "Se agregarán fondos a la cuenta"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "Los activos de la cuenta de tokens están inmovilizados"
+    },
     "SolanaAddressOfEd25519" : {
       "title" : "Dirección fuera de la curva ed25519"
     },
@@ -970,6 +977,9 @@
     "FirmwareNotRecognized" : {
       "title" : "Proveedor no válido",
       "description" : "Tienes que cambiar el ajuste \"Proveedor de Mi Ledger\". Para cambiarlo, abre los \"Ajustes\" de Ledger Live, selecciona \"Funciones experimentales\" y, a continuación, elige un proveedor distinto."
+    },
+    "GasLessThanEstimate" : {
+      "title" : "Puede que sea demasiado bajo. Auméntalo"
     },
     "SequenceNumberError" : {
       "title" : "Error de número de secuencia",
@@ -1291,7 +1301,7 @@
       "desc" : "Nuestros productos son las únicas billeteras de hardware con seguridad certificada por agencias internacionales de seguridad cibernética."
     },
     "title" : "Necesitas un Ledger",
-    "desc" : "Por motivos de seguridad, Ledger Live solo se puede usar en conjunto con un dispositivo físico. Necesitas un dispositivo para poder continuar.",
+    "desc" : "For your security,\n Ledger Live only works with a Ledger.",
     "cta" : "Compra tu Ledger ahora",
     "footer" : "Ya tengo un Ledger y quiero configurarlo",
     "bannerTitle" : "La máxima seguridad para tus cripto y NFTs",
@@ -3768,6 +3778,7 @@
       "to" : "A",
       "infoTotalTitle" : "Débito total",
       "infoTotalDesc" : "Incluye importe de la transacción y las tarifas de red seleccionadas",
+      "gasFee" : "Tarifa de gas",
       "gasLimit" : "Límite de gas",
       "gasPrice" : "Precio de gas",
       "maxFee" : "Tarifa máxima",
@@ -3991,6 +4002,8 @@
       "desc" : "¿Deseas cancelar la agregación de cuentas?"
     },
     "imported" : "Activo añadido con éxito",
+    "added" : "Cuenta agregada a tu portfolio",
+    "added_plural" : "{{count}} cuentas agregadas a tu portfolio",
     "sections" : {
       "importable" : {
         "title" : "Agregar cuenta existente"
@@ -4047,7 +4060,44 @@
         "title" : "Taproot",
         "desc" : "Actualización de la red de {{currency}} más reciente. Ofrecerá una mejor privacidad y tarifas más bajas, una vez difundida. Todavía con compatibilidad limitada en billeteras y exchanges."
       }
-    }
+    },
+    "scanDeviceAccounts" : {
+      "title" : "Selecciona las cuentas que quieres agregar",
+      "ctaStopScan" : "Detener escaneo",
+      "confirm" : "Confirmar",
+      "scanningTitle" : "Buscando cuentas existentes en la cadena de bloques...",
+      "sections" : {
+        "importable" : {
+          "title" : "Hemos encontrado {{count}} cuenta",
+          "title_plural" : "Hemos encontrado {{count}} cuentas"
+        },
+        "creatable" : {
+          "title" : "Nueva cuenta"
+        },
+        "imported" : {
+          "title" : "Cuenta ya existente en el portfolio ({{count}})",
+          "title_plural" : "Cuentas ya existentes en el Portfolio ({{count}})"
+        },
+        "migrate" : {
+          "title" : "Cuentas a actualizar"
+        }
+      },
+      "retryScanning" : "Inténtalo de nuevo"
+    },
+    "addAccountsSuccess" : {
+      "ctaAddFunds" : "Agregar fondos a mi cuenta",
+      "ctaClose" : "Cerrar"
+    },
+    "addAccountsWarning" : {
+      "cantCreateAccount" : {
+        "title" : "No podemos agregar una cuenta nueva",
+        "body" : "No es posible agregar una cuenta nueva antes de recibir activos en tu cuenta {{accountName}}."
+      },
+      "noAccountToCreate" : {
+        "title" : "No fue posible agregar una cuenta nueva en {{currency}}"
+      }
+    },
+    "chooseAccountToFund" : "Elige la cuenta a la que quieres añadir los fondos"
   },
   "DeviceAction" : {
     "stayInTheAppPlz" : "Mantente dentro de la aplicación Ledger Live y con tu Ledger disponible.",
@@ -5934,6 +5984,10 @@
         "description" : "Puedes recibir recompensas delegando tus activos SOL a un validador."
       },
       "reserveWarning" : "Asegúrate de reservar al menos {{amount}} SOL en tu billetera para cubrir las futuras tarifas de red, necesarias para quitar de participación tus activos y retirarlos."
+    },
+    "token" : {
+      "frozenStateWarning" : "Los activos de la cuenta están inmovilizados.",
+      "transferWarning" : "Para verificar la dirección del receptor de los tokens de Solana con un Ledger Nano S™, <0>sigue estas instrucciones</0>."
     }
   },
   "near" : {
@@ -6522,7 +6576,9 @@
     "name" : "Hedera",
     "createHederaAccountHelp" : {
       "text" : "Consulta este artículo de soporte para aprender",
-      "link" : "a crear una cuenta de Hedera"
+      "link" : "¿Cómo crear una cuenta de Hedera?",
+      "title" : "No podemos crear una cuenta de Hedera nueva",
+      "description" : "El ecosistema Hedera sólo permite la creación de cuentas nuevas a través de un número limitado de servicios. Aunque Ledger no ofrece actualmente este servicio de incorporación, tienes disponibles varias alternativas. Podrás agregar tu cuenta de Hedera a Ledger Live tras crearla."
     },
     "currentAddress" : {
       "messageIfVirtual" : "No se puede confirmar tu dirección {{name}} en tu dispositivo Ledger. Si lo usas es bajo tu propio riesgo."
@@ -7140,7 +7196,9 @@
       "title" : "Seleccionar activo"
     },
     "selectNetwork" : {
-      "title" : "Selecciona la red de cadena de bloques a la que pertenece el activo"
+      "title" : "Selecciona la red de cadena de bloques a la que pertenece el activo",
+      "detectedAccounts" : "{{count}} cuenta (detectada)",
+      "detectedAccounts_plural" : "{{count}} cuentas (detectadas)"
     }
   }
 }
