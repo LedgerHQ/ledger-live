@@ -10,6 +10,21 @@ type ConfigStatus =
       message?: string;
     }
   | {
+      type: "feature_unavailable";
+      link: string;
+      feature:
+        | "history"
+        | "swap"
+        | "token_history"
+        | "send_and_receive"
+        | "send"
+        | "receive"
+        | "sending_tokens"
+        | "receiving_tokens"
+        | "staking"
+        | "claiming_staking_rewards";
+    }
+  | {
       type: "will_be_deprecated";
       deprecated_date: string;
     }
