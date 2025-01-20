@@ -99,7 +99,8 @@
       "id" : "Identifiant {{ value }}",
       "times" : "x {{ value }}"
     },
-    "quote" : "Prix"
+    "quote" : "Prix",
+    "tryAgain" : "Réessayer"
   },
   "errors" : {
     "ReplacementTransactionUnderpriced" : {
@@ -790,6 +791,12 @@
     "SolanaAccountNotFunded" : {
       "title" : "Pas de fonds sur le compte"
     },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "Le compte sera provisionné"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "Les actifs du compte de tokens sont gelés"
+    },
     "SolanaAddressOfEd25519" : {
       "title" : "Adresse en dehors de la courbe ed25519"
     },
@@ -970,6 +977,9 @@
     "FirmwareNotRecognized" : {
       "title" : "Fournisseur non valide",
       "description" : "Vous devez modifier le paramètre \"Fournisseur de My Ledger\". Dans Ledger Live, accédez aux Paramètres, sélectionnez \"Fonctionnalités expérimentales\", puis choisissez un autre fournisseur."
+    },
+    "GasLessThanEstimate" : {
+      "title" : "Les frais risquent d’être trop bas. Veuillez les augmenter."
     },
     "SequenceNumberError" : {
       "title" : "Erreur dans le numéro de séquence",
@@ -1291,7 +1301,7 @@
       "desc" : "Nos wallets physiques sont les seuls dont la sécurité a été certifiée par l’Agence nationale de la cybersécurité."
     },
     "title" : "Vous avez besoin d’un Ledger",
-    "desc" : "Pour votre sécurité, Ledger Live ne fonctionne qu’avec un appareil. Vous avez besoin d’un Ledger pour continuer. ",
+    "desc" : "Pour votre sécurité,\n Ledger Live ne fonctionne qu’avec un appareil Ledger.",
     "cta" : "Acheter votre wallet Ledger",
     "footer" : "J’ai un wallet Ledger, je le configure",
     "bannerTitle" : "Une sécurité de pointe pour vos cryptos et NFT",
@@ -2881,7 +2891,7 @@
       "analytics" : "Statistiques",
       "analyticsDesc" : "Autorisez Ledger à collecter les données d’utilisation pour nous aider à mesurer la performance de Ledger Live, à améliorer l’application et votre expérience.",
       "mevProtection" : "Protection MEV",
-      "mevProtectionDesc" : "Activez la protection MEV pour des transactions plus fiables sur Ethereum.",
+      "mevProtectionDesc" : "Activez la protection contre la MEV pour des transactions plus fiables sur Ethereum.",
       "personalizedRecommendations" : "Expérience personnalisée",
       "personalizedRecommendationsDesc" : "Autorisez Ledger à collecter les données sur l’utilisation de l’application pour nous aider à vous proposer des recommandations personnalisées, des contenus adaptés à vos préférences et à mesurer l’efficacité de nos campagnes marketing.",
       "analyticsModal" : {
@@ -3768,6 +3778,7 @@
       "to" : "À",
       "infoTotalTitle" : "Total débité",
       "infoTotalDesc" : "Comprend le montant de la transaction et les frais de réseau choisis",
+      "gasFee" : "Frais de gaz",
       "gasLimit" : "Limite de gaz",
       "gasPrice" : "Prix du gaz",
       "maxFee" : "Frais maximaux",
@@ -3991,6 +4002,8 @@
       "desc" : "Voulez-vous vraiment annuler l’ajout de comptes ?"
     },
     "imported" : "Actif bien ajouté",
+    "added" : "Compte ajouté à votre portefeuille",
+    "added_plural" : "{{count}} comptes ajoutés à votre portefeuille",
     "sections" : {
       "importable" : {
         "title" : "Ajouter un compte existant"
@@ -4047,7 +4060,44 @@
         "title" : "Taproot",
         "desc" : "Nouvelle mise à niveau du réseau {{currency}}. Elle offrira une meilleure confidentialité et des frais moins élevés. Elle n’est pas encore prise en charge par tous les échanges et wallets."
       }
-    }
+    },
+    "scanDeviceAccounts" : {
+      "title" : "Sélectionnez le compte à ajouter",
+      "ctaStopScan" : "Arrêter le balayage",
+      "confirm" : "Confirmer",
+      "scanningTitle" : "Recherche des comptes existant déjà sur la blockchain...",
+      "sections" : {
+        "importable" : {
+          "title" : "{{count}} compte a été trouvé",
+          "title_plural" : "{{count}} comptes ont été trouvés"
+        },
+        "creatable" : {
+          "title" : "Nouveau compte"
+        },
+        "imported" : {
+          "title" : "Compte déjà dans votre portefeuille ({{count}})",
+          "title_plural" : "Comptes déjà dans votre portefeuille ({{count}})"
+        },
+        "migrate" : {
+          "title" : "Comptes à mettre à jour"
+        }
+      },
+      "retryScanning" : "Réessayer"
+    },
+    "addAccountsSuccess" : {
+      "ctaAddFunds" : "Approvisionner mon compte",
+      "ctaClose" : "Fermer"
+    },
+    "addAccountsWarning" : {
+      "cantCreateAccount" : {
+        "title" : "Impossible d’ajouter un nouveau compte",
+        "body" : "Pour ajouter un nouveau compte, vous devez d’abord approvisionner votre compte {{accountName}}."
+      },
+      "noAccountToCreate" : {
+        "title" : "Impossible d’ajouter un nouveau compte {{currency}}"
+      }
+    },
+    "chooseAccountToFund" : "Choisissez le compte à approvisionner"
   },
   "DeviceAction" : {
     "stayInTheAppPlz" : "Restez dans Ledger Live et gardez votre appareil Ledger à portée de main.",
@@ -5934,6 +5984,10 @@
         "description" : "Vous pouvez gagner des récompenses en déléguant vos SOL à un validateur."
       },
       "reserveWarning" : "Conservez au minimum {{amount}} SOL dans votre wallet pour couvrir les frais de réseau futurs afin de désactiver et retirer vos cryptos stakées"
+    },
+    "token" : {
+      "frozenStateWarning" : "Les actifs du compte sont gelés",
+      "transferWarning" : "Pour vérifier l’adresse du bénéficiaire des tokens Solana avec un Ledger Nano S™, <0>suivez ces instructions</0>."
     }
   },
   "near" : {
@@ -6522,7 +6576,9 @@
     "name" : "Hedera",
     "createHederaAccountHelp" : {
       "text" : "Consultez cet article d’assistance pour",
-      "link" : "découvrir comment créer un compte Hedera"
+      "link" : "Comment créer un compte Hedera ?",
+      "title" : "Impossible de créer un nouveau compte Hedera",
+      "description" : "Dans l’écosystème Hedera, seul un nombre limité de services peuvent créer de nouveaux comptes. Ledger Live n’offre pas ce service pour le moment, mais d’autres solutions existent. Après avoir créé votre compte Hedera, vous pourrez l’ajouter dans Ledger Live."
     },
     "currentAddress" : {
       "messageIfVirtual" : "Votre adresse {{name}} n’a pas été confirmée sur votre appareil Ledger. Il est risqué de l’utiliser."
@@ -7140,7 +7196,9 @@
       "title" : "Sélectionner un actif"
     },
     "selectNetwork" : {
-      "title" : "Sélectionner le réseau de blockchain pour cet actif"
+      "title" : "Sélectionner le réseau de blockchain pour cet actif",
+      "detectedAccounts" : "{{count}} compte (détecté)",
+      "detectedAccounts_plural" : "{{count}} comptes (détectés)"
     }
   }
 }
