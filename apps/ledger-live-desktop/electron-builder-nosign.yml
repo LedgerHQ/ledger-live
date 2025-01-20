@@ -6,7 +6,6 @@ protocols:
     - ledgerlive
 
 beforePack: scripts/beforePack.js
-afterPack: scripts/afterPack.js
 
 mac:
   artifactName: ${name}-${version}-${os}.${ext}
