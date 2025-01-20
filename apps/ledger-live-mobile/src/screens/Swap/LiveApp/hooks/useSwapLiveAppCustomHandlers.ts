@@ -6,9 +6,6 @@ import { usePTXCustomHandlers } from "~/components/WebPTXPlayer/CustomHandlers";
 import { accountsSelector } from "~/reducers/accounts";
 import { swapCustomHandlers } from "../customHandlers";
 import { useNavigation } from "@react-navigation/native";
-import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
-import { ScreenName } from "~/const";
-import { SwapFormNavigatorParamList } from "~/components/RootNavigator/types/SwapFormNavigator";
 
 export function useSwapLiveAppCustomHandlers(manifest: LiveAppManifest) {
   const accounts = useSelector(accountsSelector);
