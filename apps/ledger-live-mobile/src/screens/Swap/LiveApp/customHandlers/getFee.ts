@@ -113,11 +113,6 @@ export const getFee =
     const amount = new BigNumber(params.fromAmount);
     const atomicAmount = convertToAtomicUnit({ amount, account });
 
-    if (params.openDrawer) {
-      // display the drawer to the user and return their selected fee as the values
-      console.log("hello world xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
-    }
-
     return await generateFeeData({
       account,
       feePayingAccount,
