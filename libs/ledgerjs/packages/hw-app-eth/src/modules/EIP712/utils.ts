@@ -137,7 +137,7 @@ export const destructTypeFromString = (
   const splitNameAndArraysRegex = new RegExp(/^([^[\]]*)(\[.*\])*/g);
   // Will match all numbers (or null) inside each array. [0][10][] => [0,10,null]
   const splitArraysRegex = new RegExp(/\[(\d*)\]/g);
-  // Will separate the the name from the potential bits/bytes allocation. uint8 => [uint,8]
+  // Will separate the name from the potential bits/bytes allocation. uint8 => [uint,8]
   const splitNameAndNumberRegex = new RegExp(/(?=u?int|bytes)([a-zA-Z-0-9]+?)(\d{1,3})$/g);
 
   const [, type, maybeArrays] = splitNameAndArraysRegex.exec(typeName || "") || [];

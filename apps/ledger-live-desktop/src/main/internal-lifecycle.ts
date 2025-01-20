@@ -144,7 +144,7 @@ internal.onExit((code, signal, unexpected) => {
 });
 
 /* The following handlers seem to be unused. */
-/* TODO: confim and remove. */
+/* TODO: confirm and remove. */
 
 // ipcMain.on("command", (event, command) => {
 //   ongoing[command.requestId] = event;
