@@ -761,7 +761,7 @@
       }
     },
     "featureUnavailable": {
-      "title": "The following feature is momentarily unavailable : {{feature}}, to know more please refer to support.",
+      "title": "The following feature is momentarily unavailable : {{feature}}. To know more please refer to {{support}}",
       "feature": {
         "history": "History",
         "swap": "Swap",
@@ -774,7 +774,7 @@
         "staking": "Staking",
         "claiming_staking_rewards": "Claiming staking rewards"
       },
-      "support": "Support"
+      "support": "support"
     },
     "willBeDeprecatedBanner": {
       "title": "To optimize efficiencies, {{currencyName}} will not be supported on Ledger Live as of {{deprecatedDate}}. However, it will still be supported on Ledger hardware wallets. Please contact Ledger Customer Support if you would like assistance on this.",

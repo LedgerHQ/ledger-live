@@ -6,7 +6,7 @@ import { TFunction } from "i18next";
 import { Redirect } from "react-router";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
-import { Text } from "@ledgerhq/react-ui";
+import { Text, Link } from "@ledgerhq/react-ui";
 import { isAddressPoisoningOperation } from "@ledgerhq/live-common/operation";
 import { getCurrencyColor } from "~/renderer/getCurrencyColor";
 import { accountSelector } from "~/renderer/reducers/accounts";
@@ -44,6 +44,8 @@ import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { isBitcoinBasedAccount, isBitcoinAccount } from "@ledgerhq/live-common/account/typeGuards";
 import { useNftCollectionsStatus } from "~/renderer/hooks/nfts/useNftCollectionsStatus";
+import theme from "@ledgerhq/react-ui/styles/theme";
+import { openURL } from "~/renderer/linking";
 
 type Params = {
   id: string;
@@ -186,16 +188,24 @@ const AccountPage = ({
           status="warning"
           content={{
             message: (
-              <Text fontFamily="Inter|Bold" color="black" flex={1}>
-                {t("account.featureUnavailable.title", {
-                  feature: t(`account.featureUnavailable.feature.${currencyConfig.status.feature}`),
-                })}
-              </Text>
+              <Box style={{ flexDirection: "row", gap: 5 }}>
+                <Text fontFamily="Inter|Bold" color="black" flex={1}>
+                  {t("account.featureUnavailable.title", {
+                    feature: t(
+                      `account.featureUnavailable.feature.${currencyConfig.status.feature}`,
+                    ),
+                    support: "",
+                  })}
+                </Text>
+                <Link
+                  style={{ color: theme.colors.neutral.c100 }}
+                  alwaysUnderline
+                  onClick={() => openURL(currencyConfig.status.link || localizedContactSupportURL)}
+                >
+                  {t("account.featureUnavailable.support")}
+                </Link>
+              </Box>
             ),
-          }}
-          link={{
-            text: t("account.featureUnavailable.support"),
-            href: currencyConfig.status.link || localizedContactSupportURL,
           }}
         />
       )}

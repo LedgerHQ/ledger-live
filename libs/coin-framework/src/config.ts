@@ -11,6 +11,7 @@ type ConfigStatus =
     }
   | {
       type: "feature_unavailable";
+      link: string;
       feature:
         | "history"
         | "swap"
@@ -22,7 +23,6 @@ type ConfigStatus =
         | "receiving_tokens"
         | "staking"
         | "claiming_staking_rewards";
-      link?: string;
     }
   | {
       type: "will_be_deprecated";
