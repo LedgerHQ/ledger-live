@@ -44,7 +44,6 @@ import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { isBitcoinBasedAccount, isBitcoinAccount } from "@ledgerhq/live-common/account/typeGuards";
 import { useNftCollectionsStatus } from "~/renderer/hooks/nfts/useNftCollectionsStatus";
-import theme from "@ledgerhq/react-ui/styles/theme";
 import { openURL } from "~/renderer/linking";
 
 type Params = {
@@ -193,23 +192,19 @@ const AccountPage = ({
           status="warning"
           content={{
             message: (
-              <Box style={{ flexDirection: "row", gap: 5 }}>
-                <Text fontFamily="Inter|Bold" color="black" flex={1}>
-                  {t("account.featureUnavailable.title", {
-                    feature: t(
-                      `account.featureUnavailable.feature.${currencyConfig.status.feature}`,
-                    ),
-                    support: "",
-                  })}
-                </Text>
+              <Text fontFamily="Inter|Bold" color="neutral.c900" flex={1}>
+                {t("account.featureUnavailable.title", {
+                  feature: t(`account.featureUnavailable.feature.${currencyConfig.status.feature}`),
+                  support: "",
+                })}
                 <Link
-                  style={{ color: theme.colors.neutral.c100 }}
+                  color="neutral.c900"
                   alwaysUnderline
                   onClick={openFeatureUnvailableSupportLink}
                 >
                   {t("account.featureUnavailable.support")}
                 </Link>
-              </Box>
+              </Text>
             ),
           }}
         />
