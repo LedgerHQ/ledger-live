@@ -5,8 +5,6 @@ import { useSelector } from "react-redux";
 import { Web3AppWebview } from "~/components/Web3AppWebview";
 import { WebviewState } from "~/components/Web3AppWebview/types";
 import { useSwapLiveAppCustomHandlers } from "./hooks/useSwapLiveAppCustomHandlers";
-import QueuedDrawer from "~/components/QueuedDrawer";
-import { Text } from "@ledgerhq/native-ui";
 
 type Props = {
   manifest: LiveAppManifest;
@@ -18,9 +16,6 @@ export function WebView({ manifest, setWebviewState }: Props) {
   return (
     <TabBarSafeAreaView>
       <Web3AppWebview manifest={manifest} customHandlers={customHandlers} onStateChange={setWebviewState} />
-      <QueuedDrawer isRequestingToBeOpened={true}>
-        <Text>{"hello world."}</Text>
-      </QueuedDrawer>
     </TabBarSafeAreaView>
   );
 }
