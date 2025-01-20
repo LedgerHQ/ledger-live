@@ -1,4 +1,4 @@
-import getDeviceTransactionConfig, { methodToString } from "./deviceTransactionConfig";
+import getDeviceTransactionConfig, { methodToString } from "../../bridge/deviceTransactionConfig";
 
 describe("deviceTransactionConfig", () => {
   test("methodToString", () => {

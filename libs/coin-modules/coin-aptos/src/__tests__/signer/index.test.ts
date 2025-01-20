@@ -1,5 +1,5 @@
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import resolver from "./index";
+import resolver from "../../signer";
 
 describe("aptos signer", () => {
   test("getAddress", async () => {

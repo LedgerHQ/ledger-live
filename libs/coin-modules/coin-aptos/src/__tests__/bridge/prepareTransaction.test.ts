@@ -1,14 +1,14 @@
-import prepareTransaction from "./prepareTransaction";
-import { AptosAPI } from "../api";
-import { getEstimatedGas } from "./getFeesForTransaction";
-import { getMaxSendBalance } from "./logic";
+import prepareTransaction from "../../bridge/prepareTransaction";
+import { AptosAPI } from "../../api";
+import { getEstimatedGas } from "../../bridge/getFeesForTransaction";
+import { getMaxSendBalance } from "../../bridge/logic";
 import BigNumber from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
-import type { Transaction } from "../types";
+import type { Transaction } from "../../types";
 
-jest.mock("../api");
-jest.mock("./getFeesForTransaction");
-jest.mock("./logic");
+jest.mock("../../api");
+jest.mock("../../bridge/getFeesForTransaction");
+jest.mock("../../bridge/logic");
 
 describe("Aptos prepareTransaction", () => {
   describe("prepareTransaction", () => {

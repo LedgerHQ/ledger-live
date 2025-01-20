@@ -1,5 +1,5 @@
-import { signTransaction } from "./index";
-import { createFixtureAccount } from "../types/bridge.fixture";
+import { signTransaction } from "../../network";
+import { createFixtureAccount } from "../../bridge/bridge.fixture";
 import {
   AccountAddress,
   ChainId,
@@ -8,7 +8,6 @@ import {
   generateSigningMessageForTransaction,
   generateSignedTransaction,
 } from "@aptos-labs/ts-sdk";
-import { serialize } from "v8";
 
 jest.mock("@aptos-labs/ts-sdk");
 let mockedGenerateSigningMessageForTransaction: jest.Mocked<any>;
@@ -44,6 +43,8 @@ describe("signTransaction", () => {
     expect(signTransaction(signerContext, account, deviceId, rawTxn)).rejects.toThrow(
       "Account must have a public signing key",
     );
+
+    expect(mockGenerateSignedTransactionSpy).toHaveBeenCalledTimes(0);
   });
 
   it("should sign a transaction", async () => {

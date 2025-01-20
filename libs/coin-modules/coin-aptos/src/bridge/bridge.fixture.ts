@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { faker } from "@faker-js/faker";
-import type { AptosAccount, Transaction } from "./index";
+import type { AptosAccount, Transaction } from "../types/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { emptyHistoryCache } from "@ledgerhq/coin-framework/account/index";
 

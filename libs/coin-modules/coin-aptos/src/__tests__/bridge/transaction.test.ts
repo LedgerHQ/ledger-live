@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
-import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
-import { formatTransaction, fromTransactionRaw, toTransactionRaw } from "./transaction";
-import { Transaction, TransactionRaw } from "../types";
+import { createFixtureAccount, createFixtureTransaction } from "../../bridge/bridge.fixture";
+import { formatTransaction, fromTransactionRaw, toTransactionRaw } from "../../bridge/transaction";
+import { Transaction, TransactionRaw } from "../../types";
 
 describe("transaction Test", () => {
   describe("when formatTransaction", () => {

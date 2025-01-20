@@ -1,11 +1,11 @@
 import BigNumber from "bignumber.js";
-import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
-import * as getFeesForTransaction from "./getFeesForTransaction";
-import { AptosAPI } from "../api";
+import { createFixtureAccount, createFixtureTransaction } from "../../bridge/bridge.fixture";
+import * as getFeesForTransaction from "../../bridge/getFeesForTransaction";
+import { AptosAPI } from "../../api";
 
 let simulateTransaction = jest.fn();
 
-jest.mock("../api", () => {
+jest.mock("../../api", () => {
   return {
     AptosAPI: function () {
       return {
@@ -24,7 +24,7 @@ jest.mock("@aptos-labs/ts-sdk", () => {
   };
 });
 
-jest.mock("./logic", () => {
+jest.mock("../../bridge/logic", () => {
   return {
     DEFAULT_GAS: 201,
     DEFAULT_GAS_PRICE: 101,

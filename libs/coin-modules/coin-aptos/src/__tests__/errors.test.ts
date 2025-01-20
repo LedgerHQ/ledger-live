@@ -2,7 +2,7 @@ import {
   SequenceNumberTooOldError,
   SequenceNumberTooNewError,
   TransactionExpiredError,
-} from "./errors";
+} from "../errors";
 
 describe("APTOS errors", () => {
   it("should create the SequenceNumberTooOldError error", () => {

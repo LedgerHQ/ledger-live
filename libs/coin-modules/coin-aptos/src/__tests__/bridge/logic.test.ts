@@ -6,7 +6,7 @@ import {
 } from "@aptos-labs/ts-sdk";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { APTOS_ASSET_ID, APTOS_COIN_CHANGE, DIRECTION } from "../constants";
+import { APTOS_ASSET_ID, APTOS_COIN_CHANGE, DIRECTION } from "../../constants";
 import {
   calculateAmount,
   compareAddress,
@@ -19,9 +19,8 @@ import {
   normalizeTransactionOptions,
   getBlankOperation,
   txsToOps,
-} from "./logic";
-import type { AptosTransaction, TransactionOptions } from "../types";
-import { version } from "os";
+} from "../../bridge/logic";
+import type { AptosTransaction, TransactionOptions } from "../../types";
 
 jest.mock("@ledgerhq/cryptoassets", () => ({
   getCryptoCurrencyById: jest.fn(),

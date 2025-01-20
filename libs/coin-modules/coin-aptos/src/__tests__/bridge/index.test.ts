@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { createBridges } from "./";
+import { createBridges } from "../../bridge";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 
 const signer = jest.fn();

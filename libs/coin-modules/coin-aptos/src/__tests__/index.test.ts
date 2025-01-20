@@ -7,17 +7,17 @@ jest.mock("@ledgerhq/coin-framework/bridge/jsHelpers", () => ({
   getSerializedAddressParameters: jest.fn(),
   makeSync: jest.fn(),
 }));
-jest.mock("./signer", () => jest.fn());
-jest.mock("./types", () => jest.fn());
-jest.mock("./bridge/getTransactionStatus", () => jest.fn());
-jest.mock("./bridge/estimateMaxSpendable", () => jest.fn());
-jest.mock("./bridge/prepareTransaction", () => jest.fn());
-jest.mock("./bridge/createTransaction", () => jest.fn());
-jest.mock("./bridge/synchronisation", () => jest.fn());
-jest.mock("./bridge/signOperation", () => jest.fn());
-jest.mock("./bridge/broadcast", () => jest.fn());
+jest.mock("../signer", () => jest.fn());
+jest.mock("../types", () => jest.fn());
+jest.mock("../bridge/getTransactionStatus", () => jest.fn());
+jest.mock("../bridge/estimateMaxSpendable", () => jest.fn());
+jest.mock("../bridge/prepareTransaction", () => jest.fn());
+jest.mock("../bridge/createTransaction", () => jest.fn());
+jest.mock("../bridge/synchronisation", () => jest.fn());
+jest.mock("../bridge/signOperation", () => jest.fn());
+jest.mock("../bridge/broadcast", () => jest.fn());
 
-import { createBridges } from "./";
+import { createBridges } from "../bridge";
 
 describe("APTOS index", () => {
   it("should export a function createBridges", () => {

@@ -1,10 +1,10 @@
-import broadcast from "./broadcast";
-import { AptosAPI } from "../api";
+import broadcast from "../../bridge/broadcast";
+import { AptosAPI } from "../../api";
 import { patchOperationWithHash } from "@ledgerhq/coin-framework/operation";
 import type { Account, Operation, SignedOperation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 
-jest.mock("../api");
+jest.mock("../../api");
 jest.mock("@ledgerhq/coin-framework/operation");
 
 describe("broadcast", () => {

@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
-import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
-import getTransactionStatus from "./getTransactionStatus";
+import { createFixtureAccount, createFixtureTransaction } from "../../bridge/bridge.fixture";
+import getTransactionStatus from "../../bridge/getTransactionStatus";
 import {
   AmountRequired,
   FeeNotLoaded,

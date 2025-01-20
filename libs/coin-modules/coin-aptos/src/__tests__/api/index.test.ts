@@ -11,7 +11,7 @@ import {
 } from "@aptos-labs/ts-sdk";
 import network from "@ledgerhq/live-network";
 import BigNumber from "bignumber.js";
-import { AptosAPI } from ".";
+import { AptosAPI } from "../../api";
 
 jest.mock("@aptos-labs/ts-sdk");
 jest.mock("@apollo/client");
