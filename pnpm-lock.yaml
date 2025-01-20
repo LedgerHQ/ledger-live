@@ -444,6 +444,9 @@ importers:
       dotenv:
         specifier: 16.4.5
         version: 16.4.5
+      electron-app-universal-protocol-client:
+        specifier: 2.1.1
+        version: 2.1.1(electron@32.2.8)
       electron-context-menu:
         specifier: 3.6.1
         version: 3.6.1
@@ -19730,6 +19733,11 @@ packages:
     engines: {node: '>=0.10.0'}
     hasBin: true
 
+  electron-app-universal-protocol-client@2.1.1:
+    resolution: {integrity: sha512-3oX46dltrJl3yxa5c5JmM4jJCv44mzPgcF/i53t615mjRY/oJBmX3jIatd5nb1O/pj/BVW0EW2ZtAWSweXBAeA==}
+    peerDependencies:
+      electron: '>12.0.0'
+
   electron-builder@25.1.8:
     resolution: {integrity: sha512-poRgAtUHHOnlzZnc9PK4nzG53xh74wj2Jy7jkTrqZ0MWPoHGh1M2+C//hGeYdA+4K8w4yiVCNYoLXF7ySj2Wig==}
     engines: {node: '>=14.0.0'}
@@ -29396,6 +29404,9 @@ packages:
   typed-array-length@1.0.6:
     resolution: {integrity: sha512-/OxDN6OtAk5KBpGb28T+HZc2M+ADtvRxXrKKbUwtsLgdoxgX13hyy7ek6bFRl5+aBs2yZzB0c4CnQfAtVypW/g==}
     engines: {node: '>= 0.4'}
+
+  typed-emitter@2.1.0:
+    resolution: {integrity: sha512-g/KzbYKbH5C2vPkaXGu8DJlHrGKHLsM25Zg9WuC9pMGfuvT+X25tZQWo5fK1BjBm8+UrVE9LDCvaY0CQk+fXDA==}
 
   typedarray-to-buffer@3.1.5:
     resolution: {integrity: sha512-zdu8XMNEDepKKR+XYOXAVPtWui0ly0NtohUscw+UmaHiAWT8hrV1rr//H6V+0DvJ3OQ19S979M0laLfX8rm82Q==}
@@ -50115,6 +50126,11 @@ snapshots:
     dependencies:
       jake: 10.8.7
 
+  electron-app-universal-protocol-client@2.1.1(electron@32.2.8):
+    dependencies:
+      electron: 32.2.8
+      typed-emitter: 2.1.0
+
   electron-builder@25.1.8(lodash@4.17.21):
     dependencies:
       app-builder-lib: 25.1.8(dmg-builder@25.1.8(lodash@4.17.21))(lodash@4.17.21)
@@ -64435,6 +64451,10 @@ snapshots:
       has-proto: 1.0.3
       is-typed-array: 1.1.13
       possible-typed-array-names: 1.0.0
+
+  typed-emitter@2.1.0:
+    optionalDependencies:
+      rxjs: 7.8.1
 
   typedarray-to-buffer@3.1.5:
     dependencies:

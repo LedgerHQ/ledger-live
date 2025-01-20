@@ -14,7 +14,7 @@ import debounce from "lodash/debounce";
 import sentry from "~/sentry/main";
 import { SettingsState } from "~/renderer/reducers/settings";
 import { User } from "~/renderer/storage";
-// import electronAppUniversalProtocolClient from "electron-app-universal-protocol-client";
+import electronAppUniversalProtocolClient from "electron-app-universal-protocol-client";
 
 Store.initRenderer();
 
@@ -168,18 +168,18 @@ app.on("ready", async () => {
     }, 300),
   );
 
-  // if (__DEV__) {
-  //   electronAppUniversalProtocolClient.on("request", requestUrl => {
-  //     // Handle the request
-  //     const win = getMainWindow();
-  //     if (win) win.webContents.send("deep-linking", requestUrl);
-  //   });
+  if (__DEV__) {
+    electronAppUniversalProtocolClient.on("request", requestUrl => {
+      // Handle the request
+      const win = getMainWindow();
+      if (win) win.webContents.send("deep-linking", requestUrl);
+    });
 
-  //   await electronAppUniversalProtocolClient.initialize({
-  //     protocol: "ledgerlive",
-  //     mode: "development",
-  //   });
-  // }
+    await electronAppUniversalProtocolClient.initialize({
+      protocol: "ledgerlive",
+      mode: "development",
+    });
+  }
 
   await clearSessionCache(window.webContents.session);
 });
