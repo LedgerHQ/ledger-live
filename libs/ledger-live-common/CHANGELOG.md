@@ -1,5 +1,12 @@
 ## 34.5.0-next.4
 
+## 34.18.0-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`aa90ede`](https://github.com/LedgerHQ/ledger-live/commit/aa90edea61d9f41b9efe500bebfcc1f88a9fa1c8)]:
+  - @ledgerhq/coin-polkadot@1.5.1-next.1
+
 ## 34.18.0-next.0
 
 ### Minor Changes

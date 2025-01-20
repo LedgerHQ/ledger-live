@@ -1,5 +1,11 @@
 # @ledgerhq/coin-polkadot
 
+## 1.5.1-next.1
+
+### Patch Changes
+
+- [#8951](https://github.com/LedgerHQ/ledger-live/pull/8951) [`aa90ede`](https://github.com/LedgerHQ/ledger-live/commit/aa90edea61d9f41b9efe500bebfcc1f88a9fa1c8) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Fix derivation path serialization for swap
+
 ## 1.5.1-next.0
 
 ### Patch Changes
