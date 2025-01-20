@@ -35,7 +35,7 @@ export type RequestAccountParams = {
 };
 export const requestAccountLogic = async (
   walletState: WalletState,
-  { manifest }: Omit<WebPlatformContext, "accounts" | "dispatch" | "tracking">,
+  { manifest }: Omit<WebPlatformContext, "accounts" | "dispatch" | "tracking" | "mevProtected">,
   { currencies, includeTokens }: RequestAccountParams,
 ) => {
   trackingLiveAppSDKLogic.platformRequestAccountRequested(manifest);
