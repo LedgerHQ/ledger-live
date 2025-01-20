@@ -1,6 +1,4 @@
-import {
-  StackNavigatorNavigation,
-} from "~/components/RootNavigator/types/helpers";
+import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
 import { SwapFormNavigatorParamList } from "~/components/RootNavigator/types/SwapFormNavigator";
 import { ScreenName } from "~/const";
 
