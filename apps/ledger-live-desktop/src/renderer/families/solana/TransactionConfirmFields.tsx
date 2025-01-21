@@ -35,14 +35,7 @@ const Title: TitleComponent = props => {
     device.modelId === DeviceModelId.nanoS
   ) {
     return (
-      <Box
-        flexDirection="column"
-        alignItems="center"
-        gap={4}
-        mb={4}
-        justifyContent="center"
-        className="title-test-transfer"
-      >
+      <Box flexDirection="column" alignItems="center" gap={4} mb={4} justifyContent="center">
         <ConfirmTitle title={undefined} typeTransaction={typeTransaction} {...props} />
         <Alert type="warning">
           <Trans i18nKey="solana.token.transferWarning">
