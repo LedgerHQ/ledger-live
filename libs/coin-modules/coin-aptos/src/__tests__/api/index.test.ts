@@ -75,10 +75,10 @@ describe("Aptos API", () => {
       const mockGetAccountSpy = jest.spyOn({ getAccount: mockGetAccountInfo }, "getAccount");
 
       const api = new AptosAPI("aptos");
-      await api.getAccount("0xb69a68cc64f7aa193705193f4dd598320a0a74baf7e4b50c9980c5bd60a82390");
+      await api.getAccount("address");
 
       expect(mockGetAccountSpy).toHaveBeenCalledWith({
-        accountAddress: "0xb69a68cc64f7aa193705193f4dd598320a0a74baf7e4b50c9980c5bd60a82390",
+        accountAddress: "address",
       });
     });
   });
