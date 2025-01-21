@@ -30,7 +30,7 @@ import AccountItem from "LLM/features/Accounts/components/AccountsListView/compo
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { BaseComposite, StackNavigatorProps } from "./RootNavigator/types/helpers";
 
-const ANIMATION_DURATION = 200;
+import useAnimatedStyle from "LLM/features/Accounts/screens/ScanDeviceAccounts/components/ScanDeviceAccountsFooter/useAnimatedStyle";
 
 const selectAllHitSlop = {
   top: 16,
@@ -89,57 +89,23 @@ const SelectableAccountsList = ({
   }, [accounts, onUnselectAllProp]);
 
   const areAllSelected = accounts.every(a => selectedIds.indexOf(a.id) > -1);
-  const translateY = useRef(new Animated.Value(50)).current;
-  const opacity = useRef(new Animated.Value(0)).current;
-  const scale = useRef(new Animated.Value(0.8)).current;
   const llmNetworkBasedAddAccountFlow = useFeature("llmNetworkBasedAddAccountFlow");
-
-  useEffect(() => {
-    if (!llmNetworkBasedAddAccountFlow?.enabled) return;
-    Animated.parallel([
-      Animated.timing(translateY, {
-        toValue: 0,
-        duration: ANIMATION_DURATION,
-        useNativeDriver: true,
-      }),
-      Animated.timing(opacity, {
-        toValue: 1,
-        duration: ANIMATION_DURATION,
-        useNativeDriver: true,
-      }),
-      Animated.timing(scale, {
-        toValue: 1,
-        duration: ANIMATION_DURATION,
-        useNativeDriver: true,
-      }),
-    ]).start();
-  }, [translateY, opacity, scale, llmNetworkBasedAddAccountFlow?.enabled]);
-
-  const animatedSelectableAccount = useMemo(
-    () => ({
-      transform: [{ translateY }, { scale }],
-      opacity,
-    }),
-    [translateY, scale, opacity],
-  );
 
   const renderSelectableAccount = useCallback(
     ({ item, index }: { index: number; item: Account }) =>
       llmNetworkBasedAddAccountFlow?.enabled ? (
-        <Animated.View style={[animatedSelectableAccount]}>
-          <SelectableAccount
-            navigation={navigation}
-            showHint={!index && showHint}
-            rowIndex={index}
-            listIndex={listIndex}
-            account={item}
-            onAccountNameChange={onAccountNameChange}
-            isSelected={forceSelected || selectedIds.indexOf(item.id) > -1}
-            isDisabled={isDisabled}
-            onPress={onPressAccount}
-            useFullBalance={useFullBalance}
-          />
-        </Animated.View>
+        <SelectableAccount
+          navigation={navigation}
+          showHint={!index && showHint}
+          rowIndex={index}
+          listIndex={listIndex}
+          account={item}
+          onAccountNameChange={onAccountNameChange}
+          isSelected={forceSelected || selectedIds.indexOf(item.id) > -1}
+          isDisabled={isDisabled}
+          onPress={onPressAccount}
+          useFullBalance={useFullBalance}
+        />
       ) : (
         <SelectableAccount
           navigation={navigation}
@@ -164,7 +130,6 @@ const SelectableAccountsList = ({
       onAccountNameChange,
       onPressAccount,
       useFullBalance,
-      animatedSelectableAccount,
       llmNetworkBasedAddAccountFlow?.enabled,
     ],
   );
@@ -325,64 +290,66 @@ const SelectableAccount = ({
 
   const subAccountCount = account.subAccounts && account.subAccounts.length;
   const isToken = listTokenTypesForCryptoCurrency(account.currency).length > 0;
-
+  const { animatedSelectableAccount } = useAnimatedStyle();
   const inner = (
-    <Flex
-      marginTop={3}
-      marginBottom={3}
-      marginLeft={6}
-      marginRight={6}
-      paddingLeft={6}
-      paddingRight={6}
-      paddingTop={3}
-      paddingBottom={3}
-      flexDirection="row"
-      alignItems="center"
-      borderRadius={4}
-      opacity={isDisabled ? 0.4 : 1}
-      backgroundColor="neutral.c30"
-    >
-      {llmNetworkBasedAddAccountFlow?.enabled ? (
-        <Flex
-          flex={1}
-          flexDirection="row"
-          height={56}
-          alignItems="center"
-          backgroundColor="neutral.c30"
-          borderRadius="12px"
-          padding="8px"
-          columnGap={8}
-        >
-          <AccountItem account={account} balance={account.spendableBalance} />
-        </Flex>
-      ) : (
-        <Flex flex={1}>
-          <AccountCard
-            useFullBalance={useFullBalance}
-            account={account}
-            AccountSubTitle={
-              subAccountCount && !isDisabled ? (
-                <Flex marginTop={2}>
-                  <Text fontWeight="semiBold" variant="small" color="pillActiveForeground">
-                    <Trans
-                      i18nKey={`selectableAccountsList.${isToken ? "tokenCount" : "subaccountCount"}`}
-                      count={subAccountCount}
-                      values={{ count: subAccountCount }}
-                    />
-                  </Text>
-                </Flex>
-              ) : null
-            }
-          />
-        </Flex>
-      )}
+    <Animated.View style={[animatedSelectableAccount]}>
+      <Flex
+        marginTop={3}
+        marginBottom={3}
+        marginLeft={6}
+        marginRight={6}
+        paddingLeft={6}
+        paddingRight={6}
+        paddingTop={3}
+        paddingBottom={3}
+        flexDirection="row"
+        alignItems="center"
+        borderRadius={4}
+        opacity={isDisabled ? 0.4 : 1}
+        backgroundColor="neutral.c30"
+      >
+        {llmNetworkBasedAddAccountFlow?.enabled ? (
+          <Flex
+            flex={1}
+            flexDirection="row"
+            height={56}
+            alignItems="center"
+            backgroundColor="neutral.c30"
+            borderRadius="12px"
+            padding="8px"
+            columnGap={8}
+          >
+            <AccountItem account={account as Account} balance={account.spendableBalance} />
+          </Flex>
+        ) : (
+          <Flex flex={1}>
+            <AccountCard
+              useFullBalance={useFullBalance}
+              account={account}
+              AccountSubTitle={
+                subAccountCount && !isDisabled ? (
+                  <Flex marginTop={2}>
+                    <Text fontWeight="semiBold" variant="small" color="pillActiveForeground">
+                      <Trans
+                        i18nKey={`selectableAccountsList.${isToken ? "tokenCount" : "subaccountCount"}`}
+                        count={subAccountCount}
+                        values={{ count: subAccountCount }}
+                      />
+                    </Text>
+                  </Flex>
+                ) : null
+              }
+            />
+          </Flex>
+        )}
 
-      {!isDisabled && (
-        <Flex marginLeft={4}>
-          <CheckBox onChange={handlePress} isChecked={!!isSelected} />
-        </Flex>
-      )}
-    </Flex>
+        {!isDisabled && (
+          <Flex marginLeft={4}>
+            <CheckBox onChange={handlePress} isChecked={!!isSelected} />
+          </Flex>
+        )}
+      </Flex>
+    </Animated.View>
   );
 
   if (isDisabled) return inner;

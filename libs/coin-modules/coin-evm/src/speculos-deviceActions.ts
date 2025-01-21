@@ -66,6 +66,14 @@ export const acceptTransaction: DeviceAction<Transaction, State<Transaction>> = 
       expectedValue: ({ transaction }) => transaction.recipient,
     },
     {
+      title: "From",
+      button: SpeculosButton.RIGHT,
+    },
+    {
+      title: "To",
+      button: SpeculosButton.RIGHT,
+    },
+    {
       title: "Accept",
       button: SpeculosButton.BOTH,
     },

@@ -1,8 +1,8 @@
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { ScreenName } from "~/const";
 import { Device } from "@ledgerhq/types-devices";
-import { AccountLikeEnhanced } from "../ScanDeviceAccounts/types";
 import { Account } from "@ledgerhq/types-live";
+import { Props as TouchableProps } from "~/components/Touchable";
 
 type CommonParams = {
   context?: "addAccounts" | "receiveFunds";
@@ -19,8 +19,21 @@ export type NetworkBasedAddAccountNavigator = {
   [ScreenName.SelectAccounts]: CommonParams & {
     createTokenAccount?: boolean;
   };
+
   [ScreenName.AddAccountsSuccess]: CommonParams & {
-    fundedAccounts: AccountLikeEnhanced[];
-    accountsWithZeroBalance: AccountLikeEnhanced[];
+    accountsToAdd: Account[];
+  };
+  [ScreenName.AddAccountsWarning]: CommonParams & {
+    emptyAccount?: Account;
+    emptyAccountName?: string;
+  };
+  [ScreenName.NoAssociatedAccounts]: {
+    CustomNoAssociatedAccounts: ({
+      style,
+    }: {
+      style?: {
+        paddingHorizontal?: TouchableProps["style"];
+      };
+    }) => JSX.Element;
   };
 };

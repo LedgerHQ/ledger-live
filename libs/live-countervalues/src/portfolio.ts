@@ -8,6 +8,7 @@ import {
 import { getEnv } from "@ledgerhq/live-env";
 import type {
   Account,
+  TokenAccount,
   AccountLike,
   BalanceHistory,
   PortfolioRange,
@@ -469,4 +470,25 @@ const assetsDistributionNotAvailable: AssetsDistribution = {
   list: [],
   showFirst: 0,
   sum: 0,
+};
+
+export const orderAccountsByFiatValue = (
+  accounts: Account[] | TokenAccount[],
+  counterValueState: CounterValuesState,
+  to: Currency,
+) => {
+  const accountsWithValue = accounts.map(account => {
+    const value = calculate(counterValueState, {
+      value: account.spendableBalance.toNumber(),
+      from: getAccountCurrency(account),
+      to,
+      disableRounding: true,
+    });
+
+    return { account, value: value ?? 0 };
+  });
+
+  accountsWithValue.sort((a, b) => b.value - a.value);
+
+  return accountsWithValue.map(item => item.account);
 };

@@ -99,7 +99,8 @@
       "id": "ID {{ value }}",
       "times": "x{{ value }}"
     },
-    "quote": "Quote"
+    "quote": "Quote",
+    "tryAgain": "Try again"
   },
   "errors": {
     "ReplacementTransactionUnderpriced": {
@@ -4066,18 +4067,29 @@
           "title": "New account"
         },
         "imported": {
-          "title": "Account already in the Portfolio ({{length}})",
-          "title_plural": "Accounts already in the Portfolio ({{length}})"
+          "title": "Account already in the Portfolio ({{count}})",
+          "title_plural": "Accounts already in the Portfolio ({{count}})"
         },
         "migrate": {
           "title": "Accounts to update"
         }
-      }
+      },
+      "retryScanning": "Try Again"
     },
     "addAccountsSuccess": {
       "ctaAddFunds": "Add funds to my account",
       "ctaClose": "Close"
-    }
+    },
+    "addAccountsWarning": {
+      "cantCreateAccount": {
+        "title": "We can’t add a new account",
+        "body": "A new account cannot be added before receiving assets on your {{accountName}} account."
+      },
+      "noAccountToCreate": {
+        "title": "We couldn’t add a new {{currency}} account"
+      }
+    },
+    "chooseAccountToFund": "Choose an account to add funds"
   },
   "DeviceAction": {
     "stayInTheAppPlz": "Stay in the Ledger Live app and keep your Ledger nearby.",
@@ -6560,7 +6572,9 @@
     "name": "hedera",
     "createHederaAccountHelp": {
       "text": "Please refer to this support article for",
-      "link": "how to create a Hedera account"
+      "link": "How to create a Hedera account ?",
+      "title": "We can’t create a new Hedera account",
+      "description": "In the Hedera ecosystem, only a select number of services can create new accounts. While Ledger does not currently offer this onboarding service, alternatives are available. You will be able to add your Hedera account on Ledger Live once it’s created."
     },
     "currentAddress": {
       "messageIfVirtual": "Your {{name}} address cannot be confirmed on your Ledger device. Use at your own risk."
@@ -6773,7 +6787,7 @@
       "category": {
         "all": {
           "name": "All",
-          "description": "All ethereum staking providers available on Ledger Live."
+          "description": "All Ethereum staking providers available on Ledger Live."
         },
         "liquid": {
           "name": "Liquid",

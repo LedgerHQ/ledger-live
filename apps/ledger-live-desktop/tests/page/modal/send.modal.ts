@@ -20,6 +20,10 @@ export class SendModal extends Modal {
   private noTagButton = this.page.getByRole("button", { name: "Don’t add Tag" });
   private ENSAddressLabel = this.page.getByTestId("ens-address-sendModal");
 
+  readonly inputError = this.page.locator("id=input-error"); // no data-testid because css style is applied
+  readonly insufficientFundsWarning = this.page.getByTestId("insufficient-funds-warning");
+  readonly inputWarning = this.page.locator("id=input-warning");
+
   async selectAccount(name: string) {
     await this.drowdownAccount.click();
     await this.page.getByText(name).click();
@@ -50,7 +54,14 @@ export class SendModal extends Modal {
 
   @step("Enter recipient and tag")
   async fillRecipientInfo(transaction: Transaction) {
-    await this.fillRecipient(transaction.accountToCredit.address);
+    if (transaction.accountToCredit.ensName) {
+      await this.fillRecipient(transaction.accountToCredit.ensName);
+      const displayedAddress = await this.ENSAddressLabel.innerText();
+      expect(displayedAddress).toEqual(transaction.accountToCredit.address);
+    } else {
+      await this.fillRecipient(transaction.accountToCredit.address);
+    }
+
     if (transaction.memoTag && transaction.memoTag !== "noTag") {
       await this.tagInput.clear();
       await this.tagInput.fill(transaction.memoTag);
@@ -103,6 +114,10 @@ export class SendModal extends Modal {
 
     const displayedAmount = await this.amountDisplayedValue.innerText();
     expect(displayedAmount).toEqual(expect.stringContaining(tx.amount));
+    if (tx.accountToCredit.ensName) {
+      const displayedEns = await this.recipientEnsDisplayed.innerText();
+      expect(displayedEns).toEqual(tx.accountToCredit.ensName);
+    }
   }
 
   @step("Verify tx sent text")
@@ -131,6 +146,39 @@ export class SendModal extends Modal {
       await this.toggleMaxAmount();
     } else {
       await this.cryptoAmountField.fill(amount);
+    }
+  }
+
+  @step("Check input error state visibibility: $0")
+  async checkInputErrorVisibility(expectedState: "visible" | "hidden") {
+    await this.inputError.waitFor({ state: expectedState });
+  }
+
+  @step("Check if the error message is the same as expected")
+  async checkErrorMessage(errorMessage: string | null) {
+    if (errorMessage !== null) {
+      await this.inputError.waitFor({ state: "visible" });
+      const errorText: any = await this.inputError.textContent();
+      const normalize = (str: string) => str.replace(/\u00A0/g, " ").trim();
+      expect(normalize(errorText)).toEqual(normalize(errorMessage));
+    }
+  }
+
+  @step("Check warning message")
+  async checkAmountWarningMessage(expectedWarningMessage: RegExp) {
+    if (expectedWarningMessage !== null) {
+      await expect(this.insufficientFundsWarning).toBeVisible();
+      const warningText = await this.insufficientFundsWarning.innerText();
+      expect(warningText).toMatch(expectedWarningMessage);
+    }
+  }
+
+  @step("Check warning message")
+  async checkInputWarningMessage(expectedWarningMessage: string | null) {
+    if (expectedWarningMessage !== null) {
+      await expect(this.inputWarning).toBeVisible();
+      const warningText = await this.inputWarning.innerText();
+      expect(warningText).toMatch(expectedWarningMessage);
     }
   }
 }

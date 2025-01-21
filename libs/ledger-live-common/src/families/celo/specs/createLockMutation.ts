@@ -8,6 +8,7 @@ const minimalAmount = parseCurrencyUnit(currency.units[0], "0.005");
 
 export const createLockMutation = (): MutationSpec<Transaction> => ({
   name: "Celo: Lock",
+  feature: "staking",
   maxRun: 1,
   transaction: ({ account, bridge, maxSpendable }) => {
     const { celoResources } = account as CeloAccount;
