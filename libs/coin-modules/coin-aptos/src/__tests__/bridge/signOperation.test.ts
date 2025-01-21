@@ -1,9 +1,3 @@
-// describe("APTOS signOperation", () => {
-//   it("be true", () => {
-//     expect(true).toBeTruthy();
-//   });
-// });
-
 import BigNumber from "bignumber.js";
 import { Observable } from "rxjs";
 import { SignerContext } from "@ledgerhq/coin-framework/lib/signer";
@@ -21,20 +15,6 @@ jest.mock("../../api", () => {
     },
   };
 });
-
-// jest.mock("../../hw/deviceAccess", () => {
-//   return {
-//     withDevice: jest.fn(() => observable => {
-//       return observable(new Observable());
-//     }),
-//   };
-// });
-
-// jest.mock("../../operation", () => {
-//   return {
-//     encodeOperationId: jest.fn(() => "js:2:aptos:0x000"),
-//   };
-// });
 
 jest.mock("../../bridge/buildTransaction", () => {
   return function () {
