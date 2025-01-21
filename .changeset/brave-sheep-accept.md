@@ -6,4 +6,4 @@
 "@ledgerhq/live-common": minor
 ---
 
-aptos coin module
+support: move aptos to its own coin module
