@@ -99,7 +99,6 @@ describe("getAccountShape", () => {
         deviceId: "1",
         initialAccount: {
           id: "1:1:1:1:1",
-          // xpub: "address",
           seedIdentifier: "1",
           derivationMode: "",
           index: 0,
@@ -182,7 +181,6 @@ describe("getAccountShape", () => {
         deviceId: "1",
         initialAccount: {
           id: "1:1:1:1:1",
-          // xpub: "address",
           seedIdentifier: "1",
           derivationMode: "",
           index: 0,
@@ -208,7 +206,6 @@ describe("getAccountShape", () => {
               senders: ["sender"],
               recipients: ["recipient"],
               date: new Date(),
-              // extra: {},
             },
           ],
           pendingOperations: [],
@@ -249,7 +246,6 @@ describe("getAccountShape", () => {
         deviceId: "1",
         initialAccount: {
           id: "1:1:1:1:1",
-          // xpub: "address",
           seedIdentifier: "1",
           derivationMode: "",
           index: 0,
