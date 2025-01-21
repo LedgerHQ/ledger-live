@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.96.0-next.2
+
+### Minor Changes
+
+- [#8965](https://github.com/LedgerHQ/ledger-live/pull/8965) [`badbb9c`](https://github.com/LedgerHQ/ledger-live/commit/badbb9c3dab1c99714a3b673ca65b1bffbf1f014) Thanks [@Justkant](https://github.com/Justkant)! - fix: double broadcast on exchange flow
+
 ## 2.96.0-next.1
 
 ### Patch Changes
