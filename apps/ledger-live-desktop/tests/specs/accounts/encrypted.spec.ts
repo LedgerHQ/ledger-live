@@ -10,7 +10,7 @@ test("accounts are restored on an encrypted app.json", async ({ page }) => {
   const layout = new Layout(page);
   const lockscreenPage = new LockscreenPage(page);
   await lockscreenPage.login("bad password");
-  await layout.inputError.waitFor({ state: "visible" });
+  await lockscreenPage.checkInputErrorVisibility("visible");
   await lockscreenPage.login("foobar");
   await layout.goToAccounts();
   const accountsPage = new AccountsPage(page);

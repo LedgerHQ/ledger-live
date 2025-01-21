@@ -57,6 +57,7 @@ const icon: AppSpec<Transaction> = {
   mutations: [
     {
       name: "send 50%~",
+      feature: "send",
       maxRun: 1,
       transaction: ({ account, siblings, bridge }) => {
         invariant(account.spendableBalance.gt(0), "balance is 0");
@@ -94,6 +95,7 @@ const icon: AppSpec<Transaction> = {
     },
     {
       name: "send max",
+      feature: "sendMax",
       maxRun: 1,
       transaction: ({ account, siblings, bridge }) => {
         invariant(account.spendableBalance.gt(0), "balance is 0");

@@ -170,6 +170,7 @@ const elrond: AppSpec<Transaction> = {
   mutations: [
     {
       name: "send 50%~",
+      feature: "send",
       maxRun: 1,
       deviceAction: acceptMoveBalanceTransaction,
       transaction: ({ account, siblings, bridge }) => {
@@ -204,6 +205,7 @@ const elrond: AppSpec<Transaction> = {
     },
     {
       name: "send max",
+      feature: "sendMax",
       maxRun: 1,
       deviceAction: acceptMoveBalanceTransaction,
       transaction: ({ account, siblings, bridge }) => {
@@ -236,6 +238,7 @@ const elrond: AppSpec<Transaction> = {
     },
     {
       name: "move some ESDT",
+      feature: "tokens",
       maxRun: 1,
       deviceAction: acceptEsdtTransferTransaction,
       transaction: ({ account, siblings, bridge }) => {
@@ -273,6 +276,7 @@ const elrond: AppSpec<Transaction> = {
     },
     {
       name: "delegate 1 EGLD",
+      feature: "staking",
       maxRun: 1,
       deviceAction: acceptDelegateTransaction,
       transaction: ({ account, bridge }) => {
@@ -301,6 +305,7 @@ const elrond: AppSpec<Transaction> = {
     },
     {
       name: "unDelegate 1 EGLD",
+      feature: "staking",
       maxRun: 1,
       deviceAction: acceptUndelegateTransaction,
       transaction: ({ account, bridge }) => {
@@ -331,6 +336,7 @@ const elrond: AppSpec<Transaction> = {
     },
     {
       name: "withdraw all EGLD",
+      feature: "staking",
       maxRun: 1,
       deviceAction: acceptWithdrawTransaction,
       transaction: ({ account, bridge }) => {

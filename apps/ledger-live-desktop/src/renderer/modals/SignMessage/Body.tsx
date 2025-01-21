@@ -15,6 +15,7 @@ export type Data = {
   onClose: () => void;
   useApp?: string;
   dependencies?: string[];
+  isACRE?: boolean;
 };
 
 type OwnProps = {
@@ -56,6 +57,7 @@ const Body = ({ onClose, data }: Props) => {
     onStepChange: handleStepChange,
     stepId,
     steps,
+    isACRE: data.isACRE,
     useApp: data.useApp,
     dependencies: data.dependencies,
     message: data.message,

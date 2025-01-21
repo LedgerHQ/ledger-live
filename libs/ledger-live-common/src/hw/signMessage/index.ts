@@ -78,6 +78,7 @@ type BaseState = {
 export type State = AppState & BaseState;
 export type Request = AppRequest & {
   message: AnyMessage;
+  isACRE?: boolean;
 };
 
 export type Input = {
@@ -110,7 +111,7 @@ export const createAction = (
     const appState: AppState = createAppAction(connectAppExec).useHook(reduxDevice, {
       appName: request.appName,
       dependencies: request.dependencies,
-      account: request.appName ? undefined : request.account,
+      account: request.isACRE ? undefined : request.account, // Bypass derivation check with ACRE as we can use other addresses than the freshest
     });
     const { device, opened, inWrongDeviceForAccount, error } = appState;
     const [state, setState] = useState<BaseState>({

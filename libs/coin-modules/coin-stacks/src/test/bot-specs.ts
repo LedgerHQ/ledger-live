@@ -27,6 +27,7 @@ const stacksSpecs: AppSpec<Transaction> = {
   mutations: [
     {
       name: "Send 50%~",
+      feature: "send",
       maxRun: 1,
       transaction: ({ account, siblings, bridge }) => {
         const sibling = pickSiblings(siblings, 2);
@@ -57,6 +58,7 @@ const stacksSpecs: AppSpec<Transaction> = {
     },
     {
       name: "Transfer Max",
+      feature: "sendMax",
       maxRun: 1,
       transaction: ({ account, siblings, bridge }) => {
         const sibling = pickSiblings(siblings, 2);

@@ -24,7 +24,8 @@ const xrp: AppSpec<Transaction> = {
   mutations: [
     {
       name: "move ~50%",
-      maxRun: 2,
+      feature: "send",
+      maxRun: 1,
       testDestination: genericTestDestination,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
         invariant(maxSpendable.gt(minAmountCutoff), "balance is too low");

@@ -30,6 +30,7 @@ const casperSpecs: AppSpec<Transaction> = {
   mutations: [
     {
       name: "Send ~50%",
+      feature: "send",
       maxRun: 1,
       testDestination: genericTestDestination,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
@@ -76,6 +77,7 @@ const casperSpecs: AppSpec<Transaction> = {
     },
     {
       name: "Transfer Max",
+      feature: "sendMax",
       maxRun: 1,
       transaction: ({ account, siblings, bridge }) => {
         const updates: Array<Partial<Transaction>> = [

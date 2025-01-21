@@ -53,7 +53,8 @@ const tron: AppSpec<Transaction> = {
   mutations: [
     {
       name: "move 50% to another account",
-      maxRun: 2,
+      feature: "send",
+      maxRun: 1,
       testDestination,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
         invariant(maxSpendable.gt(minimalAmount), "balance is too low");
@@ -83,6 +84,7 @@ const tron: AppSpec<Transaction> = {
     },
     {
       name: "send max to another account",
+      feature: "sendMax",
       maxRun: 1,
       testDestination,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {

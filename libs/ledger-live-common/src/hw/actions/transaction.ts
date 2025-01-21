@@ -129,7 +129,7 @@ export const createAction = (
     } = txRequest;
     const mainAccount = getMainAccount(txRequest.account, txRequest.parentAccount);
     const appState = createAppAction(connectAppExec).useHook(reduxDevice, {
-      account: appName ? undefined : mainAccount,
+      account: isACRE ? undefined : mainAccount, // Bypass derivation check with ACRE as we can use other addresses than the freshest
       appName,
       dependencies,
       requireLatestFirmware,

@@ -49,7 +49,7 @@ for (const currency of currencies) {
 
         await app.addAccount.addAccounts();
         await app.addAccount.done();
-        await app.layout.expectBalanceVisibility();
+        await app.portfolio.expectBalanceVisibility();
         await app.portfolio.checkOperationHistory();
         await app.layout.goToAccounts();
         await app.accounts.navigateToAccountByName(firstAccountName);

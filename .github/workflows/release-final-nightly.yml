@@ -59,7 +59,9 @@ jobs:
       - name: commit
         run: |
           git add .
-          git commit -m "chore(nightly): :rocket: nightly release"
+          if [ "$(git status --porcelain --untracked-files=no)" ]; then 
+            git commit -m "chore(nightly): :rocket: nightly release"
+          fi
       - name: authenticate with npm
         uses: actions/setup-node@v4
         with:

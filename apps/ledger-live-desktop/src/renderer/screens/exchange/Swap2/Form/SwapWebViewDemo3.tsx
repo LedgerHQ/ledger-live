@@ -89,6 +89,11 @@ export type SwapWebProps = {
   liveAppUnavailable: () => void;
 };
 
+type TokenParams = {
+  fromTokenId?: string;
+  toTokenId?: string;
+};
+
 const SwapWebAppWrapper = styled.div`
   display: flex;
   width: 100%;
@@ -129,6 +134,7 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
     defaultParentAccount?: Account;
     defaultAmountFrom?: string;
     from?: string;
+    defaultToken?: TokenParams;
   }>();
   const { networkStatus } = useNetworkStatus();
   const isOffline = networkStatus === NetworkStatus.OFFLINE;
@@ -411,6 +417,13 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
               fromPath: simplifyFromPath(state?.from),
             }
           : {}),
+        ...(state?.defaultToken
+          ? {
+              fromTokenId: state.defaultToken.fromTokenId,
+              toTokenId: state.defaultToken.toTokenId,
+              amountFrom: state?.defaultAmountFrom || "",
+            }
+          : {}),
       }).toString(),
     [
       isOffline,
@@ -418,6 +431,7 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
       state?.defaultParentAccount,
       state?.defaultAmountFrom,
       state?.from,
+      state?.defaultToken,
       walletState,
     ],
   );

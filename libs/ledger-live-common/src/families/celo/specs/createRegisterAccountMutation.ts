@@ -8,6 +8,7 @@ const minimalAmount = parseCurrencyUnit(currency.units[0], "0.001");
 
 export const createRegisterAccountMutation = (): MutationSpec<Transaction> => ({
   name: "Celo: Register Account",
+  feature: "staking",
   maxRun: 1,
   transaction: ({ account, bridge, maxSpendable }) => {
     const { celoResources } = account as CeloAccount;

@@ -38,7 +38,8 @@ const stellar: AppSpec<Transaction> = {
   mutations: [
     {
       name: "move ~50% XLM",
-      maxRun: 2,
+      feature: "send",
+      maxRun: 1,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
         invariant(maxSpendable.gt(minAmountCutoff), "XLM balance is too low");
 
@@ -112,7 +113,8 @@ const stellar: AppSpec<Transaction> = {
     },
     {
       name: "Send max XLM",
-      maxRun: 2,
+      feature: "sendMax",
+      maxRun: 1,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
         invariant(maxSpendable.gt(minAmountCutoff), "XLM balance is too low");
 
@@ -177,6 +179,7 @@ const stellar: AppSpec<Transaction> = {
     },
     {
       name: "add USDC asset",
+      feature: "tokens",
       maxRun: 1,
       transaction: ({ account, bridge, maxSpendable }) => {
         invariant(maxSpendable.gt(reserve), "XLM balance is too low 1");
@@ -217,6 +220,7 @@ const stellar: AppSpec<Transaction> = {
     },
     {
       name: "move ~50% USDC asset",
+      feature: "tokens",
       maxRun: 1,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
         invariant(maxSpendable.gt(minAmountCutoff), "XLM balance is too low");

@@ -9,6 +9,7 @@ const minimalAmount = parseCurrencyUnit(currency.units[0], "0.001");
 
 export const createUnlockMutation = (): MutationSpec<Transaction> => ({
   name: "Celo: Unlock",
+  feature: "staking",
   maxRun: 1,
   transaction: ({ account, bridge, maxSpendable }) => {
     invariant(maxSpendable.gt(minimalAmount), "Celo:  Unlock | balance is too low");

@@ -225,7 +225,8 @@ const evmBasicMutations: ({
 }) => MutationSpec<EvmTransaction>[] = ({ maxAccount }) => [
   {
     name: "move 50%",
-    maxRun: 2,
+    feature: "send",
+    maxRun: 1,
     testDestination: testCoinDestination,
     transaction: ({ account, siblings, bridge, maxSpendable }): TransactionRes<EvmTransaction> => {
       const sibling = pickSiblings(siblings, maxAccount);
@@ -266,6 +267,7 @@ const evmBasicMutations: ({
   },
   {
     name: "send max",
+    feature: "sendMax",
     maxRun: 1,
     testDestination: testCoinDestination,
     transaction: ({ account, siblings, bridge }): TransactionRes<EvmTransaction> => {
@@ -311,6 +313,7 @@ const evmBasicMutations: ({
 
 const moveErc20Mutation: MutationSpec<EvmTransaction> = {
   name: "move some ERC20 like (ERC20, BEP20, etc...)",
+  feature: "tokens",
   maxRun: 1,
   testDestination: testTokenDestination,
   transaction: ({ account, siblings, bridge }): TransactionRes<EvmTransaction> => {

@@ -190,7 +190,7 @@ export const accountNameSelector = (
 ): string | undefined => state.accountNames.get(accountId);
 
 export const accountNameWithDefaultSelector = (state: WalletState, account: AccountLike): string =>
-  state.accountNames.get(account.id) || getDefaultAccountName(account);
+  state?.accountNames?.get(account.id) || getDefaultAccountName(account);
 
 export const isStarredAccountSelector = (
   state: WalletState,

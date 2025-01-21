@@ -6,6 +6,7 @@ import { TFunction } from "i18next";
 import { Redirect } from "react-router";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
+import { Text, Link } from "@ledgerhq/react-ui";
 import { isAddressPoisoningOperation } from "@ledgerhq/live-common/operation";
 import { getCurrencyColor } from "~/renderer/getCurrencyColor";
 import { accountSelector } from "~/renderer/reducers/accounts";
@@ -43,6 +44,7 @@ import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { isBitcoinBasedAccount, isBitcoinAccount } from "@ledgerhq/live-common/account/typeGuards";
 import { useNftCollectionsStatus } from "~/renderer/hooks/nfts/useNftCollectionsStatus";
+import { openURL } from "~/renderer/linking";
 
 type Params = {
   id: string;
@@ -148,6 +150,11 @@ const AccountPage = ({
   const displayOrdinals =
     isOrdinalsEnabled && isBitcoinBasedAccount(account) && isBitcoinAccount(account);
 
+  const openFeatureUnvailableSupportLink = () => {
+    currencyConfig?.status.type === "feature_unavailable" &&
+      openURL(currencyConfig?.status.link || localizedContactSupportURL);
+  };
+
   return (
     <Box key={account.id}>
       <TrackPage
@@ -180,6 +187,28 @@ const AccountPage = ({
       >
         <AccountHeaderActions account={account} parentAccount={parentAccount} />
       </Box>
+      {currencyConfig?.status.type === "feature_unavailable" && (
+        <TopBanner
+          status="warning"
+          content={{
+            message: (
+              <Text fontFamily="Inter|Bold" color="neutral.c00" flex={1}>
+                {t("account.featureUnavailable.title", {
+                  feature: t(`account.featureUnavailable.feature.${currencyConfig.status.feature}`),
+                  support: "",
+                })}
+                <Link
+                  color="neutral.c00"
+                  alwaysUnderline
+                  onClick={openFeatureUnvailableSupportLink}
+                >
+                  {t("account.featureUnavailable.support")}
+                </Link>
+              </Text>
+            ),
+          }}
+        />
+      )}
       {currencyConfig?.status.type === "will_be_deprecated" && (
         <TopBanner
           status="warning"

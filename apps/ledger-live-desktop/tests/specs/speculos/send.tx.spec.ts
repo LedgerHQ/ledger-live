@@ -328,7 +328,7 @@ test.describe("Send flows", () => {
         await app.account.clickSend();
         await app.send.fillRecipient(tokenTransactionInvalid.transaction.accountToCredit.address);
         await app.send.checkContinueButtonDisabled();
-        await app.layout.checkErrorMessage(tokenTransactionInvalid.expectedErrorMessage);
+        await app.send.checkErrorMessage(tokenTransactionInvalid.expectedErrorMessage);
       },
     );
   });
@@ -370,7 +370,7 @@ test.describe("Send flows", () => {
           await app.send.clickContinue();
           await app.send.fillAmount(transaction.transaction.amount);
           await app.send.checkContinueButtonDisabled();
-          await app.layout.checkAmoutWarningMessage(transaction.expectedWarningMessage);
+          await app.send.checkAmountWarningMessage(transaction.expectedWarningMessage);
         },
       );
     });
@@ -417,7 +417,7 @@ test.describe("Send flows", () => {
         await app.account.clickSend();
         await app.send.fillRecipient(tokenTransactionValid.accountToCredit.address);
         await app.send.checkContinueButtonEnable();
-        await app.layout.checkInputErrorVisibibility("hidden");
+        await app.send.checkInputErrorVisibility("hidden");
         await app.send.clickContinue();
         await app.send.fillAmount(tokenTransactionValid.amount);
         await app.send.checkContinueButtonEnable();
@@ -458,7 +458,7 @@ test.describe("Send flows", () => {
 
           await app.send.craftTx(transaction.transaction);
           await app.send.checkContinueButtonDisabled();
-          await app.layout.checkErrorMessage(transaction.expectedErrorMessage);
+          await app.send.checkErrorMessage(transaction.expectedErrorMessage);
         },
       );
     });
@@ -508,7 +508,7 @@ test.describe("Send flows", () => {
         await app.send.clickContinue();
         await app.send.fillAmount(transactionInputValid.amount);
         await app.send.checkContinueButtonEnable();
-        await app.layout.checkInputErrorVisibibility("hidden");
+        await app.send.checkInputErrorVisibility("hidden");
       },
     );
   });
@@ -549,7 +549,7 @@ test.describe("Send flows", () => {
 
           await app.account.clickSend();
           await app.send.fillRecipientInfo(transaction.transaction);
-          await app.layout.checkInputWarningMessage(transaction.expectedWarningMessage);
+          await app.send.checkInputWarningMessage(transaction.expectedWarningMessage);
           await app.send.checkContinueButtonEnable();
         },
       );
@@ -591,7 +591,7 @@ test.describe("Send flows", () => {
 
           await app.account.clickSend();
           await app.send.fillRecipientInfo(transaction.transaction);
-          await app.layout.checkErrorMessage(transaction.expectedErrorMessage);
+          await app.send.checkErrorMessage(transaction.expectedErrorMessage);
           await app.send.checkContinueButtonDisabled();
         },
       );

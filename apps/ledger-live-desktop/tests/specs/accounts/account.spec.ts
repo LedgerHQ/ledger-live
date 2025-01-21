@@ -57,7 +57,7 @@ test.describe.parallel("Accounts @smoke", () => {
 
       await test.step(`[${currency}] Done`, async () => {
         await addAccountModal.done();
-        await layout.totalBalance.waitFor({ state: "visible" });
+        await portfolioPage.expectTotalBalanceToBeVisible();
       });
 
       await test.step(`Navigate to first account`, async () => {

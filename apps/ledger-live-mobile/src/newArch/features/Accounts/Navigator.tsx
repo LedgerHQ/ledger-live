@@ -15,6 +15,8 @@ import AccountsList from "LLM/features/Accounts/screens/AccountsList";
 import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
 import AddAccountsSuccess from "./screens/AddAccountSuccess";
 import SelectAccounts from "./screens/SelectAccounts";
+import AddAccountsWarning from "./screens/AddAccountWarning";
+import NoAssociatedAccountsView from "./screens/NoAssociatedAccountsView";
 
 export default function Navigator() {
   const { colors } = useTheme();
@@ -58,6 +60,7 @@ export default function Navigator() {
         component={ScanDeviceAccounts}
         options={{
           headerTitle: "",
+          headerTransparent: true,
         }}
       />
       {/* Select Accounts */}
@@ -85,6 +88,25 @@ export default function Navigator() {
         options={{
           headerTitle: "",
           headerLeft: () => null,
+          headerTransparent: true,
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.AddAccountsWarning}
+        component={AddAccountsWarning}
+        options={{
+          headerTitle: "",
+          headerLeft: () => null,
+          headerTransparent: true,
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.NoAssociatedAccounts}
+        component={NoAssociatedAccountsView}
+        options={{
+          headerTitle: "",
+          headerLeft: () => null,
+          headerTransparent: true,
         }}
       />
     </Stack.Navigator>

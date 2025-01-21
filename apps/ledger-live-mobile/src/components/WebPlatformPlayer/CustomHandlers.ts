@@ -53,6 +53,7 @@ export function useACRECustomHandlers(manifest: WebviewProps["manifest"], accoun
                 dependencies: options?.dependencies,
                 onConfirmationHandler: onSuccess,
                 onFailHandler: onError,
+                isACRE: true,
               },
               onClose: onCancel,
             });

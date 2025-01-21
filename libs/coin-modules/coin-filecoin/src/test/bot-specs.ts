@@ -30,6 +30,7 @@ const filecoinSpecs: AppSpec<Transaction> = {
   mutations: [
     {
       name: "Send small to f4 address",
+      feature: "send",
       maxRun: 1,
       deviceAction: generateDeviceActionFlow(BotScenario.F4_RECIPIENT),
       testDestination: genericTestDestination,
@@ -51,6 +52,7 @@ const filecoinSpecs: AppSpec<Transaction> = {
     },
     {
       name: "Send small to eth address",
+      feature: "send",
       maxRun: 1,
       deviceAction: generateDeviceActionFlow(BotScenario.ETH_RECIPIENT),
       testDestination: genericTestDestination,
@@ -72,6 +74,7 @@ const filecoinSpecs: AppSpec<Transaction> = {
     },
     {
       name: "Send 50%~",
+      feature: "send",
       maxRun: 1,
       testDestination: genericTestDestination,
       transaction: ({ account, siblings, bridge }) => {
@@ -98,6 +101,7 @@ const filecoinSpecs: AppSpec<Transaction> = {
     },
     {
       name: "Transfer Max",
+      feature: "sendMax",
       maxRun: 1,
       transaction: ({ account, siblings, bridge }) => {
         return {
@@ -115,6 +119,7 @@ const filecoinSpecs: AppSpec<Transaction> = {
     },
     {
       name: "Send ~50% WFIL",
+      feature: "tokens",
       maxRun: 1,
       deviceAction: generateDeviceActionFlow(BotScenario.TOKEN_TRANSFER),
       transaction: ({ account, bridge, maxSpendable }) => {

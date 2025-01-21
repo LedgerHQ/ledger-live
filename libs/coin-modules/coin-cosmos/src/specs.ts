@@ -117,7 +117,8 @@ function cosmosLikeMutations(minimalTransactionAmount: BigNumber): MutationSpec<
   return [
     {
       name: "send some",
-      maxRun: 2,
+      feature: "send",
+      maxRun: 1,
       testDestination: genericTestDestination,
       test: ({ account, accountBeforeTransaction, operation }) => {
         expect(account.balance.toString()).toBe(
@@ -148,6 +149,7 @@ function cosmosLikeMutations(minimalTransactionAmount: BigNumber): MutationSpec<
     },
     {
       name: "send max",
+      feature: "sendMax",
       maxRun: 1,
       testDestination: genericTestDestination,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
@@ -172,6 +174,7 @@ function cosmosLikeMutations(minimalTransactionAmount: BigNumber): MutationSpec<
     },
     {
       name: "delegate new validators",
+      feature: "staking",
       maxRun: 1,
       transaction: ({ account, bridge, siblings }) => {
         expectSiblingsHaveSpendablePartGreaterThan(siblings, 0.5);
@@ -240,7 +243,8 @@ function cosmosLikeMutations(minimalTransactionAmount: BigNumber): MutationSpec<
     },
     {
       name: "undelegate",
-      maxRun: 5,
+      feature: "staking",
+      maxRun: 1,
       transaction: ({ account, bridge, maxSpendable }) => {
         invariant(canUndelegate(account as CosmosAccount), "can undelegate");
         const { cosmosResources } = account as CosmosAccount;
@@ -305,6 +309,7 @@ function cosmosLikeMutations(minimalTransactionAmount: BigNumber): MutationSpec<
     },
     {
       name: "redelegate",
+      feature: "staking",
       maxRun: 1,
       transaction: ({ account, bridge, maxSpendable }) => {
         const { cosmosResources } = account as CosmosAccount;
@@ -381,6 +386,7 @@ function cosmosLikeMutations(minimalTransactionAmount: BigNumber): MutationSpec<
     },
     {
       name: "claim rewards",
+      feature: "staking",
       maxRun: 1,
       transaction: ({ account, bridge, maxSpendable }) => {
         const { cosmosResources } = account as CosmosAccount;

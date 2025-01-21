@@ -14,7 +14,6 @@ import { TrackScreen } from "~/analytics";
 
 import Button from "~/components/Button";
 import PreventNativeBack from "~/components/PreventNativeBack";
-import LText from "~/components/LText";
 import RetryButton from "~/components/RetryButton";
 import CancelButton from "~/components/CancelButton";
 import GenericErrorBottomModal from "~/components/GenericErrorBottomModal";
@@ -26,6 +25,7 @@ import AnimatedGradient from "./components/AnimatedGradient";
 import ScanDeviceAccountsFooter from "./components/ScanDeviceAccountsFooter";
 import AddressTypeTooltip from "./components/AddressTypeTooltip";
 import ScannedAccountsSection from "./components/ScannedAccountsSection";
+import { CantCreateAccountAlert } from "./components/CanCreateAccountAlert";
 
 function ScanDeviceAccounts() {
   const { colors } = useTheme();
@@ -37,7 +37,6 @@ function ScanDeviceAccounts() {
 
   const {
     alreadyEmptyAccount,
-    alreadyEmptyAccountName,
     cantCreateAccount,
     CustomNoAssociatedAccounts,
     error,
@@ -66,26 +65,9 @@ function ScanDeviceAccounts() {
     blacklistedTokenIds,
   });
 
-  // Empty state same UI as ledger-live-mobile/src/screens/AddAccounts/03-Accounts.tsx
   const emptyTexts = {
-    creatable: alreadyEmptyAccount ? (
-      <LText style={styles.paddingHorizontal}>
-        <Trans i18nKey="addAccounts.cantCreateAccount">
-          {"PLACEHOLDER-1"}
-          <LText semiBold>{alreadyEmptyAccountName}</LText>
-          {"PLACEHOLDER-2"}
-        </Trans>
-      </LText>
-    ) : CustomNoAssociatedAccounts ? (
-      <CustomNoAssociatedAccounts style={styles} />
-    ) : (
-      <LText style={styles.paddingHorizontal}>
-        <Trans i18nKey="addAccounts.noAccountToCreate">
-          {"PLACEHOLDER-1"}
-          <LText semiBold>{currency.name}</LText>
-          {"PLACEHOLDER-2"}
-        </Trans>
-      </LText>
+    creatable: alreadyEmptyAccount ? null : CustomNoAssociatedAccounts ? null : (
+      <CantCreateAccountAlert currencyName={currency.name} />
     ),
   };
 
@@ -100,8 +82,9 @@ function ScanDeviceAccounts() {
     >
       <TrackScreen category="AddAccounts" name="Accounts" currencyName={currency.name} />
       <PreventNativeBack />
-      <Flex px={6}>
-        {scanning || !scannedAccounts.length ? (
+
+      {scanning || !scannedAccounts.length ? (
+        <Flex px={6} style={styles.headerTitle}>
           <Text
             variant="h4"
             testID="receive-header-step2-title"
@@ -110,17 +93,21 @@ function ScanDeviceAccounts() {
           >
             <Trans i18nKey="addAccounts.scanDeviceAccounts.scanningTitle" />
           </Text>
-        ) : (
-          <Text
-            variant="h4"
-            testID="receive-header-step2-title"
-            fontSize="24px"
-            color="neutral.c100"
-          >
-            <Trans i18nKey="addAccounts.scanDeviceAccounts.title" />
-          </Text>
-        )}
-      </Flex>
+        </Flex>
+      ) : (
+        !cantCreateAccount && (
+          <Flex px={6} style={styles.headerTitle}>
+            <Text
+              variant="h4"
+              testID="receive-header-step2-title"
+              fontSize="24px"
+              color="neutral.c100"
+            >
+              <Trans i18nKey="addAccounts.scanDeviceAccounts.title" />
+            </Text>
+          </Flex>
+        )
+      )}
 
       {scanning ? <AnimatedGradient /> : null}
       <NavigationScrollView style={styles.inner} contentContainerStyle={styles.innerContent}>
@@ -225,26 +212,19 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     backgroundColor: "transparent",
+    marginTop: 50,
   },
-  paddingHorizontal: {
-    paddingHorizontal: 16,
+  headerTitle: {
+    marginTop: 50,
+    marginBottom: 16,
   },
   inner: {
-    paddingTop: 24,
     backgroundColor: "transparent",
   },
   innerContent: {
     paddingBottom: 24,
     backgroundColor: "transparent",
-  },
-  descText: {
-    paddingHorizontal: 16,
-    marginBottom: 16,
-    textAlign: "center",
-  },
-  addAccountsError: {
-    marginHorizontal: 16,
-    marginBottom: 16,
+    flex: 1,
   },
   button: {
     flex: 1,

@@ -28,6 +28,7 @@ const internetComputerSpecs: AppSpec<Transaction> = {
   mutations: [
     {
       name: "Send ~50%",
+      feature: "send",
       maxRun: 1,
       testDestination: genericTestDestination,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
@@ -74,6 +75,7 @@ const internetComputerSpecs: AppSpec<Transaction> = {
     },
     {
       name: "Transfer Max",
+      feature: "sendMax",
       maxRun: 1,
       testDestination: genericTestDestination,
       transaction: ({ account, siblings, bridge }) => {

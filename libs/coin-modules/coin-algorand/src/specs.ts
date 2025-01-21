@@ -70,7 +70,8 @@ const algorand: AppSpec<AlgorandTransaction> = {
   mutations: [
     {
       name: "move ~50%",
-      maxRun: 2,
+      feature: "send",
+      maxRun: 1,
       testDestination: genericTestDestination,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
         invariant(maxSpendable.gt(0), "Spendable balance is too low");
@@ -104,6 +105,7 @@ const algorand: AppSpec<AlgorandTransaction> = {
     },
     {
       name: "send max",
+      feature: "sendMax",
       maxRun: 1,
       testDestination: genericTestDestination,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
@@ -135,7 +137,8 @@ const algorand: AppSpec<AlgorandTransaction> = {
     },
     {
       name: "send ASA ~50%",
-      maxRun: 2,
+      feature: "tokens",
+      maxRun: 1,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
         invariant(maxSpendable.gt(0), "Spendable balance is too low");
         const subAccount = sample(getAssetsWithBalance(account));
@@ -178,6 +181,7 @@ const algorand: AppSpec<AlgorandTransaction> = {
     },
     {
       name: "opt-In ASA available",
+      feature: "tokens",
       maxRun: 1,
       transaction: ({ account, bridge, maxSpendable }) => {
         // maxSpendable is expected to be greater than 100,000 micro-Algos
@@ -217,6 +221,7 @@ const algorand: AppSpec<AlgorandTransaction> = {
     },
     {
       name: "claim rewards",
+      feature: "staking",
       maxRun: 1,
       transaction: ({ account, bridge, maxSpendable }) => {
         const rewards = (account as AlgorandAccount).algorandResources?.rewards;

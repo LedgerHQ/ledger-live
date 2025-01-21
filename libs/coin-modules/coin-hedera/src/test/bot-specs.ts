@@ -49,7 +49,8 @@ const hedera: AppSpec<Transaction> = {
   mutations: [
     {
       name: "Send ~50%",
-      maxRun: 2,
+      feature: "send",
+      maxRun: 1,
       testDestination: genericTestDestination,
       transaction: ({
         account,
@@ -83,7 +84,8 @@ const hedera: AppSpec<Transaction> = {
     },
     {
       name: "Send max",
-      maxRun: 2,
+      feature: "sendMax",
+      maxRun: 1,
       testDestination: genericTestDestination,
       transaction: ({
         account,
@@ -109,7 +111,8 @@ const hedera: AppSpec<Transaction> = {
     },
     {
       name: "Memo",
-      maxRun: 2,
+      feature: "send",
+      maxRun: 1,
       transaction: ({
         account,
         siblings,

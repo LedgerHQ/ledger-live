@@ -10,6 +10,7 @@ export const minimalAmount = parseCurrencyUnit(currency.units[0], "0.001");
 
 export const createSend50PercentMutation = (): MutationSpec<Transaction> => ({
   name: "Celo: Move 50% to another account",
+  feature: "send",
   maxRun: 1,
   transaction: ({ account, siblings, bridge, maxSpendable }) => {
     invariant(maxSpendable.gt(minimalAmount), "Celo:  Move 50% | balance is too low");
@@ -25,6 +26,7 @@ export const createSend50PercentMutation = (): MutationSpec<Transaction> => ({
 
 export const createSendMaxMutation = (): MutationSpec<Transaction> => ({
   name: "Celo: Send max to another account",
+  feature: "sendMax",
   maxRun: 1,
   transaction: ({ account, siblings, bridge, maxSpendable }) => {
     invariant(maxSpendable.gt(minimalAmount), "Celo: Send Max | Balance is too low");

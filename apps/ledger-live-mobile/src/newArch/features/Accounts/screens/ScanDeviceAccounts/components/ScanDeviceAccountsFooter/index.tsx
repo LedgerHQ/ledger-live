@@ -34,7 +34,7 @@ const ScanDeviceAccountsFooter = ({
         <Button
           event="AddAccountsRetryScan"
           type="primary"
-          title={<Trans i18nKey="addAccounts.retryScanning" />}
+          title={<Trans i18nKey="addAccounts.scanDeviceAccounts.retryScanning" />}
           onPress={onRetry}
         />
       ) : canDone ? (

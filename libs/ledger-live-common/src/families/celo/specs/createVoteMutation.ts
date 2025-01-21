@@ -12,6 +12,7 @@ const minimalAmount = parseCurrencyUnit(currency.units[0], "0.001");
 
 export const createVoteMutation = (): MutationSpec<Transaction> => ({
   name: "Celo: Vote",
+  feature: "staking",
   maxRun: 1,
   transaction: ({ account, bridge, maxSpendable }) => {
     invariant(maxSpendable.gt(minimalAmount), "Celo:  Vote | balance is too low");
