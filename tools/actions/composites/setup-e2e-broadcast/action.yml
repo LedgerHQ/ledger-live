@@ -5,10 +5,6 @@ inputs:
     description: "Enable transaction broadcast"
     required: false
     default: "false"
-  schedule_cron:
-    description: "Cron expression for scheduled runs"
-    required: false
-    default: ""
 
 runs:
   using: composite
@@ -17,7 +13,7 @@ runs:
       id: set-broadcast
       shell: bash
       run: |
-        if [[ "${{ inputs.enable_broadcast }}" == "true" || ( "${{ github.event_name }}" == "schedule" && "${{ inputs.schedule_cron }}" == "0 5 * * 1" ) ]]; then
+        if [[ "${{ inputs.enable_broadcast }}" == "true" || ( "${{ github.event_name }}" == "schedule" && "${{ github.event.schedule.cron }}" == "0 5 * * 1" ) ]]; then
           echo "DISABLE_TRANSACTION_BROADCAST=0" >> $GITHUB_ENV
         else
           echo "DISABLE_TRANSACTION_BROADCAST=1" >> $GITHUB_ENV
