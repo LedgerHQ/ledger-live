@@ -1,5 +1,5 @@
 const path = require("path");
-const { AliasPlugin } = require("@ledgerhq/esbuild-utils");
+const { AliasPlugin, NativeNodeModulesPlugin } = require("@ledgerhq/esbuild-utils");
 
 const rootFolder = path.resolve(__dirname, "..", "..");
 const srcFolder = path.resolve(rootFolder, "src");
@@ -20,6 +20,7 @@ module.exports = {
     AliasPlugin({
       "~": srcFolder,
     }),
+    NativeNodeModulesPlugin,
   ],
   loader: {
     ".woff": "file",
