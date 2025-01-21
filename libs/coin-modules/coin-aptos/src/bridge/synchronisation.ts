@@ -38,14 +38,6 @@ export const getAccountShape: GetAccountShape = async info => {
   const oldOperations = initialAccount?.operations || [];
   const startAt = (oldOperations[0]?.extra as any)?.version;
 
-  // const accountId = encodeAccountId({
-  //   type: "js",
-  //   version: "2",
-  //   currencyId: currency.id,
-  //   xpubOrAddress: address,
-  //   derivationMode,
-  // });
-
   const aptosClient = new AptosAPI(currency.id);
   const { balance, transactions, blockHeight } = await aptosClient.getAccountInfo(address, startAt);
 
