@@ -7,22 +7,56 @@ import { activateLedgerSync } from "@ledgerhq/live-common/e2e/speculos";
 import { waitFor, waitForTimeOut } from "tests/utils/waitFor";
 import C from "~/renderer/modals/Receive/Body";
 import { expect } from "@playwright/test";
+import { DistantState as LiveData } from "@ledgerhq/live-wallet/walletsync/index";
 
 const app: AppInfos = AppInfos.LS;
-const accountName = "Renamed Dogecoin 2";
+
+const accounts = [
+  {
+    id: "mock:1:dogecoin:0.790010769447963:",
+    currencyId: "dogecoin",
+    index: 1,
+    seedIdentifier: "mock",
+    derivationMode: "",
+    freshAddress: "1uVnrWAzycYqKUXSuNXt3XSjJ8",
+  },
+  {
+    id: "mock:1:bitcoin_gold:0.8027791663782486:",
+    currencyId: "bitcoin_gold",
+    index: 1,
+    seedIdentifier: "mock",
+    derivationMode: "",
+    freshAddress: "1Y5T8JQqBKUS7cXbxUYCR4wg3YSbV9R",
+  },
+];
+
+const accountNames: Record<string, string> = {
+  "mock:1:dogecoin:0.790010769447963:": "Renamed Dogecoin 2",
+  "mock:1:bitcoin_gold:0.8027791663782486:": "Bitcoin Gold 2",
+};
+
+const firstAccountId = accounts[0].id;
+const secondAccountId = accounts[1].id;
+const firstAccountName = accountNames[firstAccountId];
+const secondAccountName = accountNames[secondAccountId];
 
 test.describe(`[${app.name}] Sync Accounts`, () => {
   const ledgerKeyRingProtocolArgs = {
     pubKey: "",
     privateKey: "",
   };
+
   const ledgerSyncPushDataArgs = {
     rootId: "",
     walletSyncEncryptionKey: "",
     applicationPath: "",
     push: true,
-    data: '{"accounts":[{"id":"mock:1:dogecoin:0.790010769447963:","currencyId":"dogecoin","index":1,"seedIdentifier":"mock","derivationMode":"","freshAddress":"1uVnrWAzycYqKUXSuNXt3XSjJ8"},{"id":"mock:1:bitcoin_gold:0.8027791663782486:","currencyId":"bitcoin_gold","index":1,"seedIdentifier":"mock","derivationMode":"","freshAddress":"1Y5T8JQqBKUS7cXbxUYCR4wg3YSbV9R"}],"accountNames":{"mock:1:dogecoin:0.790010769447963:":"Renamed Dogecoin 2","mock:1:bitcoin_gold:0.8027791663782486:":"Bitcoin Gold 2"}}',
+    data: JSON.stringify({
+      accounts,
+      accountNames,
+    }),
   };
+
   const ledgerSyncPullDataArgs = {
     pubKey: "",
     privateKey: "",
@@ -92,7 +126,7 @@ test.describe(`[${app.name}] Sync Accounts`, () => {
         description: "B2CQA-2292, B2CQA-2293, B2CQA-2296",
       },
     },
-    async ({ app }) => {
+    async ({ app, page }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
       await app.layout.goToAccounts();
@@ -110,30 +144,66 @@ test.describe(`[${app.name}] Sync Accounts`, () => {
       await app.layout.goToAccounts();
       await app.accounts.expectAccountsCount(2);
 
-      await app.accounts.navigateToAccountByName(accountName);
-      await app.account.expectAccountVisibility(accountName);
+      await app.accounts.navigateToAccountByName(firstAccountName);
+      await app.account.expectAccountVisibility(firstAccountName);
       await app.account.deleteAccount();
       await app.layout.syncAccounts();
       await app.layout.waitForAccountsSyncToBeDone();
-      await app.accounts.expectAccountsCount(1);
-      await app.accounts.expectAccountAbsence(accountName);
-      await waitForTimeOut(10000);
+      await app.accounts.expectAccountAbsence(firstAccountName);
 
-      const pulledData = CLI.ledgerSync({
+      await waitForTimeOut(10000);
+      /* page.on("response", response => {
+        if (
+          response
+            .url()
+            .startsWith("https://trustchain-backend.api.aws.stg.ldg-tech.com/v1/refresh")
+        ) {
+          if (response.status() === 200) {
+            resolve(response);
+          } else {
+            reject(new Error("Trustchain error " + response.status()));
+          }
+        }
+      });*/
+
+      await app.accounts.expectAccountsCount(1);
+
+      const pulledData = await CLI.ledgerSync({
         ...ledgerKeyRingProtocolArgs,
         ...ledgerSyncPullDataArgs,
       });
 
       let parsedData;
+
       parsedData = typeof pulledData === "string" ? JSON.parse(pulledData) : pulledData;
-      const values = Object.values(parsedData);
-      expect(values).toContain(accountName);
 
       await app.layout.goToSettings();
       await app.settings.openManageLedgerSync();
       await app.ledgerSync.destroyTrustchain();
       await app.ledgerSync.expectBackupDeletion();
       await app.drawer.closeDrawer();
+
+      const deletedAccount = (parsedData.updateEvent.data as LiveData).accounts?.find(
+        account => account.id === firstAccountId,
+      );
+
+      if (deletedAccount === undefined) {
+        console.log("Assertion passed: Account :", firstAccountName, " is not present.");
+      } else {
+        console.error("Assertion failed: Account is present.");
+      }
+      expect(deletedAccount, "Account should not be present").toBeUndefined();
+
+      const remainingAccount = (parsedData.updateEvent.data as LiveData).accounts?.find(
+        account => account.id === secondAccountId,
+      );
+
+      if (remainingAccount === undefined) {
+        console.error("Assertion failed: Account is not present.");
+      } else {
+        console.log("Assertion passed: Account :", secondAccountName, " is present.");
+      }
+      expect(remainingAccount, "Account should be present").toBeDefined();
     },
   );
 });
