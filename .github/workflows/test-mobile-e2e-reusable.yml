@@ -92,6 +92,7 @@ jobs:
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+          install-proto: ${{ inputs.trigger-event-type == 'merge_group' }}
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         id: aws
