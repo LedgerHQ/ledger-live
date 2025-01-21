@@ -30,7 +30,8 @@ jobs:
     uses: LedgerHQ/ledger-live/.github/workflows/build-desktop-reusable.yml@support/merge-queue-develop
     secrets: inherit
     with:
-      trigger-event-type: ${{ github.event_name }}
+      # trigger-event-type: ${{ github.event_name }}
+      trigger-event-type: ${{ 'merge_group' }}
 
   test-desktop:
     name: "Test Desktop"
@@ -39,7 +40,8 @@ jobs:
     uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-reusable.yml@support/merge-queue-develop
     secrets: inherit
     with:
-      trigger-event-type: ${{ github.event_name }}
+      # trigger-event-type: ${{ github.event_name }}
+      trigger-event-type: ${{ 'merge_group' }}
 
   # LLM
   build-mobile:
@@ -49,7 +51,8 @@ jobs:
     uses: LedgerHQ/ledger-live/.github/workflows/build-mobile-reusable.yml@support/merge-queue-develop
     secrets: inherit
     with:
-      trigger-event-type: ${{ github.event_name }}
+      # trigger-event-type: ${{ github.event_name }}
+      trigger-event-type: ${{ 'merge_group' }}
 
   test-mobile:
     name: "Test Mobile"
@@ -65,7 +68,8 @@ jobs:
     uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-e2e-reusable.yml@support/merge-queue-develop
     secrets: inherit
     with:
-      trigger-event-type: ${{ github.event_name }}
+      # trigger-event-type: ${{ github.event_name }}
+      trigger-event-type: ${{ 'merge_group' }}
 
   # Tests
   test-libraries:
@@ -75,7 +79,8 @@ jobs:
     uses: LedgerHQ/ledger-live/.github/workflows/test-libs-reusable.yml@support/merge-queue-develop
     secrets: inherit
     with:
-      trigger-event-type: ${{ github.event_name }}
+      # trigger-event-type: ${{ github.event_name }}
+      trigger-event-type: ${{ 'merge_group' }}
 
   test-design-system:
     name: "Test Design System"
