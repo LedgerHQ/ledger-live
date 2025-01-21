@@ -20,20 +20,6 @@ export const getAccountShape: GetAccountShape = async info => {
   // but we need public key to simulate transaction.
   // "xpub" field is used because this field exists in ledger operation type
   const xpub = initialAccount?.xpub || "";
-  // if (!initialAccount?.xpub && typeof deviceId === "string") {
-  //   const result = await firstValueFrom(
-  //     withDevice(deviceId)(transport => from(new Aptos(transport).getAddress(derivationPath))),
-  //   );
-  //   xpub = Buffer.from(result.publicKey).toString("hex");
-  // }
-  // if (!xpub && initialAccount?.id) {
-  //   const { xpubOrAddress } = decodeAccountId(initialAccount.id);
-  //   xpub = xpubOrAddress;
-  // }
-  // if (!xpub) {
-  //   // This is the corner case. We don't expect this happens
-  //   throw new Error("Unable to retrieve public key");
-  // }
 
   const oldOperations = initialAccount?.operations || [];
   const startAt = (oldOperations[0]?.extra as any)?.version;
