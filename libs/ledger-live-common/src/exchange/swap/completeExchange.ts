@@ -6,7 +6,6 @@ import {
 } from "@ledgerhq/errors";
 import {
   createExchange,
-  decodeSwapPayload,
   ExchangeTypes,
   getExchangeErrorMessage,
   PayloadSignatureComputedFormat,
@@ -94,12 +93,6 @@ const completeExchange = (
           transaction = await accountBridge.prepareTransaction(refundAccount, transaction);
         }
         if (unsubscribed) return;
-
-        const swapPayload = await decodeSwapPayload(binaryPayload);
-        console.log("DEBUG SWAP payload:", swapPayload);
-        console.log("DEBUG SWAP payload provider amount:", swapPayload.amountToProvider.toString());
-        console.log("DEBUG transaction:", transaction);
-        console.log("DEBUG transaction amount:", transaction.amount.toString());
 
         const { errors, estimatedFees } = await accountBridge.getTransactionStatus(
           refundAccount,

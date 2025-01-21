@@ -15,7 +15,7 @@ import {
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import addToSwapHistory from "@ledgerhq/live-common/exchange/swap/addToSwapHistory";
 import { addPendingOperation, getMainAccount } from "@ledgerhq/live-common/account/index";
-import { AccountLike, DeviceInfo, Operation, SignedOperation } from "@ledgerhq/types-live";
+import { AccountLike, DeviceInfo, getCurrencyForAccount, Operation, SignedOperation } from "@ledgerhq/types-live";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { postSwapAccepted, postSwapCancelled } from "@ledgerhq/live-common/exchange/swap/index";
 import { InstalledItem } from "@ledgerhq/live-common/apps/types";
@@ -33,6 +33,7 @@ import { useInitSwapDeviceAction, useTransactionDeviceAction } from "~/hooks/dev
 import { BigNumber } from "bignumber.js";
 import { mevProtectionSelector } from "~/reducers/settings";
 import { DeviceModelId } from "@ledgerhq/devices";
+import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 export type DeviceMeta = {
   result: { installed: InstalledItem[] } | null | undefined;
@@ -102,18 +103,23 @@ export function Confirmation({
   const provider = exchangeRate.current.provider;
 
   const {
-    from: { account: fromAccount, parentAccount: fromParentAccount },
-    to: { account: toAccount, parentAccount: toParentAccount },
+    from: { account: fromAccount, parentAccount: fromParentAccount, currency: fromCurrency },
+    to: { account: toAccount, parentAccount: toParentAccount, currency: toCurrency },
   } = swapTx.current.swap;
 
   const exchange = useMemo<ExchangeSwap>(
     () => ({
       fromAccount: fromAccount as AccountLike,
       fromParentAccount,
+      fromCurrency:
+        fromCurrency ??
+        (getCurrencyForAccount(fromAccount as AccountLike) as CryptoOrTokenCurrency),
       toAccount: toAccount as AccountLike,
       toParentAccount,
+      toCurrency:
+        toCurrency ?? (getCurrencyForAccount(toAccount as AccountLike) as CryptoOrTokenCurrency),
     }),
-    [fromAccount, fromParentAccount, toAccount, toParentAccount],
+    [fromAccount, fromParentAccount, fromCurrency, toAccount, toParentAccount, toCurrency],
   );
 
   const [swapData, setSwapData] = useState<InitSwapResult | null>(null);
