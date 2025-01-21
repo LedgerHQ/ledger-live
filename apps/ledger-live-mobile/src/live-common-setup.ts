@@ -118,6 +118,8 @@ setSupportedCurrencies([
   "casper",
   "neon_evm",
   "lukso",
+  "aptos",
+  "aptos_testnet",
   "linea",
   "linea_sepolia",
   "blast",
@@ -130,6 +132,7 @@ setSupportedCurrencies([
   "zksync_sepolia",
   "mantra",
   "xion",
+  "zenrock",
 ]);
 
 if (Config.BLE_LOG_LEVEL) BluetoothTransport.setLogLevel(Config.BLE_LOG_LEVEL);

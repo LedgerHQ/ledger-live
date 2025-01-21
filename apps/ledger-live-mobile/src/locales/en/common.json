@@ -971,6 +971,9 @@
       "title": "Invalid Provider",
       "description": "You have to change \"My Ledger provider\" setting. To change it, open Ledger Live \"Settings\", select \"Experimental features\", and then select a different provider."
     },
+    "GasLessThanEstimate": {
+      "title": "This may be too low. Please increase"
+    },
     "SequenceNumberError": {
       "title": "Sequence number error",
       "description": "Please close the window and try again later"
@@ -1291,7 +1294,7 @@
       "desc": "Our products are the only hardware wallets certified for their security by national cyber security agencies."
     },
     "title": "You need a Ledger",
-    "desc": "For your security, Ledger Live only works with a device. You need a device in order to continue.",
+    "desc": "For your security,\n Ledger Live only works with a Ledger.",
     "cta": "Buy your Ledger now",
     "footer": "I already have a Ledger, set it up",
     "bannerTitle": "Top-notch security for your crypto and NFTs",
@@ -3768,6 +3771,7 @@
       "to": "To",
       "infoTotalTitle": "Total debit",
       "infoTotalDesc": "Includes transaction amount and the selected network fees",
+      "gasFee": "Gas fee",
       "gasLimit": "Gas limit",
       "gasPrice": "Gas price",
       "maxFee": "Max fee",
@@ -3989,6 +3993,8 @@
       "desc": "Are you sure you want to cancel adding accounts?"
     },
     "imported": "Asset added successfully",
+    "added": "Account added to your portfolio",
+    "added_plural": "{{count}} Accounts added to your portfolio",
     "sections": {
       "importable": {
         "title": "Add existing account"
@@ -4045,6 +4051,32 @@
         "title": "Taproot",
         "desc": "Latest {{currency}} network upgrade. Will provide better privacy and cheaper fees once widespread. Still limited support from wallet and exchanges."
       }
+    },
+    "scanDeviceAccounts": {
+      "title": "Select the accounts you want to add",
+      "ctaStopScan": "Stop scanning",
+      "confirm": "Confirm",
+      "scanningTitle": "Looking for any existing accounts on the Blockchain...",
+      "sections": {
+        "importable": {
+          "title": "We found {{count}} account",
+          "title_plural": "We found {{count}} accounts"
+        },
+        "creatable": {
+          "title": "New account"
+        },
+        "imported": {
+          "title": "Account already in the Portfolio ({{length}})",
+          "title_plural": "Accounts already in the Portfolio ({{length}})"
+        },
+        "migrate": {
+          "title": "Accounts to update"
+        }
+      }
+    },
+    "addAccountsSuccess": {
+      "ctaAddFunds": "Add funds to my account",
+      "ctaClose": "Close"
     }
   },
   "DeviceAction": {
@@ -7146,7 +7178,9 @@
       "title": "Select Asset"
     },
     "selectNetwork": {
-      "title": "Select the blockchain network the asset belongs to"
+      "title": "Select the blockchain network the asset belongs to",
+      "detectedAccounts": "{{count}} account (detected)",
+      "detectedAccounts_plural": "{{count}} accounts (detected)"
     }
   }
 }

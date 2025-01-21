@@ -1,3 +1,4 @@
+import aptos from "../../families/aptos/bridge/js";
 import casper from "../../families/casper/bridge/js";
 import celo from "../../families/celo/bridge/js";
 import { bridge as algorand } from "../../families/algorand/setup";
@@ -22,6 +23,7 @@ import { bridge as vechain } from "../../families/vechain/setup";
 import { bridge as xrp } from "../../families/xrp/setup";
 
 export default {
+  aptos,
   casper,
   celo,
   algorand,

@@ -4,11 +4,15 @@ import Hide from "~/renderer/components/MainSideBar/Hide";
 import Box, { Tabbable } from "~/renderer/components/Box";
 import Tooltip from "~/renderer/components/Tooltip";
 
+interface IconProps {
+  size: "S" | "XS" | "M" | "L" | "XL" | undefined;
+}
+
 export type Props = {
   label: string | ((a: Props) => React.ReactNode);
   desc?: (a: Props) => React.ReactNode;
-  icon?: React.ComponentType<{ size?: number }>;
-  iconSize?: number;
+  icon?: ({ size }: IconProps) => JSX.Element;
+  iconSize?: IconProps["size"];
   disabled?: boolean;
   iconActiveColor: string | undefined;
   NotifComponent?: React.ReactNode;
@@ -22,7 +26,7 @@ class SideBarListItem extends PureComponent<Props> {
   render() {
     const {
       icon: Icon,
-      iconSize,
+      iconSize = "S",
       label,
       desc,
       iconActiveColor,
@@ -48,7 +52,7 @@ class SideBarListItem extends PureComponent<Props> {
         </span>
       );
     return (
-      <Tooltip content={renderedLabel} enabled={!!collapsed} placement="right">
+      <Tooltip arrow={false} content={renderedLabel} enabled={!!collapsed} placement="right">
         <Container
           data-testid={`drawer-${id}-button`}
           isActive={!disabled && isActive}
@@ -56,7 +60,7 @@ class SideBarListItem extends PureComponent<Props> {
           onClick={disabled ? undefined : onClick}
           disabled={disabled}
         >
-          {!!Icon && <Icon size={iconSize || 16} />}
+          {!!Icon && <Icon size={iconSize} />}
           <Box grow shrink>
             <Hide visible={!collapsed}>
               <Box horizontal justifyContent="space-between" alignItems="center">
@@ -73,7 +77,7 @@ class SideBarListItem extends PureComponent<Props> {
 }
 const Container = styled(Tabbable).attrs(() => ({
   alignItems: "center",
-  borderRadius: 1,
+  borderRadius: 2,
   ff: "Inter|SemiBold",
   flow: 3,
   horizontal: true,
@@ -87,25 +91,24 @@ const Container = styled(Tabbable).attrs(() => ({
   width: 100%;
   cursor: ${p => (p.disabled ? "not-allowed" : "pointer")};
   color: ${p =>
-    p.isActive ? p.theme.colors.palette.text.shade100 : p.theme.colors.palette.text.shade80};
-  background: ${p => (p.isActive ? p.theme.colors.palette.action.hover : "")};
+    p.isActive ? p.theme.colors.palette.text.shade100 : p.theme.colors.palette.opacityDefault.c70};
+  background: ${p => (p.isActive ? p.theme.colors.palette.opacityDefault.c05 : "")};
   opacity: ${p => (p.disabled ? 0.5 : 1)};
 
   &:active {
-    background: ${p => !p.disabled && p.theme.colors.palette.action.hover};
+    background: ${p => !p.disabled && p.theme.colors.palette.opacityDefault.c05};
   }
 
   &:hover {
-    color: ${p => !p.disabled && p.theme.colors.palette.text.shade100};
+    background: ${p => !p.disabled && p.theme.colors.palette.opacityDefault.c05};
   }
 
   ${p => {
     const iconActiveColor =
       p.theme.colors[p.iconActiveColor as keyof DefaultTheme["colors"]] || p.iconActiveColor;
-    const color = p.isActive ? iconActiveColor : p.theme.colors.palette.text.shade60;
+    const color = p.isActive ? iconActiveColor : p.theme.colors.palette.opacityDefault.c70;
     return `
       svg { color: ${color}; }
-      &:hover svg { color: ${p.disabled ? color : iconActiveColor}; }
     `;
   }};
 `;

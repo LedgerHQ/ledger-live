@@ -16,13 +16,14 @@ import WebViewScreen from "~/components/WebViewScreen";
 import { completeOnboarding, setReadOnlyMode } from "~/actions/settings";
 import { urls } from "~/utils/urls";
 
-const defaultURL = urls.buyNanoX;
-
 const PurchaseDevice = () => {
   const { t } = useTranslation();
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const buyDeviceFromLive = useFeature("buyDeviceFromLive");
+  const upsellFlexFF = useFeature("llmRebornFlex");
+
+  const defaultURL = upsellFlexFF?.enabled ? urls.buyFlex : urls.buyNanoX;
 
   const [isURLDrawerOpen, setURLDrawerOpen] = useState(false);
   const [isMessageDrawerOpen, setMessageDrawerOpen] = useState(false);

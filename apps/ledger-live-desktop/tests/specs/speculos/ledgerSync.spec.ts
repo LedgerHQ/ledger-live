@@ -47,7 +47,7 @@ test.describe(`[${app.name}] Sync Accounts`, () => {
   }
 
   test.use({
-    userdata: "skip-onboarding",
+    userdata: "ledgerSync",
     speculosApp: app,
     cliCommands: [
       async () => {
@@ -96,7 +96,7 @@ test.describe(`[${app.name}] Sync Accounts`, () => {
       await app.settings.openManageLedgerSync();
       await app.ledgerSync.destroyTrustchain();
       await app.ledgerSync.expectBackupDeletion();
-      await app.drawer.close();
+      await app.drawer.closeDrawer();
     },
   );
 });
