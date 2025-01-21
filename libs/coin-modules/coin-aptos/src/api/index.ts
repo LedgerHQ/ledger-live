@@ -100,7 +100,7 @@ export class AptosAPI {
     try {
       const { ledger_timestamp } = await this.aptosClient.getLedgerInfo();
       opts.expireTimestamp = Number(Math.ceil(+ledger_timestamp / 1_000_000 + 2 * 60)); // in milliseconds
-    } catch (_) {
+    } catch {
       // skip
     }
 
