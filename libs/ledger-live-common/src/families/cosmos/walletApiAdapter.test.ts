@@ -16,6 +16,13 @@ describe("getWalletAPITransactionSignFlowInfos", () => {
 
       const expectedLiveTx: Partial<Transaction> = {
         ...cosmosPlatformTx,
+        fees: null,
+        gas: null,
+        useAllAmount: false,
+        networkInfo: null,
+        memo: null,
+        sourceValidator: null,
+        validators: [],
       };
 
       const { canEditFees, hasFeesProvided, liveTx } = cosmos.getWalletAPITransactionSignFlowInfos({
@@ -41,6 +48,12 @@ describe("getWalletAPITransactionSignFlowInfos", () => {
 
       const expectedLiveTx: Partial<Transaction> = {
         ...cosmosPlatformTx,
+        gas: null,
+        useAllAmount: false,
+        networkInfo: null,
+        memo: null,
+        sourceValidator: null,
+        validators: [],
       };
 
       const { canEditFees, hasFeesProvided, liveTx } = cosmos.getWalletAPITransactionSignFlowInfos({
