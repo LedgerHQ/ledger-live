@@ -1,6 +1,7 @@
 apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
+apply plugin: "io.sentry.android.gradle"
 
 apply plugin: 'com.google.gms.google-services'
 
@@ -63,6 +64,7 @@ react {
     //   The list of flags to pass to the Hermes compiler. By default is "-O", "-output-source-map"
     // hermesFlags = ["-O", "-output-source-map"]
     /* Autolinking */
+
     autolinkLibrariesWithApp()
 }
 
@@ -73,13 +75,6 @@ project.ext.react = [
     enableHermes: true,
     bundleInDebug: System.getenv("ANDROID_BUNDLE_IN_DEBUG") != null, // Generates JS bundle and sourcemap at build time
 ]
-project.ext.sentryCli = [
-    logLevel: "debug"
-]
-
-if (System.getenv("SENTRY_AUTH_TOKEN") != null) {
-  apply from: "../../node_modules/@sentry/react-native/sentry.gradle"
-}
 
 /**
  * Set this to true to create four separate APKs instead of one,
@@ -198,6 +193,44 @@ android {
         }
     }
 }
+
+
+apply from: "../../node_modules/@sentry/react-native/sentry.gradle"
+
+project.ext.sentryCli = [
+    logLevel: "debug",
+    sentryProperties: '../sentry.properties'
+]
+
+sentry {
+    // Enables or disables the automatic configuration of Native Symbols
+    // for Sentry. This executes sentry-cli automatically so
+    // you don't need to do it manually.
+    // Default is disabled.
+    uploadNativeSymbols = true
+
+    // Enables or disables the automatic upload of the app's native source code to Sentry.
+    // This executes sentry-cli with the --include-sources param automatically so
+    // you don't need to do it manually.
+    // This option has an effect only when [uploadNativeSymbols] is enabled.
+    // Default is disabled.
+    includeNativeSources = true
+
+     // `@sentry/react-native` ships with compatible `sentry-android`
+    // This option would install the latest version that ships with the SDK or SAGP (Sentry Android Gradle Plugin)
+    // which might be incompatible with the React Native SDK
+    // Enable auto-installation of Sentry components (sentry-android SDK and okhttp, timber and fragment integrations).
+    // Default is enabled.
+    autoInstallation {
+      enabled = false
+    }
+
+
+    autoUploadProguardMapping = shouldSentryAutoUpload()
+    uploadNativeSymbols = shouldSentryAutoUpload()
+}
+
+
 
 dependencies {
     // The version of react-native is set by the React Native Gradle Plugin

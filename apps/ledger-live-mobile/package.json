@@ -245,7 +245,7 @@
     "@react-native-community/cli-platform-ios": "14.1.0",
     "@react-native/babel-preset": "0.75.4",
     "@react-native/dev-middleware": "0.75.4",
-    "@sentry/cli": "2.34.1",
+    "@sentry/cli": "2.41.1",
     "@swc/core": "1.4.11",
     "@swc/jest": "0.2.36",
     "@testing-library/jest-native": "5.4.3",

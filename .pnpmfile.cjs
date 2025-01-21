@@ -34,6 +34,11 @@ function readPackage(pkg, context) {
     };
   }
 
+  if (!!pkg.devDependencies["metro"] && pkg.name.startsWith("@sentry/react-native")) {
+    pkg.dependencies["metro"] = pkg.devDependencies["metro"];
+    delete pkg.devDependencies["metro"];
+  }
+
   process(
     [
       /*
@@ -64,7 +69,7 @@ function readPackage(pkg, context) {
       }),
       /* @celo/* packages */
       addDependencies("@celo/connect", {
-        "web3": pkg.peerDependencies?.web3 ?? "1.10",
+        web3: pkg.peerDependencies?.web3 ?? "1.10",
       }),
       /*  @cosmjs/* packages */
       addDependencies("@cosmjs/proto-signing", {
