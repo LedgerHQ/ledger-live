@@ -1,5 +1,24 @@
 # @ledgerhq/coin-framework
 
+## 0.22.0
+
+### Minor Changes
+
+- [#8756](https://github.com/LedgerHQ/ledger-live/pull/8756) [`5e01938`](https://github.com/LedgerHQ/ledger-live/commit/5e01938ece3dc1ccf7bea6c2805b6558c846db80) Thanks [@qperrot](https://github.com/qperrot)! - fix solana earn on LLm
+
+- [#8396](https://github.com/LedgerHQ/ledger-live/pull/8396) [`d98a964`](https://github.com/LedgerHQ/ledger-live/commit/d98a96476c3d44eab1575f6c7c58ec03b5daf890) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Support for Aptos blockchain
+
+- [#8731](https://github.com/LedgerHQ/ledger-live/pull/8731) [`c2d24cd`](https://github.com/LedgerHQ/ledger-live/commit/c2d24cd0299ea04e39306279b6f833696bc4f4fb) Thanks [@Canestin](https://github.com/Canestin)! - Zenrock integration
+
+### Patch Changes
+
+- Updated dependencies [[`d98a964`](https://github.com/LedgerHQ/ledger-live/commit/d98a96476c3d44eab1575f6c7c58ec03b5daf890), [`c2d24cd`](https://github.com/LedgerHQ/ledger-live/commit/c2d24cd0299ea04e39306279b6f833696bc4f4fb)]:
+  - @ledgerhq/types-cryptoassets@7.19.0
+  - @ledgerhq/cryptoassets@13.9.0
+  - @ledgerhq/types-live@6.57.0
+  - @ledgerhq/live-env@2.5.0
+  - @ledgerhq/live-network@2.0.4
+
 ## 0.22.0-next.0
 
 ### Minor Changes
