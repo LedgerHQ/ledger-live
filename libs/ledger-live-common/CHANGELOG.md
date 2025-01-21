@@ -1,5 +1,42 @@
 ## 34.5.0-next.4
 
+## 34.18.0-nightly.2
+
+### Minor Changes
+
+- [#8935](https://github.com/LedgerHQ/ledger-live/pull/8935) [`6844189`](https://github.com/LedgerHQ/ledger-live/commit/6844189cfd7121c122b91b4955a7087ab7ab830d) Thanks [@Justkant](https://github.com/Justkant)! - fix(wallet-api): only bypass derivation check on LL for ACRE flows
+
+- [#8914](https://github.com/LedgerHQ/ledger-live/pull/8914) [`537141a`](https://github.com/LedgerHQ/ledger-live/commit/537141ab549b8dab57d3eb117e875faa67b54f4b) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Bot feature : Add filter for features
+
+### Patch Changes
+
+- Updated dependencies [[`7224a7d`](https://github.com/LedgerHQ/ledger-live/commit/7224a7d3e5643fee75575fab74c72a2aca260be6), [`14f55a2`](https://github.com/LedgerHQ/ledger-live/commit/14f55a2e3d863abdca7f3b1e8566e49e250eafd2), [`b8dd543`](https://github.com/LedgerHQ/ledger-live/commit/b8dd543dba50abeec088334f060f0a030e776f52), [`3a65633`](https://github.com/LedgerHQ/ledger-live/commit/3a6563309c8cacbd6e9a73e3044b1ff7c3966f87), [`537141a`](https://github.com/LedgerHQ/ledger-live/commit/537141ab549b8dab57d3eb117e875faa67b54f4b)]:
+  - @ledgerhq/coin-evm@2.9.0-nightly.1
+  - @ledgerhq/live-wallet@0.9.0-nightly.0
+  - @ledgerhq/coin-bitcoin@0.9.1-nightly.0
+  - @ledgerhq/coin-framework@0.22.0-nightly.0
+  - @ledgerhq/coin-internet_computer@1.4.1-nightly.0
+  - @ledgerhq/coin-algorand@0.6.1-nightly.0
+  - @ledgerhq/coin-filecoin@1.4.1-nightly.0
+  - @ledgerhq/coin-polkadot@1.5.1-nightly.0
+  - @ledgerhq/coin-cardano@0.3.1-nightly.0
+  - @ledgerhq/coin-stellar@0.5.1-nightly.0
+  - @ledgerhq/coin-vechain@2.3.1-nightly.0
+  - @ledgerhq/coin-cosmos@0.4.1-nightly.0
+  - @ledgerhq/coin-elrond@0.2.1-nightly.0
+  - @ledgerhq/coin-hedera@1.2.1-nightly.0
+  - @ledgerhq/coin-solana@0.10.1-nightly.0
+  - @ledgerhq/coin-stacks@0.4.1-nightly.0
+  - @ledgerhq/coin-tezos@0.8.1-nightly.0
+  - @ledgerhq/coin-icon@0.5.1-nightly.0
+  - @ledgerhq/coin-near@0.6.1-nightly.0
+  - @ledgerhq/coin-tron@0.1.1-nightly.0
+  - @ledgerhq/coin-ton@0.4.1-nightly.0
+  - @ledgerhq/coin-xrp@0.8.1-nightly.0
+  - @ledgerhq/live-countervalues@0.2.17-nightly.0
+  - @ledgerhq/live-countervalues-react@0.2.17-nightly.0
+  - @ledgerhq/live-nft@0.5.2-nightly.0
+
 ## 34.18.0-nightly.1
 
 ### Minor Changes

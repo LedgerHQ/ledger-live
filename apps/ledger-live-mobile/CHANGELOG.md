@@ -1,5 +1,33 @@
 # live-mobile
 
+## 3.61.0-nightly.2
+
+### Minor Changes
+
+- [#8952](https://github.com/LedgerHQ/ledger-live/pull/8952) [`2d6135f`](https://github.com/LedgerHQ/ledger-live/commit/2d6135f5c53f118535bb0a6f6bd0ed3be56b7c2d) Thanks [@LucasWerey](https://github.com/LucasWerey)! - llm accounts list ui order accounts by fiat value
+
+- [#8935](https://github.com/LedgerHQ/ledger-live/pull/8935) [`6844189`](https://github.com/LedgerHQ/ledger-live/commit/6844189cfd7121c122b91b4955a7087ab7ab830d) Thanks [@Justkant](https://github.com/Justkant)! - fix(wallet-api): only bypass derivation check on LL for ACRE flows
+
+- [#8929](https://github.com/LedgerHQ/ledger-live/pull/8929) [`14f55a2`](https://github.com/LedgerHQ/ledger-live/commit/14f55a2e3d863abdca7f3b1e8566e49e250eafd2) Thanks [@themooneer](https://github.com/themooneer)! - feat: Add final steps (succes,warning, quickActions, emptyState UI) for add account v2 workflow
+
+- [#8882](https://github.com/LedgerHQ/ledger-live/pull/8882) [`e9a4094`](https://github.com/LedgerHQ/ledger-live/commit/e9a4094b43ac40035716db681cb09643218a818e) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Bump sentry to 6.5 and add metrics
+
+### Patch Changes
+
+- Updated dependencies [[`7224a7d`](https://github.com/LedgerHQ/ledger-live/commit/7224a7d3e5643fee75575fab74c72a2aca260be6), [`6844189`](https://github.com/LedgerHQ/ledger-live/commit/6844189cfd7121c122b91b4955a7087ab7ab830d), [`14f55a2`](https://github.com/LedgerHQ/ledger-live/commit/14f55a2e3d863abdca7f3b1e8566e49e250eafd2), [`3a65633`](https://github.com/LedgerHQ/ledger-live/commit/3a6563309c8cacbd6e9a73e3044b1ff7c3966f87), [`537141a`](https://github.com/LedgerHQ/ledger-live/commit/537141ab549b8dab57d3eb117e875faa67b54f4b)]:
+  - @ledgerhq/coin-evm@2.9.0-nightly.1
+  - @ledgerhq/live-common@34.18.0-nightly.2
+  - @ledgerhq/live-wallet@0.9.0-nightly.0
+  - @ledgerhq/coin-framework@0.22.0-nightly.0
+  - @ledgerhq/coin-filecoin@1.4.1-nightly.0
+  - @ledgerhq/coin-cosmos@0.4.1-nightly.0
+  - @ledgerhq/coin-elrond@0.2.1-nightly.0
+  - @ledgerhq/coin-stacks@0.4.1-nightly.0
+  - @ledgerhq/live-countervalues@0.2.17-nightly.0
+  - @ledgerhq/live-countervalues-react@0.2.17-nightly.0
+  - @ledgerhq/live-nft@0.5.2-nightly.0
+  - @ledgerhq/live-nft-react@0.5.2-nightly.0
+
 ## 3.61.0-nightly.1
 
 ### Minor Changes
