@@ -1,5 +1,5 @@
 import createTransaction from "@ledgerhq/coin-cosmos/createTransaction";
-import { WalletAPICosmosTransaction } from "@ledgerhq/wallet-api-core";
+import { CosmosTransaction as WalletAPICosmosTransaction } from "@ledgerhq/wallet-api-core";
 import {
   AreFeesProvided,
   ConvertToLiveTransaction,

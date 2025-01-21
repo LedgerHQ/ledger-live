@@ -1,5 +1,5 @@
 import { Account } from "@ledgerhq/types-live";
-import { WalletAPICosmosTransaction } from "@ledgerhq/wallet-api-core";
+import { CosmosTransaction as WalletAPICosmosTransaction } from "@ledgerhq/wallet-api-core";
 import BigNumber from "bignumber.js";
 import { Transaction } from "@ledgerhq/coin-cosmos/types/index";
 import cosmos from "./walletApiAdapter";
