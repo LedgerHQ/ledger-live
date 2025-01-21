@@ -45,7 +45,7 @@ const buildSignOperation =
           recipients.push(transaction.recipient);
         }
 
-        // // build optimistic operation
+        // build optimistic operation
         const operation: Operation = {
           id: encodeOperationId(accountId, hash, type),
           hash,

@@ -1,36 +1,26 @@
-describe("APTOS signOperation", () => {
-  it("be true", () => {
-    expect(true).toBeTruthy();
-  });
+// describe("APTOS signOperation", () => {
+//   it("be true", () => {
+//     expect(true).toBeTruthy();
+//   });
+// });
+
+import BigNumber from "bignumber.js";
+import { Observable } from "rxjs";
+import { SignerContext } from "@ledgerhq/coin-framework/lib/signer";
+import { createFixtureAccount, createFixtureTransaction } from "../../bridge/bridge.fixture";
+import buildSignOperation, { getAddress } from "../../bridge/signOperation";
+import { AptosSigner } from "../../types";
+import { signTransaction } from "../../network";
+
+jest.mock("../../api", () => {
+  return {
+    AptosAPI: function () {
+      return {
+        generateTransaction: jest.fn(() => "tx"),
+      };
+    },
+  };
 });
-
-// import { Observable } from "rxjs";
-// import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
-// import signOperation, { getAddress } from "./signOperation";
-// import BigNumber from "bignumber.js";
-// import { SignerContext } from "@ledgerhq/coin-framework/lib/signer";
-// import { AptosSigner } from "../types";
-
-// jest.mock("../api", () => {
-//   return {
-//     AptosAPI: function () {
-//       return {
-//         generateTransaction: jest.fn(() => "tx"),
-//       };
-//     },
-//   };
-// });
-
-// let signTransaction;
-
-// jest.mock("./LedgerAccount", () => {
-//   return function () {
-//     return {
-//       init: jest.fn(),
-//       signTransaction,
-//     };
-//   };
-// });
 
 // jest.mock("../../hw/deviceAccess", () => {
 //   return {
@@ -46,155 +36,163 @@ describe("APTOS signOperation", () => {
 //   };
 // });
 
-// jest.mock("./buildTransaction", () => {
-//   return function () {
-//     return {
-//       sequence_number: "789",
-//     };
-//   };
-// });
+jest.mock("../../bridge/buildTransaction", () => {
+  return function () {
+    return {
+      sequence_number: "789",
+    };
+  };
+});
 
-// describe("getAddress", () => {
-//   it("should return address and derivationPath", () => {
-//     const account = createFixtureAccount();
-//     expect(getAddress(account)).toEqual({ address: "address", derivationPath: "derivation_path" });
-//   });
-// });
+jest.mock("../../network");
+let mockedSignTransaction: jest.Mocked<any>;
 
-// describe("signOperation", () => {
-//   // beforeEach(() => {
-//   //   signTransaction = jest.fn(() => "tx");
-//   // });
+describe("getAddress", () => {
+  it("should return address and derivationPath", () => {
+    const account = createFixtureAccount();
+    expect(getAddress(account)).toEqual({ address: "address", derivationPath: "derivation_path" });
+  });
+});
 
-//   it("should thrown an error", async () => {
-//     // signTransaction = () => {
-//     //   throw new Error("observable-catch-error");
-//     // };
+describe("buildSignOperation", () => {
+  beforeEach(() => {
+    mockedSignTransaction = jest.mocked(signTransaction);
+  });
+  afterEach(() => jest.clearAllMocks());
 
-//     const account = createFixtureAccount();
-//     const transaction = createFixtureTransaction();
+  it("should thrown an error", async () => {
+    mockedSignTransaction.mockImplementation(() => {
+      throw new Error("observable-catch-error");
+    });
 
-//     account.id = "js:2:aptos:0x000:";
-//     transaction.mode = "send";
+    const account = createFixtureAccount();
+    const transaction = createFixtureTransaction();
 
-//     const observable = await signOperation({} as unknown as SignerContext<AptosSigner>)({
-//       account,
-//       deviceId: "1",
-//       transaction,
-//     });
+    account.id = "js:2:aptos:0x000:";
+    transaction.mode = "send";
 
-//     observable.subscribe({
-//       error: err => {
-//         expect(err.message).toBe("observable-catch-error");
-//       },
-//     });
-//   });
+    const observable = await buildSignOperation({} as unknown as SignerContext<AptosSigner>)({
+      account,
+      deviceId: "1",
+      transaction,
+    });
 
-//   // it("should return 3 operations", async () => {
-//   //   const date = new Date("2020-01-01");
-//   //   jest.useFakeTimers().setSystemTime(date);
+    observable.subscribe({
+      error: err => {
+        expect(err.message).toBe("observable-catch-error");
+      },
+    });
+  });
 
-//   //   const account = createFixtureAccount();
-//   //   const transaction = createFixtureTransaction();
+  it("should return 3 operations", async () => {
+    mockedSignTransaction.mockReturnValue("signedTx");
 
-//   //   account.id = "js:2:aptos:0x000:";
-//   //   transaction.mode = "send";
+    const date = new Date("2020-01-01");
+    jest.useFakeTimers().setSystemTime(date);
 
-//   //   const observable = await signOperation({
-//   //     account,
-//   //     deviceId: "1",
-//   //     transaction,
-//   //   });
+    const account = createFixtureAccount();
+    const transaction = createFixtureTransaction();
 
-//   //   expect(observable).toBeInstanceOf(Observable);
+    account.id = "js:2:aptos:0x000:";
+    transaction.mode = "send";
 
-//   //   const expectedValues = [
-//   //     { type: "device-signature-requested" },
-//   //     { type: "device-signature-granted" },
-//   //     {
-//   //       type: "signed",
-//   //       signedOperation: {
-//   //         operation: {
-//   //           id: "js:2:aptos:0x000",
-//   //           hash: "",
-//   //           type: "OUT",
-//   //           value: new BigNumber(0),
-//   //           fee: new BigNumber(0),
-//   //           extra: {},
-//   //           blockHash: null,
-//   //           blockHeight: null,
-//   //           senders: [account.freshAddress],
-//   //           recipients: [transaction.recipient],
-//   //           accountId: "js:2:aptos:0x000:",
-//   //           date,
-//   //           transactionSequenceNumber: 789,
-//   //         },
-//   //         signature: "7478",
-//   //       },
-//   //     },
-//   //   ];
+    const observable = await buildSignOperation({} as unknown as SignerContext<AptosSigner>)({
+      account,
+      deviceId: "1",
+      transaction,
+    });
 
-//   //   let i = 0;
+    expect(observable).toBeInstanceOf(Observable);
 
-//   //   observable.forEach(signOperationEvent => {
-//   //     expect(signOperationEvent).toEqual(expectedValues[i]);
-//   //     i++;
-//   //   });
-//   // });
+    const expectedValues = [
+      { type: "device-signature-requested" },
+      { type: "device-signature-granted" },
+      {
+        type: "signed",
+        signedOperation: {
+          operation: {
+            id: "js:2:aptos:0x000:--OUT",
+            hash: "",
+            type: "OUT",
+            value: new BigNumber(0),
+            fee: new BigNumber(0),
+            extra: {},
+            blockHash: null,
+            blockHeight: null,
+            senders: [account.freshAddress],
+            recipients: [transaction.recipient],
+            accountId: "js:2:aptos:0x000:",
+            date,
+            transactionSequenceNumber: 789,
+          },
+          signature: "7369676e65645478",
+        },
+      },
+    ];
 
-//   // it("should return 3 operations with all amount", async () => {
-//   //   const date = new Date("2020-01-01");
-//   //   jest.useFakeTimers().setSystemTime(date);
+    let i = 0;
 
-//   //   const account = createFixtureAccount();
-//   //   const transaction = createFixtureTransaction();
+    observable.forEach(signOperationEvent => {
+      expect(signOperationEvent).toEqual(expectedValues[i]);
+      i++;
+    });
+  });
 
-//   //   account.balance = new BigNumber(40);
-//   //   transaction.fees = new BigNumber(30);
-//   //   transaction.useAllAmount = true;
+  it("should return 3 operations with all amount", async () => {
+    mockedSignTransaction.mockReturnValue("signedTx");
 
-//   //   account.id = "js:2:aptos:0x000:";
-//   //   transaction.mode = "send";
+    const date = new Date("2020-01-01");
+    jest.useFakeTimers().setSystemTime(date);
 
-//   //   const observable = await signOperation({
-//   //     account,
-//   //     deviceId: "1",
-//   //     transaction,
-//   //   });
+    const account = createFixtureAccount();
+    const transaction = createFixtureTransaction();
 
-//   //   expect(observable).toBeInstanceOf(Observable);
+    account.balance = new BigNumber(40);
+    transaction.fees = new BigNumber(30);
+    transaction.useAllAmount = true;
 
-//   //   const expectedValues = [
-//   //     { type: "device-signature-requested" },
-//   //     { type: "device-signature-granted" },
-//   //     {
-//   //       type: "signed",
-//   //       signedOperation: {
-//   //         operation: {
-//   //           id: "js:2:aptos:0x000",
-//   //           hash: "",
-//   //           type: "OUT",
-//   //           value: new BigNumber(10),
-//   //           fee: transaction.fees,
-//   //           extra: {},
-//   //           blockHash: null,
-//   //           blockHeight: null,
-//   //           senders: [account.freshAddress],
-//   //           recipients: [transaction.recipient],
-//   //           accountId: "js:2:aptos:0x000:",
-//   //           date,
-//   //           transactionSequenceNumber: 789,
-//   //         },
-//   //         signature: "7478",
-//   //       },
-//   //     },
-//   //   ];
+    account.id = "js:2:aptos:0x000:";
+    transaction.mode = "send";
 
-//   //   let i = 0;
+    const observable = await buildSignOperation({} as unknown as SignerContext<AptosSigner>)({
+      account,
+      deviceId: "1",
+      transaction,
+    });
 
-//   //   observable.forEach(signOperationEvent => {
-//   //     expect(signOperationEvent).toEqual(expectedValues[i]);
-//   //     i++;
-//   //   });
-//   // });
-// });
+    expect(observable).toBeInstanceOf(Observable);
+
+    const expectedValues = [
+      { type: "device-signature-requested" },
+      { type: "device-signature-granted" },
+      {
+        type: "signed",
+        signedOperation: {
+          operation: {
+            id: "js:2:aptos:0x000:--OUT",
+            hash: "",
+            type: "OUT",
+            value: new BigNumber(10),
+            fee: transaction.fees,
+            extra: {},
+            blockHash: null,
+            blockHeight: null,
+            senders: [account.freshAddress],
+            recipients: [transaction.recipient],
+            accountId: "js:2:aptos:0x000:",
+            date,
+            transactionSequenceNumber: 789,
+          },
+          signature: "7369676e65645478",
+        },
+      },
+    ];
+
+    let i = 0;
+
+    observable.forEach(signOperationEvent => {
+      expect(signOperationEvent).toEqual(expectedValues[i]);
+      i++;
+    });
+  });
+});
