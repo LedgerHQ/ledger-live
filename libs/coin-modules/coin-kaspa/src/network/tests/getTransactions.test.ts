@@ -8,6 +8,9 @@ describe("getTransactions function", () => {
   it("should fetch TXs for (burn)address from real API", async () => {
     global.fetch = jest.fn().mockResolvedValueOnce({
       ok: true,
+      headers: {
+        get: jest.fn(() => ""),
+      },
       json: async () => [
         {
           subnetwork_id: "0000000000000000000000000000000000000000",
@@ -155,6 +158,6 @@ describe("getTransactions function", () => {
     });
     const address = "kaspa:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqkx9awp4e";
     const result = await getTransactions(address);
-    expect(result.length).toBe(3);
+    expect(result.transactions.length).toBe(3);
   });
 });

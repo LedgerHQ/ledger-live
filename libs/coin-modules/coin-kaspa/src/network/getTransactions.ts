@@ -1,10 +1,13 @@
 import { ApiResponseTransaction } from "../types";
 import { API_BASE } from "./config";
 
-export const getTransactions = async (address: string): Promise<ApiResponseTransaction[]> => {
+export const getTransactions = async (
+  address: string,
+  after: number = 1,
+): Promise<{ transactions: ApiResponseTransaction[]; nextPageAfter: string | null }> => {
   try {
     const response = await fetch(
-      `${API_BASE}/addresses/${address}/full-transactions-page?resolve_previous_outpoints=light&limit=50&before=0`,
+      `${API_BASE}/addresses/${address}/full-transactions-page?resolve_previous_outpoints=light&limit=500&before=0&after=${after}`,
       {
         headers: {
           Accept: "application/json",
@@ -16,9 +19,13 @@ export const getTransactions = async (address: string): Promise<ApiResponseTrans
       throw new Error("Network response was not ok.");
     }
 
-    return (await response.json()) as ApiResponseTransaction[];
+    const nextPageAfter = response.headers.get("X-Next-Page-After") || null;
+
+    return { transactions: await response.json(), nextPageAfter } as {
+      transactions: ApiResponseTransaction[];
+      nextPageAfter: string | null;
+    };
   } catch (error) {
-    console.error("Error fetching transactions:", error);
     throw error;
   }
 };
