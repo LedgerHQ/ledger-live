@@ -5,3 +5,4 @@ export { getTransactions } from "./getTransactions";
 export { getUtxosForAddresses } from "./getUtxosForAddresses";
 export { getVirtualChainBlueScore } from "./getVirtualChainBlueScore";
 export { submitTransaction } from "./submitTransaction";
+export { getBlockDagInfo } from "./getBlockDagInfo";

@@ -4,6 +4,18 @@ export type ApiResponseSubmitTransaction = {
   txId: string;
 };
 
+export type ApiResponseBlockDagInfo = {
+  networkName: string;
+  blockCount: string;
+  headerCount: string;
+  tipHashes: string[];
+  difficulty: number;
+  pastMedianTime: string;
+  virtualParentHashes: string[];
+  pruningPointHash: string;
+  virtualDaaScore: string;
+};
+
 export type ApiResponseAddressActive = {
   address: string;
   active: boolean;
