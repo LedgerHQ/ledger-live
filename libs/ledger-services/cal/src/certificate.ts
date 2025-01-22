@@ -52,6 +52,7 @@ export async function getCertificate(
     output: "id,target_device,not_valid_after,public_key_usage,certificate_version,descriptor",
     target_device: DeviceModel[device],
     public_key_usage: "trusted_name",
+    public_key_id: "domain_metadata_key",
     ref,
   };
   if (version === "latest") {
