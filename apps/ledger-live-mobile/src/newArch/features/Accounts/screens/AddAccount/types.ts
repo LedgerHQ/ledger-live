@@ -7,6 +7,7 @@ import { Props as TouchableProps } from "~/components/Touchable";
 type CommonParams = {
   context?: "addAccounts" | "receiveFunds";
   onSuccess?: () => void;
+  onCloseNavigation?: () => void;
   currency: CryptoOrTokenCurrency;
 };
 export type NetworkBasedAddAccountNavigator = {
@@ -27,7 +28,7 @@ export type NetworkBasedAddAccountNavigator = {
     emptyAccount?: Account;
     emptyAccountName?: string;
   };
-  [ScreenName.NoAssociatedAccounts]: {
+  [ScreenName.NoAssociatedAccounts]: Pick<CommonParams, "onCloseNavigation"> & {
     CustomNoAssociatedAccounts: ({
       style,
     }: {

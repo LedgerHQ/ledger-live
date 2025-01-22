@@ -76,6 +76,7 @@ const getFeatureFlagProperties = () => {
   (async () => {
     const fetchAdditionalCoins = analyticsFeatureFlagMethod("fetchAdditionalCoins");
     const stakingProviders = analyticsFeatureFlagMethod("ethStakingProviders");
+    const stakePrograms = analyticsFeatureFlagMethod("stakePrograms");
 
     const isBatch1Enabled =
       !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 1;
@@ -86,11 +87,22 @@ const getFeatureFlagProperties = () => {
     const stakingProvidersEnabled =
       stakingProviders?.enabled && stakingProviders?.params?.listProvider.length;
 
+    const stakingCurrenciesEnabled =
+      stakePrograms?.enabled && stakePrograms?.params?.list?.length
+        ? Object.fromEntries(
+            stakePrograms.params.list.map((currencyId: string) => [
+              `feature_earn_${currencyId}_enabled`,
+              true,
+            ]),
+          )
+        : {};
+
     updateIdentify({
       isBatch1Enabled,
       isBatch2Enabled,
       isBatch3Enabled,
       stakingProvidersEnabled,
+      ...stakingCurrenciesEnabled,
     });
   })();
 };

@@ -40,7 +40,7 @@ export type ExchangeCompleteBaseParams = {
   rawTransaction: RawTransaction;
   hexBinaryPayload: string;
   hexSignature: string;
-  feeStrategy: "SLOW" | "MEDIUM" | "FAST" | "CUSTOM";
+  feeStrategy: "slow" | "medium" | "fast" | "custom";
   tokenCurrency?: string;
 };
 

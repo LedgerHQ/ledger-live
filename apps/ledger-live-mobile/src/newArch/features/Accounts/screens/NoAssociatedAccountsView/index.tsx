@@ -1,5 +1,5 @@
 import React from "react";
-import { Flex, Icons, rgba, Button } from "@ledgerhq/native-ui";
+import { Flex, Icons, rgba } from "@ledgerhq/native-ui";
 import { StyleSheet, View } from "react-native";
 import { useTheme } from "styled-components/native";
 import SafeAreaView from "~/components/SafeAreaView";
@@ -10,6 +10,7 @@ import { useTranslation } from "react-i18next";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { NetworkBasedAddAccountNavigator } from "../AddAccount/types";
 import { ScreenName } from "~/const";
+import CloseWithConfirmation from "LLM/components/CloseWithConfirmation";
 
 type Props = BaseComposite<
   StackNavigatorProps<NetworkBasedAddAccountNavigator, ScreenName.NoAssociatedAccounts>
@@ -18,7 +19,7 @@ export default function NoAssociatedAccountsView({ route }: Props) {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
   const { t } = useTranslation();
-  const { CustomNoAssociatedAccounts } = route.params || {};
+  const { CustomNoAssociatedAccounts, onCloseNavigation } = route.params || {};
 
   const statusColor = colors.primary.c70;
   return (
@@ -48,9 +49,11 @@ export default function NoAssociatedAccountsView({ route }: Props) {
         {<CustomNoAssociatedAccounts />}
       </Flex>
       <Flex mb={insets.bottom + 2} px={6} rowGap={6}>
-        <Button size="large" testID="button-create-account">
-          {t("addAccounts.addAccountsSuccess.ctaClose")}
-        </Button>
+        <CloseWithConfirmation
+          showButton
+          buttonText={t("addAccounts.addAccountsSuccess.ctaClose")}
+          onClose={onCloseNavigation}
+        />
       </Flex>
     </SafeAreaView>
   );

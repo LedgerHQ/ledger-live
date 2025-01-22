@@ -37,6 +37,7 @@ import { Loader } from "./styled";
 import { WebviewAPI, WebviewProps } from "./types";
 import { useWebviewState } from "./helpers";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
+import { mevProtectionSelector } from "~/renderer/reducers/settings";
 import { walletSelector } from "~/renderer/reducers/wallet";
 
 export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
@@ -77,6 +78,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
 
     const dispatch = useDispatch();
     const accounts = useSelector(flattenAccountsSelector);
+    const mevProtected = useSelector(mevProtectionSelector);
     const { pushToast } = useToasts();
     const { t } = useTranslation();
 
@@ -178,14 +180,14 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         signedTransaction: RawPlatformSignedTransaction;
       }) => {
         return broadcastTransactionLogic(
-          { manifest, dispatch, accounts, tracking },
+          { manifest, dispatch, accounts, tracking, mevProtected },
           accountId,
           signedTransaction,
           pushToast,
           t,
         );
       },
-      [manifest, accounts, pushToast, dispatch, t, tracking],
+      [manifest, accounts, pushToast, dispatch, t, tracking, mevProtected],
     );
 
     const startExchange = useCallback(

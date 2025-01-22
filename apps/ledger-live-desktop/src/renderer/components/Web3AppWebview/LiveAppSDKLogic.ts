@@ -25,6 +25,7 @@ type WebPlatformContext = {
   dispatch: Dispatch;
   accounts: AccountLike[];
   tracking: typeof trackingLiveAppSDKLogic;
+  mevProtected: boolean;
 };
 
 export type RequestAccountParams = {
@@ -34,7 +35,7 @@ export type RequestAccountParams = {
 };
 export const requestAccountLogic = async (
   walletState: WalletState,
-  { manifest }: Omit<WebPlatformContext, "accounts" | "dispatch" | "tracking">,
+  { manifest }: Omit<WebPlatformContext, "accounts" | "dispatch" | "tracking" | "mevProtected">,
   { currencies, includeTokens }: RequestAccountParams,
 ) => {
   trackingLiveAppSDKLogic.platformRequestAccountRequested(manifest);
@@ -53,7 +54,7 @@ export const requestAccountLogic = async (
 };
 
 export const broadcastTransactionLogic = (
-  { manifest, dispatch, accounts, tracking }: WebPlatformContext,
+  { manifest, dispatch, accounts, tracking, mevProtected }: WebPlatformContext,
   accountId: string,
   signedTransaction: RawPlatformSignedTransaction,
   pushToast: (data: ToastData) => void,
@@ -79,6 +80,7 @@ export const broadcastTransactionLogic = (
           optimisticOperation = await bridge.broadcast({
             account: mainAccount,
             signedOperation,
+            broadcastConfig: { mevProtected },
           });
           tracking.platformBroadcastSuccess(manifest);
         } catch (error) {

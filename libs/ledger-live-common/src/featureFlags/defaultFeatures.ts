@@ -102,7 +102,6 @@ export const DEFAULT_FEATURES: Features = {
   ptxServiceCtaExchangeDrawer: DEFAULT_FEATURE,
   ptxServiceCtaScreens: DEFAULT_FEATURE,
   ptxSwapReceiveTRC20WithoutTrx: DEFAULT_FEATURE,
-  ptxSwapLiveAppMobile: DEFAULT_FEATURE,
   disableNftLedgerMarket: DEFAULT_FEATURE,
   disableNftRaribleOpensea: DEFAULT_FEATURE,
   disableNftSend: DEFAULT_FEATURE,
@@ -403,6 +402,13 @@ export const DEFAULT_FEATURES: Features = {
 
   ptxSwapLiveApp: {
     enabled: true,
+    params: {
+      manifest_id: "swap-live-app-demo-3",
+    },
+  },
+
+  ptxSwapLiveAppMobile: {
+    enabled: false,
     params: {
       manifest_id: "swap-live-app-demo-3",
     },

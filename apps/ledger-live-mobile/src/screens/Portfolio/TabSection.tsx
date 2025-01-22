@@ -38,7 +38,13 @@ const TabSection: React.FC<TabSectionProps> = ({
 }) => (
   <>
     <Box height={40} mb={16}>
-      <TabSelector labels={[t("assets.title"), t("accounts.title")]} onToggle={handleToggle} />
+      <TabSelector
+        labels={[
+          { id: TAB_OPTIONS.Assets, value: t("assets.title") },
+          { id: TAB_OPTIONS.Accounts, value: t("accounts.title") },
+        ]}
+        onToggle={handleToggle}
+      />
     </Box>
     <Flex
       flexDirection="row"

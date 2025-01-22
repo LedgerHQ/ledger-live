@@ -3991,7 +3991,11 @@
     },
     "quitConfirmation": {
       "title": "Cancel add account",
-      "desc": "Are you sure you want to cancel adding accounts?"
+      "desc": "Are you sure you want to cancel adding accounts?",
+      "v2": {
+        "title": "Cancel adding account?",
+        "desc": "No account wll be added to Ledger Live."
+      }
     },
     "imported": "Asset added successfully",
     "added": "Account added to your portfolio",

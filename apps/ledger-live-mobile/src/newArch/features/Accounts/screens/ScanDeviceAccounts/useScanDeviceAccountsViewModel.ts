@@ -43,6 +43,7 @@ export default function useScanDeviceAccountsViewModel({
     device: { deviceId },
     inline,
     returnToSwap,
+    onCloseNavigation,
   } = route.params || {};
 
   const newAccountSchemes = useMemo(() => {
@@ -292,5 +293,6 @@ export default function useScanDeviceAccountsViewModel({
     viewAllCreatedAccounts,
     returnToSwap,
     currency,
+    onCloseNavigation,
   };
 }
