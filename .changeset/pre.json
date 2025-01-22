@@ -133,5 +133,32 @@
     "@ledgerhq/native-modules-tools": "1.0.3",
     "@ledgerhq/pnpm-utils": "1.0.1"
   },
-  "changesets": []
+  "changesets": [
+    "big-numbers-smash",
+    "brave-hounds-listen",
+    "brave-icons-glow",
+    "bright-turkeys-compete",
+    "chatty-cobras-add",
+    "clean-moose-kick",
+    "cuddly-gorillas-protect",
+    "dry-avocados-look",
+    "eleven-dolphins-lick",
+    "good-fans-flash",
+    "heavy-kings-fix",
+    "hip-avocados-marry",
+    "hungry-bobcats-sneeze",
+    "kind-buttons-lay",
+    "new-colts-cover",
+    "polite-boxes-cry",
+    "polite-donkeys-marry",
+    "red-actors-explode",
+    "sharp-cheetahs-tell",
+    "sharp-items-nail",
+    "silent-poets-check",
+    "tame-dryers-try",
+    "thin-camels-tap",
+    "tough-frogs-cover",
+    "unlucky-garlics-move",
+    "wet-swans-greet"
+  ]
 }
