@@ -168,6 +168,11 @@ export type ServerInfoResponse = {
   };
 } & ResponseStatus;
 
+export type Marker = {
+  ledger: number;
+  seq: number;
+};
+
 export type AccountTxResponse = {
   account: string;
   ledger_index_max: number;
@@ -175,6 +180,7 @@ export type AccountTxResponse = {
   limit: number;
   transactions: XrplOperation[];
   validated: boolean;
+  marker?: Marker;
 } & ResponseStatus;
 
 export type LedgerResponse = {

@@ -1,6 +1,7 @@
 import type {
   Api,
   Transaction as ApiTransaction,
+  Operation,
   Pagination,
 } from "@ledgerhq/coin-framework/api/index";
 import coinConfig, { type PolkadotConfig } from "../config";
@@ -47,5 +48,10 @@ async function estimate(addr: string, amount: bigint): Promise<bigint> {
   return estimateFees(tx);
 }
 
-const operations = async (addr: string, { limit, start }: Pagination) =>
-  listOperations(addr, { limit, startAt: start });
+async function operations(
+  address: string,
+  { limit, start }: Pagination,
+): Promise<[Operation[], string]> {
+  const [ops, nextHeight] = await listOperations(address, { limit: limit || 0, startAt: start });
+  return [ops, JSON.stringify(nextHeight)];
+}

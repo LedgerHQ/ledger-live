@@ -42,12 +42,9 @@ describe("Xrp Api", () => {
       });
     });
 
-    it("returns paginated operations", async () => {
+    it("returns all operations", async () => {
       // When
-      const [tx, idx] = await module.listOperations(address, { limit: 200 });
-      const [tx2, _] = await module.listOperations(address, { limit: 200, start: idx });
-      tx.push(...tx2);
-
+      const [tx, _] = await module.listOperations(address, {});
       // Then
       const checkSet = new Set(tx.map(elt => elt.hash));
       expect(checkSet.size).toEqual(tx.length);

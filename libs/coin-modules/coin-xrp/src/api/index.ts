@@ -15,6 +15,7 @@ import {
   lastBlock,
   listOperations,
 } from "../logic";
+import { XrpOperation } from "../types";
 
 export function createApi(config: XrpConfig): Api {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
@@ -41,16 +42,47 @@ async function estimate(_addr: string, _amount: bigint): Promise<bigint> {
   return fees.fee;
 }
 
-async function operations(
-  address: string,
-  { limit, start }: Pagination,
-): Promise<[Operation[], number]> {
-  const options: {
-    limit?: number;
-    minHeight?: number;
-  } = { limit: limit };
-  if (start) options.minHeight = start;
-  const [ops, index] = await listOperations(address, options);
+type PaginationState = {
+  pageSize: number;
+  minHeight: number;
+  continueIterations: boolean;
+  apiNextCursor?: string;
+  accumulator: XrpOperation[];
+};
+
+async function operationsFromHeight(address: string, minHeight: number): Promise<XrpOperation[]> {
+  async function fetchNextPage(state: PaginationState): Promise<PaginationState> {
+    const [operations, apiNextCursor] = await listOperations(address, {
+      limit: state.pageSize,
+      minHeight: state.minHeight,
+    });
+    const continueIteration = apiNextCursor !== "";
+    const accumulated = state.accumulator.concat(operations);
+    return {
+      ...state,
+      continueIterations: continueIteration,
+      apiNextCursor: apiNextCursor,
+      accumulator: accumulated,
+    };
+  }
+
+  const firstState: PaginationState = {
+    pageSize: 200,
+    minHeight: minHeight,
+    continueIterations: true,
+    accumulator: [],
+  };
+
+  let state = await fetchNextPage(firstState);
+  while (state.continueIterations) {
+    state = await fetchNextPage(state);
+  }
+  return state.accumulator;
+}
+
+async function operations(address: string, { start }: Pagination): Promise<[Operation[], string]> {
+  const minHeight = start ? start : 0;
+  const ops = await operationsFromHeight(address, minHeight);
   return [
     ops.map(op => {
       const { simpleType, blockHash, blockTime, blockHeight, ...rest } = op;
@@ -61,8 +93,8 @@ async function operations(
           hash: blockHash,
           time: blockTime,
         },
-      } satisfies Operation;
+      };
     }),
-    index,
+    "",
   ];
 }

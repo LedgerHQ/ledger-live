@@ -54,11 +54,9 @@ describe("Polkadot Api", () => {
       });
     }, 20000);
 
-    it("returns paginated operations", async () => {
+    it("returns all operations", async () => {
       // When
-      const [tx, idx] = await module.listOperations(address, { limit: 100 });
-      const [tx2, _] = await module.listOperations(address, { limit: 100, start: idx });
-      tx.push(...tx2);
+      const [tx, _] = await module.listOperations(address, {});
 
       // Then
       const checkSet = new Set(tx.map(elt => elt.hash));

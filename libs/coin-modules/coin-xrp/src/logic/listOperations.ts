@@ -1,5 +1,5 @@
 import { getServerInfos, getTransactions } from "../network";
-import type { XrplOperation } from "../network/types";
+import type { Marker, XrplOperation } from "../network/types";
 import { XrpMemo, XrpOperation } from "../types";
 import { RIPPLE_EPOCH } from "./utils";
 
@@ -13,28 +13,28 @@ export async function listOperations(
   address: string,
   {
     limit,
-    maxHeight,
     minHeight,
+    token,
   }: {
+    // pagination:
     limit?: number;
-    maxHeight?: number | undefined; // used for pagination
+    token?: string;
+    // filters:
     minHeight?: number; // used to retrieve operations from a specific block height until top most
   },
-): Promise<[XrpOperation[], number]> {
+): Promise<[XrpOperation[], string]> {
   const serverInfo = await getServerInfos();
   const ledgers = serverInfo.info.complete_ledgers.split("-");
   const minLedgerVersion = Number(ledgers[0]);
-  const maxLedgerVersion = Number(ledgers[1]);
 
   type Options = {
     ledger_index_min?: number;
-    ledger_index_max?: number;
     limit?: number;
     tx_type?: string;
+    token?: Marker;
   };
 
   let options: Options = {
-    ledger_index_max: maxHeight ?? maxLedgerVersion,
     tx_type: "Payment",
   };
 
@@ -44,6 +44,14 @@ export async function listOperations(
       limit,
     };
   }
+
+  if (token) {
+    options = {
+      ...options,
+      token: JSON.parse(token),
+    };
+  }
+
   if (minHeight) {
     options = {
       ...options,
@@ -56,23 +64,20 @@ export async function listOperations(
     address: string,
     options: Options,
   ): Promise<[boolean, Options, XrplOperation[]]> {
-    const txs = await getTransactions(address, options);
+    const response = await getTransactions(address, options);
+    const txs = response.transactions;
+    const token = response.marker;
     // Filter out the transactions that are not "Payment" type because the filter on "tx_type" of the node RPC is not working as expected.
     const paymentTxs = txs.filter(tx => tx.tx_json.TransactionType === "Payment");
     const shortage = (options.limit && txs.length < options.limit) || false;
-    const lastTransaction = txs.slice(-1)[0];
     const nextOptions = { ...options };
-    if (lastTransaction) {
-      nextOptions.ledger_index_max = lastTransaction.tx_json.ledger_index - 1;
+    if (token) {
+      nextOptions.token = token;
       if (nextOptions.limit) nextOptions.limit -= paymentTxs.length;
     }
     return [shortage, nextOptions, paymentTxs];
   }
 
-  // TODO BUG: given the number of txs belonging to the SAME block > limit
-  //           when user loop over pages using the provided token
-  //           then user misses some txs that doesn't fit the page size limit
-  //           because the "next token" is a block height (solution is to use an opaque token instead)
   let [txShortage, nextOptions, transactions] = await getPaymentTransactions(address, options);
   const isEnough = () => txShortage || (limit && transactions.length >= limit);
   // We need to call the node RPC multiple times to get the desired number of transactions by the limiter.
@@ -86,13 +91,9 @@ export async function listOperations(
     transactions = transactions.concat(newTransactions);
   }
 
-  const lastTransaction = transactions.slice(-1)[0];
   // the next index to start the pagination from
-  const nextIndex = lastTransaction
-    ? Math.max(lastTransaction.tx_json.ledger_index - 1, minLedgerVersion)
-    : minLedgerVersion;
-
-  return [transactions.map(convertToCoreOperation(address)), nextIndex];
+  const next = nextOptions.token ? JSON.stringify(nextOptions.token) : "";
+  return [transactions.map(convertToCoreOperation(address)), next];
 }
 
 const convertToCoreOperation =

@@ -59,11 +59,9 @@ describe("Tezos Api", () => {
       });
     });
 
-    it("returns paginated operations", async () => {
+    it("returns all operations", async () => {
       // When
-      const [tx, idx] = await module.listOperations(address, { limit: 100 });
-      const [tx2, _] = await module.listOperations(address, { limit: 100, start: idx });
-      tx.push(...tx2);
+      const [tx, _] = await module.listOperations(address, {});
 
       // Then
       // Find a way to create a unique id. In Tezos, the same hash may represent different operations in case of delegation.

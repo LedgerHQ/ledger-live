@@ -27,7 +27,12 @@ export type Transaction = {
   supplement?: unknown;
 };
 
-export type Pagination = { limit: number; start?: number };
+// FIXME rename start to minHeight
+//       and add a `token: string` field to the pagination if we really need to support pagination
+//       (which is not the case for now)
+//       for now start is used as a minHeight from which we want to fetch ALL operations
+//       limit is unused for now
+export type Pagination = { limit?: number; start?: number };
 export type Api = {
   broadcast: (tx: string) => Promise<string>;
   combine: (tx: string, signature: string, pubkey?: string) => string;
@@ -35,13 +40,5 @@ export type Api = {
   estimateFees: (addr: string, amount: bigint) => Promise<bigint>;
   getBalance: (address: string) => Promise<bigint>;
   lastBlock: () => Promise<BlockInfo>;
-  /**
-   *
-   * @param address
-   * @param pagination The max number of operation to receive and the "id" or "index" to start from (see returns value).
-   * @returns Operations found and the next "id" or "index" to use for pagination (i.e. `start` property).\
-   * If `0` is returns, no pagination needed.
-   * This "id" or "index" value, thus it has functional meaning, is different for each blockchain.
-   */
-  listOperations: (address: string, pagination: Pagination) => Promise<[Operation[], number]>;
+  listOperations: (address: string, pagination: Pagination) => Promise<[Operation[], string]>;
 };
