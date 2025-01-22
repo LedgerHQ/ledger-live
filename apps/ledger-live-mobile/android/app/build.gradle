@@ -137,14 +137,6 @@ android {
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
 
-
-    if (System.getenv("SENTRY_AUTH_TOKEN") != null) {
-    sentry {
-        autoUploadProguardMapping = shouldSentryAutoUpload()
-        uploadNativeSymbols = shouldSentryAutoUpload()
-        }
-    }
-
     configurations.all {
         resolutionStrategy {
             // Needed for Braze
