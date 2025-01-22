@@ -1,4 +1,11 @@
-import { Account, AccountLike, AnyMessage, getCurrencyForAccount, SignedOperation, TokenAccount } from "@ledgerhq/types-live";
+import {
+  Account,
+  AccountLike,
+  AnyMessage,
+  getCurrencyForAccount,
+  SignedOperation,
+  TokenAccount,
+} from "@ledgerhq/types-live";
 import {
   accountToWalletAPIAccount,
   getWalletAPITransactionSignFlowInfos,

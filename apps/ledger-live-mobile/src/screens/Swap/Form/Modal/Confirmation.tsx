@@ -15,7 +15,13 @@ import {
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import addToSwapHistory from "@ledgerhq/live-common/exchange/swap/addToSwapHistory";
 import { addPendingOperation, getMainAccount } from "@ledgerhq/live-common/account/index";
-import { AccountLike, DeviceInfo, getCurrencyForAccount, Operation, SignedOperation } from "@ledgerhq/types-live";
+import {
+  AccountLike,
+  DeviceInfo,
+  getCurrencyForAccount,
+  Operation,
+  SignedOperation,
+} from "@ledgerhq/types-live";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { postSwapAccepted, postSwapCancelled } from "@ledgerhq/live-common/exchange/swap/index";
 import { InstalledItem } from "@ledgerhq/live-common/apps/types";
