@@ -1,5 +1,32 @@
 # ledger-live-desktop
 
+## 2.96.0-nightly.3
+
+### Minor Changes
+
+- [#8748](https://github.com/LedgerHQ/ledger-live/pull/8748) [`03c5920`](https://github.com/LedgerHQ/ledger-live/commit/03c59200a4f32a182b8d7f9f3ac5670f0c3d30eb) Thanks [@thesan](https://github.com/thesan)! - Enable ASAR integrity check on MacOS and Windows
+
+### Patch Changes
+
+- [#8892](https://github.com/LedgerHQ/ledger-live/pull/8892) [`694e041`](https://github.com/LedgerHQ/ledger-live/commit/694e041ff91f4b89165961d524a985418be15203) Thanks [@Wozacosta](https://github.com/Wozacosta)! - feat: make sure all transaction broadcast use the broadcastconfig parameter
+
+- [#8917](https://github.com/LedgerHQ/ledger-live/pull/8917) [`40f3bcc`](https://github.com/LedgerHQ/ledger-live/commit/40f3bcced4a1b0e851047607f9c2311e0e112917) Thanks [@beths-ledger](https://github.com/beths-ledger)! - track all stake programs in analytics
+
+- Updated dependencies [[`f5196c5`](https://github.com/LedgerHQ/ledger-live/commit/f5196c52453b971a3327d09966edb62bb3d6a293)]:
+  - @ledgerhq/types-live@6.57.0-nightly.0
+  - @ledgerhq/live-common@34.18.0-nightly.3
+  - @ledgerhq/coin-framework@0.22.0-nightly.1
+  - @ledgerhq/coin-bitcoin@0.9.1-nightly.1
+  - @ledgerhq/coin-cosmos@0.4.1-nightly.1
+  - @ledgerhq/coin-evm@2.9.0-nightly.2
+  - @ledgerhq/coin-filecoin@1.4.1-nightly.1
+  - @ledgerhq/domain-service@1.2.16-nightly.0
+  - @ledgerhq/live-countervalues@0.2.17-nightly.1
+  - @ledgerhq/live-countervalues-react@0.2.17-nightly.1
+  - @ledgerhq/live-nft@0.5.2-nightly.1
+  - @ledgerhq/live-nft-react@0.5.2-nightly.1
+  - @ledgerhq/live-wallet@0.9.0-nightly.1
+
 ## 2.96.0-nightly.2
 
 ### Minor Changes

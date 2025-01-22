@@ -1,5 +1,43 @@
 ## 34.5.0-next.4
 
+## 34.18.0-nightly.3
+
+### Minor Changes
+
+- [#8960](https://github.com/LedgerHQ/ledger-live/pull/8960) [`f5196c5`](https://github.com/LedgerHQ/ledger-live/commit/f5196c52453b971a3327d09966edb62bb3d6a293) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - LLM Swap: fix to load the manifest from feature flag
+
+### Patch Changes
+
+- Updated dependencies [[`59af83f`](https://github.com/LedgerHQ/ledger-live/commit/59af83f6fa6787c055646ec65d17fe6773eab38e)]:
+  - @ledgerhq/wallet-api-exchange-module@0.9.0-nightly.0
+  - @ledgerhq/coin-framework@0.22.0-nightly.1
+  - @ledgerhq/coin-algorand@0.6.1-nightly.1
+  - @ledgerhq/coin-bitcoin@0.9.1-nightly.1
+  - @ledgerhq/coin-cardano@0.3.1-nightly.1
+  - @ledgerhq/coin-cosmos@0.4.1-nightly.1
+  - @ledgerhq/coin-elrond@0.2.1-nightly.1
+  - @ledgerhq/coin-evm@2.9.0-nightly.2
+  - @ledgerhq/coin-filecoin@1.4.1-nightly.1
+  - @ledgerhq/coin-hedera@1.2.1-nightly.1
+  - @ledgerhq/coin-icon@0.5.1-nightly.1
+  - @ledgerhq/coin-internet_computer@1.4.1-nightly.1
+  - @ledgerhq/coin-near@0.6.1-nightly.1
+  - @ledgerhq/coin-polkadot@1.5.1-nightly.1
+  - @ledgerhq/coin-solana@0.10.1-nightly.1
+  - @ledgerhq/coin-stacks@0.4.1-nightly.1
+  - @ledgerhq/coin-stellar@0.5.1-nightly.1
+  - @ledgerhq/coin-tezos@0.8.1-nightly.1
+  - @ledgerhq/coin-ton@0.4.1-nightly.1
+  - @ledgerhq/coin-tron@0.1.1-nightly.1
+  - @ledgerhq/coin-vechain@2.3.1-nightly.1
+  - @ledgerhq/coin-xrp@0.8.1-nightly.1
+  - @ledgerhq/device-core@0.4.11-nightly.0
+  - @ledgerhq/hw-app-eth@6.42.3-nightly.0
+  - @ledgerhq/live-countervalues@0.2.17-nightly.1
+  - @ledgerhq/live-countervalues-react@0.2.17-nightly.1
+  - @ledgerhq/live-nft@0.5.2-nightly.1
+  - @ledgerhq/live-wallet@0.9.0-nightly.1
+
 ## 34.18.0-nightly.2
 
 ### Minor Changes

@@ -1,5 +1,36 @@
 # live-mobile
 
+## 3.61.0-nightly.3
+
+### Minor Changes
+
+- [#8962](https://github.com/LedgerHQ/ledger-live/pull/8962) [`4958893`](https://github.com/LedgerHQ/ledger-live/commit/49588934da0f23c668d4244999d0c1842cf4a632) Thanks [@LucasWerey](https://github.com/LucasWerey)! - fix tab selector to use a key instead of a string
+
+- [#8959](https://github.com/LedgerHQ/ledger-live/pull/8959) [`c8f0c9a`](https://github.com/LedgerHQ/ledger-live/commit/c8f0c9a502daa53bbd825ea365234d1923b97815) Thanks [@themooneer](https://github.com/themooneer)! - Add account v2 close process management
+
+- [#8960](https://github.com/LedgerHQ/ledger-live/pull/8960) [`f5196c5`](https://github.com/LedgerHQ/ledger-live/commit/f5196c52453b971a3327d09966edb62bb3d6a293) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - LLM Swap: fix to load the manifest from feature flag
+
+### Patch Changes
+
+- [#8892](https://github.com/LedgerHQ/ledger-live/pull/8892) [`694e041`](https://github.com/LedgerHQ/ledger-live/commit/694e041ff91f4b89165961d524a985418be15203) Thanks [@Wozacosta](https://github.com/Wozacosta)! - feat: make sure all transaction broadcast use the broadcastconfig parameter
+
+- Updated dependencies [[`4958893`](https://github.com/LedgerHQ/ledger-live/commit/49588934da0f23c668d4244999d0c1842cf4a632), [`f5196c5`](https://github.com/LedgerHQ/ledger-live/commit/f5196c52453b971a3327d09966edb62bb3d6a293)]:
+  - @ledgerhq/native-ui@0.28.0-nightly.0
+  - @ledgerhq/types-live@6.57.0-nightly.0
+  - @ledgerhq/live-common@34.18.0-nightly.3
+  - @ledgerhq/coin-framework@0.22.0-nightly.1
+  - @ledgerhq/coin-cosmos@0.4.1-nightly.1
+  - @ledgerhq/coin-elrond@0.2.1-nightly.1
+  - @ledgerhq/coin-evm@2.9.0-nightly.2
+  - @ledgerhq/coin-filecoin@1.4.1-nightly.1
+  - @ledgerhq/coin-stacks@0.4.1-nightly.1
+  - @ledgerhq/domain-service@1.2.16-nightly.0
+  - @ledgerhq/live-countervalues@0.2.17-nightly.1
+  - @ledgerhq/live-countervalues-react@0.2.17-nightly.1
+  - @ledgerhq/live-nft@0.5.2-nightly.1
+  - @ledgerhq/live-nft-react@0.5.2-nightly.1
+  - @ledgerhq/live-wallet@0.9.0-nightly.1
+
 ## 3.61.0-nightly.2
 
 ### Minor Changes

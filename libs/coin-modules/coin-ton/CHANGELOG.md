@@ -1,5 +1,13 @@
 # @ledgerhq/coin-ton
 
+## 0.4.1-nightly.1
+
+### Patch Changes
+
+- Updated dependencies [[`f5196c5`](https://github.com/LedgerHQ/ledger-live/commit/f5196c52453b971a3327d09966edb62bb3d6a293)]:
+  - @ledgerhq/types-live@6.57.0-nightly.0
+  - @ledgerhq/coin-framework@0.22.0-nightly.1
+
 ## 0.4.1-nightly.0
 
 ### Patch Changes
