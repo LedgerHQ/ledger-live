@@ -6,6 +6,7 @@ import type {
   TransactionStatusCommon,
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
+import { BigNumber } from "bignumber.js";
 
 export type KaspaAccount = Account & {
   xpub: string;
@@ -25,12 +26,22 @@ export type KaspaSignedOperation = SignedOperation & {
 
 export type Transaction = TransactionCommon & {
   family: "kaspa";
+  networkInfo: {
+    label: string;
+    amount: BigNumber;
+    estimatedSeconds: number;
+  }[];
   feerate: number | null;
   rbf: boolean;
 };
 
 export type TransactionRaw = TransactionCommonRaw & {
   family: "kaspa";
+  networkInfo: {
+    label: string;
+    amount: string;
+    estimatedSeconds: number;
+  }[];
   feerate: number | null;
   rbf: boolean;
 };

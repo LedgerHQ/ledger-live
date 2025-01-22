@@ -11,6 +11,7 @@ import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import type { Account } from "@ledgerhq/types-live";
 import { formatTransactionStatus as formatTransactionStatusCommon } from "@ledgerhq/coin-framework/lib/formatters";
+import { BigNumber } from "bignumber.js";
 
 export const formatTransactionStatus = (
   t: Transaction,
@@ -51,6 +52,10 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
     ...common,
     rbf: tr.rbf,
     family: tr.family,
+    networkInfo: tr.networkInfo.map(x => ({
+      ...x,
+      amount: BigNumber(x.amount),
+    })),
     feesStrategy: tr.feesStrategy,
     feerate: tr.feerate,
   };
@@ -62,6 +67,10 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
     ...common,
     rbf: t.rbf,
     family: t.family,
+    networkInfo: t.networkInfo.map(x => ({
+      ...x,
+      amount: x.amount.toString(),
+    })),
     feesStrategy: t.feesStrategy,
     feerate: t.feerate,
   };

@@ -3,8 +3,9 @@ import { useFeesStrategy } from "@ledgerhq/live-common/families/kaspa/react";
 import { Transaction } from "@ledgerhq/live-common/families/kaspa/types";
 import React, { useCallback, useEffect } from "react";
 import styled from "styled-components";
-import SelectFeeStrategy, { OnClickType } from "~/renderer/components/SelectFeeStrategy";
+import SelectFeeStrategyKaspa, { OnClickType } from "./SelectFeeStrategyKaspa";
 import { context } from "~/renderer/drawers/Provider";
+import { KaspaFamily } from "~/renderer/families/kaspa/types";
 
 type Props = NonNullable<KaspaFamily["sendAmountFields"]>["component"];
 
@@ -53,7 +54,7 @@ const Fields: Props = ({
 
   return (
     <>
-      <SelectFeeStrategy
+      <SelectFeeStrategyKaspa
         strategies={strategies}
         onClick={onFeeStrategyClick}
         transaction={transaction}

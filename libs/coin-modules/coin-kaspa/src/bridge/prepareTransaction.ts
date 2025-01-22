@@ -1,6 +1,6 @@
 import { ApiResponseFeeEstimate, KaspaAccount, Transaction } from "../types";
 import { getFeeEstimate } from "../network";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 
 /**
  * Prepares a transaction by calculating and setting its fee based on the specified fee strategy.
@@ -13,29 +13,33 @@ import { BigNumber } from "bignumber.js";
  * @throws Will throw an error if the fee strategy type is unknown.
  */
 export const prepareTransaction = async (account: KaspaAccount, transaction: Transaction) => {
-  // if (transaction.amount.gt(BigNumber(0))) {
-  //   const fees: ApiResponseFeeEstimate = await getFeeEstimate();
-  //
-  //   switch (transaction.feesStrategy) {
-  //     case "slow":
-  //       transaction.feerate = fees.lowBuckets[0].feerate;
-  //       break;
-  //
-  //     case "medium":
-  //       transaction.feerate = fees.normalBuckets[0].feerate;
-  //       break;
-  //     case "fast":
-  //       transaction.feerate = fees.priorityBucket.feerate;
-  //       break;
-  //     case "custom":
-  //       // transaction.fees = transaction.fees; // nothing to do here?
-  //       break;
-  //
-  //     default:
-  //       throw new Error("Unknown fee strategy type for transaction.");
-  //       break;
-  //   }
-  // }
+  const fees: ApiResponseFeeEstimate = await getFeeEstimate();
+
+  transaction.networkInfo = [
+    {
+      label: "slow",
+      amount: BigNumber(fees.lowBuckets[0]?.feerate || 1),
+      estimatedSeconds: fees.lowBuckets[0]?.estimatedSeconds,
+    },
+    {
+      label: "medium",
+      amount: BigNumber(fees.normalBuckets[0]?.feerate || 1),
+      estimatedSeconds: fees.normalBuckets[0]?.estimatedSeconds,
+    },
+    {
+      label: "fast",
+      amount: BigNumber(fees.priorityBucket.feerate),
+      estimatedSeconds: fees.priorityBucket.estimatedSeconds,
+    },
+  ];
+
+  if (
+    transaction.networkInfo.every(
+      info => info.estimatedSeconds === transaction.networkInfo[0].estimatedSeconds,
+    )
+  ) {
+    transaction.feesStrategy = "fast";
+  }
 
   return transaction;
 };
