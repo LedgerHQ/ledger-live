@@ -2,26 +2,26 @@
 "@ledgerhq/live-common": minor
 "@ledgerhq/coin-framework": minor
 "@ledgerhq/actions-root": minor
-"@ledgerhq/coin-internet_computer": patch
-"@ledgerhq/coin-algorand": patch
-"@ledgerhq/coin-filecoin": patch
-"@ledgerhq/coin-polkadot": patch
-"@ledgerhq/coin-bitcoin": patch
-"@ledgerhq/coin-cardano": patch
-"@ledgerhq/coin-stellar": patch
-"@ledgerhq/coin-vechain": patch
-"@ledgerhq/coin-cosmos": patch
-"@ledgerhq/coin-elrond": patch
-"@ledgerhq/coin-hedera": patch
-"@ledgerhq/coin-solana": patch
-"@ledgerhq/coin-stacks": patch
-"@ledgerhq/coin-tezos": patch
-"@ledgerhq/coin-icon": patch
-"@ledgerhq/coin-near": patch
-"@ledgerhq/coin-tron": patch
-"@ledgerhq/coin-evm": patch
-"@ledgerhq/coin-ton": patch
-"@ledgerhq/coin-xrp": patch
+"@ledgerhq/coin-internet_computer": minor
+"@ledgerhq/coin-algorand": minor
+"@ledgerhq/coin-filecoin": minor
+"@ledgerhq/coin-polkadot": minor
+"@ledgerhq/coin-bitcoin": minor
+"@ledgerhq/coin-cardano": minor
+"@ledgerhq/coin-stellar": minor
+"@ledgerhq/coin-vechain": minor
+"@ledgerhq/coin-cosmos": minor
+"@ledgerhq/coin-elrond": minor
+"@ledgerhq/coin-hedera": minor
+"@ledgerhq/coin-solana": minor
+"@ledgerhq/coin-stacks": minor
+"@ledgerhq/coin-tezos": minor
+"@ledgerhq/coin-icon": minor
+"@ledgerhq/coin-near": minor
+"@ledgerhq/coin-tron": minor
+"@ledgerhq/coin-evm": minor
+"@ledgerhq/coin-ton": minor
+"@ledgerhq/coin-xrp": minor
 ---
 
 Bot feature : Add filter for features
