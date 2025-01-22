@@ -1,4 +1,10 @@
-import { AmountRequired, DustLimit, InvalidAddress, RecipientRequired } from "@ledgerhq/errors";
+import {
+  AmountRequired,
+  DustLimit,
+  InvalidAddress,
+  NotEnoughBalance,
+  RecipientRequired,
+} from "@ledgerhq/errors";
 import { BigNumber } from "bignumber.js";
 import {
   calcMaxSpendableAmount,
@@ -43,29 +49,32 @@ const getTransactionStatus = async (
 
     const { utxos } = await scanUtxos(compressedPublicKey, chainCode);
 
-    if (transaction.useAllAmount) {
-      const maxSpendableAmount: BigNumber = calcMaxSpendableAmount(
-        utxos,
-        transaction.recipient.length > 67,
-        transaction?.networkInfo
-          .filter(ni => ni.label === transaction?.feesStrategy)[0]
-          .amount.toNumber() || 1,
-      );
-
-      transaction.amount = maxSpendableAmount;
-    }
-
-    const result = selectUtxos(
+    const maxSpendableAmount: BigNumber = calcMaxSpendableAmount(
       utxos,
-      UtxoStrategy.FIFO,
       transaction.recipient.length > 67,
-      transaction.amount,
       transaction?.networkInfo
         .filter(ni => ni.label === transaction?.feesStrategy)[0]
         .amount.toNumber() || 1,
     );
 
-    estimateFee = result.fee;
+    if (transaction.useAllAmount) {
+      transaction.amount = maxSpendableAmount;
+    }
+
+    if (transaction.amount.gt(maxSpendableAmount)) {
+      errors.amount = new NotEnoughBalance();
+    } else {
+      const result = selectUtxos(
+        utxos,
+        UtxoStrategy.FIFO,
+        transaction.recipient.length > 67,
+        transaction.amount,
+        transaction?.networkInfo
+          .filter(ni => ni.label === transaction?.feesStrategy)[0]
+          .amount.toNumber() || 1,
+      );
+      estimateFee = result.fee;
+    }
   }
 
   return {
