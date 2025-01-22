@@ -16,7 +16,10 @@ export const estimateMaxSpendable: AccountBridge<
     transaction?.networkInfo
       .filter(ni => ni.label === transaction?.feesStrategy)[0]
       .amount.toNumber() || 1;
-  return mainAccount.spendableBalance
+
+  const maxSpendable: BigNumber = mainAccount.spendableBalance
     .minus(506)
     .minus(1118 * mainAccount.activeAddressCount * feeRate);
+
+  return maxSpendable.lt(0) ? BigNumber(0) : maxSpendable;
 };

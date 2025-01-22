@@ -94,7 +94,7 @@ export const calcMaxSpendableAmount = (
     maxSpendableAmount = maxSpendableAmount.minus(BigNumber(11));
   }
 
-  return maxSpendableAmount;
+  return maxSpendableAmount.lt(0) ? BigNumber(0) : maxSpendableAmount;
 };
 
 export const sumBigNumber = (values: BigNumber[]): BigNumber => {
