@@ -34,6 +34,8 @@ const Fields: Props = ({
     updateTransaction((t: Transaction) =>
       bridge.updateTransaction(t, {
         rbf: true,
+        // initially "fast" is selected - set this feerate
+        feerate: strategies.filter(x => x.label === "fast")[0].amount,
       }),
     );
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
