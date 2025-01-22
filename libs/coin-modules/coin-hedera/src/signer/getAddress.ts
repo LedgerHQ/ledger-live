@@ -6,12 +6,10 @@ import { GetAddressOptions } from "@ledgerhq/coin-framework/derivation";
 const resolver = (signerContext: SignerContext<HederaSigner>): GetAddressFn => {
   return async (deviceId: string, { path, derivationMode }: GetAddressOptions) => {
     let publicKey = "";
-    console.log(derivationMode);
+    publicKey = await signerContext(deviceId, signer => signer.getPublicKey(path));
     if (derivationMode == "hederaBip44Ecdsa") {
       publicKey = await signerContext(deviceId, signer => signer.getPublicKey(path, true));
-      console.log(publicKey);
     }
-    publicKey = await signerContext(deviceId, signer => signer.getPublicKey(path));
 
     return {
       path,

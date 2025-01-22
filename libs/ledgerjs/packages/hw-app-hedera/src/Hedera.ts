@@ -34,11 +34,8 @@ export default class Hedera {
    * @return the public key
    */
   async getPublicKey(path: string, ecdsa?: boolean): Promise<string> {
-    console.log("path: " + path);
     const bipPath = BIPPath.fromString(path).toPathArray();
     const serializedPath = this._serializePath(bipPath);
-
-    //44/3030/0
 
     const p1 = 0x01;
     let p2 = 0x00;
@@ -47,11 +44,7 @@ export default class Hedera {
       p2 = 1;
     }
 
-    console.log("getting key...");
-
     const response = await this.transport.send(CLA, INS.GET_PUBLIC_KEY, p1, p2, serializedPath);
-
-    console.log(response);
 
     const returnCodeBytes = response.slice(-2);
     const returnCode = (returnCodeBytes[0] << 8) | returnCodeBytes[1];
@@ -60,7 +53,11 @@ export default class Hedera {
       throw new UserRefusedAddress();
     }
 
-    return response.slice(0, 32).toString("hex");
+    if (ecdsa) {
+      return response.slice(0, 33).toString("hex");
+    } else {
+      return response.slice(0, 32).toString("hex");
+    }
   }
 
   // TODO: the BOLOS app does not support anything but index #0 for signing transactions
