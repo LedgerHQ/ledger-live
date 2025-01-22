@@ -1,4 +1,4 @@
-import { Flex, IconsLegacy } from "@ledgerhq/native-ui";
+import { Button, Flex, IconsLegacy } from "@ledgerhq/native-ui";
 import { ParamListBase, useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import React, { useCallback, useState } from "react";
@@ -78,6 +78,9 @@ type AdvancedProps = {
   confirmationDesc?: React.ReactNode;
   onClose?: () => void;
   rounded?: boolean;
+  showButton?: boolean;
+  buttonText?: string;
+  customDrawerStyle?: Record<string, unknown>;
 };
 
 /**
@@ -96,6 +99,9 @@ export const NavigationHeaderCloseButtonAdvanced: React.FC<AdvancedProps> = Reac
     confirmationDesc,
     onClose = emptyFunction,
     rounded = false,
+    showButton = false,
+    buttonText,
+    customDrawerStyle,
   }) => {
     const navigation = useNavigation();
     const [isConfirmationModalOpened, setIsConfirmationModalOpened] = useState(false);
@@ -157,13 +163,21 @@ export const NavigationHeaderCloseButtonAdvanced: React.FC<AdvancedProps> = Reac
       setIsConfirmationModalOpened(false);
     }, [close]);
 
+    const renderCloseElement = useCallback(() => {
+      if (showButton && buttonText)
+        return (
+          <Button size="large" testID="button-create-account" onPress={onPress}>
+            {buttonText}
+          </Button>
+        );
+
+      if (rounded) return <NavigationHeaderCloseButtonRounded onPress={onPress} color={color} />;
+      else return <NavigationHeaderCloseButton onPress={onPress} color={color} />;
+    }, [buttonText, showButton, onPress, rounded, color]);
+
     return (
       <>
-        {rounded ? (
-          <NavigationHeaderCloseButtonRounded onPress={onPress} color={color} />
-        ) : (
-          <NavigationHeaderCloseButton onPress={onPress} color={color} />
-        )}
+        {renderCloseElement()}
 
         {withConfirmation && (
           <ConfirmationModal
@@ -173,6 +187,8 @@ export const NavigationHeaderCloseButtonAdvanced: React.FC<AdvancedProps> = Reac
             confirmationTitle={confirmationTitle}
             confirmationDesc={confirmationDesc}
             onModalHide={onModalHide}
+            customTitleStyle={customDrawerStyle?.title ?? {}}
+            customDescriptionStyle={customDrawerStyle?.description ?? {}}
           />
         )}
       </>

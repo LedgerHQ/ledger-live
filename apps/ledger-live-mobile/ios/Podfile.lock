@@ -1983,11 +1983,29 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNSentry (5.24.3):
+  - RNSentry (6.5.0):
+    - DoubleConversion
+    - glog
     - hermes-engine
+    - RCT-Folly (= 2024.01.01.00)
+    - RCTRequired
+    - RCTTypeSafety
     - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
     - React-hermes
-    - Sentry/HybridSDK (= 8.36.0)
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Sentry/HybridSDK (= 8.43.0)
+    - Yoga
   - RNShare (10.1.0):
     - React-Core
   - RNSVG (13.14.0):
@@ -2022,7 +2040,7 @@ PODS:
   - segment-analytics-react-native (2.19.1):
     - React-Core
     - sovran-react-native
-  - Sentry/HybridSDK (8.36.0)
+  - Sentry/HybridSDK (8.43.0)
   - SocketRocket (0.7.0)
   - sovran-react-native (0.4.5):
     - React-Core
@@ -2576,14 +2594,14 @@ SPEC CHECKSUMS:
   RNReactNativeHapticFeedback: ec56a5f81c3941206fd85625fa669ffc7b4545f9
   RNReanimated: 82b558efb00a30a3b8ea1a3ca8975125e9400313
   RNScreens: 63500b789c1b5286972a55d4a7d73fc1123f51e4
-  RNSentry: e7e5d059d62d6c447d83e14800edc1812a594a5d
+  RNSentry: e1a16a23ada7d12686dff2f1eeaf55a08738585c
   RNShare: b674d9f1cb0dc11116983bebd8712908a226a3ee
   RNSVG: d00c8f91c3cbf6d476451313a18f04d220d4f396
   RNVectorIcons: 6382277afab3c54658e9d555ee0faa7a37827136
   SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d
   SDWebImageWebPCoder: 908b83b6adda48effe7667cd2b7f78c897e5111d
   segment-analytics-react-native: 1c36d83c0a735795e304178241331e7701dc5d2a
-  Sentry: f8374b5415bc38dfb5645941b3ae31230fbeae57
+  Sentry: 532b281a53b1b45a523fd592f608956fb36e577c
   SocketRocket: abac6f5de4d4d62d24e11868d7a2f427e0ef940d
   sovran-react-native: fd3dc8f1a4b14acdc4ad25fc6b4ac4f52a2a2a15
   Storyly: 310297bcf4493d3d5b41e71834fba49502c8067a

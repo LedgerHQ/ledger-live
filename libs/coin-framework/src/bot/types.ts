@@ -78,6 +78,8 @@ export type TransactionRes<T extends TransactionCommon> = {
 export type MutationSpec<T extends TransactionCommon> = {
   // Name what this mutation is doing
   name: string;
+  // related feature to test
+  feature?: MutationFeatureType;
   // The maximum number of times to execute this mutation for a given test run
   maxRun: number;
   // Express the transaction to be done
@@ -118,7 +120,7 @@ export type AppSpec<T extends TransactionCommon> = {
   testTimeout?: number;
   // how much should we retry scan accounts if an error occurs
   scanAccountsRetries?: number;
-  // if define, will run the mutations {multipleRuns} times in order to cover 2 txs in the same run and detect possible issues at the "second tx time"
+  // if defined, will run the mutations {multipleRuns} times in order to cover 2 txs in the same run and detect possible issues at the "second tx time"
   multipleRuns?: number;
   // if the nano app depends on an app, name of this app
   dependency?: string | undefined;
@@ -266,3 +268,5 @@ export type FlowDesc<T extends TransactionCommon> = {
   steps: Array<Step<T>>;
   fallback?: (arg0: DeviceActionArg<T, State<T>>) => Step<T> | null | undefined;
 };
+
+export type MutationFeatureType = "send" | "sendMax" | "tokens" | "staking";

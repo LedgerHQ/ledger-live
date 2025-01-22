@@ -15,6 +15,21 @@ describe("getSpecs", () => {
     expect(specs.every(spec => spec.currency.family === "bitcoin")).toEqual(true);
   });
 
+  it("should filter by feature correctly", () => {
+    setSupportedCurrencies(["bitcoin"]);
+    const specs = getSpecs({ disabled: {}, filter: { features: ["send"] } });
+    expect(specs[0].mutations.length).toBeGreaterThan(0);
+    expect(specs[0].mutations.every(spec => spec.feature === "send")).toEqual(true);
+  });
+
+  it("should filter multiple features correctly", () => {
+    setSupportedCurrencies(["bitcoin"]);
+    const currentFilter = ["send", "sendMax"];
+    const specs = getSpecs({ disabled: {}, filter: { features: currentFilter } });
+    expect(specs[0].mutations.length).toBeGreaterThan(0);
+    expect(specs[0].mutations.every(spec => currentFilter.includes(spec.feature))).toEqual(true);
+  });
+
   it("should disable currencies correctly", () => {
     setSupportedCurrencies(["bitcoin", "ethereum", "digibyte"]);
     const specs = getSpecs({ disabled: { currencies: ["digibyte"] }, filter: {} });

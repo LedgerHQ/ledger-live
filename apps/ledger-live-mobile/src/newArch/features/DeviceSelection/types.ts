@@ -7,6 +7,7 @@ import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 type CommonParams = {
   context?: "addAccounts" | "receiveFunds";
   onSuccess?: () => void;
+  onCloseNavigation?: () => void;
 };
 
 export type SelectDeviceRouteParams = CommonParams & {
