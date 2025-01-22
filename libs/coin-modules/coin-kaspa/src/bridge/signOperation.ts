@@ -1,5 +1,4 @@
 import { Observable } from "rxjs";
-import { FeeNotLoaded } from "@ledgerhq/errors";
 import type { AccountBridge, SignOperationEvent } from "@ledgerhq/types-live";
 
 import { buildTransaction } from "./buildTransaction";
@@ -21,10 +20,6 @@ export const buildSignOperation =
         o.next({
           type: "device-signature-requested",
         });
-
-        if (!transaction.feerate) {
-          throw new FeeNotLoaded();
-        }
 
         const tx = await buildTransaction(account, transaction);
 

@@ -31,8 +31,6 @@ export type Transaction = TransactionCommon & {
     amount: BigNumber;
     estimatedSeconds: number;
   }[];
-  feerate: number | null;
-  rbf: boolean;
 };
 
 export type TransactionRaw = TransactionCommonRaw & {
@@ -42,8 +40,6 @@ export type TransactionRaw = TransactionCommonRaw & {
     amount: string;
     estimatedSeconds: number;
   }[];
-  feerate: number | null;
-  rbf: boolean;
 };
 
 export type TransactionStatus = TransactionStatusCommon;

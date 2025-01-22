@@ -8,8 +8,6 @@ export const createTransaction = (): Transaction => ({
   useAllAmount: false,
   feesStrategy: "fast",
   family: "kaspa",
-  feerate: 1,
-  rbf: true,
 });
 
 export default createTransaction;

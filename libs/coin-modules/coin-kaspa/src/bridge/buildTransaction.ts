@@ -38,7 +38,7 @@ export const buildTransaction = async (
     UtxoStrategy.FIFO,
     recipientIsTypeECDSA,
     amount,
-    t.feerate || 1,
+    t.networkInfo.filter(ni => ni.label === t.feesStrategy)[0].amount.toNumber(),
   );
 
   const selectedUtxos = result.utxos;

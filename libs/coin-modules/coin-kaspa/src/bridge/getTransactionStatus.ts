@@ -47,7 +47,9 @@ const getTransactionStatus = async (
       const maxSpendableAmount: BigNumber = calcMaxSpendableAmount(
         utxos,
         transaction.recipient.length > 67,
-        transaction.feerate || 1,
+        transaction?.networkInfo
+          .filter(ni => ni.label === transaction?.feesStrategy)[0]
+          .amount.toNumber() || 1,
       );
 
       transaction.amount = maxSpendableAmount;
@@ -58,7 +60,9 @@ const getTransactionStatus = async (
       UtxoStrategy.FIFO,
       transaction.recipient.length > 67,
       transaction.amount,
-      transaction.feerate || 1,
+      transaction?.networkInfo
+        .filter(ni => ni.label === transaction?.feesStrategy)[0]
+        .amount.toNumber() || 1,
     );
 
     estimateFee = result.fee;

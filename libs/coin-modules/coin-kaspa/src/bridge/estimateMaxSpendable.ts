@@ -12,7 +12,10 @@ export const estimateMaxSpendable: AccountBridge<
   if (!mainAccount) {
     return BigNumber(0);
   }
-  const feeRate: number = transaction?.feerate || 1;
+  const feeRate: number =
+    transaction?.networkInfo
+      .filter(ni => ni.label === transaction?.feesStrategy)[0]
+      .amount.toNumber() || 1;
   return mainAccount.spendableBalance
     .minus(506)
     .minus(1118 * mainAccount.activeAddressCount * feeRate);

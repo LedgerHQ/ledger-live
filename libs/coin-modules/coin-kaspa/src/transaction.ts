@@ -50,14 +50,12 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   const common = fromTransactionCommonRaw(tr);
   return {
     ...common,
-    rbf: tr.rbf,
     family: tr.family,
     networkInfo: tr.networkInfo.map(x => ({
       ...x,
       amount: BigNumber(x.amount),
     })),
     feesStrategy: tr.feesStrategy,
-    feerate: tr.feerate,
   };
 };
 
@@ -65,14 +63,12 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
   const common = toTransactionCommonRaw(t);
   return {
     ...common,
-    rbf: t.rbf,
     family: t.family,
     networkInfo: t.networkInfo.map(x => ({
       ...x,
       amount: x.amount.toString(),
     })),
     feesStrategy: t.feesStrategy,
-    feerate: t.feerate,
   };
 };
 
