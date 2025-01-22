@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.58.0-next.0
+
+### Minor Changes
+
+- [#8960](https://github.com/LedgerHQ/ledger-live/pull/8960) [`f5196c5`](https://github.com/LedgerHQ/ledger-live/commit/f5196c52453b971a3327d09966edb62bb3d6a293) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - LLM Swap: fix to load the manifest from feature flag
+
 ## 6.57.0
 
 ### Minor Changes
