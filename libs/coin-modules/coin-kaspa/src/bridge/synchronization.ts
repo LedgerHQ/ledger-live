@@ -5,7 +5,7 @@ import { Operation } from "@ledgerhq/types-live";
 import { SignerContext } from "@ledgerhq/coin-framework/lib/signer";
 import { KaspaSigner } from "../signer";
 import { parseExtendedPublicKey, scanAddresses, scanOperations } from "../logic";
-import { getVirtualChainBlueScore } from "../network";
+import { getBlockDagInfo, getVirtualChainBlueScore } from "../network";
 
 export const makeGetAccountShape =
   (signerContext: SignerContext<KaspaSigner>): GetAccountShape<KaspaAccount> =>
@@ -48,7 +48,20 @@ export const makeGetAccountShape =
       ...accountAddresses.usedReceiveAddresses.map(addr => addr.address),
       ...accountAddresses.usedChangeAddresses.map(addr => addr.address),
     ];
-    const allOperations: Operation[] = await scanOperations(usedAddresses, accountId);
+
+    let scanOperationsAfter: number = 1; // begin with after=1 for correct TX fetching
+    if (initialAccount?.lastSyncTimestamp) {
+      // as older blocks with valid transactions can be added into the BlockDAG up to an hour later,
+      // we have to set the rescan timestamp to around 2 hours earlier than the last tip's timestamp.
+      scanOperationsAfter = Number(initialAccount.lastSyncTimestamp) - 60 * 60 * 2 * 1000; // milliseconds timestamp
+      scanOperationsAfter = Math.max(scanOperationsAfter, 1); // actually it can't really be lower than 1.
+    }
+
+    const allOperations: Operation[] = await scanOperations(
+      usedAddresses,
+      accountId,
+      scanOperationsAfter,
+    );
     const operations = mergeOps(oldOperations, allOperations);
 
     const activeAddressCount: number =
@@ -58,6 +71,7 @@ export const makeGetAccountShape =
     return {
       id: accountId,
       xpub: xpub,
+      lastSyncTimestamp: (await getBlockDagInfo()).pastMedianTime || "1",
       index: accountIndex,
       blockHeight: await getVirtualChainBlueScore(),
       balance: accountAddresses.totalBalance,
