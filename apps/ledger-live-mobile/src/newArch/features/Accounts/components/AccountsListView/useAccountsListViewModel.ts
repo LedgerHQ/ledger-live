@@ -15,6 +15,10 @@ import { PortfolioNavigatorStackParamList } from "~/components/RootNavigator/typ
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
 import { walletSelector } from "~/reducers/wallet";
+import isEqual from "lodash/isEqual";
+import { orderAccountsByFiatValue } from "@ledgerhq/live-countervalues/portfolio";
+import { useCountervaluesState } from "@ledgerhq/live-countervalues-react/index";
+import { counterValueCurrencySelector } from "~/reducers/settings";
 
 export interface Props {
   sourceScreenName?: ScreenName;
@@ -36,9 +40,14 @@ const useAccountsListViewModel = ({
 }: Props) => {
   const startNavigationTTITimer = useStartProfiler();
   const navigation = useNavigation<NavigationProp>();
-  const accounts = useSelector(accountsSelector);
-  const walletState = useSelector(walletSelector);
-  const accountsToDisplay = specificAccounts || accounts.slice(0, limitNumberOfAccounts);
+  const countervalueState = useCountervaluesState();
+  const toCurrency = useSelector(counterValueCurrencySelector);
+  const allAccounts = useSelector(accountsSelector, isEqual);
+  const walletState = useSelector(walletSelector, isEqual);
+  const accounts = specificAccounts || allAccounts;
+  const orderedAccountsByValue = orderAccountsByFiatValue(accounts, countervalueState, toCurrency);
+
+  const accountsToDisplay = orderedAccountsByValue.slice(0, limitNumberOfAccounts);
 
   const refreshAccountsOrdering = useRefreshAccountsOrdering();
   useFocusEffect(refreshAccountsOrdering);

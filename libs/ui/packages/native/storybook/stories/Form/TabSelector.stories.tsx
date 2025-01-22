@@ -6,16 +6,16 @@ export default {
   title: "Form/TabSelector",
   component: TabSelector,
   argTypes: {
-    labels: { control: "array" },
+    labels: { control: "object" },
     onToggle: { action: "toggled" },
   },
 };
 
 type TabSelectorStoryArgs = {
-  labels: string[];
-  labels2: string[];
-  labels3: string[];
-  labels4: string[];
+  labels: { id: string; value: string }[];
+  labels2: { id: string; value: string }[];
+  labels3: { id: string; value: string }[];
+  labels4: { id: string; value: string }[];
   onToggle: (value: string) => void;
 };
 
@@ -45,14 +45,21 @@ export const TabSelectorStory = (args: TabSelectorStoryArgs) => {
 TabSelectorStory.storyName = "TabSelectorStory";
 
 const TabSelectorStoryArgs = {
-  labels: ["First tab"],
-  labels2: ["First tab", "Second Tab"],
-  labels3: ["First tab", "Second Tab", "Third Tab"],
+  labels: [{ id: "tab1", value: "first tab" }],
+  labels2: [
+    { id: "tab1", value: "first tab" },
+    { id: "tab2", value: "second tab" },
+  ],
+  labels3: [
+    { id: "tab1", value: "first tab" },
+    { id: "tab2", value: "second tab" },
+    { id: "tab3", value: "third tab" },
+  ],
   labels4: [
-    "First tab First tab First tab",
-    "Second Tab Second Tab Second Tab",
-    "Third Tab Third Tab Third Tab",
-    "Fourth Tab Fourth Tab Fourth Tab",
+    { id: "tab1", value: "first tab" },
+    { id: "tab2", value: "second tab" },
+    { id: "tab3", value: "third tab" },
+    { id: "tab4", value: "fourth tab" },
   ],
 };
 

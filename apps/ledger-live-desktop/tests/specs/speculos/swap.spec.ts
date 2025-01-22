@@ -63,7 +63,7 @@ const swaps = [
     xrayTicket: "B2CQA-2753",
   },
   {
-    swap: new Swap(Account.ETH_USDT_1, Account.SOL_1, "40", Fee.MEDIUM),
+    swap: new Swap(Account.ETH_USDT_1, Account.SOL_1, "60", Fee.MEDIUM),
     xrayTicket: "B2CQA-2751",
   },
   {
@@ -89,6 +89,10 @@ const swaps = [
   {
     swap: new Swap(Account.ETH_USDC_1, Account.BTC_NATIVE_SEGWIT_1, "65", Fee.MEDIUM),
     xrayTicket: "B2CQA-2832",
+  },
+  {
+    swap: new Swap(Account.ETH_1, Account.DOT_1, "0.02", Fee.MEDIUM),
+    xrayTicket: "B2CQA-3017",
   },
 ];
 

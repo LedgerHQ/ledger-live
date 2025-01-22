@@ -760,6 +760,22 @@
         "description3Link": "This integration has been carried out by <1><0>{{team}}</0></1> in collaboration with Ledger"
       }
     },
+    "featureUnavailable": {
+      "title": "The following feature is momentarily unavailable : {{feature}}. To know more please refer to {{support}}",
+      "feature": {
+        "history": "History",
+        "swap": "Swap",
+        "token_history": "Token history",
+        "send_and_receive": "Send & receive",
+        "send": "Send",
+        "receive": "Receive",
+        "sending_tokens": "Sending tokens",
+        "receiving_tokens": "Receiving tokens",
+        "staking": "Staking",
+        "claiming_staking_rewards": "Claiming staking rewards"
+      },
+      "support": "support"
+    },
     "willBeDeprecatedBanner": {
       "title": "To optimize efficiencies, {{currencyName}} will not be supported on Ledger Live as of {{deprecatedDate}}. However, it will still be supported on Ledger hardware wallets. Please contact Ledger Customer Support if you would like assistance on this.",
       "contactSupport": "Contact Support"

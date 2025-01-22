@@ -171,7 +171,7 @@ export type Features = CurrencyFeatures & {
   transactionsAlerts: Feature_TransactionsAlerts;
   fetchAdditionalCoins: Feature_FetchAdditionalCoins;
   ptxCard: DefaultFeature;
-  ptxSwapLiveAppMobile: DefaultFeature;
+  ptxSwapLiveAppMobile: Feature_PtxSwapLiveApp;
   ptxSwapLiveApp: Feature_PtxSwapLiveApp;
   ptxSwapReceiveTRC20WithoutTrx: Feature_PtxSwapReceiveTRC20WithoutTrx;
   flexibleContentCards: Feature_FlexibleContentCards;

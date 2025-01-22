@@ -21,6 +21,7 @@ export default function StepSign({
   dependencies,
   onConfirmationHandler,
   onFailHandler,
+  isACRE,
 }: StepProps) {
   const dispatch = useDispatch();
   const request = useMemo(() => {
@@ -30,8 +31,9 @@ export default function StepSign({
       message,
       appName: useApp,
       dependencies: appRequests,
+      isACRE,
     };
-  }, [account, dependencies, message, useApp]);
+  }, [account, dependencies, isACRE, message, useApp]);
   return (
     <DeviceAction
       action={action}
