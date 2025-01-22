@@ -13,7 +13,7 @@ Minimum system requirements can be found on [Ledger Support website](https://sup
   <p align="center">
     <img src="./docs/screenshot.png" width="550"/>
   </p>
- </a>
+</a>
 
 ## Architecture
 
