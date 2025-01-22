@@ -1,13 +1,17 @@
 import { Operation, OperationType } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
-import { getTransactions } from "../network";
+import { getAllTransactions } from "./getAllTransactions";
 
-export async function scanOperations(addresses: string[], accountId: string): Promise<Operation[]> {
+export async function scanOperations(
+  addresses: string[],
+  accountId: string,
+  afterValue: number = 1,
+): Promise<Operation[]> {
   const operations: Operation[] = [];
 
-  const fetchedTxs = await Promise.all(addresses.map(addr => getTransactions(addr))).then(results =>
-    results.flat(),
-  );
+  const fetchedTxs = await Promise.all(
+    addresses.map(addr => getAllTransactions(addr, afterValue)),
+  ).then(results => results.flat());
 
   for (const tx of fetchedTxs) {
     const myInputAmount: BigNumber = tx.inputs.reduce((acc: BigNumber, v): BigNumber => {
