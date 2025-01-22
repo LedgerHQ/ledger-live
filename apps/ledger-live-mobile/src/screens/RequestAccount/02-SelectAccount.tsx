@@ -142,6 +142,7 @@ function SelectAccount({ navigation, route }: Props) {
           screen: ScreenName.SelectNetwork,
           params: {
             currency: currency.id,
+            inline: true,
             context: "addAccounts",
             onSuccess: () =>
               navigation.navigate(ScreenName.RequestAccountsSelectAccount, route.params),
@@ -153,6 +154,7 @@ function SelectAccount({ navigation, route }: Props) {
           params: {
             currency: currency as CryptoCurrency,
             context: "addAccounts",
+            inline: true,
             onSuccess: () =>
               navigation.navigate(ScreenName.RequestAccountsSelectAccount, route.params),
           },
