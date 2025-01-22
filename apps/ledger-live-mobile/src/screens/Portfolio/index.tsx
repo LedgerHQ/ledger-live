@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
-import { ListRenderItemInfo, Platform } from "react-native";
+import { Animated, LayoutAnimation, ListRenderItemInfo, Platform, UIManager } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useFocusEffect } from "@react-navigation/native";
 import { Box, Flex } from "@ledgerhq/native-ui";
@@ -158,25 +158,34 @@ function PortfolioScreen({ navigation }: NavigationProps) {
       t,
     ],
   );
+  if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
+    UIManager.setLayoutAnimationEnabledExperimental(true);
+  }
+
+  const handleContentSizeChange = () =>
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
 
   return (
     <ReactNavigationPerformanceView screenName={ScreenName.Portfolio} interactive>
-      <CheckLanguageAvailability />
-      <CheckTermOfUseUpdate />
-      <RefreshableCollapsibleHeaderFlatList
-        data={data}
-        renderItem={({ item }: ListRenderItemInfo<unknown>) => {
-          return item as JSX.Element;
-        }}
-        keyExtractor={(_: unknown, index: number) => String(index)}
-        showsVerticalScrollIndicator={false}
-        testID={showAssets ? "PortfolioAccountsList" : "PortfolioEmptyList"}
-      />
-      <AddAccountDrawer
-        isOpened={isAddModalOpened}
-        onClose={closeAddModal}
-        doesNotHaveAccount={!showAssets}
-      />
+      <Animated.View style={{ flex: 1 }}>
+        <CheckLanguageAvailability />
+        <CheckTermOfUseUpdate />
+        <RefreshableCollapsibleHeaderFlatList
+          onContentSizeChange={handleContentSizeChange}
+          data={data}
+          renderItem={({ item }: ListRenderItemInfo<unknown>) => {
+            return item as JSX.Element;
+          }}
+          keyExtractor={(_: unknown, index: number) => String(index)}
+          showsVerticalScrollIndicator={false}
+          testID={showAssets ? "PortfolioAccountsList" : "PortfolioEmptyList"}
+        />
+        <AddAccountDrawer
+          isOpened={isAddModalOpened}
+          onClose={closeAddModal}
+          doesNotHaveAccount={!showAssets}
+        />
+      </Animated.View>
     </ReactNavigationPerformanceView>
   );
 }

@@ -19,6 +19,7 @@ export interface Props {
   sourceScreenName?: ScreenName;
   isSyncEnabled?: boolean;
   limitNumberOfAssets?: number;
+  onContentChange?: (width: number, height: number) => void;
 }
 
 export type NavigationProp = BaseNavigationComposite<
@@ -30,6 +31,7 @@ const useAssetsListViewModel = ({
   sourceScreenName,
   isSyncEnabled = false,
   limitNumberOfAssets,
+  onContentChange,
 }: Props) => {
   const hideEmptyTokenAccount = useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
   const navigation = useNavigation<NavigationProp>();
@@ -86,6 +88,7 @@ const useAssetsListViewModel = ({
     assetsToDisplay,
     isSyncEnabled,
     onItemPress,
+    onContentChange,
   };
 };
 
