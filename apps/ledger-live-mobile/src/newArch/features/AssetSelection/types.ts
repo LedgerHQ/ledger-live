@@ -6,15 +6,18 @@ import {
   NetworkBasedAddAccountNavigator,
 } from "../Accounts/screens/AddAccount/types";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { AnalyticMetadata } from "../../hooks/useAnalytics/types";
 export type CommonParams = {
   context?: AddAccountContextType;
   onSuccess?: () => void;
   currency?: string;
   inline?: boolean;
+  sourceScreenName?: string;
 };
 
 export type SelectNetworkRouteParams = CommonParams & {
   filterCurrencyIds?: string[];
+  analyticsMetadata?: AnalyticMetadata;
 };
 export type AssetSelectionNavigatorParamsList = {
   [ScreenName.AddAccountsSelectCrypto]: CommonParams & {

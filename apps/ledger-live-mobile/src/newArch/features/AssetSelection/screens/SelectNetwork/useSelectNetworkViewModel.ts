@@ -24,6 +24,7 @@ export default function useSelectNetworkViewModel({
   context,
   currency,
   inline,
+  analyticsMetadata,
 }: SelectNetworkRouteParams) {
   const navigation = useNavigation<AssetSelectionNavigationProps["navigation"]>();
 
@@ -113,10 +114,12 @@ export default function useSelectNetworkViewModel({
 
   const processNetworkSelection = useCallback(
     (selectedCurrency: CryptoCurrency | TokenCurrency) => {
-      track("network_clicked", {
-        network: selectedCurrency.name,
-        page: "Choose a network",
-      });
+      const clickMetadata = analyticsMetadata?.SelectNetwork?.onNetworkClick;
+      if (clickMetadata)
+        track(clickMetadata.eventName, {
+          network: selectedCurrency.name,
+          ...clickMetadata.payload,
+        });
 
       const cryptoToSend = provider?.currenciesByNetwork.find(curByNetwork =>
         curByNetwork.type === "TokenCurrency"
@@ -166,7 +169,14 @@ export default function useSelectNetworkViewModel({
         navigateToDevice(cryptoToSend, false);
       }
     },
-    [accounts, navigation, provider, context, navigateToDevice],
+    [
+      accounts,
+      navigation,
+      provider,
+      context,
+      navigateToDevice,
+      analyticsMetadata?.SelectNetwork?.onNetworkClick,
+    ],
   );
 
   const hideBanner = useCallback(() => {

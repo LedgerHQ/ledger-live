@@ -12,6 +12,7 @@ type CommonParams = {
   onSuccess?: () => void;
   onCloseNavigation?: () => void;
   currency: CryptoOrTokenCurrency;
+  sourceScreenName?: string;
 };
 export type NetworkBasedAddAccountNavigator = {
   [ScreenName.ScanDeviceAccounts]: CommonParams & {

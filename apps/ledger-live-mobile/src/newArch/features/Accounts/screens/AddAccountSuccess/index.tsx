@@ -107,7 +107,11 @@ export default function AddAccountsSuccess({ route }: Props) {
         />
       </Flex>
       <Flex mb={insets.bottom + 2} px={6} rowGap={6}>
-        <AddFundsButton accounts={accountsToAdd} currency={currency} />
+        <AddFundsButton
+          accounts={accountsToAdd}
+          currency={currency}
+          sourceScreenName={ScreenName.AddAccountsSuccess}
+        />
         <CloseWithConfirmation
           showButton
           buttonText={t("addAccounts.addAccountsSuccess.ctaClose")}

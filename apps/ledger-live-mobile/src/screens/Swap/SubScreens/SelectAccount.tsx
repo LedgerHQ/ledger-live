@@ -159,6 +159,7 @@ export function SelectAccount({ navigation, route: { params } }: SelectAccountPa
           },
           analyticsPropertyFlow: "swap",
           context: AddAccountContexts.AddAccounts,
+          sourceScreenName: ScreenName.SwapSelectAccount,
         },
       });
     } else {

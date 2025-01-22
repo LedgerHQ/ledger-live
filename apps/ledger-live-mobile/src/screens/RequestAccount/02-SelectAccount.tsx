@@ -145,6 +145,7 @@ function SelectAccount({ navigation, route }: Props) {
             currency: currency.id,
             inline: true,
             context: AddAccountContexts.AddAccounts,
+            sourceScreenName: ScreenName.RequestAccountsSelectAccount,
             onSuccess: () =>
               navigation.navigate(ScreenName.RequestAccountsSelectAccount, route.params),
           },

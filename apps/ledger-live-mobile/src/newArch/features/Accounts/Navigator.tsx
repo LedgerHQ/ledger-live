@@ -3,7 +3,7 @@ import { Platform } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTheme } from "styled-components/native";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { ScreenName } from "~/const";
+import { NavigatorName, ScreenName } from "~/const";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import { track } from "~/analytics";
 import type { NetworkBasedAddAccountNavigator } from "LLM/features/Accounts/screens/AddAccount/types";
@@ -17,25 +17,51 @@ import SelectAccounts from "./screens/SelectAccounts";
 import AddAccountsWarning from "./screens/AddAccountWarning";
 import NoAssociatedAccountsView from "./screens/NoAssociatedAccountsView";
 import CloseWithConfirmation from "LLM/components/CloseWithConfirmation";
-import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
-import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import {
+  BaseComposite,
+  StackNavigatorNavigation,
+  StackNavigatorProps,
+} from "~/components/RootNavigator/types/helpers";
 import { NavigationHeaderCloseButtonAdvanced } from "~/components/NavigationHeaderCloseButton";
 
+import useAnalytics from "LLM/hooks/useAnalytics";
+import { AddAccountsNavigatorParamList } from "~/components/RootNavigator/types/AddAccountsNavigator";
+type NavigationProps = BaseComposite<
+  StackNavigatorProps<AddAccountsNavigatorParamList, NavigatorName.AddAccounts>
+>;
 export default function Navigator() {
   const { colors } = useTheme();
-  const route = useRoute();
+  const route = useRoute<NavigationProps["route"]>();
   const accountListUIFF = useFeature("llmAccountListUI");
-  const navigation = useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
+  const navigation = useNavigation<StackNavigatorNavigation<AddAccountsNavigatorParamList>>();
+
+  const { analyticsMetadata } = useAnalytics("addAccounts");
+
+  const exitProcess = useCallback(() => {
+    const rootParent = navigation.getParent();
+    // this is the only way to go back to the root navigator
+    navigation.replace(rootParent?.getState().routeNames[0] as keyof AddAccountsNavigatorParamList);
+  }, [navigation]);
 
   const onClose = useCallback(() => {
     track("button_clicked", {
       button: "Close",
       screen: route.name,
     });
-    const rootParent = navigation.getParent();
-    // this is the only way to go back to the root navigator
-    navigation.replace(rootParent?.getState().routeNames[0] as keyof BaseNavigatorStackParamList);
-  }, [route, navigation]);
+    exitProcess();
+  }, [route, exitProcess]);
+
+  const onExitScanDeviceAccounts = useCallback(() => {
+    const clickMetadata = analyticsMetadata[ScreenName.ScanDeviceAccounts]?.onClose;
+    track(clickMetadata?.eventName, clickMetadata?.payload);
+    exitProcess();
+  }, [exitProcess, analyticsMetadata]);
+
+  const onBackScanDeviceAccounts = useCallback(() => {
+    const clickMetadata = analyticsMetadata[ScreenName.ScanDeviceAccounts]?.onBack;
+    track(clickMetadata?.eventName, clickMetadata?.payload);
+    navigation.goBack();
+  }, [navigation, analyticsMetadata]);
 
   const stackNavigationConfig = useMemo(
     () => ({
@@ -67,6 +93,8 @@ export default function Navigator() {
         options={{
           headerTitle: "",
           headerTransparent: true,
+          headerRight: () => <CloseWithConfirmation onClose={onExitScanDeviceAccounts} />,
+          headerLeft: () => <NavigationHeaderBackButton onPress={onBackScanDeviceAccounts} />,
         }}
       />
       {/* Select Accounts */}
