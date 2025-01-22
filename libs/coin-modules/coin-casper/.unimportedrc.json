@@ -39,8 +39,11 @@
   "ignoreUnresolved": [
     "follow-redirects",
     "form-data",
-    "proxy-from-env"
+    "proxy-from-env",
+    "jest-matcher-utils",
+    "jest-get-type",
+    "jest-message-util"
   ],
   "ignoreUnused": [],
-  "ignoreUnimported": []
+  "ignoreUnimported": ["src/common-logic/utils.unit.test.ts"]
 }
