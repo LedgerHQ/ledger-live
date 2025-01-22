@@ -1,4 +1,11 @@
-import { Account, AccountLike, AnyMessage, getCurrencyForAccount, Operation, SignedOperation } from "@ledgerhq/types-live";
+import {
+  Account,
+  AccountLike,
+  AnyMessage,
+  getCurrencyForAccount,
+  Operation,
+  SignedOperation,
+} from "@ledgerhq/types-live";
 import { accountToPlatformAccount, getPlatformTransactionSignFlowInfos } from "./converters";
 import { RawPlatformTransaction, RawPlatformSignedTransaction } from "./rawTypes";
 import {
