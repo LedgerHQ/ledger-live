@@ -1,5 +1,18 @@
 # live-mobile
 
+## 3.62.0-nightly.0
+
+### Minor Changes
+
+- [#8974](https://github.com/LedgerHQ/ledger-live/pull/8974) [`3c2f593`](https://github.com/LedgerHQ/ledger-live/commit/3c2f5932c8ef166404e067d02479ce01cf1e13ac) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Token accounts showing wrong fiat value
+
+- [#8975](https://github.com/LedgerHQ/ledger-live/pull/8975) [`b955f24`](https://github.com/LedgerHQ/ledger-live/commit/b955f2499d5e48aa4f791eb3ed317da839a7b78f) Thanks [@themooneer](https://github.com/themooneer)! - Plug the receive/buy/swap flow to add account v2 instead of v1 screens
+
+### Patch Changes
+
+- Updated dependencies [[`f299d90`](https://github.com/LedgerHQ/ledger-live/commit/f299d90944395800df1dedabdaabfb7ec7691cb8)]:
+  - @ledgerhq/live-common@34.19.0-nightly.0
+
 ## 3.61.0
 
 ### Minor Changes

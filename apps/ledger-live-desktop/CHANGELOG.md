@@ -1,5 +1,16 @@
 # ledger-live-desktop
 
+## 2.97.0-nightly.0
+
+### Minor Changes
+
+- [#8953](https://github.com/LedgerHQ/ledger-live/pull/8953) [`8e68e45`](https://github.com/LedgerHQ/ledger-live/commit/8e68e459a50b5a3a52bec099ee799ed0b82c5ea2) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Fix windows scroll on change device language
+
+### Patch Changes
+
+- Updated dependencies [[`f299d90`](https://github.com/LedgerHQ/ledger-live/commit/f299d90944395800df1dedabdaabfb7ec7691cb8)]:
+  - @ledgerhq/live-common@34.19.0-nightly.0
+
 ## 2.96.0
 
 ### Minor Changes

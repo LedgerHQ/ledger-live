@@ -1,5 +1,11 @@
 ## 34.5.0-next.4
 
+## 34.19.0-nightly.0
+
+### Minor Changes
+
+- [#8961](https://github.com/LedgerHQ/ledger-live/pull/8961) [`f299d90`](https://github.com/LedgerHQ/ledger-live/commit/f299d90944395800df1dedabdaabfb7ec7691cb8) Thanks [@Justkant](https://github.com/Justkant)! - fix(wallet-api): add missing cosmos walletApiAdapter
+
 ## 34.18.0
 
 ### Minor Changes
