@@ -63,28 +63,24 @@ jobs:
   test-libraries:
     name: "Test Libraries"
     needs: determine-affected
-    if: ${{contains(needs.determine-affected.outputs.paths, 'libs') && !github.event.pull_request.head.repo.fork}}
     uses: LedgerHQ/ledger-live/.github/workflows/test-libs-reusable.yml@develop
     secrets: inherit
 
   test-design-system:
     name: "Test Design System"
     needs: determine-affected
-    if: ${{contains(needs.determine-affected.outputs.paths, 'libs/ui') && !github.event.pull_request.head.repo.fork}}
     uses: LedgerHQ/ledger-live/.github/workflows/test-design-system-reusable.yml@develop
     secrets: inherit
 
   build-web-tools:
     name: "Build Web Tools"
     needs: determine-affected
-    if: ${{contains(needs.determine-affected.outputs.paths, 'apps/web-tools') && !github.event.pull_request.head.repo.fork}}
     uses: LedgerHQ/ledger-live/.github/workflows/build-web-tools-reusable.yml@develop
     secrets: inherit
 
   test-cli:
     name: "Test CLI"
     needs: determine-affected
-    if: ${{contains(needs.determine-affected.outputs.paths, 'apps/cli') && !github.event.pull_request.head.repo.fork}}
     uses: LedgerHQ/ledger-live/.github/workflows/test-cli-reusable.yml@develop
     secrets: inherit
 
