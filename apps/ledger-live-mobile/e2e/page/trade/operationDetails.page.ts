@@ -7,6 +7,15 @@ export default class OperationDetailsPage {
   account = () => getElementById("operationDetails-account");
   amount = () => getElementById("operationDetails-amount");
   recipientId = "operationDetails-recipient0";
+  delegatedAmountId = "operationDetails-delegatedAmount";
+  providerId = "operationDetails-delegatedTo";
+  senderId = "operationDetails-sender0";
+
+  "operationsType" = {
+    OUT: "Sent",
+    DELEGATE: "Delegated",
+    STAKE: "Staked",
+  };
 
   async isOpened() {
     await expect(this.title()).toBeVisible();
@@ -30,5 +39,28 @@ export default class OperationDetailsPage {
   async checkRecipient(recipient: string) {
     await scrollToId(this.recipientId);
     await expect(getElementById(this.recipientId)).toHaveText(recipient);
+  }
+
+  @Step("Check delegated provider")
+  async checkProvider(provider: string) {
+    await scrollToId(this.providerId);
+    await expect(getElementById(this.providerId)).toHaveText(provider);
+  }
+
+  @Step("Check delegated amount")
+  async checkDelegatedAmount(amount: string) {
+    await scrollToId(this.delegatedAmountId);
+    await expect(getElementById(this.delegatedAmountId)).toHaveText(amount);
+  }
+
+  @Step("Check sender")
+  async checkSender(sender: string) {
+    await scrollToId(this.senderId);
+    await expect(getElementById(this.senderId)).toHaveText(sender);
+  }
+
+  @Step("Check transaction type")
+  async checkTransactionType(type: keyof typeof this.operationsType) {
+    await expect(getElementById(this.titleId)).toHaveText(this.operationsType[type]);
   }
 }
