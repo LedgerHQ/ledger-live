@@ -201,6 +201,8 @@
       "blake2"
     ],
     "overrides": {
+      "@electron/rebuild": "3.7.1",
+      "tiny-secp256k1": "1.1.7",
       "stellar-base>sodium-native": "^3.2.1",
       "remove-flow-types-loader>flow-remove-types": "^2",
       "remove-flow-types-loader>loader-utils": "*",
@@ -211,6 +213,7 @@
       "@ethersproject/providers>ws": "7.5.10"
     },
     "patchedDependencies": {
+      "tiny-secp256k1@1.1.7": "patches/tiny-secp256k1@1.1.7.patch",
       "react-native-fast-crypto@2.2.0": "patches/react-native-fast-crypto@2.2.0.patch",
       "rn-fetch-blob@0.12.0": "patches/rn-fetch-blob@0.12.0.patch",
       "react-native-image-crop-tools@1.6.4": "patches/react-native-image-crop-tools@1.6.4.patch",

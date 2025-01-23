@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { Button, Flex, Icons, rgba, Text } from "@ledgerhq/native-ui";
+import { Flex, Icons, rgba, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { Animated, StyleSheet, TouchableOpacity, View } from "react-native";
 import { useTheme } from "styled-components/native";
@@ -16,6 +16,7 @@ import BigNumber from "bignumber.js";
 import { useNavigation } from "@react-navigation/core";
 import useAnimatedStyle from "../ScanDeviceAccounts/components/ScanDeviceAccountsFooter/useAnimatedStyle";
 import AddFundsButton from "../../components/AddFundsButton";
+import CloseWithConfirmation from "LLM/components/CloseWithConfirmation";
 type Props = BaseComposite<
   StackNavigatorProps<NetworkBasedAddAccountNavigator, ScreenName.AddAccountsWarning>
 >;
@@ -39,6 +40,10 @@ export default function AddAccountsWarning({ route }: Props) {
   const { emptyAccount, emptyAccountName, currency } = route.params || {};
 
   const statusColor = colors.warning.c70;
+
+  const handleOnCloseWarningScreen = useCallback(() => {
+    navigation.goBack();
+  }, [navigation]);
 
   return (
     <SafeAreaView edges={["left", "right"]} isFlex>
@@ -85,9 +90,11 @@ export default function AddAccountsWarning({ route }: Props) {
       </Flex>
       <Flex mb={insets.bottom + 2} px={6} rowGap={6}>
         <AddFundsButton accounts={[emptyAccount as Account]} currency={currency} />
-        <Button size="large" testID="button-create-account">
-          {t("addAccounts.addAccountsSuccess.ctaClose")}
-        </Button>
+        <CloseWithConfirmation
+          showButton
+          buttonText={t("addAccounts.addAccountsSuccess.ctaClose")}
+          onClose={handleOnCloseWarningScreen}
+        />
       </Flex>
     </SafeAreaView>
   );

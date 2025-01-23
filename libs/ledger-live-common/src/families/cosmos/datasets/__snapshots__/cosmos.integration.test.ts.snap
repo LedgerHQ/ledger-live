@@ -3,7 +3,7 @@
 exports[`cosmos currency bridge scanAccounts cosmos seed 1 1`] = `
 [
   {
-    "balance": "1612686",
+    "balance": "5739320",
     "currencyId": "cosmos",
     "derivationMode": "",
     "freshAddress": "cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl",
@@ -12,7 +12,7 @@ exports[`cosmos currency bridge scanAccounts cosmos seed 1 1`] = `
     "index": 0,
     "pendingOperations": [],
     "seedIdentifier": "0388459b2653519948b12492f1a0b464720110c147a8155d23d423a5cc3c21d89a",
-    "spendableBalance": "315704",
+    "spendableBalance": "4442338",
     "swapHistory": [],
     "syncHash": undefined,
     "used": true,
@@ -257,6 +257,25 @@ exports[`cosmos currency bridge scanAccounts cosmos seed 1 2`] = `
       "transactionSequenceNumber": 32,
       "type": "IN",
       "value": "1000",
+    },
+    {
+      "accountId": "js:2:cosmos:cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl:",
+      "blockHash": null,
+      "blockHeight": 24046706,
+      "extra": {},
+      "fee": "1729",
+      "hasFailed": false,
+      "hash": "146D033842F4637F5FA2F13AC4D7888EEA8935F1D5822B955562ED685E7E8A78",
+      "id": "js:2:cosmos:cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl:-146D033842F4637F5FA2F13AC4D7888EEA8935F1D5822B955562ED685E7E8A78-IN",
+      "recipients": [
+        "cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl",
+      ],
+      "senders": [
+        "cosmos125me68y8fx88wyqwa4mp4q2cmglrnetsa2kr68",
+      ],
+      "transactionSequenceNumber": 22364,
+      "type": "IN",
+      "value": "4639888",
     },
     {
       "accountId": "js:2:cosmos:cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl:",
@@ -1139,6 +1158,29 @@ exports[`cosmos currency bridge scanAccounts cosmos seed 1 2`] = `
       "transactionSequenceNumber": 87,
       "type": "DELEGATE",
       "value": "10650",
+    },
+    {
+      "accountId": "js:2:cosmos:cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl:",
+      "blockHash": null,
+      "blockHeight": 23976580,
+      "extra": {
+        "memo": "LedgerLiveBot",
+        "validators": [
+          {
+            "address": "cosmosvaloper1clpqr4nrk4khgkxj78fcwwh6dl3uw4epsluffn",
+            "amount": "5210",
+          },
+        ],
+      },
+      "fee": "17390",
+      "hasFailed": false,
+      "hash": "7706B2098FBB961FED169FE177276EFE1C85C7FCA216B61A9F9FD54DEDD6B81A",
+      "id": "js:2:cosmos:cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl:-7706B2098FBB961FED169FE177276EFE1C85C7FCA216B61A9F9FD54DEDD6B81A-REWARD",
+      "recipients": [],
+      "senders": [],
+      "transactionSequenceNumber": 157,
+      "type": "REWARD",
+      "value": "5210",
     },
     {
       "accountId": "js:2:cosmos:cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl:",
@@ -2180,6 +2222,25 @@ exports[`cosmos currency bridge scanAccounts cosmos seed 1 2`] = `
       "transactionSequenceNumber": 67,
       "type": "DELEGATE",
       "value": "11254",
+    },
+    {
+      "accountId": "js:2:cosmos:cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl:",
+      "blockHash": null,
+      "blockHeight": 24063617,
+      "extra": {},
+      "fee": "1074",
+      "hasFailed": false,
+      "hash": "CEF4B772F7E12B048A8903146DDC06FB769813B0A6AB475EC455CE6BBAF9BAEB",
+      "id": "js:2:cosmos:cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl:-CEF4B772F7E12B048A8903146DDC06FB769813B0A6AB475EC455CE6BBAF9BAEB-OUT",
+      "recipients": [
+        "osmo10a3k4hvk37cc4hnxctw4p95fhscd2z6h2rmx0aukc6rm8u9qqx9smfsh7u",
+      ],
+      "senders": [
+        "cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl",
+      ],
+      "transactionSequenceNumber": 158,
+      "type": "OUT",
+      "value": "501074",
     },
     {
       "accountId": "js:2:cosmos:cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl:",
