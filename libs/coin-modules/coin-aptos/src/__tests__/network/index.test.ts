@@ -10,8 +10,8 @@ import {
 } from "@aptos-labs/ts-sdk";
 
 jest.mock("@aptos-labs/ts-sdk", () => {
-  const originalAptosLabs = jest.requireActual("@aptos-labs/ts-sdk");
-  const partialMockedAptosLabs = Object.keys(originalAptosLabs).reduce(
+  const originalModule = jest.requireActual("@aptos-labs/ts-sdk");
+  const partialMockedModule = Object.keys(originalModule).reduce(
     (pre: { [key: string]: jest.Mock }, methodName) => {
       pre[methodName] = jest.fn();
       return pre;
@@ -19,10 +19,10 @@ jest.mock("@aptos-labs/ts-sdk", () => {
     {} as { [key: string]: jest.Mock },
   );
   return {
-    ...partialMockedAptosLabs,
+    ...partialMockedModule,
     // mock all except these
-    AccountAddress: originalAptosLabs.AccountAddress,
-    Hex: originalAptosLabs.Hex,
+    AccountAddress: originalModule.AccountAddress,
+    Hex: originalModule.Hex,
   };
 });
 let mockedGenerateSigningMessageForTransaction: jest.Mocked<any>;
