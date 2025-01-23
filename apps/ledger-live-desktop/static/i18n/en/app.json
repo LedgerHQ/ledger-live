@@ -120,6 +120,7 @@
     "addressCopiedSuspicious": "Mismatch between the copied address and the one in the clipboard.",
     "experimentalFeature": "Experimental",
     "featureFlags": "Feature flag",
+    "ldmkEnabled": "LDMK transport",
     "information": "Information",
     "search": "Search...",
     "searchWithoutEllipsis": "Search",
@@ -6903,8 +6904,5 @@
       "address": "Address",
       "transactionId": "Transaction ID"
     }
-  },
-  "ldmkFeatureFlagWarning": {
-    "title": "With LDMK transport"
   }
 }

@@ -6836,8 +6836,5 @@
       "address" : "Endereço",
       "transactionId" : "ID da transação"
     }
-  },
-  "ldmkFeatureFlagWarning" : {
-    "title" : "Com transporte LDMK"
   }
 }
