@@ -127,6 +127,10 @@ export type ConnectAppEvent =
     }
   | LockedDeviceEvent;
 
+const isDMKError = (e: unknown) => {
+  return e && typeof e === "object" && "_tag" in e && e._tag === "WebHidSendReportError";
+};
+
 export const openAppFromDashboard = (
   transport: Transport,
   appName: string,
@@ -435,11 +439,12 @@ const cmd = ({ deviceId, request }: Input): Observable<ConnectAppEvent> => {
                 });
               }
 
-              if (e && typeof e === "object" && "_tag" in e && e._tag === "WebHidSendReportError") {
+              if (isDMKError(e)) {
                 return timer(500).pipe(
                   mergeMap(() =>
                     innerSub({
                       appName,
+                      dependencies,
                       allowPartialDependencies,
                     }),
                   ),
