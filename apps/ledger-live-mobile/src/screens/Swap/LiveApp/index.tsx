@@ -42,7 +42,7 @@ export function SwapLiveApp() {
   const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
   const isWebviewError = webviewState?.url.includes("/unknown-error");
 
-  const manifest = useSwapLiveAppManifest();
+  const manifest: LiveAppManifest | undefined = !localManifest ? remoteManifest : localManifest;
 
   if (!manifest || isWebviewError) {
     return (
