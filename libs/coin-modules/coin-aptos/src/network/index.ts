@@ -1,4 +1,5 @@
 import {
+  AccountAddress,
   AccountAuthenticatorEd25519,
   Ed25519PublicKey,
   Ed25519Signature,
@@ -25,7 +26,7 @@ export async function signTransaction(
     throw Error("Account must have a public signing key");
   }
 
-  const publicKey = Buffer.from(account.xpub);
+  const publicKey = Buffer.from(AccountAddress.from(account.xpub).toUint8Array());
   const hash = sha3Hash.create();
   hash.update(publicKey.toString("hex"));
   hash.update("\x00");
@@ -39,7 +40,7 @@ export async function signTransaction(
     async signer => await signer.signTransaction(derivationPath, Buffer.from(signingMessage)),
   );
 
-  const sigHexStr = await new Hex(new Uint8Array(response.signature));
+  const sigHexStr = Hex.fromHexString(response.signature.toString("hex"));
   const signature = new Ed25519Signature(sigHexStr.toUint8Array());
   const authenticator = new AccountAuthenticatorEd25519(
     new Ed25519PublicKey(publicKey.toString("hex")),

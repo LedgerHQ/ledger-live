@@ -9,7 +9,22 @@ import {
   generateSignedTransaction,
 } from "@aptos-labs/ts-sdk";
 
-jest.mock("@aptos-labs/ts-sdk");
+jest.mock("@aptos-labs/ts-sdk", () => {
+  const originalAptosLabs = jest.requireActual("@aptos-labs/ts-sdk");
+  const partialMockedAptosLabs = Object.keys(originalAptosLabs).reduce(
+    (pre: { [key: string]: jest.Mock }, methodName) => {
+      pre[methodName] = jest.fn();
+      return pre;
+    },
+    {} as { [key: string]: jest.Mock },
+  );
+  return {
+    ...partialMockedAptosLabs,
+    // mock all except these
+    AccountAddress: originalAptosLabs.AccountAddress,
+    Hex: originalAptosLabs.Hex,
+  };
+});
 let mockedGenerateSigningMessageForTransaction: jest.Mocked<any>;
 let mockedGenerateSignedTransaction: jest.Mocked<any>;
 
@@ -17,6 +32,10 @@ describe("signTransaction", () => {
   beforeAll(() => {
     mockedGenerateSigningMessageForTransaction = jest.mocked(generateSigningMessageForTransaction);
     mockedGenerateSignedTransaction = jest.mocked(generateSignedTransaction);
+  });
+
+  afterEach(() => {
+    jest.resetAllMocks();
   });
 
   it("should throw an error", async () => {
@@ -27,11 +46,11 @@ describe("signTransaction", () => {
       "generateSignedTransaction",
     );
 
-    const signerContext = jest.fn().mockImplementation(() => ({ signature: "signature" }));
+    const signerContext = jest.fn().mockImplementation(() => ({ signature: "0x7aa193705193f4" }));
     const account = createFixtureAccount();
     const deviceId = "nanoX";
     const rawTxn = new RawTransaction(
-      new AccountAddress(Uint8Array.from(Buffer.from("address"))),
+      new AccountAddress(Uint8Array.from(Buffer.from("thisaddressmustbe32byteslooooong"))),
       BigInt(1),
       "" as unknown as Serializable,
       BigInt(100),
@@ -55,12 +74,12 @@ describe("signTransaction", () => {
       "generateSignedTransaction",
     );
 
-    const signerContext = jest.fn().mockImplementation(() => ({ signature: "signature" }));
+    const signerContext = jest.fn().mockImplementation(() => ({ signature: "0x7aa193705193f4" }));
     const account = createFixtureAccount();
     account.xpub = "0xb69a68cc64f7aa193705193f4dd598320a0a74baf7e4b50c9980c5bd60a82390";
     const deviceId = "nanoX";
     const rawTxn = new RawTransaction(
-      new AccountAddress(Uint8Array.from(Buffer.from("address"))),
+      AccountAddress.fromString(account.xpub),
       BigInt(1),
       "" as unknown as Serializable,
       BigInt(100),
