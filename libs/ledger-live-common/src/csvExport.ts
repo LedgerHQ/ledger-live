@@ -166,14 +166,29 @@ const accountsRows = (
   }, []);
 };
 
+const mapRowValue = (row: string[]): string => {
+  const rowWithoutNewlines = row.map(value => {
+    let formatedValue = value;
+    if (value) {
+      formatedValue = value.replace(/[,\n\r]/g, "");
+    }
+    return formatedValue;
+  });
+  return rowWithoutNewlines.join(",");
+};
+
 export const accountsOpToCSV = (
   accounts: Account[],
   counterValueCurrency?: Currency,
   countervalueState?: CounterValuesState, // cvs state required for countervalues export
   walletState?: WalletState, // wallet state required for account name
-): string =>
-  fields.map(field => field.title).join(",") +
-  newLine +
-  accountsRows(accounts, counterValueCurrency, countervalueState, walletState)
-    .map(row => row.map(value => value.replace(/[,\n\r]/g, "")).join(","))
-    .join(newLine);
+): string => {
+  const header = fields.map(field => field.title).join(",") + newLine; // + res
+  const accountsRowsRes = accountsRows(
+    accounts,
+    counterValueCurrency,
+    countervalueState,
+    walletState,
+  );
+  return header + accountsRowsRes.map(mapRowValue).join(newLine);
+};
