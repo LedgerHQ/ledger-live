@@ -37,9 +37,13 @@ export default function AddAccountsWarning({ route }: Props) {
     },
     [navigation],
   );
-  const { emptyAccount, emptyAccountName, currency, onCloseNavigation } = route.params || {};
+  const { emptyAccount, emptyAccountName, currency } = route.params || {};
 
   const statusColor = colors.warning.c70;
+
+  const handleOnCloseWarningScreen = useCallback(() => {
+    navigation.goBack();
+  }, [navigation]);
 
   return (
     <SafeAreaView edges={["left", "right"]} isFlex>
@@ -89,7 +93,7 @@ export default function AddAccountsWarning({ route }: Props) {
         <CloseWithConfirmation
           showButton
           buttonText={t("addAccounts.addAccountsSuccess.ctaClose")}
-          onClose={onCloseNavigation}
+          onClose={handleOnCloseWarningScreen}
         />
       </Flex>
     </SafeAreaView>

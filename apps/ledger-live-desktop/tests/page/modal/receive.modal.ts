@@ -9,7 +9,8 @@ export class ReceiveModal extends Modal {
     "text=Verify that the shared address exactly matches the one on your device",
   );
   private approveLabel = this.page.locator("text=Address shared securely");
-  private receiveAddressValue = (address: string) => this.page.locator(`text=${address}`);
+  private receiveAddressValue = (address: string) =>
+    this.page.getByTestId("modal-content").locator(`text=${address}`);
   private addressDisplayedValue = this.page.locator("#address-field");
   private selectAccount = this.page.getByText("Choose a crypto asset");
   private warningMessage = this.page.locator('div[type="warning"]');

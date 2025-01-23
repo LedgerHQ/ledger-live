@@ -20,6 +20,7 @@ import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import { walletSelector } from "~/reducers/wallet";
 import { accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 type SubAccountEnhanced = SubAccount & {
   parentAccount: Account;
@@ -128,11 +129,13 @@ function ReceiveSelectAccount({
     });
 
     if (llmNetworkBasedAddAccountFlow?.enabled) {
-      navigationAccount.navigate(NavigatorName.AssetSelection, {
-        ...(currency && currency.type === "TokenCurrency"
-          ? { token: currency.id, currency: currency.parentCurrency.id }
-          : { currency: currency.id }),
-        context: "addAccounts",
+      navigationAccount.navigate(NavigatorName.DeviceSelection, {
+        screen: ScreenName.SelectDevice,
+        params: {
+          currency: currency as CryptoCurrency,
+          context: "addAccounts",
+          inline: true,
+        },
       });
     } else {
       if (currency && currency.type === "TokenCurrency") {

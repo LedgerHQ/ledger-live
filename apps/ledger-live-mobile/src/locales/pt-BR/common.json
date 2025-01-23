@@ -971,6 +971,9 @@
       "title" : "Provedor Inválido",
       "description" : "Você deve mudar a configuração em “Provedor da Minha Ledger”. Para desativá-la, abra as “Configurações” do Ledger Live, selecione “Recursos experimentais” e, em seguida, selecione um provedor diferente."
     },
+    "GasLessThanEstimate" : {
+      "title" : "Isto pode ser baixo demais Por favor, aumente"
+    },
     "SequenceNumberError" : {
       "title" : "Erro do número de sequência",
       "description" : "Feche a janela e tente novamente mais tarde"
@@ -1291,7 +1294,7 @@
       "desc" : "Nossos produtos são as únicas carteiras hardware certificadas por agências nacionais de segurança cibernética."
     },
     "title" : "Tenha uma Ledger",
-    "desc" : "Para sua segurança, o Ledger Live só funciona com um dispositivo. Você precisa de um dispositivo para poder continuar.",
+    "desc" : "Para sua segurança,\no Ledger Live só funciona com uma Ledger.",
     "cta" : "Comprar sua Ledger agora",
     "footer" : "Já tenho uma Ledger, configurar agora",
     "bannerTitle" : "Segurança de alto nível para suas criptomoedas e NFTs",
@@ -3768,6 +3771,7 @@
       "to" : "Para",
       "infoTotalTitle" : "Débito Total",
       "infoTotalDesc" : "Inclui a quantia da transação e as taxas da rede selecionadas",
+      "gasFee" : "Taxa de gás",
       "gasLimit" : "Limite de gás",
       "gasPrice" : "Preço do gás",
       "maxFee" : "Taxa máxima",
@@ -3991,6 +3995,8 @@
       "desc" : "Você tem certeza de que quer cancelar a adição de contas?"
     },
     "imported" : "Ativos adicionados com sucesso",
+    "added" : "Conta adicionada ao seu portfólio",
+    "added_plural" : "{{count}} contas adicionadas ao seu portfólio",
     "sections" : {
       "importable" : {
         "title" : "Adicionar conta existente"
@@ -4047,6 +4053,32 @@
         "title" : "Taproot",
         "desc" : "Última atualização da rede {{currency}}. Proporcionará melhor privacidade e tarifas mais baratas, uma vez difundidas. Suporte ainda limitado das carteiras e exchanges."
       }
+    },
+    "scanDeviceAccounts" : {
+      "title" : "Selecione as contas que você deseja adicionar",
+      "ctaStopScan" : "Interromper varredura",
+      "confirm" : "Confirmar",
+      "scanningTitle" : "Procurando por contas existentes na blockchain...",
+      "sections" : {
+        "importable" : {
+          "title" : "Encontramos {{count}} conta",
+          "title_plural" : "Encontramos {{count}} contas"
+        },
+        "creatable" : {
+          "title" : "Nova conta"
+        },
+        "imported" : {
+          "title" : "Conta já no portfólio ({{length}})",
+          "title_plural" : "Contas já no Portfólio ({{length}})"
+        },
+        "migrate" : {
+          "title" : "Contas a atualizar"
+        }
+      }
+    },
+    "addAccountsSuccess" : {
+      "ctaAddFunds" : "Adicionar fundos à minha conta",
+      "ctaClose" : "Fechar"
     }
   },
   "DeviceAction" : {
@@ -7140,7 +7172,9 @@
       "title" : "Selecionar ativo"
     },
     "selectNetwork" : {
-      "title" : "Selecione a rede blockchain à qual o ativo pertence"
+      "title" : "Selecione a rede blockchain à qual o ativo pertence",
+      "detectedAccounts" : "{{count}} conta (detectada)",
+      "detectedAccounts_plural" : "{{count}} contas (detectadas)"
     }
   }
 }

@@ -135,6 +135,10 @@ export const LiveAppDrawer = () => {
     }
   }, [dismissDisclaimerChecked, dispatch, payload]);
 
+  const onCloseExchangeComplete = useCallback(() => {
+    dispatch(closePlatformAppDrawer());
+  }, [dispatch]);
+
   const drawerContent = useMemo(() => {
     if (!payload) {
       return null;
@@ -238,17 +242,20 @@ export const LiveAppDrawer = () => {
       }
       case "EXCHANGE_COMPLETE":
         return data && isCompleteExchangeData(data) ? (
-          <CompleteExchange
-            data={data}
-            onClose={() => {
-              dispatch(closePlatformAppDrawer());
-            }}
-          />
+          <CompleteExchange data={data} onClose={onCloseExchangeComplete} />
         ) : null;
       default:
         return null;
     }
-  }, [payload, t, dismissDisclaimerChecked, onContinue, device?.modelId, dispatch]);
+  }, [
+    payload,
+    t,
+    dismissDisclaimerChecked,
+    onContinue,
+    onCloseExchangeComplete,
+    device?.modelId,
+    dispatch,
+  ]);
 
   return (
     <SideDrawer

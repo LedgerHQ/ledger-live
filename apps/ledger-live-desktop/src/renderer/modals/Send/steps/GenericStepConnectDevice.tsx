@@ -58,10 +58,11 @@ export default function StepConnectDevice({
 }) {
   const mevProtected = useSelector(mevProtectionSelector);
   const dispatch = useDispatch();
+  const broadcastConfig = useMemo(() => ({ mevProtected }), [mevProtected]);
   const broadcast = useBroadcast({
     account,
     parentAccount,
-    broadcastConfig: { mevProtected },
+    broadcastConfig,
   });
   const tokenCurrency = (account && account.type === "TokenAccount" && account.token) || undefined;
   const request = useMemo(

@@ -20,7 +20,7 @@ const AnimatedView = Animatable.View;
 export default function SelectNetwork({
   route,
 }: StackNavigatorProps<AssetSelectionNavigatorParamsList, ScreenName.SelectNetwork>) {
-  const { filterCurrencyIds, context, currency } = route.params;
+  const { filterCurrencyIds, context, currency, inline } = route.params;
   const { t } = useTranslation();
   const {
     hideBanner,
@@ -34,7 +34,7 @@ export default function SelectNetwork({
     subTitleTestId,
     listTestId,
     providersLoadingStatus,
-  } = useSelectNetworkViewModel({ filterCurrencyIds, context, currency });
+  } = useSelectNetworkViewModel({ filterCurrencyIds, context, currency, inline });
 
   const renderItem = useCallback(
     ({ item }: { item: CryptoWithAccounts }) => (

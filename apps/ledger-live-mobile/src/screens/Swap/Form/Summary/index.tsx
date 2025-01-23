@@ -109,6 +109,7 @@ export function Summary({ provider, swapTx: { swap, status, transaction } }: Pro
             ...params,
             currency: to.currency,
             context: "addAccounts",
+            inline: true,
           },
         });
       } else {

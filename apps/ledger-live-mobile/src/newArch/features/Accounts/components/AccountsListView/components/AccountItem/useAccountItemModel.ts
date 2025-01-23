@@ -1,5 +1,6 @@
 import { getTagDerivationMode } from "@ledgerhq/coin-framework/lib/derivation";
 import {
+  getAccountCurrency,
   getParentAccount,
   isTokenAccount as isTokenAccountChecker,
 } from "@ledgerhq/live-common/account/index";
@@ -21,7 +22,7 @@ export interface AccountItemProps {
 const useAccountItemModel = ({ account, balance, showUnit, hideBalanceInfo }: AccountItemProps) => {
   const allAccount = useSelector(accountsSelector);
   const isTokenAccount = isTokenAccountChecker(account);
-  const currency = isTokenAccount ? account.token.parentCurrency : account.currency;
+  const currency = getAccountCurrency(account);
   const accountName = useMaybeAccountName(account);
   const unit = useMaybeAccountUnit(account);
 

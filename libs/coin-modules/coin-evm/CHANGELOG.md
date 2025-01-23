@@ -1,30 +1,28 @@
 # @ledgerhq/coin-evm
 
-## 2.9.0-nightly.2
+## 2.8.1
 
 ### Patch Changes
 
-- Updated dependencies []:
-  - @ledgerhq/coin-framework@0.22.0-nightly.1
-  - @ledgerhq/domain-service@1.2.16-nightly.0
-  - @ledgerhq/evm-tools@1.3.1-nightly.0
+- Updated dependencies [[`5e01938`](https://github.com/LedgerHQ/ledger-live/commit/5e01938ece3dc1ccf7bea6c2805b6558c846db80), [`d98a964`](https://github.com/LedgerHQ/ledger-live/commit/d98a96476c3d44eab1575f6c7c58ec03b5daf890), [`c2d24cd`](https://github.com/LedgerHQ/ledger-live/commit/c2d24cd0299ea04e39306279b6f833696bc4f4fb)]:
+  - @ledgerhq/coin-framework@0.22.0
+  - @ledgerhq/cryptoassets@13.9.0
+  - @ledgerhq/live-env@2.5.0
+  - @ledgerhq/domain-service@1.2.16
+  - @ledgerhq/evm-tools@1.3.1
+  - @ledgerhq/live-network@2.0.4
 
-## 2.9.0-nightly.1
+## 2.8.1-next.0
 
 ### Patch Changes
 
-- [#8909](https://github.com/LedgerHQ/ledger-live/pull/8909) [`7224a7d`](https://github.com/LedgerHQ/ledger-live/commit/7224a7d3e5643fee75575fab74c72a2aca260be6) Thanks [@qperrot](https://github.com/qperrot)! - Fix bot device actions for polygon
-
-- [#8914](https://github.com/LedgerHQ/ledger-live/pull/8914) [`537141a`](https://github.com/LedgerHQ/ledger-live/commit/537141ab549b8dab57d3eb117e875faa67b54f4b) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Bot feature : Add filter for features
-
-- Updated dependencies [[`3a65633`](https://github.com/LedgerHQ/ledger-live/commit/3a6563309c8cacbd6e9a73e3044b1ff7c3966f87), [`537141a`](https://github.com/LedgerHQ/ledger-live/commit/537141ab549b8dab57d3eb117e875faa67b54f4b)]:
-  - @ledgerhq/coin-framework@0.22.0-nightly.0
-
-## 2.9.0-nightly.0
-
-### Minor Changes
-
-- [#8899](https://github.com/LedgerHQ/ledger-live/pull/8899) [`c62cec9`](https://github.com/LedgerHQ/ledger-live/commit/c62cec9a911f41d2383effeb2ea1f92756ce0a09) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Prevent request on blockscout for ERC1155 NFTs as unsupported yet and add a `none` option for explorer's config to allow for node-only synchronization (will make token accounts disappear though)
+- Updated dependencies [[`5e01938`](https://github.com/LedgerHQ/ledger-live/commit/5e01938ece3dc1ccf7bea6c2805b6558c846db80), [`d98a964`](https://github.com/LedgerHQ/ledger-live/commit/d98a96476c3d44eab1575f6c7c58ec03b5daf890), [`c2d24cd`](https://github.com/LedgerHQ/ledger-live/commit/c2d24cd0299ea04e39306279b6f833696bc4f4fb)]:
+  - @ledgerhq/coin-framework@0.22.0-next.0
+  - @ledgerhq/cryptoassets@13.9.0-next.0
+  - @ledgerhq/live-env@2.5.0-next.0
+  - @ledgerhq/domain-service@1.2.16-next.0
+  - @ledgerhq/evm-tools@1.3.1-next.0
+  - @ledgerhq/live-network@2.0.4-next.0
 
 ## 2.8.0
 

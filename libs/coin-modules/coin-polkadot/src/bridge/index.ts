@@ -1,5 +1,4 @@
 import {
-  getSerializedAddressParameters,
   updateTransaction,
   makeAccountBridgeReceive,
   makeScanAccounts,
@@ -12,6 +11,7 @@ import { PolkadotAccount, PolkadotSigner, TransactionStatus, type Transaction } 
 import { getPreloadStrategy, hydrate, preload } from "./preload";
 import polkadotCoinConfig, { type PolkadotCoinConfig } from "../config";
 import { estimateMaxSpendable } from "./estimateMaxSpendable";
+import { getSerializedAddressParameters } from "./exchange";
 import { getTransactionStatus } from "./getTransactionStatus";
 import { prepareTransaction } from "./prepareTransaction";
 import { getAccountShape, sync } from "./synchronization";

@@ -114,7 +114,8 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
   }, [toAccount, getCurrencyByAccount]);
 
   const mevProtected = useSelector(mevProtectionSelector);
-  const broadcast = useBroadcast({ account, parentAccount, broadcastConfig: { mevProtected } });
+  const broadcastConfig = useMemo(() => ({ mevProtected }), [mevProtected]);
+  const broadcast = useBroadcast({ account, parentAccount, broadcastConfig });
   const [transaction, setTransaction] = useState<Transaction>();
   const [signedOperation, setSignedOperation] = useState<SignedOperation>();
   const [error, setError] = useState<Error>();
