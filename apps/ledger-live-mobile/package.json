@@ -77,7 +77,6 @@
     "@formatjs/intl-locale": "3.4.5",
     "@formatjs/intl-pluralrules": "5.2.12",
     "@formatjs/intl-relativetimeformat": "11.2.12",
-    "@ledgerhq/coin-aptos": "workspace:^",
     "@ledgerhq/coin-cosmos": "workspace:^",
     "@ledgerhq/coin-elrond": "workspace:^",
     "@ledgerhq/coin-evm": "workspace:^",

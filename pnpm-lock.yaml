@@ -868,9 +868,6 @@ importers:
       '@formatjs/intl-relativetimeformat':
         specifier: 11.2.12
         version: 11.2.12
-      '@ledgerhq/coin-aptos':
-        specifier: workspace:^
-        version: link:../../libs/coin-modules/coin-aptos
       '@ledgerhq/coin-cosmos':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-cosmos
