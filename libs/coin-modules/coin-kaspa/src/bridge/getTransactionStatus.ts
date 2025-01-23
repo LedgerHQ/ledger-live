@@ -59,11 +59,16 @@ const getTransactionStatus = async (
 
     if (transaction.useAllAmount) {
       transaction.amount = maxSpendableAmount;
+      if (transaction.amount.lt(20000000)) {
+        errors.dustLimit = new DustLimit("");
+      }
     }
 
-    if (transaction.amount.gt(maxSpendableAmount)) {
+    if (transaction.amount.gt(maxSpendableAmount) || maxSpendableAmount.eq(0)) {
       errors.amount = new NotEnoughBalance();
-    } else {
+    }
+
+    if (Object.keys(errors).length === 0) {
       const result = selectUtxos(
         utxos,
         UtxoStrategy.FIFO,
