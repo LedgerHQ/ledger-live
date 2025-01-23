@@ -34,11 +34,6 @@ function readPackage(pkg, context) {
     };
   }
 
-  if (!!pkg.devDependencies["metro"] && pkg.name.startsWith("@sentry/react-native")) {
-    pkg.dependencies["metro"] = pkg.devDependencies["metro"];
-    delete pkg.devDependencies["metro"];
-  }
-
   process(
     [
       /*
@@ -169,6 +164,7 @@ function readPackage(pkg, context) {
       addDependencies("@sentry/react-native", {
         tslib: "*",
         promise: "*",
+        metro: "*",
       }),
       addDependencies("react-native-text-input-mask", {
         tslib: "*",
