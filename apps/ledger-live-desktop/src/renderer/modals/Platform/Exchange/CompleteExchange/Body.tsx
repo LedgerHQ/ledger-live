@@ -6,8 +6,8 @@ import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { useBroadcast } from "@ledgerhq/live-common/hooks/useBroadcast";
 import { ExchangeType } from "@ledgerhq/live-common/wallet-api/react";
 import { getEnv } from "@ledgerhq/live-env";
-import { CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { AccountLike, Operation, SignedOperation } from "@ledgerhq/types-live";
+import { CryptoOrTokenCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { Operation, SignedOperation } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
@@ -72,6 +72,7 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
   const { fromAccount: account, fromParentAccount: parentAccount } = exchange;
   // toAccount exists only in swap mode
   const toAccount = "toAccount" in exchange ? exchange.toAccount : undefined;
+  const toCurrency = "toCurrency" in exchange ? exchange.toCurrency : undefined;
 
   const broadcastRef = useRef(false);
   const redirectToHistory = useRedirectToSwapHistory();
@@ -88,30 +89,19 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
   const tokenCurrency: TokenCurrency | undefined =
     account.type === "TokenAccount" ? account.token : undefined;
 
-  const getCurrencyByAccount = useCallback((account: AccountLike) => {
-    switch (account.type) {
-      case "Account":
-        return account.currency;
-      case "TokenAccount":
-        return account.token;
-      default:
-        return null;
-    }
-  }, []);
-
   const sourceCurrency = useMemo(() => {
     if ("fromAccount" in exchange) {
-      return getCurrencyByAccount(exchange.fromAccount);
+      return exchange.fromCurrency;
     }
     return null;
-  }, [exchange, getCurrencyByAccount]);
+  }, [exchange]);
 
   const targetCurrency = useMemo(() => {
-    if (toAccount) {
-      return getCurrencyByAccount(toAccount);
+    if (toCurrency) {
+      return toCurrency;
     }
     return null;
-  }, [toAccount, getCurrencyByAccount]);
+  }, [toCurrency]);
 
   const mevProtected = useSelector(mevProtectionSelector);
   const broadcastConfig = useMemo(() => ({ mevProtected }), [mevProtected]);
@@ -158,7 +148,7 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
   );
 
   const getResultByTransactionType = (
-    isSwapTransaction: "" | CryptoCurrency | TokenCurrency | null | undefined,
+    isSwapTransaction: "" | CryptoOrTokenCurrency | null | undefined,
   ) => {
     return isSwapTransaction
       ? {
