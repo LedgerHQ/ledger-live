@@ -16,6 +16,20 @@ import {
   UtxoStrategy,
 } from "../logic";
 import { KaspaAccount, Transaction, TransactionStatus } from "../types";
+import { makeLRUCache } from "@ledgerhq/live-network/lib/cache";
+
+const getCachedUtxos = makeLRUCache(
+  async (account: KaspaAccount) => {
+    const { compressedPublicKey, chainCode } = parseExtendedPublicKey(
+      Buffer.from(account.xpub, "hex"),
+    );
+    return await scanUtxos(compressedPublicKey, chainCode);
+  },
+  (account: KaspaAccount) => "kaspa",
+  {
+    ttl: 60 * 1000, // 1 minute
+  },
+);
 
 const getTransactionStatus = async (
   account: KaspaAccount,
@@ -44,11 +58,7 @@ const getTransactionStatus = async (
   }
 
   if ((transaction.amount.gte(20000000) || transaction.useAllAmount) && !!transaction.recipient) {
-    const { compressedPublicKey, chainCode } = parseExtendedPublicKey(
-      Buffer.from(account.xpub, "hex"),
-    );
-
-    const { utxos } = await scanUtxos(compressedPublicKey, chainCode);
+    const { utxos } = await getCachedUtxos(account);
 
     const maxSpendableAmount: BigNumber = calcMaxSpendableAmount(
       utxos,
