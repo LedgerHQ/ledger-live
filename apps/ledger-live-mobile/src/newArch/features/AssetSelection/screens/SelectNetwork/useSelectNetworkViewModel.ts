@@ -17,6 +17,7 @@ import { AssetSelectionNavigationProps, SelectNetworkRouteParams } from "../../t
 import { CryptoWithAccounts } from "./types";
 import { LoadingBasedGroupedCurrencies } from "@ledgerhq/live-common/deposit/type";
 import { useGroupedCurrenciesByProvider } from "@ledgerhq/live-common/deposit/index";
+import { AddAccountContexts } from "LLM/features/Accounts/screens/AddAccount/enums";
 
 export default function useSelectNetworkViewModel({
   filterCurrencyIds,
@@ -124,7 +125,7 @@ export default function useSelectNetworkViewModel({
       );
 
       if (!cryptoToSend) return;
-      const isAddAccountContext = context === "addAccounts";
+      const isAddAccountContext = context === AddAccountContexts.AddAccounts;
 
       const accs = findAccountByCurrency(accounts, cryptoToSend);
 
@@ -191,7 +192,7 @@ export default function useSelectNetworkViewModel({
     string
   > => {
     switch (context) {
-      case "receiveFunds":
+      case AddAccountContexts.ReceiveFunds:
         return {
           titleText: t("selectNetwork.swap.title"),
           titleTestId: "receive-header-step2-title",
@@ -199,7 +200,7 @@ export default function useSelectNetworkViewModel({
           subTitleTestId: "transfer.receive.selectNetwork.subtitle",
           listTestId: "receive-header-step2-networks",
         };
-      case "addAccounts":
+      case AddAccountContexts.AddAccounts:
         return {
           titleText: t("assetSelection.selectNetwork.title"),
           titleTestId: "addAccounts-header-step2-title",

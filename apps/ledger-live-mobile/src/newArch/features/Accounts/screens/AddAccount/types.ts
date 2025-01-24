@@ -3,9 +3,12 @@ import { ScreenName } from "~/const";
 import { Device } from "@ledgerhq/types-devices";
 import { Account } from "@ledgerhq/types-live";
 import { Props as TouchableProps } from "~/components/Touchable";
+import { AddAccountContexts } from "./enums";
+
+export type AddAccountContextType = `${AddAccountContexts}`;
 
 type CommonParams = {
-  context?: "addAccounts" | "receiveFunds";
+  context?: AddAccountContextType;
   onSuccess?: () => void;
   onCloseNavigation?: () => void;
   currency: CryptoOrTokenCurrency;

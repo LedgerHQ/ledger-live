@@ -3,7 +3,7 @@ import { Flex, Icons, rgba, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { Animated, StyleSheet, TouchableOpacity, View } from "react-native";
 import { useTheme } from "styled-components/native";
-import { ScreenName } from "~/const";
+import { NavigatorName, ScreenName } from "~/const";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import AccountItem from "../../components/AccountsListView/components/AccountItem";
 import { Account } from "@ledgerhq/types-live";
@@ -17,6 +17,7 @@ import { useNavigation } from "@react-navigation/core";
 import useAnimatedStyle from "../ScanDeviceAccounts/components/ScanDeviceAccountsFooter/useAnimatedStyle";
 import AddFundsButton from "../../components/AddFundsButton";
 import CloseWithConfirmation from "LLM/components/CloseWithConfirmation";
+import { AddAccountContexts } from "../AddAccount/enums";
 type Props = BaseComposite<
   StackNavigatorProps<NetworkBasedAddAccountNavigator, ScreenName.AddAccountsWarning>
 >;
@@ -29,17 +30,27 @@ export default function AddAccountsWarning({ route }: Props) {
 
   const { animatedSelectableAccount } = useAnimatedStyle();
 
-  const goToAccounts = useCallback(
-    (accountId: string) => () => {
-      navigation.navigate(ScreenName.Account, {
-        accountId,
-      });
-    },
-    [navigation],
-  );
-  const { emptyAccount, emptyAccountName, currency } = route.params || {};
+  const { emptyAccount, emptyAccountName, currency, context } = route.params || {};
 
   const statusColor = colors.warning.c70;
+
+  const goToAccounts = useCallback(
+    (accountId: string) => () => {
+      if (context === AddAccountContexts.AddAccounts)
+        navigation.navigate(ScreenName.Account, {
+          accountId,
+        });
+      else
+        navigation.navigate(NavigatorName.ReceiveFunds, {
+          screen: ScreenName.ReceiveConfirmation,
+          params: {
+            ...route.params,
+            accountId,
+          },
+        });
+    },
+    [navigation, route.params, context],
+  );
 
   const handleOnCloseWarningScreen = useCallback(() => {
     navigation.goBack();

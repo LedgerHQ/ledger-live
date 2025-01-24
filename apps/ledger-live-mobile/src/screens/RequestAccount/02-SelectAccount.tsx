@@ -26,6 +26,7 @@ import { Flex } from "@ledgerhq/native-ui";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useGroupedCurrenciesByProvider } from "@ledgerhq/live-common/deposit/index";
 import { LoadingBasedGroupedCurrencies } from "@ledgerhq/live-common/deposit/type";
+import { AddAccountContexts } from "LLM/features/Accounts/screens/AddAccount/enums";
 
 const SEARCH_KEYS = [
   "name",
@@ -143,7 +144,7 @@ function SelectAccount({ navigation, route }: Props) {
           params: {
             currency: currency.id,
             inline: true,
-            context: "addAccounts",
+            context: AddAccountContexts.AddAccounts,
             onSuccess: () =>
               navigation.navigate(ScreenName.RequestAccountsSelectAccount, route.params),
           },
@@ -153,7 +154,7 @@ function SelectAccount({ navigation, route }: Props) {
           screen: ScreenName.SelectDevice,
           params: {
             currency: currency as CryptoCurrency,
-            context: "addAccounts",
+            context: AddAccountContexts.AddAccounts,
             inline: true,
             onSuccess: () =>
               navigation.navigate(ScreenName.RequestAccountsSelectAccount, route.params),
