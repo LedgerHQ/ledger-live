@@ -72,6 +72,7 @@ import { isSyncOnboardingSupported } from "@ledgerhq/live-common/device/use-case
 import NoSuchAppOnProviderErrorComponent from "./NoSuchAppOnProviderErrorComponent";
 import Image from "~/renderer/components/Image";
 import Nano from "~/renderer/images/nanoS.v4.svg";
+import { usePostOnboardingHubState } from "@ledgerhq/live-common/postOnboarding/hooks/usePostOnboardingHubState";
 
 export const AnimationWrapper = styled.div`
   width: 600px;
@@ -895,39 +896,43 @@ export const renderInWrongAppForAccount = ({
   });
 
 export const renderConnectYourDevice = ({
-  modelId,
   type,
   onRepairModal,
   device,
   unresponsive,
 }: {
-  modelId: DeviceModelId;
   type: Theme["theme"];
   onRepairModal?: ((open: boolean) => void) | null;
   device: Device;
   unresponsive?: boolean | null;
-}) => (
-  <Wrapper>
-    <Header />
-    <AnimationWrapper>
-      <Animation animation={getDeviceAnimation(modelId, type, "enterPinCode")} />
-    </AnimationWrapper>
-    <Footer>
-      <Title>
-        <Trans
-          i18nKey={
-            unresponsive ? "DeviceAction.unlockDevice" : "DeviceAction.connectAndUnlockDevice"
-          }
+}) => {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const { deviceModelId } = usePostOnboardingHubState();
+  return (
+    <Wrapper>
+      <Header />
+      <AnimationWrapper>
+        <Animation
+          animation={getDeviceAnimation(deviceModelId ?? DeviceModelId.stax, type, "enterPinCode")}
         />
-      </Title>
-      {!device && onRepairModal ? (
-        <TroubleshootingWrapper>
-          <ConnectTroubleshooting onRepair={onRepairModal} />
-        </TroubleshootingWrapper>
-      ) : null}
-    </Footer>
-  </Wrapper>
-);
+      </AnimationWrapper>
+      <Footer>
+        <Title>
+          <Trans
+            i18nKey={
+              unresponsive ? "DeviceAction.unlockDevice" : "DeviceAction.connectAndUnlockDevice"
+            }
+          />
+        </Title>
+        {!device && onRepairModal ? (
+          <TroubleshootingWrapper>
+            <ConnectTroubleshooting onRepair={onRepairModal} />
+          </TroubleshootingWrapper>
+        ) : null}
+      </Footer>
+    </Wrapper>
+  );
+};
 
 const OpenSwapBtn = () => {
   const { setDrawer } = useContext(context);
