@@ -24,7 +24,7 @@ import {
 } from "@ledgerhq/live-common/errors";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { closeAllModal } from "~/renderer/actions/modals";
 import Animation from "~/renderer/animations";
 import Button from "~/renderer/components/Button";
@@ -1084,8 +1084,8 @@ export const renderSwapDeviceConfirmation = ({
   stateSettings: SettingsState;
   walletState: WalletState;
 }) => {
-  const sourceAccountCurrency = getAccountCurrency(exchange.fromAccount);
-  const targetAccountCurrency = getAccountCurrency(exchange.toAccount);
+  const sourceAccountCurrency = exchange.fromCurrency;
+  const targetAccountCurrency = exchange.toCurrency;
   const sourceAccountName =
     accountNameSelector(walletState, {
       accountId: exchange.fromAccount.id,
