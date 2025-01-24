@@ -28,10 +28,15 @@ import {
   TransferCommand,
 } from "../../types";
 import { drainSeqAsyncGen, median } from "../../utils";
-import { parseTokenAccountInfo, tryParseAsTokenAccount, tryParseAsVoteAccount } from "./account";
+import {
+  parseTokenAccountInfo,
+  tryParseAsTokenAccount,
+  tryParseAsVoteAccount,
+  tryParseAsMintAccount,
+} from "./account";
 import { parseStakeAccountInfo } from "./account/parser";
 import { StakeAccountInfo } from "./account/stake";
-import { TokenAccountInfo } from "./account/token";
+import { MintAccountInfo, TokenAccountInfo } from "./account/token";
 import { VoteAccountInfo } from "./account/vote";
 
 const MEMO_PROGRAM_ID = "MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr";
@@ -223,6 +228,18 @@ export async function findAssociatedTokenAccountPubkey(
 
   return getAssociatedTokenAddress(mintPubkey, ownerPubKey);
 }
+
+export const getMaybeMintAccount = async (
+  address: string,
+  api: ChainAPI,
+): Promise<MintAccountInfo | undefined | Error> => {
+  const accInfo = await api.getAccountInfo(address);
+
+  const mintAccount =
+    accInfo !== null && "parsed" in accInfo.data ? tryParseAsMintAccount(accInfo.data) : undefined;
+
+  return mintAccount;
+};
 
 export const getMaybeTokenAccount = async (
   address: string,

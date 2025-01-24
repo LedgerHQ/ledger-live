@@ -6225,6 +6225,15 @@
     "SolanaAccountNotFunded": {
       "title": "Account not funded"
     },
+    "SolanaTokenAccountHoldsAnotherToken": {
+      "title": "Token account holds another token"
+    },
+    "SolanaTokenAccountNotAllowed": {
+      "title": "This is a token account address"
+    },
+    "SolanaMintAccountNotAllowed": {
+      "title": "This is a mint account address"
+    },
     "SolanaAssociatedTokenAccountWillBeFunded": {
       "title": "Account will be funded"
     },

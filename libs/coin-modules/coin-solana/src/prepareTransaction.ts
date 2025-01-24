@@ -10,6 +10,7 @@ import type { Account } from "@ledgerhq/types-live";
 import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
 import { ChainAPI } from "./api";
 import {
+  getMaybeMintAccount,
   getMaybeTokenAccount,
   getMaybeVoteAccount,
   getStakeAccountAddressWithSeed,
@@ -34,6 +35,8 @@ import {
   SolanaTokenAccountHoldsAnotherToken,
   SolanaTokenRecipientIsSenderATA,
   SolanaValidatorRequired,
+  SolanaTokenAccountNotAllowed,
+  SolanaMintAccountNotAllowed,
 } from "./errors";
 import {
   decodeAccountIdWithTokenAccountAddress,
@@ -132,7 +135,7 @@ const deriveTokenTransferCommandDescriptor = async (
     errors.amount = new SolanaTokenAccountFrozen();
   }
 
-  await validateRecipientCommon(mainAccount, tx, errors, warnings, api);
+  await validateRecipientCommon(mainAccount, tx, errors, warnings, api, true);
 
   const memo = model.uiState.memo;
 
@@ -316,7 +319,7 @@ async function deriveTransferCommandDescriptor(
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
 
-  await validateRecipientCommon(mainAccount, tx, errors, warnings, api);
+  await validateRecipientCommon(mainAccount, tx, errors, warnings, api, false);
 
   const memo = model.uiState.memo;
 
@@ -625,6 +628,7 @@ async function validateRecipientCommon(
   errors: Record<string, Error>,
   warnings: Record<string, Error>,
   api: ChainAPI,
+  allowATA: boolean,
 ) {
   if (!tx.recipient) {
     errors.recipient = new RecipientRequired();
@@ -636,6 +640,34 @@ async function validateRecipientCommon(
     });
   } else {
     const recipientWalletIsUnfunded = !(await isAccountFunded(tx.recipient, api));
+
+    const recipientTokenAccount = await getMaybeTokenAccount(tx.recipient, api);
+
+    if (recipientTokenAccount instanceof Error) {
+      throw recipientTokenAccount;
+    }
+
+    if (recipientTokenAccount) {
+      if (allowATA) {
+        if (isEd25519Address(tx.recipient)) {
+          errors.recipient = new SolanaTokenAccountNotAllowed();
+        } else {
+          warnings.recipient = new SolanaTokenAccountNotAllowed();
+        }
+      } else {
+        errors.recipient = new SolanaTokenAccountNotAllowed();
+      }
+    }
+
+    const mintTokenAccount = await getMaybeMintAccount(tx.recipient, api);
+
+    if (mintTokenAccount instanceof Error) {
+      throw recipientTokenAccount;
+    }
+
+    if (mintTokenAccount) {
+      errors.recipient = new SolanaMintAccountNotAllowed();
+    }
 
     if (recipientWalletIsUnfunded) {
       warnings.recipient = new SolanaAccountNotFunded();
