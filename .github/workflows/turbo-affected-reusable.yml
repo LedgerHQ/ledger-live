@@ -55,6 +55,12 @@ jobs:
             core.exportVariable("head_branch", newHeadBranch);
             core.exportVariable("base_branch", newBaseBranch);
 
+      - name: Echo env.base_branch
+        run: |
+            echo "env.base_branch: ${{ env.base_branch }}"
+            echo "format('origin/{0}', env.base_branch): ${{ format('origin/{0}', env.base_branch) }}"
+
+
       - uses: LedgerHQ/ledger-live/tools/actions/turbo-affected@develop
         id: affected
         with:
