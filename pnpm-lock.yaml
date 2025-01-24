@@ -303,6 +303,9 @@ importers:
       '@braze/web-sdk':
         specifier: 4.10.2
         version: 4.10.2
+      '@ledgerhq/coin-aptos':
+        specifier: workspace:^
+        version: link:../../libs/coin-modules/coin-aptos
       '@ledgerhq/coin-bitcoin':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-bitcoin
@@ -1871,6 +1874,85 @@ importers:
       ts-jest:
         specifier: ^29.1.1
         version: 29.1.5(jest@29.7.0)(typescript@5.4.3)
+
+  libs/coin-modules/coin-aptos:
+    dependencies:
+      '@apollo/client':
+        specifier: ^3.12.6
+        version: 3.12.6(graphql@16.10.0)(react@18.3.1)
+      '@aptos-labs/ts-sdk':
+        specifier: ^1.33.1
+        version: 1.33.1
+      '@ledgerhq/coin-framework':
+        specifier: workspace:^
+        version: link:../../coin-framework
+      '@ledgerhq/cryptoassets':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/cryptoassets
+      '@ledgerhq/devices':
+        specifier: workspace:*
+        version: link:../../ledgerjs/packages/devices
+      '@ledgerhq/errors':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/errors
+      '@ledgerhq/live-env':
+        specifier: workspace:^
+        version: link:../../env
+      '@ledgerhq/live-network':
+        specifier: workspace:^
+        version: link:../../live-network
+      '@ledgerhq/logs':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/logs
+      '@ledgerhq/types-live':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/types-live
+      '@noble/hashes':
+        specifier: 1.7.0
+        version: 1.7.0
+      bignumber.js:
+        specifier: ^9.1.2
+        version: 9.1.2
+      graphql:
+        specifier: ^16.10.0
+        version: 16.10.0
+      invariant:
+        specifier: ^2.2.4
+        version: 2.2.4
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
+      rxjs:
+        specifier: ^7.8.1
+        version: 7.8.1
+    devDependencies:
+      '@faker-js/faker':
+        specifier: ^9.4.0
+        version: 9.4.0
+      '@types/invariant':
+        specifier: ^2.2.37
+        version: 2.2.37
+      '@types/jest':
+        specifier: ^29.5.14
+        version: 29.5.14
+      '@types/lodash':
+        specifier: ^4.17.14
+        version: 4.17.14
+      '@types/semver':
+        specifier: ^7.5.8
+        version: 7.5.8
+      axios:
+        specifier: ^1.7.9
+        version: 1.7.9
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0
+      react:
+        specifier: ^18.3.1
+        version: 18.3.1
+      ts-jest:
+        specifier: ^29.2.5
+        version: 29.2.5(jest@29.7.0)(typescript@5.4.3)
 
   libs/coin-modules/coin-bitcoin:
     dependencies:
@@ -3917,12 +3999,6 @@ importers:
 
   libs/ledger-live-common:
     dependencies:
-      '@apollo/client':
-        specifier: ^3.8.7
-        version: 3.12.4(@types/react@18.2.73)(graphql@16.8.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@aptos-labs/ts-sdk':
-        specifier: ^1.33.1
-        version: 1.33.1
       '@blooo/hw-app-acre':
         specifier: ^1.1.1
         version: 1.1.1
@@ -3956,6 +4032,9 @@ importers:
       '@ledgerhq/coin-algorand':
         specifier: workspace:^
         version: link:../coin-modules/coin-algorand
+      '@ledgerhq/coin-aptos':
+        specifier: workspace:^
+        version: link:../coin-modules/coin-aptos
       '@ledgerhq/coin-bitcoin':
         specifier: workspace:^
         version: link:../coin-modules/coin-bitcoin
@@ -4142,9 +4221,6 @@ importers:
       '@ledgerhq/wallet-api-server':
         specifier: ^1.7.0
         version: 1.7.0(react@18.3.1)(rxjs@7.8.1)
-      '@noble/hashes':
-        specifier: 1.6.1
-        version: 1.6.1
       '@stricahq/typhonjs':
         specifier: ^2.0.0
         version: 2.0.0
@@ -4226,9 +4302,6 @@ importers:
       fuse.js:
         specifier: ^6.6.2
         version: 6.6.2
-      graphql:
-        specifier: ^16.8.1
-        version: 16.8.1
       invariant:
         specifier: ^2.2.2
         version: 2.2.4
@@ -8160,8 +8233,8 @@ packages:
     peerDependencies:
       ajv: '>=8'
 
-  '@apollo/client@3.12.4':
-    resolution: {integrity: sha512-S/eC9jxEW9Jg1BjD6AZonE1fHxYuvC3gFHop8FRQkUdeK63MmBD5r0DOrN2WlJbwha1MSD6A97OwXwjaujEQpA==}
+  '@apollo/client@3.12.6':
+    resolution: {integrity: sha512-MOEtkojZagMKB7nxlwQ426eaBYwEs/Xfn+JeLOd81wv6j7toKo57eEGAbJdZwyXGRgtiqDkX5gx3EzE7qtarXA==}
     peerDependencies:
       graphql: ^15.0.0 || ^16.0.0
       graphql-ws: ^5.5.5
@@ -10959,6 +11032,10 @@ packages:
     resolution: {integrity: sha512-XQ3cU+Q8Uqmrbf2e0cIC/QN43sTBSC8KF12u29Mb47tWrt2hAgBXSgpZMj4Ao8Uk0iJcU99QsOCaIL8934obCg==}
     engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0, npm: '>=6.14.13'}
 
+  '@faker-js/faker@9.4.0':
+    resolution: {integrity: sha512-85+k0AxaZSTowL0gXp8zYWDIrWclTbRPg/pm/V0dSFZ6W6D4lhcG3uuZl4zLsEKfEvs69xDbLN2cHQudwp95JA==}
+    engines: {node: '>=18.0.0', npm: '>=9.0.0'}
+
   '@fal-works/esbuild-plugin-global-externals@2.1.2':
     resolution: {integrity: sha512-cEee/Z+I12mZcFJshKcCqC8tuX5hG3s+d+9nZ3LabqKF1vKdF41B92pJVCBggjAGORAeOzyyDDKrZwIkLffeOQ==}
 
@@ -11996,6 +12073,10 @@ packages:
 
   '@noble/hashes@1.6.1':
     resolution: {integrity: sha512-pq5D8h10hHBjyqX+cfBm0i8JUXJ0UhczFc4r74zbuT9XgewFo2E3J1cOaGtdZynILNmQ685YWGzGE1Zv6io50w==}
+    engines: {node: ^14.21.3 || >=16}
+
+  '@noble/hashes@1.7.0':
+    resolution: {integrity: sha512-HXydb0DgzTpDPwbVeDGCG1gIu7X6+AuU6Zl6av/E/KG8LMsvPntvq+w17CHRpKBmN6Ybdrt1eP3k4cj8DJa78w==}
     engines: {node: ^14.21.3 || >=16}
 
   '@noble/secp256k1@1.7.1':
@@ -15974,6 +16055,9 @@ packages:
   '@types/lodash@4.17.0':
     resolution: {integrity: sha512-t7dhREVv6dbNj0q17X12j7yDG4bD/DHYX7o5/DbDxobP0HnGPgpRz2Ej77aL7TZT3DSw13fqUTj8J4mMnqa7WA==}
 
+  '@types/lodash@4.17.14':
+    resolution: {integrity: sha512-jsxagdikDiDBeIRaPYtArcT8my4tN1og7MtMRquFT3XNA6axxyHDRUemqDz/taRDdOUn0GnGHRCuff4q48sW9A==}
+
   '@types/lodash@4.17.7':
     resolution: {integrity: sha512-8wTvZawATi/lsmNu10/j2hk1KEP0IvjubqPE3cu1Xz7xfXXt5oCq3SNUz4fMIP4XGF9Ky+Ue2tBA3hcS7LSBlA==}
 
@@ -17380,6 +17464,9 @@ packages:
 
   axios@1.7.7:
     resolution: {integrity: sha512-S4kL7XrjgBmvdGut0sN3yJxqYzrDOnivkBiN0OFs6hLiUam3UPvswUo0kqGyhqUZGEOytHyumEdXsAkgCOUf3Q==}
+
+  axios@1.7.9:
+    resolution: {integrity: sha512-LhLcE7Hbiryz8oMDdDptSrWowmB4Bl6RCt6sIJKpRB4XtVf0iEgewX3au/pJqm+Py1kCASkb/FFKjxQaLtxJvw==}
 
   axobject-query@3.2.1:
     resolution: {integrity: sha512-jsyHu61e6N4Vbz/v18DHwWYKK0bSWLqn47eeDSKPB7m8tqMHF9YJ+mhIk2lVteyZrY8tnSj/jHOv4YiTCuCJgg==}
@@ -21534,6 +21621,10 @@ packages:
   graphql@15.8.0:
     resolution: {integrity: sha512-5gghUc24tP9HRznNpV2+FIoq3xKkj5dTQqf4v0CpdPbFVwFkWoxOM+o+2OC9ZSvjEMTjfmG9QT+gcvggTwW1zw==}
     engines: {node: '>= 10.x'}
+
+  graphql@16.10.0:
+    resolution: {integrity: sha512-AjqGKbDGUFRKIRCP9tCKiIGHyriz2oHEbPIbEtcSLSs4YjReZOIPQQWek4+6hjw62H9QShXHyaGivGiYVLeYFQ==}
+    engines: {node: ^12.22.0 || ^14.16.0 || ^16.0.0 || >=17.0.0}
 
   graphql@16.8.1:
     resolution: {integrity: sha512-59LZHPdGZVh695Ud9lRzPBVTtlX9ZCV150Er2W43ro37wVof0ctenSaskPPjN7lVTIN8mSZt8PHUNKZuNQUuxw==}
@@ -30857,18 +30948,18 @@ snapshots:
       jsonpointer: 5.0.1
       leven: 3.1.0
 
-  '@apollo/client@3.12.4(@types/react@18.2.73)(graphql@16.8.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@apollo/client@3.12.6(graphql@16.10.0)(react@18.3.1)':
     dependencies:
-      '@graphql-typed-document-node/core': 3.2.0(graphql@16.8.1)
+      '@graphql-typed-document-node/core': 3.2.0(graphql@16.10.0)
       '@wry/caches': 1.0.1
       '@wry/equality': 0.5.7
       '@wry/trie': 0.5.0
-      graphql: 16.8.1
-      graphql-tag: 2.12.6(graphql@16.8.1)
+      graphql: 16.10.0
+      graphql-tag: 2.12.6(graphql@16.10.0)
       hoist-non-react-statics: 3.3.2
       optimism: 0.18.1
       prop-types: 15.8.1
-      rehackt: 0.1.0(@types/react@18.2.73)(react@18.3.1)
+      rehackt: 0.1.0(react@18.3.1)
       response-iterator: 0.2.11
       symbol-observable: 4.0.0
       ts-invariant: 0.10.3
@@ -30876,7 +30967,6 @@ snapshots:
       zen-observable-ts: 1.2.5
     optionalDependencies:
       react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
     transitivePeerDependencies:
       - '@types/react'
 
@@ -30894,7 +30984,7 @@ snapshots:
       '@aptos-labs/aptos-cli': 1.0.2
       '@aptos-labs/aptos-client': 0.1.1
       '@noble/curves': 1.6.0
-      '@noble/hashes': 1.6.1
+      '@noble/hashes': 1.7.0
       '@scure/bip32': 1.4.0
       '@scure/bip39': 1.3.0
       eventemitter3: 5.0.1
@@ -33902,7 +33992,7 @@ snapshots:
       '@ethereumjs/rlp': 5.0.2
       '@ethereumjs/util': 8.0.5
       '@noble/curves': 1.6.0
-      '@noble/hashes': 1.6.1
+      '@noble/hashes': 1.7.0
       '@types/debug': 4.1.12
       bignumber.js: 9.1.2
       debug: 4.3.4
@@ -34345,7 +34435,7 @@ snapshots:
 
   '@confio/ics23@0.6.8':
     dependencies:
-      '@noble/hashes': 1.6.1
+      '@noble/hashes': 1.7.0
       protobufjs: 6.11.4
 
   '@cosmjs/amino@0.26.8':
@@ -34382,7 +34472,7 @@ snapshots:
       '@cosmjs/encoding': 0.26.8
       '@cosmjs/math': 0.26.8
       '@cosmjs/utils': 0.26.8
-      '@noble/hashes': 1.6.1
+      '@noble/hashes': 1.7.0
       bn.js: 5.2.1
       elliptic: 6.5.5
       libsodium-wrappers: 0.7.13
@@ -34392,7 +34482,7 @@ snapshots:
       '@cosmjs/encoding': 0.31.3
       '@cosmjs/math': 0.31.3
       '@cosmjs/utils': 0.31.3
-      '@noble/hashes': 1.5.0
+      '@noble/hashes': 1.7.0
       bn.js: 5.2.1
       elliptic: 6.5.5
       libsodium-wrappers-sumo: 0.7.13
@@ -34632,7 +34722,7 @@ snapshots:
       '@dfinity/candid': 0.21.4(@dfinity/principal@0.15.7(@types/node@20.12.12)(typescript@5.1.3))
       '@dfinity/principal': 0.15.7(@types/node@20.12.12)(typescript@5.1.3)
       '@noble/curves': 1.6.0
-      '@noble/hashes': 1.5.0
+      '@noble/hashes': 1.7.0
       base64-arraybuffer: 0.2.0
       borc: 2.1.2
       buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
@@ -34643,7 +34733,7 @@ snapshots:
       '@dfinity/candid': 0.21.4(@dfinity/principal@0.15.7(typescript@5.4.3))
       '@dfinity/principal': 0.15.7(typescript@5.4.3)
       '@noble/curves': 1.6.0
-      '@noble/hashes': 1.5.0
+      '@noble/hashes': 1.7.0
       base64-arraybuffer: 0.2.0
       borc: 2.1.2
       buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
@@ -36204,6 +36294,8 @@ snapshots:
 
   '@faker-js/faker@8.4.1': {}
 
+  '@faker-js/faker@9.4.0': {}
+
   '@fal-works/esbuild-plugin-global-externals@2.1.2': {}
 
   '@fastify/busboy@2.1.1': {}
@@ -36597,9 +36689,9 @@ snapshots:
     dependencies:
       graphql: 15.8.0
 
-  '@graphql-typed-document-node/core@3.2.0(graphql@16.8.1)':
+  '@graphql-typed-document-node/core@3.2.0(graphql@16.10.0)':
     dependencies:
-      graphql: 16.8.1
+      graphql: 16.10.0
 
   '@grpc/grpc-js@1.6.7':
     dependencies:
@@ -37716,7 +37808,7 @@ snapshots:
       '@ledgerhq/device-transport-kit-mock-client': 1.1.0
       '@sentry/minimal': 6.19.7
       '@statelyai/inspect': 0.4.0(xstate@5.19.0)
-      axios: 1.7.7
+      axios: 1.7.9
       inversify: 6.1.4(reflect-metadata@0.2.2)
       inversify-logger-middleware: 3.1.0
       purify-ts: 2.1.0
@@ -38195,6 +38287,8 @@ snapshots:
   '@noble/hashes@1.5.0': {}
 
   '@noble/hashes@1.6.1': {}
+
+  '@noble/hashes@1.7.0': {}
 
   '@noble/secp256k1@1.7.1': {}
 
@@ -38771,7 +38865,7 @@ snapshots:
 
   '@polkadot-api/substrate-bindings@0.0.1':
     dependencies:
-      '@noble/hashes': 1.6.1
+      '@noble/hashes': 1.7.0
       '@polkadot-api/utils': 0.0.1
       '@scure/base': 1.1.6
       scale-ts: 1.6.0
@@ -38955,7 +39049,7 @@ snapshots:
   '@polkadot/util-crypto@12.6.2(@polkadot/util@12.6.2)':
     dependencies:
       '@noble/curves': 1.6.0
-      '@noble/hashes': 1.5.0
+      '@noble/hashes': 1.7.0
       '@polkadot/networks': 12.6.2
       '@polkadot/util': 12.6.2
       '@polkadot/wasm-crypto': 7.3.2(@polkadot/util@12.6.2)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.3.2(@polkadot/util@12.6.2)))
@@ -41993,7 +42087,7 @@ snapshots:
     dependencies:
       '@babel/runtime': 7.25.0
       '@noble/curves': 1.6.0
-      '@noble/hashes': 1.5.0
+      '@noble/hashes': 1.7.0
       '@solana/buffer-layout': 4.0.1
       agentkeepalive: 4.5.0
       bigint-buffer: 1.1.5
@@ -42071,7 +42165,7 @@ snapshots:
 
   '@stacks/transactions@4.3.8':
     dependencies:
-      '@noble/hashes': 1.6.1
+      '@noble/hashes': 1.7.0
       '@noble/secp256k1': 1.7.1
       '@stacks/common': 4.3.5
       '@stacks/network': 4.3.5
@@ -42742,7 +42836,7 @@ snapshots:
   '@stellar/stellar-sdk@11.3.0':
     dependencies:
       '@stellar/stellar-base': 11.0.1
-      axios: 1.7.7
+      axios: 1.7.9
       bignumber.js: 9.1.2
       eventsource: 2.0.2
       randombytes: 2.1.0
@@ -43060,7 +43154,7 @@ snapshots:
       '@storybook/preview-api': 7.6.20
       '@storybook/theming': 7.6.20(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@storybook/types': 7.6.20
-      '@types/lodash': 4.17.7
+      '@types/lodash': 4.17.14
       color-convert: 2.0.1
       dequal: 2.0.3
       lodash: 4.17.21
@@ -43093,7 +43187,7 @@ snapshots:
       '@storybook/preview-api': 7.6.20
       '@storybook/theming': 7.6.20(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@storybook/types': 7.6.20
-      '@types/lodash': 4.17.7
+      '@types/lodash': 4.17.14
       color-convert: 2.0.1
       dequal: 2.0.3
       lodash: 4.17.21
@@ -44704,7 +44798,7 @@ snapshots:
     dependencies:
       '@ton/core': 0.56.3(@ton/crypto@3.3.0)
       '@ton/crypto': 3.3.0
-      axios: 1.7.7
+      axios: 1.7.9
       dataloader: 2.2.2
       symbol.inspect: 1.0.1
       teslabot: 1.5.0
@@ -44744,7 +44838,7 @@ snapshots:
 
   '@types/axios@0.14.0':
     dependencies:
-      axios: 1.7.7
+      axios: 1.7.9
 
   '@types/babel__core@7.20.5':
     dependencies:
@@ -45072,6 +45166,8 @@ snapshots:
   '@types/linkify-it@5.0.0': {}
 
   '@types/lodash@4.17.0': {}
+
+  '@types/lodash@4.17.14': {}
 
   '@types/lodash@4.17.7': {}
 
@@ -45433,7 +45529,7 @@ snapshots:
 
   '@types/testing-library__jest-dom@5.14.9':
     dependencies:
-      '@types/jest': 29.5.12
+      '@types/jest': 29.5.14
 
   '@types/tough-cookie@4.0.5': {}
 
@@ -46338,7 +46434,7 @@ snapshots:
 
   '@xrplf/isomorphic@1.0.0':
     dependencies:
-      '@noble/hashes': 1.6.1
+      '@noble/hashes': 1.7.0
       eventemitter3: 5.0.1
       ws: 8.17.1
     transitivePeerDependencies:
@@ -46509,7 +46605,7 @@ snapshots:
     dependencies:
       '@ledgerhq/hw-transport': 6.30.6
       '@zondax/ledger-js': 0.8.2
-      axios: 1.7.7
+      axios: 1.7.9
 
   JSONStream@1.3.5:
     dependencies:
@@ -47099,6 +47195,12 @@ snapshots:
       proxy-from-env: 1.1.0
 
   axios@1.7.7:
+    dependencies:
+      follow-redirects: 1.15.6
+      form-data: 4.0.0
+      proxy-from-env: 1.1.0
+
+  axios@1.7.9:
     dependencies:
       follow-redirects: 1.15.6
       form-data: 4.0.0
@@ -47707,7 +47809,7 @@ snapshots:
 
   bip32@4.0.0:
     dependencies:
-      '@noble/hashes': 1.5.0
+      '@noble/hashes': 1.7.0
       '@scure/base': 1.1.6
       typeforce: 1.18.0
       wif: 2.0.6
@@ -47977,7 +48079,7 @@ snapshots:
 
   bs58check@3.0.1:
     dependencies:
-      '@noble/hashes': 1.5.0
+      '@noble/hashes': 1.7.0
       bs58: 5.0.0
 
   bser@2.1.1:
@@ -48147,7 +48249,7 @@ snapshots:
 
   c32check@2.0.0:
     dependencies:
-      '@noble/hashes': 1.6.1
+      '@noble/hashes': 1.7.0
       base-x: 4.0.0
 
   cac@6.7.14: {}
@@ -48287,7 +48389,7 @@ snapshots:
       '@ethersproject/constants': 5.7.0
       '@noble/curves': 1.6.0
       '@noble/ed25519': 1.7.3
-      '@noble/hashes': 1.6.1
+      '@noble/hashes': 1.7.0
       '@noble/secp256k1': 1.7.1
       '@open-rpc/client-js': 1.8.1
       '@scure/bip32': 1.4.0
@@ -52775,12 +52877,14 @@ snapshots:
       graphql: 15.8.0
       tslib: 2.6.2
 
-  graphql-tag@2.12.6(graphql@16.8.1):
+  graphql-tag@2.12.6(graphql@16.10.0):
     dependencies:
-      graphql: 16.8.1
+      graphql: 16.10.0
       tslib: 2.6.2
 
   graphql@15.8.0: {}
+
+  graphql@16.10.0: {}
 
   graphql@16.8.1: {}
 
@@ -53793,7 +53897,7 @@ snapshots:
     dependencies:
       '@ipld/dag-cbor': 9.2.1
       '@noble/curves': 1.6.0
-      '@noble/hashes': 1.5.0
+      '@noble/hashes': 1.7.0
       '@scure/bip32': 1.4.0
       '@scure/bip39': 1.3.0
       bignumber.js: 9.1.2
@@ -61601,9 +61705,8 @@ snapshots:
     dependencies:
       jsesc: 0.5.0
 
-  rehackt@0.1.0(@types/react@18.2.73)(react@18.3.1):
+  rehackt@0.1.0(react@18.3.1):
     optionalDependencies:
-      '@types/react': 18.2.73
       react: 18.3.1
 
   relateurl@0.2.7: {}
@@ -63845,11 +63948,11 @@ snapshots:
       '@ethersproject/logger': 5.7.0
       '@ethersproject/properties': 5.7.0
       '@ethersproject/strings': 5.7.0
-      '@noble/hashes': 1.5.0
+      '@noble/hashes': 1.7.0
       '@noble/secp256k1': 1.7.1
       '@tronweb3/google-protobuf': 3.21.2
       aes-js: 3.1.2
-      axios: 1.7.7
+      axios: 1.7.9
       bignumber.js: 9.1.2
       ethereum-cryptography: 2.1.3
       ethers: 6.12.1
@@ -64138,7 +64241,7 @@ snapshots:
       chalk: 4.1.2
       enhanced-resolve: 5.17.1
       micromatch: 4.0.7
-      semver: 7.6.3
+      semver: 7.5.4
       source-map: 0.7.4
       typescript: 5.1.3
       webpack: 5.94.0

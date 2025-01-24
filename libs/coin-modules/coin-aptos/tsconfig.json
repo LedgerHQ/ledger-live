@@ -1,0 +1,14 @@
+{
+  "extends": "../../../tsconfig.base",
+  "compilerOptions": {
+    "declaration": true,
+    "declarationMap": true,
+    "module": "commonjs",
+    "downlevelIteration": true,
+    "lib": ["es2020", "dom"],
+    "rootDir": "./src",
+    "outDir": "lib",
+    "exactOptionalPropertyTypes": true
+  },
+  "include": ["src/**/*", "deviceTransactionConfig.ts", "transaction.ts"]
+}
