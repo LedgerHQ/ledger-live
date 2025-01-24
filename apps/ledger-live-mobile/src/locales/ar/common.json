@@ -99,7 +99,8 @@
       "id" : "مُعرّف {{ value }}",
       "times" : "x{{ value }}"
     },
-    "quote" : "عرض أسعار"
+    "quote" : "عرض أسعار",
+    "tryAgain" : "إعادة المحاولة"
   },
   "errors" : {
     "ReplacementTransactionUnderpriced" : {
@@ -971,6 +972,9 @@
       "title" : "مزوّد غير صالح",
       "description" : "يجب عليك تغيير إعداد \"My Ledger Provider (مزوّد جهازي Ledger)\". لتغييره، افتح \"Settings (إعدادات)\" في Ledger Live، واختر \"Experimental features (الميزات التجريبية)\"، ثم اختر مزوّداً آخر."
     },
+    "GasLessThanEstimate" : {
+      "title" : "قد يكون هذا منخفضاً جداً. يرجى زيادته"
+    },
     "SequenceNumberError" : {
       "title" : "خطأ في رقم التسلسل",
       "description" : "يُرجى إغلاق النافذة وإعادة المحاولة لاحقاً"
@@ -1019,6 +1023,12 @@
     "ScannedNewImportQrCode" : {
       "title" : "مطلوب التحديث",
       "description" : "لمزامنة تطبيقاتك، يُرجى التأكد من أن كليهما مُحدّث إلى أحدث إصدار."
+    },
+    "AppManifestUnknownError" : {
+      "title" : "لم يتم العثور على تطبيق Swap Live"
+    },
+    "AppManifestNotFoundError" : {
+      "title" : "فشل تحميل تطبيق Swap Live"
     }
   },
   "crash" : {
@@ -1285,7 +1295,7 @@
       "desc" : "منتجاتنا هي محافظ الأجهزة الوحيدة المعتمدة في السوق لأمانها من قِبل الهيئات الوطنية لأمن نظم المعلومات."
     },
     "title" : "أنت بحاجة إلى جهاز Ledger",
-    "desc" : "من أجل أمانك، Ledger Live يعمل فقط مع جهاز. أنت بحاجة إلى جهاز لتتمكن من المتابعة.",
+    "desc" : "من أجل أمانك،\n Ledger Live يعمل فقط مع جهاز Ledger.",
     "cta" : "اشترِ محفظتك Ledger الآن",
     "footer" : "لديّ جهاز Ledger بالفعل، لنعده",
     "bannerTitle" : "مستوى عالي التطور من الأمان لأصولك المشفرة ورموزك غير القابلة للاستبدال",
@@ -2342,7 +2352,8 @@
       "seeMarket" : "رؤية الكل"
     },
     "walletBalance" : "رصيد المحفظة",
-    "seelAllAssets" : "رؤية جميع الأصول",
+    "seeAllAssets" : "رؤية جميع الأصول",
+    "seeAllAccounts" : "رؤية جميع الحسابات",
     "marketPriceSection" : {
       "title" : "سعر السوق لـ{{currencyTicker}}",
       "currencyPrice" : "سعر 1 {{currencyTicker}}",
@@ -2748,6 +2759,9 @@
         "cta" : "قم بالتكديس الآن"
       }
     }
+  },
+  "assets" : {
+    "title" : "الأصول"
   },
   "accounts" : {
     "title" : "الحسابات",
@@ -3467,6 +3481,16 @@
         "providers" : {
           "noProviders" : "لم يتم العثور على نتائج. ليس متاح عروض أسعار بالتفضيلات الحالية."
         }
+      },
+      "incompatibility" : {
+        "explore_compatible_devices" : "استكشف الأجهزة المتوافقة",
+        "contact_support" : "تواصل مع دعم العملاء",
+        "ton_title" : "™Ledger Nano S لا تدعم مبادلة Ton",
+        "ton_description" : "لمبادلة Ton، استخدِم أي جهاز Ledger آخر متوافق مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
+        "spl_tokens_title" : "™Ledger Nano S لا تدعم مبادلة رموز سولانا (Solana)",
+        "spl_tokens_description" : "لمبادلة رموز سولانا (Solana)، استخدِم أي جهاز Ledger آخر متوافق مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
+        "ada_title" : "™Ledger Nano S لا تدعم مبادلة كاردانو (Cardano)",
+        "ada_description" : "لمبادلة كاردانو (Cardano)، استخدِم أي جهاز Ledger آخر متوافق مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax."
       }
     },
     "lending" : {
@@ -3693,7 +3717,7 @@
     "highFeeModal" : "كن حذراً، رسوم الشبكة أعلى من <1>%10</1> من المبلغ. هل ترغب في المتابعة؟",
     "scan" : {
       "title" : "مسح ضوئي لكود QR",
-      "descBottom" : "يرجى توسيط كود QR داخل المربع.",
+      "descBottom" : "مسح ضوئي لكود QR",
       "fallback" : {
         "header" : "مسح ضوئي لكود QR",
         "title" : "تمكين الكاميرا",
@@ -3748,6 +3772,7 @@
       "to" : "إلى",
       "infoTotalTitle" : "إجمالي الخصم",
       "infoTotalDesc" : "يشمل مبلغ المعاملة ورسوم الشبكة المحددة",
+      "gasFee" : "رسوم الغاز",
       "gasLimit" : "حد الغاز",
       "gasPrice" : "سعر الغاز",
       "maxFee" : "الحد الأقصى للرسوم",
@@ -3961,6 +3986,8 @@
   },
   "addAccounts" : {
     "addNew" : "إضافة جديد",
+    "seeAllAccounts" : "رؤية جميع الحسابات",
+    "addNewOrExisting" : "إضافة حساب جديد أو موجود",
     "supportLinks" : {
       "segwit_or_native_segwit" : "Segwit أم Native SegWit؟"
     },
@@ -3969,6 +3996,8 @@
       "desc" : "هل أنت متأكد أنك تريد إلغاء إضافة حسابات؟"
     },
     "imported" : "تمت إضافة الأصل بنجاح",
+    "added" : "تمت إضافة الحساب إلى محفظتك الاستثمارية",
+    "added_plural" : "تمت إضافة {{count}} حساب إلى محفظتك الاستثمارية",
     "sections" : {
       "importable" : {
         "title" : "إضافة حساب موجود"
@@ -4025,7 +4054,44 @@
         "title" : "Taproot",
         "desc" : "أحدث ترقية لشبكة {{currency}}. سوف توفر خصوصية أفضل ورسوم أرخص بمجرد انتشارها. لا يزال الدعم محدود من المحفظة ومنصات التداول."
       }
-    }
+    },
+    "scanDeviceAccounts" : {
+      "title" : "اختر الحسابات التي ترغب في إضافتها",
+      "ctaStopScan" : "إيقاف المسح الضوئي",
+      "confirm" : "تأكيد",
+      "scanningTitle" : "جارٍ البحث عن أي حسابات قائمة في سلسلة الكتل (Blockchain)...",
+      "sections" : {
+        "importable" : {
+          "title" : "وجدنا {{count}} حساب",
+          "title_plural" : "وجدنا {{count}} حساب"
+        },
+        "creatable" : {
+          "title" : "حساب جديد"
+        },
+        "imported" : {
+          "title" : "الحساب موجود بالفعل في المحفظة الاستثمارية ({{count}})",
+          "title_plural" : "الحسابات الموجودة بالفعل في المحفظة الاستثمارية ({{count}})"
+        },
+        "migrate" : {
+          "title" : "الحسابات المطلوب تحديثها"
+        }
+      },
+      "retryScanning" : "إعادة المحاولة"
+    },
+    "addAccountsSuccess" : {
+      "ctaAddFunds" : "إضافة أموال إلى حسابي",
+      "ctaClose" : "إغلاق"
+    },
+    "addAccountsWarning" : {
+      "cantCreateAccount" : {
+        "title" : "لا يمكننا إضافة حساب جديد",
+        "body" : "لا يمكن إضافة حساب جديد قبل تلقي أصول في حسابك {{accountName}}."
+      },
+      "noAccountToCreate" : {
+        "title" : "لم نتمكن من إضافة حساب {{currency}} جديد"
+      }
+    },
+    "chooseAccountToFund" : "اختر حساباً لإضافة الأموال"
   },
   "DeviceAction" : {
     "stayInTheAppPlz" : "لا تُغادر تطبيق Ledger Live وابق على Ledger خاصتك بالقرب منك.",
@@ -6102,7 +6168,7 @@
     },
     "warning" : "تأكد أن العنوان المعروض على Ledger الخاص بك يُطابق عنوان {{recipientWording}}",
     "recipientWording" : {
-      "send" : "دائماً تحقق من أن العنوان المعروض على جهازك يطابق تماماً العنوان الذي قدمه لك المستلم",
+      "send" : "دائماً تحقق أن العنوان المعروض على جهازك يطابق تماماً العنوان الذي قدمه المستلم",
       "delegate" : "دائماً تحقق من أن جهازك يعرض العنوان بشكل مطابق لما قدمه لك المدقق",
       "undelegate" : "دائماً تحقق من أن جهازك يعرض العنوان بشكل مطابق لما قدمه لك المدقق",
       "freeze" : "دائماً تحقق من أن جهازك يعرض العنوان بشكل مطابق لما تم تقديمه إليك",
@@ -6500,7 +6566,9 @@
     "name" : "hedera",
     "createHederaAccountHelp" : {
       "text" : "يرجي الرجوع إلى مقالة الدعم هذه لمعرفة",
-      "link" : "كيفية إنشاء حساب Hedera"
+      "link" : "كيف تنشئ حساب Hedera ؟",
+      "title" : "لا يمكننا إنشاء حساب Hedera جديد",
+      "description" : "في نظام Hedera البيئي، عدد محدود فقط من الخدمات هي التي يمكنها أن تُنشيء حسابات جديدة. بينما لا توفر Ledger حالياً خدمة التهيئة هذه، هناك بدائل متاحة. ستكون قادراً على إضافة حساب Hedera خاصتك على Ledger Live بمجرد إنشائه."
     },
     "currentAddress" : {
       "messageIfVirtual" : "عنوانك {{name}} لا يمكن تأكيده على جهازك Ledger. استخدمه على مسؤوليتك الخاصة."
@@ -7111,6 +7179,16 @@
           "name" : "إضافة حساب"
         }
       }
+    }
+  },
+  "assetSelection" : {
+    "selectCrypto" : {
+      "title" : "اختر أصل"
+    },
+    "selectNetwork" : {
+      "title" : "اختر شبكة سلسلة الكتل (blockchain) التي ينتمي الأصل إليها",
+      "detectedAccounts" : "{{count}} حساب (تم اكتشافه)",
+      "detectedAccounts_plural" : "{{count}} حساب (تم اكتشافه)"
     }
   }
 }
