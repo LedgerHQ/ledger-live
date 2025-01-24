@@ -8,6 +8,7 @@ import {
 import { BigNumber } from "bignumber.js";
 import {
   calcMaxSpendableAmount,
+  getFeeRate,
   isValidKaspaAddress,
   parseExtendedPublicKey,
   scanUtxos,
@@ -52,9 +53,7 @@ const getTransactionStatus = async (
     const maxSpendableAmount: BigNumber = calcMaxSpendableAmount(
       utxos,
       transaction.recipient.length > 67,
-      transaction?.networkInfo
-        .filter(ni => ni.label === transaction?.feesStrategy)[0]
-        .amount.toNumber() || 1,
+      getFeeRate(transaction).toNumber() || 1,
     );
 
     if (transaction.useAllAmount) {
@@ -74,9 +73,7 @@ const getTransactionStatus = async (
         UtxoStrategy.FIFO,
         transaction.recipient.length > 67,
         transaction.amount,
-        transaction?.networkInfo
-          .filter(ni => ni.label === transaction?.feesStrategy)[0]
-          .amount.toNumber() || 1,
+        getFeeRate(transaction).toNumber() || 1,
       );
       estimateFee = result.fee;
     }

@@ -7,3 +7,4 @@ export * from "./base32";
 export * from "./bip32";
 export * from "./utxoSelection/lib";
 export * from "./utxoSelection/index";
+export * from "./getFeeRate";

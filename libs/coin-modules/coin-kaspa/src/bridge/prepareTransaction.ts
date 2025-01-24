@@ -36,7 +36,8 @@ export const prepareTransaction = async (account: KaspaAccount, transaction: Tra
   if (
     transaction.networkInfo.every(
       info => info.estimatedSeconds === transaction.networkInfo[0].estimatedSeconds,
-    )
+    ) &&
+    transaction.feesStrategy !== "custom"
   ) {
     transaction.feesStrategy = "fast";
   }

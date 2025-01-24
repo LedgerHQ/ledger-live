@@ -4,6 +4,7 @@ import { KaspaHwTransaction, KaspaHwTransactionInput, KaspaHwTransactionOutput }
 import { KaspaAccount, Transaction } from "../types";
 import { selectUtxos, UtxoStrategy } from "../logic/utxoSelection";
 import { addressToScriptPublicKey, parseExtendedPublicKey, scanUtxos } from "../logic";
+import { getFeeRate } from "../logic";
 
 /**
  * Assembles a transaction for the Kaspa network.
@@ -38,7 +39,7 @@ export const buildTransaction = async (
     UtxoStrategy.FIFO,
     recipientIsTypeECDSA,
     amount,
-    t.networkInfo.filter(ni => ni.label === t.feesStrategy)[0].amount.toNumber(),
+    getFeeRate(t).toNumber(),
   );
 
   const selectedUtxos = result.utxos;

@@ -31,6 +31,7 @@ export type Transaction = TransactionCommon & {
     amount: BigNumber;
     estimatedSeconds: number;
   }[];
+  customFeeRate?: BigNumber | undefined;
 };
 
 export type TransactionRaw = TransactionCommonRaw & {
@@ -40,6 +41,7 @@ export type TransactionRaw = TransactionCommonRaw & {
     amount: string;
     estimatedSeconds: number;
   }[];
+  customFeeRate?: string | undefined;
 };
 
 export type TransactionStatus = TransactionStatusCommon;

@@ -56,6 +56,7 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
       amount: BigNumber(x.amount),
     })),
     feesStrategy: tr.feesStrategy,
+    customFeeRate: tr.customFeeRate ? BigNumber(tr.customFeeRate) : undefined,
   };
 };
 
@@ -69,6 +70,7 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
       amount: x.amount.toString(),
     })),
     feesStrategy: t.feesStrategy,
+    customFeeRate: t.customFeeRate?.toString(),
   };
 };
 

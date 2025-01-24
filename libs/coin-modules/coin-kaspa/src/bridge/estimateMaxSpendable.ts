@@ -2,6 +2,7 @@ import type { AccountBridge } from "@ledgerhq/types-live";
 import { KaspaAccount, Transaction } from "../types";
 import { BigNumber } from "bignumber.js";
 import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
+import { getFeeRate } from "../logic";
 
 export const estimateMaxSpendable: AccountBridge<
   Transaction,
@@ -12,14 +13,11 @@ export const estimateMaxSpendable: AccountBridge<
   if (!mainAccount) {
     return BigNumber(0);
   }
-  const feeRate: number =
-    transaction?.networkInfo
-      .filter(ni => ni.label === transaction?.feesStrategy)[0]
-      .amount.toNumber() || 1;
+  const feeRate: BigNumber = getFeeRate(transaction);
 
   const maxSpendable: BigNumber = mainAccount.spendableBalance
-    .minus(506)
-    .minus(1118 * mainAccount.activeAddressCount * feeRate);
+    .minus(506 * feeRate.toNumber())
+    .minus(1118 * mainAccount.activeAddressCount * feeRate.toNumber());
 
   return maxSpendable.lt(0) ? BigNumber(0) : maxSpendable;
 };
