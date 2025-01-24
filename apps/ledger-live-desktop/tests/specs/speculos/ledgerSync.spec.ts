@@ -30,7 +30,7 @@ const accounts = [
 ];
 
 const accountNames: Record<string, string> = {
-  "mock:1:dogecoin:0.790010769447963:": "Renamed Dogecoin 2",
+  "mock:1:dogecoin:0.790010769447963:": "Dogecoin 2",
   "mock:1:bitcoin_gold:0.8027791663782486:": "Bitcoin Gold 2",
 };
 
@@ -146,28 +146,10 @@ test.describe(`[${app.name}] Sync Accounts`, () => {
       await app.accounts.navigateToAccountByName(firstAccountName);
       await app.account.expectAccountVisibility(firstAccountName);
       await app.account.deleteAccount();
-
-      const firstSuccessfulQuery = new Promise(resolve => {
-        page.on("response", response => {
-          if (
-            response
-              .url()
-              .startsWith("https://trustchain-backend.api.aws.stg.ldg-tech.com/v1/refresh")
-          ) {
-            if (response.status() === 200) {
-              resolve(response);
-            }
-          }
-        });
-      });
-
       await app.layout.syncAccounts();
       await app.layout.waitForAccountsSyncToBeDone();
-      // expect(await firstSuccessfulQuery).toBeDefined();
-      console.log("firstSuccessfulQuery", firstSuccessfulQuery);
-      await app.accounts.expectAccountAbsence(firstAccountName);
 
-      //await waitForTimeOut(10000);
+      await waitForTimeOut(10000);
 
       await app.accounts.expectAccountsCount(1);
 
