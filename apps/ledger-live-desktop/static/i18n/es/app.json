@@ -119,7 +119,7 @@
     "addressCopied" : "Dirección copiada",
     "addressCopiedSuspicious" : "La dirección copiada y la del portapapeles no coinciden.",
     "experimentalFeature" : "Experimental",
-    "featureFlags" : "Indicadores de funciones",
+    "featureFlags" : "Indicador de función",
     "information" : "Información",
     "search" : "Buscar...",
     "searchWithoutEllipsis" : "Buscar",
@@ -442,6 +442,14 @@
       "cta" : "Explorar dispositivos compatibles",
       "changeProvider" : "Permutar con otro proveedor"
     },
+    "incompatibility" : {
+      "ton_title" : "No es posible utilizar el Ledger Nano S™ para permutar Ton",
+      "ton_description" : "Para permutar Ton, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
+      "spl_tokens_title" : "No es posible utilizar el Ledger Nano S™ para permutar tokens de Solana",
+      "spl_tokens_description" : "Para permutar tokens de Solana, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
+      "ada_title" : "No es posible utilizar el Ledger Nano S™ para permutar Cardano",
+      "ada_description" : "Para permutar Cardano, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™."
+    },
     "providers" : {
       "title" : "Elige un proveedor para permutar cripto",
       "learnMore" : "¿Qué es la permuta?",
@@ -751,6 +759,22 @@
         "description3" : "Esta integración ha sido llevada adelante por {{team}} en colaboración con Ledger",
         "description3Link" : "Esta integración la ha realizado <1><0>{{team}}</0></1> en colaboración con Ledger"
       }
+    },
+    "featureUnavailable" : {
+      "title" : "La siguiente opción está temporalmente deshabilitada: {{feature}}. Si quieres obtener más información, contacta con {{support}}.",
+      "feature" : {
+        "history" : "Historial",
+        "swap" : "Permutar",
+        "token_history" : "Historial de tokens",
+        "send_and_receive" : "Enviar y recibir",
+        "send" : "Enviar",
+        "receive" : "Recibir",
+        "sending_tokens" : "Enviar tokens",
+        "receiving_tokens" : "Recibir tokens",
+        "staking" : "Puesta en participación",
+        "claiming_staking_rewards" : "Reclamar recompensas por participación"
+      },
+      "support" : "el servicio de soporte"
     },
     "willBeDeprecatedBanner" : {
       "title" : "Por razones de optimización de eficiencia, {{currencyName}} dejará de ser compatible con Ledger Live el {{deprecatedDate}}. No obstante, seguirá siendo compatible con las billeteras de hardware de Ledger. Ponte en contacto con el servicio de soporte al cliente de Ledger si necesitas ayuda con esto.",
@@ -1834,7 +1858,8 @@
       "withdrawUnbondedAmount" : "Importe retirado",
       "palletMethod" : "Método",
       "transferAmount" : "Transferir importe",
-      "validatorsCount" : "Validadores ({{number}})"
+      "validatorsCount" : "Validadores ({{number}})",
+      "version" : "Versión"
     }
   },
   "operationList" : {
@@ -5288,6 +5313,7 @@
     "verifyData" : "Siempre verifica los detalles de la operación en tu dispositivo.",
     "doubleCheck" : "Comprueba los detalles de la transacción en tu dispositivo Ledger antes de firmarla.",
     "termsAndConditions" : "Al firmar esta transacción, aceptas los términos de uso de <0>{{appName}}.</0>",
+    "termsAndConditionsWithPrivacy" : "Al firmar esta transacción, aceptas la <1>Política de privacidad</1> y los <0>Términos de uso de {{appName}}</0>.",
     "warningWording" : {
     },
     "titleWording" : {
