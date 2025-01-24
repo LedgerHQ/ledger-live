@@ -442,6 +442,14 @@
       "cta" : "対応デバイスを探す",
       "changeProvider" : "別のプロバイダーでスワップ"
     },
+    "incompatibility" : {
+      "ton_title" : "Ledger Nano S™はTonのスワップに対応していません",
+      "ton_description" : "Tonをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。",
+      "spl_tokens_title" : "Ledger Nano S™はSolanaトークンのスワップに対応していません",
+      "spl_tokens_description" : "Solanaトークンをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。",
+      "ada_title" : "Ledger Nano S™はCardanoのスワップに対応していません",
+      "ada_description" : "Cardanoをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。"
+    },
     "providers" : {
       "title" : "暗号資産のスワップに利用するプロバイダーを選択",
       "learnMore" : "スワップとは？",
@@ -751,6 +759,22 @@
         "description3" : "この統合は、 {{team}}がLedgerと共同で実施しました",
         "description3Link" : "この統合は、<1><0>{{team}}</0></1>がLedgerと共同で実施しました"
       }
+    },
+    "featureUnavailable" : {
+      "title" : "次の機能は一時的にご利用いただけません：{{feature}}。詳しくは{{support}}をご覧ください",
+      "feature" : {
+        "history" : "履歴",
+        "swap" : "スワップ",
+        "token_history" : "トークン履歴",
+        "send_and_receive" : "送付＆受け取り",
+        "send" : "送付",
+        "receive" : "受け取る",
+        "sending_tokens" : "トークンの送付",
+        "receiving_tokens" : "トークンの受け取り",
+        "staking" : "ステーキング",
+        "claiming_staking_rewards" : "ステーキング報酬の獲得請求"
+      },
+      "support" : "サポート"
     },
     "willBeDeprecatedBanner" : {
       "title" : "効率を最適化するため、{{deprecatedDate}}以降、{{currencyName}}はLedger Liveではサポートされなくなります。ただし、Ledgerハードウェアウォレットでは引き続きサポートされます。この件に関してご不明な点などがございましたら、Ledgerカスタマーサポートまでご連絡ください。",
@@ -1834,7 +1858,8 @@
       "withdrawUnbondedAmount" : "引き出し数量",
       "palletMethod" : "方法",
       "transferAmount" : "送付額",
-      "validatorsCount" : "バリデータ（{{number}}）"
+      "validatorsCount" : "バリデータ（{{number}}）",
+      "version" : "バージョン"
     }
   },
   "operationList" : {
@@ -5288,6 +5313,7 @@
     "verifyData" : "必ず、操作の詳細をデバイス上で確認してください。",
     "doubleCheck" : "署名する前に、Ledgerデバイス上のトランザクションの詳細を再確認してください。",
     "termsAndConditions" : "このトランザクションへの署名により、<0>{{appName}}の利用規約</0>に同意したことになります。",
+    "termsAndConditionsWithPrivacy" : "この取引に署名することにより、お客様は<0>{{appName}}の利用規約</0>および<1>プライバシーポリシー</1>に同意したものとみなされます。",
     "warningWording" : {
     },
     "titleWording" : {
