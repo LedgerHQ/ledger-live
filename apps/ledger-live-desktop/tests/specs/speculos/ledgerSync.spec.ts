@@ -5,7 +5,6 @@ import { getDescription } from "../../utils/customJsonReporter";
 import { CLI } from "tests/utils/cliUtils";
 import { activateLedgerSync } from "@ledgerhq/live-common/e2e/speculos";
 import { waitFor, waitForTimeOut } from "tests/utils/waitFor";
-import C from "~/renderer/modals/Receive/Body";
 import { expect } from "@playwright/test";
 import { DistantState as LiveData } from "@ledgerhq/live-wallet/walletsync/index";
 
@@ -147,24 +146,28 @@ test.describe(`[${app.name}] Sync Accounts`, () => {
       await app.accounts.navigateToAccountByName(firstAccountName);
       await app.account.expectAccountVisibility(firstAccountName);
       await app.account.deleteAccount();
+
+      const firstSuccessfulQuery = new Promise(resolve => {
+        page.on("response", response => {
+          if (
+            response
+              .url()
+              .startsWith("https://trustchain-backend.api.aws.stg.ldg-tech.com/v1/refresh")
+          ) {
+            if (response.status() === 200) {
+              resolve(response);
+            }
+          }
+        });
+      });
+
       await app.layout.syncAccounts();
       await app.layout.waitForAccountsSyncToBeDone();
+      // expect(await firstSuccessfulQuery).toBeDefined();
+      console.log("firstSuccessfulQuery", firstSuccessfulQuery);
       await app.accounts.expectAccountAbsence(firstAccountName);
 
-      await waitForTimeOut(10000);
-      /* page.on("response", response => {
-        if (
-          response
-            .url()
-            .startsWith("https://trustchain-backend.api.aws.stg.ldg-tech.com/v1/refresh")
-        ) {
-          if (response.status() === 200) {
-            resolve(response);
-          } else {
-            reject(new Error("Trustchain error " + response.status()));
-          }
-        }
-      });*/
+      //await waitForTimeOut(10000);
 
       await app.accounts.expectAccountsCount(1);
 
