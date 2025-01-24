@@ -8,7 +8,7 @@ export class PasswordlockModal extends Modal {
   private confirmPasswordInput = this.page.getByTestId("confirm-password-input");
   private currentPasswordInput = this.page.getByTestId("current-password-input");
   private disablePasswordInput = this.page.getByTestId("disable-password-input");
-  private saveButton = this.page.getByTestId("modal-save-button");
+  readonly saveButton = this.page.getByTestId("modal-save-button");
   private cancelButton = this.page.getByTestId("modal-cancel-button");
 
   @step("Toggle password lock")

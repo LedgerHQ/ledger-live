@@ -13,10 +13,6 @@ export class Modal extends Component {
   protected closeButton = this.page.getByTestId("modal-close-button");
   protected maxAmountCheckbox = this.page.getByTestId("modal-max-checkbox");
 
-  constructor(page: any) {
-    super(page);
-  }
-
   @step("Click Continue button")
   async continue() {
     await this.continueButton.click();
@@ -27,15 +23,18 @@ export class Modal extends Component {
     await this.closeButton.click();
   }
 
+  @step("Wait for modal to appear")
   async waitForModalToAppear() {
     await this.container.waitFor({ state: "attached" });
     await this.backdrop.waitFor({ state: "attached" });
   }
 
+  @step("Wait for modal to disappear")
   async waitForModalToDisappear() {
     await this.container.waitFor({ state: "detached" });
   }
 
+  @step("Toggle Max Amount")
   async toggleMaxAmount() {
     await this.maxAmountCheckbox.click();
   }
@@ -45,10 +44,12 @@ export class Modal extends Component {
     await this.continueButton.click();
   }
 
+  @step("Continue to sign transaction")
   async continueToSignTransaction() {
     await this.continueButton.click({ force: true });
   }
 
+  @step("continue until option is displayed")
   async scrollUntilOptionIsDisplayed(dropdown: Locator, element: Locator) {
     let isVisible = await element.isVisible();
 

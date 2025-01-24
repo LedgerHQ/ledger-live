@@ -19,7 +19,7 @@ export class delegateModal extends Modal {
   private checkIcon = this.page
     .getByTestId("check-icon")
     .locator('path[fill]:not([fill="transparent"])');
-  private spendableBanner = this.page.getByTestId("modal-spendable-banner");
+  readonly spendableBanner = this.page.getByTestId("modal-spendable-banner");
   readonly cryptoAmountField = this.page.getByTestId("modal-amount-field");
 
   @step("Get title provider on row $0")
