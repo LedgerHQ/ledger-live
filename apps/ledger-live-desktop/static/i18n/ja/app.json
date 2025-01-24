@@ -442,6 +442,14 @@
       "cta" : "対応デバイスを探す",
       "changeProvider" : "別のプロバイダーでスワップ"
     },
+    "incompatibility" : {
+      "ton_title" : "Ledger Nano S™はTonのスワップに対応していません",
+      "ton_description" : "Tonをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。",
+      "spl_tokens_title" : "Ledger Nano S™はSolanaトークンのスワップに対応していません",
+      "spl_tokens_description" : "Solanaトークンをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。",
+      "ada_title" : "Ledger Nano S™はCardanoのスワップに対応していません",
+      "ada_description" : "Cardanoをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。"
+    },
     "providers" : {
       "title" : "暗号資産のスワップに利用するプロバイダーを選択",
       "learnMore" : "スワップとは？",
@@ -1834,7 +1842,8 @@
       "withdrawUnbondedAmount" : "引き出し数量",
       "palletMethod" : "方法",
       "transferAmount" : "送付額",
-      "validatorsCount" : "バリデータ（{{number}}）"
+      "validatorsCount" : "バリデータ（{{number}}）",
+      "version" : "バージョン"
     }
   },
   "operationList" : {
@@ -5288,6 +5297,7 @@
     "verifyData" : "必ず、操作の詳細をデバイス上で確認してください。",
     "doubleCheck" : "署名する前に、Ledgerデバイス上のトランザクションの詳細を再確認してください。",
     "termsAndConditions" : "このトランザクションへの署名により、<0>{{appName}}の利用規約</0>に同意したことになります。",
+    "termsAndConditionsWithPrivacy" : "この取引に署名することにより、お客様は<0>{{appName}}の利用規約</0>および<1>プライバシーポリシー</1>に同意したものとみなされます。",
     "warningWording" : {
     },
     "titleWording" : {
