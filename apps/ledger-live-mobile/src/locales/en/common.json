@@ -792,13 +792,16 @@
       "title": "Account not funded"
     },
     "SolanaTokenAccountHoldsAnotherToken": {
-      "title": "Token account holds another token"
+      "title": "This associated token account holds another token"
+    },
+    "SolanaTokenAccountWarning": {
+      "title": "This is not a regular wallet address but an associated token account. Continue only if you know what you are doing"
     },
     "SolanaTokenAccountNotAllowed": {
-      "title": "This is a token account address"
+      "title": "This is a token account. Input a regular wallet address"
     },
     "SolanaMintAccountNotAllowed": {
-      "title": "This is a mint account address"
+      "title": "This is a token address. Input a regular wallet address"
     },
     "SolanaAssociatedTokenAccountWillBeFunded": {
       "title": "Account will be funded"

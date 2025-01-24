@@ -37,6 +37,7 @@ import {
   SolanaValidatorRequired,
   SolanaTokenAccountNotAllowed,
   SolanaMintAccountNotAllowed,
+  SolanaTokenAccountWarning,
 } from "./errors";
 import {
   decodeAccountIdWithTokenAccountAddress,
@@ -652,7 +653,7 @@ async function validateRecipientCommon(
         if (isEd25519Address(tx.recipient)) {
           errors.recipient = new SolanaTokenAccountNotAllowed();
         } else {
-          warnings.recipient = new SolanaTokenAccountNotAllowed();
+          warnings.recipient = new SolanaTokenAccountWarning();
         }
       } else {
         errors.recipient = new SolanaTokenAccountNotAllowed();

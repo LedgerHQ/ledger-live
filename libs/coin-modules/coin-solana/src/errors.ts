@@ -12,6 +12,8 @@ export const SolanaTokenAccountHoldsAnotherToken = createCustomErrorClass(
   "SolanaTokenAccountHoldsAnotherToken",
 );
 
+export const SolanaTokenAccountWarning = createCustomErrorClass("SolanaTokenAccountWarning");
+
 export const SolanaTokenAccountNotAllowed = createCustomErrorClass("SolanaTokenAccountNotAllowed");
 
 export const SolanaMintAccountNotAllowed = createCustomErrorClass("SolanaMintAccountNotAllowed");
