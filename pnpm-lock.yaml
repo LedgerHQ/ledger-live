@@ -283,8 +283,8 @@ importers:
         specifier: 4.17.7
         version: 4.17.7
       '@types/node':
-        specifier: 20.12.12
-        version: 20.12.12
+        specifier: 22.10.10
+        version: 22.10.10
       '@types/pako':
         specifier: 2.0.3
         version: 2.0.3
@@ -296,7 +296,7 @@ importers:
         version: 8.5.10
       ts-node:
         specifier: 10.9.2
-        version: 10.9.2(@types/node@20.12.12)(typescript@5.4.3)
+        version: 10.9.2(@types/node@22.10.10)(typescript@5.4.3)
 
   apps/ledger-live-desktop:
     dependencies:
@@ -1699,8 +1699,8 @@ importers:
         specifier: ^4.14.198
         version: 4.17.7
       '@types/node':
-        specifier: 20.8.10
-        version: 20.8.10
+        specifier: 22.10.10
+        version: 22.10.10
       '@types/qrcode':
         specifier: '1'
         version: 1.5.5
@@ -3135,14 +3135,14 @@ importers:
         specifier: ^29.5.10
         version: 29.5.12
       '@types/node':
-        specifier: ^20.8.10
-        version: 20.12.12
+        specifier: ^22.10.10
+        version: 22.10.10
       jest:
         specifier: ^29.7.0
-        version: 29.7.0(@types/node@20.12.12)
+        version: 29.7.0(@types/node@22.10.10)
       ts-jest:
         specifier: ^29.1.1
-        version: 29.1.5(jest@29.7.0(@types/node@20.12.12))(typescript@5.4.3)
+        version: 29.1.5(jest@29.7.0(@types/node@22.10.10))(typescript@5.4.3)
 
   libs/coin-modules/coin-tezos:
     dependencies:
@@ -3552,14 +3552,14 @@ importers:
         specifier: ^28.1.8
         version: 28.1.8
       '@types/node':
-        specifier: ^18.15.7
-        version: 18.19.26
+        specifier: ^22.10.10
+        version: 22.10.10
       jest:
         specifier: ^28.1.3
-        version: 28.1.3(@types/node@18.19.26)
+        version: 28.1.3(@types/node@22.10.10)
       ts-jest:
         specifier: ^28.0.8
-        version: 28.0.8(jest@28.1.3(@types/node@18.19.26))(typescript@5.6.3)
+        version: 28.0.8(jest@28.1.3(@types/node@22.10.10))(typescript@5.6.3)
       typescript:
         specifier: ^5.1.3
         version: 5.6.3
@@ -3598,8 +3598,8 @@ importers:
         specifier: ^29.5.10
         version: 29.5.12
       '@types/node':
-        specifier: ^20.8.10
-        version: 20.12.12
+        specifier: ^22.10.10
+        version: 22.10.10
       '@types/semver':
         specifier: 7.5.7
         version: 7.5.7
@@ -3608,13 +3608,13 @@ importers:
         version: 2.4.4
       jest:
         specifier: ^29.7.0
-        version: 29.7.0(@types/node@20.12.12)
+        version: 29.7.0(@types/node@22.10.10)
       jest-environment-jsdom:
         specifier: ^29.7.0
         version: 29.7.0
       ts-jest:
         specifier: ^29.1.1
-        version: 29.1.5(jest@29.7.0(@types/node@20.12.12))(typescript@5.4.3)
+        version: 29.1.5(jest@29.7.0(@types/node@22.10.10))(typescript@5.4.3)
 
   libs/device-react:
     dependencies:
@@ -3629,11 +3629,11 @@ importers:
         specifier: ^29.5.10
         version: 29.5.12
       '@types/node':
-        specifier: ^20.8.10
-        version: 20.12.12
+        specifier: ^22.10.10
+        version: 22.10.10
       jest:
         specifier: ^29.7.0
-        version: 29.7.0(@types/node@20.12.12)
+        version: 29.7.0(@types/node@22.10.10)
       jest-environment-jsdom:
         specifier: ^29.7.0
         version: 29.7.0
@@ -3645,7 +3645,7 @@ importers:
         version: 18.3.1(react@18.3.1)
       ts-jest:
         specifier: ^29.1.1
-        version: 29.1.5(jest@29.7.0(@types/node@20.12.12))(typescript@5.4.3)
+        version: 29.1.5(jest@29.7.0(@types/node@22.10.10))(typescript@5.4.3)
 
   libs/domain-service:
     dependencies:
@@ -3676,7 +3676,7 @@ importers:
         version: link:../ledgerjs/packages/types-cryptoassets
       '@testing-library/jest-dom':
         specifier: ^6.1.5
-        version: 6.4.2(@types/jest@29.5.12)(jest@29.7.0(@types/node@20.12.12))
+        version: 6.4.2(@types/jest@29.5.12)(jest@29.7.0(@types/node@22.10.10))
       '@testing-library/react':
         specifier: ^14.1.2
         version: 14.2.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -3684,8 +3684,8 @@ importers:
         specifier: ^29.5.10
         version: 29.5.12
       '@types/node':
-        specifier: ^20.8.10
-        version: 20.12.12
+        specifier: ^22.10.10
+        version: 22.10.10
       '@types/testing-library__jest-dom':
         specifier: ^5.14.5
         version: 5.14.9
@@ -3694,10 +3694,10 @@ importers:
         version: 7.0.3
       eslint-plugin-jest:
         specifier: ^27.4.2
-        version: 27.9.0(@typescript-eslint/eslint-plugin@6.21.0(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.4.3))(eslint@8.57.0)(typescript@5.4.3))(eslint@8.57.0)(jest@29.7.0(@types/node@20.12.12))(typescript@5.4.3)
+        version: 27.9.0(@typescript-eslint/eslint-plugin@6.21.0(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.4.3))(eslint@8.57.0)(typescript@5.4.3))(eslint@8.57.0)(jest@29.7.0(@types/node@22.10.10))(typescript@5.4.3)
       jest:
         specifier: ^29.7.0
-        version: 29.7.0(@types/node@20.12.12)
+        version: 29.7.0(@types/node@22.10.10)
       jest-environment-jsdom:
         specifier: ^29.7.0
         version: 29.7.0
@@ -3706,7 +3706,7 @@ importers:
         version: 18.3.1(react@18.3.1)
       ts-jest:
         specifier: ^29.1.1
-        version: 29.1.5(jest@29.7.0(@types/node@20.12.12))(typescript@5.4.3)
+        version: 29.1.5(jest@29.7.0(@types/node@22.10.10))(typescript@5.4.3)
 
   libs/env:
     dependencies:
@@ -3789,14 +3789,14 @@ importers:
         specifier: ^29.5.10
         version: 29.5.12
       '@types/node':
-        specifier: ^20.8.10
-        version: 20.12.12
+        specifier: ^22.10.10
+        version: 22.10.10
       jest:
         specifier: ^29.7.0
-        version: 29.7.0(@types/node@20.12.12)
+        version: 29.7.0(@types/node@22.10.10)
       ts-jest:
         specifier: ^29.1.1
-        version: 29.1.5(jest@29.7.0(@types/node@20.12.12))(typescript@5.4.3)
+        version: 29.1.5(jest@29.7.0(@types/node@22.10.10))(typescript@5.4.3)
 
   libs/exchange-module:
     dependencies:
@@ -3808,8 +3808,8 @@ importers:
         version: 1.13.0
     devDependencies:
       '@types/node':
-        specifier: ^20.2.5
-        version: 20.12.12
+        specifier: ^22.10.10
+        version: 22.10.10
 
   libs/hw-ledger-key-ring-protocol:
     dependencies:
@@ -3946,13 +3946,13 @@ importers:
         version: 6.0.3
       '@dfinity/agent':
         specifier: ^0.21.0
-        version: 0.21.4(@dfinity/candid@0.21.4(@dfinity/principal@0.15.7(@types/node@20.12.12)(typescript@5.1.3)))(@dfinity/principal@0.15.7(@types/node@20.12.12)(typescript@5.1.3))
+        version: 0.21.4(@dfinity/candid@0.21.4(@dfinity/principal@0.15.7(@types/node@22.10.10)(typescript@5.1.3)))(@dfinity/principal@0.15.7(@types/node@22.10.10)(typescript@5.1.3))
       '@dfinity/candid':
         specifier: ^0.21.0
-        version: 0.21.4(@dfinity/principal@0.15.7(@types/node@20.12.12)(typescript@5.1.3))
+        version: 0.21.4(@dfinity/principal@0.15.7(@types/node@22.10.10)(typescript@5.1.3))
       '@dfinity/principal':
         specifier: ^0.15.6
-        version: 0.15.7(@types/node@20.12.12)(typescript@5.1.3)
+        version: 0.15.7(@types/node@22.10.10)(typescript@5.1.3)
       '@ledgerhq/coin-algorand':
         specifier: workspace:^
         version: link:../coin-modules/coin-algorand
@@ -4180,7 +4180,7 @@ importers:
         version: 2.6.1
       '@zondax/ledger-cosmos-js':
         specifier: 3.0.3
-        version: 3.0.3(@types/node@20.12.12)(eslint@8.57.0)(lodash@4.17.21)(prettier@3.2.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.1.3)
+        version: 3.0.3(@types/node@22.10.10)(eslint@8.57.0)(lodash@4.17.21)(prettier@3.2.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.1.3)
       '@zondax/ledger-filecoin':
         specifier: ^0.11.2
         version: 0.11.2
@@ -4345,8 +4345,8 @@ importers:
         specifier: ^4.14.179
         version: 4.17.7
       '@types/node':
-        specifier: ^20.8.10
-        version: 20.12.12
+        specifier: ^22.10.10
+        version: 22.10.10
       '@types/react':
         specifier: ^18.2.21
         version: 18.2.73
@@ -4388,7 +4388,7 @@ importers:
         version: 7.2.3
       jest:
         specifier: ^29.7.0
-        version: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(typescript@5.1.3))
+        version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.1.3))
       jest-environment-jsdom:
         specifier: ^29.7.0
         version: 29.7.0
@@ -4430,10 +4430,10 @@ importers:
         version: 0.3.2
       ts-jest:
         specifier: ^29.1.1
-        version: 29.1.5(jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(typescript@5.1.3)))(typescript@5.1.3)
+        version: 29.1.5(jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.1.3)))(typescript@5.1.3)
       ts-node:
         specifier: ^10.4.0
-        version: 10.9.2(@types/node@20.12.12)(typescript@5.1.3)
+        version: 10.9.2(@types/node@22.10.10)(typescript@5.1.3)
       typescript:
         specifier: 5.1.3
         version: 5.1.3
@@ -4460,8 +4460,8 @@ importers:
         specifier: ^29.5.10
         version: 29.5.14
       '@types/node':
-        specifier: ^20.11.0
-        version: 20.12.12
+        specifier: ^22.10.10
+        version: 22.10.10
       dotenv:
         specifier: ^16.4.5
         version: 16.4.5
@@ -4470,16 +4470,16 @@ importers:
         version: 27.5.1
       jest:
         specifier: ^29.7.0
-        version: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(typescript@5.4.3))
+        version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.4.3))
       msw:
         specifier: ^2.2.13
         version: 2.3.4(typescript@5.4.3)
       ts-jest:
         specifier: ^29.1.1
-        version: 29.2.5(jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(typescript@5.4.3)))(typescript@5.4.3)
+        version: 29.2.5(jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.4.3)))(typescript@5.4.3)
       ts-node:
         specifier: ^10.9.2
-        version: 10.9.2(@types/node@20.12.12)(typescript@5.4.3)
+        version: 10.9.2(@types/node@22.10.10)(typescript@5.4.3)
 
   libs/ledger-services/trust:
     dependencies:
@@ -4494,8 +4494,8 @@ importers:
         specifier: ^29.5.10
         version: 29.5.14
       '@types/node':
-        specifier: ^20.11.0
-        version: 20.12.12
+        specifier: ^22.10.10
+        version: 22.10.10
       dotenv:
         specifier: ^16.4.5
         version: 16.4.5
@@ -4504,16 +4504,16 @@ importers:
         version: 27.5.1
       jest:
         specifier: ^29.7.0
-        version: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(typescript@5.4.3))
+        version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.4.3))
       msw:
         specifier: ^2.2.13
         version: 2.3.4(typescript@5.4.3)
       ts-jest:
         specifier: ^29.1.1
-        version: 29.2.5(jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(typescript@5.4.3)))(typescript@5.4.3)
+        version: 29.2.5(jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.4.3)))(typescript@5.4.3)
       ts-node:
         specifier: ^10.9.2
-        version: 10.9.2(@types/node@20.12.12)(typescript@5.4.3)
+        version: 10.9.2(@types/node@22.10.10)(typescript@5.4.3)
 
   libs/ledgerjs:
     dependencies:
@@ -4531,17 +4531,17 @@ importers:
         specifier: ^29.5.10
         version: 29.5.12
       '@types/node':
-        specifier: ^20.8.10
-        version: 20.12.12
+        specifier: ^22.10.10
+        version: 22.10.10
       eslint-plugin-react:
         specifier: ^7.33.2
         version: 7.34.1(eslint@8.57.0)
       jest:
         specifier: ^29.7.0
-        version: 29.7.0(@types/node@20.12.12)
+        version: 29.7.0(@types/node@22.10.10)
       ts-jest:
         specifier: ^29.1.1
-        version: 29.1.5(jest@29.7.0(@types/node@20.12.12))(typescript@5.4.3)
+        version: 29.1.5(jest@29.7.0(@types/node@22.10.10))(typescript@5.4.3)
 
   libs/ledgerjs/packages/context-module:
     dependencies:
@@ -4559,20 +4559,20 @@ importers:
         specifier: ^29.5.10
         version: 29.5.12
       '@types/node':
-        specifier: ^20.8.10
-        version: 20.12.12
+        specifier: ^22.10.10
+        version: 22.10.10
       jest:
         specifier: ^29.7.0
-        version: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(typescript@5.6.3))
+        version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.6.3))
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
       ts-jest:
         specifier: ^29.1.1
-        version: 29.1.5(jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(typescript@5.6.3)))(typescript@5.6.3)
+        version: 29.1.5(jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.6.3)))(typescript@5.6.3)
       ts-node:
         specifier: ^10.7.0
-        version: 10.9.2(@types/node@20.12.12)(typescript@5.6.3)
+        version: 10.9.2(@types/node@22.10.10)(typescript@5.6.3)
       typescript:
         specifier: ^5.4.5
         version: 5.6.3
@@ -4602,14 +4602,14 @@ importers:
         specifier: ^29.5.10
         version: 29.5.12
       '@types/node':
-        specifier: ^20.8.10
-        version: 20.12.12
+        specifier: ^22.10.10
+        version: 22.10.10
       documentation:
         specifier: 14.0.2
         version: 14.0.2
       jest:
         specifier: ^29.7.0
-        version: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3))
+        version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -4618,10 +4618,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^29.1.1
-        version: 29.1.5(jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
+        version: 29.1.5(jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
       ts-node:
         specifier: ^10.7.0
-        version: 10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)
+        version: 10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/cryptoassets-evm-signatures:
     dependencies:
@@ -4639,14 +4639,14 @@ importers:
         specifier: ^29.5.10
         version: 29.5.12
       '@types/node':
-        specifier: ^20.8.10
-        version: 20.12.12
+        specifier: ^22.10.10
+        version: 22.10.10
       documentation:
         specifier: 14.0.2
         version: 14.0.2
       jest:
         specifier: ^29.7.0
-        version: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3))
+        version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -4655,10 +4655,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^29.1.1
-        version: 29.1.5(jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
+        version: 29.1.5(jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
       ts-node:
         specifier: ^10.7.0
-        version: 10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)
+        version: 10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/devices:
     dependencies:
@@ -4679,8 +4679,8 @@ importers:
         specifier: ^29.5.10
         version: 29.5.12
       '@types/node':
-        specifier: ^20.8.10
-        version: 20.12.12
+        specifier: ^22.10.10
+        version: 22.10.10
       '@types/semver':
         specifier: ^7.3.9
         version: 7.5.8
@@ -4689,7 +4689,7 @@ importers:
         version: 14.0.2
       jest:
         specifier: ^29.7.0
-        version: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3))
+        version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -4698,10 +4698,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^29.1.1
-        version: 29.1.5(jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
+        version: 29.1.5(jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
       ts-node:
         specifier: ^10.4.0
-        version: 10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)
+        version: 10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/errors:
     devDependencies:
@@ -4709,14 +4709,14 @@ importers:
         specifier: ^29.5.10
         version: 29.5.12
       '@types/node':
-        specifier: ^20.8.10
-        version: 20.12.12
+        specifier: ^22.10.10
+        version: 22.10.10
       documentation:
         specifier: 14.0.2
         version: 14.0.2
       jest:
         specifier: ^29.7.0
-        version: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3))
+        version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -4725,10 +4725,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^29.1.1
-        version: 29.1.5(jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
+        version: 29.1.5(jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
       ts-node:
         specifier: ^10.4.0
-        version: 10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)
+        version: 10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/hw-app-algorand:
     dependencies:
@@ -4758,14 +4758,14 @@ importers:
         specifier: ^29.5.10
         version: 29.5.12
       '@types/node':
-        specifier: ^20.8.10
-        version: 20.12.12
+        specifier: ^22.10.10
+        version: 22.10.10
       documentation:
         specifier: 14.0.2
         version: 14.0.2
       jest:
         specifier: ^29.7.0
-        version: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3))
+        version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -4774,10 +4774,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^29.1.1
-        version: 29.1.5(jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
+        version: 29.1.5(jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
       ts-node:
         specifier: ^10.4.0
-        version: 10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)
+        version: 10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/hw-app-aptos:
     dependencies:
@@ -4801,14 +4801,14 @@ importers:
         specifier: ^29.5.10
         version: 29.5.14
       '@types/node':
-        specifier: ^20.8.10
-        version: 20.12.12
+        specifier: ^22.10.10
+        version: 22.10.10
       documentation:
         specifier: 14.0.2
         version: 14.0.2
       jest:
         specifier: ^29.7.0
-        version: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3))
+        version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -4817,10 +4817,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^29.1.1
-        version: 29.2.5(jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
+        version: 29.2.5(jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
       ts-node:
         specifier: ^10.4.0
-        version: 10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)
+        version: 10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/hw-app-btc:
     dependencies:
@@ -4871,8 +4871,8 @@ importers:
         specifier: ^29.5.10
         version: 29.5.12
       '@types/node':
-        specifier: ^20.8.10
-        version: 20.12.12
+        specifier: ^22.10.10
+        version: 22.10.10
       axios:
         specifier: 1.7.7
         version: 1.7.7
@@ -4881,7 +4881,7 @@ importers:
         version: 14.0.2
       jest:
         specifier: ^29.7.0
-        version: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3))
+        version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -4890,10 +4890,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^29.1.1
-        version: 29.1.5(jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
+        version: 29.1.5(jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
       ts-node:
         specifier: ^10.4.0
-        version: 10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)
+        version: 10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/hw-app-cosmos:
     dependencies:
@@ -4914,14 +4914,14 @@ importers:
         specifier: ^29.5.10
         version: 29.5.12
       '@types/node':
-        specifier: ^20.8.10
-        version: 20.12.12
+        specifier: ^22.10.10
+        version: 22.10.10
       documentation:
         specifier: 14.0.2
         version: 14.0.2
       jest:
         specifier: ^29.7.0
-        version: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3))
+        version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -4930,10 +4930,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^29.1.1
-        version: 29.1.5(jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
+        version: 29.1.5(jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
       ts-node:
         specifier: ^10.4.0
-        version: 10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)
+        version: 10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/hw-app-elrond:
     dependencies:
@@ -4960,14 +4960,14 @@ importers:
         specifier: ^29.5.10
         version: 29.5.12
       '@types/node':
-        specifier: ^20.8.10
-        version: 20.12.12
+        specifier: ^22.10.10
+        version: 22.10.10
       documentation:
         specifier: 14.0.2
         version: 14.0.2
       jest:
         specifier: ^29.7.0
-        version: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3))
+        version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -4976,10 +4976,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^29.1.1
-        version: 29.1.5(jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
+        version: 29.1.5(jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
       ts-node:
         specifier: ^10.4.0
-        version: 10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)
+        version: 10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/hw-app-eth:
     dependencies:
@@ -5039,14 +5039,14 @@ importers:
         specifier: ^29.5.10
         version: 29.5.12
       '@types/node':
-        specifier: ^20.8.10
-        version: 20.12.12
+        specifier: ^22.10.10
+        version: 22.10.10
       documentation:
         specifier: 14.0.2
         version: 14.0.2
       jest:
         specifier: ^29.7.0
-        version: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3))
+        version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       nock:
         specifier: ^13.0.5
         version: 13.5.4
@@ -5058,10 +5058,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^29.1.1
-        version: 29.1.5(jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
+        version: 29.1.5(jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
       ts-node:
         specifier: ^10.4.0
-        version: 10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)
+        version: 10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/hw-app-exchange:
     dependencies:
@@ -5094,8 +5094,8 @@ importers:
         specifier: ^29.5.10
         version: 29.5.12
       '@types/node':
-        specifier: ^20.8.10
-        version: 20.12.12
+        specifier: ^22.10.10
+        version: 22.10.10
       bip32-path:
         specifier: ^0.4.2
         version: 0.4.2
@@ -5104,16 +5104,16 @@ importers:
         version: 14.0.2
       jest:
         specifier: ^29.7.0
-        version: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(typescript@5.4.3))
+        version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.4.3))
       secp256k1:
         specifier: 5.0.0
         version: 5.0.0
       ts-jest:
         specifier: ^29.1.1
-        version: 29.1.5(jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(typescript@5.4.3)))(typescript@5.4.3)
+        version: 29.1.5(jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.4.3)))(typescript@5.4.3)
       ts-node:
         specifier: ^10.4.0
-        version: 10.9.2(@types/node@20.12.12)(typescript@5.4.3)
+        version: 10.9.2(@types/node@22.10.10)(typescript@5.4.3)
 
   libs/ledgerjs/packages/hw-app-hedera:
     dependencies:
@@ -5134,14 +5134,14 @@ importers:
         specifier: ^29.5.10
         version: 29.5.12
       '@types/node':
-        specifier: ^20.8.10
-        version: 20.12.12
+        specifier: ^22.10.10
+        version: 22.10.10
       documentation:
         specifier: 14.0.2
         version: 14.0.2
       jest:
         specifier: ^29.7.0
-        version: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3))
+        version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -5150,10 +5150,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^29.1.1
-        version: 29.1.5(jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
+        version: 29.1.5(jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
       ts-node:
         specifier: ^10.4.0
-        version: 10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)
+        version: 10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/hw-app-helium:
     dependencies:
@@ -5192,8 +5192,8 @@ importers:
         specifier: ^29.5.10
         version: 29.5.12
       '@types/node':
-        specifier: ^20.8.10
-        version: 20.12.12
+        specifier: ^22.10.10
+        version: 22.10.10
       axios:
         specifier: 1.7.7
         version: 1.7.7
@@ -5202,7 +5202,7 @@ importers:
         version: 14.0.2
       jest:
         specifier: ^29.7.0
-        version: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3))
+        version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -5211,10 +5211,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^29.1.1
-        version: 29.1.5(jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
+        version: 29.1.5(jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
       ts-node:
         specifier: ^10.4.0
-        version: 10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)
+        version: 10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/hw-app-icon:
     dependencies:
@@ -5238,14 +5238,14 @@ importers:
         specifier: ^29.5.10
         version: 29.5.12
       '@types/node':
-        specifier: ^20.8.10
-        version: 20.12.12
+        specifier: ^22.10.10
+        version: 22.10.10
       documentation:
         specifier: 14.0.2
         version: 14.0.2
       jest:
         specifier: ^29.7.0
-        version: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3))
+        version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -5254,10 +5254,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^29.1.1
-        version: 29.1.5(jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
+        version: 29.1.5(jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
       ts-node:
         specifier: ^10.4.0
-        version: 10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)
+        version: 10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/hw-app-near:
     dependencies:
@@ -5275,14 +5275,14 @@ importers:
         specifier: ^29.5.10
         version: 29.5.12
       '@types/node':
-        specifier: ^20.8.10
-        version: 20.12.12
+        specifier: ^22.10.10
+        version: 22.10.10
       documentation:
         specifier: 14.0.2
         version: 14.0.2
       jest:
         specifier: ^29.7.0
-        version: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3))
+        version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -5291,10 +5291,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^29.1.1
-        version: 29.1.5(jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
+        version: 29.1.5(jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
       ts-node:
         specifier: ^10.4.0
-        version: 10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)
+        version: 10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/hw-app-polkadot:
     dependencies:
@@ -5318,14 +5318,14 @@ importers:
         specifier: ^29.5.10
         version: 29.5.12
       '@types/node':
-        specifier: ^20.8.10
-        version: 20.12.12
+        specifier: ^22.10.10
+        version: 22.10.10
       documentation:
         specifier: 14.0.2
         version: 14.0.2
       jest:
         specifier: ^29.7.0
-        version: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3))
+        version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -5334,10 +5334,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^29.1.1
-        version: 29.1.5(jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
+        version: 29.1.5(jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
       ts-node:
         specifier: ^10.4.0
-        version: 10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)
+        version: 10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/hw-app-solana:
     dependencies:
@@ -5361,8 +5361,8 @@ importers:
         specifier: ^29.5.10
         version: 29.5.12
       '@types/node':
-        specifier: ^20.8.10
-        version: 20.12.12
+        specifier: ^22.10.10
+        version: 22.10.10
       axios:
         specifier: 1.7.7
         version: 1.7.7
@@ -5371,7 +5371,7 @@ importers:
         version: 14.0.2
       jest:
         specifier: ^29.7.0
-        version: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3))
+        version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -5380,10 +5380,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^29.1.1
-        version: 29.1.5(jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
+        version: 29.1.5(jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
       ts-node:
         specifier: ^10.4.0
-        version: 10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)
+        version: 10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/hw-app-str:
     dependencies:
@@ -5404,14 +5404,14 @@ importers:
         specifier: ^29.5.10
         version: 29.5.12
       '@types/node':
-        specifier: ^20.8.10
-        version: 20.12.12
+        specifier: ^22.10.10
+        version: 22.10.10
       documentation:
         specifier: 14.0.2
         version: 14.0.2
       jest:
         specifier: ^29.7.0
-        version: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3))
+        version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -5420,10 +5420,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^29.1.1
-        version: 29.1.5(jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
+        version: 29.1.5(jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
       ts-node:
         specifier: ^10.4.0
-        version: 10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)
+        version: 10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/hw-app-tezos:
     dependencies:
@@ -5447,14 +5447,14 @@ importers:
         specifier: ^29.5.10
         version: 29.5.12
       '@types/node':
-        specifier: ^20.8.10
-        version: 20.12.12
+        specifier: ^22.10.10
+        version: 22.10.10
       documentation:
         specifier: 14.0.2
         version: 14.0.2
       jest:
         specifier: ^29.7.0
-        version: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3))
+        version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -5463,10 +5463,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^29.1.1
-        version: 29.1.5(jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
+        version: 29.1.5(jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
       ts-node:
         specifier: ^10.4.0
-        version: 10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)
+        version: 10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/hw-app-trx:
     dependencies:
@@ -5481,14 +5481,14 @@ importers:
         specifier: ^29.5.10
         version: 29.5.12
       '@types/node':
-        specifier: ^20.8.10
-        version: 20.12.12
+        specifier: ^22.10.10
+        version: 22.10.10
       documentation:
         specifier: 14.0.2
         version: 14.0.2
       jest:
         specifier: ^29.7.0
-        version: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3))
+        version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -5497,10 +5497,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^29.1.1
-        version: 29.1.5(jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
+        version: 29.1.5(jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
       ts-node:
         specifier: ^10.4.0
-        version: 10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)
+        version: 10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/hw-app-vet:
     dependencies:
@@ -5527,23 +5527,23 @@ importers:
         specifier: ^29.5.10
         version: 29.5.12
       '@types/node':
-        specifier: ^18.15.3
-        version: 18.19.26
+        specifier: ^22.10.10
+        version: 22.10.10
       documentation:
         specifier: 14.0.2
         version: 14.0.2
       jest:
         specifier: ^29.7.0
-        version: 29.7.0(@types/node@18.19.26)(ts-node@10.9.2(@types/node@18.19.26)(source-map-support@0.5.21)(typescript@4.9.5))
+        version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@4.9.5))
       source-map-support:
         specifier: ^0.5.21
         version: 0.5.21
       ts-jest:
         specifier: ^29.1.1
-        version: 29.1.5(jest@29.7.0(@types/node@18.19.26)(ts-node@10.9.2(@types/node@18.19.26)(source-map-support@0.5.21)(typescript@4.9.5)))(typescript@4.9.5)
+        version: 29.1.5(jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@4.9.5)))(typescript@4.9.5)
       ts-node:
         specifier: ^10.4.0
-        version: 10.9.2(@types/node@18.19.26)(source-map-support@0.5.21)(typescript@4.9.5)
+        version: 10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@4.9.5)
       typescript:
         specifier: ^4
         version: 4.9.5
@@ -5564,14 +5564,14 @@ importers:
         specifier: ^29.5.10
         version: 29.5.12
       '@types/node':
-        specifier: ^20.8.10
-        version: 20.12.12
+        specifier: ^22.10.10
+        version: 22.10.10
       documentation:
         specifier: 14.0.2
         version: 14.0.2
       jest:
         specifier: ^29.7.0
-        version: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3))
+        version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -5580,10 +5580,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^29.1.1
-        version: 29.1.5(jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
+        version: 29.1.5(jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
       ts-node:
         specifier: ^10.4.0
-        version: 10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)
+        version: 10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/hw-bolos:
     dependencies:
@@ -5601,23 +5601,23 @@ importers:
         specifier: ^29.5.10
         version: 29.5.14
       '@types/node':
-        specifier: ^20.8.10
-        version: 20.12.12
+        specifier: ^22.10.10
+        version: 22.10.10
       documentation:
         specifier: 14.0.2
         version: 14.0.2
       jest:
         specifier: ^29.7.0
-        version: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(typescript@5.4.3))
+        version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.4.3))
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
       ts-jest:
         specifier: ^29.1.1
-        version: 29.2.5(jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(typescript@5.4.3)))(typescript@5.4.3)
+        version: 29.2.5(jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.4.3)))(typescript@5.4.3)
       ts-node:
         specifier: ^10.4.0
-        version: 10.9.2(@types/node@20.12.12)(typescript@5.4.3)
+        version: 10.9.2(@types/node@22.10.10)(typescript@5.4.3)
 
   libs/ledgerjs/packages/hw-transport:
     dependencies:
@@ -5638,14 +5638,14 @@ importers:
         specifier: ^29.5.10
         version: 29.5.12
       '@types/node':
-        specifier: ^20.8.10
-        version: 20.12.12
+        specifier: ^22.10.10
+        version: 22.10.10
       documentation:
         specifier: 14.0.2
         version: 14.0.2
       jest:
         specifier: ^29.7.0
-        version: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3))
+        version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -5654,10 +5654,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^29.1.1
-        version: 29.1.5(jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
+        version: 29.1.5(jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
       ts-node:
         specifier: ^10.4.0
-        version: 10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)
+        version: 10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/hw-transport-http:
     dependencies:
@@ -5681,14 +5681,14 @@ importers:
         specifier: ^29.5.10
         version: 29.5.12
       '@types/node':
-        specifier: ^20.8.10
-        version: 20.12.12
+        specifier: ^22.10.10
+        version: 22.10.10
       documentation:
         specifier: 14.0.2
         version: 14.0.2
       jest:
         specifier: ^29.7.0
-        version: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3))
+        version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -5697,10 +5697,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^29.1.1
-        version: 29.1.5(jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
+        version: 29.1.5(jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
       ts-node:
         specifier: ^10.4.0
-        version: 10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)
+        version: 10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/hw-transport-mocker:
     dependencies:
@@ -5718,14 +5718,14 @@ importers:
         specifier: ^29.5.10
         version: 29.5.12
       '@types/node':
-        specifier: ^20.8.10
-        version: 20.12.12
+        specifier: ^22.10.10
+        version: 22.10.10
       documentation:
         specifier: 14.0.2
         version: 14.0.2
       jest:
         specifier: ^29.7.0
-        version: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3))
+        version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -5734,10 +5734,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^29.1.1
-        version: 29.1.5(jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
+        version: 29.1.5(jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
       ts-node:
         specifier: ^10.4.0
-        version: 10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)
+        version: 10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/hw-transport-node-hid:
     dependencies:
@@ -5770,14 +5770,14 @@ importers:
         specifier: ^29.5.10
         version: 29.5.12
       '@types/node':
-        specifier: ^20.8.10
-        version: 20.12.12
+        specifier: ^22.10.10
+        version: 22.10.10
       documentation:
         specifier: 14.0.2
         version: 14.0.2
       jest:
         specifier: ^29.7.0
-        version: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3))
+        version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -5786,10 +5786,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^29.1.1
-        version: 29.1.5(jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
+        version: 29.1.5(jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
       ts-node:
         specifier: ^10.4.0
-        version: 10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)
+        version: 10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/hw-transport-node-hid-noevents:
     dependencies:
@@ -5813,8 +5813,8 @@ importers:
         specifier: ^29.5.10
         version: 29.5.12
       '@types/node':
-        specifier: ^20.8.10
-        version: 20.12.12
+        specifier: ^22.10.10
+        version: 22.10.10
       '@types/node-hid':
         specifier: ^1.3.1
         version: 1.3.4
@@ -5823,7 +5823,7 @@ importers:
         version: 14.0.2
       jest:
         specifier: ^29.7.0
-        version: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3))
+        version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -5832,10 +5832,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^29.1.1
-        version: 29.1.5(jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
+        version: 29.1.5(jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
       ts-node:
         specifier: ^10.4.0
-        version: 10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)
+        version: 10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/hw-transport-node-hid-singleton:
     dependencies:
@@ -5865,14 +5865,14 @@ importers:
         specifier: ^29.5.10
         version: 29.5.12
       '@types/node':
-        specifier: ^20.8.10
-        version: 20.12.12
+        specifier: ^22.10.10
+        version: 22.10.10
       documentation:
         specifier: 14.0.2
         version: 14.0.2
       jest:
         specifier: ^29.7.0
-        version: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3))
+        version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -5881,10 +5881,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^29.1.1
-        version: 29.1.5(jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
+        version: 29.1.5(jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
       ts-node:
         specifier: ^10.4.0
-        version: 10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)
+        version: 10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/hw-transport-node-speculos:
     dependencies:
@@ -5905,14 +5905,14 @@ importers:
         specifier: ^29.5.10
         version: 29.5.12
       '@types/node':
-        specifier: ^20.8.10
-        version: 20.12.12
+        specifier: ^22.10.10
+        version: 22.10.10
       documentation:
         specifier: 14.0.2
         version: 14.0.2
       jest:
         specifier: ^29.7.0
-        version: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3))
+        version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -5921,10 +5921,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^29.1.1
-        version: 29.1.5(jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
+        version: 29.1.5(jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
       ts-node:
         specifier: ^10.4.0
-        version: 10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)
+        version: 10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/hw-transport-node-speculos-http:
     dependencies:
@@ -5948,14 +5948,14 @@ importers:
         specifier: ^29.5.10
         version: 29.5.12
       '@types/node':
-        specifier: ^20.8.10
-        version: 20.12.12
+        specifier: ^22.10.10
+        version: 22.10.10
       documentation:
         specifier: 14.0.2
         version: 14.0.2
       jest:
         specifier: ^29.7.0
-        version: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3))
+        version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -5964,10 +5964,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^29.1.1
-        version: 29.1.5(jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
+        version: 29.1.5(jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
       ts-node:
         specifier: ^10.4.0
-        version: 10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)
+        version: 10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/hw-transport-vault:
     dependencies:
@@ -5985,14 +5985,14 @@ importers:
         specifier: ^29.5.10
         version: 29.5.12
       '@types/node':
-        specifier: ^20.8.10
-        version: 20.12.12
+        specifier: ^22.10.10
+        version: 22.10.10
       documentation:
         specifier: 14.0.2
         version: 14.0.2
       jest:
         specifier: ^29.7.0
-        version: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3))
+        version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -6001,10 +6001,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^29.1.1
-        version: 29.1.5(jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
+        version: 29.1.5(jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
       ts-node:
         specifier: ^10.4.0
-        version: 10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)
+        version: 10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/hw-transport-web-ble:
     dependencies:
@@ -6028,8 +6028,8 @@ importers:
         specifier: ^29.5.10
         version: 29.5.12
       '@types/node':
-        specifier: ^20.8.10
-        version: 20.12.12
+        specifier: ^22.10.10
+        version: 22.10.10
       '@types/web-bluetooth':
         specifier: ^0.0.20
         version: 0.0.20
@@ -6038,7 +6038,7 @@ importers:
         version: 14.0.2
       jest:
         specifier: ^29.7.0
-        version: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3))
+        version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -6047,10 +6047,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^29.1.1
-        version: 29.1.5(jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
+        version: 29.1.5(jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
       ts-node:
         specifier: ^10.4.0
-        version: 10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)
+        version: 10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/hw-transport-webhid:
     dependencies:
@@ -6071,8 +6071,8 @@ importers:
         specifier: ^29.5.10
         version: 29.5.12
       '@types/node':
-        specifier: ^20.8.10
-        version: 20.12.12
+        specifier: ^22.10.10
+        version: 22.10.10
       '@types/w3c-web-hid':
         specifier: ^1.0.2
         version: 1.0.6
@@ -6081,7 +6081,7 @@ importers:
         version: 14.0.2
       jest:
         specifier: ^29.7.0
-        version: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3))
+        version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -6090,10 +6090,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^29.1.1
-        version: 29.1.5(jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
+        version: 29.1.5(jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
       ts-node:
         specifier: ^10.4.0
-        version: 10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)
+        version: 10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/hw-transport-webusb:
     dependencies:
@@ -6114,8 +6114,8 @@ importers:
         specifier: ^29.5.10
         version: 29.5.12
       '@types/node':
-        specifier: ^20.8.10
-        version: 20.12.12
+        specifier: ^22.10.10
+        version: 22.10.10
       '@types/w3c-web-usb':
         specifier: ^1.0.5
         version: 1.0.10
@@ -6124,7 +6124,7 @@ importers:
         version: 14.0.2
       jest:
         specifier: ^29.7.0
-        version: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3))
+        version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -6133,10 +6133,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^29.1.1
-        version: 29.1.5(jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
+        version: 29.1.5(jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
       ts-node:
         specifier: ^10.4.0
-        version: 10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)
+        version: 10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/keyring-eth:
     dependencies:
@@ -6169,23 +6169,23 @@ importers:
         specifier: ^29.5.10
         version: 29.5.12
       '@types/node':
-        specifier: ^20.8.10
-        version: 20.12.12
+        specifier: ^22.10.10
+        version: 22.10.10
       dotenv:
         specifier: ^16.4.5
         version: 16.4.5
       jest:
         specifier: ^29.7.0
-        version: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(typescript@5.6.3))
+        version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.6.3))
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
       ts-jest:
         specifier: ^29.1.1
-        version: 29.1.5(jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(typescript@5.6.3)))(typescript@5.6.3)
+        version: 29.1.5(jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.6.3)))(typescript@5.6.3)
       ts-node:
         specifier: ^10.7.0
-        version: 10.9.2(@types/node@20.12.12)(typescript@5.6.3)
+        version: 10.9.2(@types/node@22.10.10)(typescript@5.6.3)
       typescript:
         specifier: ^5.4.5
         version: 5.6.3
@@ -6196,14 +6196,14 @@ importers:
         specifier: ^29.5.10
         version: 29.5.12
       '@types/node':
-        specifier: ^20.8.10
-        version: 20.12.12
+        specifier: ^22.10.10
+        version: 22.10.10
       documentation:
         specifier: 14.0.2
         version: 14.0.2
       jest:
         specifier: ^29.7.0
-        version: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3))
+        version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -6212,10 +6212,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^29.1.1
-        version: 29.1.5(jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
+        version: 29.1.5(jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
       ts-node:
         specifier: ^10.4.0
-        version: 10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)
+        version: 10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/react-native-hid:
     dependencies:
@@ -6239,14 +6239,14 @@ importers:
         specifier: ^29.5.10
         version: 29.5.12
       '@types/node':
-        specifier: ^20.8.10
-        version: 20.12.12
+        specifier: ^22.10.10
+        version: 22.10.10
       documentation:
         specifier: 14.0.2
         version: 14.0.2
       jest:
         specifier: ^29.7.0
-        version: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3))
+        version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -6255,10 +6255,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^29.1.1
-        version: 29.1.5(jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
+        version: 29.1.5(jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
       ts-node:
         specifier: ^10.4.0
-        version: 10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)
+        version: 10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
       yarn-add-no-save:
         specifier: ^1.0.3
         version: 1.0.3
@@ -6291,8 +6291,8 @@ importers:
         specifier: ^29.5.10
         version: 29.5.12
       '@types/node':
-        specifier: ^20.8.10
-        version: 20.12.12
+        specifier: ^22.10.10
+        version: 22.10.10
       '@types/uuid':
         specifier: ^9.0.5
         version: 9.0.8
@@ -6301,7 +6301,7 @@ importers:
         version: 14.0.2
       jest:
         specifier: ^29.7.0
-        version: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3))
+        version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -6310,10 +6310,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^29.1.1
-        version: 29.1.5(jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
+        version: 29.1.5(jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
       ts-node:
         specifier: ^10.4.0
-        version: 10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)
+        version: 10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/swift-bridge-hw-app-eth:
     dependencies:
@@ -6328,14 +6328,14 @@ importers:
         specifier: ^29.5.10
         version: 29.5.12
       '@types/node':
-        specifier: ^20.8.10
-        version: 20.12.12
+        specifier: ^22.10.10
+        version: 22.10.10
       documentation:
         specifier: 14.0.2
         version: 14.0.2
       jest:
         specifier: ^29.7.0
-        version: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3))
+        version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -6344,10 +6344,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^29.1.1
-        version: 29.1.5(jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
+        version: 29.1.5(jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
       ts-node:
         specifier: ^10.4.0
-        version: 10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)
+        version: 10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/swift-bridge-hw-app-solana:
     dependencies:
@@ -6362,14 +6362,14 @@ importers:
         specifier: ^29.5.10
         version: 29.5.12
       '@types/node':
-        specifier: ^20.8.10
-        version: 20.12.12
+        specifier: ^22.10.10
+        version: 22.10.10
       documentation:
         specifier: 14.0.2
         version: 14.0.2
       jest:
         specifier: ^29.7.0
-        version: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3))
+        version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -6378,10 +6378,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^29.1.1
-        version: 29.1.5(jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
+        version: 29.1.5(jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
       ts-node:
         specifier: ^10.4.0
-        version: 10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)
+        version: 10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/swift-bridge-hw-transport-ble:
     dependencies:
@@ -6393,14 +6393,14 @@ importers:
         specifier: ^29.5.10
         version: 29.5.12
       '@types/node':
-        specifier: ^20.8.10
-        version: 20.12.12
+        specifier: ^22.10.10
+        version: 22.10.10
       documentation:
         specifier: 14.0.2
         version: 14.0.2
       jest:
         specifier: ^29.7.0
-        version: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3))
+        version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -6409,10 +6409,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^29.1.1
-        version: 29.1.5(jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
+        version: 29.1.5(jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
       ts-node:
         specifier: ^10.4.0
-        version: 10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)
+        version: 10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/types-cryptoassets:
     devDependencies:
@@ -6420,11 +6420,11 @@ importers:
         specifier: ^29.5.10
         version: 29.5.12
       '@types/node':
-        specifier: ^20.8.10
-        version: 20.12.12
+        specifier: ^22.10.10
+        version: 22.10.10
       jest:
         specifier: ^29.7.0
-        version: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3))
+        version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -6433,10 +6433,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^29.1.1
-        version: 29.1.5(jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
+        version: 29.1.5(jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
       ts-node:
         specifier: ^10.4.0
-        version: 10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)
+        version: 10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/types-devices:
     devDependencies:
@@ -6444,14 +6444,14 @@ importers:
         specifier: ^29.5.10
         version: 29.5.12
       '@types/node':
-        specifier: ^20.8.10
-        version: 20.12.12
+        specifier: ^22.10.10
+        version: 22.10.10
       documentation:
         specifier: 14.0.2
         version: 14.0.2
       jest:
         specifier: ^29.7.0
-        version: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3))
+        version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -6460,10 +6460,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^29.1.1
-        version: 29.1.5(jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
+        version: 29.1.5(jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
       ts-node:
         specifier: ^10.4.0
-        version: 10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)
+        version: 10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/ledgerjs/packages/types-live:
     dependencies:
@@ -6484,14 +6484,14 @@ importers:
         specifier: ^29.5.10
         version: 29.5.12
       '@types/node':
-        specifier: ^20.8.10
-        version: 20.12.12
+        specifier: ^22.10.10
+        version: 22.10.10
       documentation:
         specifier: 14.0.2
         version: 14.0.2
       jest:
         specifier: ^29.7.0
-        version: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3))
+        version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -6500,10 +6500,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^29.1.1
-        version: 29.1.5(jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
+        version: 29.1.5(jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3)
       ts-node:
         specifier: ^10.4.0
-        version: 10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)
+        version: 10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
 
   libs/live-config:
     dependencies:
@@ -6518,11 +6518,11 @@ importers:
         specifier: ^4.14.202
         version: 4.17.7
       '@types/node':
-        specifier: ^20.2.5
-        version: 20.12.12
+        specifier: ^22.10.10
+        version: 22.10.10
       jest:
         specifier: ^28.1.1
-        version: 28.1.3(@types/node@20.12.12)
+        version: 28.1.3(@types/node@22.10.10)
       jest-environment-jsdom:
         specifier: '28'
         version: 28.1.3
@@ -6531,7 +6531,7 @@ importers:
         version: 7.5.4
       ts-jest:
         specifier: ^28.0.5
-        version: 28.0.8(jest@28.1.3(@types/node@20.12.12))(typescript@5.4.3)
+        version: 28.0.8(jest@28.1.3(@types/node@22.10.10))(typescript@5.4.3)
 
   libs/live-countervalues:
     dependencies:
@@ -6717,14 +6717,14 @@ importers:
         specifier: ^29.5.10
         version: 29.5.12
       '@types/node':
-        specifier: ^20.8.10
-        version: 20.12.12
+        specifier: ^22.10.10
+        version: 22.10.10
       jest:
         specifier: ^29.7.0
-        version: 29.7.0(@types/node@20.12.12)
+        version: 29.7.0(@types/node@22.10.10)
       ts-jest:
         specifier: ^29.1.1
-        version: 29.1.5(jest@29.7.0(@types/node@20.12.12))(typescript@5.4.3)
+        version: 29.1.5(jest@29.7.0(@types/node@22.10.10))(typescript@5.4.3)
 
   libs/live-nft:
     dependencies:
@@ -6932,8 +6932,8 @@ importers:
         version: link:../ledgerjs/packages/logs
     devDependencies:
       '@types/node':
-        specifier: ^20.8.10
-        version: 20.12.12
+        specifier: ^22.10.10
+        version: 22.10.10
       documentation:
         specifier: 14.0.2
         version: 14.0.2
@@ -7305,8 +7305,8 @@ importers:
         specifier: ^3.3.1
         version: 3.3.5(@types/react@18.2.73)
       '@types/node':
-        specifier: ^20.8.10
-        version: 20.12.12
+        specifier: ^22.10.10
+        version: 22.10.10
       '@types/prop-types':
         specifier: ^15.7.5
         version: 15.7.12
@@ -7675,8 +7675,8 @@ importers:
         version: 1.13.0
     devDependencies:
       '@types/node':
-        specifier: ^20.2.5
-        version: 20.12.12
+        specifier: ^22.10.10
+        version: 22.10.10
 
   tests/dummy-live-app:
     dependencies:
@@ -7697,8 +7697,8 @@ importers:
         specifier: ^27.0.1
         version: 27.5.2
       '@types/node':
-        specifier: ^20.8.10
-        version: 20.12.12
+        specifier: ^22.10.10
+        version: 22.10.10
       '@types/react':
         specifier: ^18.2.21
         version: 18.2.73
@@ -7755,8 +7755,8 @@ importers:
         specifier: ^27.0.1
         version: 27.5.2
       '@types/node':
-        specifier: ^20.8.10
-        version: 20.12.12
+        specifier: ^22.10.10
+        version: 22.10.10
       '@types/react':
         specifier: ^18.2.21
         version: 18.2.73
@@ -7771,7 +7771,7 @@ importers:
         version: 6.21.0(eslint@8.57.0)(typescript@5.6.3)
       '@vitejs/plugin-react':
         specifier: ^4.2.1
-        version: 4.2.1(vite@4.5.5(@types/node@20.12.12))
+        version: 4.2.1(vite@4.5.5(@types/node@22.10.10))
       eslint:
         specifier: ^8.55.0
         version: 8.57.0
@@ -7786,13 +7786,13 @@ importers:
         version: 5.6.3
       vite:
         specifier: ^4.5.3
-        version: 4.5.5(@types/node@20.12.12)
+        version: 4.5.5(@types/node@22.10.10)
 
   tools/actions:
     devDependencies:
       '@types/node':
-        specifier: 20.12.12
-        version: 20.12.12
+        specifier: 22.10.10
+        version: 22.10.10
 
   tools/actions/build-checks:
     devDependencies:
@@ -7854,8 +7854,8 @@ importers:
         specifier: 6.0.0
         version: 6.0.0
       '@types/node':
-        specifier: 20.8.10
-        version: 20.8.10
+        specifier: 22.10.10
+        version: 22.10.10
       '@types/unzipper':
         specifier: 0.10.9
         version: 0.10.9
@@ -8070,11 +8070,11 @@ importers:
         specifier: 29.5.12
         version: 29.5.12
       '@types/node':
-        specifier: 20.12.12
-        version: 20.12.12
+        specifier: 22.10.10
+        version: 22.10.10
       jest:
         specifier: 29.7.0
-        version: 29.7.0(@types/node@20.12.12)
+        version: 29.7.0(@types/node@22.10.10)
       nock:
         specifier: 13.5.4
         version: 13.5.4
@@ -8086,7 +8086,7 @@ importers:
         version: 1.2.5
       ts-jest:
         specifier: 29.1.2
-        version: 29.1.2(jest@29.7.0(@types/node@20.12.12))(typescript@5.4.3)
+        version: 29.1.2(jest@29.7.0(@types/node@22.10.10))(typescript@5.4.3)
 
   tools/native-modules-tools: {}
 
@@ -16040,17 +16040,17 @@ packages:
   '@types/node@18.15.13':
     resolution: {integrity: sha512-N+0kuo9KgrUQ1Sn/ifDXsvg0TTleP7rIy4zOBGECxAljqvqfqpTfzx0Q1NUedOixRMBfe2Whhb056a42cWs26Q==}
 
-  '@types/node@18.19.26':
-    resolution: {integrity: sha512-+wiMJsIwLOYCvUqSdKTrfkS8mpTp+MPINe6+Np4TAGFWWRWiBQ5kSq9nZGCSPkzx9mvT+uEukzpX4MOSCydcvw==}
+  '@types/node@18.19.74':
+    resolution: {integrity: sha512-HMwEkkifei3L605gFdV+/UwtpxP6JSzM+xFk2Ia6DNFSwSVBRh9qp5Tgf4lNFOMfPVuU0WnkcWpXZpgn5ufO4A==}
 
-  '@types/node@20.12.12':
-    resolution: {integrity: sha512-eWLDGF/FOSPtAvEqeRAQ4C8LSA7M1I7i0ky1I8U7kD1J5ITyW3AsRhQrKVoWf5pFKZ2kILsEGJhsI9r93PYnOw==}
+  '@types/node@20.17.16':
+    resolution: {integrity: sha512-vOTpLduLkZXePLxHiHsBLp98mHGnl8RptV4YAO3HfKO5UHjDvySGbxKtpYfy8Sx5+WKcgc45qNreJJRVM3L6mw==}
 
   '@types/node@20.5.1':
     resolution: {integrity: sha512-4tT2UrL5LBqDwoed9wZ6N3umC4Yhz3W3FloMmiiG4JwmUJWpie0c7lcnUNd4gtMKuDEO4wRVS8B6Xa0uMRsMKg==}
 
-  '@types/node@20.8.10':
-    resolution: {integrity: sha512-TlgT8JntpcbmKUFzjhsyhGfP2fsiz1Mv56im6enJ905xG1DAYesxJaeSbGqQmAw8OWPdhyJGhGSQGKRNJ45u9w==}
+  '@types/node@22.10.10':
+    resolution: {integrity: sha512-X47y/mPNzxviAGY5TcYPtYL8JsY3kAq2n8fMmKoRCxq/c4v4pyGNCzM2R6+M5/umG4ZfHuT+sgqDYqWc9rJ6ww==}
 
   '@types/normalize-package-data@2.4.4':
     resolution: {integrity: sha512-37i+OaWTh9qeK4LSHPsyRC7NahnGotNuZvjLSgcPzblpHB3rrCJxAOgI5gCdKm7coonsaX1Of0ILiTcnZjbfxA==}
@@ -16966,6 +16966,10 @@ packages:
 
   agentkeepalive@4.5.0:
     resolution: {integrity: sha512-5GG/5IbQQpC9FpkRGsSvZI5QYeSCzlJHdpBQntCsuTOxhKD8lqKhrleg2Yi7yvMIf82Ycmmqln9U8V9qwEiJew==}
+    engines: {node: '>= 8.0.0'}
+
+  agentkeepalive@4.6.0:
+    resolution: {integrity: sha512-kja8j7PjmncONqaTsB8fQ+wE2mSU2DJ9D4XKoJ5PFWIdRMa6SLSN1ff4mOr4jCbfRSsxR4keIiySJU0N9T5hIQ==}
     engines: {node: '>= 8.0.0'}
 
   aggregate-error@3.1.0:
@@ -24842,6 +24846,10 @@ packages:
     resolution: {integrity: sha512-+EUsqGPLsM+j/zdChZjsnX51g4XrHFOIXwfnCVPGlQk/k5giakcKsuxCObBRu6DSm9opw/O6slWbJdghQM4bBg==}
     engines: {node: '>= 0.6'}
 
+  negotiator@0.6.4:
+    resolution: {integrity: sha512-myRT3DiWPHqho5PrJaIRyaMv2kgYf0mUVgBNOYMuCH5Ki1yEiQaf/ZJuQ62nvpc44wL5WDbTX7yGJi1Neevw8w==}
+    engines: {node: '>= 0.6'}
+
   neo-async@2.6.2:
     resolution: {integrity: sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==}
 
@@ -29532,6 +29540,12 @@ packages:
   undici-types@5.26.5:
     resolution: {integrity: sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==}
 
+  undici-types@6.19.8:
+    resolution: {integrity: sha512-ve2KP6f/JnbPBFyobGHuerC9g1FYGn/F8n1LWTwNxCEzd6IfqTwUQcNXgEtmmQ6DlRrC1hrSrBnCZPokRrDHjw==}
+
+  undici-types@6.20.0:
+    resolution: {integrity: sha512-Ny6QZ2Nju20vw1SRHe3d9jVu6gJ+4e3+MMpqu7pqE5HT6WsTSlce++GQmK5UXS8mzV8DSYHrQH+Xrf2jVcuKNg==}
+
   undici@5.28.3:
     resolution: {integrity: sha512-3ItfzbrhDlINjaP0duwnNsKpDQk3acHI3gVJ1z4fmwMK31k5G9OVIAMLSIaP6w4FaGkaAkN6zaQO9LUvZ1t7VA==}
     engines: {node: '>=14.0'}
@@ -33887,7 +33901,7 @@ snapshots:
       '@noble/curves': 1.3.0
       '@noble/hashes': 1.3.3
       '@types/bn.js': 5.1.5
-      '@types/node': 18.19.26
+      '@types/node': 18.19.74
       bignumber.js: 9.1.2
       fp-ts: 2.1.1
       io-ts: 2.0.1(fp-ts@2.1.1)
@@ -34627,10 +34641,10 @@ snapshots:
       ajv: 6.12.6
       ajv-keywords: 3.5.2(ajv@6.12.6)
 
-  '@dfinity/agent@0.21.4(@dfinity/candid@0.21.4(@dfinity/principal@0.15.7(@types/node@20.12.12)(typescript@5.1.3)))(@dfinity/principal@0.15.7(@types/node@20.12.12)(typescript@5.1.3))':
+  '@dfinity/agent@0.21.4(@dfinity/candid@0.21.4(@dfinity/principal@0.15.7(@types/node@22.10.10)(typescript@5.1.3)))(@dfinity/principal@0.15.7(@types/node@22.10.10)(typescript@5.1.3))':
     dependencies:
-      '@dfinity/candid': 0.21.4(@dfinity/principal@0.15.7(@types/node@20.12.12)(typescript@5.1.3))
-      '@dfinity/principal': 0.15.7(@types/node@20.12.12)(typescript@5.1.3)
+      '@dfinity/candid': 0.21.4(@dfinity/principal@0.15.7(@types/node@22.10.10)(typescript@5.1.3))
+      '@dfinity/principal': 0.15.7(@types/node@22.10.10)(typescript@5.1.3)
       '@noble/curves': 1.6.0
       '@noble/hashes': 1.5.0
       base64-arraybuffer: 0.2.0
@@ -34649,18 +34663,18 @@ snapshots:
       buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
       simple-cbor: 0.4.1
 
-  '@dfinity/candid@0.21.4(@dfinity/principal@0.15.7(@types/node@20.12.12)(typescript@5.1.3))':
+  '@dfinity/candid@0.21.4(@dfinity/principal@0.15.7(@types/node@22.10.10)(typescript@5.1.3))':
     dependencies:
-      '@dfinity/principal': 0.15.7(@types/node@20.12.12)(typescript@5.1.3)
+      '@dfinity/principal': 0.15.7(@types/node@22.10.10)(typescript@5.1.3)
 
   '@dfinity/candid@0.21.4(@dfinity/principal@0.15.7(typescript@5.4.3))':
     dependencies:
       '@dfinity/principal': 0.15.7(typescript@5.4.3)
 
-  '@dfinity/principal@0.15.7(@types/node@20.12.12)(typescript@5.1.3)':
+  '@dfinity/principal@0.15.7(@types/node@22.10.10)(typescript@5.1.3)':
     dependencies:
       js-sha256: 0.9.0
-      ts-node: 10.9.2(@types/node@20.12.12)(typescript@5.1.3)
+      ts-node: 10.9.2(@types/node@22.10.10)(typescript@5.1.3)
     transitivePeerDependencies:
       - '@swc/core'
       - '@swc/wasm'
@@ -36604,12 +36618,12 @@ snapshots:
   '@grpc/grpc-js@1.6.7':
     dependencies:
       '@grpc/proto-loader': 0.6.13
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
 
   '@grpc/grpc-js@1.7.3':
     dependencies:
       '@grpc/proto-loader': 0.7.12
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
 
   '@grpc/proto-loader@0.6.13':
     dependencies:
@@ -36713,7 +36727,7 @@ snapshots:
       '@inquirer/figures': 1.0.1
       '@inquirer/type': 1.3.1
       '@types/mute-stream': 0.0.4
-      '@types/node': 20.12.12
+      '@types/node': 20.17.16
       '@types/wrap-ansi': 3.0.0
       ansi-escapes: 4.3.2
       chalk: 4.1.2
@@ -36795,7 +36809,7 @@ snapshots:
   '@jest/console@27.5.1':
     dependencies:
       '@jest/types': 27.5.1
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       chalk: 4.1.2
       jest-message-util: 27.5.1
       jest-util: 27.5.1
@@ -36804,7 +36818,7 @@ snapshots:
   '@jest/console@28.1.3':
     dependencies:
       '@jest/types': 28.1.3
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       chalk: 4.1.2
       jest-message-util: 28.1.3
       jest-util: 28.1.3
@@ -36813,7 +36827,7 @@ snapshots:
   '@jest/console@29.7.0':
     dependencies:
       '@jest/types': 29.6.3
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       chalk: 4.1.2
       jest-message-util: 29.7.0
       jest-util: 29.7.0
@@ -36826,7 +36840,7 @@ snapshots:
       '@jest/test-result': 27.5.1
       '@jest/transform': 27.5.1
       '@jest/types': 27.5.1
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       ansi-escapes: 4.3.2
       chalk: 4.1.2
       emittery: 0.8.1
@@ -36864,14 +36878,14 @@ snapshots:
       '@jest/test-result': 28.1.3
       '@jest/transform': 28.1.3
       '@jest/types': 28.1.3
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       ansi-escapes: 4.3.2
       chalk: 4.1.2
       ci-info: 3.9.0
       exit: 0.1.2
       graceful-fs: 4.2.11
       jest-changed-files: 28.1.3
-      jest-config: 28.1.3(@types/node@20.12.12)
+      jest-config: 28.1.3(@types/node@22.10.10)
       jest-haste-map: 28.1.3
       jest-message-util: 28.1.3
       jest-regex-util: 28.0.2
@@ -36900,14 +36914,14 @@ snapshots:
       '@jest/test-result': 29.7.0
       '@jest/transform': 29.7.0
       '@jest/types': 29.6.3
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       ansi-escapes: 4.3.2
       chalk: 4.1.2
       ci-info: 3.9.0
       exit: 0.1.2
       graceful-fs: 4.2.11
       jest-changed-files: 29.7.0
-      jest-config: 29.7.0(@types/node@20.12.12)
+      jest-config: 29.7.0(@types/node@22.10.10)
       jest-haste-map: 29.7.0
       jest-message-util: 29.7.0
       jest-regex-util: 29.6.3
@@ -36936,14 +36950,14 @@ snapshots:
       '@jest/test-result': 29.7.0
       '@jest/transform': 29.7.0
       '@jest/types': 29.6.3
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       ansi-escapes: 4.3.2
       chalk: 4.1.2
       ci-info: 3.9.0
       exit: 0.1.2
       graceful-fs: 4.2.11
       jest-changed-files: 29.7.0
-      jest-config: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3))
+      jest-config: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3))
       jest-haste-map: 29.7.0
       jest-message-util: 29.7.0
       jest-regex-util: 29.6.3
@@ -36965,21 +36979,21 @@ snapshots:
       - supports-color
       - ts-node
 
-  '@jest/core@29.7.0(ts-node@10.9.2(@types/node@18.19.26)(source-map-support@0.5.21)(typescript@4.9.5))':
+  '@jest/core@29.7.0(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@4.9.5))':
     dependencies:
       '@jest/console': 29.7.0
       '@jest/reporters': 29.7.0
       '@jest/test-result': 29.7.0
       '@jest/transform': 29.7.0
       '@jest/types': 29.6.3
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       ansi-escapes: 4.3.2
       chalk: 4.1.2
       ci-info: 3.9.0
       exit: 0.1.2
       graceful-fs: 4.2.11
       jest-changed-files: 29.7.0
-      jest-config: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@18.19.26)(source-map-support@0.5.21)(typescript@4.9.5))
+      jest-config: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@4.9.5))
       jest-haste-map: 29.7.0
       jest-message-util: 29.7.0
       jest-regex-util: 29.6.3
@@ -37001,21 +37015,21 @@ snapshots:
       - supports-color
       - ts-node
 
-  '@jest/core@29.7.0(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3))':
+  '@jest/core@29.7.0(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))':
     dependencies:
       '@jest/console': 29.7.0
       '@jest/reporters': 29.7.0
       '@jest/test-result': 29.7.0
       '@jest/transform': 29.7.0
       '@jest/types': 29.6.3
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       ansi-escapes: 4.3.2
       chalk: 4.1.2
       ci-info: 3.9.0
       exit: 0.1.2
       graceful-fs: 4.2.11
       jest-changed-files: 29.7.0
-      jest-config: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3))
+      jest-config: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       jest-haste-map: 29.7.0
       jest-message-util: 29.7.0
       jest-regex-util: 29.6.3
@@ -37037,21 +37051,21 @@ snapshots:
       - supports-color
       - ts-node
 
-  '@jest/core@29.7.0(ts-node@10.9.2(@types/node@20.12.12)(typescript@5.1.3))':
+  '@jest/core@29.7.0(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.1.3))':
     dependencies:
       '@jest/console': 29.7.0
       '@jest/reporters': 29.7.0
       '@jest/test-result': 29.7.0
       '@jest/transform': 29.7.0
       '@jest/types': 29.6.3
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       ansi-escapes: 4.3.2
       chalk: 4.1.2
       ci-info: 3.9.0
       exit: 0.1.2
       graceful-fs: 4.2.11
       jest-changed-files: 29.7.0
-      jest-config: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(typescript@5.1.3))
+      jest-config: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.1.3))
       jest-haste-map: 29.7.0
       jest-message-util: 29.7.0
       jest-regex-util: 29.6.3
@@ -37073,21 +37087,21 @@ snapshots:
       - supports-color
       - ts-node
 
-  '@jest/core@29.7.0(ts-node@10.9.2(@types/node@20.12.12)(typescript@5.4.3))':
+  '@jest/core@29.7.0(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.4.3))':
     dependencies:
       '@jest/console': 29.7.0
       '@jest/reporters': 29.7.0
       '@jest/test-result': 29.7.0
       '@jest/transform': 29.7.0
       '@jest/types': 29.6.3
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       ansi-escapes: 4.3.2
       chalk: 4.1.2
       ci-info: 3.9.0
       exit: 0.1.2
       graceful-fs: 4.2.11
       jest-changed-files: 29.7.0
-      jest-config: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(typescript@5.4.3))
+      jest-config: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.4.3))
       jest-haste-map: 29.7.0
       jest-message-util: 29.7.0
       jest-regex-util: 29.6.3
@@ -37109,21 +37123,21 @@ snapshots:
       - supports-color
       - ts-node
 
-  '@jest/core@29.7.0(ts-node@10.9.2(@types/node@20.12.12)(typescript@5.6.3))':
+  '@jest/core@29.7.0(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.6.3))':
     dependencies:
       '@jest/console': 29.7.0
       '@jest/reporters': 29.7.0
       '@jest/test-result': 29.7.0
       '@jest/transform': 29.7.0
       '@jest/types': 29.6.3
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       ansi-escapes: 4.3.2
       chalk: 4.1.2
       ci-info: 3.9.0
       exit: 0.1.2
       graceful-fs: 4.2.11
       jest-changed-files: 29.7.0
-      jest-config: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(typescript@5.6.3))
+      jest-config: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.6.3))
       jest-haste-map: 29.7.0
       jest-message-util: 29.7.0
       jest-regex-util: 29.6.3
@@ -37152,14 +37166,14 @@ snapshots:
       '@jest/test-result': 29.7.0
       '@jest/transform': 29.7.0
       '@jest/types': 29.6.3
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       ansi-escapes: 4.3.2
       chalk: 4.1.2
       ci-info: 3.9.0
       exit: 0.1.2
       graceful-fs: 4.2.11
       jest-changed-files: 29.7.0
-      jest-config: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(typescript@5.4.3))
+      jest-config: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(typescript@5.4.3))
       jest-haste-map: 29.7.0
       jest-message-util: 29.7.0
       jest-regex-util: 29.6.3
@@ -37188,14 +37202,14 @@ snapshots:
       '@jest/test-result': 29.7.0
       '@jest/transform': 29.7.0
       '@jest/types': 29.6.3
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       ansi-escapes: 4.3.2
       chalk: 4.1.2
       ci-info: 3.9.0
       exit: 0.1.2
       graceful-fs: 4.2.11
       jest-changed-files: 29.7.0
-      jest-config: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(typescript@5.6.3))
+      jest-config: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(typescript@5.6.3))
       jest-haste-map: 29.7.0
       jest-message-util: 29.7.0
       jest-regex-util: 29.6.3
@@ -37225,21 +37239,21 @@ snapshots:
     dependencies:
       '@jest/fake-timers': 27.5.1
       '@jest/types': 27.5.1
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       jest-mock: 27.5.1
 
   '@jest/environment@28.1.3':
     dependencies:
       '@jest/fake-timers': 28.1.3
       '@jest/types': 28.1.3
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       jest-mock: 28.1.3
 
   '@jest/environment@29.7.0':
     dependencies:
       '@jest/fake-timers': 29.7.0
       '@jest/types': 29.6.3
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       jest-mock: 29.7.0
 
   '@jest/expect-utils@28.1.3':
@@ -37270,7 +37284,7 @@ snapshots:
     dependencies:
       '@jest/types': 27.5.1
       '@sinonjs/fake-timers': 8.1.0
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       jest-message-util: 27.5.1
       jest-mock: 27.5.1
       jest-util: 27.5.1
@@ -37279,7 +37293,7 @@ snapshots:
     dependencies:
       '@jest/types': 28.1.3
       '@sinonjs/fake-timers': 9.1.2
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       jest-message-util: 28.1.3
       jest-mock: 28.1.3
       jest-util: 28.1.3
@@ -37288,7 +37302,7 @@ snapshots:
     dependencies:
       '@jest/types': 29.6.3
       '@sinonjs/fake-timers': 10.3.0
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       jest-message-util: 29.7.0
       jest-mock: 29.7.0
       jest-util: 29.7.0
@@ -37325,7 +37339,7 @@ snapshots:
       '@jest/test-result': 27.5.1
       '@jest/transform': 27.5.1
       '@jest/types': 27.5.1
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       chalk: 4.1.2
       collect-v8-coverage: 1.0.2
       exit: 0.1.2
@@ -37357,7 +37371,7 @@ snapshots:
       '@jest/transform': 28.1.3
       '@jest/types': 28.1.3
       '@jridgewell/trace-mapping': 0.3.25
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       chalk: 4.1.2
       collect-v8-coverage: 1.0.2
       exit: 0.1.2
@@ -37388,7 +37402,7 @@ snapshots:
       '@jest/transform': 29.7.0
       '@jest/types': 29.6.3
       '@jridgewell/trace-mapping': 0.3.25
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       chalk: 4.1.2
       collect-v8-coverage: 1.0.2
       exit: 0.1.2
@@ -37579,7 +37593,7 @@ snapshots:
     dependencies:
       '@types/istanbul-lib-coverage': 2.0.6
       '@types/istanbul-reports': 3.0.4
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       '@types/yargs': 15.0.19
       chalk: 4.1.2
 
@@ -37587,7 +37601,7 @@ snapshots:
     dependencies:
       '@types/istanbul-lib-coverage': 2.0.6
       '@types/istanbul-reports': 3.0.4
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       '@types/yargs': 16.0.9
       chalk: 4.1.2
 
@@ -37596,7 +37610,7 @@ snapshots:
       '@jest/schemas': 28.1.3
       '@types/istanbul-lib-coverage': 2.0.6
       '@types/istanbul-reports': 3.0.4
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       '@types/yargs': 17.0.32
       chalk: 4.1.2
 
@@ -37605,7 +37619,7 @@ snapshots:
       '@jest/schemas': 29.6.3
       '@types/istanbul-lib-coverage': 2.0.6
       '@types/istanbul-reports': 3.0.4
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       '@types/yargs': 17.0.32
       chalk: 4.1.2
 
@@ -40628,7 +40642,7 @@ snapshots:
 
   '@rnx-kit/chromium-edge-launcher@1.0.0':
     dependencies:
-      '@types/node': 18.19.26
+      '@types/node': 18.19.74
       escape-string-regexp: 4.0.0
       is-wsl: 2.2.0
       lighthouse-logger: 1.4.2
@@ -42047,13 +42061,13 @@ snapshots:
   '@stacks/common@4.3.5':
     dependencies:
       '@types/bn.js': 5.1.5
-      '@types/node': 18.19.26
+      '@types/node': 18.19.74
       buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
 
   '@stacks/common@6.13.0':
     dependencies:
       '@types/bn.js': 5.1.5
-      '@types/node': 18.19.26
+      '@types/node': 18.19.74
 
   '@stacks/network@4.3.5':
     dependencies:
@@ -42075,7 +42089,7 @@ snapshots:
       '@noble/secp256k1': 1.7.1
       '@stacks/common': 4.3.5
       '@stacks/network': 4.3.5
-      '@types/node': 18.19.26
+      '@types/node': 18.19.74
       '@types/sha.js': 2.4.4
       c32check: 1.1.3
       lodash.clonedeep: 4.5.0
@@ -43147,7 +43161,7 @@ snapshots:
       '@storybook/preview': 7.6.20
       '@storybook/preview-api': 7.6.20
       '@swc/core': 1.4.11
-      '@types/node': 18.19.26
+      '@types/node': 18.19.74
       '@types/semver': 7.5.8
       babel-loader: 9.1.3(@babel/core@7.24.3)(webpack@5.94.0(esbuild@0.19.12))
       browser-assert: 1.2.1
@@ -43199,7 +43213,7 @@ snapshots:
       '@storybook/preview': 7.6.20
       '@storybook/preview-api': 7.6.20
       '@swc/core': 1.4.11
-      '@types/node': 18.19.26
+      '@types/node': 18.19.74
       '@types/semver': 7.5.8
       babel-loader: 9.1.3(@babel/core@7.24.3)(webpack@5.94.0(metro@0.80.12))
       browser-assert: 1.2.1
@@ -43500,7 +43514,7 @@ snapshots:
       '@storybook/node-logger': 7.6.20
       '@storybook/types': 7.6.20
       '@types/find-cache-dir': 3.2.1
-      '@types/node': 18.19.26
+      '@types/node': 18.19.74
       '@types/node-fetch': 2.6.11
       '@types/pretty-hrtime': 1.0.3
       chalk: 4.1.2
@@ -43561,7 +43575,7 @@ snapshots:
       '@storybook/telemetry': 7.6.20
       '@storybook/types': 7.6.20
       '@types/detect-port': 1.3.5
-      '@types/node': 18.19.26
+      '@types/node': 18.19.74
       '@types/pretty-hrtime': 1.0.3
       '@types/semver': 7.5.8
       better-opn: 3.0.2
@@ -43596,7 +43610,7 @@ snapshots:
       '@storybook/core-common': 7.6.20
       '@storybook/node-logger': 7.6.20
       '@storybook/types': 7.6.20
-      '@types/node': 18.19.26
+      '@types/node': 18.19.74
       ts-dedent: 2.2.0
     transitivePeerDependencies:
       - encoding
@@ -43750,7 +43764,7 @@ snapshots:
       '@storybook/node-logger': 7.6.20
       '@storybook/react': 7.6.20(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.4.3)
       '@storybook/react-docgen-typescript-plugin': 1.0.6--canary.9.0c3f3b7.0(typescript@5.4.3)(webpack@5.94.0(esbuild@0.19.12))
-      '@types/node': 18.19.26
+      '@types/node': 18.19.74
       '@types/semver': 7.5.8
       babel-plugin-add-react-displayname: 0.0.5
       fs-extra: 11.2.0
@@ -43789,7 +43803,7 @@ snapshots:
       '@storybook/node-logger': 7.6.20
       '@storybook/react': 7.6.20(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.4.3)
       '@storybook/react-docgen-typescript-plugin': 1.0.6--canary.9.0c3f3b7.0(typescript@5.4.3)(webpack@5.94.0(metro@0.80.12))
-      '@types/node': 18.19.26
+      '@types/node': 18.19.74
       '@types/semver': 7.5.8
       babel-plugin-add-react-displayname: 0.0.5
       fs-extra: 11.2.0
@@ -43948,7 +43962,7 @@ snapshots:
       '@storybook/builder-webpack5': 7.6.20(esbuild@0.19.12)(typescript@5.4.3)
       '@storybook/preset-react-webpack': 7.6.20(@babel/core@7.24.3)(esbuild@0.19.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.4.3)
       '@storybook/react': 7.6.20(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.4.3)
-      '@types/node': 18.19.26
+      '@types/node': 18.19.74
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
     optionalDependencies:
@@ -43976,7 +43990,7 @@ snapshots:
       '@storybook/builder-webpack5': 7.6.20(metro@0.80.12)(typescript@5.4.3)
       '@storybook/preset-react-webpack': 7.6.20(@babel/core@7.24.3)(metro@0.80.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.4.3)(webpack-dev-server@4.15.2(webpack@5.94.0(metro@0.80.12)))
       '@storybook/react': 7.6.20(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.4.3)
-      '@types/node': 18.19.26
+      '@types/node': 18.19.74
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
     optionalDependencies:
@@ -44010,7 +44024,7 @@ snapshots:
       '@storybook/types': 7.6.20
       '@types/escodegen': 0.0.6
       '@types/estree': 0.0.51
-      '@types/node': 18.19.26
+      '@types/node': 18.19.74
       acorn: 7.4.1
       acorn-jsx: 5.3.2(acorn@7.4.1)
       acorn-walk: 7.2.0
@@ -44587,7 +44601,7 @@ snapshots:
       '@types/jest': 29.5.12
       jest: 29.7.0(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3))
 
-  '@testing-library/jest-dom@6.4.2(@types/jest@29.5.12)(jest@29.7.0(@types/node@20.12.12))':
+  '@testing-library/jest-dom@6.4.2(@types/jest@29.5.12)(jest@29.7.0(@types/node@22.10.10))':
     dependencies:
       '@adobe/css-tools': 4.3.3
       '@babel/runtime': 7.24.1
@@ -44599,7 +44613,7 @@ snapshots:
       redent: 3.0.0
     optionalDependencies:
       '@types/jest': 29.5.12
-      jest: 29.7.0(@types/node@20.12.12)
+      jest: 29.7.0(@types/node@22.10.10)
 
   '@testing-library/jest-dom@6.6.3':
     dependencies:
@@ -44736,7 +44750,7 @@ snapshots:
 
   '@types/accepts@1.3.7':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
 
   '@types/aria-query@5.0.4': {}
 
@@ -44775,25 +44789,25 @@ snapshots:
 
   '@types/bn.js@5.1.5':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
 
   '@types/body-parser@1.19.5':
     dependencies:
       '@types/connect': 3.4.38
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
 
   '@types/bonjour@3.5.13':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
 
   '@types/bs58@4.0.4':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       base-x: 3.0.9
 
   '@types/bs58check@2.1.2':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
 
   '@types/btoa-lite@1.0.2': {}
 
@@ -44801,7 +44815,7 @@ snapshots:
     dependencies:
       '@types/http-cache-semantics': 4.0.4
       '@types/keyv': 3.1.4
-      '@types/node': 20.12.12
+      '@types/node': 20.17.16
       '@types/responselike': 1.0.3
 
   '@types/cashaddrjs@0.3.3': {}
@@ -44829,15 +44843,15 @@ snapshots:
   '@types/connect-history-api-fallback@1.5.4':
     dependencies:
       '@types/express-serve-static-core': 4.17.43
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
 
   '@types/connect@3.4.36':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
 
   '@types/connect@3.4.38':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
 
   '@types/content-disposition@0.5.8': {}
 
@@ -44848,19 +44862,19 @@ snapshots:
       '@types/connect': 3.4.38
       '@types/express': 4.17.21
       '@types/keygrip': 1.0.6
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
 
   '@types/cors@2.8.17':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
 
   '@types/create-hmac@1.1.3':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
 
   '@types/cross-spawn@6.0.6':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
 
   '@types/crypto-js@4.2.2': {}
 
@@ -44913,7 +44927,7 @@ snapshots:
 
   '@types/express-serve-static-core@4.17.43':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       '@types/qs': 6.9.14
       '@types/range-parser': 1.2.7
       '@types/send': 0.17.4
@@ -44932,20 +44946,20 @@ snapshots:
   '@types/fs-extra@11.0.4':
     dependencies:
       '@types/jsonfile': 6.1.4
-      '@types/node': 20.12.12
+      '@types/node': 18.19.74
 
   '@types/fs-extra@9.0.13':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
 
   '@types/glob@7.2.0':
     dependencies:
       '@types/minimatch': 5.1.2
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
 
   '@types/graceful-fs@4.1.9':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
 
   '@types/hammerjs@2.0.45': {}
 
@@ -44971,7 +44985,7 @@ snapshots:
 
   '@types/http-proxy@1.17.14':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
 
   '@types/imurmurhash@0.1.4': {}
 
@@ -45016,13 +45030,13 @@ snapshots:
 
   '@types/jsdom@16.2.15':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       '@types/parse5': 6.0.3
       '@types/tough-cookie': 4.0.5
 
   '@types/jsdom@20.0.1':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       '@types/tough-cookie': 4.0.5
       parse5: 7.1.2
 
@@ -45032,17 +45046,17 @@ snapshots:
 
   '@types/jsonfile@6.1.4':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 18.19.74
 
   '@types/jsonwebtoken@9.0.6':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
 
   '@types/keygrip@1.0.6': {}
 
   '@types/keyv@3.1.4':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 20.17.16
 
   '@types/koa-compose@3.2.8':
     dependencies:
@@ -45057,7 +45071,7 @@ snapshots:
       '@types/http-errors': 2.0.4
       '@types/keygrip': 1.0.6
       '@types/koa-compose': 3.2.8
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
 
   '@types/koa__router@12.0.3':
     dependencies:
@@ -45065,7 +45079,7 @@ snapshots:
 
   '@types/ledgerhq__hw-transport@4.21.8':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
 
   '@types/libsodium-wrappers@0.7.13': {}
 
@@ -45104,24 +45118,24 @@ snapshots:
 
   '@types/mute-stream@0.0.4':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 20.17.16
 
   '@types/mysql@2.15.22':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
 
   '@types/node-fetch@2.6.11':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       form-data: 4.0.0
 
   '@types/node-forge@1.3.11':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
 
   '@types/node-hid@1.3.4':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
 
   '@types/node@10.12.18': {}
 
@@ -45133,19 +45147,19 @@ snapshots:
 
   '@types/node@18.15.13': {}
 
-  '@types/node@18.19.26':
+  '@types/node@18.19.74':
     dependencies:
       undici-types: 5.26.5
 
-  '@types/node@20.12.12':
+  '@types/node@20.17.16':
     dependencies:
-      undici-types: 5.26.5
+      undici-types: 6.19.8
 
   '@types/node@20.5.1': {}
 
-  '@types/node@20.8.10':
+  '@types/node@22.10.10':
     dependencies:
-      undici-types: 5.26.5
+      undici-types: 6.20.0
 
   '@types/normalize-package-data@2.4.4': {}
 
@@ -45161,7 +45175,7 @@ snapshots:
 
   '@types/pbkdf2@3.1.2':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
 
   '@types/pg-pool@2.0.4':
     dependencies:
@@ -45169,13 +45183,13 @@ snapshots:
 
   '@types/pg@8.6.1':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       pg-protocol: 1.6.1
       pg-types: 2.2.0
 
   '@types/plist@3.0.2':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       xmlbuilder: 15.1.1
     optional: true
 
@@ -45193,7 +45207,7 @@ snapshots:
 
   '@types/qrcode@1.5.5':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
 
   '@types/qs@6.9.14': {}
 
@@ -45341,7 +45355,7 @@ snapshots:
 
   '@types/resolve@1.17.1':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
 
   '@types/resolve@1.20.2': {}
 
@@ -45349,7 +45363,7 @@ snapshots:
 
   '@types/responselike@1.0.3':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 20.17.16
 
   '@types/retry@0.12.0': {}
 
@@ -45357,11 +45371,11 @@ snapshots:
 
   '@types/ripemd160@2.0.3':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
 
   '@types/secp256k1@4.0.6':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
 
   '@types/semver@7.5.7': {}
 
@@ -45370,11 +45384,11 @@ snapshots:
   '@types/send@0.17.4':
     dependencies:
       '@types/mime': 1.3.5
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
 
   '@types/serve-handler@6.1.4':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
 
   '@types/serve-index@1.9.4':
     dependencies:
@@ -45384,17 +45398,17 @@ snapshots:
     dependencies:
       '@types/http-errors': 2.0.4
       '@types/mime': 3.0.4
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
 
   '@types/sha.js@2.4.4':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
 
   '@types/shimmer@1.2.0': {}
 
   '@types/sockjs@0.3.36':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
 
   '@types/stack-utils@2.0.3': {}
 
@@ -45402,11 +45416,11 @@ snapshots:
 
   '@types/stream-chain@2.0.4':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
 
   '@types/stream-json@1.7.7':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       '@types/stream-chain': 2.0.4
 
   '@types/styled-components-react-native@5.2.5(@types/react@18.2.73)':
@@ -45441,19 +45455,19 @@ snapshots:
 
   '@types/trust__keyto@1.0.4':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
 
   '@types/trusted-types@2.0.7': {}
 
   '@types/tunnel@0.0.3':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
 
   '@types/unist@2.0.10': {}
 
   '@types/unzipper@0.10.9':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
 
   '@types/utf8@2.1.6': {}
 
@@ -45478,15 +45492,15 @@ snapshots:
 
   '@types/write-file-atomic@4.0.3':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
 
   '@types/ws@7.4.7':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 12.20.55
 
   '@types/ws@8.5.10':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
 
   '@types/yargs-parser@21.0.3': {}
 
@@ -45508,7 +45522,7 @@ snapshots:
 
   '@types/yauzl@2.10.3':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 20.17.16
     optional: true
 
   '@typescript-eslint/eslint-plugin@5.62.0(@typescript-eslint/parser@5.62.0(eslint@8.57.0)(typescript@5.4.3))(eslint@8.57.0)(typescript@5.4.3)':
@@ -45913,14 +45927,14 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@vitejs/plugin-react@4.2.1(vite@4.5.5(@types/node@20.12.12))':
+  '@vitejs/plugin-react@4.2.1(vite@4.5.5(@types/node@22.10.10))':
     dependencies:
       '@babel/core': 7.24.3
       '@babel/plugin-transform-react-jsx-self': 7.24.1(@babel/core@7.24.3)
       '@babel/plugin-transform-react-jsx-source': 7.24.1(@babel/core@7.24.3)
       '@types/babel__core': 7.20.5
       react-refresh: 0.14.0
-      vite: 4.5.5(@types/node@20.12.12)
+      vite: 4.5.5(@types/node@22.10.10)
     transitivePeerDependencies:
       - supports-color
 
@@ -46385,12 +46399,12 @@ snapshots:
       '@ledgerhq/hw-transport': 6.31.4
       '@types/ledgerhq__hw-transport': 4.21.8
 
-  '@zondax/ledger-cosmos-js@3.0.3(@types/node@20.12.12)(eslint@8.57.0)(lodash@4.17.21)(prettier@3.2.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.1.3)':
+  '@zondax/ledger-cosmos-js@3.0.3(@types/node@22.10.10)(eslint@8.57.0)(lodash@4.17.21)(prettier@3.2.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.1.3)':
     dependencies:
       '@babel/runtime': 7.24.1
       '@ledgerhq/hw-transport': 6.27.1
       '@ledgerhq/hw-transport-u2f': 5.36.0-deprecated
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       '@vue/cli-plugin-typescript': 5.0.8(@vue/cli-service@5.0.8(lodash@4.17.21)(prettier@3.2.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(vue-template-compiler@2.7.16)(vue@2.7.16))(eslint@8.57.0)(typescript@5.1.3)(vue-template-compiler@2.7.16)(vue@2.7.16)
       '@vue/cli-service': 5.0.8(lodash@4.17.21)(prettier@3.2.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(vue-template-compiler@2.7.16)(vue@2.7.16)
       bech32: 1.1.4
@@ -46598,6 +46612,10 @@ snapshots:
   agent-base@7.1.3: {}
 
   agentkeepalive@4.5.0:
+    dependencies:
+      humanize-ms: 1.2.1
+
+  agentkeepalive@4.6.0:
     dependencies:
       humanize-ms: 1.2.1
 
@@ -48429,7 +48447,7 @@ snapshots:
 
   chrome-launcher@0.15.2:
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       escape-string-regexp: 4.0.0
       is-wsl: 2.2.0
       lighthouse-logger: 1.4.2
@@ -48440,7 +48458,7 @@ snapshots:
 
   chromium-edge-launcher@0.2.0:
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       escape-string-regexp: 4.0.0
       is-wsl: 2.2.0
       lighthouse-logger: 1.4.2
@@ -49041,13 +49059,13 @@ snapshots:
       - supports-color
       - ts-node
 
-  create-jest@29.7.0(@types/node@18.19.26)(ts-node@10.9.2(@types/node@18.19.26)(source-map-support@0.5.21)(typescript@4.9.5)):
+  create-jest@29.7.0(@types/node@22.10.10):
     dependencies:
       '@jest/types': 29.6.3
       chalk: 4.1.2
       exit: 0.1.2
       graceful-fs: 4.2.11
-      jest-config: 29.7.0(@types/node@18.19.26)(ts-node@10.9.2(@types/node@18.19.26)(source-map-support@0.5.21)(typescript@4.9.5))
+      jest-config: 29.7.0(@types/node@22.10.10)
       jest-util: 29.7.0
       prompts: 2.4.2
     transitivePeerDependencies:
@@ -49057,13 +49075,13 @@ snapshots:
       - supports-color
       - ts-node
 
-  create-jest@29.7.0(@types/node@20.12.12):
+  create-jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@4.9.5)):
     dependencies:
       '@jest/types': 29.6.3
       chalk: 4.1.2
       exit: 0.1.2
       graceful-fs: 4.2.11
-      jest-config: 29.7.0(@types/node@20.12.12)
+      jest-config: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@4.9.5))
       jest-util: 29.7.0
       prompts: 2.4.2
     transitivePeerDependencies:
@@ -49073,13 +49091,13 @@ snapshots:
       - supports-color
       - ts-node
 
-  create-jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)):
+  create-jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)):
     dependencies:
       '@jest/types': 29.6.3
       chalk: 4.1.2
       exit: 0.1.2
       graceful-fs: 4.2.11
-      jest-config: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3))
+      jest-config: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       jest-util: 29.7.0
       prompts: 2.4.2
     transitivePeerDependencies:
@@ -49089,13 +49107,13 @@ snapshots:
       - supports-color
       - ts-node
 
-  create-jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(typescript@5.1.3)):
+  create-jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.1.3)):
     dependencies:
       '@jest/types': 29.6.3
       chalk: 4.1.2
       exit: 0.1.2
       graceful-fs: 4.2.11
-      jest-config: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(typescript@5.1.3))
+      jest-config: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.1.3))
       jest-util: 29.7.0
       prompts: 2.4.2
     transitivePeerDependencies:
@@ -49105,13 +49123,13 @@ snapshots:
       - supports-color
       - ts-node
 
-  create-jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(typescript@5.4.3)):
+  create-jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.4.3)):
     dependencies:
       '@jest/types': 29.6.3
       chalk: 4.1.2
       exit: 0.1.2
       graceful-fs: 4.2.11
-      jest-config: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(typescript@5.4.3))
+      jest-config: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.4.3))
       jest-util: 29.7.0
       prompts: 2.4.2
     transitivePeerDependencies:
@@ -49121,13 +49139,13 @@ snapshots:
       - supports-color
       - ts-node
 
-  create-jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(typescript@5.6.3)):
+  create-jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.6.3)):
     dependencies:
       '@jest/types': 29.6.3
       chalk: 4.1.2
       exit: 0.1.2
       graceful-fs: 4.2.11
-      jest-config: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(typescript@5.6.3))
+      jest-config: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.6.3))
       jest-util: 29.7.0
       prompts: 2.4.2
     transitivePeerDependencies:
@@ -50241,7 +50259,7 @@ snapshots:
   electron@32.2.8:
     dependencies:
       '@electron/get': 2.0.3
-      '@types/node': 20.12.12
+      '@types/node': 20.17.16
       extract-zip: 2.0.1
     transitivePeerDependencies:
       - supports-color
@@ -50973,13 +50991,13 @@ snapshots:
       - supports-color
       - typescript
 
-  eslint-plugin-jest@27.9.0(@typescript-eslint/eslint-plugin@6.21.0(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.4.3))(eslint@8.57.0)(typescript@5.4.3))(eslint@8.57.0)(jest@29.7.0(@types/node@20.12.12))(typescript@5.4.3):
+  eslint-plugin-jest@27.9.0(@typescript-eslint/eslint-plugin@6.21.0(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.4.3))(eslint@8.57.0)(typescript@5.4.3))(eslint@8.57.0)(jest@29.7.0(@types/node@22.10.10))(typescript@5.4.3):
     dependencies:
       '@typescript-eslint/utils': 5.62.0(eslint@8.57.0)(typescript@5.4.3)
       eslint: 8.57.0
     optionalDependencies:
       '@typescript-eslint/eslint-plugin': 6.21.0(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.4.3))(eslint@8.57.0)(typescript@5.4.3)
-      jest: 29.7.0(@types/node@20.12.12)
+      jest: 29.7.0(@types/node@22.10.10)
     transitivePeerDependencies:
       - supports-color
       - typescript
@@ -54008,7 +54026,7 @@ snapshots:
       '@jest/environment': 27.5.1
       '@jest/test-result': 27.5.1
       '@jest/types': 27.5.1
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       chalk: 4.1.2
       co: 4.6.0
       dedent: 0.7.0
@@ -54034,7 +54052,7 @@ snapshots:
       '@jest/expect': 28.1.3
       '@jest/test-result': 28.1.3
       '@jest/types': 28.1.3
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       chalk: 4.1.2
       co: 4.6.0
       dedent: 0.7.0
@@ -54059,7 +54077,7 @@ snapshots:
       '@jest/expect': 29.7.0
       '@jest/test-result': 29.7.0
       '@jest/types': 29.6.3
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       chalk: 4.1.2
       co: 4.6.0
       dedent: 1.5.1
@@ -54102,7 +54120,7 @@ snapshots:
       - ts-node
       - utf-8-validate
 
-  jest-cli@28.1.3(@types/node@18.19.26):
+  jest-cli@28.1.3(@types/node@22.10.10):
     dependencies:
       '@jest/core': 28.1.3
       '@jest/test-result': 28.1.3
@@ -54111,27 +54129,7 @@ snapshots:
       exit: 0.1.2
       graceful-fs: 4.2.11
       import-local: 3.1.0
-      jest-config: 28.1.3(@types/node@18.19.26)
-      jest-util: 28.1.3
-      jest-validate: 28.1.3
-      prompts: 2.4.2
-      yargs: 17.7.2
-    transitivePeerDependencies:
-      - '@types/node'
-      - metro
-      - supports-color
-      - ts-node
-
-  jest-cli@28.1.3(@types/node@20.12.12):
-    dependencies:
-      '@jest/core': 28.1.3
-      '@jest/test-result': 28.1.3
-      '@jest/types': 28.1.3
-      chalk: 4.1.2
-      exit: 0.1.2
-      graceful-fs: 4.2.11
-      import-local: 3.1.0
-      jest-config: 28.1.3(@types/node@20.12.12)
+      jest-config: 28.1.3(@types/node@22.10.10)
       jest-util: 28.1.3
       jest-validate: 28.1.3
       prompts: 2.4.2
@@ -54162,36 +54160,16 @@ snapshots:
       - supports-color
       - ts-node
 
-  jest-cli@29.7.0(@types/node@18.19.26)(ts-node@10.9.2(@types/node@18.19.26)(source-map-support@0.5.21)(typescript@4.9.5)):
-    dependencies:
-      '@jest/core': 29.7.0(ts-node@10.9.2(@types/node@18.19.26)(source-map-support@0.5.21)(typescript@4.9.5))
-      '@jest/test-result': 29.7.0
-      '@jest/types': 29.6.3
-      chalk: 4.1.2
-      create-jest: 29.7.0(@types/node@18.19.26)(ts-node@10.9.2(@types/node@18.19.26)(source-map-support@0.5.21)(typescript@4.9.5))
-      exit: 0.1.2
-      import-local: 3.1.0
-      jest-config: 29.7.0(@types/node@18.19.26)(ts-node@10.9.2(@types/node@18.19.26)(source-map-support@0.5.21)(typescript@4.9.5))
-      jest-util: 29.7.0
-      jest-validate: 29.7.0
-      yargs: 17.7.2
-    transitivePeerDependencies:
-      - '@types/node'
-      - babel-plugin-macros
-      - metro
-      - supports-color
-      - ts-node
-
-  jest-cli@29.7.0(@types/node@20.12.12):
+  jest-cli@29.7.0(@types/node@22.10.10):
     dependencies:
       '@jest/core': 29.7.0
       '@jest/test-result': 29.7.0
       '@jest/types': 29.6.3
       chalk: 4.1.2
-      create-jest: 29.7.0(@types/node@20.12.12)
+      create-jest: 29.7.0(@types/node@22.10.10)
       exit: 0.1.2
       import-local: 3.1.0
-      jest-config: 29.7.0(@types/node@20.12.12)
+      jest-config: 29.7.0(@types/node@22.10.10)
       jest-util: 29.7.0
       jest-validate: 29.7.0
       yargs: 17.7.2
@@ -54202,16 +54180,16 @@ snapshots:
       - supports-color
       - ts-node
 
-  jest-cli@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)):
+  jest-cli@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@4.9.5)):
     dependencies:
-      '@jest/core': 29.7.0(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3))
+      '@jest/core': 29.7.0(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@4.9.5))
       '@jest/test-result': 29.7.0
       '@jest/types': 29.6.3
       chalk: 4.1.2
-      create-jest: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3))
+      create-jest: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@4.9.5))
       exit: 0.1.2
       import-local: 3.1.0
-      jest-config: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3))
+      jest-config: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@4.9.5))
       jest-util: 29.7.0
       jest-validate: 29.7.0
       yargs: 17.7.2
@@ -54222,16 +54200,16 @@ snapshots:
       - supports-color
       - ts-node
 
-  jest-cli@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(typescript@5.1.3)):
+  jest-cli@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)):
     dependencies:
-      '@jest/core': 29.7.0(ts-node@10.9.2(@types/node@20.12.12)(typescript@5.1.3))
+      '@jest/core': 29.7.0(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       '@jest/test-result': 29.7.0
       '@jest/types': 29.6.3
       chalk: 4.1.2
-      create-jest: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(typescript@5.1.3))
+      create-jest: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       exit: 0.1.2
       import-local: 3.1.0
-      jest-config: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(typescript@5.1.3))
+      jest-config: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       jest-util: 29.7.0
       jest-validate: 29.7.0
       yargs: 17.7.2
@@ -54242,16 +54220,16 @@ snapshots:
       - supports-color
       - ts-node
 
-  jest-cli@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(typescript@5.4.3)):
+  jest-cli@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.1.3)):
     dependencies:
-      '@jest/core': 29.7.0(ts-node@10.9.2(@types/node@20.12.12)(typescript@5.4.3))
+      '@jest/core': 29.7.0(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.1.3))
       '@jest/test-result': 29.7.0
       '@jest/types': 29.6.3
       chalk: 4.1.2
-      create-jest: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(typescript@5.4.3))
+      create-jest: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.1.3))
       exit: 0.1.2
       import-local: 3.1.0
-      jest-config: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(typescript@5.4.3))
+      jest-config: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.1.3))
       jest-util: 29.7.0
       jest-validate: 29.7.0
       yargs: 17.7.2
@@ -54262,16 +54240,36 @@ snapshots:
       - supports-color
       - ts-node
 
-  jest-cli@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(typescript@5.6.3)):
+  jest-cli@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.4.3)):
     dependencies:
-      '@jest/core': 29.7.0(ts-node@10.9.2(@types/node@20.12.12)(typescript@5.6.3))
+      '@jest/core': 29.7.0(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.4.3))
       '@jest/test-result': 29.7.0
       '@jest/types': 29.6.3
       chalk: 4.1.2
-      create-jest: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(typescript@5.6.3))
+      create-jest: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.4.3))
       exit: 0.1.2
       import-local: 3.1.0
-      jest-config: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(typescript@5.6.3))
+      jest-config: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.4.3))
+      jest-util: 29.7.0
+      jest-validate: 29.7.0
+      yargs: 17.7.2
+    transitivePeerDependencies:
+      - '@types/node'
+      - babel-plugin-macros
+      - metro
+      - supports-color
+      - ts-node
+
+  jest-cli@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.6.3)):
+    dependencies:
+      '@jest/core': 29.7.0(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.6.3))
+      '@jest/test-result': 29.7.0
+      '@jest/types': 29.6.3
+      chalk: 4.1.2
+      create-jest: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.6.3))
+      exit: 0.1.2
+      import-local: 3.1.0
+      jest-config: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.6.3))
       jest-util: 29.7.0
       jest-validate: 29.7.0
       yargs: 17.7.2
@@ -54375,7 +54373,7 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  jest-config@28.1.3(@types/node@18.19.26):
+  jest-config@28.1.3(@types/node@22.10.10):
     dependencies:
       '@babel/core': 7.24.3
       '@jest/test-sequencer': 28.1.3
@@ -54400,37 +54398,7 @@ snapshots:
       slash: 3.0.0
       strip-json-comments: 3.1.1
     optionalDependencies:
-      '@types/node': 18.19.26
-    transitivePeerDependencies:
-      - metro
-      - supports-color
-
-  jest-config@28.1.3(@types/node@20.12.12):
-    dependencies:
-      '@babel/core': 7.24.3
-      '@jest/test-sequencer': 28.1.3
-      '@jest/types': 28.1.3
-      babel-jest: 28.1.3(@babel/core@7.24.3)
-      chalk: 4.1.2
-      ci-info: 3.9.0
-      deepmerge: 4.3.1
-      glob: 7.2.3
-      graceful-fs: 4.2.11
-      jest-circus: 28.1.3
-      jest-environment-node: 28.1.3
-      jest-get-type: 28.0.2
-      jest-regex-util: 28.0.2
-      jest-resolve: 28.1.3
-      jest-runner: 28.1.3
-      jest-util: 28.1.3
-      jest-validate: 28.1.3
-      micromatch: 4.0.7
-      parse-json: 5.2.0
-      pretty-format: 28.1.3
-      slash: 3.0.0
-      strip-json-comments: 3.1.1
-    optionalDependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
     transitivePeerDependencies:
       - metro
       - supports-color
@@ -54464,7 +54432,7 @@ snapshots:
       - metro
       - supports-color
 
-  jest-config@29.7.0(@types/node@18.19.26)(ts-node@10.9.2(@types/node@18.19.26)(source-map-support@0.5.21)(typescript@4.9.5)):
+  jest-config@29.7.0(@types/node@22.10.10):
     dependencies:
       '@babel/core': 7.24.3
       '@jest/test-sequencer': 29.7.0
@@ -54489,14 +54457,13 @@ snapshots:
       slash: 3.0.0
       strip-json-comments: 3.1.1
     optionalDependencies:
-      '@types/node': 18.19.26
-      ts-node: 10.9.2(@types/node@18.19.26)(source-map-support@0.5.21)(typescript@4.9.5)
+      '@types/node': 22.10.10
     transitivePeerDependencies:
       - babel-plugin-macros
       - metro
       - supports-color
 
-  jest-config@29.7.0(@types/node@20.12.12):
+  jest-config@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3)):
     dependencies:
       '@babel/core': 7.24.3
       '@jest/test-sequencer': 29.7.0
@@ -54521,45 +54488,14 @@ snapshots:
       slash: 3.0.0
       strip-json-comments: 3.1.1
     optionalDependencies:
-      '@types/node': 20.12.12
-    transitivePeerDependencies:
-      - babel-plugin-macros
-      - metro
-      - supports-color
-
-  jest-config@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3)):
-    dependencies:
-      '@babel/core': 7.24.3
-      '@jest/test-sequencer': 29.7.0
-      '@jest/types': 29.6.3
-      babel-jest: 29.7.0(@babel/core@7.24.3)
-      chalk: 4.1.2
-      ci-info: 3.9.0
-      deepmerge: 4.3.1
-      glob: 7.2.3
-      graceful-fs: 4.2.11
-      jest-circus: 29.7.0
-      jest-environment-node: 29.7.0
-      jest-get-type: 29.6.3
-      jest-regex-util: 29.6.3
-      jest-resolve: 29.7.0
-      jest-runner: 29.7.0
-      jest-util: 29.7.0
-      jest-validate: 29.7.0
-      micromatch: 4.0.7
-      parse-json: 5.2.0
-      pretty-format: 29.7.0
-      slash: 3.0.0
-      strip-json-comments: 3.1.1
-    optionalDependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       ts-node: 10.9.2(@swc/core@1.4.11)(typescript@5.4.3)
     transitivePeerDependencies:
       - babel-plugin-macros
       - metro
       - supports-color
 
-  jest-config@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@18.19.26)(source-map-support@0.5.21)(typescript@4.9.5)):
+  jest-config@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@4.9.5)):
     dependencies:
       '@babel/core': 7.24.3
       '@jest/test-sequencer': 29.7.0
@@ -54584,14 +54520,14 @@ snapshots:
       slash: 3.0.0
       strip-json-comments: 3.1.1
     optionalDependencies:
-      '@types/node': 20.12.12
-      ts-node: 10.9.2(@types/node@18.19.26)(source-map-support@0.5.21)(typescript@4.9.5)
+      '@types/node': 22.10.10
+      ts-node: 10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@4.9.5)
     transitivePeerDependencies:
       - babel-plugin-macros
       - metro
       - supports-color
 
-  jest-config@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)):
+  jest-config@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)):
     dependencies:
       '@babel/core': 7.24.3
       '@jest/test-sequencer': 29.7.0
@@ -54616,14 +54552,14 @@ snapshots:
       slash: 3.0.0
       strip-json-comments: 3.1.1
     optionalDependencies:
-      '@types/node': 20.12.12
-      ts-node: 10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)
+      '@types/node': 22.10.10
+      ts-node: 10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)
     transitivePeerDependencies:
       - babel-plugin-macros
       - metro
       - supports-color
 
-  jest-config@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(typescript@5.1.3)):
+  jest-config@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.1.3)):
     dependencies:
       '@babel/core': 7.24.3
       '@jest/test-sequencer': 29.7.0
@@ -54648,14 +54584,14 @@ snapshots:
       slash: 3.0.0
       strip-json-comments: 3.1.1
     optionalDependencies:
-      '@types/node': 20.12.12
-      ts-node: 10.9.2(@types/node@20.12.12)(typescript@5.1.3)
+      '@types/node': 22.10.10
+      ts-node: 10.9.2(@types/node@22.10.10)(typescript@5.1.3)
     transitivePeerDependencies:
       - babel-plugin-macros
       - metro
       - supports-color
 
-  jest-config@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(typescript@5.4.3)):
+  jest-config@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.4.3)):
     dependencies:
       '@babel/core': 7.24.3
       '@jest/test-sequencer': 29.7.0
@@ -54680,14 +54616,14 @@ snapshots:
       slash: 3.0.0
       strip-json-comments: 3.1.1
     optionalDependencies:
-      '@types/node': 20.12.12
-      ts-node: 10.9.2(@types/node@20.12.12)(typescript@5.4.3)
+      '@types/node': 22.10.10
+      ts-node: 10.9.2(@types/node@22.10.10)(typescript@5.4.3)
     transitivePeerDependencies:
       - babel-plugin-macros
       - metro
       - supports-color
 
-  jest-config@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(typescript@5.6.3)):
+  jest-config@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.6.3)):
     dependencies:
       '@babel/core': 7.24.3
       '@jest/test-sequencer': 29.7.0
@@ -54712,14 +54648,14 @@ snapshots:
       slash: 3.0.0
       strip-json-comments: 3.1.1
     optionalDependencies:
-      '@types/node': 20.12.12
-      ts-node: 10.9.2(@types/node@20.12.12)(typescript@5.6.3)
+      '@types/node': 22.10.10
+      ts-node: 10.9.2(@types/node@22.10.10)(typescript@5.6.3)
     transitivePeerDependencies:
       - babel-plugin-macros
       - metro
       - supports-color
 
-  jest-config@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(typescript@5.4.3)):
+  jest-config@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(typescript@5.4.3)):
     dependencies:
       '@babel/core': 7.24.3
       '@jest/test-sequencer': 29.7.0
@@ -54744,14 +54680,14 @@ snapshots:
       slash: 3.0.0
       strip-json-comments: 3.1.1
     optionalDependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       ts-node: 10.9.2(typescript@5.4.3)
     transitivePeerDependencies:
       - babel-plugin-macros
       - metro
       - supports-color
 
-  jest-config@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(typescript@5.6.3)):
+  jest-config@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(typescript@5.6.3)):
     dependencies:
       '@babel/core': 7.24.3
       '@jest/test-sequencer': 29.7.0
@@ -54776,7 +54712,7 @@ snapshots:
       slash: 3.0.0
       strip-json-comments: 3.1.1
     optionalDependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       ts-node: 10.9.2(typescript@5.6.3)
     transitivePeerDependencies:
       - babel-plugin-macros
@@ -54961,7 +54897,7 @@ snapshots:
       '@jest/environment': 27.5.1
       '@jest/fake-timers': 27.5.1
       '@jest/types': 27.5.1
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       jest-mock: 27.5.1
       jest-util: 27.5.1
       jsdom: 16.7.0
@@ -54977,7 +54913,7 @@ snapshots:
       '@jest/fake-timers': 28.1.3
       '@jest/types': 28.1.3
       '@types/jsdom': 16.2.15
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       jest-mock: 28.1.3
       jest-util: 28.1.3
       jsdom: 19.0.0
@@ -54993,7 +54929,7 @@ snapshots:
       '@jest/fake-timers': 29.7.0
       '@jest/types': 29.6.3
       '@types/jsdom': 20.0.1
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       jest-mock: 29.7.0
       jest-util: 29.7.0
       jsdom: 20.0.3
@@ -55007,7 +54943,7 @@ snapshots:
       '@jest/environment': 27.5.1
       '@jest/fake-timers': 27.5.1
       '@jest/types': 27.5.1
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       jest-mock: 27.5.1
       jest-util: 27.5.1
 
@@ -55016,7 +54952,7 @@ snapshots:
       '@jest/environment': 28.1.3
       '@jest/fake-timers': 28.1.3
       '@jest/types': 28.1.3
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       jest-mock: 28.1.3
       jest-util: 28.1.3
 
@@ -55025,7 +54961,7 @@ snapshots:
       '@jest/environment': 29.7.0
       '@jest/fake-timers': 29.7.0
       '@jest/types': 29.6.3
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       jest-mock: 29.7.0
       jest-util: 29.7.0
 
@@ -55050,7 +54986,7 @@ snapshots:
     dependencies:
       '@jest/types': 27.5.1
       '@types/graceful-fs': 4.1.9
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       anymatch: 3.1.3
       fb-watchman: 2.0.2
       graceful-fs: 4.2.11
@@ -55069,7 +55005,7 @@ snapshots:
     dependencies:
       '@jest/types': 28.1.3
       '@types/graceful-fs': 4.1.9
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       anymatch: 3.1.3
       fb-watchman: 2.0.2
       graceful-fs: 4.2.11
@@ -55087,7 +55023,7 @@ snapshots:
     dependencies:
       '@jest/types': 29.6.3
       '@types/graceful-fs': 4.1.9
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       anymatch: 3.1.3
       fb-watchman: 2.0.2
       graceful-fs: 4.2.11
@@ -55105,7 +55041,7 @@ snapshots:
     dependencies:
       '@jest/types': 29.6.3
       '@types/graceful-fs': 4.1.9
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       anymatch: 3.1.3
       fb-watchman: 2.0.2
       graceful-fs: 4.2.11
@@ -55125,7 +55061,7 @@ snapshots:
       '@jest/source-map': 27.5.1
       '@jest/test-result': 27.5.1
       '@jest/types': 27.5.1
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       chalk: 4.1.2
       co: 4.6.0
       expect: 27.5.1
@@ -55235,17 +55171,17 @@ snapshots:
   jest-mock@27.5.1:
     dependencies:
       '@jest/types': 27.5.1
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
 
   jest-mock@28.1.3:
     dependencies:
       '@jest/types': 28.1.3
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
 
   jest-mock@29.7.0:
     dependencies:
       '@jest/types': 29.6.3
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       jest-util: 29.7.0
 
   jest-pnp-resolver@1.2.3(jest-resolve@27.5.1):
@@ -55341,7 +55277,7 @@ snapshots:
       '@jest/test-result': 27.5.1
       '@jest/transform': 27.5.1
       '@jest/types': 27.5.1
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       chalk: 4.1.2
       emittery: 0.8.1
       graceful-fs: 4.2.11
@@ -55371,7 +55307,7 @@ snapshots:
       '@jest/test-result': 28.1.3
       '@jest/transform': 28.1.3
       '@jest/types': 28.1.3
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       chalk: 4.1.2
       emittery: 0.10.2
       graceful-fs: 4.2.11
@@ -55398,7 +55334,7 @@ snapshots:
       '@jest/test-result': 29.7.0
       '@jest/transform': 29.7.0
       '@jest/types': 29.6.3
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       chalk: 4.1.2
       emittery: 0.13.1
       graceful-fs: 4.2.11
@@ -55483,7 +55419,7 @@ snapshots:
       '@jest/test-result': 29.7.0
       '@jest/transform': 29.7.0
       '@jest/types': 29.6.3
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       chalk: 4.1.2
       cjs-module-lexer: 1.2.3
       collect-v8-coverage: 1.0.2
@@ -55504,7 +55440,7 @@ snapshots:
 
   jest-serializer@27.5.1:
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       graceful-fs: 4.2.11
 
   jest-snapshot@27.5.1:
@@ -55598,7 +55534,7 @@ snapshots:
   jest-util@27.5.1:
     dependencies:
       '@jest/types': 27.5.1
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       chalk: 4.1.2
       ci-info: 3.9.0
       graceful-fs: 4.2.11
@@ -55607,7 +55543,7 @@ snapshots:
   jest-util@28.1.3:
     dependencies:
       '@jest/types': 28.1.3
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       chalk: 4.1.2
       ci-info: 3.9.0
       graceful-fs: 4.2.11
@@ -55616,7 +55552,7 @@ snapshots:
   jest-util@29.7.0:
     dependencies:
       '@jest/types': 29.6.3
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       chalk: 4.1.2
       ci-info: 3.9.0
       graceful-fs: 4.2.11
@@ -55664,7 +55600,7 @@ snapshots:
     dependencies:
       '@jest/test-result': 27.5.1
       '@jest/types': 27.5.1
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       ansi-escapes: 4.3.2
       chalk: 4.1.2
       jest-util: 27.5.1
@@ -55674,7 +55610,7 @@ snapshots:
     dependencies:
       '@jest/test-result': 28.1.3
       '@jest/types': 28.1.3
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       ansi-escapes: 4.3.2
       chalk: 4.1.2
       emittery: 0.10.2
@@ -55685,7 +55621,7 @@ snapshots:
     dependencies:
       '@jest/test-result': 29.7.0
       '@jest/types': 29.6.3
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       ansi-escapes: 4.3.2
       chalk: 4.1.2
       emittery: 0.13.1
@@ -55694,19 +55630,19 @@ snapshots:
 
   jest-worker@26.6.2:
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       merge-stream: 2.0.0
       supports-color: 7.2.0
 
   jest-worker@27.5.1:
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       merge-stream: 2.0.0
       supports-color: 8.1.1
 
   jest-worker@27.5.1(metro@0.80.12):
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       merge-stream: 2.0.0
       supports-color: 8.1.1
     optionalDependencies:
@@ -55714,20 +55650,20 @@ snapshots:
 
   jest-worker@28.1.3:
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       merge-stream: 2.0.0
       supports-color: 8.1.1
 
   jest-worker@29.7.0:
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       jest-util: 29.7.0
       merge-stream: 2.0.0
       supports-color: 8.1.1
 
   jest-worker@29.7.0(metro@0.80.12):
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       jest-util: 29.7.0
       merge-stream: 2.0.0
       supports-color: 8.1.1
@@ -55747,24 +55683,12 @@ snapshots:
       - ts-node
       - utf-8-validate
 
-  jest@28.1.3(@types/node@18.19.26):
+  jest@28.1.3(@types/node@22.10.10):
     dependencies:
       '@jest/core': 28.1.3
       '@jest/types': 28.1.3
       import-local: 3.1.0
-      jest-cli: 28.1.3(@types/node@18.19.26)
-    transitivePeerDependencies:
-      - '@types/node'
-      - metro
-      - supports-color
-      - ts-node
-
-  jest@28.1.3(@types/node@20.12.12):
-    dependencies:
-      '@jest/core': 28.1.3
-      '@jest/types': 28.1.3
-      import-local: 3.1.0
-      jest-cli: 28.1.3(@types/node@20.12.12)
+      jest-cli: 28.1.3(@types/node@22.10.10)
     transitivePeerDependencies:
       - '@types/node'
       - metro
@@ -55784,25 +55708,12 @@ snapshots:
       - supports-color
       - ts-node
 
-  jest@29.7.0(@types/node@18.19.26)(ts-node@10.9.2(@types/node@18.19.26)(source-map-support@0.5.21)(typescript@4.9.5)):
-    dependencies:
-      '@jest/core': 29.7.0(ts-node@10.9.2(@types/node@18.19.26)(source-map-support@0.5.21)(typescript@4.9.5))
-      '@jest/types': 29.6.3
-      import-local: 3.1.0
-      jest-cli: 29.7.0(@types/node@18.19.26)(ts-node@10.9.2(@types/node@18.19.26)(source-map-support@0.5.21)(typescript@4.9.5))
-    transitivePeerDependencies:
-      - '@types/node'
-      - babel-plugin-macros
-      - metro
-      - supports-color
-      - ts-node
-
-  jest@29.7.0(@types/node@20.12.12):
+  jest@29.7.0(@types/node@22.10.10):
     dependencies:
       '@jest/core': 29.7.0
       '@jest/types': 29.6.3
       import-local: 3.1.0
-      jest-cli: 29.7.0(@types/node@20.12.12)
+      jest-cli: 29.7.0(@types/node@22.10.10)
     transitivePeerDependencies:
       - '@types/node'
       - babel-plugin-macros
@@ -55810,12 +55721,12 @@ snapshots:
       - supports-color
       - ts-node
 
-  jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)):
+  jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@4.9.5)):
     dependencies:
-      '@jest/core': 29.7.0(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3))
+      '@jest/core': 29.7.0(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@4.9.5))
       '@jest/types': 29.6.3
       import-local: 3.1.0
-      jest-cli: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3))
+      jest-cli: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@4.9.5))
     transitivePeerDependencies:
       - '@types/node'
       - babel-plugin-macros
@@ -55823,12 +55734,12 @@ snapshots:
       - supports-color
       - ts-node
 
-  jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(typescript@5.1.3)):
+  jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)):
     dependencies:
-      '@jest/core': 29.7.0(ts-node@10.9.2(@types/node@20.12.12)(typescript@5.1.3))
+      '@jest/core': 29.7.0(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       '@jest/types': 29.6.3
       import-local: 3.1.0
-      jest-cli: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(typescript@5.1.3))
+      jest-cli: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
     transitivePeerDependencies:
       - '@types/node'
       - babel-plugin-macros
@@ -55836,12 +55747,12 @@ snapshots:
       - supports-color
       - ts-node
 
-  jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(typescript@5.4.3)):
+  jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.1.3)):
     dependencies:
-      '@jest/core': 29.7.0(ts-node@10.9.2(@types/node@20.12.12)(typescript@5.4.3))
+      '@jest/core': 29.7.0(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.1.3))
       '@jest/types': 29.6.3
       import-local: 3.1.0
-      jest-cli: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(typescript@5.4.3))
+      jest-cli: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.1.3))
     transitivePeerDependencies:
       - '@types/node'
       - babel-plugin-macros
@@ -55849,12 +55760,25 @@ snapshots:
       - supports-color
       - ts-node
 
-  jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(typescript@5.6.3)):
+  jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.4.3)):
     dependencies:
-      '@jest/core': 29.7.0(ts-node@10.9.2(@types/node@20.12.12)(typescript@5.6.3))
+      '@jest/core': 29.7.0(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.4.3))
       '@jest/types': 29.6.3
       import-local: 3.1.0
-      jest-cli: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(typescript@5.6.3))
+      jest-cli: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.4.3))
+    transitivePeerDependencies:
+      - '@types/node'
+      - babel-plugin-macros
+      - metro
+      - supports-color
+      - ts-node
+
+  jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.6.3)):
+    dependencies:
+      '@jest/core': 29.7.0(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.6.3))
+      '@jest/types': 29.6.3
+      import-local: 3.1.0
+      jest-cli: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.6.3))
     transitivePeerDependencies:
       - '@types/node'
       - babel-plugin-macros
@@ -57146,7 +57070,7 @@ snapshots:
 
   make-fetch-happen@10.2.1:
     dependencies:
-      agentkeepalive: 4.5.0
+      agentkeepalive: 4.6.0
       cacache: 16.1.3
       http-cache-semantics: 4.1.1
       http-proxy-agent: 5.0.0
@@ -57158,7 +57082,7 @@ snapshots:
       minipass-fetch: 2.1.2
       minipass-flush: 1.0.5
       minipass-pipeline: 1.2.4
-      negotiator: 0.6.3
+      negotiator: 0.6.4
       promise-retry: 2.0.1
       socks-proxy-agent: 7.0.0
       ssri: 9.0.1
@@ -58435,6 +58359,8 @@ snapshots:
       - encoding
 
   negotiator@0.6.3: {}
+
+  negotiator@0.6.4: {}
 
   neo-async@2.6.2: {}
 
@@ -60079,7 +60005,7 @@ snapshots:
       '@protobufjs/pool': 1.1.0
       '@protobufjs/utf8': 1.1.0
       '@types/long': 4.0.2
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       long: 4.0.0
 
   protobufjs@6.11.4:
@@ -60095,7 +60021,7 @@ snapshots:
       '@protobufjs/pool': 1.1.0
       '@protobufjs/utf8': 1.1.0
       '@types/long': 4.0.2
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       long: 4.0.0
 
   protobufjs@7.2.5:
@@ -60110,7 +60036,7 @@ snapshots:
       '@protobufjs/path': 1.1.2
       '@protobufjs/pool': 1.1.0
       '@protobufjs/utf8': 1.1.0
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       long: 5.2.3
 
   protobufjs@7.3.2:
@@ -60125,7 +60051,7 @@ snapshots:
       '@protobufjs/path': 1.1.2
       '@protobufjs/pool': 1.1.0
       '@protobufjs/utf8': 1.1.0
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       long: 5.2.3
 
   protocols@2.0.1: {}
@@ -63893,30 +63819,30 @@ snapshots:
     dependencies:
       tslib: 2.6.2
 
-  ts-jest@28.0.8(jest@28.1.3(@types/node@18.19.26))(typescript@5.6.3):
+  ts-jest@28.0.8(jest@28.1.3(@types/node@22.10.10))(typescript@5.4.3):
     dependencies:
       bs-logger: 0.2.6
       fast-json-stable-stringify: 2.1.0
-      jest: 28.1.3(@types/node@18.19.26)
-      jest-util: 28.1.3
-      json5: 2.2.3
-      lodash.memoize: 4.1.2
-      make-error: 1.3.6
-      semver: 7.5.4
-      typescript: 5.6.3
-      yargs-parser: 21.1.1
-
-  ts-jest@28.0.8(jest@28.1.3(@types/node@20.12.12))(typescript@5.4.3):
-    dependencies:
-      bs-logger: 0.2.6
-      fast-json-stable-stringify: 2.1.0
-      jest: 28.1.3(@types/node@20.12.12)
+      jest: 28.1.3(@types/node@22.10.10)
       jest-util: 28.1.3
       json5: 2.2.3
       lodash.memoize: 4.1.2
       make-error: 1.3.6
       semver: 7.5.4
       typescript: 5.4.3
+      yargs-parser: 21.1.1
+
+  ts-jest@28.0.8(jest@28.1.3(@types/node@22.10.10))(typescript@5.6.3):
+    dependencies:
+      bs-logger: 0.2.6
+      fast-json-stable-stringify: 2.1.0
+      jest: 28.1.3(@types/node@22.10.10)
+      jest-util: 28.1.3
+      json5: 2.2.3
+      lodash.memoize: 4.1.2
+      make-error: 1.3.6
+      semver: 7.5.4
+      typescript: 5.6.3
       yargs-parser: 21.1.1
 
   ts-jest@29.1.2(@babel/core@7.24.3)(babel-jest@29.7.0(@babel/core@7.24.3))(jest@29.7.0(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3)))(typescript@5.4.3):
@@ -63935,11 +63861,11 @@ snapshots:
       '@babel/core': 7.24.3
       babel-jest: 29.7.0(@babel/core@7.24.3)
 
-  ts-jest@29.1.2(jest@29.7.0(@types/node@20.12.12))(typescript@5.4.3):
+  ts-jest@29.1.2(jest@29.7.0(@types/node@22.10.10))(typescript@5.4.3):
     dependencies:
       bs-logger: 0.2.6
       fast-json-stable-stringify: 2.1.0
-      jest: 29.7.0(@types/node@20.12.12)
+      jest: 29.7.0(@types/node@22.10.10)
       jest-util: 29.7.0
       json5: 2.2.3
       lodash.memoize: 4.1.2
@@ -63961,11 +63887,11 @@ snapshots:
       typescript: 5.4.3
       yargs-parser: 21.1.1
 
-  ts-jest@29.1.5(jest@29.7.0(@types/node@18.19.26)(ts-node@10.9.2(@types/node@18.19.26)(source-map-support@0.5.21)(typescript@4.9.5)))(typescript@4.9.5):
+  ts-jest@29.1.5(jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@4.9.5)))(typescript@4.9.5):
     dependencies:
       bs-logger: 0.2.6
       fast-json-stable-stringify: 2.1.0
-      jest: 29.7.0(@types/node@18.19.26)(ts-node@10.9.2(@types/node@18.19.26)(source-map-support@0.5.21)(typescript@4.9.5))
+      jest: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@4.9.5))
       jest-util: 29.7.0
       json5: 2.2.3
       lodash.memoize: 4.1.2
@@ -63974,11 +63900,11 @@ snapshots:
       typescript: 4.9.5
       yargs-parser: 21.1.1
 
-  ts-jest@29.1.5(jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3):
+  ts-jest@29.1.5(jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3):
     dependencies:
       bs-logger: 0.2.6
       fast-json-stable-stringify: 2.1.0
-      jest: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3))
+      jest: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       jest-util: 29.7.0
       json5: 2.2.3
       lodash.memoize: 4.1.2
@@ -63987,11 +63913,11 @@ snapshots:
       typescript: 5.4.3
       yargs-parser: 21.1.1
 
-  ts-jest@29.1.5(jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(typescript@5.1.3)))(typescript@5.1.3):
+  ts-jest@29.1.5(jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.1.3)))(typescript@5.1.3):
     dependencies:
       bs-logger: 0.2.6
       fast-json-stable-stringify: 2.1.0
-      jest: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(typescript@5.1.3))
+      jest: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.1.3))
       jest-util: 29.7.0
       json5: 2.2.3
       lodash.memoize: 4.1.2
@@ -64000,11 +63926,11 @@ snapshots:
       typescript: 5.1.3
       yargs-parser: 21.1.1
 
-  ts-jest@29.1.5(jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(typescript@5.4.3)))(typescript@5.4.3):
+  ts-jest@29.1.5(jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.4.3)))(typescript@5.4.3):
     dependencies:
       bs-logger: 0.2.6
       fast-json-stable-stringify: 2.1.0
-      jest: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(typescript@5.4.3))
+      jest: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.4.3))
       jest-util: 29.7.0
       json5: 2.2.3
       lodash.memoize: 4.1.2
@@ -64013,11 +63939,11 @@ snapshots:
       typescript: 5.4.3
       yargs-parser: 21.1.1
 
-  ts-jest@29.1.5(jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(typescript@5.6.3)))(typescript@5.6.3):
+  ts-jest@29.1.5(jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.6.3)))(typescript@5.6.3):
     dependencies:
       bs-logger: 0.2.6
       fast-json-stable-stringify: 2.1.0
-      jest: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(typescript@5.6.3))
+      jest: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.6.3))
       jest-util: 29.7.0
       json5: 2.2.3
       lodash.memoize: 4.1.2
@@ -64026,11 +63952,11 @@ snapshots:
       typescript: 5.6.3
       yargs-parser: 21.1.1
 
-  ts-jest@29.1.5(jest@29.7.0(@types/node@20.12.12))(typescript@5.4.3):
+  ts-jest@29.1.5(jest@29.7.0(@types/node@22.10.10))(typescript@5.4.3):
     dependencies:
       bs-logger: 0.2.6
       fast-json-stable-stringify: 2.1.0
-      jest: 29.7.0(@types/node@20.12.12)
+      jest: 29.7.0(@types/node@22.10.10)
       jest-util: 29.7.0
       json5: 2.2.3
       lodash.memoize: 4.1.2
@@ -64091,12 +64017,12 @@ snapshots:
       typescript: 5.6.3
       yargs-parser: 21.1.1
 
-  ts-jest@29.2.5(jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3):
+  ts-jest@29.2.5(jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3)))(typescript@5.4.3):
     dependencies:
       bs-logger: 0.2.6
       ejs: 3.1.10
       fast-json-stable-stringify: 2.1.0
-      jest: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3))
+      jest: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
       jest-util: 29.7.0
       json5: 2.2.3
       lodash.memoize: 4.1.2
@@ -64105,12 +64031,12 @@ snapshots:
       typescript: 5.4.3
       yargs-parser: 21.1.1
 
-  ts-jest@29.2.5(jest@29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(typescript@5.4.3)))(typescript@5.4.3):
+  ts-jest@29.2.5(jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.4.3)))(typescript@5.4.3):
     dependencies:
       bs-logger: 0.2.6
       ejs: 3.1.10
       fast-json-stable-stringify: 2.1.0
-      jest: 29.7.0(@types/node@20.12.12)(ts-node@10.9.2(@types/node@20.12.12)(typescript@5.4.3))
+      jest: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.4.3))
       jest-util: 29.7.0
       json5: 2.2.3
       lodash.memoize: 4.1.2
@@ -64164,94 +64090,14 @@ snapshots:
     transitivePeerDependencies:
       - source-map-support
 
-  ts-node@10.9.2(@types/node@18.19.26)(source-map-support@0.5.21)(typescript@4.9.5):
-    dependencies:
-      '@cspotcode/source-map-support': 0.8.1(source-map-support@0.5.21)
-      '@tsconfig/node10': 1.0.11
-      '@tsconfig/node12': 1.0.11
-      '@tsconfig/node14': 1.0.3
-      '@tsconfig/node16': 1.0.4
-      '@types/node': 18.19.26
-      acorn: 8.13.0
-      acorn-walk: 8.3.2
-      arg: 4.1.3
-      create-require: 1.1.1
-      diff: 4.0.2
-      make-error: 1.3.6
-      typescript: 4.9.5
-      v8-compile-cache-lib: 3.0.1
-      yn: 3.1.1
-    transitivePeerDependencies:
-      - source-map-support
-
-  ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3):
-    dependencies:
-      '@cspotcode/source-map-support': 0.8.1(source-map-support@0.5.21)
-      '@tsconfig/node10': 1.0.11
-      '@tsconfig/node12': 1.0.11
-      '@tsconfig/node14': 1.0.3
-      '@tsconfig/node16': 1.0.4
-      '@types/node': 20.12.12
-      acorn: 8.13.0
-      acorn-walk: 8.3.2
-      arg: 4.1.3
-      create-require: 1.1.1
-      diff: 4.0.2
-      make-error: 1.3.6
-      typescript: 5.4.3
-      v8-compile-cache-lib: 3.0.1
-      yn: 3.1.1
-    transitivePeerDependencies:
-      - source-map-support
-
-  ts-node@10.9.2(@types/node@20.12.12)(typescript@5.1.3):
+  ts-node@10.9.2(@types/node@20.5.1)(typescript@5.6.3):
     dependencies:
       '@cspotcode/source-map-support': 0.8.1
       '@tsconfig/node10': 1.0.11
       '@tsconfig/node12': 1.0.11
       '@tsconfig/node14': 1.0.3
       '@tsconfig/node16': 1.0.4
-      '@types/node': 20.12.12
-      acorn: 8.13.0
-      acorn-walk: 8.3.2
-      arg: 4.1.3
-      create-require: 1.1.1
-      diff: 4.0.2
-      make-error: 1.3.6
-      typescript: 5.1.3
-      v8-compile-cache-lib: 3.0.1
-      yn: 3.1.1
-    transitivePeerDependencies:
-      - source-map-support
-
-  ts-node@10.9.2(@types/node@20.12.12)(typescript@5.4.3):
-    dependencies:
-      '@cspotcode/source-map-support': 0.8.1
-      '@tsconfig/node10': 1.0.11
-      '@tsconfig/node12': 1.0.11
-      '@tsconfig/node14': 1.0.3
-      '@tsconfig/node16': 1.0.4
-      '@types/node': 20.12.12
-      acorn: 8.13.0
-      acorn-walk: 8.3.2
-      arg: 4.1.3
-      create-require: 1.1.1
-      diff: 4.0.2
-      make-error: 1.3.6
-      typescript: 5.4.3
-      v8-compile-cache-lib: 3.0.1
-      yn: 3.1.1
-    transitivePeerDependencies:
-      - source-map-support
-
-  ts-node@10.9.2(@types/node@20.12.12)(typescript@5.6.3):
-    dependencies:
-      '@cspotcode/source-map-support': 0.8.1
-      '@tsconfig/node10': 1.0.11
-      '@tsconfig/node12': 1.0.11
-      '@tsconfig/node14': 1.0.3
-      '@tsconfig/node16': 1.0.4
-      '@types/node': 20.12.12
+      '@types/node': 20.5.1
       acorn: 8.13.0
       acorn-walk: 8.3.2
       arg: 4.1.3
@@ -64264,14 +64110,94 @@ snapshots:
     transitivePeerDependencies:
       - source-map-support
 
-  ts-node@10.9.2(@types/node@20.5.1)(typescript@5.6.3):
+  ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@4.9.5):
+    dependencies:
+      '@cspotcode/source-map-support': 0.8.1(source-map-support@0.5.21)
+      '@tsconfig/node10': 1.0.11
+      '@tsconfig/node12': 1.0.11
+      '@tsconfig/node14': 1.0.3
+      '@tsconfig/node16': 1.0.4
+      '@types/node': 22.10.10
+      acorn: 8.13.0
+      acorn-walk: 8.3.2
+      arg: 4.1.3
+      create-require: 1.1.1
+      diff: 4.0.2
+      make-error: 1.3.6
+      typescript: 4.9.5
+      v8-compile-cache-lib: 3.0.1
+      yn: 3.1.1
+    transitivePeerDependencies:
+      - source-map-support
+
+  ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3):
+    dependencies:
+      '@cspotcode/source-map-support': 0.8.1(source-map-support@0.5.21)
+      '@tsconfig/node10': 1.0.11
+      '@tsconfig/node12': 1.0.11
+      '@tsconfig/node14': 1.0.3
+      '@tsconfig/node16': 1.0.4
+      '@types/node': 22.10.10
+      acorn: 8.13.0
+      acorn-walk: 8.3.2
+      arg: 4.1.3
+      create-require: 1.1.1
+      diff: 4.0.2
+      make-error: 1.3.6
+      typescript: 5.4.3
+      v8-compile-cache-lib: 3.0.1
+      yn: 3.1.1
+    transitivePeerDependencies:
+      - source-map-support
+
+  ts-node@10.9.2(@types/node@22.10.10)(typescript@5.1.3):
     dependencies:
       '@cspotcode/source-map-support': 0.8.1
       '@tsconfig/node10': 1.0.11
       '@tsconfig/node12': 1.0.11
       '@tsconfig/node14': 1.0.3
       '@tsconfig/node16': 1.0.4
-      '@types/node': 20.5.1
+      '@types/node': 22.10.10
+      acorn: 8.13.0
+      acorn-walk: 8.3.2
+      arg: 4.1.3
+      create-require: 1.1.1
+      diff: 4.0.2
+      make-error: 1.3.6
+      typescript: 5.1.3
+      v8-compile-cache-lib: 3.0.1
+      yn: 3.1.1
+    transitivePeerDependencies:
+      - source-map-support
+
+  ts-node@10.9.2(@types/node@22.10.10)(typescript@5.4.3):
+    dependencies:
+      '@cspotcode/source-map-support': 0.8.1
+      '@tsconfig/node10': 1.0.11
+      '@tsconfig/node12': 1.0.11
+      '@tsconfig/node14': 1.0.3
+      '@tsconfig/node16': 1.0.4
+      '@types/node': 22.10.10
+      acorn: 8.13.0
+      acorn-walk: 8.3.2
+      arg: 4.1.3
+      create-require: 1.1.1
+      diff: 4.0.2
+      make-error: 1.3.6
+      typescript: 5.4.3
+      v8-compile-cache-lib: 3.0.1
+      yn: 3.1.1
+    transitivePeerDependencies:
+      - source-map-support
+
+  ts-node@10.9.2(@types/node@22.10.10)(typescript@5.6.3):
+    dependencies:
+      '@cspotcode/source-map-support': 0.8.1
+      '@tsconfig/node10': 1.0.11
+      '@tsconfig/node12': 1.0.11
+      '@tsconfig/node14': 1.0.3
+      '@tsconfig/node16': 1.0.4
+      '@types/node': 22.10.10
       acorn: 8.13.0
       acorn-walk: 8.3.2
       arg: 4.1.3
@@ -64583,6 +64509,10 @@ snapshots:
   underscore@1.13.6: {}
 
   undici-types@5.26.5: {}
+
+  undici-types@6.19.8: {}
+
+  undici-types@6.20.0: {}
 
   undici@5.28.3:
     dependencies:
@@ -65063,13 +64993,13 @@ snapshots:
     optionalDependencies:
       fsevents: 2.3.3
 
-  vite@4.5.5(@types/node@20.12.12):
+  vite@4.5.5(@types/node@22.10.10):
     dependencies:
       esbuild: 0.18.20
       postcss: 8.4.38
       rollup: 3.29.4
     optionalDependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.10.10
       fsevents: 2.3.3
 
   vlq@0.2.3: {}
@@ -66442,7 +66372,7 @@ snapshots:
     dependencies:
       '@types/fs-extra': 11.0.4
       '@types/minimist': 1.2.5
-      '@types/node': 18.19.26
+      '@types/node': 18.19.74
       '@types/ps-tree': 1.1.6
       '@types/which': 3.0.3
       chalk: 5.3.0
