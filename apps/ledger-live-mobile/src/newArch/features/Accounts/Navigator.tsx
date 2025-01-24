@@ -26,6 +26,7 @@ import { NavigationHeaderCloseButtonAdvanced } from "~/components/NavigationHead
 
 import useAnalytics from "LLM/hooks/useAnalytics";
 import { AddAccountsNavigatorParamList } from "~/components/RootNavigator/types/AddAccountsNavigator";
+import { AnalyticContexts } from "LLM/hooks/useAnalytics/enums";
 type NavigationProps = BaseComposite<
   StackNavigatorProps<AddAccountsNavigatorParamList, NavigatorName.AddAccounts>
 >;
@@ -35,7 +36,7 @@ export default function Navigator() {
   const accountListUIFF = useFeature("llmAccountListUI");
   const navigation = useNavigation<StackNavigatorNavigation<AddAccountsNavigatorParamList>>();
 
-  const { analyticsMetadata } = useAnalytics("addAccounts");
+  const { analyticsMetadata } = useAnalytics(AnalyticContexts.AddAccounts);
 
   const exitProcess = useCallback(() => {
     const rootParent = navigation.getParent();

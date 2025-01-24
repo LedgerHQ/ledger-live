@@ -11,6 +11,7 @@ import AccountListEmpty from "../AccountListEmpty";
 import { useTranslation } from "react-i18next";
 import { TrackScreen } from "~/analytics";
 import useAnalytics from "LLM/hooks/useAnalytics";
+import { AnalyticContexts } from "LLM/hooks/useAnalytics/enums";
 
 type AccountListDrawerProps = {
   isOpen: boolean;
@@ -22,7 +23,7 @@ type AccountListDrawerProps = {
 const AccountListDrawer = ({ isOpen, onClose, data, onPressAccount }: AccountListDrawerProps) => {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const { analyticsMetadata } = useAnalytics("addAccounts", "tata");
+  const { analyticsMetadata } = useAnalytics(AnalyticContexts.AddAccounts);
 
   const renderItem = useCallback(
     ({ item: account }: ListRenderItemInfo<Account | TokenAccount>) => {

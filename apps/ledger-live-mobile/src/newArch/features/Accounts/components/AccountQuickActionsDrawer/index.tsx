@@ -10,6 +10,7 @@ import CustomHeader from "./CustomHeader";
 import { useTheme } from "styled-components/native";
 import { TrackScreen } from "~/analytics";
 import useAnalytics from "LLM/hooks/useAnalytics";
+import { AnalyticContexts } from "LLM/hooks/useAnalytics/enums";
 
 type AccountListDrawerProps = {
   isOpen: boolean;
@@ -29,7 +30,7 @@ const AccountQuickActionsDrawer = ({
     currency,
   });
   const { colors } = useTheme();
-  const { analyticsMetadata } = useAnalytics("addAccounts");
+  const { analyticsMetadata } = useAnalytics(AnalyticContexts.AddAccounts);
   const pageTrackingEvent = analyticsMetadata.AddFunds?.onQuickActionOpen;
 
   return (
