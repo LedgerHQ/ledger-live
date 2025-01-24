@@ -35,7 +35,7 @@ export type SwapPayload = {
 };
 
 /**
- * @deprecated use `decodeSwapPayload` instead
+ * deprecated use `decodeSwapPayload` instead
  */
 export const decodePayloadProtobuf = (payload: string): Promise<SwapPayload> =>
   decodeSwapPayload(payload);
