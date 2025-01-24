@@ -7,6 +7,7 @@ export type CommonParams = {
   context?: "addAccounts" | "receiveFunds";
   onSuccess?: () => void;
   currency?: string;
+  inline?: boolean;
 };
 
 export type SelectNetworkRouteParams = CommonParams & {

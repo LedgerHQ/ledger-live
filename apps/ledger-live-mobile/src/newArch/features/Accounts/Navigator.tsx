@@ -19,6 +19,7 @@ import NoAssociatedAccountsView from "./screens/NoAssociatedAccountsView";
 import CloseWithConfirmation from "LLM/components/CloseWithConfirmation";
 import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import { NavigationHeaderCloseButtonAdvanced } from "~/components/NavigationHeaderCloseButton";
 
 export default function Navigator() {
   const { colors } = useTheme();
@@ -106,6 +107,7 @@ export default function Navigator() {
           headerTitle: "",
           headerLeft: () => null,
           headerTransparent: true,
+          headerRight: () => <NavigationHeaderCloseButtonAdvanced />,
         }}
         initialParams={{
           onCloseNavigation: onClose,

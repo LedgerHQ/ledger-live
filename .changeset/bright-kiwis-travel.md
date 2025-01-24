@@ -2,4 +2,4 @@
 "@ledgerhq/live-common": patch
 ---
 
-fix bakers error on tezos earn
+Update several evm explorers

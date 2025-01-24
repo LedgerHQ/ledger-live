@@ -71,14 +71,6 @@ const Crashes = (_: Props) => {
         containerStyle={styles.buttonStyle}
       />
 
-      <Button
-        event="DebugSentryTest"
-        type="primary"
-        title="Send Sentry Fatal Error"
-        onPress={() => Sentry.captureMessage("Debug Fatal error", { level: "fatal" })}
-        containerStyle={styles.buttonStyle}
-      />
-
       {renderCrash && <CrashingComponent />}
       {renderErrorModal && <CrashingComponent handled />}
     </View>

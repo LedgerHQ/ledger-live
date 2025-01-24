@@ -154,9 +154,7 @@ export const DEFAULT_FEATURES: Features = {
       bannerSubscriptionNotification: false,
       account: {
         homeURI:
-          "ledgerlive://recover/protect-simu?redirectTo=account&source=lld-sidebar-navigation&ajs_recover_source=lld-sidebar-navigation&ajs_recover_campaign=recover-launch",
-        loginURI:
-          "ledgerlive://recover/protect-simu?redirectTo=login&source=lld-welcome-login&ajs_recover_source=lld-welcome-login&ajs_recover_campaign=recover-launch",
+          "ledgerlive://recover/protect-simu?source=lld-sidebar-navigation&ajs_recover_source=lld-sidebar-navigation&ajs_recover_campaign=recover-launch",
       },
       compatibleDevices: [],
       discoverTheBenefitsLink: "https://www.ledger.com/recover",
@@ -306,9 +304,7 @@ export const DEFAULT_FEATURES: Features = {
       compatibleDevices: [],
       account: {
         homeURI:
-          "ledgerlive://recover/protect-simu?redirectTo=account&source=llm-myledger-access-card&ajs_prop_source=llm-myledger-access-card&ajs_prop_campaign=recover-launch",
-        loginURI:
-          "ledgerlive://recover/protect-simu?redirectTo=login&source=llm-myledger-access-card&ajs_prop_source=llm-myledger-access-card&ajs_prop_campaign=recover-launch",
+          "ledgerlive://recover/protect-simu?source=llm-myledger-access-card&ajs_prop_source=llm-myledger-access-card&ajs_prop_campaign=recover-launch",
       },
       managerStatesData: {
         NEW: {

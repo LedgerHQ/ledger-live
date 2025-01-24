@@ -22,6 +22,7 @@ export default function useSelectNetworkViewModel({
   filterCurrencyIds,
   context,
   currency,
+  inline,
 }: SelectNetworkRouteParams) {
   const navigation = useNavigation<AssetSelectionNavigationProps["navigation"]>();
 
@@ -95,16 +96,18 @@ export default function useSelectNetworkViewModel({
 
   const navigateToDevice = useCallback(
     (currency: CryptoCurrency, createTokenAccount: boolean) => {
-      navigation.navigate(NavigatorName.DeviceSelection, {
+      const processNavigate = inline ? navigation.replace : navigation.navigate;
+      processNavigate(NavigatorName.DeviceSelection, {
         screen: ScreenName.SelectDevice,
         params: {
           currency: currency,
           createTokenAccount,
           context,
+          inline,
         },
       });
     },
-    [navigation, context],
+    [navigation, context, inline],
   );
 
   const processNetworkSelection = useCallback(
