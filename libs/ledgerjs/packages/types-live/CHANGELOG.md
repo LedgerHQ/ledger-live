@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.58.0-nightly.0
+
+### Minor Changes
+
+- [#8981](https://github.com/LedgerHQ/ledger-live/pull/8981) [`d15a240`](https://github.com/LedgerHQ/ledger-live/commit/d15a2402bbd7f39353059c1cc2f74b9ac0876d3d) Thanks [@vcluzeau-ledger](https://github.com/vcluzeau-ledger)! - Recover: removes unused loginURI and modify homeURI to new requirements
+
 ## 6.57.0
 
 ### Minor Changes

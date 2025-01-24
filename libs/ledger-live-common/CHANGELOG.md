@@ -1,5 +1,42 @@
 ## 34.5.0-next.4
 
+## 34.19.0-nightly.1
+
+### Minor Changes
+
+- [#8981](https://github.com/LedgerHQ/ledger-live/pull/8981) [`d15a240`](https://github.com/LedgerHQ/ledger-live/commit/d15a2402bbd7f39353059c1cc2f74b9ac0876d3d) Thanks [@vcluzeau-ledger](https://github.com/vcluzeau-ledger)! - Recover: removes unused loginURI and modify homeURI to new requirements
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@0.22.1-nightly.0
+  - @ledgerhq/coin-algorand@0.6.2-nightly.0
+  - @ledgerhq/coin-bitcoin@0.9.2-nightly.0
+  - @ledgerhq/coin-cardano@0.3.2-nightly.0
+  - @ledgerhq/coin-cosmos@0.5.1-nightly.0
+  - @ledgerhq/coin-elrond@0.2.2-nightly.0
+  - @ledgerhq/coin-evm@2.8.2-nightly.0
+  - @ledgerhq/coin-filecoin@1.4.2-nightly.0
+  - @ledgerhq/coin-hedera@1.2.2-nightly.0
+  - @ledgerhq/coin-icon@0.5.2-nightly.0
+  - @ledgerhq/coin-internet_computer@1.4.2-nightly.0
+  - @ledgerhq/coin-near@0.6.2-nightly.0
+  - @ledgerhq/coin-polkadot@1.6.1-nightly.0
+  - @ledgerhq/coin-solana@0.10.2-nightly.0
+  - @ledgerhq/coin-stacks@0.4.2-nightly.0
+  - @ledgerhq/coin-stellar@0.5.2-nightly.0
+  - @ledgerhq/coin-tezos@0.8.2-nightly.0
+  - @ledgerhq/coin-ton@0.4.2-nightly.0
+  - @ledgerhq/coin-tron@0.1.2-nightly.0
+  - @ledgerhq/coin-vechain@2.3.2-nightly.0
+  - @ledgerhq/coin-xrp@0.8.2-nightly.0
+  - @ledgerhq/device-core@0.4.12-nightly.0
+  - @ledgerhq/hw-app-eth@6.42.4-nightly.0
+  - @ledgerhq/live-countervalues@0.2.18-nightly.0
+  - @ledgerhq/live-countervalues-react@0.2.18-nightly.0
+  - @ledgerhq/live-nft@0.5.3-nightly.0
+  - @ledgerhq/live-wallet@0.8.2-nightly.0
+
 ## 34.19.0-nightly.0
 
 ### Minor Changes
