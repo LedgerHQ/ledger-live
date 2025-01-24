@@ -38,6 +38,6 @@
     "@ledgerhq/wallet-api-core": "^1.13.0"
   },
   "devDependencies": {
-    "@types/node": "^20.2.5"
+    "@types/node": "^22.10.10"
   }
 }
