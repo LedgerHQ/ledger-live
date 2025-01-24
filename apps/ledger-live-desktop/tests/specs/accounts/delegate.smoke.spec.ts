@@ -27,16 +27,16 @@ test("Delegate flow using max amount", async () => {
   });
 
   await test.step("Check Ledger is the provider by default", async () => {
-    await modalPage.continue();
+    await delegate.continue();
     const defaultprovider = await delegate.getTitleProvider(1);
     expect(defaultprovider).toEqual("Ledger");
   });
 
   await test.step("Toggle max amount to be filled in the amount field", async () => {
-    await delegate.continueDelegate();
-    await modalPage.toggleMaxAmount();
-    const availableMaxAmount = await modalPage.getSpendableBannerValue();
-    const filledMaxAmount = await modalPage.getCryptoAmount();
+    await delegate.continue();
+    await delegate.toggleMaxAmount();
+    const availableMaxAmount = await delegate.getSpendableBannerValue();
+    const filledMaxAmount = await delegate.getCryptoAmount();
     expect(filledMaxAmount).toEqual(availableMaxAmount);
     await expect.soft(modalPage.container).toHaveScreenshot(`staking-max-amount-page.png`);
   });
@@ -44,7 +44,7 @@ test("Delegate flow using max amount", async () => {
 
 test("The user search and select a provider", async () => {
   await test.step("open the provider search modal", async () => {
-    await modalPage.continue();
+    await delegate.continue();
     await expect.soft(modalPage.container).toHaveScreenshot(`provider-search-page.png`);
   });
 

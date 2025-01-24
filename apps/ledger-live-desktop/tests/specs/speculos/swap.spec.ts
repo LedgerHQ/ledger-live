@@ -190,7 +190,7 @@ const tooLowAmountForQuoteSwaps = [
     xrayTicket: "B2CQA-2759",
   },
   {
-    swap: new Swap(Account.TRX_1, Account.ETH_1, "77", Fee.MEDIUM),
+    swap: new Swap(Account.TRX_1, Account.ETH_1, "70", Fee.MEDIUM),
     xrayTicket: "B2CQA-2739",
   },
 ];
