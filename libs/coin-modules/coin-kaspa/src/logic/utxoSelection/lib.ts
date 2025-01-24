@@ -1,4 +1,4 @@
-import { calcComputeMass, calcStorageMass, calcTotalMass } from "../massCalcluation";
+import { calcComputeMass, calcStorageMass } from "../massCalcluation";
 import { BigNumber } from "bignumber.js";
 import { KaspaUtxo } from "../../types";
 
@@ -13,31 +13,34 @@ const MAX_UTXOS_PER_TX: number = 88;
 export function calculateChangeAmount(
   inputs: BigNumber[],
   amount: BigNumber,
-  fee_rate: number,
+  feerate: number,
+  recipientIsECDSA: boolean = false,
 ): { changeAmount: BigNumber; mass: number; fee: BigNumber } {
   // start with default compute mass and let it grow
   let mass = DEFAULT_MASS_2_OUTPUTS + ADDITIONAL_MASS_PER_INPUT * inputs.length;
-  let fee = BigNumber(Math.ceil(mass * fee_rate));
+  let fee = BigNumber(Math.ceil(mass * feerate));
   let changeAmount = sumBigNumber(inputs).minus(amount).minus(fee);
-  let prev_fee: BigNumber | null = null;
-  let discard_change = changeAmount.lt(0);
+  let prevFee: BigNumber | null = null;
+  let discardChange = changeAmount.lt(0);
 
-  while (prev_fee === null || !fee.eq(prev_fee)) {
-    prev_fee = fee;
+  while (prevFee === null || !fee.eq(prevFee)) {
+    prevFee = fee;
     // TX with two outputs
-    if (!discard_change) {
-      mass = calcTotalMass(inputs, [amount, changeAmount]);
-      fee = BigNumber(Math.ceil(mass * fee_rate));
+    if (!discardChange) {
+      const computeMass = calcComputeMass(inputs.length, true, recipientIsECDSA);
+      const storageMass = calcStorageMass(inputs, [amount, changeAmount]);
+      const minFee = Math.max(computeMass, storageMass);
+      fee = BigNumber(Math.max(minFee, Math.ceil(computeMass * feerate)));
     } else {
       // trying with one output
       mass = calcStorageMass(inputs, [amount]);
       mass = Math.max(mass, calcComputeMass(inputs.length, false, false)); // TODO: recognize ECDSA
-      // change is zero, so diff is prev_fee
+      // change is zero, so diff is prevFee
       fee = sumBigNumber(inputs).minus(amount);
 
-      if (fee.lt(BigNumber(Math.ceil(mass * fee_rate)))) {
+      if (fee.lt(BigNumber(Math.ceil(mass * feerate)))) {
         throw new Error(
-          `Insufficient fee: calculated fee ${fee} is less than the minimum fee ( with fee_rate ) ${mass * fee_rate}.`,
+          `Insufficient fee: calculated fee ${fee} is less than the minimum fee ( with fee_rate ) ${mass * feerate}.`,
         );
       }
     }
@@ -51,9 +54,9 @@ export function calculateChangeAmount(
     // try to discard the change and try again
     if (mass > MAX_MASS || changeAmount.lt(BigNumber(0))) {
       // try without change
-      if (!discard_change && changeAmount <= THROWAWAY_CHANGE_THRESHOLD) {
+      if (!discardChange && changeAmount <= THROWAWAY_CHANGE_THRESHOLD) {
         // try once again with discarding change address
-        discard_change = true;
+        discardChange = true;
         continue;
       }
 

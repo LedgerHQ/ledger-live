@@ -16,7 +16,11 @@ export const selectUtxosFIFO = (
   feerate: number = 1,
 ): { changeAmount: BigNumber; fee: BigNumber; utxos: KaspaUtxo[] } => {
   // sort with blockDaaScore ASCENDING for FIFO
-  utxos.sort((a, b) => parseInt(a.utxoEntry.blockDaaScore) - parseInt(b.utxoEntry.blockDaaScore));
+  utxos.sort(
+    (a, b) =>
+      parseInt(a.utxoEntry.blockDaaScore) - parseInt(b.utxoEntry.blockDaaScore) ||
+      a.outpoint.index - b.outpoint.index,
+  );
 
   checkMaxSpendableAmountValidity(utxos.slice(0, 88), amount, isEcdsaRecipient);
   // we have enough UTXOs for this strategy - find the right slice
@@ -26,7 +30,7 @@ export const selectUtxosFIFO = (
   for (let i = 0; i < utxos.length; i++) {
     combinedAmount = combinedAmount.plus(BigNumber(utxos[i].utxoEntry.amount));
 
-    const minFee = calcComputeMass(i + 1, false, false) * feerate;
+    const minFee = calcComputeMass(i + 1, false, isEcdsaRecipient) * feerate;
     if (combinedAmount.isGreaterThanOrEqualTo(amount.plus(minFee))) {
       // here we might have enough UTXOs for the amount + computeMass
       // now the storageMass could be very high, with a low change amount, maybe another UTXO is needed.
@@ -35,6 +39,7 @@ export const selectUtxosFIFO = (
           utxos.slice(0, i + 1).map(u => u.utxoEntry.amount),
           amount,
           feerate,
+          isEcdsaRecipient,
         );
 
         // if calculateChangeAmount worked, the utxo set works:
