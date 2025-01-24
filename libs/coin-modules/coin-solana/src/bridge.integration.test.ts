@@ -1178,7 +1178,8 @@ describe("solana tokens", () => {
     },
     swapHistory: [],
   };
-  test("token.transfer :: status is error: sender ATA is frozen", async () => {
+  // Skip frozen test as the address used is not an ATA and is not frozen
+  test.skip("token.transfer :: status is error: sender ATA is frozen", async () => {
     const txModel: TokenTransferTransaction = {
       kind: "token.transfer",
       uiState: {
@@ -1225,7 +1226,8 @@ describe("solana tokens", () => {
     expect(receivedTxStatus).toEqual(expectedTxStatus);
   });
 
-  test("token.transfer :: status is error: recipient ATA is frozen", async () => {
+  // Skip frozen test as the address used is not an ATA and is not frozen
+  test.skip("token.transfer :: status is error: recipient ATA is frozen", async () => {
     const txModel: TokenTransferTransaction = {
       kind: "token.transfer",
       uiState: {
