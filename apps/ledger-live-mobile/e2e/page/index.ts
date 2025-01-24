@@ -6,6 +6,7 @@ import BuyDevicePage from "./discover/buyDevice.page";
 import CommonPage from "./common.page";
 import CryptoDrawer from "./liveApps/cryptoDrawer";
 import CustomLockscreenPage from "./stax/customLockscreen.page";
+import DeviceValidationPage from "./trade/deviceValidation.page";
 import DiscoverPage from "./discover/discover.page";
 import DummyWalletApp from "./liveApps/dummyWalletApp.webView";
 import WalletAPIReceivePage from "./liveApps/walletAPIReceive";
@@ -60,6 +61,7 @@ export class Application {
   public common = new CommonPage();
   public cryptoDrawer = new CryptoDrawer();
   public customLockscreen = new CustomLockscreenPage();
+  public deviceValidation = new DeviceValidationPage();
   public discover = new DiscoverPage();
   public dummyWalletApp = new DummyWalletApp();
   public walletAPIReceive = new WalletAPIReceivePage();

@@ -15,8 +15,6 @@ const baseLink = "send";
 export default class SendPage {
   summaryAmount = () => getElementById("send-summary-amount");
   summaryRecipient = () => getElementById("send-summary-recipient");
-  validationAmountId = "send-validation-amount";
-  validationAddressId = "send-validation-address";
   getStep1HeaderTitle = () => getElementById("send-header-step1-title");
   recipientContinueButtonId = "recipient-continue-button";
   recipientInputId = "recipient-input";
@@ -87,17 +85,5 @@ export default class SendPage {
   async dismissHighFeeModal() {
     if (await IsIdVisible(this.highFreeConfirmButtonID))
       await tapById(this.highFreeConfirmButtonID);
-  }
-
-  @Step("Expect amount in device validation screen")
-  async expectValidationAmount(amount: string) {
-    await waitForElementById(this.validationAmountId);
-    await expect(getElementById(this.validationAmountId)).toHaveText(amount);
-  }
-
-  @Step("Expect address in device validation screen")
-  async expectValidationAddress(recipient: string) {
-    await waitForElementById(this.validationAddressId);
-    await expect(getElementById(this.validationAddressId)).toHaveText(recipient);
   }
 }

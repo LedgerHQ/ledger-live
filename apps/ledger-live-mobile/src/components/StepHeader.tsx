@@ -12,7 +12,7 @@ type Props = {
 export default function StepHeader({ title, subtitle, testID }: Props) {
   return (
     <TouchableWithoutFeedback onPress={scrollToTop}>
-      <Flex flexDirection={"column"} justifyContent={"center"} flex={1} py={3} testID={testID}>
+      <Flex flexDirection={"column"} justifyContent={"center"} flex={1} py={3}>
         {subtitle && (
           <Text
             variant={"small"}
@@ -30,6 +30,7 @@ export default function StepHeader({ title, subtitle, testID }: Props) {
           numberOfLines={1}
           textAlign={"center"}
           color={"neutral.c100"}
+          testID={testID}
         >
           {title}
         </Text>

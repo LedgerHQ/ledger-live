@@ -74,8 +74,16 @@ function OperationDetailsExtra({ operation, type, account }: Props) {
       });
       ret = (
         <>
-          <Section title={t("operationDetails.extra.delegatedTo")} value={formattedValidator} />
-          <Section title={t("operationDetails.extra.delegatedAmount")} value={formattedAmount} />
+          <Section
+            title={t("operationDetails.extra.delegatedTo")}
+            value={formattedValidator}
+            testID="operationDetails-delegatedTo"
+          />
+          <Section
+            title={t("operationDetails.extra.delegatedAmount")}
+            value={formattedAmount}
+            testID="operationDetails-delegatedAmount"
+          />
         </>
       );
       break;

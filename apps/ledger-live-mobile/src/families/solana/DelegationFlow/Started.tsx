@@ -73,6 +73,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
           onPress={onNext}
           title={<Trans i18nKey="delegation.started.cta" />}
           type="primary"
+          testID="solana-delegation-start-button"
         />
       </View>
     </SafeAreaView>

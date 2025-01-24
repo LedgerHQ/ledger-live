@@ -353,7 +353,6 @@ export type Feature_ProtectServicesMobile = Feature<{
     };
   };
   account: {
-    loginURI: string;
     homeURI: string;
   };
   protectId: string;
@@ -383,7 +382,6 @@ export type Feature_ProtectServicesDesktop = Feature<{
   };
   account: {
     homeURI: string;
-    loginURI: string;
   };
   protectId: string;
 }>;

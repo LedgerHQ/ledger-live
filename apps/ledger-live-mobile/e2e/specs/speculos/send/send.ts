@@ -60,6 +60,7 @@ export async function runSendTest(transaction: Transaction, tmsLink: string) {
       await app.operationDetails.waitForOperationDetails();
       await app.operationDetails.checkAccount(transaction.accountToDebit.accountName);
       await app.operationDetails.checkRecipient(transaction.accountToCredit.address);
+      await app.operationDetails.checkTransactionType("OUT");
     });
   });
 }

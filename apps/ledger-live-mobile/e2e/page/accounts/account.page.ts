@@ -1,4 +1,4 @@
-import { getElementById, getTextOfElement, scrollToId, tapByElement } from "../../helpers";
+import { getElementById, getTextOfElement, scrollToId, tapByElement, tapById } from "../../helpers";
 import { expect } from "detox";
 import jestExpect from "expect";
 
@@ -14,8 +14,9 @@ export default class AccountPage {
   operationHistorySectionId = (accountId: string) => this.operationHistorySection + accountId;
   accountScreenScrollView = "account-screen-scrollView";
   accountAdvancedLogsId = "account-advanced-logs";
-  receiveButton = () => getElementById("account-quick-action-button-Receive");
-  sendButton = () => getElementById("account-quick-action-button-Send");
+  receiveButton = () => getElementById("account-quick-action-button-receive");
+  sendButton = () => getElementById("account-quick-action-button-send");
+  earnButtonId = "account-quick-action-button-earn";
 
   @Step("Open account settings")
   async openAccountSettings() {
@@ -72,5 +73,11 @@ export default class AccountPage {
   @Step("Tap on send button")
   async tapSend() {
     await tapByElement(this.sendButton());
+  }
+
+  @Step("Tap on earn button")
+  async tapEarn() {
+    await scrollToId(this.earnButtonId, this.accountScreenScrollView);
+    await tapById(this.earnButtonId);
   }
 }

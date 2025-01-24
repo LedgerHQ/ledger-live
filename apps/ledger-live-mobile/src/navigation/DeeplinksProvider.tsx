@@ -15,6 +15,7 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { BUY_SELL_UI_APP_ID } from "@ledgerhq/live-common/wallet-api/constants";
 import Braze from "@braze/react-native-sdk";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
+import * as Sentry from "@sentry/react-native";
 import { hasCompletedOnboardingSelector } from "~/reducers/settings";
 import { navigationRef, isReadyRef } from "../rootnavigation";
 import { ScreenName, NavigatorName } from "~/const";
@@ -26,7 +27,7 @@ import { track } from "~/analytics";
 import { setEarnInfoModal } from "~/actions/earn";
 import { blockPasswordLock } from "../actions/appstate";
 import { useStorylyContext } from "~/components/StorylyStories/StorylyProvider";
-import { navigationIntegration } from "../sentry";
+const routingInstrumentation = new Sentry.ReactNavigationInstrumentation();
 const TRACKING_EVENT = "deeplink_clicked";
 
 const themes: {
@@ -673,7 +674,7 @@ export const DeeplinksProvider = ({
       onReady={() => {
         (isReadyRef as Writeable<typeof isReadyRef>).current = true;
         setTimeout(() => SplashScreen.hide(), 300);
-        navigationIntegration.registerNavigationContainer(navigationRef);
+        routingInstrumentation.registerNavigationContainer(navigationRef);
       }}
     >
       {children}

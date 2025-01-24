@@ -33,6 +33,7 @@ import { getFirstStatusError, hasStatusError } from "../../helpers";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { NearStakingFlowParamList } from "./types";
 import { useAccountUnit } from "~/hooks/useAccountUnit";
+import Config from "react-native-config";
 
 type Props = BaseComposite<
   StackNavigatorProps<NearStakingFlowParamList, ScreenName.NearStakingValidator>
@@ -104,26 +105,28 @@ export default function StakingSummary({ navigation, route }: Props) {
 
   const [rotateAnim] = useState(() => new Animated.Value(0));
   useEffect(() => {
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(rotateAnim, {
-          toValue: 1,
-          duration: 200,
-          useNativeDriver: true,
-        }),
-        Animated.timing(rotateAnim, {
-          toValue: -1,
-          duration: 300,
-          useNativeDriver: true,
-        }),
-        Animated.timing(rotateAnim, {
-          toValue: 0,
-          duration: 200,
-          useNativeDriver: true,
-        }),
-        Animated.delay(1000),
-      ]),
-    ).start();
+    if (!Config.DETOX) {
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(rotateAnim, {
+            toValue: 1,
+            duration: 200,
+            useNativeDriver: true,
+          }),
+          Animated.timing(rotateAnim, {
+            toValue: -1,
+            duration: 300,
+            useNativeDriver: true,
+          }),
+          Animated.timing(rotateAnim, {
+            toValue: 0,
+            duration: 200,
+            useNativeDriver: true,
+          }),
+          Animated.delay(1000),
+        ]),
+      ).start();
+    }
     return () => {
       rotateAnim.setValue(0);
     };
@@ -241,6 +244,7 @@ export default function StakingSummary({ navigation, route }: Props) {
           onPress={onContinue}
           disabled={bridgePending || !!bridgeError || hasErrors}
           pending={bridgePending}
+          testID="near-summary-continue-button"
         />
       </View>
     </SafeAreaView>
@@ -358,7 +362,7 @@ function SummaryWords({
           <Trans i18nKey="near.staking.iStake" />
         </Words>
         <Touchable onPress={onChangeAmount}>
-          <Selectable name={formattedAmount} />
+          <Selectable name={formattedAmount} testID="near-delegation-summary-amount" />
         </Touchable>
       </Line>
       <Line>
@@ -366,7 +370,10 @@ function SummaryWords({
           <Trans i18nKey="delegation.to" />
         </Words>
         <Touchable onPress={onChangeValidator}>
-          <Selectable name={validator?.validatorAddress ?? "-"} />
+          <Selectable
+            name={validator?.validatorAddress ?? "-"}
+            testID="near-delegation-summary-validator"
+          />
         </Touchable>
       </Line>
     </>
@@ -422,7 +429,7 @@ const Words = ({
   </Text>
 );
 
-const Selectable = ({ name }: { name: string; readOnly?: boolean }) => {
+const Selectable = ({ name, testID }: { name: string; readOnly?: boolean; testID: string }) => {
   const { colors } = useTheme();
   return (
     <View style={[styles.validatorSelection, { backgroundColor: rgba(colors.primary, 0.2) }]}>
@@ -431,6 +438,7 @@ const Selectable = ({ name }: { name: string; readOnly?: boolean }) => {
         numberOfLines={1}
         style={styles.validatorSelectionText}
         color={colors.primary}
+        testID={testID}
       >
         {name}
       </Text>
