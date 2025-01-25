@@ -9,7 +9,7 @@ import type {
   TransactionRaw as aptosTransactionRaw,
   TransactionStatus as aptosTransactionStatus,
   TransactionStatusRaw as aptosTransactionStatusRaw,
-} from "../families/aptos/types";
+} from "@ledgerhq/coin-aptos/types/index";
 import type {
   Transaction as bitcoinTransaction,
   TransactionRaw as bitcoinTransactionRaw,

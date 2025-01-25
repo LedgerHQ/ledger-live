@@ -30,7 +30,9 @@ export class Modal extends Component {
 
   @step("Click Continue button")
   async continue() {
-    await this.continueButton.click();
+    if (await this.continueButton.isVisible()) {
+      await this.continueButton.click();
+    }
   }
 
   async save() {

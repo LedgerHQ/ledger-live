@@ -1,7 +1,7 @@
-import aptos from "../families/aptos/specs";
 import casper from "../families/casper/specs";
 import celo from "../families/celo/specs";
 import algorand from "@ledgerhq/coin-algorand/specs";
+import aptos from "@ledgerhq/coin-aptos/specs";
 import bitcoin from "@ledgerhq/coin-bitcoin/specs";
 import cardano from "@ledgerhq/coin-cardano/specs";
 import cosmos from "@ledgerhq/coin-cosmos/specs";
@@ -23,10 +23,10 @@ import vechain from "@ledgerhq/coin-vechain/specs";
 import xrp from "@ledgerhq/coin-xrp/specs";
 
 export default {
-  aptos,
   casper,
   celo,
   algorand,
+  aptos,
   bitcoin,
   cardano,
   cosmos,

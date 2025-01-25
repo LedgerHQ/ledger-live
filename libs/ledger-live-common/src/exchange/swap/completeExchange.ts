@@ -1,32 +1,30 @@
 import {
+  DisconnectedDeviceDuringOperation,
   TransportStatusError,
   WrongDeviceForAccountPayout,
   WrongDeviceForAccountRefund,
 } from "@ledgerhq/errors";
-import { log } from "@ledgerhq/logs";
-import { firstValueFrom, from, Observable } from "rxjs";
-import secp256k1 from "secp256k1";
-import { getCurrencyExchangeConfig } from "../";
-import { getAccountCurrency, getMainAccount } from "../../account";
-import { getAccountBridge } from "../../bridge";
-import { TransactionRefusedOnDevice } from "../../errors";
-import { withDevice } from "../../hw/deviceAccess";
-import { delay } from "../../promise";
 import {
   createExchange,
   ExchangeTypes,
   getExchangeErrorMessage,
   PayloadSignatureComputedFormat,
 } from "@ledgerhq/hw-app-exchange";
+import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
+import { log } from "@ledgerhq/logs";
+import BigNumber from "bignumber.js";
+import { Observable } from "rxjs";
+import secp256k1 from "secp256k1";
+import { getCurrencyExchangeConfig } from "../";
+import { getAccountCurrency, getMainAccount } from "../../account";
+import { getAccountBridge } from "../../bridge";
+import { TransactionRefusedOnDevice } from "../../errors";
+import { withDevicePromise } from "../../hw/deviceAccess";
+import { delay } from "../../promise";
+import { CompleteExchangeStep, convertTransportError } from "../error";
 import type { CompleteExchangeInputSwap, CompleteExchangeRequestEvent } from "../platform/types";
 import { convertToAppExchangePartnerKey, getSwapProvider } from "../providers";
-import { CompleteExchangeStep, convertTransportError } from "../error";
-import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
-import BigNumber from "bignumber.js";
 import { CEXProviderConfig } from "../providers/swap";
-
-const withDevicePromise = (deviceId, fn) =>
-  firstValueFrom(withDevice(deviceId)(transport => from(fn(transport))));
 
 const COMPLETE_EXCHANGE_LOG = "SWAP-CompleteExchange";
 
@@ -46,6 +44,10 @@ const completeExchange = (
     let currentStep: CompleteExchangeStep = "INIT";
 
     const confirmExchange = async () => {
+      if (deviceId === undefined) {
+        throw new DisconnectedDeviceDuringOperation();
+      }
+
       await withDevicePromise(deviceId, async transport => {
         const providerConfig = await getSwapProvider(provider);
         if (providerConfig.useInExchangeApp === false) {
@@ -113,7 +115,6 @@ const completeExchange = (
         if (unsubscribed) return;
 
         currentStep = "PROCESS_TRANSACTION";
-
         const { payload, format }: { payload: Buffer; format: PayloadSignatureComputedFormat } =
           exchange.transactionType === ExchangeTypes.SwapNg
             ? { payload: Buffer.from("." + binaryPayload), format: "jws" }
@@ -135,20 +136,6 @@ const completeExchange = (
         if (!payoutAddressParameters) {
           throw new Error(`Family not supported: ${mainPayoutCurrency.family}`);
         }
-
-        //-- Special case of SPLToken
-        //- NOT READY YET
-        // //TODO: generalize this case when another blockchain has the same requirement
-        // if (isSPLTokenAccount(fromAccount) || isSPLTokenAccount(toAccount)) {
-        //   sendPKI(transport);
-        // }
-
-        // if (isSPLTokenAccount(fromAccount)) {
-        //   //TODO Call AppExchange with TrustedService info
-        // }
-        // if (isSPLTokenAccount(toAccount)) {
-        //   //TODO Call AppExchange with TrustedService info
-        // }
 
         //-- CHECK_PAYOUT_ADDRESS
         const { config: payoutAddressConfig, signature: payoutAddressConfigSignature } =
@@ -256,20 +243,6 @@ const completeExchange = (
     };
   });
 };
-
-// function isSPLTokenAccount(account: AccountLike): boolean {
-//   return account.type !== "TokenAccount" && account.currency.id === "solana";
-// }
-
-// async function sendPKI(transport: Transport) {
-//   // FIXME: version number hardcoded
-//   const { descriptor, signature } = await calService.getCertificate(
-//     transport.deviceModel!.id,
-//     "1.3.0",
-//   );
-
-//   await loadPKI(transport, "TRUSTED_NAME", descriptor, signature);
-// }
 
 function convertSignature(signature: string, exchangeType: ExchangeTypes): Buffer {
   return exchangeType === ExchangeTypes.SwapNg

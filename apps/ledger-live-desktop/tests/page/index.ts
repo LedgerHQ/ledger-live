@@ -26,6 +26,7 @@ import { AssetPage } from "./asset.page";
 import { SettingsModal } from "tests/page/modal/settings.modal";
 import { OnboardingPage } from "tests/page/onboarding.page";
 import { OperationDrawer } from "./drawer/operation.drawer";
+import { LiveApp } from "tests/page/liveApp.page";
 
 export class Application extends PageHolder {
   public account = new AccountPage(this.page);
@@ -55,4 +56,5 @@ export class Application extends PageHolder {
   public settingsModal = new SettingsModal(this.page);
   public onboarding = new OnboardingPage(this.page);
   public operationDrawer = new OperationDrawer(this.page);
+  public liveApp = new LiveApp(this.page);
 }

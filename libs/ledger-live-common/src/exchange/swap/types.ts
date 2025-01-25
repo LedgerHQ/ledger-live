@@ -1,16 +1,18 @@
-import { BigNumber } from "bignumber.js";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { Account, AccountLike, AccountRaw, AccountRawLike, Operation } from "@ledgerhq/types-live";
-import { Transaction, TransactionRaw } from "../../generated/types";
-import { Result as UseBridgeTransactionResult } from "../../bridge/useBridgeTransaction";
 import { DeviceModelId } from "@ledgerhq/devices";
+import { CryptoCurrency, CryptoOrTokenCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { Account, AccountLike, AccountRaw, AccountRawLike, Operation } from "@ledgerhq/types-live";
+import { BigNumber } from "bignumber.js";
+import { Result as UseBridgeTransactionResult } from "../../bridge/useBridgeTransaction";
+import { Transaction, TransactionRaw } from "../../generated/types";
 export type { SwapLiveError } from "@ledgerhq/wallet-api-exchange-module";
 
 export type ExchangeSwap = {
   fromParentAccount: Account | null | undefined;
   fromAccount: AccountLike;
+  fromCurrency: CryptoOrTokenCurrency;
   toParentAccount: Account | null | undefined;
   toAccount: AccountLike;
+  toCurrency: CryptoOrTokenCurrency;
 };
 export type ExchangeSwapRaw = {
   fromParentAccount: AccountRaw | null | undefined;

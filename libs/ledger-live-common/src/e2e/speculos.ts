@@ -24,12 +24,13 @@ import { sendPolkadot } from "./families/polkadot";
 import { sendAlgorand } from "./families/algorand";
 import { sendTron } from "./families/tron";
 import { sendStellar } from "./families/stellar";
-import { sendCardano } from "./families/cardano";
+import { sendCardano, delegateCardano } from "./families/cardano";
 import { sendXRP } from "./families/xrp";
 import { sendAptos } from "./families/aptos";
 import { delegateNear } from "./families/near";
 import { delegateCosmos, sendCosmos } from "./families/cosmos";
 import { delegateSolana, sendSolana } from "./families/solana";
+import { delegateMultiversX } from "./families/multiversX";
 import { NFTTransaction, Transaction } from "./models/Transaction";
 import { Delegate } from "./models/Delegate";
 import { Swap } from "./models/Swap";
@@ -275,6 +276,14 @@ export const specs: Specs = {
     },
     dependency: "",
   },
+  Injective: {
+    currency: getCryptoCurrencyById("injective"),
+    appQuery: {
+      model: DeviceModelId.nanoSP,
+      appName: "Cosmos",
+    },
+    dependency: "",
+  },
 };
 
 export async function startSpeculos(
@@ -470,6 +479,11 @@ export async function activateLedgerSync() {
   await pressBoth();
 }
 
+export async function activateExpertMode() {
+  await pressUntilTextFound(DeviceLabels.EXPERT_MODE);
+  await pressBoth();
+}
+
 export async function expectValidAddressDevice(account: Account, addressDisplayed: string) {
   let deviceLabels: string[];
 
@@ -558,7 +572,15 @@ export async function signDelegationTransaction(delegatingAccount: Delegate) {
       await delegateNear(delegatingAccount);
       break;
     case Account.ATOM_1.currency.name:
+    case Account.INJ_1.currency.name:
+    case Account.OSMO_1.currency.name:
       await delegateCosmos(delegatingAccount);
+      break;
+    case Account.MULTIVERS_X_1.currency.name:
+      await delegateMultiversX();
+      break;
+    case Account.ADA_1.currency.name:
+      await delegateCardano();
       break;
     default:
       throw new Error(`Unsupported currency: ${currencyName}`);

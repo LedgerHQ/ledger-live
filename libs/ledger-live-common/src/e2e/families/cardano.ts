@@ -20,3 +20,24 @@ export async function sendCardano(tx: Transaction) {
   const isAddressCorrect = containsSubstringInEvent(tx.accountToCredit.address, events);
   expect(isAddressCorrect).toBeTruthy();
 }
+
+export async function delegateCardano() {
+  await waitFor(DeviceLabels.NEW_ORDINARY_TRANSACTION);
+  await pressBoth();
+  await pressUntilTextFound(DeviceLabels.TRANSACTION_FEE);
+  await pressBoth();
+  await pressUntilTextFound(DeviceLabels.REGISTER);
+  await pressBoth();
+  await pressUntilTextFound(DeviceLabels.STAKE_KEY);
+  await pressBoth();
+  await pressUntilTextFound(DeviceLabels.CONFIRM);
+  await pressBoth();
+  await pressUntilTextFound(DeviceLabels.DELEGATE_STAKE);
+  await pressBoth();
+  await pressUntilTextFound(DeviceLabels.STAKE_KEY);
+  await pressBoth();
+  await pressUntilTextFound(DeviceLabels.CONFIRM);
+  await pressBoth();
+  await pressUntilTextFound(DeviceLabels.CONFIRM);
+  await pressBoth();
+}

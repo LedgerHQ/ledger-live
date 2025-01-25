@@ -37,7 +37,7 @@ function SuccessDisplay({
       >
         <IconCheckCircle size={43} />
       </span>
-      <Title>{title}</Title>
+      <Title data-testid="success-message-label">{title}</Title>
 
       <Text
         style={{

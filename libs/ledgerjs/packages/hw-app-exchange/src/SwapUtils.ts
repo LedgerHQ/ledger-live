@@ -34,7 +34,13 @@ export type SwapPayload = {
   deviceTransactionIdNg?: string;
 };
 
-export async function decodePayloadProtobuf(payload: string): Promise<SwapPayload> {
+/**
+ * deprecated use `decodeSwapPayload` instead
+ */
+export const decodePayloadProtobuf = (payload: string): Promise<SwapPayload> =>
+  decodeSwapPayload(payload);
+
+export async function decodeSwapPayload(payload: string): Promise<SwapPayload> {
   const buffer = isHexadecimal(payload)
     ? Buffer.from(payload, "hex")
     : Buffer.from(payload, "base64");

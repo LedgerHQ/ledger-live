@@ -4,8 +4,9 @@
  * Use only exposed methods below outside of this module.
  */
 
-import { getOwnerAddress } from "./solana";
+import { computedTokenAddress, getOwnerAddress } from "./solana";
 
 export default {
+  computedTokenAddress,
   getOwnerAddress,
 };

@@ -42,4 +42,8 @@ export enum DeviceLabels {
   SEND_TO_ADDRESS_2 = "Send to address (2/2)",
   CONFIRM_TRANSACTION = "Confirm transaction",
   REVIEW_TRANSACTION = "Review transaction",
+  EXPERT_MODE = "Expert mode",
+  REGISTER = "Register",
+  STAKE_KEY = "Stake key",
+  DELEGATE_STAKE = "Delegate stake",
 }
