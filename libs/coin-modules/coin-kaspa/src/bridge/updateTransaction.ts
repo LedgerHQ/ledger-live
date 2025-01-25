@@ -10,3 +10,5 @@ export const updateTransaction = (t: Transaction, patch: Partial<Transaction>) =
   ...t,
   ...patch,
 });
+
+export default updateTransaction;

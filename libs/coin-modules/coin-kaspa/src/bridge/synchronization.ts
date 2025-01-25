@@ -1,5 +1,5 @@
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
-import { type GetAccountShape, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { GetAccountShape, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { AccountAddresses, KaspaAccount } from "../types";
 import { Operation } from "@ledgerhq/types-live";
 import { SignerContext } from "@ledgerhq/coin-framework/lib/signer";

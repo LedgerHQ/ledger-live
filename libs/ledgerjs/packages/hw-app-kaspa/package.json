@@ -24,8 +24,8 @@
   },
   "homepage": "https://github.com/coderofstuff/hw-app-kaspa#readme",
   "dependencies": {
-    "@ledgerhq/errors": "^6.16.3",
-    "@ledgerhq/hw-transport": "^6.30.5",
+    "@ledgerhq/errors": "workspace:^",
+    "@ledgerhq/hw-transport": "workspace:^",
     "bip32-path": "^0.4.2"
   },
   "devDependencies": {

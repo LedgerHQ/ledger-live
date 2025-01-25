@@ -1,5 +1,5 @@
 import {
-  defaultUpdateTransaction,
+  getSerializedAddressParameters,
   makeAccountBridgeReceive,
   makeScanAccounts,
   makeSync,
@@ -15,6 +15,7 @@ import getTransactionStatus from "./getTransactionStatus";
 import { makeGetAccountShape } from "./synchronization";
 import { prepareTransaction } from "./prepareTransaction";
 import { createTransaction } from "./createTransaction";
+import { updateTransaction } from "./updateTransaction";
 import { broadcast } from "./broadcast";
 import { initAccount } from "./initAccount";
 import { KaspaSigner } from "../signer";
@@ -26,7 +27,7 @@ export function buildCurrencyBridge(signerContext: SignerContext<KaspaSigner>): 
 
   const scanAccounts = makeScanAccounts({
     getAccountShape: makeGetAccountShape(signerContext),
-    getAddressFn: getAddress,
+    getAddressFn: getAddressWrapper(getAddress),
   });
 
   return {
@@ -49,8 +50,9 @@ export function buildAccountBridge(
   const signOperation = buildSignOperation(signerContext);
 
   return {
+    getSerializedAddressParameters,
     createTransaction,
-    updateTransaction: defaultUpdateTransaction,
+    updateTransaction,
     prepareTransaction,
     getTransactionStatus,
     sync,
