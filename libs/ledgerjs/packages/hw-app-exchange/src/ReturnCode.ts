@@ -28,7 +28,7 @@ export function getExchangeErrorMessage(errorCode: number, step?: string): strin
     case ErrorStatus.DESERIALIZATION_FAILED:
       return "Payload deserialzation failed";
     case ErrorStatus.WRONG_TRANSACTION_ID:
-      return "Wrond transaction id";
+      return "Wrong transaction id";
     case ErrorStatus.INVALID_ADDRESS:
       if (step === "CHECK_PAYOUT_ADDRESS")
         return "This receiving account does not belong to your device. Please change and retry.";

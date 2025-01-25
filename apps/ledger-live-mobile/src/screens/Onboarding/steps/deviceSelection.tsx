@@ -1,8 +1,7 @@
 import { getDeviceModel } from "@ledgerhq/devices/index";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { useNavigation } from "@react-navigation/native";
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Platform } from "react-native";
 import { isSyncOnboardingSupported } from "@ledgerhq/live-common/device/use-cases/isSyncOnboardingSupported";
@@ -53,23 +52,19 @@ export const devices = {
 
 const NOT_SUPPORTED_DEVICES_IOS = [DeviceModelId.nanoS, DeviceModelId.nanoSP];
 
+const availableDevices = [
+  devices.stax,
+  devices.europa,
+  devices.nanoX,
+  devices.nanoSP,
+  devices.nanoS,
+];
+
 function OnboardingStepDeviceSelection() {
   const navigation = useNavigation<NavigationProp>();
   const { t } = useTranslation();
-  const deviceEuropaSupported = useFeature("supportDeviceEuropa");
 
   const [isOpen, setOpen] = useState<boolean>(false);
-
-  const availableDevices = useMemo(
-    () => [
-      devices.stax,
-      ...(deviceEuropaSupported?.enabled ? [devices.europa] : []),
-      devices.nanoX,
-      devices.nanoSP,
-      devices.nanoS,
-    ],
-    [deviceEuropaSupported],
-  );
 
   const getProductName = (modelId: DeviceModelId) =>
     getDeviceModel(modelId)?.productName.replace("Ledger", "").trimStart() || modelId;

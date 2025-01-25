@@ -39,7 +39,7 @@ export function NotificationIndicator() {
       />
       <Tooltip content={t("informationCenter.tooltip")} placement="bottom">
         <ItemContainer
-          data-test-id="topbar-notification-button"
+          data-testid="topbar-notification-button"
           isInteractive
           onClick={onClickNotificationCenter}
         >

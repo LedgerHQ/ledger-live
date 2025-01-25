@@ -21,7 +21,7 @@ const PostOnboardingScreen = () => {
       flexDirection="row"
       width="100%"
       height="100%"
-      data-test-id="post-onboarding-hub-container"
+      data-testid="post-onboarding-hub-container"
     >
       <Flex
         justifyContent="center"

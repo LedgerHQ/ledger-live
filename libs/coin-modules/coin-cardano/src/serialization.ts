@@ -115,6 +115,9 @@ function toProtocolParamsRaw({
   collateralPercent,
   priceSteps,
   priceMem,
+  maxTxSize,
+  maxValueSize,
+  utxoCostPerByte,
   languageView,
 }: ProtocolParams): ProtocolParamsRaw {
   return {
@@ -125,6 +128,9 @@ function toProtocolParamsRaw({
     collateralPercent,
     priceSteps,
     priceMem,
+    maxTxSize,
+    maxValueSize,
+    utxoCostPerByte,
     languageView,
   };
 }
@@ -137,6 +143,9 @@ function fromProtocolParamsRaw({
   collateralPercent,
   priceSteps,
   priceMem,
+  maxTxSize,
+  maxValueSize,
+  utxoCostPerByte,
   languageView,
 }: ProtocolParamsRaw): ProtocolParams {
   return {
@@ -147,6 +156,9 @@ function fromProtocolParamsRaw({
     collateralPercent,
     priceSteps,
     priceMem,
+    maxTxSize,
+    maxValueSize,
+    utxoCostPerByte,
     languageView,
   };
 }

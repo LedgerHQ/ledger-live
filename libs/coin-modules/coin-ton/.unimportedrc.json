@@ -1,0 +1,19 @@
+{
+  "entry": [
+    "src/bridge/js.ts",
+    "src/errors.ts",
+    "src/hw-getAddress.ts",
+    "src/types.ts",
+    "src/cli-transaction.ts",
+    "src/synchronisation.ts",
+    "src/specs.ts"
+  ],
+  "ignoreUnimported": [
+    "src/transaction.ts",
+    "src/deviceTransactionConfig.ts",
+    "src/hw-signMessage.ts",
+    "src/specs.ts",
+    "src/speculos-deviceActions.ts"
+  ],
+  "ignoreUnused": ["msw", "@ledgerhq/types-cryptoassets", "@ledgerhq/live-env"]
+}

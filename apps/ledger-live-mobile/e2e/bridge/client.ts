@@ -2,17 +2,18 @@ import { Platform } from "react-native";
 import invariant from "invariant";
 import { Subject } from "rxjs";
 import { store } from "~/context/store";
-import { importSettings } from "~/actions/settings";
+import { importSettings, setLastConnectedDevice } from "~/actions/settings";
 import { importStore as importAccountsRaw } from "~/actions/accounts";
 import { acceptGeneralTerms } from "~/logic/terms";
 import { navigate } from "~/rootnavigation";
-import { importBle } from "~/actions/ble";
+import { addKnownDevice, importBle, removeKnownDevice } from "~/actions/ble";
 import { LaunchArguments } from "react-native-launch-arguments";
 import { DeviceEventEmitter } from "react-native";
 import logReport from "../../src/log-report";
 import { MessageData, ServerData, mockDeviceEventSubject } from "./types";
-import { getAllEnvs } from "@ledgerhq/live-env";
+import { getAllEnvs, setEnv } from "@ledgerhq/live-env";
 import { getAllFeatureFlags } from "@ledgerhq/live-common/e2e/index";
+import { DeviceModelId } from "@ledgerhq/devices";
 
 export const e2eBridgeClient = new Subject<MessageData>();
 
@@ -23,6 +24,13 @@ const retryDelay = 500; // Initial retry delay in milliseconds
 
 export function init() {
   const wsPort = LaunchArguments.value()["wsPort"] || "8099";
+  const mock = LaunchArguments.value()["mock"];
+  const disable_broadcast = LaunchArguments.value()["disable_broadcast"];
+
+  log(`[E2E Bridge Client]: wsPort=${wsPort}, mock=${mock}`);
+
+  if (mock == "0") setEnv("MOCK", "");
+  setEnv("DISABLE_TRANSACTION_BROADCAST", disable_broadcast != "0");
 
   if (ws) {
     ws.close();
@@ -116,6 +124,33 @@ function onMessage(event: WebSocketMessageEvent) {
           type: "appEnvs",
           payload,
         });
+        break;
+      }
+      case "addKnownSpeculos": {
+        const address = msg.payload;
+        const model = DeviceModelId.nanoX;
+        store.dispatch(
+          setLastConnectedDevice({
+            deviceId: `httpdebug|ws://${address}`,
+            deviceName: `${address}`,
+            wired: false,
+            modelId: model,
+          }),
+        );
+        store.dispatch(
+          addKnownDevice({
+            id: `httpdebug|ws://${address}`,
+            name: `${address}`,
+            modelId: model,
+          }),
+        );
+        setEnv("DEVICE_PROXY_URL", address);
+        break;
+      }
+      case "removeKnownSpeculos": {
+        const address = msg.payload;
+        store.dispatch(removeKnownDevice(`httpdebug|ws://${address}`));
+        setEnv("DEVICE_PROXY_URL", "");
         break;
       }
       default:

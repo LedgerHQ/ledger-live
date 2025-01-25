@@ -4,13 +4,15 @@ import { Feature, FeatureId, Features } from "@ledgerhq/types-live";
 import { getEnv } from "@ledgerhq/live-env";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 
+type GetFeature = <T extends FeatureId>(param: {
+  key: T;
+  appLanguage?: string;
+  allowOverride?: boolean;
+  localOverrides?: { [key in FeatureId]?: Feature | undefined };
+}) => Features[T] | null;
+
 export interface FirebaseFeatureFlagsProviderProps {
-  getFeature: <T extends FeatureId>(param: {
-    key: T;
-    appLanguage?: string;
-    allowOverride?: boolean;
-    localOverrides?: { [key in FeatureId]?: Feature | undefined };
-  }) => Features[T];
+  getFeature: GetFeature;
   children: React.ReactNode;
 }
 
@@ -63,12 +65,7 @@ export const isFeature = (key: string): boolean => {
   }
 };
 
-export const getFeature = (args: {
-  key: FeatureId;
-  appLanguage?: string;
-  localOverrides?: { [key in FeatureId]?: Feature };
-  allowOverride?: boolean;
-}) => {
+export const getFeature: GetFeature = args => {
   if (!LiveConfig.instance?.provider?.getValueByKey) {
     return null;
   }
@@ -108,8 +105,8 @@ export const getFeature = (args: {
     }
 
     return checkFeatureFlagVersion(feature);
-  } catch (error) {
-    console.error(`Failed to retrieve feature "${key}"`);
+  } catch (_error: unknown) {
+    // console.error(`Failed to retrieve feature "${key}"`);
     return null;
   }
 };

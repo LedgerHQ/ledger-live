@@ -10,14 +10,13 @@ import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
-import { calculateMinUtxoAmount } from "@stricahq/typhonjs/dist/utils/utils";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import { inferSubOperations } from "@ledgerhq/coin-framework/serialization/index";
 import type { Operation, OperationType, TokenAccount } from "@ledgerhq/types-live";
 import { getDelegationInfo } from "./api/getDelegationInfo";
 import { APITransaction, HashType } from "./api/api-types";
 import { getTransactions } from "./api/getTransactions";
-import { getNetworkInfo } from "./api/getNetworkInfo";
+import { fetchNetworkInfo } from "./api/getNetworkInfo";
 import { buildSubAccounts } from "./buildSubAccounts";
 import { getNetworkParameters } from "./networks";
 import { CardanoSigner } from "./signer";
@@ -40,6 +39,7 @@ import {
   isHexString,
   mergeTokens,
 } from "./logic";
+import { CARDANO_MAX_SUPPLY } from "./constants";
 
 export const makeGetAccountShape =
   (signerContext: SignerContext<CardanoSigner>): GetAccountShape<CardanoAccount> =>
@@ -148,16 +148,19 @@ export const makeGetAccountShape =
           stakeCred: stakeCredential,
         }).getBech32(),
       }));
-    const cardanoNetworkInfo = await getNetworkInfo(initialAccount, currency);
+    const cardanoNetworkInfo = await fetchNetworkInfo(currency);
     const delegationInfo = await getDelegationInfo(currency, stakeCredential.key);
 
     const totalBalance = delegationInfo?.rewards ? utxosSum.plus(delegationInfo.rewards) : utxosSum;
 
-    const minAdaBalanceForTokens = tokenBalance.length
-      ? calculateMinUtxoAmount(
-          tokenBalance,
-          new BigNumber(cardanoNetworkInfo.protocolParams.lovelacePerUtxoWord),
-          false,
+    const minAdaForTokens = tokenBalance.length
+      ? TyphonUtils.calculateMinUtxoAmountBabbage(
+          {
+            address: TyphonUtils.getAddressFromString(freshAddresses[0].address),
+            amount: new BigNumber(CARDANO_MAX_SUPPLY),
+            tokens: tokenBalance,
+          },
+          new BigNumber(cardanoNetworkInfo.protocolParams.utxoCostPerByte),
         )
       : new BigNumber(0);
 
@@ -179,7 +182,7 @@ export const makeGetAccountShape =
       id: accountId,
       xpub,
       balance: totalBalance,
-      spendableBalance: utxosSum.minus(minAdaBalanceForTokens),
+      spendableBalance: BigNumber.max(0, utxosSum.minus(minAdaForTokens)),
       operations: operations,
       syncHash,
       subAccounts,
@@ -289,10 +292,14 @@ function mapTxToAccountOperation(
     fee: new BigNumber(tx.fees),
     value: operationValue.absoluteValue(),
     senders: tx.inputs.map(i =>
-      isHexString(i.address) ? TyphonUtils.getAddressFromHex(i.address).getBech32() : i.address,
+      isHexString(i.address)
+        ? TyphonUtils.getAddressFromHex(Buffer.from(i.address, "hex")).getBech32()
+        : i.address,
     ),
     recipients: tx.outputs.map(o =>
-      isHexString(o.address) ? TyphonUtils.getAddressFromHex(o.address).getBech32() : o.address,
+      isHexString(o.address)
+        ? TyphonUtils.getAddressFromHex(Buffer.from(o.address, "hex")).getBech32()
+        : o.address,
     ),
     subOperations,
     blockHeight: tx.blockHeight,

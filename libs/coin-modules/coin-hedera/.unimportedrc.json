@@ -1,0 +1,33 @@
+{
+  "entry": [
+    "src/account.ts",
+    "src/bridge/index.ts",
+    "src/test/cli.ts",
+    "src/deviceTransactionConfig.ts",
+    "src/errors.ts",
+    "src/hw-getAddress.ts",
+    "src/specs.ts",
+    "src/transaction.ts"
+  ],
+  "ignorePatterns": [
+    "**/node_modules/**",
+    "**/*.fixture.ts",
+    "**/*.mock.ts",
+    "**/*.test.{js,jsx,ts,tsx}"
+  ],
+  "ignoreUnresolved": [],
+  "ignoreUnimported": [
+    "src/index.ts",
+    "src/test/bot-specs.ts",
+    "src/test/bridgeDatasetTest.ts",
+    "src/test/cli.ts",
+    "src/test/index.ts",
+    "src/test/speculos-deviceActions.ts"
+  ],
+  "ignoreUnused": [
+    "@ledgerhq/devices",
+    "expect",
+    "lodash",
+    "rxjs"
+  ]
+}

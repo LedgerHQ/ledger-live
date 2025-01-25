@@ -5,8 +5,8 @@ import { useHistory } from "react-router-dom";
 import ContextMenuItem from "./Item";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { Account } from "@ledgerhq/types-live";
-import { CollectibleType } from "../../Collectibles/types/Collectibles";
 import { createContextMenuItems } from "./createContextMenuItems";
+import { CollectibleType } from "LLD/features/Collectibles/types/Collectibles";
 
 type Props = {
   account: Account;
@@ -16,6 +16,8 @@ type Props = {
   leftClick?: boolean;
   goBackToAccount?: boolean;
   typeOfCollectible: CollectibleType;
+  inscriptionId?: string;
+  inscriptionName?: string;
 };
 
 export default function CollectionContextMenu({
@@ -26,6 +28,8 @@ export default function CollectionContextMenu({
   leftClick,
   goBackToAccount = false,
   typeOfCollectible,
+  inscriptionId,
+  inscriptionName,
 }: Props) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -36,6 +40,8 @@ export default function CollectionContextMenu({
     collectionName,
     collectionAddress,
     account,
+    inscriptionId,
+    inscriptionName,
     dispatch,
     setDrawer,
     history,

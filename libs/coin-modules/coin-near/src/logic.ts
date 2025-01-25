@@ -10,7 +10,7 @@ import {
   NearAccount,
 } from "./types";
 import { createTransaction } from "./createTransaction";
-import { defaultUpdateTransaction as updateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { updateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { getCurrentNearPreloadData } from "./preload";
 import { FRACTIONAL_DIGITS, STAKING_GAS_BASE, YOCTO_THRESHOLD_VARIATION } from "./constants";
 
@@ -119,7 +119,6 @@ export const mapStakingPositions = (
     return {
       ...sp,
       formattedAmount: formatCurrencyUnit(unit, sp.staked, formatConfig),
-      formattedRewards: formatCurrencyUnit(unit, sp.rewards, formatConfig),
       formattedPending: formatCurrencyUnit(unit, sp.pending, formatConfig),
       formattedAvailable: formatCurrencyUnit(unit, sp.available, formatConfig),
       rank,

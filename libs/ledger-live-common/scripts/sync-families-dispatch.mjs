@@ -1,6 +1,6 @@
 #!/usr/bin/env zx
-import "zx/globals";
 import rimraf from "rimraf";
+import "zx/globals";
 
 const targets = [
   "hw-getAddress.ts",
@@ -14,7 +14,6 @@ const targets = [
   "mock.ts",
   "account.ts",
   "formatters.ts",
-  "exchange.ts",
   "platformAdapter.ts",
   "walletApiAdapter.ts",
   "operation.ts",
@@ -23,16 +22,26 @@ const targets = [
 // Coins using coin-framework
 const familiesWPackage = [
   "algorand",
+  "aptos",
   "bitcoin",
   "cardano",
+  "cosmos",
+  "elrond",
   "evm",
+  "hedera",
+  "filecoin",
+  "internet_computer",
+  "icon",
   "kaspa",
   "near",
   "polkadot",
   "solana",
+  "stacks",
   "stellar",
   "tezos",
+  "ton",
   "tron",
+  "vechain",
   "xrp",
 ];
 
@@ -159,7 +168,7 @@ async function getDeviceTransactionConfig(families) {
 
   const libsDir = path.join(__dirname, "../..");
   const target = "deviceTransactionConfig.ts";
-  for (const family of ["polkadot", "tron"]) {
+  for (const family of ["aptos", "filecoin", "stacks", "polkadot", "tron"]) {
     if (fs.existsSync(path.join(libsDir, `coin-modules/coin-${family}/src/bridge`, target))) {
       imports += `import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_${family} } from "@ledgerhq/coin-${family}/bridge/deviceTransactionConfig";\n`;
       exprts += `\n  | ExtraDeviceTransactionField_${family}`;

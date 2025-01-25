@@ -29,7 +29,7 @@ export const debugFetchCustomImageHeaderOptions: ReactNavigationHeaderOptions = 
 
 export default function DebugFetchCustomImage() {
   const deviceAction = useStaxFetchImageDeviceAction();
-  const { colors } = useTheme();
+  const { colors, dark } = useTheme();
   const navigation = useNavigation();
 
   const [device, setDevice] = useState<Device | null>(null);
@@ -179,7 +179,11 @@ export default function DebugFetchCustomImage() {
             {imageSource ? (
               <Flex flexDirection="row" flexGrow={0}>
                 <FramedPicture
-                  framedPictureConfig={getFramedPictureConfig("transfer", deviceModelId)}
+                  framedPictureConfig={getFramedPictureConfig(
+                    "transfer",
+                    deviceModelId,
+                    dark ? "dark" : "light",
+                  )}
                   source={imageSource}
                 />
               </Flex>

@@ -1,0 +1,1 @@
+{"request":{"url":"https://rest-mainnet.onomy.io/cosmos/distribution/v1beta1/delegators/onomy1v2mp0m7k96dm9qv60fkspcqlzpkzrwnecy8mat/rewards","method":"GET"},"response":{"body":{"rewards":[],"total":[]}}}

@@ -7,19 +7,26 @@ export type Operation = {
   type: string;
   value: bigint;
   fee: bigint;
-  blockHeight: number;
+  block: {
+    height: number;
+    hash?: string;
+    time?: Date;
+  };
   senders: string[];
   recipients: string[];
   date: Date;
   transactionSequenceNumber: number;
 };
 
-export async function listOperations(addr: string): Promise<Operation[]> {
+export async function listOperations(
+  addr: string,
+  { limit, startAt }: { limit: number; startAt?: number | undefined },
+): Promise<[Operation[], number]> {
   //The accountId is used to map Operations to Live types.
   const fakeAccountId = "";
-  const operations = await network.getOperations(fakeAccountId, addr);
+  const operations = await network.getOperations(fakeAccountId, addr, startAt, limit);
 
-  return operations.map(convertToCoreOperation(addr));
+  return [operations.map(convertToCoreOperation(addr)), operations.slice(-1)[0].blockHeight ?? 0];
 }
 
 const convertToCoreOperation = (address: string) => (operation: PolkadotOperation) => {
@@ -40,7 +47,9 @@ const convertToCoreOperation = (address: string) => (operation: PolkadotOperatio
     type,
     value: BigInt(value.toString()),
     fee: BigInt(fee.toString()),
-    blockHeight: blockHeight ?? 0,
+    block: {
+      height: blockHeight ?? 0,
+    },
     senders,
     recipients,
     date,

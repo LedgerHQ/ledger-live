@@ -2,7 +2,7 @@ import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
 import { DiscoverPage } from "../../page/discover.page";
 import { Layout } from "../../component/layout.component";
-import { Drawer } from "../../page/drawer/drawer";
+import { Drawer } from "../../component/drawer.component";
 import { Modal } from "../../component/modal.component";
 import { DeviceAction } from "../../models/DeviceAction";
 import { randomUUID } from "crypto";
@@ -23,6 +23,8 @@ const methods = [
   "device.open",
   "device.exchange",
   "device.close",
+  "bitcoin.getAddress",
+  "bitcoin.getPublicKey",
   "bitcoin.getXPub",
   "exchange.start",
   "exchange.complete",
@@ -238,7 +240,7 @@ test("Wallet API methods @smoke", async ({ page }) => {
     await drawer.selectCurrency("tether usd");
     // Test name and balance for tokens
     await expect(drawer.getAccountButton("tether usd", 2)).toContainText(
-      "Tether USD (USDT)71.8174 USDT", // Special space present in the actual rendered element apparently
+      "Ethereum 3 (USDT)71.8174 USDT",
     );
     await drawer.back();
 
@@ -463,7 +465,7 @@ test("Wallet API methods @smoke", async ({ page }) => {
     });
 
     // Step Fees
-    await expect(page.getByText("Max estimated fee")).toBeVisible();
+    await expect(page.getByText(/learn more about fees/i)).toBeVisible();
     await modal.continueToSignTransaction();
 
     // Step Recipient
@@ -502,7 +504,7 @@ test("Wallet API methods @smoke", async ({ page }) => {
     });
 
     // Step Fees
-    await expect(page.getByText("Max estimated fee")).toBeVisible();
+    await expect(page.getByText(/learn more about fees/i)).toBeVisible();
     await modal.continueToSignTransaction();
 
     // Step Recipient
@@ -514,15 +516,15 @@ test("Wallet API methods @smoke", async ({ page }) => {
 
     // Click on notification toaster
     // NOTE: toaster not visible in output, need to find a better way to handle css animations
-    // await page.waitForSelector('[data-test-id="toaster"][style="opacity: 1;"]');
-    const toaster = page.locator("data-test-id=toaster");
+    // await page.waitForSelector('[data-testid="toaster"][style="opacity: 1;"]');
+    const toaster = page.getByTestId("toaster");
     await toaster.scrollIntoViewIfNeeded();
     await expect(toaster).toBeVisible();
     await expect(toaster.getByText("Transaction sent !")).toBeVisible();
 
     // Display transaction drawer
     await toaster.click();
-    const drawer = page.locator("data-test-id=drawer-content");
+    const drawer = page.getByTestId("drawer-content");
     await expect(drawer).toBeVisible();
     await expect(drawer.getByText("View in explorer")).toBeVisible();
     await expect(drawer.getByText("Confirmed")).toBeVisible();

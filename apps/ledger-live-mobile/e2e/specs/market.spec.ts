@@ -1,17 +1,17 @@
 import { Application } from "../page";
 
-let app: Application;
+const app = new Application();
 const asset = "Ethereum (ETH)";
 
 describe("Market page for user with no device", () => {
   beforeAll(async () => {
-    app = await Application.init("1accountEth");
+    await app.init({ userdata: "1accountEth" });
     await app.portfolio.waitForPortfolioPageToLoad();
   });
 
   $TmsLink("B2CQA-1880");
   it("should find the researched crypto", async () => {
-    await app.portfolio.openWalletTabMarket();
+    await app.walletTabNavigator.navigateToMarket();
     await app.market.searchAsset("eth");
     await app.market.expectMarketRowTitle(asset);
   });

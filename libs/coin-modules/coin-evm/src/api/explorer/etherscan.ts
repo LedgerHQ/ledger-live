@@ -211,6 +211,11 @@ export const getLastERC1155Operations = async (
     throw new EtherscanLikeExplorerUsedIncorrectly();
   }
 
+  // Blockscout has no ERC1155 support yet
+  if (explorer.type === "blockscout") {
+    return [];
+  }
+
   const ops = await fetchWithRetries<EtherscanERC1155Event[]>({
     method: "GET",
     url: `${explorer.uri}?module=account&action=token1155tx&address=${address}`,

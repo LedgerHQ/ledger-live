@@ -52,7 +52,7 @@ export default function EvmFeesStrategy({
   const bridge: AccountBridge<Transaction> = getAccountBridge(mainAccount);
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const unit = useAccountUnit(account);
+  const unit = useAccountUnit(mainAccount);
 
   const [gasOptions, error, loading] = useGasOptions({
     currency: mainAccount.currency,

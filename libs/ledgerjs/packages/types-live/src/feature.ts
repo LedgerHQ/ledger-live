@@ -1,6 +1,7 @@
 import { ABTestingVariants } from "./ABTesting";
 import { ChainwatchNetwork } from "./chainwatch";
 import { StorylyInstanceID, StorylyInstanceType } from "./storyly";
+import { WalletSyncEnvironment, WalletSyncWatchConfig } from "./walletSync";
 
 /**
  * Feature type.
@@ -88,6 +89,8 @@ export type CurrencyFeatures = {
   currencyMoonriver: DefaultFeature;
   currencyVelasEvm: DefaultFeature;
   currencySyscoin: DefaultFeature;
+  currencyAptos: DefaultFeature;
+  currencyAptosTestnet: DefaultFeature;
   currencyAxelar: DefaultFeature;
   currencySecretNetwork: DefaultFeature;
   currencySeiNetwork: DefaultFeature;
@@ -117,6 +120,14 @@ export type CurrencyFeatures = {
   currencyBlastSepolia: DefaultFeature;
   currencyScroll: DefaultFeature;
   currencyScrollSepolia: DefaultFeature;
+  currencyIcon: DefaultFeature;
+  currencyTon: DefaultFeature;
+  currencyEtherlink: DefaultFeature;
+  currencyZkSync: DefaultFeature;
+  currencyZkSyncSepolia: DefaultFeature;
+  currencyMantra: DefaultFeature;
+  currencyXion: DefaultFeature;
+  currencyZenrock: DefaultFeature;
 };
 
 /**
@@ -135,12 +146,12 @@ export type Features = CurrencyFeatures & {
   mockFeature: Feature_MockFeature;
   buySellUi: Feature_BuySellUiManifest;
   buySellShortcut: DefaultFeature;
-  multibuyNavigation: Feature_MultibuyNavigation;
   referralProgramDesktopSidebar: Feature_ReferralProgramDesktopSidebar;
   disableNftSend: Feature_DisableNftSend;
   disableNftLedgerMarket: Feature_DisableNftLedgerMarket;
   disableNftRaribleOpensea: Feature_DisableNftRaribleOpensea;
   receiveStakingFlowConfigDesktop: Feature_ReceiveStakingFlowConfigDesktop;
+  ethStakingModalWithFilters: DefaultFeature;
   ethStakingProviders: Feature_EthStakingProviders;
   storyly: Feature_Storyly;
   postOnboardingAssetsTransfer: Feature_PostOnboardingAssetsTransfer;
@@ -152,23 +163,21 @@ export type Features = CurrencyFeatures & {
   swapWalletApiPartnerList: Feature_SwapWalletApiPartnerList;
   stakePrograms: Feature_StakePrograms;
   portfolioExchangeBanner: Feature_PortfolioExchangeBanner;
-  objkt: Feature_Objkt;
   editEvmTx: Feature_EditEvmTx;
   stakeAccountBanner: Feature_StakeAccountBanner;
   newsfeedPage: Feature_NewsfeedPage;
   domainInputResolution: Feature_DomainInputResolution;
   discover: Feature_Discover;
   transactionsAlerts: Feature_TransactionsAlerts;
-  listAppsV2minor1: Feature_ListAppsV2minor1;
   fetchAdditionalCoins: Feature_FetchAdditionalCoins;
-  ptxSwapLiveAppDemoZero: Feature_PtxSwapLiveAppDemoZero;
-  ptxSwapLiveAppDemoOne: Feature_PtxSwapLiveAppDemoZero;
-  ptxSwapMoonpayProvider: Feature_PtxSwapMoonpayProvider;
-  ptxSwapExodusProvider: Feature_PtxSwapExodusProvider;
-  ptxSwapThorswapProvider: Feature_PtxSwapThorswapProvider;
+  ptxCard: DefaultFeature;
+  ptxSwapLiveAppMobile: Feature_PtxSwapLiveApp;
+  ptxSwapLiveApp: Feature_PtxSwapLiveApp;
   ptxSwapReceiveTRC20WithoutTrx: Feature_PtxSwapReceiveTRC20WithoutTrx;
   flexibleContentCards: Feature_FlexibleContentCards;
   llmAnalyticsOptInPrompt: Feature_LlmAnalyticsOptInPrompt;
+  ptxSwapMoonpayProvider: Feature_PtxSwapMoonpayProvider;
+  ptxSwapExodusProvider: Feature_PtxSwapExodusProvider;
   lldAnalyticsOptInPrompt: Feature_LldAnalyticsOptInPrompt;
   lldChatbotSupport: Feature_LldChatbotSupport;
   llmChatbotSupport: Feature_LlmChatbotSupport;
@@ -176,15 +185,26 @@ export type Features = CurrencyFeatures & {
   nftsFromSimplehash: Feature_NftsFromSimpleHash;
   lldActionCarousel: Feature_lldActionCarousel;
   marketperformanceWidgetDesktop: Feature_MarketperformanceWidgetDesktop;
-  supportDeviceEuropa: Feature_SupportDeviceEuropa;
   lldRefreshMarketData: Feature_LldRefreshMarketData;
   llmRefreshMarketData: Feature_LlmRefreshMarketData;
   spamReportNfts: Feature_SpamReportNfts;
   lldWalletSync: Feature_LldWalletSync;
   llmWalletSync: Feature_LlmWalletSync;
   lldNftsGalleryNewArch: DefaultFeature;
+  lldnewArchOrdinals: DefaultFeature;
   enableAppsBackup: Feature_EnableAppsBackup;
   web3hub: Feature_web3hub;
+  llmMarketQuickActions: DefaultFeature;
+  spamFilteringTx: Feature_SpamFilteringTx;
+  llmMemoTag: Feature_MemoTag;
+  lldMemoTag: Feature_MemoTag;
+  ldmkTransport: Feature_LdmkTransport;
+  llMevProtection: DefaultFeature;
+  llmNetworkBasedAddAccountFlow: DefaultFeature;
+  llCounterValueGranularitiesRates: Feature_LlCounterValueGranularitiesRates;
+  llmRebornLP: Feature_LlmRebornLP;
+  llmRebornFlex: DefaultFeature;
+  llmAccountListUI: DefaultFeature;
 };
 
 /**
@@ -193,17 +213,43 @@ export type Features = CurrencyFeatures & {
 export type FeatureId = keyof Features;
 
 /**
+ * EthStakingProvider category type.
+ */
+export type EthStakingProviderCategory = "liquid" | "pooling" | "protocol" | "restaking";
+
+/**
+ * EthStakingProvider rewards strategy.
+ */
+export type EthStakingProviderRewardsStrategy =
+  | "basic"
+  | "auto-compounded"
+  | "daily"
+  | "eigenlayer_points"
+  | "validator";
+
+/**
+ * EthStakingProvider.
+ */
+export interface EthStakingProvider {
+  id: string;
+  category: EthStakingProviderCategory;
+  disabled?: boolean;
+  icon?: string;
+  liveAppId: string;
+  /** Requires Liquid Staking Token */
+  lst?: boolean;
+  min?: number;
+  name: string;
+  queryParams?: Record<string, string>;
+  rewardsStrategy: EthStakingProviderRewardsStrategy;
+  supportLink?: string;
+}
+
+/**
  * Features types.
  */
 export type Feature_EthStakingProviders = Feature<{
-  listProvider: {
-    id: string;
-    name: string;
-    liveAppId: string;
-    supportLink?: string;
-    icon?: string;
-    queryParams?: Record<string, string>;
-  }[];
+  listProvider: EthStakingProvider[];
 }>;
 
 export type Feature_TransactionsAlerts = Feature<{
@@ -307,7 +353,6 @@ export type Feature_ProtectServicesMobile = Feature<{
     };
   };
   account: {
-    loginURI: string;
     homeURI: string;
   };
   protectId: string;
@@ -337,7 +382,6 @@ export type Feature_ProtectServicesDesktop = Feature<{
   };
   account: {
     homeURI: string;
-    loginURI: string;
   };
   protectId: string;
 }>;
@@ -366,6 +410,10 @@ export type Feature_EditEvmTx = Feature<{
 export type Feature_FirebaseEnvironmentReadOnly = Feature<{
   comment: string;
   project: string;
+}>;
+
+export type Feature_LdmkTransport = Feature<{
+  warningVisible: boolean;
 }>;
 
 export type Feature_NpsRatingsPrompt = Feature<{
@@ -423,11 +471,6 @@ export type Feature_RatingsPrompt = Feature<{
 }>;
 
 export type Feature_PtxSwapLiveApp = Feature<{
-  currencies?: Array<string>;
-  families?: Array<string>;
-}>;
-
-export type Feature_PtxSwapLiveAppDemoZero = Feature<{
   manifest_id: string;
   currencies?: string[];
   families?: string[];
@@ -455,11 +498,14 @@ export type Feature_MarketperformanceWidgetDesktop = Feature<{
   variant: ABTestingVariants;
   refreshRate: number;
   top: number;
+  limit: number;
   supported: boolean;
+  enableNewFeature: boolean;
 }>;
 
 export type Feature_NftsFromSimpleHash = Feature<{
   threshold: number;
+  staleTime: number;
 }>;
 
 export type Feature_LldRefreshMarketData = Feature<{
@@ -470,12 +516,27 @@ export type Feature_LlmRefreshMarketData = Feature<{
 }>;
 
 export type Feature_BuySellUiManifest = Feature<{
-  manifestId: string; // id of the app to use for the Buy/Sell UI, e.g. "multibuy-v2"
+  manifestId: string; // id of the app to use for the Buy/Sell UI, e.g. "buy-sell-ui"
+}>;
+
+export type Feature_LldWalletSync = Feature<{
+  environment: WalletSyncEnvironment;
+  watchConfig: WalletSyncWatchConfig;
+  learnMoreLink: string;
+}>;
+export type Feature_LlmWalletSync = Feature<{
+  environment: WalletSyncEnvironment;
+  watchConfig: WalletSyncWatchConfig;
+  learnMoreLink: string;
+}>;
+
+export type Feature_LlCounterValueGranularitiesRates = Feature<{
+  daily: number;
+  hourly: number;
 }>;
 
 export type Feature_CounterValue = DefaultFeature;
 export type Feature_MockFeature = DefaultFeature;
-export type Feature_MultibuyNavigation = DefaultFeature;
 export type Feature_DisableNftSend = DefaultFeature;
 export type Feature_DisableNftLedgerMarket = DefaultFeature;
 export type Feature_DisableNftRaribleOpensea = DefaultFeature;
@@ -483,24 +544,25 @@ export type Feature_PostOnboardingAssetsTransfer = DefaultFeature;
 export type Feature_PtxServiceCtaExchangeDrawer = DefaultFeature;
 export type Feature_PtxServiceCtaScreens = DefaultFeature;
 export type Feature_PortfolioExchangeBanner = DefaultFeature;
-export type Feature_Objkt = DefaultFeature;
-export type Feature_ListAppsV2minor1 = DefaultFeature;
 export type Feature_BrazeLearn = DefaultFeature;
-export type Feature_PtxSwapMoonpayProvider = DefaultFeature;
-export type Feature_PtxSwapExodusProvider = DefaultFeature;
-export type Feature_PtxSwapThorswapProvider = DefaultFeature;
 export type Feature_PtxSwapReceiveTRC20WithoutTrx = DefaultFeature;
 export type Feature_FlexibleContentCards = DefaultFeature;
 export type Feature_MyLedgerDisplayAppDeveloperName = DefaultFeature;
-export type Feature_SupportDeviceEuropa = DefaultFeature;
 export type Feature_LldChatbotSupport = DefaultFeature;
 export type Feature_LlmChatbotSupport = DefaultFeature;
-export type Feature_LldWalletSync = DefaultFeature;
-export type Feature_LlmWalletSync = DefaultFeature;
 export type Feature_SpamReportNfts = DefaultFeature;
 export type Feature_EnableAppsBackup = DefaultFeature;
 export type Feature_web3hub = DefaultFeature;
+export type Feature_lldNftsGalleryNewArch = DefaultFeature;
+export type Feature_lldnewArchOrdinals = DefaultFeature;
+export type Feature_SpamFilteringTx = DefaultFeature;
+export type Feature_MemoTag = DefaultFeature;
+export type Feature_PtxSwapMoonpayProvider = DefaultFeature;
+export type Feature_PtxSwapExodusProvider = DefaultFeature;
 
+export type Feature_LlmRebornLP = Feature<{
+  variant: ABTestingVariants;
+}>;
 /**
  * Utils types.
  */

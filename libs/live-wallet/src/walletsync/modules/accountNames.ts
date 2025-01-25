@@ -21,13 +21,15 @@ const manager: WalletSyncDataManager<
     };
   },
 
-  async resolveIncomingDistantState(_ctx, localData, latestState, incomingState) {
+  // NB: current implementation will take any incoming state changes and replace it all. the risk of conflict is limited but possible.
+  async resolveIncrementalUpdate(_ctx, localData, latestState, incomingState) {
     if (!incomingState) {
       return { hasChanges: false }; // nothing to do, the data is no longer available
     }
 
-    // instead of looking at diff between latestState->incomingState, we just directly jump from the localData to incomingState, so we will look if we have actual changes between these two
-    const hasChanges = !sameDistantState(Object.fromEntries(localData.entries()), incomingState);
+    const hasChanges =
+      latestState !== incomingState && // bail out from "local" increment update
+      !sameDistantState(Object.fromEntries(localData.entries()), incomingState);
 
     if (!hasChanges) {
       return { hasChanges: false };

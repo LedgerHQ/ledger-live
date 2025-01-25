@@ -174,7 +174,7 @@ function FormLocalManifest({
                   path={path}
                   handleChange={handleChange}
                   multipleChoices={false}
-                  initalValue={value}
+                  initialValue={value}
                 ></FormLiveAppSelector>
               );
             }
@@ -281,7 +281,7 @@ function FormLocalManifest({
                         path={path}
                         handleChange={handleChange}
                         multipleChoices={true}
-                        initalValue={form[key]}
+                        initialValue={form[key]}
                       ></FormLiveAppSelector>
                     );
                   }
@@ -300,7 +300,7 @@ function FormLocalManifest({
                         path={path}
                         handleChange={handleChange}
                         multipleChoices={false}
-                        initalValue={value as string}
+                        initialValue={value as string}
                       ></FormLiveAppSelector>
                     );
                   }
@@ -359,7 +359,7 @@ function FormLocalManifest({
                   disabled={!formIsValid}
                   primary
                   onClick={submitHandler}
-                  data-test-id="create-local-manifest"
+                  data-testid="create-local-manifest"
                 >
                   {<Trans i18nKey={`settings.developer.createLocalAppModal.create`} />}
                 </Button>

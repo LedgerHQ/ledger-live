@@ -17,7 +17,11 @@ import {
 } from "@ledgerhq/errors";
 import { CardanoMinAmountError, CardanoNotEnoughFunds } from "@ledgerhq/coin-cardano/errors";
 import { buildTransaction } from "@ledgerhq/coin-cardano/buildTransaction";
-import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { CARDANO_MAX_SUPPLY } from "@ledgerhq/coin-cardano/constants";
+import {
+  getSerializedAddressParameters,
+  updateTransaction,
+} from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import {
   scanAccounts,
   signOperation,
@@ -72,7 +76,8 @@ const getTransactionStatus = async (
 
   let tokensToSend: Array<Token> = [];
 
-  if (transaction.subAccountId) {
+  const isTokenTx = !!transaction.subAccountId;
+  if (isTokenTx) {
     // Token transaction
     if (!tokenAccount || tokenAccount.type !== "TokenAccount") {
       throw new Error("TokenAccount not found");
@@ -94,11 +99,7 @@ const getTransactionStatus = async (
     totalSpent = amount.plus(estimatedFees);
   }
 
-  const minTransactionAmount = TyphonUtils.calculateMinUtxoAmount(
-    tokensToSend,
-    new BigNumber(account.cardanoResources.protocolParams.lovelacePerUtxoWord),
-    false,
-  );
+  let minTransactionAmount = new BigNumber(0);
 
   if (!transaction.fees) {
     errors.fees = new FeeNotLoaded();
@@ -110,11 +111,22 @@ const getTransactionStatus = async (
     errors.recipient = new InvalidAddress("", {
       currencyName: account.currency.name,
     });
+  } else {
+    // minTransactionAmount can only be calculated with valid recipient
+    const recipient = TyphonUtils.getAddressFromString(transaction.recipient);
+    minTransactionAmount = TyphonUtils.calculateMinUtxoAmountBabbage(
+      {
+        address: recipient,
+        amount: new BigNumber(CARDANO_MAX_SUPPLY),
+        tokens: tokensToSend,
+      },
+      new BigNumber(account.cardanoResources.protocolParams.utxoCostPerByte),
+    );
   }
 
   if (!amount.gt(0)) {
     errors.amount = useAllAmount ? new CardanoNotEnoughFunds() : new AmountRequired();
-  } else if (!transaction.subAccountId && amount.lt(minTransactionAmount)) {
+  } else if (!isTokenTx && amount.lt(minTransactionAmount)) {
     errors.amount = new CardanoMinAmountError("", {
       amount: minTransactionAmount.div(1e6).toString(),
     });
@@ -149,7 +161,7 @@ const prepareTransaction = async (account: Account, transaction: CardanoTransact
 
 const accountBridge: AccountBridge<CardanoTransaction> = {
   createTransaction,
-  updateTransaction: defaultUpdateTransaction,
+  updateTransaction,
   getTransactionStatus,
   estimateMaxSpendable,
   prepareTransaction,
@@ -157,6 +169,7 @@ const accountBridge: AccountBridge<CardanoTransaction> = {
   receive,
   signOperation,
   broadcast,
+  getSerializedAddressParameters,
 };
 
 const currencyBridge: CurrencyBridge = {

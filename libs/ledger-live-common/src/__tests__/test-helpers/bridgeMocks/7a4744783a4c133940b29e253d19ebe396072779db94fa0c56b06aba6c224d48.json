@@ -1,0 +1,1 @@
+{"request":{"url":"https://rest.core.persistence.one/cosmos/auth/v1beta1/accounts/persistence17r56udl09ssv88x85cxftx7su0rgv4v27ej3p0","method":"GET"},"response":{"body":{"code":5,"message":"account persistence17r56udl09ssv88x85cxftx7su0rgv4v27ej3p0 not found","details":[]}}}

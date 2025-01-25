@@ -3,6 +3,7 @@ import { InvalidDomain, NoResolution } from "@ledgerhq/domain-service/errors/ind
 import { DomainServiceResponseError } from "@ledgerhq/domain-service/hooks/types";
 import Alert from "~/renderer/components/Alert";
 import { useTranslation } from "react-i18next";
+import { urls } from "~/config/urls";
 
 type DomainErrorsProps = {
   domainError: DomainServiceResponseError;
@@ -18,7 +19,7 @@ export const DomainErrorsView = memo(({ domainError, isForwardResolution }: Doma
           title={t("send.steps.recipient.domainService.invalidDomain.title")}
           type="warning"
           learnMoreLabel={t("common.learnMore")}
-          learnMoreUrl="https://support.ledger.com/hc/articles/9710787581469?docs=true"
+          learnMoreUrl={urls.ens}
         >
           {t("send.steps.recipient.domainService.invalidDomain.description")}
         </Alert>

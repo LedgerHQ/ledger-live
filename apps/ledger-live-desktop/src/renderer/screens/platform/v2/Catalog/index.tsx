@@ -6,13 +6,27 @@ import { Browse } from "./Browse";
 import { useTranslation } from "react-i18next";
 import { useCatalog, useRecentlyUsedDB } from "../hooks";
 import { LocalLiveAppSection } from "./LocalLiveAppSection";
+import { useLocation } from "react-router-dom";
+import { Categories } from "@ledgerhq/live-common/wallet-api/react";
 
 export function Catalog() {
   const recentlyUsedDB = useRecentlyUsedDB();
 
   const { t } = useTranslation();
-  const { categories, recentlyUsed, disclaimer, search, localLiveApps } =
-    useCatalog(recentlyUsedDB);
+
+  const { state } = useLocation<{
+    category?: Categories["selected"];
+  }>();
+
+  const deeplinkInitialCategory = state?.category;
+
+  const {
+    categories,
+    recentlyUsed,
+    disclaimer,
+    search: searchInput,
+    localLiveApps,
+  } = useCatalog(recentlyUsedDB, deeplinkInitialCategory);
 
   return (
     <Flex flexDirection="column" paddingBottom={100}>
@@ -28,7 +42,7 @@ export function Catalog() {
         <RecentlyUsed recentlyUsed={recentlyUsed} disclaimer={disclaimer} />
       ) : null}
 
-      <Browse categories={categories} search={search} disclaimer={disclaimer} />
+      <Browse categories={categories} search={searchInput} disclaimer={disclaimer} />
     </Flex>
   );
 }

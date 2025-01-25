@@ -1,6 +1,7 @@
 import { IconsLegacy } from "@ledgerhq/react-ui";
 import { openModal } from "~/renderer/actions/modals";
-import { CollectibleType, CollectibleTypeEnum } from "../../Collectibles/types/Collectibles";
+import { CollectibleType } from "LLD/features/Collectibles/types/Collectibles";
+import { CollectibleTypeEnum } from "LLD/features/Collectibles/types/enum/Collectibles";
 import { Account } from "@ledgerhq/types-live";
 import { Dispatch } from "redux";
 import { TFunction } from "i18next";
@@ -11,6 +12,8 @@ type Props = {
   collectionAddress: string;
   collectionName?: string | null;
   goBackToAccount?: boolean;
+  inscriptionId?: string;
+  inscriptionName?: string;
   typeOfCollectible: CollectibleType;
   dispatch: Dispatch;
   setDrawer: () => void;
@@ -23,6 +26,8 @@ export function createContextMenuItems({
   collectionName,
   collectionAddress,
   account,
+  inscriptionId,
+  inscriptionName,
   dispatch,
   setDrawer,
   history,
@@ -40,6 +45,29 @@ export function createContextMenuItems({
             openModal("MODAL_HIDE_NFT_COLLECTION", {
               collectionName: collectionName ?? collectionAddress,
               collectionId: `${account.id}|${collectionAddress}`,
+              blockchain: account.currency.id,
+              onClose: () => {
+                if (goBackToAccount) {
+                  setDrawer();
+                  history.replace(`account/${account.id}`);
+                }
+              },
+            }),
+          ),
+      },
+    ];
+  }
+  if (typeOfCollectible === CollectibleTypeEnum.Inscriptions) {
+    return [
+      {
+        key: "hide",
+        label: t("ordinals.inscriptions.hide"),
+        Icon: IconsLegacy.NoneMedium,
+        callback: () =>
+          dispatch(
+            openModal("MODAL_HIDE_INSCRIPTION", {
+              inscriptionName: String(inscriptionName),
+              inscriptionId: String(inscriptionId),
               onClose: () => {
                 if (goBackToAccount) {
                   setDrawer();

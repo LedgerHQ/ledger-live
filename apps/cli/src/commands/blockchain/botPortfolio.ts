@@ -4,6 +4,7 @@ import { listSupportedCurrencies } from "@ledgerhq/live-common/currencies/index"
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { accountFormatters } from "@ledgerhq/live-common/account/index";
 const blacklist = ["decred", "tezos", "stellar", "ethereum_classic"];
+export type BotPortfolioJobOpts = { format: string };
 export default {
   description: "Use speculos and a list of supported coins to retrieve all accounts",
   args: [
@@ -15,7 +16,7 @@ export default {
       desc: "how to display the data",
     },
   ],
-  job: (opts: { format: string }) => {
+  job: (opts: BotPortfolioJobOpts) => {
     return from(listSupportedCurrencies()).pipe(
       filter(c => !blacklist.includes(c.id) && !c.isTestnetFor),
       map(currency =>

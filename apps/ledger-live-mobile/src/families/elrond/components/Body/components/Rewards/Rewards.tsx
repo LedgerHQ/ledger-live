@@ -2,7 +2,7 @@ import React, { useCallback, useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { View } from "react-native";
 import { useTranslation } from "react-i18next";
-import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency, getMainAccount } from "@ledgerhq/coin-framework/account";
 import BigNumber from "bignumber.js";
 
 import type { StackNavigationProp } from "@react-navigation/stack";

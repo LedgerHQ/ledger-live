@@ -3,6 +3,7 @@
   "compilerOptions": {
     "jsx": "react-native",
     "composite": true,
+    "declarationMap": true,
     "allowSyntheticDefaultImports": true,
     "isolatedModules": true,
     "strict": true,

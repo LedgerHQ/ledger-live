@@ -1,9 +1,9 @@
 import React, { useMemo, memo, useCallback } from "react";
-import camelCase from "lodash/camelCase";
 import { useNotEnoughMemoryToInstall } from "@ledgerhq/live-common/apps/react";
-import { getCryptoCurrencyById, isCurrencySupported } from "@ledgerhq/live-common/currencies/index";
-import { App, FeatureId } from "@ledgerhq/types-live";
+import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { App } from "@ledgerhq/types-live";
 import { State, Action, InstalledItem } from "@ledgerhq/live-common/apps/types";
+import { isAppAssociatedCurrencySupported } from "@ledgerhq/live-common/apps/filtering";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
 
@@ -16,7 +16,7 @@ import IconInfoCircleFull from "~/renderer/icons/InfoCircleFull";
 import AppActions from "./AppActions";
 import AppIcon from "./AppIcon";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature, useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
 import ToolTip from "~/renderer/components/Tooltip";
 
 const AppRowContainer = styled.div`
@@ -92,7 +92,7 @@ const Item = ({
   setAppUninstallDep,
   addAccount,
 }: Props) => {
-  const { name, type, currencyId, authorName } = app;
+  const { name, authorName } = app;
   const { deviceModel, deviceInfo } = state;
   const notEnoughMemoryToInstall = useNotEnoughMemoryToInstall(optimisticState, name);
   const currency = useMemo(
@@ -109,13 +109,8 @@ const Item = ({
     [app.name, state.apps],
   );
 
-  // FIXME No explicit mapping between Currency.id and FeatureId
-  const flag = useFeature(camelCase(`currency_${currencyId}`) as FeatureId);
-
-  // when the flag doesn't exist it's equivalent to being enabled
-  const currencyFlagEnabled = !flag || flag.enabled;
-  const currencySupported = !!currency && isCurrencySupported(currency) && currencyFlagEnabled;
-  const isLiveSupported = currencySupported || ["swap", "plugin"].includes(type);
+  const { getFeature, isFeature } = useFeatureFlags();
+  const isLiveSupported = isAppAssociatedCurrencySupported({ app, isFeature, getFeature });
 
   const bytes = useMemo(
     () =>
@@ -169,7 +164,7 @@ const Item = ({
         </ToolTip>
       </Box>
       <Box flex="0.7" horizontal alignContent="center" justifyContent="flex-start" ml={5}>
-        {isLiveSupported && currencyFlagEnabled ? (
+        {isLiveSupported ? (
           <>
             <Box>
               <IconCheckFull size={16} />
@@ -204,7 +199,6 @@ const Item = ({
         setAppUninstallDep={setAppUninstallDep}
         isLiveSupported={isLiveSupported}
         addAccount={onAddAccount}
-        featureFlagActivated={currencyFlagEnabled}
       />
     </AppRowContainer>
   );

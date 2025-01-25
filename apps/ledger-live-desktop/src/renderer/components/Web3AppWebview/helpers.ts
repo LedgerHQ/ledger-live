@@ -35,12 +35,17 @@ type UseWebviewStateParams = {
   inputs?: Record<string, string | boolean | undefined>;
 };
 
+type WebviewPartition = {
+  partition?: string;
+};
+
 type UseWebviewStateReturn = {
   webviewState: WebviewState;
   webviewProps: {
     src: string;
   };
   webviewRef: RefObject<WebviewTag>;
+  webviewPartition: WebviewPartition;
   handleRefresh: () => void;
 };
 
@@ -261,10 +266,24 @@ export function useWebviewState(
     src: initialURL,
   };
 
+  const webviewPartition = useMemo(() => {
+    const _webviewPartition: WebviewPartition = {};
+    if (manifest.cacheBustingId !== undefined) {
+      // webview data will persist across LL app reloads
+      // when changing cacheBustingId, the partition will change and the webview's cache will be reset
+      // NOTE: setting partition to "temp-no-cache" (anything that's not starting with "persist")
+      // means that the webview will not persist data across LL app reloads
+      const idSlug = manifest.id.replace(/[^a-zA-Z0-9]/g, "");
+      _webviewPartition.partition = `persist:${idSlug}-${manifest.cacheBustingId}`;
+    }
+    return _webviewPartition;
+  }, [manifest]);
+
   return {
     webviewState: state,
     webviewProps: props,
     webviewRef,
+    webviewPartition,
     handleRefresh,
   };
 }
@@ -277,7 +296,8 @@ export function useSelectAccount({
   currentAccountHistDb?: CurrentAccountHistDB;
 }) {
   const currencies = useManifestCurrencies(manifest);
-  const { setCurrentAccountHist } = useDappCurrentAccount(currentAccountHistDb);
+  const { setCurrentAccountHist, setCurrentAccount, currentAccount } =
+    useDappCurrentAccount(currentAccountHistDb);
 
   const onSelectAccount = useCallback(() => {
     setDrawer(
@@ -287,6 +307,7 @@ export function useSelectAccount({
         onAccountSelected: account => {
           setDrawer();
           setCurrentAccountHist(manifest.id, account);
+          setCurrentAccount(account);
         },
       },
       {
@@ -295,7 +316,7 @@ export function useSelectAccount({
         },
       },
     );
-  }, [currencies, manifest.id, setCurrentAccountHist]);
+  }, [currencies, manifest.id, setCurrentAccount, setCurrentAccountHist]);
 
-  return { onSelectAccount };
+  return { onSelectAccount, currentAccount };
 }

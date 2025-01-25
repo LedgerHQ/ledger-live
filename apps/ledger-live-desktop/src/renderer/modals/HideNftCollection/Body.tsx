@@ -4,14 +4,17 @@ import Text from "~/renderer/components/Text";
 import ModalBody from "~/renderer/components/Modal/ModalBody";
 import React from "react";
 import Footer from "~/renderer/modals/HideNftCollection/Footer";
+import { BlockchainsType } from "@ledgerhq/live-nft/supported";
 const Body = ({
   onClose,
   collectionId,
   collectionName,
+  blockchain,
 }: {
   onClose: () => void;
   collectionId: string;
   collectionName: string;
+  blockchain: string;
 }) => {
   const { t } = useTranslation();
   return (
@@ -47,7 +50,13 @@ const Body = ({
           </Box>
         </Box>
       )}
-      renderFooter={() => <Footer collectionId={collectionId} onClose={onClose} />}
+      renderFooter={() => (
+        <Footer
+          collectionId={collectionId}
+          onClose={onClose}
+          blockchain={blockchain as BlockchainsType}
+        />
+      )}
     />
   );
 };

@@ -216,6 +216,15 @@ exports[`getFormattedFeeFields with tx type 0 with locale de-DE should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 0 with locale de-DE should correctly format fee fields for Etherlink unit 1`] = `
+{
+  "formattedFeeValue": "0,000105 XTZ",
+  "formattedGasPrice": "5 Gwei",
+  "formattedMaxFeePerGas": "0 Gwei",
+  "formattedMaxPriorityFeePerGas": "0 Gwei",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 0 with locale de-DE should correctly format fee fields for Ethersocial unit 1`] = `
 {
   "formattedFeeValue": "0,000105 ESN",
@@ -398,7 +407,7 @@ exports[`getFormattedFeeFields with tx type 0 with locale de-DE should correctly
 
 exports[`getFormattedFeeFields with tx type 0 with locale de-DE should correctly format fee fields for Polygon unit 1`] = `
 {
-  "formattedFeeValue": "0,000105 MATIC",
+  "formattedFeeValue": "0,000105 POL",
   "formattedGasPrice": "5 Gwei",
   "formattedMaxFeePerGas": "0 Gwei",
   "formattedMaxPriorityFeePerGas": "0 Gwei",
@@ -432,7 +441,7 @@ exports[`getFormattedFeeFields with tx type 0 with locale de-DE should correctly
 }
 `;
 
-exports[`getFormattedFeeFields with tx type 0 with locale de-DE should correctly format fee fields for RSK unit 1`] = `
+exports[`getFormattedFeeFields with tx type 0 with locale de-DE should correctly format fee fields for Rootstock unit 1`] = `
 {
   "formattedFeeValue": "0,000105 RBTC",
   "formattedGasPrice": "5 Gwei",
@@ -528,6 +537,24 @@ exports[`getFormattedFeeFields with tx type 0 with locale de-DE should correctly
   "formattedGasPrice": "50 WAN",
   "formattedMaxFeePerGas": "0 WAN",
   "formattedMaxPriorityFeePerGas": "0 WAN",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 0 with locale de-DE should correctly format fee fields for ZKsync Sepolia unit 1`] = `
+{
+  "formattedFeeValue": "0,000105 𝚝ETH",
+  "formattedGasPrice": "5 𝚝Gwei",
+  "formattedMaxFeePerGas": "0 𝚝Gwei",
+  "formattedMaxPriorityFeePerGas": "0 𝚝Gwei",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 0 with locale de-DE should correctly format fee fields for ZKsync unit 1`] = `
+{
+  "formattedFeeValue": "0,000105 ETH",
+  "formattedGasPrice": "5 Gwei",
+  "formattedMaxFeePerGas": "0 Gwei",
+  "formattedMaxPriorityFeePerGas": "0 Gwei",
 }
 `;
 
@@ -747,6 +774,15 @@ exports[`getFormattedFeeFields with tx type 0 with locale en-US should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 0 with locale en-US should correctly format fee fields for Etherlink unit 1`] = `
+{
+  "formattedFeeValue": "0.000105 XTZ",
+  "formattedGasPrice": "5 Gwei",
+  "formattedMaxFeePerGas": "0 Gwei",
+  "formattedMaxPriorityFeePerGas": "0 Gwei",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 0 with locale en-US should correctly format fee fields for Ethersocial unit 1`] = `
 {
   "formattedFeeValue": "0.000105 ESN",
@@ -929,7 +965,7 @@ exports[`getFormattedFeeFields with tx type 0 with locale en-US should correctly
 
 exports[`getFormattedFeeFields with tx type 0 with locale en-US should correctly format fee fields for Polygon unit 1`] = `
 {
-  "formattedFeeValue": "0.000105 MATIC",
+  "formattedFeeValue": "0.000105 POL",
   "formattedGasPrice": "5 Gwei",
   "formattedMaxFeePerGas": "0 Gwei",
   "formattedMaxPriorityFeePerGas": "0 Gwei",
@@ -963,7 +999,7 @@ exports[`getFormattedFeeFields with tx type 0 with locale en-US should correctly
 }
 `;
 
-exports[`getFormattedFeeFields with tx type 0 with locale en-US should correctly format fee fields for RSK unit 1`] = `
+exports[`getFormattedFeeFields with tx type 0 with locale en-US should correctly format fee fields for Rootstock unit 1`] = `
 {
   "formattedFeeValue": "0.000105 RBTC",
   "formattedGasPrice": "5 Gwei",
@@ -1059,6 +1095,24 @@ exports[`getFormattedFeeFields with tx type 0 with locale en-US should correctly
   "formattedGasPrice": "50 WAN",
   "formattedMaxFeePerGas": "0 WAN",
   "formattedMaxPriorityFeePerGas": "0 WAN",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 0 with locale en-US should correctly format fee fields for ZKsync Sepolia unit 1`] = `
+{
+  "formattedFeeValue": "0.000105 𝚝ETH",
+  "formattedGasPrice": "5 𝚝Gwei",
+  "formattedMaxFeePerGas": "0 𝚝Gwei",
+  "formattedMaxPriorityFeePerGas": "0 𝚝Gwei",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 0 with locale en-US should correctly format fee fields for ZKsync unit 1`] = `
+{
+  "formattedFeeValue": "0.000105 ETH",
+  "formattedGasPrice": "5 Gwei",
+  "formattedMaxFeePerGas": "0 Gwei",
+  "formattedMaxPriorityFeePerGas": "0 Gwei",
 }
 `;
 
@@ -1278,6 +1332,15 @@ exports[`getFormattedFeeFields with tx type 0 with locale es-ES should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 0 with locale es-ES should correctly format fee fields for Etherlink unit 1`] = `
+{
+  "formattedFeeValue": "0,000105 XTZ",
+  "formattedGasPrice": "5 Gwei",
+  "formattedMaxFeePerGas": "0 Gwei",
+  "formattedMaxPriorityFeePerGas": "0 Gwei",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 0 with locale es-ES should correctly format fee fields for Ethersocial unit 1`] = `
 {
   "formattedFeeValue": "0,000105 ESN",
@@ -1460,7 +1523,7 @@ exports[`getFormattedFeeFields with tx type 0 with locale es-ES should correctly
 
 exports[`getFormattedFeeFields with tx type 0 with locale es-ES should correctly format fee fields for Polygon unit 1`] = `
 {
-  "formattedFeeValue": "0,000105 MATIC",
+  "formattedFeeValue": "0,000105 POL",
   "formattedGasPrice": "5 Gwei",
   "formattedMaxFeePerGas": "0 Gwei",
   "formattedMaxPriorityFeePerGas": "0 Gwei",
@@ -1494,7 +1557,7 @@ exports[`getFormattedFeeFields with tx type 0 with locale es-ES should correctly
 }
 `;
 
-exports[`getFormattedFeeFields with tx type 0 with locale es-ES should correctly format fee fields for RSK unit 1`] = `
+exports[`getFormattedFeeFields with tx type 0 with locale es-ES should correctly format fee fields for Rootstock unit 1`] = `
 {
   "formattedFeeValue": "0,000105 RBTC",
   "formattedGasPrice": "5 Gwei",
@@ -1590,6 +1653,24 @@ exports[`getFormattedFeeFields with tx type 0 with locale es-ES should correctly
   "formattedGasPrice": "50 WAN",
   "formattedMaxFeePerGas": "0 WAN",
   "formattedMaxPriorityFeePerGas": "0 WAN",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 0 with locale es-ES should correctly format fee fields for ZKsync Sepolia unit 1`] = `
+{
+  "formattedFeeValue": "0,000105 𝚝ETH",
+  "formattedGasPrice": "5 𝚝Gwei",
+  "formattedMaxFeePerGas": "0 𝚝Gwei",
+  "formattedMaxPriorityFeePerGas": "0 𝚝Gwei",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 0 with locale es-ES should correctly format fee fields for ZKsync unit 1`] = `
+{
+  "formattedFeeValue": "0,000105 ETH",
+  "formattedGasPrice": "5 Gwei",
+  "formattedMaxFeePerGas": "0 Gwei",
+  "formattedMaxPriorityFeePerGas": "0 Gwei",
 }
 `;
 
@@ -1809,6 +1890,15 @@ exports[`getFormattedFeeFields with tx type 0 with locale fr-FR should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 0 with locale fr-FR should correctly format fee fields for Etherlink unit 1`] = `
+{
+  "formattedFeeValue": "0,000105 XTZ",
+  "formattedGasPrice": "5 Gwei",
+  "formattedMaxFeePerGas": "0 Gwei",
+  "formattedMaxPriorityFeePerGas": "0 Gwei",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 0 with locale fr-FR should correctly format fee fields for Ethersocial unit 1`] = `
 {
   "formattedFeeValue": "0,000105 ESN",
@@ -1991,7 +2081,7 @@ exports[`getFormattedFeeFields with tx type 0 with locale fr-FR should correctly
 
 exports[`getFormattedFeeFields with tx type 0 with locale fr-FR should correctly format fee fields for Polygon unit 1`] = `
 {
-  "formattedFeeValue": "0,000105 MATIC",
+  "formattedFeeValue": "0,000105 POL",
   "formattedGasPrice": "5 Gwei",
   "formattedMaxFeePerGas": "0 Gwei",
   "formattedMaxPriorityFeePerGas": "0 Gwei",
@@ -2025,7 +2115,7 @@ exports[`getFormattedFeeFields with tx type 0 with locale fr-FR should correctly
 }
 `;
 
-exports[`getFormattedFeeFields with tx type 0 with locale fr-FR should correctly format fee fields for RSK unit 1`] = `
+exports[`getFormattedFeeFields with tx type 0 with locale fr-FR should correctly format fee fields for Rootstock unit 1`] = `
 {
   "formattedFeeValue": "0,000105 RBTC",
   "formattedGasPrice": "5 Gwei",
@@ -2121,6 +2211,24 @@ exports[`getFormattedFeeFields with tx type 0 with locale fr-FR should correctly
   "formattedGasPrice": "50 WAN",
   "formattedMaxFeePerGas": "0 WAN",
   "formattedMaxPriorityFeePerGas": "0 WAN",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 0 with locale fr-FR should correctly format fee fields for ZKsync Sepolia unit 1`] = `
+{
+  "formattedFeeValue": "0,000105 𝚝ETH",
+  "formattedGasPrice": "5 𝚝Gwei",
+  "formattedMaxFeePerGas": "0 𝚝Gwei",
+  "formattedMaxPriorityFeePerGas": "0 𝚝Gwei",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 0 with locale fr-FR should correctly format fee fields for ZKsync unit 1`] = `
+{
+  "formattedFeeValue": "0,000105 ETH",
+  "formattedGasPrice": "5 Gwei",
+  "formattedMaxFeePerGas": "0 Gwei",
+  "formattedMaxPriorityFeePerGas": "0 Gwei",
 }
 `;
 
@@ -2340,6 +2448,15 @@ exports[`getFormattedFeeFields with tx type 0 with locale ja-JP should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 0 with locale ja-JP should correctly format fee fields for Etherlink unit 1`] = `
+{
+  "formattedFeeValue": "0.000105 XTZ",
+  "formattedGasPrice": "5 Gwei",
+  "formattedMaxFeePerGas": "0 Gwei",
+  "formattedMaxPriorityFeePerGas": "0 Gwei",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 0 with locale ja-JP should correctly format fee fields for Ethersocial unit 1`] = `
 {
   "formattedFeeValue": "0.000105 ESN",
@@ -2522,7 +2639,7 @@ exports[`getFormattedFeeFields with tx type 0 with locale ja-JP should correctly
 
 exports[`getFormattedFeeFields with tx type 0 with locale ja-JP should correctly format fee fields for Polygon unit 1`] = `
 {
-  "formattedFeeValue": "0.000105 MATIC",
+  "formattedFeeValue": "0.000105 POL",
   "formattedGasPrice": "5 Gwei",
   "formattedMaxFeePerGas": "0 Gwei",
   "formattedMaxPriorityFeePerGas": "0 Gwei",
@@ -2556,7 +2673,7 @@ exports[`getFormattedFeeFields with tx type 0 with locale ja-JP should correctly
 }
 `;
 
-exports[`getFormattedFeeFields with tx type 0 with locale ja-JP should correctly format fee fields for RSK unit 1`] = `
+exports[`getFormattedFeeFields with tx type 0 with locale ja-JP should correctly format fee fields for Rootstock unit 1`] = `
 {
   "formattedFeeValue": "0.000105 RBTC",
   "formattedGasPrice": "5 Gwei",
@@ -2652,6 +2769,24 @@ exports[`getFormattedFeeFields with tx type 0 with locale ja-JP should correctly
   "formattedGasPrice": "50 WAN",
   "formattedMaxFeePerGas": "0 WAN",
   "formattedMaxPriorityFeePerGas": "0 WAN",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 0 with locale ja-JP should correctly format fee fields for ZKsync Sepolia unit 1`] = `
+{
+  "formattedFeeValue": "0.000105 𝚝ETH",
+  "formattedGasPrice": "5 𝚝Gwei",
+  "formattedMaxFeePerGas": "0 𝚝Gwei",
+  "formattedMaxPriorityFeePerGas": "0 𝚝Gwei",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 0 with locale ja-JP should correctly format fee fields for ZKsync unit 1`] = `
+{
+  "formattedFeeValue": "0.000105 ETH",
+  "formattedGasPrice": "5 Gwei",
+  "formattedMaxFeePerGas": "0 Gwei",
+  "formattedMaxPriorityFeePerGas": "0 Gwei",
 }
 `;
 
@@ -2871,6 +3006,15 @@ exports[`getFormattedFeeFields with tx type 0 with locale ko-KR should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 0 with locale ko-KR should correctly format fee fields for Etherlink unit 1`] = `
+{
+  "formattedFeeValue": "0.000105 XTZ",
+  "formattedGasPrice": "5 Gwei",
+  "formattedMaxFeePerGas": "0 Gwei",
+  "formattedMaxPriorityFeePerGas": "0 Gwei",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 0 with locale ko-KR should correctly format fee fields for Ethersocial unit 1`] = `
 {
   "formattedFeeValue": "0.000105 ESN",
@@ -3053,7 +3197,7 @@ exports[`getFormattedFeeFields with tx type 0 with locale ko-KR should correctly
 
 exports[`getFormattedFeeFields with tx type 0 with locale ko-KR should correctly format fee fields for Polygon unit 1`] = `
 {
-  "formattedFeeValue": "0.000105 MATIC",
+  "formattedFeeValue": "0.000105 POL",
   "formattedGasPrice": "5 Gwei",
   "formattedMaxFeePerGas": "0 Gwei",
   "formattedMaxPriorityFeePerGas": "0 Gwei",
@@ -3087,7 +3231,7 @@ exports[`getFormattedFeeFields with tx type 0 with locale ko-KR should correctly
 }
 `;
 
-exports[`getFormattedFeeFields with tx type 0 with locale ko-KR should correctly format fee fields for RSK unit 1`] = `
+exports[`getFormattedFeeFields with tx type 0 with locale ko-KR should correctly format fee fields for Rootstock unit 1`] = `
 {
   "formattedFeeValue": "0.000105 RBTC",
   "formattedGasPrice": "5 Gwei",
@@ -3183,6 +3327,24 @@ exports[`getFormattedFeeFields with tx type 0 with locale ko-KR should correctly
   "formattedGasPrice": "50 WAN",
   "formattedMaxFeePerGas": "0 WAN",
   "formattedMaxPriorityFeePerGas": "0 WAN",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 0 with locale ko-KR should correctly format fee fields for ZKsync Sepolia unit 1`] = `
+{
+  "formattedFeeValue": "0.000105 𝚝ETH",
+  "formattedGasPrice": "5 𝚝Gwei",
+  "formattedMaxFeePerGas": "0 𝚝Gwei",
+  "formattedMaxPriorityFeePerGas": "0 𝚝Gwei",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 0 with locale ko-KR should correctly format fee fields for ZKsync unit 1`] = `
+{
+  "formattedFeeValue": "0.000105 ETH",
+  "formattedGasPrice": "5 Gwei",
+  "formattedMaxFeePerGas": "0 Gwei",
+  "formattedMaxPriorityFeePerGas": "0 Gwei",
 }
 `;
 
@@ -3402,6 +3564,15 @@ exports[`getFormattedFeeFields with tx type 0 with locale pt-BR should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 0 with locale pt-BR should correctly format fee fields for Etherlink unit 1`] = `
+{
+  "formattedFeeValue": "0,000105 XTZ",
+  "formattedGasPrice": "5 Gwei",
+  "formattedMaxFeePerGas": "0 Gwei",
+  "formattedMaxPriorityFeePerGas": "0 Gwei",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 0 with locale pt-BR should correctly format fee fields for Ethersocial unit 1`] = `
 {
   "formattedFeeValue": "0,000105 ESN",
@@ -3584,7 +3755,7 @@ exports[`getFormattedFeeFields with tx type 0 with locale pt-BR should correctly
 
 exports[`getFormattedFeeFields with tx type 0 with locale pt-BR should correctly format fee fields for Polygon unit 1`] = `
 {
-  "formattedFeeValue": "0,000105 MATIC",
+  "formattedFeeValue": "0,000105 POL",
   "formattedGasPrice": "5 Gwei",
   "formattedMaxFeePerGas": "0 Gwei",
   "formattedMaxPriorityFeePerGas": "0 Gwei",
@@ -3618,7 +3789,7 @@ exports[`getFormattedFeeFields with tx type 0 with locale pt-BR should correctly
 }
 `;
 
-exports[`getFormattedFeeFields with tx type 0 with locale pt-BR should correctly format fee fields for RSK unit 1`] = `
+exports[`getFormattedFeeFields with tx type 0 with locale pt-BR should correctly format fee fields for Rootstock unit 1`] = `
 {
   "formattedFeeValue": "0,000105 RBTC",
   "formattedGasPrice": "5 Gwei",
@@ -3714,6 +3885,24 @@ exports[`getFormattedFeeFields with tx type 0 with locale pt-BR should correctly
   "formattedGasPrice": "50 WAN",
   "formattedMaxFeePerGas": "0 WAN",
   "formattedMaxPriorityFeePerGas": "0 WAN",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 0 with locale pt-BR should correctly format fee fields for ZKsync Sepolia unit 1`] = `
+{
+  "formattedFeeValue": "0,000105 𝚝ETH",
+  "formattedGasPrice": "5 𝚝Gwei",
+  "formattedMaxFeePerGas": "0 𝚝Gwei",
+  "formattedMaxPriorityFeePerGas": "0 𝚝Gwei",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 0 with locale pt-BR should correctly format fee fields for ZKsync unit 1`] = `
+{
+  "formattedFeeValue": "0,000105 ETH",
+  "formattedGasPrice": "5 Gwei",
+  "formattedMaxFeePerGas": "0 Gwei",
+  "formattedMaxPriorityFeePerGas": "0 Gwei",
 }
 `;
 
@@ -3933,6 +4122,15 @@ exports[`getFormattedFeeFields with tx type 0 with locale ru-RU should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 0 with locale ru-RU should correctly format fee fields for Etherlink unit 1`] = `
+{
+  "formattedFeeValue": "0,000105 XTZ",
+  "formattedGasPrice": "5 Gwei",
+  "formattedMaxFeePerGas": "0 Gwei",
+  "formattedMaxPriorityFeePerGas": "0 Gwei",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 0 with locale ru-RU should correctly format fee fields for Ethersocial unit 1`] = `
 {
   "formattedFeeValue": "0,000105 ESN",
@@ -4115,7 +4313,7 @@ exports[`getFormattedFeeFields with tx type 0 with locale ru-RU should correctly
 
 exports[`getFormattedFeeFields with tx type 0 with locale ru-RU should correctly format fee fields for Polygon unit 1`] = `
 {
-  "formattedFeeValue": "0,000105 MATIC",
+  "formattedFeeValue": "0,000105 POL",
   "formattedGasPrice": "5 Gwei",
   "formattedMaxFeePerGas": "0 Gwei",
   "formattedMaxPriorityFeePerGas": "0 Gwei",
@@ -4149,7 +4347,7 @@ exports[`getFormattedFeeFields with tx type 0 with locale ru-RU should correctly
 }
 `;
 
-exports[`getFormattedFeeFields with tx type 0 with locale ru-RU should correctly format fee fields for RSK unit 1`] = `
+exports[`getFormattedFeeFields with tx type 0 with locale ru-RU should correctly format fee fields for Rootstock unit 1`] = `
 {
   "formattedFeeValue": "0,000105 RBTC",
   "formattedGasPrice": "5 Gwei",
@@ -4245,6 +4443,24 @@ exports[`getFormattedFeeFields with tx type 0 with locale ru-RU should correctly
   "formattedGasPrice": "50 WAN",
   "formattedMaxFeePerGas": "0 WAN",
   "formattedMaxPriorityFeePerGas": "0 WAN",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 0 with locale ru-RU should correctly format fee fields for ZKsync Sepolia unit 1`] = `
+{
+  "formattedFeeValue": "0,000105 𝚝ETH",
+  "formattedGasPrice": "5 𝚝Gwei",
+  "formattedMaxFeePerGas": "0 𝚝Gwei",
+  "formattedMaxPriorityFeePerGas": "0 𝚝Gwei",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 0 with locale ru-RU should correctly format fee fields for ZKsync unit 1`] = `
+{
+  "formattedFeeValue": "0,000105 ETH",
+  "formattedGasPrice": "5 Gwei",
+  "formattedMaxFeePerGas": "0 Gwei",
+  "formattedMaxPriorityFeePerGas": "0 Gwei",
 }
 `;
 
@@ -4464,6 +4680,15 @@ exports[`getFormattedFeeFields with tx type 0 with locale tr-TR should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 0 with locale tr-TR should correctly format fee fields for Etherlink unit 1`] = `
+{
+  "formattedFeeValue": "0,000105 XTZ",
+  "formattedGasPrice": "5 Gwei",
+  "formattedMaxFeePerGas": "0 Gwei",
+  "formattedMaxPriorityFeePerGas": "0 Gwei",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 0 with locale tr-TR should correctly format fee fields for Ethersocial unit 1`] = `
 {
   "formattedFeeValue": "0,000105 ESN",
@@ -4646,7 +4871,7 @@ exports[`getFormattedFeeFields with tx type 0 with locale tr-TR should correctly
 
 exports[`getFormattedFeeFields with tx type 0 with locale tr-TR should correctly format fee fields for Polygon unit 1`] = `
 {
-  "formattedFeeValue": "0,000105 MATIC",
+  "formattedFeeValue": "0,000105 POL",
   "formattedGasPrice": "5 Gwei",
   "formattedMaxFeePerGas": "0 Gwei",
   "formattedMaxPriorityFeePerGas": "0 Gwei",
@@ -4680,7 +4905,7 @@ exports[`getFormattedFeeFields with tx type 0 with locale tr-TR should correctly
 }
 `;
 
-exports[`getFormattedFeeFields with tx type 0 with locale tr-TR should correctly format fee fields for RSK unit 1`] = `
+exports[`getFormattedFeeFields with tx type 0 with locale tr-TR should correctly format fee fields for Rootstock unit 1`] = `
 {
   "formattedFeeValue": "0,000105 RBTC",
   "formattedGasPrice": "5 Gwei",
@@ -4776,6 +5001,24 @@ exports[`getFormattedFeeFields with tx type 0 with locale tr-TR should correctly
   "formattedGasPrice": "50 WAN",
   "formattedMaxFeePerGas": "0 WAN",
   "formattedMaxPriorityFeePerGas": "0 WAN",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 0 with locale tr-TR should correctly format fee fields for ZKsync Sepolia unit 1`] = `
+{
+  "formattedFeeValue": "0,000105 𝚝ETH",
+  "formattedGasPrice": "5 𝚝Gwei",
+  "formattedMaxFeePerGas": "0 𝚝Gwei",
+  "formattedMaxPriorityFeePerGas": "0 𝚝Gwei",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 0 with locale tr-TR should correctly format fee fields for ZKsync unit 1`] = `
+{
+  "formattedFeeValue": "0,000105 ETH",
+  "formattedGasPrice": "5 Gwei",
+  "formattedMaxFeePerGas": "0 Gwei",
+  "formattedMaxPriorityFeePerGas": "0 Gwei",
 }
 `;
 
@@ -4995,6 +5238,15 @@ exports[`getFormattedFeeFields with tx type 0 with locale zh-CN should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 0 with locale zh-CN should correctly format fee fields for Etherlink unit 1`] = `
+{
+  "formattedFeeValue": "0.000105 XTZ",
+  "formattedGasPrice": "5 Gwei",
+  "formattedMaxFeePerGas": "0 Gwei",
+  "formattedMaxPriorityFeePerGas": "0 Gwei",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 0 with locale zh-CN should correctly format fee fields for Ethersocial unit 1`] = `
 {
   "formattedFeeValue": "0.000105 ESN",
@@ -5177,7 +5429,7 @@ exports[`getFormattedFeeFields with tx type 0 with locale zh-CN should correctly
 
 exports[`getFormattedFeeFields with tx type 0 with locale zh-CN should correctly format fee fields for Polygon unit 1`] = `
 {
-  "formattedFeeValue": "0.000105 MATIC",
+  "formattedFeeValue": "0.000105 POL",
   "formattedGasPrice": "5 Gwei",
   "formattedMaxFeePerGas": "0 Gwei",
   "formattedMaxPriorityFeePerGas": "0 Gwei",
@@ -5211,7 +5463,7 @@ exports[`getFormattedFeeFields with tx type 0 with locale zh-CN should correctly
 }
 `;
 
-exports[`getFormattedFeeFields with tx type 0 with locale zh-CN should correctly format fee fields for RSK unit 1`] = `
+exports[`getFormattedFeeFields with tx type 0 with locale zh-CN should correctly format fee fields for Rootstock unit 1`] = `
 {
   "formattedFeeValue": "0.000105 RBTC",
   "formattedGasPrice": "5 Gwei",
@@ -5307,6 +5559,24 @@ exports[`getFormattedFeeFields with tx type 0 with locale zh-CN should correctly
   "formattedGasPrice": "50 WAN",
   "formattedMaxFeePerGas": "0 WAN",
   "formattedMaxPriorityFeePerGas": "0 WAN",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 0 with locale zh-CN should correctly format fee fields for ZKsync Sepolia unit 1`] = `
+{
+  "formattedFeeValue": "0.000105 𝚝ETH",
+  "formattedGasPrice": "5 𝚝Gwei",
+  "formattedMaxFeePerGas": "0 𝚝Gwei",
+  "formattedMaxPriorityFeePerGas": "0 𝚝Gwei",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 0 with locale zh-CN should correctly format fee fields for ZKsync unit 1`] = `
+{
+  "formattedFeeValue": "0.000105 ETH",
+  "formattedGasPrice": "5 Gwei",
+  "formattedMaxFeePerGas": "0 Gwei",
+  "formattedMaxPriorityFeePerGas": "0 Gwei",
 }
 `;
 
@@ -5526,6 +5796,15 @@ exports[`getFormattedFeeFields with tx type 2 with locale de-DE should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 2 with locale de-DE should correctly format fee fields for Etherlink unit 1`] = `
+{
+  "formattedFeeValue": "0,000042 XTZ",
+  "formattedGasPrice": "0 Gwei",
+  "formattedMaxFeePerGas": "2 Gwei",
+  "formattedMaxPriorityFeePerGas": "1 Gwei",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 2 with locale de-DE should correctly format fee fields for Ethersocial unit 1`] = `
 {
   "formattedFeeValue": "0,000042 ESN",
@@ -5708,7 +5987,7 @@ exports[`getFormattedFeeFields with tx type 2 with locale de-DE should correctly
 
 exports[`getFormattedFeeFields with tx type 2 with locale de-DE should correctly format fee fields for Polygon unit 1`] = `
 {
-  "formattedFeeValue": "0,000042 MATIC",
+  "formattedFeeValue": "0,000042 POL",
   "formattedGasPrice": "0 Gwei",
   "formattedMaxFeePerGas": "2 Gwei",
   "formattedMaxPriorityFeePerGas": "1 Gwei",
@@ -5742,7 +6021,7 @@ exports[`getFormattedFeeFields with tx type 2 with locale de-DE should correctly
 }
 `;
 
-exports[`getFormattedFeeFields with tx type 2 with locale de-DE should correctly format fee fields for RSK unit 1`] = `
+exports[`getFormattedFeeFields with tx type 2 with locale de-DE should correctly format fee fields for Rootstock unit 1`] = `
 {
   "formattedFeeValue": "0,000042 RBTC",
   "formattedGasPrice": "0 Gwei",
@@ -5838,6 +6117,24 @@ exports[`getFormattedFeeFields with tx type 2 with locale de-DE should correctly
   "formattedGasPrice": "0 WAN",
   "formattedMaxFeePerGas": "20 WAN",
   "formattedMaxPriorityFeePerGas": "10 WAN",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 2 with locale de-DE should correctly format fee fields for ZKsync Sepolia unit 1`] = `
+{
+  "formattedFeeValue": "0,000042 𝚝ETH",
+  "formattedGasPrice": "0 𝚝Gwei",
+  "formattedMaxFeePerGas": "2 𝚝Gwei",
+  "formattedMaxPriorityFeePerGas": "1 𝚝Gwei",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 2 with locale de-DE should correctly format fee fields for ZKsync unit 1`] = `
+{
+  "formattedFeeValue": "0,000042 ETH",
+  "formattedGasPrice": "0 Gwei",
+  "formattedMaxFeePerGas": "2 Gwei",
+  "formattedMaxPriorityFeePerGas": "1 Gwei",
 }
 `;
 
@@ -6057,6 +6354,15 @@ exports[`getFormattedFeeFields with tx type 2 with locale en-US should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 2 with locale en-US should correctly format fee fields for Etherlink unit 1`] = `
+{
+  "formattedFeeValue": "0.000042 XTZ",
+  "formattedGasPrice": "0 Gwei",
+  "formattedMaxFeePerGas": "2 Gwei",
+  "formattedMaxPriorityFeePerGas": "1 Gwei",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 2 with locale en-US should correctly format fee fields for Ethersocial unit 1`] = `
 {
   "formattedFeeValue": "0.000042 ESN",
@@ -6239,7 +6545,7 @@ exports[`getFormattedFeeFields with tx type 2 with locale en-US should correctly
 
 exports[`getFormattedFeeFields with tx type 2 with locale en-US should correctly format fee fields for Polygon unit 1`] = `
 {
-  "formattedFeeValue": "0.000042 MATIC",
+  "formattedFeeValue": "0.000042 POL",
   "formattedGasPrice": "0 Gwei",
   "formattedMaxFeePerGas": "2 Gwei",
   "formattedMaxPriorityFeePerGas": "1 Gwei",
@@ -6273,7 +6579,7 @@ exports[`getFormattedFeeFields with tx type 2 with locale en-US should correctly
 }
 `;
 
-exports[`getFormattedFeeFields with tx type 2 with locale en-US should correctly format fee fields for RSK unit 1`] = `
+exports[`getFormattedFeeFields with tx type 2 with locale en-US should correctly format fee fields for Rootstock unit 1`] = `
 {
   "formattedFeeValue": "0.000042 RBTC",
   "formattedGasPrice": "0 Gwei",
@@ -6369,6 +6675,24 @@ exports[`getFormattedFeeFields with tx type 2 with locale en-US should correctly
   "formattedGasPrice": "0 WAN",
   "formattedMaxFeePerGas": "20 WAN",
   "formattedMaxPriorityFeePerGas": "10 WAN",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 2 with locale en-US should correctly format fee fields for ZKsync Sepolia unit 1`] = `
+{
+  "formattedFeeValue": "0.000042 𝚝ETH",
+  "formattedGasPrice": "0 𝚝Gwei",
+  "formattedMaxFeePerGas": "2 𝚝Gwei",
+  "formattedMaxPriorityFeePerGas": "1 𝚝Gwei",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 2 with locale en-US should correctly format fee fields for ZKsync unit 1`] = `
+{
+  "formattedFeeValue": "0.000042 ETH",
+  "formattedGasPrice": "0 Gwei",
+  "formattedMaxFeePerGas": "2 Gwei",
+  "formattedMaxPriorityFeePerGas": "1 Gwei",
 }
 `;
 
@@ -6588,6 +6912,15 @@ exports[`getFormattedFeeFields with tx type 2 with locale es-ES should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 2 with locale es-ES should correctly format fee fields for Etherlink unit 1`] = `
+{
+  "formattedFeeValue": "0,000042 XTZ",
+  "formattedGasPrice": "0 Gwei",
+  "formattedMaxFeePerGas": "2 Gwei",
+  "formattedMaxPriorityFeePerGas": "1 Gwei",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 2 with locale es-ES should correctly format fee fields for Ethersocial unit 1`] = `
 {
   "formattedFeeValue": "0,000042 ESN",
@@ -6770,7 +7103,7 @@ exports[`getFormattedFeeFields with tx type 2 with locale es-ES should correctly
 
 exports[`getFormattedFeeFields with tx type 2 with locale es-ES should correctly format fee fields for Polygon unit 1`] = `
 {
-  "formattedFeeValue": "0,000042 MATIC",
+  "formattedFeeValue": "0,000042 POL",
   "formattedGasPrice": "0 Gwei",
   "formattedMaxFeePerGas": "2 Gwei",
   "formattedMaxPriorityFeePerGas": "1 Gwei",
@@ -6804,7 +7137,7 @@ exports[`getFormattedFeeFields with tx type 2 with locale es-ES should correctly
 }
 `;
 
-exports[`getFormattedFeeFields with tx type 2 with locale es-ES should correctly format fee fields for RSK unit 1`] = `
+exports[`getFormattedFeeFields with tx type 2 with locale es-ES should correctly format fee fields for Rootstock unit 1`] = `
 {
   "formattedFeeValue": "0,000042 RBTC",
   "formattedGasPrice": "0 Gwei",
@@ -6900,6 +7233,24 @@ exports[`getFormattedFeeFields with tx type 2 with locale es-ES should correctly
   "formattedGasPrice": "0 WAN",
   "formattedMaxFeePerGas": "20 WAN",
   "formattedMaxPriorityFeePerGas": "10 WAN",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 2 with locale es-ES should correctly format fee fields for ZKsync Sepolia unit 1`] = `
+{
+  "formattedFeeValue": "0,000042 𝚝ETH",
+  "formattedGasPrice": "0 𝚝Gwei",
+  "formattedMaxFeePerGas": "2 𝚝Gwei",
+  "formattedMaxPriorityFeePerGas": "1 𝚝Gwei",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 2 with locale es-ES should correctly format fee fields for ZKsync unit 1`] = `
+{
+  "formattedFeeValue": "0,000042 ETH",
+  "formattedGasPrice": "0 Gwei",
+  "formattedMaxFeePerGas": "2 Gwei",
+  "formattedMaxPriorityFeePerGas": "1 Gwei",
 }
 `;
 
@@ -7119,6 +7470,15 @@ exports[`getFormattedFeeFields with tx type 2 with locale fr-FR should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 2 with locale fr-FR should correctly format fee fields for Etherlink unit 1`] = `
+{
+  "formattedFeeValue": "0,000042 XTZ",
+  "formattedGasPrice": "0 Gwei",
+  "formattedMaxFeePerGas": "2 Gwei",
+  "formattedMaxPriorityFeePerGas": "1 Gwei",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 2 with locale fr-FR should correctly format fee fields for Ethersocial unit 1`] = `
 {
   "formattedFeeValue": "0,000042 ESN",
@@ -7301,7 +7661,7 @@ exports[`getFormattedFeeFields with tx type 2 with locale fr-FR should correctly
 
 exports[`getFormattedFeeFields with tx type 2 with locale fr-FR should correctly format fee fields for Polygon unit 1`] = `
 {
-  "formattedFeeValue": "0,000042 MATIC",
+  "formattedFeeValue": "0,000042 POL",
   "formattedGasPrice": "0 Gwei",
   "formattedMaxFeePerGas": "2 Gwei",
   "formattedMaxPriorityFeePerGas": "1 Gwei",
@@ -7335,7 +7695,7 @@ exports[`getFormattedFeeFields with tx type 2 with locale fr-FR should correctly
 }
 `;
 
-exports[`getFormattedFeeFields with tx type 2 with locale fr-FR should correctly format fee fields for RSK unit 1`] = `
+exports[`getFormattedFeeFields with tx type 2 with locale fr-FR should correctly format fee fields for Rootstock unit 1`] = `
 {
   "formattedFeeValue": "0,000042 RBTC",
   "formattedGasPrice": "0 Gwei",
@@ -7431,6 +7791,24 @@ exports[`getFormattedFeeFields with tx type 2 with locale fr-FR should correctly
   "formattedGasPrice": "0 WAN",
   "formattedMaxFeePerGas": "20 WAN",
   "formattedMaxPriorityFeePerGas": "10 WAN",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 2 with locale fr-FR should correctly format fee fields for ZKsync Sepolia unit 1`] = `
+{
+  "formattedFeeValue": "0,000042 𝚝ETH",
+  "formattedGasPrice": "0 𝚝Gwei",
+  "formattedMaxFeePerGas": "2 𝚝Gwei",
+  "formattedMaxPriorityFeePerGas": "1 𝚝Gwei",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 2 with locale fr-FR should correctly format fee fields for ZKsync unit 1`] = `
+{
+  "formattedFeeValue": "0,000042 ETH",
+  "formattedGasPrice": "0 Gwei",
+  "formattedMaxFeePerGas": "2 Gwei",
+  "formattedMaxPriorityFeePerGas": "1 Gwei",
 }
 `;
 
@@ -7650,6 +8028,15 @@ exports[`getFormattedFeeFields with tx type 2 with locale ja-JP should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 2 with locale ja-JP should correctly format fee fields for Etherlink unit 1`] = `
+{
+  "formattedFeeValue": "0.000042 XTZ",
+  "formattedGasPrice": "0 Gwei",
+  "formattedMaxFeePerGas": "2 Gwei",
+  "formattedMaxPriorityFeePerGas": "1 Gwei",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 2 with locale ja-JP should correctly format fee fields for Ethersocial unit 1`] = `
 {
   "formattedFeeValue": "0.000042 ESN",
@@ -7832,7 +8219,7 @@ exports[`getFormattedFeeFields with tx type 2 with locale ja-JP should correctly
 
 exports[`getFormattedFeeFields with tx type 2 with locale ja-JP should correctly format fee fields for Polygon unit 1`] = `
 {
-  "formattedFeeValue": "0.000042 MATIC",
+  "formattedFeeValue": "0.000042 POL",
   "formattedGasPrice": "0 Gwei",
   "formattedMaxFeePerGas": "2 Gwei",
   "formattedMaxPriorityFeePerGas": "1 Gwei",
@@ -7866,7 +8253,7 @@ exports[`getFormattedFeeFields with tx type 2 with locale ja-JP should correctly
 }
 `;
 
-exports[`getFormattedFeeFields with tx type 2 with locale ja-JP should correctly format fee fields for RSK unit 1`] = `
+exports[`getFormattedFeeFields with tx type 2 with locale ja-JP should correctly format fee fields for Rootstock unit 1`] = `
 {
   "formattedFeeValue": "0.000042 RBTC",
   "formattedGasPrice": "0 Gwei",
@@ -7962,6 +8349,24 @@ exports[`getFormattedFeeFields with tx type 2 with locale ja-JP should correctly
   "formattedGasPrice": "0 WAN",
   "formattedMaxFeePerGas": "20 WAN",
   "formattedMaxPriorityFeePerGas": "10 WAN",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 2 with locale ja-JP should correctly format fee fields for ZKsync Sepolia unit 1`] = `
+{
+  "formattedFeeValue": "0.000042 𝚝ETH",
+  "formattedGasPrice": "0 𝚝Gwei",
+  "formattedMaxFeePerGas": "2 𝚝Gwei",
+  "formattedMaxPriorityFeePerGas": "1 𝚝Gwei",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 2 with locale ja-JP should correctly format fee fields for ZKsync unit 1`] = `
+{
+  "formattedFeeValue": "0.000042 ETH",
+  "formattedGasPrice": "0 Gwei",
+  "formattedMaxFeePerGas": "2 Gwei",
+  "formattedMaxPriorityFeePerGas": "1 Gwei",
 }
 `;
 
@@ -8181,6 +8586,15 @@ exports[`getFormattedFeeFields with tx type 2 with locale ko-KR should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 2 with locale ko-KR should correctly format fee fields for Etherlink unit 1`] = `
+{
+  "formattedFeeValue": "0.000042 XTZ",
+  "formattedGasPrice": "0 Gwei",
+  "formattedMaxFeePerGas": "2 Gwei",
+  "formattedMaxPriorityFeePerGas": "1 Gwei",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 2 with locale ko-KR should correctly format fee fields for Ethersocial unit 1`] = `
 {
   "formattedFeeValue": "0.000042 ESN",
@@ -8363,7 +8777,7 @@ exports[`getFormattedFeeFields with tx type 2 with locale ko-KR should correctly
 
 exports[`getFormattedFeeFields with tx type 2 with locale ko-KR should correctly format fee fields for Polygon unit 1`] = `
 {
-  "formattedFeeValue": "0.000042 MATIC",
+  "formattedFeeValue": "0.000042 POL",
   "formattedGasPrice": "0 Gwei",
   "formattedMaxFeePerGas": "2 Gwei",
   "formattedMaxPriorityFeePerGas": "1 Gwei",
@@ -8397,7 +8811,7 @@ exports[`getFormattedFeeFields with tx type 2 with locale ko-KR should correctly
 }
 `;
 
-exports[`getFormattedFeeFields with tx type 2 with locale ko-KR should correctly format fee fields for RSK unit 1`] = `
+exports[`getFormattedFeeFields with tx type 2 with locale ko-KR should correctly format fee fields for Rootstock unit 1`] = `
 {
   "formattedFeeValue": "0.000042 RBTC",
   "formattedGasPrice": "0 Gwei",
@@ -8493,6 +8907,24 @@ exports[`getFormattedFeeFields with tx type 2 with locale ko-KR should correctly
   "formattedGasPrice": "0 WAN",
   "formattedMaxFeePerGas": "20 WAN",
   "formattedMaxPriorityFeePerGas": "10 WAN",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 2 with locale ko-KR should correctly format fee fields for ZKsync Sepolia unit 1`] = `
+{
+  "formattedFeeValue": "0.000042 𝚝ETH",
+  "formattedGasPrice": "0 𝚝Gwei",
+  "formattedMaxFeePerGas": "2 𝚝Gwei",
+  "formattedMaxPriorityFeePerGas": "1 𝚝Gwei",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 2 with locale ko-KR should correctly format fee fields for ZKsync unit 1`] = `
+{
+  "formattedFeeValue": "0.000042 ETH",
+  "formattedGasPrice": "0 Gwei",
+  "formattedMaxFeePerGas": "2 Gwei",
+  "formattedMaxPriorityFeePerGas": "1 Gwei",
 }
 `;
 
@@ -8712,6 +9144,15 @@ exports[`getFormattedFeeFields with tx type 2 with locale pt-BR should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 2 with locale pt-BR should correctly format fee fields for Etherlink unit 1`] = `
+{
+  "formattedFeeValue": "0,000042 XTZ",
+  "formattedGasPrice": "0 Gwei",
+  "formattedMaxFeePerGas": "2 Gwei",
+  "formattedMaxPriorityFeePerGas": "1 Gwei",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 2 with locale pt-BR should correctly format fee fields for Ethersocial unit 1`] = `
 {
   "formattedFeeValue": "0,000042 ESN",
@@ -8894,7 +9335,7 @@ exports[`getFormattedFeeFields with tx type 2 with locale pt-BR should correctly
 
 exports[`getFormattedFeeFields with tx type 2 with locale pt-BR should correctly format fee fields for Polygon unit 1`] = `
 {
-  "formattedFeeValue": "0,000042 MATIC",
+  "formattedFeeValue": "0,000042 POL",
   "formattedGasPrice": "0 Gwei",
   "formattedMaxFeePerGas": "2 Gwei",
   "formattedMaxPriorityFeePerGas": "1 Gwei",
@@ -8928,7 +9369,7 @@ exports[`getFormattedFeeFields with tx type 2 with locale pt-BR should correctly
 }
 `;
 
-exports[`getFormattedFeeFields with tx type 2 with locale pt-BR should correctly format fee fields for RSK unit 1`] = `
+exports[`getFormattedFeeFields with tx type 2 with locale pt-BR should correctly format fee fields for Rootstock unit 1`] = `
 {
   "formattedFeeValue": "0,000042 RBTC",
   "formattedGasPrice": "0 Gwei",
@@ -9024,6 +9465,24 @@ exports[`getFormattedFeeFields with tx type 2 with locale pt-BR should correctly
   "formattedGasPrice": "0 WAN",
   "formattedMaxFeePerGas": "20 WAN",
   "formattedMaxPriorityFeePerGas": "10 WAN",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 2 with locale pt-BR should correctly format fee fields for ZKsync Sepolia unit 1`] = `
+{
+  "formattedFeeValue": "0,000042 𝚝ETH",
+  "formattedGasPrice": "0 𝚝Gwei",
+  "formattedMaxFeePerGas": "2 𝚝Gwei",
+  "formattedMaxPriorityFeePerGas": "1 𝚝Gwei",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 2 with locale pt-BR should correctly format fee fields for ZKsync unit 1`] = `
+{
+  "formattedFeeValue": "0,000042 ETH",
+  "formattedGasPrice": "0 Gwei",
+  "formattedMaxFeePerGas": "2 Gwei",
+  "formattedMaxPriorityFeePerGas": "1 Gwei",
 }
 `;
 
@@ -9243,6 +9702,15 @@ exports[`getFormattedFeeFields with tx type 2 with locale ru-RU should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 2 with locale ru-RU should correctly format fee fields for Etherlink unit 1`] = `
+{
+  "formattedFeeValue": "0,000042 XTZ",
+  "formattedGasPrice": "0 Gwei",
+  "formattedMaxFeePerGas": "2 Gwei",
+  "formattedMaxPriorityFeePerGas": "1 Gwei",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 2 with locale ru-RU should correctly format fee fields for Ethersocial unit 1`] = `
 {
   "formattedFeeValue": "0,000042 ESN",
@@ -9425,7 +9893,7 @@ exports[`getFormattedFeeFields with tx type 2 with locale ru-RU should correctly
 
 exports[`getFormattedFeeFields with tx type 2 with locale ru-RU should correctly format fee fields for Polygon unit 1`] = `
 {
-  "formattedFeeValue": "0,000042 MATIC",
+  "formattedFeeValue": "0,000042 POL",
   "formattedGasPrice": "0 Gwei",
   "formattedMaxFeePerGas": "2 Gwei",
   "formattedMaxPriorityFeePerGas": "1 Gwei",
@@ -9459,7 +9927,7 @@ exports[`getFormattedFeeFields with tx type 2 with locale ru-RU should correctly
 }
 `;
 
-exports[`getFormattedFeeFields with tx type 2 with locale ru-RU should correctly format fee fields for RSK unit 1`] = `
+exports[`getFormattedFeeFields with tx type 2 with locale ru-RU should correctly format fee fields for Rootstock unit 1`] = `
 {
   "formattedFeeValue": "0,000042 RBTC",
   "formattedGasPrice": "0 Gwei",
@@ -9555,6 +10023,24 @@ exports[`getFormattedFeeFields with tx type 2 with locale ru-RU should correctly
   "formattedGasPrice": "0 WAN",
   "formattedMaxFeePerGas": "20 WAN",
   "formattedMaxPriorityFeePerGas": "10 WAN",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 2 with locale ru-RU should correctly format fee fields for ZKsync Sepolia unit 1`] = `
+{
+  "formattedFeeValue": "0,000042 𝚝ETH",
+  "formattedGasPrice": "0 𝚝Gwei",
+  "formattedMaxFeePerGas": "2 𝚝Gwei",
+  "formattedMaxPriorityFeePerGas": "1 𝚝Gwei",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 2 with locale ru-RU should correctly format fee fields for ZKsync unit 1`] = `
+{
+  "formattedFeeValue": "0,000042 ETH",
+  "formattedGasPrice": "0 Gwei",
+  "formattedMaxFeePerGas": "2 Gwei",
+  "formattedMaxPriorityFeePerGas": "1 Gwei",
 }
 `;
 
@@ -9774,6 +10260,15 @@ exports[`getFormattedFeeFields with tx type 2 with locale tr-TR should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 2 with locale tr-TR should correctly format fee fields for Etherlink unit 1`] = `
+{
+  "formattedFeeValue": "0,000042 XTZ",
+  "formattedGasPrice": "0 Gwei",
+  "formattedMaxFeePerGas": "2 Gwei",
+  "formattedMaxPriorityFeePerGas": "1 Gwei",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 2 with locale tr-TR should correctly format fee fields for Ethersocial unit 1`] = `
 {
   "formattedFeeValue": "0,000042 ESN",
@@ -9956,7 +10451,7 @@ exports[`getFormattedFeeFields with tx type 2 with locale tr-TR should correctly
 
 exports[`getFormattedFeeFields with tx type 2 with locale tr-TR should correctly format fee fields for Polygon unit 1`] = `
 {
-  "formattedFeeValue": "0,000042 MATIC",
+  "formattedFeeValue": "0,000042 POL",
   "formattedGasPrice": "0 Gwei",
   "formattedMaxFeePerGas": "2 Gwei",
   "formattedMaxPriorityFeePerGas": "1 Gwei",
@@ -9990,7 +10485,7 @@ exports[`getFormattedFeeFields with tx type 2 with locale tr-TR should correctly
 }
 `;
 
-exports[`getFormattedFeeFields with tx type 2 with locale tr-TR should correctly format fee fields for RSK unit 1`] = `
+exports[`getFormattedFeeFields with tx type 2 with locale tr-TR should correctly format fee fields for Rootstock unit 1`] = `
 {
   "formattedFeeValue": "0,000042 RBTC",
   "formattedGasPrice": "0 Gwei",
@@ -10086,6 +10581,24 @@ exports[`getFormattedFeeFields with tx type 2 with locale tr-TR should correctly
   "formattedGasPrice": "0 WAN",
   "formattedMaxFeePerGas": "20 WAN",
   "formattedMaxPriorityFeePerGas": "10 WAN",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 2 with locale tr-TR should correctly format fee fields for ZKsync Sepolia unit 1`] = `
+{
+  "formattedFeeValue": "0,000042 𝚝ETH",
+  "formattedGasPrice": "0 𝚝Gwei",
+  "formattedMaxFeePerGas": "2 𝚝Gwei",
+  "formattedMaxPriorityFeePerGas": "1 𝚝Gwei",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 2 with locale tr-TR should correctly format fee fields for ZKsync unit 1`] = `
+{
+  "formattedFeeValue": "0,000042 ETH",
+  "formattedGasPrice": "0 Gwei",
+  "formattedMaxFeePerGas": "2 Gwei",
+  "formattedMaxPriorityFeePerGas": "1 Gwei",
 }
 `;
 
@@ -10305,6 +10818,15 @@ exports[`getFormattedFeeFields with tx type 2 with locale zh-CN should correctly
 }
 `;
 
+exports[`getFormattedFeeFields with tx type 2 with locale zh-CN should correctly format fee fields for Etherlink unit 1`] = `
+{
+  "formattedFeeValue": "0.000042 XTZ",
+  "formattedGasPrice": "0 Gwei",
+  "formattedMaxFeePerGas": "2 Gwei",
+  "formattedMaxPriorityFeePerGas": "1 Gwei",
+}
+`;
+
 exports[`getFormattedFeeFields with tx type 2 with locale zh-CN should correctly format fee fields for Ethersocial unit 1`] = `
 {
   "formattedFeeValue": "0.000042 ESN",
@@ -10487,7 +11009,7 @@ exports[`getFormattedFeeFields with tx type 2 with locale zh-CN should correctly
 
 exports[`getFormattedFeeFields with tx type 2 with locale zh-CN should correctly format fee fields for Polygon unit 1`] = `
 {
-  "formattedFeeValue": "0.000042 MATIC",
+  "formattedFeeValue": "0.000042 POL",
   "formattedGasPrice": "0 Gwei",
   "formattedMaxFeePerGas": "2 Gwei",
   "formattedMaxPriorityFeePerGas": "1 Gwei",
@@ -10521,7 +11043,7 @@ exports[`getFormattedFeeFields with tx type 2 with locale zh-CN should correctly
 }
 `;
 
-exports[`getFormattedFeeFields with tx type 2 with locale zh-CN should correctly format fee fields for RSK unit 1`] = `
+exports[`getFormattedFeeFields with tx type 2 with locale zh-CN should correctly format fee fields for Rootstock unit 1`] = `
 {
   "formattedFeeValue": "0.000042 RBTC",
   "formattedGasPrice": "0 Gwei",
@@ -10617,5 +11139,23 @@ exports[`getFormattedFeeFields with tx type 2 with locale zh-CN should correctly
   "formattedGasPrice": "0 WAN",
   "formattedMaxFeePerGas": "20 WAN",
   "formattedMaxPriorityFeePerGas": "10 WAN",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 2 with locale zh-CN should correctly format fee fields for ZKsync Sepolia unit 1`] = `
+{
+  "formattedFeeValue": "0.000042 𝚝ETH",
+  "formattedGasPrice": "0 𝚝Gwei",
+  "formattedMaxFeePerGas": "2 𝚝Gwei",
+  "formattedMaxPriorityFeePerGas": "1 𝚝Gwei",
+}
+`;
+
+exports[`getFormattedFeeFields with tx type 2 with locale zh-CN should correctly format fee fields for ZKsync unit 1`] = `
+{
+  "formattedFeeValue": "0.000042 ETH",
+  "formattedGasPrice": "0 Gwei",
+  "formattedMaxFeePerGas": "2 Gwei",
+  "formattedMaxPriorityFeePerGas": "1 Gwei",
 }
 `;

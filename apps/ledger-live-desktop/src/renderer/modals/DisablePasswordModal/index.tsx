@@ -27,10 +27,10 @@ const DisablePasswordModal = () => {
     async (password?: string | null) => {
       if (password) {
         dispatch(setHasPassword(true));
-        await setEncryptionKey("app", "accounts", password);
+        await setEncryptionKey(password);
       } else {
         dispatch(setHasPassword(false));
-        await removeEncryptionKey("app", "accounts");
+        await removeEncryptionKey();
       }
     },
     [dispatch],
@@ -47,7 +47,7 @@ const DisablePasswordModal = () => {
       if (e) {
         e.preventDefault();
       }
-      if (!(await isEncryptionKeyCorrect("app", "accounts", currentPassword))) {
+      if (!(await isEncryptionKeyCorrect(currentPassword))) {
         setIncorrectPassword(new PasswordIncorrectError());
         return;
       }
@@ -83,7 +83,7 @@ const DisablePasswordModal = () => {
                   <InputPassword
                     autoFocus
                     type="password"
-                    data-test-id="disable-password-input"
+                    data-testid="disable-password-input"
                     onChange={handleInputChange("currentPassword")}
                     value={currentPassword}
                     error={incorrectPassword}
@@ -102,7 +102,7 @@ const DisablePasswordModal = () => {
                 primary
                 onClick={disablePassword}
                 disabled={!currentPassword && !incorrectPassword}
-                data-test-id="modal-save-button"
+                data-testid="modal-save-button"
               >
                 {t("common.save")}
               </Button>

@@ -2,9 +2,9 @@ import React, { useCallback, useMemo } from "react";
 import { View } from "react-native";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
-import { handleTransactionStatus } from "@ledgerhq/live-common/families/elrond/helpers/handleTransactionStatus";
+import { handleTransactionStatus } from "@ledgerhq/live-common/families/elrond/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { getMainAccount, getAccountCurrency } from "@ledgerhq/coin-framework/account/helpers";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 
 import Button from "~/components/Button";

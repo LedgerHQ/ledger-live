@@ -68,3 +68,17 @@ export const openPlatformAppDisclaimerDrawer = createAction(
   }),
 );
 export const closePlatformAppDrawer = createAction("PLATFORM_APP_DRAWER_CLOSE");
+
+export const setMemoTagInfoBoxDisplay = createAction(
+  "TOGGLE_MEMOTAG_DISPLAY",
+  ({
+    isMemoTagBoxVisible,
+    forceAutoFocusOnMemoField,
+  }: {
+    isMemoTagBoxVisible: boolean;
+    forceAutoFocusOnMemoField?: boolean;
+  }) => ({
+    isMemoTagBoxVisible,
+    forceAutoFocusOnMemoField,
+  }),
+);

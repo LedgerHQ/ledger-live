@@ -127,14 +127,6 @@ describe("xpub integration sync", () => {
       currencyId: "komodo",
     },
     {
-      xpub: "ToEA6kVVodfRW2DuuMjPPMsLLukY4EsScxdHYJkTtdopPD5Z5t9gpB2zEwpschy7rFzTqxQCXQFUBnxT5MAnfkNT4dkWqtHPE2L7bG7GC24XnLy",
-      derivationMode: DerivationModes.LEGACY,
-      addresses: 1,
-      balance: 400000000,
-      network: coininfo.bitcoin.main.toBitcoinJS(),
-      currencyId: "pivx",
-    },
-    {
       xpub: "dpubZFUiMExUREbqJQVJkfXSs4wjUb1jwVkoofnPK8Mt95j3PanCyq9Mc4aFnWtRZkhci9ZYPVLZybVLMMkS6g1nKBTN4899KJwGeVBvyumvcjW",
       derivationMode: DerivationModes.LEGACY,
       addresses: 6,

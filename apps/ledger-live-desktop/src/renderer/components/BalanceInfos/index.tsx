@@ -1,20 +1,24 @@
-import React, { useCallback, useRef } from "react";
-import { useTranslation } from "react-i18next";
-import { AccountLike, ValueChange } from "@ledgerhq/types-live";
+import { flattenAccounts } from "@ledgerhq/live-common/account/index";
+import { getAvailableAccountsById } from "@ledgerhq/live-common/exchange/swap/utils/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { Text } from "@ledgerhq/react-ui";
 import { Unit } from "@ledgerhq/types-cryptoassets";
+import { AccountLike, ValueChange } from "@ledgerhq/types-live";
+import React, { useCallback, useMemo, useRef } from "react";
+import { useTranslation } from "react-i18next";
+import { useSelector } from "react-redux";
+import { useHistory } from "react-router-dom";
+import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
+import Button from "~/renderer/components/ButtonV3";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import PillsDaysCount from "~/renderer/components/PillsDaysCount";
 import TransactionsPendingConfirmationWarning from "~/renderer/components/TransactionsPendingConfirmationWarning";
-import { useGetSwapTrackingProperties } from "~/renderer/screens/exchange/Swap2/utils/index";
-import { PlaceholderLine } from "./Placeholder";
-import Button from "~/renderer/components/ButtonV3";
-import { setTrackingSource } from "~/renderer/analytics/TrackPage";
-import { useHistory } from "react-router-dom";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { Text } from "@ledgerhq/react-ui";
-import PilldDaysSelect from "../PillsDaysSelect";
 import { useResize } from "~/renderer/hooks/useResize";
+import { accountsSelector } from "~/renderer/reducers/accounts";
+import { useGetSwapTrackingProperties } from "~/renderer/screens/exchange/Swap2/utils/index";
+import PilldDaysSelect from "../PillsDaysSelect";
+import { PlaceholderLine } from "./Placeholder";
 
 type BalanceSinceProps = {
   valueChange: ValueChange;
@@ -35,12 +39,14 @@ type BalanceTotalProps = {
 };
 type Props = {
   unit: Unit;
+  counterValueId?: string;
 } & BalanceSinceProps;
 export function BalanceDiff({ valueChange, unit, isAvailable, ...boxProps }: Props) {
   if (!isAvailable) return null;
   return (
     <Box horizontal {...boxProps}>
       <Box
+        data-testid="balance-diff"
         horizontal
         alignItems="center"
         style={{
@@ -103,7 +109,7 @@ export function BalanceTotal({
               showCode
               val={totalBalance}
               dynamicSignificantDigits={dynamicSignificantDigits}
-              data-test-id="total-balance"
+              data-testid="total-balance"
             />
           )}
           {withTransactionsPendingConfirmationWarning ? (
@@ -115,10 +121,34 @@ export function BalanceTotal({
     </Box>
   );
 }
-export default function BalanceInfos({ totalBalance, valueChange, isAvailable, unit }: Props) {
+export default function BalanceInfos({
+  totalBalance,
+  valueChange,
+  isAvailable,
+  unit,
+  counterValueId,
+}: Props) {
   const swapDefaultTrack = useGetSwapTrackingProperties();
   const { t } = useTranslation();
   const history = useHistory();
+
+  const allAccounts = useSelector(accountsSelector);
+  const flattenedAccounts = useMemo(() => flattenAccounts(allAccounts), [allAccounts]);
+
+  const defaultAccount = useMemo(
+    () =>
+      counterValueId
+        ? getAvailableAccountsById(counterValueId, flattenedAccounts).find(Boolean)
+        : undefined,
+    [counterValueId, flattenedAccounts],
+  );
+
+  const parentAccount = useMemo(() => {
+    if (defaultAccount?.type === "TokenAccount") {
+      const parentId = defaultAccount.parentId;
+      return flattenedAccounts.find(a => a.id === parentId);
+    }
+  }, [defaultAccount, flattenedAccounts]);
 
   // Remove "SWAP" and "BUY" redundant buttons when portafolio exchange banner is available
   const portfolioExchangeBanner = useFeature("portfolioExchangeBanner");
@@ -135,8 +165,14 @@ export default function BalanceInfos({ totalBalance, valueChange, isAvailable, u
     setTrackingSource("Page Portfolio");
     history.push({
       pathname: "/swap",
+      state: {
+        from: history.location.pathname,
+        defaultAccount,
+        defaultAmountFrom: "0",
+        defaultParentAccount: parentAccount,
+      },
     });
-  }, [history]);
+  }, [history, defaultAccount, parentAccount]);
 
   const ref = useRef<HTMLDivElement>(null);
   const { width } = useResize(ref);
@@ -160,11 +196,11 @@ export default function BalanceInfos({ totalBalance, valueChange, isAvailable, u
 
         {!portfolioExchangeBanner?.enabled && (
           <>
-            <Button data-test-id="portfolio-buy-button" variant="color" mr={1} onClick={onBuy}>
+            <Button data-testid="portfolio-buy-button" variant="color" mr={1} onClick={onBuy}>
               {t("accounts.contextMenu.buy")}
             </Button>
             <Button
-              data-test-id="portfolio-swap-button"
+              data-testid="portfolio-swap-button"
               variant="color"
               event="button_clicked2"
               eventProperties={{

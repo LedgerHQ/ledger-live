@@ -90,10 +90,11 @@ const accounts = raws.map(a => fromAccountRaw(a));
 const walletState: WalletState = {
   accountNames: new Map(),
   starredAccountIds: new Set(),
-  wsState: {
+  walletSyncState: {
     data: null,
     version: 0,
   },
+  nonImportedAccountInfos: [],
 };
 
 for (const raw of raws) {

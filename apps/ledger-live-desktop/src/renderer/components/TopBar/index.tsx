@@ -11,6 +11,8 @@ import Box from "~/renderer/components/Box";
 import Tooltip from "~/renderer/components/Tooltip";
 import Breadcrumb from "~/renderer/components/Breadcrumb";
 import HelpSideBar from "~/renderer/modals/Help";
+import BreadCrumbNewArch from "LLD/components/BreadCrumb";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 // TODO: ActivityIndicator
 import ActivityIndicator from "./ActivityIndicator";
@@ -49,6 +51,8 @@ const TopBar = () => {
   const hasPassword = useSelector(hasPasswordSelector);
   const hasAccounts = useSelector(hasAccountsSelector);
   const discreetMode = useSelector(discreetModeSelector);
+  const nftReworked = useFeature("lldNftsGalleryNewArch");
+  const isNftReworkedEnabled = nftReworked?.enabled;
   const [helpSideBarVisible, setHelpSideBarVisible] = useState(false);
   const handleLock = useCallback(() => dispatch(lock()), [dispatch]);
   const handleDiscreet = useCallback(
@@ -68,7 +72,7 @@ const TopBar = () => {
     <Container color="palette.text.shade80">
       <Inner bg="palette.background.default">
         <Box grow horizontal justifyContent="space-between">
-          <Breadcrumb />
+          {isNftReworkedEnabled ? <BreadCrumbNewArch /> : <Breadcrumb />}
           <Box horizontal>
             {hasAccounts && (
               <>
@@ -85,7 +89,7 @@ const TopBar = () => {
             </Box>
             <Tooltip content={t("settings.discreet")} placement="bottom">
               <ItemContainer
-                data-test-id="topbar-discreet-button"
+                data-testid="topbar-discreet-button"
                 isInteractive
                 onClick={handleDiscreet}
               >
@@ -101,7 +105,7 @@ const TopBar = () => {
             </Box>
             <Tooltip content={t("settings.helpButton")} placement="bottom">
               <ItemContainer
-                data-test-id="topbar-help-button"
+                data-testid="topbar-help-button"
                 isInteractive
                 onClick={() => setHelpSideBarVisible(true)}
               >
@@ -119,7 +123,7 @@ const TopBar = () => {
                 </Box>
                 <Tooltip content={t("common.lock")}>
                   <ItemContainer
-                    data-test-id="topbar-password-lock-button"
+                    data-testid="topbar-password-lock-button"
                     isInteractive
                     justifyContent="center"
                     onClick={handleLock}
@@ -134,7 +138,7 @@ const TopBar = () => {
             </Box>
             <Tooltip content={t("settings.title")} placement="bottom">
               <ItemContainer
-                data-test-id="topbar-settings-button"
+                data-testid="topbar-settings-button"
                 isInteractive
                 onClick={navigateToSettings}
               >

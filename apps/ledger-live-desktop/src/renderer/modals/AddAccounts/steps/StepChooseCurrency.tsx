@@ -35,6 +35,8 @@ const listSupportedTokens = () =>
 const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
   const mock = useEnv("MOCK");
 
+  const aptos = useFeature("currencyAptos");
+  const aptosTestnet = useFeature("currencyAptosTestnet");
   const axelar = useFeature("currencyAxelar");
   const stargaze = useFeature("currencyStargaze");
   const secretNetwork = useFeature("currencySecretNetwork");
@@ -79,9 +81,19 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
   const blastSepolia = useFeature("currencyBlastSepolia");
   const scroll = useFeature("currencyScroll");
   const scrollSepolia = useFeature("currencyScrollSepolia");
+  const icon = useFeature("currencyIcon");
+  const ton = useFeature("currencyTon");
+  const etherlink = useFeature("currencyEtherlink");
+  const zksync = useFeature("currencyZkSync");
+  const zksyncSepolia = useFeature("currencyZkSyncSepolia");
+  const mantra = useFeature("currencyMantra");
+  const xion = useFeature("currencyXion");
+  const zenrock = useFeature("currencyZenrock");
 
   const featureFlaggedCurrencies = useMemo(
     (): Partial<Record<CryptoCurrencyId, Feature<unknown> | null>> => ({
+      aptos,
+      aptos_testnet: aptosTestnet,
       axelar,
       stargaze,
       secret_network: secretNetwork,
@@ -121,13 +133,23 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       neon_evm: neonEvm,
       lukso,
       linea,
+      ton,
       linea_sepolia: lineaSepolia,
       blast,
       blast_sepolia: blastSepolia,
       scroll,
       scroll_sepolia: scrollSepolia,
+      icon,
+      etherlink,
+      zksync,
+      zksync_sepolia: zksyncSepolia,
+      mantra,
+      xion,
+      zenrock,
     }),
     [
+      aptos,
+      aptosTestnet,
       axelar,
       stargaze,
       secretNetwork,
@@ -167,11 +189,19 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       neonEvm,
       lukso,
       linea,
+      ton,
       lineaSepolia,
       blast,
       blastSepolia,
       scroll,
       scrollSepolia,
+      icon,
+      etherlink,
+      zksync,
+      zksyncSepolia,
+      mantra,
+      xion,
+      zenrock,
     ],
   );
 
@@ -212,7 +242,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       <SelectCurrency currencies={currencies} autoFocus onChange={setCurrency} value={currency} />
       <FullNodeStatus currency={currency} />
       {currency && currency.type === "TokenCurrency" ? (
-        <Alert type="primary" learnMoreUrl={url} mt={4} data-test-id="add-token-infoBox">
+        <Alert type="primary" learnMoreUrl={url} mt={4} data-testid="add-token-infoBox">
           <Trans
             i18nKey="addAccounts.tokensTip"
             values={{
@@ -297,7 +327,13 @@ export const StepChooseCurrencyFooter = ({
       {isToken ? (
         <Box horizontal>
           {parentCurrency ? (
-            <Button ml={2} primary onClick={onTokenCta} data-test-id="modal-continue-button">
+            <Button
+              ml={2}
+              primary
+              onClick={onTokenCta}
+              data-testid="modal-continue-button"
+              style={{ wordBreak: "break-word", maxWidth: "170px" }}
+            >
               {parentTokenAccount
                 ? t("addAccounts.cta.receive")
                 : t("addAccounts.cta.addAccountName", {
@@ -311,7 +347,7 @@ export const StepChooseCurrencyFooter = ({
           primary
           disabled={!currency || fullNodeNotReady || !navigator.onLine}
           onClick={() => transitionTo("connectDevice")}
-          data-test-id="modal-continue-button"
+          data-testid="modal-continue-button"
         >
           {t("common.continue")}
         </Button>

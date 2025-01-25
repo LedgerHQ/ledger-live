@@ -12,7 +12,6 @@ export interface PolkadotSigner {
     path: string,
     ss58prefix: number,
     showAddrInDevice?: boolean,
-    runtimeUpgraded?: boolean,
   ): Promise<PolkadotAddress>;
   sign(path: string, message: Uint8Array, metadata: string): Promise<PolkadotSignature>;
 }

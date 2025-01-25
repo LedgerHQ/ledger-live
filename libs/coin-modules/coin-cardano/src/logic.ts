@@ -20,6 +20,7 @@ import {
   StakeChain,
   StakeCredential,
   Token,
+  ProtocolParams,
 } from "./types";
 import { Bip32PublicKey } from "@stricahq/bip32ed25519";
 import BigNumber from "bignumber.js";
@@ -131,13 +132,13 @@ export function getBaseAddress({
   stakeCred: StakeCredential;
 }): TyphonAddress.BaseAddress {
   const paymentCredential: TyphonTypes.HashCredential = {
-    hash: paymentCred.key,
+    hash: Buffer.from(paymentCred.key, "hex"),
     type: TyphonTypes.HashType.ADDRESS,
     bipPath: paymentCred.path,
   };
 
   const stakeCredential: TyphonTypes.HashCredential = {
-    hash: stakeCred.key,
+    hash: Buffer.from(stakeCred.key, "hex"),
     type: TyphonTypes.HashType.ADDRESS,
     bipPath: stakeCred.path,
   };
@@ -153,7 +154,7 @@ export const isValidAddress = (address: string, networkId: number): boolean => {
   if (!address) return false;
 
   try {
-    const cardanoAddress = TyphonUtils.getAddressFromBech32(address);
+    const cardanoAddress = TyphonUtils.getAddressFromString(address);
     if (cardanoAddress instanceof ShelleyTypeAddress) {
       const addressNetworkId = Number(cardanoAddress.getHex().toLowerCase().charAt(1));
       if (addressNetworkId !== networkId) {
@@ -327,4 +328,27 @@ export function getBech32PoolId(poolId: string, networkName: string): string {
   const words = bech32.toWords(Buffer.from(poolId, "hex"));
   const encoded = bech32.encode(networkParams.poolIdPrefix, words, 1000);
   return encoded;
+}
+
+export function isValidNumString(value: unknown): boolean {
+  if (typeof value !== "string" && typeof value !== "number") return false;
+  if (isNaN(Number(value))) return false;
+  if (new BigNumber(value).isNaN()) return false;
+  return true;
+}
+
+export function isProtocolParamsValid(pp: ProtocolParams): boolean {
+  const paramsRequiredCheck = [
+    pp.minFeeA,
+    pp.minFeeB,
+    pp.stakeKeyDeposit,
+    pp.lovelacePerUtxoWord,
+    pp.collateralPercent,
+    pp.priceSteps,
+    pp.priceMem,
+    pp.maxTxSize,
+    pp.maxValueSize,
+    pp.utxoCostPerByte,
+  ];
+  return paramsRequiredCheck.every(isValidNumString);
 }

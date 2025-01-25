@@ -15,7 +15,7 @@ const EnableLearnPageStagingUrl = () => {
       <Switch
         isChecked={!!enableLearnPageStagingUrl}
         onChange={onSetEnablePlatformDevTools}
-        data-test-id="settings-enable-earn-page-staging-url"
+        data-testid="settings-enable-earn-page-staging-url"
       />
     </>
   );

@@ -12,6 +12,8 @@ import { StepProps } from "../types";
 import CardanoLedgerPoolIcon from "../LedgerPoolIcon";
 import BigNumber from "bignumber.js";
 import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import IconExclamationCircle from "~/renderer/icons/ExclamationCircle";
+import TranslatedError from "~/renderer/components/TranslatedError";
 
 const FromToWrapper = styled.div``;
 const Separator = styled.div`
@@ -27,8 +29,8 @@ function StepSummary(props: StepProps) {
   const feesUnit = useMaybeAccountUnit(account);
   if (!account || !transaction) return null;
 
-  const { estimatedFees } = status;
-
+  const { estimatedFees, warnings } = status;
+  const { feeTooHigh } = warnings;
   const feesCurrency = getAccountCurrency(account);
   const showDeposit = !account.cardanoResources?.delegation?.status;
   const stakeKeyDeposit = account.cardanoResources?.protocolParams.stakeKeyDeposit;
@@ -44,7 +46,13 @@ function StepSummary(props: StepProps) {
               <Ellipsis mt={2}>
                 <Box horizontal alignItems="center">
                   <CardanoLedgerPoolIcon validator={selectedPool} />
-                  <Text ff="Inter" color="palette.text.shade100" fontSize={4} ml={2}>
+                  <Text
+                    ff="Inter"
+                    color="palette.text.shade100"
+                    fontSize={4}
+                    ml={2}
+                    data-testid="validator-name-label"
+                  >
                     {`${selectedPool.name} [${selectedPool.ticker}]`}
                   </Text>
                 </Box>
@@ -105,7 +113,8 @@ function StepSummary(props: StepProps) {
           </Text>
           <Box>
             <FormattedVal
-              color={"palette.text.shade80"}
+              data-testid="fees-amount-step-summary"
+              color={feeTooHigh ? "warning" : "palette.text.shade80"}
               disableRounding
               unit={feesUnit}
               alwaysShowValue
@@ -116,7 +125,7 @@ function StepSummary(props: StepProps) {
             />
             <Box textAlign="right">
               <CounterValue
-                color={"palette.text.shade60"}
+                color={feeTooHigh ? "warning" : "palette.text.shade60"}
                 fontSize={3}
                 currency={feesCurrency}
                 value={estimatedFees}
@@ -126,6 +135,20 @@ function StepSummary(props: StepProps) {
             </Box>
           </Box>
         </Box>
+        {feeTooHigh ? (
+          <Box horizontal justifyContent="flex-end" alignItems="center" color="warning">
+            <IconExclamationCircle size={10} />
+            <Text
+              ff="Inter|Medium"
+              fontSize={2}
+              style={{
+                marginLeft: "5px",
+              }}
+            >
+              <TranslatedError error={feeTooHigh} />
+            </Text>
+          </Box>
+        ) : null}
       </FromToWrapper>
     </Box>
   );

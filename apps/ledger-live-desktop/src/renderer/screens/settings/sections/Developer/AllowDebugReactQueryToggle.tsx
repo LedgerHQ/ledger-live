@@ -17,7 +17,7 @@ const AllowDebugReactQueryToggle = () => {
       <Switch
         isChecked={allowDebug}
         onChange={onSetAllowDebug}
-        data-test-id="settings-allow-debug-react-query"
+        data-testid="settings-allow-debug-react-query"
       />
     </>
   );

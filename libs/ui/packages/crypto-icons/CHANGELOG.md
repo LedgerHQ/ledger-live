@@ -1,5 +1,129 @@
 # @ledgerhq/icons-ui
 
+## 1.8.0
+
+### Minor Changes
+
+- [#8396](https://github.com/LedgerHQ/ledger-live/pull/8396) [`d98a964`](https://github.com/LedgerHQ/ledger-live/commit/d98a96476c3d44eab1575f6c7c58ec03b5daf890) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Support for Aptos blockchain
+
+- [#8731](https://github.com/LedgerHQ/ledger-live/pull/8731) [`c2d24cd`](https://github.com/LedgerHQ/ledger-live/commit/c2d24cd0299ea04e39306279b6f833696bc4f4fb) Thanks [@Canestin](https://github.com/Canestin)! - Zenrock integration
+
+## 1.8.0-next.0
+
+### Minor Changes
+
+- [#8396](https://github.com/LedgerHQ/ledger-live/pull/8396) [`d98a964`](https://github.com/LedgerHQ/ledger-live/commit/d98a96476c3d44eab1575f6c7c58ec03b5daf890) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Support for Aptos blockchain
+
+- [#8731](https://github.com/LedgerHQ/ledger-live/pull/8731) [`c2d24cd`](https://github.com/LedgerHQ/ledger-live/commit/c2d24cd0299ea04e39306279b6f833696bc4f4fb) Thanks [@Canestin](https://github.com/Canestin)! - Zenrock integration
+
+## 1.7.0
+
+### Minor Changes
+
+- [#8704](https://github.com/LedgerHQ/ledger-live/pull/8704) [`1fa754d`](https://github.com/LedgerHQ/ledger-live/commit/1fa754deed730bb3dd8d05cb4e83e8c8d1b33ad1) Thanks [@Canestin](https://github.com/Canestin)! - add xion currency
+
+## 1.7.0-next.0
+
+### Minor Changes
+
+- [#8704](https://github.com/LedgerHQ/ledger-live/pull/8704) [`1fa754d`](https://github.com/LedgerHQ/ledger-live/commit/1fa754deed730bb3dd8d05cb4e83e8c8d1b33ad1) Thanks [@Canestin](https://github.com/Canestin)! - add xion currency
+
+## 1.6.0
+
+### Minor Changes
+
+- [#8205](https://github.com/LedgerHQ/ledger-live/pull/8205) [`2013b0f`](https://github.com/LedgerHQ/ledger-live/commit/2013b0f23d7f5bccff58dfd93fd45333194b8ae0) Thanks [@Canestin](https://github.com/Canestin)! - add mantra currency
+
+- [#8182](https://github.com/LedgerHQ/ledger-live/pull/8182) [`63e5392`](https://github.com/LedgerHQ/ledger-live/commit/63e5392a108f1bec7cfc9c413db1550e7b5c9a25) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for ZKsync currency
+
+## 1.6.0-next.0
+
+### Minor Changes
+
+- [#8205](https://github.com/LedgerHQ/ledger-live/pull/8205) [`2013b0f`](https://github.com/LedgerHQ/ledger-live/commit/2013b0f23d7f5bccff58dfd93fd45333194b8ae0) Thanks [@Canestin](https://github.com/Canestin)! - add mantra currency
+
+- [#8182](https://github.com/LedgerHQ/ledger-live/pull/8182) [`63e5392`](https://github.com/LedgerHQ/ledger-live/commit/63e5392a108f1bec7cfc9c413db1550e7b5c9a25) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for ZKsync currency
+
+## 1.5.1
+
+### Patch Changes
+
+- [#7566](https://github.com/LedgerHQ/ledger-live/pull/7566) [`f275f48`](https://github.com/LedgerHQ/ledger-live/commit/f275f48a17eeba2bdd3119e478975c8d4c7183be) Thanks [@albertov19](https://github.com/albertov19)! - Updated logos for Moonbeam/Moonriver
+
+## 1.5.1-next.0
+
+### Patch Changes
+
+- [#7566](https://github.com/LedgerHQ/ledger-live/pull/7566) [`f275f48`](https://github.com/LedgerHQ/ledger-live/commit/f275f48a17eeba2bdd3119e478975c8d4c7183be) Thanks [@albertov19](https://github.com/albertov19)! - Updated logos for Moonbeam/Moonriver
+
+## 1.5.0
+
+### Minor Changes
+
+- [#7740](https://github.com/LedgerHQ/ledger-live/pull/7740) [`c83af75`](https://github.com/LedgerHQ/ledger-live/commit/c83af756fb388043c9f5a3862cae1231ec99a02c) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Add etherlink evm currency
+
+## 1.5.0-next.0
+
+### Minor Changes
+
+- [#7740](https://github.com/LedgerHQ/ledger-live/pull/7740) [`c83af75`](https://github.com/LedgerHQ/ledger-live/commit/c83af756fb388043c9f5a3862cae1231ec99a02c) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Add etherlink evm currency
+
+## 1.4.1
+
+### Patch Changes
+
+- [#7770](https://github.com/LedgerHQ/ledger-live/pull/7770) [`3de65c8`](https://github.com/LedgerHQ/ledger-live/commit/3de65c89b64bc8ba6f5d29c819753d25146c5303) Thanks [@Wozacosta](https://github.com/Wozacosta)! - adds angle tokens icon
+
+- [#7710](https://github.com/LedgerHQ/ledger-live/pull/7710) [`cc291f5`](https://github.com/LedgerHQ/ledger-live/commit/cc291f5466d80a2b7e9394338ab588ecd3db4623) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Migrating the Matic currency to POL (see https://polygon.technology/blog/save-the-date-matic-pol-migration-coming-september-4th-everything-you-need-to-know)
+
+- [#7672](https://github.com/LedgerHQ/ledger-live/pull/7672) [`fb9466a`](https://github.com/LedgerHQ/ledger-live/commit/fb9466a4d7827fd4759c726ad3ae0b43dddcacd3) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Add support for jettons
+
+- [#7533](https://github.com/LedgerHQ/ledger-live/pull/7533) [`c21eddc`](https://github.com/LedgerHQ/ledger-live/commit/c21eddcf11683d018875e0a247ac53a4f4c4a2f4) Thanks [@Wozacosta](https://github.com/Wozacosta)! - adds stader tokens icons
+
+## 1.4.1-next.0
+
+### Patch Changes
+
+- [#7770](https://github.com/LedgerHQ/ledger-live/pull/7770) [`3de65c8`](https://github.com/LedgerHQ/ledger-live/commit/3de65c89b64bc8ba6f5d29c819753d25146c5303) Thanks [@Wozacosta](https://github.com/Wozacosta)! - adds angle tokens icon
+
+- [#7710](https://github.com/LedgerHQ/ledger-live/pull/7710) [`cc291f5`](https://github.com/LedgerHQ/ledger-live/commit/cc291f5466d80a2b7e9394338ab588ecd3db4623) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Migrating the Matic currency to POL (see https://polygon.technology/blog/save-the-date-matic-pol-migration-coming-september-4th-everything-you-need-to-know)
+
+- [#7672](https://github.com/LedgerHQ/ledger-live/pull/7672) [`fb9466a`](https://github.com/LedgerHQ/ledger-live/commit/fb9466a4d7827fd4759c726ad3ae0b43dddcacd3) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Add support for jettons
+
+- [#7533](https://github.com/LedgerHQ/ledger-live/pull/7533) [`c21eddc`](https://github.com/LedgerHQ/ledger-live/commit/c21eddcf11683d018875e0a247ac53a4f4c4a2f4) Thanks [@Wozacosta](https://github.com/Wozacosta)! - adds stader tokens icons
+
+## 1.4.0
+
+### Minor Changes
+
+- [#7394](https://github.com/LedgerHQ/ledger-live/pull/7394) [`4bd91de`](https://github.com/LedgerHQ/ledger-live/commit/4bd91de13442d12acce3ee83d5f2fd5f087570cf) Thanks [@emmanuelm41](https://github.com/emmanuelm41)! - Support for TON blockchain
+
+### Patch Changes
+
+- [#7442](https://github.com/LedgerHQ/ledger-live/pull/7442) [`3415d7d`](https://github.com/LedgerHQ/ledger-live/commit/3415d7df077e0c1d44d0d0ce9a26efd8e5ac4811) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Change the size of polkadot icon that was bigger than others
+
+## 1.4.0-next.0
+
+### Minor Changes
+
+- [#7394](https://github.com/LedgerHQ/ledger-live/pull/7394) [`4bd91de`](https://github.com/LedgerHQ/ledger-live/commit/4bd91de13442d12acce3ee83d5f2fd5f087570cf) Thanks [@emmanuelm41](https://github.com/emmanuelm41)! - Support for TON blockchain
+
+### Patch Changes
+
+- [#7442](https://github.com/LedgerHQ/ledger-live/pull/7442) [`3415d7d`](https://github.com/LedgerHQ/ledger-live/commit/3415d7df077e0c1d44d0d0ce9a26efd8e5ac4811) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Change the size of polkadot icon that was bigger than others
+
+## 1.3.0
+
+### Minor Changes
+
+- [#7138](https://github.com/LedgerHQ/ledger-live/pull/7138) [`ef2d53d`](https://github.com/LedgerHQ/ledger-live/commit/ef2d53d514f1f4e6f18fc79fa3423bd9b0208a04) Thanks [@lvndry](https://github.com/lvndry)! - removes via, vtc and ppc support
+
+## 1.3.0-next.0
+
+### Minor Changes
+
+- [#7138](https://github.com/LedgerHQ/ledger-live/pull/7138) [`ef2d53d`](https://github.com/LedgerHQ/ledger-live/commit/ef2d53d514f1f4e6f18fc79fa3423bd9b0208a04) Thanks [@lvndry](https://github.com/lvndry)! - removes via, vtc and ppc support
+
 ## 1.2.0
 
 ### Minor Changes

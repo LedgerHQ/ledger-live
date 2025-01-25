@@ -1,6 +1,7 @@
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { StyleSheet, SafeAreaView, BackHandler, Platform } from "react-native";
+import { useSelector } from "react-redux";
 
 import { useNavigation } from "@react-navigation/native";
 import { Flex } from "@ledgerhq/native-ui";
@@ -19,6 +20,8 @@ import { InfoPanel } from "./InfoPanel";
 import { usePTXCustomHandlers } from "../WebPTXPlayer/CustomHandlers";
 import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
 import { useCurrentAccountHistDB } from "~/screens/Platform/v2/hooks";
+import { flattenAccountsSelector } from "~/reducers/accounts";
+import { useACRECustomHandlers } from "./CustomHandlers";
 
 type Props = {
   manifest: LiveAppManifest;
@@ -78,14 +81,17 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
     });
   }, [manifest, navigation, webviewState]);
 
-  const customPTXHandlers = usePTXCustomHandlers(manifest);
+  const accounts = useSelector(flattenAccountsSelector);
+  const customACREHandlers = useACRECustomHandlers(manifest, accounts);
+  const customPTXHandlers = usePTXCustomHandlers(manifest, accounts);
 
   const customHandlers = useMemo<WalletAPICustomHandlers>(() => {
     return {
       ...loggerHandlers,
+      ...customACREHandlers,
       ...customPTXHandlers,
     };
-  }, [customPTXHandlers]);
+  }, [customACREHandlers, customPTXHandlers]);
 
   return (
     <SafeAreaView style={[styles.root]}>

@@ -15,7 +15,12 @@
     "src/operation.ts",
     "src/config.ts"
   ],
-  "ignoreUnimported": ["src/__tests__/*", "**/*.test.*", "**/*.spec.*", "src/datasets/ethereum1.ts"],
+  "ignoreUnimported": [
+    "src/__tests__/*",
+    "**/*.test.*",
+    "**/*.spec.*",
+    "src/datasets/ethereum1.ts"
+  ],
   "ignoreUnresolved": [
     "@ethersproject/bytes",
     "@ethersproject/logger",
@@ -25,6 +30,10 @@
     "@ethersproject/constants",
     "@ethersproject/strings",
     "@ethersproject/hash",
-    "@ethersproject/keccak256"
+    "@ethersproject/keccak256",
+    "@ethersproject/signing-key",
+    "@ledgerhq/cryptoassets-evm-signatures/data/evm/index",
+    "bn.js",
+    "lru-cache"
   ]
 }

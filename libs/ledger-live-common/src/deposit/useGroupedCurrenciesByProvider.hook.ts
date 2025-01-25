@@ -1,4 +1,4 @@
-import { GroupedCurrencies } from "./type";
+import { GroupedCurrencies, LoadingBasedGroupedCurrencies, LoadingStatus } from "./type";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useEffect, useMemo, useState } from "react";
 import { isCurrencySupported, listSupportedCurrencies, listTokens } from "../currencies";
@@ -12,9 +12,12 @@ const initialResult: GroupedCurrencies = {
   currenciesByProvider: [],
 };
 
-export const useGroupedCurrenciesByProvider = () => {
+export const useGroupedCurrenciesByProvider = (
+  withLoading?: boolean,
+): GroupedCurrencies | LoadingBasedGroupedCurrencies => {
   const [result, setResult] = useState(initialResult);
 
+  const [loadingStatus, setLoadingStatus] = useState<LoadingStatus>(LoadingStatus.Idle);
   const coinsAndTokensSupported = useMemo(
     () => (listSupportedCurrencies() as CryptoOrTokenCurrency[]).concat(listSupportedTokens()),
     [],
@@ -22,8 +25,17 @@ export const useGroupedCurrenciesByProvider = () => {
 
   // Get mapped assets filtered by supported & sorted currencies, grouped by provider id
   useEffect(() => {
-    loadCurrenciesByProvider(coinsAndTokensSupported).then(setResult);
-  }, [coinsAndTokensSupported]);
-
-  return result;
+    if (withLoading) {
+      setLoadingStatus(LoadingStatus.Idle);
+      loadCurrenciesByProvider(coinsAndTokensSupported)
+        .then(data => {
+          setResult(data);
+          setLoadingStatus(LoadingStatus.Success);
+        })
+        .catch(() => setLoadingStatus(LoadingStatus.Error));
+    } else {
+      loadCurrenciesByProvider(coinsAndTokensSupported).then(setResult);
+    }
+  }, [coinsAndTokensSupported, withLoading]);
+  return withLoading ? { result, loadingStatus } : result;
 };

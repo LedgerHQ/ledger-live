@@ -1,115 +1,88 @@
-import React, { useState } from "react";
+import React, { ComponentProps, useCallback, useState } from "react";
 import { View } from "react-native";
+import Animated from "react-native-reanimated";
 import { useTranslation } from "react-i18next";
-import { FlashList } from "@shopify/flash-list";
-import {
-  GetNextPageParamFunction,
-  InfiniteData,
-  QueryFunction,
-  useInfiniteQuery,
-} from "@tanstack/react-query";
-import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { FlashList, FlashListProps } from "@shopify/flash-list";
 import { Box, Text } from "@ledgerhq/native-ui";
-import { MAIN_BUTTON_BOTTOM, MAIN_BUTTON_SIZE } from "~/components/TabBar/shared";
-import ManifestItem, { type NavigationProp } from "./ManifestItem";
+import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
+import Disclaimer, { useDisclaimerViewModel } from "LLM/features/Web3Hub/components/Disclaimer";
+import type { MainProps, SearchProps } from "LLM/features/Web3Hub/types";
+import { NavigatorName, ScreenName } from "~/const";
+import ManifestItem from "./ManifestItem";
 import CategoriesList from "./CategoriesList";
 import LoadingIndicator from "./LoadingIndicator";
-// Temporary and will be replaced with proper mocks in hooks using tanstack query
-import { data } from "../../__integrations__/mocks/manifests";
+import useManifestsListViewModel from "./useManifestsListViewModel";
 
-const manifests = [
-  ...data,
-  ...data,
-  ...data,
-  ...data,
-  ...data,
-  ...data,
-  ...data,
-  ...data,
-  ...data,
-  ...data,
-  ...data,
-  ...data,
-  ...data,
-];
+type NavigationProp = MainProps["navigation"] | SearchProps["navigation"];
 
-const PAGE_SIZE = 10;
-
-const fetchManifestsMock: (
-  category: string,
-) => QueryFunction<LiveAppManifest[], string[], number> =
-  category =>
-  async ({ pageParam }) => {
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    let list = manifests;
-
-    if (category !== "all") {
-      list = list.filter(manifest => {
-        return manifest.categories.includes(category);
-      });
-    }
-
-    return list.slice((pageParam - 1) * PAGE_SIZE, pageParam * PAGE_SIZE);
-  };
-
-const selectManifests = (data: InfiniteData<LiveAppManifest[], number>) => {
-  return data.pages.flat(1);
+type Props = {
+  navigation: NavigationProp;
+  onScroll?: ComponentProps<typeof AnimatedFlashList>["onScroll"];
+  pt?: number;
+  pb?: number;
+  headerComponent?: React.ReactNode;
 };
 
-const getNextPageParam: GetNextPageParamFunction<number, LiveAppManifest[]> = (
-  lastPage,
-  allPages,
-  lastPageParam,
-) => {
-  if (allPages.length === 0) {
-    return undefined;
-  }
-  if (lastPage.length < PAGE_SIZE) {
-    return undefined;
-  }
-  return lastPageParam + 1;
+const AnimatedFlashList = Animated.createAnimatedComponent<FlashListProps<AppManifest>>(FlashList);
+
+const keyExtractor = (item: AppManifest) => item.id;
+
+const noop = () => {};
+
+const renderItem = ({
+  item,
+  extraData = noop,
+}: {
+  item: AppManifest;
+  extraData?: (manifest: AppManifest) => void;
+}) => {
+  return <ManifestItem manifest={item} onPress={extraData} />;
 };
 
-export default function ManifestList({ navigation }: { navigation: NavigationProp }) {
+export default function ManifestsList({
+  navigation,
+  onScroll,
+  pt = 0,
+  pb = 0,
+  headerComponent,
+}: Props) {
   const { t } = useTranslation();
-  const insets = useSafeAreaInsets();
   const [selectedCategory, selectCategory] = useState("all");
+  const { data, isLoading, onEndReached } = useManifestsListViewModel(selectedCategory);
 
-  const manifestsQuery = useInfiniteQuery({
-    queryKey: ["web3hub/manifests", selectedCategory],
-    queryFn: fetchManifestsMock(selectedCategory),
-    initialPageParam: 1,
-    getNextPageParam,
-    select: selectManifests,
-  });
+  const goToApp = useCallback(
+    (manifestId: string) => {
+      navigation.push(NavigatorName.Web3Hub, {
+        screen: ScreenName.Web3HubApp,
+        params: {
+          manifestId: manifestId,
+        },
+      });
+    },
+    [navigation],
+  );
 
-  const isLoading = manifestsQuery.isLoading || manifestsQuery.isFetching;
+  const disclaimer = useDisclaimerViewModel(goToApp);
 
   return (
     <>
-      <Text mt={5} numberOfLines={1} variant="h5" mx={5} accessibilityRole="header">
-        {t("web3hub.manifestsList.title")}
-      </Text>
-      <Text mt={2} mb={5} numberOfLines={1} variant="body" mx={5} accessibilityRole="header">
-        {t("web3hub.manifestsList.description")}
-      </Text>
-
-      <View style={{ height: 32, marginBottom: 2 }}>
-        <CategoriesList selectedCategory={selectedCategory} selectCategory={selectCategory} />
-      </View>
-
-      <FlashList
-        testID="web3hub-manifests-scroll"
-        nestedScrollEnabled
+      <Disclaimer disclaimer={disclaimer} />
+      <AnimatedFlashList
         contentContainerStyle={{
-          // Using this padding to keep the view visible under the button
-          paddingBottom: MAIN_BUTTON_SIZE + MAIN_BUTTON_BOTTOM + insets.bottom,
+          paddingTop: pt,
+          paddingBottom: pb,
         }}
-        // keyExtractor={item => item.id}
-        renderItem={({ item }) => {
-          return <ManifestItem manifest={item} navigation={navigation} />;
-        }}
+        ListHeaderComponent={
+          <>
+            {headerComponent}
+            <View style={{ height: 32, marginBottom: 2 }}>
+              <CategoriesList selectedCategory={selectedCategory} selectCategory={selectCategory} />
+            </View>
+          </>
+        }
+        testID="web3hub-manifests-scroll"
+        keyExtractor={keyExtractor}
+        renderItem={renderItem}
         ListFooterComponent={isLoading ? <LoadingIndicator /> : null}
         ListEmptyComponent={
           isLoading ? null : ( // TODO handle empty case
@@ -119,8 +92,11 @@ export default function ManifestList({ navigation }: { navigation: NavigationPro
           )
         }
         estimatedItemSize={128}
-        data={manifestsQuery.data}
-        onEndReached={manifestsQuery.hasNextPage ? manifestsQuery.fetchNextPage : undefined}
+        data={data}
+        extraData={disclaimer.onPressItem}
+        onScroll={onScroll}
+        scrollEventThrottle={16}
+        onEndReached={onEndReached}
       />
     </>
   );

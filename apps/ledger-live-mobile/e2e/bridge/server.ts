@@ -2,14 +2,15 @@ import { Server, WebSocket } from "ws";
 import path from "path";
 import fs from "fs";
 import net from "net";
+import merge from "lodash/merge";
 import { toAccountRaw } from "@ledgerhq/live-common/account/index";
 import { NavigatorName } from "../../src/const";
 import { Subject } from "rxjs";
-import { BleState } from "../../src/reducers/types";
+import { BleState, DeviceLike } from "../../src/reducers/types";
 import { Account, AccountRaw } from "@ledgerhq/types-live";
 import { DeviceUSB, nanoSP_USB, nanoS_USB, nanoX_USB } from "../models/devices";
 import { MessageData, MockDeviceEvent, ServerData } from "./types";
-import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
+import { getDeviceModel } from "@ledgerhq/devices";
 
 export const e2eBridgeServer = new Subject<ServerData>();
 
@@ -83,7 +84,9 @@ export async function loadConfig(fileName: string, agreed: true = true): Promise
 
   const { data } = JSON.parse(f.toString());
 
-  await postMessage({ type: "importSettings", id: uniqueId(), payload: data.settings });
+  const defaultSettings = { shareAnalytics: true, hasSeenAnalyticsOptInPrompt: true };
+  const settings = merge(defaultSettings, data.settings);
+  await postMessage({ type: "importSettings", id: uniqueId(), payload: settings });
 
   navigate(NavigatorName.Base);
 
@@ -136,23 +139,19 @@ export async function mockDeviceEvent(...args: MockDeviceEvent[]) {
   });
 }
 
-export async function addDevicesBT(
-  deviceNames: string | string[] = [
-    "Nano X de David",
-    "Nano X de Arnaud",
-    "Nano X de Didier Duchmol",
-  ],
-): Promise<string[]> {
-  const names = Array.isArray(deviceNames) ? deviceNames : [deviceNames];
-  const serviceUUID = getDeviceModel(DeviceModelId.nanoX).bluetoothSpec![0].serviceUuid;
-  names.forEach((name, i) => {
+export async function addDevicesBT(devices: DeviceLike | DeviceLike[]) {
+  const devicesList = Array.isArray(devices) ? devices : [devices];
+  devicesList.forEach(device => {
     postMessage({
       type: "add",
       id: uniqueId(),
-      payload: { id: `mock_${i + 1}`, name, serviceUUID },
+      payload: {
+        id: device.id,
+        name: device.name,
+        serviceUUID: getDeviceModel(device.modelId).bluetoothSpec![0].serviceUuid,
+      },
     });
   });
-  return names;
 }
 
 export async function addDevicesUSB(
@@ -202,6 +201,14 @@ function fetchData(message: MessageData): Promise<string> {
       resolve(data);
     };
   });
+}
+
+export async function addKnownSpeculos(proxyAddress: string) {
+  await postMessage({ type: "addKnownSpeculos", id: uniqueId(), payload: proxyAddress });
+}
+
+export async function removeKnownSpeculos(id: string) {
+  await postMessage({ type: "removeKnownSpeculos", id: uniqueId(), payload: id });
 }
 
 function onMessage(messageStr: string) {

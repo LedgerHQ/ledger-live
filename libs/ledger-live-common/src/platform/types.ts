@@ -103,12 +103,15 @@ export type LiveAppManifestDapp = {
   provider: DappProviders;
   networks: Array<LiveAppManifestParamsNetwork>;
   nanoApp: string;
+  dependencies?: string[];
 };
 
 export type LiveAppManifest = {
   id: string;
   author?: string;
   private?: boolean;
+  cacheBustingId?: number;
+  nocache?: boolean;
   name: string;
   url: string | URL;
   params?: LiveAppManifestParams;
@@ -126,6 +129,8 @@ export type LiveAppManifest = {
   currencies: string[] | "*";
   visibility: Visibility;
   highlight?: boolean;
+  providerTestBaseUrl?: string;
+  providerTestId?: string;
   content: {
     cta?: TranslatableString;
     subtitle?: TranslatableString;
@@ -146,6 +151,7 @@ export const LiveAppManifestDappSchema = z.object({
   provider: DappProvidersSchema,
   networks: z.array(LiveAppManifestParamsNetworkSchema),
   nanoApp: z.string().min(1),
+  dependencies: z.array(z.string()).optional(),
 });
 
 export const LiveAppManifestSchema = z
@@ -153,6 +159,8 @@ export const LiveAppManifestSchema = z
     id: z.string().trim().min(1),
     author: z.string().optional(),
     private: z.boolean().optional(),
+    cacheBustingId: z.number().optional(),
+    nocache: z.boolean().optional(),
     name: z.string().trim().min(1),
     url: z.string().trim().min(1),
     dapp: LiveAppManifestDappSchema.optional(),

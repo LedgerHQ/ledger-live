@@ -1,0 +1,66 @@
+{
+  "domain": {
+    "name": "Permit2",
+    "chainId": 137,
+    "verifyingContract": "0x000000000022d473030f116ddee9f6b43ac78ba3"
+  },
+  "primaryType": "PermitSingle",
+  "message": {
+    "details": {
+      "expiration": "1718184249",
+      "amount": "69420000000000000000",
+      "nonce": "0",
+      "token": "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619"
+    },
+    "spender": "0xec7be89e9d109e7e3fec59c222cf297125fefda2",
+    "sigDeadline": "1715594049"
+  },
+  "types": {
+    "PermitSingle": [
+      {
+        "name": "details",
+        "type": "PermitDetails"
+      },
+      {
+        "name": "spender",
+        "type": "address"
+      },
+      {
+        "name": "sigDeadline",
+        "type": "uint256"
+      }
+    ],
+    "PermitDetails": [
+      {
+        "name": "token",
+        "type": "address"
+      },
+      {
+        "name": "amount",
+        "type": "uint160"
+      },
+      {
+        "name": "expiration",
+        "type": "uint48"
+      },
+      {
+        "name": "nonce",
+        "type": "uint48"
+      }
+    ],
+    "EIP712Domain": [
+      {
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "name": "chainId",
+        "type": "uint256"
+      },
+      {
+        "name": "verifyingContract",
+        "type": "address"
+      }
+    ]
+  }
+}

@@ -107,6 +107,8 @@ export default function StepSummary({ account, message: messageData }: StepProps
 
   const accountName = useAccountName(account);
 
+  const isACREWithdraw = "type" in messageData && messageData.type === "Withdraw";
+
   useEffect(() => {
     if (messageData.standard === "EIP712") {
       const specific = getLLDCoinFamily(mainAccount.currency.family);
@@ -136,11 +138,13 @@ export default function StepSummary({ account, message: messageData }: StepProps
       </Box>
       <Separator />
 
-      {messageData.standard === "EIP712" ? (
-        <MessagePropertiesComp properties={messageFields} />
-      ) : (
-        <MessageProperty label={"message"} value={messageData.message} />
-      )}
+      {!isACREWithdraw ? (
+        messageData.standard === "EIP712" ? (
+          <MessagePropertiesComp properties={messageFields} />
+        ) : (
+          <MessageProperty label={"message"} value={messageData.message} />
+        )
+      ) : null}
 
       <MessageContainer flex="1">
         {messageFields ? (

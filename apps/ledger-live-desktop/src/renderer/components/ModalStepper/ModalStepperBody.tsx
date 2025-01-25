@@ -47,7 +47,7 @@ export default function ModalStepperBody({
   const defaultContinueLabel = t("common.continue");
   const defaultBackLabel = t("common.back");
   return (
-    <StepContainer data-test-id={dataTestId}>
+    <StepContainer data-testid={dataTestId}>
       <StepLeftSide
         Header={<ProgressHeader title={title} {...stepsProps} />}
         stepTitle={stepTitle}

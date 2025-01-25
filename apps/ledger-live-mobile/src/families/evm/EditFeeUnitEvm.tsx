@@ -6,7 +6,7 @@ import { BigNumber } from "bignumber.js";
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { StyleSheet, View } from "react-native";
-import Slider from "react-native-slider";
+import Slider from "@react-native-community/slider";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import LText from "~/components/LText";
 

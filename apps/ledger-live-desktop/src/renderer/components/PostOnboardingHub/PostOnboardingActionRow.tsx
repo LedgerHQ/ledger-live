@@ -85,7 +85,7 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
 
   return (
     <ActionRowWrapper
-      data-test-id={`postonboarding-action-row-${id}`}
+      data-testid={`postonboarding-action-row-${id}`}
       flexDirection="row"
       alignItems="center"
       backgroundColor="neutral.c30"

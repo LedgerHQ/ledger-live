@@ -1,5 +1,485 @@
 # @ledgerhq/coin-evm
 
+## 2.8.1
+
+### Patch Changes
+
+- Updated dependencies [[`5e01938`](https://github.com/LedgerHQ/ledger-live/commit/5e01938ece3dc1ccf7bea6c2805b6558c846db80), [`d98a964`](https://github.com/LedgerHQ/ledger-live/commit/d98a96476c3d44eab1575f6c7c58ec03b5daf890), [`c2d24cd`](https://github.com/LedgerHQ/ledger-live/commit/c2d24cd0299ea04e39306279b6f833696bc4f4fb)]:
+  - @ledgerhq/coin-framework@0.22.0
+  - @ledgerhq/cryptoassets@13.9.0
+  - @ledgerhq/live-env@2.5.0
+  - @ledgerhq/domain-service@1.2.16
+  - @ledgerhq/evm-tools@1.3.1
+  - @ledgerhq/live-network@2.0.4
+
+## 2.8.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`5e01938`](https://github.com/LedgerHQ/ledger-live/commit/5e01938ece3dc1ccf7bea6c2805b6558c846db80), [`d98a964`](https://github.com/LedgerHQ/ledger-live/commit/d98a96476c3d44eab1575f6c7c58ec03b5daf890), [`c2d24cd`](https://github.com/LedgerHQ/ledger-live/commit/c2d24cd0299ea04e39306279b6f833696bc4f4fb)]:
+  - @ledgerhq/coin-framework@0.22.0-next.0
+  - @ledgerhq/cryptoassets@13.9.0-next.0
+  - @ledgerhq/live-env@2.5.0-next.0
+  - @ledgerhq/domain-service@1.2.16-next.0
+  - @ledgerhq/evm-tools@1.3.1-next.0
+  - @ledgerhq/live-network@2.0.4-next.0
+
+## 2.8.0
+
+### Minor Changes
+
+- [#8499](https://github.com/LedgerHQ/ledger-live/pull/8499) [`9820a8f`](https://github.com/LedgerHQ/ledger-live/commit/9820a8f8ec66cf114b23c3c3b92474d250b8bf01) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Exchange function is now in coin-modules
+
+### Patch Changes
+
+- Updated dependencies [[`9820a8f`](https://github.com/LedgerHQ/ledger-live/commit/9820a8f8ec66cf114b23c3c3b92474d250b8bf01), [`50b00c7`](https://github.com/LedgerHQ/ledger-live/commit/50b00c73e39af99c7d749bf57d5ef2f2e4942f2d), [`6cd5ecd`](https://github.com/LedgerHQ/ledger-live/commit/6cd5ecdedaed090d47a4df18db3c36f990de60e5), [`1fa754d`](https://github.com/LedgerHQ/ledger-live/commit/1fa754deed730bb3dd8d05cb4e83e8c8d1b33ad1), [`2ae713b`](https://github.com/LedgerHQ/ledger-live/commit/2ae713b20c1da18ef33beb730f41fb3ea2990e44), [`1f62290`](https://github.com/LedgerHQ/ledger-live/commit/1f622907dd108fced66a36be1d8d8738d41303c9), [`9d8e34e`](https://github.com/LedgerHQ/ledger-live/commit/9d8e34eee5d77c6620298def250e85eda6b606b7)]:
+  - @ledgerhq/coin-framework@0.21.0
+  - @ledgerhq/cryptoassets@13.8.0
+  - @ledgerhq/domain-service@1.2.15
+  - @ledgerhq/evm-tools@1.3.0
+
+## 2.8.0-next.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@0.21.0-next.1
+  - @ledgerhq/domain-service@1.2.15-next.1
+  - @ledgerhq/evm-tools@1.3.0
+
+## 2.8.0-next.0
+
+### Minor Changes
+
+- [#8499](https://github.com/LedgerHQ/ledger-live/pull/8499) [`9820a8f`](https://github.com/LedgerHQ/ledger-live/commit/9820a8f8ec66cf114b23c3c3b92474d250b8bf01) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Exchange function is now in coin-modules
+
+### Patch Changes
+
+- Updated dependencies [[`9820a8f`](https://github.com/LedgerHQ/ledger-live/commit/9820a8f8ec66cf114b23c3c3b92474d250b8bf01), [`50b00c7`](https://github.com/LedgerHQ/ledger-live/commit/50b00c73e39af99c7d749bf57d5ef2f2e4942f2d), [`6cd5ecd`](https://github.com/LedgerHQ/ledger-live/commit/6cd5ecdedaed090d47a4df18db3c36f990de60e5), [`1fa754d`](https://github.com/LedgerHQ/ledger-live/commit/1fa754deed730bb3dd8d05cb4e83e8c8d1b33ad1), [`2ae713b`](https://github.com/LedgerHQ/ledger-live/commit/2ae713b20c1da18ef33beb730f41fb3ea2990e44), [`1f62290`](https://github.com/LedgerHQ/ledger-live/commit/1f622907dd108fced66a36be1d8d8738d41303c9), [`9d8e34e`](https://github.com/LedgerHQ/ledger-live/commit/9d8e34eee5d77c6620298def250e85eda6b606b7)]:
+  - @ledgerhq/coin-framework@0.21.0-next.0
+  - @ledgerhq/cryptoassets@13.8.0-next.0
+  - @ledgerhq/domain-service@1.2.15-next.0
+  - @ledgerhq/evm-tools@1.3.0
+
+## 2.7.0
+
+### Minor Changes
+
+- [#8375](https://github.com/LedgerHQ/ledger-live/pull/8375) [`c45ee45`](https://github.com/LedgerHQ/ledger-live/commit/c45ee457a9f5500ae42f2a8fb7f0cfb7926f319b) Thanks [@Canestin](https://github.com/Canestin)! - add mev protection
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@0.20.1
+  - @ledgerhq/domain-service@1.2.14
+  - @ledgerhq/evm-tools@1.3.0
+
+## 2.7.0-next.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@0.20.1-next.1
+  - @ledgerhq/domain-service@1.2.14-next.1
+  - @ledgerhq/evm-tools@1.3.0
+
+## 2.7.0-next.0
+
+### Minor Changes
+
+- [#8375](https://github.com/LedgerHQ/ledger-live/pull/8375) [`c45ee45`](https://github.com/LedgerHQ/ledger-live/commit/c45ee457a9f5500ae42f2a8fb7f0cfb7926f319b) Thanks [@Canestin](https://github.com/Canestin)! - add mev protection
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@0.20.1-next.0
+  - @ledgerhq/domain-service@1.2.14-next.0
+  - @ledgerhq/evm-tools@1.3.0
+
+## 2.6.0
+
+### Minor Changes
+
+- [#8412](https://github.com/LedgerHQ/ledger-live/pull/8412) [`0397e32`](https://github.com/LedgerHQ/ledger-live/commit/0397e32253ea2af6fc901d69b51f6a59896f3e6a) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Coin-tester clean up. Fixing italian typo (sorry pasta bros), fixing Polkadot coin-tester log noise & docker-compose.
+
+### Patch Changes
+
+- Updated dependencies [[`0b51d37`](https://github.com/LedgerHQ/ledger-live/commit/0b51d37762c73a88d7204d1fcc3bb60a110568ed), [`daa059a`](https://github.com/LedgerHQ/ledger-live/commit/daa059a90eb4381a0936c4a3703e8061db24072a)]:
+  - @ledgerhq/coin-framework@0.20.0
+  - @ledgerhq/domain-service@1.2.13
+  - @ledgerhq/evm-tools@1.3.0
+
+## 2.6.0-next.0
+
+### Minor Changes
+
+- [#8412](https://github.com/LedgerHQ/ledger-live/pull/8412) [`0397e32`](https://github.com/LedgerHQ/ledger-live/commit/0397e32253ea2af6fc901d69b51f6a59896f3e6a) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Coin-tester clean up. Fixing italian typo (sorry pasta bros), fixing Polkadot coin-tester log noise & docker-compose.
+
+### Patch Changes
+
+- Updated dependencies [[`0b51d37`](https://github.com/LedgerHQ/ledger-live/commit/0b51d37762c73a88d7204d1fcc3bb60a110568ed), [`daa059a`](https://github.com/LedgerHQ/ledger-live/commit/daa059a90eb4381a0936c4a3703e8061db24072a)]:
+  - @ledgerhq/coin-framework@0.20.0-next.0
+  - @ledgerhq/domain-service@1.2.13-next.0
+  - @ledgerhq/evm-tools@1.3.0
+
+## 2.5.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@0.19.1
+  - @ledgerhq/domain-service@1.2.12
+  - @ledgerhq/evm-tools@1.3.0
+
+## 2.5.1-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@0.19.1-next.0
+  - @ledgerhq/domain-service@1.2.12-next.0
+  - @ledgerhq/evm-tools@1.3.0
+
+## 2.5.0
+
+### Minor Changes
+
+- [#8305](https://github.com/LedgerHQ/ledger-live/pull/8305) [`408dd7d`](https://github.com/LedgerHQ/ledger-live/commit/408dd7d7a25f6c9b99e8e4a35180f08ad0ac4b26) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Change preload cache duration from 1 hour to 1 day in order to delay new synchronizations from block 0
+
+### Patch Changes
+
+- [#8206](https://github.com/LedgerHQ/ledger-live/pull/8206) [`9059f4b`](https://github.com/LedgerHQ/ledger-live/commit/9059f4bb1dd540f28e2e16d85d701d70a99b6c96) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add new coin-tester helper `callMyDealer` capable of providing any token or NFT without the need to know a previous owner. Also adds 2 new scenarii for Blast & Scroll.
+
+- [#8206](https://github.com/LedgerHQ/ledger-live/pull/8206) [`9059f4b`](https://github.com/LedgerHQ/ledger-live/commit/9059f4bb1dd540f28e2e16d85d701d70a99b6c96) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Make coin-tester script run tests sequentially
+
+- [#8175](https://github.com/LedgerHQ/ledger-live/pull/8175) [`b93a421`](https://github.com/LedgerHQ/ledger-live/commit/b93a421866519b80fdd8a029caea97323eceae93) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Remove helper `applyEIP155` now that `hw-app-eth` is fixed and returns a valid `v` in all possible cases. Adding a env var `EVM_FORCE_LEGACY_TRANSACTIONS` to force transaction type 0, making this change QA compatible.
+
+- Updated dependencies [[`5c13c7b`](https://github.com/LedgerHQ/ledger-live/commit/5c13c7bf743333f09cbfee720d275dfae7e157d2), [`2013b0f`](https://github.com/LedgerHQ/ledger-live/commit/2013b0f23d7f5bccff58dfd93fd45333194b8ae0), [`2013b0f`](https://github.com/LedgerHQ/ledger-live/commit/2013b0f23d7f5bccff58dfd93fd45333194b8ae0), [`95fbec9`](https://github.com/LedgerHQ/ledger-live/commit/95fbec9fdff75cd6d4ac23e189e876efffc81906), [`63e5392`](https://github.com/LedgerHQ/ledger-live/commit/63e5392a108f1bec7cfc9c413db1550e7b5c9a25), [`b93a421`](https://github.com/LedgerHQ/ledger-live/commit/b93a421866519b80fdd8a029caea97323eceae93), [`b93a421`](https://github.com/LedgerHQ/ledger-live/commit/b93a421866519b80fdd8a029caea97323eceae93), [`a40c525`](https://github.com/LedgerHQ/ledger-live/commit/a40c5256b80574aaaf17651d195832668b9796f5)]:
+  - @ledgerhq/live-env@2.4.1
+  - @ledgerhq/coin-framework@0.19.0
+  - @ledgerhq/cryptoassets@13.7.0
+  - @ledgerhq/evm-tools@1.3.0
+  - @ledgerhq/live-network@2.0.3
+  - @ledgerhq/domain-service@1.2.11
+
+## 2.5.0-next.0
+
+### Minor Changes
+
+- [#8305](https://github.com/LedgerHQ/ledger-live/pull/8305) [`408dd7d`](https://github.com/LedgerHQ/ledger-live/commit/408dd7d7a25f6c9b99e8e4a35180f08ad0ac4b26) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Change preload cache duration from 1 hour to 1 day in order to delay new synchronizations from block 0
+
+### Patch Changes
+
+- [#8206](https://github.com/LedgerHQ/ledger-live/pull/8206) [`9059f4b`](https://github.com/LedgerHQ/ledger-live/commit/9059f4bb1dd540f28e2e16d85d701d70a99b6c96) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add new coin-tester helper `callMyDealer` capable of providing any token or NFT without the need to know a previous owner. Also adds 2 new scenarii for Blast & Scroll.
+
+- [#8206](https://github.com/LedgerHQ/ledger-live/pull/8206) [`9059f4b`](https://github.com/LedgerHQ/ledger-live/commit/9059f4bb1dd540f28e2e16d85d701d70a99b6c96) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Make coin-tester script run tests sequentially
+
+- [#8175](https://github.com/LedgerHQ/ledger-live/pull/8175) [`b93a421`](https://github.com/LedgerHQ/ledger-live/commit/b93a421866519b80fdd8a029caea97323eceae93) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Remove helper `applyEIP155` now that `hw-app-eth` is fixed and returns a valid `v` in all possible cases. Adding a env var `EVM_FORCE_LEGACY_TRANSACTIONS` to force transaction type 0, making this change QA compatible.
+
+- Updated dependencies [[`5c13c7b`](https://github.com/LedgerHQ/ledger-live/commit/5c13c7bf743333f09cbfee720d275dfae7e157d2), [`2013b0f`](https://github.com/LedgerHQ/ledger-live/commit/2013b0f23d7f5bccff58dfd93fd45333194b8ae0), [`2013b0f`](https://github.com/LedgerHQ/ledger-live/commit/2013b0f23d7f5bccff58dfd93fd45333194b8ae0), [`95fbec9`](https://github.com/LedgerHQ/ledger-live/commit/95fbec9fdff75cd6d4ac23e189e876efffc81906), [`63e5392`](https://github.com/LedgerHQ/ledger-live/commit/63e5392a108f1bec7cfc9c413db1550e7b5c9a25), [`b93a421`](https://github.com/LedgerHQ/ledger-live/commit/b93a421866519b80fdd8a029caea97323eceae93), [`b93a421`](https://github.com/LedgerHQ/ledger-live/commit/b93a421866519b80fdd8a029caea97323eceae93), [`a40c525`](https://github.com/LedgerHQ/ledger-live/commit/a40c5256b80574aaaf17651d195832668b9796f5)]:
+  - @ledgerhq/live-env@2.4.1-next.0
+  - @ledgerhq/coin-framework@0.19.0-next.0
+  - @ledgerhq/cryptoassets@13.7.0-next.0
+  - @ledgerhq/evm-tools@1.3.0-next.0
+  - @ledgerhq/live-network@2.0.3-next.0
+  - @ledgerhq/domain-service@1.2.11-next.0
+
+## 2.4.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@0.18.6
+  - @ledgerhq/domain-service@1.2.10
+  - @ledgerhq/evm-tools@1.2.4
+
+## 2.4.3-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@0.18.6-next.0
+  - @ledgerhq/domain-service@1.2.10-next.0
+  - @ledgerhq/evm-tools@1.2.4
+
+## 2.4.2
+
+### Patch Changes
+
+- Updated dependencies [[`f275f48`](https://github.com/LedgerHQ/ledger-live/commit/f275f48a17eeba2bdd3119e478975c8d4c7183be)]:
+  - @ledgerhq/cryptoassets@13.6.2
+  - @ledgerhq/coin-framework@0.18.5
+  - @ledgerhq/domain-service@1.2.9
+  - @ledgerhq/evm-tools@1.2.4
+
+## 2.4.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`f275f48`](https://github.com/LedgerHQ/ledger-live/commit/f275f48a17eeba2bdd3119e478975c8d4c7183be)]:
+  - @ledgerhq/cryptoassets@13.6.2-next.0
+  - @ledgerhq/coin-framework@0.18.5-next.0
+  - @ledgerhq/domain-service@1.2.9-next.0
+  - @ledgerhq/evm-tools@1.2.4
+
+## 2.4.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@0.18.4
+  - @ledgerhq/domain-service@1.2.8
+  - @ledgerhq/evm-tools@1.2.4
+
+## 2.4.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@0.18.4-hotfix.0
+  - @ledgerhq/domain-service@1.2.8-hotfix.0
+  - @ledgerhq/evm-tools@1.2.4
+
+## 2.4.0
+
+### Minor Changes
+
+- [#7991](https://github.com/LedgerHQ/ledger-live/pull/7991) [`ced792c`](https://github.com/LedgerHQ/ledger-live/commit/ced792c37b42135f2b7596228c14ccd0783a803f) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Decreasing the base fee multiplier to 27% for the EIP1559 fee system. Based on the spec of EIP1559, it should allow to create blocks which could be included in the next 3 blocks even in awful network situations.
+
+### Patch Changes
+
+- [#7874](https://github.com/LedgerHQ/ledger-live/pull/7874) [`9c6e2c4`](https://github.com/LedgerHQ/ledger-live/commit/9c6e2c4969832d9d55188ed03bbdfd79b43b7e63) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for Uniswap plugin resolution in `signOperation`
+
+- Updated dependencies [[`ced792c`](https://github.com/LedgerHQ/ledger-live/commit/ced792c37b42135f2b7596228c14ccd0783a803f)]:
+  - @ledgerhq/live-env@2.4.0
+  - @ledgerhq/coin-framework@0.18.3
+  - @ledgerhq/domain-service@1.2.7
+  - @ledgerhq/evm-tools@1.2.4
+  - @ledgerhq/cryptoassets@13.6.1
+  - @ledgerhq/live-network@2.0.2
+
+## 2.4.0-next.0
+
+### Minor Changes
+
+- [#7991](https://github.com/LedgerHQ/ledger-live/pull/7991) [`ced792c`](https://github.com/LedgerHQ/ledger-live/commit/ced792c37b42135f2b7596228c14ccd0783a803f) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Decreasing the base fee multiplier to 27% for the EIP1559 fee system. Based on the spec of EIP1559, it should allow to create blocks which could be included in the next 3 blocks even in awful network situations.
+
+### Patch Changes
+
+- [#7874](https://github.com/LedgerHQ/ledger-live/pull/7874) [`9c6e2c4`](https://github.com/LedgerHQ/ledger-live/commit/9c6e2c4969832d9d55188ed03bbdfd79b43b7e63) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for Uniswap plugin resolution in `signOperation`
+
+- Updated dependencies [[`ced792c`](https://github.com/LedgerHQ/ledger-live/commit/ced792c37b42135f2b7596228c14ccd0783a803f)]:
+  - @ledgerhq/live-env@2.4.0-next.0
+  - @ledgerhq/coin-framework@0.18.3-next.0
+  - @ledgerhq/domain-service@1.2.7-next.0
+  - @ledgerhq/evm-tools@1.2.4-next.0
+  - @ledgerhq/cryptoassets@13.6.1-next.0
+  - @ledgerhq/live-network@2.0.2-next.0
+
+## 2.3.1
+
+### Patch Changes
+
+- [#7817](https://github.com/LedgerHQ/ledger-live/pull/7817) [`2f71fec`](https://github.com/LedgerHQ/ledger-live/commit/2f71fecc0e4bd2692277386931978242a25a364c) Thanks [@Wozacosta](https://github.com/Wozacosta)! - chore: update default explorer for local base & zkevm config, update evm bridge test
+
+- Updated dependencies [[`c83af75`](https://github.com/LedgerHQ/ledger-live/commit/c83af756fb388043c9f5a3862cae1231ec99a02c)]:
+  - @ledgerhq/cryptoassets@13.6.0
+  - @ledgerhq/coin-framework@0.18.2
+  - @ledgerhq/domain-service@1.2.6
+  - @ledgerhq/evm-tools@1.2.3
+
+## 2.3.1-next.0
+
+### Patch Changes
+
+- [#7817](https://github.com/LedgerHQ/ledger-live/pull/7817) [`2f71fec`](https://github.com/LedgerHQ/ledger-live/commit/2f71fecc0e4bd2692277386931978242a25a364c) Thanks [@Wozacosta](https://github.com/Wozacosta)! - chore: update default explorer for local base & zkevm config, update evm bridge test
+
+- Updated dependencies [[`c83af75`](https://github.com/LedgerHQ/ledger-live/commit/c83af756fb388043c9f5a3862cae1231ec99a02c)]:
+  - @ledgerhq/cryptoassets@13.6.0-next.0
+  - @ledgerhq/coin-framework@0.18.2-next.0
+  - @ledgerhq/domain-service@1.2.6-next.0
+  - @ledgerhq/evm-tools@1.2.3-next.0
+
+## 2.3.0
+
+### Minor Changes
+
+- [#7621](https://github.com/LedgerHQ/ledger-live/pull/7621) [`1605678`](https://github.com/LedgerHQ/ledger-live/commit/1605678a4c43ce85b19bd549b295f3c67ff1dcb9) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update preloading method to use the crypto-assets service instead of the CDN for fetching token definitions
+
+### Patch Changes
+
+- [#7883](https://github.com/LedgerHQ/ledger-live/pull/7883) [`f805d14`](https://github.com/LedgerHQ/ledger-live/commit/f805d1470f927824233f94eaba065b00d7af18cf) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update Axios to 1.7.7 following CVE: https://github.com/advisories/GHSA-8hc4-vh64-cxmj
+
+- Updated dependencies [[`1605678`](https://github.com/LedgerHQ/ledger-live/commit/1605678a4c43ce85b19bd549b295f3c67ff1dcb9), [`f805d14`](https://github.com/LedgerHQ/ledger-live/commit/f805d1470f927824233f94eaba065b00d7af18cf), [`0a71c43`](https://github.com/LedgerHQ/ledger-live/commit/0a71c4344b7bb2c6640f3e5dda152ae815573330), [`1605678`](https://github.com/LedgerHQ/ledger-live/commit/1605678a4c43ce85b19bd549b295f3c67ff1dcb9)]:
+  - @ledgerhq/cryptoassets@13.5.0
+  - @ledgerhq/domain-service@1.2.5
+  - @ledgerhq/live-network@2.0.1
+  - @ledgerhq/evm-tools@1.2.2
+  - @ledgerhq/errors@6.19.1
+  - @ledgerhq/coin-framework@0.18.1
+  - @ledgerhq/devices@8.4.4
+
+## 2.3.0-next.1
+
+### Patch Changes
+
+- [#7883](https://github.com/LedgerHQ/ledger-live/pull/7883) [`f805d14`](https://github.com/LedgerHQ/ledger-live/commit/f805d1470f927824233f94eaba065b00d7af18cf) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update Axios to 1.7.7 following CVE: https://github.com/advisories/GHSA-8hc4-vh64-cxmj
+
+- Updated dependencies [[`f805d14`](https://github.com/LedgerHQ/ledger-live/commit/f805d1470f927824233f94eaba065b00d7af18cf)]:
+  - @ledgerhq/cryptoassets@13.5.0-next.1
+  - @ledgerhq/domain-service@1.2.5-next.1
+  - @ledgerhq/live-network@2.0.1-next.1
+  - @ledgerhq/evm-tools@1.2.2-next.1
+  - @ledgerhq/coin-framework@0.18.1-next.1
+
+## 2.3.0-next.0
+
+### Minor Changes
+
+- [#7621](https://github.com/LedgerHQ/ledger-live/pull/7621) [`1605678`](https://github.com/LedgerHQ/ledger-live/commit/1605678a4c43ce85b19bd549b295f3c67ff1dcb9) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update preloading method to use the crypto-assets service instead of the CDN for fetching token definitions
+
+### Patch Changes
+
+- Updated dependencies [[`1605678`](https://github.com/LedgerHQ/ledger-live/commit/1605678a4c43ce85b19bd549b295f3c67ff1dcb9), [`0a71c43`](https://github.com/LedgerHQ/ledger-live/commit/0a71c4344b7bb2c6640f3e5dda152ae815573330), [`1605678`](https://github.com/LedgerHQ/ledger-live/commit/1605678a4c43ce85b19bd549b295f3c67ff1dcb9)]:
+  - @ledgerhq/cryptoassets@13.5.0-next.0
+  - @ledgerhq/errors@6.19.1-next.0
+  - @ledgerhq/coin-framework@0.18.1-next.0
+  - @ledgerhq/evm-tools@1.2.2-next.0
+  - @ledgerhq/domain-service@1.2.5-next.0
+  - @ledgerhq/devices@8.4.4-next.0
+  - @ledgerhq/live-network@2.0.1-next.0
+
+## 2.2.0
+
+### Minor Changes
+
+- [#7741](https://github.com/LedgerHQ/ledger-live/pull/7741) [`224e33c`](https://github.com/LedgerHQ/ledger-live/commit/224e33c93d2acd22c82892148b240df004284037) Thanks [@CremaFR](https://github.com/CremaFR)! - fixed bnb custom fee crashes and erased gasLimit
+
+- [#7652](https://github.com/LedgerHQ/ledger-live/pull/7652) [`e7db725`](https://github.com/LedgerHQ/ledger-live/commit/e7db72552042ff4dd85bec236f6bd083fa3da533) Thanks [@CremaFR](https://github.com/CremaFR)! - fix evm getFeeData to return requested option value
+
+### Patch Changes
+
+- [#7593](https://github.com/LedgerHQ/ledger-live/pull/7593) [`187293c`](https://github.com/LedgerHQ/ledger-live/commit/187293c6cf6093f15f07d5effc1ded0843a9e6ab) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update `axios` to fixed version `1.7.3`
+
+- [#7710](https://github.com/LedgerHQ/ledger-live/pull/7710) [`cc291f5`](https://github.com/LedgerHQ/ledger-live/commit/cc291f5466d80a2b7e9394338ab588ecd3db4623) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Migrating the Matic currency to POL (see https://polygon.technology/blog/save-the-date-matic-pol-migration-coming-september-4th-everything-you-need-to-know)
+
+- [#7531](https://github.com/LedgerHQ/ledger-live/pull/7531) [`d213d81`](https://github.com/LedgerHQ/ledger-live/commit/d213d8122647d559b7a0f44e2beffa5e39c3249b) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Remove `NotEnoughBalanceInParentAccount` error from `validateAmount` check in `getTransactionStatus` as it was redundant with a `validateGas` test
+
+- Updated dependencies [[`5c738cb`](https://github.com/LedgerHQ/ledger-live/commit/5c738cbd35ce5d0ca39ad3b86a61cc6234d1bdf7), [`9c55e81`](https://github.com/LedgerHQ/ledger-live/commit/9c55e81c84d3372f2a7fd36248f970376aec905a), [`187293c`](https://github.com/LedgerHQ/ledger-live/commit/187293c6cf6093f15f07d5effc1ded0843a9e6ab), [`187293c`](https://github.com/LedgerHQ/ledger-live/commit/187293c6cf6093f15f07d5effc1ded0843a9e6ab), [`cc291f5`](https://github.com/LedgerHQ/ledger-live/commit/cc291f5466d80a2b7e9394338ab588ecd3db4623), [`fb9466a`](https://github.com/LedgerHQ/ledger-live/commit/fb9466a4d7827fd4759c726ad3ae0b43dddcacd3), [`5758950`](https://github.com/LedgerHQ/ledger-live/commit/5758950841fbf8018dd848e745017484aec67333), [`4799d5d`](https://github.com/LedgerHQ/ledger-live/commit/4799d5de3fb1dcef2b01de31fe29b59e76922576), [`ef82161`](https://github.com/LedgerHQ/ledger-live/commit/ef82161688fc49bf32cbc88f1837b15490e5d2b4), [`d13e7b9`](https://github.com/LedgerHQ/ledger-live/commit/d13e7b9f55d92098cacc9384fd7fab24033c040f), [`a3fd728`](https://github.com/LedgerHQ/ledger-live/commit/a3fd72861f2a7df676bd793062b3816fdb9d1f57), [`a0bb74b`](https://github.com/LedgerHQ/ledger-live/commit/a0bb74b8f3704ab9d5567c9d14c16cab9e0872f7), [`eb9a36f`](https://github.com/LedgerHQ/ledger-live/commit/eb9a36f6ee8487c9ffbb841c3e6c0ca84f68bb0a), [`6815f6f`](https://github.com/LedgerHQ/ledger-live/commit/6815f6fccb9bca627a2e51ab954dc3f9b8f7c710), [`9c2f1b3`](https://github.com/LedgerHQ/ledger-live/commit/9c2f1b3b6e11a37a6b5ecf02d1e1ae7f0258e3ae)]:
+  - @ledgerhq/errors@6.19.0
+  - @ledgerhq/cryptoassets@13.4.0
+  - @ledgerhq/domain-service@1.2.4
+  - @ledgerhq/live-network@2.0.0
+  - @ledgerhq/evm-tools@1.2.1
+  - @ledgerhq/coin-framework@0.18.0
+  - @ledgerhq/live-env@2.3.0
+  - @ledgerhq/devices@8.4.3
+
+## 2.2.0-next.0
+
+### Minor Changes
+
+- [#7741](https://github.com/LedgerHQ/ledger-live/pull/7741) [`224e33c`](https://github.com/LedgerHQ/ledger-live/commit/224e33c93d2acd22c82892148b240df004284037) Thanks [@CremaFR](https://github.com/CremaFR)! - fixed bnb custom fee crashes and erased gasLimit
+
+- [#7652](https://github.com/LedgerHQ/ledger-live/pull/7652) [`e7db725`](https://github.com/LedgerHQ/ledger-live/commit/e7db72552042ff4dd85bec236f6bd083fa3da533) Thanks [@CremaFR](https://github.com/CremaFR)! - fix evm getFeeData to return requested option value
+
+### Patch Changes
+
+- [#7593](https://github.com/LedgerHQ/ledger-live/pull/7593) [`187293c`](https://github.com/LedgerHQ/ledger-live/commit/187293c6cf6093f15f07d5effc1ded0843a9e6ab) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update `axios` to fixed version `1.7.3`
+
+- [#7710](https://github.com/LedgerHQ/ledger-live/pull/7710) [`cc291f5`](https://github.com/LedgerHQ/ledger-live/commit/cc291f5466d80a2b7e9394338ab588ecd3db4623) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Migrating the Matic currency to POL (see https://polygon.technology/blog/save-the-date-matic-pol-migration-coming-september-4th-everything-you-need-to-know)
+
+- [#7531](https://github.com/LedgerHQ/ledger-live/pull/7531) [`d213d81`](https://github.com/LedgerHQ/ledger-live/commit/d213d8122647d559b7a0f44e2beffa5e39c3249b) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Remove `NotEnoughBalanceInParentAccount` error from `validateAmount` check in `getTransactionStatus` as it was redundant with a `validateGas` test
+
+- Updated dependencies [[`5c738cb`](https://github.com/LedgerHQ/ledger-live/commit/5c738cbd35ce5d0ca39ad3b86a61cc6234d1bdf7), [`9c55e81`](https://github.com/LedgerHQ/ledger-live/commit/9c55e81c84d3372f2a7fd36248f970376aec905a), [`187293c`](https://github.com/LedgerHQ/ledger-live/commit/187293c6cf6093f15f07d5effc1ded0843a9e6ab), [`187293c`](https://github.com/LedgerHQ/ledger-live/commit/187293c6cf6093f15f07d5effc1ded0843a9e6ab), [`cc291f5`](https://github.com/LedgerHQ/ledger-live/commit/cc291f5466d80a2b7e9394338ab588ecd3db4623), [`fb9466a`](https://github.com/LedgerHQ/ledger-live/commit/fb9466a4d7827fd4759c726ad3ae0b43dddcacd3), [`5758950`](https://github.com/LedgerHQ/ledger-live/commit/5758950841fbf8018dd848e745017484aec67333), [`4799d5d`](https://github.com/LedgerHQ/ledger-live/commit/4799d5de3fb1dcef2b01de31fe29b59e76922576), [`ef82161`](https://github.com/LedgerHQ/ledger-live/commit/ef82161688fc49bf32cbc88f1837b15490e5d2b4), [`d13e7b9`](https://github.com/LedgerHQ/ledger-live/commit/d13e7b9f55d92098cacc9384fd7fab24033c040f), [`a3fd728`](https://github.com/LedgerHQ/ledger-live/commit/a3fd72861f2a7df676bd793062b3816fdb9d1f57), [`a0bb74b`](https://github.com/LedgerHQ/ledger-live/commit/a0bb74b8f3704ab9d5567c9d14c16cab9e0872f7), [`eb9a36f`](https://github.com/LedgerHQ/ledger-live/commit/eb9a36f6ee8487c9ffbb841c3e6c0ca84f68bb0a), [`6815f6f`](https://github.com/LedgerHQ/ledger-live/commit/6815f6fccb9bca627a2e51ab954dc3f9b8f7c710), [`9c2f1b3`](https://github.com/LedgerHQ/ledger-live/commit/9c2f1b3b6e11a37a6b5ecf02d1e1ae7f0258e3ae)]:
+  - @ledgerhq/errors@6.19.0-next.0
+  - @ledgerhq/cryptoassets@13.4.0-next.0
+  - @ledgerhq/domain-service@1.2.4-next.0
+  - @ledgerhq/live-network@2.0.0-next.0
+  - @ledgerhq/evm-tools@1.2.1-next.0
+  - @ledgerhq/coin-framework@0.18.0-next.0
+  - @ledgerhq/live-env@2.3.0-next.0
+  - @ledgerhq/devices@8.4.3-next.0
+
+## 2.1.4
+
+### Patch Changes
+
+- [#7494](https://github.com/LedgerHQ/ledger-live/pull/7494) [`60f1b5c`](https://github.com/LedgerHQ/ledger-live/commit/60f1b5c6cab125f5281468bb3e36f1abfae2d70c) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update env variable for CAL_SERVICE
+
+- Updated dependencies [[`afa03ae`](https://github.com/LedgerHQ/ledger-live/commit/afa03ae921ad1ca7df83dc0ba717c1cc27cb08cd), [`db9c2d7`](https://github.com/LedgerHQ/ledger-live/commit/db9c2d78fb74df586c3ea1b9fb75ce3b014a0f4b), [`4bd91de`](https://github.com/LedgerHQ/ledger-live/commit/4bd91de13442d12acce3ee83d5f2fd5f087570cf), [`53ff78c`](https://github.com/LedgerHQ/ledger-live/commit/53ff78c541d3ed69a3e74854d77f58a7e0d93978), [`8553b3e`](https://github.com/LedgerHQ/ledger-live/commit/8553b3eef10132396ec580a2d5f20b616f5b18a0), [`52daa39`](https://github.com/LedgerHQ/ledger-live/commit/52daa3998709ac3538afd447fe771faa3e3441be), [`60f1b5c`](https://github.com/LedgerHQ/ledger-live/commit/60f1b5c6cab125f5281468bb3e36f1abfae2d70c), [`60f1b5c`](https://github.com/LedgerHQ/ledger-live/commit/60f1b5c6cab125f5281468bb3e36f1abfae2d70c), [`60f1b5c`](https://github.com/LedgerHQ/ledger-live/commit/60f1b5c6cab125f5281468bb3e36f1abfae2d70c), [`50b6db6`](https://github.com/LedgerHQ/ledger-live/commit/50b6db67d374a23ba040043aa93e7fbc52685297)]:
+  - @ledgerhq/coin-framework@0.17.0
+  - @ledgerhq/cryptoassets@13.3.0
+  - @ledgerhq/live-env@2.2.0
+  - @ledgerhq/live-network@1.4.0
+  - @ledgerhq/evm-tools@1.2.0
+  - @ledgerhq/domain-service@1.2.3
+
+## 2.1.4-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`50b6db6`](https://github.com/LedgerHQ/ledger-live/commit/50b6db67d374a23ba040043aa93e7fbc52685297)]:
+  - @ledgerhq/cryptoassets@13.3.0-next.1
+  - @ledgerhq/coin-framework@0.17.0-next.1
+  - @ledgerhq/evm-tools@1.2.0-next.1
+
+## 2.1.4-next.0
+
+### Patch Changes
+
+- [#7494](https://github.com/LedgerHQ/ledger-live/pull/7494) [`60f1b5c`](https://github.com/LedgerHQ/ledger-live/commit/60f1b5c6cab125f5281468bb3e36f1abfae2d70c) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update env variable for CAL_SERVICE
+
+- Updated dependencies [[`afa03ae`](https://github.com/LedgerHQ/ledger-live/commit/afa03ae921ad1ca7df83dc0ba717c1cc27cb08cd), [`db9c2d7`](https://github.com/LedgerHQ/ledger-live/commit/db9c2d78fb74df586c3ea1b9fb75ce3b014a0f4b), [`4bd91de`](https://github.com/LedgerHQ/ledger-live/commit/4bd91de13442d12acce3ee83d5f2fd5f087570cf), [`53ff78c`](https://github.com/LedgerHQ/ledger-live/commit/53ff78c541d3ed69a3e74854d77f58a7e0d93978), [`8553b3e`](https://github.com/LedgerHQ/ledger-live/commit/8553b3eef10132396ec580a2d5f20b616f5b18a0), [`52daa39`](https://github.com/LedgerHQ/ledger-live/commit/52daa3998709ac3538afd447fe771faa3e3441be), [`60f1b5c`](https://github.com/LedgerHQ/ledger-live/commit/60f1b5c6cab125f5281468bb3e36f1abfae2d70c), [`60f1b5c`](https://github.com/LedgerHQ/ledger-live/commit/60f1b5c6cab125f5281468bb3e36f1abfae2d70c), [`60f1b5c`](https://github.com/LedgerHQ/ledger-live/commit/60f1b5c6cab125f5281468bb3e36f1abfae2d70c)]:
+  - @ledgerhq/coin-framework@0.17.0-next.0
+  - @ledgerhq/cryptoassets@13.3.0-next.0
+  - @ledgerhq/live-env@2.2.0-next.0
+  - @ledgerhq/live-network@1.4.0-next.0
+  - @ledgerhq/evm-tools@1.2.0-next.0
+  - @ledgerhq/domain-service@1.2.3-next.0
+
+## 2.1.3
+
+### Patch Changes
+
+- Updated dependencies [[`0b12c90`](https://github.com/LedgerHQ/ledger-live/commit/0b12c9040d6ee0a326b1d5effd261ddee2db452f)]:
+  - @ledgerhq/devices@8.4.2
+  - @ledgerhq/coin-framework@0.16.1
+
+## 2.1.3-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`5d508e5`](https://github.com/LedgerHQ/ledger-live/commit/5d508e5cfd296e458746adf176dd292aa884f7ea)]:
+  - @ledgerhq/devices@8.4.2-hotfix.0
+  - @ledgerhq/coin-framework@0.16.1-hotfix.0
+
+## 2.1.2
+
+### Patch Changes
+
+- Updated dependencies [[`ef2d53d`](https://github.com/LedgerHQ/ledger-live/commit/ef2d53d514f1f4e6f18fc79fa3423bd9b0208a04), [`b77ab8e`](https://github.com/LedgerHQ/ledger-live/commit/b77ab8e718ee8e10b74dc15370e8a19d2597d39e), [`fe8a26b`](https://github.com/LedgerHQ/ledger-live/commit/fe8a26b04206df64e50220c3e9249c9a1bd057a6), [`e78f3b7`](https://github.com/LedgerHQ/ledger-live/commit/e78f3b75296c7a063f6cddbeae44c36d236055f3), [`f979216`](https://github.com/LedgerHQ/ledger-live/commit/f9792160293fc8215c6d099f02e1b136c6655f9b), [`c1d2bb0`](https://github.com/LedgerHQ/ledger-live/commit/c1d2bb0866723c10d6e2899d40ddd9b9801189f4), [`c59adf2`](https://github.com/LedgerHQ/ledger-live/commit/c59adf2b0d49ea3c72b94fcb356eb72bcbfc4a6b)]:
+  - @ledgerhq/cryptoassets@13.2.0
+  - @ledgerhq/coin-framework@0.16.0
+  - @ledgerhq/errors@6.18.0
+  - @ledgerhq/domain-service@1.2.2
+  - @ledgerhq/evm-tools@1.1.2
+  - @ledgerhq/devices@8.4.1
+  - @ledgerhq/live-network@1.3.1
+
+## 2.1.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`ef2d53d`](https://github.com/LedgerHQ/ledger-live/commit/ef2d53d514f1f4e6f18fc79fa3423bd9b0208a04), [`b77ab8e`](https://github.com/LedgerHQ/ledger-live/commit/b77ab8e718ee8e10b74dc15370e8a19d2597d39e), [`fe8a26b`](https://github.com/LedgerHQ/ledger-live/commit/fe8a26b04206df64e50220c3e9249c9a1bd057a6), [`e78f3b7`](https://github.com/LedgerHQ/ledger-live/commit/e78f3b75296c7a063f6cddbeae44c36d236055f3), [`f979216`](https://github.com/LedgerHQ/ledger-live/commit/f9792160293fc8215c6d099f02e1b136c6655f9b), [`c1d2bb0`](https://github.com/LedgerHQ/ledger-live/commit/c1d2bb0866723c10d6e2899d40ddd9b9801189f4), [`c59adf2`](https://github.com/LedgerHQ/ledger-live/commit/c59adf2b0d49ea3c72b94fcb356eb72bcbfc4a6b)]:
+  - @ledgerhq/cryptoassets@13.2.0-next.0
+  - @ledgerhq/coin-framework@0.16.0-next.0
+  - @ledgerhq/errors@6.18.0-next.0
+  - @ledgerhq/domain-service@1.2.2-next.0
+  - @ledgerhq/evm-tools@1.1.2-next.0
+  - @ledgerhq/devices@8.4.1-next.0
+  - @ledgerhq/live-network@1.3.1-next.0
+
 ## 2.1.1
 
 ### Patch Changes

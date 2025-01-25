@@ -6,7 +6,6 @@ export { default as Zec } from "./zec";
 export { default as Zen } from "./zen";
 export { default as Dash } from "./dash";
 export { default as Komodo } from "./komodo";
-export { default as Pivx } from "./pivx";
 export { default as BitcoinGold } from "./bitcoingold";
 export { default as Doge } from "./doge";
 export { default as Qtum } from "./qtum";

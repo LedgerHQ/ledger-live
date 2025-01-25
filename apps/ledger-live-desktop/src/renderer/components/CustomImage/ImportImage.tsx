@@ -16,9 +16,19 @@ type Props = {
   onClick: () => void;
 };
 
+const acceptedMimeTypes = [
+  "image/jpeg",
+  "image/png",
+  "image/bmp",
+  "image/tiff",
+  "image/heif",
+  "image/heic",
+];
+const acceptedMimeTypesString = acceptedMimeTypes.join(", ");
+
 const ImageInput = styled.input.attrs({
   type: "file",
-  accept: "image/*",
+  accept: acceptedMimeTypesString,
   title: "",
   value: "",
 })`
@@ -40,7 +50,7 @@ const ImportImage: React.FC<Props> = ({ setLoading, onResult, onError, onClick }
       try {
         const reader = new FileReader();
         if (!file) return;
-        if (!file.type.startsWith("image/")) {
+        if (!acceptedMimeTypes.includes(file.type)) {
           onError(new ImageIncorrectFileTypeError());
           return;
         }
@@ -75,10 +85,10 @@ const ImportImage: React.FC<Props> = ({ setLoading, onResult, onError, onClick }
     <ImportButton
       text={t("customImage.steps.choose.upload")}
       Icon={IconsLegacy.UploadMedium}
-      data-test-id="custom-image-import-image-button"
+      data-testid="custom-image-import-image-button"
       onClick={onClick}
     >
-      <ImageInput onChange={onChange} data-test-id="custom-image-import-image-input" />
+      <ImageInput onChange={onChange} data-testid="custom-image-import-image-input" />
     </ImportButton>
   );
 };

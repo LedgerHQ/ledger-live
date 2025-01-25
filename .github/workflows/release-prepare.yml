@@ -11,7 +11,7 @@ on:
 jobs:
   prepare-release:
     name: Prepare Release
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
@@ -30,8 +30,11 @@ jobs:
       - name: Setup git user
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
 
-      - name: Setup the toolchain
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
+      - name: Setup the caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        id: setup-caches
+        with:
+          install-proto: true
 
       - name: install dependencies
         run: pnpm i -F "ledger-live"
@@ -72,3 +75,11 @@ jobs:
           git checkout -b support/release-merge-conflicts
           git push origin support/release-merge-conflicts
           gh pr create --title ":rotating_light: Release merge conflicts" -F .github/templates/release-conflicts.md --base develop --head support/release-merge-conflicts
+
+  release-final:
+    name: "[Release] Publish packages and apps"
+    needs: prepare-release
+    uses: LedgerHQ/ledger-live/.github/workflows/release-final.yml@develop
+    with:
+      ref: main
+    secrets: inherit

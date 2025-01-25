@@ -41,12 +41,13 @@ export function PinCodeHowTo() {
 
 const PinCodeHowToAnimation = () => {
   const { deviceModelId } = useContext(OnboardingContext);
+  const { theme } = useTheme();
 
   return (
     deviceModelId && (
       <AnimationContainer>
         <Animation
-          animation={getDeviceAnimation(deviceModelId, "light", "plugAndPinCode") as object}
+          animation={getDeviceAnimation(deviceModelId, theme, "plugAndPinCode") as object}
         />
       </AnimationContainer>
     )

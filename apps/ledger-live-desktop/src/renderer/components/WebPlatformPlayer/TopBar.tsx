@@ -18,11 +18,12 @@ import { WebviewAPI, WebviewState } from "../Web3AppWebview/types";
 import Spinner from "../Spinner";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
-import { useDappCurrentAccount } from "@ledgerhq/live-common/wallet-api/useDappLogic";
 import { CurrentAccountHistDB, safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
 import Wallet from "~/renderer/icons/Wallet";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import CryptoCurrencyIcon from "../CryptoCurrencyIcon";
+import { walletSelector } from "~/renderer/reducers/wallet";
+import { accountNameSelector } from "@ledgerhq/live-wallet/store";
 
 const Container = styled(Box).attrs(() => ({
   horizontal: true,
@@ -141,8 +142,9 @@ export const TopBar = ({
   webviewAPIRef,
   webviewState,
 }: Props) => {
+  const walletState = useSelector(walletSelector);
+
   const { name, icon } = manifest;
-  const { currentAccount } = useDappCurrentAccount(currentAccountHistDb);
 
   const {
     shouldDisplayName = true,
@@ -183,7 +185,11 @@ export const TopBar = ({
     webview.goForward();
   }, [webviewAPIRef]);
 
-  const { onSelectAccount } = useSelectAccount({ manifest, currentAccountHistDb });
+  const { onSelectAccount, currentAccount } = useSelectAccount({ manifest, currentAccountHistDb });
+  const currentAccountName =
+    currentAccount &&
+    (accountNameSelector(walletState, { accountId: currentAccount.id }) ||
+      getDefaultAccountName(currentAccount));
 
   const isLoading = useDebounce(webviewState.loading, 100);
 
@@ -193,7 +199,7 @@ export const TopBar = ({
         <>
           <TitleContainer>
             <LiveAppIcon name={name} icon={icon || undefined} size={20} />
-            <ItemContent data-test-id="live-app-title">{name}</ItemContent>
+            <ItemContent data-testid="live-app-title">{name}</ItemContent>
           </TitleContainer>
           <Separator />
         </>
@@ -230,7 +236,7 @@ export const TopBar = ({
           <Spinner
             isRotating
             size={16}
-            data-test-id="web-platform-player-topbar-activity-indicator"
+            data-testid="web-platform-player-topbar-activity-indicator"
           />
         </ItemContainer>
         {shouldDisplaySelectAccount ? (
@@ -238,7 +244,7 @@ export const TopBar = ({
             <ItemContainer
               isInteractive
               onClick={onSelectAccount}
-              data-test-id="web-platform-player-topbar-selected-account"
+              data-testid="web-platform-player-topbar-selected-account"
             >
               {!currentAccount ? (
                 <>
@@ -254,7 +260,7 @@ export const TopBar = ({
                     currency={getAccountCurrency(currentAccount)}
                     size={16}
                   />
-                  <ItemContent>{getDefaultAccountName(currentAccount)}</ItemContent>
+                  <ItemContent>{currentAccountName}</ItemContent>
                 </>
               )}
             </ItemContainer>

@@ -1,4 +1,9 @@
-import type { Api } from "@ledgerhq/coin-framework/api/index";
+import {
+  IncorrectTypeError,
+  Pagination,
+  type Api,
+  type Transaction as ApiTransaction,
+} from "@ledgerhq/coin-framework/api/index";
 import coinConfig, { type TezosConfig } from "../config";
 import {
   broadcast,
@@ -7,6 +12,7 @@ import {
   estimateFees,
   getBalance,
   listOperations,
+  lastBlock,
   rawEncode,
 } from "../logic";
 import api from "../network/tzkt";
@@ -20,21 +26,25 @@ export function createApi(config: TezosConfig): Api {
     craftTransaction: craft,
     estimateFees: estimate,
     getBalance,
-    listOperations,
+    lastBlock,
+    listOperations: operations,
   };
 }
 
+function isTezosTransactionType(type: string): type is "send" | "delegate" | "undelegate" {
+  return ["send", "delegate", "undelegate"].includes(type);
+}
 async function craft(
   address: string,
-  transaction: {
-    recipient: string;
-    amount: bigint;
-    fee: bigint;
-  },
+  { type, recipient, amount, fee }: ApiTransaction,
 ): Promise<string> {
+  if (!isTezosTransactionType(type)) {
+    throw new IncorrectTypeError(type);
+  }
+
   const { contents } = await craftTransaction(
     { address },
-    { ...transaction, type: "send", fee: { fees: transaction.fee.toString() } },
+    { recipient, amount, type, fee: { fees: fee.toString() } },
   );
   return rawEncode(contents);
 }
@@ -54,3 +64,6 @@ async function estimate(addr: string, amount: bigint): Promise<bigint> {
   });
   return estimatedFees.estimatedFees;
 }
+
+const operations = (address: string, { limit, start }: Pagination) =>
+  listOperations(address, { limit, lastId: start });

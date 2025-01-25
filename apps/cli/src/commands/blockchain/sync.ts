@@ -4,6 +4,11 @@ import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { scan, scanCommonOpts } from "../../scan";
 import type { ScanCommonOpts } from "../../scan";
+
+export type SyncJobOpts = ScanCommonOpts & {
+  format: string;
+};
+
 export default {
   description: "Synchronize accounts with blockchain",
   args: [
@@ -16,11 +21,7 @@ export default {
       desc: "how to display the data",
     },
   ],
-  job: (
-    opts: ScanCommonOpts & {
-      format: string;
-    },
-  ) =>
+  job: (opts: SyncJobOpts) =>
     scan(opts).pipe(
       switchMap(async account => {
         const { currencyId } = decodeAccountId(account.id);

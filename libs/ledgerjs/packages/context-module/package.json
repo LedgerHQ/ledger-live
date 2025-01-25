@@ -1,7 +1,8 @@
 {
   "name": "@ledgerhq/context-module",
-  "version": "0.0.3",
+  "version": "0.1.2",
   "description": "Ledger context module",
+  "private": true,
   "files": [
     "./lib"
   ],
@@ -11,6 +12,7 @@
     "clean": "rimraf lib lib-es",
     "build": "tsc -p src && tsc -p src -m ES6 --outDir lib-es",
     "watch": "tsc --watch",
+    "watch:es": "tsc --watch -m ES6 --outDir lib-es",
     "test": "jest"
   },
   "keywords": [],
@@ -26,7 +28,7 @@
     "typescript": "^5.4.5"
   },
   "dependencies": {
-    "axios": "^1.6.8",
+    "axios": "1.7.7",
     "ethers": "^5.7.2"
   }
 }

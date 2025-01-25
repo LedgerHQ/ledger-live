@@ -23,7 +23,7 @@ import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import invariant from "invariant";
 import { Account, SignedOperation, SubAccount } from "@ledgerhq/types-live";
 
-type SwapJobOpts = ScanCommonOpts & {
+export type SwapJobOpts = ScanCommonOpts & {
   amount: string;
   useAllAmount: boolean;
   useFloat: boolean;
@@ -49,7 +49,7 @@ const exec = async (opts: SwapJobOpts) => {
       },
     ],
     {
-      argv: opts._unknown.map((a, i) => (i % 2 ? a : a.replace("_2", ""))),
+      argv: opts._unknown.map((a: string, i: number) => (i % 2 ? a : a.replace("_2", ""))),
     },
   ) as ScanCommonOpts & { tokenId: string };
 
@@ -169,8 +169,10 @@ const exec = async (opts: SwapJobOpts) => {
   const exchange: ExchangeSwap = {
     fromAccount,
     fromParentAccount,
+    fromCurrency: fromAccount.type === "TokenAccount" ? fromAccount.token : fromAccount.currency,
     toAccount,
     toParentAccount,
+    toCurrency: toAccount.type === "TokenAccount" ? toAccount.token : toAccount.currency,
   };
 
   const exchangeRates = await getExchangeRates({ exchange, transaction });

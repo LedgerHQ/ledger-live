@@ -107,6 +107,9 @@ export type ProtocolParams = {
   collateralPercent: string;
   priceSteps: string;
   priceMem: string;
+  maxTxSize: string;
+  maxValueSize: string;
+  utxoCostPerByte: string;
   languageView: TyphonTypes.LanguageView;
 };
 
@@ -118,6 +121,9 @@ export type ProtocolParamsRaw = {
   collateralPercent: string;
   priceSteps: string;
   priceMem: string;
+  maxTxSize: string;
+  maxValueSize: string;
+  utxoCostPerByte: string;
   // TyphonTypes.LanguageView is already a raw type
   languageView: TyphonTypes.LanguageView;
 };
@@ -171,6 +177,7 @@ export type Transaction = TransactionCommon & {
   fees?: BigNumber;
   memo?: string;
   poolId: string | undefined;
+  protocolParams?: ProtocolParams;
   // add here all transaction-specific fields if you implement other modes than "send"
 };
 
@@ -183,6 +190,7 @@ export type TransactionRaw = TransactionCommonRaw & {
   fees?: string;
   memo?: string;
   poolId: string | undefined;
+  protocolParams?: ProtocolParams;
   // also the transaction fields as raw JSON data
 };
 

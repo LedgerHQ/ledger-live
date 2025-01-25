@@ -1,7 +1,10 @@
 import { map, concatMap } from "rxjs/operators";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
-import { deviceOpt } from "../../scan";
+import { DeviceCommonOpts, deviceOpt } from "../../scan";
 import { apdusFromFile } from "../../stream";
+
+export type ReplJobOpts = DeviceCommonOpts & Partial<{ file: string }>;
+
 export default {
   description: "Low level exchange with the device. Send APDUs from stdin.",
   args: [
@@ -14,7 +17,7 @@ export default {
       desc: "A file can also be provided. By default stdin is used.",
     },
   ],
-  job: ({ device, file }: { device: string; file: string }) =>
+  job: ({ device, file }: ReplJobOpts) =>
     withDevice(device || "")(t =>
       apdusFromFile(file || "-").pipe(concatMap(apdu => t.exchange(apdu))),
     ).pipe(map(res => res.toString("hex"))),

@@ -8,7 +8,7 @@ import type {
 } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { DeviceModelId } from "@ledgerhq/devices";
-import type { CryptoCurrencyId, Currency, Unit } from "@ledgerhq/types-cryptoassets";
+import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { MarketListRequestParams } from "@ledgerhq/live-common/market/utils/types";
 import { PostOnboardingState } from "@ledgerhq/types-live";
 import { AvailableProviderV3, ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
@@ -23,11 +23,16 @@ import {
   NotificationContentCard,
   CategoryContentCard,
   BrazeContentCard,
+  LandingPageStickyCtaContentCard,
 } from "../dynamicContent/types";
 import { ProtectStateNumberEnum } from "../components/ServicesWidget/types";
 import { ImageType } from "../components/CustomImage/types";
 import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 import { WalletState } from "@ledgerhq/live-wallet/store";
+import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
+import { Steps } from "LLM/features/WalletSync/types/Activation";
+import { SupportedBlockchainsType, BlockchainsType } from "@ledgerhq/live-nft/supported";
+import { NftStatus } from "@ledgerhq/live-nft/types";
 
 // === ACCOUNT STATE ===
 
@@ -124,8 +129,12 @@ export type DynamicContentState = {
   notificationCards: NotificationContentCard[];
   /** Dynamic content cards handling flexible categories throughout the app */
   categoriesCards: CategoryContentCard[];
+  /** Dynamic content cards displayed in the landing page as sticky CTA */
+  landingPageStickyCtaCards: LandingPageStickyCtaContentCard[];
   /** Dynamic content cards for Ledger Live Mobile */
   mobileCards: BrazeContentCard[];
+  /** Check if CC are loading */
+  isLoading: boolean;
 };
 
 // === RATINGS STATE ===
@@ -156,6 +165,7 @@ export enum OnboardingType {
   restore = "restore",
   connect = "connect",
   setupNew = "setup new",
+  walletSync = "wallet sync",
 }
 
 export type CurrencySettings = {
@@ -209,6 +219,8 @@ export type SettingsState = {
   filterTokenOperationsZeroAmount: boolean;
   blacklistedTokenIds: string[];
   hiddenNftCollections: string[];
+  whitelistedNftCollections: string[];
+  nftCollectionsStatusByNetwork: Record<SupportedBlockchainsType, Record<string, NftStatus>>;
   dismissedBanners: string[];
   hasAvailableUpdate: boolean;
   theme: Theme;
@@ -250,7 +262,9 @@ export type SettingsState = {
   featureFlagsBannerVisible: boolean;
   debugAppLevelDrawerOpened: boolean;
   dateFormat: string;
+  /* NB: Protect is the former codename for Ledger Recover */
   hasBeenUpsoldProtect: boolean;
+  hasBeenRedirectedToPostOnboarding: boolean;
   generalTermsVersionAccepted?: string;
   depositFlow: {
     hasClosedNetworkBanner: boolean;
@@ -261,6 +275,8 @@ export type SettingsState = {
   hasSeenAnalyticsOptInPrompt: boolean;
   dismissedContentCards: { [id: string]: number };
   starredMarketCoins: string[];
+  fromLedgerSyncOnboarding: boolean;
+  mevProtection: boolean;
 };
 
 export type NotificationsSettings = {
@@ -292,6 +308,7 @@ export type EarnState = {
   infoModal: {
     message?: string;
     messageTitle?: string;
+    learnMoreLink?: string;
   };
 };
 
@@ -327,8 +344,8 @@ export type NftState = {
 };
 
 export type NftGalleryChainFiltersState = Pick<
-  Record<CryptoCurrencyId, boolean>,
-  "polygon" | "ethereum"
+  Record<BlockchainsType, boolean>,
+  SupportedBlockchainsType
 >;
 
 // === MARKET STATE ===
@@ -337,6 +354,14 @@ export type MarketState = {
   marketParams: MarketListRequestParams;
   marketFilterByStarredCurrencies: boolean;
   marketCurrentPage: number;
+};
+
+// === WALLETSYNC STATE ===
+
+export type WalletSyncState = {
+  isManageKeyDrawerOpen: boolean;
+  isActivateDrawerOpen: boolean;
+  activateDrawerStep: Steps;
 };
 
 // === ROOT STATE ===
@@ -357,4 +382,6 @@ export type State = {
   nft: NftState;
   market: MarketState;
   wallet: WalletState;
+  trustchain: TrustchainStore;
+  walletSync: WalletSyncState;
 };

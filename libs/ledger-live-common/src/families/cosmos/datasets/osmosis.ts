@@ -7,7 +7,7 @@ import {
 } from "@ledgerhq/errors";
 import invariant from "invariant";
 import type { CosmosAccount, Transaction } from "../types";
-import transactionTransformer from "../transaction";
+import { fromTransactionRaw } from "@ledgerhq/coin-cosmos/transaction";
 import { AccountRaw, CurrenciesData } from "@ledgerhq/types-live";
 
 const dataset: CurrenciesData<Transaction> = {
@@ -78,7 +78,7 @@ const dataset: CurrenciesData<Transaction> = {
         },
         {
           name: "send max",
-          transaction: transactionTransformer.fromTransactionRaw({
+          transaction: fromTransactionRaw({
             amount: "0",
             recipient: "osmo10c792arqxymu8fghu3dfwsacxdvqd8glh8j30p",
             useAllAmount: true,
@@ -106,7 +106,7 @@ const dataset: CurrenciesData<Transaction> = {
         },
         {
           name: "send with memo",
-          transaction: transactionTransformer.fromTransactionRaw({
+          transaction: fromTransactionRaw({
             amount: "0",
             recipient: "osmo10c792arqxymu8fghu3dfwsacxdvqd8glh8j30p",
             useAllAmount: true,

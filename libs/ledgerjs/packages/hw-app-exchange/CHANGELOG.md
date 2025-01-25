@@ -1,5 +1,89 @@
 # @ledgerhq/hw-app-exchange
 
+## 0.6.2
+
+### Patch Changes
+
+- [#7952](https://github.com/LedgerHQ/ledger-live/pull/7952) [`d6c9096`](https://github.com/LedgerHQ/ledger-live/commit/d6c9096968692b64d12c6bd81e8daa48f55793b9) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Fix issue with infinite loader during swap with legacy swap ui
+  Add additionnal test to hw-app-exchange
+
+## 0.6.2-next.0
+
+### Patch Changes
+
+- [#7952](https://github.com/LedgerHQ/ledger-live/pull/7952) [`d6c9096`](https://github.com/LedgerHQ/ledger-live/commit/d6c9096968692b64d12c6bd81e8daa48f55793b9) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Fix issue with infinite loader during swap with legacy swap ui
+  Add additionnal test to hw-app-exchange
+
+## 0.6.1
+
+### Patch Changes
+
+- Updated dependencies [[`0a71c43`](https://github.com/LedgerHQ/ledger-live/commit/0a71c4344b7bb2c6640f3e5dda152ae815573330)]:
+  - @ledgerhq/errors@6.19.1
+  - @ledgerhq/hw-transport@6.31.4
+
+## 0.6.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`0a71c43`](https://github.com/LedgerHQ/ledger-live/commit/0a71c4344b7bb2c6640f3e5dda152ae815573330)]:
+  - @ledgerhq/errors@6.19.1-next.0
+  - @ledgerhq/hw-transport@6.31.4-next.0
+
+## 0.6.0
+
+### Minor Changes
+
+- [#7521](https://github.com/LedgerHQ/ledger-live/pull/7521) [`16aee39`](https://github.com/LedgerHQ/ledger-live/commit/16aee39a3b8c33d5b3680a9d7045cd11a3863b9a) Thanks [@chrisduma-ledger](https://github.com/chrisduma-ledger)! - Adds sell utils
+
+### Patch Changes
+
+- Updated dependencies [[`5c738cb`](https://github.com/LedgerHQ/ledger-live/commit/5c738cbd35ce5d0ca39ad3b86a61cc6234d1bdf7), [`fb9466a`](https://github.com/LedgerHQ/ledger-live/commit/fb9466a4d7827fd4759c726ad3ae0b43dddcacd3), [`a3fd728`](https://github.com/LedgerHQ/ledger-live/commit/a3fd72861f2a7df676bd793062b3816fdb9d1f57)]:
+  - @ledgerhq/errors@6.19.0
+  - @ledgerhq/hw-transport@6.31.3
+
+## 0.6.0-next.0
+
+### Minor Changes
+
+- [#7521](https://github.com/LedgerHQ/ledger-live/pull/7521) [`16aee39`](https://github.com/LedgerHQ/ledger-live/commit/16aee39a3b8c33d5b3680a9d7045cd11a3863b9a) Thanks [@chrisduma-ledger](https://github.com/chrisduma-ledger)! - Adds sell utils
+
+### Patch Changes
+
+- Updated dependencies [[`5c738cb`](https://github.com/LedgerHQ/ledger-live/commit/5c738cbd35ce5d0ca39ad3b86a61cc6234d1bdf7), [`fb9466a`](https://github.com/LedgerHQ/ledger-live/commit/fb9466a4d7827fd4759c726ad3ae0b43dddcacd3), [`a3fd728`](https://github.com/LedgerHQ/ledger-live/commit/a3fd72861f2a7df676bd793062b3816fdb9d1f57)]:
+  - @ledgerhq/errors@6.19.0-next.0
+  - @ledgerhq/hw-transport@6.31.3-next.0
+
+## 0.5.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.2
+
+## 0.5.2-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.2-hotfix.0
+
+## 0.5.1
+
+### Patch Changes
+
+- Updated dependencies [[`e78f3b7`](https://github.com/LedgerHQ/ledger-live/commit/e78f3b75296c7a063f6cddbeae44c36d236055f3), [`f979216`](https://github.com/LedgerHQ/ledger-live/commit/f9792160293fc8215c6d099f02e1b136c6655f9b), [`c1d2bb0`](https://github.com/LedgerHQ/ledger-live/commit/c1d2bb0866723c10d6e2899d40ddd9b9801189f4)]:
+  - @ledgerhq/errors@6.18.0
+  - @ledgerhq/hw-transport@6.31.1
+
+## 0.5.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`e78f3b7`](https://github.com/LedgerHQ/ledger-live/commit/e78f3b75296c7a063f6cddbeae44c36d236055f3), [`f979216`](https://github.com/LedgerHQ/ledger-live/commit/f9792160293fc8215c6d099f02e1b136c6655f9b), [`c1d2bb0`](https://github.com/LedgerHQ/ledger-live/commit/c1d2bb0866723c10d6e2899d40ddd9b9801189f4)]:
+  - @ledgerhq/errors@6.18.0-next.0
+  - @ledgerhq/hw-transport@6.31.1-next.0
+
 ## 0.5.0
 
 ### Minor Changes

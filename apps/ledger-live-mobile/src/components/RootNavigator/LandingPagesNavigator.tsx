@@ -4,7 +4,7 @@ import { useTheme } from "styled-components/native";
 import { ScreenName } from "~/const";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import { LandingPagesNavigatorParamList } from "./types/LandingPagesNavigator";
-import GenericLandingPage from "~/newArch/features/LandingPages/screens/GenericLandingPage";
+import GenericLandingPage from "LLM/features/LandingPages/screens/GenericLandingPage";
 import { NavigationHeaderCloseButton } from "../NavigationHeaderCloseButton";
 
 const Stack = createStackNavigator<LandingPagesNavigatorParamList>();

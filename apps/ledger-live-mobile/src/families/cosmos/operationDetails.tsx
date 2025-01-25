@@ -8,7 +8,7 @@ import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { BigNumber } from "bignumber.js";
 import type { CosmosAccount, CosmosOperation } from "@ledgerhq/live-common/families/cosmos/types";
 import { useSelector } from "react-redux";
-import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain/chain";
+import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";
 import Section from "~/screens/OperationDetails/Section";
 import { discreetModeSelector } from "~/reducers/settings";
 import { useSettings } from "~/hooks";
@@ -74,8 +74,16 @@ function OperationDetailsExtra({ operation, type, account }: Props) {
       });
       ret = (
         <>
-          <Section title={t("operationDetails.extra.delegatedTo")} value={formattedValidator} />
-          <Section title={t("operationDetails.extra.delegatedAmount")} value={formattedAmount} />
+          <Section
+            title={t("operationDetails.extra.delegatedTo")}
+            value={formattedValidator}
+            testID="operationDetails-delegatedTo"
+          />
+          <Section
+            title={t("operationDetails.extra.delegatedAmount")}
+            value={formattedAmount}
+            testID="operationDetails-delegatedAmount"
+          />
         </>
       );
       break;

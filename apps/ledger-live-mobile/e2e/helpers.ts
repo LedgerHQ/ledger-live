@@ -1,10 +1,17 @@
-import { by, element, waitFor, device } from "detox";
+import { by, element, waitFor, device, web } from "detox";
 import { Direction } from "detox/detox";
 import { findFreePort, close as closeBridge, init as initBridge } from "./bridge/server";
+
+import { startSpeculos, stopSpeculos, specs } from "@ledgerhq/live-common/e2e/speculos";
+import { SpeculosDevice } from "@ledgerhq/speculos-transport";
+import invariant from "invariant";
+import { getEnv, setEnv } from "@ledgerhq/live-env";
+import { startProxy, closeProxy } from "./bridge/proxy";
 
 const DEFAULT_TIMEOUT = 60000; // 60s !!
 const BASE_DEEPLINK = "ledgerlive://";
 const startPositionY = 0.8; // Needed on Android to scroll views : https://github.com/wix/Detox/issues/3918
+
 export const itifAndroid = (...args: Parameters<typeof test>) =>
   isAndroid() ? test(...args) : test.skip("[Android only] " + args[0], args[1], args[2]);
 export const describeifAndroid = (...args: Parameters<typeof describe>) =>
@@ -14,23 +21,57 @@ export const recipientParam = "&recipient=";
 export const amountParam = "&amount=";
 export const accountIdParam = "?accountId=";
 
-export async function waitForElementById(id: string | RegExp, timeout: number = DEFAULT_TIMEOUT) {
-  return await waitFor(getElementById(id)).toBeVisible().withTimeout(timeout);
+const BASE_PORT = 30000;
+const MAX_PORT = 65535;
+let portCounter = BASE_PORT; // Counter for generating unique ports
+const speculosDevices: [number, SpeculosDevice][] = [];
+
+function sync_delay(ms: number) {
+  const done = new Int32Array(new SharedArrayBuffer(4));
+  Atomics.wait(done, 0, 0, ms); // Wait for the specified duration
 }
 
-export async function waitForElementByText(
-  text: string | RegExp,
-  timeout: number = DEFAULT_TIMEOUT,
-) {
-  return await waitFor(getElementByText(text)).toBeVisible().withTimeout(timeout);
+export function waitForElementById(id: string | RegExp, timeout: number = DEFAULT_TIMEOUT) {
+  return waitFor(element(by.id(id)))
+    .toBeVisible()
+    .withTimeout(timeout);
+}
+
+export function waitForElementByText(text: string | RegExp, timeout: number = DEFAULT_TIMEOUT) {
+  return waitFor(element(by.text(text)))
+    .toBeVisible()
+    .withTimeout(timeout);
 }
 
 export function getElementById(id: string | RegExp, index = 0) {
+  if (!isAndroid()) sync_delay(200); // Issue with RN75 : QAA-370
   return element(by.id(id)).atIndex(index);
 }
 
 export function getElementByText(text: string | RegExp, index = 0) {
+  if (!isAndroid()) sync_delay(200); // Issue with RN75 : QAA-370
   return element(by.text(text)).atIndex(index);
+}
+
+export function getWebElementById(id: string, index = 0) {
+  if (!isAndroid()) sync_delay(200); // Issue with RN75 : QAA-370
+  return web.element(by.web.id(id)).atIndex(index);
+}
+
+export function getWebElementByTag(tag: string, index = 0) {
+  if (!isAndroid()) sync_delay(200); // Issue with RN75 : QAA-370
+  return web.element(by.web.tag(tag)).atIndex(index);
+}
+
+export async function IsIdVisible(id: string | RegExp) {
+  try {
+    await waitFor(element(by.id(id)))
+      .toBeVisible()
+      .withTimeout(1000);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 export async function tapById(id: string | RegExp, index = 0) {
@@ -78,6 +119,7 @@ async function performScroll(
   const scrollViewMatcher = scrollViewId
     ? by.id(scrollViewId)
     : by.type(isAndroid() ? "android.widget.ScrollView" : "RCTScrollView");
+  if (!isAndroid()) sync_delay(200); // Issue with RN75 : QAA-370
   await waitFor(element(elementMatcher))
     .toBeVisible()
     .whileElement(scrollViewMatcher)
@@ -107,6 +149,14 @@ export async function scrollToId(
 export async function getTextOfElement(id: string | RegExp, index = 0) {
   const attributes = await getElementById(id, index).getAttributes();
   return (!("elements" in attributes) ? attributes.text : attributes.elements[index].text) || "";
+}
+
+export async function getIdOfElement(id: RegExp, index = 0) {
+  const attributes = await getElementById(id, index).getAttributes();
+  return (
+    (!("elements" in attributes) ? attributes.identifier : attributes.elements[index].identifier) ||
+    ""
+  );
 }
 
 /**
@@ -139,7 +189,11 @@ export async function launchApp() {
     launchArgs: {
       wsPort: port,
       detoxURLBlacklistRegex:
-        '\\(".*sdk.*.braze.*",".*.googleapis.com/.*",".*app.adjust.*",".*clients3.google.com.*"\\)',
+        '\\(".*sdk.*.braze.*",".*.googleapis.com/.*",".*clients3.google.com.*",".*tron.coin.ledger.com/wallet/getBrokerage.*"\\)',
+      mock: getEnv("MOCK") ? getEnv("MOCK") : "0",
+      disable_broadcast: getEnv("DISABLE_TRANSACTION_BROADCAST")
+        ? getEnv("DISABLE_TRANSACTION_BROADCAST")
+        : "1",
     },
     languageAndLocale: {
       language: "en-US",
@@ -150,4 +204,52 @@ export async function launchApp() {
     },
   });
   return port;
+}
+
+export async function launchSpeculos(appName: string, proxyPort: number) {
+  // Ensure the portCounter stays within the valid port range
+  if (portCounter > MAX_PORT) {
+    portCounter = BASE_PORT;
+  }
+  const speculosPort = portCounter++;
+  const speculosPidOffset =
+    (speculosPort - BASE_PORT) * 1000 + parseInt(process.env.JEST_WORKER_ID || "0") * 100;
+  setEnv("SPECULOS_PID_OFFSET", speculosPidOffset);
+
+  const testName = expect.getState().testPath || "unknown";
+  const speculosDevice = await startSpeculos(testName, specs[appName.replace(/ /g, "_")]);
+  invariant(speculosDevice, "[E2E Setup] Speculos not started");
+
+  const speculosApiPort = speculosDevice.ports.apiPort;
+  invariant(speculosApiPort, "[E2E Setup] speculosApiPort not defined");
+  setEnv("SPECULOS_API_PORT", speculosApiPort);
+  speculosDevices.push([proxyPort, speculosDevice]);
+  console.warn(`Speculos started on ${proxyPort}`);
+  return speculosApiPort;
+}
+
+export async function launchProxy(
+  proxyPort: number,
+  speculosAddress?: string,
+  speculosPort?: number,
+) {
+  await device.reverseTcpPort(proxyPort);
+  await startProxy(proxyPort, speculosAddress, speculosPort);
+}
+
+export async function deleteSpeculos(proxyPort?: number) {
+  if (!proxyPort) {
+    for (const [address] of speculosDevices) {
+      await deleteSpeculos(address);
+    }
+    return;
+  }
+  if (proxyPort) closeProxy(proxyPort);
+  const speculosDevice = speculosDevices.find(([number]) => number === proxyPort)?.[1];
+  if (speculosDevice) {
+    await stopSpeculos(speculosDevice);
+    speculosDevices.splice(speculosDevices.indexOf([proxyPort, speculosDevice]));
+    console.warn(`Speculos stopped on ${proxyPort}`);
+  }
+  setEnv("SPECULOS_API_PORT", 0);
 }

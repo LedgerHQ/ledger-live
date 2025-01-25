@@ -162,7 +162,7 @@ export function StepAccountFooter({
   const error = account ? getReceiveFlowError(account, parentAccount) : null;
   return (
     <Button
-      data-test-id="modal-continue-button"
+      data-testid="modal-continue-button"
       disabled={!account || (receiveTokenMode && !token) || !!error}
       primary
       onClick={() => transitionTo("device")}

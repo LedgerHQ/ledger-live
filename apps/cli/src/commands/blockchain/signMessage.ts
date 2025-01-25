@@ -3,7 +3,13 @@ import { from } from "rxjs";
 import { switchMap } from "rxjs/operators";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import signMessage, { prepareMessageToSign } from "@ledgerhq/live-common/hw/signMessage/index";
-import { scan, scanCommonOpts } from "../../scan";
+import { scan, ScanCommonOpts, scanCommonOpts } from "../../scan";
+
+export type SignMessageJobOpts = {
+  message: string;
+  path?: string;
+  parser?: "string" | "file";
+} & ScanCommonOpts;
 
 export default {
   description: "Sign a message with the device on specific derivations (advanced)",
@@ -26,7 +32,7 @@ export default {
       default: "String",
     },
   ],
-  job: (opts: any) => {
+  job: (opts: SignMessageJobOpts) => {
     return scan(opts).pipe(
       switchMap(account => {
         if (!account.currency) {

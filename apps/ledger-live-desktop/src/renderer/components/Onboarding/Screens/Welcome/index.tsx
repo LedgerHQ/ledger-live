@@ -12,9 +12,9 @@ import { acceptTerms } from "~/renderer/terms";
 import BuyNanoX from "./assets/buyNanoX.webm";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { urls } from "~/config/urls";
-import AnalyticsOptInPrompt from "LLD/AnalyticsOptInPrompt/screens";
-import { useAnalyticsOptInPrompt } from "LLD/AnalyticsOptInPrompt/hooks/useCommonLogic";
-import { EntryPoint } from "LLD/AnalyticsOptInPrompt/types/AnalyticsOptInPromptNavigator";
+import AnalyticsOptInPrompt from "LLD/features/AnalyticsOptInPrompt/screens";
+import { useAnalyticsOptInPrompt } from "LLD/features/AnalyticsOptInPrompt/hooks/useCommonLogic";
+import { EntryPoint } from "LLD/features/AnalyticsOptInPrompt/types/AnalyticsOptInPromptNavigator";
 
 const StyledLink = styled(Text)`
   text-decoration: underline;
@@ -146,7 +146,7 @@ export function Welcome() {
   const {
     analyticsOptInPromptProps,
     isFeatureFlagsAnalyticsPrefDisplayed,
-    openAnalitycsOptInPrompt,
+    openAnalyticsOptInPrompt,
     onSubmit,
   } = useAnalyticsOptInPrompt({
     entryPoint: EntryPoint.onboarding,
@@ -162,7 +162,13 @@ export function Welcome() {
       <LeftContainer>
         <Presentation>
           <Logos.LedgerLiveRegular color={colors.neutral.c100} />
-          <Text variant="h1" pt={10} pb={7} onClick={() => handleOpenFeatureFlagsDrawer("1")}>
+          <Text
+            data-testid="onbording-welcome-title"
+            variant="h1"
+            pt={10}
+            pb={7}
+            onClick={() => handleOpenFeatureFlagsDrawer("1")}
+          >
             {t("onboarding.screens.welcome.title")}
           </Text>
           <Description variant="body" onClick={() => handleOpenFeatureFlagsDrawer("2")}>
@@ -176,13 +182,13 @@ export function Welcome() {
             </Button>
           )}
           <Button
-            data-test-id="v3-onboarding-get-started-button"
+            data-testid="v3-onboarding-get-started-button"
             iconPosition="right"
             Icon={IconsLegacy.ArrowRightMedium}
             variant="main"
             onClick={_ => {
               isFeatureFlagsAnalyticsPrefDisplayed
-                ? openAnalitycsOptInPrompt("Onboarding", handleAcceptTermsAndGetStarted)
+                ? openAnalyticsOptInPrompt("Onboarding", handleAcceptTermsAndGetStarted)
                 : handleAcceptTermsAndGetStarted();
             }}
             mb="5"
@@ -194,7 +200,7 @@ export function Welcome() {
             variant="main"
             onClick={_ => {
               isFeatureFlagsAnalyticsPrefDisplayed
-                ? openAnalitycsOptInPrompt("Onboarding", buyNanoX)
+                ? openAnalyticsOptInPrompt("Onboarding", buyNanoX)
                 : buyNanoX();
             }}
             outline={true}

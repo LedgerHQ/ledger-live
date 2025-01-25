@@ -63,6 +63,7 @@ interface Window {
 
   getAllFeatureFlags: (appLanguage: string) => Partial<{ [key in FeatureId]: Feature }>;
   getAllEnvs: () => { [key in EnvName]: unknown };
+  saveLogs: (path: string) => void;
 
   // for mocking purposes apparently?
   // eslint-disable-next-line

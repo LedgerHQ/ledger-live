@@ -12,6 +12,7 @@
       "language": "en",
       "theme": "light",
       "region": null,
+      "locale": "en-US",
       "orderAccounts": "balance|desc",
       "countervalueFirst": false,
       "autoLockTimeout": 10,

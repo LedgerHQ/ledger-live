@@ -13,7 +13,9 @@ import {
   setAccountName,
   setAccountNames,
   setAccountStarred,
+  walletStateExportShouldDiffer,
   walletSyncUpdate,
+  walletSyncStateSelector,
 } from "./store";
 import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
 import type { Account } from "@ledgerhq/types-live";
@@ -51,6 +53,46 @@ describe("Wallet store", () => {
     });
     expect(result.accountNames.get(ETHEREUM_ACCOUNT)).toBe(ETHEREUM_ACCOUNT_NAME);
     expect(result.accountNames.get(POLKADOT_ACCOUNT)).toBe(POLKADOT_ACCOUNT_NAME);
+    expect(result.accountNames.get(NEW_POLKADOT_ACCOUNT)).toBe(NEW_POLKADOT_ACCOUNT_NAME);
+  });
+  it("should not save the default accounts names when adding an account", () => {
+    const editedNames = new Map();
+    editedNames.set(ETHEREUM_ACCOUNT, "Ethereum 1");
+    editedNames.set(POLKADOT_ACCOUNT, "Polkadot 1");
+    editedNames.set(NEW_POLKADOT_ACCOUNT, NEW_POLKADOT_ACCOUNT_NAME);
+    const result = handlers.ADD_ACCOUNTS(
+      {
+        ...initialState,
+        accountNames: new Map(),
+      },
+      {
+        payload: {
+          allAccounts: [
+            {
+              id: ETHEREUM_ACCOUNT,
+              type: "Account",
+              currency: { name: "Ethereum" },
+              index: 0,
+            } as Account,
+            {
+              id: POLKADOT_ACCOUNT,
+              type: "Account",
+              currency: { name: "Polkadot" },
+              index: 0,
+            } as Account,
+            {
+              id: NEW_POLKADOT_ACCOUNT,
+              type: "Account",
+              currency: { name: "Polkadot" },
+              index: 1,
+            } as Account,
+          ],
+          editedNames,
+        },
+      },
+    );
+    expect(result.accountNames.get(ETHEREUM_ACCOUNT)).toBe(undefined);
+    expect(result.accountNames.get(POLKADOT_ACCOUNT)).toBe(undefined);
     expect(result.accountNames.get(NEW_POLKADOT_ACCOUNT)).toBe(NEW_POLKADOT_ACCOUNT_NAME);
   });
 
@@ -174,27 +216,42 @@ describe("Wallet store", () => {
 
   it("can update the wallet sync state", () => {
     const result = handlers.WALLET_SYNC_UPDATE(initialState, walletSyncUpdate({}, 42));
-    expect(result.wsState).toEqual({
+    expect(result.walletSyncState).toEqual({
       data: {},
       version: 42,
     });
   });
 
+  const exportedState = {
+    walletSyncState: { data: {}, version: 42 },
+    nonImportedAccountInfos: [],
+  };
+
+  it("allows partial wallet state", () => {
+    const result = handlers.IMPORT_WALLET_SYNC(
+      initialState,
+      importWalletState({
+        walletSyncState: { version: 42, data: {} },
+      }),
+    );
+    expect(result.nonImportedAccountInfos).toEqual([]);
+  });
+
   it("can import the wallet state", () => {
-    const exportedState = {
-      wsState: { data: {}, version: 42 },
-    };
     const result = handlers.IMPORT_WALLET_SYNC(initialState, importWalletState(exportedState));
-    expect(result.wsState).toEqual({ data: {}, version: 42 });
+    expect(walletSyncStateSelector(result)).toEqual({ data: {}, version: 42 });
   });
 
   it("can export the wallet state", () => {
-    const exportedState = {
-      wsState: { data: {}, version: 42 },
-    };
     const result = handlers.IMPORT_WALLET_SYNC(initialState, importWalletState(exportedState));
-    expect(exportWalletState(result)).toEqual({
-      wsState: { data: {}, version: 42 },
-    });
+    expect(exportWalletState(result)).toEqual(exportedState);
+  });
+
+  it("walletStateExportShouldDiffer", () => {
+    const result = handlers.IMPORT_WALLET_SYNC(initialState, importWalletState(exportedState));
+    expect(exportWalletState(result)).toEqual(exportedState);
+    expect(walletStateExportShouldDiffer(initialState, result)).toBe(true);
+    expect(walletStateExportShouldDiffer(initialState, initialState)).toBe(false);
+    expect(walletStateExportShouldDiffer(result, result)).toBe(false);
   });
 });

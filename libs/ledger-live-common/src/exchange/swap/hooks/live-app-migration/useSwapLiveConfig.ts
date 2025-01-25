@@ -1,11 +1,15 @@
 import { useFeature } from "../../../../featureFlags";
 
-// used to enable the Swap Live App globally
+/**
+ * This hook is used to retrieve the configuration for the Swap Live App.
+ * The `ptxSwapLiveApp` feature flag is always true, but it is used
+ * to obtain the manifest ID that loads the URL for the live app in production,
+ * stg, or ppr environments.
+ *
+ * @returns The feature flag configuration for `ptxSwapLiveApp`.
+ */
 export function useSwapLiveConfig() {
-  const demoZero = useFeature("ptxSwapLiveAppDemoZero");
-  const demoOne = useFeature("ptxSwapLiveAppDemoOne");
+  const config = useFeature("ptxSwapLiveApp");
 
-  if (demoZero?.enabled === demoOne?.enabled) return null;
-
-  return demoZero?.enabled && !demoOne?.enabled ? demoZero : demoOne?.enabled ? demoOne : null;
+  return config;
 }

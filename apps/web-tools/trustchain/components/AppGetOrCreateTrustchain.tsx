@@ -4,10 +4,9 @@ import {
   MemberCredentials,
   Trustchain,
   TrustchainDeviceCallbacks,
-} from "@ledgerhq/trustchain/types";
+} from "@ledgerhq/ledger-key-ring-protocol/types";
 import { Actionable } from "./Actionable";
 import { useTrustchainSDK } from "../context";
-import { runWithDevice } from "../device";
 
 export function AppGetOrCreateTrustchain({
   deviceId,
@@ -26,11 +25,9 @@ export function AppGetOrCreateTrustchain({
 
   const action = useCallback(
     (memberCredentials: MemberCredentials) =>
-      runWithDevice(deviceId, transport =>
-        sdk
-          .getOrCreateTrustchain(transport, memberCredentials, callbacks)
-          .then(result => result.trustchain),
-      ),
+      sdk
+        .getOrCreateTrustchain(deviceId, memberCredentials, callbacks)
+        .then(result => result.trustchain),
     [deviceId, sdk, callbacks],
   );
 

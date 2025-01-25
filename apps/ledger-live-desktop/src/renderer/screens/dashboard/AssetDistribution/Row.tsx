@@ -102,7 +102,7 @@ const Row = ({ item: { currency, amount, distribution }, isVisible }: Props) => 
     });
   }, [currency, history]);
   return (
-    <Wrapper onClick={onClick} data-test-id={`asset-row-${currency.name.toLowerCase()}`}>
+    <Wrapper onClick={onClick} data-testid={`asset-row-${currency.name.toLowerCase()}`}>
       <Asset>
         {icon}
         <Tooltip delay={1200} content={currency.name}>

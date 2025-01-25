@@ -7,6 +7,7 @@ import { calculate } from "@ledgerhq/live-countervalues/logic";
 import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
 import type { Currency } from "@ledgerhq/types-cryptoassets";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
+import { WalletState, accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
 
 type Field = {
   title: string;
@@ -16,6 +17,7 @@ type Field = {
     arg2: Operation,
     arg3: Currency | null | undefined,
     arg4: CounterValuesState | null | undefined,
+    arg5: WalletState | null | undefined,
   ) => string;
 };
 
@@ -64,8 +66,12 @@ const fields: Field[] = [
   },
   {
     title: "Account Name",
-    // FIXME: we need to inject wallet state if we want the actual user's account name
-    cell: (account, parentAccount) => getDefaultAccountName(getMainAccount(account, parentAccount)),
+    cell: (account, parentAccount, _op, _counterValueCurrency, _countervalueState, walletState) => {
+      const main = getMainAccount(account, parentAccount);
+      return walletState
+        ? accountNameWithDefaultSelector(walletState, main)
+        : getDefaultAccountName(main);
+    },
   },
   {
     title: "Account xpub",
@@ -128,12 +134,20 @@ const accountRows = (
   parentAccount: Account | null | undefined,
   counterValueCurrency?: Currency,
   countervalueState?: CounterValuesState,
+  walletState?: WalletState,
 ): Array<string[]> =>
   account.operations
     .reduce((ops: Operation[], op) => ops.concat(flattenOperationWithInternalsAndNfts(op)), [])
     .map(operation =>
       fields.map(field =>
-        field.cell(account, parentAccount, operation, counterValueCurrency, countervalueState),
+        field.cell(
+          account,
+          parentAccount,
+          operation,
+          counterValueCurrency,
+          countervalueState,
+          walletState,
+        ),
       ),
     );
 
@@ -141,20 +155,40 @@ const accountsRows = (
   accounts: Account[],
   counterValueCurrency?: Currency,
   countervalueState?: CounterValuesState,
-): Array<string[]> =>
-  flattenAccounts(accounts).reduce((all: Array<string[]>, account) => {
+  walletState?: WalletState,
+): Array<string[]> => {
+  return flattenAccounts(accounts).reduce((all: Array<string[]>, account) => {
     const parentAccount =
       account.type !== "Account" ? accounts.find(a => a.id === account.parentId) : null;
-    return all.concat(accountRows(account, parentAccount, counterValueCurrency, countervalueState));
+    return all.concat(
+      accountRows(account, parentAccount, counterValueCurrency, countervalueState, walletState),
+    );
   }, []);
+};
+
+const mapRowValue = (row: string[]): string => {
+  const rowWithoutNewlines = row.map(value => {
+    if (value) {
+      return value.replace(/[,\n\r]/g, "");
+    }
+    return value;
+  });
+  return rowWithoutNewlines.join(",");
+};
 
 export const accountsOpToCSV = (
   accounts: Account[],
   counterValueCurrency?: Currency,
   countervalueState?: CounterValuesState, // cvs state required for countervalues export
-): string =>
-  fields.map(field => field.title).join(",") +
-  newLine +
-  accountsRows(accounts, counterValueCurrency, countervalueState)
-    .map(row => row.map(value => value.replace(/[,\n\r]/g, "")).join(","))
-    .join(newLine);
+  walletState?: WalletState, // wallet state required for account name
+): string => {
+  const header = fields.map(field => field.title).join(",") + newLine;
+  const accountsRowsRes = accountsRows(
+    accounts,
+    counterValueCurrency,
+    countervalueState,
+    walletState,
+  );
+  const rows = accountsRowsRes.map(mapRowValue).join(newLine);
+  return header + rows;
+};

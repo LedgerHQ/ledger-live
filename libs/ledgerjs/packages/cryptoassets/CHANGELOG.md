@@ -1,5 +1,243 @@
 # @ledgerhq/cryptoassets
 
+## 13.9.0
+
+### Minor Changes
+
+- [#8396](https://github.com/LedgerHQ/ledger-live/pull/8396) [`d98a964`](https://github.com/LedgerHQ/ledger-live/commit/d98a96476c3d44eab1575f6c7c58ec03b5daf890) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Support for Aptos blockchain
+
+- [#8731](https://github.com/LedgerHQ/ledger-live/pull/8731) [`c2d24cd`](https://github.com/LedgerHQ/ledger-live/commit/c2d24cd0299ea04e39306279b6f833696bc4f4fb) Thanks [@Canestin](https://github.com/Canestin)! - Zenrock integration
+
+### Patch Changes
+
+- Updated dependencies [[`d98a964`](https://github.com/LedgerHQ/ledger-live/commit/d98a96476c3d44eab1575f6c7c58ec03b5daf890)]:
+  - @ledgerhq/live-env@2.5.0
+
+## 13.9.0-next.0
+
+### Minor Changes
+
+- [#8396](https://github.com/LedgerHQ/ledger-live/pull/8396) [`d98a964`](https://github.com/LedgerHQ/ledger-live/commit/d98a96476c3d44eab1575f6c7c58ec03b5daf890) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Support for Aptos blockchain
+
+- [#8731](https://github.com/LedgerHQ/ledger-live/pull/8731) [`c2d24cd`](https://github.com/LedgerHQ/ledger-live/commit/c2d24cd0299ea04e39306279b6f833696bc4f4fb) Thanks [@Canestin](https://github.com/Canestin)! - Zenrock integration
+
+### Patch Changes
+
+- Updated dependencies [[`d98a964`](https://github.com/LedgerHQ/ledger-live/commit/d98a96476c3d44eab1575f6c7c58ec03b5daf890)]:
+  - @ledgerhq/live-env@2.5.0-next.0
+
+## 13.8.0
+
+### Minor Changes
+
+- [#8374](https://github.com/LedgerHQ/ledger-live/pull/8374) [`50b00c7`](https://github.com/LedgerHQ/ledger-live/commit/50b00c73e39af99c7d749bf57d5ef2f2e4942f2d) Thanks [@qperrot](https://github.com/qperrot)! - move crypto_org into cosmos coin module
+
+- [#8704](https://github.com/LedgerHQ/ledger-live/pull/8704) [`1fa754d`](https://github.com/LedgerHQ/ledger-live/commit/1fa754deed730bb3dd8d05cb4e83e8c8d1b33ad1) Thanks [@Canestin](https://github.com/Canestin)! - add xion currency
+
+- [#8579](https://github.com/LedgerHQ/ledger-live/pull/8579) [`1f62290`](https://github.com/LedgerHQ/ledger-live/commit/1f622907dd108fced66a36be1d8d8738d41303c9) Thanks [@ahsan-javaiid](https://github.com/ahsan-javaiid)! - fix: updare rsk network name to rootstock
+
+## 13.8.0-next.0
+
+### Minor Changes
+
+- [#8374](https://github.com/LedgerHQ/ledger-live/pull/8374) [`50b00c7`](https://github.com/LedgerHQ/ledger-live/commit/50b00c73e39af99c7d749bf57d5ef2f2e4942f2d) Thanks [@qperrot](https://github.com/qperrot)! - move crypto_org into cosmos coin module
+
+- [#8704](https://github.com/LedgerHQ/ledger-live/pull/8704) [`1fa754d`](https://github.com/LedgerHQ/ledger-live/commit/1fa754deed730bb3dd8d05cb4e83e8c8d1b33ad1) Thanks [@Canestin](https://github.com/Canestin)! - add xion currency
+
+- [#8579](https://github.com/LedgerHQ/ledger-live/pull/8579) [`1f62290`](https://github.com/LedgerHQ/ledger-live/commit/1f622907dd108fced66a36be1d8d8738d41303c9) Thanks [@ahsan-javaiid](https://github.com/ahsan-javaiid)! - fix: updare rsk network name to rootstock
+
+## 13.7.0
+
+### Minor Changes
+
+- [#8205](https://github.com/LedgerHQ/ledger-live/pull/8205) [`2013b0f`](https://github.com/LedgerHQ/ledger-live/commit/2013b0f23d7f5bccff58dfd93fd45333194b8ae0) Thanks [@Canestin](https://github.com/Canestin)! - add mantra currency
+
+- [#8182](https://github.com/LedgerHQ/ledger-live/pull/8182) [`63e5392`](https://github.com/LedgerHQ/ledger-live/commit/63e5392a108f1bec7cfc9c413db1550e7b5c9a25) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for ZKsync currency
+
+### Patch Changes
+
+- Updated dependencies [[`5c13c7b`](https://github.com/LedgerHQ/ledger-live/commit/5c13c7bf743333f09cbfee720d275dfae7e157d2), [`95fbec9`](https://github.com/LedgerHQ/ledger-live/commit/95fbec9fdff75cd6d4ac23e189e876efffc81906), [`b93a421`](https://github.com/LedgerHQ/ledger-live/commit/b93a421866519b80fdd8a029caea97323eceae93)]:
+  - @ledgerhq/live-env@2.4.1
+
+## 13.7.0-next.0
+
+### Minor Changes
+
+- [#8205](https://github.com/LedgerHQ/ledger-live/pull/8205) [`2013b0f`](https://github.com/LedgerHQ/ledger-live/commit/2013b0f23d7f5bccff58dfd93fd45333194b8ae0) Thanks [@Canestin](https://github.com/Canestin)! - add mantra currency
+
+- [#8182](https://github.com/LedgerHQ/ledger-live/pull/8182) [`63e5392`](https://github.com/LedgerHQ/ledger-live/commit/63e5392a108f1bec7cfc9c413db1550e7b5c9a25) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for ZKsync currency
+
+### Patch Changes
+
+- Updated dependencies [[`5c13c7b`](https://github.com/LedgerHQ/ledger-live/commit/5c13c7bf743333f09cbfee720d275dfae7e157d2), [`95fbec9`](https://github.com/LedgerHQ/ledger-live/commit/95fbec9fdff75cd6d4ac23e189e876efffc81906), [`b93a421`](https://github.com/LedgerHQ/ledger-live/commit/b93a421866519b80fdd8a029caea97323eceae93)]:
+  - @ledgerhq/live-env@2.4.1-next.0
+
+## 13.6.2
+
+### Patch Changes
+
+- [#7566](https://github.com/LedgerHQ/ledger-live/pull/7566) [`f275f48`](https://github.com/LedgerHQ/ledger-live/commit/f275f48a17eeba2bdd3119e478975c8d4c7183be) Thanks [@albertov19](https://github.com/albertov19)! - Updated logos for Moonbeam/Moonriver
+
+## 13.6.2-next.0
+
+### Patch Changes
+
+- [#7566](https://github.com/LedgerHQ/ledger-live/pull/7566) [`f275f48`](https://github.com/LedgerHQ/ledger-live/commit/f275f48a17eeba2bdd3119e478975c8d4c7183be) Thanks [@albertov19](https://github.com/albertov19)! - Updated logos for Moonbeam/Moonriver
+
+## 13.6.1
+
+### Patch Changes
+
+- Updated dependencies [[`ced792c`](https://github.com/LedgerHQ/ledger-live/commit/ced792c37b42135f2b7596228c14ccd0783a803f)]:
+  - @ledgerhq/live-env@2.4.0
+
+## 13.6.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`ced792c`](https://github.com/LedgerHQ/ledger-live/commit/ced792c37b42135f2b7596228c14ccd0783a803f)]:
+  - @ledgerhq/live-env@2.4.0-next.0
+
+## 13.6.0
+
+### Minor Changes
+
+- [#7740](https://github.com/LedgerHQ/ledger-live/pull/7740) [`c83af75`](https://github.com/LedgerHQ/ledger-live/commit/c83af756fb388043c9f5a3862cae1231ec99a02c) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Add etherlink evm currency
+
+## 13.6.0-next.0
+
+### Minor Changes
+
+- [#7740](https://github.com/LedgerHQ/ledger-live/pull/7740) [`c83af75`](https://github.com/LedgerHQ/ledger-live/commit/c83af756fb388043c9f5a3862cae1231ec99a02c) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Add etherlink evm currency
+
+## 13.5.0
+
+### Minor Changes
+
+- [#7621](https://github.com/LedgerHQ/ledger-live/pull/7621) [`1605678`](https://github.com/LedgerHQ/ledger-live/commit/1605678a4c43ce85b19bd549b295f3c67ff1dcb9) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update all importers to use the crypt-assets service instead of the CDN & remove when possible deprecated and usued values like `disableCounterValue` and `BEP20` type.
+
+### Patch Changes
+
+- [#7621](https://github.com/LedgerHQ/ledger-live/pull/7621) [`1605678`](https://github.com/LedgerHQ/ledger-live/commit/1605678a4c43ce85b19bd549b295f3c67ff1dcb9) Thanks [@lambertkevin](https://github.com/lambertkevin)! - CAL update
+
+- [#7883](https://github.com/LedgerHQ/ledger-live/pull/7883) [`f805d14`](https://github.com/LedgerHQ/ledger-live/commit/f805d1470f927824233f94eaba065b00d7af18cf) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update Axios to 1.7.7 following CVE: https://github.com/advisories/GHSA-8hc4-vh64-cxmj
+
+## 13.5.0-next.1
+
+### Patch Changes
+
+- [#7883](https://github.com/LedgerHQ/ledger-live/pull/7883) [`f805d14`](https://github.com/LedgerHQ/ledger-live/commit/f805d1470f927824233f94eaba065b00d7af18cf) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update Axios to 1.7.7 following CVE: https://github.com/advisories/GHSA-8hc4-vh64-cxmj
+
+## 13.5.0-next.0
+
+### Minor Changes
+
+- [#7621](https://github.com/LedgerHQ/ledger-live/pull/7621) [`1605678`](https://github.com/LedgerHQ/ledger-live/commit/1605678a4c43ce85b19bd549b295f3c67ff1dcb9) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update all importers to use the crypt-assets service instead of the CDN & remove when possible deprecated and usued values like `disableCounterValue` and `BEP20` type.
+
+### Patch Changes
+
+- [#7621](https://github.com/LedgerHQ/ledger-live/pull/7621) [`1605678`](https://github.com/LedgerHQ/ledger-live/commit/1605678a4c43ce85b19bd549b295f3c67ff1dcb9) Thanks [@lambertkevin](https://github.com/lambertkevin)! - CAL update
+
+## 13.4.0
+
+### Minor Changes
+
+- [#7414](https://github.com/LedgerHQ/ledger-live/pull/7414) [`5758950`](https://github.com/LedgerHQ/ledger-live/commit/5758950841fbf8018dd848e745017484aec67333) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Add ERC20 token support for filecoin
+
+- [#7507](https://github.com/LedgerHQ/ledger-live/pull/7507) [`d13e7b9`](https://github.com/LedgerHQ/ledger-live/commit/d13e7b9f55d92098cacc9384fd7fab24033c040f) Thanks [@CremaFR](https://github.com/CremaFR)! - Adding support for polygon ERC20 exchange importing
+
+### Patch Changes
+
+- [#7761](https://github.com/LedgerHQ/ledger-live/pull/7761) [`9c55e81`](https://github.com/LedgerHQ/ledger-live/commit/9c55e81c84d3372f2a7fd36248f970376aec905a) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - add ton token importer for CAL
+
+- [#7593](https://github.com/LedgerHQ/ledger-live/pull/7593) [`187293c`](https://github.com/LedgerHQ/ledger-live/commit/187293c6cf6093f15f07d5effc1ded0843a9e6ab) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update `axios` to fixed version `1.7.3`
+
+- [#7710](https://github.com/LedgerHQ/ledger-live/pull/7710) [`cc291f5`](https://github.com/LedgerHQ/ledger-live/commit/cc291f5466d80a2b7e9394338ab588ecd3db4623) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Migrating the Matic currency to POL (see https://polygon.technology/blog/save-the-date-matic-pol-migration-coming-september-4th-everything-you-need-to-know)
+
+- [#7563](https://github.com/LedgerHQ/ledger-live/pull/7563) [`ef82161`](https://github.com/LedgerHQ/ledger-live/commit/ef82161688fc49bf32cbc88f1837b15490e5d2b4) Thanks [@Wozacosta](https://github.com/Wozacosta)! - remove pivx code
+
+- [#7708](https://github.com/LedgerHQ/ledger-live/pull/7708) [`6815f6f`](https://github.com/LedgerHQ/ledger-live/commit/6815f6fccb9bca627a2e51ab954dc3f9b8f7c710) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - edit zcash explorer links
+
+## 13.4.0-next.0
+
+### Minor Changes
+
+- [#7414](https://github.com/LedgerHQ/ledger-live/pull/7414) [`5758950`](https://github.com/LedgerHQ/ledger-live/commit/5758950841fbf8018dd848e745017484aec67333) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Add ERC20 token support for filecoin
+
+- [#7507](https://github.com/LedgerHQ/ledger-live/pull/7507) [`d13e7b9`](https://github.com/LedgerHQ/ledger-live/commit/d13e7b9f55d92098cacc9384fd7fab24033c040f) Thanks [@CremaFR](https://github.com/CremaFR)! - Adding support for polygon ERC20 exchange importing
+
+### Patch Changes
+
+- [#7761](https://github.com/LedgerHQ/ledger-live/pull/7761) [`9c55e81`](https://github.com/LedgerHQ/ledger-live/commit/9c55e81c84d3372f2a7fd36248f970376aec905a) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - add ton token importer for CAL
+
+- [#7593](https://github.com/LedgerHQ/ledger-live/pull/7593) [`187293c`](https://github.com/LedgerHQ/ledger-live/commit/187293c6cf6093f15f07d5effc1ded0843a9e6ab) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update `axios` to fixed version `1.7.3`
+
+- [#7710](https://github.com/LedgerHQ/ledger-live/pull/7710) [`cc291f5`](https://github.com/LedgerHQ/ledger-live/commit/cc291f5466d80a2b7e9394338ab588ecd3db4623) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Migrating the Matic currency to POL (see https://polygon.technology/blog/save-the-date-matic-pol-migration-coming-september-4th-everything-you-need-to-know)
+
+- [#7563](https://github.com/LedgerHQ/ledger-live/pull/7563) [`ef82161`](https://github.com/LedgerHQ/ledger-live/commit/ef82161688fc49bf32cbc88f1837b15490e5d2b4) Thanks [@Wozacosta](https://github.com/Wozacosta)! - remove pivx code
+
+- [#7708](https://github.com/LedgerHQ/ledger-live/pull/7708) [`6815f6f`](https://github.com/LedgerHQ/ledger-live/commit/6815f6fccb9bca627a2e51ab954dc3f9b8f7c710) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - edit zcash explorer links
+
+## 13.3.0
+
+### Minor Changes
+
+- [#7075](https://github.com/LedgerHQ/ledger-live/pull/7075) [`db9c2d7`](https://github.com/LedgerHQ/ledger-live/commit/db9c2d78fb74df586c3ea1b9fb75ce3b014a0f4b) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Integrate Sync, Send, Receive, Create Account for Icon network
+
+- [#7394](https://github.com/LedgerHQ/ledger-live/pull/7394) [`4bd91de`](https://github.com/LedgerHQ/ledger-live/commit/4bd91de13442d12acce3ee83d5f2fd5f087570cf) Thanks [@emmanuelm41](https://github.com/emmanuelm41)! - Support for TON blockchain
+
+- [#7494](https://github.com/LedgerHQ/ledger-live/pull/7494) [`60f1b5c`](https://github.com/LedgerHQ/ledger-live/commit/60f1b5c6cab125f5281468bb3e36f1abfae2d70c) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add EIP712_v2 importer
+
+- [#7515](https://github.com/LedgerHQ/ledger-live/pull/7515) [`50b6db6`](https://github.com/LedgerHQ/ledger-live/commit/50b6db67d374a23ba040043aa93e7fbc52685297) Thanks [@CremaFR](https://github.com/CremaFR)! - Adding support for polygon ERC20 exchange importing
+
+### Patch Changes
+
+- [#7232](https://github.com/LedgerHQ/ledger-live/pull/7232) [`8553b3e`](https://github.com/LedgerHQ/ledger-live/commit/8553b3eef10132396ec580a2d5f20b616f5b18a0) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix: rename crypto.org to cronos POS chain
+
+## 13.3.0-next.1
+
+### Minor Changes
+
+- [#7515](https://github.com/LedgerHQ/ledger-live/pull/7515) [`50b6db6`](https://github.com/LedgerHQ/ledger-live/commit/50b6db67d374a23ba040043aa93e7fbc52685297) Thanks [@CremaFR](https://github.com/CremaFR)! - Adding support for polygon ERC20 exchange importing
+
+## 13.3.0-next.0
+
+### Minor Changes
+
+- [#7075](https://github.com/LedgerHQ/ledger-live/pull/7075) [`db9c2d7`](https://github.com/LedgerHQ/ledger-live/commit/db9c2d78fb74df586c3ea1b9fb75ce3b014a0f4b) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Integrate Sync, Send, Receive, Create Account for Icon network
+
+- [#7394](https://github.com/LedgerHQ/ledger-live/pull/7394) [`4bd91de`](https://github.com/LedgerHQ/ledger-live/commit/4bd91de13442d12acce3ee83d5f2fd5f087570cf) Thanks [@emmanuelm41](https://github.com/emmanuelm41)! - Support for TON blockchain
+
+- [#7494](https://github.com/LedgerHQ/ledger-live/pull/7494) [`60f1b5c`](https://github.com/LedgerHQ/ledger-live/commit/60f1b5c6cab125f5281468bb3e36f1abfae2d70c) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add EIP712_v2 importer
+
+### Patch Changes
+
+- [#7232](https://github.com/LedgerHQ/ledger-live/pull/7232) [`8553b3e`](https://github.com/LedgerHQ/ledger-live/commit/8553b3eef10132396ec580a2d5f20b616f5b18a0) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix: rename crypto.org to cronos POS chain
+
+## 13.2.0
+
+### Minor Changes
+
+- [#7138](https://github.com/LedgerHQ/ledger-live/pull/7138) [`ef2d53d`](https://github.com/LedgerHQ/ledger-live/commit/ef2d53d514f1f4e6f18fc79fa3423bd9b0208a04) Thanks [@lvndry](https://github.com/lvndry)! - removes via, vtc and ppc support
+
+### Patch Changes
+
+- [#7260](https://github.com/LedgerHQ/ledger-live/pull/7260) [`b77ab8e`](https://github.com/LedgerHQ/ledger-live/commit/b77ab8e718ee8e10b74dc15370e8a19d2597d39e) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Use random dead address to determine trx fees, update pricing for the sending of trc20 tokens
+
+- [#7183](https://github.com/LedgerHQ/ledger-live/pull/7183) [`fe8a26b`](https://github.com/LedgerHQ/ledger-live/commit/fe8a26b04206df64e50220c3e9249c9a1bd057a6) Thanks [@cng-ledger](https://github.com/cng-ledger)! - fix(LIVE-13101): update tron dead address
+
+## 13.2.0-next.0
+
+### Minor Changes
+
+- [#7138](https://github.com/LedgerHQ/ledger-live/pull/7138) [`ef2d53d`](https://github.com/LedgerHQ/ledger-live/commit/ef2d53d514f1f4e6f18fc79fa3423bd9b0208a04) Thanks [@lvndry](https://github.com/lvndry)! - removes via, vtc and ppc support
+
+### Patch Changes
+
+- [#7260](https://github.com/LedgerHQ/ledger-live/pull/7260) [`b77ab8e`](https://github.com/LedgerHQ/ledger-live/commit/b77ab8e718ee8e10b74dc15370e8a19d2597d39e) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Use random dead address to determine trx fees, update pricing for the sending of trc20 tokens
+
+- [#7183](https://github.com/LedgerHQ/ledger-live/pull/7183) [`fe8a26b`](https://github.com/LedgerHQ/ledger-live/commit/fe8a26b04206df64e50220c3e9249c9a1bd057a6) Thanks [@cng-ledger](https://github.com/cng-ledger)! - fix(LIVE-13101): update tron dead address
+
 ## 13.1.1
 
 ### Patch Changes

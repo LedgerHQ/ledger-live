@@ -1,9 +1,9 @@
 import { BigNumber } from "bignumber.js";
-import asciichart from "asciichart";
+import { plot } from "asciichart";
 import invariant from "invariant";
 import { from } from "rxjs";
 import { reduce, concatMap, map } from "rxjs/operators";
-import type { Account, PortfolioRange } from "@ledgerhq/types-live";
+import type { Account, AccountLike, PortfolioRange } from "@ledgerhq/types-live";
 import type { Currency } from "@ledgerhq/types-cryptoassets";
 import { flattenAccounts } from "@ledgerhq/live-common/account/index";
 import { getPortfolio, getRanges } from "@ledgerhq/live-countervalues/portfolio";
@@ -22,6 +22,13 @@ function asPortfolioRange(period: string): PortfolioRange {
   invariant(ranges.includes(period), "invalid period. valid values are %s", ranges.join(" | "));
   return period as PortfolioRange;
 }
+
+export type PortfolioJobOpts = ScanCommonOpts &
+  Partial<{
+    countervalue: string;
+    period: string;
+    disableAutofillGaps: boolean;
+  }>;
 
 export default {
   description: "Get a portfolio summary for accounts",
@@ -45,15 +52,7 @@ export default {
       desc: "if set, disable the autofill of gaps to evaluate the rates availability",
     },
   ],
-  job: (
-    opts: Partial<
-      ScanCommonOpts & {
-        disableAutofillGaps: boolean;
-        countervalue: string;
-        period: string;
-      }
-    >,
-  ) => {
+  job: (opts: PortfolioJobOpts) => {
     const countervalue = findCurrencyByTicker(opts.countervalue || "USD");
     invariant(countervalue, "currency not found with ticker=" + opts.countervalue);
     return scan(opts).pipe(
@@ -72,7 +71,7 @@ export default {
             const period = asPortfolioRange(opts.period || "month");
             const unit = (countervalue as Currency).units[0];
 
-            function render(title, accounts) {
+            function render(title: string, accounts: AccountLike[]) {
               const portfolio = getPortfolio(accounts, period, state, countervalue as Currency);
               const balance = portfolio.balanceHistory[portfolio.balanceHistory.length - 1].value;
               return (
@@ -95,13 +94,13 @@ export default {
                     ")"
                   : "") +
                 "\n" +
-                asciichart.plot(
+                plot(
                   portfolio.balanceHistory.map(h =>
                     new BigNumber(h.value).div(new BigNumber(10).pow(unit.magnitude)).toNumber(),
                   ),
                   {
                     height: 10,
-                    format: value =>
+                    format: (value: BigNumber.Value) =>
                       formatCurrencyUnit(
                         unit,
                         new BigNumber(value).times(new BigNumber(10).pow(unit.magnitude)),

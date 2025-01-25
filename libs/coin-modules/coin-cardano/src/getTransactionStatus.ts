@@ -19,6 +19,8 @@ import {
   CardanoStakeKeyDepositError,
   CardanoMinAmountError,
   CardanoNotEnoughFunds,
+  CardanoFeeTooHigh,
+  CardanoFeeHigh,
 } from "./errors";
 import type {
   CardanoAccount,
@@ -27,6 +29,8 @@ import type {
   Transaction,
   TransactionStatus,
 } from "./types";
+import { CARDANO_MAX_SUPPLY } from "./constants";
+import coinConfig from "./config";
 
 export const getTransactionStatus: AccountBridge<
   Transaction,
@@ -50,15 +54,28 @@ export const getTransactionStatus: AccountBridge<
     });
   }
 
+  let txStatus: TransactionStatus;
+
   if (transaction.mode === "send") {
-    return getSendTransactionStatus(account, transaction);
+    txStatus = await getSendTransactionStatus(account, transaction);
   } else if (transaction.mode === "delegate") {
-    return getDelegateTransactionStatus(account, transaction);
+    txStatus = await getDelegateTransactionStatus(account, transaction);
   } else if (transaction.mode === "undelegate") {
-    return getUndelegateTransactionStatus(account, transaction);
+    txStatus = await getUndelegateTransactionStatus(account, transaction);
   } else {
     throw new Error("Invalid transaction mode");
   }
+
+  const MAX_FEES_WARN = coinConfig.getCoinConfig().maxFeesWarning;
+  const MAX_FEES_THROW = coinConfig.getCoinConfig().maxFeesError;
+
+  if (txStatus.estimatedFees.gt(MAX_FEES_THROW)) {
+    throw new CardanoFeeTooHigh();
+  } else if (txStatus.estimatedFees.gt(MAX_FEES_WARN)) {
+    txStatus.warnings.feeTooHigh = new CardanoFeeHigh();
+  }
+
+  return txStatus;
 };
 
 async function getSendTransactionStatus(
@@ -84,7 +101,8 @@ async function getSendTransactionStatus(
       : undefined;
 
   let tokensToSend: Array<Token> = [];
-  if (transaction.subAccountId) {
+  const isTokenTx = !!transaction.subAccountId;
+  if (isTokenTx) {
     // Token transaction
     if (!tokenAccount || tokenAccount.type !== "TokenAccount") {
       throw new Error("TokenAccount not found");
@@ -108,11 +126,7 @@ async function getSendTransactionStatus(
     totalSpent = amount.plus(estimatedFees);
   }
 
-  const minTransactionAmount = TyphonUtils.calculateMinUtxoAmount(
-    tokensToSend,
-    new BigNumber(cardanoResources.protocolParams.lovelacePerUtxoWord),
-    false,
-  );
+  let minTransactionAmount = new BigNumber(0);
 
   if (!transaction.fees) {
     errors.fees = new FeeNotLoaded();
@@ -124,11 +138,22 @@ async function getSendTransactionStatus(
     errors.recipient = new InvalidAddress("", {
       currencyName: account.currency.name,
     });
+  } else {
+    // minTransactionAmount can only be calculated with valid recipient
+    const recipient = TyphonUtils.getAddressFromString(transaction.recipient);
+    minTransactionAmount = TyphonUtils.calculateMinUtxoAmountBabbage(
+      {
+        address: recipient,
+        amount: new BigNumber(CARDANO_MAX_SUPPLY),
+        tokens: tokensToSend,
+      },
+      new BigNumber(cardanoResources.protocolParams.utxoCostPerByte),
+    );
   }
 
   if (!amount.gt(0)) {
     errors.amount = useAllAmount ? new CardanoNotEnoughFunds() : new AmountRequired();
-  } else if (!transaction.subAccountId && amount.lt(minTransactionAmount)) {
+  } else if (!isTokenTx && amount.lt(minTransactionAmount)) {
     errors.amount = new CardanoMinAmountError("", {
       amount: minTransactionAmount.div(1e6).toString(),
     });

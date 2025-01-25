@@ -48,7 +48,7 @@ const Pre = styled.span`
   white-space: pre-line;
   display: block;
   unicode-bidi: embed;
-  line-break: anywhere;
+  word-break: break-word;
   line-height: 15px;
 `;
 
@@ -239,6 +239,7 @@ const NFTViewerDrawer = ({ account, nftId, height }: NFTViewerDrawerProps) => {
               </Skeleton>
             </Text>
             <Text
+              data-testid="nft-name-sendDrawer"
               ff="Inter|SemiBold"
               fontSize={7}
               lineHeight="29px"
@@ -278,6 +279,7 @@ const NFTViewerDrawer = ({ account, nftId, height }: NFTViewerDrawerProps) => {
           </Skeleton>
           <NFTActions>
             <Button
+              data-testid="nft-send-button-sendDrawer"
               style={{
                 flex: 1,
                 justifyContent: "center",
@@ -364,7 +366,13 @@ const NFTViewerDrawer = ({ account, nftId, height }: NFTViewerDrawerProps) => {
                   skeleton={floorPriceLoading}
                   title={t("NFT.viewer.attributes.floorPrice")}
                   value={
-                    <Text mb={1} lineHeight="15.73px" fontSize={4} color="palette.text.shade60">
+                    <Text
+                      mb={1}
+                      data-testid="nft-floor-price"
+                      lineHeight="15.73px"
+                      fontSize={4}
+                      color="palette.text.shade60"
+                    >
                       {floorPrice} {ticker}
                     </Text>
                   }

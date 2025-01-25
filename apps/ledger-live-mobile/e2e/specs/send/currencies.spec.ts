@@ -1,5 +1,5 @@
 import DeviceAction from "../../models/DeviceAction";
-import { knownDevice } from "../../models/devices";
+import { knownDevices } from "../../models/devices";
 import { Account } from "@ledgerhq/types-live";
 import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import {
@@ -10,7 +10,7 @@ import {
 } from "../../models/currencies";
 import { Application } from "../../page";
 
-let app: Application;
+const app = new Application();
 let deviceAction: DeviceAction;
 
 let first = true;
@@ -30,11 +30,16 @@ const testedCurrencies: CryptoCurrencyId[] = [
   "cosmos",
 ];
 const testAccounts = initTestAccounts(testedCurrencies);
+const knownDevice = knownDevices.nanoX;
 
 $TmsLink("B2CQA-1823");
 describe("Send flow", () => {
   beforeAll(async () => {
-    app = await Application.init("onboardingcompleted", [knownDevice], testAccounts);
+    await app.init({
+      userdata: "skip-onboarding",
+      knownDevices: [knownDevice],
+      testAccounts: testAccounts,
+    });
     deviceAction = new DeviceAction(knownDevice);
 
     await app.portfolio.waitForPortfolioPageToLoad();

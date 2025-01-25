@@ -1,0 +1,1 @@
+{"request":{"url":"https://rest.core.persistence.one/cosmos/staking/v1beta1/delegations/persistence17r56udl09ssv88x85cxftx7su0rgv4v27ej3p0","method":"GET"},"response":{"body":{"delegation_responses":[],"pagination":{"next_key":null,"total":"0"}}}}

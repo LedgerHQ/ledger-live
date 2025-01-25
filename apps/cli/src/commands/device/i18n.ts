@@ -6,7 +6,7 @@ import uninstallLanguage from "@ledgerhq/live-common/hw/uninstallLanguage";
 import type { Language } from "@ledgerhq/types-live";
 import { deviceOpt } from "../../scan";
 
-type i18nJobOps = ScanCommonOpts & {
+export type I18nJobOpts = ScanCommonOpts & {
   deviceId: string;
   install: string;
   uninstall: string;
@@ -14,7 +14,7 @@ type i18nJobOps = ScanCommonOpts & {
   date_last_modified: string;
 };
 
-const exec = async (opts: i18nJobOps) => {
+const exec = async (opts: I18nJobOpts) => {
   const { deviceId = "", uninstall = "", install = "" } = opts;
   const language = (uninstall || install) as Language;
 
@@ -66,5 +66,5 @@ export default {
       desc: "uninstall a language pack by its id",
     },
   ],
-  job: (opts: i18nJobOps): any => from(exec(opts)),
+  job: (opts: I18nJobOpts): any => from(exec(opts)),
 };

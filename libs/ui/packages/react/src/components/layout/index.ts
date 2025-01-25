@@ -7,3 +7,4 @@ export { default as Drawer } from "./Drawer";
 export { default as Carousel } from "./Carousel";
 export { default as VerticalTimeline } from "./List/VerticalTimeline";
 export { default as NumberedList } from "./List/NumberedList";
+export { default as PortfolioContentCard } from "./ContentCard/PortfolioContentCard";

@@ -47,8 +47,16 @@ export type TransportModule = {
 };
 
 const modules: TransportModule[] = [];
+
 export const registerTransportModule = (module: TransportModule): void => {
   modules.push(module);
+};
+
+export const unregisterTransportModule = (moduleId: string): void => {
+  modules.splice(
+    modules.findIndex(m => m.id === moduleId),
+    1,
+  );
 };
 
 export const discoverDevices = (
@@ -146,7 +154,6 @@ export const open = (
       ]) as Promise<Transport>;
     }
   }
-
   return Promise.reject(new CantOpenDevice(`Cannot find registered transport to open ${deviceId}`));
 };
 

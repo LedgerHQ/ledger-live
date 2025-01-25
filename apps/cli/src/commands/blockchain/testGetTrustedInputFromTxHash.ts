@@ -1,14 +1,15 @@
 /* eslint-disable no-console */
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
-import { deviceOpt } from "../../scan";
+import { DeviceCommonOpts, deviceOpt } from "../../scan";
 import { from } from "rxjs";
 import invariant from "invariant";
 import Btc from "@ledgerhq/hw-app-btc";
 import network from "@ledgerhq/live-network/network";
 import { findCurrencyExplorer } from "@ledgerhq/live-common/explorer";
 import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import Transport from "@ledgerhq/hw-transport";
 
-const command = async (transport, currencyId, hash) => {
+const command = async (transport: Transport, currencyId: string, hash: string) => {
   const currency = findCryptoCurrencyById(currencyId);
   invariant(currency, "currency not found");
   if (!currency) throw new Error("currency not found");
@@ -36,6 +37,11 @@ const command = async (transport, currencyId, hash) => {
   };
 };
 
+export type TestGetTrustedInputFromTxHashJobOpts = DeviceCommonOpts & {
+  currency: string;
+  hash: string;
+};
+
 export default {
   args: [
     deviceOpt,
@@ -50,13 +56,6 @@ export default {
       type: String,
     },
   ],
-  job: ({
-    device,
-    currency,
-    hash,
-  }: Partial<{
-    device: string;
-    currency: string;
-    hash: string;
-  }>) => withDevice(device || "")(transport => from(command(transport, currency, hash))),
+  job: ({ device, currency, hash }: TestGetTrustedInputFromTxHashJobOpts) =>
+    withDevice(device || "")(transport => from(command(transport, currency, hash))),
 };

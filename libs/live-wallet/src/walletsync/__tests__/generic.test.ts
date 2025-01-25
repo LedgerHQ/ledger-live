@@ -16,7 +16,7 @@ describe("canonical cases", () => {
   it("detects no changes on empty incoming", async () => {
     const localState = genState(5);
     const latestState = convertLocalToDistantState(localState);
-    const resolved = await walletsync.resolveIncomingDistantState(
+    const resolved = await walletsync.resolveIncrementalUpdate(
       dummyContext,
       localState,
       latestState,
@@ -25,12 +25,12 @@ describe("canonical cases", () => {
     expect(resolved).toEqual({ hasChanges: false });
   });
 
-  it("detects no changes on same incoming", async () => {
+  it("detects no changes on same incoming from empty local state", async () => {
     const localState = genState(9);
     const latestState = convertLocalToDistantState(localState);
-    const resolved = await walletsync.resolveIncomingDistantState(
+    const resolved = await walletsync.resolveIncrementalUpdate(
       dummyContext,
-      localState,
+      emptyState,
       latestState,
       latestState,
     );
@@ -69,7 +69,7 @@ describe("canonical cases", () => {
       let update: UpdateEvent | null = null;
 
       it("resolves the transition (distI->distJ) from stateI", async () => {
-        const resolved = await walletsync.resolveIncomingDistantState(
+        const resolved = await walletsync.resolveIncrementalUpdate(
           dummyContext,
           stateI,
           distI,

@@ -13,7 +13,7 @@ export const STEPS = {
 export type StepId = (typeof STEPS)[keyof typeof STEPS];
 
 export type StepProps = {
-  firmware?: FirmwareUpdateContext;
+  firmware: FirmwareUpdateContext;
   appsToBeReinstalled: boolean;
   onDrawerClose: (reinstall?: boolean) => void;
   error?: Error | null | undefined;

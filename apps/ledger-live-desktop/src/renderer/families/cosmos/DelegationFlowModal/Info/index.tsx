@@ -6,7 +6,7 @@ import EarnRewardsInfoModal from "~/renderer/components/EarnRewardsInfoModal";
 import WarnBox from "~/renderer/components/WarnBox";
 import { openURL } from "~/renderer/linking";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
-import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain/chain";
+import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";
 import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
 
 export type Props = {

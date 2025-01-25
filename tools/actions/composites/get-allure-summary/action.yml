@@ -1,0 +1,51 @@
+name: "Get Allure Summary"
+description: "Generates a test summary from allure report"
+inputs:
+  platform:
+    description: "Platform (android, iOS or linux)"
+    required: true
+  allure-results-path:
+    description: "Path to allure files"
+    required: true
+outputs:
+  test_result:
+    value: ${{ steps.get-summary.outputs.test_result }}
+    description: "Test result summary"
+  status_color:
+    value: ${{ steps.get-summary.outputs.status_color }}
+    description: "Slack Status color"
+  status_emoji:
+    value: ${{ steps.get-summary.outputs.status_emoji }}
+    description: "Slack Status emoji"
+runs:
+  using: composite
+  steps:
+    - name: Get summary
+      id: get-summary
+      run: |
+        cd ${{ inputs.allure-results-path }}
+        allure generate .
+        cd allure-report/widgets
+        passedTests=$(jq '.statistic.passed' summary.json)
+        failedTests=$(jq '.statistic.failed' summary.json)
+        brokenTests=$(jq '.statistic.broken' summary.json)
+        skippedTests=$(jq '.statistic.skipped' summary.json)
+        totalTests=$(jq '.statistic.total' summary.json)
+        echo "test_result=$passedTests passed, $failedTests failed, $brokenTests broken, $skippedTests skipped, $totalTests total" >> "$GITHUB_OUTPUT"
+
+        if [ "$failedTests" -gt 0 ] || [ "$brokenTests" -gt 0 ]; then
+          echo "status_color=#FF333C" >> "$GITHUB_OUTPUT";
+          echo "status_emoji=❌" >> "$GITHUB_OUTPUT";
+        else
+          echo "status_color=#33FF39" >> "$GITHUB_OUTPUT";
+          echo "status_emoji=✅" >> "$GITHUB_OUTPUT";
+        fi
+      shell: bash
+    - name: Generate single file Allure report
+      run: allure generate ${{ inputs.allure-results-path }} --single-file --clean
+      shell: bash
+    - name: Upload Allure single file report
+      uses: actions/upload-artifact@v4
+      with:
+        name: allure-report-${{ inputs.platform }}
+        path: allure-report/index.html

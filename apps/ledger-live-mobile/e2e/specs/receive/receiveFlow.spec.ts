@@ -1,15 +1,19 @@
 import DeviceAction from "../../models/DeviceAction";
-import { knownDevice } from "../../models/devices";
+import { knownDevices } from "../../models/devices";
 import { Application } from "../../page";
 
-let app: Application;
+const app = new Application();
 let deviceAction: DeviceAction;
 const btcReceiveAddress = "173ej2furpaB8mTtN5m9829MPGMD7kCgSPx";
 let first = true;
+const knownDevice = knownDevices.nanoX;
 
 describe("Receive Flow", () => {
   beforeAll(async () => {
-    app = await Application.init("EthAccountXrpAccountReadOnlyFalse", [knownDevice]);
+    await app.init({
+      userdata: "EthAccountXrpAccountReadOnlyFalse",
+      knownDevices: [knownDevice],
+    });
     deviceAction = new DeviceAction(knownDevice);
 
     await app.portfolio.waitForPortfolioPageToLoad();
@@ -23,8 +27,8 @@ describe("Receive Flow", () => {
 
   $TmsLink("B2CQA-1864");
   it("Should verify the address after importing an account working on a single network", async () => {
-    await app.portfolio.openTransferMenu();
-    await app.portfolio.navigateToReceiveFromTransferMenu();
+    await app.transfertMenu.open();
+    await app.transfertMenu.navigateToReceive();
     await app.common.performSearch("Bitcoin");
     await app.receive.selectAsset("BTC");
     first && (await deviceAction.selectMockDevice(), (first = false));
@@ -66,7 +70,7 @@ describe("Receive Flow", () => {
   it("Should access to receive after importing a cryptocurrency on a selected network", async () => {
     await openReceive();
     await app.common.performSearch("Polygon");
-    await app.receive.selectAsset("MATIC");
+    await app.receive.selectAsset("POL");
     await app.receive.selectNetwork("binance smart chain");
     first && (await deviceAction.selectMockDevice(), (first = false));
     await deviceAction.openApp();

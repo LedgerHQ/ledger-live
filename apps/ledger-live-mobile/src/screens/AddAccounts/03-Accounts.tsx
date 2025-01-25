@@ -24,7 +24,7 @@ import Button from "~/components/Button";
 import PreventNativeBack from "~/components/PreventNativeBack";
 import SelectableAccountsList from "~/components/SelectableAccountsList";
 import LiveLogo from "~/icons/LiveLogoIcon";
-import IconPause from "~/icons/Pause";
+import IconPause from "~/icons/PauseCircle";
 import ExternalLink from "~/icons/ExternalLink";
 import Chevron from "~/icons/Chevron";
 import Info from "~/icons/Info";
@@ -350,7 +350,7 @@ function AddAccountsAccounts({
               <SectionAccounts
                 defaultSelected={defaultSelected}
                 key={id}
-                showHint={selectable && i === 0 && !Config.MOCK}
+                showHint={selectable && i === 0 && !Config.DETOX}
                 header={
                   <Trans
                     values={{

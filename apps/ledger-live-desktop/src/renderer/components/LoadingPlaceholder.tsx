@@ -38,7 +38,7 @@ const Activity = styled.div`
 
 function LoadingPlaceholder({ style }: { style?: React.CSSProperties }) {
   return (
-    <Wrapper data-test-id="loading-placeholder" style={style}>
+    <Wrapper data-testid="loading-placeholder" style={style}>
       <Activity />
     </Wrapper>
   );

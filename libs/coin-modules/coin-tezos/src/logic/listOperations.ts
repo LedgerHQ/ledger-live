@@ -1,4 +1,10 @@
-import { APIOperation, fetchAllTransactions } from "../network";
+import { tzkt } from "../network";
+import {
+  type APIDelegationType,
+  type APITransactionType,
+  isAPIDelegationType,
+  isAPITransactionType,
+} from "../network/types";
 
 export type Operation = {
   hash: string;
@@ -6,37 +12,53 @@ export type Operation = {
   type: string;
   value: bigint;
   fee: bigint;
-  blockHeight: number;
+  block: {
+    hash?: string;
+    height: number;
+    time?: Date;
+  };
   senders: string[];
   recipients: string[];
   date: Date;
   transactionSequenceNumber: number;
 };
 
-export async function listOperations(address: string, _blockHeight: number): Promise<Operation[]> {
-  const operations = await fetchAllTransactions(address);
-  return operations.reduce(
-    (acc, op) => acc.concat(convertOperation(address, op) ?? acc),
-    [] as Operation[],
-  );
+export async function listOperations(
+  address: string,
+  { lastId, limit }: { lastId?: number; limit?: number },
+): Promise<[Operation[], number]> {
+  const operations = await tzkt.getAccountOperations(address, { lastId, limit });
+  return [
+    operations
+      .filter(op => isAPITransactionType(op) || isAPIDelegationType(op))
+      .reduce((acc, op) => acc.concat(convertOperation(address, op)), [] as Operation[]),
+    operations.slice(-1)[0].id,
+  ];
 }
 
-function convertOperation(address: string, operation: APIOperation): Operation | null {
-  if (operation.type !== "transaction") {
-    return null;
+function convertOperation(
+  address: string,
+  operation: APITransactionType | APIDelegationType,
+): Operation {
+  const { amount, hash, storageFee, sender, timestamp, type, counter } = operation;
+  let targetAddress = "";
+  if (isAPITransactionType(operation) && operation.target) {
+    targetAddress = operation.target.address;
   }
-
-  const { amount, hash, storageFee, sender, target, timestamp, type, counter } = operation;
   return {
     hash: hash ?? "",
     address,
     type: type,
     value: BigInt(amount),
     // storageFee for transaction is always present
-    fee: BigInt(storageFee!),
-    blockHeight: 0, // operation.block is a string
+    fee: BigInt(storageFee ?? 0),
+    block: {
+      hash: operation.block,
+      height: operation.level,
+      time: new Date(operation.timestamp),
+    },
     senders: [sender?.address ?? ""],
-    recipients: [target?.address ?? ""],
+    recipients: [targetAddress],
     date: new Date(timestamp),
     transactionSequenceNumber: counter,
   };

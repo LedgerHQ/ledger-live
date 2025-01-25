@@ -5,6 +5,7 @@ import {
   useDisclaimerRaw,
   useRecentlyUsed,
   DisclaimerRaw,
+  Categories,
 } from "@ledgerhq/live-common/wallet-api/react";
 import { useLocalLiveAppContext } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 
@@ -13,6 +14,8 @@ import {
   DAPP_DISCLAIMER_ID,
   DISCOVER_STORE_KEY,
   BROWSE_SEARCH_OPTIONS,
+  WC_ID,
+  LEDGER_SHOP_ID,
 } from "@ledgerhq/live-common/wallet-api/constants";
 import { DiscoverDB, AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -21,17 +24,18 @@ import { useSearch } from "@ledgerhq/live-common/hooks/useSearch";
 import { useDB } from "../../../db";
 import { NavigatorName, ScreenName } from "~/const";
 import { useBanner } from "~/components/banners/hooks";
-import { readOnlyModeEnabledSelector } from "../../../reducers/settings";
+import { hasOrderedNanoSelector, readOnlyModeEnabledSelector } from "../../../reducers/settings";
 import { NavigationProps } from "./types";
 import { useManifests } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
+import { useRebornFlow } from "LLM/features/Reborn/hooks/useRebornFlow";
 
-export function useCatalog() {
+export function useCatalog(initialCategory?: Categories["selected"] | null) {
   const recentlyUsedDB = useRecentlyUsedDB();
   const { state: localLiveApps } = useLocalLiveAppContext();
   const allManifests = useManifests();
   const completeManifests = useManifests({ visibility: ["complete"] });
   const combinedManifests = useManifests({ visibility: ["searchable", "complete"] });
-  const categories = useCategories(completeManifests);
+  const categories = useCategories(completeManifests, initialCategory);
   const recentlyUsed = useRecentlyUsed(combinedManifests, recentlyUsedDB);
 
   const search = useSearch<AppManifest, TextInput>({
@@ -99,15 +103,16 @@ export type Disclaimer = DisclaimerRaw & {
   openApp: (manifest: AppManifest) => void;
 };
 
-const WALLET_CONNECT_LIVE_APP = "ledger-wallet-connect";
-
 function useDisclaimer(appendRecentlyUsed: (manifest: AppManifest) => void): Disclaimer {
   const isReadOnly = useSelector(readOnlyModeEnabledSelector);
+  const hasOrderedNano = useSelector(hasOrderedNanoSelector);
+
   const [isDismissed, dismiss] = useBanner(DAPP_DISCLAIMER_ID);
 
   const navigation = useNavigation<NavigationProps["navigation"]>();
   const route = useRoute<NavigationProps["route"]>();
   const { platform, ...params } = route.params ?? {};
+  const { navigateToRebornFlow } = useRebornFlow();
 
   const [manifest, setManifest] = useState<AppManifest>();
   const [isChecked, setIsChecked] = useState(false);
@@ -116,20 +121,28 @@ function useDisclaimer(appendRecentlyUsed: (manifest: AppManifest) => void): Dis
     (manifest: AppManifest) => {
       // Navigate to the WalletConnect navigator screen instead of the discover one
       // In order to avoid issue with deeplinks opening wallet-connect multiple times
-      if (manifest.id === WALLET_CONNECT_LIVE_APP) {
+      if (manifest.id === WC_ID) {
         navigation.navigate(NavigatorName.WalletConnect, {
           screen: ScreenName.WalletConnectConnect,
           params: {},
         });
         return;
       }
+
+      const isLedgerShopApp = manifest.id === LEDGER_SHOP_ID;
+
+      if (isReadOnly && !hasOrderedNano && !isLedgerShopApp) {
+        navigateToRebornFlow();
+        return;
+      }
+
       navigation.navigate(ScreenName.PlatformApp, {
         ...params,
         platform: manifest.id,
         name: manifest.name,
       });
     },
-    [navigation, params],
+    [hasOrderedNano, isReadOnly, navigateToRebornFlow, navigation, params],
   );
 
   const toggleCheck = useCallback(() => {
@@ -184,5 +197,13 @@ export function useCurrentAccountHistDB() {
     DISCOVER_STORE_KEY,
     INITIAL_PLATFORM_STATE,
     state => state.currentAccountHist,
+  );
+}
+
+export function useCacheBustedLiveAppsDB() {
+  return useDB<DiscoverDB, DiscoverDB["cacheBustedLiveApps"]>(
+    DISCOVER_STORE_KEY,
+    INITIAL_PLATFORM_STATE,
+    state => state.cacheBustedLiveApps,
   );
 }

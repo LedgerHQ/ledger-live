@@ -6,6 +6,7 @@ export class InstallSetOfApps extends AppPage {
   private installCtaButton = this.page.getByTestId("install-cta-button");
   private cancelCtaButton = this.page.getByTestId("skip-cta-button");
   private inputOptionSelector = this.page.getByTestId("input-option-selector");
+  container = this.page.getByTestId("install-set-of-apps-container");
 
   private circleProgressSelector = (circleProgress: string) =>
     this.page.locator(`circle[style="stroke-dashoffset: ${circleProgress};"]`);

@@ -31,6 +31,7 @@ import type { CosmosRedelegationFlowParamList } from "../RedelegationFlow/types"
 import { CosmosUndelegationFlowParamList } from "../UndelegationFlow/types";
 import { useSettings } from "~/hooks";
 import { useAccountUnit } from "~/hooks/useAccountUnit";
+import NotEnoughFundFeesAlert from "../../shared/StakingErrors/NotEnoughFundFeesAlert";
 
 type Props =
   | StackNavigatorProps<CosmosDelegationFlowParamList, ScreenName.CosmosDelegationAmount>
@@ -152,6 +153,7 @@ function DelegationAmount({ navigation, route }: Props) {
                 onChange={setValue}
                 inputStyle={styles.inputStyle}
                 hasError={isAmountOutOfRange || isNotEnoughBalance}
+                testID="cosmos-delegation-amount-input"
               />
               <View style={styles.ratioButtonContainer}>
                 {ratioButtons.map(({ label, value: v }) => (
@@ -175,7 +177,7 @@ function DelegationAmount({ navigation, route }: Props) {
                     <LText
                       style={[styles.ratioLabel]}
                       color={value.eq(v) ? colors.neutral.c100 : colors.neutral.c60}
-                      testID={"delegate-ratio-" + label}
+                      testID={"cosmos-delegate-ratio-" + label}
                     >
                       {label}
                     </LText>
@@ -192,30 +194,32 @@ function DelegationAmount({ navigation, route }: Props) {
                 },
               ]}
             >
-              {(isNotEnoughBalance || (isAmountOutOfRange && !value.eq(0))) && (
-                <View style={styles.labelContainer}>
-                  <Warning size={16} color={colors.error.c50} />
-                  <LText style={[styles.assetsRemaining]} color={colors.error.c50}>
-                    <Trans
-                      i18nKey={errorMessageKey}
-                      values={{
-                        min: formatCurrencyUnit(unit, min, {
-                          showCode: true,
-                          showAllDigits: true,
-                          locale: locale,
-                        }),
-                        max: formatCurrencyUnit(unit, initialMax, {
-                          showCode: true,
-                          showAllDigits: true,
-                          locale: locale,
-                        }),
-                      }}
-                    >
-                      <LText semiBold>{""}</LText>
-                    </Trans>
-                  </LText>
-                </View>
-              )}
+              {tx.mode !== "undelegate"
+                ? (isNotEnoughBalance || (isAmountOutOfRange && !value.eq(0))) && (
+                    <View style={styles.labelContainer}>
+                      <Warning size={16} color={colors.error.c50} />
+                      <LText style={[styles.assetsRemaining]} color={colors.error.c50}>
+                        <Trans
+                          i18nKey={errorMessageKey}
+                          values={{
+                            min: formatCurrencyUnit(unit, min, {
+                              showCode: true,
+                              showAllDigits: true,
+                              locale: locale,
+                            }),
+                            max: formatCurrencyUnit(unit, initialMax, {
+                              showCode: true,
+                              showAllDigits: true,
+                              locale: locale,
+                            }),
+                          }}
+                        >
+                          <LText semiBold>{""}</LText>
+                        </Trans>
+                      </LText>
+                    </View>
+                  )
+                : isNotEnoughBalance && <NotEnoughFundFeesAlert account={account} />}
               {max.isZero() && (
                 <View style={styles.labelContainer}>
                   <Check size={16} color={colors.success.c50} />

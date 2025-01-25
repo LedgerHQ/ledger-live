@@ -11,6 +11,7 @@ import { mergeTokens } from "./logic";
 import { formatCurrencyUnit, parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import { SubAccount } from "@ledgerhq/types-live";
 import { acceptTransaction } from "./speculos-deviceActions";
+import { CARDANO_MAX_SUPPLY } from "./constants";
 
 const maxAccounts = 5;
 const currency = getCryptoCurrencyById("cardano");
@@ -34,6 +35,7 @@ const cardano: AppSpec<Transaction> = {
   mutations: [
     {
       name: "move ~10% token",
+      feature: "tokens",
       maxRun: 1,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
         invariant(maxSpendable.gte(minSpendableRequiredForTokenTx), "balance is too low");
@@ -76,6 +78,7 @@ const cardano: AppSpec<Transaction> = {
     {
       testDestination: genericTestDestination,
       name: "move ~50%",
+      feature: "send",
       maxRun: 1,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
         invariant(maxSpendable.gt(minBalanceRequired), "balance is too low");
@@ -124,6 +127,7 @@ const cardano: AppSpec<Transaction> = {
     },
     {
       name: "send max",
+      feature: "sendMax",
       maxRun: 1,
       testDestination: genericTestDestination,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
@@ -143,21 +147,26 @@ const cardano: AppSpec<Transaction> = {
         const cardanoResources = (account as CardanoAccount).cardanoResources as CardanoResources;
         const utxoTokens = cardanoResources.utxos.map(u => u.tokens).flat();
         const tokenBalance = mergeTokens(utxoTokens);
-        const requiredAdaForTokens = tokenBalance.length
-          ? TyphonUtils.calculateMinUtxoAmount(
-              tokenBalance,
-              new BigNumber(cardanoResources.protocolParams.lovelacePerUtxoWord),
-              false,
+        const changeAddress = TyphonUtils.getAddressFromString(account.freshAddress);
+        const requiredAdaForChangeTokens = tokenBalance.length
+          ? TyphonUtils.calculateMinUtxoAmountBabbage(
+              {
+                address: changeAddress,
+                amount: new BigNumber(CARDANO_MAX_SUPPLY),
+                tokens: tokenBalance,
+              },
+              new BigNumber(cardanoResources.protocolParams.utxoCostPerByte),
             )
           : new BigNumber(0);
 
         botTest("remaining balance equals requiredAdaForTokens)", () =>
-          expect(account.balance).toEqual(requiredAdaForTokens),
+          expect(account.balance).toEqual(requiredAdaForChangeTokens),
         );
       },
     },
     {
       name: "delegate to pool",
+      feature: "staking",
       maxRun: 1,
       transaction: ({ account, bridge, maxSpendable }) => {
         invariant(maxSpendable.gte(minBalanceRequiredForDelegate), "balance is too low");
@@ -190,6 +199,7 @@ const cardano: AppSpec<Transaction> = {
     },
     {
       name: "redelegate to pool",
+      feature: "staking",
       maxRun: 1,
       transaction: ({ account, bridge, maxSpendable }) => {
         invariant(maxSpendable.gte(minBalanceRequiredForDelegate), "balance is too low");
@@ -220,6 +230,7 @@ const cardano: AppSpec<Transaction> = {
     },
     {
       name: "undelegate",
+      feature: "staking",
       maxRun: 1,
       transaction: ({ account, bridge, maxSpendable }) => {
         invariant(maxSpendable.gte(minBalanceRequiredForDelegate), "balance is too low");

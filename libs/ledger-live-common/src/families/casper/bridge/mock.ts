@@ -16,7 +16,10 @@ import {
   makeAccountBridgeReceive,
 } from "../../../bridge/mockHelpers";
 import { getEstimatedFees } from "./bridgeHelpers/fee";
-import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import {
+  getSerializedAddressParameters,
+  updateTransaction,
+} from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { getAddress, isAddressValid } from "./bridgeHelpers/addresses";
 import { isTransferIdValid } from "./bridgeHelpers/transferId";
 import { CasperInvalidTransferId, InvalidMinimumAmount, MayBlockAccount } from "../errors";
@@ -154,7 +157,7 @@ const currencyBridge: CurrencyBridge = {
 };
 const accountBridge: AccountBridge<Transaction> = {
   createTransaction,
-  updateTransaction: defaultUpdateTransaction,
+  updateTransaction,
   prepareTransaction,
   getTransactionStatus,
   sync,
@@ -162,6 +165,7 @@ const accountBridge: AccountBridge<Transaction> = {
   signOperation,
   broadcast,
   estimateMaxSpendable,
+  getSerializedAddressParameters,
 };
 export default {
   currencyBridge,

@@ -1,5 +1,6 @@
 import protobuf from "protobufjs";
 import * as protoJson from "./generate-protocol.json";
+import { isHexadecimal } from "./shared-utils";
 
 type SwapProtobufPayload = {
   payinAddress: string;
@@ -33,11 +34,13 @@ export type SwapPayload = {
   deviceTransactionIdNg?: string;
 };
 
-function isHexadecimal(str: string): boolean {
-  return /^[A-F0-9]+$/i.test(str);
-}
+/**
+ * deprecated use `decodeSwapPayload` instead
+ */
+export const decodePayloadProtobuf = (payload: string): Promise<SwapPayload> =>
+  decodeSwapPayload(payload);
 
-export async function decodePayloadProtobuf(payload: string): Promise<SwapPayload> {
+export async function decodeSwapPayload(payload: string): Promise<SwapPayload> {
   const buffer = isHexadecimal(payload)
     ? Buffer.from(payload, "hex")
     : Buffer.from(payload, "base64");

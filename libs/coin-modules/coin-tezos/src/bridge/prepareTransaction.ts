@@ -3,9 +3,14 @@ import { AccountBridge } from "@ledgerhq/types-live";
 import { TezosAccount, Transaction } from "../types";
 import { validateRecipient } from "../logic";
 import getEstimatedFees from "./getFeesForTransaction";
+import coinConfig from "../config";
 
 function bnEq(a: BigNumber | null | undefined, b: BigNumber | null | undefined): boolean {
   return !a && !b ? true : !a || !b ? false : a.eq(b);
+}
+
+function maxBigNumber(a: BigNumber, b: BigNumber): BigNumber {
+  return a.isGreaterThan(b) ? a : b;
 }
 
 export const prepareTransaction: AccountBridge<
@@ -29,7 +34,18 @@ export const prepareTransaction: AccountBridge<
   }
 
   const estimation = await getEstimatedFees({ account, transaction });
+  const minGasLimit = coinConfig.getCoinConfig().fees.minGasLimit;
+  const minStorageLimit = coinConfig.getCoinConfig().fees.minStorageLimit;
+  const minFees = coinConfig.getCoinConfig().fees.minFees;
+  const minEstimatedFees = coinConfig.getCoinConfig().fees.minEstimatedFees;
 
+  estimation.gasLimit = maxBigNumber(estimation.gasLimit, new BigNumber(minGasLimit));
+  estimation.storageLimit = maxBigNumber(estimation.storageLimit, new BigNumber(minStorageLimit));
+  estimation.fees = maxBigNumber(estimation.fees, new BigNumber(minFees));
+  estimation.estimatedFees = maxBigNumber(
+    estimation.estimatedFees,
+    new BigNumber(minEstimatedFees),
+  );
   const tx: Transaction = {
     ...transaction,
     ...estimation,

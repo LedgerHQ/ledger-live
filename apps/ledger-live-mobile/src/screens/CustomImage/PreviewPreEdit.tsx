@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import styled from "styled-components/native";
+import styled, { useTheme } from "styled-components/native";
 import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import {
   NFTMetadataLoadingError,
@@ -25,7 +25,6 @@ import {
   CLSSupportedDeviceModelId,
   supportedDeviceModelIds,
 } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { CustomImageNavigatorParamList } from "~/components/RootNavigator/types/CustomImageNavigator";
@@ -111,18 +110,12 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
     params.deviceModelId ?? DeviceModelId.stax,
   );
 
-  const supportDeviceEuropa = useFeature("supportDeviceEuropa")?.enabled;
-  const supportedAndEnabledDeviceModelIds = supportedDeviceModelIds.filter(() => {
-    const devicesSupported: Record<CLSSupportedDeviceModelId, boolean> = {
-      [DeviceModelId.stax]: true,
-      [DeviceModelId.europa]: Boolean(supportDeviceEuropa),
-    };
-    return devicesSupported[deviceModelId];
-  }, [supportDeviceEuropa]);
   const targetDisplayDimensions = useMemo(
     () => getScreenVisibleAreaDimensions(deviceModelId),
     [deviceModelId],
   );
+  const { colors } = useTheme();
+  const theme = colors.type as "light" | "dark";
 
   const isNftMetadata = "nftMetadataParams" in params;
   const isImageUrl = "imageUrl" in params;
@@ -371,9 +364,9 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
   return (
     <SafeAreaView style={{ flex: 1 }} edges={["bottom"]}>
       <TrackScreen category={analyticsScreenName} />
-      {!params.deviceModelId && supportDeviceEuropa && (
+      {!params.deviceModelId && (
         <TabContainer>
-          {supportedAndEnabledDeviceModelIds.map(modelId => (
+          {supportedDeviceModelIds.map(modelId => (
             <Tab
               key={modelId}
               onPress={() => onChangeDeviceModelId(modelId)}
@@ -409,7 +402,7 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
                 onError={handlePreviewImageError}
                 fadeDuration={0}
                 source={{ uri: processorPreviewImage?.imageBase64DataUri }}
-                framedPictureConfig={getFramedPictureConfig("preview", deviceModelId)}
+                framedPictureConfig={getFramedPictureConfig("preview", deviceModelId, theme)}
               />
             </Flex>
           </Flex>

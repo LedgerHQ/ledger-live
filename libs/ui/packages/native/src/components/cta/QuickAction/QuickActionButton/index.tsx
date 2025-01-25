@@ -46,8 +46,13 @@ const QuickActionButton = ({
   onPressWhenDisabled,
   textVariant = "body",
   variant = "large",
+  testID,
   ...otherProps
 }: QuickActionButtonProps): React.ReactElement => {
+  const text = // Extract the text to use it as a testID
+    React.isValidElement(children) && children.props?.i18nKey
+      ? children.props.i18nKey.split(".").pop() // Extract the last part of the key
+      : children?.toString().toLowerCase();
   return (
     <Base
       disabled={onPressWhenDisabled ? false : disabled}
@@ -55,6 +60,7 @@ const QuickActionButton = ({
       visuallyDisabled={disabled}
       variant={variant}
       {...otherProps}
+      testID={`${testID}-${text}`}
     >
       <Icon
         size={variant === "small" ? 20 : 24}

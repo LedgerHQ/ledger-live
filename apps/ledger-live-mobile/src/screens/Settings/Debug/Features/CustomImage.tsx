@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { IconsLegacy } from "@ledgerhq/native-ui";
+import { Icons, IconsLegacy } from "@ledgerhq/native-ui";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import SettingsRow from "~/components/SettingsRow";
 import { NavigatorName, ScreenName } from "~/const";
@@ -38,7 +38,7 @@ export default function CustomImage() {
       <SettingsRow
         title="Custom lockscreen Europa"
         desc="Convenient access to the flow"
-        iconLeft={<IconsLegacy.EuropaMedium size={32} color="black" />}
+        iconLeft={<Icons.Flex size="M" color="black" />}
         onPress={handlePressEuropa}
       />
     </>

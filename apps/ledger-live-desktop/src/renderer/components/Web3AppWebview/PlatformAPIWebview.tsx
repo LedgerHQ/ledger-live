@@ -25,7 +25,7 @@ import {
 } from "@ledgerhq/live-common/platform/react";
 import trackingWrapper from "@ledgerhq/live-common/platform/tracking";
 import { openModal } from "../../actions/modals";
-import { flattenAccountsSelector } from "../../reducers/accounts";
+import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
 import BigSpinner from "../BigSpinner";
 import { track } from "~/renderer/analytics/segment";
 import {
@@ -37,11 +37,15 @@ import { Loader } from "./styled";
 import { WebviewAPI, WebviewProps } from "./types";
 import { useWebviewState } from "./helpers";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
+import { mevProtectionSelector } from "~/renderer/reducers/settings";
 import { walletSelector } from "~/renderer/reducers/wallet";
 
 export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
   ({ manifest, inputs = {}, onStateChange }, ref) => {
-    const { webviewState, webviewRef, webviewProps } = useWebviewState({ manifest, inputs }, ref);
+    const { webviewState, webviewRef, webviewProps, webviewPartition } = useWebviewState(
+      { manifest, inputs },
+      ref,
+    );
 
     const tracking = useMemo(
       () =>
@@ -74,6 +78,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
 
     const dispatch = useDispatch();
     const accounts = useSelector(flattenAccountsSelector);
+    const mevProtected = useSelector(mevProtectionSelector);
     const { pushToast } = useToasts();
     const { t } = useTranslation();
 
@@ -175,14 +180,14 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         signedTransaction: RawPlatformSignedTransaction;
       }) => {
         return broadcastTransactionLogic(
-          { manifest, dispatch, accounts, tracking },
+          { manifest, dispatch, accounts, tracking, mevProtected },
           accountId,
           signedTransaction,
           pushToast,
           t,
         );
       },
-      [manifest, accounts, pushToast, dispatch, t, tracking],
+      [manifest, accounts, pushToast, dispatch, t, tracking, mevProtected],
     );
 
     const startExchange = useCallback(
@@ -408,6 +413,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
           // eslint-disable-next-line react/no-unknown-property
           allowpopups="true"
           {...webviewProps}
+          {...webviewPartition}
         />
         {!widgetLoaded ? (
           <Loader>

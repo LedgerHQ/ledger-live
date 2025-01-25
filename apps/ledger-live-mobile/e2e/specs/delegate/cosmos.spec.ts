@@ -1,4 +1,4 @@
-import { knownDevice } from "../../models/devices";
+import { knownDevices } from "../../models/devices";
 import {
   COSMOS_MIN_FEES,
   COSMOS_MIN_SAFE,
@@ -8,17 +8,23 @@ import {
 } from "../../models/currencies";
 import { Application } from "../../page";
 import DeviceAction from "../../models/DeviceAction";
+import BigNumber from "bignumber.js";
 
-let app: Application;
+const app = new Application();
 let deviceAction: DeviceAction;
 
 const testedCurrency = "cosmos";
-const defaultValidator = "Ledger";
+const defaultProvider = "Ledger";
 const testAccount = initTestAccounts([testedCurrency])[0];
+const knownDevice = knownDevices.nanoX;
 
 describe("Cosmos delegate flow", () => {
   beforeAll(async () => {
-    app = await Application.init("onboardingcompleted", [knownDevice], [testAccount]);
+    await app.init({
+      userdata: "skip-onboarding",
+      knownDevices: [knownDevice],
+      testAccounts: [testAccount],
+    });
     deviceAction = new DeviceAction(knownDevice);
 
     await app.portfolio.waitForPortfolioPageToLoad();
@@ -26,8 +32,8 @@ describe("Cosmos delegate flow", () => {
 
   $TmsLink("B2CQA-384");
   it("open account stake flow", async () => {
-    await app.portfolio.openTransferMenu();
-    await app.portfolio.navigateToStakeFromTransferMenu();
+    await app.transfertMenu.open();
+    await app.transfertMenu.navigateToStake();
   });
 
   $TmsLink("B2CQA-387");
@@ -36,20 +42,30 @@ describe("Cosmos delegate flow", () => {
     const unit = getAccountUnit(testAccount);
 
     const usableAmount = testAccount.spendableBalance.minus(COSMOS_MIN_SAFE).minus(COSMOS_MIN_FEES);
-    const delegatedAmount = usableAmount.div(100 / delegatedPercent).integerValue();
+    // rounding to avoid floating point errors
+    // NOTE: we could allow for some precision error here to avoid rounding issues
+    const delegatedAmount = usableAmount
+      .multipliedBy(delegatedPercent)
+      .div(100)
+      .integerValue(BigNumber.ROUND_CEIL);
     const remainingAmount = usableAmount.minus(delegatedAmount);
 
     await app.stake.selectCurrency(testedCurrency);
     await app.common.selectAccount(testAccount.id);
 
-    await app.stake.setAmount(delegatedPercent);
-    await app.stake.expectRemainingAmount(delegatedPercent, formattedAmount(unit, remainingAmount));
-    await app.stake.validateAmount();
+    await app.stake.setAmountPercent(testedCurrency, delegatedPercent);
+    await app.stake.expectRemainingAmount(
+      testedCurrency,
+      delegatedPercent,
+      formattedAmount(unit, remainingAmount),
+    );
+    await app.stake.validateAmount(testedCurrency);
     await app.stake.expectDelegatedAmount(
+      testedCurrency,
       formattedAmount(unit, delegatedAmount, { showAllDigits: true, showCode: true }),
     );
-    await app.stake.expectValidator(defaultValidator);
-    await app.stake.summaryContinue();
+    await app.stake.expectProvider(testedCurrency, defaultProvider);
+    await app.stake.summaryContinue(testedCurrency);
     await deviceAction.selectMockDevice();
     await deviceAction.openApp();
     await app.common.successClose();

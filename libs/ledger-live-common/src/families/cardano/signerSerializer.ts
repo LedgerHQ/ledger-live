@@ -11,6 +11,7 @@ import {
   TxInput,
   TxOutput,
   TxOutputDestination,
+  TxOutputFormat,
   TxOutputDestinationType,
   Withdrawal,
 } from "@cardano-foundation/ledgerjs-hw-app-cardano";
@@ -81,6 +82,7 @@ function prepareLedgerOutput(output: SignerTxOutput): TxOutput {
   const destination = convertDestination(output);
 
   return {
+    format: TxOutputFormat.MAP_BABBAGE,
     amount,
     destination,
     tokenBundle,

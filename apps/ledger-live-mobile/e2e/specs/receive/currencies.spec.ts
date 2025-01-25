@@ -1,17 +1,21 @@
 import DeviceAction from "../../models/DeviceAction";
-import { knownDevice } from "../../models/devices";
+import { knownDevices } from "../../models/devices";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { Application } from "../../page";
 
-let app: Application;
+const app = new Application();
 let deviceAction: DeviceAction;
 let first = true;
+const knownDevice = knownDevices.nanoX;
 
 $TmsLink("B2CQA-651");
 $TmsLink("B2CQA-1854");
 describe("Receive different currency", () => {
   beforeAll(async () => {
-    app = await Application.init("onboardingcompleted", [knownDevice]);
+    await app.init({
+      userdata: "skip-onboarding",
+      knownDevices: [knownDevice],
+    });
     deviceAction = new DeviceAction(knownDevice);
 
     await app.portfolio.waitForPortfolioPageToLoad();

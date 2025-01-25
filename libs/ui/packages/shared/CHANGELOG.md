@@ -1,5 +1,29 @@
 # @ledgerhq/ui-shared
 
+## 0.3.0
+
+### Minor Changes
+
+- [#8371](https://github.com/LedgerHQ/ledger-live/pull/8371) [`be83cab`](https://github.com/LedgerHQ/ledger-live/commit/be83cabecda649b52cb23be0d1f4ec822629b112) Thanks [@thesan](https://github.com/thesan)! - Update the react-ui Carousel based on the portfolio content cards design
+
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#8371](https://github.com/LedgerHQ/ledger-live/pull/8371) [`be83cab`](https://github.com/LedgerHQ/ledger-live/commit/be83cabecda649b52cb23be0d1f4ec822629b112) Thanks [@thesan](https://github.com/thesan)! - Update the react-ui Carousel based on the portfolio content cards design
+
+## 0.2.2
+
+### Patch Changes
+
+- [#7941](https://github.com/LedgerHQ/ledger-live/pull/7941) [`2f90189`](https://github.com/LedgerHQ/ledger-live/commit/2f9018986102f23fa22d31605d0d9f99abd41892) Thanks [@thesan](https://github.com/thesan)! - Fix IDE go to definition feature for some libs
+
+## 0.2.2-next.0
+
+### Patch Changes
+
+- [#7941](https://github.com/LedgerHQ/ledger-live/pull/7941) [`2f90189`](https://github.com/LedgerHQ/ledger-live/commit/2f9018986102f23fa22d31605d0d9f99abd41892) Thanks [@thesan](https://github.com/thesan)! - Fix IDE go to definition feature for some libs
+
 ## 0.2.1
 
 ### Patch Changes

@@ -1,33 +1,52 @@
 import fs from "fs";
 import path from "path";
-import { fetchTokens } from "../../fetch";
+import { fetchTokensFromCALService } from "../../fetch";
 
 type TRC20Token = [
   string, // id
-  string, // abbr
+  string, // ticker
   string, // name
   string, // contractAddress
-  number, // precision
+  number, // decimals
   boolean?, // delisted
-  string?, // ledgerSignature
-  boolean?, // enableCountervalues
+  string?, // live signature
 ];
 
 export const importTRC20Tokens = async (outputDir: string) => {
   try {
     console.log("importing trc20 tokens...");
-    const [trc20tokens, hash] = await fetchTokens<TRC20Token[]>("trc20.json");
-    const filePath = path.join(outputDir, "trc20");
+    const { tokens, hash } = await fetchTokensFromCALService({ blockchain_name: "tron" }, [
+      "id",
+      "ticker",
+      "name",
+      "contract_address",
+      "decimals",
+      "delisted",
+      "live_signature",
+    ]);
+    const trc20tokens: TRC20Token[] = tokens.map(token => {
+      const [, , tokenIdentifier] = token.id.split("/");
 
+      return [
+        tokenIdentifier,
+        token.ticker,
+        token.name,
+        token.contract_address,
+        token.decimals,
+        token.delisted,
+        token.live_signature,
+      ];
+    });
+
+    const filePath = path.join(outputDir, "trc20");
     const trc20TypeStringified = `export type TRC20Token = [
   string, // id
-  string, // abbr
+  string, // ticker
   string, // name
   string, // contractAddress
-  number, // precision
+  number, // decimals
   boolean?, // delisted
-  string?, // ledgerSignature
-  boolean?, // enableCountervalues
+  string?, // live signature
 ];`;
 
     fs.writeFileSync(`${filePath}.json`, JSON.stringify(trc20tokens));
@@ -41,7 +60,7 @@ export const importTRC20Tokens = async (outputDir: string) => {
 
 import tokens from "./trc20.json";
 
-${hash ? `export { default as hash } from "./trc20-hash.json";` : null}
+${hash ? `export { default as hash } from "./trc20-hash.json";` : ""}
 
 export default tokens as TRC20Token[];
 `,

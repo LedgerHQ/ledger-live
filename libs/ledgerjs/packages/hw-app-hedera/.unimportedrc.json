@@ -1,0 +1,9 @@
+{
+  "ignoreUnresolved": [],
+  "ignoreUnused": [
+    "@ledgerhq/hw-transport"
+  ],
+  "ignoreUnimported": [
+    "src/Hedera.ts"
+  ]
+}

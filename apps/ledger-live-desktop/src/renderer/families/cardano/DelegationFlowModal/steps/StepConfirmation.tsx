@@ -56,7 +56,7 @@ function StepConfirmation({ t, optimisticOperation, error, signed }: StepProps) 
 export function StepConfirmationFooter({ onRetry, error, onClose }: StepProps) {
   return (
     <Box horizontal alignItems="right">
-      <Button data-test-id="modal-close-button" ml={2} onClick={onClose}>
+      <Button data-testid="modal-close-button" ml={2} onClick={onClose}>
         <Trans i18nKey="common.close" />
       </Button>
       {error ? <RetryButton primary ml={2} onClick={onRetry} /> : null}

@@ -1,51 +1,28 @@
-import { ExchangeProviderNameAndSignature } from ".";
+import { getEnv } from "@ledgerhq/live-env";
+import { getTestProviderInfo, type ExchangeProviderNameAndSignature } from ".";
+import calService, { SWAP_DATA_CDN } from "@ledgerhq/ledger-cal-service";
 import { isIntegrationTestEnv } from "../swap/utils/isIntegrationTestEnv";
-import network from "@ledgerhq/live-network";
 
 export type SwapProviderConfig = {
   needsKYC: boolean;
-  needsBearerToken: boolean;
+  needsBearerToken?: boolean;
 };
 
-type CEXProviderConfig = ExchangeProviderNameAndSignature & SwapProviderConfig & { type: "CEX" };
-type DEXProviderConfig = SwapProviderConfig & { type: "DEX" };
-type AdditionalProviderConfig = SwapProviderConfig & { type: "DEX" | "CEX" } & {
+export type CEXProviderConfig = ExchangeProviderNameAndSignature &
+  SwapProviderConfig & { type: "CEX" };
+export type DEXProviderConfig = SwapProviderConfig & { type: "DEX" };
+export type AdditionalProviderConfig = SwapProviderConfig & { type: "DEX" | "CEX" } & {
   version?: number;
-  needsBearerToken: boolean;
-  needsKYC: boolean;
+  termsOfUseUrl: string;
+  supportUrl: string;
+  mainUrl: string;
+  useInExchangeApp: boolean;
+  displayName: string;
 };
+
 export type ProviderConfig = CEXProviderConfig | DEXProviderConfig;
 
-const SWAP_DATA_CDN: Record<string, AdditionalProviderConfig> = {
-  changelly: {
-    needsKYC: false,
-    needsBearerToken: false,
-    type: "CEX",
-  },
-  cic: {
-    needsKYC: false,
-    needsBearerToken: false,
-    type: "CEX",
-  },
-  moonpay: {
-    needsKYC: true,
-    needsBearerToken: false,
-    type: "CEX",
-    version: 2,
-  },
-  oneinch: {
-    type: "DEX",
-    needsKYC: false,
-    needsBearerToken: false,
-  },
-  paraswap: {
-    type: "DEX",
-    needsKYC: false,
-    needsBearerToken: false,
-  },
-};
-
-const DEFAULT_SWAP_PROVIDERS: Record<string, ProviderConfig & AdditionalProviderConfig> = {
+const DEFAULT_SWAP_PROVIDERS: Record<string, ProviderConfig & Partial<AdditionalProviderConfig>> = {
   changelly: {
     name: "Changelly",
     publicKey: {
@@ -62,6 +39,29 @@ const DEFAULT_SWAP_PROVIDERS: Record<string, ProviderConfig & AdditionalProvider
     needsKYC: false,
     needsBearerToken: false,
     type: "CEX",
+    termsOfUseUrl: "https://changelly.com/terms-of-use",
+    supportUrl: "https://support.changelly.com/en/support/home",
+    mainUrl: "https://changelly.com/",
+  },
+  exodus: {
+    name: "exodus",
+    publicKey: {
+      curve: "secp256k1",
+      data: Buffer.from(
+        "048abacf1b1027b7c5f96d77826eada263e21d2ba8a2a037a84e0679e05d997a91ff34df181f88bdaf3521c26fb70eb028622f3afd66d0c282d5bb61da38ad76c1",
+        "hex",
+      ),
+    },
+    signature: Buffer.from(
+      "30450221009278b9a6d7b69e56a7f58004072bd4ec741f4c6134ac0a0b83d42e8d246159760220317b334a465d9b056e9da5bfbccbac31d36c0b564b06c60e28d6e8b010782c3e",
+      "hex",
+    ),
+    needsKYC: false,
+    needsBearerToken: false,
+    type: "CEX",
+    termsOfUseUrl: "https://www.exodus.com/legal/exodus-tos-20240219-v29.pdf",
+    supportUrl: "https://www.exodus.com/contact-support/",
+    mainUrl: "https://www.exodus.com/",
   },
   cic: {
     name: "CIC",
@@ -79,6 +79,9 @@ const DEFAULT_SWAP_PROVIDERS: Record<string, ProviderConfig & AdditionalProvider
     needsKYC: false,
     needsBearerToken: false,
     type: "CEX",
+    termsOfUseUrl: "https://criptointercambio.com/terms-of-use",
+    supportUrl: "https://criptointercambio.com/en/about",
+    mainUrl: "https://criptointercambio.com/",
   },
   moonpay: {
     name: "moonpay",
@@ -97,17 +100,67 @@ const DEFAULT_SWAP_PROVIDERS: Record<string, ProviderConfig & AdditionalProvider
     needsBearerToken: false,
     type: "CEX",
     version: 2,
+    termsOfUseUrl: "https://www.moonpay.com/legal/terms_of_use_row",
+    supportUrl: "https://support.moonpay.com/",
+    mainUrl: "https://www.moonpay.com/",
   },
   oneinch: {
     type: "DEX",
     needsKYC: false,
     needsBearerToken: false,
+    termsOfUseUrl: "https://1inch.io/assets/1inch_network_terms_of_use.pdf",
+    supportUrl: "https://help.1inch.io/en/",
+    mainUrl: "https://1inch.io/",
   },
   paraswap: {
     type: "DEX",
     needsKYC: false,
     needsBearerToken: false,
+    termsOfUseUrl: "https://files.paraswap.io/tos_v4.pdf",
+    supportUrl: "https://help.paraswap.io/en/",
+    mainUrl: "https://www.paraswap.io/",
   },
+  thorswap: {
+    type: "CEX",
+    name: "thorswap",
+    needsBearerToken: false,
+    termsOfUseUrl: "https://docs.thorswap.finance/thorswap/resources/terms-of-service",
+    supportUrl: "mailto:support@thorswap.finance",
+    mainUrl: "https://www.thorswap.finance/",
+    needsKYC: false,
+    version: 2,
+    publicKey: {
+      curve: "secp256r1",
+      data: Buffer.from(
+        "0480a453a91e728c5f622d966b90d15de6fdb6c267bb8147dd0e0d4e1c730d631594e724aaf2b2f526600f3713ce6bc2adbfdbaafd2121bfee64fce93fd59a9050",
+        "hex",
+      ),
+    },
+    signature: Buffer.from(
+      "304402207a9676f6971575cad70e4ef4d937ebdba82c51e6a0ab5343c11fefa18dff326d0220643f0718da68ead3fd9900eb90bca782d533d1698c8ea1435ae232ddf2e94229",
+      "hex",
+    ),
+  },
+};
+
+export const dexProvidersContractAddress: { [key: string]: string } = {
+  "0x3fC91A3afd70395Cd496C647d5a6CC9D4B2b7FAD": "Uniswap",
+};
+
+export const termsOfUse: { [key: string]: string } = {
+  paraswap: "https://paraswap.io/tos",
+  "1inch": "https://1inch.io/assets/1inch_network_terms_of_use.pdf",
+  Uniswap: "https://uniswap.org/terms-of-service",
+};
+
+export const privacyPolicy: { [key: string]: string } = {
+  Uniswap: "https://uniswap.org/privacy-policy",
+};
+
+type CurrencyData = {
+  id: string;
+  config: string;
+  signature: string;
 };
 
 let providerDataCache: Record<string, ProviderConfig & AdditionalProviderConfig> | null = null;
@@ -115,7 +168,25 @@ let providerDataCache: Record<string, ProviderConfig & AdditionalProviderConfig>
 export const getSwapProvider = async (
   providerName: string,
 ): Promise<ProviderConfig & AdditionalProviderConfig> => {
-  const res = await fetchAndMergeProviderData();
+  const testProviderInfo = getTestProviderInfo();
+  const ledgerSignatureEnv = getEnv("MOCK_EXCHANGE_TEST_CONFIG") ? "test" : "prod";
+  const partnerSignatureEnv = getEnv("MOCK_EXCHANGE_TEST_PARTNER") ? "test" : "prod";
+
+  if (ledgerSignatureEnv === "test" && testProviderInfo) {
+    return {
+      needsKYC: false,
+      useInExchangeApp: true,
+      needsBearerToken: false,
+      type: "CEX",
+      termsOfUseUrl: "https://example.com",
+      supportUrl: "https://example.com",
+      mainUrl: "https://example.com",
+      displayName: providerName,
+      ...testProviderInfo,
+    };
+  }
+
+  const res = await fetchAndMergeProviderData({ ledgerSignatureEnv, partnerSignatureEnv });
 
   if (!res[providerName.toLowerCase()]) {
     throw new Error(`Unknown partner ${providerName}`);
@@ -124,50 +195,25 @@ export const getSwapProvider = async (
   return res[providerName.toLowerCase()];
 };
 
-function transformData(providersData) {
-  const transformed = {};
-  providersData.forEach(provider => {
-    const key = provider.name.toLowerCase();
-    transformed[key] = {
-      name: provider.name,
-      publicKey: {
-        curve: provider.public_key_curve,
-        data: Buffer.from(provider.public_key, "hex"),
-      },
-      signature: Buffer.from(provider.signature, "hex"),
-    };
-  });
-  return transformed;
-}
+/**
+ * Retrieves the currency data for a given ID
+ * @param currencyId The unique identifier for the currency.
+ * @returns A promise that resolves to the currency data including ID, serialized config, and signature.
+ * @deprecated Use cal module `findCurrencyData` method.
+ */
+export const findExchangeCurrencyData = async (currencyId: string): Promise<CurrencyData> =>
+  calService.findCurrencyData(currencyId);
 
-export const getProvidersData = async () => {
-  const providersData = await network({
-    url:
-      "https://crypto-assets-service.api.ledger.com/v1/partners" +
-      "?output=name,signature,public_key,public_key_curve" +
-      "&service_name=swap",
-  });
-  return transformData(providersData.data);
-};
-
-export const getProvidersCDNData = async () => {
-  const providersData = await network({
-    url: "https://cdn.live.ledger.com/swap-providers/data.json",
-  });
-  return providersData.data;
-};
-
-export const fetchAndMergeProviderData = async () => {
+export const fetchAndMergeProviderData = async env => {
   if (providerDataCache) {
     return providerDataCache;
   }
 
   try {
     const [providersData, providersExtraData] = await Promise.all([
-      getProvidersData(),
-      getProvidersCDNData(),
+      calService.getProvidersData({ type: "swap", ...env }),
+      calService.getProvidersCDNData(),
     ]);
-
     const finalProvidersData = mergeProviderData(providersData, providersExtraData);
     providerDataCache = finalProvidersData;
 
@@ -192,8 +238,10 @@ function mergeProviderData(baseData, additionalData) {
 }
 
 export const getAvailableProviders = async (): Promise<string[]> => {
+  const ledgerSignatureEnv = getEnv("MOCK_EXCHANGE_TEST_CONFIG") ? "test" : "prod";
+  const partnerSignatureEnv = getEnv("MOCK_EXCHANGE_TEST_PARTNER") ? "test" : "prod";
   if (isIntegrationTestEnv()) {
     return Object.keys(DEFAULT_SWAP_PROVIDERS).filter(p => p !== "changelly");
   }
-  return Object.keys(await fetchAndMergeProviderData());
+  return Object.keys(await fetchAndMergeProviderData({ ledgerSignatureEnv, partnerSignatureEnv }));
 };

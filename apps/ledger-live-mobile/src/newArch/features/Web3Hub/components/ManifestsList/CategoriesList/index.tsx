@@ -1,74 +1,54 @@
-import React, { useMemo } from "react";
+import React from "react";
+import { StyleSheet } from "react-native";
 import { FlashList } from "@shopify/flash-list";
-import { useQuery } from "@tanstack/react-query";
 import { Box } from "@ledgerhq/native-ui";
+import { Category } from "LLM/features/Web3Hub/utils/api/categories";
+import useCategoriesListViewModel, {
+  type useCategoriesListViewModelProps,
+} from "./useCategoriesListViewModel";
 import Badge from "./Badge";
 
-const categories = [
-  "games",
-  "defi",
-  "collectibles",
-  "marketplaces",
-  "high-risk",
-  "gambling",
-  "exchanges",
-  "social",
-  "other",
-];
+const identityFn = (item: Category) => item.id;
 
-// TODO move this to an api folder or utils for hooks
-const fetchCategoriesMock = async () => {
-  await new Promise(resolve => setTimeout(resolve, 500));
-  return categories;
-};
+type Props = useCategoriesListViewModelProps;
 
-const selectCategories = (data: string[]) => {
-  return ["all", ...data];
-};
-
-const identityFn = (item: string) => item;
-
-type Props = {
-  selectedCategory: string;
-  selectCategory: (category: string) => void;
+const renderItem = ({
+  item,
+  extraData,
+}: {
+  item: Category;
+  extraData?: useCategoriesListViewModelProps;
+}) => {
+  return (
+    <Badge
+      onPress={() => extraData?.selectCategory(item.id)}
+      label={item.name}
+      selected={extraData?.selectedCategory === item.id}
+    />
+  );
 };
 
 export default function CategoriesList({ selectedCategory, selectCategory }: Props) {
-  const categoriesQuery = useQuery({
-    queryKey: ["web3hub/categories"],
-    queryFn: fetchCategoriesMock,
-    select: selectCategories,
-  });
-
-  const categoriesExtraData = useMemo(() => {
-    return {
-      selectedCategory,
-      selectCategory,
-    };
-  }, [selectCategory, selectedCategory]);
+  const { data, extraData } = useCategoriesListViewModel({ selectedCategory, selectCategory });
 
   return (
     <FlashList
       testID="web3hub-categories-scroll"
       horizontal
-      contentContainerStyle={{
-        paddingHorizontal: 5,
-      }}
+      contentContainerStyle={styles.container}
       keyExtractor={identityFn}
-      renderItem={({ item, extraData }) => {
-        return (
-          <Badge
-            onPress={() => extraData.selectCategory(item)}
-            label={item}
-            selected={extraData.selectedCategory === item}
-          />
-        );
-      }}
+      renderItem={renderItem}
       ListEmptyComponent={<Box height={32} />} // Empty box for first height calculation, could be improved
       estimatedItemSize={50}
-      data={categoriesQuery.data}
+      data={data}
       showsHorizontalScrollIndicator={false}
-      extraData={categoriesExtraData}
+      extraData={extraData}
     />
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    paddingHorizontal: 5,
+  },
+});

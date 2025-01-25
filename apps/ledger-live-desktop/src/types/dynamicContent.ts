@@ -16,6 +16,7 @@ export type ContentCard = {
   location?: LocationContentCard;
   order?: number;
   created: Date;
+  isMock?: boolean;
 };
 
 export type ActionContentCard = ContentCard & {
@@ -33,19 +34,9 @@ export type NotificationContentCard = ContentCard & {
 };
 
 export type PortfolioContentCard = ContentCard & {
-  id: string;
-  location?: LocationContentCard;
-  imgs?: {
-    source: string;
-    transform: [number, number, number, number];
-    size: { width: number; height: number };
-  }[];
-  title: React.ReactNode;
-  description: React.ReactNode;
   url?: string;
   path?: string;
   image?: string;
-  onClickOnSlide?: (cardId: string) => void;
-  order?: number;
-  created: Date;
+  cta?: string;
+  tag?: string;
 };

@@ -6,6 +6,7 @@ import {
   Features,
 } from "@ledgerhq/types-live";
 import reduce from "lodash/reduce";
+import { BUY_SELL_UI_APP_ID } from "../wallet-api/constants";
 import { formatToFirebaseFeatureId } from "./firebaseFeatureFlags";
 
 /**
@@ -36,6 +37,8 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyArbitrumSepolia: DEFAULT_FEATURE,
   currencyAstar: DEFAULT_FEATURE,
   currencyAvalancheCChain: DEFAULT_FEATURE,
+  currencyAptos: DEFAULT_FEATURE,
+  currencyAptosTestnet: DEFAULT_FEATURE,
   currencyAxelar: DEFAULT_FEATURE,
   currencyBase: DEFAULT_FEATURE,
   currencyBaseSepolia: DEFAULT_FEATURE,
@@ -76,6 +79,14 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyBlastSepolia: DEFAULT_FEATURE,
   currencyScroll: DEFAULT_FEATURE,
   currencyScrollSepolia: DEFAULT_FEATURE,
+  currencyIcon: DEFAULT_FEATURE,
+  currencyTon: DEFAULT_FEATURE,
+  currencyEtherlink: DEFAULT_FEATURE,
+  currencyZkSync: DEFAULT_FEATURE,
+  currencyZkSyncSepolia: DEFAULT_FEATURE,
+  currencyMantra: DEFAULT_FEATURE,
+  currencyXion: DEFAULT_FEATURE,
+  currencyZenrock: DEFAULT_FEATURE,
 };
 
 /**
@@ -83,22 +94,19 @@ export const CURRENCY_DEFAULT_FEATURES = {
  */
 export const DEFAULT_FEATURES: Features = {
   ...CURRENCY_DEFAULT_FEATURES,
-
   brazeLearn: DEFAULT_FEATURE,
-  objkt: DEFAULT_FEATURE,
   portfolioExchangeBanner: DEFAULT_FEATURE,
   postOnboardingAssetsTransfer: DEFAULT_FEATURE,
   counterValue: DEFAULT_FEATURE,
   mockFeature: DEFAULT_FEATURE,
-  multibuyNavigation: DEFAULT_FEATURE,
   ptxServiceCtaExchangeDrawer: DEFAULT_FEATURE,
   ptxServiceCtaScreens: DEFAULT_FEATURE,
   ptxSwapReceiveTRC20WithoutTrx: DEFAULT_FEATURE,
   disableNftLedgerMarket: DEFAULT_FEATURE,
   disableNftRaribleOpensea: DEFAULT_FEATURE,
   disableNftSend: DEFAULT_FEATURE,
-  listAppsV2minor1: DEFAULT_FEATURE,
   flexibleContentCards: DEFAULT_FEATURE,
+  ethStakingModalWithFilters: DEFAULT_FEATURE,
   ethStakingProviders: initFeature(),
   newsfeedPage: initFeature(),
   swapWalletApiPartnerList: initFeature(),
@@ -146,9 +154,7 @@ export const DEFAULT_FEATURES: Features = {
       bannerSubscriptionNotification: false,
       account: {
         homeURI:
-          "ledgerlive://recover/protect-simu?redirectTo=account&source=lld-sidebar-navigation&ajs_recover_source=lld-sidebar-navigation&ajs_recover_campaign=recover-launch",
-        loginURI:
-          "ledgerlive://recover/protect-simu?redirectTo=login&source=lld-welcome-login&ajs_recover_source=lld-welcome-login&ajs_recover_campaign=recover-launch",
+          "ledgerlive://recover/protect-simu?source=lld-sidebar-navigation&ajs_recover_source=lld-sidebar-navigation&ajs_recover_campaign=recover-launch",
       },
       compatibleDevices: [],
       discoverTheBenefitsLink: "https://www.ledger.com/recover",
@@ -166,8 +172,8 @@ export const DEFAULT_FEATURES: Features = {
           "ledgerlive://recover/protect-simu?redirectTo=restore&source=lld-restore",
         restoreInfoDrawer: {
           enabled: true,
-          manualStepsURI:
-            "https://support.ledger.com/hc/en-us/articles/360013349800-Update-Ledger-Nano-X-firmware?docs=true",
+          manualStepsURI: "https://support.ledger.com/article/360013349800-zd",
+
           supportLinkURI: "https://support.ledger.com",
         },
       },
@@ -298,9 +304,7 @@ export const DEFAULT_FEATURES: Features = {
       compatibleDevices: [],
       account: {
         homeURI:
-          "ledgerlive://recover/protect-simu?redirectTo=account&source=llm-myledger-access-card&ajs_prop_source=llm-myledger-access-card&ajs_prop_campaign=recover-launch",
-        loginURI:
-          "ledgerlive://recover/protect-simu?redirectTo=login&source=llm-myledger-access-card&ajs_prop_source=llm-myledger-access-card&ajs_prop_campaign=recover-launch",
+          "ledgerlive://recover/protect-simu?source=llm-myledger-access-card&ajs_prop_source=llm-myledger-access-card&ajs_prop_campaign=recover-launch",
       },
       managerStatesData: {
         NEW: {
@@ -319,8 +323,7 @@ export const DEFAULT_FEATURES: Features = {
           "ledgerlive://recover/protect-simu?redirectTo=restore&source=llm-restore-24&ajs_prop_source=llm-restore-24&ajs_prop_campaign=recover-launch",
         restoreInfoDrawer: {
           enabled: true,
-          manualStepsURI:
-            "https://support.ledger.com/hc/en-us/articles/360013349800-Update-Ledger-Nano-X-firmware?docs=true",
+          manualStepsURI: "https://support.ledger.com/article/360013349800-zd",
           supportLinkURI:
             "http://chat.abhishekpriyam.com/sprinklrlivechatv2.php?appId=63453067138a3f453db323b4_app_300078397&env=prod3",
         },
@@ -384,31 +387,28 @@ export const DEFAULT_FEATURES: Features = {
   buySellUi: {
     enabled: false,
     params: {
-      manifestId: "multibuy-v2", // Update to "buy-sell-ui" after rollout
+      manifestId: BUY_SELL_UI_APP_ID,
     },
   },
 
   buySellShortcut: {
     enabled: false,
   },
+  ptxCard: DEFAULT_FEATURE,
 
-  ptxSwapLiveAppDemoZero: {
-    enabled: false,
+  ptxSwapLiveApp: {
+    enabled: true,
     params: {
-      manifest_id: "swap-live-app-demo-0",
+      manifest_id: "swap-live-app-demo-3",
     },
   },
 
-  ptxSwapLiveAppDemoOne: {
+  ptxSwapLiveAppMobile: {
     enabled: false,
     params: {
-      manifest_id: "swap-live-app-demo-1",
+      manifest_id: "swap-live-app-demo-3",
     },
   },
-
-  ptxSwapMoonpayProvider: DEFAULT_FEATURE,
-  ptxSwapExodusProvider: DEFAULT_FEATURE,
-  ptxSwapThorswapProvider: DEFAULT_FEATURE,
 
   llmAnalyticsOptInPrompt: {
     enabled: false,
@@ -433,11 +433,15 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
 
+  ptxSwapMoonpayProvider: DEFAULT_FEATURE,
+  ptxSwapExodusProvider: DEFAULT_FEATURE,
+
   myLedgerDisplayAppDeveloperName: DEFAULT_FEATURE,
   nftsFromSimplehash: {
     ...DEFAULT_FEATURE,
     params: {
       threshold: 75,
+      staleTime: 1000 * 60 * 15,
     },
   },
   marketperformanceWidgetDesktop: {
@@ -445,14 +449,15 @@ export const DEFAULT_FEATURES: Features = {
     params: {
       variant: ABTestingVariants.variantA,
       refreshRate: 2,
-      top: 50,
+      top: 100,
+      limit: 100,
       supported: true,
+      enableNewFeature: false,
     },
   },
 
   lldChatbotSupport: DEFAULT_FEATURE,
   llmChatbotSupport: DEFAULT_FEATURE,
-  supportDeviceEuropa: DEFAULT_FEATURE,
   lldRefreshMarketData: {
     ...DEFAULT_FEATURE,
     params: {
@@ -466,11 +471,48 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
   spamReportNfts: DEFAULT_FEATURE,
-  lldWalletSync: DEFAULT_FEATURE,
-  llmWalletSync: DEFAULT_FEATURE,
+  lldWalletSync: {
+    ...DEFAULT_FEATURE,
+    params: {
+      environment: "STAGING",
+      watchConfig: {},
+      learnMoreLink: "",
+    },
+  },
+  llmWalletSync: {
+    ...DEFAULT_FEATURE,
+    params: {
+      environment: "STAGING",
+      watchConfig: {},
+      learnMoreLink: "",
+    },
+  },
   lldNftsGalleryNewArch: DEFAULT_FEATURE,
+  lldnewArchOrdinals: DEFAULT_FEATURE,
   enableAppsBackup: DEFAULT_FEATURE,
   web3hub: DEFAULT_FEATURE,
+  llmMarketQuickActions: DEFAULT_FEATURE,
+  spamFilteringTx: DEFAULT_FEATURE,
+  llmMemoTag: DEFAULT_FEATURE,
+  lldMemoTag: DEFAULT_FEATURE,
+  ldmkTransport: {
+    ...DEFAULT_FEATURE,
+    params: {
+      warningVisible: true,
+    },
+  },
+  llMevProtection: DEFAULT_FEATURE,
+  llmNetworkBasedAddAccountFlow: DEFAULT_FEATURE,
+  llCounterValueGranularitiesRates: {
+    ...DEFAULT_FEATURE,
+    params: {
+      daily: 14 * 24 * 60 * 60 * 1000,
+      hourly: 2 * 24 * 60 * 60 * 1000,
+    },
+  },
+  llmRebornLP: { ...DEFAULT_FEATURE, params: { variant: ABTestingVariants.variantA } },
+  llmRebornFlex: DEFAULT_FEATURE,
+  llmAccountListUI: DEFAULT_FEATURE,
 };
 
 // Firebase SDK treat JSON values as strings

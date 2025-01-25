@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
+import { denominate } from "@ledgerhq/live-common/families/elrond/helpers";
 import { Linking } from "react-native";
 import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
 

@@ -12,7 +12,7 @@ export default {
   component: Button,
   argTypes: {
     type: {
-      options: ["main", "error", "shade", "color", undefined],
+      options: ["main", "error", "shade", "color", "default", "accent", undefined],
       control: { type: "select" },
     },
     size: {

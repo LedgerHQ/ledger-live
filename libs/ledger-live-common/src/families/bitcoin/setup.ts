@@ -13,7 +13,6 @@ import { signMessage } from "@ledgerhq/coin-bitcoin/hw-signMessage";
 import { BitcoinAccount, Transaction, TransactionStatus } from "@ledgerhq/coin-bitcoin/types";
 import { GetAddressOptions, Resolver } from "../../hw/getAddress/types";
 import { withDevice } from "../../hw/deviceAccess";
-import { startSpan } from "../../performance";
 import { GetAddressFn } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import { getCurrencyConfiguration } from "../../config";
 import { BitcoinConfigInfo } from "@ledgerhq/coin-bitcoin/lib/config";
@@ -36,13 +35,8 @@ const getCurrencyConfig = (currency: CryptoCurrency) => {
   return { info: getCurrencyConfiguration<BitcoinConfigInfo>(currency) };
 };
 
-const perfLogger = {
-  startSpan,
-};
-
 const bridge: Bridge<Transaction, BitcoinAccount, TransactionStatus> = createBridges(
   signerContext,
-  perfLogger,
   getCurrencyConfig,
 );
 

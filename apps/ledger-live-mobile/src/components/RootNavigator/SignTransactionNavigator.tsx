@@ -11,7 +11,6 @@ import SignTransactionValidationError from "~/screens/SignTransaction/03-Validat
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import StepHeader from "../StepHeader";
 import { SignTransactionNavigatorParamList } from "./types/SignTransactionNavigator";
-import { StackNavigatorProps } from "./types/helpers";
 
 const Stack = createStackNavigator<SignTransactionNavigatorParamList>();
 
@@ -20,20 +19,6 @@ export default function SignTransactionNavigator() {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
-
-  // @TODO replace with correct error
-  const listeners = ({
-    route,
-  }: StackNavigatorProps<
-    SignTransactionNavigatorParamList,
-    | ScreenName.SignTransactionSummary
-    | ScreenName.SignTransactionSelectDevice
-    | ScreenName.SignTransactionValidationError
-  >) => ({
-    beforeRemove: () =>
-      route.params?.onError &&
-      route.params?.onError(route.params.error || new Error("Signature interrupted by user")),
-  });
 
   return (
     <DomainServiceProvider>
@@ -52,7 +37,6 @@ export default function SignTransactionNavigator() {
               />
             ),
           }}
-          listeners={listeners}
         />
         <Stack.Screen
           name={ScreenName.SignTransactionSelectDevice}
@@ -68,7 +52,6 @@ export default function SignTransactionNavigator() {
               />
             ),
           }}
-          listeners={listeners}
         />
         <Stack.Screen
           name={ScreenName.SignTransactionConnectDevice}
@@ -91,7 +74,6 @@ export default function SignTransactionNavigator() {
           options={{
             headerShown: false,
           }}
-          listeners={listeners}
         />
       </Stack.Navigator>
     </DomainServiceProvider>

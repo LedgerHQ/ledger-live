@@ -28,7 +28,7 @@ permissions:
 
 jobs:
   regen-pods:
-    runs-on: macos-latest
+    runs-on: macos-14
     name: "Regenerate Podfile"
     env:
       SKIP_BUNDLE_CHECK: 1
@@ -55,10 +55,11 @@ jobs:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
       - name: Setup git user
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
-      - name: Setup the toolchain
-        id: toolchain
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
+      - name: Setup the caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        id: setup-caches
         with:
+          install-proto: true
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
@@ -83,7 +84,7 @@ jobs:
           git push
       - name: create summary (failure)
         if: failure() && inputs.number != null
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           github-token: ${{ steps.generate-token.outputs.token }}
           script: |
@@ -94,7 +95,7 @@ jobs:
             fs.writeFileSync("summary.txt", body, "utf8");
       - name: create summary (success)
         if: inputs.number != null && steps.check-status.outputs.status != 0
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           github-token: ${{ steps.generate-token.outputs.token }}
           script: |
@@ -105,7 +106,7 @@ jobs:
             fs.writeFileSync("summary.txt", body, "utf8");
       - name: create summary (no change)
         if: inputs.number != null && steps.check-status.outputs.status == 0
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           github-token: ${{ steps.generate-token.outputs.token }}
           script: |
@@ -123,7 +124,7 @@ jobs:
 
   report-start:
     name: Report start
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     if: inputs.commentId != ''
     steps:
       - name: generate token
@@ -133,7 +134,7 @@ jobs:
           app_id: ${{ secrets.GH_BOT_APP_ID }}
           private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
       - name: report start
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           github-token: ${{ steps.generate-token.outputs.token }}
           result-encoding: string
@@ -158,7 +159,7 @@ jobs:
     name: Report end
     needs: [regen-pods, report-start]
     if: ${{ !cancelled() }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: generate token
         id: generate-token
@@ -171,7 +172,7 @@ jobs:
         with:
           name: summary.txt
       - name: report job status
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           github-token: ${{ steps.generate-token.outputs.token }}
           result-encoding: string

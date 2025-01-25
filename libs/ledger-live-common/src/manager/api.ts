@@ -16,12 +16,10 @@ import network from "@ledgerhq/live-network/network";
 import { log } from "@ledgerhq/logs";
 import {
   Application,
-  ApplicationVersion,
   Category,
   DeviceInfo,
   DeviceVersion,
   FinalFirmware,
-  Id,
   LanguagePackage,
   LanguagePackageResponse,
   McuVersion,
@@ -107,31 +105,6 @@ const remapSocketError = (context?: string) =>
         return throwError(() => e);
     }
   });
-
-/** @deprecated use getAppsCatalogForDevice (from ledger-live-common/src/device/use-cases) instead */
-const applicationsByDevice: (params: {
-  provider: number;
-  current_se_firmware_final_version: Id;
-  device_version: Id;
-}) => Promise<Array<ApplicationVersion>> = makeLRUCache(
-  async params => {
-    const r = await network({
-      method: "POST",
-      url: URL.format({
-        pathname: `${getEnv("MANAGER_API_BASE")}/get_apps`,
-        query: {
-          livecommonversion,
-        },
-      }),
-      data: params,
-    });
-    return r.data.application_versions;
-  },
-  p =>
-    `${getEnv("MANAGER_API_BASE")}_${p.provider}_${p.current_se_firmware_final_version}_${
-      p.device_version
-    }`,
-);
 
 /** @deprecated use getAppsCatalogForDevice (from ledger-live-common/src/device/use-cases) instead */
 const listApps: () => Promise<Array<Application>> = makeLRUCache(
@@ -238,18 +211,16 @@ const getCurrentOSU: (input: {
 }) => Promise<OsuFirmware> = makeLRUCache(
   async input => {
     const { data } = await network({
-      method: "POST",
+      method: "GET",
       url: URL.format({
         pathname: `${getEnv("MANAGER_API_BASE")}/get_osu_version`,
         query: {
           livecommonversion,
+          device_version: input.deviceId,
+          version_name: `${input.version}-osu`,
+          provider: input.provider,
         },
       }),
-      data: {
-        device_version: input.deviceId,
-        version_name: `${input.version}-osu`,
-        provider: input.provider,
-      },
     });
     return data;
   },
@@ -266,18 +237,16 @@ const getCurrentFirmware: (input: {
     }: {
       data: FinalFirmware;
     } = await network({
-      method: "POST",
+      method: "GET",
       url: URL.format({
         pathname: `${getEnv("MANAGER_API_BASE")}/get_firmware_version`,
         query: {
           livecommonversion,
+          device_version: input.deviceId,
+          version_name: input.version,
+          provider: input.provider,
         },
       }),
-      data: {
-        device_version: input.deviceId,
-        version_name: input.version,
-        provider: input.provider,
-      },
     }).catch(error => {
       const status = error?.status || error?.response?.status;
 
@@ -317,17 +286,15 @@ const getDeviceVersion: (targetId: string | number, provider: number) => Promise
       }: {
         data: DeviceVersion;
       } = await network({
-        method: "POST",
+        method: "GET",
         url: URL.format({
           pathname: `${getEnv("MANAGER_API_BASE")}/get_device_version`,
           query: {
             livecommonversion,
+            provider,
+            target_id: targetId,
           },
         }),
-        data: {
-          provider,
-          target_id: targetId,
-        },
       }).catch(error => {
         const status = error?.status || error?.response?.status;
 
@@ -517,8 +484,6 @@ async function retrieveMcuVersion({
 }
 
 const API = {
-  /** @deprecated use getAppsCatalogForDevice (from ledger-live-common/src/device/use-cases) instead */
-  applicationsByDevice,
   /** @deprecated use getAppsCatalogForDevice (from ledger-live-common/src/device/use-cases) instead */
   listApps,
   listInstalledApps,

@@ -77,7 +77,7 @@ export function StepDelegationFooter({
 }: StepProps) {
   invariant(account, "account required");
   const { errors } = status;
-  const canNext = !bridgePending && !errors.amount && transaction;
+  const canNext = !bridgePending && Object.keys(errors).length === 0 && transaction;
 
   return (
     <Box horizontal justifyContent="flex-end" flow={2} grow>

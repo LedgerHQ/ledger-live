@@ -90,7 +90,7 @@ const ValidatorList = (props: Props) => {
       {showAll && <ValidatorSearchInput noMargin={true} search={search} onSearch={onSearch} />}
 
       <ValidatorsFieldContainer>
-        <Box p={1}>
+        <Box p={1} data-testid="validator-list">
           <ScrollLoadingList
             data={showAll ? providers : defaultValidator}
             style={{

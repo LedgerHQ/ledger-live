@@ -1,29 +1,40 @@
 import fs from "fs";
 import path from "path";
-import { fetchTokens } from "../../fetch";
+import { fetchTokensFromCALService } from "../../fetch";
 
 type SPLToken = [
   number, // chainId
   string, // name
-  string, // symbol
+  string, // ticker
   string, // address
   number, // decimals
-  boolean?, // enableCountervalues
 ];
 
 export const importSPLTokens = async (outputDir: string) => {
   try {
     console.log("importing spl tokens...");
-    const [splTokens, hash] = await fetchTokens<SPLToken[]>("spl.json");
-    const filePath = path.join(outputDir, "spl");
+    const { tokens, hash } = await fetchTokensFromCALService({ blockchain_name: "solana" }, [
+      "chain_id",
+      "name",
+      "ticker",
+      "contract_address",
+      "decimals",
+    ]);
+    const splTokens: SPLToken[] = tokens.map(token => [
+      token.chain_id,
+      token.name,
+      token.ticker,
+      token.contract_address,
+      token.decimals,
+    ]);
 
+    const filePath = path.join(outputDir, "spl");
     const splTypeStringified = `export type SPLToken = [
   number, // chainId
   string, // name
-  string, // symbol
+  string, // ticker
   string, // address
   number, // decimals
-  boolean?, // enableCountervalues
 ];`;
 
     fs.writeFileSync(`${filePath}.json`, JSON.stringify(splTokens));
@@ -36,7 +47,7 @@ export const importSPLTokens = async (outputDir: string) => {
 
 import tokens from "./spl.json";
 
-${hash ? `export { default as hash } from "./spl-hash.json";` : null}
+${hash ? `export { default as hash } from "./spl-hash.json";` : ""}
 
 export default tokens as SPLToken[];
 `,

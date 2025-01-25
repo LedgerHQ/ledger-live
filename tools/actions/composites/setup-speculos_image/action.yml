@@ -1,0 +1,34 @@
+name: "Setup Speculos Image and Coin Apps"
+description: "Uploading allure report to Allure Server"
+inputs:
+  coinapps_path:
+    required: true
+    description: "Path to the coin apps folder"
+  speculos_tag:
+    required: false
+    description: "Speculos docker image tag"
+  bot_id:
+    description: "GitHub Bot ID"
+  bot_key:
+    description: "GitHub Bot private key"
+
+runs:
+  using: composite
+
+  steps:
+    - name: Generate token
+      id: generate-token
+      uses: tibdex/github-app-token@v1
+      with:
+        app_id: ${{ inputs.bot_id }}
+        private_key: ${{ inputs.bot_key }}
+    - name: Retrieving coin apps
+      uses: actions/checkout@v4
+      with:
+        ref: master
+        repository: LedgerHQ/coin-apps
+        token: ${{ steps.generate-token.outputs.token }}
+        path: ${{ inputs.coinapps_path }}
+    - name: Pull docker image
+      run: docker pull ${{ inputs.speculos_tag }}
+      shell: bash

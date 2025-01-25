@@ -24,13 +24,13 @@ export type SpeculosDeviceInternal =
       buttonPort: number;
       automationPort: number;
       transport: SpeculosTransportWebsocket;
-      destroy: () => void;
+      destroy: () => Promise<unknown>;
     }
   | {
       process: ChildProcessWithoutNullStreams;
       apiPort: string | undefined;
       transport: SpeculosTransportHttp;
-      destroy: () => void;
+      destroy: () => Promise<unknown>;
     };
 
 // FIXME we need to figure out a better system, using a filesystem file?
@@ -114,6 +114,11 @@ function conventionalAppSubpath(
   return `${reverseModelMap[model]}/${firmware}/${appName.replace(/ /g, "")}/app_${appVersion}.elf`;
 }
 
+interface Dependency {
+  name: string;
+  appVersion?: string;
+}
+
 /**
  * instanciate a speculos device that runs through docker
  */
@@ -124,6 +129,7 @@ export async function createSpeculosDevice(
     appName: string;
     appVersion: string;
     dependency?: string;
+    dependencies?: Dependency[];
     seed: string;
     // Root folder from which you need to lookup app binaries
     coinapps: string;
@@ -133,8 +139,17 @@ export async function createSpeculosDevice(
   },
   maxRetry = 3,
 ): Promise<SpeculosDevice> {
-  const { overridesAppPath, model, firmware, appName, appVersion, seed, coinapps, dependency } =
-    arg;
+  const {
+    overridesAppPath,
+    model,
+    firmware,
+    appName,
+    appVersion,
+    seed,
+    coinapps,
+    dependency,
+    dependencies,
+  } = arg;
   idCounter = idCounter ?? getEnv("SPECULOS_PID_OFFSET");
   const speculosID = `speculosID-${++idCounter}`;
   const ports = getPorts(idCounter, isSpeculosWebsocket);
@@ -181,6 +196,12 @@ export async function createSpeculosDevice(
           `${dependency}:./apps/${conventionalAppSubpath(model, firmware, dependency, appVersion)}`,
         ]
       : []),
+    ...(dependencies !== undefined
+      ? dependencies.flatMap(dependency => [
+          "-l",
+          `${dependency.name}:./apps/${conventionalAppSubpath(model, firmware, dependency.name, dependency.appVersion ? dependency.appVersion : "1.0.0")}`,
+        ])
+      : []),
     ...(sdk ? ["--sdk", sdk] : []),
     "--display",
     "headless",
@@ -214,11 +235,11 @@ export async function createSpeculosDevice(
   });
   let destroyed = false;
 
-  const destroy = () => {
-    if (destroyed) return;
+  const destroy = async () => {
+    if (destroyed) return Promise.resolve();
     destroyed = true;
-    new Promise((resolve, reject) => {
-      if (!data[speculosID]) return;
+    return new Promise((resolve, reject) => {
+      if (!data[speculosID]) return resolve(undefined);
       delete data[speculosID];
       exec(`docker rm -f ${speculosID}`, (error, stdout, stderr) => {
         if (error) {
@@ -238,7 +259,7 @@ export async function createSpeculosDevice(
     }
   });
   let latestStderr: string | undefined;
-  p.stderr.on("data", data => {
+  p.stderr.on("data", async data => {
     if (!data) return;
     latestStderr = data;
 
@@ -248,23 +269,23 @@ export async function createSpeculosDevice(
 
     if (/using\s(?:SDK|API_LEVEL)/.test(data)) {
       setTimeout(() => resolveReady(true), 500);
-    } else if (data.includes("is already in use by container")) {
+    } else if (data.includes("is already in use by")) {
       rejectReady(
         new Error("speculos already in use! Try `ledger-live cleanSpeculos` or check logs"),
       );
     } else if (data.includes("address already in use")) {
       if (maxRetry > 0) {
         log("speculos", "retrying speculos connection");
-        destroy();
+        await destroy();
         resolveReady(false);
       }
     }
   });
-  p.on("close", () => {
+  p.on("close", async () => {
     log("speculos", `${speculosID} closed`);
 
     if (!destroyed) {
-      destroy();
+      await destroy();
       rejectReady(new Error(`speculos process failure. ${latestStderr || ""}`));
     }
   });

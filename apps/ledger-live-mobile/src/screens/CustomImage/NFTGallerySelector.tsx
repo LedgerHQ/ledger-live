@@ -14,7 +14,9 @@ import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/t
 import { CustomImageNavigatorParamList } from "~/components/RootNavigator/types/CustomImageNavigator";
 import { TrackScreen } from "~/analytics";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-import { isThresholdValid, useNftGalleryFilter } from "@ledgerhq/live-nft-react";
+import { getThreshold, useNftGalleryFilter } from "@ledgerhq/live-nft-react";
+import { getEnv } from "@ledgerhq/live-env";
+import { State } from "~/reducers/types";
 
 const NB_COLUMNS = 2;
 
@@ -27,11 +29,16 @@ const keyExtractor = (item: ProtoNFT) => item.id;
 const NFTGallerySelector = ({ navigation, route }: NavigationProps) => {
   const { params } = route;
   const { device, deviceModelId } = params;
+  const SUPPORTED_NFT_CURRENCIES = getEnv("NFT_CURRENCIES");
 
-  const nftsOrdered = useSelector(orderedVisibleNftsSelector, isEqual);
+  const nftsOrdered = useSelector(
+    (state: State) =>
+      orderedVisibleNftsSelector(state, Boolean(nftsFromSimplehashFeature?.enabled)),
+    isEqual,
+  );
 
   const nftsFromSimplehashFeature = useFeature("nftsFromSimplehash");
-  const thresold = nftsFromSimplehashFeature?.params?.threshold;
+  const threshold = nftsFromSimplehashFeature?.params?.threshold;
   const nftsFromSimplehashEnabled = nftsFromSimplehashFeature?.enabled;
   const accounts = useSelector(accountsSelector);
 
@@ -48,8 +55,10 @@ const NFTGallerySelector = ({ navigation, route }: NavigationProps) => {
   const { nfts: filteredNfts, isLoading } = useNftGalleryFilter({
     nftsOwned: nftsOrdered || [],
     addresses: addresses,
-    chains: ["ethereum", "polygon"],
-    threshold: isThresholdValid(thresold) ? Number(thresold) : 75,
+    chains: SUPPORTED_NFT_CURRENCIES,
+    threshold: getThreshold(threshold),
+    enabled: nftsFromSimplehashEnabled || false,
+    staleTime: nftsFromSimplehashFeature?.params?.staleTime,
   });
 
   const nfts = nftsFromSimplehashEnabled ? filteredNfts : nftsOrdered;

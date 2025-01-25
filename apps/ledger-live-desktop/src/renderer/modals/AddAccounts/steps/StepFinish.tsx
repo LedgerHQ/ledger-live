@@ -45,7 +45,7 @@ export function StepFinishFooter({ onGoStep1, onCloseModal }: StepProps) {
       <Box horizontal alignItems="center" justifyContent="space-between" grow>
         <Button
           event="Page AddAccounts Step 4 AddMore"
-          data-test-id={"add-accounts-finish-add-more-button"}
+          data-testid={"add-accounts-finish-add-more-button"}
           outlineGrey
           onClick={onGoStep1}
         >
@@ -53,7 +53,7 @@ export function StepFinishFooter({ onGoStep1, onCloseModal }: StepProps) {
         </Button>
         <Button
           event="Page AddAccounts Step 4 AddMore"
-          data-test-id={"add-accounts-finish-close-button"}
+          data-testid={"add-accounts-finish-close-button"}
           primary
           onClick={onCloseModal}
         >

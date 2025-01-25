@@ -1,16 +1,21 @@
-import { knownDevice } from "../../models/devices";
+import { knownDevices } from "../../models/devices";
 import DeviceAction from "../../models/DeviceAction";
 import { Application } from "../../page";
+import { capitalize } from "../../models/currencies";
 
-let app: Application;
+const app = new Application();
 let deviceAction: DeviceAction;
 
 const testedCurrency = "bitcoin";
 const expectedBalance = "1.19576\u00a0BTC";
+const knownDevice = knownDevices.nanoX;
 
 describe("Add account from modal", () => {
   beforeAll(async () => {
-    app = await Application.init("onboardingcompleted", [knownDevice]);
+    await app.init({
+      userdata: "skip-onboarding",
+      knownDevices: [knownDevice],
+    });
     deviceAction = new DeviceAction(knownDevice);
 
     await app.portfolio.waitForPortfolioPageToLoad();
@@ -27,15 +32,15 @@ describe("Add account from modal", () => {
     await app.addAccount.selectCurrency(testedCurrency);
     await deviceAction.selectMockDevice();
     await deviceAction.openApp();
-    await app.addAccount.startAccountsDiscovery();
-    await app.addAccount.expectAccountDiscovery(testedCurrency, 1);
+    await app.addAccount.waitAccountsDiscovery();
+    await app.addAccount.expectAccountDiscovery(capitalize(testedCurrency), testedCurrency, 0);
     await app.addAccount.finishAccountsDiscovery();
     await app.addAccount.tapSuccessCta();
   });
 
   $TmsLink("B2CQA-101");
   it("displays Bitcoin accounts page summary", async () => {
-    await app.account.waitForAccountPageToLoad(testedCurrency);
-    await app.account.expectAccountBalance(expectedBalance);
+    await app.assetAccountsPage.waitForAccountPageToLoad(testedCurrency);
+    await app.assetAccountsPage.expectAccountsBalance(expectedBalance);
   });
 });

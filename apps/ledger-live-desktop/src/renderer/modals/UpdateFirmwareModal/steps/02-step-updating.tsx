@@ -12,6 +12,7 @@ import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import { renderFirmwareUpdating } from "~/renderer/components/DeviceAction/rendering";
 import useTheme from "~/renderer/hooks/useTheme";
 import { StepProps } from "../types";
+import { isRestoreStepEnabled } from "../helpers/createFirmwareUpdateSteps";
 
 const Container = styled(Box).attrs(() => ({
   alignItems: "center",
@@ -56,7 +57,8 @@ const StepUpdating = ({
       .subscribe({
         next: setUpdatedDeviceInfo,
         complete: () => {
-          transitionTo("restore");
+          const nextStep = isRestoreStepEnabled(deviceModelId, firmware) ? "restore" : "finish";
+          transitionTo(nextStep);
         },
         error: (error: Error) => {
           setError(error);

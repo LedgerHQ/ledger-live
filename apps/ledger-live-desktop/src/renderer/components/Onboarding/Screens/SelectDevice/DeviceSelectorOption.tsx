@@ -89,11 +89,11 @@ export function DeviceSelectorOption({
 }: DeviceSelectOptionProps) {
   const { t } = useTranslation();
   return (
-    <Container data-test-id={`v3-container-${id}`} {...{ id, isFirst, isLast }}>
+    <Container data-testid={`v3-container-${id}`} {...{ id, isFirst, isLast }}>
       <ContentContainer>
         <DeviceIllustrationContainer>{Illu}</DeviceIllustrationContainer>
         <DeviceName>{label}</DeviceName>
-        <SelectButton data-test-id={`v3-${id}`} variant="main" onClick={onClick}>
+        <SelectButton data-testid={`v3-${id}`} variant="main" onClick={onClick}>
           {t("onboarding.screens.selectDevice.selectLabel")}
         </SelectButton>
       </ContentContainer>

@@ -16,12 +16,11 @@ import { getDeviceModel } from "@ledgerhq/devices";
 import { useTheme } from "@react-navigation/native";
 import styled from "styled-components/native";
 import { Flex } from "@ledgerhq/native-ui";
-import { QRCodeDevices } from "@ledgerhq/types-devices";
 import Alert from "./Alert";
 import perFamilyTransactionConfirmFields from "../generated/TransactionConfirmFields";
 import { DataRowUnitValue, TextValueField } from "./ValidateOnDeviceDataRow";
 import Animation from "./Animation";
-import { getDeviceAnimation } from "~/helpers/getDeviceAnimation";
+import { getDeviceAnimation, getDeviceAnimationStyles } from "~/helpers/getDeviceAnimation";
 import { TitleText } from "./DeviceAction/rendering";
 import { useAccountUnit } from "~/hooks/useAccountUnit";
 
@@ -40,11 +39,19 @@ const AnimationContainer = styled(Flex).attrs({
   alignItems: "center",
   justifyContent: "center",
   height: "150px",
+  mb: 10,
 })``;
 
 function AmountField({ account, status, field }: FieldComponentProps) {
   const unit = useAccountUnit(account);
-  return <DataRowUnitValue label={field.label} unit={unit} value={status.amount} />;
+  return (
+    <DataRowUnitValue
+      label={field.label}
+      unit={unit}
+      value={status.amount}
+      testID="device-validation-amount"
+    />
+  );
 }
 
 function FeesField({ account, parentAccount, status, field }: FieldComponentProps) {
@@ -57,7 +64,9 @@ function FeesField({ account, parentAccount, status, field }: FieldComponentProp
 
 function AddressField({ field }: FieldComponentProps) {
   invariant(field.type === "address", "AddressField invalid");
-  return <TextValueField label={field.label} value={field.address} />;
+  return (
+    <TextValueField label={field.label} value={field.address} testID="device-validation-address" />
+  );
 }
 
 // NB Leaving AddressField although I think it's redundant at this point
@@ -169,8 +178,8 @@ export default function ValidateOnDevice({
         <Flex alignItems="center">
           <AnimationContainer>
             <Animation
-              source={getDeviceAnimation({ device, key: "sign", theme })}
-              style={QRCodeDevices.includes(device.modelId) ? { height: 210 } : {}}
+              source={getDeviceAnimation({ modelId: device.modelId, key: "sign", theme })}
+              style={getDeviceAnimationStyles(device.modelId)}
             />
           </AnimationContainer>
           {Title ? (

@@ -27,7 +27,7 @@ export const RenderImageLoadRequested = ({
       flexDirection="column"
       justifyContent="center"
       alignItems="center"
-      data-test-id="device-action-image-load-requested"
+      data-testid="device-action-image-load-requested"
     >
       <DeviceBlocker />
       <AnimationWrapper>
@@ -51,11 +51,13 @@ export const RenderLoadingImage = ({
   progress,
   source,
   deviceModelId,
+  type,
 }: {
   deviceModelId: CLSSupportedDeviceModelId;
   device: Device;
   progress: number | undefined;
   source?: string;
+  type: Theme["theme"];
 }) => {
   const { t } = useTranslation();
   return (
@@ -64,11 +66,11 @@ export const RenderLoadingImage = ({
       flexDirection="column"
       justifyContent="center"
       alignItems="center"
-      data-test-id={`device-action-image-loading-${progress}`}
+      data-testid={`device-action-image-loading-${progress}`}
     >
       <AnimationWrapper>
         <FramedPicture
-          frameConfig={getFramedPictureConfig("transfer", deviceModelId)}
+          frameConfig={getFramedPictureConfig("transfer", deviceModelId, type)}
           source={source}
           loadingProgress={progress}
         />
@@ -109,12 +111,12 @@ export const RenderImageCommitRequested = ({
       flexDirection="column"
       justifyContent="center"
       alignItems="center"
-      data-test-id="device-action-image-commit-requested"
+      data-testid="device-action-image-commit-requested"
     >
       <DeviceBlocker />
       <AnimationWrapper>
         <FramedPicture
-          frameConfig={getFramedPictureConfig("transfer", deviceModelId)}
+          frameConfig={getFramedPictureConfig("preview", deviceModelId, type)}
           source={source}
           background={
             <Animation animation={getDeviceAnimation(device.modelId, type, "confirmLockscreen")} />

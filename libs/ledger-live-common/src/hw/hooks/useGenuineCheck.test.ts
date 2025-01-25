@@ -3,7 +3,11 @@
  */
 import { renderHook, act } from "@testing-library/react";
 import { of, throwError } from "rxjs";
-import { UserRefusedAllowManager, DisconnectedDeviceDuringOperation } from "@ledgerhq/errors";
+import {
+  UserRefusedAllowManager,
+  DisconnectedDeviceDuringOperation,
+  UnresponsiveDeviceError,
+} from "@ledgerhq/errors";
 import { useGenuineCheck } from "./useGenuineCheck";
 import {
   getGenuineCheckFromDeviceId,
@@ -225,6 +229,74 @@ describe("useGenuineCheck", () => {
 
       expect(result.current.devicePermissionState).toEqual("unlock-needed");
       expect(result.current.genuineState).toEqual("unchecked");
+      expect(result.current.error).toBeNull();
+    });
+  });
+
+  describe("When device permission is requested but times out", () => {
+    const mockedGetGenuineCheckFromDeviceId = jest.fn();
+    const permissionTimeoutMs = 60 * 1000;
+
+    it("should throw UnresponsiveDeviceError after 30 seconds if permission is not granted", async () => {
+      // Given the getGenuineCheckFromDeviceId function will return a device permission request
+      mockedGetGenuineCheckFromDeviceId.mockReturnValue(
+        of({
+          socketEvent: { type: "device-permission-requested" },
+          lockedDevice: false,
+        }),
+      );
+
+      const { result } = renderHook(() =>
+        useGenuineCheck({
+          getGenuineCheckFromDeviceId: mockedGetGenuineCheckFromDeviceId,
+          deviceId: "A_DEVICE_ID",
+          permissionTimeoutMs,
+        }),
+      );
+
+      await act(async () => {
+        jest.advanceTimersByTime(1);
+      });
+
+      expect(result.current.devicePermissionState).toEqual("requested");
+      expect(result.current.error).toBeNull();
+
+      // When the permission times out
+      await act(async () => {
+        jest.advanceTimersByTime(permissionTimeoutMs + 1);
+      });
+
+      // Then the hook consumer should be notified of the error
+      expect(result.current.error).toBeInstanceOf(UnresponsiveDeviceError);
+      expect(result.current.devicePermissionState).toEqual("requested");
+    });
+  });
+
+  describe("When device permission is granted", () => {
+    const mockedGetGenuineCheckFromDeviceId = jest.fn();
+
+    it("should not throw UnresponsiveDeviceError and set permission state to granted", async () => {
+      // Given the getGenuineCheckFromDeviceId function will return a device permission granted
+      mockedGetGenuineCheckFromDeviceId.mockReturnValue(
+        of({
+          socketEvent: { type: "device-permission-granted" },
+          lockedDevice: false,
+        }),
+      );
+
+      const { result } = renderHook(() =>
+        useGenuineCheck({
+          getGenuineCheckFromDeviceId: mockedGetGenuineCheckFromDeviceId,
+          deviceId: "A_DEVICE_ID",
+        }),
+      );
+
+      await act(async () => {
+        jest.advanceTimersByTime(1);
+      });
+
+      // Then the hook consumer should not have errors and the permission state should be granted
+      expect(result.current.devicePermissionState).toEqual("granted");
       expect(result.current.error).toBeNull();
     });
   });

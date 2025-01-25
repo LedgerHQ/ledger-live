@@ -167,7 +167,7 @@ const ModalQuizz: React.FunctionComponent<Props> = ({
       >
         {choices.map(({ label, correct }: QuizzChoice, index: number) => (
           <RadioElement
-            data-test-id={`v3-quiz-answer-${index}`}
+            data-testid={`v3-quiz-answer-${index}`}
             outlined
             key={`${radioName}-choice-${index}`}
             label={label}

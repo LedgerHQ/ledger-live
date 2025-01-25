@@ -7,6 +7,7 @@ import TranslatedError from "~/components/TranslatedError";
 import SupportLinkError from "~/components/SupportLinkError";
 import LText from "~/components/LText";
 import Alert from "~/components/Alert";
+import { urls } from "~/utils/urls";
 
 type BasicErrorsProps = {
   error: Error | undefined | null;
@@ -63,7 +64,7 @@ export const DomainErrorsView = memo(({ domainError, isForwardResolution }: Doma
         title={t("send.recipient.domainService.invalidDomain.title")}
         type="warning"
         learnMoreKey="common.learnMore"
-        learnMoreUrl="https://support.ledger.com/hc/articles/9710787581469?docs=true"
+        learnMoreUrl={urls.domainService}
       >
         <LText>{t("send.recipient.domainService.invalidDomain.description")}</LText>
       </Alert>

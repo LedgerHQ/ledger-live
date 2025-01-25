@@ -72,7 +72,7 @@ const DeviceLanguage: React.FC<Props> = ({
             : IconsLegacy.ChevronRightMedium
         }
         onClick={disabled ? undefined : openLanguageInstallation}
-        data-test-id="manager-change-language-button"
+        data-testid="manager-change-language-button"
       >
         {t(`deviceLocalization.languages.${deviceLanguage}`)}
       </Link>

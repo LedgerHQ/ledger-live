@@ -1,0 +1,29 @@
+diff --git a/android/build.gradle b/android/build.gradle
+index a022b38c398d5e64bb77df6c6fc1c2f73932f019..2e47e85d013b5dc3b18e5519bdaf241399c16a0f 100644
+--- a/android/build.gradle
++++ b/android/build.gradle
+@@ -18,11 +18,11 @@ def safeExtGet(prop, fallback) {
+ }
+ 
+ android {
+-    compileSdkVersion safeExtGet('Pbkdf2_compileSdkVersion', 29)
++    compileSdkVersion safeExtGet('Pbkdf2_compileSdkVersion', 34)
+     buildToolsVersion safeExtGet('Pbkdf2_buildToolsVersion', '29.0.2')
+     defaultConfig {
+         minSdkVersion safeExtGet('Pbkdf2_minSdkVersion', 16)
+-        targetSdkVersion safeExtGet('Pbkdf2_targetSdkVersion', 29)
++        targetSdkVersion safeExtGet('Pbkdf2_targetSdkVersion', 34)
+         versionCode 1
+         versionName "1.0"
+ 
+@@ -37,8 +37,8 @@ android {
+         disable 'GradleCompatible'
+     }
+     compileOptions {
+-        sourceCompatibility JavaVersion.VERSION_1_8
+-        targetCompatibility JavaVersion.VERSION_1_8
++        sourceCompatibility JavaVersion.VERSION_17
++        targetCompatibility JavaVersion.VERSION_17
+     }
+ }
+ 

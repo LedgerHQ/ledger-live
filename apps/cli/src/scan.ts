@@ -27,6 +27,9 @@ import { delay } from "@ledgerhq/live-common/promise";
 import { jsonFromFile } from "./stream";
 import fs from "fs";
 
+export type DeviceCommonOpts = Partial<{
+  device: string;
+}>;
 export const deviceOpt = {
   name: "device",
   alias: "d",
@@ -34,13 +37,16 @@ export const deviceOpt = {
   descOpt: "usb path",
   desc: "provide a specific HID path of a device",
 };
+export type CurrencyCommonOpts = Partial<{
+  currency: string;
+}>;
 export const currencyOpt = {
   name: "currency",
   alias: "c",
   type: String,
   desc: "Currency name or ticker. If not provided, it will be inferred from the device.",
 };
-const localCache = {};
+const localCache: Record<string, unknown> = {};
 const cache = makeBridgeCacheSystem({
   saveData(c, d) {
     localCache[c.id] = d;
@@ -169,12 +175,12 @@ export const inferCurrency = <
   );
 };
 
-function requiredCurrency(cur) {
+function requiredCurrency(cur: CryptoCurrency | null | undefined) {
   if (!cur) throw new Error("--currency is required");
   return cur;
 }
 
-const prepareCurrency = fn => observable =>
+const prepareCurrency = (fn: any) => (observable: any) =>
   observable.pipe(
     concatMap(item => {
       const maybeCurrency = fn(item);
@@ -217,7 +223,7 @@ export function scan(arg: ScanCommonOpts): Observable<Account> {
       return throwError(() => new Error("encrypted ledger live data is not supported"));
     }
 
-    return from(appjsondata.data.accounts.map(a => fromAccountRaw(a.data))).pipe(
+    return from(appjsondata.data.accounts.map((a: any) => fromAccountRaw(a.data))).pipe(
       skip(index || 0) as any,
       take(length === undefined ? (index !== undefined ? 1 : Infinity) : length),
     );
@@ -226,7 +232,7 @@ export function scan(arg: ScanCommonOpts): Observable<Account> {
   if (typeof file === "string") {
     return jsonFromFile(file).pipe(
       map(fromAccountRaw),
-      prepareCurrency(a => a.currency),
+      prepareCurrency((a: any) => a.currency),
       concatMap((account: Account) =>
         getAccountBridge(account, null)
           .sync(account, syncConfig)
@@ -257,7 +263,7 @@ export function scan(arg: ScanCommonOpts): Observable<Account> {
           } catch (e) {
             const splitted = id.split(":");
 
-            const findAndEat = predicate => {
+            const findAndEat = (predicate: any) => {
               const res = splitted.find(predicate);
 
               if (typeof res === "string") {
@@ -267,13 +273,17 @@ export function scan(arg: ScanCommonOpts): Observable<Account> {
             };
 
             const currencyId =
-              findAndEat(s => findCryptoCurrencyById(s)) || requiredCurrency(cur).id;
+              findAndEat((s: string) => findCryptoCurrencyById(s)) || requiredCurrency(cur).id;
             const currency = getCryptoCurrencyById(currencyId);
             const type =
-              findAndEat(s => possibleImpls[s]) || implTypePerFamily[currency.family] || "js";
-            const version = findAndEat(s => s.match(/^\d+$/)) || "1";
+              findAndEat((s: "js" | "mock") => possibleImpls[s]) ||
+              implTypePerFamily[
+                currency.family as "tron" | "ripple" | "ethereum" | "polkadot" | "bitcoin"
+              ] ||
+              "js";
+            const version = findAndEat((s: string) => s.match(/^\d+$/)) || "1";
             const derivationMode = asDerivationMode(
-              findAndEat(s => {
+              findAndEat((s: string) => {
                 try {
                   return asDerivationMode(s);
                 } catch (e) {
@@ -358,7 +368,7 @@ export function scan(arg: ScanCommonOpts): Observable<Account> {
       const currency = requiredCurrency(cur);
       // otherwise we just scan for accounts
       return concat(
-        of(currency).pipe(prepareCurrency(a => a)),
+        of(currency).pipe(prepareCurrency((a: any) => a)),
         getCurrencyBridge(currency).scanAccounts({
           currency,
           deviceId: device || "",

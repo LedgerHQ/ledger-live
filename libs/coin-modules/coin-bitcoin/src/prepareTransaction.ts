@@ -18,12 +18,18 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
   const feePerByte = inferFeePerByte(transaction, networkInfo);
 
   if (
-    (transaction.networkInfo === networkInfo &&
-      (feePerByte === transaction.feePerByte || feePerByte.eq(transaction.feePerByte || 0))) ||
-    transaction.feesStrategy === "custom"
+    transaction.networkInfo === networkInfo &&
+    (feePerByte === transaction.feePerByte || feePerByte.eq(transaction.feePerByte || 0))
   ) {
     // nothing changed
     return transaction;
+  }
+  // if fees strategy is custom, we don't want to change the feePerByte but we still want to update the networkInfo
+  if (transaction.feesStrategy === "custom") {
+    return {
+      ...transaction,
+      networkInfo,
+    };
   }
 
   return {

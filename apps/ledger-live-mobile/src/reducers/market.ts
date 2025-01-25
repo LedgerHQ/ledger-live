@@ -21,7 +21,7 @@ export const INITIAL_STATE: MarketState = {
     search: "",
     liveCompatible: false,
     page: 1,
-    counterCurrency: "usd",
+    counterCurrency: "USD",
   },
   marketFilterByStarredCurrencies: false,
   marketCurrentPage: 1,

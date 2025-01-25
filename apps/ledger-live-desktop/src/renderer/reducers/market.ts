@@ -16,7 +16,7 @@ const initialState: MarketState = {
     search: "",
     liveCompatible: false,
     page: 1,
-    counterCurrency: "usd",
+    counterCurrency: "USD",
   },
   currentPage: 1,
 };

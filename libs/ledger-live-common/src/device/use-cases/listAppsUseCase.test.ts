@@ -1,35 +1,47 @@
-import { enableListAppsV2, listAppsUseCase } from "./listAppsUseCase";
+import { listAppsUseCase } from "./listAppsUseCase";
 import Transport from "@ledgerhq/hw-transport";
 import { DeviceInfo } from "@ledgerhq/types-live";
+import { HttpManagerApiRepository } from "./screenSpecs";
 
-const listAppsV2Module = jest.requireActual("../../apps/listApps/v2");
-const listAppsV1Module = jest.requireActual("../../apps/listApps/v1");
+const listAppsModule = jest.requireActual("../../apps/listApps");
+
+jest.mock("@ledgerhq/live-env", () => {
+  const actual = jest.requireActual("@ledgerhq/live-env");
+  const { getEnv } = actual;
+  return {
+    ...actual,
+    getEnv: jest.fn().mockImplementation((key: string) => {
+      switch (key) {
+        case "DEVICE_PROXY_MODEL":
+          return "mockDeviceProxyModel";
+        case "FORCE_PROVIDER":
+          return 123;
+        case "MANAGER_DEV_MODE":
+          return false;
+        default:
+          return getEnv(key);
+      }
+    }),
+  };
+});
 
 describe("listAppsUseCase", () => {
-  let listAppsV1Spy: jest.SpyInstance;
-  let listAppsV2Spy: jest.SpyInstance;
+  let listAppsSpy: jest.SpyInstance;
   beforeEach(() => {
     jest.restoreAllMocks();
-    enableListAppsV2(false);
-    listAppsV1Spy = jest.spyOn(listAppsV1Module, "listApps").mockImplementation(jest.fn());
-    listAppsV2Spy = jest.spyOn(listAppsV2Module, "listApps").mockImplementation(jest.fn());
+    listAppsSpy = jest.spyOn(listAppsModule, "listApps").mockImplementation(jest.fn());
   });
 
-  it("should call listAppsV2 when enableListAppsV2 is called with true", () => {
-    enableListAppsV2(true);
-
+  it("should call listApps with the correct parameters", () => {
     listAppsUseCase({} as Transport, {} as DeviceInfo);
 
-    expect(listAppsV1Spy).not.toHaveBeenCalled();
-    expect(listAppsV2Spy).toHaveBeenCalled();
-  });
-
-  it("should call listAppsV1 when enableListAppsV2 is called with false", () => {
-    enableListAppsV2(false);
-
-    listAppsUseCase({} as Transport, {} as DeviceInfo);
-
-    expect(listAppsV1Spy).toHaveBeenCalled();
-    expect(listAppsV2Spy).not.toHaveBeenCalled();
+    expect(listAppsSpy).toHaveBeenCalledWith({
+      transport: {},
+      deviceInfo: {},
+      deviceProxyModel: "mockDeviceProxyModel",
+      managerApiRepository: expect.any(HttpManagerApiRepository),
+      forceProvider: 123,
+      managerDevModeEnabled: false,
+    });
   });
 });

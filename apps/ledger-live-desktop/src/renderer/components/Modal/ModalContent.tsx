@@ -15,7 +15,7 @@ const ContentScrollableContainer = styled.div<{ noScroll?: boolean; pt?: number 
   position: relative;
   flex: 0 auto;
   ${noScroll ? "overflow: hidden" : theme.overflow.y};
-  
+
   ::-webkit-scrollbar {
     width: 18px;
   }
@@ -84,7 +84,7 @@ function ModalContent(
         pt={pt}
         ref={containerRef}
         noScroll={noScroll}
-        data-test-id="modal-content"
+        data-testid="modal-content"
       >
         {children}
       </ContentScrollableContainer>

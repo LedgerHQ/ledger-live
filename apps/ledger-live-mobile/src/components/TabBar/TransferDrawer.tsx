@@ -13,13 +13,18 @@ import { NavigatorName } from "~/const";
 import { hasOrderedNanoSelector, readOnlyModeEnabledSelector } from "~/reducers/settings";
 import { Props as ModalProps } from "../QueuedDrawer";
 import TransferButton from "../TransferButton";
-import BuyDeviceBanner, { IMAGE_PROPS_SMALL_NANO } from "../BuyDeviceBanner";
-import SetupDeviceBanner from "../SetupDeviceBanner";
+import BuyDeviceBanner, {
+  IMAGE_PROPS_BUY_DEVICE_FLEX_BOX,
+} from "LLM/features/Reborn/components/BuyDeviceBanner";
+import SetupDeviceBanner from "LLM/features/Reborn/components/SetupDeviceBanner";
 import { track, useAnalytics } from "~/analytics";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import useQuickActions from "~/hooks/useQuickActions";
 import { PTX_SERVICES_TOAST_ID } from "~/utils/constants";
 import { useQuickAccessURI } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
+import { EntryOf } from "~/types/helpers";
+import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
+import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
 
 type ButtonItem = {
   title: string;
@@ -36,10 +41,11 @@ type ButtonItem = {
 };
 
 export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequestingToBeOpened">) {
-  const navigation = useNavigation();
+  const navigation = useNavigation<StackNavigationProp<BaseNavigatorStackParamList>>();
   const {
     quickActionsList: { SEND, RECEIVE, BUY, SELL, SWAP, STAKE, RECOVER },
   } = useQuickActions();
+  const stakeLabel = getStakeLabelLocaleBased();
   const { t } = useTranslation();
   const { pushToast, dismissToast } = useToasts();
 
@@ -60,11 +66,8 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
   const quickAccessURI = useQuickAccessURI(recoverConfig);
 
   const onNavigate = useCallback(
-    (name: string, options?: object) => {
-      (navigation as StackNavigationProp<{ [key: string]: object | undefined }>).navigate(
-        name,
-        options,
-      );
+    (route: EntryOf<BaseNavigatorStackParamList>) => {
+      navigation.navigate<keyof BaseNavigatorStackParamList>(...route);
       onClose?.();
     },
     [navigation, onClose],
@@ -77,7 +80,7 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
   }, [onClose, quickAccessURI]);
 
   const buttonsList: ButtonItem[] = [
-    {
+    SEND && {
       eventProperties: {
         button: "transfer_send",
         page,
@@ -85,12 +88,12 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       },
       title: t("transfer.send.title"),
       description: t("transfer.send.description"),
-      onPress: () => onNavigate(...SEND.route),
+      onPress: () => onNavigate(SEND.route),
       Icon: SEND.icon,
       disabled: SEND.disabled,
       testID: "transfer-send-button",
     },
-    {
+    RECEIVE && {
       eventProperties: {
         button: "transfer_receive",
         page,
@@ -98,12 +101,12 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       },
       title: t("transfer.receive.title"),
       description: t("transfer.receive.description"),
-      onPress: () => onNavigate(...RECEIVE.route),
+      onPress: () => onNavigate(RECEIVE.route),
       Icon: RECEIVE.icon,
       disabled: RECEIVE.disabled,
       testID: "transfer-receive-button",
     },
-    {
+    BUY && {
       eventProperties: {
         button: "transfer_buy",
         page,
@@ -112,7 +115,7 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       title: t("transfer.buy.title"),
       description: t("transfer.buy.description"),
       Icon: BUY.icon,
-      onPress: () => onNavigate(...BUY.route),
+      onPress: () => onNavigate(BUY.route),
       onDisabledPress: () => {
         if (isPtxServiceCtaExchangeDrawerDisabled) {
           onClose?.();
@@ -128,7 +131,7 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       disabled: BUY.disabled,
       testID: "transfer-buy-button",
     },
-    {
+    SELL && {
       eventProperties: {
         button: "transfer_sell",
         page,
@@ -137,7 +140,7 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       title: t("transfer.sell.title"),
       description: t("transfer.sell.description"),
       Icon: SELL.icon,
-      onPress: () => onNavigate(...SELL.route),
+      onPress: () => onNavigate(SELL.route),
       onDisabledPress: () => {
         if (isPtxServiceCtaExchangeDrawerDisabled) {
           onClose?.();
@@ -153,25 +156,20 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       disabled: SELL.disabled,
       testID: "transfer-sell-button",
     },
-
-    ...(STAKE
-      ? [
-          {
-            eventProperties: {
-              button: "transfer_stake",
-              page,
-              drawer: "stake",
-            },
-            title: t("transfer.stake.title"),
-            description: t("transfer.stake.description"),
-            Icon: STAKE.icon,
-            onPress: () => onNavigate(...STAKE.route),
-            disabled: STAKE.disabled,
-            testID: "transfer-stake-button",
-          },
-        ]
-      : []),
-    {
+    STAKE && {
+      eventProperties: {
+        button: "transfer_stake",
+        page,
+        drawer: "stake",
+      },
+      title: t(stakeLabel),
+      description: t("transfer.stake.description"),
+      Icon: STAKE.icon,
+      onPress: () => onNavigate(STAKE.route),
+      disabled: STAKE.disabled,
+      testID: "transfer-stake-button",
+    },
+    SWAP && {
       eventProperties: {
         button: "transfer_swap",
         page,
@@ -180,7 +178,7 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       title: t("transfer.swap.title"),
       description: t("transfer.swap.description"),
       Icon: SWAP.icon,
-      onPress: () => onNavigate(...SWAP.route),
+      onPress: () => onNavigate(SWAP.route),
       onDisabledPress: () => {
         if (isPtxServiceCtaExchangeDrawerDisabled) {
           onClose?.();
@@ -196,26 +194,21 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       disabled: SWAP.disabled,
       testID: "swap-transfer-button",
     },
-
-    ...(RECOVER
-      ? [
-          {
-            eventProperties: {
-              button: "transfer_recover",
-              page,
-              drawer: "trade",
-            },
-            tag: t("transfer.recover.tag"),
-            title: t("transfer.recover.title"),
-            description: t("transfer.recover.description"),
-            Icon: RECOVER.icon,
-            onPress: () => onNavigateRecover(),
-            disabled: RECOVER.disabled,
-            testID: "transfer-recover-button",
-          },
-        ]
-      : []),
-  ];
+    RECOVER && {
+      eventProperties: {
+        button: "transfer_recover",
+        page,
+        drawer: "trade",
+      },
+      tag: t("transfer.recover.tag"),
+      title: t("transfer.recover.title"),
+      description: t("transfer.recover.description"),
+      Icon: RECOVER.icon,
+      onPress: () => onNavigateRecover(),
+      disabled: RECOVER.disabled,
+      testID: "transfer-recover-button",
+    },
+  ].filter(<T extends ButtonItem>(v: T | undefined): v is T => !!v);
 
   const bannerEventProperties = useMemo(
     () => ({
@@ -250,32 +243,34 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
   }
 
   return (
-    <Flex flexDirection="column" alignItems="flex-start" p={7} pt={9} flex={1}>
-      <ScrollView
-        alwaysBounceVertical={false}
-        style={{ width: "100%" }}
-        testID="transfer-scroll-list"
-      >
-        {buttonsList.map((button, index) => (
-          <Box mb={index === buttonsList.length - 1 ? 0 : 8} key={button.title}>
-            <TransferButton {...button} testID={button.testID} />
-          </Box>
-        ))}
-      </ScrollView>
+    <>
+      <Flex flexDirection="column" alignItems="flex-start" p={7} pt={9} flex={1}>
+        <ScrollView
+          alwaysBounceVertical={false}
+          style={{ width: "100%" }}
+          testID="transfer-scroll-list"
+        >
+          {buttonsList.map((button, index) => (
+            <Box mb={index === buttonsList.length - 1 ? 0 : 8} key={button.title}>
+              <TransferButton {...button} testID={button.testID} />
+            </Box>
+          ))}
+        </ScrollView>
+      </Flex>
       {readOnlyModeEnabled && !hasOrderedNano && (
         <BuyDeviceBanner
+          {...IMAGE_PROPS_BUY_DEVICE_FLEX_BOX}
+          image="buyDoubleFlex"
           topLeft={
-            <Text color="primary.c40" uppercase mb={3} fontSize="11px" fontWeight="semiBold">
+            <Text color="neutral.c00" mb={6} minHeight={36} fontSize="14px" fontWeight="semiBold">
               {t("buyDevice.bannerTitle2")}
             </Text>
           }
-          style={{ marginTop: 36, paddingTop: 13.5, paddingBottom: 13.5 }}
           buttonLabel={t("buyDevice.bannerButtonTitle2")}
           buttonSize="small"
           event="button_clicked"
           eventProperties={bannerEventProperties}
           screen={screen}
-          {...IMAGE_PROPS_SMALL_NANO}
         />
       )}
       {readOnlyModeEnabled && hasOrderedNano ? (
@@ -283,6 +278,6 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
           <SetupDeviceBanner screen={screen} />
         </Box>
       ) : null}
-    </Flex>
+    </>
   );
 }

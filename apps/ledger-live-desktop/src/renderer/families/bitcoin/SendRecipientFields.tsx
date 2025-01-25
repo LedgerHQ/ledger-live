@@ -7,7 +7,7 @@ import { connect } from "react-redux";
 import Alert from "~/renderer/components/Alert";
 import TranslatedError from "~/renderer/components/TranslatedError";
 import { State } from "~/renderer/reducers";
-import { confirmationsNbForCurrencySelector } from "../../reducers/settings";
+import { confirmationsNbForCurrencySelector } from "~/renderer/reducers/settings";
 
 // FIXME: ConfirmationNB seems to be specific.
 // So we can't do

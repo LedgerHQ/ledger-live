@@ -102,7 +102,7 @@ export default function EarnRewardsInfoModal<Name extends keyof ModalData>({
               <Button ml={2} secondary onClick={onClose}>
                 <Trans i18nKey="common.cancel" />
               </Button>
-              <Button ml={2} primary onClick={onNextFn} data-test-id="modal-continue-button">
+              <Button ml={2} primary onClick={onNextFn} data-testid="modal-continue-button">
                 {nextLabel || <Trans i18nKey="common.continue" />}
               </Button>
             </Box>

@@ -1,0 +1,178 @@
+{
+  "domain": {
+    "name": "Permit2",
+    "chainId": 1,
+    "verifyingContract": "0x000000000022d473030f116ddee9f6b43ac78ba3"
+  },
+  "primaryType": "PermitWitnessTransferFrom",
+  "message": {
+    "permitted": {
+      "token": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+      "amount": "100000000000000000"
+    },
+    "spender": "0x6000da47483062a0d734ba3dc7576ce6a0b645c4",
+    "nonce": "1993354326232431306240697018571020274189859638820531235067341608173853199105",
+    "deadline": "1718467096",
+    "witness": {
+      "info": {
+        "nonce": "1993354326232431306240697018571020274189859638820531235067341608173853199105",
+        "swapper": "0x224cbc440944c72e951507e97d8bf5ffa2e3d2b9",
+        "additionalValidationContract": "0x0000000000000000000000000000000000000000",
+        "reactor": "0x6000da47483062a0d734ba3dc7576ce6a0b645c4",
+        "deadline": "1718467096",
+        "additionalValidationData": "0x"
+      },
+      "decayStartTime": "1718467024",
+      "decayEndTime": "1718467084",
+      "exclusiveFiller": "0xff8ba4d1fc3762f6154cc942ccf30049a2a0cec6",
+      "exclusivityOverrideBps": "100",
+      "inputToken": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+      "inputStartAmount": "100000000000000000",
+      "inputEndAmount": "100000000000000000",
+      "outputs": [
+        {
+          "startAmount": "348572327",
+          "token": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "endAmount": "332452012",
+          "recipient": "0x224cbc440944c72e951507e97d8bf5ffa2e3d2b9"
+        },
+        {
+          "endAmount": "833213",
+          "token": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "startAmount": "873614",
+          "recipient": "0x27213e28d7fda5c57fe9e5dd923818dbccf71c47"
+        }
+      ]
+    }
+  },
+  "types": {
+    "PermitWitnessTransferFrom": [
+      {
+        "name": "permitted",
+        "type": "TokenPermissions"
+      },
+      {
+        "name": "spender",
+        "type": "address"
+      },
+      {
+        "name": "nonce",
+        "type": "uint256"
+      },
+      {
+        "name": "deadline",
+        "type": "uint256"
+      },
+      {
+        "name": "witness",
+        "type": "ExclusiveDutchOrder"
+      }
+    ],
+    "TokenPermissions": [
+      {
+        "name": "token",
+        "type": "address"
+      },
+      {
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "ExclusiveDutchOrder": [
+      {
+        "name": "info",
+        "type": "OrderInfo"
+      },
+      {
+        "name": "decayStartTime",
+        "type": "uint256"
+      },
+      {
+        "name": "decayEndTime",
+        "type": "uint256"
+      },
+      {
+        "name": "exclusiveFiller",
+        "type": "address"
+      },
+      {
+        "name": "exclusivityOverrideBps",
+        "type": "uint256"
+      },
+      {
+        "name": "inputToken",
+        "type": "address"
+      },
+      {
+        "name": "inputStartAmount",
+        "type": "uint256"
+      },
+      {
+        "name": "inputEndAmount",
+        "type": "uint256"
+      },
+      {
+        "name": "outputs",
+        "type": "DutchOutput[]"
+      }
+    ],
+    "OrderInfo": [
+      {
+        "name": "reactor",
+        "type": "address"
+      },
+      {
+        "name": "swapper",
+        "type": "address"
+      },
+      {
+        "name": "nonce",
+        "type": "uint256"
+      },
+      {
+        "name": "deadline",
+        "type": "uint256"
+      },
+      {
+        "name": "additionalValidationContract",
+        "type": "address"
+      },
+      {
+        "name": "additionalValidationData",
+        "type": "bytes"
+      }
+    ],
+    "DutchOutput": [
+      {
+        "name": "token",
+        "type": "address"
+      },
+      {
+        "name": "startAmount",
+        "type": "uint256"
+      },
+      {
+        "name": "endAmount",
+        "type": "uint256"
+      },
+      {
+        "name": "recipient",
+        "type": "address"
+      }
+    ],
+    "EIP712Domain": [
+      {
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "name": "chainId",
+        "type": "uint256"
+      },
+      {
+        "name": "verifyingContract",
+        "type": "address"
+      }
+    ]
+  }
+}

@@ -32,6 +32,7 @@ export const HTTP_REGEX = new RegExp(
 export const INITIAL_PLATFORM_STATE = {
   recentlyUsed: [],
   currentAccountHist: {},
+  cacheBustedLiveApps: { init: 1 },
   localLiveApp: [],
 };
 
@@ -47,4 +48,10 @@ export const DEFAULT_MULTIBUY_APP_ID = "multibuy-v2";
 
 export const BUY_SELL_UI_APP_ID = "buy-sell-ui";
 
-export const INTERNAL_APP_IDS = [DEFAULT_MULTIBUY_APP_ID, BUY_SELL_UI_APP_ID];
+export const CARD_APP_ID = "card-program";
+
+export const WC_ID = "ledger-wallet-connect";
+
+export const LEDGER_SHOP_ID = "ledger-shop";
+
+export const INTERNAL_APP_IDS = [DEFAULT_MULTIBUY_APP_ID, BUY_SELL_UI_APP_ID, CARD_APP_ID];

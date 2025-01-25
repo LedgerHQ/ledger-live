@@ -1,39 +1,24 @@
-/********************************************************************************
- *   Ledger Node JS API
- *   (c) 2016-2017 Ledger
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- ********************************************************************************/
-/* eslint @typescript-eslint/no-duplicate-enum-values: 1 */
-// FIXME drop:
-import type Transport from "@ledgerhq/hw-transport";
-import { BigNumber } from "bignumber.js";
-// NB: these are temporary import for the deprecated fallback mechanism
-import { LedgerEthTransactionResolution, LoadConfig, ResolutionConfig } from "./services/types";
+/* eslint-disable @typescript-eslint/no-duplicate-enum-values */
+
 import { log } from "@ledgerhq/logs";
+import { BigNumber } from "bignumber.js";
+import type Transport from "@ledgerhq/hw-transport";
+import { EIP712Message } from "@ledgerhq/types-live";
+import { parse as parseTransaction } from "@ethersproject/transactions";
+import { LedgerEthTransactionResolution, LoadConfig, ResolutionConfig } from "./services/types";
+import { EthAppNftNotSupported, EthAppPleaseEnableContractData } from "./errors";
+import { signEIP712HashedMessage, signEIP712Message } from "./modules/EIP712";
+import { domainResolutionFlow } from "./modules/Domains";
+import ledgerService from "./services/ledger";
 import {
-  decodeTxInfo,
+  safeChunkTransaction,
+  getV,
   hexBuffer,
   intAsHexBytes,
   maybeHexBuffer,
   padHexString,
   splitPath,
 } from "./utils";
-import { domainResolutionFlow } from "./modules/Domains";
-import ledgerService from "./services/ledger";
-import { EthAppNftNotSupported, EthAppPleaseEnableContractData } from "./errors";
-import { signEIP712HashedMessage, signEIP712Message } from "./modules/EIP712";
-import { EIP712Message } from "@ledgerhq/types-live";
 
 export { ledgerService };
 export * from "./utils";
@@ -193,6 +178,14 @@ export default class Eth {
     v: string;
     r: string;
   }> {
+    enum APDU_FIELDS {
+      CLA = 0xe0,
+      INS = 0x04,
+      P1_FIRST_CHUNK = 0x00,
+      P1_FOLLOWING_CHUNK = 0x80,
+      P2 = 0x00,
+    }
+
     if (resolution === undefined) {
       console.warn(
         "hw-app-eth: signTransaction(path, rawTxHex, resolution): " +
@@ -207,6 +200,7 @@ export default class Eth {
         .resolveTransaction(rawTxHex, this.loadConfig, {
           externalPlugins: true,
           erc20: true,
+          uniswapV3: false,
         })
         .catch(e => {
           console.warn(
@@ -246,68 +240,36 @@ export default class Eth {
     }
 
     const rawTx = Buffer.from(rawTxHex, "hex");
-    const { vrsOffset, txType, chainId, chainIdTruncated } = decodeTxInfo(rawTx);
+    const parsedTransaction = parseTransaction(`0x${rawTx.toString("hex")}`);
+    const chainId = new BigNumber(parsedTransaction.chainId);
 
     const paths = splitPath(path);
+    const derivationPathBuff = Buffer.alloc(1 + paths.length * 4);
+    derivationPathBuff[0] = paths.length;
+    paths.forEach((element, index) => {
+      derivationPathBuff.writeUInt32BE(element, 1 + 4 * index);
+    });
+
+    const payloadChunks = safeChunkTransaction(rawTx, derivationPathBuff, parsedTransaction.type);
     let response;
-    let offset = 0;
-    while (offset !== rawTx.length) {
-      const first = offset === 0;
-      const maxChunkSize = first ? 150 - 1 - paths.length * 4 : 150;
-      let chunkSize = offset + maxChunkSize > rawTx.length ? rawTx.length - offset : maxChunkSize;
-
-      if (vrsOffset != 0 && offset + chunkSize >= vrsOffset) {
-        // Make sure that the chunk doesn't end right on the EIP 155 marker if set
-        chunkSize = rawTx.length - offset;
-      }
-
-      const buffer = Buffer.alloc(first ? 1 + paths.length * 4 + chunkSize : chunkSize);
-
-      if (first) {
-        buffer[0] = paths.length;
-        paths.forEach((element, index) => {
-          buffer.writeUInt32BE(element, 1 + 4 * index);
-        });
-        rawTx.copy(buffer, 1 + 4 * paths.length, offset, offset + chunkSize);
-      } else {
-        rawTx.copy(buffer, 0, offset, offset + chunkSize);
-      }
-
+    for (const chunk of payloadChunks) {
+      const isFirstChunk = chunk === payloadChunks[0];
       response = await this.transport
-        .send(0xe0, 0x04, first ? 0x00 : 0x80, 0x00, buffer)
+        .send(
+          APDU_FIELDS.CLA,
+          APDU_FIELDS.INS,
+          isFirstChunk ? APDU_FIELDS.P1_FIRST_CHUNK : APDU_FIELDS.P1_FOLLOWING_CHUNK,
+          APDU_FIELDS.P2,
+          chunk,
+        )
         .catch(e => {
           throw remapTransactionRelatedErrors(e);
         });
-
-      offset += chunkSize;
     }
 
-    const response_byte: number = response[0];
-    let v = "";
-
-    if (chainId.times(2).plus(35).plus(1).isGreaterThan(255)) {
-      const oneByteChainId = (chainIdTruncated * 2 + 35) % 256;
-
-      const ecc_parity = Math.abs(response_byte - oneByteChainId);
-
-      if (txType != null) {
-        // For EIP2930 and EIP1559 tx, v is simply the parity.
-        v = ecc_parity % 2 == 1 ? "00" : "01";
-      } else {
-        // Legacy type transaction with a big chain ID
-        v = chainId.times(2).plus(35).plus(ecc_parity).toString(16);
-      }
-    } else {
-      v = response_byte.toString(16);
-    }
-
-    // Make sure v has is prefixed with a 0 if its length is odd ("1" -> "01").
-    if (v.length % 2 == 1) {
-      v = "0" + v;
-    }
-
-    const r = response.slice(1, 1 + 32).toString("hex");
-    const s = response.slice(1 + 32, 1 + 32 + 32).toString("hex");
+    const v = getV(response[0], chainId, parsedTransaction.type);
+    const r = response.subarray(1, 1 + 32).toString("hex");
+    const s = response.subarray(1 + 32, 1 + 32 + 32).toString("hex");
     return { v, r, s };
   }
 

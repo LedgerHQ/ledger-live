@@ -1,6 +1,7 @@
 /* istanbul ignore file: pure exports, bridge tested by live-common with bridge.integration.test.ts */
 import {
-  defaultUpdateTransaction,
+  getSerializedAddressParameters,
+  updateTransaction,
   makeAccountBridgeReceive,
   makeScanAccounts,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
@@ -35,7 +36,7 @@ export function buildCurrencyBridge(signerContext: SignerContext<EvmSigner>): Cu
     scanAccounts,
     nftResolvers,
     getPreloadStrategy: () => ({
-      preloadMaxAge: 1 * 60 * 60 * 1000, // 1 hour cache
+      preloadMaxAge: 24 * 60 * 60 * 1000, // 1 day cache
     }),
   };
 }
@@ -50,7 +51,7 @@ export function buildAccountBridge(
 
   return {
     createTransaction,
-    updateTransaction: defaultUpdateTransaction<EvmTransaction>,
+    updateTransaction: updateTransaction<EvmTransaction>,
     prepareTransaction,
     getTransactionStatus,
     sync,
@@ -58,6 +59,7 @@ export function buildAccountBridge(
     signOperation,
     broadcast,
     estimateMaxSpendable,
+    getSerializedAddressParameters,
   };
 }
 

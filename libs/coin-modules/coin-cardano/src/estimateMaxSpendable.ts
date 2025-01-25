@@ -10,6 +10,7 @@ import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
 import type { CardanoAccount, Transaction } from "./types";
 import { createTransaction } from "./createTransaction";
 import { buildTransaction } from "./buildTransaction";
+import { prepareTransaction } from "./prepareTransaction";
 
 /**
  * Returns the maximum possible amount for transaction
@@ -32,7 +33,7 @@ export const estimateMaxSpendable: AccountBridge<
 
   const dummyRecipient =
     "addr1qyqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqv2t5am";
-  const t: Transaction = {
+  let t: Transaction = {
     ...createTransaction(account),
     ...transaction,
     recipient: dummyRecipient,
@@ -42,6 +43,7 @@ export const estimateMaxSpendable: AccountBridge<
   };
   let typhonTransaction: TyphonTransaction;
   try {
+    t = await prepareTransaction(account, t);
     typhonTransaction = await buildTransaction(mainAccount, t);
   } catch (error) {
     log("cardano-error", "Failed to estimate max spendable: " + String(error));

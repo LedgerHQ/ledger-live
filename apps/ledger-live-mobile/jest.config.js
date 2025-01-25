@@ -18,6 +18,8 @@ const transformIncludePatterns = [
   "react-native-ble-plx",
   "react-native-android-location-services-dialog-box",
   "react-native-vector-icons",
+  "react-native-qrcode-svg",
+  "react-native-video",
 ];
 
 /** @type {import('ts-jest').JestConfigWithTsJest} */
@@ -46,8 +48,22 @@ module.exports = {
   ],
   testPathIgnorePatterns: ["<rootDir>/node_modules/"],
   moduleDirectories: ["node_modules"],
-  collectCoverageFrom: ["src/**/*.{ts,tsx}", "!src/**/*.test.{ts,tsx}", "!src/**/*.spec.{ts,tsx}"],
-  coverageReporters: ["json", "lcov", "json-summary"],
+  collectCoverageFrom: [
+    "src/**/*.{ts,tsx}",
+    "!src/**/*.test.{ts,tsx}",
+    "!src/**/*.spec.{ts,tsx}",
+    "!src/**/__integration__/**",
+    "!src/**/__tests__/**",
+  ],
+  coverageReporters: ["json", ["lcov", { projectRoot: "../" }], "json-summary"],
+  reporters: [
+    "default",
+    [
+      "jest-sonar",
+      { outputName: "llm-sonar-executionTests-report.xml", reportedFilePath: "absolute" },
+    ],
+  ],
+  resolver: "<rootDir>/scripts/resolver.js",
   moduleNameMapper: {
     ...pathsToModuleNameMapper(compilerOptions.paths),
     "^react$": "<rootDir>/node_modules/react",

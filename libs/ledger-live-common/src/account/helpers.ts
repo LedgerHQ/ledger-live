@@ -78,6 +78,10 @@ export const getVotesCount = (
     case "osmosis":
     case "cosmos":
     case "coreum":
+    case "mantra":
+    case "crypto_org":
+    case "xion":
+    case "zenrock":
       return (mainAccount as CosmosAccount)?.cosmosResources?.delegations.length || 0;
     default:
       return 0;

@@ -84,6 +84,7 @@ type Props = {
   bannerId?: string;
   id?: string;
   testId?: string;
+  containerStyle?: React.CSSProperties;
 };
 
 const TopBanner = ({
@@ -94,6 +95,7 @@ const TopBanner = ({
   dismissable = false,
   bannerId,
   link,
+  containerStyle,
 }: Props) => {
   const dispatch = useDispatch();
   const dismissedBanners = useSelector(dismissedBannersSelector);
@@ -108,7 +110,7 @@ const TopBanner = ({
   const { Icon, message, right } = content;
 
   return (
-    <Container status={status} id={id} data-test-id={testId}>
+    <Container status={status} id={id} data-testid={testId} style={containerStyle}>
       {Icon && (
         <IconContainer>
           <Icon size={18} />

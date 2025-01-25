@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Platform, ScrollView } from "react-native";
+import { Image, Linking, Platform, ScrollView } from "react-native";
 import { useSelector } from "react-redux";
 import styled from "styled-components/native";
 import {
@@ -35,7 +35,6 @@ import {
   getFeesUnit,
 } from "@ledgerhq/live-common/account/index";
 import { TFunction } from "react-i18next";
-import { DeviceModelId, QRCodeDevices } from "@ledgerhq/types-devices";
 import type { DeviceModelInfo } from "@ledgerhq/types-live";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { ParamListBase } from "@react-navigation/native";
@@ -49,7 +48,7 @@ import Button from "../Button";
 import DeviceActionProgress from "../DeviceActionProgress";
 import { NavigatorName, ScreenName } from "~/const";
 import Animation from "../Animation";
-import { getDeviceAnimation } from "~/helpers/getDeviceAnimation";
+import { getDeviceAnimation, getDeviceAnimationStyles } from "~/helpers/getDeviceAnimation";
 import GenericErrorView from "../GenericErrorView";
 import Circle from "../Circle";
 import { MANAGER_TABS } from "~/const/manager";
@@ -63,6 +62,8 @@ import Config from "react-native-config";
 import { WalletState, accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
 import { SettingsState } from "~/reducers/types";
 import { RootStackParamList } from "../RootNavigator/types/RootNavigator";
+import { isSyncOnboardingSupported } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 
 export const Wrapper = styled(Flex).attrs({
   flex: 1,
@@ -76,6 +77,7 @@ const AnimationContainer = styled(Flex).attrs({
   alignItems: "center",
   justifyContent: "center",
   height: "150px",
+  m: 6,
 })``;
 
 const ActionContainer = styled(Flex).attrs({
@@ -125,9 +127,6 @@ const ConnectDeviceExtraContentWrapper = styled(Flex).attrs({
   mb: 8,
 })``;
 
-const animationStyles = (modelId: DeviceModelId) =>
-  [DeviceModelId.stax, DeviceModelId.europa].includes(modelId) ? { height: 210 } : {};
-
 export type RawProps = {
   t: (key: string, options?: { [key: string]: string | number }) => string;
   colors?: Theme["colors"];
@@ -145,8 +144,8 @@ export function renderRequestQuitApp({
     <Wrapper>
       <AnimationContainer>
         <Animation
-          source={getDeviceAnimation({ device, key: "quitApp", theme })}
-          style={animationStyles(device.modelId)}
+          source={getDeviceAnimation({ modelId: device.modelId, key: "quitApp", theme })}
+          style={getDeviceAnimationStyles(device.modelId)}
         />
       </AnimationContainer>
       <CenteredText>{t("DeviceAction.quitApp")}</CenteredText>
@@ -206,8 +205,8 @@ export function renderVerifyAddress({
     <Wrapper>
       <AnimationContainer>
         <Animation
-          source={getDeviceAnimation({ device, key: "verify", theme })}
-          style={animationStyles(device.modelId)}
+          source={getDeviceAnimation({ modelId: device.modelId, key: "verify", theme })}
+          style={getDeviceAnimationStyles(device.modelId)}
         />
       </AnimationContainer>
       <TitleText>{t("DeviceAction.verifyAddress.title")}</TitleText>
@@ -277,8 +276,8 @@ export function renderConfirmSwap({
         </Alert>
         <AnimationContainer marginTop="16px">
           <Animation
-            source={getDeviceAnimation({ device, key: "sign", theme })}
-            style={animationStyles(device.modelId)}
+            source={getDeviceAnimation({ modelId: device.modelId, key: "sign", theme })}
+            style={getDeviceAnimationStyles(device.modelId)}
           />
         </AnimationContainer>
         <TitleText>{t("DeviceAction.confirmSwap.title")}</TitleText>
@@ -388,8 +387,8 @@ export function renderAllowManager({
       </Flex>
       <AnimationContainer>
         <Animation
-          source={getDeviceAnimation({ device, key: "allowManager", theme })}
-          style={animationStyles(device.modelId)}
+          source={getDeviceAnimation({ modelId: device.modelId, key: "allowManager", theme })}
+          style={getDeviceAnimationStyles(device.modelId)}
         />
       </AnimationContainer>
     </Wrapper>
@@ -427,8 +426,8 @@ export function renderAllowLanguageInstallation({
       </Text>
       <AnimationContainer my={8}>
         <Animation
-          source={getDeviceAnimation({ device, key, theme })}
-          style={animationStyles(device.modelId)}
+          source={getDeviceAnimation({ modelId: device.modelId, key, theme })}
+          style={getDeviceAnimationStyles(device.modelId)}
         />
       </AnimationContainer>
     </Flex>
@@ -453,8 +452,8 @@ export const renderAllowRemoveCustomLockscreen = ({
       </Text>
       <AnimationContainer>
         <Animation
-          source={getDeviceAnimation({ device, key, theme })}
-          style={animationStyles(device.modelId)}
+          source={getDeviceAnimation({ modelId: device.modelId, key, theme })}
+          style={getDeviceAnimationStyles(device.modelId)}
         />
       </AnimationContainer>
     </Wrapper>
@@ -490,11 +489,11 @@ const AllowOpeningApp = ({
       <AnimationContainer>
         <Animation
           source={getDeviceAnimation({
-            device,
+            modelId: device.modelId,
             key: "openApp",
             theme,
           })}
-          style={animationStyles(device.modelId)}
+          style={getDeviceAnimationStyles(device.modelId)}
         />
       </AnimationContainer>
       <TitleText>{t("DeviceAction.allowAppPermission", { wording })}</TitleText>
@@ -773,7 +772,7 @@ export function renderDeviceNotOnboarded({
   navigation: StackNavigationProp<ParamListBase>;
 }) {
   const navigateToOnboarding = () => {
-    if (QRCodeDevices.includes(device.modelId)) {
+    if (isSyncOnboardingSupported(device.modelId)) {
       // On pairing success, navigate to the Sync Onboarding Companion
       navigation.navigate(NavigatorName.BaseOnboarding, {
         screen: NavigatorName.SyncOnboarding,
@@ -845,11 +844,11 @@ export function renderConnectYourDevice({
       <AnimationContainer>
         <Animation
           source={getDeviceAnimation({
-            device,
+            modelId: device.modelId,
             key: isLocked || unresponsive ? "enterPinCode" : "plugAndPinCode",
             theme,
           })}
-          style={animationStyles(device.modelId)}
+          style={getDeviceAnimationStyles(device.modelId)}
         />
       </AnimationContainer>
       {device.deviceName && <ConnectDeviceNameText>{device.deviceName}</ConnectDeviceNameText>}
@@ -886,11 +885,9 @@ export function renderLoading({
   return (
     <Wrapper>
       <SpinnerContainer>
-        <InfiniteLoader mock={Config.MOCK} />
+        <InfiniteLoader mock={Config.DETOX} testID="device-action-loading" />
       </SpinnerContainer>
-      <CenteredText testID="device-action-loading">
-        {description ?? t("DeviceAction.loading")}
-      </CenteredText>
+      <CenteredText>{description ?? t("DeviceAction.loading")}</CenteredText>
       {lockModal ? <ModalLock /> : null}
     </Wrapper>
   );
@@ -934,8 +931,8 @@ export function renderSecureTransferDeviceConfirmation({
     <Wrapper>
       <AnimationContainer>
         <Animation
-          source={getDeviceAnimation({ device, key: "sign", theme })}
-          style={animationStyles(device.modelId)}
+          source={getDeviceAnimation({ modelId: device.modelId, key: "sign", theme })}
+          style={getDeviceAnimationStyles(device.modelId)}
         />
       </AnimationContainer>
       <TitleText>{t(`DeviceAction.${exchangeTypeName}.title`)}</TitleText>
@@ -952,15 +949,19 @@ export function LoadingAppInstall({
   ...props
 }: RawProps & {
   analyticsPropertyFlow: string;
+  appName: string | null | undefined;
   description?: string;
   request?: AppRequest;
 }) {
   const currency = request?.currency || request?.account?.currency;
-  const appName = request?.appName || currency?.managerAppName;
+  const appNameToTrack = props.appName ?? request?.appName ?? currency?.managerAppName;
+
   useEffect(() => {
-    const trackingArgs = ["In-line app install", { appName, flow: analyticsPropertyFlow }] as const;
-    track(...trackingArgs);
-  }, [appName, analyticsPropertyFlow]);
+    track(`${appNameToTrack?.replace(/\s/g, "").toLowerCase()}_installed`, {
+      flow: analyticsPropertyFlow,
+      installType: "inline",
+    });
+  }, [analyticsPropertyFlow, appNameToTrack]);
 
   return renderLoading({ ...props, lockModal: true });
 }
@@ -1080,5 +1081,59 @@ export const AutoRepair = ({
       <DeviceActionProgress progress={progress} />
       <DescriptionText>{t("FirmwareUpdate.pleaseWaitUpdate")}</DescriptionText>
     </Wrapper>
+  );
+};
+
+const HARDWARE_UPDATE_ASSETS: Partial<Record<DeviceModelId, number>> = {
+  nanoS: require("../../../assets/images/swap/nanoSBackdropFilter.png"),
+};
+
+export const HardwareUpdate = ({
+  t,
+  device,
+  i18nKeyTitle,
+  i18nKeyDescription,
+}: {
+  t: RawProps["t"];
+  device: Device;
+  i18nKeyTitle: string;
+  i18nKeyDescription: string;
+}) => {
+  const openUrl = (url: string) => Linking.openURL(url);
+
+  return (
+    <Flex flex={1} justifyContent="center" minHeight="160px">
+      <AnimationContainer height="200px">
+        <Image
+          source={HARDWARE_UPDATE_ASSETS[device.modelId]}
+          style={{ height: 200, width: 200 }}
+          resizeMode={"contain"}
+        />
+      </AnimationContainer>
+      <Text variant="h4" fontWeight="semiBold">
+        {t(i18nKeyTitle)}
+      </Text>
+      <Text pt={4} color="neutral.c70" variant={"body"} lineHeight={"150%"} fontWeight={"medium"}>
+        {t(i18nKeyDescription)}
+      </Text>
+      <Button
+        type="main"
+        outline={false}
+        onPress={() => openUrl("https://shop.ledger.com/pages/hardware-wallet")}
+        mt={8}
+        alignSelf="stretch"
+      >
+        {t("transfer.swap2.incompatibility.explore_compatible_devices")}
+      </Button>
+      <Button
+        type="shade"
+        outline
+        onPress={() => openUrl("https://support.ledger.com")}
+        mt={4}
+        alignSelf="stretch"
+      >
+        {t("transfer.swap2.incompatibility.contact_support")}
+      </Button>
+    </Flex>
   );
 };

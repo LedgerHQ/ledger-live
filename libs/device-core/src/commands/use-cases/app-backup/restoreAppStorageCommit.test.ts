@@ -21,7 +21,7 @@ describe("restoreAppStorageCommit", () => {
 
   it("should call the send function with correct parameters", async () => {
     await restoreAppStorageCommit(transport);
-    expect(transport.send).toHaveBeenCalledWith(0xe0, 0x6e, 0x00, 0x00, Buffer.from([0x00]), [
+    expect(transport.send).toHaveBeenCalledWith(0xe0, 0x6e, 0x00, 0x00, Buffer.from([]), [
       StatusCodes.OK,
       StatusCodes.APP_NOT_FOUND_OR_INVALID_CONTEXT,
       StatusCodes.GEN_AES_KEY_FAILED,

@@ -11,23 +11,38 @@ import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 type AddAccountScreenProps = {
   currency?: CryptoCurrency | TokenCurrency | null;
   onClose?: () => void;
+  setWalletSyncDrawerVisible?: () => void;
 };
 
-const useSelectAddAccountMethodViewModel = ({ currency, onClose }: AddAccountScreenProps) => {
+const useSelectAddAccountMethodViewModel = ({
+  currency,
+  onClose,
+  setWalletSyncDrawerVisible,
+}: AddAccountScreenProps) => {
   const navigation = useNavigation<BaseNavigation>();
   const walletSyncFeatureFlag = useFeature("llmWalletSync");
-
+  const llmNetworkBasedAddAccountFlow = useFeature("llmNetworkBasedAddAccountFlow");
   const isReadOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const isWalletSyncEnabled = walletSyncFeatureFlag?.enabled;
   const hasCurrency = !!currency;
 
   const navigationParams = useMemo(() => {
-    return hasCurrency
-      ? currency.type === "TokenCurrency"
-        ? { token: currency }
-        : { currency }
-      : {};
-  }, [hasCurrency, currency]);
+    if (hasCurrency) {
+      if (currency?.type === "TokenCurrency") {
+        return {
+          token: currency,
+          ...(llmNetworkBasedAddAccountFlow?.enabled && { context: "addAccounts" }),
+        };
+      } else {
+        return {
+          currency,
+          ...(llmNetworkBasedAddAccountFlow?.enabled && { context: "addAccounts" }),
+        };
+      }
+    } else {
+      return llmNetworkBasedAddAccountFlow?.enabled ? { context: "addAccounts" } : {};
+    }
+  }, [hasCurrency, currency, llmNetworkBasedAddAccountFlow?.enabled]);
 
   const trackButtonClick = useCallback((button: string) => {
     track("button_clicked", {
@@ -37,22 +52,40 @@ const useSelectAddAccountMethodViewModel = ({ currency, onClose }: AddAccountScr
   }, []);
 
   const onClickImport = useCallback(() => {
-    trackButtonClick("Import from Desktop");
+    trackButtonClick("Import via another Ledger Live app");
     onClose?.();
     navigation.navigate(NavigatorName.ImportAccounts);
   }, [navigation, trackButtonClick, onClose]);
 
+  const onClickImportLedgerSync = useCallback(() => {
+    trackButtonClick("Account Use Ledger Sync");
+    setWalletSyncDrawerVisible?.();
+  }, [trackButtonClick, setWalletSyncDrawerVisible]);
+
   const onClickAdd = useCallback(() => {
     trackButtonClick("With your Ledger");
     onClose?.();
-    navigation.navigate(NavigatorName.AddAccounts, navigationParams);
-  }, [navigation, navigationParams, trackButtonClick, onClose]);
+    const EntryNavigatorName = llmNetworkBasedAddAccountFlow?.enabled
+      ? NavigatorName.AssetSelection
+      : NavigatorName.AddAccounts;
+    // to delete after llmNetworkBasedAddAccountFlow is fully enabled (ts inference not working well based on navigationParams)
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    navigation.navigate(EntryNavigatorName, navigationParams);
+  }, [
+    navigation,
+    navigationParams,
+    trackButtonClick,
+    onClose,
+    llmNetworkBasedAddAccountFlow?.enabled,
+  ]);
 
   return {
     isWalletSyncEnabled,
     isReadOnlyModeEnabled,
     onClickAdd,
     onClickImport,
+    onClickImportLedgerSync,
   };
 };
 

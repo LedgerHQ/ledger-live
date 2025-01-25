@@ -38,7 +38,7 @@ const SendFeeMode = ({ isAdvanceMode, setAdvanceMode }: Props) => {
   const setStandard = useCallback(() => setAdvanceMode(false), [setAdvanceMode]);
   const feesMoreInfoUrl = useLocalizedUrl(urls.feesMoreInfo);
   return (
-    <Box data-test-id="send-fee-mode" horizontal alignItems="center" justifyContent="space-between">
+    <Box data-testid="send-fee-mode" horizontal alignItems="center" justifyContent="space-between">
       <LabelWithExternalIcon
         onClick={() => {
           openURL(feesMoreInfoUrl);
@@ -50,7 +50,7 @@ const SendFeeMode = ({ isAdvanceMode, setAdvanceMode }: Props) => {
         <Selector
           active={!isAdvanceMode}
           onClick={setStandard}
-          data-test-id="standard-fee-mode-selector"
+          data-testid="standard-fee-mode-selector"
         >
           <Text ff="Inter|SemiBold" fontSize={10}>
             <Trans i18nKey="send.steps.amount.standard" />
@@ -59,7 +59,7 @@ const SendFeeMode = ({ isAdvanceMode, setAdvanceMode }: Props) => {
         <Selector
           active={isAdvanceMode}
           onClick={setAdvanced}
-          data-test-id="advanced-fee-mode-selector"
+          data-testid="advanced-fee-mode-selector"
         >
           <Text ff="Inter|SemiBold" fontSize={10}>
             <Trans i18nKey="send.steps.amount.advanced" />

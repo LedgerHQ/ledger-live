@@ -1,10 +1,11 @@
 import { CosmosValidatorItem } from "@ledgerhq/live-common/families/cosmos/types";
 import React from "react";
-import cosmosBase from "@ledgerhq/live-common/families/cosmos/chain/cosmosBase";
+import cosmosBase from "@ledgerhq/coin-cosmos/chain/cosmosBase";
 import { IconContainer } from "~/renderer/components/Delegation/ValidatorRow";
 import LedgerLiveLogo from "~/renderer/components/LedgerLiveLogo";
 import Logo from "~/renderer/icons/Logo";
 import FirstLetterIcon from "~/renderer/components/FirstLetterIcon";
+
 const CosmosFamilyLedgerValidatorIcon = ({
   validator,
 }: {

@@ -33,6 +33,7 @@ const parentTx = [
   "UnDelegateResourceContract",
   "FreezeBalanceContract",
   "UnfreezeBalanceContract",
+  "ContractApproval",
 ];
 
 export const isParentTx = (tx: TrongridTxInfo): boolean => parentTx.includes(tx.type);
@@ -108,6 +109,9 @@ const getOperationType = (
     case "TransferAssetContract":
     case "TriggerSmartContract":
       return tx.from === accountAddr ? "OUT" : "IN";
+
+    case "ContractApproval":
+      return "APPROVE";
 
     case "ExchangeTransactionContract":
       return "OUT";

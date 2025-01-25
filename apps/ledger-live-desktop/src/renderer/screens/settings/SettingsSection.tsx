@@ -111,7 +111,7 @@ export const SettingsSectionRow = ({
     onClick={onClick}
     tabIndex={-1}
     inset={inset}
-    data-test-id={dataTestId}
+    data-testid={dataTestId}
     id={id}
   >
     <Box

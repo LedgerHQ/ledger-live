@@ -4,13 +4,12 @@ import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
 import { initState, ListAppsResult, reducer, runAll } from "@ledgerhq/live-common/apps/index";
 import ManagerAPI from "@ledgerhq/live-common/manager/api";
-import {
-  listAppsUseCase,
-  execWithTransport,
-} from "@ledgerhq/live-common/device/use-cases/listAppsUseCase";
+import { listAppsUseCase } from "@ledgerhq/live-common/device/use-cases/listAppsUseCase";
+import { execWithTransport } from "@ledgerhq/live-common/device/use-cases/execWithTransport";
 import installApp from "@ledgerhq/live-common/hw/installApp";
-import { deviceOpt } from "../../scan";
-import { Application } from "@ledgerhq/types-live";
+import { DeviceCommonOpts, deviceOpt } from "../../scan";
+import { Application, DeviceInfo, ApplicationVersion } from "@ledgerhq/types-live";
+import Transport from "@ledgerhq/hw-transport";
 type Scenario = number[];
 // how to add a scenario:
 // wget https://manager.api.live.ledger.com/api/applications
@@ -26,8 +25,13 @@ const scenarios: Record<string, Scenario> = {
 };
 const scenariosValues = Object.keys(scenarios).join(" | ");
 
-const installScenario = (apps, transport, deviceInfo, scene) => {
-  const appVersionsPerId = {};
+const installScenario = (
+  apps: Application[],
+  transport: Transport,
+  deviceInfo: DeviceInfo,
+  scene: Scenario,
+) => {
+  const appVersionsPerId: Record<number, ApplicationVersion> = {};
   apps.forEach(a =>
     a.application_versions.forEach(av => {
       appVersionsPerId[av.id] = av;
@@ -41,6 +45,11 @@ const installScenario = (apps, transport, deviceInfo, scene) => {
   );
 };
 
+export type DevDeviceAppsScenarioJobOpts = DeviceCommonOpts &
+  Partial<{
+    scenario: keyof typeof scenarios;
+  }>;
+
 export default {
   description: "dev feature to enter into a specific device apps scenario",
   args: [
@@ -52,13 +61,7 @@ export default {
       desc: scenariosValues,
     },
   ],
-  job: ({
-    device,
-    scenario,
-  }: Partial<{
-    device: string;
-    scenario: keyof typeof scenarios;
-  }>) =>
+  job: ({ device, scenario }: DevDeviceAppsScenarioJobOpts) =>
     withDevice(device || "")(t => {
       const scene = scenarios[scenario || ""];
       if (!scene)

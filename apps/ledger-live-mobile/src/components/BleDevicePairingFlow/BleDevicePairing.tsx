@@ -103,9 +103,9 @@ const BleDevicePairing = ({ deviceToPair, onPaired, onRetry }: BleDevicePairingP
           </Text>
         </Flex>
         <Animation
-          style={{ marginTop: -20 }}
+          style={{ height: 200 }}
           source={getDeviceAnimation({
-            device: deviceToPair,
+            modelId: deviceToPair.modelId,
             key: "blePaired",
             theme,
           })}
@@ -169,7 +169,14 @@ const BleDevicePairing = ({ deviceToPair, onPaired, onRetry }: BleDevicePairingP
         <Flex width="100%" py={16} alignItems="center">
           <Flex height={100} justifyContent="center">
             <BoxedIcon
-              Icon={<InfiniteLoader color="primary.c80" size={32} mock={Config.MOCK} />}
+              Icon={() => (
+                <InfiniteLoader
+                  color="primary.c80"
+                  size={32}
+                  mock={Config.DETOX}
+                  testID="ble-pairing-loading"
+                />
+              )}
               backgroundColor={colors.opacityDefault.c05}
               size={64}
               variant="circle"
@@ -186,9 +193,9 @@ const BleDevicePairing = ({ deviceToPair, onPaired, onRetry }: BleDevicePairingP
           </Text>
         </Flex>
         <Animation
-          style={{ marginTop: -20 }}
+          style={{ height: 200 }}
           source={getDeviceAnimation({
-            device: deviceToPair,
+            modelId: deviceToPair.modelId,
             key: "blePairing",
             theme,
           })}

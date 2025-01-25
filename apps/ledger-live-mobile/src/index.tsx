@@ -1,5 +1,6 @@
 import "./polyfill";
 import "./live-common-setup";
+import "./iosWebsocketFix";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import React, { Component, useCallback, useMemo, useEffect } from "react";
 import { StyleSheet, LogBox, Appearance, AppState } from "react-native";
@@ -28,6 +29,8 @@ import {
   saveCountervalues,
   savePostOnboardingState,
   saveMarketState,
+  saveTrustchainState,
+  saveWalletExportState,
 } from "./db";
 import {
   exportSelector as settingsExportSelector,
@@ -62,7 +65,6 @@ import Modals from "~/screens/Modals";
 import NavBarColorHandler from "~/components/NavBarColorHandler";
 import { FirebaseRemoteConfigProvider } from "~/components/FirebaseRemoteConfig";
 import { FirebaseFeatureFlagsProvider } from "~/components/FirebaseFeatureFlags";
-import AdjustSetup from "~/components/AdjustSetup";
 import { TermsAndConditionMigrateLegacyData } from "~/logic/terms";
 import HookDynamicContentCards from "~/dynamicContent/useContentCards";
 import PlatformAppProviderWrapper from "./PlatformAppProviderWrapper";
@@ -84,8 +86,12 @@ import { StorylyProvider } from "./components/StorylyStories/StorylyProvider";
 import { useSettings } from "~/hooks";
 import AppProviders from "./AppProviders";
 import { useAutoDismissPostOnboardingEntryPoint } from "@ledgerhq/live-common/postOnboarding/hooks/index";
-import QueuedDrawersContextProvider from "~/newArch/components/QueuedDrawer/QueuedDrawersContextProvider";
+import QueuedDrawersContextProvider from "LLM/components/QueuedDrawer/QueuedDrawersContextProvider";
 import { exportMarketSelector } from "./reducers/market";
+import { trustchainStoreSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
+import { walletSelector } from "~/reducers/wallet";
+import { exportWalletState, walletStateExportShouldDiffer } from "@ledgerhq/live-wallet/store";
+import { useSyncNFTsWithAccounts } from "./hooks/nfts/useSyncNFTsWithAccounts";
 
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();
@@ -104,6 +110,10 @@ const styles = StyleSheet.create({
   },
 });
 
+function walletExportSelector(state: State) {
+  return exportWalletState(walletSelector(state));
+}
+
 function App() {
   const accounts = useSelector(accountsSelector);
   const analyticsFF = useFeature("llmAnalyticsOptInPrompt");
@@ -114,7 +124,7 @@ function App() {
   useEffect(() => {
     if (
       !analyticsFF?.enabled ||
-      (hasCompletedOnboarding && !analyticsFF?.params?.entryPoints.includes("Portfolio")) ||
+      (hasCompletedOnboarding && !analyticsFF?.params?.entryPoints?.includes?.("Portfolio")) ||
       hasSeenAnalyticsOptInPrompt
     )
       return;
@@ -134,6 +144,8 @@ function App() {
   useFetchCurrencyFrom();
   useListenToHidDevices();
   useAutoDismissPostOnboardingEntryPoint();
+
+  useSyncNFTsWithAccounts();
 
   const getSettingsChanged = useCallback((a: State, b: State) => a.settings !== b.settings, []);
   const getAccountsChanged = useCallback(
@@ -208,6 +220,20 @@ function App() {
     throttle: 500,
     getChangesStats: (a, b) => a.market !== b.market,
     lense: exportMarketSelector,
+  });
+
+  useDBSaveEffect({
+    save: saveTrustchainState,
+    throttle: 500,
+    getChangesStats: (a, b) => a.trustchain !== b.trustchain,
+    lense: trustchainStoreSelector,
+  });
+
+  useDBSaveEffect({
+    save: saveWalletExportState,
+    throttle: 500,
+    getChangesStats: (a, b) => walletStateExportShouldDiffer(a.wallet, b.wallet),
+    lense: walletExportSelector,
   });
 
   return (
@@ -288,7 +314,7 @@ export default class Root extends Component {
   }
 
   onInitFinished = () => {
-    if (Config.MOCK) {
+    if (Config.DETOX) {
       init();
     }
   };
@@ -307,7 +333,6 @@ export default class Root extends Component {
               <>
                 <SetEnvsFromSettings />
                 <HookSentry />
-                <AdjustSetup />
                 <SegmentSetup />
                 <HookNotifications />
                 <HookDynamicContentCards />

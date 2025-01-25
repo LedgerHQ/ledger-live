@@ -1,25 +1,25 @@
-import React, { useEffect, Component } from "react";
+import React, { Component, useEffect } from "react";
 import BigNumber from "bignumber.js";
 import { Trans, useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { Action } from "@ledgerhq/live-common/hw/actions/types";
 import {
-  OutdatedApp,
+  EConnResetError,
+  ImageDoesNotExistOnDevice,
+  LanguageInstallRefusedOnDevice,
   LatestFirmwareVersionRequired,
   NoSuchAppOnProvider,
-  EConnResetError,
-  LanguageInstallRefusedOnDevice,
-  ImageDoesNotExistOnDevice,
+  OutdatedApp,
 } from "@ledgerhq/live-common/errors";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import {
-  setPreferredDeviceModel,
-  setLastSeenDeviceInfo,
   addNewDeviceModel,
+  setLastSeenDeviceInfo,
+  setPreferredDeviceModel,
 } from "~/renderer/actions/settings";
 import {
-  storeSelector as settingsSelector,
   preferredDeviceModelSelector,
+  storeSelector as settingsSelector,
 } from "~/renderer/reducers/settings";
 import { DeviceModelId } from "@ledgerhq/devices";
 import AutoRepair from "~/renderer/components/AutoRepair";
@@ -28,35 +28,35 @@ import SignMessageConfirm from "~/renderer/components/SignMessageConfirm";
 import useTheme from "~/renderer/hooks/useTheme";
 import {
   ManagerNotEnoughSpaceError,
+  TransportRaceCondition,
+  UnresponsiveDeviceError,
   UpdateYourApp,
   UserRefusedAddress,
   UserRefusedAllowManager,
+  UserRefusedDeviceNameChange,
   UserRefusedFirmwareUpdate,
   UserRefusedOnDevice,
-  UserRefusedDeviceNameChange,
-  UnresponsiveDeviceError,
-  TransportRaceCondition,
 } from "@ledgerhq/errors";
 import {
+  DeviceNotOnboardedErrorComponent,
   InstallingApp,
+  renderAllowLanguageInstallation,
   renderAllowManager,
   renderAllowOpeningApp,
+  renderAllowRemoveCustomLockscreen,
   renderBootloaderStep,
   renderConnectYourDevice,
   renderError,
+  renderInstallingLanguage,
   renderInWrongAppForAccount,
+  renderListingApps,
   renderLoading,
+  renderLockedDeviceError,
   renderRequestQuitApp,
   renderRequiresAppInstallation,
-  renderListingApps,
-  renderWarningOutdated,
-  renderSwapDeviceConfirmation,
   renderSecureTransferDeviceConfirmation,
-  renderAllowLanguageInstallation,
-  renderInstallingLanguage,
-  renderAllowRemoveCustomLockscreen,
-  renderLockedDeviceError,
-  DeviceNotOnboardedErrorComponent,
+  renderSwapDeviceConfirmation,
+  renderWarningOutdated,
 } from "./rendering";
 import { useGetSwapTrackingProperties } from "~/renderer/screens/exchange/Swap2/utils";
 import {
@@ -67,8 +67,8 @@ import {
   DeviceModelInfo,
 } from "@ledgerhq/types-live";
 import {
-  ExchangeSwap,
   ExchangeRate,
+  ExchangeSwap,
   InitSwapResult,
 } from "@ledgerhq/live-common/exchange/swap/types";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
@@ -76,7 +76,7 @@ import { AppAndVersion } from "@ledgerhq/live-common/hw/connectApp";
 import { Device } from "@ledgerhq/types-devices";
 import { LedgerErrorConstructor } from "@ledgerhq/errors/lib/helpers";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { isDeviceNotOnboardedError } from "./utils";
+import { getNoSuchAppProviderLearnMoreMetadataPerApp, isDeviceNotOnboardedError } from "./utils";
 import { useKeepScreenAwake } from "~/renderer/hooks/useKeepScreenAwake";
 import { walletSelector } from "~/renderer/reducers/wallet";
 
@@ -469,6 +469,8 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
         error,
         withOpenManager: true,
         withExportLogs: true,
+        ...(device && { device }),
+        ...getNoSuchAppProviderLearnMoreMetadataPerApp((request as { appName: string })?.appName),
       });
     }
 

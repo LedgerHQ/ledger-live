@@ -51,15 +51,15 @@ export function createAggregator<Mods extends Record<string, WalletSyncDataManag
       };
     },
 
-    async resolveIncomingDistantState(ctx, localData, latestState, incomingState) {
-      // Aggregate all promises resulting of each module resolveIncomingDistantState
+    async resolveIncrementalUpdate(ctx, localData, latestState, incomingState) {
+      // Aggregate all promises resulting of each module resolveIncrementalUpdate
 
       type Resolved = {
         [K in keyof Mods]: Promise<UpdateDiff<ExtractUpdateEvent<Mods[K]>>>;
       };
 
       const resolved = mapValues<Mods, Resolved>(modules, (m, k) =>
-        m.resolveIncomingDistantState(
+        m.resolveIncrementalUpdate(
           ctx,
           localData[k],
           latestState && latestState[k] ? latestState[k] : null,

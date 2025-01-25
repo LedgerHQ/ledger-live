@@ -33,9 +33,6 @@ export const Header = () => (
       <Trans i18nKey="near.stake.table.staked" />
     </TableLine>
     <TableLine>
-      <Trans i18nKey="delegation.rewards" />
-    </TableLine>
-    <TableLine>
       <Trans i18nKey="near.stake.table.pending" />
     </TableLine>
     <TableLine>

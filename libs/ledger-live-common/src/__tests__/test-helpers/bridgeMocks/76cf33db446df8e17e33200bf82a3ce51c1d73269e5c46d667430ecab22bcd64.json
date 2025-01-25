@@ -1,0 +1,1 @@
+{"request":{"url":"https://rest.core.persistence.one/cosmos/tx/v1beta1/txs?events=message.sender=%27persistence17r56udl09ssv88x85cxftx7su0rgv4v27ej3p0%27&pagination.limit=100&pagination.offset=0&pagination.reverse=true","method":"GET"},"response":{"body":{"txs":[],"tx_responses":[],"pagination":null,"total":"0"}}}

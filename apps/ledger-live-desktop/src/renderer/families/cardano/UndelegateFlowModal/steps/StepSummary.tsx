@@ -13,6 +13,9 @@ import { StepProps } from "../types";
 import BigNumber from "bignumber.js";
 import Alert from "~/renderer/components/Alert";
 import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import IconExclamationCircle from "~/renderer/icons/ExclamationCircle";
+import { CardanoNotEnoughFunds } from "@ledgerhq/live-common/errors";
+import NotEnoughFundsToUnstake from "~/renderer/components/NotEnoughFundsToUnstake";
 
 const FromToWrapper = styled.div``;
 const Separator = styled.div`
@@ -24,17 +27,20 @@ const Separator = styled.div`
 
 function StepSummary(props: StepProps) {
   const { account, transaction, status, error } = props;
-  const { estimatedFees, errors } = status;
+  const { estimatedFees, errors, warnings } = status;
+  const { feeTooHigh } = warnings;
   const displayError = errors.amount?.message ? errors.amount : "";
+  const notEnoughFundsError = error && error instanceof CardanoNotEnoughFunds;
 
   const accountUnit = useMaybeAccountUnit(account);
   if (!account || !transaction) return null;
 
   const feesCurrency = getAccountCurrency(account);
   const stakeKeyDeposit = account.cardanoResources?.protocolParams.stakeKeyDeposit;
+
   return (
     <Box flow={4} mx={40}>
-      {error && <ErrorBanner error={error} />}
+      {error && !notEnoughFundsError && <ErrorBanner error={error} />}
 
       <FromToWrapper>
         <Box>
@@ -72,7 +78,7 @@ function StepSummary(props: StepProps) {
           </Text>
           <Box>
             <FormattedVal
-              color={"palette.text.shade80"}
+              color={feeTooHigh ? "warning" : "palette.text.shade80"}
               disableRounding
               unit={accountUnit}
               alwaysShowValue
@@ -83,7 +89,7 @@ function StepSummary(props: StepProps) {
             />
             <Box textAlign="right">
               <CounterValue
-                color={"palette.text.shade60"}
+                color={feeTooHigh ? "warning" : "palette.text.shade60"}
                 fontSize={3}
                 currency={feesCurrency}
                 value={estimatedFees}
@@ -93,6 +99,20 @@ function StepSummary(props: StepProps) {
             </Box>
           </Box>
         </Box>
+        {feeTooHigh ? (
+          <Box horizontal justifyContent="flex-end" alignItems="center" color="warning">
+            <IconExclamationCircle size={10} />
+            <Text
+              ff="Inter|Medium"
+              fontSize={2}
+              style={{
+                marginLeft: "5px",
+              }}
+            >
+              <TranslatedError error={feeTooHigh} />
+            </Text>
+          </Box>
+        ) : null}
       </FromToWrapper>
       {displayError ? (
         <Box grow>
@@ -100,6 +120,9 @@ function StepSummary(props: StepProps) {
             <TranslatedError error={displayError} field="title" />
           </Alert>
         </Box>
+      ) : null}
+      {notEnoughFundsError ? (
+        <NotEnoughFundsToUnstake account={account} onClose={props.onClose} />
       ) : null}
     </Box>
   );
@@ -114,22 +137,20 @@ export function StepSummaryFooter({
   onClose,
 }: StepProps) {
   const { errors } = status;
-  const canNext = !errors.amount && !bridgePending && !errors.validators && transaction;
+  const canNext = Object.keys(errors).length === 0 && !bridgePending && transaction;
   return (
-    <>
-      <Box horizontal justifyContent="flex-end" flow={2} grow>
-        <Button mr={1} secondary onClick={onClose}>
-          <Trans i18nKey="common.cancel" />
-        </Button>
-        <Button
-          id="undelegate-continue-button"
-          disabled={!canNext}
-          primary
-          onClick={() => transitionTo("connectDevice")}
-        >
-          <Trans i18nKey="common.continue" />
-        </Button>
-      </Box>
-    </>
+    <Box horizontal justifyContent="flex-end" flow={2} grow>
+      <Button mr={1} secondary onClick={onClose}>
+        <Trans i18nKey="common.cancel" />
+      </Button>
+      <Button
+        id="undelegate-continue-button"
+        disabled={!canNext}
+        primary
+        onClick={() => transitionTo("connectDevice")}
+      >
+        <Trans i18nKey="common.continue" />
+      </Button>
+    </Box>
   );
 }

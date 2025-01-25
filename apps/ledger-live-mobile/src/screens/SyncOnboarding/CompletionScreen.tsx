@@ -1,101 +1,59 @@
-import React, { useCallback, useEffect, useRef } from "react";
+import React, { useCallback, useEffect } from "react";
 import { Flex } from "@ledgerhq/native-ui";
 import { StackScreenProps } from "@react-navigation/stack";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
-import Video from "react-native-video";
-import { useStartPostOnboardingCallback } from "@ledgerhq/live-common/postOnboarding/hooks/useStartPostOnboardingCallback";
-import { useTheme } from "styled-components/native";
 
 import { NavigatorName, ScreenName } from "~/const";
 import { SyncOnboardingStackParamList } from "~/components/RootNavigator/types/SyncOnboardingNavigator";
 import { BaseComposite, RootNavigation } from "~/components/RootNavigator/types/helpers";
-import useIsAppInBackground from "~/components/useIsAppInBackground";
-import videoSources from "../../../assets/videos";
-
-const sourceLight = videoSources.onboardingSuccessStaxLight;
-const sourceDark = videoSources.onboardingSuccessStaxDark;
-
-const redirectDelay = 5000;
-
-const absoluteStyle = {
-  position: "absolute" as const,
-  bottom: 0,
-  left: 0,
-  top: 0,
-  right: 0,
-};
+import { DeviceModelId } from "@ledgerhq/devices";
+import EuropaCompletionView from "./EuropaCompletionView";
+import StaxCompletionView from "./StaxCompletionView";
+import { useDispatch } from "react-redux";
+import { setHasBeenRedirectedToPostOnboarding, setHasBeenUpsoldProtect } from "~/actions/settings";
 
 type Props = BaseComposite<
   StackScreenProps<SyncOnboardingStackParamList, ScreenName.SyncOnboardingCompletion>
 >;
 
 const CompletionScreen = ({ navigation, route }: Props) => {
-  const delayRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
   const { device } = route.params;
-  const startPostOnboarding = useStartPostOnboardingCallback();
-  const videoMounted = !useIsAppInBackground();
-  const { theme } = useTheme();
-
-  const videoSource = theme === "light" ? sourceLight : sourceDark;
-
-  const redirectToPostOnboarding = useCallback(() => {
-    startPostOnboarding({
-      deviceModelId: device.modelId,
-      resetNavigationStack: true,
-      fallbackIfNoAction: () =>
-        // Resets the navigation stack to avoid allowing to go back to the onboarding welcome screen
-        // FIXME: bindings to react-navigation seem to have issues with composites
-        (navigation as unknown as RootNavigation).reset({
-          index: 0,
-          routes: [
-            {
-              name: NavigatorName.Base,
-              state: {
-                routes: [
-                  {
-                    name: NavigatorName.Main,
-                  },
-                ],
-              },
-            },
-          ],
-        }),
-    });
-  }, [device.modelId, navigation, startPostOnboarding]);
-
-  const skipDelay = useCallback(() => {
-    if (!delayRef.current) {
-      return;
-    }
-    clearTimeout(delayRef.current);
-    delayRef.current = null;
-    redirectToPostOnboarding();
-  }, [redirectToPostOnboarding]);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    delayRef.current = setTimeout(redirectToPostOnboarding, redirectDelay);
+    dispatch(setHasBeenUpsoldProtect(false));
+    dispatch(setHasBeenRedirectedToPostOnboarding(false));
+  }, [dispatch]);
 
-    return () => {
-      if (delayRef.current) {
-        clearTimeout(delayRef.current);
-        delayRef.current = null;
-      }
-    };
-  }, [redirectToPostOnboarding]);
+  const hasRedirected = React.useRef(false);
+
+  const redirectToMainScreen = useCallback(() => {
+    if (hasRedirected.current) return;
+    hasRedirected.current = true;
+    (navigation as unknown as RootNavigation).reset({
+      index: 0,
+      routes: [
+        {
+          name: NavigatorName.Base,
+          state: {
+            routes: [
+              {
+                name: NavigatorName.Main,
+              },
+            ],
+          },
+        },
+      ],
+    });
+  }, [navigation]);
 
   return (
-    <TouchableWithoutFeedback onPress={skipDelay}>
+    <TouchableWithoutFeedback onPress={redirectToMainScreen}>
       <Flex width="100%" height="100%" alignItems="center" justifyContent="center">
-        {videoMounted && (
-          <Video
-            disableFocus
-            source={videoSource}
-            style={absoluteStyle}
-            muted
-            repeat
-            resizeMode={"cover"}
-          />
+        {device.modelId === DeviceModelId.europa ? (
+          <EuropaCompletionView device={device} onAnimationFinish={redirectToMainScreen} />
+        ) : (
+          <StaxCompletionView onAnimationFinish={redirectToMainScreen} />
         )}
       </Flex>
     </TouchableWithoutFeedback>

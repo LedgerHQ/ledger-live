@@ -6,6 +6,9 @@ const jestAllure2ReporterOptions = {
       issue: "https://ledgerhq.atlassian.net/browse/{{name}}",
       tms: "https://ledgerhq.atlassian.net/browse/{{name}}",
     },
+    labels: {
+      host: process.env.RUNNER_NAME,
+    },
   },
   overwrite: false,
   environment: async ({ $ }) => {
@@ -35,7 +38,7 @@ module.exports = async () => ({
   },
   setupFilesAfterEnv: ["<rootDir>/e2e/setup.ts"],
   testTimeout: 150000,
-  testMatch: ["<rootDir>/e2e/**/*.spec.ts"],
+  testMatch: ["<rootDir>/e2e/specs/{*.spec.ts,!(speculos)/**/*.spec.ts}"],
   reporters: ["detox/runners/jest/reporter", ["jest-allure2-reporter", jestAllure2ReporterOptions]],
   globalSetup: "detox/runners/jest/globalSetup",
   globalTeardown: "<rootDir>/e2e/jest.globalTeardown.ts",

@@ -5,7 +5,7 @@ import {
   ELROND_EXPLORER_URL,
   ELROND_LEDGER_VALIDATOR_ADDRESS,
 } from "@ledgerhq/live-common/families/elrond/constants";
-import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
+import { denominate } from "@ledgerhq/live-common/families/elrond/helpers";
 import { useElrondPreloadData } from "@ledgerhq/live-common/families/elrond/react";
 import { ElrondProvider, ElrondOperation } from "@ledgerhq/live-common/families/elrond/types";
 import { Account, Operation } from "@ledgerhq/types-live";

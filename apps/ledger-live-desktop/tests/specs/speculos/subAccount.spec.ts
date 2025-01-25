@@ -1,106 +1,121 @@
-import test from "../../fixtures/common";
-import { Token } from "../../enum/Tokens";
-import { specs } from "../../utils/speculos";
+import { test } from "../../fixtures/common";
+import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { addTmsLink } from "tests/utils/allureUtils";
+import { getDescription } from "../../utils/customJsonReporter";
 
-const tokens: Token[] = [
-  Token.ETH_USDT,
-  //Token.XLM_USCD, //TODO: Reactivate when Date.Parse issue is fixed - desactivate time machine for Speculos tests
-  Token.ALGO_USDT,
-  Token.TRON_USDT,
-  Token.BSC_BUSD,
-  Token.MATIC_DAI,
+const subAccounts = [
+  { account: Account.ETH_USDT_1, xrayTicket1: "B2CQA-2577, B2CQA-1079", xrayTicket2: "B2CQA-2583" },
+  { account: Account.XLM_USCD, xrayTicket1: "B2CQA-2579", xrayTicket2: "B2CQA-2585" },
+  { account: Account.ALGO_USDT_1, xrayTicket1: "B2CQA-2575", xrayTicket2: "B2CQA-2581" },
+  { account: Account.TRX_USDT, xrayTicket1: "B2CQA-2580", xrayTicket2: "B2CQA-2586" },
+  { account: Account.BSC_BUSD_1, xrayTicket1: "B2CQA-2576", xrayTicket2: "B2CQA-2582" },
+  { account: Account.POL_DAI_1, xrayTicket1: "B2CQA-2578", xrayTicket2: "B2CQA-2584" },
 ];
 
-const tokensReceive: Token[] = [
-  Token.ETH_USDT,
-  Token.ETH_LIDO,
-  Token.TRON_USDT,
-  Token.TRON_BTT,
-  Token.BSC_BUSD,
-  Token.BSC_SHIBA,
-  Token.MATIC_DAI,
-  Token.MATIC_UNI,
+const subAccountReceive = [
+  { account: Account.ETH_USDT_1, xrayTicket: "B2CQA-2492" },
+  { account: Account.ETH_LIDO, xrayTicket: "B2CQA-2491" },
+  { account: Account.TRX_USDT, xrayTicket: "B2CQA-2496" },
+  { account: Account.BSC_BUSD_1, xrayTicket: "B2CQA-2489" },
+  { account: Account.BSC_SHIBA, xrayTicket: "B2CQA-2490" },
+  { account: Account.POL_DAI_1, xrayTicket: "B2CQA-2493" },
+  { account: Account.POL_UNI, xrayTicket: "B2CQA-2494" },
 ];
 
-for (const [i, token] of tokens.entries()) {
+for (const token of subAccounts) {
   test.describe("Add subAccount without parent", () => {
     test.use({
       userdata: "skip-onboarding",
-      testName: `add subAccount without parent (${token.tokenName})`,
-      speculosCurrency: specs[token.parentAccount.currency.deviceLabel.replace(/ /g, "_")],
-      speculosOffset: i,
+      speculosApp: token.account.currency.speculosApp,
     });
 
-    test(`Add Sub Account without parent (${token.parentAccount.currency.uiName})`, async ({
-      app,
-    }) => {
-      addTmsLink(["B2CQA-2448", "B2CQA-1079"]);
+    test(
+      `Add Sub Account without parent (${token.account.currency.speculosApp.name}) - ${token.account.currency.ticker}`,
+      {
+        annotation: {
+          type: "TMS",
+          description: token.xrayTicket1,
+        },
+      },
+      async ({ app }) => {
+        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-      await app.portfolio.openAddAccountModal();
-      await app.addAccount.expectModalVisiblity();
+        await app.portfolio.openAddAccountModal();
+        await app.addAccount.expectModalVisiblity();
 
-      await app.addAccount.selectToken(token);
-      await app.addAccount.addAccounts();
+        await app.addAccount.selectToken(token.account);
+        await app.addAccount.addAccounts();
 
-      await app.addAccount.done();
-      await app.layout.goToPortfolio();
-      await app.portfolio.navigateToAsset(token.tokenName);
-      await app.account.navigateToToken(token);
-      await app.account.expectLastOperationsVisibility();
-      await app.account.expectTokenAccount(token);
-    });
+        await app.addAccount.done();
+        await app.layout.goToPortfolio();
+        await app.portfolio.navigateToAsset(token.account.currency.name);
+        await app.account.navigateToToken(token.account);
+        await app.account.expectLastOperationsVisibility();
+        await app.account.expectTokenAccount(token.account);
+      },
+    );
   });
 }
 
-//Reactivate test after fixing the GetAppAndVersion issue - Jira: LIVE-12581
-for (const [i, token] of tokensReceive.entries()) {
-  test.describe.skip("Add subAccount when parent exists", () => {
+//Warning 🚨: Test may fail due to the GetAppAndVersion issue - Jira: LIVE-12581
+for (const token of subAccountReceive) {
+  test.describe("Add subAccount when parent exists", () => {
     test.use({
       userdata: "speculos-subAccount",
-      testName: `Add subAccount when parent exists (${token.tokenName})`,
-      speculosCurrency: specs[token.parentAccount.currency.deviceLabel.replace(/ /g, "_")],
-      speculosOffset: i,
+      speculosApp: token.account.currency.speculosApp,
     });
 
-    test(`[${token.tokenName}] Add subAccount when parent exists (${token.tokenNetwork})`, async ({
-      app,
-    }) => {
-      addTmsLink(["B2CQA-640"]);
+    test(
+      `[${token.account.currency.speculosApp.name}] Add subAccount when parent exists (${token.account.currency.ticker})`,
+      {
+        annotation: {
+          type: "TMS",
+          description: token.xrayTicket,
+        },
+      },
+      async ({ app }) => {
+        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-      await app.layout.goToAccounts();
-      await app.accounts.navigateToAccountByName(token.parentAccount.accountName);
-      await app.account.expectAccountVisibility(token.parentAccount.accountName);
+        await app.layout.goToAccounts();
+        await app.accounts.navigateToAccountByName(token.account.accountName);
+        await app.account.expectAccountVisibility(token.account.accountName);
 
-      await app.account.clickAddToken();
-      await app.receive.selectToken(token);
+        await app.account.clickAddToken();
+        await app.receive.selectToken(token.account);
 
-      await app.modal.continue();
-      await app.receive.expectValidReceiveAddress(token.parentAccount.address);
+        await app.modal.continue();
 
-      await app.speculos.expectValidReceiveAddress(token.parentAccount);
-      await app.receive.expectApproveLabel();
-    });
+        const displayedAddress = await app.receive.getAddressDisplayed();
+        await app.receive.expectValidReceiveAddress(displayedAddress);
+
+        await app.speculos.expectValidAddressDevice(token.account, displayedAddress);
+        await app.receive.expectApproveLabel();
+      },
+    );
   });
 }
 
-for (const [i, token] of tokens.entries()) {
+for (const token of subAccounts) {
   test.describe("Token visible in parent account", () => {
     test.use({
       userdata: "speculos-subAccount",
-      testName: `Token visible in parent account (${token.parentAccount.currency.uiName})`,
-      speculosCurrency: specs[token.parentAccount.currency.deviceLabel.replace(/ /g, "_")],
-      speculosOffset: i,
     });
 
-    test(`Token visible in parent account (${token.parentAccount.currency.uiName})`, async ({
-      app,
-    }) => {
-      addTmsLink(["B2CQA-1425"]);
+    test(
+      `Token visible in parent account (${token.account.currency.speculosApp.name}) - ${token.account.currency.ticker}`,
+      {
+        annotation: {
+          type: "TMS",
+          description: token.xrayTicket2,
+        },
+      },
+      async ({ app }) => {
+        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-      await app.layout.goToAccounts();
-      await app.accounts.navigateToAccountByName(token.parentAccount.accountName);
-      await app.account.expectTokenToBePresent(token);
-    });
+        await app.layout.goToAccounts();
+        await app.accounts.navigateToAccountByName(token.account.accountName);
+        await app.account.expectTokenToBePresent(token.account);
+      },
+    );
   });
 }

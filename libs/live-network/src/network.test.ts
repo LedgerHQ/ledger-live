@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosHeaders } from "axios";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 import network, { requestInterceptor, responseInterceptor } from "./network";
 import * as logs from "@ledgerhq/logs";
@@ -26,6 +26,7 @@ describe("network", () => {
         baseURL: "baseURL",
         url: "url",
         data: "data",
+        headers: new AxiosHeaders(),
       };
       const req = requestInterceptor(request);
       expect(req).toEqual(request);
@@ -38,6 +39,7 @@ describe("network", () => {
         baseURL: "baseURL",
         url: "url",
         data: "data",
+        headers: new AxiosHeaders(),
       };
       const req = requestInterceptor(request);
       expect(req).toEqual({
@@ -55,6 +57,7 @@ describe("network", () => {
         baseURL: "baseURL",
         url: "url",
         data: "data",
+        headers: new AxiosHeaders(),
       };
       requestInterceptor(request);
 
@@ -69,11 +72,12 @@ describe("network", () => {
           baseURL: "baseURL",
           url: "url",
           data: "data",
+          headers: new AxiosHeaders(),
         },
         data: "data",
         status: 200,
         statusText: "OK",
-        headers: {},
+        headers: new AxiosHeaders(),
       };
       const res = responseInterceptor(response);
       expect(res).toEqual(response);
@@ -87,11 +91,12 @@ describe("network", () => {
           baseURL: "baseURL",
           url: "url",
           data: "data",
+          headers: new AxiosHeaders(),
         },
+        headers: new AxiosHeaders(),
         data: "data",
         status: 200,
         statusText: "OK",
-        headers: {},
       };
       const res = responseInterceptor(response);
       expect(res).toEqual(response);
@@ -107,11 +112,12 @@ describe("network", () => {
           baseURL: "baseURL",
           url: "url",
           data: "data",
+          headers: new AxiosHeaders(),
         },
+        headers: new AxiosHeaders(),
         data: "data",
         status: 200,
         statusText: "OK",
-        headers: {},
       };
       responseInterceptor(response);
 
@@ -124,11 +130,12 @@ describe("network", () => {
           baseURL: "baseURL",
           url: "url",
           data: "data",
+          headers: new AxiosHeaders(),
         },
         data: "data",
         status: 500,
         statusText: "Error",
-        headers: {},
+        headers: new AxiosHeaders(),
       };
 
       try {

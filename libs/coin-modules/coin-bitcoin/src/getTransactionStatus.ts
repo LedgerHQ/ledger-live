@@ -22,7 +22,7 @@ export const getTransactionStatus: AccountBridge<
   Transaction,
   Account,
   TransactionStatus
->["getTransactionStatus"] = async (account, transaction) => {
+>["getTransactionStatus"] = async (account: Account, transaction: Transaction) => {
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
   const useAllAmount = !!transaction.useAllAmount;

@@ -96,7 +96,7 @@ const ModalHeader = ({
   return (
     <Container hasTitle={Boolean(children || subTitle)} style={style}>
       {onBack ? (
-        <ModalHeaderAction onClick={onBack} data-test-id="modal-back-button">
+        <ModalHeaderAction onClick={onBack} data-testid="modal-back-button">
           <IconAngleLeft size={12} />
           {backButtonComponent || (
             <Text ff="Inter|Medium" fontSize={4} color="palette.text.shade40">
@@ -110,12 +110,12 @@ const ModalHeader = ({
       {children || subTitle ? (
         <TitleContainer>
           {subTitle && <ModalSubTitle data-id="modal-subtitle">{subTitle}</ModalSubTitle>}
-          <ModalTitle data-test-id="modal-title">{children}</ModalTitle>
+          <ModalTitle data-testid="modal-title">{children}</ModalTitle>
         </TitleContainer>
       ) : null}
       {onClose ? (
         // @ts-expect-error it is complicated to override styled-components prop types - right is supposed to be a string and inherited from Tabbable
-        <ModalHeaderAction right onClick={onClose} data-test-id="modal-close-button">
+        <ModalHeaderAction right onClick={onClose} data-testid="modal-close-button">
           <IconCross size={16} />
         </ModalHeaderAction>
       ) : (

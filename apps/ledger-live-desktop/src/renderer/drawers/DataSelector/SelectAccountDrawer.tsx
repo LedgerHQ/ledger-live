@@ -57,7 +57,7 @@ const SelectAccountDrawer = ({
           style={{
             textTransform: "uppercase",
           }}
-          data-test-id="select-account-drawer-title"
+          data-testid="select-account-drawer-title"
         >
           {t("drawers.selectAccount.title")}
         </Text>

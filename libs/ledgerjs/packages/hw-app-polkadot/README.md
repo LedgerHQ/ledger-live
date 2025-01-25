@@ -57,7 +57,6 @@ const polkadot = new Polkadot(transport)
 *   `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
 *   `ss58prefix` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**  (optional, default `0`)
 *   `showAddrInDevice` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** if true, user must valid if the address is correct on the device (optional, default `false`)
-*   `runtimeUpgraded`   (optional, default `false`)
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<{pubKey: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), address: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), return\_code: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)}>**&#x20;
 

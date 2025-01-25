@@ -128,6 +128,32 @@ import STAX_USB_connection_success from "~/renderer/animations/stax/USBConnectio
 // @ts-ignore
 import STAX_plug_and_pin from "~/renderer/animations/stax/USBConnectionAndPin.json";
 
+// @ts-ignore
+import EUROPA_LIGHT_enterPin from "~/renderer/animations/europa/light/enterPIN.json";
+// @ts-ignore
+import EUROPA_LIGHT_signTransaction from "~/renderer/animations/europa/light/signTransaction.json";
+// @ts-ignore
+import EUROPA_LIGHT_allowConnection from "~/renderer/animations/europa/light/allowConnection.json";
+// @ts-ignore
+import EUROPA_LIGHT_confirmLockscreen from "~/renderer/animations/europa/light/confirmLockscreen.json";
+// @ts-ignore
+import EUROPA_LIGHT_USB_connection_success from "~/renderer/animations/europa/light/connectionSuccess.json";
+
+// @ts-ignore
+import EUROPA_DARK_enterPin from "~/renderer/animations/europa/dark/enterPIN.json";
+// @ts-ignore
+import EUROPA_DARK_signTransaction from "~/renderer/animations/europa/dark/signTransaction.json";
+// @ts-ignore
+import EUROPA_DARK_allowConnection from "~/renderer/animations/europa/dark/allowConnection.json";
+// @ts-ignore
+import EUROPA_DARK_confirmLockscreen from "~/renderer/animations/europa/dark/confirmLockscreen.json";
+// @ts-ignore
+import EUROPA_DARK_USB_connection_success from "~/renderer/animations/europa/dark/connectionSuccess.json";
+// @ts-ignore
+import EUROPA_DARK_onboarding_success from "~/renderer/animations/europa/dark/onboardingSuccess.json";
+// @ts-ignore
+import EUROPA_LIGHT_onboarding_success from "~/renderer/animations/europa/light/onboardingSuccess.json";
+
 /* eslint-enable camelcase */
 type ThemedAnimation = Record<Theme["theme"], Record<string, unknown>>;
 export type AnimationKey =
@@ -143,7 +169,8 @@ export type AnimationKey =
   | "confirmLockscreen"
   | "recoverWithProtect"
   | "connectionSuccess";
-type DeviceAnimations = { [key in AnimationKey]: ThemedAnimation };
+
+type DeviceAnimations<Key extends string = string> = { [key in Key]: ThemedAnimation };
 
 const nanoS: DeviceAnimations = {
   plugAndPinCode: {
@@ -349,6 +376,61 @@ const stax: DeviceAnimations = {
   },
 };
 
+const europa: DeviceAnimations<AnimationKey | "onboardingSuccess"> = {
+  plugAndPinCode: {
+    light: EUROPA_LIGHT_enterPin,
+    dark: EUROPA_DARK_enterPin,
+  },
+  enterPinCode: {
+    light: EUROPA_LIGHT_enterPin,
+    dark: EUROPA_DARK_enterPin,
+  },
+  quitApp: {
+    light: EUROPA_LIGHT_allowConnection,
+    dark: EUROPA_DARK_allowConnection,
+  },
+  allowManager: {
+    light: EUROPA_LIGHT_allowConnection,
+    dark: EUROPA_DARK_allowConnection,
+  },
+  openApp: {
+    light: EUROPA_LIGHT_allowConnection,
+    dark: EUROPA_DARK_allowConnection,
+  },
+  verify: {
+    light: EUROPA_LIGHT_allowConnection,
+    dark: EUROPA_DARK_allowConnection,
+  },
+  sign: {
+    light: EUROPA_LIGHT_signTransaction,
+    dark: EUROPA_DARK_signTransaction,
+  },
+  firmwareUpdating: {
+    light: EUROPA_LIGHT_enterPin,
+    dark: EUROPA_DARK_enterPin,
+  },
+  installLoading: {
+    light: EUROPA_LIGHT_allowConnection,
+    dark: EUROPA_DARK_allowConnection,
+  },
+  confirmLockscreen: {
+    light: EUROPA_LIGHT_confirmLockscreen,
+    dark: EUROPA_DARK_confirmLockscreen,
+  },
+  recoverWithProtect: {
+    light: NANO_X_LIGHT_recoverWithProtect,
+    dark: NANO_X_DARK_recoverWithProtect,
+  },
+  connectionSuccess: {
+    light: EUROPA_LIGHT_USB_connection_success,
+    dark: EUROPA_DARK_USB_connection_success,
+  },
+  onboardingSuccess: {
+    light: EUROPA_LIGHT_onboarding_success,
+    dark: EUROPA_DARK_onboarding_success,
+  },
+};
+
 const blue: DeviceAnimations = {
   plugAndPinCode: {
     light: BLUE_LIGHT_plugAndPinCode,
@@ -401,21 +483,19 @@ const blue: DeviceAnimations = {
   },
 };
 
-type Animations = {
-  [modelId in DeviceModelId]: DeviceAnimations;
-};
-const animations: Animations = { nanoX, nanoS, nanoSP, stax, europa: stax, blue };
+const animations = { nanoX, nanoS, nanoSP, stax, europa, blue };
 
 export const getDeviceAnimation = (
   modelId: DeviceModelId,
   theme: Theme["theme"],
-  key: AnimationKey,
+  key: AnimationKey | "onboardingSuccess",
 ) => {
   const animationModelId = (process.env.OVERRIDE_MODEL_ID as DeviceModelId) || modelId;
 
   // Handles the case where OVERRIDE_MODEL_ID is incorrect
   const animationModel = animations[animationModelId] || animations.nanoX;
-  const animationKey: ThemedAnimation | undefined = animationModel[key];
+  const animationKey: ThemedAnimation | undefined =
+    animationModel[animationModelId === "europa" ? key : (key as AnimationKey)];
 
   if (!animationKey) {
     return null;

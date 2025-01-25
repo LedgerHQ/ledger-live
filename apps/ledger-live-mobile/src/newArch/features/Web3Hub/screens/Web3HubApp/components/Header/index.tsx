@@ -1,43 +1,68 @@
 import React from "react";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "@react-navigation/native";
-import { NativeStackHeaderProps } from "@react-navigation/native-stack";
-import { Box, Flex, Icons } from "@ledgerhq/native-ui";
-import TextInput from "~/components/TextInput";
-import Touchable from "~/components/Touchable";
+import { SharedValue } from "react-native-reanimated";
+import { Flex, Icons, Text } from "@ledgerhq/native-ui";
+import AnimatedBar from "LLM/features/Web3Hub/components/AnimatedBar";
+import BackButton from "LLM/features/Web3Hub/components/BackButton";
+import TabButton from "LLM/features/Web3Hub/components/TabButton";
+import { AppProps } from "LLM/features/Web3Hub/types";
 
-const SEARCH_HEIGHT = 60;
+const BAR_HEIGHT = 60;
+export const TOTAL_HEADER_HEIGHT = BAR_HEIGHT;
+const ANIMATION_HEIGHT = TOTAL_HEADER_HEIGHT;
 
 type Props = {
-  navigation: NativeStackHeaderProps["navigation"];
+  navigation: AppProps["navigation"];
+  layoutY: SharedValue<number>;
+  initialLoad: boolean;
+  secure: boolean;
+  baseUrl: string;
 };
 
-export default function Web3HubMainHeader({ navigation }: Props) {
-  const insets = useSafeAreaInsets();
+export default function Web3HubAppHeader({
+  navigation,
+  layoutY,
+  initialLoad,
+  secure,
+  baseUrl,
+}: Props) {
   const { colors } = useTheme();
 
   return (
-    <Box
+    <AnimatedBar
+      layoutY={layoutY}
       backgroundColor={colors.background}
-      paddingTop={insets.top}
-      height={SEARCH_HEIGHT + insets.top}
-    >
-      <Flex height={SEARCH_HEIGHT} flexDirection="row" alignItems="center">
-        <Touchable testID="navigation-header-back-button" onPress={navigation.goBack}>
-          <Box p={5}>
-            <Icons.ArrowLeft />
-          </Box>
-        </Touchable>
-        <Box width={"80%"}>
-          <TextInput
-            placeholder="Current URL"
-            keyboardType="default"
-            returnKeyType="done"
-            value=""
-            disabled
-          />
-        </Box>
-      </Flex>
-    </Box>
+      animationHeight={ANIMATION_HEIGHT}
+      opacityHeight={TOTAL_HEADER_HEIGHT}
+      totalHeight={TOTAL_HEADER_HEIGHT}
+      opacityChildren={
+        <Flex flex={1} height={BAR_HEIGHT} flexDirection="row" alignItems="center">
+          <BackButton onPress={navigation.goBack} />
+          <Flex
+            flex={1}
+            height={40}
+            backgroundColor={colors.lightGrey}
+            borderRadius={14}
+            flexDirection={"row"}
+            alignItems={"center"}
+            justifyContent={"center"}
+          >
+            {initialLoad ? null : (
+              <>
+                {secure ? (
+                  <Icons.Lock color={colors.grey} size="S" />
+                ) : (
+                  <Icons.Warning color={colors.alert} size="S" />
+                )}
+                <Text ml={2} color={colors.grey}>
+                  {baseUrl}
+                </Text>
+              </>
+            )}
+          </Flex>
+          <TabButton count={2} navigation={navigation} />
+        </Flex>
+      }
+    />
   );
 }

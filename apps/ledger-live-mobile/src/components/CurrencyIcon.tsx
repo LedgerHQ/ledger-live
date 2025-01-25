@@ -58,9 +58,19 @@ type Props = {
   bg?: string;
   circle?: boolean;
   disabled?: boolean;
+  forceIconScale?: number;
 };
 
-const CurrencyIcon = ({ size, currency, circle, color, radius, bg, disabled }: Props) => {
+const CurrencyIcon = ({
+  size,
+  currency,
+  circle,
+  color,
+  radius,
+  bg,
+  disabled,
+  forceIconScale = 1,
+}: Props) => {
   const { colors } = useTheme();
   const bgColor = useMemo(
     () => ensureContrast(getCurrencyColor(currency), colors.constant.white),
@@ -68,7 +78,7 @@ const CurrencyIcon = ({ size, currency, circle, color, radius, bg, disabled }: P
   );
   const currencyColor = useCurrencyColor(currency, colors.background.main);
   const overrideColor = color || currencyColor;
-  const iconSize = size * 0.625;
+  const iconSize = size * forceIconScale * 0.625;
 
   if (currency.type === "FiatCurrency") {
     return null;

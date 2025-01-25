@@ -3,6 +3,20 @@ import styled from "styled-components";
 import { Operation } from "@ledgerhq/types-live";
 import Box from "~/renderer/components/Box";
 
+export const splitAddress = (value: string): { left: string; right: string } => {
+  let left, right;
+  if (value.includes(".")) {
+    const parts = value.split(".");
+    left = parts[0] + ".";
+    right = parts.slice(1).join(".");
+  } else {
+    const third = Math.round(value.length / 3);
+    left = value.slice(0, third);
+    right = value.slice(third, value.length);
+  }
+  return { left, right };
+};
+
 export const SplitAddress = ({
   value,
   color,
@@ -22,11 +36,9 @@ export const SplitAddress = ({
     ff,
     fontSize,
   };
-  const third = Math.round(value.length / 3);
 
-  // FIXME why not using CSS for this? meaning we might be able to have a left & right which both take 50% & play with overflow & text-align
-  const left = value.slice(0, third);
-  const right = value.slice(third, value.length);
+  const { left, right } = splitAddress(value);
+
   return (
     <Box horizontal {...boxProps}>
       <Left>{left}</Left>
@@ -39,6 +51,7 @@ export const Address = ({ value }: { value: string }) => (
 );
 const Left = styled.div`
   overflow: hidden;
+  max-width: calc(100% - 50px);
   white-space: nowrap;
   font-kerning: none;
   letter-spacing: 0px;

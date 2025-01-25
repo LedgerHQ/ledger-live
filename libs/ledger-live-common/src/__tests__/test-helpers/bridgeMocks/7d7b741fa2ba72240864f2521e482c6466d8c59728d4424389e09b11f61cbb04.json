@@ -1,0 +1,1 @@
+{"request":{"url":"https://rest-mainnet.onomy.io/cosmos/bank/v1beta1/balances/onomy1v2mp0m7k96dm9qv60fkspcqlzpkzrwnecy8mat","method":"GET"},"response":{"body":{"balances":[],"pagination":{"next_key":null,"total":"0"}}}}

@@ -8,6 +8,9 @@ import { ActionButtonEvent, NavigationParamsType } from "~/components/FabActions
 import { NavigatorName, ScreenName } from "~/const";
 import BigNumber from "bignumber.js";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
+import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
+import { WalletState } from "@ledgerhq/live-wallet/store";
 
 const ethMagnitude = getCryptoCurrencyById("ethereum").units[0].magnitude ?? 18;
 
@@ -17,9 +20,15 @@ type Props = {
   account: Account;
   parentAccount: Account;
   parentRoute: RouteProp<ParamListBase, ScreenName>;
+  walletState: WalletState;
 };
 
-function getNavigatorParams({ parentRoute, account, parentAccount }: Props): NavigationParamsType {
+function getNavigatorParams({
+  parentRoute,
+  account,
+  parentAccount,
+  walletState,
+}: Props): NavigationParamsType {
   if (isAccountEmpty(account)) {
     return [
       NavigatorName.NoFundsFlow,
@@ -33,19 +42,35 @@ function getNavigatorParams({ parentRoute, account, parentAccount }: Props): Nav
     ];
   }
 
+  if (account.type === "Account" && account.currency.id === "bsc") {
+    return [
+      ScreenName.PlatformApp,
+      {
+        params: {
+          platform: "stakekit",
+          name: "StakeKit",
+          accountId: account.id,
+          yieldId: "bsc-bnb-native-staking",
+        },
+      },
+    ];
+  }
+
+  const walletApiAccount = accountToWalletAPIAccount(walletState, account, parentAccount);
+
   const params = {
     screen: parentRoute.name,
     drawer: {
       id: "EvmStakingDrawer",
       props: {
         singleProviderRedirectMode: true,
-        accountId: account.id,
+        accountId: walletApiAccount.id,
         has32Eth: account.spendableBalance.gt(ETH_LIMIT),
       },
     },
     params: {
       ...(parentRoute.params ?? {}),
-      account,
+      account: walletApiAccount,
       parentAccount,
     },
   };
@@ -62,22 +87,33 @@ function getNavigatorParams({ parentRoute, account, parentAccount }: Props): Nav
   }
 }
 
-const getMainActions = ({ account, parentAccount, parentRoute }: Props): ActionButtonEvent[] => {
-  if (account.type === "Account" && account.currency.id === "ethereum") {
+const getMainActions = ({
+  account,
+  parentAccount,
+  parentRoute,
+  walletState,
+}: Props): ActionButtonEvent[] => {
+  if (
+    account.type === "Account" &&
+    (account.currency.id === "ethereum" || account.currency.id === "bsc")
+  ) {
+    const label = getStakeLabelLocaleBased();
+
     const navigationParams = getNavigatorParams({
       account,
       parentAccount,
       parentRoute,
+      walletState,
     });
 
     return [
       {
         id: "stake",
         navigationParams,
-        label: <Trans i18nKey="account.stake" />,
+        label: <Trans i18nKey={label} />,
         Icon: IconsLegacy.CoinsMedium,
         eventProperties: {
-          currency: "ETH",
+          currency: account.currency.id === "ethereum" ? "ETH" : "BNB",
         },
       },
     ];

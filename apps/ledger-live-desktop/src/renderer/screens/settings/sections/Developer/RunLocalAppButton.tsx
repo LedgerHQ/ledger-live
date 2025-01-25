@@ -115,7 +115,7 @@ const RunLocalAppButton = () => {
             small
             primary
             onClick={onOpenModal}
-            data-test-id="settings-open-local-manifest-form"
+            data-testid="settings-open-local-manifest-form"
           >
             {t("settings.developer.createLocalAppModal.create")}
           </Button>
@@ -133,7 +133,7 @@ const RunLocalAppButton = () => {
               onClick={() => {
                 onExportLocalManifest(manifest);
               }}
-              data-test-id="settings-export-local-manifest"
+              data-testid="settings-export-local-manifest"
             >
               {t("settings.developer.createLocalAppModal.export")}
             </Button>

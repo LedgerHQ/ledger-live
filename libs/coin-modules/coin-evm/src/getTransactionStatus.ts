@@ -7,7 +7,6 @@ import {
   InvalidAddress,
   MaxFeeTooLow,
   NotEnoughBalance,
-  NotEnoughBalanceInParentAccount,
   NotEnoughGas,
   PriorityFeeHigherThanMaxFee,
   PriorityFeeTooHigh,
@@ -118,9 +117,7 @@ const validateAmount = (
     errors.amount = new AmountRequired(); // "Amount required"
   } else if (totalSpent.isGreaterThan(account.balance)) {
     // if not enough to make the transaction
-    errors.amount = isTokenTransaction
-      ? new NotEnoughBalanceInParentAccount() // Insufficient balance in the parent account
-      : new NotEnoughBalance(); // "Sorry, insufficient funds"
+    errors.amount = new NotEnoughBalance(); // "Sorry, insufficient funds"
   }
   return [errors, warnings];
 };
@@ -214,7 +211,9 @@ const validateNft = (account: Account, tx: EvmTransaction): Array<ValidationIssu
 
   const quantityIsPositive = tx.nft.quantity.gt(0);
   const nftFromAccount = account.nfts?.find(
-    nft => nft.tokenId === tx.nft.tokenId && nft.contract === tx.nft.contract,
+    nft =>
+      nft.tokenId === tx.nft.tokenId &&
+      nft.contract.toLowerCase() === tx.nft.contract.toLowerCase(),
   );
 
   if (!nftFromAccount) {

@@ -7,14 +7,12 @@ import { defaultTronResources } from "../logic/utils";
 import { Transaction, TronAccount } from "../types";
 import { createBridges } from "./index";
 
-jest.setTimeout(30000);
-
 const tron = getCryptoCurrencyById("tron");
 const defaultSyncConfig = {
   paginationConfig: {},
   blacklistedTokenIds: [],
 };
-export function syncAccount<T extends TransactionCommon, A extends Account = Account>(
+function syncAccount<T extends TransactionCommon, A extends Account = Account>(
   bridge: AccountBridge<T, A>,
   account: A,
   syncConfig: SyncConfig = defaultSyncConfig,
@@ -60,7 +58,7 @@ const dummyAccount: TronAccount = {
   tronResources: {} as any,
 };
 
-describe("Tron Accounts", () => {
+describe("Sync Accounts", () => {
   let bridge: ReturnType<typeof createBridges>;
 
   beforeAll(() => {
@@ -93,13 +91,17 @@ describe("Tron Accounts", () => {
     "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
     "TUxd6v64YTWkfpFpNDdtgc5Ps4SfGxwizT",
     "TY2ksFgpvb82TgGPwUSa7iseqPW5weYQyh",
-  ])("should always be sync wihtout error for address %s", async (accountId: string) => {
-    const account = await syncAccount<Transaction, TronAccount>(
-      bridge.accountBridge,
-      { ...dummyAccount, id: `js:2:tron:${accountId}:`, freshAddress: accountId },
-      defaultSyncConfig,
-    );
+  ])(
+    "should always be sync without error for address %s",
+    async (accountId: string) => {
+      const account = await syncAccount<Transaction, TronAccount>(bridge.accountBridge, {
+        ...dummyAccount,
+        id: `js:2:tron:${accountId}:`,
+        freshAddress: accountId,
+      });
 
-    expect(account.id).toEqual(`js:2:tron:${accountId}:`);
-  });
+      expect(account.id).toEqual(`js:2:tron:${accountId}:`);
+    },
+    15 * 1_000,
+  );
 });

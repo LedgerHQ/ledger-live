@@ -9,7 +9,6 @@ import { buildTransaction } from "./buildTransaction";
 import { calculateAmount } from "./utils";
 import { signExtrinsic } from "../logic";
 import polkadotAPI from "../network";
-import coinConfig from "../config";
 
 /**
  * Sign Transaction with Ledger hardware
@@ -21,7 +20,6 @@ export const buildSignOperation =
   ({ account, deviceId, transaction }) =>
     new Observable(o => {
       async function main() {
-        const runtimeUpgraded = coinConfig.getCoinConfig().runtimeUpgraded;
         o.next({
           type: "device-signature-requested",
         });
@@ -46,13 +44,9 @@ export const buildSignOperation =
           .toU8a({
             method: true,
           });
-        let metadata = "";
-        if (runtimeUpgraded) {
-          const payloadString = Buffer.from(payload).toString("hex");
-          metadata = await polkadotAPI.shortenMetadata(payloadString);
-        }
+        const payloadString = Buffer.from(payload).toString("hex");
+        const metadata = await polkadotAPI.shortenMetadata(payloadString);
         const r = await signerContext(deviceId, signer =>
-          // FIXME: the type of payload Uint8Array is not compatible with the signature of sign which accept a string
           signer.sign(account.freshAddressPath, payload, metadata),
         );
 

@@ -1,4 +1,10 @@
 {
-  "entry": ["src/Eth.ts"],
-  "ignoreUnused": ["@ledgerhq/hw-transport-mocker"]
+  "entry": [
+    "src/Eth.ts"
+  ],
+  "ignoreUnused": [
+    "@ledgerhq/hw-transport-mocker"
+  ],
+  "ignoreUnresolved": [],
+  "ignoreUnimported": []
 }

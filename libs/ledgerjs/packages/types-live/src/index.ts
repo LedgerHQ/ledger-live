@@ -16,3 +16,4 @@ export * from "./chainwatch";
 export * from "./messages";
 export * from "./swap";
 export * from "./ABTesting";
+export * from "./walletSync";

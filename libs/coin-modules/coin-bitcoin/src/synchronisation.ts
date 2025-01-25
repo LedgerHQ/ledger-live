@@ -71,23 +71,8 @@ const deduplicateOperations = (operations: (Operation | undefined)[]): Operation
   return out;
 };
 
-// For performance monitoring
-export type StartSpan = (
-  op: string,
-  description?: string,
-  rest?: {
-    tags?: any;
-    data?: any;
-  },
-) => {
-  finish: () => void;
-};
-export function makeGetAccountShape(
-  signerContext: SignerContext,
-  startSpan: StartSpan,
-): GetAccountShape<BitcoinAccount> {
+export function makeGetAccountShape(signerContext: SignerContext): GetAccountShape<BitcoinAccount> {
   return async info => {
-    let span;
     const { currency, index, derivationPath, derivationMode, initialAccount, deviceId } = info;
     // In case we get a full derivation path, extract the seed identification part
     // 44'/0'/0'/0/0 --> 44'/0'
@@ -115,7 +100,6 @@ export function makeGetAccountShape(
     const walletNetwork = toWalletNetwork(currency.id);
     const walletDerivationMode = toWalletDerivationMode(derivationMode);
 
-    span = startSpan("sync", "generateAccount");
     const walletAccount =
       initialAccount?.bitcoinResources?.walletAccount ||
       (await wallet.generateAccount(
@@ -129,7 +113,6 @@ export function makeGetAccountShape(
         },
         currency,
       ));
-    span.finish();
 
     const oldOperations = initialAccount?.operations || [];
     const currentBlock = await walletAccount.xpub.explorer.getCurrentBlock();
@@ -138,39 +121,27 @@ export function makeGetAccountShape(
     await wallet.syncAccount(walletAccount, blockHeight);
 
     const balance = await wallet.getAccountBalance(walletAccount);
-    span = startSpan("sync", "getAccountTransactions");
     const { txs: transactions } = await wallet.getAccountTransactions(walletAccount);
-    span.finish();
 
-    span = startSpan("sync", "getXpubAddresses");
     const accountAddresses: Set<string> = new Set<string>();
     const accountAddressesWithInfo = await walletAccount.xpub.getXpubAddresses();
     accountAddressesWithInfo.forEach(a => accountAddresses.add(a.address));
-    span.finish();
 
-    span = startSpan("sync", "getUniquesAddresses");
     const changeAddresses: Set<string> = new Set<string>();
     const changeAddressesWithInfo = await walletAccount.xpub.storage.getUniquesAddresses({
       account: 1,
     });
     changeAddressesWithInfo.forEach(a => changeAddresses.add(a.address));
-    span.finish();
 
-    span = startSpan("sync", "mapTxToOperations");
     const newOperations = transactions
       ?.map(tx => mapTxToOperations(tx, currency.id, accountId, accountAddresses, changeAddresses))
       .flat();
-    span.finish();
 
-    span = startSpan("sync", "unify operations");
     const newUniqueOperations = deduplicateOperations(newOperations);
     const operations = mergeOps(oldOperations, newUniqueOperations);
-    span.finish();
 
-    span = startSpan("sync", "gather utxos");
     const rawUtxos = await wallet.getAccountUnspentUtxos(walletAccount);
     const utxos = rawUtxos.map(utxo => fromWalletUtxo(utxo, changeAddresses));
-    span.finish();
 
     return {
       id: accountId,

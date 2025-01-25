@@ -23,12 +23,14 @@ const resolver = (signerContext: SignerContext<CardanoSigner>): GetAddressFn => 
       signer.getAddress({ path, stakingPathString, networkParams, verify }),
     );
 
-    const address = TyphonUtils.getAddressFromHex(r.addressHex) as TyphonAddress.BaseAddress;
+    const address = TyphonUtils.getAddressFromHex(
+      Buffer.from(r.addressHex, "hex"),
+    ) as TyphonAddress.BaseAddress;
 
     return {
       address: address.getBech32(),
       // Here, we use publicKey hash, as cardano app doesn't export the public key
-      publicKey: address.paymentCredential.hash,
+      publicKey: address.paymentCredential.hash.toString("hex"),
       path,
     };
   };

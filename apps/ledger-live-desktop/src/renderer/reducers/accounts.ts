@@ -13,12 +13,14 @@ import { orderByLastReceived } from "@ledgerhq/live-nft";
 import { getEnv } from "@ledgerhq/live-env";
 import isEqual from "lodash/isEqual";
 import { State } from ".";
-import { hiddenNftCollectionsSelector } from "./settings";
+import { nftCollectionsStatusByNetworkSelector } from "./settings";
 import { Handlers } from "./types";
 import { walletSelector } from "./wallet";
 import { isStarredAccountSelector } from "@ledgerhq/live-wallet/store";
 import { nestedSortAccounts, AccountComparator } from "@ledgerhq/live-wallet/ordering";
 import { AddAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
+import { NftStatus } from "@ledgerhq/live-nft/types";
+import { nftCollectionParser } from "../hooks/nfts/useNftCollectionsStatus";
 
 /*
 FIXME
@@ -38,6 +40,7 @@ type HandlersPayloads = {
   REMOVE_ACCOUNT: Account;
   CLEAN_FULLNODE_DISCONNECT: never;
   CLEAN_ACCOUNTS_CACHE: never;
+  REPLACE_ACCOUNTS: Account[];
 };
 
 type AccountsHandlers<PreciseKey = true> = Handlers<AccountsState, HandlersPayloads, PreciseKey>;
@@ -56,6 +59,7 @@ const handlers: AccountsHandlers = {
   REMOVE_ACCOUNT: (state, { payload: account }) => state.filter(acc => acc.id !== account.id),
   CLEAN_FULLNODE_DISCONNECT: state => state.filter(acc => acc.currency.id !== "bitcoin"),
   CLEAN_ACCOUNTS_CACHE: state => state.map(clearAccount),
+  REPLACE_ACCOUNTS: (state, { payload }) => payload,
 };
 
 export default handleActions<AccountsState, HandlersPayloads[keyof HandlersPayloads]>(
@@ -115,14 +119,17 @@ export const subAccountByCurrencyOrderedSelector = createSelector(
 // FIXME we might reboot this idea later!
 export const activeAccountsSelector = accountsSelector;
 export const isUpToDateSelector = createSelector(activeAccountsSelector, accounts =>
-  accounts.every(a => {
+  accounts.map(a => {
     const { lastSyncDate } = a;
     const { blockAvgTime } = a.currency;
-    if (!blockAvgTime) return true;
-    const outdated =
-      Date.now() - (lastSyncDate.getTime() || 0) >
-      blockAvgTime * 1000 + getEnv("SYNC_OUTDATED_CONSIDERED_DELAY");
-    return !outdated;
+    let isUpToDate = true;
+    if (blockAvgTime) {
+      const outdated =
+        Date.now() - (lastSyncDate.getTime() || 0) >
+        blockAvgTime * 1000 + getEnv("SYNC_OUTDATED_CONSIDERED_DELAY");
+      isUpToDate = !outdated;
+    }
+    return { account: a, isUpToDate };
   }),
 );
 
@@ -185,6 +192,20 @@ export const getNFTById = createSelector(
   ) => nftId,
   (nfts, nftId) => nfts.find(nft => nft?.id === nftId),
 );
+
+export const getNFTsByListOfIds = createSelector(
+  getAllNFTs,
+  (
+    _: State,
+    {
+      nftIds,
+    }: {
+      nftIds: string[];
+    },
+  ) => nftIds,
+  (nfts, nftIds) => nfts.filter(nft => nft && nft.id && nftIds.includes(nft.id)),
+);
+
 export const flattenAccountsSelector = createSelector(accountsSelector, flattenAccounts);
 
 /**
@@ -203,9 +224,17 @@ export const flattenAccountsSelector = createSelector(accountsSelector, flattenA
  * */
 export const orderedVisibleNftsSelector = createSelector(
   accountsSelector,
-  hiddenNftCollectionsSelector,
-  (accounts, hiddenNftCollections) => {
+  nftCollectionsStatusByNetworkSelector,
+  (_: State, hideSpam: boolean) => hideSpam,
+  (accounts, nftCollectionsStatusByNetwork, hideSpams) => {
     const nfts = accounts.map(a => a.nfts ?? []).flat();
+
+    const hiddenNftCollections = nftCollectionParser(
+      nftCollectionsStatusByNetwork,
+      ([_, status]) =>
+        hideSpams ? status !== NftStatus.whitelisted : status === NftStatus.blacklisted,
+    );
+
     const visibleNfts = nfts.filter(
       nft => !hiddenNftCollections.includes(`${decodeNftId(nft.id).accountId}|${nft.contract}`),
     );

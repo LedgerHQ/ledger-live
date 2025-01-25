@@ -371,12 +371,17 @@ const reducer = (state: State, e: Event): State => {
  * specify an account or a currency without resolving manually the actual
  * applications we depend on in order to access the flow.
  */
-function inferCommandParams(appRequest: AppRequest) {
+function inferCommandParams(appRequest: AppRequest): ConnectAppRequest {
   let derivationMode;
   let derivationPath;
 
-  const { account, requireLatestFirmware, allowPartialDependencies } = appRequest;
-  let { appName, currency, dependencies } = appRequest;
+  const {
+    account,
+    requireLatestFirmware,
+    allowPartialDependencies = false,
+    dependencies: appDependencies,
+  } = appRequest;
+  let { appName, currency } = appRequest;
 
   if (!currency && account) {
     currency = account.currency;
@@ -388,8 +393,9 @@ function inferCommandParams(appRequest: AppRequest) {
 
   invariant(appName, "appName or currency or account is missing");
 
-  if (dependencies) {
-    dependencies = dependencies.map(d => inferCommandParams(d).appName);
+  let dependencies: string[] | undefined = undefined;
+  if (appDependencies) {
+    dependencies = appDependencies.map(d => inferCommandParams(d).appName);
   }
 
   if (!currency) {
@@ -450,7 +456,7 @@ export const createAction = (
     const firmwareResolvedRef = useRef(false);
     const outdatedAppRef = useRef<AppAndVersion>();
 
-    const request: ConnectAppRequest = useMemo(
+    const request = useMemo(
       () => inferCommandParams(appRequest), // for now i don't have better
       // eslint-disable-next-line react-hooks/exhaustive-deps
       [
@@ -556,3 +562,11 @@ export const createAction = (
     mapResult,
   };
 };
+
+export function dependenciesToAppRequests(dependencies?: string[]): AppRequest[] {
+  if (!dependencies) {
+    return [];
+  }
+
+  return dependencies.map(appName => ({ appName }));
+}

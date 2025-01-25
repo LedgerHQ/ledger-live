@@ -8,7 +8,7 @@ Please make sure to read CONTRIBUTING.md if you have not already. Pull Requests 
 <!-- Pull Requests must pass the CI and be code reviewed. Set as Draft if the PR is not ready. -->
 
 - [ ] `npx changeset` was attached.
-- [ ] **Covered by automatic tests.** <!-- if not, please explain. (Feature must be tested / Bugfix must bring non-regression) -->
+- [ ] **Covered by automatic tests.** <!-- if not, please explain. (Feature must be tested / Bug fix must bring non-regression) -->
 - [ ] **Impact of the changes:** <!-- Please take some time to list the impact & what specific areas Quality Assurance (QA) should focus on -->
   - ...
 
@@ -16,7 +16,7 @@ Please make sure to read CONTRIBUTING.md if you have not already. Pull Requests 
 
 _Replace this text by a clear and concise description of what this pull request is about and why it is needed. Be sure to explain the problem you're addressing and the solution you're proposing._
 _For libraries, you can add a code sample of how to use it._
-_For bugfixes, you can explain the previous behavior and how it was fixed._
+_For bug fixes, you can explain the previous behaviour and how it was fixed._
 _In case of visual features, please attach screenshots or video recordings to demonstrate the changes._
 
 <!--

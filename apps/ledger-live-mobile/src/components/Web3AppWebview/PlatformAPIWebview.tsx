@@ -5,7 +5,7 @@ import { WebView as RNWebView, WebViewMessageEvent } from "react-native-webview"
 import { useNavigation } from "@react-navigation/native";
 import { JSONRPCRequest } from "json-rpc-2.0";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
-import { Account, AccountLike, Operation, SignedOperation } from "@ledgerhq/types-live";
+import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import type {
   RawPlatformTransaction,
   RawPlatformSignedTransaction,
@@ -58,7 +58,7 @@ function renderLoading() {
   );
 }
 export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
-  ({ manifest, inputs = {}, onStateChange }, ref) => {
+  ({ manifest, inputs = {}, onStateChange, onScroll }, ref) => {
     const tracking = useMemo(
       () =>
         trackingWrapper((eventName: string, properties?: Record<string, unknown> | null) =>
@@ -120,7 +120,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
             currencies: safeCurrencyIds,
             includeTokens,
           });
-          // handle no curencies selected case
+          // handle no currencies selected case
           const cryptoCurrencyIds =
             safeCurrencyIds && safeCurrencyIds.length > 0
               ? safeCurrencyIds
@@ -251,40 +251,33 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
             const tx = prepareSignTransaction(account, parentAccount, liveTx);
 
             return new Promise((resolve, reject) => {
+              let done = false;
+
+              const onError = (error: Error) => {
+                if (done) return;
+                done = true;
+                tracking.platformSignTransactionFail(manifest);
+                reject(error);
+              };
+
               navigation.navigate(NavigatorName.SignTransaction, {
                 screen: ScreenName.SignTransactionSummary,
                 params: {
                   currentNavigation: ScreenName.SignTransactionSummary,
                   nextNavigation: ScreenName.SignTransactionSelectDevice,
-                  transaction: tx as Transaction,
+                  transaction: tx,
                   accountId,
                   parentId: parentAccount?.id,
                   appName: params?.useApp,
-                  onSuccess: ({
-                    signedOperation,
-                    transactionSignError,
-                  }: {
-                    signedOperation: SignedOperation;
-                    transactionSignError: Error;
-                  }) => {
-                    if (transactionSignError) {
-                      tracking.platformSignTransactionFail(manifest);
-                      reject(transactionSignError);
-                    } else {
-                      tracking.platformSignTransactionSuccess(manifest);
-                      resolve(serializePlatformSignedTransaction(signedOperation));
-                      const n =
-                        navigation.getParent<
-                          StackNavigatorNavigation<BaseNavigatorStackParamList>
-                        >() || navigation;
-                      n.pop();
-                    }
+                  onSuccess: signedOperation => {
+                    if (done) return;
+                    done = true;
+                    tracking.platformSignTransactionSuccess(manifest);
+                    resolve(serializePlatformSignedTransaction(signedOperation));
                   },
-                  onError: (error: Error) => {
-                    tracking.platformSignTransactionFail(manifest);
-                    reject(error);
-                  },
+                  onError,
                 },
+                onError,
               });
             });
           },
@@ -507,13 +500,9 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
 
     const onOpenWindow = useCallback((event: WebViewOpenWindowEvent) => {
       const { targetUrl } = event.nativeEvent;
-      Linking.canOpenURL(targetUrl).then(supported => {
-        if (supported) {
-          Linking.openURL(targetUrl);
-        } else {
-          console.error(`Don't know how to open URI: ${targetUrl}`);
-        }
-      });
+      // Don't use canOpenURL as we cannot check unknown apps on the phone
+      // Without listing everything in plist and android manifest
+      Linking.openURL(targetUrl);
     }, []);
 
     useEffect(() => {
@@ -527,6 +516,8 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     return (
       <RNWebView
         ref={webviewRef}
+        onScroll={onScroll}
+        decelerationRate="normal"
         allowsBackForwardNavigationGestures
         startInLoadingState={true}
         showsHorizontalScrollIndicator={false}

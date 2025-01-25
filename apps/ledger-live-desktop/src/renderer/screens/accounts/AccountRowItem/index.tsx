@@ -219,11 +219,11 @@ const AccountRowItem = (props: Props) => {
             className="accounts-account-row-item-content"
             isSubAccountsExpanded={showTokensIndicator && expanded}
             onClick={onClickHandler}
-            data-test-id={account.type === "Account" && `account-component-${accountName}`}
+            data-testid={account.type === "Account" && `account-component-${accountName}`}
           >
             <Header account={account} />
             <Box flex="12%">
-              <div>
+              <div data-testid={"sync-button"}>
                 <AccountSyncStatusIndicator accountId={mainAccount.id} account={account} />
               </div>
             </Box>

@@ -1,4 +1,8 @@
-import { ActionContentCard, PortfolioContentCard } from "~/types/dynamicContent";
+import {
+  ActionContentCard,
+  PortfolioContentCard,
+  NotificationContentCard,
+} from "~/types/dynamicContent";
 
 export const setPortfolioCards = (payload: PortfolioContentCard[]) => ({
   type: "DYNAMIC_CONTENT_SET_PORTFOLIO_CARDS",
@@ -10,7 +14,7 @@ export const setActionCards = (payload: ActionContentCard[]) => ({
   payload,
 });
 
-export const setNotificationsCards = (payload: PortfolioContentCard[]) => ({
+export const setNotificationsCards = (payload: NotificationContentCard[]) => ({
   type: "DYNAMIC_CONTENT_SET_NOTIFICATIONS_CARDS",
   payload,
 });

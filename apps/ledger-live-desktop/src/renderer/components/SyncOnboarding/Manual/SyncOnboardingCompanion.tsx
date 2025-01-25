@@ -35,7 +35,6 @@ import { setDrawer } from "~/renderer/drawers/Provider";
 import LockedDeviceDrawer from "./LockedDeviceDrawer";
 import { LockedDeviceError } from "@ledgerhq/errors";
 import { useRecoverRestoreOnboarding } from "~/renderer/hooks/useRecoverRestoreOnboarding";
-import BackupStep from "./BackupStep";
 
 const READY_REDIRECT_DELAY_MS = 2000;
 const POLLING_PERIOD_MS = 1000;
@@ -117,6 +116,7 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
   const [seedPathStatus, setSeedPathStatus] = useState<SeedPathStatus>("choice_new_or_restore");
 
   const servicesConfig = useFeature("protectServicesDesktop");
+
   const recoverRestoreStaxPath = useCustomPath(servicesConfig, "restore", "lld-onboarding-24");
 
   const productName = device
@@ -190,15 +190,6 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
         ),
       },
       {
-        key: StepKey.Backup,
-        status: "inactive",
-        title: t("syncOnboarding.manual.backup.title"),
-        titleCompleted: t("syncOnboarding.manual.backup.title"),
-        renderBody: () => (
-          <BackupStep device={device} onPressKeepManualBackup={() => setStepKey(StepKey.Apps)} />
-        ),
-      },
-      {
         key: StepKey.Apps,
         status: "inactive",
         hasLoader: hasAppLoader,
@@ -212,7 +203,6 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
             deviceToRestore={shouldRestoreApps && deviceToRestore ? deviceToRestore : undefined}
             setHeaderLoader={(hasLoader: boolean) => setHasAppLoader(hasLoader)}
             onComplete={handleInstallRecommendedApplicationComplete}
-            onError={handleInstallRecommendedApplicationComplete}
           />
         ),
       },
@@ -228,12 +218,12 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
     [
       t,
       deviceName,
+      hasAppLoader,
       productName,
-      seedPathStatus,
       device,
+      seedPathStatus,
       shouldRestoreApps,
       deviceToRestore,
-      hasAppLoader,
       handleInstallRecommendedApplicationComplete,
     ],
   );
@@ -349,20 +339,16 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
     // When the device is seeded, there are 2 cases before triggering the application install step:
     // - the user came to the sync onboarding with an non-seeded device and did a full onboarding: onboarding flag `Ready`
     // - the user came to the sync onboarding with an already seeded device: onboarding flag `WelcomeScreen1`
-    if (deviceOnboardingState?.isOnboarded && !seededDeviceHandled.current) {
-      if (deviceOnboardingState?.currentOnboardingStep === DeviceOnboardingStep.Ready) {
-        // device was just seeded
-        setStepKey(StepKey.Backup);
-        seededDeviceHandled.current = true;
-        return;
-      } else if (
-        deviceOnboardingState?.currentOnboardingStep === DeviceOnboardingStep.WelcomeScreen1
-      ) {
-        // switch to the apps step
-        __DEV__ ? setStepKey(StepKey.Backup) : setStepKey(StepKey.Apps); // for ease of testing in dev mode without having to reset the device
-        seededDeviceHandled.current = true;
-        return;
-      }
+    if (
+      deviceOnboardingState?.isOnboarded &&
+      !seededDeviceHandled.current &&
+      [DeviceOnboardingStep.Ready, DeviceOnboardingStep.WelcomeScreen1].includes(
+        deviceOnboardingState.currentOnboardingStep,
+      )
+    ) {
+      setStepKey(StepKey.Apps);
+      seededDeviceHandled.current = true;
+      return;
     }
 
     // case DeviceOnboardingStep.SafetyWarning not handled so the previous step (new seed, restore, recover) is kept

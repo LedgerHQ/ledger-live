@@ -43,7 +43,7 @@ const PostOnboardingHubContent = () => {
     >
       <PostOnboardingHub />
       {!areAllPostOnboardingActionsCompleted ? (
-        <Link onClick={handleSkipButton} data-test-id={"postonboarding-hub-skip-button"} mt={5}>
+        <Link onClick={handleSkipButton} data-testid={"postonboarding-hub-skip-button"} mt={5}>
           {t("postOnboarding.postOnboardingContent.skipLink")}
         </Link>
       ) : (

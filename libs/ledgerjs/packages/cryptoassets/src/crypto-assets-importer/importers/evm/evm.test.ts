@@ -3,22 +3,28 @@ import { importTokenByChainId } from ".";
 import fs from "fs/promises";
 
 const evmToken = [
-  ["ethereum", "$aapl", "$AAPL", 18, "$AAPL", "signature", "address", true, false, null],
+  {
+    id: "ethereum/erc20/usd__coin",
+    blockchain_name: "ethereum",
+    chain_id: 1,
+    contract_address: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+    decimals: 6,
+    delisted: false,
+    name: "USD Coin",
+    ticker: "USDC",
+    live_signature:
+      "3045022100b2e358726e4e6a6752cf344017c0e9d45b9a904120758d45f61b2804f9ad5299022015161ef28d8c4481bd9432c13562def9cce688bcfec896ef244c9a213f106cdd",
+  },
 ];
-
-const evmTokenSignature = "signature";
 
 describe("import EVM Token", () => {
   beforeEach(() => {
     const mockedAxios = jest.spyOn(axios, "get");
-    mockedAxios.mockImplementation(url => {
-      if (url.endsWith("erc20.json")) {
-        return Promise.resolve({ data: evmToken, headers: { etag: "etagHash" } });
-      } else if (url.endsWith("erc20-signatures.json")) {
-        return Promise.resolve({ data: evmTokenSignature, headers: { etag: "signatureEtagHash" } });
-      }
-
-      return Promise.reject("Unexpected route call");
+    mockedAxios.mockImplementation(() => {
+      return Promise.resolve({
+        data: evmToken,
+        headers: { ["etag"]: "commitHash" },
+      });
     });
   });
 
@@ -31,28 +37,41 @@ describe("import EVM Token", () => {
 
     await importTokenByChainId(".", 1);
 
-    const expectedIndex = `export { default as tokens } from "./erc20.json";
-export { default as signatures } from "./erc20-signatures.json";
-export { default as hash } from "./erc20-hash.json";
-export { default as signaturesHash } from "./erc20-signatures-hash.json";
-`;
-
-    expect(mockedFs).toHaveBeenNthCalledWith(1, "evm/1/erc20.json", JSON.stringify(evmToken));
+    expect(mockedFs).toHaveBeenNthCalledWith(
+      1,
+      "evm/1/erc20.json",
+      JSON.stringify([
+        [
+          "ethereum",
+          "usd__coin",
+          "USDC",
+          6,
+          "USD Coin",
+          "3045022100b2e358726e4e6a6752cf344017c0e9d45b9a904120758d45f61b2804f9ad5299022015161ef28d8c4481bd9432c13562def9cce688bcfec896ef244c9a213f106cdd",
+          "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+          false,
+          false,
+        ],
+      ]),
+    );
     expect(mockedFs).toHaveBeenNthCalledWith(
       2,
       "evm/1/erc20-hash.json",
-      JSON.stringify("etagHash"),
+      JSON.stringify("commitHash"),
     );
     expect(mockedFs).toHaveBeenNthCalledWith(
       3,
-      "evm/1/erc20-signatures-hash.json",
-      JSON.stringify("signatureEtagHash"),
-    );
-    expect(mockedFs).toHaveBeenNthCalledWith(
-      4,
       "evm/1/erc20-signatures.json",
-      JSON.stringify(evmTokenSignature),
+      `"AAAAaARVU0RDoLhpkcYhizbB0Z1KLp6wzjYG60gAAAAGAAAAATBFAiEAsuNYcm5OamdSzzRAF8Dp1FuakEEgdY1F9hsoBPmtUpkCIBUWHvKNjESBvZQywTVi3vnM5oi8/siW7yRMmiE/EGzd"`,
     );
-    expect(mockedFs).toHaveBeenNthCalledWith(5, "evm/1/index.ts", expectedIndex);
+
+    const expectedIndex = `import { ERC20Token } from "../../../types";
+import erc20 from "./erc20.json";
+export const tokens = erc20 as ERC20Token[];
+export { default as signatures } from "./erc20-signatures.json";
+export { default as hash } from "./erc20-hash.json";
+`;
+
+    expect(mockedFs).toHaveBeenNthCalledWith(4, "evm/1/index.ts", expectedIndex);
   });
 });

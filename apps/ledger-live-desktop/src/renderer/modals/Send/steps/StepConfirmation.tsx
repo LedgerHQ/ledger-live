@@ -6,15 +6,18 @@ import { Trans } from "react-i18next";
 import styled from "styled-components";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
-import BroadcastErrorDisclaimer from "~/renderer/components/BroadcastErrorDisclaimer";
 import Button from "~/renderer/components/Button";
-import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import RetryButton from "~/renderer/components/RetryButton";
 import SuccessDisplay from "~/renderer/components/SuccessDisplay";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { multiline } from "~/renderer/styles/helpers";
+import { urls } from "~/config/urls";
 import { StepProps } from "../types";
+import NodeError from "./Confirmation/NodeError";
+import ErrorDisplay from "~/renderer/components/ErrorDisplay";
+import { AccountLike } from "@ledgerhq/types-live";
+import { createTransactionBroadcastError } from "@ledgerhq/live-common/errors/transactionBroadcastErrors";
 
 const Container = styled(Box).attrs(() => ({
   alignItems: "center",
@@ -58,14 +61,25 @@ function StepConfirmation({
       </Container>
     );
   }
+
+  const mainAccount = account ? getMainAccount(account, parentAccount) : null;
+
   if (error) {
     // Edit ethereum transaction nonce error because transaction has been validated
     if (error.name === "LedgerAPI4xx" && error.message.includes("nonce too low")) {
-      const mainAccount = account ? getMainAccount(account, parentAccount) : null;
       if (mainAccount?.currency?.family === "evm") {
         error = new TransactionHasBeenValidatedError();
       }
     }
+
+    const getTicker = (account: AccountLike): string => {
+      if (account.type === "TokenAccount") {
+        return account.token.ticker;
+      }
+      return account.currency.ticker;
+    };
+
+    const ticker = getTicker(account as AccountLike);
 
     return (
       <Container shouldSpace={signed}>
@@ -75,11 +89,15 @@ function StepConfirmation({
           currencyName={currencyName}
         />
         {signed ? (
-          <BroadcastErrorDisclaimer
-            title={<Trans i18nKey="send.steps.confirmation.broadcastError" />}
+          <NodeError
+            error={createTransactionBroadcastError(error, urls, {
+              coin: ticker,
+              network: String(mainAccount?.currency.name),
+            })}
           />
-        ) : null}
-        <ErrorDisplay error={error} withExportLogs />
+        ) : (
+          <ErrorDisplay error={error} withExportLogs />
+        )}
       </Container>
     );
   }

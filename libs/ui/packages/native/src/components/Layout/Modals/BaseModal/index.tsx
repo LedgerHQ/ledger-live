@@ -1,7 +1,7 @@
 import React, { ReactNode, useCallback } from "react";
 import ReactNativeModal, { ModalProps } from "react-native-modal";
 import styled from "styled-components/native";
-import { StyleProp, ViewStyle } from "react-native";
+import { StyleProp, TouchableOpacity, ViewStyle } from "react-native";
 
 import sizes from "../../../../helpers/getDeviceSize";
 import Text from "../../../Text";
@@ -9,7 +9,7 @@ import { IconOrElementType } from "../../../Icon/type";
 import { BoxedIcon } from "../../../Icon";
 import { Flex } from "../../index";
 import { space } from "styled-system";
-import { Close } from "@ledgerhq/icons-ui/native";
+import { Close, ArrowLeft } from "@ledgerhq/icons-ui/native";
 import { useTheme } from "styled-components/native";
 
 const { width, height } = sizes;
@@ -17,6 +17,7 @@ const { width, height } = sizes;
 export type BaseModalProps = {
   isOpen?: boolean;
   onClose?: () => void;
+  onBack?: () => void;
   modalStyle?: StyleProp<ViewStyle>;
   safeContainerStyle?: StyleProp<ViewStyle>;
   containerStyle?: StyleProp<ViewStyle>;
@@ -28,6 +29,7 @@ export type BaseModalProps = {
   subtitle?: string;
   children?: React.ReactNode;
   noCloseButton?: boolean;
+  hasBackButton?: boolean;
   CustomHeader?: React.ComponentType<{ children?: ReactNode }>;
 } & Partial<ModalProps>;
 
@@ -50,6 +52,13 @@ const ContentContainer = styled.View`
 const CloseContainer = styled.View`
   display: flex;
   align-items: flex-end;
+  margin-bottom: ${(p) => p.theme.space[6]}px;
+  z-index: 10;
+`;
+
+const BackContainer = styled.View`
+  display: flex;
+  align-items: flex-start;
   margin-bottom: ${(p) => p.theme.space[6]}px;
   z-index: 10;
 `;
@@ -127,10 +136,26 @@ export function ModalHeaderCloseButton({
   );
 }
 
+export function ModalHeaderBackButton({
+  onBack,
+}: Pick<BaseModalProps, "onBack">): React.ReactElement {
+  const { colors } = useTheme();
+
+  return (
+    <BackContainer>
+      <TouchableOpacity onPress={onBack} testID="modal-back-button">
+        <ArrowLeft color={colors.neutral.c100} size="XS" />
+      </TouchableOpacity>
+    </BackContainer>
+  );
+}
+
 export default function BaseModal({
   isOpen,
   onClose = () => {},
+  onBack = () => {},
   noCloseButton,
+  hasBackButton,
   safeContainerStyle = {},
   containerStyle = {},
   modalStyle = {},
@@ -181,7 +206,23 @@ export default function BaseModal({
           </CustomHeader>
         )}
         <Container style={containerStyle}>
-          {!CustomHeader && !noCloseButton && <ModalHeaderCloseButton onClose={onClose} />}
+          <Flex
+            flexDirection={"row"}
+            justifyContent={"space-between"}
+            width={"100%"}
+            alignItems={"center"}
+          >
+            {!CustomHeader && onBack && hasBackButton && (
+              <Flex flex={1} justifyContent={"flex-start"}>
+                <ModalHeaderBackButton onBack={onBack} />
+              </Flex>
+            )}
+            {!CustomHeader && !noCloseButton && (
+              <Flex flex={1} justifyContent={"flex-end"}>
+                <ModalHeaderCloseButton onClose={onClose} />
+              </Flex>
+            )}
+          </Flex>
           <ModalHeader
             Icon={Icon}
             iconColor={iconColor}

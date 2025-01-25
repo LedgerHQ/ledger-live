@@ -33,7 +33,9 @@ export const buildOptimisticOperation = (
     .getInputs()
     .reduce(
       (total, i) =>
-        accountCreds.has(i.address.paymentCredential.hash) ? total.plus(i.amount) : total.plus(0),
+        accountCreds.has(i.address.paymentCredential.hash.toString("hex"))
+          ? total.plus(i.amount)
+          : total.plus(0),
       new BigNumber(0),
     );
 
@@ -42,7 +44,7 @@ export const buildOptimisticOperation = (
     .reduce(
       (total, o) =>
         o.address instanceof ShelleyTypeAddress &&
-        accountCreds.has(o.address.paymentCredential.hash)
+        accountCreds.has(o.address.paymentCredential.hash.toString("hex"))
           ? total.plus(o.amount)
           : total.plus(0),
       new BigNumber(0),
@@ -76,7 +78,7 @@ export const buildOptimisticOperation = (
     const walletRegistration = stakeRegistrationCertificates.find(
       c =>
         c.stakeCredential.type === HashType.ADDRESS &&
-        c.stakeCredential.hash === stakeCredential.key,
+        c.stakeCredential.hash.toString("hex") === stakeCredential.key,
     );
     if (walletRegistration) {
       extra.deposit = formatCurrencyUnit(
@@ -94,7 +96,7 @@ export const buildOptimisticOperation = (
     const walletDeRegistration = stakeDeRegistrationCertificates.find(
       c =>
         c.stakeCredential.type === HashType.ADDRESS &&
-        c.stakeCredential.hash === stakeCredential.key,
+        c.stakeCredential.hash.toString("hex") === stakeCredential.key,
     );
     if (walletDeRegistration) {
       operationValue = operationValue.minus(protocolParams.stakeKeyDeposit);
@@ -113,7 +115,7 @@ export const buildOptimisticOperation = (
     const walletWithdraw = txWithdrawals.find(
       w =>
         w.rewardAccount.stakeCredential.type === HashType.ADDRESS &&
-        w.rewardAccount.stakeCredential.hash === stakeCredential.key,
+        w.rewardAccount.stakeCredential.hash.toString("hex") === stakeCredential.key,
     );
     if (walletWithdraw) {
       operationValue = operationValue.minus(walletWithdraw.amount);

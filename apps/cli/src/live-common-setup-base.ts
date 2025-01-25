@@ -10,6 +10,8 @@ import { WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
 setWalletAPIVersion(WALLET_API_VERSION);
 
 setSupportedCurrencies([
+  "aptos",
+  "aptos_testnet",
   "bitcoin",
   "ethereum",
   "bsc",
@@ -34,7 +36,6 @@ setSupportedCurrencies([
   "qtum",
   "bitcoin_gold",
   "komodo",
-  "pivx",
   "zencash",
   "bitcoin_testnet",
   "ethereum_sepolia",
@@ -52,6 +53,8 @@ setSupportedCurrencies([
   "songbird",
   "flare",
   "near",
+  "icon",
+  "icon_berlin_testnet",
   "optimism",
   "optimism_sepolia",
   "arbitrum",
@@ -91,11 +94,18 @@ setSupportedCurrencies([
   "lukso",
   "filecoin",
   "linea",
+  "ton",
   "linea_sepolia",
   "blast",
   "blast_sepolia",
   "scroll",
   "scroll_sepolia",
+  "etherlink",
+  "zksync",
+  "zksync_sepolia",
+  "mantra",
+  "xion",
+  "zenrock",
 ]);
 
 for (const k in process.env) setEnvUnsafe(k as EnvName, process.env[k]);

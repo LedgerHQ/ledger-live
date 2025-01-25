@@ -2,7 +2,7 @@ import { ParsedAccountData } from "@solana/web3.js";
 import { create } from "superstruct";
 import { PARSED_PROGRAMS } from "../program/constants";
 import { ParsedInfo } from "../validators";
-import { StakeAccountInfo } from "./stake";
+import { StakeAccount, StakeAccountInfo, StakeHistoryEntry } from "./stake";
 import { TokenAccount, TokenAccountInfo } from "./token";
 import { VoteAccount, VoteAccountInfo } from "./vote";
 
@@ -52,6 +52,22 @@ export function tryParseAsVoteAccount(
 
 export function parseStakeAccountInfo(info: unknown): StakeAccountInfo {
   return create(info, StakeAccountInfo);
+}
+
+export function tryParseAsStakeAccount(
+  data: ParsedAccountData,
+): StakeAccountInfo | undefined | Error {
+  const routine = () => {
+    const info = create(data.parsed, ParsedInfo);
+    const parsed = create(info, StakeAccount);
+    return parseStakeAccountInfo(parsed.info);
+  };
+
+  return onThrowReturnError(routine);
+}
+
+export function parseStakeHistoryEntry(entry: unknown) {
+  return create(entry, StakeHistoryEntry);
 }
 
 function onThrowReturnError<R>(fn: () => R) {

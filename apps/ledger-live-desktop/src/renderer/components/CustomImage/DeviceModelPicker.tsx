@@ -5,8 +5,6 @@ import {
   supportedDeviceModelIds,
 } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 import { Bar, Flex, Text } from "@ledgerhq/react-ui";
-import { DeviceModelId } from "@ledgerhq/types-devices";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 type Props = {
   deviceModelId: CLSSupportedDeviceModelId;
@@ -14,24 +12,15 @@ type Props = {
 };
 
 export default function DeviceModelPicker({ deviceModelId, onChange }: Props) {
-  const supportDeviceEuropa = useFeature("supportDeviceEuropa")?.enabled;
-  const supportedAndEnabledDeviceModelIds = supportedDeviceModelIds.filter(() => {
-    const devicesSupported: Record<CLSSupportedDeviceModelId, boolean> = {
-      [DeviceModelId.stax]: true,
-      [DeviceModelId.europa]: Boolean(supportDeviceEuropa),
-    };
-    return devicesSupported[deviceModelId];
-  }, [supportDeviceEuropa]);
-
   return (
     <Flex height={40}>
       <Bar
-        initialActiveIndex={supportedAndEnabledDeviceModelIds.indexOf(deviceModelId)}
+        initialActiveIndex={supportedDeviceModelIds.indexOf(deviceModelId)}
         onTabChange={i => {
-          onChange(supportedAndEnabledDeviceModelIds[i]);
+          onChange(supportedDeviceModelIds[i]);
         }}
       >
-        {supportedAndEnabledDeviceModelIds.map(deviceModelId => (
+        {supportedDeviceModelIds.map(deviceModelId => (
           <Text
             px={3}
             color="inherit"

@@ -61,6 +61,8 @@ type Props = {
   isIncomplete: boolean;
   installQueue: string[];
   uninstallQueue: string[];
+  hasCustomLockScreen: boolean;
+  setHasCustomLockScreen: (value: boolean) => void;
 };
 
 /**
@@ -79,11 +81,13 @@ const DeviceInformationSummary = ({
   isIncomplete,
   installQueue,
   uninstallQueue,
+  hasCustomLockScreen,
+  setHasCustomLockScreen,
 }: Props) => {
   const navigationLocked = useSelector(isNavigationLocked);
 
   return (
-    <Card p={20} mb={4} data-test-id="device-storage-card">
+    <Card p={20} mb={4} data-testid="device-storage-card">
       <Flex flexDirection="row">
         <Box position="relative" flex="0 0 140px" mr={20}>
           <DeviceIllustration deviceModel={deviceModel} />
@@ -142,7 +146,7 @@ const DeviceInformationSummary = ({
             />
           </div>
           <Flex
-            data-test-id="device-options-container"
+            data-testid="device-options-container"
             alignSelf="flex-start"
             justifyContent="flex-start"
             alignItems="flex-end"
@@ -164,6 +168,8 @@ const DeviceInformationSummary = ({
                 <CustomImageManagerButton
                   disabled={navigationLocked}
                   deviceModelId={deviceModel.id}
+                  hasCustomLockScreen={hasCustomLockScreen}
+                  setHasCustomLockScreen={setHasCustomLockScreen}
                 />
               </>
             ) : null}

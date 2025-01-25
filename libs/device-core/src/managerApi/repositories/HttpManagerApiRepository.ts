@@ -37,19 +37,17 @@ export class HttpManagerApiRepository implements ManagerApiRepository {
           se_firmware_osu_version: OsuFirmware;
         };
       } = await network({
-        method: "POST",
+        method: "GET",
         url: URL.format({
           pathname: `${this.managerApiBase}/get_latest_firmware`,
           query: {
             livecommonversion: this.liveCommonVersion,
             salt,
+            current_se_firmware_final_version,
+            device_version,
+            provider: providerId,
           },
         }),
-        data: {
-          current_se_firmware_final_version,
-          device_version,
-          provider: providerId,
-        },
       });
 
       if (data.result === "null") {
@@ -84,17 +82,15 @@ export class HttpManagerApiRepository implements ManagerApiRepository {
       }: {
         data: DeviceVersionEntity;
       } = await network({
-        method: "POST",
+        method: "GET",
         url: URL.format({
           pathname: `${this.managerApiBase}/get_device_version`,
           query: {
             livecommonversion: this.liveCommonVersion,
+            provider: providerId,
+            target_id: targetId,
           },
         }),
-        data: {
-          provider: providerId,
-          target_id: targetId,
-        },
       }).catch(error => {
         const status = error?.status || error?.response?.status;
 
@@ -113,18 +109,16 @@ export class HttpManagerApiRepository implements ManagerApiRepository {
   readonly getCurrentOSU: ManagerApiRepository["getCurrentOSU"] = makeLRUCache(
     async input => {
       const { data } = await network({
-        method: "POST",
+        method: "GET",
         url: URL.format({
           pathname: `${this.managerApiBase}/get_osu_version`,
           query: {
             livecommonversion: this.liveCommonVersion,
+            device_version: input.deviceId,
+            version_name: `${input.version}-osu`,
+            provider: input.providerId,
           },
         }),
-        data: {
-          device_version: input.deviceId,
-          version_name: `${input.version}-osu`,
-          provider: input.providerId,
-        },
       });
       return data;
     },
@@ -138,18 +132,16 @@ export class HttpManagerApiRepository implements ManagerApiRepository {
       }: {
         data: FinalFirmware;
       } = await network({
-        method: "POST",
+        method: "GET",
         url: URL.format({
           pathname: `${this.managerApiBase}/get_firmware_version`,
           query: {
             livecommonversion: this.liveCommonVersion,
+            device_version: input.deviceId,
+            version_name: input.version,
+            provider: input.providerId,
           },
         }),
-        data: {
-          device_version: input.deviceId,
-          version_name: input.version,
-          provider: input.providerId,
-        },
       }).catch(error => {
         const status = error?.status || error?.response?.status;
 

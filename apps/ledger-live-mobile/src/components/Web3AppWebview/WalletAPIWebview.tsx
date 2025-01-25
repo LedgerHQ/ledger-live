@@ -5,7 +5,7 @@ import Config from "react-native-config";
 import { WebviewAPI, WebviewProps } from "./types";
 import { useWebView } from "./helpers";
 import { NetworkError } from "./NetworkError";
-import { INTERNAL_APP_IDS } from "@ledgerhq/live-common/wallet-api/constants";
+import { INTERNAL_APP_IDS, WC_ID } from "@ledgerhq/live-common/wallet-api/constants";
 import { useInternalAppIds } from "@ledgerhq/live-common/hooks/useInternalAppIds";
 import { INJECTED_JAVASCRIPT } from "./dappInject";
 import { NoAccountScreen } from "./NoAccountScreen";
@@ -19,20 +19,28 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       customHandlers,
       onStateChange,
       allowsBackForwardNavigationGestures = true,
+      onScroll,
     },
     ref,
   ) => {
-    const { onMessage, onLoadError, onOpenWindow, webviewProps, webviewRef, noAccounts } =
-      useWebView(
-        {
-          manifest,
-          inputs,
-          customHandlers,
-          currentAccountHistDb,
-        },
-        ref,
-        onStateChange,
-      );
+    const {
+      onMessage,
+      onLoadError,
+      onOpenWindow,
+      webviewProps,
+      webviewRef,
+      webviewCacheOptions,
+      noAccounts,
+    } = useWebView(
+      {
+        manifest,
+        inputs,
+        customHandlers,
+        currentAccountHistDb,
+      },
+      ref,
+      onStateChange,
+    );
 
     const reloadWebView = () => {
       webviewRef.current?.reload();
@@ -40,7 +48,8 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
 
     const internalAppIds = useInternalAppIds() || INTERNAL_APP_IDS;
 
-    const javaScriptCanOpenWindowsAutomatically = internalAppIds.includes(manifest.id);
+    const javaScriptCanOpenWindowsAutomatically =
+      internalAppIds.includes(manifest.id) || manifest.id === WC_ID;
 
     if (!!manifest.dapp && noAccounts) {
       return <NoAccountScreen manifest={manifest} currentAccountHistDb={currentAccountHistDb} />;
@@ -49,6 +58,8 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     return (
       <RNWebView
         ref={webviewRef}
+        onScroll={onScroll}
+        decelerationRate="normal"
         startInLoadingState={true}
         showsHorizontalScrollIndicator={false}
         allowsBackForwardNavigationGestures={allowsBackForwardNavigationGestures}
@@ -72,6 +83,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         javaScriptCanOpenWindowsAutomatically={javaScriptCanOpenWindowsAutomatically}
         injectedJavaScriptBeforeContentLoaded={manifest.dapp ? INJECTED_JAVASCRIPT : undefined}
         {...webviewProps}
+        {...webviewCacheOptions}
       />
     );
   },

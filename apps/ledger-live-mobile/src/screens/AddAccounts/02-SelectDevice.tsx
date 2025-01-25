@@ -1,6 +1,5 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect } from "react";
 import { StyleSheet, SafeAreaView } from "react-native";
-import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useIsFocused, useTheme } from "@react-navigation/native";
 import { isTokenCurrency } from "@ledgerhq/live-common/currencies/index";
 import { Flex } from "@ledgerhq/native-ui";
@@ -16,7 +15,7 @@ import type { AddAccountsNavigatorParamList } from "~/components/RootNavigator/t
 import SkipSelectDevice from "../SkipSelectDevice";
 import AddAccountsHeaderRightClose from "./AddAccountsHeaderRightClose";
 import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
-import { useAppDeviceAction } from "~/hooks/deviceActions";
+import { useAppDeviceAction, useSelectDevice } from "~/hooks/deviceActions";
 
 type Props = StackNavigatorProps<AddAccountsNavigatorParamList, ScreenName.AddAccountsSelectDevice>;
 
@@ -32,17 +31,17 @@ export default function AddAccountsSelectDevice({ navigation, route }: Props) {
   const action = useAppDeviceAction();
   const { currency, analyticsPropertyFlow } = route.params;
   const { colors } = useTheme();
-  const [device, setDevice] = useState<Device | null | undefined>(null);
+  const { device, selectDevice, registerDeviceSelection } = useSelectDevice();
   const isFocused = useIsFocused();
 
   const onClose = useCallback(() => {
-    setDevice(null);
-  }, []);
+    selectDevice(null);
+  }, [selectDevice]);
 
   const onResult = useCallback(
     // @ts-expect-error should be AppResult but navigation.navigate does not agree
     meta => {
-      setDevice(null);
+      selectDevice(null);
       const { inline } = route.params;
       const arg = { ...route.params, ...meta };
 
@@ -52,7 +51,7 @@ export default function AddAccountsSelectDevice({ navigation, route }: Props) {
         navigation.navigate(ScreenName.AddAccountsAccounts, arg);
       }
     },
-    [navigation, route],
+    [selectDevice, navigation, route],
   );
 
   useEffect(() => {
@@ -89,10 +88,10 @@ export default function AddAccountsSelectDevice({ navigation, route }: Props) {
         },
       ]}
     >
-      <SkipSelectDevice route={route} onResult={setDevice} />
+      <SkipSelectDevice route={route} onResult={selectDevice} />
       <Flex px={16} py={8} flex={1}>
         <SelectDevice2
-          onSelect={setDevice}
+          onSelect={selectDevice}
           stopBleScanning={!!device || !isFocused}
           requestToSetHeaderOptions={requestToSetHeaderOptions}
         />
@@ -105,8 +104,9 @@ export default function AddAccountsSelectDevice({ navigation, route }: Props) {
         request={{
           currency: currency && isTokenCurrency(currency) ? currency.parentCurrency : currency,
         }}
-        onSelectDeviceLink={() => setDevice(null)}
+        onSelectDeviceLink={() => selectDevice(null)}
         analyticsPropertyFlow={analyticsPropertyFlow || "add account"}
+        registerDeviceSelection={registerDeviceSelection}
       />
     </SafeAreaView>
   );

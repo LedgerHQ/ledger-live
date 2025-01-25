@@ -1,4 +1,9 @@
-import type { Api } from "@ledgerhq/coin-framework/api/index";
+import type {
+  Api,
+  Operation,
+  Transaction as ApiTransaction,
+  Pagination,
+} from "@ledgerhq/coin-framework/api/index";
 import coinConfig, { type XrpConfig } from "../config";
 import {
   broadcast,
@@ -7,6 +12,7 @@ import {
   estimateFees,
   getBalance,
   getNextValidSequence,
+  lastBlock,
   listOperations,
 } from "../logic";
 
@@ -19,18 +25,12 @@ export function createApi(config: XrpConfig): Api {
     craftTransaction: craft,
     estimateFees: estimate,
     getBalance,
-    listOperations,
+    lastBlock,
+    listOperations: operations,
   };
 }
 
-async function craft(
-  address: string,
-  transaction: {
-    recipient: string;
-    amount: bigint;
-    fee: bigint;
-  },
-): Promise<string> {
+async function craft(address: string, transaction: ApiTransaction): Promise<string> {
   const nextSequenceNumber = await getNextValidSequence(address);
   const tx = await craftTransaction({ address, nextSequenceNumber }, transaction);
   return tx.serializedTransaction;
@@ -39,4 +39,30 @@ async function craft(
 async function estimate(_addr: string, _amount: bigint): Promise<bigint> {
   const fees = await estimateFees();
   return fees.fee;
+}
+
+async function operations(
+  address: string,
+  { limit, start }: Pagination,
+): Promise<[Operation[], number]> {
+  const options: {
+    limit?: number;
+    minHeight?: number;
+  } = { limit: limit };
+  if (start) options.minHeight = start;
+  const [ops, index] = await listOperations(address, options);
+  return [
+    ops.map(op => {
+      const { simpleType, blockHash, blockTime, blockHeight, ...rest } = op;
+      return {
+        ...rest,
+        block: {
+          height: blockHeight,
+          hash: blockHash,
+          time: blockTime,
+        },
+      } satisfies Operation;
+    }),
+    index,
+  ];
 }

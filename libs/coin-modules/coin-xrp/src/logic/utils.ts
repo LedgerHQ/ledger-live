@@ -2,7 +2,6 @@ import BigNumber from "bignumber.js";
 import { isValidClassicAddress } from "ripple-address-codec";
 import { getAccountInfo } from "../network";
 
-export const NEW_ACCOUNT_ERROR_MESSAGE = "actNotFound";
 export const UINT32_MAX = new BigNumber(2).pow(32).minus(1);
 
 /** @see https://xrpl.org/basic-data-types.html#specifying-time */
@@ -16,7 +15,7 @@ export const validateTag = (tag: BigNumber) => {
 
 export const getNextValidSequence = async (address: string) => {
   const accInfo = await getAccountInfo(address, true);
-  return accInfo.account_data.Sequence;
+  return accInfo.sequence;
 };
 
 function isRecipientValid(recipient: string): boolean {
@@ -27,10 +26,7 @@ const recipientIsNew = async (recipient: string): Promise<boolean> => {
   if (!isRecipientValid(recipient)) return false;
 
   const info = await getAccountInfo(recipient);
-  if (info.error === NEW_ACCOUNT_ERROR_MESSAGE) {
-    return true;
-  }
-  return false;
+  return info.isNewAccount;
 };
 
 const cacheRecipientsNew: Record<string, boolean> = {};

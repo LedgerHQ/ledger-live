@@ -69,6 +69,7 @@ function ValidateSuccess({
               outline={false}
               onPress={onViewDetails}
               mt={7}
+              testID="success-view-details-button"
             >
               <Trans i18nKey="send.validation.button.details" />
             </Button>

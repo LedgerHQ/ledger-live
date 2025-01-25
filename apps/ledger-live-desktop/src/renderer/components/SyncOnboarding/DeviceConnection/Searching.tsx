@@ -10,6 +10,7 @@ import Animation from "~/renderer/animations";
 import useTheme from "~/renderer/hooks/useTheme";
 import { useSelector } from "react-redux";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
+import { isSyncOnboardingSupported } from "@ledgerhq/live-common/device/use-cases/isSyncOnboardingSupported";
 
 export type SyncOnboardingDeviceConnectionSearchingProps = {
   deviceModelId: DeviceModelId;
@@ -26,7 +27,11 @@ const SyncOnboardingDeviceConnectionSearching = ({
   const currentDevice = useSelector(getCurrentDevice);
 
   useEffect(() => {
-    if (currentDevice && currentDevice.modelId !== deviceModelId) {
+    if (
+      currentDevice &&
+      currentDevice.modelId !== deviceModelId &&
+      !isSyncOnboardingSupported(deviceModelId)
+    ) {
       setDeviceModelId(currentDevice.modelId);
       history.replace("/onboarding/select-use-case");
     }

@@ -5,6 +5,7 @@ import buildSignOperation, { getOperationContents } from "./signOperation";
 import config, { type TezosCoinConfig } from "../config";
 import { TezosSigner } from "../types";
 import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
+import { mockConfig } from "../test/config";
 
 const mockForgeOperations = jest.fn();
 const mockEstimateReveal = jest.fn();
@@ -46,21 +47,7 @@ describe("signOperation", () => {
   const deviceId = "dummyDeviceId";
 
   beforeAll(() => {
-    config.setCoinConfig(
-      (): TezosCoinConfig => ({
-        status: { type: "active" },
-        baker: {
-          url: "https://httpbin.org",
-        },
-        explorer: {
-          url: "https://httpbin.org",
-          maxTxQuery: 100,
-        },
-        node: {
-          url: "https://httpbin.org",
-        },
-      }),
-    );
+    config.setCoinConfig((): TezosCoinConfig => mockConfig as TezosCoinConfig);
   });
 
   afterEach(() => {

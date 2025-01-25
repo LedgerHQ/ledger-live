@@ -408,7 +408,11 @@ export default function Content({
 
       {uniqueSenders.length > 0 && (
         <View style={sectionStyles.wrapper}>
-          <DataList data={uniqueSenders} title={<Trans i18nKey="operationDetails.from" />} />
+          <DataList
+            testID="operationDetails-sender"
+            data={uniqueSenders}
+            title={<Trans i18nKey="operationDetails.from" />}
+          />
         </View>
       )}
 
@@ -417,6 +421,7 @@ export default function Content({
           <DataList
             data={uniqueRecipients}
             title={<Trans i18nKey="operationDetails.to" />}
+            testID="operationDetails-recipient"
             rightComp={
               uniqueRecipients.length > 1 ? (
                 <View

@@ -6,19 +6,20 @@ import {
   ExchangeType,
 } from "@ledgerhq/live-common/wallet-api/Exchange/server";
 import trackingWrapper from "@ledgerhq/live-common/wallet-api/Exchange/tracking";
-import { Operation } from "@ledgerhq/types-live";
+import { AccountLike, Operation } from "@ledgerhq/types-live";
 import { track } from "~/renderer/analytics/segment";
-import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 import { closePlatformAppDrawer, openExchangeDrawer } from "~/renderer/actions/UI";
 import { WebviewProps } from "../Web3AppWebview/types";
 import { context } from "~/renderer/drawers/Provider";
 import WebviewErrorDrawer from "~/renderer/screens/exchange/Swap2/Form/WebviewErrorDrawer";
+import { platformAppDrawerStateSelector } from "~/renderer/reducers/UI";
 
-export function usePTXCustomHandlers(manifest: WebviewProps["manifest"]) {
+export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], accounts: AccountLike[]) {
   const dispatch = useDispatch();
-  const accounts = useSelector(flattenAccountsSelector);
   const { setDrawer } = React.useContext(context);
+
+  const { isOpen: isDrawerOpen } = useSelector(platformAppDrawerStateSelector);
 
   const tracking = useMemo(
     () =>
@@ -81,12 +82,14 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"]) {
             );
           },
           "custom.exchange.error": ({ error }) => {
-            dispatch(closePlatformAppDrawer());
-            setDrawer(WebviewErrorDrawer, error);
+            if (!isDrawerOpen) {
+              dispatch(closePlatformAppDrawer());
+              setDrawer(WebviewErrorDrawer, error);
+            }
             return Promise.resolve();
           },
         },
       }),
     };
-  }, [accounts, tracking, manifest, dispatch, setDrawer]);
+  }, [accounts, tracking, manifest, dispatch, setDrawer, isDrawerOpen]);
 }

@@ -1,5 +1,104 @@
 # @ledgerhq/coin-tester
 
+## 0.3.0
+
+### Minor Changes
+
+- [#8412](https://github.com/LedgerHQ/ledger-live/pull/8412) [`0397e32`](https://github.com/LedgerHQ/ledger-live/commit/0397e32253ea2af6fc901d69b51f6a59896f3e6a) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Coin-tester clean up. Fixing italian typo (sorry pasta bros), fixing Polkadot coin-tester log noise & docker-compose.
+
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#8412](https://github.com/LedgerHQ/ledger-live/pull/8412) [`0397e32`](https://github.com/LedgerHQ/ledger-live/commit/0397e32253ea2af6fc901d69b51f6a59896f3e6a) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Coin-tester clean up. Fixing italian typo (sorry pasta bros), fixing Polkadot coin-tester log noise & docker-compose.
+
+## 0.2.5
+
+### Patch Changes
+
+- [#8206](https://github.com/LedgerHQ/ledger-live/pull/8206) [`9059f4b`](https://github.com/LedgerHQ/ledger-live/commit/9059f4bb1dd540f28e2e16d85d701d70a99b6c96) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Remove some logs
+
+## 0.2.5-next.0
+
+### Patch Changes
+
+- [#8206](https://github.com/LedgerHQ/ledger-live/pull/8206) [`9059f4b`](https://github.com/LedgerHQ/ledger-live/commit/9059f4bb1dd540f28e2e16d85d701d70a99b6c96) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Remove some logs
+
+## 0.2.4
+
+### Patch Changes
+
+- [#7883](https://github.com/LedgerHQ/ledger-live/pull/7883) [`f805d14`](https://github.com/LedgerHQ/ledger-live/commit/f805d1470f927824233f94eaba065b00d7af18cf) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update Axios to 1.7.7 following CVE: https://github.com/advisories/GHSA-8hc4-vh64-cxmj
+
+- Updated dependencies [[`f805d14`](https://github.com/LedgerHQ/ledger-live/commit/f805d1470f927824233f94eaba065b00d7af18cf)]:
+  - @ledgerhq/hw-transport-node-speculos-http@6.29.4
+
+## 0.2.4-next.1
+
+### Patch Changes
+
+- [#7883](https://github.com/LedgerHQ/ledger-live/pull/7883) [`f805d14`](https://github.com/LedgerHQ/ledger-live/commit/f805d1470f927824233f94eaba065b00d7af18cf) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update Axios to 1.7.7 following CVE: https://github.com/advisories/GHSA-8hc4-vh64-cxmj
+
+- Updated dependencies [[`f805d14`](https://github.com/LedgerHQ/ledger-live/commit/f805d1470f927824233f94eaba065b00d7af18cf)]:
+  - @ledgerhq/hw-transport-node-speculos-http@6.29.4-next.1
+
+## 0.2.4-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport-node-speculos-http@6.29.4-next.0
+
+## 0.2.3
+
+### Patch Changes
+
+- [#7593](https://github.com/LedgerHQ/ledger-live/pull/7593) [`187293c`](https://github.com/LedgerHQ/ledger-live/commit/187293c6cf6093f15f07d5effc1ded0843a9e6ab) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update `axios` to fixed version `1.7.3`
+
+- Updated dependencies [[`187293c`](https://github.com/LedgerHQ/ledger-live/commit/187293c6cf6093f15f07d5effc1ded0843a9e6ab)]:
+  - @ledgerhq/hw-transport-node-speculos-http@6.29.3
+
+## 0.2.3-next.0
+
+### Patch Changes
+
+- [#7593](https://github.com/LedgerHQ/ledger-live/pull/7593) [`187293c`](https://github.com/LedgerHQ/ledger-live/commit/187293c6cf6093f15f07d5effc1ded0843a9e6ab) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update `axios` to fixed version `1.7.3`
+
+- Updated dependencies [[`187293c`](https://github.com/LedgerHQ/ledger-live/commit/187293c6cf6093f15f07d5effc1ded0843a9e6ab)]:
+  - @ledgerhq/hw-transport-node-speculos-http@6.29.3-next.0
+
+## 0.2.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport-node-speculos-http@6.29.2
+
+## 0.2.2-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport-node-speculos-http@6.29.2-hotfix.0
+
+## 0.2.1
+
+### Patch Changes
+
+- [#7181](https://github.com/LedgerHQ/ledger-live/pull/7181) [`f0ed580`](https://github.com/LedgerHQ/ledger-live/commit/f0ed580b0e71c1f1aa1b38f6ef7a536f14a5e750) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - polkadot coin tester update
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport-node-speculos-http@6.29.1
+
+## 0.2.1-next.0
+
+### Patch Changes
+
+- [#7181](https://github.com/LedgerHQ/ledger-live/pull/7181) [`f0ed580`](https://github.com/LedgerHQ/ledger-live/commit/f0ed580b0e71c1f1aa1b38f6ef7a536f14a5e750) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - polkadot coin tester update
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport-node-speculos-http@6.29.1-next.0
+
 ## 0.2.0
 
 ### Minor Changes

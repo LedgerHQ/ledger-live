@@ -39,6 +39,10 @@ export const IDS = [
   "axelar",
   "persistence",
   "onomy",
+  "mantra",
+  "crypto_org",
+  "xion",
+  "zenrock",
 ];
 
 export const CURRENCIES_LIST: CryptoCurrency[] = [
@@ -502,6 +506,122 @@ export const CURRENCIES_LIST: CryptoCurrency[] = [
       {
         tx: "https://www.mintscan.io/injective/txs/$hash",
         address: "https://www.mintscan.io/injective/validators/$address",
+      },
+    ],
+  },
+  {
+    type: "CryptoCurrency",
+    id: "mantra",
+    coinType: 118,
+    name: "Mantra",
+    managerAppName: "Cosmos",
+    ticker: "OM",
+    scheme: "mantra",
+    color: "#ffb386",
+    family: "cosmos",
+    units: [
+      {
+        name: "Mantra",
+        code: "OM",
+        magnitude: 6,
+      },
+      {
+        name: "Micro-Mantra",
+        code: "uom",
+        magnitude: 0,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://www.mintscan.io/mantra/txs/$hash",
+        address: "https://www.mintscan.io/mantra/validators/$address",
+      },
+    ],
+  },
+  {
+    type: "CryptoCurrency",
+    id: "crypto_org",
+    coinType: 394,
+    name: "Cronos POS Chain",
+    managerAppName: "Cronos POS Chain",
+    ticker: "CRO",
+    scheme: "crypto_org",
+    color: "#0e1c37",
+    family: "cosmos",
+    units: [
+      {
+        name: "CRO",
+        code: "CRO",
+        magnitude: 8,
+      },
+      {
+        name: "Micro-CRO",
+        code: "baseCRO",
+        magnitude: 0,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://www.mintscan.io/crypto-org/tx/$hash",
+        address: "https://www.mintscan.io/crypto-org/validators/$address",
+      },
+    ],
+  },
+  {
+    type: "CryptoCurrency",
+    id: "xion",
+    coinType: 118,
+    name: "Xion",
+    managerAppName: "Cosmos",
+    ticker: "XION",
+    scheme: "xion",
+    color: "#000000",
+    family: "cosmos",
+    units: [
+      {
+        name: "Xion",
+        code: "XION",
+        magnitude: 6,
+      },
+      {
+        name: "Micro-XION",
+        code: "uxion",
+        magnitude: 0,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://www.mintscan.io/xion/txs/$hash",
+        address: "https://www.mintscan.io/xion/validators/$address",
+      },
+    ],
+  },
+  {
+    type: "CryptoCurrency",
+    id: "zenrock",
+    coinType: 118,
+    name: "Zenrock",
+    managerAppName: "Cosmos",
+    ticker: "ROCK",
+    scheme: "zenrock",
+    color: "#000000",
+    family: "cosmos",
+    units: [
+      {
+        name: "Zenrock",
+        code: "ROCK",
+        magnitude: 6,
+      },
+      {
+        name: "Micro-Zenrock",
+        code: "urock",
+        magnitude: 0,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://explorer.diamond.zenrocklabs.io/transactions/$hash",
+        address: "https://explorer.diamond.zenrocklabs.io/validators/$address",
       },
     ],
   },

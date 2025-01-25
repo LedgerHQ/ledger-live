@@ -3,7 +3,12 @@ import {
   getDeviceRunningMode,
   GetDeviceRunningModeResult,
 } from "@ledgerhq/live-common/hw/getDeviceRunningMode";
-import { deviceOpt } from "../../scan";
+import { DeviceCommonOpts, deviceOpt } from "../../scan";
+
+export type GetDeviceRunningModeJobOpts = DeviceCommonOpts & {
+  unresponsiveTimeoutMs: number;
+  cantOpenDeviceRetryLimit: number;
+};
 
 export default {
   description:
@@ -27,11 +32,7 @@ export default {
     device,
     unresponsiveTimeoutMs,
     cantOpenDeviceRetryLimit,
-  }: Partial<{
-    device: string;
-    unresponsiveTimeoutMs: number;
-    cantOpenDeviceRetryLimit: number;
-  }>): Observable<GetDeviceRunningModeResult | null> =>
+  }: Partial<GetDeviceRunningModeJobOpts>): Observable<GetDeviceRunningModeResult | null> =>
     getDeviceRunningMode({
       deviceId: device ?? "",
       unresponsiveTimeoutMs,

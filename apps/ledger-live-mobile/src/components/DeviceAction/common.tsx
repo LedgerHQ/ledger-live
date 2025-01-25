@@ -6,7 +6,7 @@ import { useTheme } from "styled-components/native";
 import { TFunction } from "react-i18next";
 import Button from "../wrappedUi/Button";
 import Animation from "../Animation";
-import { getDeviceAnimation } from "~/helpers/getDeviceAnimation";
+import { getDeviceAnimation, getDeviceAnimationStyles } from "~/helpers/getDeviceAnimation";
 import Link from "../wrappedUi/Link";
 import { TrackScreen } from "~/analytics";
 import { ArrowRight } from "@ledgerhq/native-ui/assets/icons";
@@ -23,7 +23,9 @@ export const AllowManager = ({ wording, device }: { wording: string; device: Dev
           {wording}
         </Text>
       </Flex>
-      <Animation source={getDeviceAnimation({ device, key: "allowManager", theme })} />
+      <Animation
+        source={getDeviceAnimation({ modelId: device.modelId, key: "allowManager", theme })}
+      />
     </Flex>
   );
 };
@@ -64,10 +66,11 @@ export const ConfirmFirmwareUpdate = ({
 
       <Animation
         source={getDeviceAnimation({
-          device,
+          modelId: device.modelId,
           key: "allowUpdate",
           theme,
         })}
+        style={getDeviceAnimationStyles(device.modelId)}
       />
     </Flex>
   );
@@ -97,7 +100,9 @@ export const FinishFirmwareUpdate = ({ t, device }: { t: TFunction; device: Devi
         </Flex>
       </Flex>
       <Flex alignItems="center">
-        <Animation source={getDeviceAnimation({ device, key: "enterPinCode", theme })} />
+        <Animation
+          source={getDeviceAnimation({ modelId: device.modelId, key: "enterPinCode", theme })}
+        />
       </Flex>
     </Flex>
   );

@@ -1,4 +1,4 @@
-import { Device, DeviceModelId } from "@ledgerhq/types-devices";
+import { Device, DevicesWithTouchScreen } from "@ledgerhq/types-devices";
 import React, { useCallback } from "react";
 import { Flex } from "@ledgerhq/native-ui";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -70,7 +70,7 @@ export const BleDevicePairingFlow: React.FC<Props> = ({ navigation }) => {
       <Flex px={6} flex={1}>
         <BleDevicePairingFlowComponent
           key={keyToReset}
-          filterByDeviceModelId={DeviceModelId.stax}
+          filterByDeviceModelId={DevicesWithTouchScreen}
           onPairingSuccess={onPairingSuccess}
           requestToSetHeaderOptions={requestToSetHeaderOptions}
         />

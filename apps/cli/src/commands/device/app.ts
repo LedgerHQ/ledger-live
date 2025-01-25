@@ -8,8 +8,19 @@ import installApp from "@ledgerhq/live-common/hw/installApp";
 import uninstallApp from "@ledgerhq/live-common/hw/uninstallApp";
 import { getAppsCatalogForDevice } from "@ledgerhq/live-common/device/use-cases/getAppsCatalogForDevice";
 import { mapApplicationV2ToApp } from "@ledgerhq/live-common/apps/polyfill";
-import { deviceOpt, inferManagerApp } from "../../scan";
+import { DeviceCommonOpts, deviceOpt, inferManagerApp } from "../../scan";
 import type { DeviceInfo } from "@ledgerhq/types-live";
+
+export type AppJobOpts = DeviceCommonOpts &
+  Partial<{
+    verbose: boolean;
+    install: string[];
+    uninstall: string[];
+    open: string;
+    quit: string;
+    debug: string;
+  }>;
+
 export default {
   description: "Manage Ledger device's apps",
   args: [
@@ -52,23 +63,7 @@ export default {
       desc: "close current application",
     },
   ],
-  job: ({
-    device,
-    verbose,
-    install,
-    uninstall,
-    open,
-    quit,
-    debug,
-  }: Partial<{
-    device: string;
-    verbose: boolean;
-    install: string[];
-    uninstall: string[];
-    open: string;
-    quit: string;
-    debug: string;
-  }>) =>
+  job: ({ device, verbose, install, uninstall, open, quit, debug }: AppJobOpts) =>
     withDevice(device || "")(t => {
       if (quit) return from(quitApp(t));
       if (open) return from(openApp(t, inferManagerApp(open)));

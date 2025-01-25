@@ -1,0 +1,1 @@
+{"request":{"url":"https://cosmoshub4.coin.ledger.com/cosmos/distribution/v1beta1/delegators/osmo1xx72kqjlf2qqj88h0wakwv6rp0v8fwh74z9q89/withdraw_address","method":"GET"},"response":{"body":{"code":2,"message":"codespace sdk code 35: internal logic error: hrp does not match bech32 prefix: expected 'cosmos' got 'osmo'","details":[]}}}

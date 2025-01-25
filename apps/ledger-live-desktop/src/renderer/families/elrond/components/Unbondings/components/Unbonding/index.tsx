@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useMemo, useEffect } from "react";
 import { Trans } from "react-i18next";
-import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
+import { denominate } from "@ledgerhq/live-common/families/elrond/helpers";
 import { useDispatch } from "react-redux";
 import Box from "~/renderer/components/Box/Box";
 import ExclamationCircleThin from "~/renderer/icons/ExclamationCircleThin";

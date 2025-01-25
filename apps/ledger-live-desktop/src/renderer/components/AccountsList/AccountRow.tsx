@@ -142,7 +142,13 @@ function AccountRow(props: Props) {
           color="palette.text.shade60"
         />
       ) : null}
-      {!isDisabled && !isReadonly && <CheckBox disabled isChecked={isChecked || !!isDisabled} />}
+      {!isDisabled && !isReadonly && (
+        <CheckBox
+          data-testid="accountRow-checkbox"
+          disabled
+          isChecked={isChecked || !!isDisabled}
+        />
+      )}
     </AccountRowContainer>
   );
 }

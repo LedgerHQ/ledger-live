@@ -1,5 +1,89 @@
 # @ledgerhq/icons-ui
 
+## 0.8.1
+
+### Patch Changes
+
+- [#8013](https://github.com/LedgerHQ/ledger-live/pull/8013) [`bc5048e`](https://github.com/LedgerHQ/ledger-live/commit/bc5048e0fda29b49a16b9e529fe0ace042267e8d) Thanks [@thesan](https://github.com/thesan)! - Align the receive screen with Figma designs
+
+## 0.8.1-next.0
+
+### Patch Changes
+
+- [#8013](https://github.com/LedgerHQ/ledger-live/pull/8013) [`bc5048e`](https://github.com/LedgerHQ/ledger-live/commit/bc5048e0fda29b49a16b9e529fe0ace042267e8d) Thanks [@thesan](https://github.com/thesan)! - Align the receive screen with Figma designs
+
+## 0.8.0
+
+### Minor Changes
+
+- [#7870](https://github.com/LedgerHQ/ledger-live/pull/7870) [`1b3a21d`](https://github.com/LedgerHQ/ledger-live/commit/1b3a21d5d8496c42f4dec4116fdcf59ad6f038cd) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - ledger-live-desktop: Updated staking modal. Filtering per category. New copy and design
+  live-mobile: Updated staking modal. Filtering per category. New copy and design
+  @ledgerhq/icons-ui: Add book-graduation icon
+  @ledgerhq/types-live: Update schema of ethStakingProviders flag
+  @ledgerhq/native-ui: Add `xs` size to Button
+
+## 0.8.0-next.0
+
+### Minor Changes
+
+- [#7870](https://github.com/LedgerHQ/ledger-live/pull/7870) [`1b3a21d`](https://github.com/LedgerHQ/ledger-live/commit/1b3a21d5d8496c42f4dec4116fdcf59ad6f038cd) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - ledger-live-desktop: Updated staking modal. Filtering per category. New copy and design
+  live-mobile: Updated staking modal. Filtering per category. New copy and design
+  @ledgerhq/icons-ui: Add book-graduation icon
+  @ledgerhq/types-live: Update schema of ethStakingProviders flag
+  @ledgerhq/native-ui: Add `xs` size to Button
+
+## 0.7.4
+
+### Patch Changes
+
+- [#7941](https://github.com/LedgerHQ/ledger-live/pull/7941) [`2f90189`](https://github.com/LedgerHQ/ledger-live/commit/2f9018986102f23fa22d31605d0d9f99abd41892) Thanks [@thesan](https://github.com/thesan)! - Fix IDE go to definition feature for some libs
+
+## 0.7.4-next.0
+
+### Patch Changes
+
+- [#7941](https://github.com/LedgerHQ/ledger-live/pull/7941) [`2f90189`](https://github.com/LedgerHQ/ledger-live/commit/2f9018986102f23fa22d31605d0d9f99abd41892) Thanks [@thesan](https://github.com/thesan)! - Fix IDE go to definition feature for some libs
+
+## 0.7.3
+
+### Patch Changes
+
+- [#7672](https://github.com/LedgerHQ/ledger-live/pull/7672) [`fb9466a`](https://github.com/LedgerHQ/ledger-live/commit/fb9466a4d7827fd4759c726ad3ae0b43dddcacd3) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Add support for jettons
+
+- [#7760](https://github.com/LedgerHQ/ledger-live/pull/7760) [`9070cff`](https://github.com/LedgerHQ/ledger-live/commit/9070cffc83fd607b593c4b85a78faaf8e29f7acb) Thanks [@LucasWerey](https://github.com/LucasWerey)! - update satributes icons
+
+## 0.7.3-next.0
+
+### Patch Changes
+
+- [#7672](https://github.com/LedgerHQ/ledger-live/pull/7672) [`fb9466a`](https://github.com/LedgerHQ/ledger-live/commit/fb9466a4d7827fd4759c726ad3ae0b43dddcacd3) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Add support for jettons
+
+- [#7760](https://github.com/LedgerHQ/ledger-live/pull/7760) [`9070cff`](https://github.com/LedgerHQ/ledger-live/commit/9070cffc83fd607b593c4b85a78faaf8e29f7acb) Thanks [@LucasWerey](https://github.com/LucasWerey)! - update satributes icons
+
+## 0.7.2
+
+### Patch Changes
+
+- [#7264](https://github.com/LedgerHQ/ledger-live/pull/7264) [`fc3924d`](https://github.com/LedgerHQ/ledger-live/commit/fc3924df49de36ea1da2c2adb42fd5aeb6d3e545) Thanks [@thesan](https://github.com/thesan)! - Fix generated icons attributes case
+
+## 0.7.2-next.0
+
+### Patch Changes
+
+- [#7264](https://github.com/LedgerHQ/ledger-live/pull/7264) [`fc3924d`](https://github.com/LedgerHQ/ledger-live/commit/fc3924df49de36ea1da2c2adb42fd5aeb6d3e545) Thanks [@thesan](https://github.com/thesan)! - Fix generated icons attributes case
+
+## 0.7.1
+
+### Patch Changes
+
+- [#7390](https://github.com/LedgerHQ/ledger-live/pull/7390) [`d1138d3`](https://github.com/LedgerHQ/ledger-live/commit/d1138d333a65e11b231f020a42ae62c64b91734e) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Update Europa icon
+
+## 0.7.1-hotfix.0
+
+### Patch Changes
+
+- [#7291](https://github.com/LedgerHQ/ledger-live/pull/7291) [`b3010eb`](https://github.com/LedgerHQ/ledger-live/commit/b3010ebcf99fe06436960d023fffd1cc549eea4a) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Update Europa icon
+
 ## 0.7.0
 
 ### Minor Changes

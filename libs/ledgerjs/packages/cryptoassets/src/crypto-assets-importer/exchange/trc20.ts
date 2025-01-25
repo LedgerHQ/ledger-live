@@ -1,12 +1,12 @@
 import fs from "fs";
-import { fetchTokens } from "../fetch";
+import { fetchTokensFromCDN } from "../fetch";
 
 type TRC20Exchange = [string, string, string];
 
 export const importTRC20Exchange = async (outputDir: string) => {
   console.log("importing TRC20 exchange...");
   try {
-    const [trc20Exchange, hash] = await fetchTokens<TRC20Exchange>("exchange/trc20.json");
+    const [trc20Exchange, hash] = await fetchTokensFromCDN<TRC20Exchange>("exchange/trc20.json");
     fs.writeFileSync(`${outputDir}/exchange/trc20.json`, JSON.stringify(trc20Exchange));
     if (hash) {
       fs.writeFileSync(`${outputDir}/exchange/trc20-hash.json`, JSON.stringify(hash));

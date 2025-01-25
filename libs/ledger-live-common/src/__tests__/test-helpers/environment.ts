@@ -1,11 +1,11 @@
-import winston from "winston";
-import { listen } from "@ledgerhq/logs";
-import { setSupportedCurrencies } from "../../currencies";
-import { EnvName, setEnvUnsafe, setEnv } from "@ledgerhq/live-env";
-import { setWalletAPIVersion } from "../../wallet-api/version";
-import { WALLET_API_VERSION } from "../../wallet-api/constants";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import { EnvName, setEnv, setEnvUnsafe } from "@ledgerhq/live-env";
+import { listen } from "@ledgerhq/logs";
+import winston from "winston";
 import { liveConfig } from "../../config/sharedConfig";
+import { setSupportedCurrencies } from "../../currencies";
+import { WALLET_API_VERSION } from "../../wallet-api/constants";
+import { setWalletAPIVersion } from "../../wallet-api/version";
 
 setWalletAPIVersion(WALLET_API_VERSION);
 setSupportedCurrencies([
@@ -38,7 +38,6 @@ setSupportedCurrencies([
   "dogecoin",
   "digibyte",
   "komodo",
-  "pivx",
   "zencash",
   "decred",
   "tron",
@@ -65,6 +64,8 @@ setSupportedCurrencies([
   "songbird",
   "flare",
   "near",
+  "icon",
+  "icon_berlin_testnet",
   "optimism",
   "optimism_sepolia",
   "arbitrum",
@@ -98,6 +99,15 @@ setSupportedCurrencies([
   "blast_sepolia",
   "scroll",
   "scroll_sepolia",
+  "ton",
+  "etherlink",
+  "zksync",
+  "zksync_sepolia",
+  "mantra",
+  "aptos",
+  "aptos_testnet",
+  "xion",
+  "zenrock",
 ]);
 LiveConfig.setConfig(liveConfig);
 

@@ -5,6 +5,7 @@ export type {
   OsuFirmware,
   FirmwareUpdateContextEntity,
 } from "./managerApi/entities/FirmwareUpdateContextEntity";
+export type { ReinstallConfigArgs } from "./commands/entities/ReinstallConfigEntity";
 export type { ManagerApiRepository } from "./managerApi/repositories/ManagerApiRepository";
 export { HttpManagerApiRepository } from "./managerApi/repositories/HttpManagerApiRepository";
 export { StubManagerApiRepository } from "./managerApi/repositories/StubManagerApiRepository";
@@ -22,7 +23,7 @@ export { getDeviceName } from "./commands/use-cases/getDeviceName";
 export { isHardwareVersionSupported } from "./commands/use-cases/isHardwareVersionSupported";
 export { isBootloaderVersionSupported } from "./commands/use-cases/isBootloaderVersionSupported";
 export { getVersion } from "./commands/use-cases/getVersion";
-export type { AppStorageInfo } from "./commands/entities/AppStorageInfo";
+export { type AppStorageInfo, isAppStorageInfo } from "./commands/entities/AppStorageInfo";
 export { backupAppStorage } from "./commands/use-cases/app-backup/backupAppStorage";
 export { getAppStorageInfo } from "./commands/use-cases/app-backup/getAppStorageInfo";
 export { restoreAppStorage } from "./commands/use-cases/app-backup/restoreAppStorage";
@@ -40,3 +41,7 @@ export { supportedDeviceModelIds } from "./capabilities/isCustomLockScreenSuppor
 export * from "./customLockScreen/screenSpecs";
 // src/firmwareUpdate/
 export { shouldForceFirmwareUpdate } from "./firmwareUpdate/shouldForceFirmwareUpdate";
+// errors
+export * from "./errors";
+// src/commands/consent/
+export { reinstallConfigurationConsent } from "./commands/use-cases/consent/reinstallConfigurationConsent";

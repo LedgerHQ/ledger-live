@@ -32,12 +32,12 @@ import { track } from "~/renderer/analytics/segment";
 import SelectAccountAndCurrencyDrawer from "~/renderer/drawers/DataSelector/SelectAccountAndCurrencyDrawer";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
-import { shareAnalyticsSelector } from "~/renderer/reducers/settings";
+import { mevProtectionSelector, shareAnalyticsSelector } from "~/renderer/reducers/settings";
 import { walletSelector } from "~/renderer/reducers/wallet";
 import { getStoreValue, setStoreValue } from "~/renderer/store";
-import { updateAccountWithUpdater } from "../../actions/accounts";
-import { openModal } from "../../actions/modals";
-import { flattenAccountsSelector } from "../../reducers/accounts";
+import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
+import { openModal } from "~/renderer/actions/modals";
+import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
 import BigSpinner from "../BigSpinner";
 import { NetworkErrorScreen } from "./NetworkError";
 import { NoAccountOverlay } from "./NoAccountOverlay";
@@ -121,6 +121,7 @@ function useUiHook(manifest: AppManifest, tracking: Record<string, TrackFunction
             stepId: canEditFees && !hasFeesProvided ? "amount" : "summary",
             transactionData: liveTx,
             useApp: options?.hwAppId,
+            dependencies: options?.dependencies,
             account,
             parentAccount,
             onResult: onSuccess,
@@ -229,13 +230,15 @@ function useWebView(
     manifest,
     customHandlers,
     currentAccountHistDb,
-  }: Pick<WebviewProps, "manifest" | "customHandlers" | "currentAccountHistDb">,
+    inputs,
+  }: Pick<WebviewProps, "manifest" | "customHandlers" | "currentAccountHistDb" | "inputs">,
   webviewRef: RefObject<WebviewTag>,
   tracking: TrackingAPI,
   serverRef: React.MutableRefObject<WalletAPIServer | undefined>,
   customWebviewStyle?: React.CSSProperties,
 ) {
   const accounts = useSelector(flattenAccountsSelector);
+  const mevProtected = useSelector(mevProtectionSelector);
 
   const uiHook = useUiHook(manifest, tracking);
   const shareAnalytics = useSelector(shareAnalyticsSelector);
@@ -245,6 +248,7 @@ function useWebView(
     userId,
     tracking: shareAnalytics,
     wallet,
+    mevProtected,
   });
 
   const webviewHook = useMemo(() => {
@@ -287,6 +291,8 @@ function useWebView(
     postMessage: webviewHook.postMessage,
     currentAccountHistDb,
     tracking,
+    initialAccountId: inputs?.accountId?.toString(),
+    mevProtected,
   });
 
   const handleMessage = useCallback(
@@ -386,11 +392,8 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
 
     const serverRef = useRef<WalletAPIServer>();
 
-    const { webviewState, webviewRef, webviewProps, handleRefresh } = useWebviewState(
-      { manifest, inputs },
-      ref,
-      serverRef,
-    );
+    const { webviewState, webviewRef, webviewProps, handleRefresh, webviewPartition } =
+      useWebviewState({ manifest, inputs }, ref, serverRef);
     useEffect(() => {
       if (onStateChange) {
         onStateChange(webviewState);
@@ -402,6 +405,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         manifest,
         customHandlers,
         currentAccountHistDb,
+        inputs,
       },
       webviewRef,
       tracking,
@@ -444,6 +448,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
           // eslint-disable-next-line react/no-unknown-property
           webpreferences={`nativeWindowOpen=no${isDapp ? ", contextIsolation=no" : ""}`}
           {...webviewProps}
+          {...webviewPartition}
         />
         {!widgetLoaded && !hideLoader ? (
           <Loader>

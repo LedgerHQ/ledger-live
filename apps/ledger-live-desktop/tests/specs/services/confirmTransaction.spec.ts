@@ -3,7 +3,7 @@ import { expect } from "@playwright/test";
 import { Modal } from "../../component/modal.component";
 import { DiscoverPage } from "../../page/discover.page";
 import { Layout } from "../../component/layout.component";
-import { Drawer } from "../../page/drawer/drawer";
+import { Drawer } from "../../component/drawer.component";
 import { DeviceAction } from "../../models/DeviceAction";
 import { randomUUID } from "crypto";
 import { LiveAppWebview } from "../../models/LiveAppWebview";
@@ -77,6 +77,7 @@ test("Confirm Transaction modals @smoke", async ({ page }) => {
   }
 
   const liveAppWebview = new LiveAppWebview(page);
+  await liveAppWebview.waitForLoaded();
   const modal = new Modal(page);
   const deviceAction = new DeviceAction(page);
 
@@ -107,7 +108,7 @@ test("Confirm Transaction modals @smoke", async ({ page }) => {
     });
 
     // Step Fees
-    await expect(page.getByText("Max estimated fee")).toBeVisible();
+    await expect(page.getByText(/learn more about fees/i)).toBeVisible();
     await modal.continueToSignTransaction();
 
     // Step Recipient
@@ -124,7 +125,7 @@ test("Confirm Transaction modals @smoke", async ({ page }) => {
     ).toBeVisible();
 
     // Displays TOC in footer
-    const operationList = page.locator("data-test-id=confirm-footer-toc");
+    const operationList = page.getByTestId("confirm-footer-toc");
     await operationList.scrollIntoViewIfNeeded();
     await expect(page.getByText(`${MANIFEST_NAME}'s terms of use.`)).toBeVisible();
 
@@ -164,7 +165,7 @@ test("Confirm Transaction modals @smoke", async ({ page }) => {
     });
 
     // Step Fees
-    await expect(page.getByText("Max estimated fee")).toBeVisible();
+    await expect(page.getByText(/learn more about fees/i)).toBeVisible();
     await expect(page.getByText("Approve token")).toBeVisible();
     await modal.continueToSignTransaction();
 
@@ -184,7 +185,7 @@ test("Confirm Transaction modals @smoke", async ({ page }) => {
     ).toBeVisible();
 
     // Displays TOC in footer
-    const operationList = page.locator("data-test-id=confirm-footer-toc");
+    const operationList = page.getByTestId("confirm-footer-toc");
     await operationList.scrollIntoViewIfNeeded();
     await expect(page.getByText(`${MANIFEST_NAME}'s terms of use.`)).toBeVisible();
 
@@ -202,7 +203,7 @@ test("Confirm Transaction modals @smoke", async ({ page }) => {
 
     const recipient = "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2";
 
-    liveAppWebview.send({
+    const response = liveAppWebview.send({
       jsonrpc: "2.0",
       id,
       method: "transaction.signAndBroadcast",
@@ -224,7 +225,7 @@ test("Confirm Transaction modals @smoke", async ({ page }) => {
     });
 
     // Step Fees
-    await expect(page.getByText("Max estimated fee")).toBeVisible();
+    await expect(page.getByText(/learn more about fees/i)).toBeVisible();
     await expect(page.getByText("Approve token")).toBeVisible();
     await modal.continueToSignTransaction();
 
@@ -242,5 +243,13 @@ test("Confirm Transaction modals @smoke", async ({ page }) => {
         "You're authorizing this provider to access the selected token from your wallet",
       ),
     ).toBeVisible();
+
+    await expect(response).resolves.toStrictEqual({
+      id,
+      jsonrpc: "2.0",
+      result: {
+        transactionHash: "32BEBB4660C4C328F7E130D0E1F45D5B2AFD9129B903E0F3B6EA52756329CD25",
+      },
+    });
   });
 });

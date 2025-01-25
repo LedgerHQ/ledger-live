@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-transport-node-speculos-http",
-  "version": "6.29.0",
+  "version": "6.29.4",
   "description": "Ledger Hardware Wallet communication layer with speculos Nano simulator using the http api",
   "keywords": [
     "Ledger",
@@ -31,7 +31,7 @@
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
-    "axios": "^0.26.1",
+    "axios": "1.7.7",
     "rxjs": "^7.8.1"
   },
   "scripts": {
@@ -39,6 +39,7 @@
     "build": "tsc && tsc -m ES6 --outDir lib-es",
     "prewatch": "pnpm build",
     "watch": "tsc --watch",
+    "watch:es": "tsc --watch -m ES6 --outDir lib-es",
     "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",

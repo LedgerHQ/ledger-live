@@ -2,7 +2,8 @@ import React, { useMemo, useCallback } from "react";
 import { View, FlatList } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { getMainAccount } from "@ledgerhq/coin-framework/account";
+
 import BigNumber from "bignumber.js";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 

@@ -62,6 +62,26 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Rosetta API for ICP",
   },
+  APTOS_API_ENDPOINT: {
+    def: "https://apt.coin.ledger.com/node/v1",
+    parser: stringParser,
+    desc: "API enpoint for Aptos",
+  },
+  APTOS_TESTNET_API_ENDPOINT: {
+    def: "https://apt.coin.ledger-stg.com/node/v1",
+    parser: stringParser,
+    desc: "API enpoint for Aptos",
+  },
+  APTOS_INDEXER_ENDPOINT: {
+    def: "https://apt.coin.ledger.com/node/v1/graphql",
+    parser: stringParser,
+    desc: "Indexer endpoint for Aptos",
+  },
+  APTOS_TESTNET_INDEXER_ENDPOINT: {
+    def: "https://apt.coin.ledger-stg.com/node/v1/graphql",
+    parser: stringParser,
+    desc: "Indexer endpoint for Aptos",
+  },
   API_CASPER_INDEXER_ENDPOINT: {
     parser: stringParser,
     def: "https://casper.coin.ledger.com/indexer",
@@ -232,6 +252,36 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Cardano API url",
   },
+  ICON_NODE_ENDPOINT: {
+    parser: stringParser,
+    def: "https://icon.coin.ledger.com/api/v3",
+    desc: "ICON RPC url",
+  },
+  ICON_DEBUG_ENDPOINT: {
+    parser: stringParser,
+    def: "https://icon.coin.ledger.com/api/v3d",
+    desc: "ICON debug RPC url",
+  },
+  ICON_INDEXER_ENDPOINT: {
+    parser: stringParser,
+    def: "https://icon.coin.ledger.com/api/v1",
+    desc: "ICON API url",
+  },
+  ICON_TESTNET_NODE_ENDPOINT: {
+    parser: stringParser,
+    def: "https://berlin.net.solidwallet.io/api/v3",
+    desc: "ICON Berlin Testnet API url",
+  },
+  ICON_TESTNET_DEBUG_ENDPOINT: {
+    parser: stringParser,
+    def: "https://berlin.net.solidwallet.io/api/v3d",
+    desc: "ICON Berlin Testnet debug",
+  },
+  ICON_TESTNET_INDEXER_ENDPOINT: {
+    parser: stringParser,
+    def: "https://tracker.berlin.icon.community/api/v1",
+    desc: "ICON Berlin Testnet API url",
+  },
   COINAPPS: {
     def: "",
     parser: stringParser,
@@ -297,6 +347,11 @@ const envDefinitions = {
     parser: boolParser,
     desc: "disable the version check for firmware update eligibility",
   },
+  DETOX: {
+    def: "",
+    parser: stringParser,
+    desc: "switch the app into a DETOX mode for test purpose. Avoid falsy values.",
+  },
   EIP1559_MINIMUM_FEES_GATE: {
     def: true,
     parser: boolParser,
@@ -308,7 +363,7 @@ const envDefinitions = {
     desc: "minimum priority fee percents allowed compared to network conditions allowed when EIP1559_MINIMUM_FEES_GATE is activated",
   },
   EIP1559_BASE_FEE_MULTIPLIER: {
-    def: 1.5,
+    def: 1.27,
     parser: floatParser,
     desc: "mutiplier for the base fee that is composing the maxFeePerGas property",
   },
@@ -477,6 +532,11 @@ const envDefinitions = {
     parser: stringParser,
     desc: "switch the countervalues resolution into a MOCK mode for test purpose",
   },
+  MOCK_APP_UPDATE: {
+    def: false,
+    parser: boolParser,
+    desc: "Always shows app update in the manager",
+  },
   /**
    * Note: the mocked cryptoassets config and test partner are signed with the
    * Ledger test private key
@@ -485,6 +545,11 @@ const envDefinitions = {
     def: false,
     parser: boolParser,
     desc: "mock the cryptoassets config and test partner (in the context of app-exchange)",
+  },
+  MOCK_EXCHANGE_TEST_PARTNER: {
+    def: false,
+    parser: boolParser,
+    desc: "change CAL partner context to test",
   },
   MOCK_REMOTE_LIVE_MANIFEST: {
     def: "",
@@ -502,8 +567,8 @@ const envDefinitions = {
     desc: "if defined, avoids bypass of the currentDevice in the store.",
   },
   NFT_CURRENCIES: {
-    def: "ethereum,polygon",
-    parser: stringParser,
+    def: ["avalanche_c_chain", "bsc", "ethereum", "polygon"],
+    parser: stringArrayParser,
     desc: "set the currencies where NFT is active",
   },
   NFT_ETH_METADATA_SERVICE: {
@@ -593,6 +658,11 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Swap IP",
   },
+  SWAP_DISABLE_APPS_INSTALL: {
+    def: false,
+    parser: boolParser,
+    desc: "bypass app checks on Nano for speculos swap tests",
+  },
   SYNC_ALL_INTERVAL: {
     def: 8 * 60 * 1000,
     parser: intParser,
@@ -633,10 +703,15 @@ const envDefinitions = {
     parser: boolParser,
     desc: "is walletconnect enabled",
   },
-  CLOUD_SYNC_API: {
+  CLOUD_SYNC_API_STAGING: {
     def: "https://cloud-sync-backend.api.aws.stg.ldg-tech.com",
     parser: stringParser,
-    desc: "wallet sync api base url",
+    desc: "wallet sync api staging base url",
+  },
+  CLOUD_SYNC_API_PROD: {
+    def: "https://cloud-sync.api.live.ledger.com",
+    parser: stringParser,
+    desc: "wallet sync api production base url",
   },
   WITH_DEVICE_POLLING_DELAY: {
     def: 500,
@@ -668,10 +743,15 @@ const envDefinitions = {
     parser: intParser,
     desc: "safe max on maximum number of queries to synchronize a tezos account",
   },
-  TRUSTCHAIN_API: {
+  TRUSTCHAIN_API_STAGING: {
     def: "https://trustchain-backend.api.aws.stg.ldg-tech.com",
     parser: stringParser,
-    desc: "Trustchain API",
+    desc: "Trustchain API Staging",
+  },
+  TRUSTCHAIN_API_PROD: {
+    def: "https://trustchain.api.live.ledger.com",
+    parser: stringParser,
+    desc: "Trustchain API Prod",
   },
   PLATFORM_DEBUG: {
     def: false,
@@ -743,6 +823,11 @@ const envDefinitions = {
     parser: stringParser,
     desc: "bucket S3 of the dynamic cryptoassets list",
   },
+  CAL_SERVICE_URL: {
+    def: "https://crypto-assets-service.api.ledger.com",
+    parser: stringParser,
+    desc: "Cryptoassets list service url",
+  },
   FEATURE_FLAGS: {
     def: "{}",
     parser: jsonParser,
@@ -772,6 +857,11 @@ const envDefinitions = {
     def: 1.1,
     parser: floatParser,
     desc: "Replace transaction max priority fee factor for EIP1559 evm transaction. This value should be 1.1 minimum since this is the minimum increase required by most nodes",
+  },
+  EVM_FORCE_LEGACY_TRANSACTIONS: {
+    def: false,
+    parser: boolParser,
+    desc: "Force transaction type 0 on EVM networks",
   },
   ENABLE_NETWORK_LOGS: {
     def: false,

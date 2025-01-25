@@ -1,4 +1,4 @@
-import { SidecarRuntimeSpec, SidecarTransactionMaterial } from "./sidecar.types";
+import { SidecarRuntimeSpec, SidecarTransactionMaterial } from "./types";
 
 export const fixtureTransactionParams = {
   blockHash: "0x7346af1ba9531cffafd7b5cb30632ccf920f0770832b4215a49fe34519479c7a",

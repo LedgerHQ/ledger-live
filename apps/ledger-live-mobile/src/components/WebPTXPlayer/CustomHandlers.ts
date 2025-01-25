@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { useSelector } from "react-redux";
+import type { AccountLike } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
 import trackingWrapper from "@ledgerhq/live-common/wallet-api/Exchange/tracking";
@@ -8,7 +8,6 @@ import {
   ExchangeType,
 } from "@ledgerhq/live-common/wallet-api/Exchange/server";
 import { useNavigation } from "@react-navigation/native";
-import { flattenAccountsSelector } from "~/reducers/accounts";
 import { StackNavigatorNavigation } from "../RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
 import { track } from "~/analytics";
@@ -16,10 +15,9 @@ import { NavigatorName, ScreenName } from "~/const";
 import { currentRouteNameRef } from "~/analytics/screenRefs";
 import { WebviewProps } from "../Web3AppWebview/types";
 
-export function usePTXCustomHandlers(manifest: WebviewProps["manifest"]) {
+export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], accounts: AccountLike[]) {
   const navigation = useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
   const [device, setDevice] = useState<Device>();
-  const accounts = useSelector(flattenAccountsSelector);
 
   const tracking = useMemo(
     () =>
@@ -88,18 +86,30 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"]) {
                 onResult: result => {
                   if (result.error) {
                     onCancel(result.error);
+                    navigation.pop();
+                    navigation.navigate(NavigatorName.CustomError, {
+                      screen: ScreenName.CustomErrorScreen,
+                      params: {
+                        error: result.error,
+                      },
+                    });
                   }
                   if (result.operation) {
                     onSuccess(result.operation.id);
                   }
                   setDevice(undefined);
-                  navigation.pop();
+                  !result.error && navigation.pop();
                 },
               },
             });
           },
-          "custom.exchange.error": () => {
-            // todo add screen for LLM
+          "custom.exchange.error": ({ error }) => {
+            navigation.navigate(NavigatorName.CustomError, {
+              screen: ScreenName.CustomErrorScreen,
+              params: {
+                error,
+              },
+            });
           },
         },
       }),

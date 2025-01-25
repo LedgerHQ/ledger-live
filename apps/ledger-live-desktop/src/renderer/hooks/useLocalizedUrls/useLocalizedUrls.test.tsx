@@ -49,21 +49,15 @@ describe("useLocalizedUrl", () => {
     expect(localizedUrl).toEqual("https://www.ledger.com/zh-hans/staking");
   });
 
-  test("LEDGER_SUPPORT", () => {
+  test("LEDGER_SUPPORT_SALESFORCE", () => {
     setLocaleMockWithURL("fr", urls.troubleshootingUSB);
-    expect(localizedUrl).toEqual(
-      "https://support.ledger.com/hc/fr-fr/articles/115005165269?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=error",
-    );
+    expect(localizedUrl).toEqual("https://support.ledger.com/fr/article/115005165269-zd");
 
     setLocaleMockWithURL("en", urls.troubleshootingUSB);
-    expect(localizedUrl).toEqual(
-      "https://support.ledger.com/hc/en-us/articles/115005165269?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=error",
-    );
+    expect(localizedUrl).toEqual("https://support.ledger.com/article/115005165269-zd");
 
     setLocaleMockWithURL("zh", urls.troubleshootingUSB);
-    expect(localizedUrl).toEqual(
-      "https://support.ledger.com/hc/zh-cn/articles/115005165269?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=error",
-    );
+    expect(localizedUrl).toEqual("https://support.ledger.com/zh-cn/article/115005165269-zd");
   });
 
   test("SHOP", () => {

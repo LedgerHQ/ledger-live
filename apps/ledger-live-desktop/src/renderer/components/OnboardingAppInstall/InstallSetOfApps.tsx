@@ -20,7 +20,6 @@ type Props = {
   setHeaderLoader: (hasLoader: boolean) => void;
   onComplete: () => void;
   onCancel: () => void;
-  onLocked: () => void;
   onError: (error: Error) => void;
 };
 
@@ -30,7 +29,6 @@ const InstallSetOfApps = ({
   setHeaderLoader,
   onComplete,
   onCancel,
-  onLocked,
   onError,
 }: Props) => {
   const { t } = useTranslation();
@@ -57,16 +55,9 @@ const InstallSetOfApps = ({
     itemProgress,
     progress,
     opened,
-    isLocked,
     allowManagerGranted,
     isLoading,
   } = status;
-
-  useEffect(() => {
-    if (isLocked) {
-      onLocked();
-    }
-  }, [isLocked, onLocked]);
 
   useEffect(() => {
     if (error instanceof UserRefusedAllowManager) {
@@ -98,8 +89,8 @@ const InstallSetOfApps = ({
       />
       <Flex height="100%">
         <Flex flex={1} alignItems="flex-start" flexDirection="column">
-          <Flex style={{ width: "100%" }} flexDirection="row" justifyContent="space-between" mb={6}>
-            <Text data-test-id="installing-text">
+          <Flex flexDirection="row" justifyContent="space-between" mb={6}>
+            <Text flex={1} data-testid="installing-text">
               {t("onboardingAppInstall.progress.progress")}
             </Text>
           </Flex>

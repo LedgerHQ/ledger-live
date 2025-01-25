@@ -10,7 +10,6 @@ In Ledger Live, the Bitcoin family includes the following cryptocurrencies:
 - Horizen (ZEN)
 - Dash
 - Komodo
-- PIVX
 - Bitcoin Gold
 - Dogecoin (DOGE)
 - Qtum

@@ -140,6 +140,12 @@ export const developerFeatures: Feature[] = [
     title: i18nKeyDeveloper("staggingUrl", "title"),
     description: i18nKeyDeveloper("staggingUrl", "description"),
   },
+  {
+    type: "toggle",
+    name: "MOCK_APP_UPDATE",
+    title: i18nKeyDeveloper("mockAppUpdate", "title"),
+    description: i18nKeyDeveloper("mockAppUpdate", "description"),
+  },
 ];
 
 const storageKey = "experimentalFlags";

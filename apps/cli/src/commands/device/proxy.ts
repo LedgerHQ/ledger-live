@@ -4,17 +4,18 @@ import {
   createTransportRecorder,
   openTransportReplayer,
 } from "@ledgerhq/hw-transport-mocker";
+import Transport from "@ledgerhq/hw-transport";
 import { log, listen } from "@ledgerhq/logs";
 import { open } from "@ledgerhq/live-common/hw/index";
 import fs from "fs";
 import http from "http";
 import express from "express";
 import cors from "cors";
-import WebSocket from "ws";
+import WebSocket, { WebSocketServer } from "ws";
 import bodyParser from "body-parser";
 import os from "os";
 import { Observable } from "rxjs";
-import { deviceOpt } from "../../scan";
+import { DeviceCommonOpts, deviceOpt } from "../../scan";
 const args = [
   deviceOpt,
   {
@@ -54,7 +55,24 @@ const args = [
   },
 ];
 
-const job = ({ device, file, record, port, silent, verbose, "disable-auto-skip": noAutoSkip }) =>
+export type ProxyJobOpts = DeviceCommonOpts & {
+  file: string;
+  verbose: boolean;
+  silent: boolean;
+  "disable-auto-skip": boolean;
+  port: string;
+  record: boolean;
+};
+
+const job = ({
+  device,
+  file,
+  record,
+  port,
+  silent,
+  verbose,
+  "disable-auto-skip": noAutoSkip,
+}: Partial<ProxyJobOpts>) =>
   new Observable(o => {
     const unsub = listen(l => {
       if (verbose) {
@@ -63,11 +81,16 @@ const job = ({ device, file, record, port, silent, verbose, "disable-auto-skip":
         o.next(l.message);
       }
     });
-    let Transport;
-    let saveToFile = null;
-    let recordStore;
+    let Transport: TransportLike;
+    let saveToFile: string | null = null;
+    let recordStore!: RecordStore;
 
-    const getTransportLike = () => {
+    type TransportLike = {
+      open: () => Promise<Transport>;
+      create: () => Promise<Transport>;
+    };
+
+    const getTransportLike = (): TransportLike => {
       return {
         open: () => open(device || ""),
         create: () => open(device || ""),
@@ -126,16 +149,16 @@ const job = ({ device, file, record, port, silent, verbose, "disable-auto-skip":
     const PORT = port || "8435";
     const app = express();
     const server = http.createServer(app);
-    const wss = new WebSocket.Server({
+    const wss: WebSocketServer = new WebSocket.Server({
       server,
     });
     app.use(cors());
-    app.get("/", (req, res) => {
+    app.get("/", (req: any, res: any) => {
       res.sendStatus(200);
     });
 
     if (recordStore) {
-      app.post("/end", (req, res) => {
+      app.post("/end", (req: any, res: any) => {
         try {
           if (!saveToFile) {
             recordStore.ensureQueueEmpty();
@@ -152,9 +175,9 @@ const job = ({ device, file, record, port, silent, verbose, "disable-auto-skip":
     }
 
     let pending = false;
-    app.post("/", bodyParser.json(), async (req, res) => {
+    app.post("/", bodyParser.json(), async (req: any, res: any) => {
       if (!req.body) return res.sendStatus(400);
-      let data = null;
+      let data: Buffer | null = null;
       let error: Error | null = null;
 
       if (pending) {
@@ -208,12 +231,12 @@ const job = ({ device, file, record, port, silent, verbose, "disable-auto-skip":
     });
     let wsIndex = 0;
     let wsBusyIndex = 0;
-    wss.on("connection", ws => {
+    wss.on("connection", (ws: WebSocket) => {
       const index = ++wsIndex;
 
       try {
-        let transport;
-        let transportP;
+        let transport: Transport;
+        let transportP: Promise<Transport>;
         let destroyed = false;
 
         const onClose = async () => {
@@ -223,7 +246,7 @@ const job = ({ device, file, record, port, silent, verbose, "disable-auto-skip":
           if (wsBusyIndex === index) {
             log("proxy", `WS(${index}): close`);
             await transportP.then(
-              t => t.close(),
+              (t: Transport) => t.close(),
               () => {},
             );
             wsBusyIndex = 0;
@@ -239,7 +262,7 @@ const job = ({ device, file, record, port, silent, verbose, "disable-auto-skip":
         };
 
         ws.on("close", onClose);
-        ws.on("message", async (data, isBinary) => {
+        ws.on("message", async (data: any, isBinary: boolean) => {
           if (destroyed) return;
 
           const apduHex = isBinary ? data : data.toString();

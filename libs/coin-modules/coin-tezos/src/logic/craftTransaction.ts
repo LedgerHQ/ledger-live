@@ -2,6 +2,7 @@ import { OpKind, type OperationContents } from "@taquito/rpc";
 import { DEFAULT_FEE } from "@taquito/taquito";
 import { UnsupportedTransactionMode } from "../types/errors";
 import { getTezosToolkit } from "./tezosToolkit";
+import coinConfig from "../config";
 
 type TransactionFee = {
   fees?: string;
@@ -43,13 +44,14 @@ export async function craftTransaction(
 
   if (publicKey !== undefined) {
     const revealFees = await tezosToolkit.estimate.reveal();
-
+    const minRevealGasLimit = coinConfig.getCoinConfig().fees.minRevealGasLimit;
+    const revealGasLimit = Math.max(revealFees?.gasLimit || 0, minRevealGasLimit);
     contents.push({
       kind: OpKind.REVEAL,
       fee: DEFAULT_FEE.REVEAL.toString(),
       //TODO: use instead of previous line when this PR will be validated, as the value change (don't forget to update the test too)
       // fee: getRevealFee(address).toString(),
-      gas_limit: (revealFees?.gasLimit || 0).toString(),
+      gas_limit: revealGasLimit.toString(),
       storage_limit: (revealFees?.storageLimit || 0).toString(),
       source: publicKey.publicKeyHash,
       counter: (counter + 1 + contents.length).toString(),

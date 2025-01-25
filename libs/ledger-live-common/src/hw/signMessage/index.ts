@@ -3,14 +3,16 @@ import { log } from "@ledgerhq/logs";
 import invariant from "invariant";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { firstValueFrom, from, Observable } from "rxjs";
-import perFamily from "../../generated/hw-signMessage";
+import { AcreMessageType } from "@ledgerhq/wallet-api-acre-module";
 import { Account, AnyMessage } from "@ledgerhq/types-live";
+import perFamily from "../../generated/hw-signMessage";
 import type { AppRequest, AppState } from "../actions/app";
 import { createAction as createAppAction } from "../actions/app";
 import type { Device } from "../actions/types";
 import type { ConnectAppEvent, Input as ConnectAppInput } from "../connectApp";
 import { withDevice } from "../deviceAccess";
 import type { SignMessage, Result } from "./types";
+import { messageSigner as ACREMessageSigner } from "../../families/bitcoin/ACRESetup";
 
 export const prepareMessageToSign = (account: Account, message: string): AnyMessage => {
   const utf8Message = Buffer.from(message, "hex").toString();
@@ -32,19 +34,30 @@ export const prepareMessageToSign = (account: Account, message: string): AnyMess
 
 const signMessage: SignMessage = (transport, account, opts) => {
   const { currency } = account;
-  const signMessage = perFamily[currency.family].signMessage;
+  let signMessage = perFamily[currency.family].signMessage;
+  if ("type" in opts) {
+    switch (opts.type) {
+      case AcreMessageType.Withdraw:
+        signMessage = ACREMessageSigner.signWithdraw;
+        break;
+      case AcreMessageType.SignIn:
+        signMessage = ACREMessageSigner.signIn;
+        break;
+      default:
+        signMessage = ACREMessageSigner.signMessage;
+        break;
+    }
+  }
   invariant(signMessage, `signMessage is not implemented for ${currency.id}`);
   return signMessage(transport, account, opts)
     .then(result => {
-      log(
-        "hw",
-        `signMessage ${currency.id} on ${account.freshAddressPath} with message [${opts.message}]`,
-        result,
-      );
+      const path = "path" in opts && opts.path ? opts.path : account.freshAddressPath;
+      log("hw", `signMessage ${currency.id} on ${path} with message [${opts.message}]`, result);
       return result;
     })
     .catch(e => {
-      log("hw", `signMessage ${currency.id} on ${account.freshAddressPath} FAILED ${String(e)}`);
+      const path = "path" in opts && opts.path ? opts.path : account.freshAddressPath;
+      log("hw", `signMessage ${currency.id} on ${path} FAILED ${String(e)}`);
 
       if (e && e.name === "TransportStatusError") {
         if (e.statusCode === 0x6985 || e.statusCode === 0x5501) {
@@ -65,6 +78,7 @@ type BaseState = {
 export type State = AppState & BaseState;
 export type Request = AppRequest & {
   message: AnyMessage;
+  isACRE?: boolean;
 };
 
 export type Input = {
@@ -95,7 +109,9 @@ export const createAction = (
 ) => {
   const useHook = (reduxDevice: Device | null | undefined, request: Request): State => {
     const appState: AppState = createAppAction(connectAppExec).useHook(reduxDevice, {
-      account: request.account,
+      appName: request.appName,
+      dependencies: request.dependencies,
+      account: request.isACRE ? undefined : request.account, // Bypass derivation check with ACRE as we can use other addresses than the freshest
     });
     const { device, opened, inWrongDeviceForAccount, error } = appState;
     const [state, setState] = useState<BaseState>({

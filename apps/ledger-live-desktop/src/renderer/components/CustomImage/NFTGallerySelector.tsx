@@ -2,7 +2,7 @@ import React, { useMemo, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { Flex, Grid, InfiniteLoader, Text } from "@ledgerhq/react-ui";
 import { NFTMetadata } from "@ledgerhq/types-live";
-import { accountsSelector, orderedVisibleNftsSelector } from "../../reducers/accounts";
+import { accountsSelector, orderedVisibleNftsSelector } from "~/renderer/reducers/accounts";
 import NftGalleryEmptyState from "./NftGalleryEmptyState";
 import isEqual from "lodash/isEqual";
 import NFTItem from "./NFTItem";
@@ -11,6 +11,8 @@ import styled from "styled-components";
 import { useOnScreen } from "~/renderer/screens/nft/useOnScreen";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { isThresholdValid, useNftGalleryFilter } from "@ledgerhq/live-nft-react";
+import { getEnv } from "@ledgerhq/live-env";
+import { State } from "~/renderer/reducers";
 
 const ScrollContainer = styled(Flex).attrs({
   flexDirection: "column",
@@ -30,10 +32,15 @@ type Props = {
 };
 
 const NFTGallerySelector = ({ handlePickNft, selectedNftId }: Props) => {
+  const SUPPORTED_NFT_CURRENCIES = getEnv("NFT_CURRENCIES");
   const nftsFromSimplehashFeature = useFeature("nftsFromSimplehash");
   const threshold = nftsFromSimplehashFeature?.params?.threshold;
   const accounts = useSelector(accountsSelector);
-  const nftsOrdered = useSelector(orderedVisibleNftsSelector, isEqual);
+  const nftsOrdered = useSelector(
+    (state: State) =>
+      orderedVisibleNftsSelector(state, Boolean(nftsFromSimplehashFeature?.enabled)),
+    isEqual,
+  );
 
   const addresses = useMemo(
     () =>
@@ -52,12 +59,12 @@ const NFTGallerySelector = ({ handlePickNft, selectedNftId }: Props) => {
   } = useNftGalleryFilter({
     nftsOwned: nftsOrdered || [],
     addresses: addresses,
-    chains: ["ethereum", "polygon"],
+    chains: SUPPORTED_NFT_CURRENCIES,
     threshold: isThresholdValid(threshold) ? Number(threshold) : 75,
+    enabled: nftsFromSimplehashFeature?.enabled || false,
   });
 
   const nfts = nftsFromSimplehashFeature?.enabled ? nftsFiltered : nftsOrdered;
-
   const { t } = useTranslation();
 
   const [displayedCount, setDisplayedCount] = useState(10);

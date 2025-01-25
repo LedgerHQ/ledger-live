@@ -5,11 +5,13 @@ import type {
   AccountsDeleteAccountPayload,
   AccountsImportAccountsPayload,
   AccountsReorderPayload,
+  AccountsReplacePayload,
   AccountsUpdateAccountWithUpdaterPayload,
 } from "./types";
 import { AccountsActionTypes } from "./types";
 import logger from "../logger";
 import { initAccounts } from "@ledgerhq/live-wallet/store";
+import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 
 const version = 0; // FIXME this needs to come from user data
 
@@ -25,7 +27,9 @@ export const importStore = (rawAccounts: { active: { data: AccountRaw }[] }) => 
     }
   }
   const accounts = tuples.map(([account]) => account);
-  const accountsUserData = tuples.map(([, userData]) => userData);
+  const accountsUserData = tuples
+    .filter(([account, userData]) => userData.name !== getDefaultAccountName(account))
+    .map(([, userData]) => userData);
   return initAccounts(accounts, accountsUserData);
 };
 export const reorderAccounts = createAction<AccountsReorderPayload>(
@@ -51,4 +55,8 @@ export const updateAccount = (payload: Pick<Account, "id"> & Partial<Account>) =
 export const deleteAccount = createAction<AccountsDeleteAccountPayload>(
   AccountsActionTypes.DELETE_ACCOUNT,
 );
+export const replaceAccounts = createAction<AccountsReplacePayload>(
+  AccountsActionTypes.SET_ACCOUNTS,
+);
+
 export const cleanCache = createAction(AccountsActionTypes.CLEAN_CACHE);

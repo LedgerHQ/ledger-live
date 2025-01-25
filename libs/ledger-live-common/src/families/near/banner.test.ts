@@ -125,7 +125,6 @@ describe("near/banner", () => {
       staked: new BigNumber("1.29802125309300073830514e+23"),
       available: new BigNumber("1"),
       pending: new BigNumber("0"),
-      rewards: new BigNumber("1.462125309300073830515e+21"),
       validatorId: "vcap.poolv1.near",
     };
     jest.spyOn(preloadedData, "getCurrentNearPreloadData").mockReturnValue(validatorsMap);

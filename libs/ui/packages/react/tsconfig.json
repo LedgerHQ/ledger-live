@@ -2,6 +2,7 @@
   "extends": "../../../../tsconfig.base",
   "compilerOptions": {
     "composite": true,
+    "declarationMap": true,
     "jsx": "react",
     "lib": ["es2019", "dom"],
     "baseUrl": ".",

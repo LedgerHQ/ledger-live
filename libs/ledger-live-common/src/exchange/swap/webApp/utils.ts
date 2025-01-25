@@ -2,7 +2,7 @@ import { BigNumber } from "bignumber.js";
 import { AccountLike } from "@ledgerhq/types-live";
 
 export const getCustomFeesPerFamily = transaction => {
-  const { family, maxFeePerGas, maxPriorityFeePerGas, feePerByte, fees, utxoStrategy } =
+  const { family, maxFeePerGas, maxPriorityFeePerGas, feePerByte, fees, utxoStrategy, gasPrice } =
     transaction;
 
   switch (family) {
@@ -10,6 +10,7 @@ export const getCustomFeesPerFamily = transaction => {
       return {
         maxFeePerGas,
         maxPriorityFeePerGas,
+        gasPrice,
       };
     }
     case "bitcoin": {

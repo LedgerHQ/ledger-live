@@ -18,7 +18,6 @@ export type PolkadotConfig = {
   metadataHash: {
     url: string;
   };
-  runtimeUpgraded: boolean;
 };
 
 export type PolkadotCoinConfig = CurrencyConfig & PolkadotConfig;

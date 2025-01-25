@@ -20,10 +20,12 @@ describe("ESDT tokens sync functionality", () => {
       return Promise.resolve(localCache[c.id]);
     },
   });
+
   test("initial raw account contains no token accounts", async () => {
     await cache.prepareCurrency(account.currency);
     expect(elrond1.subAccounts?.length).toBeFalsy();
   });
+
   test("sync finds tokens", async () => {
     const bridge = getAccountBridge(account);
     const synced = await firstValueFrom(

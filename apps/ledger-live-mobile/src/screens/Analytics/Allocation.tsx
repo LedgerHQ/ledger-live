@@ -25,7 +25,7 @@ const AssetWrapperContainer = styled(Flex).attrs({
   alignItems: "center",
 })``;
 
-const size = normalize(150);
+const size = normalize(200);
 
 function Allocation() {
   const distribution = useDistribution({ showEmptyAccounts: true });

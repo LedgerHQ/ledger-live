@@ -163,6 +163,11 @@ const StepPrepare = ({
     // the firmware update payload to the device whereas now we are backing up the CLS too
     // but only for stax or europa.
     const deviceId = device?.deviceId ?? "";
+
+    // Back app data for installed apps before initiating the firmware update.
+    // TODO:
+
+    // This is the backup of the CLS for stax or flex devices.
     const maybeCLSBackup =
       deviceInfo.onboarded && isCustomLockScreenSupported(deviceModelId)
         ? customLockScreenFetch({
@@ -237,7 +242,7 @@ const StepPrepare = ({
   if (!firmware) return null;
 
   return (
-    <Container data-test-id="firmware-update-download-progress">
+    <Container data-testid="firmware-update-download-progress">
       <TrackPage category="Manager" name="InstallFirmware" />
       <Body
         deviceModelId={deviceModelId}

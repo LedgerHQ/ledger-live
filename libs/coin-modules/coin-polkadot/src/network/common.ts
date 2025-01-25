@@ -1,7 +1,7 @@
 import { expandMetadata, Metadata, TypeRegistry } from "@polkadot/types";
 import { getSpecTypes } from "@polkadot/types-known";
 import { Extrinsics } from "@polkadot/types/metadata/decorate/types";
-import { SidecarRuntimeSpec, SidecarTransactionMaterial } from "./sidecar.types";
+import { SidecarRuntimeSpec, SidecarTransactionMaterial } from "./types";
 
 export const createRegistryAndExtrinsics = (
   material: SidecarTransactionMaterial,

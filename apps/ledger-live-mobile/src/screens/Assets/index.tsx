@@ -65,8 +65,6 @@ function Assets() {
 
   const closeAddModal = useCallback(() => setAddModalOpened(false), [setAddModalOpened]);
 
-  const reopenAddModal = useCallback(() => setAddModalOpened(true), [setAddModalOpened]);
-
   const renderItem = useCallback(
     ({ item }: { item: Asset }) => (
       <AssetRow asset={item} navigation={navigation} sourceScreenName={ScreenName.Assets} />
@@ -118,11 +116,7 @@ function Assets() {
             />
           </Flex>
         </Flex>
-        <AddAccountDrawer
-          isOpened={isAddModalOpened}
-          onClose={closeAddModal}
-          reopenDrawer={reopenAddModal}
-        />
+        <AddAccountDrawer isOpened={isAddModalOpened} onClose={closeAddModal} />
       </SafeAreaView>
     </ReactNavigationPerformanceView>
   );

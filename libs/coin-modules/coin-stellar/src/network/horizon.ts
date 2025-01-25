@@ -1,43 +1,50 @@
+import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { LedgerAPI4xx, LedgerAPI5xx, NetworkDown } from "@ledgerhq/errors";
-import type { Account, Operation } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
+import type { CacheRes } from "@ledgerhq/live-network/cache";
+import { makeLRUCache } from "@ledgerhq/live-network/cache";
+import { log } from "@ledgerhq/logs";
+import type { Account } from "@ledgerhq/types-live";
 import {
   // @ts-expect-error stellar-sdk ts definition missing?
   AccountRecord,
-  NetworkError,
-  NotFoundError,
-  Horizon,
   BASE_FEE,
-  Asset,
-  Operation as StellarSdkOperation,
-  Account as StellarSdkAccount,
-  Transaction as StellarSdkTransaction,
-  TransactionBuilder,
+  Horizon,
+  MuxedAccount,
+  NetworkError,
   Networks,
+  NotFoundError,
+  Transaction as StellarSdkTransaction,
+  StrKey,
 } from "@stellar/stellar-sdk";
-import { log } from "@ledgerhq/logs";
-import { getEnv } from "@ledgerhq/live-env";
+import { BigNumber } from "bignumber.js";
+import coinConfig from "../config";
 import {
   type BalanceAsset,
   type NetworkInfo,
   type RawOperation,
   type Signer,
   NetworkCongestionLevel,
+  StellarOperation,
 } from "../types";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import {
   getAccountSpendableBalance,
   getReservedBalance,
   rawOperationsToOperations,
-} from "../logic";
-import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
+} from "./serialization";
 
-const LIMIT = getEnv("API_STELLAR_HORIZON_FETCH_LIMIT");
 const FALLBACK_BASE_FEE = 100;
 const TRESHOLD_LOW = 0.5;
 const TRESHOLD_MEDIUM = 0.75;
+const FETCH_LIMIT = 100;
 const currency = getCryptoCurrencyById("stellar");
-const server = new Horizon.Server(getEnv("API_STELLAR_HORIZON"));
+let server: Horizon.Server | undefined;
+const getServer = () => {
+  if (!server) {
+    server = new Horizon.Server(coinConfig.getCoinConfig().explorer.url);
+  }
+  return server;
+};
 
 // Constants
 export const BASE_RESERVE = 0.5;
@@ -48,7 +55,7 @@ export const MIN_BALANCE = 1;
 // and the version (0.26.1) used by `@ledgerhq/live-network/network`, it is not possible to use the interceptors
 // provided by `@ledgerhq/live-network/network`.
 Horizon.AxiosClient.interceptors.request.use(config => {
-  if (!getEnv("ENABLE_NETWORK_LOGS")) {
+  if (!coinConfig.getCoinConfig().enableNetworkLogs) {
     return config;
   }
 
@@ -57,8 +64,16 @@ Horizon.AxiosClient.interceptors.request.use(config => {
   return config;
 });
 
+// This function allows to fix the URL, because the url returned by the Stellar SDK is not the correct one.
+// It replaces the host of the URL returned with the host of the explorer.
+function useConfigHost(url: string): string {
+  const u = new URL(url);
+  u.host = new URL(coinConfig.getCoinConfig().explorer.url).host;
+  return u.toString();
+}
+
 Horizon.AxiosClient.interceptors.response.use(response => {
-  if (getEnv("ENABLE_NETWORK_LOGS")) {
+  if (coinConfig.getCoinConfig().enableNetworkLogs) {
     const { url, method } = response.config;
     log("network-success", `${response.status} ${method} ${url}`, { data: response.data });
   }
@@ -66,20 +81,20 @@ Horizon.AxiosClient.interceptors.response.use(response => {
   // FIXME: workaround for the Stellar SDK not using the correct URL: the "next" URL
   // included in server responses points to the node itself instead of our reverse proxy...
   // (https://github.com/stellar/js-stellar-sdk/issues/637)
+
   const next_href = response?.data?._links?.next?.href;
 
   if (next_href) {
-    const next = new URL(next_href);
-    next.host = new URL(getEnv("API_STELLAR_HORIZON")).host;
-    response.data._links.next.href = next.toString();
+    response.data._links.next.href = useConfigHost(next_href);
   }
+
+  response?.data?._embedded?.records?.forEach((r: any) => {
+    const href = r.transaction?._links?.ledger?.href;
+    if (href) r.transaction._links.ledger.href = useConfigHost(href);
+  });
 
   return response;
 });
-
-function getFormattedAmount(amount: BigNumber) {
-  return amount.div(new BigNumber(10).pow(currency.units[0].magnitude)).toString(10);
-}
 
 export async function fetchBaseFee(): Promise<{
   baseFee: number;
@@ -87,7 +102,7 @@ export async function fetchBaseFee(): Promise<{
   networkCongestionLevel: NetworkCongestionLevel;
 }> {
   // For tests
-  if (getEnv("API_STELLAR_HORIZON_STATIC_FEE")) {
+  if (coinConfig.getCoinConfig().useStaticFees) {
     return {
       baseFee: 100,
       recommendedFee: 100,
@@ -100,7 +115,7 @@ export async function fetchBaseFee(): Promise<{
   let networkCongestionLevel = NetworkCongestionLevel.MEDIUM;
 
   try {
-    const feeStats = await server.feeStats();
+    const feeStats = await getServer().feeStats();
     const ledgerCapacityUsage = feeStats.ledger_capacity_usage;
     recommendedFee = new BigNumber(feeStats.fee_charged.mode).toNumber();
 
@@ -142,7 +157,7 @@ export async function fetchAccount(addr: string): Promise<{
   let balance = "0";
 
   try {
-    account = await server.accounts().accountId(addr).call();
+    account = await getServer().accounts().accountId(addr).call();
     balance =
       account.balances?.find(balance => {
         return balance.asset_type === "native";
@@ -177,28 +192,28 @@ export async function fetchAccount(addr: string): Promise<{
  *
  * @return {Operation[]}
  */
-export async function fetchOperations({
+export async function fetchAllOperations({
   accountId,
   addr,
   order,
-  cursor,
+  cursor = "0",
 }: {
   accountId: string;
   addr: string;
   order: "asc" | "desc";
-  cursor: string;
-}): Promise<Operation[]> {
+  cursor: string | undefined;
+}): Promise<StellarOperation[]> {
   if (!addr) {
     return [];
   }
 
-  let operations: Operation[] = [];
+  let operations: StellarOperation[] = [];
 
   try {
-    let rawOperations = await server
+    let rawOperations = await getServer()
       .operations()
       .forAccount(addr)
-      .limit(LIMIT)
+      .limit(coinConfig.getCoinConfig().explorer.fetchLimit ?? FETCH_LIMIT)
       .order(order)
       .cursor(cursor)
       .includeFailed(true)
@@ -250,9 +265,73 @@ export async function fetchOperations({
   }
 }
 
+export async function fetchOperations({
+  accountId,
+  addr,
+  order,
+  cursor = "0",
+  limit,
+}: {
+  accountId: string;
+  addr: string;
+  order: "asc" | "desc";
+  cursor: string | undefined;
+  limit?: number | undefined;
+}): Promise<StellarOperation[]> {
+  if (!addr) {
+    return [];
+  }
+
+  const defaultFetchLimit = coinConfig.getCoinConfig().explorer.fetchLimit ?? FETCH_LIMIT;
+
+  try {
+    const rawOperations = await getServer()
+      .operations()
+      .forAccount(addr)
+      .limit(limit ?? defaultFetchLimit)
+      .order(order)
+      .cursor(cursor)
+      .includeFailed(true)
+      .join("transactions")
+      .call();
+
+    if (!rawOperations || !rawOperations.records.length) {
+      return [];
+    }
+
+    return rawOperationsToOperations(rawOperations.records as RawOperation[], addr, accountId);
+  } catch (e: unknown) {
+    // FIXME: terrible hacks, because Stellar SDK fails to cast network failures to typed errors in react-native...
+    // (https://github.com/stellar/js-stellar-sdk/issues/638)
+    const errorMsg = e ? String(e) : "";
+
+    if (e instanceof NotFoundError || errorMsg.match(/status code 404/)) {
+      return [];
+    }
+
+    if (errorMsg.match(/status code 4[0-9]{2}/)) {
+      throw new LedgerAPI4xx();
+    }
+
+    if (errorMsg.match(/status code 5[0-9]{2}/)) {
+      throw new LedgerAPI5xx();
+    }
+
+    if (
+      e instanceof NetworkError ||
+      errorMsg.match(/ECONNRESET|ECONNREFUSED|ENOTFOUND|EPIPE|ETIMEDOUT/) ||
+      errorMsg.match(/undefined is not an object/)
+    ) {
+      throw new NetworkDown();
+    }
+
+    throw e;
+  }
+}
+
 export async function fetchAccountNetworkInfo(account: Account): Promise<NetworkInfo> {
   try {
-    const extendedAccount = await server.accounts().accountId(account.freshAddress).call();
+    const extendedAccount = await getServer().accounts().accountId(account.freshAddress).call();
     const baseReserve = getReservedBalance(extendedAccount);
     const { recommendedFee, networkCongestionLevel, baseFee } = await fetchBaseFee();
 
@@ -280,7 +359,7 @@ export async function fetchSequence(account: Account): Promise<BigNumber> {
 
 export async function fetchSigners(account: Account): Promise<Signer[]> {
   try {
-    const extendedAccount = await server.accounts().accountId(account.freshAddress).call();
+    const extendedAccount = await getServer().accounts().accountId(account.freshAddress).call();
     return extendedAccount.signers;
   } catch (error) {
     return [];
@@ -289,54 +368,10 @@ export async function fetchSigners(account: Account): Promise<Signer[]> {
 
 export async function broadcastTransaction(signedTransaction: string): Promise<string> {
   const transaction = new StellarSdkTransaction(signedTransaction, Networks.PUBLIC);
-  const res = await server.submitTransaction(transaction, {
+  const res = await getServer().submitTransaction(transaction, {
     skipMemoRequiredCheck: true,
   });
   return res.hash;
-}
-
-export function buildPaymentOperation({
-  destination,
-  amount,
-  assetCode,
-  assetIssuer,
-}: {
-  destination: string;
-  amount: BigNumber;
-  assetCode: string | undefined;
-  assetIssuer: string | undefined;
-}) {
-  const formattedAmount = getFormattedAmount(amount);
-  // Non-native assets should always have asset code and asset issuer. If an
-  // asset doesn't have both, we assume it is native asset.
-  const asset = assetCode && assetIssuer ? new Asset(assetCode, assetIssuer) : Asset.native();
-  return StellarSdkOperation.payment({
-    destination: destination,
-    amount: formattedAmount,
-    asset,
-  });
-}
-
-export function buildCreateAccountOperation(destination: string, amount: BigNumber) {
-  const formattedAmount = getFormattedAmount(amount);
-  return StellarSdkOperation.createAccount({
-    destination: destination,
-    startingBalance: formattedAmount,
-  });
-}
-
-export function buildChangeTrustOperation(assetCode: string, assetIssuer: string) {
-  return StellarSdkOperation.changeTrust({
-    asset: new Asset(assetCode, assetIssuer),
-  });
-}
-
-export function buildTransactionBuilder(source: StellarSdkAccount, fee: BigNumber) {
-  const formattedFee = fee.toString();
-  return new TransactionBuilder(source, {
-    fee: formattedFee,
-    networkPassphrase: Networks.PUBLIC,
-  });
 }
 
 export async function loadAccount(addr: string): Promise<AccountRecord | null> {
@@ -345,8 +380,86 @@ export async function loadAccount(addr: string): Promise<AccountRecord | null> {
   }
 
   try {
-    return await server.loadAccount(addr);
+    return await getServer().loadAccount(addr);
   } catch (e) {
     return null;
+  }
+}
+
+export async function getLastBlock(): Promise<{
+  height: number;
+  hash: string;
+  time: Date;
+}> {
+  const ledger = await getServer().ledgers().order("desc").limit(1).call();
+  return {
+    height: ledger.records[0].sequence,
+    hash: ledger.records[0].hash,
+    time: new Date(ledger.records[0].closed_at),
+  };
+}
+
+export const getRecipientAccount: CacheRes<
+  Array<{
+    recipient: string;
+  }>,
+  {
+    id: string | null;
+    isMuxedAccount: boolean;
+    assetIds: string[];
+  } | null
+> = makeLRUCache(
+  async ({ recipient }) => await recipientAccount(recipient),
+  extract => extract.recipient,
+  {
+    max: 300,
+    ttl: 5 * 60,
+  }, // 5 minutes
+);
+
+async function recipientAccount(address?: string): Promise<{
+  id: string | null;
+  isMuxedAccount: boolean;
+  assetIds: string[];
+} | null> {
+  if (!address) {
+    return null;
+  }
+
+  let accountAddress = address;
+
+  const isMuxedAccount = StrKey.isValidMed25519PublicKey(address);
+
+  if (isMuxedAccount) {
+    const muxedAccount = MuxedAccount.fromAddress(address, "0");
+    accountAddress = muxedAccount.baseAccount().accountId();
+  }
+
+  const account: AccountRecord = await loadAccount(accountAddress);
+
+  if (!account) {
+    return null;
+  }
+
+  return {
+    id: account.id,
+    isMuxedAccount,
+    assetIds: account.balances.reduce((allAssets: any[], balance: any) => {
+      return [...allAssets, getBalanceId(balance)];
+    }, []),
+  };
+}
+
+function getBalanceId(balance: BalanceAsset): string | null {
+  switch (balance.asset_type) {
+    case "native":
+      return "native";
+    case "liquidity_pool_shares":
+      return balance.liquidity_pool_id || null;
+    case "credit_alphanum4":
+    case "credit_alphanum12":
+      return `${balance.asset_code}:${balance.asset_issuer}`;
+    default:
+      return null;
   }
 }

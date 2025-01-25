@@ -106,13 +106,13 @@ function Row({
   onAccountSelect: (account: AccountLike, parentAccount?: Account) => void;
 }) {
   const accountCurrency = getAccountCurrency(subAccount || account);
-  const accountName = useAccountName(subAccount || account);
+  const accountName = useAccountName(account);
   const unit = useAccountUnit(subAccount || account);
 
   return (
     <RowContainer
       id={`account-${accountCurrency.name}-${index}`}
-      data-test-id={`account-row-${accountCurrency.name.toLowerCase()}-${index}`}
+      data-testid={`account-row-${accountCurrency.name.toLowerCase()}-${index}`}
       onClick={() => {
         if (subAccount) {
           onAccountSelect(subAccount, account);
@@ -149,7 +149,7 @@ function Row({
         <Box horizontal alignItems="center" marginLeft="12px">
           <FormattedVal
             color="palette.text.shade50"
-            val={subAccount ? subAccount.balance : account.balance}
+            val={subAccount ? subAccount.spendableBalance : account.spendableBalance}
             unit={unit}
             showCode
           />

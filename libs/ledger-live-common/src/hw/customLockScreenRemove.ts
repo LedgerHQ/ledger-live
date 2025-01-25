@@ -5,9 +5,9 @@ import {
   UserRefusedOnDevice,
 } from "@ledgerhq/errors";
 import Transport from "@ledgerhq/hw-transport";
-import { Observable, from, of } from "rxjs";
+import { Observable, from, of, throwError } from "rxjs";
 import { withDevice } from "./deviceAccess";
-import { delay, mergeMap } from "rxjs/operators";
+import { catchError, delay, mergeMap } from "rxjs/operators";
 import getDeviceInfo from "./getDeviceInfo";
 import { ImageDoesNotExistOnDevice } from "../errors";
 
@@ -57,9 +57,9 @@ export const command = async (transport: Transport): Promise<void> => {
 };
 
 export default function removeImage({ deviceId }: Input): Observable<RemoveImageEvent> {
-  const sub = withDevice(deviceId)(
+  return withDevice(deviceId)(
     transport =>
-      new Observable(subscriber => {
+      new Observable<RemoveImageEvent>(subscriber => {
         const timeoutSub = of<RemoveImageEvent>({
           type: "unresponsiveDevice",
         })
@@ -73,9 +73,14 @@ export default function removeImage({ deviceId }: Input): Observable<RemoveImage
               subscriber.next({ type: "removeImagePermissionRequested" });
               await command(transport);
               subscriber.next({ type: "imageRemoved" });
+              subscriber.complete();
+            }),
+            catchError(e => {
+              subscriber.error(e);
+              return throwError(() => e);
             }),
           )
-          .subscribe(subscriber);
+          .subscribe();
 
         return () => {
           timeoutSub.unsubscribe();
@@ -83,6 +88,4 @@ export default function removeImage({ deviceId }: Input): Observable<RemoveImage
         };
       }),
   );
-
-  return sub as Observable<RemoveImageEvent>;
 }

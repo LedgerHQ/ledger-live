@@ -1,11 +1,12 @@
 import React, { useCallback } from "react";
 import { compose } from "redux";
-import { connect, useSelector } from "react-redux";
+import { connect } from "react-redux";
 import { withTranslation } from "react-i18next";
 import { TFunction } from "i18next";
 import { Redirect } from "react-router";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
+import { Text, Link } from "@ledgerhq/react-ui";
 import { isAddressPoisoningOperation } from "@ledgerhq/live-common/operation";
 import { getCurrencyColor } from "~/renderer/getCurrencyColor";
 import { accountSelector } from "~/renderer/reducers/accounts";
@@ -18,15 +19,14 @@ import {
   setCountervalueFirst,
   useFilterTokenOperationsZeroAmount,
 } from "~/renderer/actions/settings";
-import {
-  countervalueFirstSelector,
-  hiddenNftCollectionsSelector,
-} from "~/renderer/reducers/settings";
+import { countervalueFirstSelector } from "~/renderer/reducers/settings";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import OperationsList from "~/renderer/components/OperationsList";
 import useTheme from "~/renderer/hooks/useTheme";
 import Collections from "~/renderer/screens/nft/Collections";
+import NftCollections from "LLD/features/Collectibles/Nfts/Collections";
+import OrdinalsAccount from "LLD/features/Collectibles/Ordinals/screens/Account";
 import BalanceSummary from "./BalanceSummary";
 import AccountHeader from "./AccountHeader";
 import AccountHeaderActions, { AccountHeaderSettingsButton } from "./AccountHeaderActions";
@@ -41,6 +41,10 @@ import TopBanner from "~/renderer/components/TopBanner";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { urls } from "~/config/urls";
 import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { isBitcoinBasedAccount, isBitcoinAccount } from "@ledgerhq/live-common/account/typeGuards";
+import { useNftCollectionsStatus } from "~/renderer/hooks/nfts/useNftCollectionsStatus";
+import { openURL } from "~/renderer/linking";
 
 type Params = {
   id: string;
@@ -103,7 +107,13 @@ const AccountPage = ({
   const AccountSubHeader = specific?.AccountSubHeader;
   const bgColor = useTheme().colors.palette.background.paper;
   const [shouldFilterTokenOpsZeroAmount] = useFilterTokenOperationsZeroAmount();
-  const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
+  const { hiddenNftCollections } = useNftCollectionsStatus();
+
+  const nftReworked = useFeature("lldNftsGalleryNewArch");
+  const isNftReworkedEnabled = nftReworked?.enabled;
+
+  const ordinalsFF = useFeature("lldnewArchOrdinals");
+  const isOrdinalsEnabled = ordinalsFF?.enabled;
 
   const filterOperations = useCallback(
     (operation: Operation, account: AccountLike) => {
@@ -137,6 +147,14 @@ const AccountPage = ({
 
   const color = getCurrencyColor(currency, bgColor);
 
+  const displayOrdinals =
+    isOrdinalsEnabled && isBitcoinBasedAccount(account) && isBitcoinAccount(account);
+
+  const openFeatureUnvailableSupportLink = () => {
+    currencyConfig?.status.type === "feature_unavailable" &&
+      openURL(currencyConfig?.status.link || localizedContactSupportURL);
+  };
+
   return (
     <Box key={account.id}>
       <TrackPage
@@ -169,6 +187,28 @@ const AccountPage = ({
       >
         <AccountHeaderActions account={account} parentAccount={parentAccount} />
       </Box>
+      {currencyConfig?.status.type === "feature_unavailable" && (
+        <TopBanner
+          status="warning"
+          content={{
+            message: (
+              <Text fontFamily="Inter|Bold" color="neutral.c00" flex={1}>
+                {t("account.featureUnavailable.title", {
+                  feature: t(`account.featureUnavailable.feature.${currencyConfig.status.feature}`),
+                  support: "",
+                })}
+                <Link
+                  color="neutral.c00"
+                  alwaysUnderline
+                  onClick={openFeatureUnvailableSupportLink}
+                >
+                  {t("account.featureUnavailable.support")}
+                </Link>
+              </Text>
+            ),
+          }}
+        />
+      )}
       {currencyConfig?.status.type === "will_be_deprecated" && (
         <TopBanner
           status="warning"
@@ -204,8 +244,13 @@ const AccountPage = ({
             <AccountBodyHeader account={account} parentAccount={parentAccount} />
           ) : null}
           {account.type === "Account" && isNFTActive(account.currency) ? (
-            <Collections account={account} />
+            isNftReworkedEnabled ? (
+              <NftCollections account={account} />
+            ) : (
+              <Collections account={account} />
+            )
           ) : null}
+          {displayOrdinals ? <OrdinalsAccount account={account} /> : null}
           {account.type === "Account" ? <TokensList account={account} /> : null}
           <OperationsList
             account={account}

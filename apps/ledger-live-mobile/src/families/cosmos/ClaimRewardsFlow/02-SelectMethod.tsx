@@ -9,7 +9,7 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useTheme } from "@react-navigation/native";
-import cosmosBase from "@ledgerhq/live-common/families/cosmos/chain/cosmosBase";
+import cosmosBase from "@ledgerhq/coin-cosmos/chain/cosmosBase";
 import { accountScreenSelector } from "~/reducers/accounts";
 import Button from "~/components/Button";
 import LText from "~/components/LText";

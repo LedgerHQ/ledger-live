@@ -27,6 +27,20 @@ NativeModules.RNAnalytics = {};
 
 const mockAnalytics = jest.genMockFromModule("@segment/analytics-react-native");
 
+// Overriding the default RNGH mocks
+// to replace TouchableNativeFeedback with TouchableOpacity
+// as the former breaks tests trying to press buttons
+jest.mock("react-native-gesture-handler", () => {
+  const TouchableOpacity = require("react-native").TouchableOpacity;
+  return {
+    ...require("react-native-gesture-handler/lib/commonjs/mocks").default,
+    RawButton: TouchableOpacity,
+    BaseButton: TouchableOpacity,
+    RectButton: TouchableOpacity,
+    BorderlessButton: TouchableOpacity,
+  };
+});
+
 jest.mock("@segment/analytics-react-native", () => mockAnalytics);
 
 jest.mock("react-native-launch-arguments", () => ({}));
@@ -39,22 +53,18 @@ jest.mock("react-native-share", () => ({
   default: jest.fn(),
 }));
 
-jest.mock("expo-camera", () => {
+jest.mock("expo-camera/legacy", () => {
   return {
     Camera: MockedExpoCamera,
     CameraType: MockedCameraType,
   };
 });
 
-jest.mock("expo-barcode-scanner", () => ({
-  BarCodeScanner: {
-    Constants: {
-      BarCodeType: {
-        qr: "qr",
-      },
-    },
-  },
-}));
+jest.mock("expo-camera", () => {
+  return {
+    CameraView: jest.fn(() => null),
+  };
+});
 
 // Mock of Native Modules
 jest.mock("react-native-localize", () => ({
@@ -69,10 +79,9 @@ jest.mock("react-native-localize", () => ({
   findBestAvailableLanguage: jest.fn(),
 }));
 
-jest.mock("@react-native-async-storage/async-storage", () => ({
-  getItem: jest.fn(),
-  setItem: jest.fn(),
-}));
+jest.mock("@react-native-async-storage/async-storage", () =>
+  require("@react-native-async-storage/async-storage/jest/async-storage-mock"),
+);
 
 jest.mock("react-native-version-number", () => ({
   appVersion: "1.0.0",
@@ -98,6 +107,11 @@ jest.mock("react-native-reanimated", () => {
 // Silence the warning: Animated: `useNativeDriver` is not supported because the native animated module is missing
 jest.mock("react-native/Libraries/Animated/NativeAnimatedHelper");
 
+jest.mock("~/analytics", () => ({
+  ...jest.requireActual("~/analytics"),
+  track: jest.fn(),
+}));
+
 jest.mock("@react-native-firebase/messaging", () => ({
   messaging: jest.fn(() => ({
     hasPermission: jest.fn(() => Promise.resolve(true)),
@@ -116,6 +130,12 @@ jest.mock("@react-native-firebase/messaging", () => ({
 }));
 
 jest.mock("@braze/react-native-sdk", () => ({}));
+
+jest.mock("react-native-webview", () => jest.fn());
+
+jest.mock("react-native-device-info", () => ({
+  getDeviceNameSync: jest.fn(() => "Mocked Device"),
+}));
 
 const originalError = console.error;
 const originalWarn = console.warn;

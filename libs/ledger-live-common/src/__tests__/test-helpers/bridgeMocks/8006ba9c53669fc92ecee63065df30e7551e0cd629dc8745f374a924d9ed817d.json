@@ -1,0 +1,1 @@
+{"request":{"url":"https://rest.core.persistence.one/cosmos/distribution/v1beta1/delegators/persistence17r56udl09ssv88x85cxftx7su0rgv4v27ej3p0/rewards","method":"GET"},"response":{"body":{"rewards":[],"total":[]}}}

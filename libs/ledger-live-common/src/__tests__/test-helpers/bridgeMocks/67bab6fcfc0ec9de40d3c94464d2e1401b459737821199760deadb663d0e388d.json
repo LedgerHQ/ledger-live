@@ -1,0 +1,1 @@
+{"request":{"url":"https://cosmoshub4.coin.ledger.com/cosmos/bank/v1beta1/balances/osmo10h50supk4en682vrjkc6wkgkpcyxyqn4vxjy2c","method":"GET"},"response":{"body":{"code":3,"message":"invalid address: hrp does not match bech32 prefix: expected 'cosmos' got 'osmo': internal logic error","details":[]}}}

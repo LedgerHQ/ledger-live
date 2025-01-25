@@ -10,62 +10,76 @@ import ActionCard from "../ContentCards/ActionCard";
 import { Card } from "../Box";
 import styled from "styled-components";
 
+enum LedgerRecoverSubscriptionStateEnum {
+  BACKUP_DEVICE_CONNECTION = "BACKUP_DEVICE_CONNECTION",
+  BACKUP_DONE = "BACKUP_DONE",
+  BACKUP_VERIFY_IDENTITY = "BACKUP_VERIFY_IDENTITY",
+  NO_SUBSCRIPTION = "NO_SUBSCRIPTION",
+  STARGATE_SUBSCRIBE = "STARGATE_SUBSCRIBE",
+}
+
+const maxStepNumber = Object.keys(LedgerRecoverSubscriptionStateEnum).length;
+
 const Wrapper = styled(Card)`
   background-color: ${p => p.theme.colors.opacityPurple.c10};
-  margin: 20px 0px;
+  margin: 20px 0;
 `;
 
 /**
- * @prop children: if a child is passed, it will be rendered instead of the default banner. this allows to do a passthrough to have first the recover banner, then the rest of the content.
+ * @prop children: if a child is passed, it will be rendered instead of the default banner. this allows to do a passthroughs to have first the recover banner, then the rest of the content.
  */
 export default function RecoverBanner({ children }: { children?: React.ReactNode }) {
-  const [storageData, setStorageData] = useState<string>();
+  const [storageData, setStorageData] = useState<LedgerRecoverSubscriptionStateEnum>(
+    LedgerRecoverSubscriptionStateEnum.NO_SUBSCRIPTION,
+  );
   const [displayBannerData, setDisplayBannerData] = useState<boolean>();
   const [stepNumber, setStepNumber] = useState<number>(0);
 
-  const { t } = useTranslation();
-  const history = useHistory();
-
   const recoverServices = useFeature("protectServicesDesktop");
-
   const recoverBannerIsEnabled = recoverServices?.params?.bannerSubscriptionNotification;
   const protectID = recoverServices?.params?.protectId ?? "protect-prod";
-  const recoverUnfinishedOnboardingPath = useCustomPath(
-    recoverServices,
-    "activate",
-    "lld-banner-unfinished-onboarding",
-    "recover-launch",
-  );
-
-  const maxStepNumber = 5;
 
   const getStorageSubscriptionState = useCallback(async () => {
     const storage = await getStoreValue("SUBSCRIPTION_STATE", protectID);
     const displayBanner = await getStoreValue("DISPLAY_BANNER", protectID);
-    setStorageData(storage as string);
+    setStorageData(storage as LedgerRecoverSubscriptionStateEnum);
     setDisplayBannerData(displayBanner === "true");
   }, [protectID]);
+
+  useEffect(() => {
+    getStorageSubscriptionState();
+  }, [getStorageSubscriptionState]);
+
+  const { t } = useTranslation();
+  const history = useHistory();
+
+  const recoverResumeActivatePath = useCustomPath(
+    recoverServices,
+    "resumeActivate",
+    "lld-banner-unfinished-onboarding",
+    "recover-launch",
+  );
 
   const recoverBannerSelected: RecoverBannerType | undefined = useMemo(() => {
     let recoverBannerWording: RecoverBannerType;
 
     switch (storageData) {
-      case "NO_SUBSCRIPTION":
+      case LedgerRecoverSubscriptionStateEnum.NO_SUBSCRIPTION:
         setStepNumber(1);
         return undefined;
-      case "STARGATE_SUBSCRIBE":
+      case LedgerRecoverSubscriptionStateEnum.STARGATE_SUBSCRIBE:
         setStepNumber(2);
         recoverBannerWording = t("dashboard.recoverBanner.subscribeDone", { returnObjects: true });
         break;
-      case "BACKUP_VERIFY_IDENTITY":
+      case LedgerRecoverSubscriptionStateEnum.BACKUP_VERIFY_IDENTITY:
         setStepNumber(3);
         recoverBannerWording = t("dashboard.recoverBanner.verifyIdentity", { returnObjects: true });
         break;
-      case "BACKUP_DEVICE_CONNECTION":
+      case LedgerRecoverSubscriptionStateEnum.BACKUP_DEVICE_CONNECTION:
         setStepNumber(4);
         recoverBannerWording = t("dashboard.recoverBanner.connectDevice", { returnObjects: true });
         break;
-      case "BACKUP_DONE":
+      case LedgerRecoverSubscriptionStateEnum.BACKUP_DONE:
         setStepNumber(5);
         return undefined;
       default:
@@ -77,7 +91,9 @@ export default function RecoverBanner({ children }: { children?: React.ReactNode
   }, [storageData, t]);
 
   const onRedirectRecover = () => {
-    if (recoverUnfinishedOnboardingPath) history.push(recoverUnfinishedOnboardingPath);
+    if (recoverResumeActivatePath) {
+      history.push(recoverResumeActivatePath);
+    }
   };
 
   const onCloseBanner = () => {
@@ -85,12 +101,8 @@ export default function RecoverBanner({ children }: { children?: React.ReactNode
     setDisplayBannerData(false);
   };
 
-  useEffect(() => {
-    getStorageSubscriptionState();
-  }, [getStorageSubscriptionState]);
-
-  const passthrough = children || null;
-  if (!recoverBannerIsEnabled || !recoverBannerSelected || !displayBannerData) return passthrough;
+  const passthroughs = children || null;
+  if (!recoverBannerIsEnabled || !recoverBannerSelected || !displayBannerData) return passthroughs;
 
   return (
     <Wrapper>

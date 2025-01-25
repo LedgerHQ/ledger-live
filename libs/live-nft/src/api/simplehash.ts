@@ -1,6 +1,11 @@
-import network from "@ledgerhq/live-network/network";
-import { SimpleHashResponse, SimpleHashSpamReportResponse } from "./types";
+import network from "@ledgerhq/live-network";
+import {
+  SimpleHashRefreshResponse,
+  SimpleHashResponse,
+  SimpleHashSpamReportResponse,
+} from "./types";
 import { getEnv } from "@ledgerhq/live-env";
+import { mapChain, mapChains } from "..";
 
 /**
  *
@@ -33,7 +38,7 @@ type NftFetchOpts = {
   /**
    * wallet addresses to get NFTs from. separated by a ","
    */
-  addresses: string;
+  addresses?: string;
   /**
    * cursor used to paginate the API
    */
@@ -50,6 +55,14 @@ type NftFetchOpts = {
    * spam filtering threshold, defaults to a constant %
    */
   threshold?: number;
+  /**
+   * token id to look for
+   */
+  token_id?: string;
+  /**
+   * contract address to look for
+   */
+  contract_address?: string;
 };
 const defaultOpts = {
   limit: PAGE_SIZE,
@@ -64,10 +77,13 @@ const defaultOpts = {
  */
 export async function fetchNftsFromSimpleHash(opts: NftFetchOpts): Promise<SimpleHashResponse> {
   const { chains, addresses, limit, filters, cursor, threshold } = { ...defaultOpts, ...opts };
+
+  const chainsMapped = mapChains(chains);
+
   const enrichedFilters = buildFilters(filters, { threshold: String(threshold) });
   const { data } = await network<SimpleHashResponse>({
     method: "GET",
-    url: `${getEnv("SIMPLE_HASH_API_BASE")}/nfts/owners_v2?chains=${chains.join(
+    url: `${getEnv("SIMPLE_HASH_API_BASE")}/nfts/owners_v2?chains=${chainsMapped.join(
       ",",
     )}&wallet_addresses=${addresses}&limit=${limit}${filters ? enrichedFilters : ""}${
       cursor ? `&cursor=${cursor}` : ""
@@ -122,11 +138,81 @@ export async function reportSpamNtf(
     },
     data: JSON.stringify({
       contract_address: opts.contractAddress,
-      chain_id: opts.chainId,
+      chain_id: mapChain(opts.chainId),
       token_id: opts.tokenId,
       collection_id: opts.collectionId,
       event_type: opts.eventType,
     }),
+  });
+
+  return data;
+}
+
+/**
+ * @contractAddress: The contract address of the NFT to be refreshed.
+ * @chainId: The chain of the contract / NFT to be refreshed
+ * @collectionId: The SimpleHash collection ID of the NFT refreshed.
+ * @tokenId: The token id of the NFT to be refreshed.
+ */
+
+export type RefreshOpts = {
+  contractAddress?: string;
+  chainId?: string;
+  tokenId?: string;
+  refreshType: "contract" | "nft";
+};
+/**
+ * Refresh Metada of Contract or Nft using SimpleHash API.
+ */
+export async function refreshMetadata(opts: RefreshOpts): Promise<SimpleHashRefreshResponse> {
+  const url = `${getEnv("SIMPLE_HASH_API_BASE")}/nfts/refresh/${opts.chainId}/${opts.contractAddress}`;
+  const { data } = await network<SimpleHashRefreshResponse>({
+    method: "POST",
+    url,
+    headers: {
+      accept: "application/json",
+      "content-type": "application/json",
+    },
+  });
+
+  return data;
+}
+
+/**
+ * @contractAddress: The contract address of the NFT to be checked.
+ * @chainId: The chain of the contract / NFT to be checked
+ */
+
+export type CheckSpamScoreOpts = {
+  contractAddress: string;
+  chainId: string;
+};
+/**
+ * Refresh Metada of Contract or Nft using SimpleHash API.
+ */
+export async function getSpamScore(opts: CheckSpamScoreOpts): Promise<SimpleHashRefreshResponse> {
+  const url = `${getEnv("SIMPLE_HASH_API_BASE")}/nfts/${opts.chainId}/${opts.contractAddress}`;
+  const { data } = await network<SimpleHashRefreshResponse>({
+    method: "GET",
+    url,
+    headers: {
+      accept: "application/json",
+      "content-type": "application/json",
+    },
+  });
+
+  return data;
+}
+
+/**
+ * Fetch NFTs for a list of token id and a specific chain
+ * using SimpleHash API.
+ */
+export async function fetchNftsFromSimpleHashById(opts: NftFetchOpts): Promise<SimpleHashResponse> {
+  const { chains, contract_address, token_id } = { ...defaultOpts, ...opts };
+  const { data } = await network<SimpleHashResponse>({
+    method: "GET",
+    url: `${getEnv("SIMPLE_HASH_API_BASE")}/nfts/${chains[0]}/${contract_address}/${token_id}`,
   });
 
   return data;

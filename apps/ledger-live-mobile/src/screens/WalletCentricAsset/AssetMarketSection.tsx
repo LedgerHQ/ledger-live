@@ -5,7 +5,7 @@ import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import SectionContainer from "../WalletCentricSections/SectionContainer";
 import SectionTitle from "../WalletCentricSections/SectionTitle";
 import MarketPriceSection from "../WalletCentricSections/MarketPrice";
-import { useMarketCoinData } from "~/newArch/features/Market/hooks/useMarketCoinData";
+import { useMarketCoinData } from "LLM/features/Market/hooks/useMarketCoinData";
 
 // @FIXME workaround for main tokens
 const tokenIDToMarketID = {

@@ -114,7 +114,7 @@ export function HideRecoverySeed(props: { handleNextInDrawer: () => void }) {
         </HideRecoverySeedContainer>
       </ScrollArea>
       <Button
-        data-test-id="v3-hide-seed-drawer"
+        data-testid="v3-hide-seed-drawer"
         mt="auto"
         left="-258px"
         width="248px"

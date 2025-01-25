@@ -125,6 +125,7 @@ export function mockListAppsResult(
   installedDesc: string,
   deviceInfo: DeviceInfo,
   deviceModelId?: DeviceModelId,
+  deviceName?: string | null,
 ): ListAppsResult {
   const tickersByMarketCap = Object.keys(getBTCValues());
   const apps = appDesc
@@ -173,7 +174,7 @@ export function mockListAppsResult(
   });
   const installed = parseInstalled(installedDesc);
   return {
-    deviceName: "Mock device name",
+    deviceName: deviceName || "Mock device name",
     appByName,
     appsListNames: apps.map(a => a.name),
     deviceInfo,
@@ -192,7 +193,7 @@ export function mockListAppsResult(
 
 export const mockExecWithInstalledContext = (installedInitial: InstalledItem[]): Exec => {
   let installed = installedInitial.slice(0);
-  return (appOp: AppOp, targetId: string | number, app: App) => {
+  return ({ appOp, app }: { appOp: AppOp; targetId: string | number; app: App }) => {
     if (appOp.name !== app.name) {
       throw new Error("appOp.name must match app.name");
     }

@@ -39,6 +39,8 @@ import { ManageAction } from "~/renderer/families/types";
 import { getAvailableProviders } from "@ledgerhq/live-common/exchange/swap/index";
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { isWalletConnectSupported } from "@ledgerhq/live-common/walletConnect/index";
+import { WC_ID } from "@ledgerhq/live-common/wallet-api/constants";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 type RenderActionParams = {
   label: React.ReactNode;
@@ -137,7 +139,7 @@ const AccountHeaderSettingsButtonComponent = ({ account, parentAccount, openModa
       initialAccountId: mainAccount.id,
     };
     history.push({
-      pathname: "/platform/ledger-wallet-connect",
+      pathname: `/platform/${WC_ID}`,
       state: params,
     });
   }, [mainAccount.id, history]);
@@ -161,7 +163,7 @@ const AccountHeaderSettingsButtonComponent = ({ account, parentAccount, openModa
       {account.type === "Account" ? (
         <Tooltip content={t("account.settings.title")}>
           <ButtonSettings
-            data-test-id="account-settings-button"
+            data-testid="account-settings-button"
             onClick={() =>
               openModal("MODAL_SETTINGS_ACCOUNT", {
                 parentAccount,
@@ -188,6 +190,10 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
   const swapDefaultTrack = useGetSwapTrackingProperties();
   const specific = getLLDCoinFamily(mainAccount.currency.family);
 
+  const stakeProgramsFeatureFlag = useFeature("stakePrograms");
+  const listFlag = stakeProgramsFeatureFlag?.params?.list ?? [];
+  const stakeProgramsEnabled = stakeProgramsFeatureFlag?.enabled ?? false;
+
   const manage = specific?.accountHeaderManageActions;
   let manageList: ManageAction[] = [];
   if (manage) {
@@ -203,6 +209,7 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
 
   const availableOnBuy = !!currency && isCurrencyAvailable(currency.id, "onRamp");
   const availableOnSell = !!currency && isCurrencyAvailable(currency.id, "offRamp");
+  const availableOnStake = stakeProgramsEnabled && listFlag.includes(currency.id || "");
 
   // don't show buttons until we know whether or not we can show swap button, otherwise possible click jacking
   const showButtons = !!getAvailableProviders();
@@ -250,6 +257,8 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
         defaultCurrency: currency,
         defaultAccount: account,
         defaultParentAccount: parentAccount,
+        defaultAmountFrom: "0",
+        from: history.location.pathname,
       },
     });
   }, [currency, swapDefaultTrack, history, account, parentAccount, buttonSharedTrackingFields]);
@@ -276,8 +285,9 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
     });
   }, [openModal, parentAccount, account, buttonSharedTrackingFields]);
 
-  const manageActions: RenderActionParams[] = [
-    ...manageList.map(item => ({
+  const manageActions: RenderActionParams[] = manageList
+    .filter(item => (availableOnStake && item.key === "Stake") || item.key !== "Stake")
+    .map(item => ({
       ...item,
       contrastText,
       currency,
@@ -285,8 +295,7 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
         ...buttonSharedTrackingFields,
         ...item.eventProperties,
       },
-    })),
-  ];
+    }));
 
   const buyHeader = <BuyActionDefault onClick={() => onBuySell("buy")} />;
   const sellHeader = <SellActionDefault onClick={() => onBuySell("sell")} />;
@@ -296,7 +305,7 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
   ));
 
   const NonEmptyAccountHeader = (
-    <FadeInButtonsContainer data-test-id="account-buttons-group" show={showButtons}>
+    <FadeInButtonsContainer data-testid="account-buttons-group" show={showButtons}>
       {manageActions.length > 0 ? manageActionsHeader : null}
       {availableOnSwap ? swapHeader : null}
       {availableOnBuy ? buyHeader : null}

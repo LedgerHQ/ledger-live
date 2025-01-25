@@ -27,10 +27,10 @@ const PasswordModal = () => {
     async (password?: string | null) => {
       if (password) {
         dispatch(setHasPassword(true));
-        await setEncryptionKey("app", "accounts", password);
+        await setEncryptionKey(password);
       } else {
         dispatch(setHasPassword(false));
-        await removeEncryptionKey("app", "accounts");
+        await removeEncryptionKey();
       }
     },
     [dispatch],
@@ -54,7 +54,7 @@ const PasswordModal = () => {
         return;
       }
       if (hasPassword) {
-        if (!(await isEncryptionKeyCorrect("app", "accounts", currentPassword))) {
+        if (!(await isEncryptionKeyCorrect(currentPassword))) {
           setIncorrectPassword(new PasswordIncorrectError());
           return;
         }
@@ -129,7 +129,7 @@ const PasswordModal = () => {
         )}
         renderFooter={() => (
           <Box horizontal alignItems="center" justifyContent="flex-end" flow={2}>
-            <Button small type="button" onClick={onClose} data-test-id="modal-cancel-button">
+            <Button small type="button" onClick={onClose} data-testid="modal-cancel-button">
               {t("common.cancel")}
             </Button>
             <Button
@@ -137,7 +137,7 @@ const PasswordModal = () => {
               primary
               onClick={handleSave}
               disabled={!isValid() || !newPassword.length || !confirmPassword.length}
-              data-test-id="modal-save-button"
+              data-testid="modal-save-button"
             >
               {t("common.save")}
             </Button>

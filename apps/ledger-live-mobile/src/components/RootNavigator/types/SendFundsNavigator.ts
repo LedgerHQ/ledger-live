@@ -4,6 +4,7 @@ import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { Operation } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import type { Transaction as EvmTransaction, GasOptions } from "@ledgerhq/coin-evm/types/index";
+import type { TransactionBroadcastError } from "@ledgerhq/live-common/errors/transactionBroadcastErrors";
 import type {
   CardanoAccount,
   Transaction as CardanoTransaction,
@@ -21,10 +22,6 @@ import {
   CosmosAccount,
   Transaction as CosmosTransaction,
 } from "@ledgerhq/live-common/families/cosmos/types";
-import {
-  CryptoOrgAccount,
-  Transaction as CryptoOrgTransaction,
-} from "@ledgerhq/live-common/families/crypto_org/types";
 import { Transaction as HederaTransaction } from "@ledgerhq/live-common/families/hedera/types";
 import {
   SolanaAccount,
@@ -35,6 +32,7 @@ import type { Transaction as ICPTransaction } from "@ledgerhq/live-common/famili
 import type { Transaction as StellarTransaction } from "@ledgerhq/live-common/families/stellar/types";
 import type { Transaction as StacksTransaction } from "@ledgerhq/live-common/families/stacks/types";
 import type { Transaction as CasperTransaction } from "@ledgerhq/live-common/families/casper/types";
+import type { Transaction as TonTransaction } from "@ledgerhq/live-common/families/ton/types";
 import BigNumber from "bignumber.js";
 import { Result } from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { ScreenName } from "~/const";
@@ -113,6 +111,14 @@ export type SendFundsNavigatorStackParamList = {
     transaction: Transaction;
     result: Operation;
   };
+  [ScreenName.SendBroadcastError]:
+    | undefined
+    | {
+        error: TransactionBroadcastError;
+        account?: AccountLike;
+        accountId?: string;
+        parentId?: string;
+      };
   [ScreenName.SendValidationError]:
     | undefined
     | {
@@ -238,20 +244,6 @@ export type SendFundsNavigatorStackParamList = {
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
   };
-  [ScreenName.CryptoOrgEditMemo]: {
-    accountId: string;
-    parentId?: string;
-    account: CryptoOrgAccount;
-    transaction: CryptoOrgTransaction;
-    currentNavigation:
-      | ScreenName.SignTransactionSummary
-      | ScreenName.SendSummary
-      | ScreenName.SwapForm;
-    nextNavigation:
-      | ScreenName.SignTransactionSelectDevice
-      | ScreenName.SendSelectDevice
-      | ScreenName.SwapForm;
-  };
   [ScreenName.HederaEditMemo]: {
     accountId: string;
     parentId?: string;
@@ -335,6 +327,20 @@ export type SendFundsNavigatorStackParamList = {
     account: Account;
     parentId?: string;
     transaction: CasperTransaction;
+    currentNavigation:
+      | ScreenName.SignTransactionSummary
+      | ScreenName.SendSummary
+      | ScreenName.SwapForm;
+    nextNavigation:
+      | ScreenName.SignTransactionSelectDevice
+      | ScreenName.SendSelectDevice
+      | ScreenName.SwapForm;
+  };
+  [ScreenName.TonEditComment]: {
+    accountId: string;
+    account: Account;
+    parentId?: string;
+    transaction: TonTransaction;
     currentNavigation:
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary

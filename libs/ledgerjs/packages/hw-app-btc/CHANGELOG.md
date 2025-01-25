@@ -1,5 +1,93 @@
 # @ledgerhq/hw-app-btc
 
+## 10.5.0
+
+### Minor Changes
+
+- [#8548](https://github.com/LedgerHQ/ledger-live/pull/8548) [`1a388b9`](https://github.com/LedgerHQ/ledger-live/commit/1a388b946ce309c0a0e6e0c50b28af4e3c3a2cdb) Thanks [@qperrot](https://github.com/qperrot)! - Update Zcash consensus ID to NU6
+
+## 10.5.0-next.0
+
+### Minor Changes
+
+- [#8548](https://github.com/LedgerHQ/ledger-live/pull/8548) [`1a388b9`](https://github.com/LedgerHQ/ledger-live/commit/1a388b946ce309c0a0e6e0c50b28af4e3c3a2cdb) Thanks [@qperrot](https://github.com/qperrot)! - Update Zcash consensus ID to NU6
+
+## 10.4.3
+
+### Patch Changes
+
+- [#7883](https://github.com/LedgerHQ/ledger-live/pull/7883) [`f805d14`](https://github.com/LedgerHQ/ledger-live/commit/f805d1470f927824233f94eaba065b00d7af18cf) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update Axios to 1.7.7 following CVE: https://github.com/advisories/GHSA-8hc4-vh64-cxmj
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.4
+
+## 10.4.3-next.1
+
+### Patch Changes
+
+- [#7883](https://github.com/LedgerHQ/ledger-live/pull/7883) [`f805d14`](https://github.com/LedgerHQ/ledger-live/commit/f805d1470f927824233f94eaba065b00d7af18cf) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update Axios to 1.7.7 following CVE: https://github.com/advisories/GHSA-8hc4-vh64-cxmj
+
+## 10.4.3-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.4-next.0
+
+## 10.4.2
+
+### Patch Changes
+
+- [#7593](https://github.com/LedgerHQ/ledger-live/pull/7593) [`187293c`](https://github.com/LedgerHQ/ledger-live/commit/187293c6cf6093f15f07d5effc1ded0843a9e6ab) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update `axios` to fixed version `1.7.3`
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.3
+
+## 10.4.2-next.0
+
+### Patch Changes
+
+- [#7593](https://github.com/LedgerHQ/ledger-live/pull/7593) [`187293c`](https://github.com/LedgerHQ/ledger-live/commit/187293c6cf6093f15f07d5effc1ded0843a9e6ab) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update `axios` to fixed version `1.7.3`
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.3-next.0
+
+## 10.4.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.2
+
+## 10.4.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.2-hotfix.0
+
+## 10.4.0
+
+### Minor Changes
+
+- [#7138](https://github.com/LedgerHQ/ledger-live/pull/7138) [`ef2d53d`](https://github.com/LedgerHQ/ledger-live/commit/ef2d53d514f1f4e6f18fc79fa3423bd9b0208a04) Thanks [@lvndry](https://github.com/lvndry)! - removes via, vtc and ppc support
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.1
+
+## 10.4.0-next.0
+
+### Minor Changes
+
+- [#7138](https://github.com/LedgerHQ/ledger-live/pull/7138) [`ef2d53d`](https://github.com/LedgerHQ/ledger-live/commit/ef2d53d514f1f4e6f18fc79fa3423bd9b0208a04) Thanks [@lvndry](https://github.com/lvndry)! - removes via, vtc and ppc support
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.1-next.0
+
 ## 10.3.0
 
 ### Minor Changes

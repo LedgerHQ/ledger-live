@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-transport-webhid",
-  "version": "6.29.0",
+  "version": "6.30.0",
   "description": "Ledger Hardware Wallet WebHID implementation of the communication layer",
   "keywords": [
     "Ledger",
@@ -26,7 +26,7 @@
   "types": "lib/TransportWebHID.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
-    "@ledgerhq/devices": "workspace:^",
+    "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/logs": "workspace:^"
@@ -48,6 +48,7 @@
     "build": "tsc && tsc -m ES6 --outDir lib-es",
     "prewatch": "pnpm build",
     "watch": "tsc --watch",
+    "watch:es": "tsc --watch -m ES6 --outDir lib-es",
     "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",

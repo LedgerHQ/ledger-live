@@ -275,12 +275,12 @@ const ValidatorRow = ({
       disabled={!value && disabled}
       active={!!value}
       onClick={onRowClick}
-      data-test-id="modal-provider-row"
+      data-testid="modal-provider-row"
     >
       {icon}
       <InfoContainer>
         <Title onClick={onTitleClick}>
-          <Text data-test-id="modal-provider-title">{title}</Text>
+          <Text data-testid="modal-provider-title">{title}</Text>
           <IconContainer>
             <ExternalLink size={16} />
           </IconContainer>

@@ -1,3 +1,92 @@
+# 2.96.0
+
+This release includes small security improvements, UI tweaks, and minor bug fixes.
+
+# 2.94.0
+
+This release includes small security improvements, UI tweaks, and minor bug fixes.
+
+# 2.92.1
+
+We've upgraded the sell feature to provide a more seamless and flexible experience. Users can now select their preferred payment method and easily compare quotes from different providers, ensuring they get the best deal possible.
+
+# 2.92.0
+
+### 🌷 Improvements
+
+You can now buy Ton, CSPR, and ICP directly from the app.
+
+We've added a filter to keep spam NFTs out of your transaction history.
+
+NFT support for BNB and AVAX is now available.
+
+We've improved the Send and Receive flow for assets that support Memo tags, making it smoother and more intuitive.
+
+# 2.91.1
+
+This release includes minor bug fixes.
+
+# 2.91.0
+
+Ledger Sync is now available on desktop! Easily sync your Ledger Live accounts across devices for seamless access. To enable Ledger Sync, go to Settings  > General tab > Ledger Sync, then click Manage. Ensure you have the latest Ledger Live and OS versions to get started, with full data encryption for security.
+To Learn more about Ledger Sync, see our article [here](https://support.ledger.com/article/How-to-synchronize-your-Ledger-Live-accounts-with-Ledger-Sync).
+
+# 2.89.1
+
+This release includes minor bug fixes.
+
+# 2.89.0
+
+This release includes small security improvements, UI tweaks, and minor bug fixes.
+
+# 2.87.1
+
+This release includes small security improvements, UI tweaks, and minor bug fixes.
+
+# 2.87.0
+
+This release includes minor bug fixes.
+
+# 2.86.0
+
+### 🚀 Features
+
+You can now swap cross-chain with Exodus as a new provider.
+
+We’ve added support for TON tokens.
+
+FIL tokens are now also supported but limited to f0, f4 & 0x addresses.
+
+### 🌷 Improvements
+
+We’ve made it easier to reach your favorite provider quickly using the Buy flow.
+
+MATIC has been renamed to POL across the platform.
+
+# 2.85.1
+
+Some Windows users reported issues with device interactions. This has been fixed.
+
+# 2.85.0
+
+This release includes minor bug fixes and security improvements.
+
+# 2.84.1
+
+### 🐛 Fix
+
+Some users reported issues when trying to top up their CL Card. This has been fixed.
+
+# 2.84.0
+
+### 🗑 Removed features
+
+Viacoin (VIA), Peercoin (PPC), and Vertcoin (VTC) are no longer supported.
+
+### 🐛 Fix
+
+We fixed a bug that caused an error when trying to send or stake Injective (INJ).
+
 # 2.83.0
 
 ### 🚀 Features

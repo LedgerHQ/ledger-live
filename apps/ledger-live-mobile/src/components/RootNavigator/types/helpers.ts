@@ -12,6 +12,7 @@ import {
 import { StackNavigationProp, StackScreenProps } from "@react-navigation/stack";
 import { BaseNavigatorStackParamList } from "./BaseNavigator";
 import { RootStackParamList } from "./RootNavigator";
+import { MainNavigatorParamList } from "./MainNavigator";
 
 export type RootNavigation = StackNavigationProp<RootStackParamList>;
 export type BaseNavigation = CompositeNavigationProp<
@@ -58,6 +59,32 @@ export type MaterialTopTabNavigatorRoute<
   ParamList extends ParamListBase,
   RouteName = never,
 > = MaterialTopTabNavigatorProps<ParamList, RouteName>["route"];
+
+export type MainComposite<
+  A extends {
+    navigation: NavigationProp<
+      ParamListBase,
+      string,
+      string | undefined,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      any,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      any,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      any
+    >;
+    route: RouteProp<ParamListBase>;
+  },
+> = CompositeScreenProps<
+  A,
+  CompositeScreenProps<
+    StackScreenProps<MainNavigatorParamList>,
+    CompositeScreenProps<
+      StackScreenProps<BaseNavigatorStackParamList>,
+      StackScreenProps<RootStackParamList>
+    >
+  >
+>;
 
 export type BaseComposite<
   A extends {

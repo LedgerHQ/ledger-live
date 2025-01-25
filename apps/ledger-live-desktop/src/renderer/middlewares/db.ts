@@ -7,12 +7,15 @@ import { actionTypePrefix as postOnboardingActionTypePrefix } from "@ledgerhq/li
 import { settingsExportSelector, areSettingsLoaded } from "./../reducers/settings";
 import { State } from "../reducers";
 import { Account, AccountUserData } from "@ledgerhq/types-live";
-import { accountUserDataExportSelector } from "@ledgerhq/live-wallet/store";
-
+import {
+  accountUserDataExportSelector,
+  walletStateExportShouldDiffer,
+  exportWalletState,
+} from "@ledgerhq/live-wallet/store";
 import {
   trustchainStoreActionTypePrefix,
   trustchainStoreSelector,
-} from "@ledgerhq/trustchain/store";
+} from "@ledgerhq/ledger-key-ring-protocol/store";
 
 import { marketStoreSelector } from "../reducers/market";
 
@@ -52,7 +55,7 @@ const DBMiddleware: Middleware<{}, State> = store => next => action => {
   } else if (DB_MIDDLEWARE_ENABLED && action.type.startsWith(trustchainStoreActionTypePrefix)) {
     next(action);
     const state = store.getState();
-    setKey("app", "trustchainStore", trustchainStoreSelector(state));
+    setKey("app", "trustchain", trustchainStoreSelector(state));
   } else if (DB_MIDDLEWARE_ENABLED && action.type.startsWith("MARKET")) {
     next(action);
     const state = store.getState();
@@ -66,6 +69,10 @@ const DBMiddleware: Middleware<{}, State> = store => next => action => {
       if (areSettingsLoaded(newState) && oldState.settings !== newState.settings) {
         setKey("app", "settings", settingsExportSelector(newState));
       }
+    }
+
+    if (walletStateExportShouldDiffer(oldState.wallet, newState.wallet)) {
+      setKey("app", "wallet", exportWalletState(newState.wallet));
     }
     return res;
   }

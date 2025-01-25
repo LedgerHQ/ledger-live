@@ -1,5 +1,400 @@
 # @ledgerhq/live-nft-react
 
+## 0.5.2
+
+### Patch Changes
+
+- Updated dependencies [[`5e01938`](https://github.com/LedgerHQ/ledger-live/commit/5e01938ece3dc1ccf7bea6c2805b6558c846db80), [`d98a964`](https://github.com/LedgerHQ/ledger-live/commit/d98a96476c3d44eab1575f6c7c58ec03b5daf890), [`c2d24cd`](https://github.com/LedgerHQ/ledger-live/commit/c2d24cd0299ea04e39306279b6f833696bc4f4fb)]:
+  - @ledgerhq/coin-framework@0.22.0
+  - @ledgerhq/types-cryptoassets@7.19.0
+  - @ledgerhq/cryptoassets@13.9.0
+  - @ledgerhq/types-live@6.57.0
+  - @ledgerhq/live-nft@0.5.2
+
+## 0.5.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`5e01938`](https://github.com/LedgerHQ/ledger-live/commit/5e01938ece3dc1ccf7bea6c2805b6558c846db80), [`d98a964`](https://github.com/LedgerHQ/ledger-live/commit/d98a96476c3d44eab1575f6c7c58ec03b5daf890), [`c2d24cd`](https://github.com/LedgerHQ/ledger-live/commit/c2d24cd0299ea04e39306279b6f833696bc4f4fb)]:
+  - @ledgerhq/coin-framework@0.22.0-next.0
+  - @ledgerhq/types-cryptoassets@7.19.0-next.0
+  - @ledgerhq/cryptoassets@13.9.0-next.0
+  - @ledgerhq/types-live@6.57.0-next.0
+  - @ledgerhq/live-nft@0.5.2-next.0
+
+## 0.5.1
+
+### Patch Changes
+
+- Updated dependencies [[`9820a8f`](https://github.com/LedgerHQ/ledger-live/commit/9820a8f8ec66cf114b23c3c3b92474d250b8bf01), [`50b00c7`](https://github.com/LedgerHQ/ledger-live/commit/50b00c73e39af99c7d749bf57d5ef2f2e4942f2d), [`6cd5ecd`](https://github.com/LedgerHQ/ledger-live/commit/6cd5ecdedaed090d47a4df18db3c36f990de60e5), [`6d050fd`](https://github.com/LedgerHQ/ledger-live/commit/6d050fda707a63cff15cee797ea1167a0219aa32), [`1fa754d`](https://github.com/LedgerHQ/ledger-live/commit/1fa754deed730bb3dd8d05cb4e83e8c8d1b33ad1), [`be4233c`](https://github.com/LedgerHQ/ledger-live/commit/be4233ce713b90dc3ad335c330ca9d6509bf23e3), [`2ae713b`](https://github.com/LedgerHQ/ledger-live/commit/2ae713b20c1da18ef33beb730f41fb3ea2990e44), [`1f62290`](https://github.com/LedgerHQ/ledger-live/commit/1f622907dd108fced66a36be1d8d8738d41303c9), [`fe81150`](https://github.com/LedgerHQ/ledger-live/commit/fe811500ae626cab1995ccf8bd8cb8aa8e74bb40), [`9d8e34e`](https://github.com/LedgerHQ/ledger-live/commit/9d8e34eee5d77c6620298def250e85eda6b606b7)]:
+  - @ledgerhq/types-live@6.56.0
+  - @ledgerhq/coin-framework@0.21.0
+  - @ledgerhq/cryptoassets@13.8.0
+  - @ledgerhq/types-cryptoassets@7.18.0
+  - @ledgerhq/live-nft@0.5.1
+
+## 0.5.1-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`6d050fd`](https://github.com/LedgerHQ/ledger-live/commit/6d050fda707a63cff15cee797ea1167a0219aa32)]:
+  - @ledgerhq/types-live@6.56.0-next.1
+  - @ledgerhq/coin-framework@0.21.0-next.1
+  - @ledgerhq/live-nft@0.5.1-next.1
+
+## 0.5.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`9820a8f`](https://github.com/LedgerHQ/ledger-live/commit/9820a8f8ec66cf114b23c3c3b92474d250b8bf01), [`50b00c7`](https://github.com/LedgerHQ/ledger-live/commit/50b00c73e39af99c7d749bf57d5ef2f2e4942f2d), [`6cd5ecd`](https://github.com/LedgerHQ/ledger-live/commit/6cd5ecdedaed090d47a4df18db3c36f990de60e5), [`1fa754d`](https://github.com/LedgerHQ/ledger-live/commit/1fa754deed730bb3dd8d05cb4e83e8c8d1b33ad1), [`be4233c`](https://github.com/LedgerHQ/ledger-live/commit/be4233ce713b90dc3ad335c330ca9d6509bf23e3), [`2ae713b`](https://github.com/LedgerHQ/ledger-live/commit/2ae713b20c1da18ef33beb730f41fb3ea2990e44), [`1f62290`](https://github.com/LedgerHQ/ledger-live/commit/1f622907dd108fced66a36be1d8d8738d41303c9), [`fe81150`](https://github.com/LedgerHQ/ledger-live/commit/fe811500ae626cab1995ccf8bd8cb8aa8e74bb40), [`9d8e34e`](https://github.com/LedgerHQ/ledger-live/commit/9d8e34eee5d77c6620298def250e85eda6b606b7)]:
+  - @ledgerhq/types-live@6.56.0-next.0
+  - @ledgerhq/coin-framework@0.21.0-next.0
+  - @ledgerhq/cryptoassets@13.8.0-next.0
+  - @ledgerhq/types-cryptoassets@7.18.0-next.0
+  - @ledgerhq/live-nft@0.5.1-next.0
+
+## 0.5.0
+
+### Minor Changes
+
+- [#8495](https://github.com/LedgerHQ/ledger-live/pull/8495) [`f0a34a0`](https://github.com/LedgerHQ/ledger-live/commit/f0a34a06461331ec44fa02b8093699fa001f94a0) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Rework Hiddencollections
+
+- [#8457](https://github.com/LedgerHQ/ledger-live/pull/8457) [`d45e871`](https://github.com/LedgerHQ/ledger-live/commit/d45e871ee6b7e98102a4ffbdf3d7581c8cf838d0) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Rework Hiddencollections
+
+- [#8404](https://github.com/LedgerHQ/ledger-live/pull/8404) [`2901938`](https://github.com/LedgerHQ/ledger-live/commit/29019387955bbab5bc0adcd550bc9e32d08b4f72) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix undefined join on Spam filter
+
+- [#8601](https://github.com/LedgerHQ/ledger-live/pull/8601) [`61aedb7`](https://github.com/LedgerHQ/ledger-live/commit/61aedb7bbd45e73d6bc2b53e55f562262d5c5fa7) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Revery useNFTCOllections
+
+### Patch Changes
+
+- Updated dependencies [[`f0a34a0`](https://github.com/LedgerHQ/ledger-live/commit/f0a34a06461331ec44fa02b8093699fa001f94a0), [`40f1cd4`](https://github.com/LedgerHQ/ledger-live/commit/40f1cd4c22d17480dcf86c73e90a07866667b0ba), [`c45ee45`](https://github.com/LedgerHQ/ledger-live/commit/c45ee457a9f5500ae42f2a8fb7f0cfb7926f319b), [`d45e871`](https://github.com/LedgerHQ/ledger-live/commit/d45e871ee6b7e98102a4ffbdf3d7581c8cf838d0), [`322fd58`](https://github.com/LedgerHQ/ledger-live/commit/322fd58ffcde6d592eb27af1fd93f8c45d33205c), [`61aedb7`](https://github.com/LedgerHQ/ledger-live/commit/61aedb7bbd45e73d6bc2b53e55f562262d5c5fa7)]:
+  - @ledgerhq/live-nft@0.5.0
+  - @ledgerhq/types-live@6.55.0
+  - @ledgerhq/coin-framework@0.20.1
+
+## 0.5.0-next.1
+
+### Minor Changes
+
+- [#8601](https://github.com/LedgerHQ/ledger-live/pull/8601) [`61aedb7`](https://github.com/LedgerHQ/ledger-live/commit/61aedb7bbd45e73d6bc2b53e55f562262d5c5fa7) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Revery useNFTCOllections
+
+### Patch Changes
+
+- Updated dependencies [[`61aedb7`](https://github.com/LedgerHQ/ledger-live/commit/61aedb7bbd45e73d6bc2b53e55f562262d5c5fa7)]:
+  - @ledgerhq/types-live@6.55.0-next.1
+  - @ledgerhq/coin-framework@0.20.1-next.1
+  - @ledgerhq/live-nft@0.5.0-next.1
+
+## 0.5.0-next.0
+
+### Minor Changes
+
+- [#8495](https://github.com/LedgerHQ/ledger-live/pull/8495) [`f0a34a0`](https://github.com/LedgerHQ/ledger-live/commit/f0a34a06461331ec44fa02b8093699fa001f94a0) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Rework Hiddencollections
+
+- [#8457](https://github.com/LedgerHQ/ledger-live/pull/8457) [`d45e871`](https://github.com/LedgerHQ/ledger-live/commit/d45e871ee6b7e98102a4ffbdf3d7581c8cf838d0) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Rework Hiddencollections
+
+- [#8404](https://github.com/LedgerHQ/ledger-live/pull/8404) [`2901938`](https://github.com/LedgerHQ/ledger-live/commit/29019387955bbab5bc0adcd550bc9e32d08b4f72) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix undefined join on Spam filter
+
+### Patch Changes
+
+- Updated dependencies [[`f0a34a0`](https://github.com/LedgerHQ/ledger-live/commit/f0a34a06461331ec44fa02b8093699fa001f94a0), [`40f1cd4`](https://github.com/LedgerHQ/ledger-live/commit/40f1cd4c22d17480dcf86c73e90a07866667b0ba), [`c45ee45`](https://github.com/LedgerHQ/ledger-live/commit/c45ee457a9f5500ae42f2a8fb7f0cfb7926f319b), [`d45e871`](https://github.com/LedgerHQ/ledger-live/commit/d45e871ee6b7e98102a4ffbdf3d7581c8cf838d0), [`322fd58`](https://github.com/LedgerHQ/ledger-live/commit/322fd58ffcde6d592eb27af1fd93f8c45d33205c)]:
+  - @ledgerhq/live-nft@0.5.0-next.0
+  - @ledgerhq/types-live@6.55.0-next.0
+  - @ledgerhq/coin-framework@0.20.1-next.0
+
+## 0.4.14
+
+### Patch Changes
+
+- Updated dependencies [[`0b51d37`](https://github.com/LedgerHQ/ledger-live/commit/0b51d37762c73a88d7204d1fcc3bb60a110568ed), [`724fa8b`](https://github.com/LedgerHQ/ledger-live/commit/724fa8b29cbda74a729c5756f91c5c9b745fdbdb), [`daa059a`](https://github.com/LedgerHQ/ledger-live/commit/daa059a90eb4381a0936c4a3703e8061db24072a)]:
+  - @ledgerhq/coin-framework@0.20.0
+  - @ledgerhq/types-live@6.54.0
+  - @ledgerhq/live-nft@0.4.14
+
+## 0.4.14-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`0b51d37`](https://github.com/LedgerHQ/ledger-live/commit/0b51d37762c73a88d7204d1fcc3bb60a110568ed), [`724fa8b`](https://github.com/LedgerHQ/ledger-live/commit/724fa8b29cbda74a729c5756f91c5c9b745fdbdb), [`daa059a`](https://github.com/LedgerHQ/ledger-live/commit/daa059a90eb4381a0936c4a3703e8061db24072a)]:
+  - @ledgerhq/coin-framework@0.20.0-next.0
+  - @ledgerhq/types-live@6.54.0-next.0
+  - @ledgerhq/live-nft@0.4.14-next.0
+
+## 0.4.13
+
+### Patch Changes
+
+- Updated dependencies [[`5ce33a4`](https://github.com/LedgerHQ/ledger-live/commit/5ce33a417ecc87face54c1864aa49476c5f394b9), [`a52f6ae`](https://github.com/LedgerHQ/ledger-live/commit/a52f6ae3d49ea8daea42d9cdc24e9dd0d6d0f371), [`748cf14`](https://github.com/LedgerHQ/ledger-live/commit/748cf146b3e903172831e7e5ddbc29a3565c8932), [`61f8b03`](https://github.com/LedgerHQ/ledger-live/commit/61f8b033f710369171e277f5c0faede636207160)]:
+  - @ledgerhq/types-live@6.53.1
+  - @ledgerhq/coin-framework@0.19.1
+  - @ledgerhq/live-nft@0.4.13
+
+## 0.4.13-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`5ce33a4`](https://github.com/LedgerHQ/ledger-live/commit/5ce33a417ecc87face54c1864aa49476c5f394b9), [`a52f6ae`](https://github.com/LedgerHQ/ledger-live/commit/a52f6ae3d49ea8daea42d9cdc24e9dd0d6d0f371), [`748cf14`](https://github.com/LedgerHQ/ledger-live/commit/748cf146b3e903172831e7e5ddbc29a3565c8932), [`61f8b03`](https://github.com/LedgerHQ/ledger-live/commit/61f8b033f710369171e277f5c0faede636207160)]:
+  - @ledgerhq/types-live@6.53.1-next.0
+  - @ledgerhq/coin-framework@0.19.1-next.0
+  - @ledgerhq/live-nft@0.4.13-next.0
+
+## 0.4.12
+
+### Patch Changes
+
+- [#7911](https://github.com/LedgerHQ/ledger-live/pull/7911) [`87218b1`](https://github.com/LedgerHQ/ledger-live/commit/87218b17b86eaea9daa23c4c9cdf644c7ad2f65a) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add useCheckNftAccount Hook
+
+- [#7911](https://github.com/LedgerHQ/ledger-live/pull/7911) [`87218b1`](https://github.com/LedgerHQ/ledger-live/commit/87218b17b86eaea9daa23c4c9cdf644c7ad2f65a) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - use Hook CheckNft in Default and handle global sync of NFTs every 12 hours
+
+- Updated dependencies [[`5c13c7b`](https://github.com/LedgerHQ/ledger-live/commit/5c13c7bf743333f09cbfee720d275dfae7e157d2), [`52d6621`](https://github.com/LedgerHQ/ledger-live/commit/52d662147c5c45622795c54c6088de1f9f64f46c), [`2013b0f`](https://github.com/LedgerHQ/ledger-live/commit/2013b0f23d7f5bccff58dfd93fd45333194b8ae0), [`2013b0f`](https://github.com/LedgerHQ/ledger-live/commit/2013b0f23d7f5bccff58dfd93fd45333194b8ae0), [`63e5392`](https://github.com/LedgerHQ/ledger-live/commit/63e5392a108f1bec7cfc9c413db1550e7b5c9a25), [`87218b1`](https://github.com/LedgerHQ/ledger-live/commit/87218b17b86eaea9daa23c4c9cdf644c7ad2f65a), [`42e27f2`](https://github.com/LedgerHQ/ledger-live/commit/42e27f229ee2c1302258b6cc27d165c7b638cf3b), [`a40c525`](https://github.com/LedgerHQ/ledger-live/commit/a40c5256b80574aaaf17651d195832668b9796f5)]:
+  - @ledgerhq/live-nft@0.4.12
+  - @ledgerhq/coin-framework@0.19.0
+  - @ledgerhq/types-cryptoassets@7.17.0
+  - @ledgerhq/cryptoassets@13.7.0
+  - @ledgerhq/types-live@6.53.0
+
+## 0.4.12-next.0
+
+### Patch Changes
+
+- [#7911](https://github.com/LedgerHQ/ledger-live/pull/7911) [`87218b1`](https://github.com/LedgerHQ/ledger-live/commit/87218b17b86eaea9daa23c4c9cdf644c7ad2f65a) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add useCheckNftAccount Hook
+
+- [#7911](https://github.com/LedgerHQ/ledger-live/pull/7911) [`87218b1`](https://github.com/LedgerHQ/ledger-live/commit/87218b17b86eaea9daa23c4c9cdf644c7ad2f65a) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - use Hook CheckNft in Default and handle global sync of NFTs every 12 hours
+
+- Updated dependencies [[`5c13c7b`](https://github.com/LedgerHQ/ledger-live/commit/5c13c7bf743333f09cbfee720d275dfae7e157d2), [`52d6621`](https://github.com/LedgerHQ/ledger-live/commit/52d662147c5c45622795c54c6088de1f9f64f46c), [`2013b0f`](https://github.com/LedgerHQ/ledger-live/commit/2013b0f23d7f5bccff58dfd93fd45333194b8ae0), [`2013b0f`](https://github.com/LedgerHQ/ledger-live/commit/2013b0f23d7f5bccff58dfd93fd45333194b8ae0), [`35d6de2`](https://github.com/LedgerHQ/ledger-live/commit/35d6de2ace269f30fc39a3f022673a82d0c48193), [`63e5392`](https://github.com/LedgerHQ/ledger-live/commit/63e5392a108f1bec7cfc9c413db1550e7b5c9a25), [`87218b1`](https://github.com/LedgerHQ/ledger-live/commit/87218b17b86eaea9daa23c4c9cdf644c7ad2f65a), [`42e27f2`](https://github.com/LedgerHQ/ledger-live/commit/42e27f229ee2c1302258b6cc27d165c7b638cf3b), [`a40c525`](https://github.com/LedgerHQ/ledger-live/commit/a40c5256b80574aaaf17651d195832668b9796f5)]:
+  - @ledgerhq/live-nft@0.4.12-next.0
+  - @ledgerhq/coin-framework@0.19.0-next.0
+  - @ledgerhq/types-cryptoassets@7.17.0-next.0
+  - @ledgerhq/cryptoassets@13.7.0-next.0
+  - @ledgerhq/types-live@6.53.0-next.0
+
+## 0.4.11
+
+### Patch Changes
+
+- Updated dependencies [[`65c3322`](https://github.com/LedgerHQ/ledger-live/commit/65c3322bf3871659f078148ab4b5c12b0fd53dc1)]:
+  - @ledgerhq/types-live@6.52.4
+  - @ledgerhq/coin-framework@0.18.6
+  - @ledgerhq/live-nft@0.4.11
+
+## 0.4.11-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`65c3322`](https://github.com/LedgerHQ/ledger-live/commit/65c3322bf3871659f078148ab4b5c12b0fd53dc1)]:
+  - @ledgerhq/types-live@6.52.4-next.0
+  - @ledgerhq/coin-framework@0.18.6-next.0
+  - @ledgerhq/live-nft@0.4.11-next.0
+
+## 0.4.10
+
+### Patch Changes
+
+- Updated dependencies [[`81cd773`](https://github.com/LedgerHQ/ledger-live/commit/81cd7735a3c94628b6d4825b736ef12a0b74d3a3), [`f275f48`](https://github.com/LedgerHQ/ledger-live/commit/f275f48a17eeba2bdd3119e478975c8d4c7183be), [`1a0fa20`](https://github.com/LedgerHQ/ledger-live/commit/1a0fa20da7509cdde1141002a2be8e9d8458b27d)]:
+  - @ledgerhq/types-live@6.52.3
+  - @ledgerhq/cryptoassets@13.6.2
+  - @ledgerhq/coin-framework@0.18.5
+  - @ledgerhq/live-nft@0.4.10
+
+## 0.4.10-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`81cd773`](https://github.com/LedgerHQ/ledger-live/commit/81cd7735a3c94628b6d4825b736ef12a0b74d3a3), [`f275f48`](https://github.com/LedgerHQ/ledger-live/commit/f275f48a17eeba2bdd3119e478975c8d4c7183be), [`1a0fa20`](https://github.com/LedgerHQ/ledger-live/commit/1a0fa20da7509cdde1141002a2be8e9d8458b27d)]:
+  - @ledgerhq/types-live@6.52.3-next.0
+  - @ledgerhq/cryptoassets@13.6.2-next.0
+  - @ledgerhq/coin-framework@0.18.5-next.0
+  - @ledgerhq/live-nft@0.4.10-next.0
+
+## 0.4.9
+
+### Patch Changes
+
+- Updated dependencies [[`80e333c`](https://github.com/LedgerHQ/ledger-live/commit/80e333c30afdc7d14f1b5fd3e92c9fb10372e2c1), [`d8c171a`](https://github.com/LedgerHQ/ledger-live/commit/d8c171a6ed32012733786bde29b5493b1106cf56)]:
+  - @ledgerhq/types-live@6.52.2
+  - @ledgerhq/coin-framework@0.18.4
+  - @ledgerhq/live-nft@0.4.9
+
+## 0.4.9-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`80e333c`](https://github.com/LedgerHQ/ledger-live/commit/80e333c30afdc7d14f1b5fd3e92c9fb10372e2c1), [`d8c171a`](https://github.com/LedgerHQ/ledger-live/commit/d8c171a6ed32012733786bde29b5493b1106cf56)]:
+  - @ledgerhq/types-live@6.52.2-hotfix.0
+  - @ledgerhq/coin-framework@0.18.4-hotfix.0
+  - @ledgerhq/live-nft@0.4.9-hotfix.0
+
+## 0.4.8
+
+### Patch Changes
+
+- [#7891](https://github.com/LedgerHQ/ledger-live/pull/7891) [`00cab1d`](https://github.com/LedgerHQ/ledger-live/commit/00cab1db1d67eb0cf35059eeeb9e2d8bd328f8f3) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add useCheckNftAccount Hook
+
+- [#7966](https://github.com/LedgerHQ/ledger-live/pull/7966) [`4b0d0f8`](https://github.com/LedgerHQ/ledger-live/commit/4b0d0f8b3694491143ea9307460384471ca93cc2) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add the hide inscription feature for ordinals
+
+- Updated dependencies [[`642c714`](https://github.com/LedgerHQ/ledger-live/commit/642c714d52eaaccb1b8ac3a2ee0391b641d19303), [`1b3a21d`](https://github.com/LedgerHQ/ledger-live/commit/1b3a21d5d8496c42f4dec4116fdcf59ad6f038cd), [`0a16ae4`](https://github.com/LedgerHQ/ledger-live/commit/0a16ae4cb58ad9f2e67c7f3494b0dc52cb7423a1), [`00cab1d`](https://github.com/LedgerHQ/ledger-live/commit/00cab1db1d67eb0cf35059eeeb9e2d8bd328f8f3), [`4b0d0f8`](https://github.com/LedgerHQ/ledger-live/commit/4b0d0f8b3694491143ea9307460384471ca93cc2)]:
+  - @ledgerhq/types-live@6.52.1
+  - @ledgerhq/live-nft@0.4.8
+  - @ledgerhq/coin-framework@0.18.3
+  - @ledgerhq/cryptoassets@13.6.1
+
+## 0.4.8-next.0
+
+### Patch Changes
+
+- [#7891](https://github.com/LedgerHQ/ledger-live/pull/7891) [`00cab1d`](https://github.com/LedgerHQ/ledger-live/commit/00cab1db1d67eb0cf35059eeeb9e2d8bd328f8f3) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add useCheckNftAccount Hook
+
+- [#7966](https://github.com/LedgerHQ/ledger-live/pull/7966) [`4b0d0f8`](https://github.com/LedgerHQ/ledger-live/commit/4b0d0f8b3694491143ea9307460384471ca93cc2) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add the hide inscription feature for ordinals
+
+- Updated dependencies [[`642c714`](https://github.com/LedgerHQ/ledger-live/commit/642c714d52eaaccb1b8ac3a2ee0391b641d19303), [`1b3a21d`](https://github.com/LedgerHQ/ledger-live/commit/1b3a21d5d8496c42f4dec4116fdcf59ad6f038cd), [`0a16ae4`](https://github.com/LedgerHQ/ledger-live/commit/0a16ae4cb58ad9f2e67c7f3494b0dc52cb7423a1), [`00cab1d`](https://github.com/LedgerHQ/ledger-live/commit/00cab1db1d67eb0cf35059eeeb9e2d8bd328f8f3), [`4b0d0f8`](https://github.com/LedgerHQ/ledger-live/commit/4b0d0f8b3694491143ea9307460384471ca93cc2)]:
+  - @ledgerhq/types-live@6.52.1-next.0
+  - @ledgerhq/live-nft@0.4.8-next.0
+  - @ledgerhq/coin-framework@0.18.3-next.0
+  - @ledgerhq/cryptoassets@13.6.1-next.0
+
+## 0.4.7
+
+### Patch Changes
+
+- Updated dependencies [[`c83af75`](https://github.com/LedgerHQ/ledger-live/commit/c83af756fb388043c9f5a3862cae1231ec99a02c), [`6cf1258`](https://github.com/LedgerHQ/ledger-live/commit/6cf125821cced8312557d5b8f8f0a7b5d0af537c), [`a7696cc`](https://github.com/LedgerHQ/ledger-live/commit/a7696cc2487836f5c3e12e6279a2ab0ac34df415)]:
+  - @ledgerhq/types-cryptoassets@7.16.0
+  - @ledgerhq/cryptoassets@13.6.0
+  - @ledgerhq/types-live@6.52.0
+  - @ledgerhq/live-nft@0.4.7
+
+## 0.4.7-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`c83af75`](https://github.com/LedgerHQ/ledger-live/commit/c83af756fb388043c9f5a3862cae1231ec99a02c), [`6cf1258`](https://github.com/LedgerHQ/ledger-live/commit/6cf125821cced8312557d5b8f8f0a7b5d0af537c), [`a7696cc`](https://github.com/LedgerHQ/ledger-live/commit/a7696cc2487836f5c3e12e6279a2ab0ac34df415)]:
+  - @ledgerhq/types-cryptoassets@7.16.0-next.0
+  - @ledgerhq/cryptoassets@13.6.0-next.0
+  - @ledgerhq/types-live@6.52.0-next.0
+  - @ledgerhq/live-nft@0.4.7-next.0
+
+## 0.4.6
+
+### Patch Changes
+
+- [#7783](https://github.com/LedgerHQ/ledger-live/pull/7783) [`e4b6647`](https://github.com/LedgerHQ/ledger-live/commit/e4b664794ef5c65b391f29c2d4d8774b103e6348) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Plug the front with simplehash api for the rare sats table and inscriptions table
+
+- Updated dependencies [[`1605678`](https://github.com/LedgerHQ/ledger-live/commit/1605678a4c43ce85b19bd549b295f3c67ff1dcb9), [`1605678`](https://github.com/LedgerHQ/ledger-live/commit/1605678a4c43ce85b19bd549b295f3c67ff1dcb9), [`e4b6647`](https://github.com/LedgerHQ/ledger-live/commit/e4b664794ef5c65b391f29c2d4d8774b103e6348), [`f805d14`](https://github.com/LedgerHQ/ledger-live/commit/f805d1470f927824233f94eaba065b00d7af18cf), [`461ddc5`](https://github.com/LedgerHQ/ledger-live/commit/461ddc56fbbe862789fe9a06db8a7e7a894e4bdd), [`672875f`](https://github.com/LedgerHQ/ledger-live/commit/672875feb9876edacf06aaea6c7bb47f4bb7d993), [`7865dcb`](https://github.com/LedgerHQ/ledger-live/commit/7865dcb1891b89a0d9fe28efeea3a6284f3d87c5), [`1605678`](https://github.com/LedgerHQ/ledger-live/commit/1605678a4c43ce85b19bd549b295f3c67ff1dcb9)]:
+  - @ledgerhq/cryptoassets@13.5.0
+  - @ledgerhq/types-cryptoassets@7.15.2
+  - @ledgerhq/live-nft@0.4.6
+  - @ledgerhq/types-live@6.51.1
+
+## 0.4.6-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`f805d14`](https://github.com/LedgerHQ/ledger-live/commit/f805d1470f927824233f94eaba065b00d7af18cf)]:
+  - @ledgerhq/cryptoassets@13.5.0-next.1
+  - @ledgerhq/live-nft@0.4.6-next.1
+
+## 0.4.6-next.0
+
+### Patch Changes
+
+- [#7783](https://github.com/LedgerHQ/ledger-live/pull/7783) [`e4b6647`](https://github.com/LedgerHQ/ledger-live/commit/e4b664794ef5c65b391f29c2d4d8774b103e6348) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Plug the front with simplehash api for the rare sats table and inscriptions table
+
+- Updated dependencies [[`1605678`](https://github.com/LedgerHQ/ledger-live/commit/1605678a4c43ce85b19bd549b295f3c67ff1dcb9), [`1605678`](https://github.com/LedgerHQ/ledger-live/commit/1605678a4c43ce85b19bd549b295f3c67ff1dcb9), [`e4b6647`](https://github.com/LedgerHQ/ledger-live/commit/e4b664794ef5c65b391f29c2d4d8774b103e6348), [`461ddc5`](https://github.com/LedgerHQ/ledger-live/commit/461ddc56fbbe862789fe9a06db8a7e7a894e4bdd), [`672875f`](https://github.com/LedgerHQ/ledger-live/commit/672875feb9876edacf06aaea6c7bb47f4bb7d993), [`7865dcb`](https://github.com/LedgerHQ/ledger-live/commit/7865dcb1891b89a0d9fe28efeea3a6284f3d87c5), [`1605678`](https://github.com/LedgerHQ/ledger-live/commit/1605678a4c43ce85b19bd549b295f3c67ff1dcb9)]:
+  - @ledgerhq/cryptoassets@13.5.0-next.0
+  - @ledgerhq/types-cryptoassets@7.15.2-next.0
+  - @ledgerhq/live-nft@0.4.6-next.0
+  - @ledgerhq/types-live@6.51.1-next.0
+
+## 0.4.5
+
+### Patch Changes
+
+- Updated dependencies [[`9c55e81`](https://github.com/LedgerHQ/ledger-live/commit/9c55e81c84d3372f2a7fd36248f970376aec905a), [`187293c`](https://github.com/LedgerHQ/ledger-live/commit/187293c6cf6093f15f07d5effc1ded0843a9e6ab), [`cc291f5`](https://github.com/LedgerHQ/ledger-live/commit/cc291f5466d80a2b7e9394338ab588ecd3db4623), [`fb9466a`](https://github.com/LedgerHQ/ledger-live/commit/fb9466a4d7827fd4759c726ad3ae0b43dddcacd3), [`5758950`](https://github.com/LedgerHQ/ledger-live/commit/5758950841fbf8018dd848e745017484aec67333), [`0c80144`](https://github.com/LedgerHQ/ledger-live/commit/0c80144b8c16fc3729baa6503875d21af87b2752), [`ef82161`](https://github.com/LedgerHQ/ledger-live/commit/ef82161688fc49bf32cbc88f1837b15490e5d2b4), [`d13e7b9`](https://github.com/LedgerHQ/ledger-live/commit/d13e7b9f55d92098cacc9384fd7fab24033c040f), [`6815f6f`](https://github.com/LedgerHQ/ledger-live/commit/6815f6fccb9bca627a2e51ab954dc3f9b8f7c710), [`9a650da`](https://github.com/LedgerHQ/ledger-live/commit/9a650da9a147d6881f7082278d2bf764c37e1451)]:
+  - @ledgerhq/cryptoassets@13.4.0
+  - @ledgerhq/types-live@6.51.0
+  - @ledgerhq/types-cryptoassets@7.15.1
+  - @ledgerhq/live-nft@0.4.5
+
+## 0.4.5-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`9c55e81`](https://github.com/LedgerHQ/ledger-live/commit/9c55e81c84d3372f2a7fd36248f970376aec905a), [`187293c`](https://github.com/LedgerHQ/ledger-live/commit/187293c6cf6093f15f07d5effc1ded0843a9e6ab), [`cc291f5`](https://github.com/LedgerHQ/ledger-live/commit/cc291f5466d80a2b7e9394338ab588ecd3db4623), [`fb9466a`](https://github.com/LedgerHQ/ledger-live/commit/fb9466a4d7827fd4759c726ad3ae0b43dddcacd3), [`5758950`](https://github.com/LedgerHQ/ledger-live/commit/5758950841fbf8018dd848e745017484aec67333), [`0c80144`](https://github.com/LedgerHQ/ledger-live/commit/0c80144b8c16fc3729baa6503875d21af87b2752), [`ef82161`](https://github.com/LedgerHQ/ledger-live/commit/ef82161688fc49bf32cbc88f1837b15490e5d2b4), [`d13e7b9`](https://github.com/LedgerHQ/ledger-live/commit/d13e7b9f55d92098cacc9384fd7fab24033c040f), [`6815f6f`](https://github.com/LedgerHQ/ledger-live/commit/6815f6fccb9bca627a2e51ab954dc3f9b8f7c710), [`9a650da`](https://github.com/LedgerHQ/ledger-live/commit/9a650da9a147d6881f7082278d2bf764c37e1451)]:
+  - @ledgerhq/cryptoassets@13.4.0-next.0
+  - @ledgerhq/types-live@6.51.0-next.0
+  - @ledgerhq/types-cryptoassets@7.15.1-next.0
+  - @ledgerhq/live-nft@0.4.5-next.0
+
+## 0.4.4
+
+### Patch Changes
+
+- [#7408](https://github.com/LedgerHQ/ledger-live/pull/7408) [`37c0b90`](https://github.com/LedgerHQ/ledger-live/commit/37c0b90becb5911c8244015165f6500c97acf8ef) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add Spam Score checker
+
+- [#7400](https://github.com/LedgerHQ/ledger-live/pull/7400) [`db826f8`](https://github.com/LedgerHQ/ledger-live/commit/db826f8ee54dac8bc460abde6991073892a769cc) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add useRefreshMetada hook NFts and contract
+
+- Updated dependencies [[`df9b4b7`](https://github.com/LedgerHQ/ledger-live/commit/df9b4b7b699503bb3aab1dc791b28e11ef0d51b9), [`db9c2d7`](https://github.com/LedgerHQ/ledger-live/commit/db9c2d78fb74df586c3ea1b9fb75ce3b014a0f4b), [`87d6bb2`](https://github.com/LedgerHQ/ledger-live/commit/87d6bb2501eac654dc10f45a0f591b28569b3d9f), [`4bd91de`](https://github.com/LedgerHQ/ledger-live/commit/4bd91de13442d12acce3ee83d5f2fd5f087570cf), [`37c0b90`](https://github.com/LedgerHQ/ledger-live/commit/37c0b90becb5911c8244015165f6500c97acf8ef), [`8553b3e`](https://github.com/LedgerHQ/ledger-live/commit/8553b3eef10132396ec580a2d5f20b616f5b18a0), [`52daa39`](https://github.com/LedgerHQ/ledger-live/commit/52daa3998709ac3538afd447fe771faa3e3441be), [`db826f8`](https://github.com/LedgerHQ/ledger-live/commit/db826f8ee54dac8bc460abde6991073892a769cc), [`60f1b5c`](https://github.com/LedgerHQ/ledger-live/commit/60f1b5c6cab125f5281468bb3e36f1abfae2d70c), [`50b6db6`](https://github.com/LedgerHQ/ledger-live/commit/50b6db67d374a23ba040043aa93e7fbc52685297)]:
+  - @ledgerhq/types-live@6.50.0
+  - @ledgerhq/cryptoassets@13.3.0
+  - @ledgerhq/types-cryptoassets@7.15.0
+  - @ledgerhq/live-nft@0.4.4
+
+## 0.4.4-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`50b6db6`](https://github.com/LedgerHQ/ledger-live/commit/50b6db67d374a23ba040043aa93e7fbc52685297)]:
+  - @ledgerhq/cryptoassets@13.3.0-next.1
+  - @ledgerhq/live-nft@0.4.4-next.1
+
+## 0.4.4-next.0
+
+### Patch Changes
+
+- [#7408](https://github.com/LedgerHQ/ledger-live/pull/7408) [`37c0b90`](https://github.com/LedgerHQ/ledger-live/commit/37c0b90becb5911c8244015165f6500c97acf8ef) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add Spam Score checker
+
+- [#7400](https://github.com/LedgerHQ/ledger-live/pull/7400) [`db826f8`](https://github.com/LedgerHQ/ledger-live/commit/db826f8ee54dac8bc460abde6991073892a769cc) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add useRefreshMetada hook NFts and contract
+
+- Updated dependencies [[`df9b4b7`](https://github.com/LedgerHQ/ledger-live/commit/df9b4b7b699503bb3aab1dc791b28e11ef0d51b9), [`db9c2d7`](https://github.com/LedgerHQ/ledger-live/commit/db9c2d78fb74df586c3ea1b9fb75ce3b014a0f4b), [`87d6bb2`](https://github.com/LedgerHQ/ledger-live/commit/87d6bb2501eac654dc10f45a0f591b28569b3d9f), [`4bd91de`](https://github.com/LedgerHQ/ledger-live/commit/4bd91de13442d12acce3ee83d5f2fd5f087570cf), [`37c0b90`](https://github.com/LedgerHQ/ledger-live/commit/37c0b90becb5911c8244015165f6500c97acf8ef), [`8553b3e`](https://github.com/LedgerHQ/ledger-live/commit/8553b3eef10132396ec580a2d5f20b616f5b18a0), [`52daa39`](https://github.com/LedgerHQ/ledger-live/commit/52daa3998709ac3538afd447fe771faa3e3441be), [`db826f8`](https://github.com/LedgerHQ/ledger-live/commit/db826f8ee54dac8bc460abde6991073892a769cc), [`60f1b5c`](https://github.com/LedgerHQ/ledger-live/commit/60f1b5c6cab125f5281468bb3e36f1abfae2d70c)]:
+  - @ledgerhq/types-live@6.50.0-next.0
+  - @ledgerhq/cryptoassets@13.3.0-next.0
+  - @ledgerhq/types-cryptoassets@7.15.0-next.0
+  - @ledgerhq/live-nft@0.4.4-next.0
+
+## 0.4.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/types-live@6.49.0
+  - @ledgerhq/live-nft@0.4.3
+
+## 0.4.3-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-nft@0.4.3-hotfix.0
+
+## 0.4.2
+
+### Patch Changes
+
+- Updated dependencies [[`ef2d53d`](https://github.com/LedgerHQ/ledger-live/commit/ef2d53d514f1f4e6f18fc79fa3423bd9b0208a04), [`b77ab8e`](https://github.com/LedgerHQ/ledger-live/commit/b77ab8e718ee8e10b74dc15370e8a19d2597d39e), [`52db252`](https://github.com/LedgerHQ/ledger-live/commit/52db252757870398cba5366d595b4d5fe8099b90), [`f819703`](https://github.com/LedgerHQ/ledger-live/commit/f81970347d139e63a547ab809be425d6f4d464a4), [`fe8a26b`](https://github.com/LedgerHQ/ledger-live/commit/fe8a26b04206df64e50220c3e9249c9a1bd057a6), [`1cbf767`](https://github.com/LedgerHQ/ledger-live/commit/1cbf767465d9e1f7bed5de79c5b5a0a5ca06e1b5)]:
+  - @ledgerhq/types-cryptoassets@7.14.0
+  - @ledgerhq/cryptoassets@13.2.0
+  - @ledgerhq/types-live@6.49.0
+  - @ledgerhq/live-nft@0.4.2
+
+## 0.4.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`ef2d53d`](https://github.com/LedgerHQ/ledger-live/commit/ef2d53d514f1f4e6f18fc79fa3423bd9b0208a04), [`b77ab8e`](https://github.com/LedgerHQ/ledger-live/commit/b77ab8e718ee8e10b74dc15370e8a19d2597d39e), [`52db252`](https://github.com/LedgerHQ/ledger-live/commit/52db252757870398cba5366d595b4d5fe8099b90), [`f819703`](https://github.com/LedgerHQ/ledger-live/commit/f81970347d139e63a547ab809be425d6f4d464a4), [`fe8a26b`](https://github.com/LedgerHQ/ledger-live/commit/fe8a26b04206df64e50220c3e9249c9a1bd057a6), [`1cbf767`](https://github.com/LedgerHQ/ledger-live/commit/1cbf767465d9e1f7bed5de79c5b5a0a5ca06e1b5)]:
+  - @ledgerhq/types-cryptoassets@7.14.0-next.0
+  - @ledgerhq/cryptoassets@13.2.0-next.0
+  - @ledgerhq/types-live@6.49.0-next.0
+  - @ledgerhq/live-nft@0.4.2-next.0
+
 ## 0.4.1
 
 ### Patch Changes

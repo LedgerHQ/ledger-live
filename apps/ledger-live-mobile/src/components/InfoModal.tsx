@@ -79,7 +79,6 @@ const InfoModal = ({
         {children}
       </View>
     </Flex>
-
     <Flex pt={6}>
       {withCancel ? (
         <Button event={(id || "") + "InfoModalClose"} type={undefined} onPress={onClose} mt={7}>

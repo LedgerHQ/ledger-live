@@ -4,6 +4,7 @@ import { Bullet, Title, Column, AnimationContainer, AsideFooter } from "../share
 import Animation from "~/renderer/animations";
 import { getDeviceAnimation } from "~/renderer/components/DeviceAction/animations";
 import { OnboardingContext } from "../../../index";
+import { useTheme } from "styled-components";
 
 const steps = [
   {
@@ -39,12 +40,13 @@ export function DeviceHowTo2() {
 
 const DeviceHowTo2Animation = () => {
   const { deviceModelId } = useContext(OnboardingContext);
+  const { theme } = useTheme();
 
   return (
     <AnimationContainer>
       {deviceModelId && (
         <Animation
-          animation={getDeviceAnimation(deviceModelId, "light", "plugAndPinCode") as object}
+          animation={getDeviceAnimation(deviceModelId, theme, "plugAndPinCode") as object}
         />
       )}
     </AnimationContainer>

@@ -24,7 +24,7 @@ type Props = {
   deviceToRestore?: DeviceModelInfo | null | undefined;
   setHeaderLoader: (hasLoader: boolean) => void;
   onComplete: () => void;
-  onError: (error: Error) => void;
+  onError?: (error: Error) => void;
 };
 
 /**
@@ -65,6 +65,7 @@ const OnboardingAppInstallStep = ({
   const handleRetry = useCallback(() => {
     setCancelModalOpen(false);
     setLockedModalOpen(false);
+    setInProgress(true);
   }, []);
 
   const handleCancel = useCallback(() => {
@@ -72,18 +73,21 @@ const OnboardingAppInstallStep = ({
     setCancelModalOpen(true);
   }, []);
 
-  const handleLocked = useCallback(() => {
-    setInProgress(false);
-    setLockedModalOpen(true);
-  }, []);
-
   const handleError = useCallback(
     (error: Error) => {
       if (onError) {
         onError(error);
+      } else {
+        setHeaderLoader(false);
+        setInProgress(false);
+        const errorActions = new Map<string, () => void>([
+          ["LockedDeviceError", () => setLockedModalOpen(true)],
+          ["default", () => setCancelModalOpen(true)],
+        ]);
+        (errorActions.get(error.name) || errorActions.get("default"))!();
       }
     },
-    [onError],
+    [setHeaderLoader, onError],
   );
 
   const handlePressSkip = useCallback(() => {
@@ -158,7 +162,6 @@ const OnboardingAppInstallStep = ({
           setHeaderLoader={setHeaderLoader}
           onComplete={handleInstallComplete}
           onCancel={handleCancel}
-          onLocked={handleLocked}
           onError={handleError}
         />
       ) : (
@@ -184,7 +187,7 @@ const OnboardingAppInstallStep = ({
               outline
               flex={1}
               onClick={handlePressSkip}
-              data-test-id="skip-cta-button"
+              data-testid="skip-cta-button"
             >
               {t(`onboardingAppInstall.${deviceToRestore ? "restore" : "default"}.skipCTA`)}
             </Button>
@@ -193,7 +196,7 @@ const OnboardingAppInstallStep = ({
               flex={1}
               variant="main"
               onClick={handlePressInstall}
-              data-test-id="install-cta-button"
+              data-testid="install-cta-button"
             >
               {t(`onboardingAppInstall.${deviceToRestore ? "restore" : "default"}.installCTA`)}
             </Button>

@@ -5,7 +5,7 @@ import { formatCurrencyUnit, getCurrencyColor } from "@ledgerhq/live-common/curr
 import { getMaxDelegationAvailable } from "@ledgerhq/live-common/families/cosmos/logic";
 import { useLedgerFirstShuffledValidatorsCosmosFamily } from "@ledgerhq/live-common/families/cosmos/react";
 import { CosmosAccount, CosmosValidatorItem } from "@ledgerhq/live-common/families/cosmos/types";
-import cosmosBase from "@ledgerhq/live-common/families/cosmos/chain/cosmosBase";
+import cosmosBase from "@ledgerhq/coin-cosmos/chain/cosmosBase";
 import { AccountLike } from "@ledgerhq/types-live";
 import { Text } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
@@ -106,7 +106,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
 
   const [rotateAnim] = useState(() => new Animated.Value(0));
   useEffect(() => {
-    if (!Config.MOCK) {
+    if (!Config.DETOX) {
       Animated.loop(
         Animated.sequence([
           Animated.timing(rotateAnim, {

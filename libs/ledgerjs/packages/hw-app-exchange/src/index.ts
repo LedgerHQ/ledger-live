@@ -7,17 +7,20 @@ import Exchange, {
   isExchangeTypeNg,
   PayloadSignatureComputedFormat,
 } from "./Exchange";
-import { decodePayloadProtobuf } from "./SwapUtils";
+import { decodeSwapPayload, decodePayloadProtobuf } from "./SwapUtils";
+import { decodeSellPayload } from "./SellUtils";
 
 export {
   createExchange,
   decodePayloadProtobuf,
+  decodeSwapPayload,
   getExchangeErrorMessage,
   ExchangeTypes,
   RateTypes,
   PartnerKeyInfo,
   isExchangeTypeNg,
   PayloadSignatureComputedFormat,
+  decodeSellPayload,
 };
 
 export default Exchange;

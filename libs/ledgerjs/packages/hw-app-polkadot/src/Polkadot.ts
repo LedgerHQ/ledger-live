@@ -16,23 +16,16 @@
  ********************************************************************************/
 import type Transport from "@ledgerhq/hw-transport";
 import BIPPath from "bip32-path";
-import { UserRefusedOnDevice, UserRefusedAddress, TransportError } from "@ledgerhq/errors";
+import { UserRefusedAddress } from "@ledgerhq/errors";
 import { PolkadotGenericApp } from "@zondax/ledger-substrate";
 
-const CHUNK_SIZE = 250;
-const CLA = 0x90;
 const INS = {
   GET_VERSION: 0x00,
   GET_ADDR_ED25519: 0x01,
   SIGN_ED25519: 0x02,
 };
-const PAYLOAD_TYPE_INIT = 0x00;
-const PAYLOAD_TYPE_ADD = 0x01;
-const PAYLOAD_TYPE_LAST = 0x02;
 const SW_OK = 0x9000;
 const SW_CANCEL = 0x6986;
-const SW_ERROR_DATA_INVALID = 0x6984;
-const SW_ERROR_BAD_KEY_HANDLE = 0x6a80;
 
 /**
  * Polkadot API
@@ -73,13 +66,12 @@ export default class Polkadot {
     path: string,
     ss58prefix: number = 0,
     showAddrInDevice = false,
-    runtimeUpgraded = false,
   ): Promise<{
     pubKey: string;
     address: string;
     return_code: number;
   }> {
-    const CLA = runtimeUpgraded ? 0xf9 : 0x90;
+    const CLA = 0xf9;
     const bipPath = BIPPath.fromString(path).toPathArray();
     const bip44Path = this.serializePath(bipPath, ss58prefix);
     return this.transport
@@ -128,74 +120,17 @@ export default class Polkadot {
     signature: string | null;
     return_code: number;
   }> {
-    if (metadata.length > 0) {
-      // runtimeUpgraded
-      const app = new PolkadotGenericApp(this.transport);
-      const signatureRequest = await app.signWithMetadata(
-        "m/" + path,
-        Buffer.from(message),
-        Buffer.from(metadata.slice(2), "hex"),
-      );
-      // we need to cast the signature to Buffer explicitly. In react native, the signature from signWithMetadata is not necessarily a Buffer
-      signatureRequest.signature = Buffer.from(signatureRequest.signature);
-      return {
-        signature: signatureRequest.signature.toString("hex"),
-        return_code: SW_OK,
-      };
-    }
-    const bipPath = BIPPath.fromString(path).toPathArray();
-    const serializedPath = this.serializePath(bipPath);
-    const chunks: Buffer[] = [];
-    const buffer = Buffer.from(message);
-    chunks.push(serializedPath);
-    for (let i = 0; i < buffer.length; i += CHUNK_SIZE) {
-      let end = i + CHUNK_SIZE;
-
-      if (i > buffer.length) {
-        end = buffer.length;
-      }
-
-      chunks.push(buffer.slice(i, end));
-    }
-
-    let response: any = {};
-    return this.foreach(chunks, (data, j) =>
-      this.transport
-        .send(
-          CLA,
-          INS.SIGN_ED25519,
-          j === 0
-            ? PAYLOAD_TYPE_INIT
-            : j + 1 === chunks.length
-              ? PAYLOAD_TYPE_LAST
-              : PAYLOAD_TYPE_ADD,
-          0,
-          data,
-          [SW_OK, SW_CANCEL, SW_ERROR_DATA_INVALID, SW_ERROR_BAD_KEY_HANDLE],
-        )
-        .then(apduResponse => (response = apduResponse)),
-    ).then(() => {
-      const errorCodeData = response.slice(-2);
-      const returnCode = errorCodeData[0] * 256 + errorCodeData[1];
-
-      if (returnCode === SW_CANCEL) {
-        throw new UserRefusedOnDevice();
-      }
-      if (returnCode === SW_ERROR_DATA_INVALID || returnCode === SW_ERROR_BAD_KEY_HANDLE) {
-        const errorMessage = response.slice(0, response.length - 2).toString("ascii");
-        throw new TransportError(errorMessage, "Sign");
-      }
-
-      let signature = null;
-
-      if (response.length > 2) {
-        signature = response.slice(0, response.length - 2);
-      }
-
-      return {
-        signature,
-        return_code: returnCode,
-      };
-    });
+    const app = new PolkadotGenericApp(this.transport);
+    const signatureRequest = await app.signWithMetadata(
+      "m/" + path,
+      Buffer.from(message),
+      Buffer.from(metadata.slice(2), "hex"),
+    );
+    // we need to cast the signature to Buffer explicitly. In react native, the signature from signWithMetadata is not necessarily a Buffer
+    signatureRequest.signature = Buffer.from(signatureRequest.signature);
+    return {
+      signature: signatureRequest.signature.toString("hex"),
+      return_code: SW_OK,
+    };
   }
 }

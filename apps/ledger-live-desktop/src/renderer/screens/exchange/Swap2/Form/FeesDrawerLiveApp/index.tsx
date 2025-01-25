@@ -1,22 +1,24 @@
 import React, { useCallback, useState } from "react";
 import Box from "~/renderer/components/Box";
 import SendAmountFields from "~/renderer/modals/Send/SendAmountFields";
-import {
-  SwapTransactionType,
-  SwapSelectorStateType,
-} from "@ledgerhq/live-common/exchange/swap/types";
+import { SwapTransactionType } from "@ledgerhq/live-common/exchange/swap/types";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { useGetSwapTrackingProperties } from "../../utils/index";
-import { Account, FeeStrategy } from "@ledgerhq/types-live";
-import { SideDrawer } from "~/renderer/components/SideDrawer";
+import { Account, AccountLike, FeeStrategy } from "@ledgerhq/types-live";
 import { t } from "i18next";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
-import { Button, Divider } from "@ledgerhq/react-ui";
+import { Button, Divider, Flex } from "@ledgerhq/react-ui";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import LowGasAlertBuyMore from "~/renderer/families/evm/SendAmountFields/LowGasAlertBuyMore";
+import TranslatedError from "~/renderer/components/TranslatedError";
+import Alert from "~/renderer/components/Alert";
+import { useTrack } from "~/renderer/analytics/segment";
 
 type Props = {
   setTransaction: SwapTransactionType["setTransaction"];
-  mainAccount: SwapSelectorStateType["account"];
-  parentAccount: SwapSelectorStateType["parentAccount"];
+  account: AccountLike;
+  parentAccount: Account;
   status: SwapTransactionType["status"];
   disableSlowStrategy?: boolean;
   provider: string | undefined | null;
@@ -26,7 +28,7 @@ type Props = {
 
 export default function FeesDrawerLiveApp({
   setTransaction,
-  mainAccount,
+  account,
   parentAccount,
   status,
   provider,
@@ -35,27 +37,65 @@ export default function FeesDrawerLiveApp({
   disableSlowStrategy = false,
 }: Props) {
   const swapDefaultTrack = useGetSwapTrackingProperties();
+  const track = useTrack();
 
   const [isOpen, setIsOpen] = useState(true);
   const [transaction, setTransactionState] = useState(initialTransaction);
+  const [transactionStatus, setTransactionStatus] = useState(status);
+  const mainAccount = getMainAccount(account, parentAccount);
+
+  const bridge = getAccountBridge(mainAccount, parentAccount);
+  const { amount: amountError, gasPrice: gasPriceError } = transactionStatus.errors;
 
   const handleSetTransaction = useCallback(
     (transaction: Transaction) => {
-      setTransactionState(transaction);
-      setTransaction(transaction);
+      bridge
+        .prepareTransaction(mainAccount, transaction)
+        .then(preparedTransaction =>
+          bridge.getTransactionStatus(mainAccount, preparedTransaction).then(status => {
+            setTransactionStatus(status);
+            setTransactionState(preparedTransaction);
+            setTransaction(preparedTransaction);
+          }),
+        )
+        .catch(error => {
+          console.error("Error preparing transaction:", error);
+        });
     },
-    [setTransaction],
+    [setTransaction, bridge, mainAccount],
   );
 
   const handleUpdateTransaction = useCallback(
     (updater: (arg0: Transaction) => Transaction) => {
       setTransactionState(prevTransaction => {
-        const updatedTransaction = updater(prevTransaction);
-        setTransaction(updatedTransaction);
+        let updatedTransaction = updater(prevTransaction);
+
+        if (prevTransaction.feesStrategy !== updatedTransaction.feesStrategy) {
+          track("button_clicked", {
+            ...swapDefaultTrack,
+            button: updatedTransaction.feesStrategy,
+            page: "quoteSwap",
+          });
+        }
+
+        bridge
+          .prepareTransaction(mainAccount, updatedTransaction)
+          .then(preparedTransaction =>
+            bridge.getTransactionStatus(mainAccount, preparedTransaction).then(status => {
+              setTransactionStatus(status);
+              setTransaction(preparedTransaction);
+              updatedTransaction = preparedTransaction;
+            }),
+          )
+          .catch(error => {
+            console.error("Error updating transaction:", error);
+            return prevTransaction;
+          });
+
         return updatedTransaction;
       });
     },
-    [setTransaction],
+    [setTransaction, bridge, mainAccount, swapDefaultTrack, track],
   );
 
   const mapStrategies = useCallback(
@@ -81,51 +121,59 @@ export default function FeesDrawerLiveApp({
   if (!isOpen) return null;
 
   return (
-    <SideDrawer
-      title={t("swap2.form.details.label.fees")}
-      isOpen={isOpen}
-      preventBackdropClick
-      onRequestClose={() => handleRequestClose(false)}
-      direction="left"
-    >
+    <Box height="100%" display="flex" flexDirection="column">
       <Divider />
-      <Box height="90%" display="flex" flexDirection="column">
-        <TrackPage
-          category="Swap"
-          name="Form - Edit Fees"
-          provider={provider}
-          {...swapDefaultTrack}
+      <TrackPage
+        category="Swap"
+        name="Form - Edit Fees"
+        provider={provider}
+        {...swapDefaultTrack}
+      />
+      <Box mt={3} flow={4} mx={3} flex="1">
+        {transaction && mainAccount && (
+          <SendAmountFields
+            account={parentAccount || (mainAccount as Account)}
+            parentAccount={parentAccount}
+            status={transactionStatus}
+            transaction={transaction}
+            onChange={handleSetTransaction}
+            updateTransaction={handleUpdateTransaction}
+            mapStrategies={mapStrategies}
+            disableSlowStrategy={disableSlowStrategy}
+            disableEditGasLimit={true}
+            trackProperties={{
+              page: "Swap quotes",
+              ...swapDefaultTrack,
+            }}
+          />
+        )}
+        <LowGasAlertBuyMore
+          account={mainAccount}
+          handleRequestClose={() => handleRequestClose(false)}
+          gasPriceError={gasPriceError}
+          trackingSource={"swap flow"}
         />
-        <Box mt={3} flow={4} mx={3} flex="1">
-          {transaction && mainAccount && (
-            <SendAmountFields
-              account={parentAccount || (mainAccount as Account)}
-              parentAccount={parentAccount}
-              status={status}
-              transaction={transaction}
-              onChange={handleSetTransaction}
-              updateTransaction={handleUpdateTransaction}
-              mapStrategies={mapStrategies}
-              disableSlowStrategy={disableSlowStrategy}
-              trackProperties={{
-                page: "Swap quotes",
-                ...swapDefaultTrack,
-              }}
-            />
-          )}
-        </Box>
-        <Divider />
-        <Box mt={3} mx={3} alignSelf="flex-end">
-          <Button
-            variant={"main"}
-            outline
-            borderRadius={48}
-            onClick={() => handleRequestClose(true)}
-          >
-            {t("common.continue")}
-          </Button>
-        </Box>
+        {amountError && !gasPriceError && (
+          <Flex>
+            <Alert type="warning">
+              <TranslatedError error={amountError} />
+            </Alert>
+          </Flex>
+        )}
       </Box>
-    </SideDrawer>
+      <Divider />
+
+      <Box mt={3} mx={3} alignSelf="flex-end">
+        <Button
+          disabled={Object.keys(transactionStatus.errors).length > 0}
+          variant={"main"}
+          outline
+          borderRadius={48}
+          onClick={() => handleRequestClose(true)}
+        >
+          {t("common.continue")}
+        </Button>
+      </Box>
+    </Box>
   );
 }

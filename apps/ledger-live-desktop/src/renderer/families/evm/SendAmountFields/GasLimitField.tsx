@@ -17,6 +17,7 @@ const AdvancedOptions: NonNullable<EvmFamily["sendAmountFields"]>["component"] =
   transaction,
   status,
   updateTransaction,
+  disableEditGasLimit,
 }) => {
   invariant(transaction.family === "evm", "AdvancedOptions: evm family expected");
   invariant(account, "Account required");
@@ -63,18 +64,20 @@ const AdvancedOptions: NonNullable<EvmFamily["sendAmountFields"]>["component"] =
       ) : (
         <Box horizontal justifyContent="left">
           <Label color="p.theme.colors.palette.text.shade100">{gasLimit.toString()}</Label>
-          <Button
-            borderRadius={4}
-            variant="shade"
-            outline
-            size="small"
-            onClick={onEditClick}
-            ml={2}
-          >
-            <Box horizontal alignItems="center">
-              {t("send.steps.details.edit")}
-            </Box>
-          </Button>
+          {!disableEditGasLimit && (
+            <Button
+              borderRadius={4}
+              variant="shade"
+              outline
+              size="small"
+              onClick={onEditClick}
+              ml={2}
+            >
+              <Box horizontal alignItems="center">
+                {t("send.steps.details.edit")}
+              </Box>
+            </Button>
+          )}
         </Box>
       )}
     </Box>

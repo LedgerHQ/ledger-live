@@ -1,0 +1,1 @@
+{"request":{"url":"https://cosmoshub4.coin.ledger.com/cosmos/staking/v1beta1/delegators/axelar1gyauvl44q2apn3u3aujm36q8zrj74vry3kglyg/redelegations","method":"GET"},"response":{"body":{"code":13,"message":"hrp does not match bech32 prefix: expected 'cosmos' got 'axelar': internal logic error","details":[]}}}

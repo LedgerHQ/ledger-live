@@ -29,7 +29,15 @@ const CustomButton = styled(Button)`
   border: none;
   padding-right: 14px;
 `;
-export default function AccountSubHeader({ family, team }: { family: string; team: string }) {
+export default function AccountSubHeader({
+  family,
+  team,
+  teamLink,
+}: {
+  family: string;
+  team: string;
+  teamLink?: string;
+}) {
   const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
   const { t } = useTranslation();
   function openDrawer() {
@@ -63,6 +71,7 @@ export default function AccountSubHeader({ family, team }: { family: string; tea
         closeDrawer={closeDrawer}
         family={family}
         team={team}
+        teamLink={teamLink}
       />
     </Card>
   );

@@ -23,10 +23,6 @@ function AddAccount({ currencyId }: { currencyId?: string }) {
     setIsAddModalOpened(false);
   }
 
-  function reopenAddModal() {
-    setIsAddModalOpened(true);
-  }
-
   return (
     <>
       <Touchable event="OpenAddAccountModal" onPress={openAddModal} testID="OpenAddAccountModal">
@@ -42,12 +38,7 @@ function AddAccount({ currencyId }: { currencyId?: string }) {
           <PlusMedium size={20} color={"neutral.c00"} />
         </Flex>
       </Touchable>
-      <AddAccountDrawer
-        isOpened={isAddModalOpened}
-        onClose={closeAddModal}
-        reopenDrawer={reopenAddModal}
-        currency={currency}
-      />
+      <AddAccountDrawer isOpened={isAddModalOpened} onClose={closeAddModal} currency={currency} />
     </>
   );
 }

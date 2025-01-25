@@ -21,6 +21,7 @@
     "../../Network/RCTNetworking",
     "../Utilities/BackHandler",
     "../Utilities/Platform",
+    "../../../../Libraries/Utilities/Platform",
     "../../Network/RCTNetworking at node_modules/react-native/Libraries/Core/Devtools/loadBundleFromServer.js",
     "./BaseViewConfig",
     "./Image",

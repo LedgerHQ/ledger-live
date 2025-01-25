@@ -1,0 +1,1 @@
+{"request":{"url":"https://rest.core.persistence.one/cosmos/auth/v1beta1/accounts/persistence1v2mp0m7k96dm9qv60fkspcqlzpkzrwnevf47z2","method":"GET"},"response":{"body":{"account":{"@type":"/cosmos.auth.v1beta1.BaseAccount","address":"persistence1v2mp0m7k96dm9qv60fkspcqlzpkzrwnevf47z2","pub_key":null,"account_number":"52757","sequence":"0"}}}}

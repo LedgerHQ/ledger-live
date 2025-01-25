@@ -16,6 +16,14 @@ import { scan, scanCommonOpts } from "../../scan";
 import type { ScanCommonOpts } from "../../scan";
 import type { InferTransactionsOpts } from "../../transaction";
 import { inferTransactions, inferTransactionsOpts } from "../../transaction";
+
+export type SendJobOpts = ScanCommonOpts &
+  InferTransactionsOpts & {
+    "ignore-errors": boolean;
+    "disable-broadcast": boolean;
+    format: string;
+  };
+
 export default {
   description: "Send crypto-assets",
   args: [
@@ -37,18 +45,11 @@ export default {
       desc: "default | json | silent",
     },
   ],
-  job: (
-    opts: ScanCommonOpts &
-      InferTransactionsOpts & {
-        "ignore-errors": boolean;
-        "disable-broadcast": boolean;
-        format: string;
-      },
-  ) => {
+  job: (opts: SendJobOpts) => {
     const l =
       opts.format !== "json" && opts.format !== "silent" // eslint-disable-next-line no-console
-        ? l => console.log(l)
-        : _l => {};
+        ? (l: any) => console.log(l)
+        : (_l: any) => {};
     return scan(opts).pipe(
       tap(account => {
         l(`→ FROM ${formatAccount(account, "basic")}`);

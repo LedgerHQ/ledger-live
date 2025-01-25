@@ -36,12 +36,13 @@ export class ExchangeModule extends CustomModule {
    *
    * @returns - A transaction ID used to complete the exchange process
    */
-  async startSell({ provider }: Omit<ExchangeStartSellParams, "exchangeType">) {
+  async startSell({ provider, fromAccountId }: Omit<ExchangeStartSellParams, "exchangeType">) {
     const result = await this.request<ExchangeStartSellParams, ExchangeStartResult>(
       "custom.exchange.start",
       {
         exchangeType: "SELL",
         provider,
+        fromAccountId,
       },
     );
 
@@ -158,8 +159,8 @@ export class ExchangeModule extends CustomModule {
     provider: string;
     fromAccountId: string;
     transaction: Transaction;
-    binaryPayload: Buffer;
-    signature: Buffer;
+    binaryPayload: string | Buffer; // Support Coinify Buffer legacy
+    signature: string | Buffer; // Support Coinify Buffer legacy
     feeStrategy: ExchangeCompleteParams["feeStrategy"];
   }): Promise<string> {
     const result = await this.request<ExchangeCompleteParams, ExchangeCompleteResult>(
@@ -169,8 +170,9 @@ export class ExchangeModule extends CustomModule {
         provider,
         fromAccountId,
         rawTransaction: serializeTransaction(transaction),
-        hexBinaryPayload: binaryPayload.toString("hex"),
-        hexSignature: signature.toString("hex"),
+        hexBinaryPayload:
+          typeof binaryPayload === "string" ? binaryPayload : binaryPayload.toString("hex"),
+        hexSignature: typeof signature === "string" ? signature : signature.toString("hex"),
         feeStrategy,
       },
     );

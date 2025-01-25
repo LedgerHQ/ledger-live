@@ -31,6 +31,8 @@ import { NearUnstakingFlowParamList } from "../UnstakingFlow/types";
 import { NearWithdrawingFlowParamList } from "../WithdrawingFlow/types";
 import { useSettings } from "~/hooks";
 import { useAccountUnit } from "~/hooks/useAccountUnit";
+import NotEnoughFundFeesAlert from "../../shared/StakingErrors/NotEnoughFundFeesAlert";
+import { NotEnoughBalance } from "@ledgerhq/errors";
 
 type Props =
   | StackNavigatorProps<NearStakingFlowParamList, ScreenName.NearStakingAmount>
@@ -92,6 +94,8 @@ function StakingAmount({ navigation, route }: Props) {
     behaviorParam = "padding";
   }
 
+  const errorDuringUnstaking = error instanceof NotEnoughBalance && transaction.mode === "unstake";
+
   return (
     <View
       style={[
@@ -112,6 +116,7 @@ function StakingAmount({ navigation, route }: Props) {
                 inputStyle={styles.inputStyle}
                 hasError={!!error}
                 hasWarning={!!warning}
+                testID="near-delegation-amount-input"
               />
               <LText
                 style={[styles.fieldStatus]}
@@ -158,6 +163,7 @@ function StakingAmount({ navigation, route }: Props) {
                 },
               ]}
             >
+              {errorDuringUnstaking && <NotEnoughFundFeesAlert account={account} />}
               {remaining.isZero() && (
                 <View style={styles.labelContainer}>
                   <Check size={16} color={colors.success.c50} />
@@ -190,6 +196,7 @@ function StakingAmount({ navigation, route }: Props) {
                 onPress={onNext}
                 title={<Trans i18nKey="near.staking.flow.steps.amount.cta" />}
                 type="primary"
+                testID="near-delegation-amount-continue"
               />
             </View>
           </View>
@@ -241,7 +248,7 @@ const styles = StyleSheet.create({
   },
   footer: {
     alignSelf: "stretch",
-    padding: 8,
+    paddingVertical: 8,
   },
   labelContainer: {
     width: "100%",

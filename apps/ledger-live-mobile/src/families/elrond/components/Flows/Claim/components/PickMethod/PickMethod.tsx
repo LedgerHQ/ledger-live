@@ -4,8 +4,8 @@ import { useTheme } from "@react-navigation/native";
 import { Trans } from "react-i18next";
 import { BigNumber } from "bignumber.js";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { handleTransactionStatus } from "@ledgerhq/live-common/families/elrond/helpers/handleTransactionStatus";
-import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { handleTransactionStatus } from "@ledgerhq/live-common/families/elrond/helpers";
+import { getAccountCurrency, getMainAccount } from "@ledgerhq/coin-framework/account";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { MIN_DELEGATION_AMOUNT } from "@ledgerhq/live-common/families/elrond/constants";
 

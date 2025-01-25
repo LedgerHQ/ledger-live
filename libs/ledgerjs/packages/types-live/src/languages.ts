@@ -1,4 +1,11 @@
-export type Language = "french" | "english" | "spanish";
+export type Language =
+  | "french"
+  | "english"
+  | "spanish"
+  | "brazilian"
+  | "german"
+  | "russian"
+  | "turkish";
 
 export type LanguagePackage = {
   language: Language;
@@ -24,6 +31,10 @@ export const languageIds: { [key in Language]: number } = {
   english: 0x00,
   french: 0x01,
   spanish: 0x02,
+  brazilian: 0x03,
+  german: 0x04,
+  russian: 0x05,
+  turkish: 0x06,
 };
 
 export const idsToLanguage: {
@@ -32,4 +43,8 @@ export const idsToLanguage: {
   0x00: "english",
   0x01: "french",
   0x02: "spanish",
+  0x03: "brazilian",
+  0x04: "german",
+  0x05: "russian",
+  0x06: "turkish",
 };

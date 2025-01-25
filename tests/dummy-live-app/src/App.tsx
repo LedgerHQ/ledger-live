@@ -129,34 +129,34 @@ const App = () => {
         <h3>Ledger Live Dummy Test App</h3>
         <p>App for testing the Ledger Live SDK manually and in Automated tests</p>
         <div className="button-container">
-          <button onClick={getAccounts} data-test-id="get-all-accounts-button">
+          <button onClick={getAccounts} data-testid="get-all-accounts-button">
             Get all accounts
           </button>
-          <button onClick={requestAccount} data-test-id="request-single-account-button">
+          <button onClick={requestAccount} data-testid="request-single-account-button">
             Request account
           </button>
-          <button onClick={verifyAddress} data-test-id="verify-address-button">
+          <button onClick={verifyAddress} data-testid="verify-address-button">
             Verify Address
           </button>
-          <button onClick={signBitcoinTransaction} data-test-id="sign-bitcoin-transaction-button">
+          <button onClick={signBitcoinTransaction} data-testid="sign-bitcoin-transaction-button">
             Sign bitcoin Transaction
           </button>
-          <button onClick={signEthereumTransaction} data-test-id="sign-ethereum-transaction-button">
+          <button onClick={signEthereumTransaction} data-testid="sign-ethereum-transaction-button">
             Sign ethereum Transaction
           </button>
-          <button onClick={broadcastTransaction} data-test-id="broadcast-transaction-button">
+          <button onClick={broadcastTransaction} data-testid="broadcast-transaction-button">
             Broadcast Transaction (Not yet implemented)
           </button>
-          <button onClick={listCurrencies} data-test-id="list-currencies-button">
+          <button onClick={listCurrencies} data-testid="list-currencies-button">
             List Currencies
           </button>
-          <button onClick={swap} data-test-id="swap-button">
+          <button onClick={swap} data-testid="swap-button">
             Swap (Not yet implemented)
           </button>
-          <button onClick={fund} data-test-id="fund-button">
+          <button onClick={fund} data-testid="fund-button">
             Fund (Not yet implemented)
           </button>
-          <button onClick={sell} data-test-id="sell-button">
+          <button onClick={sell} data-testid="sell-button">
             Sell (Not yet implemented)
           </button>
         </div>

@@ -12,6 +12,7 @@ import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import Button from "~/renderer/components/Button";
+import { UpdateStepFooterWrapper } from "../UpdateStepFooterWrapper";
 import { StepProps } from "../types";
 
 const Container = styled(Box).attrs(() => ({
@@ -102,12 +103,16 @@ const StepResetDevice = ({ deviceModelId }: StepProps) => {
   );
 };
 
-export function StepResetFooter({ transitionTo }: StepProps) {
+function Footer({ transitionTo }: StepProps) {
   return (
-    <Button primary onClick={() => transitionTo("idCheck")}>
-      <Trans i18nKey="common.continue" />
-    </Button>
+    <UpdateStepFooterWrapper>
+      <Button primary onClick={() => transitionTo("idCheck")}>
+        <Trans i18nKey="common.continue" />
+      </Button>
+    </UpdateStepFooterWrapper>
   );
 }
+
+StepResetDevice.Footer = Footer;
 
 export default StepResetDevice;

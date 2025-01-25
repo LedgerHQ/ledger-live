@@ -15,6 +15,7 @@ import {
   startOfHour,
   startOfDay,
   startOfWeek,
+  orderAccountsByFiatValue,
 } from "./portfolio";
 import { setEnv } from "@ledgerhq/live-env";
 import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
@@ -299,6 +300,16 @@ describe("date utils", () => {
   describe("getRanges", () => {
     test("returns a non empty array", () => {
       expect(getRanges().length).toBeGreaterThan(0);
+    });
+  });
+  describe("orderAccountsByFiatValue", () => {
+    test("should return accounts ordered by fiat value", async () => {
+      const account1 = genAccountBitcoin("bitcoin_1");
+      const account2 = genAccountBitcoin("bitcoin_2");
+      const { state, to } = await loadCV([account1, account2]);
+      const accounts = [account1, account2];
+      const orderedAccounts = orderAccountsByFiatValue(accounts, state, to);
+      expect(orderedAccounts).toMatchObject([account2, account1]);
     });
   });
 });

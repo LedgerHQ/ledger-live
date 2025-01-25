@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Trans } from "react-i18next";
 import { bitcoinPickingStrategy } from "@ledgerhq/live-common/families/bitcoin/types";
 type Keys = keyof typeof bitcoinPickingStrategy;
-type Option = {
+export type Option = {
   value: Keys;
   label: React.ReactNode;
 };

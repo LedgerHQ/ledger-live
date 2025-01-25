@@ -97,7 +97,7 @@ describe("accountNames' WalletSyncDataManager", () => {
     const incomingState = {
       "1": "a",
     };
-    const diff = await manager.resolveIncomingDistantState(
+    const diff = await manager.resolveIncrementalUpdate(
       dummyContext,
       localData,
       latestState,
@@ -117,7 +117,7 @@ describe("accountNames' WalletSyncDataManager", () => {
       "1": "a",
       "2": "b",
     };
-    const diff = await manager.resolveIncomingDistantState(
+    const diff = await manager.resolveIncrementalUpdate(
       dummyContext,
       localData,
       latestState,
@@ -147,7 +147,7 @@ describe("accountNames' WalletSyncDataManager", () => {
       "1": "a",
       "2": "bbbb",
     };
-    const diff = await manager.resolveIncomingDistantState(
+    const diff = await manager.resolveIncrementalUpdate(
       dummyContext,
       localData,
       latestState,

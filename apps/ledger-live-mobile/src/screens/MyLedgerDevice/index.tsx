@@ -29,6 +29,7 @@ import {
   AppWithDependents,
   AppsInstallUninstallWithDependenciesContextProvider,
 } from "./AppsInstallUninstallWithDependenciesContext";
+import { useAppDataStorage } from "~/hooks/storageProvider/useAppDataStorage";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<MyLedgerNavigatorStackParamList, ScreenName.MyLedgerDevice>
@@ -48,7 +49,8 @@ const Manager = ({ navigation, route }: NavigationProps) => {
 
   const { deviceId, modelId } = device;
   const { deviceName } = result;
-  const [state, dispatch] = useApps(result, deviceId, appsToRestore);
+  const storage = useAppDataStorage();
+  const [state, dispatch] = useApps(result, device, storage, appsToRestore);
   const reduxDispatch = useDispatch();
 
   const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);

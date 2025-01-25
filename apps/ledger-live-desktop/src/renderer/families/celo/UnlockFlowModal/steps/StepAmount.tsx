@@ -11,6 +11,9 @@ import Alert from "~/renderer/components/Alert";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import AmountField from "../fields/AmountField";
 import { StepProps } from "../types";
+import NotEnoughFundsToUnstake from "~/renderer/components/NotEnoughFundsToUnstake";
+import { NotEnoughBalance } from "@ledgerhq/errors";
+
 export const StepAmountFooter = ({
   transitionTo,
   account,
@@ -51,8 +54,12 @@ const StepAmount = ({
   error,
   bridgePending,
   t,
+  onClose,
 }: StepProps) => {
   invariant(account && transaction, "account and transaction required");
+  const notEnoughFundsError =
+    status.errors.amount && status.errors.amount instanceof NotEnoughBalance;
+
   return (
     <Box flow={1}>
       <SyncSkipUnderPriority priority={100} />
@@ -81,6 +88,8 @@ const StepAmount = ({
         status={status}
         t={t}
       />
+      <Box mb={3} />
+      {notEnoughFundsError ? <NotEnoughFundsToUnstake account={account} onClose={onClose} /> : null}
     </Box>
   );
 };

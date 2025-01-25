@@ -134,9 +134,9 @@ const Stories: React.FC<Props> = props => {
         const newStoryGroupList = computeNewStoryGroupList(storyGroupList, event);
         if (!isEqual(storyGroupList, newStoryGroupList)) setStoryGroupList(newStoryGroupList);
       }
-      if (event.event === "StoryCTAClicked" && event?.story?.media?.actionUrl) {
-        Linking.openURL(event.story.media.actionUrl);
-        storylyRef.current?.close?.();
+      if (event.event === "StoryCTAClicked" && event?.story?.actionUrl) {
+        Linking.openURL(event.story.actionUrl);
+        storylyRef.current?.closeStory?.();
       }
     },
     [storyGroupList],

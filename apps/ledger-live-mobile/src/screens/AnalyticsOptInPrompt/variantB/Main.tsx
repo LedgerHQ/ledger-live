@@ -79,6 +79,7 @@ function Main({ route, navigation }: Props) {
             />
             <Button
               title={t("analyticsOptIn.variantB.main.ctas.share")}
+              testID="accept-analytics-button"
               onPress={clickOnAllowAnalytics}
               type="main"
               size="large"

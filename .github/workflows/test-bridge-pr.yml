@@ -14,7 +14,7 @@ jobs:
     outputs:
       is-affected: ${{ steps.affected.outputs.is-affected }}
       paths: ${{ steps.affected.outputs.paths }}
-    runs-on: [ubuntu-latest]
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
         with:
@@ -48,15 +48,16 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          - ubuntu-latest
+          - ubuntu-22.04
 
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
-      - name: Setup the toolchain
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
-        id: toolchain
+      - name: Setup the caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        id: setup-caches
         with:
+          install-proto: true
           skip-turbo-cache: "false"
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
@@ -65,11 +66,11 @@ jobs:
       - name: Install node-gyp globally
         if: runner.os == 'Windows'
         run: |
-          pnpm add -g node-gyp
+          pnpm add -g node-gyp@3.8.0
       - name: Install dependencies
         run: pnpm i --filter="live-common..." --filter="ledger-live"
       - name: Build
-        run: pnpm build:llc --api="http://127.0.0.1:${{ steps.toolchain.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
+        run: pnpm build:llc --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
       - name: Test
         shell: bash
         env:

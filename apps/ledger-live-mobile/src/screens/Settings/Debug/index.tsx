@@ -1,49 +1,15 @@
-import React, { useCallback, useRef } from "react";
+import React from "react";
 import { IconsLegacy, Alert as AlertBox, Flex } from "@ledgerhq/native-ui";
-import { Alert, TouchableWithoutFeedback, View } from "react-native";
-import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/FeatureFlagsContext";
-import { groupedFeatures } from "@ledgerhq/live-common/featureFlags/groupedFeatures";
 import { TrackScreen } from "~/analytics";
 import SettingsRow from "~/components/SettingsRow";
 import { ScreenName } from "~/const";
 import SettingsNavigationScrollView from "../SettingsNavigationScrollView";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
-import PoweredByLedger from "../PoweredByLedger";
 
 export default function DebugSettings({
   navigation: { navigate },
 }: StackNavigatorProps<SettingsNavigatorStackParamList, ScreenName.DebugSettings>) {
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const pressCount = useRef(0);
-
-  const { getFeature, overrideFeature } = useFeatureFlags();
-
-  const ruleThemAll = useCallback(() => {
-    groupedFeatures.europa.featureIds.forEach(featureId =>
-      overrideFeature(featureId, { ...getFeature(featureId), enabled: true }),
-    );
-    Alert.alert("I can only show you the door, you're the one that has to walk through it.");
-  }, [overrideFeature, getFeature]);
-
-  const onDebugHiddenPress = useCallback(() => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
-    pressCount.current += 1;
-    const timeout = setTimeout(() => {
-      pressCount.current = 0;
-    }, 300);
-    if (pressCount.current > 6) {
-      ruleThemAll();
-      pressCount.current = 0;
-    }
-    timeoutRef.current = timeout;
-    return () => {
-      clearTimeout(timeout);
-    };
-  }, [ruleThemAll]);
-
   return (
     <SettingsNavigationScrollView>
       <TrackScreen category="Settings" name="Debug" />
@@ -99,11 +65,6 @@ export default function DebugSettings({
         iconLeft={<IconsLegacy.EmojiHappyMedium size={24} color="black" />}
         onPress={() => navigate(ScreenName.DebugPlayground)}
       />
-      <TouchableWithoutFeedback onPress={onDebugHiddenPress}>
-        <View>
-          <PoweredByLedger />
-        </View>
-      </TouchableWithoutFeedback>
     </SettingsNavigationScrollView>
   );
 }

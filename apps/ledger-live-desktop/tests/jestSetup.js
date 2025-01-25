@@ -1,6 +1,33 @@
-import { TextDecoder, TextEncoder } from "util";
 import "@jest/globals";
 import "@testing-library/jest-dom";
+import { server } from "./server";
+import { ALLOWED_UNHANDLED_REQUESTS } from "./handlers";
+
+global.setImmediate = global.setImmediate || ((fn, ...args) => global.setTimeout(fn, 0, ...args));
+
+class ResizeObserver {
+  constructor(callback) {
+    this.callback = callback;
+  }
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+}
+
+global.ResizeObserver = ResizeObserver;
+
+beforeAll(() =>
+  server.listen({
+    onUnhandledRequest(request, print) {
+      if (ALLOWED_UNHANDLED_REQUESTS.some(ignoredUrl => request.url.includes(ignoredUrl))) {
+        return;
+      }
+      print.warning();
+    },
+  }),
+);
+afterEach(() => server.resetHandlers());
+afterAll(() => server.close());
 
 jest.mock("src/sentry/install", () => ({
   init: jest.fn(),
@@ -58,6 +85,7 @@ jest.mock("src/renderer/analytics/segment", () => ({
   trackPage: jest.fn(),
   start: jest.fn(),
   useTrack: jest.fn(),
+  setAnalyticsFeatureFlagMethod: jest.fn(),
 }));
 
 jest.mock("src/sentry/renderer", () => ({
@@ -67,6 +95,17 @@ jest.mock("src/sentry/renderer", () => ({
   getSentryIfAvailable: jest.fn().mockReturnValue(false),
 }));
 
-global.TextEncoder = TextEncoder;
-global.TextDecoder = TextDecoder;
-global.setImmediate = global.setImmediate || ((fn, ...args) => global.setTimeout(fn, 0, ...args));
+if (!globalThis.Buffer) {
+  // Note: this polyfill depends on the patch buffer@6.0.3 which adds the Uint8
+  // subarray logic. It's the same as in ledger-live-mobile
+  // Furthermore, importing 'buffer' gets translated to 'node:buffer' so we're
+  // using a relative path here
+  const { Buffer } = require("../node_modules/buffer");
+  Object.defineProperty(globalThis, "Buffer", { value: Buffer });
+} else {
+  // jsdom defines a global Buffer
+  if (!(globalThis.Buffer.prototype instanceof Uint8Array)) {
+    // jsdom does not define Buffer as an instance of Uint8Array, so we need to set it
+    Object.setPrototypeOf(globalThis.Buffer.prototype, Uint8Array.prototype);
+  }
+}

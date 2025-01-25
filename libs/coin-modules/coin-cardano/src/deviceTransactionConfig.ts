@@ -12,6 +12,7 @@ import {
   getBech32PoolId,
   getBipPathString,
 } from "./logic";
+import { CARDANO_MAX_SUPPLY } from "./constants";
 
 function getDeviceTransactionConfig({
   account,
@@ -54,9 +55,14 @@ function getDeviceTransactionConfig({
         },
       ];
 
-      const requiredMinAdaForTokens = TyphonUtils.calculateMinUtxoAmount(
-        tokensToSend,
-        new BigNumber(cardanoResources.protocolParams.lovelacePerUtxoWord),
+      const recipient = TyphonUtils.getAddressFromString(transaction.recipient);
+      const requiredMinAdaForTokens = TyphonUtils.calculateMinUtxoAmountBabbage(
+        {
+          address: recipient,
+          amount: new BigNumber(CARDANO_MAX_SUPPLY),
+          tokens: tokensToSend,
+        },
+        new BigNumber(cardanoResources.protocolParams.utxoCostPerByte),
       );
       fields.push({
         type: "text",
@@ -76,7 +82,7 @@ function getDeviceTransactionConfig({
         value: decodeTokenName(assetName),
       });
       fields.push({
-        type: "text",
+        type: "amount",
         label: "Amount",
         value: formatCurrencyUnit(getAccountCurrency(account).units[0], transactionAmount, {
           showCode: true,
@@ -85,7 +91,7 @@ function getDeviceTransactionConfig({
       });
     } else if (account.type === "Account") {
       fields.push({
-        type: "text",
+        type: "amount",
         label: "Amount",
         value: formatCurrencyUnit(getAccountCurrency(account).units[0], transaction.amount, {
           showCode: true,

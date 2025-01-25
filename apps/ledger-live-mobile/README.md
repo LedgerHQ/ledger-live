@@ -25,7 +25,7 @@ We also share core business logic with Ledger Live mobile through [@ledgerhq/liv
 
 ### iOS
 
-- XCode
+- XCode (our CI builds run 15.3, so 15.3 is recommended)
 - Ruby 3.3.0 or above. The macOS built-in Ruby [does not work properly for installing dependencies of the iOS app](https://jeffreymorgan.io/articles/ruby-on-macos-with-rvm/), you have to install Ruby with for instance [Homebrew](https://brew.sh/) or [rvm](https://rvm.io/rvm/install) and make sure that `which ruby` points to that newly installed Ruby.
 
 ### Android
@@ -81,6 +81,27 @@ Produces a development .ipa signed with the developer's current certificates (ca
 ### `pnpm build:llm:android`
 
 Produces a development .apk that can be installed on Android phones. Not eligible for Google PlayStore
+
+## Watch deps
+
+In another terminal and in parallel to `pnpm dev:llm`, you can watch different libs from the monorepo
+
+```bash
+# watch common
+pnpm watch:common
+
+# watch ljs
+pnpm watch:ljs
+
+# watch coin integrations
+pnpm watch:coin
+
+# watch specific lib
+pnpm turbo run watch --filter="./libs/ledgerjs/packages/hw-app-btc"
+
+# watch specific coin integration
+pnpm turbo run watch --filter="./libs/coin-modules/coin-bitcoin"
+```
 
 ## Environment variables
 

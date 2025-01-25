@@ -18,3 +18,8 @@ export type Merge<A, B> = Omit<A, keyof B> & B;
 export type PartialNullable<T> = {
   [P in keyof T]?: T[P] | null;
 };
+
+export type EntryOf<
+  T extends Record<string, unknown>,
+  K extends keyof T = keyof T,
+> = K extends unknown ? [K, T[K]] : never;

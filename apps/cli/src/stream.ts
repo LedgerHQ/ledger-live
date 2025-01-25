@@ -2,7 +2,7 @@ import fs from "fs";
 import { Observable } from "rxjs";
 import { map, concatMap } from "rxjs/operators";
 export const fromNodeStream = (stream: any): Observable<Buffer> =>
-  Observable.create(o => {
+  Observable.create((o: any) => {
     const endHandler = () => o.complete();
 
     const errorHandler = (e: Error) => o.error(e);
@@ -34,7 +34,7 @@ export const apdusFromFile = (file: string) =>
     map(line => Buffer.from(line, "hex")),
   );
 export const jsonFromFile = (file: string, rawValue = false): Observable<any> =>
-  Observable.create(o => {
+  Observable.create((o: any) => {
     let acc = "";
     let count = 0;
     return fromFile(file).subscribe({

@@ -14,22 +14,35 @@ import {
   editSatStackConfig,
   checkRPCNodeConfig,
   validateRPCNodeConfig,
+  RPCNodeConfig,
 } from "@ledgerhq/live-common/families/bitcoin/satstack";
 import { deviceOpt } from "../../scan";
 import { jsonFromFile } from "../../stream";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 const bitcoin = getCryptoCurrencyById("bitcoin");
 
-function requiredNodeConfig(nodeConfig) {
+function requiredNodeConfig(nodeConfig: RPCNodeConfig | undefined) {
   invariant(nodeConfig, "--rpcHOST,--rpcUSER,--rpcPASSWORD config required");
-  const errors = validateRPCNodeConfig(nodeConfig);
+  const errors = validateRPCNodeConfig(nodeConfig!);
 
   if (errors.length) {
     throw new Error(errors.map(e => e.field + ": " + e.error.message).join(", "));
   }
 
-  return nodeConfig;
+  return nodeConfig!;
 }
+
+export type SatstackJobOpts = {
+  "no-device": boolean;
+  "no-save": boolean;
+  device: string;
+  lss: string;
+  rpcHOST: string;
+  rpcUSER: string;
+  rpcPASSWORD: string;
+  rpcTLS: boolean;
+};
 
 export default {
   description: "SatStack: Generate and manage lss.json file",
@@ -81,16 +94,7 @@ export default {
     rpcUSER,
     rpcPASSWORD,
     rpcTLS,
-  }: {
-    "no-device": boolean;
-    "no-save": boolean;
-    device: string;
-    lss: string;
-    rpcHOST: string;
-    rpcUSER: string;
-    rpcPASSWORD: string;
-    rpcTLS: boolean;
-  }) => {
+  }: SatstackJobOpts) => {
     setEnv("SATSTACK", true);
     const maybeExistingConfigO = !lss
       ? of(null)
@@ -100,8 +104,8 @@ export default {
           catchError(() => of(null)),
         );
     const signerContext: SignerContext = <T>(
-      deviceId,
-      currency,
+      deviceId: string,
+      currency: CryptoCurrency,
       fn: (signer: Btc) => Promise<T>,
     ): Promise<T> =>
       firstValueFrom(
@@ -131,7 +135,7 @@ export default {
         const { initialConfig, descriptors } = a;
         const patch = {
           node: requiredNodeConfig(
-            maybeNodeConfigOverride || (initialConfig ? initialConfig.node : null),
+            maybeNodeConfigOverride || (initialConfig ? initialConfig.node : undefined),
           ),
           accounts: descriptors.map(descriptor => ({
             descriptor,

@@ -3,8 +3,12 @@ import { firstValueFrom, from, Observable } from "rxjs";
 import { TransportStatusError, WrongDeviceForAccount } from "@ledgerhq/errors";
 
 import { delay } from "../../../promise";
-import { createExchange, ExchangeTypes } from "@ledgerhq/hw-app-exchange";
-import perFamily from "../../../generated/exchange";
+import {
+  createExchange,
+  ExchangeTypes,
+  isExchangeTypeNg,
+  PayloadSignatureComputedFormat,
+} from "@ledgerhq/hw-app-exchange";
 import { getAccountCurrency, getMainAccount } from "../../../account";
 import { getAccountBridge } from "../../../bridge";
 import { TransactionRefusedOnDevice } from "../../../errors";
@@ -46,7 +50,7 @@ const completeExchange = (
 
     const confirmExchange = async () => {
       await withDevicePromise(deviceId, async transport => {
-        const providerNameAndSignature = getProviderConfig(exchangeType, provider);
+        const providerNameAndSignature = await getProviderConfig(exchangeType, provider);
 
         if (!providerNameAndSignature) throw new Error("Could not get provider infos");
 
@@ -82,27 +86,31 @@ const completeExchange = (
         if (unsubscribed) return;
 
         currentStep = "CHECK_PARTNER";
-        await exchange.checkPartner(providerNameAndSignature.signature);
+        await exchange.checkPartner(providerNameAndSignature.signature!);
         if (unsubscribed) return;
 
         currentStep = "PROCESS_TRANSACTION";
-        await exchange.processTransaction(Buffer.from(binaryPayload, "hex"), estimatedFees);
+        const { payload, format }: { payload: Buffer; format: PayloadSignatureComputedFormat } =
+          isExchangeTypeNg(exchange.transactionType)
+            ? { payload: Buffer.from("." + binaryPayload), format: "jws" }
+            : { payload: Buffer.from(binaryPayload, "hex"), format: "raw" };
+        await exchange.processTransaction(payload, estimatedFees, format);
         if (unsubscribed) return;
 
-        const bufferSignature = Buffer.from(signature, "hex");
-        const goodSign = convertSignature(bufferSignature, exchangeType);
+        const goodSign = convertSignature(signature, exchange.transactionType);
 
         currentStep = "CHECK_TRANSACTION_SIGNATURE";
         await exchange.checkTransactionSignature(goodSign);
         if (unsubscribed) return;
 
-        const payoutAddressParameters = await perFamily[
-          mainPayoutCurrency.family
-        ].getSerializedAddressParameters(mainAccount.freshAddressPath, mainAccount.derivationMode);
+        const payoutAddressParameters = accountBridge.getSerializedAddressParameters(mainAccount);
         if (unsubscribed) return;
+        if (!payoutAddressParameters) {
+          throw new Error(`Family not supported: ${mainPayoutCurrency.family}`);
+        }
 
         const { config: payoutAddressConfig, signature: payoutAddressConfigSignature } =
-          getCurrencyExchangeConfig(payoutCurrency);
+          await getCurrencyExchangeConfig(payoutCurrency);
 
         try {
           o.next({
@@ -110,10 +118,10 @@ const completeExchange = (
             estimatedFees: estimatedFees.toString(),
           });
           currentStep = "CHECK_PAYOUT_ADDRESS";
-          await exchange.checkPayoutAddress(
+          await exchange.validatePayoutOrAsset(
             payoutAddressConfig,
             payoutAddressConfigSignature,
-            payoutAddressParameters.addressParameters,
+            payoutAddressParameters,
           );
         } catch (e) {
           if (e instanceof TransportStatusError && e.statusCode === 0x6a83) {
@@ -173,17 +181,13 @@ const completeExchange = (
  * @param {ExchangeTypes} exchangeType
  * @return {Buffer} The correct format Buffer for AppExchange call.
  */
-function convertSignature(bufferSignature: Buffer, exchangeType: ExchangeTypes): Buffer {
-  const goodSign =
-    exchangeType === ExchangeTypes.Sell
-      ? bufferSignature
-      : Buffer.from(secp256k1.signatureExport(bufferSignature));
-
-  if (!goodSign) {
-    throw new Error("Could not check provider signature");
+function convertSignature(signature: string, exchangeType: ExchangeTypes): Buffer {
+  if (isExchangeTypeNg(exchangeType)) {
+    const base64Signature = signature.replace(/-/g, "+").replace(/_/g, "/");
+    return Buffer.from(base64Signature, "base64");
   }
-
-  return goodSign;
+  if (exchangeType === ExchangeTypes.Sell) return Buffer.from(signature, "hex");
+  return <Buffer>secp256k1.signatureExport(Buffer.from(signature, "hex"));
 }
 
 export default completeExchange;

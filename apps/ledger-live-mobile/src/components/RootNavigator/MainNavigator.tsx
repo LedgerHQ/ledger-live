@@ -5,7 +5,7 @@ import { IconsLegacy } from "@ledgerhq/native-ui";
 import { BottomTabBarProps, createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { useSelector } from "react-redux";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import Web3HubNavigator from "LLM/features/Web3Hub/Navigator";
+import Web3HubTabNavigator from "LLM/features/Web3Hub/TabNavigator";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useManagerNavLockCallback } from "./CustomBlockRouterNavigator";
 import { ScreenName, NavigatorName } from "~/const";
@@ -20,6 +20,8 @@ import customTabBar from "../TabBar/CustomTabBar";
 import { MainNavigatorParamList } from "./types/MainNavigator";
 import { isMainNavigatorVisibleSelector } from "~/reducers/appstate";
 import EarnLiveAppNavigator from "./EarnLiveAppNavigator";
+import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
+import { useRebornFlow } from "LLM/features/Reborn/hooks/useRebornFlow";
 
 const Tab = createBottomTabNavigator<MainNavigatorParamList>();
 
@@ -35,6 +37,8 @@ export default function MainNavigator() {
   const isMainNavigatorVisible = useSelector(isMainNavigatorVisibleSelector);
   const managerNavLockCallback = useManagerNavLockCallback();
   const web3hub = useFeature("web3hub");
+  const earnYiedlLabel = getStakeLabelLocaleBased();
+  const { navigateToRebornFlow } = useRebornFlow();
 
   const insets = useSafeAreaInsets();
   const tabBar = useMemo(
@@ -108,7 +112,7 @@ export default function MainNavigator() {
           tabBarIcon: props => (
             <TabIcon
               Icon={IconsLegacy.LendMedium}
-              i18nKey="tabs.earn"
+              i18nKey={earnYiedlLabel}
               testID="tab-bar-earn"
               {...props}
             />
@@ -118,9 +122,14 @@ export default function MainNavigator() {
           tabPress: e => {
             e.preventDefault();
             managerLockAwareCallback(() => {
-              navigation.navigate(NavigatorName.Earn, {
-                screen: ScreenName.Earn,
-              });
+              if (readOnlyModeEnabled && hasOrderedNano) {
+                navigation.navigate(ScreenName.PostBuyDeviceSetupNanoWallScreen);
+              } else if (readOnlyModeEnabled) {
+                navigateToRebornFlow();
+              } else
+                navigation.navigate(NavigatorName.Earn, {
+                  screen: ScreenName.Earn,
+                });
             });
           },
         })}
@@ -136,8 +145,8 @@ export default function MainNavigator() {
       />
       {web3hub?.enabled ? (
         <Tab.Screen
-          name={NavigatorName.Web3Hub}
-          component={Web3HubNavigator}
+          name={NavigatorName.Web3HubTab}
+          component={Web3HubTabNavigator}
           options={{
             headerShown: false,
             tabBarIcon: props => (
@@ -148,7 +157,7 @@ export default function MainNavigator() {
             tabPress: e => {
               e.preventDefault();
               managerLockAwareCallback(() => {
-                navigation.navigate(NavigatorName.Web3Hub);
+                navigation.navigate(NavigatorName.Web3HubTab);
               });
             },
           })}
@@ -189,7 +198,7 @@ export default function MainNavigator() {
               if (readOnlyModeEnabled && hasOrderedNano) {
                 navigation.navigate(ScreenName.PostBuyDeviceSetupNanoWallScreen);
               } else if (readOnlyModeEnabled) {
-                navigation.navigate(NavigatorName.BuyDevice);
+                navigateToRebornFlow();
               } else {
                 navigation.navigate(NavigatorName.MyLedger, {
                   screen: ScreenName.MyLedgerChooseDevice,

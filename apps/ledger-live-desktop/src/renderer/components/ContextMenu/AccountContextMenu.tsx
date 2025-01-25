@@ -120,7 +120,9 @@ export default function AccountContextMenu({
             state: {
               defaultCurrency: currency,
               defaultAccount: account,
+              defaultAmountFrom: "0",
               defaultParentAccount: parentAccount,
+              from: history.location.pathname,
             },
           });
         },

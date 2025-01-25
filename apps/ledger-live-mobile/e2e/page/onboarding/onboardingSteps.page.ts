@@ -1,33 +1,26 @@
 import {
-  tapByText,
   tapByElement,
   getElementById,
   waitForElementById,
   tapById,
-  waitForElementByText,
+  scrollToId,
 } from "../../helpers";
-import * as bridge from "../../bridge/server";
-import DeviceAction from "../../models/DeviceAction";
-import { ModelId, getUSBDevice, knownDevice } from "../../models/devices";
+import { ModelId } from "../../models/devices";
 import { expect } from "detox";
 
 export default class OnboardingStepsPage {
   getStartedButtonId = "onboarding-getStarted-button";
+  acceptAnalyticsButtonId = "accept-analytics-button";
   exploreWithoutDeviceButtonId = "discoverLive-exploreWithoutADevice";
-  readyToScanButtonID = "onboarding-scan-button";
-  scanAndImportAccountsPageID = "onboarding-import-accounts-title";
   discoverLiveTitle = (index: number) => `onboarding-discoverLive-${index}-title`;
   onboardingGetStartedButton = () => getElementById(this.getStartedButtonId);
+  acceptAnalyticsButton = () => getElementById(this.acceptAnalyticsButtonId);
   accessWalletButton = () => getElementById("onboarding-accessWallet");
   noLedgerYetButton = () => getElementById("onboarding-noLedgerYet");
   exploreAppButton = () => getElementById("onboarding-noLedgerYetModal-explore");
   buyLedgerButton = () => getElementById("onboarding-noLedgerYetModal-buy");
   exploreWithoutDeviceButton = () => getElementById(this.exploreWithoutDeviceButtonId);
   connectLedgerButton = () => getElementById("Existing Wallet | Connect");
-  syncWithLedgerLiveDesktop = () => getElementById("Existing Wallet | Sync");
-  readyToScanButton = () => getElementById(this.readyToScanButtonID);
-  addDeviceButton = () => getElementById("connect-with-bluetooth");
-  pairNanoButton = () => getElementById("Onboarding-PairNewNano");
   maybeLaterButton = () => getElementById("notifications-prompt-later");
 
   setupLedger = "onboarding-setupLedger";
@@ -68,6 +61,12 @@ export default class OnboardingStepsPage {
   async startOnboarding() {
     await waitForElementById(this.getStartedButtonId);
     await tapByElement(this.onboardingGetStartedButton());
+    await waitForElementById(new RegExp(`${this.setupLedger}|${this.acceptAnalyticsButtonId}`));
+    try {
+      await tapByElement(this.acceptAnalyticsButton());
+    } catch {
+      // Analytics prompt not enabled
+    }
   }
 
   // Exploring App
@@ -96,24 +95,13 @@ export default class OnboardingStepsPage {
     await tapByElement(this.connectLedgerButton());
   }
 
-  async chooseToSyncWithLedgerLiveDesktop() {
-    await tapByElement(this.syncWithLedgerLiveDesktop());
-  }
-
-  async goesThroughLedgerLiveDesktopScanning() {
-    await tapByElement(this.readyToScanButton());
-  }
-
-  async waitForScanningPage() {
-    await waitForElementById(this.scanAndImportAccountsPageID);
-  }
-
   // Setup new Ledger
   async chooseSetupLedger() {
     await tapById(this.setupLedger);
   }
 
   async chooseDevice(device: ModelId) {
+    await scrollToId(this.selectDevice(device));
     await tapById(this.selectDevice(device));
   }
 
@@ -166,32 +154,6 @@ export default class OnboardingStepsPage {
       await tapById(this.quizzCta);
     }
     await tapById(this.quizzFinalCta);
-  }
-
-  async selectPairMyNano() {
-    await tapByElement(this.pairNanoButton());
-  }
-
-  async selectAddDevice() {
-    await tapByElement(this.addDeviceButton());
-  }
-
-  async addDeviceViaBluetooth(name = knownDevice.name) {
-    const deviceAction = new DeviceAction(knownDevice);
-    await bridge.addDevicesBT(name);
-    await waitForElementByText(name);
-    await tapByText(name);
-    await bridge.open(); // Mocked action open ledger manager on the Nano
-    await deviceAction.waitForSpinner();
-    await deviceAction.accessManager();
-  }
-
-  async addDeviceViaUSB(device: ModelId) {
-    const nano = getUSBDevice(device);
-    await bridge.addDevicesUSB(nano);
-    await waitForElementByText(nano.deviceName);
-    await tapByText(nano.deviceName);
-    await new DeviceAction(nano).accessManager();
   }
 
   async declineNotifications() {

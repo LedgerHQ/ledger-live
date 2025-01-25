@@ -93,9 +93,9 @@ const cmd = ({ deviceId, request }: Input): Observable<ConnectManagerEvent> =>
                   [
                     StatusCodes.CLA_NOT_SUPPORTED,
                     StatusCodes.INS_NOT_SUPPORTED,
+                    StatusCodes.UNKNOWN_APDU,
                     0x6e01, // No StatusCodes definition
                     0x6d01, // No StatusCodes definition
-                    0x6d02, // No StatusCodes definition
                   ].includes(e.statusCode))
               ) {
                 return from(getAppAndVersion(transport)).pipe(

@@ -23,7 +23,7 @@ import { StepProps } from "../types";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { useAccountName } from "~/renderer/reducers/wallet";
 
-const urlDelegationHelp = "https://support.ledger.com/hc/en-us/articles/360010653260";
+const urlDelegationHelp = "https://support.ledger.com/article/360010653260-zd?redirect=false";
 
 const Container = styled(Box)`
   width: 148px;

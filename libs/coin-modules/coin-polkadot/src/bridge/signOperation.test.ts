@@ -5,6 +5,7 @@ import type { PolkadotOperationMode, PolkadotSigner, PolkadotOperationExtra } fr
 import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
 import buildSignOperation from "./signOperation";
 import { createRegistryAndExtrinsics } from "../network/common";
+
 import {
   fixtureChainSpec,
   fixtureTransactionParams,
@@ -12,24 +13,29 @@ import {
 } from "../network/sidecar.fixture";
 import coinConfig from "../config";
 
+jest.mock("../config");
+const mockGetConfig = jest.mocked(coinConfig.getCoinConfig);
+const mockRegistry = jest
+  .fn()
+  .mockResolvedValue(createRegistryAndExtrinsics(fixtureTxMaterialWithMetadata, fixtureChainSpec));
+const mockTransactionParams = jest.fn().mockResolvedValue(fixtureTransactionParams);
 const mockPaymentInfo = jest.fn().mockResolvedValue({
   weight: "WHATEVER",
   class: "WHATEVER",
   partialFee: "155099814",
 });
-const mockRegistry = jest
-  .fn()
-  .mockResolvedValue(createRegistryAndExtrinsics(fixtureTxMaterialWithMetadata, fixtureChainSpec));
-const mockTransactionParams = jest.fn().mockResolvedValue(fixtureTransactionParams);
 
+jest.mock("../network", () => ({
+  ...jest.requireActual("../network").default,
+  metadataHash: () => jest.fn().mockResolvedValue(""),
+  shortenMetadata: () => jest.fn().mockResolvedValue(""),
+}));
 jest.mock("../network/sidecar", () => ({
   getRegistry: () => mockRegistry(),
   paymentInfo: (args: any) => mockPaymentInfo(args),
   getTransactionParams: () => mockTransactionParams(),
+  fetchTransactionMaterial: () => fixtureTxMaterialWithMetadata,
 }));
-
-jest.mock("../config");
-const mockGetConfig = jest.mocked(coinConfig.getCoinConfig);
 
 describe("signOperation", () => {
   // Global setup
@@ -45,6 +51,7 @@ describe("signOperation", () => {
     fn(fakeSigner);
   const signOperation = buildSignOperation(signerContext);
   const deviceId = "dummyDeviceId";
+
   beforeAll(() => {
     mockGetConfig.mockImplementation((): any => {
       return {
@@ -59,15 +66,15 @@ describe("signOperation", () => {
           electionStatusThreshold: 25,
         },
         metadataShortener: {
-          url: "https://api.zondax.ch/polkadot/transaction/metadata",
+          url: "https://polkadot-metadata-shortener.api.live.ledger.com/transaction/metadata",
         },
         metadataHash: {
-          url: "https://api.zondax.ch/polkadot/node/metadata/hash",
+          url: "https://polkadot-metadata-shortener.api.live.ledger.com/node/metadata/hash",
         },
-        runtimeUpgraded: false,
       };
     });
   });
+
   it("returns events in the right order", done => {
     // GIVEN
     const account = createFixtureAccount();

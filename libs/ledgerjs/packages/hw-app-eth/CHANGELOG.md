@@ -1,5 +1,439 @@
 # @ledgerhq/hw-app-eth
 
+## 6.42.3
+
+### Patch Changes
+
+- Updated dependencies [[`d98a964`](https://github.com/LedgerHQ/ledger-live/commit/d98a96476c3d44eab1575f6c7c58ec03b5daf890), [`c2d24cd`](https://github.com/LedgerHQ/ledger-live/commit/c2d24cd0299ea04e39306279b6f833696bc4f4fb)]:
+  - @ledgerhq/types-live@6.57.0
+  - @ledgerhq/domain-service@1.2.16
+  - @ledgerhq/cryptoassets-evm-signatures@13.5.3
+  - @ledgerhq/evm-tools@1.3.1
+
+## 6.42.3-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`d98a964`](https://github.com/LedgerHQ/ledger-live/commit/d98a96476c3d44eab1575f6c7c58ec03b5daf890), [`c2d24cd`](https://github.com/LedgerHQ/ledger-live/commit/c2d24cd0299ea04e39306279b6f833696bc4f4fb)]:
+  - @ledgerhq/types-live@6.57.0-next.0
+  - @ledgerhq/domain-service@1.2.16-next.0
+  - @ledgerhq/cryptoassets-evm-signatures@13.5.3-next.0
+  - @ledgerhq/evm-tools@1.3.1-next.0
+
+## 6.42.2
+
+### Patch Changes
+
+- Updated dependencies [[`9820a8f`](https://github.com/LedgerHQ/ledger-live/commit/9820a8f8ec66cf114b23c3c3b92474d250b8bf01), [`50b00c7`](https://github.com/LedgerHQ/ledger-live/commit/50b00c73e39af99c7d749bf57d5ef2f2e4942f2d), [`6d050fd`](https://github.com/LedgerHQ/ledger-live/commit/6d050fda707a63cff15cee797ea1167a0219aa32), [`1fa754d`](https://github.com/LedgerHQ/ledger-live/commit/1fa754deed730bb3dd8d05cb4e83e8c8d1b33ad1), [`be4233c`](https://github.com/LedgerHQ/ledger-live/commit/be4233ce713b90dc3ad335c330ca9d6509bf23e3), [`fe81150`](https://github.com/LedgerHQ/ledger-live/commit/fe811500ae626cab1995ccf8bd8cb8aa8e74bb40)]:
+  - @ledgerhq/types-live@6.56.0
+  - @ledgerhq/domain-service@1.2.15
+  - @ledgerhq/evm-tools@1.3.0
+  - @ledgerhq/cryptoassets-evm-signatures@13.5.2
+
+## 6.42.2-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`6d050fd`](https://github.com/LedgerHQ/ledger-live/commit/6d050fda707a63cff15cee797ea1167a0219aa32)]:
+  - @ledgerhq/types-live@6.56.0-next.1
+  - @ledgerhq/domain-service@1.2.15-next.1
+  - @ledgerhq/evm-tools@1.3.0
+
+## 6.42.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`9820a8f`](https://github.com/LedgerHQ/ledger-live/commit/9820a8f8ec66cf114b23c3c3b92474d250b8bf01), [`50b00c7`](https://github.com/LedgerHQ/ledger-live/commit/50b00c73e39af99c7d749bf57d5ef2f2e4942f2d), [`1fa754d`](https://github.com/LedgerHQ/ledger-live/commit/1fa754deed730bb3dd8d05cb4e83e8c8d1b33ad1), [`be4233c`](https://github.com/LedgerHQ/ledger-live/commit/be4233ce713b90dc3ad335c330ca9d6509bf23e3), [`fe81150`](https://github.com/LedgerHQ/ledger-live/commit/fe811500ae626cab1995ccf8bd8cb8aa8e74bb40)]:
+  - @ledgerhq/types-live@6.56.0-next.0
+  - @ledgerhq/domain-service@1.2.15-next.0
+  - @ledgerhq/evm-tools@1.3.0
+  - @ledgerhq/cryptoassets-evm-signatures@13.5.2
+
+## 6.42.1
+
+### Patch Changes
+
+- Updated dependencies [[`40f1cd4`](https://github.com/LedgerHQ/ledger-live/commit/40f1cd4c22d17480dcf86c73e90a07866667b0ba), [`c45ee45`](https://github.com/LedgerHQ/ledger-live/commit/c45ee457a9f5500ae42f2a8fb7f0cfb7926f319b), [`322fd58`](https://github.com/LedgerHQ/ledger-live/commit/322fd58ffcde6d592eb27af1fd93f8c45d33205c), [`61aedb7`](https://github.com/LedgerHQ/ledger-live/commit/61aedb7bbd45e73d6bc2b53e55f562262d5c5fa7)]:
+  - @ledgerhq/types-live@6.55.0
+  - @ledgerhq/domain-service@1.2.14
+  - @ledgerhq/evm-tools@1.3.0
+
+## 6.42.1-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`61aedb7`](https://github.com/LedgerHQ/ledger-live/commit/61aedb7bbd45e73d6bc2b53e55f562262d5c5fa7)]:
+  - @ledgerhq/types-live@6.55.0-next.1
+  - @ledgerhq/domain-service@1.2.14-next.1
+  - @ledgerhq/evm-tools@1.3.0
+
+## 6.42.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`40f1cd4`](https://github.com/LedgerHQ/ledger-live/commit/40f1cd4c22d17480dcf86c73e90a07866667b0ba), [`c45ee45`](https://github.com/LedgerHQ/ledger-live/commit/c45ee457a9f5500ae42f2a8fb7f0cfb7926f319b), [`322fd58`](https://github.com/LedgerHQ/ledger-live/commit/322fd58ffcde6d592eb27af1fd93f8c45d33205c)]:
+  - @ledgerhq/types-live@6.55.0-next.0
+  - @ledgerhq/domain-service@1.2.14-next.0
+  - @ledgerhq/evm-tools@1.3.0
+
+## 6.42.0
+
+### Minor Changes
+
+- [#8430](https://github.com/LedgerHQ/ledger-live/pull/8430) [`abb25e1`](https://github.com/LedgerHQ/ledger-live/commit/abb25e1c0238b918824a9350ac29a425c2b19643) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for `SWEEP` command in Uniswap plugin
+
+- [#8473](https://github.com/LedgerHQ/ledger-live/pull/8473) [`4fc1d7a`](https://github.com/LedgerHQ/ledger-live/commit/4fc1d7a0d52839b7d57e1c81b99b8e6a2cfa69c8) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Force entries order in EIP-712 Structs when providing their implementation.
+
+### Patch Changes
+
+- Updated dependencies [[`724fa8b`](https://github.com/LedgerHQ/ledger-live/commit/724fa8b29cbda74a729c5756f91c5c9b745fdbdb)]:
+  - @ledgerhq/types-live@6.54.0
+  - @ledgerhq/domain-service@1.2.13
+  - @ledgerhq/evm-tools@1.3.0
+
+## 6.42.0-next.0
+
+### Minor Changes
+
+- [#8430](https://github.com/LedgerHQ/ledger-live/pull/8430) [`abb25e1`](https://github.com/LedgerHQ/ledger-live/commit/abb25e1c0238b918824a9350ac29a425c2b19643) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for `SWEEP` command in Uniswap plugin
+
+- [#8473](https://github.com/LedgerHQ/ledger-live/pull/8473) [`4fc1d7a`](https://github.com/LedgerHQ/ledger-live/commit/4fc1d7a0d52839b7d57e1c81b99b8e6a2cfa69c8) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Force entries order in EIP-712 Structs when providing their implementation.
+
+### Patch Changes
+
+- Updated dependencies [[`724fa8b`](https://github.com/LedgerHQ/ledger-live/commit/724fa8b29cbda74a729c5756f91c5c9b745fdbdb)]:
+  - @ledgerhq/types-live@6.54.0-next.0
+  - @ledgerhq/domain-service@1.2.13-next.0
+  - @ledgerhq/evm-tools@1.3.0
+
+## 6.41.1
+
+### Patch Changes
+
+- Updated dependencies [[`5ce33a4`](https://github.com/LedgerHQ/ledger-live/commit/5ce33a417ecc87face54c1864aa49476c5f394b9), [`a52f6ae`](https://github.com/LedgerHQ/ledger-live/commit/a52f6ae3d49ea8daea42d9cdc24e9dd0d6d0f371), [`748cf14`](https://github.com/LedgerHQ/ledger-live/commit/748cf146b3e903172831e7e5ddbc29a3565c8932), [`61f8b03`](https://github.com/LedgerHQ/ledger-live/commit/61f8b033f710369171e277f5c0faede636207160)]:
+  - @ledgerhq/types-live@6.53.1
+  - @ledgerhq/domain-service@1.2.12
+  - @ledgerhq/evm-tools@1.3.0
+
+## 6.41.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`5ce33a4`](https://github.com/LedgerHQ/ledger-live/commit/5ce33a417ecc87face54c1864aa49476c5f394b9), [`a52f6ae`](https://github.com/LedgerHQ/ledger-live/commit/a52f6ae3d49ea8daea42d9cdc24e9dd0d6d0f371), [`748cf14`](https://github.com/LedgerHQ/ledger-live/commit/748cf146b3e903172831e7e5ddbc29a3565c8932), [`61f8b03`](https://github.com/LedgerHQ/ledger-live/commit/61f8b033f710369171e277f5c0faede636207160)]:
+  - @ledgerhq/types-live@6.53.1-next.0
+  - @ledgerhq/domain-service@1.2.12-next.0
+  - @ledgerhq/evm-tools@1.3.0
+
+## 6.41.0
+
+### Minor Changes
+
+- [#8175](https://github.com/LedgerHQ/ledger-live/pull/8175) [`b93a421`](https://github.com/LedgerHQ/ledger-live/commit/b93a421866519b80fdd8a029caea97323eceae93) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Refactoring of transaction decoding and fix EIP-155 applied incorrectly for legacy transactions (type 0). The `v` can now be used as is, representing either the EIP-155 value or the parity (0/1) for transactions using EIP-2718. Ethers full library has now also been removes from dependencies to decrease install and bundle sizes.
+
+### Patch Changes
+
+- Updated dependencies [[`2013b0f`](https://github.com/LedgerHQ/ledger-live/commit/2013b0f23d7f5bccff58dfd93fd45333194b8ae0), [`63e5392`](https://github.com/LedgerHQ/ledger-live/commit/63e5392a108f1bec7cfc9c413db1550e7b5c9a25), [`87218b1`](https://github.com/LedgerHQ/ledger-live/commit/87218b17b86eaea9daa23c4c9cdf644c7ad2f65a), [`42e27f2`](https://github.com/LedgerHQ/ledger-live/commit/42e27f229ee2c1302258b6cc27d165c7b638cf3b), [`b93a421`](https://github.com/LedgerHQ/ledger-live/commit/b93a421866519b80fdd8a029caea97323eceae93)]:
+  - @ledgerhq/types-live@6.53.0
+  - @ledgerhq/evm-tools@1.3.0
+  - @ledgerhq/cryptoassets-evm-signatures@13.5.2
+  - @ledgerhq/domain-service@1.2.11
+
+## 6.41.0-next.0
+
+### Minor Changes
+
+- [#8175](https://github.com/LedgerHQ/ledger-live/pull/8175) [`b93a421`](https://github.com/LedgerHQ/ledger-live/commit/b93a421866519b80fdd8a029caea97323eceae93) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Refactoring of transaction decoding and fix EIP-155 applied incorrectly for legacy transactions (type 0). The `v` can now be used as is, representing either the EIP-155 value or the parity (0/1) for transactions using EIP-2718. Ethers full library has now also been removes from dependencies to decrease install and bundle sizes.
+
+### Patch Changes
+
+- Updated dependencies [[`2013b0f`](https://github.com/LedgerHQ/ledger-live/commit/2013b0f23d7f5bccff58dfd93fd45333194b8ae0), [`35d6de2`](https://github.com/LedgerHQ/ledger-live/commit/35d6de2ace269f30fc39a3f022673a82d0c48193), [`63e5392`](https://github.com/LedgerHQ/ledger-live/commit/63e5392a108f1bec7cfc9c413db1550e7b5c9a25), [`87218b1`](https://github.com/LedgerHQ/ledger-live/commit/87218b17b86eaea9daa23c4c9cdf644c7ad2f65a), [`42e27f2`](https://github.com/LedgerHQ/ledger-live/commit/42e27f229ee2c1302258b6cc27d165c7b638cf3b), [`b93a421`](https://github.com/LedgerHQ/ledger-live/commit/b93a421866519b80fdd8a029caea97323eceae93)]:
+  - @ledgerhq/types-live@6.53.0-next.0
+  - @ledgerhq/evm-tools@1.3.0-next.0
+  - @ledgerhq/cryptoassets-evm-signatures@13.5.2-next.0
+  - @ledgerhq/domain-service@1.2.11-next.0
+
+## 6.40.3
+
+### Patch Changes
+
+- Updated dependencies [[`65c3322`](https://github.com/LedgerHQ/ledger-live/commit/65c3322bf3871659f078148ab4b5c12b0fd53dc1)]:
+  - @ledgerhq/types-live@6.52.4
+  - @ledgerhq/domain-service@1.2.10
+  - @ledgerhq/evm-tools@1.2.4
+
+## 6.40.3-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`65c3322`](https://github.com/LedgerHQ/ledger-live/commit/65c3322bf3871659f078148ab4b5c12b0fd53dc1)]:
+  - @ledgerhq/types-live@6.52.4-next.0
+  - @ledgerhq/domain-service@1.2.10-next.0
+  - @ledgerhq/evm-tools@1.2.4
+
+## 6.40.2
+
+### Patch Changes
+
+- Updated dependencies [[`81cd773`](https://github.com/LedgerHQ/ledger-live/commit/81cd7735a3c94628b6d4825b736ef12a0b74d3a3), [`1a0fa20`](https://github.com/LedgerHQ/ledger-live/commit/1a0fa20da7509cdde1141002a2be8e9d8458b27d)]:
+  - @ledgerhq/types-live@6.52.3
+  - @ledgerhq/domain-service@1.2.9
+  - @ledgerhq/evm-tools@1.2.4
+
+## 6.40.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`81cd773`](https://github.com/LedgerHQ/ledger-live/commit/81cd7735a3c94628b6d4825b736ef12a0b74d3a3), [`1a0fa20`](https://github.com/LedgerHQ/ledger-live/commit/1a0fa20da7509cdde1141002a2be8e9d8458b27d)]:
+  - @ledgerhq/types-live@6.52.3-next.0
+  - @ledgerhq/domain-service@1.2.9-next.0
+  - @ledgerhq/evm-tools@1.2.4
+
+## 6.40.1
+
+### Patch Changes
+
+- Updated dependencies [[`80e333c`](https://github.com/LedgerHQ/ledger-live/commit/80e333c30afdc7d14f1b5fd3e92c9fb10372e2c1), [`d8c171a`](https://github.com/LedgerHQ/ledger-live/commit/d8c171a6ed32012733786bde29b5493b1106cf56)]:
+  - @ledgerhq/types-live@6.52.2
+  - @ledgerhq/domain-service@1.2.8
+  - @ledgerhq/evm-tools@1.2.4
+
+## 6.40.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`80e333c`](https://github.com/LedgerHQ/ledger-live/commit/80e333c30afdc7d14f1b5fd3e92c9fb10372e2c1), [`d8c171a`](https://github.com/LedgerHQ/ledger-live/commit/d8c171a6ed32012733786bde29b5493b1106cf56)]:
+  - @ledgerhq/types-live@6.52.2-hotfix.0
+  - @ledgerhq/domain-service@1.2.8-hotfix.0
+  - @ledgerhq/evm-tools@1.2.4
+
+## 6.40.0
+
+### Minor Changes
+
+- [#7874](https://github.com/LedgerHQ/ledger-live/pull/7874) [`9c6e2c4`](https://github.com/LedgerHQ/ledger-live/commit/9c6e2c4969832d9d55188ed03bbdfd79b43b7e63) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for Uniswap plugin
+
+### Patch Changes
+
+- [#7992](https://github.com/LedgerHQ/ledger-live/pull/7992) [`450c88c`](https://github.com/LedgerHQ/ledger-live/commit/450c88cefb01f11e6e3670b946f31fe160eebe33) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Force ws version even when bundled without pnpm from the monorepo
+
+- Updated dependencies [[`642c714`](https://github.com/LedgerHQ/ledger-live/commit/642c714d52eaaccb1b8ac3a2ee0391b641d19303), [`1b3a21d`](https://github.com/LedgerHQ/ledger-live/commit/1b3a21d5d8496c42f4dec4116fdcf59ad6f038cd), [`0a16ae4`](https://github.com/LedgerHQ/ledger-live/commit/0a16ae4cb58ad9f2e67c7f3494b0dc52cb7423a1), [`00cab1d`](https://github.com/LedgerHQ/ledger-live/commit/00cab1db1d67eb0cf35059eeeb9e2d8bd328f8f3)]:
+  - @ledgerhq/types-live@6.52.1
+  - @ledgerhq/domain-service@1.2.7
+  - @ledgerhq/evm-tools@1.2.4
+  - @ledgerhq/cryptoassets-evm-signatures@13.5.1
+
+## 6.40.0-next.0
+
+### Minor Changes
+
+- [#7874](https://github.com/LedgerHQ/ledger-live/pull/7874) [`9c6e2c4`](https://github.com/LedgerHQ/ledger-live/commit/9c6e2c4969832d9d55188ed03bbdfd79b43b7e63) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for Uniswap plugin
+
+### Patch Changes
+
+- [#7992](https://github.com/LedgerHQ/ledger-live/pull/7992) [`450c88c`](https://github.com/LedgerHQ/ledger-live/commit/450c88cefb01f11e6e3670b946f31fe160eebe33) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Force ws version even when bundled without pnpm from the monorepo
+
+- Updated dependencies [[`642c714`](https://github.com/LedgerHQ/ledger-live/commit/642c714d52eaaccb1b8ac3a2ee0391b641d19303), [`1b3a21d`](https://github.com/LedgerHQ/ledger-live/commit/1b3a21d5d8496c42f4dec4116fdcf59ad6f038cd), [`0a16ae4`](https://github.com/LedgerHQ/ledger-live/commit/0a16ae4cb58ad9f2e67c7f3494b0dc52cb7423a1), [`00cab1d`](https://github.com/LedgerHQ/ledger-live/commit/00cab1db1d67eb0cf35059eeeb9e2d8bd328f8f3)]:
+  - @ledgerhq/types-live@6.52.1-next.0
+  - @ledgerhq/domain-service@1.2.7-next.0
+  - @ledgerhq/evm-tools@1.2.4-next.0
+  - @ledgerhq/cryptoassets-evm-signatures@13.5.1-next.0
+
+## 6.39.0
+
+### Minor Changes
+
+- [#7943](https://github.com/LedgerHQ/ledger-live/pull/7943) [`07c584a`](https://github.com/LedgerHQ/ledger-live/commit/07c584a61573c53ff0d205d316d9195cd8f5399e) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for filters for empty arrays / discarded paths
+
+- [#7903](https://github.com/LedgerHQ/ledger-live/pull/7903) [`0698cbf`](https://github.com/LedgerHQ/ledger-live/commit/0698cbfdd6970ebb92992cb9d273cfb5508629f3) Thanks [@Wozacosta](https://github.com/Wozacosta)! - feat: uses lightweight token asset list
+
+### Patch Changes
+
+- Updated dependencies [[`c83af75`](https://github.com/LedgerHQ/ledger-live/commit/c83af756fb388043c9f5a3862cae1231ec99a02c), [`0698cbf`](https://github.com/LedgerHQ/ledger-live/commit/0698cbfdd6970ebb92992cb9d273cfb5508629f3)]:
+  - @ledgerhq/types-live@6.52.0
+  - @ledgerhq/cryptoassets-evm-signatures@13.5.0
+  - @ledgerhq/domain-service@1.2.6
+  - @ledgerhq/evm-tools@1.2.3
+
+## 6.39.0-next.0
+
+### Minor Changes
+
+- [#7943](https://github.com/LedgerHQ/ledger-live/pull/7943) [`07c584a`](https://github.com/LedgerHQ/ledger-live/commit/07c584a61573c53ff0d205d316d9195cd8f5399e) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for filters for empty arrays / discarded paths
+
+- [#7903](https://github.com/LedgerHQ/ledger-live/pull/7903) [`0698cbf`](https://github.com/LedgerHQ/ledger-live/commit/0698cbfdd6970ebb92992cb9d273cfb5508629f3) Thanks [@Wozacosta](https://github.com/Wozacosta)! - feat: uses lightweight token asset list
+
+### Patch Changes
+
+- Updated dependencies [[`c83af75`](https://github.com/LedgerHQ/ledger-live/commit/c83af756fb388043c9f5a3862cae1231ec99a02c), [`0698cbf`](https://github.com/LedgerHQ/ledger-live/commit/0698cbfdd6970ebb92992cb9d273cfb5508629f3)]:
+  - @ledgerhq/types-live@6.52.0-next.0
+  - @ledgerhq/cryptoassets-evm-signatures@13.5.0-next.0
+  - @ledgerhq/domain-service@1.2.6-next.0
+  - @ledgerhq/evm-tools@1.2.3-next.0
+
+## 6.38.2
+
+### Patch Changes
+
+- [#7883](https://github.com/LedgerHQ/ledger-live/pull/7883) [`f805d14`](https://github.com/LedgerHQ/ledger-live/commit/f805d1470f927824233f94eaba065b00d7af18cf) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update Axios to 1.7.7 following CVE: https://github.com/advisories/GHSA-8hc4-vh64-cxmj
+
+- [#7883](https://github.com/LedgerHQ/ledger-live/pull/7883) [`f805d14`](https://github.com/LedgerHQ/ledger-live/commit/f805d1470f927824233f94eaba065b00d7af18cf) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update dev dependency `ethers` to 5.7.2
+
+- [#7883](https://github.com/LedgerHQ/ledger-live/pull/7883) [`f805d14`](https://github.com/LedgerHQ/ledger-live/commit/f805d1470f927824233f94eaba065b00d7af18cf) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Force `ws` dependency of `ethers` to 7.5.10 following CVE: https://github.com/advisories/GHSA-3h5v-q93c-6h6q
+
+- Updated dependencies [[`1605678`](https://github.com/LedgerHQ/ledger-live/commit/1605678a4c43ce85b19bd549b295f3c67ff1dcb9), [`f805d14`](https://github.com/LedgerHQ/ledger-live/commit/f805d1470f927824233f94eaba065b00d7af18cf), [`461ddc5`](https://github.com/LedgerHQ/ledger-live/commit/461ddc56fbbe862789fe9a06db8a7e7a894e4bdd), [`672875f`](https://github.com/LedgerHQ/ledger-live/commit/672875feb9876edacf06aaea6c7bb47f4bb7d993), [`0a71c43`](https://github.com/LedgerHQ/ledger-live/commit/0a71c4344b7bb2c6640f3e5dda152ae815573330), [`7865dcb`](https://github.com/LedgerHQ/ledger-live/commit/7865dcb1891b89a0d9fe28efeea3a6284f3d87c5), [`1605678`](https://github.com/LedgerHQ/ledger-live/commit/1605678a4c43ce85b19bd549b295f3c67ff1dcb9)]:
+  - @ledgerhq/cryptoassets@13.5.0
+  - @ledgerhq/domain-service@1.2.5
+  - @ledgerhq/evm-tools@1.2.2
+  - @ledgerhq/types-live@6.51.1
+  - @ledgerhq/errors@6.19.1
+  - @ledgerhq/hw-transport@6.31.4
+  - @ledgerhq/hw-transport-mocker@6.29.4
+
+## 6.38.2-next.1
+
+### Patch Changes
+
+- [#7883](https://github.com/LedgerHQ/ledger-live/pull/7883) [`f805d14`](https://github.com/LedgerHQ/ledger-live/commit/f805d1470f927824233f94eaba065b00d7af18cf) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update Axios to 1.7.7 following CVE: https://github.com/advisories/GHSA-8hc4-vh64-cxmj
+
+- [#7883](https://github.com/LedgerHQ/ledger-live/pull/7883) [`f805d14`](https://github.com/LedgerHQ/ledger-live/commit/f805d1470f927824233f94eaba065b00d7af18cf) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update dev dependency `ethers` to 5.7.2
+
+- [#7883](https://github.com/LedgerHQ/ledger-live/pull/7883) [`f805d14`](https://github.com/LedgerHQ/ledger-live/commit/f805d1470f927824233f94eaba065b00d7af18cf) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Force `ws` dependency of `ethers` to 7.5.10 following CVE: https://github.com/advisories/GHSA-3h5v-q93c-6h6q
+
+- Updated dependencies [[`f805d14`](https://github.com/LedgerHQ/ledger-live/commit/f805d1470f927824233f94eaba065b00d7af18cf)]:
+  - @ledgerhq/cryptoassets@13.5.0-next.1
+  - @ledgerhq/domain-service@1.2.5-next.1
+  - @ledgerhq/evm-tools@1.2.2-next.1
+
+## 6.38.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`1605678`](https://github.com/LedgerHQ/ledger-live/commit/1605678a4c43ce85b19bd549b295f3c67ff1dcb9), [`461ddc5`](https://github.com/LedgerHQ/ledger-live/commit/461ddc56fbbe862789fe9a06db8a7e7a894e4bdd), [`672875f`](https://github.com/LedgerHQ/ledger-live/commit/672875feb9876edacf06aaea6c7bb47f4bb7d993), [`0a71c43`](https://github.com/LedgerHQ/ledger-live/commit/0a71c4344b7bb2c6640f3e5dda152ae815573330), [`7865dcb`](https://github.com/LedgerHQ/ledger-live/commit/7865dcb1891b89a0d9fe28efeea3a6284f3d87c5), [`1605678`](https://github.com/LedgerHQ/ledger-live/commit/1605678a4c43ce85b19bd549b295f3c67ff1dcb9)]:
+  - @ledgerhq/cryptoassets@13.5.0-next.0
+  - @ledgerhq/types-live@6.51.1-next.0
+  - @ledgerhq/errors@6.19.1-next.0
+  - @ledgerhq/evm-tools@1.2.2-next.0
+  - @ledgerhq/domain-service@1.2.5-next.0
+  - @ledgerhq/hw-transport@6.31.4-next.0
+  - @ledgerhq/hw-transport-mocker@6.29.4-next.0
+
+## 6.38.1
+
+### Patch Changes
+
+- [#7593](https://github.com/LedgerHQ/ledger-live/pull/7593) [`187293c`](https://github.com/LedgerHQ/ledger-live/commit/187293c6cf6093f15f07d5effc1ded0843a9e6ab) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update `axios` to fixed version `1.7.3`
+
+- [#7775](https://github.com/LedgerHQ/ledger-live/pull/7775) [`9a732c6`](https://github.com/LedgerHQ/ledger-live/commit/9a732c6d0b6e61b39f00d46c3af240640b4883e8) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Fix `destructTypeFromString` not splitting types correctly when they contained a number and weren't native types (Struct with numbers in the name)
+
+- [#7779](https://github.com/LedgerHQ/ledger-live/pull/7779) [`9abf63b`](https://github.com/LedgerHQ/ledger-live/commit/9abf63b51a159fe6c501a6b50d1e33c1551834e8) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Allow token to not be provided to the device (might not be existing in CAL) when providing filters V2 for the EIP-712 messages
+
+- Updated dependencies [[`5c738cb`](https://github.com/LedgerHQ/ledger-live/commit/5c738cbd35ce5d0ca39ad3b86a61cc6234d1bdf7), [`9c55e81`](https://github.com/LedgerHQ/ledger-live/commit/9c55e81c84d3372f2a7fd36248f970376aec905a), [`187293c`](https://github.com/LedgerHQ/ledger-live/commit/187293c6cf6093f15f07d5effc1ded0843a9e6ab), [`cc291f5`](https://github.com/LedgerHQ/ledger-live/commit/cc291f5466d80a2b7e9394338ab588ecd3db4623), [`fb9466a`](https://github.com/LedgerHQ/ledger-live/commit/fb9466a4d7827fd4759c726ad3ae0b43dddcacd3), [`5758950`](https://github.com/LedgerHQ/ledger-live/commit/5758950841fbf8018dd848e745017484aec67333), [`0c80144`](https://github.com/LedgerHQ/ledger-live/commit/0c80144b8c16fc3729baa6503875d21af87b2752), [`ef82161`](https://github.com/LedgerHQ/ledger-live/commit/ef82161688fc49bf32cbc88f1837b15490e5d2b4), [`d13e7b9`](https://github.com/LedgerHQ/ledger-live/commit/d13e7b9f55d92098cacc9384fd7fab24033c040f), [`a3fd728`](https://github.com/LedgerHQ/ledger-live/commit/a3fd72861f2a7df676bd793062b3816fdb9d1f57), [`6815f6f`](https://github.com/LedgerHQ/ledger-live/commit/6815f6fccb9bca627a2e51ab954dc3f9b8f7c710), [`9a650da`](https://github.com/LedgerHQ/ledger-live/commit/9a650da9a147d6881f7082278d2bf764c37e1451)]:
+  - @ledgerhq/errors@6.19.0
+  - @ledgerhq/cryptoassets@13.4.0
+  - @ledgerhq/domain-service@1.2.4
+  - @ledgerhq/evm-tools@1.2.1
+  - @ledgerhq/types-live@6.51.0
+  - @ledgerhq/hw-transport@6.31.3
+  - @ledgerhq/hw-transport-mocker@6.29.3
+
+## 6.38.1-next.0
+
+### Patch Changes
+
+- [#7593](https://github.com/LedgerHQ/ledger-live/pull/7593) [`187293c`](https://github.com/LedgerHQ/ledger-live/commit/187293c6cf6093f15f07d5effc1ded0843a9e6ab) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update `axios` to fixed version `1.7.3`
+
+- [#7775](https://github.com/LedgerHQ/ledger-live/pull/7775) [`9a732c6`](https://github.com/LedgerHQ/ledger-live/commit/9a732c6d0b6e61b39f00d46c3af240640b4883e8) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Fix `destructTypeFromString` not splitting types correctly when they contained a number and weren't native types (Struct with numbers in the name)
+
+- [#7779](https://github.com/LedgerHQ/ledger-live/pull/7779) [`9abf63b`](https://github.com/LedgerHQ/ledger-live/commit/9abf63b51a159fe6c501a6b50d1e33c1551834e8) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Allow token to not be provided to the device (might not be existing in CAL) when providing filters V2 for the EIP-712 messages
+
+- Updated dependencies [[`5c738cb`](https://github.com/LedgerHQ/ledger-live/commit/5c738cbd35ce5d0ca39ad3b86a61cc6234d1bdf7), [`9c55e81`](https://github.com/LedgerHQ/ledger-live/commit/9c55e81c84d3372f2a7fd36248f970376aec905a), [`187293c`](https://github.com/LedgerHQ/ledger-live/commit/187293c6cf6093f15f07d5effc1ded0843a9e6ab), [`cc291f5`](https://github.com/LedgerHQ/ledger-live/commit/cc291f5466d80a2b7e9394338ab588ecd3db4623), [`fb9466a`](https://github.com/LedgerHQ/ledger-live/commit/fb9466a4d7827fd4759c726ad3ae0b43dddcacd3), [`5758950`](https://github.com/LedgerHQ/ledger-live/commit/5758950841fbf8018dd848e745017484aec67333), [`0c80144`](https://github.com/LedgerHQ/ledger-live/commit/0c80144b8c16fc3729baa6503875d21af87b2752), [`ef82161`](https://github.com/LedgerHQ/ledger-live/commit/ef82161688fc49bf32cbc88f1837b15490e5d2b4), [`d13e7b9`](https://github.com/LedgerHQ/ledger-live/commit/d13e7b9f55d92098cacc9384fd7fab24033c040f), [`a3fd728`](https://github.com/LedgerHQ/ledger-live/commit/a3fd72861f2a7df676bd793062b3816fdb9d1f57), [`6815f6f`](https://github.com/LedgerHQ/ledger-live/commit/6815f6fccb9bca627a2e51ab954dc3f9b8f7c710), [`9a650da`](https://github.com/LedgerHQ/ledger-live/commit/9a650da9a147d6881f7082278d2bf764c37e1451)]:
+  - @ledgerhq/errors@6.19.0-next.0
+  - @ledgerhq/cryptoassets@13.4.0-next.0
+  - @ledgerhq/domain-service@1.2.4-next.0
+  - @ledgerhq/evm-tools@1.2.1-next.0
+  - @ledgerhq/types-live@6.51.0-next.0
+  - @ledgerhq/hw-transport@6.31.3-next.0
+  - @ledgerhq/hw-transport-mocker@6.29.3-next.0
+
+## 6.38.0
+
+### Minor Changes
+
+- [#7494](https://github.com/LedgerHQ/ledger-live/pull/7494) [`60f1b5c`](https://github.com/LedgerHQ/ledger-live/commit/60f1b5c6cab125f5281468bb3e36f1abfae2d70c) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for filters v2 for EIP712 messages
+
+### Patch Changes
+
+- Updated dependencies [[`df9b4b7`](https://github.com/LedgerHQ/ledger-live/commit/df9b4b7b699503bb3aab1dc791b28e11ef0d51b9), [`db9c2d7`](https://github.com/LedgerHQ/ledger-live/commit/db9c2d78fb74df586c3ea1b9fb75ce3b014a0f4b), [`87d6bb2`](https://github.com/LedgerHQ/ledger-live/commit/87d6bb2501eac654dc10f45a0f591b28569b3d9f), [`4bd91de`](https://github.com/LedgerHQ/ledger-live/commit/4bd91de13442d12acce3ee83d5f2fd5f087570cf), [`8553b3e`](https://github.com/LedgerHQ/ledger-live/commit/8553b3eef10132396ec580a2d5f20b616f5b18a0), [`52daa39`](https://github.com/LedgerHQ/ledger-live/commit/52daa3998709ac3538afd447fe771faa3e3441be), [`60f1b5c`](https://github.com/LedgerHQ/ledger-live/commit/60f1b5c6cab125f5281468bb3e36f1abfae2d70c), [`60f1b5c`](https://github.com/LedgerHQ/ledger-live/commit/60f1b5c6cab125f5281468bb3e36f1abfae2d70c), [`50b6db6`](https://github.com/LedgerHQ/ledger-live/commit/50b6db67d374a23ba040043aa93e7fbc52685297)]:
+  - @ledgerhq/types-live@6.50.0
+  - @ledgerhq/cryptoassets@13.3.0
+  - @ledgerhq/evm-tools@1.2.0
+  - @ledgerhq/domain-service@1.2.3
+
+## 6.38.0-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`50b6db6`](https://github.com/LedgerHQ/ledger-live/commit/50b6db67d374a23ba040043aa93e7fbc52685297)]:
+  - @ledgerhq/cryptoassets@13.3.0-next.1
+  - @ledgerhq/evm-tools@1.2.0-next.1
+
+## 6.38.0-next.0
+
+### Minor Changes
+
+- [#7494](https://github.com/LedgerHQ/ledger-live/pull/7494) [`60f1b5c`](https://github.com/LedgerHQ/ledger-live/commit/60f1b5c6cab125f5281468bb3e36f1abfae2d70c) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for filters v2 for EIP712 messages
+
+### Patch Changes
+
+- Updated dependencies [[`df9b4b7`](https://github.com/LedgerHQ/ledger-live/commit/df9b4b7b699503bb3aab1dc791b28e11ef0d51b9), [`db9c2d7`](https://github.com/LedgerHQ/ledger-live/commit/db9c2d78fb74df586c3ea1b9fb75ce3b014a0f4b), [`87d6bb2`](https://github.com/LedgerHQ/ledger-live/commit/87d6bb2501eac654dc10f45a0f591b28569b3d9f), [`4bd91de`](https://github.com/LedgerHQ/ledger-live/commit/4bd91de13442d12acce3ee83d5f2fd5f087570cf), [`8553b3e`](https://github.com/LedgerHQ/ledger-live/commit/8553b3eef10132396ec580a2d5f20b616f5b18a0), [`52daa39`](https://github.com/LedgerHQ/ledger-live/commit/52daa3998709ac3538afd447fe771faa3e3441be), [`60f1b5c`](https://github.com/LedgerHQ/ledger-live/commit/60f1b5c6cab125f5281468bb3e36f1abfae2d70c), [`60f1b5c`](https://github.com/LedgerHQ/ledger-live/commit/60f1b5c6cab125f5281468bb3e36f1abfae2d70c)]:
+  - @ledgerhq/types-live@6.50.0-next.0
+  - @ledgerhq/cryptoassets@13.3.0-next.0
+  - @ledgerhq/evm-tools@1.2.0-next.0
+  - @ledgerhq/domain-service@1.2.3-next.0
+
+## 6.37.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.2
+  - @ledgerhq/types-live@6.49.0
+  - @ledgerhq/hw-transport-mocker@6.29.2
+
+## 6.37.3-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.2-hotfix.0
+  - @ledgerhq/hw-transport-mocker@6.29.2-hotfix.0
+
+## 6.37.2
+
+### Patch Changes
+
+- Updated dependencies [[`ef2d53d`](https://github.com/LedgerHQ/ledger-live/commit/ef2d53d514f1f4e6f18fc79fa3423bd9b0208a04), [`b77ab8e`](https://github.com/LedgerHQ/ledger-live/commit/b77ab8e718ee8e10b74dc15370e8a19d2597d39e), [`52db252`](https://github.com/LedgerHQ/ledger-live/commit/52db252757870398cba5366d595b4d5fe8099b90), [`f819703`](https://github.com/LedgerHQ/ledger-live/commit/f81970347d139e63a547ab809be425d6f4d464a4), [`fe8a26b`](https://github.com/LedgerHQ/ledger-live/commit/fe8a26b04206df64e50220c3e9249c9a1bd057a6), [`1cbf767`](https://github.com/LedgerHQ/ledger-live/commit/1cbf767465d9e1f7bed5de79c5b5a0a5ca06e1b5), [`e78f3b7`](https://github.com/LedgerHQ/ledger-live/commit/e78f3b75296c7a063f6cddbeae44c36d236055f3), [`f979216`](https://github.com/LedgerHQ/ledger-live/commit/f9792160293fc8215c6d099f02e1b136c6655f9b), [`c1d2bb0`](https://github.com/LedgerHQ/ledger-live/commit/c1d2bb0866723c10d6e2899d40ddd9b9801189f4)]:
+  - @ledgerhq/cryptoassets@13.2.0
+  - @ledgerhq/types-live@6.49.0
+  - @ledgerhq/errors@6.18.0
+  - @ledgerhq/domain-service@1.2.2
+  - @ledgerhq/evm-tools@1.1.2
+  - @ledgerhq/hw-transport@6.31.1
+  - @ledgerhq/hw-transport-mocker@6.29.1
+
+## 6.37.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`ef2d53d`](https://github.com/LedgerHQ/ledger-live/commit/ef2d53d514f1f4e6f18fc79fa3423bd9b0208a04), [`b77ab8e`](https://github.com/LedgerHQ/ledger-live/commit/b77ab8e718ee8e10b74dc15370e8a19d2597d39e), [`52db252`](https://github.com/LedgerHQ/ledger-live/commit/52db252757870398cba5366d595b4d5fe8099b90), [`f819703`](https://github.com/LedgerHQ/ledger-live/commit/f81970347d139e63a547ab809be425d6f4d464a4), [`fe8a26b`](https://github.com/LedgerHQ/ledger-live/commit/fe8a26b04206df64e50220c3e9249c9a1bd057a6), [`1cbf767`](https://github.com/LedgerHQ/ledger-live/commit/1cbf767465d9e1f7bed5de79c5b5a0a5ca06e1b5), [`e78f3b7`](https://github.com/LedgerHQ/ledger-live/commit/e78f3b75296c7a063f6cddbeae44c36d236055f3), [`f979216`](https://github.com/LedgerHQ/ledger-live/commit/f9792160293fc8215c6d099f02e1b136c6655f9b), [`c1d2bb0`](https://github.com/LedgerHQ/ledger-live/commit/c1d2bb0866723c10d6e2899d40ddd9b9801189f4)]:
+  - @ledgerhq/cryptoassets@13.2.0-next.0
+  - @ledgerhq/types-live@6.49.0-next.0
+  - @ledgerhq/errors@6.18.0-next.0
+  - @ledgerhq/domain-service@1.2.2-next.0
+  - @ledgerhq/evm-tools@1.1.2-next.0
+  - @ledgerhq/hw-transport@6.31.1-next.0
+  - @ledgerhq/hw-transport-mocker@6.29.1-next.0
+
 ## 6.37.1
 
 ### Patch Changes

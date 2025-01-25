@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/cryptoassets",
-  "version": "13.1.1",
+  "version": "13.9.0",
   "description": "Ledger crypto-assets list",
   "keywords": [
     "Ledger"
@@ -24,6 +24,7 @@
     "build": "tsc && tsc -m ES6 --outDir lib-es",
     "prewatch": "pnpm build",
     "watch": "tsc --watch",
+    "watch:es": "tsc --watch -m ES6 --outDir lib-es",
     "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
@@ -33,7 +34,8 @@
     "import:cal-tokens": "ts-node ./src/crypto-assets-importer/index.ts"
   },
   "dependencies": {
-    "axios": "^1.6.0",
+    "@ledgerhq/live-env": "workspace:^",
+    "axios": "1.7.7",
     "bs58check": "^2.1.2",
     "invariant": "2"
   },

@@ -12,6 +12,9 @@ import SnackbarContainer from "~/screens/NotificationCenter/Snackbar/SnackbarCon
 import PostOnboardingProviderWrapped from "~/logic/postOnboarding/PostOnboardingProviderWrapped";
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
 import { CountervaluesMarketcap } from "@ledgerhq/live-countervalues-react/index";
+import { InViewContextProvider } from "LLM/contexts/InViewContext";
+import { WalletSyncProvider } from "LLM/features/WalletSync/components/WalletSyncContext";
+import { AppDataStorageProvider } from "~/hooks/storageProvider/useAppDataStorage";
 
 type AppProvidersProps = {
   initialCountervalues?: CounterValuesStateRaw;
@@ -24,24 +27,28 @@ function AppProviders({ initialCountervalues, children }: AppProvidersProps) {
   return (
     <QueryClientProvider client={queryClient}>
       <BridgeSyncProvider>
-        <CountervaluesMarketcap>
-          <CounterValuesProvider initialState={initialCountervalues}>
-            <ButtonUseTouchableContext.Provider value={true}>
-              <OnboardingContextProvider>
-                <PostOnboardingProviderWrapped>
-                  <ToastProvider>
-                    <NotificationsProvider>
-                      <SnackbarContainer />
-                      <NftMetadataProvider getCurrencyBridge={getCurrencyBridge}>
-                        {children}
-                      </NftMetadataProvider>
-                    </NotificationsProvider>
-                  </ToastProvider>
-                </PostOnboardingProviderWrapped>
-              </OnboardingContextProvider>
-            </ButtonUseTouchableContext.Provider>
-          </CounterValuesProvider>
-        </CountervaluesMarketcap>
+        <WalletSyncProvider>
+          <CountervaluesMarketcap>
+            <CounterValuesProvider initialState={initialCountervalues}>
+              <ButtonUseTouchableContext.Provider value={true}>
+                <AppDataStorageProvider>
+                  <OnboardingContextProvider>
+                    <PostOnboardingProviderWrapped>
+                      <ToastProvider>
+                        <NotificationsProvider>
+                          <SnackbarContainer />
+                          <NftMetadataProvider getCurrencyBridge={getCurrencyBridge}>
+                            <InViewContextProvider>{children}</InViewContextProvider>
+                          </NftMetadataProvider>
+                        </NotificationsProvider>
+                      </ToastProvider>
+                    </PostOnboardingProviderWrapped>
+                  </OnboardingContextProvider>
+                </AppDataStorageProvider>
+              </ButtonUseTouchableContext.Provider>
+            </CounterValuesProvider>
+          </CountervaluesMarketcap>
+        </WalletSyncProvider>
       </BridgeSyncProvider>
     </QueryClientProvider>
   );

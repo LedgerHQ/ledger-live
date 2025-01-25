@@ -19,11 +19,12 @@ import {
 import {
   DeviceNotOnboarded,
   LatestFirmwareVersionRequired,
+  NoSuchAppOnProvider,
   TransactionRefusedOnDevice,
 } from "@ledgerhq/live-common/errors";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { closeAllModal } from "~/renderer/actions/modals";
 import Animation from "~/renderer/animations";
 import Button from "~/renderer/components/Button";
@@ -68,6 +69,10 @@ import { closePlatformAppDrawer } from "~/renderer/actions/UI";
 import { CompleteExchangeError } from "@ledgerhq/live-common/exchange/error";
 import { currencySettingsLocaleSelector, SettingsState } from "~/renderer/reducers/settings";
 import { accountNameSelector, WalletState } from "@ledgerhq/live-wallet/store";
+import { isSyncOnboardingSupported } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
+import NoSuchAppOnProviderErrorComponent from "./NoSuchAppOnProviderErrorComponent";
+import Image from "~/renderer/components/Image";
+import Nano from "~/renderer/images/nanoS.v4.svg";
 
 export const AnimationWrapper = styled.div`
   width: 600px;
@@ -96,6 +101,7 @@ export const Wrapper = styled.div`
   justify-content: center;
   min-height: 260px;
   max-width: 100%;
+  margin: auto ${p => p.theme.space[5]}px;
 `;
 
 export const ConfirmWrapper = styled.div`
@@ -244,6 +250,11 @@ const EllipsesTextStyled = styled(Text)`
   flex-shrink: 1;
   display: inline-block;
   max-width: 100%;
+`;
+
+const ButtonFooter = styled(Footer)`
+  width: 100%;
+  margin-top: 46px;
 `;
 
 // these are not components because we want reconciliation to not remount the sub elements
@@ -407,7 +418,7 @@ export const InstallingApp = ({
     track("In-line app install", { appName: appNameToTrack, flow: analyticsPropertyFlow });
   }, [appNameToTrack, analyticsPropertyFlow]);
   return (
-    <Wrapper data-test-id="device-action-loader">
+    <Wrapper data-testid="device-action-loader">
       <Header />
       <AnimationWrapper>
         <Animation animation={getDeviceAnimation(modelId, type, "installLoading")} />
@@ -432,7 +443,7 @@ export const renderInstallingLanguage = ({ progress, t }: { progress: number; t:
       alignItems="center"
       justifyContent="center"
       flexDirection="column"
-      data-test-id="installing-language-progress"
+      data-testid="installing-language-progress"
     >
       <Box my={5} alignItems="center">
         <Flex alignItems="center" justifyContent="center" borderRadius={9999} size={60} mb={5}>
@@ -450,7 +461,7 @@ export const renderInstallingLanguage = ({ progress, t }: { progress: number; t:
 };
 
 export const renderListingApps = () => (
-  <Wrapper data-test-id="device-action-loader">
+  <Wrapper data-testid="device-action-loader">
     <Header />
     <ProgressWrapper>
       <Rotating size={58}>
@@ -512,7 +523,7 @@ export const renderAllowLanguageInstallation = ({
     flexDirection="column"
     justifyContent="center"
     alignItems="center"
-    data-test-id="allow-language-installation"
+    data-testid="allow-language-installation"
   >
     <DeviceBlocker />
     <AnimationWrapper>
@@ -663,7 +674,15 @@ export const DeviceNotOnboardedErrorComponent = withV3StyleProvider(
       setTrackingSource("device action open onboarding button");
       dispatch(closeAllModal());
       setDrawer(undefined);
-      history.push(device?.modelId === "stax" ? "/sync-onboarding/manual" : "/onboarding");
+      if (!device?.modelId) {
+        history.push("/onboarding");
+      } else {
+        history.push(
+          isSyncOnboardingSupported(device.modelId)
+            ? `/sync-onboarding/${device.modelId}`
+            : "/onboarding",
+        );
+      }
     }, [device?.modelId, dispatch, history, setDrawer]);
 
     return (
@@ -742,6 +761,8 @@ export const renderError = ({
   device,
   inlineRetry = true,
   withDescription = true,
+  learnMoreLink,
+  learnMoreTextKey,
   Icon,
 }: {
   error: Error | ErrorConstructor;
@@ -751,6 +772,8 @@ export const renderError = ({
   withExportLogs?: boolean;
   list?: boolean;
   supportLink?: string;
+  learnMoreLink?: string;
+  learnMoreTextKey?: string;
   buyLedger?: string;
   warning?: boolean;
   info?: boolean;
@@ -775,6 +798,15 @@ export const renderError = ({
     if (tmpError.message === "User refused") {
       tmpError = new TransactionRefusedOnDevice();
     }
+  } else if (tmpError instanceof NoSuchAppOnProvider) {
+    return (
+      <NoSuchAppOnProviderErrorComponent
+        error={tmpError}
+        productName={getDeviceModel(device?.modelId as DeviceModelId)?.productName}
+        learnMoreLink={learnMoreLink}
+        learnMoreTextKey={learnMoreTextKey}
+      />
+    );
   }
 
   // if no supportLink is provided, we fallback on the related url linked to
@@ -904,6 +936,72 @@ export const renderConnectYourDevice = ({
   </Wrapper>
 );
 
+const OpenSwapBtn = () => {
+  const { setDrawer } = useContext(context);
+  const dispatch = useDispatch();
+
+  const onClick = () => {
+    setTrackingSource("device action open swap button");
+    dispatch(closePlatformAppDrawer());
+    setDrawer(undefined);
+  };
+
+  return (
+    <ButtonV3
+      variant="main"
+      outline
+      size="large"
+      width="calc(100% - 80px)"
+      ml="40px"
+      mr="40px"
+      onClick={onClick}
+    >
+      <Trans i18nKey={"swap.wrongDevice.changeProvider"} />
+    </ButtonV3>
+  );
+};
+
+export const HardwareUpdate = ({
+  i18nKeyTitle,
+  i18nKeyDescription,
+}: {
+  i18nKeyTitle: string;
+  i18nKeyDescription: string;
+}) => (
+  <Wrapper>
+    <Header>
+      <Image resource={Nano} alt="NanoS" mb="40px"></Image>
+    </Header>
+    <Flex alignItems="center" flexDirection="column" rowGap="16px" mr="40px" ml="40px">
+      <Title variant="body" color="palette.text.shade100">
+        <Trans i18nKey={i18nKeyTitle} />
+      </Title>
+      <Text variant="body" color="palette.text.shade60" textAlign="center">
+        <Trans i18nKey={i18nKeyDescription} />
+      </Text>
+    </Flex>
+    <ButtonFooter>
+      <ButtonContainer width="100%">
+        <ButtonV3
+          variant="main"
+          size="large"
+          width="calc(100% - 80px)"
+          ml="40px"
+          mr="40px"
+          onClick={() => {
+            openURL("https://shop.ledger.com/pages/hardware-wallet");
+          }}
+        >
+          <Trans i18nKey={"swap.wrongDevice.cta"} />
+        </ButtonV3>
+      </ButtonContainer>
+      <ButtonContainer width="100%">
+        <OpenSwapBtn />
+      </ButtonContainer>
+    </ButtonFooter>
+  </Wrapper>
+);
+
 const renderFirmwareUpdatingBase = ({
   modelId,
   type,
@@ -986,8 +1084,8 @@ export const renderSwapDeviceConfirmation = ({
   stateSettings: SettingsState;
   walletState: WalletState;
 }) => {
-  const sourceAccountCurrency = getAccountCurrency(exchange.fromAccount);
-  const targetAccountCurrency = getAccountCurrency(exchange.toAccount);
+  const sourceAccountCurrency = exchange.fromCurrency;
+  const targetAccountCurrency = exchange.toCurrency;
   const sourceAccountName =
     accountNameSelector(walletState, {
       accountId: exchange.fromAccount.id,
@@ -1103,22 +1201,20 @@ export const renderSwapDeviceConfirmation = ({
           </Alert>
         </Box>
 
-        <DeviceSwapSummaryStyled data-test-id="device-swap-summary">
+        <DeviceSwapSummaryStyled data-testid="device-swap-summary">
           {deviceSwapSummaryFields.map(([key, value]) => (
             <Fragment key={key}>
               <Text fontWeight="medium" color="palette.text.shade40" fontSize="14px">
                 <Trans i18nKey={`DeviceAction.swap2.${key}`} />
               </Text>
-              <DeviceSwapSummaryValueStyled>{value}</DeviceSwapSummaryValueStyled>
+              <DeviceSwapSummaryValueStyled data-testid={key}>{value}</DeviceSwapSummaryValueStyled>
             </Fragment>
           ))}
         </DeviceSwapSummaryStyled>
         {renderVerifyUnwrapped({ modelId, type })}
       </ConfirmWrapper>
       <Separator />
-      <Flex width="100%" mb={3}>
-        <DrawerFooter provider={exchangeRate.provider} />
-      </Flex>
+      <DrawerFooter provider={exchangeRate.provider} />
     </>
   );
 };
@@ -1148,7 +1244,7 @@ export const renderSecureTransferDeviceConfirmation = ({
 );
 
 export const renderLoading = ({ children }: { children?: React.ReactNode } = {}) => (
-  <Wrapper data-test-id="device-action-loader">
+  <Wrapper data-testid="device-action-loader">
     <Header />
     <Flex alignItems="center" justifyContent="center" borderRadius={9999} size={60} mb={5}>
       <InfiniteLoader size={58} />

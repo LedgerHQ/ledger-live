@@ -4,6 +4,11 @@ import { Trans, withTranslation } from "react-i18next";
 import { getEnv } from "@ledgerhq/live-env";
 import Text from "~/renderer/components/Text";
 import { openURL } from "~/renderer/linking";
+import {
+  dexProvidersContractAddress,
+  privacyPolicy,
+  termsOfUse,
+} from "@ledgerhq/live-common/exchange/providers/swap";
 
 const HorizontalSeparator = styled.div`
   height: 1px;
@@ -11,24 +16,24 @@ const HorizontalSeparator = styled.div`
   width: 100%;
 `;
 
-const termsOfUse = new Map<string, string>([
-  ["paraswap", "https://paraswap.io/tos"],
-  ["1inch", "https://1inch.io/assets/1inch_network_terms_of_use.pdf"],
-]);
-
 if (getEnv("PLAYWRIGHT_RUN")) {
-  termsOfUse.set("dummy-live-app", "https://localhost.io/testtos");
+  termsOfUse["dummy-live-app"] = "https://localhost.io/testtos";
 }
 
 type Props = {
   footer: React.ReactNode | undefined;
   manifestId?: string | null;
+  transaction?: Transaction | null;
   manifestName?: string | null;
 };
 
-const ConfirmFooter = ({ footer, manifestId, manifestName }: Props) => {
+const handleUrlClick = (url?: string) => () => url && openURL(url);
+
+const ConfirmFooter = ({ footer, transaction, manifestId, manifestName }: Props) => {
   if (!manifestId) return;
-  const termsOfUseUrl = termsOfUse.get(manifestId);
+  const appNameByAddr = dexProvidersContractAddress[transaction?.recipient || ""];
+  const termsOfUseUrl = termsOfUse[appNameByAddr || manifestId];
+  const privacyUrl = privacyPolicy[appNameByAddr || manifestId];
   if (!termsOfUseUrl) return;
   return (
     <>
@@ -36,21 +41,46 @@ const ConfirmFooter = ({ footer, manifestId, manifestName }: Props) => {
       {footer ? (
         footer
       ) : (
-        <Text marginTop={30} data-test-id="confirm-footer-toc">
-          <Trans
-            i18nKey="TransactionConfirm.termsAndConditions"
-            values={{ appName: manifestName || manifestId }}
-            components={[
-              <Text
-                key={manifestId}
-                onClick={() => openURL(termsOfUseUrl)}
-                style={{
-                  cursor: "pointer",
-                  textDecoration: "underline",
-                }}
-              />,
-            ]}
-          />
+        <Text marginTop={30} data-testid="confirm-footer-toc">
+          {privacyUrl ? (
+            <Trans
+              i18nKey="TransactionConfirm.termsAndConditionsWithPrivacy"
+              values={{ appName: appNameByAddr || manifestName || manifestId }}
+              components={[
+                <Text
+                  key={manifestId}
+                  onClick={handleUrlClick(termsOfUseUrl)}
+                  style={{
+                    cursor: "pointer",
+                    textDecoration: "underline",
+                  }}
+                />,
+                <Text
+                  key={manifestId + "1"}
+                  onClick={handleUrlClick(privacyUrl)}
+                  style={{
+                    cursor: "pointer",
+                    textDecoration: "underline",
+                  }}
+                />,
+              ]}
+            />
+          ) : (
+            <Trans
+              i18nKey="TransactionConfirm.termsAndConditions"
+              values={{ appName: appNameByAddr || manifestName || manifestId }}
+              components={[
+                <Text
+                  key={manifestId}
+                  onClick={handleUrlClick(termsOfUseUrl)}
+                  style={{
+                    cursor: "pointer",
+                    textDecoration: "underline",
+                  }}
+                />,
+              ]}
+            />
+          )}
         </Text>
       )}
     </>

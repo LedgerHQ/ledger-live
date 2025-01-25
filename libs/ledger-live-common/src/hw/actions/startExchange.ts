@@ -9,6 +9,7 @@ import { createAction as createAppAction } from "./app";
 import { ExchangeType } from "@ledgerhq/live-app-sdk";
 import { getMainAccount } from "../../account";
 import { isExchangeSwap, type Exchange } from "../../exchange/types";
+import { isSwapDisableAppsInstall } from "../../exchange/swap/utils/isIntegrationTestEnv";
 
 export type StartExchangeSuccessResult = {
   nonce: string;
@@ -122,27 +123,40 @@ export const createAction = (
         ? getMainAccount(exchange.toAccount, exchange.toParentAccount)
         : null;
 
-    const request: AppRequest = useMemo(() => {
-      if (!exchange || !mainFromAccount || !mainToAccount) {
+    const request = useMemo<AppRequest>(() => {
+      if (isSwapDisableAppsInstall()) {
         return {
           appName: "Exchange",
-          requireLatestFirmware,
-        };
-      } else {
-        return {
-          appName: "Exchange",
-          dependencies: [
-            {
-              account: mainFromAccount,
-            },
-            {
-              account: mainToAccount,
-            },
-          ],
-          requireLatestFirmware,
         };
       }
-    }, [exchange, mainFromAccount, mainToAccount, requireLatestFirmware]);
+      const dependencies: AppRequest["dependencies"] = [];
+      if (mainFromAccount) {
+        dependencies.push({ appName: mainFromAccount?.currency?.managerAppName });
+      }
+
+      if (mainToAccount) {
+        dependencies.push({ appName: mainToAccount?.currency?.managerAppName });
+      }
+
+      const shouldAddEthApp =
+        (mainFromAccount?.currency?.family === "evm" ||
+          mainToAccount?.currency?.family === "evm") &&
+        mainFromAccount?.currency?.managerAppName !== "Ethereum" &&
+        mainToAccount?.currency?.managerAppName !== "Ethereum";
+
+      // Check if we should add ETH app, for cases like when we want AVAX to use the ETH app.
+      if (shouldAddEthApp) {
+        dependencies.push({
+          appName: "Ethereum",
+        });
+      }
+
+      return {
+        appName: "Exchange",
+        dependencies,
+        requireLatestFirmware,
+      };
+    }, [mainFromAccount, mainToAccount, requireLatestFirmware]);
 
     const appState = createAppAction(connectAppExec).useHook(reduxDeviceFrozen, request);
 

@@ -8,6 +8,7 @@ import {
 import { createRegistryAndExtrinsics } from "../network/common";
 import { createFixtureAccount } from "../types/bridge.fixture";
 import { craftEstimationTransaction } from "./craftTransaction";
+import coinConfig from "../config";
 
 jest.mock("./polkadot-crypto");
 
@@ -30,6 +31,28 @@ jest.mock("../network/sidecar", () => ({
 describe("estimatedFees", () => {
   beforeEach(() => {
     mockPaymentInfo.mockClear();
+  });
+  beforeAll(() => {
+    coinConfig.setCoinConfig(() => ({
+      status: {
+        type: "active",
+      },
+      node: {
+        url: "https://polkadot-rpc.publicnode.com",
+      },
+      sidecar: {
+        url: "https://polkadot-sidecar.coin.ledger.com",
+      },
+      staking: {
+        electionStatusThreshold: 25,
+      },
+      metadataShortener: {
+        url: "https://polkadot-metadata-shortener.api.live.ledger.com/transaction/metadata",
+      },
+      metadataHash: {
+        url: "https://polkadot-metadata-shortener.api.live.ledger.com/node/metadata/hash",
+      },
+    }));
   });
 
   it("calls loadPolkadotCrypto (WASM check)", async () => {

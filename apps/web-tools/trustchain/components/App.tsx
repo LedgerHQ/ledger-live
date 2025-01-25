@@ -2,11 +2,16 @@ import dynamic from "next/dynamic";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import styled from "styled-components";
 import { Tooltip } from "react-tooltip";
-import { MemberCredentials, Trustchain, TrustchainMember } from "@ledgerhq/trustchain/types";
-import { getInitialStore } from "@ledgerhq/trustchain/store";
+import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
+import {
+  MemberCredentials,
+  Trustchain,
+  TrustchainMember,
+} from "@ledgerhq/ledger-key-ring-protocol/types";
+import { getInitialStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import useEnv from "../useEnv";
 import Expand from "./Expand";
-import { getSdk } from "@ledgerhq/trustchain";
+import { getSdk } from "@ledgerhq/ledger-key-ring-protocol";
 import { DisplayName, IdentityManager } from "./IdentityManager";
 import { AppSetDeviceId } from "./AppSetDeviceId";
 import { AppSetSupportedCurrencies } from "./AppSetSupportedCurrencies";
@@ -26,10 +31,10 @@ import { AppRestoreTrustchain } from "./AppRestoreTrustchain";
 import { AppWalletSync } from "./AppCloudSync";
 import { AppSetCloudSyncAPIEnv } from "./AppSetCloudSyncAPIEnv";
 import { DeviceInteractionLayer } from "./DeviceInteractionLayer";
-import { Account } from "@ledgerhq/types-live";
-import { WalletState, initialState as walletInitialState } from "@ledgerhq/live-wallet/store";
+import { initialState as walletInitialState } from "@ledgerhq/live-wallet/store";
 import { DistantState, trustchainLifecycle } from "@ledgerhq/live-wallet/walletsync/index";
 import { Loading } from "./Loading";
+import { State } from "./types";
 
 const Container = styled.div`
   padding: 0 10px 50px 0;
@@ -39,8 +44,9 @@ const Container = styled.div`
   flex-direction: column;
 `;
 
-const initialState = {
+const initialState: State = {
   accounts: [],
+  nonImportedAccounts: [],
   walletState: walletInitialState,
 };
 
@@ -56,6 +62,7 @@ const App = () => {
       setTrustchainState(s => ({ jwt: null, trustchain: null, memberCredentials })),
     [],
   );
+  const cloudSyncApiBaseUrl = useEnv("CLOUD_SYNC_API_STAGING");
   const setTrustchain = useCallback(
     (trustchain: Trustchain | null) => setTrustchainState(s => ({ ...s, trustchain })),
     [],
@@ -72,18 +79,20 @@ const App = () => {
     setAccountsSync(false);
   }, [setAccountsSync]);
 
+  /*
   // turning accounts sync off will cascade to state reset
   useEffect(() => {
     if (!accountsSync) {
       setState(initialState);
     }
   }, [accountsSync]);
+  */
 
   const [wssdkHandledVersion, setWssdkHandledVersion] = useState(0);
   const [wssdkHandledData, setWssdkHandledData] = useState<DistantState | null>(null);
 
-  const version = state.walletState.wsState.version || wssdkHandledVersion;
-  const data = state.walletState.wsState.data || wssdkHandledData;
+  const version = state.walletState.walletSyncState.version || wssdkHandledVersion;
+  const data = state.walletState.walletSyncState.data || wssdkHandledData;
 
   const wsStateRef = useRef({ version, data });
   useEffect(() => {
@@ -102,13 +111,14 @@ const App = () => {
   const lifecycle = useMemo(
     () =>
       trustchainLifecycle({
+        cloudSyncApiBaseUrl,
         getCurrentWSState: () => wsStateRef.current,
       }),
-    [],
+    [cloudSyncApiBaseUrl],
   );
 
   const sdk = useMemo(
-    () => getSdk(!!mockEnv, context, lifecycle),
+    () => getSdk(!!mockEnv, context, withDevice, lifecycle),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [
       mockEnv,
@@ -117,8 +127,8 @@ const App = () => {
       memberCredentials,
     ],
   );
-  const envTrustchainApiIsStg = useEnv("TRUSTCHAIN_API").includes("stg");
-  const envWalletSyncApiIsStg = useEnv("CLOUD_SYNC_API").includes("stg");
+  const envTrustchainApiIsStg = useEnv("TRUSTCHAIN_API_STAGING").includes("stg");
+  const envWalletSyncApiIsStg = useEnv("CLOUD_SYNC_API_STAGING").includes("stg");
   const envSummary = mockEnv
     ? "MOCK"
     : envTrustchainApiIsStg && envWalletSyncApiIsStg
@@ -261,6 +271,7 @@ const App = () => {
             <AppQRCodeCandidate
               memberCredentials={memberCredentials}
               setTrustchain={setTrustchain}
+              trustchain={trustchain}
             />
           </Expand>
         </Expand>
@@ -282,7 +293,7 @@ const App = () => {
               data={data}
               setVersion={setWssdkHandledVersion}
               setData={setWssdkHandledData}
-              forceReadOnlyData={state.walletState.wsState.data}
+              forceReadOnlyData={state.walletState.walletSyncState.data}
               readOnly={accountsSync}
               takeControl={takeControl}
             />
@@ -310,11 +321,6 @@ const App = () => {
       </Container>
     </TrustchainSDKContext.Provider>
   );
-};
-
-type State = {
-  accounts: Account[];
-  walletState: WalletState;
 };
 
 const AppAccountsSync = dynamic<{

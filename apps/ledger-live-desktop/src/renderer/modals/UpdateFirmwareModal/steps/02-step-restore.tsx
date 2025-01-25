@@ -87,4 +87,14 @@ const StepRestore = ({
   );
 };
 
+const Footer: React.FC<StepProps> = props => {
+  const { completedRestoreSteps } = props;
+  if (!completedRestoreSteps.includes("language")) {
+    return <Language.Footer {...props} />;
+  }
+  return null;
+};
+
+StepRestore.Footer = Footer;
+
 export default StepRestore;

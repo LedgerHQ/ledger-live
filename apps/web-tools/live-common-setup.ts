@@ -46,7 +46,6 @@ setSupportedCurrencies([
   "qtum",
   "bitcoin_gold",
   "komodo",
-  "pivx",
   "zencash",
   "bitcoin_testnet",
   "ethereum_sepolia",
@@ -70,4 +69,7 @@ setSupportedCurrencies([
   "optimism_sepolia",
   "linea",
   "linea_sepolia",
+  "mantra",
+  "xion",
+  "zenrock",
 ]);

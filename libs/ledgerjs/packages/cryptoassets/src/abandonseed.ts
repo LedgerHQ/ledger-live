@@ -1,5 +1,5 @@
-import invariant from "invariant";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import invariant from "invariant";
 
 const EVM_DEAD_ADDRESS = "0x000000000000000000000000000000000000dEaD";
 
@@ -13,6 +13,8 @@ const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
   algorand: "PSHLIWQKDEETIIBQEOTLGCT5IF7BTTOKCUULONOGVGF2HYDT2IHW3H4CCI",
   // https://snowtrace.io/address/0x000000000000000000000000000000000000dead/tokens
   avalanche_c_chain: EVM_DEAD_ADDRESS,
+  aptos: EVM_DEAD_ADDRESS,
+  aptos_testnet: EVM_DEAD_ADDRESS,
   cosmos: "cosmos19rl4cm2hmr8afy4kldpxz3fka4jguq0auqdal4",
   ripple: "rHsMGQEkVNJmpGWs8XUBoTBiAAbwxZN5v3",
   stellar: "GDYPMQMYW2JTLPWAUAHIDY3E4VHP5SGTFC5SMA45L7ZPOTHWQ2PHEW3E",
@@ -33,7 +35,6 @@ const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
   komodo: "RW8gfgpCUdgZbkPAs1uJQF2S9681JVkGRi",
   litecoin: "LUWPbpM43E2p7ZSh8cyTBEkvpHmr3cB8Ez",
   nix: "GRpn2DPiQxAczMrQFt2sK1CS8EYdnvSHxo",
-  pivx: "DDBxSas734KhMp1Btga3LdwWAc1igSER8o",
   polkadot: "111111111111111111111111111111111HC1",
   qtum: "QPvRe2C17qk24K6v5gTg7CPghZ8b4WMxZP",
   stratis: "Sdo6x9k5AxWtfyJe5B9SZPteYTKgUoMMr1",
@@ -101,12 +102,21 @@ const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
   dydx: "dydx19rl4cm2hmr8afy4kldpxz3fka4jguq0a4erelz",
   vechain: EVM_DEAD_ADDRESS,
   lukso: EVM_DEAD_ADDRESS,
+  icon: "hxd3f4224ffb2cfd354f8db2eef39e12aadb7a4ebb",
+  icon_berlin_testnet: "hxd3f4224ffb2cfd354f8db2eef39e12aadb7a4ebb",
   linea: EVM_DEAD_ADDRESS,
+  ton: "UQChCJybqqY3KOVE_6QCCVJDvXDMT-lPszwl1loaCEyVDfbq",
   linea_sepolia: EVM_DEAD_ADDRESS,
   blast: EVM_DEAD_ADDRESS,
   blast_sepolia: EVM_DEAD_ADDRESS,
   scroll: EVM_DEAD_ADDRESS,
   scroll_sepolia: EVM_DEAD_ADDRESS,
+  etherlink: EVM_DEAD_ADDRESS,
+  zksync: EVM_DEAD_ADDRESS,
+  zksync_sepolia: EVM_DEAD_ADDRESS,
+  mantra: "mantra12jypwtxm7npfszx5x9780fhz0j3ken696fdp33",
+  xion: "xion19rl4cm2hmr8afy4kldpxz3fka4jguq0a5xyz123",
+  zenrock: "zen1704dk997ccmk5x8smn8secphckfvbgxxfd99xxr",
 };
 
 /**

@@ -1,9 +1,10 @@
+import { Locator } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
 import { Component } from "tests/page/abstractClasses";
 
 export class Modal extends Component {
   readonly container = this.page.locator(
-    '[data-test-id=modal-container][style*="opacity: 1"][style*="transform: scale(1)"]',
+    '[data-testid=modal-container][style*="opacity: 1"][style*="transform: scale(1)"]',
   );
   readonly title = this.page.getByTestId("modal-title");
   readonly content = this.page.getByTestId("modal-content");
@@ -14,26 +15,24 @@ export class Modal extends Component {
   protected confirmButton = this.page.getByTestId("modal-confirm-button");
   protected closeButton = this.page.getByTestId("modal-close-button");
   protected backButton = this.page.getByTestId("modal-back-button");
-  protected titleProvider = this.page.getByTestId("modal-provider-title");
-  protected rowProvider = this.page.getByTestId("modal-provider-row");
-  protected delegateContinueButton = this.page.locator("id=delegate-continue-button");
   protected spendableBanner = this.page.getByTestId("modal-spendable-banner");
   protected maxAmountCheckbox = this.page.getByTestId("modal-max-checkbox");
   protected cryptoAmountField = this.page.getByTestId("modal-amount-field");
   protected continueAmountButton = this.page.locator("id=send-amount-continue-button");
-  protected searchOpenButton = this.page.getByText("Show all");
-  protected searchCloseButton = this.page.getByText("Show less");
-  protected inputSearchField = this.page.getByPlaceholder("Search by name or address...");
-  protected stakeProviderContainer = (stakeProviderID: string) =>
-    this.page.getByTestId(`stake-provider-container-${stakeProviderID}`);
   protected signContinueButton = this.page.locator("text=Continue");
   protected confirmText = this.page.locator(
     "text=Please confirm the operation on your device to finalize it",
   );
 
+  constructor(page: any) {
+    super(page);
+  }
+
   @step("Click Continue button")
   async continue() {
-    await this.continueButton.click();
+    if (await this.continueButton.isVisible()) {
+      await this.continueButton.click();
+    }
   }
 
   async save() {
@@ -52,6 +51,7 @@ export class Modal extends Component {
     await this.backButton.click();
   }
 
+  @step("Close modal")
   async close() {
     await this.closeButton.click();
   }
@@ -63,19 +63,6 @@ export class Modal extends Component {
 
   async waitForModalToDisappear() {
     await this.container.waitFor({ state: "detached" });
-  }
-
-  async chooseStakeProvider(stakeProvider: string) {
-    await this.stakeProviderContainer(stakeProvider).click();
-  }
-
-  async getTitleProvider() {
-    await this.titleProvider.waitFor();
-    return await this.titleProvider.textContent();
-  }
-
-  async continueDelegate() {
-    await this.delegateContinueButton.click();
   }
 
   async getSpendableBannerValue() {
@@ -93,21 +80,9 @@ export class Modal extends Component {
     return parseInt(valueAmount);
   }
 
+  @step("Click Continue button")
   async countinueSendAmount() {
     await this.continueAmountButton.click();
-  }
-
-  async openSearchProviderModal() {
-    await this.searchOpenButton.click();
-  }
-
-  async inputProvider(provider: string) {
-    await this.inputSearchField.fill(provider);
-  }
-
-  async selectProvider(providerIndex: number) {
-    await this.rowProvider.nth(providerIndex).click();
-    await this.searchCloseButton.click();
   }
 
   async continueToSignTransaction() {
@@ -116,5 +91,16 @@ export class Modal extends Component {
 
   async waitForConfirmationScreenToBeDisplayed() {
     await this.confirmText.waitFor({ state: "visible" });
+  }
+
+  async scrollUntilOptionIsDisplayed(dropdown: Locator, element: Locator) {
+    let isVisible = await element.isVisible();
+
+    while (!isVisible) {
+      await dropdown.evaluate(node => {
+        node.scrollBy(0, 50);
+      });
+      isVisible = await element.isVisible();
+    }
   }
 }

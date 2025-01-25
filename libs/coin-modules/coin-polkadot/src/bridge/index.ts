@@ -1,5 +1,5 @@
 import {
-  defaultUpdateTransaction,
+  updateTransaction,
   makeAccountBridgeReceive,
   makeScanAccounts,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
@@ -11,6 +11,7 @@ import { PolkadotAccount, PolkadotSigner, TransactionStatus, type Transaction } 
 import { getPreloadStrategy, hydrate, preload } from "./preload";
 import polkadotCoinConfig, { type PolkadotCoinConfig } from "../config";
 import { estimateMaxSpendable } from "./estimateMaxSpendable";
+import { getSerializedAddressParameters } from "./exchange";
 import { getTransactionStatus } from "./getTransactionStatus";
 import { prepareTransaction } from "./prepareTransaction";
 import { getAccountShape, sync } from "./synchronization";
@@ -52,7 +53,7 @@ function buildAccountBridge(
   return {
     estimateMaxSpendable,
     createTransaction,
-    updateTransaction: defaultUpdateTransaction,
+    updateTransaction,
     getTransactionStatus,
     prepareTransaction,
     sync,
@@ -63,6 +64,7 @@ function buildAccountBridge(
     assignToAccountRaw,
     fromOperationExtraRaw,
     toOperationExtraRaw,
+    getSerializedAddressParameters,
   };
 }
 

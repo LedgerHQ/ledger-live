@@ -1,4 +1,7 @@
 export type XrplOperation = {
+  ledger_hash: string;
+  hash: string;
+  close_time_iso: string;
   meta: {
     AffectedNodes: {
       ModifiedNode: {
@@ -22,18 +25,21 @@ export type XrplOperation = {
     TransactionResult: string;
     delivered_amount: string;
   };
-  tx: {
+  tx_json: {
     Account: string;
     Amount: string;
     DeliverMax: string;
     Destination: string;
-    DestinationTag: number;
+    DestinationTag?: number;
     Fee: string;
     Flags: number;
     LastLedgerSequence: number;
-    Memos: {
+    // cf. https://xrpl.org/docs/references/protocol/transactions/common-fields#memos-field
+    Memos?: {
       Memo: {
-        MemoData: string;
+        MemoData?: string;
+        MemoFormat?: string;
+        MemoType?: string;
       };
     }[];
     Sequence: number;
@@ -41,20 +47,22 @@ export type XrplOperation = {
     TransactionType: string;
     TxnSignature: string;
     date: number;
-    hash: string;
-    inLedger: number;
     ledger_index: number;
   };
   validated: boolean;
 };
 
-type ResponseStatus =
+export type ResponseStatus =
   | { status: string; error?: never }
   | {
       status?: never;
       error: string;
     };
+export function isResponseStatus(obj: object): obj is ResponseStatus {
+  return "status" in obj || "error" in obj;
+}
 
+export type NewAccount = "NewAccount";
 export type AccountInfoResponse = {
   account_data: {
     Account: string;
@@ -189,3 +197,22 @@ export type LedgerResponse = {
   ledger_index: number;
   validated: boolean;
 } & ResponseStatus;
+
+export type ErrorResponse = {
+  account: string;
+  error: string;
+  error_code: number;
+  error_message: string;
+  ledger_hash: string;
+  ledger_index: number;
+  request: {
+    account: string;
+    command: string;
+    ledger_index: string;
+  };
+  status: string;
+  validated: boolean;
+};
+export function isErrorResponse(obj: object): obj is ErrorResponse {
+  return "status" in obj && obj.status === "error" && "error" in obj;
+}

@@ -57,6 +57,8 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
 
   const mock = useEnv("MOCK");
 
+  const aptos = useFeature("currencyAptos");
+  const aptosTestnet = useFeature("currencyAptosTestnet");
   const axelar = useFeature("currencyAxelar");
   const stargaze = useFeature("currencyStargaze");
   const secretNetwork = useFeature("currencySecretNetwork");
@@ -101,9 +103,19 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const blastSepolia = useFeature("currencyBlastSepolia");
   const scroll = useFeature("currencyScroll");
   const scrollSepolia = useFeature("currencyScrollSepolia");
+  const icon = useFeature("currencyIcon");
+  const ton = useFeature("currencyTon");
+  const etherlink = useFeature("currencyEtherlink");
+  const zksync = useFeature("currencyZkSync");
+  const zksyncSepolia = useFeature("currencyZkSyncSepolia");
+  const mantra = useFeature("currencyMantra");
+  const xion = useFeature("currencyXion");
+  const zenrock = useFeature("currencyZenrock");
 
   const featureFlaggedCurrencies = useMemo(
     (): Partial<Record<CryptoCurrencyId, Feature<unknown> | null>> => ({
+      aptos,
+      aptos_testnet: aptosTestnet,
       axelar,
       stargaze,
       umee,
@@ -143,13 +155,23 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       neon_evm: neonEvm,
       lukso,
       linea,
+      ton,
       linea_sepolia: lineaSepolia,
       blast,
       blast_sepolia: blastSepolia,
       scroll,
       scroll_sepolia: scrollSepolia,
+      icon,
+      etherlink,
+      zksync,
+      zksync_sepolia: zksyncSepolia,
+      mantra,
+      xion,
+      zenrock,
     }),
     [
+      aptos,
+      aptosTestnet,
       axelar,
       stargaze,
       umee,
@@ -189,11 +211,19 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       neonEvm,
       lukso,
       linea,
+      ton,
       lineaSepolia,
       blast,
       blastSepolia,
       scroll,
       scrollSepolia,
+      icon,
+      etherlink,
+      zksync,
+      zksyncSepolia,
+      mantra,
+      xion,
+      zenrock,
     ],
   );
 

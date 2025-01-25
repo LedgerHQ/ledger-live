@@ -2,33 +2,25 @@ import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
-import { Flex, Theme } from "@ledgerhq/react-ui";
 import { hidePostOnboardingWalletEntryPoint } from "@ledgerhq/live-common/postOnboarding/actions";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { usePostOnboardingHubState } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { useNavigateToPostOnboardingHubCallback } from "./logic/useNavigateToPostOnboardingHubCallback";
-import Illustration from "~/renderer/components/Illustration";
-import bannerStaxLight from "./assets/bannerStaxLight.svg";
-import bannerStaxDark from "./assets/bannerStaxDark.svg";
 import { track } from "~/renderer/analytics/segment";
 import { Card } from "../Box";
 import ActionCard from "../ContentCards/ActionCard";
+import StaxBannerIllustration from "./StaxBannerIllustration";
+import EuropaBannerIllustration from "./EuropaBannerIllustration";
 
 const Wrapper = styled(Card)`
   background-color: ${p => p.theme.colors.opacityPurple.c10};
   margin: 20px 0px;
 `;
 
-const illustrations: { [key in DeviceModelId]: Record<Theme["theme"], unknown> | undefined } = {
-  stax: {
-    light: bannerStaxLight,
-    dark: bannerStaxDark,
-  },
-  europa: {
-    light: bannerStaxLight,
-    dark: bannerStaxDark,
-  },
+const illustrations = {
+  stax: <StaxBannerIllustration />,
+  europa: <EuropaBannerIllustration />,
   nanoS: undefined,
   nanoSP: undefined,
   nanoX: undefined,
@@ -54,19 +46,7 @@ const PostOnboardingHubBanner = () => {
   return (
     <Wrapper>
       <ActionCard
-        leftContent={
-          deviceModelId && illustrations[deviceModelId] ? (
-            <Flex
-              alignItems="center"
-              justifyContent="center"
-              bg="neutral.c100"
-              borderRadius="100%"
-              p={1}
-            >
-              <Illustration lightSource={bannerStaxLight} darkSource={bannerStaxDark} size={30} />
-            </Flex>
-          ) : null
-        }
+        leftContent={deviceModelId ? illustrations[deviceModelId] : undefined}
         title={t("postOnboarding.postOnboardingBanner.title", {
           productName: getDeviceModel(deviceModelId ?? DeviceModelId.stax).productName,
         })}

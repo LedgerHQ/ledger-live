@@ -55,6 +55,7 @@ export type CryptoCurrencyId =
   | "hpb"
   | "hycon"
   | "icon"
+  | "icon_berlin_testnet"
   | "iota"
   | "iov"
   | "kaspa"
@@ -81,7 +82,6 @@ export type CryptoCurrencyId =
   | "particl"
   | "persistence"
   | "pirl"
-  | "pivx"
   | "poa"
   | "polkadot"
   | "polygon"
@@ -107,6 +107,7 @@ export type CryptoCurrencyId =
   | "tezos"
   | "thundercore"
   | "tomo"
+  | "ton"
   | "tron"
   | "ubiq"
   | "umee"
@@ -135,6 +136,8 @@ export type CryptoCurrencyId =
   | "songbird"
   | "moonbeam"
   | "near"
+  | "aptos"
+  | "aptos_testnet"
   | "rsk"
   | "bittorrent"
   | "optimism"
@@ -162,7 +165,13 @@ export type CryptoCurrencyId =
   | "blast"
   | "blast_sepolia"
   | "scroll"
-  | "scroll_sepolia";
+  | "scroll_sepolia"
+  | "etherlink"
+  | "zksync"
+  | "zksync_sepolia"
+  | "mantra"
+  | "xion"
+  | "zenrock";
 
 export type LedgerExplorerId =
   | "btc"
@@ -177,7 +186,6 @@ export type LedgerExplorerId =
   | "hsr"
   | "kmd"
   | "ltc"
-  | "pivx"
   | "posw"
   | "qtum"
   | "strat"
@@ -220,7 +228,7 @@ type CurrencyCommon = {
   units: Unit[];
   // a shorter version of code using the symbol of the currency. like Ƀ . not all cryptocurrencies have a symbol
   symbol?: string;
-  /*
+  /**
    * tells if countervalue need to be disabled (typically because colliding with other coins)
    * @deprecated this field will soon be dropped. this is the API that drives this dynamically.
    */

@@ -6,17 +6,18 @@ const config: PlaywrightTestConfig = {
       name: "speculos_tests",
       testDir: "specs/speculos/",
       retries: process.env.CI ? 2 : 0,
+      timeout: process.env.CI ? 400000 : 1200000,
     },
     {
       name: "mocked_tests",
       testDir: "specs/",
       testIgnore: ["**/speculos/**", "specs/recorder.spec.ts"],
+      timeout: process.env.CI ? 190000 : 600000,
     },
   ],
   outputDir: "./artifacts/test-results",
   snapshotPathTemplate:
     "{snapshotDir}/{testFileDir}/{testFileName}-snapshots/{arg}{-platform}{ext}",
-  timeout: process.env.CI ? 190000 : 600000,
   expect: {
     timeout: 41000,
     toHaveScreenshot: {
@@ -34,7 +35,6 @@ const config: PlaywrightTestConfig = {
   use: {
     ignoreHTTPSErrors: true,
     screenshot: process.env.CI ? "only-on-failure" : "off",
-    testIdAttribute: "data-test-id",
   },
   forbidOnly: !!process.env.CI,
   preserveOutput: process.env.CI ? "failures-only" : "always",
@@ -49,6 +49,7 @@ const config: PlaywrightTestConfig = {
         ["github"],
         ["line"],
         ["allure-playwright"],
+        ["./utils/customJsonReporter.ts"],
       ]
     : [["allure-playwright"]],
 };

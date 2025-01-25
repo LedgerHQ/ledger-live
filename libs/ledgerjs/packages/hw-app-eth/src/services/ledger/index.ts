@@ -1,20 +1,31 @@
-// This implements the resolution of a Transaction using Ledger's own API
-import { log } from "@ledgerhq/logs";
+import { parse as parseTransaction } from "@ethersproject/transactions";
 import { Interface } from "@ethersproject/abi";
+import { log } from "@ledgerhq/logs";
 import {
   signDomainResolution,
   signAddressResolution,
 } from "@ledgerhq/domain-service/signers/index";
 import { LedgerEthTransactionResolution, LedgerEthTransactionService, LoadConfig } from "../types";
+import { UNISWAP_UNIVERSAL_ROUTER_ADDRESS } from "../../modules/Uniswap/constants";
 import { byContractAddressAndChainId, findERC20SignaturesInfo } from "./erc20";
+import { loadInfosForUniswap } from "../../modules/Uniswap";
 import { loadInfosForContractMethod } from "./contracts";
 import { getNFTInfo, loadNftPlugin } from "./nfts";
-import { decodeTxInfo, tokenSelectors, nftSelectors, mergeResolutions } from "../../utils";
+import {
+  tokenSelectors,
+  nftSelectors,
+  mergeResolutions,
+  ERC20_CLEAR_SIGNED_SELECTORS,
+  ERC1155_CLEAR_SIGNED_SELECTORS,
+  ERC721_CLEAR_SIGNED_SELECTORS,
+  getChainIdAsUint32,
+} from "../../utils";
 
 type PotentialResolutions = {
   token: boolean | undefined;
   nft: boolean | undefined;
   externalPlugins: boolean | undefined;
+  uniswapV3: boolean | undefined;
 };
 
 /**
@@ -26,7 +37,7 @@ type PotentialResolutions = {
  */
 const getAdditionalDataForContract = async (
   contractAddress: string,
-  chainIdTruncated: number,
+  chainIdUint32: number,
   loadConfig: LoadConfig,
   shouldResolve: PotentialResolutions,
 ): Promise<Pick<LedgerEthTransactionResolution, "nfts" | "erc20Tokens">> => {
@@ -36,7 +47,7 @@ const getAdditionalDataForContract = async (
   };
 
   if (shouldResolve.nft) {
-    const nftInfo = await getNFTInfo(contractAddress, chainIdTruncated, loadConfig);
+    const nftInfo = await getNFTInfo(contractAddress, chainIdUint32, loadConfig);
 
     if (nftInfo) {
       log(
@@ -50,10 +61,10 @@ const getAdditionalDataForContract = async (
   }
 
   if (shouldResolve.token) {
-    const erc20SignaturesBlob = await findERC20SignaturesInfo(loadConfig, chainIdTruncated);
+    const erc20SignaturesBlob = await findERC20SignaturesInfo(loadConfig, chainIdUint32);
     const erc20Info = byContractAddressAndChainId(
       contractAddress,
-      chainIdTruncated,
+      chainIdUint32,
       erc20SignaturesBlob,
     );
 
@@ -81,8 +92,8 @@ const getAdditionalDataForContract = async (
 const loadNanoAppPlugins = async (
   contractAddress: string,
   selector: string,
-  decodedTx,
-  chainIdTruncated: number,
+  parsedTransaction,
+  chainIdUint32: number,
   loadConfig: LoadConfig,
   shouldResolve: PotentialResolutions,
 ): Promise<LedgerEthTransactionResolution> => {
@@ -98,7 +109,7 @@ const loadNanoAppPlugins = async (
     const nftPluginPayload = await loadNftPlugin(
       contractAddress,
       selector,
-      chainIdTruncated,
+      chainIdUint32,
       loadConfig,
     );
 
@@ -112,11 +123,13 @@ const loadNanoAppPlugins = async (
     }
   }
 
-  if (shouldResolve.externalPlugins) {
+  // Uniswap has its own way of working, so we need to handle it separately
+  // This will prevent an error if we add Uniswap to the CAL service
+  if (shouldResolve.externalPlugins && contractAddress !== UNISWAP_UNIVERSAL_ROUTER_ADDRESS) {
     const contractMethodInfos = await loadInfosForContractMethod(
       contractAddress,
       selector,
-      chainIdTruncated,
+      chainIdUint32,
       loadConfig,
     );
 
@@ -130,7 +143,7 @@ const loadNanoAppPlugins = async (
 
       if (erc20OfInterest && erc20OfInterest.length && abi) {
         const contract = new Interface(abi);
-        const args = contract.parseTransaction(decodedTx).args;
+        const args = contract.parseTransaction(parsedTransaction).args;
 
         for (const path of erc20OfInterest) {
           const erc20ContractAddress = path.split(".").reduce((value, seg) => {
@@ -142,12 +155,13 @@ const loadNanoAppPlugins = async (
 
           const externalPluginResolution = await getAdditionalDataForContract(
             erc20ContractAddress,
-            chainIdTruncated,
+            chainIdUint32,
             loadConfig,
             {
               nft: false,
               externalPlugins: false,
               token: true, // enforcing resolution of tokens for external plugins that need info on assets (e.g. for a swap)
+              uniswapV3: false,
             },
           );
           resolution = mergeResolutions([resolution, externalPluginResolution]);
@@ -155,6 +169,20 @@ const loadNanoAppPlugins = async (
       }
     } else {
       log("ethereum", "no infos for selector " + selector);
+    }
+  }
+
+  if (shouldResolve.uniswapV3) {
+    const { pluginData, tokenDescriptors } = await loadInfosForUniswap(
+      parsedTransaction,
+      chainIdUint32,
+    );
+    if (pluginData && tokenDescriptors) {
+      resolution.externalPlugin.push({
+        payload: pluginData.toString("hex"),
+        signature: "",
+      });
+      resolution.erc20Tokens.push(...tokenDescriptors.map(d => d.toString("hex")));
     }
   }
 
@@ -173,25 +201,41 @@ const resolveTransaction: LedgerEthTransactionService["resolveTransaction"] = as
   resolutionConfig,
 ) => {
   const rawTx = Buffer.from(rawTxHex, "hex");
-  const { decodedTx, chainIdTruncated } = decodeTxInfo(rawTx);
+  const parsedTransaction = parseTransaction(`0x${rawTx.toString("hex")}`);
+  const chainIdUint32 = getChainIdAsUint32(parsedTransaction.chainId);
   const { domains } = resolutionConfig;
 
-  const contractAddress = decodedTx.to;
-  const selector = decodedTx.data.length >= 10 && decodedTx.data.substring(0, 10);
+  const contractAddress = parsedTransaction.to?.toLowerCase();
+  if (!contractAddress)
+    return {
+      nfts: [],
+      erc20Tokens: [],
+      externalPlugin: [],
+      plugin: [],
+      domains: [],
+    };
+
+  const selector = parsedTransaction.data.length >= 10 && parsedTransaction.data.substring(0, 10);
 
   const resolutions: Partial<LedgerEthTransactionResolution>[] = [];
   if (selector) {
     const shouldResolve: PotentialResolutions = {
-      token: resolutionConfig.erc20 && tokenSelectors.includes(selector),
-      nft: resolutionConfig.nft && nftSelectors.includes(selector),
+      token:
+        resolutionConfig.erc20 && tokenSelectors.includes(selector as ERC20_CLEAR_SIGNED_SELECTORS),
+      nft:
+        resolutionConfig.nft &&
+        nftSelectors.includes(
+          selector as ERC721_CLEAR_SIGNED_SELECTORS | ERC1155_CLEAR_SIGNED_SELECTORS,
+        ),
       externalPlugins: resolutionConfig.externalPlugins,
+      uniswapV3: resolutionConfig.uniswapV3,
     };
 
     const pluginsResolution = await loadNanoAppPlugins(
       contractAddress,
       selector,
-      decodedTx,
-      chainIdTruncated,
+      parsedTransaction,
+      chainIdUint32,
       loadConfig,
       shouldResolve,
     );
@@ -201,7 +245,7 @@ const resolveTransaction: LedgerEthTransactionService["resolveTransaction"] = as
 
     const contractResolution = await getAdditionalDataForContract(
       contractAddress,
-      chainIdTruncated,
+      chainIdUint32,
       loadConfig,
       shouldResolve,
     );

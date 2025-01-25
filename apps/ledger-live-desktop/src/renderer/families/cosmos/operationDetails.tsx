@@ -2,7 +2,7 @@
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
-import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain/chain";
+import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";
 import { mapDelegationInfo } from "@ledgerhq/live-common/families/cosmos/logic";
 import { useCosmosFamilyPreloadData } from "@ledgerhq/live-common/families/cosmos/react";
 import {

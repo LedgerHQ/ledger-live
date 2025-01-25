@@ -4,14 +4,26 @@ import fs from "fs";
 import { getState } from "expect";
 import { MatcherState } from "expect/build/types";
 import { format } from "date-fns";
-import { launchApp } from "./helpers";
+import { launchApp, deleteSpeculos } from "./helpers";
+import { closeProxy } from "./bridge/proxy";
+import { setEnv } from "@ledgerhq/live-env";
 
 const currentDate = new Date();
 const date = format(currentDate, "MM-dd");
 const directoryPath = `artifacts/${date}_LLM`;
 
+if (process.env.MOCK == "0") {
+  setEnv("MOCK", "");
+  process.env.MOCK = "";
+} else {
+  setEnv("MOCK", "1");
+  process.env.MOCK = "1";
+}
+
 beforeAll(
   async () => {
+    setEnv("DISABLE_APP_VERSION_REQUIREMENTS", true);
+
     const port = await launchApp();
     await device.reverseTcpPort(8081);
     await device.reverseTcpPort(port);
@@ -26,6 +38,8 @@ afterEach(async () => {
 
 afterAll(async () => {
   serverBridge.close();
+  closeProxy();
+  await deleteSpeculos();
 });
 
 const writeFile = (state: MatcherState, extension: string, data: string) => {

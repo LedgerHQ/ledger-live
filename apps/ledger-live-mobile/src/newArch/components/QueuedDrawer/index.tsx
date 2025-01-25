@@ -63,6 +63,8 @@ const QueuedDrawer = ({
   isRequestingToBeOpened = false,
   isForcingToBeOpened = false,
   onClose,
+  onBack,
+  hasBackButton,
   onModalHide,
   noCloseButton,
   preventBackdropClick,
@@ -150,6 +152,8 @@ const QueuedDrawer = ({
       preventBackdropClick={areDrawersLocked || preventBackdropClick}
       onClose={handleCloseUserEvent}
       onModalHide={handleModalHide}
+      onBack={onBack}
+      hasBackButton={hasBackButton}
       noCloseButton={areDrawersLocked || noCloseButton}
       modalStyle={style}
       containerStyle={containerStyle}

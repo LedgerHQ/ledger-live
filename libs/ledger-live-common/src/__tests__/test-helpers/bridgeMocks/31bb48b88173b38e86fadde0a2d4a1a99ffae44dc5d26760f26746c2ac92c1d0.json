@@ -1,0 +1,1 @@
+{"request":{"url":"https://rest.core.persistence.one/cosmos/bank/v1beta1/balances/persistence1v2mp0m7k96dm9qv60fkspcqlzpkzrwnevf47z2","method":"GET"},"response":{"body":{"balances":[{"denom":"uxprt","amount":"230000"}],"pagination":{"next_key":null,"total":"1"}}}}

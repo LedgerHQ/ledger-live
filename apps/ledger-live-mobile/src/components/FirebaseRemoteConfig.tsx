@@ -38,8 +38,8 @@ export const FirebaseRemoteConfigProvider = ({
       }
     };
     fetchConfig();
-    // 12 hours fetch interval. TODO: make this configurable
-    const intervalId = setInterval(fetchConfig, 12 * 60 * 60 * 1000);
+    // 5 minutes fetch interval. TODO: make this configurable
+    const intervalId = setInterval(fetchConfig, 5 * 60 * 1000);
     return () => {
       clearInterval(intervalId);
       unmounted = true;

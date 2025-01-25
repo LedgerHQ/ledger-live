@@ -75,7 +75,7 @@ const ChangeDeviceLanguagePromptDrawer: React.FC<Props> = ({
       overflowY="hidden"
       width="100%"
       flex={1}
-      data-test-id="device-language-installation-container"
+      data-testid="device-language-installation-container"
     >
       <Text alignSelf="center" variant="h5Inter" mb={3}>
         {t("deviceLocalization.deviceLanguage")}
@@ -97,7 +97,7 @@ const ChangeDeviceLanguagePromptDrawer: React.FC<Props> = ({
                 <Button
                   variant="main"
                   onClick={onCloseDrawer}
-                  data-test-id="close-language-installation-button"
+                  data-testid="close-language-installation-button"
                 >
                   {t("common.close")}
                 </Button>

@@ -4,7 +4,7 @@ import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { useTheme } from "styled-components/native";
-import { setOnboardingType } from "~/actions/settings";
+import { setFromLedgerSyncOnboarding, setOnboardingType } from "~/actions/settings";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
@@ -15,6 +15,11 @@ import OnboardingView from "./OnboardingView";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { logDrawer } from "LLM/components/QueuedDrawer/utils/logDrawer";
 import ActivationDrawer from "LLM/features/WalletSync/screens/Activation/ActivationDrawer";
+import { Steps } from "LLM/features/WalletSync/types/Activation";
+import {
+  AnalyticsButton,
+  AnalyticsPage,
+} from "LLM/features/WalletSync/hooks/useLedgerSyncAnalytics";
 
 type NavigationProps = StackNavigatorProps<
   OnboardingNavigatorParamList & BaseNavigatorStackParamList,
@@ -37,6 +42,7 @@ function AccessExistingWallet() {
     navigation.navigate(ScreenName.OnboardingPairNew, {
       deviceModelId: undefined,
       showSeedWarning: false,
+      fromAccessExistingWallet: true,
     });
   }, [dispatch, navigation]);
 
@@ -45,19 +51,17 @@ function AccessExistingWallet() {
   }, [navigation]);
 
   const openDrawer = useCallback(() => {
+    dispatch(setOnboardingType(OnboardingType.walletSync));
+    dispatch(setFromLedgerSyncOnboarding(true));
     setIsDrawerVisible(true);
     logDrawer("Wallet Sync Welcome back", "open");
-  }, []);
+  }, [dispatch]);
 
   const closeDrawer = useCallback(() => {
     setIsDrawerVisible(false);
+    dispatch(setFromLedgerSyncOnboarding(false));
     logDrawer("Wallet Sync Welcome back", "close");
-  }, []);
-
-  const reopenDrawer = useCallback(() => {
-    setIsDrawerVisible(true);
-    logDrawer("Wallet Sync Welcome back", "reopen");
-  }, []);
+  }, [dispatch]);
 
   return (
     <OnboardingView
@@ -88,11 +92,12 @@ function AccessExistingWallet() {
                   title: t("onboarding.welcomeBackStep.walletSync"),
                   event: "button_clicked",
                   eventProperties: {
-                    button: "Sync with WalletSync",
+                    button: AnalyticsButton.UseLedgerSync,
+                    page: AnalyticsPage.OnboardingAccessExistingWallet,
                   },
                   testID: "Existing Wallet | Wallet Sync",
                   onPress: openDrawer,
-                  icon: <Icons.QrCode color={colors.primary.c80} />,
+                  icon: <Icons.Refresh color={colors.primary.c80} />,
                 },
               ]
             : [
@@ -109,10 +114,11 @@ function AccessExistingWallet() {
               ]),
         ]}
       />
+
       <ActivationDrawer
+        startingStep={Steps.ChooseSyncMethod}
         isOpen={isDrawerVisible}
         handleClose={closeDrawer}
-        reopenDrawer={reopenDrawer}
       />
     </OnboardingView>
   );

@@ -1,5 +1,97 @@
 # @ledgerhq/live-env
 
+## 2.5.0
+
+### Minor Changes
+
+- [#8396](https://github.com/LedgerHQ/ledger-live/pull/8396) [`d98a964`](https://github.com/LedgerHQ/ledger-live/commit/d98a96476c3d44eab1575f6c7c58ec03b5daf890) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Support for Aptos blockchain
+
+## 2.5.0-next.0
+
+### Minor Changes
+
+- [#8396](https://github.com/LedgerHQ/ledger-live/pull/8396) [`d98a964`](https://github.com/LedgerHQ/ledger-live/commit/d98a96476c3d44eab1575f6c7c58ec03b5daf890) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Support for Aptos blockchain
+
+## 2.4.1
+
+### Patch Changes
+
+- [#7926](https://github.com/LedgerHQ/ledger-live/pull/7926) [`5c13c7b`](https://github.com/LedgerHQ/ledger-live/commit/5c13c7bf743333f09cbfee720d275dfae7e157d2) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add new EVMs to NFT support
+
+- [#8184](https://github.com/LedgerHQ/ledger-live/pull/8184) [`95fbec9`](https://github.com/LedgerHQ/ledger-live/commit/95fbec9fdff75cd6d4ac23e189e876efffc81906) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Revert some NFTs support waiting for new API support
+
+- [#8175](https://github.com/LedgerHQ/ledger-live/pull/8175) [`b93a421`](https://github.com/LedgerHQ/ledger-live/commit/b93a421866519b80fdd8a029caea97323eceae93) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Remove helper `applyEIP155` now that `hw-app-eth` is fixed and returns a valid `v` in all possible cases. Adding a env var `EVM_FORCE_LEGACY_TRANSACTIONS` to force transaction type 0, making this change QA compatible.
+
+## 2.4.1-next.0
+
+### Patch Changes
+
+- [#7926](https://github.com/LedgerHQ/ledger-live/pull/7926) [`5c13c7b`](https://github.com/LedgerHQ/ledger-live/commit/5c13c7bf743333f09cbfee720d275dfae7e157d2) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add new EVMs to NFT support
+
+- [#8184](https://github.com/LedgerHQ/ledger-live/pull/8184) [`95fbec9`](https://github.com/LedgerHQ/ledger-live/commit/95fbec9fdff75cd6d4ac23e189e876efffc81906) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Revert some NFTs support waiting for new API support
+
+- [#8175](https://github.com/LedgerHQ/ledger-live/pull/8175) [`b93a421`](https://github.com/LedgerHQ/ledger-live/commit/b93a421866519b80fdd8a029caea97323eceae93) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Remove helper `applyEIP155` now that `hw-app-eth` is fixed and returns a valid `v` in all possible cases. Adding a env var `EVM_FORCE_LEGACY_TRANSACTIONS` to force transaction type 0, making this change QA compatible.
+
+## 2.4.0
+
+### Minor Changes
+
+- [#7991](https://github.com/LedgerHQ/ledger-live/pull/7991) [`ced792c`](https://github.com/LedgerHQ/ledger-live/commit/ced792c37b42135f2b7596228c14ccd0783a803f) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Decreasing the base fee multiplier to 27% for the EIP1559 fee system. Based on the spec of EIP1559, it should allow to create blocks which could be included in the next 3 blocks even in awful network situations.
+
+## 2.4.0-next.0
+
+### Minor Changes
+
+- [#7991](https://github.com/LedgerHQ/ledger-live/pull/7991) [`ced792c`](https://github.com/LedgerHQ/ledger-live/commit/ced792c37b42135f2b7596228c14ccd0783a803f) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Decreasing the base fee multiplier to 27% for the EIP1559 fee system. Based on the spec of EIP1559, it should allow to create blocks which could be included in the next 3 blocks even in awful network situations.
+
+## 2.3.0
+
+### Minor Changes
+
+- [#7414](https://github.com/LedgerHQ/ledger-live/pull/7414) [`5758950`](https://github.com/LedgerHQ/ledger-live/commit/5758950841fbf8018dd848e745017484aec67333) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Add ERC20 token support for filecoin
+
+- [#7684](https://github.com/LedgerHQ/ledger-live/pull/7684) [`eb9a36f`](https://github.com/LedgerHQ/ledger-live/commit/eb9a36f6ee8487c9ffbb841c3e6c0ca84f68bb0a) Thanks [@CremaFR](https://github.com/CremaFR)! - feat: added new env to bypass app requirements to init swaps
+
+### Patch Changes
+
+- [#7525](https://github.com/LedgerHQ/ledger-live/pull/7525) [`4799d5d`](https://github.com/LedgerHQ/ledger-live/commit/4799d5de3fb1dcef2b01de31fe29b59e76922576) Thanks [@valpinkman](https://github.com/valpinkman)! - Add new MOCK_APP_UPDATE env
+
+## 2.3.0-next.0
+
+### Minor Changes
+
+- [#7414](https://github.com/LedgerHQ/ledger-live/pull/7414) [`5758950`](https://github.com/LedgerHQ/ledger-live/commit/5758950841fbf8018dd848e745017484aec67333) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Add ERC20 token support for filecoin
+
+- [#7684](https://github.com/LedgerHQ/ledger-live/pull/7684) [`eb9a36f`](https://github.com/LedgerHQ/ledger-live/commit/eb9a36f6ee8487c9ffbb841c3e6c0ca84f68bb0a) Thanks [@CremaFR](https://github.com/CremaFR)! - feat: added new env to bypass app requirements to init swaps
+
+### Patch Changes
+
+- [#7525](https://github.com/LedgerHQ/ledger-live/pull/7525) [`4799d5d`](https://github.com/LedgerHQ/ledger-live/commit/4799d5de3fb1dcef2b01de31fe29b59e76922576) Thanks [@valpinkman](https://github.com/valpinkman)! - Add new MOCK_APP_UPDATE env
+
+## 2.2.0
+
+### Minor Changes
+
+- [#7394](https://github.com/LedgerHQ/ledger-live/pull/7394) [`4bd91de`](https://github.com/LedgerHQ/ledger-live/commit/4bd91de13442d12acce3ee83d5f2fd5f087570cf) Thanks [@emmanuelm41](https://github.com/emmanuelm41)! - Support for TON blockchain
+
+- [#7497](https://github.com/LedgerHQ/ledger-live/pull/7497) [`52daa39`](https://github.com/LedgerHQ/ledger-live/commit/52daa3998709ac3538afd447fe771faa3e3441be) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - Added parameters to lldWalletSync and llmWalletSync to be able to configure the wallet sync feature remotely
+
+### Patch Changes
+
+- [#7494](https://github.com/LedgerHQ/ledger-live/pull/7494) [`60f1b5c`](https://github.com/LedgerHQ/ledger-live/commit/60f1b5c6cab125f5281468bb3e36f1abfae2d70c) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update env variable for CAL_SERVICE
+
+## 2.2.0-next.0
+
+### Minor Changes
+
+- [#7394](https://github.com/LedgerHQ/ledger-live/pull/7394) [`4bd91de`](https://github.com/LedgerHQ/ledger-live/commit/4bd91de13442d12acce3ee83d5f2fd5f087570cf) Thanks [@emmanuelm41](https://github.com/emmanuelm41)! - Support for TON blockchain
+
+- [#7497](https://github.com/LedgerHQ/ledger-live/pull/7497) [`52daa39`](https://github.com/LedgerHQ/ledger-live/commit/52daa3998709ac3538afd447fe771faa3e3441be) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - Added parameters to lldWalletSync and llmWalletSync to be able to configure the wallet sync feature remotely
+
+### Patch Changes
+
+- [#7494](https://github.com/LedgerHQ/ledger-live/pull/7494) [`60f1b5c`](https://github.com/LedgerHQ/ledger-live/commit/60f1b5c6cab125f5281468bb3e36f1abfae2d70c) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update env variable for CAL_SERVICE
+
 ## 2.1.0
 
 ### Minor Changes

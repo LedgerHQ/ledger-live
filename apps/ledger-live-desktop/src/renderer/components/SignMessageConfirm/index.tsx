@@ -88,12 +88,6 @@ const SignMessageConfirm = ({ device, account, parentAccount, signMessageRequest
         label: t("SignMessageConfirm.messageHash"),
         value: signMessageRequested.hashStruct,
       });
-    } else {
-      fields.push({
-        type: "text",
-        label: t("SignMessageConfirm.message"),
-        value: signMessageRequested.message,
-      });
     }
   }
 
