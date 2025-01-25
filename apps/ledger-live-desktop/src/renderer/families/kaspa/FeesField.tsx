@@ -7,11 +7,13 @@ import InputCurrency from "~/renderer/components/InputCurrency";
 import Box from "~/renderer/components/Box";
 import Label from "~/renderer/components/Label";
 import BigNumber from "bignumber.js";
+import { TransactionStatus } from "@ledgerhq/coin-bitcoin/lib/types";
 
 type Props = {
   account: Account;
   onChange: (feePerByte: BigNumber) => void;
   transaction: Transaction;
+  status: TransactionStatus;
 };
 const InputRight = styled(Box).attrs(() => ({
   ff: "Inter",
@@ -21,10 +23,12 @@ const InputRight = styled(Box).attrs(() => ({
   pr: 3,
 }))``;
 
-export const FeesField = ({ account, transaction, onChange }: Props) => {
+export const FeesField = ({ account, transaction, onChange, status }: Props) => {
   const inputRef = useRef();
   const { units } = account.currency;
   const sompis = units[units.length - 1];
+  const { errors } = status;
+  const { feePerByte: feePerByteError } = errors;
 
   const onInputChange = (feePerByte: BigNumber) => onChange(feePerByte);
   return (
@@ -46,6 +50,7 @@ export const FeesField = ({ account, transaction, onChange }: Props) => {
         onChange={onInputChange}
         loading={false}
         value={transaction.customFeeRate || BigNumber(1)}
+        error={!!feePerByteError && feePerByteError}
         renderRight={
           <InputRight>
             <Trans

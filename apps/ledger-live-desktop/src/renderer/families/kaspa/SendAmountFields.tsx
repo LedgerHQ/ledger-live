@@ -14,10 +14,10 @@ import BigNumber from "bignumber.js";
 type Props = NonNullable<KaspaFamily["sendAmountFields"]>["component"];
 
 const Separator = styled.div`
-  width: 100%;
-  height: 1px;
-  background-color: ${p => p.theme.colors.palette.text.shade10};
-  margin: 20px 0;
+    width: 100%;
+    height: 1px;
+    background-color: ${p => p.theme.colors.palette.text.shade10};
+    margin: 20px 0;
 `;
 
 const getFeeRate = (transaction: Transaction | null | undefined): BigNumber => {
@@ -39,15 +39,15 @@ const getFeeRate = (transaction: Transaction | null | undefined): BigNumber => {
 };
 
 const Fields: Props = ({
-  transaction,
-  account,
-  parentAccount,
-  onChange,
-  status,
-  updateTransaction,
-  mapStrategies,
-  trackProperties = {},
-}) => {
+                         transaction,
+                         account,
+                         parentAccount,
+                         onChange,
+                         status,
+                         updateTransaction,
+                         mapStrategies,
+                         trackProperties = {},
+                       }) => {
   const [isAdvanceMode, setAdvanceMode] = useState(!transaction.feesStrategy);
   const bridge = getAccountBridge(account);
   const { state: drawerState, setDrawer } = React.useContext(context);
@@ -132,7 +132,12 @@ const Fields: Props = ({
           status={status}
         />
       ) : (
-        <FeesField account={account} onChange={customFeeChanged} transaction={transaction} />
+        <FeesField
+          account={account}
+          onChange={customFeeChanged}
+          transaction={transaction}
+          status={status}
+        />
       )}
     </>
   );

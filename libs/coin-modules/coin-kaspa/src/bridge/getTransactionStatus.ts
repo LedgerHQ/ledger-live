@@ -1,6 +1,8 @@
 import {
   AmountRequired,
   DustLimit,
+  FeeNotLoaded,
+  FeeRequired,
   InvalidAddress,
   NotEnoughBalance,
   RecipientRequired,
@@ -55,6 +57,15 @@ const getTransactionStatus = async (
 
   if (transaction.amount.gt(0) && transaction.amount.lt(20000000)) {
     errors.dustLimit = new DustLimit("");
+  }
+
+  if (transaction.feesStrategy === "custom") {
+    if (!transaction.customFeeRate) {
+      errors.feePerByte = new FeeNotLoaded();
+    }
+    if (transaction.customFeeRate?.eq(0)) {
+      errors.feePerByte = new FeeRequired();
+    }
   }
 
   if ((transaction.amount.gte(20000000) || transaction.useAllAmount) && !!transaction.recipient) {
