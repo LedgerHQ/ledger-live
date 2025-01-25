@@ -1,5 +1,31 @@
 # ledger-live-desktop
 
+## 2.97.0-nightly.2
+
+### Minor Changes
+
+- [#8897](https://github.com/LedgerHQ/ledger-live/pull/8897) [`f1ea0eb`](https://github.com/LedgerHQ/ledger-live/commit/f1ea0eb70ccd55281b1c86f4f038bb813c8200c1) Thanks [@jccguimaraes](https://github.com/jccguimaraes)! - support: move aptos to its own coin module
+
+- [#8988](https://github.com/LedgerHQ/ledger-live/pull/8988) [`a231c50`](https://github.com/LedgerHQ/ledger-live/commit/a231c5084a24acb0e49efeb3c7ab1f5dbc6fd94b) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Swap: find currency 'from' and 'to' in wallet-api server
+
+### Patch Changes
+
+- Updated dependencies [[`f1ea0eb`](https://github.com/LedgerHQ/ledger-live/commit/f1ea0eb70ccd55281b1c86f4f038bb813c8200c1), [`0bdc3d1`](https://github.com/LedgerHQ/ledger-live/commit/0bdc3d1ffe27f09e6ea38a98155e4481e835fe2b), [`7fb9cd7`](https://github.com/LedgerHQ/ledger-live/commit/7fb9cd7991af2d688947ace85de22411deeec7de), [`a231c50`](https://github.com/LedgerHQ/ledger-live/commit/a231c5084a24acb0e49efeb3c7ab1f5dbc6fd94b)]:
+  - @ledgerhq/coin-aptos@1.4.0-nightly.0
+  - @ledgerhq/live-common@34.19.0-nightly.2
+  - @ledgerhq/types-live@6.58.0-nightly.1
+  - @ledgerhq/coin-framework@0.22.1-nightly.1
+  - @ledgerhq/coin-bitcoin@0.9.2-nightly.1
+  - @ledgerhq/coin-cosmos@0.5.1-nightly.1
+  - @ledgerhq/coin-evm@2.8.2-nightly.1
+  - @ledgerhq/coin-filecoin@1.4.2-nightly.1
+  - @ledgerhq/domain-service@1.2.17-nightly.1
+  - @ledgerhq/live-countervalues@0.2.18-nightly.1
+  - @ledgerhq/live-countervalues-react@0.2.18-nightly.1
+  - @ledgerhq/live-nft@0.5.3-nightly.1
+  - @ledgerhq/live-nft-react@0.5.3-nightly.1
+  - @ledgerhq/live-wallet@0.8.2-nightly.1
+
 ## 2.97.0-nightly.1
 
 ### Patch Changes

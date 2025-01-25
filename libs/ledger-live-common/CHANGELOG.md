@@ -1,5 +1,52 @@
 ## 34.5.0-next.4
 
+## 34.19.0-nightly.2
+
+### Minor Changes
+
+- [#8897](https://github.com/LedgerHQ/ledger-live/pull/8897) [`f1ea0eb`](https://github.com/LedgerHQ/ledger-live/commit/f1ea0eb70ccd55281b1c86f4f038bb813c8200c1) Thanks [@jccguimaraes](https://github.com/jccguimaraes)! - support: move aptos to its own coin module
+
+- [#8988](https://github.com/LedgerHQ/ledger-live/pull/8988) [`a231c50`](https://github.com/LedgerHQ/ledger-live/commit/a231c5084a24acb0e49efeb3c7ab1f5dbc6fd94b) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Swap: find currency 'from' and 'to' in wallet-api server
+
+### Patch Changes
+
+- [#8888](https://github.com/LedgerHQ/ledger-live/pull/8888) [`0bdc3d1`](https://github.com/LedgerHQ/ledger-live/commit/0bdc3d1ffe27f09e6ea38a98155e4481e835fe2b) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Update several evm explorers
+
+- [#8985](https://github.com/LedgerHQ/ledger-live/pull/8985) [`7fb9cd7`](https://github.com/LedgerHQ/ledger-live/commit/7fb9cd7991af2d688947ace85de22411deeec7de) Thanks [@Wozacosta](https://github.com/Wozacosta)! - fix: export shouldn't operate on undefined value
+
+- Updated dependencies [[`f1ea0eb`](https://github.com/LedgerHQ/ledger-live/commit/f1ea0eb70ccd55281b1c86f4f038bb813c8200c1), [`a231c50`](https://github.com/LedgerHQ/ledger-live/commit/a231c5084a24acb0e49efeb3c7ab1f5dbc6fd94b)]:
+  - @ledgerhq/hw-app-aptos@6.31.0-nightly.0
+  - @ledgerhq/coin-aptos@1.4.0-nightly.0
+  - @ledgerhq/hw-app-exchange@0.7.0-nightly.0
+  - @ledgerhq/ledger-cal-service@0.2.0-nightly.0
+  - @ledgerhq/coin-framework@0.22.1-nightly.1
+  - @ledgerhq/coin-algorand@0.6.2-nightly.1
+  - @ledgerhq/coin-bitcoin@0.9.2-nightly.1
+  - @ledgerhq/coin-cardano@0.3.2-nightly.1
+  - @ledgerhq/coin-cosmos@0.5.1-nightly.1
+  - @ledgerhq/coin-elrond@0.2.2-nightly.1
+  - @ledgerhq/coin-evm@2.8.2-nightly.1
+  - @ledgerhq/coin-filecoin@1.4.2-nightly.1
+  - @ledgerhq/coin-hedera@1.2.2-nightly.1
+  - @ledgerhq/coin-icon@0.5.2-nightly.1
+  - @ledgerhq/coin-internet_computer@1.4.2-nightly.1
+  - @ledgerhq/coin-near@0.6.2-nightly.1
+  - @ledgerhq/coin-polkadot@1.6.1-nightly.1
+  - @ledgerhq/coin-solana@0.10.2-nightly.1
+  - @ledgerhq/coin-stacks@0.4.2-nightly.1
+  - @ledgerhq/coin-stellar@0.5.2-nightly.1
+  - @ledgerhq/coin-tezos@0.8.2-nightly.1
+  - @ledgerhq/coin-ton@0.4.2-nightly.1
+  - @ledgerhq/coin-tron@0.1.2-nightly.1
+  - @ledgerhq/coin-vechain@2.3.2-nightly.1
+  - @ledgerhq/coin-xrp@0.8.2-nightly.1
+  - @ledgerhq/device-core@0.4.12-nightly.1
+  - @ledgerhq/hw-app-eth@6.42.4-nightly.1
+  - @ledgerhq/live-countervalues@0.2.18-nightly.1
+  - @ledgerhq/live-countervalues-react@0.2.18-nightly.1
+  - @ledgerhq/live-nft@0.5.3-nightly.1
+  - @ledgerhq/live-wallet@0.8.2-nightly.1
+
 ## 34.19.0-nightly.1
 
 ### Minor Changes

@@ -1,5 +1,21 @@
 # @ledgerhq/live-cli
 
+## 24.11.0-nightly.2
+
+### Minor Changes
+
+- [#8988](https://github.com/LedgerHQ/ledger-live/pull/8988) [`a231c50`](https://github.com/LedgerHQ/ledger-live/commit/a231c5084a24acb0e49efeb3c7ab1f5dbc6fd94b) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Swap: find currency 'from' and 'to' in wallet-api server
+
+### Patch Changes
+
+- Updated dependencies [[`f1ea0eb`](https://github.com/LedgerHQ/ledger-live/commit/f1ea0eb70ccd55281b1c86f4f038bb813c8200c1), [`0bdc3d1`](https://github.com/LedgerHQ/ledger-live/commit/0bdc3d1ffe27f09e6ea38a98155e4481e835fe2b), [`7fb9cd7`](https://github.com/LedgerHQ/ledger-live/commit/7fb9cd7991af2d688947ace85de22411deeec7de), [`a231c50`](https://github.com/LedgerHQ/ledger-live/commit/a231c5084a24acb0e49efeb3c7ab1f5dbc6fd94b)]:
+  - @ledgerhq/live-common@34.19.0-nightly.2
+  - @ledgerhq/coin-framework@0.22.1-nightly.1
+  - @ledgerhq/coin-bitcoin@0.9.2-nightly.1
+  - @ledgerhq/device-core@0.4.12-nightly.1
+  - @ledgerhq/live-countervalues@0.2.18-nightly.1
+  - @ledgerhq/live-wallet@0.8.2-nightly.1
+
 ## 24.10.1-nightly.1
 
 ### Patch Changes
