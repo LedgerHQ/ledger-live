@@ -119,7 +119,7 @@
     "addressCopied" : "Dirección copiada",
     "addressCopiedSuspicious" : "La dirección copiada y la del portapapeles no coinciden.",
     "experimentalFeature" : "Experimental",
-    "featureFlags" : "Indicadores de funciones",
+    "featureFlags" : "Indicador de función",
     "information" : "Información",
     "search" : "Buscar...",
     "searchWithoutEllipsis" : "Buscar",
@@ -441,6 +441,14 @@
       "description" : "El Ledger Nano S™ no es compatible con THORChain. Puedes usar el Ledger Nano S Plus, el Ledger Nano X, el Ledger Stax o el Ledger Flex para permutas intercadena en THORChain desde Ledger Live.",
       "cta" : "Explorar dispositivos compatibles",
       "changeProvider" : "Permutar con otro proveedor"
+    },
+    "incompatibility" : {
+      "ton_title" : "No es posible utilizar el Ledger Nano S™ para permutar Ton",
+      "ton_description" : "Para permutar Ton, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
+      "spl_tokens_title" : "No es posible utilizar el Ledger Nano S™ para permutar tokens de Solana",
+      "spl_tokens_description" : "Para permutar tokens de Solana, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
+      "ada_title" : "No es posible utilizar el Ledger Nano S™ para permutar Cardano",
+      "ada_description" : "Para permutar Cardano, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™."
     },
     "providers" : {
       "title" : "Elige un proveedor para permutar cripto",
@@ -1834,7 +1842,8 @@
       "withdrawUnbondedAmount" : "Importe retirado",
       "palletMethod" : "Método",
       "transferAmount" : "Transferir importe",
-      "validatorsCount" : "Validadores ({{number}})"
+      "validatorsCount" : "Validadores ({{number}})",
+      "version" : "Versión"
     }
   },
   "operationList" : {
@@ -5288,6 +5297,7 @@
     "verifyData" : "Siempre verifica los detalles de la operación en tu dispositivo.",
     "doubleCheck" : "Comprueba los detalles de la transacción en tu dispositivo Ledger antes de firmarla.",
     "termsAndConditions" : "Al firmar esta transacción, aceptas los términos de uso de <0>{{appName}}.</0>",
+    "termsAndConditionsWithPrivacy" : "Al firmar esta transacción, aceptas la <1>Política de privacidad</1> y los <0>Términos de uso de {{appName}}</0>.",
     "warningWording" : {
     },
     "titleWording" : {
@@ -5783,6 +5793,16 @@
     "SatStackDescriptorNotImported" : {
       "title" : "Cuenta no escaneada por el nodo completo",
       "description" : "Configura el nodo completo para buscar las cuentas asociadas a este dispositivo. El nodo completo debe buscar esta cuenta primero en la cadena de bloques, antes de agregarla a tu Portfolio."
+    },
+    "SequenceNumberTooNew" : {
+      "title" : "El número de secuencia es demasiado nuevo"
+    },
+    "SequenceNumberTooOld" : {
+      "title" : "El número de secuencia es demasiado antiguo",
+      "description" : "El número de secuencia es demasiado antiguo"
+    },
+    "TransactionExpired" : {
+      "title" : "Transacción caducada"
     },
     "SwapRateExpiredError" : {
       "title" : "Tasa caducada",
@@ -6700,7 +6720,7 @@
           "description" : "Sincronizar con la aplicación Ledger Live en otro teléfono",
           "steps" : {
             "step1" : "Abre la aplicación Ledger Live que quieras sincronizar",
-            "step2" : "Ingresa a <0>Ajustes</0> > <0>General</0> > <0>Ledger Sync</0> > <0>Activar sincronización</0> > <0>Mostrar QR</0>",
+            "step2" : "Ve a <0>Ajustes</0> > <0>General</0> > <0>Ledger Sync</0> > <0>Ya lo he activado</0> > <0>Mostrar QR</0>",
             "step3" : "Escanear código QR"
           }
         },
@@ -6708,7 +6728,7 @@
           "description" : "Sincroniza tus cuentas con otra aplicación Ledger Live",
           "steps" : {
             "step1" : "Abre la aplicación Ledger Live que quieras sincronizar",
-            "step2" : "Ingresa a <0>Ajustes</0> > <0>General</0> > <0>Ledger Sync</0> > <0>Activar sincronización</0> > <0>Usa tu Ledger/0>",
+            "step2" : "Ve a <0>Ajustes</0> > <0>General</0> > <0>Ledger Sync</0> > <0>Ya lo he activado</0> > <0>Usa tu Ledger</0>",
             "step3" : "Conecta tu Ledger"
           }
         }
