@@ -5,7 +5,7 @@
   "common" : {
     "cancel" : "Annuler",
     "apply" : "Appliquer",
-    "seeAll" : "Tout afficher",
+    "seeAll" : "Afficher tout",
     "seeAllWithNumber" : "Afficher tout ({{number}})",
     "back" : "Retour",
     "delete" : "Effacer",
@@ -971,6 +971,18 @@
       "title" : "Fournisseur non valide",
       "description" : "Vous devez modifier le paramètre \"Fournisseur de My Ledger\". Dans Ledger Live, accédez aux Paramètres, sélectionnez \"Fonctionnalités expérimentales\", puis choisissez un autre fournisseur."
     },
+    "GasLessThanEstimate" : {
+      "title" : "Les frais risquent d’être trop bas. Veuillez les augmenter."
+    },
+    "SequenceNumberTooNew" : {
+      "title" : "Numéro de séquence trop récent"
+    },
+    "SequenceNumberTooOld" : {
+      "title" : "Numéro de séquence trop ancien"
+    },
+    "TransactionExpired" : {
+      "title" : "Transaction expirée"
+    },
     "SequenceNumberError" : {
       "title" : "Erreur dans le numéro de séquence",
       "description" : "Veuillez fermer la fenêtre et réessayer plus tard."
@@ -1019,6 +1031,12 @@
     "ScannedNewImportQrCode" : {
       "title" : "Mise à jour nécessaire",
       "description" : "Pour synchroniser vos applications, assurez-vous qu’elles sont toutes deux mises à jour avec la dernière version."
+    },
+    "AppManifestUnknownError" : {
+      "title" : "App Live Swap introuvable"
+    },
+    "AppManifestNotFoundError" : {
+      "title" : "Échec du chargement de l’app Live Swap"
     }
   },
   "crash" : {
@@ -2339,10 +2357,11 @@
     },
     "topGainers" : {
       "title" : "Palmarès marché (24H)",
-      "seeMarket" : "Tout afficher"
+      "seeMarket" : "Afficher tout"
     },
     "walletBalance" : "Solde total",
-    "seelAllAssets" : "Afficher tous les actifs",
+    "seeAllAssets" : "Voir tous les actifs",
+    "seeAllAccounts" : "Voir tous les comptes",
     "marketPriceSection" : {
       "title" : "Cours du {{currencyTicker}}",
       "currencyPrice" : "Prix de 1 {{currencyTicker}}",
@@ -2497,7 +2516,7 @@
     "identifier" : "Identifiant de la transaction",
     "viewOperation" : "Voir dans l’explorateur",
     "whatIsThis" : "À quoi correspond cette opération ?",
-    "seeAll" : "Tout afficher",
+    "seeAll" : "Afficher tout",
     "seeLess" : "Afficher moins",
     "viewInExplorer" : "Voir dans l’explorateur",
     "sending" : "Envoi en cours…",
@@ -2602,7 +2621,7 @@
       },
       "stellar" : {
         "seeMore" : "Voir plus d’actifs",
-        "seeLess" : "Afficher moins d’actifs",
+        "seeLess" : "Voir moins d’actifs",
         "addTokens" : "Ajouter des actifs",
         "howTo" : "Vous pouvez ajouter des actifs à votre compte Stellar",
         "addAsset" : "Ajouter un actif"
@@ -2749,6 +2768,9 @@
       }
     }
   },
+  "assets" : {
+    "title" : "Actifs"
+  },
   "accounts" : {
     "title" : "Comptes",
     "cryptoAccountsTitle" : "Comptes {{currencyTicker}}",
@@ -2871,7 +2893,7 @@
       "analytics" : "Statistiques",
       "analyticsDesc" : "Autorisez Ledger à collecter les données d’utilisation pour nous aider à mesurer la performance de Ledger Live, à améliorer l’application et votre expérience.",
       "mevProtection" : "Protection MEV",
-      "mevProtectionDesc" : "Activez la protection MEV pour des transactions plus fiables sur Ethereum.",
+      "mevProtectionDesc" : "Activez la protection contre la MEV pour des transactions plus fiables sur Ethereum.",
       "personalizedRecommendations" : "Expérience personnalisée",
       "personalizedRecommendationsDesc" : "Autorisez Ledger à collecter les données sur l’utilisation de l’application pour nous aider à vous proposer des recommandations personnalisées, des contenus adaptés à vos préférences et à mesurer l’efficacité de nos campagnes marketing.",
       "analyticsModal" : {
@@ -3467,6 +3489,16 @@
         "providers" : {
           "noProviders" : "Aucun résultat. Il n’y a pas de résultat correspondant à ces préférences."
         }
+      },
+      "incompatibility" : {
+        "explore_compatible_devices" : "Voir les appareils compatibles",
+        "contact_support" : "Contacter l’Assistance",
+        "ton_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de TON",
+        "ton_description" : "Pour échanger des TON, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+        "spl_tokens_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de tokens Solana",
+        "spl_tokens_description" : "Pour échanger des tokens Solana, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+        "ada_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de Cardano",
+        "ada_description" : "Pour échanger des Cardano, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™."
       }
     },
     "lending" : {
@@ -3748,6 +3780,7 @@
       "to" : "À",
       "infoTotalTitle" : "Total débité",
       "infoTotalDesc" : "Comprend le montant de la transaction et les frais de réseau choisis",
+      "gasFee" : "Frais de gaz",
       "gasLimit" : "Limite de gaz",
       "gasPrice" : "Prix du gaz",
       "maxFee" : "Frais maximaux",
@@ -3961,6 +3994,8 @@
   },
   "addAccounts" : {
     "addNew" : "Ajouter",
+    "seeAllAccounts" : "Voir tous les comptes",
+    "addNewOrExisting" : "Ajouter un compte nouveau ou existant",
     "supportLinks" : {
       "segwit_or_native_segwit" : "SegWit ou Native SegWit ?"
     },
@@ -3986,9 +4021,9 @@
     "success" : {
       "desc" : "Accédez à vos comptes ou ajoutez d’autres comptes.",
       "secondaryCTA" : "Ajouter un nouvel actif",
-      "cta" : "Afficher votre actif"
+      "cta" : "Voir votre actif"
     },
-    "stopScanning" : "Mettre fin au balayage",
+    "stopScanning" : "Arrêter le balayage",
     "retryScanning" : "Réessayer le balayage",
     "retry" : "Réessayer",
     "done" : "Terminé",
@@ -6604,7 +6639,7 @@
         "select" : "Sélectionner",
         "filter" : "Filtrer",
         "blockchain" : "Blockchain",
-        "seeAll" : "Tout afficher",
+        "seeAll" : "Afficher tout",
         "selectAndHide" : "Sélectionner et masquer",
         "hide" : "Masquer {{count}} collection",
         "hiddenCollections" : "Collections masquées",
@@ -6990,7 +7025,7 @@
             "title" : "Scannez et synchronisez vos comptes en utilisant une autre application Ledger Live",
             "steps" : {
               "step1" : "Ouvrez l’application Ledger Live à synchroniser.",
-              "step2" : "Accédez à <0>Paramètres</0> <1>></1> <0>Général</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Activer Ledger Sync</0> <1>></1> <0>Scanner le code QR</0>.",
+              "step2" : "Accédez à <0>Paramètres</0> <1>></1> <0>Général</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Je l’ai déjà activé</0> <1>></1> <0>Scanner le code QR</0>.",
               "step3" : "Scannez le code QR."
             }
           }
@@ -7002,7 +7037,7 @@
             "title" : "Pour synchroniser avec Ledger Live sur un autre téléphone ou ordinateur...",
             "steps" : {
               "step1" : "Ouvrez l’application Ledger Live à synchroniser.",
-              "step2" : "Accédez à <0>Paramètres</0> <1>></1> <0>Général</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Activer Ledger Sync</0> <1>></1> <0>Voir le code QR</0>.",
+              "step2" : "Accédez à <0>Paramètres</0> <1>></1> <0>Général</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Je l’ai déjà activé</0> <1>></1> <0>Voir le code QR</0>.",
               "step3" : "Scannez le code QR."
             }
           }
@@ -7111,6 +7146,14 @@
           "name" : "Ajouter un compte"
         }
       }
+    }
+  },
+  "assetSelection" : {
+    "selectCrypto" : {
+      "title" : "Sélectionner un actif"
+    },
+    "selectNetwork" : {
+      "title" : "Sélectionner le réseau de blockchain pour cet actif"
     }
   }
 }
