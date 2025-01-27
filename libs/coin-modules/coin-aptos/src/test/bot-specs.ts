@@ -15,7 +15,7 @@ const aptos: AppSpec<Transaction> = {
   name: currency.family,
   currency,
   appQuery: {
-    model: DeviceModelId.nanoSP,
+    model: DeviceModelId.nanoS,
     appName: currency.managerAppName,
   },
   genericDeviceAction: acceptTransaction,
