@@ -10,6 +10,7 @@ import type { Transaction } from "../types";
 
 const currency = getCryptoCurrencyById("ripple");
 const minAmountCutoff = parseCurrencyUnit(currency.units[0], "0.1");
+const reserve = parseCurrencyUnit(currency.units[0], "20");
 
 const xrp: AppSpec<Transaction> = {
   name: "XRP",
@@ -28,23 +29,34 @@ const xrp: AppSpec<Transaction> = {
       testDestination: genericTestDestination,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
         invariant(maxSpendable.gt(minAmountCutoff), "balance is too low");
-
+        const transaction = bridge.createTransaction(account);
         const sibling = pickSiblings(siblings, 3);
         const recipient = sibling.freshAddress;
-        const amount = maxSpendable.div(1.9 + 0.2 * Math.random()).integerValue();
+        let amount = maxSpendable.div(1.9 + 0.2 * Math.random()).integerValue();
 
-        const transaction = bridge.createTransaction(account);
-
-        const updates: Array<Partial<Transaction>> = [
-          {
-            recipient,
-          },
-          { amount },
-        ];
+        if (!sibling.used && amount.lt(reserve)) {
+          invariant(
+            maxSpendable.gt(reserve.plus(minAmountCutoff)),
+            "not enough funds to send to new account",
+          );
+          amount = reserve;
+        }
 
         return {
           transaction,
-          updates,
+          updates: [
+            {
+              amount,
+            },
+            {
+              recipient,
+            },
+            Math.random() > 0.5
+              ? {
+                  tag: 123,
+                }
+              : null,
+          ],
         };
       },
       test: ({ account, accountBeforeTransaction, operation }) => {
