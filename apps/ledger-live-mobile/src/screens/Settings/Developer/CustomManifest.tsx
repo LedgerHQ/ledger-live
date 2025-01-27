@@ -167,6 +167,7 @@ export default function CustomManifest({ navigation }: Props) {
           value={manifest === null ? "" : manifest}
           onChangeText={onChange}
           placeholder="Paste your manifest json"
+          placeholderTextColor={"#a3a7ad"}
           multiline
           autoCorrect={false}
           scrollEnabled={false}
