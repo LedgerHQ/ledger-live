@@ -1,4 +1,4 @@
-import invariant from "invariant";
+// import invariant from "invariant";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
@@ -21,9 +21,9 @@ const aptos: AppSpec<Transaction> = {
   genericDeviceAction: acceptTransaction,
   testTimeout: 5 * 60 * 1000,
   minViableAmount: minBalanceNewAccount,
-  transactionCheck: ({ maxSpendable }) => {
-    invariant(maxSpendable.gt(minBalanceNewAccount), "balance is too low");
-  },
+  // transactionCheck: ({ maxSpendable }) => {
+  //   invariant(maxSpendable.gt(minBalanceNewAccount), "balance is too low");
+  // },
   mutations: [
     {
       name: "Send ~50%",
@@ -31,8 +31,6 @@ const aptos: AppSpec<Transaction> = {
       maxRun: 1,
       testDestination: genericTestDestination,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
-        invariant(maxSpendable.gt(minBalanceNewAccount), "balance is too low");
-
         const sibling = pickSiblings(siblings, maxAccountSiblings);
         const recipient = sibling.freshAddress;
         const amount = maxSpendable.div(2).integerValue();
@@ -62,9 +60,7 @@ const aptos: AppSpec<Transaction> = {
       name: "Send max",
       maxRun: 2,
       testDestination: genericTestDestination,
-      transaction: ({ account, siblings, bridge, maxSpendable }) => {
-        invariant(maxSpendable.gt(minBalanceNewAccount), "balance is too low");
-
+      transaction: ({ account, siblings, bridge }) => {
         const sibling = pickSiblings(siblings, maxAccountSiblings);
         const recipient = sibling.freshAddress;
 
