@@ -99,7 +99,8 @@
       "id" : "مُعرّف {{ value }}",
       "times" : "x{{ value }}"
     },
-    "quote" : "عرض أسعار"
+    "quote" : "عرض أسعار",
+    "tryAgain" : "إعادة المحاولة"
   },
   "errors" : {
     "ReplacementTransactionUnderpriced" : {
@@ -1294,7 +1295,7 @@
       "desc" : "منتجاتنا هي محافظ الأجهزة الوحيدة المعتمدة في السوق لأمانها من قِبل الهيئات الوطنية لأمن نظم المعلومات."
     },
     "title" : "أنت بحاجة إلى جهاز Ledger",
-    "desc" : "For your security,\n Ledger Live only works with a Ledger.",
+    "desc" : "من أجل أمانك،\n Ledger Live يعمل فقط مع جهاز Ledger.",
     "cta" : "اشترِ محفظتك Ledger الآن",
     "footer" : "لديّ جهاز Ledger بالفعل، لنعده",
     "bannerTitle" : "مستوى عالي التطور من الأمان لأصولك المشفرة ورموزك غير القابلة للاستبدال",
@@ -3992,7 +3993,11 @@
     },
     "quitConfirmation" : {
       "title" : "إلغاء إضافة حساب",
-      "desc" : "هل أنت متأكد أنك تريد إلغاء إضافة حسابات؟"
+      "desc" : "هل أنت متأكد أنك تريد إلغاء إضافة حسابات؟",
+      "v2" : {
+        "title" : "إلغاء إضافة حساب؟",
+        "desc" : "لن تُضاف أي حسابات إلى Ledger Live."
+      }
     },
     "imported" : "تمت إضافة الأصل بنجاح",
     "added" : "تمت إضافة الحساب إلى محفظتك الاستثمارية",
@@ -4068,18 +4073,29 @@
           "title" : "حساب جديد"
         },
         "imported" : {
-          "title" : "الحساب موجود بالفعل في المحفظة الاستثمارية ({{length}})",
-          "title_plural" : "الحسابات الموجودة بالفعل في المحفظة الاستثمارية ({{length}})"
+          "title" : "الحساب موجود بالفعل في المحفظة الاستثمارية ({{count}})",
+          "title_plural" : "الحسابات الموجودة بالفعل في المحفظة الاستثمارية ({{count}})"
         },
         "migrate" : {
           "title" : "الحسابات المطلوب تحديثها"
         }
-      }
+      },
+      "retryScanning" : "إعادة المحاولة"
     },
     "addAccountsSuccess" : {
       "ctaAddFunds" : "إضافة أموال إلى حسابي",
       "ctaClose" : "إغلاق"
-    }
+    },
+    "addAccountsWarning" : {
+      "cantCreateAccount" : {
+        "title" : "لا يمكننا إضافة حساب جديد",
+        "body" : "لا يمكن إضافة حساب جديد قبل تلقي أصول في حسابك {{accountName}}."
+      },
+      "noAccountToCreate" : {
+        "title" : "لم نتمكن من إضافة حساب {{currency}} جديد"
+      }
+    },
+    "chooseAccountToFund" : "اختر حساباً لإضافة الأموال"
   },
   "DeviceAction" : {
     "stayInTheAppPlz" : "لا تُغادر تطبيق Ledger Live وابق على Ledger خاصتك بالقرب منك.",
@@ -6554,7 +6570,9 @@
     "name" : "hedera",
     "createHederaAccountHelp" : {
       "text" : "يرجي الرجوع إلى مقالة الدعم هذه لمعرفة",
-      "link" : "كيفية إنشاء حساب Hedera"
+      "link" : "كيف تنشئ حساب Hedera ؟",
+      "title" : "لا يمكننا إنشاء حساب Hedera جديد",
+      "description" : "في نظام Hedera البيئي، عدد محدود فقط من الخدمات هي التي يمكنها أن تُنشيء حسابات جديدة. بينما لا توفر Ledger حالياً خدمة التهيئة هذه، هناك بدائل متاحة. ستكون قادراً على إضافة حساب Hedera خاصتك على Ledger Live بمجرد إنشائه."
     },
     "currentAddress" : {
       "messageIfVirtual" : "عنوانك {{name}} لا يمكن تأكيده على جهازك Ledger. استخدمه على مسؤوليتك الخاصة."
