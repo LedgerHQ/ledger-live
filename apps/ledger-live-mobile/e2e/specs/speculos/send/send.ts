@@ -179,10 +179,11 @@ export async function runSendMaxTest(transaction: Transaction, tmsLink: string) 
     it(`Check Valid amount input (${transaction.amount}) - ${transaction.accountToCredit.accountName}`, async () => {
       await navigateToSendScreen(app, transaction.accountToDebit.accountName);
       await app.send.setRecipientAndContinue(transaction.accountToCredit.address);
+      const amount = await app.send.setAmount("max");
+      await app.send.expectSendAmountSuccess();
       await app.send.amountContinue();
 
-      const amountWithCode = amount + " " + transaction.accountToCredit.currency.ticker;
-      await app.send.expectSummaryAmount(amountWithCode);
+      await app.send.expectSummaryMaxAmount(amount);
       await app.send.expectSummaryRecepient(transaction.accountToCredit.address);
     });
   });

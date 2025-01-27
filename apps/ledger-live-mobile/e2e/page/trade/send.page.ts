@@ -15,7 +15,7 @@ import jestExpect from "expect";
 const baseLink = "send";
 
 export default class SendPage {
-  summaryAmount = () => getElementById("send-summary-amount");
+  summaryAmountId = "send-summary-amount";
   summaryRecipient = () => getElementById("send-summary-recipient");
   summaryRecipientEns = () => getElementById("send-summary-recipient-ens");
   validationAmountId = "send-validation-amount";
@@ -77,10 +77,15 @@ export default class SendPage {
     await this.recipientContinue();
   }
 
+  @Step("Set the amount and return the value")
   async setAmount(amount: string) {
-    const element = getElementById(this.amountInputId);
-    await element.replaceText(amount);
-    await element.tapReturnKey();
+    if (amount === "max") await tapByElement(this.amountMaxSwitch());
+    else {
+      const element = getElementById(this.amountInputId);
+      await element.replaceText(amount);
+      await element.tapReturnKey();
+    }
+    return await getTextOfElement(this.amountInputId);
   }
 
   async amountContinue() {
@@ -111,7 +116,18 @@ export default class SendPage {
 
   @Step("Expect amount in summary")
   async expectSummaryAmount(amount: string) {
-    await expect(this.summaryAmount()).toHaveText(amount);
+    await expect(getElementById(this.summaryAmountId)).toHaveText(amount);
+  }
+
+  @Step("Expect max amount is within range in summary")
+  async expectSummaryMaxAmount(amount: string, tolerance = 0.00005) {
+    const summaryAmount = parseFloat(
+      (await getTextOfElement(this.summaryAmountId)).replace(/[^\d.-]/g, ""),
+    );
+    const expectedAmount = parseFloat(amount);
+    // Check if the actual amount is within the tolerance range
+    jestExpect(summaryAmount).toBeGreaterThanOrEqual(expectedAmount - tolerance);
+    jestExpect(summaryAmount).toBeLessThanOrEqual(expectedAmount + tolerance);
   }
 
   @Step("Expect recipient in summary")
