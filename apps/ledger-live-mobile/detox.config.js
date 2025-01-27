@@ -73,13 +73,13 @@ module.exports = {
     simulator: {
       type: "ios.simulator",
       device: {
-        type: "iPhone 15",
+        type: "ios",
       },
     },
     emulator: {
       type: "android.emulator",
       device: {
-        avdName: "Pixel_7_Pro_API_35",
+        avdName: "android",
       },
       gpuMode: "swiftshader_indirect",
       headless: process.env.CI ? true : false,
