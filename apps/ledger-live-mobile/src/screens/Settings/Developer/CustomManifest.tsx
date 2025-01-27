@@ -32,6 +32,8 @@ import {
 } from "./manifests/headerSniffer";
 import { ScrollView } from "react-native-gesture-handler";
 import Close from "~/icons/Close";
+import Clipboard from "@react-native-clipboard/clipboard";
+import Paste from "~/icons/Paste";
 
 const DebuggerButton: React.ComponentType<{
   onPress: TouchableOpacityProps["onPress"];
@@ -76,6 +78,17 @@ const DeleteTextButton: React.ComponentType<{
   );
 };
 
+const PasteButton: React.ComponentType<{
+  onPress: TouchableOpacityProps["onPress"];
+}> = ({ onPress }) => {
+  const { colors } = useTheme();
+  return (
+    <TouchableOpacity style={styles.buttons} onPress={onPress}>
+      <Paste color={colors.grey} />
+    </TouchableOpacity>
+  );
+};
+
 type Props = CompositeScreenProps<
   StackNavigatorProps<SettingsNavigatorStackParamList, ScreenName.DeveloperCustomManifest>,
   StackNavigatorProps<BaseNavigatorStackParamList>
@@ -111,6 +124,13 @@ export default function CustomManifest({ navigation }: Props) {
     navigation.setOptions({
       headerRight: () => (
         <Box flexDirection="row" alignItems="center">
+          <PasteButton
+            onPress={async () => {
+              const text = await Clipboard.getString();
+
+              setManifest(text);
+            }}
+          />
           <DeleteTextButton
             disabled={manifest === null}
             onPress={() => {
