@@ -35,7 +35,12 @@ import { sha256 } from "../crypto";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 
 type Arg = Partial<{
-  filter: Partial<{ currencies: string[]; families: string[]; mutation: string }>;
+  filter: Partial<{
+    currencies: string[];
+    families: string[];
+    mutation: string;
+    features: string[];
+  }>;
   disabled: Partial<{ currencies: string[]; families: string[] }>;
 }>;
 const usd = getFiatCurrencyByTicker("USD");
@@ -105,6 +110,7 @@ export function getSpecs({ disabled, filter }) {
   const filteredCurrencies = filter?.currencies || [];
   const filteredFamilies = filter?.families || [];
   const filteredMutation = filter?.mutation;
+  const filteredFeatures = filter.features || [];
   let disabledCurrencies = disabled?.currencies || [];
   let disabledFamilies = disabled?.families || [];
 
@@ -152,6 +158,13 @@ export function getSpecs({ disabled, filter }) {
         spec = {
           ...spec,
           mutations: spec.mutations.filter(m => new RegExp(filteredMutation).test(m.name)),
+        };
+      }
+
+      if (filteredFeatures) {
+        spec = {
+          ...spec,
+          mutations: spec.mutations.filter(m => filteredFeatures.includes(m.feature)),
         };
       }
 

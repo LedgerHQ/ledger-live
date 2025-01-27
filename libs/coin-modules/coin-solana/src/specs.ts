@@ -39,7 +39,8 @@ const solana: AppSpec<Transaction> = {
   mutations: [
     {
       name: "Transfer ~50%",
-      maxRun: 2,
+      feature: "send",
+      maxRun: 1,
       testDestination: genericTestDestination,
       deviceAction: acceptTransferTransaction,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
@@ -60,6 +61,7 @@ const solana: AppSpec<Transaction> = {
     },
     {
       name: "Transfer Max",
+      feature: "sendMax",
       maxRun: 1,
       deviceAction: acceptTransferTransaction,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
@@ -83,6 +85,7 @@ const solana: AppSpec<Transaction> = {
     },
     {
       name: "Delegate",
+      feature: "staking",
       maxRun: 1,
       deviceAction: acceptStakeCreateAccountTransaction,
       transaction: ({ account, bridge, siblings }) => {
@@ -153,6 +156,7 @@ const solana: AppSpec<Transaction> = {
     },
     {
       name: "Deactivate Activating Delegation",
+      feature: "staking",
       maxRun: 1,
       deviceAction: acceptStakeUndelegateTransaction,
       transaction: ({ account, bridge }) => {
@@ -213,6 +217,7 @@ const solana: AppSpec<Transaction> = {
     },
     {
       name: "Deactivate Active Delegation",
+      feature: "staking",
       maxRun: 1,
       deviceAction: acceptStakeUndelegateTransaction,
       transaction: ({ account, bridge }) => {
@@ -270,6 +275,7 @@ const solana: AppSpec<Transaction> = {
     },
     {
       name: "Reactivate Deactivating Delegation",
+      feature: "staking",
       maxRun: 1,
       deviceAction: acceptStakeDelegateTransaction,
       transaction: ({ account, bridge }) => {
@@ -339,6 +345,7 @@ const solana: AppSpec<Transaction> = {
     },
     {
       name: "Activate Inactive Delegation",
+      feature: "staking",
       maxRun: 1,
       deviceAction: acceptStakeDelegateTransaction,
       transaction: ({ account, bridge }) => {
@@ -407,6 +414,7 @@ const solana: AppSpec<Transaction> = {
     },
     {
       name: "Withdraw Delegation",
+      feature: "staking",
       maxRun: 1,
       deviceAction: acceptStakeWithdrawTransaction,
       transaction: ({ account, bridge }) => {

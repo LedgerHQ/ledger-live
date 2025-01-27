@@ -8,7 +8,8 @@ const minimalAmount = parseCurrencyUnit(currency.units[0], "0.001");
 
 export const createActivateVoteMutation = (): MutationSpec<Transaction> => ({
   name: "Celo: Activate Vote",
-  maxRun: 5,
+  feature: "staking",
+  maxRun: 1,
   transaction: ({ account, bridge, maxSpendable }) => {
     const { celoResources } = account as CeloAccount;
     invariant(celoResources?.registrationStatus, "Celo: Activate Vote | Account is not registered");

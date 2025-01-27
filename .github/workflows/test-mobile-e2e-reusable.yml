@@ -49,6 +49,11 @@ on:
         required: false
         type: boolean
         default: false
+      production_firebase:
+        description: "Target Production Firebase environment"
+        required: false
+        type: boolean
+        default: false
 
 # Uncomment to have log-level: trace on detox run and build
 # (cf: apps/ledger-live-mobile/detox.config.js)
@@ -109,7 +114,7 @@ jobs:
         id: detox-build
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator
-          key: ${{ runner.os }}-detox-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock', 'apps/ledger-live-mobile/ios/ledgerlivemobile.xcodeproj/project.pbxproj', 'apps/ledger-live-mobile/detox.config.js', 'apps/ledger-live-mobile/.env.mock') }}
+          key: ${{ runner.os }}-detox-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock', 'apps/ledger-live-mobile/ios/ledgerlivemobile.xcodeproj/project.pbxproj', 'apps/ledger-live-mobile/detox.config.js', 'apps/ledger-live-mobile/.env.mock', 'apps/ledger-live-mobile/ios/ledgerlivemobile/AppDelegate.mm') }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
           sessionToken: ${{ env.AWS_SESSION_TOKEN}}
@@ -126,7 +131,7 @@ jobs:
       - name: Create iOS simulator
         id: simulator
         run: |
-          ID=$(xcrun simctl create "iPhone 14" "iPhone 14")
+          ID=$(xcrun simctl create "iPhone 15" "iPhone 15")
           echo "id=$ID" >> $GITHUB_OUTPUT
       - name: Build iOS app for Detox test run
         if: steps.detox-build.outputs.cache-hit != 'true'
@@ -196,11 +201,11 @@ jobs:
       LANG: en_US.UTF-8
       LANGUAGE: en_US.UTF-8
       LC_ALL: en_US.UTF-8
-      AVD_API: 32
+      AVD_API: 35
       AVD_ARCH: x86_64
-      AVD_PROFILE: pixel_6_pro
+      AVD_PROFILE: pixel_7_pro
       AVD_TARGET: google_apis
-      AVD_NAME: "Pixel_6_Pro_API_32"
+      AVD_NAME: "Pixel_7_Pro_API_35"
       AVD_CORES: 4
       AVD_RAM_SIZE: 4096M
       AVD_OPTIONS: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
@@ -266,7 +271,9 @@ jobs:
         shell: bash
       - name: Build Android app for Detox test run
         run: |
-          pnpm mobile e2e:ci -p android -b
+          pnpm mobile e2e:ci -p android -b $([[ "$PRODUCTION" == "true" ]] && printf %s '--production')
+        env:
+          PRODUCTION: ${{ inputs.production_firebase }}
       - name: cache android emulator
         timeout-minutes: 5
         uses: tespkg/actions-cache@v1
@@ -315,12 +322,13 @@ jobs:
           enable_broadcast: ${{ inputs.enable_broadcast }}
       - name: Run Android Tests
         id: detox
-        run: pnpm mobile e2e:ci -p android -t $([[ "$INPUT_SPECULOS" == "true" ]] && printf %s '--speculos') --shard ${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+        run: pnpm mobile e2e:ci -p android -t $([[ "$INPUT_SPECULOS" == "true" ]] && printf %s '--speculos') $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') --shard ${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
         timeout-minutes: ${{ env.SPECULOS_RUN && 120 || 45 }}
         env:
           DETOX_INSTALL_TIMEOUT: 120000
           SEED: ${{ secrets.SEED_QAA_B2C }}
           INPUT_SPECULOS: ${{ env.SPECULOS_RUN }}
+          PRODUCTION: ${{ inputs.production_firebase }}
       - name: Upload test artifacts
         uses: actions/upload-artifact@v4
         if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
@@ -457,7 +465,7 @@ jobs:
                 "text": {
                   "type": "plain_text",
                   "text": process.env.SPECULOS_RUN == 'false'
-                    ? "Ledger Live Mobile Mocked Tests on ${{ github.ref_name }}" 
+                    ? "Ledger Live Mobile Mocked Tests on ${{ github.ref_name }}"
                     : ":ledger-logo: Ledger Live Mobile E2E nightly tests results on ${{ github.ref_name }}",
                   "emoji": true
                 }
@@ -535,8 +543,8 @@ jobs:
               : {
                   attachments: [
                     {
-                      color: process.env.ANDROID_STATUS !== 'success' 
-                        ? "#FF333C" 
+                      color: process.env.ANDROID_STATUS !== 'success'
+                        ? "#FF333C"
                         : "#33FF39",
                       blocks,
                     },

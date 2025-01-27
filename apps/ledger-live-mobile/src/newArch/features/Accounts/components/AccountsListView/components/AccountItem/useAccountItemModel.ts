@@ -1,11 +1,13 @@
 import { getTagDerivationMode } from "@ledgerhq/coin-framework/lib/derivation";
 import {
+  getAccountCurrency,
   getParentAccount,
   isTokenAccount as isTokenAccountChecker,
 } from "@ledgerhq/live-common/account/index";
 import { Account, DerivationMode, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { useSelector } from "react-redux";
+import { useMaybeAccountUnit } from "~/hooks";
 import { formatAddress } from "~/newArch/features/Accounts/utils/formatAddress";
 import { accountsSelector } from "~/reducers/accounts";
 import { useMaybeAccountName } from "~/reducers/wallet";
@@ -13,13 +15,17 @@ import { useMaybeAccountName } from "~/reducers/wallet";
 export interface AccountItemProps {
   account: Account | TokenAccount;
   balance: BigNumber;
+  showUnit?: boolean;
+  hideBalanceInfo?: boolean;
 }
 
-const useAccountItemModel = ({ account, balance }: AccountItemProps) => {
+const useAccountItemModel = ({ account, balance, showUnit, hideBalanceInfo }: AccountItemProps) => {
   const allAccount = useSelector(accountsSelector);
   const isTokenAccount = isTokenAccountChecker(account);
-  const currency = isTokenAccount ? account.token.parentCurrency : account.currency;
+  const currency = getAccountCurrency(account);
   const accountName = useMaybeAccountName(account);
+  const unit = useMaybeAccountUnit(account);
+
   const parentAccount = getParentAccount(account, allAccount);
   const formattedAddress = formatAddress(
     isTokenAccount ? parentAccount.freshAddress : account.freshAddress,
@@ -37,6 +43,9 @@ const useAccountItemModel = ({ account, balance }: AccountItemProps) => {
     formattedAddress,
     tag,
     currency,
+    unit,
+    showUnit,
+    hideBalanceInfo,
   };
 };
 

@@ -109,6 +109,7 @@ const bitcoinLikeMutations = ({
 }: Arg = {}): MutationSpec<Transaction>[] => [
   {
     name: "move ~50%",
+    feature: "send",
     maxRun: 1,
     transaction: ({ account, siblings, bridge, maxSpendable }) => {
       invariant(maxSpendable.gt(minimalAmount), "balance is too low");
@@ -144,6 +145,7 @@ const bitcoinLikeMutations = ({
   },
   {
     name: "optimize-size",
+    feature: "send",
     maxRun: 1,
     transaction: ({ account, siblings, bridge, maxSpendable }) => {
       invariant(maxSpendable.gt(minimalAmount), "balance is too low");
@@ -176,6 +178,7 @@ const bitcoinLikeMutations = ({
   },
   {
     name: "send 1 utxo",
+    feature: "send",
     maxRun: 1,
     transaction: ({ account, bridge, siblings, maxSpendable }) => {
       invariant(maxSpendable.gt(minimalAmount), "balance is too low");
@@ -249,6 +252,7 @@ const bitcoinLikeMutations = ({
   },
   {
     name: "send OP_RETURN transaction",
+    feature: "send",
     maxRun: 1,
     transaction: ({ account, bridge, siblings, maxSpendable }) => {
       invariant(maxSpendable.gt(minimalAmount), "balance is too low");
@@ -282,6 +286,7 @@ const bitcoinLikeMutations = ({
   },
   {
     name: "send max",
+    feature: "sendMax",
     maxRun: 1,
     transaction: ({ account, siblings, bridge, maxSpendable }) => {
       invariant(maxSpendable.gt(minimalAmount), "balance is too low");

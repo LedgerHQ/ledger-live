@@ -1,5 +1,31 @@
 # @ledgerhq/live-wallet
 
+## 0.3.1
+
+### Patch Changes
+
+- Updated dependencies [[`d98a964`](https://github.com/LedgerHQ/ledger-live/commit/d98a96476c3d44eab1575f6c7c58ec03b5daf890)]:
+  - @ledgerhq/live-env@2.5.0
+
+## 0.3.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`d98a964`](https://github.com/LedgerHQ/ledger-live/commit/d98a96476c3d44eab1575f6c7c58ec03b5daf890)]:
+  - @ledgerhq/live-env@2.5.0-next.0
+
+## 0.3.0
+
+### Minor Changes
+
+- [#8653](https://github.com/LedgerHQ/ledger-live/pull/8653) [`fbff5e4`](https://github.com/LedgerHQ/ledger-live/commit/fbff5e46c871d4f0d9d89a5638309408bb057197) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - HWLKRP - Pin tiny-secp256k1 version
+
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#8653](https://github.com/LedgerHQ/ledger-live/pull/8653) [`fbff5e4`](https://github.com/LedgerHQ/ledger-live/commit/fbff5e46c871d4f0d9d89a5638309408bb057197) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - HWLKRP - Pin tiny-secp256k1 version
+
 ## 0.2.1
 
 ### Patch Changes

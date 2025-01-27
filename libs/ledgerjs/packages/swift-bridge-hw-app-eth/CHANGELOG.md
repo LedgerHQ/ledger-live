@@ -1,5 +1,40 @@
 # @ledgerhq/swift-bridge-hw-app-eth
 
+## 1.2.17
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-app-eth@6.42.3
+
+## 1.2.17-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-app-eth@6.42.3-next.0
+
+## 1.2.16
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-app-eth@6.42.2
+
+## 1.2.16-next.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-app-eth@6.42.2-next.1
+
+## 1.2.16-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-app-eth@6.42.2-next.0
+
 ## 1.2.15
 
 ### Patch Changes

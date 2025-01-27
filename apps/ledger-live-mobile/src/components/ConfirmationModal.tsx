@@ -1,6 +1,6 @@
 import React, { PureComponent } from "react";
 import { Trans } from "react-i18next";
-import { View, StyleSheet, Image } from "react-native";
+import { View, StyleSheet, Image, StyleProp, ViewStyle } from "react-native";
 import { rgba, Theme, withTheme } from "../colors";
 import QueuedDrawer from "./QueuedDrawer";
 import LText from "./LText";
@@ -25,6 +25,8 @@ type Props = {
   preventBackdropClick?: boolean;
   iconMarginBottom?: number;
   testID?: string;
+  customTitleStyle?: StyleProp<ViewStyle>;
+  customDescriptionStyle?: StyleProp<ViewStyle>;
 };
 
 class ConfirmationModal extends PureComponent<Props> {
@@ -48,6 +50,8 @@ class ConfirmationModal extends PureComponent<Props> {
       hideRejectButton,
       colors,
       iconMarginBottom,
+      customTitleStyle,
+      customDescriptionStyle,
       ...rest
     } = this.props;
     const iColor = iconColor || colors.live;
@@ -77,12 +81,12 @@ class ConfirmationModal extends PureComponent<Props> {
           </View>
         )}
         {confirmationTitle && (
-          <LText secondary semiBold style={styles.confirmationTitle}>
+          <LText secondary semiBold style={[styles.confirmationTitle, customTitleStyle]}>
             {confirmationTitle}
           </LText>
         )}
         {confirmationDesc && (
-          <LText style={styles.confirmationDesc} color="smoke">
+          <LText style={[styles.confirmationDesc, customDescriptionStyle]} color="smoke">
             {confirmationDesc}
           </LText>
         )}

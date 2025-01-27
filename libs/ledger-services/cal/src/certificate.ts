@@ -46,19 +46,31 @@ export type CertificateInfo = {
  */
 export async function getCertificate(
   device: Device,
-  version: string,
+  version: string | "latest" = "latest",
   { env = "prod", signatureKind = "prod", ref = undefined }: ServiceOption = DEFAULT_OPTION,
 ): Promise<CertificateInfo> {
+  let params: Record<string, string | boolean | number | undefined> = {
+    output: "id,target_device,not_valid_after,public_key_usage,certificate_version,descriptor",
+    target_device: DeviceModel[device],
+    public_key_usage: "trusted_name",
+    ref,
+  };
+  if (version === "latest") {
+    params = {
+      ...params,
+      latest: true,
+    };
+  } else {
+    params = {
+      ...params,
+      not_valid_after: version,
+    };
+  }
+
   const { data } = await network<CertificateResponse[]>({
     method: "GET",
     url: `${getCALDomain(env)}/v1/certificates`,
-    params: {
-      output: "id,target_device,not_valid_after,public_key_usage,certificate_version,descriptor",
-      target_device: DeviceModel[device],
-      public_key_usage: "trusted_name",
-      note_valid_after: version,
-      ref,
-    },
+    params,
   });
 
   if (data.length === 0) {

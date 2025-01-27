@@ -971,6 +971,9 @@
       "title" : "Proveedor no válido",
       "description" : "Tienes que cambiar el ajuste \"Proveedor de Mi Ledger\". Para cambiarlo, abre los \"Ajustes\" de Ledger Live, selecciona \"Funciones experimentales\" y, a continuación, elige un proveedor distinto."
     },
+    "GasLessThanEstimate" : {
+      "title" : "Puede que sea demasiado bajo. Auméntalo"
+    },
     "SequenceNumberError" : {
       "title" : "Error de número de secuencia",
       "description" : "Cierra la ventana e inténtalo de nuevo más tarde"
@@ -1019,6 +1022,12 @@
     "ScannedNewImportQrCode" : {
       "title" : "Actualización necesaria",
       "description" : "Para sincronizar tus aplicaciones, asegúrate de que ambas estén actualizadas a la versión más reciente."
+    },
+    "AppManifestUnknownError" : {
+      "title" : "Aplicación Permuta de Live no encontrada"
+    },
+    "AppManifestNotFoundError" : {
+      "title" : "Error al cargar Aplicación Permuta de Live"
     }
   },
   "crash" : {
@@ -1285,7 +1294,7 @@
       "desc" : "Nuestros productos son las únicas billeteras de hardware con seguridad certificada por agencias internacionales de seguridad cibernética."
     },
     "title" : "Necesitas un Ledger",
-    "desc" : "Por motivos de seguridad, Ledger Live solo se puede usar en conjunto con un dispositivo físico. Necesitas un dispositivo para poder continuar.",
+    "desc" : "Por motivos de seguridad,\n Ledger Live solo es compatible con dispositivos Ledger.",
     "cta" : "Compra tu Ledger ahora",
     "footer" : "Ya tengo un Ledger y quiero configurarlo",
     "bannerTitle" : "La máxima seguridad para tus cripto y NFTs",
@@ -2342,7 +2351,8 @@
       "seeMarket" : "Ver todo"
     },
     "walletBalance" : "Saldo de la billetera",
-    "seelAllAssets" : "Ver todos los activos",
+    "seeAllAssets" : "Ver todos los activos",
+    "seeAllAccounts" : "Ver todas las cuentas",
     "marketPriceSection" : {
       "title" : "Precio de mercado de {{currencyTicker}}",
       "currencyPrice" : "Precio de 1 {{currencyTicker}}",
@@ -2748,6 +2758,9 @@
         "cta" : "Comienza a poner en participación ahora"
       }
     }
+  },
+  "assets" : {
+    "title" : "Activos"
   },
   "accounts" : {
     "title" : "Cuentas",
@@ -3467,6 +3480,16 @@
         "providers" : {
           "noProviders" : "No se han encontrado resultados. No hay cotizaciones disponibles con las preferencias actuales."
         }
+      },
+      "incompatibility" : {
+        "explore_compatible_devices" : "Explorar dispositivos compatibles",
+        "contact_support" : "Ponte en contacto con Soporte",
+        "ton_title" : "No es posible utilizar el Ledger Nano S™ para permutar Ton",
+        "ton_description" : "Para permutar Ton, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
+        "spl_tokens_title" : "No es posible utilizar el Ledger Nano S™ para permutar tokens de Solana",
+        "spl_tokens_description" : "Para permutar tokens de Solana, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
+        "ada_title" : "No es posible utilizar el Ledger Nano S™ para permutar Cardano",
+        "ada_description" : "Para permutar Cardano, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™."
       }
     },
     "lending" : {
@@ -3693,7 +3716,7 @@
     "highFeeModal" : "Ten cuidado, las tarifas de red son superiores al <1>10%</1> del monto. ¿Deseas continuar?",
     "scan" : {
       "title" : "Escanear código QR",
-      "descBottom" : "Centra el código QR dentro del recuadro.",
+      "descBottom" : "Escanear código QR",
       "fallback" : {
         "header" : "Escanear código QR",
         "title" : "Habilitar cámara",
@@ -3748,6 +3771,7 @@
       "to" : "A",
       "infoTotalTitle" : "Débito total",
       "infoTotalDesc" : "Incluye importe de la transacción y las tarifas de red seleccionadas",
+      "gasFee" : "Tarifa de gas",
       "gasLimit" : "Límite de gas",
       "gasPrice" : "Precio de gas",
       "maxFee" : "Tarifa máxima",
@@ -3961,6 +3985,8 @@
   },
   "addAccounts" : {
     "addNew" : "Agregar nueva",
+    "seeAllAccounts" : "Ver todas las cuentas",
+    "addNewOrExisting" : "Agregar cuenta nueva o existente",
     "supportLinks" : {
       "segwit_or_native_segwit" : "¿Segwit o Native segwit?"
     },
@@ -3969,6 +3995,8 @@
       "desc" : "¿Deseas cancelar la agregación de cuentas?"
     },
     "imported" : "Activo añadido con éxito",
+    "added" : "Cuenta agregada a tu portfolio",
+    "added_plural" : "{{count}} cuentas agregadas a tu portfolio",
     "sections" : {
       "importable" : {
         "title" : "Agregar cuenta existente"
@@ -4025,6 +4053,32 @@
         "title" : "Taproot",
         "desc" : "Actualización de la red de {{currency}} más reciente. Ofrecerá una mejor privacidad y tarifas más bajas, una vez difundida. Todavía con compatibilidad limitada en billeteras y exchanges."
       }
+    },
+    "scanDeviceAccounts" : {
+      "title" : "Selecciona las cuentas que quieres agregar",
+      "ctaStopScan" : "Detener escaneo",
+      "confirm" : "Confirmar",
+      "scanningTitle" : "Buscando cuentas existentes en la cadena de bloques...",
+      "sections" : {
+        "importable" : {
+          "title" : "Hemos encontrado {{count}} cuenta",
+          "title_plural" : "Hemos encontrado {{count}} cuentas"
+        },
+        "creatable" : {
+          "title" : "Nueva cuenta"
+        },
+        "imported" : {
+          "title" : "Cuenta ya existente en el portfolio ({{length}})",
+          "title_plural" : "Cuentas ya existentes en el Portfolio ({{length}})"
+        },
+        "migrate" : {
+          "title" : "Cuentas a actualizar"
+        }
+      }
+    },
+    "addAccountsSuccess" : {
+      "ctaAddFunds" : "Agregar fondos a mi cuenta",
+      "ctaClose" : "Cerrar"
     }
   },
   "DeviceAction" : {
@@ -6102,7 +6156,7 @@
     },
     "warning" : "Asegúrate de que la dirección que se muestra en tu Ledger coincide con la dirección de {{recipientWording}}",
     "recipientWording" : {
-      "send" : "Verifica siempre que la dirección que muestra tu dispositivo coincida exactamente con la que te haya proporcionado el receptor",
+      "send" : "Comprueba siempre que la dirección mostrada en tu dispositivo coincida exactamente con la indicada por el destinatario.",
       "delegate" : "Verifica siempre que tu dispositivo muestre exactamente la dirección que te haya proporcionado el validador",
       "undelegate" : "Verifica siempre que tu dispositivo muestre exactamente la dirección que te haya proporcionado el validador",
       "freeze" : "Verifica siempre que tu dispositivo muestre exactamente la dirección que te hayan proporcionado",
@@ -7111,6 +7165,16 @@
           "name" : "Agregar una cuenta"
         }
       }
+    }
+  },
+  "assetSelection" : {
+    "selectCrypto" : {
+      "title" : "Seleccionar activo"
+    },
+    "selectNetwork" : {
+      "title" : "Selecciona la red de cadena de bloques a la que pertenece el activo",
+      "detectedAccounts" : "{{count}} cuenta (detectada)",
+      "detectedAccounts_plural" : "{{count}} cuentas (detectadas)"
     }
   }
 }

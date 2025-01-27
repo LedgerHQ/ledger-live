@@ -17,6 +17,8 @@ Ledger Hardware Wallet Exchange app.
 *   [resolveTransactionType](#resolvetransactiontype)
     *   [Parameters](#parameters)
 *   [OkStatus](#okstatus)
+*   [decodePayloadProtobuf](#decodepayloadprotobuf)
+    *   [Parameters](#parameters-1)
 
 ### resolveTransactionType
 
@@ -36,6 +38,16 @@ Returns **ExchangeTypes**&#x20;
 Those values map the one defined in the app-exchange code (@see protocol.md and swap\_errors.h)
 
 Type: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)
+
+### decodePayloadProtobuf
+
+deprecated use `decodeSwapPayload` instead
+
+#### Parameters
+
+*   `payload` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
+
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<SwapPayload>**&#x20;
 
 ## Integration test
 

@@ -42,6 +42,7 @@ export const IDS = [
   "mantra",
   "crypto_org",
   "xion",
+  "zenrock",
 ];
 
 export const CURRENCIES_LIST: CryptoCurrency[] = [
@@ -592,6 +593,35 @@ export const CURRENCIES_LIST: CryptoCurrency[] = [
       {
         tx: "https://www.mintscan.io/xion/txs/$hash",
         address: "https://www.mintscan.io/xion/validators/$address",
+      },
+    ],
+  },
+  {
+    type: "CryptoCurrency",
+    id: "zenrock",
+    coinType: 118,
+    name: "Zenrock",
+    managerAppName: "Cosmos",
+    ticker: "ROCK",
+    scheme: "zenrock",
+    color: "#000000",
+    family: "cosmos",
+    units: [
+      {
+        name: "Zenrock",
+        code: "ROCK",
+        magnitude: 6,
+      },
+      {
+        name: "Micro-Zenrock",
+        code: "urock",
+        magnitude: 0,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://explorer.diamond.zenrocklabs.io/transactions/$hash",
+        address: "https://explorer.diamond.zenrocklabs.io/validators/$address",
       },
     ],
   },

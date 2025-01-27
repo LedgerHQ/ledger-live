@@ -79,10 +79,12 @@ const DelegateExtraFields = ({ account, voteAddress, amount }: DelegateExtraFiel
         title={t("operationDetails.extra.delegatedTo")}
         value={nameOrAddress}
         onPress={() => openAddressUrl(account.currency, voteAddress)}
+        testID="operationDetails-delegatedTo"
       />
       <Section
         title={t("operationDetails.extra.delegatedAmount")}
         value={formatAmount(unit, amount)}
+        testID="operationDetails-delegatedAmount"
       />
     </View>
   );

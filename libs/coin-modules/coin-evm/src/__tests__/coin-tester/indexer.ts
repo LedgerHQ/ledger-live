@@ -727,7 +727,7 @@ export const initMswHandlers = (currencyConfig: EvmConfigInfo) => {
         return HttpResponse.json(response);
       }),
     );
-  } else {
+  } else if (currencyConfig.explorer.type !== "none") {
     handlers.push(
       http.get(currencyConfig.explorer.uri, async ({ request }) => {
         const uri = new URL(request.url).searchParams;

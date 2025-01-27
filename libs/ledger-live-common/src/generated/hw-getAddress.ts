@@ -1,7 +1,7 @@
-import aptos from "../families/aptos/hw-getAddress";
 import casper from "../families/casper/hw-getAddress";
 import celo from "../families/celo/hw-getAddress";
 import { resolver as algorand } from "../families/algorand/setup";
+import { resolver as aptos } from "../families/aptos/setup";
 import { resolver as bitcoin } from "../families/bitcoin/setup";
 import { resolver as cardano } from "../families/cardano/setup";
 import { resolver as cosmos } from "../families/cosmos/setup";
@@ -23,10 +23,10 @@ import { resolver as vechain } from "../families/vechain/setup";
 import { resolver as xrp } from "../families/xrp/setup";
 
 export default {
-  aptos,
   casper,
   celo,
   algorand,
+  aptos,
   bitcoin,
   cardano,
   cosmos,

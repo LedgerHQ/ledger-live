@@ -3,6 +3,7 @@ import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "../../utils/customJsonReporter";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { CLI } from "tests/utils/cliUtils";
+import { FileUtils } from "tests/utils/fileUtils";
 
 test.describe("Settings", () => {
   test.use({
@@ -72,7 +73,7 @@ test.describe("Password", () => {
       await app.settings.goToHelpTab();
       await app.settings.clearCache();
       await app.LockscreenPage.login("bad password");
-      await app.layout.checkInputErrorVisibibility("visible");
+      await app.LockscreenPage.checkInputErrorVisibility("visible");
       await app.LockscreenPage.login("SpeculosPassword");
       await app.layout.goToAccounts();
       const countAfterLock = await app.accounts.countAccounts();
@@ -144,6 +145,35 @@ test.describe("Ledger Support (web link)", () => {
       await app.settings.goToHelpTab();
 
       await app.settings.expectLedgerSupportUrlToBeCorrect();
+    },
+  );
+});
+
+test.describe("Reset app", () => {
+  test.use({
+    userdata: "1AccountBTC1AccountETH",
+  });
+
+  test(
+    "Verify that user can Reset app",
+    {
+      annotation: {
+        type: "TMS",
+        description: "B2CQA-821",
+      },
+    },
+    async ({ app, userdataFile }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
+      await app.layout.goToSettings();
+      const appJsonBefore = await FileUtils.getAppJsonSize(userdataFile);
+      await app.settings.goToHelpTab();
+      await app.settings.resetApp();
+      await app.settingsModal.checkResetModal();
+      await app.settingsModal.clickOnConfirmButton();
+      await app.onboarding.waitForLaunch();
+      const appJsonAfter = await FileUtils.getAppJsonSize(userdataFile);
+      await FileUtils.compareAppJsonSize(appJsonBefore, appJsonAfter);
     },
   );
 });

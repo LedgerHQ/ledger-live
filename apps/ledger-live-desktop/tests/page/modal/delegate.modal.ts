@@ -14,6 +14,9 @@ export class delegateModal extends Modal {
     this.page.getByTestId(`stake-provider-container-${stakeProviderID}`);
   private detailsButton = this.page.getByRole("button", { name: "View details" });
   private validatorTC = this.page.getByTestId("ledger-validator-tc");
+  private validatorName = this.page.getByTestId("validator-name-label");
+  private feesSummaryStep = this.page.getByTestId("fees-amount-step-summary");
+  private successMessageLabel = this.page.getByTestId("success-message-label");
   private checkIcon = this.page
     .getByTestId("check-icon")
     .locator('path[fill]:not([fill="transparent"])');
@@ -123,5 +126,21 @@ export class delegateModal extends Modal {
     } else {
       await this.cryptoAmountField.fill(amount);
     }
+  }
+
+  @step("Verify success message")
+  async verifySuccessMessage() {
+    await expect(this.successMessageLabel).toBeVisible();
+  }
+
+  @step("Verify validator name is $0")
+  async verifyValidatorName(validatorName: string) {
+    const validator = await this.validatorName.allInnerTexts();
+    expect(validator).toContain(validatorName);
+  }
+
+  @step("Verify fees summary step")
+  async verifyFeesVisible() {
+    await expect(this.feesSummaryStep).toBeVisible();
   }
 }

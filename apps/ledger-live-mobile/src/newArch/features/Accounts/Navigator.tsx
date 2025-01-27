@@ -7,31 +7,40 @@ import { ScreenName } from "~/const";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import { track } from "~/analytics";
 import type { NetworkBasedAddAccountNavigator } from "LLM/features/Accounts/screens/AddAccount/types";
-import SelectAccounts from "LLM/features/Accounts/screens/SelectAccounts";
-import { NavigationHeaderCloseButtonAdvanced } from "~/components/NavigationHeaderCloseButton";
 import ScanDeviceAccounts from "LLM/features/Accounts/screens/ScanDeviceAccounts";
 import { AccountsListNavigator } from "./screens/AccountsList/types";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import AccountsList from "LLM/features/Accounts/screens/AccountsList";
 import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
+import AddAccountsSuccess from "./screens/AddAccountSuccess";
+import SelectAccounts from "./screens/SelectAccounts";
+import AddAccountsWarning from "./screens/AddAccountWarning";
+import NoAssociatedAccountsView from "./screens/NoAssociatedAccountsView";
+import CloseWithConfirmation from "LLM/components/CloseWithConfirmation";
+import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
+import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import { NavigationHeaderCloseButtonAdvanced } from "~/components/NavigationHeaderCloseButton";
 
 export default function Navigator() {
   const { colors } = useTheme();
   const route = useRoute();
   const accountListUIFF = useFeature("llmAccountListUI");
-  const navigation = useNavigation();
+  const navigation = useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
 
   const onClose = useCallback(() => {
     track("button_clicked", {
       button: "Close",
       screen: route.name,
     });
-  }, [route]);
+    const rootParent = navigation.getParent();
+    // this is the only way to go back to the root navigator
+    navigation.replace(rootParent?.getState().routeNames[0] as keyof BaseNavigatorStackParamList);
+  }, [route, navigation]);
 
   const stackNavigationConfig = useMemo(
     () => ({
       ...getStackNavigatorConfig(colors, true),
-      headerRight: () => <NavigationHeaderCloseButtonAdvanced onClose={onClose} />,
+      headerRight: () => <CloseWithConfirmation onClose={onClose} />,
     }),
     [colors, onClose],
   );
@@ -51,6 +60,15 @@ export default function Navigator() {
         gestureEnabled: Platform.OS === "ios",
       }}
     >
+      {/* Scan accounts from device */}
+      <Stack.Screen
+        name={ScreenName.ScanDeviceAccounts}
+        component={ScanDeviceAccounts}
+        options={{
+          headerTitle: "",
+          headerTransparent: true,
+        }}
+      />
       {/* Select Accounts */}
       <Stack.Screen
         name={ScreenName.SelectAccounts}
@@ -59,15 +77,6 @@ export default function Navigator() {
           headerTitle: "",
         }}
         initialParams={route.params}
-      />
-
-      {/* Scan accounts from device */}
-      <Stack.Screen
-        name={ScreenName.ScanDeviceAccounts}
-        component={ScanDeviceAccounts}
-        options={{
-          headerTitle: "",
-        }}
       />
       {accountListUIFF?.enabled && (
         <Stack.Screen
@@ -79,6 +88,43 @@ export default function Navigator() {
           }}
         />
       )}
+      <Stack.Screen
+        name={ScreenName.AddAccountsSuccess}
+        component={AddAccountsSuccess}
+        options={{
+          headerTitle: "",
+          headerLeft: () => null,
+          headerTransparent: true,
+        }}
+        initialParams={{
+          onCloseNavigation: onClose,
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.AddAccountsWarning}
+        component={AddAccountsWarning}
+        options={{
+          headerTitle: "",
+          headerLeft: () => null,
+          headerTransparent: true,
+          headerRight: () => <NavigationHeaderCloseButtonAdvanced />,
+        }}
+        initialParams={{
+          onCloseNavigation: onClose,
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.NoAssociatedAccounts}
+        component={NoAssociatedAccountsView}
+        options={{
+          headerTitle: "",
+          headerLeft: () => <NavigationHeaderBackButton onPress={onPressBack} />,
+          headerTransparent: true,
+        }}
+        initialParams={{
+          onCloseNavigation: onClose,
+        }}
+      />
     </Stack.Navigator>
   );
 }

@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 
+import { DEFAULT_FEATURES } from "@ledgerhq/live-common/featureFlags/defaultFeatures";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import {
   useRemoteLiveAppContext,
   useRemoteLiveAppManifest,
@@ -9,21 +11,32 @@ import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalL
 import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import GenericErrorView from "~/components/GenericErrorView";
-import TabBarSafeAreaView from "~/components/TabBar/TabBarSafeAreaView";
 import { initialWebviewState } from "~/components/Web3AppWebview/helpers";
 import { WebviewState } from "~/components/Web3AppWebview/types";
 import { WebView } from "./WebView";
 
-const DEFAULT_SWAP_APP_ID = "swap-live-app-demo-3";
+// set the default manifest ID for the production swap live app
+// in case the FF is failing to load the manifest ID
+// "swap-live-app-demo-3" points to production vercel URL for the swap live app
+const DEFAULT_MANIFEST_ID =
+  process.env.DEFAULT_SWAP_MANIFEST_ID || DEFAULT_FEATURES.ptxSwapLiveApp.params?.manifest_id;
 
 export function SwapLiveApp() {
   const { t } = useTranslation();
+  const ptxSwapLiveAppMobile = useFeature("ptxSwapLiveAppMobile");
 
   const APP_MANIFEST_NOT_FOUND_ERROR = new Error(t("errors.AppManifestUnknown.title"));
   const APP_MANIFEST_UNKNOWN_ERROR = new Error(t("errors.AppManifestNotFoundError.title"));
 
-  const localManifest: LiveAppManifest | undefined = useLocalLiveAppManifest(DEFAULT_SWAP_APP_ID);
-  const remoteManifest: LiveAppManifest | undefined = useRemoteLiveAppManifest(DEFAULT_SWAP_APP_ID);
+  const swapLiveAppManifestID =
+    (ptxSwapLiveAppMobile?.params?.manifest_id as string) || DEFAULT_MANIFEST_ID;
+
+  const localManifest: LiveAppManifest | undefined = useLocalLiveAppManifest(
+    swapLiveAppManifestID || undefined,
+  );
+  const remoteManifest: LiveAppManifest | undefined = useRemoteLiveAppManifest(
+    swapLiveAppManifestID || undefined,
+  );
   const { state: remoteLiveAppState } = useRemoteLiveAppContext();
 
   const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
@@ -46,10 +59,8 @@ export function SwapLiveApp() {
   }
 
   return (
-    <>
-      <TabBarSafeAreaView>
-        <WebView manifest={manifest} setWebviewState={setWebviewState} />
-      </TabBarSafeAreaView>
-    </>
+    <Flex flex={1} mb={10}>
+      <WebView manifest={manifest} setWebviewState={setWebviewState} />
+    </Flex>
   );
 }

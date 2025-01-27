@@ -760,6 +760,22 @@
         "description3Link": "This integration has been carried out by <1><0>{{team}}</0></1> in collaboration with Ledger"
       }
     },
+    "featureUnavailable": {
+      "title": "The following feature is momentarily unavailable : {{feature}}. To know more please refer to {{support}}",
+      "feature": {
+        "history": "History",
+        "swap": "Swap",
+        "token_history": "Token history",
+        "send_and_receive": "Send & receive",
+        "send": "Send",
+        "receive": "Receive",
+        "sending_tokens": "Sending tokens",
+        "receiving_tokens": "Receiving tokens",
+        "staking": "Staking",
+        "claiming_staking_rewards": "Claiming staking rewards"
+      },
+      "support": "support"
+    },
     "willBeDeprecatedBanner": {
       "title": "To optimize efficiencies, {{currencyName}} will not be supported on Ledger Live as of {{deprecatedDate}}. However, it will still be supported on Ledger hardware wallets. Please contact Ledger Customer Support if you would like assistance on this.",
       "contactSupport": "Contact Support"
@@ -3782,7 +3798,7 @@
       "category": {
         "all": {
           "name": "All",
-          "description": "All ethereum staking providers available on Ledger Live."
+          "description": "All Ethereum staking providers available on Ledger Live."
         },
         "liquid": {
           "name": "Liquid",
@@ -5317,6 +5333,7 @@
     "verifyData": "Always verify the operation details on your device.",
     "doubleCheck": "Double-check the transaction details on your Ledger device before signing.",
     "termsAndConditions": "By signing this transaction, you accept <0>{{appName}}'s terms of use.</0>",
+    "termsAndConditionsWithPrivacy": "By signing this transaction, you accept <0>{{appName}}'s terms of use.</0> and <1>Privacy Policy.</1>",
     "warningWording": {},
     "titleWording": {
       "send": "Please confirm on your device to finalize the operation",
@@ -5815,16 +5832,6 @@
     "SatStackDescriptorNotImported": {
       "title": "Account not scanned by full node",
       "description": "Please configure your full node to scan for the accounts associated with this device. Your full node must first scan the blockchain for this account before you can add it to your portfolio."
-    },
-    "SequenceNumberTooNew": {
-      "title": "Sequence number too new"
-    },
-    "SequenceNumberTooOld": {
-      "title": "Sequence number too old",
-      "description": "Sequence number too old"
-    },
-    "TransactionExpired": {
-      "title": "Transaction expired"
     },
     "SwapRateExpiredError": {
       "title": "Rate Expired",

@@ -14,7 +14,7 @@ test.describe("send NFT to ENS address", () => {
   test.beforeAll(async () => {
     process.env.DISABLE_TRANSACTION_BROADCAST = "1";
   });
-  const transaction = new NFTTransaction(Account.ETH_1, Account.ETH_MC, Nft.PODIUM, Fee.SLOW);
+  const transaction = new NFTTransaction(Account.ETH_1, Account.ETH_2, Nft.PODIUM, Fee.SLOW);
   test.use({
     userdata: "skip-onboarding",
     cliCommands: [
@@ -51,7 +51,7 @@ test.describe("send NFT to ENS address", () => {
       await app.speculos.signSendNFTTransaction(transaction);
       await app.send.expectTxSent();
       await app.account.navigateToViewDetails();
-      await app.drawer.close();
+      await app.drawer.closeDrawer();
       await app.layout.goToAccounts();
       await app.accounts.navigateToAccountByName(transaction.accountToDebit.accountName);
       await app.account.navigateToNFTOperation();

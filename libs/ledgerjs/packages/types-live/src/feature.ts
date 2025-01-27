@@ -127,6 +127,7 @@ export type CurrencyFeatures = {
   currencyZkSyncSepolia: DefaultFeature;
   currencyMantra: DefaultFeature;
   currencyXion: DefaultFeature;
+  currencyZenrock: DefaultFeature;
 };
 
 /**
@@ -170,11 +171,13 @@ export type Features = CurrencyFeatures & {
   transactionsAlerts: Feature_TransactionsAlerts;
   fetchAdditionalCoins: Feature_FetchAdditionalCoins;
   ptxCard: DefaultFeature;
-  ptxSwapLiveAppMobile: DefaultFeature;
+  ptxSwapLiveAppMobile: Feature_PtxSwapLiveApp;
   ptxSwapLiveApp: Feature_PtxSwapLiveApp;
   ptxSwapReceiveTRC20WithoutTrx: Feature_PtxSwapReceiveTRC20WithoutTrx;
   flexibleContentCards: Feature_FlexibleContentCards;
   llmAnalyticsOptInPrompt: Feature_LlmAnalyticsOptInPrompt;
+  ptxSwapMoonpayProvider: Feature_PtxSwapMoonpayProvider;
+  ptxSwapExodusProvider: Feature_PtxSwapExodusProvider;
   lldAnalyticsOptInPrompt: Feature_LldAnalyticsOptInPrompt;
   lldChatbotSupport: Feature_LldChatbotSupport;
   llmChatbotSupport: Feature_LlmChatbotSupport;
@@ -200,6 +203,7 @@ export type Features = CurrencyFeatures & {
   llmNetworkBasedAddAccountFlow: DefaultFeature;
   llCounterValueGranularitiesRates: Feature_LlCounterValueGranularitiesRates;
   llmRebornLP: Feature_LlmRebornLP;
+  llmRebornFlex: DefaultFeature;
   llmAccountListUI: DefaultFeature;
 };
 
@@ -349,7 +353,6 @@ export type Feature_ProtectServicesMobile = Feature<{
     };
   };
   account: {
-    loginURI: string;
     homeURI: string;
   };
   protectId: string;
@@ -379,7 +382,6 @@ export type Feature_ProtectServicesDesktop = Feature<{
   };
   account: {
     homeURI: string;
-    loginURI: string;
   };
   protectId: string;
 }>;
@@ -555,6 +557,8 @@ export type Feature_lldNftsGalleryNewArch = DefaultFeature;
 export type Feature_lldnewArchOrdinals = DefaultFeature;
 export type Feature_SpamFilteringTx = DefaultFeature;
 export type Feature_MemoTag = DefaultFeature;
+export type Feature_PtxSwapMoonpayProvider = DefaultFeature;
+export type Feature_PtxSwapExodusProvider = DefaultFeature;
 
 export type Feature_LlmRebornLP = Feature<{
   variant: ABTestingVariants;

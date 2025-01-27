@@ -86,6 +86,7 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyZkSyncSepolia: DEFAULT_FEATURE,
   currencyMantra: DEFAULT_FEATURE,
   currencyXion: DEFAULT_FEATURE,
+  currencyZenrock: DEFAULT_FEATURE,
 };
 
 /**
@@ -101,7 +102,6 @@ export const DEFAULT_FEATURES: Features = {
   ptxServiceCtaExchangeDrawer: DEFAULT_FEATURE,
   ptxServiceCtaScreens: DEFAULT_FEATURE,
   ptxSwapReceiveTRC20WithoutTrx: DEFAULT_FEATURE,
-  ptxSwapLiveAppMobile: DEFAULT_FEATURE,
   disableNftLedgerMarket: DEFAULT_FEATURE,
   disableNftRaribleOpensea: DEFAULT_FEATURE,
   disableNftSend: DEFAULT_FEATURE,
@@ -154,9 +154,7 @@ export const DEFAULT_FEATURES: Features = {
       bannerSubscriptionNotification: false,
       account: {
         homeURI:
-          "ledgerlive://recover/protect-simu?redirectTo=account&source=lld-sidebar-navigation&ajs_recover_source=lld-sidebar-navigation&ajs_recover_campaign=recover-launch",
-        loginURI:
-          "ledgerlive://recover/protect-simu?redirectTo=login&source=lld-welcome-login&ajs_recover_source=lld-welcome-login&ajs_recover_campaign=recover-launch",
+          "ledgerlive://recover/protect-simu?source=lld-sidebar-navigation&ajs_recover_source=lld-sidebar-navigation&ajs_recover_campaign=recover-launch",
       },
       compatibleDevices: [],
       discoverTheBenefitsLink: "https://www.ledger.com/recover",
@@ -306,9 +304,7 @@ export const DEFAULT_FEATURES: Features = {
       compatibleDevices: [],
       account: {
         homeURI:
-          "ledgerlive://recover/protect-simu?redirectTo=account&source=llm-myledger-access-card&ajs_prop_source=llm-myledger-access-card&ajs_prop_campaign=recover-launch",
-        loginURI:
-          "ledgerlive://recover/protect-simu?redirectTo=login&source=llm-myledger-access-card&ajs_prop_source=llm-myledger-access-card&ajs_prop_campaign=recover-launch",
+          "ledgerlive://recover/protect-simu?source=llm-myledger-access-card&ajs_prop_source=llm-myledger-access-card&ajs_prop_campaign=recover-launch",
       },
       managerStatesData: {
         NEW: {
@@ -407,6 +403,13 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
 
+  ptxSwapLiveAppMobile: {
+    enabled: false,
+    params: {
+      manifest_id: "swap-live-app-demo-3",
+    },
+  },
+
   llmAnalyticsOptInPrompt: {
     enabled: false,
     params: {
@@ -429,6 +432,9 @@ export const DEFAULT_FEATURES: Features = {
       variant: ABTestingVariants.variantA,
     },
   },
+
+  ptxSwapMoonpayProvider: DEFAULT_FEATURE,
+  ptxSwapExodusProvider: DEFAULT_FEATURE,
 
   myLedgerDisplayAppDeveloperName: DEFAULT_FEATURE,
   nftsFromSimplehash: {
@@ -505,6 +511,7 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
   llmRebornLP: { ...DEFAULT_FEATURE, params: { variant: ABTestingVariants.variantA } },
+  llmRebornFlex: DEFAULT_FEATURE,
   llmAccountListUI: DEFAULT_FEATURE,
 };
 

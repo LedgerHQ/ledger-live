@@ -27,6 +27,7 @@ const near: AppSpec<Transaction> = {
   mutations: [
     {
       name: "Move 50% to another account",
+      feature: "send",
       maxRun: 1,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
         invariant(maxSpendable.gt(minimalAmount), "balance is too low");
@@ -48,6 +49,7 @@ const near: AppSpec<Transaction> = {
     },
     {
       name: "Send max to another account",
+      feature: "sendMax",
       maxRun: 1,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
         invariant(maxSpendable.gt(minimalAmount), "balance is too low");
@@ -66,6 +68,7 @@ const near: AppSpec<Transaction> = {
     },
     {
       name: "Stake",
+      feature: "staking",
       maxRun: 1,
       transaction: ({ account, bridge, maxSpendable }) => {
         invariant(maxSpendable.gt(minimalAmount.plus(stakingFee)), "balance is too low");
@@ -99,6 +102,7 @@ const near: AppSpec<Transaction> = {
     },
     {
       name: "Unstake",
+      feature: "staking",
       maxRun: 1,
       transaction: ({ account, bridge, maxSpendable }) => {
         invariant(maxSpendable.gt(stakingFee), "balance is too low for fees");
@@ -134,6 +138,7 @@ const near: AppSpec<Transaction> = {
     },
     {
       name: "Withdraw",
+      feature: "staking",
       maxRun: 1,
       transaction: ({ account, bridge, maxSpendable }) => {
         invariant(maxSpendable.gt(stakingFee), "balance is too low for fees");

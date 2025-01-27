@@ -29,7 +29,7 @@ const Tab = styled(Flex)`
 `;
 
 type TabSelectorProps = {
-  labels: string[];
+  labels: { id: string; value: string }[];
   onToggle: (value: string) => void;
 };
 
@@ -38,10 +38,10 @@ export default function TabSelector({ labels, onToggle }: TabSelectorProps): JSX
   const [containerWidth, setContainerWidth] = useState(0);
   const [selectedIndex, setSelectedIndex] = useState(0);
 
-  const handlePress = (value: string, index: number) => {
+  const handlePress = (id: string, index: number) => {
     setSelectedIndex(index);
     translateX.value = (containerWidth / labels.length) * index;
-    if (selectedIndex !== index) onToggle(value);
+    if (selectedIndex !== index) onToggle(id);
   };
 
   const handleLayout = (event: LayoutChangeEvent) => {
@@ -70,15 +70,15 @@ export default function TabSelector({ labels, onToggle }: TabSelectorProps): JSX
         {labels.map((label, index) => (
           <Pressable
             hitSlop={6}
-            key={label}
-            onPress={() => handlePress(label, index)}
+            key={label.id}
+            onPress={() => handlePress(label.id, index)}
             style={({ pressed }: { pressed: boolean }) => [
               { opacity: pressed && selectedIndex !== index ? 0.5 : 1, flex: 1 },
             ]}
           >
             <Tab>
               <Text fontSize={14} fontWeight="semiBold" flexShrink={1} numberOfLines={1}>
-                {label}
+                {label.value}
               </Text>
             </Tab>
           </Pressable>

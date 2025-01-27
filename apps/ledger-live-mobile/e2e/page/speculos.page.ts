@@ -1,6 +1,11 @@
-import { expectValidAddressDevice, signSendTransaction } from "@ledgerhq/live-common/e2e/speculos";
+import {
+  expectValidAddressDevice,
+  signSendTransaction,
+  signDelegationTransaction,
+} from "@ledgerhq/live-common/e2e/speculos";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
+import { Delegate } from "@ledgerhq/live-common/e2e/models/Delegate";
 
 export default class SpeculosPage {
   @Step("Verify receive address correctness on device")
@@ -11,5 +16,10 @@ export default class SpeculosPage {
   @Step("Sign Send Transaction")
   async signSendTransaction(tx: Transaction) {
     await signSendTransaction(tx);
+  }
+
+  @Step("Sign Delegation Transaction")
+  async signDelegationTransaction(delegation: Delegate) {
+    await signDelegationTransaction(delegation);
   }
 }

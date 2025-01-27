@@ -14,6 +14,14 @@ export class Account {
     public readonly nft?: Nft[],
   ) {}
 
+  static readonly INJ_1 = new Account(
+    Currency.INJ,
+    "Injective 1",
+    "inj1hyz3lqavdc28jfph0wlwh5d2026r5elkmxxpwr",
+    undefined,
+    0,
+  );
+
   static readonly APTOS_1 = new Account(
     Currency.APT,
     "Aptos 1",
@@ -159,15 +167,7 @@ export class Account {
     "0x43047a5023D55a8658Fcb1c1Cea468311AdAA3Ad",
     undefined,
     1,
-  );
-
-  static readonly ETH_MC = new Account(
-    Currency.ETH,
-    "Ethereum MC",
-    "0x4258A05DBA420A398bcdFB389E4250759b4223ea",
-    undefined,
-    undefined,
-    "ldgrqamco.eth",
+    "speculos.eth",
   );
 
   static readonly ETH_3 = new Account(
@@ -581,11 +581,27 @@ export class Account {
     0,
   );
 
+  static readonly MULTIVERS_X_2 = new Account(
+    Currency.MULTIVERS_X,
+    "MultiversX 2",
+    "erd10nxfga5uavl7pr8k5qptk49h2983erxznj7z3kpw28937z7gmf5sc7shug",
+    undefined,
+    1,
+  );
+
   static readonly OSMO_1 = new Account(
     Currency.OSMO,
     "Osmosis 1",
     "osmo1w7v2v6v8z3r3d8x8h7yjv6w2k3c5w3z7w6v8v8",
     undefined,
     0,
+  );
+
+  static readonly OSMO_2 = new Account(
+    Currency.OSMO,
+    "Osmosis 2",
+    "osmo12d854g9mut943gu5ncyhalapukttkddnyy4dkg",
+    undefined,
+    1,
   );
 }
