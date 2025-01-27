@@ -12,11 +12,11 @@ const currency = getCryptoCurrencyById("aptos");
 const maxAccountSiblings = 4;
 
 const aptos: AppSpec<Transaction> = {
-  name: "Aptos",
+  name: currency.family,
   currency,
   appQuery: {
     model: DeviceModelId.nanoSP,
-    appName: "aptos",
+    appName: currency.managerAppName,
   },
   genericDeviceAction: acceptTransaction,
   // testTimeout: 5 * 60 * 1000,
