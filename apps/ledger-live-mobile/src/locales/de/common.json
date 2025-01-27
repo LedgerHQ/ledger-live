@@ -99,7 +99,8 @@
       "id" : "ID {{ value }}",
       "times" : "x{{ value }}"
     },
-    "quote" : "Preis"
+    "quote" : "Preis",
+    "tryAgain" : "Wiederholen"
   },
   "errors" : {
     "ReplacementTransactionUnderpriced" : {
@@ -3992,7 +3993,11 @@
     },
     "quitConfirmation" : {
       "title" : "Konto hinzufügen abbrechen",
-      "desc" : "Sind Sie sicher, dass Sie das Hinzufügen von Konten abbrechen möchten?"
+      "desc" : "Sind Sie sicher, dass Sie das Hinzufügen von Konten abbrechen möchten?",
+      "v2" : {
+        "title" : "Hinzufügen des Kontos abbrechen?",
+        "desc" : "Es wird dann kein Konto in Ledger Live hinzugefügt."
+      }
     },
     "imported" : "Vermögenswert erfolgreich hinzugefügt",
     "added" : "Konto zu deinem Portfolio hinzugefügt",
@@ -4068,18 +4073,29 @@
           "title" : "Neues Konto"
         },
         "imported" : {
-          "title" : "Konto bereits im Portfolio vorhanden ({{length}})",
-          "title_plural" : "Konten bereits im Portfolio ({{length}})"
+          "title" : "Konto bereits im Portfolio vorhanden ({{count}})",
+          "title_plural" : "Konten bereits im Portfolio ({{count}})"
         },
         "migrate" : {
           "title" : "Zu aktualisierende Konten"
         }
-      }
+      },
+      "retryScanning" : "Wiederholen"
     },
     "addAccountsSuccess" : {
       "ctaAddFunds" : "Mein Konto mit Guthaben aufladen",
       "ctaClose" : "Schließen"
-    }
+    },
+    "addAccountsWarning" : {
+      "cantCreateAccount" : {
+        "title" : "Wir können kein neues Konto hinzufügen",
+        "body" : "Ein neues Konto kann erst hinzugefügt werden, nachdem du Guthaben auf deinem {{accountName}}-Konto erhalten hast."
+      },
+      "noAccountToCreate" : {
+        "title" : "Wir können kein neues {{currency}}-Konto hinzufügen"
+      }
+    },
+    "chooseAccountToFund" : "Wähle ein Konto aus, um Guthaben hinzuzufügen"
   },
   "DeviceAction" : {
     "stayInTheAppPlz" : "Bleiben Sie in der Ledger Live-App und halten Sie Ihr Ledger-Gerät bereit.",
@@ -6554,7 +6570,9 @@
     "name" : "Hedera",
     "createHederaAccountHelp" : {
       "text" : "In diesem Supportartikel erhältst du weitere Informationen zum Thema",
-      "link" : "Erstellen eines Hedera-Kontos"
+      "link" : "Wie erstellt man ein Hedera-Konto?",
+      "title" : "Wir können kein neues Hedera-Konto erstellen.",
+      "description" : "Im Hedera-Ökosystem können nur ausgewählte Services neue Konten erstellen. Ledger bietet diesen Onboarding-Service derzeit zwar nicht an, aber es gibt Alternativen. Du kannst dein Hedera-Konto in Ledger Live hinzufügen, nachdem es erstellt wurde."
     },
     "currentAddress" : {
       "messageIfVirtual" : "Ihre {{name}}-Adresse kann auf Ihrem Ledger-Gerät nicht bestätigt werden. Nutzung auf eigenes Risiko."
