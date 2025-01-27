@@ -36,11 +36,11 @@ export default function AddAccountsWarning({ route }: Props) {
 
   const goToAccounts = useCallback(
     (accountId: string) => () => {
-      if (context === AddAccountContexts.AddAccounts)
+      if (context === AddAccountContexts.AddAccounts) {
         navigation.navigate(ScreenName.Account, {
           accountId,
         });
-      else
+      } else {
         navigation.navigate(NavigatorName.ReceiveFunds, {
           screen: ScreenName.ReceiveConfirmation,
           params: {
@@ -48,6 +48,7 @@ export default function AddAccountsWarning({ route }: Props) {
             accountId,
           },
         });
+      }
     },
     [navigation, route.params, context],
   );
