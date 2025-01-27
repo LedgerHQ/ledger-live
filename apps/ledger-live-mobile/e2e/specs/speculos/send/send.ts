@@ -151,7 +151,7 @@ export async function runSendInvalidTokenAmountTest(
       await beforeAllFunction(app, transaction);
     });
 
-    it(`Check "${expectedErrorMessage}" for ${transaction.accountToDebit.currency.name} - invalid amount ${transaction.amount} input error`, async () => {
+    it(`Check error message for ${transaction.accountToDebit.currency.name} - invalid amount ${transaction.amount} input error`, async () => {
       await navigateToSendScreen(app, transaction.accountToDebit.currency.name);
       await app.send.setRecipientAndContinue(transaction.accountToCredit.address);
       await app.send.setAmount(transaction.amount);
