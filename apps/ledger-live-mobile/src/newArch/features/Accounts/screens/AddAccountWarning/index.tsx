@@ -101,7 +101,11 @@ export default function AddAccountsWarning({ route }: Props) {
         </Animated.View>
       </Flex>
       <Flex mb={insets.bottom + 2} px={6} rowGap={6}>
-        <AddFundsButton accounts={[emptyAccount as Account]} currency={currency} />
+        <AddFundsButton
+          accounts={[emptyAccount as Account]}
+          currency={currency}
+          sourceScreenName={ScreenName.AddAccountsWarning}
+        />
         <CloseWithConfirmation
           showButton
           buttonText={t("addAccounts.addAccountsSuccess.ctaClose")}

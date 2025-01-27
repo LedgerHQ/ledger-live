@@ -56,6 +56,7 @@ const InstallSuccessBar = ({ state, navigation, disable }: Props) => {
     if (llmNetworkBasedAddAccountFlow?.enabled)
       navigation.navigate(NavigatorName.AssetSelection, {
         context: AddAccountContexts.AddAccounts,
+        sourceScreenName: "InstalleAppModal",
       });
     else navigation.navigate(NavigatorName.AddAccounts);
 

@@ -87,6 +87,7 @@ export default function AccountsList({ route }: Props) {
           params: {
             currency: currency.id,
             context: AddAccountContexts.AddAccounts,
+            sourceScreenName: ScreenName.AccountsList,
           },
         });
       } else {

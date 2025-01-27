@@ -117,6 +117,7 @@ const AssetScreen = ({ route }: NavigationProps) => {
           params: {
             currency: currency.id,
             context: AddAccountContexts.AddAccounts,
+            sourceScreenName: ScreenName.Asset,
           },
         });
       } else {

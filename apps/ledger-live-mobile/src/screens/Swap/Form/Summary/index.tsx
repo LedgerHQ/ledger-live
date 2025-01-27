@@ -92,6 +92,7 @@ export function Summary({ provider, swapTx: { swap, status, transaction } }: Pro
           token: to.currency.id,
           currency: to.currency.parentCurrency.id,
           context: AddAccountContexts.AddAccounts,
+          sourceScreenName: ScreenName.SwapForm,
         });
       } else {
         navigation.navigate(NavigatorName.AddAccounts, {
