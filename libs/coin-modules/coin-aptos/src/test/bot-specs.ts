@@ -19,7 +19,7 @@ const aptos: AppSpec<Transaction> = {
     appName: "aptos",
   },
   genericDeviceAction: acceptTransaction,
-  testTimeout: 5 * 60 * 1000,
+  // testTimeout: 5 * 60 * 1000,
   // minViableAmount: minBalanceNewAccount,
   // transactionCheck: ({ maxSpendable }) => {
   //   invariant(maxSpendable.gt(minBalanceNewAccount), "balance is too low");
