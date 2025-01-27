@@ -231,6 +231,102 @@ for (const account of e2eDelegationAccountsWithoutBroadcast) {
   });
 }
 
+test.describe("e2e delegation - Tezos", () => {
+  const account = new Delegate(Account.XTZ_1, "N/A", "Ledger by Kiln");
+  setupEnv(true);
+  test.use({
+    userdata: "skip-onboarding",
+    speculosApp: account.account.currency.speculosApp,
+    cliCommands: [
+      (appjsonPath: string) => {
+        return CLI.liveData({
+          currency: account.account.currency.ticker,
+          index: account.account.index,
+          add: true,
+          appjson: appjsonPath,
+        });
+      },
+    ],
+  });
+
+  test(
+    "Tezos Delegation",
+    {
+      annotation: {
+        type: "TMS",
+        description: "B2CQA-3041",
+      },
+    },
+    async ({ app }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+      await app.layout.goToAccounts();
+      await app.accounts.navigateToAccountByName(account.account.accountName);
+      await app.account.startStakingFlowFromMainStakeButton();
+      await app.delegate.clickDelegateToEarnRewardsButton();
+      await app.delegate.verifyDelegateInfos(account.account.currency.currencyId, account.provider);
+      await app.delegate.continue();
+      await app.speculos.signDelegationTransaction(account);
+      await app.delegate.verifySuccessMessage();
+      await app.delegate.clickViewDetailsButton();
+      await app.drawer.waitForDrawerToBeVisible();
+      await app.delegateDrawer.transactionTypeIsVisible();
+      await app.delegateDrawer.transactionTypeIsCorrect("Delegated");
+      await app.delegateDrawer.providerIsVisible(account);
+      await app.delegateDrawer.operationTypeIsCorrect("Delegated");
+      await app.drawer.closeDrawer();
+    },
+  );
+});
+
+test.describe("e2e delegation - Celo", () => {
+  const account = new Delegate(Account.CELO_1, "0.001", "N/A");
+  test.use({
+    userdata: "skip-onboarding",
+    speculosApp: account.account.currency.speculosApp,
+    cliCommands: [
+      (appjsonPath: string) => {
+        return CLI.liveData({
+          currency: account.account.currency.ticker,
+          index: account.account.index,
+          add: true,
+          appjson: appjsonPath,
+        });
+      },
+    ],
+  });
+
+  test(
+    "Celo Delegation",
+    {
+      annotation: {
+        type: "TMS",
+        description: "B2CQA-3042",
+      },
+    },
+    async ({ app }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+      await app.layout.goToAccounts();
+      await app.accounts.navigateToAccountByName(account.account.accountName);
+      await app.speculos.activateContractData();
+      await app.account.startStakingFlowFromMainStakeButton();
+      await app.delegate.checkManageAssetModal();
+      await app.delegate.clickLockButton();
+      await app.delegate.fillAmount(account.amount);
+      await app.delegate.verifyLockInfoCeloWarning();
+      await app.delegate.continue();
+      await app.speculos.signDelegationTransaction(account);
+      await app.delegate.verifySuccessMessage();
+      await app.delegate.clickViewDetailsButton();
+      await app.drawer.waitForDrawerToBeVisible();
+      await app.delegateDrawer.transactionTypeIsVisible();
+      await app.delegateDrawer.transactionTypeIsCorrect("Locked");
+      await app.delegateDrawer.providerIsVisible(account);
+      await app.delegateDrawer.operationTypeIsCorrect("Locked");
+      await app.drawer.closeDrawer();
+    },
+  );
+});
+
 for (const validator of validators) {
   test.describe("Select a validator", () => {
     test.use({

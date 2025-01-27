@@ -201,14 +201,14 @@ const transactionE2E = [
 
 const tokenTransactionInvalid = [
   {
-    transaction: new Transaction(Account.BSC_BUSD_1, Account.BSC_BUSD_2, "1", Fee.MEDIUM),
+    transaction: new Transaction(Account.BSC_BUSD_1, Account.BSC_BUSD_2, "1", Fee.FAST),
     expectedWarningMessage: new RegExp(
       /You need \d+\.\d+ BNB in your account to pay for transaction fees on the Binance Smart Chain network\. .*/,
     ),
     xrayTicket: "B2CQA-2700",
   },
   {
-    transaction: new Transaction(Account.ETH_USDT_2, Account.ETH_USDT_1, "1", Fee.MEDIUM),
+    transaction: new Transaction(Account.ETH_USDT_2, Account.ETH_USDT_1, "1", Fee.FAST),
     expectedWarningMessage: new RegExp(
       /You need \d+\.\d+ ETH in your account to pay for transaction fees on the Ethereum network\. .*/,
     ),

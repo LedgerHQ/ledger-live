@@ -16,6 +16,20 @@ export class delegateModal extends Modal {
   private validatorName = this.page.getByTestId("validator-name-label");
   private feesSummaryStep = this.page.getByTestId("fees-amount-step-summary");
   private successMessageLabel = this.page.getByTestId("success-message-label");
+  private delegateToEarnRewardsButton = this.page.getByRole("button", {
+    name: "Delegate to earn rewards",
+  });
+  private delegateStarterInfos = this.page.getByTestId("delegation-starter-infos");
+  private delegateProvider = (currency: string) =>
+    this.page.getByTestId(`validator-name-${currency}`);
+  private warningBox = this.page.getByTestId("warning-box");
+  private lockButton = this.page.getByTestId("lock-button");
+  private voteButton = this.page.getByTestId("vote-button");
+  private activateVoteButton = this.page.getByTestId("activate-vote-button");
+  private revokeVoteButton = this.page.getByTestId("revoke-vote-button");
+  private unlockButton = this.page.getByTestId("unlock-button");
+  private withdrawButton = this.page.getByTestId("withdraw-button");
+  private lockInfoCeloWarning = this.page.getByTestId("lock-info-celo");
   private checkIcon = this.page
     .getByTestId("check-icon")
     .locator('path[fill]:not([fill="transparent"])');
@@ -150,5 +164,38 @@ export class delegateModal extends Modal {
   @step("Verify fees summary step")
   async verifyFeesVisible() {
     await expect(this.feesSummaryStep).toBeVisible();
+  }
+
+  @step("Click on delegate to earn rewards button")
+  async clickDelegateToEarnRewardsButton() {
+    expect(await this.delegateStarterInfos).toBeVisible();
+    await this.delegateToEarnRewardsButton.click();
+  }
+
+  @step("Verify delegate infos")
+  async verifyDelegateInfos(currency: string, validator: string) {
+    await expect(this.delegateProvider(currency)).toBeVisible();
+    expect(await this.delegateProvider(currency).innerText()).toContain(validator);
+    await expect(this.warningBox).toBeVisible();
+  }
+
+  @step("Verify manage asset modal is visible")
+  async checkManageAssetModal() {
+    expect(await this.lockButton).toBeVisible();
+    expect(await this.voteButton).toBeVisible();
+    expect(await this.activateVoteButton).toBeVisible();
+    expect(await this.revokeVoteButton).toBeVisible();
+    expect(await this.unlockButton).toBeVisible();
+    expect(await this.withdrawButton).toBeVisible();
+  }
+
+  @step("Click on lock button")
+  async clickLockButton() {
+    await this.lockButton.click();
+  }
+
+  @step("Check alert message is visible when locking CELO")
+  async verifyLockInfoCeloWarning() {
+    await expect(this.lockInfoCeloWarning).toBeVisible();
   }
 }

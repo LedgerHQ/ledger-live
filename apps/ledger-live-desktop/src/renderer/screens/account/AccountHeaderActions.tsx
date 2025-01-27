@@ -301,7 +301,7 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
   const sellHeader = <SellActionDefault onClick={() => onBuySell("sell")} />;
   const swapHeader = <SwapActionDefault onClick={onSwap} />;
   const manageActionsHeader = manageActions.map(item => (
-    <ActionItem {...item} key={item.accountActionsTestId} />
+    <ActionItem {...item} key={item.accountActionsTestId} data-testid={item.accountActionsTestId} />
   ));
 
   const NonEmptyAccountHeader = (
