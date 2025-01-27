@@ -15,6 +15,7 @@ import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets
 import { AssetSelectionNavigationProps, CommonParams } from "../../types";
 import { useGroupedCurrenciesByProvider } from "@ledgerhq/live-common/deposit/index";
 import { LoadingBasedGroupedCurrencies } from "@ledgerhq/live-common/deposit/type";
+import { AddAccountContexts } from "LLM/features/Accounts/screens/AddAccount/enums";
 
 type SelectCryptoViewModelProps = Pick<CommonParams, "context"> & {
   filterCurrencyIds?: string[];
@@ -58,7 +59,7 @@ export default function useSelectCryptoViewModel({
         navigation.navigate(ScreenName.SelectNetwork, {
           context,
           currency: curr.id,
-          ...(context === "receiveFunds" && { filterCurrencyIds }),
+          ...(context === AddAccountContexts.AddAccounts && { filterCurrencyIds }),
         });
         return;
       }
@@ -66,7 +67,7 @@ export default function useSelectCryptoViewModel({
       const isToken = curr.type === "TokenCurrency";
       const currency = isToken ? curr.parentCurrency : curr;
       const currencyAccounts = findAccountByCurrency(accounts, currency);
-      const isAddAccountContext = context === "addAccounts";
+      const isAddAccountContext = context === AddAccountContexts.AddAccounts;
 
       if (currencyAccounts.length > 0 && !isAddAccountContext) {
         // If we found one or more accounts of the currency then we select account
@@ -113,12 +114,12 @@ export default function useSelectCryptoViewModel({
   );
   const { titleText, titleTestId } = useMemo(() => {
     switch (context) {
-      case "addAccounts":
+      case AddAccountContexts.AddAccounts:
         return {
           titleText: t("assetSelection.selectCrypto.title"),
           titleTestId: "select-crypto-header-step1-title",
         };
-      case "receiveFunds":
+      case AddAccountContexts.ReceiveFunds:
         return {
           titleText: t("transfer.receive.selectCrypto.title"),
           titleTestId: "receive-header-step1-title",
