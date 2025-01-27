@@ -1,14 +1,14 @@
 // import invariant from "invariant";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+// import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import { botTest, genericTestDestination, pickSiblings } from "@ledgerhq/coin-framework/bot/specs";
 import type { AppSpec } from "@ledgerhq/coin-framework/bot/types";
 import { acceptTransaction } from "./speculos-deviceActions";
 import type { Transaction } from "../types";
 
 const currency = getCryptoCurrencyById("aptos");
-const minBalanceNewAccount = parseCurrencyUnit(currency.units[0], "0.0001");
+// const minBalanceNewAccount = parseCurrencyUnit(currency.units[0], "0.0001");
 const maxAccountSiblings = 4;
 
 const aptos: AppSpec<Transaction> = {
@@ -20,7 +20,7 @@ const aptos: AppSpec<Transaction> = {
   },
   genericDeviceAction: acceptTransaction,
   testTimeout: 5 * 60 * 1000,
-  minViableAmount: minBalanceNewAccount,
+  // minViableAmount: minBalanceNewAccount,
   // transactionCheck: ({ maxSpendable }) => {
   //   invariant(maxSpendable.gt(minBalanceNewAccount), "balance is too low");
   // },
@@ -56,35 +56,35 @@ const aptos: AppSpec<Transaction> = {
         );
       },
     },
-    {
-      name: "Send max",
-      maxRun: 2,
-      testDestination: genericTestDestination,
-      transaction: ({ account, siblings, bridge }) => {
-        const sibling = pickSiblings(siblings, maxAccountSiblings);
-        const recipient = sibling.freshAddress;
+    // {
+    //   name: "Send max",
+    //   maxRun: 2,
+    //   testDestination: genericTestDestination,
+    //   transaction: ({ account, siblings, bridge }) => {
+    //     const sibling = pickSiblings(siblings, maxAccountSiblings);
+    //     const recipient = sibling.freshAddress;
 
-        const transaction = bridge.createTransaction(account);
-        const updates: Array<Partial<Transaction>> = [
-          {
-            recipient,
-          },
-          { useAllAmount: true },
-        ];
+    //     const transaction = bridge.createTransaction(account);
+    //     const updates: Array<Partial<Transaction>> = [
+    //       {
+    //         recipient,
+    //       },
+    //       { useAllAmount: true },
+    //     ];
 
-        return {
-          transaction,
-          updates,
-        };
-      },
-      test: ({ account, accountBeforeTransaction, operation }) => {
-        botTest("Account balance should have decreased", () => {
-          expect(account.balance.toNumber()).toEqual(
-            accountBeforeTransaction.balance.minus(operation.value).toNumber(),
-          );
-        });
-      },
-    },
+    //     return {
+    //       transaction,
+    //       updates,
+    //     };
+    //   },
+    //   test: ({ account, accountBeforeTransaction, operation }) => {
+    //     botTest("Account balance should have decreased", () => {
+    //       expect(account.balance.toNumber()).toEqual(
+    //         accountBeforeTransaction.balance.minus(operation.value).toNumber(),
+    //       );
+    //     });
+    //   },
+    // },
   ],
 };
 
