@@ -205,6 +205,7 @@ export type Features = CurrencyFeatures & {
   llmRebornLP: Feature_LlmRebornLP;
   llmRebornFlex: DefaultFeature;
   llmAccountListUI: DefaultFeature;
+  llmLedgerSyncEntryPoints: Feature_LlmLedgerSyncEntryPoints;
 };
 
 /**
@@ -528,6 +529,12 @@ export type Feature_LlmWalletSync = Feature<{
   environment: WalletSyncEnvironment;
   watchConfig: WalletSyncWatchConfig;
   learnMoreLink: string;
+}>;
+
+export type Feature_LlmLedgerSyncEntryPoints = Feature<{
+  manager: boolean;
+  accounts: boolean;
+  settings: boolean;
 }>;
 
 export type Feature_LlCounterValueGranularitiesRates = Feature<{
