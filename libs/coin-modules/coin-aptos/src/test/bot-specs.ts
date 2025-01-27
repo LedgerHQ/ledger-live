@@ -16,7 +16,7 @@ const aptos: AppSpec<Transaction> = {
   currency,
   appQuery: {
     model: DeviceModelId.nanoSP,
-    appName: "Aptos",
+    appName: "aptos",
   },
   genericDeviceAction: acceptTransaction,
   testTimeout: 5 * 60 * 1000,
@@ -62,14 +62,23 @@ const aptos: AppSpec<Transaction> = {
       name: "Send max",
       maxRun: 2,
       testDestination: genericTestDestination,
-      transaction: ({ account, siblings, bridge }) => {
-        const sibling = pickSiblings(siblings, 4);
+      transaction: ({ account, siblings, bridge, maxSpendable }) => {
+        invariant(maxSpendable.gt(minBalanceNewAccount), "balance is too low");
+
+        const sibling = pickSiblings(siblings, maxAccountSiblings);
         const recipient = sibling.freshAddress;
+
         const transaction = bridge.createTransaction(account);
+        const updates: Array<Partial<Transaction>> = [
+          {
+            recipient,
+          },
+          { useAllAmount: true },
+        ];
 
         return {
           transaction,
-          updates: [{ recipient }, { useAllAmount: true }],
+          updates,
         };
       },
       test: ({ account, accountBeforeTransaction, operation }) => {
