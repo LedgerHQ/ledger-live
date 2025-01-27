@@ -16,7 +16,7 @@ test.beforeEach(async ({ page }) => {
   await layout.goToAccounts();
   modalPage = new Modal(page);
   const accountsPage = new AccountsPage(page);
-  await accountsPage.navigateToAccountByName("Cosmos 1");
+  await accountsPage.navigateToAccountByName("Cosmos 2");
   await accountPage.startStakingFlowFromMainStakeButton();
   delegate = new delegateModal(page);
 });

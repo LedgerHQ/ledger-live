@@ -40,6 +40,7 @@ function accountsExportSelector(state: State) {
 
 const DBMiddleware: Middleware<{}, State> = store => next => action => {
   if (DB_MIDDLEWARE_ENABLED && action.type.startsWith("DB:")) {
+    console.log("ACTION CATCHED", { action });
     const [, type] = action.type.split(":");
     store.dispatch({
       type,

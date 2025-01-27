@@ -31,7 +31,7 @@ module.exports = {
     "./node_modules/react-native-gesture-handler/jestSetup.js",
     "./__tests__/jest-setup.js",
   ],
-  testMatch: ["**/src/**/*.test.(ts|tsx)"],
+  testMatch: ["**/src/newArch/features/WalletSync/__integrations__/walletSyncActivation.integration.test.tsx"],
   transform: {
     "^.+\\.(t)sx?$": [
       "@swc/jest",

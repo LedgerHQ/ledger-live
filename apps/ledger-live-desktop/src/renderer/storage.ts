@@ -149,6 +149,7 @@ const debouncedSetKey = memoize(
   <K extends keyof DatabaseValues, V = DatabaseValue<K>>(ns: string, keyPath: K) =>
     debounceToUse((value: V) => {
       const transform = transforms[keyPath as keyof Transforms];
+      console.log("SET KEY", { ns, keyPath, value });
       ipcRenderer.invoke("setKey", {
         ns,
         keyPath,
@@ -163,6 +164,7 @@ export const setKey = <K extends keyof DatabaseValues, V = DatabaseValue<K>, Val
   keyPath: K,
   value: Val,
 ) => {
+  console.log("Setting key", { ns, keyPath, value });
   debouncedSetKey<K, V>(ns, keyPath)(value);
 };
 
