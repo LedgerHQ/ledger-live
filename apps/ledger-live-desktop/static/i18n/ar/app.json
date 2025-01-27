@@ -760,6 +760,22 @@
         "description3Link" : "هذا الدمج تم تنفيذه من قِبل <1><0>{{team}}</1></0> بالتعاون مع Ledger"
       }
     },
+    "featureUnavailable" : {
+      "title" : "الميزة التالية غير متاحة بشكل مؤقت : {{feature}}. لمعرفة المزيد يُرجى الرجوع إلى {{support}}",
+      "feature" : {
+        "history" : "السجل",
+        "swap" : "مبادلة",
+        "token_history" : "سجِل رمز التوكن",
+        "send_and_receive" : "الإرسال والتلقي",
+        "send" : "إرسال",
+        "receive" : "تلقي",
+        "sending_tokens" : "جارٍ إرسال رموز التوكن",
+        "receiving_tokens" : "جارٍ تلقي رموز التوكن",
+        "staking" : "التكديس",
+        "claiming_staking_rewards" : "المطالبة بمكافآت التكديس"
+      },
+      "support" : "الدعم"
+    },
     "willBeDeprecatedBanner" : {
       "title" : "لتحسين الكفاءة، {{currencyName}} لن تكون مدعومةً على Ledger Live بدءاً من {{deprecatedDate}}. مع ذلك، ستظل مدعومةً على محافظ أجهزة Ledger. يُرجى التواصل مع دعم عملاء Ledger إذا كنت ترغب في الحصول على مساعدة حول ذلك.",
       "contactSupport" : "تواصل مع الدعم"
