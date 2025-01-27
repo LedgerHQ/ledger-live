@@ -6,6 +6,7 @@ import AccountBalanceSummaryFooter from "./AccountBalanceSummaryFooter";
 import StakeBanner from "./StakeBanner";
 import { SolanaFamily } from "./types";
 import operationDetails from "./operationDetails";
+import sendAmountFields from "./SendAmountFields";
 import transactionConfirmFields from "./TransactionConfirmFields";
 
 const family: SolanaFamily = {
@@ -16,6 +17,7 @@ const family: SolanaFamily = {
   AccountBalanceSummaryFooter,
   StakeBanner,
   operationDetails,
+  sendAmountFields,
   transactionConfirmFields,
 };
 

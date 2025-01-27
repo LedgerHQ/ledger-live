@@ -159,35 +159,51 @@ describe(isAccountEmpty.name, () => {
         expect(isAccountEmpty(mockAccount)).toEqual(false);
       });
     });
-    describe("when account has subaccounts", () => {
-      beforeEach(() => {
-        mockAccount.subAccounts = [{} as TokenAccount];
-      });
-
-      it("should return false", () => {
-        expect(isAccountEmpty(mockAccount)).toEqual(false);
-      });
-    });
   });
-  describe("given an solana account", () => {
-    beforeEach(() => {
+  describe("given a solana account", () => {
+    beforeAll(() => {
       mockAccount.type = "Account";
       mockAccount.currency = { family: "solana" } as CryptoCurrency;
+      mockAccount.operationsCount = 0;
+      delete mockAccount.subAccounts;
     });
-    it("Account has balance and spendableBalance is zero ", () => {
+
+    it("returns false when balance and spendableBalance is zero ", () => {
       mockAccount.balance = new BigNumber(10);
       mockAccount.spendableBalance = new BigNumber(0);
-      expect(isAccountEmpty(mockAccount)).toEqual(true);
+      expect(isAccountEmpty(mockAccount)).toEqual(false);
     });
-    it("Account has spendableBalance and balance is zero", () => {
+    it("returns true when spendableBalance and balance is zero", () => {
       mockAccount.balance = new BigNumber(0);
       mockAccount.spendableBalance = new BigNumber(10);
       expect(isAccountEmpty(mockAccount)).toEqual(true);
     });
-    it("Account has spendableBalance and has balance", () => {
+    it("returns false when spendableBalance and has balance", () => {
       mockAccount.balance = new BigNumber(10);
       mockAccount.spendableBalance = new BigNumber(10);
       expect(isAccountEmpty(mockAccount)).toEqual(false);
+    });
+
+    describe("when it has subaccounts", () => {
+      beforeAll(() => {
+        mockAccount.subAccounts = [{} as TokenAccount];
+      });
+
+      it("returns false when balance and spendableBalance is zero ", () => {
+        mockAccount.balance = new BigNumber(10);
+        mockAccount.spendableBalance = new BigNumber(0);
+        expect(isAccountEmpty(mockAccount)).toEqual(false);
+      });
+      it("returns false when spendableBalance and balance is zero", () => {
+        mockAccount.balance = new BigNumber(0);
+        mockAccount.spendableBalance = new BigNumber(10);
+        expect(isAccountEmpty(mockAccount)).toEqual(false);
+      });
+      it("returns false when spendableBalance and has balance", () => {
+        mockAccount.balance = new BigNumber(10);
+        mockAccount.spendableBalance = new BigNumber(10);
+        expect(isAccountEmpty(mockAccount)).toEqual(false);
+      });
     });
   });
 });
