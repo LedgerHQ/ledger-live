@@ -23,8 +23,6 @@ import vechain from "@ledgerhq/coin-vechain/specs";
 import xrp from "@ledgerhq/coin-xrp/specs";
 
 export default {
-  aptos,
-  casper,
   celo,
   algorand,
   aptos,

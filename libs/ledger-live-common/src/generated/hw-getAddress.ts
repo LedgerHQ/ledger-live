@@ -23,8 +23,6 @@ import { resolver as vechain } from "../families/vechain/setup";
 import { resolver as xrp } from "../families/xrp/setup";
 
 export default {
-  aptos,
-  casper,
   celo,
   algorand,
   aptos,
