@@ -191,9 +191,7 @@ export async function launchApp() {
       detoxURLBlacklistRegex:
         '\\(".*sdk.*.braze.*",".*.googleapis.com/.*",".*clients3.google.com.*",".*tron.coin.ledger.com/wallet/getBrokerage.*"\\)',
       mock: getEnv("MOCK") ? getEnv("MOCK") : "0",
-      disable_broadcast: getEnv("DISABLE_TRANSACTION_BROADCAST")
-        ? getEnv("DISABLE_TRANSACTION_BROADCAST")
-        : "1",
+      disable_broadcast: getEnv("DISABLE_TRANSACTION_BROADCAST") ? 1 : 0,
     },
     languageAndLocale: {
       language: "en-US",

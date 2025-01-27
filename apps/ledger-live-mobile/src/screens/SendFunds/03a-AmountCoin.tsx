@@ -187,6 +187,7 @@ export default function SendAmountCoin({ navigation, route }: Props) {
                         style={styles.switch}
                         value={useAllAmount}
                         onValueChange={toggleUseAllAmount}
+                        testID="send-amount-max-switch"
                       />
                     </View>
                   ) : null}
