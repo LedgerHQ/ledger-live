@@ -521,6 +521,15 @@ export const DEFAULT_FEATURES: Features = {
       settings: true,
     },
   },
+  lldLedgerSyncEntryPoints: {
+    ...DEFAULT_FEATURE,
+    params: {
+      manager: true,
+      accounts: true,
+      settings: true,
+      onboarding: true,
+    },
+  },
 };
 
 // Firebase SDK treat JSON values as strings
