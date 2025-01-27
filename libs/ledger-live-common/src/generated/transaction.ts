@@ -23,12 +23,12 @@ import vechain from "@ledgerhq/coin-vechain/transaction";
 import xrp from "@ledgerhq/coin-xrp/transaction";
 
 export default {
-  aptos,
-  casper,
   celo,
   algorand,
+  aptos,
   bitcoin,
   cardano,
+  casper,
   cosmos,
   elrond,
   evm,

@@ -1,5 +1,3 @@
-import aptos from "../families/aptos/deviceTransactionConfig";
-import casper from "../families/casper/deviceTransactionConfig";
 import celo from "../families/celo/deviceTransactionConfig";
 import algorand from "@ledgerhq/coin-algorand/deviceTransactionConfig";
 import aptos from "@ledgerhq/coin-aptos/deviceTransactionConfig";
@@ -24,8 +22,6 @@ import tron from "@ledgerhq/coin-tron/deviceTransactionConfig";
 import xrp from "@ledgerhq/coin-xrp/deviceTransactionConfig";
 
 export default {
-  aptos,
-  casper,
   celo,
   algorand,
   aptos,
