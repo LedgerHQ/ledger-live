@@ -40,6 +40,7 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useGroupedCurrenciesByProvider } from "@ledgerhq/live-common/deposit/index";
 import { LoadingBasedGroupedCurrencies, LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { AddAccountContexts } from "LLM/features/Accounts/screens/AddAccount/enums";
 
 const AnimatedFlatListWithRefreshControl = Animated.createAnimatedComponent(
   accountSyncRefreshControl(FlatList),
@@ -115,7 +116,8 @@ const AssetScreen = ({ route }: NavigationProps) => {
           screen: ScreenName.SelectNetwork,
           params: {
             currency: currency.id,
-            context: "addAccounts",
+            context: AddAccountContexts.AddAccounts,
+            sourceScreenName: ScreenName.Asset,
           },
         });
       } else {
@@ -123,7 +125,7 @@ const AssetScreen = ({ route }: NavigationProps) => {
           screen: ScreenName.SelectDevice,
           params: {
             currency: currency as CryptoCurrency,
-            context: "addAccounts",
+            context: AddAccountContexts.AddAccounts,
           },
         });
       }

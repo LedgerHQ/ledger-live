@@ -1,11 +1,14 @@
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { NavigatorScreenParams } from "@react-navigation/core";
 import { NavigatorName, ScreenName } from "~/const";
-import { NetworkBasedAddAccountNavigator } from "../Accounts/screens/AddAccount/types";
+import {
+  AddAccountContextType,
+  NetworkBasedAddAccountNavigator,
+} from "../Accounts/screens/AddAccount/types";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 
 type CommonParams = {
-  context?: "addAccounts" | "receiveFunds";
+  context?: AddAccountContextType;
   onSuccess?: () => void;
   onCloseNavigation?: () => void;
 };

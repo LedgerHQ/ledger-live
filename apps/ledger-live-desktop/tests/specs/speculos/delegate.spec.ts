@@ -130,7 +130,6 @@ for (const account of e2eDelegationAccounts) {
         }
 
         await app.account.startStakingFlowFromMainStakeButton();
-        await app.modal.continue();
         await app.delegate.verifyFirstProviderName(account.delegate.provider);
         if (account.delegate.account.currency.name == Currency.SOL.name) {
           await app.delegate.verifyContinueDisabled();
@@ -138,9 +137,9 @@ for (const account of e2eDelegationAccounts) {
           await app.delegate.verifyProviderTC(account.delegate.provider);
           await app.delegate.verifyProvider(1);
         }
-        await app.delegate.continueDelegate();
+        await app.delegate.continue();
         await app.delegate.fillAmount(account.delegate.amount);
-        await app.modal.countinueSendAmount();
+        await app.delegate.continue();
 
         await app.speculos.signDelegationTransaction(account.delegate);
         await app.delegate.verifySuccessMessage();
@@ -200,17 +199,17 @@ for (const account of e2eDelegationAccountsWithoutBroadcast) {
         await app.accounts.navigateToAccountByName(account.delegate.account.accountName);
 
         await app.account.startStakingFlowFromMainStakeButton();
-        await app.modal.continue();
+        await app.delegate.continue();
         await app.delegate.verifyFirstProviderName(account.delegate.provider);
-        await app.delegate.continueDelegate();
+        await app.delegate.continue();
 
         if (account.delegate.account.currency.name == Currency.ADA.name) {
           await app.delegate.verifyValidatorName("Ledger by Figment 3 [LBF3]");
           await app.delegate.verifyFeesVisible();
-          await app.delegate.continueDelegate();
+          await app.delegate.continue();
         } else {
           await app.delegate.fillAmount(account.delegate.amount);
-          await app.modal.countinueSendAmount();
+          await app.delegate.continue();
         }
 
         await app.speculos.signDelegationTransaction(account.delegate);
@@ -261,7 +260,7 @@ for (const validator of validators) {
         await app.accounts.navigateToAccountByName(validator.delegate.account.accountName);
 
         await app.account.startStakingFlowFromMainStakeButton();
-        await app.modal.continue();
+        await app.delegate.continue();
 
         await app.delegate.verifyFirstProviderName(validator.delegate.provider);
         if (validator.delegate.account.currency.name == Currency.SOL.name) {
@@ -314,7 +313,7 @@ test.describe("Staking flow from different entry point", () => {
       await app.assetDrawer.selectAccountByIndex(delegateAccount.account);
 
       await app.delegate.verifyFirstProviderName(delegateAccount.provider);
-      await app.delegate.continueDelegate();
+      await app.delegate.continue();
     },
   );
 
@@ -336,7 +335,7 @@ test.describe("Staking flow from different entry point", () => {
       await app.assetDrawer.selectAccountByIndex(delegateAccount.account);
 
       await app.delegate.verifyFirstProviderName(delegateAccount.provider);
-      await app.delegate.continueDelegate();
+      await app.delegate.continue();
     },
   );
 });

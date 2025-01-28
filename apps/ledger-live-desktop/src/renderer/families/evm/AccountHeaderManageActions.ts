@@ -22,19 +22,23 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
 
   const isEthereumAccount = account.type === "Account" && account.currency.id === "ethereum";
   const isBscAccount = account.type === "Account" && account.currency.id === "bsc";
+  const isPOLAccount = account.type === "Account" && account.currency.id === "polygon";
 
-  const onClickStakekit = useCallback(() => {
-    const value = "/platform/stakekit";
+  const onClickStakekit = useCallback(
+    (yieldId: string) => {
+      const value = "/platform/stakekit";
 
-    history.push({
-      pathname: value,
-      state: {
-        yieldId: "bsc-bnb-native-staking",
-        accountId: account.id,
-        returnTo: `/account/${account.id}`,
-      },
-    });
-  }, [account.id, history]);
+      history.push({
+        pathname: value,
+        state: {
+          yieldId,
+          accountId: account.id,
+          returnTo: `/account/${account.id}`,
+        },
+      });
+    },
+    [account.id, history],
+  );
 
   const onClickStakeModal = useCallback(() => {
     if (isAccountEmpty(account)) {
@@ -58,11 +62,13 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
     if (isEthereumAccount) {
       onClickStakeModal();
     } else if (isBscAccount) {
-      onClickStakekit();
+      onClickStakekit("bsc-bnb-native-staking");
+    } else if (isPOLAccount) {
+      onClickStakekit("ethereum-matic-native-staking");
     }
-  }, [isEthereumAccount, isBscAccount, onClickStakeModal, onClickStakekit]);
+  }, [isEthereumAccount, isBscAccount, onClickStakeModal, onClickStakekit, isPOLAccount]);
 
-  if (isEthereumAccount || isBscAccount) {
+  if (isEthereumAccount || isBscAccount || isPOLAccount) {
     return [
       {
         key: "Stake",

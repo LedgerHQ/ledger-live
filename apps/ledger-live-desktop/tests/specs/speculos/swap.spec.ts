@@ -157,7 +157,7 @@ test.describe("Swap - Rejected on device", () => {
   test(
     `Swap ${rejectedSwap.accountToDebit.currency.name} to ${rejectedSwap.accountToCredit.currency.name}`,
     {
-      annotation: { type: "TMS", description: "B2CQA-600, B2CQA-2212" },
+      annotation: { type: "TMS", description: "B2CQA-2212" },
     },
     async ({ app, electronApp }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
@@ -190,7 +190,7 @@ const tooLowAmountForQuoteSwaps = [
     xrayTicket: "B2CQA-2759",
   },
   {
-    swap: new Swap(Account.TRX_1, Account.ETH_1, "77", Fee.MEDIUM),
+    swap: new Swap(Account.TRX_1, Account.ETH_1, "70", Fee.MEDIUM),
     xrayTicket: "B2CQA-2739",
   },
 ];

@@ -36,13 +36,13 @@ export class DelegateDrawer extends Drawer {
     await expect(this.transactionType).toBeVisible();
   }
 
-  @step("Verify transaction type corresond to $0")
+  @step("Verify transaction type corresponds to $0")
   async transactionTypeIsCorrect(transactionType: string) {
     const transaction = await this.transactionType.allInnerTexts();
     expect(transaction).toContain(transactionType);
   }
 
-  @step("Verify operation type corresond to $0")
+  @step("Verify operation type corresponds to $0")
   async operationTypeIsCorrect(operationType: string) {
     const operation = await this.operationType.allInnerTexts();
     expect(operation).toContain(operationType);

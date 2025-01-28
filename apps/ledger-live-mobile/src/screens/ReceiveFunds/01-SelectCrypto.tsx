@@ -11,7 +11,7 @@ import debounce from "lodash/debounce";
 import SafeAreaView from "~/components/SafeAreaView";
 import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import { useSelector } from "react-redux";
-import { ScreenName } from "~/const";
+import { NavigatorName, ScreenName } from "~/const";
 import { track, TrackScreen } from "~/analytics";
 import FilteredSearchBar from "~/components/FilteredSearchBar";
 import BigCurrencyRow from "~/components/BigCurrencyRow";
@@ -23,6 +23,8 @@ import { findAccountByCurrency } from "~/logic/deposit";
 
 import { useGroupedCurrenciesByProvider } from "@ledgerhq/live-common/deposit/index";
 import { LoadingBasedGroupedCurrencies, LoadingStatus } from "@ledgerhq/live-common/deposit/type";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { AddAccountContexts } from "LLM/features/Accounts/screens/AddAccount/enums";
 
 const SEARCH_KEYS = getEnv("CRYPTO_ASSET_SEARCH_KEYS");
 
@@ -51,10 +53,32 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const { t } = useTranslation();
   const accounts = useSelector(flattenAccountsSelector);
 
+  const llmNetworkBasedAddAccountFlow = useFeature("llmNetworkBasedAddAccountFlow");
+
   const { result, loadingStatus: providersLoadingStatus } = useGroupedCurrenciesByProvider(
     true,
   ) as LoadingBasedGroupedCurrencies;
   const { currenciesByProvider, sortedCryptoCurrencies } = result;
+
+  const goToDeviceSelection = useCallback(
+    (currency: CryptoCurrency, createTokenAccount?: boolean) => {
+      if (llmNetworkBasedAddAccountFlow?.enabled) {
+        navigation.replace(NavigatorName.DeviceSelection, {
+          screen: ScreenName.SelectDevice,
+          params: {
+            currency,
+            context: AddAccountContexts.ReceiveFunds,
+          },
+        });
+      } else {
+        navigation.navigate(ScreenName.ReceiveAddAccountSelectDevice, {
+          currency,
+          ...(createTokenAccount && { createTokenAccount }),
+        });
+      }
+    },
+    [llmNetworkBasedAddAccountFlow?.enabled, navigation],
+  );
 
   const onPressItem = useCallback(
     (curr: CryptoCurrency | TokenCurrency) => {
@@ -88,14 +112,10 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
           currency,
         });
       } else {
-        // If we didn't find any account of the parent currency then we add one
-        navigation.navigate(ScreenName.ReceiveAddAccountSelectDevice, {
-          currency,
-          createTokenAccount: isToken || undefined,
-        });
+        goToDeviceSelection(currency, isToken);
       }
     },
-    [currenciesByProvider, accounts, navigation, filterCurrencyIds],
+    [currenciesByProvider, accounts, navigation, filterCurrencyIds, goToDeviceSelection],
   );
 
   useEffect(() => {

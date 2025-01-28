@@ -55,7 +55,7 @@ test("Enable password lock", async ({ page, userdataFile }) => {
   await test.step("I lost my password", async () => {
     await lockscreenPage.lostPassword();
     await expect.soft(modal.container).toHaveScreenshot("lockscreen-reset-app-modal.png");
-    await modal.cancel();
+    await passwordlockModal.clickCancel();
   });
 
   await test.step("Unlock with wrong password", async () => {

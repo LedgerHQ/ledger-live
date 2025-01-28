@@ -64,7 +64,7 @@ for (const account of accounts) {
             await app.receive.verifySendCurrencyTokensWarningMessage(account.account, "BEP20");
             break;
         }
-        await app.modal.continue();
+        await app.receive.continue();
         const displayedAddress = await app.receive.getAddressDisplayed();
         await app.receive.expectValidReceiveAddress(displayedAddress);
 
@@ -106,7 +106,7 @@ test.describe("Receive", () => {
       await app.accounts.navigateToAccountByName(account.accountName);
       await app.account.expectAccountVisibility(account.accountName);
       await app.account.clickReceive();
-      await app.modal.continue();
+      await app.receive.continue();
       await app.receive.verifyTronAddressActivationWarningMessage();
     },
   );

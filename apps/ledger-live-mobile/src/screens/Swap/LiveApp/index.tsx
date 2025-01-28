@@ -59,7 +59,7 @@ export function SwapLiveApp() {
   }
 
   return (
-    <Flex flex={1} mb={10}>
+    <Flex flex={1}>
       <WebView manifest={manifest} setWebviewState={setWebviewState} />
     </Flex>
   );

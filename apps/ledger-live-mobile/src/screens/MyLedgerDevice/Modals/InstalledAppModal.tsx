@@ -18,6 +18,7 @@ import QueuedDrawer from "~/components/QueuedDrawer";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { MyLedgerNavigatorStackParamList } from "~/components/RootNavigator/types/MyLedgerNavigator";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { AddAccountContexts } from "~/newArch/features/Accounts/screens/AddAccount/enums";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<MyLedgerNavigatorStackParamList, ScreenName.MyLedgerDevice>
@@ -54,7 +55,8 @@ const InstallSuccessBar = ({ state, navigation, disable }: Props) => {
   const onAddAccount = useCallback(() => {
     if (llmNetworkBasedAddAccountFlow?.enabled)
       navigation.navigate(NavigatorName.AssetSelection, {
-        context: "addAccounts",
+        context: AddAccountContexts.AddAccounts,
+        sourceScreenName: "InstalleAppModal",
       });
     else navigation.navigate(NavigatorName.AddAccounts);
 

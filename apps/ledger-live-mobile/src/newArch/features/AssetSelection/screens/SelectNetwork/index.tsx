@@ -12,6 +12,7 @@ import { AssetSelectionNavigatorParamsList } from "../../types";
 import useSelectNetworkViewModel from "./useSelectNetworkViewModel";
 import NetworkBanner from "../../components/NetworkBanner";
 import { LoadingStatus } from "@ledgerhq/live-common/deposit/type";
+import useAnalytics from "../../../../hooks/useAnalytics";
 
 const keyExtractor = (elem: CryptoWithAccounts) => elem.crypto.id;
 
@@ -20,8 +21,10 @@ const AnimatedView = Animatable.View;
 export default function SelectNetwork({
   route,
 }: StackNavigatorProps<AssetSelectionNavigatorParamsList, ScreenName.SelectNetwork>) {
-  const { filterCurrencyIds, context, currency, inline } = route.params;
+  const { filterCurrencyIds, context, currency, inline, sourceScreenName } = route.params;
   const { t } = useTranslation();
+  const { analyticsMetadata } = useAnalytics(context, sourceScreenName);
+
   const {
     hideBanner,
     clickLearn,
@@ -34,7 +37,13 @@ export default function SelectNetwork({
     subTitleTestId,
     listTestId,
     providersLoadingStatus,
-  } = useSelectNetworkViewModel({ filterCurrencyIds, context, currency, inline });
+  } = useSelectNetworkViewModel({
+    filterCurrencyIds,
+    context,
+    currency,
+    inline,
+    analyticsMetadata,
+  });
 
   const renderItem = useCallback(
     ({ item }: { item: CryptoWithAccounts }) => (
@@ -51,9 +60,11 @@ export default function SelectNetwork({
     [onPressItem, t],
   );
 
+  const pageTrackingEvent = analyticsMetadata.SelectNetwork?.onAccessScreen;
+
   return (
     <>
-      <TrackScreen category="Deposit" name="Choose a network" />
+      <TrackScreen name={pageTrackingEvent?.eventName} {...pageTrackingEvent?.payload} />
       <Flex px={6} py={2} testID="select-network-view-area">
         <Text variant="h4" fontWeight="semiBold" testID={titleTestId} mb={2}>
           {titleText}

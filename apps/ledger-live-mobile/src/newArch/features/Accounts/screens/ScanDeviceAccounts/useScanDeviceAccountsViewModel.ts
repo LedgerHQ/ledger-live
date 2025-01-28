@@ -19,10 +19,12 @@ import { useMaybeAccountName } from "~/reducers/wallet";
 import { setAccountName } from "@ledgerhq/live-wallet/store";
 import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
 import type { ScanDeviceAccountsNavigationProps, ScanDeviceAccountsViewModelProps } from "./types";
+import { track } from "~/analytics";
 
 export default function useScanDeviceAccountsViewModel({
   existingAccounts,
   blacklistedTokenIds,
+  analyticsMetadata,
 }: ScanDeviceAccountsViewModelProps) {
   const [scanning, setScanning] = useState(true);
   const navigation = useNavigation<ScanDeviceAccountsNavigationProps["navigation"]>();
@@ -96,16 +98,24 @@ export default function useScanDeviceAccountsViewModel({
     setCancelled(false);
     startSubscription();
   }, [startSubscription]);
-  const stopSubscription = useCallback((syncUI = true) => {
-    if (scanSubscription.current) {
-      scanSubscription.current.unsubscribe();
-      scanSubscription.current = null;
+  const stopSubscription = useCallback(
+    (syncUI = true) => {
+      if (scanSubscription.current) {
+        scanSubscription.current.unsubscribe();
+        scanSubscription.current = null;
 
-      if (syncUI) {
-        setScanning(false);
+        if (syncUI) {
+          setScanning(false);
+          const stopScanMetadata = analyticsMetadata?.ScanDeviceAccounts.onStopScan;
+          if (stopScanMetadata)
+            track(stopScanMetadata.eventName, {
+              ...stopScanMetadata.payload,
+            });
+        }
       }
-    }
-  }, []);
+    },
+    [analyticsMetadata?.ScanDeviceAccounts.onStopScan],
+  );
   const quitFlow = useCallback(() => {
     navigation.navigate(NavigatorName.Accounts);
   }, [navigation]);
@@ -122,8 +132,13 @@ export default function useScanDeviceAccountsViewModel({
   const selectAll = useCallback(
     (accounts: Account[]) => {
       setSelectedIds(uniq([...selectedIds, ...accounts.map(a => a.id)]));
+      const selectAllMetadata = analyticsMetadata?.AccountsFound.onSelectAll;
+      if (selectAllMetadata)
+        track(selectAllMetadata.eventName, {
+          ...selectAllMetadata.payload,
+        });
     },
-    [selectedIds],
+    [selectedIds, analyticsMetadata?.AccountsFound.onSelectAll],
   );
   const unselectAll = useCallback(
     (accounts: Account[]) => {
@@ -160,6 +175,20 @@ export default function useScanDeviceAccountsViewModel({
           accountsToAdd: accountsToAdd,
         });
     }
+
+    const continueMetadata = analyticsMetadata?.AccountsFound.onContinue;
+    if (continueMetadata)
+      track(continueMetadata.eventName, {
+        ...continueMetadata.payload,
+      });
+
+    const successMetadata = analyticsMetadata?.AccountsFound.onAccountsAdded;
+    if (successMetadata)
+      track(successMetadata.eventName, {
+        ...successMetadata.payload,
+        currency,
+        amount: accountsToAdd.length,
+      });
   }, [
     currency,
     inline,
@@ -169,6 +198,8 @@ export default function useScanDeviceAccountsViewModel({
     scannedAccounts,
     selectedIds,
     dispatch,
+    analyticsMetadata?.AccountsFound.onContinue,
+    analyticsMetadata?.AccountsFound.onAccountsAdded,
   ]);
 
   const onCancel = useCallback(() => {

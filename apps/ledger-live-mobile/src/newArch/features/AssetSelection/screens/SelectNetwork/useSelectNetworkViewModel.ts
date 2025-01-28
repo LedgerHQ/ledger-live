@@ -17,12 +17,14 @@ import { AssetSelectionNavigationProps, SelectNetworkRouteParams } from "../../t
 import { CryptoWithAccounts } from "./types";
 import { LoadingBasedGroupedCurrencies } from "@ledgerhq/live-common/deposit/type";
 import { useGroupedCurrenciesByProvider } from "@ledgerhq/live-common/deposit/index";
+import { AddAccountContexts } from "LLM/features/Accounts/screens/AddAccount/enums";
 
 export default function useSelectNetworkViewModel({
   filterCurrencyIds,
   context,
   currency,
   inline,
+  analyticsMetadata,
 }: SelectNetworkRouteParams) {
   const navigation = useNavigation<AssetSelectionNavigationProps["navigation"]>();
 
@@ -112,10 +114,12 @@ export default function useSelectNetworkViewModel({
 
   const processNetworkSelection = useCallback(
     (selectedCurrency: CryptoCurrency | TokenCurrency) => {
-      track("network_clicked", {
-        network: selectedCurrency.name,
-        page: "Choose a network",
-      });
+      const clickMetadata = analyticsMetadata?.SelectNetwork?.onNetworkClick;
+      if (clickMetadata)
+        track(clickMetadata.eventName, {
+          network: selectedCurrency.name,
+          ...clickMetadata.payload,
+        });
 
       const cryptoToSend = provider?.currenciesByNetwork.find(curByNetwork =>
         curByNetwork.type === "TokenCurrency"
@@ -124,7 +128,7 @@ export default function useSelectNetworkViewModel({
       );
 
       if (!cryptoToSend) return;
-      const isAddAccountContext = context === "addAccounts";
+      const isAddAccountContext = context === AddAccountContexts.AddAccounts;
 
       const accs = findAccountByCurrency(accounts, cryptoToSend);
 
@@ -165,7 +169,14 @@ export default function useSelectNetworkViewModel({
         navigateToDevice(cryptoToSend, false);
       }
     },
-    [accounts, navigation, provider, context, navigateToDevice],
+    [
+      accounts,
+      navigation,
+      provider,
+      context,
+      navigateToDevice,
+      analyticsMetadata?.SelectNetwork?.onNetworkClick,
+    ],
   );
 
   const hideBanner = useCallback(() => {
@@ -191,7 +202,7 @@ export default function useSelectNetworkViewModel({
     string
   > => {
     switch (context) {
-      case "receiveFunds":
+      case AddAccountContexts.ReceiveFunds:
         return {
           titleText: t("selectNetwork.swap.title"),
           titleTestId: "receive-header-step2-title",
@@ -199,7 +210,7 @@ export default function useSelectNetworkViewModel({
           subTitleTestId: "transfer.receive.selectNetwork.subtitle",
           listTestId: "receive-header-step2-networks",
         };
-      case "addAccounts":
+      case AddAccountContexts.AddAccounts:
         return {
           titleText: t("assetSelection.selectNetwork.title"),
           titleTestId: "addAccounts-header-step2-title",

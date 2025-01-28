@@ -21,6 +21,7 @@ import { walletSelector } from "~/reducers/wallet";
 import { accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { AddAccountContexts } from "LLM/features/Accounts/screens/AddAccount/enums";
 
 type SubAccountEnhanced = SubAccount & {
   parentAccount: Account;
@@ -133,7 +134,7 @@ function ReceiveSelectAccount({
         screen: ScreenName.SelectDevice,
         params: {
           currency: currency as CryptoCurrency,
-          context: "addAccounts",
+          context: AddAccountContexts.AddAccounts,
           inline: true,
         },
       });

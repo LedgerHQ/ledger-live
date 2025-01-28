@@ -83,7 +83,7 @@ for (const token of subAccountReceive) {
         await app.account.clickAddToken();
         await app.receive.selectToken(token.account);
 
-        await app.modal.continue();
+        await app.receive.continue();
 
         const displayedAddress = await app.receive.getAddressDisplayed();
         await app.receive.expectValidReceiveAddress(displayedAddress);

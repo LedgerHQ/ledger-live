@@ -17,6 +17,7 @@ import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackBut
 import { AssetSelectionNavigatorParamsList } from "./types";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import CloseWithConfirmation from "LLM/components/CloseWithConfirmation";
+import useAnalytics from "../../hooks/useAnalytics";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<AssetSelectionNavigatorParamsList, NavigatorName.AssetSelection>
@@ -27,23 +28,39 @@ export default function Navigator() {
   const route = useRoute<NavigationProps["route"]>();
   const hasClosedNetworkBanner = useSelector(hasClosedNetworkBannerSelector);
 
-  const { token, currency } = route.params || {};
+  const { token, currency, context, sourceScreenName } = route.params || {};
   const navigation = useNavigation();
+  const { analyticsMetadata } = useAnalytics(context, sourceScreenName);
 
-  const handleOnCloseAssetSelectionNavigator = useCallback(() => {
-    track("button_clicked", {
-      button: "Close",
-      screen: route.name,
-    });
-    navigation.getParent()?.goBack();
-  }, [route, navigation]);
+  const handleOnCloseAssetSelectionNavigator = useCallback(
+    (screenName: string) => () => {
+      const closeMetadata = analyticsMetadata[screenName]?.onClose;
+      if (closeMetadata)
+        track(closeMetadata.eventName, {
+          ...closeMetadata.payload,
+        });
+      navigation.getParent()?.goBack();
+    },
+    [navigation, analyticsMetadata],
+  );
+
+  const handleOnBack = useCallback(
+    (screenName: string) => (nav: typeof navigation) => {
+      const backMetadata = analyticsMetadata[screenName]?.onBack;
+      if (backMetadata)
+        track(backMetadata.eventName, {
+          ...backMetadata.payload,
+        });
+      nav.goBack();
+    },
+    [analyticsMetadata],
+  );
 
   const stackNavigationConfig = useMemo(
     () => ({
       ...getStackNavigatorConfig(colors, true),
-      headerRight: () => <CloseWithConfirmation onClose={handleOnCloseAssetSelectionNavigator} />,
     }),
-    [colors, handleOnCloseAssetSelectionNavigator],
+    [colors],
   );
 
   return (
@@ -60,8 +77,18 @@ export default function Navigator() {
         name={ScreenName.AddAccountsSelectCrypto}
         component={SelectCrypto}
         options={{
-          headerLeft: () => <NavigationHeaderBackButton />,
           title: "",
+          headerRight: () => (
+            <CloseWithConfirmation
+              onClose={handleOnCloseAssetSelectionNavigator(ScreenName.AddAccountsSelectCrypto)}
+            />
+          ),
+
+          headerLeft: () => (
+            <NavigationHeaderBackButton
+              onPress={handleOnBack(ScreenName.AddAccountsSelectCrypto)}
+            />
+          ),
         }}
         initialParams={route.params}
       />
@@ -70,14 +97,18 @@ export default function Navigator() {
         name={ScreenName.SelectNetwork}
         component={SelectNetwork}
         options={{
-          headerLeft: () => <NavigationHeaderBackButton />,
           headerTitle: "",
+          headerLeft: () => (
+            <NavigationHeaderBackButton onPress={handleOnBack(ScreenName.SelectNetwork)} />
+          ),
           headerRight: () => (
             <Flex alignItems="center" justifyContent="center" flexDirection="row">
               {hasClosedNetworkBanner && (
                 <HelpButton eventButton="Choose a network article" url={urls.chooseNetwork} />
               )}
-              {stackNavigationConfig.headerRight()}
+              <CloseWithConfirmation
+                onClose={handleOnCloseAssetSelectionNavigator(ScreenName.SelectNetwork)}
+              />
             </Flex>
           ),
         }}
