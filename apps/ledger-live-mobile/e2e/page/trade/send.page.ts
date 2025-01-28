@@ -131,7 +131,7 @@ export default class SendPage {
   }
 
   @Step("Expect recipient in summary")
-  async expectSummaryRecepient(recipient: string) {
+  async expectSummaryRecipient(recipient: string) {
     await expect(this.summaryRecipient()).toHaveText(recipient);
   }
 
@@ -148,7 +148,7 @@ export default class SendPage {
   }
 
   @Step("Expect recipient ENS in summary")
-  async expectSummaryRecepientEns(ensName: string) {
+  async expectSummaryRecipientEns(ensName: string) {
     await expect(this.summaryRecipientEns()).toHaveText(ensName);
   }
 
