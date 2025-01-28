@@ -1,13 +1,17 @@
+import BigNumber from "bignumber.js";
 import { getTokenById } from "@ledgerhq/cryptoassets";
 import {
   AmountRequired,
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
+  NotEnoughGas,
   RecipientRequired,
 } from "@ledgerhq/errors";
 import type { Account } from "@ledgerhq/types-live";
-import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
+import { findSubAccountById, getFeesUnit } from "@ledgerhq/coin-framework/account/index";
+import { updateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
 import { ChainAPI } from "./api";
 import {
   getMaybeMintAccount,
@@ -64,7 +68,6 @@ import type {
   TransferTransaction,
 } from "./types";
 import { assertUnreachable } from "./utils";
-import { updateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { estimateFeeAndSpendable } from "./estimateMaxSpendable";
 
 async function deriveCommandDescriptor(
@@ -185,7 +188,7 @@ const deriveTokenTransferCommandDescriptor = async (
   const { fee, spendable: spendableSol } = await estimateFeeAndSpendable(api, mainAccount, tx);
 
   if (spendableSol.lt(assocAccRentExempt) || spendableSol.isZero()) {
-    errors.fee = new NotEnoughBalance();
+    errors.gasPrice = createNotEnoughGasError(mainAccount, fee + assocAccRentExempt);
   }
 
   if (!tx.useAllAmount && tx.amount.lte(0)) {
@@ -295,7 +298,7 @@ async function deriveCreateAssociatedTokenAccountCommandDescriptor(
   const { fee } = await estimateFeeAndSpendable(api, mainAccount, tx);
 
   if (mainAccount.spendableBalance.lt(fee)) {
-    errors.fee = new NotEnoughBalance();
+    errors.gasPrice = createNotEnoughGasError(mainAccount, fee);
   }
 
   return {
@@ -732,6 +735,19 @@ function validateAndTryGetStakeAccount(
   }
 
   return undefined;
+}
+
+function createNotEnoughGasError(account: Account, fees: number): Error {
+  const query = new URLSearchParams({
+    ...(account?.id ? { account: account.id } : {}),
+  });
+  return new NotEnoughGas(undefined, {
+    // "You need {{fees}} {{ticker}} for network fees to swap as you are on {{cryptoName}} network. <link0>Buy {{ticker}}</link0>"
+    fees: formatCurrencyUnit(getFeesUnit(account.currency), BigNumber(fees)),
+    ticker: account.currency.ticker,
+    cryptoName: account.currency.name,
+    links: [`ledgerlive://buy?${query.toString()}`],
+  });
 }
 
 export { prepareTransaction };
