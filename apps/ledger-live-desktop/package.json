@@ -60,7 +60,6 @@
     "@ledgerhq/coin-filecoin": "workspace:^",
     "@ledgerhq/coin-framework": "workspace:^",
     "@ledgerhq/devices": "workspace:*",
-    "@ledgerhq/device-management-kit": "0.5.1",
     "@ledgerhq/domain-service": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/ethereum-provider": "workspace:^",
