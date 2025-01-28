@@ -1,14 +1,17 @@
 import { AssertionError, fail } from "assert";
 import BigNumber from "bignumber.js";
 import { getEnv } from "@ledgerhq/live-env";
+import { TokenAccount } from "@ledgerhq/types-live";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { decodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
 import { AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { TokenAccount } from "@ledgerhq/types-live";
 import { makeTokenAccount } from "../fixtures/common.fixtures";
 import * as etherscanAPI from "../../api/explorer/etherscan";
+import { UnknownExplorer, UnknownNode } from "../../errors";
 import * as synchronization from "../../synchronization";
+import * as noneExplorer from "../../api/explorer/none";
 import * as nodeApi from "../../api/node/rpc.common";
+import { createSwapHistoryMap } from "../../logic";
 import {
   account,
   coinOperations,
@@ -23,10 +26,8 @@ import {
   internalOperations,
   swapHistory,
 } from "../fixtures/synchronization.fixtures";
-import { UnknownNode } from "../../errors";
-import * as logic from "../../logic";
 import { getCoinConfig } from "../../config";
-import { createSwapHistoryMap } from "../../logic";
+import * as logic from "../../logic";
 
 jest.mock("../../api/node/rpc.common");
 jest.useFakeTimers().setSystemTime(new Date("2014-04-21"));
@@ -102,9 +103,13 @@ describe("EVM Family", () => {
       });
 
       it("should throw for currency with unsupported explorer", async () => {
-        mockGetConfig.mockImplementationOnce((): any => {
+        mockGetConfig.mockImplementation((): any => {
           return {
             info: {
+              node: {
+                type: "external",
+                uri: "https://my-rpc.com",
+              },
               explorer: {
                 uri: "http://nope.com",
                 type: "unsupported" as any,
@@ -131,12 +136,54 @@ describe("EVM Family", () => {
           if (e instanceof AssertionError) {
             throw e;
           }
-          expect(e).toBeInstanceOf(UnknownNode);
+          expect(e).toBeInstanceOf(UnknownExplorer);
         }
+      });
+
+      it("shouldn't throw for none explorer config", async () => {
+        mockGetConfig.mockImplementation((): any => {
+          return {
+            info: {
+              node: {
+                type: "external",
+                uri: "https://my-rpc.com",
+              },
+              explorer: {
+                type: "none",
+              },
+            },
+          };
+        });
+        const spy = jest.spyOn(noneExplorer?.default, "getLastOperations");
+
+        await synchronization.getAccountShape(
+          {
+            ...getAccountShapeParameters,
+            currency: {
+              ...currency,
+              ethereumLikeInfo: {
+                chainId: 1,
+              } as any,
+            },
+          },
+          {} as any,
+        );
+
+        expect(spy).toHaveBeenCalledTimes(1);
+        expect(spy).toHaveReturnedWith(
+          Promise.resolve({
+            lastCoinOperations: [],
+            lastTokenOperations: [],
+            lastNftOperations: [],
+            lastInternalOperations: [],
+          }),
+        );
       });
 
       describe("With no transactions fetched", () => {
         beforeAll(() => {
+          // @ts-expect-error reseting cache
+          etherscanAPI?.default.getLastOperations.reset();
           jest.spyOn(etherscanAPI, "getLastOperations").mockImplementation(() =>
             Promise.resolve({
               lastCoinOperations: [],
@@ -265,6 +312,8 @@ describe("EVM Family", () => {
 
       describe("With transactions fetched", () => {
         beforeAll(() => {
+          // @ts-expect-error reseting cache
+          etherscanAPI?.default.getLastOperations.reset();
           jest
             .spyOn(etherscanAPI, "getLastCoinOperations")
             .mockImplementation(() =>
@@ -522,6 +571,84 @@ describe("EVM Family", () => {
           );
 
           expect(accountShape.operations).toEqual([coinOperations[0]]);
+        });
+      });
+
+      describe("With Blockscout", () => {
+        beforeAll(() => {
+          // @ts-expect-error reseting cache
+          etherscanAPI?.default.getLastOperations.reset();
+          jest
+            .spyOn(etherscanAPI, "getLastCoinOperations")
+            .mockImplementation(() =>
+              Promise.resolve([{ ...coinOperations[0] }, { ...coinOperations[1] }]),
+            );
+          jest
+            .spyOn(etherscanAPI, "getLastTokenOperations")
+            .mockImplementation(() =>
+              Promise.resolve([{ ...tokenOperations[0] }, { ...tokenOperations[1] }]),
+            );
+
+          jest
+            .spyOn(etherscanAPI, "getLastERC721Operations")
+            .mockImplementation(() =>
+              Promise.resolve([
+                { ...erc721Operations[0] },
+                { ...erc721Operations[1] },
+                { ...erc721Operations[2] },
+              ]),
+            );
+          jest
+            .spyOn(etherscanAPI, "getLastInternalOperations")
+            .mockImplementation(() =>
+              Promise.resolve([
+                { ...internalOperations[0] },
+                { ...internalOperations[1] },
+                { ...internalOperations[2] },
+              ]),
+            );
+          jest
+            .spyOn(nodeApi, "getTokenBalance")
+            .mockImplementation(async (a, b, contractAddress) => {
+              if (contractAddress === tokenCurrencies[0].contractAddress) {
+                return new BigNumber(10000);
+              }
+              throw new Error("Shouldn't be trying to fetch this token balance");
+            });
+        });
+
+        afterAll(() => {
+          jest.restoreAllMocks();
+        });
+
+        it("should never call ERC1155 endpoint", async () => {
+          mockGetConfig.mockImplementation((): any => {
+            return {
+              info: {
+                node: {
+                  type: "external",
+                  uri: "https://my-rpc.com",
+                },
+                explorer: {
+                  type: "blockscout",
+                  uri: "https://api.com",
+                },
+              },
+            };
+          });
+          console.log(etherscanAPI?.default.getLastOperations);
+          const spy = jest.spyOn(etherscanAPI, "getLastERC1155Operations");
+
+          await synchronization.getAccountShape(
+            {
+              ...getAccountShapeParameters,
+              initialAccount: account,
+            },
+            {} as any,
+          );
+
+          expect(spy).toHaveBeenCalledTimes(1);
+          expect(spy).toHaveReturnedWith(Promise.resolve([]));
         });
       });
     });

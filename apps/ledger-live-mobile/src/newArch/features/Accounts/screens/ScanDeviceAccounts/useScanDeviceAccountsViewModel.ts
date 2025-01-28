@@ -8,10 +8,10 @@ import uniq from "lodash/uniq";
 import type { Account } from "@ledgerhq/types-live";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { isTokenCurrency } from "@ledgerhq/live-common/currencies/index";
-import logger from "../../../../../logger";
+import logger from "~/logger";
 import { NavigatorName, ScreenName } from "~/const";
 import { prepareCurrency } from "~/bridge/cache";
-import noAssociatedAccountsByFamily from "../../../../../generated/NoAssociatedAccounts";
+import noAssociatedAccountsByFamily from "~/generated/NoAssociatedAccounts";
 import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { groupAddAccounts } from "@ledgerhq/live-wallet/addAccounts";
@@ -34,6 +34,7 @@ export default function useScanDeviceAccountsViewModel({
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [cancelled, setCancelled] = useState(false);
   const scanSubscription = useRef<Subscription | null>(null);
+  const [isAddingAccounts, setIsAddinAccounts] = useState<boolean>(false);
   const dispatch = useDispatch();
 
   const route = useRoute<ScanDeviceAccountsNavigationProps["route"]>();
@@ -42,6 +43,7 @@ export default function useScanDeviceAccountsViewModel({
     device: { deviceId },
     inline,
     returnToSwap,
+    onCloseNavigation,
   } = route.params || {};
 
   const newAccountSchemes = useMemo(() => {
@@ -130,31 +132,17 @@ export default function useScanDeviceAccountsViewModel({
     [selectedIds],
   );
   const importAccounts = useCallback(() => {
-    const selectedAccounts = scannedAccounts.filter(a => selectedIds.includes(a.id));
-    const { accountsWithZeroBalance, fundedAccounts } = selectedAccounts.reduce(
-      (acc, account) => {
-        if (account.balance.isZero()) {
-          acc.accountsWithZeroBalance.push(account);
-        } else {
-          acc.fundedAccounts.push(account);
-        }
-        return acc;
-      },
-      { accountsWithZeroBalance: [], fundedAccounts: [] } as {
-        accountsWithZeroBalance: Account[];
-        fundedAccounts: Account[];
-      },
+    setIsAddinAccounts(true);
+    const accountsToAdd = scannedAccounts.filter(a => selectedIds.includes(a.id));
+
+    dispatch(
+      addAccountsAction({
+        existingAccounts,
+        scannedAccounts,
+        selectedIds,
+        renamings: {}, // renaming was done in scannedAccounts directly.. (see if we want later to change this paradigm)
+      }),
     );
-    if (fundedAccounts.length > 0) {
-      dispatch(
-        addAccountsAction({
-          existingAccounts,
-          scannedAccounts,
-          selectedIds: fundedAccounts.map(a => a.id),
-          renamings: {}, // renaming was done in scannedAccounts directly.. (see if we want later to change this paradigm)
-        }),
-      );
-    }
 
     if (inline) {
       navigation.goBack();
@@ -163,14 +151,13 @@ export default function useScanDeviceAccountsViewModel({
       if (onSuccess)
         onSuccess({
           scannedAccounts,
-          selected: scannedAccounts.filter(a => selectedIds.includes(a.id)),
+          selected: accountsToAdd,
         });
       else
         navigation.replace(ScreenName.AddAccountsSuccess, {
           ...route.params,
           currency,
-          fundedAccounts,
-          accountsWithZeroBalance,
+          accountsToAdd: accountsToAdd,
         });
     }
   }, [
@@ -256,6 +243,30 @@ export default function useScanDeviceAccountsViewModel({
     }
   }, [existingAccounts, latestScannedAccount, onlyNewAccounts, scannedAccounts, selectedIds]);
 
+  useEffect(() => {
+    if (!cantCreateAccount && !isAddingAccounts && !scanning) {
+      if (alreadyEmptyAccount) {
+        navigation.replace(ScreenName.AddAccountsWarning, {
+          emptyAccount: alreadyEmptyAccount,
+          emptyAccountName: alreadyEmptyAccountName,
+          currency,
+        });
+      } else if (CustomNoAssociatedAccounts) {
+        navigation.replace(ScreenName.NoAssociatedAccounts, {
+          CustomNoAssociatedAccounts,
+        });
+      }
+    }
+  }, [
+    cantCreateAccount,
+    isAddingAccounts,
+    alreadyEmptyAccount,
+    alreadyEmptyAccountName,
+    scanning,
+    navigation,
+    currency,
+    CustomNoAssociatedAccounts,
+  ]);
   return {
     alreadyEmptyAccount,
     alreadyEmptyAccountName,
@@ -282,5 +293,6 @@ export default function useScanDeviceAccountsViewModel({
     viewAllCreatedAccounts,
     returnToSwap,
     currency,
+    onCloseNavigation,
   };
 }

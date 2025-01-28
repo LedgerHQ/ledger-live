@@ -6,8 +6,7 @@ export { default as RecoveryPhrase } from "./RecoveryPhrase";
 export { default as RecoveryPhraseInstructions } from "./RecoveryPhraseInstructions";
 export { default as RecoveryPhraseSetup } from "./RecoveryPhraseSetup";
 export { default as HideRecoveryPhrase } from "./HideRecoveryPhrase";
-export { default as PairNew } from "./PairNew";
-export { default as ConnectNano } from "./ConnectNano";
+export { default as ConnectDevice } from "./ConnectDevice";
 export { default as QuizzFinal } from "./QuizzFinal";
 export { default as SyncDesktop } from "./SyncDesktop";
 

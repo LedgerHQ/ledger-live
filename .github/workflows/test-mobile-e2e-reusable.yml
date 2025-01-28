@@ -49,6 +49,11 @@ on:
         required: false
         type: boolean
         default: false
+      production_firebase:
+        description: "Target Production Firebase environment"
+        required: false
+        type: boolean
+        default: false
 
 # Uncomment to have log-level: trace on detox run and build
 # (cf: apps/ledger-live-mobile/detox.config.js)
@@ -266,7 +271,9 @@ jobs:
         shell: bash
       - name: Build Android app for Detox test run
         run: |
-          pnpm mobile e2e:ci -p android -b
+          pnpm mobile e2e:ci -p android -b $([[ "$PRODUCTION" == "true" ]] && printf %s '--production')
+        env:
+          PRODUCTION: ${{ inputs.production_firebase }}
       - name: cache android emulator
         timeout-minutes: 5
         uses: tespkg/actions-cache@v1
@@ -313,15 +320,15 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-broadcast@develop
         with:
           enable_broadcast: ${{ inputs.enable_broadcast }}
-          schedule_cron: ${{ github.event.schedule.cron }}
       - name: Run Android Tests
         id: detox
-        run: pnpm mobile e2e:ci -p android -t $([[ "$INPUT_SPECULOS" == "true" ]] && printf %s '--speculos') --shard ${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+        run: pnpm mobile e2e:ci -p android -t $([[ "$INPUT_SPECULOS" == "true" ]] && printf %s '--speculos') $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') --shard ${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
         timeout-minutes: ${{ env.SPECULOS_RUN && 120 || 45 }}
         env:
           DETOX_INSTALL_TIMEOUT: 120000
           SEED: ${{ secrets.SEED_QAA_B2C }}
           INPUT_SPECULOS: ${{ env.SPECULOS_RUN }}
+          PRODUCTION: ${{ inputs.production_firebase }}
       - name: Upload test artifacts
         uses: actions/upload-artifact@v4
         if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
