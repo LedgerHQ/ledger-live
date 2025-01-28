@@ -14,6 +14,7 @@ import trc20tokens, { TRC20Token } from "./data/trc20";
 import { tokens as mainnetTokens } from "./data/evm/1";
 import { tokens as bnbTokens } from "./data/evm/56";
 import filecoinTokens from "./data/filecoin-erc20";
+import spltokens, { SPLToken } from "./data/spl";
 import { ERC20Token } from "./types";
 
 const emptyArray = [];
@@ -54,6 +55,8 @@ addTokens(vechainTokens.map(convertVechainToken));
 addTokens(jettonTokens.map(convertJettonToken));
 // Filecoin tokens
 addTokens(filecoinTokens.map(convertERC20));
+// Solana tokens
+addTokens(spltokens.map(convertSplTokens));
 
 type TokensListOptions = {
   withDelisted: boolean;
@@ -397,6 +400,26 @@ function convertElrondESDTTokens([
       {
         name,
         code: name,
+        magnitude: decimals,
+      },
+    ],
+  };
+}
+
+function convertSplTokens([id, network, name, symbol, address, decimals]: SPLToken): TokenCurrency {
+  return {
+    type: "TokenCurrency",
+    id,
+    contractAddress: address,
+    parentCurrency: getCryptoCurrencyById(network),
+    name,
+    tokenType: "spl",
+    ticker: symbol,
+    disableCountervalue: false,
+    units: [
+      {
+        name,
+        code: symbol,
         magnitude: decimals,
       },
     ],
