@@ -1,5 +1,19 @@
 # @ledgerhq/coin-bitcoin
 
+## 0.10.0
+
+### Minor Changes
+
+- [#8944](https://github.com/LedgerHQ/ledger-live/pull/8944) [`b8dd543`](https://github.com/LedgerHQ/ledger-live/commit/b8dd543dba50abeec088334f060f0a030e776f52) Thanks [@qperrot](https://github.com/qperrot)! - Fix bot device actions for Bitcoin Gold, bitcoin Cash and Litecoin
+
+- [#8914](https://github.com/LedgerHQ/ledger-live/pull/8914) [`537141a`](https://github.com/LedgerHQ/ledger-live/commit/537141ab549b8dab57d3eb117e875faa67b54f4b) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Bot feature : Add filter for features
+
+### Patch Changes
+
+- Updated dependencies [[`f5196c5`](https://github.com/LedgerHQ/ledger-live/commit/f5196c52453b971a3327d09966edb62bb3d6a293), [`3a65633`](https://github.com/LedgerHQ/ledger-live/commit/3a6563309c8cacbd6e9a73e3044b1ff7c3966f87), [`537141a`](https://github.com/LedgerHQ/ledger-live/commit/537141ab549b8dab57d3eb117e875faa67b54f4b)]:
+  - @ledgerhq/types-live@6.58.0
+  - @ledgerhq/coin-framework@0.23.0
+
 ## 0.10.0-next.0
 
 ### Minor Changes

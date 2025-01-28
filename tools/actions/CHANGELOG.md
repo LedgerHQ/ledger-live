@@ -1,5 +1,11 @@
 # actions-root
 
+## 0.2.0
+
+### Minor Changes
+
+- [#8914](https://github.com/LedgerHQ/ledger-live/pull/8914) [`537141a`](https://github.com/LedgerHQ/ledger-live/commit/537141ab549b8dab57d3eb117e875faa67b54f4b) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Bot feature : Add filter for features
+
 ## 0.2.0-next.0
 
 ### Minor Changes
