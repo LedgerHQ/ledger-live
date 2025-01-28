@@ -176,7 +176,7 @@ describe("useDeviceSessionRefresherToggle", () => {
     });
   });
 
-  describe.todo("enabled = false", () => {
+  describe("enabled = false", () => {
     it("should not toggle the device session refresher on if there is no active session", () => {
       renderHook(() => useDeviceSessionRefresherToggle(false));
       expect(deviceManagementKitMock.toggleDeviceSessionRefresher).not.toHaveBeenCalled();
