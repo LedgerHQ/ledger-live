@@ -3,7 +3,7 @@ import Alert from "~/renderer/components/Alert";
 import { Flex } from "@ledgerhq/react-ui";
 import TranslatedError from "~/renderer/components/TranslatedError";
 import { Account } from "@ledgerhq/types-live";
-import type { TransactionStatus } from "@ledgerhq/live-common/families/solana/types";
+import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/solana/types";
 
 type Props = {
   account: Account;
