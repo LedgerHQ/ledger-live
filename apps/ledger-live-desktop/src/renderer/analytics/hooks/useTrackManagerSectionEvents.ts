@@ -6,9 +6,8 @@ import {
 } from "@ledgerhq/errors";
 import { track } from "../segment";
 import { Device } from "@ledgerhq/types-devices";
-import { LedgerErrorConstructor } from "@ledgerhq/errors/lib/helpers";
-
-type LedgerError = InstanceType<LedgerErrorConstructor<{ [key: string]: unknown }>>;
+import { CONNECTION_TYPES } from "./variables";
+import { LedgerError } from "~/renderer/components/DeviceAction";
 
 export type UseTrackManagerSectionEvents = {
   location: string | undefined;
@@ -52,7 +51,7 @@ export const useTrackManagerSectionEvents = ({
 
     const defaultPayload = {
       deviceType: device?.modelId,
-      connectionType: device?.wired ? "USB" : "BLE",
+      connectionType: device?.wired ? CONNECTION_TYPES.USB : CONNECTION_TYPES.BLE,
       platform: "LLD",
       page: "Manager Dashboard",
     };
