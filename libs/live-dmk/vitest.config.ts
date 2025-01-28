@@ -11,5 +11,12 @@ export default defineConfig({
     exclude: ["node_modules", "lib-es"],
     silent: false,
     printConsoleTrace: true,
+    coverage: {
+      enabled: true,
+      provider: "v8",
+      reporter: ["text", "html"],
+      include: ["src/**/*.ts", "src/**/*.tsx"],
+      exclude: ["node_modules", "lib-es", "src/hooks/index.ts", "src/index.ts", "src/**/*.test.*"],
+    },
   },
 });

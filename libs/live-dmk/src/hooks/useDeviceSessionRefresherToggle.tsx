@@ -14,10 +14,17 @@ export const useDeviceSessionRefresherToggle = (enabled: boolean) => {
         if (session) {
           if (sessionId.current !== session.sessionId) {
             if (sessionId.current) {
-              sdk.toggleDeviceSessionRefresher({
-                sessionId: sessionId.current,
-                enabled: true,
-              });
+              try {
+                sdk.toggleDeviceSessionRefresher({
+                  sessionId: sessionId.current,
+                  enabled: true,
+                });
+              } catch (error) {
+                console.error(
+                  `[useDeviceSessionRefresherToggle] error toggling back device session refresher ${sessionId.current}`,
+                  error,
+                );
+              }
             }
 
             sessionId.current = session.sessionId;
