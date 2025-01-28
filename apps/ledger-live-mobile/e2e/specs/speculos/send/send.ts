@@ -46,7 +46,7 @@ export async function runSendTest(transaction: Transaction, tmsLink: string) {
 
       const amountWithCode = transaction.amount + " " + transaction.accountToCredit.currency.ticker;
       await app.send.expectSummaryAmount(amountWithCode);
-      await app.send.expectSummaryRecepient(transaction.accountToCredit.address);
+      await app.send.expectSummaryRecipient(transaction.accountToCredit.address);
       await app.send.summaryContinue();
       await app.send.dismissHighFeeModal();
 
@@ -110,7 +110,7 @@ export async function runSendValidAddressTest(
 
       const amountWithCode = transaction.amount + " " + transaction.accountToCredit.currency.ticker;
       await app.send.expectSummaryAmount(amountWithCode);
-      await app.send.expectSummaryRecepient(transaction.accountToCredit.address);
+      await app.send.expectSummaryRecipient(transaction.accountToCredit.address);
       if (expectedWarningMessage) await app.send.expectSummaryWarning(expectedWarningMessage);
     });
   });
@@ -160,7 +160,7 @@ export async function runSendInvalidTokenAmountTest(
 
       const amountWithCode = transaction.amount + " " + transaction.accountToCredit.currency.ticker;
       await app.send.expectSummaryAmount(amountWithCode);
-      await app.send.expectSummaryRecepient(transaction.accountToCredit.address);
+      await app.send.expectSummaryRecipient(transaction.accountToCredit.address);
       await app.send.expectSendSummaryError(expectedErrorMessage);
     });
   });
@@ -184,7 +184,7 @@ export async function runSendMaxTest(transaction: Transaction, tmsLink: string) 
       await app.send.amountContinue();
 
       await app.send.expectSummaryMaxAmount(amount);
-      await app.send.expectSummaryRecepient(transaction.accountToCredit.address);
+      await app.send.expectSummaryRecipient(transaction.accountToCredit.address);
     });
   });
 }
@@ -209,8 +209,8 @@ export async function runSendENSTest(transaction: Transaction, tmsLink: string) 
 
       const amountWithCode = transaction.amount + " " + transaction.accountToCredit.currency.ticker;
       await app.send.expectSummaryAmount(amountWithCode);
-      await app.send.expectSummaryRecepient(transaction.accountToCredit.address);
-      await app.send.expectSummaryRecepientEns(ensName);
+      await app.send.expectSummaryRecipient(transaction.accountToCredit.address);
+      await app.send.expectSummaryRecipientEns(ensName);
       await app.send.summaryContinue();
       await app.send.dismissHighFeeModal();
 
