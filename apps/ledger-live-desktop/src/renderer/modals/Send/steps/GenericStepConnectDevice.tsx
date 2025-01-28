@@ -14,6 +14,7 @@ import { DeviceBlocker } from "~/renderer/components/DeviceAction/DeviceBlocker"
 import { closeModal } from "~/renderer/actions/modals";
 import { mevProtectionSelector } from "~/renderer/reducers/settings";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
+import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectApp);
 const Result = (
   props:
@@ -119,6 +120,7 @@ export default function StepConnectDevice({
         }
       }}
       analyticsPropertyFlow="send"
+      location={HOOKS_TRACKING_LOCATIONS.sendModal}
     />
   );
 }

@@ -9,4 +9,5 @@ export enum HOOKS_TRACKING_LOCATIONS {
   managerDashboard = "Manager Dashboard",
   receiveModal = "Receive Modal",
   exchange = "Exchange",
+  sendModal = "Send Modal",
 }
