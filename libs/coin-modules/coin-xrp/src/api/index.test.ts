@@ -54,65 +54,7 @@ describe("listOperations", () => {
       const deliveredAmount = 100;
       const fee = 10;
       mockGetTransactions.mockResolvedValueOnce(
-        mockNetworkTxs(
-          [
-            {
-              ledger_hash: "HASH_VALUE_BLOCK",
-              hash: "HASH_VALUE",
-              close_time_iso: "2000-01-01T00:00:01Z",
-              meta: { delivered_amount: deliveredAmount.toString() },
-              tx_json: {
-                TransactionType: "Payment",
-                Fee: fee.toString(),
-                ledger_index: 1,
-                date: 1000,
-                Account: opSender,
-                Destination: opDestination,
-                Sequence: 1,
-              },
-            },
-            {
-              ledger_hash: "HASH_VALUE_BLOCK",
-              hash: "HASH_VALUE",
-              close_time_iso: "2000-01-01T00:00:01Z",
-              meta: { delivered_amount: deliveredAmount.toString() },
-              tx_json: {
-                TransactionType: "Payment",
-                Fee: fee.toString(),
-                ledger_index: 1,
-                date: 1000,
-                Account: opSender,
-                Destination: opDestination,
-                DestinationTag: 509555,
-                Sequence: 1,
-              },
-            },
-            {
-              ledger_hash: "HASH_VALUE_BLOCK",
-              hash: "HASH_VALUE",
-              close_time_iso: "2000-01-01T00:00:01Z",
-              meta: { delivered_amount: deliveredAmount.toString() },
-              tx_json: {
-                TransactionType: "Payment",
-                Fee: fee.toString(),
-                ledger_index: 1,
-                date: 1000,
-                Account: opSender,
-                Destination: opDestination,
-                Memos: [
-                  {
-                    Memo: {
-                      MemoType: "687474703a2f2f6578616d706c652e636f6d2f6d656d6f2f67656e65726963",
-                      MemoData: "72656e74",
-                    },
-                  },
-                ],
-                Sequence: 1,
-              },
-            },
-          ],
-          defaultMarker,
-        ),
+        mockNetworkTxs(givenTxs(fee, deliveredAmount, opSender, opDestination), defaultMarker),
       );
 
       // second call to kill the loop
