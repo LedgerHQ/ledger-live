@@ -4,6 +4,7 @@ import type {
   Transaction as ApiTransaction,
   Pagination,
 } from "@ledgerhq/coin-framework/api/index";
+import { log } from "@ledgerhq/logs";
 import coinConfig, { type XrpConfig } from "../config";
 import {
   broadcast,
@@ -43,7 +44,9 @@ async function estimate(_addr: string, _amount: bigint): Promise<bigint> {
 }
 
 type PaginationState = {
-  pageSize: number;
+  pageSize: number; // must be large enough to avoid unnecessary calls to the underlying explorer
+  maxIterations: number; // a security to avoid infinite loop
+  currentIteration: number;
   minHeight: number;
   continueIterations: boolean;
   apiNextCursor?: string;
@@ -56,10 +59,18 @@ async function operationsFromHeight(address: string, minHeight: number): Promise
       limit: state.pageSize,
       minHeight: state.minHeight,
     });
-    const continueIteration = apiNextCursor !== "";
+    const newCurrentIteration = state.currentIteration + 1;
+    let continueIteration = true;
+    if (apiNextCursor === "") {
+      continueIteration = false;
+    } else if (newCurrentIteration >= state.maxIterations) {
+      log("⚠ coin:xrp (api/operations): max iterations reached");
+      continueIteration = false;
+    }
     const accumulated = state.accumulator.concat(operations);
     return {
       ...state,
+      currentIteration: newCurrentIteration,
       continueIterations: continueIteration,
       apiNextCursor: apiNextCursor,
       accumulator: accumulated,
@@ -67,7 +78,9 @@ async function operationsFromHeight(address: string, minHeight: number): Promise
   }
 
   const firstState: PaginationState = {
-    pageSize: 400, // must be large enough to avoid unnecessary calls to the underlying explorer
+    pageSize: 400,
+    maxIterations: 10,
+    currentIteration: 0,
     minHeight: minHeight,
     continueIterations: true,
     accumulator: [],

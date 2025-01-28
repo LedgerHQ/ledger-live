@@ -34,6 +34,84 @@ describe("listOperations", () => {
     };
   }
 
+  function givenTxs(
+    fee: number,
+    deliveredAmount: number,
+    opSender: string,
+    opDestination: string,
+  ): unknown[] {
+    return [
+      {
+        ledger_hash: "HASH_VALUE_BLOCK",
+        hash: "HASH_VALUE",
+        close_time_iso: "2000-01-01T00:00:01Z",
+        meta: { delivered_amount: deliveredAmount.toString() },
+        tx_json: {
+          TransactionType: "Payment",
+          Fee: fee.toString(),
+          ledger_index: 1,
+          date: 1000,
+          Account: opSender,
+          Destination: opDestination,
+          Sequence: 1,
+        },
+      },
+      {
+        ledger_hash: "HASH_VALUE_BLOCK",
+        hash: "HASH_VALUE",
+        close_time_iso: "2000-01-01T00:00:01Z",
+        meta: { delivered_amount: deliveredAmount.toString() },
+        tx_json: {
+          TransactionType: "Payment",
+          Fee: fee.toString(),
+          ledger_index: 1,
+          date: 1000,
+          Account: opSender,
+          Destination: opDestination,
+          DestinationTag: 509555,
+          Sequence: 1,
+        },
+      },
+      {
+        ledger_hash: "HASH_VALUE_BLOCK",
+        hash: "HASH_VALUE",
+        close_time_iso: "2000-01-01T00:00:01Z",
+        meta: { delivered_amount: deliveredAmount.toString() },
+        tx_json: {
+          TransactionType: "Payment",
+          Fee: fee.toString(),
+          ledger_index: 1,
+          date: 1000,
+          Account: opSender,
+          Destination: opDestination,
+          Memos: [
+            {
+              Memo: {
+                MemoType: "687474703a2f2f6578616d706c652e636f6d2f6d656d6f2f67656e65726963",
+                MemoData: "72656e74",
+              },
+            },
+          ],
+          Sequence: 1,
+        },
+      },
+    ];
+  }
+
+  it("should kill the loop after 10 iterations", async () => {
+    const txs = givenTxs(10, 10, "src", "dest");
+    // each time it's called it returns a marker, so in theory it would loop forever
+    mockGetTransactions.mockResolvedValue(mockNetworkTxs(txs, defaultMarker));
+    const [results, _] = await api.listOperations("src", { limit: 100 });
+
+    // called 10 times because there is a hard limit of 10 iterations in case something goes wrong
+    // with interpretation of the token (bug / explorer api changed ...)
+    expect(mockGetServerInfos).toHaveBeenCalledTimes(10);
+    expect(mockGetTransactions).toHaveBeenCalledTimes(10);
+
+    expect(results.length).toBe(txs.length * 10);
+  });
+
   it.each([
     {
       address: "WHATEVER_ADDRESS",
