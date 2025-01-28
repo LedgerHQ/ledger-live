@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { track } from "../segment";
 import { Device } from "@ledgerhq/types-devices";
-import { UserRefusedOnDevice } from "@ledgerhq/errors";
+import { UserRefusedOnDevice, UserRefusedAddress } from "@ledgerhq/errors";
 import { LedgerError } from "~/renderer/components/DeviceAction";
 import { CONNECTION_TYPES, HOOKS_TRACKING_LOCATIONS } from "./variables";
 
@@ -63,7 +63,7 @@ export const useTrackReceiveFlow = ({
       // user refused to open app
       track("Open app denied", defaultPayload, isTrackingEnabled);
     }
-    if (verifyAddressError?.name === "UserRefusedAddress") {
+    if ((verifyAddressError as unknown) instanceof UserRefusedAddress) {
       // user refused to confirm address
       track("Address confirmation rejected", defaultPayload, isTrackingEnabled);
     }
@@ -71,12 +71,5 @@ export const useTrackReceiveFlow = ({
       // device used is not associated with the account
       track("Wrong device association", defaultPayload, isTrackingEnabled);
     }
-  }, [
-    error,
-    location,
-    isTrackingEnabled,
-    device,
-    verifyAddressError?.name,
-    inWrongDeviceForAccount,
-  ]);
+  }, [error, location, isTrackingEnabled, device, inWrongDeviceForAccount, verifyAddressError]);
 };
