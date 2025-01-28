@@ -184,7 +184,7 @@ const deriveTokenTransferCommandDescriptor = async (
 
   const { fee, spendable: spendableSol } = await estimateFeeAndSpendable(api, mainAccount, tx);
 
-  if (spendableSol.lt(assocAccRentExempt)) {
+  if (spendableSol.lt(assocAccRentExempt) || spendableSol.isZero()) {
     errors.fee = new NotEnoughBalance();
   }
 
