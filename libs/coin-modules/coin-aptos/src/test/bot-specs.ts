@@ -1,29 +1,28 @@
-// import invariant from "invariant";
+import invariant from "invariant";
 import { DeviceModelId } from "@ledgerhq/devices";
+import BigNumber from "bignumber.js";
+import type { Transaction } from "../types";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-// import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
-import { botTest, genericTestDestination, pickSiblings } from "@ledgerhq/coin-framework/bot/specs";
+import { genericTestDestination, pickSiblings, botTest } from "@ledgerhq/coin-framework/bot/specs";
 import type { AppSpec } from "@ledgerhq/coin-framework/bot/types";
 import { acceptTransaction } from "./speculos-deviceActions";
-import type { Transaction } from "../types";
 
-const currency = getCryptoCurrencyById("aptos");
-// const minBalanceNewAccount = parseCurrencyUnit(currency.units[0], "0.0001");
-const maxAccountSiblings = 4;
+const MIN_SAFE = new BigNumber(0.00000001);
+const maxAccount = 6;
 
-const aptos: AppSpec<Transaction> = {
-  name: currency.family,
-  currency,
+const aptosSpecs: AppSpec<Transaction> = {
+  name: "Aptos",
+  currency: getCryptoCurrencyById("aptos"),
   appQuery: {
-    model: DeviceModelId.nanoS,
-    appName: currency.managerAppName,
+    model: DeviceModelId.nanoSP,
+    appName: "Aptos",
   },
   genericDeviceAction: acceptTransaction,
-  // testTimeout: 5 * 60 * 1000,
-  // minViableAmount: minBalanceNewAccount,
-  // transactionCheck: ({ maxSpendable }) => {
-  //   invariant(maxSpendable.gt(minBalanceNewAccount), "balance is too low");
-  // },
+  testTimeout: 6 * 60 * 1000,
+  minViableAmount: MIN_SAFE,
+  transactionCheck: ({ maxSpendable }) => {
+    invariant(maxSpendable.gt(MIN_SAFE), "balance is too low");
+  },
   mutations: [
     {
       name: "Send ~50%",
@@ -31,7 +30,8 @@ const aptos: AppSpec<Transaction> = {
       maxRun: 1,
       testDestination: genericTestDestination,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
-        const sibling = pickSiblings(siblings, maxAccountSiblings);
+        invariant(maxSpendable.gt(MIN_SAFE), "balance is too low");
+        const sibling = pickSiblings(siblings, maxAccount);
         const recipient = sibling.freshAddress;
         const amount = maxSpendable.div(2).integerValue();
 
@@ -48,44 +48,44 @@ const aptos: AppSpec<Transaction> = {
           updates,
         };
       },
-      test: ({ account, accountBeforeTransaction, operation }) => {
-        botTest("account balance moved with operation.value", () =>
-          expect(account.balance.toString()).toBe(
-            accountBeforeTransaction.balance.minus(operation.value).toString(),
+
+      test: ({ accountBeforeTransaction, operation, account }) => {
+        botTest("account spendable balance decreased with operation", () =>
+          expect(account.spendableBalance).toEqual(
+            accountBeforeTransaction.spendableBalance.minus(operation.value),
           ),
         );
       },
     },
-    // {
-    //   name: "Send max",
-    //   maxRun: 2,
-    //   testDestination: genericTestDestination,
-    //   transaction: ({ account, siblings, bridge }) => {
-    //     const sibling = pickSiblings(siblings, maxAccountSiblings);
-    //     const recipient = sibling.freshAddress;
+    {
+      name: "Transfer Max",
+      feature: "sendMax",
+      maxRun: 1,
+      transaction: ({ account, siblings, bridge }) => {
+        const updates: Array<Partial<Transaction>> = [
+          {
+            recipient: pickSiblings(siblings, maxAccount).freshAddress,
+          },
+          {
+            useAllAmount: true,
+          },
+        ];
 
-    //     const transaction = bridge.createTransaction(account);
-    //     const updates: Array<Partial<Transaction>> = [
-    //       {
-    //         recipient,
-    //       },
-    //       { useAllAmount: true },
-    //     ];
-
-    //     return {
-    //       transaction,
-    //       updates,
-    //     };
-    //   },
-    //   test: ({ account, accountBeforeTransaction, operation }) => {
-    //     botTest("Account balance should have decreased", () => {
-    //       expect(account.balance.toNumber()).toEqual(
-    //         accountBeforeTransaction.balance.minus(operation.value).toNumber(),
-    //       );
-    //     });
-    //   },
-    // },
+        return {
+          transaction: bridge.createTransaction(account),
+          updates,
+        };
+      },
+      testDestination: genericTestDestination,
+      test: ({ account }) => {
+        botTest("account spendable balance is zero", () =>
+          expect(account.spendableBalance.toString()).toBe("0"),
+        );
+      },
+    },
   ],
 };
 
-export default { aptos };
+export default {
+  aptosSpecs,
+};
