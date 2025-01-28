@@ -1,5 +1,36 @@
 ## 34.5.0-next.4
 
+## 34.19.1
+
+### Patch Changes
+
+- Updated dependencies [[`670776e`](https://github.com/LedgerHQ/ledger-live/commit/670776e3a34859a18d6de1470de4195cf2094a81)]:
+  - @ledgerhq/coin-framework@0.24.0
+  - @ledgerhq/coin-algorand@0.7.1
+  - @ledgerhq/coin-bitcoin@0.10.1
+  - @ledgerhq/coin-cardano@0.4.1
+  - @ledgerhq/coin-cosmos@0.6.1
+  - @ledgerhq/coin-elrond@0.3.1
+  - @ledgerhq/coin-evm@2.9.1
+  - @ledgerhq/coin-filecoin@1.5.1
+  - @ledgerhq/coin-hedera@1.3.1
+  - @ledgerhq/coin-icon@0.6.1
+  - @ledgerhq/coin-internet_computer@1.5.1
+  - @ledgerhq/coin-near@0.7.1
+  - @ledgerhq/coin-polkadot@1.7.1
+  - @ledgerhq/coin-solana@0.11.1
+  - @ledgerhq/coin-stacks@0.5.1
+  - @ledgerhq/coin-stellar@0.6.1
+  - @ledgerhq/coin-tezos@0.9.1
+  - @ledgerhq/coin-ton@0.5.1
+  - @ledgerhq/coin-tron@0.2.1
+  - @ledgerhq/coin-vechain@2.4.1
+  - @ledgerhq/coin-xrp@0.9.1
+  - @ledgerhq/live-countervalues@0.2.19
+  - @ledgerhq/live-countervalues-react@0.2.19
+  - @ledgerhq/live-nft@0.5.4
+  - @ledgerhq/live-wallet@0.9.1
+
 ## 34.19.1-hotfix.0
 
 ### Patch Changes
