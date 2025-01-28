@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
-import { Animated, LayoutAnimation, ListRenderItemInfo, Platform, UIManager } from "react-native";
+import { ListRenderItemInfo, Platform } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useFocusEffect } from "@react-navigation/native";
 import { Box, Flex } from "@ledgerhq/native-ui";
@@ -39,8 +39,10 @@ import { ContentCardLocation } from "~/dynamicContent/types";
 import usePortfolioAnalyticsOptInPrompt from "~/hooks/analyticsOptInPrompt/usePorfolioAnalyticsOptInPrompt";
 import AddAccountDrawer from "LLM/features/Accounts/screens/AddAccount";
 import { useAutoRedirectToPostOnboarding } from "~/hooks/useAutoRedirectToPostOnboarding";
-
 export { default as PortfolioTabIcon } from "./TabIcon";
+import Animated, { useSharedValue } from "react-native-reanimated";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import AnimatedContainer from "./AnimatedContainer";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<WalletTabNavigatorStackParamList, ScreenName.Portfolio>
@@ -56,6 +58,8 @@ function PortfolioScreen({ navigation }: NavigationProps) {
   const [isAddModalOpened, setAddModalOpened] = useState(false);
   const { colors } = useTheme();
   const { isAWalletCardDisplayed } = useDynamicContent();
+  const accountListFF = useFeature("llmAccountListUI");
+  const isAccountListUIEnabled = accountListFF?.enabled;
 
   const onBackFromUpdate = useCallback(
     (_updateState: UpdateStep) => {
@@ -90,6 +94,16 @@ function PortfolioScreen({ navigation }: NavigationProps) {
     hasTokenAccountsWithPositiveBalance || // always show token accounts if they are not empty
     (!hideEmptyTokenAccount && hasTokenAccounts); // conditionally show empty token accounts
 
+  const animatedHeight = useSharedValue(0);
+
+  const handleHeightChange = useCallback(
+    (newHeight: number) => {
+      if (newHeight === 0) return;
+      animatedHeight.value = newHeight;
+    },
+    [animatedHeight],
+  );
+
   const data = useMemo(
     () => [
       <WalletTabSafeAreaView key="portfolioHeaderElements" edges={["left", "right"]}>
@@ -106,13 +120,25 @@ function PortfolioScreen({ navigation }: NavigationProps) {
         ) : null}
       </WalletTabSafeAreaView>,
       showAssets ? (
-        <Box background={colors.background.main} px={6} key="PortfolioAssets">
-          <RecoverBanner />
-          <PortfolioAssets
-            hideEmptyTokenAccount={hideEmptyTokenAccount}
-            openAddModal={openAddModal}
-          />
-        </Box>
+        isAccountListUIEnabled ? (
+          <AnimatedContainer onHeightChange={handleHeightChange}>
+            <Box background={colors.background.main} px={6} key="PortfolioAssets">
+              <RecoverBanner />
+              <PortfolioAssets
+                hideEmptyTokenAccount={hideEmptyTokenAccount}
+                openAddModal={openAddModal}
+              />
+            </Box>
+          </AnimatedContainer>
+        ) : (
+          <Box background={colors.background.main} px={6} key="PortfolioAssets">
+            <RecoverBanner />
+            <PortfolioAssets
+              hideEmptyTokenAccount={hideEmptyTokenAccount}
+              openAddModal={openAddModal}
+            />
+          </Box>
+        )
       ) : null,
       ...(showAssets && isAWalletCardDisplayed
         ? [
@@ -151,6 +177,8 @@ function PortfolioScreen({ navigation }: NavigationProps) {
     [
       onBackFromUpdate,
       showAssets,
+      isAccountListUIEnabled,
+      handleHeightChange,
       colors.background.main,
       hideEmptyTokenAccount,
       openAddModal,
@@ -158,20 +186,13 @@ function PortfolioScreen({ navigation }: NavigationProps) {
       t,
     ],
   );
-  if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
-    UIManager.setLayoutAnimationEnabledExperimental(true);
-  }
-
-  const handleContentSizeChange = () =>
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
 
   return (
     <ReactNavigationPerformanceView screenName={ScreenName.Portfolio} interactive>
+      <CheckLanguageAvailability />
+      <CheckTermOfUseUpdate />
       <Animated.View style={{ flex: 1 }}>
-        <CheckLanguageAvailability />
-        <CheckTermOfUseUpdate />
         <RefreshableCollapsibleHeaderFlatList
-          onContentSizeChange={handleContentSizeChange}
           data={data}
           renderItem={({ item }: ListRenderItemInfo<unknown>) => {
             return item as JSX.Element;

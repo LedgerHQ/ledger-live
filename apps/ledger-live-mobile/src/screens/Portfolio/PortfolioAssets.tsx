@@ -104,8 +104,6 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
     [startNavigationTTITimer, showAssets, isAccountListUIEnabled, navigation],
   );
 
-  const showAddAccountButton = isAccountListUIEnabled && showAccounts;
-
   return (
     <>
       <TrackScreen
@@ -129,7 +127,6 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
           showAccounts={showAccounts}
           assetsLength={assetsToDisplay.length}
           accountsLength={allAccounts.length}
-          showAddAccountButton={showAddAccountButton}
           assetsAnimatedStyle={assetsAnimatedStyle}
           accountsAnimatedStyle={accountsAnimatedStyle}
           maxItemsToDysplay={maxItemsToDysplay}
@@ -138,7 +135,7 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
       ) : (
         <Assets assets={assetsToDisplay} />
       )}
-      {!showAddAccountButton && distribution.list.length === 0 && (
+      {!isAccountListUIEnabled && distribution.list.length === 0 && (
         <Button
           type="shade"
           size="large"
@@ -153,7 +150,7 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
       )}
       {!isAccountListUIEnabled && distribution.list.length >= maxItemsToDysplay && (
         <Button type="shade" size="large" outline onPress={onPressButton}>
-          {showAssets ? t("portfolio.seeAllAssets") : t("portfolio.seeAllAccounts")}
+          {t("portfolio.seeAllAssets")}
         </Button>
       )}
     </>

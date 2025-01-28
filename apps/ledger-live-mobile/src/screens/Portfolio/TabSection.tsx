@@ -37,7 +37,6 @@ type TabSectionProps = {
   assetsLength: number;
   showAccounts: boolean;
   accountsLength: number;
-  showAddAccountButton?: boolean;
   assetsAnimatedStyle: BaseAnimationStyle;
   accountsAnimatedStyle: BaseAnimationStyle;
   containerHeight: number;
@@ -56,7 +55,6 @@ const TabSection: React.FC<TabSectionProps> = ({
   assetsLength,
   showAccounts,
   accountsLength,
-  showAddAccountButton,
   assetsAnimatedStyle,
   accountsAnimatedStyle,
   containerHeight,
@@ -89,7 +87,10 @@ const TabSection: React.FC<TabSectionProps> = ({
           onContentChange={handleAssetsContentSizeChange}
         />
         {assetsLength >= maxItemsToDysplay && showAssets && (
-          <Box onLayout={event => handleButtonLayout(TAB_OPTIONS.Assets, event)}>
+          <Box
+            onLayout={event => handleButtonLayout(TAB_OPTIONS.Assets, event)}
+            testID="assets-button"
+          >
             <Button type="shade" size="large" outline onPress={onPressButton}>
               {t("portfolio.seeAllAssets")}
             </Button>
@@ -103,8 +104,11 @@ const TabSection: React.FC<TabSectionProps> = ({
           onContentChange={handleAccountsContentSizeChange}
         />
         {showAccounts && (
-          <Box onLayout={event => handleButtonLayout(TAB_OPTIONS.Accounts, event)}>
-            {showAddAccountButton && <AddAccountButton sourceScreenName="Wallet" />}
+          <Box
+            onLayout={event => handleButtonLayout(TAB_OPTIONS.Accounts, event)}
+            testID="accounts-button"
+          >
+            <AddAccountButton sourceScreenName="Wallet" />
             {accountsLength >= maxItemsToDysplay && (
               <Button type="shade" size="large" outline onPress={onPressButton}>
                 {t("portfolio.seeAllAccounts")}
