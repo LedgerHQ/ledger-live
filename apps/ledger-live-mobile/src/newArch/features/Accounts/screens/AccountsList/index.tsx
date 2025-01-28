@@ -26,6 +26,7 @@ import { LoadingBasedGroupedCurrencies, LoadingStatus } from "@ledgerhq/live-com
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { TrackingEvent } from "../../enums";
 import { parseBoolean } from "LLM/utils/parseBoolean";
+import { AddAccountContexts } from "../AddAccount/enums";
 type Props = StackNavigatorProps<AccountsListNavigator, ScreenName.AccountsList>;
 
 export default function AccountsList({ route }: Props) {
@@ -85,7 +86,8 @@ export default function AccountsList({ route }: Props) {
           screen: ScreenName.SelectNetwork,
           params: {
             currency: currency.id,
-            context: "addAccounts",
+            context: AddAccountContexts.AddAccounts,
+            sourceScreenName: ScreenName.AccountsList,
           },
         });
       } else {
@@ -93,7 +95,7 @@ export default function AccountsList({ route }: Props) {
           screen: ScreenName.SelectDevice,
           params: {
             currency: currency as CryptoCurrency,
-            context: "addAccounts",
+            context: AddAccountContexts.AddAccounts,
           },
         });
       }

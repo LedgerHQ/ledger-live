@@ -169,6 +169,7 @@ const TransactionConfirm = ({
                 parentAccount={parentAccount}
                 transaction={transaction}
                 status={status}
+                device={device}
               />
             ) : null
           }

@@ -31,13 +31,17 @@ function CosmosDelegateValidatorsField({ account, transaction }: FieldProps) {
   const { validator, formattedAmount, address } = mappedDelegations[0];
   return (
     <>
-      <TextValueField label={t("ValidateOnDevice.amount")} value={formattedAmount} />
+      <TextValueField
+        label={t("ValidateOnDevice.amount")}
+        value={formattedAmount}
+        testID="device-validation-amount"
+      />
       <TextValueField
         label={t("ValidateOnDevice.validator")}
         value={
           <View style={styles.lineLabel}>
             <LText semiBold>{shortAddressPreview(address)}</LText>
-            <LText style={styles.validatorLabel} color="grey">
+            <LText style={styles.validatorLabel} color="grey" testID="device-validation-provider">
               {validator?.name ?? null}
             </LText>
           </View>

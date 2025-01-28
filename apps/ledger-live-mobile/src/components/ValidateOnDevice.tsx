@@ -49,7 +49,7 @@ function AmountField({ account, status, field }: FieldComponentProps) {
       label={field.label}
       unit={unit}
       value={status.amount}
-      testID="send-validation-amount"
+      testID="device-validation-amount"
     />
   );
 }
@@ -65,7 +65,7 @@ function FeesField({ account, parentAccount, status, field }: FieldComponentProp
 function AddressField({ field }: FieldComponentProps) {
   invariant(field.type === "address", "AddressField invalid");
   return (
-    <TextValueField label={field.label} value={field.address} testID="send-validation-address" />
+    <TextValueField label={field.label} value={field.address} testID="device-validation-address" />
   );
 }
 
@@ -96,6 +96,7 @@ type SubComponentCommonProps = {
   parentAccount?: Account | null | undefined;
   transaction: Transaction;
   status: TransactionStatus;
+  device: Device;
 };
 
 export default function ValidateOnDevice({
@@ -188,6 +189,7 @@ export default function ValidateOnDevice({
               parentAccount={parentAccount}
               transaction={transaction}
               status={status}
+              device={device}
             />
           ) : (
             <TitleText>{titleWording}</TitleText>
@@ -223,6 +225,7 @@ export default function ValidateOnDevice({
                 transaction={transaction}
                 recipientWording={recipientWording}
                 status={status}
+                device={device}
               />
             ) : null}
           </DataRowsContainer>

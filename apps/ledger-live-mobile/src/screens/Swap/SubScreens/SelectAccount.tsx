@@ -22,6 +22,7 @@ import { sharedSwapTracking } from "../utils";
 import { walletSelector } from "~/reducers/wallet";
 import { accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { AddAccountContexts } from "LLM/features/Accounts/screens/AddAccount/enums";
 
 export function SelectAccount({ navigation, route: { params } }: SelectAccountParamList) {
   const { provider, target, selectableCurrencyIds, selectedCurrency } = params;
@@ -157,7 +158,8 @@ export function SelectAccount({ navigation, route: { params } }: SelectAccountPa
             navigation.navigate(ScreenName.SwapSelectAccount, params);
           },
           analyticsPropertyFlow: "swap",
-          context: "addAccounts",
+          context: AddAccountContexts.AddAccounts,
+          sourceScreenName: ScreenName.SwapSelectAccount,
         },
       });
     } else {
