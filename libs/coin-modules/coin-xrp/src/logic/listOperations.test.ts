@@ -1,6 +1,7 @@
 import { assert } from "console";
 import { listOperations } from "./listOperations";
 import { RIPPLE_EPOCH } from "./utils";
+import { Marker } from "../network/types";
 
 const maxHeight = 2;
 const minHeight = 1;
@@ -21,33 +22,48 @@ describe("listOperations", () => {
     mockGetTransactions.mockClear();
   });
 
+  const someMarker: Marker = { ledger: 1, seq: 1 };
+  function mockNetworkTxs(txs: unknown): unknown {
+    return {
+      account: "account",
+      ledger_index_max: 1,
+      ledger_index_min: 1,
+      limit: 1,
+      validated: false,
+      transactions: txs,
+      marker: someMarker,
+      error: "",
+    };
+  }
+
   it("when there are no transactions then the result is empty", async () => {
     // Given
-    mockGetTransactions.mockResolvedValue([]);
+    mockGetTransactions.mockResolvedValue(mockNetworkTxs([]));
     // When
     const [results, token] = await listOperations("any address", { minHeight: 0 });
     // Then
     expect(mockGetServerInfos).toHaveBeenCalledTimes(1);
     expect(mockGetTransactions).toHaveBeenCalledTimes(1);
     expect(results).toEqual([]);
-    expect(token).toEqual(minHeight);
+    expect(JSON.parse(token)).toEqual(someMarker);
   });
 
   it("when there are no transactions and a limit then the result is empty", async () => {
     // Given
-    mockGetTransactions.mockResolvedValue([]);
+    mockGetTransactions.mockResolvedValue(mockNetworkTxs([]));
     // When
     const [results, token] = await listOperations("any address", { minHeight: 0, limit: 1 });
     // Then
     expect(mockGetServerInfos).toHaveBeenCalledTimes(1);
     expect(mockGetTransactions).toHaveBeenCalledTimes(1);
     expect(results).toEqual([]);
-    expect(token).toEqual(minHeight);
+    expect(JSON.parse(token)).toEqual(someMarker);
   });
 
   const paymentTx = {
     ledger_hash: "HASH_VALUE_BLOCK",
     hash: "HASH_VALUE",
+    validated: true,
     close_time_iso: "2000-01-01T00:00:01Z",
     meta: { delivered_amount: "100" },
     tx_json: {
@@ -65,8 +81,9 @@ describe("listOperations", () => {
   it("should only list operations of type payment", async () => {
     // Given
     const lastTransaction = paymentTx;
-    mockGetTransactions.mockResolvedValueOnce([paymentTx, otherTx, lastTransaction]);
-    mockGetTransactions.mockResolvedValue([]); // subsequent calls
+    const txs = [paymentTx, otherTx, lastTransaction];
+    mockGetTransactions.mockResolvedValueOnce(mockNetworkTxs(txs));
+    mockGetTransactions.mockResolvedValue(mockNetworkTxs([])); // subsequent calls
 
     // When
     const [results, token] = await listOperations("any address", { minHeight: 0, limit: 3 });
@@ -76,14 +93,13 @@ describe("listOperations", () => {
     // it's called twice because first call yields only 2 transactions, and 3 are asked
     expect(mockGetTransactions).toHaveBeenCalledTimes(2);
     expect(results.length).toEqual(2);
-    expect(token).toEqual(lastTransaction.tx_json.ledger_index - 1);
+    expect(JSON.parse(token)).toEqual(someMarker);
   });
 
   it("should make enough calls so that the limit requested is satified", async () => {
-    const lastTransaction = otherTx;
     const txs = [paymentTx, paymentTx, otherTx, otherTx, otherTx, otherTx, otherTx, otherTx];
     assert(txs.length === 8);
-    mockGetTransactions.mockResolvedValue(txs);
+    mockGetTransactions.mockResolvedValue(mockNetworkTxs(txs));
 
     const [results, token] = await listOperations("any address", { minHeight: 0, limit: 8 });
 
@@ -91,14 +107,13 @@ describe("listOperations", () => {
     // it's called 4 times because each call yields only 2 transactions, and 8 are asked
     expect(mockGetTransactions).toHaveBeenCalledTimes(4);
     expect(results.length).toEqual(8);
-    expect(token).toEqual(lastTransaction.tx_json.ledger_index - 1);
+    expect(JSON.parse(token)).toEqual(someMarker);
   });
 
   it("should make enough calls, even if there is not enough txs to satisfy the limit", async () => {
-    mockGetTransactions.mockResolvedValueOnce([otherTx, otherTx, otherTx, otherTx]);
-    mockGetTransactions.mockResolvedValueOnce([paymentTx, paymentTx]);
+    mockGetTransactions.mockResolvedValueOnce(mockNetworkTxs([otherTx, otherTx, otherTx, otherTx]));
+    mockGetTransactions.mockResolvedValueOnce(mockNetworkTxs([paymentTx, paymentTx]));
     mockGetTransactions.mockResolvedValue([]); // subsequent calls
-    const lastTransaction = paymentTx;
 
     const [results, token] = await listOperations("any address", { minHeight: 0, limit: 4 });
 
@@ -106,7 +121,7 @@ describe("listOperations", () => {
     // it's called 2 times because the second call is a shortage of txs
     expect(mockGetTransactions).toHaveBeenCalledTimes(2);
     expect(results.length).toEqual(2);
-    expect(token).toEqual(lastTransaction.tx_json.ledger_index - 1);
+    expect(JSON.parse(token)).toEqual(someMarker);
   });
 
   it.each([
@@ -128,62 +143,64 @@ describe("listOperations", () => {
       // Given
       const deliveredAmount = 100;
       const fee = 10;
-      mockGetTransactions.mockResolvedValue([
-        {
-          ledger_hash: "HASH_VALUE_BLOCK",
-          hash: "HASH_VALUE",
-          close_time_iso: "2000-01-01T00:00:01Z",
-          meta: { delivered_amount: deliveredAmount.toString() },
-          tx_json: {
-            TransactionType: "Payment",
-            Fee: fee.toString(),
-            ledger_index: 1,
-            date: 1000,
-            Account: opSender,
-            Destination: opDestination,
-            Sequence: 1,
+      mockGetTransactions.mockResolvedValue(
+        mockNetworkTxs([
+          {
+            ledger_hash: "HASH_VALUE_BLOCK",
+            hash: "HASH_VALUE",
+            close_time_iso: "2000-01-01T00:00:01Z",
+            meta: { delivered_amount: deliveredAmount.toString() },
+            tx_json: {
+              TransactionType: "Payment",
+              Fee: fee.toString(),
+              ledger_index: 1,
+              date: 1000,
+              Account: opSender,
+              Destination: opDestination,
+              Sequence: 1,
+            },
           },
-        },
-        {
-          ledger_hash: "HASH_VALUE_BLOCK",
-          hash: "HASH_VALUE",
-          close_time_iso: "2000-01-01T00:00:01Z",
-          meta: { delivered_amount: deliveredAmount.toString() },
-          tx_json: {
-            TransactionType: "Payment",
-            Fee: fee.toString(),
-            ledger_index: 1,
-            date: 1000,
-            Account: opSender,
-            Destination: opDestination,
-            DestinationTag: 509555,
-            Sequence: 1,
+          {
+            ledger_hash: "HASH_VALUE_BLOCK",
+            hash: "HASH_VALUE",
+            close_time_iso: "2000-01-01T00:00:01Z",
+            meta: { delivered_amount: deliveredAmount.toString() },
+            tx_json: {
+              TransactionType: "Payment",
+              Fee: fee.toString(),
+              ledger_index: 1,
+              date: 1000,
+              Account: opSender,
+              Destination: opDestination,
+              DestinationTag: 509555,
+              Sequence: 1,
+            },
           },
-        },
-        {
-          ledger_hash: "HASH_VALUE_BLOCK",
-          hash: "HASH_VALUE",
-          close_time_iso: "2000-01-01T00:00:01Z",
-          meta: { delivered_amount: deliveredAmount.toString() },
-          tx_json: {
-            TransactionType: "Payment",
-            Fee: fee.toString(),
-            ledger_index: 1,
-            date: 1000,
-            Account: opSender,
-            Destination: opDestination,
-            Memos: [
-              {
-                Memo: {
-                  MemoType: "687474703a2f2f6578616d706c652e636f6d2f6d656d6f2f67656e65726963",
-                  MemoData: "72656e74",
+          {
+            ledger_hash: "HASH_VALUE_BLOCK",
+            hash: "HASH_VALUE",
+            close_time_iso: "2000-01-01T00:00:01Z",
+            meta: { delivered_amount: deliveredAmount.toString() },
+            tx_json: {
+              TransactionType: "Payment",
+              Fee: fee.toString(),
+              ledger_index: 1,
+              date: 1000,
+              Account: opSender,
+              Destination: opDestination,
+              Memos: [
+                {
+                  Memo: {
+                    MemoType: "687474703a2f2f6578616d706c652e636f6d2f6d656d6f2f67656e65726963",
+                    MemoData: "72656e74",
+                  },
                 },
-              },
-            ],
-            Sequence: 1,
+              ],
+              Sequence: 1,
+            },
           },
-        },
-      ]);
+        ]),
+      );
 
       // When
       const [results, _] = await listOperations(address, { minHeight: 0 });

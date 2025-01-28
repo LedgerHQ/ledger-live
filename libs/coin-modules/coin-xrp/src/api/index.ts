@@ -67,7 +67,7 @@ async function operationsFromHeight(address: string, minHeight: number): Promise
   }
 
   const firstState: PaginationState = {
-    pageSize: 200,
+    pageSize: 400, // must be large enough to avoid unnecessary calls to the underlying explorer
     minHeight: minHeight,
     continueIterations: true,
     accumulator: [],

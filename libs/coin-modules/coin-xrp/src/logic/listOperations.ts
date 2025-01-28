@@ -52,7 +52,7 @@ export async function listOperations(
     };
   }
 
-  if (minHeight) {
+  if (minHeight !== undefined) {
     options = {
       ...options,
       // if there is no ops, it might be after a clear and we prefer to pull from the oldest possible history

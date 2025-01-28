@@ -20,6 +20,20 @@ describe("listOperations", () => {
     mockGetTransactions.mockClear();
   });
 
+  const defaultMarker = { ledger: 1, seq: 1 };
+  function mockNetworkTxs(txs: unknown, marker: undefined | unknown): unknown {
+    return {
+      account: "account",
+      ledger_index_max: 1,
+      ledger_index_min: 1,
+      limit: 1,
+      validated: false,
+      transactions: txs,
+      marker: marker,
+      error: "",
+    };
+  }
+
   it.each([
     {
       address: "WHATEVER_ADDRESS",
@@ -39,69 +53,79 @@ describe("listOperations", () => {
       // Givem
       const deliveredAmount = 100;
       const fee = 10;
-      mockGetTransactions.mockResolvedValue([
-        {
-          ledger_hash: "HASH_VALUE_BLOCK",
-          hash: "HASH_VALUE",
-          close_time_iso: "2000-01-01T00:00:01Z",
-          meta: { delivered_amount: deliveredAmount.toString() },
-          tx_json: {
-            TransactionType: "Payment",
-            Fee: fee.toString(),
-            ledger_index: 1,
-            date: 1000,
-            Account: opSender,
-            Destination: opDestination,
-            Sequence: 1,
-          },
-        },
-        {
-          ledger_hash: "HASH_VALUE_BLOCK",
-          hash: "HASH_VALUE",
-          close_time_iso: "2000-01-01T00:00:01Z",
-          meta: { delivered_amount: deliveredAmount.toString() },
-          tx_json: {
-            TransactionType: "Payment",
-            Fee: fee.toString(),
-            ledger_index: 1,
-            date: 1000,
-            Account: opSender,
-            Destination: opDestination,
-            DestinationTag: 509555,
-            Sequence: 1,
-          },
-        },
-        {
-          ledger_hash: "HASH_VALUE_BLOCK",
-          hash: "HASH_VALUE",
-          close_time_iso: "2000-01-01T00:00:01Z",
-          meta: { delivered_amount: deliveredAmount.toString() },
-          tx_json: {
-            TransactionType: "Payment",
-            Fee: fee.toString(),
-            ledger_index: 1,
-            date: 1000,
-            Account: opSender,
-            Destination: opDestination,
-            Memos: [
-              {
-                Memo: {
-                  MemoType: "687474703a2f2f6578616d706c652e636f6d2f6d656d6f2f67656e65726963",
-                  MemoData: "72656e74",
-                },
+      mockGetTransactions.mockResolvedValueOnce(
+        mockNetworkTxs(
+          [
+            {
+              ledger_hash: "HASH_VALUE_BLOCK",
+              hash: "HASH_VALUE",
+              close_time_iso: "2000-01-01T00:00:01Z",
+              meta: { delivered_amount: deliveredAmount.toString() },
+              tx_json: {
+                TransactionType: "Payment",
+                Fee: fee.toString(),
+                ledger_index: 1,
+                date: 1000,
+                Account: opSender,
+                Destination: opDestination,
+                Sequence: 1,
               },
-            ],
-            Sequence: 1,
-          },
-        },
-      ]);
+            },
+            {
+              ledger_hash: "HASH_VALUE_BLOCK",
+              hash: "HASH_VALUE",
+              close_time_iso: "2000-01-01T00:00:01Z",
+              meta: { delivered_amount: deliveredAmount.toString() },
+              tx_json: {
+                TransactionType: "Payment",
+                Fee: fee.toString(),
+                ledger_index: 1,
+                date: 1000,
+                Account: opSender,
+                Destination: opDestination,
+                DestinationTag: 509555,
+                Sequence: 1,
+              },
+            },
+            {
+              ledger_hash: "HASH_VALUE_BLOCK",
+              hash: "HASH_VALUE",
+              close_time_iso: "2000-01-01T00:00:01Z",
+              meta: { delivered_amount: deliveredAmount.toString() },
+              tx_json: {
+                TransactionType: "Payment",
+                Fee: fee.toString(),
+                ledger_index: 1,
+                date: 1000,
+                Account: opSender,
+                Destination: opDestination,
+                Memos: [
+                  {
+                    Memo: {
+                      MemoType: "687474703a2f2f6578616d706c652e636f6d2f6d656d6f2f67656e65726963",
+                      MemoData: "72656e74",
+                    },
+                  },
+                ],
+                Sequence: 1,
+              },
+            },
+          ],
+          defaultMarker,
+        ),
+      );
+
+      // second call to kill the loop
+      mockGetTransactions.mockResolvedValue(mockNetworkTxs([], undefined));
 
       // When
       const [results, _] = await api.listOperations(address, { limit: 100 });
 
       // Then
-      expect(mockGetServerInfos).toHaveBeenCalledTimes(1);
-      expect(mockGetTransactions).toHaveBeenCalledTimes(1);
+      // called twice because the marker is set the first time
+      expect(mockGetServerInfos).toHaveBeenCalledTimes(2);
+      expect(mockGetTransactions).toHaveBeenCalledTimes(2);
+
       // if expectedType is "OUT", compute value with fees (i.e. delivered_amount + Fee)
       const expectedValue =
         expectedType === "IN" ? BigInt(deliveredAmount) : BigInt(deliveredAmount + fee);
