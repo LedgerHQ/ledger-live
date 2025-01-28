@@ -6,6 +6,7 @@ import { sign } from "ripple-keypairs";
 describe("Xrp Api", () => {
   let module: Api;
   const address = "rh1HPuRVsYYvThxG2Bs1MfjmrVC73S16Fb";
+  const bigAddress = "rUxSkt6hQpWxXQwTNRUCYYRQ7BC2yRA3F8"; // An account with more that 4000 txs
   const emptyAddress = "rKtXXTVno77jhu6tto1MAXjepyuaKaLcqB"; // Account with no transaction (at the time of this writing)
   const xrpPubKey = process.env["PUB_KEY"]!;
   const xrpSecretKey = process.env["SECRET_KEY"]!;
@@ -44,10 +45,15 @@ describe("Xrp Api", () => {
 
     it("returns all operations", async () => {
       // When
-      const [tx, _] = await module.listOperations(address, {});
+      const [tx, _] = await module.listOperations(bigAddress, { start: 0 });
       // Then
       const checkSet = new Set(tx.map(elt => elt.hash));
       expect(checkSet.size).toEqual(tx.length);
+      // the first transaction is returned
+      expect(tx[0].block.height).toEqual(73126713);
+      // 200 is the default XRP explorer hard limit,
+      // so here we are checking that this limit is bypassed
+      expect(tx.length).toBeGreaterThan(200);
     });
   });
 

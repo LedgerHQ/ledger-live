@@ -66,6 +66,7 @@ export const getServerInfos = async (): Promise<ServerInfoResponse> => {
   return rpcCall<ServerInfoResponse>("server_info", { ledger_index: "validated" });
 };
 
+// https://xrpl.org/docs/references/http-websocket-apis/public-api-methods/account-methods/account_tx
 export const getTransactions = async (
   address: string,
   options:
@@ -75,7 +76,7 @@ export const getTransactions = async (
   const result = await rpcCall<AccountTxResponse>("account_tx", {
     account: address,
     // oldest first
-    forward: false,
+    forward: true,
     ...options,
     api_version: 2,
   });

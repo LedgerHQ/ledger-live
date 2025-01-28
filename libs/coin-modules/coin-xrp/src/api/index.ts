@@ -53,7 +53,10 @@ type PaginationState = {
   accumulator: XrpOperation[];
 };
 
-async function operationsFromHeight(address: string, minHeight: number): Promise<XrpOperation[]> {
+async function operationsFromHeight(
+  address: string,
+  minHeight: number,
+): Promise<[XrpOperation[], string]> {
   async function fetchNextPage(state: PaginationState): Promise<PaginationState> {
     const [operations, apiNextCursor] = await listOperations(address, {
       limit: state.pageSize,
@@ -64,7 +67,7 @@ async function operationsFromHeight(address: string, minHeight: number): Promise
     if (apiNextCursor === "") {
       continueIteration = false;
     } else if (newCurrentIteration >= state.maxIterations) {
-      log("⚠ coin:xrp (api/operations): max iterations reached");
+      log("coin:xrp", "(api/operations): max iterations reached", state.maxIterations);
       continueIteration = false;
     }
     const accumulated = state.accumulator.concat(operations);
@@ -78,7 +81,7 @@ async function operationsFromHeight(address: string, minHeight: number): Promise
   }
 
   const firstState: PaginationState = {
-    pageSize: 400,
+    pageSize: 200,
     maxIterations: 10,
     currentIteration: 0,
     minHeight: minHeight,
@@ -90,12 +93,13 @@ async function operationsFromHeight(address: string, minHeight: number): Promise
   while (state.continueIterations) {
     state = await fetchNextPage(state);
   }
-  return state.accumulator;
+  return [state.accumulator, state.apiNextCursor ?? ""];
 }
 
 async function operations(address: string, { start }: Pagination): Promise<[Operation[], string]> {
   const minHeight = start ? start : 0;
-  const ops = await operationsFromHeight(address, minHeight);
+  const [ops, token] = await operationsFromHeight(address, minHeight);
+  // TODO token must be implemented properly (waiting ack from the design document)
   return [
     ops.map(op => {
       const { simpleType, blockHash, blockTime, blockHeight, ...rest } = op;
@@ -108,6 +112,6 @@ async function operations(address: string, { start }: Pagination): Promise<[Oper
         },
       };
     }),
-    "",
+    token,
   ];
 }
