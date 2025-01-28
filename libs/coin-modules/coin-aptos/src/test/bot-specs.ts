@@ -1,4 +1,5 @@
 import invariant from "invariant";
+import expect from "expect";
 import { DeviceModelId } from "@ledgerhq/devices";
 import BigNumber from "bignumber.js";
 import type { Transaction } from "../types";
@@ -7,7 +8,7 @@ import { genericTestDestination, pickSiblings, botTest } from "@ledgerhq/coin-fr
 import type { AppSpec } from "@ledgerhq/coin-framework/bot/types";
 import { acceptTransaction } from "./speculos-deviceActions";
 
-const MIN_SAFE = new BigNumber(0.00000001);
+const MIN_SAFE = new BigNumber(0.0001);
 const maxAccount = 6;
 
 const aptosSpecs: AppSpec<Transaction> = {

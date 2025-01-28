@@ -1,15 +1,7 @@
 import type { DeviceAction } from "@ledgerhq/coin-framework/bot/types";
 import type { Transaction } from "../types";
-import {
-  deviceActionFlow,
-  formatDeviceAmount,
-  SpeculosButton,
-} from "@ledgerhq/coin-framework/bot/specs";
+import { deviceActionFlow, SpeculosButton } from "@ledgerhq/coin-framework/bot/specs";
 import { State } from "@ledgerhq/coin-framework/bot/types";
-
-const typeWording = {
-  send: "Send",
-};
 
 export const acceptTransaction: DeviceAction<Transaction, State<Transaction>> = deviceActionFlow({
   steps: [
@@ -18,27 +10,35 @@ export const acceptTransaction: DeviceAction<Transaction, State<Transaction>> = 
       button: SpeculosButton.RIGHT,
     },
     {
-      title: "Type",
+      title: "Transaction",
       button: SpeculosButton.RIGHT,
-      expectedValue: ({ transaction }) => {
-        return typeWording[transaction.mode as keyof typeof typeWording];
-      },
+    },
+    {
+      title: "Function",
+      button: SpeculosButton.RIGHT,
+    },
+    {
+      title: "Coin Type",
+      button: SpeculosButton.RIGHT,
+    },
+    {
+      title: "Receiver (1/2)",
+      button: SpeculosButton.RIGHT,
+    },
+    {
+      title: "Receiver (2/2)",
+      button: SpeculosButton.RIGHT,
     },
     {
       title: "Amount",
       button: SpeculosButton.RIGHT,
-      expectedValue: ({ account, status }) =>
-        formatDeviceAmount(account.currency, status.amount, {
-          forceFloating: true,
-        }),
     },
     {
-      title: "Address",
+      title: "Gas Fee",
       button: SpeculosButton.RIGHT,
-      expectedValue: ({ transaction }) => transaction.recipient,
     },
     {
-      title: "Accept",
+      title: "Approve",
       button: SpeculosButton.BOTH,
     },
   ],
