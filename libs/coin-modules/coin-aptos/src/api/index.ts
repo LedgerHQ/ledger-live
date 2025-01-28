@@ -1,4 +1,4 @@
-import { ApolloClient, InMemoryCache } from "@apollo/client/main.cjs";
+import { ApolloClient, InMemoryCache } from "@apollo/client";
 
 import {
   AccountData,
