@@ -1,16 +1,8 @@
-import React, { Component, useEffect } from "react";
-import BigNumber from "bignumber.js";
-import { Trans, useTranslation } from "react-i18next";
+import React, { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { Action } from "@ledgerhq/live-common/hw/actions/types";
-import {
-  EConnResetError,
-  ImageDoesNotExistOnDevice,
-  LanguageInstallRefusedOnDevice,
-  LatestFirmwareVersionRequired,
-  NoSuchAppOnProvider,
-  OutdatedApp,
-} from "@ledgerhq/live-common/errors";
+
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import {
   addNewDeviceModel,
@@ -22,250 +14,113 @@ import {
   storeSelector as settingsSelector,
   trackingEnabledSelector,
 } from "~/renderer/reducers/settings";
-import { DeviceModelId } from "@ledgerhq/devices";
-import AutoRepair from "~/renderer/components/AutoRepair";
-import TransactionConfirm from "~/renderer/components/TransactionConfirm";
-import SignMessageConfirm from "~/renderer/components/SignMessageConfirm";
+
 import useTheme from "~/renderer/hooks/useTheme";
-import {
-  ManagerNotEnoughSpaceError,
-  TransportRaceCondition,
-  UnresponsiveDeviceError,
-  UpdateYourApp,
-  UserRefusedAddress,
-  UserRefusedAllowManager,
-  UserRefusedDeviceNameChange,
-  UserRefusedFirmwareUpdate,
-  UserRefusedOnDevice,
-} from "@ledgerhq/errors";
-import {
-  DeviceNotOnboardedErrorComponent,
-  InstallingApp,
-  renderAllowLanguageInstallation,
-  renderAllowManager,
-  renderAllowOpeningApp,
-  renderAllowRemoveCustomLockscreen,
-  renderBootloaderStep,
-  renderConnectYourDevice,
-  renderError,
-  renderInstallingLanguage,
-  renderInWrongAppForAccount,
-  renderListingApps,
-  renderLoading,
-  renderLockedDeviceError,
-  renderRequestQuitApp,
-  renderRequiresAppInstallation,
-  renderSecureTransferDeviceConfirmation,
-  renderSwapDeviceConfirmation,
-  renderWarningOutdated,
-} from "./rendering";
 import { useGetSwapTrackingProperties } from "~/renderer/screens/exchange/Swap2/utils";
-import {
-  Account,
-  AccountLike,
-  AnyMessage,
-  DeviceInfo,
-  DeviceModelInfo,
-} from "@ledgerhq/types-live";
-import {
-  ExchangeRate,
-  ExchangeSwap,
-  InitSwapResult,
-} from "@ledgerhq/live-common/exchange/swap/types";
-import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import { AppAndVersion } from "@ledgerhq/live-common/hw/connectApp";
-import { Device } from "@ledgerhq/types-devices";
-import { LedgerErrorConstructor } from "@ledgerhq/errors/lib/helpers";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { getNoSuchAppProviderLearnMoreMetadataPerApp, isDeviceNotOnboardedError } from "./utils";
+import { DeviceModelInfo } from "@ledgerhq/types-live";
+
 import { useKeepScreenAwake } from "~/renderer/hooks/useKeepScreenAwake";
 import { walletSelector } from "~/renderer/reducers/wallet";
 import { useTrackManagerSectionEvents } from "~/renderer/analytics/hooks/useTrackManagerSectionEvents";
 
-type LedgerError = InstanceType<LedgerErrorConstructor<{ [key: string]: unknown }>>;
+import {
+  stepAutoRepair,
+  stepRequestQuitApp,
+  stepWarningOutdated,
+  stepInstallingApp,
+  stepInstallingLanguage,
+  stepRequiresAppInstallation,
+  stepAllowManagerLanguageLockscreen,
+  stepListingApps,
+  stepCompleteExchangeStarted,
+  stepInitSwapRequested,
+  stepAllowOpeningApp,
+  stepInWrongAppForAccount,
+  stepUnresponsiveOrTransportError,
+  stepErrorHandling,
+  stepLockedDevice,
+  stepConnectDevice,
+  stepLoading,
+  stepBootloader,
+  stepDeviceSignature,
+  stepSignMessage,
+  stepDeviceStreaming,
+  stepFinalPayload,
+  States,
+  InnerProps,
+  ExtendedRenderContext,
+} from "./deviceActionSteps";
 
-type PartialNullable<T> = {
-  [P in keyof T]?: T[P] | null;
-};
-
-type States = PartialNullable<{
-  appAndVersion: AppAndVersion;
-  device: Device;
-  unresponsive: boolean;
-  isLocked: boolean;
-  error: LedgerError & {
-    name?: string;
-    managerAppName?: string;
-  };
-  isLoading: boolean;
-  allowManagerRequested: boolean;
-  allowRenamingRequested: boolean;
-  requestQuitApp: boolean;
-  deviceInfo: DeviceInfo;
-  latestFirmware: unknown;
-  onRepairModal: (open: boolean) => void;
-  requestOpenApp: string;
-  allowOpeningRequestedWording: string;
-  requiresAppInstallation: {
-    appName: string;
-    appNames: string[];
-  };
-  inWrongDeviceForAccount: {
-    accountName: string;
-  };
-  onRetry: () => void;
-  repairModalOpened: {
-    auto: boolean;
-  };
-  onAutoRepair: () => void;
-  closeRepairModal: () => void;
-  deviceSignatureRequested: boolean;
-  deviceStreamingProgress: number;
-  displayUpgradeWarning: boolean;
-  passWarning: () => void;
-  initSwapRequested: boolean;
-  initSwapError: Error;
-  initSwapResult: InitSwapResult | null;
-  installingLanguage: boolean;
-  languageInstallationRequested: boolean;
-  signMessageRequested: AnyMessage;
-  allowOpeningGranted: boolean;
-  completeExchangeStarted: boolean;
-  completeExchangeResult: Transaction;
-  completeExchangeError: Error;
-  imageRemoveRequested: boolean;
-  imageRemoved: boolean;
-  installingApp: boolean;
-  progress: number;
-  listingApps: boolean;
-  amountExpectedTo: string;
-  estimatedFees: string;
-  imageLoadRequested: boolean;
-  loadingImage: boolean;
-  imageLoaded: boolean;
-  imageCommitRequested: boolean;
-  manifestName: string;
-  manifestId: string;
-}>;
-
-type InnerProps<P> = {
-  Result?: React.ComponentType<P>;
-  onResult?: (_: NonNullable<P>) => void;
-  onError?: (_: Error) => Promise<void> | void;
-  renderOnResult?: (_: P) => JSX.Element | null;
-  onSelectDeviceLink?: () => void;
-  analyticsPropertyFlow?: string;
-  overridesPreferredDeviceModel?: DeviceModelId;
-  inlineRetry?: boolean; // Set to false if the retry mechanism is handled externally.
-  location?: string;
-};
-
-type Props<H extends States, P> = InnerProps<P> & {
+/**
+ * - R: request type
+ * - H: hook state type (extends your `States`)
+ * - P: final payload/result type from `mapResult`
+ */
+export type DeviceActionDefaultRenderingProps<R, H extends States, P> = {
   status: H;
   payload?: P | null;
-};
+  request: R;
+  location?: string;
+  onError?: (error: Error) => void;
+  overridesPreferredDeviceModel?: string;
+  inlineRetry?: boolean;
+  analyticsPropertyFlow?: string;
+} & InnerProps<P>;
 
-class OnResult<P> extends Component<{ payload: P; onResult: (_: P) => void }> {
-  componentDidMount() {
-    const { onResult, payload } = this.props;
-    onResult && onResult(payload);
-  }
-
-  render() {
-    return null;
-  }
-}
-
-export const DeviceActionDefaultRendering = <R, H extends States, P>({
+export function DeviceActionDefaultRendering<R, H extends States, P>({
   status: hookState,
   payload,
   request,
-  Result,
-  onResult,
   onError,
   overridesPreferredDeviceModel,
   inlineRetry = true,
   analyticsPropertyFlow,
   location,
-}: Props<H, P> & {
-  request?: R;
-}) => {
-  const {
-    appAndVersion,
-    device,
-    unresponsive,
-    isLocked,
-    error,
-    isLoading,
-    allowManagerRequested,
-    allowRenamingRequested,
-    imageRemoveRequested,
-    requestQuitApp,
-    deviceInfo,
-    latestFirmware,
-    repairModalOpened,
-    requestOpenApp,
-    allowOpeningRequestedWording,
-    installingApp,
-    progress,
-    listingApps,
-    requiresAppInstallation,
-    languageInstallationRequested,
-    installingLanguage,
-    inWrongDeviceForAccount,
-    onRetry,
-    onAutoRepair,
-    closeRepairModal,
-    onRepairModal,
-    deviceSignatureRequested,
-    deviceStreamingProgress,
-    displayUpgradeWarning,
-    passWarning,
-    initSwapRequested,
-    initSwapError,
-    initSwapResult,
-    completeExchangeStarted,
-    completeExchangeResult,
-    completeExchangeError,
-    allowOpeningGranted,
-    signMessageRequested,
-    manifestId,
-    manifestName,
-  } = hookState;
-
+}: DeviceActionDefaultRenderingProps<R, H, P>) {
   const dispatch = useDispatch();
+
+  const { device, deviceInfo, latestFirmware, error, manifestId, manifestName } = hookState;
+
   const preferredDeviceModel = useSelector(preferredDeviceModelSelector);
   const swapDefaultTrack = useGetSwapTrackingProperties();
   const stateSettings = useSelector(settingsSelector);
   const walletState = useSelector(walletSelector);
+  const isTrackingEnabled = useSelector(trackingEnabledSelector);
 
+  const theme = useTheme();
+  const themeType = theme.colors.palette.type as "dark" | "light";
+  const { t } = useTranslation();
+
+  // analytics
   useTrackManagerSectionEvents({
     location,
     device,
     allowManagerRequested: hookState.allowManagerRequested,
     clsImageRemoved: hookState.imageRemoved,
     error,
-    isTrackingEnabled: useSelector(trackingEnabledSelector),
+    isTrackingEnabled,
   });
 
-  const type = useTheme().colors.palette.type;
+  useKeepScreenAwake(true);
 
+  // determine the correct device model
   const modelId = device ? device.modelId : overridesPreferredDeviceModel || preferredDeviceModel;
 
+  // update store's preferred device model
   useEffect(() => {
-    if (modelId !== preferredDeviceModel) {
+    if (modelId && modelId !== preferredDeviceModel) {
       dispatch(setPreferredDeviceModel(modelId));
     }
   }, [dispatch, modelId, preferredDeviceModel]);
 
-  const { t } = useTranslation();
-
+  // if there's an error, call onError
   useEffect(() => {
     if (error && onError) {
       onError(error);
     }
   }, [error, onError]);
 
+  // save lastSeen device info if available
   useEffect(() => {
     if (deviceInfo && device) {
       const lastSeenDevice: DeviceModelInfo = {
@@ -274,351 +129,62 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
         apps: [],
       };
       dispatch(setLastSeenDeviceInfo({ lastSeenDevice, latestFirmware }));
-      dispatch(addNewDeviceModel({ deviceModelId: lastSeenDevice.modelId }));
+      dispatch(addNewDeviceModel({ deviceModelId: device.modelId }));
     }
   }, [dispatch, device, deviceInfo, latestFirmware]);
 
-  if (displayUpgradeWarning && appAndVersion && passWarning) {
-    return renderWarningOutdated({ appName: appAndVersion.name, passWarning });
-  }
+  // context object for step rendering
+  const ctx: ExtendedRenderContext<H, P> = {
+    hookState,
+    payload,
+    request,
+    inlineRetry,
+    modelId,
+    type: themeType,
+    swapDefaultTrack,
+    stateSettings,
+    walletState,
+    t,
+    analyticsPropertyFlow,
+    manifestId: manifestId ?? null,
+    manifestName: manifestName ?? null,
+  };
 
-  if (repairModalOpened && repairModalOpened.auto && closeRepairModal) {
-    return <AutoRepair onDone={closeRepairModal} />;
-  }
+  return [
+    stepWarningOutdated,
+    stepAutoRepair,
+    stepRequestQuitApp,
+    stepInstallingApp,
+    stepInstallingLanguage,
+    stepRequiresAppInstallation,
+    stepAllowManagerLanguageLockscreen,
+    stepListingApps,
+    stepCompleteExchangeStarted,
+    stepInitSwapRequested,
+    stepAllowOpeningApp,
+    stepInWrongAppForAccount,
+    stepUnresponsiveOrTransportError,
+    stepErrorHandling,
+    stepLockedDevice,
+    stepConnectDevice,
+    stepLoading,
+    stepBootloader,
+    stepDeviceSignature,
+    stepSignMessage,
+    stepDeviceStreaming,
+    stepFinalPayload,
+  ].reduce<JSX.Element | null>((acc, step) => acc || step(ctx), null);
+}
 
-  if (requestQuitApp) {
-    return renderRequestQuitApp({ modelId, type });
-  }
-
-  if (installingApp && requestOpenApp && request) {
-    const appName = requestOpenApp;
-    return (
-      <InstallingApp
-        type={type}
-        modelId={modelId}
-        appName={appName}
-        progress={progress ?? 0}
-        request={request}
-        analyticsPropertyFlow={analyticsPropertyFlow}
-      />
-    );
-  }
-
-  if (installingLanguage) {
-    return renderInstallingLanguage({ progress: progress ?? 0, t });
-  }
-
-  if (requiresAppInstallation) {
-    const { appName, appNames: maybeAppNames } = requiresAppInstallation;
-    const appNames = maybeAppNames?.length ? maybeAppNames : [appName];
-
-    return renderRequiresAppInstallation({ appNames });
-  }
-
-  if (allowRenamingRequested) {
-    return renderAllowManager({ modelId, type, requestType: "rename" });
-  }
-
-  if (allowManagerRequested) {
-    return renderAllowManager({ modelId, type });
-  }
-
-  if (languageInstallationRequested) {
-    return renderAllowLanguageInstallation({ modelId, type, t });
-  }
-
-  if (imageRemoveRequested) {
-    const refused = error instanceof UserRefusedOnDevice;
-    const noImage = error instanceof ImageDoesNotExistOnDevice;
-    if (error) {
-      if (refused || noImage) {
-        return renderError({
-          t,
-          inlineRetry,
-          error,
-          onRetry: refused ? onRetry : undefined,
-          info: true,
-        });
-      }
-    } else {
-      return renderAllowRemoveCustomLockscreen({ modelId, type });
-    }
-  }
-
-  if (listingApps) {
-    return renderListingApps();
-  }
-
-  if (completeExchangeStarted && !completeExchangeResult && !completeExchangeError && !isLoading) {
-    const { exchangeType } = request as { exchangeType: number };
-
-    // FIXME: could use a TS enum (when LLD will be in TS) or a JS object instead of raw numbers for switch values for clarity
-    switch (exchangeType) {
-      // swap
-      case 0x00: {
-        const {
-          transaction,
-          exchange,
-          provider,
-          rate = 1,
-          amountExpectedTo = 0,
-        } = request as {
-          transaction: Transaction;
-          exchange: ExchangeSwap;
-          provider: string;
-          rate: number;
-          amountExpectedTo: number;
-        };
-        const { estimatedFees } = hookState;
-
-        return renderSwapDeviceConfirmation({
-          modelId: device.modelId,
-          type,
-          transaction,
-          exchangeRate: {
-            provider,
-            rate: new BigNumber(rate),
-          } as ExchangeRate,
-          exchange,
-          swapDefaultTrack,
-          amountExpectedTo: amountExpectedTo.toString() ?? undefined,
-          estimatedFees: estimatedFees?.toString() ?? undefined,
-          stateSettings,
-          walletState,
-        });
-      }
-
-      case 0x01: // sell
-      case 0x02: // fund
-        return renderSecureTransferDeviceConfirmation({
-          exchangeType: exchangeType === 0x01 ? "sell" : "fund",
-          modelId,
-          type,
-        });
-
-      default:
-        return <div>{"Confirm exchange on your device"}</div>;
-    }
-  }
-
-  if (initSwapRequested && !initSwapResult && !initSwapError) {
-    const { transaction, exchange, exchangeRate } = request as {
-      transaction: Transaction;
-      exchange: ExchangeSwap;
-      exchangeRate: ExchangeRate;
-    };
-    const { amountExpectedTo, estimatedFees } = hookState;
-    return renderSwapDeviceConfirmation({
-      modelId,
-      type,
-      transaction,
-      exchangeRate,
-      exchange,
-      amountExpectedTo: amountExpectedTo ?? undefined,
-      estimatedFees: estimatedFees ?? undefined,
-      swapDefaultTrack,
-      stateSettings,
-      walletState,
-    });
-  }
-
-  if (allowOpeningRequestedWording || requestOpenApp) {
-    // requestOpenApp for Nano S 1.3.1 (need to ask user to open the app.)
-    const wording = allowOpeningRequestedWording || requestOpenApp || "";
-    const { tokenCurrency } = request as { tokenCurrency: TokenCurrency };
-    const tokenContext = tokenCurrency;
-    return renderAllowOpeningApp({
-      modelId,
-      type,
-      wording,
-      tokenContext,
-      isDeviceBlocker: !requestOpenApp,
-    });
-  }
-
-  if (inWrongDeviceForAccount) {
-    return renderInWrongAppForAccount({ t, onRetry });
-  }
-
-  if (unresponsive || error instanceof TransportRaceCondition) {
-    return renderError({
-      t,
-      error: new UnresponsiveDeviceError(),
-      onRetry,
-      withExportLogs: false,
-    });
-  }
-
-  if (!isLoading && error) {
-    const e = error as unknown;
-    if (
-      e instanceof ManagerNotEnoughSpaceError ||
-      e instanceof OutdatedApp ||
-      e instanceof UpdateYourApp
-    ) {
-      return renderError({
-        t,
-        error,
-        managerAppName: (error as { managerAppName: string }).managerAppName,
-      });
-    }
-
-    if (e instanceof LatestFirmwareVersionRequired) {
-      return renderError({
-        t,
-        error,
-        requireFirmwareUpdate: true,
-      });
-    }
-
-    // NB Until we find a better way, remap the error if it's 6d06 (LNS, LNSP, LNX) or 6d07 (Stax) and we haven't fallen
-    // into another handled case.
-    if (isDeviceNotOnboardedError(e)) {
-      return <DeviceNotOnboardedErrorComponent t={t} device={device} />;
-    }
-
-    if (e instanceof NoSuchAppOnProvider) {
-      return renderError({
-        t,
-        error,
-        withOpenManager: true,
-        withExportLogs: true,
-        ...(device && { device }),
-        ...getNoSuchAppProviderLearnMoreMetadataPerApp((request as { appName: string })?.appName),
-      });
-    }
-
-    // workaround to catch ECONNRESET error and show better message
-    if ((error as Error)?.message?.includes("ECONNRESET")) {
-      return renderError({
-        t,
-        error: new EConnResetError(),
-        onRetry,
-        withExportLogs: true,
-      });
-    }
-
-    let withExportLogs = true;
-    let warning = false;
-    let withDescription = true;
-    // User rejections, should be rendered as warnings and not export logs.
-    // All the error rendering needs to be unified, the same way we do for ErrorIcon
-    // not handled here.
-    if (
-      (error as unknown) instanceof UserRefusedFirmwareUpdate ||
-      (error as unknown) instanceof UserRefusedAllowManager ||
-      (error as unknown) instanceof UserRefusedOnDevice ||
-      (error as unknown) instanceof UserRefusedAddress ||
-      (error as unknown) instanceof UserRefusedDeviceNameChange ||
-      (error as unknown) instanceof LanguageInstallRefusedOnDevice
-    ) {
-      withExportLogs = false;
-      warning = true;
-    }
-
-    if ((error as unknown) instanceof UserRefusedDeviceNameChange) {
-      withDescription = false;
-    }
-
-    return renderError({
-      t,
-      error,
-      warning,
-      onRetry,
-      withExportLogs,
-      device: device ?? undefined,
-      inlineRetry,
-      withDescription,
-    });
-  }
-
-  // Renders an error as long as LLD is using the "event" implementation of device actions
-  if (isLocked) {
-    return renderLockedDeviceError({ t, device, onRetry, inlineRetry });
-  }
-
-  if (!isLoading && !device) {
-    return renderConnectYourDevice({
-      modelId,
-      type,
-      unresponsive,
-      device,
-      onRepairModal,
-    });
-  }
-
-  if (isLoading || (allowOpeningGranted && !appAndVersion)) {
-    return renderLoading();
-  }
-
-  if (deviceInfo && deviceInfo.isBootloader && onAutoRepair) {
-    return renderBootloaderStep({ onAutoRepair });
-  }
-
-  if (request && device && deviceSignatureRequested) {
-    const { account, parentAccount, status, transaction } = request as unknown as {
-      account: AccountLike;
-      parentAccount: Account | null;
-      status: TransactionStatus;
-      transaction: Transaction;
-    };
-    if (account && status && transaction) {
-      return (
-        <TransactionConfirm
-          device={device}
-          account={account}
-          parentAccount={parentAccount}
-          transaction={transaction}
-          status={status}
-          manifestId={manifestId}
-          manifestName={manifestName}
-        />
-      );
-    }
-  }
-
-  if (request && signMessageRequested) {
-    const { account, parentAccount } = request as unknown as {
-      account: AccountLike;
-      parentAccount: Account | null;
-    };
-    return (
-      <SignMessageConfirm
-        device={device}
-        account={account}
-        parentAccount={parentAccount}
-        signMessageRequested={signMessageRequested}
-      />
-    );
-  }
-
-  if (typeof deviceStreamingProgress === "number") {
-    return renderLoading({
-      children:
-        deviceStreamingProgress > 0 ? (
-          // with streaming event, we have accurate version of the wording
-          <Trans
-            i18nKey="send.steps.verification.streaming.accurate"
-            values={{ percentage: (deviceStreamingProgress * 100).toFixed(0) + "%" }}
-          />
-        ) : (
-          // otherwise, we're not accurate (usually because we don't need to, it's fast case)
-
-          <Trans i18nKey="send.steps.verification.streaming.inaccurate" />
-        ),
-    });
-  }
-
-  if (!payload) {
-    return null;
-  }
-
-  return (
-    <>
-      {Result ? <Result {...payload} /> : null}
-      {onResult ? <OnResult onResult={onResult} payload={payload} /> : null}
-    </>
-  );
+/**
+ *  - R: the request type
+ *  - H: the hook state type
+ *  - P: the final payload type
+ */
+type DeviceActionProps<R, H extends States, P> = InnerProps<P> & {
+  action: Action<R, H, P>;
+  request: R;
+  location?: string;
 };
 
 /**
@@ -629,28 +195,25 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
  * @prop onResult optional: an action produces a result, this gives a callback to be called with it
  * @prop location optional: an action might need to know the location for analytics
  */
-
 export default function DeviceAction<R, H extends States, P>({
   action,
   request,
   location,
-  ...props
-}: InnerProps<P> & {
-  action: Action<R, H, P>;
-  request: R;
-}): JSX.Element {
+  ...rest
+}: DeviceActionProps<R, H, P>) {
   const device = useSelector(getCurrentDevice);
   const hookState = action.useHook(device, request);
   const payload = action.mapResult(hookState);
+
   useKeepScreenAwake(true);
 
   return (
-    <DeviceActionDefaultRendering
+    <DeviceActionDefaultRendering<R, H, P>
       status={hookState}
       request={request}
       payload={payload}
       location={location}
-      {...props}
+      {...rest}
     />
   );
 }
