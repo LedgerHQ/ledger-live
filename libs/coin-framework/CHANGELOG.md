@@ -1,5 +1,11 @@
 # @ledgerhq/coin-framework
 
+## 0.23.1-hotfix.0
+
+### Patch Changes
+
+- [#9027](https://github.com/LedgerHQ/ledger-live/pull/9027) [`670776e`](https://github.com/LedgerHQ/ledger-live/commit/670776e3a34859a18d6de1470de4195cf2094a81) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Revert fix solana earn on LLm
+
 ## 0.23.0
 
 ### Minor Changes
