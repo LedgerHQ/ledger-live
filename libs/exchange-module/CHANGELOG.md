@@ -1,5 +1,11 @@
 # @ledgerhq/wallet-api-exchange-module
 
+## 0.9.0
+
+### Minor Changes
+
+- [#8938](https://github.com/LedgerHQ/ledger-live/pull/8938) [`59af83f`](https://github.com/LedgerHQ/ledger-live/commit/59af83f6fa6787c055646ec65d17fe6773eab38e) Thanks [@CremaFR](https://github.com/CremaFR)! - fixed incorrect fee strategy types
+
 ## 0.9.0-next.0
 
 ### Minor Changes
