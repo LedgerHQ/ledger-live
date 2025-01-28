@@ -15,7 +15,7 @@ import { deviceManagementKit } from "../hooks/useDeviceManagementKit";
 const tracer = new LocalTracer("live-dmk", { function: "DeviceManagementKitTransport" });
 
 export class DeviceManagementKitTransport extends Transport {
-  readonly sessionId: string;
+  sessionId: string;
   readonly sdk: DeviceManagementKit;
 
   constructor(sdk: DeviceManagementKit, sessionId: string) {
@@ -136,6 +136,16 @@ export class DeviceManagementKitTransport extends Transport {
 
   async exchange(apdu: Buffer): Promise<Buffer> {
     tracer.trace(`[exchange] => ${apdu.toString("hex")}`);
+
+    const devices = await this.sdk.listConnectedDevices();
+
+    // If the device is not connected, connect to new session
+    if (!devices.some(device => device.sessionId === this.sessionId)) {
+      const [discoveredDevice] = await firstValueFrom(deviceManagementKit.listenToKnownDevices());
+      const connectedSessionId = await deviceManagementKit.connect({ device: discoveredDevice });
+      this.sessionId = connectedSessionId;
+    }
+
     return await this.sdk
       .sendApdu({
         sessionId: this.sessionId,
