@@ -1,5 +1,5 @@
 import semver from "semver";
-import { Observable, concat, from, of, throwError, defer, merge, timer } from "rxjs";
+import { Observable, concat, from, of, throwError, defer, merge } from "rxjs";
 import { mergeMap, concatMap, map, catchError, delay } from "rxjs/operators";
 import {
   TransportStatusError,
@@ -126,10 +126,6 @@ export type ConnectAppEvent =
       displayUpgradeWarning: boolean;
     }
   | LockedDeviceEvent;
-
-const isDMKError = (e: unknown) => {
-  return e && typeof e === "object" && "_tag" in e && e._tag === "WebHidSendReportError";
-};
 
 export const openAppFromDashboard = (
   transport: Transport,
@@ -437,18 +433,6 @@ const cmd = ({ deviceId, request }: Input): Observable<ConnectAppEvent> => {
                 return of(<ConnectAppEvent>{
                   type: "disconnected",
                 });
-              }
-
-              if (isDMKError(e)) {
-                return timer(500).pipe(
-                  mergeMap(() =>
-                    innerSub({
-                      appName,
-                      dependencies,
-                      allowPartialDependencies,
-                    }),
-                  ),
-                );
               }
 
               if (e && e instanceof TransportStatusError) {
