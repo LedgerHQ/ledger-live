@@ -1,5 +1,14 @@
 # web-tools
 
+## 0.13.2-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`670776e`](https://github.com/LedgerHQ/ledger-live/commit/670776e3a34859a18d6de1470de4195cf2094a81)]:
+  - @ledgerhq/coin-framework@0.23.1-hotfix.0
+  - @ledgerhq/live-common@34.19.1-hotfix.0
+  - @ledgerhq/live-wallet@0.9.1-hotfix.0
+
 ## 0.13.1
 
 ### Patch Changes
