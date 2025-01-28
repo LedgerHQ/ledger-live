@@ -126,6 +126,6 @@ jobs:
     needs: prepare-release
     uses: LedgerHQ/ledger-live/.github/workflows/release-final.yml@develop
     with:
-      ref: hotfix
+      ref: ${{ github.event.inputs.tag_version == 'latest' && 'main' || 'hotfix' }}
       caller: release-prepare-hotfix
     secrets: inherit
