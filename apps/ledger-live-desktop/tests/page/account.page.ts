@@ -38,6 +38,7 @@ export class AccountPage extends AppPage {
   private seeGalleryButton = this.page.getByRole("button", { name: "See Gallery" });
   private nftOperation = this.page.getByText("NFT Sent");
   private nftList = (collectionName: string) => this.page.getByTestId(`nft-row-${collectionName}`);
+  private accountHeaderName = this.page.locator("id=account-header-name");
 
   @step("Navigate to token")
   async navigateToToken(SubAccount: Account) {
@@ -104,6 +105,12 @@ export class AccountPage extends AppPage {
   async scrollToOperations() {
     const operationList = this.page.locator("id=operation-list");
     await operationList.scrollIntoViewIfNeeded();
+  }
+
+  @step("Rename account")
+  async renameAccount(newName: string) {
+    await this.accountHeaderName.fill(newName);
+    await this.page.keyboard.press("Enter");
   }
 
   /**

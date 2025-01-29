@@ -10,7 +10,7 @@ import {
   View,
 } from "react-native";
 import { useTheme } from "styled-components/native";
-import { ScreenName } from "~/const";
+import { NavigatorName, ScreenName } from "~/const";
 import { TrackScreen } from "~/analytics";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import AccountItem from "../../components/AccountsListView/components/AccountItem";
@@ -26,6 +26,7 @@ import { useNavigation } from "@react-navigation/core";
 import useAnimatedStyle from "../ScanDeviceAccounts/components/ScanDeviceAccountsFooter/useAnimatedStyle";
 import AddFundsButton from "../../components/AddFundsButton";
 import CloseWithConfirmation from "LLM/components/CloseWithConfirmation";
+import { AddAccountContexts } from "../AddAccount/enums";
 
 type Props = BaseComposite<
   StackNavigatorProps<NetworkBasedAddAccountNavigator, ScreenName.AddAccountsSuccess>
@@ -37,17 +38,25 @@ export default function AddAccountsSuccess({ route }: Props) {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
   const { animatedSelectableAccount } = useAnimatedStyle();
+  const { currency, accountsToAdd, onCloseNavigation, context } = route.params || {};
 
   const goToAccounts = useCallback(
     (accountId: string) => () => {
-      navigation.navigate(ScreenName.Account, {
-        accountId,
-      });
+      if (context === AddAccountContexts.AddAccounts)
+        navigation.navigate(ScreenName.Account, {
+          accountId,
+        });
+      else
+        navigation.navigate(NavigatorName.ReceiveFunds, {
+          screen: ScreenName.ReceiveConfirmation,
+          params: {
+            ...route.params,
+            accountId,
+          },
+        });
     },
-    [navigation],
+    [navigation, route.params, context],
   );
-
-  const { currency, accountsToAdd, onCloseNavigation } = route.params || {};
 
   const renderItem = useCallback(
     ({ item }: ListRenderItemInfo<AccountLikeEnhanced>) => (
@@ -98,7 +107,11 @@ export default function AddAccountsSuccess({ route }: Props) {
         />
       </Flex>
       <Flex mb={insets.bottom + 2} px={6} rowGap={6}>
-        <AddFundsButton accounts={accountsToAdd} currency={currency} />
+        <AddFundsButton
+          accounts={accountsToAdd}
+          currency={currency}
+          sourceScreenName={ScreenName.AddAccountsSuccess}
+        />
         <CloseWithConfirmation
           showButton
           buttonText={t("addAccounts.addAccountsSuccess.ctaClose")}

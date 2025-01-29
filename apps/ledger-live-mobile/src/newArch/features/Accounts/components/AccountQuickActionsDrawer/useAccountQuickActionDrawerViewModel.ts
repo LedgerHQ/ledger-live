@@ -9,6 +9,7 @@ import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpe
 import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
 import { StyleProp, ViewStyle } from "react-native";
 import { track } from "~/analytics";
+import { AnalyticButtons, AnalyticEvents } from "~/newArch/hooks/useAnalytics/enums";
 
 type ActionItem = {
   title: string;
@@ -40,9 +41,8 @@ export default function useAccountQuickActionDrawerViewModel({
   const actions: ActionItem[] = [
     RECEIVE && {
       eventProperties: {
-        button: "transfer_receive",
-        //page, TODO: add it in the analytics ticket
-        drawer: "trade",
+        button: AnalyticButtons.Receive,
+        page: AnalyticEvents.FundingQuickAction,
       },
       title: t("transfer.receive.title"),
       description: t("transfer.receive.description"),
@@ -54,9 +54,8 @@ export default function useAccountQuickActionDrawerViewModel({
     },
     BUY && {
       eventProperties: {
-        button: "transfer_buy",
-        //page, TODO: add it in the analytics ticket
-        drawer: "trade",
+        button: AnalyticButtons.Buy,
+        page: AnalyticEvents.FundingQuickAction,
       },
       title: t("transfer.buy.title"),
       description: t("transfer.buy.description"),

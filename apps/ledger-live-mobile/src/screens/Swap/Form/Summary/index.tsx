@@ -30,6 +30,7 @@ import { EDITABLE_FEE_FAMILIES } from "@ledgerhq/live-common/exchange/swap/const
 import { useMaybeAccountName } from "~/reducers/wallet";
 import { useMaybeAccountUnit } from "~/hooks/useAccountUnit";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { AddAccountContexts } from "LLM/features/Accounts/screens/AddAccount/enums";
 
 interface Props {
   provider?: string;
@@ -90,7 +91,8 @@ export function Summary({ provider, swapTx: { swap, status, transaction } }: Pro
         navigation.navigate(NavigatorName.AssetSelection, {
           token: to.currency.id,
           currency: to.currency.parentCurrency.id,
-          context: "addAccounts",
+          context: AddAccountContexts.AddAccounts,
+          sourceScreenName: ScreenName.SwapForm,
         });
       } else {
         navigation.navigate(NavigatorName.AddAccounts, {
@@ -108,7 +110,7 @@ export function Summary({ provider, swapTx: { swap, status, transaction } }: Pro
           params: {
             ...params,
             currency: to.currency,
-            context: "addAccounts",
+            context: AddAccountContexts.AddAccounts,
             inline: true,
           },
         });
