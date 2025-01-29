@@ -26,6 +26,24 @@ const MAX_PORT = 65535;
 let portCounter = BASE_PORT; // Counter for generating unique ports
 const speculosDevices: [number, SpeculosDevice][] = [];
 
+export function setupEnvironment() {
+  setEnv("DISABLE_APP_VERSION_REQUIREMENTS", true);
+
+  if (process.env.MOCK == "0") {
+    setEnv("MOCK", "");
+    process.env.MOCK = "";
+  } else {
+    setEnv("MOCK", "1");
+    process.env.MOCK = "1";
+  }
+
+  if (process.env.DISABLE_TRANSACTION_BROADCAST == "0") {
+    setEnv("DISABLE_TRANSACTION_BROADCAST", false);
+  } else if (getEnv("MOCK") != "1") {
+    setEnv("DISABLE_TRANSACTION_BROADCAST", true);
+  }
+}
+
 function sync_delay(ms: number) {
   const done = new Int32Array(new SharedArrayBuffer(4));
   Atomics.wait(done, 0, 0, ms); // Wait for the specified duration

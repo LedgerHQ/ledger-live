@@ -4,7 +4,7 @@ import fs from "fs";
 import { getState } from "expect";
 import { MatcherState } from "expect";
 import { format } from "date-fns";
-import { launchApp, deleteSpeculos } from "./helpers";
+import { launchApp, deleteSpeculos, setupEnvironment } from "./helpers";
 import { closeProxy } from "./bridge/proxy";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 
@@ -13,24 +13,10 @@ const date = format(currentDate, "MM-dd");
 const directoryPath = `artifacts/${date}_LLM`;
 const broadcastOriginalValue = getEnv("DISABLE_TRANSACTION_BROADCAST");
 
-if (process.env.MOCK == "0") {
-  setEnv("MOCK", "");
-  process.env.MOCK = "";
-} else {
-  setEnv("MOCK", "1");
-  process.env.MOCK = "1";
-}
-
-if (process.env.DISABLE_TRANSACTION_BROADCAST == "0") {
-  setEnv("DISABLE_TRANSACTION_BROADCAST", false);
-} else if (getEnv("MOCK") != "1") {
-  setEnv("DISABLE_TRANSACTION_BROADCAST", true);
-}
+setupEnvironment();
 
 beforeAll(
   async () => {
-    setEnv("DISABLE_APP_VERSION_REQUIREMENTS", true);
-
     const port = await launchApp();
     await device.reverseTcpPort(8081);
     await device.reverseTcpPort(port);

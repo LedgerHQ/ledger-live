@@ -14,6 +14,7 @@ import { MessageData, ServerData, mockDeviceEventSubject } from "./types";
 import { getAllEnvs, setEnv } from "@ledgerhq/live-env";
 import { getAllFeatureFlags } from "@ledgerhq/live-common/e2e/index";
 import { DeviceModelId } from "@ledgerhq/devices";
+import Config from "react-native-config";
 
 export const e2eBridgeClient = new Subject<MessageData>();
 
@@ -29,7 +30,11 @@ export function init() {
 
   log(`[E2E Bridge Client]: wsPort=${wsPort}, mock=${mock}`);
 
-  if (mock == "0") setEnv("MOCK", "");
+  if (mock == "0") {
+    setEnv("MOCK", "");
+    setEnv("MOCK_COUNTERVALUES", "");
+    Config.MOCK = "";
+  }
   setEnv("DISABLE_TRANSACTION_BROADCAST", disable_broadcast != "0");
 
   if (ws) {
