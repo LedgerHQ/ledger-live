@@ -1,5 +1,5 @@
 ---
-"live-mobile": patch
+"live-mobile": minor
 ---
 
 Fixes Add Custom Manifest screen
