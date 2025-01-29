@@ -1,5 +1,15 @@
 # @ledgerhq/types-live
 
+## 6.58.0-nightly.2
+
+### Minor Changes
+
+- [#9018](https://github.com/LedgerHQ/ledger-live/pull/9018) [`11c3b8b`](https://github.com/LedgerHQ/ledger-live/commit/11c3b8b27bc4fa996757c58ec7f5beac90c7a425) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LS - LLD Entry Points feature flag added
+
+- [#8119](https://github.com/LedgerHQ/ledger-live/pull/8119) [`41b153a`](https://github.com/LedgerHQ/ledger-live/commit/41b153adb98ce8de3336563694204d83905dba0e) Thanks [@Justkant](https://github.com/Justkant)! - Solana spl tokens support
+
+- [#9017](https://github.com/LedgerHQ/ledger-live/pull/9017) [`1524353`](https://github.com/LedgerHQ/ledger-live/commit/152435384370b729183b7898308cbc1f8b61e451) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LS - LLM Entry Points feature flag added
+
 ## 6.58.0-nightly.1
 
 ### Minor Changes

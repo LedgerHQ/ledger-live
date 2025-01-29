@@ -1,5 +1,33 @@
 # live-mobile
 
+## 3.62.0-nightly.4
+
+### Minor Changes
+
+- [#8119](https://github.com/LedgerHQ/ledger-live/pull/8119) [`41b153a`](https://github.com/LedgerHQ/ledger-live/commit/41b153adb98ce8de3336563694204d83905dba0e) Thanks [@Justkant](https://github.com/Justkant)! - Solana spl tokens support
+
+- [#8916](https://github.com/LedgerHQ/ledger-live/pull/8916) [`4717fef`](https://github.com/LedgerHQ/ledger-live/commit/4717fef32e824d9454568ea30235b4374b849303) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LS - Copy and UX improvements
+
+- [#8968](https://github.com/LedgerHQ/ledger-live/pull/8968) [`0d96beb`](https://github.com/LedgerHQ/ledger-live/commit/0d96bebaae2c83ccf373d4895a2b3508a324238a) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Bump sentry version to 6.5.0
+
+### Patch Changes
+
+- Updated dependencies [[`eb9f1b3`](https://github.com/LedgerHQ/ledger-live/commit/eb9f1b3e4d40522513dd589000eda2915fb4af55), [`11c3b8b`](https://github.com/LedgerHQ/ledger-live/commit/11c3b8b27bc4fa996757c58ec7f5beac90c7a425), [`41b153a`](https://github.com/LedgerHQ/ledger-live/commit/41b153adb98ce8de3336563694204d83905dba0e), [`1524353`](https://github.com/LedgerHQ/ledger-live/commit/152435384370b729183b7898308cbc1f8b61e451)]:
+  - @ledgerhq/live-wallet@0.9.0-nightly.2
+  - @ledgerhq/types-live@6.58.0-nightly.2
+  - @ledgerhq/live-common@34.19.0-nightly.3
+  - @ledgerhq/coin-framework@0.23.0-nightly.2
+  - @ledgerhq/coin-cosmos@0.5.1-nightly.2
+  - @ledgerhq/coin-elrond@0.2.2-nightly.2
+  - @ledgerhq/coin-evm@2.8.2-nightly.2
+  - @ledgerhq/coin-filecoin@1.4.2-nightly.2
+  - @ledgerhq/coin-stacks@0.4.2-nightly.2
+  - @ledgerhq/domain-service@1.2.17-nightly.2
+  - @ledgerhq/live-countervalues@0.2.18-nightly.2
+  - @ledgerhq/live-countervalues-react@0.2.18-nightly.2
+  - @ledgerhq/live-nft@0.5.3-nightly.2
+  - @ledgerhq/live-nft-react@0.5.3-nightly.2
+
 ## 3.62.0-nightly.3
 
 ### Minor Changes

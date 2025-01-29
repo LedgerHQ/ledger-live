@@ -1,5 +1,15 @@
 # @ledgerhq/coin-evm
 
+## 2.8.2-nightly.2
+
+### Patch Changes
+
+- Updated dependencies [[`41b153a`](https://github.com/LedgerHQ/ledger-live/commit/41b153adb98ce8de3336563694204d83905dba0e)]:
+  - @ledgerhq/cryptoassets@13.10.0-nightly.0
+  - @ledgerhq/coin-framework@0.23.0-nightly.2
+  - @ledgerhq/domain-service@1.2.17-nightly.2
+  - @ledgerhq/evm-tools@1.3.1
+
 ## 2.8.2-nightly.1
 
 ### Patch Changes

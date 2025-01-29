@@ -1,5 +1,18 @@
 # @ledgerhq/live-wallet
 
+## 0.9.0-nightly.2
+
+### Minor Changes
+
+- [#9006](https://github.com/LedgerHQ/ledger-live/pull/9006) [`eb9f1b3`](https://github.com/LedgerHQ/ledger-live/commit/eb9f1b3e4d40522513dd589000eda2915fb4af55) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - Fix rename account issue
+
+### Patch Changes
+
+- Updated dependencies [[`11c3b8b`](https://github.com/LedgerHQ/ledger-live/commit/11c3b8b27bc4fa996757c58ec7f5beac90c7a425), [`41b153a`](https://github.com/LedgerHQ/ledger-live/commit/41b153adb98ce8de3336563694204d83905dba0e), [`1524353`](https://github.com/LedgerHQ/ledger-live/commit/152435384370b729183b7898308cbc1f8b61e451)]:
+  - @ledgerhq/types-live@6.58.0-nightly.2
+  - @ledgerhq/cryptoassets@13.10.0-nightly.0
+  - @ledgerhq/coin-framework@0.23.0-nightly.2
+
 ## 0.8.2-nightly.1
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @ledgerhq/cryptoassets
 
+## 13.10.0-nightly.0
+
+### Minor Changes
+
+- [#8119](https://github.com/LedgerHQ/ledger-live/pull/8119) [`41b153a`](https://github.com/LedgerHQ/ledger-live/commit/41b153adb98ce8de3336563694204d83905dba0e) Thanks [@Justkant](https://github.com/Justkant)! - Solana spl tokens support
+
 ## 13.9.0
 
 ### Minor Changes
