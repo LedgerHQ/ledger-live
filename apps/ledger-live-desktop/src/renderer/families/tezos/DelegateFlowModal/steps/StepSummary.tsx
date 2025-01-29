@@ -123,7 +123,7 @@ const StepSummary = ({ account, transaction, eventType, transitionTo }: StepProp
                 <BakerImage size={32} baker={baker} />
                 <Ellipsis>
                   <Text
-                    data-testid={`validator-name-${getAccountCurrency(account).id}`}
+                    data-testid="validator-name-tezos"
                     ff="Inter|SemiBold"
                     color="palette.text.shade100"
                     fontSize={3}

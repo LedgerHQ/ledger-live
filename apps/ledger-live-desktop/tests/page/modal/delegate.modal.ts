@@ -16,19 +16,18 @@ export class delegateModal extends Modal {
   private validatorName = this.page.getByTestId("validator-name-label");
   private feesSummaryStep = this.page.getByTestId("fees-amount-step-summary");
   private successMessageLabel = this.page.getByTestId("success-message-label");
-  private delegateToEarnRewardsButton = this.page.getByRole("button", {
+  readonly delegateToEarnRewardsButton = this.page.getByRole("button", {
     name: "Delegate to earn rewards",
   });
   private delegateStarterInfos = this.page.getByTestId("delegation-starter-infos");
-  private delegateProvider = (currency: string) =>
-    this.page.getByTestId(`validator-name-${currency}`);
+  private delegateTezosProvider = this.page.getByTestId("validator-name-tezos");
   private warningBox = this.page.getByTestId("warning-box");
-  private lockButton = this.page.getByTestId("lock-button");
-  private voteButton = this.page.getByTestId("vote-button");
-  private activateVoteButton = this.page.getByTestId("activate-vote-button");
-  private revokeVoteButton = this.page.getByTestId("revoke-vote-button");
-  private unlockButton = this.page.getByTestId("unlock-button");
-  private withdrawButton = this.page.getByTestId("withdraw-button");
+  private celoLockButton = this.page.getByTestId("celo-lock-button");
+  private celoVoteButton = this.page.getByTestId("celo-vote-button");
+  private celoActivateVoteButton = this.page.getByTestId("celo-activate-vote-button");
+  private celoRevokeVoteButton = this.page.getByTestId("celo-revoke-vote-button");
+  private celoUnlockButton = this.page.getByTestId("celo-unlock-button");
+  private celoWithdrawButton = this.page.getByTestId("celo-withdraw-button");
   private lockInfoCeloWarning = this.page.getByTestId("lock-info-celo");
   private checkIcon = this.page
     .getByTestId("check-icon")
@@ -168,30 +167,30 @@ export class delegateModal extends Modal {
 
   @step("Click on delegate to earn rewards button")
   async clickDelegateToEarnRewardsButton() {
-    expect(await this.delegateStarterInfos).toBeVisible();
+    await expect(this.delegateStarterInfos).toBeVisible();
     await this.delegateToEarnRewardsButton.click();
   }
 
-  @step("Verify delegate infos")
-  async verifyDelegateInfos(currency: string, validator: string) {
-    await expect(this.delegateProvider(currency)).toBeVisible();
-    expect(await this.delegateProvider(currency).innerText()).toContain(validator);
+  @step("Verify delegate infos for $0 and $1")
+  async verifyTezosDelegateInfos(currency: string, validator: string) {
+    await expect(this.delegateTezosProvider).toBeVisible();
+    expect(await this.delegateTezosProvider.innerText()).toContain(validator);
     await expect(this.warningBox).toBeVisible();
   }
 
-  @step("Verify manage asset modal is visible")
-  async checkManageAssetModal() {
-    expect(await this.lockButton).toBeVisible();
-    expect(await this.voteButton).toBeVisible();
-    expect(await this.activateVoteButton).toBeVisible();
-    expect(await this.revokeVoteButton).toBeVisible();
-    expect(await this.unlockButton).toBeVisible();
-    expect(await this.withdrawButton).toBeVisible();
+  @step("Verify Celo manage asset modal is visible")
+  async checkCeloManageAssetModal() {
+    await expect(this.celoLockButton).toBeVisible();
+    await expect(this.celoVoteButton).toBeVisible();
+    await expect(this.celoActivateVoteButton).toBeVisible();
+    await expect(this.celoRevokeVoteButton).toBeVisible();
+    await expect(this.celoUnlockButton).toBeVisible();
+    await expect(this.celoWithdrawButton).toBeVisible();
   }
 
-  @step("Click on lock button")
-  async clickLockButton() {
-    await this.lockButton.click();
+  @step("Click on lock button for CELO")
+  async clickCeloLockButton() {
+    await this.celoLockButton.click();
   }
 
   @step("Check alert message is visible when locking CELO")

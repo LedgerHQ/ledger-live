@@ -146,11 +146,11 @@ for (const account of e2eDelegationAccounts) {
         await app.delegate.clickViewDetailsButton();
 
         await app.drawer.waitForDrawerToBeVisible();
-        await app.delegateDrawer.transactionTypeIsVisible();
+        await app.delegateDrawer.verifyTxTypeIsVisible();
 
         const transactionType =
           account.delegate.account.currency.name === Currency.NEAR.name ? "Staked" : "Delegated";
-        await app.delegateDrawer.transactionTypeIsCorrect(transactionType);
+        await app.delegateDrawer.verifyTxTypeIs(transactionType);
 
         await app.delegateDrawer.providerIsVisible(account.delegate);
         await app.delegateDrawer.amountValueIsVisible();
@@ -161,7 +161,7 @@ for (const account of e2eDelegationAccounts) {
           await app.layout.syncAccounts();
           await app.account.clickOnLastOperation();
           await app.delegateDrawer.expectDelegationInfos(account.delegate);
-          await app.delegateDrawer.transactionTypeIsCorrect(transactionType);
+          await app.delegateDrawer.verifyTxTypeIs(transactionType);
           await app.delegateDrawer.operationTypeIsCorrect(transactionType);
         }
       },
@@ -219,8 +219,8 @@ for (const account of e2eDelegationAccountsWithoutBroadcast) {
           await app.delegate.clickViewDetailsButton();
 
           await app.drawer.waitForDrawerToBeVisible();
-          await app.delegateDrawer.transactionTypeIsVisible();
-          await app.delegateDrawer.transactionTypeIsCorrect("Delegated");
+          await app.delegateDrawer.verifyTxTypeIsVisible();
+          await app.delegateDrawer.verifyTxTypeIs("Delegated");
           await app.delegateDrawer.providerIsVisible(account.delegate);
           await app.delegateDrawer.amountValueIsVisible();
           await app.delegateDrawer.operationTypeIsCorrect("Delegated");
@@ -263,14 +263,17 @@ test.describe("e2e delegation - Tezos", () => {
       await app.accounts.navigateToAccountByName(account.account.accountName);
       await app.account.startStakingFlowFromMainStakeButton();
       await app.delegate.clickDelegateToEarnRewardsButton();
-      await app.delegate.verifyDelegateInfos(account.account.currency.currencyId, account.provider);
+      await app.delegate.verifyTezosDelegateInfos(
+        account.account.currency.currencyId,
+        account.provider,
+      );
       await app.delegate.continue();
       await app.speculos.signDelegationTransaction(account);
       await app.delegate.verifySuccessMessage();
       await app.delegate.clickViewDetailsButton();
       await app.drawer.waitForDrawerToBeVisible();
-      await app.delegateDrawer.transactionTypeIsVisible();
-      await app.delegateDrawer.transactionTypeIsCorrect("Delegated");
+      await app.delegateDrawer.verifyTxTypeIsVisible();
+      await app.delegateDrawer.verifyTxTypeIs("Delegated");
       await app.delegateDrawer.providerIsVisible(account);
       await app.delegateDrawer.operationTypeIsCorrect("Delegated");
       await app.drawer.closeDrawer();
@@ -309,8 +312,8 @@ test.describe("e2e delegation - Celo", () => {
       await app.accounts.navigateToAccountByName(account.account.accountName);
       await app.speculos.activateContractData();
       await app.account.startStakingFlowFromMainStakeButton();
-      await app.delegate.checkManageAssetModal();
-      await app.delegate.clickLockButton();
+      await app.delegate.checkCeloManageAssetModal();
+      await app.delegate.clickCeloLockButton();
       await app.delegate.fillAmount(account.amount);
       await app.delegate.verifyLockInfoCeloWarning();
       await app.delegate.continue();
@@ -318,8 +321,8 @@ test.describe("e2e delegation - Celo", () => {
       await app.delegate.verifySuccessMessage();
       await app.delegate.clickViewDetailsButton();
       await app.drawer.waitForDrawerToBeVisible();
-      await app.delegateDrawer.transactionTypeIsVisible();
-      await app.delegateDrawer.transactionTypeIsCorrect("Locked");
+      await app.delegateDrawer.verifyTxTypeIsVisible();
+      await app.delegateDrawer.verifyTxTypeIs("Locked");
       await app.delegateDrawer.providerIsVisible(account);
       await app.delegateDrawer.operationTypeIsCorrect("Locked");
       await app.drawer.closeDrawer();

@@ -63,7 +63,7 @@ const ManageModal = ({ account, source, ...rest }: Props) => {
             <>
               <Box>
                 <S.ManageButton
-                  data-testid="lock-button"
+                  data-testid="celo-lock-button"
                   onClick={() => {
                     if (account.celoResources?.registrationStatus) {
                       onSelectAction(onClose, "MODAL_CELO_LOCK");
@@ -87,7 +87,7 @@ const ManageModal = ({ account, source, ...rest }: Props) => {
                   </S.InfoWrapper>
                 </S.ManageButton>
                 <S.ManageButton
-                  data-testid="vote-button"
+                  data-testid="celo-vote-button"
                   disabled={!votingEnabled}
                   onClick={() => onSelectAction(onClose, "MODAL_CELO_VOTE")}
                 >
@@ -112,7 +112,7 @@ const ManageModal = ({ account, source, ...rest }: Props) => {
                   </S.InfoWrapper>
                 </S.ManageButton>
                 <S.ManageButton
-                  data-testid="activate-vote-button"
+                  data-testid="celo-activate-vote-button"
                   disabled={!activatingEnabled}
                   onClick={() => onSelectAction(onClose, "MODAL_CELO_ACTIVATE")}
                 >
@@ -129,7 +129,7 @@ const ManageModal = ({ account, source, ...rest }: Props) => {
                   </S.InfoWrapper>
                 </S.ManageButton>
                 <S.ManageButton
-                  data-testid="revoke-vote-button"
+                  data-testid="celo-revoke-vote-button"
                   disabled={!revokingEnabled}
                   onClick={() => onSelectAction(onClose, "MODAL_CELO_REVOKE")}
                 >
@@ -146,7 +146,7 @@ const ManageModal = ({ account, source, ...rest }: Props) => {
                   </S.InfoWrapper>
                 </S.ManageButton>
                 <S.ManageButton
-                  data-testid="unlock-button"
+                  data-testid="celo-unlock-button"
                   disabled={!unlockingEnabled}
                   onClick={() => onSelectAction(onClose, "MODAL_CELO_UNLOCK")}
                 >
@@ -163,7 +163,7 @@ const ManageModal = ({ account, source, ...rest }: Props) => {
                   </S.InfoWrapper>
                 </S.ManageButton>
                 <S.ManageButton
-                  data-testid="withdraw-button"
+                  data-testid="celo-withdraw-button"
                   disabled={!withdrawEnabled}
                   onClick={() =>
                     onSelectAction(onClose, "MODAL_CELO_WITHDRAW", {

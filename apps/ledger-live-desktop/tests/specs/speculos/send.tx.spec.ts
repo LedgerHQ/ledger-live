@@ -214,6 +214,11 @@ const tokenTransactionInvalid = [
     ),
     xrayTicket: "B2CQA-2701",
   },
+  {
+    transaction: new Transaction(Account.ETH_USDT_1, Account.ETH_USDT_2, "10000", Fee.MEDIUM),
+    expectedWarningMessage: "Sorry, insufficient funds",
+    xrayTicket: "B2CQA-3043",
+  },
 ];
 
 test.describe("Send flows", () => {
@@ -370,7 +375,11 @@ test.describe("Send flows", () => {
           await app.send.continue();
           await app.send.fillAmount(transaction.transaction.amount);
           await app.send.checkContinueButtonDisabled();
-          await app.send.checkAmountWarningMessage(transaction.expectedWarningMessage);
+          if (transaction.expectedWarningMessage instanceof RegExp) {
+            await app.send.checkAmountWarningMessage(transaction.expectedWarningMessage);
+          } else {
+            await app.send.checkErrorMessage(transaction.expectedWarningMessage);
+          }
         },
       );
     });
