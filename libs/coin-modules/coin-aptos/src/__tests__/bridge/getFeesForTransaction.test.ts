@@ -42,8 +42,8 @@ describe("getFeesForTransaction Test", () => {
             success: false,
             vm_status: ["INSUFFICIENT_BALANCE"],
             expiration_timestamp_secs: 5,
-            gas_used: "201",
-            gas_unit_price: "101",
+            gas_used: "202",
+            gas_unit_price: "102",
           },
         ]);
 
@@ -58,10 +58,10 @@ describe("getFeesForTransaction Test", () => {
         const result = await getFeesForTransaction.getFee(account, transaction, aptosClient);
 
         const expected = {
-          fees: new BigNumber(20301),
+          fees: new BigNumber(20604),
           estimate: {
-            maxGasAmount: "201",
-            gasUnitPrice: "101",
+            maxGasAmount: "202",
+            gasUnitPrice: "102",
           },
           errors: {},
         };
@@ -99,7 +99,7 @@ describe("getFeesForTransaction Test", () => {
 
   describe("when using getEstimatedGas", () => {
     describe("when key not in cache", () => {
-      it("should return cached fee", async () => {
+      it("should return fee", async () => {
         simulateTransaction = jest.fn(() => [
           {
             success: true,
@@ -143,23 +143,21 @@ describe("getFeesForTransaction Test", () => {
       });
 
       it("should return cached fee", async () => {
-        const mocked = jest.spyOn(getFeesForTransaction, "getFee");
-
-        const account = createFixtureAccount();
-        const transaction = createFixtureTransaction();
-        const aptosClient = new AptosAPI(account.currency.id);
-
-        transaction.amount = new BigNumber(10);
-
         simulateTransaction = jest.fn(() => [
           {
             success: true,
             vm_status: [],
             expiration_timestamp_secs: 5,
-            gas_used: "9",
-            gas_unit_price: "100",
+            gas_used: "202",
+            gas_unit_price: "102",
           },
         ]);
+        const account = createFixtureAccount();
+        account.xpub = "xpub";
+        const transaction = createFixtureTransaction();
+        const aptosClient = new AptosAPI(account.currency.id);
+
+        transaction.amount = new BigNumber(10);
 
         const result1 = await getFeesForTransaction.getEstimatedGas(
           account,
@@ -172,15 +170,15 @@ describe("getFeesForTransaction Test", () => {
           aptosClient,
         );
 
-        expect(mocked).toHaveBeenCalledTimes(1);
+        expect(simulateTransaction.mock.calls).toHaveLength(1);
 
         const expected = {
           errors: {},
           estimate: {
-            gasUnitPrice: "101",
-            maxGasAmount: "201",
+            gasUnitPrice: "102",
+            maxGasAmount: "202",
           },
-          fees: new BigNumber("20301"),
+          fees: new BigNumber("20604"),
         };
 
         expect(result1).toEqual(expected);
