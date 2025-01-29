@@ -11,6 +11,15 @@ const typeWording = {
   claimRewardCompound: "(not tested)",
 };
 
+const zenrockTypeWording = {
+  send: "Send",
+  delegate: "zrchain/MsgDelegate",
+  redelegate: "zrchain/MsgBeginRedelegate",
+  undelegate: "zrchain/MsgUndelegate",
+  claimReward: "Withdraw Reward",
+  claimRewardCompound: "(not tested)",
+};
+
 export const acceptTransaction: DeviceAction<Transaction, State<Transaction>> = deviceActionFlow({
   steps: [
     {
@@ -36,7 +45,12 @@ export const acceptTransaction: DeviceAction<Transaction, State<Transaction>> = 
     {
       title: "Type",
       button: SpeculosButton.RIGHT,
-      expectedValue: ({ transaction }) => typeWording[transaction.mode],
+      expectedValue: ({ transaction, account }) => {
+        if (account.currency.id === "zenrock") {
+          return zenrockTypeWording[transaction.mode];
+        }
+        return typeWording[transaction.mode];
+      },
     },
     {
       title: "Validator Source",
