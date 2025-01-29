@@ -34,6 +34,10 @@ export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlo
       button: SpeculosButton.RIGHT,
     },
     {
+      title: "Operation (1)",
+      button: SpeculosButton.RIGHT,
+    },
+    {
       title: "Confirm",
       button: SpeculosButton.RIGHT,
       expectedValue: ({ transaction }) => {
