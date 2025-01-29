@@ -17,7 +17,7 @@ import * as serverBridge from "./server";
 
 const filePath = process.argv[2];
 
-const fullFilePath = path.resolve("e2e", "setups", `${filePath}.json`);
+const fullFilePath = path.resolve("e2e", "userdata", `${filePath}.json`);
 
 access(fullFilePath, constants.F_OK, err => {
   if (err) {
