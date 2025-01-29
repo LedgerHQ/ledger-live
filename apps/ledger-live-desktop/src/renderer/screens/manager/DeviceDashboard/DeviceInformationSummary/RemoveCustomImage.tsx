@@ -101,6 +101,7 @@ const RemoveCustomImage: React.FC<Props> = ({ onClose, onRemoved }) => {
               action={action}
               onResult={onSuccess}
               onError={onError}
+              location="Manager Dashboard"
             />
           </Flex>
         ) : null}

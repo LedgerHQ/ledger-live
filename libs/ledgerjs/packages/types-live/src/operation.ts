@@ -53,7 +53,9 @@ export type OperationType =
   // NEAR
   | "STAKE"
   | "UNSTAKE"
-  | "WITHDRAW_UNSTAKED";
+  | "WITHDRAW_UNSTAKED"
+  // SOLANA
+  | "BURN";
 
 export type OperationExtra = unknown;
 /**

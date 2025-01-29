@@ -20,6 +20,7 @@ import {
 import {
   preferredDeviceModelSelector,
   storeSelector as settingsSelector,
+  trackingEnabledSelector,
 } from "~/renderer/reducers/settings";
 import { DeviceModelId } from "@ledgerhq/devices";
 import AutoRepair from "~/renderer/components/AutoRepair";
@@ -79,6 +80,7 @@ import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getNoSuchAppProviderLearnMoreMetadataPerApp, isDeviceNotOnboardedError } from "./utils";
 import { useKeepScreenAwake } from "~/renderer/hooks/useKeepScreenAwake";
 import { walletSelector } from "~/renderer/reducers/wallet";
+import { useTrackManagerSectionEvents } from "~/renderer/analytics/hooks/useTrackManagerSectionEvents";
 
 type LedgerError = InstanceType<LedgerErrorConstructor<{ [key: string]: unknown }>>;
 
@@ -132,6 +134,7 @@ type States = PartialNullable<{
   completeExchangeResult: Transaction;
   completeExchangeError: Error;
   imageRemoveRequested: boolean;
+  imageRemoved: boolean;
   installingApp: boolean;
   progress: number;
   listingApps: boolean;
@@ -154,6 +157,7 @@ type InnerProps<P> = {
   analyticsPropertyFlow?: string;
   overridesPreferredDeviceModel?: DeviceModelId;
   inlineRetry?: boolean; // Set to false if the retry mechanism is handled externally.
+  location?: string;
 };
 
 type Props<H extends States, P> = InnerProps<P> & {
@@ -182,6 +186,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   overridesPreferredDeviceModel,
   inlineRetry = true,
   analyticsPropertyFlow,
+  location,
 }: Props<H, P> & {
   request?: R;
 }) => {
@@ -233,6 +238,15 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   const swapDefaultTrack = useGetSwapTrackingProperties();
   const stateSettings = useSelector(settingsSelector);
   const walletState = useSelector(walletSelector);
+
+  useTrackManagerSectionEvents({
+    location,
+    device,
+    allowManagerRequested: hookState.allowManagerRequested,
+    clsImageRemoved: hookState.imageRemoved,
+    error,
+    isTrackingEnabled: useSelector(trackingEnabledSelector),
+  });
 
   const type = useTheme().colors.palette.type;
 
@@ -613,11 +627,13 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
  * @prop request: an object that is the input of that action
  * @prop Result optional: an action produces a result, this gives a component to render it
  * @prop onResult optional: an action produces a result, this gives a callback to be called with it
+ * @prop location optional: an action might need to know the location for analytics
  */
 
 export default function DeviceAction<R, H extends States, P>({
   action,
   request,
+  location,
   ...props
 }: InnerProps<P> & {
   action: Action<R, H, P>;
@@ -633,6 +649,7 @@ export default function DeviceAction<R, H extends States, P>({
       status={hookState}
       request={request}
       payload={payload}
+      location={location}
       {...props}
     />
   );

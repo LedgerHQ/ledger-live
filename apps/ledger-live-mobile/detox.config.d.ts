@@ -13,7 +13,8 @@ declare let detoxConfig: {
     simulator: {
       type: string;
       device: {
-        type: string;
+        type?: string;
+        name: string;
       };
     };
     emulator: {

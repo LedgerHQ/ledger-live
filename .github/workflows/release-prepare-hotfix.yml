@@ -127,4 +127,5 @@ jobs:
     uses: LedgerHQ/ledger-live/.github/workflows/release-final.yml@develop
     with:
       ref: hotfix
+      caller: release-prepare-hotfix
     secrets: inherit

@@ -10,6 +10,7 @@ import type { Account } from "@ledgerhq/types-live";
 import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
 import { ChainAPI } from "./api";
 import {
+  getMaybeMintAccount,
   getMaybeTokenAccount,
   getMaybeVoteAccount,
   getStakeAccountAddressWithSeed,
@@ -17,6 +18,7 @@ import {
 } from "./api/chain/web3";
 import {
   SolanaAccountNotFunded,
+  SolanaTokenAccountFrozen,
   SolanaAddressOffEd25519,
   SolanaInvalidValidator,
   SolanaMemoIsTooLong,
@@ -33,6 +35,9 @@ import {
   SolanaTokenAccountHoldsAnotherToken,
   SolanaTokenRecipientIsSenderATA,
   SolanaValidatorRequired,
+  SolanaTokenAccountNotAllowed,
+  SolanaMintAccountNotAllowed,
+  SolanaTokenAccountWarning,
 } from "./errors";
 import {
   decodeAccountIdWithTokenAccountAddress,
@@ -44,6 +49,7 @@ import type {
   CommandDescriptor,
   SolanaAccount,
   SolanaStake,
+  SolanaTokenAccount,
   StakeCreateAccountTransaction,
   StakeDelegateTransaction,
   StakeSplitTransaction,
@@ -126,7 +132,11 @@ const deriveTokenTransferCommandDescriptor = async (
     throw new Error("subaccount not found");
   }
 
-  await validateRecipientCommon(mainAccount, tx, errors, warnings, api);
+  if ((subAccount as SolanaTokenAccount)?.state === "frozen") {
+    errors.amount = new SolanaTokenAccountFrozen();
+  }
+
+  await validateRecipientCommon(mainAccount, tx, errors, warnings, api, true);
 
   const memo = model.uiState.memo;
 
@@ -134,8 +144,7 @@ const deriveTokenTransferCommandDescriptor = async (
     validateMemoCommon(memo, errors);
   }
 
-  const tokenIdParts = subAccount.token.id.split("/");
-  const mintAddress = tokenIdParts[tokenIdParts.length - 1];
+  const mintAddress = subAccount.token.contractAddress;
   const mintDecimals = subAccount.token.units[0].magnitude;
 
   const senderAssociatedTokenAccountAddress = decodeAccountIdWithTokenAccountAddress(
@@ -175,7 +184,7 @@ const deriveTokenTransferCommandDescriptor = async (
 
   const { fee, spendable: spendableSol } = await estimateFeeAndSpendable(api, mainAccount, tx);
 
-  if (spendableSol.lt(assocAccRentExempt)) {
+  if (spendableSol.lt(assocAccRentExempt) || spendableSol.isZero()) {
     errors.fee = new NotEnoughBalance();
   }
 
@@ -232,6 +241,17 @@ async function getTokenRecipient(
       api,
     ));
 
+    if (!shouldCreateAsAssociatedTokenAccount) {
+      const associatedTokenAccount = await getMaybeTokenAccount(
+        recipientAssociatedTokenAccountAddress,
+        api,
+      );
+      if (associatedTokenAccount instanceof Error) throw recipientTokenAccount;
+      if (associatedTokenAccount?.state === "frozen") {
+        return new SolanaTokenAccountFrozen();
+      }
+    }
+
     return {
       walletAddress: recipientAddress,
       shouldCreateAsAssociatedTokenAccount,
@@ -240,6 +260,9 @@ async function getTokenRecipient(
   } else {
     if (recipientTokenAccount.mint.toBase58() !== mintAddress) {
       return new SolanaTokenAccountHoldsAnotherToken();
+    }
+    if (recipientTokenAccount.state === "frozen") {
+      return new SolanaTokenAccountFrozen();
     }
     if (recipientTokenAccount.state !== "initialized") {
       return new SolanaTokenAccounNotInitialized();
@@ -262,8 +285,7 @@ async function deriveCreateAssociatedTokenAccountCommandDescriptor(
   const errors: Record<string, Error> = {};
 
   const token = getTokenById(model.uiState.tokenId);
-  const tokenIdParts = token.id.split("/");
-  const mint = tokenIdParts[tokenIdParts.length - 1];
+  const mint = token.contractAddress;
 
   const associatedTokenAccountAddress = await api.findAssocTokenAccAddress(
     mainAccount.freshAddress,
@@ -298,7 +320,7 @@ async function deriveTransferCommandDescriptor(
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
 
-  await validateRecipientCommon(mainAccount, tx, errors, warnings, api);
+  await validateRecipientCommon(mainAccount, tx, errors, warnings, api, false);
 
   const memo = model.uiState.memo;
 
@@ -607,6 +629,7 @@ async function validateRecipientCommon(
   errors: Record<string, Error>,
   warnings: Record<string, Error>,
   api: ChainAPI,
+  allowATA: boolean,
 ) {
   if (!tx.recipient) {
     errors.recipient = new RecipientRequired();
@@ -618,6 +641,34 @@ async function validateRecipientCommon(
     });
   } else {
     const recipientWalletIsUnfunded = !(await isAccountFunded(tx.recipient, api));
+
+    const recipientTokenAccount = await getMaybeTokenAccount(tx.recipient, api);
+
+    if (recipientTokenAccount instanceof Error) {
+      throw recipientTokenAccount;
+    }
+
+    if (recipientTokenAccount) {
+      if (allowATA) {
+        if (isEd25519Address(tx.recipient)) {
+          errors.recipient = new SolanaTokenAccountNotAllowed();
+        } else {
+          warnings.recipient = new SolanaTokenAccountWarning();
+        }
+      } else {
+        errors.recipient = new SolanaTokenAccountNotAllowed();
+      }
+    }
+
+    const mintTokenAccount = await getMaybeMintAccount(tx.recipient, api);
+
+    if (mintTokenAccount instanceof Error) {
+      throw recipientTokenAccount;
+    }
+
+    if (mintTokenAccount) {
+      errors.recipient = new SolanaMintAccountNotAllowed();
+    }
 
     if (recipientWalletIsUnfunded) {
       warnings.recipient = new SolanaAccountNotFunded();

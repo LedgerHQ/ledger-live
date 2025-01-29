@@ -55,8 +55,6 @@ describe("WalletSyncActivation", () => {
       }),
     );
 
-    await user.press(screen.getByText(/use my ledger/i));
-
     expect(await screen.findByText(/Choose a Ledger device/i)).toBeVisible();
 
     await user.press(

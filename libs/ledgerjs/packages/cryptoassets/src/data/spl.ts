@@ -1,5 +1,6 @@
 export type SPLToken = [
-  number, // chainId
+  string, // CAL id
+  string, // network
   string, // name
   string, // ticker
   string, // address

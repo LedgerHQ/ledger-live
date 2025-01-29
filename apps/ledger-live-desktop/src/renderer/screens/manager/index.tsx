@@ -61,7 +61,12 @@ const Manager = () => {
           onRefreshDeviceInfo={refreshDeviceInfo}
         />
       ) : !hasReset ? (
-        <DeviceAction onResult={onResult} action={action} request={null} />
+        <DeviceAction
+          onResult={onResult}
+          action={action}
+          request={null}
+          location="Manager Dashboard"
+        />
       ) : (
         <Disconnected onTryAgain={setHasReset} />
       )}

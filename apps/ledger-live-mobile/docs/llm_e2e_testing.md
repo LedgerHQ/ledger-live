@@ -41,7 +41,7 @@ Most of the setup is taken care of in the React Native docs, but you will have t
 
 - XCode and XCode command line tools - run `xcode-select -v` and `xcrun --version` to make sure these are working
 - Latest `ruby` is installed with brew, make sure `$PATH` is updated - `which ruby` points to `/opt/homebrew/opt/ruby/bin/ruby`, not `usr/bin/ruby`.
-- An iPhone simulator for iPhone 15 - open Xcode > Window > Devices and Simulators > Simulators > Add a new device from the '+' sign in the bottom right corner.
+- An iPhone simulator for iPhone 15 named 'iOS Simulator' - open Xcode > Window > Devices and Simulators > Simulators > Add a new device from the '+' sign in the bottom right corner.
 - `applesimutils` is installed via npm.
 
 ### Tips for Android setup
@@ -50,7 +50,7 @@ The Android toolkit can be more complex than the iOS one. Once you've done the R
 
 - Java version 17 installed. Check with `java -version`
 - Android 15 (API Level 35) is installed.
-- An Android Virtual Device (AVD) named 'Pixel 7 Pro API 35'
+- An Android Virtual Device (AVD) for Pixel 7 Pro named 'Android_Emulator'
 - Android SDK Build Tools, SDK Platform Tools, SDK Command Line Tools, Android Emulator, CMake 3.10.2 and NDK 21.4.7075529 are installed. You can do this through Android Studio > Tools > SDK Tools, or via the [command line](https://wix.github.io/Detox/docs/guide/android-dev-env#heres-how-to-install-them-using-the-command-line).
 - Your shell profile (for example `~/.zshrc`) should have environmental variables setup something like this:
 

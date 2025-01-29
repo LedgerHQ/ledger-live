@@ -1,6 +1,7 @@
 apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
+apply plugin: "io.sentry.android.gradle"
 
 apply plugin: 'com.google.gms.google-services'
 
@@ -63,6 +64,7 @@ react {
     //   The list of flags to pass to the Hermes compiler. By default is "-O", "-output-source-map"
     // hermesFlags = ["-O", "-output-source-map"]
     /* Autolinking */
+
     autolinkLibrariesWithApp()
 }
 
@@ -73,13 +75,6 @@ project.ext.react = [
     enableHermes: true,
     bundleInDebug: System.getenv("ANDROID_BUNDLE_IN_DEBUG") != null, // Generates JS bundle and sourcemap at build time
 ]
-project.ext.sentryCli = [
-    logLevel: "debug"
-]
-
-if (System.getenv("SENTRY_AUTH_TOKEN") != null) {
-  apply from: "../../node_modules/@sentry/react-native/sentry.gradle"
-}
 
 /**
  * Set this to true to create four separate APKs instead of one,
@@ -131,7 +126,7 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 36176158
-        versionName "3.48.0"
+        versionName "3.61.0"
         resValue "string", "build_config_package", "com.ledger.live"
         testBuildType System.getProperty('testBuildType', 'debug')
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
@@ -198,6 +193,17 @@ android {
         }
     }
 }
+
+
+apply from: "../../node_modules/@sentry/react-native/sentry.gradle"
+
+
+sentry {
+    autoUploadProguardMapping = shouldSentryAutoUpload()
+    uploadNativeSymbols = shouldSentryAutoUpload()
+}
+
+
 
 dependencies {
     // The version of react-native is set by the React Native Gradle Plugin

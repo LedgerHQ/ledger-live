@@ -58,4 +58,4 @@ jobs:
       - uses: LedgerHQ/ledger-live/tools/actions/turbo-affected@develop
         id: affected
         with:
-          ref: ${{ format('origin/{0}', inputs.base_branch) }}
+          ref: ${{ format('origin/{0}', env.base_branch) }}
