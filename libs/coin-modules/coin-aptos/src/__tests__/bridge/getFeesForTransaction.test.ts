@@ -148,8 +148,8 @@ describe("getFeesForTransaction Test", () => {
             success: true,
             vm_status: [],
             expiration_timestamp_secs: 5,
-            gas_used: "201",
-            gas_unit_price: "101",
+            gas_used: "202",
+            gas_unit_price: "102",
           },
         ]);
         const account = createFixtureAccount();
@@ -175,10 +175,10 @@ describe("getFeesForTransaction Test", () => {
         const expected = {
           errors: {},
           estimate: {
-            gasUnitPrice: "101",
-            maxGasAmount: "201",
+            gasUnitPrice: "102",
+            maxGasAmount: "202",
           },
-          fees: new BigNumber("20301"),
+          fees: new BigNumber("20604"),
         };
 
         expect(result1).toEqual(expected);
