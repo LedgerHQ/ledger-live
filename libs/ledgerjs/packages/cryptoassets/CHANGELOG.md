@@ -1,5 +1,13 @@
 # @ledgerhq/cryptoassets
 
+## 13.10.0-next.0
+
+### Minor Changes
+
+- [#8119](https://github.com/LedgerHQ/ledger-live/pull/8119) [`41b153a`](https://github.com/LedgerHQ/ledger-live/commit/41b153adb98ce8de3336563694204d83905dba0e) Thanks [@Justkant](https://github.com/Justkant)! - Solana spl tokens support
+
+- [#8934](https://github.com/LedgerHQ/ledger-live/pull/8934) [`9534f17`](https://github.com/LedgerHQ/ledger-live/commit/9534f17247e1472b0fee8b993a83264f4e4ab363) Thanks [@Canestin](https://github.com/Canestin)! - Remove Misleading Casper Token Support in Cryptoassets Data
+
 ## 13.9.0
 
 ### Minor Changes

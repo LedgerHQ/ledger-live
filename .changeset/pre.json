@@ -134,5 +134,30 @@
     "@ledgerhq/native-modules-tools": "1.0.3",
     "@ledgerhq/pnpm-utils": "1.0.1"
   },
-  "changesets": []
+  "changesets": [
+    "brave-sheep-accept",
+    "bright-kiwis-travel",
+    "curvy-taxis-carry",
+    "early-worms-cry",
+    "eight-geese-dream",
+    "eighty-cougars-perform",
+    "famous-mails-teach",
+    "fifty-worms-remain",
+    "healthy-llamas-visit",
+    "honest-dingos-unite",
+    "hot-roses-shave",
+    "itchy-camels-sin",
+    "lovely-dolls-chew",
+    "lucky-birds-help",
+    "mean-mice-own",
+    "modern-teachers-scream",
+    "new-bulldogs-hope",
+    "real-impalas-sell",
+    "seven-tigers-hunt",
+    "sour-bananas-trade",
+    "sour-mayflies-learn",
+    "stale-books-melt",
+    "strong-peas-jam",
+    "tame-ants-join"
+  ]
 }
