@@ -10,7 +10,7 @@ export class SwapPage extends AppPage {
   private currencyByName = (accountName: string) => this.page.getByText(accountName); // TODO: this is rubbish. Changed this
 
   // Swap Amount and Currency components
-  private maxSpendableToggle = this.page.getByTestId("swap-max-spendable-toggle");
+  private maxSpendableToggle = this.page.getByTestId("from-account-max-toggle");
   private fromAccountCoinSelector = "from-account-coin-selector";
   private fromAccountAmoutInput = "from-account-amount-input";
   private toAccountCoinSelector = "to-account-coin-selector";
@@ -144,6 +144,12 @@ export class SwapPage extends AppPage {
   async clickExchangeButton(electronApp: ElectronApplication, provider: string) {
     const [, webview] = electronApp.windows();
     await webview.getByRole("button", { name: `Swap with ${provider}` }).click();
+  }
+
+  @step("Click Max spend toggle")
+  async sendMax(electronApp: ElectronApplication) {
+    const [, webview] = electronApp.windows();
+    await webview.getByTestId("from-account-max-toggle").click();
   }
 
   async confirmExchange() {

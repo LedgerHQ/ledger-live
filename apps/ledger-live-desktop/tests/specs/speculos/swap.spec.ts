@@ -132,6 +132,7 @@ for (const { swap, xrayTicket } of swaps) {
         await app.swap.fillInOriginCurrencyAmount(electronApp, swap.amount);
         const selectedProvider = await app.swap.selectExchange(electronApp);
         await performSwapUntilDeviceVerificationStep(app, electronApp, swap, selectedProvider);
+        await app.swapDrawer.verifyAmountSent(swap.amount, swap.accountToDebit.currency.ticker);
         await app.speculos.verifyAmountsAndAcceptSwap(swap);
         await app.swapDrawer.verifyExchangeCompletedTextContent(swap.accountToCredit.currency.name);
       },
@@ -172,6 +173,7 @@ test.describe("Swap - Rejected on device", () => {
         rejectedSwap,
         selectedProvider,
       );
+      await app.swapDrawer.verifyAmountSent(rejectedSwap.amount, rejectedSwap.accountToDebit.currency.ticker);
       await app.speculos.verifyAmountsAndRejectSwap(rejectedSwap);
       await app.swapDrawer.verifyExchangeErrorTextContent("Operation denied on device");
     },
@@ -322,9 +324,9 @@ for (const { swap, xrayTicket } of swapWithSendMax) {
       async ({ app, electronApp }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
         await performSwapUntilQuoteSelectionStep(app, electronApp, swap);
-        await app.swap.sendMax(electronApp)
+        await app.swap.sendMax(electronApp);
         const selectedProvider = await app.swap.selectExchange(electronApp);
-        await performSwapUntilDeviceVerificationStepSendMax(app, electronApp, swap, selectedProvider);
+        await performSwapUntilDeviceVerificationStep(app, electronApp, swap, selectedProvider);
         await app.speculos.verifyAmountsAndAcceptSwap(swap);
         await app.swapDrawer.verifyExchangeCompletedTextContent(swap.accountToCredit.currency.name);
       },
@@ -503,28 +505,6 @@ async function performSwapUntilDeviceVerificationStep(
 
   swap.setAmountToReceive(amountTo);
   swap.setFeesAmount(fees);
-
-  await app.swapDrawer.verifyAmountToReceive(amountTo);
-  await app.swapDrawer.verifyAmountSent(swap.amount, swap.accountToDebit.currency.ticker);
-  await app.swapDrawer.verifySourceAccount(swap.accountToDebit.currency.name);
-  await app.swapDrawer.verifyTargetCurrency(swap.accountToCredit.currency.name);
-  await app.swapDrawer.verifyProvider(selectedProvider);
-}
-
-async function performSwapUntilDeviceVerificationStepSendMax(
-  app: Application,
-  electronApp: ElectronApplication,
-  swap: Swap,
-  selectedProvider: any,
-) {
-  await app.swap.clickExchangeButton(electronApp, selectedProvider);
-
-  const amountTo = await app.swapDrawer.getAmountToReceive();
-  const fees = await app.swapDrawer.getFees();
-
-  swap.setAmountToReceive(amountTo);
-  swap.setFeesAmount(fees);
-
   await app.swapDrawer.verifyAmountToReceive(amountTo);
   await app.swapDrawer.verifySourceAccount(swap.accountToDebit.currency.name);
   await app.swapDrawer.verifyTargetCurrency(swap.accountToCredit.currency.name);
