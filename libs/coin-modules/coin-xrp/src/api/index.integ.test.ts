@@ -51,6 +51,9 @@ describe("Xrp Api", () => {
       expect(checkSet.size).toEqual(tx.length);
       // the first transaction is returned
       expect(tx[0].block.height).toEqual(73126713);
+      expect(tx[0].hash.toUpperCase).toEqual(
+        "0FC3792449E5B1E431D45E3606017D10EC1FECC8EDF988A98E36B8FE0C33ACAE",
+      );
       // 200 is the default XRP explorer hard limit,
       // so here we are checking that this limit is bypassed
       expect(tx.length).toBeGreaterThan(200);
