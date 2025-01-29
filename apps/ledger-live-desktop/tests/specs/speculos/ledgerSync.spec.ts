@@ -125,7 +125,7 @@ test.describe(`[${app.name}] Sync Accounts`, () => {
         description: "B2CQA-2292, B2CQA-2293, B2CQA-2296",
       },
     },
-    async ({ app, page }) => {
+    async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
       await app.layout.goToAccounts();
