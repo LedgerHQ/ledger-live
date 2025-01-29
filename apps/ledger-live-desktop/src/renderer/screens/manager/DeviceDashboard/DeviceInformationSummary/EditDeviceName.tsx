@@ -144,6 +144,7 @@ const EditDeviceName: React.FC<Props> = ({
               inlineRetry={false}
               onResult={onSuccess}
               onError={(error: Error) => setActionError(error)}
+              location="Manager Dashboard"
             />
           </Flex>
         ) : (

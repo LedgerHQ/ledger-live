@@ -51,19 +51,19 @@ module.exports = {
     },
     "android.debug": {
       type: "android.apk",
-      build: `cd android && ENVFILE=.env.mock ./gradlew app:assembleDebug app:assembleAndroidTest -DtestBuildType=debug -PreactNativeArchitectures=${androidArch} && cd ..`,
+      build: `cd android && ENVFILE=.env.mock SENTRY_DISABLE_AUTO_UPLOAD=true ./gradlew app:assembleDebug app:assembleAndroidTest -DtestBuildType=debug -PreactNativeArchitectures=${androidArch} && cd ..`,
       binaryPath: `android/app/build/outputs/apk/debug/app-${androidArch}-debug.apk`,
       testBinaryPath: "android/app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk",
     },
     "android.release": {
       type: "android.apk",
-      build: `cd android && ENVFILE=.env.mock ./gradlew app:assembleDetox app:assembleAndroidTest -DtestBuildType=detox -PreactNativeArchitectures=${androidArch} && cd ..`,
+      build: `cd android && ENVFILE=.env.mock SENTRY_DISABLE_AUTO_UPLOAD=true ./gradlew app:assembleDetox app:assembleAndroidTest -DtestBuildType=detox -PreactNativeArchitectures=${androidArch} && cd ..`,
       binaryPath: `android/app/build/outputs/apk/detox/app-${androidArch}-detox.apk`,
       testBinaryPath: "android/app/build/outputs/apk/androidTest/detox/app-detox-androidTest.apk",
     },
     "android.prerelease": {
       type: "android.apk",
-      build: `cd android && ENVFILE=.env.mock.prerelease ./gradlew app:assembleDetoxPreRelease app:assembleAndroidTest -DtestBuildType=detoxPreRelease -PreactNativeArchitectures=${androidArch} && cd ..`,
+      build: `cd android && ENVFILE=.env.mock.prerelease SENTRY_DISABLE_AUTO_UPLOAD=true ./gradlew app:assembleDetoxPreRelease app:assembleAndroidTest -DtestBuildType=detoxPreRelease -PreactNativeArchitectures=${androidArch} && cd ..`,
       binaryPath: `android/app/build/outputs/apk/detoxPreRelease/app-${androidArch}-detoxPreRelease.apk`,
       testBinaryPath:
         "android/app/build/outputs/apk/androidTest/detoxPreRelease/app-detoxPreRelease-androidTest.apk",
@@ -73,13 +73,13 @@ module.exports = {
     simulator: {
       type: "ios.simulator",
       device: {
-        type: "iPhone 15",
+        name: "iOS Simulator",
       },
     },
     emulator: {
       type: "android.emulator",
       device: {
-        avdName: "Pixel_7_Pro_API_35",
+        avdName: "Android_Emulator",
       },
       gpuMode: "swiftshader_indirect",
       headless: process.env.CI ? true : false,

@@ -15,16 +15,21 @@ import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets
 import { AssetSelectionNavigationProps, CommonParams } from "../../types";
 import { useGroupedCurrenciesByProvider } from "@ledgerhq/live-common/deposit/index";
 import { LoadingBasedGroupedCurrencies } from "@ledgerhq/live-common/deposit/type";
+import { AddAccountContexts } from "LLM/features/Accounts/screens/AddAccount/enums";
+import { AnalyticMetadata } from "../../../../hooks/useAnalytics/types";
 
 type SelectCryptoViewModelProps = Pick<CommonParams, "context"> & {
   filterCurrencyIds?: string[];
   paramsCurrency?: string;
+  sourceScreenName?: string;
+  analyticsMetadata: AnalyticMetadata;
 };
 
 export default function useSelectCryptoViewModel({
   context,
   filterCurrencyIds,
   paramsCurrency,
+  analyticsMetadata,
 }: SelectCryptoViewModelProps) {
   const { t } = useTranslation();
   const filterCurrencyIdsSet = useMemo(
@@ -42,10 +47,12 @@ export default function useSelectCryptoViewModel({
 
   const onPressItem = useCallback(
     (curr: CryptoCurrency | TokenCurrency) => {
-      track("asset_clicked", {
-        asset: curr.name,
-        page: "Choose a crypto to secure",
-      });
+      const clickMetadata = analyticsMetadata.AddAccountsSelectCrypto?.onAssetClick;
+      if (clickMetadata)
+        track(clickMetadata?.eventName, {
+          asset: curr.name,
+          ...clickMetadata.payload,
+        });
 
       const provider = currenciesByProvider.find(elem =>
         elem.currenciesByNetwork.some(
@@ -58,7 +65,8 @@ export default function useSelectCryptoViewModel({
         navigation.navigate(ScreenName.SelectNetwork, {
           context,
           currency: curr.id,
-          ...(context === "receiveFunds" && { filterCurrencyIds }),
+          ...(context === AddAccountContexts.AddAccounts && { filterCurrencyIds }),
+          sourceScreenName: ScreenName.AddAccountsSelectCrypto,
         });
         return;
       }
@@ -66,7 +74,7 @@ export default function useSelectCryptoViewModel({
       const isToken = curr.type === "TokenCurrency";
       const currency = isToken ? curr.parentCurrency : curr;
       const currencyAccounts = findAccountByCurrency(accounts, currency);
-      const isAddAccountContext = context === "addAccounts";
+      const isAddAccountContext = context === AddAccountContexts.AddAccounts;
 
       if (currencyAccounts.length > 0 && !isAddAccountContext) {
         // If we found one or more accounts of the currency then we select account
@@ -88,7 +96,14 @@ export default function useSelectCryptoViewModel({
         });
       }
     },
-    [currenciesByProvider, accounts, navigation, filterCurrencyIds, context],
+    [
+      currenciesByProvider,
+      accounts,
+      navigation,
+      filterCurrencyIds,
+      context,
+      analyticsMetadata.AddAccountsSelectCrypto?.onAssetClick,
+    ],
   );
 
   useEffect(() => {
@@ -113,12 +128,12 @@ export default function useSelectCryptoViewModel({
   );
   const { titleText, titleTestId } = useMemo(() => {
     switch (context) {
-      case "addAccounts":
+      case AddAccountContexts.AddAccounts:
         return {
           titleText: t("assetSelection.selectCrypto.title"),
           titleTestId: "select-crypto-header-step1-title",
         };
-      case "receiveFunds":
+      case AddAccountContexts.ReceiveFunds:
         return {
           titleText: t("transfer.receive.selectCrypto.title"),
           titleTestId: "receive-header-step1-title",
