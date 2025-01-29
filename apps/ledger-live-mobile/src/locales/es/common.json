@@ -99,7 +99,8 @@
       "id" : "ID {{ value }}",
       "times" : "x{{ value }}"
     },
-    "quote" : "Cotización"
+    "quote" : "Cotización",
+    "tryAgain" : "Inténtalo de nuevo"
   },
   "errors" : {
     "ReplacementTransactionUnderpriced" : {
@@ -3992,7 +3993,11 @@
     },
     "quitConfirmation" : {
       "title" : "Cancelar agregar cuenta",
-      "desc" : "¿Deseas cancelar la agregación de cuentas?"
+      "desc" : "¿Deseas cancelar la agregación de cuentas?",
+      "v2" : {
+        "title" : "¿Cancelar la acción de agregar cuenta?",
+        "desc" : "No se agregará ninguna cuenta a Ledger Live."
+      }
     },
     "imported" : "Activo añadido con éxito",
     "added" : "Cuenta agregada a tu portfolio",
@@ -4068,18 +4073,29 @@
           "title" : "Nueva cuenta"
         },
         "imported" : {
-          "title" : "Cuenta ya existente en el portfolio ({{length}})",
-          "title_plural" : "Cuentas ya existentes en el Portfolio ({{length}})"
+          "title" : "Cuenta ya existente en el portfolio ({{count}})",
+          "title_plural" : "Cuentas ya existentes en el Portfolio ({{count}})"
         },
         "migrate" : {
           "title" : "Cuentas a actualizar"
         }
-      }
+      },
+      "retryScanning" : "Inténtalo de nuevo"
     },
     "addAccountsSuccess" : {
       "ctaAddFunds" : "Agregar fondos a mi cuenta",
       "ctaClose" : "Cerrar"
-    }
+    },
+    "addAccountsWarning" : {
+      "cantCreateAccount" : {
+        "title" : "No podemos agregar una cuenta nueva",
+        "body" : "No es posible agregar una cuenta nueva antes de recibir activos en tu cuenta {{accountName}}."
+      },
+      "noAccountToCreate" : {
+        "title" : "No fue posible agregar una cuenta nueva en {{currency}}"
+      }
+    },
+    "chooseAccountToFund" : "Elige la cuenta a la que quieres añadir los fondos"
   },
   "DeviceAction" : {
     "stayInTheAppPlz" : "Mantente dentro de la aplicación Ledger Live y con tu Ledger disponible.",
@@ -6554,7 +6570,9 @@
     "name" : "Hedera",
     "createHederaAccountHelp" : {
       "text" : "Consulta este artículo de soporte para aprender",
-      "link" : "a crear una cuenta de Hedera"
+      "link" : "¿Cómo crear una cuenta de Hedera?",
+      "title" : "No podemos crear una cuenta de Hedera nueva",
+      "description" : "El ecosistema Hedera sólo permite la creación de cuentas nuevas a través de un número limitado de servicios. Aunque Ledger no ofrece actualmente este servicio de incorporación, tienes disponibles varias alternativas. Podrás agregar tu cuenta de Hedera a Ledger Live tras crearla."
     },
     "currentAddress" : {
       "messageIfVirtual" : "No se puede confirmar tu dirección {{name}} en tu dispositivo Ledger. Si lo usas es bajo tu propio riesgo."

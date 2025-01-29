@@ -99,7 +99,8 @@
       "id" : "ID {{ value }}",
       "times" : "x{{ value }}"
     },
-    "quote" : "报价"
+    "quote" : "报价",
+    "tryAgain" : "请重试"
   },
   "errors" : {
     "ReplacementTransactionUnderpriced" : {
@@ -3992,7 +3993,11 @@
     },
     "quitConfirmation" : {
       "title" : "取消添加账户",
-      "desc" : "您确定要取消添加账户？"
+      "desc" : "您确定要取消添加账户？",
+      "v2" : {
+        "title" : "取消添加账户？",
+        "desc" : "账户不会添加至 Ledger Live。"
+      }
     },
     "imported" : "资产添加成功",
     "added" : "账户已添加到您的资产组合",
@@ -4068,18 +4073,29 @@
           "title" : "新账户"
         },
         "imported" : {
-          "title" : "已经在资产组合中的账户 ({{length}})",
-          "title_plural" : "已经在资产组合中的账户 ({{length}})"
+          "title" : "已经在资产组合中的账户 ({{count}})",
+          "title_plural" : "已经在资产组合中的账户 ({{count}})"
         },
         "migrate" : {
           "title" : "待更新账户"
         }
-      }
+      },
+      "retryScanning" : "请重试"
     },
     "addAccountsSuccess" : {
       "ctaAddFunds" : "向我的账户添加资金",
       "ctaClose" : "关闭"
-    }
+    },
+    "addAccountsWarning" : {
+      "cantCreateAccount" : {
+        "title" : "我们无法添加新账户",
+        "body" : "首先需要用您的 {{accountName}} 账户接收资产，然后才能添加新账户。"
+      },
+      "noAccountToCreate" : {
+        "title" : "我们无法添加新的 {{currency}} 账户"
+      }
+    },
+    "chooseAccountToFund" : "选择账户用于添加资金"
   },
   "DeviceAction" : {
     "stayInTheAppPlz" : "停留在 Ledger Live 应用程序中并将 Ledger 设备一直放在附近。",
@@ -6554,7 +6570,9 @@
     "name" : "hedera",
     "createHederaAccountHelp" : {
       "text" : "要了解如何创建 Hedera 账户，",
-      "link" : "请参考此支持文章"
+      "link" : "如何创建 Hedera 账户？",
+      "title" : "我们无法创建新的 Hedera 账户",
+      "description" : "在 Hedera 生态系统中，仅有限数量的服务可以创建新账户。目前，Ledger 不提供入驻服务，但有其他的可用服务可选。创建 Hedera 账户后，就可以将其添加到 Ledger Live 中。"
     },
     "currentAddress" : {
       "messageIfVirtual" : "无法在 Ledger 设备上确认您的 {{name}} 地址。使用需自担风险。"

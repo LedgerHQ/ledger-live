@@ -160,52 +160,6 @@ describe(isAccountEmpty.name, () => {
       });
     });
   });
-  describe("given a solana account", () => {
-    beforeAll(() => {
-      mockAccount.type = "Account";
-      mockAccount.currency = { family: "solana" } as CryptoCurrency;
-      mockAccount.operationsCount = 0;
-      delete mockAccount.subAccounts;
-    });
-
-    it("returns false when balance and spendableBalance is zero ", () => {
-      mockAccount.balance = new BigNumber(10);
-      mockAccount.spendableBalance = new BigNumber(0);
-      expect(isAccountEmpty(mockAccount)).toEqual(false);
-    });
-    it("returns true when spendableBalance and balance is zero", () => {
-      mockAccount.balance = new BigNumber(0);
-      mockAccount.spendableBalance = new BigNumber(10);
-      expect(isAccountEmpty(mockAccount)).toEqual(true);
-    });
-    it("returns false when spendableBalance and has balance", () => {
-      mockAccount.balance = new BigNumber(10);
-      mockAccount.spendableBalance = new BigNumber(10);
-      expect(isAccountEmpty(mockAccount)).toEqual(false);
-    });
-
-    describe("when it has subaccounts", () => {
-      beforeAll(() => {
-        mockAccount.subAccounts = [{} as TokenAccount];
-      });
-
-      it("returns false when balance and spendableBalance is zero ", () => {
-        mockAccount.balance = new BigNumber(10);
-        mockAccount.spendableBalance = new BigNumber(0);
-        expect(isAccountEmpty(mockAccount)).toEqual(false);
-      });
-      it("returns false when spendableBalance and balance is zero", () => {
-        mockAccount.balance = new BigNumber(0);
-        mockAccount.spendableBalance = new BigNumber(10);
-        expect(isAccountEmpty(mockAccount)).toEqual(false);
-      });
-      it("returns false when spendableBalance and has balance", () => {
-        mockAccount.balance = new BigNumber(10);
-        mockAccount.spendableBalance = new BigNumber(10);
-        expect(isAccountEmpty(mockAccount)).toEqual(false);
-      });
-    });
-  });
 });
 
 describe(clearAccount.name, () => {

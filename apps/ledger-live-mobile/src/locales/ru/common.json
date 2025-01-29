@@ -99,7 +99,8 @@
       "id" : "ID {{ value }}",
       "times" : "x{{ value }}"
     },
-    "quote" : "Курс"
+    "quote" : "Курс",
+    "tryAgain" : "Попробовать ещё раз"
   },
   "errors" : {
     "ReplacementTransactionUnderpriced" : {
@@ -3992,7 +3993,11 @@
     },
     "quitConfirmation" : {
       "title" : "Отменить добавление счёта",
-      "desc" : "Уверены, что не хотите добавлять счета?"
+      "desc" : "Уверены, что не хотите добавлять счета?",
+      "v2" : {
+        "title" : "Отменить добавление счёта?",
+        "desc" : "В Ledger Live не появятся новые счета."
+      }
     },
     "imported" : "Актив успешно добавлен",
     "added" : "Счёт добавлен в Портфель",
@@ -4068,18 +4073,29 @@
           "title" : "Новый счёт"
         },
         "imported" : {
-          "title" : "Счёт уже в Портфеле ({{length}})",
-          "title_plural" : "Счета в Портфеле ({{length}})"
+          "title" : "Счёт уже в Портфеле ({{count}})",
+          "title_plural" : "Счета в Портфеле ({{count}})"
         },
         "migrate" : {
           "title" : "Счета, которые будут обновлены"
         }
-      }
+      },
+      "retryScanning" : "Повторить"
     },
     "addAccountsSuccess" : {
       "ctaAddFunds" : "Добавить монеты на счёт",
       "ctaClose" : "Закрыть"
-    }
+    },
+    "addAccountsWarning" : {
+      "cantCreateAccount" : {
+        "title" : "Не удалось добавить новый счёт",
+        "body" : "Нельзя добавить новый счёт до получения криптоактивов на счёт {{accountName}}."
+      },
+      "noAccountToCreate" : {
+        "title" : "Не удалось добавить новый счёт {{currency}}"
+      }
+    },
+    "chooseAccountToFund" : "Выберите счёт для пополнения"
   },
   "DeviceAction" : {
     "stayInTheAppPlz" : "Оставайтесь в приложении и держите устройство Ledger при себе.",
@@ -6554,7 +6570,9 @@
     "name" : "Hedera",
     "createHederaAccountHelp" : {
       "text" : "Используйте информацию из этой статьи",
-      "link" : "для создания счёта Hedera"
+      "link" : "Как создать счёт Hedera?",
+      "title" : "Не удалось создать новый счёт Hedera",
+      "description" : "В экосистеме Hedera пока не так много сервисов, которые позволяют создавать новые счета. Ledger ещё тоже не поддерживает опцию создания счетов Hedera, однако это можно сделать посредством альтернатив. Вы сможете добавить счёт Hedera в Ledger Live после его создания."
     },
     "currentAddress" : {
       "messageIfVirtual" : "Адрес {{name}} не может быть подтверждён на устройстве Ledger. Вы принимаете на себя все риски пользования."
@@ -6767,7 +6785,7 @@
       "category" : {
         "all" : {
           "name" : "Все",
-          "description" : "Все операторы стейкинга Эфириума доступны в Ledger Live."
+          "description" : "Все операторы стейкинга Эфириума, доступные в Ledger Live."
         },
         "liquid" : {
           "name" : "Ликвидный",
