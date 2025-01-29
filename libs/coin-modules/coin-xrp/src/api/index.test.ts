@@ -102,7 +102,7 @@ describe("listOperations", () => {
     const txs = givenTxs(10, 10, "src", "dest");
     // each time it's called it returns a marker, so in theory it would loop forever
     mockGetTransactions.mockResolvedValue(mockNetworkTxs(txs, defaultMarker));
-    const [results, _] = await api.listOperations("src", { limit: 100 });
+    const [results, _] = await api.listOperations("src", { minHeight: 0 });
 
     // called 10 times because there is a hard limit of 10 iterations in case something goes wrong
     // with interpretation of the token (bug / explorer api changed ...)
@@ -139,7 +139,7 @@ describe("listOperations", () => {
       mockGetTransactions.mockResolvedValue(mockNetworkTxs([], undefined));
 
       // When
-      const [results, _] = await api.listOperations(address, { limit: 100 });
+      const [results, _] = await api.listOperations(address, { minHeight: 0 });
 
       // Then
       // called twice because the marker is set the first time

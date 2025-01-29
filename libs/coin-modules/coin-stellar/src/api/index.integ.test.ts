@@ -32,7 +32,7 @@ describe("Stellar Api", () => {
   describe.only("listOperations", () => {
     it("returns a list regarding address parameter", async () => {
       // When
-      const [tx, _] = await module.listOperations(address, { limit: 100 });
+      const [tx, _] = await module.listOperations(address, { minHeight: 0 });
 
       // Then
       expect(tx.length).toBeGreaterThanOrEqual(100);
@@ -46,7 +46,7 @@ describe("Stellar Api", () => {
 
     it("returns all operations", async () => {
       // When
-      const [tx, _] = await module.listOperations(address, {});
+      const [tx, _] = await module.listOperations(address, { minHeight: 0 });
 
       // Then
       const checkSet = new Set(tx.map(elt => elt.hash));

@@ -67,7 +67,10 @@ function compose(tx: string, signature: string, pubkey?: string): string {
   return combine(tx, signature, pubkey);
 }
 
-async function operations(address: string, { limit }: Pagination): Promise<[Operation[], string]> {
+async function operations(
+  address: string,
+  _pagination: Pagination,
+): Promise<[Operation[], string]> {
   // TODO will be fixed with https://github.com/LedgerHQ/ledger-live/pull/8898/files
-  return listOperations(address, { limit: limit ?? 200 });
+  return listOperations(address, { limit: 200 });
 }

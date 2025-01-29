@@ -31,7 +31,7 @@ describe("Xrp Api", () => {
   describe("listOperations", () => {
     it("returns a list regarding address parameter", async () => {
       // When
-      const [tx, _] = await module.listOperations(address, { limit: 200 });
+      const [tx, _] = await module.listOperations(address, { minHeight: 200 });
 
       // Then
       expect(tx.length).toBe(200);
@@ -45,7 +45,7 @@ describe("Xrp Api", () => {
 
     it("returns all operations", async () => {
       // When
-      const [tx, _] = await module.listOperations(bigAddress, { start: 0 });
+      const [tx, _] = await module.listOperations(bigAddress, { minHeight: 0 });
       // Then
       const checkSet = new Set(tx.map(elt => elt.hash));
       expect(checkSet.size).toEqual(tx.length);

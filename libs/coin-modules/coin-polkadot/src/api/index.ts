@@ -50,8 +50,8 @@ async function estimate(addr: string, amount: bigint): Promise<bigint> {
 
 async function operations(
   address: string,
-  { limit, start }: Pagination,
+  { minHeight }: Pagination,
 ): Promise<[Operation[], string]> {
-  const [ops, nextHeight] = await listOperations(address, { limit: limit || 0, startAt: start });
+  const [ops, nextHeight] = await listOperations(address, { limit: 0, startAt: minHeight });
   return [ops, JSON.stringify(nextHeight)];
 }

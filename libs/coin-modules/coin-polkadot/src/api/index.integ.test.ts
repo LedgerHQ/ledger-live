@@ -42,7 +42,7 @@ describe("Polkadot Api", () => {
   describe("listOperations", () => {
     it("returns a list regarding address parameter", async () => {
       // When
-      const [tx, _] = await module.listOperations(address, { limit: 100 });
+      const [tx, _] = await module.listOperations(address, { minHeight: 0 });
 
       // Then
       expect(tx.length).toBeGreaterThanOrEqual(1);
@@ -56,7 +56,7 @@ describe("Polkadot Api", () => {
 
     it("returns all operations", async () => {
       // When
-      const [tx, _] = await module.listOperations(address, {});
+      const [tx, _] = await module.listOperations(address, { minHeight: 0 });
 
       // Then
       const checkSet = new Set(tx.map(elt => elt.hash));

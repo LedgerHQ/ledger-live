@@ -65,7 +65,7 @@ async function estimate(addr: string, amount: bigint): Promise<bigint> {
   return estimatedFees.estimatedFees;
 }
 
-function operations(address: string, { limit }: Pagination) {
+function operations(address: string, _pagination: Pagination) {
   //TODO implement properly with https://github.com/LedgerHQ/ledger-live/pull/8875
-  return listOperations(address, { limit });
+  return listOperations(address, {});
 }

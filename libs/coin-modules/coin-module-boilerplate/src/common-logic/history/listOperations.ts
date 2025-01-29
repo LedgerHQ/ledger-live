@@ -13,9 +13,7 @@ export async function listOperations(
   address: string,
   page: Pagination,
 ): Promise<[Operation[], string]> {
-  let options: { from: number; size?: number } = { from: page.start || 0 };
-  if (page.limit) options = { ...options, size: page.limit };
-  const transactions = await getTransactions(address, options);
+  const transactions = await getTransactions(address, { from: page.minHeight });
   return [transactions.map(convertToCoreOperation(address)), ""];
 }
 

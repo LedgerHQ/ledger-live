@@ -96,8 +96,10 @@ async function operationsFromHeight(
   return [state.accumulator, state.apiNextCursor ?? ""];
 }
 
-async function operations(address: string, { start }: Pagination): Promise<[Operation[], string]> {
-  const minHeight = start ? start : 0;
+async function operations(
+  address: string,
+  { minHeight }: Pagination,
+): Promise<[Operation[], string]> {
   const [ops, token] = await operationsFromHeight(address, minHeight);
   // TODO token must be implemented properly (waiting ack from the design document)
   return [
