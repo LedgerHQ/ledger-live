@@ -5,7 +5,7 @@ import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 export async function runVerifyAddressTest(account: Account, tmsLink: string) {
   const app = new Application();
 
-  describe(`Verify Address - ${account.currency.name}`, () => {
+  describe("Verify Address", () => {
     beforeAll(async () => {
       await app.init({
         speculosApp: account.currency.speculosApp,
