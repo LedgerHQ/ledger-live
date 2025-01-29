@@ -27,11 +27,12 @@ export type Transaction = {
   supplement?: unknown;
 };
 
-// FIXME rename start to minHeight
+// TODO rename start to minHeight
 //       and add a `token: string` field to the pagination if we really need to support pagination
 //       (which is not the case for now)
 //       for now start is used as a minHeight from which we want to fetch ALL operations
 //       limit is unused for now
+//       see design document at https://ledgerhq.atlassian.net/wiki/spaces/BE/pages/5446205788/coin-modules+lama-adapter+APIs+refinements
 export type Pagination = { limit?: number; start?: number };
 export type Api = {
   broadcast: (tx: string) => Promise<string>;
