@@ -6,7 +6,6 @@ import { getAllDivergedFlags } from "./components/FirebaseFeatureFlags";
 import { enabledExperimentalFeatures } from "./experimental";
 import { languageSelector } from "./reducers/settings";
 import { store } from "./context/store";
-
 // we exclude errors related to user's environment, not fixable by us
 const excludedErrorName = [
   // networking conditions
@@ -79,8 +78,6 @@ const excludedErrorDescription = [
   "Bad status on response: 503", // cryptoorg node
 ];
 
-const samplingContexts = ["Route Change", "navigation", "navigation.processing"];
-
 const sentryEnabled =
   Config.SENTRY_DSN && (!__DEV__ || Config.FORCE_SENTRY) && !(Config.MOCK || Config.DETOX);
 
@@ -108,6 +105,7 @@ if (sentryEnabled) {
     enableUserInteractionTracing: true,
     enableAppHangTracking: true,
     profilesSampleRate: Config.FORCE_SENTRY ? 1 : 0.0002,
+    tracesSampleRate: Config.FORCE_SENTRY ? 1 : 0.0002,
     integrations: [
       navigationIntegration,
       Sentry.reactNativeTracingIntegration({
@@ -115,12 +113,6 @@ if (sentryEnabled) {
         idleTimeoutMs: 10_000,
       }),
     ],
-    tracesSampler: samplingContext => {
-      if (samplingContexts.includes(samplingContext.name) || Config.FORCE_SENTRY) {
-        return 1.0;
-      }
-      return 0.0002;
-    },
     beforeSend(event) {
       if (!getEnabled()) return null;
       // If the error matches excludedErrorName or excludedErrorDescription,

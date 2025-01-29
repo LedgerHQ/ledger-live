@@ -971,6 +971,9 @@
       "title" : "유효하지 않은 공급자",
       "description" : "\"My Ledger 공급자\" 설정을 변경해야 합니다. 이를 변경하려면 Ledger Live \"설정\"을 열고 \"실험 기능\"을 선택한 다음 다른 공급자를 선택합니다."
     },
+    "GasLessThanEstimate" : {
+      "title" : "너무 낮은 것 같습니다. 조금 높여주세요"
+    },
     "SequenceNumberError" : {
       "title" : "시퀀스 번호 오류",
       "description" : "창을 닫고 나중에 다시 시도하세요"
@@ -1291,7 +1294,7 @@
       "desc" : "당사 제품은 국가 사이버 보안 기관에서 보안에 대해 인증한 유일한 하드웨어 지갑입니다."
     },
     "title" : "Ledger 장치가 필요하시군요",
-    "desc" : "보안을 위해 Ledger Live는 오직 Ledger 장치에서만 작동합니다. 계속하려면 장치가 필요합니다.",
+    "desc" : "For your security,\n Ledger Live only works with a Ledger.",
     "cta" : "지금 여러분의 Ledger를 구매하세요",
     "footer" : "이미 Ledger가 있습니다. 설정을 진행합니다",
     "bannerTitle" : "암호화폐 및 NFT를 위한 최고 수준의 보안",
@@ -3768,6 +3771,7 @@
       "to" : "발신",
       "infoTotalTitle" : "총 인출",
       "infoTotalDesc" : "트랜잭션 금액과 선택된 네트워크 수수료가 포함됩니다",
+      "gasFee" : "가스비",
       "gasLimit" : "가스 한도(Gas limit)",
       "gasPrice" : "가스 가격(Gas price)",
       "maxFee" : "최대 비용",
@@ -3991,6 +3995,8 @@
       "desc" : "계정 추가를 취소할까요?"
     },
     "imported" : "자산이 성공적으로 추가되었습니다",
+    "added" : "포트폴리오에 계정이 추가되었습니다",
+    "added_plural" : "{{count}}개의 계정이 포트폴리오에 추가되었습니다",
     "sections" : {
       "importable" : {
         "title" : "기존 계정 추가"
@@ -4047,6 +4053,32 @@
         "title" : "탭루트",
         "desc" : "최신 {{currency}} 네트워크 업그레이드. 공개 후 더 나은 개인 정보 보호와 더 저렴한 수수료를 제공합니다. 지갑과 거래소의 지원은 여전히 제한적입니다."
       }
+    },
+    "scanDeviceAccounts" : {
+      "title" : "추가하려는 계정을 선택하세요",
+      "ctaStopScan" : "스캔 중단",
+      "confirm" : "확인",
+      "scanningTitle" : "블록체인에 있는 기존 계정을 찾고 있습니다...",
+      "sections" : {
+        "importable" : {
+          "title" : "{{count}}개의 계정을 찾았습니다",
+          "title_plural" : "{{count}}개의 계정을 찾았습니다"
+        },
+        "creatable" : {
+          "title" : "새 계정"
+        },
+        "imported" : {
+          "title" : "계정이 이미 포트폴리오({{length}})에 있습니다",
+          "title_plural" : "계정이 이미 포트폴리오에 있습니다 ({{length}})"
+        },
+        "migrate" : {
+          "title" : "업데이트할 계정"
+        }
+      }
+    },
+    "addAccountsSuccess" : {
+      "ctaAddFunds" : "내 계정에 자금 추가하기",
+      "ctaClose" : "닫기"
     }
   },
   "DeviceAction" : {
@@ -7140,7 +7172,9 @@
       "title" : "자산 선택"
     },
     "selectNetwork" : {
-      "title" : "자산이 속한 블록체인 네트워크를 선택하세요"
+      "title" : "자산이 속한 블록체인 네트워크를 선택하세요",
+      "detectedAccounts" : "{{count}}개의 계정이 (감지됨)",
+      "detectedAccounts_plural" : "{{count}}개의 계정이 (감지됨)"
     }
   }
 }

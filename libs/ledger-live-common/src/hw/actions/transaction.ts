@@ -151,6 +151,7 @@ export const createAction = (
           account: mainAccount,
           transaction,
           deviceId: device.deviceId,
+          deviceModelId: device.modelId,
         })
         .pipe(
           catchError(error =>

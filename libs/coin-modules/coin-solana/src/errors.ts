@@ -12,9 +12,17 @@ export const SolanaTokenAccountHoldsAnotherToken = createCustomErrorClass(
   "SolanaTokenAccountHoldsAnotherToken",
 );
 
+export const SolanaTokenAccountWarning = createCustomErrorClass("SolanaTokenAccountWarning");
+
+export const SolanaTokenAccountNotAllowed = createCustomErrorClass("SolanaTokenAccountNotAllowed");
+
+export const SolanaMintAccountNotAllowed = createCustomErrorClass("SolanaMintAccountNotAllowed");
+
 export const SolanaTokenAccounNotInitialized = createCustomErrorClass(
   "SolanaTokenAccounNotInitialized",
 );
+
+export const SolanaTokenAccountFrozen = createCustomErrorClass("SolanaTokenAccountFrozen");
 
 export const SolanaAddressOffEd25519 = createCustomErrorClass("SolanaAddressOfEd25519");
 
