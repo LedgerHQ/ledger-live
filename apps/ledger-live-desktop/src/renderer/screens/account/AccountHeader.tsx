@@ -254,7 +254,6 @@ const AccountHeader: React.ComponentType<Props> = React.memo(function AccountHea
             disableEllipsis={editingName}
             value={name}
             id="account-header-name"
-            data-testid="account-header-name"
           />
           {account.type === "Account" && (
             <>

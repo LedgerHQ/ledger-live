@@ -91,7 +91,6 @@ class EditAccountName extends PureComponent<
             onSubmitEditing={this.onNameEndEditing}
             clearButtonMode="while-editing"
             placeholder={i18next.t("account.settings.accountName.placeholder")}
-            testID="account-rename-text-input"
           />
         </Box>
         <Button
