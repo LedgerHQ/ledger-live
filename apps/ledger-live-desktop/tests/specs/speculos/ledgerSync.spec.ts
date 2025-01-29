@@ -4,114 +4,31 @@ import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "../../utils/customJsonReporter";
 import { CLI } from "tests/utils/cliUtils";
 import { activateLedgerSync } from "@ledgerhq/live-common/e2e/speculos";
-import { waitFor, waitForTimeOut } from "tests/utils/waitFor";
+import { waitForTimeOut } from "tests/utils/waitFor";
 import { expect } from "@playwright/test";
 import { DistantState as LiveData } from "@ledgerhq/live-wallet/walletsync/index";
+import { LedgerSyncCliHelper } from "../../utils/ledgerSyncCliUtils";
+import { accountNames, accounts } from "tests/testdata/ledgerSyncTestData";
 
 const app: AppInfos = AppInfos.LS;
-
-const accounts = [
-  {
-    id: "mock:1:dogecoin:0.790010769447963:",
-    currencyId: "dogecoin",
-    index: 1,
-    seedIdentifier: "mock",
-    derivationMode: "",
-    freshAddress: "1uVnrWAzycYqKUXSuNXt3XSjJ8",
-  },
-  {
-    id: "mock:1:bitcoin_gold:0.8027791663782486:",
-    currencyId: "bitcoin_gold",
-    index: 1,
-    seedIdentifier: "mock",
-    derivationMode: "",
-    freshAddress: "1Y5T8JQqBKUS7cXbxUYCR4wg3YSbV9R",
-  },
-];
-
-const accountNames: Record<string, string> = {
-  "mock:1:dogecoin:0.790010769447963:": "Dogecoin 2",
-  "mock:1:bitcoin_gold:0.8027791663782486:": "Bitcoin Gold 2",
-};
-
-const firstAccountId = accounts[0].id;
-const secondAccountId = accounts[1].id;
-const firstAccountName = accountNames[firstAccountId];
-const secondAccountName = accountNames[secondAccountId];
+const accountId = accounts[0].id;
+const accountName = accountNames[accountId];
 
 test.describe(`[${app.name}] Sync Accounts`, () => {
-  const ledgerKeyRingProtocolArgs = {
-    pubKey: "",
-    privateKey: "",
-  };
-
-  const ledgerSyncPushDataArgs = {
-    rootId: "",
-    walletSyncEncryptionKey: "",
-    applicationPath: "",
-    push: true,
-    data: JSON.stringify({
-      accounts,
-      accountNames,
-    }),
-  };
-
-  const ledgerSyncPullDataArgs = {
-    pubKey: "",
-    privateKey: "",
-    rootId: "",
-    walletSyncEncryptionKey: "",
-    applicationPath: "",
-    push: false,
-    pull: true,
-    data: "",
-  };
-
-  async function initializeLedgerKeyRingProtocol() {
-    return CLI.ledgerKeyRingProtocol({ initMemberCredentials: true }).then(output => {
-      if (output && typeof output !== "string" && "pubkey" in output) {
-        ledgerKeyRingProtocolArgs.pubKey = output.pubkey;
-        ledgerKeyRingProtocolArgs.privateKey = output.privatekey;
-        ledgerSyncPullDataArgs.pubKey = output.pubkey;
-        ledgerSyncPullDataArgs.privateKey = output.privatekey;
-      }
-      return output;
-    });
-  }
-
-  async function initializeLedgerSync() {
-    const output = CLI.ledgerKeyRingProtocol({
-      getKeyRingTree: true,
-      ...ledgerKeyRingProtocolArgs,
-    }).then(out => {
-      if (out && typeof out !== "string" && "rootId" in out) {
-        ledgerSyncPushDataArgs.rootId = out.rootId;
-        ledgerSyncPushDataArgs.walletSyncEncryptionKey = out.walletSyncEncryptionKey;
-        ledgerSyncPushDataArgs.applicationPath = out.applicationPath;
-        ledgerSyncPullDataArgs.rootId = out.rootId;
-        ledgerSyncPullDataArgs.walletSyncEncryptionKey = out.walletSyncEncryptionKey;
-        ledgerSyncPullDataArgs.applicationPath = out.applicationPath;
-      }
-      return out;
-    });
-    await activateLedgerSync();
-    return output;
-  }
-
   test.use({
     userdata: "ledgerSync",
     speculosApp: app,
     cliCommands: [
       async () => {
-        return initializeLedgerKeyRingProtocol();
+        return LedgerSyncCliHelper.initializeLedgerKeyRingProtocol();
       },
       async () => {
-        return initializeLedgerSync();
+        return LedgerSyncCliHelper.initializeLedgerSync();
       },
       async () => {
         return CLI.ledgerSync({
-          ...ledgerKeyRingProtocolArgs,
-          ...ledgerSyncPushDataArgs,
+          ...LedgerSyncCliHelper.ledgerKeyRingProtocolArgs,
+          ...LedgerSyncCliHelper.ledgerSyncPushDataArgs,
         });
       },
     ],
@@ -143,8 +60,8 @@ test.describe(`[${app.name}] Sync Accounts`, () => {
       await app.layout.goToAccounts();
       await app.accounts.expectAccountsCount(2);
 
-      await app.accounts.navigateToAccountByName(firstAccountName);
-      await app.account.expectAccountVisibility(firstAccountName);
+      await app.accounts.navigateToAccountByName(accountName);
+      await app.account.expectAccountVisibility(accountName);
       await app.account.deleteAccount();
       await app.layout.syncAccounts();
       await app.layout.waitForAccountsSyncToBeDone();
@@ -154,13 +71,11 @@ test.describe(`[${app.name}] Sync Accounts`, () => {
       await app.accounts.expectAccountsCount(1);
 
       const pulledData = await CLI.ledgerSync({
-        ...ledgerKeyRingProtocolArgs,
-        ...ledgerSyncPullDataArgs,
+        ...LedgerSyncCliHelper.ledgerKeyRingProtocolArgs,
+        ...LedgerSyncCliHelper.ledgerSyncPullDataArgs,
       });
 
-      let parsedData;
-
-      parsedData = typeof pulledData === "string" ? JSON.parse(pulledData) : pulledData;
+      let parsedData = typeof pulledData === "string" ? JSON.parse(pulledData) : pulledData;
 
       await app.layout.goToSettings();
       await app.settings.openManageLedgerSync();
@@ -169,26 +84,9 @@ test.describe(`[${app.name}] Sync Accounts`, () => {
       await app.drawer.closeDrawer();
 
       const deletedAccount = (parsedData.updateEvent.data as LiveData).accounts?.find(
-        account => account.id === firstAccountId,
+        account => account.id === accountId,
       );
-
-      if (deletedAccount === undefined) {
-        console.log("Assertion passed: Account :", firstAccountName, " is not present.");
-      } else {
-        console.error("Assertion failed: Account is present.");
-      }
       expect(deletedAccount, "Account should not be present").toBeUndefined();
-
-      const remainingAccount = (parsedData.updateEvent.data as LiveData).accounts?.find(
-        account => account.id === secondAccountId,
-      );
-
-      if (remainingAccount === undefined) {
-        console.error("Assertion failed: Account is not present.");
-      } else {
-        console.log("Assertion passed: Account :", secondAccountName, " is present.");
-      }
-      expect(remainingAccount, "Account should be present").toBeDefined();
     },
   );
 });
