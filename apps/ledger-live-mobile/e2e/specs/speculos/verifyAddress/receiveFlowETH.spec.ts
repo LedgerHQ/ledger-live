@@ -44,7 +44,7 @@ describe("Receive Flow", () => {
   it("Should access to receive after importing a cryptocurrency on a selected network", async () => {
     await openReceive();
     await app.common.performSearch("Polygon");
-    await app.receive.selectAsset("POL");
+    await app.receive.selectCurrency("Polygon");
     await app.receive.selectNetwork("binance smart chain");
     await app.receive.selectAccount("Binance Smart Chain 1");
     await app.receive.doNotVerifyAddress();
