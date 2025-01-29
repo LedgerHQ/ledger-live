@@ -1516,21 +1516,21 @@
     },
     "recoverBanner": {
       "subscribeDone": {
-        "title": "Finish adding your payment card",
-        "description": "Restore reliably with Ledger Recover.",
+        "title": "Reminder: Finish subscribing to Ledger Recover",
+        "description": "You're just two steps away from being secured.",
         "primaryCta": "Add card",
         "secondaryCta": "Maybe later"
       },
       "verifyIdentity": {
-        "title": "Finish verifying your identity",
-        "description": "Restore reliably with Ledger Recover.",
-        "primaryCta": "Verify",
+        "title": "Reminder: Finish subscribing to Ledger Recover",
+        "description": "You're just one step away from being secured.",
+        "primaryCta": "Verify identity",
         "secondaryCta": "Maybe later"
       },
       "connectDevice": {
-        "title": "Connect your Ledger",
-        "description": "You're 1 step away from Ledger Recover.",
-        "primaryCta": "Connect",
+        "title": "Reminder: Finish subscribing to Ledger Recover",
+        "description": "It's your final step to ensure wallet access recovery.",
+        "primaryCta": "Connect device",
         "secondaryCta": "Maybe later"
       }
     },
