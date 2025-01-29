@@ -6,7 +6,6 @@ import { tokens as sepoliaTokens } from "./data/evm/11155111";
 import stellarTokens, { StellarToken } from "./data/stellar";
 import vechainTokens, { Vip180Token } from "./data/vip180";
 import esdttokens, { ElrondESDTToken } from "./data/esdt";
-import casperTokens, { CasperToken } from "./data/casper";
 import asatokens, { AlgorandASAToken } from "./data/asa";
 import { tokens as polygonTokens } from "./data/evm/137";
 import trc10tokens, { TRC10Token } from "./data/trc10";
@@ -47,8 +46,6 @@ addTokens(esdttokens.map(convertElrondESDTTokens));
 addTokens(cardanoNativeTokens.map(convertCardanoNativeTokens));
 // Stellar tokens
 addTokens(stellarTokens.map(convertStellarTokens));
-// Casper tokens
-addTokens(casperTokens.map(convertCasperTokens));
 // VeChain tokens
 addTokens(vechainTokens.map(convertVechainToken));
 // Ton tokens
@@ -484,35 +481,6 @@ function convertStellarTokens([
     name,
     ticker: assetCode,
     disableCountervalue: false,
-    units: [
-      {
-        name,
-        code: assetCode,
-        magnitude: precision,
-      },
-    ],
-  };
-}
-
-function convertCasperTokens([
-  assetCode,
-  assetIssuer,
-  assetType,
-  name,
-  precision,
-  enableCountervalues,
-]: CasperToken): TokenCurrency {
-  const parentCurrency = getCryptoCurrencyById("casper");
-
-  return {
-    type: "TokenCurrency",
-    id: `casper/asset/${assetCode}:${assetIssuer}`,
-    contractAddress: assetIssuer,
-    parentCurrency,
-    tokenType: assetType,
-    name,
-    ticker: assetCode,
-    disableCountervalue: !enableCountervalues,
     units: [
       {
         name,
