@@ -42,8 +42,8 @@ describe("getFeesForTransaction Test", () => {
             success: false,
             vm_status: ["INSUFFICIENT_BALANCE"],
             expiration_timestamp_secs: 5,
-            gas_used: "201",
-            gas_unit_price: "101",
+            gas_used: "202",
+            gas_unit_price: "102",
           },
         ]);
 
@@ -58,10 +58,10 @@ describe("getFeesForTransaction Test", () => {
         const result = await getFeesForTransaction.getFee(account, transaction, aptosClient);
 
         const expected = {
-          fees: new BigNumber(20301),
+          fees: new BigNumber(20604),
           estimate: {
-            maxGasAmount: "201",
-            gasUnitPrice: "101",
+            maxGasAmount: "202",
+            gasUnitPrice: "102",
           },
           errors: {},
         };
