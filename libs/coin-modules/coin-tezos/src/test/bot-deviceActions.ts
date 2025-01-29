@@ -79,7 +79,6 @@ export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlo
     {
       title: "Storage limit",
       button: SpeculosButton.RIGHT,
-      expectedValue: ({ transaction }) => transaction.storageLimit?.toString() || "",
     },
     {
       title: "Reject",
