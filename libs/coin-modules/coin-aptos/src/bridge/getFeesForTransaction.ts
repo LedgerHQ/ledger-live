@@ -70,9 +70,9 @@ export const getFee = async (
   return res;
 };
 
-let CACHE = makeLRUCache(
+const CACHE = makeLRUCache(
   getFee,
-  (account: Account, transaction: Transaction, aptosClient: AptosAPI) => {
+  (_account: Account, transaction: Transaction, _aptosClient: AptosAPI) => {
     return transaction.amount.toString();
   },
   seconds(30),
