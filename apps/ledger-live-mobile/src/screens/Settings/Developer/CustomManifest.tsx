@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import { useTheme, CompositeScreenProps } from "@react-navigation/native";
 import { useLocalLiveAppContext } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
-import { Box, Text } from "@ledgerhq/native-ui";
+import { Box, Icons, Text } from "@ledgerhq/native-ui";
 import { ScreenName } from "~/const";
 import KeyboardView from "~/components/KeyboardView";
 import ImportIcon from "~/icons/Import";
@@ -16,7 +16,6 @@ import type { SettingsNavigatorStackParamList } from "~/components/RootNavigator
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import AppCard from "~/screens/Platform/Catalog/AppCard";
-import Plus from "~/icons/Plus";
 import Trash from "~/icons/Trash";
 import { LAGADO_MANIFEST, LAGADO_MANIFEST_BUST, LAGADO_MANIFEST_NOCACHE } from "./manifests/lagado";
 import {
@@ -31,9 +30,7 @@ import {
   HEADERS_MANIFEST_NOCACHE,
 } from "./manifests/headerSniffer";
 import { ScrollView } from "react-native-gesture-handler";
-import Close from "~/icons/Close";
 import Clipboard from "@react-native-clipboard/clipboard";
-import Paste from "~/icons/Paste";
 
 const DebuggerButton: React.ComponentType<{
   onPress: TouchableOpacityProps["onPress"];
@@ -61,7 +58,7 @@ const AddButton: React.ComponentType<{
   const { colors } = useTheme();
   return (
     <TouchableOpacity style={styles.buttons} onPress={onPress} disabled={disabled}>
-      <Plus size={20} color={disabled ? colors.grey : colors.black} />
+      <Icons.Plus size="S" color={disabled ? colors.grey : colors.black} />
     </TouchableOpacity>
   );
 };
@@ -73,7 +70,7 @@ const DeleteTextButton: React.ComponentType<{
   const { colors } = useTheme();
   return (
     <TouchableOpacity style={styles.buttons} onPress={onPress} disabled={disabled}>
-      <Close size={20} color={disabled ? colors.grey : colors.black} />
+      <Icons.Close size="S" color={disabled ? colors.grey : colors.black} />
     </TouchableOpacity>
   );
 };
@@ -84,7 +81,7 @@ const PasteButton: React.ComponentType<{
   const { colors } = useTheme();
   return (
     <TouchableOpacity style={styles.buttons} onPress={onPress}>
-      <Paste color={colors.grey} />
+      <Icons.Paste size="S" color={colors.grey} />
     </TouchableOpacity>
   );
 };
