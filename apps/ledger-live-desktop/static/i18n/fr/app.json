@@ -200,7 +200,8 @@
       "STAKE" : "Staké",
       "UNSTAKE" : "Déstaké",
       "WITHDRAW_UNSTAKED" : "Retiré",
-      "SENDING" : "Envoi"
+      "SENDING" : "Envoi",
+      "BURN" : "Brûlé"
     },
     "edit" : {
       "title" : "Accélérer ou annuler",
@@ -759,6 +760,22 @@
         "description3" : "Cette intégration a été réalisée par {{team}} en collaboration avec Ledger.",
         "description3Link" : "Cette intégration a été réalisée par <1><0>{{team}}</0></1> en collaboration avec Ledger."
       }
+    },
+    "featureUnavailable" : {
+      "title" : "La fonctionnalité suivante est temporairement indisponible : {{feature}}. Pour plus d’informations, veuillez contacter l’{{support}}.",
+      "feature" : {
+        "history" : "historique",
+        "swap" : "Swap",
+        "token_history" : "historique des tokens",
+        "send_and_receive" : "envoyer et recevoir",
+        "send" : "envoyer",
+        "receive" : "recevoir",
+        "sending_tokens" : "envoyer des tokens",
+        "receiving_tokens" : "recevoir des tokens",
+        "staking" : "staker",
+        "claiming_staking_rewards" : "demander des récompenses de staking"
+      },
+      "support" : "assistance"
     },
     "willBeDeprecatedBanner" : {
       "title" : "Pour une meilleure performance, Ledger Live ne prendra plus en charge {{currencyName}} à partir du {{deprecatedDate}}. Cette monnaie restera prise en charge par les wallets physiques Ledger. Veuillez contacter l’Assistance Ledger pour toute question.",
@@ -3726,6 +3743,10 @@
           }
         }
       }
+    },
+    "token" : {
+      "frozenStateWarning" : "Les actifs du compte sont gelés",
+      "transferWarning" : "Pour vérifier l’adresse du bénéficiaire des tokens Solana avec un Ledger Nano S™, <0>suivez ces instructions</0>."
     }
   },
   "ethereum" : {
@@ -6180,6 +6201,27 @@
     },
     "SolanaAccountNotFunded" : {
       "title" : "Pas de fonds sur le compte"
+    },
+    "SolanaTokenAccountHoldsAnotherToken" : {
+      "title" : "Ce compte de tokens associé contient un autre token"
+    },
+    "SolanaTokenAccountWarning" : {
+      "title" : "Cette adresse n’est pas celle d’un wallet ordinaire, mais celle d’un compte de tokens associé. Ne poursuivez que si vous en comprenez les implications."
+    },
+    "SolanaTokenAccountNotAllowed" : {
+      "title" : "Ceci est un compte de tokens. Saisissez une adresse de wallet ordinaire"
+    },
+    "SolanaMintAccountNotAllowed" : {
+      "title" : "Ceci est une adresse de token. Saisissez une adresse de wallet ordinaire"
+    },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "Le compte sera provisionné"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "Les actifs du compte de tokens sont gelés"
+    },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "Compte non configuré"
     },
     "SolanaMemoIsTooLong" : {
       "title" : "Mémo trop long. Longueur maximale : {{maxLength}}"
