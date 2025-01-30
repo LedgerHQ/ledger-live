@@ -200,7 +200,8 @@
       "STAKE" : "Stake edildi",
       "UNSTAKE" : "Stake durdurma",
       "WITHDRAW_UNSTAKED" : "Çekildi",
-      "SENDING" : "Gönderiliyor"
+      "SENDING" : "Gönderiliyor",
+      "BURN" : "Yakıldı"
     },
     "edit" : {
       "title" : "Hızlandırın veya İptal Edin",
@@ -759,6 +760,22 @@
         "description3" : "Bu entegrasyon, {{team}} tarafından Ledger ile işbirliği içinde gerçekleştirilmiştir.",
         "description3Link" : "Bu entegrasyon, <1><0>{{team}}</0></1> tarafından Ledger ile iş birliği yapılarak gerçekleştirilmiştir"
       }
+    },
+    "featureUnavailable" : {
+      "title" : "Şu özellik an itibarıyla kullanılamıyor: {{feature}}. Daha fazla bilgi için lütfen {{support}} bakın.",
+      "feature" : {
+        "history" : "Geçmiş",
+        "swap" : "Takas et",
+        "token_history" : "Token geçmişi",
+        "send_and_receive" : "Gönder & al",
+        "send" : "Gönder",
+        "receive" : "Al",
+        "sending_tokens" : "Token gönderme",
+        "receiving_tokens" : "Token alma",
+        "staking" : "Staking",
+        "claiming_staking_rewards" : "Staking ödüllerini alma"
+      },
+      "support" : "destek bölümüne"
     },
     "willBeDeprecatedBanner" : {
       "title" : "Verimliliği iyileştirmek için {{deprecatedDate}} tarihinden itibaren {{currencyName}} artık Ledger Live'da desteklenmeyecektir. Ancak Ledger donanım cüzdanlarında desteklenmeye devam edecektir. Bu konuda yardım almak isterseniz Ledger Müşteri Destek ekibiyle lütfen iletişime geçin.",
@@ -3726,6 +3743,10 @@
           }
         }
       }
+    },
+    "token" : {
+      "frozenStateWarning" : "Hesap varlıkları donduruldu!",
+      "transferWarning" : "Ledger Nano S™ kullanarak Solana token'ları için alıcı adresini doğrulamak üzere <0>bu yönergeleri uygulayın.</0>"
     }
   },
   "ethereum" : {
@@ -6180,6 +6201,27 @@
     },
     "SolanaAccountNotFunded" : {
       "title" : "Hesap daha önce fonlanmamış"
+    },
+    "SolanaTokenAccountHoldsAnotherToken" : {
+      "title" : "Bu ilgili token hesabında başka bir token tutuluyor"
+    },
+    "SolanaTokenAccountWarning" : {
+      "title" : "Bu normal bir cüzdan adresi değil, ilgili bir token hesabıdır. Sadece ne yaptığınızdan eminseniz devam edin."
+    },
+    "SolanaTokenAccountNotAllowed" : {
+      "title" : "Bu bir token hesabı. Normal bir cüzdan adresi girin."
+    },
+    "SolanaMintAccountNotAllowed" : {
+      "title" : "Bu bir token adresi. Normal bir cüzdan adresi girin."
+    },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "Hesap fonlanacak"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "Token hesabı varlıkları donduruldu"
+    },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "Hesap başlatılmadı"
     },
     "SolanaMemoIsTooLong" : {
       "title" : "Memo çok uzun Uzunluk en fazla {{maxLength}} olmalıdır"
