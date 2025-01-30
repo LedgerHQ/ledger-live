@@ -99,7 +99,8 @@
       "id" : "Kimlik {{ value }}",
       "times" : "x{{ value }}"
     },
-    "quote" : "Teklif"
+    "quote" : "Teklif",
+    "tryAgain" : "Tekrar dene"
   },
   "errors" : {
     "ReplacementTransactionUnderpriced" : {
@@ -789,6 +790,24 @@
     },
     "SolanaAccountNotFunded" : {
       "title" : "Hesap daha önce fonlanmamış"
+    },
+    "SolanaTokenAccountHoldsAnotherToken" : {
+      "title" : "Bu ilgili token hesabında başka bir token tutuluyor"
+    },
+    "SolanaTokenAccountWarning" : {
+      "title" : "Bu normal bir cüzdan adresi değil, ilgili bir token hesabıdır. Sadece ne yaptığınızdan eminseniz devam edin."
+    },
+    "SolanaTokenAccountNotAllowed" : {
+      "title" : "Bu bir token hesabı. Normal bir cüzdan adresi girin."
+    },
+    "SolanaMintAccountNotAllowed" : {
+      "title" : "Bu bir token adresi. Normal bir cüzdan adresi girin."
+    },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "Hesap fonlanacak"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "Token hesabı varlıkları donduruldu"
     },
     "SolanaAddressOfEd25519" : {
       "title" : "Adres ed25519 eğrisi dışında"
@@ -2063,7 +2082,7 @@
     },
     "pairing" : {
       "success" : {
-        "title" : "{{deviceName}} ile eşleştirildi"
+        "title" : "{{deviceName}} ile eşlendi"
       },
       "loading" : {
         "title" : "{{deviceName}} ile eşleştiriliyor...",
@@ -2194,7 +2213,7 @@
     },
     "pairing" : {
       "success" : {
-        "title" : "{{deviceName}} ile eşleştirildi"
+        "title" : "{{deviceName}} ile eşlendi"
       },
       "loading" : {
         "title" : "{{deviceName}} ile eşleştiriliyor",
@@ -3992,7 +4011,11 @@
     },
     "quitConfirmation" : {
       "title" : "Hesap ekleme iptali",
-      "desc" : "Hesap eklemeyi iptal etmek istediğinizden emin misiniz?"
+      "desc" : "Hesap eklemeyi iptal etmek istediğinizden emin misiniz?",
+      "v2" : {
+        "title" : "Hesap ekleme işlemi iptal edilsin mi?",
+        "desc" : "Ledger Live'a hiçbir hesap eklenmeyecek."
+      }
     },
     "imported" : "Varlık başarıyla eklendi",
     "added" : "Hesap, portföyünüze eklendi",
@@ -4068,18 +4091,29 @@
           "title" : "Yeni hesap"
         },
         "imported" : {
-          "title" : "Hesap zaten Portföyde mevcut ({{length}})",
-          "title_plural" : "Portföydeki hesaplar ({{length}})"
+          "title" : "Hesap zaten Portföyde mevcut ({{count}})",
+          "title_plural" : "Portföydeki hesaplar ({{count}})"
         },
         "migrate" : {
           "title" : "Güncellenecek hesaplar"
         }
-      }
+      },
+      "retryScanning" : "Tekrar dene"
     },
     "addAccountsSuccess" : {
       "ctaAddFunds" : "Hesabınıza fon ekleyin",
       "ctaClose" : "Kapat"
-    }
+    },
+    "addAccountsWarning" : {
+      "cantCreateAccount" : {
+        "title" : "Yeni bir hesap ekleyemiyoruz",
+        "body" : "{{accountName}} hesabınıza varlık almadan önce yeni bir hesap eklenemez."
+      },
+      "noAccountToCreate" : {
+        "title" : "Yeni bir {{currency}} hesabı ekleyemedik"
+      }
+    },
+    "chooseAccountToFund" : "Fonların ekleneceği bir hesap seçin"
   },
   "DeviceAction" : {
     "stayInTheAppPlz" : "Ledger Live uygulamasında kalın ve Ledger'ınızı yakınınızda tutun.",
@@ -4142,7 +4176,7 @@
       "openManager" : "My Ledger'ı Aç",
       "openOnboarding" : "Cihaz kurulumu"
     },
-    "installApp" : "{{appName}} uygulama kurulumu {{percentage}}",
+    "installApp" : "{{appName}} Uygulama kurulumu {{percentage}}",
     "installAppDescription" : "Lütfen kurulum bitene kadar bekleyin",
     "listApps" : "Uygulama şartları denetleniyor",
     "listAppsDescription" : "Gerekli tüm uygulamalara sahip olduğunuz kontrol edilirken lütfen bekleyin"
@@ -4665,7 +4699,7 @@
     "token" : "ASA (Varlıklar)",
     "claimRewards" : {
       "title" : "Ödüller",
-      "button" : "Ödüllerinizi toplayın",
+      "button" : "Ödülleri topla",
       "stepperHeader" : {
         "info" : "Ödüller kazanın",
         "starter" : "Ödüller",
@@ -5966,6 +6000,10 @@
         "description" : "SOL varlıklarınızla bir doğrulayıcıya yetki devrederek ödüller kazanabilirsiniz."
       },
       "reserveWarning" : "Gelecekte staking'inizi durdurmak ve çekmek için gerekecek ağ ücretlerini karşılamak üzere cüzdanınızda en az {{amount}} SOL bulundurduğunuzdan lütfen emin olun"
+    },
+    "token" : {
+      "frozenStateWarning" : "Hesap varlıkları donduruldu!",
+      "transferWarning" : "Ledger Nano S™ kullanarak Solana token'ları için alıcı adresini doğrulamak üzere <0>bu yönergeleri uygulayın.</0>"
     }
   },
   "near" : {
@@ -6554,7 +6592,9 @@
     "name" : "hedera",
     "createHederaAccountHelp" : {
       "text" : "Bu destek makalesini inceleyerek",
-      "link" : "Hedera hesabının nasıl oluşturulduğunu öğrenebilirsiniz"
+      "link" : "Bir Hedera hesabı nasıl oluşturulur?",
+      "title" : "Yeni bir Hedera hesabı oluşturamıyoruz",
+      "description" : "Hedera ekosisteminde yeni hesap oluşturma hizmetini sunan sağlayıcıların sayısı kısıtlıdır. Ledger an itibarıyla bu yeni hesap oluşturma hizmetini sunmasa da bazı alternatifler mevcuttur. Hedera hesabınız oluşturulduktan sonra o hesabı Ledger Live'da ekleyebilirsiniz."
     },
     "currentAddress" : {
       "messageIfVirtual" : "{{name}} adresiniz Ledger cihazınızda onaylanamıyor. Kullandığınız takdirde sorumluluk size aittir."
