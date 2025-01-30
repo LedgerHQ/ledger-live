@@ -90,7 +90,6 @@ const AccountScreenInner = ({
     useBalanceHistoryWithCountervalue({ account, range });
   const useCounterValue = useSelector(countervalueFirstSelector);
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
-
   const isEmpty = isAccountEmpty(account);
 
   const onSwitchAccountCurrency = useCallback(() => {

@@ -25,6 +25,7 @@ import { useGroupedCurrenciesByProvider } from "@ledgerhq/live-common/deposit/in
 import { LoadingBasedGroupedCurrencies, LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { AddAccountContexts } from "LLM/features/Accounts/screens/AddAccount/enums";
+import { ReactNavigationPerformanceView } from "@shopify/react-native-performance-navigation";
 
 const SEARCH_KEYS = getEnv("CRYPTO_ASSET_SEARCH_KEYS");
 
@@ -183,13 +184,17 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
     }
   }, [providersLoadingStatus, list, renderList, debounceTrackOnSearchChange]);
 
+  console.warn("AddAccountsSelectCrypto");
+
   return (
-    <SafeAreaView edges={["left", "right"]} isFlex>
-      <TrackScreen category="Deposit" name="Choose a crypto to secure" />
-      <Text variant="h4" fontWeight="semiBold" mx={6} testID="receive-header-step1-title">
-        {t("transfer.receive.selectCrypto.title")}
-      </Text>
-      {renderListView()}
-    </SafeAreaView>
+    <ReactNavigationPerformanceView screenName={ScreenName.ReceiveSelectCrypto} interactive>
+      <SafeAreaView edges={["left", "right"]} isFlex>
+        <TrackScreen category="Deposit" name="Choose a crypto to secure" />
+        <Text variant="h4" fontWeight="semiBold" mx={6} testID="receive-header-step1-title">
+          {t("transfer.receive.selectCrypto.title")}
+        </Text>
+        {renderListView()}
+      </SafeAreaView>
+    </ReactNavigationPerformanceView>
   );
 }

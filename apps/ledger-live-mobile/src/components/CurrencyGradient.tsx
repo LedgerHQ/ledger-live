@@ -1,12 +1,14 @@
 import * as React from "react";
-import Svg, { Path, Defs, LinearGradient, Stop, Mask, G } from "react-native-svg";
+import Svg, { Path, Defs, Stop, Mask, G } from "react-native-svg";
 import { useTheme } from "styled-components/native";
 import { ensureContrast } from "../colors";
+import LinearGradient from "react-native-linear-gradient";
+import { StyleSheet } from "react-native";
+import { Flex, rgba, Text } from "@ledgerhq/native-ui";
 
-function CurrencyGradient({ gradientColor }: { gradientColor: string }) {
+/* function CurrencyGradientOld({ gradientColor }: { gradientColor: string }) {
   const { colors } = useTheme();
   const contrastedColor = ensureContrast(gradientColor, colors.background.main);
-  console.log(">>> gradient render", gradientColor, contrastedColor);
   return (
     <Svg width={850} height={454} viewBox="0 0 850 454" fill="none">
       <Mask
@@ -55,5 +57,29 @@ function CurrencyGradient({ gradientColor }: { gradientColor: string }) {
     </Svg>
   );
 }
+ */
+function CurrencyGradient({ gradientColor }: { gradientColor: string }) {
+  const { colors } = useTheme();
+  const contrastedColor = ensureContrast(gradientColor, colors.background.main);
+  return (
+    <LinearGradient
+      colors={[
+        rgba(contrastedColor, 0.3),
+        colors.background.main,
+        colors.background.main,
+        colors.background.main,
+      ]}
+      start={{ x: 0.27, y: 0 }}
+      style={styles.linearGradient}
+      end={{ x: 0.27, y: 1.7 }}
+    />
+  );
+}
+
+const styles = StyleSheet.create({
+  linearGradient: {
+    flex: 1,
+  },
+});
 
 export default CurrencyGradient;
