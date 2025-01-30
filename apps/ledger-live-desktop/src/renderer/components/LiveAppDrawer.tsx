@@ -206,7 +206,7 @@ export const LiveAppDrawer = () => {
       case "EXCHANGE_START": {
         if (data && isStartExchangeData(data)) {
           if (device?.modelId === "nanoS" && data.exchange && isExchangeSwap(data.exchange)) {
-            if (data.provider === "thorswap" || data.provider === "lifi") {
+            if (data.provider && ["thorswap", "lifi"].includes(data.provider)) {
               return (
                 <HardwareUpdate
                   i18nKeyTitle="swap.wrongDevice.title"
