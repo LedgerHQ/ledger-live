@@ -22,6 +22,7 @@ export type CryptoCurrencyId =
   | "cardano"
   | "cardano_testnet"
   | "celo"
+  | "celo_evm"
   | "clubcoin"
   | "coreum"
   | "cosmos"

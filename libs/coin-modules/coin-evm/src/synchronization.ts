@@ -18,10 +18,16 @@ import { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
 import { decodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { nftsFromOperations } from "@ledgerhq/coin-framework/nft/helpers";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { attachOperations, getSyncHash, mergeSubAccounts, createSwapHistoryMap } from "./logic";
 import { ExplorerApi } from "./api/explorer/types";
 import { getExplorerApi } from "./api/explorer";
 import { getNodeApi } from "./api/node/index";
+import {
+  attachOperations,
+  getSyncHash,
+  mergeSubAccounts,
+  createSwapHistoryMap,
+  getAdditionalUnspendableBalance,
+} from "./logic";
 
 /**
  * Number of blocks that are considered "unsafe" due to a potential reorg.
@@ -36,7 +42,7 @@ export const SAFE_REORG_THRESHOLD = 80;
 export const getAccountShape: GetAccountShape<Account> = async (infos, { blacklistedTokenIds }) => {
   const { initialAccount, address, derivationMode, currency } = infos;
   const nodeApi = getNodeApi(currency);
-  const [latestBlock, balance] = await Promise.all([
+  const [latestBlock, spendableBalance] = await Promise.all([
     nodeApi.getBlockByHeight(currency, "latest"),
     nodeApi.getCoinBalance(currency, address),
   ]);
@@ -76,6 +82,9 @@ export const getAccountShape: GetAccountShape<Account> = async (infos, { blackli
         throw e;
       }
     })();
+  const evmResources = await nodeApi.getCurrencyResources?.(currency, address);
+  const unspendableBalance = getAdditionalUnspendableBalance(evmResources);
+
   const swapHistoryMap = createSwapHistoryMap(initialAccount);
   const newSubAccounts = await getSubAccounts(
     infos,
@@ -126,14 +135,15 @@ export const getAccountShape: GetAccountShape<Account> = async (infos, { blackli
     type: "Account",
     id: accountId,
     syncHash,
-    balance,
-    spendableBalance: balance,
+    balance: spendableBalance.plus(unspendableBalance),
+    spendableBalance,
     blockHeight,
     operations,
     operationsCount: operations.length,
     subAccounts,
     nfts,
     lastSyncDate: new Date(),
+    evmResources,
   } as Partial<Account>;
 };
 

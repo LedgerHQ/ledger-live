@@ -750,6 +750,14 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       explorer: { type: "blockscout", uri: "https://zksync-sepolia.blockscout.com/api" },
     },
   },
+  config_currency_celo_evm: {
+    type: "object",
+    default: {
+      status: { type: "active" },
+      node: { type: "external", uri: "https://forno.celo.org" },
+      explorer: { type: "blockscout", uri: "https://celo.blockscout.com/api" },
+    },
+  },
 };
 
 export { evmConfig };

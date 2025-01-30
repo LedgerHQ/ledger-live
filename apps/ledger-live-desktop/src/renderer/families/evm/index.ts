@@ -1,6 +1,7 @@
 import { getMessageProperties } from "@ledgerhq/coin-evm/logic";
-import AccountBodyHeader from "./AccountBodyHeader";
 import AccountFooter from "./AccountFooter";
+import AccountBalanceSummaryFooter from "./AccountBalanceSummaryFooter";
+import AccountBodyHeader from "./AccountBodyHeader";
 import accountHeaderManageActions from "./AccountHeaderManageActions";
 import sendAmountFields from "./SendAmountFields";
 import StakeBanner from "./StakeBanner";
@@ -13,6 +14,7 @@ import { EvmFamily } from "./types";
 const family: EvmFamily = {
   AccountBodyHeader,
   AccountFooter,
+  AccountBalanceSummaryFooter,
   operationDetails,
   accountHeaderManageActions,
   transactionConfirmFields,

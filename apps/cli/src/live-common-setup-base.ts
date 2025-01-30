@@ -106,6 +106,7 @@ setSupportedCurrencies([
   "mantra",
   "xion",
   "zenrock",
+  "celo_evm",
 ]);
 
 for (const k in process.env) setEnvUnsafe(k as EnvName, process.env[k]);

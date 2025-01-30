@@ -464,6 +464,9 @@ export const getScrollAdditionalFees: NodeApi["getScrollAdditionalFees"] = async
   return new BigNumber(result.response);
 };
 
+export const getCurrencyResources: NodeApi["getCurrencyResources"] = async (currency, address) =>
+  undefined;
+
 const node: NodeApi = {
   getBlockByHeight,
   getCoinBalance,
@@ -475,6 +478,7 @@ const node: NodeApi = {
   broadcastTransaction,
   getOptimismAdditionalFees,
   getScrollAdditionalFees,
+  getCurrencyResources,
 };
 
 export default node;

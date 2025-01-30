@@ -4,16 +4,19 @@ import BigNumber from "bignumber.js";
 import { log } from "@ledgerhq/logs";
 import { getEnv } from "@ledgerhq/live-env";
 import { delay } from "@ledgerhq/live-promise";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
-import OptimismGasPriceOracleAbi from "../../abis/optimismGasPriceOracle.abi.json";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import ScrollGasPriceOracleAbi from "../../abis/scrollGasPriceOracle.abi.json";
+import OptimismGasPriceOracleAbi from "../../abis/optimismGasPriceOracle.abi.json";
+import { FeeHistory, CeloResources, CeloPendingWithdrawal, CeloVote } from "../../types";
 import { GasEstimationError, InsufficientFunds } from "../../errors";
+import celoLockedGoldAbi from "../../abis/celoLockedGold.abi.json";
 import { transactionToEthersTransaction } from "../../adapters";
+import celoElectionAbi from "../../abis/celoElection.abi.json";
 import { getSerializedTransaction } from "../../transaction";
+import celoAccountAbi from "../../abis/celoAccount.abi.json";
 import ERC20Abi from "../../abis/erc20.abi.json";
 import { getCoinConfig } from "../../config";
-import { FeeHistory } from "../../types";
 import { NodeApi, isExternalNodeConfig } from "./types";
 
 export const RPC_TIMEOUT =
@@ -171,11 +174,13 @@ export const getFeeData: NodeApi["getFeeData"] = currency =>
         }
     > => {
       if (currencySupports1559) {
-        const feeHistory: FeeHistory = await api.send("eth_feeHistory", [
-          "0x5", // Fetching the history for 5 blocks
-          "latest", // from the latest block
-          [50], // 50% percentile sample
-        ]);
+        const feeHistory: FeeHistory | Record<string, never> = await api
+          .send("eth_feeHistory", [
+            "0x5", // Fetching the history for 5 blocks
+            "latest", // from the latest block
+            [50], // 50% percentile sample
+          ])
+          .catch(() => ({}));
         // Taking the average priority fee used on the last 5 blocks
         const maxPriorityFeeAverage = feeHistory.reward
           ? feeHistory.reward
@@ -185,18 +190,20 @@ export const getFeeData: NodeApi["getFeeData"] = currency =>
 
         // A maxPriorityFeePerGas too low might make a transaction stuck forever
         // As a safety measure, if maxPriorityFeePerGas is zero
-        // we enforce a 1 Gwei value
+        // we use the pre EIP-1559 gas price as fallback
         const maxPriorityFeePerGas = maxPriorityFeeAverage.isZero()
-          ? new BigNumber(1e9) // 1 Gwei
+          ? await api.getGasPrice().then(gasPrice => new BigNumber(gasPrice.toString())) // Necessary fallback for chains supporting EIP-1559 but not having the eth_feeHistory endpoint
           : maxPriorityFeeAverage;
 
-        const nextBaseFee = new BigNumber(
-          feeHistory.baseFeePerGas[feeHistory.baseFeePerGas.length - 1],
-        );
+        const nextBaseFee = feeHistory.baseFeePerGas
+          ? new BigNumber(feeHistory.baseFeePerGas[feeHistory.baseFeePerGas.length - 1])
+          : new BigNumber(block.baseFeePerGas!.toString());
 
         return {
           maxPriorityFeePerGas,
-          maxFeePerGas: nextBaseFee.multipliedBy(2).plus(maxPriorityFeePerGas),
+          maxFeePerGas: nextBaseFee
+            .multipliedBy(getEnv("EIP1559_BASE_FEE_MULTIPLIER"))
+            .plus(maxPriorityFeePerGas),
           nextBaseFee,
         };
       } else {
@@ -359,6 +366,117 @@ export const getScrollAdditionalFees: NodeApi["getScrollAdditionalFees"] = (
     return new BigNumber(additionalL1Fees.toString());
   });
 
+export const getCurrencyResources: NodeApi["getCurrencyResources"] = async (currency, address) => {
+  switch (currency.id) {
+    case "celo_evm":
+      return getCeloResources(currency, address);
+    default:
+      return;
+  }
+};
+
+export const getCeloResources = async (
+  currency: CryptoCurrency,
+  address: string,
+): Promise<CeloResources> =>
+  withApi(currency, async api => {
+    if (!["celo_evm"].includes(currency.id)) {
+      throw new Error("Currency is not Celo");
+    }
+
+    console.log("address", address);
+    const celoAccountContract = new ethers.Contract(
+      "0x7d21685C17607338b313a7174bAb6620baD0aaB7",
+      celoAccountAbi,
+      api,
+    );
+    const registrationStatus = await celoAccountContract.isAccount(address);
+    console.log({ registrationStatus });
+    const lockedGoldAddress = "0x6cc083aed9e3ebe302a6336dbc7c921c9f03349e";
+    const celoLockedGoldContract = new ethers.Contract(lockedGoldAddress, celoLockedGoldAbi, api);
+
+    const pendingWithdrawals = registrationStatus
+      ? ((await celoLockedGoldContract
+          .getPendingWithdrawals(address)
+          .then((res: [ethers.BigNumber, ethers.BigNumber][] | []) => {
+            console.log("getPendingWithdrawals", res);
+            return res.reduce<CeloPendingWithdrawal[]>((acc, [value, time], index) => {
+              if (!value || !time) {
+                return acc;
+              }
+              return [
+                ...acc,
+                {
+                  value: new BigNumber(value.toString()),
+                  time: new BigNumber(time.toString()),
+                  index,
+                },
+              ];
+            }, []);
+          })) as CeloPendingWithdrawal[])
+      : [];
+    console.log("evm", { pendingWithdrawals });
+
+    const lockedBalance = await celoLockedGoldContract
+      .getAccountTotalLockedGold(address)
+      .then((res: ethers.BigNumber) => new BigNumber(res.toString()));
+    const nonvotingLockedBalance = await celoLockedGoldContract
+      .getAccountNonvotingLockedGold(address)
+      .then((res: ethers.BigNumber) => new BigNumber(res.toString()));
+    const electionAddress = "0x8D6677192144292870907E3Fa8A5527fE55A7ff6";
+    const celoElectionContract = new ethers.Contract(electionAddress, celoElectionAbi, api);
+    const maxNumGroupsVotedFor = await celoElectionContract
+      .maxNumGroupsVotedFor()
+      .then((res: ethers.BigNumber) => new BigNumber(res.toString()));
+
+    const groupsVotedFor: string[] = await celoElectionContract.getGroupsVotedForByAccount(address);
+    const votes: CeloVote[] = await Promise.all(
+      groupsVotedFor.map(async (group: string) => {
+        const totalVotes: CeloVote[] = [];
+        const hasActivatablePendingVotes: boolean =
+          await celoElectionContract.hasActivatablePendingVotes(address, group);
+        const pendingVote: ethers.BigNumber =
+          await celoElectionContract.getPendingVotesForGroupByAccount(group, address);
+        console.log("pending", pendingVote.toString());
+        if (pendingVote.gt(0)) {
+          totalVotes.push({
+            validatorGroup: group,
+            amount: new BigNumber(pendingVote.toString()),
+            activatable: hasActivatablePendingVotes,
+            revokable: true,
+            index: totalVotes.length,
+            type: "pending",
+          });
+        }
+        const activeVote: ethers.BigNumber =
+          await celoElectionContract.getActiveVotesForGroupByAccount(group, address);
+        console.log("active", activeVote.toString());
+        if (activeVote.gt(0)) {
+          totalVotes.push({
+            validatorGroup: group,
+            amount: new BigNumber(activeVote.toString()),
+            activatable: false,
+            revokable: totalVotes.length === 0,
+            index: totalVotes.length,
+            type: "active",
+          });
+        }
+        return totalVotes;
+      }, 2),
+    ).then(res => res.flat());
+    console.log({ votes });
+
+    return {
+      type: "celo_evm",
+      registrationStatus,
+      lockedBalance,
+      nonvotingLockedBalance,
+      pendingWithdrawals,
+      votes,
+      maxNumGroupsVotedFor,
+    };
+  });
+
 const node: NodeApi = {
   getBlockByHeight,
   getCoinBalance,
@@ -370,6 +488,7 @@ const node: NodeApi = {
   broadcastTransaction,
   getOptimismAdditionalFees,
   getScrollAdditionalFees,
+  getCurrencyResources,
 };
 
 export default node;

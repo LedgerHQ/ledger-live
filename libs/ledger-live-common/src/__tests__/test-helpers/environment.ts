@@ -108,6 +108,7 @@ setSupportedCurrencies([
   "aptos_testnet",
   "xion",
   "zenrock",
+  "celo_evm",
 ]);
 LiveConfig.setConfig(liveConfig);
 

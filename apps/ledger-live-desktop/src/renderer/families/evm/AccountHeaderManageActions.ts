@@ -23,6 +23,7 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
   const isEthereumAccount = account.type === "Account" && account.currency.id === "ethereum";
   const isBscAccount = account.type === "Account" && account.currency.id === "bsc";
   const isPOLAccount = account.type === "Account" && account.currency.id === "polygon";
+  const isCeloAccount = account.type === "Account" && account.currency.id === "celo_evm";
 
   const onClickStakekit = useCallback(
     (yieldId: string) => {
@@ -63,12 +64,21 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
       onClickStakeModal();
     } else if (isBscAccount) {
       onClickStakekit("bsc-bnb-native-staking");
+    } else if (isCeloAccount) {
+      onClickStakekit("celo-celo-native-staking");
     } else if (isPOLAccount) {
       onClickStakekit("ethereum-matic-native-staking");
     }
-  }, [isEthereumAccount, isBscAccount, onClickStakeModal, onClickStakekit, isPOLAccount]);
+  }, [
+    isBscAccount,
+    isCeloAccount,
+    isEthereumAccount,
+    isPOLAccount,
+    onClickStakeModal,
+    onClickStakekit,
+  ]);
 
-  if (isEthereumAccount || isBscAccount || isPOLAccount) {
+  if (isEthereumAccount || isBscAccount || isCeloAccount) {
     return [
       {
         key: "Stake",

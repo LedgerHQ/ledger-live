@@ -12,13 +12,14 @@ export type EtherscanOperation = {
   gasPrice: string;
   isError: string;
   txreceipt_status: string;
-  /** @deprecated do not use can be deprecated */
+  /** @warning deprecated on some explorers */
   input?: string;
   contractAddress: string;
   cumulativeGasUsed: string;
   gasUsed: string;
   confirmations: string;
-  methodId: string;
+  /** @warning not available on blockscout */
+  methodId?: string;
   functionName: string;
 };
 

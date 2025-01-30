@@ -4337,6 +4337,34 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
+  celo_evm: {
+    type: "CryptoCurrency",
+    id: "celo_evm",
+    coinType: CoinType.CELO,
+    name: "Celo EVM",
+    managerAppName: "Celo",
+    blockAvgTime: 5,
+    ticker: "CELO",
+    scheme: "celo",
+    color: "#35D07F",
+    family: "evm",
+    units: [
+      {
+        name: "CELO",
+        code: "CELO",
+        magnitude: 18,
+      },
+    ],
+    ethereumLikeInfo: {
+      chainId: 42220,
+    },
+    explorerViews: [
+      {
+        tx: "https://explorer.celo.org/tx/$hash",
+        address: "https://explorer.celo.org/address/$address",
+      },
+    ],
+  },
   // Keep it at the bottom
   // Tickers dup
   binance_beacon_chain: {

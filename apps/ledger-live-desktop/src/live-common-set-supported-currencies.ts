@@ -100,4 +100,5 @@ setSupportedCurrencies([
   "mantra",
   "xion",
   "zenrock",
+  "celo_evm",
 ]);

@@ -20,6 +20,7 @@ import { getNodeApi } from "./api/node/index";
 import { getCoinConfig } from "./config";
 import {
   EvmNftTransaction,
+  EvmResources,
   Transaction as EvmTransaction,
   EvmTransactionEIP1559,
   EvmTransactionLegacy,
@@ -85,6 +86,18 @@ export const getAdditionalLayer2Fees = async (
     }
     default:
       return;
+  }
+};
+
+export const getAdditionalUnspendableBalance = (evmResources: EvmResources): BigNumber => {
+  if (!evmResources) return new BigNumber(0);
+
+  switch (evmResources.type) {
+    case "celo_evm": {
+      return evmResources.lockedBalance;
+    }
+    default:
+      return new BigNumber(0);
   }
 };
 

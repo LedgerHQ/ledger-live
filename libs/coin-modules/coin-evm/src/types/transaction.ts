@@ -127,7 +127,7 @@ export type FeeHistory = {
   baseFeePerGas: string[];
   gasUsedRatio: number[];
   oldestBlock: string;
-  reward: string[][];
+  reward?: string[][];
 };
 
 export type FeeData = {

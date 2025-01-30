@@ -4,11 +4,13 @@ import {
   encodeERC1155OperationId,
   encodeERC721OperationId,
 } from "@ledgerhq/coin-framework/nft/nftOperationId";
+import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { Operation, OperationType } from "@ledgerhq/types-live";
 import { encodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
 import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets";
 import { decodeAccountId, encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { encodeOperationId, encodeSubOperationId } from "@ledgerhq/coin-framework/operation";
+import { getCurrencySpecificOutOperationType } from "../currencyHelpers";
 import { safeEncodeEIP55 } from "../logic";
 import {
   EtherscanOperation,
@@ -26,7 +28,7 @@ export const etherscanOperationToOperations = (
   accountId: string,
   etherscanOp: EtherscanOperation,
 ): Operation[] => {
-  const { xpubOrAddress: address } = decodeAccountId(accountId);
+  const { currencyId, xpubOrAddress: address } = decodeAccountId(accountId);
   const checksummedAddress = eip55.encode(address);
   const from = safeEncodeEIP55(etherscanOp.from);
   const to = safeEncodeEIP55(etherscanOp.to);
@@ -39,8 +41,19 @@ export const etherscanOperationToOperations = (
     types.push("IN");
   }
   if (from === checksummedAddress) {
-    const isContractInteraction = new RegExp(/0[xX][0-9a-fA-F]{8}/).test(etherscanOp.methodId); // 0x + 4 bytes selector
-    types.push(isContractInteraction ? "FEES" : "OUT");
+    const currencySpecifcOutType = getCurrencySpecificOutOperationType(
+      currencyId as CryptoCurrencyId,
+      etherscanOp,
+    );
+
+    if (currencySpecifcOutType) {
+      types.push(currencySpecifcOutType);
+    } else {
+      const isContractInteraction = new RegExp(/0[xX][0-9a-fA-F]{8}/).test(
+        etherscanOp.methodId || etherscanOp.input || "",
+      ); // 0x + 4 bytes selector
+      types.push(isContractInteraction ? "FEES" : "OUT");
+    }
   }
   if (!types.length) {
     types.push("NONE");

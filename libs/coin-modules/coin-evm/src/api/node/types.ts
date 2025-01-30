@@ -2,6 +2,7 @@ import BigNumber from "bignumber.js";
 import { Account, BroadcastConfig } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Transaction as EvmTransaction, FeeData } from "../../types";
+import { EvmResources } from "../../types/resources";
 import { EvmConfigInfo } from "../../config";
 
 export type NodeApi = {
@@ -44,6 +45,7 @@ export type NodeApi = {
     currency: CryptoCurrency,
     transaction: EvmTransaction,
   ) => Promise<BigNumber>;
+  getCurrencyResources: (currency: CryptoCurrency, address: string) => Promise<EvmResources>;
 };
 
 type NodeConfig = EvmConfigInfo["node"];
