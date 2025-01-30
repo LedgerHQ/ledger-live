@@ -1,7 +1,7 @@
 import { Text } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/core";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import React, { useEffect, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
 import { useTrack } from "~/analytics";
@@ -43,14 +43,17 @@ export default function SwapFormNavigator({
   const track = useTrack();
 
   // Helper function to track button click
-  const trackButtonClick = (source: string) => {
-    track("button_clicked", {
-      button: "swap",
-      source,
-      flow: "swap",
-      swapVersion: SWAP_VERSION,
-    });
-  };
+  const trackButtonClick = useCallback(
+    (source: string) => {
+      track("button_clicked", {
+        button: "swap",
+        source,
+        flow: "swap",
+        swapVersion: SWAP_VERSION,
+      });
+    },
+    [track],
+  );
 
   useEffect(() => {
     const parentNavigator = navig.getParent();
@@ -69,7 +72,9 @@ export default function SwapFormNavigator({
     if (source) {
       trackButtonClick(source);
     }
-  }, [navig, trackButtonClick]);
+  }, [trackButtonClick, navig]);
+
+  const ptxSwapLiveAppMobile = useFeature("ptxSwapLiveAppMobile");
 
   return (
     <Tab.Navigator {...tabNavigationConfig}>
