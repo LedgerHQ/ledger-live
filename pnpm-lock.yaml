@@ -2856,8 +2856,8 @@ importers:
         specifier: ^9.1.2
         version: 9.1.2
       bs58check:
-        specifier: ^4.0.0
-        version: 4.0.0
+        specifier: ^2.1.2
+        version: 2.1.2
       expect:
         specifier: ^27.4.6
         version: 27.5.1
@@ -2874,6 +2874,9 @@ importers:
         specifier: ^7.8.1
         version: 7.8.1
     devDependencies:
+      '@types/bs58check':
+        specifier: ^2.1.2
+        version: 2.1.2
       '@types/invariant':
         specifier: ^2.2.2
         version: 2.2.37
@@ -18209,9 +18212,6 @@ packages:
   base-x@4.0.0:
     resolution: {integrity: sha512-FuwxlW4H5kh37X/oW59pwTzzTKRzfrrQwhmyspRM7swOEZcHtDZSCt45U6oKgtuFE+WYPblePMVIPR4RZrh/hw==}
 
-  base-x@5.0.0:
-    resolution: {integrity: sha512-sMW3VGSX1QWVFA6l8U62MLKz29rRfpTlYdCqLdpLo1/Yd4zZwSbnUaDfciIAowAqvq7YFnWq9hrhdg1KYgc1lQ==}
-
   base32.js@0.1.0:
     resolution: {integrity: sha512-n3TkB02ixgBOhTvANakDb4xaMXnYUVkNoRFJjQflcqMQhyEKxEHdj3E6N8t8sUQ0mjH/3/JxzlXuz3ul/J90pQ==}
     engines: {node: '>=0.12.0'}
@@ -18488,17 +18488,11 @@ packages:
   bs58@5.0.0:
     resolution: {integrity: sha512-r+ihvQJvahgYT50JD05dyJNKlmmSlMoOGwn1lCcEzanPglg7TxYjioQUYehQ9mAR/+hOSd2jRc/Z2y5UxBymvQ==}
 
-  bs58@6.0.0:
-    resolution: {integrity: sha512-PD0wEnEYg6ijszw/u8s+iI3H17cTymlrwkKhDhPZq+Sokl3AU4htyBFTjAeNAlCCmg0f53g6ih3jATyCKftTfw==}
-
   bs58check@2.1.2:
     resolution: {integrity: sha512-0TS1jicxdU09dwJMNZtVAfzPi6Q6QeN0pM1Fkzrjn+XYHvzMKPU3pHVpva+769iNVSfIYWf7LJ6WR+BuuMf8cA==}
 
   bs58check@3.0.1:
     resolution: {integrity: sha512-hjuuJvoWEybo7Hn/0xOrczQKKEKD63WguEjlhLExYs2wUBcebDC1jDNK17eEAD2lYfw82d5ASC1d7K3SWszjaQ==}
-
-  bs58check@4.0.0:
-    resolution: {integrity: sha512-FsGDOnFg9aVI9erdriULkd/JjEWONV/lQE5aYziB5PoBsXRind56lh8doIZIc9X4HoxT5x4bLjMWN1/NB8Zp5g==}
 
   bser@2.1.1:
     resolution: {integrity: sha512-gQxTNE/GAfIIrmHLUE3oJyp5FO6HRBfhjnw4/wMmA63ZGDJnWBmgY/lyQBpnDUkGmAhbSe39tx2d/iTOAfglwQ==}
@@ -48773,8 +48767,6 @@ snapshots:
 
   base-x@4.0.0: {}
 
-  base-x@5.0.0: {}
-
   base32.js@0.1.0: {}
 
   base64-arraybuffer@0.2.0: {}
@@ -49134,10 +49126,6 @@ snapshots:
     dependencies:
       base-x: 4.0.0
 
-  bs58@6.0.0:
-    dependencies:
-      base-x: 5.0.0
-
   bs58check@2.1.2:
     dependencies:
       bs58: 4.0.1
@@ -49148,11 +49136,6 @@ snapshots:
     dependencies:
       '@noble/hashes': 1.7.0
       bs58: 5.0.0
-
-  bs58check@4.0.0:
-    dependencies:
-      '@noble/hashes': 1.7.0
-      bs58: 6.0.0
 
   bser@2.1.1:
     dependencies:
