@@ -11,4 +11,5 @@ export const createTransaction: AccountBridge<
   recipient: "",
   useAllAmount: false,
   fees: new BigNumber(0),
+  memo: undefined,
 });
