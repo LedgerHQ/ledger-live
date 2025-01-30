@@ -75,6 +75,10 @@ const INCOMPATIBLE_NANO_S_CURRENCY_KEYS: Keys = {
     title: "transfer.swap2.incompatibility.ada_title",
     description: "transfer.swap2.incompatibility.ada_description",
   },
+  near: {
+    title: "transfer.swap2.incompatibility.near_title",
+    description: "transfer.swap2.incompatibility.near_description",
+  },
 };
 
 const getIncompatibleCurrencyKeys = (exchange: ExchangeSwap) => {
