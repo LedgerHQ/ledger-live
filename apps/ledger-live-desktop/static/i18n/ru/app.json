@@ -760,6 +760,22 @@
         "description3Link" : "Эта интеграция проведена <1><0>{{team}}</0></1> в сотрудничестве с Ledger."
       }
     },
+    "featureUnavailable" : {
+      "title" : "В данный момент недоступна эта функция: {{feature}}. Обратитесь в {{support}} за подробностями.",
+      "feature" : {
+        "history" : "История",
+        "swap" : "Обменять",
+        "token_history" : "История токенов",
+        "send_and_receive" : "Отправка и получение",
+        "send" : "Отправить",
+        "receive" : "Получить",
+        "sending_tokens" : "Отправка токенов",
+        "receiving_tokens" : "Получение токенов",
+        "staking" : "Стейкинг",
+        "claiming_staking_rewards" : "Запрос вознаграждения за стейкинг"
+      },
+      "support" : "Поддержку"
+    },
     "willBeDeprecatedBanner" : {
       "title" : "{{currencyName}} не будет поддерживаться в Ledger Live с {{deprecatedDate}} для оптимизации работы. При этом устройства Ledger по-прежнему смогут взаимодействовать с этим криптоактивом. Обратитесь в Поддержку Ledger, если понадобится помощь по данному вопросу.",
       "contactSupport" : "Написать в Поддержку"
@@ -3766,7 +3782,7 @@
       "category" : {
         "all" : {
           "name" : "Все",
-          "description" : "Все операторы стейкинга Эфириума доступны в Ledger Live."
+          "description" : "Все операторы стейкинга Эфириума, доступные в Ledger Live."
         },
         "liquid" : {
           "name" : "Ликвидный",

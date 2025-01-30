@@ -1,5 +1,43 @@
 # @ledgerhq/coin-framework
 
+## 0.24.0
+
+### Minor Changes
+
+- [#9027](https://github.com/LedgerHQ/ledger-live/pull/9027) [`670776e`](https://github.com/LedgerHQ/ledger-live/commit/670776e3a34859a18d6de1470de4195cf2094a81) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Revert fix solana earn on LLm
+
+## 0.23.1-hotfix.0
+
+### Patch Changes
+
+- [#9027](https://github.com/LedgerHQ/ledger-live/pull/9027) [`670776e`](https://github.com/LedgerHQ/ledger-live/commit/670776e3a34859a18d6de1470de4195cf2094a81) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Revert fix solana earn on LLm
+
+## 0.23.0
+
+### Minor Changes
+
+- [#8933](https://github.com/LedgerHQ/ledger-live/pull/8933) [`3a65633`](https://github.com/LedgerHQ/ledger-live/commit/3a6563309c8cacbd6e9a73e3044b1ff7c3966f87) Thanks [@Canestin](https://github.com/Canestin)! - feat: create banner to warn users about potential issues
+
+- [#8914](https://github.com/LedgerHQ/ledger-live/pull/8914) [`537141a`](https://github.com/LedgerHQ/ledger-live/commit/537141ab549b8dab57d3eb117e875faa67b54f4b) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Bot feature : Add filter for features
+
+### Patch Changes
+
+- Updated dependencies [[`f5196c5`](https://github.com/LedgerHQ/ledger-live/commit/f5196c52453b971a3327d09966edb62bb3d6a293)]:
+  - @ledgerhq/types-live@6.58.0
+
+## 0.23.0-next.0
+
+### Minor Changes
+
+- [#8933](https://github.com/LedgerHQ/ledger-live/pull/8933) [`3a65633`](https://github.com/LedgerHQ/ledger-live/commit/3a6563309c8cacbd6e9a73e3044b1ff7c3966f87) Thanks [@Canestin](https://github.com/Canestin)! - feat: create banner to warn users about potential issues
+
+- [#8914](https://github.com/LedgerHQ/ledger-live/pull/8914) [`537141a`](https://github.com/LedgerHQ/ledger-live/commit/537141ab549b8dab57d3eb117e875faa67b54f4b) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Bot feature : Add filter for features
+
+### Patch Changes
+
+- Updated dependencies [[`f5196c5`](https://github.com/LedgerHQ/ledger-live/commit/f5196c52453b971a3327d09966edb62bb3d6a293)]:
+  - @ledgerhq/types-live@6.58.0-next.0
+
 ## 0.22.0
 
 ### Minor Changes
