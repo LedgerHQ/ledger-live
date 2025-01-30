@@ -99,7 +99,8 @@
       "id" : "ID {{ value }}",
       "times" : "x{{ value }}"
     },
-    "quote" : "Курс"
+    "quote" : "Курс",
+    "tryAgain" : "Попробовать ещё раз"
   },
   "errors" : {
     "ReplacementTransactionUnderpriced" : {
@@ -789,6 +790,24 @@
     },
     "SolanaAccountNotFunded" : {
       "title" : "Счёт не пополнен"
+    },
+    "SolanaTokenAccountHoldsAnotherToken" : {
+      "title" : "На связанном с этим токеном счёте есть другой токен"
+    },
+    "SolanaTokenAccountWarning" : {
+      "title" : "Это не адрес кошелька, а адрес токена, связанного с кошельком. Продолжайте только в том случае, если понимаете суть происходящего."
+    },
+    "SolanaTokenAccountNotAllowed" : {
+      "title" : "Это счёт токена. Введите обычный адрес кошелька."
+    },
+    "SolanaMintAccountNotAllowed" : {
+      "title" : "Это адрес токена. Введите обычный адрес кошелька."
+    },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "Счёт будет пополнен"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "Токены на счету заморожены"
     },
     "SolanaAddressOfEd25519" : {
       "title" : "Адрес за пределами кривой ed25519"
@@ -2374,16 +2393,16 @@
     },
     "recoverBanner" : {
       "subscribeDone" : {
-        "title" : "Завершите добавление платёжной карты",
-        "description" : "Надёжное восстановление с Ledger Recover."
+        "title" : "Не забудьте завершить оформление подписки на Ledger Recover",
+        "description" : "До безопасности осталось всего два шага!"
       },
       "verifyIdentity" : {
-        "title" : "Завершите подтверждение личности",
-        "description" : "Надёжное восстановление с Ledger Recover."
+        "title" : "Не забудьте завершить оформление подписки на Ledger Recover",
+        "description" : "До безопасности остался всего один шаг!"
       },
       "connectDevice" : {
-        "title" : "Последний этап: подключите устройство Ledger",
-        "description" : "Ledger Recover всего в одном шаге от вас."
+        "title" : "Не забудьте завершить оформление подписки на Ledger Recover",
+        "description" : "Это последний этап для возможности восстановить кошелёк в дальнейшем."
       }
     }
   },
@@ -3103,7 +3122,7 @@
       "title" : "Разработчикам",
       "desc" : "Попробуйте функции для разработчиков и расскажите нам, что вы думаете.",
       "customManifest" : {
-        "title" : "Загрузить манифест пользовательской платформы"
+        "title" : "Загрузка манифеста"
       },
       "exchangeDeveloperMode" : {
         "title" : "Режим разработчика для приложения Exchange",
@@ -3992,7 +4011,11 @@
     },
     "quitConfirmation" : {
       "title" : "Отменить добавление счёта",
-      "desc" : "Уверены, что не хотите добавлять счета?"
+      "desc" : "Уверены, что не хотите добавлять счета?",
+      "v2" : {
+        "title" : "Отменить добавление счёта?",
+        "desc" : "В Ledger Live не появятся новые счета."
+      }
     },
     "imported" : "Актив успешно добавлен",
     "added" : "Счёт добавлен в Портфель",
@@ -4068,18 +4091,29 @@
           "title" : "Новый счёт"
         },
         "imported" : {
-          "title" : "Счёт уже в Портфеле ({{length}})",
-          "title_plural" : "Счета в Портфеле ({{length}})"
+          "title" : "Счёт уже в Портфеле ({{count}})",
+          "title_plural" : "Счета в Портфеле ({{count}})"
         },
         "migrate" : {
           "title" : "Счета, которые будут обновлены"
         }
-      }
+      },
+      "retryScanning" : "Повторить"
     },
     "addAccountsSuccess" : {
       "ctaAddFunds" : "Добавить монеты на счёт",
       "ctaClose" : "Закрыть"
-    }
+    },
+    "addAccountsWarning" : {
+      "cantCreateAccount" : {
+        "title" : "Не удалось добавить новый счёт",
+        "body" : "Нельзя добавить новый счёт до получения криптоактивов на счёт {{accountName}}."
+      },
+      "noAccountToCreate" : {
+        "title" : "Не удалось добавить новый счёт {{currency}}"
+      }
+    },
+    "chooseAccountToFund" : "Выберите счёт для пополнения"
   },
   "DeviceAction" : {
     "stayInTheAppPlz" : "Оставайтесь в приложении и держите устройство Ledger при себе.",
@@ -5966,6 +6000,10 @@
         "description" : "Вы можете получать вознаграждения, делегируя активы SOL валидатору."
       },
       "reserveWarning" : "Убедитесь в наличии как минимум {{amount}} SOL на вашем кошельке. Криптовалюта понадобится для оплаты комиссий сети при деактивации и выводе стейка в дальнейшем"
+    },
+    "token" : {
+      "frozenStateWarning" : "Активы на счету заморожены",
+      "transferWarning" : "<0>Используйте это руководство</0>, чтобы подтвердить адрес получения токенов Solana с помощью Ledger Nano S™."
     }
   },
   "near" : {
@@ -6554,7 +6592,9 @@
     "name" : "Hedera",
     "createHederaAccountHelp" : {
       "text" : "Используйте информацию из этой статьи",
-      "link" : "для создания счёта Hedera"
+      "link" : "Как создать счёт Hedera?",
+      "title" : "Не удалось создать новый счёт Hedera",
+      "description" : "В экосистеме Hedera пока не так много сервисов, которые позволяют создавать новые счета. Ledger ещё тоже не поддерживает опцию создания счетов Hedera, однако это можно сделать посредством альтернатив. Вы сможете добавить счёт Hedera в Ledger Live после его создания."
     },
     "currentAddress" : {
       "messageIfVirtual" : "Адрес {{name}} не может быть подтверждён на устройстве Ledger. Вы принимаете на себя все риски пользования."
@@ -6767,7 +6807,7 @@
       "category" : {
         "all" : {
           "name" : "Все",
-          "description" : "Все операторы стейкинга Эфириума доступны в Ledger Live."
+          "description" : "Все операторы стейкинга Эфириума, доступные в Ledger Live."
         },
         "liquid" : {
           "name" : "Ликвидный",
@@ -7043,9 +7083,10 @@
           "explanation" : {
             "title" : "Сканируйте и синхронизируйте ваши счета с помощью другого приложения Ledger Live",
             "steps" : {
-              "step1" : "Откройте приложение Ledger Live, которое хотите синхронизировать",
-              "step2" : "Перейдите в <0>«Настройки»</0> <1>></1> <0>«Общие»</0> <1>></1> <0>«Ledger Sync»</0> <1>></1> <0>«Включить синхронизацию»</0> <1>></1> <0>«Сканировать QR»</0>",
-              "step3" : "Сканируйте QR-код"
+              "step1" : "Make sure Ledger Sync is activated on one of your apps.",
+              "step2" : "Open the Ledger Live app you want to sync.",
+              "step3" : "Go to <0>Settings</0> <1>></1> <0>General</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>I already turned it on</0> <1>></1> <0>Scan QR code</0>",
+              "step4" : "Scan QR code."
             }
           }
         },
@@ -7055,9 +7096,10 @@
           "explanation" : {
             "title" : "Для синхронизации Ledger Live на другом смартфоне или ПК...",
             "steps" : {
-              "step1" : "Откройте приложение Ledger Live, с которым хотите синхронизироваться.",
-              "step2" : "Перейдите в <0>«Настройки</0> <1>></1> <0>Общие</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Включить Ledger Sync</0> <1>></1> <0>Показать QR»</0>",
-              "step3" : "Сканируйте QR-код"
+              "step1" : "Make sure Ledger Sync is activated on one of your apps.",
+              "step2" : "Open the Ledger Live you want to sync with.",
+              "step3" : "Go to <0>Settings</0> <1>></1> <0>General</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>I already turned it on</0> <1>></1> <0>Show QR</0>",
+              "step4" : "Scan QR code."
             }
           }
         },
