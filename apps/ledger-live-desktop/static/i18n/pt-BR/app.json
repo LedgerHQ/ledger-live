@@ -200,7 +200,8 @@
       "STAKE" : "Aplicado",
       "UNSTAKE" : "Desaplicado",
       "WITHDRAW_UNSTAKED" : "Sacado",
-      "SENDING" : "Enviando"
+      "SENDING" : "Enviando",
+      "BURN" : "Queimado"
     },
     "edit" : {
       "title" : "Acelerar ou Cancelar",
@@ -760,6 +761,22 @@
         "description3Link" : "Esta integração foi realizada por <1><0>{{team}}</0></1> em colaboração com a Ledger"
       }
     },
+    "featureUnavailable" : {
+      "title" : "O seguinte recurso está momentaneamente indisponível: {{feature}}. Para saber mais, consulte o {{support}}",
+      "feature" : {
+        "history" : "Histórico",
+        "swap" : "Trocar",
+        "token_history" : "Histórico de token",
+        "send_and_receive" : "Enviar e receber",
+        "send" : "Enviar",
+        "receive" : "Receber",
+        "sending_tokens" : "Enviando tokens",
+        "receiving_tokens" : "Recebendo tokens",
+        "staking" : "Staking",
+        "claiming_staking_rewards" : "Resgatando recompensas de staking"
+      },
+      "support" : "suporte"
+    },
     "willBeDeprecatedBanner" : {
       "title" : "Para otimizar a eficiência, {{currencyName}} não será mais compatível com o Ledger Live a partir de {{deprecatedDate}}. No entanto, este ativo ainda será compatível com as carteiras hardware Ledger. Fale com o Suporte ao Cliente Ledger para obter ajuda com isso.",
       "contactSupport" : "Falar com o suporte"
@@ -796,7 +813,7 @@
     "stake" : "Aplicar",
     "delegatedAssets" : "Ativos Delegados",
     "undelegating" : "Removendo de delegação",
-    "availableBalanceTooltip" : "Esta quantia é descartável.",
+    "availableBalanceTooltip" : "Esta é a quantia que você usar.",
     "frozenAssetsTooltip" : "Ativos congelados são usados no processo de votação da Tron. Isso representa seu número total de votos.",
     "bandwidthTooltip" : "Congele ativos para ganhar Largura de Banda",
     "energyTooltip" : "Congele ativos para ganhar Energia",
@@ -3726,6 +3743,10 @@
           }
         }
       }
+    },
+    "token" : {
+      "frozenStateWarning" : "Os ativos da conta estão congelados!",
+      "transferWarning" : "Para verificar o endereço do destinatário para tokens Solana usando uma Ledger Nano S™, <0>siga essas instruções.</0>"
     }
   },
   "ethereum" : {
@@ -3766,7 +3787,7 @@
       "category" : {
         "all" : {
           "name" : "Todos",
-          "description" : "Todos os provedores de staking na Ethereum disponíveis pelo Ledger Live."
+          "description" : "Todos os provedores de staking Ethereum disponíveis pelo Ledger Live."
         },
         "liquid" : {
           "name" : "Liquid",
@@ -6180,6 +6201,27 @@
     },
     "SolanaAccountNotFunded" : {
       "title" : "Conta sem saldo"
+    },
+    "SolanaTokenAccountHoldsAnotherToken" : {
+      "title" : "Essa conta de token associada detém outro token"
+    },
+    "SolanaTokenAccountWarning" : {
+      "title" : "Esse não é um endereço de carteira normal, mas uma conta de token associada. Continue apenas se você sabe o que está fazendo"
+    },
+    "SolanaTokenAccountNotAllowed" : {
+      "title" : "Essa é uma conta de token. Insira um endereço de carteira normal"
+    },
+    "SolanaMintAccountNotAllowed" : {
+      "title" : "Esse é um endereço de token. Insira um endereço de carteira normal"
+    },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "A conta será financiada"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "Os ativos da conta de token estão congelados"
+    },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "Conta não inicializada"
     },
     "SolanaMemoIsTooLong" : {
       "title" : "O memo é muito longo. O comprimento máximo é {{maxLength}}"
