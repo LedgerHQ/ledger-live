@@ -54,6 +54,7 @@ const mina: CurrenciesData<Transaction> = {
             recipient: "novalidaddress",
             fees: new BigNumber(0).toString(),
             amount: "1000",
+            memo: undefined,
           }),
           expectedStatus: {
             errors: {
@@ -69,6 +70,7 @@ const mina: CurrenciesData<Transaction> = {
             recipient: ACCOUNT_ADDRESS_1,
             fees: new BigNumber(0).toString(),
             amount: (300 * 1e9).toString(),
+            memo: undefined,
           }),
           expectedStatus: {
             errors: {
@@ -98,6 +100,7 @@ const mina: CurrenciesData<Transaction> = {
           transaction: fromTransactionRaw({
             family: "mina",
             recipient: ACCOUNT_ADDRESS_1,
+            memo: undefined,
             amount: "0",
             fees: new BigNumber(0).toString(),
           }),
@@ -115,6 +118,7 @@ const mina: CurrenciesData<Transaction> = {
             recipient: ACCOUNT_ADDRESS,
             amount: "10",
             fees: new BigNumber(0).toString(),
+            memo: undefined,
           }),
           expectedStatus: {
             errors: {
@@ -130,6 +134,7 @@ const mina: CurrenciesData<Transaction> = {
             recipient: ACCOUNT_ADDRESS_1,
             amount: "1000",
             fees: new BigNumber(0).toString(),
+            memo: undefined,
           }),
           expectedStatus: {
             amount: new BigNumber("1000"),
