@@ -14,6 +14,42 @@ const confirmWording: Record<string, string> = {
 export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
   steps: [
     {
+      title: "View header",
+      button: SpeculosButton.RIGHT,
+    },
+    {
+      title: "Signer Id (1/2)",
+      button: SpeculosButton.RIGHT,
+    },
+    {
+      title: "Signer Id (2/2)",
+      button: SpeculosButton.RIGHT,
+    },
+    {
+      title: "Receiver Id (1/2)",
+      button: SpeculosButton.RIGHT,
+    },
+    {
+      title: "Receiver Id (2/2)",
+      button: SpeculosButton.RIGHT,
+    },
+    {
+      title: "Total actions",
+      button: SpeculosButton.RIGHT,
+    },
+    {
+      title: "Continue to actions",
+      button: SpeculosButton.BOTH,
+    },
+    {
+      title: "View action 1/1",
+      button: SpeculosButton.RIGHT,
+    },
+    {
+      title: "Action type",
+      button: SpeculosButton.RIGHT,
+    },
+    {
       title: "Confirm",
       button: SpeculosButton.RIGHT,
       expectedValue: ({ transaction }) => confirmWording[transaction.mode],
@@ -65,6 +101,11 @@ export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlo
           ),
         });
       },
+    },
+    {
+      title: "Sign",
+      button: SpeculosButton.BOTH,
+      final: true,
     },
     {
       title: "Approve",
