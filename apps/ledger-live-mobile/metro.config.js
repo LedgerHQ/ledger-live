@@ -67,6 +67,18 @@ const metroConfig = {
         inlineRequires: true,
       },
     }),
+    minifierPath: require.resolve("metro-minify-terser"),
+    minifierConfig: {
+      keep_classnames: false,
+      keep_fnames: false,
+      mangle: true,
+      compress: {
+        drop_console: true,
+        drop_debugger: true,
+        pure_funcs: ["console.log", "console.info", "console.debug", "console.warn"],
+        passes: 2,
+      },
+    },
   },
   resolver: {
     unstable_enableSymlinks: true,
