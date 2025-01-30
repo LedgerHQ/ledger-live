@@ -99,7 +99,8 @@
       "id" : "ID {{ value }}",
       "times" : "x{{ value }}"
     },
-    "quote" : "見積もり"
+    "quote" : "見積もり",
+    "tryAgain" : "再試行"
   },
   "errors" : {
     "ReplacementTransactionUnderpriced" : {
@@ -789,6 +790,24 @@
     },
     "SolanaAccountNotFunded" : {
       "title" : "アカウントに資金がありません"
+    },
+    "SolanaTokenAccountHoldsAnotherToken" : {
+      "title" : "この関連トークンアカウントは別のトークンを保持しています"
+    },
+    "SolanaTokenAccountWarning" : {
+      "title" : "これは通常のウォレットアドレスではなく、関連するトークンアカウントです。自分が何をしているのか理解している場合にのみ、続行してください"
+    },
+    "SolanaTokenAccountNotAllowed" : {
+      "title" : "これはトークンアカウントです。通常のウォレットアドレスを入力してください"
+    },
+    "SolanaMintAccountNotAllowed" : {
+      "title" : "これはトークンアドレスです。通常のウォレットアドレスを入力してください"
+    },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "アカウントに入金されます"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "トークンアカウントの資産が凍結されています"
     },
     "SolanaAddressOfEd25519" : {
       "title" : "アドレスオフed25519 curve"
@@ -2374,16 +2393,16 @@
     },
     "recoverBanner" : {
       "subscribeDone" : {
-        "title" : "お支払いカードの追加を完了する",
-        "description" : "Ledger Recoverを使用して確実に復元する。"
+        "title" : "Reminder: Finish subscribing to Ledger Recover",
+        "description" : "You're just two steps away from being secured."
       },
       "verifyIdentity" : {
-        "title" : "本人認証を完了する",
-        "description" : "Ledger Recoverを使用して確実に復元する。"
+        "title" : "Reminder: Finish subscribing to Ledger Recover",
+        "description" : "You're just one step away from being secured."
       },
       "connectDevice" : {
-        "title" : "最後のステップ：Ledgerを接続する",
-        "description" : "Ledger Recoverまであと1歩です。"
+        "title" : "Reminder: Finish subscribing to Ledger Recover",
+        "description" : "It's your final step to ensure wallet access recovery."
       }
     }
   },
@@ -3103,7 +3122,7 @@
       "title" : "デベロッパー",
       "desc" : "試験的機能を試して、フィードバックを送る。",
       "customManifest" : {
-        "title" : "カスタムプラットフォームマニフェストを読み込む"
+        "title" : "マニフェストの読み込み"
       },
       "exchangeDeveloperMode" : {
         "title" : "Exchange開発者モード",
@@ -3992,7 +4011,11 @@
     },
     "quitConfirmation" : {
       "title" : "アカウントの追加を取り消す",
-      "desc" : "アカウントの追加をキャンセルしますか？"
+      "desc" : "アカウントの追加をキャンセルしますか？",
+      "v2" : {
+        "title" : "アカウントの追加を取り消しますか？",
+        "desc" : "Ledger Liveにアカウントは追加されません。"
+      }
     },
     "imported" : "資産が正常に追加されました",
     "added" : "ポートフォリオにアカウントが追加されました",
@@ -4068,18 +4091,29 @@
           "title" : "新しいアカウント"
         },
         "imported" : {
-          "title" : "アカウントはポートフォリオに追加済みです ({{length}})",
-          "title_plural" : "ポートフォリオに既存のアカウント({{length}})"
+          "title" : "アカウントはポートフォリオに追加済みです ({{count}})",
+          "title_plural" : "ポートフォリオに既存のアカウント({{count}})"
         },
         "migrate" : {
           "title" : "アカウントのアップデート"
         }
-      }
+      },
+      "retryScanning" : "再試行"
     },
     "addAccountsSuccess" : {
       "ctaAddFunds" : "資金をアカウントに追加する",
       "ctaClose" : "閉じる"
-    }
+    },
+    "addAccountsWarning" : {
+      "cantCreateAccount" : {
+        "title" : "新しいアカウントを追加できません",
+        "body" : "{{accountName}}アカウントで資産を受け取る前に、新しいアカウントを追加することはできません。"
+      },
+      "noAccountToCreate" : {
+        "title" : "新しい{{currency}}アカウントを追加できませんでした"
+      }
+    },
+    "chooseAccountToFund" : "資金を追加するアカウントを選択"
   },
   "DeviceAction" : {
     "stayInTheAppPlz" : "Ledger Liveアプリを開いた状態で、Ledgerを近くに置いてください。",
@@ -5966,6 +6000,10 @@
         "description" : "SOL資産をバリデーターにデリゲートすることで報酬を得ることができます。"
       },
       "reserveWarning" : "今後ステーキングを無効化して引き出す際に必要となるネットワーク手数料として、ウォレットに少なくとも{{amount}}SOLを確保してください。"
+    },
+    "token" : {
+      "frozenStateWarning" : "アカウント資産が凍結されています！",
+      "transferWarning" : "Ledger Nano S™を使用してSolanaトークンの受取人アドレスを認証するには、<0>こちらの手順に従ってください。</0>"
     }
   },
   "near" : {
@@ -6554,7 +6592,9 @@
     "name" : "Hedera",
     "createHederaAccountHelp" : {
       "text" : "Hederaアカウントの作成方法については、",
-      "link" : "こちらのサポート記事をご参照ください。"
+      "link" : "Hederaアカウントを作成するには？",
+      "title" : "新しいHederaアカウントを作成できません",
+      "description" : "Hederaエコシステムでは、選択された数のサービスのみが新しいアカウントを作成できます。Ledgerは現在このオンボーディングサービスを提供していませんが、代替サービスは利用可能です。Hederaアカウントが作成されたら、Ledger Liveに追加できるようになります。"
     },
     "currentAddress" : {
       "messageIfVirtual" : "{{name}}アドレスがLedgerデバイスで確認できません。リスクを理解した上で、自己責任でご利用ください。"
@@ -7043,9 +7083,10 @@
           "explanation" : {
             "title" : "別のLedger Liveアプリを使用してアカウントをスキャンして同期します",
             "steps" : {
-              "step1" : "同期したいLedger Liveアプリを開く",
-              "step2" : "<0>設定</0> <1>></1> <0>一般</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Ledger Syncをオンにする</0> <1>></1> <0>QRコードをスキャン</0>に移動",
-              "step3" : "QRコードをスキャン"
+              "step1" : "Make sure Ledger Sync is activated on one of your apps.",
+              "step2" : "Open the Ledger Live app you want to sync.",
+              "step3" : "Go to <0>Settings</0> <1>></1> <0>General</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>I already turned it on</0> <1>></1> <0>Scan QR code</0>",
+              "step4" : "Scan QR code."
             }
           }
         },
@@ -7055,9 +7096,10 @@
           "explanation" : {
             "title" : "別のスマホまたはコンピューターでLedger Liveと同期するには...",
             "steps" : {
-              "step1" : "同期したいLedger Liveを開く。",
-              "step2" : "<0>設定</0> <1>></1> <0>一般</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Ledger Syncをオンにする</0> <1>></1> <0>QRを表示</0>に移動",
-              "step3" : "QRコードをスキャン"
+              "step1" : "Make sure Ledger Sync is activated on one of your apps.",
+              "step2" : "Open the Ledger Live you want to sync with.",
+              "step3" : "Go to <0>Settings</0> <1>></1> <0>General</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>I already turned it on</0> <1>></1> <0>Show QR</0>",
+              "step4" : "Scan QR code."
             }
           }
         },
