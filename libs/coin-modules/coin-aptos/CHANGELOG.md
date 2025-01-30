@@ -1,5 +1,19 @@
 # @ledgerhq/coin-aptos
 
+## 1.4.0-nightly.2
+
+### Minor Changes
+
+- [#9046](https://github.com/LedgerHQ/ledger-live/pull/9046) [`c4cb2a3`](https://github.com/LedgerHQ/ledger-live/commit/c4cb2a3e16cb6542a386c3c90f4ec5d3fca9ecf8) Thanks [@may01](https://github.com/may01)! - Change test values to differ from default one
+
+- [#9034](https://github.com/LedgerHQ/ledger-live/pull/9034) [`335f059`](https://github.com/LedgerHQ/ledger-live/commit/335f059cc8b8727576f2f95ef2be45a53bc892fa) Thanks [@may01](https://github.com/may01)! - Use makeLRUCache for getEstimatedGas
+
+### Patch Changes
+
+- Updated dependencies [[`9534f17`](https://github.com/LedgerHQ/ledger-live/commit/9534f17247e1472b0fee8b993a83264f4e4ab363)]:
+  - @ledgerhq/cryptoassets@13.10.0-nightly.1
+  - @ledgerhq/coin-framework@0.24.1-nightly.0
+
 ## 1.4.0-nightly.1
 
 ### Patch Changes

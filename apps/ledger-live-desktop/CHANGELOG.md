@@ -1,5 +1,28 @@
 # ledger-live-desktop
 
+## 2.98.0-nightly.0
+
+### Minor Changes
+
+- [#9028](https://github.com/LedgerHQ/ledger-live/pull/9028) [`eeb4b46`](https://github.com/LedgerHQ/ledger-live/commit/eeb4b46513065a5a8de162ba5823ef99468b9038) Thanks [@vcluzeau-ledger](https://github.com/vcluzeau-ledger)! - Updates RecoverBanner wording
+
+### Patch Changes
+
+- Updated dependencies [[`c4cb2a3`](https://github.com/LedgerHQ/ledger-live/commit/c4cb2a3e16cb6542a386c3c90f4ec5d3fca9ecf8), [`335f059`](https://github.com/LedgerHQ/ledger-live/commit/335f059cc8b8727576f2f95ef2be45a53bc892fa), [`c033094`](https://github.com/LedgerHQ/ledger-live/commit/c033094c33b98d5b2a3dffbaf6fce732c46643d7), [`9534f17`](https://github.com/LedgerHQ/ledger-live/commit/9534f17247e1472b0fee8b993a83264f4e4ab363)]:
+  - @ledgerhq/coin-aptos@1.4.0-nightly.2
+  - @ledgerhq/coin-cosmos@0.6.2-nightly.0
+  - @ledgerhq/cryptoassets@13.10.0-nightly.1
+  - @ledgerhq/live-common@34.19.2-nightly.0
+  - @ledgerhq/coin-framework@0.24.1-nightly.0
+  - @ledgerhq/coin-bitcoin@0.10.2-nightly.0
+  - @ledgerhq/coin-evm@2.9.2-nightly.0
+  - @ledgerhq/coin-filecoin@1.5.2-nightly.0
+  - @ledgerhq/live-countervalues@0.2.20-nightly.0
+  - @ledgerhq/live-countervalues-react@0.2.20-nightly.0
+  - @ledgerhq/live-nft@0.5.5-nightly.0
+  - @ledgerhq/live-nft-react@0.5.5-nightly.0
+  - @ledgerhq/live-wallet@0.9.2-nightly.0
+
 ## 2.97.1
 
 ### Patch Changes

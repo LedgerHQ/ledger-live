@@ -1,5 +1,15 @@
 # @ledgerhq/coin-cosmos
 
+## 0.6.2-nightly.0
+
+### Patch Changes
+
+- [#8950](https://github.com/LedgerHQ/ledger-live/pull/8950) [`c033094`](https://github.com/LedgerHQ/ledger-live/commit/c033094c33b98d5b2a3dffbaf6fce732c46643d7) Thanks [@qperrot](https://github.com/qperrot)! - Fix device actions for zenrock Type
+
+- Updated dependencies [[`9534f17`](https://github.com/LedgerHQ/ledger-live/commit/9534f17247e1472b0fee8b993a83264f4e4ab363)]:
+  - @ledgerhq/cryptoassets@13.10.0-nightly.1
+  - @ledgerhq/coin-framework@0.24.1-nightly.0
+
 ## 0.6.1
 
 ### Patch Changes

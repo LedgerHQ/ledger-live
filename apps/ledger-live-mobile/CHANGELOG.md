@@ -1,5 +1,29 @@
 # live-mobile
 
+## 3.64.0-nightly.0
+
+### Minor Changes
+
+- [#9028](https://github.com/LedgerHQ/ledger-live/pull/9028) [`eeb4b46`](https://github.com/LedgerHQ/ledger-live/commit/eeb4b46513065a5a8de162ba5823ef99468b9038) Thanks [@vcluzeau-ledger](https://github.com/vcluzeau-ledger)! - Updates RecoverBanner wording
+
+- [#9045](https://github.com/LedgerHQ/ledger-live/pull/9045) [`fad2266`](https://github.com/LedgerHQ/ledger-live/commit/fad2266c21c5c0417f165b7474ea1295cfeba415) Thanks [@mwiercinska](https://github.com/mwiercinska)! - update e2e loadConfig script
+
+### Patch Changes
+
+- Updated dependencies [[`c033094`](https://github.com/LedgerHQ/ledger-live/commit/c033094c33b98d5b2a3dffbaf6fce732c46643d7)]:
+  - @ledgerhq/coin-cosmos@0.6.2-nightly.0
+  - @ledgerhq/live-common@34.19.2-nightly.0
+  - @ledgerhq/coin-framework@0.24.1-nightly.0
+  - @ledgerhq/coin-elrond@0.3.2-nightly.0
+  - @ledgerhq/coin-evm@2.9.2-nightly.0
+  - @ledgerhq/coin-filecoin@1.5.2-nightly.0
+  - @ledgerhq/coin-stacks@0.5.2-nightly.0
+  - @ledgerhq/live-countervalues@0.2.20-nightly.0
+  - @ledgerhq/live-countervalues-react@0.2.20-nightly.0
+  - @ledgerhq/live-nft@0.5.5-nightly.0
+  - @ledgerhq/live-nft-react@0.5.5-nightly.0
+  - @ledgerhq/live-wallet@0.9.2-nightly.0
+
 ## 3.63.0
 
 ### Minor Changes

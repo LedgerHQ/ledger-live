@@ -1,5 +1,15 @@
 # @ledgerhq/coin-stellar
 
+## 0.6.2-nightly.0
+
+### Patch Changes
+
+- [#8946](https://github.com/LedgerHQ/ledger-live/pull/8946) [`dcf4c42`](https://github.com/LedgerHQ/ledger-live/commit/dcf4c422be682128c2337a94e7b4bc656fdfe099) Thanks [@qperrot](https://github.com/qperrot)! - Fix device actions
+
+- Updated dependencies [[`9534f17`](https://github.com/LedgerHQ/ledger-live/commit/9534f17247e1472b0fee8b993a83264f4e4ab363)]:
+  - @ledgerhq/cryptoassets@13.10.0-nightly.1
+  - @ledgerhq/coin-framework@0.24.1-nightly.0
+
 ## 0.6.1
 
 ### Patch Changes

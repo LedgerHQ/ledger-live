@@ -1,5 +1,11 @@
 # @ledgerhq/cryptoassets
 
+## 13.10.0-nightly.1
+
+### Minor Changes
+
+- [#8934](https://github.com/LedgerHQ/ledger-live/pull/8934) [`9534f17`](https://github.com/LedgerHQ/ledger-live/commit/9534f17247e1472b0fee8b993a83264f4e4ab363) Thanks [@Canestin](https://github.com/Canestin)! - Remove Misleading Casper Token Support in Cryptoassets Data
+
 ## 13.10.0-nightly.0
 
 ### Minor Changes
