@@ -200,7 +200,8 @@
       "STAKE" : "Stake edildi",
       "UNSTAKE" : "Stake durdurma",
       "WITHDRAW_UNSTAKED" : "Çekildi",
-      "SENDING" : "Gönderiliyor"
+      "SENDING" : "Gönderiliyor",
+      "BURN" : "Yakıldı"
     },
     "edit" : {
       "title" : "Hızlandırın veya İptal Edin",
@@ -759,6 +760,22 @@
         "description3" : "Bu entegrasyon, {{team}} tarafından Ledger ile işbirliği içinde gerçekleştirilmiştir.",
         "description3Link" : "Bu entegrasyon, <1><0>{{team}}</0></1> tarafından Ledger ile iş birliği yapılarak gerçekleştirilmiştir"
       }
+    },
+    "featureUnavailable" : {
+      "title" : "Şu özellik an itibarıyla kullanılamıyor: {{feature}}. Daha fazla bilgi için lütfen {{support}} bakın.",
+      "feature" : {
+        "history" : "Geçmiş",
+        "swap" : "Takas et",
+        "token_history" : "Token geçmişi",
+        "send_and_receive" : "Gönder & al",
+        "send" : "Gönder",
+        "receive" : "Al",
+        "sending_tokens" : "Token gönderme",
+        "receiving_tokens" : "Token alma",
+        "staking" : "Staking",
+        "claiming_staking_rewards" : "Staking ödüllerini alma"
+      },
+      "support" : "destek bölümüne"
     },
     "willBeDeprecatedBanner" : {
       "title" : "Verimliliği iyileştirmek için {{deprecatedDate}} tarihinden itibaren {{currencyName}} artık Ledger Live'da desteklenmeyecektir. Ancak Ledger donanım cüzdanlarında desteklenmeye devam edecektir. Bu konuda yardım almak isterseniz Ledger Müşteri Destek ekibiyle lütfen iletişime geçin.",
@@ -1499,21 +1516,21 @@
     },
     "recoverBanner" : {
       "subscribeDone" : {
-        "title" : "Ödeme kartınızı eklemeyi bitirin",
-        "description" : "Ledger Recover ile güvenilir bir şekilde geri yükleyin.",
+        "title" : "Reminder: Finish subscribing to Ledger Recover",
+        "description" : "You're just two steps away from being secured.",
         "primaryCta" : "Kart ekle",
         "secondaryCta" : "Belki sonra"
       },
       "verifyIdentity" : {
-        "title" : "Kimliğinizi doğrulamayı bitirin",
-        "description" : "Ledger Recover ile güvenilir bir şekilde geri yükleyin.",
-        "primaryCta" : "Doğrula",
+        "title" : "Reminder: Finish subscribing to Ledger Recover",
+        "description" : "You're just one step away from being secured.",
+        "primaryCta" : "Verify identity",
         "secondaryCta" : "Belki sonra"
       },
       "connectDevice" : {
-        "title" : "Ledger'ınızı bağlayın",
-        "description" : "Ledger Recover'a erişiminizin 1 adım uzağındasınız.",
-        "primaryCta" : "Bağlan",
+        "title" : "Reminder: Finish subscribing to Ledger Recover",
+        "description" : "It's your final step to ensure wallet access recovery.",
+        "primaryCta" : "Connect device",
         "secondaryCta" : "Belki sonra"
       }
     },
@@ -3726,6 +3743,10 @@
           }
         }
       }
+    },
+    "token" : {
+      "frozenStateWarning" : "Hesap varlıkları donduruldu!",
+      "transferWarning" : "Ledger Nano S™ kullanarak Solana token'ları için alıcı adresini doğrulamak üzere <0>bu yönergeleri uygulayın.</0>"
     }
   },
   "ethereum" : {
@@ -6181,6 +6202,27 @@
     "SolanaAccountNotFunded" : {
       "title" : "Hesap daha önce fonlanmamış"
     },
+    "SolanaTokenAccountHoldsAnotherToken" : {
+      "title" : "This associated token account holds another token"
+    },
+    "SolanaTokenAccountWarning" : {
+      "title" : "This is not a regular wallet address but an associated token account. Continue only if you know what you are doing"
+    },
+    "SolanaTokenAccountNotAllowed" : {
+      "title" : "This is a token account. Input a regular wallet address"
+    },
+    "SolanaMintAccountNotAllowed" : {
+      "title" : "This is a token address. Input a regular wallet address"
+    },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "Hesap fonlanacak"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "Token hesabı varlıkları donduruldu"
+    },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "Hesap başlatılmadı"
+    },
     "SolanaMemoIsTooLong" : {
       "title" : "Memo çok uzun Uzunluk en fazla {{maxLength}} olmalıdır"
     },
@@ -6709,17 +6751,19 @@
         "mobile" : {
           "description" : "Başka bir telefondaki Ledger Live uygulamasıyla senkronize edin",
           "steps" : {
-            "step1" : "Senkronize etmek istediğiniz Ledger Live uygulamasını açın",
-            "step2" : "Sırasıyla <0>Ayarlar</0> > <0>Genel</0> > <0>Ledger Sync</0> > <0>Senkronizasyonu aç</0> > <0>Karekodu Göster</0> adımlarını izleyin",
-            "step3" : "Karekodu okutun"
+            "step1" : "Make sure Ledger Sync is activated on one of your apps.",
+            "step2" : "Open the Ledger Live app you want to sync.",
+            "step3" : "Go to <0>Settings</0> > <0>General</0> > <0>Ledger Sync</0> > <0>I already turned it on</0> > <0>Show QR</0>",
+            "step4" : "Scan QR code."
           }
         },
         "desktop" : {
           "description" : "Hesaplarınızı başka bir Ledger Live uygulamasıyla senkronize edin",
           "steps" : {
-            "step1" : "Senkronize etmek istediğiniz Ledger Live uygulamasını açın",
-            "step2" : "Sırasıyla <0>Ayarlar</0> > <0>Genel</0> > <0>Ledger Sync</0> > <0>Senkronizasyonu aç</0> > <0>Ledger cihazınızı kullanın</0> adımlarını izleyin",
-            "step3" : "Ledger'ınızı bağlayın"
+            "step1" : "Make sure Ledger Sync is activated on one of your apps.",
+            "step2" : "Open the Ledger Live app you want to sync.",
+            "step3" : "Go to <0>Settings</0> > <0>General</0> > <0>Ledger Sync</0> > <0>I already turned it on</0> > <0>Use your Ledger</0>",
+            "step4" : "Connect your Ledger."
           }
         }
       },
