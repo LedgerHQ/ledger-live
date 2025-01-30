@@ -78,6 +78,10 @@ export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlo
     {
       title: "Storage limit",
       button: SpeculosButton.RIGHT,
+      expectedValue: ({ transaction }) => {
+        console.log("TRANSACTION: ", transaction);
+        return transaction.storageLimit?.toString() || "";
+      },
     },
     {
       title: "Reject",
