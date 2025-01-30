@@ -200,7 +200,8 @@
       "STAKE" : "ステーキング済み",
       "UNSTAKE" : "ステーキング解除済み",
       "WITHDRAW_UNSTAKED" : "引き出し済み",
-      "SENDING" : "送信中"
+      "SENDING" : "送信中",
+      "BURN" : "バーン済み"
     },
     "edit" : {
       "title" : "速度を上げる、またはキャンセルする",
@@ -759,6 +760,22 @@
         "description3" : "この統合は、 {{team}}がLedgerと共同で実施しました",
         "description3Link" : "この統合は、<1><0>{{team}}</0></1>がLedgerと共同で実施しました"
       }
+    },
+    "featureUnavailable" : {
+      "title" : "次の機能は一時的にご利用いただけません：{{feature}}。詳しくは{{support}}をご覧ください",
+      "feature" : {
+        "history" : "履歴",
+        "swap" : "スワップ",
+        "token_history" : "トークン履歴",
+        "send_and_receive" : "送付＆受け取り",
+        "send" : "送付",
+        "receive" : "受け取る",
+        "sending_tokens" : "トークンの送付",
+        "receiving_tokens" : "トークンの受け取り",
+        "staking" : "ステーキング",
+        "claiming_staking_rewards" : "ステーキング報酬の獲得請求"
+      },
+      "support" : "サポート"
     },
     "willBeDeprecatedBanner" : {
       "title" : "効率を最適化するため、{{deprecatedDate}}以降、{{currencyName}}はLedger Liveではサポートされなくなります。ただし、Ledgerハードウェアウォレットでは引き続きサポートされます。この件に関してご不明な点などがございましたら、Ledgerカスタマーサポートまでご連絡ください。",
@@ -3726,6 +3743,10 @@
           }
         }
       }
+    },
+    "token" : {
+      "frozenStateWarning" : "アカウント資産が凍結されています！",
+      "transferWarning" : "Ledger Nano S™を使用してSolanaトークンの受取人アドレスを認証するには、<0>こちらの手順に従ってください。</0>"
     }
   },
   "ethereum" : {
@@ -6180,6 +6201,27 @@
     },
     "SolanaAccountNotFunded" : {
       "title" : "アカウントに資金がありません"
+    },
+    "SolanaTokenAccountHoldsAnotherToken" : {
+      "title" : "この関連トークンアカウントは別のトークンを保持しています"
+    },
+    "SolanaTokenAccountWarning" : {
+      "title" : "これは通常のウォレットアドレスではなく、関連するトークンアカウントです。自分が何をしているのか理解している場合にのみ、続行してください"
+    },
+    "SolanaTokenAccountNotAllowed" : {
+      "title" : "これはトークンアカウントです。通常のウォレットアドレスを入力してください"
+    },
+    "SolanaMintAccountNotAllowed" : {
+      "title" : "これはトークンアドレスです。通常のウォレットアドレスを入力してください"
+    },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "アカウントに入金されます"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "トークンアカウントの資産が凍結されています"
+    },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "アカウントが初期化されていません"
     },
     "SolanaMemoIsTooLong" : {
       "title" : "Memo(メモ)が長すぎます。最長{{maxLength}}以内で入力してください。"
