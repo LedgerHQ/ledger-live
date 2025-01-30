@@ -99,7 +99,8 @@
       "id" : "Identifiant {{ value }}",
       "times" : "x {{ value }}"
     },
-    "quote" : "Prix"
+    "quote" : "Prix",
+    "tryAgain" : "Réessayer"
   },
   "errors" : {
     "ReplacementTransactionUnderpriced" : {
@@ -3992,7 +3993,11 @@
     },
     "quitConfirmation" : {
       "title" : "Annuler l’ajout de compte",
-      "desc" : "Voulez-vous vraiment annuler l’ajout de comptes ?"
+      "desc" : "Voulez-vous vraiment annuler l’ajout de comptes ?",
+      "v2" : {
+        "title" : "Annuler l’ajout de compte ?",
+        "desc" : "Aucun compte ne sera ajouté dans Ledger Live."
+      }
     },
     "imported" : "Actif bien ajouté",
     "added" : "Compte ajouté à votre portefeuille",
@@ -4068,18 +4073,29 @@
           "title" : "Nouveau compte"
         },
         "imported" : {
-          "title" : "Compte déjà dans votre portefeuille ({{length}})",
-          "title_plural" : "Comptes déjà dans votre portefeuille ({{length}})"
+          "title" : "Compte déjà dans votre portefeuille ({{count}})",
+          "title_plural" : "Comptes déjà dans votre portefeuille ({{count}})"
         },
         "migrate" : {
           "title" : "Comptes à mettre à jour"
         }
-      }
+      },
+      "retryScanning" : "Réessayer"
     },
     "addAccountsSuccess" : {
       "ctaAddFunds" : "Approvisionner mon compte",
       "ctaClose" : "Fermer"
-    }
+    },
+    "addAccountsWarning" : {
+      "cantCreateAccount" : {
+        "title" : "Impossible d’ajouter un nouveau compte",
+        "body" : "Pour ajouter un nouveau compte, vous devez d’abord approvisionner votre compte {{accountName}}."
+      },
+      "noAccountToCreate" : {
+        "title" : "Impossible d’ajouter un nouveau compte {{currency}}"
+      }
+    },
+    "chooseAccountToFund" : "Choisissez le compte à approvisionner"
   },
   "DeviceAction" : {
     "stayInTheAppPlz" : "Restez dans Ledger Live et gardez votre appareil Ledger à portée de main.",
@@ -6554,7 +6570,9 @@
     "name" : "Hedera",
     "createHederaAccountHelp" : {
       "text" : "Consultez cet article d’assistance pour",
-      "link" : "découvrir comment créer un compte Hedera"
+      "link" : "Comment créer un compte Hedera ?",
+      "title" : "Impossible de créer un nouveau compte Hedera",
+      "description" : "Dans l’écosystème Hedera, seul un nombre limité de services peuvent créer de nouveaux comptes. Ledger Live n’offre pas ce service pour le moment, mais d’autres solutions existent. Après avoir créé votre compte Hedera, vous pourrez l’ajouter dans Ledger Live."
     },
     "currentAddress" : {
       "messageIfVirtual" : "Votre adresse {{name}} n’a pas été confirmée sur votre appareil Ledger. Il est risqué de l’utiliser."

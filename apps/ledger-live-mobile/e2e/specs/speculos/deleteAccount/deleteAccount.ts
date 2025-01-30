@@ -5,7 +5,7 @@ import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 export async function runDeleteAccountTest(account: Account, tmsLink: string) {
   const app = new Application();
 
-  describe(`Delete account - ${account.accountName}`, () => {
+  describe("Delete account", () => {
     beforeAll(async () => {
       await app.init({
         speculosApp: account.currency.speculosApp,
@@ -24,7 +24,7 @@ export async function runDeleteAccountTest(account: Account, tmsLink: string) {
     });
 
     $TmsLink(tmsLink);
-    it(`Perform a delete account`, async () => {
+    it(`Perform a delete account - ${account.accountName}`, async () => {
       await app.accounts.openViaDeeplink();
       await app.common.expectAccountName(account.accountName);
       await app.common.goToAccountByName(account.accountName);

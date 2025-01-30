@@ -760,6 +760,22 @@
         "description3Link" : "Diese Integration wurde von <1><0>{{team}}</0></1> in Zusammenarbeit mit Ledger durchgeführt"
       }
     },
+    "featureUnavailable" : {
+      "title" : "Die folgende Funktion ist momentan nicht verfügbar: {{feature}}. Weitere Informationen erhältst du vom {{support}}.",
+      "feature" : {
+        "history" : "Verlauf",
+        "swap" : "Swappen",
+        "token_history" : "Token-Verlauf",
+        "send_and_receive" : "Senden und Empfangen",
+        "send" : "Senden",
+        "receive" : "Empfangen",
+        "sending_tokens" : "Senden von Token",
+        "receiving_tokens" : "Empfangen von Token",
+        "staking" : "Staking",
+        "claiming_staking_rewards" : "Staking-Prämien beanspruchen"
+      },
+      "support" : "Support"
+    },
     "willBeDeprecatedBanner" : {
       "title" : "Um die Effizienz zu steigern, wird {{currencyName}} ab dem {{deprecatedDate}} nicht mehr in Ledger Live unterstützt. Auf den Hardware-Wallets von Ledger bleibt die Unterstützung jedoch bestehen. Wenn du Hilfe benötigst, wende dich bitte an den Ledger-Kundenservice.",
       "contactSupport" : "Support kontaktieren"

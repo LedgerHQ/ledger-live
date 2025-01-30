@@ -99,7 +99,8 @@
       "id" : "ID {{ value }}",
       "times" : "x{{ value }}"
     },
-    "quote" : "Cotação"
+    "quote" : "Cotação",
+    "tryAgain" : "Tente novamente"
   },
   "errors" : {
     "ReplacementTransactionUnderpriced" : {
@@ -3992,7 +3993,11 @@
     },
     "quitConfirmation" : {
       "title" : "Cancelar adição de conta",
-      "desc" : "Você tem certeza de que quer cancelar a adição de contas?"
+      "desc" : "Você tem certeza de que quer cancelar a adição de contas?",
+      "v2" : {
+        "title" : "Cancelar adição de conta?",
+        "desc" : "Nenhuma conta será adicionada ao Ledger Live."
+      }
     },
     "imported" : "Ativos adicionados com sucesso",
     "added" : "Conta adicionada ao seu portfólio",
@@ -4068,18 +4073,29 @@
           "title" : "Nova conta"
         },
         "imported" : {
-          "title" : "Conta já no portfólio ({{length}})",
-          "title_plural" : "Contas já no Portfólio ({{length}})"
+          "title" : "Conta já no portfólio ({{count}})",
+          "title_plural" : "Contas já no Portfólio ({{count}})"
         },
         "migrate" : {
           "title" : "Contas a atualizar"
         }
-      }
+      },
+      "retryScanning" : "Tentar novamente"
     },
     "addAccountsSuccess" : {
       "ctaAddFunds" : "Adicionar fundos à minha conta",
       "ctaClose" : "Fechar"
-    }
+    },
+    "addAccountsWarning" : {
+      "cantCreateAccount" : {
+        "title" : "Não é possível adicionar uma nova conta",
+        "body" : "Não é possível adicionar uma nova conta antes de receber ativos em sua conta {{accountName}}."
+      },
+      "noAccountToCreate" : {
+        "title" : "Não foi possível adicionar a nova conta {{currency}}"
+      }
+    },
+    "chooseAccountToFund" : "Escolha uma conta para adicionar fundos"
   },
   "DeviceAction" : {
     "stayInTheAppPlz" : "Fique no aplicativo Ledger Live e mantenha a Ledger por perto.",
@@ -4826,7 +4842,7 @@
     "info" : {
       "available" : {
         "title" : "CELO disponível",
-        "description" : "Esta quantia é descartável."
+        "description" : "Esta é a quantia que você usar."
       },
       "lockedBalance" : {
         "title" : "Saldo Bloqueado",
@@ -5103,7 +5119,7 @@
     "info" : {
       "available" : {
         "title" : "{{currencyTicker}} disponível",
-        "description" : "Esta quantia é descartável."
+        "description" : "Esta é a quantia que você usar."
       },
       "delegated" : {
         "title" : "Ativos Delegados",
@@ -5599,7 +5615,7 @@
     "info" : {
       "available" : {
         "title" : "TRX disponível",
-        "description" : "Esta quantia é descartável."
+        "description" : "Esta é a quantia que você usar."
       },
       "frozen" : {
         "title" : "Congelado",
@@ -5972,7 +5988,7 @@
     "info" : {
       "available" : {
         "title" : "NEAR disponível",
-        "description" : "Esta quantia é descartável."
+        "description" : "Esta é a quantia que você usar."
       },
       "storageUsage" : {
         "title" : "Saldo mínimo",
@@ -6554,7 +6570,9 @@
     "name" : "hedera",
     "createHederaAccountHelp" : {
       "text" : "Consulte este artigo de suporte sobre",
-      "link" : "como criar uma conta Hedera"
+      "link" : "Como criar uma conta Hedera?",
+      "title" : "Não é possível criar uma nova conta Hedera",
+      "description" : "No ecossistema Hedera, apenas um pequeno número de serviços pode criar novas contas. Embora a Ledger não ofereça atualmente esse serviço de introdução, há alternativas disponíveis. Você poderá adicionar sua conta Hedera no Ledger Live depois que ela for criada."
     },
     "currentAddress" : {
       "messageIfVirtual" : "Seu endereço {{name}} não pode ser confirmado no seu dispositivo Ledger. Use por sua própria conta e risco."
@@ -6767,7 +6785,7 @@
       "category" : {
         "all" : {
           "name" : "Todos",
-          "description" : "Todos os provedores de staking na Ethereum disponíveis pelo Ledger Live."
+          "description" : "Todos os provedores de staking Ethereum disponíveis pelo Ledger Live."
         },
         "liquid" : {
           "name" : "Liquid",

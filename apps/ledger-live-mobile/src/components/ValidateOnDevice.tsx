@@ -175,6 +175,7 @@ export default function ValidateOnDevice({
           flexGrow: 1,
           justifyContent: "center",
         }}
+        testID="device-validation-scroll-view"
       >
         <Flex alignItems="center">
           <AnimationContainer>

@@ -99,7 +99,8 @@
       "id" : "ID {{ value }}",
       "times" : "x{{ value }}"
     },
-    "quote" : "見積もり"
+    "quote" : "見積もり",
+    "tryAgain" : "再試行"
   },
   "errors" : {
     "ReplacementTransactionUnderpriced" : {
@@ -3992,7 +3993,11 @@
     },
     "quitConfirmation" : {
       "title" : "アカウントの追加を取り消す",
-      "desc" : "アカウントの追加をキャンセルしますか？"
+      "desc" : "アカウントの追加をキャンセルしますか？",
+      "v2" : {
+        "title" : "アカウントの追加を取り消しますか？",
+        "desc" : "Ledger Liveにアカウントは追加されません。"
+      }
     },
     "imported" : "資産が正常に追加されました",
     "added" : "ポートフォリオにアカウントが追加されました",
@@ -4068,18 +4073,29 @@
           "title" : "新しいアカウント"
         },
         "imported" : {
-          "title" : "アカウントはポートフォリオに追加済みです ({{length}})",
-          "title_plural" : "ポートフォリオに既存のアカウント({{length}})"
+          "title" : "アカウントはポートフォリオに追加済みです ({{count}})",
+          "title_plural" : "ポートフォリオに既存のアカウント({{count}})"
         },
         "migrate" : {
           "title" : "アカウントのアップデート"
         }
-      }
+      },
+      "retryScanning" : "再試行"
     },
     "addAccountsSuccess" : {
       "ctaAddFunds" : "資金をアカウントに追加する",
       "ctaClose" : "閉じる"
-    }
+    },
+    "addAccountsWarning" : {
+      "cantCreateAccount" : {
+        "title" : "新しいアカウントを追加できません",
+        "body" : "{{accountName}}アカウントで資産を受け取る前に、新しいアカウントを追加することはできません。"
+      },
+      "noAccountToCreate" : {
+        "title" : "新しい{{currency}}アカウントを追加できませんでした"
+      }
+    },
+    "chooseAccountToFund" : "資金を追加するアカウントを選択"
   },
   "DeviceAction" : {
     "stayInTheAppPlz" : "Ledger Liveアプリを開いた状態で、Ledgerを近くに置いてください。",
@@ -6554,7 +6570,9 @@
     "name" : "Hedera",
     "createHederaAccountHelp" : {
       "text" : "Hederaアカウントの作成方法については、",
-      "link" : "こちらのサポート記事をご参照ください。"
+      "link" : "Hederaアカウントを作成するには？",
+      "title" : "新しいHederaアカウントを作成できません",
+      "description" : "Hederaエコシステムでは、選択された数のサービスのみが新しいアカウントを作成できます。Ledgerは現在このオンボーディングサービスを提供していませんが、代替サービスは利用可能です。Hederaアカウントが作成されたら、Ledger Liveに追加できるようになります。"
     },
     "currentAddress" : {
       "messageIfVirtual" : "{{name}}アドレスがLedgerデバイスで確認できません。リスクを理解した上で、自己責任でご利用ください。"

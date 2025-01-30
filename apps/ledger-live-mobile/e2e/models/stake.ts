@@ -13,13 +13,14 @@ export async function verifyAppValidationStakeInfo(
   const currency = delegation.account.currency;
   const provider = delegation.provider;
 
+  await app.deviceValidation.expectDeviceValidationScreen();
+
   if (currenciesForValidationAmount.includes(currency)) {
     await app.deviceValidation.expectAmount(amount);
   }
   if (currenciesForValidationProvider.includes(currency)) {
     await app.deviceValidation.expectProvider(provider);
   }
-  return;
 }
 
 export async function verifyStakeOperationDetailsInfo(

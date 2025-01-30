@@ -760,6 +760,22 @@
         "description3Link" : "此集成由 <1><0>{{team}}</0></1> 与 Ledger 协作实施"
       }
     },
+    "featureUnavailable" : {
+      "title" : "以下功能暂不可用：{{feature}}。如需了解更多信息，请联系 {{support}}",
+      "feature" : {
+        "history" : "历史记录",
+        "swap" : "互换",
+        "token_history" : "代币交易记录",
+        "send_and_receive" : "发送和接收",
+        "send" : "发送",
+        "receive" : "接收",
+        "sending_tokens" : "发送代币",
+        "receiving_tokens" : "接收代币",
+        "staking" : "质押",
+        "claiming_staking_rewards" : "领取权益质押奖励"
+      },
+      "support" : "客服"
+    },
     "willBeDeprecatedBanner" : {
       "title" : "为了优化效率，自 {{deprecatedDate}} 起，Ledger Live 将不再支持 {{currencyName}}。但 Ledger 硬件钱包将继续支持该币种。如需这方面的帮助，请联系 Ledger 客服。",
       "contactSupport" : "联系客服"

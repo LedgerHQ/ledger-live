@@ -2,6 +2,7 @@ import { Ed25519PublicKey } from "@aptos-labs/ts-sdk";
 import { log } from "@ledgerhq/logs";
 import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
+import { makeLRUCache, seconds } from "@ledgerhq/live-network/cache";
 import { AptosAPI } from "../api";
 import buildTransaction from "./buildTransaction";
 import { DEFAULT_GAS, DEFAULT_GAS_PRICE, ESTIMATE_GAS_MUL } from "./logic";
@@ -14,18 +15,6 @@ type IGetEstimatedGasReturnType = {
     gasUnitPrice: string;
   };
   errors: TransactionErrors;
-};
-
-const CACHE = {
-  amount: new BigNumber(0),
-  estimate: Promise.resolve({
-    fees: new BigNumber(0),
-    estimate: {
-      maxGasAmount: "",
-      gasUnitPrice: "",
-    },
-    errors: {},
-  }),
 };
 
 export const getFee = async (
@@ -81,20 +70,18 @@ export const getFee = async (
   return res;
 };
 
+const CACHE = makeLRUCache(
+  getFee,
+  (_account: Account, transaction: Transaction, _aptosClient: AptosAPI) => {
+    return transaction.amount.toString();
+  },
+  seconds(30),
+);
+
 export const getEstimatedGas = async (
   account: Account,
   transaction: Transaction,
   aptosClient: AptosAPI,
 ): Promise<IGetEstimatedGasReturnType> => {
-  if (!CACHE.amount.eq(transaction.amount)) {
-    CACHE.estimate = getFee(account, transaction, aptosClient);
-    CACHE.amount = transaction.amount;
-  }
-
-  // XXX: we await Promise form getFee() in this place to make cache work for asynchronous calls
-  // Example [if wee await getFee()]: thread 1 goes to getFee() and awaits there for transaction simulation.
-  // at this moment thread 2 will enter getEstimatedGas() CACHE is not set yet, it will call getFee() as well
-  // Current implementation: CACHE.estimate set immediately after getFee() is called, so thread 2 will not go under if clause
-  // and both treads will wait for promise resolve in return statement.
-  return await CACHE.estimate;
+  return await CACHE(account, transaction, aptosClient);
 };

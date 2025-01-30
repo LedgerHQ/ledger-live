@@ -82,7 +82,6 @@ describe(`Ledger Sync Accounts`, () => {
     await goToLedgerSync();
     await app.ledgerSync.expectLedgerSyncPageIsDisplayed();
     await app.ledgerSync.tapTurnOnSync();
-    await app.ledgerSync.selectUseLedger();
     await app.common.selectKnownDevice();
     await activateLedgerSync();
     await app.ledgerSync.expectLedgerSyncSuccessPage();

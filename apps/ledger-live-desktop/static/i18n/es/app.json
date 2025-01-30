@@ -760,6 +760,22 @@
         "description3Link" : "Esta integración la ha realizado <1><0>{{team}}</0></1> en colaboración con Ledger"
       }
     },
+    "featureUnavailable" : {
+      "title" : "La siguiente opción está temporalmente deshabilitada: {{feature}}. Si quieres obtener más información, contacta con {{support}}.",
+      "feature" : {
+        "history" : "Historial",
+        "swap" : "Permutar",
+        "token_history" : "Historial de tokens",
+        "send_and_receive" : "Enviar y recibir",
+        "send" : "Enviar",
+        "receive" : "Recibir",
+        "sending_tokens" : "Enviar tokens",
+        "receiving_tokens" : "Recibir tokens",
+        "staking" : "Puesta en participación",
+        "claiming_staking_rewards" : "Reclamar recompensas por participación"
+      },
+      "support" : "el servicio de soporte"
+    },
     "willBeDeprecatedBanner" : {
       "title" : "Por razones de optimización de eficiencia, {{currencyName}} dejará de ser compatible con Ledger Live el {{deprecatedDate}}. No obstante, seguirá siendo compatible con las billeteras de hardware de Ledger. Ponte en contacto con el servicio de soporte al cliente de Ledger si necesitas ayuda con esto.",
       "contactSupport" : "Ponte en contacto con Soporte"

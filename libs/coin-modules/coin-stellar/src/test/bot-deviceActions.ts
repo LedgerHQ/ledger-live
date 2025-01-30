@@ -113,5 +113,9 @@ export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlo
       title: "Valid After (UTC)",
       button: SpeculosButton.RIGHT,
     },
+    {
+      title: "Sign",
+      button: SpeculosButton.BOTH,
+    },
   ],
 });

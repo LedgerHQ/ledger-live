@@ -760,6 +760,22 @@
         "description3Link" : "Bu entegrasyon, <1><0>{{team}}</0></1> tarafından Ledger ile iş birliği yapılarak gerçekleştirilmiştir"
       }
     },
+    "featureUnavailable" : {
+      "title" : "Şu özellik an itibarıyla kullanılamıyor: {{feature}}. Daha fazla bilgi için lütfen {{support}} bakın.",
+      "feature" : {
+        "history" : "Geçmiş",
+        "swap" : "Takas et",
+        "token_history" : "Token geçmişi",
+        "send_and_receive" : "Gönder & al",
+        "send" : "Gönder",
+        "receive" : "Al",
+        "sending_tokens" : "Token gönderme",
+        "receiving_tokens" : "Token alma",
+        "staking" : "Staking",
+        "claiming_staking_rewards" : "Staking ödüllerini alma"
+      },
+      "support" : "destek bölümüne"
+    },
     "willBeDeprecatedBanner" : {
       "title" : "Verimliliği iyileştirmek için {{deprecatedDate}} tarihinden itibaren {{currencyName}} artık Ledger Live'da desteklenmeyecektir. Ancak Ledger donanım cüzdanlarında desteklenmeye devam edecektir. Bu konuda yardım almak isterseniz Ledger Müşteri Destek ekibiyle lütfen iletişime geçin.",
       "contactSupport" : "Destek Al"

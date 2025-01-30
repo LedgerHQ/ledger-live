@@ -760,6 +760,22 @@
         "description3Link" : "Esta integração foi realizada por <1><0>{{team}}</0></1> em colaboração com a Ledger"
       }
     },
+    "featureUnavailable" : {
+      "title" : "O seguinte recurso está momentaneamente indisponível: {{feature}}. Para saber mais, consulte o {{support}}",
+      "feature" : {
+        "history" : "Histórico",
+        "swap" : "Trocar",
+        "token_history" : "Histórico de token",
+        "send_and_receive" : "Enviar e receber",
+        "send" : "Enviar",
+        "receive" : "Receber",
+        "sending_tokens" : "Enviando tokens",
+        "receiving_tokens" : "Recebendo tokens",
+        "staking" : "Staking",
+        "claiming_staking_rewards" : "Resgatando recompensas de staking"
+      },
+      "support" : "suporte"
+    },
     "willBeDeprecatedBanner" : {
       "title" : "Para otimizar a eficiência, {{currencyName}} não será mais compatível com o Ledger Live a partir de {{deprecatedDate}}. No entanto, este ativo ainda será compatível com as carteiras hardware Ledger. Fale com o Suporte ao Cliente Ledger para obter ajuda com isso.",
       "contactSupport" : "Falar com o suporte"
@@ -796,7 +812,7 @@
     "stake" : "Aplicar",
     "delegatedAssets" : "Ativos Delegados",
     "undelegating" : "Removendo de delegação",
-    "availableBalanceTooltip" : "Esta quantia é descartável.",
+    "availableBalanceTooltip" : "Esta é a quantia que você usar.",
     "frozenAssetsTooltip" : "Ativos congelados são usados no processo de votação da Tron. Isso representa seu número total de votos.",
     "bandwidthTooltip" : "Congele ativos para ganhar Largura de Banda",
     "energyTooltip" : "Congele ativos para ganhar Energia",
@@ -3766,7 +3782,7 @@
       "category" : {
         "all" : {
           "name" : "Todos",
-          "description" : "Todos os provedores de staking na Ethereum disponíveis pelo Ledger Live."
+          "description" : "Todos os provedores de staking Ethereum disponíveis pelo Ledger Live."
         },
         "liquid" : {
           "name" : "Liquid",

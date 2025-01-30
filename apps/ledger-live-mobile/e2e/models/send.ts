@@ -29,6 +29,8 @@ export async function verifyAppValidationSendInfo(
   const addressRecipient = transaction.accountToCredit.address;
   const addressSender = transaction.accountToDebit.address;
 
+  await app.deviceValidation.expectDeviceValidationScreen();
+
   if (currenciesForValidationAmount.includes(currency)) {
     await app.deviceValidation.expectAmount(amount);
   }
