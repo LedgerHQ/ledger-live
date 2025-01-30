@@ -99,7 +99,8 @@
       "id" : "ID {{ value }}",
       "times" : "x{{ value }}"
     },
-    "quote" : "报价"
+    "quote" : "报价",
+    "tryAgain" : "请重试"
   },
   "errors" : {
     "ReplacementTransactionUnderpriced" : {
@@ -789,6 +790,24 @@
     },
     "SolanaAccountNotFunded" : {
       "title" : "账户没有资金"
+    },
+    "SolanaTokenAccountHoldsAnotherToken" : {
+      "title" : "该关联代币账户持有另一种代币"
+    },
+    "SolanaTokenAccountWarning" : {
+      "title" : "这不是普通钱包地址，而是关联代币账户。继续之前，请务必清楚您在做什么"
+    },
+    "SolanaTokenAccountNotAllowed" : {
+      "title" : "这是一个代币账户。请输入普通钱包地址"
+    },
+    "SolanaMintAccountNotAllowed" : {
+      "title" : "这是一个代币地址。请输入普通钱包地址"
+    },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "账户将获得资金"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "代币账户资产已冻结"
     },
     "SolanaAddressOfEd25519" : {
       "title" : "地址关闭 ed25519 曲线"
@@ -2374,16 +2393,16 @@
     },
     "recoverBanner" : {
       "subscribeDone" : {
-        "title" : "完成添加支付卡",
-        "description" : "使用 Ledger Recover 可靠地恢复。"
+        "title" : "Reminder: Finish subscribing to Ledger Recover",
+        "description" : "You're just two steps away from being secured."
       },
       "verifyIdentity" : {
-        "title" : "完成身份验证",
-        "description" : "使用 Ledger Recover 可靠地恢复。"
+        "title" : "Reminder: Finish subscribing to Ledger Recover",
+        "description" : "You're just one step away from being secured."
       },
       "connectDevice" : {
-        "title" : "最后一步：连接 Ledger 设备",
-        "description" : "还差一步即可使用 Ledger Recover。"
+        "title" : "Reminder: Finish subscribing to Ledger Recover",
+        "description" : "It's your final step to ensure wallet access recovery."
       }
     }
   },
@@ -3103,7 +3122,7 @@
       "title" : "开发者",
       "desc" : "尝试一下开发者功能，让我们知道您的想法。",
       "customManifest" : {
-        "title" : "加载自定义平台清单"
+        "title" : "加载清单"
       },
       "exchangeDeveloperMode" : {
         "title" : "兑换开发模式",
@@ -3992,7 +4011,11 @@
     },
     "quitConfirmation" : {
       "title" : "取消添加账户",
-      "desc" : "您确定要取消添加账户？"
+      "desc" : "您确定要取消添加账户？",
+      "v2" : {
+        "title" : "取消添加账户？",
+        "desc" : "账户不会添加至 Ledger Live。"
+      }
     },
     "imported" : "资产添加成功",
     "added" : "账户已添加到您的资产组合",
@@ -4068,18 +4091,29 @@
           "title" : "新账户"
         },
         "imported" : {
-          "title" : "已经在资产组合中的账户 ({{length}})",
-          "title_plural" : "已经在资产组合中的账户 ({{length}})"
+          "title" : "已经在资产组合中的账户 ({{count}})",
+          "title_plural" : "已经在资产组合中的账户 ({{count}})"
         },
         "migrate" : {
           "title" : "待更新账户"
         }
-      }
+      },
+      "retryScanning" : "请重试"
     },
     "addAccountsSuccess" : {
       "ctaAddFunds" : "向我的账户添加资金",
       "ctaClose" : "关闭"
-    }
+    },
+    "addAccountsWarning" : {
+      "cantCreateAccount" : {
+        "title" : "我们无法添加新账户",
+        "body" : "首先需要用您的 {{accountName}} 账户接收资产，然后才能添加新账户。"
+      },
+      "noAccountToCreate" : {
+        "title" : "我们无法添加新的 {{currency}} 账户"
+      }
+    },
+    "chooseAccountToFund" : "选择账户用于添加资金"
   },
   "DeviceAction" : {
     "stayInTheAppPlz" : "停留在 Ledger Live 应用程序中并将 Ledger 设备一直放在附近。",
@@ -5966,6 +6000,10 @@
         "description" : "您可以将 SOL 资产委托给验证者，从而赚取奖励。"
       },
       "reserveWarning" : "请确保您的钱包中至少保留 {{amount}} SOL，用来支付未来停用和撤回权益质押所需的网络费用"
+    },
+    "token" : {
+      "frozenStateWarning" : "账户资产已冻结！",
+      "transferWarning" : "要使用 Ledger Nano S™ 验证 Solana 代币的接收人地址，<0>请按照以下说明操作。</0>"
     }
   },
   "near" : {
@@ -6554,7 +6592,9 @@
     "name" : "hedera",
     "createHederaAccountHelp" : {
       "text" : "要了解如何创建 Hedera 账户，",
-      "link" : "请参考此支持文章"
+      "link" : "如何创建 Hedera 账户？",
+      "title" : "我们无法创建新的 Hedera 账户",
+      "description" : "在 Hedera 生态系统中，仅有限数量的服务可以创建新账户。目前，Ledger 不提供入驻服务，但有其他的可用服务可选。创建 Hedera 账户后，就可以将其添加到 Ledger Live 中。"
     },
     "currentAddress" : {
       "messageIfVirtual" : "无法在 Ledger 设备上确认您的 {{name}} 地址。使用需自担风险。"
@@ -7043,9 +7083,10 @@
           "explanation" : {
             "title" : "使用另一个 Ledger Live 应用程序扫描并同步您的账户",
             "steps" : {
-              "step1" : "打开您要同步的 Ledger Live 应用程序",
-              "step2" : "前往<0>设置</0> <1>></1> <0>常规</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>开启 Ledger Sync</0> <1>></1> <0>扫描二维码</0>",
-              "step3" : "扫描二维码"
+              "step1" : "Make sure Ledger Sync is activated on one of your apps.",
+              "step2" : "Open the Ledger Live app you want to sync.",
+              "step3" : "Go to <0>Settings</0> <1>></1> <0>General</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>I already turned it on</0> <1>></1> <0>Scan QR code</0>",
+              "step4" : "Scan QR code."
             }
           }
         },
@@ -7055,9 +7096,10 @@
           "explanation" : {
             "title" : "如需与另一部手机或电脑上的 Ledger Live 同步……",
             "steps" : {
-              "step1" : "打开您要同步的 Ledger Live。",
-              "step2" : "前往<0>设置</0> <1>></1> <0>常规</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>开启 Ledger Sync</0> <1>></1> <0>显示二维码</0>",
-              "step3" : "扫描二维码"
+              "step1" : "Make sure Ledger Sync is activated on one of your apps.",
+              "step2" : "Open the Ledger Live you want to sync with.",
+              "step3" : "Go to <0>Settings</0> <1>></1> <0>General</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>I already turned it on</0> <1>></1> <0>Show QR</0>",
+              "step4" : "Scan QR code."
             }
           }
         },
