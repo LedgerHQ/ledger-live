@@ -140,7 +140,7 @@ export async function runSendInvalidAmountTest(
 
 export async function runSendInvalidTokenAmountTest(
   transaction: Transaction,
-  expectedErrorMessage: RegExp,
+  expectedErrorMessage: RegExp | string,
   tmsLink: string,
 ) {
   const app = new Application();
@@ -155,13 +155,18 @@ export async function runSendInvalidTokenAmountTest(
       await navigateToSendScreen(app, transaction.accountToDebit.currency.name);
       await app.send.setRecipientAndContinue(transaction.accountToCredit.address);
       await app.send.setAmount(transaction.amount);
-      await app.send.expectSendAmountSuccess();
-      await app.send.amountContinue();
+      if (expectedErrorMessage instanceof RegExp) {
+        await app.send.expectSendAmountSuccess();
+        await app.send.amountContinue();
 
-      const amountWithCode = transaction.amount + " " + transaction.accountToCredit.currency.ticker;
-      await app.send.expectSummaryAmount(amountWithCode);
-      await app.send.expectSummaryRecipient(transaction.accountToCredit.address);
-      await app.send.expectSendSummaryError(expectedErrorMessage);
+        const amountWithCode =
+          transaction.amount + " " + transaction.accountToCredit.currency.ticker;
+        await app.send.expectSummaryAmount(amountWithCode);
+        await app.send.expectSummaryRecipient(transaction.accountToCredit.address);
+        await app.send.expectSendSummaryError(expectedErrorMessage);
+      } else {
+        await app.send.expectSendAmountError(expectedErrorMessage);
+      }
     });
   });
 }
