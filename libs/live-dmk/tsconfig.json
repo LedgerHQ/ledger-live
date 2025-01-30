@@ -6,14 +6,15 @@
     "declarationMap": true,
     "noImplicitAny": true,
     "noImplicitThis": true,
-    "module": "esnext",
-    "moduleResolution": "Bundler",
     "downlevelIteration": true,
     "lib": ["es2020", "dom"],
-    "outDir": "lib",
+    "outDir": "lib-es",
     "baseUrl": ".",
     "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "types": ["vitest/globals", "@testing-library/jest-dom"]
   },
-  "include": ["src/**/*", "src/index.tsx"]
+  "include": ["src", "tests.setup.ts"]
 }
