@@ -78,7 +78,7 @@ export default function AccountsNavigator() {
       <Stack.Screen
         name={ScreenName.Account}
         component={readOnlyModeEnabled ? ReadOnlyAccount : Account}
-        options={{ headerShown: false }}
+        options={{ headerShown: true }}
       />
       <Stack.Screen
         name={ScreenName.NftCollection}

@@ -60,7 +60,6 @@ const AssetScreen = ({ route }: NavigationProps) => {
     flattenAccountsByCryptoCurrencyScreenSelector(currency),
     isEqual,
   );
-
   const defaultAccount = cryptoAccounts?.length === 1 ? cryptoAccounts[0] : undefined;
 
   const cryptoAccountsEmpty = useMemo(

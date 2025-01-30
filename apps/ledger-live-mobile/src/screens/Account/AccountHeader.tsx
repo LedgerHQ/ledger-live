@@ -59,7 +59,9 @@ function AccountHeader({
   const accountName = useAccountName(account);
   const parentAccountName = useMaybeAccountName(parentAccount);
 
-  return (
+  const enableOld = false;
+
+  return enableOld ? (
     <CurrencyHeaderLayout
       currentPositionY={currentPositionY}
       graphCardEndPosition={graphCardEndPosition}
@@ -92,6 +94,19 @@ function AccountHeader({
       rightElement={<AccountHeaderRight />}
       currencyColor={getCurrencyColor(currency)}
     />
+  ) : (
+    <Flex
+      flexDirection={"row"}
+      justifyContent={"space-between"}
+      px={6}
+      py={4}
+      width={"100%"}
+      position={"absolute"}
+      top={60}
+    >
+      <AccountHeaderLeft currency={currency} />
+      <AccountHeaderRight />
+    </Flex>
   );
 }
 

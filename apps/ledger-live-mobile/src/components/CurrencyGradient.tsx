@@ -6,6 +6,7 @@ import { ensureContrast } from "../colors";
 function CurrencyGradient({ gradientColor }: { gradientColor: string }) {
   const { colors } = useTheme();
   const contrastedColor = ensureContrast(gradientColor, colors.background.main);
+  console.log(">>> gradient render", gradientColor, contrastedColor);
   return (
     <Svg width={850} height={454} viewBox="0 0 850 454" fill="none">
       <Mask

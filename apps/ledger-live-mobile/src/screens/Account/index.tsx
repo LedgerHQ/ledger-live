@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { FlatList, LayoutChangeEvent, ListRenderItemInfo } from "react-native";
 import Animated, { useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
-import { useDispatch, useSelector } from "react-redux";
+import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { Flex } from "@ledgerhq/native-ui";
@@ -74,7 +74,6 @@ function AccountScreen({ route }: Props) {
 
   return <AccountScreenInner account={account} parentAccount={parentAccount || undefined} />;
 }
-
 const AccountScreenInner = ({
   account,
   parentAccount,
@@ -91,6 +90,7 @@ const AccountScreenInner = ({
     useBalanceHistoryWithCountervalue({ account, range });
   const useCounterValue = useSelector(countervalueFirstSelector);
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
+
   const isEmpty = isAccountEmpty(account);
 
   const onSwitchAccountCurrency = useCallback(() => {
@@ -181,15 +181,20 @@ const AccountScreenInner = ({
         ]),
   ];
 
+  const disableGradient = false;
+
   return (
     <ReactNavigationPerformanceView screenName={ScreenName.Account} interactive>
       <SafeAreaView isFlex>
         {analytics}
-        <CurrencyBackgroundGradient
-          currentPositionY={currentPositionY}
-          graphCardEndPosition={graphCardEndPosition}
-          gradientColor={getCurrencyColor(currency) || colors.primary.c80}
-        />
+
+        {!disableGradient && (
+          <CurrencyBackgroundGradient
+            currentPositionY={currentPositionY}
+            graphCardEndPosition={graphCardEndPosition}
+            gradientColor={getCurrencyColor(currency) || colors.primary.c80}
+          />
+        )}
         <AnimatedFlatListWithRefreshControl
           style={{ flex: 1 }}
           contentContainerStyle={{
