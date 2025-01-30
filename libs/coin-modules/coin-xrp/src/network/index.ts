@@ -67,16 +67,27 @@ export const getServerInfos = async (): Promise<ServerInfoResponse> => {
 };
 
 // https://xrpl.org/docs/references/http-websocket-apis/public-api-methods/account-methods/account_tx
+export type GetTransactionsOptions = {
+  ledger_index_min?: number;
+  ledger_index_max?: number;
+  limit?: number;
+  marker?: Marker;
+  // this property controls the order of the transactions
+  // true: oldest first
+  // false: newest first
+  forward: boolean;
+};
+
 export const getTransactions = async (
   address: string,
-  options:
-    | { ledger_index_min?: number; ledger_index_max?: number; limit?: number; marker?: Marker }
-    | undefined,
+  options: GetTransactionsOptions | undefined,
 ): Promise<AccountTxResponse> => {
   const result = await rpcCall<AccountTxResponse>("account_tx", {
     account: address,
-    // oldest first
-    forward: true,
+    // this property controls the order of the transactions
+    // looks like there is a bug in LL (https://ledgerhq.atlassian.net/browse/LIVE-16705)
+    // so we need to set it to false (newest first) to get the transactions in the right order
+    // for lama-adapter we need to set it to true (oldest first)
     ...options,
     api_version: 2,
   });
