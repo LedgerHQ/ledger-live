@@ -59,7 +59,7 @@ function AccountHeader({
   const accountName = useAccountName(account);
   const parentAccountName = useMaybeAccountName(parentAccount);
 
-  const enableOld = false;
+  const enableOld = true;
 
   return enableOld ? (
     <CurrencyHeaderLayout
