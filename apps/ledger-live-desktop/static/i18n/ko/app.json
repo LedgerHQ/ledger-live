@@ -200,7 +200,8 @@
       "STAKE" : "스테이킹 완료",
       "UNSTAKE" : "언스테이킹 완료",
       "WITHDRAW_UNSTAKED" : "출금됨",
-      "SENDING" : "보내기"
+      "SENDING" : "보내기",
+      "BURN" : "소각됨"
     },
     "edit" : {
       "title" : "속도 올리기 또는 취소",
@@ -759,6 +760,22 @@
         "description3" : "이 통합은 Ledger와 협력을 통해 {{team}} 에서 수행했습니다.",
         "description3Link" : "이 통합은 Ledger와 협력을 통해 <1><0>{{team}}</0></1>에서 수행했습니다."
       }
+    },
+    "featureUnavailable" : {
+      "title" : "다음의 {{feature}} 기능은 현재 이용하실 수 없습니다. 자세한 내용은 {{support}}에 문의하세요",
+      "feature" : {
+        "history" : "내역",
+        "swap" : "스왑",
+        "token_history" : "토큰 이력",
+        "send_and_receive" : "보내기 & 수령",
+        "send" : "전송",
+        "receive" : "수령",
+        "sending_tokens" : "토큰 보내는 중",
+        "receiving_tokens" : "토큰 받는 중",
+        "staking" : "스테이킹",
+        "claiming_staking_rewards" : "스테이킹 보상 신청"
+      },
+      "support" : "지원"
     },
     "willBeDeprecatedBanner" : {
       "title" : "효율성을 최적화하기 위해 {{currencyName}}은 {{deprecatedDate}}부터 Ledger Live에서 지원되지 않습니다. 그러나 Ledger 하드웨어 지갑에서는 계속 지원됩니다. 이와 관련하여 도움이 필요하다면 Ledger 고객 지원팀에 문의하세요.",
@@ -1499,21 +1516,21 @@
     },
     "recoverBanner" : {
       "subscribeDone" : {
-        "title" : "결제 카드 추가 완료",
-        "description" : "Ledger Recover로 안심하고 복구하세요.",
+        "title" : "Reminder: Finish subscribing to Ledger Recover",
+        "description" : "You're just two steps away from being secured.",
         "primaryCta" : "카드 추가",
         "secondaryCta" : "다음에 결정하기"
       },
       "verifyIdentity" : {
-        "title" : "신원 인증을 완료하세요",
-        "description" : "Ledger Recover로 안심하고 복구하세요.",
-        "primaryCta" : "확인",
+        "title" : "Reminder: Finish subscribing to Ledger Recover",
+        "description" : "You're just one step away from being secured.",
+        "primaryCta" : "Verify identity",
         "secondaryCta" : "다음에 결정하기"
       },
       "connectDevice" : {
-        "title" : "Ledger 장치에 연결합니다",
-        "description" : "한 단계만 더 완료하면 Ledger Recover를 사용하실 수 있습니다.",
-        "primaryCta" : "연결",
+        "title" : "Reminder: Finish subscribing to Ledger Recover",
+        "description" : "It's your final step to ensure wallet access recovery.",
+        "primaryCta" : "Connect device",
         "secondaryCta" : "다음에 결정하기"
       }
     },
@@ -3726,6 +3743,10 @@
           }
         }
       }
+    },
+    "token" : {
+      "frozenStateWarning" : "계정 자산이 동결되었습니다!",
+      "transferWarning" : "Ledger Nano S™를 사용해 솔라나 토큰의 수령인 주소를 확인하려면 <0>다음 지침을 따르세요.</0>"
     }
   },
   "ethereum" : {
@@ -6181,6 +6202,27 @@
     "SolanaAccountNotFunded" : {
       "title" : "자금이 입금되지 않은 계정"
     },
+    "SolanaTokenAccountHoldsAnotherToken" : {
+      "title" : "이 연관된 토큰 계정은 다른 토큰을 보유하고 있습니다."
+    },
+    "SolanaTokenAccountWarning" : {
+      "title" : "이것은 일반 지갑 주소가 아니라 연관된 토큰 계정입니다. 프로세스를 제대로 이해하는 경우에만 계속 진행하세요"
+    },
+    "SolanaTokenAccountNotAllowed" : {
+      "title" : "이것은 토큰 계정입니다. 일반 지갑 주소를 입력하세요"
+    },
+    "SolanaMintAccountNotAllowed" : {
+      "title" : "이것은 토큰 주소입니다. 일반 지갑 주소를 입력하세요"
+    },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "계정에 자금이 지원됩니다"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "토큰 계정 자산이 동결되었습니다"
+    },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "계정이 초기화되지 않았습니다"
+    },
     "SolanaMemoIsTooLong" : {
       "title" : "메모가 너무 깁니다. 최대 길이는 {{maxLength}}입니다."
     },
@@ -6709,17 +6751,19 @@
         "mobile" : {
           "description" : "다른 전화기에서 Ledger Live와 동기화",
           "steps" : {
-            "step1" : "동기화하려는 Ledger Live 앱을 엽니다.",
-            "step2" : "<0>설정</0> > <0>일반</0> > <0>Ledger 동기화</0> > <0>동기화 켜기</0> > <0>QR 표시</0>로 차례로 이동합니다",
-            "step3" : "QR 코드 스캔"
+            "step1" : "Make sure Ledger Sync is activated on one of your apps.",
+            "step2" : "Open the Ledger Live app you want to sync.",
+            "step3" : "Go to <0>Settings</0> > <0>General</0> > <0>Ledger Sync</0> > <0>I already turned it on</0> > <0>Show QR</0>",
+            "step4" : "Scan QR code."
           }
         },
         "desktop" : {
           "description" : "내 계정을 다른 Ledger Live 앱과 동기화",
           "steps" : {
-            "step1" : "동기화하려는 Ledger Live 앱을 엽니다.",
-            "step2" : "<0>설정</0> > <0>일반</0> > <0>Ledger 동기화</0> > <0>동기화 켜기</0> > <0>\u001D Ledger 사용하기</0>로 차례로 이동합니다",
-            "step3" : "Ledger 장치에 연결합니다"
+            "step1" : "Make sure Ledger Sync is activated on one of your apps.",
+            "step2" : "Open the Ledger Live app you want to sync.",
+            "step3" : "Go to <0>Settings</0> > <0>General</0> > <0>Ledger Sync</0> > <0>I already turned it on</0> > <0>Use your Ledger</0>",
+            "step4" : "Connect your Ledger."
           }
         }
       },
