@@ -61,7 +61,7 @@ async function operationsFromHeight(
     const [operations, apiNextCursor] = await listOperations(address, {
       limit: state.pageSize,
       minHeight: state.minHeight,
-      order: "desc",
+      order: "asc",
     });
     const newCurrentIteration = state.currentIteration + 1;
     let continueIteration = true;

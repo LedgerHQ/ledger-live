@@ -1,5 +1,5 @@
 import { getServerInfos, getTransactions, GetTransactionsOptions } from "../network";
-import type { Marker, XrplOperation } from "../network/types";
+import type { XrplOperation } from "../network/types";
 import { XrpMemo, XrpOperation } from "../types";
 import { RIPPLE_EPOCH } from "./utils";
 
@@ -37,6 +37,7 @@ export async function listOperations(
   const ledgers = serverInfo.info.complete_ledgers.split("-");
   const minLedgerVersion = Number(ledgers[0]);
 
+  // by default the explorer queries the transactions in descending order (newest first)
   let forward = false;
   if (order && order === "asc") {
     forward = true;
@@ -99,7 +100,8 @@ export async function listOperations(
     transactions = transactions.concat(newTransactions);
   }
 
-  transactions.reverse();
+  // the order is reversed so that the results are always sorted by newest tx first element of the list
+  if (order === "asc") transactions.reverse();
 
   // the next index to start the pagination from
   const next = nextOptions.marker ? JSON.stringify(nextOptions.marker) : "";

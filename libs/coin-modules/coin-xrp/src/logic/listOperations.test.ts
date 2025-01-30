@@ -10,16 +10,16 @@ const mockGetServerInfos = jest.fn().mockResolvedValue({
     complete_ledgers: `${minHeight}-${maxHeight}`,
   },
 });
-const mockGetTransactions = jest.fn();
+const mockNetworkGetTransactions = jest.fn();
 jest.mock("../network", () => ({
   getServerInfos: () => mockGetServerInfos(),
-  getTransactions: () => mockGetTransactions(),
+  getTransactions: () => mockNetworkGetTransactions(),
 }));
 
 describe("listOperations", () => {
   afterEach(() => {
     mockGetServerInfos.mockClear();
-    mockGetTransactions.mockClear();
+    mockNetworkGetTransactions.mockClear();
   });
 
   const someMarker: Marker = { ledger: 1, seq: 1 };
@@ -38,24 +38,24 @@ describe("listOperations", () => {
 
   it("when there are no transactions then the result is empty", async () => {
     // Given
-    mockGetTransactions.mockResolvedValue(mockNetworkTxs([]));
+    mockNetworkGetTransactions.mockResolvedValue(mockNetworkTxs([]));
     // When
     const [results, token] = await listOperations("any address", { minHeight: 0 });
     // Then
     expect(mockGetServerInfos).toHaveBeenCalledTimes(1);
-    expect(mockGetTransactions).toHaveBeenCalledTimes(1);
+    expect(mockNetworkGetTransactions).toHaveBeenCalledTimes(1);
     expect(results).toEqual([]);
     expect(JSON.parse(token)).toEqual(someMarker);
   });
 
   it("when there are no transactions and a limit then the result is empty", async () => {
     // Given
-    mockGetTransactions.mockResolvedValue(mockNetworkTxs([]));
+    mockNetworkGetTransactions.mockResolvedValue(mockNetworkTxs([]));
     // When
     const [results, token] = await listOperations("any address", { minHeight: 0, limit: 1 });
     // Then
     expect(mockGetServerInfos).toHaveBeenCalledTimes(1);
-    expect(mockGetTransactions).toHaveBeenCalledTimes(1);
+    expect(mockNetworkGetTransactions).toHaveBeenCalledTimes(1);
     expect(results).toEqual([]);
     expect(JSON.parse(token)).toEqual(someMarker);
   });
@@ -82,8 +82,8 @@ describe("listOperations", () => {
     // Given
     const lastTransaction = paymentTx;
     const txs = [paymentTx, otherTx, lastTransaction];
-    mockGetTransactions.mockResolvedValueOnce(mockNetworkTxs(txs));
-    mockGetTransactions.mockResolvedValue(mockNetworkTxs([])); // subsequent calls
+    mockNetworkGetTransactions.mockResolvedValueOnce(mockNetworkTxs(txs));
+    mockNetworkGetTransactions.mockResolvedValue(mockNetworkTxs([])); // subsequent calls
 
     // When
     const [results, token] = await listOperations("any address", { minHeight: 0, limit: 3 });
@@ -91,7 +91,7 @@ describe("listOperations", () => {
     // Then
     expect(mockGetServerInfos).toHaveBeenCalledTimes(1);
     // it's called twice because first call yields only 2 transactions, and 3 are asked
-    expect(mockGetTransactions).toHaveBeenCalledTimes(2);
+    expect(mockNetworkGetTransactions).toHaveBeenCalledTimes(2);
     expect(results.length).toEqual(2);
     expect(JSON.parse(token)).toEqual(someMarker);
   });
@@ -99,27 +99,29 @@ describe("listOperations", () => {
   it("should make enough calls so that the limit requested is satified", async () => {
     const txs = [paymentTx, paymentTx, otherTx, otherTx, otherTx, otherTx, otherTx, otherTx];
     assert(txs.length === 8);
-    mockGetTransactions.mockResolvedValue(mockNetworkTxs(txs));
+    mockNetworkGetTransactions.mockResolvedValue(mockNetworkTxs(txs));
 
     const [results, token] = await listOperations("any address", { minHeight: 0, limit: 8 });
 
     expect(mockGetServerInfos).toHaveBeenCalledTimes(1);
     // it's called 4 times because each call yields only 2 transactions, and 8 are asked
-    expect(mockGetTransactions).toHaveBeenCalledTimes(4);
+    expect(mockNetworkGetTransactions).toHaveBeenCalledTimes(4);
     expect(results.length).toEqual(8);
     expect(JSON.parse(token)).toEqual(someMarker);
   });
 
   it("should make enough calls, even if there is not enough txs to satisfy the limit", async () => {
-    mockGetTransactions.mockResolvedValueOnce(mockNetworkTxs([otherTx, otherTx, otherTx, otherTx]));
-    mockGetTransactions.mockResolvedValueOnce(mockNetworkTxs([paymentTx, paymentTx]));
-    mockGetTransactions.mockResolvedValue([]); // subsequent calls
+    mockNetworkGetTransactions.mockResolvedValueOnce(
+      mockNetworkTxs([otherTx, otherTx, otherTx, otherTx]),
+    );
+    mockNetworkGetTransactions.mockResolvedValueOnce(mockNetworkTxs([paymentTx, paymentTx]));
+    mockNetworkGetTransactions.mockResolvedValue([]); // subsequent calls
 
     const [results, token] = await listOperations("any address", { minHeight: 0, limit: 4 });
 
     expect(mockGetServerInfos).toHaveBeenCalledTimes(1);
     // it's called 2 times because the second call is a shortage of txs
-    expect(mockGetTransactions).toHaveBeenCalledTimes(2);
+    expect(mockNetworkGetTransactions).toHaveBeenCalledTimes(2);
     expect(results.length).toEqual(2);
     expect(JSON.parse(token)).toEqual(someMarker);
   });
@@ -143,7 +145,7 @@ describe("listOperations", () => {
       // Given
       const deliveredAmount = 100;
       const fee = 10;
-      mockGetTransactions.mockResolvedValue(
+      mockNetworkGetTransactions.mockResolvedValue(
         mockNetworkTxs([
           {
             ledger_hash: "HASH_VALUE_BLOCK",
@@ -203,11 +205,11 @@ describe("listOperations", () => {
       );
 
       // When
-      const [results, _] = await listOperations(address, { minHeight: 0 });
+      const [results, _] = await listOperations(address, { minHeight: 0, order: "asc" });
 
       // Then
       expect(mockGetServerInfos).toHaveBeenCalledTimes(1);
-      expect(mockGetTransactions).toHaveBeenCalledTimes(1);
+      expect(mockNetworkGetTransactions).toHaveBeenCalledTimes(1);
       // if expectedType is "OUT", compute value with fees (i.e. delivered_amount + Fee)
       const expectedValue =
         expectedType === "IN" ? BigInt(deliveredAmount) : BigInt(deliveredAmount + fee);
@@ -226,6 +228,14 @@ describe("listOperations", () => {
           recipients: [opDestination],
           date: new Date(1000000 + RIPPLE_EPOCH * 1000),
           transactionSequenceNumber: 1,
+          details: {
+            memos: [
+              {
+                type: "687474703a2f2f6578616d706c652e636f6d2f6d656d6f2f67656e65726963",
+                data: "72656e74",
+              },
+            ],
+          },
         },
         {
           hash: "HASH_VALUE",
@@ -259,14 +269,6 @@ describe("listOperations", () => {
           recipients: [opDestination],
           date: new Date(1000000 + RIPPLE_EPOCH * 1000),
           transactionSequenceNumber: 1,
-          details: {
-            memos: [
-              {
-                type: "687474703a2f2f6578616d706c652e636f6d2f6d656d6f2f67656e65726963",
-                data: "72656e74",
-              },
-            ],
-          },
         },
       ]);
     },

@@ -35,8 +35,8 @@ describe("listOperations", () => {
   }
 
   function givenTxs(
-    fee: number,
-    deliveredAmount: number,
+    fee: bigint,
+    deliveredAmount: bigint,
     opSender: string,
     opDestination: string,
   ): unknown[] {
@@ -99,7 +99,7 @@ describe("listOperations", () => {
   }
 
   it("should kill the loop after 10 iterations", async () => {
-    const txs = givenTxs(10, 10, "src", "dest");
+    const txs = givenTxs(BigInt(10), BigInt(10), "src", "dest");
     // each time it's called it returns a marker, so in theory it would loop forever
     mockGetTransactions.mockResolvedValue(mockNetworkTxs(txs, defaultMarker));
     const [results, _] = await api.listOperations("src", { minHeight: 0 });
@@ -126,11 +126,11 @@ describe("listOperations", () => {
       expectedType: "OUT",
     },
   ])(
-    "should return the list of operations associated to an account",
+    `should return the list of operations associated to an account when expected type is %s`,
     async ({ address, opSender, opDestination, expectedType }) => {
       // Givem
-      const deliveredAmount = 100;
-      const fee = 10;
+      const deliveredAmount = BigInt(100);
+      const fee = BigInt(10);
       mockGetTransactions.mockResolvedValueOnce(
         mockNetworkTxs(givenTxs(fee, deliveredAmount, opSender, opDestination), defaultMarker),
       );
@@ -147,15 +147,15 @@ describe("listOperations", () => {
       expect(mockGetTransactions).toHaveBeenCalledTimes(2);
 
       // if expectedType is "OUT", compute value with fees (i.e. delivered_amount + Fee)
-      const expectedValue =
-        expectedType === "IN" ? BigInt(deliveredAmount) : BigInt(deliveredAmount + fee);
+      const expectedValue = expectedType === "IN" ? deliveredAmount : deliveredAmount + fee;
+      // the order is reversed so that the result is always sorted by newest tx first element of the list
       expect(results).toEqual([
         {
           hash: "HASH_VALUE",
           address,
           type: "Payment",
           value: expectedValue,
-          fee: BigInt(10),
+          fee: fee,
           block: {
             hash: "HASH_VALUE_BLOCK",
             height: 1,
@@ -165,13 +165,21 @@ describe("listOperations", () => {
           recipients: [opDestination],
           date: new Date(1000000 + RIPPLE_EPOCH * 1000),
           transactionSequenceNumber: 1,
+          details: {
+            memos: [
+              {
+                type: "687474703a2f2f6578616d706c652e636f6d2f6d656d6f2f67656e65726963",
+                data: "72656e74",
+              },
+            ],
+          },
         },
         {
           hash: "HASH_VALUE",
           address,
           type: "Payment",
           value: expectedValue,
-          fee: BigInt(10),
+          fee: fee,
           block: {
             hash: "HASH_VALUE_BLOCK",
             height: 1,
@@ -190,7 +198,7 @@ describe("listOperations", () => {
           address,
           type: "Payment",
           value: expectedValue,
-          fee: BigInt(10),
+          fee: fee,
           block: {
             hash: "HASH_VALUE_BLOCK",
             height: 1,
@@ -200,14 +208,6 @@ describe("listOperations", () => {
           recipients: [opDestination],
           date: new Date(1000000 + RIPPLE_EPOCH * 1000),
           transactionSequenceNumber: 1,
-          details: {
-            memos: [
-              {
-                type: "687474703a2f2f6578616d706c652e636f6d2f6d656d6f2f67656e65726963",
-                data: "72656e74",
-              },
-            ],
-          },
         },
       ]);
     },
