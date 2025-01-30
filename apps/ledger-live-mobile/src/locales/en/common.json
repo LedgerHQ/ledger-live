@@ -1119,6 +1119,11 @@
       "fast": "fast",
       "custom": "Custom",
       "blockCount": "{{blockCount}} blocks"
+    },
+    "estimatedTime": {
+      "slow": "≈ 2-3 min",
+      "medium": "≈ 30 sec",
+      "fast": "≈ 15 sec"
     }
   },
   "signout": {

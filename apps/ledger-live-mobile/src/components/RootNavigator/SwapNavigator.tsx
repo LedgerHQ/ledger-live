@@ -2,13 +2,13 @@ import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { Flex, Icons, Text } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/core";
 import { createStackNavigator } from "@react-navigation/stack";
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import SwapHistory from "~/screens/Swap/History";
 import Touchable from "../Touchable";
 
 import { useTheme } from "styled-components/native";
-import { track } from "~/analytics";
+import { useTrack } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
 import { useNoNanoBuyNanoWallScreenOptions } from "~/context/NoNanoBuyNanoWall";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
@@ -21,12 +21,25 @@ import {
   SelectProvider,
 } from "~/screens/Swap/index";
 import { SwapLiveApp } from "~/screens/Swap/LiveApp";
+import { SWAP_VERSION } from "~/screens/Swap/utils";
 import StepHeader from "../StepHeader";
 import SwapFormNavigator from "./SwapFormNavigator";
 import { BaseNavigatorStackParamList } from "./types/BaseNavigator";
 import { StackNavigatorNavigation, StackNavigatorProps } from "./types/helpers";
 import { SwapFormNavigatorParamList } from "./types/SwapFormNavigator";
 import { SwapNavigatorParamList } from "./types/SwapNavigator";
+
+// Constants for tracking sources
+const TRACKING_SOURCES = {
+  Accounts: "Account",
+  Main: "Portfolio",
+  MarketDetail: "Assets",
+};
+
+// Helper function to determine tracking source based on route name
+const getTrackingSource = (routeName: string) => {
+  return Object.entries(TRACKING_SOURCES).find(([key]) => routeName.startsWith(key))?.[1];
+};
 
 const Stack = createStackNavigator<SwapNavigatorParamList>();
 
@@ -38,17 +51,50 @@ export default function SwapNavigator(
   const { colors } = useTheme();
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
   const noNanoBuyNanoWallScreenOptions = useNoNanoBuyNanoWallScreenOptions();
-
+  const track = useTrack();
   const navigation = useNavigation<StackNavigatorNavigation<SwapFormNavigatorParamList>>();
 
   const goToSwapHistory = useCallback(() => {
     track("button_clicked", {
       button: "SwapHistory",
       page: ScreenName.SwapTab,
+      swapVersion: SWAP_VERSION,
     });
 
     navigation.navigate(ScreenName.SwapHistory);
-  }, [navigation]);
+  }, [navigation, track]);
+
+  // Helper function to track button click
+  const trackButtonClick = useCallback(
+    (source: string) => {
+      track("button_clicked", {
+        button: "swap",
+        source,
+        flow: "swap",
+        swapVersion: SWAP_VERSION,
+      });
+    },
+    [track],
+  );
+
+  useEffect(() => {
+    const parentNavigator = navigation.getParent();
+    const navigationState = parentNavigator?.getState();
+
+    if (!navigationState?.index || navigationState.index <= 0) {
+      return;
+    }
+
+    const previousRoute = navigationState.routes[navigationState.index - 1];
+    if (!previousRoute?.name) {
+      return;
+    }
+
+    const source = getTrackingSource(previousRoute.name);
+    if (source) {
+      trackButtonClick(source);
+    }
+  }, [trackButtonClick, navigation]);
 
   const ptxSwapLiveAppMobile = useFeature("ptxSwapLiveAppMobile");
 
