@@ -200,7 +200,8 @@
       "STAKE" : "В стейкинге",
       "UNSTAKE" : "Выведено из стейкинга",
       "WITHDRAW_UNSTAKED" : "Вывод",
-      "SENDING" : "Отправка"
+      "SENDING" : "Отправка",
+      "BURN" : "Сожжено"
     },
     "edit" : {
       "title" : "Ускорение или отмена",
@@ -759,6 +760,22 @@
         "description3" : "Эта интеграция проведена {{team}} в сотрудничестве с Ledger.",
         "description3Link" : "Эта интеграция проведена <1><0>{{team}}</0></1> в сотрудничестве с Ledger."
       }
+    },
+    "featureUnavailable" : {
+      "title" : "В данный момент недоступна эта функция: {{feature}}. Обратитесь в {{support}} за подробностями.",
+      "feature" : {
+        "history" : "История",
+        "swap" : "Обменять",
+        "token_history" : "История токенов",
+        "send_and_receive" : "Отправка и получение",
+        "send" : "Отправить",
+        "receive" : "Получить",
+        "sending_tokens" : "Отправка токенов",
+        "receiving_tokens" : "Получение токенов",
+        "staking" : "Стейкинг",
+        "claiming_staking_rewards" : "Запрос вознаграждения за стейкинг"
+      },
+      "support" : "Поддержку"
     },
     "willBeDeprecatedBanner" : {
       "title" : "{{currencyName}} не будет поддерживаться в Ledger Live с {{deprecatedDate}} для оптимизации работы. При этом устройства Ledger по-прежнему смогут взаимодействовать с этим криптоактивом. Обратитесь в Поддержку Ledger, если понадобится помощь по данному вопросу.",
@@ -3726,6 +3743,10 @@
           }
         }
       }
+    },
+    "token" : {
+      "frozenStateWarning" : "Активы на счету заморожены",
+      "transferWarning" : "<0>Используйте это руководство</0>, чтобы подтвердить адрес получения токенов Solana с помощью Ledger Nano S™."
     }
   },
   "ethereum" : {
@@ -3766,7 +3787,7 @@
       "category" : {
         "all" : {
           "name" : "Все",
-          "description" : "Все операторы стейкинга Эфириума доступны в Ledger Live."
+          "description" : "Все операторы стейкинга Эфириума, доступные в Ledger Live."
         },
         "liquid" : {
           "name" : "Ликвидный",
@@ -6180,6 +6201,27 @@
     },
     "SolanaAccountNotFunded" : {
       "title" : "Счёт не пополнен"
+    },
+    "SolanaTokenAccountHoldsAnotherToken" : {
+      "title" : "На связанном с этим токеном счёте есть другой токен"
+    },
+    "SolanaTokenAccountWarning" : {
+      "title" : "Это не адрес кошелька, а адрес токена, связанного с кошельком. Продолжайте только в том случае, если понимаете суть происходящего."
+    },
+    "SolanaTokenAccountNotAllowed" : {
+      "title" : "Это счёт токена. Введите обычный адрес кошелька."
+    },
+    "SolanaMintAccountNotAllowed" : {
+      "title" : "Это адрес токена. Введите обычный адрес кошелька."
+    },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "Счёт будет пополнен"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "Токены на счету заморожены"
+    },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "Счёт не был использован"
     },
     "SolanaMemoIsTooLong" : {
       "title" : "Слишком длинное Memo. Макс. длина {{maxLength}}"
