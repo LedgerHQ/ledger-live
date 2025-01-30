@@ -200,7 +200,8 @@
       "STAKE" : "En participación",
       "UNSTAKE" : "Fuera de participación",
       "WITHDRAW_UNSTAKED" : "Retirado",
-      "SENDING" : "Enviando"
+      "SENDING" : "Enviando",
+      "BURN" : "Quemado"
     },
     "edit" : {
       "title" : "Acelerar o cancelar",
@@ -759,6 +760,22 @@
         "description3" : "Esta integración ha sido llevada adelante por {{team}} en colaboración con Ledger",
         "description3Link" : "Esta integración la ha realizado <1><0>{{team}}</0></1> en colaboración con Ledger"
       }
+    },
+    "featureUnavailable" : {
+      "title" : "La siguiente opción está temporalmente deshabilitada: {{feature}}. Si quieres obtener más información, contacta con {{support}}.",
+      "feature" : {
+        "history" : "Historial",
+        "swap" : "Permutar",
+        "token_history" : "Historial de tokens",
+        "send_and_receive" : "Enviar y recibir",
+        "send" : "Enviar",
+        "receive" : "Recibir",
+        "sending_tokens" : "Enviar tokens",
+        "receiving_tokens" : "Recibir tokens",
+        "staking" : "Puesta en participación",
+        "claiming_staking_rewards" : "Reclamar recompensas por participación"
+      },
+      "support" : "el servicio de soporte"
     },
     "willBeDeprecatedBanner" : {
       "title" : "Por razones de optimización de eficiencia, {{currencyName}} dejará de ser compatible con Ledger Live el {{deprecatedDate}}. No obstante, seguirá siendo compatible con las billeteras de hardware de Ledger. Ponte en contacto con el servicio de soporte al cliente de Ledger si necesitas ayuda con esto.",
@@ -1499,21 +1516,21 @@
     },
     "recoverBanner" : {
       "subscribeDone" : {
-        "title" : "Termina de agregar tu tarjeta de pago",
-        "description" : "Restauración fiable con Ledger Recover.",
+        "title" : "Reminder: Finish subscribing to Ledger Recover",
+        "description" : "You're just two steps away from being secured.",
         "primaryCta" : "Agregar tarjeta",
         "secondaryCta" : "Quizás más tarde"
       },
       "verifyIdentity" : {
-        "title" : "Termina de verificar tu identidad",
-        "description" : "Restauración fiable con Ledger Recover.",
-        "primaryCta" : "Verificar",
+        "title" : "Reminder: Finish subscribing to Ledger Recover",
+        "description" : "You're just one step away from being secured.",
+        "primaryCta" : "Verify identity",
         "secondaryCta" : "Quizás más tarde"
       },
       "connectDevice" : {
-        "title" : "Conecta tu Ledger",
-        "description" : "Solo te queda un paso para disfrutar de Ledger Recover.",
-        "primaryCta" : "Conectar",
+        "title" : "Reminder: Finish subscribing to Ledger Recover",
+        "description" : "It's your final step to ensure wallet access recovery.",
+        "primaryCta" : "Connect device",
         "secondaryCta" : "Quizás más tarde"
       }
     },
@@ -3726,6 +3743,10 @@
           }
         }
       }
+    },
+    "token" : {
+      "frozenStateWarning" : "Los activos de la cuenta están inmovilizados.",
+      "transferWarning" : "Para verificar la dirección del receptor de los tokens de Solana con un Ledger Nano S™, <0>sigue estas instrucciones</0>."
     }
   },
   "ethereum" : {
@@ -6181,6 +6202,27 @@
     "SolanaAccountNotFunded" : {
       "title" : "Cuenta sin fondos"
     },
+    "SolanaTokenAccountHoldsAnotherToken" : {
+      "title" : "Esta cuenta de token asociada contiene otro token."
+    },
+    "SolanaTokenAccountWarning" : {
+      "title" : "Esta no es una dirección de billetera normal, sino una cuenta de token asociada. Continúa sólo si sabes lo que estás haciendo."
+    },
+    "SolanaTokenAccountNotAllowed" : {
+      "title" : "Esta es una cuenta de token. Especifica una dirección de billetera normal."
+    },
+    "SolanaMintAccountNotAllowed" : {
+      "title" : "Esta es una dirección de token. Especifica una dirección de billetera normal."
+    },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "Se agregarán fondos a la cuenta"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "Los activos de la cuenta de tokens están inmovilizados"
+    },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "Cuenta no inicializada"
+    },
     "SolanaMemoIsTooLong" : {
       "title" : "El Memo es demasiado largo. La longitud máxima es {{maxLength}}"
     },
@@ -6709,17 +6751,19 @@
         "mobile" : {
           "description" : "Sincronizar con la aplicación Ledger Live en otro teléfono",
           "steps" : {
-            "step1" : "Abre la aplicación Ledger Live que quieras sincronizar",
-            "step2" : "Ingresa a <0>Ajustes</0> > <0>General</0> > <0>Ledger Sync</0> > <0>Activar sincronización</0> > <0>Mostrar QR</0>",
-            "step3" : "Escanear código QR"
+            "step1" : "Make sure Ledger Sync is activated on one of your apps.",
+            "step2" : "Open the Ledger Live app you want to sync.",
+            "step3" : "Go to <0>Settings</0> > <0>General</0> > <0>Ledger Sync</0> > <0>I already turned it on</0> > <0>Show QR</0>",
+            "step4" : "Scan QR code."
           }
         },
         "desktop" : {
           "description" : "Sincroniza tus cuentas con otra aplicación Ledger Live",
           "steps" : {
-            "step1" : "Abre la aplicación Ledger Live que quieras sincronizar",
-            "step2" : "Ingresa a <0>Ajustes</0> > <0>General</0> > <0>Ledger Sync</0> > <0>Activar sincronización</0> > <0>Usa tu Ledger/0>",
-            "step3" : "Conecta tu Ledger"
+            "step1" : "Make sure Ledger Sync is activated on one of your apps.",
+            "step2" : "Open the Ledger Live app you want to sync.",
+            "step3" : "Go to <0>Settings</0> > <0>General</0> > <0>Ledger Sync</0> > <0>I already turned it on</0> > <0>Use your Ledger</0>",
+            "step4" : "Connect your Ledger."
           }
         }
       },
