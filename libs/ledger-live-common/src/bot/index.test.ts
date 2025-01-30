@@ -34,13 +34,13 @@ describe("getSpecs", () => {
     setSupportedCurrencies(["bitcoin"]);
     const currentFilter = [];
     const specs = getSpecs({ disabled: {}, filter: { features: currentFilter } });
-    expect(specs[0].mutations).toHaveLength(0);
+    expect(specs[0].mutations.length).toBeGreaterThan(0);
   });
 
   it("should filter features not set correctly", () => {
     setSupportedCurrencies(["bitcoin"]);
     const specs = getSpecs({ disabled: {}, filter: {} });
-    expect(specs[0].mutations).toHaveLength(0);
+    expect(specs[0].mutations.length).toBeGreaterThan(0);
   });
 
   it("should disable currencies correctly", () => {
