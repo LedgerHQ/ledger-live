@@ -120,6 +120,7 @@
     "addressCopiedSuspicious" : "Incompatibilidade entre o endereço copiado e o que está na área de transferência.",
     "experimentalFeature" : "Experimental",
     "featureFlags" : "Marcadores de funções",
+    "ldmkEnabled" : "Transporte LDMK",
     "information" : "Informações",
     "search" : "Pesquisar...",
     "searchWithoutEllipsis" : "Pesquisar",
@@ -200,7 +201,8 @@
       "STAKE" : "Aplicado",
       "UNSTAKE" : "Desaplicado",
       "WITHDRAW_UNSTAKED" : "Sacado",
-      "SENDING" : "Enviando"
+      "SENDING" : "Enviando",
+      "BURN" : "Queimado"
     },
     "edit" : {
       "title" : "Acelerar ou Cancelar",
@@ -760,6 +762,22 @@
         "description3Link" : "Esta integração foi realizada por <1><0>{{team}}</0></1> em colaboração com a Ledger"
       }
     },
+    "featureUnavailable" : {
+      "title" : "O seguinte recurso está momentaneamente indisponível: {{feature}}. Para saber mais, consulte o {{support}}",
+      "feature" : {
+        "history" : "Histórico",
+        "swap" : "Trocar",
+        "token_history" : "Histórico de token",
+        "send_and_receive" : "Enviar e receber",
+        "send" : "Enviar",
+        "receive" : "Receber",
+        "sending_tokens" : "Enviando tokens",
+        "receiving_tokens" : "Recebendo tokens",
+        "staking" : "Staking",
+        "claiming_staking_rewards" : "Resgatando recompensas de staking"
+      },
+      "support" : "suporte"
+    },
     "willBeDeprecatedBanner" : {
       "title" : "Para otimizar a eficiência, {{currencyName}} não será mais compatível com o Ledger Live a partir de {{deprecatedDate}}. No entanto, este ativo ainda será compatível com as carteiras hardware Ledger. Fale com o Suporte ao Cliente Ledger para obter ajuda com isso.",
       "contactSupport" : "Falar com o suporte"
@@ -796,7 +814,7 @@
     "stake" : "Aplicar",
     "delegatedAssets" : "Ativos Delegados",
     "undelegating" : "Removendo de delegação",
-    "availableBalanceTooltip" : "Esta quantia é descartável.",
+    "availableBalanceTooltip" : "Esta é a quantia que você usar.",
     "frozenAssetsTooltip" : "Ativos congelados são usados no processo de votação da Tron. Isso representa seu número total de votos.",
     "bandwidthTooltip" : "Congele ativos para ganhar Largura de Banda",
     "energyTooltip" : "Congele ativos para ganhar Energia",
@@ -1499,21 +1517,21 @@
     },
     "recoverBanner" : {
       "subscribeDone" : {
-        "title" : "Termine de adicionar seu cartão para pagamento",
-        "description" : "Use o Ledger Recover para restaurar de forma confiável",
+        "title" : "Reminder: Finish subscribing to Ledger Recover",
+        "description" : "You're just two steps away from being secured.",
         "primaryCta" : "Adicionar cartão",
         "secondaryCta" : "Talvez mais tarde"
       },
       "verifyIdentity" : {
-        "title" : "Termine de verificar sua identidade",
-        "description" : "Use o Ledger Recover para restaurar de forma confiável",
-        "primaryCta" : "Verificar",
+        "title" : "Reminder: Finish subscribing to Ledger Recover",
+        "description" : "You're just one step away from being secured.",
+        "primaryCta" : "Verify identity",
         "secondaryCta" : "Talvez mais tarde"
       },
       "connectDevice" : {
-        "title" : "Conectar sua Ledger",
-        "description" : "Você está a um passo do Ledger Recover.",
-        "primaryCta" : "Conectar",
+        "title" : "Reminder: Finish subscribing to Ledger Recover",
+        "description" : "It's your final step to ensure wallet access recovery.",
+        "primaryCta" : "Connect device",
         "secondaryCta" : "Talvez mais tarde"
       }
     },
@@ -3726,6 +3744,10 @@
           }
         }
       }
+    },
+    "token" : {
+      "frozenStateWarning" : "Os ativos da conta estão congelados!",
+      "transferWarning" : "Para verificar o endereço do destinatário para tokens Solana usando uma Ledger Nano S™, <0>siga essas instruções.</0>"
     }
   },
   "ethereum" : {
@@ -3766,7 +3788,7 @@
       "category" : {
         "all" : {
           "name" : "Todos",
-          "description" : "Todos os provedores de staking na Ethereum disponíveis pelo Ledger Live."
+          "description" : "Todos os provedores de staking Ethereum disponíveis pelo Ledger Live."
         },
         "liquid" : {
           "name" : "Liquid",
@@ -6181,6 +6203,27 @@
     "SolanaAccountNotFunded" : {
       "title" : "Conta sem saldo"
     },
+    "SolanaTokenAccountHoldsAnotherToken" : {
+      "title" : "Essa conta de token associada detém outro token"
+    },
+    "SolanaTokenAccountWarning" : {
+      "title" : "Esse não é um endereço de carteira normal, mas uma conta de token associada. Continue apenas se você sabe o que está fazendo"
+    },
+    "SolanaTokenAccountNotAllowed" : {
+      "title" : "Essa é uma conta de token. Insira um endereço de carteira normal"
+    },
+    "SolanaMintAccountNotAllowed" : {
+      "title" : "Esse é um endereço de token. Insira um endereço de carteira normal"
+    },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "A conta será financiada"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "Os ativos da conta de token estão congelados"
+    },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "Conta não inicializada"
+    },
     "SolanaMemoIsTooLong" : {
       "title" : "O memo é muito longo. O comprimento máximo é {{maxLength}}"
     },
@@ -6709,17 +6752,19 @@
         "mobile" : {
           "description" : "Sincronize o aplicativo Ledger Live em outro telefone",
           "steps" : {
-            "step1" : "Abra o aplicativo Ledger Live que você deseja sincronizar",
-            "step2" : "Vá para <0>Configurações</0> > <0>Geral</0> > <0>Ledger Sync</0> > <0>Ativar sincronização</0> > <0>Mostrar QR</0>",
-            "step3" : "Escanear QR Code"
+            "step1" : "Make sure Ledger Sync is activated on one of your apps.",
+            "step2" : "Open the Ledger Live app you want to sync.",
+            "step3" : "Go to <0>Settings</0> > <0>General</0> > <0>Ledger Sync</0> > <0>I already turned it on</0> > <0>Show QR</0>",
+            "step4" : "Scan QR code."
           }
         },
         "desktop" : {
           "description" : "Sincronize suas contas com outro aplicativo Ledger Live",
           "steps" : {
-            "step1" : "Abra o aplicativo Ledger Live que você deseja sincronizar",
-            "step2" : "Vá para <0>Configurações</0> > <0>Geral</0> > <0>Ledger Sync</0> > <0>Ativar sincronização</0> > <0>Usar sua Ledger/0>",
-            "step3" : "Conectar sua Ledger"
+            "step1" : "Make sure Ledger Sync is activated on one of your apps.",
+            "step2" : "Open the Ledger Live app you want to sync.",
+            "step3" : "Go to <0>Settings</0> > <0>General</0> > <0>Ledger Sync</0> > <0>I already turned it on</0> > <0>Use your Ledger</0>",
+            "step4" : "Connect your Ledger."
           }
         }
       },
