@@ -99,7 +99,8 @@
       "id" : "ID {{ value }}",
       "times" : "x{{ value }}"
     },
-    "quote" : "Cotação"
+    "quote" : "Cotação",
+    "tryAgain" : "Tente novamente"
   },
   "errors" : {
     "ReplacementTransactionUnderpriced" : {
@@ -789,6 +790,24 @@
     },
     "SolanaAccountNotFunded" : {
       "title" : "Conta sem saldo"
+    },
+    "SolanaTokenAccountHoldsAnotherToken" : {
+      "title" : "Essa conta de token associada detém outro token"
+    },
+    "SolanaTokenAccountWarning" : {
+      "title" : "Esse não é um endereço de carteira normal, mas uma conta de token associada. Continue apenas se você sabe o que está fazendo"
+    },
+    "SolanaTokenAccountNotAllowed" : {
+      "title" : "Essa é uma conta de token. Insira um endereço de carteira normal"
+    },
+    "SolanaMintAccountNotAllowed" : {
+      "title" : "Esse é um endereço de token. Insira um endereço de carteira normal"
+    },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "A conta será financiada"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "Os ativos da conta de token estão congelados"
     },
     "SolanaAddressOfEd25519" : {
       "title" : "Endereço fora da curva ed25519"
@@ -2374,16 +2393,16 @@
     },
     "recoverBanner" : {
       "subscribeDone" : {
-        "title" : "Termine de adicionar seu cartão para pagamento",
-        "description" : "Use o Ledger Recover para restaurar de forma confiável"
+        "title" : "Reminder: Finish subscribing to Ledger Recover",
+        "description" : "You're just two steps away from being secured."
       },
       "verifyIdentity" : {
-        "title" : "Termine de verificar sua identidade",
-        "description" : "Use o Ledger Recover para restaurar de forma confiável"
+        "title" : "Reminder: Finish subscribing to Ledger Recover",
+        "description" : "You're just one step away from being secured."
       },
       "connectDevice" : {
-        "title" : "Último passo: Conecte sua Ledger",
-        "description" : "Você está a um passo do Ledger Recover."
+        "title" : "Reminder: Finish subscribing to Ledger Recover",
+        "description" : "It's your final step to ensure wallet access recovery."
       }
     }
   },
@@ -3103,7 +3122,7 @@
       "title" : "Desenvolvedor",
       "desc" : "Ative os recursos para desenvolvedores e nos conte o que achou.",
       "customManifest" : {
-        "title" : "Carregar o Manifesto da Plataforma Personalizada"
+        "title" : "Manifesto de Carga"
       },
       "exchangeDeveloperMode" : {
         "title" : "Exchange em Modo Desenvolvedor",
@@ -3992,7 +4011,11 @@
     },
     "quitConfirmation" : {
       "title" : "Cancelar adição de conta",
-      "desc" : "Você tem certeza de que quer cancelar a adição de contas?"
+      "desc" : "Você tem certeza de que quer cancelar a adição de contas?",
+      "v2" : {
+        "title" : "Cancelar adição de conta?",
+        "desc" : "Nenhuma conta será adicionada ao Ledger Live."
+      }
     },
     "imported" : "Ativos adicionados com sucesso",
     "added" : "Conta adicionada ao seu portfólio",
@@ -4068,18 +4091,29 @@
           "title" : "Nova conta"
         },
         "imported" : {
-          "title" : "Conta já no portfólio ({{length}})",
-          "title_plural" : "Contas já no Portfólio ({{length}})"
+          "title" : "Conta já no portfólio ({{count}})",
+          "title_plural" : "Contas já no Portfólio ({{count}})"
         },
         "migrate" : {
           "title" : "Contas a atualizar"
         }
-      }
+      },
+      "retryScanning" : "Tentar novamente"
     },
     "addAccountsSuccess" : {
       "ctaAddFunds" : "Adicionar fundos à minha conta",
       "ctaClose" : "Fechar"
-    }
+    },
+    "addAccountsWarning" : {
+      "cantCreateAccount" : {
+        "title" : "Não é possível adicionar uma nova conta",
+        "body" : "Não é possível adicionar uma nova conta antes de receber ativos em sua conta {{accountName}}."
+      },
+      "noAccountToCreate" : {
+        "title" : "Não foi possível adicionar a nova conta {{currency}}"
+      }
+    },
+    "chooseAccountToFund" : "Escolha uma conta para adicionar fundos"
   },
   "DeviceAction" : {
     "stayInTheAppPlz" : "Fique no aplicativo Ledger Live e mantenha a Ledger por perto.",
@@ -4826,7 +4860,7 @@
     "info" : {
       "available" : {
         "title" : "CELO disponível",
-        "description" : "Esta quantia é descartável."
+        "description" : "Esta é a quantia que você usar."
       },
       "lockedBalance" : {
         "title" : "Saldo Bloqueado",
@@ -5103,7 +5137,7 @@
     "info" : {
       "available" : {
         "title" : "{{currencyTicker}} disponível",
-        "description" : "Esta quantia é descartável."
+        "description" : "Esta é a quantia que você usar."
       },
       "delegated" : {
         "title" : "Ativos Delegados",
@@ -5599,7 +5633,7 @@
     "info" : {
       "available" : {
         "title" : "TRX disponível",
-        "description" : "Esta quantia é descartável."
+        "description" : "Esta é a quantia que você usar."
       },
       "frozen" : {
         "title" : "Congelado",
@@ -5966,13 +6000,17 @@
         "description" : "Você pode receber recompensas delegando seus ativos SOL a um validador."
       },
       "reserveWarning" : "Reserve sempre {{amount}} SOL em sua carteira para cobrir futuras taxas de rede na hora de retirar suas moedas do staking"
+    },
+    "token" : {
+      "frozenStateWarning" : "Os ativos da conta estão congelados!",
+      "transferWarning" : "Para verificar o endereço do destinatário para tokens Solana usando uma Ledger Nano S™, <0>siga essas instruções.</0>"
     }
   },
   "near" : {
     "info" : {
       "available" : {
         "title" : "NEAR disponível",
-        "description" : "Esta quantia é descartável."
+        "description" : "Esta é a quantia que você usar."
       },
       "storageUsage" : {
         "title" : "Saldo mínimo",
@@ -6554,7 +6592,9 @@
     "name" : "hedera",
     "createHederaAccountHelp" : {
       "text" : "Consulte este artigo de suporte sobre",
-      "link" : "como criar uma conta Hedera"
+      "link" : "Como criar uma conta Hedera?",
+      "title" : "Não é possível criar uma nova conta Hedera",
+      "description" : "No ecossistema Hedera, apenas um pequeno número de serviços pode criar novas contas. Embora a Ledger não ofereça atualmente esse serviço de introdução, há alternativas disponíveis. Você poderá adicionar sua conta Hedera no Ledger Live depois que ela for criada."
     },
     "currentAddress" : {
       "messageIfVirtual" : "Seu endereço {{name}} não pode ser confirmado no seu dispositivo Ledger. Use por sua própria conta e risco."
@@ -6767,7 +6807,7 @@
       "category" : {
         "all" : {
           "name" : "Todos",
-          "description" : "Todos os provedores de staking na Ethereum disponíveis pelo Ledger Live."
+          "description" : "Todos os provedores de staking Ethereum disponíveis pelo Ledger Live."
         },
         "liquid" : {
           "name" : "Liquid",
@@ -7043,9 +7083,10 @@
           "explanation" : {
             "title" : "Escanear e sincronizar suas contas com outro aplicativo Ledger Live",
             "steps" : {
-              "step1" : "Abra o aplicativo Ledger Live que você deseja sincronizar",
-              "step2" : "Vá para <0>Configurações</0> <1>></1> <0>Geral</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Ativar o Ledger Sync</0> <1>></1> <0>Escanear QR Code</0>",
-              "step3" : "Escanear QR Code"
+              "step1" : "Make sure Ledger Sync is activated on one of your apps.",
+              "step2" : "Open the Ledger Live app you want to sync.",
+              "step3" : "Go to <0>Settings</0> <1>></1> <0>General</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>I already turned it on</0> <1>></1> <0>Scan QR code</0>",
+              "step4" : "Scan QR code."
             }
           }
         },
@@ -7055,9 +7096,10 @@
           "explanation" : {
             "title" : "Para sincronizar o Ledger Live em outro telefone ou computador...",
             "steps" : {
-              "step1" : "Abra o Ledger Live que você quer sincronizar.",
-              "step2" : "Vá para <0>Configurações</0> <1>></1> <0>Geral</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Ativar o Ledger Sync</0> <1>></1> <0>Mostrar QR</0>",
-              "step3" : "Escanear QR Code"
+              "step1" : "Make sure Ledger Sync is activated on one of your apps.",
+              "step2" : "Open the Ledger Live you want to sync with.",
+              "step3" : "Go to <0>Settings</0> <1>></1> <0>General</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>I already turned it on</0> <1>></1> <0>Show QR</0>",
+              "step4" : "Scan QR code."
             }
           }
         },
