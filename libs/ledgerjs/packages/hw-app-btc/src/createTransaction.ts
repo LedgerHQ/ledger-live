@@ -126,10 +126,12 @@ export async function createTransaction(
   // Inputs are provided as arrays of [transaction, output_index, optional redeem script, optional sequence]
   // associatedKeysets are provided as arrays of [path]
   const lockTimeBuffer = Buffer.alloc(4);
+  console.log({ lockTime, lockTimeMinus: lockTime - 1000 });
   lockTimeBuffer.writeUInt32LE(lockTime, 0);
   const nullScript = Buffer.alloc(0);
   const nullPrevout = Buffer.alloc(0);
   const defaultVersion = Buffer.alloc(4);
+  // NOTE: version 6 here is not a mistake, it is the default version for zcash nu5, nu6
   !!expiryHeight && !isDecred
     ? defaultVersion.writeUInt32LE(isZcash ? 0x80000005 : sapling ? 0x80000004 : 0x80000003, 0) // v5 format for zcash refer to https://zips.z.cash/zip-0225
     : defaultVersion.writeUInt32LE(1, 0);
@@ -150,21 +152,55 @@ export async function createTransaction(
   const outputScript = Buffer.from(outputScriptHex, "hex");
   notify(0, 0);
   // first pass on inputs to get trusted inputs
+  console.log("before loop over inputs in createTransaction");
+  onDeviceSignatureRequested();
+
   for (const input of inputs) {
     if (!resuming) {
+      console.log({ input });
+      debugger;
+
+      if (
+        input[0] &&
+        input[0].locktime &&
+        input[0].locktime.every(e => e === 0) &&
+        input.length > 4 && // input[4] (locktime) is set
+        typeof input[4] === "number"
+      ) {
+        debugger;
+        console.log({ forcingLocktime: input[4] });
+        if (input[4] >= 2726400) {
+          console.log("Locktime = nu6");
+          // input[0].locktime.writeUint32BE(input[4]);
+          // sequence.write
+        }
+        // input[0].locktime.writeUint32BE(input[4]);
+      }
+      debugger;
       const trustedInput = await getTrustedInputCall(transport, input[1], input[0], additionals);
+      console.log({ trustedInput });
       log("hw", "got trustedInput=" + trustedInput);
       const sequence = Buffer.alloc(4);
+      // if (typeof input[4] === "number" && input[4] >= 2726400) {
+      //   debugger;
+      // sequence.writeUInt32LE(
+      //   input[4],
+      //   0,
+      // );
+      // } else {
+        debugger;
       sequence.writeUInt32LE(
         input.length >= 4 && typeof input[3] === "number" ? input[3] : DEFAULT_SEQUENCE,
         0,
       );
+      // }
       trustedInputs.push({
         trustedInput: true,
         value: Buffer.from(trustedInput, "hex"),
         sequence,
       });
     }
+    console.log({ trustedInputs });
 
     const { outputs } = input[0];
     const index = input[1];
@@ -174,15 +210,35 @@ export async function createTransaction(
     }
 
     if (expiryHeight && !isDecred) {
-      targetTransaction.nVersionGroupId = Buffer.from(
-        // nVersionGroupId is 0x26A7270A for zcash NU5 upgrade
-        // refer to https://github.com/zcash/zcash/blob/master/src/primitives/transaction.h
-        isZcash
-          ? [0x0a, 0x27, 0xa7, 0x26]
-          : sapling
-            ? [0x85, 0x20, 0x2f, 0x89]
-            : [0x70, 0x82, 0xc4, 0x03],
-      );
+      if (isZcash) {
+        if (typeof input[4] === "number" && input[4] >= 2726400) {
+          targetTransaction.nVersionGroupId = Buffer.from(
+            // nVersionGroupId is 0x26A7270A for zcash NU5 upgrade
+            // refer to https://github.com/zcash/zcash/blob/master/src/primitives/transaction.h
+            [0x0a, 0x27, 0xa7, 0x26],
+          );
+        } else {
+          targetTransaction.nVersionGroupId = Buffer.from(
+            // nVersionGroupId is 0x26A7270A for zcash NU5 upgrade
+            // refer to https://github.com/zcash/zcash/blob/master/src/primitives/transaction.h
+            [0x0a, 0x27, 0xa7, 0x26],
+          );
+        }
+      } else {
+        targetTransaction.nVersionGroupId = Buffer.from(
+          sapling ? [0x85, 0x20, 0x2f, 0x89] : [0x70, 0x82, 0xc4, 0x03],
+        );
+      }
+      debugger;
+      // targetTransaction.nVersionGroupId = Buffer.from(
+      //   // nVersionGroupId is 0x26A7270A for zcash NU5 upgrade
+      //   // refer to https://github.com/zcash/zcash/blob/master/src/primitives/transaction.h
+      //   isZcash
+      //     ? [0x0a, 0x27, 0xa7, 0x26]
+      //     : sapling
+      //       ? [0x85, 0x20, 0x2f, 0x89]
+      //       : [0x70, 0x82, 0xc4, 0x03],
+      // );
       targetTransaction.nExpiryHeight = expiryHeight;
       // For sapling : valueBalance (8), nShieldedSpend (1), nShieldedOutput (1), nJoinSplit (1)
       // Overwinter : use nJoinSplit (1)
@@ -227,11 +283,14 @@ export async function createTransaction(
       publicKeys.push(compressPublicKey(Buffer.from(result[i].publicKey, "hex")));
     }
   }
+  console.log({ targetTransactionInputs: targetTransaction.inputs });
 
   onDeviceSignatureRequested();
+  console.log(`after signature`);
 
   if (useBip143) {
     // Do the first run with all inputs
+    console.log("using bip143");
     await startUntrustedHashTransactionInput(
       transport,
       true,
@@ -251,7 +310,9 @@ export async function createTransaction(
   }
 
   if (!!expiryHeight && !isDecred) {
+    console.log("awaiting sign transaction");
     await signTransaction(transport, "", lockTime, SIGHASH_ALL, expiryHeight);
+    console.log("we have signed the tx");
   }
 
   // Do the second run with the individual transaction
@@ -286,6 +347,7 @@ export async function createTransaction(
       additionals,
       useTrustedInputForSegwit,
     );
+    console.log(`after startUntrustedHashTransactionInput ${i}`);
 
     if (!useBip143) {
       if (!resuming && changePath) {
@@ -300,7 +362,14 @@ export async function createTransaction(
       notify(1, 0);
     }
     const lockTimeInput = input.length >= 5 && typeof input[4] === "number" ? input[4] : lockTime;
+    console.log({ createtransactionLockTimeInput: lockTimeInput });
+    console.log(`waiting for signature`);
 
+    // PISTE
+    // INPUT, without any locktime, works ok for nu5
+    // doesn't work for nu6
+    // with locktime, doesn't work for nu6 and nu5
+    // get logic here (first pass, second pass?)
     const signature = await signTransaction(
       transport,
       associatedKeysets[i],
@@ -309,6 +378,7 @@ export async function createTransaction(
       expiryHeight,
       additionals,
     );
+    console.log({ signature });
     notify(1, i + 1);
     signatures.push(signature);
     targetTransaction.inputs[i].script = nullScript;

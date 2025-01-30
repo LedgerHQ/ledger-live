@@ -260,11 +260,18 @@ class BitcoinLikeWallet {
         hasExtraData,
         additionals,
       });
+      const locktime = i.block_height ? i.block_height - 1000 : 0;
+      const uLockTime = locktime < 0 ? 0 : locktime;
+
+      console.log({wallettsinputblockheight: i.block_height, uLockTime});
       return [
+        // NOTE: input here has locktime 0
+        // logical since we're splitting the tx hex, we'll need to enforce it downstream though
         btc.splitTransaction(i.txHex, true, hasExtraData, additionals),
         i.output_index,
         null,
         i.sequence,
+        // uLockTime,
         i.block_height,
       ];
     });
@@ -285,6 +292,8 @@ class BitcoinLikeWallet {
       additionals: additionals || [],
     });
 
+    console.log({walletInputs: inputs})
+    debugger;
     const tx = await btc.createPaymentTransaction({
       inputs,
       associatedKeysets,

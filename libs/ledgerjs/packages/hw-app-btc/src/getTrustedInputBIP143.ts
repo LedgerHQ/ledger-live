@@ -24,6 +24,9 @@ export function getTrustedInputBIP143(
   const data = Buffer.alloc(4);
   data.writeUInt32LE(indexLookup, 0);
   const { outputs, locktime } = transaction;
+  
+  console.log({getTrustedInputLockTimeBip143: locktime})
+
 
   if (!outputs || !locktime) {
     throw new Error("getTrustedInputBIP143: locktime & outputs is expected");

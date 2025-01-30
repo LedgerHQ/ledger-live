@@ -20,8 +20,11 @@ export async function getTrustedInputRaw(
     data = transactionData;
   }
 
+  // if (data.)
   const trustedInput = await transport.send(0xe0, 0x42, firstRound ? 0x00 : 0x80, 0x00, data);
+  // [0, 0, 0, 0, 4, 0, 0, 0, 0]
   const res = trustedInput.slice(0, trustedInput.length - 2).toString("hex");
+  console.log({data, trustedInput, res})
   return res;
 }
 export async function getTrustedInput(
@@ -35,6 +38,8 @@ export async function getTrustedInput(
   if (!outputs || !locktime) {
     throw new Error("getTrustedInput: locktime & outputs is expected");
   }
+  console.log({getTrustedInputLockTime: locktime, inputs})
+  debugger;
 
   const isDecred = additionals.includes("decred");
 
@@ -63,21 +68,25 @@ export async function getTrustedInput(
     }
 
     let res;
+    console.log({scriptBlocks})
 
     for (const scriptBlock of scriptBlocks) {
       res = await getTrustedInputRaw(transport, scriptBlock);
+      console.log({transport, scriptBlock, res})
     }
 
     return res;
   };
 
   const processWholeScriptBlock = block => getTrustedInputRaw(transport, block);
+  // console.log({processWHoleScriptBlock})
 
+  console.log({timestamp: transaction.timestamp})
   await getTrustedInputRaw(
     transport,
     Buffer.concat([
       transaction.version,
-      transaction.timestamp || Buffer.alloc(0),
+      transaction.timestamp || Buffer.alloc(0), // transaction.locktime
       transaction.nVersionGroupId || Buffer.alloc(0),
       createVarint(inputs.length),
     ]),
@@ -86,11 +95,14 @@ export async function getTrustedInput(
 
   for (const input of inputs) {
     const treeField = isDecred ? input.tree || Buffer.from([0x00]) : Buffer.alloc(0);
+    console.log({treeField})
     const data = Buffer.concat([input.prevout, treeField, createVarint(input.script.length)]);
+    console.log({dataInput: data})
     await getTrustedInputRaw(transport, data);
     // iteration (eachSeries) ended
     // TODO notify progress
     // deferred.notify("input");
+    console.log({processScriptBlockScript: input.script, sequence: input.sequence, input})
     await (isDecred
       ? processWholeScriptBlock(Buffer.concat([input.script, input.sequence]))
       : processScriptBlocks(input.script, input.sequence));
@@ -105,6 +117,7 @@ export async function getTrustedInput(
       createVarint(output.script.length),
       output.script,
     ]);
+    console.log({dataOutput: data})
     await getTrustedInputRaw(transport, data);
   }
 
@@ -125,6 +138,7 @@ export async function getTrustedInput(
     extraPart = isDecred ? data : Buffer.concat([createVarint(data.length), data]);
   }
 
+  console.log({lockTimeConcat: locktime, extraPart})
   const res = await processScriptBlocks(Buffer.concat([locktime, extraPart || Buffer.alloc(0)]));
   invariant(res, "missing result in processScriptBlocks");
   return res;

@@ -35,6 +35,7 @@ export async function signP2SHTransaction(transport: Transport, arg: SignP2SHTra
     segwit,
     transactionVersion,
   } = { ...defaultArg, ...arg };
+  console.log({signp2shtxLockTime: lockTime})
   // Inputs are provided as arrays of [transaction, output_index, redeem script, optional sequence]
   // associatedKeysets are provided as arrays of [path]
   const nullScript = Buffer.alloc(0);
@@ -56,6 +57,7 @@ export async function signP2SHTransaction(transport: Transport, arg: SignP2SHTra
   for (const input of inputs) {
     if (!resuming) {
       const trustedInput = await getTrustedInputCall(transport, input[1], input[0]);
+      console.log({trustedInput})
       const sequence = Buffer.alloc(4);
       sequence.writeUInt32LE(
         input.length >= 4 && typeof input[3] === "number" ? input[3] : DEFAULT_SEQUENCE,

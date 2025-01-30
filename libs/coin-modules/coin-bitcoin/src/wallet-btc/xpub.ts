@@ -255,6 +255,7 @@ class Xpub {
     );
 
     const inputs: InputInfo[] = unspentUtxoSelected.map((utxo, index) => {
+      console.log({settingblockcheightxpub: utxo.block_height})
       return {
         txHex: txHexs[index],
         value: utxo.value,

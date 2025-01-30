@@ -35,6 +35,8 @@ export function serializeTransaction(
   let inputBuffer = Buffer.alloc(0);
   const useWitness = typeof transaction["witness"] != "undefined" && !skipWitness;
   transaction.inputs.forEach(input => {
+    console.log({inputBuffer: inputBuffer, inputSequence: input.sequence})
+    debugger;
     inputBuffer =
       isDecred || isBech32
         ? Buffer.concat([
@@ -49,11 +51,16 @@ export function serializeTransaction(
             createVarint(input.script.length),
             input.script,
             input.sequence,
+            // transaction.locktime || input.sequence,
           ]);
+    debugger;
   });
+  debugger;
+  console.log({transactioninputs: transaction.inputs})
   let outputBuffer = serializeTransactionOutputs(transaction);
 
   if (typeof transaction.outputs !== "undefined" && typeof transaction.locktime !== "undefined") {
+    console.log({outputlocktime: transaction.locktime})
     outputBuffer = Buffer.concat([
       outputBuffer,
       (useWitness && transaction.witness) || Buffer.alloc(0),
@@ -64,11 +71,15 @@ export function serializeTransaction(
   }
   // from to https://zips.z.cash/zip-0225, zcash is different with other coins, the lock_time and nExpiryHeight fields are before the inputs and outputs
   if (isZcash) {
+    console.log({serializeLocktime: transaction.locktime})
+    debugger;
     return Buffer.concat([
       transaction.version,
       transaction.nVersionGroupId || Buffer.alloc(0),
       Buffer.from([0x55, 0x10, 0xe7, 0xc8]), // Zcash Consensus Branch ID: 0xC8E71055 refer to https://zips.z.cash/zip-0253
+      // check also https://zips.z.cash/zip-0252
       transaction.locktime || Buffer.from([0x00, 0x00, 0x00, 0x00]),
+      // Buffer.from([0x00, 0x00, 0x00, 0x00]),
       transaction.nExpiryHeight || Buffer.from([0x00, 0x00, 0x00, 0x00]),
       useWitness ? Buffer.from("0001", "hex") : Buffer.alloc(0),
       createVarint(transaction.inputs.length),

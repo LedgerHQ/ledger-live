@@ -154,6 +154,7 @@ export function splitTransaction(
     nExpiryHeight,
     extraData,
   };
+  console.log({splitTransactionInputs: inputs})
   log("btc", `splitTransaction ${transactionHex}:\n${formatTransactionDebug(t)}`);
   return t;
 }

@@ -20,6 +20,8 @@ export function signTransaction(
         Buffer.from([sigHashType]),
       ])
     : Buffer.concat([pathsBuffer, Buffer.from([0x00]), lockTimeBuffer, Buffer.from([sigHashType])]);
+  
+    console.log({signTransactionLockTIme: lockTime, buffer: lockTimeBuffer})
 
   if (expiryHeight && !isDecred) {
     buffer = Buffer.concat([buffer, expiryHeight]);
