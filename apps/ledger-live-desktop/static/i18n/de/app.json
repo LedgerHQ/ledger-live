@@ -200,7 +200,8 @@
       "STAKE" : "Gestaket",
       "UNSTAKE" : "Nicht mehr gestaket",
       "WITHDRAW_UNSTAKED" : "Ausgezahlt",
-      "SENDING" : "Senden"
+      "SENDING" : "Senden",
+      "BURN" : "Verbrannt"
     },
     "edit" : {
       "title" : "Beschleunigen oder Abbrechen",
@@ -759,6 +760,22 @@
         "description3" : "Diese Integration wurde von {{team}} in Zusammenarbeit mit Ledger durchgeführt",
         "description3Link" : "Diese Integration wurde von <1><0>{{team}}</0></1> in Zusammenarbeit mit Ledger durchgeführt"
       }
+    },
+    "featureUnavailable" : {
+      "title" : "Die folgende Funktion ist momentan nicht verfügbar: {{feature}}. Weitere Informationen erhältst du vom {{support}}.",
+      "feature" : {
+        "history" : "Verlauf",
+        "swap" : "Swappen",
+        "token_history" : "Token-Verlauf",
+        "send_and_receive" : "Senden und Empfangen",
+        "send" : "Senden",
+        "receive" : "Empfangen",
+        "sending_tokens" : "Senden von Token",
+        "receiving_tokens" : "Empfangen von Token",
+        "staking" : "Staking",
+        "claiming_staking_rewards" : "Staking-Prämien beanspruchen"
+      },
+      "support" : "Support"
     },
     "willBeDeprecatedBanner" : {
       "title" : "Um die Effizienz zu steigern, wird {{currencyName}} ab dem {{deprecatedDate}} nicht mehr in Ledger Live unterstützt. Auf den Hardware-Wallets von Ledger bleibt die Unterstützung jedoch bestehen. Wenn du Hilfe benötigst, wende dich bitte an den Ledger-Kundenservice.",
@@ -1499,21 +1516,21 @@
     },
     "recoverBanner" : {
       "subscribeDone" : {
-        "title" : "Hinzufügen deiner Zahlungskarte abschließen",
-        "description" : "Zuverlässige Wiederherstellung mit Ledger Recover.",
+        "title" : "Reminder: Finish subscribing to Ledger Recover",
+        "description" : "You're just two steps away from being secured.",
         "primaryCta" : "Karte hinzufügen",
         "secondaryCta" : "Vielleicht später"
       },
       "verifyIdentity" : {
-        "title" : "Identitätsnachweis abschließen",
-        "description" : "Zuverlässige Wiederherstellung mit Ledger Recover.",
-        "primaryCta" : "Bestätigen",
+        "title" : "Reminder: Finish subscribing to Ledger Recover",
+        "description" : "You're just one step away from being secured.",
+        "primaryCta" : "Verify identity",
         "secondaryCta" : "Vielleicht später"
       },
       "connectDevice" : {
-        "title" : "Ledger-Gerät verbinden",
-        "description" : "Nur noch ein Schritt, und schon kannst du Ledger Recover nutzen.",
-        "primaryCta" : "Verbinden",
+        "title" : "Reminder: Finish subscribing to Ledger Recover",
+        "description" : "It's your final step to ensure wallet access recovery.",
+        "primaryCta" : "Connect device",
         "secondaryCta" : "Vielleicht später"
       }
     },
@@ -3726,6 +3743,10 @@
           }
         }
       }
+    },
+    "token" : {
+      "frozenStateWarning" : "Kontovermögenswerte sind gesperrt!",
+      "transferWarning" : "Zum Verifizieren der Empfängeradresse für Solana-Token mit einer Ledger Nano S™ <0>befolge diese Anweisungen</0>."
     }
   },
   "ethereum" : {
@@ -6181,6 +6202,27 @@
     "SolanaAccountNotFunded" : {
       "title" : "Konto nicht gedeckt"
     },
+    "SolanaTokenAccountHoldsAnotherToken" : {
+      "title" : "Dieses zugeordnete Tokenkonto enthält ein weiteres Token"
+    },
+    "SolanaTokenAccountWarning" : {
+      "title" : "Das ist keine reguläre Wallet-Adresse, sondern ein verbundenes Tokenkonto. Du solltest den Vorgang nur fortsetzen, wenn du genau weißt, was du tust."
+    },
+    "SolanaTokenAccountNotAllowed" : {
+      "title" : "Das ist ein Tokenkonto. Bitte gib eine reguläre Wallet-Adresse ein."
+    },
+    "SolanaMintAccountNotAllowed" : {
+      "title" : "Das ist eine Tokenadresse. Bitte gib eine reguläre Wallet-Adresse ein."
+    },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "Konto wird gedeckt"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "Vermögenswerte des Tokenkontos sind gesperrt"
+    },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "Konto nicht initialisiert"
+    },
     "SolanaMemoIsTooLong" : {
       "title" : "Memo ist zu lang. Maximale Länge beträgt {{maxLength}}"
     },
@@ -6709,17 +6751,19 @@
         "mobile" : {
           "description" : "Synchronisiere mit der Ledger Live-App auf einem anderen Smartphone",
           "steps" : {
-            "step1" : "Öffne die Ledger Live-App, die du synchronisieren möchtest.",
-            "step2" : "Gehe zu <0>Settings</0> (Einstellungen) > <0>General</0> (Allgemein) > <0>Ledger Sync</0> > <0>Turn on sync</0> (Sync einschalten) > <0>Show QR</0> (QR-Code anzeigen)",
-            "step3" : "QR-Code scannen"
+            "step1" : "Make sure Ledger Sync is activated on one of your apps.",
+            "step2" : "Open the Ledger Live app you want to sync.",
+            "step3" : "Go to <0>Settings</0> > <0>General</0> > <0>Ledger Sync</0> > <0>I already turned it on</0> > <0>Show QR</0>",
+            "step4" : "Scan QR code."
           }
         },
         "desktop" : {
           "description" : "Deine Konten mit einer anderen Ledger Live-App synchronisieren",
           "steps" : {
-            "step1" : "Öffne die Ledger Live-App, die du synchronisieren möchtest.",
-            "step2" : "Gehe zu <0>Settings</0> (Einstellungen) > <0>General</0> (Allgemein) > <0>Ledger Sync</0> > <0>Turn on sync</0> (Sync einschalten) > <0>Use your Ledger</0> (Dein Ledger-Gerät verwenden)",
-            "step3" : "Ledger-Gerät verbinden"
+            "step1" : "Make sure Ledger Sync is activated on one of your apps.",
+            "step2" : "Open the Ledger Live app you want to sync.",
+            "step3" : "Go to <0>Settings</0> > <0>General</0> > <0>Ledger Sync</0> > <0>I already turned it on</0> > <0>Use your Ledger</0>",
+            "step4" : "Connect your Ledger."
           }
         }
       },
