@@ -47,7 +47,7 @@ const toTransactionRaw = (t: Transaction): TransactionRaw => {
     family: t.family,
     amount: t.amount.toFixed(),
     fees: t.fees.toString(),
-    memo: t.memo,
+    memo: t.memo ?? undefined,
   };
 };
 
