@@ -74,7 +74,6 @@ export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlo
     {
       title: "Public key",
       button: SpeculosButton.RIGHT,
-      expectedValue: ({ account }) => account.xpub || "",
     },
     {
       title: "Storage limit",
