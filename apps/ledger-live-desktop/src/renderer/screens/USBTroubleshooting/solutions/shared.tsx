@@ -4,7 +4,7 @@ import Box from "~/renderer/components/Box";
 import { Flex } from "@ledgerhq/react-ui";
 import Text from "~/renderer/components/Text";
 import ExternalLinkIcon from "~/renderer/icons/ExternalLink";
-import { FlexBoxProps } from "@ledgerhq/react-ui/components/layout/Flex";
+import { FlexBoxProps } from "@ledgerhq/react-ui/components/layout/Flex/index";
 
 export const Wrapper = styled(Box).attrs({
   alignItems: "center",

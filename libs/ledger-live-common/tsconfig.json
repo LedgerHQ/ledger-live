@@ -8,7 +8,8 @@
     "outDir": "lib", // if out path for a file is same as its src path, nothing will be emitted
     "jsx": "react",
     "lib": ["es2020", "dom"],
-    "composite": true // required on the dependency project for references to work
+    "composite": true, // required on the dependency project for references to work
+    "isolatedModules": false
   },
   "files": [
     // by whitelisting the files to include, TS won't automatically

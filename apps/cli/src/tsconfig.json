@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
+    "module": "nodenext",
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
@@ -10,8 +10,7 @@
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-
-    "moduleResolution": "node",
+    "moduleResolution": "nodenext",
     "downlevelIteration": true,
     "resolveJsonModule": true,
     "rootDir": ".",

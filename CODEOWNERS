@@ -46,7 +46,8 @@ libs/live-network/                                       @ledgerhq/live-blockcha
 libs/live-services/                                      @ledgerhq/live-blockchain-support
 
 # YLD Partner
-libs/coin-modules/coin-aptos/                            @ledgerhq/ledger-partner-yld
+libs/coin-modules/coin-aptos/                            @ledgerhq/live-blockchain-support @ledgerhq/ledger-partner-yld
+libs/coin-modules/coin-near/                             @ledgerhq/live-blockchain-support @ledgerhq/ledger-partner-yld
 
 # PTX team
 apps/cli/src/commands/ptx                                            					@ledgerhq/ptx

@@ -3,12 +3,11 @@
   "compilerOptions": {
     "declaration": true,
     "declarationMap": true,
-    "module": "commonjs",
     "downlevelIteration": true,
     "lib": ["es2020", "dom"],
     "outDir": "lib",
     "exactOptionalPropertyTypes": true,
     "typeRoots": ["./types", "./node_modules/@types"]
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*", "types/*.d.ts"]
 }

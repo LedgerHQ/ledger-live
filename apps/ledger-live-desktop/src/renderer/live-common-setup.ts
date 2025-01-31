@@ -2,8 +2,10 @@ import "~/live-common-setup-base";
 import "~/live-common-set-supported-currencies";
 import "./families";
 
+import { Store } from "redux";
 import VaultTransport from "@ledgerhq/hw-transport-vault";
 import { registerTransportModule } from "@ledgerhq/live-common/hw/index";
+import { getEnv } from "@ledgerhq/live-env";
 import { retry } from "@ledgerhq/live-common/promise";
 import { TraceContext, listen as listenLogs, trace } from "@ledgerhq/logs";
 import { getUserId } from "~/helpers/user";
@@ -13,13 +15,7 @@ import logger from "./logger";
 import { setDeviceMode } from "@ledgerhq/live-common/hw/actions/app";
 import { getFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { overriddenFeatureFlagsSelector } from "~/renderer/reducers/settings";
-import { State } from "./reducers";
 import { DeviceManagementKitTransport } from "@ledgerhq/live-dmk";
-import { getEnv } from "@ledgerhq/live-env";
-
-interface Store {
-  getState: () => State;
-}
 
 const isDeviceManagementKitEnabled = (store: Store) => {
   const state = store.getState();

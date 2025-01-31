@@ -1,5 +1,5 @@
 {
-  "entry": ["src/index.tsx"],
+  "entry": ["src/index.ts"],
   "ignorePatterns": ["**/node_modules/**", "**/*.test.{ts,tsx}"],
   "ignoreUnused": ["react-dom"]
 }

@@ -57689,9 +57689,7 @@ function isDateBefore(a, b) {
   return new Date(a) < new Date(b);
 }
 var Reporter = class {
-  constructor() {
-    this.statements = [];
-  }
+  statements = [];
   improvement(message) {
     this.statements.push(`\u{1F680} ${message}`);
   }
