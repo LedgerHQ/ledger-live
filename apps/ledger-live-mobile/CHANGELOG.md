@@ -1,5 +1,18 @@
 # live-mobile
 
+## 3.64.0-nightly.1
+
+### Minor Changes
+
+- [#8996](https://github.com/LedgerHQ/ledger-live/pull/8996) [`8b62628`](https://github.com/LedgerHQ/ledger-live/commit/8b62628defde7d66fa29d2ac0bf9fcdb87437d8e) Thanks [@chrisduma-ledger](https://github.com/chrisduma-ledger)! - Fixes Add Custom Manifest screen
+
+### Patch Changes
+
+- Updated dependencies [[`e96114a`](https://github.com/LedgerHQ/ledger-live/commit/e96114a015016642df3a9837f1e6cd8c6ab6ca8f)]:
+  - @ledgerhq/live-countervalues@0.3.0-nightly.1
+  - @ledgerhq/live-common@34.19.2-nightly.1
+  - @ledgerhq/live-countervalues-react@0.2.20-nightly.1
+
 ## 3.64.0-nightly.0
 
 ### Minor Changes

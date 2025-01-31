@@ -172,6 +172,7 @@
     "@ledgerhq/coin-aptos": "1.3.2"
   },
   "changesets": [
+    "blue-actors-cheat",
     "brave-sheep-accept",
     "bright-kiwis-travel",
     "curvy-taxis-carry",
@@ -181,6 +182,7 @@
     "famous-mails-teach",
     "fifty-worms-remain",
     "healthy-llamas-visit",
+    "heavy-lobsters-rush",
     "honest-dingos-unite",
     "hot-roses-shave",
     "itchy-camels-sin",
@@ -189,12 +191,14 @@
     "mean-mice-own",
     "modern-teachers-scream",
     "new-bulldogs-hope",
+    "orange-drinks-explode",
     "real-impalas-sell",
     "seven-tigers-hunt",
     "sour-bananas-trade",
     "sour-mayflies-learn",
     "stale-books-melt",
     "strong-peas-jam",
+    "tall-toys-invite",
     "tame-ants-join"
   ]
 }

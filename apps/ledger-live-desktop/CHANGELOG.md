@@ -1,5 +1,19 @@
 # ledger-live-desktop
 
+## 2.98.0-nightly.1
+
+### Minor Changes
+
+- [#8807](https://github.com/LedgerHQ/ledger-live/pull/8807) [`b7ee34a`](https://github.com/LedgerHQ/ledger-live/commit/b7ee34a7128b0b12c90070950901ed2d826c7a40) Thanks [@valpinkman](https://github.com/valpinkman)! - use dmk listenToKnownDevices in LLD:useListenToHidDevices
+
+### Patch Changes
+
+- Updated dependencies [[`e96114a`](https://github.com/LedgerHQ/ledger-live/commit/e96114a015016642df3a9837f1e6cd8c6ab6ca8f), [`b7ee34a`](https://github.com/LedgerHQ/ledger-live/commit/b7ee34a7128b0b12c90070950901ed2d826c7a40)]:
+  - @ledgerhq/live-countervalues@0.3.0-nightly.1
+  - @ledgerhq/live-dmk@0.3.0-nightly.0
+  - @ledgerhq/live-common@34.19.2-nightly.1
+  - @ledgerhq/live-countervalues-react@0.2.20-nightly.1
+
 ## 2.98.0-nightly.0
 
 ### Minor Changes

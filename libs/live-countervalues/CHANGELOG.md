@@ -1,5 +1,11 @@
 # @ledgerhq/live-countervalues
 
+## 0.3.0-nightly.1
+
+### Minor Changes
+
+- [#9053](https://github.com/LedgerHQ/ledger-live/pull/9053) [`e96114a`](https://github.com/LedgerHQ/ledger-live/commit/e96114a015016642df3a9837f1e6cd8c6ab6ca8f) Thanks [@semeano](https://github.com/semeano)! - Add mocked value for Aptos
+
 ## 0.2.20-nightly.0
 
 ### Patch Changes

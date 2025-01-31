@@ -1,5 +1,14 @@
 ## 34.5.0-next.4
 
+## 34.19.2-nightly.1
+
+### Patch Changes
+
+- Updated dependencies [[`e96114a`](https://github.com/LedgerHQ/ledger-live/commit/e96114a015016642df3a9837f1e6cd8c6ab6ca8f)]:
+  - @ledgerhq/live-countervalues@0.3.0-nightly.1
+  - @ledgerhq/coin-hedera@1.3.2-nightly.1
+  - @ledgerhq/live-countervalues-react@0.2.20-nightly.1
+
 ## 34.19.2-nightly.0
 
 ### Patch Changes
