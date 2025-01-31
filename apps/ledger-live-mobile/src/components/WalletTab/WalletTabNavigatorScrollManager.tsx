@@ -1,3 +1,4 @@
+import { ReactNavigationPerformanceView } from "@shopify/react-native-performance-navigation";
 import React, { createContext, useCallback, useEffect, useRef } from "react";
 import { Animated, FlatList, ScrollView } from "react-native";
 

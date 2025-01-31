@@ -83,8 +83,8 @@ export default function Generators() {
       <GenerateMockAccount />
       <GenerateMockAccounts
         title="Accounts"
-        desc="Replace existing accounts with 10 mock accounts from random currencies."
-        count={10}
+        desc="Replace existing accounts with 100 mock accounts from random currencies."
+        count={50}
       />
       <GenerateMockAccountsNft
         title="Accounts + NFTs"

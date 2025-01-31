@@ -22,6 +22,7 @@ import { isMainNavigatorVisibleSelector } from "~/reducers/appstate";
 import EarnLiveAppNavigator from "./EarnLiveAppNavigator";
 import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
 import { useRebornFlow } from "LLM/features/Reborn/hooks/useRebornFlow";
+import { useStartProfiler } from "@shopify/react-native-performance";
 
 const Tab = createBottomTabNavigator<MainNavigatorParamList>();
 
@@ -62,6 +63,8 @@ export default function MainNavigator() {
     [managerNavLockCallback],
   );
 
+  const startNavigationTTITimer = useStartProfiler();
+
   return (
     <Tab.Navigator
       tabBar={tabBar}
@@ -93,9 +96,14 @@ export default function MainNavigator() {
           tabBarIcon: props => <PortfolioTabIcon {...props} />,
         }}
         listeners={({ navigation }) => ({
-          tabPress: e => {
+          tabPress: (e, uiEvent) => {
             e.preventDefault();
             managerLockAwareCallback(() => {
+              startNavigationTTITimer({
+                source: "MainNavigator",
+                uiEvent,
+              });
+
               navigation.navigate(NavigatorName.Portfolio, {
                 screen: ScreenName.Portfolio,
               });
@@ -119,17 +127,23 @@ export default function MainNavigator() {
           ),
         }}
         listeners={({ navigation }) => ({
-          tabPress: e => {
+          tabPress: (e, uiEvent) => {
             e.preventDefault();
             managerLockAwareCallback(() => {
               if (readOnlyModeEnabled && hasOrderedNano) {
                 navigation.navigate(ScreenName.PostBuyDeviceSetupNanoWallScreen);
               } else if (readOnlyModeEnabled) {
+                startNavigationTTITimer({
+                  source: "MainNavigator",
+                  uiEvent,
+                });
                 navigateToRebornFlow();
-              } else
+              } else {
                 navigation.navigate(NavigatorName.Earn, {
                   screen: ScreenName.Earn,
+                  uiEvent,
                 });
+              }
             });
           },
         })}
@@ -154,9 +168,13 @@ export default function MainNavigator() {
             ),
           }}
           listeners={({ navigation }) => ({
-            tabPress: e => {
+            tabPress: (e, uiEvent) => {
               e.preventDefault();
               managerLockAwareCallback(() => {
+                startNavigationTTITimer({
+                  source: "MainNavigator",
+                  uiEvent,
+                });
                 navigation.navigate(NavigatorName.Web3HubTab);
               });
             },
@@ -173,9 +191,13 @@ export default function MainNavigator() {
             ),
           }}
           listeners={({ navigation }) => ({
-            tabPress: e => {
+            tabPress: (e, uiEvent) => {
               e.preventDefault();
               managerLockAwareCallback(() => {
+                startNavigationTTITimer({
+                  source: "MainNavigator",
+                  uiEvent,
+                });
                 navigation.navigate(NavigatorName.Discover, {
                   screen: ScreenName.DiscoverScreen,
                 });
@@ -200,6 +222,9 @@ export default function MainNavigator() {
               } else if (readOnlyModeEnabled) {
                 navigateToRebornFlow();
               } else {
+                startNavigationTTITimer({
+                  source: "MainNavigator",
+                });
                 navigation.navigate(NavigatorName.MyLedger, {
                   screen: ScreenName.MyLedgerChooseDevice,
                   params: {

@@ -17,6 +17,8 @@ import { MainNavigatorParamList } from "~/components/RootNavigator/types/MainNav
 import useDynamicContent from "~/dynamicContent/useDynamicContent";
 import { useIsNewsfeedAvailable } from "~/hooks/newsfeed/useIsNewsfeedAvailable";
 
+import { PerformanceMeasureView } from "@shopify/react-native-performance";
+
 const images = {
   light: {
     learnImg: require("~/images/illustration/Light/_063.png"),
@@ -240,37 +242,39 @@ function Discover() {
   );
 
   return (
-    <TabBarSafeAreaView>
-      <TrackScreen category="Discover" />
-      <Flex px={6} pb={6} flexDirection="row">
-        <Flex flex={1} justifyContent="flex-start" alignItems="flex-start">
-          <Text my={3} variant="h4" fontWeight="semiBold">
-            {t("discover.title")}
-          </Text>
+    <PerformanceMeasureView screenName={"Discover"} interactive>
+      <TabBarSafeAreaView>
+        <TrackScreen category="Discover" />
+        <Flex px={6} pb={6} flexDirection="row">
+          <Flex flex={1} justifyContent="flex-start" alignItems="flex-start">
+            <Text my={3} variant="h4" fontWeight="semiBold">
+              {t("discover.title")}
+            </Text>
+          </Flex>
         </Flex>
-      </Flex>
-      <ScrollView>
-        {featuresList.map(({ title, subTitle, onPress, disabled, labelBadge, Image }, i) => (
-          <DiscoverCard
-            key={i}
-            title={title}
-            subTitle={subTitle}
-            onPress={onPress}
-            disabled={disabled}
-            labelBadge={labelBadge}
-            imageContainerProps={{
-              position: "relative",
-              height: "auto",
-              alignItems: "center",
-              justifyContent: "center",
-              flex: 1,
-              paddingRight: 4,
-            }}
-            Image={Image}
-          />
-        ))}
-      </ScrollView>
-    </TabBarSafeAreaView>
+        <ScrollView>
+          {featuresList.map(({ title, subTitle, onPress, disabled, labelBadge, Image }, i) => (
+            <DiscoverCard
+              key={i}
+              title={title}
+              subTitle={subTitle}
+              onPress={onPress}
+              disabled={disabled}
+              labelBadge={labelBadge}
+              imageContainerProps={{
+                position: "relative",
+                height: "auto",
+                alignItems: "center",
+                justifyContent: "center",
+                flex: 1,
+                paddingRight: 4,
+              }}
+              Image={Image}
+            />
+          ))}
+        </ScrollView>
+      </TabBarSafeAreaView>
+    </PerformanceMeasureView>
   );
 }
 

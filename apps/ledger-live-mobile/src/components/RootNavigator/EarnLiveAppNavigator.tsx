@@ -14,6 +14,7 @@ import { EarnScreen } from "~/screens/PTX/Earn";
 import { shallowAccountsSelector } from "~/reducers/accounts";
 import { EarnInfoDrawer } from "~/screens/PTX/Earn/EarnInfoDrawer";
 import { useStakingDrawer } from "../Stake/useStakingDrawer";
+import { PerformanceMeasureView } from "@shopify/react-native-performance";
 
 const Stack = createStackNavigator<EarnLiveAppNavigatorParamList>();
 
@@ -130,14 +131,16 @@ export default function EarnLiveAppNavigator() {
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
 
   return (
-    <Stack.Navigator {...stackNavigationConfig}>
-      <Stack.Screen
-        name={ScreenName.Earn}
-        options={{
-          headerShown: false,
-        }}
-        component={Earn} // route props are passed automatically
-      />
-    </Stack.Navigator>
+    <PerformanceMeasureView screenName={ScreenName.Earn} interactive>
+      <Stack.Navigator {...stackNavigationConfig}>
+        <Stack.Screen
+          name={ScreenName.Earn}
+          options={{
+            headerShown: false,
+          }}
+          component={Earn} // route props are passed automatically
+        />
+      </Stack.Navigator>
+    </PerformanceMeasureView>
   );
 }

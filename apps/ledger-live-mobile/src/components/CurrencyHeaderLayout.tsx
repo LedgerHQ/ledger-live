@@ -84,6 +84,21 @@ function CurrencyHeaderLayout({
       height={92}
       pt={44}
     >
+      <Animated.View
+        style={[
+          {
+            position: "absolute",
+            width: windowsWidth,
+            height: 92,
+            overflow: "hidden",
+          },
+          BackgroundOpacity,
+        ]}
+      >
+        <Box height={"100%"} width={windowsWidth}>
+          <CurrencyGradient gradientColor={currencyColor} />
+        </Box>
+      </Animated.View>
       <Box>{leftElement}</Box>
       <Flex flexDirection={"row"} alignItems={"center"}>
         <CenteredElement width={windowsWidth}>
