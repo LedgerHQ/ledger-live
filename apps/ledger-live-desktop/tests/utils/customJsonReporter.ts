@@ -16,6 +16,8 @@ class JsonReporter implements Reporter {
     tests: [],
   };
 
+  private testResults: { [testKey: string]: { testKey: string; status: string } } = {};
+
   constructor() {
     if (!process.env.TEST_EXECUTION) {
       this.results.info = {
@@ -31,12 +33,14 @@ class JsonReporter implements Reporter {
   onTestEnd(test: TestCase, result: TestResult): void {
     const testKeys = getDescription(test.annotations, "TMS").split(", ");
     const status = result.status.toUpperCase();
-    testKeys.forEach((testKey: string) => {
-      this.results.tests.push({ testKey, status });
-    });
+
+    for (const testKey of testKeys) {
+      this.testResults[testKey] = { testKey, status };
+    }
   }
 
   async onExit(): Promise<void> {
+    this.results.tests = Object.values(this.testResults);
     const outputPath = path.resolve("./tests/artifacts/xray/xray-report.json");
     const outputDir = path.dirname(outputPath);
     fs.mkdirSync(outputDir, { recursive: true });
