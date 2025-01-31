@@ -19,7 +19,7 @@ const near: AppSpec<Transaction> = {
   name: "NEAR",
   currency,
   appQuery: {
-    model: DeviceModelId.nanoS,
+    model: DeviceModelId.nanoSP,
     appName: "NEAR",
   },
   genericDeviceAction: acceptTransaction,
