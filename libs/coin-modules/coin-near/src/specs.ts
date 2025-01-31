@@ -21,6 +21,8 @@ const near: AppSpec<Transaction> = {
   appQuery: {
     model: DeviceModelId.nanoSP,
     appName: "NEAR",
+    firmware: "1.3.1",
+    appVersion: "2.3.4",
   },
   genericDeviceAction: acceptTransaction,
   testTimeout: 2 * 60 * 1000,
