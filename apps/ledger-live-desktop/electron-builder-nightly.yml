@@ -11,6 +11,11 @@ afterSign: scripts/notarize.js
 directories:
   buildResources: "build-nightly"
 
+dmg:
+  window:
+    width: 540
+    height: 460
+
 mac:
   artifactName: ${name}-${version}-${os}.${ext}
   category: public.app-category.wallet
