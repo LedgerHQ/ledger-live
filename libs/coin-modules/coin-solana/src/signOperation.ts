@@ -99,7 +99,15 @@ export const buildSignOperation =
         subscriber.next({
           type: "device-signature-requested",
         });
-
+        console.log(
+          "buildSignOperation",
+          account,
+          "deviceId",
+          deviceId,
+          "transaction",
+          transaction,
+        );
+        console.log("buildSignOperation tx", tx, tx.message.serialize());
         const { signature } = await signerContext(deviceId, signer =>
           signer.signTransaction(
             account.freshAddressPath,
@@ -108,11 +116,19 @@ export const buildSignOperation =
           ),
         );
 
+        console.log("buildSignOperation signerContext signature", signature);
+
         subscriber.next({
           type: "device-signature-granted",
         });
 
         const signedTx = signOnChainTransaction(signature);
+
+        console.log("buildSignOperation signedTx", signedTx);
+        console.log(
+          "buildSignOperation signature",
+          Buffer.from(signedTx.serialize()).toString("hex"),
+        );
 
         subscriber.next({
           type: "signed",

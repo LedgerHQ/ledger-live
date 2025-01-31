@@ -183,7 +183,7 @@ const modes: Readonly<Record<DerivationMode, ModeSpec>> = Object.freeze({
     overridesDerivation: "44'/607'/0'/0'/<account>'/0'",
   },
   sui: {
-    overridesDerivation: "44'/784'/0'/0'/<account>'/0'",
+    overridesDerivation: "44'/784'/<account>'/0'/0'",
   },
 });
 modes as Record<DerivationMode, ModeSpec>; // eslint-disable-line

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-sui",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Ledger Hardware Wallet Sui Application API",
   "keywords": [
     "Ledger",
@@ -26,10 +26,9 @@
   "types": "lib/Sui.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
-    "@ledgerhq/errors": "workspace:^",
-    "@ledgerhq/hw-transport": "workspace:^",
-    "@zondax/ledger-substrate": "^0.44.2",
-    "bip32-path": "^0.4.2"
+        "@ledgerhq/hw-transport": "^6.31.0",
+    "fast-sha256": "^1.3.0",
+    "@mysten/ledgerjs-hw-app-sui": "0.4.2"
   },
   "devDependencies": {
     "@ledgerhq/hw-transport-mocker": "workspace:^",
