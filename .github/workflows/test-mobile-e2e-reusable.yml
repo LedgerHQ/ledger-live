@@ -411,7 +411,8 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: "artifacts-${{ matrix.platform }}"
-          name: ${{ matrix.platform }}-test-artifacts
+          pattern: ${{ matrix.platform }}-test-artifacts-*
+          merge-multiple: true
 
       - name: Format Xray results
         run: apps/ledger-live-mobile/e2e/xray.formater.sh artifacts-${{ matrix.platform }} ${{ matrix.platform }} ${{ env.TEST_EXECUTION}}
