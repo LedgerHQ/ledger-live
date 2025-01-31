@@ -215,6 +215,8 @@ class BitcoinLikeWallet {
       onDeviceSignatureGranted,
       onDeviceStreaming,
     } = params;
+    let blockHeight = fromAccount.xpub.currentBlockHeight
+    debugger;
     let length = txInfo.outputs.reduce((sum, output) => {
       return sum + 8 + output.script.length + 1;
     }, 1);
@@ -251,6 +253,7 @@ class BitcoinLikeWallet {
       number,
       string | null | undefined,
       number | null | undefined,
+      number | null | undefined, // NOTE: blockheight
     ][];
     const inputs: Inputs = txInfo.inputs.map(i => {
       log("hw", `splitTransaction`, {
@@ -259,11 +262,15 @@ class BitcoinLikeWallet {
         hasExtraData,
         additionals,
       });
+      // const block_height = i.block_height ? i.block_height : 0
+      console.log({wallettsinputblockheight: i.block_height})
+      debugger;
       return [
         btc.splitTransaction(i.txHex, true, hasExtraData, additionals),
         i.output_index,
         null,
         i.sequence,
+        i.block_height,
       ];
     });
 
@@ -273,6 +280,7 @@ class BitcoinLikeWallet {
       inputs,
       associatedKeysets,
       outputScriptHex,
+      blockHeight,
       ...(params.lockTime && { lockTime: params.lockTime }),
       ...(params.sigHashType && { sigHashType: params.sigHashType }),
       ...(params.segwit && { segwit: params.segwit }),
@@ -287,6 +295,7 @@ class BitcoinLikeWallet {
       inputs,
       associatedKeysets,
       outputScriptHex,
+      blockHeight,
       ...(params.lockTime && { lockTime: params.lockTime }),
       ...(params.sigHashType && { sigHashType: params.sigHashType }),
       ...(params.segwit && { segwit: params.segwit }),

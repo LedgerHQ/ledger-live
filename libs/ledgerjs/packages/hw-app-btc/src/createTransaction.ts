@@ -38,11 +38,20 @@ const defaultsSignTransaction = {
  *
  */
 export type CreateTransactionArg = {
-  inputs: Array<[Transaction, number, string | null | undefined, number | null | undefined]>;
+  inputs: Array<
+    [
+      Transaction,
+      number,
+      string | null | undefined,
+      number | null | undefined,
+      number | null | undefined,
+    ]
+  >;
   associatedKeysets: string[];
   changePath?: string;
   outputScriptHex: string;
   lockTime?: number;
+  blockHeight?: number,
   sigHashType?: number;
   segwit?: boolean;
   additionals: Array<string>;
@@ -60,6 +69,7 @@ export async function createTransaction(
   const {
     inputs,
     associatedKeysets,
+    blockHeight,
     changePath,
     outputScriptHex,
     lockTime,
@@ -72,6 +82,8 @@ export async function createTransaction(
     onDeviceSignatureRequested,
   } = signTx;
   let useTrustedInputForSegwit = signTx.useTrustedInputForSegwit;
+  console.log({blockHeight})
+  debugger;
 
   if (useTrustedInputForSegwit === undefined) {
     try {
@@ -121,10 +133,19 @@ export async function createTransaction(
   lockTimeBuffer.writeUInt32LE(lockTime, 0);
   const nullScript = Buffer.alloc(0);
   const nullPrevout = Buffer.alloc(0);
+  let zcashDefaultVersion = 0x80000005
+  if (blockHeight && blockHeight > 2726400) {
+    zcashDefaultVersion = 0x80000006
+  }
   const defaultVersion = Buffer.alloc(4);
   !!expiryHeight && !isDecred
-    ? defaultVersion.writeUInt32LE(isZcash ? 0x80000005 : sapling ? 0x80000004 : 0x80000003, 0) // v5 format for zcash refer to https://zips.z.cash/zip-0225
+    ? defaultVersion.writeUInt32LE(isZcash ? zcashDefaultVersion : sapling ? 0x80000004 : 0x80000003, 0) // v5 format for zcash refer to https://zips.z.cash/zip-0225
     : defaultVersion.writeUInt32LE(1, 0);
+
+  const defaultVersionNu5Only = Buffer.alloc(4);
+  !!expiryHeight && !isDecred
+    ? defaultVersionNu5Only.writeUInt32LE(isZcash ? 0x80000005 : sapling ? 0x80000004 : 0x80000003, 0) // v5 format for zcash refer to https://zips.z.cash/zip-0225
+    : defaultVersionNu5Only.writeUInt32LE(1, 0);
   // Default version to 2 for XST not to have timestamp
   const trustedInputs: Array<any> = [];
   const regularOutputs: Array<TransactionOutput> = [];
@@ -144,8 +165,11 @@ export async function createTransaction(
   // first pass on inputs to get trusted inputs
   for (const input of inputs) {
     if (!resuming) {
-      const trustedInput = await getTrustedInputCall(transport, input[1], input[0], additionals);
+      debugger;
+      // NOTE: not good
+      const trustedInput = await getTrustedInputCall(transport, input[1], input[0], additionals, input[4] || 0);
       log("hw", "got trustedInput=" + trustedInput);
+      debugger;
       const sequence = Buffer.alloc(4);
       sequence.writeUInt32LE(
         input.length >= 4 && typeof input[3] === "number" ? input[3] : DEFAULT_SEQUENCE,
@@ -309,8 +333,11 @@ export async function createTransaction(
     }
   }
 
+  targetTransaction.version = defaultVersionNu5Only;
+  debugger;
   // Populate the final input scripts
   for (let i = 0; i < inputs.length; i++) {
+    
     if (segwit) {
       targetTransaction.witness = Buffer.alloc(0);
 
