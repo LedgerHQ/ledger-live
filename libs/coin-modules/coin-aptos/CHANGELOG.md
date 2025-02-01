@@ -1,5 +1,11 @@
 # @ledgerhq/coin-aptos
 
+## 1.4.0-nightly.3
+
+### Minor Changes
+
+- [#9019](https://github.com/LedgerHQ/ledger-live/pull/9019) [`b7e70fd`](https://github.com/LedgerHQ/ledger-live/commit/b7e70fd3ce6d0ddecf0d7192f67d5f84b1ab7803) Thanks [@jccguimaraes](https://github.com/jccguimaraes)! - fix bot detecting features
+
 ## 1.4.0-nightly.2
 
 ### Minor Changes
