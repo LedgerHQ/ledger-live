@@ -3,11 +3,15 @@ import { Application } from "../../../page";
 import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { activateLedgerSync } from "@ledgerhq/live-common/e2e/speculos";
 import { device } from "detox";
+import { getEnv } from "@ledgerhq/live-env";
+import { getFlags } from "../../../bridge/server";
 
 const app = new Application();
 const tmsLink = "B2CQA-2292, B2CQA-2293, B2CQA-2296";
 
+let cloudSyncApiBaseUrl = "";
 const ledgerKeyRingProtocolArgs = {
+  apiBaseUrl: "",
   pubKey: "",
   privateKey: "",
 };
@@ -20,7 +24,16 @@ const ledgerSyncPushDataArgs = {
 };
 
 async function initializeLedgerKeyRingProtocol() {
-  return CLI.ledgerKeyRingProtocol({ initMemberCredentials: true }).then(output => {
+  const environment = JSON.parse(await getFlags()).llmWalletSync.params?.environment;
+  ledgerKeyRingProtocolArgs.apiBaseUrl =
+    environment == "PROD" ? getEnv("TRUSTCHAIN_API_PROD") : getEnv("TRUSTCHAIN_API_STAGING");
+  cloudSyncApiBaseUrl =
+    environment == "PROD" ? getEnv("CLOUD_SYNC_API_PROD") : getEnv("CLOUD_SYNC_API_STAGING");
+
+  return CLI.ledgerKeyRingProtocol({
+    initMemberCredentials: true,
+    apiBaseUrl: ledgerKeyRingProtocolArgs.apiBaseUrl,
+  }).then(output => {
     if (output && typeof output !== "string" && "pubkey" in output) {
       ledgerKeyRingProtocolArgs.pubKey = output.pubkey;
       ledgerKeyRingProtocolArgs.privateKey = output.privatekey;
@@ -60,6 +73,7 @@ describe(`Ledger Sync Accounts`, () => {
           return CLI.ledgerSync({
             ...ledgerKeyRingProtocolArgs,
             ...ledgerSyncPushDataArgs,
+            cloudSyncApiBaseUrl: cloudSyncApiBaseUrl,
           });
         },
       ],
