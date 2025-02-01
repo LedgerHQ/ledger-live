@@ -20,8 +20,8 @@ export type Operation = {
 
 export async function listOperations(
   address: string,
-  { limit, cursor }: { limit: number; cursor?: number | undefined },
-): Promise<[Operation[], number]> {
+  { limit, cursor }: { limit?: number; cursor?: string },
+): Promise<[Operation[], string]> {
   // Fake accountId
   const accountId = "";
   const operations = await fetchOperations({
@@ -29,12 +29,12 @@ export async function listOperations(
     addr: address,
     order: "asc",
     limit,
-    cursor: cursor?.toString(),
+    cursor: cursor,
   });
 
   return [
     operations.map(convertToCoreOperation(address)),
-    parseInt(operations.slice(-1)[0].extra.pagingToken ?? "0"),
+    operations.slice(-1)[0].extra.pagingToken ?? "",
   ];
 }
 

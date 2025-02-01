@@ -103,6 +103,7 @@ const AmountField = ({
         ) : null}
       </Box>
       <InputCurrency
+        data-testid="modal-amount-field"
         disabled={!!useAllAmount}
         autoFocus={true}
         error={amountError}

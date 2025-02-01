@@ -604,4 +604,12 @@ export class Account {
     undefined,
     1,
   );
+
+  static readonly CELO_1 = new Account(
+    Currency.CELO,
+    "Celo 1",
+    "0x2268495dE776a536A5a9828b91F04d54d7d2Aa50",
+    undefined,
+    0,
+  );
 }

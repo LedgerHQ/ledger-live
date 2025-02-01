@@ -47,6 +47,7 @@ const StepStarter = ({ transitionTo, t, openedWithAccount, eventType }: StepProp
         </Box>
         <Box mb={4}>
           <Text
+            data-testid="delegation-starter-infos"
             ff="Inter|Regular"
             fontSize={14}
             textAlign="center"

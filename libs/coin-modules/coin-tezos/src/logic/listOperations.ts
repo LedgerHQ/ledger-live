@@ -25,14 +25,20 @@ export type Operation = {
 
 export async function listOperations(
   address: string,
-  { lastId, limit }: { lastId?: number; limit?: number },
-): Promise<[Operation[], number]> {
-  const operations = await tzkt.getAccountOperations(address, { lastId, limit });
+  { token, limit }: { limit?: number; token?: string },
+): Promise<[Operation[], string]> {
+  let options: { lastId?: number; limit?: number } = { limit: limit };
+  if (token) {
+    options = { ...options, lastId: JSON.parse(token) };
+  }
+  const operations = await tzkt.getAccountOperations(address, options);
+  const lastOperation = operations.slice(-1)[0];
+  const nextId = lastOperation ? JSON.stringify(lastOperation?.id) : "";
   return [
     operations
       .filter(op => isAPITransactionType(op) || isAPIDelegationType(op))
       .reduce((acc, op) => acc.concat(convertOperation(address, op)), [] as Operation[]),
-    operations.slice(-1)[0].id,
+    nextId,
   ];
 }
 

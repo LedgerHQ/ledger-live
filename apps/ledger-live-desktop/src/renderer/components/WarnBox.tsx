@@ -6,7 +6,7 @@ type Props = {
 };
 
 const WarnBox = ({ children }: Props) => (
-  <Alert type="help" mb={4}>
+  <Alert data-testid="warning-box" type="help" mb={4}>
     {children}
   </Alert>
 );

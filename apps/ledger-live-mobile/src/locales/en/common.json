@@ -4177,7 +4177,9 @@
     "installApp": "{{appName}} App installation {{percentage}}",
     "installAppDescription": "Please wait until the installation is finished",
     "listApps": "Checking App dependencies",
-    "listAppsDescription": "Please wait while we make sure you have all the required apps"
+    "listAppsDescription": "Please wait while we make sure you have all the required apps",
+    "confirmExchangeOnDevice": "Confirm exchange on your device",
+    "confirmSwapOnDevice": "Confirm swap on your device"
   },
   "SelectDevice": {
     "title": "Pair new device",

@@ -4,13 +4,13 @@ import type { AccountInfo } from "../types/model";
 import {
   isErrorResponse,
   isResponseStatus,
+  Marker,
   type AccountInfoResponse,
   type AccountTxResponse,
   type ErrorResponse,
   type LedgerResponse,
   type ServerInfoResponse,
   type SubmitReponse,
-  type XrplOperation,
 } from "./types";
 
 const getNodeUrl = () => coinConfig.getCoinConfig().node;
@@ -66,19 +66,32 @@ export const getServerInfos = async (): Promise<ServerInfoResponse> => {
   return rpcCall<ServerInfoResponse>("server_info", { ledger_index: "validated" });
 };
 
+// https://xrpl.org/docs/references/http-websocket-apis/public-api-methods/account-methods/account_tx
+export type GetTransactionsOptions = {
+  ledger_index_min?: number;
+  ledger_index_max?: number;
+  limit?: number;
+  marker?: Marker;
+  // this property controls the order of the transactions
+  // true: oldest first
+  // false: newest first
+  forward: boolean;
+};
+
 export const getTransactions = async (
   address: string,
-  options: { ledger_index_min?: number; ledger_index_max?: number; limit?: number } | undefined,
-): Promise<XrplOperation[]> => {
+  options: GetTransactionsOptions | undefined,
+): Promise<AccountTxResponse> => {
   const result = await rpcCall<AccountTxResponse>("account_tx", {
     account: address,
-    // newest first
-    // note that order within the results is not guaranteed (see documentation of account_tx)
-    forward: false,
+    // this property controls the order of the transactions
+    // looks like there is a bug in LL (https://ledgerhq.atlassian.net/browse/LIVE-16705)
+    // so we need to set it to false (newest first) to get the transactions in the right order
+    // for lama-adapter we need to set it to true (oldest first)
     ...options,
     api_version: 2,
   });
-  return result.transactions;
+  return result;
 };
 
 export async function getLedger(): Promise<LedgerResponse> {
@@ -93,7 +106,7 @@ export async function getLedgerIndex(): Promise<number> {
 
 async function rpcCall<T extends object>(
   method: string,
-  params: Record<string, string | number | boolean> = {},
+  params: Record<string, unknown> = {},
 ): Promise<T> {
   const {
     data: { result },

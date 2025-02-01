@@ -105,6 +105,7 @@
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
+    "@ledgerhq/logs": "workspace:^",
     "bignumber.js": "^9.1.2",
     "invariant": "^2.2.4",
     "ripple-address-codec": "^5.0.0",

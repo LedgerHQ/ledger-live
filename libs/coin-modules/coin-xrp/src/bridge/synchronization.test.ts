@@ -68,6 +68,20 @@ describe("getAccountShape", () => {
     });
   });
 
+  const someMarker = { ledger: 1, seq: 1 };
+  function mockNetworkTxs(txs: unknown): unknown {
+    return {
+      account: "account",
+      ledger_index_max: 1,
+      ledger_index_min: 1,
+      limit: 1,
+      validated: false,
+      transactions: txs,
+      marker: someMarker,
+      error: "",
+    };
+  }
+
   it("convert correctly operations", async () => {
     // Given
     mockGetAccountInfo.mockResolvedValue({
@@ -76,22 +90,24 @@ describe("getAccountShape", () => {
       ownerCount: 0,
       sequence: 0,
     });
-    mockGetTransactions.mockResolvedValue([
-      {
-        ledger_hash: "HASH_VALUE_BLOCK",
-        hash: "HASH_VALUE",
-        meta: { delivered_amount: "100" },
-        tx_json: {
-          TransactionType: "Payment",
-          Fee: "10",
-          ledger_index: 1,
-          date: 1000,
-          Account: "account_addr",
-          Destination: "destination_addr",
-          Sequence: 1,
+    mockGetTransactions.mockResolvedValue(
+      mockNetworkTxs([
+        {
+          ledger_hash: "HASH_VALUE_BLOCK",
+          hash: "HASH_VALUE",
+          meta: { delivered_amount: "100" },
+          tx_json: {
+            TransactionType: "Payment",
+            Fee: "10",
+            ledger_index: 1,
+            date: 1000,
+            Account: "account_addr",
+            Destination: "destination_addr",
+            Sequence: 1,
+          },
         },
-      },
-    ]);
+      ]),
+    );
 
     // When
     const account = await getAccountShape(

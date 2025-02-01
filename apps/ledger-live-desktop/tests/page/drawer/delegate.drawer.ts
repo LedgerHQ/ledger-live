@@ -32,12 +32,12 @@ export class DelegateDrawer extends Drawer {
   }
 
   @step("Verify transaction type is correct")
-  async transactionTypeIsVisible() {
+  async verifyTxTypeIsVisible() {
     await expect(this.transactionType).toBeVisible();
   }
 
   @step("Verify transaction type corresponds to $0")
-  async transactionTypeIsCorrect(transactionType: string) {
+  async verifyTxTypeIs(transactionType: string) {
     const transaction = await this.transactionType.allInnerTexts();
     expect(transaction).toContain(transactionType);
   }
@@ -58,6 +58,6 @@ export class DelegateDrawer extends Drawer {
   async expectDelegationInfos(delegationInfo: Delegate) {
     await this.providerIsVisible(delegationInfo);
     await this.amountValueIsVisible();
-    await this.transactionTypeIsVisible();
+    await this.verifyTxTypeIsVisible();
   }
 }

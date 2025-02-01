@@ -161,7 +161,7 @@ export function getSpecs({ disabled, filter }) {
         };
       }
 
-      if (filteredFeatures) {
+      if (filteredFeatures.length > 0) {
         spec = {
           ...spec,
           mutations: spec.mutations.filter(m => filteredFeatures.includes(m.feature)),

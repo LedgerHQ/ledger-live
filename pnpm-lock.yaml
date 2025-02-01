@@ -1905,6 +1905,9 @@ importers:
       bignumber.js:
         specifier: ^9.1.2
         version: 9.1.2
+      expect:
+        specifier: ^27.4.6
+        version: 27.5.1
       graphql:
         specifier: ^16.10.0
         version: 16.10.0
@@ -3545,6 +3548,9 @@ importers:
       '@ledgerhq/live-network':
         specifier: workspace:^
         version: link:../../live-network
+      '@ledgerhq/logs':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/logs
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
