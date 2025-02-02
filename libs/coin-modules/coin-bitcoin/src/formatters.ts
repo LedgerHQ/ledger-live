@@ -12,6 +12,7 @@ export function formatInput(account: BitcoinAccount, input: BitcoinInput): strin
     : ""
   ).padEnd(12)} ${input.address || ""} ${input.previousTxHash || ""}@${input.previousOutputIndex}`;
 }
+
 export function formatOutput(account: BitcoinAccount, o: BitcoinOutput): string {
   return [
     formatCurrencyUnit(account.currency.units[0], o.value, {

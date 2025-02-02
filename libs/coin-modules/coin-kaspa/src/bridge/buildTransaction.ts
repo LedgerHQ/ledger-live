@@ -1,7 +1,12 @@
 import { BigNumber } from "bignumber.js";
 
-import { KaspaHwTransaction, KaspaHwTransactionInput, KaspaHwTransactionOutput } from "./kaspaHwTransaction";
-import { KaspaAccount, Transaction } from "../types";
+import {
+  KaspaAccount,
+  KaspaHwTransaction,
+  KaspaHwTransactionInput,
+  KaspaHwTransactionOutput,
+  Transaction,
+} from "../types";
 import { selectUtxos, UtxoStrategy } from "../logic/utxoSelection";
 import { addressToScriptPublicKey, getFeeRate, parseExtendedPublicKey, scanUtxos } from "../logic";
 

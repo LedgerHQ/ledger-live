@@ -1,4 +1,4 @@
-import { KaspaHwTransaction } from "./bridge/kaspaHwTransaction";
+import { KaspaHwTransaction } from "./index";
 
 export type KaspaAddress = {
   address: string;

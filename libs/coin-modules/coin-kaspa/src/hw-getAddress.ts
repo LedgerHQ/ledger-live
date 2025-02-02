@@ -1,7 +1,7 @@
 import { GetAddressFn } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { GetAddressOptions } from "@ledgerhq/coin-framework/derivation";
-import { KaspaSigner } from "./signer";
+import { KaspaSigner } from "./types";
 
 const resolver = (signerContext: SignerContext<KaspaSigner>): GetAddressFn => {
   return async (deviceId: string, { path, verify }: GetAddressOptions) => {

@@ -1,8 +1,7 @@
-import { KaspaAccount } from "../types";
+import { KaspaAccount, KaspaHwTransaction } from "../types";
 import { encodeOperationId } from "@ledgerhq/coin-framework/lib/operation";
 import { Operation } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
-import { KaspaHwTransaction } from "./kaspaHwTransaction";
 import { scriptPublicKeyToAddress } from "../logic";
 
 export const buildInitialOperation = (

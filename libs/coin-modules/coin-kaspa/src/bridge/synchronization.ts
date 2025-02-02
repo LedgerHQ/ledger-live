@@ -1,9 +1,8 @@
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { GetAccountShape, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { AccountAddresses, KaspaAccount } from "../types";
+import { AccountAddresses, KaspaAccount, KaspaSigner } from "../types";
 import { Operation } from "@ledgerhq/types-live";
 import { SignerContext } from "@ledgerhq/coin-framework/lib/signer";
-import { KaspaSigner } from "../signer";
 import { parseExtendedPublicKey, scanAddresses, scanOperations } from "../logic";
 import { getBlockDagInfo, getVirtualChainBlueScore } from "../network";
 

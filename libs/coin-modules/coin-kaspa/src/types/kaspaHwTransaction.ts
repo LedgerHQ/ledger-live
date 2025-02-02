@@ -232,9 +232,3 @@ export function toBigEndianHex(numberToConvert: number) {
 
   return baseStr.substring(baseStr.length - 16, baseStr.length);
 }
-
-export default {
-  KaspaHwTransaction,
-  KaspaHwTransactionInput,
-  KaspaHwTransactionOutput,
-};

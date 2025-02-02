@@ -2,8 +2,7 @@ import { Observable } from "rxjs";
 import type { AccountBridge, SignOperationEvent } from "@ledgerhq/types-live";
 
 import { buildTransaction } from "./buildTransaction";
-import { KaspaAccount, Transaction } from "../types";
-import { KaspaSigner } from "../signer";
+import { KaspaAccount, KaspaSigner, Transaction } from "../types";
 import { SignerContext } from "@ledgerhq/coin-framework/lib/signer";
 import buildInitialOperation from "./buildInitialOperation";
 
