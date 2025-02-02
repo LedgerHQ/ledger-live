@@ -7,4 +7,3 @@ export const dataset: DatasetTest<Transaction> = {
     kaspa: {},
   },
 };
-

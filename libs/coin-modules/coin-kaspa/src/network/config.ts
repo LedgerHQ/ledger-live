@@ -1,4 +1,6 @@
 // const API_BASE = "https://api.kaspa.org";
-const API_BASE = "http://127.0.0.1:8000";
+import { getEnv } from "@ledgerhq/live-env";
+
+const API_BASE = getEnv("API_KASPA_ENDPOINT");
 
 export { API_BASE };

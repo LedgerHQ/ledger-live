@@ -59,9 +59,9 @@ export function encode(data: number[]) {
   if (!(data instanceof Array)) {
     throw new Error("Must be Array");
   }
-  var base32 = "";
-  for (var i = 0; i < data.length; i++) {
-    var value = data[i];
+  let base32 = "";
+  for (let i = 0; i < data.length; i++) {
+    const value = data[i];
     if (!(0 <= value && value < 32)) {
       throw new Error("value " + value);
     }
@@ -79,9 +79,9 @@ export function decode(base32: string) {
   if (typeof base32 !== "string") {
     throw new Error("Must be base32-encoded string");
   }
-  var data = [];
-  for (var i = 0; i < base32.length; i++) {
-    var value = base32[i];
+  const data = [];
+  for (let i = 0; i < base32.length; i++) {
+    const value = base32[i];
     if (!(value in CHARSET_INVERSE_INDEX)) {
       throw new Error("value " + value);
     }

@@ -2,9 +2,7 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { useFeesStrategy } from "@ledgerhq/live-common/families/kaspa/react";
 import { Transaction } from "@ledgerhq/live-common/families/kaspa/types";
 import React, { useCallback, useEffect, useState } from "react";
-import styled from "styled-components";
 import SelectFeeStrategyKaspa, { OnClickType } from "./SelectFeeStrategyKaspa";
-import { context } from "~/renderer/drawers/Provider";
 import { KaspaFamily } from "~/renderer/families/kaspa/types";
 import SendFeeMode from "~/renderer/components/SendFeeMode";
 import { track } from "~/renderer/analytics/segment";
@@ -12,13 +10,6 @@ import { FeesField } from "./FeesField";
 import BigNumber from "bignumber.js";
 
 type Props = NonNullable<KaspaFamily["sendAmountFields"]>["component"];
-
-const Separator = styled.div`
-    width: 100%;
-    height: 1px;
-    background-color: ${p => p.theme.colors.palette.text.shade10};
-    margin: 20px 0;
-`;
 
 const getFeeRate = (transaction: Transaction | null | undefined): BigNumber => {
   if (!transaction) {
@@ -39,18 +30,17 @@ const getFeeRate = (transaction: Transaction | null | undefined): BigNumber => {
 };
 
 const Fields: Props = ({
-                         transaction,
-                         account,
-                         parentAccount,
-                         onChange,
-                         status,
-                         updateTransaction,
-                         mapStrategies,
-                         trackProperties = {},
-                       }) => {
+  transaction,
+  account,
+  parentAccount,
+  status,
+  updateTransaction,
+  mapStrategies,
+  trackProperties = {},
+}) => {
   const [isAdvanceMode, setAdvanceMode] = useState(!transaction.feesStrategy);
   const bridge = getAccountBridge(account);
-  const { state: drawerState, setDrawer } = React.useContext(context);
+  // const { state: drawerState, setDrawer } = React.useContext(context);
 
   const strategies = useFeesStrategy(account, transaction);
 

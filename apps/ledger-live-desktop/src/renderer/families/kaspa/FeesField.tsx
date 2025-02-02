@@ -2,12 +2,11 @@ import React, { useRef } from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
 import { Account } from "@ledgerhq/types-live";
-import { Transaction } from "@ledgerhq/live-common/families/kaspa/types";
+import { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/kaspa/types";
 import InputCurrency from "~/renderer/components/InputCurrency";
 import Box from "~/renderer/components/Box";
 import Label from "~/renderer/components/Label";
 import BigNumber from "bignumber.js";
-import { TransactionStatus } from "@ledgerhq/coin-bitcoin/lib/types";
 
 type Props = {
   account: Account;

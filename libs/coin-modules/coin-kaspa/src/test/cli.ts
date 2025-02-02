@@ -8,11 +8,6 @@ const options = [
     type: String,
     desc: "mode of transaction: send",
   },
-  // {
-  //   name: "rbf",
-  //   type: Boolean,
-  //   desc: "enable replace-by-fee",
-  // },
 ];
 
 function inferTransactions(
