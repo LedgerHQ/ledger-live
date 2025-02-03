@@ -106,7 +106,8 @@ export class Application {
   }: ApplicationOptions) {
     let proxyPort = 0;
     if (speculosApp) {
-      proxyPort = await this.common.addSpeculos(speculosApp.name);
+      const speculosAdress = process.env.CI ? "10.102.97.71" : "localhost";
+      proxyPort = await this.common.addSpeculos(speculosApp.name, speculosAdress);
       process.env.DEVICE_PROXY_URL = `ws://localhost:${proxyPort}`;
       require("@ledgerhq/live-cli/src/live-common-setup");
     }

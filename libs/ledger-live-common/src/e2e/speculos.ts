@@ -37,6 +37,9 @@ import { NFTTransaction, Transaction } from "./models/Transaction";
 import { Delegate } from "./models/Delegate";
 import { Swap } from "./models/Swap";
 
+let idCounter: number;
+const dockerApiUrl = `http://10.102.97.71:2375/containers/`;
+
 export type Spec = {
   currency?: CryptoCurrency;
   appQuery: {
@@ -303,7 +306,7 @@ export async function startSpeculos(
 ): Promise<SpeculosDevice | undefined> {
   log("engine", `test ${testName}`);
 
-  const { SEED, COINAPPS } = process.env;
+  const { SEED, COINAPPS, COINAPPS_REMOTE } = process.env;
 
   const seed = SEED;
   invariant(seed, "SEED is not set");
@@ -355,8 +358,112 @@ export async function startSpeculos(
     onSpeculosDeviceCreated,
   };
 
+  const modelMap: Record<string, DeviceModelId> = {
+    nanos: DeviceModelId.nanoS,
+    "nanos+": DeviceModelId.nanoSP,
+    nanox: DeviceModelId.nanoX,
+    blue: DeviceModelId.blue,
+  };
+
+  const reverseModelMap: Record<string, string> = {};
+  for (const k in modelMap) {
+    reverseModelMap[modelMap[k]] = k;
+  }
+
+  function conventionalAppSubpath(
+    model: DeviceModelId,
+    firmware: string,
+    appName: string,
+    appVersion: string,
+  ) {
+    return `${reverseModelMap[model]}/${firmware}/${appName.replace(/ /g, "")}/app_${appVersion}.elf`;
+  }
+
   try {
-    return await createSpeculosDevice(deviceParams);
+    idCounter = idCounter ?? getEnv("SPECULOS_PID_OFFSET");
+    const speculosID = `speculosID-${++idCounter}`;
+
+    const subpath = conventionalAppSubpath(
+      model,
+      deviceParams.firmware,
+      deviceParams.appName,
+      deviceParams.appVersion,
+    );
+    const appPath = `./apps/${subpath}`;
+
+    const requestData = {
+      Image: `${process.env.SPECULOS_IMAGE_TAG}`,
+      Cmd: [
+        "--model",
+        model.toLowerCase(),
+        appPath,
+        "--display",
+        "headless",
+        "--api-port",
+        "40000",
+        "--seed",
+        `${seed}`,
+        ...(dependency
+          ? [
+              "-l",
+              `${dependency}:./apps/${conventionalAppSubpath(model, deviceParams.firmware, dependency, deviceParams.appVersion)}`,
+            ]
+          : []),
+        ...(dependencies !== undefined
+          ? dependencies.flatMap(dependency => [
+              "-l",
+              `${dependency.name}:./apps/${conventionalAppSubpath(model, deviceParams.firmware, dependency.name, dependency.appVersion ? dependency.appVersion : "1.0.0")}`,
+            ])
+          : []),
+      ],
+      Env: [`SPECULOS_APPNAME=${deviceParams.appName}:${deviceParams.appVersion}`],
+      HostConfig: {
+        Binds: [`${COINAPPS_REMOTE ?? coinapps}:/speculos/apps`],
+        PortBindings: { "40000/tcp": [{ HostPort: (30000 + idCounter).toString() }] },
+      },
+      NetworkMode: "bridge",
+      AutoRemove: true,
+    };
+
+    const url = dockerApiUrl + speculosID;
+
+    try {
+      await axios.post(url + "/stop", {}, { headers: { "Content-Type": "application/json" } });
+    } catch (e) {
+      console.warn(`${speculosID} not stopped because of ${String(e)}`);
+    } finally {
+      try {
+        await axios.delete(url);
+      } catch (e) {
+        console.warn(`${speculosID} not deleted because of ${String(e)}`);
+      }
+    }
+
+    await axios
+      .post(dockerApiUrl + `create?name=${speculosID}`, requestData, {
+        headers: { "Content-Type": "application/json" },
+      })
+      .then(response => {
+        console.warn("Container Created:", response.data);
+      })
+      .catch(error => {
+        console.error(
+          "Error creating container:",
+          error.response ? error.response.data : error.message,
+        );
+      });
+    await axios.post(
+      dockerApiUrl + `${speculosID}/start`,
+      {},
+      { headers: { "Content-Type": "application/json" } },
+    );
+    return {
+      transport: undefined as unknown,
+      id: speculosID,
+      appPath: appPath,
+      ports: { apiPort: 30000 + idCounter, vncPort: 0 },
+    } as SpeculosDevice;
+    //return await createSpeculosDevice(deviceParams);
   } catch (e: unknown) {
     console.error(e);
     log("engine", `test ${testName} failed with ${String(e)}`);
@@ -366,7 +473,19 @@ export async function startSpeculos(
 export async function stopSpeculos(device: Device | undefined) {
   if (device) {
     log("engine", `test ${device.id} finished`);
-    await releaseSpeculosDevice(device.id);
+    const url = dockerApiUrl + device.id;
+    try {
+      await axios.post(url + "/stop", {}, { headers: { "Content-Type": "application/json" } });
+    } catch (e) {
+      console.warn(`${device.id} not stopped because of ${String(e)}`);
+    } finally {
+      try {
+        await axios.delete(url);
+      } catch (e) {
+        console.warn(`${device.id} not deleted because of ${String(e)}`);
+      }
+    }
+    //await releaseSpeculosDevice(device.id);
   }
 }
 
