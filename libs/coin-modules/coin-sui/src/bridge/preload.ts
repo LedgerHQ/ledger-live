@@ -48,10 +48,8 @@ export const getPreloadStrategy = () => ({
 
 export const preload = async (): Promise<SuiPreloadData> => {
   log("sui/preload", "preloading sui data...");
-
-  const somePreloadedData = await getPreloadedData();
-
-  return { somePreloadedData };
+  const preloadedData = await getPreloadedData();
+  return { somePreloadedData: preloadedData };
 };
 
 export const hydrate = (data: any) => {

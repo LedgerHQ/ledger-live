@@ -6,6 +6,8 @@ import type { Operation, OperationType } from "@ledgerhq/types-live";
 // import { getEnv } from "@ledgerhq/live-env";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 
+import { makeLRUCache, minutes, hours } from "@ledgerhq/live-network/cache";
+
 type AsyncApiFunction = (api: SuiClient) => Promise<any>;
 
 const rpcUrl = getFullnodeUrl("devnet");
@@ -148,6 +150,10 @@ export const getOperations = async (
   startAt: number,
 ): Promise<Operation[]> =>
   withApi(async api => {
+    if (startAt) {
+      //
+    }
+
     const senderTx = await api.queryTransactionBlocks({
       filter: { FromAddress: addr },
       options: {
@@ -174,7 +180,26 @@ export const getOperations = async (
       (a, b) => Number(b.timestampMs) - Number(a.timestampMs),
     );
 
-    return rawTransactions.map(transaction => transactionToOperation(accountId, addr, transaction));
+    return rawTransactions.map(transaction =>
+      transactionToOperation(accountId, addr, transaction as unknown as Transaction),
+    );
   });
 
-export const getPreloadedData = () => {};
+export const getPreloadedData = () => ({
+  // Add any preloaded data fields here
+  networkInfo: {},
+});
+
+export const paymentInfo = makeLRUCache(
+  signedTx => signedTx, // TODO: add fn
+  signedTx => signedTx,
+  minutes(5),
+);
+
+export const submitExtrinsic = async (extrinsic: string) => extrinsic;
+
+export const getRegistry = makeLRUCache(
+  () => new Promise(resolve => resolve({})),
+  () => "sui",
+  hours(1),
+);

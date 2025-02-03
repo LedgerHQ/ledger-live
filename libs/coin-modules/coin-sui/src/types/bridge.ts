@@ -4,6 +4,8 @@ import type {
   TransactionCommonRaw,
   TransactionStatusCommon,
   TransactionStatusCommonRaw,
+  Operation,
+  OperationRaw,
 } from "@ledgerhq/types-live";
 import type { Account, AccountRaw } from "@ledgerhq/types-live";
 
@@ -64,3 +66,31 @@ export type SuiAccountRaw = AccountRaw & {
 
 export type TransactionStatus = TransactionStatusCommon;
 export type TransactionStatusRaw = TransactionStatusCommonRaw;
+
+export type SuiOperation = Operation<SuiOperationExtra>;
+export type SuiOperationRaw = OperationRaw<SuiOperationExtraRaw>;
+
+export type SuiOperationExtra = {
+  transferAmount?: BigNumber;
+  palletMethod: PalletMethod;
+  bondedAmount?: BigNumber;
+  unbondedAmount?: BigNumber;
+  withdrawUnbondedAmount?: BigNumber;
+  validatorStash?: string | undefined;
+  validators?: string[] | undefined;
+};
+export type SuiOperationExtraRaw = Record<string, string>;
+
+export type PalletMethod =
+  | "balances.transfer"
+  | "balances.transferKeepAlive"
+  | "balances.transferAllowDeath"
+  | "staking.bond"
+  | "staking.bondExtra"
+  | "staking.unbond"
+  | "staking.rebond"
+  | "staking.withdrawUnbonded"
+  | "staking.nominate"
+  | "staking.chill"
+  | "staking.setController"
+  | "staking.payoutStakers";

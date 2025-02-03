@@ -1,5 +1,6 @@
 import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import {
+  getSerializedAddressParameters,
   updateTransaction,
   makeAccountBridgeReceive,
   makeScanAccounts,
@@ -7,7 +8,7 @@ import {
 import { CoinConfig } from "@ledgerhq/coin-framework/config";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
-import suiConfig, { type SuiConfig } from "../config";
+import suiConfig, { type SuiCoinConfig } from "../config";
 import signerGetAddress from "../signer";
 import { SuiAccount, SuiSigner, TransactionStatus, type Transaction } from "../types";
 import { broadcast } from "./broadcast";
@@ -63,12 +64,13 @@ function buildAccountBridge(
     assignToAccountRaw,
     fromOperationExtraRaw,
     toOperationExtraRaw,
+    getSerializedAddressParameters,
   };
 }
 
 export function createBridges(
   signerContext: SignerContext<SuiSigner>,
-  coinConfig: CoinConfig<SuiConfig>,
+  coinConfig: CoinConfig<SuiCoinConfig>,
 ) {
   suiConfig.setCoinConfig(coinConfig);
 

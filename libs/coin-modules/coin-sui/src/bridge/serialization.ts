@@ -1,6 +1,13 @@
-import { Account, AccountRaw } from "@ledgerhq/types-live";
+import { Account, AccountRaw, OperationExtra, OperationExtraRaw } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
-import type { SuiAccount, SuiAccountRaw, SuiResourcesRaw, SuiResources } from "../types";
+import type {
+  SuiAccount,
+  SuiAccountRaw,
+  SuiResourcesRaw,
+  SuiResources,
+  SuiOperationExtra,
+  SuiOperationExtraRaw,
+} from "../types";
 
 export function toSuiResourcesRaw(r: SuiResources): SuiResourcesRaw {
   const { nonce, additionalBalance } = r;
@@ -30,4 +37,25 @@ export function assignFromAccountRaw(accountRaw: AccountRaw, account: Account) {
   if (suiResourcesRaw) {
     (account as SuiAccount).suiResources = fromSuiResourcesRaw(suiResourcesRaw);
   }
+}
+
+export function fromOperationExtraRaw(extraRaw: OperationExtraRaw) {
+  if (extraRaw) {
+    //
+  }
+
+  const extra: SuiOperationExtra = {
+    palletMethod: "balances.transferKeepAlive",
+  };
+
+  return extra;
+}
+
+export function toOperationExtraRaw(extra: OperationExtra) {
+  if (extra) {
+    //
+  }
+  const extraRaw: SuiOperationExtraRaw = {};
+
+  return extraRaw;
 }

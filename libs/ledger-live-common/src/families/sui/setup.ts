@@ -2,12 +2,12 @@
 
 import { SuiAccount, TransactionStatus, createBridges, type Transaction } from "@ledgerhq/coin-sui";
 import Transport from "@ledgerhq/hw-transport";
-import Sui from "@ledgerhq/hw-app-sui/lib/Sui";
+import Sui from "@ledgerhq/hw-app-sui";
 import type { Bridge } from "@ledgerhq/types-live";
 import { SuiCoinConfig } from "@ledgerhq/coin-sui/config";
 import { type SuiSigner } from "@ledgerhq/coin-sui/types/signer";
 import suiResolver from "@ledgerhq/coin-sui/signer/index";
-// import makeCliTools, { type CliTools } from "@ledgerhq/coin-sui/test/cli";
+import makeCliTools, { type CliTools } from "@ledgerhq/coin-sui/test/cli";
 import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/setup";
 import { Resolver } from "../../hw/getAddress/types";
 import { getCurrencyConfiguration } from "../../config";
@@ -29,10 +29,6 @@ const bridge: Bridge<Transaction, SuiAccount, TransactionStatus> = createBridges
 
 const resolver: Resolver = createResolver(createSigner, suiResolver);
 
-// const cliTools: CliTools = makeCliTools();
+const cliTools: CliTools = makeCliTools();
 
-export {
-  bridge,
-  // cliTools,
-  resolver,
-};
+export { bridge, cliTools, resolver };
