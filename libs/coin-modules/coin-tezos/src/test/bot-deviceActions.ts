@@ -78,10 +78,14 @@ export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlo
     {
       title: "Storage limit",
       button: SpeculosButton.RIGHT,
-      expectedValue: ({ transaction, account, status }) => {
-        console.log("TRANSACTION: ", transaction);
-        console.log("ACCOUNT: ", account);
-        console.log("STATUS: ", status);
+      expectedValue: ({ transaction }, prevSteps) => {
+        if (prevSteps.find(step => step.title === "Operation (0)" && step.value === "Reveal")) {
+          if (!prevSteps.find(step => step.title === "Operation (1)")) {
+            return "0";
+          } else {
+            return transaction.storageLimit?.toString() || "";
+          }
+        }
         return transaction.storageLimit?.toString() || "";
       },
     },
