@@ -200,7 +200,8 @@
       "STAKE" : "Gestaket",
       "UNSTAKE" : "Nicht mehr gestaket",
       "WITHDRAW_UNSTAKED" : "Ausgezahlt",
-      "SENDING" : "Senden"
+      "SENDING" : "Senden",
+      "BURN" : "Verbrannt"
     },
     "edit" : {
       "title" : "Beschleunigen oder Abbrechen",
@@ -1515,21 +1516,21 @@
     },
     "recoverBanner" : {
       "subscribeDone" : {
-        "title" : "Hinzufügen deiner Zahlungskarte abschließen",
-        "description" : "Zuverlässige Wiederherstellung mit Ledger Recover.",
+        "title" : "Erinnerung: Schließe die Anmeldung für Ledger Recover ab",
+        "description" : "Du musst noch zwei Schritte bis zum optimalen Schutz zurücklegen.",
         "primaryCta" : "Karte hinzufügen",
         "secondaryCta" : "Vielleicht später"
       },
       "verifyIdentity" : {
-        "title" : "Identitätsnachweis abschließen",
-        "description" : "Zuverlässige Wiederherstellung mit Ledger Recover.",
-        "primaryCta" : "Bestätigen",
+        "title" : "Erinnerung: Schließe die Anmeldung für Ledger Recover ab",
+        "description" : "Du musst noch einen Schritt bis zum optimalen Schutz zurücklegen.",
+        "primaryCta" : "Identität verifizieren",
         "secondaryCta" : "Vielleicht später"
       },
       "connectDevice" : {
-        "title" : "Ledger-Gerät verbinden",
-        "description" : "Nur noch ein Schritt, und schon kannst du Ledger Recover nutzen.",
-        "primaryCta" : "Verbinden",
+        "title" : "Erinnerung: Schließe die Anmeldung für Ledger Recover ab",
+        "description" : "Das ist der letzte Schritt, um die Wiederherstellung des Zugriffs auf deine Wallet zu gewährleisten.",
+        "primaryCta" : "Gerät verbinden",
         "secondaryCta" : "Vielleicht später"
       }
     },
@@ -3742,6 +3743,10 @@
           }
         }
       }
+    },
+    "token" : {
+      "frozenStateWarning" : "Kontovermögenswerte sind gesperrt!",
+      "transferWarning" : "Zum Verifizieren der Empfängeradresse für Solana-Token mit einer Ledger Nano S™ <0>befolge diese Anweisungen</0>."
     }
   },
   "ethereum" : {
@@ -6197,6 +6202,27 @@
     "SolanaAccountNotFunded" : {
       "title" : "Konto nicht gedeckt"
     },
+    "SolanaTokenAccountHoldsAnotherToken" : {
+      "title" : "Dieses zugeordnete Tokenkonto enthält ein weiteres Token"
+    },
+    "SolanaTokenAccountWarning" : {
+      "title" : "Das ist keine reguläre Wallet-Adresse, sondern ein verbundenes Tokenkonto. Du solltest den Vorgang nur fortsetzen, wenn du genau weißt, was du tust."
+    },
+    "SolanaTokenAccountNotAllowed" : {
+      "title" : "Das ist ein Tokenkonto. Bitte gib eine reguläre Wallet-Adresse ein."
+    },
+    "SolanaMintAccountNotAllowed" : {
+      "title" : "Das ist eine Tokenadresse. Bitte gib eine reguläre Wallet-Adresse ein."
+    },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "Konto wird gedeckt"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "Vermögenswerte des Tokenkontos sind gesperrt"
+    },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "Konto nicht initialisiert"
+    },
     "SolanaMemoIsTooLong" : {
       "title" : "Memo ist zu lang. Maximale Länge beträgt {{maxLength}}"
     },
@@ -6725,17 +6751,19 @@
         "mobile" : {
           "description" : "Synchronisiere mit der Ledger Live-App auf einem anderen Smartphone",
           "steps" : {
-            "step1" : "Öffne die Ledger Live-App, die du synchronisieren möchtest.",
-            "step2" : "Gehe zu <0>Settings</0> (Einstellungen) > <0>General</0> (Allgemein) > <0>Ledger Sync</0> > <0>Turn on sync</0> (Sync einschalten) > <0>Show QR</0> (QR-Code anzeigen)",
-            "step3" : "QR-Code scannen"
+            "step1" : "Vergewissere dich, dass Ledger Sync in einer deiner Apps aktiviert ist.",
+            "step2" : "Öffne die Ledger Live-App, die du synchronisieren möchtest.",
+            "step3" : "Gehe zu <0>Settings</0> (Einstellungen) > <0>General</0> (Allgemein) > <0>Ledger Sync</0> > <0>I already turned it on</0> (Ich habe Sync schon aktiviert) > <0>Show QR</0> (QR-Code anzeigen).",
+            "step4" : "Scanne den QR-Code."
           }
         },
         "desktop" : {
           "description" : "Deine Konten mit einer anderen Ledger Live-App synchronisieren",
           "steps" : {
-            "step1" : "Öffne die Ledger Live-App, die du synchronisieren möchtest.",
-            "step2" : "Gehe zu <0>Settings</0> (Einstellungen) > <0>General</0> (Allgemein) > <0>Ledger Sync</0> > <0>Turn on sync</0> (Sync einschalten) > <0>Use your Ledger</0> (Dein Ledger-Gerät verwenden)",
-            "step3" : "Ledger-Gerät verbinden"
+            "step1" : "Vergewissere dich, dass Ledger Sync in einer deiner Apps aktiviert ist.",
+            "step2" : "Öffne die Ledger Live-App, die du synchronisieren möchtest.",
+            "step3" : "Gehe zu <0>Settings</0> (Einstellungen) > <0>General</0> (Allgemein) > <0>Ledger Sync</0> > <0>I already turned it on</0> (Ich habe Sync schon aktiviert) > <0>Use your Ledger</0> (Dein Ledger-Gerät verwenden).",
+            "step4" : "Stelle eine Verbindung mit deinem Ledger-Gerät her."
           }
         }
       },

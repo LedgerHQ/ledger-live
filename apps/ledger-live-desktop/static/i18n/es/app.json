@@ -200,7 +200,8 @@
       "STAKE" : "En participación",
       "UNSTAKE" : "Fuera de participación",
       "WITHDRAW_UNSTAKED" : "Retirado",
-      "SENDING" : "Enviando"
+      "SENDING" : "Enviando",
+      "BURN" : "Quemado"
     },
     "edit" : {
       "title" : "Acelerar o cancelar",
@@ -1515,21 +1516,21 @@
     },
     "recoverBanner" : {
       "subscribeDone" : {
-        "title" : "Termina de agregar tu tarjeta de pago",
-        "description" : "Restauración fiable con Ledger Recover.",
+        "title" : "Recordatorio: termina de suscribirte a Ledger Recover",
+        "description" : "Estás a sólo dos pasos de tener la protección que te mereces.",
         "primaryCta" : "Agregar tarjeta",
         "secondaryCta" : "Quizás más tarde"
       },
       "verifyIdentity" : {
-        "title" : "Termina de verificar tu identidad",
-        "description" : "Restauración fiable con Ledger Recover.",
-        "primaryCta" : "Verificar",
+        "title" : "Recordatorio: termina de suscribirte a Ledger Recover",
+        "description" : "Estás a sólo un paso de tener la protección que te mereces.",
+        "primaryCta" : "Verificar identidad",
         "secondaryCta" : "Quizás más tarde"
       },
       "connectDevice" : {
-        "title" : "Conecta tu Ledger",
-        "description" : "Solo te queda un paso para disfrutar de Ledger Recover.",
-        "primaryCta" : "Conectar",
+        "title" : "Recordatorio: termina de suscribirte a Ledger Recover",
+        "description" : "Es el último paso que debes realizar para garantizar la recuperación del acceso a tu billetera.",
+        "primaryCta" : "Conectar dispositivo",
         "secondaryCta" : "Quizás más tarde"
       }
     },
@@ -3742,6 +3743,10 @@
           }
         }
       }
+    },
+    "token" : {
+      "frozenStateWarning" : "Los activos de la cuenta están inmovilizados.",
+      "transferWarning" : "Para verificar la dirección del receptor de los tokens de Solana con un Ledger Nano S™, <0>sigue estas instrucciones</0>."
     }
   },
   "ethereum" : {
@@ -6197,6 +6202,27 @@
     "SolanaAccountNotFunded" : {
       "title" : "Cuenta sin fondos"
     },
+    "SolanaTokenAccountHoldsAnotherToken" : {
+      "title" : "Esta cuenta de token asociada contiene otro token."
+    },
+    "SolanaTokenAccountWarning" : {
+      "title" : "Esta no es una dirección de billetera normal, sino una cuenta de token asociada. Continúa sólo si sabes lo que estás haciendo."
+    },
+    "SolanaTokenAccountNotAllowed" : {
+      "title" : "Esta es una cuenta de token. Especifica una dirección de billetera normal."
+    },
+    "SolanaMintAccountNotAllowed" : {
+      "title" : "Esta es una dirección de token. Especifica una dirección de billetera normal."
+    },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "Se agregarán fondos a la cuenta"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "Los activos de la cuenta de tokens están inmovilizados"
+    },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "Cuenta no inicializada"
+    },
     "SolanaMemoIsTooLong" : {
       "title" : "El Memo es demasiado largo. La longitud máxima es {{maxLength}}"
     },
@@ -6725,17 +6751,19 @@
         "mobile" : {
           "description" : "Sincronizar con la aplicación Ledger Live en otro teléfono",
           "steps" : {
-            "step1" : "Abre la aplicación Ledger Live que quieras sincronizar",
-            "step2" : "Ingresa a <0>Ajustes</0> > <0>General</0> > <0>Ledger Sync</0> > <0>Activar sincronización</0> > <0>Mostrar QR</0>",
-            "step3" : "Escanear código QR"
+            "step1" : "Asegúrate de que Ledger Sync esté activado en una de tus aplicaciones.",
+            "step2" : "Abre la aplicación Ledger Live que quieres sincronizar.",
+            "step3" : "Ve a <0>Ajustes</0> > <0>General</0> > <0>Ledger Sync</0> > <0>Ya lo he activado</0> > <0>Mostrar QR</0>.",
+            "step4" : "Escanea el código QR."
           }
         },
         "desktop" : {
           "description" : "Sincroniza tus cuentas con otra aplicación Ledger Live",
           "steps" : {
-            "step1" : "Abre la aplicación Ledger Live que quieras sincronizar",
-            "step2" : "Ingresa a <0>Ajustes</0> > <0>General</0> > <0>Ledger Sync</0> > <0>Activar sincronización</0> > <0>Usa tu Ledger/0>",
-            "step3" : "Conecta tu Ledger"
+            "step1" : "Asegúrate de que Ledger Sync esté activado en una de tus aplicaciones.",
+            "step2" : "Abre la aplicación Ledger Live que quieres sincronizar.",
+            "step3" : "Ve a <0>Ajustes</0> > <0>General</0> > <0>Ledger Sync</0> > <0>Ya lo he activado</0> > <0>Usar tu Ledger</0>.",
+            "step4" : "Conecta tu Ledger."
           }
         }
       },

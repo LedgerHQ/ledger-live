@@ -200,7 +200,8 @@
       "STAKE" : "مُكدَّس",
       "UNSTAKE" : "غير مُكدَّس",
       "WITHDRAW_UNSTAKED" : "مسحوب",
-      "SENDING" : "إرسال"
+      "SENDING" : "إرسال",
+      "BURN" : "محروق"
     },
     "edit" : {
       "title" : "التسريع أو الإلغاء",
@@ -1515,21 +1516,21 @@
     },
     "recoverBanner" : {
       "subscribeDone" : {
-        "title" : "أكمِل إضافة بطاقة الدفع الخاصة بك",
-        "description" : "استعد بشكل موثوق مع Ledger Recover.",
+        "title" : "تذكير: أكمِل تسجيل الاشتراك في Ledger Recover",
+        "description" : "أنت على بعد خطوتين فقط من أن تصبح مُؤمَّناً.",
         "primaryCta" : "إضافة بطاقة",
         "secondaryCta" : "ربّما في وقت لاحق"
       },
       "verifyIdentity" : {
-        "title" : "أكمِل تأكيد هويتك",
-        "description" : "استعد بشكل موثوق مع Ledger Recover.",
-        "primaryCta" : "تحقق",
+        "title" : "تذكير: أكمِل تسجيل الاشتراك في Ledger Recover",
+        "description" : "أنت على بعد خطوة واحدة فقط من أن تصبح مُؤمَّناً.",
+        "primaryCta" : "التحقق من الهويّة",
         "secondaryCta" : "ربّما في وقت لاحق"
       },
       "connectDevice" : {
-        "title" : "توصيل جهازك Ledger",
-        "description" : "أنت على بعد خطوة واحدة من Ledger Recover.",
-        "primaryCta" : "اتصال",
+        "title" : "تذكير: أكمِل تسجيل الاشتراك في Ledger Recover",
+        "description" : "هذه هي الخطوة الأخيرة لضمان استرداد الوصول إلى المحفظة.",
+        "primaryCta" : "توصيل الجهاز",
         "secondaryCta" : "ربّما في وقت لاحق"
       }
     },
@@ -3742,6 +3743,10 @@
           }
         }
       }
+    },
+    "token" : {
+      "frozenStateWarning" : "تمّ تجميد أصول الحساب!",
+      "transferWarning" : "للتحقق من عنوان المستلم لرموز سولانا (Solana) باستخدام ™Ledger Nano S، <0>يرجى اتباع هذه التعليمات.</0>"
     }
   },
   "ethereum" : {
@@ -6197,6 +6202,27 @@
     "SolanaAccountNotFunded" : {
       "title" : "الحساب غير ممول"
     },
+    "SolanaTokenAccountHoldsAnotherToken" : {
+      "title" : "حساب رمز التوكن المرتبط هذا يحتفظ برمز توكن آخر"
+    },
+    "SolanaTokenAccountWarning" : {
+      "title" : "هذا ليس عنوان محفظة عادي لكنه حساب رمز توكن مرتبط. تابع فقط إذا كنت تعلم ماذا تفعل"
+    },
+    "SolanaTokenAccountNotAllowed" : {
+      "title" : "هذا حساب رمز توكن. أدخِل عنوان محفظة عادي"
+    },
+    "SolanaMintAccountNotAllowed" : {
+      "title" : "هذا عنوان رمز توكن. أدخِل عنوان محفظة عادي"
+    },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "سيتمّ تمويل الحساب"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "تمّ تجميد رموز أصول الحساب"
+    },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "لم يتمّ بدء الحساب"
+    },
     "SolanaMemoIsTooLong" : {
       "title" : "الملاحظة طويلة جداً. الحد الأقصى للطول هو {{maxLength}}"
     },
@@ -6725,17 +6751,19 @@
         "mobile" : {
           "description" : "المزامنة مع تطبيق Ledger Live على هاتف آخر",
           "steps" : {
-            "step1" : "افتح تطبيق Ledger Live الذي تريد مزامنته",
-            "step2" : "انتقل إلى <0>Settings (الإعدادات)</0> > <0>General (عام)</0> > <0>Ledger Sync (مزامنة Ledger)</0> > <0>Turn on sync (تشغيل المزامنة)</0> > <0>Show QR (إظهار كود QR)</0>",
-            "step3" : "مسح ضوئي لكود QR"
+            "step1" : "تأكد من أن مزامنة Ledger Sync مُفعَّلة على أحد تطبيقاتك.",
+            "step2" : "افتح تطبيق Ledger Live الذي تريد مزامنته.",
+            "step3" : "انتقل إلى <0>Settings (إعدادات)</0> > <0>General (عامة)</0> > <0>Ledger Sync (مزامنة Ledger Sync)</0> > <0>I already turned it on (قمت بتشغيلها بالفعل)</0> > <0>Show QR (عرض كود QR)</0>",
+            "step4" : "امسح كود QR ضوئياً."
           }
         },
         "desktop" : {
           "description" : "مزامنة حساباتك عن طريق تطبيق Ledger Live آخر",
           "steps" : {
-            "step1" : "افتح تطبيق Ledger Live الذي تريد مزامنته",
-            "step2" : "انتقل إلى <0>Settings (الإعدادات)</0> > <0>General (عام)</0> > <0>Ledger Sync (مزامنة Ledger)</0> > <0>Turn on sync (تشغيل المزامنة)</0> > <0>Use your Ledger (استخدم جهازك Ledger)</0>",
-            "step3" : "توصيل جهازك Ledger"
+            "step1" : "تأكد من أن مزامنة Ledger Sync مُفعَّلة على أحد تطبيقاتك.",
+            "step2" : "افتح تطبيق Ledger Live الذي تريد مزامنته.",
+            "step3" : "انتقل إلى <0>Settings (إعدادات)</0> > <0>General (عامة)</0> > <0>Ledger Sync (مزامنة Ledger Sync)</0> > <0>I already turned it on (قمت بتشغيلها بالفعل)</0> > <0>Use your Ledger (استخدام Ledger خاصتك)</0>",
+            "step4" : "قم بتوصيل جهازك Ledger."
           }
         }
       },
