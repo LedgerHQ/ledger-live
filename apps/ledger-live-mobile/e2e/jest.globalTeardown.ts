@@ -2,12 +2,14 @@ const detoxGlobalTeardown = require("detox/runners/jest/globalTeardown");
 import { promises as fs } from "fs";
 import { getEnvs, getFlags, loadConfig } from "./bridge/server";
 import { formatFlagsData, formatEnvData } from "@ledgerhq/live-common/e2e/index";
-import { launchApp, waitForElementById } from "./helpers";
+import { launchApp, setupEnvironment, waitForElementById } from "./helpers";
 import detox from "detox/internals";
 import { close as closeBridge } from "./bridge/server";
 
 const environmentFilePath = "artifacts/environment.properties";
 const shouldManageDetox = detox.getStatus() === "inactive";
+
+setupEnvironment();
 
 export default async () => {
   if (process.env.CI) {
