@@ -89,7 +89,6 @@ describe(`Ledger Sync Accounts`, () => {
   }
 
   $TmsLink(tmsLink);
-  $Issue("LIVE-15614");
   it(`Synchronize one instance then delete the backup`, async () => {
     await app.accounts.openViaDeeplink();
     await app.accounts.expectAccountsNumber(0);
