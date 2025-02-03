@@ -20,7 +20,6 @@ import { botTest, genericTestDestination, pickSiblings } from "@ledgerhq/coin-fr
 import { acceptTransaction, avalancheSpeculosDeviceAction } from "./speculos-deviceActions";
 import { Transaction as EvmTransaction } from "./types";
 import { getEstimatedFees } from "./logic";
-import { blast } from "./__tests__/coin-tester/helpers";
 
 const testTimeout = 10 * 60 * 1000;
 
