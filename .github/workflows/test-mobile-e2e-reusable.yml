@@ -65,7 +65,7 @@ permissions:
   contents: read
 
 env:
-  SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:0.11
+  SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:master
   COINAPPS: ${{ github.workspace }}/coin-apps
   SPECULOS_RUN: ${{ inputs.speculos_tests || github.event_name == 'schedule' }}
 
