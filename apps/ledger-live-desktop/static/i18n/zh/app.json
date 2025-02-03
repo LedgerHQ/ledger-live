@@ -200,7 +200,8 @@
       "STAKE" : "已权益质押",
       "UNSTAKE" : "已解除权益质押",
       "WITHDRAW_UNSTAKED" : "已提取",
-      "SENDING" : "发送"
+      "SENDING" : "发送",
+      "BURN" : "已销毁"
     },
     "edit" : {
       "title" : "加速或取消",
@@ -1515,21 +1516,21 @@
     },
     "recoverBanner" : {
       "subscribeDone" : {
-        "title" : "完成添加支付卡",
-        "description" : "使用 Ledger Recover 可靠地恢复。",
+        "title" : "提醒：完成订阅 Ledger Recover 服务",
+        "description" : "完成最后两步，让您的设备及资金得到安全保障。",
         "primaryCta" : "添加卡",
         "secondaryCta" : "以后再说"
       },
       "verifyIdentity" : {
-        "title" : "完成身份验证",
-        "description" : "使用 Ledger Recover 可靠地恢复。",
-        "primaryCta" : "验证",
+        "title" : "提醒：完成订阅 Ledger Recover 服务",
+        "description" : "完成最后一步，让您的设备及资金得到安全保障。",
+        "primaryCta" : "验证身份",
         "secondaryCta" : "以后再说"
       },
       "connectDevice" : {
-        "title" : "连接 Ledger 设备",
-        "description" : "还差一步即可使用 Ledger Recover。",
-        "primaryCta" : "连接",
+        "title" : "提醒：完成订阅 Ledger Recover 服务",
+        "description" : "这是您确保能恢复钱包访问权限的最后一步。",
+        "primaryCta" : "连接设备",
         "secondaryCta" : "以后再说"
       }
     },
@@ -3742,6 +3743,10 @@
           }
         }
       }
+    },
+    "token" : {
+      "frozenStateWarning" : "账户资产已冻结！",
+      "transferWarning" : "要使用 Ledger Nano S™ 验证 Solana 代币的接收人地址，<0>请按照以下说明操作。</0>"
     }
   },
   "ethereum" : {
@@ -6197,6 +6202,27 @@
     "SolanaAccountNotFunded" : {
       "title" : "账户没有资金"
     },
+    "SolanaTokenAccountHoldsAnotherToken" : {
+      "title" : "该关联代币账户持有另一种代币"
+    },
+    "SolanaTokenAccountWarning" : {
+      "title" : "这不是普通钱包地址，而是关联代币账户。继续之前，请务必清楚您在做什么"
+    },
+    "SolanaTokenAccountNotAllowed" : {
+      "title" : "这是一个代币账户。请输入普通钱包地址"
+    },
+    "SolanaMintAccountNotAllowed" : {
+      "title" : "这是一个代币地址。请输入普通钱包地址"
+    },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "账户将获得资金"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "代币账户资产已冻结"
+    },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "账户未初始化"
+    },
     "SolanaMemoIsTooLong" : {
       "title" : "Memo 标签太长。最大长度为 {{maxLength}}"
     },
@@ -6725,17 +6751,19 @@
         "mobile" : {
           "description" : "与另一部手机上的 Ledger Live 应用程序同步",
           "steps" : {
-            "step1" : "打开您要同步的 Ledger Live 应用程序",
-            "step2" : "前往<0>设置</0> > <0>常规</0> > <0>Ledger Sync</0> > <0>开启同步</0> > <0>显示二维码</0>",
-            "step3" : "扫描二维码"
+            "step1" : "确保您已在其中一个应用程序上激活 Ledger Sync。",
+            "step2" : "打开您要同步的 Ledger Live 应用程序。",
+            "step3" : "前往<0>“设置”</0> > <0>常规</0> > <0>Ledger Sync</0> > <0>我已打开</0> > <0>显示二维码</0>",
+            "step4" : "扫描二维码。"
           }
         },
         "desktop" : {
           "description" : "将您的账户与另一个 Ledger Live 应用程序同步",
           "steps" : {
-            "step1" : "打开您要同步的 Ledger Live 应用程序",
-            "step2" : "前往<0>设置</0> > <0>常规</0> > <0>Ledger Sync</0> > <0>开启同步</0> > <0>使用您的 Ledger</0>",
-            "step3" : "连接 Ledger 设备"
+            "step1" : "确保您已在其中一个应用程序上激活 Ledger Sync。",
+            "step2" : "打开您要同步的 Ledger Live 应用程序。",
+            "step3" : "前往<0>“设置”</0> > <0>常规</0> > <0>Ledger Sync</0> > <0>我已打开</0> > <0>使用您的 Ledger 设备</0>",
+            "step4" : "连接 Ledger 设备。"
           }
         }
       },
