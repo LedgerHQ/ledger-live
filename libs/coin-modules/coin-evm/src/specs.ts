@@ -20,6 +20,7 @@ import { botTest, genericTestDestination, pickSiblings } from "@ledgerhq/coin-fr
 import { acceptTransaction, avalancheSpeculosDeviceAction } from "./speculos-deviceActions";
 import { Transaction as EvmTransaction } from "./types";
 import { getEstimatedFees } from "./logic";
+import { blast } from "./__tests__/coin-tester/helpers";
 
 const testTimeout = 10 * 60 * 1000;
 
@@ -149,7 +150,7 @@ const testCoinBalance: MutationSpec<EvmTransaction>["test"] = ({
   // Klaytn is not providing the right gasPrice either at the moment
   // and their explorers are using the transaction gasPrice
   // instead of the effectiveGasPrice from the receipt
-  const underValuedFeesCurrencies = ["optimism", "base", "base_sepolia"];
+  const underValuedFeesCurrencies = ["optimism", "base", "base_sepolia", "blast", "blast_sepolia"];
   const overValuedFeesCurrencies = ["arbitrum", "arbitrum_sepolia", "klaytn"];
   const currenciesWithFlakyBehaviour = [...underValuedFeesCurrencies, ...overValuedFeesCurrencies];
 
