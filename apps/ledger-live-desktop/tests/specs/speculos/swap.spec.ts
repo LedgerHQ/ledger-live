@@ -173,7 +173,10 @@ test.describe("Swap - Rejected on device", () => {
         rejectedSwap,
         selectedProvider,
       );
-      await app.swapDrawer.verifyAmountSent(rejectedSwap.amount, rejectedSwap.accountToDebit.currency.ticker);
+      await app.swapDrawer.verifyAmountSent(
+        rejectedSwap.amount,
+        rejectedSwap.accountToDebit.currency.ticker,
+      );
       await app.speculos.verifyAmountsAndRejectSwap(rejectedSwap);
       await app.swapDrawer.verifyExchangeErrorTextContent("Operation denied on device");
     },
@@ -274,13 +277,13 @@ for (const { swap, xrayTicket } of tooLowAmountForQuoteSwaps) {
 const swapWithSendMax = [
   {
     swap: new Swap(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "sendMax", Fee.MEDIUM),
-    xrayTicket: "B2CQA-2110, QAA-292",
+    xrayTicket: "B2CQA-2110",
   },
   {
     swap: new Swap(Account.ETH_1, Account.SOL_1, "sendMax", Fee.MEDIUM),
-    xrayTicket: "B2CQA-2110, QAA-292",
+    xrayTicket: "B2CQA-2110",
   }
-];
+""];
 
 for (const { swap, xrayTicket } of swapWithSendMax) {
   test.describe("Swap - Swap with Send Max", () => {
