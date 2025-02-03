@@ -1,42 +1,79 @@
-import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
-import { log } from "@ledgerhq/logs";
-import { cached, Config, getChainAPI, queued } from "../api";
-import { traced } from "../api/traced";
-import { makeBridges } from "./bridge";
+import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
+import {
+  updateTransaction,
+  makeAccountBridgeReceive,
+  makeScanAccounts,
+} from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { CoinConfig } from "@ledgerhq/coin-framework/config";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import { SuiSigner } from "../types/signer";
+import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import suiConfig, { type SuiConfig } from "../config";
+import signerGetAddress from "../signer";
+import { SuiAccount, SuiSigner, TransactionStatus, type Transaction } from "../types";
+import { broadcast } from "./broadcast";
+import { createTransaction } from "./createTransaction";
+import { estimateMaxSpendable } from "./estimateMaxSpendable";
+import { getTransactionStatus } from "./getTransactionStatus";
+import { getPreloadStrategy, hydrate, preload } from "./preload";
+import { prepareTransaction } from "./prepareTransaction";
+import {
+  assignFromAccountRaw,
+  assignToAccountRaw,
+  fromOperationExtraRaw,
+  toOperationExtraRaw,
+} from "./serialization";
+import { buildSignOperation } from "./signOperation";
+import { getAccountShape, sync } from "./synchronisation";
 
-const httpRequestLogger = (url: string, options: any) => {
-  log("network", url, {
-    method: options?.method,
-    body: options?.body,
-    params: options?.params,
+function buildCurrencyBridge(signerContext: SignerContext<SuiSigner>): CurrencyBridge {
+  const getAddress = signerGetAddress(signerContext);
+
+  const scanAccounts = makeScanAccounts({
+    getAccountShape,
+    getAddressFn: getAddressWrapper(getAddress),
   });
-};
 
-const getAPI = makeLRUCache(
-  (config: Config) => Promise.resolve(traced(getChainAPI(config, httpRequestLogger))),
-  config => config.endpoint,
-  minutes(1000),
-);
+  return {
+    getPreloadStrategy,
+    preload,
+    hydrate,
+    scanAccounts,
+  };
+}
 
-const getQueuedAPI = makeLRUCache(
-  (config: Config) => getAPI(config).then(api => queued(api, 500)),
-  config => config.endpoint,
-  minutes(1000),
-);
+function buildAccountBridge(
+  signerContext: SignerContext<SuiSigner>,
+): AccountBridge<Transaction, SuiAccount, TransactionStatus> {
+  const getAddress = signerGetAddress(signerContext);
 
-const getQueuedAndCachedAPI = makeLRUCache(
-  (config: Config) => getQueuedAPI(config).then(cached),
-  config => config.endpoint,
-  minutes(1000),
-);
+  const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));
+  const signOperation = buildSignOperation(signerContext);
 
-export function createBridges(signerContext: SignerContext<SuiSigner>) {
-  return makeBridges({
-    getAPI,
-    getQueuedAPI,
-    getQueuedAndCachedAPI,
-    signerContext,
-  });
+  return {
+    estimateMaxSpendable,
+    createTransaction,
+    updateTransaction,
+    getTransactionStatus,
+    prepareTransaction,
+    sync,
+    receive,
+    signOperation,
+    broadcast,
+    assignFromAccountRaw,
+    assignToAccountRaw,
+    fromOperationExtraRaw,
+    toOperationExtraRaw,
+  };
+}
+
+export function createBridges(
+  signerContext: SignerContext<SuiSigner>,
+  coinConfig: CoinConfig<SuiConfig>,
+) {
+  suiConfig.setCoinConfig(coinConfig);
+
+  return {
+    currencyBridge: buildCurrencyBridge(signerContext),
+    accountBridge: buildAccountBridge(signerContext),
+  };
 }
