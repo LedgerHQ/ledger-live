@@ -124,9 +124,9 @@ export default function Store() {
       const options = {
         failOnCancel: false,
         saveToFiles: true,
-        type: "application/json",
+        type: "text/plain",
         filename: humanReadableName,
-        url: `data:application/json;base64,${base64}`,
+        url: `data:text/plain;base64,${base64}`,
       };
 
       try {
