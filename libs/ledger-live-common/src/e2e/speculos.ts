@@ -7,6 +7,7 @@ import {
   findLatestAppCandidate,
   SpeculosTransport,
 } from "../load/speculos";
+import { createSpeculosDeviceAPI, releaseSpeculosDeviceAPI } from "./speculosDockerAPI";
 import { SpeculosDevice } from "@ledgerhq/speculos-transport";
 import type { AppCandidate } from "@ledgerhq/coin-framework/bot/types";
 import { DeviceModelId } from "@ledgerhq/devices";
@@ -36,6 +37,9 @@ import { delegateMultiversX } from "./families/multiversX";
 import { NFTTransaction, Transaction } from "./models/Transaction";
 import { Delegate } from "./models/Delegate";
 import { Swap } from "./models/Swap";
+
+const isDockerRemote = process.env.DOCKER_API_ADDRESS;
+const dockerAddress = isDockerRemote || "127.0.0.1";
 
 export type Spec = {
   currency?: CryptoCurrency;
@@ -362,19 +366,23 @@ export async function startSpeculos(
     coinapps,
     onSpeculosDeviceCreated,
   };
-
   try {
-    return await createSpeculosDevice(deviceParams);
+    const device = isDockerRemote
+      ? await createSpeculosDeviceAPI(deviceParams)
+      : await createSpeculosDevice(deviceParams);
+    return device;
   } catch (e: unknown) {
     console.error(e);
     log("engine", `test ${testName} failed with ${String(e)}`);
   }
 }
 
-export async function stopSpeculos(deviceId: string | undefined) {
+export async function stopSpeculos(deviceId: Device | undefined) {
   if (deviceId) {
-    log("engine", `test ${deviceId} finished`);
-    await releaseSpeculosDevice(deviceId);
+    log("engine", `test ${device.id} finished`);
+    isDockerRemote
+      ? await releaseSpeculosDeviceAPI(deviceId)
+      : await releaseSpeculosDevice(deviceId);
   }
 }
 
@@ -392,7 +400,7 @@ export async function waitFor(text: string, maxAttempts: number = 10): Promise<s
   let textFound: boolean = false;
   while (attempts < maxAttempts && !textFound) {
     const response = await axios.get<ResponseData>(
-      `http://127.0.0.1:${speculosApiPort}/events?stream=false&currentscreenonly=true`,
+      `http://${dockerAddress}:${speculosApiPort}/events?stream=false&currentscreenonly=true`,
     );
     const responseData = response.data;
     const texts = responseData.events.map(event => event.text);
@@ -409,7 +417,7 @@ export async function waitFor(text: string, maxAttempts: number = 10): Promise<s
 
 export async function pressBoth() {
   const speculosApiPort = getEnv("SPECULOS_API_PORT");
-  await axios.post(`http://127.0.0.1:${speculosApiPort}/button/both`, {
+  await axios.post(`http://${dockerAddress}:${speculosApiPort}/button/both`, {
     action: "press-and-release",
   });
 }
@@ -438,20 +446,20 @@ export async function pressUntilTextFound(
 
 async function fetchCurrentScreenTexts(speculosApiPort: number): Promise<string> {
   const response = await axios.get<ResponseData>(
-    `http://127.0.0.1:${speculosApiPort}/events?stream=false&currentscreenonly=true`,
+    `http://${dockerAddress}:${speculosApiPort}/events?stream=false&currentscreenonly=true`,
   );
   return response.data.events.map(event => event.text).join("");
 }
 
 async function fetchAllEvents(speculosApiPort: number): Promise<string[]> {
   const response = await axios.get<ResponseData>(
-    `http://127.0.0.1:${speculosApiPort}/events?stream=false&currentscreenonly=false`,
+    `http://${dockerAddress}:${speculosApiPort}/events?stream=false&currentscreenonly=false`,
   );
   return response.data.events.map(event => event.text);
 }
 
 async function pressRightButton(speculosApiPort: number): Promise<void> {
-  await axios.post(`http://127.0.0.1:${speculosApiPort}/button/right`, {
+  await axios.post(`http://${dockerAddress}:${speculosApiPort}/button/right`, {
     action: "press-and-release",
   });
 }
@@ -473,7 +481,7 @@ export function containsSubstringInEvent(targetString: string, events: string[])
 export async function takeScreenshot(port?: number): Promise<Buffer | undefined> {
   const speculosApiPort = port ?? getEnv("SPECULOS_API_PORT");
   try {
-    const response = await axios.get(`http://127.0.0.1:${speculosApiPort}/screenshot`, {
+    const response = await axios.get(`http://${dockerAddress}:${speculosApiPort}/screenshot`, {
       responseType: "arraybuffer",
     });
     return response.data;

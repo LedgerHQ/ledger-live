@@ -122,7 +122,8 @@ export class Application {
     if (!getEnv("MOCK"))
       fs.copyFileSync(getUserdataPath(userdata || "skip-onboarding"), userdataPath);
 
-    if (speculosApp) await this.common.addSpeculos(speculosApp.name);
+    const speculosAddress = process.env.DOCKER_API_ADDRESS || "localhost";
+    if (speculosApp) await this.common.addSpeculos(speculosApp.name, speculosAddress);
     for (const cmd of cliCommands || []) {
       await executeCliCommand(cmd, userdataPath);
     }
