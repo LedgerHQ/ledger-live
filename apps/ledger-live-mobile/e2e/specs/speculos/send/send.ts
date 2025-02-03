@@ -47,6 +47,7 @@ export async function runSendTest(transaction: Transaction, tmsLink: string) {
       const amountWithCode = transaction.amount + " " + transaction.accountToCredit.currency.ticker;
       await app.send.expectSummaryAmount(amountWithCode);
       await app.send.expectSummaryRecipient(transaction.accountToCredit.address);
+      await app.send.chooseFeeStrategy(transaction.speed);
       await app.send.summaryContinue();
       await app.send.dismissHighFeeModal();
 
@@ -163,6 +164,7 @@ export async function runSendInvalidTokenAmountTest(
           transaction.amount + " " + transaction.accountToCredit.currency.ticker;
         await app.send.expectSummaryAmount(amountWithCode);
         await app.send.expectSummaryRecipient(transaction.accountToCredit.address);
+        await app.send.chooseFeeStrategy(transaction.speed);
         await app.send.expectSendSummaryError(expectedErrorMessage);
       } else {
         await app.send.expectSendAmountError(expectedErrorMessage);

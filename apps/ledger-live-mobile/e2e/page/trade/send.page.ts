@@ -8,6 +8,7 @@ import {
   tapByElement,
   IsIdVisible,
   getTextOfElement,
+  getElementByText,
 } from "../../helpers";
 import { expect } from "detox";
 import jestExpect from "expect";
@@ -33,6 +34,7 @@ export default class SendPage {
   summaryWarning = () => getElementById("send-summary-warning");
   summaryContinueButton = () => getElementById("summary-continue-button");
   highFreeConfirmButtonID = "confirmation-modal-confirm-button";
+  feeStrategy = (fee: string) => getElementByText(fee);
 
   async openViaDeeplink() {
     await openDeeplink(baseLink);
@@ -174,5 +176,12 @@ export default class SendPage {
   async expectValidationEnsName(ensName: string) {
     await waitForElementById(this.validationEnsId);
     await expect(getElementById(this.validationEnsId)).toHaveText(ensName);
+  }
+
+  @Step("choose fee startegy")
+  async chooseFeeStrategy(fee: string | undefined) {
+    if (fee) {
+      await tapByElement(this.feeStrategy(fee));
+    }
   }
 }
