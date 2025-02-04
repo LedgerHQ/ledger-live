@@ -1,14 +1,47 @@
-import { CLI, CLI as CLIType } from "tests/utils/cliUtils";
+import { CLI } from "tests/utils/cliUtils";
 import { activateLedgerSync } from "@ledgerhq/live-common/e2e/speculos";
 import { accountNames, accounts } from "tests/testdata/ledgerSyncTestData";
+import { Page } from "@playwright/test";
+
+interface LedgerKeyRingProtocolArgs {
+  pubKey: string;
+  privateKey: string;
+}
+
+interface LedgerSyncPushDataArgs {
+  rootId: string;
+  walletSyncEncryptionKey: string;
+  applicationPath: string;
+  push: boolean;
+  data: string;
+}
+
+interface LedgerSyncPullDataArgs {
+  pubKey: string;
+  privateKey: string;
+  rootId: string;
+  walletSyncEncryptionKey: string;
+  applicationPath: string;
+  push: boolean;
+  pull: boolean;
+  data: string;
+}
+
+interface LedgerOutput {
+  pubkey?: string;
+  privatekey?: string;
+  rootId?: string;
+  walletSyncEncryptionKey?: string;
+  applicationPath?: string;
+}
 
 export class LedgerSyncCliHelper {
-  static ledgerKeyRingProtocolArgs = {
+  static ledgerKeyRingProtocolArgs: LedgerKeyRingProtocolArgs = {
     pubKey: "",
     privateKey: "",
   };
 
-  static ledgerSyncPushDataArgs = {
+  static ledgerSyncPushDataArgs: LedgerSyncPushDataArgs = {
     rootId: "",
     walletSyncEncryptionKey: "",
     applicationPath: "",
@@ -19,7 +52,7 @@ export class LedgerSyncCliHelper {
     }),
   };
 
-  static ledgerSyncPullDataArgs = {
+  static ledgerSyncPullDataArgs: LedgerSyncPullDataArgs = {
     pubKey: "",
     privateKey: "",
     rootId: "",
@@ -30,30 +63,65 @@ export class LedgerSyncCliHelper {
     data: "",
   };
 
-  private static updateKeysAndArgs(output: any) {
-    if (output && typeof output !== "string") {
-      if ("pubkey" in output) {
-        LedgerSyncCliHelper.ledgerKeyRingProtocolArgs.pubKey = output.pubkey;
-        LedgerSyncCliHelper.ledgerKeyRingProtocolArgs.privateKey = output.privatekey;
-        LedgerSyncCliHelper.ledgerSyncPullDataArgs.pubKey = output.pubkey;
-        LedgerSyncCliHelper.ledgerSyncPullDataArgs.privateKey = output.privatekey;
-      }
-      if ("rootId" in output) {
-        LedgerSyncCliHelper.ledgerSyncPushDataArgs.rootId = output.rootId;
-        LedgerSyncCliHelper.ledgerSyncPushDataArgs.walletSyncEncryptionKey =
-          output.walletSyncEncryptionKey;
-        LedgerSyncCliHelper.ledgerSyncPushDataArgs.applicationPath = output.applicationPath;
-        LedgerSyncCliHelper.ledgerSyncPullDataArgs.rootId = output.rootId;
-        LedgerSyncCliHelper.ledgerSyncPullDataArgs.walletSyncEncryptionKey =
-          output.walletSyncEncryptionKey;
-        LedgerSyncCliHelper.ledgerSyncPullDataArgs.applicationPath = output.applicationPath;
-      }
+  private static updateKeysAndArgs(output: LedgerOutput) {
+    if (!output || typeof output === "string") return;
+
+    LedgerSyncCliHelper.updateKeyRingCredentials(output);
+    LedgerSyncCliHelper.updateSyncArgs(output);
+  }
+
+  private static updateKeyRingCredentials(output: LedgerOutput) {
+    if ("pubkey" in output) {
+      LedgerSyncCliHelper.ledgerKeyRingProtocolArgs.pubKey = output.pubkey ?? "";
+      LedgerSyncCliHelper.ledgerKeyRingProtocolArgs.privateKey = output.privatekey ?? "";
+      LedgerSyncCliHelper.ledgerSyncPullDataArgs.pubKey = output.pubkey ?? "";
+      LedgerSyncCliHelper.ledgerSyncPullDataArgs.privateKey = output.privatekey ?? "";
     }
+  }
+
+  private static updateSyncArgs(output: LedgerOutput) {
+    if ("rootId" in output) {
+      Object.assign(LedgerSyncCliHelper.ledgerSyncPushDataArgs, {
+        rootId: output.rootId,
+        walletSyncEncryptionKey: output.walletSyncEncryptionKey,
+        applicationPath: output.applicationPath,
+      });
+
+      Object.assign(LedgerSyncCliHelper.ledgerSyncPullDataArgs, {
+        rootId: output.rootId,
+        walletSyncEncryptionKey: output.walletSyncEncryptionKey,
+        applicationPath: output.applicationPath,
+      });
+    }
+  }
+
+  static parseData(pulledData: string) {
+    try {
+      const parsedData = typeof pulledData === "string" ? JSON.parse(pulledData) : pulledData;
+      return parsedData;
+    } catch (error) {
+      throw new Error(`Failed to parse pulledData: ${error}`);
+    }
+  }
+  static queryBackEnd(page: Page) {
+    const queryResponse = new Promise(resolve => {
+      page.on("response", response => {
+        if (
+          response
+            .url()
+            .startsWith("https://cloud-sync-backend.api.aws.stg.ldg-tech.com/atomic/v1/live") &&
+          response.status() === 200
+        ) {
+          resolve(response);
+        }
+      });
+    });
+    return queryResponse;
   }
 
   static async initializeLedgerKeyRingProtocol() {
     return CLI.ledgerKeyRingProtocol({ initMemberCredentials: true }).then(output => {
-      LedgerSyncCliHelper.updateKeysAndArgs(output);
+      LedgerSyncCliHelper.updateKeysAndArgs(output as LedgerOutput);
       return output;
     });
   }
@@ -63,14 +131,19 @@ export class LedgerSyncCliHelper {
       getKeyRingTree: true,
       ...LedgerSyncCliHelper.ledgerKeyRingProtocolArgs,
     }).then(out => {
-      LedgerSyncCliHelper.updateKeysAndArgs(out);
+      LedgerSyncCliHelper.updateKeysAndArgs(out as LedgerOutput);
       return out;
     });
     await activateLedgerSync();
     return output;
   }
 
-  static async pullDataFromCLI(pulledData: String) {
-    return typeof pulledData === "string" ? JSON.parse(pulledData) : pulledData;
+  static async pullDataFromCLI(pulledData: string | object) {
+    try {
+      return typeof pulledData === "string" ? JSON.parse(pulledData) : pulledData;
+    } catch (error) {
+      console.error("Failed to parse pulled data:", pulledData, error);
+      throw new Error("Invalid JSON string in pulledData");
+    }
   }
 }

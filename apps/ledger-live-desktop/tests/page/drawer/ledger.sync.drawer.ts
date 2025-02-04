@@ -28,7 +28,7 @@ export class LedgerSyncDrawer extends Drawer {
     await this.closeLedgerSyncButton.click();
   }
 
-  @step("Open the Manage Key section")
+  @step("Delete Sync")
   async deleteSync() {
     await this.deleteSyncButton.click();
     if (await this.deleteSyncButton.isVisible()) {

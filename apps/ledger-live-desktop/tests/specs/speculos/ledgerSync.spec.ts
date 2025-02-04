@@ -3,7 +3,6 @@ import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "../../utils/customJsonReporter";
 import { CLI } from "tests/utils/cliUtils";
-import { waitForTimeOut } from "tests/utils/waitFor";
 import { expect } from "@playwright/test";
 import { DistantState as LiveData } from "@ledgerhq/live-wallet/walletsync/index";
 import { LedgerSyncCliHelper } from "../../utils/ledgerSyncCliUtils";
@@ -41,7 +40,7 @@ test.describe(`[${app.name}] Sync Accounts`, () => {
         description: "B2CQA-2292, B2CQA-2293, B2CQA-2296",
       },
     },
-    async ({ app }) => {
+    async ({ app, page }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
       await app.layout.goToAccounts();
@@ -63,9 +62,10 @@ test.describe(`[${app.name}] Sync Accounts`, () => {
       await app.account.expectAccountVisibility(accountName);
       await app.account.deleteAccount();
       await app.layout.syncAccounts();
-      await app.layout.waitForAccountsSyncToBeDone();
 
-      await waitForTimeOut(1000);
+      const successfulQuery = await LedgerSyncCliHelper.queryBackEnd(page);
+      await app.layout.waitForAccountsSyncToBeDone();
+      expect(await successfulQuery).toBeDefined();
 
       await app.accounts.expectAccountsCount(1);
 
@@ -74,7 +74,8 @@ test.describe(`[${app.name}] Sync Accounts`, () => {
         ...LedgerSyncCliHelper.ledgerSyncPullDataArgs,
       });
 
-      let parsedData = typeof pulledData === "string" ? JSON.parse(pulledData) : pulledData;
+      //  let parsedData = typeof pulledData === "string" ? JSON.parse(pulledData) : pulledData;
+      const parsedData = LedgerSyncCliHelper.parseData(pulledData);
 
       await app.layout.goToSettings();
       await app.settings.openManageLedgerSync();
