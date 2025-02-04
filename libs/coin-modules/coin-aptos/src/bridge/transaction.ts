@@ -45,9 +45,9 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
     ...common,
     family: t.family,
     mode: t.mode,
-    fees: t.fees ? t.fees.toString() : null,
     options: JSON.stringify(t.options),
-    errors: JSON.stringify(t.errors),
+    ...(t.fees && { fees: t.fees.toString() }),
+    ...(t.errors && { errors: JSON.stringify(t.errors) }),
   };
 };
 

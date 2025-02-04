@@ -82,14 +82,14 @@ const aptos: CurrenciesData<Transaction> = {
         {
           name: "NO_NAME",
           transaction: fromTransactionRaw({
-            amount: "1000",
+            amount: "1001",
             recipient: "0xd20fa44192f94ba086ab16bfdf57e43ff118ada69b4c66fa9b9a9223cbc068c1",
             useAllAmount: false,
             subAccountId: null,
             family: "aptos",
             mode: "send",
-            fees: "900",
-            options: '{"maxGasAmount":"9","gasUnitPrice":"100"}',
+            fees: "700",
+            options: '{"maxGasAmount":"7","gasUnitPrice":"100"}',
             errors: "{}",
           }),
           expectedStatus: () =>
@@ -97,9 +97,9 @@ const aptos: CurrenciesData<Transaction> = {
             ({
               errors: {},
               warnings: {},
-              estimatedFees: BigNumber("900"),
-              amount: BigNumber("1000"),
-              totalSpent: BigNumber("1900"),
+              estimatedFees: BigNumber("700"),
+              amount: BigNumber("1001"),
+              totalSpent: BigNumber("1701"),
             }),
         },
       ],
