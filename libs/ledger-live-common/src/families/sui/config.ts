@@ -10,7 +10,7 @@ export const suiConfig: Record<string, ConfigInfo> = {
       },
       node: {
         // url: getEnv("API_SUI_NODE"),
-        url: "http://127.0.0.1:9000",
+        url: "https://fullnode.devnet.sui.io:443",
       },
     },
   },

@@ -9,16 +9,16 @@ import type {
   SuiOperationExtraRaw,
 } from "../types";
 
-export function toSuiResourcesRaw(r: SuiResources): SuiResourcesRaw {
-  const { nonce, additionalBalance } = r;
+export function toSuiResourcesRaw(resources: SuiResources): SuiResourcesRaw {
+  const { nonce, additionalBalance } = resources;
   return {
     nonce,
-    additionalBalance: additionalBalance.toString(),
+    additionalBalance: additionalBalance?.toString(),
   };
 }
 
-export function fromSuiResourcesRaw(r: SuiResourcesRaw): SuiResources {
-  const { nonce, additionalBalance } = r;
+export function fromSuiResourcesRaw(resources: SuiResourcesRaw): SuiResources {
+  const { nonce, additionalBalance } = resources;
   return {
     nonce,
     additionalBalance: BigNumber(additionalBalance),

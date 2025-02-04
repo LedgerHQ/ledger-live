@@ -1,3 +1,6 @@
+// import { GetPublicKeyResult, SignTransactionResult, GetVersionResult } from "@mysten/ledgerjs-hw-app-sui";
+import Sui from "@ledgerhq/hw-app-sui";
+
 export type SuiAddress = {
   pubKey: string;
   address: string;
@@ -7,20 +10,4 @@ export type SuiSignature = {
   signature: null | string;
   return_code: number;
 };
-export interface SuiSigner {
-  getAddress(
-    path: string,
-    display?: boolean,
-  ): Promise<{
-    publicKey: string;
-    address: string;
-    returnCode: number;
-  }>;
-
-  signTransaction(
-    path: string,
-    message: string,
-  ): Promise<{ signature: Buffer | null; returnCode: number }>;
-
-  getAppConfiguration(): Promise<{ version: string }>;
-}
+export interface SuiSigner extends Sui {}
