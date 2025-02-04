@@ -48,8 +48,8 @@ export async function runSendTest(transaction: Transaction, tmsLink: string) {
       const amountWithCode = transaction.amount + " " + transaction.accountToCredit.currency.ticker;
       await app.send.expectSummaryAmount(amountWithCode);
       await app.send.expectSummaryRecipient(addressToCredit);
-      await app.send.expectSummaryMemoTag(transaction.memoTag); // inverser ici ?
-      await app.send.chooseFeeStrategy(transaction.speed); // Inverser ici ?
+      await app.send.expectSummaryMemoTag(transaction.memoTag);
+      await app.send.chooseFeeStrategy(transaction.speed);
       await app.send.summaryContinue();
       await app.send.dismissHighFeeModal();
 
