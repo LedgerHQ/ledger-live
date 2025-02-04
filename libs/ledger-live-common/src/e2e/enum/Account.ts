@@ -563,7 +563,7 @@ export class Account {
     0,
   );
 
-  static readonly EMPTY = new Account(Currency.BTC, "Empty", " ");
+  static readonly EMPTY = new Account(Currency.BTC, "Empty", "");
 
   static readonly ETH_2_LOWER_CASE = new Account(
     Currency.ETH,

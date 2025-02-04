@@ -181,7 +181,7 @@ function SendSummary({ navigation, route }: Props) {
         />
         <SummaryToSection transaction={transaction} currency={mainAccount.currency} />
         {status.warnings.recipient ? (
-          <LText style={styles.warning} color="orange">
+          <LText style={styles.warning} color="orange" testID="send-summary-warning">
             <TranslatedError error={status.warnings.recipient} />
           </LText>
         ) : null}

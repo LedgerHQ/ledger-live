@@ -411,7 +411,8 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: "artifacts-${{ matrix.platform }}"
-          name: ${{ matrix.platform }}-test-artifacts
+          pattern: ${{ matrix.platform }}-test-artifacts-*
+          merge-multiple: true
 
       - name: Format Xray results
         run: apps/ledger-live-mobile/e2e/xray.formater.sh artifacts-${{ matrix.platform }} ${{ matrix.platform }} ${{ env.TEST_EXECUTION}}
@@ -426,7 +427,10 @@ jobs:
       - name: Authenticate to Xray
         id: authenticate
         run: |
-          response=$(curl -H "Content-Type: application/json" -X POST --data '{"client_id": "${{ env.XRAY_CLIENT_ID }}", "client_secret": "${{ env.XRAY_CLIENT_SECRET }}"}' ${{ env.XRAY_API_URL }}/authenticate)
+          response=$(curl -H "Content-Type: application/json" -X POST \
+                    --data '{"client_id": "${{ env.XRAY_CLIENT_ID }}", "client_secret": "${{ env.XRAY_CLIENT_SECRET }}"}' \
+                    ${{ env.XRAY_API_URL }}/authenticate)
+          echo "Xray Authentication Response: $response"
           echo "xray_token=$response" >> $GITHUB_OUTPUT
       - name: Publish report on Xray
         id: publish-xray
@@ -436,8 +440,9 @@ jobs:
                     -X POST \
                     --data @artifacts-${{ matrix.platform }}/xray_report.json \
                     ${{ env.XRAY_API_URL }}/import/execution)
-            key=$(echo $response | jq -r '.key')
-            echo "xray_key=$key" >> $GITHUB_OUTPUT
+          echo "Xray Report Response: $response"
+          key=$(echo $response | jq -r '.key')
+          echo "xray_key=$key" >> $GITHUB_OUTPUT
       - name: Write Xray report link in summary
         shell: bash
         run: echo "::notice title=${{ matrix.platform }} Xray report URL::${{ env.JIRA_URL }}/${{ steps.publish-xray.outputs.xray_key }}"

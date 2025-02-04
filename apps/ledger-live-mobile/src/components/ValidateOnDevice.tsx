@@ -73,7 +73,13 @@ function AddressField({ field }: FieldComponentProps) {
 // in case we want specific styles for addresses.
 function TextField({ field }: FieldComponentProps) {
   invariant(field.type === "text", "TextField invalid");
-  return <TextValueField label={field.label} value={field.value} />;
+  return (
+    <TextValueField
+      label={field.label}
+      value={field.value}
+      testID={"send-validation-" + field.label.toLowerCase()}
+    />
+  );
 }
 
 const commonFieldComponents: Record<string, FieldComponent> = {

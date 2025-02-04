@@ -1,5 +1,6 @@
 import { useCallback } from "react";
 import Share from "react-native-share";
+import RNFetchBlob from "rn-fetch-blob";
 import logger from "../logger";
 import logReport from "../log-report";
 import getFullAppVersion from "~/logic/version";
@@ -12,17 +13,18 @@ export default function useExportLogs() {
       const version = getFullAppVersion(undefined, undefined, "-");
       const date = new Date().toISOString().split("T")[0];
 
-      const humanReadableName = `ledger-live-mob-${version}-${date}-logs`;
-
-      const options = {
-        failOnCancel: false,
-        saveToFiles: true,
-        type: "application/json",
-        filename: humanReadableName,
-        url: `data:application/json;base64,${base64}`,
-      };
+      const humanReadableName = `ledger-live-mob-${version}-${date}-logs.txt`;
+      const filePath = `${RNFetchBlob.fs.dirs.DocumentDir}/${humanReadableName}`;
 
       try {
+        await RNFetchBlob.fs.writeFile(filePath, base64, "base64");
+        const options = {
+          failOnCancel: false,
+          saveToFiles: true,
+          type: "text/plain",
+          url: `file://${filePath}`,
+        };
+
         await Share.open(options);
       } catch (err) {
         if ((err as { error?: { code?: string } })?.error?.code !== "ECANCELLED500") {

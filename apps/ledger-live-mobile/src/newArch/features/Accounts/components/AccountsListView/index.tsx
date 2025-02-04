@@ -13,7 +13,12 @@ const ESTIMED_ITEM_SIZE = 150;
 
 type ViewProps = ReturnType<typeof useAccountsListViewModel>;
 
-const View: React.FC<ViewProps> = ({ accountsToDisplay, isSyncEnabled, onAccountPress }) => {
+const View: React.FC<ViewProps> = ({
+  accountsToDisplay,
+  isSyncEnabled,
+  onAccountPress,
+  onContentChange,
+}) => {
   const List = useMemo(() => {
     return isSyncEnabled
       ? globalSyncRefreshControl<FlashListProps<Account | TokenAccount>>(FlashList)
@@ -45,6 +50,7 @@ const View: React.FC<ViewProps> = ({ accountsToDisplay, isSyncEnabled, onAccount
       data={accountsToDisplay}
       showsVerticalScrollIndicator={false}
       showsHorizontalScrollIndicator={false}
+      onContentSizeChange={onContentChange}
     />
   );
 };
