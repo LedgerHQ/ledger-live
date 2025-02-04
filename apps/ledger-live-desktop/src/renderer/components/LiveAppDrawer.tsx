@@ -87,6 +87,10 @@ const INCOMPATIBLE_NANO_S_CURRENCY_KEYS: Keys = {
     title: "swap.incompatibility.apt_title",
     description: "swap.incompatibility.apt_description",
   },
+  near: {
+    title: "swap.incompatibility.near_title",
+    description: "swap.incompatibility.near_description",
+  },
 };
 const getIncompatibleCurrencyKeys = (exchange: ExchangeSwap) => {
   const parentFrom =
