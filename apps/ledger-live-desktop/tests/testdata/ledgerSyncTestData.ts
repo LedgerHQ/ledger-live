@@ -1,4 +1,3 @@
-// LedgerSyncTestData.ts
 export const accounts = [
   {
     id: "mock:1:dogecoin:0.790010769447963:",

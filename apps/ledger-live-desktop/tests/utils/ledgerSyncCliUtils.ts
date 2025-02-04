@@ -66,8 +66,11 @@ export class LedgerSyncCliHelper {
       LedgerSyncCliHelper.updateKeysAndArgs(out);
       return out;
     });
-
     await activateLedgerSync();
     return output;
+  }
+
+  static async pullDataFromCLI(pulledData: String) {
+    return typeof pulledData === "string" ? JSON.parse(pulledData) : pulledData;
   }
 }

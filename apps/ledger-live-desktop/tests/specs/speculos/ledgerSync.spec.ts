@@ -3,7 +3,6 @@ import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "../../utils/customJsonReporter";
 import { CLI } from "tests/utils/cliUtils";
-import { activateLedgerSync } from "@ledgerhq/live-common/e2e/speculos";
 import { waitForTimeOut } from "tests/utils/waitFor";
 import { expect } from "@playwright/test";
 import { DistantState as LiveData } from "@ledgerhq/live-wallet/walletsync/index";
@@ -66,7 +65,7 @@ test.describe(`[${app.name}] Sync Accounts`, () => {
       await app.layout.syncAccounts();
       await app.layout.waitForAccountsSyncToBeDone();
 
-      await waitForTimeOut(10000);
+      await waitForTimeOut(1000);
 
       await app.accounts.expectAccountsCount(1);
 
