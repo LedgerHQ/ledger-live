@@ -30,6 +30,8 @@ import { sendAptos } from "./families/aptos";
 import { delegateNear } from "./families/near";
 import { delegateCosmos, sendCosmos } from "./families/cosmos";
 import { delegateSolana, sendSolana } from "./families/solana";
+import { delegateTezos } from "./families/tezos";
+import { delegateCelo } from "./families/celo";
 import { delegateMultiversX } from "./families/multiversX";
 import { NFTTransaction, Transaction } from "./models/Transaction";
 import { Delegate } from "./models/Delegate";
@@ -284,6 +286,15 @@ export const specs: Specs = {
     },
     dependency: "",
   },
+
+  Celo: {
+    currency: getCryptoCurrencyById("celo"),
+    appQuery: {
+      model: DeviceModelId.nanoSP,
+      appName: "Celo",
+    },
+    dependency: "",
+  },
 };
 
 export async function startSpeculos(
@@ -484,6 +495,13 @@ export async function activateExpertMode() {
   await pressBoth();
 }
 
+export async function activateContractData() {
+  await pressUntilTextFound(DeviceLabels.SETTINGS);
+  await pressBoth();
+  await waitFor(DeviceLabels.CONTRACT_DATA);
+  await pressBoth();
+}
+
 export async function expectValidAddressDevice(account: Account, addressDisplayed: string) {
   let deviceLabels: string[];
 
@@ -581,6 +599,12 @@ export async function signDelegationTransaction(delegatingAccount: Delegate) {
       break;
     case Account.ADA_1.currency.name:
       await delegateCardano();
+      break;
+    case Account.XTZ_1.currency.name:
+      await delegateTezos();
+      break;
+    case Account.CELO_1.currency.name:
+      await delegateCelo(delegatingAccount);
       break;
     default:
       throw new Error(`Unsupported currency: ${currencyName}`);

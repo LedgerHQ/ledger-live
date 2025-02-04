@@ -563,7 +563,7 @@ export class Account {
     0,
   );
 
-  static readonly EMPTY = new Account(Currency.BTC, "Empty", " ");
+  static readonly EMPTY = new Account(Currency.BTC, "Empty", "");
 
   static readonly ETH_2_LOWER_CASE = new Account(
     Currency.ETH,
@@ -603,5 +603,13 @@ export class Account {
     "osmo12d854g9mut943gu5ncyhalapukttkddnyy4dkg",
     undefined,
     1,
+  );
+
+  static readonly CELO_1 = new Account(
+    Currency.CELO,
+    "Celo 1",
+    "0x2268495dE776a536A5a9828b91F04d54d7d2Aa50",
+    undefined,
+    0,
   );
 }

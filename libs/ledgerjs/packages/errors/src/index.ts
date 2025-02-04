@@ -378,6 +378,14 @@ export class LockedDeviceError extends TransportStatusError {
   }
 }
 
+export class DeviceMangementKitError extends Error {
+  constructor(name: string, message: string) {
+    super(message);
+    this.name = name;
+    Object.setPrototypeOf(this, DeviceMangementKitError.prototype);
+  }
+}
+
 // Represents the type of the class TransportStatusError and its children
 export type TransportStatusErrorClassType = typeof TransportStatusError | typeof LockedDeviceError;
 

@@ -34,7 +34,7 @@ export function GenericMemoTagSummary({
       }
       data={
         <Flex pt={2}>
-          <Text fontSize={13} onPress={editMemo} numberOfLines={1}>
+          <Text fontSize={13} onPress={editMemo} numberOfLines={1} testID="summary-memo-tag">
             {memoTag}
           </Text>
           <Text

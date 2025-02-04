@@ -14,7 +14,12 @@ const ESTIMED_ITEM_SIZE = 150;
 
 type ViewProps = ReturnType<typeof useAssetsListViewModel>;
 
-const View: React.FC<ViewProps> = ({ assetsToDisplay, onItemPress, isSyncEnabled }) => {
+const View: React.FC<ViewProps> = ({
+  assetsToDisplay,
+  onItemPress,
+  onContentChange,
+  isSyncEnabled,
+}) => {
   const List = useMemo(() => {
     return isSyncEnabled ? globalSyncRefreshControl<FlashListProps<Asset>>(FlashList) : FlashList;
   }, [isSyncEnabled]);
@@ -46,6 +51,7 @@ const View: React.FC<ViewProps> = ({ assetsToDisplay, onItemPress, isSyncEnabled
       data={assetsToDisplay}
       showsVerticalScrollIndicator={false}
       showsHorizontalScrollIndicator={false}
+      onContentSizeChange={onContentChange}
     />
   );
 };

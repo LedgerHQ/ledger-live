@@ -54,4 +54,6 @@ export class AppInfos {
   static readonly LS = new AppInfos("LedgerSync");
 
   static readonly EXCHANGE = new AppInfos("Exchange");
+
+  static readonly CELO = new AppInfos("Celo");
 }

@@ -1,80 +1,21 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
-import Transport from "@ledgerhq/hw-transport";
 import {
-  DeviceManagementKitBuilder,
-  ConsoleLogger,
-  type DeviceManagementKit,
-  type DeviceSessionState,
+  DeviceManagementKit,
   DeviceStatus,
-  LogLevel,
-  BuiltinTransports,
+  type DeviceSessionState,
+  DiscoveredDevice,
 } from "@ledgerhq/device-management-kit";
-import { BehaviorSubject, firstValueFrom } from "rxjs";
+import Transport from "@ledgerhq/hw-transport";
+import { DescriptorEvent } from "@ledgerhq/types-devices";
+import { firstValueFrom, Observer, startWith, pairwise, map } from "rxjs";
 import { LocalTracer } from "@ledgerhq/logs";
-
-const deviceManagementKit = new DeviceManagementKitBuilder()
-  .addTransport(BuiltinTransports.USB)
-  .addLogger(new ConsoleLogger(LogLevel.Debug))
-  .build();
-
-export const DeviceManagementKitContext = createContext<DeviceManagementKit>(deviceManagementKit);
-
-type Props = {
-  children: React.ReactNode;
-};
-
-export const DeviceManagementKitProvider: React.FC<Props> = ({ children }) => (
-  <DeviceManagementKitContext.Provider value={deviceManagementKit}>
-    {children}
-  </DeviceManagementKitContext.Provider>
-);
-
-export const useDeviceManagementKit = (): DeviceManagementKit =>
-  useContext(DeviceManagementKitContext);
-
-export const useDeviceSessionState = (): DeviceSessionState | undefined => {
-  const sdk = useDeviceManagementKit();
-  const [sessionState, setSessionState] = useState<DeviceSessionState | undefined>(undefined);
-
-  useEffect(() => {
-    const subscription = activeDeviceSessionSubject.subscribe({
-      next: session => {
-        if (!session) {
-          setSessionState(undefined);
-        } else {
-          const { sessionId } = session;
-          const stateSubscription = sdk.getDeviceSessionState({ sessionId }).subscribe({
-            next: (state: DeviceSessionState) => {
-              state.deviceStatus !== DeviceStatus.NOT_CONNECTED
-                ? setSessionState(state)
-                : setSessionState(undefined);
-            },
-            error: (error: Error) => console.error("[useDeviceSessionState] error", error),
-          });
-          return () => stateSubscription.unsubscribe();
-        }
-      },
-      error: error => console.error("[useDeviceSessionState] subscription error", error),
-    });
-
-    return () => subscription.unsubscribe();
-  }, [sdk]);
-
-  return sessionState;
-};
-
-const activeDeviceSessionSubject: BehaviorSubject<{
-  sessionId: string;
-  transport: DeviceManagementKitTransport;
-} | null> = new BehaviorSubject<{
-  sessionId: string;
-  transport: DeviceManagementKitTransport;
-} | null>(null);
+import { deviceIdMap } from "../config/deviceIdMap";
+import { activeDeviceSessionSubject } from "../config/activeDeviceSession";
+import { deviceManagementKit } from "../hooks/useDeviceManagementKit";
 
 const tracer = new LocalTracer("live-dmk", { function: "DeviceManagementKitTransport" });
 
 export class DeviceManagementKitTransport extends Transport {
-  readonly sessionId: string;
+  sessionId: string;
   readonly sdk: DeviceManagementKit;
 
   constructor(sdk: DeviceManagementKit, sessionId: string) {
@@ -118,7 +59,10 @@ export class DeviceManagementKitTransport extends Transport {
         return null;
       });
 
-      if (deviceSessionState?.deviceStatus !== DeviceStatus.NOT_CONNECTED) {
+      if (
+        deviceSessionState?.deviceStatus !== DeviceStatus.NOT_CONNECTED &&
+        activeDeviceSessionSubject.value?.transport
+      ) {
         tracer.trace("[open] reusing existing session and instantiating a new SdkTransport");
         return activeDeviceSessionSubject.value.transport;
       }
@@ -135,10 +79,73 @@ export class DeviceManagementKitTransport extends Transport {
     return transport;
   }
 
+  static listen = (observer: Observer<DescriptorEvent<string>>) => {
+    const subscription = deviceManagementKit
+      .listenToKnownDevices()
+      .pipe(
+        startWith<DiscoveredDevice[]>([]),
+        pairwise(),
+        map(([prev, curr]) => {
+          const added = curr.filter(item => !prev.some(prevItem => prevItem.id === item.id));
+          const removed = prev.filter(item => !curr.some(currItem => currItem.id === item.id));
+          return { added, removed };
+        }),
+      )
+      .subscribe({
+        next: ({ added, removed }) => {
+          for (const device of added) {
+            const id = deviceIdMap[device.deviceModel.model];
+
+            tracer.trace(`[listen] device added ${id}`);
+            observer.next({
+              type: "add",
+              descriptor: "",
+              device: device,
+              // @ts-expect-error types are not matching
+              deviceModel: {
+                id,
+              },
+            });
+          }
+
+          for (const device of removed) {
+            const id = deviceIdMap[device.deviceModel.model];
+
+            tracer.trace(`[listen] device removed ${id}`);
+            observer.next({
+              type: "remove",
+              descriptor: "",
+              device: device,
+              // @ts-expect-error types are not matching
+              deviceModel: {
+                id,
+              },
+            });
+          }
+        },
+        error: observer.error,
+        complete: observer.complete,
+      });
+
+    return {
+      unsubscribe: () => subscription.unsubscribe(),
+    };
+  };
+
   close: () => Promise<void> = () => Promise.resolve();
 
   async exchange(apdu: Buffer): Promise<Buffer> {
-    tracer.trace(`[exchange] => ${apdu}`);
+    tracer.trace(`[exchange] => ${apdu.toString("hex")}`);
+
+    const devices = await this.sdk.listConnectedDevices();
+
+    // If the device is not connected, connect to new session
+    if (!devices.some(device => device.sessionId === this.sessionId)) {
+      const [discoveredDevice] = await firstValueFrom(deviceManagementKit.listenToKnownDevices());
+      const connectedSessionId = await deviceManagementKit.connect({ device: discoveredDevice });
+      this.sessionId = connectedSessionId;
+    }
+
     return await this.sdk
       .sendApdu({
         sessionId: this.sessionId,
@@ -146,8 +153,12 @@ export class DeviceManagementKitTransport extends Transport {
       })
       .then((apduResponse: { data: Uint8Array; statusCode: Uint8Array }): Buffer => {
         const response = Buffer.from([...apduResponse.data, ...apduResponse.statusCode]);
-        tracer.trace(`[exchange] <= ${response}`);
+        tracer.trace(`[exchange] <= ${response.toString("hex")}`);
         return response;
+      })
+      .catch(e => {
+        console.error("[exchange] error", e);
+        throw e;
       });
   }
 }

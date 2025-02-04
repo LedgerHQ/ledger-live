@@ -95,6 +95,7 @@
     "bignumber.js": "^9.1.2",
     "graphql": "^16.10.0",
     "invariant": "^2.2.4",
+    "expect": "^27.4.6",
     "lodash": "^4.17.21",
     "rxjs": "^7.8.1"
   },
@@ -111,7 +112,7 @@
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
-    "build": "tsc && tsc -m ES6 --outDir lib-es",
+    "build": "tsc --outDir lib --module commonjs --moduleResolution node10 && tsc -m ES6 --outDir lib-es",
     "coverage": "jest --coverage --testPathIgnorePatterns='/bridge.integration.test.ts|node_modules|lib-es|lib/' --coveragePathIgnorePatterns='src/test|src/types|src/index.ts|src/bridge/bridge.fixture.ts' --passWithNoTests && mv coverage/coverage-final.json coverage/coverage-aptos.json",
     "prewatch": "pnpm build",
     "watch": "tsc --watch",
