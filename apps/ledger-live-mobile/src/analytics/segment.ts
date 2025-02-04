@@ -30,7 +30,6 @@ import {
   trackingEnabledSelector,
   languageSelector,
   localeSelector,
-  lastSeenDeviceSelector,
   sensitiveAnalyticsSelector,
   onboardingHasDeviceSelector,
   notificationsSelector,
@@ -41,6 +40,7 @@ import {
   hasSeenAnalyticsOptInPromptSelector,
   mevProtectionSelector,
   readOnlyModeEnabledSelector,
+  seenDevicesSelector,
 } from "../reducers/settings";
 import { knownDevicesSelector } from "../reducers/ble";
 import { DeviceLike, State } from "../reducers/types";
@@ -170,10 +170,10 @@ const extraProperties = async (store: AppStore) => {
   const customImageType = customImageTypeSelector(state);
   const language = sensitiveAnalytics ? null : languageSelector(state);
   const region = sensitiveAnalytics ? null : localeSelector(state);
-  const devices = knownDevicesSelector(state);
+  const devices = seenDevicesSelector(state);
   const satisfaction = satisfactionSelector(state);
   const accounts = accountsSelector(state);
-  const lastDevice = lastSeenDeviceSelector(state) || devices[devices.length - 1];
+  const lastDevice = devices.at(-1) || knownDevicesSelector(state).at(-1);
   const deviceInfo = lastDevice
     ? {
         deviceVersion: lastDevice.deviceInfo?.version,
