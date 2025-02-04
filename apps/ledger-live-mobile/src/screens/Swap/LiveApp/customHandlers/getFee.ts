@@ -13,6 +13,8 @@ import {
   getCustomFeesPerFamily,
   transformToBigNumbers,
 } from "../utils";
+import { NavigationProp, NavigationState } from "@react-navigation/native";
+import { NavigatorName, ScreenName } from "~/const";
 
 interface FeeParams {
   fromAccountId: string;
@@ -23,7 +25,7 @@ interface FeeParams {
   SWAP_VERSION: string;
 }
 
-interface FeeData {
+export interface FeeData {
   feesStrategy: Strategy;
   estimatedFees: BigNumber | undefined;
   errors: TransactionStatus["errors"];
@@ -93,7 +95,12 @@ const generateFeeData = async ({
 };
 
 export const getFee =
-  (accounts: AccountLike[]) =>
+  (
+    accounts: AccountLike[],
+    navigation: Omit<NavigationProp<ReactNavigation.RootParamList>, "getState"> & {
+      getState(): NavigationState | undefined;
+    },
+  ) =>
   async ({ params }: { params: FeeParams }): Promise<FeeData> => {
     const accountId = getAccountIdFromWalletAccountId(params.fromAccountId);
     if (!accountId) {
@@ -112,6 +119,35 @@ export const getFee =
 
     const amount = new BigNumber(params.fromAmount);
     const atomicAmount = convertToAtomicUnit({ amount, account });
+
+    if (params.openDrawer) {
+      return new Promise(resolve => {
+        navigation.navigate(NavigatorName.Fees, {
+          screen: ScreenName.FeeHomePage,
+          params: {
+            onSelect: async feesStrategy => {
+              console.log("xxxxxxx", feesStrategy);
+              const newFeeData = await generateFeeData({
+                account,
+                feePayingAccount,
+                feesStrategy,
+                fromAmount: atomicAmount,
+                customFeeConfig: params.customFeeConfig,
+              });
+              resolve(newFeeData);
+              navigation.canGoBack() && navigation.goBack();
+            },
+            account,
+            feePayingAccount,
+            fromAmount: amount,
+            feesStrategy: params.feeStrategy,
+            customFeeConfig: params.customFeeConfig,
+          },
+        });
+      });
+    }
+
+    console.log('xxxxxxx','RETURN DEFAULT FEE DATA');
 
     return await generateFeeData({
       account,
