@@ -240,6 +240,9 @@ export default function useScanDeviceAccountsViewModel({
   const noImportableAccounts = !sections.some(
     s => s.id === "importable" || s.id === "creatable" || s.id === "migrate",
   );
+  // We don't show already imported accounts in the UI
+  const sanitizedSections = sections.filter(s => s.id !== "imported");
+
   const CustomNoAssociatedAccounts =
     currency.type === "CryptoCurrency"
       ? noAssociatedAccountsByFamily[currency.family as keyof typeof noAssociatedAccountsByFamily]
@@ -315,7 +318,7 @@ export default function useScanDeviceAccountsViewModel({
     restartSubscription,
     scannedAccounts,
     scanning,
-    sections,
+    sections: sanitizedSections,
     selectAll,
     selectedIds,
     showAllCreatedAccounts,
