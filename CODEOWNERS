@@ -45,6 +45,9 @@ libs/live-config/                                        @ledgerhq/live-blockcha
 libs/live-network/                                       @ledgerhq/live-blockchain-support
 libs/live-services/                                      @ledgerhq/live-blockchain-support
 
+# YLD Partner
+libs/coin-modules/coin-aptos/                            @ledgerhq/ledger-partner-yld
+
 # PTX team
 apps/cli/src/commands/ptx                                            					@ledgerhq/ptx
 apps/ledger-live-desktop/src/renderer/components/ProviderIcon/       					@ledgerhq/ptx

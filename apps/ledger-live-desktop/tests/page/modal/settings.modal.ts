@@ -4,6 +4,7 @@ import { step } from "tests/misc/reporters/step";
 
 export class SettingsModal extends Modal {
   readonly warningMessage = this.page.getByTestId("warning-message");
+  readonly confirmButton = this.page.getByTestId("modal-confirm-button");
 
   @step("Check Reset Modal")
   async checkResetModal() {

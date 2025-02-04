@@ -7,6 +7,7 @@ import BIPPath from "bip32-path";
 const P1_NON_CONFIRM = 0x00;
 const P1_CONFIRM = 0x01;
 
+const P2_INIT = 0x00;
 const P2_EXTEND = 0x01;
 const P2_MORE = 0x02;
 
@@ -19,6 +20,8 @@ const INS = {
   GET_ADDR: 0x05,
   SIGN: 0x06,
   SIGN_OFFCHAIN: 0x07,
+  GET_CHALLENGE: 0x20,
+  PROVIDE_TRUSTED_NAME: 0x21,
 };
 
 enum EXTRA_STATUS_CODES {
@@ -47,7 +50,13 @@ export default class Solana {
     this.transport = transport;
     this.transport.decorateAppAPIMethods(
       this,
-      ["getAddress", "signTransaction", "getAppConfiguration"],
+      [
+        "getAddress",
+        "signTransaction",
+        "getAppConfiguration",
+        "getChallenge",
+        "provideTrustedName",
+      ],
       scrambleKey,
     );
   }
@@ -169,6 +178,44 @@ export default class Solana {
     };
   }
 
+  /**
+   * Method returning a 4 bytes TLV challenge as an hex string
+   *
+   * @returns {Promise<string>}
+   */
+  async getChallenge(): Promise<string> {
+    return this.transport.send(LEDGER_CLA, INS.GET_CHALLENGE, P1_NON_CONFIRM, P2_INIT).then(res => {
+      const data = res.toString("hex");
+      const fourBytesChallenge = data.slice(0, -4);
+      const statusCode = data.slice(-4);
+
+      if (statusCode !== "9000") {
+        throw new Error(
+          `An error happened while generating the challenge. Status code: ${statusCode}`,
+        );
+      }
+      return `0x${fourBytesChallenge}`;
+    });
+  }
+
+  /**
+   * Provides a trusted name to be displayed during transactions in place of the token address it is associated to. It shall be run just before a transaction involving the associated address that would be displayed on the device.
+   *
+   * @param data a stringified buffer of some TLV encoded data to represent the trusted name
+   * @returns a boolean
+   */
+  async provideTrustedName(data: string): Promise<boolean> {
+    await this.transport.send(
+      LEDGER_CLA,
+      INS.PROVIDE_TRUSTED_NAME,
+      P1_NON_CONFIRM,
+      P2_INIT,
+      Buffer.from(data, "hex"),
+    );
+
+    return true;
+  }
+
   private pathToBuffer(originalPath: string) {
     const path = originalPath
       .split("/")
@@ -191,13 +238,13 @@ export default class Solana {
   private async sendToDevice(instruction: number, p1: number, payload: Buffer) {
     /*
      * By default transport will throw if status code is not OK.
-     * For some pyaloads we need to enable blind sign in the app settings
+     * For some payloads we need to enable blind sign in the app settings
      * and this is reported with StatusCodes.MISSING_CRITICAL_PARAMETER first byte prefix
      * so we handle it and show a user friendly error message.
      */
     const acceptStatusList = [StatusCodes.OK, EXTRA_STATUS_CODES.BLIND_SIGNATURE_REQUIRED];
 
-    let p2 = 0;
+    let p2 = P2_INIT;
     let payload_offset = 0;
 
     if (payload.length > MAX_PAYLOAD) {

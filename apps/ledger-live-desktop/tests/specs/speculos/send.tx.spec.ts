@@ -259,7 +259,7 @@ test.describe("Send flows", () => {
 
           await app.account.clickSend();
           await app.send.craftTx(transaction.transaction);
-          await app.send.countinueSendAmount();
+          await app.send.continueAmountModal();
           await app.send.expectTxInfoValidity(transaction.transaction);
           await app.send.clickContinueToDevice();
 
@@ -367,7 +367,7 @@ test.describe("Send flows", () => {
           await app.account.navigateToTokenInAccount(transaction.transaction.accountToDebit);
           await app.account.clickSend();
           await app.send.fillRecipient(transaction.transaction.accountToCredit.address);
-          await app.send.clickContinue();
+          await app.send.continue();
           await app.send.fillAmount(transaction.transaction.amount);
           await app.send.checkContinueButtonDisabled();
           await app.send.checkAmountWarningMessage(transaction.expectedWarningMessage);
@@ -418,7 +418,7 @@ test.describe("Send flows", () => {
         await app.send.fillRecipient(tokenTransactionValid.accountToCredit.address);
         await app.send.checkContinueButtonEnable();
         await app.send.checkInputErrorVisibility("hidden");
-        await app.send.clickContinue();
+        await app.send.continue();
         await app.send.fillAmount(tokenTransactionValid.amount);
         await app.send.checkContinueButtonEnable();
       },
@@ -505,7 +505,7 @@ test.describe("Send flows", () => {
 
         await app.account.clickSend();
         await app.send.fillRecipient(transactionInputValid.accountToCredit.address);
-        await app.send.clickContinue();
+        await app.send.continue();
         await app.send.fillAmount(transactionInputValid.amount);
         await app.send.checkContinueButtonEnable();
         await app.send.checkInputErrorVisibility("hidden");
@@ -652,7 +652,7 @@ test.describe("Send flows", () => {
 
         await app.account.clickSend();
         await app.send.craftTx(transactionEnsAddress);
-        await app.send.countinueSendAmount();
+        await app.send.continueAmountModal();
         await app.send.expectTxInfoValidity(transactionEnsAddress);
         await app.send.clickContinueToDevice();
 

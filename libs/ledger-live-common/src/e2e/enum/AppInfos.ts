@@ -3,6 +3,8 @@ export class AppInfos {
 
   static readonly BITCOIN = new AppInfos("Bitcoin");
 
+  static readonly INJECTIVE = new AppInfos("Injective");
+
   static readonly APTOS = new AppInfos("Aptos");
 
   static readonly BITCOIN_TESTNET = new AppInfos("Bitcoin Test");

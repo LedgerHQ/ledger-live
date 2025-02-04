@@ -200,7 +200,8 @@
       "STAKE" : "Stake edildi",
       "UNSTAKE" : "Stake durdurma",
       "WITHDRAW_UNSTAKED" : "Çekildi",
-      "SENDING" : "Gönderiliyor"
+      "SENDING" : "Gönderiliyor",
+      "BURN" : "Yakıldı"
     },
     "edit" : {
       "title" : "Hızlandırın veya İptal Edin",
@@ -1515,21 +1516,21 @@
     },
     "recoverBanner" : {
       "subscribeDone" : {
-        "title" : "Ödeme kartınızı eklemeyi bitirin",
-        "description" : "Ledger Recover ile güvenilir bir şekilde geri yükleyin.",
+        "title" : "Hatırlatma: Ledger Recover'a abone olma işlemini tamamlayın",
+        "description" : "Güvende olmanıza sadece iki adım kaldı.",
         "primaryCta" : "Kart ekle",
         "secondaryCta" : "Belki sonra"
       },
       "verifyIdentity" : {
-        "title" : "Kimliğinizi doğrulamayı bitirin",
-        "description" : "Ledger Recover ile güvenilir bir şekilde geri yükleyin.",
-        "primaryCta" : "Doğrula",
+        "title" : "Hatırlatma: Ledger Recover'a abone olma işlemini tamamlayın",
+        "description" : "Güvende olmanıza sadece bir adım kaldı.",
+        "primaryCta" : "Kimliğinizi doğrulayın",
         "secondaryCta" : "Belki sonra"
       },
       "connectDevice" : {
-        "title" : "Ledger'ınızı bağlayın",
-        "description" : "Ledger Recover'a erişiminizin 1 adım uzağındasınız.",
-        "primaryCta" : "Bağlan",
+        "title" : "Hatırlatma: Ledger Recover'a abone olma işlemini tamamlayın",
+        "description" : "Bu, gerektiğinde cüzdana yeniden erişebilmek için tamamlamanız gereken son adımdır.",
+        "primaryCta" : "Cihazı bağlayın",
         "secondaryCta" : "Belki sonra"
       }
     },
@@ -3742,6 +3743,10 @@
           }
         }
       }
+    },
+    "token" : {
+      "frozenStateWarning" : "Hesap varlıkları donduruldu!",
+      "transferWarning" : "Ledger Nano S™ kullanarak Solana token'ları için alıcı adresini doğrulamak üzere <0>bu yönergeleri uygulayın.</0>"
     }
   },
   "ethereum" : {
@@ -6197,6 +6202,27 @@
     "SolanaAccountNotFunded" : {
       "title" : "Hesap daha önce fonlanmamış"
     },
+    "SolanaTokenAccountHoldsAnotherToken" : {
+      "title" : "Bu ilgili token hesabında başka bir token tutuluyor"
+    },
+    "SolanaTokenAccountWarning" : {
+      "title" : "Bu normal bir cüzdan adresi değil, ilgili bir token hesabıdır. Sadece ne yaptığınızdan eminseniz devam edin."
+    },
+    "SolanaTokenAccountNotAllowed" : {
+      "title" : "Bu bir token hesabı. Normal bir cüzdan adresi girin."
+    },
+    "SolanaMintAccountNotAllowed" : {
+      "title" : "Bu bir token adresi. Normal bir cüzdan adresi girin."
+    },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "Hesap fonlanacak"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "Token hesabı varlıkları donduruldu"
+    },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "Hesap başlatılmadı"
+    },
     "SolanaMemoIsTooLong" : {
       "title" : "Memo çok uzun Uzunluk en fazla {{maxLength}} olmalıdır"
     },
@@ -6725,17 +6751,19 @@
         "mobile" : {
           "description" : "Başka bir telefondaki Ledger Live uygulamasıyla senkronize edin",
           "steps" : {
-            "step1" : "Senkronize etmek istediğiniz Ledger Live uygulamasını açın",
-            "step2" : "Sırasıyla <0>Ayarlar</0> > <0>Genel</0> > <0>Ledger Sync</0> > <0>Senkronizasyonu aç</0> > <0>Karekodu Göster</0> adımlarını izleyin",
-            "step3" : "Karekodu okutun"
+            "step1" : "Ledger Sync'in uygulamalarınızdan birinde etkinleştirildiğinden emin olun.",
+            "step2" : "Senkronize etmek istediğiniz Ledger Live uygulamasını açın.",
+            "step3" : "<0>Ayarlar</0> > <0>Genel</0> > <0>Ledger Sync</0> > <0>Zaten açtım</0> > <0>Karekodu göster</0> adımlarını izleyin",
+            "step4" : "Karekodu okutun."
           }
         },
         "desktop" : {
           "description" : "Hesaplarınızı başka bir Ledger Live uygulamasıyla senkronize edin",
           "steps" : {
-            "step1" : "Senkronize etmek istediğiniz Ledger Live uygulamasını açın",
-            "step2" : "Sırasıyla <0>Ayarlar</0> > <0>Genel</0> > <0>Ledger Sync</0> > <0>Senkronizasyonu aç</0> > <0>Ledger cihazınızı kullanın</0> adımlarını izleyin",
-            "step3" : "Ledger'ınızı bağlayın"
+            "step1" : "Ledger Sync'in uygulamalarınızdan birinde etkinleştirildiğinden emin olun.",
+            "step2" : "Senkronize etmek istediğiniz Ledger Live uygulamasını açın.",
+            "step3" : "<0>Ayarlar</0> > <0>Genel</0> > <0>Ledger Sync</0> > <0>Zaten açtım</0> > <0>Ledger cihazınızı kullanın</0> adımlarını izleyin",
+            "step4" : "Ledger cihazınızı bağlayın."
           }
         }
       },

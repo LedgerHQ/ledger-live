@@ -67,6 +67,7 @@
     "coin:coverage": "pnpm turbo coverage --filter=\"@ledgerhq/coin-*\" --concurrency=2 && mkdir -p coverage && mv libs/coin-modules/**/coverage/*.json coverage && pnpm exec nyc merge coverage coverage/coverage-final.json && pnpm exec nyc report -t coverage --report-dir coverage --reporter=html-spa",
     "coin:coverage:clean": "rm -rf coverage && rm -rf libs/coin-modules/**/coverage",
     "coin:algorand": "pnpm --filter coin-algorand",
+    "coin:aptos": "pnpm --filter coin-aptos",
     "coin:bitcoin": "pnpm --filter coin-bitcoin",
     "coin:cardano": "pnpm --filter coin-cardano",
     "coin:cosmos": "pnpm --filter coin-cosmos",
@@ -200,8 +201,6 @@
       "blake2"
     ],
     "overrides": {
-      "@electron/rebuild": "3.7.1",
-      "tiny-secp256k1": "1.1.7",
       "stellar-base>sodium-native": "^3.2.1",
       "remove-flow-types-loader>flow-remove-types": "^2",
       "remove-flow-types-loader>loader-utils": "*",
@@ -212,7 +211,6 @@
       "@ethersproject/providers>ws": "7.5.10"
     },
     "patchedDependencies": {
-      "tiny-secp256k1@1.1.7": "patches/tiny-secp256k1@1.1.7.patch",
       "react-native-fast-crypto@2.2.0": "patches/react-native-fast-crypto@2.2.0.patch",
       "rn-fetch-blob@0.12.0": "patches/rn-fetch-blob@0.12.0.patch",
       "react-native-image-crop-tools@1.6.4": "patches/react-native-image-crop-tools@1.6.4.patch",

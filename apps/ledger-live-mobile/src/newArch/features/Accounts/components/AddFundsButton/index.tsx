@@ -8,13 +8,17 @@ import { Account, AccountLike } from "@ledgerhq/types-live";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import AccountListDrawer from "../AccountListDrawer";
 import AccountQuickActionsDrawer from "../AccountQuickActionsDrawer";
+import useAnalytics from "LLM/hooks/useAnalytics";
+import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 
 export default function AddFundsButton({
   accounts,
   currency,
+  sourceScreenName,
 }: {
   accounts: Account[];
   currency: CryptoOrTokenCurrency;
+  sourceScreenName: string;
 }) {
   const { t } = useTranslation();
   const [isAccountListDrawerOpen, setIsAccountListDrawerOpen] = useState<boolean>(false);
@@ -23,23 +27,49 @@ export default function AddFundsButton({
   const [selectedAccount, setSelectedAccount] = useState<AccountLike | null>(
     accounts.length === 1 ? accounts[0] : null,
   );
-  const openFundOrAccountListDrawer = () => {
-    track("button_clicked", { button: "Add a new account" });
+  const { analyticsMetadata } = useAnalytics("addAccounts", sourceScreenName);
+
+  const openFundOrAccountListDrawer = useCallback(() => {
+    let clickMetadata;
     if (accounts.length === 1) {
+      clickMetadata = analyticsMetadata.AddFunds?.onQuickActionOpen;
       setIsAccountQuickActionsDrawerOpen(true);
-    } else setIsAccountListDrawerOpen(true);
-  };
+    } else {
+      clickMetadata = analyticsMetadata.AddFunds?.onOpenDrawer;
+      setIsAccountListDrawerOpen(true);
+    }
+    track(clickMetadata.eventName, clickMetadata.payload);
+  }, [
+    accounts.length,
+    analyticsMetadata.AddFunds?.onQuickActionOpen,
+    analyticsMetadata.AddFunds?.onOpenDrawer,
+  ]);
 
-  const closeAccountListDrawer = () => setIsAccountListDrawerOpen(false);
+  const closeAccountListDrawer = useCallback(() => {
+    const clickMetadata = analyticsMetadata.AddFunds?.onCloseDrawer;
+    setIsAccountListDrawerOpen(false);
+    track(clickMetadata.eventName, clickMetadata.payload);
+  }, [analyticsMetadata.AddFunds?.onCloseDrawer]);
 
-  const handleOnSelectAccoount = useCallback((account: AccountLike) => {
-    closeAccountListDrawer();
-    setSelectedAccount(account);
-    setIsAccountQuickActionsDrawerOpen(true);
-  }, []);
+  const handleOnSelectAccoount = useCallback(
+    (account: AccountLike) => {
+      closeAccountListDrawer();
+      setSelectedAccount(account);
+      setIsAccountQuickActionsDrawerOpen(true);
+      const selectAccountMetadata = analyticsMetadata.AddFunds?.onSelectAccount;
+      track(selectAccountMetadata.eventName, {
+        ...selectAccountMetadata.payload,
+        account: getDefaultAccountName(account),
+        currency: currency.id,
+      });
+    },
+    [closeAccountListDrawer, currency, analyticsMetadata.AddFunds?.onSelectAccount],
+  );
 
   const handleOnCloseQuickActions = () => {
+    const clickMetadata = analyticsMetadata.AddFunds?.onQuickActionClose;
     setIsAccountQuickActionsDrawerOpen(false);
+    track(clickMetadata.eventName, clickMetadata.payload);
   };
 
   return (
@@ -55,14 +85,12 @@ export default function AddFundsButton({
       <AccountListDrawer
         isOpen={isAccountListDrawerOpen}
         onClose={closeAccountListDrawer}
-        onBack={closeAccountListDrawer}
         data={accounts}
         onPressAccount={handleOnSelectAccoount}
       />
       <AccountQuickActionsDrawer
         isOpen={isAccountQuickActionsDrawerOpen}
         onClose={handleOnCloseQuickActions}
-        onBack={handleOnCloseQuickActions}
         account={selectedAccount}
         currency={currency}
       />

@@ -6,7 +6,6 @@ import { tokens as sepoliaTokens } from "./data/evm/11155111";
 import stellarTokens, { StellarToken } from "./data/stellar";
 import vechainTokens, { Vip180Token } from "./data/vip180";
 import esdttokens, { ElrondESDTToken } from "./data/esdt";
-import casperTokens, { CasperToken } from "./data/casper";
 import asatokens, { AlgorandASAToken } from "./data/asa";
 import { tokens as polygonTokens } from "./data/evm/137";
 import trc10tokens, { TRC10Token } from "./data/trc10";
@@ -14,6 +13,7 @@ import trc20tokens, { TRC20Token } from "./data/trc20";
 import { tokens as mainnetTokens } from "./data/evm/1";
 import { tokens as bnbTokens } from "./data/evm/56";
 import filecoinTokens from "./data/filecoin-erc20";
+import spltokens, { SPLToken } from "./data/spl";
 import { ERC20Token } from "./types";
 
 const emptyArray = [];
@@ -46,14 +46,14 @@ addTokens(esdttokens.map(convertElrondESDTTokens));
 addTokens(cardanoNativeTokens.map(convertCardanoNativeTokens));
 // Stellar tokens
 addTokens(stellarTokens.map(convertStellarTokens));
-// Casper tokens
-addTokens(casperTokens.map(convertCasperTokens));
 // VeChain tokens
 addTokens(vechainTokens.map(convertVechainToken));
 // Ton tokens
 addTokens(jettonTokens.map(convertJettonToken));
 // Filecoin tokens
 addTokens(filecoinTokens.map(convertERC20));
+// Solana tokens
+addTokens(spltokens.map(convertSplTokens));
 
 type TokensListOptions = {
   withDelisted: boolean;
@@ -403,6 +403,26 @@ function convertElrondESDTTokens([
   };
 }
 
+function convertSplTokens([id, network, name, symbol, address, decimals]: SPLToken): TokenCurrency {
+  return {
+    type: "TokenCurrency",
+    id,
+    contractAddress: address,
+    parentCurrency: getCryptoCurrencyById(network),
+    name,
+    tokenType: "spl",
+    ticker: symbol,
+    disableCountervalue: false,
+    units: [
+      {
+        name,
+        code: symbol,
+        magnitude: decimals,
+      },
+    ],
+  };
+}
+
 function convertCardanoNativeTokens([
   parentCurrencyId,
   policyId,
@@ -461,35 +481,6 @@ function convertStellarTokens([
     name,
     ticker: assetCode,
     disableCountervalue: false,
-    units: [
-      {
-        name,
-        code: assetCode,
-        magnitude: precision,
-      },
-    ],
-  };
-}
-
-function convertCasperTokens([
-  assetCode,
-  assetIssuer,
-  assetType,
-  name,
-  precision,
-  enableCountervalues,
-]: CasperToken): TokenCurrency {
-  const parentCurrency = getCryptoCurrencyById("casper");
-
-  return {
-    type: "TokenCurrency",
-    id: `casper/asset/${assetCode}:${assetIssuer}`,
-    contractAddress: assetIssuer,
-    parentCurrency,
-    tokenType: assetType,
-    name,
-    ticker: assetCode,
-    disableCountervalue: !enableCountervalues,
     units: [
       {
         name,
