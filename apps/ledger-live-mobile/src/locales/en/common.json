@@ -809,6 +809,12 @@
     "SolanaTokenAccountFrozen": {
       "title": "Token account assets are frozen"
     },
+    "SolanaTokenAccounNotInitialized": {
+      "title": "Account not initialized"
+    },
+    "SolanaTokenRecipientIsSenderATA": {
+      "title": "Recipient address is the same as the sender token address"
+    },
     "SolanaAddressOfEd25519": {
       "title": "Address off ed25519 curve"
     },
