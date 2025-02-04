@@ -1,5 +1,18 @@
 # web-tools
 
+## 0.14.0-nightly.3
+
+### Minor Changes
+
+- [#9072](https://github.com/LedgerHQ/ledger-live/pull/9072) [`37fc8b0`](https://github.com/LedgerHQ/ledger-live/commit/37fc8b0feea1034388e25fbd62344baea7f5ffbd) Thanks [@KVNLS](https://github.com/KVNLS)! - Export logs to txt format for LLM & LLD
+
+### Patch Changes
+
+- Updated dependencies [[`5e18866`](https://github.com/LedgerHQ/ledger-live/commit/5e18866320b843632699659ee66f6c410c108c1e)]:
+  - @ledgerhq/coin-framework@1.0.0-nightly.1
+  - @ledgerhq/live-common@34.20.0-nightly.3
+  - @ledgerhq/live-wallet@0.9.2-nightly.1
+
 ## 0.13.3-nightly.2
 
 ### Patch Changes

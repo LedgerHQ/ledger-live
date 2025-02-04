@@ -1,5 +1,27 @@
 # ledger-live-desktop
 
+## 2.98.0-nightly.3
+
+### Minor Changes
+
+- [#9072](https://github.com/LedgerHQ/ledger-live/pull/9072) [`37fc8b0`](https://github.com/LedgerHQ/ledger-live/commit/37fc8b0feea1034388e25fbd62344baea7f5ffbd) Thanks [@KVNLS](https://github.com/KVNLS)! - Export logs to txt format for LLM & LLD
+
+### Patch Changes
+
+- Updated dependencies [[`5e18866`](https://github.com/LedgerHQ/ledger-live/commit/5e18866320b843632699659ee66f6c410c108c1e)]:
+  - @ledgerhq/coin-framework@1.0.0-nightly.1
+  - @ledgerhq/coin-aptos@1.4.0-nightly.4
+  - @ledgerhq/coin-bitcoin@0.10.2-nightly.1
+  - @ledgerhq/coin-cosmos@0.6.2-nightly.1
+  - @ledgerhq/coin-evm@2.9.2-nightly.1
+  - @ledgerhq/coin-filecoin@1.5.2-nightly.1
+  - @ledgerhq/live-common@34.20.0-nightly.3
+  - @ledgerhq/live-countervalues@0.3.0-nightly.2
+  - @ledgerhq/live-countervalues-react@0.2.20-nightly.2
+  - @ledgerhq/live-nft@0.5.5-nightly.1
+  - @ledgerhq/live-nft-react@0.5.5-nightly.1
+  - @ledgerhq/live-wallet@0.9.2-nightly.1
+
 ## 2.98.0-nightly.2
 
 ### Minor Changes

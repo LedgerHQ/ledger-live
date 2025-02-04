@@ -1,5 +1,29 @@
 # live-mobile
 
+## 3.64.0-nightly.3
+
+### Minor Changes
+
+- [#8976](https://github.com/LedgerHQ/ledger-live/pull/8976) [`d97e054`](https://github.com/LedgerHQ/ledger-live/commit/d97e054664e8774c15ae3306adcce5dccf776f46) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Enhance switch tab animation on portfolioassets for the assets and accounts tabs
+
+- [#9072](https://github.com/LedgerHQ/ledger-live/pull/9072) [`37fc8b0`](https://github.com/LedgerHQ/ledger-live/commit/37fc8b0feea1034388e25fbd62344baea7f5ffbd) Thanks [@KVNLS](https://github.com/KVNLS)! - Export logs to txt format for LLM & LLD
+
+### Patch Changes
+
+- Updated dependencies [[`5e18866`](https://github.com/LedgerHQ/ledger-live/commit/5e18866320b843632699659ee66f6c410c108c1e)]:
+  - @ledgerhq/coin-framework@1.0.0-nightly.1
+  - @ledgerhq/coin-cosmos@0.6.2-nightly.1
+  - @ledgerhq/coin-elrond@0.3.2-nightly.1
+  - @ledgerhq/coin-evm@2.9.2-nightly.1
+  - @ledgerhq/coin-filecoin@1.5.2-nightly.1
+  - @ledgerhq/coin-stacks@0.5.2-nightly.1
+  - @ledgerhq/live-common@34.20.0-nightly.3
+  - @ledgerhq/live-countervalues@0.3.0-nightly.2
+  - @ledgerhq/live-countervalues-react@0.2.20-nightly.2
+  - @ledgerhq/live-nft@0.5.5-nightly.1
+  - @ledgerhq/live-nft-react@0.5.5-nightly.1
+  - @ledgerhq/live-wallet@0.9.2-nightly.1
+
 ## 3.64.0-nightly.2
 
 ### Minor Changes

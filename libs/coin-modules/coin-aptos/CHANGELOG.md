@@ -1,5 +1,12 @@
 # @ledgerhq/coin-aptos
 
+## 1.4.0-nightly.4
+
+### Patch Changes
+
+- Updated dependencies [[`5e18866`](https://github.com/LedgerHQ/ledger-live/commit/5e18866320b843632699659ee66f6c410c108c1e)]:
+  - @ledgerhq/coin-framework@1.0.0-nightly.1
+
 ## 1.4.0-nightly.3
 
 ### Minor Changes
