@@ -791,6 +791,24 @@
     "SolanaAccountNotFunded" : {
       "title" : "Conta sem saldo"
     },
+    "SolanaTokenAccountHoldsAnotherToken" : {
+      "title" : "Essa conta de token associada detém outro token"
+    },
+    "SolanaTokenAccountWarning" : {
+      "title" : "Esse não é um endereço de carteira normal, mas uma conta de token associada. Continue apenas se você sabe o que está fazendo"
+    },
+    "SolanaTokenAccountNotAllowed" : {
+      "title" : "Essa é uma conta de token. Insira um endereço de carteira normal"
+    },
+    "SolanaMintAccountNotAllowed" : {
+      "title" : "Esse é um endereço de token. Insira um endereço de carteira normal"
+    },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "A conta será financiada"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "Os ativos da conta de token estão congelados"
+    },
     "SolanaAddressOfEd25519" : {
       "title" : "Endereço fora da curva ed25519"
     },
@@ -2375,16 +2393,16 @@
     },
     "recoverBanner" : {
       "subscribeDone" : {
-        "title" : "Termine de adicionar seu cartão para pagamento",
-        "description" : "Use o Ledger Recover para restaurar de forma confiável"
+        "title" : "Lembrete: Termine de assinar o Ledger Recover",
+        "description" : "Você está a apenas dois passos de aumentar sua segurança."
       },
       "verifyIdentity" : {
-        "title" : "Termine de verificar sua identidade",
-        "description" : "Use o Ledger Recover para restaurar de forma confiável"
+        "title" : "Lembrete: Termine de assinar o Ledger Recover",
+        "description" : "Você está a apenas dois passos de aumentar sua segurança."
       },
       "connectDevice" : {
-        "title" : "Último passo: Conecte sua Ledger",
-        "description" : "Você está a um passo do Ledger Recover."
+        "title" : "Lembrete: Termine de assinar o Ledger Recover",
+        "description" : "Essa é a última etapa para garantir a recuperação do acesso à carteira."
       }
     }
   },
@@ -3104,7 +3122,7 @@
       "title" : "Desenvolvedor",
       "desc" : "Ative os recursos para desenvolvedores e nos conte o que achou.",
       "customManifest" : {
-        "title" : "Carregar o Manifesto da Plataforma Personalizada"
+        "title" : "Manifesto de Carga"
       },
       "exchangeDeveloperMode" : {
         "title" : "Exchange em Modo Desenvolvedor",
@@ -3489,6 +3507,8 @@
         "ton_description" : "Para trocar Ton, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
         "spl_tokens_title" : "A Ledger Nano S™ não é compatível com a troca de tokens Solana",
         "spl_tokens_description" : "Para trocar tokens Solana, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+        "near_title" : "Ledger Nano S™ does not support swapping Near",
+        "near_description" : "To swap Near, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
         "ada_title" : "A Ledger Nano S™ não é compatível com a troca de Cardano",
         "ada_description" : "Para trocar Cardano, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™."
       }
@@ -4072,10 +4092,6 @@
         "creatable" : {
           "title" : "Nova conta"
         },
-        "imported" : {
-          "title" : "Conta já no portfólio ({{count}})",
-          "title_plural" : "Contas já no Portfólio ({{count}})"
-        },
         "migrate" : {
           "title" : "Contas a atualizar"
         }
@@ -4161,7 +4177,9 @@
     "installApp" : "Instalação do aplicativo {{appName}} {{percentage}}",
     "installAppDescription" : "Aguarde a instalação ser concluída",
     "listApps" : "Verificando dependências do aplicativo",
-    "listAppsDescription" : "Aguarde enquanto verificamos se você tem todos os aplicativos necessários"
+    "listAppsDescription" : "Aguarde enquanto verificamos se você tem todos os aplicativos necessários",
+    "confirmExchangeOnDevice" : "Confirm exchange on your device",
+    "confirmSwapOnDevice" : "Confirm swap on your device"
   },
   "SelectDevice" : {
     "title" : "Emparelhar novo dispositivo",
@@ -5982,6 +6000,10 @@
         "description" : "Você pode receber recompensas delegando seus ativos SOL a um validador."
       },
       "reserveWarning" : "Reserve sempre {{amount}} SOL em sua carteira para cobrir futuras taxas de rede na hora de retirar suas moedas do staking"
+    },
+    "token" : {
+      "frozenStateWarning" : "Os ativos da conta estão congelados!",
+      "transferWarning" : "Para verificar o endereço do destinatário para tokens Solana usando uma Ledger Nano S™, <0>siga essas instruções.</0>"
     }
   },
   "near" : {
@@ -7061,9 +7083,10 @@
           "explanation" : {
             "title" : "Escanear e sincronizar suas contas com outro aplicativo Ledger Live",
             "steps" : {
-              "step1" : "Abra o aplicativo Ledger Live que você deseja sincronizar",
-              "step2" : "Vá para <0>Configurações</0> <1>></1> <0>Geral</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Ativar o Ledger Sync</0> <1>></1> <0>Escanear QR Code</0>",
-              "step3" : "Escanear QR Code"
+              "step1" : "Verifique se o Ledger Sync foi ativado em um de seus aplicativos.",
+              "step2" : "Abra o aplicativo Ledger Live que você deseja sincronizar.",
+              "step3" : "Vá para <0>Configurações</0> <1>></1> <0>Geral</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Já ativei</0> <1>></1> <0>Escanear QR code</0>",
+              "step4" : "Escaneie o QR code."
             }
           }
         },
@@ -7073,9 +7096,10 @@
           "explanation" : {
             "title" : "Para sincronizar o Ledger Live em outro telefone ou computador...",
             "steps" : {
-              "step1" : "Abra o Ledger Live que você quer sincronizar.",
-              "step2" : "Vá para <0>Configurações</0> <1>></1> <0>Geral</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Ativar o Ledger Sync</0> <1>></1> <0>Mostrar QR</0>",
-              "step3" : "Escanear QR Code"
+              "step1" : "Verifique se o Ledger Sync foi ativado em um de seus aplicativos.",
+              "step2" : "Abra o Ledger Live com o qual você deseja sincronizar.",
+              "step3" : "Vá para <0>Configurações</0> <1>></1> <0>Geral</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Já ativei</0> <1>></1> <0>Mostrar QR</0>",
+              "step4" : "Escaneie o QR code."
             }
           }
         },
