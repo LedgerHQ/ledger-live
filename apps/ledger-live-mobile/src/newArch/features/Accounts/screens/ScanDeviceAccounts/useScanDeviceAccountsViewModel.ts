@@ -243,6 +243,7 @@ export default function useScanDeviceAccountsViewModel({
   );
   // We don't show already imported accounts in the UI
   const sanitizedSections = sections.filter(s => s.id !== "imported");
+  const hasImportableAccounts = sections.find(s => s.id === "importable" && s.data.length > 0);
 
   const CustomNoAssociatedAccounts =
     currency.type === "CryptoCurrency"
@@ -280,7 +281,7 @@ export default function useScanDeviceAccountsViewModel({
 
   useEffect(() => {
     if (!cantCreateAccount && !isAddingAccounts && !scanning) {
-      if (alreadyEmptyAccount) {
+      if (alreadyEmptyAccount && !hasImportableAccounts) {
         navigation.replace(ScreenName.AddAccountsWarning, {
           emptyAccount: alreadyEmptyAccount,
           emptyAccountName: alreadyEmptyAccountName,
@@ -293,6 +294,7 @@ export default function useScanDeviceAccountsViewModel({
       }
     }
   }, [
+    hasImportableAccounts,
     cantCreateAccount,
     isAddingAccounts,
     alreadyEmptyAccount,
@@ -301,6 +303,7 @@ export default function useScanDeviceAccountsViewModel({
     navigation,
     currency,
     CustomNoAssociatedAccounts,
+    scannedAccounts,
   ]);
   return {
     alreadyEmptyAccount,

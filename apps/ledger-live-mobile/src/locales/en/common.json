@@ -4029,6 +4029,9 @@
       "creatable": {
         "title": "Add new account"
       },
+      "imported": {
+        "title": "Accounts already in the Portfolio ({{length}})"
+      },
       "migrate": {
         "title": "Accounts to update"
       }
@@ -4088,10 +4091,6 @@
         },
         "creatable": {
           "title": "New account"
-        },
-        "imported": {
-          "title": "Account already in the Portfolio ({{count}})",
-          "title_plural": "Accounts already in the Portfolio ({{count}})"
         },
         "migrate": {
           "title": "Accounts to update"
