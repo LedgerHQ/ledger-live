@@ -5,7 +5,6 @@ import makeCliTools from "@ledgerhq/coin-evm/cli-transaction";
 import evmResolver from "@ledgerhq/coin-evm/hw-getAddress";
 import { prepareMessageToSign, signMessage } from "@ledgerhq/coin-evm/hw-signMessage";
 import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
-import Eth from "@ledgerhq/hw-app-eth";
 import {
   CreateSigner,
   createMessageSigner,
@@ -14,13 +13,31 @@ import {
 } from "../../bridge/setup";
 import { Resolver } from "../../hw/getAddress/types";
 import Transport from "@ledgerhq/hw-transport";
-import { Bridge } from "@ledgerhq/types-live";
+import type { Bridge } from "@ledgerhq/types-live";
 import { getCurrencyConfiguration } from "../../config";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
+import { type DeviceManagementKit } from "@ledgerhq/device-management-kit";
+import { DmkSignerEth, LegacySignerEth } from "@ledgerhq/live-signer-evm";
+import { EvmSigner } from "@ledgerhq/coin-evm/lib/types/signer";
 
-const createSigner: CreateSigner<Eth> = (transport: Transport) => {
-  return new Eth(transport);
+const createSigner: CreateSigner<EvmSigner> = (transport: Transport) => {
+  if (isDmkTransport(transport)) {
+    return new DmkSignerEth(transport.sdk, transport.sessionId);
+  }
+
+  return new LegacySignerEth(transport);
+};
+
+const isDmkTransport = (
+  transport: Transport,
+): transport is Transport & { sdk: DeviceManagementKit; sessionId: string } => {
+  return (
+    "sdk" in transport &&
+    transport.sdk !== undefined &&
+    "sessionId" in transport &&
+    transport.sessionId !== undefined
+  );
 };
 
 const getCurrencyConfig = (currency: CryptoCurrency) => {
