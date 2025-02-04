@@ -48,7 +48,13 @@ export default function SolanaSendRowsCustom({ account, transaction, navigation,
     <View>
       <SummaryRow title={t("send.summary.memo.title")} onPress={editMemo}>
         {model.uiState.memo ? (
-          <Text fontWeight="semiBold" style={styles.tagText} onPress={editMemo} numberOfLines={1}>
+          <Text
+            fontWeight="semiBold"
+            style={styles.tagText}
+            onPress={editMemo}
+            numberOfLines={1}
+            testID="summary-memo-tag"
+          >
             {model.uiState.memo}
           </Text>
         ) : (

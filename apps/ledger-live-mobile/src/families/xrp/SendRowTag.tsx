@@ -40,7 +40,11 @@ export default function XrpTagRow({ account, transaction }: Props) {
     <View>
       <SummaryRow title={<Trans i18nKey="send.summary.tag" />}>
         <View style={styles.tagContainer}>
-          {tag && <LText style={styles.tagText}>{tag.toString()}</LText>}
+          {tag && (
+            <LText style={styles.tagText} testID="summary-memo-tag">
+              {tag.toString()}
+            </LText>
+          )}
           <LText
             style={[
               styles.link,
