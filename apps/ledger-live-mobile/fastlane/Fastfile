@@ -506,6 +506,16 @@ platform :android do
     end
   end
 
+  desc "upload to FIREBASE"
+  private_lane :upload_firebase do
+    upload_to_play_store(
+      track: options[:nightly] ? 'Nightly' : options[:recover] ? 'Recover Beta' : "internal",
+      package_name: 'com.ledger.live',
+      json_key_data: ENV["ANDROID_SERVICE_KEY_CONTENT"],
+      skip_upload_apk: true
+    )
+  end
+
   # ============================= END PRIVATE =============================
   # ============================= LOCAL BUILD =============================
 
@@ -531,6 +541,17 @@ platform :android do
 
   desc "build APKs + AAB and send the AAB to the Google Play Store "
   lane :ci_playstore do
+    prepare_android_internal
+    build(
+      type: "Release",
+      ci: true,
+      apk_and_aab: true
+    )
+    upload(ci: true)
+  end
+
+  desc "build APKs + AAB and send the AAB to FIREBASE APP DISTRIBUTION"
+  lane :ci_firebase do
     prepare_android_internal
     build(
       type: "Release",

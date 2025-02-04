@@ -158,6 +158,9 @@ GEM
       xcodeproj (>= 1.13.0, < 2.0.0)
       xcpretty (~> 0.3.0)
       xcpretty-travis-formatter (>= 0.0.3, < 2.0.0)
+    fastlane-plugin-firebase_app_distribution (0.10.0)
+      google-apis-firebaseappdistribution_v1 (~> 0.3.0)
+      google-apis-firebaseappdistribution_v1alpha (~> 0.2.0)
     fastlane-plugin-load_json (0.0.1)
     fastlane-plugin-versioning_android (0.1.1)
     ffi (1.17.0)
@@ -174,6 +177,10 @@ GEM
       representable (~> 3.0)
       retriable (>= 2.0, < 4.a)
       rexml
+    google-apis-firebaseappdistribution_v1 (0.3.0)
+      google-apis-core (>= 0.11.0, < 2.a)
+    google-apis-firebaseappdistribution_v1alpha (0.2.0)
+      google-apis-core (>= 0.11.0, < 2.a)
     google-apis-iamcredentials_v1 (0.17.0)
       google-apis-core (>= 0.11.0, < 2.a)
     google-apis-playcustomapp_v1 (0.13.0)
@@ -283,6 +290,7 @@ DEPENDENCIES
   cocoapods (>= 1.13, != 1.15.1, != 1.15.0)
   dotenv
   fastlane (~> 2.223.1)
+  fastlane-plugin-firebase_app_distribution
   fastlane-plugin-load_json
   fastlane-plugin-versioning_android
   semver2 (~> 3.4, >= 3.4.2)
