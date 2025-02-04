@@ -74,7 +74,6 @@ test.describe(`[${app.name}] Sync Accounts`, () => {
         ...LedgerSyncCliHelper.ledgerSyncPullDataArgs,
       });
 
-      //  let parsedData = typeof pulledData === "string" ? JSON.parse(pulledData) : pulledData;
       const parsedData = LedgerSyncCliHelper.parseData(pulledData);
 
       await app.layout.goToSettings();
