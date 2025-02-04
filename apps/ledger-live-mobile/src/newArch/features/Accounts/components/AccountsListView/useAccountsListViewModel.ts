@@ -25,6 +25,7 @@ export interface Props {
   isSyncEnabled?: boolean;
   limitNumberOfAccounts?: number;
   specificAccounts?: Account[] | TokenAccount[];
+  onContentChange?: (width: number, height: number) => void;
 }
 
 export type NavigationProp = BaseNavigationComposite<
@@ -37,6 +38,7 @@ const useAccountsListViewModel = ({
   isSyncEnabled = false,
   limitNumberOfAccounts,
   specificAccounts,
+  onContentChange,
 }: Props) => {
   const startNavigationTTITimer = useStartProfiler();
   const navigation = useNavigation<NavigationProp>();
@@ -90,6 +92,7 @@ const useAccountsListViewModel = ({
     accountsToDisplay,
     onAccountPress,
     isSyncEnabled,
+    onContentChange,
   };
 };
 

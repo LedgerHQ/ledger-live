@@ -81,6 +81,7 @@ export default function AmountInput({
           style={[error ? styles.error : styles.warning]}
           color={error ? "alert" : "orange"}
           numberOfLines={2}
+          testID="send-amount-error"
         >
           <TranslatedError error={error || warning} />
         </LText>
