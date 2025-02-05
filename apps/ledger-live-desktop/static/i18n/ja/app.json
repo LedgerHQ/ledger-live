@@ -160,87 +160,88 @@
     "stax": "Stax",
     "blue": "Blue"
   },
-  "operation": {
-    "type": {
-      "IN": "受取済み",
-      "OUT": "送付済み",
-      "NFT_IN": "NFT受け取り済み",
-      "NFT_OUT": "NFT送付済み",
-      "CREATE": "作成済み",
-      "REVEAL": "表示済み",
-      "DELEGATE": "デリゲート",
-      "REDELEGATE": "再デリゲート済み",
-      "UNDELEGATE": "デリゲート解除済み",
-      "APPROVE": "承認済み",
-      "VOTE": "投票済み",
-      "FREEZE": "凍結中",
-      "UNFREEZE": "凍結解除済み",
-      "UNDELEGATE_RESOURCE": "デリゲート解除済み",
-      "WITHDRAW_EXPIRE_UNFREEZE": "出金",
-      "LEGACYUNFREEZE": "凍結解除済み",
-      "REWARD": "獲得した報酬",
-      "FEES": "手数料",
-      "OPT_IN": "オプトイン",
-      "OPT_OUT": "オプトアウト",
-      "CLOSE_ACCOUNT": "アカウントを閉じる",
-      "BOND": "ボンド",
-      "UNBOND": "ボンド解除",
-      "REWARD_PAYOUT": "報酬",
-      "SLASH": "スラッシュ",
-      "WITHDRAW_UNBONDED": "引き出す",
-      "NOMINATE": "ノミネート",
-      "CHILL": "ノミネートを解除する",
-      "SET_CONTROLLER": "コントローラーを設定",
-      "LOCK": "ロックされました",
-      "UNLOCK": "ロック解除されました",
-      "WITHDRAW": "引き出し済み",
-      "REVOKE": "取り消されました",
-      "ACTIVATE": "有効化されました",
-      "REGISTER": "登録されました",
-      "STAKE": "ステーキング済み",
-      "UNSTAKE": "ステーキング解除済み",
-      "WITHDRAW_UNSTAKED": "引き出し済み",
-      "SENDING": "送信中"
+  "operation" : {
+    "type" : {
+      "IN" : "受取済み",
+      "OUT" : "送付済み",
+      "NFT_IN" : "NFT受け取り済み",
+      "NFT_OUT" : "NFT送付済み",
+      "CREATE" : "作成済み",
+      "REVEAL" : "表示済み",
+      "DELEGATE" : "デリゲート",
+      "REDELEGATE" : "再デリゲート済み",
+      "UNDELEGATE" : "デリゲート解除済み",
+      "APPROVE" : "承認済み",
+      "VOTE" : "投票済み",
+      "FREEZE" : "凍結中",
+      "UNFREEZE" : "凍結解除済み",
+      "UNDELEGATE_RESOURCE" : "デリゲート解除済み",
+      "WITHDRAW_EXPIRE_UNFREEZE" : "出金",
+      "LEGACYUNFREEZE" : "凍結解除済み",
+      "REWARD" : "獲得した報酬",
+      "FEES" : "手数料",
+      "OPT_IN" : "オプトイン",
+      "OPT_OUT" : "オプトアウト",
+      "CLOSE_ACCOUNT" : "アカウントを閉じる",
+      "BOND" : "ボンド",
+      "UNBOND" : "ボンド解除",
+      "REWARD_PAYOUT" : "報酬",
+      "SLASH" : "スラッシュ",
+      "WITHDRAW_UNBONDED" : "引き出す",
+      "NOMINATE" : "ノミネート",
+      "CHILL" : "ノミネートを解除する",
+      "SET_CONTROLLER" : "コントローラーを設定",
+      "LOCK" : "ロックされました",
+      "UNLOCK" : "ロック解除されました",
+      "WITHDRAW" : "引き出し済み",
+      "REVOKE" : "取り消されました",
+      "ACTIVATE" : "有効化されました",
+      "REGISTER" : "登録されました",
+      "STAKE" : "ステーキング済み",
+      "UNSTAKE" : "ステーキング解除済み",
+      "WITHDRAW_UNSTAKED" : "引き出し済み",
+      "SENDING" : "送信中",
+      "BURN" : "バーン済み"
     },
-    "edit": {
-      "title": "速度を上げる、またはキャンセルする",
-      "description": "お客様のトランザクションは進行中です。より高いネットワーク手数料で速度を上げるか、キャンセルが可能です。",
-      "stuckDescription": "お客様のトランザクションは進行中です。より高いネットワーク手数料で速度を上げるか、キャンセルが可能です。",
-      "previousFeesInfo": {
-        "pendingTransactionFeesInfo": "保留中のトランザクション手数料情報：",
-        "networkfee": "ネットワーク手数料 = {{amount}}",
-        "maxFee": "最大手数料 = {{amount}}",
-        "maxPriorityFee": "最大優先手数料＝{{amount}}",
-        "gasPrice": "ガス代 = {{amount}}"
+    "edit" : {
+      "title" : "速度を上げる、またはキャンセルする",
+      "description" : "お客様のトランザクションは進行中です。より高いネットワーク手数料で速度を上げるか、キャンセルが可能です。",
+      "stuckDescription" : "お客様のトランザクションは進行中です。より高いネットワーク手数料で速度を上げるか、キャンセルが可能です。",
+      "previousFeesInfo" : {
+        "pendingTransactionFeesInfo" : "保留中のトランザクション手数料情報：",
+        "networkfee" : "ネットワーク手数料 = {{amount}}",
+        "maxFee" : "最大手数料 = {{amount}}",
+        "maxPriorityFee" : "最大優先手数料＝{{amount}}",
+        "gasPrice" : "ガス代 = {{amount}}"
       },
-      "learnMore": "詳細を知りたいです",
-      "panel": {
-        "title": "速度を上げる、またはキャンセルする",
-        "description": "直近の「送信」トランザクションが滞っています。さらに高いネットワーク手数料でトランザクションを高速化するか、キャンセルしてください。"
+      "learnMore" : "詳細を知りたいです",
+      "panel" : {
+        "title" : "速度を上げる、またはキャンセルする",
+        "description" : "直近の「送信」トランザクションが滞っています。さらに高いネットワーク手数料でトランザクションを高速化するか、キャンセルしてください。"
       },
-      "speedUp": {
-        "title": "スピードアップ",
-        "description": "より高いネットワーク手数料でトランザクションを再送信します。"
+      "speedUp" : {
+        "title" : "スピードアップ",
+        "description" : "より高いネットワーク手数料でトランザクションを再送信します。"
       },
-      "cancel": {
-        "title": "キャンセル",
-        "description": "0{{ticker}}をお客様のアドレスに送信中です。"
+      "cancel" : {
+        "title" : "キャンセル",
+        "description" : "0{{ticker}}をお客様のアドレスに送信中です。"
       },
-      "steps": {
-        "method": {
-          "title": "方法"
+      "steps" : {
+        "method" : {
+          "title" : "方法"
         },
-        "fees": {
-          "title": "手数料"
+        "fees" : {
+          "title" : "手数料"
         },
-        "summary": {
-          "title": "概要"
+        "summary" : {
+          "title" : "概要"
         },
-        "device": {
-          "title": "デバイス"
+        "device" : {
+          "title" : "デバイス"
         },
-        "confirmation": {
-          "title": "確認"
+        "confirmation" : {
+          "title" : "確認"
         }
       },
       "error": {
@@ -1513,24 +1514,24 @@
         "description": "お持ちの暗号資産で報酬を獲得"
       }
     },
-    "recoverBanner": {
-      "subscribeDone": {
-        "title": "お支払いカードの追加を完了する",
-        "description": "Ledger Recoverを使用して確実に復元する。",
-        "primaryCta": "カードを追加する",
-        "secondaryCta": "後で"
+    "recoverBanner" : {
+      "subscribeDone" : {
+        "title" : "Ledger Recoverのサブスクリプション契約が完了していません",
+        "description" : "安全の確保まで残り2ステップです。",
+        "primaryCta" : "カードを追加する",
+        "secondaryCta" : "後で"
       },
-      "verifyIdentity": {
-        "title": "本人認証を完了する",
-        "description": "Ledger Recoverを使用して確実に復元する。",
-        "primaryCta": "認証する",
-        "secondaryCta": "後で"
+      "verifyIdentity" : {
+        "title" : "Ledger Recoverのサブスクリプション契約が完了していません",
+        "description" : "安全の確保まで残り1ステップです。",
+        "primaryCta" : "本人認証を行う",
+        "secondaryCta" : "後で"
       },
-      "connectDevice": {
-        "title": "Ledgerを接続する",
-        "description": "Ledger Recoverまであと1歩です。",
-        "primaryCta": "接続",
-        "secondaryCta": "後で"
+      "connectDevice" : {
+        "title" : "Ledger Recoverのサブスクリプション契約が完了していません",
+        "description" : "これが、ウォレットへのアクセス復元を確実にするための最後のステップです。",
+        "primaryCta" : "デバイスを接続",
+        "secondaryCta" : "後で"
       }
     },
     "marketPerformanceWidget": {
@@ -3758,6 +3759,10 @@
           }
         }
       }
+    },
+    "token" : {
+      "frozenStateWarning" : "アカウント資産が凍結されています！",
+      "transferWarning" : "Ledger Nano S™を使用してSolanaトークンの受取人アドレスを認証するには、<0>こちらの手順に従ってください。</0>"
     }
   },
   "ethereum": {
@@ -6220,8 +6225,29 @@
     "SolanaAccountNotFunded": {
       "title": "アカウントに資金がありません"
     },
-    "SolanaMemoIsTooLong": {
-      "title": "Memo(メモ)が長すぎます。最長{{maxLength}}以内で入力してください。"
+    "SolanaTokenAccountHoldsAnotherToken" : {
+      "title" : "この関連トークンアカウントは別のトークンを保持しています"
+    },
+    "SolanaTokenAccountWarning" : {
+      "title" : "これは通常のウォレットアドレスではなく、関連するトークンアカウントです。自分が何をしているのか理解している場合にのみ、続行してください"
+    },
+    "SolanaTokenAccountNotAllowed" : {
+      "title" : "これはトークンアカウントです。通常のウォレットアドレスを入力してください"
+    },
+    "SolanaMintAccountNotAllowed" : {
+      "title" : "これはトークンアドレスです。通常のウォレットアドレスを入力してください"
+    },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "アカウントに入金されます"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "トークンアカウントの資産が凍結されています"
+    },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "アカウントが初期化されていません"
+    },
+    "SolanaMemoIsTooLong" : {
+      "title" : "Memo(メモ)が長すぎます。最長{{maxLength}}以内で入力してください。"
     },
     "SolanaAddressOfEd25519": {
       "title": "アドレスオフed25519 curve"
@@ -6739,26 +6765,28 @@
           "description": "Ledgerに署名して同期する"
         }
       },
-      "qrCode": {
-        "title": "Ledger Liveアプリを同期",
-        "options": {
-          "mobile": "スマホと同期",
-          "desktop": "コンピューターと同期"
+      "qrCode" : {
+        "title" : "Ledger Liveアプリを同期",
+        "options" : {
+          "mobile" : "スマホと同期",
+          "desktop" : "コンピューターと同期"
         },
-        "mobile": {
-          "description": "別のスマホのLedger Liveアプリと同期",
-          "steps": {
-            "step1": "同期したいLedger Liveアプリを開く",
-            "step2": "<0>設定 </0>> <0>一般</0> > <0>Ledger Sync</0> > <0>同期をオンにする</0> > <0>QRを表示</0>に移動",
-            "step3": "QRコードをスキャン"
+        "mobile" : {
+          "description" : "別のスマホのLedger Liveアプリと同期",
+          "steps" : {
+            "step1" : "アプリの1つでLedger Syncが有効になっていることを確認する。",
+            "step2" : "同期したいLedger Liveアプリを開く。",
+            "step3" : "<0>設定</0> > <0>一般</0> > <0>Ledger Sync</0> > <0>すでにオンにしました</0> > <0>QRを表示</0>に移動する。",
+            "step4" : "QRコードをスキャンする。"
           }
         },
-        "desktop": {
-          "description": "アカウントを別のLedger Liveアプリと同期します",
-          "steps": {
-            "step1": "同期したいLedger Liveアプリを開く",
-            "step2": "<0>設定</0> > <0>一般</0> > <0>Ledger Sync</0> > <0>同期をオンにする</0> > <0>Ledgerを使用</0>に移動",
-            "step3": "Ledgerを接続する"
+        "desktop" : {
+          "description" : "アカウントを別のLedger Liveアプリと同期します",
+          "steps" : {
+            "step1" : "アプリの1つでLedger Syncが有効になっていることを確認する。",
+            "step2" : "同期したいLedger Liveアプリを開く。",
+            "step3" : "<0>設定</0> > <0>一般</0> > <0>Ledger Sync</0> > <0>すでにオンにしました</0> > <0>Ledgerを使う</0>に移動する。",
+            "step4" : "Ledgerを接続する。"
           }
         }
       },

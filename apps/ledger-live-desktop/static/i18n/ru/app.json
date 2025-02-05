@@ -160,87 +160,88 @@
     "stax": "Stax",
     "blue": "Blue"
   },
-  "operation": {
-    "type": {
-      "IN": "Получение",
-      "OUT": "Отправка",
-      "NFT_IN": "NFT получен",
-      "NFT_OUT": "NFT отправлен",
-      "CREATE": "Создано",
-      "REVEAL": "Раскрытие",
-      "DELEGATE": "Делегировано",
-      "REDELEGATE": "Переделегировано",
-      "UNDELEGATE": "Отозвано",
-      "APPROVE": "Подтверждено",
-      "VOTE": "Проголосовано",
-      "FREEZE": "Заморожено",
-      "UNFREEZE": "Разморожено",
-      "UNDELEGATE_RESOURCE": "Отозвано",
-      "WITHDRAW_EXPIRE_UNFREEZE": "Вывод",
-      "LEGACYUNFREEZE": "Разморозка",
-      "REWARD": "Вознаграждение",
-      "FEES": "Комиссия",
-      "OPT_IN": "Выбрать",
-      "OPT_OUT": "Отказаться",
-      "CLOSE_ACCOUNT": "Закрыть счёт",
-      "BOND": "Блокировка",
-      "UNBOND": "Разблокировка",
-      "REWARD_PAYOUT": "Вознаграждение",
-      "SLASH": "Штраф",
-      "WITHDRAW_UNBONDED": "Вывод",
-      "NOMINATE": "Назначение",
-      "CHILL": "Отзыв голосов",
-      "SET_CONTROLLER": "Назначить контроллер",
-      "LOCK": "Заблокировано",
-      "UNLOCK": "Разблокировано",
-      "WITHDRAW": "Вывод",
-      "REVOKE": "Отозвано",
-      "ACTIVATE": "Активировано",
-      "REGISTER": "Зарегистрировано",
-      "STAKE": "В стейкинге",
-      "UNSTAKE": "Выведено из стейкинга",
-      "WITHDRAW_UNSTAKED": "Вывод",
-      "SENDING": "Отправка"
+  "operation" : {
+    "type" : {
+      "IN" : "Получение",
+      "OUT" : "Отправка",
+      "NFT_IN" : "NFT получен",
+      "NFT_OUT" : "NFT отправлен",
+      "CREATE" : "Создано",
+      "REVEAL" : "Раскрытие",
+      "DELEGATE" : "Делегировано",
+      "REDELEGATE" : "Переделегировано",
+      "UNDELEGATE" : "Отозвано",
+      "APPROVE" : "Подтверждено",
+      "VOTE" : "Проголосовано",
+      "FREEZE" : "Заморожено",
+      "UNFREEZE" : "Разморожено",
+      "UNDELEGATE_RESOURCE" : "Отозвано",
+      "WITHDRAW_EXPIRE_UNFREEZE" : "Вывод",
+      "LEGACYUNFREEZE" : "Разморозка",
+      "REWARD" : "Вознаграждение",
+      "FEES" : "Комиссия",
+      "OPT_IN" : "Выбрать",
+      "OPT_OUT" : "Отказаться",
+      "CLOSE_ACCOUNT" : "Закрыть счёт",
+      "BOND" : "Блокировка",
+      "UNBOND" : "Разблокировка",
+      "REWARD_PAYOUT" : "Вознаграждение",
+      "SLASH" : "Штраф",
+      "WITHDRAW_UNBONDED" : "Вывод",
+      "NOMINATE" : "Назначение",
+      "CHILL" : "Отзыв голосов",
+      "SET_CONTROLLER" : "Назначить контроллер",
+      "LOCK" : "Заблокировано",
+      "UNLOCK" : "Разблокировано",
+      "WITHDRAW" : "Вывод",
+      "REVOKE" : "Отозвано",
+      "ACTIVATE" : "Активировано",
+      "REGISTER" : "Зарегистрировано",
+      "STAKE" : "В стейкинге",
+      "UNSTAKE" : "Выведено из стейкинга",
+      "WITHDRAW_UNSTAKED" : "Вывод",
+      "SENDING" : "Отправка",
+      "BURN" : "Сожжено"
     },
-    "edit": {
-      "title": "Ускорение или отмена",
-      "description": "Ваша транзакция сейчас проводится. При необходимости её можно ускорить за счёт увеличения комиссии или отменить.",
-      "stuckDescription": "Ваша транзакция застряла. Ускорьте её за счёт увеличения комиссии или отмените.",
-      "previousFeesInfo": {
-        "pendingTransactionFeesInfo": "Детали комиссии неподтверждённой транзакции:",
-        "networkfee": "Комиссия сети = {{amount}}",
-        "maxFee": "Макс. комиссия = {{amount}}",
-        "maxPriorityFee": "Макс. комиссия за приоритет = {{amount}}",
-        "gasPrice": "Цена Газа = {{amount}}"
+    "edit" : {
+      "title" : "Ускорение или отмена",
+      "description" : "Ваша транзакция сейчас проводится. При необходимости её можно ускорить за счёт увеличения комиссии или отменить.",
+      "stuckDescription" : "Ваша транзакция застряла. Ускорьте её за счёт увеличения комиссии или отмените.",
+      "previousFeesInfo" : {
+        "pendingTransactionFeesInfo" : "Детали комиссии неподтверждённой транзакции:",
+        "networkfee" : "Комиссия сети = {{amount}}",
+        "maxFee" : "Макс. комиссия = {{amount}}",
+        "maxPriorityFee" : "Макс. комиссия за приоритет = {{amount}}",
+        "gasPrice" : "Цена Газа = {{amount}}"
       },
-      "learnMore": "Подробнее...",
-      "panel": {
-        "title": "Ускорение или отмена",
-        "description": "Одна из ваших последних исходящих транзакций застряла. Ускорьте её за счёт увеличения комиссии или отмените."
+      "learnMore" : "Подробнее...",
+      "panel" : {
+        "title" : "Ускорение или отмена",
+        "description" : "Одна из ваших последних исходящих транзакций застряла. Ускорьте её за счёт увеличения комиссии или отмените."
       },
-      "speedUp": {
-        "title": "Ускорение",
-        "description": "Повторная отправка транзакции с большей комиссией сети."
+      "speedUp" : {
+        "title" : "Ускорение",
+        "description" : "Повторная отправка транзакции с большей комиссией сети."
       },
-      "cancel": {
-        "title": "Отменить",
-        "description": "Отправить 0 {{ticker}} на собственный адрес."
+      "cancel" : {
+        "title" : "Отменить",
+        "description" : "Отправить 0 {{ticker}} на собственный адрес."
       },
-      "steps": {
-        "method": {
-          "title": "Метод"
+      "steps" : {
+        "method" : {
+          "title" : "Метод"
         },
-        "fees": {
-          "title": "Комиссия"
+        "fees" : {
+          "title" : "Комиссия"
         },
-        "summary": {
-          "title": "Сводка"
+        "summary" : {
+          "title" : "Сводка"
         },
-        "device": {
-          "title": "Устройство"
+        "device" : {
+          "title" : "Устройство"
         },
-        "confirmation": {
-          "title": "Подтверждение"
+        "confirmation" : {
+          "title" : "Подтверждение"
         }
       },
       "error": {
@@ -1513,24 +1514,24 @@
         "description": "Получайте вознаграждения с вашей крипты"
       }
     },
-    "recoverBanner": {
-      "subscribeDone": {
-        "title": "Завершите добавление платёжной карты",
-        "description": "Надёжное восстановление с Ledger Recover.",
-        "primaryCta": "Добавить карту",
-        "secondaryCta": "Не сейчас"
+    "recoverBanner" : {
+      "subscribeDone" : {
+        "title" : "Не забудьте завершить оформление подписки на Ledger Recover",
+        "description" : "До безопасности осталось всего два шага!",
+        "primaryCta" : "Добавить карту",
+        "secondaryCta" : "Не сейчас"
       },
-      "verifyIdentity": {
-        "title": "Завершите подтверждение личности",
-        "description": "Надёжное восстановление с Ledger Recover.",
-        "primaryCta": "Подтвердить",
-        "secondaryCta": "Не сейчас"
+      "verifyIdentity" : {
+        "title" : "Не забудьте завершить оформление подписки на Ledger Recover",
+        "description" : "До безопасности остался всего один шаг!",
+        "primaryCta" : "Подтвердить личность",
+        "secondaryCta" : "Не сейчас"
       },
-      "connectDevice": {
-        "title": "Подключение устройства Ledger",
-        "description": "Ledger Recover всего в одном шаге от вас.",
-        "primaryCta": "Подключить",
-        "secondaryCta": "Не сейчас"
+      "connectDevice" : {
+        "title" : "Не забудьте завершить оформление подписки на Ledger Recover",
+        "description" : "Это последний этап для возможности восстановить кошелёк в дальнейшем.",
+        "primaryCta" : "Подключить устройство",
+        "secondaryCta" : "Не сейчас"
       }
     },
     "marketPerformanceWidget": {
@@ -3758,6 +3759,10 @@
           }
         }
       }
+    },
+    "token" : {
+      "frozenStateWarning" : "Активы на счету заморожены",
+      "transferWarning" : "<0>Используйте это руководство</0>, чтобы подтвердить адрес получения токенов Solana с помощью Ledger Nano S™."
     }
   },
   "ethereum": {
@@ -6220,8 +6225,29 @@
     "SolanaAccountNotFunded": {
       "title": "Счёт не пополнен"
     },
-    "SolanaMemoIsTooLong": {
-      "title": "Слишком длинное Memo. Макс. длина {{maxLength}}"
+    "SolanaTokenAccountHoldsAnotherToken" : {
+      "title" : "На связанном с этим токеном счёте есть другой токен"
+    },
+    "SolanaTokenAccountWarning" : {
+      "title" : "Это не адрес кошелька, а адрес токена, связанного с кошельком. Продолжайте только в том случае, если понимаете суть происходящего."
+    },
+    "SolanaTokenAccountNotAllowed" : {
+      "title" : "Это счёт токена. Введите обычный адрес кошелька."
+    },
+    "SolanaMintAccountNotAllowed" : {
+      "title" : "Это адрес токена. Введите обычный адрес кошелька."
+    },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "Счёт будет пополнен"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "Токены на счету заморожены"
+    },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "Счёт не был использован"
+    },
+    "SolanaMemoIsTooLong" : {
+      "title" : "Слишком длинное Memo. Макс. длина {{maxLength}}"
     },
     "SolanaAddressOfEd25519": {
       "title": "Адрес за пределами кривой ed25519"
@@ -6739,26 +6765,28 @@
           "description": "Синхронизация через подпись устройством Ledger"
         }
       },
-      "qrCode": {
-        "title": "Синхронизируйте приложения в Ledger Live",
-        "options": {
-          "mobile": "Через смартфон",
-          "desktop": "Через ПК"
+      "qrCode" : {
+        "title" : "Синхронизируйте приложения в Ledger Live",
+        "options" : {
+          "mobile" : "Через смартфон",
+          "desktop" : "Через ПК"
         },
-        "mobile": {
-          "description": "Синхронизировать с Ledger Live на другом смартфоне",
-          "steps": {
-            "step1": "Откройте Ledger Live, с которым хотите синхронизироваться",
-            "step2": "Перейдите в <0>«Настройки</0> > <0>Общие</0> > <0>Ledger Sync</0> > <0>Включить Ledger Sync</0> > <0>Показать QR»</0>",
-            "step3": "Сканируйте QR-код"
+        "mobile" : {
+          "description" : "Синхронизировать с Ledger Live на другом смартфоне",
+          "steps" : {
+            "step1" : "Убедитесь, что функция Ledger Sync активирована в одном из приложений.",
+            "step2" : "Запустите приложение Ledger Live, которое будете синхронизировать.",
+            "step3" : "Перейдите в <0>«Настройки</0> > <0>Общие</0> > <0>Ledger Sync</0> > <0>Уже включено</0> > <0>Через QR-код»</0>",
+            "step4" : "Сканируйте QR-код."
           }
         },
-        "desktop": {
-          "description": "Синхронизируйте ваши счета с другим приложением Ledger Live",
-          "steps": {
-            "step1": "Откройте Ledger Live, с которым хотите синхронизироваться",
-            "step2": "Перейдите в <0>«Настройки</0> > <0>Общие</0> > <0>Ledger Sync</0> > <0>Включить Ledger Sync</0> > <0>С помощью Ledger»</0>",
-            "step3": "Подключение устройства Ledger"
+        "desktop" : {
+          "description" : "Синхронизируйте ваши счета с другим приложением Ledger Live",
+          "steps" : {
+            "step1" : "Убедитесь, что функция Ledger Sync активирована в одном из приложений.",
+            "step2" : "Запустите приложение Ledger Live, которое будете синхронизировать.",
+            "step3" : "Перейдите в <0>«Настройки</0> > <0>Общие</0> > <0>Ledger Sync</0> > <0>Уже включено</0> > <0>С помощью Ledger»</0>",
+            "step4" : "Подключите устройство Ledger."
           }
         }
       },
