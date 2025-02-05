@@ -53,3 +53,49 @@ export async function runDelegateTest(delegation: Delegate, tmsLink: string) {
     });
   });
 }
+
+export async function runDelegateCelo(delegation: Delegate, tmsLink: string) {
+  const app = new Application();
+
+  $TmsLink(tmsLink);
+  describe(`Delegate flow on CELO`, () => {
+    beforeAll(async () => {
+      await app.init({
+        speculosApp: delegation.account.currency.speculosApp,
+        cliCommands: [
+          () => {
+            return CLI.liveData({
+              currency: delegation.account.currency.currencyId,
+              index: delegation.account.index,
+              add: true,
+              appjson: app.userdataPath,
+            });
+          },
+        ],
+      });
+
+      await app.portfolio.waitForPortfolioPageToLoad();
+    });
+
+    it(`Delegate on CELO`, async () => {
+      const amountWithCode = delegation.amount + " " + delegation.account.currency.ticker;
+      const currencyId = delegation.account.currency.currencyId;
+
+      await app.speculos.activateContractData();
+
+      await app.portfolio.goToAccounts(delegation.account.currency.name);
+      await app.common.goToAccountByName(delegation.account.accountName);
+      await app.account.tapEarn();
+
+      await app.manageAssets.checkCeloManagePage();
+      await app.manageAssets.clickCeloLock();
+      await app.stake.setCeloLockAmount(delegation.amount);
+      await app.stake.validateAmount(currencyId);
+      await app.speculos.signDelegationTransaction(delegation);
+      await device.disableSynchronization();
+
+      await app.common.successViewDetails();
+      await verifyStakeOperationDetailsInfo(app, delegation, amountWithCode);
+    });
+  });
+}

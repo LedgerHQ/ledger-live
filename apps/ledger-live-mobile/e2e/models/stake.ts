@@ -30,10 +30,11 @@ export async function verifyStakeOperationDetailsInfo(
 ) {
   const currenciesForProvider = [Currency.ATOM];
   const currenciesForRecipientAsProvider = [Currency.NEAR];
-  const currenciesForSender = [Currency.NEAR];
+  const currenciesForSender = [Currency.NEAR, Currency.CELO];
   const currenciesForAmount = [Currency.ATOM, Currency.NEAR];
   const currenciesForDelegateType = [Currency.ATOM, Currency.SOL];
   const currenciesForStakeType = [Currency.NEAR];
+  const currenciesForLockType = [Currency.CELO];
 
   const currency = delegation.account.currency;
   const provider = delegation.provider;
@@ -59,4 +60,12 @@ export async function verifyStakeOperationDetailsInfo(
   if (currenciesForStakeType.includes(currency)) {
     await app.operationDetails.checkTransactionType("STAKE");
   }
+  if (currenciesForLockType.includes(currency)) {
+    await app.operationDetails.checkTransactionType("LOCK");
+  }
+}
+
+export async function verifyCeloDelegationScreen(app: Application, delegation: Delegate) {
+  await app.operationDetails.waitForOperationDetails();
+  await app.operationDetails.checkAccount(delegation.account.accountName);
 }

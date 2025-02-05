@@ -28,6 +28,7 @@ import StakePage from "./trade/stake.page";
 import SwapPage from "./trade/swap.page";
 import TransfertMenuDrawer from "./wallet/transferMenu.drawer";
 import WalletTabNavigatorPage from "./wallet/walletTabNavigator.page";
+import ManageAssetsPage from "./trade/manageAssets.page";
 
 import type { Account } from "@ledgerhq/types-live";
 import { DeviceLike } from "~/reducers/types";
@@ -83,6 +84,7 @@ export class Application {
   public swap = new SwapPage();
   public transfertMenu = new TransfertMenuDrawer();
   public walletTabNavigator = new WalletTabNavigatorPage();
+  public manageAssets = new ManageAssetsPage();
 
   constructor(userdata?: string) {
     if (!getEnv("MOCK")) {
