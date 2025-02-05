@@ -120,6 +120,7 @@
     "addressCopiedSuspicious": "Mismatch between the copied address and the one in the clipboard.",
     "experimentalFeature": "Experimental",
     "featureFlags": "Feature flag",
+    "ldmkEnabled": "LDMK transport",
     "information": "Information",
     "search": "Search...",
     "searchWithoutEllipsis": "Search",
@@ -200,7 +201,8 @@
       "STAKE": "Staked",
       "UNSTAKE": "Unstaked",
       "WITHDRAW_UNSTAKED": "Withdrawn",
-      "SENDING": "Sending"
+      "SENDING": "Sending",
+      "BURN": "Burned"
     },
     "edit": {
       "title": "Speed up or Cancel",
@@ -1515,21 +1517,21 @@
     },
     "recoverBanner": {
       "subscribeDone": {
-        "title": "Finish adding your payment card",
-        "description": "Restore reliably with Ledger Recover.",
+        "title": "Reminder: Finish subscribing to Ledger Recover",
+        "description": "You're just two steps away from being secured.",
         "primaryCta": "Add card",
         "secondaryCta": "Maybe later"
       },
       "verifyIdentity": {
-        "title": "Finish verifying your identity",
-        "description": "Restore reliably with Ledger Recover.",
-        "primaryCta": "Verify",
+        "title": "Reminder: Finish subscribing to Ledger Recover",
+        "description": "You're just one step away from being secured.",
+        "primaryCta": "Verify identity",
         "secondaryCta": "Maybe later"
       },
       "connectDevice": {
-        "title": "Connect your Ledger",
-        "description": "You're 1 step away from Ledger Recover.",
-        "primaryCta": "Connect",
+        "title": "Reminder: Finish subscribing to Ledger Recover",
+        "description": "It's your final step to ensure wallet access recovery.",
+        "primaryCta": "Connect device",
         "secondaryCta": "Maybe later"
       }
     },
@@ -3758,6 +3760,10 @@
           }
         }
       }
+    },
+    "token": {
+      "frozenStateWarning": "Account assets are frozen!",
+      "transferWarning": "To verify the recipient address for Solana tokens using a Ledger Nano S™, <0>follow these instructions.</0>"
     }
   },
   "ethereum": {
@@ -6220,6 +6226,27 @@
     "SolanaAccountNotFunded": {
       "title": "Account not funded"
     },
+    "SolanaTokenAccountHoldsAnotherToken": {
+      "title": "This associated token account holds another token"
+    },
+    "SolanaTokenAccountWarning": {
+      "title": "This is not a regular wallet address but an associated token account. Continue only if you know what you are doing"
+    },
+    "SolanaTokenAccountNotAllowed": {
+      "title": "This is a token account. Input a regular wallet address"
+    },
+    "SolanaMintAccountNotAllowed": {
+      "title": "This is a token address. Input a regular wallet address"
+    },
+    "SolanaAssociatedTokenAccountWillBeFunded": {
+      "title": "Account will be funded"
+    },
+    "SolanaTokenAccountFrozen": {
+      "title": "Token account assets are frozen"
+    },
+    "SolanaTokenAccounNotInitialized": {
+      "title": "Account not initialized"
+    },
     "SolanaMemoIsTooLong": {
       "title": "Memo is too long. Max length is {{maxLength}}"
     },
@@ -6748,17 +6775,19 @@
         "mobile": {
           "description": "Sync with the Ledger Live app on another phone",
           "steps": {
-            "step1": "Open the Ledger Live app you want to sync",
-            "step2": "Go to <0>Settings</0> > <0>General</0> > <0>Ledger Sync</0> > <0>Turn on sync</0> > <0>Show QR</0>",
-            "step3": "Scan QR code"
+            "step1": "Make sure Ledger Sync is activated on one of your apps.",
+            "step2": "Open the Ledger Live app you want to sync.",
+            "step3": "Go to <0>Settings</0> > <0>General</0> > <0>Ledger Sync</0> > <0>I already turned it on</0> > <0>Show QR</0>",
+            "step4": "Scan QR code."
           }
         },
         "desktop": {
           "description": "Synchronize your accounts with another Ledger Live app",
           "steps": {
-            "step1": "Open the Ledger Live app you want to sync",
-            "step2": "Go to <0>Settings</0> > <0>General</0> > <0>Ledger Sync</0> > <0>Turn on sync</0> > <0>Use your Ledger</0>",
-            "step3": "Connect your Ledger"
+            "step1": "Make sure Ledger Sync is activated on one of your apps.",
+            "step2": "Open the Ledger Live app you want to sync.",
+            "step3": "Go to <0>Settings</0> > <0>General</0> > <0>Ledger Sync</0> > <0>I already turned it on</0> > <0>Use your Ledger</0>",
+            "step4": "Connect your Ledger."
           }
         }
       },
@@ -6875,8 +6904,5 @@
       "address": "Address",
       "transactionId": "Transaction ID"
     }
-  },
-  "ldmkFeatureFlagWarning": {
-    "title": "With LDMK transport"
   }
 }

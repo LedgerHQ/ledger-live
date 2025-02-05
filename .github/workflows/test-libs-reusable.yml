@@ -23,7 +23,7 @@ jobs:
   test-libraries:
     name: "Test Libraries"
     env:
-      NODE_OPTIONS: "--max-old-space-size=8192"
+      NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
       CI_OS: ubuntu-22.04
 

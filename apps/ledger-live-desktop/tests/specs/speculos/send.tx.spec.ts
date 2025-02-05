@@ -201,18 +201,23 @@ const transactionE2E = [
 
 const tokenTransactionInvalid = [
   {
-    transaction: new Transaction(Account.BSC_BUSD_1, Account.BSC_BUSD_2, "1", Fee.MEDIUM),
+    transaction: new Transaction(Account.BSC_BUSD_1, Account.BSC_BUSD_2, "1", Fee.FAST),
     expectedWarningMessage: new RegExp(
       /You need \d+\.\d+ BNB in your account to pay for transaction fees on the Binance Smart Chain network\. .*/,
     ),
     xrayTicket: "B2CQA-2700",
   },
   {
-    transaction: new Transaction(Account.ETH_USDT_2, Account.ETH_USDT_1, "1", Fee.MEDIUM),
+    transaction: new Transaction(Account.ETH_USDT_2, Account.ETH_USDT_1, "1", Fee.FAST),
     expectedWarningMessage: new RegExp(
       /You need \d+\.\d+ ETH in your account to pay for transaction fees on the Ethereum network\. .*/,
     ),
     xrayTicket: "B2CQA-2701",
+  },
+  {
+    transaction: new Transaction(Account.ETH_USDT_1, Account.ETH_USDT_2, "10000", Fee.MEDIUM),
+    expectedWarningMessage: "Sorry, insufficient funds",
+    xrayTicket: "B2CQA-3043",
   },
 ];
 
@@ -259,7 +264,7 @@ test.describe("Send flows", () => {
 
           await app.account.clickSend();
           await app.send.craftTx(transaction.transaction);
-          await app.send.countinueSendAmount();
+          await app.send.continueAmountModal();
           await app.send.expectTxInfoValidity(transaction.transaction);
           await app.send.clickContinueToDevice();
 
@@ -367,10 +372,14 @@ test.describe("Send flows", () => {
           await app.account.navigateToTokenInAccount(transaction.transaction.accountToDebit);
           await app.account.clickSend();
           await app.send.fillRecipient(transaction.transaction.accountToCredit.address);
-          await app.send.clickContinue();
+          await app.send.continue();
           await app.send.fillAmount(transaction.transaction.amount);
           await app.send.checkContinueButtonDisabled();
-          await app.send.checkAmountWarningMessage(transaction.expectedWarningMessage);
+          if (transaction.expectedWarningMessage instanceof RegExp) {
+            await app.send.checkAmountWarningMessage(transaction.expectedWarningMessage);
+          } else {
+            await app.send.checkErrorMessage(transaction.expectedWarningMessage);
+          }
         },
       );
     });
@@ -418,7 +427,7 @@ test.describe("Send flows", () => {
         await app.send.fillRecipient(tokenTransactionValid.accountToCredit.address);
         await app.send.checkContinueButtonEnable();
         await app.send.checkInputErrorVisibility("hidden");
-        await app.send.clickContinue();
+        await app.send.continue();
         await app.send.fillAmount(tokenTransactionValid.amount);
         await app.send.checkContinueButtonEnable();
       },
@@ -505,7 +514,7 @@ test.describe("Send flows", () => {
 
         await app.account.clickSend();
         await app.send.fillRecipient(transactionInputValid.accountToCredit.address);
-        await app.send.clickContinue();
+        await app.send.continue();
         await app.send.fillAmount(transactionInputValid.amount);
         await app.send.checkContinueButtonEnable();
         await app.send.checkInputErrorVisibility("hidden");
@@ -652,7 +661,7 @@ test.describe("Send flows", () => {
 
         await app.account.clickSend();
         await app.send.craftTx(transactionEnsAddress);
-        await app.send.countinueSendAmount();
+        await app.send.continueAmountModal();
         await app.send.expectTxInfoValidity(transactionEnsAddress);
         await app.send.clickContinueToDevice();
 

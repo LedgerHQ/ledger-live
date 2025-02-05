@@ -7,6 +7,7 @@ import { useCallback, useMemo } from "react";
 import { track } from "~/analytics";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { AddAccountContexts } from "../../enums";
 
 type AddAccountScreenProps = {
   currency?: CryptoCurrency | TokenCurrency | null;
@@ -31,16 +32,22 @@ const useSelectAddAccountMethodViewModel = ({
       if (currency?.type === "TokenCurrency") {
         return {
           token: currency,
-          ...(llmNetworkBasedAddAccountFlow?.enabled && { context: "addAccounts" }),
+          ...(llmNetworkBasedAddAccountFlow?.enabled && {
+            context: AddAccountContexts.AddAccounts,
+          }),
         };
       } else {
         return {
           currency,
-          ...(llmNetworkBasedAddAccountFlow?.enabled && { context: "addAccounts" }),
+          ...(llmNetworkBasedAddAccountFlow?.enabled && {
+            context: AddAccountContexts.AddAccounts,
+          }),
         };
       }
     } else {
-      return llmNetworkBasedAddAccountFlow?.enabled ? { context: "addAccounts" } : {};
+      return llmNetworkBasedAddAccountFlow?.enabled
+        ? { context: AddAccountContexts.AddAccounts }
+        : {};
     }
   }, [hasCurrency, currency, llmNetworkBasedAddAccountFlow?.enabled]);
 

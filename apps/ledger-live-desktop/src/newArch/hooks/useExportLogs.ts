@@ -38,8 +38,8 @@ export function useExportLogs() {
 
       const path = await ipcRenderer.invoke("show-save-dialog", {
         title: "Export logs",
-        defaultPath: `ledgerlive-logs-${getDateTxt()}-${__GIT_REVISION__ || "unversioned"}.json`,
-        filters: [{ name: "All Files", extensions: ["json"] }],
+        defaultPath: `ledgerlive-logs-${getDateTxt()}-${__GIT_REVISION__ || "unversioned"}.txt`,
+        filters: [{ name: "All Files", extensions: ["txt"] }],
       });
 
       if (path) {

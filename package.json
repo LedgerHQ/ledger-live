@@ -54,7 +54,7 @@
     "pre:lld": "pnpm turbo pre-build --filter=ledger-live-desktop",
     "nightly": "pnpm turbo nightly",
     "nightly:lld": "pnpm turbo nightly --filter=ledger-live-desktop",
-    "test": "pnpm turbo test --concurrency=50%",
+    "test": "pnpm turbo test --concurrency=50% --no-cache",
     "run:cli": "./apps/cli/bin/index.js",
     "lint": "pnpm turbo lint",
     "lint:fix": "pnpm turbo lint:fix",
@@ -67,6 +67,7 @@
     "coin:coverage": "pnpm turbo coverage --filter=\"@ledgerhq/coin-*\" --concurrency=2 && mkdir -p coverage && mv libs/coin-modules/**/coverage/*.json coverage && pnpm exec nyc merge coverage coverage/coverage-final.json && pnpm exec nyc report -t coverage --report-dir coverage --reporter=html-spa",
     "coin:coverage:clean": "rm -rf coverage && rm -rf libs/coin-modules/**/coverage",
     "coin:algorand": "pnpm --filter coin-algorand",
+    "coin:aptos": "pnpm --filter coin-aptos",
     "coin:bitcoin": "pnpm --filter coin-bitcoin",
     "coin:cardano": "pnpm --filter coin-cardano",
     "coin:cosmos": "pnpm --filter coin-cosmos",
@@ -130,6 +131,7 @@
     "ljs:hw-app-trx": "pnpm --filter hw-app-trx",
     "ljs:hw-app-xrp": "pnpm --filter hw-app-xrp",
     "ljs:hw-app-icon": "pnpm --filter hw-app-icon",
+    "ljs:hw-app-vet": "pnpm --filter hw-app-vet",
     "ljs:hw-bolos": "pnpm --filter hw-bolos",
     "ljs:hw-transport": "pnpm --filter hw-transport",
     "ljs:hw-transport-http": "pnpm --filter hw-transport-http",
@@ -200,19 +202,16 @@
       "blake2"
     ],
     "overrides": {
-      "@electron/rebuild": "3.7.1",
-      "tiny-secp256k1": "1.1.7",
       "stellar-base>sodium-native": "^3.2.1",
       "remove-flow-types-loader>flow-remove-types": "^2",
       "remove-flow-types-loader>loader-utils": "*",
       "@ledgerhq/devices": "workspace:*",
       "tslib": "2.6.2",
-      "@hashgraph/sdk>@grpc/grpc-js": "1.6.7",
       "@hashgraph/sdk>@hashgraph/cryptography": "1.1.2",
+      "@hashgraph/sdk>@grpc/grpc-js": "1.6.7",
       "@ethersproject/providers>ws": "7.5.10"
     },
     "patchedDependencies": {
-      "tiny-secp256k1@1.1.7": "patches/tiny-secp256k1@1.1.7.patch",
       "react-native-fast-crypto@2.2.0": "patches/react-native-fast-crypto@2.2.0.patch",
       "rn-fetch-blob@0.12.0": "patches/rn-fetch-blob@0.12.0.patch",
       "react-native-image-crop-tools@1.6.4": "patches/react-native-image-crop-tools@1.6.4.patch",
@@ -220,11 +219,11 @@
       "detox@20.28.0": "patches/detox@20.28.0.patch",
       "usb@2.9.0": "patches/usb@2.9.0.patch",
       "react-native-video@5.2.1": "patches/react-native-video@5.2.1.patch",
-      "@hashgraph/sdk@2.14.2": "patches/@hashgraph__sdk@2.14.2.patch",
       "@changesets/get-github-info@0.6.0": "patches/@changesets__get-github-info@0.6.0.patch",
       "react-native-webview@13.10.3": "patches/react-native-webview@13.10.3.patch",
       "buffer@6.0.3": "patches/buffer@6.0.3.patch",
-      "react-native-fast-pbkdf2@0.3.1": "patches/react-native-fast-pbkdf2@0.3.1.patch"
+      "react-native-fast-pbkdf2@0.3.1": "patches/react-native-fast-pbkdf2@0.3.1.patch",
+      "@hashgraph/sdk@2.14.2": "patches/@hashgraph__sdk@2.14.2.patch"
     },
     "packageExtensions": {
       "eslint-config-next@*": {

@@ -1,3 +1,4 @@
+import { Account } from "@ledgerhq/types-live";
 import type { DeviceAction } from "@ledgerhq/coin-framework/bot/types";
 import type { Transaction } from "./types";
 import {
@@ -7,7 +8,8 @@ import {
 } from "@ledgerhq/coin-framework/bot/specs";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import BigNumber from "bignumber.js";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { findSubAccountById } from "@ledgerhq/coin-framework/lib/account/helpers";
 
 function getMainCurrency(currency: CryptoCurrency) {
   if (currency.isTestnetFor !== undefined) {
@@ -20,11 +22,23 @@ function ellipsis(str: string) {
   return `${str.slice(0, 7)}..${str.slice(-7)}`;
 }
 
-function formatAmount(c: CryptoCurrency, amount: number) {
-  const currency = getMainCurrency(c);
+function formatAmount(c: CryptoCurrency | TokenCurrency, amount: number) {
+  const currency = c.type === "CryptoCurrency" ? getMainCurrency(c) : c;
   return formatDeviceAmount(currency, new BigNumber(amount), {
     postfixCode: true,
   });
+}
+
+function formatTokenAmount(c: TokenCurrency, amount: number) {
+  return formatAmount(c, amount);
+}
+
+function findTokenAccount(account: Account, id: string) {
+  const tokenAccount = findSubAccountById(account, id);
+  if (!tokenAccount || tokenAccount.type !== "TokenAccount") {
+    throw new Error("expected token account " + id);
+  }
+  return tokenAccount;
 }
 
 export const acceptTransferTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
@@ -223,6 +237,161 @@ export const acceptStakeWithdrawTransaction: DeviceAction<Transaction, any> = de
     },
   ],
 });
+
+export const acceptTransferTokensTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
+  steps: [
+    {
+      title: "Transfer tokens",
+      button: SpeculosButton.RIGHT,
+      expectedValue: ({ account, transaction }) => {
+        const command = transaction.model.commandDescriptor?.command;
+        if (command?.kind === "token.transfer" && transaction.subAccountId) {
+          const tokenCurrency = findTokenAccount(account, transaction.subAccountId).token;
+          return formatTokenAmount(tokenCurrency, command.amount);
+        }
+        throwUnexpectedTransaction();
+      },
+    },
+    {
+      title: "Mint",
+      button: SpeculosButton.RIGHT,
+      expectedValue: ({ transaction }) => {
+        const command = transaction.model.commandDescriptor?.command;
+        if (command?.kind === "token.transfer") {
+          return ellipsis(command.mintAddress);
+        }
+        throwUnexpectedTransaction();
+      },
+    },
+    {
+      title: "From",
+      button: SpeculosButton.RIGHT,
+      expectedValue: ({ transaction }) => {
+        const command = transaction.model.commandDescriptor?.command;
+        if (command?.kind === "token.transfer") {
+          return ellipsis(command.ownerAssociatedTokenAccountAddress);
+        }
+        throwUnexpectedTransaction();
+      },
+    },
+    {
+      title: "To",
+      button: SpeculosButton.RIGHT,
+      expectedValue: ({ transaction }) => {
+        const command = transaction.model.commandDescriptor?.command;
+        if (command?.kind === "token.transfer") {
+          return ellipsis(command.recipientDescriptor.tokenAccAddress);
+        }
+        throwUnexpectedTransaction();
+      },
+    },
+    {
+      title: "Approve",
+      button: SpeculosButton.BOTH,
+      final: true,
+    },
+  ],
+});
+
+export const acceptTransferTokensWithATACreationTransaction: DeviceAction<Transaction, any> =
+  deviceActionFlow({
+    steps: [
+      {
+        title: "Create token acct",
+        button: SpeculosButton.RIGHT,
+        expectedValue: ({ transaction }) => {
+          const command = transaction.model.commandDescriptor?.command;
+          if (command?.kind === "token.transfer") {
+            return ellipsis(command.recipientDescriptor.tokenAccAddress);
+          }
+          throwUnexpectedTransaction();
+        },
+      },
+      {
+        title: "From mint",
+        button: SpeculosButton.RIGHT,
+        expectedValue: ({ transaction }) => {
+          const command = transaction.model.commandDescriptor?.command;
+          if (command?.kind === "token.transfer") {
+            return ellipsis(command.mintAddress);
+          }
+          throwUnexpectedTransaction();
+        },
+      },
+      {
+        title: "Owned by",
+        button: SpeculosButton.RIGHT,
+        expectedValue: ({ transaction }) => {
+          const command = transaction.model.commandDescriptor?.command;
+          if (command?.kind === "token.transfer") {
+            return ellipsis(command.recipientDescriptor.walletAddress);
+          }
+          throwUnexpectedTransaction();
+        },
+      },
+      {
+        title: "Funded by",
+        button: SpeculosButton.RIGHT,
+        expectedValue: ({ transaction }) => {
+          const command = transaction.model.commandDescriptor?.command;
+          if (command?.kind === "token.transfer") {
+            return ellipsis(command.ownerAddress);
+          }
+          throwUnexpectedTransaction();
+        },
+      },
+      {
+        title: "Transfer tokens",
+        button: SpeculosButton.RIGHT,
+        expectedValue: ({ account, transaction }) => {
+          const command = transaction.model.commandDescriptor?.command;
+          if (command?.kind === "token.transfer" && transaction.subAccountId) {
+            const tokenCurrency = findTokenAccount(account, transaction.subAccountId).token;
+            return formatTokenAmount(tokenCurrency, command.amount);
+          }
+          throwUnexpectedTransaction();
+        },
+      },
+      {
+        title: "Mint",
+        button: SpeculosButton.RIGHT,
+        expectedValue: ({ transaction }) => {
+          const command = transaction.model.commandDescriptor?.command;
+          if (command?.kind === "token.transfer") {
+            return ellipsis(command.mintAddress);
+          }
+          throwUnexpectedTransaction();
+        },
+      },
+      {
+        title: "From",
+        button: SpeculosButton.RIGHT,
+        expectedValue: ({ transaction }) => {
+          const command = transaction.model.commandDescriptor?.command;
+          if (command?.kind === "token.transfer") {
+            return ellipsis(command.ownerAssociatedTokenAccountAddress);
+          }
+          throwUnexpectedTransaction();
+        },
+      },
+      {
+        title: "To",
+        button: SpeculosButton.RIGHT,
+        expectedValue: ({ transaction }) => {
+          const command = transaction.model.commandDescriptor?.command;
+          if (command?.kind === "token.transfer") {
+            return ellipsis(command.recipientDescriptor.tokenAccAddress);
+          }
+          throwUnexpectedTransaction();
+        },
+      },
+      {
+        title: "Approve",
+        button: SpeculosButton.BOTH,
+        final: true,
+      },
+    ],
+  });
 
 function throwUnexpectedTransaction(): never {
   throw new Error("unexpected or unprepared transaction");

@@ -8,6 +8,10 @@ export class Currency {
     public readonly speculosApp: AppInfos,
   ) {}
 
+  static readonly CELO = new Currency("Celo", "CELO", "celo", AppInfos.CELO);
+
+  static readonly INJ = new Currency("Injective", "INJ", "injective", AppInfos.INJECTIVE);
+
   static readonly BTC = new Currency("Bitcoin", "BTC", "bitcoin", AppInfos.BITCOIN);
 
   static readonly APT = new Currency("Aptos", "APT", "aptos", AppInfos.APTOS);

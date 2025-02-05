@@ -8,9 +8,11 @@
     "baseUrl": ".",
     "rootDir": "./src",
     "outDir": "./lib",
-    "preserveSymlinks": true
+    "preserveSymlinks": true,
+    "moduleResolution": "bundler",
+    "module": "ESNext"
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "types.d.ts"],
   "exclude": [
     "node_modules",
     "babel.config.js",

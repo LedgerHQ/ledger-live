@@ -1,4 +1,11 @@
-import { Account, AccountLike, AnyMessage, SignedOperation } from "@ledgerhq/types-live";
+import {
+  Account,
+  AccountLike,
+  AnyMessage,
+  getCurrencyForAccount,
+  SignedOperation,
+  TokenAccount,
+} from "@ledgerhq/types-live";
 import {
   accountToWalletAPIAccount,
   getWalletAPITransactionSignFlowInfos,
@@ -20,6 +27,7 @@ import { Exchange } from "../exchange/types";
 import { findTokenById } from "@ledgerhq/cryptoassets";
 import { WalletState } from "@ledgerhq/live-wallet/store";
 import { getWalletAccount } from "@ledgerhq/coin-bitcoin/wallet-btc/index";
+import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 export function translateContent(content: string | TranslatableString, locale = "en"): string {
   if (!content || typeof content === "string") return content;
@@ -420,13 +428,15 @@ export function completeExchangeLogic(
 
   const fromParentAccount = getParentAccount(fromAccount, accounts);
   const currency = tokenCurrency ? findTokenById(tokenCurrency) : null;
-  const newTokenAccount = currency ? makeEmptyTokenAccount(toAccount, currency) : null;
+  const newTokenAccount = currency ? makeEmptyTokenAccount(toAccount, currency) : undefined;
   const toParentAccount = toAccount ? getParentAccount(toAccount, accounts) : undefined;
   const exchange = {
     fromAccount,
     fromParentAccount: fromAccount !== fromParentAccount ? fromParentAccount : undefined,
+    fromCurrency: getCurrencyForAccount(fromAccount),
     toAccount: newTokenAccount ? newTokenAccount : toAccount,
     toParentAccount: newTokenAccount ? toAccount : toParentAccount,
+    toCurrency: toAccount ? getToCurrency(toAccount, newTokenAccount) : undefined,
   };
 
   const accountBridge = getAccountBridge(fromAccount, fromParentAccount);
@@ -435,7 +445,7 @@ export function completeExchangeLogic(
 
   const { liveTx } = getWalletAPITransactionSignFlowInfos({
     walletApiTransaction: transaction,
-    account: mainFromAccount,
+    account: fromAccount,
   });
 
   if (liveTx.family !== mainFromAccountFamily) {
@@ -452,7 +462,7 @@ export function completeExchangeLogic(
    */
   const subAccountId = exchange.fromParentAccount ? fromAccount.id : undefined;
 
-  const bridgeTx = accountBridge.createTransaction(mainFromAccount);
+  const bridgeTx = accountBridge.createTransaction(fromAccount);
   /**
    * We append the `recipient` to the tx created from `createTransaction`
    * to avoid having userGasLimit reset to null for ETH txs
@@ -481,4 +491,8 @@ export function completeExchangeLogic(
     swapId,
     rate,
   });
+}
+
+function getToCurrency(account: AccountLike, tokenAccount?: TokenAccount): CryptoOrTokenCurrency {
+  return tokenAccount ? getCurrencyForAccount(tokenAccount) : getCurrencyForAccount(account);
 }

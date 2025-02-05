@@ -7,7 +7,6 @@ protocols:
 
 beforePack: scripts/beforePack.js
 afterSign: scripts/notarize.js
-afterPack: scripts/afterPack.js
 
 mac:
   artifactName: ${name}-${version}-${os}.${ext}
@@ -15,7 +14,6 @@ mac:
   hardenedRuntime: true
   entitlements: build/mac/entitlements.plist
   entitlementsInherit: build/mac/entitlements.plist
-  mergeASARs: false
   target:
     - target: dmg
       arch:

@@ -26,6 +26,9 @@ import ScanDeviceAccountsFooter from "./components/ScanDeviceAccountsFooter";
 import AddressTypeTooltip from "./components/AddressTypeTooltip";
 import ScannedAccountsSection from "./components/ScannedAccountsSection";
 import { CantCreateAccountAlert } from "./components/CanCreateAccountAlert";
+import { useRoute } from "@react-navigation/core";
+import { ScanDeviceAccountsNavigationProps } from "./types";
+import useAnalytics from "LLM/hooks/useAnalytics";
 
 function ScanDeviceAccounts() {
   const { colors } = useTheme();
@@ -34,6 +37,10 @@ function ScanDeviceAccounts() {
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
 
   const llmNetworkBasedAddAccountFlow = useFeature("llmNetworkBasedAddAccountFlow");
+  const route = useRoute<ScanDeviceAccountsNavigationProps["route"]>();
+  const { context, sourceScreenName } = route.params || {};
+
+  const { analyticsMetadata } = useAnalytics(context, sourceScreenName);
 
   const {
     alreadyEmptyAccount,
@@ -63,6 +70,7 @@ function ScanDeviceAccounts() {
   } = useScanDeviceAccountsViewModel({
     existingAccounts,
     blacklistedTokenIds,
+    analyticsMetadata,
   });
 
   const emptyTexts = {
@@ -70,6 +78,11 @@ function ScanDeviceAccounts() {
       <CantCreateAccountAlert currencyName={currency.name} />
     ),
   };
+
+  const pageTrackingEvent =
+    sections?.length === 0
+      ? analyticsMetadata.ScanDeviceAccounts?.onAccessScreen
+      : analyticsMetadata.AccountsFound?.onAccessScreen;
 
   return (
     <SafeAreaView
@@ -80,9 +93,8 @@ function ScanDeviceAccounts() {
         },
       ]}
     >
-      <TrackScreen category="AddAccounts" name="Accounts" currencyName={currency.name} />
+      <TrackScreen name={pageTrackingEvent?.eventName} {...pageTrackingEvent?.payload} />
       <PreventNativeBack />
-
       {scanning || !scannedAccounts.length ? (
         <Flex px={6} style={styles.headerTitle}>
           <Text
@@ -108,7 +120,6 @@ function ScanDeviceAccounts() {
           </Flex>
         )
       )}
-
       {scanning ? <AnimatedGradient /> : null}
       <NavigationScrollView style={styles.inner} contentContainerStyle={styles.innerContent}>
         {sections.map(({ id, selectable, defaultSelected, data }, i) => {

@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/live-common",
   "description": "Common ground for the Ledger Live apps",
-  "version": "34.18.0",
+  "version": "34.19.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live.git"
@@ -120,8 +120,6 @@
     "https": false
   },
   "dependencies": {
-    "@apollo/client": "^3.8.7",
-    "@aptos-labs/ts-sdk": "^1.33.1",
     "@blooo/hw-app-acre": "^1.1.1",
     "@cardano-foundation/ledgerjs-hw-app-cardano": "^7.1.2",
     "@celo/connect": "^6.0.2",
@@ -133,6 +131,7 @@
     "@dfinity/candid": "^0.21.0",
     "@dfinity/principal": "^0.15.6",
     "@ledgerhq/coin-algorand": "workspace:^",
+    "@ledgerhq/coin-aptos": "workspace:^",
     "@ledgerhq/coin-bitcoin": "workspace:^",
     "@ledgerhq/coin-cardano": "workspace:^",
     "@ledgerhq/coin-cosmos": "workspace:^",
@@ -175,9 +174,11 @@
     "@ledgerhq/hw-app-trx": "workspace:^",
     "@ledgerhq/hw-app-vet": "workspace:^",
     "@ledgerhq/hw-app-xrp": "workspace:^",
+    "@ledgerhq/hw-bolos": "workspace:*",
     "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/hw-transport-mocker": "workspace:^",
     "@ledgerhq/ledger-cal-service": "workspace:^",
+    "@ledgerhq/ledger-trust-service": "workspace:*",
     "@ledgerhq/live-app-sdk": "^0.8.1",
     "@ledgerhq/live-config": "workspace:^",
     "@ledgerhq/live-countervalues": "workspace:^",
@@ -195,7 +196,6 @@
     "@ledgerhq/wallet-api-core": "^1.13.0",
     "@ledgerhq/wallet-api-exchange-module": "workspace:^",
     "@ledgerhq/wallet-api-server": "^1.7.0",
-    "@noble/hashes": "1.6.1",
     "@stricahq/typhonjs": "^2.0.0",
     "@taquito/ledger-signer": "^20.0.0",
     "@ton-community/ton-ledger": "^7.0.1",
@@ -223,7 +223,6 @@
     "date-fns": "^2.23.0",
     "expect": "^27.4.6",
     "fuse.js": "^6.6.2",
-    "graphql": "^16.8.1",
     "invariant": "^2.2.2",
     "isomorphic-ws": "^4.0.1",
     "jotai": "^2.10.1",

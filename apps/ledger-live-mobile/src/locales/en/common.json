@@ -791,6 +791,24 @@
     "SolanaAccountNotFunded": {
       "title": "Account not funded"
     },
+    "SolanaTokenAccountHoldsAnotherToken": {
+      "title": "This associated token account holds another token"
+    },
+    "SolanaTokenAccountWarning": {
+      "title": "This is not a regular wallet address but an associated token account. Continue only if you know what you are doing"
+    },
+    "SolanaTokenAccountNotAllowed": {
+      "title": "This is a token account. Input a regular wallet address"
+    },
+    "SolanaMintAccountNotAllowed": {
+      "title": "This is a token address. Input a regular wallet address"
+    },
+    "SolanaAssociatedTokenAccountWillBeFunded": {
+      "title": "Account will be funded"
+    },
+    "SolanaTokenAccountFrozen": {
+      "title": "Token account assets are frozen"
+    },
     "SolanaAddressOfEd25519": {
       "title": "Address off ed25519 curve"
     },
@@ -2375,16 +2393,16 @@
     },
     "recoverBanner": {
       "subscribeDone": {
-        "title": "Finish adding your payment card",
-        "description": "Restore reliably with Ledger Recover."
+        "title": "Reminder: Finish subscribing to Ledger Recover",
+        "description": "You're just two steps away from being secured."
       },
       "verifyIdentity": {
-        "title": "Finish verifying your identity",
-        "description": "Restore reliably with Ledger Recover."
+        "title": "Reminder: Finish subscribing to Ledger Recover",
+        "description": "You're just one step away from being secured."
       },
       "connectDevice": {
-        "title": "Final step: Connect your Ledger",
-        "description": "You're 1 step away from Ledger Recover."
+        "title": "Reminder: Finish subscribing to Ledger Recover",
+        "description": "It's your final step to ensure wallet access recovery."
       }
     }
   },
@@ -3104,7 +3122,7 @@
       "title": "Developer",
       "desc": "Try out the Developer features and let us know what you think.",
       "customManifest": {
-        "title": "Load Custom Platform Manifest"
+        "title": "Load Manifest"
       },
       "exchangeDeveloperMode": {
         "title": "Exchange Dev Mode",
@@ -4159,7 +4177,9 @@
     "installApp": "{{appName}} App installation {{percentage}}",
     "installAppDescription": "Please wait until the installation is finished",
     "listApps": "Checking App dependencies",
-    "listAppsDescription": "Please wait while we make sure you have all the required apps"
+    "listAppsDescription": "Please wait while we make sure you have all the required apps",
+    "confirmExchangeOnDevice": "Confirm exchange on your device",
+    "confirmSwapOnDevice": "Confirm swap on your device"
   },
   "SelectDevice": {
     "title": "Pair new device",
@@ -5984,6 +6004,10 @@
         "description": "You may earn rewards by delegating your SOL assets to a validator."
       },
       "reserveWarning": "Please ensure you reserve at least {{amount}} SOL in your wallet to cover future network fees to deactivate and withdraw your stake"
+    },
+    "token": {
+      "frozenStateWarning": "Account assets are frozen!",
+      "transferWarning": "To verify the recipient address for Solana tokens using a Ledger Nano S™, <0>follow these instructions.</0>"
     }
   },
   "near": {
@@ -7067,9 +7091,10 @@
           "explanation": {
             "title": "Scan and synchronize your accounts using another Ledger Live app",
             "steps": {
-              "step1": "Open the Ledger Live app you want to sync",
-              "step2": "Go to <0>Settings</0> <1>></1> <0>General</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Turn on Ledger Sync</0> <1>></1> <0>Scan QR code</0>",
-              "step3": "Scan QR code"
+              "step1": "Make sure Ledger Sync is activated on one of your apps.",
+              "step2": "Open the Ledger Live app you want to sync.",
+              "step3": "Go to <0>Settings</0> <1>></1> <0>General</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>I already turned it on</0> <1>></1> <0>Scan QR code</0>",
+              "step4": "Scan QR code."
             }
           }
         },
@@ -7079,9 +7104,10 @@
           "explanation": {
             "title": "To sync with Ledger Live on another phone or computer...",
             "steps": {
-              "step1": "Open the Ledger Live you want to sync with.",
-              "step2": "Go to <0>Settings</0> <1>></1> <0>General</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Turn on Ledger Sync</0> <1>></1> <0>Show QR</0>",
-              "step3": "Scan QR code"
+              "step1": "Make sure Ledger Sync is activated on one of your apps.",
+              "step2": "Open the Ledger Live you want to sync with.",
+              "step3": "Go to <0>Settings</0> <1>></1> <0>General</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>I already turned it on</0> <1>></1> <0>Show QR</0>",
+              "step4": "Scan QR code."
             }
           }
         },

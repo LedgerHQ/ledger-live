@@ -1,19 +1,56 @@
-import React, { memo } from "react";
+import React, { memo, useCallback } from "react";
 import { View, StyleSheet } from "react-native";
-import { Trans } from "react-i18next";
-import { useTheme } from "@react-navigation/native";
+import { useTranslation } from "react-i18next";
+import { useTheme, useNavigation } from "@react-navigation/native";
 import GenericErrorView from "./GenericErrorView";
 import Button from "./Button";
 import NeedHelp from "./NeedHelp";
+import { BaseNavigation } from "./RootNavigator/types/helpers";
+import { NavigatorName, ScreenName } from "~/const";
+import { MANAGER_TABS } from "~/const/manager";
+import { LatestFirmwareVersionRequired } from "@ledgerhq/live-common/errors";
+import { UpdateYourApp } from "@ledgerhq/errors";
+import { RequiredFirmwareUpdate } from "./DeviceAction/rendering";
+import { useSelector } from "react-redux";
+import { lastConnectedDeviceSelector } from "~/reducers/settings";
+import { LedgerError } from "~/types/error";
 
 type Props = {
-  error: Error;
+  error: LedgerError;
   onClose: () => void;
   onRetry?: () => void;
 };
 
 function ValidateError({ error, onClose, onRetry }: Props) {
+  const navigation = useNavigation<BaseNavigation>();
+  const { t } = useTranslation();
   const { colors } = useTheme();
+
+  const managerAppName = error instanceof UpdateYourApp ? error.managerAppName : undefined;
+
+  const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);
+
+  const onPress = useCallback(() => {
+    if (managerAppName && navigation) {
+      navigation.navigate(NavigatorName.Base, {
+        screen: NavigatorName.Main,
+        params: {
+          screen: NavigatorName.MyLedger,
+          params: {
+            screen: ScreenName.MyLedgerChooseDevice,
+            params: {
+              tab: MANAGER_TABS.INSTALLED_APPS,
+              updateModalOpened: true,
+              device: lastConnectedDevice,
+            },
+          },
+        },
+      });
+    } else if (onRetry) {
+      onRetry();
+    }
+  }, [lastConnectedDevice, managerAppName, navigation, onRetry]);
+
   return (
     <View
       style={[
@@ -24,21 +61,27 @@ function ValidateError({ error, onClose, onRetry }: Props) {
       ]}
     >
       <View style={styles.container}>
-        <GenericErrorView error={error} />
-        <Button
-          event="SendErrorRetry"
-          title={<Trans i18nKey="send.validation.button.retry" />}
-          type="primary"
-          containerStyle={styles.button}
-          onPress={onRetry}
-        />
-        <Button
-          event="SendErrorClose"
-          title={<Trans i18nKey="common.close" />}
-          type="lightSecondary"
-          containerStyle={styles.button}
-          onPress={onClose}
-        />
+        {error instanceof LatestFirmwareVersionRequired && lastConnectedDevice ? (
+          <RequiredFirmwareUpdate t={t} navigation={navigation} device={lastConnectedDevice} />
+        ) : (
+          <>
+            <GenericErrorView error={error} hasExportLogButton={!managerAppName} />
+            <Button
+              event={managerAppName ? "SendErrorOpenManager" : "SendErrorRetry"}
+              title={managerAppName ? t("DeviceAction.button.openManager") : t("common.retry")}
+              type="primary"
+              containerStyle={styles.button}
+              onPress={onPress}
+            />
+            <Button
+              event="SendErrorClose"
+              title={t("common.close")}
+              type="lightSecondary"
+              containerStyle={styles.button}
+              onPress={onClose}
+            />
+          </>
+        )}
       </View>
       <View
         style={[

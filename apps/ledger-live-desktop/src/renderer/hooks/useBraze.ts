@@ -140,6 +140,7 @@ export async function useBraze() {
       enableHtmlInAppMessages: true,
       enableLogging: __DEV__,
       sessionTimeoutInSeconds: devMode ? 1 : 1800,
+      appVersion: isTrackedUser ? __APP_VERSION__ : undefined,
     });
 
     // If it's playwright, we don't want to fetch content cards

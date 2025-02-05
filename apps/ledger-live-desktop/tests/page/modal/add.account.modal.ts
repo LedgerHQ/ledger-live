@@ -14,6 +14,7 @@ export class AddAccountModal extends Modal {
   private stopButton = this.page.getByTestId("add-accounts-import-stop-button");
   private doneButton = this.page.getByTestId("add-accounts-finish-close-button");
   private infoBox = this.page.getByTestId("add-token-infoBox");
+  private addSubAccountButton = this.page.getByTestId("modal-continue-button");
   private successAddLabel = this.page.locator("text=Account added successfully");
   private selectAccountInList = (Currency: Currency) =>
     this.page.getByRole("option", {
@@ -46,7 +47,7 @@ export class AddAccountModal extends Modal {
     }
     await expect(this.closeButton).toBeVisible();
     await expect(this.infoBox).toBeVisible();
-    await this.continue();
+    await this.addSubAccountButton.click();
   }
 
   @step("Select account by scrolling: {0}")
