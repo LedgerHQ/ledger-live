@@ -354,7 +354,7 @@ export default class BtcNew {
       number,
       string | null | undefined,
       number | null | undefined,
-      number | null | undefined,
+      (number | null | undefined)?,
     ],
     pathElements: number[],
     accountType: AccountType,

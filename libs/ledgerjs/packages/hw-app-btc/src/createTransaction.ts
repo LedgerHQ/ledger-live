@@ -40,8 +40,9 @@ const getZcashTransactionVersion = (blockHeight: number | undefined): Buffer => 
   const version = Buffer.alloc(4);
   if (blockHeight && blockHeight >= ZCASH_NU6_ACTIVATION_HEIGHT) {
     version.writeUInt32LE(0x80000006, 0);
+  } else {
+    version.writeUInt32LE(0x80000005, 0);
   }
-  version.writeUInt32LE(0x80000005, 0);
   return version;
 };
 
@@ -87,7 +88,7 @@ export type CreateTransactionArg = {
       number,
       string | null | undefined,
       number | null | undefined,
-      number | null | undefined,
+      (number | null | undefined)?,
     ]
   >;
   associatedKeysets: string[];
