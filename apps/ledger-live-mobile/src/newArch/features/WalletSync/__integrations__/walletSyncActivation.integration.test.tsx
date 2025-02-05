@@ -36,7 +36,7 @@ describe("WalletSyncActivation", () => {
               },
             },
           },
-          lastSeenDevice: LAST_SEEN_DEVICE,
+          seenDevice: [LAST_SEEN_DEVICE],
         },
         ble: {
           ...state.ble,

@@ -347,7 +347,7 @@ export type SettingsSetLastSeenCustomImagePayload = {
   imageHash: string;
 };
 export type SettingsLastSeenDevicePayload = NonNullable<
-  SettingsState["lastSeenDevice"]
+  SettingsState["seenDevices"][number]
 >["deviceInfo"];
 export type SettingsLastSeenDeviceInfoPayload = DeviceModelInfo;
 export type SettingsLastSeenDeviceLanguagePayload = DeviceInfo["languageId"];
