@@ -42,7 +42,7 @@ import {
   readOnlyModeEnabledSelector,
   seenDevicesSelector,
 } from "../reducers/settings";
-import { knownDevicesSelector } from "../reducers/ble";
+import { bleDevicesSelector } from "../reducers/ble";
 import { DeviceLike, State } from "../reducers/types";
 import { satisfactionSelector } from "../reducers/ratings";
 import { accountsSelector } from "../reducers/accounts";
@@ -173,7 +173,7 @@ const extraProperties = async (store: AppStore) => {
   const devices = seenDevicesSelector(state);
   const satisfaction = satisfactionSelector(state);
   const accounts = accountsSelector(state);
-  const lastDevice = devices.at(-1) || knownDevicesSelector(state).at(-1);
+  const lastDevice = devices.at(-1) || bleDevicesSelector(state).at(-1);
   const deviceInfo = lastDevice
     ? {
         deviceVersion: lastDevice.deviceInfo?.version,
