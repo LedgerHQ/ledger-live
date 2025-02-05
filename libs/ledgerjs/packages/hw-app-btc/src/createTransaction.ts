@@ -21,6 +21,7 @@ import {
   HASH_SIZE,
   OP_EQUALVERIFY,
   OP_CHECKSIG,
+  ZCASH_NU6_ACTIVATION_HEIGHT,
 } from "./constants";
 import { shouldUseTrustedInputForSegwit } from "./shouldUseTrustedInputForSegwit";
 export type { AddressFormat };
@@ -32,6 +33,41 @@ const defaultsSignTransaction = {
   onDeviceStreaming: _e => {},
   onDeviceSignatureGranted: () => {},
   onDeviceSignatureRequested: () => {},
+};
+
+const getZcashTransactionVersion = (blockHeight: number | undefined): Buffer => {
+  const version = Buffer.alloc(4);
+  if (blockHeight && blockHeight >= ZCASH_NU6_ACTIVATION_HEIGHT) {
+    version.writeUInt32LE(0x80000006, 0);
+  }
+  version.writeUInt32LE(0x80000005, 0);
+  return version;
+};
+
+const getDefaultVersions = (
+  isZcash: boolean,
+  sapling: boolean,
+  isDecred: boolean,
+  expiryHeight: Buffer | undefined,
+  blockHeight: number | undefined,
+): { defaultVersion: Buffer; defaultVersionNu5Only: Buffer } => {
+  let defaultVersion = Buffer.alloc(4);
+  const defaultVersionNu5Only = Buffer.alloc(4);
+
+  if (!!expiryHeight && !isDecred) {
+    if (isZcash) {
+      defaultVersion = getZcashTransactionVersion(blockHeight);
+      defaultVersionNu5Only.writeUInt32LE(0x80000005, 0);
+    } else {
+      const version = sapling ? 0x80000004 : 0x80000003;
+      defaultVersion.writeUInt32LE(version, 0);
+      defaultVersionNu5Only.writeUInt32LE(version, 0);
+    }
+  } else {
+    defaultVersion.writeUInt32LE(1, 0);
+    defaultVersionNu5Only.writeUInt32LE(1, 0);
+  }
+  return { defaultVersion, defaultVersionNu5Only };
 };
 
 /**
@@ -51,7 +87,7 @@ export type CreateTransactionArg = {
   changePath?: string;
   outputScriptHex: string;
   lockTime?: number;
-  blockHeight?: number,
+  blockHeight?: number;
   sigHashType?: number;
   segwit?: boolean;
   additionals: Array<string>;
@@ -82,8 +118,6 @@ export async function createTransaction(
     onDeviceSignatureRequested,
   } = signTx;
   let useTrustedInputForSegwit = signTx.useTrustedInputForSegwit;
-  console.log({blockHeight})
-  debugger;
 
   if (useTrustedInputForSegwit === undefined) {
     try {
@@ -133,19 +167,14 @@ export async function createTransaction(
   lockTimeBuffer.writeUInt32LE(lockTime, 0);
   const nullScript = Buffer.alloc(0);
   const nullPrevout = Buffer.alloc(0);
-  let zcashDefaultVersion = 0x80000005
-  if (blockHeight && blockHeight > 2726400) {
-    zcashDefaultVersion = 0x80000006
-  }
-  const defaultVersion = Buffer.alloc(4);
-  !!expiryHeight && !isDecred
-    ? defaultVersion.writeUInt32LE(isZcash ? zcashDefaultVersion : sapling ? 0x80000004 : 0x80000003, 0) // v5 format for zcash refer to https://zips.z.cash/zip-0225
-    : defaultVersion.writeUInt32LE(1, 0);
 
-  const defaultVersionNu5Only = Buffer.alloc(4);
-  !!expiryHeight && !isDecred
-    ? defaultVersionNu5Only.writeUInt32LE(isZcash ? 0x80000005 : sapling ? 0x80000004 : 0x80000003, 0) // v5 format for zcash refer to https://zips.z.cash/zip-0225
-    : defaultVersionNu5Only.writeUInt32LE(1, 0);
+  const { defaultVersion, defaultVersionNu5Only } = getDefaultVersions(
+    isZcash,
+    sapling,
+    isDecred,
+    expiryHeight,
+    blockHeight,
+  );
   // Default version to 2 for XST not to have timestamp
   const trustedInputs: Array<any> = [];
   const regularOutputs: Array<TransactionOutput> = [];
@@ -165,9 +194,10 @@ export async function createTransaction(
   // first pass on inputs to get trusted inputs
   for (const input of inputs) {
     if (!resuming) {
-      debugger;
-      // NOTE: not good
-      const trustedInput = await getTrustedInputCall(transport, input[1], input[0], additionals, input[4] || 0);
+      if (isZcash) {
+        input[0].version = getZcashTransactionVersion(input[4] || 0);
+      }
+      const trustedInput = await getTrustedInputCall(transport, input[1], input[0], additionals);
       log("hw", "got trustedInput=" + trustedInput);
       debugger;
       const sequence = Buffer.alloc(4);
@@ -334,10 +364,8 @@ export async function createTransaction(
   }
 
   targetTransaction.version = defaultVersionNu5Only;
-  debugger;
   // Populate the final input scripts
   for (let i = 0; i < inputs.length; i++) {
-    
     if (segwit) {
       targetTransaction.witness = Buffer.alloc(0);
 

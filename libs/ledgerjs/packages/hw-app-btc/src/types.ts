@@ -37,7 +37,7 @@ export interface Transaction {
   // refer to https://zips.z.cash/zip-0203 for more details
   nExpiryHeight?: Buffer;
   // extraData is used only for Zcash and ZenCash and komodo
-  extraData?: Buffer; // NOTE: use this ?
+  extraData?: Buffer
 }
 
 export interface TrustedInput {

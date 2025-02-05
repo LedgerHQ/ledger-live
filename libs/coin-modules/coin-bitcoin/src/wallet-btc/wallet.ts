@@ -262,9 +262,6 @@ class BitcoinLikeWallet {
         hasExtraData,
         additionals,
       });
-      // const block_height = i.block_height ? i.block_height : 0
-      console.log({wallettsinputblockheight: i.block_height})
-      debugger;
       return [
         btc.splitTransaction(i.txHex, true, hasExtraData, additionals),
         i.output_index,

@@ -29,7 +29,6 @@ export async function getTrustedInput(
   indexLookup: number,
   transaction: Transaction,
   additionals: Array<string> = [],
-  blockHeight?: number,
 ): Promise<string> {
   const { inputs, outputs, locktime, nExpiryHeight, extraData } = transaction;
 
@@ -74,24 +73,10 @@ export async function getTrustedInput(
 
   const processWholeScriptBlock = block => getTrustedInputRaw(transport, block);
 
-  let defaultVersion = Buffer.alloc(4);
-  let zcashDefaultVersion = 0x80000005
-  if (blockHeight && blockHeight > 2726400) {
-    zcashDefaultVersion = 0x80000006
-  }
-  let isZcash = additionals.includes("zcash");
-  if (isZcash) {
-    defaultVersion.writeUInt32LE(zcashDefaultVersion);
-  } else {
-    defaultVersion = transaction.version
-  }
-  console.log({version: transaction.version, defaultVersion})
-  debugger;
-
   await getTrustedInputRaw(
     transport,
     Buffer.concat([
-      defaultVersion, //transaction.version,
+      transaction.version,
       transaction.timestamp || Buffer.alloc(0),
       transaction.nVersionGroupId || Buffer.alloc(0),
       createVarint(inputs.length),
