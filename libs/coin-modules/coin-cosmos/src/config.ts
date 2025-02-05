@@ -17,7 +17,7 @@ export const cosmosConfig: CosmosConfig = {
   config_currency_cosmos: {
     type: "object",
     default: {
-      lcd: "https://cosmoshub4.coin.ledger.com",
+      lcd: "https://cosmoshub4.coin.ledger-test.com",
       minGasPrice: 0.025,
       ledgerValidator: "cosmosvaloper10wljxpl03053h9690apmyeakly3ylhejrucvtm",
       status: {
@@ -35,7 +35,7 @@ export const cosmosConfig: CosmosConfig = {
   config_currency_dydx: {
     type: "object",
     default: {
-      lcd: "https://dydx.coin.ledger.com",
+      lcd: "https://dydx.coin.ledger-test.com",
       minGasPrice: 12500000000,
       ledgerValidator: "dydxvaloper1gffkd68xcnfpzcsplf0fsuetxkysunud6a900w",
       status: {

@@ -93,7 +93,7 @@ const envDefinitions = {
     desc: "Casper API url node",
   },
   API_ALGORAND_BLOCKCHAIN_EXPLORER_API_ENDPOINT: {
-    def: "https://algorand.coin.ledger.com",
+    def: "https://algorand.coin.ledger-test.com",
     parser: stringParser,
     desc: "Node API endpoint for algorand",
   },
@@ -178,12 +178,12 @@ const envDefinitions = {
     desc: "Ledger explorer API for tezos",
   },
   API_TEZOS_TZKT_API: {
-    def: "https://xtz-tzkt-explorer.api.live.ledger.com",
+    def: "https://xtz-tzkt-explorer.api.live.ledger-test.com",
     parser: stringParser,
     desc: "tzkt.io explorer",
   },
   API_TEZOS_NODE: {
-    def: "https://xtz-node.api.live.ledger.com",
+    def: "https://xtz-node.api.live.ledger-test.com",
     parser: stringParser,
     desc: "node API for tezos (for broadcast only)",
   },
