@@ -134,5 +134,29 @@
     "@ledgerhq/native-modules-tools": "1.0.3",
     "@ledgerhq/pnpm-utils": "1.0.1"
   },
-  "changesets": []
+  "changesets": [
+    "blue-actors-cheat",
+    "calm-games-reply",
+    "dull-dots-float",
+    "dull-pianos-wave",
+    "few-hats-repair",
+    "great-parrots-talk",
+    "heavy-lobsters-rush",
+    "lemon-berries-lie",
+    "loud-bees-shake",
+    "loud-comics-remember",
+    "loud-llamas-try",
+    "nine-jokes-share",
+    "ninety-crews-fail",
+    "orange-drinks-explode",
+    "rotten-jeans-smell",
+    "selfish-buckets-fix",
+    "shaggy-seals-sleep",
+    "small-knives-fetch",
+    "tall-toys-invite",
+    "tender-birds-visit",
+    "twenty-fireants-walk",
+    "wild-cougars-cough",
+    "young-coins-double"
+  ]
 }

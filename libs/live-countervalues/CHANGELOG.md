@@ -1,5 +1,16 @@
 # @ledgerhq/live-countervalues
 
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#9053](https://github.com/LedgerHQ/ledger-live/pull/9053) [`e96114a`](https://github.com/LedgerHQ/ledger-live/commit/e96114a015016642df3a9837f1e6cd8c6ab6ca8f) Thanks [@semeano](https://github.com/semeano)! - Add mocked value for Aptos
+
+### Patch Changes
+
+- Updated dependencies [[`5e18866`](https://github.com/LedgerHQ/ledger-live/commit/5e18866320b843632699659ee66f6c410c108c1e)]:
+  - @ledgerhq/coin-framework@1.0.0-next.0
+
 ## 0.2.20
 
 ### Patch Changes

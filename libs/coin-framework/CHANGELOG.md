@@ -1,5 +1,11 @@
 # @ledgerhq/coin-framework
 
+## 1.0.0-next.0
+
+### Major Changes
+
+- [#9092](https://github.com/LedgerHQ/ledger-live/pull/9092) [`5e18866`](https://github.com/LedgerHQ/ledger-live/commit/5e18866320b843632699659ee66f6c410c108c1e) Thanks [@jprudent](https://github.com/jprudent)! - Change coin-framework/api types for list operations
+
 ## 0.25.0
 
 ### Minor Changes
