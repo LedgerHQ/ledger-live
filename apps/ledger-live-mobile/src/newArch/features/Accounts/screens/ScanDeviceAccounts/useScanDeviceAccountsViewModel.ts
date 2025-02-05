@@ -106,7 +106,7 @@ export default function useScanDeviceAccountsViewModel({
 
         if (syncUI) {
           setScanning(false);
-          const stopScanMetadata = analyticsMetadata?.ScanDeviceAccounts.onStopScan;
+          const stopScanMetadata = analyticsMetadata?.ScanDeviceAccounts?.onStopScan;
           if (stopScanMetadata)
             track(stopScanMetadata.eventName, {
               ...stopScanMetadata.payload,
@@ -114,8 +114,9 @@ export default function useScanDeviceAccountsViewModel({
         }
       }
     },
-    [analyticsMetadata?.ScanDeviceAccounts.onStopScan],
+    [analyticsMetadata?.ScanDeviceAccounts?.onStopScan],
   );
+
   const quitFlow = useCallback(() => {
     navigation.navigate(NavigatorName.Accounts);
   }, [navigation]);
@@ -132,13 +133,13 @@ export default function useScanDeviceAccountsViewModel({
   const selectAll = useCallback(
     (accounts: Account[]) => {
       setSelectedIds(uniq([...selectedIds, ...accounts.map(a => a.id)]));
-      const selectAllMetadata = analyticsMetadata?.AccountsFound.onSelectAll;
+      const selectAllMetadata = analyticsMetadata?.AccountsFound?.onSelectAll;
       if (selectAllMetadata)
         track(selectAllMetadata.eventName, {
           ...selectAllMetadata.payload,
         });
     },
-    [selectedIds, analyticsMetadata?.AccountsFound.onSelectAll],
+    [selectedIds, analyticsMetadata?.AccountsFound?.onSelectAll],
   );
   const unselectAll = useCallback(
     (accounts: Account[]) => {
@@ -176,13 +177,13 @@ export default function useScanDeviceAccountsViewModel({
         });
     }
 
-    const continueMetadata = analyticsMetadata?.AccountsFound.onContinue;
+    const continueMetadata = analyticsMetadata?.AccountsFound?.onContinue;
     if (continueMetadata)
       track(continueMetadata.eventName, {
         ...continueMetadata.payload,
       });
 
-    const successMetadata = analyticsMetadata?.AccountsFound.onAccountsAdded;
+    const successMetadata = analyticsMetadata?.AccountsFound?.onAccountsAdded;
     if (successMetadata)
       track(successMetadata.eventName, {
         ...successMetadata.payload,
@@ -198,8 +199,8 @@ export default function useScanDeviceAccountsViewModel({
     scannedAccounts,
     selectedIds,
     dispatch,
-    analyticsMetadata?.AccountsFound.onContinue,
-    analyticsMetadata?.AccountsFound.onAccountsAdded,
+    analyticsMetadata?.AccountsFound?.onContinue,
+    analyticsMetadata?.AccountsFound?.onAccountsAdded,
   ]);
 
   const onCancel = useCallback(() => {
@@ -242,6 +243,7 @@ export default function useScanDeviceAccountsViewModel({
   );
   // We don't show already imported accounts in the UI
   const sanitizedSections = sections.filter(s => s.id !== "imported");
+  const hasImportableAccounts = sections.find(s => s.id === "importable" && s.data.length > 0);
 
   const CustomNoAssociatedAccounts =
     currency.type === "CryptoCurrency"
@@ -279,7 +281,7 @@ export default function useScanDeviceAccountsViewModel({
 
   useEffect(() => {
     if (!cantCreateAccount && !isAddingAccounts && !scanning) {
-      if (alreadyEmptyAccount) {
+      if (alreadyEmptyAccount && !hasImportableAccounts) {
         navigation.replace(ScreenName.AddAccountsWarning, {
           emptyAccount: alreadyEmptyAccount,
           emptyAccountName: alreadyEmptyAccountName,
@@ -292,6 +294,7 @@ export default function useScanDeviceAccountsViewModel({
       }
     }
   }, [
+    hasImportableAccounts,
     cantCreateAccount,
     isAddingAccounts,
     alreadyEmptyAccount,
@@ -300,6 +303,7 @@ export default function useScanDeviceAccountsViewModel({
     navigation,
     currency,
     CustomNoAssociatedAccounts,
+    scannedAccounts,
   ]);
   return {
     alreadyEmptyAccount,

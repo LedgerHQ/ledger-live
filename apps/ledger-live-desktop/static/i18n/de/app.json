@@ -160,87 +160,88 @@
     "stax": "Stax",
     "blue": "Blau"
   },
-  "operation": {
-    "type": {
-      "IN": "Empfangen",
-      "OUT": "Gesendet",
-      "NFT_IN": "NFT erhalten",
-      "NFT_OUT": "NFT gesendet",
-      "CREATE": "Erstellt",
-      "REVEAL": "Enthüllt",
-      "DELEGATE": "Delegiert",
-      "REDELEGATE": "Erneut delegiert",
-      "UNDELEGATE": "Nicht delegiert",
-      "APPROVE": "Genehmigt",
-      "VOTE": "Abgestimmt",
-      "FREEZE": "Eingefroren",
-      "UNFREEZE": "Einfrieren aufgehoben",
-      "UNDELEGATE_RESOURCE": "Nicht delegiert",
-      "WITHDRAW_EXPIRE_UNFREEZE": "Abhebung",
-      "LEGACYUNFREEZE": "Einfrieren aufgehoben",
-      "REWARD": "Beanspruchte Prämie",
-      "FEES": "Gebühren",
-      "OPT_IN": "Zustimmen",
-      "OPT_OUT": "Ablehnen",
-      "CLOSE_ACCOUNT": "Konto schließen",
-      "BOND": "Binden",
-      "UNBOND": "Ungebunden",
-      "REWARD_PAYOUT": "Belohnungen",
-      "SLASH": "Slash-Strafe",
-      "WITHDRAW_UNBONDED": "Abhebung",
-      "NOMINATE": "Nominierung",
-      "CHILL": "Nominierungen löschen",
-      "SET_CONTROLLER": "Controller einstellen",
-      "LOCK": "Gesperrt",
-      "UNLOCK": "Entsperrt",
-      "WITHDRAW": "Ausgezahlt",
-      "REVOKE": "Widerrufen",
-      "ACTIVATE": "Aktiviert",
-      "REGISTER": "Registriert",
-      "STAKE": "Gestaket",
-      "UNSTAKE": "Nicht mehr gestaket",
-      "WITHDRAW_UNSTAKED": "Ausgezahlt",
-      "SENDING": "Senden"
+  "operation" : {
+    "type" : {
+      "IN" : "Empfangen",
+      "OUT" : "Gesendet",
+      "NFT_IN" : "NFT erhalten",
+      "NFT_OUT" : "NFT gesendet",
+      "CREATE" : "Erstellt",
+      "REVEAL" : "Enthüllt",
+      "DELEGATE" : "Delegiert",
+      "REDELEGATE" : "Erneut delegiert",
+      "UNDELEGATE" : "Nicht delegiert",
+      "APPROVE" : "Genehmigt",
+      "VOTE" : "Abgestimmt",
+      "FREEZE" : "Eingefroren",
+      "UNFREEZE" : "Einfrieren aufgehoben",
+      "UNDELEGATE_RESOURCE" : "Nicht delegiert",
+      "WITHDRAW_EXPIRE_UNFREEZE" : "Abhebung",
+      "LEGACYUNFREEZE" : "Einfrieren aufgehoben",
+      "REWARD" : "Beanspruchte Prämie",
+      "FEES" : "Gebühren",
+      "OPT_IN" : "Zustimmen",
+      "OPT_OUT" : "Ablehnen",
+      "CLOSE_ACCOUNT" : "Konto schließen",
+      "BOND" : "Binden",
+      "UNBOND" : "Ungebunden",
+      "REWARD_PAYOUT" : "Belohnungen",
+      "SLASH" : "Slash-Strafe",
+      "WITHDRAW_UNBONDED" : "Abhebung",
+      "NOMINATE" : "Nominierung",
+      "CHILL" : "Nominierungen löschen",
+      "SET_CONTROLLER" : "Controller einstellen",
+      "LOCK" : "Gesperrt",
+      "UNLOCK" : "Entsperrt",
+      "WITHDRAW" : "Ausgezahlt",
+      "REVOKE" : "Widerrufen",
+      "ACTIVATE" : "Aktiviert",
+      "REGISTER" : "Registriert",
+      "STAKE" : "Gestaket",
+      "UNSTAKE" : "Nicht mehr gestaket",
+      "WITHDRAW_UNSTAKED" : "Ausgezahlt",
+      "SENDING" : "Senden",
+      "BURN" : "Verbrannt"
     },
-    "edit": {
-      "title": "Beschleunigen oder Abbrechen",
-      "description": "Deine Transaktion ist noch nicht abgeschlossen. Du kannst sie entweder mit einer höheren Netzwerkgebühr beschleunigen oder sie abbrechen.",
-      "stuckDescription": "Deine Transaktion reagiert zurzeit nicht. Du kannst sie mit einer höheren Netzwerkgebühr beschleunigen oder sie abbrechen.",
-      "previousFeesInfo": {
-        "pendingTransactionFeesInfo": "Informationen über ausstehende Transaktionsgebühren:",
-        "networkfee": "Netzwerkgebühr: {{amount}}",
-        "maxFee": "Maximale Gebühr: {{amount}}",
-        "maxPriorityFee": "Maximale Prioritätsgebühr: {{amount}}",
-        "gasPrice": "Gaspreis: {{amount}}"
+    "edit" : {
+      "title" : "Beschleunigen oder Abbrechen",
+      "description" : "Deine Transaktion ist noch nicht abgeschlossen. Du kannst sie entweder mit einer höheren Netzwerkgebühr beschleunigen oder sie abbrechen.",
+      "stuckDescription" : "Deine Transaktion reagiert zurzeit nicht. Du kannst sie mit einer höheren Netzwerkgebühr beschleunigen oder sie abbrechen.",
+      "previousFeesInfo" : {
+        "pendingTransactionFeesInfo" : "Informationen über ausstehende Transaktionsgebühren:",
+        "networkfee" : "Netzwerkgebühr: {{amount}}",
+        "maxFee" : "Maximale Gebühr: {{amount}}",
+        "maxPriorityFee" : "Maximale Prioritätsgebühr: {{amount}}",
+        "gasPrice" : "Gaspreis: {{amount}}"
       },
-      "learnMore": "Ich möchte mehr erfahren",
-      "panel": {
-        "title": "Beschleunigen oder Abbrechen",
-        "description": "Eine deiner letzten Versandtransaktionen reagiert zurzeit nicht. Du kannst sie mit einer höheren Netzwerkgebühr beschleunigen oder sie abbrechen."
+      "learnMore" : "Ich möchte mehr erfahren",
+      "panel" : {
+        "title" : "Beschleunigen oder Abbrechen",
+        "description" : "Eine deiner letzten Versandtransaktionen reagiert zurzeit nicht. Du kannst sie mit einer höheren Netzwerkgebühr beschleunigen oder sie abbrechen."
       },
-      "speedUp": {
-        "title": "Beschleunigen",
-        "description": "Reiche die Transaktion mit einer höheren Netzwerkgebühr erneut ein."
+      "speedUp" : {
+        "title" : "Beschleunigen",
+        "description" : "Reiche die Transaktion mit einer höheren Netzwerkgebühr erneut ein."
       },
-      "cancel": {
-        "title": "Abbrechen",
-        "description": "Sendet 0 {{ticker}} an deine eigene Adresse."
+      "cancel" : {
+        "title" : "Abbrechen",
+        "description" : "Sendet 0 {{ticker}} an deine eigene Adresse."
       },
-      "steps": {
-        "method": {
-          "title": "Methode"
+      "steps" : {
+        "method" : {
+          "title" : "Methode"
         },
-        "fees": {
-          "title": "Gebühren"
+        "fees" : {
+          "title" : "Gebühren"
         },
-        "summary": {
-          "title": "Zusammenfassung"
+        "summary" : {
+          "title" : "Zusammenfassung"
         },
-        "device": {
-          "title": "Gerät"
+        "device" : {
+          "title" : "Gerät"
         },
-        "confirmation": {
-          "title": "Bestätigung"
+        "confirmation" : {
+          "title" : "Bestätigung"
         }
       },
       "error": {
@@ -1513,24 +1514,24 @@
         "description": "Prämien für deine Kryptos erhalten"
       }
     },
-    "recoverBanner": {
-      "subscribeDone": {
-        "title": "Hinzufügen deiner Zahlungskarte abschließen",
-        "description": "Zuverlässige Wiederherstellung mit Ledger Recover.",
-        "primaryCta": "Karte hinzufügen",
-        "secondaryCta": "Vielleicht später"
+    "recoverBanner" : {
+      "subscribeDone" : {
+        "title" : "Erinnerung: Schließe die Anmeldung für Ledger Recover ab",
+        "description" : "Du musst noch zwei Schritte bis zum optimalen Schutz zurücklegen.",
+        "primaryCta" : "Karte hinzufügen",
+        "secondaryCta" : "Vielleicht später"
       },
-      "verifyIdentity": {
-        "title": "Identitätsnachweis abschließen",
-        "description": "Zuverlässige Wiederherstellung mit Ledger Recover.",
-        "primaryCta": "Bestätigen",
-        "secondaryCta": "Vielleicht später"
+      "verifyIdentity" : {
+        "title" : "Erinnerung: Schließe die Anmeldung für Ledger Recover ab",
+        "description" : "Du musst noch einen Schritt bis zum optimalen Schutz zurücklegen.",
+        "primaryCta" : "Identität verifizieren",
+        "secondaryCta" : "Vielleicht später"
       },
-      "connectDevice": {
-        "title": "Ledger-Gerät verbinden",
-        "description": "Nur noch ein Schritt, und schon kannst du Ledger Recover nutzen.",
-        "primaryCta": "Verbinden",
-        "secondaryCta": "Vielleicht später"
+      "connectDevice" : {
+        "title" : "Erinnerung: Schließe die Anmeldung für Ledger Recover ab",
+        "description" : "Das ist der letzte Schritt, um die Wiederherstellung des Zugriffs auf deine Wallet zu gewährleisten.",
+        "primaryCta" : "Gerät verbinden",
+        "secondaryCta" : "Vielleicht später"
       }
     },
     "marketPerformanceWidget": {
@@ -3758,6 +3759,10 @@
           }
         }
       }
+    },
+    "token" : {
+      "frozenStateWarning" : "Kontovermögenswerte sind gesperrt!",
+      "transferWarning" : "Zum Verifizieren der Empfängeradresse für Solana-Token mit einer Ledger Nano S™ <0>befolge diese Anweisungen</0>."
     }
   },
   "ethereum": {
@@ -6220,8 +6225,29 @@
     "SolanaAccountNotFunded": {
       "title": "Konto nicht gedeckt"
     },
-    "SolanaMemoIsTooLong": {
-      "title": "Memo ist zu lang. Maximale Länge beträgt {{maxLength}}"
+    "SolanaTokenAccountHoldsAnotherToken" : {
+      "title" : "Dieses zugeordnete Tokenkonto enthält ein weiteres Token"
+    },
+    "SolanaTokenAccountWarning" : {
+      "title" : "Das ist keine reguläre Wallet-Adresse, sondern ein verbundenes Tokenkonto. Du solltest den Vorgang nur fortsetzen, wenn du genau weißt, was du tust."
+    },
+    "SolanaTokenAccountNotAllowed" : {
+      "title" : "Das ist ein Tokenkonto. Bitte gib eine reguläre Wallet-Adresse ein."
+    },
+    "SolanaMintAccountNotAllowed" : {
+      "title" : "Das ist eine Tokenadresse. Bitte gib eine reguläre Wallet-Adresse ein."
+    },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "Konto wird gedeckt"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "Vermögenswerte des Tokenkontos sind gesperrt"
+    },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "Konto nicht initialisiert"
+    },
+    "SolanaMemoIsTooLong" : {
+      "title" : "Memo ist zu lang. Maximale Länge beträgt {{maxLength}}"
     },
     "SolanaAddressOfEd25519": {
       "title": "Adresse aus ed25519 Kurve"
@@ -6739,26 +6765,28 @@
           "description": "Synchronisieren durch Signieren mit deinem Ledger-Gerät"
         }
       },
-      "qrCode": {
-        "title": "Synchronisiere deine Ledger Live-Apps",
-        "options": {
-          "mobile": "Mit Smartphone synchronisieren",
-          "desktop": "Mit Computer synchronisieren"
+      "qrCode" : {
+        "title" : "Synchronisiere deine Ledger Live-Apps",
+        "options" : {
+          "mobile" : "Mit Smartphone synchronisieren",
+          "desktop" : "Mit Computer synchronisieren"
         },
-        "mobile": {
-          "description": "Synchronisiere mit der Ledger Live-App auf einem anderen Smartphone",
-          "steps": {
-            "step1": "Öffne die Ledger Live-App, die du synchronisieren möchtest.",
-            "step2": "Gehe zu <0>Settings</0> (Einstellungen) > <0>General</0> (Allgemein) > <0>Ledger Sync</0> > <0>Turn on sync</0> (Sync einschalten) > <0>Show QR</0> (QR-Code anzeigen)",
-            "step3": "QR-Code scannen"
+        "mobile" : {
+          "description" : "Synchronisiere mit der Ledger Live-App auf einem anderen Smartphone",
+          "steps" : {
+            "step1" : "Vergewissere dich, dass Ledger Sync in einer deiner Apps aktiviert ist.",
+            "step2" : "Öffne die Ledger Live-App, die du synchronisieren möchtest.",
+            "step3" : "Gehe zu <0>Settings</0> (Einstellungen) > <0>General</0> (Allgemein) > <0>Ledger Sync</0> > <0>I already turned it on</0> (Ich habe Sync schon aktiviert) > <0>Show QR</0> (QR-Code anzeigen).",
+            "step4" : "Scanne den QR-Code."
           }
         },
-        "desktop": {
-          "description": "Deine Konten mit einer anderen Ledger Live-App synchronisieren",
-          "steps": {
-            "step1": "Öffne die Ledger Live-App, die du synchronisieren möchtest.",
-            "step2": "Gehe zu <0>Settings</0> (Einstellungen) > <0>General</0> (Allgemein) > <0>Ledger Sync</0> > <0>Turn on sync</0> (Sync einschalten) > <0>Use your Ledger</0> (Dein Ledger-Gerät verwenden)",
-            "step3": "Ledger-Gerät verbinden"
+        "desktop" : {
+          "description" : "Deine Konten mit einer anderen Ledger Live-App synchronisieren",
+          "steps" : {
+            "step1" : "Vergewissere dich, dass Ledger Sync in einer deiner Apps aktiviert ist.",
+            "step2" : "Öffne die Ledger Live-App, die du synchronisieren möchtest.",
+            "step3" : "Gehe zu <0>Settings</0> (Einstellungen) > <0>General</0> (Allgemein) > <0>Ledger Sync</0> > <0>I already turned it on</0> (Ich habe Sync schon aktiviert) > <0>Use your Ledger</0> (Dein Ledger-Gerät verwenden).",
+            "step4" : "Stelle eine Verbindung mit deinem Ledger-Gerät her."
           }
         }
       },

@@ -244,11 +244,12 @@ jobs:
     if: ${{ !cancelled() && (inputs.slack_notif || github.event_name == 'schedule' )}}
     steps:
       - uses: actions/github-script@v7
-        if: ${{ !cancelled() && (inputs.slack_notif || github.event_name == 'schedule' )}}
         name: prepare status
         id: status
         env:
           STATUS_EMOJI: ${{ needs.report-to-allure.outputs.status_emoji }}
+          EXPORT_TO_XRAY: ${{ inputs.export_to_xray }}
+          TEST_EXECUTION: ${{ github.event.inputs.test_execution }}
         with:
           script: |
             const fs = require("fs");
@@ -375,13 +376,13 @@ jobs:
               ]
             };
 
-            if (${{ inputs.export_to_xray }}) {
+            if (process.env.EXPORT_TO_XRAY === 'true') {
               slackPayload.attachments[0].blocks.push({
                 "type": "section",
                 "fields": [
                   {
                     "type": "mrkdwn",
-                    "text": "*Xray Link*\n<https://ledgerhq.atlassian.net/browse/${{ github.event.inputs.test_execution }}|Test Execution>"
+                    "text": `*Xray Link*\n<https://ledgerhq.atlassian.net/browse/${process.env.TEST_EXECUTION}|Test Execution>`
                   }
                 ]
               });

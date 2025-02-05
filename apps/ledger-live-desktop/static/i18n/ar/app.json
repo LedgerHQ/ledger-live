@@ -160,87 +160,88 @@
     "stax": "Stax",
     "blue": "Blue"
   },
-  "operation": {
-    "type": {
-      "IN": "تم الاستلام",
-      "OUT": "تم الإرسال",
-      "NFT_IN": "تم تلقي NFT",
-      "NFT_OUT": "تم إرسال NFT",
-      "CREATE": "تم إنشاؤه",
-      "REVEAL": "تم الإظهار",
-      "DELEGATE": "تم التفويض",
-      "REDELEGATE": "تمت إعادة التفويض",
-      "UNDELEGATE": "غير مفوّض",
-      "APPROVE": "مُعتمد",
-      "VOTE": "تم التصويت",
-      "FREEZE": "مُجمد",
-      "UNFREEZE": "تمت إزالة التجميد",
-      "UNDELEGATE_RESOURCE": "غير مفوّض",
-      "WITHDRAW_EXPIRE_UNFREEZE": "سحب",
-      "LEGACYUNFREEZE": "تمت إزالة التجميد",
-      "REWARD": "المكافأة المُطالب بها",
-      "FEES": "رسوم",
-      "OPT_IN": "الانضمام",
-      "OPT_OUT": "إلغاء الانضمام",
-      "CLOSE_ACCOUNT": "إغلاق الحساب",
-      "BOND": "تقيد",
-      "UNBOND": "إلغاء التقيد",
-      "REWARD_PAYOUT": "مُكافأة",
-      "SLASH": "تغريم",
-      "WITHDRAW_UNBONDED": "سحب",
-      "NOMINATE": "ترشيح",
-      "CHILL": "حذف الترشيحات",
-      "SET_CONTROLLER": "إعداد وحدة التحكم",
-      "LOCK": "مُقفل",
-      "UNLOCK": "غير مُقفل",
-      "WITHDRAW": "مسحوب",
-      "REVOKE": "مُبطل",
-      "ACTIVATE": "تم التنشيط",
-      "REGISTER": "مُسجّل",
-      "STAKE": "مُكدَّس",
-      "UNSTAKE": "غير مُكدَّس",
-      "WITHDRAW_UNSTAKED": "مسحوب",
-      "SENDING": "إرسال"
+  "operation" : {
+    "type" : {
+      "IN" : "تم الاستلام",
+      "OUT" : "تم الإرسال",
+      "NFT_IN" : "تم تلقي NFT",
+      "NFT_OUT" : "تم إرسال NFT",
+      "CREATE" : "تم إنشاؤه",
+      "REVEAL" : "تم الإظهار",
+      "DELEGATE" : "تم التفويض",
+      "REDELEGATE" : "تمت إعادة التفويض",
+      "UNDELEGATE" : "غير مفوّض",
+      "APPROVE" : "مُعتمد",
+      "VOTE" : "تم التصويت",
+      "FREEZE" : "مُجمد",
+      "UNFREEZE" : "تمت إزالة التجميد",
+      "UNDELEGATE_RESOURCE" : "غير مفوّض",
+      "WITHDRAW_EXPIRE_UNFREEZE" : "سحب",
+      "LEGACYUNFREEZE" : "تمت إزالة التجميد",
+      "REWARD" : "المكافأة المُطالب بها",
+      "FEES" : "رسوم",
+      "OPT_IN" : "الانضمام",
+      "OPT_OUT" : "إلغاء الانضمام",
+      "CLOSE_ACCOUNT" : "إغلاق الحساب",
+      "BOND" : "تقيد",
+      "UNBOND" : "إلغاء التقيد",
+      "REWARD_PAYOUT" : "مُكافأة",
+      "SLASH" : "تغريم",
+      "WITHDRAW_UNBONDED" : "سحب",
+      "NOMINATE" : "ترشيح",
+      "CHILL" : "حذف الترشيحات",
+      "SET_CONTROLLER" : "إعداد وحدة التحكم",
+      "LOCK" : "مُقفل",
+      "UNLOCK" : "غير مُقفل",
+      "WITHDRAW" : "مسحوب",
+      "REVOKE" : "مُبطل",
+      "ACTIVATE" : "تم التنشيط",
+      "REGISTER" : "مُسجّل",
+      "STAKE" : "مُكدَّس",
+      "UNSTAKE" : "غير مُكدَّس",
+      "WITHDRAW_UNSTAKED" : "مسحوب",
+      "SENDING" : "إرسال",
+      "BURN" : "محروق"
     },
-    "edit": {
-      "title": "التسريع أو الإلغاء",
-      "description": "معاملتك جارية. يمكنك تسريعها برسوم شبكة أعلى، أو إلغائها.",
-      "stuckDescription": "معاملتك عالقة. قم بتسريعها برسوم شبكة أعلى أو قم بإلغائها.",
-      "previousFeesInfo": {
-        "pendingTransactionFeesInfo": "معلومات رسوم المعاملة المُعلَّقة:",
-        "networkfee": "رسوم الشبكة = {{amount}}",
-        "maxFee": "الحد الأقصى للرسوم = {{amount}}",
-        "maxPriorityFee": "الحد الأقصى لرسوم الأولوية = {{amount}}",
-        "gasPrice": "سعر الغاز = {{amount}}"
+    "edit" : {
+      "title" : "التسريع أو الإلغاء",
+      "description" : "معاملتك جارية. يمكنك تسريعها برسوم شبكة أعلى، أو إلغائها.",
+      "stuckDescription" : "معاملتك عالقة. قم بتسريعها برسوم شبكة أعلى أو قم بإلغائها.",
+      "previousFeesInfo" : {
+        "pendingTransactionFeesInfo" : "معلومات رسوم المعاملة المُعلَّقة:",
+        "networkfee" : "رسوم الشبكة = {{amount}}",
+        "maxFee" : "الحد الأقصى للرسوم = {{amount}}",
+        "maxPriorityFee" : "الحد الأقصى لرسوم الأولوية = {{amount}}",
+        "gasPrice" : "سعر الغاز = {{amount}}"
       },
-      "learnMore": "أرغب في معرفة المزيد",
-      "panel": {
-        "title": "التسريع أو الإلغاء",
-        "description": "واحدة من أحدث معاملات 'الإرسال' لديك عالقة. قم بتسريع المعاملة برسوم شبكة أعلى أو قم بإلغائها."
+      "learnMore" : "أرغب في معرفة المزيد",
+      "panel" : {
+        "title" : "التسريع أو الإلغاء",
+        "description" : "واحدة من أحدث معاملات 'الإرسال' لديك عالقة. قم بتسريع المعاملة برسوم شبكة أعلى أو قم بإلغائها."
       },
-      "speedUp": {
-        "title": "تسريع",
-        "description": "أعد تقديم المعاملة برسوم شبكة أعلى."
+      "speedUp" : {
+        "title" : "تسريع",
+        "description" : "أعد تقديم المعاملة برسوم شبكة أعلى."
       },
-      "cancel": {
-        "title": "إلغاء",
-        "description": "إرسال 0 {{ticker}} إلى عنوانك."
+      "cancel" : {
+        "title" : "إلغاء",
+        "description" : "إرسال 0 {{ticker}} إلى عنوانك."
       },
-      "steps": {
-        "method": {
-          "title": "الطريقة"
+      "steps" : {
+        "method" : {
+          "title" : "الطريقة"
         },
-        "fees": {
-          "title": "رسوم"
+        "fees" : {
+          "title" : "رسوم"
         },
-        "summary": {
-          "title": "الملخص"
+        "summary" : {
+          "title" : "الملخص"
         },
-        "device": {
-          "title": "الجهاز"
+        "device" : {
+          "title" : "الجهاز"
         },
-        "confirmation": {
-          "title": "تأكيد"
+        "confirmation" : {
+          "title" : "تأكيد"
         }
       },
       "error": {
@@ -1513,24 +1514,24 @@
         "description": "احصل على مكافآت على أصولك المشفرة"
       }
     },
-    "recoverBanner": {
-      "subscribeDone": {
-        "title": "أكمِل إضافة بطاقة الدفع الخاصة بك",
-        "description": "استعد بشكل موثوق مع Ledger Recover.",
-        "primaryCta": "إضافة بطاقة",
-        "secondaryCta": "ربّما في وقت لاحق"
+    "recoverBanner" : {
+      "subscribeDone" : {
+        "title" : "تذكير: أكمِل تسجيل الاشتراك في Ledger Recover",
+        "description" : "أنت على بعد خطوتين فقط من أن تصبح مُؤمَّناً.",
+        "primaryCta" : "إضافة بطاقة",
+        "secondaryCta" : "ربّما في وقت لاحق"
       },
-      "verifyIdentity": {
-        "title": "أكمِل تأكيد هويتك",
-        "description": "استعد بشكل موثوق مع Ledger Recover.",
-        "primaryCta": "تحقق",
-        "secondaryCta": "ربّما في وقت لاحق"
+      "verifyIdentity" : {
+        "title" : "تذكير: أكمِل تسجيل الاشتراك في Ledger Recover",
+        "description" : "أنت على بعد خطوة واحدة فقط من أن تصبح مُؤمَّناً.",
+        "primaryCta" : "التحقق من الهويّة",
+        "secondaryCta" : "ربّما في وقت لاحق"
       },
-      "connectDevice": {
-        "title": "توصيل جهازك Ledger",
-        "description": "أنت على بعد خطوة واحدة من Ledger Recover.",
-        "primaryCta": "اتصال",
-        "secondaryCta": "ربّما في وقت لاحق"
+      "connectDevice" : {
+        "title" : "تذكير: أكمِل تسجيل الاشتراك في Ledger Recover",
+        "description" : "هذه هي الخطوة الأخيرة لضمان استرداد الوصول إلى المحفظة.",
+        "primaryCta" : "توصيل الجهاز",
+        "secondaryCta" : "ربّما في وقت لاحق"
       }
     },
     "marketPerformanceWidget": {
@@ -3758,6 +3759,10 @@
           }
         }
       }
+    },
+    "token" : {
+      "frozenStateWarning" : "تمّ تجميد أصول الحساب!",
+      "transferWarning" : "للتحقق من عنوان المستلم لرموز سولانا (Solana) باستخدام ™Ledger Nano S، <0>يرجى اتباع هذه التعليمات.</0>"
     }
   },
   "ethereum": {
@@ -6220,8 +6225,29 @@
     "SolanaAccountNotFunded": {
       "title": "الحساب غير ممول"
     },
-    "SolanaMemoIsTooLong": {
-      "title": "الملاحظة طويلة جداً. الحد الأقصى للطول هو {{maxLength}}"
+    "SolanaTokenAccountHoldsAnotherToken" : {
+      "title" : "حساب رمز التوكن المرتبط هذا يحتفظ برمز توكن آخر"
+    },
+    "SolanaTokenAccountWarning" : {
+      "title" : "هذا ليس عنوان محفظة عادي لكنه حساب رمز توكن مرتبط. تابع فقط إذا كنت تعلم ماذا تفعل"
+    },
+    "SolanaTokenAccountNotAllowed" : {
+      "title" : "هذا حساب رمز توكن. أدخِل عنوان محفظة عادي"
+    },
+    "SolanaMintAccountNotAllowed" : {
+      "title" : "هذا عنوان رمز توكن. أدخِل عنوان محفظة عادي"
+    },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "سيتمّ تمويل الحساب"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "تمّ تجميد رموز أصول الحساب"
+    },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "لم يتمّ بدء الحساب"
+    },
+    "SolanaMemoIsTooLong" : {
+      "title" : "الملاحظة طويلة جداً. الحد الأقصى للطول هو {{maxLength}}"
     },
     "SolanaAddressOfEd25519": {
       "title": "العنوان خارج منحنى ed25519"
@@ -6739,26 +6765,28 @@
           "description": "المزامنة عن طريق التوقيع بجهازك Ledger"
         }
       },
-      "qrCode": {
-        "title": "مزامنة تطبيقات Ledger Live الخاصة بك",
-        "options": {
-          "mobile": "المزامنة مع الهاتف",
-          "desktop": "المزامنة مع الكمبيوتر"
+      "qrCode" : {
+        "title" : "مزامنة تطبيقات Ledger Live الخاصة بك",
+        "options" : {
+          "mobile" : "المزامنة مع الهاتف",
+          "desktop" : "المزامنة مع الكمبيوتر"
         },
-        "mobile": {
-          "description": "المزامنة مع تطبيق Ledger Live على هاتف آخر",
-          "steps": {
-            "step1": "افتح تطبيق Ledger Live الذي تريد مزامنته",
-            "step2": "انتقل إلى <0>Settings (الإعدادات)</0> > <0>General (عام)</0> > <0>Ledger Sync (مزامنة Ledger)</0> > <0>Turn on sync (تشغيل المزامنة)</0> > <0>Show QR (إظهار كود QR)</0>",
-            "step3": "مسح ضوئي لكود QR"
+        "mobile" : {
+          "description" : "المزامنة مع تطبيق Ledger Live على هاتف آخر",
+          "steps" : {
+            "step1" : "تأكد من أن مزامنة Ledger Sync مُفعَّلة على أحد تطبيقاتك.",
+            "step2" : "افتح تطبيق Ledger Live الذي تريد مزامنته.",
+            "step3" : "انتقل إلى <0>Settings (إعدادات)</0> > <0>General (عامة)</0> > <0>Ledger Sync (مزامنة Ledger Sync)</0> > <0>I already turned it on (قمت بتشغيلها بالفعل)</0> > <0>Show QR (عرض كود QR)</0>",
+            "step4" : "امسح كود QR ضوئياً."
           }
         },
-        "desktop": {
-          "description": "مزامنة حساباتك عن طريق تطبيق Ledger Live آخر",
-          "steps": {
-            "step1": "افتح تطبيق Ledger Live الذي تريد مزامنته",
-            "step2": "انتقل إلى <0>Settings (الإعدادات)</0> > <0>General (عام)</0> > <0>Ledger Sync (مزامنة Ledger)</0> > <0>Turn on sync (تشغيل المزامنة)</0> > <0>Use your Ledger (استخدم جهازك Ledger)</0>",
-            "step3": "توصيل جهازك Ledger"
+        "desktop" : {
+          "description" : "مزامنة حساباتك عن طريق تطبيق Ledger Live آخر",
+          "steps" : {
+            "step1" : "تأكد من أن مزامنة Ledger Sync مُفعَّلة على أحد تطبيقاتك.",
+            "step2" : "افتح تطبيق Ledger Live الذي تريد مزامنته.",
+            "step3" : "انتقل إلى <0>Settings (إعدادات)</0> > <0>General (عامة)</0> > <0>Ledger Sync (مزامنة Ledger Sync)</0> > <0>I already turned it on (قمت بتشغيلها بالفعل)</0> > <0>Use your Ledger (استخدام Ledger خاصتك)</0>",
+            "step4" : "قم بتوصيل جهازك Ledger."
           }
         }
       },

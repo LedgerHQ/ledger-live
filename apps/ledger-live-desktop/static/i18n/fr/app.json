@@ -160,87 +160,88 @@
     "stax": "Stax",
     "blue": "Blue"
   },
-  "operation": {
-    "type": {
-      "IN": "Reçu",
-      "OUT": "Envoyé",
-      "NFT_IN": "NFT reçu",
-      "NFT_OUT": "NFT envoyé",
-      "CREATE": "Créé",
-      "REVEAL": "Révélé",
-      "DELEGATE": "Délégué",
-      "REDELEGATE": "Redélégué",
-      "UNDELEGATE": "Délégation arrêtée",
-      "APPROVE": "Approuvé",
-      "VOTE": "Voté",
-      "FREEZE": "Gelé",
-      "UNFREEZE": "Dégelé",
-      "UNDELEGATE_RESOURCE": "Délégation arrêtée",
-      "WITHDRAW_EXPIRE_UNFREEZE": "Retiré",
-      "LEGACYUNFREEZE": "Dégelé",
-      "REWARD": "Récompense demandée",
-      "FEES": "Frais",
-      "OPT_IN": "Activé",
-      "OPT_OUT": "Désactivé",
-      "CLOSE_ACCOUNT": "Compte fermé",
-      "BOND": "Lié",
-      "UNBOND": "Délié",
-      "REWARD_PAYOUT": "Récompense",
-      "SLASH": "Slashé",
-      "WITHDRAW_UNBONDED": "Retiré",
-      "NOMINATE": "Nomination",
-      "CHILL": "Retirer les nominations",
-      "SET_CONTROLLER": "Définir contrôleur",
-      "LOCK": "Immobilisé",
-      "UNLOCK": "Dégelé",
-      "WITHDRAW": "Retiré",
-      "REVOKE": "Révoqué",
-      "ACTIVATE": "Activé",
-      "REGISTER": "Enregistré",
-      "STAKE": "Staké",
-      "UNSTAKE": "Déstaké",
-      "WITHDRAW_UNSTAKED": "Retiré",
-      "SENDING": "Envoi"
+  "operation" : {
+    "type" : {
+      "IN" : "Reçu",
+      "OUT" : "Envoyé",
+      "NFT_IN" : "NFT reçu",
+      "NFT_OUT" : "NFT envoyé",
+      "CREATE" : "Créé",
+      "REVEAL" : "Révélé",
+      "DELEGATE" : "Délégué",
+      "REDELEGATE" : "Redélégué",
+      "UNDELEGATE" : "Délégation arrêtée",
+      "APPROVE" : "Approuvé",
+      "VOTE" : "Voté",
+      "FREEZE" : "Gelé",
+      "UNFREEZE" : "Dégelé",
+      "UNDELEGATE_RESOURCE" : "Délégation arrêtée",
+      "WITHDRAW_EXPIRE_UNFREEZE" : "Retiré",
+      "LEGACYUNFREEZE" : "Dégelé",
+      "REWARD" : "Récompense demandée",
+      "FEES" : "Frais",
+      "OPT_IN" : "Activé",
+      "OPT_OUT" : "Désactivé",
+      "CLOSE_ACCOUNT" : "Compte fermé",
+      "BOND" : "Lié",
+      "UNBOND" : "Délié",
+      "REWARD_PAYOUT" : "Récompense",
+      "SLASH" : "Slashé",
+      "WITHDRAW_UNBONDED" : "Retiré",
+      "NOMINATE" : "Nomination",
+      "CHILL" : "Retirer les nominations",
+      "SET_CONTROLLER" : "Définir contrôleur",
+      "LOCK" : "Immobilisé",
+      "UNLOCK" : "Dégelé",
+      "WITHDRAW" : "Retiré",
+      "REVOKE" : "Révoqué",
+      "ACTIVATE" : "Activé",
+      "REGISTER" : "Enregistré",
+      "STAKE" : "Staké",
+      "UNSTAKE" : "Déstaké",
+      "WITHDRAW_UNSTAKED" : "Retiré",
+      "SENDING" : "Envoi",
+      "BURN" : "Brûlé"
     },
-    "edit": {
-      "title": "Accélérer ou annuler",
-      "description": "Votre transaction est en cours. Vous pouvez l’accélérer en augmentant les frais de réseau, ou l’annuler.",
-      "stuckDescription": "Votre transaction est bloquée. Accélérez-la en augmentant les frais de réseau, ou annulez-la.",
-      "previousFeesInfo": {
-        "pendingTransactionFeesInfo": "Info sur les frais des transactions en attente :",
-        "networkfee": "Frais de réseau = {{amount}}",
-        "maxFee": "Frais max. = {{amount}}",
-        "maxPriorityFee": "Frais de priorité maximaux = {{amount}}",
-        "gasPrice": "Prix du gaz = {{amount}}"
+    "edit" : {
+      "title" : "Accélérer ou annuler",
+      "description" : "Votre transaction est en cours. Vous pouvez l’accélérer en augmentant les frais de réseau, ou l’annuler.",
+      "stuckDescription" : "Votre transaction est bloquée. Accélérez-la en augmentant les frais de réseau, ou annulez-la.",
+      "previousFeesInfo" : {
+        "pendingTransactionFeesInfo" : "Info sur les frais des transactions en attente :",
+        "networkfee" : "Frais de réseau = {{amount}}",
+        "maxFee" : "Frais max. = {{amount}}",
+        "maxPriorityFee" : "Frais de priorité maximaux = {{amount}}",
+        "gasPrice" : "Prix du gaz = {{amount}}"
       },
-      "learnMore": "En savoir plus",
-      "panel": {
-        "title": "Accélérer ou annuler",
-        "description": "L’une de vos dernières transactions sortantes est bloquée. Accélérez-la en augmentant les frais de réseau, ou annulez-la."
+      "learnMore" : "En savoir plus",
+      "panel" : {
+        "title" : "Accélérer ou annuler",
+        "description" : "L’une de vos dernières transactions sortantes est bloquée. Accélérez-la en augmentant les frais de réseau, ou annulez-la."
       },
-      "speedUp": {
-        "title": "Accélérer",
-        "description": "Renvoyez votre transaction avec des frais de réseau plus élevés."
+      "speedUp" : {
+        "title" : "Accélérer",
+        "description" : "Renvoyez votre transaction avec des frais de réseau plus élevés."
       },
-      "cancel": {
-        "title": "Annuler",
-        "description": "Envoyez 0 {{ticker}} à votre propre adresse."
+      "cancel" : {
+        "title" : "Annuler",
+        "description" : "Envoyez 0 {{ticker}} à votre propre adresse."
       },
-      "steps": {
-        "method": {
-          "title": "Méthode"
+      "steps" : {
+        "method" : {
+          "title" : "Méthode"
         },
-        "fees": {
-          "title": "Frais"
+        "fees" : {
+          "title" : "Frais"
         },
-        "summary": {
-          "title": "Récapitulatif"
+        "summary" : {
+          "title" : "Récapitulatif"
         },
-        "device": {
-          "title": "Appareil"
+        "device" : {
+          "title" : "Appareil"
         },
-        "confirmation": {
-          "title": "Confirmation"
+        "confirmation" : {
+          "title" : "Confirmation"
         }
       },
       "error": {
@@ -1513,24 +1514,24 @@
         "description": "Obtenez des récompenses sur vos cryptos"
       }
     },
-    "recoverBanner": {
-      "subscribeDone": {
-        "title": "Ajoutez votre carte de paiement",
-        "description": "Restaurez en toute confiance avec Ledger Recover.",
-        "primaryCta": "Ajouter une carte",
-        "secondaryCta": "Plus tard"
+    "recoverBanner" : {
+      "subscribeDone" : {
+        "title" : "Rappel : finalisez votre abonnement à Ledger Recover",
+        "description" : "Plus que deux étapes avant d’être en sécurité.",
+        "primaryCta" : "Ajouter ma carte",
+        "secondaryCta" : "Plus tard"
       },
-      "verifyIdentity": {
-        "title": "Terminez la vérification d’identité",
-        "description": "Restaurez en toute confiance avec Ledger Recover.",
-        "primaryCta": "Vérifier",
-        "secondaryCta": "Plus tard"
+      "verifyIdentity" : {
+        "title" : "Rappel : finalisez votre abonnement à Ledger Recover",
+        "description" : "Plus qu’une étape avant d’être en sécurité.",
+        "primaryCta" : "Vérifier mon identité",
+        "secondaryCta" : "Plus tard"
       },
-      "connectDevice": {
-        "title": "Connectez votre appareil Ledger",
-        "description": "Dernière étape pour profiter de Ledger Recover.",
-        "primaryCta": "Connecter",
-        "secondaryCta": "Plus tard"
+      "connectDevice" : {
+        "title" : "Rappel : finalisez votre abonnement à Ledger Recover",
+        "description" : "Dernière étape pour sécuriser l’accès à votre wallet.",
+        "primaryCta" : "Connecter mon appareil",
+        "secondaryCta" : "Plus tard"
       }
     },
     "marketPerformanceWidget": {
@@ -3758,6 +3759,10 @@
           }
         }
       }
+    },
+    "token" : {
+      "frozenStateWarning" : "Les actifs du compte sont gelés",
+      "transferWarning" : "Pour vérifier l’adresse du bénéficiaire des tokens Solana avec un Ledger Nano S™, <0>suivez ces instructions</0>."
     }
   },
   "ethereum": {
@@ -6220,8 +6225,29 @@
     "SolanaAccountNotFunded": {
       "title": "Pas de fonds sur le compte"
     },
-    "SolanaMemoIsTooLong": {
-      "title": "Mémo trop long. Longueur maximale : {{maxLength}}"
+    "SolanaTokenAccountHoldsAnotherToken" : {
+      "title" : "Ce compte de tokens associé contient un autre token"
+    },
+    "SolanaTokenAccountWarning" : {
+      "title" : "Cette adresse n’est pas celle d’un wallet ordinaire, mais celle d’un compte de tokens associé. Ne poursuivez que si vous en comprenez les implications."
+    },
+    "SolanaTokenAccountNotAllowed" : {
+      "title" : "Ceci est un compte de tokens. Saisissez une adresse de wallet ordinaire"
+    },
+    "SolanaMintAccountNotAllowed" : {
+      "title" : "Ceci est une adresse de token. Saisissez une adresse de wallet ordinaire"
+    },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "Le compte sera provisionné"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "Les actifs du compte de tokens sont gelés"
+    },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "Compte non configuré"
+    },
+    "SolanaMemoIsTooLong" : {
+      "title" : "Mémo trop long. Longueur maximale : {{maxLength}}"
     },
     "SolanaAddressOfEd25519": {
       "title": "Adresse en dehors de la courbe ed25519"
@@ -6739,26 +6765,28 @@
           "description": "Synchronisez en signant avec votre appareil Ledger."
         }
       },
-      "qrCode": {
-        "title": "Synchroniser vos applications Ledger Live",
-        "options": {
-          "mobile": "Avec un téléphone",
-          "desktop": "Avec un ordinateur"
+      "qrCode" : {
+        "title" : "Synchroniser vos applications Ledger Live",
+        "options" : {
+          "mobile" : "Avec un téléphone",
+          "desktop" : "Avec un ordinateur"
         },
-        "mobile": {
-          "description": "Synchronisez avec l’application Ledger Live d’un autre téléphone",
-          "steps": {
-            "step1": "Ouvrez l’application Ledger Live à synchroniser.",
-            "step2": "Accédez à <0>Paramètres</0> > <0>Général</0> > <0>Ledger Sync</0> > <0>Activer Sync</0> > <0>Voir le code QR</0>.",
-            "step3": "Scannez le code QR."
+        "mobile" : {
+          "description" : "Synchronisez avec l’application Ledger Live d’un autre téléphone",
+          "steps" : {
+            "step1" : "Vérifiez que Ledger Sync est activé sur l’une de vos applications.",
+            "step2" : "Ouvrez l’application Ledger Live à synchroniser.",
+            "step3" : "Accédez à <0>Paramètres</0> > <0>Général</0> > <0>Ledger Sync</0> > <0>Je l’ai déjà activé</0> > <0>Voir le code QR</0>.",
+            "step4" : "Scannez le code QR."
           }
         },
-        "desktop": {
-          "description": "Synchronisez vos comptes avec une autre application Ledger Live",
-          "steps": {
-            "step1": "Ouvrez l’application Ledger Live à synchroniser.",
-            "step2": "Accédez à <0>Paramètres</0> > <0>Général</0> > <0>Ledger Sync</0> > <0>Activer Sync</0> > <0>Utiliser mon wallet Ledger</0>.",
-            "step3": "Connectez votre appareil Ledger."
+        "desktop" : {
+          "description" : "Synchronisez vos comptes avec une autre application Ledger Live",
+          "steps" : {
+            "step1" : "Vérifiez que Ledger Sync est activé sur l’une de vos applications.",
+            "step2" : "Ouvrez l’application Ledger Live à synchroniser.",
+            "step3" : "Accédez à <0>Paramètres</0> > <0>Général</0> > <0>Ledger Sync</0> > <0>Je l’ai déjà activé</0> > <0>Utiliser mon wallet Ledger</0>.",
+            "step4" : "Connectez votre appareil Ledger."
           }
         }
       },
