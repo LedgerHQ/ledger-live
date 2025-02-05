@@ -25,6 +25,7 @@ import {
 } from "./constants";
 import { shouldUseTrustedInputForSegwit } from "./shouldUseTrustedInputForSegwit";
 export type { AddressFormat };
+
 const defaultsSignTransaction = {
   lockTime: DEFAULT_LOCKTIME,
   sigHashType: SIGHASH_ALL,
@@ -44,13 +45,19 @@ const getZcashTransactionVersion = (blockHeight: number | undefined): Buffer => 
   return version;
 };
 
-const getDefaultVersions = (
-  isZcash: boolean,
-  sapling: boolean,
-  isDecred: boolean,
-  expiryHeight: Buffer | undefined,
-  blockHeight: number | undefined,
-): { defaultVersion: Buffer; defaultVersionNu5Only: Buffer } => {
+export const getDefaultVersions = ({
+  isZcash,
+  sapling,
+  isDecred,
+  expiryHeight,
+  blockHeight,
+}: {
+  isZcash: boolean;
+  sapling: boolean;
+  isDecred: boolean;
+  expiryHeight: Buffer | undefined;
+  blockHeight: number | undefined;
+}): { defaultVersion: Buffer; defaultVersionNu5Only: Buffer } => {
   let defaultVersion = Buffer.alloc(4);
   const defaultVersionNu5Only = Buffer.alloc(4);
 
@@ -168,13 +175,13 @@ export async function createTransaction(
   const nullScript = Buffer.alloc(0);
   const nullPrevout = Buffer.alloc(0);
 
-  const { defaultVersion, defaultVersionNu5Only } = getDefaultVersions(
+  const { defaultVersion, defaultVersionNu5Only } = getDefaultVersions({
     isZcash,
     sapling,
     isDecred,
     expiryHeight,
     blockHeight,
-  );
+  });
   // Default version to 2 for XST not to have timestamp
   const trustedInputs: Array<any> = [];
   const regularOutputs: Array<TransactionOutput> = [];
