@@ -3,4 +3,4 @@
 "live-mobile": minor
 ---
 
-DOT stake eearn more reward button redirecting to stakekit
+DOT stake earn more reward button redirecting to stakekit
