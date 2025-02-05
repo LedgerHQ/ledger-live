@@ -31,16 +31,24 @@ const AccountHeaderActions = ({ account, parentAccount, source }: Props) => {
 
   const onClickStakekit = useCallback(() => {
     const value = "/platform/stakekit";
-
-    history.push({
-      pathname: value,
-      state: {
-        yieldId: "cronos-cro-native-staking",
-        accountId: account.id,
-        returnTo: `/account/${account.id}`,
-      },
-    });
-  }, [account.id, history]);
+    if (!earnRewardEnabled) {
+      dispatch(
+        openModal("MODAL_NO_FUNDS_STAKE", {
+          account,
+          parentAccount,
+        }),
+      );
+    } else {
+      history.push({
+        pathname: value,
+        state: {
+          yieldId: "cronos-cro-native-staking",
+          accountId: account.id,
+          returnTo: `/account/${account.id}`,
+        },
+      });
+    }
+  }, [history, account, dispatch, earnRewardEnabled, parentAccount]);
 
   const onClick = useCallback(() => {
     if (account.type !== "Account") return;
