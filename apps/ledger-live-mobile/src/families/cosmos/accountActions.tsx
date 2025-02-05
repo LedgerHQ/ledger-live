@@ -23,6 +23,35 @@ const getMainActions = ({
   const label = getStakeLabelLocaleBased();
   const startWithValidator =
     account.cosmosResources && account.cosmosResources?.delegations.length > 0;
+  const isCroAccount =
+    account.type === "Account" &&
+    (account.currency.id === "crypto_org" || account.currency.id === "crypto_org_croeseid");
+
+  const getNavParams = (): NavigationParamsType =>
+    isCroAccount
+      ? [
+          ScreenName.PlatformApp,
+          {
+            params: {
+              platform: "stakekit",
+              name: "StakeKit",
+              accountId: account.id,
+              yieldId: "cronos-cro-native-staking",
+            },
+          },
+        ]
+      : [
+          NavigatorName.CosmosDelegationFlow,
+          {
+            screen: startWithValidator
+              ? ScreenName.CosmosDelegationValidator
+              : ScreenName.CosmosDelegationStarted,
+            params: {
+              source: parentRoute,
+              skipStartedStep: startWithValidator,
+            },
+          },
+        ];
   const navigationParams: NavigationParamsType = delegationDisabled
     ? [
         NavigatorName.NoFundsFlow,
@@ -34,18 +63,7 @@ const getMainActions = ({
           },
         },
       ]
-    : [
-        NavigatorName.CosmosDelegationFlow,
-        {
-          screen: startWithValidator
-            ? ScreenName.CosmosDelegationValidator
-            : ScreenName.CosmosDelegationStarted,
-          params: {
-            source: parentRoute,
-            skipStartedStep: startWithValidator,
-          },
-        },
-      ];
+    : getNavParams();
 
   return [
     {
@@ -54,7 +72,7 @@ const getMainActions = ({
       label: <Trans i18nKey={label} />,
       Icon: IconsLegacy.CoinsMedium,
       eventProperties: {
-        currency: "COSMOS",
+        currency: isCroAccount ? "CRO" : "COSMOS",
       },
     },
   ];
