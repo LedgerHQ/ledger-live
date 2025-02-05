@@ -92,6 +92,7 @@ export default class PortfolioPage {
     await tapByElement(this.lastTransactionAmount());
   }
 
+  @Step("Go to accounts")
   async goToAccounts(currencyName: string) {
     await tapById(this.assetRowNameId(currencyName));
   }

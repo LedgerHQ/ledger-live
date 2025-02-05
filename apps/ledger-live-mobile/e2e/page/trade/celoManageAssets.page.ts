@@ -1,7 +1,7 @@
 import { getElementById, waitForElementById, tapById } from "../../helpers";
 import { expect } from "detox";
 
-export default class ManageAssetsPage {
+export default class CeloManageAssetsPage {
   titleId = "live-app-title";
   title = () => getElementById(this.titleId);
   celoLockButton = "celo-lock-button";
@@ -11,22 +11,18 @@ export default class ManageAssetsPage {
   celoActivateVoteButton = "celo-activate-vote-button";
   celoRevokeButton = "celo-revoke-button";
 
-  async isOpened() {
-    await expect(this.title()).toBeVisible();
-  }
-
-  @Step("Wait for manage assets")
+  @Step("Wait for CELO manage assets")
   async waitForManageAssets() {
     await waitForElementById(this.titleId);
   }
 
   @Step("Click on Lock for CELO delegation")
-  async clickCeloLock() {
+  async clickLock() {
     await tapById(this.celoLockButton);
   }
 
-  @Step("Check celoManagePage")
-  async checkCeloManagePage() {
+  @Step("Check manage assets page - CELO")
+  async checkManagePage() {
     await this.waitForManageAssets();
     await expect(getElementById(this.celoLockButton)).toBeVisible();
     await expect(getElementById(this.celoUnlockButton)).toBeVisible();

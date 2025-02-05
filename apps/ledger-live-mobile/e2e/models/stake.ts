@@ -7,8 +7,8 @@ export async function verifyAppValidationStakeInfo(
   delegation: Delegate,
   amount: string,
 ) {
-  const currenciesForValidationAmount = [Currency.ATOM, Currency.NEAR];
-  const currenciesForValidationProvider = [Currency.ATOM];
+  const currenciesForValidationAmount = [Currency.ATOM, Currency.NEAR, Currency.CELO];
+  const currenciesForValidationProvider = [Currency.ATOM, Currency.XTZ];
 
   const currency = delegation.account.currency;
   const provider = delegation.provider;
@@ -30,9 +30,9 @@ export async function verifyStakeOperationDetailsInfo(
 ) {
   const currenciesForProvider = [Currency.ATOM];
   const currenciesForRecipientAsProvider = [Currency.NEAR];
-  const currenciesForSender = [Currency.NEAR, Currency.CELO];
+  const currenciesForSender = [Currency.NEAR, Currency.CELO, Currency.XTZ];
   const currenciesForAmount = [Currency.ATOM, Currency.NEAR];
-  const currenciesForDelegateType = [Currency.ATOM, Currency.SOL];
+  const currenciesForDelegateType = [Currency.ATOM, Currency.SOL, Currency.XTZ];
   const currenciesForStakeType = [Currency.NEAR];
   const currenciesForLockType = [Currency.CELO];
 
@@ -63,9 +63,4 @@ export async function verifyStakeOperationDetailsInfo(
   if (currenciesForLockType.includes(currency)) {
     await app.operationDetails.checkTransactionType("LOCK");
   }
-}
-
-export async function verifyCeloDelegationScreen(app: Application, delegation: Delegate) {
-  await app.operationDetails.waitForOperationDetails();
-  await app.operationDetails.checkAccount(delegation.account.accountName);
 }
