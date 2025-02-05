@@ -1,5 +1,24 @@
 # ledger-live-desktop
 
+## 2.98.0-nightly.4
+
+### Minor Changes
+
+- [#9105](https://github.com/LedgerHQ/ledger-live/pull/9105) [`8d8c399`](https://github.com/LedgerHQ/ledger-live/commit/8d8c39910d8ea791260800a83f34f176c8442d79) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - Fix tracking of clicks on new Portfolio cards
+
+- [#9060](https://github.com/LedgerHQ/ledger-live/pull/9060) [`5b78154`](https://github.com/LedgerHQ/ledger-live/commit/5b78154530d2c2794914207bd2e12578a52885f9) Thanks [@CremaFR](https://github.com/CremaFR)! - added near in the not supported coins for LNS
+
+- [#9102](https://github.com/LedgerHQ/ledger-live/pull/9102) [`de3d600`](https://github.com/LedgerHQ/ledger-live/commit/de3d60059ba9f864ed66a90fb6adf094e31272ba) Thanks [@semeano](https://github.com/semeano)! - Add Aptos to the list of not supported coins for swap with Ledger Nano S
+
+- [#8948](https://github.com/LedgerHQ/ledger-live/pull/8948) [`f65d055`](https://github.com/LedgerHQ/ledger-live/commit/f65d055a60744085e4896015dac0ebe211cc5534) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Update lottie animations
+
+- [#9020](https://github.com/LedgerHQ/ledger-live/pull/9020) [`5ab27af`](https://github.com/LedgerHQ/ledger-live/commit/5ab27af7672a56015f08f0908af7dfc5448c4dfe) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Add data tracking in the receive flow
+
+### Patch Changes
+
+- Updated dependencies [[`5b78154`](https://github.com/LedgerHQ/ledger-live/commit/5b78154530d2c2794914207bd2e12578a52885f9), [`de3d600`](https://github.com/LedgerHQ/ledger-live/commit/de3d60059ba9f864ed66a90fb6adf094e31272ba)]:
+  - @ledgerhq/live-common@34.20.0-nightly.4
+
 ## 2.98.0-nightly.3
 
 ### Minor Changes

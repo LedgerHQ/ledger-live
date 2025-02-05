@@ -1,5 +1,28 @@
 # live-mobile
 
+## 3.64.0-nightly.4
+
+### Minor Changes
+
+- [#9108](https://github.com/LedgerHQ/ledger-live/pull/9108) [`df1dac2`](https://github.com/LedgerHQ/ledger-live/commit/df1dac2c4bfd67bf480f4048614bbbf0e902ed85) Thanks [@themooneer](https://github.com/themooneer)! - Fix Scrollable UI on add account v2 scan step
+
+- [#9111](https://github.com/LedgerHQ/ledger-live/pull/9111) [`67e8b36`](https://github.com/LedgerHQ/ledger-live/commit/67e8b367ef5136f955e58a721358410eaac86e66) Thanks [@themooneer](https://github.com/themooneer)! - fix: 🐞 allow user to add funded account when 0$ account exist on his wallet (add account v2)
+
+- [#9060](https://github.com/LedgerHQ/ledger-live/pull/9060) [`5b78154`](https://github.com/LedgerHQ/ledger-live/commit/5b78154530d2c2794914207bd2e12578a52885f9) Thanks [@CremaFR](https://github.com/CremaFR)! - added near in the not supported coins for LNS
+
+- [#9102](https://github.com/LedgerHQ/ledger-live/pull/9102) [`de3d600`](https://github.com/LedgerHQ/ledger-live/commit/de3d60059ba9f864ed66a90fb6adf094e31272ba) Thanks [@semeano](https://github.com/semeano)! - Add Aptos to the list of not supported coins for swap with Ledger Nano S
+
+- [#9098](https://github.com/LedgerHQ/ledger-live/pull/9098) [`5f0169e`](https://github.com/LedgerHQ/ledger-live/commit/5f0169ef5a6beeaad9dc5a3e7ec397f017b090aa) Thanks [@themooneer](https://github.com/themooneer)! - Hide account already in the portfolio in add account v2 scan process
+
+- [#9094](https://github.com/LedgerHQ/ledger-live/pull/9094) [`ad7babc`](https://github.com/LedgerHQ/ledger-live/commit/ad7babc76e24bddff9c0ad3c5749db4c23e8383d) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Reborn return false to segment if LP ff is off
+
+- [#9097](https://github.com/LedgerHQ/ledger-live/pull/9097) [`ce939a1`](https://github.com/LedgerHQ/ledger-live/commit/ce939a12c51a1fbb4750fc3248b414f002937b8d) Thanks [@themooneer](https://github.com/themooneer)! - Use parentCurrency object transit to add account flow from token based selection
+
+### Patch Changes
+
+- Updated dependencies [[`5b78154`](https://github.com/LedgerHQ/ledger-live/commit/5b78154530d2c2794914207bd2e12578a52885f9), [`de3d600`](https://github.com/LedgerHQ/ledger-live/commit/de3d60059ba9f864ed66a90fb6adf094e31272ba)]:
+  - @ledgerhq/live-common@34.20.0-nightly.4
+
 ## 3.64.0-nightly.3
 
 ### Minor Changes

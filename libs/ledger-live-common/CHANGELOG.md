@@ -1,5 +1,13 @@
 ## 34.5.0-next.4
 
+## 34.20.0-nightly.4
+
+### Minor Changes
+
+- [#9060](https://github.com/LedgerHQ/ledger-live/pull/9060) [`5b78154`](https://github.com/LedgerHQ/ledger-live/commit/5b78154530d2c2794914207bd2e12578a52885f9) Thanks [@CremaFR](https://github.com/CremaFR)! - added near in the not supported coins for LNS
+
+- [#9102](https://github.com/LedgerHQ/ledger-live/pull/9102) [`de3d600`](https://github.com/LedgerHQ/ledger-live/commit/de3d60059ba9f864ed66a90fb6adf094e31272ba) Thanks [@semeano](https://github.com/semeano)! - Add Aptos to the list of not supported coins for swap with Ledger Nano S
+
 ## 34.20.0-nightly.3
 
 ### Patch Changes
