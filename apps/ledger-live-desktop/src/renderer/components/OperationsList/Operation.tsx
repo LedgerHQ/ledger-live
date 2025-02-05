@@ -41,7 +41,7 @@ type OwnProps = {
   text?: string;
   editable?: boolean;
 };
-type Props = OwnProps;
+export type Props = OwnProps;
 
 function OperationComponent({
   operation,

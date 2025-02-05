@@ -20,12 +20,12 @@ import Text from "~/renderer/components/Text";
 import { track } from "~/renderer/analytics/segment";
 import { createStructuredSelector } from "reselect";
 import { accountsSelector } from "~/renderer/reducers/accounts";
-import SectionTitle from "./SectionTitle";
-import OperationC from "./Operation";
 import TableContainer, { TableHeader } from "../TableContainer";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { isEditableOperation } from "@ledgerhq/live-common/operation";
+import { OperationGroup } from "./components/OperationGroup";
+import { OperationWrapper } from "./components/OperationWrapper";
 
 const ShowMore = styled(Box).attrs(() => ({
   horizontal: true,
@@ -129,46 +129,51 @@ export class OperationsList extends PureComponent<Props, State> {
               }}
             />
           )}
-          {groupedOperations?.sections.map(group => (
-            <Box key={group.day.toISOString()}>
-              <SectionTitle date={group.day} />
-              <Box p={0}>
-                {group.data.map(operation => {
-                  const account = accountsMap[operation.accountId];
-                  if (!account) {
-                    logger.warn(`no account found for operation ${operation.id}`);
-                    return null;
-                  }
-                  let parentAccount;
-                  if (account.type !== "Account") {
-                    const pa =
-                      accountsMap[account.parentId] ||
-                      allAccounts?.find(a => a.id === account.parentId);
-                    if (pa && pa.type === "Account") {
-                      parentAccount = pa;
-                    }
-                    if (!parentAccount) {
-                      logger.warn(`no token account found for token operation ${operation.id}`);
-                      return null;
-                    }
-                  }
-                  const mainAccount = getMainAccount(account, parentAccount);
-                  return (
-                    <OperationC
-                      operation={operation}
-                      account={account}
-                      parentAccount={parentAccount}
-                      key={`${account.id}_${operation.id}`}
-                      onOperationClick={this.handleClickOperation}
-                      t={t}
-                      withAccount={withAccount}
-                      editable={account && isEditableOperation({ account: mainAccount, operation })}
-                    />
-                  );
-                })}
-              </Box>
-            </Box>
-          ))}
+          {groupedOperations?.sections.map(group => {
+            const validOperations = group.data.map(operation => {
+              const account = accountsMap[operation.accountId];
+              if (!account) {
+                logger.warn(`no account found for operation ${operation.id}`);
+                return <></>;
+              }
+
+              let parentAccount;
+              if (account.type !== "Account") {
+                const pa =
+                  accountsMap[account.parentId] ||
+                  allAccounts?.find(a => a.id === account.parentId);
+                if (pa && pa.type === "Account") {
+                  parentAccount = pa;
+                }
+                if (!parentAccount) {
+                  logger.warn(`no token account found for token operation ${operation.id}`);
+                  return <></>;
+                }
+              }
+
+              const mainAccount = getMainAccount(account, parentAccount);
+              return (
+                <OperationWrapper
+                  key={`${account.id}_${operation.id}`}
+                  operation={operation}
+                  account={account}
+                  parentAccount={parentAccount}
+                  onOperationClick={this.handleClickOperation}
+                  t={t}
+                  withAccount={withAccount}
+                  editable={account && isEditableOperation({ account: mainAccount, operation })}
+                />
+              );
+            });
+
+            return (
+              <OperationGroup
+                key={`${group.day.toISOString()}`}
+                group={group}
+                validOperations={validOperations}
+              />
+            );
+          })}
         </TableContainer>
         {!groupedOperations?.completed ? (
           <ShowMore onClick={this.fetchMoreOperations}>

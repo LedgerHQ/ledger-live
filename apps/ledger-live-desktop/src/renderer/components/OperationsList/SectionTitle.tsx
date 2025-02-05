@@ -6,14 +6,15 @@ import { useCalendarFormatted } from "~/renderer/hooks/useDateFormatter";
 
 type Props = {
   date: Date;
+  className?: string;
 };
 
-const SectionTitle = ({ date }: Props) => {
+const SectionTitle = ({ date, className }: Props) => {
   const theme = useTheme();
   const txt = useCalendarFormatted(date);
 
   return (
-    <HeaderWrapper>
+    <HeaderWrapper className={className}>
       <Text fontWeight="semiBold" fontSize={3} color={theme.colors.palette.text.shade50}>
         {txt}
       </Text>
