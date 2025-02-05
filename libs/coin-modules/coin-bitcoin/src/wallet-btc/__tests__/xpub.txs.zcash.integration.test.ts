@@ -126,7 +126,6 @@ describe("testing zcash transactions", () => {
       utxoPickingStrategy,
       sequence: 0,
     });
-    debugger;
     const account = await wallet.generateAccount(
       {
         xpub: xpub.xpub,

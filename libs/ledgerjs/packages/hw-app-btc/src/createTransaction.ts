@@ -207,7 +207,6 @@ export async function createTransaction(
       }
       const trustedInput = await getTrustedInputCall(transport, input[1], input[0], additionals);
       log("hw", "got trustedInput=" + trustedInput);
-      debugger;
       const sequence = Buffer.alloc(4);
       sequence.writeUInt32LE(
         input.length >= 4 && typeof input[3] === "number" ? input[3] : DEFAULT_SEQUENCE,

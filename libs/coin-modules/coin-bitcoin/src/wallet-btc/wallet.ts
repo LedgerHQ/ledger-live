@@ -215,8 +215,7 @@ class BitcoinLikeWallet {
       onDeviceSignatureGranted,
       onDeviceStreaming,
     } = params;
-    let blockHeight = fromAccount.xpub.currentBlockHeight
-    debugger;
+    const blockHeight = fromAccount.xpub.currentBlockHeight;
     let length = txInfo.outputs.reduce((sum, output) => {
       return sum + 8 + output.script.length + 1;
     }, 1);
