@@ -60,7 +60,7 @@ export default function StellarMemoValueRow({ account, transaction }: Props) {
           title={<Trans i18nKey={`stellar.memoType.${memoType || "NO_MEMO"}`} />}
           onPress={editMemo}
         >
-          <LText semiBold style={styles.tagText} onPress={editMemo}>
+          <LText semiBold style={styles.tagText} onPress={editMemo} testID="summary-memo-tag">
             {String(memoValue)}
           </LText>
         </SummaryRow>

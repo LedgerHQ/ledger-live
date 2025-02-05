@@ -5,19 +5,19 @@ import europaTransferBackgroundLight from "./assets/europaTransferBackgroundLigh
 import europaTransferBackgroundDark from "./assets/europaTransferBackgroundDark.png";
 import { FramedPictureConfig } from "./FramedPicture";
 
-const STAX_FRAME_HEIGHT = 944;
-const STAX_FRAME_WIDTH = 600;
+const STAX_FRAME_HEIGHT = 960;
+const STAX_FRAME_WIDTH = 960;
 
 export const staxTransferConfig: Omit<FramedPictureConfig, "backgroundSource"> = {
   frameHeight: STAX_FRAME_HEIGHT / 4,
   frameWidth: STAX_FRAME_WIDTH / 4,
-  innerHeight: 223,
-  innerWidth: 140.5,
+  innerHeight: 192,
+  innerWidth: 122,
   innerRight: 8,
-  innerTop: 7,
-  innerLeft: 1.5,
-  innerBottomHeight: 27,
-  borderRightRadius: 6.5,
+  innerTop: 22,
+  innerLeft: 58,
+  innerBottomHeight: 0,
+  borderRightRadius: 10,
 };
 
 const EUROPA_FRAME_WIDTH = 572;

@@ -235,7 +235,6 @@ const styles = StyleSheet.create({
   innerContent: {
     paddingBottom: 24,
     backgroundColor: "transparent",
-    flex: 1,
   },
   button: {
     flex: 1,

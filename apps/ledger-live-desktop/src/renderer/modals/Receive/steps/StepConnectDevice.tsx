@@ -34,6 +34,7 @@ export default function StepConnectDevice({
         request={request}
         onResult={() => transitionTo("receive")}
         analyticsPropertyFlow="receive"
+        location="Receive Modal"
       />
     </>
   );

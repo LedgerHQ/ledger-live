@@ -81,6 +81,7 @@ import { getNoSuchAppProviderLearnMoreMetadataPerApp, isDeviceNotOnboardedError 
 import { useKeepScreenAwake } from "~/renderer/hooks/useKeepScreenAwake";
 import { walletSelector } from "~/renderer/reducers/wallet";
 import { useTrackManagerSectionEvents } from "~/renderer/analytics/hooks/useTrackManagerSectionEvents";
+import { useTrackReceiveFlow } from "~/renderer/analytics/hooks/useTrackReceiveFlow";
 
 type LedgerError = InstanceType<LedgerErrorConstructor<{ [key: string]: unknown }>>;
 
@@ -245,6 +246,14 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     allowManagerRequested: hookState.allowManagerRequested,
     clsImageRemoved: hookState.imageRemoved,
     error,
+    isTrackingEnabled: useSelector(trackingEnabledSelector),
+  });
+
+  useTrackReceiveFlow({
+    location,
+    device,
+    error,
+    inWrongDeviceForAccount,
     isTrackingEnabled: useSelector(trackingEnabledSelector),
   });
 

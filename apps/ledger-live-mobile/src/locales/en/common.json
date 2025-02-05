@@ -3507,8 +3507,12 @@
         "ton_description": "To swap Ton, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
         "spl_tokens_title": "Ledger Nano S™ does not support swapping Solana tokens",
         "spl_tokens_description": "To swap Solana tokens, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+        "near_title": "Ledger Nano S™ does not support swapping Near",
+        "near_description": "To swap Near, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
         "ada_title": "Ledger Nano S™ does not support swapping Cardano",
-        "ada_description": "To swap Cardano, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
+        "ada_description": "To swap Cardano, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+        "apt_title": "Ledger Nano S™ does not support swapping Aptos",
+        "apt_description": "To swap Aptos, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
       }
     },
     "lending": {
@@ -4087,10 +4091,6 @@
         },
         "creatable": {
           "title": "New account"
-        },
-        "imported": {
-          "title": "Account already in the Portfolio ({{count}})",
-          "title_plural": "Accounts already in the Portfolio ({{count}})"
         },
         "migrate": {
           "title": "Accounts to update"

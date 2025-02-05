@@ -24,5 +24,12 @@ export function GenericMemoTagInput<T extends Transaction>({
     onChange({ value, patch });
   };
 
-  return <AnimatedInput {...inputProps} value={value} onChangeText={handleChange} />;
+  return (
+    <AnimatedInput
+      {...inputProps}
+      value={value}
+      onChangeText={handleChange}
+      testID="memo-tag-input"
+    />
+  );
 }

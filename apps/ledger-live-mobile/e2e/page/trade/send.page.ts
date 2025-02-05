@@ -8,6 +8,7 @@ import {
   tapByElement,
   IsIdVisible,
   getTextOfElement,
+  getElementByText,
 } from "../../helpers";
 import { expect } from "detox";
 import jestExpect from "expect";
@@ -18,6 +19,8 @@ export default class SendPage {
   summaryAmountId = "send-summary-amount";
   summaryRecipient = () => getElementById("send-summary-recipient");
   summaryRecipientEns = () => getElementById("send-summary-recipient-ens");
+  summaryMemoTagId = "summary-memo-tag";
+  summaryMemoTag = () => getElementById(this.summaryMemoTagId);
   validationAmountId = "send-validation-amount";
   validationAddressId = "send-validation-address";
   validationEnsId = "send-validation-domain";
@@ -25,6 +28,9 @@ export default class SendPage {
   recipientContinueButtonId = "recipient-continue-button";
   recipientInputId = "recipient-input";
   recipientErrorId = "send-recipient-error";
+  memoTagInputId = "memo-tag-input";
+  memoTagDrawerTitleId = "memo-tag-drawer-title";
+  memoTagIgnoreButtonId = "memo-tag-ignore-button";
   amountInputId = "amount-input";
   amountErrorId = "send-amount-error";
   amountMaxSwitch = () => getElementById("send-amount-max-switch");
@@ -33,6 +39,7 @@ export default class SendPage {
   summaryWarning = () => getElementById("send-summary-warning");
   summaryContinueButton = () => getElementById("summary-continue-button");
   highFreeConfirmButtonID = "confirmation-modal-confirm-button";
+  feeStrategy = (fee: string) => getElementByText(fee);
 
   async openViaDeeplink() {
     await openDeeplink(baseLink);
@@ -47,13 +54,22 @@ export default class SendPage {
     await expect(this.getStep1HeaderTitle()).toBeVisible();
   }
 
-  async setRecipient(address: string) {
+  @Step("Set recipient and memo tag")
+  async setRecipient(address: string, memoTag?: string) {
     await typeTextById(this.recipientInputId, address);
+    if (memoTag && memoTag !== "noTag") {
+      await typeTextById(this.memoTagInputId, memoTag);
+    }
   }
 
-  async recipientContinue() {
+  @Step("Continue to next step and skip memo tag if needed")
+  async recipientContinue(memoTag?: string) {
     await waitForElementById(this.recipientContinueButtonId); // To prevent flakiness
     await tapById(this.recipientContinueButtonId);
+    if (memoTag == "noTag") {
+      await waitForElementById(this.memoTagDrawerTitleId);
+      await tapById(this.memoTagIgnoreButtonId);
+    }
   }
 
   @Step("Expect recipient error message")
@@ -72,9 +88,9 @@ export default class SendPage {
   }
 
   @Step("Set recipient and continue")
-  async setRecipientAndContinue(address: string) {
-    await this.setRecipient(address);
-    await this.recipientContinue();
+  async setRecipientAndContinue(address: string, memoTag?: string) {
+    await this.setRecipient(address, memoTag);
+    await this.recipientContinue(memoTag);
   }
 
   @Step("Set the amount and return the value")
@@ -152,6 +168,14 @@ export default class SendPage {
     await expect(this.summaryRecipientEns()).toHaveText(ensName);
   }
 
+  @Step("Expect memo tag in summary")
+  async expectSummaryMemoTag(memoTag?: string) {
+    if (memoTag && memoTag !== "noTag") await expect(this.summaryMemoTag()).toHaveText(memoTag);
+    else if (await IsIdVisible(this.summaryMemoTagId)) {
+      await expect(this.summaryMemoTag()).toHaveText("");
+    }
+  }
+
   @Step("Dismiss high fee modal if visible")
   async dismissHighFeeModal() {
     if (await IsIdVisible(this.highFreeConfirmButtonID))
@@ -174,5 +198,12 @@ export default class SendPage {
   async expectValidationEnsName(ensName: string) {
     await waitForElementById(this.validationEnsId);
     await expect(getElementById(this.validationEnsId)).toHaveText(ensName);
+  }
+
+  @Step("choose fee startegy")
+  async chooseFeeStrategy(fee: string | undefined) {
+    if (fee) {
+      await tapByElement(this.feeStrategy(fee));
+    }
   }
 }

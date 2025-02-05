@@ -59,7 +59,7 @@ describe("Send flow", () => {
       await app.common.performSearch(accountName);
       await app.common.selectAccount(account.id);
       await app.send.setRecipient(account.freshAddress);
-      await app.send.recipientContinue();
+      await app.send.recipientContinue(account.currency.name == "Cosmos" ? "noTag" : undefined);
       await app.send.setAmount(amountInput);
       await app.send.amountContinue();
       await app.send.expectSummaryAmount(amountWithCode);

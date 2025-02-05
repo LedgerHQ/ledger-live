@@ -910,13 +910,7 @@ export const renderConnectYourDevice = ({
   <Wrapper>
     <Header />
     <AnimationWrapper>
-      <Animation
-        animation={getDeviceAnimation(
-          modelId,
-          type,
-          unresponsive ? "enterPinCode" : "plugAndPinCode",
-        )}
-      />
+      <Animation animation={getDeviceAnimation(modelId, type, "enterPinCode")} />
     </AnimationWrapper>
     <Footer>
       <Title>
