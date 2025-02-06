@@ -599,8 +599,8 @@ importers:
         specifier: 7.2.1
         version: 7.2.1(@types/react@18.2.73)(react@18.3.1)
       undici:
-        specifier: 6.19.2
-        version: 6.19.2
+        specifier: 6.21.1
+        version: 6.21.1
       uuid:
         specifier: 9.0.1
         version: 9.0.1
@@ -4515,8 +4515,8 @@ importers:
         specifier: 5.1.3
         version: 5.1.3
       undici:
-        specifier: 6.19.2
-        version: 6.19.2
+        specifier: 6.21.1
+        version: 6.21.1
       uuid:
         specifier: ^8.3.2
         version: 8.3.2
@@ -6899,7 +6899,7 @@ importers:
         version: link:../coin-framework
       '@ledgerhq/compressjs':
         specifier: github:LedgerHQ/compressjs#d9e8e4d994923e0ea76a32b97289bcccfe71b82e
-        version: https://codeload.github.com/LedgerHQ/compressjs/tar.gz/d9e8e4d994923e0ea76a32b97289bcccfe71b82e
+        version: git+https://git@github.com:LedgerHQ/compressjs.git#d9e8e4d994923e0ea76a32b97289bcccfe71b82e
       '@ledgerhq/cryptoassets':
         specifier: workspace:*
         version: link:../ledgerjs/packages/cryptoassets
@@ -12009,8 +12009,8 @@ packages:
   '@kwsites/promise-deferred@1.1.1':
     resolution: {integrity: sha512-GaHYm+c0O9MjZRu0ongGBRbinu8gVAMd2UZjji6jVmqKtZluZnptXGWhz1E8j8D2HJ3f/yMxKAUC0b+57wncIw==}
 
-  '@ledgerhq/compressjs@https://codeload.github.com/LedgerHQ/compressjs/tar.gz/d9e8e4d994923e0ea76a32b97289bcccfe71b82e':
-    resolution: {tarball: https://codeload.github.com/LedgerHQ/compressjs/tar.gz/d9e8e4d994923e0ea76a32b97289bcccfe71b82e}
+  '@ledgerhq/compressjs@git+https://git@github.com:LedgerHQ/compressjs.git#d9e8e4d994923e0ea76a32b97289bcccfe71b82e':
+    resolution: {commit: d9e8e4d994923e0ea76a32b97289bcccfe71b82e, repo: git@github.com:LedgerHQ/compressjs.git, type: git}
     version: 1.3.1
     hasBin: true
 
@@ -21009,10 +21009,13 @@ packages:
     resolution: {integrity: sha512-06OKXQmKI0vuje++6lm7w1kO3rKsZAHio/4d9hwQuVAtExJ6RM92BnpzkDAV16ZheVN/FHKzNyY1BYLqXfujMw==}
     peerDependencies:
       expo: '*'
+      expo-constants: '*'
       expo-modules-core: '*'
       react: '*'
       react-native: '*'
     peerDependenciesMeta:
+      expo-constants:
+        optional: true
       expo-modules-core:
         optional: true
       react:
@@ -21024,10 +21027,13 @@ packages:
     resolution: {integrity: sha512-9tNY3OVO0jfiMzl7ngb6IOyR5VFzNoN5OOazUWoeGfmMqVB5kltTemRvKraK9JRbBKIw+SOYLEmF0sEqgFZ6OQ==}
     peerDependencies:
       expo: '*'
+      expo-constants: '*'
       expo-modules-core: '*'
       react: '*'
       react-native: '*'
     peerDependenciesMeta:
+      expo-constants:
+        optional: true
       expo-modules-core:
         optional: true
       react:
@@ -21225,10 +21231,13 @@ packages:
     resolution: {integrity: sha512-y8yDWjOi+rQRdO+HY+LnUlz8qzHerUaw/LUjKPU/mX8PRXP4UUPEEp5fjAwBU44xjNmYSHWZDwet4IBBE+yQUA==}
     peerDependencies:
       expo-constants: '*'
+      expo-modules-core: '*'
       react: '*'
       react-native: '*'
     peerDependenciesMeta:
       expo-constants:
+        optional: true
+      expo-modules-core:
         optional: true
       react:
         optional: true
@@ -30140,12 +30149,12 @@ packages:
   undici-types@6.20.0:
     resolution: {integrity: sha512-Ny6QZ2Nju20vw1SRHe3d9jVu6gJ+4e3+MMpqu7pqE5HT6WsTSlce++GQmK5UXS8mzV8DSYHrQH+Xrf2jVcuKNg==}
 
-  undici@5.28.3:
-    resolution: {integrity: sha512-3ItfzbrhDlINjaP0duwnNsKpDQk3acHI3gVJ1z4fmwMK31k5G9OVIAMLSIaP6w4FaGkaAkN6zaQO9LUvZ1t7VA==}
+  undici@5.28.5:
+    resolution: {integrity: sha512-zICwjrDrcrUE0pyyJc1I2QzBkLM8FINsgOrt6WjA+BgajVq9Nxu2PbFFXUrAggLfDXlZGZBVZYw7WNV5KiBiBA==}
     engines: {node: '>=14.0'}
 
-  undici@6.19.2:
-    resolution: {integrity: sha512-JfjKqIauur3Q6biAtHJ564e3bWa8VvT+7cSiOJHFbX4Erv6CLGDpg8z+Fmg/1OI/47RA+GI2QZaF48SSaLvyBA==}
+  undici@6.21.1:
+    resolution: {integrity: sha512-q/1rj5D0/zayJB2FraXdaWxbhWiNKDvu8naDT2dl1yTlvJp4BLtOcp2a5BvgGNQpYYJzau7tf1WgKv3b+7mqpQ==}
     engines: {node: '>=18.17'}
 
   unfetch@4.2.0:
@@ -31551,7 +31560,7 @@ snapshots:
       '@octokit/core': 5.1.0
       '@octokit/plugin-paginate-rest': 9.2.1(@octokit/core@5.1.0)
       '@octokit/plugin-rest-endpoint-methods': 10.4.1(@octokit/core@5.1.0)
-      undici: 6.19.2
+      undici: 6.21.1
 
   '@actions/glob@0.1.2':
     dependencies:
@@ -31561,7 +31570,7 @@ snapshots:
   '@actions/http-client@2.2.1':
     dependencies:
       tunnel: 0.0.6
-      undici: 5.28.3
+      undici: 5.28.5
 
   '@actions/io@1.1.3': {}
 
@@ -38648,7 +38657,7 @@ snapshots:
 
   '@kwsites/promise-deferred@1.1.1': {}
 
-  '@ledgerhq/compressjs@https://codeload.github.com/LedgerHQ/compressjs/tar.gz/d9e8e4d994923e0ea76a32b97289bcccfe71b82e':
+  '@ledgerhq/compressjs@git+https://git@github.com:LedgerHQ/compressjs.git#d9e8e4d994923e0ea76a32b97289bcccfe71b82e':
     dependencies:
       commander: 2.20.3
 
@@ -52595,6 +52604,7 @@ snapshots:
       expo: 51.0.39(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(expo-constants@14.5.1)(expo-modules-core@1.12.26)(metro-core@0.80.12)(metro@0.80.12)(react-native@0.75.4(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1)(typescript@5.4.3))(react@18.3.1)
       uuid: 3.4.0
     optionalDependencies:
+      expo-constants: 14.5.1(expo-modules-core@1.12.26)(expo@51.0.39)(react-native@0.75.4(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1)(typescript@5.4.3))(react@18.3.1)
       expo-modules-core: 1.12.26(expo-constants@14.5.1)(react-native@0.75.4(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1)(typescript@5.4.3))(react@18.3.1)
       react: 18.3.1
       react-native: 0.75.4(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1)(typescript@5.4.3)
@@ -52607,6 +52617,7 @@ snapshots:
       '@expo/env': 0.3.0
       expo: 51.0.39(@babel/core@7.24.3)(expo-modules-autolinking@1.11.2(expo-modules-core@1.12.26(react-native@0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3))(react@18.3.1))(react-native@0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3))(react@18.3.1))(expo-modules-core@1.12.26(react-native@0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3))(react@18.3.1))(react-native@0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3))(react@18.3.1)
     optionalDependencies:
+      expo-constants: 16.0.2(expo-modules-core@1.12.26(react-native@0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3))(react@18.3.1))(expo@51.0.39(@babel/core@7.24.3)(expo-modules-autolinking@1.11.2(expo-modules-core@1.12.26(react-native@0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3))(react@18.3.1))(react-native@0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3))(react@18.3.1))(expo-modules-core@1.12.26(react-native@0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3))(react@18.3.1))(react-native@0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3))(react@18.3.1))(react-native@0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3))(react@18.3.1)
       expo-modules-core: 1.12.26(react-native@0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3))(react@18.3.1)
       react: 18.3.1
       react-native: 0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3)
@@ -52619,6 +52630,7 @@ snapshots:
       '@expo/env': 0.3.0
       expo: 51.0.39(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(expo-constants@14.5.1)(expo-modules-core@1.12.26)(metro-core@0.80.12)(metro@0.80.12)(react-native@0.75.4(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1)(typescript@5.4.3))(react@18.3.1)
     optionalDependencies:
+      expo-constants: 16.0.2(expo-modules-core@1.12.26)(expo@51.0.39)(react-native@0.75.4(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1)(typescript@5.4.3))(react@18.3.1)
       expo-modules-core: 1.12.26(expo-constants@14.5.1)(react-native@0.75.4(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1)(typescript@5.4.3))(react@18.3.1)
       react: 18.3.1
       react-native: 0.75.4(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1)(typescript@5.4.3)
@@ -52630,6 +52642,8 @@ snapshots:
       '@expo/config': 9.0.4
       '@expo/env': 0.3.0
       expo: 51.0.39
+    optionalDependencies:
+      expo-constants: 16.0.2(expo@51.0.39)
     transitivePeerDependencies:
       - supports-color
 
@@ -52771,6 +52785,7 @@ snapshots:
       invariant: 2.2.4
     optionalDependencies:
       expo-constants: 14.5.1(expo-modules-core@1.12.26)(expo@51.0.39)(react-native@0.75.4(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1)(typescript@5.4.3))(react@18.3.1)
+      expo-modules-core: 1.12.26(expo-constants@14.5.1)(react-native@0.75.4(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1)(typescript@5.4.3))(react@18.3.1)
       react: 18.3.1
       react-native: 0.75.4(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1)(typescript@5.4.3)
 
@@ -52778,6 +52793,7 @@ snapshots:
     dependencies:
       invariant: 2.2.4
     optionalDependencies:
+      expo-modules-core: 1.12.26(react-native@0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3))(react@18.3.1)
       react: 18.3.1
       react-native: 0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3)
 
@@ -65870,11 +65886,11 @@ snapshots:
 
   undici-types@6.20.0: {}
 
-  undici@5.28.3:
+  undici@5.28.5:
     dependencies:
       '@fastify/busboy': 2.1.1
 
-  undici@6.19.2: {}
+  undici@6.21.1: {}
 
   unfetch@4.2.0: {}
 
