@@ -1,5 +1,11 @@
 # @ledgerhq/coin-aptos
 
+## 1.4.1-nightly.0
+
+### Patch Changes
+
+- [#9107](https://github.com/LedgerHQ/ledger-live/pull/9107) [`42f1657`](https://github.com/LedgerHQ/ledger-live/commit/42f1657f8678474b9974f6105c76eae55511b0e6) Thanks [@semeano](https://github.com/semeano)! - Fix Aptos bridge integration tests
+
 ## 1.4.0
 
 ### Minor Changes

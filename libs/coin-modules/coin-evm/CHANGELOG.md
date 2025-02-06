@@ -1,5 +1,11 @@
 # @ledgerhq/coin-evm
 
+## 2.9.3-nightly.0
+
+### Patch Changes
+
+- [#9082](https://github.com/LedgerHQ/ledger-live/pull/9082) [`07ec8a0`](https://github.com/LedgerHQ/ledger-live/commit/07ec8a0204368f47d05ec7481375dfdc04e0b15a) Thanks [@qperrot](https://github.com/qperrot)! - Fix specs test for blast and blast_sepolia
+
 ## 2.9.2
 
 ### Patch Changes

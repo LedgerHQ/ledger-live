@@ -1,5 +1,21 @@
 ## 34.5.0-next.4
 
+## 34.21.0-nightly.0
+
+### Minor Changes
+
+- [#9096](https://github.com/LedgerHQ/ledger-live/pull/9096) [`49cb00c`](https://github.com/LedgerHQ/ledger-live/commit/49cb00cca4ac96634a4e052ec6a007a19cb73ed5) Thanks [@semeano](https://github.com/semeano)! - Update WalletAPI dependencies
+
+### Patch Changes
+
+- [#9107](https://github.com/LedgerHQ/ledger-live/pull/9107) [`42f1657`](https://github.com/LedgerHQ/ledger-live/commit/42f1657f8678474b9974f6105c76eae55511b0e6) Thanks [@semeano](https://github.com/semeano)! - Fix Aptos bridge integration tests
+
+- Updated dependencies [[`42f1657`](https://github.com/LedgerHQ/ledger-live/commit/42f1657f8678474b9974f6105c76eae55511b0e6), [`49cb00c`](https://github.com/LedgerHQ/ledger-live/commit/49cb00cca4ac96634a4e052ec6a007a19cb73ed5), [`07ec8a0`](https://github.com/LedgerHQ/ledger-live/commit/07ec8a0204368f47d05ec7481375dfdc04e0b15a)]:
+  - @ledgerhq/coin-aptos@1.4.1-nightly.0
+  - @ledgerhq/wallet-api-acre-module@0.2.0-nightly.0
+  - @ledgerhq/wallet-api-exchange-module@0.10.0-nightly.0
+  - @ledgerhq/coin-evm@2.9.3-nightly.0
+
 ## 34.20.0
 
 ### Minor Changes

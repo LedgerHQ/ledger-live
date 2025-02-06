@@ -1,5 +1,19 @@
 # live-mobile
 
+## 3.65.0-nightly.0
+
+### Minor Changes
+
+- [#9124](https://github.com/LedgerHQ/ledger-live/pull/9124) [`655cbd9`](https://github.com/LedgerHQ/ledger-live/commit/655cbd96d528379c39886429389c697e1752a106) Thanks [@LucasWerey](https://github.com/LucasWerey)! - fix an issue introduced in a previous PR that hide the add account button
+
+- [#9114](https://github.com/LedgerHQ/ledger-live/pull/9114) [`d34d013`](https://github.com/LedgerHQ/ledger-live/commit/d34d013fa9d5d6e9ea1f993f380283be6e899e6a) Thanks [@themooneer](https://github.com/themooneer)! - When a tag is displayed, the full account name should not be truncated
+
+### Patch Changes
+
+- Updated dependencies [[`42f1657`](https://github.com/LedgerHQ/ledger-live/commit/42f1657f8678474b9974f6105c76eae55511b0e6), [`49cb00c`](https://github.com/LedgerHQ/ledger-live/commit/49cb00cca4ac96634a4e052ec6a007a19cb73ed5), [`07ec8a0`](https://github.com/LedgerHQ/ledger-live/commit/07ec8a0204368f47d05ec7481375dfdc04e0b15a)]:
+  - @ledgerhq/live-common@34.21.0-nightly.0
+  - @ledgerhq/coin-evm@2.9.3-nightly.0
+
 ## 3.64.0
 
 ### Minor Changes
