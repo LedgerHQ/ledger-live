@@ -160,87 +160,88 @@
     "stax": "Stax",
     "blue": "Blue"
   },
-  "operation": {
-    "type": {
-      "IN": "Alındı",
-      "OUT": "Gönderildi",
-      "NFT_IN": "NFT Alındı",
-      "NFT_OUT": "NFT Gönderildi",
-      "CREATE": "Oluşturuldu",
-      "REVEAL": "Adres gösterildi",
-      "DELEGATE": "Yetki devredildi",
-      "REDELEGATE": "Yetki yeniden devredildi",
-      "UNDELEGATE": "Yetki devri iptal edildi",
-      "APPROVE": "Onaylandı",
-      "VOTE": "Oylandı",
-      "FREEZE": "Donduruldu",
-      "UNFREEZE": "Çözüldü",
-      "UNDELEGATE_RESOURCE": "Yetki devri iptal edildi",
-      "WITHDRAW_EXPIRE_UNFREEZE": "Çekim",
-      "LEGACYUNFREEZE": "Çözüldü",
-      "REWARD": "Ödül alındı",
-      "FEES": "Ücretler",
-      "OPT_IN": "Onayla",
-      "OPT_OUT": "Reddet",
-      "CLOSE_ACCOUNT": "Hesabı kapat",
-      "BOND": "Bağla",
-      "UNBOND": "Çöz",
-      "REWARD_PAYOUT": "Ödül",
-      "SLASH": "Kesinti",
-      "WITHDRAW_UNBONDED": "Çekim",
-      "NOMINATE": "Aday gösterme",
-      "CHILL": "Aday gösterimlerini temizle",
-      "SET_CONTROLLER": "Denetleyici belirle",
-      "LOCK": "Kilitlendi",
-      "UNLOCK": "Kilit açıldı",
-      "WITHDRAW": "Çekildi",
-      "REVOKE": "İptal Edildi",
-      "ACTIVATE": "Etkinleştirildi",
-      "REGISTER": "Kaydedildi",
-      "STAKE": "Stake edildi",
-      "UNSTAKE": "Stake durdurma",
-      "WITHDRAW_UNSTAKED": "Çekildi",
-      "SENDING": "Gönderiliyor"
+  "operation" : {
+    "type" : {
+      "IN" : "Alındı",
+      "OUT" : "Gönderildi",
+      "NFT_IN" : "NFT Alındı",
+      "NFT_OUT" : "NFT Gönderildi",
+      "CREATE" : "Oluşturuldu",
+      "REVEAL" : "Adres gösterildi",
+      "DELEGATE" : "Yetki devredildi",
+      "REDELEGATE" : "Yetki yeniden devredildi",
+      "UNDELEGATE" : "Yetki devri iptal edildi",
+      "APPROVE" : "Onaylandı",
+      "VOTE" : "Oylandı",
+      "FREEZE" : "Donduruldu",
+      "UNFREEZE" : "Çözüldü",
+      "UNDELEGATE_RESOURCE" : "Yetki devri iptal edildi",
+      "WITHDRAW_EXPIRE_UNFREEZE" : "Çekim",
+      "LEGACYUNFREEZE" : "Çözüldü",
+      "REWARD" : "Ödül alındı",
+      "FEES" : "Ücretler",
+      "OPT_IN" : "Onayla",
+      "OPT_OUT" : "Reddet",
+      "CLOSE_ACCOUNT" : "Hesabı kapat",
+      "BOND" : "Bağla",
+      "UNBOND" : "Çöz",
+      "REWARD_PAYOUT" : "Ödül",
+      "SLASH" : "Kesinti",
+      "WITHDRAW_UNBONDED" : "Çekim",
+      "NOMINATE" : "Aday gösterme",
+      "CHILL" : "Aday gösterimlerini temizle",
+      "SET_CONTROLLER" : "Denetleyici belirle",
+      "LOCK" : "Kilitlendi",
+      "UNLOCK" : "Kilit açıldı",
+      "WITHDRAW" : "Çekildi",
+      "REVOKE" : "İptal Edildi",
+      "ACTIVATE" : "Etkinleştirildi",
+      "REGISTER" : "Kaydedildi",
+      "STAKE" : "Stake edildi",
+      "UNSTAKE" : "Stake durdurma",
+      "WITHDRAW_UNSTAKED" : "Çekildi",
+      "SENDING" : "Gönderiliyor",
+      "BURN" : "Yakıldı"
     },
-    "edit": {
-      "title": "Hızlandırın veya İptal Edin",
-      "description": "İşleminiz devam ediyor. Daha yüksek bir ağ ücretiyle hızlandırabilir ya da işlemi iptal edebilirsiniz.",
-      "stuckDescription": "İşleminiz takıldı. Daha yüksek bir ağ ücretiyle hızlandırın veya işlemi iptal edin.",
-      "previousFeesInfo": {
-        "pendingTransactionFeesInfo": "Bekleyen işlem ücreti bilgileri:",
-        "networkfee": "Ağ ücreti = {{amount}}",
-        "maxFee": "Maks. ücret = {{amount}}",
-        "maxPriorityFee": "Maks. Öncelik ücreti = {{amount}}",
-        "gasPrice": "Gas Ücreti = {{amount}}"
+    "edit" : {
+      "title" : "Hızlandırın veya İptal Edin",
+      "description" : "İşleminiz devam ediyor. Daha yüksek bir ağ ücretiyle hızlandırabilir ya da işlemi iptal edebilirsiniz.",
+      "stuckDescription" : "İşleminiz takıldı. Daha yüksek bir ağ ücretiyle hızlandırın veya işlemi iptal edin.",
+      "previousFeesInfo" : {
+        "pendingTransactionFeesInfo" : "Bekleyen işlem ücreti bilgileri:",
+        "networkfee" : "Ağ ücreti = {{amount}}",
+        "maxFee" : "Maks. ücret = {{amount}}",
+        "maxPriorityFee" : "Maks. Öncelik ücreti = {{amount}}",
+        "gasPrice" : "Gas Ücreti = {{amount}}"
       },
-      "learnMore": "Daha fazla bilgi almak istiyorum",
-      "panel": {
-        "title": "Hızlandırın veya İptal Edin",
-        "description": "En son başlattığınız gönderme işlemlerinden biri takıldı. Daha yüksek bir ağ ücretiyle hızlandırın veya işlemi iptal edin."
+      "learnMore" : "Daha fazla bilgi almak istiyorum",
+      "panel" : {
+        "title" : "Hızlandırın veya İptal Edin",
+        "description" : "En son başlattığınız gönderme işlemlerinden biri takıldı. Daha yüksek bir ağ ücretiyle hızlandırın veya işlemi iptal edin."
       },
-      "speedUp": {
-        "title": "Hızlandır",
-        "description": "İşlemi daha yüksek bir ağ ücretiyle yeniden gönderin."
+      "speedUp" : {
+        "title" : "Hızlandır",
+        "description" : "İşlemi daha yüksek bir ağ ücretiyle yeniden gönderin."
       },
-      "cancel": {
-        "title": "İptal et",
-        "description": "Kendi adresinize 0 {{ticker}} gönderiliyor."
+      "cancel" : {
+        "title" : "İptal et",
+        "description" : "Kendi adresinize 0 {{ticker}} gönderiliyor."
       },
-      "steps": {
-        "method": {
-          "title": "Yöntem"
+      "steps" : {
+        "method" : {
+          "title" : "Yöntem"
         },
-        "fees": {
-          "title": "Ücretler"
+        "fees" : {
+          "title" : "Ücretler"
         },
-        "summary": {
-          "title": "Özet"
+        "summary" : {
+          "title" : "Özet"
         },
-        "device": {
-          "title": "Cihaz"
+        "device" : {
+          "title" : "Cihaz"
         },
-        "confirmation": {
-          "title": "Onaylayın"
+        "confirmation" : {
+          "title" : "Onaylayın"
         }
       },
       "error": {
@@ -1513,24 +1514,24 @@
         "description": "Kriptolarınızla ödüller kazanın"
       }
     },
-    "recoverBanner": {
-      "subscribeDone": {
-        "title": "Ödeme kartınızı eklemeyi bitirin",
-        "description": "Ledger Recover ile güvenilir bir şekilde geri yükleyin.",
-        "primaryCta": "Kart ekle",
-        "secondaryCta": "Belki sonra"
+    "recoverBanner" : {
+      "subscribeDone" : {
+        "title" : "Hatırlatma: Ledger Recover'a abone olma işlemini tamamlayın",
+        "description" : "Güvende olmanıza sadece iki adım kaldı.",
+        "primaryCta" : "Kart ekle",
+        "secondaryCta" : "Belki sonra"
       },
-      "verifyIdentity": {
-        "title": "Kimliğinizi doğrulamayı bitirin",
-        "description": "Ledger Recover ile güvenilir bir şekilde geri yükleyin.",
-        "primaryCta": "Doğrula",
-        "secondaryCta": "Belki sonra"
+      "verifyIdentity" : {
+        "title" : "Hatırlatma: Ledger Recover'a abone olma işlemini tamamlayın",
+        "description" : "Güvende olmanıza sadece bir adım kaldı.",
+        "primaryCta" : "Kimliğinizi doğrulayın",
+        "secondaryCta" : "Belki sonra"
       },
-      "connectDevice": {
-        "title": "Ledger'ınızı bağlayın",
-        "description": "Ledger Recover'a erişiminizin 1 adım uzağındasınız.",
-        "primaryCta": "Bağlan",
-        "secondaryCta": "Belki sonra"
+      "connectDevice" : {
+        "title" : "Hatırlatma: Ledger Recover'a abone olma işlemini tamamlayın",
+        "description" : "Bu, gerektiğinde cüzdana yeniden erişebilmek için tamamlamanız gereken son adımdır.",
+        "primaryCta" : "Cihazı bağlayın",
+        "secondaryCta" : "Belki sonra"
       }
     },
     "marketPerformanceWidget": {
@@ -3758,6 +3759,10 @@
           }
         }
       }
+    },
+    "token" : {
+      "frozenStateWarning" : "Hesap varlıkları donduruldu!",
+      "transferWarning" : "Ledger Nano S™ kullanarak Solana token'ları için alıcı adresini doğrulamak üzere <0>bu yönergeleri uygulayın.</0>"
     }
   },
   "ethereum": {
@@ -6220,8 +6225,29 @@
     "SolanaAccountNotFunded": {
       "title": "Hesap daha önce fonlanmamış"
     },
-    "SolanaMemoIsTooLong": {
-      "title": "Memo çok uzun Uzunluk en fazla {{maxLength}} olmalıdır"
+    "SolanaTokenAccountHoldsAnotherToken" : {
+      "title" : "Bu ilgili token hesabında başka bir token tutuluyor"
+    },
+    "SolanaTokenAccountWarning" : {
+      "title" : "Bu normal bir cüzdan adresi değil, ilgili bir token hesabıdır. Sadece ne yaptığınızdan eminseniz devam edin."
+    },
+    "SolanaTokenAccountNotAllowed" : {
+      "title" : "Bu bir token hesabı. Normal bir cüzdan adresi girin."
+    },
+    "SolanaMintAccountNotAllowed" : {
+      "title" : "Bu bir token adresi. Normal bir cüzdan adresi girin."
+    },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "Hesap fonlanacak"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "Token hesabı varlıkları donduruldu"
+    },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "Hesap başlatılmadı"
+    },
+    "SolanaMemoIsTooLong" : {
+      "title" : "Memo çok uzun Uzunluk en fazla {{maxLength}} olmalıdır"
     },
     "SolanaAddressOfEd25519": {
       "title": "Adres ed25519 eğrisi dışında"
@@ -6739,26 +6765,28 @@
           "description": "Ledger cihazınızla imzalayarak senkronize edin"
         }
       },
-      "qrCode": {
-        "title": "Ledger Live uygulamalarınızı senkronize edin",
-        "options": {
-          "mobile": "Telefonla senkronize edin",
-          "desktop": "Bilgisayarla senkronize edin"
+      "qrCode" : {
+        "title" : "Ledger Live uygulamalarınızı senkronize edin",
+        "options" : {
+          "mobile" : "Telefonla senkronize edin",
+          "desktop" : "Bilgisayarla senkronize edin"
         },
-        "mobile": {
-          "description": "Başka bir telefondaki Ledger Live uygulamasıyla senkronize edin",
-          "steps": {
-            "step1": "Senkronize etmek istediğiniz Ledger Live uygulamasını açın",
-            "step2": "Sırasıyla <0>Ayarlar</0> > <0>Genel</0> > <0>Ledger Sync</0> > <0>Senkronizasyonu aç</0> > <0>Karekodu Göster</0> adımlarını izleyin",
-            "step3": "Karekodu okutun"
+        "mobile" : {
+          "description" : "Başka bir telefondaki Ledger Live uygulamasıyla senkronize edin",
+          "steps" : {
+            "step1" : "Ledger Sync'in uygulamalarınızdan birinde etkinleştirildiğinden emin olun.",
+            "step2" : "Senkronize etmek istediğiniz Ledger Live uygulamasını açın.",
+            "step3" : "<0>Ayarlar</0> > <0>Genel</0> > <0>Ledger Sync</0> > <0>Zaten açtım</0> > <0>Karekodu göster</0> adımlarını izleyin",
+            "step4" : "Karekodu okutun."
           }
         },
-        "desktop": {
-          "description": "Hesaplarınızı başka bir Ledger Live uygulamasıyla senkronize edin",
-          "steps": {
-            "step1": "Senkronize etmek istediğiniz Ledger Live uygulamasını açın",
-            "step2": "Sırasıyla <0>Ayarlar</0> > <0>Genel</0> > <0>Ledger Sync</0> > <0>Senkronizasyonu aç</0> > <0>Ledger cihazınızı kullanın</0> adımlarını izleyin",
-            "step3": "Ledger'ınızı bağlayın"
+        "desktop" : {
+          "description" : "Hesaplarınızı başka bir Ledger Live uygulamasıyla senkronize edin",
+          "steps" : {
+            "step1" : "Ledger Sync'in uygulamalarınızdan birinde etkinleştirildiğinden emin olun.",
+            "step2" : "Senkronize etmek istediğiniz Ledger Live uygulamasını açın.",
+            "step3" : "<0>Ayarlar</0> > <0>Genel</0> > <0>Ledger Sync</0> > <0>Zaten açtım</0> > <0>Ledger cihazınızı kullanın</0> adımlarını izleyin",
+            "step4" : "Ledger cihazınızı bağlayın."
           }
         }
       },

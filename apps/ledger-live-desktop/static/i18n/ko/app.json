@@ -160,87 +160,88 @@
     "stax": "Stax",
     "blue": "Blue"
   },
-  "operation": {
-    "type": {
-      "IN": "수령됨",
-      "OUT": "전송됨",
-      "NFT_IN": "NFT 수령됨",
-      "NFT_OUT": "NFT 전송됨",
-      "CREATE": "생성됨",
-      "REVEAL": "숨김 해제",
-      "DELEGATE": "위임됨",
-      "REDELEGATE": "재위임됨",
-      "UNDELEGATE": "위임 해제됨",
-      "APPROVE": "승인됨",
-      "VOTE": "투표 완료",
-      "FREEZE": "동결됨",
-      "UNFREEZE": "동결 해제",
-      "UNDELEGATE_RESOURCE": "위임 해제됨",
-      "WITHDRAW_EXPIRE_UNFREEZE": "출금",
-      "LEGACYUNFREEZE": "동결 해제",
-      "REWARD": "보상 수령됨",
-      "FEES": "수수료",
-      "OPT_IN": "참여",
-      "OPT_OUT": "참여하지 않음",
-      "CLOSE_ACCOUNT": "계정 닫기",
-      "BOND": "본딩",
-      "UNBOND": "언본딩",
-      "REWARD_PAYOUT": "보상",
-      "SLASH": "슬래시",
-      "WITHDRAW_UNBONDED": "출금",
-      "NOMINATE": "지명",
-      "CHILL": "지명 해제",
-      "SET_CONTROLLER": "관리자 설정",
-      "LOCK": "잠금",
-      "UNLOCK": "잠금 해제",
-      "WITHDRAW": "출금됨",
-      "REVOKE": "취소",
-      "ACTIVATE": "활성화",
-      "REGISTER": "등록 완료",
-      "STAKE": "스테이킹 완료",
-      "UNSTAKE": "언스테이킹 완료",
-      "WITHDRAW_UNSTAKED": "출금됨",
-      "SENDING": "보내기"
+  "operation" : {
+    "type" : {
+      "IN" : "수령됨",
+      "OUT" : "전송됨",
+      "NFT_IN" : "NFT 수령됨",
+      "NFT_OUT" : "NFT 전송됨",
+      "CREATE" : "생성됨",
+      "REVEAL" : "숨김 해제",
+      "DELEGATE" : "위임됨",
+      "REDELEGATE" : "재위임됨",
+      "UNDELEGATE" : "위임 해제됨",
+      "APPROVE" : "승인됨",
+      "VOTE" : "투표 완료",
+      "FREEZE" : "동결됨",
+      "UNFREEZE" : "동결 해제",
+      "UNDELEGATE_RESOURCE" : "위임 해제됨",
+      "WITHDRAW_EXPIRE_UNFREEZE" : "출금",
+      "LEGACYUNFREEZE" : "동결 해제",
+      "REWARD" : "보상 수령됨",
+      "FEES" : "수수료",
+      "OPT_IN" : "참여",
+      "OPT_OUT" : "참여하지 않음",
+      "CLOSE_ACCOUNT" : "계정 닫기",
+      "BOND" : "본딩",
+      "UNBOND" : "언본딩",
+      "REWARD_PAYOUT" : "보상",
+      "SLASH" : "슬래시",
+      "WITHDRAW_UNBONDED" : "출금",
+      "NOMINATE" : "지명",
+      "CHILL" : "지명 해제",
+      "SET_CONTROLLER" : "관리자 설정",
+      "LOCK" : "잠금",
+      "UNLOCK" : "잠금 해제",
+      "WITHDRAW" : "출금됨",
+      "REVOKE" : "취소",
+      "ACTIVATE" : "활성화",
+      "REGISTER" : "등록 완료",
+      "STAKE" : "스테이킹 완료",
+      "UNSTAKE" : "언스테이킹 완료",
+      "WITHDRAW_UNSTAKED" : "출금됨",
+      "SENDING" : "보내기",
+      "BURN" : "소각됨"
     },
-    "edit": {
-      "title": "속도 올리기 또는 취소",
-      "description": "트랜잭션이 진행 중입니다. 트랜잭션을 취소하거나 네트워크 수수료를 올려 속도를 높일 수 있습니다.",
-      "stuckDescription": "트랜잭션이 중단되었습니다. 트랜잭션을 취소하거나 네트워크 수수료를 올려 속도를 높이세요.",
-      "previousFeesInfo": {
-        "pendingTransactionFeesInfo": "보류 중인 트랜잭션 수수료 정보:",
-        "networkfee": "네트워크 수수료 = {{amount}}",
-        "maxFee": "최대 수수료 = {{amount}}",
-        "maxPriorityFee": "최대 우선 수수료 = {{amount}}",
-        "gasPrice": "가스비 = {{amount}}"
+    "edit" : {
+      "title" : "속도 올리기 또는 취소",
+      "description" : "트랜잭션이 진행 중입니다. 트랜잭션을 취소하거나 네트워크 수수료를 올려 속도를 높일 수 있습니다.",
+      "stuckDescription" : "트랜잭션이 중단되었습니다. 트랜잭션을 취소하거나 네트워크 수수료를 올려 속도를 높이세요.",
+      "previousFeesInfo" : {
+        "pendingTransactionFeesInfo" : "보류 중인 트랜잭션 수수료 정보:",
+        "networkfee" : "네트워크 수수료 = {{amount}}",
+        "maxFee" : "최대 수수료 = {{amount}}",
+        "maxPriorityFee" : "최대 우선 수수료 = {{amount}}",
+        "gasPrice" : "가스비 = {{amount}}"
       },
-      "learnMore": "더 자세히 알고 싶어요",
-      "panel": {
-        "title": "속도 올리기 또는 취소",
-        "description": "가장 최근 실행한 '전송' 트랜잭션이 중단되었습니다. 트랜잭션을 취소하거나 네트워크 수수료를 올려 속도를 높일 수 있습니다."
+      "learnMore" : "더 자세히 알고 싶어요",
+      "panel" : {
+        "title" : "속도 올리기 또는 취소",
+        "description" : "가장 최근 실행한 '전송' 트랜잭션이 중단되었습니다. 트랜잭션을 취소하거나 네트워크 수수료를 올려 속도를 높일 수 있습니다."
       },
-      "speedUp": {
-        "title": "스피드 업",
-        "description": "네트워크 수수료를 높여 트랜잭션을 다시 제출하세요."
+      "speedUp" : {
+        "title" : "스피드 업",
+        "description" : "네트워크 수수료를 높여 트랜잭션을 다시 제출하세요."
       },
-      "cancel": {
-        "title": "취소",
-        "description": "0의 {{ticker}}를 본인 주소로 전송하기."
+      "cancel" : {
+        "title" : "취소",
+        "description" : "0의 {{ticker}}를 본인 주소로 전송하기."
       },
-      "steps": {
-        "method": {
-          "title": "방법"
+      "steps" : {
+        "method" : {
+          "title" : "방법"
         },
-        "fees": {
-          "title": "수수료"
+        "fees" : {
+          "title" : "수수료"
         },
-        "summary": {
-          "title": "요약"
+        "summary" : {
+          "title" : "요약"
         },
-        "device": {
-          "title": "장치"
+        "device" : {
+          "title" : "장치"
         },
-        "confirmation": {
-          "title": "확인"
+        "confirmation" : {
+          "title" : "확인"
         }
       },
       "error": {
@@ -1513,24 +1514,24 @@
         "description": "암호화폐로 더 큰 혜택을 누려보세요"
       }
     },
-    "recoverBanner": {
-      "subscribeDone": {
-        "title": "결제 카드 추가 완료",
-        "description": "Ledger Recover로 안심하고 복구하세요.",
-        "primaryCta": "카드 추가",
-        "secondaryCta": "다음에 결정하기"
+    "recoverBanner" : {
+      "subscribeDone" : {
+        "title" : "알림: Ledger Recover 구독을 완료하세요",
+        "description" : "이제 두 단계만 거치면 완료됩니다.",
+        "primaryCta" : "카드 추가",
+        "secondaryCta" : "다음에 결정하기"
       },
-      "verifyIdentity": {
-        "title": "신원 인증을 완료하세요",
-        "description": "Ledger Recover로 안심하고 복구하세요.",
-        "primaryCta": "확인",
-        "secondaryCta": "다음에 결정하기"
+      "verifyIdentity" : {
+        "title" : "알림: Ledger Recover 구독을 완료하세요",
+        "description" : "이제 한 단계만 거치면 완료됩니다.",
+        "primaryCta" : "신원 인증",
+        "secondaryCta" : "다음에 결정하기"
       },
-      "connectDevice": {
-        "title": "Ledger 장치에 연결합니다",
-        "description": "한 단계만 더 완료하면 Ledger Recover를 사용하실 수 있습니다.",
-        "primaryCta": "연결",
-        "secondaryCta": "다음에 결정하기"
+      "connectDevice" : {
+        "title" : "알림: Ledger Recover 구독을 완료하세요",
+        "description" : "지갑 액세스 복구를 보장하는 마지막 단계입니다.",
+        "primaryCta" : "장치 연결",
+        "secondaryCta" : "다음에 결정하기"
       }
     },
     "marketPerformanceWidget": {
@@ -3758,6 +3759,10 @@
           }
         }
       }
+    },
+    "token" : {
+      "frozenStateWarning" : "계정 자산이 동결되었습니다!",
+      "transferWarning" : "Ledger Nano S™를 사용해 솔라나 토큰의 수령인 주소를 확인하려면 <0>다음 지침을 따르세요.</0>"
     }
   },
   "ethereum": {
@@ -6220,8 +6225,29 @@
     "SolanaAccountNotFunded": {
       "title": "자금이 입금되지 않은 계정"
     },
-    "SolanaMemoIsTooLong": {
-      "title": "메모가 너무 깁니다. 최대 길이는 {{maxLength}}입니다."
+    "SolanaTokenAccountHoldsAnotherToken" : {
+      "title" : "이 연관된 토큰 계정은 다른 토큰을 보유하고 있습니다."
+    },
+    "SolanaTokenAccountWarning" : {
+      "title" : "이것은 일반 지갑 주소가 아니라 연관된 토큰 계정입니다. 프로세스를 제대로 이해하는 경우에만 계속 진행하세요"
+    },
+    "SolanaTokenAccountNotAllowed" : {
+      "title" : "이것은 토큰 계정입니다. 일반 지갑 주소를 입력하세요"
+    },
+    "SolanaMintAccountNotAllowed" : {
+      "title" : "이것은 토큰 주소입니다. 일반 지갑 주소를 입력하세요"
+    },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "계정에 자금이 지원됩니다"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "토큰 계정 자산이 동결되었습니다"
+    },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "계정이 초기화되지 않았습니다"
+    },
+    "SolanaMemoIsTooLong" : {
+      "title" : "메모가 너무 깁니다. 최대 길이는 {{maxLength}}입니다."
     },
     "SolanaAddressOfEd25519": {
       "title": "주소 끄기 ed25519 곡선"
@@ -6739,26 +6765,28 @@
           "description": "Ledger 장치에 서명하여 동기화합니다"
         }
       },
-      "qrCode": {
-        "title": "Ledger Live 앱 동기화",
-        "options": {
-          "mobile": "휴대전화와 동기화",
-          "desktop": "컴퓨터와 동기화"
+      "qrCode" : {
+        "title" : "Ledger Live 앱 동기화",
+        "options" : {
+          "mobile" : "휴대전화와 동기화",
+          "desktop" : "컴퓨터와 동기화"
         },
-        "mobile": {
-          "description": "다른 전화기에서 Ledger Live와 동기화",
-          "steps": {
-            "step1": "동기화하려는 Ledger Live 앱을 엽니다.",
-            "step2": "<0>설정</0> > <0>일반</0> > <0>Ledger 동기화</0> > <0>동기화 켜기</0> > <0>QR 표시</0>로 차례로 이동합니다",
-            "step3": "QR 코드 스캔"
+        "mobile" : {
+          "description" : "다른 전화기에서 Ledger Live와 동기화",
+          "steps" : {
+            "step1" : "앱 중 하나에서 Ledger Sync가 활성화되어 있는지 확인하세요.",
+            "step2" : "동기화하려는 Ledger Live 앱을 엽니다.",
+            "step3" : "<0>설정</0> > <0>일반</0> > <0>Ledger Sync</0> > <0>이미 켰습니다</0> > <0>QR 표시</0>로 차례로 이동하세요",
+            "step4" : "QR 코드를 스캔합니다."
           }
         },
-        "desktop": {
-          "description": "내 계정을 다른 Ledger Live 앱과 동기화",
-          "steps": {
-            "step1": "동기화하려는 Ledger Live 앱을 엽니다.",
-            "step2": "<0>설정</0> > <0>일반</0> > <0>Ledger 동기화</0> > <0>동기화 켜기</0> > <0>\u001D Ledger 사용하기</0>로 차례로 이동합니다",
-            "step3": "Ledger 장치에 연결합니다"
+        "desktop" : {
+          "description" : "내 계정을 다른 Ledger Live 앱과 동기화",
+          "steps" : {
+            "step1" : "앱 중 하나에서 Ledger Sync가 활성화되어 있는지 확인하세요.",
+            "step2" : "동기화하려는 Ledger Live 앱을 엽니다.",
+            "step3" : "<0>설정</0> > <0>일반</0> > <0>Ledger Sync</0> > <0>이미 켰습니다</0> > <0>내 Ledger 사용</0>으로 차례로 이동하세요",
+            "step4" : "Ledger를 연결합니다."
           }
         }
       },

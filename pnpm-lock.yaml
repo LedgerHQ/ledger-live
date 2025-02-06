@@ -3881,11 +3881,11 @@ importers:
   libs/exchange-module:
     dependencies:
       '@ledgerhq/wallet-api-client':
-        specifier: ^1.6.0
-        version: 1.6.0
+        specifier: ^1.6.1
+        version: 1.6.1
       '@ledgerhq/wallet-api-core':
-        specifier: ^1.13.0
-        version: 1.13.0
+        specifier: ^1.14.0
+        version: 1.14.0
     devDependencies:
       '@types/node':
         specifier: ^20.2.5
@@ -4214,17 +4214,17 @@ importers:
         specifier: workspace:^
         version: link:../wallet-api-acre-module
       '@ledgerhq/wallet-api-client':
-        specifier: ^1.6.0
-        version: 1.6.0
+        specifier: ^1.6.1
+        version: 1.6.1
       '@ledgerhq/wallet-api-core':
-        specifier: ^1.13.0
-        version: 1.13.0
+        specifier: ^1.14.0
+        version: 1.14.0
       '@ledgerhq/wallet-api-exchange-module':
         specifier: workspace:^
         version: link:../exchange-module
       '@ledgerhq/wallet-api-server':
-        specifier: ^1.7.0
-        version: 1.7.0(react@18.3.1)(rxjs@7.8.1)
+        specifier: ^1.7.1
+        version: 1.7.1(react@18.3.1)(rxjs@7.8.1)
       '@stricahq/typhonjs':
         specifier: ^2.0.0
         version: 2.0.0
@@ -7754,11 +7754,11 @@ importers:
   libs/wallet-api-acre-module:
     dependencies:
       '@ledgerhq/wallet-api-client':
-        specifier: ^1.6.0
-        version: 1.6.0
+        specifier: ^1.6.1
+        version: 1.6.1
       '@ledgerhq/wallet-api-core':
-        specifier: ^1.13.0
-        version: 1.13.0
+        specifier: ^1.14.0
+        version: 1.14.0
     devDependencies:
       '@types/node':
         specifier: ^20.2.5
@@ -7816,14 +7816,14 @@ importers:
         specifier: workspace:*
         version: link:../../libs/ledger-live-common
       '@ledgerhq/wallet-api-client':
-        specifier: ^1.6.0
-        version: 1.6.0
+        specifier: ^1.6.1
+        version: 1.6.1
       '@ledgerhq/wallet-api-client-react':
-        specifier: ^1.3.12
-        version: 1.3.12(react@18.3.1)
+        specifier: ^1.4.1
+        version: 1.4.1(react@18.3.1)
       '@ledgerhq/wallet-api-simulator':
-        specifier: ^1.2.0
-        version: 1.2.0(react@18.3.1)
+        specifier: ^1.2.2
+        version: 1.2.2(react@18.3.1)
       bignumber.js:
         specifier: ^9.1.2
         version: 9.1.2
@@ -12103,19 +12103,19 @@ packages:
   '@ledgerhq/types-live@6.53.1':
     resolution: {integrity: sha512-ukaDDyxg7quBQ0vdoQQjj3ICqiG13gO/rGIO0Jm2nRh/icbLWgxfsI2wX0u0ugJQJ+q/muiX+wJrMJn9EKhEaQ==}
 
-  '@ledgerhq/wallet-api-client-react@1.3.12':
-    resolution: {integrity: sha512-hf7OlhGtj6yuo42OGyKt0dMPNoIpBHm7u1vTH40yWfsabFaDtPzJFGSkWhBb19/zRtDGpbFr3Plo/WnBLFDfXQ==}
+  '@ledgerhq/wallet-api-client-react@1.4.1':
+    resolution: {integrity: sha512-DdtrB6PmlIB9CrC2Y6BcctDk7QvKf27VAv3g8luWoogLKy6Q3aOkmTYuqtvQwqQ4vRFqV3VX2Vftn9ZzkHJQIw==}
     peerDependencies:
       react: ^16.8.0 || ^17 || ^18
 
-  '@ledgerhq/wallet-api-client@1.6.0':
-    resolution: {integrity: sha512-xf5g9baUB1Fn94GKYGNXtlRCKTWnqMBv1w9bE/H3+IXubwY7Cdy5zhn4rI8+iA4Llmwujp+sZciesWAa9f63gg==}
+  '@ledgerhq/wallet-api-client@1.6.1':
+    resolution: {integrity: sha512-e0izid9wNREbiVgS/IFR1br1kGDFuP4E7dOJzRdxx+LmUlsCwmAWxqN5ChWf8NyCiiEzKRfjKKX0wyfvW2IGnA==}
 
-  '@ledgerhq/wallet-api-core@1.13.0':
-    resolution: {integrity: sha512-HGnkPcbkeoNr+XAH+5NSrgyRYD/sVD3tgCyoYPAKEs7j3W/eJyT/EvBWwV4yPKhghfSjuqMo1L+0wLCXnbt4Dw==}
+  '@ledgerhq/wallet-api-core@1.14.0':
+    resolution: {integrity: sha512-mvOzQ5H1nFAu4+ene1DSnTTDQCD6+3Q7l+U73FeD9Rx9eJYDGyqpkuSNiFBq2EZyfgINrBTIsElHCMmBlsVgGg==}
 
-  '@ledgerhq/wallet-api-server@1.6.0':
-    resolution: {integrity: sha512-x2aI2wqWlt03zUMYucfqNeYkohZzROs2DYgRdwkkZbQG2Q0iUZsixUYjNkFZxPVUhxXaUA+YIgF43OeG/fyOjA==}
+  '@ledgerhq/wallet-api-server@1.7.1':
+    resolution: {integrity: sha512-+rlDk514BgqoZ+Aibd9KS5Dj8shJ+A1pqC7NL2LIWtHWeJrX5ov3ECiSVoRd0NlRbV8U09Vt12SSDI29Nbe8JQ==}
     peerDependencies:
       react: ^17.x || ^18.x
       rxjs: ^7.x
@@ -12123,17 +12123,8 @@ packages:
       react:
         optional: true
 
-  '@ledgerhq/wallet-api-server@1.7.0':
-    resolution: {integrity: sha512-4xQRo8Z08C8y+nqdwjgUGBxmV0++DFkAnXJGnqSzEP0Cc0jXUXwfIK8+Xfyj+mHoVzJVeaYMmPrGycPvKSjt8Q==}
-    peerDependencies:
-      react: ^17.x || ^18.x
-      rxjs: ^7.x
-    peerDependenciesMeta:
-      react:
-        optional: true
-
-  '@ledgerhq/wallet-api-simulator@1.2.0':
-    resolution: {integrity: sha512-EB4rqArFWut8A+Pzoi0uK1sqlGsF5fPYDql4IGH5ghdyKgh3Mq9svi5Um8h3+33aETB3hqCR2T2itN+kGxk3Tw==}
+  '@ledgerhq/wallet-api-simulator@1.2.2':
+    resolution: {integrity: sha512-0MD4dZDrP2CtoPmICbUUH5iEr2ax/VphIudHS8Qd1RsgsN9v520BZistOAFK5PUcR6EZQEzDDfDHkaFswNL24Q==}
 
   '@leichtgewicht/ip-codec@2.0.5':
     resolution: {integrity: sha512-Vo+PSpZG2/fmgmiNzYK9qWRh8h/CHrwD0mo1h1DzL4yzHNSfWYujGTYsWGreD000gcgmZ7K4Ys6Tx9TxtsKdDw==}
@@ -21011,13 +21002,10 @@ packages:
     resolution: {integrity: sha512-06OKXQmKI0vuje++6lm7w1kO3rKsZAHio/4d9hwQuVAtExJ6RM92BnpzkDAV16ZheVN/FHKzNyY1BYLqXfujMw==}
     peerDependencies:
       expo: '*'
-      expo-constants: '*'
       expo-modules-core: '*'
       react: '*'
       react-native: '*'
     peerDependenciesMeta:
-      expo-constants:
-        optional: true
       expo-modules-core:
         optional: true
       react:
@@ -21029,13 +21017,10 @@ packages:
     resolution: {integrity: sha512-9tNY3OVO0jfiMzl7ngb6IOyR5VFzNoN5OOazUWoeGfmMqVB5kltTemRvKraK9JRbBKIw+SOYLEmF0sEqgFZ6OQ==}
     peerDependencies:
       expo: '*'
-      expo-constants: '*'
       expo-modules-core: '*'
       react: '*'
       react-native: '*'
     peerDependenciesMeta:
-      expo-constants:
-        optional: true
       expo-modules-core:
         optional: true
       react:
@@ -21233,13 +21218,10 @@ packages:
     resolution: {integrity: sha512-y8yDWjOi+rQRdO+HY+LnUlz8qzHerUaw/LUjKPU/mX8PRXP4UUPEEp5fjAwBU44xjNmYSHWZDwet4IBBE+yQUA==}
     peerDependencies:
       expo-constants: '*'
-      expo-modules-core: '*'
       react: '*'
       react-native: '*'
     peerDependenciesMeta:
       expo-constants:
-        optional: true
-      expo-modules-core:
         optional: true
       react:
         optional: true
@@ -38726,48 +38708,39 @@ snapshots:
       bignumber.js: 9.1.2
       rxjs: 7.8.1
 
-  '@ledgerhq/wallet-api-client-react@1.3.12(react@18.3.1)':
+  '@ledgerhq/wallet-api-client-react@1.4.1(react@18.3.1)':
     dependencies:
-      '@ledgerhq/wallet-api-client': 1.6.0
+      '@ledgerhq/wallet-api-client': 1.6.1
       react: 18.3.1
 
-  '@ledgerhq/wallet-api-client@1.6.0':
+  '@ledgerhq/wallet-api-client@1.6.1':
     dependencies:
       '@ledgerhq/hw-transport': 6.31.4
-      '@ledgerhq/wallet-api-core': 1.13.0
+      '@ledgerhq/wallet-api-core': 1.14.0
       bignumber.js: 9.1.2
 
-  '@ledgerhq/wallet-api-core@1.13.0':
+  '@ledgerhq/wallet-api-core@1.14.0':
     dependencies:
       '@ledgerhq/errors': 6.19.1
       bignumber.js: 9.1.2
       uuid: 9.0.1
       zod: 3.23.8
 
-  '@ledgerhq/wallet-api-server@1.6.0(react@18.3.1)(rxjs@7.8.1)':
+  '@ledgerhq/wallet-api-server@1.7.1(react@18.3.1)(rxjs@7.8.1)':
     dependencies:
-      '@ledgerhq/wallet-api-core': 1.13.0
+      '@ledgerhq/wallet-api-core': 1.14.0
       bignumber.js: 9.1.2
       picomatch: 4.0.2
       rxjs: 7.8.1
     optionalDependencies:
       react: 18.3.1
 
-  '@ledgerhq/wallet-api-server@1.7.0(react@18.3.1)(rxjs@7.8.1)':
-    dependencies:
-      '@ledgerhq/wallet-api-core': 1.13.0
-      bignumber.js: 9.1.2
-      picomatch: 4.0.2
-      rxjs: 7.8.1
-    optionalDependencies:
-      react: 18.3.1
-
-  '@ledgerhq/wallet-api-simulator@1.2.0(react@18.3.1)':
+  '@ledgerhq/wallet-api-simulator@1.2.2(react@18.3.1)':
     dependencies:
       '@ledgerhq/hw-transport': 6.31.4
-      '@ledgerhq/wallet-api-client': 1.6.0
-      '@ledgerhq/wallet-api-core': 1.13.0
-      '@ledgerhq/wallet-api-server': 1.6.0(react@18.3.1)(rxjs@7.8.1)
+      '@ledgerhq/wallet-api-client': 1.6.1
+      '@ledgerhq/wallet-api-core': 1.14.0
+      '@ledgerhq/wallet-api-server': 1.7.1(react@18.3.1)(rxjs@7.8.1)
       rxjs: 7.8.1
       ws: 8.18.0
     transitivePeerDependencies:
@@ -52536,7 +52509,6 @@ snapshots:
       expo: 51.0.39(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(expo-constants@14.5.1)(expo-modules-core@1.12.26)(metro-core@0.80.12)(metro@0.80.12)(react-native@0.75.4(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1)(typescript@5.4.3))(react@18.3.1)
       uuid: 3.4.0
     optionalDependencies:
-      expo-constants: 14.5.1(expo-modules-core@1.12.26)(expo@51.0.39)(react-native@0.75.4(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1)(typescript@5.4.3))(react@18.3.1)
       expo-modules-core: 1.12.26(expo-constants@14.5.1)(react-native@0.75.4(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1)(typescript@5.4.3))(react@18.3.1)
       react: 18.3.1
       react-native: 0.75.4(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1)(typescript@5.4.3)
@@ -52549,7 +52521,6 @@ snapshots:
       '@expo/env': 0.3.0
       expo: 51.0.39(@babel/core@7.24.3)(expo-modules-autolinking@1.11.2(expo-modules-core@1.12.26(react-native@0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3))(react@18.3.1))(react-native@0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3))(react@18.3.1))(expo-modules-core@1.12.26(react-native@0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3))(react@18.3.1))(react-native@0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3))(react@18.3.1)
     optionalDependencies:
-      expo-constants: 16.0.2(expo-modules-core@1.12.26(react-native@0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3))(react@18.3.1))(expo@51.0.39(@babel/core@7.24.3)(expo-modules-autolinking@1.11.2(expo-modules-core@1.12.26(react-native@0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3))(react@18.3.1))(react-native@0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3))(react@18.3.1))(expo-modules-core@1.12.26(react-native@0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3))(react@18.3.1))(react-native@0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3))(react@18.3.1))(react-native@0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3))(react@18.3.1)
       expo-modules-core: 1.12.26(react-native@0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3))(react@18.3.1)
       react: 18.3.1
       react-native: 0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3)
@@ -52562,7 +52533,6 @@ snapshots:
       '@expo/env': 0.3.0
       expo: 51.0.39(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(expo-constants@14.5.1)(expo-modules-core@1.12.26)(metro-core@0.80.12)(metro@0.80.12)(react-native@0.75.4(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1)(typescript@5.4.3))(react@18.3.1)
     optionalDependencies:
-      expo-constants: 16.0.2(expo-modules-core@1.12.26)(expo@51.0.39)(react-native@0.75.4(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1)(typescript@5.4.3))(react@18.3.1)
       expo-modules-core: 1.12.26(expo-constants@14.5.1)(react-native@0.75.4(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1)(typescript@5.4.3))(react@18.3.1)
       react: 18.3.1
       react-native: 0.75.4(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1)(typescript@5.4.3)
@@ -52574,8 +52544,6 @@ snapshots:
       '@expo/config': 9.0.4
       '@expo/env': 0.3.0
       expo: 51.0.39
-    optionalDependencies:
-      expo-constants: 16.0.2(expo@51.0.39)
     transitivePeerDependencies:
       - supports-color
 
@@ -52717,7 +52685,6 @@ snapshots:
       invariant: 2.2.4
     optionalDependencies:
       expo-constants: 14.5.1(expo-modules-core@1.12.26)(expo@51.0.39)(react-native@0.75.4(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1)(typescript@5.4.3))(react@18.3.1)
-      expo-modules-core: 1.12.26(expo-constants@14.5.1)(react-native@0.75.4(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1)(typescript@5.4.3))(react@18.3.1)
       react: 18.3.1
       react-native: 0.75.4(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1)(typescript@5.4.3)
 
@@ -52725,7 +52692,6 @@ snapshots:
     dependencies:
       invariant: 2.2.4
     optionalDependencies:
-      expo-modules-core: 1.12.26(react-native@0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3))(react@18.3.1)
       react: 18.3.1
       react-native: 0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3)
 

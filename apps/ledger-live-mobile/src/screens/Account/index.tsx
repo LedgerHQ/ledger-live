@@ -164,14 +164,12 @@ const AccountScreenInner = ({
     ...listHeaderComponents,
     ...(!isEmpty
       ? [
-          <SectionContainer
-            key={"section-container-accounts"}
-            px={6}
-            isLast
-            testID={`operations-history-${account.id}`}
-          >
+          <SectionContainer key={"section-container-accounts"} px={6} isLast>
             <SectionTitle title={t("analytics.operations.title")} />
-            <OperationsHistorySection accounts={[account]} />
+            <OperationsHistorySection
+              accounts={[account]}
+              testID={`operations-history-${account.id}`}
+            />
           </SectionContainer>,
         ]
       : [

@@ -26,7 +26,7 @@ const View: React.FC<ViewProps> = ({
           variant="large"
           fontWeight="semiBold"
           color="neutral.c100"
-          flexShrink={1}
+          {...(!tag && { flexShrink: 1 })}
         >
           {accountName}
         </Text>

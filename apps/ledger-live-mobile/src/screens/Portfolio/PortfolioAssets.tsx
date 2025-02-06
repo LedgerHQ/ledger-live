@@ -135,7 +135,7 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
       ) : (
         <Assets assets={assetsToDisplay} />
       )}
-      {!isAccountListUIEnabled && distribution.list.length === 0 && (
+      {!isAccountListUIEnabled && distribution.list.length < maxItemsToDysplay && (
         <Button
           type="shade"
           size="large"

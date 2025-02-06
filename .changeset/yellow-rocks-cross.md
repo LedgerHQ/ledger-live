@@ -2,4 +2,4 @@
 "ledger-live-desktop": minor
 ---
 
-Add data tracking in My Ledger flows
+Fix a bug in post onboarding

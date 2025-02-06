@@ -160,87 +160,88 @@
     "stax": "Stax",
     "blue": "Blue"
   },
-  "operation": {
-    "type": {
-      "IN": "已接收",
-      "OUT": "已发送",
-      "NFT_IN": "已收到的 NFT",
-      "NFT_OUT": "已发送的 NFT",
-      "CREATE": "已创建",
-      "REVEAL": "已显示",
-      "DELEGATE": "已委托",
-      "REDELEGATE": "已重新委托",
-      "UNDELEGATE": "已解除委托",
-      "APPROVE": "已批准",
-      "VOTE": "已投票",
-      "FREEZE": "已冻结",
-      "UNFREEZE": "已解冻",
-      "UNDELEGATE_RESOURCE": "已解除委托",
-      "WITHDRAW_EXPIRE_UNFREEZE": "提取",
-      "LEGACYUNFREEZE": "已解冻",
-      "REWARD": "已申领的奖励",
-      "FEES": "费用",
-      "OPT_IN": "选择加入",
-      "OPT_OUT": "选择退出",
-      "CLOSE_ACCOUNT": "关闭账户",
-      "BOND": "绑定",
-      "UNBOND": "解绑",
-      "REWARD_PAYOUT": "奖励",
-      "SLASH": "Slash 削减惩罚",
-      "WITHDRAW_UNBONDED": "提取",
-      "NOMINATE": "提名",
-      "CHILL": "清除提名",
-      "SET_CONTROLLER": "设置控制器",
-      "LOCK": "已锁定",
-      "UNLOCK": "已解锁",
-      "WITHDRAW": "已提取",
-      "REVOKE": "已撤销",
-      "ACTIVATE": "已激活",
-      "REGISTER": "已注册",
-      "STAKE": "已权益质押",
-      "UNSTAKE": "已解除权益质押",
-      "WITHDRAW_UNSTAKED": "已提取",
-      "SENDING": "发送"
+  "operation" : {
+    "type" : {
+      "IN" : "已接收",
+      "OUT" : "已发送",
+      "NFT_IN" : "已收到的 NFT",
+      "NFT_OUT" : "已发送的 NFT",
+      "CREATE" : "已创建",
+      "REVEAL" : "已显示",
+      "DELEGATE" : "已委托",
+      "REDELEGATE" : "已重新委托",
+      "UNDELEGATE" : "已解除委托",
+      "APPROVE" : "已批准",
+      "VOTE" : "已投票",
+      "FREEZE" : "已冻结",
+      "UNFREEZE" : "已解冻",
+      "UNDELEGATE_RESOURCE" : "已解除委托",
+      "WITHDRAW_EXPIRE_UNFREEZE" : "提取",
+      "LEGACYUNFREEZE" : "已解冻",
+      "REWARD" : "已申领的奖励",
+      "FEES" : "费用",
+      "OPT_IN" : "选择加入",
+      "OPT_OUT" : "选择退出",
+      "CLOSE_ACCOUNT" : "关闭账户",
+      "BOND" : "绑定",
+      "UNBOND" : "解绑",
+      "REWARD_PAYOUT" : "奖励",
+      "SLASH" : "Slash 削减惩罚",
+      "WITHDRAW_UNBONDED" : "提取",
+      "NOMINATE" : "提名",
+      "CHILL" : "清除提名",
+      "SET_CONTROLLER" : "设置控制器",
+      "LOCK" : "已锁定",
+      "UNLOCK" : "已解锁",
+      "WITHDRAW" : "已提取",
+      "REVOKE" : "已撤销",
+      "ACTIVATE" : "已激活",
+      "REGISTER" : "已注册",
+      "STAKE" : "已权益质押",
+      "UNSTAKE" : "已解除权益质押",
+      "WITHDRAW_UNSTAKED" : "已提取",
+      "SENDING" : "发送",
+      "BURN" : "已销毁"
     },
-    "edit": {
-      "title": "加速或取消",
-      "description": "您的交易正在进行。您可使用较高的网络费用加速交易，或取消交易。",
-      "stuckDescription": "您的交易已停滞。使用较高的网络费用加速交易，或取消交易。",
-      "previousFeesInfo": {
-        "pendingTransactionFeesInfo": "待处理交易费用信息：",
-        "networkfee": "网络费用 = {{amount}}",
-        "maxFee": "最高费用 = {{amount}}",
-        "maxPriorityFee": "最高优先费用 = {{amount}}",
-        "gasPrice": "Gas 价格 = {{amount}}"
+    "edit" : {
+      "title" : "加速或取消",
+      "description" : "您的交易正在进行。您可使用较高的网络费用加速交易，或取消交易。",
+      "stuckDescription" : "您的交易已停滞。使用较高的网络费用加速交易，或取消交易。",
+      "previousFeesInfo" : {
+        "pendingTransactionFeesInfo" : "待处理交易费用信息：",
+        "networkfee" : "网络费用 = {{amount}}",
+        "maxFee" : "最高费用 = {{amount}}",
+        "maxPriorityFee" : "最高优先费用 = {{amount}}",
+        "gasPrice" : "Gas 价格 = {{amount}}"
       },
-      "learnMore": "我想进一步了解",
-      "panel": {
-        "title": "加速或取消",
-        "description": "您最近的一次“发送”交易已停滞。使用较高的网络费用加速交易，或取消交易。"
+      "learnMore" : "我想进一步了解",
+      "panel" : {
+        "title" : "加速或取消",
+        "description" : "您最近的一次“发送”交易已停滞。使用较高的网络费用加速交易，或取消交易。"
       },
-      "speedUp": {
-        "title": "加快速度",
-        "description": "使用较高的网络费用重新提交交易。"
+      "speedUp" : {
+        "title" : "加快速度",
+        "description" : "使用较高的网络费用重新提交交易。"
       },
-      "cancel": {
-        "title": "取消",
-        "description": "发送 0 {{ticker}} 到您自己的地址。"
+      "cancel" : {
+        "title" : "取消",
+        "description" : "发送 0 {{ticker}} 到您自己的地址。"
       },
-      "steps": {
-        "method": {
-          "title": "方法"
+      "steps" : {
+        "method" : {
+          "title" : "方法"
         },
-        "fees": {
-          "title": "费用"
+        "fees" : {
+          "title" : "费用"
         },
-        "summary": {
-          "title": "概要"
+        "summary" : {
+          "title" : "概要"
         },
-        "device": {
-          "title": "设备"
+        "device" : {
+          "title" : "设备"
         },
-        "confirmation": {
-          "title": "确认"
+        "confirmation" : {
+          "title" : "确认"
         }
       },
       "error": {
@@ -1513,24 +1514,24 @@
         "description": "获得加密货币权益质押奖励"
       }
     },
-    "recoverBanner": {
-      "subscribeDone": {
-        "title": "完成添加支付卡",
-        "description": "使用 Ledger Recover 可靠地恢复。",
-        "primaryCta": "添加卡",
-        "secondaryCta": "以后再说"
+    "recoverBanner" : {
+      "subscribeDone" : {
+        "title" : "提醒：完成订阅 Ledger Recover 服务",
+        "description" : "完成最后两步，让您的设备及资金得到安全保障。",
+        "primaryCta" : "添加卡",
+        "secondaryCta" : "以后再说"
       },
-      "verifyIdentity": {
-        "title": "完成身份验证",
-        "description": "使用 Ledger Recover 可靠地恢复。",
-        "primaryCta": "验证",
-        "secondaryCta": "以后再说"
+      "verifyIdentity" : {
+        "title" : "提醒：完成订阅 Ledger Recover 服务",
+        "description" : "完成最后一步，让您的设备及资金得到安全保障。",
+        "primaryCta" : "验证身份",
+        "secondaryCta" : "以后再说"
       },
-      "connectDevice": {
-        "title": "连接 Ledger 设备",
-        "description": "还差一步即可使用 Ledger Recover。",
-        "primaryCta": "连接",
-        "secondaryCta": "以后再说"
+      "connectDevice" : {
+        "title" : "提醒：完成订阅 Ledger Recover 服务",
+        "description" : "这是您确保能恢复钱包访问权限的最后一步。",
+        "primaryCta" : "连接设备",
+        "secondaryCta" : "以后再说"
       }
     },
     "marketPerformanceWidget": {
@@ -3758,6 +3759,10 @@
           }
         }
       }
+    },
+    "token" : {
+      "frozenStateWarning" : "账户资产已冻结！",
+      "transferWarning" : "要使用 Ledger Nano S™ 验证 Solana 代币的接收人地址，<0>请按照以下说明操作。</0>"
     }
   },
   "ethereum": {
@@ -6220,8 +6225,29 @@
     "SolanaAccountNotFunded": {
       "title": "账户没有资金"
     },
-    "SolanaMemoIsTooLong": {
-      "title": "Memo 标签太长。最大长度为 {{maxLength}}"
+    "SolanaTokenAccountHoldsAnotherToken" : {
+      "title" : "该关联代币账户持有另一种代币"
+    },
+    "SolanaTokenAccountWarning" : {
+      "title" : "这不是普通钱包地址，而是关联代币账户。继续之前，请务必清楚您在做什么"
+    },
+    "SolanaTokenAccountNotAllowed" : {
+      "title" : "这是一个代币账户。请输入普通钱包地址"
+    },
+    "SolanaMintAccountNotAllowed" : {
+      "title" : "这是一个代币地址。请输入普通钱包地址"
+    },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "账户将获得资金"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "代币账户资产已冻结"
+    },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "账户未初始化"
+    },
+    "SolanaMemoIsTooLong" : {
+      "title" : "Memo 标签太长。最大长度为 {{maxLength}}"
     },
     "SolanaAddressOfEd25519": {
       "title": "地址关闭 ed25519 曲线"
@@ -6739,26 +6765,28 @@
           "description": "通过使用 Ledger 设备签署进行同步"
         }
       },
-      "qrCode": {
-        "title": "同步 Ledger Live 应用程序",
-        "options": {
-          "mobile": "通过手机同步",
-          "desktop": "通过电脑同步"
+      "qrCode" : {
+        "title" : "同步 Ledger Live 应用程序",
+        "options" : {
+          "mobile" : "通过手机同步",
+          "desktop" : "通过电脑同步"
         },
-        "mobile": {
-          "description": "与另一部手机上的 Ledger Live 应用程序同步",
-          "steps": {
-            "step1": "打开您要同步的 Ledger Live 应用程序",
-            "step2": "前往<0>设置</0> > <0>常规</0> > <0>Ledger Sync</0> > <0>开启同步</0> > <0>显示二维码</0>",
-            "step3": "扫描二维码"
+        "mobile" : {
+          "description" : "与另一部手机上的 Ledger Live 应用程序同步",
+          "steps" : {
+            "step1" : "确保您已在其中一个应用程序上激活 Ledger Sync。",
+            "step2" : "打开您要同步的 Ledger Live 应用程序。",
+            "step3" : "前往<0>“设置”</0> > <0>常规</0> > <0>Ledger Sync</0> > <0>我已打开</0> > <0>显示二维码</0>",
+            "step4" : "扫描二维码。"
           }
         },
-        "desktop": {
-          "description": "将您的账户与另一个 Ledger Live 应用程序同步",
-          "steps": {
-            "step1": "打开您要同步的 Ledger Live 应用程序",
-            "step2": "前往<0>设置</0> > <0>常规</0> > <0>Ledger Sync</0> > <0>开启同步</0> > <0>使用您的 Ledger</0>",
-            "step3": "连接 Ledger 设备"
+        "desktop" : {
+          "description" : "将您的账户与另一个 Ledger Live 应用程序同步",
+          "steps" : {
+            "step1" : "确保您已在其中一个应用程序上激活 Ledger Sync。",
+            "step2" : "打开您要同步的 Ledger Live 应用程序。",
+            "step3" : "前往<0>“设置”</0> > <0>常规</0> > <0>Ledger Sync</0> > <0>我已打开</0> > <0>使用您的 Ledger 设备</0>",
+            "step4" : "连接 Ledger 设备。"
           }
         }
       },
