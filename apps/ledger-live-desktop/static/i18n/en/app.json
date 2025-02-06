@@ -6914,5 +6914,37 @@
       "address": "Address",
       "transactionId": "Transaction ID"
     }
+  },
+  "lnsUpsell": {
+    "banner": {
+      "manager": {
+        "optIn": {
+          "title": "It's time to upgrade",
+          "description": "Upgrade to our latest devices with <0>{{discount}}% discount</0> for an enhanced security and a seamless experience.",
+          "cta": "Level up my wallet",
+          "linkText": "Learn more"
+        },
+        "optOut": {
+          "title": "It's time to upgrade",
+          "description": "Upgrade to our latest devices with <0>{{discount}}% discount</0> for an enhanced security and a seamless experience.",
+          "cta": "Level up my wallet",
+          "linkText": "Learn more"
+        }
+      },
+      "accounts": {
+        "optIn": {
+          "title": "It's time to upgrade",
+          "description": "Ledger Nano S updates are ending soon. Upgrade to our latest devices with <0>{{discount}}% discount</0>.",
+          "cta": "Level up my wallet",
+          "linkText": "Learn more"
+        },
+        "optOut": {
+          "title": "It's time to upgrade",
+          "description": "Ledger Nano S updates are ending soon. Upgrade to our latest devices with <0>{{discount}}% discount</0>.",
+          "cta": "Level up my wallet",
+          "linkText": "Learn more"
+        }
+      }
+    }
   }
 }
