@@ -6,6 +6,7 @@ import {
   TransactionVersion,
   UnsignedTokenTransferOptions,
   estimateTransaction,
+  estimateTransactionByteLength,
   makeUnsignedSTXTokenTransfer,
 } from "@stacks/transactions";
 import BigNumber from "bignumber.js";
@@ -48,7 +49,7 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
         : AddressVersion.TestnetSingleSig;
     const senderAddress = c32address(addressVersion, tx.auth.spendingCondition!.signer);
 
-    const [fee] = await estimateTransaction(tx.payload);
+    const [fee] = await estimateTransaction(tx.payload, estimateTransactionByteLength(tx));
 
     patch.fee = new BigNumber(fee.fee);
     patch.nonce = await findNextNonce(senderAddress, pendingOperations);

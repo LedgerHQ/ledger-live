@@ -5,6 +5,7 @@ import { StacksMainnet } from "@stacks/network";
 import {
   UnsignedTokenTransferOptions,
   estimateTransaction,
+  estimateTransactionByteLength,
   makeUnsignedSTXTokenTransfer,
 } from "@stacks/transactions";
 import BigNumber from "bignumber.js";
@@ -43,7 +44,7 @@ export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpenda
 
   const tx = await makeUnsignedSTXTokenTransfer(options);
 
-  const [feeEst] = await estimateTransaction(tx.payload);
+  const [feeEst] = await estimateTransaction(tx.payload, estimateTransactionByteLength(tx));
 
   const diff = spendableBalance.minus(new BigNumber(feeEst.fee));
   return diff.gte(0) ? diff : new BigNumber(0);
