@@ -5,7 +5,7 @@ import flatMap from "lodash/flatMap";
 import zipWith from "lodash/zipWith";
 import { from, Observable } from "rxjs";
 import { map } from "rxjs/operators";
-import { getTronSuperRepresentativeData } from "../network";
+import { getTronSuperRepresentativeData } from "../network/trongrid";
 import type {
   SuperRepresentativeData,
   Transaction,

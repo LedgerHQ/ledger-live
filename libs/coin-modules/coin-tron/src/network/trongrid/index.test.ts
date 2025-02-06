@@ -1,7 +1,7 @@
 import { HttpResponse, http } from "msw";
 import { setupServer } from "msw/node";
-import { TRANSACTION_DETAIL_FIXTURE, TRANSACTION_FIXTURE, TRC20_FIXTURE } from "./types.fixture";
-import { setCoinConfig } from "../config";
+import { TRANSACTION_DETAIL_FIXTURE, TRANSACTION_FIXTURE, TRC20_FIXTURE } from "../types.fixture";
+import { setCoinConfig } from "../../config";
 import { fetchTronAccountTxs } from ".";
 
 export const TRON_BASE_URL_TEST = "https://httpbin.org";

@@ -1,5 +1,5 @@
 import { AccountBridge } from "@ledgerhq/types-live";
-import { getTronAccountNetwork } from "../network";
+import { getTronAccountNetwork } from "../network/trongrid";
 import { Transaction, TronAccount } from "../types";
 
 export const prepareTransaction: AccountBridge<

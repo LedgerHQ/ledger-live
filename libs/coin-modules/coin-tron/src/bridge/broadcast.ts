@@ -1,5 +1,5 @@
 import { Account, Operation, SignedOperation } from "@ledgerhq/types-live";
-import { broadcastTron } from "../network";
+import { broadcastTron } from "../network/trongrid";
 
 const broadcast = async ({
   signedOperation: { signature, operation, rawData },

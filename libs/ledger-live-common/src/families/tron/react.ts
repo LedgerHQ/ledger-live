@@ -1,7 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import { ONE_TRX } from "@ledgerhq/coin-tron/logic/constants";
-import { getTronSuperRepresentatives } from "@ledgerhq/coin-tron/network";
+import { getTronSuperRepresentatives } from "@ledgerhq/coin-tron/lib/network/trongrid/index";
 import type { SuperRepresentative, TronAccount, Vote } from "@ledgerhq/coin-tron/types/index";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useBridgeSync } from "../../bridge/react";

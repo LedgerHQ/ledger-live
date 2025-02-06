@@ -1,5 +1,5 @@
 import get from "lodash/get";
-import { TrongridExtraTxInfo, TrongridTxInfo, TrongridTxType, TronTransactionInfo } from "../types";
+import { TrongridExtraTxInfo, TrongridTxInfo, TrongridTxType, TronTransactionInfo } from "./types";
 import { TransactionTronAPI, Trc20API } from "./types";
 import BigNumber from "bignumber.js";
 import { log } from "@ledgerhq/logs";

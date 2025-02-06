@@ -17,7 +17,7 @@ import {
   fetchTronAccount,
   fetchTronAccountTxs,
   getTronResources,
-} from "../network";
+} from "../network/trongrid";
 import { TronAccount, TrongridExtraTxInfo, TronOperation } from "../types";
 
 type TronToken = {

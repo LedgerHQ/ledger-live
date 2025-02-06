@@ -11,7 +11,7 @@ import {
   unfreezeTronTransaction,
   voteTronSuperRepresentatives,
   withdrawExpireUnfreezeTronTransaction,
-} from "../network";
+} from "../network/trongrid";
 import { Transaction, TronAccount, TronSigner } from "../types";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
 import getEstimatedFees from "./getEstimateFees";

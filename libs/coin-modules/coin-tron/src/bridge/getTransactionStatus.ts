@@ -18,7 +18,7 @@ import {
   getDelegatedResource,
   getTronSuperRepresentatives,
   validateAddress,
-} from "../network";
+} from "../network/trongrid";
 import { Transaction, TransactionStatus, TronAccount } from "../types";
 import {
   TronInvalidFreezeAmount,

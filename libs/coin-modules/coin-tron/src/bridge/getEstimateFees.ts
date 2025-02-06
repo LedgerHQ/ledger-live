@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { Transaction } from "../types";
-import { fetchTronAccount } from "../network";
+import { fetchTronAccount } from "../network/trongrid";
 import { ACTIVATION_FEES, ACTIVATION_FEES_TRC_20, STANDARD_FEES_TRC_20 } from "../logic/constants";
 import { getEstimatedBlockSize, extractBandwidthInfo } from "../logic/utils";
 

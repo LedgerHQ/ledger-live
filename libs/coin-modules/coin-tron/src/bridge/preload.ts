@@ -1,4 +1,4 @@
-import { getTronSuperRepresentatives, hydrateSuperRepresentatives } from "../network";
+import { getTronSuperRepresentatives, hydrateSuperRepresentatives } from "../network/trongrid";
 import { SuperRepresentative } from "../types";
 
 export const preload = async () => {

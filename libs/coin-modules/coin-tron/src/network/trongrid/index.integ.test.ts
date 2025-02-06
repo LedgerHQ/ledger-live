@@ -1,5 +1,5 @@
 import { fetchTronAccountTxs } from ".";
-import { setCoinConfig } from "../config";
+import { setCoinConfig } from "../../config";
 
 describe("fetchTronAccountTxs", () => {
   beforeAll(() => {
