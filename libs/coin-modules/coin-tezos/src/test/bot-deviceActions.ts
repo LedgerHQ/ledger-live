@@ -52,6 +52,11 @@ export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlo
           postfixCode: true,
         }),
     },
+    /**
+     * when revealing, fee are print twice on nano side.
+     * we ignore the assertion failure because we can't know if it's the first or second fee
+     * status.estimatedFees is the total fees, so we can't use it
+     */
     {
       title: "Fee",
       button: SpeculosButton.RIGHT,
