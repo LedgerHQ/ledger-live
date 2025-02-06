@@ -142,7 +142,6 @@ output 1: amount 0e532a0000000000 script 76a9144cd6509f71020b6a9e890bef43c4d5e61
           "0210270000000000001976a9140fef7d9e0afcc8e198ac049945b6499b6fe7aef288ac1a314700000000001976a914d83e71f7a39b28a617c7bcedbd925c2a621952b288ac",
         additionals: ["zcash", "sapling"],
       });
-      console.log("RESULT", result);
       expect(result).toEqual(
         "010000005510e7c8000000000000000002989caa0731d6526fe4e03d49c54720be148f911924129e15d7ecf6e190829edb00000000050230000102000000007203407d7ff3f5832db7c37973ac01569a832cd78a6dbd3627e4f9ee745853220000000003000102000000000210270000000000001976a9140fef7d9e0afcc8e198ac049945b6499b6fe7aef288ac1a314700000000001976a914d83e71f7a39b28a617c7bcedbd925c2a621952b288ac000000",
       );
@@ -183,7 +182,6 @@ output 1: amount 0e532a0000000000 script 76a9144cd6509f71020b6a9e890bef43c4d5e61
         expiryHeight: Buffer.alloc(4),
         blockHeight: blockHeight,
       });
-      console.log({ result });
       expect(result.defaultVersion.readUInt32LE(0)).toBe(0x80000006);
       expect(result.defaultVersionNu5Only.readUInt32LE(0)).toBe(0x80000005);
     });
