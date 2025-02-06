@@ -75,15 +75,15 @@ export async function startProxy(
 
 export function closeProxy(proxyPort?: number) {
   if (!proxyPort) {
-    for (const [, subscription] of proxySubscriptions) {
-      subscription.unsubscribe();
-    }
+    proxySubscriptions.forEach(([, subscription]) => subscription.unsubscribe());
+    proxySubscriptions.length = 0;
     return;
   }
-  const proxySubscription = proxySubscriptions.find(([port]) => port === proxyPort)?.[1];
-  if (proxySubscription) {
-    proxySubscription.unsubscribe();
-    proxySubscriptions.splice(proxySubscriptions.indexOf([proxyPort, proxySubscription]));
+
+  const index = proxySubscriptions.findIndex(([port]) => port === proxyPort);
+  if (index !== -1) {
+    proxySubscriptions[index][1].unsubscribe();
+    proxySubscriptions.splice(index, 1);
   }
 }
 

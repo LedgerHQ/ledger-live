@@ -255,17 +255,17 @@ export async function launchProxy(
 
 export async function deleteSpeculos(proxyPort?: number) {
   if (!proxyPort) {
-    for (const [address] of speculosDevices) {
-      await deleteSpeculos(address);
-    }
+    await Promise.all(speculosDevices.map(async ([address]) => deleteSpeculos(address)));
     return;
   }
-  if (proxyPort) closeProxy(proxyPort);
-  const speculosDevice = speculosDevices.find(([number]) => number === proxyPort)?.[1];
-  if (speculosDevice) {
+
+  closeProxy(proxyPort);
+  const index = speculosDevices.findIndex(([port]) => port === proxyPort);
+  if (index !== -1) {
+    const [, speculosDevice] = speculosDevices[index];
     await stopSpeculos(speculosDevice);
-    speculosDevices.splice(speculosDevices.indexOf([proxyPort, speculosDevice]));
-    console.warn(`Speculos stopped on ${proxyPort}`);
+    speculosDevices.splice(index, 1);
+    console.warn(`Speculos successfully stopped on port ${proxyPort}`);
   }
   setEnv("SPECULOS_API_PORT", 0);
 }
