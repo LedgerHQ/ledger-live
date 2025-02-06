@@ -3351,7 +3351,7 @@
       },
       "form": {
         "validate": "Confirm Swap transaction",
-        "tab": "Exchange",
+        "tab": "Swap",
         "button": "Continue",
         "from": "From",
         "to": "To",
@@ -3460,8 +3460,8 @@
           "receive": "Receive"
         },
         "placeholder": "Select",
-        "title": "Exchange",
-        "cta": "Exchange",
+        "title": "Swap",
+        "cta": "Swap",
         "from": "From",
         "to": "To",
         "loading": "Loading...",
