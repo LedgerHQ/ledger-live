@@ -72,15 +72,10 @@ static NSString *const iOSPushAutoEnabledKey = @"iOSPushAutoEnabled";
   RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
   RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge moduleName:@"ledgerlivemobile" initialProperties:nil];
 
- if (rootView) {
-  UIStoryboard *sb = [UIStoryboard storyboardWithName:@"LaunchScreen" bundle:[NSBundle mainBundle]];
+  [self.window makeKeyAndVisible];
+  UIStoryboard *sb = [UIStoryboard storyboardWithName:@"LaunchScreen" bundle:nil];
   UIViewController *vc = [sb instantiateInitialViewController];
   rootView.loadingView = vc.view;
-  UIViewController *rootViewController = [UIViewController new];
-  rootViewController.view = rootView;
-  self.window.rootViewController = rootViewController;
-  [self.window makeKeyAndVisible];
-}
 
   return YES;
 }
