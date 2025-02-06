@@ -20,7 +20,7 @@ import {
 } from "@ledgerhq/live-common/hw/extractOnboardingState";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useCustomPath } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
-import { lastSeenDeviceSelector } from "~/renderer/reducers/settings";
+import { lastSeenDeviceSelector, trackingEnabledSelector } from "~/renderer/reducers/settings";
 import { DesyncOverlay } from "./DesyncOverlay";
 import SeedStep, { SeedPathStatus } from "./SeedStep";
 import { analyticsFlowName, StepText } from "./shared";
@@ -36,6 +36,7 @@ import { setDrawer } from "~/renderer/drawers/Provider";
 import LockedDeviceDrawer from "./LockedDeviceDrawer";
 import { LockedDeviceError } from "@ledgerhq/errors";
 import { useRecoverRestoreOnboarding } from "~/renderer/hooks/useRecoverRestoreOnboarding";
+import { useTrackOnboardingFlow } from "~/renderer/analytics/hooks/useTrackOnboardingFlow";
 
 const READY_REDIRECT_DELAY_MS = 2000;
 const POLLING_PERIOD_MS = 1000;
@@ -115,6 +116,13 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
   const deviceToRestore = useSelector(lastSeenDeviceSelector) as DeviceModelInfo | null | undefined;
   const lastCompanionStepKey = useRef<StepKey>();
   const [seedPathStatus, setSeedPathStatus] = useState<SeedPathStatus>("choice_new_or_restore");
+
+  useTrackOnboardingFlow({
+    location: "Onboarding flow",
+    device: device,
+    isTrackingEnabled: useSelector(trackingEnabledSelector),
+    seedPathStatus: seedPathStatus,
+  });
 
   const servicesConfig = useFeature("protectServicesDesktop");
 
