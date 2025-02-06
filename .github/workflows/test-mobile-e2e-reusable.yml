@@ -94,6 +94,8 @@ jobs:
       LANGUAGE: en_US.UTF-8
       LC_ALL: en_US.UTF-8
       COINAPPS_REMOTE: ${{ needs.speculos-ios.outputs.coinapps_remote }}
+      DOCKER_API_ADDRESS: 10.102.97.71
+      DOCKER_API_PORT: 2375
     outputs:
       status: ${{ steps.detox.outcome }}
     steps:
