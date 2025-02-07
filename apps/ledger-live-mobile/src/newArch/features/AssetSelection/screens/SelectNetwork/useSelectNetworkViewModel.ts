@@ -5,7 +5,6 @@ import { useTranslation } from "react-i18next";
 import { Linking } from "react-native";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
-import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/hooks";
 import { hasClosedNetworkBannerSelector } from "~/reducers/settings";
 import { flattenAccountsSelector } from "~/reducers/accounts";
 import { setCloseNetworkBanner } from "~/actions/settings";
@@ -78,23 +77,22 @@ export default function useSelectNetworkViewModel({
 
   const accounts = useSelector(flattenAccountsSelector);
 
-  const sortedCryptoCurrencies = useCurrenciesByMarketcap(
-    cryptoCurrencies.filter(e => !!e) as CryptoCurrency[],
+  const filteredCryptoCurrencies = useMemo(
+    () => cryptoCurrencies.filter(e => !!e) as CryptoCurrency[],
+    [cryptoCurrencies],
   );
 
-  const sortedCryptoCurrenciesWithAccounts: CryptoWithAccounts[] = useMemo(
-    () =>
-      sortedCryptoCurrencies
-        .map(crypto => {
-          const accs = findAccountByCurrency(accounts, crypto);
-          return {
-            crypto,
-            accounts: accs,
-          };
-        })
-        .sort((a, b) => b.accounts.length - a.accounts.length),
-    [accounts, sortedCryptoCurrencies],
-  );
+  const sortedCryptoCurrenciesWithAccounts: CryptoWithAccounts[] = useMemo(() => {
+    const withAccounts = filteredCryptoCurrencies.map(crypto => ({
+      crypto,
+      accounts: findAccountByCurrency(accounts, crypto),
+    }));
+
+    return withAccounts.sort((a, b) => {
+      const accountDiff = b.accounts.length - a.accounts.length;
+      return accountDiff !== 0 ? accountDiff : a.crypto.name.localeCompare(b.crypto.name);
+    });
+  }, [accounts, filteredCryptoCurrencies]);
 
   const navigateToDevice = useCallback(
     (currency: CryptoCurrency, createTokenAccount: boolean) => {
