@@ -4419,6 +4419,9 @@ importers:
       '@zondax/ledger-icp':
         specifier: ^0.7.0
         version: 0.7.0
+      '@zondax/ledger-mina-js':
+        specifier: 0.0.2
+        version: 0.0.2
       '@zondax/ledger-stacks':
         specifier: ^1.0.2
         version: 1.0.4
@@ -4467,9 +4470,6 @@ importers:
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
-      mina-ledger-js:
-        specifier: ^1.0.7
-        version: 1.0.7
       minimatch:
         specifier: ^5.1.0
         version: 5.1.6
@@ -17471,6 +17471,12 @@ packages:
 
   '@zondax/ledger-js@0.8.2':
     resolution: {integrity: sha512-U/lzNzcJwfYGhhpwUviazihXzIv8w3rM31HbgKWOwF/xVS4/hHSLCGpONEGVwtgYUNDF7L0YfSy95/0H+tGtFA==}
+
+  '@zondax/ledger-js@1.2.0':
+    resolution: {integrity: sha512-HGvDU0s4zg0scu8ebGenFHFB6g5SLDqmrctncZUY9ie5pGibOU8C0VdjZSHbttSOCyh+IloLi/a4jyMPOEQGuQ==}
+
+  '@zondax/ledger-mina-js@0.0.2':
+    resolution: {integrity: sha512-6tB4voId5NOfn1XzYivyQnjq8A7eoz/2D+Ay0IDCimkF4wX2dWC0KKzatRnJmC80z8b37Hsi5/roSvkZUQ/bgw==}
 
   '@zondax/ledger-stacks@1.0.4':
     resolution: {integrity: sha512-R8CB0CZ2poTzpcG0jhzzXZvXF7axIsmZFhp06aHCUjgz+1df63YbC4tUzyzmseekwqNWnaebWFejQKJ99WiHZA==}
@@ -32976,7 +32982,7 @@ snapshots:
       '@babel/traverse': 7.26.7
       '@babel/types': 7.26.7
       convert-source-map: 2.0.0
-      debug: 4.3.4
+      debug: 4.3.7
       gensync: 1.0.0-beta.2
       json5: 2.2.3
       semver: 6.3.1
@@ -47648,6 +47654,14 @@ snapshots:
   '@zondax/ledger-js@0.8.2':
     dependencies:
       '@ledgerhq/hw-transport': 6.30.6
+
+  '@zondax/ledger-js@1.2.0':
+    dependencies:
+      '@ledgerhq/hw-transport': 6.31.4
+
+  '@zondax/ledger-mina-js@0.0.2':
+    dependencies:
+      '@zondax/ledger-js': 1.2.0
 
   '@zondax/ledger-stacks@1.0.4':
     dependencies:
