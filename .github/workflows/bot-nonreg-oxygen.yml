@@ -34,5 +34,5 @@ jobs:
           SEED: ${{ secrets.SEED5 }}
           BOT_ENVIRONMENT: production
           # We only run these currencies on a weekly basis because fees are expensive
-          BOT_FILTER_CURRENCIES: qtum,decred,cardano,axelar,cosmos,secret_network,avalanche_c_chain,bsc,filecoin,tron,cronos,fantom,boba,telos_evm,polygon_zk_evm,polkadot
+          BOT_FILTER_CURRENCIES: qtum,decred,cardano,axelar,cosmos,avalanche_c_chain,bsc,filecoin,tron,cronos,fantom,boba,telos_evm,polygon_zk_evm,polkadot
           BOT_FILTER_FEATURES: send
