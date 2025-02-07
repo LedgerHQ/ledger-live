@@ -33,6 +33,7 @@ const tezos: AppSpec<Transaction> = {
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "TezosWallet",
+    appVersion: "3.0.6",
   },
   genericDeviceAction: acceptTransaction,
   testTimeout: 2 * 60 * 1000,
