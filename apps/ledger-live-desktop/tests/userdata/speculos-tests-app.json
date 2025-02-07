@@ -3674,8 +3674,8 @@
           "pendingOperations": [],
           "currencyId": "bitcoin",
           "lastSyncDate": "2024-08-01T09:06:55.635Z",
-          "balance": "6205",
-          "spendableBalance": "6205",
+          "balance": "218109",
+          "spendableBalance": "218109",
           "balanceHistoryCache": {
             "HOUR": {
               "balances": [

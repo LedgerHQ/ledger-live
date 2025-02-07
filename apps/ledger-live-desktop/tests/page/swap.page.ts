@@ -1,10 +1,11 @@
 import { AppPage } from "tests/page/abstractClasses";
 import { waitFor } from "../utils/waitFor";
 import { step } from "tests/misc/reporters/step";
-import { ElectronApplication, expect } from "@playwright/test";
+import { ElectronApplication, expect, Page } from "@playwright/test";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { ChooseAssetDrawer } from "tests/page/drawer/choose.asset.drawer";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Swap";
+import { Application } from "tests/page";
 
 export class SwapPage extends AppPage {
   private currencyByName = (accountName: string) => this.page.getByText(accountName); // TODO: this is rubbish. Changed this
@@ -262,5 +263,24 @@ export class SwapPage extends AppPage {
       await expect(webview.locator(this.errorSpan(message))).toBeVisible();
     }
     await expect(webview.getByTestId(`execute-button`)).not.toBeEnabled();
+  }
+
+  @step("Go and wait for Swap app to be ready")
+  async goAndWaitForSwapToBeReady(app: Application, page: Page, swapFunction: () => Promise<void>) {
+    const successfulQuery = new Promise(resolve => {
+      page.on("response", response => {
+        if (
+          response
+            .url()
+            .startsWith("https://explorers.api.live.ledger.com/blockchain/v4/btc/fees") &&
+          response.status() === 200
+        ) {
+          resolve(response);
+        }
+      });
+    });
+
+    await swapFunction();
+    expect(await successfulQuery).toBeDefined();
   }
 }
