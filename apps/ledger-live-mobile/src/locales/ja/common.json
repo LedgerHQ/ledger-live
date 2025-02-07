@@ -791,6 +791,30 @@
     "SolanaAccountNotFunded" : {
       "title" : "アカウントに資金がありません"
     },
+    "SolanaTokenAccountHoldsAnotherToken" : {
+      "title" : "この関連トークンアカウントは別のトークンを保持しています"
+    },
+    "SolanaTokenAccountWarning" : {
+      "title" : "これは通常のウォレットアドレスではなく、関連するトークンアカウントです。自分が何をしているのか理解している場合にのみ、続行してください"
+    },
+    "SolanaTokenAccountNotAllowed" : {
+      "title" : "これはトークンアカウントです。通常のウォレットアドレスを入力してください"
+    },
+    "SolanaMintAccountNotAllowed" : {
+      "title" : "これはトークンアドレスです。通常のウォレットアドレスを入力してください"
+    },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "アカウントに入金されます"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "トークンアカウントの資産が凍結されています"
+    },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "アカウントが初期化されていません"
+    },
+    "SolanaTokenRecipientIsSenderATA" : {
+      "title" : "送付者のトークンアドレスと同じ受取アドレスです"
+    },
     "SolanaAddressOfEd25519" : {
       "title" : "アドレスオフed25519 curve"
     },
@@ -2375,16 +2399,16 @@
     },
     "recoverBanner" : {
       "subscribeDone" : {
-        "title" : "お支払いカードの追加を完了する",
-        "description" : "Ledger Recoverを使用して確実に復元する。"
+        "title" : "Ledger Recoverのサブスクリプション契約が完了していません",
+        "description" : "安全の確保まで残り2ステップです。"
       },
       "verifyIdentity" : {
-        "title" : "本人認証を完了する",
-        "description" : "Ledger Recoverを使用して確実に復元する。"
+        "title" : "Ledger Recoverのサブスクリプション契約が完了していません",
+        "description" : "安全の確保まで残り1ステップです。"
       },
       "connectDevice" : {
-        "title" : "最後のステップ：Ledgerを接続する",
-        "description" : "Ledger Recoverまであと1歩です。"
+        "title" : "Ledger Recoverのサブスクリプション契約が完了していません",
+        "description" : "これが、ウォレットへのアクセス復元を確実にするための最後のステップです。"
       }
     }
   },
@@ -3104,7 +3128,7 @@
       "title" : "デベロッパー",
       "desc" : "試験的機能を試して、フィードバックを送る。",
       "customManifest" : {
-        "title" : "カスタムプラットフォームマニフェストを読み込む"
+        "title" : "マニフェストの読み込み"
       },
       "exchangeDeveloperMode" : {
         "title" : "Exchange開発者モード",
@@ -4161,7 +4185,9 @@
     "installApp" : "{{appName}}アプリのインストール{{percentage}}",
     "installAppDescription" : "インストールが完了するまでお待ちください。",
     "listApps" : "アプリの依存関係を確認しています。",
-    "listAppsDescription" : "必要な全てのアプリを確認中です。しばらくお待ちください。"
+    "listAppsDescription" : "必要な全てのアプリを確認中です。しばらくお待ちください。",
+    "confirmExchangeOnDevice" : "デバイスで取引を確定する",
+    "confirmSwapOnDevice" : "デバイスでスワップを確定する"
   },
   "SelectDevice" : {
     "title" : "新しいデバイスのペアリング",
@@ -5982,6 +6008,10 @@
         "description" : "SOL資産をバリデーターにデリゲートすることで報酬を得ることができます。"
       },
       "reserveWarning" : "今後ステーキングを無効化して引き出す際に必要となるネットワーク手数料として、ウォレットに少なくとも{{amount}}SOLを確保してください。"
+    },
+    "token" : {
+      "frozenStateWarning" : "アカウント資産が凍結されています！",
+      "transferWarning" : "Ledger Nano S™を使用してSolanaトークンの受取人アドレスを認証するには、<0>こちらの手順に従ってください。</0>"
     }
   },
   "near" : {
@@ -7061,9 +7091,10 @@
           "explanation" : {
             "title" : "別のLedger Liveアプリを使用してアカウントをスキャンして同期します",
             "steps" : {
-              "step1" : "同期したいLedger Liveアプリを開く",
-              "step2" : "<0>設定</0> <1>></1> <0>一般</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Ledger Syncをオンにする</0> <1>></1> <0>QRコードをスキャン</0>に移動",
-              "step3" : "QRコードをスキャン"
+              "step1" : "アプリの1つでLedger Syncが有効になっていることを確認する。",
+              "step2" : "同期したいLedger Liveアプリを開く。",
+              "step3" : "<0>設定</0> <1>></1> <0>一般</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>すでにオンにしました</0> <1>></1> <0>QRコードをスキャン</0>に移動する。",
+              "step4" : "QRコードをスキャンする。"
             }
           }
         },
@@ -7073,9 +7104,10 @@
           "explanation" : {
             "title" : "別のスマホまたはコンピューターでLedger Liveと同期するには...",
             "steps" : {
-              "step1" : "同期したいLedger Liveを開く。",
-              "step2" : "<0>設定</0> <1>></1> <0>一般</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Ledger Syncをオンにする</0> <1>></1> <0>QRを表示</0>に移動",
-              "step3" : "QRコードをスキャン"
+              "step1" : "アプリの1つでLedger Syncが有効になっていることを確認する。",
+              "step2" : "同期したいLedger Liveを開く。",
+              "step3" : "<0>設定</0> <1>></1> <0>一般</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>すでにオンにしました</0> <1>></1> <0>QRを表示</0>に移動する。",
+              "step4" : "QRコードをスキャンする。"
             }
           }
         },

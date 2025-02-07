@@ -120,6 +120,7 @@
     "addressCopiedSuspicious" : "Incompatibilidade entre o endereço copiado e o que está na área de transferência.",
     "experimentalFeature" : "Experimental",
     "featureFlags" : "Marcadores de funções",
+    "ldmkEnabled" : "Transporte LDMK",
     "information" : "Informações",
     "search" : "Pesquisar...",
     "searchWithoutEllipsis" : "Pesquisar",
@@ -200,7 +201,8 @@
       "STAKE" : "Aplicado",
       "UNSTAKE" : "Desaplicado",
       "WITHDRAW_UNSTAKED" : "Sacado",
-      "SENDING" : "Enviando"
+      "SENDING" : "Enviando",
+      "BURN" : "Queimado"
     },
     "edit" : {
       "title" : "Acelerar ou Cancelar",
@@ -1515,21 +1517,21 @@
     },
     "recoverBanner" : {
       "subscribeDone" : {
-        "title" : "Termine de adicionar seu cartão para pagamento",
-        "description" : "Use o Ledger Recover para restaurar de forma confiável",
+        "title" : "Lembrete: Termine de assinar o Ledger Recover",
+        "description" : "Você está a apenas dois passos de aumentar sua segurança.",
         "primaryCta" : "Adicionar cartão",
         "secondaryCta" : "Talvez mais tarde"
       },
       "verifyIdentity" : {
-        "title" : "Termine de verificar sua identidade",
-        "description" : "Use o Ledger Recover para restaurar de forma confiável",
-        "primaryCta" : "Verificar",
+        "title" : "Lembrete: Termine de assinar o Ledger Recover",
+        "description" : "Você está a apenas dois passos de aumentar sua segurança.",
+        "primaryCta" : "Verificar identidade",
         "secondaryCta" : "Talvez mais tarde"
       },
       "connectDevice" : {
-        "title" : "Conectar sua Ledger",
-        "description" : "Você está a um passo do Ledger Recover.",
-        "primaryCta" : "Conectar",
+        "title" : "Lembrete: Termine de assinar o Ledger Recover",
+        "description" : "Essa é a última etapa para garantir a recuperação do acesso à carteira.",
+        "primaryCta" : "Conectar dispositivo",
         "secondaryCta" : "Talvez mais tarde"
       }
     },
@@ -3742,6 +3744,10 @@
           }
         }
       }
+    },
+    "token" : {
+      "frozenStateWarning" : "Os ativos da conta estão congelados!",
+      "transferWarning" : "Para verificar o endereço do destinatário para tokens Solana usando uma Ledger Nano S™, <0>siga essas instruções.</0>"
     }
   },
   "ethereum" : {
@@ -6197,6 +6203,30 @@
     "SolanaAccountNotFunded" : {
       "title" : "Conta sem saldo"
     },
+    "SolanaTokenAccountHoldsAnotherToken" : {
+      "title" : "Essa conta de token associada detém outro token"
+    },
+    "SolanaTokenAccountWarning" : {
+      "title" : "Esse não é um endereço de carteira normal, mas uma conta de token associada. Continue apenas se você sabe o que está fazendo"
+    },
+    "SolanaTokenAccountNotAllowed" : {
+      "title" : "Essa é uma conta de token. Insira um endereço de carteira normal"
+    },
+    "SolanaMintAccountNotAllowed" : {
+      "title" : "Esse é um endereço de token. Insira um endereço de carteira normal"
+    },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "A conta será financiada"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "Os ativos da conta de token estão congelados"
+    },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "Conta não inicializada"
+    },
+    "SolanaTokenRecipientIsSenderATA" : {
+      "title" : "O endereço do destinatário é o mesmo que o endereço do remetente do token"
+    },
     "SolanaMemoIsTooLong" : {
       "title" : "O memo é muito longo. O comprimento máximo é {{maxLength}}"
     },
@@ -6725,17 +6755,19 @@
         "mobile" : {
           "description" : "Sincronize o aplicativo Ledger Live em outro telefone",
           "steps" : {
-            "step1" : "Abra o aplicativo Ledger Live que você deseja sincronizar",
-            "step2" : "Vá para <0>Configurações</0> > <0>Geral</0> > <0>Ledger Sync</0> > <0>Ativar sincronização</0> > <0>Mostrar QR</0>",
-            "step3" : "Escanear QR Code"
+            "step1" : "Verifique se o Ledger Sync foi ativado em um de seus aplicativos.",
+            "step2" : "Abra o aplicativo Ledger Live que você deseja sincronizar.",
+            "step3" : "Vá para <0>Configurações</0> > <0>Geral</0> > <0>Ledger Sync</0> > <0>Já ativei</0> > <0>Mostrar QR</0>",
+            "step4" : "Escaneie o QR code."
           }
         },
         "desktop" : {
           "description" : "Sincronize suas contas com outro aplicativo Ledger Live",
           "steps" : {
-            "step1" : "Abra o aplicativo Ledger Live que você deseja sincronizar",
-            "step2" : "Vá para <0>Configurações</0> > <0>Geral</0> > <0>Ledger Sync</0> > <0>Ativar sincronização</0> > <0>Usar sua Ledger/0>",
-            "step3" : "Conectar sua Ledger"
+            "step1" : "Verifique se o Ledger Sync foi ativado em um de seus aplicativos.",
+            "step2" : "Abra o aplicativo Ledger Live que você deseja sincronizar.",
+            "step3" : "Vá para <0>Configurações</0> > <0>Geral</0> > <0>Ledger Sync</0> > <0>Já ativei</0> > <0>Use sua Ledger</0>",
+            "step4" : "Conecte sua Ledger."
           }
         }
       },
