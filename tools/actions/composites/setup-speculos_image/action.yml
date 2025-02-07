@@ -11,9 +11,6 @@ inputs:
     description: "GitHub Bot ID"
   bot_key:
     description: "GitHub Bot private key"
-  platform:
-    description: "Speculos image platform to pull"
-    required: false
 
 runs:
   using: composite
@@ -34,5 +31,5 @@ runs:
         path: ${{ inputs.coinapps_path }}
     - name: Pull docker image
       if: ${{ inputs.speculos_tag }}
-      run: docker pull ${{ inputs.platform && '--platform' || '' }} ${{ inputs.platform }} ${{ inputs.speculos_tag }}
+      run: docker pull ${{ inputs.speculos_tag }}
       shell: bash
