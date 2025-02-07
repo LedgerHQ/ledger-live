@@ -41,7 +41,7 @@ export async function launchSpeculos(appName: string) {
   const speculosDevice = await startSpeculos(testName, specs[appName.replace(/ /g, "_")]);
   invariant(speculosDevice, "[E2E Setup] Speculos not started");
 
-  const speculosApiPort = speculosDevice.ports.apiPort;
+  const speculosApiPort = speculosDevice.apiPort;
   invariant(speculosApiPort, "[E2E Setup] speculosApiPort not defined");
   setEnv("SPECULOS_API_PORT", speculosApiPort);
   speculosDevices.set(speculosApiPort, speculosDevice.id);

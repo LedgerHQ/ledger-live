@@ -129,9 +129,13 @@ function createRequestData(deviceParams: DeviceParams) {
   };
 }
 
-export async function createSpeculosDeviceAPI(
-  deviceParams: DeviceParams,
-): Promise<SpeculosDevice | undefined> {
+export async function createSpeculosDeviceAPI(deviceParams: DeviceParams): Promise<
+  | {
+      id: string;
+      apiPort: number;
+    }
+  | undefined
+> {
   idCounter = idCounter ?? getEnv("SPECULOS_PID_OFFSET");
   const speculosID = `speculosID-${++idCounter}`;
 
@@ -144,11 +148,9 @@ export async function createSpeculosDeviceAPI(
     await waitForSpeculosReady(speculosID);
 
     return {
-      transport: undefined as unknown,
       id: speculosID,
-      appPath: requestData.Cmd[3],
-      ports: { apiPort: 30000 + idCounter, vncPort: 0 },
-    } as SpeculosDevice;
+      apiPort: 30000 + idCounter,
+    };
   } catch (e: unknown) {
     console.error(e);
     log("engine", `test ${speculosID} failed with ${String(e)}`);
