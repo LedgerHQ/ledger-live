@@ -8,7 +8,11 @@ import { Button, IconsLegacy, Box } from "@ledgerhq/native-ui";
 import { useDistribution } from "~/actions/general";
 import { track, TrackScreen } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
-import { blacklistedTokenIdsSelector, discreetModeSelector } from "~/reducers/settings";
+import {
+  blacklistedTokenIdsSelector,
+  discreetModeSelector,
+  selectedTabPortfolioAssetsSelector,
+} from "~/reducers/settings";
 import Assets from "./Assets";
 import PortfolioQuickActionsBar from "./PortfolioQuickActionsBar";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
@@ -29,6 +33,8 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
   const isAccountListUIEnabled = accountListFF?.enabled;
   const navigation = useNavigation();
   const allAccounts = useSelector(accountsSelector, shallowEqual);
+  const initialSelectedTab = useSelector(selectedTabPortfolioAssetsSelector, shallowEqual);
+
   const startNavigationTTITimer = useStartProfiler();
   const distribution = useDistribution({
     showEmptyAccounts: true,
@@ -62,7 +68,7 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
     assetsAnimatedStyle,
     containerHeight,
     accountsAnimatedStyle,
-  } = useListsAnimation(TAB_OPTIONS.Assets);
+  } = useListsAnimation(initialSelectedTab);
 
   const showAssets = selectedTab === TAB_OPTIONS.Assets;
   const showAccounts = selectedTab === TAB_OPTIONS.Accounts;
@@ -123,6 +129,7 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
           handleAssetsContentSizeChange={handleAssetsContentSizeChange}
           handleAccountsContentSizeChange={handleAccountsContentSizeChange}
           onPressButton={onPressButton}
+          initialTab={initialSelectedTab}
           showAssets={showAssets}
           showAccounts={showAccounts}
           assetsLength={assetsToDisplay.length}
