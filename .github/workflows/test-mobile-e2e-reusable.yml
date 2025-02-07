@@ -66,7 +66,7 @@ permissions:
   contents: read
 
 env:
-  SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:d3fc405353651d3f53d0ce162e26c732f5f6ee98@sha256:ea0af25fb7cdc1ed2e97210a244af243cc85194f732f10aaf65480a44a84d089
+  SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:0.11
   COINAPPS: ${{ github.workspace }}/coin-apps
   SPECULOS_RUN: ${{ inputs.speculos_tests || github.event_name == 'schedule' }}
 
@@ -86,6 +86,7 @@ jobs:
           speculos_tag: ${{ env.SPECULOS_IMAGE_TAG }}
           bot_id: ${{ secrets.GH_BOT_APP_ID }}
           bot_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+          platform: linux/arm64
   detox-tests-ios:
     name: "LLM - iOS Detox Tests"
     runs-on: ${{(inputs.speculos_tests || github.event_name == 'schedule') && fromJson('["macOS", "speculos"]') || fromJson('["macOS", "m1"]')}}
