@@ -17,7 +17,6 @@ import {
   rawEncode,
 } from "../logic";
 import api from "../network/tzkt";
-import { assert } from "console";
 import { log } from "@ledgerhq/logs";
 
 export function createApi(config: TezosConfig): Api {
