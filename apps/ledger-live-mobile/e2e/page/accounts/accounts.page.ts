@@ -16,6 +16,7 @@ export default class AccountsPage {
   @Step("Open accounts list via deeplink")
   async openViaDeeplink() {
     await openDeeplink(baseLink);
+    await this.waitForAccountsPageToLoad(); // Issue with RN75 : QAA-370
   }
   async waitForAccountsPageToLoad() {
     await waitForElementById(this.listTitle);
