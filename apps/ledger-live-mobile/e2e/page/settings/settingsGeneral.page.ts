@@ -5,8 +5,8 @@ import {
   tapByText,
   scrollToText,
   typeTextByElement,
+  expect,
 } from "../../helpers";
-import { expect } from "detox";
 
 export default class SettingsGeneralPage {
   passwordSettingsSwitch = () => getElementById("password-settings-switch");

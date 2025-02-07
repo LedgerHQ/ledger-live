@@ -5,8 +5,8 @@ import {
   tapByElement,
   tapByText,
   typeTextByElement,
+  expect,
 } from "../../helpers";
-import { expect } from "detox";
 
 const baseLink = "swap";
 

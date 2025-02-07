@@ -1,5 +1,4 @@
-import { getElementById, typeTextByElement, tapByText, tapByElement } from "../../helpers";
-import { expect } from "detox";
+import { getElementById, typeTextByElement, tapByText, tapByElement, expect } from "../../helpers";
 
 export default class MarketPage {
   searchBar = () => getElementById("search-box");

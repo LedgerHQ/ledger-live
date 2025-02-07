@@ -4,8 +4,8 @@ import {
   openDeeplink,
   tapByElement,
   waitForElementById,
+  expect,
 } from "../../helpers";
-import { expect } from "detox";
 
 const baseLink = "nftgallery";
 

@@ -1,5 +1,4 @@
-import { getElementById, waitForElementById } from "../../helpers";
-import { expect } from "detox";
+import { getElementById, waitForElementById, expect } from "../../helpers";
 
 export default class DeviceValidationPage {
   validationScrollViewId = "device-validation-scroll-view";

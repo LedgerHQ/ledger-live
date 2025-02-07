@@ -1,5 +1,4 @@
-import { getElementById, tapByElement } from "../../helpers";
-import { expect } from "detox";
+import { getElementById, tapByElement, expect } from "../../helpers";
 
 export default class NftViewerPage {
   mainScrollView = () => getElementById("nft-viewer-page-scrollview");

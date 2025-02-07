@@ -1,5 +1,11 @@
-import { getElementById, getTextOfElement, scrollToId, tapByElement, tapById } from "../../helpers";
-import { expect } from "detox";
+import {
+  getElementById,
+  getTextOfElement,
+  scrollToId,
+  tapByElement,
+  tapById,
+  expect,
+} from "../../helpers";
 import jestExpect from "expect";
 
 export default class AccountPage {

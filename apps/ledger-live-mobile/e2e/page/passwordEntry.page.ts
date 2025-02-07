@@ -1,5 +1,10 @@
-import { getElementById, getElementByText, tapByElement, typeTextByElement } from "../helpers";
-import { expect } from "detox";
+import {
+  getElementById,
+  getElementByText,
+  tapByElement,
+  typeTextByElement,
+  expect,
+} from "../helpers";
 
 export default class PasswordEntryPage {
   getPasswordTextInput = () => getElementById("password-text-input");

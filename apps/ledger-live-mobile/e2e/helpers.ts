@@ -1,6 +1,7 @@
-import { by, element, waitFor, device, web } from "detox";
+import { by, element, waitFor, device, web, expect as detoxExpect } from "detox";
 import { Direction } from "detox/detox";
 import { findFreePort, close as closeBridge, init as initBridge } from "./bridge/server";
+import jestExpect from "expect";
 
 import { startSpeculos, stopSpeculos, specs } from "@ledgerhq/live-common/e2e/speculos";
 import { SpeculosDevice } from "@ledgerhq/speculos-transport";
@@ -44,9 +45,14 @@ export function setupEnvironment() {
   }
 }
 
-function sync_delay(ms: number) {
+function sync_delay(ms = 200) {
   const done = new Int32Array(new SharedArrayBuffer(4));
   Atomics.wait(done, 0, 0, ms); // Wait for the specified duration
+}
+
+export function expect(element: any) {
+  if (!isAndroid()) sync_delay(); // Issue with RN75 : QAA-370
+  return detoxExpect(element);
 }
 
 export function waitForElementById(id: string | RegExp, timeout: number = DEFAULT_TIMEOUT) {
@@ -62,22 +68,22 @@ export function waitForElementByText(text: string | RegExp, timeout: number = DE
 }
 
 export function getElementById(id: string | RegExp, index = 0) {
-  if (!isAndroid()) sync_delay(200); // Issue with RN75 : QAA-370
+  if (!isAndroid()) sync_delay(); // Issue with RN75 : QAA-370
   return element(by.id(id)).atIndex(index);
 }
 
 export function getElementByText(text: string | RegExp, index = 0) {
-  if (!isAndroid()) sync_delay(200); // Issue with RN75 : QAA-370
+  if (!isAndroid()) sync_delay(); // Issue with RN75 : QAA-370
   return element(by.text(text)).atIndex(index);
 }
 
 export function getWebElementById(id: string, index = 0) {
-  if (!isAndroid()) sync_delay(200); // Issue with RN75 : QAA-370
+  if (!isAndroid()) sync_delay(); // Issue with RN75 : QAA-370
   return web.element(by.web.id(id)).atIndex(index);
 }
 
 export function getWebElementByTag(tag: string, index = 0) {
-  if (!isAndroid()) sync_delay(200); // Issue with RN75 : QAA-370
+  if (!isAndroid()) sync_delay(); // Issue with RN75 : QAA-370
   return web.element(by.web.tag(tag)).atIndex(index);
 }
 
@@ -137,7 +143,7 @@ async function performScroll(
   const scrollViewMatcher = scrollViewId
     ? by.id(scrollViewId)
     : by.type(isAndroid() ? "android.widget.ScrollView" : "RCTScrollView");
-  if (!isAndroid()) sync_delay(200); // Issue with RN75 : QAA-370
+  if (!isAndroid()) sync_delay(); // Issue with RN75 : QAA-370
   await waitFor(element(elementMatcher))
     .toBeVisible()
     .whileElement(scrollViewMatcher)
@@ -232,7 +238,7 @@ export async function launchSpeculos(appName: string, proxyPort: number) {
     (speculosPort - BASE_PORT) * 1000 + parseInt(process.env.JEST_WORKER_ID || "0") * 100;
   setEnv("SPECULOS_PID_OFFSET", speculosPidOffset);
 
-  const testName = expect.getState().testPath || "unknown";
+  const testName = jestExpect.getState().testPath || "unknown";
   const speculosDevice = await startSpeculos(testName, specs[appName.replace(/ /g, "_")]);
   invariant(speculosDevice, "[E2E Setup] Speculos not started");
 
