@@ -18,15 +18,15 @@
   "types": "lib/index.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
-    "@ledgerhq/live-env": "workspace:*",
-    "@ledgerhq/live-promise": "workspace:*",
-    "@ledgerhq/logs": "workspace:*",
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/hw-transport-node-speculos": "workspace:*",
-    "@ledgerhq/hw-transport-node-speculos-http": "workspace:*"
+    "@ledgerhq/hw-transport-node-speculos-http": "workspace:*",
+    "@ledgerhq/live-env": "workspace:*",
+    "@ledgerhq/live-promise": "workspace:*",
+    "@ledgerhq/logs": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "^20.8.10",
+    "@types/node": "^22.10.10",
     "documentation": "14.0.2"
   },
   "scripts": {
