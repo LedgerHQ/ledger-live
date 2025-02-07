@@ -11,6 +11,7 @@ import ChangeDeviceLanguagePrompt from "~/renderer/components/ChangeDeviceLangua
 import { getDeviceModel } from "@ledgerhq/devices";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { setDrawer } from "~/renderer/drawers/Provider";
+import { CONNECTION_TYPES } from "~/renderer/analytics/hooks/variables";
 
 export type Props = {
   currentLanguage: Language;
@@ -19,6 +20,10 @@ export type Props = {
   onClose?: () => void;
   onSuccess?: () => void;
   onError?: () => void;
+  analyticsPayload?: {
+    deviceType: string | undefined;
+    connectionType: CONNECTION_TYPES;
+  };
 };
 
 const ChangeDeviceLanguagePromptDrawer: React.FC<Props> = ({
@@ -28,6 +33,7 @@ const ChangeDeviceLanguagePromptDrawer: React.FC<Props> = ({
   onClose,
   onSuccess,
   onError,
+  analyticsPayload = {},
 }) => {
   const [installingLanguage, setInstallingLanguage] = useState(false);
   const [languageInstalled, setLanguageInstalled] = useState(false);
@@ -55,8 +61,14 @@ const ChangeDeviceLanguagePromptDrawer: React.FC<Props> = ({
     (error: Error) => {
       if (onError) onError();
       track(`${analyticsContext} LanguageInstallError`, { error });
+      analyticsPayload &&
+        track("User refused languageInstall on device", {
+          ...analyticsPayload,
+          platform: "LLD",
+          flow: "SyncOnboarding",
+        });
     },
-    [onError, analyticsContext],
+    [onError, analyticsContext, analyticsPayload],
   );
 
   const getTextToDisplay = (key: "description" | "title") =>
