@@ -33,13 +33,9 @@ describe("get operations", () => {
     logicGetTransactions.mockClear();
   });
 
-  it("operations", async () => {
+  it("could return no operation", async () => {
     logicGetTransactions.mockResolvedValue([[], ""]);
-
-    // When
     const [operations, token] = await api.listOperations("addr", { minHeight: 100 });
-
-    // Then
     expect(operations).toEqual([]);
     expect(token).toEqual("");
   });
