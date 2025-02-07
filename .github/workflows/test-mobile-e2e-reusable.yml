@@ -146,7 +146,6 @@ jobs:
           pnpm build:dummy-apps
         shell: bash
       - name: Create iOS simulator
-        id: simulator
         run: xcrun simctl create "iOS Simulator" "iPhone 15"
       - name: Build iOS app for Detox test run
         if: steps.detox-build.outputs.cache-hit != 'true'
