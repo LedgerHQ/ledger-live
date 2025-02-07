@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.99.0-nightly.1
+
+### Minor Changes
+
+- [#9023](https://github.com/LedgerHQ/ledger-live/pull/9023) [`9bce8fe`](https://github.com/LedgerHQ/ledger-live/commit/9bce8fe6bcbc63927dcf77373db9f4f0a03e8f70) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - add lifi to nano S incompatibility list
+
 ## 2.99.0-nightly.0
 
 ### Minor Changes

@@ -1,5 +1,13 @@
 # live-mobile
 
+## 3.65.0-nightly.1
+
+### Minor Changes
+
+- [#9130](https://github.com/LedgerHQ/ledger-live/pull/9130) [`bc9001a`](https://github.com/LedgerHQ/ledger-live/commit/bc9001a94b76396d0653089c17a24793af55a509) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Missing style properties for hero card text. We text wasn't centered well
+
+- [#8967](https://github.com/LedgerHQ/ledger-live/pull/8967) [`ce73c9d`](https://github.com/LedgerHQ/ledger-live/commit/ce73c9d931fa7cc5355c86d171d44966b07f642f) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Remove ios loading view causing flakiness on detox
+
 ## 3.65.0-nightly.0
 
 ### Minor Changes
