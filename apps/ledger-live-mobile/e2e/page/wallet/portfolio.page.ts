@@ -60,6 +60,7 @@ export default class PortfolioPage {
   @Step("Open Portfolio via deeplink")
   async openViaDeeplink() {
     await openDeeplink(baseLink);
+    await waitForElementById(this.portfolioSettingsButtonId); // Issue with RN75 : QAA-370
   }
 
   async openMyLedger() {
