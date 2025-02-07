@@ -40,19 +40,23 @@ export default function BannerCard({
     event.stopPropagation();
     onClose?.(event);
   };
+  const handleCTAClick: ReactEventHandler = event => {
+    event.stopPropagation();
+    onClick(event);
+  };
   const handleLinkClick: ReactEventHandler = event => {
     event.stopPropagation();
     onLinkClick?.(event);
   };
 
   return (
-    <Wrapper {...boxProps} image={image} tag={tag} onClick={onClick}>
+    <Wrapper {...boxProps} image={image} tag={tag} onClick={handleCTAClick}>
       {tag && <StyledTag>{tag}</StyledTag>}
       <Title>{title}</Title>
       {description && <Desc maxWidth={descriptionWidth}>{description}</Desc>}
       <Flex columnGap={5}>
         {cta && (
-          <Button variant="main" outline={false} onClick={onClick}>
+          <Button variant="main" outline={false} onClick={handleCTAClick}>
             {cta}
           </Button>
         )}
@@ -92,7 +96,7 @@ const Desc = styled(Text).attrs({ variant: "small", color: "neutral.c70" })`
   padding-bottom: 8px;
 `;
 
-const Wrapper = styled(Flex)<Pick<BannerCardProps, "image" | "tag" | "maxHeight" | "onClick">>`
+const Wrapper = styled(Flex)<Pick<BannerCardProps, "image" | "tag">>`
   background-color: ${p => p.theme.colors.background.card};
   background-image: ${p => (p.image ? `url("${p.image}")` : "none")};
   background-position: right center;

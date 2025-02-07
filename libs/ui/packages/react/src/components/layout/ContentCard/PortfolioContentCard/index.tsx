@@ -22,11 +22,6 @@ export default function PortfolioContentCard({
   onClick,
   onClose,
 }: PortfolioContentCardProps) {
-  const handleClose: ReactEventHandler = event => {
-    event.stopPropagation();
-    onClose(event);
-  };
-
   return (
     <BannerCard
       title={title}
@@ -35,7 +30,7 @@ export default function PortfolioContentCard({
       tag={tag}
       image={image}
       onClick={onClick}
-      onClose={handleClose}
+      onClose={onClose}
     />
   );
 }
