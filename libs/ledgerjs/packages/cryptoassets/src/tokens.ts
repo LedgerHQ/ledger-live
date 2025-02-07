@@ -5,7 +5,7 @@ import jettonTokens, { TonJettonToken } from "./data/ton-jetton";
 import { tokens as sepoliaTokens } from "./data/evm/11155111";
 import stellarTokens, { StellarToken } from "./data/stellar";
 import vechainTokens, { Vip180Token } from "./data/vip180";
-import esdttokens, { MultiversxESDTToken } from "./data/esdt";
+import esdttokens, { MultiversXESDTToken } from "./data/esdt";
 import asatokens, { AlgorandASAToken } from "./data/asa";
 import { tokens as polygonTokens } from "./data/evm/137";
 import trc10tokens, { TRC10Token } from "./data/trc10";
