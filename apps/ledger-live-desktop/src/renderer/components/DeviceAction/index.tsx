@@ -548,6 +548,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
 
   if (!isLoading && !device) {
     return renderConnectYourDevice({
+      modelId,
       type,
       unresponsive,
       device,
