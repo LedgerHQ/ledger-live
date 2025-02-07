@@ -1,4 +1,3 @@
-import { expect } from "detox";
 import {
   getElementById,
   getIdOfElement,
@@ -6,6 +5,7 @@ import {
   scrollToId,
   tapById,
   waitForElementById,
+  expect,
 } from "../../helpers";
 import { getEnv } from "@ledgerhq/live-env";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";

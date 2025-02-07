@@ -4,9 +4,9 @@ import {
   waitForElementById,
   tapById,
   scrollToId,
+  expect,
 } from "../../helpers";
 import { ModelId } from "../../models/devices";
-import { expect } from "detox";
 
 export default class OnboardingStepsPage {
   getStartedButtonId = "onboarding-getStarted-button";

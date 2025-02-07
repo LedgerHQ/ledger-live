@@ -1,5 +1,4 @@
-import { getElementById, tapByElement, tapById, waitForElementById } from "../../helpers";
-import { expect } from "detox";
+import { getElementById, tapByElement, tapById, waitForElementById, expect } from "../../helpers";
 
 export default class LedgerSyncPage {
   activationButton = () => getElementById("walletsync-activation-button");

@@ -4,8 +4,9 @@ import {
   scrollToId,
   tapByElement,
   waitForElementById,
+  expect,
 } from "../../helpers";
-import { expect, element, by } from "detox";
+import { element, by } from "detox";
 
 const baseLink = "myledger";
 

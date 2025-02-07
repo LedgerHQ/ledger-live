@@ -1,4 +1,3 @@
-import { expect } from "detox";
 import {
   getElementById,
   getTextOfElement,
@@ -7,6 +6,7 @@ import {
   tapByElement,
   tapById,
   waitForElementById,
+  expect,
 } from "../../helpers";
 import jestExpect from "expect";
 

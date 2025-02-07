@@ -7,8 +7,9 @@ import {
   scrollToId,
   tapById,
   waitForElementById,
+  expect,
 } from "../../helpers";
-import { by, element, expect } from "detox";
+import { by, element } from "detox";
 import jestExpect from "expect";
 
 const baseLink = "receive";

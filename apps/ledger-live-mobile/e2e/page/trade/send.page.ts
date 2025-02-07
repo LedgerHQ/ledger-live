@@ -9,8 +9,8 @@ import {
   IsIdVisible,
   getTextOfElement,
   getElementByText,
+  expect,
 } from "../../helpers";
-import { expect } from "detox";
 import jestExpect from "expect";
 
 const baseLink = "send";

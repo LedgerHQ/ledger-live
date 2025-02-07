@@ -8,8 +8,8 @@ import {
   tapById,
   typeTextByElement,
   waitForElementById,
+  expect,
 } from "../helpers";
-import { expect } from "detox";
 import jestExpect from "expect";
 import DeviceAction from "../models/DeviceAction";
 import * as bridge from "../bridge/server";

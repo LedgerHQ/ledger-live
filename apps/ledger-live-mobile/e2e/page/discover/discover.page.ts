@@ -4,8 +4,9 @@ import {
   getWebElementByTag,
   openDeeplink,
   waitForElementByText,
+  expect,
 } from "../../helpers";
-import { expect, log } from "detox";
+import { log } from "detox";
 import jestExpect from "expect";
 
 const baseLink = "discover/";
