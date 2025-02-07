@@ -10,6 +10,11 @@ jest.mock("../network", () => ({
   },
 }));
 
+const options: { sort: "Ascending" | "Descending"; minHeight: number } = {
+  sort: "Ascending",
+  minHeight: 0,
+};
+
 describe("listOperations", () => {
   afterEach(() => {
     mockNetworkGetTransactions.mockClear();
@@ -19,7 +24,7 @@ describe("listOperations", () => {
     // Given
     mockNetworkGetTransactions.mockResolvedValue([]);
     // When
-    const [results, token] = await listOperations("any address", {});
+    const [results, token] = await listOperations("any address", options);
     // Then
     expect(results).toEqual([]);
     expect(token).toEqual("");
@@ -65,7 +70,7 @@ describe("listOperations", () => {
       // Given
       mockNetworkGetTransactions.mockResolvedValue([operation]);
       // When
-      const [results, token] = await listOperations("any address", {});
+      const [results, token] = await listOperations("any address", options);
       // Then
       expect(results.length).toEqual(1);
       expect(results[0].recipients).toEqual([someDestinationAddress]);
@@ -80,7 +85,7 @@ describe("listOperations", () => {
     // Given
     mockNetworkGetTransactions.mockResolvedValue([operation]);
     // When
-    const [results, token] = await listOperations("any address", {});
+    const [results, token] = await listOperations("any address", options);
     // Then
     expect(results.length).toEqual(1);
     expect(results[0].recipients).toEqual([]);
@@ -92,10 +97,18 @@ describe("listOperations", () => {
     const operation = { ...undelegate, sender: null };
     mockNetworkGetTransactions.mockResolvedValue([operation]);
     // When
-    const [results, token] = await listOperations("any address", {});
+    const [results, token] = await listOperations("any address", options);
     // Then
     expect(results.length).toEqual(1);
     expect(results[0].senders).toEqual([]);
     expect(token).toEqual(JSON.stringify(operation.id));
+  });
+
+  it("should order the results in descending order even if the sort option is set to ascending", async () => {
+    const op1 = { ...undelegate, level: "1" };
+    const op2 = { ...undelegate, level: "2" };
+    mockNetworkGetTransactions.mockResolvedValue([op1, op2]);
+    const [results, _] = await listOperations("any address", options);
+    expect(results.map(op => op.block.height)).toEqual(["2", "1"]);
   });
 });
