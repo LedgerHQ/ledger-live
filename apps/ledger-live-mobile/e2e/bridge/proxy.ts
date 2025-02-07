@@ -16,7 +16,7 @@ import { Buffer } from "buffer";
 import { getEnv } from "@ledgerhq/live-env";
 import invariant from "invariant";
 
-const proxySubscriptions: [number, Subscription][] = [];
+const proxySubscriptions = new Map<number, Subscription>();
 
 let transport: TransportModule;
 
@@ -51,7 +51,7 @@ export async function startProxy(
 
     const observable = job(options);
 
-    proxySubscriptions.push([
+    proxySubscriptions.set(
       proxyPort,
       observable.subscribe({
         next: message => {
@@ -69,21 +69,21 @@ export async function startProxy(
         },
         complete: () => console.warn("Proxy stopped."),
       }),
-    ]);
+    );
   });
 }
 
 export function closeProxy(proxyPort?: number) {
   if (!proxyPort) {
-    proxySubscriptions.forEach(([, subscription]) => subscription.unsubscribe());
-    proxySubscriptions.length = 0;
+    proxySubscriptions.forEach(sub => sub.unsubscribe());
+    proxySubscriptions.clear();
     return;
   }
 
-  const index = proxySubscriptions.findIndex(([port]) => port === proxyPort);
-  if (index !== -1) {
-    proxySubscriptions[index][1].unsubscribe();
-    proxySubscriptions.splice(index, 1);
+  const subscription = proxySubscriptions.get(proxyPort);
+  if (subscription) {
+    subscription.unsubscribe();
+    proxySubscriptions.delete(proxyPort);
   }
 }
 

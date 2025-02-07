@@ -8,7 +8,6 @@ import {
   SpeculosTransport,
 } from "../load/speculos";
 import { createSpeculosDeviceAPI, releaseSpeculosDeviceAPI } from "./speculosDockerAPI";
-import { SpeculosDevice } from "@ledgerhq/speculos-transport";
 import type { AppCandidate } from "@ledgerhq/coin-framework/bot/types";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
@@ -304,7 +303,13 @@ export const specs: Specs = {
 export async function startSpeculos(
   testName: string,
   spec: Specs[keyof Specs],
-): Promise<SpeculosDevice | undefined> {
+): Promise<
+  | {
+      id: string;
+      apiPort: number | undefined;
+    }
+  | undefined
+> {
   log("engine", `test ${testName}`);
 
   const { SEED, COINAPPS } = process.env;
@@ -361,7 +366,9 @@ export async function startSpeculos(
   try {
     const device = isDockerRemote
       ? await createSpeculosDeviceAPI(deviceParams)
-      : await createSpeculosDevice(deviceParams);
+      : await createSpeculosDevice(deviceParams).then(device => {
+          return { id: device.id, apiPort: device.ports.apiPort };
+        });
     return device;
   } catch (e: unknown) {
     console.error(e);
@@ -369,12 +376,12 @@ export async function startSpeculos(
   }
 }
 
-export async function stopSpeculos(device: Device | undefined) {
-  if (device) {
-    log("engine", `test ${device.id} finished`);
+export async function stopSpeculos(deviceId: string | undefined) {
+  if (deviceId) {
+    log("engine", `test ${deviceId} finished`);
     isDockerRemote
-      ? await releaseSpeculosDeviceAPI(device.id)
-      : await releaseSpeculosDevice(device.id);
+      ? await releaseSpeculosDeviceAPI(deviceId)
+      : await releaseSpeculosDevice(deviceId);
   }
 }
 
