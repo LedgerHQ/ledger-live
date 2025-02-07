@@ -85,6 +85,7 @@ import { useTrackReceiveFlow } from "~/renderer/analytics/hooks/useTrackReceiveF
 import { useTrackAddAccountModal } from "~/renderer/analytics/hooks/useTrackAddAccountModal";
 import { useTrackExchangeFlow } from "~/renderer/analytics/hooks/useTrackExchangeFlow";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
+import { useTrackSyncFlow } from "~/renderer/analytics/hooks/useTrackSyncFlow";
 
 export type LedgerError = InstanceType<LedgerErrorConstructor<{ [key: string]: unknown }>>;
 
@@ -244,7 +245,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   const walletState = useSelector(walletSelector);
 
   useTrackManagerSectionEvents({
-    location,
+    location: location === HOOKS_TRACKING_LOCATIONS.managerDashboard ? location : undefined,
     device,
     allowManagerRequested: hookState.allowManagerRequested,
     clsImageRemoved: hookState.imageRemoved,
@@ -253,7 +254,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   });
 
   useTrackReceiveFlow({
-    location,
+    location: location === HOOKS_TRACKING_LOCATIONS.receiveModal ? location : undefined,
     device,
     error,
     inWrongDeviceForAccount,
@@ -261,7 +262,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   });
 
   useTrackAddAccountModal({
-    location,
+    location: location === HOOKS_TRACKING_LOCATIONS.addAccountModal ? location : undefined,
     device,
     error,
     isTrackingEnabled: useSelector(trackingEnabledSelector),
@@ -276,6 +277,16 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     error,
     isTrackingEnabled: useSelector(trackingEnabledSelector),
     isRequestOpenAppExchange: requestOpenApp === "Exchange",
+  });
+
+  useTrackSyncFlow({
+    location: location === HOOKS_TRACKING_LOCATIONS.ledgerSync ? location : undefined,
+    device,
+    error,
+    allowManagerRequested: hookState.allowManagerRequested,
+    requestOpenApp,
+    isLedgerSyncAppOpen: appAndVersion?.name === "Ledger Sync",
+    isTrackingEnabled: useSelector(trackingEnabledSelector),
   });
 
   const type = useTheme().colors.palette.type;
