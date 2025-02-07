@@ -113,6 +113,7 @@ export const getAccountShape: GetAccountShape = async info => {
     derivationMode,
   });
 
+  // log("debug", "getAccountShape, address: ", { address });
   const { blockHeight, balance, spendableBalance } = await getAccount(address);
 
   const rosettaTxns = await getTransactions(address);
