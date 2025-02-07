@@ -12,8 +12,7 @@ jest.mock("../network", () => ({
 
 describe("listOperations", () => {
   afterEach(() => {
-    // mockGetServerInfos.mockClear();
-    // mockNetworkGetTransactions.mockClear();
+    mockNetworkGetTransactions.mockClear();
   });
 
   it("should return no operations", async () => {

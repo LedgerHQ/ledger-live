@@ -1,4 +1,3 @@
-import { es } from "@faker-js/faker";
 import { tzkt } from "../network";
 import { log } from "@ledgerhq/logs";
 import {
