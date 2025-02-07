@@ -1,4 +1,3 @@
-import { expect } from "detox";
 import { openDeeplink } from "../../helpers/commonHelpers";
 
 export default class NftGalleryPage {
@@ -31,11 +30,11 @@ export default class NftGalleryPage {
   }
 
   async hideNft(index = 0) {
-    await expect(this.nftListItem(index)).toBeVisible();
+    await detoxExpect(this.nftListItem(index)).toBeVisible();
     await tapByElement(this.selectAndHide());
     await tapByElement(this.nftListItem(index));
     await tapByElement(this.confirmHide());
-    await expect(this.nftListItem(index)).not.toBeVisible();
+    await detoxExpect(this.nftListItem(index)).not.toBeVisible();
   }
 
   @Step("Hide All Nft")
@@ -51,7 +50,7 @@ export default class NftGalleryPage {
     await tapByElement(this.confirmHide());
 
     // Expect no NFT displayed
-    await expect(this.nftListItem()).not.toBeVisible();
+    await detoxExpect(this.nftListItem()).not.toBeVisible();
   }
 
   async continueFromReceiveNFTsModal() {
@@ -65,33 +64,33 @@ export default class NftGalleryPage {
 
   @Step("Expect NFT Gallery visible")
   async expectGalleryVisible() {
-    await expect(this.root()).toBeVisible();
+    await detoxExpect(this.root()).toBeVisible();
   }
 
   @Step("Expect NFT Gallery not visible")
   async expectGalleryNotVisible() {
-    await expect(this.root()).not.toBeVisible();
+    await detoxExpect(this.root()).not.toBeVisible();
   }
 
   @Step("Expect Gallery empty state")
   async expectGalleryEmptyState() {
     await this.expectGalleryVisible();
-    await expect(this.emptyScreen()).toBeVisible(50);
+    await detoxExpect(this.emptyScreen()).toBeVisible(50);
   }
 
   @Step("Expect NFT visible")
   async expectNftVisible(index = 0) {
-    await expect(this.nftListItem(index)).toBeVisible();
+    await detoxExpect(this.nftListItem(index)).toBeVisible();
   }
 
   @Step("Expect Filter drawer to be visible")
   async expectFilterDrawerVisible() {
-    await expect(this.nftFilterDrawer()).toBeVisible();
+    await detoxExpect(this.nftFilterDrawer()).toBeVisible();
   }
 
   @Step("Expect Filter Drawer not to be visible")
   async expectFilterDrawerNotVisible() {
-    await expect(this.nftFilterDrawer()).not.toBeVisible();
+    await detoxExpect(this.nftFilterDrawer()).not.toBeVisible();
   }
 
   @Step("Click on reset filters")
@@ -106,6 +105,6 @@ export default class NftGalleryPage {
 
   @Step("Expect NFT receive modal visible")
   async expectNftReceiveModalVisible() {
-    await expect(this.nftReceiveModal()).toBeVisible();
+    await detoxExpect(this.nftReceiveModal()).toBeVisible();
   }
 }

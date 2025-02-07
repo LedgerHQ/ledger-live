@@ -1,4 +1,3 @@
-import { expect } from "detox";
 import { currencyParam, openDeeplink } from "../../helpers/commonHelpers";
 
 export default class SendPage {
@@ -38,7 +37,7 @@ export default class SendPage {
   }
 
   async expectFirstStep() {
-    await expect(this.getStep1HeaderTitle()).toBeVisible();
+    await detoxExpect(this.getStep1HeaderTitle()).toBeVisible();
   }
 
   @Step("Set recipient and memo tag")
@@ -62,17 +61,19 @@ export default class SendPage {
 
   @Step("Expect recipient error message")
   async expectSendRecipientError(errorMessage: string) {
-    if (errorMessage) await expect(getElementById(this.recipientErrorId)).toHaveText(errorMessage);
-    else await expect(getElementById(this.recipientErrorId)).not.toBeVisible();
-    await expect(getElementById(this.recipientContinueButtonId)).not.toBeVisible();
+    if (errorMessage)
+      await detoxExpect(getElementById(this.recipientErrorId)).toHaveText(errorMessage);
+    else await detoxExpect(getElementById(this.recipientErrorId)).not.toBeVisible();
+    await detoxExpect(getElementById(this.recipientContinueButtonId)).not.toBeVisible();
   }
 
   @Step("Expect recipient step success")
   async expectSendRecipientSuccess(expectedWarningMessage?: string) {
     if (!expectedWarningMessage)
-      await expect(getElementById(this.recipientErrorId)).not.toBeVisible();
-    else await expect(getElementById(this.recipientErrorId)).toHaveText(expectedWarningMessage);
-    await expect(getElementById(this.recipientContinueButtonId)).toBeVisible();
+      await detoxExpect(getElementById(this.recipientErrorId)).not.toBeVisible();
+    else
+      await detoxExpect(getElementById(this.recipientErrorId)).toHaveText(expectedWarningMessage);
+    await detoxExpect(getElementById(this.recipientContinueButtonId)).toBeVisible();
   }
 
   @Step("Set recipient and continue")
@@ -98,14 +99,14 @@ export default class SendPage {
 
   @Step("Expect amount step success")
   async expectSendAmountSuccess() {
-    await expect(getElementById(this.amountErrorId)).toHaveText("");
-    await expect(this.amountContinueButton()).toBeVisible();
+    await detoxExpect(getElementById(this.amountErrorId)).toHaveText("");
+    await detoxExpect(this.amountContinueButton()).toBeVisible();
   }
 
   @Step("Expect amount error message")
   async expectSendAmountError(errorMessage: string) {
-    await expect(getElementById(this.amountErrorId)).toHaveText(errorMessage);
-    await expect(this.amountContinueButton()).not.toBeVisible();
+    await detoxExpect(getElementById(this.amountErrorId)).toHaveText(errorMessage);
+    await detoxExpect(this.amountContinueButton()).not.toBeVisible();
   }
 
   @Step("Set amount and continue")
@@ -120,7 +121,7 @@ export default class SendPage {
 
   @Step("Expect amount in summary")
   async expectSummaryAmount(amount: string) {
-    await expect(getElementById(this.summaryAmountId)).toHaveText(amount);
+    await detoxExpect(getElementById(this.summaryAmountId)).toHaveText(amount);
   }
 
   @Step("Expect max amount is within range in summary")
@@ -136,31 +137,32 @@ export default class SendPage {
 
   @Step("Expect recipient in summary")
   async expectSummaryRecipient(recipient: string) {
-    await expect(this.summaryRecipient()).toHaveText(recipient);
+    await detoxExpect(this.summaryRecipient()).toHaveText(recipient);
   }
 
   @Step("Expect error in summary")
   async expectSendSummaryError(errorMessage: RegExp) {
     const error = await getTextOfElement(this.summaryErrorId);
     jestExpect(error).toMatch(errorMessage);
-    await expect(this.summaryContinueButton()).not.toBeVisible();
+    await detoxExpect(this.summaryContinueButton()).not.toBeVisible();
   }
 
   @Step("Expect warning in summary")
   async expectSummaryWarning(warningMessage: string) {
-    await expect(this.summaryWarning()).toHaveText(warningMessage);
+    await detoxExpect(this.summaryWarning()).toHaveText(warningMessage);
   }
 
   @Step("Expect recipient ENS in summary")
   async expectSummaryRecipientEns(ensName: string) {
-    await expect(this.summaryRecipientEns()).toHaveText(ensName);
+    await detoxExpect(this.summaryRecipientEns()).toHaveText(ensName);
   }
 
   @Step("Expect memo tag in summary")
   async expectSummaryMemoTag(memoTag?: string) {
-    if (memoTag && memoTag !== "noTag") await expect(this.summaryMemoTag()).toHaveText(memoTag);
+    if (memoTag && memoTag !== "noTag")
+      await detoxExpect(this.summaryMemoTag()).toHaveText(memoTag);
     else if (await IsIdVisible(this.summaryMemoTagId)) {
-      await expect(this.summaryMemoTag()).toHaveText("");
+      await detoxExpect(this.summaryMemoTag()).toHaveText("");
     }
   }
 
@@ -173,19 +175,19 @@ export default class SendPage {
   @Step("Expect amount in device validation screen")
   async expectValidationAmount(amount: string) {
     await waitForElementById(this.validationAmountId);
-    await expect(getElementById(this.validationAmountId)).toHaveText(amount);
+    await detoxExpect(getElementById(this.validationAmountId)).toHaveText(amount);
   }
 
   @Step("Expect address in device validation screen")
   async expectValidationAddress(recipient: string) {
     await waitForElementById(this.validationAddressId);
-    await expect(getElementById(this.validationAddressId)).toHaveText(recipient);
+    await detoxExpect(getElementById(this.validationAddressId)).toHaveText(recipient);
   }
 
   @Step("Expect ENS name in device validation screen")
   async expectValidationEnsName(ensName: string) {
     await waitForElementById(this.validationEnsId);
-    await expect(getElementById(this.validationEnsId)).toHaveText(ensName);
+    await detoxExpect(getElementById(this.validationEnsId)).toHaveText(ensName);
   }
 
   @Step("choose fee startegy")

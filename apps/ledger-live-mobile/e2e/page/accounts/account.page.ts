@@ -1,5 +1,5 @@
-import { expect } from "detox";
 import { openDeeplink } from "../../helpers/commonHelpers";
+
 export default class AccountPage {
   baseLink = "account";
   accountGraph = (accountId: string) => getElementById(`account-graph-${accountId}`);
@@ -70,7 +70,7 @@ export default class AccountPage {
   async expectOperationHistoryVisible(accountId: string) {
     const id = this.operationHistorySectionId(accountId);
     await scrollToId(id, this.accountScreenScrollView);
-    await expect(getElementById(id)).toBeVisible();
+    await detoxExpect(getElementById(id)).toBeVisible();
   }
 
   @Step("Scroll to transaction history")
@@ -80,8 +80,8 @@ export default class AccountPage {
 
   @Step("Expect account balance to be visible")
   async expectAccountBalanceVisible(accountId: string) {
-    await expect(this.accountGraph(accountId)).toBeVisible();
-    await expect(this.accountBalance(accountId)).toBeVisible();
+    await detoxExpect(this.accountGraph(accountId)).toBeVisible();
+    await detoxExpect(this.accountBalance(accountId)).toBeVisible();
   }
 
   @Step("Expect address index")

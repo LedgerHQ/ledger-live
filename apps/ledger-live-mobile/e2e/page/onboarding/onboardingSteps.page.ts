@@ -1,5 +1,4 @@
 import { ModelId } from "../../models/devices";
-import { expect } from "detox";
 
 export default class OnboardingStepsPage {
   getStartedButtonId = "onboarding-getStarted-button";
@@ -99,7 +98,7 @@ export default class OnboardingStepsPage {
   }
 
   async checkDeviceNotCompatible() {
-    await expect(getElementById(this.deviceNotCompatibleModal)).toBeVisible();
+    await detoxExpect(getElementById(this.deviceNotCompatibleModal)).toBeVisible();
     await tapById(this.deviceNotCompatibleClose);
   }
 
@@ -122,10 +121,10 @@ export default class OnboardingStepsPage {
 
   async goesThroughCreateWallet() {
     await tapById(this.newWallet);
-    await expect(getElementById(this.stepNewDeviceTitle(0))).toBeVisible();
+    await detoxExpect(getElementById(this.stepNewDeviceTitle(0))).toBeVisible();
     for (let i = 1; i < 5; i++) {
       await tapById(this.slideBullet(i));
-      await expect(getElementById(this.stepNewDeviceTitle(i))).toBeVisible();
+      await detoxExpect(getElementById(this.stepNewDeviceTitle(i))).toBeVisible();
     }
     await tapById(this.stepNewDeviceCta);
     await tapById(this.stepNewDeviceStart);

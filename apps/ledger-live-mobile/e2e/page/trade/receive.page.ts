@@ -1,4 +1,4 @@
-import { by, element, expect } from "detox";
+import { by, element } from "detox";
 import { currencyParam, openDeeplink } from "../../helpers/commonHelpers";
 
 export default class ReceivePage {
@@ -44,20 +44,20 @@ export default class ReceivePage {
   }
 
   async expectFirstStep() {
-    await expect(this.step1HeaderTitle()).toBeVisible();
+    await detoxExpect(this.step1HeaderTitle()).toBeVisible();
   }
 
   async expectSecondStepNetworks(networks: string[]) {
-    await expect(this.step2HeaderTitle()).toBeVisible();
-    await expect(this.step2Networks()).toBeVisible();
+    await detoxExpect(this.step2HeaderTitle()).toBeVisible();
+    await detoxExpect(this.step2Networks()).toBeVisible();
     for (const network of networks) {
-      await expect(getElementById(this.currencyNameId(network))).toBeVisible();
+      await detoxExpect(getElementById(this.currencyNameId(network))).toBeVisible();
     }
   }
 
   async expectSecoundStepAccounts() {
-    await expect(this.step2HeaderTitle()).toBeVisible();
-    await expect(this.step2Accounts()).toBeVisible();
+    await detoxExpect(this.step2HeaderTitle()).toBeVisible();
+    await detoxExpect(this.step2Accounts()).toBeVisible();
   }
 
   @Step("Select currency in receive list")
@@ -116,7 +116,7 @@ export default class ReceivePage {
     const accountnameID = this.currencyNameId(currencyName);
     const accountCountID = this.currencySubtitleId(accountCount);
     // expect accountCountID is visible and is child of networkRowID
-    await expect(
+    await detoxExpect(
       element(
         by
           .id(networkRowID)
@@ -138,8 +138,8 @@ export default class ReceivePage {
 
   async expectAccountIsCreated(accountName: string) {
     await waitForElementById(this.step2HeaderTitleId);
-    await expect(this.step2HeaderTitle()).toBeVisible();
-    await expect(getElementByText(accountName)).toBeVisible();
+    await detoxExpect(this.step2HeaderTitle()).toBeVisible();
+    await detoxExpect(getElementByText(accountName)).toBeVisible();
   }
 
   async selectDontVerifyAddress() {
@@ -158,20 +158,20 @@ export default class ReceivePage {
     const accountNameId = this.accountNameReceiveId(accountName);
     await waitForElementById(this.accountAddress);
     await waitForElementById(receiveTitleTickerId);
-    await expect(getElementById(receiveTitleTickerId)).toBeVisible();
-    await expect(getElementById(accountNameId)).toBeVisible();
+    await detoxExpect(getElementById(receiveTitleTickerId)).toBeVisible();
+    await detoxExpect(getElementById(accountNameId)).toBeVisible();
   }
 
   @Step("Expect given address is displayed on receive page")
   async expectAddressIsCorrect(address: string) {
-    await expect(getElementById(this.accountAddress)).toHaveText(address);
+    await detoxExpect(getElementById(this.accountAddress)).toHaveText(address);
   }
 
   @Step("Expect tron new address warning")
   async expectTronNewAddressWarning() {
     await scrollToId(this.tronNewAddressWarningId, this.receivePageScrollViewId);
-    await expect(getElementById(this.tronNewAddressWarningId)).toBeVisible();
-    await expect(this.tronNewAddressWarningDescription()).toHaveText(
+    await detoxExpect(getElementById(this.tronNewAddressWarningId)).toBeVisible();
+    await detoxExpect(this.tronNewAddressWarningDescription()).toHaveText(
       this.tronNewAddressWarningText,
     );
   }

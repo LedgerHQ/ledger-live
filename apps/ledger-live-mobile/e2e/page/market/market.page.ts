@@ -1,5 +1,3 @@
-import { expect } from "detox";
-
 export default class MarketPage {
   searchBar = () => getElementById("search-box");
   starButton = () => getElementById("star-asset");
@@ -33,6 +31,6 @@ export default class MarketPage {
   }
 
   async expectMarketRowTitle(title: string) {
-    await expect(this.marketRowTitle()).toHaveText(title);
+    await detoxExpect(this.marketRowTitle()).toHaveText(title);
   }
 }

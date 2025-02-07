@@ -1,4 +1,3 @@
-import { expect } from "detox";
 import { openDeeplink } from "../../helpers/commonHelpers";
 
 export default class SwapPage {
@@ -20,7 +19,7 @@ export default class SwapPage {
   }
 
   async expectSwapPage() {
-    await expect(this.swapFormTab()).toBeVisible();
+    await detoxExpect(this.swapFormTab()).toBeVisible();
   }
 
   async navigateToSwapForm() {
@@ -66,11 +65,11 @@ export default class SwapPage {
   }
 
   async expectNoMaxToggle() {
-    await expect(this.sendMaxToggle()).not.toExist();
+    await detoxExpect(this.sendMaxToggle()).not.toExist();
   }
 
   async expectTerms() {
-    await expect(this.termsAcceptButton()).toBeVisible();
-    await expect(this.termsCloseButton()).toBeVisible();
+    await detoxExpect(this.termsAcceptButton()).toBeVisible();
+    await detoxExpect(this.termsCloseButton()).toBeVisible();
   }
 }

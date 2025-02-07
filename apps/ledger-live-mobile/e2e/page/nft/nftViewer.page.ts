@@ -1,5 +1,3 @@
-import { expect } from "detox";
-
 export default class NftViewerPage {
   mainScrollView = () => getElementById("nft-viewer-page-scrollview");
   backButton = () => getElementById("navigation-header-back-button");
@@ -11,6 +9,6 @@ export default class NftViewerPage {
 
   @Step("Expect NFT viewer page to be visible")
   async expectVisible() {
-    await expect(this.mainScrollView()).toBeVisible();
+    await detoxExpect(this.mainScrollView()).toBeVisible();
   }
 }

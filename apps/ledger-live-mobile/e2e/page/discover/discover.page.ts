@@ -1,4 +1,4 @@
-import { expect, log } from "detox";
+import { log } from "detox";
 import { openDeeplink } from "../../helpers/commonHelpers";
 
 export default class DiscoverPage {
@@ -41,11 +41,11 @@ export default class DiscoverPage {
   }
 
   async expectApp(app: string) {
-    await expect(this.liveAppTitle()).toHaveText(this.getAppUrl(app));
+    await detoxExpect(this.liveAppTitle()).toHaveText(this.getAppUrl(app));
   }
 
   async expectDiscoverPage() {
-    await expect(this.discoverPageHeader()).toBeVisible();
+    await detoxExpect(this.discoverPageHeader()).toBeVisible();
   }
 
   async expect1inchParams() {
@@ -59,6 +59,6 @@ export default class DiscoverPage {
     jestExpect(url).toContain("currency%22%3A%22ethereum");
     jestExpect(url).toContain("accountId=d9d1d396-2081-53e1-9c67-f0623e0c4d3a");
 
-    await expect(getWebElementByTag("iframe")).toExist();
+    await detoxExpect(getWebElementByTag("iframe")).toExist();
   }
 }

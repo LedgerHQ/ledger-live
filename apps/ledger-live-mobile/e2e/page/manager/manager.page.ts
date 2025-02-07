@@ -1,4 +1,4 @@
-import { expect, element, by } from "detox";
+import { element, by } from "detox";
 import { openDeeplink } from "../../helpers/commonHelpers";
 
 export default class ManagerPage {
@@ -26,7 +26,7 @@ export default class ManagerPage {
   }
 
   async expectManagerPage() {
-    await expect(getElementById(this.managerTitleId)).toBeVisible();
+    await detoxExpect(getElementById(this.managerTitleId)).toBeVisible();
   }
 
   async selectSetupNewDevice() {
@@ -42,21 +42,23 @@ export default class ManagerPage {
   }
 
   async checkDeviceName(name: string) {
-    await expect(this.deviceName()).toHaveText(name);
+    await detoxExpect(this.deviceName()).toHaveText(name);
   }
   async checkDeviceVersion(version: string) {
-    await expect(this.deviceVersion()).toHaveText(`V ${version}`);
+    await detoxExpect(this.deviceVersion()).toHaveText(`V ${version}`);
   }
 
   async checkDeviceAppsNStorage(appDesc: string[], installedDesc: string[]) {
     const installedAppNumber = installedDesc.length;
     const used = installedAppNumber * 4;
-    await expect(this.storageLeftField()).toHaveText(this.storageLeftText(1.93 - used / 1000));
-    await expect(this.storageUsedField()).toHaveText(this.storageUsedText(Math.floor(used)));
+    await detoxExpect(this.storageLeftField()).toHaveText(this.storageLeftText(1.93 - used / 1000));
+    await detoxExpect(this.storageUsedField()).toHaveText(this.storageUsedText(Math.floor(used)));
 
-    await expect(this.installedAppField()).toHaveText(this.installedAppText(installedAppNumber));
+    await detoxExpect(this.installedAppField()).toHaveText(
+      this.installedAppText(installedAppNumber),
+    );
     const numberOutdated = installedDesc.filter(element => element.includes("(outdated)")).length;
-    await expect(this.updateAppField()).toHaveText(this.updateAppText(numberOutdated));
+    await detoxExpect(this.updateAppField()).toHaveText(this.updateAppText(numberOutdated));
 
     for (const app of appDesc) {
       const status = installedDesc.includes(app)
@@ -66,7 +68,7 @@ export default class ManagerPage {
           : "notInstalled";
 
       await scrollToId(this.appRow(app), this.deviceInfoScrollView);
-      await expect(
+      await detoxExpect(
         element(by.id(this.appRow(app)).withDescendant(by.id(this.appState(app, status)))),
       ).toBeVisible();
     }

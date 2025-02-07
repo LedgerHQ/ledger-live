@@ -1,5 +1,3 @@
-import { expect } from "detox";
-
 export default class SettingsGeneralPage {
   passwordSettingsSwitch = () => getElementById("password-settings-switch");
   passwordTextInput = () => getElementById("password-text-input");
@@ -36,10 +34,10 @@ export default class SettingsGeneralPage {
   }
 
   async expectpreferredCurrencyButton() {
-    await expect(this.preferredCurrencyButton()).toBeVisible();
+    await detoxExpect(this.preferredCurrencyButton()).toBeVisible();
   }
 
   async expectLocalizedText(text: string) {
-    await expect(this.localizedText(text)).toBeVisible();
+    await detoxExpect(this.localizedText(text)).toBeVisible();
   }
 }

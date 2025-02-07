@@ -64,6 +64,7 @@ declare global {
   var Fee: FeeType;
   var AppInfos: AppInfosType;
 
+  var detoxExpect: typeof ElementHelpers.expect;
   var waitForElementById: typeof ElementHelpers.waitForElementById;
   var waitForElementByText: typeof ElementHelpers.waitForElementByText;
   var getElementById: typeof ElementHelpers.getElementById;
@@ -108,6 +109,7 @@ export default async () => {
   global.Fee = Fee;
   global.AppInfos = AppInfos;
 
+  global.detoxExpect = ElementHelpers.expect;
   global.waitForElementById = ElementHelpers.waitForElementById;
   global.waitForElementByText = ElementHelpers.waitForElementByText;
   global.getElementById = ElementHelpers.getElementById;

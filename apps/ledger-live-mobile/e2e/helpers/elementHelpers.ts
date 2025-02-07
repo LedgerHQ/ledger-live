@@ -1,16 +1,21 @@
 import { Direction, NativeElement } from "detox/detox";
 import { delay, isAndroid } from "./commonHelpers";
-import { by, element, waitFor, web } from "detox";
+import { by, element, waitFor, web, expect as detoxExpect } from "detox";
 
 const DEFAULT_TIMEOUT = 60000; // 60s !!
 const startPositionY = 0.8; // Needed on Android to scroll views : https://github.com/wix/Detox/issues/3918
 
-function sync_delay(ms: number) {
+function sync_delay(ms = 200) {
   const done = new Int32Array(new SharedArrayBuffer(4));
   Atomics.wait(done, 0, 0, ms); // Wait for the specified duration
 }
 
 export const ElementHelpers = {
+  expect(element: any) {
+    if (!isAndroid()) sync_delay(); // Issue with RN75 : QAA-370
+    return detoxExpect(element);
+  },
+
   waitForElementById(id: string | RegExp, timeout: number = DEFAULT_TIMEOUT) {
     return waitFor(element(by.id(id)))
       .toBeVisible()
@@ -24,27 +29,27 @@ export const ElementHelpers = {
   },
 
   getElementsById(id: string | RegExp) {
-    if (!isAndroid()) sync_delay(200); // Issue with RN75 : QAA-370
+    if (!isAndroid()) sync_delay(); // Issue with RN75 : QAA-370
     return element(by.id(id));
   },
 
   getElementById(id: string | RegExp, index = 0) {
-    if (!isAndroid()) sync_delay(200); // Issue with RN75 : QAA-370
+    if (!isAndroid()) sync_delay(); // Issue with RN75 : QAA-370
     return element(by.id(id)).atIndex(index);
   },
 
   getElementByText(text: string | RegExp, index = 0) {
-    if (!isAndroid()) sync_delay(200); // Issue with RN75 : QAA-370
+    if (!isAndroid()) sync_delay(); // Issue with RN75 : QAA-370
     return element(by.text(text)).atIndex(index);
   },
 
   getWebElementById(id: string, index = 0) {
-    if (!isAndroid()) sync_delay(200); // Issue with RN75 : QAA-370
+    if (!isAndroid()) sync_delay(); // Issue with RN75 : QAA-370
     return web.element(by.web.id(id)).atIndex(index);
   },
 
   getWebElementByTag(tag: string, index = 0) {
-    if (!isAndroid()) sync_delay(200); // Issue with RN75 : QAA-370
+    if (!isAndroid()) sync_delay(); // Issue with RN75 : QAA-370
     return web.element(by.web.tag(tag)).atIndex(index);
   },
 
@@ -104,7 +109,7 @@ export const ElementHelpers = {
     const scrollViewMatcher = scrollViewId
       ? by.id(scrollViewId)
       : by.type(isAndroid() ? "android.widget.ScrollView" : "RCTScrollView");
-    if (!isAndroid()) sync_delay(200); // Issue with RN75 : QAA-370
+    if (!isAndroid()) sync_delay(); // Issue with RN75 : QAA-370
     await waitFor(element(elementMatcher))
       .toBeVisible()
       .whileElement(scrollViewMatcher)

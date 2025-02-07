@@ -1,4 +1,3 @@
-import { expect } from "detox";
 import { openDeeplink } from "../../helpers/commonHelpers";
 
 export default class CustomLockscreenPage {
@@ -11,7 +10,7 @@ export default class CustomLockscreenPage {
   }
 
   async expectCustomLockscreenPage() {
-    await expect(this.welcomeCustomImageTitle()).toBeVisible();
-    await expect(this.welcomeChoosePictureButton()).toBeVisible();
+    await detoxExpect(this.welcomeCustomImageTitle()).toBeVisible();
+    await detoxExpect(this.welcomeChoosePictureButton()).toBeVisible();
   }
 }

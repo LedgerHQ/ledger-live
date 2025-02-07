@@ -1,5 +1,4 @@
 import { DeviceUSB, ModelId, getUSBDevice, knownDevices } from "../models/devices";
-import { expect } from "detox";
 import { launchProxy } from "../utils/speculosUtils";
 import DeviceAction from "../models/DeviceAction";
 import {
@@ -46,7 +45,7 @@ export default class CommonPage {
   }
 
   async expectSearch(text: string) {
-    await expect(this.searchBar()).toHaveText(text);
+    await detoxExpect(this.searchBar()).toHaveText(text);
   }
 
   async closePage() {

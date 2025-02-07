@@ -1,4 +1,3 @@
-import { expect } from "detox";
 import { openDeeplink } from "../../helpers/commonHelpers";
 
 export default class PortfolioPage {
@@ -33,8 +32,8 @@ export default class PortfolioPage {
   }
 
   async expectPortfolioEmpty() {
-    await expect(this.portfolioSettingsButton()).toBeVisible();
-    await expect(this.emptyPortfolioList()).toBeVisible();
+    await detoxExpect(this.portfolioSettingsButton()).toBeVisible();
+    await detoxExpect(this.emptyPortfolioList()).toBeVisible();
   }
 
   async receive() {
@@ -42,7 +41,7 @@ export default class PortfolioPage {
   }
 
   async expectPortfolioReadOnly() {
-    await expect(this.portfolioSettingsButton()).toBeVisible();
+    await detoxExpect(this.portfolioSettingsButton()).toBeVisible();
     await waitForElementById(this.readOnlyItemsId);
     jestExpect(await getTextOfElement(this.graphCardBalanceId)).toBe(this.zeroBalance);
     for (let index = 0; index < 4; index++)
@@ -75,11 +74,11 @@ export default class PortfolioPage {
 
   @Step("Expect Portfolio with accounts")
   async expectPortfolioWithAccounts() {
-    await expect(getElementById(this.accountsListView)).toBeVisible();
+    await detoxExpect(getElementById(this.accountsListView)).toBeVisible();
   }
 
   async expectLastTransactionAmount(amount: string) {
-    await expect(this.lastTransactionAmount()).toHaveText(amount);
+    await detoxExpect(this.lastTransactionAmount()).toHaveText(amount);
   }
 
   async openLastTransaction() {
