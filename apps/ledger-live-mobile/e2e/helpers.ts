@@ -4,7 +4,6 @@ import { findFreePort, close as closeBridge, init as initBridge } from "./bridge
 import jestExpect from "expect";
 
 import { startSpeculos, stopSpeculos, specs } from "@ledgerhq/live-common/e2e/speculos";
-import { SpeculosDevice } from "@ledgerhq/speculos-transport";
 import invariant from "invariant";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { startProxy, closeProxy } from "./bridge/proxy";
@@ -25,7 +24,7 @@ export const accountIdParam = "?accountId=";
 const BASE_PORT = 30000;
 const MAX_PORT = 65535;
 let portCounter = BASE_PORT; // Counter for generating unique ports
-const speculosDevices: [number, SpeculosDevice][] = [];
+const speculosDevices = new Map<number, string>();
 
 export function setupEnvironment() {
   setEnv("DISABLE_APP_VERSION_REQUIREMENTS", true);
@@ -242,10 +241,10 @@ export async function launchSpeculos(appName: string, proxyPort: number) {
   const speculosDevice = await startSpeculos(testName, specs[appName.replace(/ /g, "_")]);
   invariant(speculosDevice, "[E2E Setup] Speculos not started");
 
-  const speculosApiPort = speculosDevice.ports.apiPort;
+  const speculosApiPort = speculosDevice.apiPort;
   invariant(speculosApiPort, "[E2E Setup] speculosApiPort not defined");
   setEnv("SPECULOS_API_PORT", speculosApiPort);
-  speculosDevices.push([proxyPort, speculosDevice]);
+  speculosDevices.set(proxyPort, speculosDevice.id);
   console.warn(`Speculos started on ${proxyPort}`);
   return speculosApiPort;
 }
@@ -261,16 +260,15 @@ export async function launchProxy(
 
 export async function deleteSpeculos(proxyPort?: number) {
   if (!proxyPort) {
-    await Promise.all(speculosDevices.map(async ([address]) => deleteSpeculos(address)));
+    await Promise.all(Array.from(speculosDevices.keys()).map(async port => deleteSpeculos(port)));
     return;
   }
 
   closeProxy(proxyPort);
-  const index = speculosDevices.findIndex(([port]) => port === proxyPort);
-  if (index !== -1) {
-    const [, speculosDevice] = speculosDevices[index];
-    await stopSpeculos(speculosDevice);
-    speculosDevices.splice(index, 1);
+  if (speculosDevices.has(proxyPort)) {
+    const speculosId = speculosDevices.get(proxyPort);
+    if (speculosId) await stopSpeculos(speculosId);
+    speculosDevices.delete(proxyPort);
     console.warn(`Speculos successfully stopped on port ${proxyPort}`);
   }
   setEnv("SPECULOS_API_PORT", 0);
