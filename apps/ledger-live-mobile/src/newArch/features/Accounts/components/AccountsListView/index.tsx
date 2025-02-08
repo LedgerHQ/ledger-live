@@ -35,7 +35,7 @@ const View: React.FC<ViewProps> = ({
         onPress={onAccountPress.bind(null, item)}
       >
         <Flex height={40} flexDirection="row" columnGap={12}>
-          <AccountItem account={item} balance={item.spendableBalance} />
+          <AccountItem account={item} balance={item.balance} withPlaceholder />
         </Flex>
       </Pressable>
     ),

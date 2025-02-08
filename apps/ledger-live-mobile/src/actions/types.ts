@@ -292,6 +292,7 @@ export enum SettingsActionTypes {
   CLEAR_DISMISSED_CONTENT_CARDS = "CLEAR_DISMISSED_CONTENT_CARDS",
   SET_LEDGER_SYNC_ONBOARDING = "SET_LEDGER_SYNC_ONBOARDING",
   SET_MEV_PROTECTION = "SET_MEV_PROTECTION",
+  SET_SELECTED_TAB_PORTFOLIO_ASSETS = "SET_SELECTED_TAB_PORTFOLIO_ASSETS",
 
   ADD_STARRED_MARKET_COINS = "ADD_STARRED_MARKET_COINS",
   REMOVE_STARRED_MARKET_COINS = "REMOVE_STARRED_MARKET_COINS",
@@ -406,6 +407,8 @@ export type SettingsSetMevProtectionPayload = boolean;
 
 export type SettingsAddStarredMarketcoinsPayload = Unpacked<SettingsState["starredMarketCoins"]>;
 export type SettingsRemoveStarredMarketcoinsPayload = Unpacked<SettingsState["starredMarketCoins"]>;
+export type SettingsSetSelectedTabPortfolioAssetsPayload =
+  SettingsState["selectedTabPortfolioAssets"];
 
 export type SettingsPayload =
   | SettingsImportPayload
@@ -463,6 +466,7 @@ export type SettingsPayload =
   | SettingsClearDismissedContentCardsPayload
   | SettingsSetFromLedgerSyncOnboardingPayload
   | SettingsSetMevProtectionPayload
+  | SettingsSetSelectedTabPortfolioAssetsPayload
   | SettingsAddStarredMarketcoinsPayload
   | SettingsRemoveStarredMarketcoinsPayload;
 

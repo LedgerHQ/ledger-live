@@ -93,7 +93,7 @@ export default function AddAccountsWarning({ route }: Props) {
             >
               <AccountItem
                 account={emptyAccount as Account}
-                balance={emptyAccount?.spendableBalance as BigNumber}
+                balance={emptyAccount?.balance || BigNumber(0)}
               />
               <Icons.ChevronRight size="M" color={colors.primary.c100} />
             </Flex>

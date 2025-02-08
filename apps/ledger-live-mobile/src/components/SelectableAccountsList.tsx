@@ -319,7 +319,10 @@ const SelectableAccount = ({
             padding="8px"
             columnGap={8}
           >
-            <AccountItem account={account as Account} balance={account.spendableBalance} />
+            <AccountItem
+              account={account as Account}
+              balance={useFullBalance ? account.balance : account.spendableBalance}
+            />
           </Flex>
         ) : (
           <Flex flex={1}>

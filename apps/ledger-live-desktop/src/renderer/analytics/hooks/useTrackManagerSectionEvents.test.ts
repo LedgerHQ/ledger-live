@@ -9,6 +9,7 @@ import {
   UserRefusedDeviceNameChange,
   UserRefusedFirmwareUpdate,
 } from "@ledgerhq/errors";
+import { CONNECTION_TYPES } from "./variables";
 
 jest.mock("../segment", () => ({
   track: jest.fn(),
@@ -48,7 +49,7 @@ describe("useTrackManagerSectionEvents", () => {
       "Secure Channel approved",
       expect.objectContaining({
         deviceType: "europa",
-        connectionType: "USB",
+        connectionType: CONNECTION_TYPES.USB,
         platform: "LLD",
         page: "Manager Dashboard",
       }),
@@ -72,7 +73,7 @@ describe("useTrackManagerSectionEvents", () => {
       "Deleted Custom Lock Screen",
       expect.objectContaining({
         deviceType: "europa",
-        connectionType: "USB",
+        connectionType: CONNECTION_TYPES.USB,
         platform: "LLD",
         page: "Manager Dashboard",
       }),
@@ -91,7 +92,7 @@ describe("useTrackManagerSectionEvents", () => {
       "Secure Channel denied",
       expect.objectContaining({
         deviceType: "europa",
-        connectionType: "USB",
+        connectionType: CONNECTION_TYPES.USB,
         platform: "LLD",
         page: "Manager Dashboard",
       }),
@@ -110,7 +111,7 @@ describe("useTrackManagerSectionEvents", () => {
       "Renamed Device cancelled",
       expect.objectContaining({
         deviceType: "europa",
-        connectionType: "USB",
+        connectionType: CONNECTION_TYPES.USB,
         platform: "LLD",
         page: "Manager Dashboard",
       }),
@@ -129,7 +130,7 @@ describe("useTrackManagerSectionEvents", () => {
       "User refused OS update via LL",
       expect.objectContaining({
         deviceType: "europa",
-        connectionType: "USB",
+        connectionType: CONNECTION_TYPES.USB,
         platform: "LLD",
         page: "Manager Dashboard",
       }),

@@ -70,7 +70,7 @@ export default function AddAccountsSuccess({ route }: Props) {
             padding="12px"
             width={343}
           >
-            <AccountItem account={item as Account} balance={item.spendableBalance} />
+            <AccountItem account={item as Account} balance={item.balance} />
             <Icons.ChevronRight size="M" color={colors.primary.c100} />
           </Flex>
         </TouchableOpacity>

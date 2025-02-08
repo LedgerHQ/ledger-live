@@ -30,7 +30,7 @@ const AccountListDrawer = ({ isOpen, onClose, data, onPressAccount }: AccountLis
       return (
         <TouchableOpacity key={account.id} onPress={() => onPressAccount(account)}>
           <Flex flexDirection="row" alignItems="center" padding={3} width={343}>
-            <AccountItem account={account} balance={account.spendableBalance} showUnit />
+            <AccountItem account={account} balance={account.balance} showUnit />
           </Flex>
         </TouchableOpacity>
       );

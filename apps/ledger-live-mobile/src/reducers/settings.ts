@@ -81,6 +81,7 @@ import type {
   SettingsSetHasBeenRedirectedToPostOnboardingPayload,
   SettingsSetMevProtectionPayload,
   SettingsUpdateNftCollectionStatus,
+  SettingsSetSelectedTabPortfolioAssetsPayload,
 } from "../actions/types";
 import {
   SettingsActionTypes,
@@ -183,6 +184,7 @@ export const INITIAL_STATE: SettingsState = {
   starredMarketCoins: [],
   fromLedgerSyncOnboarding: false,
   mevProtection: true,
+  selectedTabPortfolioAssets: "Assets",
 };
 
 const pairHash = (from: { ticker: string }, to: { ticker: string }) =>
@@ -675,6 +677,12 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     ...state,
     mevProtection: (action as Action<SettingsSetMevProtectionPayload>).payload,
   }),
+
+  [SettingsActionTypes.SET_SELECTED_TAB_PORTFOLIO_ASSETS]: (state, action) => ({
+    ...state,
+    selectedTabPortfolioAssets: (action as Action<SettingsSetSelectedTabPortfolioAssetsPayload>)
+      .payload,
+  }),
 };
 
 export default handleActions<SettingsState, SettingsPayload>(handlers, INITIAL_STATE);
@@ -905,6 +913,8 @@ export const isFromLedgerSyncOnboardingSelector = (state: State) =>
 export const starredMarketCoinsSelector = (state: State) => state.settings.starredMarketCoins;
 
 export const mevProtectionSelector = (state: State) => state.settings.mevProtection;
+export const selectedTabPortfolioAssetsSelector = (state: State) =>
+  state.settings.selectedTabPortfolioAssets;
 
 export const nftCollectionsStatusByNetworkSelector = (state: State) =>
   state.settings.nftCollectionsStatusByNetwork;
