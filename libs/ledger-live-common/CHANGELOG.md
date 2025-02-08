@@ -1,5 +1,18 @@
 ## 34.5.0-next.4
 
+## 34.21.0-nightly.1
+
+### Minor Changes
+
+- [#9147](https://github.com/LedgerHQ/ledger-live/pull/9147) [`1bd0955`](https://github.com/LedgerHQ/ledger-live/commit/1bd0955280a92fab7cf800b49d0ca5314ecbbdc9) Thanks [@semeano](https://github.com/semeano)! - Update wallet api dependencies
+
+### Patch Changes
+
+- Updated dependencies [[`1bd0955`](https://github.com/LedgerHQ/ledger-live/commit/1bd0955280a92fab7cf800b49d0ca5314ecbbdc9), [`5ad0782`](https://github.com/LedgerHQ/ledger-live/commit/5ad07824ab794b826b47cb1136bba239b1c44322)]:
+  - @ledgerhq/wallet-api-acre-module@0.2.0-nightly.1
+  - @ledgerhq/wallet-api-exchange-module@0.10.0-nightly.1
+  - @ledgerhq/coin-tezos@0.9.3-nightly.0
+
 ## 34.21.0-nightly.0
 
 ### Minor Changes

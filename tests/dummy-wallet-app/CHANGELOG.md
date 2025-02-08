@@ -1,5 +1,16 @@
 # dummy-wallet-app
 
+## 0.4.0-nightly.1
+
+### Minor Changes
+
+- [#9147](https://github.com/LedgerHQ/ledger-live/pull/9147) [`1bd0955`](https://github.com/LedgerHQ/ledger-live/commit/1bd0955280a92fab7cf800b49d0ca5314ecbbdc9) Thanks [@semeano](https://github.com/semeano)! - Update wallet api dependencies
+
+### Patch Changes
+
+- Updated dependencies [[`1bd0955`](https://github.com/LedgerHQ/ledger-live/commit/1bd0955280a92fab7cf800b49d0ca5314ecbbdc9)]:
+  - @ledgerhq/live-common@34.21.0-nightly.1
+
 ## 0.4.0-nightly.0
 
 ### Minor Changes

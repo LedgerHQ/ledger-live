@@ -1,5 +1,11 @@
 # @ledgerhq/coin-tezos
 
+## 0.9.3-nightly.0
+
+### Patch Changes
+
+- [#8908](https://github.com/LedgerHQ/ledger-live/pull/8908) [`5ad0782`](https://github.com/LedgerHQ/ledger-live/commit/5ad07824ab794b826b47cb1136bba239b1c44322) Thanks [@qperrot](https://github.com/qperrot)! - Fix device actions on tezos
+
 ## 0.9.2
 
 ### Patch Changes
