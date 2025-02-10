@@ -117,6 +117,7 @@ export type BaseNavigatorStackParamList = {
     defaultCurrencyId?: string;
     defaultTicker?: string;
     customDappURL?: string;
+    customDappUrl?: string;
     uri?: string;
     requestId?: string;
     sessionTopic?: string;
