@@ -1,5 +1,4 @@
-import buildCoinConfig, { CoinConfig, type CurrencyConfig } from "@ledgerhq/coin-framework/config";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import buildCoinConfig, { type CurrencyConfig } from "@ledgerhq/coin-framework/config";
 
 export type TronConfig = {
   explorer: {
@@ -9,9 +8,6 @@ export type TronConfig = {
 
 export type TronCoinConfig = CurrencyConfig & TronConfig;
 
-const coinConfig: {
-  setCoinConfig: (config: CoinConfig<TronCoinConfig>) => void;
-  getCoinConfig: (currency?: CryptoCurrency) => TronCoinConfig;
-} = buildCoinConfig<TronCoinConfig>();
+const coinConfig = buildCoinConfig<TronCoinConfig>();
 
 export default coinConfig;
