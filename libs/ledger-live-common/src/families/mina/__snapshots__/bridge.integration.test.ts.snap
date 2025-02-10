@@ -3,48 +3,16 @@
 exports[`mina currency bridge scanAccounts mina seed 1 1`] = `
 [
   {
-    "balance": "17998250000",
+    "balance": "0",
     "currencyId": "mina",
     "derivationMode": "minabip44h",
-    "freshAddress": "B62qkdFWJSW8zaTBZjTVtmeU3rVxyUkNxPhKKW8T2JBtpj5XfdywLSM",
+    "freshAddress": "B62qjWLs1W3J2fFGixeX49w1o7VvSGuMBNotnFhzs3PZ7PbtdFbhdeD",
     "freshAddressPath": "44'/12586'/0'/0/0",
-    "id": "js:2:mina:B62qkdFWJSW8zaTBZjTVtmeU3rVxyUkNxPhKKW8T2JBtpj5XfdywLSM:minabip44h",
+    "id": "js:2:mina:B62qjWLs1W3J2fFGixeX49w1o7VvSGuMBNotnFhzs3PZ7PbtdFbhdeD:minabip44h",
     "index": 0,
-    "operationsCount": 2,
-    "pendingOperations": [],
-    "seedIdentifier": "B62qkdFWJSW8zaTBZjTVtmeU3rVxyUkNxPhKKW8T2JBtpj5XfdywLSM",
-    "spendableBalance": "17998250000",
-    "swapHistory": [],
-    "syncHash": undefined,
-    "used": true,
-  },
-  {
-    "balance": "0",
-    "currencyId": "mina",
-    "derivationMode": "minabip44h",
-    "freshAddress": "B62qkWcHhoisWDCR7v3gvWzX6wXEVuGYLHXq3mSym4GEzfYXmSDv314",
-    "freshAddressPath": "44'/12586'/1'/0/0",
-    "id": "js:2:mina:B62qkWcHhoisWDCR7v3gvWzX6wXEVuGYLHXq3mSym4GEzfYXmSDv314:minabip44h",
-    "index": 1,
-    "operationsCount": 1,
-    "pendingOperations": [],
-    "seedIdentifier": "B62qkdFWJSW8zaTBZjTVtmeU3rVxyUkNxPhKKW8T2JBtpj5XfdywLSM",
-    "spendableBalance": "0",
-    "swapHistory": [],
-    "syncHash": undefined,
-    "used": true,
-  },
-  {
-    "balance": "0",
-    "currencyId": "mina",
-    "derivationMode": "minabip44h",
-    "freshAddress": "B62qmb35fBGjPqLuEoHB3bBvo849z2pw8B2q3XTp6wvZMLsFA3eb2VG",
-    "freshAddressPath": "44'/12586'/2'/0/0",
-    "id": "js:2:mina:B62qmb35fBGjPqLuEoHB3bBvo849z2pw8B2q3XTp6wvZMLsFA3eb2VG:minabip44h",
-    "index": 2,
     "operationsCount": 0,
     "pendingOperations": [],
-    "seedIdentifier": "B62qkdFWJSW8zaTBZjTVtmeU3rVxyUkNxPhKKW8T2JBtpj5XfdywLSM",
+    "seedIdentifier": "B62qjWLs1W3J2fFGixeX49w1o7VvSGuMBNotnFhzs3PZ7PbtdFbhdeD",
     "spendableBalance": "0",
     "swapHistory": [],
     "syncHash": undefined,
@@ -55,67 +23,6 @@ exports[`mina currency bridge scanAccounts mina seed 1 1`] = `
 
 exports[`mina currency bridge scanAccounts mina seed 1 2`] = `
 [
-  [
-    {
-      "accountId": "js:2:mina:B62qkdFWJSW8zaTBZjTVtmeU3rVxyUkNxPhKKW8T2JBtpj5XfdywLSM:minabip44h",
-      "blockHash": "3NLHrfB7TqGgu1SWZ8MgyJJprj9axLzYacDUeFWFGbyNefNQHkxy",
-      "blockHeight": 380027,
-      "extra": {
-        "memo": "Testing mainnet",
-      },
-      "fee": "1750000",
-      "hash": "5JtoGDxnS9wE5hKkGq64GHddNqvtyU4xWipNLSQm62Bg6E1bxngV",
-      "id": "js:2:mina:B62qkdFWJSW8zaTBZjTVtmeU3rVxyUkNxPhKKW8T2JBtpj5XfdywLSM:minabip44h-5JtoGDxnS9wE5hKkGq64GHddNqvtyU4xWipNLSQm62Bg6E1bxngV-OUT",
-      "recipients": [
-        "B62qkWcHhoisWDCR7v3gvWzX6wXEVuGYLHXq3mSym4GEzfYXmSDv314",
-      ],
-      "senders": [
-        "B62qkdFWJSW8zaTBZjTVtmeU3rVxyUkNxPhKKW8T2JBtpj5XfdywLSM",
-      ],
-      "type": "OUT",
-      "value": "2001750000",
-    },
-    {
-      "accountId": "js:2:mina:B62qkdFWJSW8zaTBZjTVtmeU3rVxyUkNxPhKKW8T2JBtpj5XfdywLSM:minabip44h",
-      "blockHash": "3NKrat5mXN1Lp8FmSbnPmvT8nfZMKAge18AvZj4eULTqZjNL55BX",
-      "blockHeight": 378920,
-      "extra": {
-        "memo": "",
-      },
-      "fee": "200100000",
-      "hash": "5Jtu8BF3stgsnauYZVhCEgFfc2ycciMQz4UncsdYnkLENxm9ogDG",
-      "id": "js:2:mina:B62qkdFWJSW8zaTBZjTVtmeU3rVxyUkNxPhKKW8T2JBtpj5XfdywLSM:minabip44h-5Jtu8BF3stgsnauYZVhCEgFfc2ycciMQz4UncsdYnkLENxm9ogDG-IN",
-      "recipients": [
-        "B62qkdFWJSW8zaTBZjTVtmeU3rVxyUkNxPhKKW8T2JBtpj5XfdywLSM",
-      ],
-      "senders": [
-        "B62qq9yz8xR6y3bYZqYa2MTrLFF5HW7vhDtjXcWjnE4iddxCVSzRdyk",
-      ],
-      "type": "IN",
-      "value": "21200100000",
-    },
-  ],
-  [
-    {
-      "accountId": "js:2:mina:B62qkWcHhoisWDCR7v3gvWzX6wXEVuGYLHXq3mSym4GEzfYXmSDv314:minabip44h",
-      "blockHash": "3NLHrfB7TqGgu1SWZ8MgyJJprj9axLzYacDUeFWFGbyNefNQHkxy",
-      "blockHeight": 380027,
-      "extra": {
-        "memo": "Testing mainnet",
-      },
-      "fee": "1750000",
-      "hash": "5JtoGDxnS9wE5hKkGq64GHddNqvtyU4xWipNLSQm62Bg6E1bxngV",
-      "id": "js:2:mina:B62qkWcHhoisWDCR7v3gvWzX6wXEVuGYLHXq3mSym4GEzfYXmSDv314:minabip44h-5JtoGDxnS9wE5hKkGq64GHddNqvtyU4xWipNLSQm62Bg6E1bxngV-IN",
-      "recipients": [
-        "B62qkWcHhoisWDCR7v3gvWzX6wXEVuGYLHXq3mSym4GEzfYXmSDv314",
-      ],
-      "senders": [
-        "B62qkdFWJSW8zaTBZjTVtmeU3rVxyUkNxPhKKW8T2JBtpj5XfdywLSM",
-      ],
-      "type": "IN",
-      "value": "2001750000",
-    },
-  ],
   [],
 ]
 `;
