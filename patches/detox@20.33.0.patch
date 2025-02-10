@@ -36,34 +36,6 @@ index afdc985d5a55396fbec0affd0927156348e656d0..1c71bce08e05768ec2f92245316154ec
        ...unparse({ _: [...passthrough, ...specs] }),
      ].map(String);
    }
-diff --git a/runners/jest/reporter.js b/runners/jest/reporter.js
-index 1d2f07b09efebce16720b5515f08e31797adc60d..679825a1693533f9066c61c85f020f135ef48e04 100644
---- a/runners/jest/reporter.js
-+++ b/runners/jest/reporter.js
-@@ -1,20 +1,11 @@
- /** @typedef {import('@jest/reporters').Reporter} Reporter */
- 
--const {
--  DetoxIPCReporter,
--  DetoxReporterDispatcher,
--  DetoxSummaryReporter,
--  DetoxVerboseReporter,
--} = require('./reporters');
-+const { DetoxSummaryReporter } = require('./reporters');
- 
- /** @implements {Reporter} */
--class DetoxReporter extends DetoxReporterDispatcher {
-+class DetoxReporter extends DetoxSummaryReporter {
-   constructor(globalConfig) {
--    super(globalConfig, {
--      DetoxSummaryReporter,
--      DetoxVerboseReporter,
--      DetoxIPCReporter,
--    });
-+    super(globalConfig);
-   }
- }
- 
 diff --git a/src/devices/common/drivers/android/exec/ADB.js b/src/devices/common/drivers/android/exec/ADB.js
 index 434b0d65c89f8086084c8714c98e446c9bf54c3a..3b83753d3a3bd5468b53c4b0555bd278e301dbab 100644
 --- a/src/devices/common/drivers/android/exec/ADB.js
