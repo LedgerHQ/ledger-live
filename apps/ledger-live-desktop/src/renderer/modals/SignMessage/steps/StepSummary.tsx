@@ -12,6 +12,7 @@ import IconWallet from "~/renderer/icons/Wallet";
 import { rgba } from "~/renderer/styles/helpers";
 import { StepProps } from "../types";
 import { useAccountName } from "~/renderer/reducers/wallet";
+import AngleDown from "~/renderer/icons/AngleDown";
 
 const Circle = styled.div`
   height: 32px;
@@ -64,7 +65,7 @@ const MessageProperty = memo(({ label, value }: MessageProperties[0]) => {
   if (!value) return null;
 
   return (
-    <Box flex="1" mb={20}>
+    <Box style={{ flexDirection: "row", justifyContent: "space-between" }} flex="1" mb={20}>
       <Text ff="Inter|Medium" color="palette.text.shade40" fontSize={4}>
         {label}
       </Text>
@@ -128,7 +129,7 @@ export default function StepSummary({ account, message: messageData }: StepProps
           </Text>
           <Box horizontal alignItems="center">
             <div style={{ marginRight: 7 }}>
-              <CryptoCurrencyIcon size={16} currency={account.currency} />
+              <CryptoCurrencyIcon size={14} currency={account.currency} />
             </div>
             <Text ff="Inter" color="palette.text.shade100" fontSize={4} style={{ flex: 1 }}>
               {accountName}
@@ -149,10 +150,13 @@ export default function StepSummary({ account, message: messageData }: StepProps
       <MessageContainer flex="1">
         {messageFields ? (
           <Box flex="1">
-            <Button outline small mb={2} onClick={() => setShowAdvanced(!showAdvanced)}>
+            <Button outline mb={2} onClick={() => setShowAdvanced(!showAdvanced)}>
+              <Box style={{ transform: `rotate(${showAdvanced ? 0 : -90}deg)` }} mr={10}>
+                <AngleDown size={18} />
+              </Box>
               {showAdvanced
-                ? `- ${t("signmessage.eip712.hideFullMessage")}`
-                : `+ ${t("signmessage.eip712.showFullMessage")}`}
+                ? `${t("signmessage.eip712.hideFullMessage")}`
+                : `${t("signmessage.eip712.showFullMessage")}`}
             </Button>
             {showAdvanced ? (
               <AdvancedMessageArea>
@@ -175,7 +179,8 @@ export function StepSummaryFooter({ transitionTo }: StepProps) {
         onClick={() => {
           transitionTo("sign");
         }}
-        primary
+        style={{ borderRadius: 20, backgroundColor: "white" }}
+        color="neutral.c00"
       >
         <Trans i18nKey="common.continue" />
       </Button>

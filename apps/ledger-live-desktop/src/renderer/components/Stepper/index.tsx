@@ -4,12 +4,12 @@ import { withTranslation } from "react-i18next";
 import { TFunction } from "i18next";
 import { ModalBody } from "~/renderer/components/Modal";
 import { useDeviceBlocked } from "~/renderer/components/DeviceAction/DeviceBlocker";
-import Breadcrumb from "./Breadcrumb";
 import { useTrackAddAccountModal } from "~/renderer/analytics/hooks/useTrackAddAccountModal";
 import { useSelector } from "react-redux";
 import { trackingEnabledSelector } from "~/renderer/reducers/settings";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { LedgerError } from "../DeviceAction";
+import { FlowStepper } from "@ledgerhq/react-ui";
 
 export type BasicStepProps = {
   t: TFunction;
@@ -116,21 +116,33 @@ const Stepper = <T, StepProps>({
       backButtonComponent={backButtonComponent}
       title={title}
       noScroll={noScroll}
-      render={() => (
-        <>
-          {hideBreadcrumb ? null : (
-            <Breadcrumb
-              mb={props.error && props.signed ? 4 : 6}
-              currentStep={indexVisible}
-              items={visibleSteps}
-              stepsDisabled={disabledSteps}
-              stepsErrors={errorSteps}
-            />
-          )}
-          <StepComponent {...(stepProps as React.PropsWithChildren<StepProps>)} />
-          {children}
-        </>
-      )}
+      render={() =>
+        hideBreadcrumb ? null : (
+          <FlowStepper.Indexed
+            activeKey={indexVisible.toString()}
+            extraStepperProps={{ errored: !!errorSteps }}
+            extraStepperContainerProps={{
+              p: 0,
+              mt: 0,
+              mb: 40,
+            }}
+            extraContainerProps={{ overflowY: "hidden" }}
+            extraChildrenContainerProps={{ overflowY: "hidden" }}
+            renderChildren={undefined}
+          >
+            {visibleSteps.map((step, index) => (
+              <FlowStepper.Indexed.Step
+                key={index}
+                itemKey={index.toString()}
+                label={t(step.label?.props?.i18nKey) as string}
+              >
+                <StepComponent {...(stepProps as React.PropsWithChildren<StepProps>)} />
+                {children}
+              </FlowStepper.Indexed.Step>
+            ))}
+          </FlowStepper.Indexed>
+        )
+      }
       renderFooter={
         StepFooter
           ? () => <StepFooter {...(stepProps as React.PropsWithChildren<StepProps>)} />
