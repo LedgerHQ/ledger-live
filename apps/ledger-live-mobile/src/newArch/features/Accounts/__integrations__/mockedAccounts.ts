@@ -620,7 +620,7 @@ export const MockedAccounts: AccountsState = {
       blockHeight: 112715,
       creationDate: new Date("2024-11-13T12:20:06.444Z"),
       balance: BigNumber("83315786").multipliedBy(10),
-      spendableBalance: BigNumber("83315786").multipliedBy(10),
+      spendableBalance: BigNumber("2").multipliedBy(10),
       operations: [],
       operationsCount: 155,
       pendingOperations: [],
