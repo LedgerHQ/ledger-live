@@ -791,6 +791,30 @@
     "SolanaAccountNotFunded" : {
       "title" : "Счёт не пополнен"
     },
+    "SolanaTokenAccountHoldsAnotherToken" : {
+      "title" : "На связанном с этим токеном счёте есть другой токен"
+    },
+    "SolanaTokenAccountWarning" : {
+      "title" : "Это не адрес кошелька, а адрес токена, связанного с кошельком. Продолжайте только в том случае, если понимаете суть происходящего."
+    },
+    "SolanaTokenAccountNotAllowed" : {
+      "title" : "Это счёт токена. Введите обычный адрес кошелька."
+    },
+    "SolanaMintAccountNotAllowed" : {
+      "title" : "Это адрес токена. Введите обычный адрес кошелька."
+    },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "Счёт будет пополнен"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "Токены на счету заморожены"
+    },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "Счёт не инициализирован"
+    },
+    "SolanaTokenRecipientIsSenderATA" : {
+      "title" : "Адрес получателя совпадает с адресом отправителя токена"
+    },
     "SolanaAddressOfEd25519" : {
       "title" : "Адрес за пределами кривой ed25519"
     },
@@ -2375,16 +2399,16 @@
     },
     "recoverBanner" : {
       "subscribeDone" : {
-        "title" : "Завершите добавление платёжной карты",
-        "description" : "Надёжное восстановление с Ledger Recover."
+        "title" : "Не забудьте завершить оформление подписки на Ledger Recover",
+        "description" : "До безопасности осталось всего два шага!"
       },
       "verifyIdentity" : {
-        "title" : "Завершите подтверждение личности",
-        "description" : "Надёжное восстановление с Ledger Recover."
+        "title" : "Не забудьте завершить оформление подписки на Ledger Recover",
+        "description" : "До безопасности остался всего один шаг!"
       },
       "connectDevice" : {
-        "title" : "Последний этап: подключите устройство Ledger",
-        "description" : "Ledger Recover всего в одном шаге от вас."
+        "title" : "Не забудьте завершить оформление подписки на Ledger Recover",
+        "description" : "Это последний этап для возможности восстановить кошелёк в дальнейшем."
       }
     }
   },
@@ -3104,7 +3128,7 @@
       "title" : "Разработчикам",
       "desc" : "Попробуйте функции для разработчиков и расскажите нам, что вы думаете.",
       "customManifest" : {
-        "title" : "Загрузить манифест пользовательской платформы"
+        "title" : "Загрузка манифеста"
       },
       "exchangeDeveloperMode" : {
         "title" : "Режим разработчика для приложения Exchange",
@@ -3214,8 +3238,7 @@
       },
       "selectAccount" : {
         "title" : "Выбор или создание нового счёта",
-        "subtitle" : "Ваши {{currencyTicker}} будут зачислены на этот счёт.",
-        "cta" : "Создание нового счёта"
+        "subtitle" : "Ваши {{currencyTicker}} будут зачислены на этот счёт."
       },
       "addAccount" : {
         "title" : "Проверка счёта...",
@@ -3333,7 +3356,7 @@
       },
       "form" : {
         "validate" : "Подтвердить обмен",
-        "tab" : "Обмен",
+        "tab" : "Swap",
         "button" : "Продолжить",
         "from" : "Откуда",
         "to" : "Куда",
@@ -3442,8 +3465,8 @@
           "receive" : "К получению"
         },
         "placeholder" : "Выберите",
-        "title" : "Обмен",
-        "cta" : "Обмен",
+        "title" : "Swap",
+        "cta" : "Swap",
         "from" : "Откуда",
         "to" : "Куда",
         "loading" : "Загружаем...",
@@ -3489,8 +3512,12 @@
         "ton_description" : "Используйте другие совместимые устройства Ledger для обмена TON. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
         "spl_tokens_title" : "Ledger Nano S™ не поддерживает обмен токенов сети Solana",
         "spl_tokens_description" : "Используйте другие совместимые устройства Ledger для обмена токенов сети Solana. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
+        "near_title" : "Ledger Nano S™ не поддерживает обмен Near",
+        "near_description" : "Для обмена Near используйте любое другое устройство Ledger. Это может быть Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ или Ledger Stax™.",
         "ada_title" : "Ledger Nano S™ не поддерживает обмен Cardano",
-        "ada_description" : "Используйте другие совместимые устройства Ledger для обмена Cardano. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™."
+        "ada_description" : "Используйте другие совместимые устройства Ledger для обмена Cardano. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
+        "apt_title" : "Ledger Nano S™ не поддерживает обмен Aptos",
+        "apt_description" : "Для обмена Aptos используйте любое другое устройство Ledger. Это может быть Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ или Ledger Stax™."
       }
     },
     "lending" : {
@@ -4072,10 +4099,6 @@
         "creatable" : {
           "title" : "Новый счёт"
         },
-        "imported" : {
-          "title" : "Счёт уже в Портфеле ({{count}})",
-          "title_plural" : "Счета в Портфеле ({{count}})"
-        },
         "migrate" : {
           "title" : "Счета, которые будут обновлены"
         }
@@ -4161,7 +4184,9 @@
     "installApp" : "Установка {{appName}}: {{percentage}}",
     "installAppDescription" : "Дождитесь завершения установки",
     "listApps" : "Проверяем зависимости приложения...",
-    "listAppsDescription" : "Проверяем наличие всех необходимых приложений. Пожалуйста, подождите..."
+    "listAppsDescription" : "Проверяем наличие всех необходимых приложений. Пожалуйста, подождите...",
+    "confirmExchangeOnDevice" : "Подтвердите обмен на устройстве",
+    "confirmSwapOnDevice" : "Подтвердите обмен на устройстве"
   },
   "SelectDevice" : {
     "title" : "Привязка нового устройства",
@@ -5982,6 +6007,10 @@
         "description" : "Вы можете получать вознаграждения, делегируя активы SOL валидатору."
       },
       "reserveWarning" : "Убедитесь в наличии как минимум {{amount}} SOL на вашем кошельке. Криптовалюта понадобится для оплаты комиссий сети при деактивации и выводе стейка в дальнейшем"
+    },
+    "token" : {
+      "frozenStateWarning" : "Активы на счету заморожены",
+      "transferWarning" : "<0>Используйте это руководство</0>, чтобы подтвердить адрес получения токенов Solana с помощью Ledger Nano S™."
     }
   },
   "near" : {
@@ -7061,9 +7090,10 @@
           "explanation" : {
             "title" : "Сканируйте и синхронизируйте ваши счета с помощью другого приложения Ledger Live",
             "steps" : {
-              "step1" : "Откройте приложение Ledger Live, которое хотите синхронизировать",
-              "step2" : "Перейдите в <0>«Настройки»</0> <1>></1> <0>«Общие»</0> <1>></1> <0>«Ledger Sync»</0> <1>></1> <0>«Включить синхронизацию»</0> <1>></1> <0>«Сканировать QR»</0>",
-              "step3" : "Сканируйте QR-код"
+              "step1" : "Убедитесь, что функция Ledger Sync активирована в одном из приложений.",
+              "step2" : "Запустите приложение Ledger Live, которое будете синхронизировать.",
+              "step3" : "Перейдите в <0>«Настройки</0> <1>></1> <0>Общие</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Уже включено</0> <1>></1> <0>Через QR-код»</0>",
+              "step4" : "Сканируйте QR-код."
             }
           }
         },
@@ -7073,9 +7103,10 @@
           "explanation" : {
             "title" : "Для синхронизации Ledger Live на другом смартфоне или ПК...",
             "steps" : {
-              "step1" : "Откройте приложение Ledger Live, с которым хотите синхронизироваться.",
-              "step2" : "Перейдите в <0>«Настройки</0> <1>></1> <0>Общие</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Включить Ledger Sync</0> <1>></1> <0>Показать QR»</0>",
-              "step3" : "Сканируйте QR-код"
+              "step1" : "Убедитесь, что функция Ledger Sync активирована в одном из приложений.",
+              "step2" : "Запустите приложение Ledger Live, с которым будете синхронизироваться.",
+              "step3" : "Перейдите в <0>Настройки</0> <1>></1> <0>Общие</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Уже включено</0> <1>></1> <0>Через QR-код</0>",
+              "step4" : "Сканируйте QR-код."
             }
           }
         },
