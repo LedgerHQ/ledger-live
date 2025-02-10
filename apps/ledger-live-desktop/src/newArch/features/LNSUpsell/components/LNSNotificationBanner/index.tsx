@@ -11,7 +11,7 @@ type Props = {
   discount: number;
 };
 
-export function LNSNotificationCard({ type, ctaLink, discount }: Props) {
+export function LNSNotificationBanner({ type, ctaLink, discount }: Props) {
   const handleClick = () => {
     track("button_clicked", {
       button: AnalyticsButton.CTA,
