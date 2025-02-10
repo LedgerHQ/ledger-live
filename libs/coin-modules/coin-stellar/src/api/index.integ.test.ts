@@ -49,6 +49,7 @@ describe("Stellar Api", () => {
       const [tx, _] = await module.listOperations(address, { minHeight: 0 });
 
       // Then
+      expect(tx.length).toBeGreaterThanOrEqual(100);
       const checkSet = new Set(tx.map(elt => elt.hash));
       expect(checkSet.size).toEqual(tx.length);
     });

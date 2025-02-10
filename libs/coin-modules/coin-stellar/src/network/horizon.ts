@@ -265,11 +265,12 @@ export async function fetchAllOperations({
   }
 }
 
+// https://developers.stellar.org/docs/data/horizon/api-reference/get-operations-by-account-id
 export async function fetchOperations({
   accountId,
   addr,
   order,
-  cursor = "0",
+  cursor,
   limit,
 }: {
   accountId: string;
@@ -277,9 +278,10 @@ export async function fetchOperations({
   order: "asc" | "desc";
   cursor: string | undefined;
   limit?: number | undefined;
-}): Promise<StellarOperation[]> {
+}): Promise<[StellarOperation[], string]> {
+  const noResult: [StellarOperation[], string] = [[], ""];
   if (!addr) {
-    return [];
+    return noResult;
   }
 
   const defaultFetchLimit = coinConfig.getCoinConfig().explorer.fetchLimit ?? FETCH_LIMIT;
@@ -290,23 +292,26 @@ export async function fetchOperations({
       .forAccount(addr)
       .limit(limit ?? defaultFetchLimit)
       .order(order)
-      .cursor(cursor)
+      .cursor(cursor ?? "")
       .includeFailed(true)
       .join("transactions")
       .call();
 
     if (!rawOperations || !rawOperations.records.length) {
-      return [];
+      return noResult;
     }
 
-    return rawOperationsToOperations(rawOperations.records as RawOperation[], addr, accountId);
+    return [
+      await rawOperationsToOperations(rawOperations.records as RawOperation[], addr, accountId),
+      rawOperations.records[rawOperations.records.length - 1].paging_token,
+    ];
   } catch (e: unknown) {
     // FIXME: terrible hacks, because Stellar SDK fails to cast network failures to typed errors in react-native...
     // (https://github.com/stellar/js-stellar-sdk/issues/638)
     const errorMsg = e ? String(e) : "";
 
     if (e instanceof NotFoundError || errorMsg.match(/status code 404/)) {
-      return [];
+      return noResult;
     }
 
     if (errorMsg.match(/status code 4[0-9]{2}/)) {
