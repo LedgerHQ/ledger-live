@@ -6251,6 +6251,9 @@
     "SolanaTokenAccounNotInitialized": {
       "title": "Account not initialized"
     },
+    "SolanaTokenRecipientIsSenderATA": {
+      "title": "Recipient address is the same as the sender token address"
+    },
     "SolanaMemoIsTooLong": {
       "title": "Memo is too long. Max length is {{maxLength}}"
     },

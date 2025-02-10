@@ -809,6 +809,12 @@
     "SolanaTokenAccountFrozen": {
       "title": "Token account assets are frozen"
     },
+    "SolanaTokenAccounNotInitialized": {
+      "title": "Account not initialized"
+    },
+    "SolanaTokenRecipientIsSenderATA": {
+      "title": "Recipient address is the same as the sender token address"
+    },
     "SolanaAddressOfEd25519": {
       "title": "Address off ed25519 curve"
     },
@@ -3351,7 +3357,7 @@
       },
       "form": {
         "validate": "Confirm Swap transaction",
-        "tab": "Exchange",
+        "tab": "Swap",
         "button": "Continue",
         "from": "From",
         "to": "To",
@@ -3460,8 +3466,8 @@
           "receive": "Receive"
         },
         "placeholder": "Select",
-        "title": "Exchange",
-        "cta": "Exchange",
+        "title": "Swap",
+        "cta": "Swap",
         "from": "From",
         "to": "To",
         "loading": "Loading...",

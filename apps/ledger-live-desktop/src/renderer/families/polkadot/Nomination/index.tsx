@@ -44,6 +44,7 @@ import {
 } from "@ledgerhq/live-common/families/polkadot/types";
 import { SubAccount } from "@ledgerhq/types-live";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import { useHistory } from "react-router";
 
 type Props = {
   account: PolkadotAccount | SubAccount;
@@ -64,6 +65,8 @@ export type NominationValidator =
   | PolkadotUnlocking;
 
 const Nomination = ({ account }: { account: PolkadotAccount }) => {
+  const history = useHistory();
+
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
   const unit = useAccountUnit(account);
@@ -115,12 +118,15 @@ const Nomination = ({ account }: { account: PolkadotAccount }) => {
     };
   }, [unlockings, unlockedBalance]);
   const onEarnRewards = useCallback(() => {
-    dispatch(
-      openModal("MODAL_POLKADOT_REWARDS_INFO", {
-        account,
-      }),
-    );
-  }, [account, dispatch]);
+    history.push({
+      pathname: "/platform/stakekit",
+      state: {
+        yieldId: "polkadot-dot-validator-staking",
+        accountId: account.id,
+        returnTo: `/account/${account.id}`,
+      },
+    });
+  }, [account, history]);
   const onNominate = useCallback(() => {
     dispatch(
       openModal("MODAL_POLKADOT_NOMINATE", {
