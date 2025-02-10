@@ -148,7 +148,8 @@ jobs:
       - name: Test iOS app
         id: detox
         timeout-minutes: 75
-        run: pnpm mobile e2e:ci -p ios -t $([[ "$INPUT_SPECULOS" == "true" ]] && printf %s '--speculos')
+          # run: pnpm mobile e2e:ci -p ios -t $([[ "$INPUT_SPECULOS" == "true" ]] && printf %s '--speculos')
+        run: pnpm test-e2e:llm:ios
         env:
           SEED: ${{ secrets.SEED_QAA_B2C }}
           INPUT_SPECULOS: ${{ env.SPECULOS_RUN }}

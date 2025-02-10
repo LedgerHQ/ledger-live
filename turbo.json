@@ -189,6 +189,12 @@
       "outputs": [],
       "dependsOn": ["build"],
       "env": ["CI_OS"]
+    },
+    "live-mobile#e2e:test": {
+      "cache": true,
+      "outputs": [".detox-artifacts/junit.xml"],
+      "dependsOn": ["^build"],
+      "inputs": ["src/**/*.ts", "e2e/**/*.test.js", "package.json", "pnpm-lock.yaml"]
     }
   }
 }
