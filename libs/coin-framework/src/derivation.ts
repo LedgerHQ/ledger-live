@@ -151,8 +151,11 @@ const modes: Readonly<Record<DerivationMode, ModeSpec>> = Object.freeze({
   solanaSub: {
     overridesDerivation: "44'/501'/<account>'",
   },
-  hederaBip44: {
-    overridesDerivation: "44/3030",
+  hederaBip44Ed25519: {
+    overridesDerivation: "44/3030/0",
+  },
+  hederaBip44Ecdsa: {
+    overridesDerivation: "44/3030/1",
   },
   cardano: {
     purpose: 1852,
@@ -191,7 +194,7 @@ const legacyDerivations: Partial<Record<CryptoCurrency["id"], DerivationMode[]>>
   tezos: ["galleonL", "tezboxL", "tezosbip44h", "tezbox"],
   stellar: ["sep5"],
   polkadot: ["polkadotbip44"],
-  hedera: ["hederaBip44"],
+  hedera: ["hederaBip44Ed25519", "hederaBip44Ecdsa"],
   filecoin: ["glifLegacy", "filecoinBIP44", "glif"],
   internet_computer: ["internet_computer"],
   casper: ["casper_wallet"],

@@ -437,7 +437,7 @@ export const makeScanAccounts =
             log("scanAccounts", `scanning ${currency.id} on derivationMode=${derivationMode}`);
             let result: Result = derivationsCache[path];
 
-            if (!result) {
+            if (!result || derivationMode == "hederaBip44Ecdsa") {
               try {
                 result = await getAddressFn(deviceId, {
                   currency,

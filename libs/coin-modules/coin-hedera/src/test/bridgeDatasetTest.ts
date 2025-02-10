@@ -27,7 +27,7 @@ export const hedera: CurrenciesData<Transaction> = {
         id: `js:2:hedera:0.0.751515:`,
         seedIdentifier: "",
         name: "Hedera 1",
-        derivationMode: "hederaBip44",
+        derivationMode: "hederaBip44Ed25519",
         index: 0,
         freshAddress: "0.0.751515",
         freshAddressPath: "44/3030/0/0/0",

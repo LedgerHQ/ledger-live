@@ -5,6 +5,7 @@ import { buildOptimisticOperation } from "./buildOptimisticOperation";
 import { buildUnsignedTransaction } from "../api/network";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { Transaction, HederaSigner } from "../types";
+import { getKeyTypeForAccount } from "../api/mirror";
 
 export const buildSignOperation =
   (
@@ -25,9 +26,11 @@ export const buildSignOperation =
 
           const accountPublicKey = PublicKey.fromString(account.seedIdentifier);
 
+          const keyType = await getKeyTypeForAccount(account.freshAddress);
+
           const res = await signerContext(deviceId, async signer => {
             await hederaTransaction.signWith(accountPublicKey, async bodyBytes => {
-              return await signer.signTransaction(bodyBytes);
+              return await signer.signTransaction(bodyBytes, keyType !== "ED25519");
             });
             return hederaTransaction.toBytes();
           });
