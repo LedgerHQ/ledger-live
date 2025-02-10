@@ -14,7 +14,6 @@ import {
   listOperations,
   lastBlock,
 } from "../logic";
-import { stat } from "fs";
 import { ListOperationsOptions } from "../logic/listOperations";
 
 export function createApi(config: StellarConfig): Api {
