@@ -8,7 +8,7 @@ import { useTrackAddAccountModal } from "~/renderer/analytics/hooks/useTrackAddA
 import { useSelector } from "react-redux";
 import { trackingEnabledSelector } from "~/renderer/reducers/settings";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
-import { LedgerError } from "../DeviceAction";
+import { LedgerError } from "~/renderer/components/DeviceAction";
 import { FlowStepper } from "@ledgerhq/react-ui";
 
 export type BasicStepProps = {
