@@ -3238,8 +3238,7 @@
       },
       "selectAccount": {
         "title": "Select or create new account",
-        "subtitle": "Your {{currencyTicker}} will be deposited into this account.",
-        "cta": "Create a new account"
+        "subtitle": "Your {{currencyTicker}} will be deposited into this account."
       },
       "addAccount": {
         "title": "Checking for an account...",

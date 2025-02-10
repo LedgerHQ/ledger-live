@@ -195,7 +195,7 @@ function ReceiveSelectAccount({
           onPress={createNewAccount}
           testID="button-create-account"
         >
-          {t("transfer.receive.selectAccount.cta")}
+          {t("addAccounts.addNewOrExisting")}
         </Button>
       </Flex>
     </>
