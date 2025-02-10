@@ -107,6 +107,10 @@ function useDappAccountLogic({
   }, [currentAccount, accounts]);
 
   const firstAccountAvailable = useMemo(() => {
+    // Return an account for manifests with wildcard currencyIds
+    // Prevents infinite useEffect loop seen on Swap deep links
+    if (currencyIds.includes("**")) return accounts[0];
+
     const account = accounts.find(account => {
       if (account.type === "Account" && currencyIds.includes(account.currency.id)) {
         return account;
