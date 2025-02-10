@@ -6944,6 +6944,18 @@
           "cta": "Level up my wallet",
           "linkText": "Learn more"
         }
+      },
+      "notifications": {
+        "optIn": {
+          "description": "Updates are ending soon. Upgrade now with {{discount}}% off for a seamless experience.",
+          "cta": "Level up my wallet",
+          "linkText": "Learn more"
+        },
+        "optOut": {
+          "description": "Updates are ending soon. Upgrade now with {{discount}}% off for a seamless experience.",
+          "cta": "Level up my wallet",
+          "linkText": "Learn more"
+        }
       }
     }
   }
