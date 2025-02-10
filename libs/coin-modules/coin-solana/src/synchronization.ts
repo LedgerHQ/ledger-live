@@ -256,7 +256,7 @@ function newSubAcc({
 }): SolanaTokenAccount {
   const firstTx = txs[txs.length - 1];
 
-  const creationDate = new Date((firstTx.info.blockTime ?? Date.now() / 1000) * 1000);
+  const creationDate = new Date((firstTx?.info.blockTime ?? Date.now() / 1000) * 1000);
 
   const mint = assocTokenAcc.info.mint.toBase58();
   const tokenCurrency = findTokenByAddressInCurrency(mint, currencyId);
