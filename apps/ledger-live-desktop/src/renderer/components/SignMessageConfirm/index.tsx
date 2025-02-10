@@ -12,29 +12,50 @@ import useTheme from "~/renderer/hooks/useTheme";
 import Text from "~/renderer/components/Text";
 import Box from "~/renderer/components/Box";
 import { getLLDCoinFamily } from "~/renderer/families";
+import FormattedVal from "~/renderer/components/FormattedVal";
 
 const FieldText = styled(Text).attrs(() => ({
   ml: 1,
   ff: "Inter|Medium",
   color: "palette.text.shade80",
   fontSize: 3,
-}))`
-  word-break: break-all;
-  text-align: right;
-  max-width: 50%;
-`;
+}))``;
 
 export type FieldComponentProps = {
-  account: AccountLike;
+  account: Account;
   field: DeviceTransactionField;
+  contractAddress?: string;
 };
 
 export type FieldComponent = React.ComponentType<FieldComponentProps>;
 
-const TextField = ({ field }: FieldComponentProps) => {
+const TextField = ({ field, account, contractAddress }: FieldComponentProps) => {
+  const isPropertyAmount = field.label.includes("Amount") && contractAddress;
+
+  const unit = isPropertyAmount
+    ? account.subAccounts?.find(a => a.token.contractAddress === contractAddress)?.token.units[0]
+    : undefined;
+
   return field.type === "text" ? (
     <SignMessageConfirmField label={field.label}>
-      <FieldText>{field.value}</FieldText>
+      <FieldText>
+        {isPropertyAmount ? (
+          <>
+            <FormattedVal
+              color={"palette.neutral.c100"}
+              val={Number(field.value)}
+              unit={unit}
+              fontSize={3}
+              disableRounding
+              alwaysShowValue
+              showCode
+              inline
+            />
+          </>
+        ) : (
+          field.value
+        )}
+      </FieldText>
     </SignMessageConfirmField>
   ) : null;
 };
@@ -97,9 +118,18 @@ const SignMessageConfirm = ({ device, account, parentAccount, signMessageRequest
         <Spinner size={30} />
       ) : (
         <>
-          <Box style={{ width: "100%" }} px={30} mb={20}>
+          <Box style={{ width: "100%", rowGap: 7 }} mb={20}>
             {fields.map((field, i) => {
-              return <TextField key={i} field={field} account={account} />;
+              const contractAddress = fields?.find(f => f.label === "Token") as { value: string };
+
+              return (
+                <TextField
+                  key={i}
+                  field={field}
+                  account={mainAccount}
+                  contractAddress={contractAddress?.value}
+                />
+              );
             })}
           </Box>
 

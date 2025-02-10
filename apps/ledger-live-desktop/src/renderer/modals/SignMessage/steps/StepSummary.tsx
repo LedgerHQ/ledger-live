@@ -12,6 +12,9 @@ import IconWallet from "~/renderer/icons/Wallet";
 import { rgba } from "~/renderer/styles/helpers";
 import { StepProps } from "../types";
 import { useAccountName } from "~/renderer/reducers/wallet";
+import AngleDown from "~/renderer/icons/AngleDown";
+import FormattedVal from "~/renderer/components/FormattedVal";
+import { Account } from "@ledgerhq/types-live";
 
 const Circle = styled.div`
   height: 32px;
@@ -60,43 +63,78 @@ const AdvancedMessageArea = styled.pre`
   padding: 10px;
 `;
 
-const MessageProperty = memo(({ label, value }: MessageProperties[0]) => {
-  if (!value) return null;
+const MessageProperty = memo(
+  ({
+    label,
+    value,
+    account,
+    contractAddress,
+  }: MessageProperties[0] & { account?: Account; contractAddress?: string | string[] }) => {
+    if (!value) return null;
 
-  return (
-    <Box flex="1" mb={20}>
-      <Text ff="Inter|Medium" color="palette.text.shade40" fontSize={4}>
-        {label}
-      </Text>
-      <Text ff="Inter|Medium" color="palette.text.shade90" fontSize={3} pl={2}>
-        {typeof value === "string" ? (
-          <ValueWrapper>{value}</ValueWrapper>
-        ) : (
-          <PropertiesList>
-            {value?.map?.((v, i) => (
-              <li key={i}>
-                <ValueWrapper>{`${v}${i < value.length - 1 ? "," : ""}`}</ValueWrapper>
-              </li>
-            ))}
-          </PropertiesList>
-        )}
-      </Text>
-    </Box>
-  );
-});
+    const isPropertyAmount = label.includes("Amount") && account && contractAddress;
+
+    const unit = isPropertyAmount
+      ? account.subAccounts?.find(a => a.token.contractAddress === contractAddress)?.token.units[0]
+      : undefined;
+
+    return (
+      <Box style={{ flexDirection: "row", justifyContent: "space-between" }} flex="1" mb={20}>
+        <Text ff="Inter|Medium" color="palette.text.shade40" fontSize={4}>
+          {label}
+        </Text>
+        <Text ff="Inter|Medium" color="palette.text.shade90" fontSize={3} pl={2}>
+          {typeof value === "string" ? (
+            <ValueWrapper>
+              {isPropertyAmount ? (
+                <>
+                  <FormattedVal
+                    color={"palette.neutral.c100"}
+                    val={Number(value)}
+                    unit={unit}
+                    fontSize={3}
+                    disableRounding
+                    alwaysShowValue
+                    showCode
+                    inline
+                  />
+                </>
+              ) : (
+                value
+              )}
+            </ValueWrapper>
+          ) : (
+            <PropertiesList>
+              {value?.map?.((v, i) => (
+                <li key={i}>
+                  <ValueWrapper>{`${v}${i < value.length - 1 ? "," : ""}`}</ValueWrapper>
+                </li>
+              ))}
+            </PropertiesList>
+          )}
+        </Text>
+      </Box>
+    );
+  },
+);
 
 MessageProperty.displayName = "MessageProperty";
 
-const MessagePropertiesComp = memo((props: { properties: MessageProperties | null }) => {
-  const { properties } = props;
-  return properties ? (
-    <Box flex="1">
-      {properties.map((p, i) => (
-        <MessageProperty key={i} {...p} />
-      ))}
-    </Box>
-  ) : null;
-});
+const MessagePropertiesComp = memo(
+  (props: { properties: MessageProperties | null } & { account: Account }) => {
+    const { properties, account } = props;
+    const contractAddress = properties?.find(p => p.label === "Token")?.value;
+
+    return properties ? (
+      <Box flex="1">
+        {properties.map((p, i) => {
+          const props = { ...p, account, contractAddress };
+          return <MessageProperty key={i} {...props} />;
+        })}
+      </Box>
+    ) : null;
+  },
+);
 MessagePropertiesComp.displayName = "MessageProperties";
 
 export default function StepSummary({ account, message: messageData }: StepProps) {
@@ -128,7 +166,7 @@ export default function StepSummary({ account, message: messageData }: StepProps
           </Text>
           <Box horizontal alignItems="center">
             <div style={{ marginRight: 7 }}>
-              <CryptoCurrencyIcon size={16} currency={account.currency} />
+              <CryptoCurrencyIcon size={14} currency={account.currency} />
             </div>
             <Text ff="Inter" color="palette.text.shade100" fontSize={4} style={{ flex: 1 }}>
               {accountName}
@@ -136,11 +174,11 @@ export default function StepSummary({ account, message: messageData }: StepProps
           </Box>
         </Box>
       </Box>
-      <Separator />
+      <Separator color="red" />
 
       {!isACREWithdraw ? (
         messageData.standard === "EIP712" ? (
-          <MessagePropertiesComp properties={messageFields} />
+          <MessagePropertiesComp properties={messageFields} account={account} />
         ) : (
           <MessageProperty label={"message"} value={messageData.message} />
         )
@@ -149,10 +187,13 @@ export default function StepSummary({ account, message: messageData }: StepProps
       <MessageContainer flex="1">
         {messageFields ? (
           <Box flex="1">
-            <Button outline small mb={2} onClick={() => setShowAdvanced(!showAdvanced)}>
+            <Button outline mb={2} onClick={() => setShowAdvanced(!showAdvanced)}>
+              <Box style={{ transform: `rotate(${showAdvanced ? 0 : -90}deg)` }} mr={10}>
+                <AngleDown size={18} />
+              </Box>
               {showAdvanced
-                ? `- ${t("signmessage.eip712.hideFullMessage")}`
-                : `+ ${t("signmessage.eip712.showFullMessage")}`}
+                ? `${t("signmessage.eip712.hideFullMessage")}`
+                : `${t("signmessage.eip712.showFullMessage")}`}
             </Button>
             {showAdvanced ? (
               <AdvancedMessageArea>
@@ -175,7 +216,8 @@ export function StepSummaryFooter({ transitionTo }: StepProps) {
         onClick={() => {
           transitionTo("sign");
         }}
-        primary
+        style={{ borderRadius: 20, backgroundColor: "white" }}
+        color="neutral.c00"
       >
         <Trans i18nKey="common.continue" />
       </Button>
