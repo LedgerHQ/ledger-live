@@ -224,6 +224,8 @@ export async function launchApp() {
       camera: "YES", // Give iOS permissions for the camera
     },
   });
+  const memoryUsage = process.memoryUsage();
+  console.error("Memory Usage:", memoryUsage);
   return port;
 }
 
