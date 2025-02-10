@@ -124,10 +124,11 @@ const getLedgerSyncAttributes = (state: State) => {
 const getRebornAttributes = () => {
   if (!analyticsFeatureFlagMethod) return false;
   const reborn = analyticsFeatureFlagMethod("llmRebornLP");
+  const isFFEnabled = reborn?.enabled;
 
   return {
-    llmRebornLP_A: reborn?.params?.variant === ABTestingVariants.variantA,
-    llmRebornLP_B: reborn?.params?.variant === ABTestingVariants.variantB,
+    llmRebornLP_A: isFFEnabled ? reborn?.params?.variant === ABTestingVariants.variantA : false,
+    llmRebornLP_B: isFFEnabled ? reborn?.params?.variant === ABTestingVariants.variantB : false,
   };
 };
 

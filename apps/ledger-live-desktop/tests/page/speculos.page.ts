@@ -9,6 +9,7 @@ import {
   verifyAmountsAndAcceptSwap,
   verifyAmountsAndRejectSwap,
   activateExpertMode,
+  activateContractData,
 } from "@ledgerhq/live-common/e2e/speculos";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { NFTTransaction, Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
@@ -54,5 +55,10 @@ export class SpeculosPage extends AppPage {
   @step("Activate expert mode")
   async activateExpertMode() {
     await activateExpertMode();
+  }
+
+  @step("Activate contract data")
+  async activateContractData() {
+    await activateContractData();
   }
 }

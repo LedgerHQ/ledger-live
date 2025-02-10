@@ -46,7 +46,7 @@ export function SwapLiveApp() {
 
   if (!manifest || isWebviewError) {
     return (
-      <Flex flex={1} p={10} justifyContent="center" alignItems="center">
+      <Flex flex={1} justifyContent="center" alignItems="center">
         {remoteLiveAppState.isLoading ? (
           <InfiniteLoader />
         ) : (

@@ -30,39 +30,47 @@ echo $combined_json > "$temp_file"
 # Arrays to track testKeys and their statuses
 testKeys=()
 statuses=()
+timestamps=()
 
-# Process each JSON file in the current directory
-for file in $path/*-result.json; do
-    # Extract the necessary fields
-    testKey=$(jq -r '.links[0].name // empty' "$file")
+# Process each JSON file in the specified directory
+for file in "$path"/*-result.json; do
+    # Extract test keys (split by comma), status, and start timestamp
+    testKeysRaw=$(jq -r '.links[].name // empty' "$file" | tr ',' '\n')
     status=$(jq -r '.status | ascii_upcase' "$file")
+    start=$(jq -r '.start // 0' "$file")  # Default to 0 if missing
 
-    # Replace 'broken' status with 'FAILED'
+    # Replace 'BROKEN' status with 'FAILED'
     if [ "$status" == "BROKEN" ]; then
         status="FAILED"
     fi
 
-    # Check if testKey is not null or empty
-    if [[ -n "$testKey" ]]; then
-       # Check if the testKey is already in the array
-        found=false
-        for i in "${!testKeys[@]}"; do
-            if [ "${testKeys[$i]}" == "$testKey" ]; then
-                # Update status if it's not failed
-                if [ "${statuses[$i]}" != "FAILED" ]; then
-                    statuses[$i]="$status"
-                fi
-                found=true
-                break
-            fi
-        done
+    # Process each test key separately
+    while IFS= read -r testKey; do
+        testKey=$(echo "$testKey" | xargs) # Trim whitespace
 
-        # If testKey not found, add it
-        if [ "$found" == false ]; then
-            testKeys+=("$testKey")
-            statuses+=("$status")
+        # Check if testKey is not empty
+        if [[ -n "$testKey" ]]; then
+            found=false
+            for i in "${!testKeys[@]}"; do
+                if [ "${testKeys[$i]}" == "$testKey" ]; then
+                    # Update status only if the new start timestamp is more recent
+                    if [ "$start" -gt "${timestamps[$i]}" ]; then
+                        statuses[$i]="$status"
+                        timestamps[$i]="$start"
+                    fi
+                    found=true
+                    break
+                fi
+            done
+
+            # If testKey not found, add it
+            if [ "$found" == false ]; then
+                testKeys+=("$testKey")
+                statuses+=("$status")
+                timestamps+=("$start")
+            fi
         fi
-    fi
+    done <<< "$testKeysRaw"
 done
 
 # Add the collected test entries to the combined JSON

@@ -2,28 +2,21 @@ import { device } from "detox";
 import * as serverBridge from "./bridge/server";
 import fs from "fs";
 import { getState } from "expect";
-import { MatcherState } from "expect/build/types";
+import { MatcherState } from "expect";
 import { format } from "date-fns";
-import { launchApp, deleteSpeculos } from "./helpers";
+import { launchApp, deleteSpeculos, setupEnvironment } from "./helpers";
 import { closeProxy } from "./bridge/proxy";
-import { setEnv } from "@ledgerhq/live-env";
+import { getEnv, setEnv } from "@ledgerhq/live-env";
 
 const currentDate = new Date();
 const date = format(currentDate, "MM-dd");
 const directoryPath = `artifacts/${date}_LLM`;
+const broadcastOriginalValue = getEnv("DISABLE_TRANSACTION_BROADCAST");
 
-if (process.env.MOCK == "0") {
-  setEnv("MOCK", "");
-  process.env.MOCK = "";
-} else {
-  setEnv("MOCK", "1");
-  process.env.MOCK = "1";
-}
+setupEnvironment();
 
 beforeAll(
   async () => {
-    setEnv("DISABLE_APP_VERSION_REQUIREMENTS", true);
-
     const port = await launchApp();
     await device.reverseTcpPort(8081);
     await device.reverseTcpPort(port);
@@ -37,6 +30,7 @@ afterEach(async () => {
 });
 
 afterAll(async () => {
+  setEnv("DISABLE_TRANSACTION_BROADCAST", broadcastOriginalValue);
   serverBridge.close();
   closeProxy();
   await deleteSpeculos();

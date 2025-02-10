@@ -56,7 +56,7 @@ export default function StacksMemoRow({ account, transaction }: Props) {
         </SummaryRow>
       ) : (
         <SummaryRow title={<Trans i18nKey="common.edit" />} onPress={editMemo}>
-          <LText semiBold style={styles.tagText} onPress={editMemo}>
+          <LText semiBold style={styles.tagText} onPress={editMemo} testID="summary-memo-tag">
             {String(memo)}
           </LText>
         </SummaryRow>

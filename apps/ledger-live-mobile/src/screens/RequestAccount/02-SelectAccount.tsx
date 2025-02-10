@@ -154,7 +154,10 @@ function SelectAccount({ navigation, route }: Props) {
         navigation.navigate(NavigatorName.DeviceSelection, {
           screen: ScreenName.SelectDevice,
           params: {
-            currency: currency as CryptoCurrency,
+            currency:
+              currency.type === "TokenCurrency"
+                ? currency.parentCurrency
+                : (currency as CryptoCurrency),
             context: AddAccountContexts.AddAccounts,
             inline: true,
             onSuccess: () =>

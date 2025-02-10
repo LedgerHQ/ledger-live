@@ -2,7 +2,7 @@ import React from "react";
 import { Flex, Text, Button, Link, Box } from "@ledgerhq/native-ui";
 import { AnalyticsPage } from "../../hooks/useLedgerSyncAnalytics";
 import TrackScreen from "~/analytics/TrackScreen";
-import { ButtonProps } from "@ledgerhq/native-ui/components/cta/Button";
+import { ButtonProps } from "@ledgerhq/native-ui/components/cta/Button/index";
 import styled from "styled-components/native";
 
 interface Props {

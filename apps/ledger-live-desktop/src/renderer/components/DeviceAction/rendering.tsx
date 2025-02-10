@@ -57,7 +57,6 @@ import {
   Text,
   Theme,
 } from "@ledgerhq/react-ui";
-import { LockAltMedium } from "@ledgerhq/react-ui/assets/icons";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import DeviceIllustration from "~/renderer/components/DeviceIllustration";
 import { Account } from "@ledgerhq/types-live";
@@ -642,7 +641,7 @@ export const renderLockedDeviceError = ({
   return (
     <Wrapper id="error-locked-device">
       <ErrorBody
-        Icon={LockAltMedium}
+        Icon={IconsLegacy.LockAltMedium}
         title={t("errors.LockedDeviceError.title")}
         description={
           productName
@@ -911,13 +910,7 @@ export const renderConnectYourDevice = ({
   <Wrapper>
     <Header />
     <AnimationWrapper>
-      <Animation
-        animation={getDeviceAnimation(
-          modelId,
-          type,
-          unresponsive ? "enterPinCode" : "plugAndPinCode",
-        )}
-      />
+      <Animation animation={getDeviceAnimation(modelId, type, "enterPinCode")} />
     </AnimationWrapper>
     <Footer>
       <Title>
