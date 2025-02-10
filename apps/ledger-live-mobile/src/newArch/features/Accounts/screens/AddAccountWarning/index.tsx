@@ -1,13 +1,12 @@
 import React, { useCallback } from "react";
 import { Flex, Icons, rgba, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
-import { Animated, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Animated, StyleSheet, TouchableOpacity } from "react-native";
 import { useTheme } from "styled-components/native";
 import { NavigatorName, ScreenName } from "~/const";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import AccountItem from "../../components/AccountsListView/components/AccountItem";
 import { Account } from "@ledgerhq/types-live";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import SafeAreaView from "~/components/SafeAreaView";
 import Circle from "~/components/Circle";
 import { NetworkBasedAddAccountNavigator } from "../AddAccount/types";
@@ -23,9 +22,8 @@ type Props = BaseComposite<
 >;
 
 export default function AddAccountsWarning({ route }: Props) {
-  const { colors } = useTheme();
+  const { colors, space } = useTheme();
   const { t } = useTranslation();
-  const insets = useSafeAreaInsets();
   const navigation = useNavigation();
 
   const { animatedSelectableAccount } = useAnimatedStyle();
@@ -58,38 +56,33 @@ export default function AddAccountsWarning({ route }: Props) {
   }, [navigation]);
 
   return (
-    <SafeAreaView edges={["left", "right"]} isFlex>
+    <SafeAreaView edges={["left", "right", "bottom"]} isFlex>
       <VerticalGradientBackground stopColor={statusColor} />
-      <Flex alignItems={"center"} flex={1} style={styles.root}>
-        <View style={[styles.iconWrapper, { backgroundColor: rgba(statusColor, 0.1) }]}>
-          <Circle size={24}>
-            <Icons.WarningFill size="L" color={statusColor} />
-          </Circle>
-        </View>
-        <>
-          <Text style={styles.title}>
-            {t("addAccounts.addAccountsWarning.cantCreateAccount.title", {
-              accountName: emptyAccountName,
-            })}
-          </Text>
-
-          <Text style={styles.desc}>
-            {t("addAccounts.addAccountsWarning.cantCreateAccount.body", {
-              accountName: emptyAccountName,
-            })}
-          </Text>
-        </>
+      <Flex alignItems="center" pt={space[14]}>
+        <Circle size={24} bg={rgba(statusColor, 0.05)} style={styles.iconWrapper}>
+          <Icons.WarningFill size="L" color={statusColor} />
+        </Circle>
+        <Text style={styles.title}>
+          {t("addAccounts.addAccountsWarning.cantCreateAccount.title", {
+            accountName: emptyAccountName,
+          })}
+        </Text>
+        <Text style={styles.desc} variant="bodyLineHeight" color="neutral.c70">
+          {t("addAccounts.addAccountsWarning.cantCreateAccount.body", {
+            accountName: emptyAccountName,
+          })}
+        </Text>
       </Flex>
-      <Flex flex={1} p={6} flexDirection="row" justifyContent="center">
-        <Animated.View style={[animatedSelectableAccount]}>
+      <Flex flex={1} px={space[6]} flexDirection="row" justifyContent="center">
+        <Animated.View style={[{ width: "100%" }, animatedSelectableAccount]}>
           <TouchableOpacity onPress={goToAccounts(emptyAccount?.id as string)}>
             <Flex
               flexDirection="row"
               alignItems="center"
-              backgroundColor="neutral.c30"
-              borderRadius="12px"
-              padding="12px"
-              width={343}
+              borderRadius={space[4]}
+              padding={space[6]}
+              backgroundColor="opacityDefault.c05"
+              width="100%"
             >
               <AccountItem
                 account={emptyAccount as Account}
@@ -100,7 +93,7 @@ export default function AddAccountsWarning({ route }: Props) {
           </TouchableOpacity>
         </Animated.View>
       </Flex>
-      <Flex mb={insets.bottom + 2} px={6} rowGap={6}>
+      <Flex px={6} rowGap={6}>
         <AddFundsButton
           accounts={[emptyAccount as Account]}
           currency={currency}
@@ -117,14 +110,8 @@ export default function AddAccountsWarning({ route }: Props) {
 }
 
 const styles = StyleSheet.create({
-  root: {
-    paddingHorizontal: 20,
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: 50,
-  },
   title: {
-    marginTop: 32,
+    marginTop: 16,
     fontSize: 24,
     textAlign: "center",
     width: "100%",
