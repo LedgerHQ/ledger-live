@@ -24,7 +24,7 @@ import {
 } from "./serialization";
 import { buildSignOperation } from "./signOperation";
 import { getAccountShape, sync } from "./synchronization";
-import { setCoinConfig, TronCoinConfig } from "../config";
+import coinConfig, { type TronCoinConfig } from "../config";
 
 function buildCurrencyBridge(signerContext: SignerContext<TronSigner>): CurrencyBridge {
   const getAddress = signerGetAddress(signerContext);
@@ -71,7 +71,7 @@ export function createBridges(
   signerContext: SignerContext<TronSigner>,
   coinConfig: CoinConfig<TronCoinConfig>,
 ) {
-  setCoinConfig(coinConfig);
+  coinConfig.setCoinConfig(coinConfig);
 
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
