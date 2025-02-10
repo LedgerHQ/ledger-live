@@ -73,6 +73,9 @@ function runHashChecks(writeCache = false) {
 
   const cache = getCache(cachePath);
 
+  echo(chalk.yellow("DEBUG cache:" + JSON.stringify(cache)));
+  echo(chalk.yellow("DEBUG result:" + JSON.stringify(result)));
+
   if (!cache || writeCache) {
     try {
       const data = JSON.stringify(result);
@@ -84,9 +87,6 @@ function runHashChecks(writeCache = false) {
 
     return false;
   }
-
-  echo(chalk.yellow("DEBUG cache:" + JSON.stringify(cache)));
-  echo(chalk.yellow("DEBUG result:" + JSON.stringify(result)));
 
   return compareHashes(cache, result);
 }
