@@ -194,7 +194,6 @@ export type Features = CurrencyFeatures & {
   lldnewArchOrdinals: DefaultFeature;
   enableAppsBackup: Feature_EnableAppsBackup;
   web3hub: Feature_web3hub;
-  llmMarketQuickActions: DefaultFeature;
   spamFilteringTx: Feature_SpamFilteringTx;
   llmMemoTag: Feature_MemoTag;
   lldMemoTag: Feature_MemoTag;
