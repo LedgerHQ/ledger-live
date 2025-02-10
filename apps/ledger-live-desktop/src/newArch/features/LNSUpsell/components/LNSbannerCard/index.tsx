@@ -3,7 +3,9 @@ import { Trans } from "react-i18next";
 import React from "react";
 import { BannerCard, Text } from "@ledgerhq/react-ui";
 import type { FlexBoxProps } from "@ledgerhq/react-ui/components/layout/Flex/index";
+import { AnalyticsButton, AnalyticsPage } from "LLD/features/LNSUpsell/types/enum/Analytics";
 import { openURL } from "~/renderer/linking";
+import { track } from "~/renderer/analytics/segment";
 
 type Props = Omit<FlexBoxProps, "maxHeight"> & {
   type: "optIn" | "optOut";
@@ -23,8 +25,22 @@ export function LNSBannerCard({
   discount,
   ...boxProps
 }: Props) {
-  const handleCTAClick = () => openURL(ctaLink);
-  const handleLearnMoreLink = () => openURL(learnMoreLink);
+  const handleCTAClick = () => {
+    track("button_clicked", {
+      button: AnalyticsButton.CTA,
+      link: ctaLink,
+      page: AnalyticsPageMap[location],
+    });
+    openURL(ctaLink);
+  };
+  const handleLearnMoreLink = () => {
+    track("button_clicked", {
+      button: AnalyticsButton.LearnMore,
+      link: learnMoreLink,
+      page: AnalyticsPageMap[location],
+    });
+    openURL(learnMoreLink);
+  };
 
   return (
     <BannerCard
@@ -45,3 +61,8 @@ export function LNSBannerCard({
     />
   );
 }
+
+const AnalyticsPageMap: Record<Props["location"], AnalyticsPage> = {
+  manager: AnalyticsPage.Manager,
+  accounts: AnalyticsPage.Accounts,
+};
