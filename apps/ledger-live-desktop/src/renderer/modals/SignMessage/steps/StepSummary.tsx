@@ -1,5 +1,5 @@
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import type { MessageProperties } from "@ledgerhq/types-live";
+import type { MessageProperties, Account } from "@ledgerhq/types-live";
 import React, { memo, useEffect, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import styled from "styled-components";
@@ -12,6 +12,8 @@ import IconWallet from "~/renderer/icons/Wallet";
 import { rgba } from "~/renderer/styles/helpers";
 import { StepProps } from "../types";
 import { useAccountName } from "~/renderer/reducers/wallet";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/lib-es/currencies/formatCurrencyUnit";
+import BigNumber from "bignumber.js";
 
 const Circle = styled.div`
   height: 32px;
@@ -60,8 +62,22 @@ const AdvancedMessageArea = styled.pre`
   padding: 10px;
 `;
 
-const MessageProperty = memo(({ label, value }: MessageProperties[0]) => {
+const MessageProperty = memo(({ label, value, _account }: MessageProperties[0]) => {
   if (!value) return null;
+  console.log({label, value})
+  // if (label === 'Amount') {
+  //   value = formatCurrencyUnit()
+  // }
+      if (label === "Amount") {
+        const valueBn = new BigNumber(value as string);
+        value = formatCurrencyUnit(_account.currency.units[0], valueBn, {
+          disableRounding: true,
+          alwaysShowSign: false,
+          showCode: true,
+          discreet: false,
+          locale: "en",
+        });
+      }
 
   return (
     <Box flex="1" mb={20}>
@@ -87,12 +103,13 @@ const MessageProperty = memo(({ label, value }: MessageProperties[0]) => {
 
 MessageProperty.displayName = "MessageProperty";
 
-const MessagePropertiesComp = memo((props: { properties: MessageProperties | null }) => {
-  const { properties } = props;
+const MessagePropertiesComp = memo((props: { account: Account, properties: MessageProperties | null }) => {
+  const { properties, account } = props;
+  console.log({properties})
   return properties ? (
     <Box flex="1">
       {properties.map((p, i) => (
-        <MessageProperty key={i} {...p} />
+        <MessageProperty key={i} {...p} _account={account} />
       ))}
     </Box>
   ) : null;
@@ -115,6 +132,27 @@ export default function StepSummary({ account, message: messageData }: StepProps
       specific?.message?.getMessageProperties(messageData).then(setMessageFields);
     }
   }, [account.currency.family, mainAccount, messageData, setMessageFields]);
+  
+  useEffect(() => {
+    console.log({messageFields});
+    if (!messageFields) return;
+    for (const field of messageFields) {
+      if (field.label === "Amount") {
+        console.log({field});
+        const valueBn = new BigNumber(field.value as string);
+        field.value = formatCurrencyUnit(account.currency.units[0], valueBn, {
+          disableRounding: true,
+          alwaysShowSign: false,
+          showCode: true,
+          discreet: false,
+          locale: "en",
+        });
+      }
+      console.log({field})
+    }
+
+  }, [messageFields])
+  console.log({account, messageFields})
 
   return (
     <Box flow={1}>
@@ -140,7 +178,7 @@ export default function StepSummary({ account, message: messageData }: StepProps
 
       {!isACREWithdraw ? (
         messageData.standard === "EIP712" ? (
-          <MessagePropertiesComp properties={messageFields} />
+          <MessagePropertiesComp account={account} properties={messageFields} />
         ) : (
           <MessageProperty label={"message"} value={messageData.message} />
         )
