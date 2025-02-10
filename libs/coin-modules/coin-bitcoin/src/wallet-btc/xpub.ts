@@ -255,7 +255,6 @@ class Xpub {
     );
 
     const inputs: InputInfo[] = unspentUtxoSelected.map((utxo, index) => {
-      console.log({utxo})
       return {
         txHex: txHexs[index],
         value: utxo.value,
