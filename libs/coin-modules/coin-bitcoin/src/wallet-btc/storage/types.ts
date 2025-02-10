@@ -17,7 +17,7 @@ export interface Input {
   output_hash: string;
   output_index: number;
   sequence: number;
-  block_height?: number; // NOTE: or | null
+  block_height?: number | null;
 }
 
 export interface Output {

@@ -36,12 +36,13 @@ const defaultsSignTransaction = {
   onDeviceSignatureRequested: () => {},
 };
 
-const getZcashTransactionVersion = (blockHeight: number | undefined): Buffer => {
+const getZcashTransactionVersion = (blockHeight: number | null | undefined): Buffer => {
   const version = Buffer.alloc(4);
-  if (blockHeight && blockHeight >= ZCASH_NU6_ACTIVATION_HEIGHT) {
-    version.writeUInt32LE(0x80000006, 0);
-  } else {
+  if (blockHeight && blockHeight < ZCASH_NU6_ACTIVATION_HEIGHT) {
     version.writeUInt32LE(0x80000005, 0);
+  } else {
+    // NOTE: null and undefined should default to latest version
+    version.writeUInt32LE(0x80000006, 0);
   }
   return version;
 };
@@ -203,7 +204,7 @@ export async function createTransaction(
   for (const input of inputs) {
     if (!resuming) {
       if (isZcash) {
-        input[0].version = getZcashTransactionVersion(input[4] || 0);
+        input[0].version = getZcashTransactionVersion(input[4]);
       }
       const trustedInput = await getTrustedInputCall(transport, input[1], input[0], additionals);
       log("hw", "got trustedInput=" + trustedInput);

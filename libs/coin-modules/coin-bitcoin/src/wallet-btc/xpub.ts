@@ -255,6 +255,7 @@ class Xpub {
     );
 
     const inputs: InputInfo[] = unspentUtxoSelected.map((utxo, index) => {
+      console.log({utxo})
       return {
         txHex: txHexs[index],
         value: utxo.value,
@@ -262,7 +263,7 @@ class Xpub {
         output_hash: utxo.output_hash,
         output_index: utxo.output_index,
         sequence,
-        block_height: utxo.block_height || 0,
+        block_height: utxo.block_height || null,
       };
     });
 
