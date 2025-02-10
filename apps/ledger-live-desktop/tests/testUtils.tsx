@@ -36,6 +36,7 @@ interface ExtraOptions {
 interface RenderReturn {
   store: ReturnType<typeof createStore>;
   user: ReturnType<typeof userEvent.setup>;
+  rerender: (ui: React.ReactNode) => void;
 }
 
 type DeepPartial<T> = T extends Function
