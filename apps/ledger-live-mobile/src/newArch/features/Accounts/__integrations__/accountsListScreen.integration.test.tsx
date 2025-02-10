@@ -109,9 +109,9 @@ describe("AccountsList Screen", () => {
 
     // check the rendered balance
     // for a proprer check we should find a way to setup live-countervalues-react for jest
-    expect(getAllByTestId("account-balance").length).toBe(6);
+    expect(getAllByTestId("account-balance").length).toBe(7);
     // check that we well display the full balance
-    expect(getAllByText(/\$8,331,578.60/i).length).toBe(6);
+    expect(getAllByText(/\$8,331,578.60/i).length).toBe(7);
     // check that we don't display the spendable balance
     expect(queryByText(/\$3.20/i)).toBeNull();
   });
