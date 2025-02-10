@@ -40,6 +40,7 @@ const StepConnectDevice = ({ currency, transitionTo, flow }: StepProps) => {
           transitionTo("import");
         }}
         analyticsPropertyFlow={flow}
+        location="Add account modal"
       />
     </>
   );

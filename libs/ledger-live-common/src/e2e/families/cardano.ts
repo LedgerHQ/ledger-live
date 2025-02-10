@@ -24,7 +24,7 @@ export async function sendCardano(tx: Transaction) {
 export async function delegateCardano() {
   await waitFor(DeviceLabels.NEW_ORDINARY_TRANSACTION);
   await pressBoth();
-  await pressUntilTextFound(DeviceLabels.TRANSACTION_FEE);
+  await waitFor(DeviceLabels.TRANSACTION_FEE);
   await pressBoth();
   await pressUntilTextFound(DeviceLabels.REGISTER);
   await pressBoth();
@@ -32,12 +32,12 @@ export async function delegateCardano() {
   await pressBoth();
   await pressUntilTextFound(DeviceLabels.CONFIRM);
   await pressBoth();
-  await pressUntilTextFound(DeviceLabels.DELEGATE_STAKE);
+  await waitFor(DeviceLabels.DELEGATE_STAKE);
   await pressBoth();
   await pressUntilTextFound(DeviceLabels.STAKE_KEY);
   await pressBoth();
   await pressUntilTextFound(DeviceLabels.CONFIRM);
   await pressBoth();
-  await pressUntilTextFound(DeviceLabels.CONFIRM);
+  await waitFor(DeviceLabels.CONFIRM);
   await pressBoth();
 }

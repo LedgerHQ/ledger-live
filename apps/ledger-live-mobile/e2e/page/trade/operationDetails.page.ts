@@ -15,6 +15,7 @@ export default class OperationDetailsPage {
     OUT: "Sent",
     DELEGATE: "Delegated",
     STAKE: "Staked",
+    LOCK: "Locked",
   };
 
   async isOpened() {

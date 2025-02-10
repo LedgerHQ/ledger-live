@@ -149,12 +149,12 @@ export const getGasEstimation: NodeApi["getGasEstimation"] = (account, transacti
 /**
  * Get an estimation of fees on the network
  */
-export const getFeeData: NodeApi["getFeeData"] = currency =>
+export const getFeeData: NodeApi["getFeeData"] = (currency, transaction) =>
   withApi(currency, async api => {
     const block = await api.getBlock("latest");
     const currencySupports1559 = getEnv("EVM_FORCE_LEGACY_TRANSACTIONS")
       ? false
-      : Boolean(block.baseFeePerGas);
+      : transaction.type === 2 && Boolean(block.baseFeePerGas);
 
     const feeData = await (async (): Promise<
       | {

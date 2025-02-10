@@ -20,7 +20,7 @@ const CustomHeader = ({ account, onClose, backgroundColor, iconColor }: Props) =
       borderBottom={5}
       borderBottomColor={"neutral.c30"}
     >
-      <AccountItem account={account} balance={account.spendableBalance} hideBalanceInfo />
+      <AccountItem account={account} balance={account.balance} hideBalanceInfo />
       <Flex alignItems="flex-end">
         <TouchableOpacity onPress={onClose}>
           <Flex
