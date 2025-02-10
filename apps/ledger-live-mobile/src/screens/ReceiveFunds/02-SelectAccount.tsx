@@ -195,7 +195,9 @@ function ReceiveSelectAccount({
           onPress={createNewAccount}
           testID="button-create-account"
         >
-          {t("transfer.receive.selectAccount.cta")}
+          {llmNetworkBasedAddAccountFlow?.enabled
+            ? t("addAccounts.addNewOrExisting")
+            : t("transfer.receive.selectAccount.cta")}
         </Button>
       </Flex>
     </>
