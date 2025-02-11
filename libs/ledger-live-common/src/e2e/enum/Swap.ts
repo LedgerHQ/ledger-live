@@ -10,7 +10,6 @@ export class Provider {
   static readonly ONE_INCH = new Provider("1inch", "1inch", false, false);
   static readonly PARASWAP = new Provider("paraswap", "Paraswap", false, false);
   static readonly MOONPAY = new Provider("moonpay", "MoonPay", true, false);
-  static readonly THORCHAIN = new Provider("thorchain", "THORChain", false, true);
   static readonly UNISWAP = new Provider("uniswap", "Uniswap", false, false);
 }
 
