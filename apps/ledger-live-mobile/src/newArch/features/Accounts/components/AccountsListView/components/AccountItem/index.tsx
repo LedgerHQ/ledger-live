@@ -33,7 +33,9 @@ const View: React.FC<ViewProps> = ({
         </Text>
         {tag && (
           <Flex flexShrink={0}>
-            <Tag numberOfLines={1}>{tag}</Tag>
+            <Tag numberOfLines={1} bg="opacityDefault.c10">
+              {tag}
+            </Tag>
           </Flex>
         )}
       </Flex>
@@ -64,9 +66,6 @@ const View: React.FC<ViewProps> = ({
   </>
 );
 
-const AccountItem: React.FC<AccountItemProps> = props => {
-  const model = useAccountItemModel(props);
-  return <View {...model} />;
-};
+const AccountItem: React.FC<AccountItemProps> = props => <View {...useAccountItemModel(props)} />;
 
 export default AccountItem;
