@@ -1,5 +1,11 @@
 # @ledgerhq/coin-solana
 
+## 0.13.0-nightly.0
+
+### Minor Changes
+
+- [#9154](https://github.com/LedgerHQ/ledger-live/pull/9154) [`8e64f71`](https://github.com/LedgerHQ/ledger-live/commit/8e64f71c2e8647e2c333691d337b6cc056ec7c46) Thanks [@Justkant](https://github.com/Justkant)! - fix: possible undefined tx on solana sync
+
 ## 0.12.0
 
 ### Minor Changes

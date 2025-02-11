@@ -1,5 +1,25 @@
 ## 34.5.0-next.4
 
+## 34.21.0-nightly.2
+
+### Minor Changes
+
+- [#9155](https://github.com/LedgerHQ/ledger-live/pull/9155) [`9cd8b2a`](https://github.com/LedgerHQ/ledger-live/commit/9cd8b2ae451122c1c40b1beaf3d5d75892bf2c92) Thanks [@Justkant](https://github.com/Justkant)! - feat: add explicit error message for LNS users swapping Cosmos
+
+- [#9157](https://github.com/LedgerHQ/ledger-live/pull/9157) [`29909e6`](https://github.com/LedgerHQ/ledger-live/commit/29909e6a797a7fa0467f72dfd717903770878a55) Thanks [@Justkant](https://github.com/Justkant)! - feat: bump minimum version check to 1.7.1 for sol app
+
+### Patch Changes
+
+- Updated dependencies [[`3c8182e`](https://github.com/LedgerHQ/ledger-live/commit/3c8182e81822fcdcc8c4e30004bbd648388aad95), [`8e64f71`](https://github.com/LedgerHQ/ledger-live/commit/8e64f71c2e8647e2c333691d337b6cc056ec7c46), [`6eaa5ec`](https://github.com/LedgerHQ/ledger-live/commit/6eaa5ecc094d80bdb91418a9adb1488c0aae57a7), [`aa88751`](https://github.com/LedgerHQ/ledger-live/commit/aa88751d522b97e9d45e42d228bb893bece5d72e), [`25d078c`](https://github.com/LedgerHQ/ledger-live/commit/25d078c79f21950ac6bea16d3491ec3206ed44c2)]:
+  - @ledgerhq/coin-near@0.7.3-nightly.0
+  - @ledgerhq/coin-solana@0.13.0-nightly.0
+  - @ledgerhq/coin-cosmos@0.7.1-nightly.0
+  - @ledgerhq/live-countervalues@0.3.0-nightly.0
+  - @ledgerhq/coin-evm@2.10.0-nightly.1
+  - @ledgerhq/coin-hedera@1.3.3-nightly.0
+  - @ledgerhq/live-countervalues-react@0.2.21-nightly.0
+  - @ledgerhq/hw-app-eth@6.42.6-nightly.0
+
 ## 34.21.0-nightly.1
 
 ### Minor Changes

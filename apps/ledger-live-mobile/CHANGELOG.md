@@ -1,5 +1,32 @@
 # live-mobile
 
+## 3.65.0-nightly.3
+
+### Minor Changes
+
+- [#9163](https://github.com/LedgerHQ/ledger-live/pull/9163) [`009a1ae`](https://github.com/LedgerHQ/ledger-live/commit/009a1ae354281fe31e4a06e406504de713f4fbd0) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Update wording on add account cta
+
+- [#9155](https://github.com/LedgerHQ/ledger-live/pull/9155) [`9cd8b2a`](https://github.com/LedgerHQ/ledger-live/commit/9cd8b2ae451122c1c40b1beaf3d5d75892bf2c92) Thanks [@Justkant](https://github.com/Justkant)! - feat: add explicit error message for LNS users swapping Cosmos
+
+- [#9150](https://github.com/LedgerHQ/ledger-live/pull/9150) [`eccd9b1`](https://github.com/LedgerHQ/ledger-live/commit/eccd9b198353ff9c6a0f5a57ecfa8375a3373d56) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Networks alphabetically ordered on network selector screen for the new add account flow
+
+- [#9125](https://github.com/LedgerHQ/ledger-live/pull/9125) [`26986e1`](https://github.com/LedgerHQ/ledger-live/commit/26986e146d75df0d1f22938e4c0f62f73dbb780d) Thanks [@VicAlbr](https://github.com/VicAlbr)! - Adding Speculos e2e tests
+
+- [#9100](https://github.com/LedgerHQ/ledger-live/pull/9100) [`4ef47c1`](https://github.com/LedgerHQ/ledger-live/commit/4ef47c1270e61c91e31fbb3a6d094d95e1eed388) Thanks [@Justkant](https://github.com/Justkant)! - fix: add missing error strings
+
+- [#9162](https://github.com/LedgerHQ/ledger-live/pull/9162) [`ab6d81c`](https://github.com/LedgerHQ/ledger-live/commit/ab6d81c18cd29b84465639ca0108bfa8d60fb1fc) Thanks [@LucasWerey](https://github.com/LucasWerey)! - use estimatedListSize to optimise first render of accounts/assets list
+
+### Patch Changes
+
+- [#9050](https://github.com/LedgerHQ/ledger-live/pull/9050) [`58c2e95`](https://github.com/LedgerHQ/ledger-live/commit/58c2e95576cef32053740b043227703cbc1155ec) Thanks [@qperrot](https://github.com/qperrot)! - Fix solana delegationDisabled condition on LLM
+
+- Updated dependencies [[`9cd8b2a`](https://github.com/LedgerHQ/ledger-live/commit/9cd8b2ae451122c1c40b1beaf3d5d75892bf2c92), [`29909e6`](https://github.com/LedgerHQ/ledger-live/commit/29909e6a797a7fa0467f72dfd717903770878a55), [`6eaa5ec`](https://github.com/LedgerHQ/ledger-live/commit/6eaa5ecc094d80bdb91418a9adb1488c0aae57a7), [`aa88751`](https://github.com/LedgerHQ/ledger-live/commit/aa88751d522b97e9d45e42d228bb893bece5d72e), [`25d078c`](https://github.com/LedgerHQ/ledger-live/commit/25d078c79f21950ac6bea16d3491ec3206ed44c2)]:
+  - @ledgerhq/live-common@34.21.0-nightly.2
+  - @ledgerhq/coin-cosmos@0.7.1-nightly.0
+  - @ledgerhq/live-countervalues@0.3.0-nightly.0
+  - @ledgerhq/coin-evm@2.10.0-nightly.1
+  - @ledgerhq/live-countervalues-react@0.2.21-nightly.0
+
 ## 3.65.0-nightly.2
 
 ### Minor Changes

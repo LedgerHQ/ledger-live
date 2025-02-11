@@ -1,5 +1,15 @@
 # @ledgerhq/live-cli
 
+## 24.11.1-nightly.2
+
+### Patch Changes
+
+- [#9127](https://github.com/LedgerHQ/ledger-live/pull/9127) [`f502aa5`](https://github.com/LedgerHQ/ledger-live/commit/f502aa58976a69c8084092ee652820fdce7aceb4) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix(cli): print `listApps` output only once
+
+- Updated dependencies [[`9cd8b2a`](https://github.com/LedgerHQ/ledger-live/commit/9cd8b2ae451122c1c40b1beaf3d5d75892bf2c92), [`29909e6`](https://github.com/LedgerHQ/ledger-live/commit/29909e6a797a7fa0467f72dfd717903770878a55), [`aa88751`](https://github.com/LedgerHQ/ledger-live/commit/aa88751d522b97e9d45e42d228bb893bece5d72e)]:
+  - @ledgerhq/live-common@34.21.0-nightly.2
+  - @ledgerhq/live-countervalues@0.3.0-nightly.0
+
 ## 24.11.1-nightly.1
 
 ### Patch Changes

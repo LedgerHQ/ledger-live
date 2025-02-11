@@ -1,5 +1,11 @@
 # @ledgerhq/coin-cosmos
 
+## 0.7.1-nightly.0
+
+### Patch Changes
+
+- [#9165](https://github.com/LedgerHQ/ledger-live/pull/9165) [`6eaa5ec`](https://github.com/LedgerHQ/ledger-live/commit/6eaa5ecc094d80bdb91418a9adb1488c0aae57a7) Thanks [@qperrot](https://github.com/qperrot)! - fix KILN validator display in LL
+
 ## 0.7.0
 
 ### Minor Changes

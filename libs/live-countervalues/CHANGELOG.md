@@ -1,5 +1,11 @@
 # @ledgerhq/live-countervalues
 
+## 0.3.0-nightly.0
+
+### Minor Changes
+
+- [#9156](https://github.com/LedgerHQ/ledger-live/pull/9156) [`aa88751`](https://github.com/LedgerHQ/ledger-live/commit/aa88751d522b97e9d45e42d228bb893bece5d72e) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add a props to order by spendable or full balance
+
 ## 0.2.20
 
 ### Patch Changes

@@ -1,5 +1,16 @@
 # @ledgerhq/coin-evm
 
+## 2.10.0-nightly.1
+
+### Minor Changes
+
+- [#9161](https://github.com/LedgerHQ/ledger-live/pull/9161) [`25d078c`](https://github.com/LedgerHQ/ledger-live/commit/25d078c79f21950ac6bea16d3491ec3206ed44c2) Thanks [@Justkant](https://github.com/Justkant)! - fix: legacy transaction support in rpc call of getFeeData
+
+### Patch Changes
+
+- Updated dependencies [[`551f2cc`](https://github.com/LedgerHQ/ledger-live/commit/551f2ccad6d7897a010d39110c0ba9336d407dfd)]:
+  - @ledgerhq/evm-tools@1.4.0-nightly.0
+
 ## 2.9.3-nightly.0
 
 ### Patch Changes

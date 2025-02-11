@@ -1,5 +1,11 @@
 # @ledgerhq/coin-near
 
+## 0.7.3-nightly.0
+
+### Patch Changes
+
+- [#9166](https://github.com/LedgerHQ/ledger-live/pull/9166) [`3c8182e`](https://github.com/LedgerHQ/ledger-live/commit/3c8182e81822fcdcc8c4e30004bbd648388aad95) Thanks [@Wozacosta](https://github.com/Wozacosta)! - fix: use private endpoint to validators and commissions calls for NEAR
+
 ## 0.7.2
 
 ### Patch Changes
