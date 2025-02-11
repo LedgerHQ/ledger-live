@@ -207,6 +207,7 @@ export type Features = CurrencyFeatures & {
   llmAccountListUI: DefaultFeature;
   llmLedgerSyncEntryPoints: Feature_LlmLedgerSyncEntryPoints;
   lldLedgerSyncEntryPoints: Feature_LldLedgerSyncEntryPoints;
+  lldNanoSUpsellBanners: Feature_LldNanoSUpsellBanners;
 };
 
 /**
@@ -581,6 +582,28 @@ export type Feature_PtxSwapExodusProvider = DefaultFeature;
 export type Feature_LlmRebornLP = Feature<{
   variant: ABTestingVariants;
 }>;
+
+export type Feature_LldNanoSUpsellBanners = Feature<{
+  opted_in: {
+    manager: boolean;
+    accounts: boolean;
+    notification_center: boolean;
+    img: string;
+    link: string;
+    learn_more: string;
+    "%": number;
+  };
+  opted_out: {
+    manager: boolean;
+    accounts: boolean;
+    notification_center: boolean;
+    img: string;
+    link: string;
+    learn_more: string;
+    "%": number;
+  };
+}>;
+
 /**
  * Utils types.
  */
