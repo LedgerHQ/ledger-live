@@ -27,8 +27,6 @@ export function EarnMenuDrawer() {
     }
   }, [openModal, modalOpened]);
 
-  // const { colors } = useTheme();
-
   return (
     <QueuedDrawer isRequestingToBeOpened={Boolean(modal)} onClose={closeDrawer}>
       <Flex rowGap={48}>
@@ -73,12 +71,8 @@ const OptionButton = styled(Button)<{
   padding: 16px;
   text-overflow: ellipsis;
   white-space: nowrap;
-  &:active {
-    box-shadow: 0 0 0 4px ${p => rgba(p.theme.colors.primary.c50, 0.4)};
-  }
   &:focus,
   &:hover {
-    box-shadow: 0 0 0 2px ${p => rgba(p.theme.colors.primary.c50, 0.4)};
     background-color: ${p => p.theme.colors.neutral.c50};
   }
 `;
