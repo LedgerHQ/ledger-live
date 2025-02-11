@@ -53,7 +53,12 @@ function runHashChecks(writeCache = false) {
   const lock = join(__dirname, "..", "ios", "Podfile.lock");
   const pkg = join(__dirname, "..", "package.json");
 
-  if (!existsSync(pods)) return false;
+  if (!existsSync(pods)) {
+
+    echo(chalk.yellow("DEBUG pods don't exist"));
+
+    return false;
+  }
 
   const podsHash = computeMetaHash([pods]);
   const lockHash = computeMetaHash([lock]);
@@ -67,6 +72,9 @@ function runHashChecks(writeCache = false) {
   };
 
   const cache = getCache(cachePath);
+
+  echo(chalk.yellow("DEBUG cache:" + JSON.stringify(cache)));
+  echo(chalk.yellow("DEBUG result:" + JSON.stringify(result)));
 
   if (!cache || writeCache) {
     try {
@@ -167,7 +175,8 @@ BRAZE_CUSTOM_ENDPOINT="sdk.fra-02.braze.eu"`;
             |\\_/|
             \\___/
         `;
-      echo(chalk.red(str));
+      echo(chalk.yellow(str));
+      echo(chalk.red(error));
       await $`exit 1`;
     }
   }
