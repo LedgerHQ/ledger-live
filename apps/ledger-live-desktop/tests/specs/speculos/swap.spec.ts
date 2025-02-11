@@ -282,8 +282,8 @@ const swapWithSendMax = [
   {
     swap: new Swap(Account.ETH_1, Account.SOL_1, "sendMax", Fee.MEDIUM),
     xrayTicket: "B2CQA-2110",
-  }
-""];
+  },
+];
 
 for (const { swap, xrayTicket } of swapWithSendMax) {
   test.describe("Swap - Swap with Send Max", () => {
