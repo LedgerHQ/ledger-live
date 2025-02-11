@@ -15,6 +15,7 @@ import { TrackScreen } from "~/analytics";
 import DeviceAction from "../DeviceAction";
 import { useStaxRemoveImageDeviceAction } from "~/hooks/deviceActions";
 import { type CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
+import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 
 const analyticsDrawerName = "Choose an image to set as your device lockscreen";
 
@@ -136,6 +137,7 @@ const CustomImageBottomModal: React.FC<Props> = props => {
               action={action}
               onResult={onSuccess}
               onError={onError}
+              location={HOOKS_TRACKING_LOCATIONS.myLedgerDashboard}
             />
           </Flex>
         </Flex>

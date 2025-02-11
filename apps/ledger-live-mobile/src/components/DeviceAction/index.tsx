@@ -58,6 +58,8 @@ import { walletSelector } from "~/reducers/wallet";
 import { settingsStoreSelector } from "~/reducers/settings";
 import { RootStackParamList } from "../RootNavigator/types/RootNavigator";
 import { LedgerError } from "~/types/error";
+import { useTrackMyLedgerSectionEvents } from "~/analytics/hooks/useTrackMyLedgerEvents";
+import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 
 type Status = PartialNullable<{
   appAndVersion: AppAndVersion;
@@ -120,6 +122,7 @@ type Props<H extends Status, P> = {
   payload?: P | null;
   onSelectDeviceLink?: () => void;
   analyticsPropertyFlow?: string;
+  location?: HOOKS_TRACKING_LOCATIONS;
   /*
    * Defines in what type of component this action will be rendered in.
    *
@@ -131,6 +134,7 @@ export default function DeviceAction<R, H extends Status, P>({
   action,
   request,
   device: selectedDevice,
+  location,
   ...props
 }: Omit<Props<H, P>, "status"> & {
   action: Action<R, H, P>;
@@ -145,6 +149,7 @@ export default function DeviceAction<R, H extends Status, P>({
       status={status}
       request={request}
       payload={payload}
+      location={location}
       {...props}
     />
   );
@@ -160,6 +165,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
   status,
   request,
   payload,
+  location,
 }: Props<H, P> & {
   request?: R;
 }): JSX.Element | null {
@@ -210,6 +216,15 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
     progress,
     listingApps,
   } = status;
+
+  useTrackMyLedgerSectionEvents({
+    location: location === HOOKS_TRACKING_LOCATIONS.myLedgerDashboard ? location : undefined,
+    device: selectedDevice,
+    allowManagerRequested,
+    allowRenamingRequested,
+    imageRemoveRequested,
+    error,
+  });
 
   useEffect(() => {
     if (deviceInfo && device) {
