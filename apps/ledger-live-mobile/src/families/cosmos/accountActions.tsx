@@ -23,9 +23,7 @@ const getMainActions = ({
   const label = getStakeLabelLocaleBased();
   const startWithValidator =
     account.cosmosResources && account.cosmosResources?.delegations.length > 0;
-  const isCroAccount =
-    account.type === "Account" &&
-    (account.currency.id === "crypto_org" || account.currency.id === "crypto_org_croeseid");
+  const isCroAccount = account.type === "Account" && account.currency.id === "crypto_org";
 
   const getNavParams = (): NavigationParamsType =>
     isCroAccount

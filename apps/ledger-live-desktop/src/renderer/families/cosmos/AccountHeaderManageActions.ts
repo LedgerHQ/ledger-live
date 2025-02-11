@@ -25,9 +25,7 @@ const AccountHeaderActions = ({ account, parentAccount, source }: Props) => {
   const { cosmosResources } = mainAccount;
   const earnRewardEnabled = canDelegate(mainAccount);
   const hasDelegations = cosmosResources.delegations.length > 0;
-  const isCroAccount =
-    account.type === "Account" &&
-    (account.currency.id === "crypto_org" || account.currency.id === "crypto_org_croeseid");
+  const isCroAccount = account.type === "Account" && account.currency.id === "crypto_org";
 
   const onClickStakekit = useCallback(() => {
     const value = "/platform/stakekit";
