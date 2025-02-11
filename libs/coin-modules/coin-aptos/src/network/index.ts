@@ -12,7 +12,6 @@ import {
 import { SignerContext } from "@ledgerhq/coin-framework/lib/signer";
 import { Account } from "@ledgerhq/types-live";
 import { AptosSigner } from "../types";
-import { sha3_256 as sha3Hash } from "@noble/hashes/sha3";
 
 export async function signTransaction(
   signerContext: SignerContext<AptosSigner>,
@@ -27,9 +26,6 @@ export async function signTransaction(
   }
 
   const publicKey = Buffer.from(AccountAddress.from(account.xpub).toUint8Array());
-  const hash = sha3Hash.create();
-  hash.update(publicKey.toString("hex"));
-  hash.update("\x00");
 
   const signingMessage = generateSigningMessageForTransaction({
     rawTransaction: rawTxn,
