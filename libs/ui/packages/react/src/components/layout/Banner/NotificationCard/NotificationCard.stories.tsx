@@ -38,7 +38,7 @@ export default {
 
 export const Default: StoryObj<NotificationCardProps> = {};
 
-export const LNSNotificationCard = {
+export const LNSNotificationCard: StoryObj<NotificationCardProps> = {
   args: {
     title: undefined,
     description: "Updates are ending soon. Upgrade now with 20% off for a seamless experience.",

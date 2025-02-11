@@ -49,7 +49,7 @@ export default {
 
 export const Default: StoryObj<BannerCardProps> = {};
 
-export const LNSCardBanner = {
+export const LNSCardBanner: StoryObj<BannerCardProps> = {
   args: {
     title: "It's time to upgrade",
     description: (
@@ -62,5 +62,6 @@ export const LNSCardBanner = {
     cta: "Level up my wallet",
     tag: undefined,
     onClose: undefined,
+    borderRadius: "5px",
   },
 };
