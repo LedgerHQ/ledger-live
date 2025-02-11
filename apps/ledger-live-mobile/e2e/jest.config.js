@@ -39,7 +39,7 @@ module.exports = async () => ({
   setupFilesAfterEnv: ["<rootDir>/e2e/setup.ts"],
   testTimeout: 150000,
   testMatch: ["<rootDir>/e2e/specs/{*.spec.ts,!(speculos)/**/*.spec.ts}"],
-  reporters: ["detox/runners/jest/reporter"],
+  reporters: ["detox/runners/jest/reporter", ["jest-allure2-reporter", jestAllure2ReporterOptions]],
   globalSetup: "detox/runners/jest/globalSetup",
   globalTeardown: "<rootDir>/e2e/jest.globalTeardown.ts",
   testEnvironment: "detox/runners/jest/testEnvironment",
@@ -50,5 +50,6 @@ module.exports = async () => ({
       "detox-allure2-adapter",
     ],
   },
-  verbose: true,
+  verbose: false,
+  workerIdleMemoryLimit: "3GB",
 });
