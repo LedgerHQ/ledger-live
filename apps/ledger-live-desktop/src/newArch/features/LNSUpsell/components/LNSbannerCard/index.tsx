@@ -3,13 +3,14 @@ import { Trans } from "react-i18next";
 import React from "react";
 import { BannerCard, Text } from "@ledgerhq/react-ui";
 import type { FlexBoxProps } from "@ledgerhq/react-ui/components/layout/Flex/index";
-import { AnalyticsButton, AnalyticsPage } from "LLD/features/LNSUpsell/types/enum/Analytics";
-import { openURL } from "~/renderer/linking";
 import { track } from "~/renderer/analytics/segment";
+import { openURL } from "~/renderer/linking";
+import { AnalyticsButton, AnalyticsPage, type LNSUpsellType } from "../../types";
 
-type Props = Omit<FlexBoxProps, "maxHeight"> & {
-  type: "optIn" | "optOut";
-  location: "manager" | "accounts";
+type Location = "manager" | "accounts";
+type Props = FlexBoxProps & {
+  type: LNSUpsellType;
+  location: Location;
   image: string;
   ctaLink: string;
   learnMoreLink: string;
@@ -23,6 +24,8 @@ export function LNSBannerCard({
   ctaLink,
   learnMoreLink,
   discount,
+  borderRadius = "5px",
+  maxHeight = 175,
   ...boxProps
 }: Props) {
   const handleCTAClick = () => {
@@ -47,22 +50,23 @@ export function LNSBannerCard({
       {...boxProps}
       title={t(`lnsUpsell.banner.${location}.${type}.title`)}
       description={
-        <Trans i18nKey={`lnsUpsell.banner.${location}.${type}.description`}>
-          <Text color="constant.purple">{{ discount } as never}</Text>
+        <Trans i18nKey={`lnsUpsell.banner.${location}.${type}.description`} values={{ discount }}>
+          <Text color="constant.purple" />
         </Trans>
       }
       image={image}
       cta={t(`lnsUpsell.banner.${location}.${type}.cta`)}
       linkText={t(`lnsUpsell.banner.${location}.${type}.linkText`)}
       descriptionWidth={320}
-      maxHeight={175}
+      maxHeight={maxHeight}
+      borderRadius={borderRadius}
       onClick={handleCTAClick}
       onLinkClick={handleLearnMoreLink}
     />
   );
 }
 
-const AnalyticsPageMap: Record<Props["location"], AnalyticsPage> = {
+const AnalyticsPageMap: Record<Location, AnalyticsPage> = {
   manager: AnalyticsPage.Manager,
   accounts: AnalyticsPage.Accounts,
 };
