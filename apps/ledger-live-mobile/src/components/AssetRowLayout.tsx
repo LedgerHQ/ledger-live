@@ -57,6 +57,7 @@ const AssetRowLayout = ({
             <Flex flexGrow={1} flexShrink={1} flexDirection="row" alignItems="center">
               <Flex flexShrink={1}>
                 <Text
+                  testID={`asset-row-name-${name}`}
                   variant="large"
                   fontWeight="semiBold"
                   color="neutral.c100"

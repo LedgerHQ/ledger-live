@@ -87,6 +87,7 @@ const useAssetsListViewModel = ({
   return {
     assetsToDisplay,
     isSyncEnabled,
+    limitNumberOfAssets,
     onItemPress,
     onContentChange,
   };

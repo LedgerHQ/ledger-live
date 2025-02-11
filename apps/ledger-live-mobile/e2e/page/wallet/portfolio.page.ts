@@ -29,6 +29,7 @@ export default class PortfolioPage {
   earnButton = () => getElementById("tab-bar-earn");
   addAccountCta = "add-account-cta";
   lastTransactionAmount = () => getElementById(this.transactionAmountId, 0);
+  assetRowNameId = (currencyName: string) => `asset-row-name-${currencyName}`;
 
   @Step("Navigate to Settings")
   async navigateToSettings() {
@@ -89,5 +90,10 @@ export default class PortfolioPage {
 
   async openLastTransaction() {
     await tapByElement(this.lastTransactionAmount());
+  }
+
+  @Step("Go to accounts")
+  async goToAccounts(currencyName: string) {
+    await tapById(this.assetRowNameId(currencyName));
   }
 }

@@ -2,6 +2,7 @@ import {
   expectValidAddressDevice,
   signSendTransaction,
   signDelegationTransaction,
+  activateContractData,
 } from "@ledgerhq/live-common/e2e/speculos";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
@@ -21,5 +22,10 @@ export default class SpeculosPage {
   @Step("Sign Delegation Transaction")
   async signDelegationTransaction(delegation: Delegate) {
     await signDelegationTransaction(delegation);
+  }
+
+  @Step("Activate contract data")
+  async activateContractData() {
+    await activateContractData();
   }
 }
