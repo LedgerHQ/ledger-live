@@ -41,7 +41,7 @@ const bundle_ios_with_cache = async () => {
 const test_ios = async () => {
   await $`pnpm mobile e2e:test${speculos} \
     -c ios.sim.${target} \
-    --loglevel verbose \
+    --loglevel error \
     --record-logs all \
     --take-screenshots all \
     --forceExit \

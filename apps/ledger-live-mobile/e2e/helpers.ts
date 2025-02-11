@@ -225,7 +225,7 @@ export async function launchApp() {
     },
   });
   const memoryUsage = process.memoryUsage();
-  console.warn("Memory Usage:", memoryUsage);
+  console.error("Memory Usage:", memoryUsage);
   return port;
 }
 
