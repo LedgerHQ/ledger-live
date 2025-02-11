@@ -37,7 +37,7 @@ export function EarnMenuDrawer() {
             {modal?.title}
           </Text>
         ) : null}
-        <Flex rowGap={6}>
+        <Flex rowGap={8}>
           {modal?.options.map(({ label, metadata: { link, button, ...tracked } }) =>
             link ? (
               <OptionButton
@@ -70,6 +70,7 @@ const OptionButton = styled(Button)<{
   justify-content: left;
   max-width: 100%;
   overflow: hidden;
+  padding: 16px;
   text-overflow: ellipsis;
   white-space: nowrap;
   &:active {
