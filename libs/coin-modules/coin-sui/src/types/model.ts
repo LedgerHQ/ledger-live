@@ -1,15 +1,8 @@
-export type SuiOperationMode =
-  | "send"
-  | "bond"
-  | "unbond"
-  | "rebond"
-  | "withdrawUnbonded"
-  | "setController"
-  | "nominate"
-  | "chill"
-  | "claimReward";
+import { Transaction } from "@mysten/sui/transactions";
 
-type TypeRegistry = any;
+export type SuiOperationMode = "send";
+
+// type TypeRegistry = any;
 
 export type TransactionPayloadInfo = {
   // after runtime upgrade
@@ -27,6 +20,6 @@ export type TransactionPayloadInfo = {
 };
 
 export type CoreTransaction = {
-  registry: TypeRegistry;
-  unsigned: TransactionPayloadInfo;
+  // registry: TypeRegistry;
+  unsigned: Transaction;
 };

@@ -33,6 +33,7 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
     family: tr.family,
     mode: tr.mode,
     fees: tr.fees ? BigNumber(tr.fees) : null,
+    errors: {},
   };
 };
 

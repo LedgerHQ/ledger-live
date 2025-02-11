@@ -1,4 +1,6 @@
 import { AccountBridge } from "@ledgerhq/types-live";
+import { updateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { InvalidAddressBecauseDestinationIsAlsoSource, RecipientRequired } from "@ledgerhq/errors";
 import type { SuiAccount, Transaction } from "../types";
 import getEstimatedFees from "./getFeesForTransaction";
 import BigNumber from "bignumber.js";
@@ -14,6 +16,8 @@ export const prepareTransaction: AccountBridge<
   Transaction,
   SuiAccount
 >["prepareTransaction"] = async (account, transaction) => {
+  console.log("prepareTransaction", account, transaction);
+
   let fees = transaction.fees;
   fees = await getEstimatedFees({
     account,
@@ -24,7 +28,21 @@ export const prepareTransaction: AccountBridge<
     return { ...transaction, fees };
   }
 
-  return transaction;
+  const errors: Record<string, Error> = {};
+
+  if (!transaction.recipient) {
+    errors.recipient = new RecipientRequired();
+  } else if (account.freshAddress === transaction.recipient) {
+    errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
+  } // TODO: add check for same valid sui address
+
+  // TODO: add check for amount
+
+  const patch: Partial<Transaction> = {
+    errors,
+  };
+
+  return updateTransaction(transaction, patch);
 };
 
 export default prepareTransaction;

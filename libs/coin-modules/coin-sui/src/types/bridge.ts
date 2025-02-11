@@ -32,6 +32,7 @@ export type Transaction = TransactionCommon & {
   mode: string;
   family: "sui";
   fees?: BigNumber | null;
+  errors: Record<string, Error>;
   // add here all transaction-specific fields if you implement other modes than "send"
 };
 
@@ -84,13 +85,4 @@ export type SuiOperationExtraRaw = Record<string, string>;
 export type PalletMethod =
   | "balances.transfer"
   | "balances.transferKeepAlive"
-  | "balances.transferAllowDeath"
-  | "staking.bond"
-  | "staking.bondExtra"
-  | "staking.unbond"
-  | "staking.rebond"
-  | "staking.withdrawUnbonded"
-  | "staking.nominate"
-  | "staking.chill"
-  | "staking.setController"
-  | "staking.payoutStakers";
+  | "balances.transferAllowDeath";

@@ -113,6 +113,16 @@ export const buildSignOperation =
         });
 
         const signedTx = signOnChainTransaction(signature);
+        console.log(
+          "account",
+          account,
+          "transaction",
+          transaction,
+          "signature",
+          signature,
+          "signedTx",
+          signedTx,
+        );
 
         subscriber.next({
           type: "signed",

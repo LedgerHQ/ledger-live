@@ -5699,9 +5699,15 @@ importers:
 
   libs/ledgerjs/packages/hw-app-sui:
     dependencies:
+      '@ledgerhq/hw-transport':
+        specifier: 6.31.4
+        version: 6.31.4
       '@mysten/ledgerjs-hw-app-sui':
         specifier: 0.4.2
         version: 0.4.2
+      fast-sha256:
+        specifier: 1.3.0
+        version: 1.3.0
     devDependencies:
       '@ledgerhq/hw-transport-mocker':
         specifier: workspace:^

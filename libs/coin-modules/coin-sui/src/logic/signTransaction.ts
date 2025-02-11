@@ -21,6 +21,7 @@ export const signExtrinsic = async (
   const extrinsic = registry.createType("Extrinsic", unsigned, {
     version: unsigned.version,
   });
+  console.log("signExtrinsic", unsigned, signature, registry);
   if (typeof signature === "string") {
     extrinsic.addSignature(unsigned.address, Buffer.from(signature, "hex"), unsigned as any);
   } else {

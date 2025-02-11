@@ -1,5 +1,7 @@
 import { getFullnodeUrl, SuiClient } from "@mysten/sui/client";
-import { Transaction, TransactionData } from "@mysten/sui/transactions";
+// import { Transaction, TransactionData } from "@mysten/sui/transactions";
+import { TransactionBlockData, SuiTransactionBlockResponse } from "@mysten/sui/client";
+import { Transaction } from "@mysten/sui/transactions";
 import { BigNumber } from "bignumber.js";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
 
@@ -74,21 +76,21 @@ export const getAccount = async (addr: string) =>
 /**
  * Returns true if account is the signer
  */
-function isSender(transaction: TransactionData, addr: string): boolean {
-  return transaction.sender === addr;
+function isSender(addr: string, transaction?: TransactionBlockData): boolean {
+  return transaction?.sender === addr;
 }
 
 /**
  * Map transaction to an Operation Type
  */
-function getOperationType(transaction: TransactionData, addr: string): OperationType {
-  return isSender(transaction, addr) ? "OUT" : "IN";
+function getOperationType(addr: string, transaction?: TransactionBlockData): OperationType {
+  return isSender(addr, transaction) ? "OUT" : "IN";
 }
 
 /**
  * Map transaction to a correct Operation Value (affecting account balance)
  */
-// function getOperationValue(transaction: Transaction, addr: string): BigNumber {
+// function getOperationAmount(transaction: Transaction, addr: string): BigNumber {
 //   return isSender(transaction, addr)
 //     ? BigNumber(transaction.value).plus(transaction.fees)
 //     : BigNumber(transaction.value);
@@ -104,40 +106,90 @@ function getOperationType(transaction: TransactionData, addr: string): Operation
 // }
 
 /**
+ * Extract senders from transaction
+ */
+const getOperationSenders = (transaction?: TransactionBlockData): string[] => {
+  return transaction?.sender ? [transaction?.sender] : [];
+};
+
+/**
+ * Extract recipients from transaction
+ */
+const getOperationRecipients = (transaction?: TransactionBlockData): string[] => {
+  if (transaction?.transaction.kind === "ProgrammableTransaction") {
+    if (!transaction?.transaction?.inputs) return [];
+    const recipients: string[] = [];
+    transaction.transaction.inputs.map(({ valueType, value }: any) => {
+      if (valueType === "address") {
+        recipients.push(value);
+      }
+    });
+    return recipients;
+  }
+  return [];
+};
+
+/**
+ * Extract value from transaction
+ */
+const getOperationAmount = (
+  address: string,
+  transaction: SuiTransactionBlockResponse,
+): BigNumber => {
+  let amount = new BigNumber(0);
+  if (!transaction?.balanceChanges) return amount;
+  for (const balanceChange of transaction.balanceChanges) {
+    // @ts-expect-error TODO:fix
+    if (balanceChange.owner.AddressOwner === address) {
+      amount = amount.plus(balanceChange.amount);
+    }
+  }
+  return amount;
+};
+
+/**
+ * Extract fee from transaction
+ */
+const getOperationFee = (transaction: any): BigNumber => {
+  return BigNumber(transaction.effects.gasUsed.computationCost).plus(
+    BigNumber(transaction.effects.gasUsed.nonRefundableStorageFee),
+  );
+};
+
+/**
+ * Extract date from transaction
+ */
+const getOperationDate = (transaction: any): Date => {
+  return new Date(parseInt(transaction.timestampMs));
+};
+
+/**
  * Map the Sui history transaction to a Ledger Live Operation
  */
-async function transactionToOperation(
+function transactionToOperation(
   accountId: string,
-  addr: string,
-  transaction: Transaction,
-): Promise<Operation> {
-  const type = getOperationType(transaction.getData(), addr);
-  const hash = await transaction.getDigest();
+  address: string,
+  transaction: SuiTransactionBlockResponse,
+): Operation {
+  console.log("transactionToOperation", transaction, address);
+  const type = getOperationType(address, transaction.transaction?.data);
+  const hash = transaction.digest;
 
   return {
     id: encodeOperationId(accountId, hash, type),
     accountId,
-    // fee: BigNumber(transaction.fees || 0),
-    // value: getOperationValue(transaction, addr),
-    type,
-    // This is where you retrieve the hash of the transaction
-    hash,
-    blockHash: null,
-    // blockHeight: transaction.blockNumber,
-    // date: new Date(transaction.timestamp),
-    // extra: getOperationExtra(transaction),
-    // senders: [transaction.sender],
-    // recipients: transaction.recipient ? [transaction.recipient] : [],
-    // transactionSequenceNumber: isSender(transaction, addr) ? transaction.nonce : undefined,
-    // hasFailed: !transaction.success,
-
+    blockHash: hash,
     blockHeight: 0, // Required by Operation type
-    date: new Date(), // Required by Operation type
+    date: getOperationDate(transaction), // Required by Operation type
     extra: {}, // Required by Operation type
-    value: new BigNumber(0),
-    fee: new BigNumber(0),
-    senders: [addr],
-    recipients: [],
+    fee: getOperationFee(transaction),
+    hasFailed: transaction.effects?.status.status != "success",
+    hash,
+    recipients: getOperationRecipients(transaction.transaction?.data),
+    senders: getOperationSenders(transaction.transaction?.data),
+    // transactionSequenceNumber: isSender(transaction, address) ? transaction.nonce : undefined,
+    type,
+    value: getOperationAmount(address, transaction),
   };
 }
 
@@ -180,9 +232,7 @@ export const getOperations = async (
       (a, b) => Number(b.timestampMs) - Number(a.timestampMs),
     );
 
-    return rawTransactions.map(transaction =>
-      transactionToOperation(accountId, addr, transaction as unknown as Transaction),
-    );
+    return rawTransactions.map(transaction => transactionToOperation(accountId, addr, transaction));
   });
 
 export const getPreloadedData = () => ({
@@ -191,15 +241,31 @@ export const getPreloadedData = () => ({
 });
 
 export const paymentInfo = makeLRUCache(
-  signedTx => signedTx, // TODO: add fn
+  signedTx => signedTx, // TODO: implement
   signedTx => signedTx,
   minutes(5),
 );
 
-export const submitExtrinsic = async (extrinsic: string) => extrinsic;
+export const submitExtrinsic = async (extrinsic: string) => extrinsic; // TODO: implement
 
 export const getRegistry = makeLRUCache(
-  () => new Promise(resolve => resolve({})),
+  () =>
+    new Promise(resolve => {
+      resolve({
+        // TODO: implement
+        createType: () => ({
+          addSignature: () => "",
+          toHex: () => "",
+        }),
+      });
+    }),
   () => "sui",
   hours(1),
 );
+
+export const createTransaction = (address: string) => {
+  const tx = new Transaction();
+  tx.setSenderIfNotSet(address);
+  console.log("createTransaction tx", tx);
+  return tx;
+};

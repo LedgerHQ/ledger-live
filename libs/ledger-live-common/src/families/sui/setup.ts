@@ -14,7 +14,7 @@ import { getCurrencyConfiguration } from "../../config";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 
 const createSigner: CreateSigner<SuiSigner> = (transport: Transport) => {
-  return new Sui(transport);
+  return new Sui(transport, "default_sui_scramble_key", true);
 };
 
 const sui = getCryptoCurrencyById("sui");

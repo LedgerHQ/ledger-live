@@ -7,7 +7,8 @@ import type { SuiAccount, SuiSigner, Transaction } from "../types";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
 import { buildTransaction } from "./buildTransaction";
 import { calculateAmount } from "./utils";
-import { signExtrinsic } from "../logic";
+
+// import { signExtrinsic } from "../logic";
 // import suiAPI from "../network";
 
 /**
@@ -18,15 +19,17 @@ export const buildSignOperation =
     signerContext: SignerContext<SuiSigner>,
   ): AccountBridge<Transaction, SuiAccount>["signOperation"] =>
   ({ account, deviceId, transaction }) =>
-    new Observable(o => {
+    new Observable(subscriber => {
       async function main() {
-        o.next({
+        subscriber.next({
           type: "device-signature-requested",
         });
 
         if (!transaction.fees) {
           throw new FeeNotLoaded();
         }
+
+        console.log("buildSignOperation props", account, deviceId, transaction);
 
         // Ensure amount is filled when useAllAmount
         const transactionToSign = {
@@ -36,24 +39,15 @@ export const buildSignOperation =
             transaction,
           }),
         };
-        const { unsigned, registry } = await buildTransaction(account, transactionToSign, true);
-        const payload = registry
-          .createType("ExtrinsicPayload", unsigned, {
-            version: unsigned.version,
-          })
-          .toU8a({
-            method: true,
-          });
-        // const payloadString = Buffer.from(payload).toString("hex");
-        // const metadata = await suiAPI.shortenMetadata(payloadString);
-        // const metadata = { payloadString };
-        const r = await signerContext(deviceId, signer =>
-          // signer.signTransaction(account.freshAddressPath, payload, metadata),
-          signer.signTransaction(account.freshAddressPath, payload),
+        const { unsigned } = await buildTransaction(account, transactionToSign, true);
+
+        console.log("buildSignOperation unsigned", unsigned);
+        const { signature } = await signerContext(deviceId, signer =>
+          signer.signTransaction(account.freshAddressPath, unsigned.serialize()),
         );
 
-        const signed = await signExtrinsic(unsigned, r.signature, registry);
-        o.next({
+        // const signed = await signExtrinsic(unsigned, signature, registry);
+        subscriber.next({
           type: "device-signature-granted",
         });
         const operation = buildOptimisticOperation(
@@ -61,18 +55,21 @@ export const buildSignOperation =
           transactionToSign,
           transactionToSign.fees ?? new BigNumber(0),
         );
-        o.next({
+
+        console.log("buildSignOperation signature", signature, "operation", operation);
+
+        subscriber.next({
           type: "signed",
           signedOperation: {
             operation,
-            signature: signed,
+            signature: Buffer.from(signature).toString("hex"),
           },
         });
       }
 
       main().then(
-        () => o.complete(),
-        e => o.error(e),
+        () => subscriber.complete(),
+        e => subscriber.error(e),
       );
     });
 

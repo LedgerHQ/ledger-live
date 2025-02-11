@@ -5,6 +5,7 @@ import {
   paymentInfo,
   submitExtrinsic,
   getRegistry,
+  createTransaction,
 } from "./sdk";
 
 export {
@@ -27,4 +28,5 @@ export default {
   paymentInfo,
   submitExtrinsic,
   getRegistry,
+  createTransaction,
 };
