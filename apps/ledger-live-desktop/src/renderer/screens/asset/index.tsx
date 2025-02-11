@@ -72,12 +72,7 @@ export default function AssetPage({ match }: Props) {
         <AccountDistribution accounts={accounts} />
       </Box>
       <Box mt={40}>
-        <OperationsList
-          accounts={accounts}
-          title={t("dashboard.recentActivity")}
-          t={t}
-          withAccount
-        />
+        <OperationsList accounts={accounts} title={t("dashboard.recentActivity")} withAccount />
       </Box>
     </Box>
   );

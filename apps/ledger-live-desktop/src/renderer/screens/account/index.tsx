@@ -257,7 +257,6 @@ const AccountPage = ({
             parentAccount={parentAccount}
             title={t("account.lastOperations")}
             filterOperation={filterOperations}
-            t={t}
           />
         </>
       ) : (
