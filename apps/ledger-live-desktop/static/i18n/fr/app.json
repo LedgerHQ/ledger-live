@@ -5720,6 +5720,7 @@
       "title" : "Aucun compte trouvé",
       "description" : "Une erreur est survenue lors du calcul de l’adresse. Veuillez réessayer ou contacter l’Assistance Ledger."
     },
+<<<<<<< HEAD
     "ElrondDecimalsLimitReached" : {
       "title" : "Nombre maximal de décimales atteint",
       "description" : "Veuillez vous assurer que le montant indiqué comporte 18 décimales."
@@ -5732,6 +5733,20 @@
     },
     "ElrondDelegationBelowMinimumError" : {
       "title" : "Le montant restant à déléguer ne peut pas être inférieur à {{formattedAmount}}."
+=======
+    "MultiversXDecimalsLimitReached": {
+      "title": "Nombre maximal de décimales atteint",
+      "description": "Veuillez vous assurer que le montant indiqué comporte 18 décimales."
+    },
+    "MultiversXMinDelegatedAmountError": {
+      "title": "Le montant délégué doit être d’au moins {{formattedAmount}}."
+    },
+    "MultiversXMinUndelegatedAmountError": {
+      "title": "La délégation arrêtée doit être d’au moins {{formattedAmount}}."
+    },
+    "MultiversXDelegationBelowMinimumError": {
+      "title": "Le montant restant à déléguer ne peut pas être inférieur à {{formattedAmount}}."
+>>>>>>> ea56cac218 (chore: i18n)
     },
     "NotEnoughEGLDForFees" : {
       "title" : "Solde d’EGLD insuffisant pour payer les frais de transaction",

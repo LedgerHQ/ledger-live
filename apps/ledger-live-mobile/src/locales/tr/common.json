@@ -477,17 +477,17 @@
       "title" : "Üzgünüz, hesap bulunamadı",
       "description" : "Adres hesaplamasında bir hata oluştu. Lütfen tekrar deneyin. Sorun devam ederse, lütfen aşağıdaki butonu kullanarak loglarınızı kaydedin ve Ledger Destek'e gönderin."
     },
-    "ElrondDecimalsLimitReached" : {
+    "MultiversXDecimalsLimitReached" : {
       "title" : "Maksimum ondalık basamağı sınırına ulaşıldı",
       "description" : "Lütfen belirtilen tutarın 18 ondalık basamağının olduğundan emin olun."
     },
-    "ElrondMinDelegatedAmountError" : {
+    "MultiversXMinDelegatedAmountError" : {
       "title" : "Yetkisi devredilen miktar en az {{formattedAmount}} olmalıdır"
     },
-    "ElrondMinUndelegatedAmountError" : {
+    "MultiversXMinUndelegatedAmountError" : {
       "title" : "Yetki devri iptal edilen miktar en az {{formattedAmount}} olmalıdır"
     },
-    "ElrondDelegationBelowMinimumError" : {
+    "MultiversXDelegationBelowMinimumError" : {
       "title" : "Kalan yetki devri miktarı en az {{formattedAmount}} olmalıdır"
     },
     "NotEnoughVTHO" : {
