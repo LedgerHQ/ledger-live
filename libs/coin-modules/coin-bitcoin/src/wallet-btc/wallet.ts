@@ -126,7 +126,7 @@ class BitcoinLikeWallet {
         )
       ) {
         // we can use either non pending utxo or change utxo
-        if (changeAddresses.includes(utxo.address) || utxo.block_height !== null) {
+        if (changeAddresses.includes(utxo.address) || utxo.block_height !== null || utxo.rbf) {
           usableUtxoCount++;
           balance = balance.plus(utxo.value);
         }
