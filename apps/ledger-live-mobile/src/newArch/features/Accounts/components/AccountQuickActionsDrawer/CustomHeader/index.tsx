@@ -18,7 +18,8 @@ const CustomHeader = ({ account, onClose, backgroundColor, iconColor }: Props) =
       width="100%"
       p={16}
       borderBottom={5}
-      borderBottomColor={"neutral.c30"}
+      borderBottomColor="opacityDefault.c10"
+      borderBottomWidth={1}
     >
       <AccountItem account={account} balance={account.balance} hideBalanceInfo />
       <Flex alignItems="flex-end">
