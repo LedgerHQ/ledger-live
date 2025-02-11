@@ -7,7 +7,7 @@ import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { Application } from "tests/page";
-import { ElectronApplication, Page } from "@playwright/test";
+import { ElectronApplication } from "@playwright/test";
 
 function setupEnv(disableBroadcast?: boolean) {
   const originalBroadcastValue = process.env.DISABLE_TRANSACTION_BROADCAST;
@@ -125,10 +125,10 @@ for (const { swap, xrayTicket } of swaps) {
           description: xrayTicket,
         },
       },
-      async ({ app, electronApp, page }) => {
+      async ({ app, electronApp }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-        await performSwapUntilQuoteSelectionStep(app, electronApp, page, swap);
+        await performSwapUntilQuoteSelectionStep(app, electronApp, swap);
 
         const selectedProvider = await app.swap.selectExchange(electronApp);
         await performSwapUntilDeviceVerificationStep(app, electronApp, swap, selectedProvider);
@@ -160,10 +160,10 @@ test.describe("Swap - Rejected on device", () => {
     {
       annotation: { type: "TMS", description: "B2CQA-2212" },
     },
-    async ({ app, electronApp, page }) => {
+    async ({ app, electronApp }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-      await performSwapUntilQuoteSelectionStep(app, electronApp, page, rejectedSwap);
+      await performSwapUntilQuoteSelectionStep(app, electronApp, rejectedSwap);
       const selectedProvider = await app.swap.selectExchange(electronApp);
       await performSwapUntilDeviceVerificationStep(
         app,
@@ -225,10 +225,10 @@ for (const { swap, xrayTicket } of tooLowAmountForQuoteSwaps) {
           description: xrayTicket,
         },
       },
-      async ({ app, electronApp, page }) => {
+      async ({ app, electronApp }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-        await performSwapUntilQuoteSelectionStep(app, electronApp, page, swap);
+        await performSwapUntilQuoteSelectionStep(app, electronApp, swap);
         const errorMessage = swap.accountToDebit.accountType
           ? "Not enough balance."
           : new RegExp(
@@ -403,7 +403,6 @@ test.describe("Swap flow from different entry point", () => {
 async function performSwapUntilQuoteSelectionStep(
   app: Application,
   electronApp: ElectronApplication,
-  page: Page,
   swap: Swap,
 ) {
   await app.swap.goAndWaitForSwapToBeReady(() => app.layout.goToSwap());
