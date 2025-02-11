@@ -791,6 +791,24 @@
     "SolanaAccountNotFunded" : {
       "title" : "الحساب غير ممول"
     },
+    "SolanaTokenAccountHoldsAnotherToken" : {
+      "title" : "حساب رمز التوكن المرتبط هذا يحتفظ برمز توكن آخر"
+    },
+    "SolanaTokenAccountWarning" : {
+      "title" : "هذا ليس عنوان محفظة عادي لكنه حساب رمز توكن مرتبط. تابع فقط إذا كنت تعلم ماذا تفعل"
+    },
+    "SolanaTokenAccountNotAllowed" : {
+      "title" : "هذا حساب رمز توكن. أدخِل عنوان محفظة عادي"
+    },
+    "SolanaMintAccountNotAllowed" : {
+      "title" : "هذا عنوان رمز توكن. أدخِل عنوان محفظة عادي"
+    },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "سيتمّ تمويل الحساب"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "تمّ تجميد رموز أصول الحساب"
+    },
     "SolanaAddressOfEd25519" : {
       "title" : "العنوان خارج منحنى ed25519"
     },
@@ -2375,16 +2393,16 @@
     },
     "recoverBanner" : {
       "subscribeDone" : {
-        "title" : "أكمِل إضافة بطاقة الدفع الخاصة بك",
-        "description" : "استعد بشكل موثوق مع Ledger Recover."
+        "title" : "تذكير: أكمِل تسجيل الاشتراك في Ledger Recover",
+        "description" : "أنت على بعد خطوتين فقط من أن تصبح مُؤمَّناً."
       },
       "verifyIdentity" : {
-        "title" : "أكمِل تأكيد هويتك",
-        "description" : "استعد بشكل موثوق مع Ledger Recover."
+        "title" : "تذكير: أكمِل تسجيل الاشتراك في Ledger Recover",
+        "description" : "أنت على بعد خطوة واحدة فقط من أن تصبح مُؤمَّناً."
       },
       "connectDevice" : {
-        "title" : "الخطوة الأخيرة: توصيل جهازك Ledger",
-        "description" : "أنت على بعد خطوة واحدة من Ledger Recover."
+        "title" : "تذكير: أكمِل تسجيل الاشتراك في Ledger Recover",
+        "description" : "هذه هي الخطوة الأخيرة لضمان استرداد الوصول إلى المحفظة."
       }
     }
   },
@@ -3104,7 +3122,7 @@
       "title" : "مطوّر",
       "desc" : "جرّب ميزات المطور وأخبرنا برأيك.",
       "customManifest" : {
-        "title" : "تحميل بيان المنصة المخصص"
+        "title" : "تحميل البيان"
       },
       "exchangeDeveloperMode" : {
         "title" : "وضع المطور لمنصة التداول",
@@ -3489,6 +3507,8 @@
         "ton_description" : "لمبادلة Ton، استخدِم أي جهاز Ledger آخر متوافق مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
         "spl_tokens_title" : "™Ledger Nano S لا تدعم مبادلة رموز سولانا (Solana)",
         "spl_tokens_description" : "لمبادلة رموز سولانا (Solana)، استخدِم أي جهاز Ledger آخر متوافق مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
+        "near_title" : "Ledger Nano S™ does not support swapping Near",
+        "near_description" : "To swap Near, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
         "ada_title" : "™Ledger Nano S لا تدعم مبادلة كاردانو (Cardano)",
         "ada_description" : "لمبادلة كاردانو (Cardano)، استخدِم أي جهاز Ledger آخر متوافق مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax."
       }
@@ -4072,10 +4092,6 @@
         "creatable" : {
           "title" : "حساب جديد"
         },
-        "imported" : {
-          "title" : "الحساب موجود بالفعل في المحفظة الاستثمارية ({{count}})",
-          "title_plural" : "الحسابات الموجودة بالفعل في المحفظة الاستثمارية ({{count}})"
-        },
         "migrate" : {
           "title" : "الحسابات المطلوب تحديثها"
         }
@@ -4161,7 +4177,9 @@
     "installApp" : "{{percentage}} من تثبيت تطبيق {{appName}}",
     "installAppDescription" : "يُرجى الانتظار حتى يتم الانتهاء من التثبيت",
     "listApps" : "التحقق من تبعيات التطبيق",
-    "listAppsDescription" : "يُرجى الانتظار بينما نتأكد أن لديك جميع التطبيقات المطلوبة"
+    "listAppsDescription" : "يُرجى الانتظار بينما نتأكد أن لديك جميع التطبيقات المطلوبة",
+    "confirmExchangeOnDevice" : "Confirm exchange on your device",
+    "confirmSwapOnDevice" : "Confirm swap on your device"
   },
   "SelectDevice" : {
     "title" : "إقران جهاز جديد",
@@ -5982,6 +6000,10 @@
         "description" : "يمكنك كسب المكافآت عن طريق تفويض أصولك SOL لمدقق."
       },
       "reserveWarning" : "يُرجى التأكد من أنك تحتفظ بـ {{amount}} SOL على الأقل في محفظتك لتغطية رسوم الشبكة المستقبلية من أجل إلغاء تنشيط وسحب حصتك"
+    },
+    "token" : {
+      "frozenStateWarning" : "تمّ تجميد أصول الحساب!",
+      "transferWarning" : "للتحقق من عنوان المستلم لرموز سولانا (Solana) باستخدام ™Ledger Nano S، <0>يرجى اتباع هذه التعليمات.</0>"
     }
   },
   "near" : {
@@ -7061,9 +7083,10 @@
           "explanation" : {
             "title" : "مسح ومزامنة حساباتك باستخدام تطبيق Ledger Live آخر",
             "steps" : {
-              "step1" : "افتح تطبيق Ledger Live الذي تريد مزامنته",
-              "step2" : "انتقل إلى <0>Settings (الإعدادات)</0> <1>></1> <0>General (عام)</0> <1>></1> <0>Ledger Sync (مزامنة Ledger)</0> <1>></1> <0>Turn on Ledger Sync (تشغيل مزامنة Ledger)</0> <1>></1> <0>Scan QR code (امسح ضوئياً كود QR)</0>",
-              "step3" : "مسح ضوئي لكود QR"
+              "step1" : "تأكد من أن مزامنة Ledger Sync مُفعَّلة على أحد تطبيقاتك.",
+              "step2" : "افتح تطبيق Ledger Live الذي تريد مزامنته.",
+              "step3" : "انتقل إلى <0>Settings (إعدادات)</0> <1>></1> <0>General (عامة)</0> <1>></1> <0>Ledger Sync (مزامنة Ledger Sync)</0> <1>></1> <0>I already turned it on (قمت بتشغيلها بالفعل)</0> <1>></1> <0>Scan QR code (امسح كود QR ضوئياً.)</0>",
+              "step4" : "امسح كود QR ضوئياً."
             }
           }
         },
@@ -7073,9 +7096,10 @@
           "explanation" : {
             "title" : "للمزامنة مع Ledger Live على هاتف أو كمبيوتر آخر...",
             "steps" : {
-              "step1" : "افتح Ledger Live الذي تريد المزامنة معه.",
-              "step2" : "انتقل إلى <0>Settings (الإعدادات)</0> <1>></1> <0>General (عام)</0> <1>></1> <0>Ledger Sync (مزامنة Ledger)</0> <1>></1> <0>Turn on Ledger Sync (تشغيل مزامنة Ledger)</0> <1>></1> <0>Show QR (عرض كود QR)</0>",
-              "step3" : "مسح ضوئي لكود QR"
+              "step1" : "تأكد من أن مزامنة Ledger Sync مُفعَّلة على أحد تطبيقاتك.",
+              "step2" : "افتح Ledger Live الذي ترغب في المزامنة معه.",
+              "step3" : "انتقل إلى <0>Settings (إعدادات)</0> <1>></1> <0>General (عامة)</0> <1>></1> <0>Ledger Sync (مزامنة Ledger Sync)</0> <1>></1> <0>I already turned it on (قمت بتشغيلها بالفعل)</0> <1>></1> <0>Show QR (عرض كود QR)</0>",
+              "step4" : "امسح كود QR ضوئياً."
             }
           }
         },
