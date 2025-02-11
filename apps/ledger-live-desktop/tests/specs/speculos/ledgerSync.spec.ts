@@ -63,9 +63,7 @@ test.describe(`[${app.name}] Sync Accounts`, () => {
       await app.account.deleteAccount();
       await app.layout.syncAccounts();
 
-      const successfulQuery = await LedgerSyncCliHelper.queryBackEnd(page);
-      await app.layout.waitForAccountsSyncToBeDone();
-      expect(await successfulQuery).toBeDefined();
+      expect(await LedgerSyncCliHelper.checkSynchronizationSuccess(page, app)).toBeDefined();
 
       await app.accounts.expectAccountsCount(1);
 
@@ -82,10 +80,15 @@ test.describe(`[${app.name}] Sync Accounts`, () => {
       await app.ledgerSync.expectBackupDeletion();
       await app.drawer.closeDrawer();
 
-      const deletedAccount = (parsedData.updateEvent.data as LiveData).accounts?.find(
+      /* const deletedAccount = (parsedData.updateEvent.data as LiveData).accounts?.find(
         account => account.id === accountId,
       );
-      expect(deletedAccount, "Account should not be present").toBeUndefined();
+      expect(deletedAccount, "Account should not be present").toBeUndefined();*/
+
+      expect(
+        await LedgerSyncCliHelper.checkAccountDeletion(parsedData, accountId),
+        "Account should not be present",
+      ).toBeUndefined();
     },
   );
 });

@@ -2,6 +2,8 @@ import { CLI } from "tests/utils/cliUtils";
 import { activateLedgerSync } from "@ledgerhq/live-common/e2e/speculos";
 import { accountNames, accounts } from "tests/testdata/ledgerSyncTestData";
 import { Page } from "@playwright/test";
+import { Application } from "tests/page";
+import { DistantState as LiveData } from "@ledgerhq/live-wallet/walletsync/index";
 
 interface LedgerKeyRingProtocolArgs {
   pubKey: string;
@@ -64,8 +66,7 @@ export class LedgerSyncCliHelper {
   };
 
   private static updateKeysAndArgs(output: LedgerOutput) {
-    if (!output || typeof output === "string") return;
-
+    if (!output) return;
     LedgerSyncCliHelper.updateKeyRingCredentials(output);
     LedgerSyncCliHelper.updateSyncArgs(output);
   }
@@ -97,14 +98,14 @@ export class LedgerSyncCliHelper {
 
   static parseData(pulledData: string) {
     try {
-      const parsedData = typeof pulledData === "string" ? JSON.parse(pulledData) : pulledData;
-      return parsedData;
+      return JSON.parse(pulledData);
     } catch (error) {
       throw new Error(`Failed to parse pulledData: ${error}`);
     }
   }
-  static queryBackEnd(page: Page) {
-    const queryResponse = new Promise(resolve => {
+
+  static getCloudSyncResponse(page: Page) {
+    return new Promise(resolve => {
       page.on("response", response => {
         if (
           response
@@ -116,7 +117,6 @@ export class LedgerSyncCliHelper {
         }
       });
     });
-    return queryResponse;
   }
 
   static async initializeLedgerKeyRingProtocol() {
@@ -138,12 +138,14 @@ export class LedgerSyncCliHelper {
     return output;
   }
 
-  static async pullDataFromCLI(pulledData: string | object) {
-    try {
-      return typeof pulledData === "string" ? JSON.parse(pulledData) : pulledData;
-    } catch (error) {
-      console.error("Failed to parse pulled data:", pulledData, error);
-      throw new Error("Invalid JSON string in pulledData");
-    }
+  static checkSynchronizationSuccess(page: Page, app: Application) {
+    app.layout.waitForAccountsSyncToBeDone();
+    return LedgerSyncCliHelper.getCloudSyncResponse(page);
+  }
+
+  static checkAccountDeletion(parsedData: any, accountId: string): any {
+    return (parsedData.updateEvent.data as LiveData).accounts?.find(
+      account => account.id === accountId,
+    );
   }
 }
