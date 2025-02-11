@@ -4,24 +4,24 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getAbandonSeedAddress } from "@ledgerhq/live-common/currencies/index";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
-import { Account, AccountLike } from "@ledgerhq/types-live";
+import { Account, AccountBridge, AccountLike } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { SEG_WIT_ABANDON_SEED_ADDRESS } from "../consts";
+
+import { NavigationProp, NavigationState } from "@react-navigation/native";
+import { NavigatorName, ScreenName } from "~/const";
 import {
   convertToAtomicUnit,
   convertToNonAtomicUnit,
   getCustomFeesPerFamily,
-  transformToBigNumbers,
 } from "../utils";
-import { NavigationProp, NavigationState } from "@react-navigation/native";
-import { NavigatorName, ScreenName } from "~/const";
 
 interface FeeParams {
   fromAccountId: string;
   fromAmount: string;
   feeStrategy: Strategy;
   openDrawer: boolean;
-  customFeeConfig: Record<string, unknown>;
+  customFeeConfig: object;
   SWAP_VERSION: string;
 }
 
@@ -30,7 +30,7 @@ export interface FeeData {
   estimatedFees: BigNumber | undefined;
   errors: TransactionStatus["errors"];
   warnings: TransactionStatus["warnings"];
-  customFeeConfig: Record<string, unknown>;
+  customFeeConfig: object;
 }
 
 interface GenerateFeeDataParams {
@@ -38,7 +38,9 @@ interface GenerateFeeDataParams {
   feePayingAccount: Account;
   feesStrategy: Strategy;
   fromAmount: BigNumber | undefined;
-  customFeeConfig: Record<string, unknown>;
+  customFeeConfig: object;
+  bridge: AccountBridge<any>;
+  baseTransaction: any;
 }
 
 const getRecipientAddress = (
@@ -61,27 +63,25 @@ const generateFeeData = async ({
   feesStrategy = "medium",
   fromAmount,
   customFeeConfig,
+  bridge,
+  baseTransaction,
 }: GenerateFeeDataParams): Promise<FeeData> => {
-  const bridge = getAccountBridge(account, feePayingAccount);
-  const baseTransaction = bridge.createTransaction(feePayingAccount);
-
   const recipient = getRecipientAddress(baseTransaction.family, feePayingAccount.currency.id);
-
   const transactionConfig: Transaction = {
     ...baseTransaction,
     subAccountId: account.type !== "Account" ? account.id : undefined,
     recipient,
     amount: fromAmount ?? new BigNumber(0),
     feesStrategy,
-    ...transformToBigNumbers(customFeeConfig),
+    ...customFeeConfig,
   };
 
-  const preparedTransaction = await bridge.updateTransaction(feePayingAccount, transactionConfig);
+  const preparedTransaction = bridge.updateTransaction(feePayingAccount, transactionConfig);
+
   const transactionStatus = await bridge.getTransactionStatus(
     feePayingAccount,
     preparedTransaction,
   );
-
   return {
     feesStrategy,
     estimatedFees: convertToNonAtomicUnit({
@@ -120,40 +120,43 @@ export const getFee =
     const amount = new BigNumber(params.fromAmount);
     const atomicAmount = convertToAtomicUnit({ amount, account });
 
-    if (params.openDrawer) {
-      return new Promise(resolve => {
-        navigation.navigate(NavigatorName.Fees, {
-          screen: ScreenName.FeeHomePage,
-          params: {
-            onSelect: async feesStrategy => {
-              console.log("xxxxxxx", feesStrategy);
-              const newFeeData = await generateFeeData({
-                account,
-                feePayingAccount,
-                feesStrategy,
-                fromAmount: atomicAmount,
-                customFeeConfig: params.customFeeConfig,
-              });
-              resolve(newFeeData);
-              navigation.canGoBack() && navigation.goBack();
-            },
-            account,
-            feePayingAccount,
-            fromAmount: amount,
-            feesStrategy: params.feeStrategy,
-            customFeeConfig: params.customFeeConfig,
+    const bridge = getAccountBridge(account, feePayingAccount);
+    const baseTransaction = bridge.createTransaction(feePayingAccount);
+
+    // if (params.openDrawer) {
+    return new Promise(resolve => {
+      navigation.navigate(NavigatorName.Fees, {
+        screen: ScreenName.FeeHomePage,
+        params: {
+          onSelect: async (feesStrategy, customFeeConfig) => {
+            const newFeeData = await generateFeeData({
+              account,
+              feePayingAccount,
+              feesStrategy,
+              fromAmount: atomicAmount,
+              customFeeConfig,
+              bridge,
+              baseTransaction,
+            });
+            resolve(newFeeData);
+            navigation.canGoBack() && navigation.goBack();
           },
-        });
+          account,
+          feePayingAccount,
+          fromAmount: amount,
+          feesStrategy: params.feeStrategy,
+          customFeeConfig: params.customFeeConfig,
+          transaction: baseTransaction,
+        },
       });
-    }
-
-    console.log('xxxxxxx','RETURN DEFAULT FEE DATA');
-
-    return await generateFeeData({
-      account,
-      feePayingAccount,
-      feesStrategy: params.feeStrategy,
-      fromAmount: atomicAmount,
-      customFeeConfig: params.customFeeConfig,
     });
+    // }
+
+    // return await generateFeeData({
+    //   account,
+    //   feePayingAccount,
+    //   feesStrategy: params.feeStrategy,
+    //   fromAmount: atomicAmount,
+    //   customFeeConfig: params.customFeeConfig,
+    // });
   };

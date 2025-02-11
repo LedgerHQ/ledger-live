@@ -1,28 +1,41 @@
-import { Strategy } from "@ledgerhq/coin-evm/lib/types/index";
-import { SpeedFast, SpeedLow, SpeedMedium } from "@ledgerhq/icons-ui/native";
+import { getDefaultFeeUnit } from "@ledgerhq/coin-evm/lib/logic";
+import { FeeData, Strategy } from "@ledgerhq/coin-evm/lib/types/index";
 import { Flex, Text } from "@ledgerhq/native-ui";
+import { Account } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import { TouchableOpacity } from "react-native";
 import { useTheme } from "styled-components/native";
 import { StrategyIcon } from "./StrategyIcon";
-import { TouchableOpacity } from "react-native";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/lib/currencies/formatCurrencyUnit";
 
 type Props = {
   strategy: Strategy;
   active: boolean;
-  onSelect(): void,
+  onSelect(): void;
+  gasOption?: BigNumber;
+  feePayingAccount: Account;
 };
 
-export function FeeContainer({ strategy, active, onSelect }: Props) {
+export function FeeContainer({ strategy, active, onSelect, gasOption, feePayingAccount }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
+
+  const unit = useMemo(() => feePayingAccount.currency.units[0], [feePayingAccount.currency]);
+
+  const magnitudeAwareGasOption = useMemo(() => {
+    return formatCurrencyUnit(unit, gasOption ?? BigNumber(0));
+  }, [gasOption, unit]);
+
+  if (!gasOption) return null;
 
   return (
     <TouchableOpacity onPress={onSelect}>
       <Flex
         flexDirection="column"
         border={1.5}
-        borderColor={active ? colors.opacityPurple.c30 : 'transparent'}
+        borderColor={active ? colors.opacityPurple.c30 : "transparent"}
         backgroundColor={active ? colors.opacityPurple.c20 : colors.opacityDefault.c05}
         borderRadius={12}
         p={16}
@@ -39,7 +52,7 @@ export function FeeContainer({ strategy, active, onSelect }: Props) {
           </Flex>
           <Flex flexDirection="column" ml="auto">
             <Text variant="large" textAlign="right">
-              {"0.0053 ETH"}
+              {magnitudeAwareGasOption.toString()}
             </Text>
             <Text variant="small" textAlign="right" color={colors.opacityDefault.c50}>
               {"$12.00"}
