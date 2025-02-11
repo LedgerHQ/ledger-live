@@ -287,10 +287,10 @@ test.describe("Swap flow from different entry point", () => {
         description: "B2CQA-2985",
       },
     },
-    async ({ app, electronApp, page }) => {
+    async ({ app, electronApp }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.layout.goToPortfolio();
-      await app.swap.goAndWaitForSwapToBeReady(app, page, () => app.portfolio.clickSwapButton());
+      await app.swap.goAndWaitForSwapToBeReady(() => app.portfolio.clickSwapButton());
       await app.swap.expectSelectedAssetDisplayed("BTC", electronApp);
     },
   );
@@ -303,11 +303,11 @@ test.describe("Swap flow from different entry point", () => {
         description: "B2CQA-2986",
       },
     },
-    async ({ app, electronApp, page }) => {
+    async ({ app, electronApp }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.layout.goToPortfolio();
       await app.portfolio.clickOnSelectedAssetRow(swapEntryPoint.swap.accountToDebit.currency.name);
-      await app.swap.goAndWaitForSwapToBeReady(app, page, () => app.assetPage.startSwapFlow());
+      await app.swap.goAndWaitForSwapToBeReady(() => app.assetPage.startSwapFlow());
       await app.swap.expectSelectedAssetDisplayed(
         swapEntryPoint.swap.accountToDebit.currency.name,
         electronApp,
@@ -323,10 +323,10 @@ test.describe("Swap flow from different entry point", () => {
         description: "B2CQA-2987",
       },
     },
-    async ({ app, electronApp, page }) => {
+    async ({ app, electronApp }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.layout.goToMarket();
-      await app.swap.goAndWaitForSwapToBeReady(app, page, () =>
+      await app.swap.goAndWaitForSwapToBeReady(() =>
         app.market.startSwapForSelectedTicker(swapEntryPoint.swap.accountToDebit.currency.ticker),
       );
       await app.swap.expectSelectedAssetDisplayed(
@@ -348,13 +348,11 @@ test.describe("Swap flow from different entry point", () => {
         description: "B2CQA-2988",
       },
     },
-    async ({ app, electronApp, page }) => {
+    async ({ app, electronApp }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.layout.goToMarket();
       await app.market.openCoinPage(swapEntryPoint.swap.accountToDebit.currency.ticker);
-      await app.swap.goAndWaitForSwapToBeReady(app, page, () =>
-        app.market.clickOnSwapButtonOnAsset(),
-      );
+      await app.swap.goAndWaitForSwapToBeReady(() => app.market.clickOnSwapButtonOnAsset());
       await app.swap.expectSelectedAssetDisplayed(
         swapEntryPoint.swap.accountToDebit.currency.name,
         electronApp,
@@ -370,11 +368,11 @@ test.describe("Swap flow from different entry point", () => {
         description: "B2CQA-2989",
       },
     },
-    async ({ app, electronApp, page }) => {
+    async ({ app, electronApp }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.layout.goToAccounts();
       await app.accounts.navigateToAccountByName(swapEntryPoint.swap.accountToDebit.accountName);
-      await app.swap.goAndWaitForSwapToBeReady(app, page, () => app.account.navigateToSwap());
+      await app.swap.goAndWaitForSwapToBeReady(() => app.account.navigateToSwap());
       await app.swap.expectSelectedAssetDisplayed(
         swapEntryPoint.swap.accountToDebit.currency.name,
         electronApp,
@@ -394,9 +392,9 @@ test.describe("Swap flow from different entry point", () => {
         description: "B2CQA-2990, B2CQA-523",
       },
     },
-    async ({ app, electronApp, page }) => {
+    async ({ app, electronApp }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-      await app.swap.goAndWaitForSwapToBeReady(app, page, () => app.layout.goToSwap());
+      await app.swap.goAndWaitForSwapToBeReady(() => app.layout.goToSwap());
       await app.swap.expectSelectedAssetDisplayed("BTC", electronApp);
     },
   );
@@ -408,7 +406,7 @@ async function performSwapUntilQuoteSelectionStep(
   page: Page,
   swap: Swap,
 ) {
-  await app.swap.goAndWaitForSwapToBeReady(app, page, () => app.layout.goToSwap());
+  await app.swap.goAndWaitForSwapToBeReady(() => app.layout.goToSwap());
 
   await app.swap.selectAssetFrom(electronApp, swap.accountToDebit);
   await app.swapDrawer.selectAccountByName(swap.accountToDebit);
