@@ -1,7 +1,6 @@
 import {
   makeAccountBridgeReceive,
   makeScanAccounts,
-  getSerializedAddressParameters,
   makeSync,
   updateTransaction,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
@@ -17,6 +16,7 @@ import createTransaction from "./createTransaction";
 import { getAccountShape } from "./synchronisation";
 import buildSignOperation from "./signOperation";
 import broadcast from "./broadcast";
+import { pathToBuffer } from "@ledgerhq/ledger-libs/packages/hw-app-aptos";
 
 function buildCurrencyBridge(signerContext: SignerContext<AptosSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
@@ -48,7 +48,7 @@ function buildAccountBridge(
     createTransaction,
     updateTransaction,
     getTransactionStatus,
-    getSerializedAddressParameters,
+    getSerializedAddressParameters: account => pathToBuffer(account.freshAddressPath),
     prepareTransaction,
     sync,
     receive,

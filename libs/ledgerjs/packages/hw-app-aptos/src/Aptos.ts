@@ -44,6 +44,21 @@ export interface AddressData {
   address: string;
 }
 
+export const pathToBuffer = (originalPath: string): Buffer => {
+  const path = originalPath
+    .split("/")
+    .filter(value => value !== "m")
+    .map(value => (value.endsWith("'") || value.endsWith("h") ? value : value + "'"))
+    .join("/");
+  const pathNums: number[] = BIPPath.fromString(path).toPathArray();
+  const buf = Buffer.alloc(1 + pathNums.length * 4);
+  buf.writeUInt8(pathNums.length, 0);
+  for (const [i, num] of pathNums.entries()) {
+    buf.writeUInt32BE(num, 1 + i * 4);
+  }
+  return buf;
+};
+
 /**
  * Aptos API
  *
@@ -108,7 +123,7 @@ export default class Aptos {
    * const { publicKey, address } = result;
    */
   async getAddress(path: string, display = false): Promise<AddressData> {
-    const pathBuffer = this.pathToBuffer(path);
+    const pathBuffer = pathToBuffer(path);
     const responseBuffer = await this.sendToDevice(
       INS.GET_PUBLIC_KEY,
       display ? P1_CONFIRM : P1_NON_CONFIRM,
@@ -142,7 +157,7 @@ export default class Aptos {
    * const signature = await aptos.signTransaction("44'/144'/0'/0/0", "12000022800000002400000002614000000001315D3468400000000000000C73210324E5F600B52BB3D9246D49C4AB1722BA7F32B7A3E4F9F2B8A1A28B9118CC36C48114F31B152151B6F42C1D61FE4139D34B424C8647D183142ECFC1831F6E979C6DA907E88B1CAD602DB59E2F");
    */
   async signTransaction(path: string, txBuffer: Buffer): Promise<{ signature: Buffer }> {
-    const pathBuffer = this.pathToBuffer(path);
+    const pathBuffer = pathToBuffer(path);
     await this.sendToDevice(INS.SIGN_TX, P1_START, P2_MORE, pathBuffer);
     const responseBuffer = await this.sendToDevice(INS.SIGN_TX, 1, P2_LAST, txBuffer);
 
@@ -181,25 +196,6 @@ export default class Aptos {
     this.throwOnFailure(reply);
 
     return reply.subarray(0, reply.length - 2);
-  }
-
-  private pathToBuffer(originalPath: string): Buffer {
-    const path = originalPath
-      .split("/")
-      .filter(value => value !== "m")
-      .map(value => (value.endsWith("'") || value.endsWith("h") ? value : value + "'"))
-      .join("/");
-    const pathNums: number[] = BIPPath.fromString(path).toPathArray();
-    return this.serializePath(pathNums);
-  }
-
-  private serializePath(path: number[]): Buffer {
-    const buf = Buffer.alloc(1 + path.length * 4);
-    buf.writeUInt8(path.length, 0);
-    for (const [i, num] of path.entries()) {
-      buf.writeUInt32BE(num, 1 + i * 4);
-    }
-    return buf;
   }
 
   private publicKeyToAddress(pubKey: Buffer): Buffer {
