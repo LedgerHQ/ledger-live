@@ -1,17 +1,17 @@
 import { t } from "i18next";
 import React from "react";
 import { NotificationCard } from "@ledgerhq/react-ui";
-import { AnalyticsButton, AnalyticsPage } from "LLD/features/LNSUpsell/types/enum/Analytics";
-import { openURL } from "~/renderer/linking";
 import { track } from "~/renderer/analytics/segment";
+import { openURL } from "~/renderer/linking";
+import { AnalyticsButton, AnalyticsPage, type LNSUpsellType } from "../../types";
 
 type Props = {
-  type: "optIn" | "optOut";
+  type: LNSUpsellType;
   ctaLink: string;
   discount: number;
 };
 
-export function LNSNotificationBanner({ type, ctaLink, discount }: Props) {
+export function LNSNotificationBanner({ type, ctaLink, discount }: Readonly<Props>) {
   const handleClick = () => {
     track("button_clicked", {
       button: AnalyticsButton.CTA,

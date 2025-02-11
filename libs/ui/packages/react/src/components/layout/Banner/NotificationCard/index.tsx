@@ -65,9 +65,9 @@ export default function NotificationCard({
           <Desc color={isHighlighted ? "neutral.c100" : "neutral.c80"}>{description}</Desc>
         )}
         {cta && (
-          <CTA color={ctaColor} onClick={handleCTAClick}>
+          <Cta color={ctaColor} onClick={handleCTAClick}>
             {cta}
-          </CTA>
+          </Cta>
         )}
       </Flex>
     </Wrapper>
@@ -81,7 +81,7 @@ const Desc = styled(Text).attrs({ variant: "small" })`
   font-weight: 500;
 `;
 
-const CTA = styled(Link).attrs({ alignSelf: "start" })`
+const Cta = styled(Link).attrs({ alignSelf: "start" })`
   font-size: 13px;
 `;
 
