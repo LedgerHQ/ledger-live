@@ -120,6 +120,7 @@
     "addressCopiedSuspicious" : "Incompatibilidade entre o endereço copiado e o que está na área de transferência.",
     "experimentalFeature" : "Experimental",
     "featureFlags" : "Marcadores de funções",
+    "ldmkEnabled" : "Transporte LDMK",
     "information" : "Informações",
     "search" : "Pesquisar...",
     "searchWithoutEllipsis" : "Pesquisar",
@@ -448,8 +449,14 @@
       "ton_description" : "Para trocar Ton, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
       "spl_tokens_title" : "A Ledger Nano S™ não é compatível com a troca de tokens Solana",
       "spl_tokens_description" : "Para trocar tokens Solana, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+      "near_title" : "A Ledger Nano S™ não é compatível com trocas de Near",
+      "near_description" : "Para trocar o ativo Near, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
       "ada_title" : "A Ledger Nano S™ não é compatível com a troca de Cardano",
-      "ada_description" : "Para trocar Cardano, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™."
+      "ada_description" : "Para trocar Cardano, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+      "apt_title" : "A Ledger Nano S™ não suporta trocas de APTOS",
+      "apt_description" : "Para trocar o ativo APTOS, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+      "cosmos_title" : "Ledger Nano S™ does not support swapping Cosmos",
+      "cosmos_description" : "To swap Cosmos, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
     },
     "providers" : {
       "title" : "Escolha um provedor para trocar cripto",
@@ -5713,18 +5720,18 @@
       "title" : "Nenhuma conta encontrada",
       "description" : "Algo deu errado com o cálculo do endereço, tente novamente ou contate o Suporte Ledger"
     },
-    "ElrondDecimalsLimitReached" : {
+    "MultiversXDecimalsLimitReached" : {
       "title" : "Limite máximo de decimais alcançado",
       "description" : "Certifique-se de que a quantia fornecida tenha 18 decimais."
     },
-    "ElrondMinDelegatedAmountError" : {
-      "title" : "Quantia delegada deve ser de pelo menos {{formattedAmount}}"
+    "MultiversXMinDelegatedAmountError" : {
+      "title" : "A quantia mínima para delegar é {{formattedAmount}}"
     },
-    "ElrondMinUndelegatedAmountError" : {
-      "title" : "Quantia desdelegada deve ser de pelo menos {{formattedAmount}}"
+    "MultiversXMinUndelegatedAmountError" : {
+      "title" : "A quantia mínima para desdelegar é {{formattedAmount}}"
     },
-    "ElrondDelegationBelowMinimumError" : {
-      "title" : "Delegação restante não pode ser menos que {{formattedAmount}}"
+    "MultiversXDelegationBelowMinimumError" : {
+      "title" : "O restante na delegação não pode ser menor que {{formattedAmount}}"
     },
     "NotEnoughEGLDForFees" : {
       "title" : "EGLD insuficientes para pagar as taxas de transação",
@@ -6222,6 +6229,9 @@
     },
     "SolanaTokenAccounNotInitialized" : {
       "title" : "Conta não inicializada"
+    },
+    "SolanaTokenRecipientIsSenderATA" : {
+      "title" : "O endereço do destinatário é o mesmo que o endereço do remetente do token"
     },
     "SolanaMemoIsTooLong" : {
       "title" : "O memo é muito longo. O comprimento máximo é {{maxLength}}"
