@@ -82,8 +82,9 @@ import { useKeepScreenAwake } from "~/renderer/hooks/useKeepScreenAwake";
 import { walletSelector } from "~/renderer/reducers/wallet";
 import { useTrackManagerSectionEvents } from "~/renderer/analytics/hooks/useTrackManagerSectionEvents";
 import { useTrackReceiveFlow } from "~/renderer/analytics/hooks/useTrackReceiveFlow";
+import { useTrackAddAccountModal } from "~/renderer/analytics/hooks/useTrackAddAccountModal";
 
-type LedgerError = InstanceType<LedgerErrorConstructor<{ [key: string]: unknown }>>;
+export type LedgerError = InstanceType<LedgerErrorConstructor<{ [key: string]: unknown }>>;
 
 type PartialNullable<T> = {
   [P in keyof T]?: T[P] | null;
@@ -255,6 +256,16 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     error,
     inWrongDeviceForAccount,
     isTrackingEnabled: useSelector(trackingEnabledSelector),
+  });
+
+  useTrackAddAccountModal({
+    location,
+    device,
+    error,
+    isTrackingEnabled: useSelector(trackingEnabledSelector),
+    requestOpenApp,
+    userMustConnectDevice: !isLoading && !device,
+    isLocked,
   });
 
   const type = useTheme().colors.palette.type;

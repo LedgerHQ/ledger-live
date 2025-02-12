@@ -29,11 +29,11 @@ import CompleteExchange, {
   isCompleteExchangeData,
 } from "~/renderer/modals/Platform/Exchange/CompleteExchange/Body";
 import { ExchangeType } from "@ledgerhq/live-common/wallet-api/Exchange/server";
+import { getIncompatibleCurrencyKeys } from "@ledgerhq/live-common/exchange/swap/index";
 import { Exchange, isExchangeSwap } from "@ledgerhq/live-common/exchange/types";
 import { HardwareUpdate, renderLoading } from "./DeviceAction/rendering";
 import { createCustomErrorClass } from "@ledgerhq/errors";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
-import { ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
 
 const Divider = styled(Box)`
   border: 1px solid ${p => p.theme.colors.palette.divider};
@@ -64,51 +64,6 @@ export function isStartExchangeData(data: unknown): data is StartExchangeData {
 }
 
 const DrawerClosedError = createCustomErrorClass("DrawerClosedError");
-
-type Keys = Record<string, { title: string; description: string }>;
-
-const INCOMPATIBLE_NANO_S_TOKENS_KEYS: Keys = {
-  solana: {
-    title: "swap.incompatibility.spl_tokens_title",
-    description: "swap.incompatibility.spl_tokens_description",
-  },
-};
-
-const INCOMPATIBLE_NANO_S_CURRENCY_KEYS: Keys = {
-  ton: {
-    title: "swap.incompatibility.ton_title",
-    description: "swap.incompatibility.ton_description",
-  },
-  cardano: {
-    title: "swap.incompatibility.ada_title",
-    description: "swap.incompatibility.ada_description",
-  },
-  aptos: {
-    title: "swap.incompatibility.apt_title",
-    description: "swap.incompatibility.apt_description",
-  },
-  near: {
-    title: "swap.incompatibility.near_title",
-    description: "swap.incompatibility.near_description",
-  },
-};
-const getIncompatibleCurrencyKeys = (exchange: ExchangeSwap) => {
-  const parentFrom =
-    (exchange?.fromAccount?.type === "TokenAccount" && exchange?.fromParentAccount?.currency?.id) ||
-    "";
-  const parentTo =
-    (exchange?.toAccount?.type === "TokenAccount" && exchange?.toParentAccount?.currency?.id) || "";
-  const from =
-    (exchange?.fromAccount.type === "Account" && exchange?.fromAccount?.currency?.id) || "";
-  const to = (exchange?.toAccount.type === "Account" && exchange?.toAccount?.currency?.id) || "";
-
-  return (
-    INCOMPATIBLE_NANO_S_TOKENS_KEYS[parentFrom] ||
-    INCOMPATIBLE_NANO_S_TOKENS_KEYS[parentTo] ||
-    INCOMPATIBLE_NANO_S_CURRENCY_KEYS[from] ||
-    INCOMPATIBLE_NANO_S_CURRENCY_KEYS[to]
-  );
-};
 
 export const LiveAppDrawer = () => {
   const [dismissDisclaimerChecked, setDismissDisclaimerChecked] = useState<boolean>(false);
@@ -214,7 +169,7 @@ export const LiveAppDrawer = () => {
       case "EXCHANGE_START": {
         if (data && isStartExchangeData(data)) {
           if (device?.modelId === "nanoS" && data.exchange && isExchangeSwap(data.exchange)) {
-            if (data.provider === "thorswap") {
+            if (data.provider && ["thorswap", "lifi"].includes(data.provider)) {
               return (
                 <HardwareUpdate
                   i18nKeyTitle="swap.wrongDevice.title"

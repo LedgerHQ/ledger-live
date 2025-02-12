@@ -16,7 +16,7 @@ function makeMockSettings({
   wired: boolean;
 }): {
   lastConnectedDevice: State["settings"]["lastConnectedDevice"];
-  lastSeenDevice: State["settings"]["lastSeenDevice"];
+  seenDevices: State["settings"]["seenDevices"];
   hasCompletedOnboarding: boolean;
 } {
   return {
@@ -26,11 +26,13 @@ function makeMockSettings({
       modelId,
       wired,
     },
-    lastSeenDevice: {
-      modelId,
-      deviceInfo: aDeviceInfoBuilder({ version }),
-      apps: [],
-    },
+    seenDevices: [
+      {
+        modelId,
+        deviceInfo: aDeviceInfoBuilder({ version }),
+        apps: [],
+      },
+    ],
     hasCompletedOnboarding,
   };
 }

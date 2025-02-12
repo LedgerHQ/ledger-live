@@ -1,106 +1,57 @@
-import React, { useCallback } from "react";
+import React from "react";
+import { StyleSheet } from "react-native";
 import { Flex, Icons, rgba, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
-import { Animated, StyleSheet, TouchableOpacity, View } from "react-native";
-import { useTheme } from "styled-components/native";
-import { NavigatorName, ScreenName } from "~/const";
-import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
-import AccountItem from "../../components/AccountsListView/components/AccountItem";
 import { Account } from "@ledgerhq/types-live";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { ScreenName } from "~/const";
 import SafeAreaView from "~/components/SafeAreaView";
 import Circle from "~/components/Circle";
-import { NetworkBasedAddAccountNavigator } from "../AddAccount/types";
-import VerticalGradientBackground from "../../components/VerticalGradientBackground";
-import BigNumber from "bignumber.js";
-import { useNavigation } from "@react-navigation/core";
-import useAnimatedStyle from "../ScanDeviceAccounts/components/ScanDeviceAccountsFooter/useAnimatedStyle";
-import AddFundsButton from "../../components/AddFundsButton";
 import CloseWithConfirmation from "LLM/components/CloseWithConfirmation";
-import { AddAccountContexts } from "../AddAccount/enums";
-type Props = BaseComposite<
-  StackNavigatorProps<NetworkBasedAddAccountNavigator, ScreenName.AddAccountsWarning>
->;
+import VerticalGradientBackground from "../../components/VerticalGradientBackground";
+import AddFundsButton from "../../components/AddFundsButton";
+import useAddAccountWarningViewModel, { type Props } from "./useAddAccountWarningViewModel";
+import AnimatedAccountItem from "../../components/AccountsListView/components/AnimatedAccountItem";
 
-export default function AddAccountsWarning({ route }: Props) {
-  const { colors } = useTheme();
+type ViewProps = ReturnType<typeof useAddAccountWarningViewModel>;
+
+const View = ({
+  space,
+  statusColor,
+  emptyAccount,
+  emptyAccountName,
+  currency,
+  goToAccounts,
+  handleOnCloseWarningScreen,
+}: ViewProps) => {
   const { t } = useTranslation();
-  const insets = useSafeAreaInsets();
-  const navigation = useNavigation();
-
-  const { animatedSelectableAccount } = useAnimatedStyle();
-
-  const { emptyAccount, emptyAccountName, currency, context } = route.params || {};
-
-  const statusColor = colors.warning.c70;
-
-  const goToAccounts = useCallback(
-    (accountId: string) => () => {
-      if (context === AddAccountContexts.AddAccounts) {
-        navigation.navigate(ScreenName.Account, {
-          accountId,
-        });
-      } else {
-        navigation.navigate(NavigatorName.ReceiveFunds, {
-          screen: ScreenName.ReceiveConfirmation,
-          params: {
-            ...route.params,
-            accountId,
-          },
-        });
-      }
-    },
-    [navigation, route.params, context],
-  );
-
-  const handleOnCloseWarningScreen = useCallback(() => {
-    navigation.goBack();
-  }, [navigation]);
 
   return (
-    <SafeAreaView edges={["left", "right"]} isFlex>
+    <SafeAreaView edges={["left", "right", "bottom", "top"]} isFlex>
       <VerticalGradientBackground stopColor={statusColor} />
-      <Flex alignItems={"center"} flex={1} style={styles.root}>
-        <View style={[styles.iconWrapper, { backgroundColor: rgba(statusColor, 0.1) }]}>
-          <Circle size={24}>
-            <Icons.WarningFill size="L" color={statusColor} />
-          </Circle>
-        </View>
-        <>
-          <Text style={styles.title}>
-            {t("addAccounts.addAccountsWarning.cantCreateAccount.title", {
-              accountName: emptyAccountName,
-            })}
-          </Text>
-
-          <Text style={styles.desc}>
-            {t("addAccounts.addAccountsWarning.cantCreateAccount.body", {
-              accountName: emptyAccountName,
-            })}
-          </Text>
-        </>
+      <Flex alignItems="center" pt={space[10]}>
+        <Circle size={24} bg={rgba(statusColor, 0.05)} style={styles.iconWrapper}>
+          <Icons.WarningFill size="L" color={statusColor} />
+        </Circle>
+        <Text style={styles.title}>
+          {t("addAccounts.addAccountsWarning.cantCreateAccount.title", {
+            accountName: emptyAccountName,
+          })}
+        </Text>
+        <Text style={styles.desc} variant="bodyLineHeight" color="neutral.c70">
+          {t("addAccounts.addAccountsWarning.cantCreateAccount.body", {
+            accountName: emptyAccountName,
+          })}
+        </Text>
       </Flex>
-      <Flex flex={1} p={6} flexDirection="row" justifyContent="center">
-        <Animated.View style={[animatedSelectableAccount]}>
-          <TouchableOpacity onPress={goToAccounts(emptyAccount?.id as string)}>
-            <Flex
-              flexDirection="row"
-              alignItems="center"
-              backgroundColor="neutral.c30"
-              borderRadius="12px"
-              padding="12px"
-              width={343}
-            >
-              <AccountItem
-                account={emptyAccount as Account}
-                balance={emptyAccount?.spendableBalance as BigNumber}
-              />
-              <Icons.ChevronRight size="M" color={colors.primary.c100} />
-            </Flex>
-          </TouchableOpacity>
-        </Animated.View>
+      <Flex flex={1} px={space[6]} flexDirection="row" justifyContent="center">
+        <AnimatedAccountItem
+          item={emptyAccount as Account}
+          onPress={goToAccounts(emptyAccount?.id as string)}
+        >
+          <Icons.ChevronRight color="neutral.c100" />
+        </AnimatedAccountItem>
       </Flex>
-      <Flex mb={insets.bottom + 2} px={6} rowGap={6}>
+      <Flex px={6} rowGap={6}>
         <AddFundsButton
           accounts={[emptyAccount as Account]}
           currency={currency}
@@ -114,17 +65,11 @@ export default function AddAccountsWarning({ route }: Props) {
       </Flex>
     </SafeAreaView>
   );
-}
+};
 
 const styles = StyleSheet.create({
-  root: {
-    paddingHorizontal: 20,
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: 50,
-  },
   title: {
-    marginTop: 32,
+    marginTop: 16,
     fontSize: 24,
     textAlign: "center",
     width: "100%",
@@ -139,6 +84,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 32,
     textAlign: "center",
     fontSize: 14,
+    lineHeight: 24,
   },
   iconWrapper: {
     height: 72,
@@ -148,3 +94,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
 });
+
+const AddAccountsWarning: React.FC<Props> = props => (
+  <View {...useAddAccountWarningViewModel(props)} />
+);
+
+export default AddAccountsWarning;

@@ -10,6 +10,7 @@ import {
   LayoutChangeEvent,
 } from "react-native/Libraries/Types/CoreEventTypes";
 import AddAccountButton from "LLM/features/Accounts/components/AddAccountButton";
+import { type TabListType } from "./useListsAnimation";
 
 export const TAB_OPTIONS = {
   Assets: "Assets",
@@ -23,16 +24,15 @@ type BaseAnimationStyle = {
   opacity: number;
 };
 
-type TabSectionType = (typeof TAB_OPTIONS)[keyof typeof TAB_OPTIONS];
-
 type TabSectionProps = {
   t: (key: string) => string;
-  handleToggle: (value: string) => void;
+  handleToggle: (value: TabListType) => void;
   handleLayout: (event: LayoutChangeEvent) => void;
   handleAssetsContentSizeChange: (width: number, height: number) => void;
   handleAccountsContentSizeChange: (width: number, height: number) => void;
-  handleButtonLayout: (tab: TabSectionType, event: LayoutChangeEvent) => void;
+  handleButtonLayout: (tab: TabListType, event: LayoutChangeEvent) => void;
   onPressButton: (uiEvent: GestureResponderEvent) => void;
+  initialTab: TabListType;
   showAssets: boolean;
   assetsLength: number;
   showAccounts: boolean;
@@ -51,6 +51,7 @@ const TabSection: React.FC<TabSectionProps> = ({
   handleAccountsContentSizeChange,
   handleButtonLayout,
   onPressButton,
+  initialTab,
   showAssets,
   assetsLength,
   showAccounts,
@@ -68,6 +69,7 @@ const TabSection: React.FC<TabSectionProps> = ({
           { id: TAB_OPTIONS.Accounts, value: t("accounts.title") },
         ]}
         onToggle={handleToggle}
+        initialTab={initialTab}
       />
     </Box>
     <Flex

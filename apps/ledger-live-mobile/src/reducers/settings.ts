@@ -81,6 +81,7 @@ import type {
   SettingsSetHasBeenRedirectedToPostOnboardingPayload,
   SettingsSetMevProtectionPayload,
   SettingsUpdateNftCollectionStatus,
+  SettingsSetSelectedTabPortfolioAssetsPayload,
 } from "../actions/types";
 import {
   SettingsActionTypes,
@@ -143,7 +144,7 @@ export const INITIAL_STATE: SettingsState = {
     acceptedProviders: [],
     selectableCurrencies: [],
   },
-  lastSeenDevice: null,
+  seenDevices: [],
   knownDeviceModelIds: {
     blue: false,
     nanoS: false,
@@ -183,6 +184,7 @@ export const INITIAL_STATE: SettingsState = {
   starredMarketCoins: [],
   fromLedgerSyncOnboarding: false,
   mevProtection: true,
+  selectedTabPortfolioAssets: "Assets",
 };
 
 const pairHash = (from: { ticker: string }, to: { ticker: string }) =>
@@ -445,17 +447,19 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     },
   }),
 
-  [SettingsActionTypes.LAST_SEEN_DEVICE_INFO]: (state, action) => ({
-    ...state,
-    lastSeenDevice: {
-      ...(state.lastSeenDevice || {}),
-      ...(action as Action<SettingsLastSeenDeviceInfoPayload>).payload,
-    },
-    knownDeviceModelIds: {
-      ...state.knownDeviceModelIds,
-      [(action as Action<SettingsLastSeenDeviceInfoPayload>).payload.modelId]: true,
-    },
-  }),
+  [SettingsActionTypes.LAST_SEEN_DEVICE_INFO]: (state, action) => {
+    const { payload } = action as Action<SettingsLastSeenDeviceInfoPayload>;
+    return {
+      ...state,
+      seenDevices: state.seenDevices
+        .filter(d => d.deviceInfo.targetId !== payload.deviceInfo.targetId)
+        .concat({ ...state.seenDevices.at(-1), ...payload }),
+      knownDeviceModelIds: {
+        ...state.knownDeviceModelIds,
+        [payload.modelId]: true,
+      },
+    };
+  },
 
   [SettingsActionTypes.SET_KNOWN_DEVICE_MODEL_IDS]: (state, action) => ({
     ...state,
@@ -478,16 +482,15 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
   }),
 
   [SettingsActionTypes.LAST_SEEN_DEVICE_LANGUAGE_ID]: (state, action) => {
-    if (!state.lastSeenDevice) return state;
+    const lastSeenDevice = state.seenDevices.at(-1);
+    if (!lastSeenDevice) return state;
+    const payload = (action as Action<SettingsLastSeenDeviceLanguagePayload>).payload;
     return {
       ...state,
-      lastSeenDevice: {
-        ...state.lastSeenDevice,
-        deviceInfo: {
-          ...state.lastSeenDevice.deviceInfo,
-          languageId: (action as Action<SettingsLastSeenDeviceLanguagePayload>).payload,
-        },
-      },
+      seenDevices: state.seenDevices.slice(0, -1).concat({
+        ...lastSeenDevice,
+        deviceInfo: { ...lastSeenDevice.deviceInfo, languageId: payload },
+      }),
     };
   },
 
@@ -675,6 +678,12 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     ...state,
     mevProtection: (action as Action<SettingsSetMevProtectionPayload>).payload,
   }),
+
+  [SettingsActionTypes.SET_SELECTED_TAB_PORTFOLIO_ASSETS]: (state, action) => ({
+    ...state,
+    selectedTabPortfolioAssets: (action as Action<SettingsSetSelectedTabPortfolioAssetsPayload>)
+      .payload,
+  }),
 };
 
 export default handleActions<SettingsState, SettingsPayload>(handlers, INITIAL_STATE);
@@ -851,8 +860,9 @@ export const hasSeenStaxEnabledNftsPopupSelector = (state: State) =>
   state.settings.hasSeenStaxEnabledNftsPopup;
 export const customImageTypeSelector = (state: State) => state.settings.customLockScreenType;
 
+export const seenDevicesSelector = (state: State) => state.settings.seenDevices;
 export const lastSeenDeviceSelector = (state: State) => {
-  const { lastSeenDevice } = state.settings;
+  const lastSeenDevice = state.settings.seenDevices.at(-1);
   if (!lastSeenDevice || !Object.values(DeviceModelId).includes(lastSeenDevice?.modelId))
     return null;
   return lastSeenDevice;
@@ -905,6 +915,8 @@ export const isFromLedgerSyncOnboardingSelector = (state: State) =>
 export const starredMarketCoinsSelector = (state: State) => state.settings.starredMarketCoins;
 
 export const mevProtectionSelector = (state: State) => state.settings.mevProtection;
+export const selectedTabPortfolioAssetsSelector = (state: State) =>
+  state.settings.selectedTabPortfolioAssets;
 
 export const nftCollectionsStatusByNetworkSelector = (state: State) =>
   state.settings.nftCollectionsStatusByNetwork;

@@ -9,14 +9,14 @@ import {
   setReadOnlyMode,
 } from "~/actions/settings";
 import { RebootContext } from "~/context/Reboot";
-import { knownDevicesSelector } from "~/reducers/ble";
+import { bleDevicesSelector } from "~/reducers/ble";
 import { removeKnownDevices } from "~/actions/ble";
 import { useUnacceptGeneralTerms } from "~/logic/terms";
 
 export default function ResetOnboardingStateRow() {
   const dispatch = useDispatch();
   const reboot = useContext(RebootContext);
-  const knownDevices = useSelector(knownDevicesSelector);
+  const knownDevices = useSelector(bleDevicesSelector);
   const unacceptGeneralTerms = useUnacceptGeneralTerms();
   return (
     <SettingsRow

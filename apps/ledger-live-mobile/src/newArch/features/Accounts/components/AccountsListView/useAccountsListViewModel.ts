@@ -90,6 +90,7 @@ const useAccountsListViewModel = ({
 
   return {
     accountsToDisplay,
+    limitNumberOfAccounts,
     onAccountPress,
     isSyncEnabled,
     onContentChange,

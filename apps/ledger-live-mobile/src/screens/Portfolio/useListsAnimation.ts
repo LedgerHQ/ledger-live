@@ -3,12 +3,15 @@ import { useState, useEffect } from "react";
 import { TAB_OPTIONS } from "./TabSection";
 import { track } from "~/analytics";
 import { LayoutChangeEvent } from "react-native/Libraries/Types/CoreEventTypes";
+import { useDispatch } from "react-redux";
+import { setSelectedTabPortfolioAssets } from "~/actions/settings";
 
-type TabListType = (typeof TAB_OPTIONS)[keyof typeof TAB_OPTIONS];
+export type TabListType = (typeof TAB_OPTIONS)[keyof typeof TAB_OPTIONS];
 
 const ANIMATION_DURATION = 250;
 
 const useListsAnimation = (initialTab: TabListType) => {
+  const dispatch = useDispatch();
   const [selectedTab, setSelectedTab] = useState<TabListType>(initialTab);
   const [containerWidth, setContainerWidth] = useState<number>(0);
   const [assetsHeight, setAssetsHeight] = useState<number>(0);
@@ -22,8 +25,9 @@ const useListsAnimation = (initialTab: TabListType) => {
   const accountsTranslateX = useSharedValue<number>(containerWidth);
   const accountsOpacity = useSharedValue<number>(0);
 
-  const handleToggle = (value: string) => {
-    setSelectedTab(value as TabListType);
+  const handleToggle = (value: TabListType) => {
+    setSelectedTab(value);
+    dispatch(setSelectedTabPortfolioAssets(value));
 
     if (value === TAB_OPTIONS.Assets) setContainerHeight(assetsHeight + assetsButtonHeight);
     else setContainerHeight(accountsHeight + accountsButtonHeight);

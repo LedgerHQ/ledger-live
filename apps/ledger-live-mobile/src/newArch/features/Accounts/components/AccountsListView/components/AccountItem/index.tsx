@@ -17,6 +17,7 @@ const View: React.FC<ViewProps> = ({
   unit,
   showUnit,
   hideBalanceInfo,
+  withPlaceholder,
 }) => (
   <>
     <Flex flex={1} rowGap={2} flexShrink={1} testID={`accountItem-${accountName}`}>
@@ -32,7 +33,9 @@ const View: React.FC<ViewProps> = ({
         </Text>
         {tag && (
           <Flex flexShrink={0}>
-            <Tag numberOfLines={1}>{tag}</Tag>
+            <Tag numberOfLines={1} bg="opacityDefault.c10">
+              {tag}
+            </Tag>
           </Flex>
         )}
       </Flex>
@@ -45,8 +48,13 @@ const View: React.FC<ViewProps> = ({
     </Flex>
     {!hideBalanceInfo && (
       <Flex justifyContent="center" alignItems="flex-end">
-        <Text variant="large" fontWeight="semiBold" color="neutral.c100" testID="asset-balance">
-          <CounterValue currency={currency} value={balance} joinFragmentsSeparator="" />
+        <Text variant="large" fontWeight="semiBold" color="neutral.c100" testID="account-balance">
+          <CounterValue
+            currency={currency}
+            value={balance}
+            joinFragmentsSeparator=""
+            withPlaceholder={withPlaceholder}
+          />
         </Text>
         {showUnit && (
           <Text variant="body" fontWeight="medium" color="neutral.c70">
@@ -58,9 +66,6 @@ const View: React.FC<ViewProps> = ({
   </>
 );
 
-const AccountItem: React.FC<AccountItemProps> = props => {
-  const model = useAccountItemModel(props);
-  return <View {...model} />;
-};
+const AccountItem: React.FC<AccountItemProps> = props => <View {...useAccountItemModel(props)} />;
 
 export default AccountItem;

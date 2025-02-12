@@ -1,2 +1,2 @@
-#!/usr/bin/env node
+#!/usr/bin/env node --disable-warning=DEP0040
 require("../lib/cli");

@@ -71,6 +71,7 @@ import {
   SettingsSetHasBeenRedirectedToPostOnboardingPayload,
   SettingsSetMevProtectionPayload,
   SettingsUpdateNftCollectionStatus,
+  SettingsSetSelectedTabPortfolioAssetsPayload,
 } from "./types";
 import { ImageType } from "~/components/CustomImage/types";
 
@@ -305,6 +306,11 @@ export const removeStarredMarketCoins = createAction<SettingsRemoveStarredMarket
 export const setMevProtection = createAction<SettingsSetMevProtectionPayload>(
   SettingsActionTypes.SET_MEV_PROTECTION,
 );
+
+export const setSelectedTabPortfolioAssets =
+  createAction<SettingsSetSelectedTabPortfolioAssetsPayload>(
+    SettingsActionTypes.SET_SELECTED_TAB_PORTFOLIO_ASSETS,
+  );
 
 type PortfolioRangeOption = {
   key: PortfolioRange;

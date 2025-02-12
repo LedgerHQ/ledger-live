@@ -22,10 +22,7 @@ const Event: React.FC<Props> = ({
   const propertiesText = useMemo(
     () =>
       propertiesToDisplay
-        ? JSON.stringify(propertiesToDisplay, Object.keys(propertiesToDisplay).sort(), 2)
-            .split("\n")
-            .slice(1, -1)
-            .join("\n")
+        ? JSON.stringify(propertiesToDisplay, null, 2).replace(/^{\n|\n}$/g, "")
         : null,
     [propertiesToDisplay],
   );

@@ -216,7 +216,6 @@ with fees=0.00000001`;
       const expected = {
         family: "aptos",
         mode: "send",
-        fees: null,
         options: "{}",
         amount: "0.5",
         recipient: "0xff00",

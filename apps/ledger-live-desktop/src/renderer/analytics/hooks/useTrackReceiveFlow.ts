@@ -1,10 +1,8 @@
 import { useEffect } from "react";
 import { track } from "../segment";
 import { Device } from "@ledgerhq/types-devices";
-import { LedgerErrorConstructor } from "@ledgerhq/errors/lib/helpers";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
-
-type LedgerError = InstanceType<LedgerErrorConstructor<{ [key: string]: unknown }>>;
+import { LedgerError } from "~/renderer/components/DeviceAction";
 
 export type UseTrackReceiveFlow = {
   location: string | undefined;

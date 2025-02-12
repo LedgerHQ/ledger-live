@@ -9,7 +9,6 @@ export type AddAccountContextType = `${AddAccountContexts}`;
 
 type CommonParams = {
   context?: AddAccountContextType;
-  onSuccess?: () => void;
   onCloseNavigation?: () => void;
   currency: CryptoOrTokenCurrency;
   sourceScreenName?: string;

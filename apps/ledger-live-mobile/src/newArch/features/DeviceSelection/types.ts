@@ -11,6 +11,7 @@ type CommonParams = {
   context?: AddAccountContextType;
   onSuccess?: () => void;
   onCloseNavigation?: () => void;
+  sourceScreenName?: string;
 };
 
 export type SelectDeviceRouteParams = CommonParams & {

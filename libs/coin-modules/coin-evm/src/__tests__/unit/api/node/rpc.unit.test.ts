@@ -3,7 +3,11 @@ import { ethers } from "ethers";
 import BigNumber from "bignumber.js";
 import { delay } from "@ledgerhq/live-promise";
 import { CryptoCurrency, CryptoCurrencyId, EthereumLikeInfo } from "@ledgerhq/types-cryptoassets";
-import { EvmTransactionLegacy, Transaction as EvmTransaction } from "../../../../types";
+import {
+  EvmTransactionLegacy,
+  Transaction as EvmTransaction,
+  EvmTransactionEIP1559,
+} from "../../../../types";
 import { GasEstimationError, InsufficientFunds } from "../../../../errors";
 import { makeAccount } from "../../../fixtures/common.fixtures";
 import * as RPC_API from "../../../../api/node/rpc.common";
@@ -309,6 +313,20 @@ describe("EVM Family", () => {
   });
 
   describe("getFeeData", () => {
+    const eip1559Tx: EvmTransactionEIP1559 = {
+      amount: new BigNumber(100),
+      useAllAmount: false,
+      recipient: "0xlmb",
+      family: "evm",
+      mode: "send",
+      nonce: 0,
+      gasLimit: new BigNumber(0),
+      chainId: 1,
+      maxFeePerGas: new BigNumber(0),
+      maxPriorityFeePerGas: new BigNumber(0),
+      type: 2,
+    };
+
     it("should return the expected payload for an EIP1559 tx", async () => {
       jest
         .spyOn(ethers.providers.StaticJsonRpcProvider.prototype, "send")
@@ -327,7 +345,7 @@ describe("EVM Family", () => {
           }
         });
 
-      expect(await RPC_API.getFeeData(fakeCurrency as CryptoCurrency, {} as any)).toEqual({
+      expect(await RPC_API.getFeeData(fakeCurrency as CryptoCurrency, eip1559Tx)).toEqual({
         maxFeePerGas: new BigNumber("6000000014"),
         maxPriorityFeePerGas: new BigNumber("5999999988"),
         gasPrice: null,
@@ -353,13 +371,26 @@ describe("EVM Family", () => {
           }
         });
 
-      expect(await RPC_API.getFeeData(fakeCurrency as CryptoCurrency, {} as any)).toEqual({
+      expect(await RPC_API.getFeeData(fakeCurrency as CryptoCurrency, eip1559Tx)).toEqual({
         maxFeePerGas: new BigNumber("1000000026"),
         maxPriorityFeePerGas: new BigNumber(1e9),
         gasPrice: null,
         nextBaseFee: new BigNumber("13"),
       });
     });
+
+    const legacyTx: EvmTransactionLegacy = {
+      amount: new BigNumber(100),
+      useAllAmount: false,
+      recipient: "0xlmb",
+      family: "evm",
+      mode: "send",
+      nonce: 0,
+      gasLimit: new BigNumber(0),
+      chainId: 1,
+      gasPrice: new BigNumber(0),
+      type: 0,
+    };
 
     it("should return the expected payload for a legacy tx", async () => {
       jest
@@ -387,7 +418,7 @@ describe("EVM Family", () => {
             ...fakeCurrency,
             id: "optimism",
           } as CryptoCurrency,
-          {} as any,
+          legacyTx,
         ),
       ).toEqual({
         maxFeePerGas: null,

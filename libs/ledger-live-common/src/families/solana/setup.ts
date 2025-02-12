@@ -18,7 +18,7 @@ import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/se
 import { LatestFirmwareVersionRequired } from "../../errors";
 import type { Resolver } from "../../hw/getAddress/types";
 
-const TRUSTED_NAME_MIN_VERSION = "1.6.1";
+const TRUSTED_NAME_MIN_VERSION = "1.7.1";
 const MANAGER_APP_NAME = "Solana";
 
 async function checkVersion(app: Solana) {

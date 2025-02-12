@@ -809,6 +809,12 @@
     "SolanaTokenAccountFrozen": {
       "title": "Token account assets are frozen"
     },
+    "SolanaTokenAccounNotInitialized": {
+      "title": "Account not initialized"
+    },
+    "SolanaTokenRecipientIsSenderATA": {
+      "title": "Recipient address is the same as the sender token address"
+    },
     "SolanaAddressOfEd25519": {
       "title": "Address off ed25519 curve"
     },
@@ -3351,7 +3357,7 @@
       },
       "form": {
         "validate": "Confirm Swap transaction",
-        "tab": "Exchange",
+        "tab": "Swap",
         "button": "Continue",
         "from": "From",
         "to": "To",
@@ -3460,8 +3466,8 @@
           "receive": "Receive"
         },
         "placeholder": "Select",
-        "title": "Exchange",
-        "cta": "Exchange",
+        "title": "Swap",
+        "cta": "Swap",
         "from": "From",
         "to": "To",
         "loading": "Loading...",
@@ -3512,7 +3518,9 @@
         "ada_title": "Ledger Nano S™ does not support swapping Cardano",
         "ada_description": "To swap Cardano, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
         "apt_title": "Ledger Nano S™ does not support swapping Aptos",
-        "apt_description": "To swap Aptos, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
+        "apt_description": "To swap Aptos, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+        "cosmos_title": "Ledger Nano S™ does not support swapping Cosmos",
+        "cosmos_description": "To swap Cosmos, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
       }
     },
     "lending": {
@@ -4016,7 +4024,7 @@
       "desc": "Are you sure you want to cancel adding accounts?",
       "v2": {
         "title": "Cancel adding account?",
-        "desc": "No account wll be added to Ledger Live."
+        "desc": "No account will be added to Ledger Live."
       }
     },
     "imported": "Asset added successfully",
@@ -4084,6 +4092,7 @@
       "ctaStopScan": "Stop scanning",
       "confirm": "Confirm",
       "scanningTitle": "Looking for any existing accounts on the Blockchain...",
+      "whichAddressType": "Learn how to choose an address type",
       "sections": {
         "importable": {
           "title": "We found {{count}} account",

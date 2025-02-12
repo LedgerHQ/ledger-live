@@ -23,7 +23,11 @@ import {
   SignedOperation,
 } from "@ledgerhq/types-live";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { postSwapAccepted, postSwapCancelled } from "@ledgerhq/live-common/exchange/swap/index";
+import {
+  getIncompatibleCurrencyKeys,
+  postSwapAccepted,
+  postSwapCancelled,
+} from "@ledgerhq/live-common/exchange/swap/index";
 import { InstalledItem } from "@ledgerhq/live-common/apps/types";
 import { useBroadcast } from "@ledgerhq/live-common/hooks/useBroadcast";
 import { HardwareUpdate, renderLoading } from "~/components/DeviceAction/rendering";
@@ -57,51 +61,6 @@ interface Props {
 }
 
 type NavigationProp = StackNavigatorNavigation<SwapNavigatorParamList>;
-type Keys = Record<string, { title: string; description: string }>;
-
-const INCOMPATIBLE_NANO_S_TOKENS_KEYS: Keys = {
-  solana: {
-    title: "transfer.swap2.incompatibility.spl_tokens_title",
-    description: "transfer.swap2.incompatibility.spl_tokens_description",
-  },
-};
-
-const INCOMPATIBLE_NANO_S_CURRENCY_KEYS: Keys = {
-  ton: {
-    title: "transfer.swap2.incompatibility.ton_title",
-    description: "transfer.swap2.incompatibility.ton_description",
-  },
-  cardano: {
-    title: "transfer.swap2.incompatibility.ada_title",
-    description: "transfer.swap2.incompatibility.ada_description",
-  },
-  aptos: {
-    title: "transfer.swap2.incompatibility.apt_title",
-    description: "transfer.swap2.incompatibility.apt_description",
-  },
-  near: {
-    title: "transfer.swap2.incompatibility.near_title",
-    description: "transfer.swap2.incompatibility.near_description",
-  },
-};
-
-const getIncompatibleCurrencyKeys = (exchange: ExchangeSwap) => {
-  const parentFrom =
-    (exchange?.fromAccount?.type === "TokenAccount" && exchange?.fromParentAccount?.currency?.id) ||
-    "";
-  const parentTo =
-    (exchange?.toAccount?.type === "TokenAccount" && exchange?.toParentAccount?.currency?.id) || "";
-  const from =
-    (exchange?.fromAccount.type === "Account" && exchange?.fromAccount?.currency?.id) || "";
-  const to = (exchange?.toAccount.type === "Account" && exchange?.toAccount?.currency?.id) || "";
-
-  return (
-    INCOMPATIBLE_NANO_S_TOKENS_KEYS[parentFrom] ||
-    INCOMPATIBLE_NANO_S_TOKENS_KEYS[parentTo] ||
-    INCOMPATIBLE_NANO_S_CURRENCY_KEYS[from] ||
-    INCOMPATIBLE_NANO_S_CURRENCY_KEYS[to]
-  );
-};
 
 export function Confirmation({
   swapTx: swapTxProp,

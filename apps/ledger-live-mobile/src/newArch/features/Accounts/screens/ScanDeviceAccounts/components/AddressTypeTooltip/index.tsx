@@ -1,98 +1,74 @@
 import React from "react";
-import { View, StyleSheet, Linking } from "react-native";
-import { Trans } from "react-i18next";
-
-import type { DerivationMode } from "@ledgerhq/types-live";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-
-import Button from "~/components/Button";
+import { StyleSheet } from "react-native";
+import { useTranslation } from "react-i18next";
+import { Text, Icons, Link, Flex, Button } from "@ledgerhq/native-ui";
 import QueuedDrawer from "~/components/QueuedDrawer";
-import { urls } from "~/utils/urls";
-import useAddressTypeTooltipViewModel from "./useAddressTypeTooltipViewModel";
-import { Text, Icons } from "@ledgerhq/native-ui";
+import useAddressTypeTooltipViewModel, { type Props } from "./useAddressTypeTooltipViewModel";
+import SchemeRow from "./components/SchemeRow";
 
-const AddressTypeTooltip = ({
-  accountSchemes,
+type ViewProps = ReturnType<typeof useAddressTypeTooltipViewModel>;
+
+const View = ({
+  formattedAccountSchemes,
   currency,
-}: {
-  accountSchemes: Array<DerivationMode> | null | undefined;
-  currency: CryptoCurrency;
-}) => {
-  const { isOpen, onOpen, onClose, formattedAccountSchemes } =
-    useAddressTypeTooltipViewModel(accountSchemes);
-
+  isOpen,
+  displayLearnMoreButton,
+  onOpen,
+  onClose,
+  onClickLearnMore,
+}: ViewProps) => {
+  const { t } = useTranslation();
   return (
     <>
-      <Button
-        event={"AddAccountsAddressTypeTooltip"}
-        type="lightSecondary"
-        title={<Trans i18nKey="addAccounts.addressTypeInfo.title" />}
-        onPress={onOpen}
-        IconRight={() => <Icons.Information size="M" color="primary.c10" />}
-      />
-      <QueuedDrawer isRequestingToBeOpened={isOpen} onClose={onClose} style={styles.modal}>
-        <View style={styles.modalContainer}>
-          <Text style={styles.subtitle} color="grey">
-            <Trans i18nKey="addAccounts.addressTypeInfo.subtitle" />
+      <Link onPress={onOpen} style={styles.link}>
+        <Flex alignItems="center" flexDirection="row" columnGap={8}>
+          <Text variant="bodyLineHeight" fontWeight="semiBold" style={styles.underline}>
+            {t("addAccounts.scanDeviceAccounts.whichAddressType")}
           </Text>
-          <Text style={styles.modalTitle}>
-            <Trans i18nKey="addAccounts.addressTypeInfo.title" />
-          </Text>
-        </View>
+          <Icons.InformationFill size="S" color="neutral.c100" />
+        </Flex>
+      </Link>
 
-        {formattedAccountSchemes.map((scheme, i) => (
-          <View key={i + scheme} style={styles.modalRow}>
-            <Text style={styles.title}>
-              <Trans i18nKey={`addAccounts.addressTypeInfo.${scheme}.title`} />
-            </Text>
-            <Text style={styles.subtitle} color="grey">
-              <Trans
-                i18nKey={`addAccounts.addressTypeInfo.${scheme}.desc`}
-                values={{
-                  currency: currency.name,
-                }}
-              />
-            </Text>
-          </View>
+      <QueuedDrawer isRequestingToBeOpened={isOpen} onClose={onClose} style={styles.modal}>
+        <Flex alignItems="center" justifyContent="center" marginTop={24} marginBottom={16}>
+          <Text variant="body" color="neutral.c70">
+            {t("addAccounts.addressTypeInfo.subtitle")}
+          </Text>
+          <Text variant="h3">{t("addAccounts.addressTypeInfo.title")}</Text>
+        </Flex>
+        {formattedAccountSchemes.map(scheme => (
+          <SchemeRow key={scheme} scheme={scheme} currency={currency} />
         ))}
-        {currency && currency.family === "bitcoin" ? (
+        {displayLearnMoreButton && (
           <Button
-            event={"AddAccountsSupportLink_AddressType"}
-            type="lightSecondary"
-            title={<Trans i18nKey="common.learnMore" />}
-            IconLeft={() => <Icons.ExternalLink size="M" color="primary.c10" />}
-            onPress={() => Linking.openURL(urls.bitcoinAddressType)}
-          />
-        ) : null}
+            type="main"
+            Icon={() => <Icons.ExternalLink size="M" color="primary.c10" />}
+            iconPosition="left"
+            onPress={onClickLearnMore}
+          >
+            {t("common.learnMore")}
+          </Button>
+        )}
       </QueuedDrawer>
     </>
   );
 };
 
 const styles = StyleSheet.create({
-  subtitle: {
-    fontSize: 14,
+  link: {
+    alignSelf: "flex-start",
+    paddingTop: 16,
   },
-  title: {
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
+  underline: {
+    textDecorationLine: "underline",
   },
   modal: {
     paddingHorizontal: 24,
   },
-  modalContainer: {
-    marginTop: 24,
-    marginBottom: 16,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  modalRow: {
-    marginVertical: 16,
-  },
 });
+
+const AddressTypeTooltip: React.FC<Props> = props => (
+  <View {...useAddressTypeTooltipViewModel(props)} />
+);
 
 export default AddressTypeTooltip;

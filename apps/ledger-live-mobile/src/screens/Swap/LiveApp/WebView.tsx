@@ -1,5 +1,5 @@
+import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import { getEnv } from "@ledgerhq/live-env";
 import { Flex } from "@ledgerhq/native-ui";
 import React from "react";
 import { Platform } from "react-native";
@@ -21,9 +21,6 @@ type Props = {
   setWebviewState: React.Dispatch<React.SetStateAction<WebviewState>>;
 };
 
-const SWAP_API_BASE = getEnv("SWAP_API_BASE");
-const SWAP_USER_IP = getEnv("SWAP_USER_IP");
-
 export function WebView({ manifest, setWebviewState }: Props) {
   const customHandlers = useSwapLiveAppCustomHandlers(manifest);
   const { theme } = useTheme();
@@ -31,10 +28,13 @@ export function WebView({ manifest, setWebviewState }: Props) {
   const { ticker: currencyTicker } = useSelector(counterValueCurrencySelector);
   const discreet = useSelector(discreetModeSelector);
   const countryLocale = getCountryLocale();
+  const SWAP_API_BASE = useEnv("SWAP_API_BASE");
+  const SWAP_USER_IP = useEnv("SWAP_USER_IP");
   const exportSettings = useSelector(exportSettingsSelector);
+  const devMode = exportSettings.developerModeEnabled.toString();
 
   return (
-    <Flex pb={1} flex={1}>
+    <Flex flex={1}>
       <Web3AppWebview
         manifest={manifest}
         customHandlers={customHandlers}
@@ -42,7 +42,7 @@ export function WebView({ manifest, setWebviewState }: Props) {
         inputs={{
           swapApiBase: SWAP_API_BASE,
           swapUserIp: SWAP_USER_IP,
-          devMode: exportSettings.developerModeEnabled ? "true" : "false",
+          devMode,
           theme,
           lang: language,
           locale: language, // LLM doesn't support different locales. By doing this we don't have to have specific LLM/LLD logic in earn, and in future if LLM supports locales we will change this from `language` to `locale`

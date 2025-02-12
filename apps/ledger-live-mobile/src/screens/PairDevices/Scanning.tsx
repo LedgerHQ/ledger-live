@@ -10,7 +10,7 @@ import { Device as DeviceMeta } from "@ledgerhq/live-common/hw/actions/types";
 import { TransportBleDevice } from "@ledgerhq/live-common/ble/types";
 import logger from "../../logger";
 import { BLE_SCANNING_NOTHING_TIMEOUT } from "~/utils/constants";
-import { knownDevicesSelector } from "~/reducers/ble";
+import { bleDevicesSelector } from "~/reducers/ble";
 import TransportBLE from "../../react-native-hw-transport-ble";
 import { TrackScreen } from "~/analytics";
 import DeviceItem from "~/components/SelectDevice/DeviceItem";
@@ -27,7 +27,7 @@ type Props = {
 
 export default function Scanning({ onTimeout, onError, onSelect, deviceModelIds }: Props) {
   const { t } = useTranslation();
-  const knownDevices = useSelector(knownDevicesSelector);
+  const knownDevices = useSelector(bleDevicesSelector);
   const [devices, setDevices] = useState<TransportBleDevice[]>([]);
 
   const filteredDevices = useMemo(() => {

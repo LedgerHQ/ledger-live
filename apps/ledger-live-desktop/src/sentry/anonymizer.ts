@@ -11,7 +11,7 @@ let configDir = (() => {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   require("electron")
     .ipcRenderer.invoke("getPathUserData")
-    .then(path => {
+    .then((path: string) => {
       configDir = path;
     });
   return "";
@@ -29,7 +29,7 @@ let homeDir = (() => {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   require("electron")
     .ipcRenderer.invoke("getPathHome")
-    .then(path => {
+    .then((path: string) => {
       homeDir = path;
     });
   return "";

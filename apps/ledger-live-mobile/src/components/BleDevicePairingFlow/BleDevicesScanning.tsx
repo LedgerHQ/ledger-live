@@ -9,7 +9,7 @@ import { getDeviceModel } from "@ledgerhq/devices";
 import { Device, DeviceModelId } from "@ledgerhq/types-devices";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import TransportBLE from "../../react-native-hw-transport-ble";
-import { knownDevicesSelector } from "~/reducers/ble";
+import { bleDevicesSelector } from "~/reducers/ble";
 import Animation from "../Animation";
 import BleDeviceItem from "./BleDeviceItem";
 import Link from "~/components/wrappedUi/Link";
@@ -87,7 +87,7 @@ export default function BleDevicesScanning({
   }, []);
 
   // If we want to filter on known devices:
-  const knownDevices = useSelector(knownDevicesSelector);
+  const knownDevices = useSelector(bleDevicesSelector);
   // .map creates a new array at each render and it was being used as a dependency on a useEffect
   // inside useBleDevicesScanning, so we need to memo it.
   const knownDeviceIds = useMemo(() => knownDevices.map(device => device.id), [knownDevices]);

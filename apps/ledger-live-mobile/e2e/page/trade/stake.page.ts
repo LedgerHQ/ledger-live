@@ -5,6 +5,7 @@ import {
   typeTextById,
   waitForElementById,
 } from "../../helpers";
+import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 
 export default class StakePage {
   delegationSummaryValidatorId = (currencyId: string) =>
@@ -24,6 +25,7 @@ export default class StakePage {
   delegationAmountContinueId = (currencyId: string) => `${currencyId}-delegation-amount-continue`;
   currencyRow = (currencyId: string) => `currency-row-${currencyId}`;
   zeroAssetText = "0\u00a0ATOM";
+  celoLockAmountInput = "celo-lock-amount-input";
 
   async selectCurrency(currencyId: string) {
     const id = this.currencyRow(currencyId);
@@ -80,7 +82,9 @@ export default class StakePage {
   @Step("Validate the amount entered")
   async validateAmount(currencyId: string) {
     await tapById(this.delegationAmountContinueId(currencyId));
-    await waitForElementById(this.delegationSummaryAmountId(currencyId));
+    if (currencyId !== Currency.CELO.currencyId) {
+      await waitForElementById(this.delegationSummaryAmountId(currencyId));
+    }
   }
 
   @Step("Expect delegated amount in summary")
@@ -92,5 +96,10 @@ export default class StakePage {
   @Step("Click on continue button in summary")
   async summaryContinue(currencyId: string) {
     await tapById(this.summaryContinueButtonId(currencyId));
+  }
+
+  @Step("Set Celo lock amount")
+  async setCeloLockAmount(amount: string) {
+    await typeTextById(this.celoLockAmountInput, amount);
   }
 }

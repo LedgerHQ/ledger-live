@@ -58,6 +58,7 @@ export const getFiltersForMessage = async (
   calServiceURL?: string | null,
 ): Promise<MessageFilters | undefined> => {
   const schemaHash = getSchemaHashForMessage(message);
+
   const verifyingContract = message.domain?.verifyingContract?.toLowerCase() || AddressZero;
   try {
     if (calServiceURL) {
@@ -70,7 +71,13 @@ export const getFiltersForMessage = async (
         },
       });
 
-      const filters = data?.[0]?.eip712_signatures?.[verifyingContract]?.[schemaHash];
+      // Rather than relying on array indices, find the right object wherever it may be, if it exists
+      const targetObject = data.find(
+        item => item?.eip712_signatures?.[verifyingContract]?.[schemaHash],
+      );
+
+      const filters = targetObject?.eip712_signatures?.[verifyingContract]?.[schemaHash];
+
       if (!filters) {
         // Fallback to catch
         throw new Error("Fallback to static file");
