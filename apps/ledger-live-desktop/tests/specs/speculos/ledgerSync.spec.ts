@@ -80,11 +80,6 @@ test.describe(`[${app.name}] Sync Accounts`, () => {
       await app.ledgerSync.expectBackupDeletion();
       await app.drawer.closeDrawer();
 
-      /* const deletedAccount = (parsedData.updateEvent.data as LiveData).accounts?.find(
-        account => account.id === accountId,
-      );
-      expect(deletedAccount, "Account should not be present").toBeUndefined();*/
-
       expect(
         await LedgerSyncCliHelper.checkAccountDeletion(parsedData, accountId),
         "Account should not be present",
