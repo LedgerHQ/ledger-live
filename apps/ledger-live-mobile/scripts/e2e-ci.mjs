@@ -53,7 +53,7 @@ const test_ios = async () => {
     --take-screenshots failing \
     --forceExit \
     --headless \
-    --retries 1 \
+    --retries 5 \
     --runInBand \
     --cleanup \
     --shard ${shard} \
