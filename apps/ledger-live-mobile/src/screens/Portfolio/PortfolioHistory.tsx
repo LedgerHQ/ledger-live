@@ -3,7 +3,6 @@ import { SectionList, SectionListData, SectionListRenderItemInfo } from "react-n
 import { useSelector } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
 import type { DailyOperationsSection, Operation } from "@ledgerhq/types-live";
-import { groupAccountsOperationsByDay } from "@ledgerhq/live-common/account/index";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/helpers";
 
 import { Trans } from "react-i18next";
@@ -20,6 +19,7 @@ import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import { track } from "~/analytics";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import { useOperations } from "../Analytics/Operations/useOperations";
 
 type Props = StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.PortfolioOperationHistory>;
 
@@ -39,8 +39,9 @@ export const PortfolioHistoryList = withDiscreetMode(
     const refreshAccountsOrdering = useRefreshAccountsOrdering();
     useFocusEffect(refreshAccountsOrdering);
 
-    const { sections, completed } = groupAccountsOperationsByDay(accounts, {
-      count: opCount,
+    const { sections, completed } = useOperations({
+      accounts,
+      opCount,
       withSubAccounts: true,
     });
 
