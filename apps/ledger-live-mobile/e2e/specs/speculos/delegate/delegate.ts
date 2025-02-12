@@ -46,8 +46,8 @@ export async function runDelegateTest(delegation: Delegate, tmsLink: string) {
       await app.stake.summaryContinue(currencyId);
 
       await verifyAppValidationStakeInfo(app, delegation, amountWithCode);
-      await app.speculos.signDelegationTransaction(delegation);
       await device.disableSynchronization();
+      await app.speculos.signDelegationTransaction(delegation);
       await app.common.successViewDetails();
 
       await verifyStakeOperationDetailsInfo(app, delegation, amountWithCode);
@@ -94,8 +94,8 @@ export async function runDelegateCelo(delegation: Delegate, tmsLink: string) {
       await app.stake.validateAmount(currencyId);
 
       await verifyAppValidationStakeInfo(app, delegation, amountWithCode);
-      await app.speculos.signDelegationTransaction(delegation);
       await device.disableSynchronization();
+      await app.speculos.signDelegationTransaction(delegation);
 
       await app.common.successViewDetails();
       await verifyStakeOperationDetailsInfo(app, delegation, amountWithCode);
@@ -141,8 +141,8 @@ export async function runDelegateTezos(delegation: Delegate, tmsLink: string) {
       await app.stake.summaryContinue(currencyId);
 
       await verifyAppValidationStakeInfo(app, delegation, amountWithCode);
-      await app.speculos.signDelegationTransaction(delegation);
       await device.disableSynchronization();
+      await app.speculos.signDelegationTransaction(delegation);
 
       await app.common.successViewDetails();
       await verifyStakeOperationDetailsInfo(app, delegation, amountWithCode);
