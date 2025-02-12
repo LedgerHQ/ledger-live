@@ -40,6 +40,7 @@ const AccountQuickActionsDrawer = ({
       )}
       <QueuedDrawer
         isRequestingToBeOpened={isOpen}
+        onClose={onClose}
         CustomHeader={() => (
           <CustomHeader
             account={account}
