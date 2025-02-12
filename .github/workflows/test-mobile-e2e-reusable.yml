@@ -162,10 +162,10 @@ jobs:
       - name: Create iOS simulator
         run: xcrun simctl create "iOS Simulator" "iPhone 15"
       - name: Build iOS app for Detox test run
-        if: steps.detox-build.outputs.cache-hit != 'true' || ${{ inputs.production_firebase }}
+        if: steps.detox-build.outputs.cache-hit != 'true' || inputs.production_firebase == 'true'
         run: pnpm mobile e2e:ci -p ios -b $([[ "$PRODUCTION" == "true" ]] && printf %s '--production')
       - name: Build JS Bundle app for Detox test run
-        if: steps.detox-build.outputs.cache-hit == 'true' && !${{ inputs.production_firebase }}
+        if: steps.detox-build.outputs.cache-hit == 'true' && inputs.production_firebase == 'false'
         run: pnpm mobile e2e:ci -p ios --bundle
       - name: Setup Speculos image and Coin Apps
         if: ${{ env.SPECULOS_RUN == 'true' }}
