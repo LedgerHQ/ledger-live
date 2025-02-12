@@ -14,6 +14,13 @@ import GenericErrorView from "~/components/GenericErrorView";
 import { initialWebviewState } from "~/components/Web3AppWebview/helpers";
 import { WebviewState } from "~/components/Web3AppWebview/types";
 import { WebView } from "./WebView";
+import {
+  HandlerStateChangeEvent,
+  PanGestureHandler,
+  PanGestureHandlerEventPayload,
+  State,
+} from "react-native-gesture-handler";
+import { useNavigation } from "@react-navigation/core";
 
 // set the default manifest ID for the production swap live app
 // in case the FF is failing to load the manifest ID
@@ -44,6 +51,15 @@ export function SwapLiveApp() {
 
   const manifest: LiveAppManifest | undefined = !localManifest ? remoteManifest : localManifest;
 
+  const navigation = useNavigation();
+
+  const onGesture = (event: HandlerStateChangeEvent<PanGestureHandlerEventPayload>) => {
+    // PanGestureHandler callback for swiping left to right to fix issue with <Tab.Navigator>
+    if (event.nativeEvent.state === State.END && event.nativeEvent.translationX > 10) {
+      navigation.goBack();
+    }
+  };
+
   if (!manifest || isWebviewError) {
     return (
       <Flex flex={1} justifyContent="center" alignItems="center">
@@ -59,8 +75,10 @@ export function SwapLiveApp() {
   }
 
   return (
-    <Flex flex={1}>
-      <WebView manifest={manifest} setWebviewState={setWebviewState} />
-    </Flex>
+    <PanGestureHandler onHandlerStateChange={onGesture} activeOffsetX={[0, 10]}>
+      <Flex flex={1}>
+        <WebView manifest={manifest} setWebviewState={setWebviewState} />
+      </Flex>
+    </PanGestureHandler>
   );
 }
