@@ -27,7 +27,7 @@ jobs:
       FORCE_COLOR: 3
       CI_OS: ubuntu-22.04
 
-    runs-on: [ubuntu-latest]
+    runs-on: [ledger-live-4xlarge]
     steps:
       - uses: actions/checkout@v4
         with:
@@ -37,7 +37,7 @@ jobs:
         id: setup-caches
         with:
           skip-turbo-cache: "false"
-          install-proto: true
+          install-proto: false
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
