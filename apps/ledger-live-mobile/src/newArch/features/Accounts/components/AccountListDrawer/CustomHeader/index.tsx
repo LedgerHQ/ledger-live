@@ -12,17 +12,14 @@ type Props = {
 const CustomHeader = ({ onClose, backgroundColor, iconColor, title }: Props) => {
   return (
     <Flex
-      flexDirection="row"
+      flexDirection="column"
       width="100%"
       p={16}
       borderBottom={5}
-      borderBottomColor={"neutral.c30"}
+      borderBottomColor="neutral.c30"
+      rowGap={16}
       justifyContent="space-between"
-      alignItems="center"
     >
-      <Text fontSize="18px" fontWeight="semiBold" textTransform="none">
-        {title}
-      </Text>
       <Flex alignItems="flex-end">
         <TouchableOpacity onPress={onClose}>
           <Flex
@@ -36,6 +33,9 @@ const CustomHeader = ({ onClose, backgroundColor, iconColor, title }: Props) => 
           </Flex>
         </TouchableOpacity>
       </Flex>
+      <Text variant="h3Inter" fontSize={24}>
+        {title}
+      </Text>
     </Flex>
   );
 };

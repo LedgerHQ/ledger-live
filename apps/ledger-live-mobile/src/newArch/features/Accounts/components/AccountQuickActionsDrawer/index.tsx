@@ -29,7 +29,7 @@ const AccountQuickActionsDrawer = ({
     accounts: account ? [account as Account] : [],
     currency,
   });
-  const { colors } = useTheme();
+  const { colors, space } = useTheme();
   const { analyticsMetadata } = useAnalytics(AnalyticContexts.AddAccounts);
   const pageTrackingEvent = analyticsMetadata.AddFunds?.onQuickActionOpen;
 
@@ -44,15 +44,15 @@ const AccountQuickActionsDrawer = ({
           <CustomHeader
             account={account}
             onClose={onClose}
-            backgroundColor={colors.opacityDefault.c10}
+            backgroundColor={colors.neutral.c30}
             iconColor={colors.neutral.c100}
           />
         )}
       >
-        <Flex width="100%" rowGap={6}>
-          {actions.map((button, index) => (
-            <Box mb={index === actions.length - 1 ? 0 : 8} key={button?.title as string}>
-              <TransferButton {...button} testID={button?.testID as string} />
+        <Flex width="100%" rowGap={space[8]} pb={space[8]}>
+          {actions.map(button => (
+            <Box key={button?.title}>
+              <TransferButton {...button} testID={button?.testID} />
             </Box>
           ))}
         </Flex>

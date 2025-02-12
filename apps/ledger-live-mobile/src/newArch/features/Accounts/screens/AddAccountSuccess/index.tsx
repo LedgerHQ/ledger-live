@@ -16,7 +16,6 @@ import type { BaseComposite, StackNavigatorProps } from "~/components/RootNaviga
 import AccountItem from "../../components/AccountsListView/components/AccountItem";
 import { AccountLikeEnhanced } from "../ScanDeviceAccounts/types";
 import { Account } from "@ledgerhq/types-live";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import SafeAreaView from "~/components/SafeAreaView";
 import Circle from "~/components/Circle";
 import { NetworkBasedAddAccountNavigator } from "../AddAccount/types";
@@ -33,9 +32,8 @@ type Props = BaseComposite<
 >;
 
 export default function AddAccountsSuccess({ route }: Props) {
-  const { colors } = useTheme();
+  const { colors, space } = useTheme();
   const { t } = useTranslation();
-  const insets = useSafeAreaInsets();
   const navigation = useNavigation();
   const { animatedSelectableAccount } = useAnimatedStyle();
   const { currency, accountsToAdd, onCloseNavigation, context } = route.params || {};
@@ -65,10 +63,10 @@ export default function AddAccountsSuccess({ route }: Props) {
           <Flex
             flexDirection="row"
             alignItems="center"
-            backgroundColor="neutral.c30"
-            borderRadius="12px"
-            padding="12px"
-            width={343}
+            borderRadius={space[4]}
+            padding={space[6]}
+            backgroundColor="opacityDefault.c05"
+            width="100%"
           >
             <AccountItem account={item as Account} balance={item.balance} />
             <Icons.ChevronRight size="M" color={colors.primary.c100} />
@@ -76,7 +74,7 @@ export default function AddAccountsSuccess({ route }: Props) {
         </TouchableOpacity>
       </Animated.View>
     ),
-    [colors.primary, goToAccounts, animatedSelectableAccount],
+    [animatedSelectableAccount, goToAccounts, space, colors.primary.c100],
   );
 
   const keyExtractor = useCallback((item: AccountLikeEnhanced) => item?.id, []);
@@ -84,16 +82,18 @@ export default function AddAccountsSuccess({ route }: Props) {
   const statusColor = colors.neutral.c100;
 
   return (
-    <SafeAreaView edges={["left", "right"]} isFlex>
+    <SafeAreaView edges={["left", "right", "bottom"]} isFlex>
       <TrackScreen category="AddAccounts" name="Success" currencyName={currency?.name} />
       <VerticalGradientBackground stopColor={getCurrencyColor(currency)} />
-      <Flex alignItems={"center"} style={styles.root}>
+      <Flex alignItems="center" style={styles.root} pt={space[7]}>
         <View style={[styles.iconWrapper, { backgroundColor: rgba(statusColor, 0.1) }]}>
           <Circle size={24}>
             <Icons.CheckmarkCircleFill size="L" color={statusColor} />
           </Circle>
         </View>
-        <Text style={styles.title}>{t("addAccounts.added", { count: accountsToAdd.length })}</Text>
+        <Text style={styles.title} textAlign="center" width="60%">
+          {t("addAccounts.added", { count: accountsToAdd.length })}
+        </Text>
       </Flex>
       <Flex flex={1} justifyContent="center" alignItems="center">
         <FlatList
@@ -102,11 +102,11 @@ export default function AddAccountsSuccess({ route }: Props) {
           renderItem={renderItem}
           keyExtractor={keyExtractor}
           showsVerticalScrollIndicator={false}
-          ItemSeparatorComponent={() => <View style={{ height: 16 }} />}
-          style={{ paddingHorizontal: 16 }}
+          ItemSeparatorComponent={() => <View style={{ height: space[4] }} />}
+          style={{ paddingHorizontal: space[4], width: "100%" }}
         />
       </Flex>
-      <Flex mb={insets.bottom + 2} px={6} rowGap={6}>
+      <Flex px={6} rowGap={6}>
         <AddFundsButton
           accounts={accountsToAdd}
           currency={currency}
@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   title: {
-    marginTop: 32,
+    marginTop: 16,
     fontSize: 24,
   },
   iconWrapper: {

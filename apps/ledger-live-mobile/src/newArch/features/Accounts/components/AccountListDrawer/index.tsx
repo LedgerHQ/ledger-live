@@ -29,7 +29,7 @@ const AccountListDrawer = ({ isOpen, onClose, data, onPressAccount }: AccountLis
     ({ item: account }: ListRenderItemInfo<Account | TokenAccount>) => {
       return (
         <TouchableOpacity key={account.id} onPress={() => onPressAccount(account)}>
-          <Flex flexDirection="row" alignItems="center" padding={3} width={343}>
+          <Flex flexDirection="row" alignItems="center" padding={3}>
             <AccountItem account={account} balance={account.balance} showUnit />
           </Flex>
         </TouchableOpacity>
@@ -65,8 +65,8 @@ const AccountListDrawer = ({ isOpen, onClose, data, onPressAccount }: AccountLis
             renderItem={renderItem}
             keyExtractor={keyExtractor}
             showsVerticalScrollIndicator={false}
-            ItemSeparatorComponent={() => <View style={{ height: 16 }} />}
-            style={{ paddingHorizontal: 16 }}
+            ItemSeparatorComponent={() => <View style={{ height: 8 }} />}
+            style={{ width: "100%" }}
             ListEmptyComponent={<AccountListEmpty />}
           />
         </Flex>

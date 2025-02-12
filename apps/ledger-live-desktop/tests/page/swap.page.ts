@@ -263,4 +263,23 @@ export class SwapPage extends AppPage {
     }
     await expect(webview.getByTestId(`execute-button`)).not.toBeEnabled();
   }
+
+  @step("Go and wait for Swap app to be ready")
+  async goAndWaitForSwapToBeReady(swapFunction: () => Promise<void>) {
+    const successfulQuery = new Promise(resolve => {
+      this.page.on("response", response => {
+        if (
+          response
+            .url()
+            .startsWith("https://explorers.api.live.ledger.com/blockchain/v4/btc/fees") &&
+          response.status() === 200
+        ) {
+          resolve(response);
+        }
+      });
+    });
+
+    await swapFunction();
+    expect(await successfulQuery).toBeDefined();
+  }
 }

@@ -23,7 +23,7 @@ export const groupCurrenciesByProvider = (
     assetsByLedgerId.set(asset.ledgerId.toLowerCase(), asset);
   }
   const assetsByProviderId: Map<string, CurrenciesByProviderId> = new Map();
-  const sortedCryptoCurrencies: CryptoOrTokenCurrency[] = [];
+  const sortedCryptoCurrenciesMap: Map<string, CryptoOrTokenCurrency> = new Map();
   // iterate over currencies by preserving their order
   for (const ledgerCurrency of sortedCurrencies) {
     /// FIXME(LIVE-10508) drop usage of toLowerCase
@@ -39,22 +39,14 @@ export const groupCurrenciesByProvider = (
       } else {
         existingEntry.currenciesByNetwork.push(ledgerCurrency);
       }
+      if (!sortedCryptoCurrenciesMap.has(ledgerCurrency.name)) {
+        sortedCryptoCurrenciesMap.set(ledgerCurrency.name, ledgerCurrency);
+      }
     }
   }
-
-  // in this case, the first currency of the provider is the one we want to display (Wasn't true)
-  // So we need to take the first crypto or token currency of each provider to fix that
-  for (const [, { currenciesByNetwork }] of assetsByProviderId.entries()) {
-    const firstCrypto = currenciesByNetwork.find(c => c.type === "CryptoCurrency");
-    const elem = firstCrypto || currenciesByNetwork.find(c => c.type === "TokenCurrency");
-    if (elem) {
-      sortedCryptoCurrencies.push(elem);
-    }
-  }
-
   return {
     currenciesByProvider: Array.from(assetsByProviderId.values()),
-    sortedCryptoCurrencies,
+    sortedCryptoCurrencies: Array.from(sortedCryptoCurrenciesMap.values()),
   };
 };
 

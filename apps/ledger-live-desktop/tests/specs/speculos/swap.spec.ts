@@ -129,6 +129,7 @@ for (const { swap, xrayTicket } of swaps) {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
         await performSwapUntilQuoteSelectionStep(app, electronApp, swap);
+
         const selectedProvider = await app.swap.selectExchange(electronApp);
         await performSwapUntilDeviceVerificationStep(app, electronApp, swap, selectedProvider);
         await app.speculos.verifyAmountsAndAcceptSwap(swap);
@@ -289,8 +290,7 @@ test.describe("Swap flow from different entry point", () => {
     async ({ app, electronApp }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.layout.goToPortfolio();
-      await app.portfolio.clickSwapButton();
-      await app.swap.waitForPageNetworkIdleState();
+      await app.swap.goAndWaitForSwapToBeReady(() => app.portfolio.clickSwapButton());
       await app.swap.expectSelectedAssetDisplayed("BTC", electronApp);
     },
   );
@@ -307,8 +307,7 @@ test.describe("Swap flow from different entry point", () => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.layout.goToPortfolio();
       await app.portfolio.clickOnSelectedAssetRow(swapEntryPoint.swap.accountToDebit.currency.name);
-      await app.assetPage.startSwapFlow();
-      await app.swap.waitForPageNetworkIdleState();
+      await app.swap.goAndWaitForSwapToBeReady(() => app.assetPage.startSwapFlow());
       await app.swap.expectSelectedAssetDisplayed(
         swapEntryPoint.swap.accountToDebit.currency.name,
         electronApp,
@@ -327,10 +326,9 @@ test.describe("Swap flow from different entry point", () => {
     async ({ app, electronApp }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.layout.goToMarket();
-      await app.market.startSwapForSelectedTicker(
-        swapEntryPoint.swap.accountToDebit.currency.ticker,
+      await app.swap.goAndWaitForSwapToBeReady(() =>
+        app.market.startSwapForSelectedTicker(swapEntryPoint.swap.accountToDebit.currency.ticker),
       );
-      await app.swap.waitForPageNetworkIdleState();
       await app.swap.expectSelectedAssetDisplayed(
         swapEntryPoint.swap.accountToDebit.currency.name,
         electronApp,
@@ -354,8 +352,7 @@ test.describe("Swap flow from different entry point", () => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.layout.goToMarket();
       await app.market.openCoinPage(swapEntryPoint.swap.accountToDebit.currency.ticker);
-      await app.market.clickOnSwapButtonOnAsset();
-      await app.swap.waitForPageNetworkIdleState();
+      await app.swap.goAndWaitForSwapToBeReady(() => app.market.clickOnSwapButtonOnAsset());
       await app.swap.expectSelectedAssetDisplayed(
         swapEntryPoint.swap.accountToDebit.currency.name,
         electronApp,
@@ -375,8 +372,7 @@ test.describe("Swap flow from different entry point", () => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.layout.goToAccounts();
       await app.accounts.navigateToAccountByName(swapEntryPoint.swap.accountToDebit.accountName);
-      await app.account.navigateToSwap();
-      await app.swap.waitForPageNetworkIdleState();
+      await app.swap.goAndWaitForSwapToBeReady(() => app.account.navigateToSwap());
       await app.swap.expectSelectedAssetDisplayed(
         swapEntryPoint.swap.accountToDebit.currency.name,
         electronApp,
@@ -398,8 +394,7 @@ test.describe("Swap flow from different entry point", () => {
     },
     async ({ app, electronApp }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-      await app.layout.goToSwap();
-      await app.swap.waitForPageNetworkIdleState();
+      await app.swap.goAndWaitForSwapToBeReady(() => app.layout.goToSwap());
       await app.swap.expectSelectedAssetDisplayed("BTC", electronApp);
     },
   );
@@ -410,15 +405,8 @@ async function performSwapUntilQuoteSelectionStep(
   electronApp: ElectronApplication,
   swap: Swap,
 ) {
-  //todo: remove 2 following lines after LIVE-14410
-  await app.layout.goToAccounts();
-  await app.accounts.navigateToAccountByName(swap.accountToDebit.accountName);
-  await app.layout.waitForPageDomContentLoadedState();
+  await app.swap.goAndWaitForSwapToBeReady(() => app.layout.goToSwap());
 
-  await app.layout.waitForAccountsSyncToBeDone();
-  await app.swap.waitForPageNetworkIdleState();
-  await app.layout.goToSwap();
-  await app.swap.waitForPageNetworkIdleState();
   await app.swap.selectAssetFrom(electronApp, swap.accountToDebit);
   await app.swapDrawer.selectAccountByName(swap.accountToDebit);
   await app.swap.selectAssetTo(electronApp, swap.accountToCredit.currency.name);
