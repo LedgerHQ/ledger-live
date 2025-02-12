@@ -167,7 +167,6 @@ export default function useScanDeviceAccountsViewModel({
         onSuccess({
           scannedAccounts,
           selected: accountsToAdd,
-          navigationFn: navigation,
         });
       }
     } else
