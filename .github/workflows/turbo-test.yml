@@ -29,5 +29,5 @@ jobs:
       - name: Install dependencies
         run: pnpm i --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
         shell: bash
-      - name: Run code checkers
+      - name: Run echo task
         run: pnpm echo --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
