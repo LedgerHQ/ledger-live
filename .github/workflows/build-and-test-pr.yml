@@ -61,7 +61,7 @@ jobs:
     # needs: determine-affected
     # if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile') && !github.event.pull_request.head.repo.fork}}
     if: true
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-e2e-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-e2e-reusable.yml@support/turbo-e2e-ios
     secrets: inherit
 
   # Tests
