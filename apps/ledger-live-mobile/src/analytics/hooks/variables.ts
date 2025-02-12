@@ -6,4 +6,5 @@ export enum CONNECTION_TYPES {
 export enum HOOKS_TRACKING_LOCATIONS {
   myLedgerDashboard = "My Ledger Dashboard",
   receiveFlow = "Receive Flow",
+  sendFlow = "Send Flow",
 }

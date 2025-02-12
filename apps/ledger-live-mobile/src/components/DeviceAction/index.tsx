@@ -61,6 +61,7 @@ import { LedgerError } from "~/types/error";
 import { useTrackMyLedgerSectionEvents } from "~/analytics/hooks/useTrackMyLedgerEvents";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 import { useTrackReceiveFlow } from "~/analytics/hooks/useTrackReceiveFlow";
+import { useTrackSendFlow } from "~/analytics/hooks/useTrackSendFlow";
 
 type Status = PartialNullable<{
   appAndVersion: AppAndVersion;
@@ -232,6 +233,13 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
     device: selectedDevice,
     requestOpenApp,
     inWrongDeviceForAccount,
+    error,
+  });
+
+  useTrackSendFlow({
+    location: location === HOOKS_TRACKING_LOCATIONS.sendFlow ? location : undefined,
+    device: selectedDevice,
+    requestOpenApp,
     error,
   });
 
