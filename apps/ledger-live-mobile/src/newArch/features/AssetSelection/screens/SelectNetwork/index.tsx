@@ -20,7 +20,8 @@ const keyExtractor = (elem: CryptoWithAccounts) => elem.crypto.id;
 export default function SelectNetwork({
   route,
 }: StackNavigatorProps<AssetSelectionNavigatorParamsList, ScreenName.SelectNetwork>) {
-  const { filterCurrencyIds, context, currency, inline, sourceScreenName } = route.params;
+  const { filterCurrencyIds, context, currency, inline, sourceScreenName, onSuccess } =
+    route.params;
   const { t } = useTranslation();
   const { analyticsMetadata } = useAnalytics(context, sourceScreenName);
 
@@ -42,6 +43,7 @@ export default function SelectNetwork({
     currency,
     inline,
     analyticsMetadata,
+    onSuccess,
   });
 
   const { onBannerLayout, animatedStyle } = useBannerAnimation({ displayBanner });
