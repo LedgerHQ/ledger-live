@@ -17,6 +17,7 @@ import {
 import { NavigationHeaderCloseButtonAdvanced } from "~/components/NavigationHeaderCloseButton";
 import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
 import { useAppDeviceAction } from "~/hooks/deviceActions";
+import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 
 // Defines some of the header options for this screen to be able to reset back to them.
 export const addAccountsSelectDeviceHeaderOptions = (
@@ -112,6 +113,7 @@ export default function AddAccountsSelectDevice({
         request={{ currency }}
         onSelectDeviceLink={() => setDevice(null)}
         analyticsPropertyFlow={analyticsPropertyFlow || "add account"}
+        location={HOOKS_TRACKING_LOCATIONS.receiveFlow}
       />
     </SafeAreaView>
   );
