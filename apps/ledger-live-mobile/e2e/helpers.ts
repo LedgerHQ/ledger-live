@@ -50,7 +50,7 @@ function sync_delay(ms = 200) {
 }
 
 export function expect(element: any) {
-  if (!isAndroid()) sync_delay(10000); // Issue with RN75 : QAA-370
+  if (!isAndroid()) sync_delay(); // Issue with RN75 : QAA-370
   return detoxExpect(element);
 }
 
