@@ -278,6 +278,7 @@ export async function deleteSpeculos(proxyPort?: number) {
 export async function takeSpeculosScreenshot() {
   for (const [, device] of speculosDevices) {
     const speculosScreenshot = await takeScreenshot(device.ports.apiPort);
-    speculosScreenshot && allure.attachment("Speculos Screenshot", speculosScreenshot, "image/png");
+    speculosScreenshot &&
+      (await allure.attachment("Speculos Screenshot", speculosScreenshot, "image/png"));
   }
 }

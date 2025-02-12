@@ -26,7 +26,7 @@ afterAll(async () => {
   if (testFailed) {
     await takeSpeculosScreenshot();
     if (process.env.CI)
-      allure.attachment("App logs", await serverBridge.getLogs(), "application/json");
+      await allure.attachment("App logs", await serverBridge.getLogs(), "application/json");
   }
   setEnv("DISABLE_TRANSACTION_BROADCAST", broadcastOriginalValue);
   serverBridge.close();
