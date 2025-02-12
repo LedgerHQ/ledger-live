@@ -60,6 +60,7 @@ import { RootStackParamList } from "../RootNavigator/types/RootNavigator";
 import { LedgerError } from "~/types/error";
 import { useTrackMyLedgerSectionEvents } from "~/analytics/hooks/useTrackMyLedgerEvents";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
+import { useTrackReceiveFlow } from "~/analytics/hooks/useTrackReceiveFlow";
 
 type Status = PartialNullable<{
   appAndVersion: AppAndVersion;
@@ -223,6 +224,14 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
     allowManagerRequested,
     allowRenamingRequested,
     imageRemoveRequested,
+    error,
+  });
+
+  useTrackReceiveFlow({
+    location: location === HOOKS_TRACKING_LOCATIONS.receiveFlow ? location : undefined,
+    device: selectedDevice,
+    requestOpenApp,
+    inWrongDeviceForAccount,
     error,
   });
 
