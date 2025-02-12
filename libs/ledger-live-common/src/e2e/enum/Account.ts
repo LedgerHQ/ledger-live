@@ -612,4 +612,20 @@ export class Account {
     undefined,
     0,
   );
+
+  static readonly SOL_GIGA_1 = new Account(
+    Currency.SOL_GIGA,
+    "Solana 1",
+    "HxoKQ5eu5MkqaAw7DaGVermrJqeNH8XkVnEKEpFuS9id",
+    AccountType.SPL,
+    0,
+  );
+
+  static readonly SOL_GIGA_2 = new Account(
+    Currency.SOL_GIGA,
+    "Solana 2",
+    "6vSQTFcBoPfUKAdo8BQNJqqxU6UcBmd87HQoNSbgTMzH",
+    AccountType.SPL,
+    1,
+  );
 }

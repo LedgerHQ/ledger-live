@@ -100,4 +100,5 @@ export class Currency {
     "multiverse_x",
     AppInfos.MULTIVERSE_X,
   );
+  static readonly SOL_GIGA = new Currency("GIGACHAD", "GIGA", "solana", AppInfos.SOLANA);
 }
