@@ -1,5 +1,43 @@
 ## 34.5.0-next.4
 
+## 34.21.0-nightly.3
+
+### Minor Changes
+
+- [#9170](https://github.com/LedgerHQ/ledger-live/pull/9170) [`c48d22f`](https://github.com/LedgerHQ/ledger-live/commit/c48d22fab07f856d7e2bcca67ea35446b26f1048) Thanks [@themooneer](https://github.com/themooneer)! - fix: 🐞 show all token (if supported / ignore duplicates) and crypto on asset selection
+
+### Patch Changes
+
+- Updated dependencies [[`ff40e9a`](https://github.com/LedgerHQ/ledger-live/commit/ff40e9a00d325e5b46cb069936ba2a5781c601b5)]:
+  - @ledgerhq/cryptoassets@13.10.1-nightly.0
+  - @ledgerhq/coin-framework@0.25.1-nightly.0
+  - @ledgerhq/coin-algorand@0.7.3-nightly.0
+  - @ledgerhq/coin-aptos@1.4.1-nightly.1
+  - @ledgerhq/coin-bitcoin@0.10.3-nightly.0
+  - @ledgerhq/coin-cardano@0.4.3-nightly.0
+  - @ledgerhq/coin-cosmos@0.7.1-nightly.1
+  - @ledgerhq/coin-elrond@0.3.3-nightly.0
+  - @ledgerhq/coin-evm@2.10.0-nightly.2
+  - @ledgerhq/coin-filecoin@1.5.3-nightly.0
+  - @ledgerhq/coin-hedera@1.3.3-nightly.1
+  - @ledgerhq/coin-icon@0.6.3-nightly.0
+  - @ledgerhq/coin-internet_computer@1.5.3-nightly.0
+  - @ledgerhq/coin-near@0.7.3-nightly.1
+  - @ledgerhq/coin-polkadot@1.7.3-nightly.0
+  - @ledgerhq/coin-solana@0.13.0-nightly.1
+  - @ledgerhq/coin-stacks@0.5.3-nightly.0
+  - @ledgerhq/coin-stellar@0.7.1-nightly.0
+  - @ledgerhq/coin-tezos@0.9.3-nightly.1
+  - @ledgerhq/coin-ton@0.5.3-nightly.0
+  - @ledgerhq/coin-tron@0.2.3-nightly.0
+  - @ledgerhq/coin-vechain@2.4.3-nightly.0
+  - @ledgerhq/coin-xrp@0.9.3-nightly.0
+  - @ledgerhq/hw-app-vet@0.2.14-nightly.0
+  - @ledgerhq/live-countervalues@0.3.0-nightly.1
+  - @ledgerhq/live-countervalues-react@0.2.21-nightly.1
+  - @ledgerhq/live-nft@0.5.6-nightly.0
+  - @ledgerhq/live-wallet@0.9.3-nightly.0
+
 ## 34.21.0-nightly.2
 
 ### Minor Changes

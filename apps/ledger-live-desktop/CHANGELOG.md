@@ -1,5 +1,28 @@
 # ledger-live-desktop
 
+## 2.99.0-nightly.4
+
+### Minor Changes
+
+- [#9174](https://github.com/LedgerHQ/ledger-live/pull/9174) [`706d19f`](https://github.com/LedgerHQ/ledger-live/commit/706d19f902fe85768d01423d3601569e78b82813) Thanks [@may01](https://github.com/may01)! - Fix staking NEAR e2e test crash
+
+### Patch Changes
+
+- Updated dependencies [[`c48d22f`](https://github.com/LedgerHQ/ledger-live/commit/c48d22fab07f856d7e2bcca67ea35446b26f1048), [`ff40e9a`](https://github.com/LedgerHQ/ledger-live/commit/ff40e9a00d325e5b46cb069936ba2a5781c601b5)]:
+  - @ledgerhq/live-common@34.21.0-nightly.3
+  - @ledgerhq/cryptoassets@13.10.1-nightly.0
+  - @ledgerhq/coin-framework@0.25.1-nightly.0
+  - @ledgerhq/coin-aptos@1.4.1-nightly.1
+  - @ledgerhq/coin-bitcoin@0.10.3-nightly.0
+  - @ledgerhq/coin-cosmos@0.7.1-nightly.1
+  - @ledgerhq/coin-evm@2.10.0-nightly.2
+  - @ledgerhq/coin-filecoin@1.5.3-nightly.0
+  - @ledgerhq/live-countervalues@0.3.0-nightly.1
+  - @ledgerhq/live-countervalues-react@0.2.21-nightly.1
+  - @ledgerhq/live-nft@0.5.6-nightly.0
+  - @ledgerhq/live-nft-react@0.5.6-nightly.0
+  - @ledgerhq/live-wallet@0.9.3-nightly.0
+
 ## 2.99.0-nightly.3
 
 ### Minor Changes

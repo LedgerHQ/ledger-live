@@ -1,5 +1,29 @@
 # live-mobile
 
+## 3.65.0-nightly.4
+
+### Minor Changes
+
+- [#9168](https://github.com/LedgerHQ/ledger-live/pull/9168) [`b4b5518`](https://github.com/LedgerHQ/ledger-live/commit/b4b5518b6911688547ab31c531d27fa714ead33f) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Polish ui of the add account v2 flow
+
+- [#9190](https://github.com/LedgerHQ/ledger-live/pull/9190) [`31606a1`](https://github.com/LedgerHQ/ledger-live/commit/31606a1bead0b7c1a5295768533e1701b24c06d4) Thanks [@LucasWerey](https://github.com/LucasWerey)! - fix typo when cancel adding account
+
+### Patch Changes
+
+- Updated dependencies [[`c48d22f`](https://github.com/LedgerHQ/ledger-live/commit/c48d22fab07f856d7e2bcca67ea35446b26f1048)]:
+  - @ledgerhq/live-common@34.21.0-nightly.3
+  - @ledgerhq/coin-framework@0.25.1-nightly.0
+  - @ledgerhq/coin-cosmos@0.7.1-nightly.1
+  - @ledgerhq/coin-elrond@0.3.3-nightly.0
+  - @ledgerhq/coin-evm@2.10.0-nightly.2
+  - @ledgerhq/coin-filecoin@1.5.3-nightly.0
+  - @ledgerhq/coin-stacks@0.5.3-nightly.0
+  - @ledgerhq/live-countervalues@0.3.0-nightly.1
+  - @ledgerhq/live-countervalues-react@0.2.21-nightly.1
+  - @ledgerhq/live-nft@0.5.6-nightly.0
+  - @ledgerhq/live-nft-react@0.5.6-nightly.0
+  - @ledgerhq/live-wallet@0.9.3-nightly.0
+
 ## 3.65.0-nightly.3
 
 ### Minor Changes
