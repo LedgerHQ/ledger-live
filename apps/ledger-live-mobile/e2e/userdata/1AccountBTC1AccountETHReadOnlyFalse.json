@@ -33,7 +33,7 @@
       "preferredDeviceModel": "nanoS",
       "hasInstalledApps": true,
       "dismissedDynamicCards": [],
-      "lastSeenDevice": null,
+      "seenDevices": [],
       "readOnlyModeEnabled": false,
       "blacklistedTokenIds": [],
       "swapAcceptedProviderIds": [],
