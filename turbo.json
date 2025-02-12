@@ -190,7 +190,7 @@
       "dependsOn": ["build"],
       "env": ["CI_OS"]
     },
-    "live-mobile#e2e:test": {
+    "live-mobile#e2e:test-with-turbo": {
       "cache": true,
       "outputs": [".detox-artifacts/junit.xml"],
       "dependsOn": ["^build"],
