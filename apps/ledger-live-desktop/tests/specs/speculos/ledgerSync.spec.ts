@@ -4,7 +4,6 @@ import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "../../utils/customJsonReporter";
 import { CLI } from "tests/utils/cliUtils";
 import { expect } from "@playwright/test";
-import { DistantState as LiveData } from "@ledgerhq/live-wallet/walletsync/index";
 import { LedgerSyncCliHelper } from "../../utils/ledgerSyncCliUtils";
 import { accountNames, accounts } from "tests/testdata/ledgerSyncTestData";
 
