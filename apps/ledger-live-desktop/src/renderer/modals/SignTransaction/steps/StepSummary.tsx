@@ -83,6 +83,8 @@ const StepSummary = (props: StepProps) => {
 
   const memo = "memo" in transaction ? transaction.memo : undefined;
 
+  console.log("NOW > totalSpent de chez totalSpent", totalSpent);
+  console.log("NOW > unit de chez unit ", unit);
   return (
     <Box flow={4} mx={40}>
       <TrackPage category="Sign Flow" name="Step Summary" />

@@ -7,6 +7,8 @@ import { _TypedDataEncoder as TypedDataEncoder } from "@ethersproject/hash";
 import EIP712CAL from "@ledgerhq/cryptoassets-evm-signatures/data/eip712";
 import EIP712CALV2 from "@ledgerhq/cryptoassets-evm-signatures/data/eip712_v2";
 import { CALServiceEIP712Response, MessageFilters } from "./types";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+import BigNumber from "bignumber.js";
 
 // As defined in [spec](https://eips.ethereum.org/EIPS/eip-712), the properties below are all required.
 export function isEIP712Message(message: unknown): message is EIP712Message {
@@ -172,6 +174,22 @@ function formatDate(timestamp: string) {
 
   return `${p("year")}-${p("month")}-${p("day")} ${p("hour")}:${p("minute")}:${p("second")} GMT`;
 }
+
+// function formatCurrency(val: string) {
+//   const unit = {
+//     name: "ether",
+//     code: "ETH",
+//     magnitude: 18,
+//   };
+
+//   const options = {
+//     showCode: true,
+//     disableRounding: true,
+//     showAllDigits: true,
+//   };
+
+//   return formatCurrencyUnit(unit, new BigNumber(+val / 10 ** 6), options);
+// }
 
 /**
  * Gets the fields visible on the nano for a specific EIP712 message

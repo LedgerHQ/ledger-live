@@ -1,3 +1,4 @@
+import { useCalculate } from "@ledgerhq/live-countervalues-react";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import type { MessageProperties } from "@ledgerhq/types-live";
 import React, { memo, useEffect, useState } from "react";
@@ -13,6 +14,10 @@ import { rgba } from "~/renderer/styles/helpers";
 import { StepProps } from "../types";
 import { useAccountName } from "~/renderer/reducers/wallet";
 import AngleDown from "~/renderer/icons/AngleDown";
+import FormattedVal from "~/renderer/components/FormattedVal";
+import { useSelector } from "react-redux";
+import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
+import { Account } from "@ledgerhq/types-live";
 
 const Circle = styled.div`
   height: 32px;
@@ -61,43 +66,84 @@ const AdvancedMessageArea = styled.pre`
   padding: 10px;
 `;
 
-const MessageProperty = memo(({ label, value }: MessageProperties[0]) => {
-  if (!value) return null;
+const MessageProperty = memo(
+  ({ label, value, account }: MessageProperties[0] & { account?: Account }) => {
+    const counterValueCurrency = useSelector(counterValueCurrencySelector);
 
-  return (
-    <Box style={{ flexDirection: "row", justifyContent: "space-between" }} flex="1" mb={20}>
-      <Text ff="Inter|Medium" color="palette.text.shade40" fontSize={4}>
-        {label}
-      </Text>
-      <Text ff="Inter|Medium" color="palette.text.shade90" fontSize={3} pl={2}>
-        {typeof value === "string" ? (
-          <ValueWrapper>{value}</ValueWrapper>
-        ) : (
-          <PropertiesList>
-            {value?.map?.((v, i) => (
-              <li key={i}>
-                <ValueWrapper>{`${v}${i < value.length - 1 ? "," : ""}`}</ValueWrapper>
-              </li>
-            ))}
-          </PropertiesList>
-        )}
-      </Text>
-    </Box>
-  );
-});
+    const unit = account!.currency.units[0];
+    // const unit = counterValueCurrency.units[0];
+
+    console.log("counterValueCurrency de chez counterValueCurrency", counterValueCurrency);
+    let calculatedCounterValue = useCalculate({
+      from: counterValueCurrency,
+      to: account!.currency,
+      // from: account!.currency,
+      // to: counterValueCurrency,
+      value: 1000000000000000000,
+      disableRounding: true,
+    });
+
+    if (!value) return null;
+
+    console.log("calculatedCounterValue de chez calculatedCounterValue", calculatedCounterValue);
+    if (typeof calculatedCounterValue !== "number") {
+      calculatedCounterValue = +value;
+    }
+
+    return (
+      <Box style={{ flexDirection: "row", justifyContent: "space-between" }} flex="1" mb={20}>
+        <Text ff="Inter|Medium" color="palette.text.shade40" fontSize={4}>
+          {label}
+        </Text>
+        <Text ff="Inter|Medium" color="palette.text.shade90" fontSize={3} pl={2}>
+          {typeof value === "string" ? (
+            <ValueWrapper>
+              {label.includes("Amount") ? (
+                <>
+                  <FormattedVal
+                    color={"palette.neutral.c100"}
+                    val={calculatedCounterValue}
+                    unit={unit}
+                    fontSize={3}
+                    disableRounding
+                    alwaysShowValue
+                    showCode
+                    inline
+                  />
+                </>
+              ) : (
+                value
+              )}
+            </ValueWrapper>
+          ) : (
+            <PropertiesList>
+              {value?.map?.((v, i) => (
+                <li key={i}>
+                  <ValueWrapper>{`${v}${i < value.length - 1 ? "," : ""}`}</ValueWrapper>
+                </li>
+              ))}
+            </PropertiesList>
+          )}
+        </Text>
+      </Box>
+    );
+  },
+);
 
 MessageProperty.displayName = "MessageProperty";
 
-const MessagePropertiesComp = memo((props: { properties: MessageProperties | null }) => {
-  const { properties } = props;
-  return properties ? (
-    <Box flex="1">
-      {properties.map((p, i) => (
-        <MessageProperty key={i} {...p} />
-      ))}
-    </Box>
-  ) : null;
-});
+const MessagePropertiesComp = memo(
+  (props: { properties: MessageProperties | null } & { account: Account }) => {
+    const { properties, account } = props;
+    return properties ? (
+      <Box flex="1">
+        {properties.map((p, i) => (
+          <MessageProperty key={i} {...p} account={account} />
+        ))}
+      </Box>
+    ) : null;
+  },
+);
 MessagePropertiesComp.displayName = "MessageProperties";
 
 export default function StepSummary({ account, message: messageData }: StepProps) {
@@ -141,7 +187,7 @@ export default function StepSummary({ account, message: messageData }: StepProps
 
       {!isACREWithdraw ? (
         messageData.standard === "EIP712" ? (
-          <MessagePropertiesComp properties={messageFields} />
+          <MessagePropertiesComp properties={messageFields} account={account} />
         ) : (
           <MessageProperty label={"message"} value={messageData.message} />
         )
