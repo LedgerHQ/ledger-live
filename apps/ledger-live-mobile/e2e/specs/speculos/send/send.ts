@@ -55,12 +55,10 @@ export async function runSendTest(transaction: TransactionType, tmsLinks: string
       await app.send.dismissHighFeeModal();
 
       await verifyAppValidationSendInfo(transaction, amountWithCode);
-
+      await device.disableSynchronization();
       await app.speculos.signSendTransaction(transaction);
 
-      await device.disableSynchronization();
       await app.common.successViewDetails();
-
       await app.operationDetails.waitForOperationDetails();
       await app.operationDetails.checkAccount(transaction.accountToDebit.accountName);
       await app.operationDetails.checkRecipient(addressToCredit);
@@ -223,12 +221,10 @@ export async function runSendENSTest(transaction: TransactionType, tmsLinks: str
       await app.send.dismissHighFeeModal();
 
       await verifyAppValidationSendInfo(transaction, amountWithCode);
-
+      await device.disableSynchronization();
       await app.speculos.signSendTransaction(transaction);
 
-      await device.disableSynchronization();
       await app.common.successViewDetails();
-
       await app.operationDetails.waitForOperationDetails();
       await app.operationDetails.checkAccount(transaction.accountToDebit.accountName);
       await app.operationDetails.checkRecipient(transaction.accountToCredit.address);
