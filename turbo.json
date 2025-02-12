@@ -193,7 +193,7 @@
     "live-mobile#e2e:test-with-turbo": {
       "cache": true,
       "outputs": [".detox-artifacts/junit.xml"],
-      "dependsOn": ["^build"],
+      "dependsOn": [],
       "inputs": ["src/**/*.ts", "e2e/**/*.test.js", "package.json", "pnpm-lock.yaml"]
     }
   }
