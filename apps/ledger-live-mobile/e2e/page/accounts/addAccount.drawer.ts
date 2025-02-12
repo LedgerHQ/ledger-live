@@ -23,6 +23,7 @@ export default class AddAccountDrawer {
     getElementById(`test-id-account-${accountName}`, index);
   modalButtonId = "add-accounts-modal-add-button";
   currencyRow = (currencyId: string) => `currency-row-${currencyId}`;
+  selectCryptoScrollView = "select-crypto-scrollview";
   continueButtonId = "add-accounts-continue-button";
   succesCtaId = "add-accounts-success-cta";
 
@@ -39,7 +40,8 @@ export default class AddAccountDrawer {
   @Step("Select currency")
   async selectCurrency(currencyId: string) {
     const id = this.currencyRow(currencyId);
-    await scrollToId(id);
+    await waitForElementById(this.selectCryptoScrollView); // Issue with RN75 : QAA-370
+    await scrollToId(id, this.selectCryptoScrollView);
     await tapById(id);
   }
 

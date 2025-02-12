@@ -290,6 +290,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       keyExtractor={keyExtractor}
       showsVerticalScrollIndicator={false}
       keyboardDismissMode="on-drag"
+      testID="select-crypto-scrollview"
     />
   );
 

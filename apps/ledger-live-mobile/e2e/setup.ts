@@ -27,7 +27,6 @@ beforeAll(
 
 afterEach(async () => {
   if (process.env.CI) writeFile(getState(), "json", await serverBridge.getLogs());
-  await device.enableSynchronization();
 });
 
 afterAll(async () => {

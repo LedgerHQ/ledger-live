@@ -50,7 +50,9 @@ export default class StakePage {
   async setAmount(currencyId: string, amount: string) {
     await waitForElementById(this.delegationSummaryAmountId(currencyId));
     await tapById(this.delegationSummaryAmountId(currencyId));
+    await waitForElementById(this.delegationAmountInput(currencyId)); // Issue with RN75 : QAA-370
     await typeTextById(this.delegationAmountInput(currencyId), amount);
+    await waitForElementById(this.delegationAmountContinueId(currencyId)); // Issue with RN75 : QAA-370
   }
 
   @Step("Set delegated amount percent")
@@ -95,6 +97,7 @@ export default class StakePage {
 
   @Step("Click on continue button in summary")
   async summaryContinue(currencyId: string) {
+    await waitForElementById(this.summaryContinueButtonId(currencyId)); // Issue with RN75 : QAA-370
     await tapById(this.summaryContinueButtonId(currencyId));
   }
 
