@@ -1,5 +1,89 @@
 ## 34.5.0-next.4
 
+## 34.21.0
+
+### Minor Changes
+
+- [#9060](https://github.com/LedgerHQ/ledger-live/pull/9060) [`5b78154`](https://github.com/LedgerHQ/ledger-live/commit/5b78154530d2c2794914207bd2e12578a52885f9) Thanks [@CremaFR](https://github.com/CremaFR)! - added near in the not supported coins for LNS
+
+- [#9102](https://github.com/LedgerHQ/ledger-live/pull/9102) [`de3d600`](https://github.com/LedgerHQ/ledger-live/commit/de3d60059ba9f864ed66a90fb6adf094e31272ba) Thanks [@semeano](https://github.com/semeano)! - Add Aptos to the list of not supported coins for swap with Ledger Nano S
+
+- [#9048](https://github.com/LedgerHQ/ledger-live/pull/9048) [`6e8701a`](https://github.com/LedgerHQ/ledger-live/commit/6e8701ad99006d71dd7660891b13015b9870cc34) Thanks [@VicAlbr](https://github.com/VicAlbr)! - test: adding e2e delegation test for Tezos and Celo
+
+- [#9019](https://github.com/LedgerHQ/ledger-live/pull/9019) [`b7e70fd`](https://github.com/LedgerHQ/ledger-live/commit/b7e70fd3ce6d0ddecf0d7192f67d5f84b1ab7803) Thanks [@jccguimaraes](https://github.com/jccguimaraes)! - fix bot detecting features
+
+### Patch Changes
+
+- Updated dependencies [[`e96114a`](https://github.com/LedgerHQ/ledger-live/commit/e96114a015016642df3a9837f1e6cd8c6ab6ca8f), [`5e18866`](https://github.com/LedgerHQ/ledger-live/commit/5e18866320b843632699659ee66f6c410c108c1e), [`b7e70fd`](https://github.com/LedgerHQ/ledger-live/commit/b7e70fd3ce6d0ddecf0d7192f67d5f84b1ab7803)]:
+  - @ledgerhq/live-countervalues@0.3.0
+  - @ledgerhq/coin-framework@1.0.0
+  - @ledgerhq/coin-polkadot@2.0.0
+  - @ledgerhq/coin-stellar@1.0.0
+  - @ledgerhq/coin-tezos@1.0.0
+  - @ledgerhq/coin-xrp@1.0.0
+  - @ledgerhq/coin-aptos@1.5.0
+  - @ledgerhq/coin-hedera@1.3.3
+  - @ledgerhq/live-countervalues-react@0.2.21
+  - @ledgerhq/coin-algorand@0.7.3
+  - @ledgerhq/coin-bitcoin@0.10.3
+  - @ledgerhq/coin-cardano@0.4.3
+  - @ledgerhq/coin-cosmos@0.7.1
+  - @ledgerhq/coin-elrond@0.3.3
+  - @ledgerhq/coin-evm@2.9.3
+  - @ledgerhq/coin-filecoin@1.5.3
+  - @ledgerhq/coin-icon@0.6.3
+  - @ledgerhq/coin-internet_computer@1.5.3
+  - @ledgerhq/coin-near@0.7.3
+  - @ledgerhq/coin-solana@0.12.1
+  - @ledgerhq/coin-stacks@0.5.3
+  - @ledgerhq/coin-ton@0.5.3
+  - @ledgerhq/coin-tron@0.2.3
+  - @ledgerhq/coin-vechain@2.4.3
+  - @ledgerhq/live-nft@0.5.6
+  - @ledgerhq/live-wallet@0.9.3
+
+## 34.21.0-next.0
+
+### Minor Changes
+
+- [#9060](https://github.com/LedgerHQ/ledger-live/pull/9060) [`5b78154`](https://github.com/LedgerHQ/ledger-live/commit/5b78154530d2c2794914207bd2e12578a52885f9) Thanks [@CremaFR](https://github.com/CremaFR)! - added near in the not supported coins for LNS
+
+- [#9102](https://github.com/LedgerHQ/ledger-live/pull/9102) [`de3d600`](https://github.com/LedgerHQ/ledger-live/commit/de3d60059ba9f864ed66a90fb6adf094e31272ba) Thanks [@semeano](https://github.com/semeano)! - Add Aptos to the list of not supported coins for swap with Ledger Nano S
+
+- [#9048](https://github.com/LedgerHQ/ledger-live/pull/9048) [`6e8701a`](https://github.com/LedgerHQ/ledger-live/commit/6e8701ad99006d71dd7660891b13015b9870cc34) Thanks [@VicAlbr](https://github.com/VicAlbr)! - test: adding e2e delegation test for Tezos and Celo
+
+- [#9019](https://github.com/LedgerHQ/ledger-live/pull/9019) [`b7e70fd`](https://github.com/LedgerHQ/ledger-live/commit/b7e70fd3ce6d0ddecf0d7192f67d5f84b1ab7803) Thanks [@jccguimaraes](https://github.com/jccguimaraes)! - fix bot detecting features
+
+### Patch Changes
+
+- Updated dependencies [[`e96114a`](https://github.com/LedgerHQ/ledger-live/commit/e96114a015016642df3a9837f1e6cd8c6ab6ca8f), [`5e18866`](https://github.com/LedgerHQ/ledger-live/commit/5e18866320b843632699659ee66f6c410c108c1e), [`b7e70fd`](https://github.com/LedgerHQ/ledger-live/commit/b7e70fd3ce6d0ddecf0d7192f67d5f84b1ab7803)]:
+  - @ledgerhq/live-countervalues@0.3.0-next.0
+  - @ledgerhq/coin-framework@1.0.0-next.0
+  - @ledgerhq/coin-polkadot@2.0.0-next.0
+  - @ledgerhq/coin-stellar@1.0.0-next.0
+  - @ledgerhq/coin-tezos@1.0.0-next.0
+  - @ledgerhq/coin-xrp@1.0.0-next.0
+  - @ledgerhq/coin-aptos@1.5.0-next.0
+  - @ledgerhq/coin-hedera@1.3.3-next.0
+  - @ledgerhq/live-countervalues-react@0.2.21-next.0
+  - @ledgerhq/coin-algorand@0.7.3-next.0
+  - @ledgerhq/coin-bitcoin@0.10.3-next.0
+  - @ledgerhq/coin-cardano@0.4.3-next.0
+  - @ledgerhq/coin-cosmos@0.7.1-next.0
+  - @ledgerhq/coin-elrond@0.3.3-next.0
+  - @ledgerhq/coin-evm@2.9.3-next.0
+  - @ledgerhq/coin-filecoin@1.5.3-next.0
+  - @ledgerhq/coin-icon@0.6.3-next.0
+  - @ledgerhq/coin-internet_computer@1.5.3-next.0
+  - @ledgerhq/coin-near@0.7.3-next.0
+  - @ledgerhq/coin-solana@0.12.1-next.0
+  - @ledgerhq/coin-stacks@0.5.3-next.0
+  - @ledgerhq/coin-ton@0.5.3-next.0
+  - @ledgerhq/coin-tron@0.2.3-next.0
+  - @ledgerhq/coin-vechain@2.4.3-next.0
+  - @ledgerhq/live-nft@0.5.6-next.0
+  - @ledgerhq/live-wallet@0.9.3-next.0
+
 ## 34.20.0
 
 ### Minor Changes
