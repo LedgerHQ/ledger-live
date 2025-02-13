@@ -148,6 +148,30 @@ export const getValueFromPath = (path: string, eip721Message: EIP712Message): st
   return value as string | string[];
 };
 
+function formatDate(timestamp: string) {
+  const date = new Date(Number(timestamp) * 1000);
+
+  if (isNaN(date.getTime())) {
+    return timestamp;
+  }
+
+  const formatter = new Intl.DateTimeFormat("en-GB", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    timeZone: "GMT",
+    hour12: false,
+  });
+
+  const parts = formatter.formatToParts(date);
+  const p = (type: string) => parts.find(p => p.type === type)?.value || "00";
+
+  return `${p("year")}-${p("month")}-${p("day")} ${p("hour")}:${p("minute")}:${p("second")} GMT`;
+}
+
 /**
  * Gets the fields visible on the nano for a specific EIP712 message
  */
@@ -219,10 +243,22 @@ export const getEIP712FieldsDisplayedOnNano = async (
   }
 
   for (const field of fields) {
-    displayedInfos.push({
-      label: field.label,
-      value: getValueFromPath(field.path, messageData),
-    });
+    if (field.path.includes("token")) {
+      displayedInfos.push({
+        label: "Token",
+        value: getValueFromPath(field.path, messageData),
+      });
+    } else if (field.path.includes("amount")) {
+      displayedInfos.push({
+        label: "Amount",
+        value: getValueFromPath(field.path, messageData),
+      });
+    } else if (field.path.includes("expiration")) {
+      displayedInfos.push({
+        label: "Approval expires",
+        value: formatDate(getValueFromPath(field.path, messageData) as string),
+      });
+    }
   }
 
   return displayedInfos;
