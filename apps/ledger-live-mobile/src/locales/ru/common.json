@@ -477,17 +477,17 @@
       "title" : "К сожалению, счетов не обнаружено",
       "description" : "Что-то пошло не так при вычислении адреса. Пожалуйста, попробуйте ещё раз. Если проблема не уходит, сохраните логи и отправьте их в Поддержку Ledger."
     },
-    "ElrondDecimalsLimitReached" : {
+    "MultiversXDecimalsLimitReached" : {
       "title" : "Достигнут лимит десятичных знаков",
       "description" : "Убедитесь, что у указанной суммы 18 десятичных знаков."
     },
-    "ElrondMinDelegatedAmountError" : {
+    "MultiversXMinDelegatedAmountError" : {
       "title" : "Делегированная сумма должна быть не менее {{formattedAmount}}"
     },
-    "ElrondMinUndelegatedAmountError" : {
+    "MultiversXMinUndelegatedAmountError" : {
       "title" : "Неделегированных средств должно быть как минимум {{formattedAmount}}"
     },
-    "ElrondDelegationBelowMinimumError" : {
+    "MultiversXDelegationBelowMinimumError" : {
       "title" : "Остаток делегированных средств должен быть не менее {{formattedAmount}}"
     },
     "NotEnoughVTHO" : {

@@ -477,17 +477,17 @@
       "title" : "No se encontró ninguna cuenta",
       "description" : "Algo ha salido mal en el cálculo de la dirección. Inténtalo de nuevo. Si el problema persiste, guarda los registros con el botón que se muestra a continuación y envíalos al Soporte de Ledger."
     },
-    "ElrondDecimalsLimitReached" : {
+    "MultiversXDecimalsLimitReached" : {
       "title" : "Límite máximo de decimales alcanzado",
       "description" : "Asegúrate de que el importe proporcionado tenga 18 decimales."
     },
-    "ElrondMinDelegatedAmountError" : {
+    "MultiversXMinDelegatedAmountError" : {
       "title" : "La cantidad delegada debe ser al menos {{formattedAmount}}"
     },
-    "ElrondMinUndelegatedAmountError" : {
+    "MultiversXMinUndelegatedAmountError" : {
       "title" : "La cantidad desdelegada debe ser al menos {{formattedAmount}}"
     },
-    "ElrondDelegationBelowMinimumError" : {
+    "MultiversXDelegationBelowMinimumError" : {
       "title" : "La delegación restante no puede ser menor a {{formattedAmount}}"
     },
     "NotEnoughVTHO" : {
