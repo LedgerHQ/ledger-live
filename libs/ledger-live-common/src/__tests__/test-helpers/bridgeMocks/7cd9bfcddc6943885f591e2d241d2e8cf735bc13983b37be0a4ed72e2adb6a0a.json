@@ -1,0 +1,1 @@
+{"request":{"url":"https://xtz-node.api.live.ledger.com/chains/main/blocks/head/protocols","method":"GET"},"response":{"body":{"protocol":"PsQuebecnLByd3JwTiGadoG4nGWi3HYiLXUjkibeFV8dCFeVMUg","next_protocol":"PsQuebecnLByd3JwTiGadoG4nGWi3HYiLXUjkibeFV8dCFeVMUg"}}}

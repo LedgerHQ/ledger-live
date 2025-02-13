@@ -1,0 +1,1 @@
+{"request":{"url":"https://xtz-node.api.live.ledger.com/chains/main/blocks/head/context/contracts/tz1MyR5fokb1o4bvSBtFErK6fxrkWgpvtpw9","method":"GET"},"response":{"body":{"balance":"348","counter":"2471567"}}}
