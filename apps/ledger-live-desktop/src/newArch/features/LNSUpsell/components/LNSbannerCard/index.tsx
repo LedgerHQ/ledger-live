@@ -3,60 +3,38 @@ import { Trans } from "react-i18next";
 import React from "react";
 import { BannerCard, Text } from "@ledgerhq/react-ui";
 import type { FlexBoxProps } from "@ledgerhq/react-ui/components/layout/Flex/index";
-import { track } from "~/renderer/analytics/segment";
-import { openURL } from "~/renderer/linking";
-import { AnalyticsButton, AnalyticsPage, type LNSUpsellType } from "../../types";
+import { useLNSBanner } from "../../hooks/useLNSBanner";
+import { type LNSBannerLocation } from "../../types";
 
-type Location = "manager" | "accounts";
-type Props = FlexBoxProps & {
-  type: LNSUpsellType;
-  location: Location;
-  image: string;
-  ctaLink: string;
-  learnMoreLink: string;
-  discount: number;
-};
+type Props = FlexBoxProps & { location: Extract<LNSBannerLocation, "accounts" | "manager"> };
 
 export function LNSBannerCard({
-  type,
   location,
-  image,
-  ctaLink,
-  learnMoreLink,
-  discount,
-  borderRadius = "5px",
   maxHeight = 175,
+  borderRadius = "5px",
   ...boxProps
 }: Props) {
-  const handleCTAClick = () => {
-    track("button_clicked", {
-      button: AnalyticsButton.CTA,
-      link: ctaLink,
-      page: AnalyticsPageMap[location],
-    });
-    openURL(ctaLink);
-  };
-  const handleLearnMoreLink = () => {
-    track("button_clicked", {
-      button: AnalyticsButton.LearnMore,
-      link: learnMoreLink,
-      page: AnalyticsPageMap[location],
-    });
-    openURL(learnMoreLink);
-  };
+  const params = useLNSBanner(location);
+
+  if (!params) return null;
+
+  const { discount, image, tracking, handleCTAClick, handleLearnMoreLink } = params;
 
   return (
     <BannerCard
       {...boxProps}
-      title={t(`lnsUpsell.banner.${location}.${type}.title`)}
+      title={t(`lnsUpsell.banner.${location}.${tracking}.title`)}
       description={
-        <Trans i18nKey={`lnsUpsell.banner.${location}.${type}.description`} values={{ discount }}>
+        <Trans
+          i18nKey={`lnsUpsell.banner.${location}.${tracking}.description`}
+          values={{ discount }}
+        >
           <Text color="constant.purple" />
         </Trans>
       }
       image={image}
-      cta={t(`lnsUpsell.banner.${location}.${type}.cta`)}
-      linkText={t(`lnsUpsell.banner.${location}.${type}.linkText`)}
+      cta={t(`lnsUpsell.banner.${location}.${tracking}.cta`)}
+      linkText={t(`lnsUpsell.banner.${location}.${tracking}.linkText`)}
       descriptionWidth={320}
       maxHeight={maxHeight}
       borderRadius={borderRadius}
@@ -65,8 +43,3 @@ export function LNSBannerCard({
     />
   );
 }
-
-const AnalyticsPageMap: Record<Location, AnalyticsPage> = {
-  manager: AnalyticsPage.Manager,
-  accounts: AnalyticsPage.Accounts,
-};

@@ -18,17 +18,59 @@ jest.mock("~/renderer/analytics/segment", () => ({
 }));
 
 describe("LNSNotificationBanner", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("should not render if the feature flag is disabled", () => {
+    renderBanner({ ffEnabled: false });
+    expect(screen.queryByText(t("lnsUpsell.banner.notifications.optIn.cta"))).toBeNull();
+  });
+
+  it("should not render if the location param is disabled on the feature flag", () => {
+    renderBanner({ ffLocationEnabled: false });
+    expect(screen.queryByText(t("lnsUpsell.banner.notifications.optIn.cta"))).toBeNull();
+  });
+
   it("should track click on the cta", () => {
-    render(<LNSNotificationBanner type="optIn" ctaLink="https://example.com" discount={10} />);
+    renderBanner({});
     fireEvent.click(screen.getByText(t("lnsUpsell.banner.notifications.optIn.cta")));
 
     expect(openURL).toHaveBeenCalledTimes(1);
-    expect(openURL).toHaveBeenCalledWith("https://example.com");
+    expect(openURL).toHaveBeenCalledWith("https://example.com/optInCta");
     expect(track).toHaveBeenCalledTimes(1);
     expect(track).toHaveBeenCalledWith("button_clicked", {
       button: "Level up wallet",
-      link: "https://example.com",
+      link: "https://example.com/optInCta",
       page: "Notification Panel",
     });
   });
+
+  it("should render the banner for opted out users", () => {
+    renderBanner({ isOptIn: false });
+    fireEvent.click(screen.getByText(t("lnsUpsell.banner.notifications.optOut.cta")));
+
+    expect(openURL).toHaveBeenCalledTimes(1);
+    expect(openURL).toHaveBeenCalledWith("https://example.com/optOutCta");
+    // NOTE track will be called but this function has it's own logic not to track opt out users
+  });
+
+  function renderBanner({ ffEnabled = true, ffLocationEnabled = true, isOptIn = true }) {
+    const defaultParams = { notification_center: ffLocationEnabled, "%": 10, img: "" };
+    const ffParams = {
+      opted_in: { ...defaultParams, link: "https://example.com/optInCta" },
+      opted_out: { ...defaultParams, link: "https://example.com/optOutCta" },
+    };
+
+    render(<LNSNotificationBanner />, {
+      initialState: {
+        settings: {
+          shareAnalytics: isOptIn,
+          overriddenFeatureFlags: {
+            lldNanoSUpsellBanners: { enabled: ffEnabled, params: ffParams },
+          },
+        },
+      },
+    });
+  }
 });
