@@ -30,7 +30,7 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
   if (xpub && recipient && validateAddress(recipient).isValid) {
     const { anchorMode, memo, amount } = transaction;
 
-    const network = StacksNetwork[transaction.network] || new StacksMainnet();
+    const network = StacksNetwork[transaction.network] || new StacksMainnet({url: 'https://stacks.coin.ledger.com/'});
 
     // Check if recipient is valid
     const options: UnsignedTokenTransferOptions = {

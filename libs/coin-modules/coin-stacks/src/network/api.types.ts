@@ -1,7 +1,7 @@
 import { StacksMainnet, StacksTestnet } from "@stacks/network";
 
 export const StacksNetwork = {
-  mainnet: new StacksMainnet(),
+  mainnet: new StacksMainnet({url: 'https://stacks.coin.ledger.com/'}),
   testnet: new StacksTestnet(),
 };
 

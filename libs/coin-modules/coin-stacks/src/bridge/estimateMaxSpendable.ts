@@ -32,7 +32,7 @@ export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpenda
   };
   // Compute fees
   const { recipient, anchorMode, memo, amount } = dummyTx;
-  const network = StacksNetwork[dummyTx.network] || new StacksMainnet();
+  const network = StacksNetwork[dummyTx.network] || new StacksMainnet({url: 'https://stacks.coin.ledger.com/'});
 
   const options: UnsignedTokenTransferOptions = {
     recipient,
