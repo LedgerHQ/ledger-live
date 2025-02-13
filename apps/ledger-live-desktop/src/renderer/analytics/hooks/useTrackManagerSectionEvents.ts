@@ -33,7 +33,6 @@ export type UseTrackManagerSectionEvents = {
  * @param allowManagerRequested - flag indicating if the user has allowed the Manager app.
  * @param clsImageRemoved - flag indicating if the user has removed the custom lock screen image.
  * @param error - current error state.
- * @param parentHookState - state from the parent hook, particularly allowManagerRequested.
  * @param isTrackingEnabled - flag indicating if tracking is enabled.
  */
 export const useTrackManagerSectionEvents = ({

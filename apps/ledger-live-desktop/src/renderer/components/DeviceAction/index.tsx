@@ -83,6 +83,8 @@ import { walletSelector } from "~/renderer/reducers/wallet";
 import { useTrackManagerSectionEvents } from "~/renderer/analytics/hooks/useTrackManagerSectionEvents";
 import { useTrackReceiveFlow } from "~/renderer/analytics/hooks/useTrackReceiveFlow";
 import { useTrackAddAccountModal } from "~/renderer/analytics/hooks/useTrackAddAccountModal";
+import { useTrackExchangeFlow } from "~/renderer/analytics/hooks/useTrackExchangeFlow";
+import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 
 export type LedgerError = InstanceType<LedgerErrorConstructor<{ [key: string]: unknown }>>;
 
@@ -159,7 +161,7 @@ type InnerProps<P> = {
   analyticsPropertyFlow?: string;
   overridesPreferredDeviceModel?: DeviceModelId;
   inlineRetry?: boolean; // Set to false if the retry mechanism is handled externally.
-  location?: string;
+  location?: HOOKS_TRACKING_LOCATIONS;
 };
 
 type Props<H extends States, P> = InnerProps<P> & {
@@ -268,6 +270,14 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     isLocked,
   });
 
+  useTrackExchangeFlow({
+    location: location === HOOKS_TRACKING_LOCATIONS.exchange ? location : undefined,
+    device,
+    error,
+    isTrackingEnabled: useSelector(trackingEnabledSelector),
+    isRequestOpenAppExchange: requestOpenApp === "Exchange",
+  });
+
   const type = useTheme().colors.palette.type;
 
   const modelId = device ? device.modelId : overridesPreferredDeviceModel || preferredDeviceModel;
@@ -346,7 +356,6 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   if (languageInstallationRequested) {
     return renderAllowLanguageInstallation({ modelId, type, t });
   }
-
   if (imageRemoveRequested) {
     const refused = error instanceof UserRefusedOnDevice;
     const noImage = error instanceof ImageDoesNotExistOnDevice;
