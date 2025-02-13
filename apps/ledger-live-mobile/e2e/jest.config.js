@@ -50,5 +50,5 @@ module.exports = async () => ({
       "detox-allure2-adapter",
     ],
   },
-  verbose: true,
+  verbose: false,
 });
