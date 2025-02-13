@@ -87,7 +87,8 @@ describe("LNSBannerCard", () => {
       render(<LNSBannerCard location={location} fallback={<div data-testid="fallback" />} />, {
         initialState: {
           settings: {
-            shareAnalytics: isOptIn,
+            shareAnalytics: true,
+            sharePersonalizedRecommandations: isOptIn,
             overriddenFeatureFlags: {
               lldNanoSUpsellBanners: { enabled: ffEnabled, params: ffParams },
             },
