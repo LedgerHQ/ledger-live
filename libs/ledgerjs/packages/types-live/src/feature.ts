@@ -196,6 +196,7 @@ export type Features = CurrencyFeatures & {
   web3hub: Feature_web3hub;
   llmMarketQuickActions: DefaultFeature;
   spamFilteringTx: Feature_SpamFilteringTx;
+  lldSpamFilteringTx: DefaultFeature;
   llmMemoTag: Feature_MemoTag;
   lldMemoTag: Feature_MemoTag;
   ldmkTransport: Feature_LdmkTransport;
