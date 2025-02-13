@@ -5,6 +5,7 @@ import {
   getCryptoCurrencyById,
   listSupportedFiats,
   getFiatCurrencyByTicker,
+  OFAC_CURRENCIES,
 } from "@ledgerhq/live-common/currencies/index";
 import { DeviceModelId } from "@ledgerhq/devices";
 import {
@@ -669,8 +670,13 @@ export const discreetModeSelector = (state: State): boolean => state.settings.di
 export const getCounterValueCode = (state: State) => state.settings.counterValue;
 export const lastSeenCustomImageSelector = (state: State) => state.settings.lastSeenCustomImage;
 export const deepLinkUrlSelector = (state: State) => state.settings.deepLinkUrl;
-export const counterValueCurrencyLocalSelector = (state: SettingsState): Currency =>
-  findCurrencyByTicker(state.counterValue) || getFiatCurrencyByTicker("USD");
+export const counterValueCurrencyLocalSelector = (state: SettingsState): Currency => {
+  if (OFAC_CURRENCIES.includes(state.counterValue)) {
+    return getFiatCurrencyByTicker("USD");
+  }
+  return findCurrencyByTicker(state.counterValue) || getFiatCurrencyByTicker("USD");
+};
+
 export const counterValueCurrencySelector = createSelector(
   storeSelector,
   counterValueCurrencyLocalSelector,
