@@ -72,14 +72,14 @@ export const pathToBuffer = (originalPath: string): Buffer => {
  * }
  *
  * function fetchAddress(aptosClient) {
- *     return aptosClient.getAddress("44'/144'/0'/0/0");
+ *     return aptosClient.getAddress("44'/637'/0'/0/0");
  * }
  *
  * function signTransaction(aptosClient, deviceData, seqNo, buffer) { *
  *     const transactionBlob = encode(buffer);
  *
  *     console.log('Sending transaction to device for approval...');
- *     return aptosClient.signTransaction("44'/144'/0'/0/0", transactionBlob);
+ *     return aptosClient.signTransaction("44'/637'/0'/0/0", transactionBlob);
  * }
  *
  * function prepareAndSign(aptosClient, seqNo) {
