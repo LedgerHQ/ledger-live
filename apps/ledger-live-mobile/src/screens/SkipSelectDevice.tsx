@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { discoverDevices } from "@ledgerhq/live-common/hw/index";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { lastConnectedDeviceSelector } from "~/reducers/settings";
-import { knownDevicesSelector } from "~/reducers/ble";
+import { bleDevicesSelector } from "~/reducers/ble";
 import { AddAccountsNavigatorParamList } from "~/components/RootNavigator/types/AddAccountsNavigator";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { ReceiveFundsStackParamList } from "~/components/RootNavigator/types/ReceiveFundsNavigator";
@@ -31,7 +31,7 @@ let usbTimeout: ReturnType<typeof setTimeout>;
  */
 export default function SkipSelectDevice({ onResult, route }: Props) {
   const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);
-  const knownDevices = useSelector(knownDevicesSelector);
+  const bleDevices = useSelector(bleDevicesSelector);
 
   const [hasUSB, setHasUSB] = useState(false);
   const [isBleRequired, setIsBleRequired] = useState(false);
@@ -43,7 +43,7 @@ export default function SkipSelectDevice({ onResult, route }: Props) {
       setHasUSB(e.id.startsWith("usb|"));
     });
     return () => subscription.unsubscribe();
-  }, [knownDevices]);
+  }, [bleDevices]);
 
   // Enforces the BLE requirements for a "connecting" action. The requirements are only enforced
   // if the bluetooth is needed (isBleRequired is true).
@@ -54,7 +54,7 @@ export default function SkipSelectDevice({ onResult, route }: Props) {
     });
 
   useEffect(() => {
-    if (!forceSelectDevice && knownDevices?.length > 0 && !hasUSB && lastConnectedDevice) {
+    if (!forceSelectDevice && bleDevices?.length > 0 && !hasUSB && lastConnectedDevice) {
       // Timeout to give some time to detect an usb connection
       usbTimeout = setTimeout(() => {
         // If it's a BLE device, the bluetooth requirements are enforced
@@ -67,7 +67,7 @@ export default function SkipSelectDevice({ onResult, route }: Props) {
     } else {
       clearTimeout(usbTimeout);
     }
-  }, [forceSelectDevice, hasUSB, knownDevices?.length, lastConnectedDevice, onResult]);
+  }, [forceSelectDevice, hasUSB, bleDevices?.length, lastConnectedDevice, onResult]);
 
   useEffect(() => {
     // If the bluetooth requirements are met, the device is selected

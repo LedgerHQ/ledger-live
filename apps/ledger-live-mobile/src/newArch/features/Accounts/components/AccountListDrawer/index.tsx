@@ -49,6 +49,7 @@ const AccountListDrawer = ({ isOpen, onClose, data, onPressAccount }: AccountLis
       )}
       <QueuedDrawer
         isRequestingToBeOpened={isOpen}
+        onClose={onClose}
         CustomHeader={() => (
           <CustomHeader
             onClose={onClose}

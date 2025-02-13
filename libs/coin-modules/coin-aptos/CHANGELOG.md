@@ -1,18 +1,26 @@
 # @ledgerhq/coin-aptos
 
-## 1.4.1-nightly.1
+## 1.5.0
+
+### Minor Changes
+
+- [#9019](https://github.com/LedgerHQ/ledger-live/pull/9019) [`b7e70fd`](https://github.com/LedgerHQ/ledger-live/commit/b7e70fd3ce6d0ddecf0d7192f67d5f84b1ab7803) Thanks [@jccguimaraes](https://github.com/jccguimaraes)! - fix bot detecting features
 
 ### Patch Changes
 
-- Updated dependencies [[`ff40e9a`](https://github.com/LedgerHQ/ledger-live/commit/ff40e9a00d325e5b46cb069936ba2a5781c601b5)]:
-  - @ledgerhq/cryptoassets@13.10.1-nightly.0
-  - @ledgerhq/coin-framework@0.25.1-nightly.0
+- Updated dependencies [[`5e18866`](https://github.com/LedgerHQ/ledger-live/commit/5e18866320b843632699659ee66f6c410c108c1e)]:
+  - @ledgerhq/coin-framework@1.0.0
 
-## 1.4.1-nightly.0
+## 1.5.0-next.0
+
+### Minor Changes
+
+- [#9019](https://github.com/LedgerHQ/ledger-live/pull/9019) [`b7e70fd`](https://github.com/LedgerHQ/ledger-live/commit/b7e70fd3ce6d0ddecf0d7192f67d5f84b1ab7803) Thanks [@jccguimaraes](https://github.com/jccguimaraes)! - fix bot detecting features
 
 ### Patch Changes
 
-- [#9107](https://github.com/LedgerHQ/ledger-live/pull/9107) [`42f1657`](https://github.com/LedgerHQ/ledger-live/commit/42f1657f8678474b9974f6105c76eae55511b0e6) Thanks [@semeano](https://github.com/semeano)! - Fix Aptos bridge integration tests
+- Updated dependencies [[`5e18866`](https://github.com/LedgerHQ/ledger-live/commit/5e18866320b843632699659ee66f6c410c108c1e)]:
+  - @ledgerhq/coin-framework@1.0.0-next.0
 
 ## 1.4.0
 

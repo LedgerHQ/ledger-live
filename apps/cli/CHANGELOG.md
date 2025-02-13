@@ -1,40 +1,26 @@
 # @ledgerhq/live-cli
 
-## 24.11.1-nightly.3
+## 24.11.1
 
 ### Patch Changes
 
-- Updated dependencies [[`c48d22f`](https://github.com/LedgerHQ/ledger-live/commit/c48d22fab07f856d7e2bcca67ea35446b26f1048), [`ff40e9a`](https://github.com/LedgerHQ/ledger-live/commit/ff40e9a00d325e5b46cb069936ba2a5781c601b5)]:
-  - @ledgerhq/live-common@34.21.0-nightly.3
-  - @ledgerhq/cryptoassets@13.10.1-nightly.0
-  - @ledgerhq/coin-framework@0.25.1-nightly.0
-  - @ledgerhq/coin-bitcoin@0.10.3-nightly.0
-  - @ledgerhq/live-countervalues@0.3.0-nightly.1
-  - @ledgerhq/live-wallet@0.9.3-nightly.0
+- Updated dependencies [[`e96114a`](https://github.com/LedgerHQ/ledger-live/commit/e96114a015016642df3a9837f1e6cd8c6ab6ca8f), [`5b78154`](https://github.com/LedgerHQ/ledger-live/commit/5b78154530d2c2794914207bd2e12578a52885f9), [`de3d600`](https://github.com/LedgerHQ/ledger-live/commit/de3d60059ba9f864ed66a90fb6adf094e31272ba), [`5e18866`](https://github.com/LedgerHQ/ledger-live/commit/5e18866320b843632699659ee66f6c410c108c1e), [`6e8701a`](https://github.com/LedgerHQ/ledger-live/commit/6e8701ad99006d71dd7660891b13015b9870cc34), [`b7e70fd`](https://github.com/LedgerHQ/ledger-live/commit/b7e70fd3ce6d0ddecf0d7192f67d5f84b1ab7803)]:
+  - @ledgerhq/live-countervalues@0.3.0
+  - @ledgerhq/live-common@34.21.0
+  - @ledgerhq/coin-framework@1.0.0
+  - @ledgerhq/coin-bitcoin@0.10.3
+  - @ledgerhq/live-wallet@0.9.3
 
-## 24.11.1-nightly.2
-
-### Patch Changes
-
-- [#9127](https://github.com/LedgerHQ/ledger-live/pull/9127) [`f502aa5`](https://github.com/LedgerHQ/ledger-live/commit/f502aa58976a69c8084092ee652820fdce7aceb4) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix(cli): print `listApps` output only once
-
-- Updated dependencies [[`9cd8b2a`](https://github.com/LedgerHQ/ledger-live/commit/9cd8b2ae451122c1c40b1beaf3d5d75892bf2c92), [`29909e6`](https://github.com/LedgerHQ/ledger-live/commit/29909e6a797a7fa0467f72dfd717903770878a55), [`aa88751`](https://github.com/LedgerHQ/ledger-live/commit/aa88751d522b97e9d45e42d228bb893bece5d72e)]:
-  - @ledgerhq/live-common@34.21.0-nightly.2
-  - @ledgerhq/live-countervalues@0.3.0-nightly.0
-
-## 24.11.1-nightly.1
+## 24.11.1-next.0
 
 ### Patch Changes
 
-- Updated dependencies [[`1bd0955`](https://github.com/LedgerHQ/ledger-live/commit/1bd0955280a92fab7cf800b49d0ca5314ecbbdc9)]:
-  - @ledgerhq/live-common@34.21.0-nightly.1
-
-## 24.11.1-nightly.0
-
-### Patch Changes
-
-- Updated dependencies [[`42f1657`](https://github.com/LedgerHQ/ledger-live/commit/42f1657f8678474b9974f6105c76eae55511b0e6), [`49cb00c`](https://github.com/LedgerHQ/ledger-live/commit/49cb00cca4ac96634a4e052ec6a007a19cb73ed5)]:
-  - @ledgerhq/live-common@34.21.0-nightly.0
+- Updated dependencies [[`e96114a`](https://github.com/LedgerHQ/ledger-live/commit/e96114a015016642df3a9837f1e6cd8c6ab6ca8f), [`5b78154`](https://github.com/LedgerHQ/ledger-live/commit/5b78154530d2c2794914207bd2e12578a52885f9), [`de3d600`](https://github.com/LedgerHQ/ledger-live/commit/de3d60059ba9f864ed66a90fb6adf094e31272ba), [`5e18866`](https://github.com/LedgerHQ/ledger-live/commit/5e18866320b843632699659ee66f6c410c108c1e), [`6e8701a`](https://github.com/LedgerHQ/ledger-live/commit/6e8701ad99006d71dd7660891b13015b9870cc34), [`b7e70fd`](https://github.com/LedgerHQ/ledger-live/commit/b7e70fd3ce6d0ddecf0d7192f67d5f84b1ab7803)]:
+  - @ledgerhq/live-countervalues@0.3.0-next.0
+  - @ledgerhq/live-common@34.21.0-next.0
+  - @ledgerhq/coin-framework@1.0.0-next.0
+  - @ledgerhq/coin-bitcoin@0.10.3-next.0
+  - @ledgerhq/live-wallet@0.9.3-next.0
 
 ## 24.11.0
 

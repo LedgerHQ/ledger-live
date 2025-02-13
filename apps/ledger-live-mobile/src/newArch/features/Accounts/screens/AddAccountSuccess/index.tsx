@@ -1,96 +1,50 @@
 import { Flex, Icons, rgba, Text } from "@ledgerhq/native-ui";
-import React, { useCallback } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
-import {
-  Animated,
-  FlatList,
-  ListRenderItemInfo,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import { useTheme } from "styled-components/native";
-import { NavigatorName, ScreenName } from "~/const";
+import { FlatList, ListRenderItemInfo, StyleSheet, View as RNView } from "react-native";
+import { ScreenName } from "~/const";
 import { TrackScreen } from "~/analytics";
-import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
-import AccountItem from "../../components/AccountsListView/components/AccountItem";
 import { AccountLikeEnhanced } from "../ScanDeviceAccounts/types";
-import { Account } from "@ledgerhq/types-live";
 import SafeAreaView from "~/components/SafeAreaView";
 import Circle from "~/components/Circle";
-import { NetworkBasedAddAccountNavigator } from "../AddAccount/types";
 import VerticalGradientBackground from "../../components/VerticalGradientBackground";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
-import { useNavigation } from "@react-navigation/core";
-import useAnimatedStyle from "../ScanDeviceAccounts/components/ScanDeviceAccountsFooter/useAnimatedStyle";
 import AddFundsButton from "../../components/AddFundsButton";
 import CloseWithConfirmation from "LLM/components/CloseWithConfirmation";
-import { AddAccountContexts } from "../AddAccount/enums";
+import AnimatedAccountItem from "../../components/AccountsListView/components/AnimatedAccountItem";
+import useAddAccountSuccessViewModel, { type Props } from "./useAddAccountSuccessViewModel";
 
-type Props = BaseComposite<
-  StackNavigatorProps<NetworkBasedAddAccountNavigator, ScreenName.AddAccountsSuccess>
->;
+type ViewProps = ReturnType<typeof useAddAccountSuccessViewModel>;
 
-export default function AddAccountsSuccess({ route }: Props) {
-  const { colors, space } = useTheme();
+function View({
+  space,
+  currency,
+  accountsToAdd,
+  statusColor,
+  goToAccounts,
+  keyExtractor,
+  onCloseNavigation,
+}: ViewProps) {
   const { t } = useTranslation();
-  const navigation = useNavigation();
-  const { animatedSelectableAccount } = useAnimatedStyle();
-  const { currency, accountsToAdd, onCloseNavigation, context } = route.params || {};
 
-  const goToAccounts = useCallback(
-    (accountId: string) => () => {
-      if (context === AddAccountContexts.AddAccounts)
-        navigation.navigate(ScreenName.Account, {
-          accountId,
-        });
-      else
-        navigation.navigate(NavigatorName.ReceiveFunds, {
-          screen: ScreenName.ReceiveConfirmation,
-          params: {
-            ...route.params,
-            accountId,
-          },
-        });
-    },
-    [navigation, route.params, context],
-  );
-
-  const renderItem = useCallback(
-    ({ item }: ListRenderItemInfo<AccountLikeEnhanced>) => (
-      <Animated.View style={[animatedSelectableAccount]}>
-        <TouchableOpacity onPress={goToAccounts(item.id)}>
-          <Flex
-            flexDirection="row"
-            alignItems="center"
-            borderRadius={space[4]}
-            padding={space[6]}
-            backgroundColor="opacityDefault.c05"
-            width="100%"
-          >
-            <AccountItem account={item as Account} balance={item.balance} />
-            <Icons.ChevronRight size="M" color={colors.primary.c100} />
-          </Flex>
-        </TouchableOpacity>
-      </Animated.View>
-    ),
-    [animatedSelectableAccount, goToAccounts, space, colors.primary.c100],
-  );
-
-  const keyExtractor = useCallback((item: AccountLikeEnhanced) => item?.id, []);
-
-  const statusColor = colors.neutral.c100;
+  const renderItem = ({ item, index }: ListRenderItemInfo<AccountLikeEnhanced>) => {
+    return (
+      <AnimatedAccountItem item={item} index={index} onPress={goToAccounts(item.id)}>
+        <Icons.ChevronRight color="primary.c100" />
+      </AnimatedAccountItem>
+    );
+  };
 
   return (
-    <SafeAreaView edges={["left", "right", "bottom"]} isFlex>
+    <SafeAreaView edges={["left", "right", "bottom", "top"]} isFlex>
       <TrackScreen category="AddAccounts" name="Success" currencyName={currency?.name} />
       <VerticalGradientBackground stopColor={getCurrencyColor(currency)} />
-      <Flex alignItems="center" style={styles.root} pt={space[7]}>
-        <View style={[styles.iconWrapper, { backgroundColor: rgba(statusColor, 0.1) }]}>
+      <Flex alignItems="center" style={styles.root} pt={space[10]}>
+        <RNView style={[styles.iconWrapper, { backgroundColor: rgba(statusColor, 0.1) }]}>
           <Circle size={24}>
             <Icons.CheckmarkCircleFill size="L" color={statusColor} />
           </Circle>
-        </View>
+        </RNView>
         <Text style={styles.title} textAlign="center" width="60%">
           {t("addAccounts.added", { count: accountsToAdd.length })}
         </Text>
@@ -102,11 +56,11 @@ export default function AddAccountsSuccess({ route }: Props) {
           renderItem={renderItem}
           keyExtractor={keyExtractor}
           showsVerticalScrollIndicator={false}
-          ItemSeparatorComponent={() => <View style={{ height: space[4] }} />}
+          ItemSeparatorComponent={() => <RNView style={{ height: space[4] }} />}
           style={{ paddingHorizontal: space[4], width: "100%" }}
         />
       </Flex>
-      <Flex px={6} rowGap={6}>
+      <Flex px={6} paddingTop={6} rowGap={6}>
         <AddFundsButton
           accounts={accountsToAdd}
           currency={currency}
@@ -124,7 +78,6 @@ export default function AddAccountsSuccess({ route }: Props) {
 
 const styles = StyleSheet.create({
   root: {
-    marginTop: 100,
     marginBottom: 20,
     alignItems: "center",
     justifyContent: "center",
@@ -141,3 +94,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
 });
+
+const AddAccountSuccess: React.FC<Props> = props => (
+  <View {...useAddAccountSuccessViewModel(props)} />
+);
+
+export default AddAccountSuccess;

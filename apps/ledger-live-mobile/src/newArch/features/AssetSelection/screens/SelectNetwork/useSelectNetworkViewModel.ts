@@ -24,6 +24,7 @@ export default function useSelectNetworkViewModel({
   currency,
   inline,
   analyticsMetadata,
+  onSuccess,
 }: SelectNetworkRouteParams) {
   const navigation = useNavigation<AssetSelectionNavigationProps["navigation"]>();
 
@@ -100,14 +101,15 @@ export default function useSelectNetworkViewModel({
       processNavigate(NavigatorName.DeviceSelection, {
         screen: ScreenName.SelectDevice,
         params: {
-          currency: currency,
+          currency,
           createTokenAccount,
           context,
           inline,
+          onSuccess,
         },
       });
     },
-    [navigation, context, inline],
+    [navigation, context, inline, onSuccess],
   );
 
   const processNetworkSelection = useCallback(

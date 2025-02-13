@@ -35,7 +35,7 @@
       "preferredDeviceModel": "nanoS",
       "hasInstalledApps": true,
       "dismissedDynamicCards": [],
-      "lastSeenDevice": null,
+      "seenDevices": [],
       "blacklistedTokenIds": [],
       "swapAcceptedProviderIds": [],
       "deepLinkUrl": null,

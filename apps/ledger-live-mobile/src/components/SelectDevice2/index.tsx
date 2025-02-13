@@ -13,7 +13,7 @@ import SafeAreaView from "../SafeAreaView";
 import TransportBLE from "../../react-native-hw-transport-ble";
 import { TrackScreen, track } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
-import { knownDevicesSelector } from "~/reducers/ble";
+import { bleDevicesSelector } from "~/reducers/ble";
 import Touchable from "../Touchable";
 import { saveBleDeviceName } from "~/actions/ble";
 import { setHasConnectedDevice, updateMainNavigatorVisibility } from "~/actions/appstate";
@@ -83,7 +83,7 @@ export default function SelectDevice({
   const isPostOnboardingVisible = hasPostOnboardingEntryPointCard && postOnboardingVisible;
   const { t } = useTranslation();
 
-  const knownDevices = useSelector(knownDevicesSelector);
+  const knownDevices = useSelector(bleDevicesSelector);
   const navigation = useNavigation<Navigation["navigation"]>();
   const { scannedDevices } = useBleDevicesScanning({
     bleTransportListen: TransportBLE.listen,

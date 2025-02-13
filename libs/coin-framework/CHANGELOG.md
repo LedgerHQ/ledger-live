@@ -1,11 +1,16 @@
 # @ledgerhq/coin-framework
 
-## 0.25.1-nightly.0
+## 1.0.0
 
-### Patch Changes
+### Major Changes
 
-- Updated dependencies [[`ff40e9a`](https://github.com/LedgerHQ/ledger-live/commit/ff40e9a00d325e5b46cb069936ba2a5781c601b5)]:
-  - @ledgerhq/cryptoassets@13.10.1-nightly.0
+- [#9092](https://github.com/LedgerHQ/ledger-live/pull/9092) [`5e18866`](https://github.com/LedgerHQ/ledger-live/commit/5e18866320b843632699659ee66f6c410c108c1e) Thanks [@jprudent](https://github.com/jprudent)! - Change coin-framework/api types for list operations
+
+## 1.0.0-next.0
+
+### Major Changes
+
+- [#9092](https://github.com/LedgerHQ/ledger-live/pull/9092) [`5e18866`](https://github.com/LedgerHQ/ledger-live/commit/5e18866320b843632699659ee66f6c410c108c1e) Thanks [@jprudent](https://github.com/jprudent)! - Change coin-framework/api types for list operations
 
 ## 0.25.0
 

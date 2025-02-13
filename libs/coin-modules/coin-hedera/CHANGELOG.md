@@ -1,20 +1,20 @@
 # @ledgerhq/coin-hedera
 
-## 1.3.3-nightly.1
+## 1.3.3
 
 ### Patch Changes
 
-- Updated dependencies [[`ff40e9a`](https://github.com/LedgerHQ/ledger-live/commit/ff40e9a00d325e5b46cb069936ba2a5781c601b5)]:
-  - @ledgerhq/cryptoassets@13.10.1-nightly.0
-  - @ledgerhq/coin-framework@0.25.1-nightly.0
-  - @ledgerhq/live-countervalues@0.3.0-nightly.1
+- Updated dependencies [[`e96114a`](https://github.com/LedgerHQ/ledger-live/commit/e96114a015016642df3a9837f1e6cd8c6ab6ca8f), [`5e18866`](https://github.com/LedgerHQ/ledger-live/commit/5e18866320b843632699659ee66f6c410c108c1e)]:
+  - @ledgerhq/live-countervalues@0.3.0
+  - @ledgerhq/coin-framework@1.0.0
 
-## 1.3.3-nightly.0
+## 1.3.3-next.0
 
 ### Patch Changes
 
-- Updated dependencies [[`aa88751`](https://github.com/LedgerHQ/ledger-live/commit/aa88751d522b97e9d45e42d228bb893bece5d72e)]:
-  - @ledgerhq/live-countervalues@0.3.0-nightly.0
+- Updated dependencies [[`e96114a`](https://github.com/LedgerHQ/ledger-live/commit/e96114a015016642df3a9837f1e6cd8c6ab6ca8f), [`5e18866`](https://github.com/LedgerHQ/ledger-live/commit/5e18866320b843632699659ee66f6c410c108c1e)]:
+  - @ledgerhq/live-countervalues@0.3.0-next.0
+  - @ledgerhq/coin-framework@1.0.0-next.0
 
 ## 1.3.2
 

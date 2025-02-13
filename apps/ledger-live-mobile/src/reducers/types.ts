@@ -236,7 +236,7 @@ export type SettingsState = {
     acceptedProviders: string[];
     selectableCurrencies: string[];
   };
-  lastSeenDevice: DeviceModelInfo | null;
+  seenDevices: DeviceModelInfo[];
   knownDeviceModelIds: Record<DeviceModelId, boolean>;
   hasSeenStaxEnabledNftsPopup: boolean;
   lastConnectedDevice: Device | null;

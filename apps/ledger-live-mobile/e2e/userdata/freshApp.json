@@ -32,7 +32,7 @@
       "preferredDeviceModel": "nanoS",
       "hasInstalledApps": true,
       "dismissedDynamicCards": [],
-      "lastSeenDevice": null,
+      "seenDevices": [],
       "latestFirmware": null,
       "blacklistedTokenIds": [],
       "deepLinkUrl": null,

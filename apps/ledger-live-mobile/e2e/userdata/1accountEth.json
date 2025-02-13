@@ -28,54 +28,56 @@
       "discreetMode": false,
       "preferredDeviceModel": "nanoX",
       "hasInstalledApps": true,
-      "lastSeenDevice": {
-        "modelId": "nanoX",
-        "deviceInfo": {
-          "version": "2.2.1",
-          "mcuVersion": "2.30",
-          "seVersion": "2.2.1",
-          "majMin": "2.2",
-          "providerName": null,
-          "targetId": 855638020,
-          "hasDevFirmware": false,
-          "seTargetId": 855638020,
-          "isOSU": false,
-          "isBootloader": false,
-          "isRecoveryMode": false,
-          "managerAllowed": true,
-          "pinValidated": true,
-          "onboarded": true,
-          "bootloaderVersion": "1.16",
-          "hardwareVersion": 0,
-          "languageId": 0
-        },
-        "apps": [
-          {
-            "name": "Cosmos",
-            "version": "2.34.9"
+      "seenDevices": [
+        {
+          "modelId": "nanoX",
+          "deviceInfo": {
+            "version": "2.2.1",
+            "mcuVersion": "2.30",
+            "seVersion": "2.2.1",
+            "majMin": "2.2",
+            "providerName": null,
+            "targetId": 855638020,
+            "hasDevFirmware": false,
+            "seTargetId": 855638020,
+            "isOSU": false,
+            "isBootloader": false,
+            "isRecoveryMode": false,
+            "managerAllowed": true,
+            "pinValidated": true,
+            "onboarded": true,
+            "bootloaderVersion": "1.16",
+            "hardwareVersion": 0,
+            "languageId": 0
           },
-          {
-            "name": "Ethereum",
-            "version": "1.10.2"
-          },
-          {
-            "name": "Polygon",
-            "version": "1.10.2"
-          },
-          {
-            "name": "Komodo",
-            "version": "2.1.0"
-          },
-          {
-            "name": "Bitcoin",
-            "version": "2.1.2"
-          },
-          {
-            "name": "NEAR",
-            "version": "1.2.1"
-          }
-        ]
-      },
+          "apps": [
+            {
+              "name": "Cosmos",
+              "version": "2.34.9"
+            },
+            {
+              "name": "Ethereum",
+              "version": "1.10.2"
+            },
+            {
+              "name": "Polygon",
+              "version": "1.10.2"
+            },
+            {
+              "name": "Komodo",
+              "version": "2.1.0"
+            },
+            {
+              "name": "Bitcoin",
+              "version": "2.1.2"
+            },
+            {
+              "name": "NEAR",
+              "version": "1.2.1"
+            }
+          ]
+        }
+      ],
       "lastSeenCustomImage": {
         "size": 0,
         "hash": ""
