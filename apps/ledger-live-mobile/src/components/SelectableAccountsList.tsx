@@ -1,7 +1,7 @@
 import React, { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Trans } from "react-i18next";
 import {
-  Animated,
+  Animated as RNAnimated,
   View,
   TouchableOpacity,
   PanResponder,
@@ -30,10 +30,10 @@ import { AccountSettingsNavigatorParamList } from "./RootNavigator/types/Account
 import AccountItem from "LLM/features/Accounts/components/AccountsListView/components/AccountItem";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { BaseComposite, StackNavigatorProps } from "./RootNavigator/types/helpers";
-
-import useAnimatedStyle from "LLM/features/Accounts/screens/ScanDeviceAccounts/components/ScanDeviceAccountsFooter/useAnimatedStyle";
+import Animated from "react-native-reanimated";
 import { useTheme } from "styled-components/native";
 import { TextVariants } from "@ledgerhq/native-ui/lib/styles/theme";
+import useItemAnimation from "LLM/features/Accounts/components/AccountsListView/components/AnimatedAccountItem/useItemAnimation";
 
 const selectAllHitSlop = {
   top: 16,
@@ -296,8 +296,8 @@ const SelectableAccount = ({
 
   const renderLeftActions = useCallback(
     (
-      progress: Animated.AnimatedInterpolation<number>,
-      dragX: Animated.AnimatedInterpolation<number>,
+      progress: RNAnimated.AnimatedInterpolation<number>,
+      dragX: RNAnimated.AnimatedInterpolation<number>,
     ) => {
       const translateX = dragX.interpolate({
         inputRange: [0, 1000],
@@ -306,7 +306,7 @@ const SelectableAccount = ({
 
       return (
         <Flex width="auto" flexDirection="row" alignItems="center" justifyContent="center" ml={2}>
-          <Animated.View style={[{ transform: [{ translateX }] }]} onLayout={setLayout}>
+          <RNAnimated.View style={[{ transform: [{ translateX }] }]} onLayout={setLayout}>
             <Button
               event="EditAccountNameFromSlideAction"
               type="primary"
@@ -315,7 +315,7 @@ const SelectableAccount = ({
               paddingLeft={0}
               paddingRight={0}
             />
-          </Animated.View>
+          </RNAnimated.View>
         </Flex>
       );
     },
@@ -324,11 +324,15 @@ const SelectableAccount = ({
 
   const subAccountCount = account.subAccounts && account.subAccounts.length;
   const isToken = listTokenTypesForCryptoCurrency(account.currency).length > 0;
-  const { animatedSelectableAccount } = useAnimatedStyle();
+  const { animatedStyle, startAnimation } = useItemAnimation();
   const styles = getConditionalStyles(isNetworkBasedAddAccountFlowEnabled, space);
 
+  useEffect(() => {
+    startAnimation();
+  }, [startAnimation]);
+
   const inner = (
-    <Animated.View style={[animatedSelectableAccount]}>
+    <Animated.View style={[animatedStyle]}>
       <Flex
         {...styles.selectableAccount}
         flexDirection="row"

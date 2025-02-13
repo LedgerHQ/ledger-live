@@ -98,6 +98,8 @@ describe("Xrp Api", () => {
         recipient: "rKRtUG15iBsCQRgrkeUEg5oX4Ae2zWZ89z",
         amount: BigInt(10),
         fee: BigInt(1),
+        memos: [{ data: "01", format: "02", type: "03" }],
+        destinationTag: 123,
       });
 
       // Then

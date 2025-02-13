@@ -1,12 +1,6 @@
 name: "[Code Quality Check] Sonar Scan"
 
 on:
-  workflow_dispatch:
-    inputs:
-        ref:
-          description: "Which (branch or tag) you want to perform a sonar scan ?"
-          required: false
-          default: develop
   schedule:
     - cron: "9 19 * * 1-5" # every working day at 7pm we will do a daily scan on develop
 

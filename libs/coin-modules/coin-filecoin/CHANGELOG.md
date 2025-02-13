@@ -1,5 +1,19 @@
 # @ledgerhq/coin-filecoin
 
+## 1.5.3
+
+### Patch Changes
+
+- Updated dependencies [[`5e18866`](https://github.com/LedgerHQ/ledger-live/commit/5e18866320b843632699659ee66f6c410c108c1e)]:
+  - @ledgerhq/coin-framework@1.0.0
+
+## 1.5.3-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`5e18866`](https://github.com/LedgerHQ/ledger-live/commit/5e18866320b843632699659ee66f6c410c108c1e)]:
+  - @ledgerhq/coin-framework@1.0.0-next.0
+
 ## 1.5.2
 
 ### Patch Changes

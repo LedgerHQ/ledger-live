@@ -24,14 +24,9 @@ export type Transaction = {
   recipient: string;
   amount: bigint;
   fee: bigint;
-  supplement?: unknown;
-};
+} & Record<string, unknown>; // Field containing dedicated value for each blockchain
 
-// TODO rename start to minHeight
-//       and add a `token: string` field to the pagination if we really need to support pagination
-//       (which is not the case for now)
-//       for now start is used as a minHeight from which we want to fetch ALL operations
-//       limit is unused for now
+// TODO add a `token: string` field to the pagination if we really need to support pagination (which is not the case for now)
 //       see design document at https://ledgerhq.atlassian.net/wiki/spaces/BE/pages/5446205788/coin-modules+lama-adapter+APIs+refinements
 export type Pagination = { minHeight: number };
 export type Api = {
