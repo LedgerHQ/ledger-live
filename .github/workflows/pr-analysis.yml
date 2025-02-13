@@ -96,7 +96,6 @@ jobs:
           args: >
             -Dsonar.sources=apps/ledger-live-desktop,libs
             -Dsonar.testExecutionReportPaths=lld-sonar-executionTests-report.xml
-            -Dsonar.newCode.referenceBranch=develop
 
       - name: SonarQubeScan mobile only
         if: ${{env.MOBILE_AFFECTED == 'true' && env.DESKTOP_AFFECTED == 'false'}}
@@ -107,13 +106,9 @@ jobs:
           args: >
             -Dsonar.sources=apps/ledger-live-mobile,libs
             -Dsonar.testExecutionReportPaths=llm-sonar-executionTests-report.xml
-            -Dsonar.newCode.referenceBranch=develop
 
       - name: SonarQubeScan desktop and mobile
         if: ${{env.DESKTOP_AFFECTED == 'true' && env.MOBILE_AFFECTED == 'true'}}
         uses: SonarSource/sonarqube-scan-action@v4
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        with:
-          args: >
-            -Dsonar.newCode.referenceBranch=develop
