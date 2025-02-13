@@ -1,4 +1,3 @@
-import { useCalculate } from "@ledgerhq/live-countervalues-react";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import type { MessageProperties } from "@ledgerhq/types-live";
 import React, { memo, useEffect, useState } from "react";
@@ -15,8 +14,6 @@ import { StepProps } from "../types";
 import { useAccountName } from "~/renderer/reducers/wallet";
 import AngleDown from "~/renderer/icons/AngleDown";
 import FormattedVal from "~/renderer/components/FormattedVal";
-import { useSelector } from "react-redux";
-import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
 import { Account } from "@ledgerhq/types-live";
 
 const Circle = styled.div`
@@ -67,28 +64,19 @@ const AdvancedMessageArea = styled.pre`
 `;
 
 const MessageProperty = memo(
-  ({ label, value, account }: MessageProperties[0] & { account?: Account }) => {
-    const counterValueCurrency = useSelector(counterValueCurrencySelector);
+  ({
+    label,
+    value,
+    account,
+    contractAddress,
+  }: MessageProperties[0] & { account?: Account; contractAddress?: string | string[] }) => {
+    if (!value || !account || !contractAddress) return null;
 
-    const unit = account!.currency.units[0];
-    // const unit = counterValueCurrency.units[0];
+    const isPropertyAmount = label.includes("Amount");
 
-    console.log("counterValueCurrency de chez counterValueCurrency", counterValueCurrency);
-    let calculatedCounterValue = useCalculate({
-      from: counterValueCurrency,
-      to: account!.currency,
-      // from: account!.currency,
-      // to: counterValueCurrency,
-      value: 1000000000000000000,
-      disableRounding: true,
-    });
-
-    if (!value) return null;
-
-    console.log("calculatedCounterValue de chez calculatedCounterValue", calculatedCounterValue);
-    if (typeof calculatedCounterValue !== "number") {
-      calculatedCounterValue = +value;
-    }
+    const unit = isPropertyAmount
+      ? account.subAccounts?.find(a => a.token.contractAddress === contractAddress)?.token.units[0]
+      : undefined;
 
     return (
       <Box style={{ flexDirection: "row", justifyContent: "space-between" }} flex="1" mb={20}>
@@ -98,11 +86,11 @@ const MessageProperty = memo(
         <Text ff="Inter|Medium" color="palette.text.shade90" fontSize={3} pl={2}>
           {typeof value === "string" ? (
             <ValueWrapper>
-              {label.includes("Amount") ? (
+              {isPropertyAmount ? (
                 <>
                   <FormattedVal
                     color={"palette.neutral.c100"}
-                    val={calculatedCounterValue}
+                    val={Number(value)}
                     unit={unit}
                     fontSize={3}
                     disableRounding
@@ -135,11 +123,14 @@ MessageProperty.displayName = "MessageProperty";
 const MessagePropertiesComp = memo(
   (props: { properties: MessageProperties | null } & { account: Account }) => {
     const { properties, account } = props;
+    const contractAddress = properties?.find(p => p.label === "Token")?.value;
+
     return properties ? (
       <Box flex="1">
-        {properties.map((p, i) => (
-          <MessageProperty key={i} {...p} account={account} />
-        ))}
+        {properties.map((p, i) => {
+          const props = { ...p, account, contractAddress };
+          return <MessageProperty key={i} {...props} />;
+        })}
       </Box>
     ) : null;
   },
@@ -183,7 +174,7 @@ export default function StepSummary({ account, message: messageData }: StepProps
           </Box>
         </Box>
       </Box>
-      <Separator />
+      <Separator color="red" />
 
       {!isACREWithdraw ? (
         messageData.standard === "EIP712" ? (
