@@ -26,6 +26,7 @@ jobs:
   sonarqube:
     name: "SonarQube"
     needs: determine-affected
+    if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') || contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile')}}
     runs-on: [ledger-live-4xlarge]
     env:
       MOBILE_AFFECTED: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile')}}
