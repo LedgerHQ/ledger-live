@@ -17,6 +17,7 @@ function View({
   closeAccountListDrawer,
   handleOnSelectAccount,
   handleOnCloseQuickActions,
+  sourceScreenName,
 }: ViewProps) {
   const { t } = useTranslation();
 
@@ -35,12 +36,14 @@ function View({
         onClose={closeAccountListDrawer}
         data={accounts}
         onPressAccount={handleOnSelectAccount}
+        sourceScreenName={sourceScreenName}
       />
       <AccountQuickActionsDrawer
         isOpen={isAccountQuickActionsDrawerOpen}
         onClose={handleOnCloseQuickActions}
         account={selectedAccount}
         currency={currency}
+        sourceScreenName={sourceScreenName}
       />
     </>
   );
