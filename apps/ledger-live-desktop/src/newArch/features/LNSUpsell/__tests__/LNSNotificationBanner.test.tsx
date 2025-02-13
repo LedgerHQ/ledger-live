@@ -4,6 +4,7 @@
 
 import { t } from "i18next";
 import React from "react";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 import { render, screen, fireEvent } from "tests/testUtils";
 import { openURL } from "~/renderer/linking";
 import { track } from "~/renderer/analytics/segment";
@@ -33,6 +34,16 @@ describe("LNSNotificationBanner", () => {
     expect(screen.queryByText(t("lnsUpsell.banner.notifications.optIn.cta"))).toBeNull();
   });
 
+  it("should not render if the user uses another device", () => {
+    renderBanner({ devicesModelList: [DeviceModelId.nanoSP] });
+    expect(screen.queryByText(t(`lnsUpsell.banner.${location}.optIn.cta`))).toBeNull();
+  });
+
+  it("should not render if the user has no devices", () => {
+    renderBanner({ devicesModelList: [] });
+    expect(screen.queryByText(t(`lnsUpsell.banner.${location}.optIn.cta`))).toBeNull();
+  });
+
   it("should track click on the cta", () => {
     renderBanner({});
     fireEvent.click(screen.getByText(t("lnsUpsell.banner.notifications.optIn.cta")));
@@ -56,7 +67,12 @@ describe("LNSNotificationBanner", () => {
     // NOTE track will be called but this function has it's own logic not to track opt out users
   });
 
-  function renderBanner({ ffEnabled = true, ffLocationEnabled = true, isOptIn = true }) {
+  function renderBanner({
+    ffEnabled = true,
+    ffLocationEnabled = true,
+    isOptIn = true,
+    devicesModelList = [DeviceModelId.nanoS],
+  }) {
     const defaultParams = { notification_center: ffLocationEnabled, "%": 10, img: "" };
     const ffParams = {
       opted_in: { ...defaultParams, link: "https://example.com/optInCta" },
@@ -68,6 +84,7 @@ describe("LNSNotificationBanner", () => {
         settings: {
           shareAnalytics: true,
           sharePersonalizedRecommandations: isOptIn,
+          devicesModelList,
           overriddenFeatureFlags: {
             lldNanoSUpsellBanners: { enabled: ffEnabled, params: ffParams },
           },
