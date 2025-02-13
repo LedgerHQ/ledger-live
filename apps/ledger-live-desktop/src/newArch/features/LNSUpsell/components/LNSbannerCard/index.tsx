@@ -1,22 +1,26 @@
 import { t } from "i18next";
 import { Trans } from "react-i18next";
-import React from "react";
+import React, { type ReactNode } from "react";
 import { BannerCard, Text } from "@ledgerhq/react-ui";
 import type { FlexBoxProps } from "@ledgerhq/react-ui/components/layout/Flex/index";
 import { useLNSBanner } from "../../hooks/useLNSBanner";
 import { type LNSBannerLocation } from "../../types";
 
-type Props = FlexBoxProps & { location: Extract<LNSBannerLocation, "accounts" | "manager"> };
+type Props = FlexBoxProps & {
+  location: Extract<LNSBannerLocation, "accounts" | "manager" | "portfolio">;
+  fallback?: ReactNode;
+};
 
 export function LNSBannerCard({
   location,
   maxHeight = 175,
   borderRadius = "5px",
+  fallback = null,
   ...boxProps
 }: Props) {
   const params = useLNSBanner(location);
 
-  if (!params) return null;
+  if (!params) return fallback;
 
   const { discount, image, tracking, handleCTAClick, handleLearnMoreLink } = params;
 

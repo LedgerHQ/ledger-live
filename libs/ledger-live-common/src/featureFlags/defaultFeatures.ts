@@ -546,6 +546,7 @@ export const DEFAULT_FEATURES: Features = {
         manager: true,
         accounts: true,
         notification_center: true,
+        portfolio: true,
         img: "", // TODO
         link: "", // TODO
         learn_more: "", // TODO

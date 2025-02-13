@@ -25,15 +25,18 @@ describe("LNSBannerCard", () => {
   describe.each([
     { location: "accounts", page: "Accounts" },
     { location: "manager", page: "Manager" },
+    { location: "portfolio", page: "Portfolio" },
   ] as const)("on the $page page", ({ location, page }) => {
     it("should not render if the feature flag is disabled", () => {
       renderBanner({ ffEnabled: false });
       expect(screen.queryByText(t(`lnsUpsell.banner.${location}.optIn.cta`))).toBeNull();
+      expect(screen.getByTestId("fallback")).toBeInTheDocument();
     });
 
     it("should not render if the location param is disabled on the feature flag", () => {
       renderBanner({ ffLocationEnabled: false });
       expect(screen.queryByText(t(`lnsUpsell.banner.${location}.optIn.cta`))).toBeNull();
+      expect(screen.getByTestId("fallback")).toBeInTheDocument();
     });
 
     it("should track click on the cta", () => {
@@ -81,7 +84,7 @@ describe("LNSBannerCard", () => {
         opted_out: { ...defaultParams, link: "https://example.com/optOutCta" },
       };
 
-      render(<LNSBannerCard location={location} />, {
+      render(<LNSBannerCard location={location} fallback={<div data-testid="fallback" />} />, {
         initialState: {
           settings: {
             shareAnalytics: isOptIn,

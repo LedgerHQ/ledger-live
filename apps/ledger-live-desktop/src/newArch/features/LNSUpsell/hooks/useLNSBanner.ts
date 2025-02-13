@@ -12,11 +12,11 @@ export function useLNSBanner(location: LNSBannerLocation) {
 
   // TODO add the LNS only users filtering logic
 
-  if (!ff?.enabled || !params?.[location]) {
+  if (!ff?.enabled || !params?.[location as keyof typeof params]) {
     return null;
   }
 
-  const tracking: "optIn" | "optOut" = isOptIn ? "optIn" : "optOut";
+  const tracking = isOptIn ? "optIn" : "optOut";
   const { "%": discount, img: image, link: ctaLink, learn_more: learnMoreLink } = params;
   const analitycsPage = AnalyticsPageMap[location];
 
@@ -43,5 +43,6 @@ export function useLNSBanner(location: LNSBannerLocation) {
 const AnalyticsPageMap: Record<LNSBannerLocation, AnalyticsPage> = {
   manager: AnalyticsPage.Manager,
   accounts: AnalyticsPage.Accounts,
+  portfolio: AnalyticsPage.Portfolio,
   notification_center: AnalyticsPage.NotificationPanel,
 };
