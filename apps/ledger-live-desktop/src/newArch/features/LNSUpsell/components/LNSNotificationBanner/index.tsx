@@ -1,32 +1,21 @@
 import { t } from "i18next";
 import React from "react";
 import { NotificationCard } from "@ledgerhq/react-ui";
-import { track } from "~/renderer/analytics/segment";
-import { openURL } from "~/renderer/linking";
-import { AnalyticsButton, AnalyticsPage, type LNSUpsellType } from "../../types";
+import { useLNSBanner } from "../../hooks/useLNSBanner";
 
-type Props = {
-  type: LNSUpsellType;
-  ctaLink: string;
-  discount: number;
-};
+export function LNSNotificationBanner() {
+  const params = useLNSBanner("notification_center");
 
-export function LNSNotificationBanner({ type, ctaLink, discount }: Props) {
-  const handleClick = () => {
-    track("button_clicked", {
-      button: AnalyticsButton.CTA,
-      link: ctaLink,
-      page: AnalyticsPage.NotificationPanel,
-    });
-    openURL(ctaLink);
-  };
+  if (!params) return null;
+
+  const { discount, tracking, handleCTAClick } = params;
 
   return (
     <NotificationCard
-      description={t(`lnsUpsell.banner.notifications.${type}.description`, { discount })}
-      cta={t(`lnsUpsell.banner.notifications.${type}.cta`)}
+      description={t(`lnsUpsell.banner.notifications.${tracking}.description`, { discount })}
+      cta={t(`lnsUpsell.banner.notifications.${tracking}.cta`)}
       icon="SparksFill"
-      onClick={handleClick}
+      onClick={handleCTAClick}
       isHighlighted
     />
   );
