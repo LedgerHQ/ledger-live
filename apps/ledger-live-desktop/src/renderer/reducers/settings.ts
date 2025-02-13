@@ -59,7 +59,7 @@ export type SettingsState = {
   counterValue: string;
   preferredDeviceModel: DeviceModelId;
   hasInstalledApps: boolean;
-  lastSeenDevice: DeviceModelInfo | undefined | null;
+  seenDeviceModels: DeviceModelInfo[];
   devicesModelList: DeviceModelId[];
   latestFirmware: FirmwareUpdateContext | null;
   theme: string | undefined | null;
@@ -193,7 +193,7 @@ export const INITIAL_STATE: SettingsState = {
   discreetMode: false,
   preferredDeviceModel: DeviceModelId.nanoS,
   hasInstalledApps: true,
-  lastSeenDevice: null,
+  seenDeviceModels: [],
   mevProtection: true,
   marketPerformanceWidget: true,
   hasSeenOrdinalsDiscoveryDrawer: false,
@@ -401,18 +401,24 @@ const handlers: SettingsHandlers = {
   },
   LAST_SEEN_DEVICE_INFO: (state, { payload }) => ({
     ...state,
-    lastSeenDevice: Object.assign({}, state.lastSeenDevice, payload.lastSeenDevice),
+    seenDeviceModels: state.seenDeviceModels
+      .filter(d => d.modelId !== payload.lastSeenDevice.modelId)
+      .concat({ ...(state.seenDeviceModels.at(-1) ?? {}), ...payload.lastSeenDevice }),
     latestFirmware: payload.latestFirmware,
   }),
-  LAST_SEEN_DEVICE: (state, { payload }) => ({
-    ...state,
-    lastSeenDevice: state.lastSeenDevice
-      ? {
-          ...state.lastSeenDevice,
-          deviceInfo: payload.deviceInfo,
-        }
-      : undefined,
-  }),
+
+  LAST_SEEN_DEVICE: (state, { payload }) => {
+    const lastSeenDevice = state.seenDeviceModels.at(-1);
+    if (!lastSeenDevice || lastSeenDevice.deviceInfo.targetId !== payload.deviceInfo.targetId) {
+      return state;
+    }
+    return {
+      ...state,
+      seenDeviceModels: state.seenDeviceModels
+        .slice(0, -1)
+        .concat({ ...lastSeenDevice, deviceInfo: payload.deviceInfo }),
+    };
+  },
 
   ADD_NEW_DEVICE_MODEL: (state, { payload }) => ({
     ...state,
@@ -867,12 +873,15 @@ export const hideEmptyTokenAccountsSelector = (state: State) =>
   state.settings.hideEmptyTokenAccounts;
 export const filterTokenOperationsZeroAmountSelector = (state: State) =>
   state.settings.filterTokenOperationsZeroAmount;
+
+export const seenDeviceModelsSelector = (state: State) => state.settings.seenDeviceModels;
 export const lastSeenDeviceSelector = (state: State): DeviceModelInfo | null | undefined => {
-  const { lastSeenDevice } = state.settings;
+  const lastSeenDevice = state.settings.seenDeviceModels.at(-1);
   if (!lastSeenDevice || !Object.values(DeviceModelId).includes(lastSeenDevice.modelId))
     return null;
   return lastSeenDevice;
 };
+
 export const devicesModelListSelector = (state: State): DeviceModelId[] =>
   state.settings.devicesModelList;
 export const latestFirmwareSelector = (state: State) => state.settings.latestFirmware;
