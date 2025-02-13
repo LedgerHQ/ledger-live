@@ -4,6 +4,7 @@ import { Account, AccountLike } from "@ledgerhq/types-live";
 import { useState, useCallback } from "react";
 import { track } from "~/analytics";
 import useAnalytics from "LLM/hooks/useAnalytics";
+import { AnalyticContexts } from "LLM/hooks/useAnalytics/enums";
 
 export type Props = {
   accounts: Account[];
@@ -22,7 +23,7 @@ export default function useAddFundsButtonViewModel({
   const [selectedAccount, setSelectedAccount] = useState<AccountLike | null>(
     accounts.length === 1 ? accounts[0] : null,
   );
-  const { analyticsMetadata } = useAnalytics("addAccounts", sourceScreenName);
+  const { analyticsMetadata } = useAnalytics(AnalyticContexts.AddAccounts);
 
   const openFundOrAccountListDrawer = useCallback(() => {
     let clickMetadata;
@@ -76,5 +77,6 @@ export default function useAddFundsButtonViewModel({
     closeAccountListDrawer,
     handleOnSelectAccount,
     handleOnCloseQuickActions,
+    sourceScreenName,
   };
 }

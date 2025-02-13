@@ -67,7 +67,11 @@ export default function SelectNetwork({
 
   return (
     <>
-      <TrackScreen name={pageTrackingEvent?.eventName} {...pageTrackingEvent?.payload} />
+      <TrackScreen
+        name={pageTrackingEvent?.eventName}
+        {...pageTrackingEvent?.payload}
+        source={sourceScreenName}
+      />
       <Flex px={6} py={2} testID="select-network-view-area">
         <Text variant="h4" fontWeight="semiBold" testID={titleTestId} mb={2}>
           {titleText}

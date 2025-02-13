@@ -99,7 +99,11 @@ export default function SelectCrypto({
 
   return (
     <SafeAreaView edges={["left", "right"]} isFlex testID="select-crypto-view-area">
-      <TrackScreen name={pageTrackingEvent?.eventName} {...pageTrackingEvent?.payload} />
+      <TrackScreen
+        name={pageTrackingEvent?.eventName}
+        {...pageTrackingEvent?.payload}
+        source={sourceScreenName}
+      />
       <Text variant="h4" fontWeight="semiBold" mx={6} testID={titleTestId}>
         {titleText}
       </Text>
