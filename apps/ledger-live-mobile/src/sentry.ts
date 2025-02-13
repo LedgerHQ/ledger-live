@@ -89,6 +89,10 @@ export const navigationIntegration = Sentry.reactNavigationIntegration({
 
 const SENTRY_DEBUG = Config.SENTRY_DEBUG === "true" && __DEV__;
 
+const stacksEndpoint = getEnv("API_STACKS_ENDPOINT");
+const regex = new RegExp(`^(?!${stacksEndpoint.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$).*`);
+
+
 if (sentryEnabled) {
   Sentry.init({
     dsn: Config.SENTRY_DSN,
@@ -106,6 +110,7 @@ if (sentryEnabled) {
     enableAppHangTracking: true,
     profilesSampleRate: Config.FORCE_SENTRY ? 1 : 0.0002,
     tracesSampleRate: Config.FORCE_SENTRY ? 1 : 0.0002,
+    tracePropagationTargets: [regex],
     integrations: [
       navigationIntegration,
       Sentry.reactNativeTracingIntegration({
