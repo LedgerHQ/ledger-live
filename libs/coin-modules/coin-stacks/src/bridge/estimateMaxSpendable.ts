@@ -1,6 +1,7 @@
 import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets/abandonseed";
 import { AccountBridge } from "@ledgerhq/types-live";
+import { log } from "@ledgerhq/logs";
 import { StacksMainnet } from "@stacks/network";
 import {
   UnsignedTokenTransferOptions,
@@ -43,6 +44,10 @@ export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpenda
   };
 
   const tx = await makeUnsignedSTXTokenTransfer(options);
+  const byteLength = estimateTransactionByteLength(tx);
+  console.log({byteLength})
+  log("stacks.estimateMaxSpendable", `tx: ${JSON.stringify({...tx.payload, amount: (tx.payload as any)?.amount?.toString()})}`);
+  log("stacks.estimateMaxSpendable", `byteLength: ${byteLength}`);
 
   const [feeEst] = await estimateTransaction(tx.payload, estimateTransactionByteLength(tx));
 
