@@ -38,7 +38,7 @@ export const getBufferFromString = (message: string): Buffer => {
   return Buffer.from(message);
 };
 
-function randomIntFromInterval(min, max): string {
+function randomIntFromInterval(min: number, max: number): string {
   const minBig = new BigNumber(min);
   const maxBig = new BigNumber(max);
 
