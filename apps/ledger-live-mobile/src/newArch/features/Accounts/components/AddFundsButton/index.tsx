@@ -38,13 +38,15 @@ function View({
         onPressAccount={handleOnSelectAccount}
         sourceScreenName={sourceScreenName}
       />
-      <AccountQuickActionsDrawer
-        isOpen={isAccountQuickActionsDrawerOpen}
-        onClose={handleOnCloseQuickActions}
-        account={selectedAccount}
-        currency={currency}
-        sourceScreenName={sourceScreenName}
-      />
+      {selectedAccount && (
+        <AccountQuickActionsDrawer
+          isOpen={isAccountQuickActionsDrawerOpen}
+          onClose={handleOnCloseQuickActions}
+          account={selectedAccount}
+          currency={currency}
+          sourceScreenName={sourceScreenName}
+        />
+      )}
     </>
   );
 }

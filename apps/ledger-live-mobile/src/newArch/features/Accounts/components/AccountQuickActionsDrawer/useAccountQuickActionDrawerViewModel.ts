@@ -28,18 +28,16 @@ type ActionItem = {
 
 export default function useAccountQuickActionDrawerViewModel({
   currency,
-  accounts,
+  account,
 }: {
   currency: CryptoOrTokenCurrency;
-  accounts: Account[] | TokenAccount[];
+  account: Account | TokenAccount;
 }) {
   const {
     quickActionsList: { RECEIVE, BUY },
-  } = useQuickActions({ currency, accounts });
+  } = useQuickActions({ currency, accounts: [account] });
   const navigation = useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
   const { t } = useTranslation();
-
-  const account = accounts[0];
 
   const actions: ActionItem[] = [
     RECEIVE && {
