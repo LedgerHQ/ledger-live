@@ -83,12 +83,8 @@ const isWhitelistedDomain = (url: string, whitelistedDomains: string[]): boolean
 
 export const getInitialURL = (inputs, manifest) => {
   try {
-    if (inputs?.goToURL) {
-      const url = decodeURIComponent(inputs.goToURL);
-
-      if (isWhitelistedDomain(url, manifest.domains)) {
-        return url;
-      }
+    if (inputs?.goToURL && isWhitelistedDomain(inputs?.goToURL, manifest.domains)) {
+      return inputs?.goToURL;
     }
 
     const url = new URL(manifest.url);
