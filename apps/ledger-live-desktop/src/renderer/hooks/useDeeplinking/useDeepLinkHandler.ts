@@ -33,7 +33,7 @@ export function useDeepLinkHandler() {
     (
       pathname: string,
       state?: {
-        [k: string]: string;
+        [k: string]: string | Object;
       },
       search?: string,
     ) => {
@@ -203,9 +203,26 @@ export function useDeepLinkHandler() {
           }
           break;
         }
-        case "swap":
-          navigate("/swap");
+        case "swap": {
+          const { amountFrom, fromToken, toToken } = query;
+
+          const state: {
+            defaultToken?: { fromTokenId: string; toTokenId: string };
+            defaultAmountFrom?: string;
+          } = {};
+
+          if (fromToken !== toToken) {
+            state.defaultToken = { fromTokenId: fromToken, toTokenId: toToken };
+          }
+
+          if (amountFrom) {
+            state.defaultAmountFrom = amountFrom;
+          }
+
+          navigate("/swap", state);
+
           break;
+        }
 
         case "bridge": {
           const { origin, appName } = query;
