@@ -8,13 +8,10 @@ import { Account, AccountBridge, AccountLike } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { SEG_WIT_ABANDON_SEED_ADDRESS } from "../consts";
 
+import { getGasTracker } from "@ledgerhq/coin-evm/api/gasTracker/index";
 import { NavigationProp, NavigationState } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "~/const";
-import {
-  convertToAtomicUnit,
-  convertToNonAtomicUnit,
-  getCustomFeesPerFamily,
-} from "../utils";
+import { convertToAtomicUnit, convertToNonAtomicUnit, getCustomFeesPerFamily } from "../utils";
 
 interface FeeParams {
   fromAccountId: string;
@@ -66,6 +63,13 @@ const generateFeeData = async ({
   bridge,
   baseTransaction,
 }: GenerateFeeDataParams): Promise<FeeData> => {
+  const gasTracker = getGasTracker(feePayingAccount.currency);
+
+  const gasOptions = await gasTracker?.getGasOptions({ currency: feePayingAccount.currency });
+  const gasOption = gasOptions ? gasOptions[feesStrategy] : undefined;
+
+  const config = baseTransaction.family === 'evm' ? gasOption : customFeeConfig;
+
   const recipient = getRecipientAddress(baseTransaction.family, feePayingAccount.currency.id);
   const transactionConfig: Transaction = {
     ...baseTransaction,
@@ -73,7 +77,7 @@ const generateFeeData = async ({
     recipient,
     amount: fromAmount ?? new BigNumber(0),
     feesStrategy,
-    ...customFeeConfig,
+    ...config,
   };
 
   const preparedTransaction = bridge.updateTransaction(feePayingAccount, transactionConfig);
@@ -82,6 +86,7 @@ const generateFeeData = async ({
     feePayingAccount,
     preparedTransaction,
   );
+
   return {
     feesStrategy,
     estimatedFees: convertToNonAtomicUnit({
@@ -123,40 +128,42 @@ export const getFee =
     const bridge = getAccountBridge(account, feePayingAccount);
     const baseTransaction = bridge.createTransaction(feePayingAccount);
 
-    // if (params.openDrawer) {
-    return new Promise(resolve => {
-      navigation.navigate(NavigatorName.Fees, {
-        screen: ScreenName.FeeHomePage,
-        params: {
-          onSelect: async (feesStrategy, customFeeConfig) => {
-            const newFeeData = await generateFeeData({
-              account,
-              feePayingAccount,
-              feesStrategy,
-              fromAmount: atomicAmount,
-              customFeeConfig,
-              bridge,
-              baseTransaction,
-            });
-            resolve(newFeeData);
-            navigation.canGoBack() && navigation.goBack();
+    if (params.openDrawer) {
+      return new Promise(resolve => {
+        navigation.navigate(NavigatorName.Fees, {
+          screen: ScreenName.FeeHomePage,
+          params: {
+            onSelect: async (feesStrategy, customFeeConfig) => {
+              const newFeeData = await generateFeeData({
+                account,
+                feePayingAccount,
+                feesStrategy,
+                fromAmount: atomicAmount,
+                customFeeConfig,
+                bridge,
+                baseTransaction,
+              });
+              resolve(newFeeData);
+              navigation.canGoBack() && navigation.goBack();
+            },
+            account,
+            feePayingAccount,
+            fromAmount: amount,
+            feesStrategy: params.feeStrategy,
+            customFeeConfig: params.customFeeConfig,
+            transaction: baseTransaction,
           },
-          account,
-          feePayingAccount,
-          fromAmount: amount,
-          feesStrategy: params.feeStrategy,
-          customFeeConfig: params.customFeeConfig,
-          transaction: baseTransaction,
-        },
+        });
       });
-    });
-    // }
+    }
 
-    // return await generateFeeData({
-    //   account,
-    //   feePayingAccount,
-    //   feesStrategy: params.feeStrategy,
-    //   fromAmount: atomicAmount,
-    //   customFeeConfig: params.customFeeConfig,
-    // });
+    return await generateFeeData({
+      account,
+      feePayingAccount,
+      feesStrategy: params.feeStrategy,
+      fromAmount: atomicAmount,
+      customFeeConfig: params.customFeeConfig,
+      bridge,
+      baseTransaction,
+    });
   };
