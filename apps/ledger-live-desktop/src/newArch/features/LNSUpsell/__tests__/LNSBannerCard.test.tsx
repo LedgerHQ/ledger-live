@@ -26,6 +26,7 @@ describe("LNSBannerCard", () => {
   describe.each([
     { location: "accounts", page: "Accounts" },
     { location: "manager", page: "Manager" },
+    { location: "portfolio", page: "Portfolio" },
   ] as const)("on the $page page", ({ location, page }) => {
     it("should not render if the feature flag is disabled", () => {
       renderBanner({ ffEnabled: false });

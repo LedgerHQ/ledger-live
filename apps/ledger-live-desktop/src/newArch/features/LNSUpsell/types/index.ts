@@ -12,6 +12,7 @@ export type LNSBannerModel = {
 };
 
 export type LNSBannerLocation = Extract<
-  "manager" | "accounts" | "notification_center",
-  keyof Required<Feature_LldNanoSUpsellBanners>["params"]["opted_in"]
+  "manager" | "accounts" | "notification_center" | "portfolio",
+  keyof FFParams["opted_in"] | keyof FFParams["opted_out"]
 >;
+type FFParams = Required<Feature_LldNanoSUpsellBanners>["params"];

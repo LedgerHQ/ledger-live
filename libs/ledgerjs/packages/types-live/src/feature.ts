@@ -597,6 +597,7 @@ export type Feature_LldNanoSUpsellBanners = Feature<{
     manager: boolean;
     accounts: boolean;
     notification_center: boolean;
+    portfolio: boolean;
     img: string;
     link: string;
     learn_more: string;

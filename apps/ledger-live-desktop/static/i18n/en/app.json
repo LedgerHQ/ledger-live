@@ -6945,6 +6945,14 @@
           "linkText": "Learn more"
         }
       },
+      "portfolio": {
+        "optOut": {
+          "title": "It's time to upgrade",
+          "description": "Upgrade to our latest devices with <0>{{discount}}% discount</0> for an enhanced security and a seamless experience.",
+          "cta": "Level up my wallet",
+          "linkText": "Learn more"
+        }
+      },
       "notifications": {
         "optIn": {
           "description": "Updates are ending soon. Upgrade now with {{discount}}% off for a seamless experience.",
