@@ -82,7 +82,7 @@ jobs:
           path: ${{ github.workspace }}/apps/ledger-live-mobile/android/app/build/outputs/apk/stagingRelease
 
   build-mobile-app-ios:
-    runs-on: [ledger-live-medium]
+    runs-on: [ledger-live-large]
     name: "Build LLM | iOS"
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
