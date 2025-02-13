@@ -2,7 +2,7 @@ import { useSelector } from "react-redux";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { track } from "~/renderer/analytics/segment";
 import { openURL } from "~/renderer/linking";
-import { trackingEnabledSelector } from "~/renderer/reducers/settings";
+import { sharePersonalizedRecommendationsSelector } from "~/renderer/reducers/settings";
 import {
   AnalyticsButton,
   AnalyticsPage,
@@ -11,7 +11,7 @@ import {
 } from "../types";
 
 export function useLNSUpsellBannerModel(location: LNSBannerLocation): LNSBannerModel | null {
-  const isOptIn = useSelector(trackingEnabledSelector);
+  const isOptIn = useSelector(sharePersonalizedRecommendationsSelector);
   const ff = useFeature("lldNanoSUpsellBanners");
   const params = ff?.params?.[isOptIn ? "opted_in" : "opted_out"];
 

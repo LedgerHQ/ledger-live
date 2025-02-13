@@ -66,7 +66,8 @@ describe("LNSNotificationBanner", () => {
     render(<Banner />, {
       initialState: {
         settings: {
-          shareAnalytics: isOptIn,
+          shareAnalytics: true,
+          sharePersonalizedRecommandations: isOptIn,
           overriddenFeatureFlags: {
             lldNanoSUpsellBanners: { enabled: ffEnabled, params: ffParams },
           },
