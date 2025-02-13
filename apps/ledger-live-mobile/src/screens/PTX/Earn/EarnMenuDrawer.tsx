@@ -1,4 +1,4 @@
-import { Button, Flex, rgba, Text } from "@ledgerhq/native-ui";
+import { Button, Flex, Text } from "@ledgerhq/native-ui";
 import { Theme } from "@ledgerhq/native-ui/lib/styles/theme";
 import React, { useCallback, useEffect, useState } from "react";
 import { Linking } from "react-native";
