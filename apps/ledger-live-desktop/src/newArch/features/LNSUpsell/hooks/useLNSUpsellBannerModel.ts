@@ -1,8 +1,12 @@
 import { useSelector } from "react-redux";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 import { track } from "~/renderer/analytics/segment";
 import { openURL } from "~/renderer/linking";
-import { sharePersonalizedRecommendationsSelector } from "~/renderer/reducers/settings";
+import {
+  seenDeviceModelsSelector,
+  sharePersonalizedRecommendationsSelector,
+} from "~/renderer/reducers/settings";
 import {
   AnalyticsButton,
   AnalyticsPage,
@@ -15,9 +19,11 @@ export function useLNSUpsellBannerModel(location: LNSBannerLocation): LNSBannerM
   const ff = useFeature("lldNanoSUpsellBanners");
   const params = ff?.params?.[isOptIn ? "opted_in" : "opted_out"];
 
-  // TODO add the LNS only users filtering logic
+  const seenDeviceModels = useSelector(seenDeviceModelsSelector);
+  const hasOnlySeenLNS =
+    seenDeviceModels.length === 1 && seenDeviceModels[0].modelId === DeviceModelId.nanoS;
 
-  if (!ff?.enabled || !params?.[location as keyof typeof params]) {
+  if (!ff?.enabled || !params?.[location as keyof typeof params] || !hasOnlySeenLNS) {
     return null;
   }
 
