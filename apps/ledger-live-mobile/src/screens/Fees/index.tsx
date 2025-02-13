@@ -6,7 +6,6 @@ import { SafeAreaView } from "react-native";
 import { FeesNavigatorParamsList } from "~/components/RootNavigator/types/FeesNavigator";
 import { RootComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
-import { CustomFeesButton } from "./CustomFeesButton";
 import { FeeContainer } from "./FeeContainer";
 
 export type Props = RootComposite<
@@ -57,7 +56,6 @@ export function FeesScreen({ route: { params } }: Props) {
               : undefined
           }
         />
-        <CustomFeesButton />
       </Flex>
     </SafeAreaView>
   );
