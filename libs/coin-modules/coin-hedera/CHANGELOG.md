@@ -1,5 +1,13 @@
 # @ledgerhq/coin-hedera
 
+## 1.3.4-nightly.0
+
+### Patch Changes
+
+- Updated dependencies [[`58c1a9c`](https://github.com/LedgerHQ/ledger-live/commit/58c1a9c68b2ce2ebef9dbd7af00ae09efd7a29dc)]:
+  - @ledgerhq/coin-framework@2.0.0-nightly.0
+  - @ledgerhq/live-countervalues@0.3.1-nightly.0
+
 ## 1.3.3
 
 ### Patch Changes

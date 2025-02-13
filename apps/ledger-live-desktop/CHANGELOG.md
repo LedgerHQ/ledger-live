@@ -1,5 +1,27 @@
 # ledger-live-desktop
 
+## 2.99.1-nightly.0
+
+### Patch Changes
+
+- [#9208](https://github.com/LedgerHQ/ledger-live/pull/9208) [`bbc3e19`](https://github.com/LedgerHQ/ledger-live/commit/bbc3e19e32d1031278dc5b8a6ba630b3030ea797) Thanks [@qperrot](https://github.com/qperrot)! - fix name uninstallerSidebar
+
+- [#9195](https://github.com/LedgerHQ/ledger-live/pull/9195) [`979c610`](https://github.com/LedgerHQ/ledger-live/commit/979c610b248601df04d1fd86c5834d8a9ef43975) Thanks [@jccguimaraes](https://github.com/jccguimaraes)! - add guardrail when nearResources is undefined
+
+- Updated dependencies [[`58c1a9c`](https://github.com/LedgerHQ/ledger-live/commit/58c1a9c68b2ce2ebef9dbd7af00ae09efd7a29dc)]:
+  - @ledgerhq/coin-framework@2.0.0-nightly.0
+  - @ledgerhq/live-common@34.21.1-nightly.0
+  - @ledgerhq/coin-aptos@1.5.1-nightly.0
+  - @ledgerhq/coin-bitcoin@0.10.4-nightly.0
+  - @ledgerhq/coin-cosmos@0.7.2-nightly.0
+  - @ledgerhq/coin-evm@2.9.4-nightly.0
+  - @ledgerhq/coin-filecoin@1.5.4-nightly.0
+  - @ledgerhq/live-countervalues@0.3.1-nightly.0
+  - @ledgerhq/live-countervalues-react@0.2.22-nightly.0
+  - @ledgerhq/live-nft@0.5.7-nightly.0
+  - @ledgerhq/live-nft-react@0.5.7-nightly.0
+  - @ledgerhq/live-wallet@0.9.4-nightly.0
+
 ## 2.99.0
 
 ### Minor Changes

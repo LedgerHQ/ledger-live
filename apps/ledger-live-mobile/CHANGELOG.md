@@ -1,5 +1,37 @@
 # live-mobile
 
+## 3.66.0-nightly.0
+
+### Minor Changes
+
+- [#9136](https://github.com/LedgerHQ/ledger-live/pull/9136) [`46f3cb4`](https://github.com/LedgerHQ/ledger-live/commit/46f3cb4329ef467d70600b645f7f858fa1c75019) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Swipe right gesture navigates back on swap
+
+- [#9109](https://github.com/LedgerHQ/ledger-live/pull/9109) [`d134fcd`](https://github.com/LedgerHQ/ledger-live/commit/d134fcd04f29f1b055319258449ec81598756b5f) Thanks [@thesan](https://github.com/thesan)! - Keep track of all seen devices on LLM
+
+- [#9197](https://github.com/LedgerHQ/ledger-live/pull/9197) [`1f801e2`](https://github.com/LedgerHQ/ledger-live/commit/1f801e2206d6e6d03b5016e8915267afdc4ea6bd) Thanks [@themooneer](https://github.com/themooneer)! - fix redirection from add account flow when earn is an entry point
+
+- [#9189](https://github.com/LedgerHQ/ledger-live/pull/9189) [`127c2ce`](https://github.com/LedgerHQ/ledger-live/commit/127c2ce4fb3a121a717baa6bd85f6dd7a7e0392f) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add account flow polish animations
+
+- [#9196](https://github.com/LedgerHQ/ledger-live/pull/9196) [`b57f1cd`](https://github.com/LedgerHQ/ledger-live/commit/b57f1cd6cc37d2b60e6e94fccecdebfea841cdcd) Thanks [@themooneer](https://github.com/themooneer)! - fix backdrop close event listener binding
+
+- [#9205](https://github.com/LedgerHQ/ledger-live/pull/9205) [`1f92492`](https://github.com/LedgerHQ/ledger-live/commit/1f92492bdbd7e1800b6179ac10239855bf76dcaf) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add 15 new generic landing pages
+
+### Patch Changes
+
+- Updated dependencies [[`58c1a9c`](https://github.com/LedgerHQ/ledger-live/commit/58c1a9c68b2ce2ebef9dbd7af00ae09efd7a29dc)]:
+  - @ledgerhq/coin-framework@2.0.0-nightly.0
+  - @ledgerhq/live-common@34.21.1-nightly.0
+  - @ledgerhq/coin-cosmos@0.7.2-nightly.0
+  - @ledgerhq/coin-elrond@0.3.4-nightly.0
+  - @ledgerhq/coin-evm@2.9.4-nightly.0
+  - @ledgerhq/coin-filecoin@1.5.4-nightly.0
+  - @ledgerhq/coin-stacks@0.5.4-nightly.0
+  - @ledgerhq/live-countervalues@0.3.1-nightly.0
+  - @ledgerhq/live-countervalues-react@0.2.22-nightly.0
+  - @ledgerhq/live-nft@0.5.7-nightly.0
+  - @ledgerhq/live-nft-react@0.5.7-nightly.0
+  - @ledgerhq/live-wallet@0.9.4-nightly.0
+
 ## 3.65.0
 
 ### Minor Changes
