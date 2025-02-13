@@ -5,6 +5,7 @@ import {
   getCryptoCurrencyById,
   listSupportedFiats,
   getFiatCurrencyByTicker,
+  OFAC_CURRENCIES,
 } from "@ledgerhq/live-common/currencies/index";
 import { DeviceModelId } from "@ledgerhq/devices";
 import {
@@ -23,6 +24,7 @@ import {
   Language,
   Locale,
   DEFAULT_LANGUAGE,
+  OFAC_LOCALES,
   Locales,
 } from "~/config/languages";
 import { State } from ".";
@@ -668,8 +670,13 @@ export const discreetModeSelector = (state: State): boolean => state.settings.di
 export const getCounterValueCode = (state: State) => state.settings.counterValue;
 export const lastSeenCustomImageSelector = (state: State) => state.settings.lastSeenCustomImage;
 export const deepLinkUrlSelector = (state: State) => state.settings.deepLinkUrl;
-export const counterValueCurrencyLocalSelector = (state: SettingsState): Currency =>
-  findCurrencyByTicker(state.counterValue) || getFiatCurrencyByTicker("USD");
+export const counterValueCurrencyLocalSelector = (state: SettingsState): Currency => {
+  if (OFAC_CURRENCIES.includes(state.counterValue)) {
+    return getFiatCurrencyByTicker("USD");
+  }
+  return findCurrencyByTicker(state.counterValue) || getFiatCurrencyByTicker("USD");
+};
+
 export const counterValueCurrencySelector = createSelector(
   storeSelector,
   counterValueCurrencyLocalSelector,
@@ -717,7 +724,8 @@ const localeFallbackToLanguageSelector = (
   locale: string;
 } => {
   const { language, locale, region } = state.settings;
-  if (!locale && language) {
+  const localeWithoutOFAC = locale && OFAC_LOCALES.includes(locale) ? "en-US" : locale;
+  if (!localeWithoutOFAC && language) {
     /*
       Handle settings data saved with the old logic, where the region settings'
         entire locale was not being saved (the locale was split in 2 strings on
@@ -729,9 +737,9 @@ const localeFallbackToLanguageSelector = (
       return {
         locale: potentialLocale,
       };
-  } else if (locale && isValidRegionLocale(locale))
+  } else if (localeWithoutOFAC && isValidRegionLocale(localeWithoutOFAC))
     return {
-      locale,
+      locale: localeWithoutOFAC,
     };
   return {
     locale: language || DEFAULT_LANGUAGE.locales.default,
