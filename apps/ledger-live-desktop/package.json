@@ -21,6 +21,7 @@
     "build:js": "cross-env NODE_ENV=production node ./tools/main.js build",
     "build:testing": "cross-env NODE_ENV=production TESTING=1 node ./tools/main.js build",
     "build:staging": "cross-env NODE_ENV=production STAGING=1 node ./tools/main.js build",
+    "echo": "echo 'I would like this to be cached!'",
     "lint": "eslint src static tools tests --ext .js,.jsx,.json,.ts,.tsx --cache",
     "lint:ci": "zx scripts/ci-lint.mjs",
     "lint:ci:external": "zx scripts/ci-lint.mjs --external",

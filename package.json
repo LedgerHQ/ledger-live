@@ -56,6 +56,7 @@
     "nightly:lld": "pnpm turbo nightly --filter=ledger-live-desktop",
     "test": "pnpm turbo test --concurrency=50%",
     "run:cli": "./apps/cli/bin/index.js",
+    "echo": "pnpm turbo echo", 
     "lint": "pnpm turbo lint",
     "lint:fix": "pnpm turbo lint:fix",
     "typecheck": "pnpm turbo typecheck",

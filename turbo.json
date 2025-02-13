@@ -189,6 +189,10 @@
       "outputs": [],
       "dependsOn": ["build"],
       "env": ["CI_OS"]
+    },
+    "echo": {
+      "cache": true,
+      "outputs": []
     }
   }
 }
