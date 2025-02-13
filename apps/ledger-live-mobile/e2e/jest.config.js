@@ -51,5 +51,5 @@ module.exports = async () => ({
     ],
   },
   verbose: false,
-  workerIdleMemoryLimit: "3GB",
+  workerIdleMemoryLimit: "30%",
 });
