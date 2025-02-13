@@ -27,9 +27,5 @@ export async function runAddAccountTest(currency: Currency, tmsLink: string) {
       await app.account.expectOperationHistoryVisible(accountId);
       await app.account.expectAddressIndex(0);
     });
-
-    afterAll(async () => {
-      await app.common.removeSpeculos();
-    });
   });
 }
