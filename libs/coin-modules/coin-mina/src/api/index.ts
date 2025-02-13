@@ -72,7 +72,15 @@ export const getFees = async (txn: Transaction, address: string): Promise<BigNum
   return new BigNumber(data.suggested_fee[0].value);
 };
 
-export const getNonce = async (txn: Transaction, address: string): Promise<BigNumber> => {
+export const getNonce = async (txn: Transaction, address: string): Promise<number> => {
+  if (!txn.recipient || !isValidAddress(txn.recipient)) {
+    return txn.nonce;
+  }
+
+  if (!txn.amount || !txn.fees) {
+    return txn.nonce;
+  }
+
   const { data } = await fetchTransactionMetadata(
     address,
     txn.recipient,
@@ -80,5 +88,5 @@ export const getNonce = async (txn: Transaction, address: string): Promise<BigNu
     txn.amount.toNumber(),
   );
 
-  return new BigNumber(data.metadata.nonce);
+  return parseInt(data.metadata.nonce);
 };

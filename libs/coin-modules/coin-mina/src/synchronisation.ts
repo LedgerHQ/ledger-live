@@ -10,7 +10,7 @@ import { log } from "@ledgerhq/logs";
 import invariant from "invariant";
 import { RosettaTransaction } from "./api/rosetta/types";
 
-const mapRosettaTxnToOperation = (
+export const mapRosettaTxnToOperation = (
   accountId: string,
   address: string,
   txn: RosettaTransaction,
@@ -28,8 +28,11 @@ const mapRosettaTxnToOperation = (
     let fromAccount: string = "";
     let toAccount: string = "";
     let isSending = false;
+    let failed = false;
+
     for (const op of txn.transaction.operations) {
-      const opValue = new BigNumber(op.amount.value);
+      failed = op.status === "Failed";
+      const opValue = failed ? new BigNumber(0) : new BigNumber(op.amount.value);
       switch (op.type) {
         case "fee_payment": {
           fee = fee.plus(opValue.times(-1));
@@ -45,6 +48,15 @@ const mapRosettaTxnToOperation = (
           if (fromAccount === address) {
             isSending = true;
           }
+          continue;
+        }
+        case "zkapp_fee_payer_dec": {
+          fromAccount = op.account.address;
+          continue;
+        }
+        case "zkapp_balance_update": {
+          toAccount = op.account.address;
+          value = value.plus(opValue);
           continue;
         }
         case "account_creation_fee_via_payment": {
@@ -64,6 +76,7 @@ const mapRosettaTxnToOperation = (
       value,
       fee,
       blockHeight,
+      hasFailed: failed,
       blockHash,
       accountId,
       senders: [fromAccount],

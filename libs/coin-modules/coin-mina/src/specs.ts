@@ -8,10 +8,12 @@ import { genericTestDestination, pickSiblings, botTest } from "@ledgerhq/coin-fr
 import type { AppSpec } from "@ledgerhq/coin-framework/bot/types";
 import { acceptTransaction } from "./speculos-deviceActions";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
+import { getRandomTransferID } from "./testUtils";
 // import {} from "./consts";
 
 const maxAccount = 6;
-const MIN_SAFE = new BigNumber(10);
+// 0.1 MINA
+const MIN_SAFE = new BigNumber(1 * 10 ** 8);
 
 const minaSpecs: AppSpec<Transaction> = {
   name: "Mina",
@@ -28,9 +30,10 @@ const minaSpecs: AppSpec<Transaction> = {
   },
   mutations: [
     {
-      name: "Send ~50%",
+      name: "Send ~50% to another account",
       maxRun: 1,
       testDestination: genericTestDestination,
+      feature: "send",
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
         invariant(maxSpendable.gt(MIN_SAFE), "balance is too low");
         const sibling = pickSiblings(siblings, maxAccount);
@@ -45,11 +48,11 @@ const minaSpecs: AppSpec<Transaction> = {
           { amount },
         ];
 
-        // if (Math.random() < 0.5) {
-        //   updates.push({
-        //     transferId: getRandomTransferID(),
-        //   });
-        // }
+        if (Math.random() < 0.5) {
+          updates.push({
+            memo: getRandomTransferID(),
+          });
+        }
 
         return {
           transaction,
@@ -57,20 +60,20 @@ const minaSpecs: AppSpec<Transaction> = {
         };
       },
 
-      test: ({ accountBeforeTransaction, operation, account }) => {
+      test: ({ accountBeforeTransaction, operation, account, transaction }) => {
         botTest("account spendable balance decreased with operation", () =>
           expect(account.spendableBalance).toEqual(
-            accountBeforeTransaction.spendableBalance.minus(operation.value),
+            accountBeforeTransaction.spendableBalance.minus(operation.value.minus(operation.fee)),
           ),
         );
 
-        // if (transaction.transferId) {
-        //   botTest("operation transferId", () =>
-        //     expect(operation.extra).toMatchObject({
-        //       transferId: transaction.transferId,
-        //     }),
-        //   );
-        // }
+        if (transaction.memo) {
+          botTest("operation memo", () =>
+            expect(operation.extra).toMatchObject({
+              memo: transaction.memo,
+            }),
+          );
+        }
       },
     },
     // {

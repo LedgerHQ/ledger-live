@@ -62,8 +62,10 @@ export type RosettaTransaction = {
         | "fee_payment"
         | "payment_source_dec"
         | "payment_receiver_inc"
-        | "account_creation_fee_via_payment";
-      status: string;
+        | "account_creation_fee_via_payment"
+        | "zkapp_fee_payer_dec"
+        | "zkapp_balance_update";
+      status: "Success" | "Failed";
       account: {
         address: string;
         metadata: {

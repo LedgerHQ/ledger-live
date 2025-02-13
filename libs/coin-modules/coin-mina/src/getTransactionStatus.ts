@@ -10,7 +10,8 @@ import {
 import type { Transaction, MinaAccount, TransactionStatus, StatusErrorMap } from "./types";
 import { isValidAddress, isValidMemo, getMaxAmount, getTotalSpent } from "./logic";
 import { AccountBridge } from "@ledgerhq/types-live";
-import { InvalidMemoMina } from "./errors";
+import { AccountCreationFeeWarning, InvalidMemoMina } from "./errors";
+import { MINA_ACCOUNT_CREATION_FEE } from "./consts";
 // import { fetchAccountBalance } from "./api";
 // import {} from "./constants";
 
@@ -41,6 +42,10 @@ const getTransactionStatus: AccountBridge<
 
   if (t.recipient === a.freshAddress) {
     errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
+  }
+
+  if (t.amount.lt(MINA_ACCOUNT_CREATION_FEE)) {
+    warnings.amount = new AccountCreationFeeWarning();
   }
 
   const estimatedFees = t.fees || new BigNumber(0);

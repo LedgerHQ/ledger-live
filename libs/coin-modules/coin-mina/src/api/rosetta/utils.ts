@@ -2,12 +2,12 @@ import {
   MINA_DECIMALS,
   MINA_SYMBOL,
   MINA_TOKEN_ID,
-  TESTNET_NETWORK_IDENTIFIER,
+  MAINNET_NETWORK_IDENTIFIER,
 } from "../../consts";
 
 export const addNetworkIdentifier = (data: any) => {
   return {
-    ...TESTNET_NETWORK_IDENTIFIER,
+    ...MAINNET_NETWORK_IDENTIFIER,
     ...data,
   };
 };

@@ -12,4 +12,5 @@ export const createTransaction: AccountBridge<
   useAllAmount: false,
   fees: new BigNumber(0),
   memo: undefined,
+  nonce: 0,
 });
