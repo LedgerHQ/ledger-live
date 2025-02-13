@@ -1,5 +1,10 @@
 import { Operation } from "@ledgerhq/coin-framework/api/index";
+import { fetchTronAccountTxs } from "../network";
+import { fromTrongridTxInfoToOperation } from "../network/trongrid/trongrid-adapters";
 
-export function listOperations(_address: string): Promise<[Operation[], string]> {
-  throw Error("Not implemented yet");
+export async function listOperations(_address: string): Promise<[Operation[], string]> {
+  // TODO: do not use 1000 as a limit, but depending on account state
+  const txs = await fetchTronAccountTxs(_address, txs => txs.length < 1000, {});
+  // TODO: adapt directly in network calls
+  return [txs.map(tx => fromTrongridTxInfoToOperation(tx)), ""];
 }
