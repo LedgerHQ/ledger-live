@@ -10,6 +10,7 @@ import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
 import { StyleProp, ViewStyle } from "react-native";
 import { track } from "~/analytics";
 import { AnalyticButtons, AnalyticEvents } from "~/newArch/hooks/useAnalytics/enums";
+import { NavigatorName, ScreenName } from "~/const";
 
 type ActionItem = {
   title: string;
@@ -38,6 +39,8 @@ export default function useAccountQuickActionDrawerViewModel({
   const navigation = useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
   const { t } = useTranslation();
 
+  const account = accounts[0];
+
   const actions: ActionItem[] = [
     RECEIVE && {
       eventProperties: {
@@ -47,7 +50,12 @@ export default function useAccountQuickActionDrawerViewModel({
       title: t("transfer.receive.title"),
       description: t("transfer.receive.description"),
       onPress: () =>
-        navigation.navigate<keyof BaseNavigatorStackParamList>(...(RECEIVE && RECEIVE.route)),
+        navigation.navigate<keyof BaseNavigatorStackParamList>(NavigatorName.ReceiveFunds, {
+          screen: ScreenName.ReceiveConfirmation,
+          params: {
+            accountId: (account.type !== "Account" && account?.parentId) || account.id,
+          },
+        }),
       Icon: RECEIVE.icon,
       disabled: RECEIVE.disabled,
       testID: "transfer-receive-button",
@@ -60,7 +68,14 @@ export default function useAccountQuickActionDrawerViewModel({
       title: t("transfer.buy.title"),
       description: t("transfer.buy.description"),
       Icon: BUY.icon,
-      onPress: () => navigation.navigate<keyof BaseNavigatorStackParamList>(...BUY.route),
+      onPress: () =>
+        navigation.navigate<keyof BaseNavigatorStackParamList>(NavigatorName.Exchange, {
+          screen: ScreenName.ExchangeBuy,
+          params: {
+            defaultAccountId: account?.id,
+            defaultCurrencyId: currency.id,
+          },
+        }),
       disabled: BUY.disabled,
       testID: "transfer-buy-button",
     },
