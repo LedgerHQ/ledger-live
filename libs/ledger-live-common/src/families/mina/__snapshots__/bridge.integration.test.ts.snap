@@ -1,0 +1,28 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`mina currency bridge scanAccounts mina seed 1 1`] = `
+[
+  {
+    "balance": "0",
+    "currencyId": "mina",
+    "derivationMode": "minabip44h",
+    "freshAddress": "B62qjWLs1W3J2fFGixeX49w1o7VvSGuMBNotnFhzs3PZ7PbtdFbhdeD",
+    "freshAddressPath": "44'/12586'/0'/0/0",
+    "id": "js:2:mina:B62qjWLs1W3J2fFGixeX49w1o7VvSGuMBNotnFhzs3PZ7PbtdFbhdeD:minabip44h",
+    "index": 0,
+    "operationsCount": 0,
+    "pendingOperations": [],
+    "seedIdentifier": "B62qjWLs1W3J2fFGixeX49w1o7VvSGuMBNotnFhzs3PZ7PbtdFbhdeD",
+    "spendableBalance": "0",
+    "swapHistory": [],
+    "syncHash": undefined,
+    "used": false,
+  },
+]
+`;
+
+exports[`mina currency bridge scanAccounts mina seed 1 2`] = `
+[
+  [],
+]
+`;
