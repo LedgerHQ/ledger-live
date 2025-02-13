@@ -3,6 +3,11 @@ import { NFTResource } from "@ledgerhq/live-nft/types";
 import { filterGroupedOperations, filterSection, useNftOperations } from "../useSpamTxFiltering";
 import { renderHook } from "@testing-library/react";
 
+const defaultDailyOperations: DailyOperations = {
+  sections: [],
+  completed: false,
+};
+
 const accountsMap = {
   acc1: { id: "acc1", currency: { id: "ETH" }, type: "Account" } as unknown as AccountLike,
   acc2: { id: "acc2", currency: { id: "ETH" }, type: "Account" } as unknown as AccountLike,
@@ -94,16 +99,16 @@ describe("useOperationsList Hooks", () => {
       });
     });
 
-    it("should return an empty set if groupedOperations is undefined", () => {
+    it("should return an empty set if groupedOperations is empty", () => {
       const { result } = renderHook(() =>
         useNftOperations({
           accountsMap: accountsMap,
-          groupedOperations: undefined,
+          groupedOperations: defaultDailyOperations,
           spamFilteringTxEnabled: true,
         }),
       );
 
-      expect(result.current).toEqual({});
+      expect(result.current).toEqual(defaultDailyOperations);
     });
   });
 
@@ -170,9 +175,9 @@ describe("useOperationsList Hooks", () => {
       jest.clearAllMocks();
     });
 
-    it("should return an empty object if groupedOperations is undefined", () => {
-      const result = filterGroupedOperations(metadatas, accountsMap);
-      expect(result).toEqual({});
+    it("should return an empty object if groupedOperations is empty", () => {
+      const result = filterGroupedOperations(metadatas, accountsMap, defaultDailyOperations);
+      expect(result).toEqual(defaultDailyOperations);
     });
 
     it("should use metadataMap to filter sections & respect the threshold", () => {

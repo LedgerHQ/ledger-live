@@ -41,6 +41,7 @@ export default function AssetPage({ match }: Props) {
   const accounts = useFlattenSortAccounts({
     enforceHideEmptySubAccounts: true,
   }).filter(a => getAccountCurrency(a).id === match.params.assetId);
+
   const lookupParentAccount = useCallback(
     (id: string): Account | undefined | null => allAccounts.find(a => a.id === id) || null,
     [allAccounts],

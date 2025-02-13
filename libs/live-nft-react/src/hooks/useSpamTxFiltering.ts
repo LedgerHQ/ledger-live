@@ -25,15 +25,15 @@ export function useNftOperations({
   spamFilteringTxEnabled,
 }: {
   accountsMap: AccountMap;
-  groupedOperations?: DailyOperations;
+  groupedOperations: DailyOperations;
   spamFilteringTxEnabled: boolean;
 }) {
   return useMemo(
-    () =>
+    (): NftOperations =>
       spamFilteringTxEnabled
         ? groupedOperations?.sections
             .flatMap(section => section.data)
-            .reduce((acc, operation) => {
+            .reduce((acc: NftOperations, operation: Operation): NftOperations => {
               if (operation.type === "NFT_IN") {
                 const account = accountsMap[operation.accountId];
                 const contract = operation.contract || "";
@@ -43,8 +43,8 @@ export function useNftOperations({
                 };
               }
               return acc;
-            }, {} as NftOperations) || ({} as NftOperations)
-        : ({} as NftOperations),
+            }, {})
+        : {},
     [spamFilteringTxEnabled, groupedOperations, accountsMap],
   );
 }
@@ -56,7 +56,7 @@ export function filterSection(
   markNftAsSpam?: (collectionId: string, blockchain: BlockchainsType, spamScore: number) => void,
   threshold?: number,
 ) {
-  const filtered: Operation[] = [];
+  const filtered = new Map<string, Operation>();
   operations.forEach(item => {
     if (item.type === "NFT_IN") {
       const spamScore = metadataMap.get(item.contract?.toLowerCase());
@@ -65,35 +65,32 @@ export function filterSection(
       const currencyId = getAccountCurrency(account).id;
 
       if (!spamScore || (threshold && spamScore <= threshold)) {
-        filtered.push(item);
+        filtered.set(item.id, item);
       } else {
         markNftAsSpam?.(ca, currencyId as BlockchainEVM, spamScore);
       }
     } else {
-      filtered.push(item);
+      filtered.set(item.id, item);
     }
   });
 
-  const uniqueOperationsMap = new Map(filtered.map(op => [op.id, op]));
-  const uniqueOperations = Array.from(uniqueOperationsMap.values());
-
-  return uniqueOperations;
+  return Array.from(filtered.values());
 }
 
 export function filterGroupedOperations(
   metadatas: Array<NFTResource<NonNullable<NFTCollectionMetadataResponse["result"]>>>,
   accountsMap: AccountMap,
-  groupedOperations?: DailyOperations,
+  groupedOperations: DailyOperations,
   markNftAsSpam?: (collectionId: string, blockchain: BlockchainsType, spamScore: number) => void,
   threshold?: number,
-) {
+): DailyOperations {
   const metadataMap = new Map(
     metadatas.map(meta => [meta.metadata?.contract.toLowerCase(), meta.metadata?.spamScore ?? 0]),
   );
 
   return {
     ...groupedOperations,
-    sections: groupedOperations?.sections.map(section => ({
+    sections: groupedOperations.sections.map(section => ({
       ...section,
       data: filterSection(section.data, metadataMap, accountsMap, markNftAsSpam, threshold),
     })),
@@ -103,7 +100,7 @@ export function filterGroupedOperations(
 export function useSpamTxFiltering(
   spamFilteringTxEnabled: boolean,
   accountsMap: AccountMap,
-  groupedOperations?: DailyOperations,
+  groupedOperations: DailyOperations,
   markNftAsSpam?: (collectionId: string, blockchain: BlockchainsType, spamScore: number) => void,
   threshold?: number,
 ) {
@@ -118,7 +115,7 @@ export function useSpamTxFiltering(
   );
 
   return useMemo(
-    () =>
+    (): DailyOperations =>
       spamFilteringTxEnabled
         ? filterGroupedOperations(
             metadatas,

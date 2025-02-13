@@ -2,9 +2,6 @@ import React from "react";
 import styled from "styled-components";
 import { compose } from "redux";
 import { useTranslation, withTranslation } from "react-i18next";
-import { Operation, Account, AccountLike } from "@ledgerhq/types-live";
-import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import logger from "~/renderer/logger";
 import IconAngleDown from "~/renderer/icons/AngleDown";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
@@ -12,7 +9,7 @@ import SectionTitle from "./SectionTitle";
 import OperationComponent from "./Operation";
 import TableContainer, { TableHeader } from "../TableContainer";
 import { isEditableOperation } from "@ledgerhq/live-common/operation";
-import { useOperationsList } from "./useOperationsList";
+import { Props, useOperationsList } from "./useOperationsList";
 
 const ShowMore = styled(Box).attrs(() => ({
   horizontal: true,
@@ -29,29 +26,17 @@ const ShowMore = styled(Box).attrs(() => ({
   }
 `;
 
-type Props = {
-  account?: AccountLike;
-  parentAccount?: Account | null;
-  accounts?: AccountLike[];
-  allAccounts?: AccountLike[];
-  withAccount?: boolean;
-  withSubAccounts?: boolean;
-  title?: string;
-  filterOperation?: (b: Operation, a: AccountLike) => boolean;
-};
-
 export function OperationsList({
   account,
   parentAccount,
   accounts,
-  allAccounts,
   withAccount,
   withSubAccounts,
   title,
   filterOperation,
 }: Props) {
   const { t } = useTranslation();
-  const { fetchMoreOperations, handleClickOperation, groupedOperations, accountsMap } =
+  const { fetchMoreOperations, handleClickOperation, groupedOperations, getOperationProperties } =
     useOperationsList({
       account,
       parentAccount,
@@ -75,43 +60,31 @@ export function OperationsList({
             }}
           />
         )}
-        {groupedOperations?.sections?.map(
+        {groupedOperations.sections?.map(
           group =>
             group.data.length > 0 && (
               <Box key={group.day.toISOString()}>
                 <SectionTitle date={group.day} />
                 <Box p={0}>
                   {group.data.map(operation => {
-                    const account = accountsMap[operation.accountId];
-                    if (!account) {
-                      logger.warn(`no account found for operation ${operation.id}`);
-                      return null;
-                    }
-                    let parentAccount;
-                    if (account.type !== "Account") {
-                      const pa =
-                        accountsMap[account.parentId] ||
-                        allAccounts?.find(a => a.id === account.parentId);
-                      if (pa && pa.type === "Account") {
-                        parentAccount = pa;
-                      }
-                      if (!parentAccount) {
-                        logger.warn(`no token account found for token operation ${operation.id}`);
-                        return null;
-                      }
-                    }
-                    const mainAccount = getMainAccount(account, parentAccount);
+                    const properties = getOperationProperties(operation, account, parentAccount);
+
+                    if (!properties) return null;
+
+                    const { accountOperation, parentAccountOperation, mainAccountOperation } =
+                      properties;
                     return (
                       <OperationComponent
                         operation={operation}
-                        account={account}
-                        parentAccount={parentAccount}
-                        key={`${account.id}_${operation.id}`}
+                        account={accountOperation}
+                        parentAccount={parentAccountOperation}
+                        key={`${accountOperation.id}_${operation.id}`}
                         onOperationClick={handleClickOperation}
                         t={t}
                         withAccount={withAccount}
                         editable={
-                          account && isEditableOperation({ account: mainAccount, operation })
+                          account &&
+                          isEditableOperation({ account: mainAccountOperation, operation })
                         }
                       />
                     );
