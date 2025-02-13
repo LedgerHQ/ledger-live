@@ -16,7 +16,7 @@ export function EarnMenuDrawer() {
   const openModal = useCallback(() => setModalOpened(true), []);
   const modal = useSelector(earnMenuModalSelector);
 
-  const closeDrawer = useCallback(async () => {
+  const closeDrawer = useCallback(() => {
     setModalOpened(false);
     dispatch(makeSetEarnMenuModalAction(undefined));
   }, [dispatch]);
@@ -35,7 +35,7 @@ export function EarnMenuDrawer() {
             {modal?.title}
           </Text>
         ) : null}
-        <Flex rowGap={8}>
+        <Flex rowGap={16}>
           {modal?.options.map(({ label, metadata: { link, button, ...tracked } }) =>
             link ? (
               <OptionButton
