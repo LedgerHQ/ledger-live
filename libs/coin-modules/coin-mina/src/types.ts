@@ -13,12 +13,14 @@ export type Transaction = TransactionCommon & {
   family: "mina";
   fees: BigNumber;
   memo: string | undefined;
+  nonce: number;
 };
 
 export type TransactionRaw = TransactionCommonRaw & {
   family: "mina";
   fees: string;
   memo: string | undefined;
+  nonce: number;
 };
 
 export type MinaAccount = Account;

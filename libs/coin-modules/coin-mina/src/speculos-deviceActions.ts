@@ -1,61 +1,72 @@
 import type { DeviceAction } from "@ledgerhq/coin-framework/bot/types";
 import type { Transaction } from "./types";
 import { deviceActionFlow, SpeculosButton } from "@ledgerhq/coin-framework/bot/specs";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/lib/currencies/formatCurrencyUnit";
 
 export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
   steps: [
     {
-      title: "Get",
+      title: "Sign",
       button: SpeculosButton.RIGHT,
-    },
-    {
-      title: "Path",
-      button: SpeculosButton.RIGHT,
-    },
-    {
-      title: "Generate",
-      button: SpeculosButton.BOTH,
-    },
-    {
-      title: "Address",
-      button: SpeculosButton.BOTH,
-    },
-    {
-      title: "Approve",
-      button: SpeculosButton.BOTH,
     },
     {
       title: "Type",
       button: SpeculosButton.RIGHT,
-      expectedValue: () => "Token transfer",
+      expectedValue: () => "Payment",
     },
     {
-      title: "Chain ID",
-      button: SpeculosButton.RIGHT,
-      expectedValue: () => "casper",
-    },
-    {
-      title: "Account",
+      title: "Sender",
       button: SpeculosButton.RIGHT,
       expectedValue: ({ account }) => account.freshAddress,
     },
     {
-      title: "Fee",
-      button: SpeculosButton.RIGHT,
-      expectedValue: ({ transaction }) => `${transaction.fees.toNumber()} mina`,
-    },
-    {
-      title: "Target",
+      title: "Receiver",
       button: SpeculosButton.RIGHT,
       expectedValue: ({ transaction }) => transaction.recipient,
     },
     {
       title: "Amount",
       button: SpeculosButton.RIGHT,
-      expectedValue: ({ status }) => `${status.amount.toNumber()} mina`,
+      expectedValue: ({ transaction, account }) =>
+        `MINA ${formatCurrencyUnit(account.currency.units[0], transaction.amount, {
+          dynamicSignificantDigits: 10,
+          staticSignificantDigits: 10,
+        })}`,
     },
     {
-      title: "APPROVE",
+      title: "Fee",
+      button: SpeculosButton.RIGHT,
+      expectedValue: ({ transaction, account }) =>
+        `MINA ${formatCurrencyUnit(account.currency.units[0], transaction.fees, {
+          dynamicSignificantDigits: 10,
+          staticSignificantDigits: 10,
+        })}`,
+    },
+    {
+      title: "Total",
+      button: SpeculosButton.RIGHT,
+      expectedValue: ({ transaction, account }) =>
+        `MINA ${formatCurrencyUnit(
+          account.currency.units[0],
+          transaction.fees.plus(transaction.amount),
+          {
+            dynamicSignificantDigits: 10,
+            staticSignificantDigits: 10,
+          },
+        )}`,
+    },
+    {
+      title: "Memo",
+      button: SpeculosButton.RIGHT,
+      expectedValue: ({ transaction }) => transaction.memo ?? "",
+    },
+    {
+      title: "Nonce",
+      button: SpeculosButton.RIGHT,
+      expectedValue: ({ transaction }) => transaction.nonce.toString(),
+    },
+    {
+      title: "Approve",
       button: SpeculosButton.BOTH,
     },
   ],
