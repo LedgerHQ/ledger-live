@@ -94,7 +94,9 @@ export default class LedgerStoreProvider extends Component<
     };
 
     const supportedCV = await getsupportedCountervalues();
-
+    if (settingsData && supportedCV.length > 0) {
+      settingsData.supportedCounterValues = supportedCV;
+    }
     if (
       settingsData &&
       settingsData.counterValue &&
