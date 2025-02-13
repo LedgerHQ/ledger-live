@@ -34,6 +34,7 @@ import { Grid } from "@ledgerhq/react-ui";
 import AnalyticsOptInPrompt from "LLD/features/AnalyticsOptInPrompt/screens";
 import { useDisplayOnPortfolioAnalytics } from "LLD/features/AnalyticsOptInPrompt/hooks/useDisplayOnPortfolio";
 import PortfolioContentCards from "LLD/features/DynamicContent/components/PortfolioContentCards";
+import { LNSBannerCard, useLNSUpsellBannerModel } from "LLD/features/LNSUpsell";
 import useActionCards from "~/renderer/hooks/useActionCards";
 import { useAutoRedirectToPostOnboarding } from "~/renderer/hooks/useAutoRedirectToPostOnboarding";
 import { useNftCollectionsStatus } from "~/renderer/hooks/nfts/useNftCollectionsStatus";
@@ -90,6 +91,8 @@ export default function DashboardPage() {
   const { isFeatureFlagsAnalyticsPrefDisplayed, analyticsOptInPromptProps } =
     useDisplayOnPortfolioAnalytics();
 
+  const lnsUpsellBannerModel = useLNSUpsellBannerModel("portfolio");
+
   return (
     <>
       <TopBannerContainer>
@@ -103,6 +106,8 @@ export default function DashboardPage() {
           <RecoverBanner>
             {isActionCardsCampainRunning && lldActionCarousel?.enabled ? (
               <ActionContentCards variant={ABTestingVariants.variantA} />
+            ) : lnsUpsellBannerModel ? (
+              <LNSBannerCard model={lnsUpsellBannerModel} />
             ) : (
               <PortfolioContentCards />
             )}

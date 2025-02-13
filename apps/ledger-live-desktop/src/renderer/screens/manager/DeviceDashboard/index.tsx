@@ -10,6 +10,7 @@ import {
   distribute,
 } from "@ledgerhq/live-common/apps/index";
 import { useAppsRunner } from "@ledgerhq/live-common/apps/react";
+import { LNSBannerCard, useLNSUpsellBannerModel } from "LLD/features/LNSUpsell";
 import NavigationGuard from "~/renderer/components/NavigationGuard";
 import Quit from "~/renderer/icons/Quit";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -227,6 +228,7 @@ const DeviceDashboard = ({
           setHasCustomLockScreen={setHasCustomLockScreen}
         />
         <ProviderWarning />
+        <LNSBannerCard model={useLNSUpsellBannerModel("manager")} />
         <AppList
           optimisticState={optimisticState}
           state={state}
