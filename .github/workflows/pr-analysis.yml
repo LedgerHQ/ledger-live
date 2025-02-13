@@ -15,9 +15,7 @@ permissions:
 jobs:
   determine-affected:
     name: "Turbo Affected"
-    if: |
-      ${{github.event.pull_request.head.repo.fork }} &&
-      contains(fromJSON('["thesan", "themooneer", "cgrellard-ledger", "KVNLS", "LucasWerey", "mcayuelas-ledger", "lewisd5"]'), github.event.sender.login)
+    if: ${{!github.event.pull_request.head.repo.fork && contains(fromJSON('["thesan", "themooneer", "cgrellard-ledger", "KVNLS", "LucasWerey", "mcayuelas-ledger", "lewisd5"]'), github.event.sender.login)}}
     uses: LedgerHQ/ledger-live/.github/workflows/turbo-affected-reusable.yml@develop
     with:
       head_branch: ${{ github.event.pull_request.head.ref || github.event.merge_group.head_ref }}
@@ -26,6 +24,7 @@ jobs:
   sonarqube:
     name: "SonarQube"
     needs: determine-affected
+    if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') || contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile')}}
     runs-on: [ledger-live-4xlarge]
     env:
       MOBILE_AFFECTED: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile')}}
@@ -96,7 +95,6 @@ jobs:
           args: >
             -Dsonar.sources=apps/ledger-live-desktop,libs
             -Dsonar.testExecutionReportPaths=lld-sonar-executionTests-report.xml
-            -Dsonar.newCode.referenceBranch=develop
 
       - name: SonarQubeScan mobile only
         if: ${{env.MOBILE_AFFECTED == 'true' && env.DESKTOP_AFFECTED == 'false'}}
@@ -107,13 +105,9 @@ jobs:
           args: >
             -Dsonar.sources=apps/ledger-live-mobile,libs
             -Dsonar.testExecutionReportPaths=llm-sonar-executionTests-report.xml
-            -Dsonar.newCode.referenceBranch=develop
 
       - name: SonarQubeScan desktop and mobile
         if: ${{env.DESKTOP_AFFECTED == 'true' && env.MOBILE_AFFECTED == 'true'}}
         uses: SonarSource/sonarqube-scan-action@v4
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        with:
-          args: >
-            -Dsonar.newCode.referenceBranch=develop
