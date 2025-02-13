@@ -51,7 +51,6 @@ const test_ios = async () => {
     --forceExit \
     --headless \
     --retries 5 \
-    --runInBand \
     --cleanup \
     --shard ${shard}`;
 };
