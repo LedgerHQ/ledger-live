@@ -95,6 +95,7 @@ import AddAccountsV2Navigator from "LLM/features/Accounts/Navigator";
 import DeviceSelectionNavigator from "LLM/features/DeviceSelection/Navigator";
 import AssetSelectionNavigator from "LLM/features/AssetSelection/Navigator";
 import AssetsListNavigator from "LLM/features/Assets/Navigator";
+import FeesNavigator from "./FeesNavigator";
 
 const Stack = createStackNavigator<BaseNavigatorStackParamList>();
 
@@ -270,6 +271,12 @@ export default function BaseNavigator() {
         <Stack.Screen
           name={NavigatorName.ClaimRewards}
           component={ClaimRewardsNavigator}
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
+          name={NavigatorName.Fees}
+          component={FeesNavigator}
           options={{ headerShown: false }}
         />
 
