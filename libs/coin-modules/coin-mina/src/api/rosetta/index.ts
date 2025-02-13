@@ -3,7 +3,6 @@ import {
   FetchAccountBalanceResponse,
   FetchAccountTransactionsResponse,
   FetchNetworkStatusResponse,
-  RosettaBlockInfoResponse,
   RosettaMetadataResponse,
   RosettaPreprocessResponse,
   RosettaSubmitResponse,
@@ -48,6 +47,8 @@ export const fetchAccountTransactions = async (address: string) => {
 
 const rosettaPreprocess = async (from: string, to: string, feeNano: number, valueNano: number) => {
   const payload = makeTransferPayload(from, to, feeNano, valueNano);
+  // eslint-disable-next-line no-console
+  console.log("payload", JSON.stringify(payload, null, 2));
   const { data } = await network<RosettaPreprocessResponse>({
     method: "POST",
     url: getRosettaUrl("/construction/preprocess"),

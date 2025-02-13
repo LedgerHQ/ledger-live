@@ -51,6 +51,7 @@ const mina: CurrenciesData<Transaction> = {
             fees: new BigNumber(0).toString(),
             amount: "1000",
             memo: undefined,
+            nonce: 0,
           }),
           expectedStatus: {
             errors: {
@@ -67,6 +68,7 @@ const mina: CurrenciesData<Transaction> = {
             fees: new BigNumber(0).toString(),
             amount: (300 * 1e9).toString(),
             memo: undefined,
+            nonce: 0,
           }),
           expectedStatus: {
             errors: {
@@ -83,6 +85,7 @@ const mina: CurrenciesData<Transaction> = {
             fees: new BigNumber(0).toString(),
             amount: "1000",
             memo: "string greated than 32 chars is invalid",
+            nonce: 0,
           }),
           expectedStatus: {
             errors: {
@@ -99,6 +102,7 @@ const mina: CurrenciesData<Transaction> = {
             memo: undefined,
             amount: "0",
             fees: new BigNumber(0).toString(),
+            nonce: 0,
           }),
           expectedStatus: {
             errors: {
@@ -115,6 +119,7 @@ const mina: CurrenciesData<Transaction> = {
             amount: "10",
             fees: new BigNumber(0).toString(),
             memo: undefined,
+            nonce: 0,
           }),
           expectedStatus: {
             errors: {
@@ -131,6 +136,7 @@ const mina: CurrenciesData<Transaction> = {
             amount: "1000",
             fees: new BigNumber(0).toString(),
             memo: undefined,
+            nonce: 0,
           }),
           expectedStatus: {
             amount: new BigNumber("1000"),

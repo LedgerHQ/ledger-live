@@ -36,6 +36,7 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
     fees: new BigNumber(tr.fees),
     amount: new BigNumber(tr.amount),
     memo: tr.memo,
+    nonce: tr.nonce,
   };
 };
 
@@ -48,6 +49,7 @@ const toTransactionRaw = (t: Transaction): TransactionRaw => {
     amount: t.amount.toFixed(),
     fees: t.fees.toString(),
     memo: t.memo ?? undefined,
+    nonce: t.nonce,
   };
 };
 

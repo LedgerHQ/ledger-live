@@ -3,6 +3,7 @@ import { Account, AccountBridge } from "@ledgerhq/types-live";
 import estimateMaxSpendable from "./estimateMaxSpendable";
 import getEstimatedFees from "./getFeesForTransaction";
 import { MinaAccount, Transaction } from "./types";
+import { getNonce } from "./api";
 
 export const prepareTransaction: AccountBridge<
   Transaction,
@@ -17,5 +18,7 @@ export const prepareTransaction: AccountBridge<
       })
     : t.amount;
 
-  return updateTransaction(t, { fees, amount });
+  const nonce = await getNonce(t, a.freshAddress);
+
+  return updateTransaction(t, { fees, amount, nonce });
 };

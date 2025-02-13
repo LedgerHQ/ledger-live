@@ -3,8 +3,6 @@ import type { Account } from "@ledgerhq/types-live";
 import type { MinaUnsignedTransaction, Transaction } from "./types";
 import { MINA_MAINNET_NETWORK_ID, MINA_PAYMENT_TYPE_ID } from "./consts";
 import { getAccountNumFromPath } from "./logic";
-import { getNonce } from "./api";
-import BigNumber from "bignumber.js";
 import invariant from "invariant";
 
 export const buildTransaction = async (
@@ -15,7 +13,6 @@ export const buildTransaction = async (
     // log("debug", "mina: build transaction", { account: a, transaction: t });
     const accountNum = getAccountNumFromPath(a.freshAddressPath);
     invariant(accountNum !== undefined, "mina: accountNum is required to build transaction");
-    const nonce = await getNonce(t, a.freshAddress);
     return {
       txType: MINA_PAYMENT_TYPE_ID,
       senderAccount: accountNum,
@@ -23,7 +20,7 @@ export const buildTransaction = async (
       receiverAddress: t.recipient,
       amount: t.amount.toNumber(),
       fee: t.fees.toNumber(),
-      nonce: BigNumber(nonce).toNumber(),
+      nonce: t.nonce,
       memo: t.memo ?? "",
       networkId: MINA_MAINNET_NETWORK_ID,
     };
