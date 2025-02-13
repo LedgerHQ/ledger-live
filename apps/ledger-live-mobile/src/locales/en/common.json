@@ -7235,5 +7235,13 @@
       "detectedAccounts": "{{count}} account (detected)",
       "detectedAccounts_plural": "{{count}} accounts (detected)"
     }
+  },
+  "emptyList": {
+    "accounts": {
+      "title": "No accounts found",
+      "subTitle": "Looks like you haven’t added an account yet. Get started now.",
+      "cta": "Add an account",
+      "link": "Need help? Learn how to add an account to Ledger\u00a0Live."
+    }
   }
 }
