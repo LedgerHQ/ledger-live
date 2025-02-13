@@ -6,15 +6,19 @@ export type BlockInfo = {
 
 export type Operation = {
   hash: string;
+  // TODO: check if useful
   address: string;
   type: string;
+  // TODO: check if we want Asset array
   value: bigint;
+  // TODO: check if we want Asset array
   fee: bigint;
   block: BlockInfo;
   senders: string[];
   recipients: string[];
   date: Date;
-  transactionSequenceNumber: number;
+  // TODO: check if useful
+  transactionSequenceNumber?: number;
   // Field containing dedicated value for each blockchain
   details?: Record<string, unknown>;
 };
@@ -25,6 +29,11 @@ export type Transaction = {
   amount: bigint;
   fee: bigint;
   supplement?: unknown;
+};
+
+export type Asset = {
+  amount: bigint;
+  id: string;
 };
 
 // TODO rename start to minHeight
