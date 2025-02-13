@@ -1,8 +1,8 @@
 import { Strategy } from "@ledgerhq/coin-evm/lib/types/index";
+import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { ScreenName } from "~/const";
-import { FeeData } from "~/screens/Swap/LiveApp/customHandlers/getFee";
 
 export type FeesNavigatorParamsList = {
   [ScreenName.FeeHomePage]: {
@@ -10,12 +10,9 @@ export type FeesNavigatorParamsList = {
     feePayingAccount: Account;
     feesStrategy: Strategy;
     fromAmount: BigNumber | undefined;
-    customFeeConfig: object,
-    onSelect(
-      feesStrategy: Strategy,
-      customFeeConfig: object,
-    ): Promise<void>;
-    transaction: any;
+    customFeeConfig: object;
+    onSelect(feesStrategy: Strategy, customFeeConfig: object): Promise<void>;
+    transaction: Transaction;
   };
   [ScreenName.FeeCustomFeePage]: undefined;
 };

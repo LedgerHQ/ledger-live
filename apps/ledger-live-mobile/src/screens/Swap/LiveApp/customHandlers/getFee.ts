@@ -36,8 +36,8 @@ interface GenerateFeeDataParams {
   feesStrategy: Strategy;
   fromAmount: BigNumber | undefined;
   customFeeConfig: object;
-  bridge: AccountBridge<any>;
-  baseTransaction: any;
+  bridge: AccountBridge<Transaction>;
+  baseTransaction: Transaction;
 }
 
 const getRecipientAddress = (
@@ -68,7 +68,7 @@ const generateFeeData = async ({
   const gasOptions = await gasTracker?.getGasOptions({ currency: feePayingAccount.currency });
   const gasOption = gasOptions ? gasOptions[feesStrategy] : undefined;
 
-  const config = baseTransaction.family === 'evm' ? gasOption : customFeeConfig;
+  const config = baseTransaction.family === "evm" ? gasOption : customFeeConfig;
 
   const recipient = getRecipientAddress(baseTransaction.family, feePayingAccount.currency.id);
   const transactionConfig: Transaction = {

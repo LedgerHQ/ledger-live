@@ -1,5 +1,5 @@
-import { getDefaultFeeUnit } from "@ledgerhq/coin-evm/lib/logic";
-import { FeeData, Strategy } from "@ledgerhq/coin-evm/lib/types/index";
+import { Strategy } from "@ledgerhq/coin-evm/lib/types/index";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
@@ -8,7 +8,6 @@ import { useTranslation } from "react-i18next";
 import { TouchableOpacity } from "react-native";
 import { useTheme } from "styled-components/native";
 import { StrategyIcon } from "./StrategyIcon";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/lib/currencies/formatCurrencyUnit";
 
 type Props = {
   strategy: Strategy;
