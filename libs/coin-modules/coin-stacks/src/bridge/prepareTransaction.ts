@@ -1,6 +1,5 @@
 import { updateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { AccountBridge } from "@ledgerhq/types-live";
-import { StacksMainnet } from "@stacks/network";
 import { log } from "@ledgerhq/logs";
 import {
   AddressVersion,
@@ -30,7 +29,7 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
   if (xpub && recipient && validateAddress(recipient).isValid) {
     const { anchorMode, memo, amount } = transaction;
 
-    const network = StacksNetwork[transaction.network] || new StacksMainnet({url: 'https://stacks.coin.ledger.com/'});
+    const network = StacksNetwork[transaction.network] || StacksNetwork['mainnet']
 
     // Check if recipient is valid
     const options: UnsignedTokenTransferOptions = {

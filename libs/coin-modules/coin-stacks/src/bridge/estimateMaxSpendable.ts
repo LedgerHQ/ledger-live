@@ -2,7 +2,6 @@ import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets/abandonseed";
 import { AccountBridge } from "@ledgerhq/types-live";
 import { log } from "@ledgerhq/logs";
-import { StacksMainnet } from "@stacks/network";
 import {
   UnsignedTokenTransferOptions,
   estimateTransaction,
@@ -32,7 +31,8 @@ export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpenda
   };
   // Compute fees
   const { recipient, anchorMode, memo, amount } = dummyTx;
-  const network = StacksNetwork[dummyTx.network] || new StacksMainnet({url: 'https://stacks.coin.ledger.com/'});
+
+  const network = StacksNetwork[dummyTx.network] || StacksNetwork['mainnet'];
 
   const options: UnsignedTokenTransferOptions = {
     recipient,
