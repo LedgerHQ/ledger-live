@@ -89,8 +89,9 @@ export const navigationIntegration = Sentry.reactNavigationIntegration({
 
 const SENTRY_DEBUG = Config.SENTRY_DEBUG === "true" && __DEV__;
 
-// const stacksEndpoint = getEnv("API_STACKS_ENDPOINT");
-// const regex = new RegExp(`^(?!${stacksEndpoint.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$).*`);
+// const stacksendpoint = getenv("api_stacks_endpoint");
+// const regex = new regexp(`^(?!${stacksendpoint.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$).*`);
+const regex = new RegExp(`^(?!https:\/\/stacks\.coin\.ledger\.com(?:\/.*)?$).*`)
 
 
 if (sentryEnabled) {
@@ -110,7 +111,7 @@ if (sentryEnabled) {
     enableAppHangTracking: true,
     profilesSampleRate: Config.FORCE_SENTRY ? 1 : 0.0002,
     tracesSampleRate: Config.FORCE_SENTRY ? 1 : 0.0002,
-    // tracePropagationTargets: [https:\/\/stacks.coin.ledger.com.*],
+    tracePropagationTargets: [regex],
     integrations: [
       navigationIntegration,
       Sentry.reactNativeTracingIntegration({
