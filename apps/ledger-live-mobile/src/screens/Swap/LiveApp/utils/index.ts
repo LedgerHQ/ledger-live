@@ -22,6 +22,7 @@ export const trackSwapError = (error: Error, properties: Record<string, unknown>
   }
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type TransformableObject = Record<string, any>;
 
 /**

@@ -1,7 +1,9 @@
 import { getTypedTransaction } from "@ledgerhq/coin-evm/lib/transaction";
 import { getEstimatedFees } from "@ledgerhq/coin-evm/logic";
-import { useGasOptions } from "@ledgerhq/live-common/lib/families/evm/react";
+import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/transaction";
+import { useGasOptions } from "@ledgerhq/live-common/families/evm/react";
 import { Flex } from "@ledgerhq/native-ui";
+import React from "react";
 import { SafeAreaView } from "react-native";
 import { FeesNavigatorParamsList } from "~/components/RootNavigator/types/FeesNavigator";
 import { RootComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
@@ -15,7 +17,7 @@ export type Props = RootComposite<
 export function FeesScreen({ route: { params } }: Props) {
   const [gasOptions] = useGasOptions({
     currency: params.feePayingAccount.currency,
-    transaction: params.transaction,
+    transaction: params.transaction as EvmTransaction,
   });
 
   return (
@@ -30,7 +32,9 @@ export function FeesScreen({ route: { params } }: Props) {
           }}
           gasOption={
             gasOptions?.slow
-              ? getEstimatedFees(getTypedTransaction(params.transaction, gasOptions?.slow))
+              ? getEstimatedFees(
+                  getTypedTransaction(params.transaction as EvmTransaction, gasOptions?.slow),
+                )
               : undefined
           }
         />
@@ -41,7 +45,9 @@ export function FeesScreen({ route: { params } }: Props) {
           onSelect={() => params.onSelect("medium", gasOptions?.medium ?? {})}
           gasOption={
             gasOptions?.medium
-              ? getEstimatedFees(getTypedTransaction(params.transaction, gasOptions?.medium))
+              ? getEstimatedFees(
+                  getTypedTransaction(params.transaction as EvmTransaction, gasOptions?.medium),
+                )
               : undefined
           }
         />
@@ -52,7 +58,9 @@ export function FeesScreen({ route: { params } }: Props) {
           onSelect={() => params.onSelect("fast", gasOptions?.fast ?? {})}
           gasOption={
             gasOptions?.fast
-              ? getEstimatedFees(getTypedTransaction(params.transaction, gasOptions?.fast))
+              ? getEstimatedFees(
+                  getTypedTransaction(params.transaction as EvmTransaction, gasOptions?.fast),
+                )
               : undefined
           }
         />

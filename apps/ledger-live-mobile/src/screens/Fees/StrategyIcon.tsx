@@ -1,6 +1,6 @@
 import { Strategy } from "@ledgerhq/coin-evm/lib/types/index";
 import { SpeedFast, SpeedLow, SpeedMedium } from "@ledgerhq/icons-ui/native";
-import { useMemo } from "react";
+import React, { useMemo } from "react";
 import { useTheme } from "styled-components/native";
 
 type Props = {
