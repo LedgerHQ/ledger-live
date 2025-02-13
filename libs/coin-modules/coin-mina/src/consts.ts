@@ -1,9 +1,11 @@
-export const TESTNET_NETWORK_IDENTIFIER = {
+export const MAINNET_NETWORK_IDENTIFIER = {
   network_identifier: {
     blockchain: "mina",
     network: "mainnet",
   },
 };
+
+export const MINA_ACCOUNT_CREATION_FEE = 1 * 10 ** 9;
 
 export const MINA_MAINNET_NETWORK_ID = 1;
 export const MINA_PAYMENT_TYPE_ID = 0;
