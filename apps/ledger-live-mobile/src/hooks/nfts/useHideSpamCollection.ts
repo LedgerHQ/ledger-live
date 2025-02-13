@@ -7,7 +7,7 @@ import { BlockchainsType } from "@ledgerhq/live-nft/supported";
 import { NftStatus } from "@ledgerhq/live-nft/types";
 
 export function useHideSpamCollection() {
-  const spamFilteringTxFeature = useFeature("spamFilteringTx");
+  const spamFilteringTxFeature = useFeature("llmSpamFilteringTx");
   const nftsFromSimplehashFeature = useFeature("nftsFromSimplehash");
 
   const nftCollectionsStatusByNetwork = useSelector(nftCollectionsStatusByNetworkSelector);
