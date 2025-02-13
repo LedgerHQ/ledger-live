@@ -1,10 +1,11 @@
 import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets/abandonseed";
 import { AccountBridge } from "@ledgerhq/types-live";
-import { StacksMainnet } from "@stacks/network";
+import { log } from "@ledgerhq/logs";
 import {
   UnsignedTokenTransferOptions,
   estimateTransaction,
+  estimateTransactionByteLength,
   makeUnsignedSTXTokenTransfer,
 } from "@stacks/transactions";
 import BigNumber from "bignumber.js";
@@ -30,7 +31,8 @@ export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpenda
   };
   // Compute fees
   const { recipient, anchorMode, memo, amount } = dummyTx;
-  const network = StacksNetwork[dummyTx.network] || new StacksMainnet();
+
+  const network = StacksNetwork[dummyTx.network] || StacksNetwork['mainnet'];
 
   const options: UnsignedTokenTransferOptions = {
     recipient,
@@ -42,8 +44,12 @@ export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpenda
   };
 
   const tx = await makeUnsignedSTXTokenTransfer(options);
+  const byteLength = estimateTransactionByteLength(tx);
+  console.log({byteLength})
+  log("stacks.estimateMaxSpendable", `tx: ${JSON.stringify({...tx.payload, amount: (tx.payload as any)?.amount?.toString()})}`);
+  log("stacks.estimateMaxSpendable", `byteLength: ${byteLength}`);
 
-  const [feeEst] = await estimateTransaction(tx.payload);
+  const [feeEst] = await estimateTransaction(tx.payload, estimateTransactionByteLength(tx));
 
   const diff = spendableBalance.minus(new BigNumber(feeEst.fee));
   return diff.gte(0) ? diff : new BigNumber(0);

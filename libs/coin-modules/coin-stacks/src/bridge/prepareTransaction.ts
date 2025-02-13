@@ -1,11 +1,12 @@
 import { updateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { AccountBridge } from "@ledgerhq/types-live";
-import { StacksMainnet } from "@stacks/network";
+import { log } from "@ledgerhq/logs";
 import {
   AddressVersion,
   TransactionVersion,
   UnsignedTokenTransferOptions,
   estimateTransaction,
+  estimateTransactionByteLength,
   makeUnsignedSTXTokenTransfer,
 } from "@stacks/transactions";
 import BigNumber from "bignumber.js";
@@ -28,7 +29,7 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
   if (xpub && recipient && validateAddress(recipient).isValid) {
     const { anchorMode, memo, amount } = transaction;
 
-    const network = StacksNetwork[transaction.network] || new StacksMainnet();
+    const network = StacksNetwork[transaction.network] || StacksNetwork['mainnet']
 
     // Check if recipient is valid
     const options: UnsignedTokenTransferOptions = {
@@ -40,6 +41,7 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
       amount: amount.toFixed(),
     };
 
+    log("stacks.prepareTransaction", `options: ${JSON.stringify({...options, amount: options.amount.toString()})}`)
     const tx = await makeUnsignedSTXTokenTransfer(options);
 
     const addressVersion =
@@ -47,8 +49,12 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
         ? AddressVersion.MainnetSingleSig
         : AddressVersion.TestnetSingleSig;
     const senderAddress = c32address(addressVersion, tx.auth.spendingCondition!.signer);
+  const byteLength = estimateTransactionByteLength(tx);
+  console.log({byteLengthPrepare: byteLength})
+  log("stacks.prepareTransaction", `tx: ${JSON.stringify({...tx.payload, amount: (tx.payload as any)?.amount?.toString()})}`);
+  log("stacks.prepareTransaction", `byteLength: ${byteLength}`);
 
-    const [fee] = await estimateTransaction(tx.payload);
+    const [fee] = await estimateTransaction(tx.payload, estimateTransactionByteLength(tx));
 
     patch.fee = new BigNumber(fee.fee);
     patch.nonce = await findNextNonce(senderAddress, pendingOperations);
