@@ -41,6 +41,7 @@ import {
   developerModeSelector,
   enablePlatformDevToolsSelector,
   languageSelector,
+  lastSeenDeviceSelector,
   shareAnalyticsSelector,
 } from "~/renderer/reducers/settings";
 import { walletSelector } from "~/renderer/reducers/wallet";
@@ -123,6 +124,8 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
   const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
   const fiatCurrency = useSelector(counterValueCurrencySelector);
   const locale = useSelector(languageSelector);
+  const lastSeenDevice = useSelector(lastSeenDeviceSelector);
+  const currentVersion = __APP_VERSION__;
   const enablePlatformDevTools = useSelector(enablePlatformDevToolsSelector);
   const devMode = useSelector(developerModeSelector);
   const shareAnalytics = useSelector(shareAnalyticsSelector);
@@ -484,6 +487,9 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
             swapUserIp: SWAP_USER_IP,
             devMode,
             shareAnalytics,
+            lastSeenDevice: lastSeenDevice?.modelId,
+            currentVersion,
+            platform: "LLD",
           }}
           onStateChange={onStateChange}
           ref={webviewAPIRef}
