@@ -191,11 +191,6 @@ export default class Exchange {
         Buffer.from([feeHex.length]),
         feeHex,
       ]);
-
-      if (bufferToSend.length >= 256) {
-        bufferToSend = await this.processSplitTransaction(bufferToSend);
-        p2Value = this.transactionType | P2_EXTEND;
-      }
     } else {
       bufferToSend = Buffer.concat([
         Buffer.from([transaction.length]),
@@ -203,6 +198,11 @@ export default class Exchange {
         Buffer.from([feeHex.length]),
         feeHex,
       ]);
+    }
+
+    if (bufferToSend.length >= 256) {
+      bufferToSend = await this.processSplitTransaction(bufferToSend);
+      p2Value = this.transactionType | P2_EXTEND;
     }
 
     const result: Buffer = await this.transport.send(
