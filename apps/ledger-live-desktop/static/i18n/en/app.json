@@ -6498,6 +6498,9 @@
     }, 
     "InvalidMemoMina": {
       "title": "Memo text cannot be longer than 32 characters"
+    },
+    "AccountCreationFeeWarning": {
+      "title": "This transaction may fail if the recipient account has no previous transactions"
     }
   },
   "cryptoOrg": {
