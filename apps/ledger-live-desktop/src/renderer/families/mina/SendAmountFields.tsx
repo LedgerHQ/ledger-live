@@ -21,16 +21,8 @@ const Root = (props: {
         alignItems="center"
         justifyContent="space-between"
         style={{ width: "50%", paddingRight: 28 }}
-      >
-        <Label>
-          <LabelInfoTooltip text={<Trans i18nKey="families.mina.memoWarningText" />}>
-            <span>
-              <Trans i18nKey="families.mina.memo" />
-            </span>
-          </LabelInfoTooltip>
-        </Label>
-      </Box>
-      <Box pr={2} pl={2} mb={15} horizontal alignItems="center" justifyContent="space-between">
+      ></Box>
+      <Box mb={15} horizontal alignItems="center" justifyContent="space-between">
         <Box grow={1}>
           <MemoField {...props} />
         </Box>
