@@ -46,9 +46,14 @@
         "lldWalletSync": {
           "enabled": true,
           "params": {
-            "environment": "STAGING"
-          },
-          "overridesRemote": true
+            "environment": "STAGING",
+            "learnMoreLink": "https://www.ledger.com/academy/topics/ledgersolutions/ledger-sync-effortlessly-sync-your-accounts-in-ledger-live-safely-securely-and-with-complete-privacy",
+            "watchConfig": {
+              "pollingInterval": 1000,
+              "initialTimeout": 1000,
+              "userIntentDebounce": 1000
+            }
+          }
         }
       }
     },
