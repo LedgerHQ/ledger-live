@@ -31,9 +31,9 @@ export function getExchangeErrorMessage(errorCode: number, step?: string): strin
       return "Wrong transaction id";
     case ErrorStatus.INVALID_ADDRESS:
       if (step === "CHECK_PAYOUT_ADDRESS")
-        return "This receiving account does not belong to your device. Please change and retry.";
+        return "This receiving account does not belong to the device you have connected. Please change and retry";
       else if (step === "CHECK_REFUND_ADDRESS")
-        return "This receiving account does not belong to your device for the refund. Please change and retry.";
+        return "This sending account does not belong to the device you have connected. Please change and retry";
       return "Invalid address";
     case ErrorStatus.USER_REFUSED:
       return "User refused";
