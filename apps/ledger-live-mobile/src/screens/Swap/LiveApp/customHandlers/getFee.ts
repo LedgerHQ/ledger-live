@@ -80,7 +80,7 @@ const generateFeeData = async ({
     ...config,
   };
 
-  const preparedTransaction = bridge.updateTransaction(feePayingAccount, transactionConfig);
+  const preparedTransaction = bridge.updateTransaction(baseTransaction, transactionConfig);
 
   const transactionStatus = await bridge.getTransactionStatus(
     feePayingAccount,
