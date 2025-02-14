@@ -32,8 +32,7 @@ export const IDS = [
   "ethereum/erc20/binance_usd",
   "near",
   "injective",
-  // "multiversx",
-  "elrond",
+  "elrond", // NOTE: legacy 'multiversx' name, kept for compatibility
   "tezos",
   "celo",
   "osmo",
