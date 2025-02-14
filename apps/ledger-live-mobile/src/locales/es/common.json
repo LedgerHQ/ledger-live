@@ -809,6 +809,12 @@
     "SolanaTokenAccountFrozen" : {
       "title" : "Los activos de la cuenta de tokens están inmovilizados"
     },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "Cuenta no inicializada"
+    },
+    "SolanaTokenRecipientIsSenderATA" : {
+      "title" : "La dirección del receptor es la misma que la dirección del emisor del token"
+    },
     "SolanaAddressOfEd25519" : {
       "title" : "Dirección fuera de la curva ed25519"
     },
@@ -3351,7 +3357,7 @@
       },
       "form" : {
         "validate" : "Confirmar transacción de permuta",
-        "tab" : "Cambia",
+        "tab" : "Permutar",
         "button" : "Continuar",
         "from" : "De",
         "to" : "A",
@@ -3460,8 +3466,8 @@
           "receive" : "Recibir"
         },
         "placeholder" : "Seleccionar",
-        "title" : "Cambia",
-        "cta" : "Cambia",
+        "title" : "Permutar",
+        "cta" : "Permutar",
         "from" : "De",
         "to" : "A",
         "loading" : "Cargando...",
@@ -3512,7 +3518,9 @@
         "ada_title" : "No es posible utilizar el Ledger Nano S™ para permutar Cardano",
         "ada_description" : "Para permutar Cardano, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
         "apt_title" : "No es posible usar el Ledger Nano S™ para permutar Aptos",
-        "apt_description" : "Para permutar Aptos, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™."
+        "apt_description" : "Para permutar Aptos, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
+        "cosmos_title" : "No es posible usar el Ledger Nano S™ para permutar Cosmos",
+        "cosmos_description" : "Para permutar Cosmos, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™."
       }
     },
     "lending" : {
@@ -4018,7 +4026,7 @@
       "desc" : "¿Deseas cancelar la agregación de cuentas?",
       "v2" : {
         "title" : "¿Cancelar la acción de agregar cuenta?",
-        "desc" : "No se agregará ninguna cuenta a Ledger Live."
+        "desc" : "No account will be added to Ledger Live."
       }
     },
     "imported" : "Activo añadido con éxito",
@@ -4086,6 +4094,7 @@
       "ctaStopScan" : "Detener escaneo",
       "confirm" : "Confirmar",
       "scanningTitle" : "Buscando cuentas existentes en la cadena de bloques...",
+      "whichAddressType" : "Learn how to choose an address type",
       "sections" : {
         "importable" : {
           "title" : "Hemos encontrado {{count}} cuenta",
