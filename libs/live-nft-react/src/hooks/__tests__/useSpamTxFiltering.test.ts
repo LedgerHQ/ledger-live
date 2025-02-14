@@ -1,6 +1,6 @@
 import { AccountLike, DailyOperations, NFTMetadataResponse, Operation } from "@ledgerhq/types-live";
 import { NFTResource } from "@ledgerhq/live-nft/types";
-import { filterGroupedOperations, filterSection, useNftOperations } from "../useSpamTxFiltering";
+import { filterGroupedOperations, filterSection, getNftOperations } from "../useSpamTxFiltering";
 import { renderHook } from "@testing-library/react";
 
 const defaultDailyOperations: DailyOperations = {
@@ -73,7 +73,7 @@ describe("useOperationsList Hooks", () => {
   describe("useNftOperations", () => {
     it("should return an empty set when spam filtering is disabled", () => {
       const { result } = renderHook(() =>
-        useNftOperations({
+        getNftOperations({
           accountsMap: accountsMap,
           groupedOperations: mockGroupedOperations,
           spamFilteringTxEnabled: false,
@@ -85,7 +85,7 @@ describe("useOperationsList Hooks", () => {
 
     it("should return filtered NFT_IN operations when spam filtering is enabled", () => {
       const { result } = renderHook(() =>
-        useNftOperations({
+        getNftOperations({
           accountsMap: accountsMap,
           groupedOperations: mockGroupedOperations,
           spamFilteringTxEnabled: true,
@@ -101,7 +101,7 @@ describe("useOperationsList Hooks", () => {
 
     it("should return an empty set if groupedOperations is empty", () => {
       const { result } = renderHook(() =>
-        useNftOperations({
+        getNftOperations({
           accountsMap: accountsMap,
           groupedOperations: defaultDailyOperations,
           spamFilteringTxEnabled: true,

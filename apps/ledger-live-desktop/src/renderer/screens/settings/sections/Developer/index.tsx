@@ -28,6 +28,7 @@ import MockAppUpdate from "./MockAppUpdate";
 import EnableAnalyticsConsole from "./EnableAnalyticsConsole";
 import BrazeTools from "./BrazeTools";
 import { RecoverUpsellRow } from "./RecoverUpsellRow";
+import ResetHiddenCollections from "./NftsTools";
 
 const Default = () => {
   const { t } = useTranslation();
@@ -112,6 +113,8 @@ const Default = () => {
 
       <SimpleHashTools />
       <BrazeTools />
+
+      <ResetHiddenCollections />
 
       {__DEV__ && (
         <Row

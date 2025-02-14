@@ -19,7 +19,7 @@ type NftOp = {
 
 type NftOperations = Record<string, NftOp>;
 
-export function useNftOperations({
+export function getNftOperations({
   accountsMap,
   groupedOperations,
   spamFilteringTxEnabled,
@@ -28,25 +28,21 @@ export function useNftOperations({
   groupedOperations: DailyOperations;
   spamFilteringTxEnabled: boolean;
 }) {
-  return useMemo(
-    (): NftOperations =>
-      spamFilteringTxEnabled
-        ? groupedOperations?.sections
-            .flatMap(section => section.data)
-            .reduce((acc: NftOperations, operation: Operation): NftOperations => {
-              if (operation.type === "NFT_IN") {
-                const account = accountsMap[operation.accountId];
-                const contract = operation.contract || "";
-                acc[contract] = {
-                  contract,
-                  currencyId: getAccountCurrency(account).id,
-                };
-              }
-              return acc;
-            }, {})
-        : {},
-    [spamFilteringTxEnabled, groupedOperations, accountsMap],
-  );
+  if (!spamFilteringTxEnabled) return {};
+
+  return groupedOperations?.sections
+    .flatMap(section => section.data)
+    .reduce((acc: NftOperations, operation: Operation): NftOperations => {
+      if (operation.type === "NFT_IN") {
+        const account = accountsMap[operation.accountId];
+        const contract = operation.contract || "";
+        acc[contract] = {
+          contract,
+          currencyId: getAccountCurrency(account).id,
+        };
+      }
+      return acc;
+    }, {});
 }
 
 export function filterSection(
@@ -104,7 +100,7 @@ export function useSpamTxFiltering(
   markNftAsSpam?: (collectionId: string, blockchain: BlockchainsType, spamScore: number) => void,
   threshold?: number,
 ) {
-  const nftOperations = useNftOperations({
+  const nftOperations = getNftOperations({
     accountsMap,
     groupedOperations,
     spamFilteringTxEnabled,
