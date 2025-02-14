@@ -15,7 +15,7 @@ import { AnalyticContexts } from "LLM/hooks/useAnalytics/enums";
 type AccountListDrawerProps = {
   isOpen: boolean;
   onClose: () => void;
-  account: Account | TokenAccount | null;
+  account: Account | TokenAccount;
   currency: CryptoOrTokenCurrency;
   sourceScreenName?: string;
 };
@@ -28,7 +28,7 @@ const AccountQuickActionsDrawer = ({
   sourceScreenName,
 }: AccountListDrawerProps) => {
   const { actions } = useAccountQuickActionDrawerViewModel({
-    accounts: account ? [account as Account] : [],
+    account,
     currency,
   });
   const { colors, space } = useTheme();
