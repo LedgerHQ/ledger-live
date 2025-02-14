@@ -44,6 +44,7 @@ import {
   formatTrongridTxResponse,
 } from "./format";
 import {
+  AccountTronAPI,
   isMalformedTransactionTronAPI,
   isTransactionTronAPI,
   MalformedTransactionTronAPI,
@@ -270,7 +271,30 @@ export const broadcastTron = async (trxTransaction: SendTransactionDataSuccess) 
   return result;
 };
 
-export async function fetchTronAccount(addr: string) {
+type TronGridBroadcastResponse = {
+  result: boolean;
+  code: string;
+  txid: string;
+  message: string;
+  transaction: {
+    raw_data: Record<string, unknown>;
+    signature: string[];
+  };
+};
+export const broadcastHexTron = async (rawTransaction: string): Promise<string> => {
+  const result = await post<{ transaction: string }, TronGridBroadcastResponse>(
+    `/wallet/broadcasthex`,
+    { transaction: rawTransaction },
+  );
+
+  if (!result.result) {
+    throw Error(`Broadcast failed due to ${result.code}`);
+  }
+
+  return result.txid;
+};
+
+export async function fetchTronAccount(addr: string): Promise<AccountTronAPI[]> {
   try {
     const data = await fetch(`/v1/accounts/${addr}`);
     return data.data;
@@ -279,22 +303,31 @@ export async function fetchTronAccount(addr: string) {
   }
 }
 
+export async function getAccount(address: string) {
+  return await post("/wallet/getaccount", {
+    address,
+    visible: true,
+  });
+}
+
 export async function fetchCurrentBlockHeight() {
   const data = await fetch(`/wallet/getnowblock`);
   return data.block_header.raw_data.number;
 }
 
 // For the moment, fetching transaction info is the only way to get fees from a transaction
-async function fetchTronTxDetail(txId: string): Promise<TronTransactionInfo> {
-  const { fee, blockNumber, withdraw_amount, unfreeze_amount } = await fetch(
-    `/wallet/gettransactioninfobyid?value=${encodeURIComponent(txId)}`,
-  );
-  return {
-    fee,
-    blockNumber,
-    withdraw_amount,
-    unfreeze_amount,
-  };
+// Export for test purpose only
+export async function fetchTronTxDetail(txId: string) { //: Promise<TronTransactionInfo> {
+  // const { fee, blockNumber, withdraw_amount, unfreeze_amount } = await fetch(
+  //   `/wallet/gettransactioninfobyid?value=${encodeURIComponent(txId)}`,
+  // );
+  // return {
+  //   fee,
+  //   blockNumber,
+  //   withdraw_amount,
+  //   unfreeze_amount,
+  // };
+  return await fetch(`/wallet/gettransactioninfobyid?value=${encodeURIComponent(txId)}`);
 }
 
 async function getAllTransactions<T>(
@@ -307,7 +340,6 @@ async function getAllTransactions<T>(
 ) {
   let all: Array<T> = [];
   let url: string | undefined = initialUrl;
-
   while (url && shouldFetchMoreTxs(all)) {
     const { nextUrl, results } = await getTxs(url);
     url = nextUrl;
@@ -331,7 +363,6 @@ const getTransactions =
       await fetchWithBaseUrl<
         TransactionResponseTronAPI<TransactionTronAPI | MalformedTransactionTronAPI>
       >(url);
-
     const nextUrl = transactions.meta.links?.next?.replace(
       /https:\/\/api(\.[a-z]*)?.trongrid.io/,
       getBaseApiUrl(),
@@ -403,7 +434,6 @@ export async function fetchTronAccountTxs(
       return !isDuplicated && !hasInternalTxs && type !== "TriggerSmartContract";
     })
     .map(tx => formatTrongridTxResponse(tx));
-
   // we need to fetch and filter trc20 transactions from another endpoint
   const entireTrc20Txs = (
     await getAllTransactions<Trc20API>(
