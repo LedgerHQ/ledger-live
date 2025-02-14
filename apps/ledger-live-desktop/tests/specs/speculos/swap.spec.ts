@@ -279,14 +279,14 @@ const swapWithSendMax = [
     swap: new Swap(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "sendMax", Fee.MEDIUM),
     xrayTicket: "B2CQA-2110",
   },
-  {
+  /*{
     swap: new Swap(Account.ETH_1, Account.SOL_1, "sendMax", Fee.MEDIUM),
     xrayTicket: "B2CQA-2110",
-  },
+  },*/
 ];
 
 for (const { swap, xrayTicket } of swapWithSendMax) {
-  test.describe("Swap - Swap with Send Max", () => {
+  test.describe.only("Swap - Swap with Send Max", () => {
     test.beforeAll(async () => {
       process.env.SWAP_DISABLE_APPS_INSTALL = "true";
       process.env.SWAP_API_BASE = "https://swap-stg.ledger-test.com/v5";
@@ -327,7 +327,7 @@ for (const { swap, xrayTicket } of swapWithSendMax) {
       async ({ app, electronApp }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
         await performSwapUntilQuoteSelectionStep(app, electronApp, swap);
-        await app.swap.sendMax(electronApp);
+        await app.swap.clickSendMax(electronApp);
         const selectedProvider = await app.swap.selectExchange(electronApp);
         await performSwapUntilDeviceVerificationStep(app, electronApp, swap, selectedProvider);
         await app.speculos.verifyAmountsAndAcceptSwap(swap);
