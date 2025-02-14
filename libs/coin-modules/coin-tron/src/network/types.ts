@@ -1,5 +1,42 @@
 import { TrongridTxType } from "../types";
 
+export type AccountTronAPI = {
+  account_name?: string;
+  balance?: number;
+  account_resource?: {
+    delegated_frozenV2_balance_for_energy?: number;
+    frozen_balance_for_energy?: {
+      frozen_balance: number;
+      expire_time: number;
+    };
+  };
+  delegated_frozenV2_balance_for_bandwidth?: number;
+  frozen?: {
+    frozen_balance: number;
+    expire_time: number;
+  }[];
+  frozenV2?: {
+    type?: "ENERGY" | "TRON_POWER" | string;
+    amount?: number;
+  }[];
+  latest_withdraw_time?: number;
+  unfrozenV2?: {
+    type?: "ENERGY" | string;
+    unfreeze_amount: number;
+    unfreeze_expire_time: number;
+  }[];
+  votes?: {
+    vote_address: string;
+    vote_count: number;
+  }[];
+  // TRC10
+  assetV2?: {
+    key: string;
+    value: number;
+  }[];
+  trc20: Record<string, string>[];
+};
+
 export type TransactionResponseTronAPI<T> = {
   data: T[];
   success: boolean;
