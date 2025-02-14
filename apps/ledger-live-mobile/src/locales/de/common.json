@@ -479,7 +479,7 @@
     },
     "MultiversXDecimalsLimitReached" : {
       "title" : "Maximale Dezimalstellengrenze erreicht",
-      "description" : "Bitte stellen Sie sicher, dass der angegebene Betrag 18 Dezimalstellen hat."
+      "description" : "Bitte stelle sicher, dass der angegebene Betrag 18 Dezimalstellen hat."
     },
     "MultiversXMinDelegatedAmountError" : {
       "title" : "Der delegierte Betrag muss mindestens {{formattedAmount}} betragen"
@@ -808,6 +808,12 @@
     },
     "SolanaTokenAccountFrozen" : {
       "title" : "Vermögenswerte des Tokenkontos sind gesperrt"
+    },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "Konto nicht initialisiert"
+    },
+    "SolanaTokenRecipientIsSenderATA" : {
+      "title" : "Die Empfängeradresse ist identisch mit der Adresse des Absendertokens"
     },
     "SolanaAddressOfEd25519" : {
       "title" : "Adresse aus ed25519 Kurve"
@@ -3351,7 +3357,7 @@
       },
       "form" : {
         "validate" : "Swap-Transaktion bestätigen",
-        "tab" : "Umtauschen",
+        "tab" : "Swappen",
         "button" : "Weiter",
         "from" : "Von",
         "to" : "An",
@@ -3460,8 +3466,8 @@
           "receive" : "Empfangen"
         },
         "placeholder" : "Auswählen",
-        "title" : "Umtauschen",
-        "cta" : "Umtauschen",
+        "title" : "Swappen",
+        "cta" : "Swappen",
         "from" : "Von",
         "to" : "An",
         "loading" : "Lade Daten...",
@@ -3512,7 +3518,9 @@
         "ada_title" : "Die Ledger Nano S™ unterstützt das Swappen von Cardano nicht",
         "ada_description" : "Zum Swappen von Cardano kannst du jedes sonstige kompatible Ledger-Gerät nutzen, z. B. Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ oder Ledger Stax™.",
         "apt_title" : "Ledger Nano S™ unterstützt das Swappen von Aptos nicht",
-        "apt_description" : "Zum Swappen von Aptos müsstest du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™."
+        "apt_description" : "Zum Swappen von Aptos müsstest du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
+        "cosmos_title" : "Ledger Nano S™ unterstützt das Swappen von Cosmos nicht",
+        "cosmos_description" : "Zum Swappen von Cosmos müsstest du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™."
       }
     },
     "lending" : {
@@ -4018,7 +4026,7 @@
       "desc" : "Sind Sie sicher, dass Sie das Hinzufügen von Konten abbrechen möchten?",
       "v2" : {
         "title" : "Hinzufügen des Kontos abbrechen?",
-        "desc" : "Es wird dann kein Konto in Ledger Live hinzugefügt."
+        "desc" : "No account will be added to Ledger Live."
       }
     },
     "imported" : "Vermögenswert erfolgreich hinzugefügt",
@@ -4086,6 +4094,7 @@
       "ctaStopScan" : "Scannen stoppen",
       "confirm" : "Bestätigen",
       "scanningTitle" : "Nach vorhandenen Konten in der Blockchain wird gesucht …",
+      "whichAddressType" : "Learn how to choose an address type",
       "sections" : {
         "importable" : {
           "title" : "Wir haben {{count}} Konto gefunden",
