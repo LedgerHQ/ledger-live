@@ -377,6 +377,13 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     };
   },
 
+  [SettingsActionTypes.RESET_NFT_COLLECTION_STATUS]: state => {
+    return {
+      ...state,
+      nftCollectionsStatusByNetwork: {} as Record<BlockchainsType, Record<string, NftStatus>>,
+    };
+  },
+
   [SettingsActionTypes.SETTINGS_DISMISS_BANNER]: (state, action) => ({
     ...state,
     dismissedBanners: [
