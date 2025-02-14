@@ -17,6 +17,7 @@ type AccountListDrawerProps = {
   onClose: () => void;
   account: Account | TokenAccount | null;
   currency: CryptoOrTokenCurrency;
+  sourceScreenName?: string;
 };
 
 const AccountQuickActionsDrawer = ({
@@ -24,13 +25,14 @@ const AccountQuickActionsDrawer = ({
   onClose,
   account,
   currency,
+  sourceScreenName,
 }: AccountListDrawerProps) => {
   const { actions } = useAccountQuickActionDrawerViewModel({
     accounts: account ? [account as Account] : [],
     currency,
   });
   const { colors, space } = useTheme();
-  const { analyticsMetadata } = useAnalytics(AnalyticContexts.AddAccounts);
+  const { analyticsMetadata } = useAnalytics(AnalyticContexts.AddAccounts, sourceScreenName);
   const pageTrackingEvent = analyticsMetadata.AddFunds?.onQuickActionOpen;
 
   return (
