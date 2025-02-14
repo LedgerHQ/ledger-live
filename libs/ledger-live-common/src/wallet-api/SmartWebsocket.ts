@@ -61,19 +61,19 @@ export class SmartWebsocket extends EventEmitter {
           this.reconnectAttempts = 0;
         };
 
-        ws.onmessage = (event: MessageEvent) => {
+        ws.onmessage = (event: WebSocketMessageEvent) => {
           const message = JSON.parse(event.data);
           this.emit("message", message);
           this.logger("message", message);
         };
 
-        ws.onclose = event => {
+        ws.onclose = (event: CloseEvent) => {
           this.ws = null;
           this._connected = false;
           this.logger("disconnected", event);
           this.emit("disconnected");
 
-          if (this.reconnect && !event.wasClean) {
+          if (this.reconnect && !event?.wasClean) {
             if (this.reconnectAttempts < this.reconnectMaxAttempts) {
               this.reconnectAttempts++;
               this.logger("will reconnect in 5s");
