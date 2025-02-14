@@ -1,5 +1,14 @@
 # @ledgerhq/coin-framework
 
+## 2.0.0-nightly.1
+
+### Patch Changes
+
+- [#9119](https://github.com/LedgerHQ/ledger-live/pull/9119) [`da67b55`](https://github.com/LedgerHQ/ledger-live/commit/da67b5511b22553f7e3e089eca2e363a5e3cbffe) Thanks [@qperrot](https://github.com/qperrot)! - Fix ethereum testnet units
+
+- Updated dependencies [[`da67b55`](https://github.com/LedgerHQ/ledger-live/commit/da67b5511b22553f7e3e089eca2e363a5e3cbffe)]:
+  - @ledgerhq/cryptoassets@13.10.1-nightly.1
+
 ## 2.0.0-nightly.0
 
 ### Major Changes

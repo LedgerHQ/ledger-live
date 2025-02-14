@@ -1,5 +1,27 @@
 # live-mobile
 
+## 3.66.0-nightly.1
+
+### Minor Changes
+
+- [#9219](https://github.com/LedgerHQ/ledger-live/pull/9219) [`175683f`](https://github.com/LedgerHQ/ledger-live/commit/175683f65ddfddbcbd39a9b4e0afb315ffdd95bd) Thanks [@KVNLS](https://github.com/KVNLS)! - Remove OFAC currencies and regions in LLM & LLD
+
+### Patch Changes
+
+- Updated dependencies [[`da67b55`](https://github.com/LedgerHQ/ledger-live/commit/da67b5511b22553f7e3e089eca2e363a5e3cbffe), [`175683f`](https://github.com/LedgerHQ/ledger-live/commit/175683f65ddfddbcbd39a9b4e0afb315ffdd95bd)]:
+  - @ledgerhq/coin-evm@2.9.4-nightly.1
+  - @ledgerhq/coin-framework@2.0.0-nightly.1
+  - @ledgerhq/live-common@34.22.0-nightly.1
+  - @ledgerhq/coin-cosmos@0.7.2-nightly.1
+  - @ledgerhq/coin-elrond@0.3.4-nightly.1
+  - @ledgerhq/coin-filecoin@1.5.4-nightly.1
+  - @ledgerhq/coin-stacks@0.5.4-nightly.1
+  - @ledgerhq/live-countervalues@0.3.1-nightly.1
+  - @ledgerhq/live-countervalues-react@0.2.22-nightly.1
+  - @ledgerhq/live-nft@0.5.7-nightly.1
+  - @ledgerhq/live-nft-react@0.5.7-nightly.1
+  - @ledgerhq/live-wallet@0.9.4-nightly.1
+
 ## 3.66.0-nightly.0
 
 ### Minor Changes

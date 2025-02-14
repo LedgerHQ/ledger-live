@@ -1,5 +1,43 @@
 ## 34.5.0-next.4
 
+## 34.22.0-nightly.1
+
+### Minor Changes
+
+- [#9219](https://github.com/LedgerHQ/ledger-live/pull/9219) [`175683f`](https://github.com/LedgerHQ/ledger-live/commit/175683f65ddfddbcbd39a9b4e0afb315ffdd95bd) Thanks [@KVNLS](https://github.com/KVNLS)! - Remove OFAC currencies and regions in LLM & LLD
+
+### Patch Changes
+
+- Updated dependencies [[`da67b55`](https://github.com/LedgerHQ/ledger-live/commit/da67b5511b22553f7e3e089eca2e363a5e3cbffe)]:
+  - @ledgerhq/cryptoassets@13.10.1-nightly.1
+  - @ledgerhq/coin-evm@2.9.4-nightly.1
+  - @ledgerhq/coin-framework@2.0.0-nightly.1
+  - @ledgerhq/coin-algorand@0.7.4-nightly.1
+  - @ledgerhq/coin-aptos@1.5.1-nightly.1
+  - @ledgerhq/coin-bitcoin@0.10.4-nightly.1
+  - @ledgerhq/coin-cardano@0.4.4-nightly.1
+  - @ledgerhq/coin-cosmos@0.7.2-nightly.1
+  - @ledgerhq/coin-elrond@0.3.4-nightly.1
+  - @ledgerhq/coin-filecoin@1.5.4-nightly.1
+  - @ledgerhq/coin-hedera@1.3.4-nightly.1
+  - @ledgerhq/coin-icon@0.6.4-nightly.1
+  - @ledgerhq/coin-internet_computer@1.5.4-nightly.1
+  - @ledgerhq/coin-near@0.7.4-nightly.1
+  - @ledgerhq/coin-polkadot@2.0.1-nightly.1
+  - @ledgerhq/coin-solana@0.12.2-nightly.1
+  - @ledgerhq/coin-stacks@0.5.4-nightly.1
+  - @ledgerhq/coin-stellar@1.0.1-nightly.1
+  - @ledgerhq/coin-tezos@1.0.1-nightly.1
+  - @ledgerhq/coin-ton@0.5.4-nightly.1
+  - @ledgerhq/coin-tron@0.2.4-nightly.1
+  - @ledgerhq/coin-vechain@2.4.4-nightly.1
+  - @ledgerhq/coin-xrp@2.0.0-nightly.1
+  - @ledgerhq/hw-app-vet@0.2.14-nightly.1
+  - @ledgerhq/live-countervalues@0.3.1-nightly.1
+  - @ledgerhq/live-countervalues-react@0.2.22-nightly.1
+  - @ledgerhq/live-nft@0.5.7-nightly.1
+  - @ledgerhq/live-wallet@0.9.4-nightly.1
+
 ## 34.21.1-nightly.0
 
 ### Patch Changes

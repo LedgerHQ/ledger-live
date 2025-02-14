@@ -1,5 +1,32 @@
 # ledger-live-desktop
 
+## 2.100.0-nightly.1
+
+### Minor Changes
+
+- [#9219](https://github.com/LedgerHQ/ledger-live/pull/9219) [`175683f`](https://github.com/LedgerHQ/ledger-live/commit/175683f65ddfddbcbd39a9b4e0afb315ffdd95bd) Thanks [@KVNLS](https://github.com/KVNLS)! - Remove OFAC currencies and regions in LLM & LLD
+
+- [#9122](https://github.com/LedgerHQ/ledger-live/pull/9122) [`3d77058`](https://github.com/LedgerHQ/ledger-live/commit/3d77058bef9af3fa93f41c0c5128f4de5c5bfb93) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Add data tracking in the exchange flow
+
+- [#9148](https://github.com/LedgerHQ/ledger-live/pull/9148) [`3aa93c0`](https://github.com/LedgerHQ/ledger-live/commit/3aa93c059f55b3c44dd5a2e771efd7c62387a7e6) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Add Tracking in the ledger sync flow and polish tracking implementation
+
+### Patch Changes
+
+- Updated dependencies [[`da67b55`](https://github.com/LedgerHQ/ledger-live/commit/da67b5511b22553f7e3e089eca2e363a5e3cbffe), [`175683f`](https://github.com/LedgerHQ/ledger-live/commit/175683f65ddfddbcbd39a9b4e0afb315ffdd95bd)]:
+  - @ledgerhq/cryptoassets@13.10.1-nightly.1
+  - @ledgerhq/coin-evm@2.9.4-nightly.1
+  - @ledgerhq/coin-framework@2.0.0-nightly.1
+  - @ledgerhq/live-common@34.22.0-nightly.1
+  - @ledgerhq/coin-aptos@1.5.1-nightly.1
+  - @ledgerhq/coin-bitcoin@0.10.4-nightly.1
+  - @ledgerhq/coin-cosmos@0.7.2-nightly.1
+  - @ledgerhq/coin-filecoin@1.5.4-nightly.1
+  - @ledgerhq/live-countervalues@0.3.1-nightly.1
+  - @ledgerhq/live-countervalues-react@0.2.22-nightly.1
+  - @ledgerhq/live-nft@0.5.7-nightly.1
+  - @ledgerhq/live-nft-react@0.5.7-nightly.1
+  - @ledgerhq/live-wallet@0.9.4-nightly.1
+
 ## 2.99.1-nightly.0
 
 ### Patch Changes
