@@ -809,6 +809,12 @@
     "SolanaTokenAccountFrozen" : {
       "title" : "Les actifs du compte de tokens sont gelés"
     },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "Compte non configuré"
+    },
+    "SolanaTokenRecipientIsSenderATA" : {
+      "title" : "L’adresse du bénéficiaire est identique à l’adresse de l’émetteur"
+    },
     "SolanaAddressOfEd25519" : {
       "title" : "Adresse en dehors de la courbe ed25519"
     },
@@ -3460,7 +3466,7 @@
           "receive" : "Recevez"
         },
         "placeholder" : "Sélectionner",
-        "title" : "Échanger",
+        "title" : "Swap",
         "cta" : "Échanger",
         "from" : "De",
         "to" : "À",
@@ -3512,7 +3518,9 @@
         "ada_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de Cardano",
         "ada_description" : "Pour échanger des Cardano, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
         "apt_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange d’Aptos",
-        "apt_description" : "Pour échanger des Aptos, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™."
+        "apt_description" : "Pour échanger des Aptos, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+        "cosmos_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de Cosmos",
+        "cosmos_description" : "Pour échanger des Cosmos, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™."
       }
     },
     "lending" : {
@@ -4086,6 +4094,7 @@
       "ctaStopScan" : "Arrêter le balayage",
       "confirm" : "Confirmer",
       "scanningTitle" : "Recherche des comptes existant déjà sur la blockchain...",
+      "whichAddressType" : "Apprenez à choisir un type d’adresse",
       "sections" : {
         "importable" : {
           "title" : "{{count}} compte a été trouvé",
