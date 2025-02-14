@@ -483,7 +483,7 @@ platform :android do
           "android.injected.signing.key.password" => ENV["ANDROID_KEY_PASS"],
         },
         project_dir: 'android/',
-        flags: ' -Dorg.gradle.workers.max=5'
+        flags: ' -Dorg.gradle.workers.max=7'
       )
     end
   end
