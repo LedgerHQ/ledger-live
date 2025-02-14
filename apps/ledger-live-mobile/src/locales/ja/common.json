@@ -809,6 +809,12 @@
     "SolanaTokenAccountFrozen" : {
       "title" : "トークンアカウントの資産が凍結されています"
     },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "アカウントが初期化されていません"
+    },
+    "SolanaTokenRecipientIsSenderATA" : {
+      "title" : "送付者のトークンアドレスと同じ受取アドレスです"
+    },
     "SolanaAddressOfEd25519" : {
       "title" : "アドレスオフed25519 curve"
     },
@@ -3351,7 +3357,7 @@
       },
       "form" : {
         "validate" : "スワップ取引を確定",
-        "tab" : "取引",
+        "tab" : "スワップ",
         "button" : "続行",
         "from" : "送付元",
         "to" : "送付先",
@@ -3460,8 +3466,8 @@
           "receive" : "受け取る"
         },
         "placeholder" : "選択",
-        "title" : "取引",
-        "cta" : "取引",
+        "title" : "スワップ",
+        "cta" : "スワップ",
         "from" : "送付元",
         "to" : "送付先",
         "loading" : "読み込み中...",
@@ -3511,8 +3517,10 @@
         "near_description" : "Nearをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。",
         "ada_title" : "Ledger Nano S™はCardanoのスワップに対応していません",
         "ada_description" : "Cardanoをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。",
-        "apt_title" : "Ledger Nano S™ does not support swapping Aptos",
-        "apt_description" : "To swap Aptos, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
+        "apt_title" : "Ledger Nano S™はAptosのスワップに対応していません",
+        "apt_description" : "Aptosをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。",
+        "cosmos_title" : "Ledger Nano S™はCosmosのスワップに対応していません",
+        "cosmos_description" : "Cosmosをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。"
       }
     },
     "lending" : {
@@ -4018,7 +4026,7 @@
       "desc" : "アカウントの追加をキャンセルしますか？",
       "v2" : {
         "title" : "アカウントの追加を取り消しますか？",
-        "desc" : "Ledger Liveにアカウントは追加されません。"
+        "desc" : "No account will be added to Ledger Live."
       }
     },
     "imported" : "資産が正常に追加されました",
@@ -4086,6 +4094,7 @@
       "ctaStopScan" : "スキャン停止",
       "confirm" : "確認",
       "scanningTitle" : "ブロックチェーン上の既存のアカウントを探しています...",
+      "whichAddressType" : "Learn how to choose an address type",
       "sections" : {
         "importable" : {
           "title" : "{{count}}個のアカウントが見つかりました",
