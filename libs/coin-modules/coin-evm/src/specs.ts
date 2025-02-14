@@ -370,6 +370,9 @@ const getAppQuery = (currencyId: CryptoCurrency["id"]): AppSpec<EvmTransaction>[
       return { model: DeviceModelId.nanoS, appName: "Binance Smart Chain" };
     case "ethereum_classic":
       return { model: DeviceModelId.nanoS, appName: "Ethereum Classic" };
+    case "sonic":
+    case "sonic_blaze":
+      return { model: DeviceModelId.nanoS, appName: "Ethereum" };
     default:
       return {
         model: DeviceModelId.nanoS,

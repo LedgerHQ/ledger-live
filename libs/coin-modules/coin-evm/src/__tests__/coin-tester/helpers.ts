@@ -7,6 +7,7 @@ import ERC721ABI from "../../abis/erc721.abi.json";
 import ERC20ABI from "../../abis/erc20.abi.json";
 
 export const ethereum = getCryptoCurrencyById("ethereum");
+export const sonic = getCryptoCurrencyById("sonic");
 export const polygon = getCryptoCurrencyById("polygon");
 export const scroll = getCryptoCurrencyById("scroll");
 export const blast = getCryptoCurrencyById("blast");
