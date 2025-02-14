@@ -809,6 +809,12 @@
     "SolanaTokenAccountFrozen" : {
       "title" : "토큰 계정 자산이 동결되었습니다"
     },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "계정이 초기화되지 않았습니다"
+    },
+    "SolanaTokenRecipientIsSenderATA" : {
+      "title" : "수령인 주소는 송신자 토큰 주소와 동일합니다"
+    },
     "SolanaAddressOfEd25519" : {
       "title" : "주소 끄기 ed25519 곡선"
     },
@@ -3351,7 +3357,7 @@
       },
       "form" : {
         "validate" : "스왑 트랜잭션을 검증하세요",
-        "tab" : "교환",
+        "tab" : "스왑",
         "button" : "계속",
         "from" : "수신",
         "to" : "발신",
@@ -3460,8 +3466,8 @@
           "receive" : "수령"
         },
         "placeholder" : "선택",
-        "title" : "교환",
-        "cta" : "교환",
+        "title" : "스왑",
+        "cta" : "스왑",
         "from" : "수신",
         "to" : "발신",
         "loading" : "로딩...",
@@ -3512,7 +3518,9 @@
         "ada_title" : "Ledger Nano S™는 카르다노 스왑을 지원하지 않습니다.",
         "ada_description" : "카르다노를 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요.",
         "apt_title" : "Ledger Nano S™는 Aptos 스왑을 지원하지 않습니다.",
-        "apt_description" : "Aptos 스왑 거래를 실행하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 Ledger 장치를 사용하세요."
+        "apt_description" : "Aptos 스왑 거래를 실행하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 Ledger 장치를 사용하세요.",
+        "cosmos_title" : "Ledger Nano S™는 Cosmos 스왑을 지원하지 않습니다.",
+        "cosmos_description" : "Cosmos 스왑 거래를 실행하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 Ledger 장치를 사용하세요."
       }
     },
     "lending" : {
@@ -4018,7 +4026,7 @@
       "desc" : "계정 추가를 취소할까요?",
       "v2" : {
         "title" : "계정 추가를 취소하시겠습니까?",
-        "desc" : "취소하면 어떤 계정도 Ledger Live에 추가되지 않습니다."
+        "desc" : "어떤 계정도 Ledger Live에 추가되지 않습니다."
       }
     },
     "imported" : "자산이 성공적으로 추가되었습니다",
@@ -4086,6 +4094,7 @@
       "ctaStopScan" : "스캔 중단",
       "confirm" : "확인",
       "scanningTitle" : "블록체인에 있는 기존 계정을 찾고 있습니다...",
+      "whichAddressType" : "주소 유형 선택 방법 알아보기",
       "sections" : {
         "importable" : {
           "title" : "{{count}}개의 계정을 찾았습니다",
