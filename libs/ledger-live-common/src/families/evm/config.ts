@@ -99,6 +99,34 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       },
     },
   },
+  config_currency_sonic: {
+    type: "object",
+    default: {
+      status: "active",
+      node: {
+        type: "external",
+        uri: "https://rpc.soniclabs.com",
+      },
+      explorer: {
+        type: "etherscan",
+        uri: "https://proxyetherscan.api.live.ledger.com/v2/api/146",
+      },
+    },
+  },
+  config_currency_sonic_blaze: {
+    type: "object",
+    default: {
+      status: "active",
+      node: {
+        type: "external",
+        uri: "https://rpc.blaze.soniclabs.com",
+      },
+      explorer: {
+        type: "etherscan",
+        uri: "https://proxyetherscan.api.live.ledger.com/v2/api/57054",
+      },
+    },
+  },
   config_currency_ethereum_classic: {
     type: "object",
     default: {
