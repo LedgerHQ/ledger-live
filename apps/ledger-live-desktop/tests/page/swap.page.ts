@@ -147,7 +147,7 @@ export class SwapPage extends AppPage {
   }
 
   @step("Click Max spend toggle")
-  async sendMax(electronApp: ElectronApplication) {
+  async clickSendMax(electronApp: ElectronApplication) {
     const [, webview] = electronApp.windows();
     await webview.getByTestId("from-account-max-toggle").click();
   }
