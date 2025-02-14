@@ -791,6 +791,30 @@
     "SolanaAccountNotFunded" : {
       "title" : "Hesap daha önce fonlanmamış"
     },
+    "SolanaTokenAccountHoldsAnotherToken" : {
+      "title" : "Bu ilgili token hesabında başka bir token tutuluyor"
+    },
+    "SolanaTokenAccountWarning" : {
+      "title" : "Bu normal bir cüzdan adresi değil, ilgili bir token hesabıdır. Sadece ne yaptığınızdan eminseniz devam edin."
+    },
+    "SolanaTokenAccountNotAllowed" : {
+      "title" : "Bu bir token hesabı. Normal bir cüzdan adresi girin."
+    },
+    "SolanaMintAccountNotAllowed" : {
+      "title" : "Bu bir token adresi. Normal bir cüzdan adresi girin."
+    },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "Hesap fonlanacak"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "Token hesabı varlıkları donduruldu"
+    },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "Hesap başlatılmadı"
+    },
+    "SolanaTokenRecipientIsSenderATA" : {
+      "title" : "Alıcının adresi, gönderenin token adresiyle aynı"
+    },
     "SolanaAddressOfEd25519" : {
       "title" : "Adres ed25519 eğrisi dışında"
     },
@@ -2375,16 +2399,16 @@
     },
     "recoverBanner" : {
       "subscribeDone" : {
-        "title" : "Ödeme kartınızı eklemeyi bitirin",
-        "description" : "Ledger Recover ile güvenilir bir şekilde geri yükleyin."
+        "title" : "Hatırlatma: Ledger Recover'a abone olma işlemini tamamlayın",
+        "description" : "Güvende olmanıza sadece iki adım kaldı."
       },
       "verifyIdentity" : {
-        "title" : "Kimliğinizi doğrulamayı bitirin",
-        "description" : "Ledger Recover ile güvenilir bir şekilde geri yükleyin."
+        "title" : "Hatırlatma: Ledger Recover'a abone olma işlemini tamamlayın",
+        "description" : "Güvende olmanıza sadece bir adım kaldı."
       },
       "connectDevice" : {
-        "title" : "Son adım: Ledger cihazınızı bağlayın",
-        "description" : "Ledger Recover'a erişiminizin 1 adım uzağındasınız."
+        "title" : "Hatırlatma: Ledger Recover'a abone olma işlemini tamamlayın",
+        "description" : "Bu, gerektiğinde cüzdana yeniden erişebilmek için tamamlamanız gereken son adımdır."
       }
     }
   },
@@ -3104,7 +3128,7 @@
       "title" : "Geliştiriciler için",
       "desc" : "Geliştirici özelliklerini deneyip ne düşündüğünüzü bizimle paylaşın.",
       "customManifest" : {
-        "title" : "Özel Platform Manifest Dosyası Yükle"
+        "title" : "Dizin Yükle"
       },
       "exchangeDeveloperMode" : {
         "title" : "Exchange Geliştirici Modu",
@@ -3333,7 +3357,7 @@
       },
       "form" : {
         "validate" : "Takas işlemini onayla",
-        "tab" : "Takas et",
+        "tab" : "Takas",
         "button" : "Devam",
         "from" : "Gönderici",
         "to" : "Alıcı",
@@ -3489,8 +3513,14 @@
         "ton_description" : "Ton takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın.",
         "spl_tokens_title" : "Ledger Nano S™, Solana token takasını desteklemez",
         "spl_tokens_description" : "Solana token'larını takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın.",
+        "near_title" : "Ledger Nano S™, Near takasını desteklemez",
+        "near_description" : "Near takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazı kullanın.",
         "ada_title" : "Ledger Nano S™, Cardano takasını desteklemez",
-        "ada_description" : "Cardano takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın."
+        "ada_description" : "Cardano takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın.",
+        "apt_title" : "Ledger Nano S™, Aptos takasını desteklemez",
+        "apt_description" : "Aptos takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazı kullanın.",
+        "cosmos_title" : "Ledger Nano S™, Cosmos takasını desteklemez",
+        "cosmos_description" : "Cosmos takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazı kullanın."
       }
     },
     "lending" : {
@@ -4072,10 +4102,6 @@
         "creatable" : {
           "title" : "Yeni hesap"
         },
-        "imported" : {
-          "title" : "Hesap zaten Portföyde mevcut ({{count}})",
-          "title_plural" : "Portföydeki hesaplar ({{count}})"
-        },
         "migrate" : {
           "title" : "Güncellenecek hesaplar"
         }
@@ -4161,7 +4187,9 @@
     "installApp" : "{{appName}} Uygulama kurulumu {{percentage}}",
     "installAppDescription" : "Lütfen kurulum bitene kadar bekleyin",
     "listApps" : "Uygulama şartları denetleniyor",
-    "listAppsDescription" : "Gerekli tüm uygulamalara sahip olduğunuz kontrol edilirken lütfen bekleyin"
+    "listAppsDescription" : "Gerekli tüm uygulamalara sahip olduğunuz kontrol edilirken lütfen bekleyin",
+    "confirmExchangeOnDevice" : "Takas işlemini cihazınızda onaylayın",
+    "confirmSwapOnDevice" : "Takas işlemini cihazınızda onaylayın"
   },
   "SelectDevice" : {
     "title" : "Yeni cihaz eşleme",
@@ -4681,7 +4709,7 @@
     "token" : "ASA (Varlıklar)",
     "claimRewards" : {
       "title" : "Ödüller",
-      "button" : "Ödüllerinizi toplayın",
+      "button" : "Ödülleri topla",
       "stepperHeader" : {
         "info" : "Ödüller kazanın",
         "starter" : "Ödüller",
@@ -5982,6 +6010,10 @@
         "description" : "SOL varlıklarınızla bir doğrulayıcıya yetki devrederek ödüller kazanabilirsiniz."
       },
       "reserveWarning" : "Gelecekte staking'inizi durdurmak ve çekmek için gerekecek ağ ücretlerini karşılamak üzere cüzdanınızda en az {{amount}} SOL bulundurduğunuzdan lütfen emin olun"
+    },
+    "token" : {
+      "frozenStateWarning" : "Hesap varlıkları donduruldu!",
+      "transferWarning" : "Ledger Nano S™ kullanarak Solana token'ları için alıcı adresini doğrulamak üzere <0>bu yönergeleri uygulayın.</0>"
     }
   },
   "near" : {
@@ -7061,9 +7093,10 @@
           "explanation" : {
             "title" : "Tarayın ve hesaplarınızı başka bir Ledger Live uygulamasını kullanarak senkronize edin",
             "steps" : {
-              "step1" : "Senkronize etmek istediğiniz Ledger Live uygulamasını açın",
-              "step2" : "Sırasıyla <0>Ayarlar</0> <1>></1> <0>Genel</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Ledger Sync'i aç</0> <1>></1> <0>Karekodu tara</0> adımlarını izleyin",
-              "step3" : "Karekodu okutun"
+              "step1" : "Ledger Sync'in uygulamalarınızdan birinde etkinleştirildiğinden emin olun.",
+              "step2" : "Senkronize etmek istediğiniz Ledger Live uygulamasını açın.",
+              "step3" : "<0>Ayarlar</0> <1>></1> <0>Genel</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Zaten açtım</0> <1>></1> <0>Karekodu okut</0> adımlarını izleyin",
+              "step4" : "Karekodu okutun."
             }
           }
         },
@@ -7073,9 +7106,10 @@
           "explanation" : {
             "title" : "Başka bir telefonda veya bilgisayardaki Ledger Live ile senkronize etmek için...",
             "steps" : {
-              "step1" : "Senkronize etmek istediğiniz Ledger Live'ı açın.",
-              "step2" : "Sırasıyla <0>Ayarlar</0> <1>></1> <0>Genel</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Ledger Sync'i aç</0> <1>></1> <0>Karekodu Göster</0> adımlarını izleyin",
-              "step3" : "Karekodu okutun"
+              "step1" : "Ledger Sync'in uygulamalarınızdan birinde etkinleştirildiğinden emin olun.",
+              "step2" : "Senkronize etmek istediğiniz Ledger Live'ı açın.",
+              "step3" : "<0>Ayarlar</0> <1>></1> <0>Genel</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Zaten açtım</0> <1>></1> <0>Karekodu göster</0> adımlarını izleyin",
+              "step4" : "Karekodu okutun."
             }
           }
         },
