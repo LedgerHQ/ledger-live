@@ -1,18 +1,8 @@
-// import { StacksMainnet, StacksTestnet } from "@stacks/network";
-import { StacksMainnet, StacksTestnet, createFetchFn, RequestContext } from "@stacks/network";
+import { StacksMainnet, StacksTestnet } from "@stacks/network";
 import { getEnv } from "@ledgerhq/live-env";
 
-// export const stacksUrls = [
-//   https://stacks.coin.ledger.com/
-// ]
-
-// const preMiddleware = (ctx: RequestContext) => {
-//       ctx.init.headers = new Headers(ctx.init.headers);
-//       ctx.init.headers.delete('baggage');
-// };
-// const fetchFn = createFetchFn({ pre: preMiddleware });
 export const StacksNetwork = {
-  mainnet: new StacksMainnet({url: getEnv("API_STACKS_ENDPOINT")}),//, fetchFn}),
+  mainnet: new StacksMainnet({ url: getEnv("API_STACKS_ENDPOINT") }),
   testnet: new StacksTestnet(),
 };
 

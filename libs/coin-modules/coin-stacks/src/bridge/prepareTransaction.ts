@@ -1,6 +1,5 @@
 import { updateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { AccountBridge } from "@ledgerhq/types-live";
-import { log } from "@ledgerhq/logs";
 import {
   AddressVersion,
   TransactionVersion,
@@ -29,7 +28,7 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
   if (xpub && recipient && validateAddress(recipient).isValid) {
     const { anchorMode, memo, amount } = transaction;
 
-    const network = StacksNetwork[transaction.network] || StacksNetwork['mainnet']
+    const network = StacksNetwork[transaction.network] || StacksNetwork["mainnet"];
 
     // Check if recipient is valid
     const options: UnsignedTokenTransferOptions = {
@@ -41,7 +40,6 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
       amount: amount.toFixed(),
     };
 
-    log("stacks.prepareTransaction", `options: ${JSON.stringify({...options, amount: options.amount.toString()})}`)
     const tx = await makeUnsignedSTXTokenTransfer(options);
 
     const addressVersion =
@@ -49,10 +47,6 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
         ? AddressVersion.MainnetSingleSig
         : AddressVersion.TestnetSingleSig;
     const senderAddress = c32address(addressVersion, tx.auth.spendingCondition!.signer);
-  const byteLength = estimateTransactionByteLength(tx);
-  console.log({byteLengthPrepare: byteLength})
-  log("stacks.prepareTransaction", `tx: ${JSON.stringify({...tx.payload, amount: (tx.payload as any)?.amount?.toString()})}`);
-  log("stacks.prepareTransaction", `byteLength: ${byteLength}`);
 
     const [fee] = await estimateTransaction(tx.payload, estimateTransactionByteLength(tx));
 
