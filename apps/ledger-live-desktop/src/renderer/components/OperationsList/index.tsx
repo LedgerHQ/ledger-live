@@ -11,21 +11,6 @@ import TableContainer, { TableHeader } from "../TableContainer";
 import { isEditableOperation } from "@ledgerhq/live-common/operation";
 import { Props, useOperationsList } from "./useOperationsList";
 
-const ShowMore = styled(Box).attrs(() => ({
-  horizontal: true,
-  flow: 1,
-  ff: "Inter|SemiBold",
-  fontSize: 3,
-  justifyContent: "center",
-  alignItems: "center",
-  p: 3,
-  color: "wallet",
-}))`
-  &:hover {
-    text-decoration: underline;
-  }
-`;
-
 export function OperationsList({
   account,
   parentAccount,
@@ -114,3 +99,18 @@ export function OperationsList({
 }
 
 export default compose<React.ComponentType<Props>>(withTranslation())(OperationsList);
+
+const ShowMore = styled(Box).attrs(() => ({
+  horizontal: true,
+  flow: 1,
+  ff: "Inter|SemiBold",
+  fontSize: 3,
+  justifyContent: "center",
+  alignItems: "center",
+  p: 3,
+  color: "wallet",
+}))`
+  &:hover {
+    text-decoration: underline;
+  }
+`;
