@@ -3,10 +3,10 @@ import { firstValueFrom, reduce } from "rxjs";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import { Account, AccountBridge, SyncConfig, TransactionCommon } from "@ledgerhq/types-live";
 import { TronCoinConfig } from "../config";
-import { defaultTronResources } from "../logic/utils";
 import { Transaction, TronAccount } from "../types";
 import { createBridges } from "./index";
-import account1Fixture from "./fixtures/synchronization.account1.fixture.json";
+import accountFixture from "./fixtures/synchronization.account.fixture.json";
+import { mockServer, TRONGRID_BASE_URL_MOCKED } from "../network/index.mock";
 
 const tron = getCryptoCurrencyById("tron");
 const defaultSyncConfig = {
@@ -68,7 +68,6 @@ const reviver = (key: string, value: unknown) => {
       "expiredAt",
       "lastVotedDate",
       "lastWithdrawnRewardDate",
-      // "lastSyncDate",
       // "latestDate",
     ].includes(key) === true
   ) {
@@ -80,20 +79,27 @@ const reviver = (key: string, value: unknown) => {
   }
 
   // BigNumber conversion
-  if (["unwithdrawnReward"].includes(key) === true) {
-    return new BigNumber(value as string);
-  }
-
-  // Remove undesired properties as they always change
   if (
     [
-      "blockHeight",
-      "lastSyncDate",
-      "latestDate",
+      "unwithdrawnReward",
+      "amount",
+      "balance",
+      "spendableBalance",
+      "freeLimit",
+      "freeUsed",
+      "gainedLimit",
+      "gainedUsed",
+      "value",
+      "frozenAmount",
+      "unfreezeAmount",
       "energy",
-      "balanceHistoryCache", // Balance can be purged?
+      "fee",
     ].includes(key) === true
   ) {
+    return typeof value === "string" ? new BigNumber(value as string) : value;
+  }
+  // Remove undesired properties as they always change
+  if (["lastSyncDate"].includes(key) === true) {
     return undefined;
   }
 
@@ -110,45 +116,40 @@ describe("Sync Accounts", () => {
         type: "active",
       },
       explorer: {
-        url: "https://tron.coin.ledger.com",
+        url: TRONGRID_BASE_URL_MOCKED,
       },
     });
     bridge = createBridges(signer, coinConfig);
+
+    mockServer.listen({ onUnhandledRequest: "error" });
   });
 
-  it("should always have tronResources", async () => {
-    const account = await syncAccount<Transaction, TronAccount>(
-      bridge.accountBridge,
-      dummyAccount,
-      defaultSyncConfig,
-    );
-
-    expect(account.tronResources).toEqual(defaultTronResources);
+  afterAll(() => {
+    mockServer.close();
   });
 
   it.each([
     {
       id: "TL24LCps5FKwp3PoU1MvrYrwhi5LU1tHre",
-      expectedAccount: JSON.parse(JSON.stringify(account1Fixture), reviver),
+      expectedAccount: JSON.parse(
+        JSON.stringify(accountFixture["TL24LCps5FKwp3PoU1MvrYrwhi5LU1tHre"]),
+        reviver,
+      ),
     },
     // "TAVrrARNdnjHgCGMQYeQV7hv4PSu7mVsMj",
     // "THAe4BNVxp293qgyQEqXEkHMpPcqtG73bi",
     // "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
     // "TUxd6v64YTWkfpFpNDdtgc5Ps4SfGxwizT",
     // "TY2ksFgpvb82TgGPwUSa7iseqPW5weYQyh",
-  ])(
-    "should always be sync without error for address %s",
-    async ({ id, expectedAccount }) => {
-      const account = await syncAccount<Transaction, TronAccount>(bridge.accountBridge, {
-        ...dummyAccount,
-        id: `js:2:tron:${id}:`,
-        freshAddress: id,
-      });
+  ])("should always be sync without error for address %s", async ({ id, expectedAccount }) => {
+    const account = await syncAccount<Transaction, TronAccount>(bridge.accountBridge, {
+      ...dummyAccount,
+      id: `js:2:tron:${id}:`,
+      freshAddress: id,
+    });
 
-      expect(account.id).toEqual(`js:2:tron:${id}:`);
+    expect(account.id).toEqual(`js:2:tron:${id}:`);
 
-      expect(account).toMatchObject(expectedAccount);
-    },
-    15 * 1_000,
-  );
+    expect(account).toMatchObject(expectedAccount);
+  });
 });
