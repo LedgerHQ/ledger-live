@@ -9,6 +9,7 @@ import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 import { clearLastSeenCustomImage } from "~/renderer/actions/settings";
 import { ImageDoesNotExistOnDevice } from "@ledgerhq/live-common/errors";
+import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 
 const action = createAction(removeImage);
 
@@ -101,7 +102,7 @@ const RemoveCustomImage: React.FC<Props> = ({ onClose, onRemoved }) => {
               action={action}
               onResult={onSuccess}
               onError={onError}
-              location="Manager Dashboard"
+              location={HOOKS_TRACKING_LOCATIONS.managerDashboard}
             />
           </Flex>
         ) : null}

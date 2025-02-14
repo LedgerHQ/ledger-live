@@ -8,6 +8,7 @@ import { StepProps } from "..";
 import { getEnv } from "@ledgerhq/live-env";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
+import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectApp);
 const StepConnectDevice = ({ currency, transitionTo, flow }: StepProps) => {
   invariant(currency, "No crypto asset given");
@@ -40,7 +41,7 @@ const StepConnectDevice = ({ currency, transitionTo, flow }: StepProps) => {
           transitionTo("import");
         }}
         analyticsPropertyFlow={flow}
-        location="Add account modal"
+        location={HOOKS_TRACKING_LOCATIONS.addAccountModal}
       />
     </>
   );

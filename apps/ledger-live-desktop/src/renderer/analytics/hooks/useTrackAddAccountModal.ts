@@ -2,11 +2,11 @@ import { useRef, useEffect } from "react";
 import { track } from "../segment";
 import { Device } from "@ledgerhq/types-devices";
 import { UserRefusedOnDevice, LockedDeviceError, CantOpenDevice } from "@ledgerhq/errors";
-import { CONNECTION_TYPES } from "./variables";
+import { CONNECTION_TYPES, HOOKS_TRACKING_LOCATIONS } from "./variables";
 import { LedgerError } from "~/renderer/components/DeviceAction";
 
 export type UseTrackAddAccountModal = {
-  location: string | undefined;
+  location: HOOKS_TRACKING_LOCATIONS.addAccountModal | undefined;
   device: Device;
   error:
     | (LedgerError & {
@@ -31,7 +31,7 @@ function getConnectionType(d?: Device): string | undefined {
  * a custom hook to track events in the Add Account Modal.
  * tracks user interactions with the Add Account Modal based on state changes and errors.
  *
- * @param location - current location in the app (expected "Add account modal").
+ * @param location - current location in the app (expected "Add account modal" from HOOKS_TRACKING_LOCATIONS enum).
  * @param device - the connected device information.
  * @param error - current error state.
  * @param isTrackingEnabled - flag indicating if tracking is enabled.
@@ -52,7 +52,7 @@ export const useTrackAddAccountModal = ({
   const previousDevice = useRef<Device | null | undefined>(undefined);
 
   useEffect(() => {
-    if (location !== "Add account modal") return;
+    if (location !== HOOKS_TRACKING_LOCATIONS.addAccountModal) return;
 
     const defaultPayload = {
       deviceType: device?.modelId || previousDevice.current?.modelId || undefined,

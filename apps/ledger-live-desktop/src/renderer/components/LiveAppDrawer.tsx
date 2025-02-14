@@ -34,6 +34,7 @@ import { Exchange, isExchangeSwap } from "@ledgerhq/live-common/exchange/types";
 import { HardwareUpdate, renderLoading } from "./DeviceAction/rendering";
 import { createCustomErrorClass } from "@ledgerhq/errors";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
+import { HOOKS_TRACKING_LOCATIONS } from "../analytics/hooks/variables";
 
 const Divider = styled(Box)`
   border: 1px solid ${p => p.theme.colors.palette.divider};
@@ -189,6 +190,7 @@ export const LiveAppDrawer = () => {
               action={action}
               request={data}
               Result={() => renderLoading()}
+              location={HOOKS_TRACKING_LOCATIONS.exchange}
               onResult={result => {
                 if ("startExchangeResult" in result) {
                   data.onResult(result.startExchangeResult);

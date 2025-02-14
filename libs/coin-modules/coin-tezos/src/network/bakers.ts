@@ -48,6 +48,7 @@ export const cache = makeLRUCache(
             bakers.push(baker);
           }
         });
+      bakers.sort((a, b) => (a.name > b.name ? 1 : -1));
     }
 
     const ledgerBakerIndex = bakers.findIndex(baker => baker.address === ledgerValidatorAddress);

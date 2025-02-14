@@ -6,11 +6,11 @@ import {
 } from "@ledgerhq/errors";
 import { track } from "../segment";
 import { Device } from "@ledgerhq/types-devices";
-import { CONNECTION_TYPES } from "./variables";
+import { CONNECTION_TYPES, HOOKS_TRACKING_LOCATIONS } from "./variables";
 import { LedgerError } from "~/renderer/components/DeviceAction";
 
 export type UseTrackManagerSectionEvents = {
-  location: string | undefined;
+  location: HOOKS_TRACKING_LOCATIONS.managerDashboard | undefined;
   device: Device;
   allowManagerRequested: boolean | null | undefined;
   error:
@@ -28,12 +28,11 @@ export type UseTrackManagerSectionEvents = {
  * a custom hook to track events in the Manager section.
  * tracks user interactions with the Manager dashboard based on state changes and errors.
  *
- * @param location - current location in the app (expected "Manager").
+ * @param location - current location in the app (expected "Manager Dashboard" from HOOKS_TRACKING_LOCATIONS enum).
  * @param device - the connected device information.
  * @param allowManagerRequested - flag indicating if the user has allowed the Manager app.
  * @param clsImageRemoved - flag indicating if the user has removed the custom lock screen image.
  * @param error - current error state.
- * @param parentHookState - state from the parent hook, particularly allowManagerRequested.
  * @param isTrackingEnabled - flag indicating if tracking is enabled.
  */
 export const useTrackManagerSectionEvents = ({
@@ -47,7 +46,7 @@ export const useTrackManagerSectionEvents = ({
   const previousAllowManagerRequested = useRef<boolean | null | undefined>(undefined);
 
   useEffect(() => {
-    if (location !== "Manager Dashboard") return;
+    if (location !== HOOKS_TRACKING_LOCATIONS.managerDashboard) return;
 
     const defaultPayload = {
       deviceType: device?.modelId,

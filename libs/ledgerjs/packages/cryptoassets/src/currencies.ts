@@ -3254,7 +3254,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     deviceTicker: "ETH",
     scheme: "eth_sepolia",
     color: "#ff0000",
-    units: ethereumUnits("ether", "ETH").map(makeTestnetUnit),
+    units: ethereumUnits("ether", "ETH"),
     isTestnetFor: "ethereum",
     disableCountervalue: true,
     family: "evm",
@@ -3280,7 +3280,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     deviceTicker: "ETH",
     scheme: "eth_holesky",
     color: "#00ff00",
-    units: ethereumUnits("ether", "ETH").map(makeTestnetUnit),
+    units: ethereumUnits("ether", "ETH"),
     isTestnetFor: "ethereum",
     disableCountervalue: true,
     family: "evm",
@@ -3568,7 +3568,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     scheme: "arbitrum_sepolia",
     color: "#ff0000",
     family: "evm",
-    units: ethereumUnits("ether", "ETH").map(makeTestnetUnit),
+    units: ethereumUnits("ether", "ETH"),
     isTestnetFor: "arbitrum",
     disableCountervalue: true,
     ethereumLikeInfo: {
@@ -3780,7 +3780,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     scheme: "optimism_sepolia",
     color: "#FF0000",
     family: "evm",
-    units: ethereumUnits("ether", "ETH").map(makeTestnetUnit),
+    units: ethereumUnits("ether", "ETH"),
     isTestnetFor: "optimism",
     ethereumLikeInfo: {
       chainId: 11155420,
@@ -4002,7 +4002,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     scheme: "polygon_zk_evm_testnet",
     color: "#E58247",
     family: "evm",
-    units: ethereumUnits("ETH", "ETH").map(makeTestnetUnit),
+    units: ethereumUnits("ETH", "ETH"),
     disableCountervalue: true,
     isTestnetFor: "polygon_zk_evm",
     ethereumLikeInfo: {
@@ -4049,7 +4049,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     scheme: "base_sepolia",
     color: "#FF0000",
     family: "evm",
-    units: ethereumUnits("ETH", "ETH").map(makeTestnetUnit),
+    units: ethereumUnits("ETH", "ETH"),
     disableCountervalue: true,
     isTestnetFor: "base",
     ethereumLikeInfo: {
@@ -4163,7 +4163,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     scheme: "linea_sepolia",
     color: "#ff0000",
     family: "evm",
-    units: ethereumUnits("ETH", "ETH").map(makeTestnetUnit),
+    units: ethereumUnits("ETH", "ETH"),
     disableCountervalue: false,
     isTestnetFor: "linea",
     ethereumLikeInfo: {
@@ -4210,7 +4210,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     scheme: "blast_sepolia",
     color: "#ff0000",
     family: "evm",
-    units: ethereumUnits("ETH", "ETH").map(makeTestnetUnit),
+    units: ethereumUnits("ETH", "ETH"),
     disableCountervalue: false,
     isTestnetFor: "blast",
     ethereumLikeInfo: {
@@ -4257,7 +4257,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     scheme: "scroll_sepolia",
     color: "#ff0000",
     family: "evm",
-    units: ethereumUnits("ETH", "ETH").map(makeTestnetUnit),
+    units: ethereumUnits("ETH", "ETH"),
     disableCountervalue: false,
     isTestnetFor: "scroll",
     ethereumLikeInfo: {
@@ -4325,7 +4325,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     scheme: "zksync_sepolia",
     color: "#ff0000",
     family: "evm",
-    units: ethereumUnits("ETH", "ETH").map(makeTestnetUnit),
+    units: ethereumUnits("ETH", "ETH"),
     ethereumLikeInfo: {
       chainId: 300,
     },
