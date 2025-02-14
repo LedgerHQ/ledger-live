@@ -133,9 +133,9 @@ export default function Generators() {
         onPress={onWipeBLE}
       />
       <SettingsRow
-        title="Reset Nft Anti Spam"
+        title="Reset HiddenCollections NFTs"
         desc="Remove all NFTs from the spam list"
-        iconLeft={<IconsLegacy.RefreshMedium size={24} color="black" />}
+        iconLeft={<IconsLegacy.TrashMedium size={24} color="black" />}
         onPress={onWipeAntiSpam}
       />
     </SettingsNavigationScrollView>
