@@ -481,9 +481,9 @@ platform :android do
           "android.injected.signing.store.password" => ENV["ANDROID_KEYSTORE_PASS"],
           "android.injected.signing.key.alias" => ENV["ANDROID_KEY_ALIAS"],
           "android.injected.signing.key.password" => ENV["ANDROID_KEY_PASS"],
-          "org.gradle.workers.max" => 13
         },
-        project_dir: 'android/'
+        project_dir: 'android/',
+        flags: ' -Dorg.gradle.workers.max=13'
       )
     end
   end
