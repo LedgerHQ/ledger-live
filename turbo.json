@@ -190,11 +190,10 @@
       "dependsOn": ["build"],
       "env": ["CI_OS"]
     },
-    "live-mobile#e2e:test-with-turbo": {
+    "live-mobile#e2e:test:ios": {
       "cache": true,
-      "outputs": [".detox-artifacts/junit.xml"],
-      "dependsOn": [],
-      "inputs": ["src/**/*.ts", "e2e/**/*.test.js", "package.json", "pnpm-lock.yaml"]
+      "dependsOn": ["^build"],
+      "inputs": []
     }
   }
 }
