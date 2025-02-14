@@ -479,7 +479,7 @@
     },
     "MultiversXDecimalsLimitReached" : {
       "title" : "Достигнут лимит десятичных знаков",
-      "description" : "Убедитесь, что у указанной суммы 18 десятичных знаков."
+      "description" : "Убедитесь, что в указанной сумме до 18 десятичных знаков."
     },
     "MultiversXMinDelegatedAmountError" : {
       "title" : "Делегированная сумма должна быть не менее {{formattedAmount}}"
@@ -808,6 +808,12 @@
     },
     "SolanaTokenAccountFrozen" : {
       "title" : "Токены на счету заморожены"
+    },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "Счёт не инициализирован"
+    },
+    "SolanaTokenRecipientIsSenderATA" : {
+      "title" : "Адрес получателя совпадает с адресом отправителя токена"
     },
     "SolanaAddressOfEd25519" : {
       "title" : "Адрес за пределами кривой ed25519"
@@ -3351,7 +3357,7 @@
       },
       "form" : {
         "validate" : "Подтвердить обмен",
-        "tab" : "Обмен",
+        "tab" : "Обменять",
         "button" : "Продолжить",
         "from" : "Откуда",
         "to" : "Куда",
@@ -3460,8 +3466,8 @@
           "receive" : "К получению"
         },
         "placeholder" : "Выберите",
-        "title" : "Обмен",
-        "cta" : "Обмен",
+        "title" : "Обменять",
+        "cta" : "Обменять",
         "from" : "Откуда",
         "to" : "Куда",
         "loading" : "Загружаем...",
@@ -3512,7 +3518,9 @@
         "ada_title" : "Ledger Nano S™ не поддерживает обмен Cardano",
         "ada_description" : "Используйте другие совместимые устройства Ledger для обмена Cardano. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
         "apt_title" : "Ledger Nano S™ не поддерживает обмен Aptos",
-        "apt_description" : "Для обмена Aptos используйте любое другое устройство Ledger. Это может быть Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ или Ledger Stax™."
+        "apt_description" : "Для обмена Aptos используйте любое другое устройство Ledger. Это может быть Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ или Ledger Stax™.",
+        "cosmos_title" : "Ledger Nano S™ не поддерживает обмен Cosmos",
+        "cosmos_description" : "Для обмена Cosmos используйте любое другое устройство Ledger. Это может быть Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ или Ledger Stax™."
       }
     },
     "lending" : {
@@ -4018,7 +4026,7 @@
       "desc" : "Уверены, что не хотите добавлять счета?",
       "v2" : {
         "title" : "Отменить добавление счёта?",
-        "desc" : "В Ledger Live не появятся новые счета."
+        "desc" : "Новые счета не будут добавлены в Ledger Live."
       }
     },
     "imported" : "Актив успешно добавлен",
@@ -4086,6 +4094,7 @@
       "ctaStopScan" : "Остановить сканирование",
       "confirm" : "Подтвердить",
       "scanningTitle" : "Ищем любые созданные адреса в блокчейне...",
+      "whichAddressType" : "Как определить подходящий тип адреса",
       "sections" : {
         "importable" : {
           "title" : "Мы нашли {{count}} счёт",
