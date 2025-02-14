@@ -79,11 +79,21 @@ const MessageProperty = memo(
       : undefined;
 
     return (
-      <Box style={{ flexDirection: "row", justifyContent: "space-between" }} flex="1" mb={20}>
+      <Box
+        style={{ flexDirection: "row", justifyContent: "space-between", maxWidth: "100%" }}
+        flex="1"
+        mb={20}
+      >
         <Text ff="Inter|Medium" color="palette.text.shade40" fontSize={4}>
           {label}
         </Text>
-        <Text ff="Inter|Medium" color="palette.text.shade90" fontSize={3} pl={2}>
+        <Text
+          ff="Inter|Medium"
+          color="palette.text.shade90"
+          fontSize={3}
+          pl={2}
+          style={{ maxWidth: "90%" }}
+        >
           {typeof value === "string" ? (
             <ValueWrapper>
               {isPropertyAmount ? (
