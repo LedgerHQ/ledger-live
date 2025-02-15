@@ -3099,11 +3099,11 @@ importers:
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
       '@stacks/network':
-        specifier: 6.10.0
-        version: 6.10.0
+        specifier: 6.17.0
+        version: 6.17.0
       '@stacks/transactions':
-        specifier: 6.11.0
-        version: 6.11.0
+        specifier: 6.17.0
+        version: 6.17.0
       '@zondax/ledger-stacks':
         specifier: ^1.0.2
         version: 1.0.4
@@ -14700,20 +14700,20 @@ packages:
   '@stacks/common@4.3.5':
     resolution: {integrity: sha512-UuViiQ7fn3vdtTe3739aRzbl+wbukekeQuXgqt8d7nB2HC2HodD7GcHhpUga165cO35CD6lQUtj3vXxJb5Ga+A==}
 
-  '@stacks/common@6.13.0':
-    resolution: {integrity: sha512-wwzyihjaSdmL6NxKvDeayy3dqM0L0Q2sawmdNtzJDi0FnXuJGm5PeapJj7bEfcI9XwI7Bw5jZoC6mCn9nc5YIw==}
+  '@stacks/common@6.16.0':
+    resolution: {integrity: sha512-PnzvhrdGRMVZvxTulitlYafSK4l02gPCBBoI9QEoTqgSnv62oaOXhYAUUkTMFKxdHW1seVEwZsrahuXiZPIAwg==}
 
   '@stacks/network@4.3.5':
     resolution: {integrity: sha512-TC4+AkuT6qi3MoEGxTftA+4BNp99QvGnI+qtKQkoA1m0KDr8b9hSBUhugJHRhQbWuo7D6q0+JagYEGxLID29Kw==}
 
-  '@stacks/network@6.10.0':
-    resolution: {integrity: sha512-mbiZ8nlsyy77ndmBdaqhHXii22IFdK4ThRcOQs9j/O00DkAr04jCM4GV5Q+VLUnZ9OBoJq7yOV7Pf6jglh+0hw==}
+  '@stacks/network@6.17.0':
+    resolution: {integrity: sha512-numHbfKjwco/rbkGPOEz8+FcJ2nBnS/tdJ8R422Q70h3SiA9eqk9RjSzB8p4JP8yW1SZvW+eihADHfMpBuZyfw==}
 
   '@stacks/transactions@4.3.8':
     resolution: {integrity: sha512-5xYYv2TdXXM9PVixB79Pr99symQ8fhbVATjempGUxtL23/XUiRiLvJZohDxIE4VQ2EzbB4g4j8Y7oqPjj0h09Q==}
 
-  '@stacks/transactions@6.11.0':
-    resolution: {integrity: sha512-+zIDqn9j4H/+o1ER8C9rFpig1fyrQcj2hVGNIrp+YbpPyja+cxv3fPk6kI/gePzwggzxRgUkIWhBc+mZAXuXyQ==}
+  '@stacks/transactions@6.17.0':
+    resolution: {integrity: sha512-FUah2BRgV66ApLcEXGNGhwyFTRXqX5Zco3LpiM3essw8PF0NQlHwwdPgtDko5RfrJl3LhGXXe/30nwsfNnB3+g==}
 
   '@statelyai/inspect@0.4.0':
     resolution: {integrity: sha512-VxQldRlKYcu6rzLY83RSXVwMYexkH6hNx85B89YWYyXYWtNGaWHFCwV7a/Kz8FFPeUz8EKVAnyMOg2kNpn07wQ==}
@@ -42983,7 +42983,7 @@ snapshots:
       '@types/node': 18.19.26
       buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
 
-  '@stacks/common@6.13.0':
+  '@stacks/common@6.16.0':
     dependencies:
       '@types/bn.js': 5.1.5
       '@types/node': 18.19.26
@@ -42995,9 +42995,9 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  '@stacks/network@6.10.0':
+  '@stacks/network@6.17.0':
     dependencies:
-      '@stacks/common': 6.13.0
+      '@stacks/common': 6.16.0
       cross-fetch: 3.1.8
     transitivePeerDependencies:
       - encoding
@@ -43018,12 +43018,12 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  '@stacks/transactions@6.11.0':
+  '@stacks/transactions@6.17.0':
     dependencies:
       '@noble/hashes': 1.1.5
       '@noble/secp256k1': 1.7.1
-      '@stacks/common': 6.13.0
-      '@stacks/network': 6.10.0
+      '@stacks/common': 6.16.0
+      '@stacks/network': 6.17.0
       c32check: 2.0.0
       lodash.clonedeep: 4.5.0
     transitivePeerDependencies:

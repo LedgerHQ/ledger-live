@@ -40,7 +40,10 @@ jest.mock("@ledgerhq/live-countervalues-react", () => ({
 }));
 
 describe("AccountsList Screen", () => {
-  const renderComponent = (params: AccountsListNavigator[ScreenName.AccountsList]) => {
+  const renderComponent = (
+    params: AccountsListNavigator[ScreenName.AccountsList],
+    withoutAccount: boolean = false,
+  ) => {
     const Stack = createStackNavigator<AccountsListNavigator>();
 
     return renderWithReactQuery(
@@ -53,6 +56,15 @@ describe("AccountsList Screen", () => {
       </Stack.Navigator>,
       {
         ...INITIAL_STATE,
+        ...(withoutAccount && {
+          overrideInitialState: (state: State) => ({
+            ...state,
+            accounts: {
+              ...state.accounts,
+              active: [],
+            },
+          }),
+        }),
       },
     );
   };
@@ -138,5 +150,23 @@ describe("AccountsList Screen", () => {
     expect(getByText(/add another account/i)).toBeVisible();
     expect(getByText(/use your ledger device/i)).toBeVisible();
     expect(getByText(/use ledger sync/i)).toBeVisible();
+  });
+
+  it("should render the empty list screen", async () => {
+    const { getByText } = renderComponent(
+      {
+        sourceScreenName: ScreenName.AccountsList,
+        showHeader: true,
+        canAddAccount: true,
+      },
+      true,
+    );
+
+    expect(getByText(/no accounts found/i)).toBeVisible();
+    expect(
+      getByText(/looks like you haven’t added an account yet. get started now/i),
+    ).toBeVisible();
+    expect(getByText("Add an account")).toBeVisible();
+    expect(getByText(/need help\? learn how to add an account to ledger live./i)).toBeVisible();
   });
 });
