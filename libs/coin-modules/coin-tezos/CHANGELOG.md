@@ -1,5 +1,11 @@
 # @ledgerhq/coin-tezos
 
+## 1.0.1-nightly.2
+
+### Patch Changes
+
+- [#9126](https://github.com/LedgerHQ/ledger-live/pull/9126) [`339a611`](https://github.com/LedgerHQ/ledger-live/commit/339a61190c8bd9bb125f7fd3e3fbdaa9b31fcb58) Thanks [@jprudent](https://github.com/jprudent)! - Fix addresses on operations
+
 ## 1.0.1-nightly.1
 
 ### Patch Changes

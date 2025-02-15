@@ -1,5 +1,17 @@
 # ledger-live-desktop
 
+## 2.100.0-nightly.2
+
+### Minor Changes
+
+- [#9223](https://github.com/LedgerHQ/ledger-live/pull/9223) [`42948ff`](https://github.com/LedgerHQ/ledger-live/commit/42948fffa9b435ea2f5f2c7bc9ef66071eadce4b) Thanks [@CremaFR](https://github.com/CremaFR)! - update error message for clarity
+
+### Patch Changes
+
+- Updated dependencies [[`035be8c`](https://github.com/LedgerHQ/ledger-live/commit/035be8ccb81c61ee99688e0a4b078cb50d90dcf5)]:
+  - @ledgerhq/coin-bitcoin@0.10.4-nightly.2
+  - @ledgerhq/live-common@34.22.0-nightly.2
+
 ## 2.100.0-nightly.1
 
 ### Minor Changes

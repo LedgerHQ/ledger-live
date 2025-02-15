@@ -1,5 +1,18 @@
 ## 34.5.0-next.4
 
+## 34.22.0-nightly.2
+
+### Patch Changes
+
+- [#9121](https://github.com/LedgerHQ/ledger-live/pull/9121) [`035be8c`](https://github.com/LedgerHQ/ledger-live/commit/035be8ccb81c61ee99688e0a4b078cb50d90dcf5) Thanks [@Wozacosta](https://github.com/Wozacosta)! - fix: zcash nu5/nu6
+
+- Updated dependencies [[`42948ff`](https://github.com/LedgerHQ/ledger-live/commit/42948fffa9b435ea2f5f2c7bc9ef66071eadce4b), [`035be8c`](https://github.com/LedgerHQ/ledger-live/commit/035be8ccb81c61ee99688e0a4b078cb50d90dcf5), [`50767e7`](https://github.com/LedgerHQ/ledger-live/commit/50767e711f09d057f2eaeaebd33f65de3dbce778), [`339a611`](https://github.com/LedgerHQ/ledger-live/commit/339a61190c8bd9bb125f7fd3e3fbdaa9b31fcb58)]:
+  - @ledgerhq/hw-app-exchange@0.8.0-nightly.0
+  - @ledgerhq/hw-app-btc@10.5.1-nightly.0
+  - @ledgerhq/coin-bitcoin@0.10.4-nightly.2
+  - @ledgerhq/coin-stacks@0.5.4-nightly.2
+  - @ledgerhq/coin-tezos@1.0.1-nightly.2
+
 ## 34.22.0-nightly.1
 
 ### Minor Changes

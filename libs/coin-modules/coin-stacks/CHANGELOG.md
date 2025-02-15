@@ -1,5 +1,11 @@
 # @ledgerhq/coin-stacks
 
+## 0.5.4-nightly.2
+
+### Patch Changes
+
+- [#9137](https://github.com/LedgerHQ/ledger-live/pull/9137) [`50767e7`](https://github.com/LedgerHQ/ledger-live/commit/50767e711f09d057f2eaeaebd33f65de3dbce778) Thanks [@lawRathod](https://github.com/lawRathod)! - Fix transaction broadcast, and set stacks sdk to use our proxied url
+
 ## 0.5.4-nightly.1
 
 ### Patch Changes
