@@ -74,7 +74,7 @@ const MessageProperty = memo(
 
     const isPropertyAmount = label.includes("Amount") && account && contractAddress;
 
-    const unit = isPropertyAmount
+    const tokenUnit = isPropertyAmount
       ? account.subAccounts?.find(a => a.token.contractAddress === contractAddress)?.token.units[0]
       : undefined;
 
@@ -96,12 +96,12 @@ const MessageProperty = memo(
         >
           {typeof value === "string" ? (
             <ValueWrapper>
-              {isPropertyAmount ? (
+              {tokenUnit ? (
                 <>
                   <FormattedVal
                     color={"palette.neutral.c100"}
                     val={Number(value)}
-                    unit={unit}
+                    unit={tokenUnit}
                     fontSize={3}
                     disableRounding
                     alwaysShowValue
