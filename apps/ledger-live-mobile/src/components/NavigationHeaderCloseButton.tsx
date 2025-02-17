@@ -166,7 +166,7 @@ export const NavigationHeaderCloseButtonAdvanced: React.FC<AdvancedProps> = Reac
     const renderCloseElement = useCallback(() => {
       if (showButton && buttonText)
         return (
-          <Button size="large" testID="button-create-account" onPress={onPress}>
+          <Button size="large" testID="button-close-add-account" onPress={onPress}>
             {buttonText}
           </Button>
         );

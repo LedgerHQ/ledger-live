@@ -18,9 +18,10 @@ const View: React.FC<ViewProps> = ({
   showUnit,
   hideBalanceInfo,
   withPlaceholder,
+  accountId,
 }) => (
   <>
-    <Flex flex={1} rowGap={2} flexShrink={1} testID={`accountItem-${accountName}`}>
+    <Flex flex={1} rowGap={2} flexShrink={1} testID={`account-item-${accountId}`}>
       <Flex flexDirection="row" columnGap={8} alignItems="center" maxWidth="70%">
         <Text
           numberOfLines={1}
@@ -28,6 +29,7 @@ const View: React.FC<ViewProps> = ({
           fontWeight="semiBold"
           color="neutral.c100"
           {...(!tag && { flexShrink: 1 })}
+          testID={`account-item-${accountId}-name`}
         >
           {accountName}
         </Text>

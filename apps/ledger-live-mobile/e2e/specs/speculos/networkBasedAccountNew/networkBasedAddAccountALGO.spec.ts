@@ -1,0 +1,4 @@
+import { runNetworkBasedAddAccountTest } from "./networkBasedAddAccount";
+import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
+
+runNetworkBasedAddAccountTest(Currency.ALGO, "B2CQA-2497, B2CQA-2653, B2CQA-2681");

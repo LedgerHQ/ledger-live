@@ -3,6 +3,7 @@ import {
   getElementById,
   getElementByText,
   getTextOfElement,
+  IsIdVisible,
   openDeeplink,
   scrollToId,
   tapById,
@@ -31,6 +32,7 @@ export default class ReceivePage {
   step1HeaderTitle = () => getElementById("receive-header-step1-title");
   step2HeaderTitleId = "receive-header-step2-title";
   step2HeaderTitle = () => getElementById(this.step2HeaderTitleId);
+  networkBasedStep2HeaderTitleId = "addAccounts-header-step2-title";
   titleReceiveConfirmationPageId = (t: string) => `receive-confirmation-title-${t}`;
   accountNameReceiveId = (t: string) => `receive-account-name-${t}`;
   receivePageScrollViewId = "receive-screen-scrollView";
@@ -70,6 +72,7 @@ export default class ReceivePage {
     await expect(this.step2Accounts()).toBeVisible();
   }
 
+  @Step("Select currency in receive list")
   async selectCurrency(currencyName: string) {
     const id = this.currencyNameId(currencyName.toLowerCase());
     await tapById(id);
@@ -83,6 +86,11 @@ export default class ReceivePage {
   async selectNetwork(networkId: string) {
     const id = this.currencyNameId(networkId);
     return tapById(id);
+  }
+
+  @Step("Select network in list if needed")
+  async selectNetworkIfAsked(networkId: string) {
+    if (await IsIdVisible(this.networkBasedStep2HeaderTitleId)) await this.selectNetwork(networkId);
   }
 
   async selectAccount(account: string) {

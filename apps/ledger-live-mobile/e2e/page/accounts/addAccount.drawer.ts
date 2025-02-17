@@ -25,12 +25,19 @@ export default class AddAccountDrawer {
   currencyRow = (currencyId: string) => `currency-row-${currencyId}`;
   continueButtonId = "add-accounts-continue-button";
   succesCtaId = "add-accounts-success-cta";
+  accountItemId = "account-item-";
+  accountItemRegExp = (id = ".*") => new RegExp(`${this.accountItemId}${id}`);
+  accountItem = (id: string) => getElementById(this.accountItemRegExp(id));
+  accountItemTitleId = (accountName: string, index: number) =>
+    getElementById(`account-item-${accountName}-name`, index);
+  closeAddAccountButtonId = "button-close-add-account";
 
   @Step("Open add account via deeplink")
   async openViaDeeplink() {
     await openDeeplink(baseLink);
   }
 
+  @Step("Click on 'Import with your Ledger' button")
   async importWithYourLedger() {
     await waitForElementById(this.modalButtonId);
     await tapById(this.modalButtonId);
@@ -78,6 +85,38 @@ export default class AddAccountDrawer {
     );
     await this.finishAccountsDiscovery();
     await this.tapSuccessCta();
+    return accountId;
+  }
+
+  @Step("Expect account discovered")
+  async expectNetworkBasedAccountDiscovery(currencyName: string, currencyId: string, index = 0) {
+    const accountName = `${currencyName} ${index + 1}`;
+    await expect(this.accountItem(this.accountId(currencyId, index))).toBeVisible();
+    const accountId = (await getIdOfElement(this.accountItemRegExp(), 0)).replace(
+      this.accountItemId,
+      "",
+    );
+    await expect(this.accountItemTitleId(accountId, index)).toHaveText(accountName);
+    return accountId;
+  }
+
+  @Step("Close add account success screen")
+  async tapCloseAddAccountCta() {
+    await waitForElementById(this.closeAddAccountButtonId);
+    await tapById(this.closeAddAccountButtonId);
+  }
+
+  @Step("Add only first discovered account")
+  async addNetworkBasedFirstAccount(currency: Currency) {
+    await this.waitAccountsDiscovery();
+    const accountId = await this.expectNetworkBasedAccountDiscovery(
+      currency.name,
+      currency.currencyId,
+    );
+    await tapById(this.deselectAllButtonId);
+    await tapById(this.accountItemRegExp(accountId));
+    await this.finishAccountsDiscovery();
+    await this.tapCloseAddAccountCta();
     return accountId;
   }
 }

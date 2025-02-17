@@ -151,6 +151,7 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
           iconPosition="left"
           Icon={IconsLegacy.PlusMedium}
           onPress={openAddModal}
+          testID="add-account-cta"
         >
           {t("account.emptyState.addAccountCta")}
         </Button>
