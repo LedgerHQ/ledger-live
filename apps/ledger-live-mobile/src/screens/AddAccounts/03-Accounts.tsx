@@ -369,7 +369,7 @@ function AddAccountsAccounts({
                 emptyState={emptyTexts[id as keyof typeof emptyTexts]}
                 isDisabled={!selectable}
                 forceSelected={id === "existing"}
-                style={hasMultipleSchemes ? styles.smallMarginBottom : {}}
+                style={(hasMultipleSchemes ? styles.smallMarginBottom : {}, { flex: 1 })}
               />
               {hasMultipleSchemes ? (
                 <View style={styles.moreAddressTypesContainer}>

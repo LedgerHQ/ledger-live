@@ -159,23 +159,22 @@ export default function useScanDeviceAccountsViewModel({
         renamings: {}, // renaming was done in scannedAccounts directly.. (see if we want later to change this paradigm)
       }),
     );
+    const { onSuccess } = route.params;
 
     if (inline) {
       navigation.goBack();
-    } else if (navigation.replace) {
-      const { onSuccess } = route.params;
-      if (onSuccess)
+      if (onSuccess) {
         onSuccess({
           scannedAccounts,
           selected: accountsToAdd,
         });
-      else
-        navigation.replace(ScreenName.AddAccountsSuccess, {
-          ...route.params,
-          currency,
-          accountsToAdd: accountsToAdd,
-        });
-    }
+      }
+    } else
+      navigation.replace(ScreenName.AddAccountsSuccess, {
+        ...route.params,
+        currency,
+        accountsToAdd: accountsToAdd,
+      });
 
     const continueMetadata = analyticsMetadata?.AccountsFound?.onContinue;
     if (continueMetadata)

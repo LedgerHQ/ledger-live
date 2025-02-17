@@ -1,5 +1,35 @@
 # @ledgerhq/coin-evm
 
+## 2.10.0
+
+### Minor Changes
+
+- [#9161](https://github.com/LedgerHQ/ledger-live/pull/9161) [`25d078c`](https://github.com/LedgerHQ/ledger-live/commit/25d078c79f21950ac6bea16d3491ec3206ed44c2) Thanks [@Justkant](https://github.com/Justkant)! - fix: legacy transaction support in rpc call of getFeeData
+
+- [#9082](https://github.com/LedgerHQ/ledger-live/pull/9082) [`07ec8a0`](https://github.com/LedgerHQ/ledger-live/commit/07ec8a0204368f47d05ec7481375dfdc04e0b15a) Thanks [@qperrot](https://github.com/qperrot)! - Fix specs test for blast and blast_sepolia
+
+### Patch Changes
+
+- Updated dependencies [[`58c1a9c`](https://github.com/LedgerHQ/ledger-live/commit/58c1a9c68b2ce2ebef9dbd7af00ae09efd7a29dc), [`551f2cc`](https://github.com/LedgerHQ/ledger-live/commit/551f2ccad6d7897a010d39110c0ba9336d407dfd), [`ff40e9a`](https://github.com/LedgerHQ/ledger-live/commit/ff40e9a00d325e5b46cb069936ba2a5781c601b5)]:
+  - @ledgerhq/coin-framework@2.0.0
+  - @ledgerhq/evm-tools@1.4.0
+  - @ledgerhq/cryptoassets@13.11.0
+
+## 2.10.0-next.0
+
+### Minor Changes
+
+- [#9161](https://github.com/LedgerHQ/ledger-live/pull/9161) [`25d078c`](https://github.com/LedgerHQ/ledger-live/commit/25d078c79f21950ac6bea16d3491ec3206ed44c2) Thanks [@Justkant](https://github.com/Justkant)! - fix: legacy transaction support in rpc call of getFeeData
+
+- [#9082](https://github.com/LedgerHQ/ledger-live/pull/9082) [`07ec8a0`](https://github.com/LedgerHQ/ledger-live/commit/07ec8a0204368f47d05ec7481375dfdc04e0b15a) Thanks [@qperrot](https://github.com/qperrot)! - Fix specs test for blast and blast_sepolia
+
+### Patch Changes
+
+- Updated dependencies [[`58c1a9c`](https://github.com/LedgerHQ/ledger-live/commit/58c1a9c68b2ce2ebef9dbd7af00ae09efd7a29dc), [`551f2cc`](https://github.com/LedgerHQ/ledger-live/commit/551f2ccad6d7897a010d39110c0ba9336d407dfd), [`ff40e9a`](https://github.com/LedgerHQ/ledger-live/commit/ff40e9a00d325e5b46cb069936ba2a5781c601b5)]:
+  - @ledgerhq/coin-framework@2.0.0-next.0
+  - @ledgerhq/evm-tools@1.4.0-next.0
+  - @ledgerhq/cryptoassets@13.11.0-next.0
+
 ## 2.9.3
 
 ### Patch Changes

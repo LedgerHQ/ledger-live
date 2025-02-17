@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/live-common",
   "description": "Common ground for the Ledger Live apps",
-  "version": "34.21.0",
+  "version": "34.22.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live.git"
@@ -192,10 +192,10 @@
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/speculos-transport": "workspace:^",
     "@ledgerhq/wallet-api-acre-module": "workspace:^",
-    "@ledgerhq/wallet-api-client": "^1.6.0",
-    "@ledgerhq/wallet-api-core": "^1.13.0",
+    "@ledgerhq/wallet-api-client": "^1.6.2",
+    "@ledgerhq/wallet-api-core": "^1.15.0",
     "@ledgerhq/wallet-api-exchange-module": "workspace:^",
-    "@ledgerhq/wallet-api-server": "^1.7.0",
+    "@ledgerhq/wallet-api-server": "^1.7.2",
     "@stricahq/typhonjs": "^2.0.0",
     "@taquito/ledger-signer": "^20.0.0",
     "@ton-community/ton-ledger": "^7.0.1",
@@ -263,7 +263,7 @@
     "@types/invariant": "^2.2.36",
     "@types/jest": "^29.5.10",
     "@types/lodash": "^4.14.179",
-    "@types/node": "^20.8.10",
+    "@types/node": "^22.10.10",
     "@types/react": "^18.2.21",
     "@types/uuid": "^8.3.4",
     "benchmark": "^2.1.4",

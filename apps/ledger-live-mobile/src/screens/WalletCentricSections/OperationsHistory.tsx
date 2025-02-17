@@ -24,6 +24,7 @@ import { filterTokenOperationsZeroAmountEnabledSelector } from "~/reducers/setti
 
 type Props = {
   accounts: AccountLikeArray;
+  testID?: string;
 };
 
 const NB_OPERATIONS_TO_DISPLAY = 3;
@@ -34,7 +35,7 @@ const renderSectionHeader = ({ section }: { section: { day: Date } }) => (
   <SectionHeader day={section.day} />
 );
 
-const OperationsHistory = ({ accounts }: Props) => {
+const OperationsHistory = ({ accounts, testID }: Props) => {
   const { t } = useTranslation();
   const navigation = useNavigation();
 
@@ -103,6 +104,7 @@ const OperationsHistory = ({ accounts }: Props) => {
         renderItem={renderItem}
         renderSectionHeader={renderSectionHeader}
         stickySectionHeadersEnabled={false}
+        testID={testID}
       />
       {!completed ? (
         <Button

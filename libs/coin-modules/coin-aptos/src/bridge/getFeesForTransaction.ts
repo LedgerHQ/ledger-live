@@ -72,9 +72,7 @@ export const getFee = async (
 
 const CACHE = makeLRUCache(
   getFee,
-  (_account: Account, transaction: Transaction, _aptosClient: AptosAPI) => {
-    return transaction.amount.toString();
-  },
+  (account: Account, transaction: Transaction) => `${account.id}-${transaction.amount.toString()}}`,
   seconds(30),
 );
 

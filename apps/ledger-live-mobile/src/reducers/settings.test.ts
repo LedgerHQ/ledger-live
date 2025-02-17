@@ -53,7 +53,7 @@ describe("lastConnectedDeviceSelector", () => {
 describe("lastSeenDeviceSelector", () => {
   it("should return the last seen device if the deviceModelId is valid", () => {
     validDeviceModelIds.forEach(deviceModelId => {
-      const lastSeenDevice: State["settings"]["lastSeenDevice"] = {
+      const lastSeenDevice: State["settings"]["seenDevices"][0] = {
         modelId: deviceModelId,
         deviceInfo: aDeviceInfoBuilder(),
         apps: [],
@@ -62,7 +62,7 @@ describe("lastSeenDeviceSelector", () => {
         ...({} as State),
         settings: {
           ...SETTINGS_INITIAL_STATE,
-          lastSeenDevice,
+          seenDevices: [lastSeenDevice],
         },
       };
       expect(lastSeenDeviceSelector(state)).toEqual(lastSeenDevice);
@@ -71,7 +71,7 @@ describe("lastSeenDeviceSelector", () => {
 
   it("should return null if the deviceModelId is invalid", () => {
     invalidDeviceModelIds.forEach(deviceModelId => {
-      const lastSeenDevice: State["settings"]["lastSeenDevice"] = {
+      const lastSeenDevice: State["settings"]["seenDevices"][0] = {
         modelId: deviceModelId as DeviceModelId, // We might have invalid values in the store
         deviceInfo: aDeviceInfoBuilder(),
         apps: [],
@@ -80,7 +80,7 @@ describe("lastSeenDeviceSelector", () => {
         ...({} as State),
         settings: {
           ...SETTINGS_INITIAL_STATE,
-          lastSeenDevice,
+          seenDevices: [lastSeenDevice],
         },
       };
 

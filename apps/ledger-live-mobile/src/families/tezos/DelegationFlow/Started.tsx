@@ -71,7 +71,12 @@ export default function DelegationStarted({ navigation, route }: Props) {
           </Link>
         </Flex>
         <Flex p={6}>
-          <Button event="DelegationStartedBtn" onPress={onNext} type="main">
+          <Button
+            event="DelegationStartedBtn"
+            onPress={onNext}
+            type="main"
+            testID="tezos-delegation-start-button"
+          >
             <Trans i18nKey="delegation.started.cta" />
           </Button>
         </Flex>

@@ -1,5 +1,17 @@
 # @ledgerhq/cryptoassets
 
+## 13.11.0
+
+### Minor Changes
+
+- [#9091](https://github.com/LedgerHQ/ledger-live/pull/9091) [`ff40e9a`](https://github.com/LedgerHQ/ledger-live/commit/ff40e9a00d325e5b46cb069936ba2a5781c601b5) Thanks [@meriadec](https://github.com/meriadec)! - fix(cryptoassets): update TOMO magnitude to 18
+
+## 13.11.0-next.0
+
+### Minor Changes
+
+- [#9091](https://github.com/LedgerHQ/ledger-live/pull/9091) [`ff40e9a`](https://github.com/LedgerHQ/ledger-live/commit/ff40e9a00d325e5b46cb069936ba2a5781c601b5) Thanks [@meriadec](https://github.com/meriadec)! - fix(cryptoassets): update TOMO magnitude to 18
+
 ## 13.10.0
 
 ### Minor Changes

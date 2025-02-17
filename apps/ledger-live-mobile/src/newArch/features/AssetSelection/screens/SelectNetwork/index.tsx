@@ -5,7 +5,6 @@ import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import { ScreenName } from "~/const";
 import { TrackScreen } from "~/analytics";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
-import * as Animatable from "react-native-animatable";
 import BigCurrencyRow from "~/components/BigCurrencyRow";
 import { CryptoWithAccounts } from "./types";
 import { AssetSelectionNavigatorParamsList } from "../../types";
@@ -13,15 +12,16 @@ import useSelectNetworkViewModel from "./useSelectNetworkViewModel";
 import NetworkBanner from "../../components/NetworkBanner";
 import { LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 import useAnalytics from "../../../../hooks/useAnalytics";
+import Animated from "react-native-reanimated";
+import useBannerAnimation from "./useBannerAnimation";
 
 const keyExtractor = (elem: CryptoWithAccounts) => elem.crypto.id;
-
-const AnimatedView = Animatable.View;
 
 export default function SelectNetwork({
   route,
 }: StackNavigatorProps<AssetSelectionNavigatorParamsList, ScreenName.SelectNetwork>) {
-  const { filterCurrencyIds, context, currency, inline, sourceScreenName } = route.params;
+  const { filterCurrencyIds, context, currency, inline, sourceScreenName, onSuccess } =
+    route.params;
   const { t } = useTranslation();
   const { analyticsMetadata } = useAnalytics(context, sourceScreenName);
 
@@ -30,12 +30,12 @@ export default function SelectNetwork({
     clickLearn,
     sortedCryptoCurrenciesWithAccounts,
     onPressItem,
-    displayBanner,
     titleText,
     subtitleText,
     titleTestId,
     subTitleTestId,
     listTestId,
+    displayBanner,
     providersLoadingStatus,
   } = useSelectNetworkViewModel({
     filterCurrencyIds,
@@ -43,7 +43,10 @@ export default function SelectNetwork({
     currency,
     inline,
     analyticsMetadata,
+    onSuccess,
   });
+
+  const { onBannerLayout, animatedStyle } = useBannerAnimation({ displayBanner });
 
   const renderItem = useCallback(
     ({ item }: { item: CryptoWithAccounts }) => (
@@ -97,15 +100,9 @@ export default function SelectNetwork({
           </Flex>
         )}
       </Flex>
-      {displayBanner ? (
-        <AnimatedView animation="fadeInUp" delay={50} duration={300}>
-          <NetworkBanner hideBanner={hideBanner} onPress={clickLearn} />
-        </AnimatedView>
-      ) : (
-        <AnimatedView animation="fadeOutDown" delay={50} duration={300}>
-          <NetworkBanner hideBanner={hideBanner} onPress={clickLearn} />
-        </AnimatedView>
-      )}
+      <Animated.View style={[animatedStyle]}>
+        <NetworkBanner hideBanner={hideBanner} onLayout={onBannerLayout} onPress={clickLearn} />
+      </Animated.View>
     </>
   );
 }

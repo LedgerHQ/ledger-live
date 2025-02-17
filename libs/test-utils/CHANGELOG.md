@@ -1,5 +1,19 @@
 # @ledgerhq/test-utils
 
+## 0.2.25
+
+### Patch Changes
+
+- Updated dependencies [[`9cd8b2a`](https://github.com/LedgerHQ/ledger-live/commit/9cd8b2ae451122c1c40b1beaf3d5d75892bf2c92), [`29909e6`](https://github.com/LedgerHQ/ledger-live/commit/29909e6a797a7fa0467f72dfd717903770878a55), [`42f1657`](https://github.com/LedgerHQ/ledger-live/commit/42f1657f8678474b9974f6105c76eae55511b0e6), [`1bd0955`](https://github.com/LedgerHQ/ledger-live/commit/1bd0955280a92fab7cf800b49d0ca5314ecbbdc9), [`c48d22f`](https://github.com/LedgerHQ/ledger-live/commit/c48d22fab07f856d7e2bcca67ea35446b26f1048), [`49cb00c`](https://github.com/LedgerHQ/ledger-live/commit/49cb00cca4ac96634a4e052ec6a007a19cb73ed5)]:
+  - @ledgerhq/live-common@34.22.0
+
+## 0.2.25-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`9cd8b2a`](https://github.com/LedgerHQ/ledger-live/commit/9cd8b2ae451122c1c40b1beaf3d5d75892bf2c92), [`29909e6`](https://github.com/LedgerHQ/ledger-live/commit/29909e6a797a7fa0467f72dfd717903770878a55), [`42f1657`](https://github.com/LedgerHQ/ledger-live/commit/42f1657f8678474b9974f6105c76eae55511b0e6), [`1bd0955`](https://github.com/LedgerHQ/ledger-live/commit/1bd0955280a92fab7cf800b49d0ca5314ecbbdc9), [`c48d22f`](https://github.com/LedgerHQ/ledger-live/commit/c48d22fab07f856d7e2bcca67ea35446b26f1048), [`49cb00c`](https://github.com/LedgerHQ/ledger-live/commit/49cb00cca4ac96634a4e052ec6a007a19cb73ed5)]:
+  - @ledgerhq/live-common@34.22.0-next.0
+
 ## 0.2.24
 
 ### Patch Changes

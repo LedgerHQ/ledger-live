@@ -2836,7 +2836,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       {
         name: "TOMO",
         code: "TOMO",
-        magnitude: 8,
+        magnitude: 18,
       },
     ],
     explorerViews: [

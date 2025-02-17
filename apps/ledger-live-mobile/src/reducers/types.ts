@@ -33,7 +33,7 @@ import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { Steps } from "LLM/features/WalletSync/types/Activation";
 import { SupportedBlockchainsType, BlockchainsType } from "@ledgerhq/live-nft/supported";
 import { NftStatus } from "@ledgerhq/live-nft/types";
-
+import { type TabListType as TabPortfolioAssetsType } from "~/screens/Portfolio/useListsAnimation";
 // === ACCOUNT STATE ===
 
 export type AccountsState = {
@@ -236,7 +236,7 @@ export type SettingsState = {
     acceptedProviders: string[];
     selectableCurrencies: string[];
   };
-  lastSeenDevice: DeviceModelInfo | null;
+  seenDevices: DeviceModelInfo[];
   knownDeviceModelIds: Record<DeviceModelId, boolean>;
   hasSeenStaxEnabledNftsPopup: boolean;
   lastConnectedDevice: Device | null;
@@ -277,6 +277,7 @@ export type SettingsState = {
   starredMarketCoins: string[];
   fromLedgerSyncOnboarding: boolean;
   mevProtection: boolean;
+  selectedTabPortfolioAssets: TabPortfolioAssetsType;
 };
 
 export type NotificationsSettings = {

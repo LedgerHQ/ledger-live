@@ -454,7 +454,9 @@
       "ada_title": "Ledger Nano S™ does not support swapping Cardano",
       "ada_description": "To swap Cardano, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
       "apt_title": "Ledger Nano S™ does not support swapping Aptos",
-      "apt_description": "To swap Aptos, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
+      "apt_description": "To swap Aptos, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+      "cosmos_title": "Ledger Nano S™ does not support swapping Cosmos",
+      "cosmos_description": "To swap Cosmos, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
     },
     "providers": {
       "title": "Choose a provider to swap crypto",
@@ -6250,6 +6252,9 @@
     },
     "SolanaTokenAccounNotInitialized": {
       "title": "Account not initialized"
+    },
+    "SolanaTokenRecipientIsSenderATA": {
+      "title": "Recipient address is the same as the sender token address"
     },
     "SolanaMemoIsTooLong": {
       "title": "Memo is too long. Max length is {{maxLength}}"
