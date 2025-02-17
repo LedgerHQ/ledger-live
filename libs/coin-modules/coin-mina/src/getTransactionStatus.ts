@@ -10,10 +10,8 @@ import {
 import type { Transaction, MinaAccount, TransactionStatus, StatusErrorMap } from "./types";
 import { isValidAddress, isValidMemo, getMaxAmount, getTotalSpent } from "./logic";
 import { AccountBridge } from "@ledgerhq/types-live";
-import { AccountCreationFeeWarning, InvalidMemoMina } from "./errors";
-import { MINA_ACCOUNT_CREATION_FEE } from "./consts";
-// import { fetchAccountBalance } from "./api";
-// import {} from "./constants";
+import { AccountCreationFeeWarning, InvalidMemoMina, AmountTooSmall } from "./errors";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
 
 const getTransactionStatus: AccountBridge<
   Transaction,
@@ -44,11 +42,23 @@ const getTransactionStatus: AccountBridge<
     errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
   }
 
-  if (t.amount.lt(MINA_ACCOUNT_CREATION_FEE)) {
-    warnings.amount = new AccountCreationFeeWarning();
+  if (t.fees?.accountCreationFee.gt(0)) {
+    const fee = formatCurrencyUnit(a.currency.units[0], t.fees.accountCreationFee, {
+      showCode: true,
+      disableRounding: true,
+    });
+    warnings.recipient = new AccountCreationFeeWarning(undefined, {
+      fee,
+    });
+
+    if (t.amount.lt(t.fees.accountCreationFee) && t.amount.gt(0)) {
+      errors.amount = new AmountTooSmall(undefined, {
+        amount: fee,
+      });
+    }
   }
 
-  const estimatedFees = t.fees || new BigNumber(0);
+  const estimatedFees = t.fees.fee || new BigNumber(0);
 
   const maxAmountWithFees = getMaxAmount(a, t, estimatedFees);
 
