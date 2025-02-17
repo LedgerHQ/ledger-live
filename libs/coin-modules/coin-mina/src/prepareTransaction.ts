@@ -9,7 +9,7 @@ export const prepareTransaction: AccountBridge<
   Transaction,
   MinaAccount
 >["prepareTransaction"] = async (a: Account, t: Transaction) => {
-  const fees = await getEstimatedFees(t, a.freshAddress);
+  const { fee, accountCreationFee } = await getEstimatedFees(t, a.freshAddress);
 
   const amount = t.useAllAmount
     ? await estimateMaxSpendable({
@@ -18,7 +18,11 @@ export const prepareTransaction: AccountBridge<
       })
     : t.amount;
 
+  // if (accountCreationFee.gt(0) && amount.lt(accountCreationFee)) {
+  //   amount = accountCreationFee;
+  // }
+
   const nonce = await getNonce(t, a.freshAddress);
 
-  return updateTransaction(t, { fees, amount, nonce });
+  return updateTransaction(t, { fees: { fee, accountCreationFee }, amount, nonce });
 };

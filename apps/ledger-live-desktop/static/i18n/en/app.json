@@ -1879,7 +1879,8 @@
       "palletMethod": "Method",
       "transferAmount": "Transfer Amount",
       "validatorsCount": "Validators ({{number}})",
-      "version": "Version"
+      "version": "Version",
+      "accountCreationFee": "Account Creation Fee"
     }
   },
   "operationList": {
@@ -6579,7 +6580,10 @@
       "title": "Memo text cannot be longer than 32 characters"
     },
     "AccountCreationFeeWarning": {
-      "title": "This transaction may fail if the recipient account has no previous transactions"
+      "title": "This transaction will incur an account creation fee of {{fee}}"
+    },
+    "AmountTooSmall": {
+      "title": "Minimum required amount for this transaction is {{amount}}"
     }
   },
   "cryptoOrg": {

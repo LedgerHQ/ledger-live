@@ -9,3 +9,8 @@ export const InvalidMemoMina = createCustomErrorClass("InvalidMemoMina");
  * When the user sends less than the account creation fee of 1 MINA
  */
 export const AccountCreationFeeWarning = createCustomErrorClass("AccountCreationFeeWarning");
+
+/*
+ * When the amount is less than the account creation fee of 1 MINA
+ */
+export const AmountTooSmall = createCustomErrorClass("AmountTooSmall");
