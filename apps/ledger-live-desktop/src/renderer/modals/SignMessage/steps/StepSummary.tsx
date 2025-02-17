@@ -184,7 +184,7 @@ export default function StepSummary({ account, message: messageData }: StepProps
           </Box>
         </Box>
       </Box>
-      <Separator color="red" />
+      <Separator />
 
       {!isACREWithdraw ? (
         messageData.standard === "EIP712" ? (
