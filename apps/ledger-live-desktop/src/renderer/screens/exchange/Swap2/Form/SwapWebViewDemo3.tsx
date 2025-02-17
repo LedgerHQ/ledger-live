@@ -128,7 +128,6 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
   const currentVersion = __APP_VERSION__;
   const enablePlatformDevTools = useSelector(enablePlatformDevToolsSelector);
   const devMode = useSelector(developerModeSelector);
-  const shareAnalytics = useSelector(shareAnalyticsSelector);
   const accounts = useSelector(flattenAccountsSelector);
   const { t } = useTranslation();
   const swapDefaultTrack = useGetSwapTrackingProperties();
@@ -486,7 +485,6 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
             swapApiBase: SWAP_API_BASE,
             swapUserIp: SWAP_USER_IP,
             devMode,
-            shareAnalytics,
             lastSeenDevice: lastSeenDevice?.modelId,
             currentVersion,
             platform: "LLD",

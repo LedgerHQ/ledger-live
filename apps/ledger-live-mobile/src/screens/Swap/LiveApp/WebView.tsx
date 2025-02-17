@@ -13,6 +13,7 @@ import {
   counterValueCurrencySelector,
   discreetModeSelector,
   exportSettingsSelector,
+  lastSeenDeviceSelector,
 } from "~/reducers/settings";
 import { useSwapLiveAppCustomHandlers } from "./hooks/useSwapLiveAppCustomHandlers";
 
@@ -32,6 +33,7 @@ export function WebView({ manifest, setWebviewState }: Props) {
   const SWAP_USER_IP = useEnv("SWAP_USER_IP");
   const exportSettings = useSelector(exportSettingsSelector);
   const devMode = exportSettings.developerModeEnabled.toString();
+  const lastSeenDevice = useSelector(lastSeenDeviceSelector);
 
   return (
     <Flex flex={1}>
@@ -48,8 +50,10 @@ export function WebView({ manifest, setWebviewState }: Props) {
           locale: language, // LLM doesn't support different locales. By doing this we don't have to have specific LLM/LLD logic in earn, and in future if LLM supports locales we will change this from `language` to `locale`
           countryLocale,
           currencyTicker,
+          lastSeenDevice: lastSeenDevice?.modelId,
           discreetMode: discreet ? "true" : "false",
           OS: Platform.OS,
+          platform: "LLM", // need consitent format with LLD, Platform doesn't work
         }}
       />
     </Flex>
