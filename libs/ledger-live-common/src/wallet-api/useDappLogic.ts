@@ -107,6 +107,10 @@ function useDappAccountLogic({
   }, [currentAccount, accounts]);
 
   const firstAccountAvailable = useMemo(() => {
+    // Return an account for manifests with wildcard currencyIds
+    if (currencyIds.includes("**") && accounts.length)
+      return getParentAccount(accounts[0], accounts);
+
     const account = accounts.find(account => {
       if (account.type === "Account" && currencyIds.includes(account.currency.id)) {
         return account;

@@ -39,8 +39,8 @@ export function WebView({ manifest, setWebviewState }: Props) {
 
   // ScopeProvider required to prevent conflicts between Swap's Webview instance and deeplink instances
   return (
-    <Flex flex={1}>
-      <ScopeProvider atoms={[currentAccountAtom]}>
+    <ScopeProvider atoms={[currentAccountAtom]}>
+      <Flex flex={1}>
         <Web3AppWebview
           manifest={manifest}
           customHandlers={customHandlers}
@@ -60,7 +60,7 @@ export function WebView({ manifest, setWebviewState }: Props) {
             platform: "LLM", // need consitent format with LLD, Platform doesn't work
           }}
         />
-      </ScopeProvider>
-    </Flex>
+      </Flex>
+    </ScopeProvider>
   );
 }
