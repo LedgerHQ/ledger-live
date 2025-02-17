@@ -809,6 +809,12 @@
     "SolanaTokenAccountFrozen" : {
       "title" : "Token hesabı varlıkları donduruldu"
     },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "Hesap başlatılmadı"
+    },
+    "SolanaTokenRecipientIsSenderATA" : {
+      "title" : "Alıcının adresi, gönderenin token adresiyle aynı"
+    },
     "SolanaAddressOfEd25519" : {
       "title" : "Adres ed25519 eğrisi dışında"
     },
@@ -2903,7 +2909,8 @@
       "analytics" : "Analiz",
       "analyticsDesc" : "Ledger Live'ın performansının ölçülebilmesi ve hem uygulamanın hem de deneyiminizin geliştirilebilmesi için uygulama kullanım verilerini Ledger'ın toplamasına izin verin.",
       "mevProtection" : "MEV Koruması",
-      "mevProtectionDesc" : "Ethereum'da daha güvenilir işlemler için MEV Korumasını etkinleştirin",
+      "mevProtectionDesc" : "Enable MEV Protection for more reliable transactions on Ethereum.",
+      "mevProtectionLearnMore" : "Privacy notice",
       "personalizedRecommendations" : "Kişiselleştirilmiş deneyim",
       "personalizedRecommendationsDesc" : "Size kişiselleştirilmiş öneriler ve tercihlerinize uygun içerikler sunabilmemiz ve pazarlama kampanyalarımızın performansını ölçebilmemiz için uygulama kullanım verilerini Ledger'ın toplamasına izin verin.",
       "analyticsModal" : {
@@ -3351,7 +3358,7 @@
       },
       "form" : {
         "validate" : "Takas işlemini onayla",
-        "tab" : "Takas et",
+        "tab" : "Takas",
         "button" : "Devam",
         "from" : "Gönderici",
         "to" : "Alıcı",
@@ -3512,7 +3519,9 @@
         "ada_title" : "Ledger Nano S™, Cardano takasını desteklemez",
         "ada_description" : "Cardano takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın.",
         "apt_title" : "Ledger Nano S™, Aptos takasını desteklemez",
-        "apt_description" : "Aptos takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazı kullanın."
+        "apt_description" : "Aptos takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazı kullanın.",
+        "cosmos_title" : "Ledger Nano S™, Cosmos takasını desteklemez",
+        "cosmos_description" : "Cosmos takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazı kullanın."
       }
     },
     "lending" : {
@@ -4086,6 +4095,7 @@
       "ctaStopScan" : "Taramayı durdur",
       "confirm" : "Onayla",
       "scanningTitle" : "Blok Zincirindeki mevcut tüm hesaplar aranıyor...",
+      "whichAddressType" : "Adres türünün nasıl seçileceğini öğrenin",
       "sections" : {
         "importable" : {
           "title" : "{{count}} hesap bulundu",
@@ -7219,6 +7229,14 @@
       "title" : "Varlığın ait olduğu blok zinciri ağını seçin",
       "detectedAccounts" : "{{count}} hesap (algılanan)",
       "detectedAccounts_plural" : "{{count}} hesap (algılanan)"
+    }
+  },
+  "emptyList" : {
+    "accounts" : {
+      "title" : "No accounts found",
+      "subTitle" : "Looks like you haven’t added an account yet. Get started now.",
+      "cta" : "Add an account",
+      "link" : "Need help? Learn how to add an account to Ledger Live."
     }
   }
 }
