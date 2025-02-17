@@ -140,6 +140,41 @@ export class SwapPage extends AppPage {
     throw new Error("No valid providers found");
   }
 
+  @step('Check "Best Offer" corresponds to the best quote')
+  async checkBestOffer(electronApp: ElectronApplication) {
+    // Get all swap providers available
+    const [, webview] = electronApp.windows();
+    const quoteContainers = await webview
+      .locator(
+        '[data-testid^="quote-container-"][data-testid$="-fixed"], [data-testid^="quote-container-"][data-testid$="-float"]',
+      )
+      .allTextContents();
+
+    // Extract the quotes and the fees for each providers, filtering out invalid entries
+    const quotes = quoteContainers
+      .map(quote => {
+        const match = quote.match(/\$(\d+\.\d+)/);
+        const fee = quote.match(/Network Fees[^$]*\$(\d+\.\d+)/);
+        if (match && fee) {
+          const rate = parseFloat(match[1]);
+          const fees = parseFloat(fee[1]);
+          return { rate, fees, quote };
+        }
+        return null;
+      })
+      .filter(Boolean);
+
+    // Find the actual best offer by doing rate-fees and checking it displays "Best Offer"
+    const bestOffer = quotes.reduce(
+      (max, current) =>
+        current && (!max || current.rate - current.fees > max.rate - max.fees) ? current : max,
+      null,
+    );
+
+    expect(bestOffer?.quote).toContain("Best Offer");
+  }
+
+  @step("Wait for exchange to be available")
   async waitForExchangeToBeAvailable() {
     return waitFor(() => this.exchangeButton.isEnabled(), 250, 10000);
   }
