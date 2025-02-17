@@ -19,7 +19,7 @@ export const buildTransaction = async (
       senderAddress: a.freshAddress,
       receiverAddress: t.recipient,
       amount: t.amount.toNumber(),
-      fee: t.fees.toNumber(),
+      fee: t.fees.fee.toNumber(),
       nonce: t.nonce,
       memo: t.memo ?? "",
       networkId: MINA_MAINNET_NETWORK_ID,

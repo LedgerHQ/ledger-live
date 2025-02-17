@@ -24,6 +24,7 @@ export const mapRosettaTxnToOperation = (
 
     let value = new BigNumber(0);
     let fee = new BigNumber(0);
+    let accountCreationFee = new BigNumber(0);
 
     let fromAccount: string = "";
     let toAccount: string = "";
@@ -60,7 +61,7 @@ export const mapRosettaTxnToOperation = (
           continue;
         }
         case "account_creation_fee_via_payment": {
-          fee = fee.plus(opValue.times(-1));
+          accountCreationFee = opValue.times(-1);
           continue;
         }
       }
@@ -84,6 +85,7 @@ export const mapRosettaTxnToOperation = (
       date,
       extra: {
         memo,
+        accountCreationFee: accountCreationFee.toString(),
       },
     };
 
@@ -92,6 +94,7 @@ export const mapRosettaTxnToOperation = (
       const type = "OUT";
       ops.push({
         ...op,
+        value: value.plus(fee),
         type,
         id: encodeOperationId(accountId, hash, type),
       });
@@ -114,7 +117,7 @@ export const mapRosettaTxnToOperation = (
   }
 };
 
-export const getAccountShape: GetAccountShape = async info => {
+export const getAccountShape: GetAccountShape<MinaAccount> = async info => {
   const { address, initialAccount, currency, derivationMode } = info;
   const oldOperations = initialAccount?.operations || [];
 
@@ -129,7 +132,7 @@ export const getAccountShape: GetAccountShape = async info => {
   // log("debug", "getAccountShape, address: ", { address });
   const { blockHeight, balance, spendableBalance } = await getAccount(address);
 
-  const rosettaTxns = await getTransactions(address);
+  const rosettaTxns = await getTransactions(address, initialAccount?.operationsCount);
   const newOperations = rosettaTxns
     .flatMap(t => mapRosettaTxnToOperation(accountId, address, t))
     .flat();

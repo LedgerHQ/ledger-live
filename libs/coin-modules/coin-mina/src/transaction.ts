@@ -33,7 +33,10 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   return {
     ...common,
     family: tr.family,
-    fees: new BigNumber(tr.fees),
+    fees: {
+      fee: new BigNumber(tr.fees.fee),
+      accountCreationFee: new BigNumber(tr.fees.accountCreationFee),
+    },
     amount: new BigNumber(tr.amount),
     memo: tr.memo,
     nonce: tr.nonce,
@@ -47,7 +50,10 @@ const toTransactionRaw = (t: Transaction): TransactionRaw => {
     ...common,
     family: t.family,
     amount: t.amount.toFixed(),
-    fees: t.fees.toString(),
+    fees: {
+      fee: t.fees.fee.toString(),
+      accountCreationFee: t.fees.accountCreationFee.toString(),
+    },
     memo: t.memo ?? undefined,
     nonce: t.nonce,
   };
