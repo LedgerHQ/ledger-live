@@ -10,7 +10,10 @@ export const createTransaction: AccountBridge<
   amount: new BigNumber(0),
   recipient: "",
   useAllAmount: false,
-  fees: new BigNumber(0),
+  fees: {
+    fee: new BigNumber(0),
+    accountCreationFee: new BigNumber(0),
+  },
   memo: undefined,
   nonce: 0,
 });

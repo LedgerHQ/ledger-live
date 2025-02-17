@@ -23,9 +23,12 @@ const buildOptimisticOperation = (
   transaction: Transaction,
   fee: BigNumber,
 ): MinaOperation => {
-  let value = new BigNumber(transaction.amount);
+  let value = new BigNumber(transaction.amount).plus(fee);
 
-  value = value.plus(fee);
+  if (transaction.fees?.accountCreationFee.gt(0)) {
+    value = value.minus(transaction.fees.accountCreationFee);
+  }
+
   const type: OperationType = "OUT";
 
   const operation: MinaOperation = {
@@ -42,6 +45,7 @@ const buildOptimisticOperation = (
     date: new Date(),
     extra: {
       memo: transaction.memo,
+      accountCreationFee: transaction.fees.accountCreationFee.toString(),
     },
   };
 
@@ -89,7 +93,7 @@ export const buildSignOperation =
         const operation = buildOptimisticOperation(
           account,
           transaction,
-          transaction.fees ?? new BigNumber(0),
+          transaction.fees.fee ?? new BigNumber(0),
         );
         const signedSerializedTx = JSON.stringify(signedTransaction);
 

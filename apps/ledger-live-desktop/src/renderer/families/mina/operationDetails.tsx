@@ -14,16 +14,32 @@ type OperationDetailsExtraProps = {
 
 const OperationDetailsExtra = ({ operation }: OperationDetailsExtraProps) => {
   const { extra } = operation;
-  return !extra.memo ? null : (
-    <OpDetailsSection key={extra.memo}>
-      <OpDetailsTitle>
-        <Trans i18nKey={`operationDetails.extra.memo`} />
-      </OpDetailsTitle>
-      <OpDetailsData>
-        <Ellipsis>{extra.memo}</Ellipsis>
-      </OpDetailsData>
-    </OpDetailsSection>
-  );
+  const sections = [];
+  if (extra.memo) {
+    sections.push(
+      <OpDetailsSection key={extra.memo}>
+        <OpDetailsTitle>
+          <Trans i18nKey={`operationDetails.extra.memo`} />
+        </OpDetailsTitle>
+        <OpDetailsData>
+          <Ellipsis>{extra.memo}</Ellipsis>
+        </OpDetailsData>
+      </OpDetailsSection>,
+    );
+  }
+
+  if (extra.accountCreationFee !== "0") {
+    sections.push(
+      <OpDetailsSection key={extra.accountCreationFee}>
+        <OpDetailsTitle>
+          <Trans i18nKey={`operationDetails.extra.accountCreationFee`} />
+        </OpDetailsTitle>
+        <OpDetailsData>{extra.accountCreationFee}</OpDetailsData>
+      </OpDetailsSection>,
+    );
+  }
+
+  return sections;
 };
 
 export default {
