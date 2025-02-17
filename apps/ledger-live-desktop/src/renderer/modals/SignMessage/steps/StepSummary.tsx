@@ -1,5 +1,6 @@
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import type { MessageProperties } from "@ledgerhq/types-live";
+import { Flex } from "@ledgerhq/react-ui";
 import React, { memo, useEffect, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import styled from "styled-components";
@@ -79,11 +80,7 @@ const MessageProperty = memo(
       : undefined;
 
     return (
-      <Box
-        style={{ flexDirection: "row", justifyContent: "space-between", maxWidth: "100%" }}
-        flex="1"
-        mb={20}
-      >
+      <Flex justifyContent="space-between" mb={20}>
         <Text ff="Inter|Medium" color="palette.text.shade40" fontSize={4}>
           {label}
         </Text>
@@ -123,7 +120,7 @@ const MessageProperty = memo(
             </PropertiesList>
           )}
         </Text>
-      </Box>
+      </Flex>
     );
   },
 );
