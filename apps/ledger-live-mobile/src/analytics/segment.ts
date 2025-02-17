@@ -180,9 +180,10 @@ const extraProperties = async (store: AppStore) => {
   const language = sensitiveAnalytics ? null : languageSelector(state);
   const region = sensitiveAnalytics ? null : localeSelector(state);
   const devices = seenDevicesSelector(state);
+  const bleDevices = bleDevicesSelector(state);
   const satisfaction = satisfactionSelector(state);
   const accounts = accountsSelector(state);
-  const lastDevice = devices.at(-1) || bleDevicesSelector(state).at(-1);
+  const lastDevice = devices.at(-1) || bleDevices.at(-1);
   const deviceInfo = lastDevice
     ? {
         deviceVersion: lastDevice.deviceInfo?.version,
@@ -237,6 +238,14 @@ const extraProperties = async (store: AppStore) => {
   const mevProtectionAttributes = getMEVAttributes(state);
   const addAccountsAttributes = getNewAddAccountsAttribues();
 
+  // NOTE: Currently there no reliable way to uniquely identify devices from DeviceModelInfo.
+  // So device counts is approximated as follows:
+  // Each model of device seen which was not connected in Bluetooth is counted as a 1 device.
+  const seenBleModels = bleDevices.map(d => d.modelId);
+  const usbDeviceModelSeen = devices.filter(d => !seenBleModels.includes(d.modelId));
+  const devicesCount = bleDevices.length + usbDeviceModelSeen.length;
+  const modelIdQtyList = { ...aggregateData(bleDevices), ...aggregateData(usbDeviceModelSeen) };
+
   return {
     ...mandatoryProperties,
     appVersion,
@@ -250,8 +259,8 @@ const extraProperties = async (store: AppStore) => {
     platformOS: Platform.OS,
     platformVersion: Platform.Version,
     sessionId,
-    devicesCount: devices.length,
-    modelIdQtyList: aggregateData(devices),
+    devicesCount,
+    modelIdQtyList,
     modelIdList: getUniqueModelIdList(devices),
     isReborn,
     onboardingHasDevice,

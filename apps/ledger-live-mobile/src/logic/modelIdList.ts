@@ -1,6 +1,6 @@
 import type { DeviceModelInfo } from "@ledgerhq/types-live";
 
-export const aggregateData = (devices: DeviceModelInfo[]) => {
+export const aggregateData = (devices: Pick<DeviceModelInfo, "modelId">[]) => {
   const aggregatedData = new Map<string, number>();
 
   devices.forEach(device => {
