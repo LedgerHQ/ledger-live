@@ -182,7 +182,6 @@ export const getEIP712FieldsDisplayedOnNano = async (
   if (!isEIP712Message(messageData)) {
     return null;
   }
-
   const { EIP712Domain, ...otherTypes } = messageData.types;
   const displayedInfos: { label: string; value: string | string[] }[] = [];
   const filters = await getFiltersForMessage(messageData, false, calServiceURL);
@@ -268,9 +267,7 @@ export const getEIP712FieldsDisplayedOnNano = async (
         value: getValueFromPath(field.path, messageData),
       });
     }
-
   }
-
 
   return displayedInfos;
 };
