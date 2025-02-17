@@ -4,7 +4,7 @@ import BigNumber from "bignumber.js";
 import expect from "expect";
 
 import type { Transaction } from "./types";
-import { genericTestDestination, pickSiblings, botTest } from "@ledgerhq/coin-framework/bot/specs";
+import { genericTestDestination, botTest, pickSiblings } from "@ledgerhq/coin-framework/bot/specs";
 import type { AppSpec } from "@ledgerhq/coin-framework/bot/types";
 import { acceptTransaction } from "./speculos-deviceActions";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
@@ -63,7 +63,7 @@ const minaSpecs: AppSpec<Transaction> = {
       test: ({ accountBeforeTransaction, operation, account, transaction }) => {
         botTest("account spendable balance decreased with operation", () =>
           expect(account.spendableBalance).toEqual(
-            accountBeforeTransaction.spendableBalance.minus(operation.value.minus(operation.fee)),
+            accountBeforeTransaction.spendableBalance.minus(operation.value),
           ),
         );
 
@@ -76,50 +76,45 @@ const minaSpecs: AppSpec<Transaction> = {
         }
       },
     },
-    // {
-    //   name: "Transfer Max",
-    //   maxRun: 1,
-    //   transaction: ({ account, siblings, bridge }) => {
-    //     const updates: Array<Partial<Transaction>> = [
-    //       {
-    //         recipient: pickSiblings(siblings, maxAccount).freshAddress,
-    //       },
-    //       {
-    //         useAllAmount: true,
-    //       },
-    //     ];
+    {
+      name: "Transfer Max",
+      maxRun: 1,
+      transaction: ({ account, siblings, bridge }) => {
+        const updates: Array<Partial<Transaction>> = [
+          {
+            recipient: pickSiblings(siblings, maxAccount).freshAddress,
+          },
+          {
+            useAllAmount: true,
+          },
+        ];
 
-    //     // if (Math.random() < 0.5) {
-    //     //   updates.push({
-    //     //     transferId: getRandomTransferID(),
-    //     //   });
-    //     // }
+        if (Math.random() < 0.5) {
+          updates.push({
+            memo: getRandomTransferID(),
+          });
+        }
 
-    //     return {
-    //       transaction: bridge.createTransaction(account),
-    //       updates,
-    //     };
-    //   },
-    //   expectStatusWarnings: _ => {
-    //     return {
-    //       amount: MayBlockAccountError,
-    //     };
-    //   },
-    //   testDestination: genericTestDestination,
-    //   test: ({ account }) => {
-    //     botTest("account spendable balance is zero", () =>
-    //       expect(account.spendableBalance.toString()).toBe("0"),
-    //     );
+        return {
+          transaction: bridge.createTransaction(account),
+          updates,
+        };
+      },
+      testDestination: genericTestDestination,
+      test: ({ account, transaction, operation }) => {
+        botTest("account spendable balance is zero", () =>
+          expect(account.spendableBalance.toString()).toBe("0"),
+        );
 
-    //     // if (transaction.transferId) {
-    //     //   botTest("operation transferId", () =>
-    //     //     expect(operation.extra).toMatchObject({
-    //     //       transferId: transaction.transferId,
-    //     //     }),
-    //     //   );
-    //     // }
-    //   },
-    // },
+        if (transaction.memo) {
+          botTest("operation memo", () =>
+            expect(operation.extra).toMatchObject({
+              memo: transaction.memo,
+            }),
+          );
+        }
+      },
+    },
   ],
 };
 
