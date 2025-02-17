@@ -30,9 +30,12 @@ export const getAccount = async (address: string): Promise<MinaAPIAccount> => {
   };
 };
 
-export const getTransactions = async (address: string): Promise<RosettaTransaction[]> => {
-  const txns = await fetchAccountTransactions(address);
-  return txns.transactions.sort((a, b) => b.timestamp - a.timestamp);
+export const getTransactions = async (
+  address: string,
+  offset: number = 0,
+): Promise<RosettaTransaction[]> => {
+  const txns = await fetchAccountTransactions(address, offset);
+  return txns.sort((a, b) => b.timestamp - a.timestamp);
 };
 
 export const broadcastTransaction = async (txn: MinaSignedTransaction): Promise<string> => {
@@ -57,19 +60,32 @@ export const broadcastTransaction = async (txn: MinaSignedTransaction): Promise<
   return data.transaction_identifier.hash;
 };
 
-export const getFees = async (txn: Transaction, address: string): Promise<BigNumber> => {
+export const getFees = async (
+  txn: Transaction,
+  address: string,
+): Promise<{
+  fee: BigNumber;
+  accountCreationFee: BigNumber;
+}> => {
   if (!txn.amount || !txn.recipient || !isValidAddress(txn.recipient)) {
-    return txn.fees;
+    return { fee: txn.fees.fee, accountCreationFee: new BigNumber(0) };
   }
 
   const { data } = await fetchTransactionMetadata(
     address,
     txn.recipient,
-    txn.fees.toNumber(),
+    txn.fees.fee.toNumber(),
     txn.amount.toNumber(),
   );
 
-  return new BigNumber(data.suggested_fee[0].value);
+  const accountCreationFee = data.metadata.account_creation_fee
+    ? new BigNumber(data.metadata.account_creation_fee)
+    : new BigNumber(0);
+
+  return {
+    fee: new BigNumber(data.suggested_fee[0].value),
+    accountCreationFee,
+  };
 };
 
 export const getNonce = async (txn: Transaction, address: string): Promise<number> => {
@@ -84,7 +100,7 @@ export const getNonce = async (txn: Transaction, address: string): Promise<numbe
   const { data } = await fetchTransactionMetadata(
     address,
     txn.recipient,
-    txn.fees.toNumber(),
+    txn.fees.fee.toNumber(),
     txn.amount.toNumber(),
   );
 

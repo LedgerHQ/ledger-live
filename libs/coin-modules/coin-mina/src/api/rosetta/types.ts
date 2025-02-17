@@ -94,6 +94,7 @@ export type RosettaTransaction = {
 export type FetchAccountTransactionsResponse = {
   transactions: RosettaTransaction[];
   total_count: number;
+  next_offset?: number;
 };
 
 export type RosettaPreprocessResponse = {
@@ -110,6 +111,7 @@ export type RosettaMetadataResponse = {
     nonce: string;
     token_id: string;
     receiver: string;
+    account_creation_fee?: string;
   };
   suggested_fee: Array<{
     value: string;

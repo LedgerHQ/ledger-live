@@ -6,9 +6,12 @@ import {
   RosettaMetadataResponse,
   RosettaPreprocessResponse,
   RosettaSubmitResponse,
+  RosettaTransaction,
 } from "./types";
 import { getCoinConfig } from "../../config";
 import { addNetworkIdentifier, buildAccountIdentifier, makeTransferPayload } from "./utils";
+import { MAX_TRANSACTIONS_PER_PAGE } from "../../consts";
+import { LiveNetworkResponse } from "@ledgerhq/live-network/lib/network";
 
 const getRosettaUrl = (route: string): string => {
   const currencyConfig = getCoinConfig();
@@ -35,20 +38,35 @@ export const fetchAccountBalance = async (address: string) => {
   return data;
 };
 
-export const fetchAccountTransactions = async (address: string) => {
-  const { data } = await network<FetchAccountTransactionsResponse>({
-    method: "POST",
-    url: getRosettaUrl("/search/transactions"),
-    data: { ...addNetworkIdentifier(buildAccountIdentifier(address)), include_timestamp: true },
-  });
+export const fetchAccountTransactions = async (
+  address: string,
+  offset: number = 0,
+): Promise<RosettaTransaction[]> => {
+  const transactions: RosettaTransaction[] = [];
+  let currentOffset: number | undefined = offset;
+  while (currentOffset !== undefined) {
+    const response: LiveNetworkResponse<FetchAccountTransactionsResponse> =
+      await network<FetchAccountTransactionsResponse>({
+        method: "POST",
+        url: getRosettaUrl("/search/transactions"),
+        data: {
+          ...addNetworkIdentifier(buildAccountIdentifier(address)),
+          offset: currentOffset,
+          limit: MAX_TRANSACTIONS_PER_PAGE,
+          include_timestamp: true,
+        },
+      });
+    const { data } = response;
+    transactions.push(...data.transactions);
 
-  return data;
+    currentOffset = data.next_offset;
+  }
+
+  return transactions;
 };
 
 const rosettaPreprocess = async (from: string, to: string, feeNano: number, valueNano: number) => {
   const payload = makeTransferPayload(from, to, feeNano, valueNano);
-  // eslint-disable-next-line no-console
-  console.log("payload", JSON.stringify(payload, null, 2));
   const { data } = await network<RosettaPreprocessResponse>({
     method: "POST",
     url: getRosettaUrl("/construction/preprocess"),
