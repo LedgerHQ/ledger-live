@@ -42,7 +42,6 @@ import {
   enablePlatformDevToolsSelector,
   languageSelector,
   lastSeenDeviceSelector,
-  shareAnalyticsSelector,
 } from "~/renderer/reducers/settings";
 import { walletSelector } from "~/renderer/reducers/wallet";
 import { captureException } from "~/sentry/renderer";
