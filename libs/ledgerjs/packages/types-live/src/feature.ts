@@ -199,7 +199,7 @@ export type Features = CurrencyFeatures & {
   llmMemoTag: Feature_MemoTag;
   lldMemoTag: Feature_MemoTag;
   ldmkTransport: Feature_LdmkTransport;
-  llMevProtection: DefaultFeature;
+  llMevProtection: Feature_LlMevProtection;
   llmNetworkBasedAddAccountFlow: DefaultFeature;
   llCounterValueGranularitiesRates: Feature_LlCounterValueGranularitiesRates;
   llmRebornLP: Feature_LlmRebornLP;
@@ -547,6 +547,10 @@ export type Feature_LldLedgerSyncEntryPoints = Feature<{
 export type Feature_LlCounterValueGranularitiesRates = Feature<{
   daily: number;
   hourly: number;
+}>;
+
+export type Feature_LlMevProtection = Feature<{
+  link: string | null;
 }>;
 
 export type Feature_CounterValue = DefaultFeature;

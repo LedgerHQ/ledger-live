@@ -22,7 +22,6 @@ import {
   StackNavigatorNavigation,
   StackNavigatorProps,
 } from "~/components/RootNavigator/types/helpers";
-import { NavigationHeaderCloseButtonAdvanced } from "~/components/NavigationHeaderCloseButton";
 
 import useAnalytics from "LLM/hooks/useAnalytics";
 import { AddAccountsNavigatorParamList } from "~/components/RootNavigator/types/AddAccountsNavigator";
@@ -136,7 +135,6 @@ export default function Navigator() {
           headerTitle: "",
           headerLeft: () => null,
           headerTransparent: true,
-          headerRight: () => <NavigationHeaderCloseButtonAdvanced />,
         }}
         initialParams={{
           onCloseNavigation: onClose,

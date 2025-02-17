@@ -462,8 +462,8 @@ export function containsSubstringInEvent(targetString: string, events: string[])
   return result;
 }
 
-export async function takeScreenshot() {
-  const speculosApiPort = getEnv("SPECULOS_API_PORT");
+export async function takeScreenshot(port?: number): Promise<Buffer | undefined> {
+  const speculosApiPort = port ?? getEnv("SPECULOS_API_PORT");
   try {
     const response = await axios.get(`http://127.0.0.1:${speculosApiPort}/screenshot`, {
       responseType: "arraybuffer",
@@ -471,7 +471,6 @@ export async function takeScreenshot() {
     return response.data;
   } catch (error) {
     console.error("Error downloading speculos screenshot:", error);
-    throw error;
   }
 }
 

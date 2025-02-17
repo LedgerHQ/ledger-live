@@ -501,7 +501,10 @@ export const DEFAULT_FEATURES: Features = {
       warningVisible: true,
     },
   },
-  llMevProtection: DEFAULT_FEATURE,
+  llMevProtection: {
+    ...DEFAULT_FEATURE,
+    params: { link: null },
+  },
   llmNetworkBasedAddAccountFlow: DEFAULT_FEATURE,
   llCounterValueGranularitiesRates: {
     ...DEFAULT_FEATURE,

@@ -23,7 +23,6 @@ import AnimatedGradient from "./components/AnimatedGradient";
 import ScanDeviceAccountsFooter from "./components/ScanDeviceAccountsFooter";
 import AddressTypeTooltip from "./components/AddressTypeTooltip";
 import ScannedAccountsSection from "./components/ScannedAccountsSection";
-import { CantCreateAccountAlert } from "./components/CantCreateAccountAlert";
 import { useRoute } from "@react-navigation/core";
 import { ScanDeviceAccountsNavigationProps } from "./types";
 import useAnalytics from "LLM/hooks/useAnalytics";
@@ -56,9 +55,7 @@ function ScanDeviceAccounts() {
   const { analyticsMetadata } = useAnalytics(context, sourceScreenName);
 
   const {
-    alreadyEmptyAccount,
     cantCreateAccount,
-    CustomNoAssociatedAccounts,
     error,
     importAccounts,
     newAccountSchemes,
@@ -85,12 +82,6 @@ function ScanDeviceAccounts() {
     blacklistedTokenIds,
     analyticsMetadata,
   });
-
-  const emptyTexts = {
-    creatable: alreadyEmptyAccount ? null : CustomNoAssociatedAccounts ? null : (
-      <CantCreateAccountAlert currencyName={currency.name} />
-    ),
-  };
 
   const pageTrackingEvent =
     sections?.length === 0
@@ -169,7 +160,6 @@ function ScanDeviceAccounts() {
                 onSelectAll={!selectable || id === "creatable" ? undefined : selectAll}
                 onUnselectAll={!selectable ? undefined : unselectAll}
                 selectedIds={selectedIds}
-                emptyState={emptyTexts[id as keyof typeof emptyTexts]}
                 isDisabled={!selectable}
                 forceSelected={id === "existing"}
                 style={hasMultipleSchemes ? styles.smallMarginBottom : {}}
