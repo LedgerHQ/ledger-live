@@ -37,7 +37,7 @@ export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlo
       title: "Fee",
       button: SpeculosButton.RIGHT,
       expectedValue: ({ transaction, account }) =>
-        `MINA ${formatCurrencyUnit(account.currency.units[0], transaction.fees, {
+        `MINA ${formatCurrencyUnit(account.currency.units[0], transaction.fees.fee, {
           dynamicSignificantDigits: 10,
           staticSignificantDigits: 10,
         })}`,
@@ -48,7 +48,7 @@ export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlo
       expectedValue: ({ transaction, account }) =>
         `MINA ${formatCurrencyUnit(
           account.currency.units[0],
-          transaction.fees.plus(transaction.amount),
+          transaction.fees.fee.plus(transaction.amount),
           {
             dynamicSignificantDigits: 10,
             staticSignificantDigits: 10,
