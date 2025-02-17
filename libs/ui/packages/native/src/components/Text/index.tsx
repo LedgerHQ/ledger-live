@@ -63,7 +63,7 @@ const Base = baseStyled.Text.attrs((p: BaseTextProps) => ({
 
 const T = styled.View`
   flex-direction: row;
-  justify-content: center;
+  justify-content: right;
   align-items: center;
 `;
 
