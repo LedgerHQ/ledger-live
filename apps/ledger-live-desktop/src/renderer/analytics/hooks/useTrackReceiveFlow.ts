@@ -3,9 +3,10 @@ import { track } from "../segment";
 import { Device } from "@ledgerhq/types-devices";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { LedgerError } from "~/renderer/components/DeviceAction";
+import { CONNECTION_TYPES, HOOKS_TRACKING_LOCATIONS } from "./variables";
 
 export type UseTrackReceiveFlow = {
-  location: string | undefined;
+  location: HOOKS_TRACKING_LOCATIONS.receiveModal | undefined;
   device: Device;
   verifyAddressError?:
     | {
@@ -33,7 +34,7 @@ export type UseTrackReceiveFlow = {
  * a custom hook to track events in the Receive modal.
  * tracks user interactions with the Receive modal based on state changes and errors.
  *
- * @param location - current location in the app (expected "Receive Modal").
+ * @param location - current location in the app (expected "Receive Modal" from HOOKS_TRACKING_LOCATIONS enum).
  * @param device - the connected device information.
  * @param verifyAddressError - optional - error from verifying address.
  * @param error - optional - current error state.
@@ -49,11 +50,11 @@ export const useTrackReceiveFlow = ({
   isTrackingEnabled,
 }: UseTrackReceiveFlow) => {
   useEffect(() => {
-    if (location !== "Receive Modal") return;
+    if (location !== HOOKS_TRACKING_LOCATIONS.receiveModal) return;
 
     const defaultPayload = {
       deviceType: device?.modelId,
-      connectionType: device?.wired ? "USB" : "BLE",
+      connectionType: device?.wired ? CONNECTION_TYPES.USB : CONNECTION_TYPES.BLE,
       platform: "LLD",
       page: "Receive",
     };

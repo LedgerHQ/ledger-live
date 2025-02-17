@@ -34,9 +34,5 @@ export async function runVerifyAddressTest(account: Account, tmsLink: string) {
       await app.receive.expectReceivePageIsDisplayed(account.currency.ticker, account.accountName);
       await app.receive.expectAddressIsCorrect(displayedAddress);
     });
-
-    afterAll(async () => {
-      await app?.common.removeSpeculos();
-    });
   });
 }

@@ -7,6 +7,7 @@ export enum AnalyticPages {
   AddAccountSelectAsset = "Add Account Select Asset",
   AddAccountSelectNetwork = "Add Account Select Network",
   AddAccountSuccess = "Add Account Success",
+  AddAccountWarning = "Add Account Warning",
   AccountsFound = "Found Accounts",
   FundAccountDrawerList = "Fund Account Drawer List",
 }

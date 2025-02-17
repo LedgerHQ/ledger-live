@@ -3,7 +3,7 @@ import { UseTrackAddAccountModal, useTrackAddAccountModal } from "./useTrackAddA
 import { track } from "../segment";
 import { CantOpenDevice, UserRefusedOnDevice, LockedDeviceError } from "@ledgerhq/errors";
 import type { Device } from "@ledgerhq/types-devices";
-import { CONNECTION_TYPES } from "./variables";
+import { CONNECTION_TYPES, HOOKS_TRACKING_LOCATIONS } from "./variables";
 
 jest.mock("../segment", () => ({
   track: jest.fn(),
@@ -16,7 +16,7 @@ describe("useTrackAddAccountModal", () => {
   };
 
   const defaultArgs: UseTrackAddAccountModal = {
-    location: "Add account modal",
+    location: HOOKS_TRACKING_LOCATIONS.addAccountModal,
     requestOpenApp: "Bitcoin",
     device: deviceMock,
     error: null,
@@ -43,7 +43,7 @@ describe("useTrackAddAccountModal", () => {
         deviceType: "europa",
         connectionType: CONNECTION_TYPES.BLE,
         platform: "LLD",
-        page: "Add account modal",
+        page: HOOKS_TRACKING_LOCATIONS.addAccountModal,
       }),
       true,
     );
@@ -70,7 +70,7 @@ describe("useTrackAddAccountModal", () => {
         deviceType: "europa",
         connectionType: CONNECTION_TYPES.BLE,
         platform: "LLD",
-        page: "Add account modal",
+        page: HOOKS_TRACKING_LOCATIONS.addAccountModal,
       }),
       true,
     );
@@ -90,7 +90,7 @@ describe("useTrackAddAccountModal", () => {
         deviceType: "europa",
         connectionType: CONNECTION_TYPES.BLE,
         platform: "LLD",
-        page: "Add account modal",
+        page: HOOKS_TRACKING_LOCATIONS.addAccountModal,
       }),
       true,
     );
@@ -110,7 +110,7 @@ describe("useTrackAddAccountModal", () => {
         deviceType: "europa",
         connectionType: CONNECTION_TYPES.BLE,
         platform: "LLD",
-        page: "Add account modal",
+        page: HOOKS_TRACKING_LOCATIONS.addAccountModal,
       }),
       true,
     );
@@ -130,7 +130,7 @@ describe("useTrackAddAccountModal", () => {
         deviceType: "europa",
         connectionType: CONNECTION_TYPES.BLE,
         platform: "LLD",
-        page: "Add account modal",
+        page: HOOKS_TRACKING_LOCATIONS.addAccountModal,
       }),
       true,
     );
@@ -157,16 +157,17 @@ describe("useTrackAddAccountModal", () => {
         deviceType: "europa",
         connectionType: CONNECTION_TYPES.USB,
         platform: "LLD",
-        page: "Add account modal",
+        page: HOOKS_TRACKING_LOCATIONS.addAccountModal,
       }),
       true,
     );
   });
 
-  it('should not track if location is not "Add account modal"', () => {
+  it("should not track if location is not HOOKS_TRACKING_LOCATIONS.addAccountModal", () => {
     renderHook(() =>
       useTrackAddAccountModal({
         ...defaultArgs,
+        //@ts-expect-error location should be HOOKS_TRACKING_LOCATIONS enum
         location: "NOT Add account",
       }),
     );
@@ -191,7 +192,7 @@ describe("useTrackAddAccountModal", () => {
         deviceType: "europa",
         connectionType: CONNECTION_TYPES.USB,
         platform: "LLD",
-        page: "Add account modal",
+        page: HOOKS_TRACKING_LOCATIONS.addAccountModal,
       }),
       true,
     );
