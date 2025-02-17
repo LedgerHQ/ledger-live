@@ -143,6 +143,15 @@ const getMEVAttributes = (state: State) => {
   };
 };
 
+const getNewAddAccountsAttribues = () => {
+  if (!analyticsFeatureFlagMethod) return false;
+  const llmNetworkBasedAddAccountFlow = analyticsFeatureFlagMethod("llmNetworkBasedAddAccountFlow");
+
+  return {
+    hasNewAddAccounts: llmNetworkBasedAddAccountFlow?.enabled ? "Yes" : "No",
+  };
+};
+
 const getMandatoryProperties = async (store: AppStore) => {
   const state: State = store.getState();
   const { user } = await getOrCreateUser();
@@ -225,7 +234,8 @@ const extraProperties = async (store: AppStore) => {
 
   const ledgerSyncAtributes = getLedgerSyncAttributes(state);
   const rebornAttributes = getRebornAttributes();
-  const mevProtectionAtributes = getMEVAttributes(state);
+  const mevProtectionAttributes = getMEVAttributes(state);
+  const addAccountsAttributes = getNewAddAccountsAttribues();
 
   return {
     ...mandatoryProperties,
@@ -264,7 +274,8 @@ const extraProperties = async (store: AppStore) => {
     stakingProvidersEnabled: stakingProvidersCount || "flag not loaded",
     ...ledgerSyncAtributes,
     ...rebornAttributes,
-    ...mevProtectionAtributes,
+    ...mevProtectionAttributes,
+    ...addAccountsAttributes,
   };
 };
 
