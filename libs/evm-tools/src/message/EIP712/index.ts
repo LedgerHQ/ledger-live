@@ -242,24 +242,35 @@ export const getEIP712FieldsDisplayedOnNano = async (
     });
   }
 
-  for (const field of fields) {
-    if (field.path.includes("token")) {
+  if (messageData.primaryType === "PermitSingle") {
+    for (const field of fields) {
+      if (field.path.includes("token")) {
+        displayedInfos.push({
+          label: "Token",
+          value: getValueFromPath(field.path, messageData),
+        });
+      } else if (field.path.includes("amount")) {
+        displayedInfos.push({
+          label: "Amount",
+          value: getValueFromPath(field.path, messageData),
+        });
+      } else if (field.path.includes("expiration")) {
+        displayedInfos.push({
+          label: "Approval expires",
+          value: formatDate(getValueFromPath(field.path, messageData) as string),
+        });
+      }
+    }
+  } else {
+    for (const field of fields) {
       displayedInfos.push({
-        label: "Token",
+        label: field.label,
         value: getValueFromPath(field.path, messageData),
-      });
-    } else if (field.path.includes("amount")) {
-      displayedInfos.push({
-        label: "Amount",
-        value: getValueFromPath(field.path, messageData),
-      });
-    } else if (field.path.includes("expiration")) {
-      displayedInfos.push({
-        label: "Approval expires",
-        value: formatDate(getValueFromPath(field.path, messageData) as string),
       });
     }
+
   }
+
 
   return displayedInfos;
 };
