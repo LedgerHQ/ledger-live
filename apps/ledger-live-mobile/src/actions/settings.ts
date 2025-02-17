@@ -145,7 +145,9 @@ export const showToken = createAction<SettingsShowTokenPayload>(SettingsActionTy
 export const updateNftStatus = createAction<SettingsUpdateNftCollectionStatus>(
   SettingsActionTypes.UPDATE_NFT_COLLECTION_STATUS,
 );
-
+export const updateNftStatusBatch = createAction<SettingsUpdateNftCollectionStatus[]>(
+  SettingsActionTypes.UPDATE_NFT_COLLECTION_STATUS_BATCH,
+);
 export const resetNftStatus = createAction(SettingsActionTypes.RESET_NFT_COLLECTION_STATUS);
 
 export const dismissBanner = createAction<SettingsDismissBannerPayload>(

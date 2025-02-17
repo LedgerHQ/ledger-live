@@ -14,6 +14,7 @@ import {
   NFTMetadataContextState,
   NFTMetadataContextType,
   NFTResource,
+  NFTOperations,
 } from "@ledgerhq/live-nft/types";
 
 type Item = {
@@ -123,8 +124,9 @@ export function useNftCollectionMetadata(
 }
 
 export function useNftCollectionMetadataBatch(
-  items: Array<Item>,
+  operations: NFTOperations,
 ): Array<NFTResource<NonNullable<NFTCollectionMetadataResponse["result"]>>> {
+  const items = Object.values(operations);
   const { cache, loadCollectionMetadata } = useContext(NftMetadataContext);
 
   const hasAllProperties = (item: Item): item is Required<Item> =>
@@ -155,19 +157,18 @@ export function useNftCollectionMetadataBatch(
     });
   }, [items, loadCollectionMetadata, cache, data]);
 
-  return useMemo(
-    () =>
-      items.map(item => {
-        const key = hasAllProperties(item)
-          ? getNftCollectionKey(item.contract, item.currencyId)
-          : "";
-        const cachedData = cache[key] as NFTResource<
-          NonNullable<NFTCollectionMetadataResponse["result"]>
-        >;
-        return cachedData || { status: "queued" };
-      }),
-    [items, cache],
-  );
+  return useMemo(() => {
+    const parsedItems = items.map(item => {
+      const key = hasAllProperties(item) ? getNftCollectionKey(item.contract, item.currencyId) : "";
+      const cachedData = cache[key] as NFTResource<
+        NonNullable<NFTCollectionMetadataResponse["result"]>
+      >;
+      return cachedData || { status: "queued" };
+    });
+    console.log(items);
+    console.log(parsedItems);
+    return parsedItems;
+  }, [items, cache]);
 }
 
 type UseNFTResponse =

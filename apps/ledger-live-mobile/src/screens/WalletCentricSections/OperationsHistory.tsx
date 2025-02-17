@@ -28,9 +28,9 @@ const NB_OPERATIONS_TO_DISPLAY = 3;
 
 const keyExtractor = (operation: Operation) => operation.id;
 
-const renderSectionHeader = ({ section }: { section: { day: Date } }) => (
-  <SectionHeader day={section.day} />
-);
+const renderSectionHeader = ({ section }: { section: { day: Date } }) => {
+  return <SectionHeader day={section.day} />;
+};
 
 const OperationsHistory = ({ accounts, testID }: Props) => {
   const { t } = useTranslation();
@@ -41,7 +41,6 @@ const OperationsHistory = ({ accounts, testID }: Props) => {
     opCount: NB_OPERATIONS_TO_DISPLAY,
     withSubAccounts: true,
   });
-
   const renderItem = useCallback(
     ({ item, index, section }: SectionListRenderItemInfo<Operation, DailyOperationsSection>) => {
       const account = accounts.find(a => a.id === item.accountId) as SubAccount;
@@ -73,7 +72,6 @@ const OperationsHistory = ({ accounts, testID }: Props) => {
       accountsIds: accounts.map(account => account.id),
     });
   }, [navigation, accounts]);
-
   if (!sections) return null;
 
   return (
