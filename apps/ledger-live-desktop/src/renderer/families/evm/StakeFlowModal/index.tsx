@@ -95,7 +95,7 @@ export const StakeModal = ({ account, source }: Props) => {
           flex={1}
           flexDirection="column"
           height="100%"
-          px={3}
+          px={2}
         >
           <Header p={3} pt={5} pb={0} width="100%" position="relative" isScrollable={isScrollable}>
             <Flex flexDirection="column" alignItems="center">
