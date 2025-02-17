@@ -117,7 +117,7 @@ export default function IsUnlocked({ children }: { children: React.ReactNode }):
             />
             <PageTitle>{t("common.lockScreen.title")}</PageTitle>
             <LockScreenDesc>{t("common.lockScreen.description")}</LockScreenDesc>
-            <Box horizontal alignItems="center">
+            <Box horizontal alignItems="flex-start">
               <Box
                 style={{
                   width: 280,
