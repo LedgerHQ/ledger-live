@@ -11,14 +11,20 @@ import {
 
 export type Transaction = TransactionCommon & {
   family: "mina";
-  fees: BigNumber;
+  fees: {
+    fee: BigNumber;
+    accountCreationFee: BigNumber;
+  };
   memo: string | undefined;
   nonce: number;
 };
 
 export type TransactionRaw = TransactionCommonRaw & {
   family: "mina";
-  fees: string;
+  fees: {
+    fee: string;
+    accountCreationFee: string;
+  };
   memo: string | undefined;
   nonce: number;
 };
@@ -61,4 +67,4 @@ export interface MinaSignedTransaction {
   transaction: MinaUnsignedTransaction;
 }
 
-export type MinaOperation = Operation<{ memo: string | undefined }>;
+export type MinaOperation = Operation<{ memo: string | undefined; accountCreationFee: string }>;
