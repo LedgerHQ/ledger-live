@@ -114,6 +114,7 @@ export class SendModal extends Modal {
 
     const displayedAmount = await this.amountDisplayedValue.innerText();
     expect(displayedAmount).toEqual(expect.stringContaining(tx.amount));
+    expect(displayedAmount).toEqual(expect.stringContaining(tx.accountToDebit.currency.ticker));
     if (tx.accountToCredit.ensName) {
       const displayedEns = await this.recipientEnsDisplayed.innerText();
       expect(displayedEns).toEqual(tx.accountToCredit.ensName);

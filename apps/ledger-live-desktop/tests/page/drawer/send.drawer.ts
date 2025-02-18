@@ -20,6 +20,9 @@ export class SendDrawer extends Drawer {
   async expectReceiverInfos(tx: Transaction) {
     await expect(this.addressValue(tx.accountToCredit.address)).toBeVisible();
     await expect(this.amountValue).toBeVisible();
+    const displayedAmount = await this.amountValue.innerText();
+    expect(displayedAmount).toEqual(expect.stringContaining(tx.amount));
+    expect(displayedAmount).toEqual(expect.stringContaining(tx.accountToDebit.currency.ticker));
   }
 
   @step("Verify Send NFT information")
