@@ -1,7 +1,9 @@
 import React, { useCallback, useMemo } from "react";
+import { t } from "i18next";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
 import { useDispatch } from "react-redux";
+import { Flex, Icons } from "@ledgerhq/react-ui";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import TriangleWarning from "~/renderer/icons/TriangleWarning";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
@@ -16,6 +18,7 @@ import TrackPage from "~/renderer/analytics/TrackPage";
 import { urls } from "~/config/urls";
 import { useDateFormatted } from "~/renderer/hooks/useDateFormatter";
 import LogContentCardWrapper from "LLD/features/DynamicContent/components/LogContentCardWrapper";
+import { LNSNotificationBanner, useLNSUpsellBannerModel } from "LLD/features/LNSUpsell";
 
 const DateRowContainer = styled.div`
   padding: 4px 16px;
@@ -250,6 +253,8 @@ export function AnnouncementPanel() {
     [notificationsCards],
   );
 
+  const lnsUpsellBannerModel = useLNSUpsellBannerModel("notification_center");
+
   if (!notificationsCards) {
     return (
       <PanelContainer>
@@ -279,7 +284,23 @@ export function AnnouncementPanel() {
   return (
     <ScrollArea hideScrollbar>
       <TrackPage category="Notification Center" name="notification_center_news" />
+
       <Box py="32px">
+        {lnsUpsellBannerModel && (
+          <Flex flexDirection="column" rowGap="16px">
+            <DateRowContainer style={{ margin: 0 }}>
+              <DateLabel>
+                <Icons.PinLocation
+                  size="XS"
+                  style={{ verticalAlign: "text-bottom", marginRight: 4 }}
+                />
+                {t("informationCenter.announcement.pinned")}
+              </DateLabel>
+            </DateRowContainer>
+            <LNSNotificationBanner model={lnsUpsellBannerModel} />
+          </Flex>
+        )}
+
         {groups.map((group, index) => (
           <React.Fragment key={index}>
             {group.day ? <DateRow date={group.day} /> : null}
