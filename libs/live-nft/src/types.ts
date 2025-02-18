@@ -13,6 +13,7 @@ export type NFTResourceQueued = {
 type NFTOperation = {
   contract: string;
   currencyId: string;
+  account: string;
 };
 
 export type NFTOperations = Record<string, NFTOperation>;

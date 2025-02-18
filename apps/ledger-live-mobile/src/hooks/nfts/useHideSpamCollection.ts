@@ -11,7 +11,7 @@ export function useHideSpamCollection() {
   const spamFilteringTxFeature = useFeature("llmSpamFilteringTx");
   const nftsFromSimplehashFeature = useFeature("nftsFromSimplehash");
   const nftCollectionsStatusByNetwork = useSelector(nftCollectionsStatusByNetworkSelector);
-
+  console.log(nftCollectionsStatusByNetwork);
   const dispatch = useDispatch();
 
   const updateSpamCollection = useCallback(

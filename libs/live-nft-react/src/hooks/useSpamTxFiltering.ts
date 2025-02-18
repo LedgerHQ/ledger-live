@@ -28,9 +28,10 @@ export function getFilteredNftOperations({
           if (operation.type === "NFT_IN") {
             const account = accountsMap[operation.accountId];
             const contract = operation.contract || "";
-            acc[contract] = {
+            acc[contract.toLowerCase()] = {
               contract,
               currencyId: getAccountCurrency(account).id,
+              account: account.id,
             };
           }
           return acc;
@@ -93,14 +94,26 @@ export function useSpamTxFiltering(
       }),
     [accountsMap, groupedOperations, spamFilteringTxEnabled],
   );
-
   const metadatas = useNftCollectionMetadataBatch(nftOperations);
-  //setNftStatus(metadatas);
+  console.log(metadatas);
+  const parsedMetadata = metadatas.map(metadata => {
+    return {
+      blockchain: metadata?.metadata?.contract
+        ? (nftOperations?.[metadata.metadata?.contract]?.currencyId as BlockchainsType)
+        : null,
+      collection: metadata?.metadata?.contract
+        ? `${nftOperations?.[metadata.metadata?.contract].account}|${metadata?.metadata?.contract}`
+        : "",
+      status:
+        !metadata?.metadata?.spamScore || (threshold && metadata?.metadata?.spamScore <= threshold)
+          ? "notSpam"
+          : "spam",
+    };
+  });
+  console.log(parsedMetadata);
+  //setNftStatus(parsedMetadata);
   return useMemo(
-    (): DailyOperations =>
-      spamFilteringTxEnabled
-        ? filterGroupedOperations(metadatas, groupedOperations, threshold)
-        : groupedOperations,
+    (): DailyOperations => groupedOperations,
     [groupedOperations, metadatas, spamFilteringTxEnabled, threshold],
   );
 }

@@ -105,9 +105,9 @@ export function Operations({ navigation, route }: Props) {
   const onTransactionButtonPress = useCallback(() => {
     navigation.navigate(ScreenName.PortfolioOperationHistory);
   }, [navigation]);
-
-  return (
-    <Flex flex={1} px={4}>
+  console.log(sections);
+  return null;
+  /*} <Flex flex={1} px={4}>
       <SectionList
         sections={sections}
         style={{ flex: 1 }}
@@ -141,8 +141,7 @@ export function Operations({ navigation, route }: Props) {
         ListEmptyComponent={ListEmptyComponent}
       />
       <TrackScreen category="Analytics" name="Operations" />
-    </Flex>
-  );
+    </Flex>*/
 }
 
 export default withDiscreetMode(memo<Props>(Operations));

@@ -73,7 +73,9 @@ export function useOperations({ accounts, opCount, withSubAccounts }: Props) {
     accountsMap,
     groupedOperations,
     updateNftCollection,
+    thresold,
   );
+  console.log(filteredData);
   return {
     sections: filteredData?.sections,
     completed: filteredData?.completed,

@@ -383,11 +383,13 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
       state,
       nftCollectionsStatusByNetwork: {
         ...state.nftCollectionsStatusByNetwork,
-
-        [blockchain]: {
-          ...state.nftCollectionsStatusByNetwork[blockchain],
-          [collection]: status,
-        },
+        ...metadata.reduce((acc, { blockchain, collection, status }) => {
+          acc[blockchain] = {
+            ...acc[blockchain],
+            [collection]: status,
+          };
+          return acc;
+        }, state.nftCollectionsStatusByNetwork),
       },
     };
   },
