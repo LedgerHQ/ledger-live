@@ -1,5 +1,29 @@
 # @ledgerhq/coin-solana
 
+## 0.13.0
+
+### Minor Changes
+
+- [#9154](https://github.com/LedgerHQ/ledger-live/pull/9154) [`8e64f71`](https://github.com/LedgerHQ/ledger-live/commit/8e64f71c2e8647e2c333691d337b6cc056ec7c46) Thanks [@Justkant](https://github.com/Justkant)! - fix: possible undefined tx on solana sync
+
+### Patch Changes
+
+- Updated dependencies [[`58c1a9c`](https://github.com/LedgerHQ/ledger-live/commit/58c1a9c68b2ce2ebef9dbd7af00ae09efd7a29dc), [`ff40e9a`](https://github.com/LedgerHQ/ledger-live/commit/ff40e9a00d325e5b46cb069936ba2a5781c601b5)]:
+  - @ledgerhq/coin-framework@2.0.0
+  - @ledgerhq/cryptoassets@13.11.0
+
+## 0.13.0-next.0
+
+### Minor Changes
+
+- [#9154](https://github.com/LedgerHQ/ledger-live/pull/9154) [`8e64f71`](https://github.com/LedgerHQ/ledger-live/commit/8e64f71c2e8647e2c333691d337b6cc056ec7c46) Thanks [@Justkant](https://github.com/Justkant)! - fix: possible undefined tx on solana sync
+
+### Patch Changes
+
+- Updated dependencies [[`58c1a9c`](https://github.com/LedgerHQ/ledger-live/commit/58c1a9c68b2ce2ebef9dbd7af00ae09efd7a29dc), [`ff40e9a`](https://github.com/LedgerHQ/ledger-live/commit/ff40e9a00d325e5b46cb069936ba2a5781c601b5)]:
+  - @ledgerhq/coin-framework@2.0.0-next.0
+  - @ledgerhq/cryptoassets@13.11.0-next.0
+
 ## 0.12.1
 
 ### Patch Changes

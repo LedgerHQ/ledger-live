@@ -1,5 +1,17 @@
 # @ledgerhq/evm-tools
 
+## 1.4.0
+
+### Minor Changes
+
+- [#9120](https://github.com/LedgerHQ/ledger-live/pull/9120) [`551f2cc`](https://github.com/LedgerHQ/ledger-live/commit/551f2ccad6d7897a010d39110c0ba9336d407dfd) Thanks [@chrisduma-ledger](https://github.com/chrisduma-ledger)! - Fixes Lido triggering blind message
+
+## 1.4.0-next.0
+
+### Minor Changes
+
+- [#9120](https://github.com/LedgerHQ/ledger-live/pull/9120) [`551f2cc`](https://github.com/LedgerHQ/ledger-live/commit/551f2ccad6d7897a010d39110c0ba9336d407dfd) Thanks [@chrisduma-ledger](https://github.com/chrisduma-ledger)! - Fixes Lido triggering blind message
+
 ## 1.3.1
 
 ### Patch Changes

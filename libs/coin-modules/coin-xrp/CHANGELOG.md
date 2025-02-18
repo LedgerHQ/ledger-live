@@ -1,5 +1,29 @@
 # @ledgerhq/coin-xrp
 
+## 2.0.0
+
+### Major Changes
+
+- [#9076](https://github.com/LedgerHQ/ledger-live/pull/9076) [`58c1a9c`](https://github.com/LedgerHQ/ledger-live/commit/58c1a9c68b2ce2ebef9dbd7af00ae09efd7a29dc) Thanks [@jprudent](https://github.com/jprudent)! - Evolve transaction type to allow arbitrary crafting properties
+
+### Patch Changes
+
+- Updated dependencies [[`58c1a9c`](https://github.com/LedgerHQ/ledger-live/commit/58c1a9c68b2ce2ebef9dbd7af00ae09efd7a29dc), [`ff40e9a`](https://github.com/LedgerHQ/ledger-live/commit/ff40e9a00d325e5b46cb069936ba2a5781c601b5)]:
+  - @ledgerhq/coin-framework@2.0.0
+  - @ledgerhq/cryptoassets@13.11.0
+
+## 2.0.0-next.0
+
+### Major Changes
+
+- [#9076](https://github.com/LedgerHQ/ledger-live/pull/9076) [`58c1a9c`](https://github.com/LedgerHQ/ledger-live/commit/58c1a9c68b2ce2ebef9dbd7af00ae09efd7a29dc) Thanks [@jprudent](https://github.com/jprudent)! - Evolve transaction type to allow arbitrary crafting properties
+
+### Patch Changes
+
+- Updated dependencies [[`58c1a9c`](https://github.com/LedgerHQ/ledger-live/commit/58c1a9c68b2ce2ebef9dbd7af00ae09efd7a29dc), [`ff40e9a`](https://github.com/LedgerHQ/ledger-live/commit/ff40e9a00d325e5b46cb069936ba2a5781c601b5)]:
+  - @ledgerhq/coin-framework@2.0.0-next.0
+  - @ledgerhq/cryptoassets@13.11.0-next.0
+
 ## 1.0.0
 
 ### Major Changes
