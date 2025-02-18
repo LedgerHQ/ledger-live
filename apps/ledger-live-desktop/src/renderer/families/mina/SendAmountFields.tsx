@@ -1,9 +1,6 @@
 import React from "react";
-import { Trans } from "react-i18next";
 import MemoField from "./MemoField";
 import Box from "~/renderer/components/Box";
-import Label from "~/renderer/components/Label";
-import LabelInfoTooltip from "~/renderer/components/LabelInfoTooltip";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/mina/types";
 import { Account } from "@ledgerhq/types-live";
 
