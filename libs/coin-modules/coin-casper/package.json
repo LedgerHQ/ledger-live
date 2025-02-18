@@ -96,7 +96,7 @@
     "bignumber.js": "^9.1.2",
     "invariant": "^2.2.2",
     "lodash": "^4.17.21",
-    "casper-js-sdk": "^2.15.2",
+    "casper-js-sdk": "^2.15.4",
     "blakejs": "^1.2.1",
     "rxjs": "^7.8.1"
   },

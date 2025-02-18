@@ -2200,7 +2200,7 @@ importers:
         specifier: ^1.2.1
         version: 1.2.1
       casper-js-sdk:
-        specifier: ^2.15.2
+        specifier: ^2.15.4
         version: 2.15.4
       invariant:
         specifier: ^2.2.2
@@ -40076,7 +40076,7 @@ snapshots:
     dependencies:
       '@polkadot/x-global': 12.6.2
       tslib: 2.6.2
-      ws: 8.17.1
+      ws: 8.18.0
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
@@ -44584,7 +44584,7 @@ snapshots:
       util: 0.12.5
       util-deprecate: 1.0.2
       watchpack: 2.4.2
-      ws: 8.17.1
+      ws: 8.18.0
     transitivePeerDependencies:
       - bufferutil
       - encoding
@@ -63590,7 +63590,7 @@ snapshots:
 
   smoldot@2.0.22:
     dependencies:
-      ws: 8.17.1
+      ws: 8.18.0
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
