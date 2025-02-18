@@ -134,5 +134,29 @@
     "@ledgerhq/native-modules-tools": "1.0.3",
     "@ledgerhq/pnpm-utils": "1.0.1"
   },
-  "changesets": []
+  "changesets": [
+    "calm-lamps-kneel",
+    "clean-hats-knock",
+    "clever-dolls-greet",
+    "eleven-jeans-change",
+    "fast-doors-mix",
+    "good-impalas-remain",
+    "gorgeous-teachers-tap",
+    "lucky-roses-relate",
+    "mighty-mirrors-relate",
+    "orange-turkeys-wait",
+    "purple-avocados-impress",
+    "quick-items-burn",
+    "quiet-buttons-fetch",
+    "serious-kings-judge",
+    "slow-icons-rescue",
+    "small-hornets-accept",
+    "smart-lizards-remember",
+    "tasty-guests-suffer",
+    "tender-ads-exercise",
+    "twelve-geckos-eat",
+    "wicked-doors-search",
+    "wise-frogs-kiss",
+    "wise-hornets-hunt"
+  ]
 }
