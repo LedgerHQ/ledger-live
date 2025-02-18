@@ -8,6 +8,7 @@ import {
 import { track } from "~/renderer/analytics/segment";
 import { Box } from "@ledgerhq/react-ui";
 import { updateAnonymousUserNotifications } from "~/renderer/actions/settings";
+import { OFFLINE_SEEN_DELAY } from "../utils/constants";
 
 interface LogContentCardWrapperProps {
   id: string;
@@ -16,7 +17,6 @@ interface LogContentCardWrapperProps {
 }
 
 const PERCENTAGE_OF_CARD_VISIBLE = 0.5;
-const OFFLINE_SEEN_DELAY = 2e3;
 
 const LogContentCardWrapper: React.FC<LogContentCardWrapperProps> = ({
   id,
