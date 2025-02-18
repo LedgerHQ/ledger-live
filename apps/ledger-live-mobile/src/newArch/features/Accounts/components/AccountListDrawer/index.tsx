@@ -18,12 +18,19 @@ type AccountListDrawerProps = {
   onClose: () => void;
   data: (Account | TokenAccount)[];
   onPressAccount: (account: Account | TokenAccount) => void;
+  sourceScreenName?: string;
 };
 
-const AccountListDrawer = ({ isOpen, onClose, data, onPressAccount }: AccountListDrawerProps) => {
+const AccountListDrawer = ({
+  isOpen,
+  onClose,
+  data,
+  onPressAccount,
+  sourceScreenName,
+}: AccountListDrawerProps) => {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const { analyticsMetadata } = useAnalytics(AnalyticContexts.AddAccounts);
+  const { analyticsMetadata } = useAnalytics(AnalyticContexts.AddAccounts, sourceScreenName);
 
   const renderItem = useCallback(
     ({ item: account }: ListRenderItemInfo<Account | TokenAccount>) => {

@@ -9,7 +9,7 @@ import {
   UserRefusedDeviceNameChange,
   UserRefusedFirmwareUpdate,
 } from "@ledgerhq/errors";
-import { CONNECTION_TYPES } from "./variables";
+import { CONNECTION_TYPES, HOOKS_TRACKING_LOCATIONS } from "./variables";
 
 jest.mock("../segment", () => ({
   track: jest.fn(),
@@ -23,7 +23,7 @@ describe("useTrackManagerSectionEvents", () => {
   };
 
   const defaultArgs: UseTrackManagerSectionEvents = {
-    location: "Manager Dashboard",
+    location: HOOKS_TRACKING_LOCATIONS.managerDashboard,
     device: deviceMock,
     allowManagerRequested: null,
     clsImageRemoved: null,
@@ -51,7 +51,7 @@ describe("useTrackManagerSectionEvents", () => {
         deviceType: "europa",
         connectionType: CONNECTION_TYPES.USB,
         platform: "LLD",
-        page: "Manager Dashboard",
+        page: HOOKS_TRACKING_LOCATIONS.managerDashboard,
       }),
       true,
     );
@@ -75,7 +75,7 @@ describe("useTrackManagerSectionEvents", () => {
         deviceType: "europa",
         connectionType: CONNECTION_TYPES.USB,
         platform: "LLD",
-        page: "Manager Dashboard",
+        page: HOOKS_TRACKING_LOCATIONS.managerDashboard,
       }),
       true,
     );
@@ -94,7 +94,7 @@ describe("useTrackManagerSectionEvents", () => {
         deviceType: "europa",
         connectionType: CONNECTION_TYPES.USB,
         platform: "LLD",
-        page: "Manager Dashboard",
+        page: HOOKS_TRACKING_LOCATIONS.managerDashboard,
       }),
       true,
     );
@@ -113,7 +113,7 @@ describe("useTrackManagerSectionEvents", () => {
         deviceType: "europa",
         connectionType: CONNECTION_TYPES.USB,
         platform: "LLD",
-        page: "Manager Dashboard",
+        page: HOOKS_TRACKING_LOCATIONS.managerDashboard,
       }),
       true,
     );
@@ -132,7 +132,7 @@ describe("useTrackManagerSectionEvents", () => {
         deviceType: "europa",
         connectionType: CONNECTION_TYPES.USB,
         platform: "LLD",
-        page: "Manager Dashboard",
+        page: HOOKS_TRACKING_LOCATIONS.managerDashboard,
       }),
       true,
     );

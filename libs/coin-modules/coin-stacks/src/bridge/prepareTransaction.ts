@@ -1,11 +1,11 @@
 import { updateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { AccountBridge } from "@ledgerhq/types-live";
-import { StacksMainnet } from "@stacks/network";
 import {
   AddressVersion,
   TransactionVersion,
   UnsignedTokenTransferOptions,
   estimateTransaction,
+  estimateTransactionByteLength,
   makeUnsignedSTXTokenTransfer,
 } from "@stacks/transactions";
 import BigNumber from "bignumber.js";
@@ -28,7 +28,7 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
   if (xpub && recipient && validateAddress(recipient).isValid) {
     const { anchorMode, memo, amount } = transaction;
 
-    const network = StacksNetwork[transaction.network] || new StacksMainnet();
+    const network = StacksNetwork[transaction.network] || StacksNetwork["mainnet"];
 
     // Check if recipient is valid
     const options: UnsignedTokenTransferOptions = {
@@ -48,7 +48,7 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
         : AddressVersion.TestnetSingleSig;
     const senderAddress = c32address(addressVersion, tx.auth.spendingCondition!.signer);
 
-    const [fee] = await estimateTransaction(tx.payload);
+    const [fee] = await estimateTransaction(tx.payload, estimateTransactionByteLength(tx), network);
 
     patch.fee = new BigNumber(fee.fee);
     patch.nonce = await findNextNonce(senderAddress, pendingOperations);

@@ -2,7 +2,12 @@ import { by, element, waitFor, device, web } from "detox";
 import { Direction } from "detox/detox";
 import { findFreePort, close as closeBridge, init as initBridge } from "./bridge/server";
 
-import { startSpeculos, stopSpeculos, specs } from "@ledgerhq/live-common/e2e/speculos";
+import {
+  startSpeculos,
+  stopSpeculos,
+  specs,
+  takeScreenshot,
+} from "@ledgerhq/live-common/e2e/speculos";
 import { SpeculosDevice } from "@ledgerhq/speculos-transport";
 import invariant from "invariant";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
@@ -268,4 +273,12 @@ export async function deleteSpeculos(proxyPort?: number) {
     console.warn(`Speculos stopped on ${proxyPort}`);
   }
   setEnv("SPECULOS_API_PORT", 0);
+}
+
+export async function takeSpeculosScreenshot() {
+  for (const [, device] of speculosDevices) {
+    const speculosScreenshot = await takeScreenshot(device.ports.apiPort);
+    speculosScreenshot &&
+      (await allure.attachment("Speculos Screenshot", speculosScreenshot, "image/png"));
+  }
 }
