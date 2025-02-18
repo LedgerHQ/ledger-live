@@ -1,5 +1,5 @@
-import { fetchTransactionMetadata } from ".";
-import { setConfig } from "../../testUtils";
+import { fetchTransactionMetadata } from "../api/rosetta";
+import { setConfig } from "./testUtils";
 setConfig();
 
 test("get metadata for a transactions", async () => {

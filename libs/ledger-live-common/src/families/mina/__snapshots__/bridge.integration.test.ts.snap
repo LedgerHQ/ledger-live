@@ -3,13 +3,29 @@
 exports[`mina currency bridge scanAccounts mina seed 1 1`] = `
 [
   {
-    "balance": "0",
+    "balance": "2799900000",
     "currencyId": "mina",
     "derivationMode": "minabip44h",
     "freshAddress": "B62qjWLs1W3J2fFGixeX49w1o7VvSGuMBNotnFhzs3PZ7PbtdFbhdeD",
     "freshAddressPath": "44'/12586'/0'/0/0",
     "id": "js:2:mina:B62qjWLs1W3J2fFGixeX49w1o7VvSGuMBNotnFhzs3PZ7PbtdFbhdeD:minabip44h",
     "index": 0,
+    "operationsCount": 2,
+    "pendingOperations": [],
+    "seedIdentifier": "B62qjWLs1W3J2fFGixeX49w1o7VvSGuMBNotnFhzs3PZ7PbtdFbhdeD",
+    "spendableBalance": "2799900000",
+    "swapHistory": [],
+    "syncHash": undefined,
+    "used": true,
+  },
+  {
+    "balance": "0",
+    "currencyId": "mina",
+    "derivationMode": "minabip44h",
+    "freshAddress": "B62qnD88tti626MiMnuhPMbLiPLvfddFWHjGfswyVFuLXEaKdK6o4Bc",
+    "freshAddressPath": "44'/12586'/1'/0/0",
+    "id": "js:2:mina:B62qnD88tti626MiMnuhPMbLiPLvfddFWHjGfswyVFuLXEaKdK6o4Bc:minabip44h",
+    "index": 1,
     "operationsCount": 0,
     "pendingOperations": [],
     "seedIdentifier": "B62qjWLs1W3J2fFGixeX49w1o7VvSGuMBNotnFhzs3PZ7PbtdFbhdeD",
@@ -23,6 +39,50 @@ exports[`mina currency bridge scanAccounts mina seed 1 1`] = `
 
 exports[`mina currency bridge scanAccounts mina seed 1 2`] = `
 [
+  [
+    {
+      "accountId": "js:2:mina:B62qjWLs1W3J2fFGixeX49w1o7VvSGuMBNotnFhzs3PZ7PbtdFbhdeD:minabip44h",
+      "blockHash": "3NL5Fsdbap5N5QRP7KeTUot3ps68dqVsQDkaJARVBYHJzSA9eY2a",
+      "blockHeight": 428719,
+      "extra": {
+        "accountCreationFee": "1000000000",
+        "memo": "12121",
+      },
+      "fee": "10100000",
+      "hasFailed": false,
+      "hash": "5Ju6eMsfbwUvqkBobMG2VTVt6heMckfjwxQjTuGjUchMCVXsVV3z",
+      "id": "js:2:mina:B62qjWLs1W3J2fFGixeX49w1o7VvSGuMBNotnFhzs3PZ7PbtdFbhdeD:minabip44h-5Ju6eMsfbwUvqkBobMG2VTVt6heMckfjwxQjTuGjUchMCVXsVV3z-IN",
+      "recipients": [
+        "B62qjWLs1W3J2fFGixeX49w1o7VvSGuMBNotnFhzs3PZ7PbtdFbhdeD",
+      ],
+      "senders": [
+        "B62qkdFWJSW8zaTBZjTVtmeU3rVxyUkNxPhKKW8T2JBtpj5XfdywLSM",
+      ],
+      "type": "IN",
+      "value": "4000000000",
+    },
+    {
+      "accountId": "js:2:mina:B62qjWLs1W3J2fFGixeX49w1o7VvSGuMBNotnFhzs3PZ7PbtdFbhdeD:minabip44h",
+      "blockHash": "3NKanDHMoNwwkCVXrtshy7FoAUSu763WFe6zmaE2MEBRDBdweC1X",
+      "blockHeight": 428798,
+      "extra": {
+        "accountCreationFee": "0",
+        "memo": "",
+      },
+      "fee": "200100000",
+      "hasFailed": false,
+      "hash": "5JuzzSWMVWj4NFV94q6piAgUehfHpAs7f6uu74TAQbxh2cD574CZ",
+      "id": "js:2:mina:B62qjWLs1W3J2fFGixeX49w1o7VvSGuMBNotnFhzs3PZ7PbtdFbhdeD:minabip44h-5JuzzSWMVWj4NFV94q6piAgUehfHpAs7f6uu74TAQbxh2cD574CZ-REDELEGATE",
+      "recipients": [
+        "B62qq3TQ8AP7MFYPVtMx5tZGF3kWLJukfwG1A1RGvaBW1jfTPTkDBW6",
+      ],
+      "senders": [
+        "B62qjWLs1W3J2fFGixeX49w1o7VvSGuMBNotnFhzs3PZ7PbtdFbhdeD",
+      ],
+      "type": "REDELEGATE",
+      "value": "0",
+    },
+  ],
   [],
 ]
 `;
