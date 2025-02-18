@@ -209,4 +209,9 @@ export const getProvidersCDNDataMock = () =>
       needsKYC: false,
       needsBearerToken: false,
     },
+    lifi: {
+      type: "CEX",
+      needsKYC: false,
+      needsBearerToken: false,
+    },
   });
