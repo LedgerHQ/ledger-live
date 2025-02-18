@@ -4684,6 +4684,7 @@
       }
     },
     "announcement": {
+      "pinned": "Pinned News",
       "emptyState": {
         "title": "No news for the moment",
         "desc": "You will find here all the news related to Ledger and Ledger Live"
