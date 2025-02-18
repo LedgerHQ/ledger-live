@@ -1,6 +1,6 @@
 ---
-"@ledgerhq/coin-evm": patch
-"@ledgerhq/coin-tester": patch
+"@ledgerhq/coin-evm": minor
+"@ledgerhq/coin-tester": minor
 ---
 
 fix (coin-tester): stop EVM coin tester smoothly

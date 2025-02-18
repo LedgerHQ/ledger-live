@@ -1,7 +1,7 @@
 ---
-"@ledgerhq/cryptoassets": patch
-"@ledgerhq/coin-evm": patch
-"@ledgerhq/coin-framework": patch
+"@ledgerhq/cryptoassets": minor
+"@ledgerhq/coin-evm": minor
+"@ledgerhq/coin-framework": minor
 ---
 
 Fix ethereum testnet units

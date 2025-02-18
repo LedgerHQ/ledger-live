@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-bitcoin": patch
+"@ledgerhq/coin-bitcoin": minor
 ---
 
 fix Send max with pending utxo

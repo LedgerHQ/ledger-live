@@ -1,7 +1,7 @@
 ---
-"@ledgerhq/hw-app-btc": patch
-"@ledgerhq/coin-bitcoin": patch
-"@ledgerhq/live-common": patch
+"@ledgerhq/hw-app-btc": minor
+"@ledgerhq/coin-bitcoin": minor
+"@ledgerhq/live-common": minor
 ---
 
 fix: zcash nu5/nu6
