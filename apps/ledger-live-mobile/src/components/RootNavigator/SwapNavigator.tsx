@@ -22,6 +22,7 @@ import {
 } from "~/screens/Swap/index";
 import { SwapLiveApp } from "~/screens/Swap/LiveApp";
 import StepHeader from "../StepHeader";
+import SwapFormNavigator from "./SwapFormNavigator";
 import { BaseNavigatorStackParamList } from "./types/BaseNavigator";
 import { StackNavigatorNavigation, StackNavigatorProps } from "./types/helpers";
 import { SwapFormNavigatorParamList } from "./types/SwapFormNavigator";
@@ -93,7 +94,7 @@ export default function SwapNavigator(
     <Stack.Navigator screenOptions={{ ...stackNavigationConfig, headerShown: true }}>
       <Stack.Screen
         name={ScreenName.SwapTab}
-        component={SwapLiveApp}
+        component={ptxSwapLiveAppMobile?.enabled ? SwapLiveApp : SwapFormNavigator}
         {...noNanoBuyNanoWallScreenOptions}
         options={options}
         initialParams={params as Partial<SwapNavigatorParamList[ScreenName.SwapTab]>}
