@@ -1,1 +1,1 @@
-export * from "@ledgerhq/coin-mina/logic";
+export * from "@ledgerhq/coin-mina/common-logic";
