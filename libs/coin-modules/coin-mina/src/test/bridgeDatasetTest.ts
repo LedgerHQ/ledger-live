@@ -6,11 +6,11 @@ import {
   NotEnoughBalance,
 } from "@ledgerhq/errors";
 import type { DatasetTest, CurrenciesData } from "@ledgerhq/types-live";
-import type { Transaction } from "./types";
-import { fromTransactionRaw } from "./transaction";
-import { InvalidMemoMina } from "./errors";
+import type { Transaction } from "../types/common";
+import { fromTransactionRaw } from "../bridge/transaction";
+import { InvalidMemoMina } from "../bridge/errors";
 
-const ACCOUNT_ADDRESS = "B62qkdFWJSW8zaTBZjTVtmeU3rVxyUkNxPhKKW8T2JBtpj5XfdywLSM";
+const ACCOUNT_ADDRESS = "B62qjWLs1W3J2fFGixeX49w1o7VvSGuMBNotnFhzs3PZ7PbtdFbhdeD";
 const ACCOUNT_ADDRESS_1 = "B62qkWcHhoisWDCR7v3gvWzX6wXEVuGYLHXq3mSym4GEzfYXmSDv314";
 
 const mina: CurrenciesData<Transaction> = {
@@ -20,6 +20,8 @@ const mina: CurrenciesData<Transaction> = {
       apdus: `
       => e00201000400000000
       <= 423632716a574c733157334a3266464769786558343977316f3756765347754d424e6f746e46687a7333505a3750627464466268646544009000
+      => e00201000400000001
+      <= 423632716e4438387474693632364d694d6e7568504d624c69504c766664644657486a47667377795646754c5845614b644b366f344263009000
       `,
     },
   ],

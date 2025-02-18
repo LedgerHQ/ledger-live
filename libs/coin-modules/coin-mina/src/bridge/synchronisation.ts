@@ -2,24 +2,24 @@ import type { Account } from "@ledgerhq/types-live";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
 import type { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { makeSync, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { getAccount, getTransactions } from "./api";
-import { MinaAccount, MinaOperation } from "./types";
+import { getAccount, getBlockInfo, getTransactions } from "../api";
+import { MinaAccount, MinaOperation } from "../types/common";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import BigNumber from "bignumber.js";
 import { log } from "@ledgerhq/logs";
 import invariant from "invariant";
-import { RosettaTransaction } from "./api/rosetta/types";
+import { RosettaTransaction } from "../api/rosetta/types";
 
-export const mapRosettaTxnToOperation = (
+export const mapRosettaTxnToOperation = async (
   accountId: string,
   address: string,
   txn: RosettaTransaction,
-): MinaOperation[] => {
+): Promise<MinaOperation[]> => {
   try {
     const hash = txn.transaction.transaction_identifier.hash;
     const blockHeight = txn.block_identifier.index;
     const blockHash = txn.block_identifier.hash;
-    const date = new Date(txn.timestamp);
+    const date = new Date(txn.timestamp ?? (await getBlockInfo(blockHeight)).block.timestamp);
     const memo = txn.transaction.metadata?.memo || "";
 
     let value = new BigNumber(0);
@@ -30,10 +30,11 @@ export const mapRosettaTxnToOperation = (
     let toAccount: string = "";
     let isSending = false;
     let failed = false;
+    let redelegateTransaction = false;
 
     for (const op of txn.transaction.operations) {
       failed = op.status === "Failed";
-      const opValue = failed ? new BigNumber(0) : new BigNumber(op.amount.value);
+      const opValue = failed ? new BigNumber(0) : new BigNumber(op.amount?.value ?? 0);
       switch (op.type) {
         case "fee_payment": {
           fee = fee.plus(opValue.times(-1));
@@ -58,6 +59,13 @@ export const mapRosettaTxnToOperation = (
         case "zkapp_balance_update": {
           toAccount = op.account.address;
           value = value.plus(opValue);
+          continue;
+        }
+        case "delegate_change": {
+          fromAccount = op.account.address;
+          invariant(op.metadata?.delegate_change_target, "mina: missing delegate change target");
+          toAccount = op.metadata?.delegate_change_target;
+          redelegateTransaction = true;
           continue;
         }
         case "account_creation_fee_via_payment": {
@@ -98,6 +106,14 @@ export const mapRosettaTxnToOperation = (
         type,
         id: encodeOperationId(accountId, hash, type),
       });
+    } else if (redelegateTransaction) {
+      // delegate change
+      const type = "REDELEGATE";
+      ops.push({
+        ...op,
+        type,
+        id: encodeOperationId(accountId, hash, type),
+      });
     } else {
       const type = "IN";
       ops.push({
@@ -133,11 +149,11 @@ export const getAccountShape: GetAccountShape<MinaAccount> = async info => {
   const { blockHeight, balance, spendableBalance } = await getAccount(address);
 
   const rosettaTxns = await getTransactions(address, initialAccount?.operationsCount);
-  const newOperations = rosettaTxns
-    .flatMap(t => mapRosettaTxnToOperation(accountId, address, t))
-    .flat();
+  const newOperations = await Promise.all(
+    rosettaTxns.flatMap(t => mapRosettaTxnToOperation(accountId, address, t)),
+  );
 
-  const operations = mergeOps(oldOperations, newOperations);
+  const operations = mergeOps(oldOperations, newOperations.flat());
 
   const shape: Partial<MinaAccount> = {
     id: accountId,
