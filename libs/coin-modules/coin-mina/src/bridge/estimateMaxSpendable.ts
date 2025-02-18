@@ -1,8 +1,8 @@
 import { BigNumber } from "bignumber.js";
 import type { AccountBridge } from "@ledgerhq/types-live";
-import type { Transaction, MinaAccount } from "./types";
+import type { Transaction, MinaAccount } from "../types/common";
 import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
-import { getMaxAmount } from "./logic";
+import { getMaxAmount } from "../common-logic";
 import { createTransaction } from "./createTransaction";
 import getEstimatedFees from "./getFeesForTransaction";
 

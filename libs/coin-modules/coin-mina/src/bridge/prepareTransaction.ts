@@ -2,8 +2,8 @@ import { updateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { Account, AccountBridge } from "@ledgerhq/types-live";
 import estimateMaxSpendable from "./estimateMaxSpendable";
 import getEstimatedFees from "./getFeesForTransaction";
-import { MinaAccount, Transaction } from "./types";
-import { getNonce } from "./api";
+import { MinaAccount, Transaction } from "../types/common";
+import { getNonce } from "../api";
 
 export const prepareTransaction: AccountBridge<
   Transaction,
