@@ -54,6 +54,9 @@ const maybeGetUpdatedSwapHistory = async (
     if (pendingSwapIds.length || atomicSwapIds.length) {
       const uniquePendingSwapIdsMap = new Map<string, SwapStatusRequest>();
       for (const item of pendingSwapIds) {
+        if (item.provider === "uniswap") {
+          continue;
+        }
         const existingItem = uniquePendingSwapIdsMap.get(item.swapId);
         if (!existingItem) {
           uniquePendingSwapIdsMap.set(item.swapId, item);
