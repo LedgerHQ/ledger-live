@@ -89,6 +89,7 @@ describe("LNSUpsellBanner ", () => {
             shareAnalytics: true,
             sharePersonalizedRecommandations: isOptIn,
             devicesModelList,
+            anonymousUserNotifications: {},
             overriddenFeatureFlags: {
               lldNanoSUpsellBanners: { enabled: ffEnabled, params: ffParams },
             },

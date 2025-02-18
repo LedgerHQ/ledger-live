@@ -5,11 +5,13 @@ import { BannerCard, Button, Icons, Link, NotificationCard, Text } from "@ledger
 import type { FlexBoxProps } from "@ledgerhq/react-ui/components/layout/Flex/index";
 import { useLNSUpsellBannerModel } from "../../hooks/useLNSUpsellBannerModel";
 import type { LNSBannerLocation } from "../../types";
+import { useLNSUpsellViewNotification } from "./useLNSUpsellViewNotification";
 
 type Props = FlexBoxProps & { location: LNSBannerLocation };
 
 export function LNSUpsellBanner({ location, ...boxProps }: Props): ReactElement | null {
   const { variant, discount, image, tracking, handleCTAClick } = useLNSUpsellBannerModel(location);
+  useLNSUpsellViewNotification(location, variant);
 
   switch (variant) {
     case "none":
