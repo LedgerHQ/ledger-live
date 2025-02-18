@@ -3,7 +3,7 @@ import { DeviceModelId } from "@ledgerhq/devices";
 import BigNumber from "bignumber.js";
 import expect from "expect";
 
-import type { Transaction } from "./types";
+import type { Transaction } from "../types/common";
 import { genericTestDestination, botTest, pickSiblings } from "@ledgerhq/coin-framework/bot/specs";
 import type { AppSpec } from "@ledgerhq/coin-framework/bot/types";
 import { acceptTransaction } from "./speculos-deviceActions";

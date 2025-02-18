@@ -1,6 +1,6 @@
 import { BigNumber } from "bignumber.js";
-import { getFees } from "./api";
-import { Transaction } from "./types";
+import { getFees } from "../api";
+import { Transaction } from "../types/common";
 
 const getEstimatedFees = async (
   transaction: Transaction,
