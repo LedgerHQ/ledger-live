@@ -7,8 +7,8 @@ import {
   AmountRequired,
   InvalidAddressBecauseDestinationIsAlsoSource,
 } from "@ledgerhq/errors";
-import type { Transaction, MinaAccount, TransactionStatus, StatusErrorMap } from "./types";
-import { isValidAddress, isValidMemo, getMaxAmount, getTotalSpent } from "./logic";
+import type { Transaction, MinaAccount, TransactionStatus, StatusErrorMap } from "../types/common";
+import { isValidAddress, isValidMemo, getMaxAmount, getTotalSpent } from "../common-logic";
 import { AccountBridge } from "@ledgerhq/types-live";
 import { AccountCreationFeeWarning, InvalidMemoMina, AmountTooSmall } from "./errors";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies";

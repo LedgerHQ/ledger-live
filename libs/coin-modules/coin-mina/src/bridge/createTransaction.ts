@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { MinaAccount, Transaction } from "./types";
+import { MinaAccount, Transaction } from "../types/common";
 import { AccountBridge } from "@ledgerhq/types-live";
 
 export const createTransaction: AccountBridge<
