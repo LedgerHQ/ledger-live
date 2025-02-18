@@ -1,7 +1,6 @@
 import invariant from "invariant";
 import { DeviceModelId } from "@ledgerhq/devices";
 import BigNumber from "bignumber.js";
-import expect from "expect";
 import type { Transaction } from "../types";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { genericTestDestination, pickSiblings, botTest } from "@ledgerhq/coin-framework/bot/specs";
