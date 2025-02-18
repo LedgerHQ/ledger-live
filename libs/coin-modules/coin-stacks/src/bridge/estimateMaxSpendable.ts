@@ -44,7 +44,11 @@ export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpenda
 
   const tx = await makeUnsignedSTXTokenTransfer(options);
 
-  const [feeEst] = await estimateTransaction(tx.payload, estimateTransactionByteLength(tx));
+  const [feeEst] = await estimateTransaction(
+    tx.payload,
+    estimateTransactionByteLength(tx),
+    network,
+  );
 
   const diff = spendableBalance.minus(new BigNumber(feeEst.fee));
   return diff.gte(0) ? diff : new BigNumber(0);

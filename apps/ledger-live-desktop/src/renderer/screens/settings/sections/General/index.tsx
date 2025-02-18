@@ -25,7 +25,8 @@ const SectionGeneral = () => {
   const { t } = useTranslation();
   useInitSupportedCounterValues();
   const lldAnalyticsOptInPromptFlag = useFeature("lldAnalyticsOptInPrompt");
-
+  const llMevProtectionFeatureFlag = useFeature("llMevProtection");
+  const mevLearnMoreLink = llMevProtectionFeatureFlag?.params?.link?.trim() || undefined;
   return (
     <>
       <TrackPage category="Settings" name="Display" />
@@ -97,6 +98,8 @@ const SectionGeneral = () => {
             desc={t("settings.display.mevProtectionDesc")}
             dataTestId="setting-mevProtection"
             id="setting-mevProtection"
+            linkText={t("settings.display.mevProtectionLearnMore")}
+            externalUrl={mevLearnMoreLink}
           >
             <MevProtectionRow />
           </Row>

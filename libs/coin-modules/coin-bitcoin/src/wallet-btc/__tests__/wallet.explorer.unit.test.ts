@@ -191,4 +191,154 @@ describe("BitcoinApi", () => {
       );
     });
   });
+
+  describe("hydrateTx unit test rbf", () => {
+    let mockAddress: { account: number; index: number; address: string };
+    beforeEach(() => {
+      mockAddress = {
+        account: 0,
+        index: 0,
+        address: "mock_address",
+      };
+    });
+    it("should mark outputs as replaceable when at least one input has RBF enabled", () => {
+      const mockTx = {
+        id: "mock_tx_1",
+        received_at: "2024-02-11T12:00:00Z",
+        account: 1,
+        index: 0,
+        address: "mock_address",
+        block: null,
+        inputs: [
+          {
+            value: "100000",
+            address: "input_address_1",
+            output_hash: "prev_tx_hash_1",
+            output_index: 0,
+            sequence: 0xfffffffd,
+          },
+        ],
+        outputs: [
+          {
+            value: "99000",
+            address: "output_address_1",
+            output_hash: "mock_tx_1",
+            output_index: 0,
+            block_height: null,
+            rbf: false,
+          },
+        ],
+        fees: 1000,
+      };
+
+      explorer.hydrateTx(mockAddress, mockTx);
+
+      expect(mockTx.outputs[0].rbf).toBe(true);
+    });
+
+    it("should not mark outputs as replaceable when all inputs have max sequence (non-RBF)", () => {
+      const mockTx = {
+        id: "mock_tx_2",
+        received_at: "2024-02-11T12:00:00Z",
+        account: 1,
+        index: 0,
+        address: "mock_address",
+        block: null,
+        inputs: [
+          {
+            value: "100000",
+            address: "input_address_1",
+            output_hash: "prev_tx_hash_1",
+            output_index: 0,
+            sequence: 0xfffffffe,
+          },
+        ],
+        outputs: [
+          {
+            value: "99000",
+            address: "output_address_1",
+            output_hash: "mock_tx_2",
+            output_index: 0,
+            block_height: null,
+            rbf: false,
+          },
+        ],
+        fees: 1000,
+      };
+
+      explorer.hydrateTx(mockAddress, mockTx);
+
+      expect(mockTx.outputs[0].rbf).toBe(false);
+    });
+
+    it("should mark outputs as replaceable when at least one input has RBF enabled (multi-input case)", () => {
+      const mockTx = {
+        id: "mock_tx_3",
+        received_at: "2024-02-11T12:00:00Z",
+        account: 1,
+        index: 0,
+        address: "mock_address",
+        block: null,
+        inputs: [
+          {
+            value: "100000",
+            address: "input_address_1",
+            output_hash: "prev_tx_hash_1",
+            output_index: 0,
+            sequence: 0xffffffff,
+          },
+          {
+            value: "100000",
+            address: "input_address_2",
+            output_hash: "prev_tx_hash_1",
+            output_index: 0,
+            sequence: 0xfffffffd,
+          },
+        ],
+        outputs: [
+          {
+            value: "99000",
+            address: "output_address_1",
+            output_hash: "mock_tx_3",
+            output_index: 0,
+            block_height: null,
+            rbf: false,
+          },
+        ],
+        fees: 1000,
+      };
+
+      explorer.hydrateTx(mockAddress, mockTx);
+
+      expect(mockTx.outputs[0].rbf).toBe(true);
+    });
+
+    it("should handle an empty input list gracefully", () => {
+      const mockTx = {
+        id: "mock_tx_4",
+        received_at: "2024-02-11T12:00:00Z",
+        account: 1,
+        index: 0,
+        address: "mock_address",
+        block: null,
+
+        inputs: [],
+        outputs: [
+          {
+            value: "99000",
+            address: "output_address_1",
+            output_hash: "mock_tx_4",
+            output_index: 0,
+            block_height: null,
+            rbf: false,
+          },
+        ],
+        fees: 1000,
+      };
+
+      explorer.hydrateTx(mockAddress, mockTx);
+
+      expect(mockTx.outputs[0].rbf).toBe(false);
+    });
+  });
 });
