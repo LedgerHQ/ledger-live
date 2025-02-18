@@ -1,15 +1,16 @@
 import BigNumber from "bignumber.js";
-import { MinaAPIAccount, MinaSignedTransaction, Transaction } from "../types";
+import { MinaAPIAccount, MinaSignedTransaction, Transaction } from "../types/common";
 import {
   fetchAccountBalance,
   fetchAccountTransactions,
   fetchNetworkStatus,
   fetchTransactionMetadata,
+  rosettaGetBlockInfo,
   rosettaSubmitTransaction,
 } from "./rosetta";
 import { MINA_TOKEN_ID } from "../consts";
-import { isValidAddress } from "../logic";
-import { RosettaTransaction } from "./rosetta/types";
+import { isValidAddress } from "../common-logic";
+import { RosettaBlockInfoResponse, RosettaTransaction } from "./rosetta/types";
 
 export const getAccount = async (address: string): Promise<MinaAPIAccount> => {
   const networkStatus = await fetchNetworkStatus();
@@ -28,6 +29,11 @@ export const getAccount = async (address: string): Promise<MinaAPIAccount> => {
     balance,
     spendableBalance,
   };
+};
+
+export const getBlockInfo = async (blockHeight: number): Promise<RosettaBlockInfoResponse> => {
+  const data = await rosettaGetBlockInfo(blockHeight);
+  return data;
 };
 
 export const getTransactions = async (

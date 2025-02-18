@@ -1,8 +1,8 @@
 import { log } from "@ledgerhq/logs";
 import type { Account } from "@ledgerhq/types-live";
-import type { MinaUnsignedTransaction, Transaction } from "./types";
-import { MINA_MAINNET_NETWORK_ID, MINA_PAYMENT_TYPE_ID } from "./consts";
-import { getAccountNumFromPath } from "./logic";
+import type { MinaUnsignedTransaction, Transaction } from "../types/common";
+import { MINA_MAINNET_NETWORK_ID, MINA_PAYMENT_TYPE_ID } from "../consts";
+import { getAccountNumFromPath } from "../common-logic";
 import invariant from "invariant";
 
 export const buildTransaction = async (

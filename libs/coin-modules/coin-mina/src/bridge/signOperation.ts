@@ -2,7 +2,7 @@ import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 // import * as minaAPI from "mina-ledger-js";
-import type { MinaOperation, MinaSignedTransaction, Transaction } from "./types";
+import type { MinaOperation, MinaSignedTransaction, Transaction } from "../types/common";
 import type {
   Account,
   DeviceId,
@@ -11,10 +11,10 @@ import type {
   AccountBridge,
 } from "@ledgerhq/types-live";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { MinaSignature, MinaSigner } from "./signer";
+import { MinaSignature, MinaSigner } from "../types/signer";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { buildTransaction } from "./buildTransaction";
-import { reEncodeRawSignature } from "./logic";
+import { reEncodeRawSignature } from "../common-logic";
 import invariant from "invariant";
 // import { buildTransaction } from "./js-buildTransaction";
 
