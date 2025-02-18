@@ -1,12 +1,11 @@
 import { ParsedInstruction } from "@solana/web3.js";
-import { IX_STRUCTS, IX_TITLES, TokenInstructionType } from "./types";
-
-import { ParsedInfo } from "../../validators";
 import { create, Infer } from "superstruct";
-import { PARSED_PROGRAMS } from "../../program/constants";
+import { IX_STRUCTS, IX_TITLES, TokenInstructionType } from "./types";
+import { ParsedInfo } from "../../validators";
+import { SolanaTokenProgram } from "../../../../types";
 
 export function parseSplTokenInstruction(
-  ix: ParsedInstruction & { program: typeof PARSED_PROGRAMS.SPL_TOKEN },
+  ix: ParsedInstruction & { program: SolanaTokenProgram },
 ): TokenInstructionDescriptor {
   const parsed = create(ix.parsed, ParsedInfo);
   const { type: rawType, info } = parsed;
@@ -14,11 +13,12 @@ export function parseSplTokenInstruction(
   const title = IX_TITLES[type];
   const struct = IX_STRUCTS[type];
 
+  // TODO type this correctly if possible
   return {
     type,
-    title: title as any,
-    info: create(info, struct as any) as any,
-  };
+    title,
+    info: create(info, struct as any),
+  } as TokenInstructionDescriptor;
 }
 
 export type TokenInstructionDescriptor = {

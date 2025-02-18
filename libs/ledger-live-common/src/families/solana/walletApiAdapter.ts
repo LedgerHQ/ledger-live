@@ -10,7 +10,10 @@ const getWalletAPITransactionSignFlowInfos: GetWalletAPITransactionSignFlowInfos
   WalletAPISolanaTransaction,
   Transaction
 > = ({ walletApiTransaction, account }) => {
-  const liveTx: Transaction = { ...walletApiTransaction };
+  const liveTx: Transaction = {
+    ...walletApiTransaction,
+    model: { ...walletApiTransaction.model, commandDescriptor: undefined },
+  };
 
   if (!liveTx.subAccountId && account.type === "TokenAccount") {
     liveTx.subAccountId = account.id;

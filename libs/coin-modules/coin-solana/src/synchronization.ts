@@ -4,6 +4,8 @@ import BigNumber from "bignumber.js";
 import { emptyHistoryCache, encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import {
   getAccountMinimumBalanceForRentExemption,
+  getMaybeTokenMint,
+  getTokenAccruedInterestDelta,
   getTransactions,
   ParsedOnChainStakeAccountWithInfo,
   toStakeAccountWithInfo,
@@ -15,7 +17,6 @@ import {
   Awaited,
   encodeAccountIdWithTokenAccountAddress,
   isStakeLockUpInForce,
-  tokenIsListedOnLedger,
   withdrawableFromStake,
 } from "./logic";
 import {
@@ -37,9 +38,19 @@ import { ChainAPI } from "./api";
 import { ParsedOnChainTokenAccountWithInfo, toTokenAccountWithInfo } from "./api/chain/web3";
 import { drainSeq } from "./utils";
 import { estimateTxFee } from "./tx-fees";
-import { SolanaAccount, SolanaOperationExtra, SolanaStake, SolanaTokenAccount } from "./types";
+import {
+  SolanaAccount,
+  SolanaOperationExtra,
+  SolanaStake,
+  SolanaTokenAccount,
+  SolanaTokenAccountExtensions,
+  SolanaTokenProgram,
+} from "./types";
 import { Operation, OperationType, TokenAccount } from "@ledgerhq/types-live";
 import { DelegateInfo, WithdrawInfo } from "./api/chain/instruction/stake/types";
+import { PARSED_PROGRAMS } from "./api/chain/program/constants";
+import { tokenIsListedOnLedger } from "./helpers/token";
+import { MintExtensions } from "./api/chain/account/tokenExtensions";
 
 type OnChainTokenAccount = Awaited<ReturnType<typeof getAccount>>["tokenAccounts"][number];
 
@@ -89,7 +100,12 @@ export const getAccountShapeWithAPI = async (
       continue;
     }
 
-    const assocTokenAccAddress = await api.findAssocTokenAccAddress(mainAccAddress, mint);
+    const tokenProgram = accs[0].onChainAcc.account.data.program as SolanaTokenProgram;
+    const assocTokenAccAddress = await api.findAssocTokenAccAddress(
+      mainAccAddress,
+      mint,
+      tokenProgram,
+    );
 
     const assocTokenAcc = accs.find(
       ({ onChainAcc: { pubkey } }) => pubkey.toBase58() === assocTokenAccAddress,
@@ -109,18 +125,30 @@ export const getAccountShapeWithAPI = async (
       api,
     );
 
+    const mintInfo =
+      tokenProgram === PARSED_PROGRAMS.SPL_TOKEN_2022
+        ? await getMaybeTokenMint(mint, api)
+        : undefined;
+
+    const mintExtensions =
+      mintInfo && !(mintInfo instanceof Error) ? mintInfo.info.extensions : undefined;
+
     const nextSubAcc =
       subAcc === undefined
-        ? newSubAcc({
+        ? await newSubAcc({
+            api,
             currencyId: currency.id,
             mainAccountId,
             assocTokenAcc,
             txs,
+            mintExtensions,
           })
-        : patchedSubAcc({
+        : await patchedSubAcc({
+            api,
             subAcc,
             assocTokenAcc,
             txs,
+            mintExtensions,
           });
 
     nextSubAccs.push(nextSubAcc);
@@ -243,17 +271,21 @@ export const getAccountShapeWithAPI = async (
   return shape;
 };
 
-function newSubAcc({
+async function newSubAcc({
+  api,
   currencyId,
   mainAccountId,
   assocTokenAcc,
   txs,
+  mintExtensions,
 }: {
+  api: ChainAPI;
   currencyId: string;
   mainAccountId: string;
   assocTokenAcc: OnChainTokenAccount;
   txs: TransactionDescriptor[];
-}): SolanaTokenAccount {
+  mintExtensions: MintExtensions | undefined;
+}): Promise<SolanaTokenAccount> {
   const firstTx = txs[txs.length - 1];
 
   const creationDate = new Date((firstTx?.info.blockTime ?? Date.now() / 1000) * 1000);
@@ -276,6 +308,11 @@ function newSubAcc({
 
   const newOps = compact(txs.map(tx => txToTokenAccOperation(tx, assocTokenAcc, accountId)));
 
+  const extensions =
+    mintExtensions || assocTokenAcc.info.extensions
+      ? await toSolanaTokenAccExtensions(api, assocTokenAcc, mintExtensions)
+      : undefined;
+
   return {
     balance,
     balanceHistoryCache: emptyHistoryCache,
@@ -287,26 +324,35 @@ function newSubAcc({
     pendingOperations: [],
     spendableBalance: balance,
     swapHistory: [],
+    extensions,
     token: tokenCurrency,
     state: assocTokenAcc.info.state,
     type: "TokenAccount",
   };
 }
 
-function patchedSubAcc({
+async function patchedSubAcc({
+  api,
   subAcc,
   assocTokenAcc,
   txs,
+  mintExtensions,
 }: {
+  api: ChainAPI;
   subAcc: TokenAccount;
   assocTokenAcc: OnChainTokenAccount;
   txs: TransactionDescriptor[];
-}): SolanaTokenAccount {
+  mintExtensions: MintExtensions | undefined;
+}): Promise<SolanaTokenAccount> {
   const balance = new BigNumber(assocTokenAcc.info.tokenAmount.amount);
 
   const newOps = compact(txs.map(tx => txToTokenAccOperation(tx, assocTokenAcc, subAcc.id)));
 
   const totalOps = mergeOps(subAcc.operations, newOps);
+  const extensions =
+    mintExtensions || assocTokenAcc.info.extensions
+      ? await toSolanaTokenAccExtensions(api, assocTokenAcc, mintExtensions)
+      : undefined;
 
   return {
     ...subAcc,
@@ -314,7 +360,66 @@ function patchedSubAcc({
     spendableBalance: balance,
     operations: totalOps,
     state: assocTokenAcc.info.state,
+    extensions,
   };
+}
+
+async function toSolanaTokenAccExtensions(
+  api: ChainAPI,
+  assocTokenAcc: OnChainTokenAccount,
+  mintExtensions?: MintExtensions,
+) {
+  const extensions = [...(mintExtensions || []), ...(assocTokenAcc.info.extensions || [])];
+  return extensions.reduce<Promise<SolanaTokenAccountExtensions>>(async (prevPromise, tokenExt) => {
+    const acc = await prevPromise;
+    switch (tokenExt.extension) {
+      case "interestBearingConfig": {
+        const delta = await getTokenAccruedInterestDelta(
+          api,
+          BigNumber(assocTokenAcc.info.tokenAmount.amount),
+          assocTokenAcc.info.tokenAmount.decimals,
+          assocTokenAcc.info.mint.toBase58(),
+          assocTokenAcc.info.owner.toBase58(),
+        );
+        return {
+          ...acc,
+          interestRate: {
+            rateBps: tokenExt.state.currentRate,
+            accruedDelta: delta?.toNumber(),
+          },
+        };
+      }
+      case "nonTransferable":
+        return { ...acc, nonTransferable: true };
+      case "permanentDelegate":
+        return {
+          ...acc,
+          permanentDelegate: { delegateAddress: tokenExt.state?.delegate?.toBase58() },
+        };
+      case "memoTransfer":
+        return { ...acc, requiredMemoOnTransfer: !!tokenExt.state.requireIncomingTransferMemos };
+      case "transferFeeConfig": {
+        const { epoch } = await api.getEpochInfo();
+        const { newerTransferFee, olderTransferFee } = tokenExt.state;
+        const transferFee = epoch >= newerTransferFee.epoch ? newerTransferFee : olderTransferFee;
+        return {
+          ...acc,
+          transferFee: {
+            feeBps: transferFee.transferFeeBasisPoints,
+            maxFee: transferFee.maximumFee,
+          },
+        };
+      }
+      case "transferHook": {
+        return {
+          ...acc,
+          transferHook: { programAddress: tokenExt.state?.programId?.toBase58() },
+        };
+      }
+      default:
+        return acc;
+    }
+  }, Promise.resolve({}));
 }
 
 function txToMainAccOperation(
@@ -401,7 +506,7 @@ function getOpExtra(
   const { instructions } = tx.parsed.transaction.message;
   const parsedIxs = instructions
     .map(ix => parseQuiet(ix))
-    .filter(({ program }) => program !== "spl-memo");
+    .filter(({ program }) => program !== PARSED_PROGRAMS.SPL_MEMO);
 
   if (tx.info.memo !== null) {
     extra.memo = dropMemoLengthPrefixIfAny(tx.info.memo);
@@ -505,7 +610,7 @@ function getMainAccOperationType({
   isFeePayer: boolean;
   balanceDelta: BigNumber;
 }): OperationType {
-  const type = getMainAccOperationTypeFromTx(tx);
+  const type = getMainAccOperationTypeFromTx(tx, isFeePayer);
 
   if (type !== undefined) {
     return type;
@@ -575,7 +680,10 @@ function getMainSendersRecipients(
   return initialSendersRecipients;
 }
 
-function getMainAccOperationTypeFromTx(tx: ParsedTransaction): OperationType | undefined {
+function getMainAccOperationTypeFromTx(
+  tx: ParsedTransaction,
+  isFeePayer: boolean,
+): OperationType | undefined {
   const parsedIxs = parseTxInstructions(tx);
 
   if (parsedIxs.length === 3) {
@@ -597,12 +705,13 @@ function getMainAccOperationTypeFromTx(tx: ParsedTransaction): OperationType | u
     const first = parsedIxs[0];
 
     switch (first.program) {
-      case "spl-associated-token-account":
+      case PARSED_PROGRAMS.SPL_ASSOCIATED_TOKEN_ACCOUNT:
         if (first.instruction.type === "associate") {
-          return "OPT_IN";
+          return isFeePayer ? "OPT_OUT" : "OPT_IN";
         }
         break;
-      case "spl-token":
+      case PARSED_PROGRAMS.SPL_TOKEN:
+      case PARSED_PROGRAMS.SPL_TOKEN_2022:
         switch (first.instruction.type) {
           case "closeAccount":
             return "OPT_OUT";
@@ -612,7 +721,7 @@ function getMainAccOperationTypeFromTx(tx: ParsedTransaction): OperationType | u
             return "UNFREEZE";
         }
         break;
-      case "stake":
+      case PARSED_PROGRAMS.STAKE:
         switch (first.instruction.type) {
           case "delegate":
             return "DELEGATE";
@@ -672,12 +781,13 @@ function getTokenAccOperationType({
 
   if (mainIx !== undefined && otherIxs.length === 0) {
     switch (mainIx.program) {
-      case "spl-associated-token-account":
+      case PARSED_PROGRAMS.SPL_ASSOCIATED_TOKEN_ACCOUNT:
         if (mainIx.instruction.type === "associate") {
           return "NONE"; // ATA opt-in operation is added to the main account
         }
         break;
-      case "spl-token":
+      case PARSED_PROGRAMS.SPL_TOKEN:
+      case PARSED_PROGRAMS.SPL_TOKEN_2022:
         switch (mainIx.instruction.type) {
           case "freezeAccount":
             return "FREEZE";
@@ -696,7 +806,9 @@ function getTokenAccOperationType({
 function parseTxInstructions(tx: ParsedTransaction) {
   return tx.message.instructions
     .map(ix => parseQuiet(ix))
-    .filter(({ program }) => program !== "spl-memo" && program !== "unknown");
+    .filter(
+      ({ program }) => program !== PARSED_PROGRAMS.SPL_MEMO && program !== PARSED_PROGRAMS.UNKNOWN,
+    );
 }
 
 function dropMemoLengthPrefixIfAny(memo: string) {
@@ -727,6 +839,11 @@ async function getAccount(
 
   const tokenAccounts = await api
     .getParsedTokenAccountsByOwner(address)
+    .then(res => res.value)
+    .then(map(toTokenAccountWithInfo));
+
+  const token2022Accounts = await api
+    .getParsedToken2022AccountsByOwner(address)
     .then(res => res.value)
     .then(map(toTokenAccountWithInfo));
 
@@ -766,7 +883,7 @@ async function getAccount(
   return {
     balance,
     blockHeight,
-    tokenAccounts,
+    tokenAccounts: [...tokenAccounts, ...token2022Accounts],
     stakes,
   };
 }
