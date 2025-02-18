@@ -1,6 +1,6 @@
-import { setConfig } from "../testUtils";
+import { setConfig } from "./testUtils";
 setConfig();
-import { getAccount, getTransactions } from ".";
+import { getAccount, getTransactions } from "../api";
 
 test("get balance for an account", async () => {
   const invalidAddress = [

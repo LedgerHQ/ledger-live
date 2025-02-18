@@ -1,7 +1,7 @@
 import { BigNumber } from "bignumber.js";
-import { Transaction, MinaAccount } from "./types";
+import { Transaction, MinaAccount } from "../types/common";
 import { CoinType } from "@ledgerhq/types-cryptoassets";
-import { MAX_MEMO_LENGTH, MINA_DECODED_ADDRESS_LENGTH } from "./consts";
+import { MAX_MEMO_LENGTH, MINA_DECODED_ADDRESS_LENGTH } from "../consts";
 import bs58check from "bs58check";
 
 /*

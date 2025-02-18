@@ -64,6 +64,7 @@ export type RosettaTransaction = {
         | "payment_receiver_inc"
         | "account_creation_fee_via_payment"
         | "zkapp_fee_payer_dec"
+        | "delegate_change"
         | "zkapp_balance_update";
       status: "Success" | "Failed";
       account: {
@@ -72,7 +73,7 @@ export type RosettaTransaction = {
           token_id: string;
         };
       };
-      amount: {
+      amount?: {
         value: string;
         currency: {
           symbol: string;
@@ -82,10 +83,14 @@ export type RosettaTransaction = {
       related_operations?: Array<{
         index: number;
       }>;
+      metadata?: {
+        delegate_change_target?: string;
+      };
     }>;
     related_transactions: Array<any>;
     metadata?: {
-      memo: string;
+      memo?: string;
+      nonce?: number;
     };
   };
   timestamp: number;

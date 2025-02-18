@@ -1,8 +1,8 @@
 import { GetAddressFn } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { GetAddressOptions } from "@ledgerhq/coin-framework/derivation";
-import { GetAddressResponse, MinaSigner } from "./signer";
-import { getAccountNumFromPath } from "./logic";
+import { GetAddressResponse, MinaSigner } from "../types/signer";
+import { getAccountNumFromPath } from "../common-logic";
 import invariant from "invariant";
 import { log } from "@ledgerhq/logs";
 

@@ -1,4 +1,4 @@
-import { setCoinConfig } from "./config";
+import { setCoinConfig } from "../config";
 
 export const setConfig = () => {
   setCoinConfig((): any => {
