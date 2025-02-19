@@ -4134,7 +4134,8 @@
       "walletSync" : "Ledger Sync",
       "walletSyncDesc" : "Synchronisiere deine Ledger Live-Kryptokonten auf verschiedenen Smartphones und Computern.",
       "mevProtection" : "MEV-Schutz",
-      "mevProtectionDesc" : "Aktiviere den MEV-Schutz, um die Zuverlässigkeit von Ethereum-Transaktionen zu verbessern",
+      "mevProtectionDesc" : "Enable MEV Protection for more reliable transactions on Ethereum.",
+      "mevProtectionLearnMore" : "Privacy notice",
       "marketPerformanceWidget" : "Marktperformance-Widget",
       "marketPerformanceWidgetDesc" : "Aktiviere diese Funktion, um auf der Portfolioseite die größten Gewinner und Verlierer über ausgewählte Zeiträume anzuzeigen."
     },
@@ -5722,7 +5723,7 @@
     },
     "MultiversXDecimalsLimitReached" : {
       "title" : "Maximale Dezimalstellengrenze erreicht",
-      "description" : "Bitte stellen Sie sicher, dass der angegebene Betrag 18 Dezimalstellen hat."
+      "description" : "Bitte stelle sicher, dass der angegebene Betrag 18 Dezimalstellen hat."
     },
     "MultiversXMinDelegatedAmountError" : {
       "title" : "Der delegierte Betrag muss mindestens {{formattedAmount}} betragen"
@@ -5921,11 +5922,11 @@
     },
     "WrongDeviceForAccountPayout" : {
       "title" : "Etwas ist schief gelaufen",
-      "description" : "Das Empfängerkonto ist diesem Gerät nicht zugeordnet. Bitte nutze das korrekte Gerät und versuche es noch einmal."
+      "description" : "This receiving account does not belong to the device you have connected. Please change and retry"
     },
     "WrongDeviceForAccountRefund" : {
       "title" : "Etwas ist schief gelaufen",
-      "description" : "Das Empfängerkonto für die Rückerstattung ist diesem Gerät nicht zugeordnet. Bitte nutze das korrekte Gerät und versuche es noch einmal."
+      "description" : "This sending account does not belong to the device you have connected. Please change and retry"
     },
     "DeviceAppVerifyNotSupported" : {
       "title" : "App-Update erforderlich",
@@ -6889,6 +6890,50 @@
       "confirm" : "Bestätigen",
       "address" : "Adresse",
       "transactionId" : "Transaktions-ID"
+    }
+  },
+  "lnsUpsell" : {
+    "banner" : {
+      "manager" : {
+        "optIn" : {
+          "title" : "Zeit für ein Upgrade",
+          "description" : "Jetzt auf eines unserer aktuellen Geräte aufrüsten: <0>{{discount}} % Rabatt</0> für mehr Sicherheit und ein nahtloses Erlebnis.",
+          "cta" : "Neue Wallet zulegen",
+          "linkText" : "Weitere Informationen"
+        },
+        "optOut" : {
+          "title" : "Zeit für ein Upgrade",
+          "description" : "Jetzt auf eines unserer aktuellen Geräte aufrüsten: <0>{{discount}} % Rabatt</0> für mehr Sicherheit und ein nahtloses Erlebnis.",
+          "cta" : "Neue Wallet zulegen",
+          "linkText" : "Weitere Informationen"
+        }
+      },
+      "accounts" : {
+        "optIn" : {
+          "title" : "Zeit für ein Upgrade",
+          "description" : "Bald gibt es keine Updates mehr für die Ledger Nano S. Jetzt auf eines unserer aktuellen Geräte aufrüsten – mit <0>{{discount}} % Rabatt</0>.",
+          "cta" : "Neue Wallet zulegen",
+          "linkText" : "Weitere Informationen"
+        },
+        "optOut" : {
+          "title" : "Zeit für ein Upgrade",
+          "description" : "Bald gibt es keine Updates mehr für die Ledger Nano S. Jetzt auf eines unserer aktuellen Geräte aufrüsten – mit <0>{{discount}} % Rabatt</0>.",
+          "cta" : "Neue Wallet zulegen",
+          "linkText" : "Weitere Informationen"
+        }
+      },
+      "notifications" : {
+        "optIn" : {
+          "description" : "Updates gibt es nicht mehr lange. Jetzt aufrüsten: <0>{{discount}} % Rabatt</0> für ein nahtloses Erlebnis.",
+          "cta" : "Neue Wallet zulegen",
+          "linkText" : "Weitere Informationen"
+        },
+        "optOut" : {
+          "description" : "Updates gibt es nicht mehr lange. Jetzt aufrüsten: <0>{{discount}} % Rabatt</0> für ein nahtloses Erlebnis.",
+          "cta" : "Neue Wallet zulegen",
+          "linkText" : "Weitere Informationen"
+        }
+      }
     }
   }
 }
