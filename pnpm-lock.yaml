@@ -322,6 +322,9 @@ importers:
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/cryptoassets
+      '@ledgerhq/device-transport-kit-web-hid':
+        specifier: 1.0.1
+        version: 1.0.1(rxjs@7.8.1)
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../../libs/ledgerjs/packages/devices
@@ -881,6 +884,9 @@ importers:
       '@ledgerhq/coin-stacks':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-stacks
+      '@ledgerhq/device-transport-kit-react-native-ble':
+        specifier: 0.0.0-rnble-transport-20250219135033
+        version: 0.0.0-rnble-transport-20250219135033(react-native-ble-plx@3.2.1(@babel/core@7.24.3)(expo-modules-autolinking@1.11.2(expo-modules-core@1.12.26(react-native@0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3))(react@18.3.1))(react-native@0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3))(react@18.3.1))(expo-modules-core@1.12.26(react-native@0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3))(react@18.3.1))(react-native@0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3))(react@18.3.1))(react-native@0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3))(rxjs@7.8.1)
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../../libs/ledgerjs/packages/devices
@@ -920,6 +926,9 @@ importers:
       '@ledgerhq/live-countervalues-react':
         specifier: workspace:^
         version: link:../../libs/live-countervalues-react
+      '@ledgerhq/live-dmk':
+        specifier: workspace:^
+        version: link:../../libs/live-dmk
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../libs/env
@@ -6793,11 +6802,11 @@ importers:
   libs/live-dmk:
     dependencies:
       '@ledgerhq/device-management-kit':
-        specifier: 0.6.1
-        version: 0.6.1(rxjs@7.8.1)
+        specifier: 0.0.0-rnble-transport-20250219135033
+        version: 0.0.0-rnble-transport-20250219135033(rxjs@7.8.1)
       '@ledgerhq/device-transport-kit-web-hid':
         specifier: 1.0.1
-        version: 1.0.1(@ledgerhq/device-management-kit@0.6.1(rxjs@7.8.1))(rxjs@7.8.1)
+        version: 1.0.1(@ledgerhq/device-management-kit@0.0.0-rnble-transport-20250219135033(rxjs@7.8.1))(rxjs@7.8.1)
       '@ledgerhq/hw-transport':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-transport
@@ -6807,16 +6816,10 @@ importers:
       '@ledgerhq/types-devices':
         specifier: workspace:^
         version: link:../ledgerjs/packages/types-devices
-      react:
-        specifier: ^18.3.1
-        version: 18.3.1
-      react-dom:
-        specifier: ^18.3.1
-        version: 18.3.1(react@18.3.1)
-      rxjs:
-        specifier: ^7.8.1
-        version: 7.8.1
     devDependencies:
+      '@ledgerhq/device-transport-kit-react-native-ble':
+        specifier: 0.0.0-rnble-transport-20250219135033
+        version: 0.0.0-rnble-transport-20250219135033(@ledgerhq/device-management-kit@0.0.0-rnble-transport-20250219135033(rxjs@7.8.1))(rxjs@7.8.1)
       '@testing-library/dom':
         specifier: ^9.3.4
         version: 9.3.4
@@ -6841,6 +6844,15 @@ importers:
       jsdom:
         specifier: 25.0.1
         version: 25.0.1
+      react:
+        specifier: ^18.3.1
+        version: 18.3.1
+      react-dom:
+        specifier: ^18.3.1
+        version: 18.3.1(react@18.3.1)
+      rxjs:
+        specifier: ^7.8.1
+        version: 7.8.1
       vite:
         specifier: 6.0.7
         version: 6.0.7(@types/node@22.10.10)
@@ -12171,6 +12183,11 @@ packages:
   '@ledgerhq/cryptoassets-evm-signatures@13.5.2':
     resolution: {integrity: sha512-OjjzuiMMEIYEbXeueJB6mXwlvYhru28b43buAVOeggZ2XmdlT0kBvt7Cjn4bDPqff/glWR7vQdytIr7b77m2EQ==}
 
+  '@ledgerhq/device-management-kit@0.0.0-rnble-transport-20250219135033':
+    resolution: {integrity: sha512-h8/RbOoaPIavQxWqx7KS6OeMYW+YAJEimD1nHroEWm/4DAq65gaISb7Yj9CJ5qhWdXnruvtLbrcVXSKS6rO89w==}
+    peerDependencies:
+      rxjs: ^7.8.1
+
   '@ledgerhq/device-management-kit@0.6.1':
     resolution: {integrity: sha512-ce4oM6zToJQvLzmnBAgq+hI7aTzJQxbnWYVG32Gr0ZLnb1wn+lcRHAH7KIp+neoYrOxwMJ21j0aWb6vSYmLlcw==}
     peerDependencies:
@@ -12181,6 +12198,14 @@ packages:
     peerDependencies:
       '@ledgerhq/context-module': 1.2.0
       '@ledgerhq/device-management-kit': 0.6.1
+
+  '@ledgerhq/device-transport-kit-react-native-ble@0.0.0-rnble-transport-20250219135033':
+    resolution: {integrity: sha512-U4bdg+JTWS1kLEGgKuJKN/NKXJQNstGv06Dse7s4A+tSyVW4ulvOzS4jYIHduusQTKymBNBpx7yhs7dvZGCcQA==}
+    peerDependencies:
+      '@ledgerhq/device-management-kit': 0.0.0-rnble-transport-20250219135033
+      react-native: '>0.70'
+      react-native-ble-plx: ^3.2.1
+      rxjs: ^7.8.1
 
   '@ledgerhq/device-transport-kit-web-hid@1.0.1':
     resolution: {integrity: sha512-9DPICPYjFlYA1vzaied3a70DbGI/ADXgM0FGhhe11yonqDvGCdHKN6lcAhoG7b159pManE8xqwUDuYpGuWOjrA==}
@@ -30524,6 +30549,10 @@ packages:
   url@0.11.3:
     resolution: {integrity: sha512-6hxOLGfZASQK/cijlZnZJTq8OXAkt/3YGfQX45vvMYXpZoo8NdWZcY73K108Jf759lS1Bv/8wXnHDTSz17dSRw==}
 
+  url@0.11.4:
+    resolution: {integrity: sha512-oCwdVC7mTuWiPyjLUz/COz5TLk6wgp0RCsN+wHZ2Ekneac9w8uuV0njcbbie2ME+Vs+d6duwmYuR3HgQXs1fOg==}
+    engines: {node: '>= 0.4'}
+
   usb@2.9.0:
     resolution: {integrity: sha512-G0I/fPgfHUzWH8xo2KkDxTTFruUWfppgSFJ+bQxz/kVY2x15EQ/XDB7dqD1G432G4gBG4jYQuF3U7j/orSs5nw==}
     engines: {node: '>=10.20.0 <11.x || >=12.17.0 <13.0 || >=14.0.0'}
@@ -30620,6 +30649,10 @@ packages:
   utils-merge@1.0.1:
     resolution: {integrity: sha512-pMZTvIkT1d+TFGvDOqodOclx0QWkkgi6Tdoa8gC8ffGAAqz9pzPTZWAybbsHHoED/ztMtkv/VoYTYyShUn81hA==}
     engines: {node: '>= 0.4.0'}
+
+  uuid@10.0.0:
+    resolution: {integrity: sha512-8XkAphELsDnEGrDxUOHB3RGvXz6TeuYSGEZBOjtTtPm2lwhGBjLgOzLHB63IUWfBpNucQjND6d3AOudO+H3RWQ==}
+    hasBin: true
 
   uuid@11.0.5:
     resolution: {integrity: sha512-508e6IcKLrhxKdBbcA2b4KQZlLVp2+J5UwQ6F7Drckkc5N9ZJwFa4TgWtsww9UG8fGHbm6gbV19TdM5pQ4GaIA==}
@@ -38860,6 +38893,25 @@ snapshots:
       '@ledgerhq/live-env': 2.4.1
       axios: 1.7.7
 
+  '@ledgerhq/device-management-kit@0.0.0-rnble-transport-20250219135033(rxjs@7.8.1)':
+    dependencies:
+      '@sentry/minimal': 6.19.7
+      axios: 1.7.9
+      inversify: 6.2.2(reflect-metadata@0.2.2)
+      inversify-logger-middleware: 3.1.0
+      isomorphic-ws: 5.0.0(ws@8.18.0)
+      purify-ts: 2.1.0
+      reflect-metadata: 0.2.2
+      rxjs: 7.8.1
+      semver: 7.6.3
+      url: 0.11.4
+      uuid: 11.0.5
+      ws: 8.18.0
+      xstate: 5.19.2
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+
   '@ledgerhq/device-management-kit@0.6.1(rxjs@7.8.1)':
     dependencies:
       '@sentry/minimal': 6.19.7
@@ -38894,9 +38946,35 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/device-transport-kit-web-hid@1.0.1(@ledgerhq/device-management-kit@0.6.1(rxjs@7.8.1))(rxjs@7.8.1)':
+  '@ledgerhq/device-transport-kit-react-native-ble@0.0.0-rnble-transport-20250219135033(@ledgerhq/device-management-kit@0.0.0-rnble-transport-20250219135033(rxjs@7.8.1))(rxjs@7.8.1)':
     dependencies:
-      '@ledgerhq/device-management-kit': 0.6.1(rxjs@7.8.1)
+      '@ledgerhq/device-management-kit': 0.0.0-rnble-transport-20250219135033(rxjs@7.8.1)
+      '@sentry/minimal': 6.19.7
+      js-base64: 3.7.7
+      purify-ts: 2.1.0
+      rxjs: 7.8.1
+      uuid: 10.0.0
+
+  '@ledgerhq/device-transport-kit-react-native-ble@0.0.0-rnble-transport-20250219135033(react-native-ble-plx@3.2.1(@babel/core@7.24.3)(expo-modules-autolinking@1.11.2(expo-modules-core@1.12.26(react-native@0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3))(react@18.3.1))(react-native@0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3))(react@18.3.1))(expo-modules-core@1.12.26(react-native@0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3))(react@18.3.1))(react-native@0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3))(react@18.3.1))(react-native@0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3))(rxjs@7.8.1)':
+    dependencies:
+      '@sentry/minimal': 6.19.7
+      js-base64: 3.7.7
+      purify-ts: 2.1.0
+      react-native: 0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3)
+      react-native-ble-plx: 3.2.1(@babel/core@7.24.3)(expo-modules-autolinking@1.11.2(expo-modules-core@1.12.26(react-native@0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3))(react@18.3.1))(react-native@0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3))(react@18.3.1))(expo-modules-core@1.12.26(react-native@0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3))(react@18.3.1))(react-native@0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3))(react@18.3.1)
+      rxjs: 7.8.1
+      uuid: 10.0.0
+
+  '@ledgerhq/device-transport-kit-web-hid@1.0.1(@ledgerhq/device-management-kit@0.0.0-rnble-transport-20250219135033(rxjs@7.8.1))(rxjs@7.8.1)':
+    dependencies:
+      '@ledgerhq/device-management-kit': 0.0.0-rnble-transport-20250219135033(rxjs@7.8.1)
+      '@sentry/minimal': 6.19.7
+      purify-ts: 2.1.0
+      rxjs: 7.8.1
+      uuid: 11.0.5
+
+  '@ledgerhq/device-transport-kit-web-hid@1.0.1(rxjs@7.8.1)':
+    dependencies:
       '@sentry/minimal': 6.19.7
       purify-ts: 2.1.0
       rxjs: 7.8.1
@@ -66479,6 +66557,11 @@ snapshots:
       punycode: 1.4.1
       qs: 6.13.0
 
+  url@0.11.4:
+    dependencies:
+      punycode: 1.4.1
+      qs: 6.13.0
+
   usb@2.9.0(patch_hash=d5pno5rjlboai2klvccu6wv334):
     dependencies:
       '@types/w3c-web-usb': 1.0.10
@@ -66574,6 +66657,8 @@ snapshots:
   utility-types@3.11.0: {}
 
   utils-merge@1.0.1: {}
+
+  uuid@10.0.0: {}
 
   uuid@11.0.5: {}
 

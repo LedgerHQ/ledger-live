@@ -14,7 +14,7 @@ let transport: DeviceManagementKitTransport;
 describe("DeviceManagementKitTransport", () => {
   beforeAll(async () => {
     vi.spyOn(deviceManagementKit, "toggleDeviceSessionRefresher").mockImplementation(vi.fn());
-    vi.spyOn(deviceManagementKit, "listenToKnownDevices").mockImplementation(() => {
+    vi.spyOn(deviceManagementKit, "listenToAvailableDevices").mockImplementation(() => {
       return of<DiscoveredDevice[]>([
         {
           id: `test-123`,
@@ -23,6 +23,8 @@ describe("DeviceManagementKitTransport", () => {
             model: DeviceModelId.STAX,
             name: "stax",
           },
+          rssi: undefined,
+          name: "",
           transport: "web-hid",
         },
       ]);
