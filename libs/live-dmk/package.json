@@ -45,16 +45,15 @@
     }
   },
   "dependencies": {
-    "@ledgerhq/device-management-kit": "0.6.1",
     "@ledgerhq/device-transport-kit-web-hid": "1.0.1",
+    "@ledgerhq/device-management-kit": "0.0.0-rnble-transport-20250219135033",
     "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/logs": "^6.12.0",
-    "@ledgerhq/types-devices": "workspace:^",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "rxjs": "^7.8.1"
+    "@ledgerhq/types-devices": "workspace:^"
   },
   "devDependencies": {
+    "@ledgerhq/device-transport-kit-react-native-ble": "0.0.0-rnble-transport-20250219135033",
+    "@ledgerhq/device-transport-kit-web-hid": "1.0.1",
     "@testing-library/dom": "^9.3.4",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.1.0",
@@ -63,8 +62,33 @@
     "@vitest/coverage-istanbul": "3.0.7",
     "@vitest/coverage-v8": "2.1.8",
     "jsdom": "25.0.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "rxjs": "^7.8.1",
     "vite": "6.0.7",
     "vitest": "2.1.9",
     "ws": "8.18.0"
+  },
+  "peerDependencies": {
+    "@ledgerhq/device-transport-kit-web-hid": "1.0.1",
+    "@ledgerhq/device-transport-kit-react-native-ble": "0.0.0-rnble-transport-20250219135033",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-native": ">0.70",
+    "rxjs": "^7.8.1"
+  },
+  "peerDependenciesMeta": {
+    "@ledgerhq/device-transport-kit-web-hid": {
+      "optional": true
+    },
+    "@ledgerhq/device-transport-kit-react-native-ble": {
+      "optional": true
+    },
+    "react-dom": {
+      "optional": true
+    },
+    "react-native": {
+      "optional": true
+    }
   }
 }
