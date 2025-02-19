@@ -49,8 +49,7 @@ export const useTrackAddAccountFlow = ({
   const allowOpeningGrantedBoundedQueue = useRef<BoundedQueueOfFive>(boundedQueue.initialValue);
 
   useEffect(() => {
-    if (location !== HOOKS_TRACKING_LOCATIONS.addAccount && !device?.modelId && !device?.wired)
-      return;
+    if (location !== HOOKS_TRACKING_LOCATIONS.addAccount) return;
 
     const defaultPayload = {
       deviceType: device?.modelId,
