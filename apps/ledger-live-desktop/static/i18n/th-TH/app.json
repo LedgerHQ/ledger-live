@@ -139,8 +139,8 @@
       "error" : "Synchronization error",
       "refresh" : "Refresh",
       "devTools" : "Dev tools",
-      "failingSync_one" : "Account failing to sync:",
-      "failingSync_other" : "Accounts failing to sync:"
+      "failingSync_one" : "ไม่สามารถซิงค์บัญชีได้ :",
+      "failingSync_other" : "ไม่สามารถซิงค์บัญชีได้ :"
     },
     "exchange" : "Exchange",
     "info" : "Info",
@@ -553,7 +553,7 @@
       "title" : "Swap",
       "provider" : "Provider",
       "txid" : "Swap ID",
-      "status" : "Status",
+      "status" : "สถานะ",
       "statusTooltips" : {
         "expired" : "Please contact the swap provider with your swap ID for more information.",
         "refunded" : "Please contact the swap provider with your swap ID for more information.",
@@ -579,7 +579,7 @@
       "description" : "Not enough funds? Don’t worry, you can securely buy, swap or receive crypto directly in Ledger Live.",
       "options" : {
         "buy" : {
-          "title" : "Buy",
+          "title" : "ซื้อ",
           "body" : "Buy with trusted  providers"
         },
         "swap" : {
@@ -628,7 +628,7 @@
     }
   },
   "fullNode" : {
-    "status" : "Status",
+    "status" : "สถานะ",
     "connect" : "Connect",
     "disconnect" : "Disconnect",
     "checkNodeSettings" : "Verify node settings",
@@ -679,13 +679,13 @@
               "description" : "You can now configure your full node to scan for your accounts on the blockchain."
             },
             "failure" : {
-              "header" : "Could not reach full node",
+              "header" : "ไม่สามารถเข้าถึง Full Node ได้",
               "description" : "Please ensure your node is fully synchronized and verify its connection settings."
             }
           }
         },
         "device" : {
-          "title" : "Device",
+          "title" : "อุปกรณ์",
           "connectionSteps" : {
             "pending" : {
               "header" : "Getting accounts from device",
@@ -699,7 +699,7 @@
           }
         },
         "accounts" : {
-          "title" : "Accounts",
+          "title" : "บัญชี",
           "existing" : "Existing accounts to scan",
           "toScan" : "Accounts to scan",
           "toScanDescription" : "Accounts to scan for each address type",
@@ -715,7 +715,7 @@
               "cta" : "Download SatStack"
             },
             "satstack-disconnected" : {
-              "header" : "Could not reach SatStack",
+              "header" : "ไม่สามารถเข้าถึง SatStack ได้",
               "description" : "Please verify that SatStack is running on this computer."
             },
             "satstack-outdated" : {
@@ -723,7 +723,7 @@
               "description" : "The SatStack version you are using is too old and may contain bugs or incompatibilities."
             },
             "node-disconnected" : {
-              "header" : "Could not reach full node",
+              "header" : "ไม่สามารถเข้าถึง Full Node ได้",
               "description" : "Please verify that your node is reachable and that the connection settings you entered are correct."
             },
             "invalid-chain" : {
@@ -757,12 +757,12 @@
   },
   "account" : {
     "subHeader" : {
-      "moreInfo" : "More info",
+      "moreInfo" : "ข้อมูลเพิ่มเติม",
       "cardTitle" : "Powered by {{team}}",
       "drawer" : {
-        "title" : "{{family}} integration",
+        "title" : "{{family}} Integration",
         "subTitle" : "The {{family}} integration has been done by the {{team}} team",
-        "description" : "Ledger Live is an open-source platform.",
+        "description" : "Ledger Live เป็นแพลตฟอร์ม Open-Source",
         "description2" : "Developers from anywhere in the world can integrate with our Ledger Live",
         "description3" : "This integration has been carried out by {{team}} in collaboration with Ledger",
         "description3Link" : "This integration has been carried out by <1><0>{{team}}</0></1> in collaboration with Ledger"
@@ -797,11 +797,11 @@
       "descToken" : "Make sure the <1><0>{{managerAppName}}</0></1> app is installed and start receiving <3><0>{{ticker}}</0></3> and <5><0>{{tokenList}}</0> tokens</5>",
       "buttons" : {
         "receiveFunds" : "Receive",
-        "buy" : "Buy"
+        "buy" : "ซื้อ"
       }
     },
     "settings" : {
-      "title" : "Edit account",
+      "title" : "แก้ไขบัญชี",
       "advancedLogs" : "Advanced",
       "advancedTips" : "This is a {{tag}} xpub. When importing it into a third-party wallet, choose the same derivation mode.",
       "accountName" : {
@@ -851,7 +851,7 @@
         "title" : "In case you didn’t know...",
         "description" : "The Ledger validator stakes your {{asset}} at a commission of {{commission}}%.",
         "cta" : "Stake with Ledger",
-        "linkText" : "Learn more",
+        "linkText" : "เรียนรู้เพิ่มเติม",
         "ethereum" : {
           "lido" : {
             "title" : "In case you didn’t know...",
@@ -876,7 +876,7 @@
   "exchange" : {
     "chooseProvider" : "Choose from {{providerCount}} provider",
     "chooseProviders" : "Choose from {{providerCount}} providers",
-    "title" : "Buy and sell crypto",
+    "title" : "ซื้อและขายคริปโต",
     "reset" : "Reset flow",
     "verifyAddress" : "Please confirm the address displayed exactly matches the one shown on your device",
     "buy" : {
@@ -885,22 +885,22 @@
       "buyFrom" : "Buy from anywhere",
       "cryptoSupported" : "crypto supported",
       "payWith" : "Pay with card or SEPA",
-      "tab" : "Buy",
+      "tab" : "ซื้อ",
       "coinify" : {
         "header" : "Buy crypto with {{provider}}",
         "title" : "Buy crypto via <0>{{provider}}</0>",
         "selectCrypto" : "Choose a crypto asset",
-        "selectAccount" : "Choose an account",
-        "continue" : "Continue",
+        "selectAccount" : "เลือกบัญชี",
+        "continue" : "ดำเนินการต่อ",
         "addAccount" : "Add account"
       }
     },
     "sell" : {
       "header" : "Sell crypto with our partners",
       "title" : "Sell crypto via <0>{{provider}}</0>",
-      "tab" : "Sell",
+      "tab" : "ขาย",
       "selectCrypto" : "Choose a crypto asset",
-      "selectAccount" : "Choose an account",
+      "selectAccount" : "เลือกบัญชี",
       "continue" : "Continue"
     }
   },
@@ -930,7 +930,7 @@
       "openLoans" : "Open loans",
       "closedLoans" : "Closed loans",
       "amountRedeemed" : "Amount withdrawn",
-      "date" : "Date",
+      "date" : "วันที่",
       "info" : "You can lend assets directly from your {{currency}} account and earn interest.",
       "howCompoundWorks" : "How does lending on Compound work?",
       "lend" : "Deposit {{currency}}"
@@ -959,12 +959,12 @@
     },
     "headers" : {
       "active" : {
-        "accounts" : "Account",
+        "accounts" : "บัญชี",
         "amountSupplied" : "Open loan",
         "amountSuppliedTooltip" : "Amount deposited in the network",
         "accruedInterests" : "Interest balance",
         "accruedInterestsTooltip" : "Interest being earned on loans",
-        "status" : "Account status",
+        "status" : "สถานะบัญชี",
         "actions" : "Actions"
       },
       "status" : {
@@ -978,19 +978,19 @@
         "earning" : "Earning"
       },
       "closed" : {
-        "assetLended" : "Asset",
+        "assetLended" : "สินทรัพย์",
         "amountRedeemed" : "Withdrawal amount",
         "interestsEarned" : "Interest earned",
-        "date" : "Date"
+        "date" : "วันที่"
       },
       "opened" : {
-        "assetLended" : "Asset",
-        "amount" : "Amount",
+        "assetLended" : "สินทรัพย์",
+        "amount" : "จำนวน",
         "accruedInterest" : "Accrued interest",
-        "date" : "Date"
+        "date" : "วันที่"
       },
       "rates" : {
-        "allAssets" : "Asset",
+        "allAssets" : "สินทรัพย์",
         "totalBalance" : "Asset balance",
         "totalBalanceTooltip" : "Amount available to lend",
         "currentAPY" : "Deposit APY",
@@ -1002,7 +1002,7 @@
       "cta" : "Manage lending",
       "title" : "Manage loan",
       "enable" : {
-        "approve" : "Approve",
+        "approve" : "อนุมัติ",
         "manageLimit" : "Manage limit",
         "viewDetails" : "View details",
         "info" : "You have approved <0>{{amount}}</0> on this account. You can reduce the amount at a fee.",
@@ -1027,11 +1027,11 @@
         "selectAccount" : {
           "title" : "Select account",
           "selectLabel" : "Account to lend from",
-          "cta" : "Approve",
+          "cta" : "อนุมัติ",
           "alreadyEnabled" : "This account is approved"
         },
         "amount" : {
-          "title" : "Amount",
+          "title" : "จำนวน",
           "summary" : "I grant access to <0>{{contractName}}</0> smart contract on my account <0>{{accountName}}</0> for a <0>{{amount}}</0> amount",
           "limit" : "limited {{amount}}",
           "noLimit" : "no limit {{assetName}}",
@@ -1263,19 +1263,19 @@
         "followInstructions" : "Follow instruction appearing on your {{productName}}."
       },
       "backup" : {
-        "title" : "Backup for your Secret Recovery Phrase",
+        "title" : "การสำรองข้อมูล Secret Recovery Phrase ของคุณ",
         "description" : "With a digital encrypted backup, restore access to your wallet without your Secret Recovery Phrase.\n\nChoose if you’d like a digital backup:",
         "backupChoice" : {
-          "title" : "I want a digital backup",
+          "title" : "ฉันต้องการสำรองข้อมูลแบบดิจิทัล",
           "titleSelected" : "Ledger Recover",
-          "tag" : "Popular",
+          "tag" : "ยอดนิยม",
           "description" : "Subscribe to Ledger Recover for $9.99 per month. Start for free. Cancel anytime!",
-          "tryCta" : "Try it for free",
-          "redeemCodeCta" : "I have a redeem code",
-          "howItWorksCta" : "I want to know more"
+          "tryCta" : "ลองใช้งานฟรี",
+          "redeemCodeCta" : "ฉันมี Redeem Code",
+          "howItWorksCta" : "ฉันต้องการข้อมูลเพิ่มเติม"
         },
         "manualBackup" : {
-          "title" : "No, I’m good with paper",
+          "title" : "ไม่เป็นไร ฉันจดรหัสใส่กระดาษก็พอแล้ว",
           "description" : "Without a digital backup, the Recovery Sheet is your only way to restore wallet access. Don’t lose it.",
           "cta" : "I understand"
         }
@@ -4134,7 +4134,8 @@
       "walletSync" : "Ledger Sync",
       "walletSyncDesc" : "Sync your Ledger Live crypto accounts across different phones and computers.",
       "mevProtection" : "MEV Protection",
-      "mevProtectionDesc" : "Enable MEV Protection for more reliable transactions on Ethereum",
+      "mevProtectionDesc" : "Enable MEV Protection for more reliable transactions on Ethereum.",
+      "mevProtectionLearnMore" : "Privacy notice",
       "marketPerformanceWidget" : "Market Performance Widget",
       "marketPerformanceWidgetDesc" : "Enable this feature to view the top gainers and losers over selected timeframes on the portfolio page."
     },
@@ -5445,11 +5446,11 @@
       "description" : "The network fee might be too low. Please increase"
     },
     "NoSuchAppOnProvider" : {
-      "title" : "{{appName}} is not compatible with {{productName}}.",
+      "title" : "{{appName}} ไม่สามารถใช้ได้กับ {{productName}}",
       "titleOld" : "The {{appName}} app cannot be found for your specific configuration.",
       "description" : "<0>Unlock more with our devices.</0> To access this feature, upgrade to one of our compatible devices. Choose the best option for your needs and enjoy enhanced security.",
-      "exploreCTA" : "Explore compatible devices",
-      "learnMoreCTA" : "Learn more about Ledger Sync"
+      "exploreCTA" : "เช็คอุปกรณ์ที่ใช้งานร่วมกันได้",
+      "learnMoreCTA" : "เรียนรู้เพิ่มเติมเกี่ยวกับ Ledger Sync"
     },
     "PendingOperation" : {
       "description" : "You have incoming transactions pending. Please beware pending transactions can be reversed."
@@ -5921,11 +5922,11 @@
     },
     "WrongDeviceForAccountPayout" : {
       "title" : "Something went wrong",
-      "description" : "This receiving account does not belong to your device. Please change and retry."
+      "description" : "This receiving account does not belong to the device you have connected. Please change and retry"
     },
     "WrongDeviceForAccountRefund" : {
       "title" : "Something went wrong",
-      "description" : "This receiving account does not belong to your device for the refund. Please change and retry."
+      "description" : "This sending account does not belong to the device you have connected. Please change and retry"
     },
     "DeviceAppVerifyNotSupported" : {
       "title" : "App update required",
@@ -6889,6 +6890,50 @@
       "confirm" : "Confirm",
       "address" : "Address",
       "transactionId" : "Transaction ID"
+    }
+  },
+  "lnsUpsell" : {
+    "banner" : {
+      "manager" : {
+        "optIn" : {
+          "title" : "It's time to upgrade",
+          "description" : "Upgrade to our latest devices with <0>{{discount}}% discount</0> for an enhanced security and a seamless experience.",
+          "cta" : "Level up my wallet",
+          "linkText" : "Learn more"
+        },
+        "optOut" : {
+          "title" : "It's time to upgrade",
+          "description" : "Upgrade to our latest devices with <0>{{discount}}% discount</0> for an enhanced security and a seamless experience.",
+          "cta" : "Level up my wallet",
+          "linkText" : "Learn more"
+        }
+      },
+      "accounts" : {
+        "optIn" : {
+          "title" : "It's time to upgrade",
+          "description" : "Ledger Nano S updates are ending soon. Upgrade to our latest devices with <0>{{discount}}% discount</0>.",
+          "cta" : "Level up my wallet",
+          "linkText" : "Learn more"
+        },
+        "optOut" : {
+          "title" : "It's time to upgrade",
+          "description" : "Ledger Nano S updates are ending soon. Upgrade to our latest devices with <0>{{discount}}% discount</0>.",
+          "cta" : "Level up my wallet",
+          "linkText" : "Learn more"
+        }
+      },
+      "notifications" : {
+        "optIn" : {
+          "description" : "Updates are ending soon. Upgrade now with {{discount}}% off for a seamless experience.",
+          "cta" : "Level up my wallet",
+          "linkText" : "Learn more"
+        },
+        "optOut" : {
+          "description" : "Updates are ending soon. Upgrade now with {{discount}}% off for a seamless experience.",
+          "cta" : "Level up my wallet",
+          "linkText" : "Learn more"
+        }
+      }
     }
   }
 }
