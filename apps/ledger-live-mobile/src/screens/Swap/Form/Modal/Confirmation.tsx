@@ -44,6 +44,7 @@ import { BigNumber } from "bignumber.js";
 import { mevProtectionSelector } from "~/reducers/settings";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 
 export type DeviceMeta = {
   result: { installed: InstalledItem[] } | null | undefined;
@@ -277,6 +278,7 @@ export function Confirmation({
                 }}
                 onError={error => onError({ error })}
                 analyticsPropertyFlow="swap"
+                location={HOOKS_TRACKING_LOCATIONS.swapFlow}
               />
             ) : (
               <DeviceAction
@@ -301,6 +303,7 @@ export function Confirmation({
                 }}
                 onError={error => onError({ error })}
                 analyticsPropertyFlow="swap"
+                location={HOOKS_TRACKING_LOCATIONS.swapFlow}
               />
             )}
           </View>

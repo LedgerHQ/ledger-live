@@ -64,6 +64,7 @@ import { useTrackReceiveFlow } from "~/analytics/hooks/useTrackReceiveFlow";
 import { useTrackSendFlow } from "~/analytics/hooks/useTrackSendFlow";
 import { useTrackAddAccountFlow } from "~/analytics/hooks/useTrackAddAccountFlow";
 import { useTrackLedgerSyncFlow } from "~/analytics/hooks/useTrackLedgerSyncFlow";
+import { useTrackSwapFlow } from "~/analytics/hooks/useTrackSwapFlow";
 
 type Status = PartialNullable<{
   appAndVersion: AppAndVersion;
@@ -257,6 +258,13 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
     location: location === HOOKS_TRACKING_LOCATIONS.ledgerSyncFlow ? location : undefined,
     device: selectedDevice,
     allowManagerRequested,
+    requestOpenApp,
+    error,
+  });
+
+  useTrackSwapFlow({
+    location: location === HOOKS_TRACKING_LOCATIONS.swapFlow ? location : undefined,
+    device: selectedDevice,
     requestOpenApp,
     error,
   });
