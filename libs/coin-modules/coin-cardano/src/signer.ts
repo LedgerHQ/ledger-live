@@ -60,24 +60,50 @@ export type SignerTxOutput = {
     }>;
   }>;
 };
-export type SignerTxCertificate =
-  | {
-      type: "REGISTRATION" | "DEREGISTRATION";
-      params: {
-        stakeCredential: {
-          keyPath: string;
-        };
-      };
-    }
-  | {
-      type: "DELEGATION";
-      params: {
-        stakeCredential: {
-          keyPath: string;
-        };
-        poolKeyHashHex: string;
-      };
+
+export type RegistrationCertificate = {
+  type: "REGISTRATION";
+  params: {
+    stakeCredential: {
+      keyPath: string;
     };
+  };
+};
+
+export type DeregistrationCertificate = {
+  type: "DEREGISTRATION";
+  params: {
+    stakeCredential: {
+      keyPath: string;
+    };
+  };
+};
+
+export type DelegationCertificate = {
+  type: "DELEGATION";
+  params: {
+    stakeCredential: {
+      keyPath: string;
+    };
+    poolKeyHashHex: string;
+  };
+};
+
+export type VoteDelegationCertificate = {
+  type: "VOTE_DELEGATION_ABSTAIN";
+  params: {
+    stakeCredential: {
+      keyPath: string;
+    };
+  };
+};
+
+export type SignerTxCertificate =
+  | RegistrationCertificate
+  | DeregistrationCertificate
+  | DelegationCertificate
+  | VoteDelegationCertificate;
+
 export type SignerTxWithdrawal = {
   stakeCredential: {
     keyPath: string;
