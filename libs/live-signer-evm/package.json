@@ -28,9 +28,9 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@ledgerhq/coin-evm": "workspace:^",
-    "@ledgerhq/context-module": "0.0.0-signer-eth-20250122093657",
-    "@ledgerhq/device-management-kit": "0.6.0",
-    "@ledgerhq/device-signer-kit-ethereum": "0.0.0-signer-eth-20250122093657",
+    "@ledgerhq/context-module": "1.2.0",
+    "@ledgerhq/device-management-kit": "0.6.1",
+    "@ledgerhq/device-signer-kit-ethereum": "1.2.0",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-app-eth": "workspace:^",
     "rxjs": "7.8.1"

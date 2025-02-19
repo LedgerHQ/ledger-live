@@ -45,7 +45,7 @@
     }
   },
   "dependencies": {
-    "@ledgerhq/device-management-kit": "0.6.0",
+    "@ledgerhq/device-management-kit": "0.6.1",
     "@ledgerhq/device-transport-kit-web-hid": "1.0.1",
     "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/logs": "^6.12.0",
