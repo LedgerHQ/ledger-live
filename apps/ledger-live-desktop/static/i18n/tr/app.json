@@ -5720,33 +5720,18 @@
       "title" : "Üzgünüz, hesap bulunamadı",
       "description" : "Adres hesaplamasında bir hata oluştu; tekrar deneyin veya Ledger Destek ile iletişime geçin"
     },
-<<<<<<< HEAD
-    "ElrondDecimalsLimitReached" : {
+    "MultiversXDecimalsLimitReached" : {
       "title" : "Maksimum ondalık basamağı sınırına ulaşıldı",
       "description" : "Lütfen belirtilen tutarın 18 ondalık basamağının olduğundan emin olun."
     },
-    "ElrondMinDelegatedAmountError" : {
+    "MultiversXMinDelegatedAmountError" : {
       "title" : "Yetkisi devredilen miktar en az {{formattedAmount}} olmalıdır"
     },
-    "ElrondMinUndelegatedAmountError" : {
+    "MultiversXMinUndelegatedAmountError" : {
       "title" : "Yetki devri iptal edilen miktar en az {{formattedAmount}} olmalıdır"
     },
-    "ElrondDelegationBelowMinimumError" : {
+    "MultiversXDelegationBelowMinimumError" : {
       "title" : "Kalan yetki devri miktarı en az {{formattedAmount}} olmalıdır"
-=======
-    "MultiversXDecimalsLimitReached": {
-      "title": "Maksimum ondalık basamağı sınırına ulaşıldı",
-      "description": "Lütfen belirtilen tutarın 18 ondalık basamağının olduğundan emin olun."
-    },
-    "MultiversXMinDelegatedAmountError": {
-      "title": "Yetkisi devredilen miktar en az {{formattedAmount}} olmalıdır"
-    },
-    "MultiversXMinUndelegatedAmountError": {
-      "title": "Yetki devri iptal edilen miktar en az {{formattedAmount}} olmalıdır"
-    },
-    "MultiversXDelegationBelowMinimumError": {
-      "title": "Kalan yetki devri miktarı en az {{formattedAmount}} olmalıdır"
->>>>>>> ea56cac218 (chore: i18n)
     },
     "NotEnoughEGLDForFees" : {
       "title" : "İşlem ücretlerini ödemek için yeterli EGLD yok",

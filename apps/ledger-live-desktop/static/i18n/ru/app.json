@@ -5720,33 +5720,18 @@
       "title" : "К сожалению, счета не найдены",
       "description" : "При вычислении адреса что-то пошло не так. Повторите попытку или обратитесь в Поддержку"
     },
-<<<<<<< HEAD
-    "ElrondDecimalsLimitReached" : {
+    "MultiversXDecimalsLimitReached" : {
       "title" : "Достигнут лимит десятичных знаков",
       "description" : "Убедитесь, что у указанной суммы 18 десятичных знаков."
     },
-    "ElrondMinDelegatedAmountError" : {
+    "MultiversXMinDelegatedAmountError" : {
       "title" : "Делегированная сумма должна быть не менее {{formattedAmount}}"
     },
-    "ElrondMinUndelegatedAmountError" : {
+    "MultiversXMinUndelegatedAmountError" : {
       "title" : "Неделегированных средств должно быть как минимум {{formattedAmount}}"
     },
-    "ElrondDelegationBelowMinimumError" : {
+    "MultiversXDelegationBelowMinimumError" : {
       "title" : "Остаток делегированных средств должен быть не менее {{formattedAmount}}"
-=======
-    "MultiversXDecimalsLimitReached": {
-      "title": "Достигнут лимит десятичных знаков",
-      "description": "Убедитесь, что у указанной суммы 18 десятичных знаков."
-    },
-    "MultiversXMinDelegatedAmountError": {
-      "title": "Делегированная сумма должна быть не менее {{formattedAmount}}"
-    },
-    "MultiversXMinUndelegatedAmountError": {
-      "title": "Неделегированных средств должно быть как минимум {{formattedAmount}}"
-    },
-    "MultiversXDelegationBelowMinimumError": {
-      "title": "Остаток делегированных средств должен быть не менее {{formattedAmount}}"
->>>>>>> ea56cac218 (chore: i18n)
     },
     "NotEnoughEGLDForFees" : {
       "title" : "Недостаточно EGLD для оплаты комиссии за транзакцию",
