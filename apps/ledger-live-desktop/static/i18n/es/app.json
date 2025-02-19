@@ -4134,7 +4134,8 @@
       "walletSync" : "Ledger Sync",
       "walletSyncDesc" : "Sincroniza tus cuentas de cripto de Ledger Live entre distintos teléfonos y PCs.",
       "mevProtection" : "Protección contra MEV",
-      "mevProtectionDesc" : "Activa Protección contra MEV para lograr transacciones más fiables en Ethereum",
+      "mevProtectionDesc" : "Enable MEV Protection for more reliable transactions on Ethereum.",
+      "mevProtectionLearnMore" : "Privacy notice",
       "marketPerformanceWidget" : "Widget de rendimiento del mercado",
       "marketPerformanceWidgetDesc" : "Activa esta opción para ver los principales ganadores y perdedores en los periodos que selecciones en la página del portfolio."
     },
@@ -5921,11 +5922,11 @@
     },
     "WrongDeviceForAccountPayout" : {
       "title" : "Algo ha salido mal",
-      "description" : "La cuenta receptora no coincide con tu dispositivo. Cámbiala e inténtalo de nuevo."
+      "description" : "This receiving account does not belong to the device you have connected. Please change and retry"
     },
     "WrongDeviceForAccountRefund" : {
       "title" : "Algo ha salido mal",
-      "description" : "La cuenta receptora no coincide con tu dispositivo para el reembolso. Cámbiala e inténtalo de nuevo."
+      "description" : "This sending account does not belong to the device you have connected. Please change and retry"
     },
     "DeviceAppVerifyNotSupported" : {
       "title" : "Es necesario actualizar la aplicación.",
@@ -6889,6 +6890,50 @@
       "confirm" : "Confirmar",
       "address" : "Dirección",
       "transactionId" : "ID de la transacción"
+    }
+  },
+  "lnsUpsell" : {
+    "banner" : {
+      "manager" : {
+        "optIn" : {
+          "title" : "Es hora de actualizar",
+          "description" : "Pásate a uno de nuestros nuevos dispositivos con un <0>{{discount}}% de descuento</0> y disfruta de más seguridad sin complicaciones.",
+          "cta" : "Renovar mi billetera",
+          "linkText" : "Más información"
+        },
+        "optOut" : {
+          "title" : "Es hora de actualizar",
+          "description" : "Pásate a uno de nuestros nuevos dispositivos con un <0>{{discount}}% de descuento</0> y disfruta de más seguridad sin complicaciones.",
+          "cta" : "Renovar mi billetera",
+          "linkText" : "Más información"
+        }
+      },
+      "accounts" : {
+        "optIn" : {
+          "title" : "Es hora de actualizar",
+          "description" : "Pronto dejará de haber actualizaciones para el Ledger Nano S. Pásate a uno de nuestros nuevos dispositivos con un <0>{{discount}}% de descuento</0>.",
+          "cta" : "Renovar mi billetera",
+          "linkText" : "Más información"
+        },
+        "optOut" : {
+          "title" : "Es hora de actualizar",
+          "description" : "Pronto dejará de haber actualizaciones para el Ledger Nano S. Pásate a uno de nuestros nuevos dispositivos con un <0>{{discount}}% de descuento</0>.",
+          "cta" : "Renovar mi billetera",
+          "linkText" : "Más información"
+        }
+      },
+      "notifications" : {
+        "optIn" : {
+          "description" : "Pronto dejará de haber actualizaciones. Renueva ahora con un {{discount}}% de descuento y disfruta de una experiencia más fluida.",
+          "cta" : "Renovar mi billetera",
+          "linkText" : "Más información"
+        },
+        "optOut" : {
+          "description" : "Pronto dejará de haber actualizaciones. Renueva ahora con un {{discount}}% de descuento y disfruta de una experiencia más fluida.",
+          "cta" : "Renovar mi billetera",
+          "linkText" : "Más información"
+        }
+      }
     }
   }
 }
