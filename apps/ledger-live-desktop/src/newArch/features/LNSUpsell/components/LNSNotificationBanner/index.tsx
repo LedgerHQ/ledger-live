@@ -3,7 +3,9 @@ import React from "react";
 import { NotificationCard } from "@ledgerhq/react-ui";
 import type { LNSBannerModel } from "../../types";
 
-type Props = { model: Pick<LNSBannerModel, "discount" | "tracking" | "handleCTAClick"> | null };
+type Props = Readonly<{
+  model: Pick<LNSBannerModel, "discount" | "tracking" | "handleCTAClick"> | null;
+}>;
 
 export function LNSNotificationBanner({ model }: Props) {
   if (!model) return null;
