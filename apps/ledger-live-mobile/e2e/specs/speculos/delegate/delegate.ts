@@ -8,10 +8,10 @@ import { Application } from "../../../page";
 import { CLI } from "../../../utils/cliUtils";
 import { device } from "detox";
 
-export async function runDelegateTest(delegation: Delegate, tmsLink: string) {
+export async function runDelegateTest(delegation: Delegate, tmsLinks: string[]) {
   const app = new Application();
 
-  $TmsLink(tmsLink);
+  tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   describe(`Delegate flow on  ${delegation.account.currency.name}`, () => {
     beforeAll(async () => {
       await app.init({
@@ -55,10 +55,10 @@ export async function runDelegateTest(delegation: Delegate, tmsLink: string) {
   });
 }
 
-export async function runDelegateCelo(delegation: Delegate, tmsLink: string) {
+export async function runDelegateCelo(delegation: Delegate, tmsLinks: string[]) {
   const app = new Application();
 
-  $TmsLink(tmsLink);
+  tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   describe(`Delegate flow on CELO`, () => {
     beforeAll(async () => {
       await app.init({
@@ -103,11 +103,11 @@ export async function runDelegateCelo(delegation: Delegate, tmsLink: string) {
   });
 }
 
-export async function runDelegateTezos(delegation: Delegate, tmsLink: string) {
+export async function runDelegateTezos(delegation: Delegate, tmsLinks: string[]) {
   setEnv("DISABLE_TRANSACTION_BROADCAST", true);
   const app = new Application();
 
-  $TmsLink(tmsLink);
+  tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   describe(`Delegate flow on TEZOS`, () => {
     beforeAll(async () => {
       await app.init({
