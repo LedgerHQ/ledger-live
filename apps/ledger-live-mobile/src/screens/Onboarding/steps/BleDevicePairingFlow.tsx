@@ -10,7 +10,7 @@ import { RootComposite, StackNavigatorProps } from "~/components/RootNavigator/t
 import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
 import { useSelector } from "react-redux";
 import { hasCompletedOnboardingSelector } from "~/reducers/settings";
-import { bleDevicePairingFlowHeaderOptions } from "../../BleDevicePairingFlow";
+import { bleDevicePairingFlowHeaderOptions } from "~/screens/BleDevicePairingFlow";
 
 export type Props = RootComposite<
   StackNavigatorProps<OnboardingNavigatorParamList, ScreenName.OnboardingBleDevicePairingFlow>
