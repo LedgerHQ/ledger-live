@@ -110,6 +110,7 @@ export type ProtocolParams = {
   maxTxSize: string;
   maxValueSize: string;
   utxoCostPerByte: string;
+  minFeeRefScriptCostPerByte: string;
   languageView: TyphonTypes.LanguageView;
 };
 
@@ -124,23 +125,26 @@ export type ProtocolParamsRaw = {
   maxTxSize: string;
   maxValueSize: string;
   utxoCostPerByte: string;
+  minFeeRefScriptCostPerByte: string;
   // TyphonTypes.LanguageView is already a raw type
   languageView: TyphonTypes.LanguageView;
 };
 
 export type CardanoDelegation = {
   status: boolean;
-  poolId: string;
-  ticker: string;
-  name: string;
+  poolId: string | undefined;
+  ticker: string | undefined;
+  name: string | undefined;
+  dRepHex: string | undefined;
   rewards: BigNumber;
 };
 
 export type CardanoDelegationRaw = {
   status: boolean;
-  poolId: string;
-  ticker: string;
-  name: string;
+  poolId: string | undefined;
+  ticker: string | undefined;
+  name: string | undefined;
+  dRepHex: string | undefined;
   rewards: string;
 };
 
