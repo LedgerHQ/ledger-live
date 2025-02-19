@@ -58,11 +58,16 @@ const casperSpecs: AppSpec<Transaction> = {
       },
 
       test: ({ accountBeforeTransaction, operation, account, transaction }) => {
-        botTest("account spendable balance decreased with operation", () =>
+        botTest("account spendable balance decreased with operation", () => {
+          console.log("SPEMDABLE: ", account.spendableBalance);
+          console.log(
+            "accountBeforeTransaction.spendableBalance.minus(operation.value): ",
+            accountBeforeTransaction.spendableBalance.minus(operation.value),
+          );
           expect(account.spendableBalance).toEqual(
             accountBeforeTransaction.spendableBalance.minus(operation.value),
-          ),
-        );
+          );
+        });
 
         if (transaction.transferId) {
           botTest("operation transferId", () =>
