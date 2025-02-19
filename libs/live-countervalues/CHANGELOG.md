@@ -1,5 +1,29 @@
 # @ledgerhq/live-countervalues
 
+## 0.4.0
+
+### Minor Changes
+
+- [#9156](https://github.com/LedgerHQ/ledger-live/pull/9156) [`aa88751`](https://github.com/LedgerHQ/ledger-live/commit/aa88751d522b97e9d45e42d228bb893bece5d72e) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add a props to order by spendable or full balance
+
+### Patch Changes
+
+- Updated dependencies [[`58c1a9c`](https://github.com/LedgerHQ/ledger-live/commit/58c1a9c68b2ce2ebef9dbd7af00ae09efd7a29dc), [`ff40e9a`](https://github.com/LedgerHQ/ledger-live/commit/ff40e9a00d325e5b46cb069936ba2a5781c601b5)]:
+  - @ledgerhq/coin-framework@2.0.0
+  - @ledgerhq/cryptoassets@13.11.0
+
+## 0.4.0-next.0
+
+### Minor Changes
+
+- [#9156](https://github.com/LedgerHQ/ledger-live/pull/9156) [`aa88751`](https://github.com/LedgerHQ/ledger-live/commit/aa88751d522b97e9d45e42d228bb893bece5d72e) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add a props to order by spendable or full balance
+
+### Patch Changes
+
+- Updated dependencies [[`58c1a9c`](https://github.com/LedgerHQ/ledger-live/commit/58c1a9c68b2ce2ebef9dbd7af00ae09efd7a29dc), [`ff40e9a`](https://github.com/LedgerHQ/ledger-live/commit/ff40e9a00d325e5b46cb069936ba2a5781c601b5)]:
+  - @ledgerhq/coin-framework@2.0.0-next.0
+  - @ledgerhq/cryptoassets@13.11.0-next.0
+
 ## 0.3.0
 
 ### Minor Changes

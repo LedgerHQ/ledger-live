@@ -1,5 +1,17 @@
 # @ledgerhq/native-ui
 
+## 0.29.0
+
+### Minor Changes
+
+- [#9135](https://github.com/LedgerHQ/ledger-live/pull/9135) [`653356d`](https://github.com/LedgerHQ/ledger-live/commit/653356d8a4205069a17e41ce9f0212749d35afdd) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Force the initial tab to display for tabSelector. Store the value of the last tab for portfolioAssets accountsList
+
+## 0.29.0-next.0
+
+### Minor Changes
+
+- [#9135](https://github.com/LedgerHQ/ledger-live/pull/9135) [`653356d`](https://github.com/LedgerHQ/ledger-live/commit/653356d8a4205069a17e41ce9f0212749d35afdd) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Force the initial tab to display for tabSelector. Store the value of the last tab for portfolioAssets accountsList
+
 ## 0.28.0
 
 ### Minor Changes

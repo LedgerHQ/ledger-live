@@ -133,7 +133,7 @@ export async function executeScenario<T extends TransactionCommon, A extends Acc
         );
       }
 
-      console.log(" → ", "🪲  ", chalk.bold("No status errors detected"), "✓");
+      console.log(" → ", "🪲 ", chalk.bold("No status errors detected"), "✓");
 
       const { signedOperation } = await firstValueFrom(
         accountBridge

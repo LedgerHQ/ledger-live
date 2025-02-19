@@ -1,5 +1,19 @@
 # @ledgerhq/hw-app-eth
 
+## 6.42.6
+
+### Patch Changes
+
+- Updated dependencies [[`551f2cc`](https://github.com/LedgerHQ/ledger-live/commit/551f2ccad6d7897a010d39110c0ba9336d407dfd)]:
+  - @ledgerhq/evm-tools@1.4.0
+
+## 6.42.6-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`551f2cc`](https://github.com/LedgerHQ/ledger-live/commit/551f2ccad6d7897a010d39110c0ba9336d407dfd)]:
+  - @ledgerhq/evm-tools@1.4.0-next.0
+
 ## 6.42.5
 
 ### Patch Changes

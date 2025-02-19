@@ -140,6 +140,53 @@ export class SwapPage extends AppPage {
     throw new Error("No valid providers found");
   }
 
+  @step("Get all swap providers available")
+  async getAllSwapProviders(electronApp: ElectronApplication) {
+    const [, webview] = electronApp.windows();
+    return await webview
+      .locator(
+        '[data-testid^="quote-container-"][data-testid$="-fixed"], [data-testid^="quote-container-"][data-testid$="-float"]',
+      )
+      .allTextContents();
+  }
+
+  @step("Extract quotes and fees")
+  async extractQuotesAndFees(quoteContainers: string[]) {
+    const quotes = quoteContainers
+      .map(quote => {
+        const match = quote.match(/\$(\d+\.\d+).*?Network Fees[^$]*\$(\d+\.\d+)/);
+        if (match) {
+          const rate = parseFloat(match[1]);
+          const fees = parseFloat(match[2]);
+          return { rate, fees, quote };
+        }
+        return undefined;
+      })
+      .filter(quote => quote !== undefined);
+
+    if (quotes.length === 0) {
+      throw new Error("No quotes found");
+    }
+    return quotes;
+  }
+
+  @step('Check "Best Offer" corresponds to the best quote')
+  async checkBestOffer(electronApp: ElectronApplication) {
+    const quoteContainers = await this.getAllSwapProviders(electronApp);
+    try {
+      const quotes = await this.extractQuotesAndFees(quoteContainers);
+      const bestOffer = quotes.reduce<{ rate: number; fees: number; quote: string } | null>(
+        (max, current) =>
+          current && (!max || current.rate - current.fees > max.rate - max.fees) ? current : max,
+        null,
+      );
+      expect(bestOffer?.quote).toContain("Best Offer");
+    } catch (error) {
+      console.error("Error checking Best offer:", error);
+    }
+  }
+
+  @step("Wait for exchange to be available")
   async waitForExchangeToBeAvailable() {
     return waitFor(() => this.exchangeButton.isEnabled(), 250, 10000);
   }

@@ -24,6 +24,11 @@ export class PortfolioPage extends AppPage {
   private operationRows = this.page.locator("[data-testid^='operation-row-']");
   private totalBalance = this.page.getByTestId("total-balance");
   private balanceDiff = this.page.getByTestId("balance-diff");
+  private bestPerformersButton = this.page.getByTestId("market-best-performers");
+  private worstPerformersButton = this.page.getByTestId("market-worst-performers");
+  private rowOnePerformer = this.page.getByTestId("market-performance-widget-row-1");
+  private performerArrowDirection = (direction: string) =>
+    this.rowOnePerformer.getByTestId(`arrow-${direction}`);
 
   @step("Open `Add account` modal")
   async openAddAccountModal() {
@@ -61,6 +66,12 @@ export class PortfolioPage extends AppPage {
     await expect(this.trendTitle).toBeVisible();
     await expect(this.buyButton).toBeVisible();
     await expect(this.swapButton).toBeVisible();
+    await this.bestPerformersButton.click();
+    await expect(this.performerArrowDirection("up")).toBeVisible();
+    const bestPerformer = await this.rowOnePerformer.innerText();
+    await this.worstPerformersButton.click();
+    await expect(this.performerArrowDirection("down")).toBeVisible();
+    await expect(this.rowOnePerformer).not.toContainText(bestPerformer ?? "");
   }
 
   @step("Check asset allocation section")

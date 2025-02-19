@@ -452,7 +452,7 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     return {
       ...state,
       seenDevices: state.seenDevices
-        .filter(d => d.deviceInfo.targetId !== payload.deviceInfo.targetId)
+        .filter(d => d.modelId !== payload.modelId)
         .concat({ ...state.seenDevices.at(-1), ...payload }),
       knownDeviceModelIds: {
         ...state.knownDeviceModelIds,

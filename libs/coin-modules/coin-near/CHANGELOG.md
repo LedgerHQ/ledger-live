@@ -1,5 +1,29 @@
 # @ledgerhq/coin-near
 
+## 0.8.0
+
+### Minor Changes
+
+- [#9166](https://github.com/LedgerHQ/ledger-live/pull/9166) [`3c8182e`](https://github.com/LedgerHQ/ledger-live/commit/3c8182e81822fcdcc8c4e30004bbd648388aad95) Thanks [@Wozacosta](https://github.com/Wozacosta)! - fix: use private endpoint to validators and commissions calls for NEAR
+
+### Patch Changes
+
+- Updated dependencies [[`58c1a9c`](https://github.com/LedgerHQ/ledger-live/commit/58c1a9c68b2ce2ebef9dbd7af00ae09efd7a29dc), [`ff40e9a`](https://github.com/LedgerHQ/ledger-live/commit/ff40e9a00d325e5b46cb069936ba2a5781c601b5)]:
+  - @ledgerhq/coin-framework@2.0.0
+  - @ledgerhq/cryptoassets@13.11.0
+
+## 0.8.0-next.0
+
+### Minor Changes
+
+- [#9166](https://github.com/LedgerHQ/ledger-live/pull/9166) [`3c8182e`](https://github.com/LedgerHQ/ledger-live/commit/3c8182e81822fcdcc8c4e30004bbd648388aad95) Thanks [@Wozacosta](https://github.com/Wozacosta)! - fix: use private endpoint to validators and commissions calls for NEAR
+
+### Patch Changes
+
+- Updated dependencies [[`58c1a9c`](https://github.com/LedgerHQ/ledger-live/commit/58c1a9c68b2ce2ebef9dbd7af00ae09efd7a29dc), [`ff40e9a`](https://github.com/LedgerHQ/ledger-live/commit/ff40e9a00d325e5b46cb069936ba2a5781c601b5)]:
+  - @ledgerhq/coin-framework@2.0.0-next.0
+  - @ledgerhq/cryptoassets@13.11.0-next.0
+
 ## 0.7.3
 
 ### Patch Changes

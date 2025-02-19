@@ -3,7 +3,6 @@ import { Drawer } from "tests/component/drawer.component";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 import { Delegate } from "@ledgerhq/live-common/e2e/models/Delegate";
 import { expect } from "@playwright/test";
-import { Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
 
 export class DelegateDrawer extends Drawer {
   private provider = (provider: string) =>
@@ -27,8 +26,10 @@ export class DelegateDrawer extends Drawer {
   }
 
   @step("Verify amount is visible")
-  async amountValueIsVisible() {
+  async amountValueIsVisible(ticker: string) {
     await expect(this.amountValue).toBeVisible();
+    const displayedAmount = await this.amountValue.innerText();
+    expect(displayedAmount).toEqual(expect.stringContaining(ticker));
   }
 
   @step("Verify transaction type is correct")
@@ -48,16 +49,10 @@ export class DelegateDrawer extends Drawer {
     expect(operation).toContain(operationType);
   }
 
-  @step("Verify that the information of the transaction is visible")
-  async expectReceiverInfos(tx: Transaction) {
-    await expect(this.addressValue(tx.accountToCredit.address)).toBeVisible();
-    await expect(this.amountValue).toBeVisible();
-  }
-
   @step("Verify that the information of the delegation is visible")
   async expectDelegationInfos(delegationInfo: Delegate) {
     await this.providerIsVisible(delegationInfo);
-    await this.amountValueIsVisible();
+    await this.amountValueIsVisible(delegationInfo.account.currency.ticker);
     await this.verifyTxTypeIsVisible();
   }
 }

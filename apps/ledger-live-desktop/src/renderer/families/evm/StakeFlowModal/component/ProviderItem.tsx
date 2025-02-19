@@ -87,13 +87,13 @@ export const ProviderItem = ({ provider, stakeOnClick }: Props) => {
     <Container
       alignItems="center"
       borderRadius={2}
-      columnGap={4}
+      columnGap={3}
       data-testid={`stake-provider-container-${provider.id}`}
       onClick={handleClick}
       p={3}
     >
       <StakingIcon icon={provider.icon} />
-      <Flex alignItems="flex-start" flex={2} flexDirection="column">
+      <Flex alignItems="flex-start" flex={1} flexDirection="column">
         <Text variant="bodyLineHeight" fontSize={14} fontWeight="semiBold" mr={2}>
           {displayName}
         </Text>
@@ -107,8 +107,14 @@ export const ProviderItem = ({ provider, stakeOnClick }: Props) => {
               : t("ethereum.stake.noMinimum")}
         </Text>
       </Flex>
-      <Flex flex={1} flexWrap="wrap" justifyContent="right">
-        <Text variant="paragraph" fontSize={13} color="neutral.c70" textAlign="right">
+      <Flex flex={1.1} flexWrap="wrap" justifyContent="right">
+        <Text
+          variant="paragraph"
+          fontSize={13}
+          color="neutral.c70"
+          textAlign="right"
+          width={"100%"}
+        >
           {t(`ethereum.stake.rewardsStrategy.${provider.rewardsStrategy}`)}
         </Text>
       </Flex>

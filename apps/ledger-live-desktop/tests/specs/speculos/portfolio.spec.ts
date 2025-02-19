@@ -11,7 +11,7 @@ test.describe("Portfolio", () => {
     {
       annotation: {
         type: "TMS",
-        description: "B2CQA-927, B2CQA-928",
+        description: "B2CQA-927, B2CQA-928, B2CQA-3038",
       },
     },
     async ({ app }) => {

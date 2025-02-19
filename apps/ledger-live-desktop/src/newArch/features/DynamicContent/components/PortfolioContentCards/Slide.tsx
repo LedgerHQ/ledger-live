@@ -1,4 +1,4 @@
-import React, { memo, ReactEventHandler } from "react";
+import React, { memo } from "react";
 import { useHistory } from "react-router-dom";
 
 import { PortfolioContentCard as Card } from "@ledgerhq/react-ui";
@@ -27,8 +27,7 @@ function Slide({
   const history = useHistory();
 
   const handleClose = () => dismissCard(index);
-  const handleClick: ReactEventHandler = event => {
-    event.stopPropagation();
+  const handleClick = () => {
     logSlideClick(id);
     if (path) {
       history.push({ pathname: path, state: { source: "banner" } });

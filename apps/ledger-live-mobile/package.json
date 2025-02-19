@@ -1,6 +1,6 @@
 {
   "name": "live-mobile",
-  "version": "3.65.0",
+  "version": "3.66.0",
   "private": true,
   "scripts": {
     "postinstall": "zx ./scripts/post.mjs",
@@ -156,6 +156,7 @@
     "i18next": "20.6.1",
     "invariant": "2.2.4",
     "jotai": "2.10.1",
+    "jotai-scope": "0.7.3",
     "json-rpc-2.0": "0.2.19",
     "lodash": "4.17.21",
     "lottie-react-native": "6.7.0",

@@ -48,7 +48,7 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
         : AddressVersion.TestnetSingleSig;
     const senderAddress = c32address(addressVersion, tx.auth.spendingCondition!.signer);
 
-    const [fee] = await estimateTransaction(tx.payload, estimateTransactionByteLength(tx));
+    const [fee] = await estimateTransaction(tx.payload, estimateTransactionByteLength(tx), network);
 
     patch.fee = new BigNumber(fee.fee);
     patch.nonce = await findNextNonce(senderAddress, pendingOperations);
