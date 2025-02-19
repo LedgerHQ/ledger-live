@@ -33,6 +33,10 @@ import {
 } from "./core";
 import { TransportRef, withTransport } from "../transports/core";
 import { parseDeviceInfo } from "./getDeviceInfo";
+import {
+  DeviceDisconnectedBeforeSendingApdu,
+  DeviceDisconnectedWhileSendingError,
+} from "@ledgerhq/device-management-kit";
 
 export type UpdateFirmwareTaskArgs = {
   deviceId: DeviceId;
@@ -70,6 +74,10 @@ const waitForGetVersion = retryOnErrorsCommandWrapper({
     { maxRetries: "infinite", errorClass: DisconnectedDeviceDuringOperation },
     { maxRetries: "infinite", errorClass: DisconnectedDevice },
     { maxRetries: "infinite", errorClass: CantOpenDevice },
+  ],
+  allowedDmkErrors: [
+    new DeviceDisconnectedWhileSendingError(),
+    new DeviceDisconnectedBeforeSendingApdu(),
   ],
 });
 

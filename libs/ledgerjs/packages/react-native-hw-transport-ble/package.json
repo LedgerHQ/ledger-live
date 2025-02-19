@@ -29,7 +29,7 @@
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
-    "react-native-ble-plx": "3.2.1",
+    "react-native-ble-plx": "3.4.0",
     "rxjs": "^7.8.1",
     "uuid": "^9.0.1"
   },
