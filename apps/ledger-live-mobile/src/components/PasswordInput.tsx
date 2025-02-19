@@ -1,9 +1,9 @@
-import React, { useEffect, useState, useCallback, useRef } from "react";
+import React, { useState, useCallback } from "react";
 import { View, StyleSheet, TextInput, TextInputProps } from "react-native";
-import Icon from "react-native-vector-icons/Feather";
 import Touchable from "./Touchable";
 import { getFontStyle } from "./LText";
 import { Theme, withTheme } from "../colors";
+import { Icons } from "@ledgerhq/native-ui";
 
 type Props = {
   secureTextEntry: boolean;
@@ -37,32 +37,22 @@ const PasswordInput = ({
   testID,
 }: Props) => {
   const [isFocused, setIsFocused] = useState(false);
-  const ref = useRef<TextInput>(null);
 
-  useEffect(() => {
-    if (autoFocus) {
-      ref.current?.focus();
-    }
-  }, [autoFocus]);
-
-  const wrappedOnFocus = useCallback(() => {
+  const handleFocus = useCallback(() => {
     setIsFocused(true);
-    onFocus && onFocus();
+    onFocus?.();
   }, [onFocus]);
 
-  const wrappedOnBlur = useCallback(() => {
+  const handleBlur = useCallback(() => {
     setIsFocused(false);
-    onBlur && onBlur();
+    onBlur?.();
   }, [onBlur]);
 
-  let borderColorOverride = {};
-  if (!inline && isFocused) {
-    if (error) {
-      borderColorOverride = { borderColor: colors.alert };
-    } else {
-      borderColorOverride = { borderColor: colors.live };
-    }
-  }
+  const borderColor = !inline && isFocused ? (error ? colors.alert : colors.live) : undefined;
+
+  const touchableEvent = secureTextEntry
+    ? "PasswordInputToggleUnsecure"
+    : "PasswordInputToggleSecure";
 
   return (
     <View
@@ -72,14 +62,13 @@ const PasswordInput = ({
           ...styles.nonInlineContainer,
           backgroundColor: colors.card,
           borderColor: colors.lightFog,
+          ...(borderColor ? { borderColor } : {}),
         },
-        borderColorOverride,
       ]}
     >
       <TextInput
         allowFontScaling={false}
         autoFocus={autoFocus}
-        ref={ref}
         style={[
           styles.input,
           getFontStyle({ semiBold: true }),
@@ -95,37 +84,52 @@ const PasswordInput = ({
         secureTextEntry={secureTextEntry}
         textContentType="password"
         autoCorrect={false}
-        onFocus={wrappedOnFocus}
-        onBlur={wrappedOnBlur}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
         value={password}
         testID={testID}
       />
-      {secureTextEntry ? (
-        <Touchable
-          event="PasswordInputToggleUnsecure"
-          style={styles.iconInput}
-          onPress={toggleSecureTextEntry}
-        >
-          <Icon name="eye" size={16} color={inline ? colors.grey : colors.fog} />
-        </Touchable>
-      ) : (
-        <Touchable
-          event="PasswordInputToggleSecure"
-          style={styles.iconInput}
-          onPress={toggleSecureTextEntry}
-        >
-          <Icon name="eye-off" size={16} color={inline ? colors.grey : colors.fog} />
-        </Touchable>
-      )}
+      <TouchableIcon
+        touchableEvent={touchableEvent}
+        onPress={toggleSecureTextEntry}
+        secureTextEntry={secureTextEntry}
+        colors={colors}
+      />
     </View>
   );
 };
 
 export default withTheme(PasswordInput);
+
+interface TouchableIconProps {
+  touchableEvent: string;
+  onPress: () => void;
+  secureTextEntry: boolean;
+  colors: Theme["colors"];
+}
+
+const TouchableIcon = ({
+  touchableEvent,
+  onPress,
+  secureTextEntry,
+  colors,
+}: TouchableIconProps) => {
+  return (
+    <Touchable event={touchableEvent} style={styles.iconInput} onPress={onPress}>
+      {secureTextEntry ? (
+        <Icons.Eye size="S" color={colors.grey} />
+      ) : (
+        <Icons.EyeCross size="S" color={colors.grey} />
+      )}
+    </Touchable>
+  );
+};
+
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     borderRadius: 4,
+    paddingHorizontal: 16,
     marginBottom: 16,
   },
   nonInlineContainer: {
@@ -136,7 +140,6 @@ const styles = StyleSheet.create({
   },
   input: {
     fontSize: 16,
-    paddingHorizontal: 16,
     height: 48,
     flex: 1,
   },
