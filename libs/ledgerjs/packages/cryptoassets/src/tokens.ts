@@ -14,6 +14,7 @@ import { tokens as mainnetTokens } from "./data/evm/1";
 import { tokens as bnbTokens } from "./data/evm/56";
 import filecoinTokens from "./data/filecoin-erc20";
 import spltokens, { SPLToken } from "./data/spl";
+import apttokens, { APTToken } from "./data/apt";
 import { ERC20Token } from "./types";
 
 const emptyArray = [];
@@ -54,6 +55,8 @@ addTokens(jettonTokens.map(convertJettonToken));
 addTokens(filecoinTokens.map(convertERC20));
 // Solana tokens
 addTokens(spltokens.map(convertSplTokens));
+// Aptos tokens
+addTokens(apttokens.map(convertAptTokens));
 
 type TokensListOptions = {
   withDelisted: boolean;
@@ -411,6 +414,26 @@ function convertSplTokens([id, network, name, symbol, address, decimals]: SPLTok
     parentCurrency: getCryptoCurrencyById(network),
     name,
     tokenType: "spl",
+    ticker: symbol,
+    disableCountervalue: false,
+    units: [
+      {
+        name,
+        code: symbol,
+        magnitude: decimals,
+      },
+    ],
+  };
+}
+
+function convertAptTokens([id, network, name, symbol, address, decimals]: APTToken): TokenCurrency {
+  return {
+    type: "TokenCurrency",
+    id,
+    contractAddress: address,
+    parentCurrency: getCryptoCurrencyById(network),
+    name,
+    tokenType: "apt",
     ticker: symbol,
     disableCountervalue: false,
     units: [
