@@ -1237,7 +1237,7 @@
       "pinContent" : {
         "title" : "PIN kodu",
         "titleCompleted" : "PIN kodu belirlendi",
-        "description" : "Tüm parolalar ve giriş kodları gibi PIN Kodu da {{productName}} cihazınızın kilidini açmanızı ve istenmeyen erişimleri önlemenizi sağlar.",
+        "description" : "PIN kodu, tüm parolalar ve giriş kodları gibi {{productName}} cihazınızın kilidini açmanızı ve istenmeyen erişimleri önlemenizi sağlar.",
         "continueOnDevice" : "{{productName}} cihazınızda PIN Kodunuzu belirleyin"
       },
       "seedContent" : {
@@ -3809,7 +3809,7 @@
           "description" : "Herhangi bir miktarda ETH stake etmek için bir havuza katılıp ödüller alabilirsiniz."
         },
         "restaking" : {
-          "name" : "Yeniden Stake Etme",
+          "name" : "Yeniden Stake Edin",
           "description" : "Ek ödüller kazanmak için liquid token'larınızı yeniden stake edebilirsiniz."
         }
       },
@@ -4134,7 +4134,8 @@
       "walletSync" : "Ledger Sync",
       "walletSyncDesc" : "Ledger Live kripto hesaplarınızı farklı telefonlarda ve bilgisayarlarda senkronize edin.",
       "mevProtection" : "MEV Koruması",
-      "mevProtectionDesc" : "Ethereum'da daha güvenilir işlemler için MEV Korumasını etkinleştirin",
+      "mevProtectionDesc" : "Enable MEV Protection for more reliable transactions on Ethereum.",
+      "mevProtectionLearnMore" : "Privacy notice",
       "marketPerformanceWidget" : "Piyasa Performansı Widget'ı",
       "marketPerformanceWidgetDesc" : "Portföy sayfasında seçili zaman aralıklarında en çok yükselenler ve en çok düşenleri görüntülemek için bu özelliği etkinleştirin."
     },
@@ -5721,7 +5722,7 @@
       "description" : "Adres hesaplamasında bir hata oluştu; tekrar deneyin veya Ledger Destek ile iletişime geçin"
     },
     "MultiversXDecimalsLimitReached" : {
-      "title" : "Maksimum ondalık basamağı sınırına ulaşıldı",
+      "title" : "Maksimum ondalık basamak sınırına ulaşıldı",
       "description" : "Lütfen belirtilen tutarın 18 ondalık basamağının olduğundan emin olun."
     },
     "MultiversXMinDelegatedAmountError" : {
@@ -5921,11 +5922,11 @@
     },
     "WrongDeviceForAccountPayout" : {
       "title" : "Bir hata oluştu",
-      "description" : "Bu adres, bağlı cihazla uyuşmuyor. Lütfen değiştirin ve tekrar deneyin."
+      "description" : "This receiving account does not belong to the device you have connected. Please change and retry"
     },
     "WrongDeviceForAccountRefund" : {
       "title" : "Bir hata oluştu",
-      "description" : "Bu adres, bağlı cihazla uyuşmuyor ve iade almak için kullanılamaz. Lütfen cihazı değiştirin ve tekrar deneyin."
+      "description" : "This sending account does not belong to the device you have connected. Please change and retry"
     },
     "DeviceAppVerifyNotSupported" : {
       "title" : "Uygulama güncellemesi gerekli",
@@ -6889,6 +6890,50 @@
       "confirm" : "Onayla",
       "address" : "Adres",
       "transactionId" : "İşlem Kimliği (TxID)"
+    }
+  },
+  "lnsUpsell" : {
+    "banner" : {
+      "manager" : {
+        "optIn" : {
+          "title" : "Model yükseltme zamanı",
+          "description" : "Yüksek güvenlik ve sorunsuz bir deneyim için en yeni cihazlarımıza <0>%{{discount}} indirimle</0> model yükseltin.",
+          "cta" : "Cüzdanımın modelini yükselt",
+          "linkText" : "Daha fazla bilgi"
+        },
+        "optOut" : {
+          "title" : "Model yükseltme zamanı",
+          "description" : "Yüksek güvenlik ve sorunsuz bir deneyim için en yeni cihazlarımıza <0>%{{discount}} indirimle</0> model yükseltin.",
+          "cta" : "Cüzdanımın modelini yükselt",
+          "linkText" : "Daha fazla bilgi"
+        }
+      },
+      "accounts" : {
+        "optIn" : {
+          "title" : "Model yükseltme zamanı",
+          "description" : "Ledger Nano S model yükseltme teklifleri yakında sona eriyor. En yeni cihazlarımıza <0>%{{discount}} indirimle</0> model yükseltin.",
+          "cta" : "Cüzdanımın modelini yükselt",
+          "linkText" : "Daha fazla bilgi"
+        },
+        "optOut" : {
+          "title" : "Model yükseltme zamanı",
+          "description" : "Ledger Nano S model yükseltme teklifleri yakında sona eriyor. En yeni cihazlarımıza <0>%{{discount}} indirimle</0> model yükseltin.",
+          "cta" : "Cüzdanımın modelini yükselt",
+          "linkText" : "Daha fazla bilgi"
+        }
+      },
+      "notifications" : {
+        "optIn" : {
+          "description" : "Cihaz güncellemeleri yakında sona eriyor. Sorunsuz bir deneyim için %{{discount}} indirimle hemen model yükseltin.",
+          "cta" : "Cüzdanımın modelini yükselt",
+          "linkText" : "Daha fazla bilgi"
+        },
+        "optOut" : {
+          "description" : "Cihaz güncellemeleri yakında sona eriyor. Sorunsuz bir deneyim için %{{discount}} indirimle hemen model yükseltin.",
+          "cta" : "Cüzdanımın modelini yükselt",
+          "linkText" : "Daha fazla bilgi"
+        }
+      }
     }
   }
 }
