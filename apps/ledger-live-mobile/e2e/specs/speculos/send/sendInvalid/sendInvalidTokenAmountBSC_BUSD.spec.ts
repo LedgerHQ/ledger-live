@@ -9,5 +9,5 @@ runSendInvalidTokenAmountTest(
   new RegExp(
     /You need \d+\.\d+ BNB in your account to pay for transaction fees on the Binance Smart Chain network\. .*/,
   ),
-  "B2CQA-2700",
+  ["B2CQA-2700"],
 );
