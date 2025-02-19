@@ -786,7 +786,7 @@
     },
     "willBeDeprecatedBanner" : {
       "title" : "効率を最適化するため、{{deprecatedDate}}以降、{{currencyName}}はLedger Liveではサポートされなくなります。ただし、Ledgerハードウェアウォレットでは引き続きサポートされます。この件に関してご不明な点などがございましたら、Ledgerカスタマーサポートまでご連絡ください。",
-      "contactSupport" : "サポートへのお問い合わせ"
+      "contactSupport" : "サポートへお問い合わせ"
     },
     "lastOperations" : "最近の取引",
     "contractAddress" : "コントラクト：",
@@ -2050,12 +2050,12 @@
         "cta" : "My Ledgerに移動",
         "old" : {
           "warning" : "デバイスのファームウェアのバージョンが古いため、アップデートできません。Ledgerサポートに連絡して、デバイスを交換してください。",
-          "cta" : "サポートへのお問い合わせ"
+          "cta" : "サポートへお問い合わせ"
         },
         "cta2" : "ファームウェアをアップデート"
       },
       "latest" : "ファームウェアバージョン{{version}}が利用可能です",
-      "contactSupport" : "サポートへのお問い合わせ",
+      "contactSupport" : "サポートへお問い合わせ",
       "deprecated" : "デバイスのファームウェアのバージョンが古いため、アップデートできません。Ledgerサポートに連絡して、デバイスを交換してください。",
       "prepareSeed" : "念のために、24単語のリカバリーフレーズがリカバリーシートに書き留められており、利用可能であることを確認してください。",
       "disclaimerTitle" : "<1>ファームウェアバージョン{{version}}</1>をインストールします。",
@@ -2302,7 +2302,7 @@
       }
     },
     "memoTag" : {
-      "title" : "タグ/メモがご必要ですか？",
+      "title" : "タグ/メモが必要ですか？",
       "description" : "この資産を取引所から受け取る際に、<0>タグ/メモ</0>が必要になる場合があります。その場合、1234などの数値を任意に組み合わせて使用できます。"
     }
   },
@@ -4134,7 +4134,8 @@
       "walletSync" : "Ledger同期",
       "walletSyncDesc" : "さまざまな携帯電話やコンピューター間でLedger Live暗号資産アカウントを同期します。",
       "mevProtection" : "MEV保護",
-      "mevProtectionDesc" : "MEV保護を有効にすると、イーサリアムでのトランザクションの信頼性が高まります",
+      "mevProtectionDesc" : "Enable MEV Protection for more reliable transactions on Ethereum.",
+      "mevProtectionLearnMore" : "Privacy notice",
       "marketPerformanceWidget" : "マーケットパフォーマンスウィジェット",
       "marketPerformanceWidgetDesc" : "この機能を有効化すると、ポートフォリオページで選択した時間枠の、上昇率上位と下落率上位が表示されます。"
     },
@@ -4706,7 +4707,7 @@
     },
     "modals" : {
       "recoverySeedWarning" : {
-        "contactSupportCTA" : "サポートへのお問い合わせ",
+        "contactSupportCTA" : "サポートへお問い合わせ",
         "continueCTA" : "続行",
         "title" : "箱の中身を確認してください。",
         "description" : "{{device}}にPINコードまたはリカバリーフレーズが付属していた場合、そのデバイスは安全ではありません。絶対に使用せず、Ledgerサポートに連絡してください。",
@@ -5297,7 +5298,7 @@
           "title" : " USB接続の問題が解決されませんか？",
           "desc" : "全ての解決策を試しても解決できない場合は、Ledgerサポートまでご連絡ください。まだ試していない解決策がある場合は、それらの手順を実行してください。",
           "back" : "ポートフォリオに戻る",
-          "cta" : "サポートへのお問い合わせ",
+          "cta" : "サポートへお問い合わせ",
           "cta2" : "戻る"
         },
         "repair" : {
@@ -5921,11 +5922,11 @@
     },
     "WrongDeviceForAccountPayout" : {
       "title" : "問題が発生しました。",
-      "description" : "この受取アカウントはお客様のデバイスに属していません。変更して再試行してください。"
+      "description" : "This receiving account does not belong to the device you have connected. Please change and retry"
     },
     "WrongDeviceForAccountRefund" : {
       "title" : "問題が発生しました。",
-      "description" : "この受取アカウントは、お客様の払い戻し対象のデバイスに属していません。変更して再試行してください。"
+      "description" : "This sending account does not belong to the device you have connected. Please change and retry"
     },
     "DeviceAppVerifyNotSupported" : {
       "title" : "アプリのアップデートが必要です。",
@@ -6266,11 +6267,11 @@
     },
     "CardanoFeeTooHigh" : {
       "title" : "ネットワーク手数料が異常に高いです。",
-      "description" : "ADAトランザクションは一時的にご利用いただけません。アカウントを再同期して再試行するか、サポートがご必要な場合はサポートにご連絡ください。"
+      "description" : "ADAトランザクションは一時的にご利用いただけません。アカウントを再同期して再試行するか、サポートが必要な場合はサポートにご連絡ください。"
     },
     "CardanoInvalidProtoParams" : {
       "title" : "Cardanoのプロトコルパラメータが無効です",
-      "description" : "ADAトランザクションは一時的にご利用いただけません。アカウントを再同期して再試行するか、サポートがご必要な場合はサポートにご連絡ください。"
+      "description" : "ADAトランザクションは一時的にご利用いただけません。アカウントを再同期して再試行するか、サポートが必要な場合はサポートにご連絡ください。"
     },
     "StacksMemoTooLong" : {
       "title" : "メモの長さが長すぎます"
@@ -6444,7 +6445,7 @@
       "title" : "トランザクションのブロードキャストに失敗",
       "description" : "トランザクションは{{networkName}}ネットワーク上でブロードキャストできませんでした。お客様の{{currencyName}}は転送されておらず、アカウントに残っています。",
       "helpCenterTitle" : "ヘルプセンター： ",
-      "helpCenterDesc" : "サポートがご必要な場合は、当社のヘルプセンターをご覧いただくか、ウィジェットからご連絡ください。",
+      "helpCenterDesc" : "サポートが必要な場合は、当社のヘルプセンターをご覧いただくか、ウィジェットからご連絡ください。",
       "needHelp" : "お困りですか？",
       "getHelp" : "ヘルプ",
       "technicalErrorTitle" : "技術的なエラー： ",
@@ -6508,7 +6509,7 @@
         "remove" : "現在の画像を削除する",
         "selectNft" : "NFTを選択",
         "nftEmptyStateTitle" : "表示できるNFTがありません",
-        "nftEmptyStateDescription" : "NFTをウォレットに追加して始めます。"
+        "nftEmptyStateDescription" : "NFTをウォレットに追加しましょう。"
       },
       "adjust" : {
         "stepLabel" : "クロップ",
@@ -6889,6 +6890,50 @@
       "confirm" : "確認",
       "address" : "アドレス",
       "transactionId" : "トランザクションID"
+    }
+  },
+  "lnsUpsell" : {
+    "banner" : {
+      "manager" : {
+        "optIn" : {
+          "title" : "アップグレードに絶好のチャンス！",
+          "description" : "<0>{{discount}}%割引</0>で、当社の最新のデバイスにアップグレードしましょう！より使いやすく、強化されたセキュリティをお楽しみいただけます。",
+          "cta" : "ウォレットをレベルアップ",
+          "linkText" : "詳細はこちら"
+        },
+        "optOut" : {
+          "title" : "アップグレードに絶好のチャンス！",
+          "description" : "<0>{{discount}}%割引</0>で、当社の最新のデバイスにアップグレードしましょう！より使いやすく、強化されたセキュリティをお楽しみいただけます。",
+          "cta" : "ウォレットをレベルアップ",
+          "linkText" : "詳細はこちら"
+        }
+      },
+      "accounts" : {
+        "optIn" : {
+          "title" : "絶好のアップグレードチャンス！",
+          "description" : "Ledger Nano Sのアップデートが間もなく終了します。<0>{{discount}}%OFF</0>で、最新デバイスにアップグレードしましょう。",
+          "cta" : "ウォレットをレベルアップ",
+          "linkText" : "詳細はこちら"
+        },
+        "optOut" : {
+          "title" : "絶好のアップグレードチャンス！",
+          "description" : "Ledger Nano Sのキャンペーンは間もなく終了です。<0>{{discount}}%OFF</0>で、当社の最新デバイスにアップグレードできます。",
+          "cta" : "ウォレットをレベルアップ",
+          "linkText" : "詳細はこちら"
+        }
+      },
+      "notifications" : {
+        "optIn" : {
+          "description" : "キャンペーンがまもなく終了します。今ならデバイスのアップグレードが{{discount}}%OFF！より快適な体験をお楽しみいただけます。",
+          "cta" : "ウォレットをレベルアップ",
+          "linkText" : "詳細はこちら"
+        },
+        "optOut" : {
+          "description" : "キャンペーンは間もなく終了します。今ならデバイスのアップグレードが{{discount}}%OFF！より快適な体験をお楽しみいただけます。",
+          "cta" : "ウォレットをレベルアップ",
+          "linkText" : "詳細はこちら"
+        }
+      }
     }
   }
 }
