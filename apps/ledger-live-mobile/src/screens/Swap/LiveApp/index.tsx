@@ -9,18 +9,18 @@ import {
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
+import { useNavigation } from "@react-navigation/core";
 import { useTranslation } from "react-i18next";
-import GenericErrorView from "~/components/GenericErrorView";
-import { initialWebviewState } from "~/components/Web3AppWebview/helpers";
-import { WebviewState } from "~/components/Web3AppWebview/types";
-import { WebView } from "./WebView";
 import {
   HandlerStateChangeEvent,
   PanGestureHandler,
   PanGestureHandlerEventPayload,
   State,
 } from "react-native-gesture-handler";
-import { useNavigation } from "@react-navigation/core";
+import GenericErrorView from "~/components/GenericErrorView";
+import { initialWebviewState } from "~/components/Web3AppWebview/helpers";
+import { WebviewState } from "~/components/Web3AppWebview/types";
+import { WebView } from "./WebView";
 
 // set the default manifest ID for the production swap live app
 // in case the FF is failing to load the manifest ID
@@ -76,7 +76,7 @@ export function SwapLiveApp() {
 
   return (
     <PanGestureHandler onHandlerStateChange={onGesture} activeOffsetX={[0, 10]}>
-      <Flex flex={1}>
+      <Flex flex={1} testID="swap-form-tab">
         <WebView manifest={manifest} setWebviewState={setWebviewState} />
       </Flex>
     </PanGestureHandler>

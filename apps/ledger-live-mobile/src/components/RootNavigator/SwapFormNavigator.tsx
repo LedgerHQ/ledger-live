@@ -10,8 +10,6 @@ import History from "~/screens/Swap/History";
 import { SwapNavigatorParamList } from "../RootNavigator/types/SwapNavigator";
 import type { StackNavigatorProps } from "../RootNavigator/types/helpers";
 import { SwapFormNavigatorParamList } from "./types/SwapFormNavigator";
-import { SwapLiveApp } from "~/screens/Swap/LiveApp";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 type TabLabelProps = {
   focused: boolean;
@@ -27,43 +25,25 @@ export default function SwapFormNavigator({
   const { colors } = useTheme();
   const tabNavigationConfig = useMemo(() => getLineTabNavigatorConfig(colors), [colors]);
 
-  const ptxSwapLiveAppMobile = useFeature("ptxSwapLiveAppMobile");
-
   return (
     <Tab.Navigator {...tabNavigationConfig}>
-      {ptxSwapLiveAppMobile?.enabled ? (
-        <Tab.Screen
-          name={ScreenName.SwapLiveApp}
-          component={SwapLiveApp}
-          options={{
-            swipeEnabled: false,
-            title: t("transfer.swap.form.tab"),
-            tabBarLabel: (props: TabLabelProps) => (
-              <Text variant="body" fontWeight="semiBold" {...props}>
-                {t("transfer.swap.form.tab")}
-              </Text>
-            ),
-            tabBarTestID: "swap-form-tab",
-          }}
-        />
-      ) : (
-        <Tab.Screen
-          name={ScreenName.SwapForm}
-          component={SwapForm}
-          options={{
-            title: t("transfer.swap.form.tab"),
-            tabBarLabel: (props: TabLabelProps) => (
-              <Text variant="body" fontWeight="semiBold" {...props}>
-                {t("transfer.swap.form.tab")}
-              </Text>
-            ),
-            tabBarTestID: "swap-form-tab",
-          }}
-          initialParams={{
-            ...params,
-          }}
-        />
-      )}
+      <Tab.Screen
+        name={ScreenName.SwapForm}
+        component={SwapForm}
+        options={{
+          title: t("transfer.swap.form.tab"),
+          tabBarLabel: (props: TabLabelProps) => (
+            <Text variant="body" fontWeight="semiBold" {...props}>
+              {t("transfer.swap.form.tab")}
+            </Text>
+          ),
+          tabBarTestID: "swap-form-tab",
+        }}
+        initialParams={{
+          ...params,
+        }}
+      />
+
       <Tab.Screen
         name={ScreenName.SwapHistory}
         component={History}
