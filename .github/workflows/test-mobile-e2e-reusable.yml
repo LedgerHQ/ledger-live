@@ -179,7 +179,7 @@ jobs:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
         id: upload
         with:
-          platform: ios
+          platform: ios-${{ env.SPECULOS_RUN && 'speculos' || 'mocked' }}
           login: ${{ vars.ALLURE_USERNAME }}
           password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
           path: ios-test-artifacts
@@ -355,7 +355,7 @@ jobs:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
         id: upload
         with:
-          platform: android
+          platform: android-${{ env.SPECULOS_RUN && 'speculos' || 'mocked' }}
           login: ${{ vars.ALLURE_USERNAME }}
           password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
           path: android-test-artifacts
