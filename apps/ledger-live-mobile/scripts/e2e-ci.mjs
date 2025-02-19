@@ -42,8 +42,8 @@ const test_ios = async () => {
   await $`pnpm mobile e2e:test${speculos} \
     -c ios.sim.release \
     --loglevel error \
-    --record-logs all \
-    --take-screenshots all \
+    --record-logs failing \
+    --take-screenshots failing \
     --forceExit \
     --headless \
     --retries 1 \
@@ -59,8 +59,8 @@ const test_android = async () => {
   await $`pnpm mobile e2e:test${speculos} \\
     -c android.emu.${target} \\
     --loglevel error \\
-    --record-logs all \\
-    --take-screenshots all \\
+    --record-logs failing \\
+    --take-screenshots failing \\
     --forceExit \\
     --headless \\
     --retries 1 \\
