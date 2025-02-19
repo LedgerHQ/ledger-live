@@ -1,5 +1,38 @@
 # ledger-live-desktop
 
+## 2.101.0-nightly.0
+
+### Minor Changes
+
+- [#9217](https://github.com/LedgerHQ/ledger-live/pull/9217) [`a4af405`](https://github.com/LedgerHQ/ledger-live/commit/a4af4052d7b0b0af753ab0f2e02d070379e118b4) Thanks [@CremaFR](https://github.com/CremaFR)! - feat: passing last device and LL version and type to the swap live app
+
+- [#9172](https://github.com/LedgerHQ/ledger-live/pull/9172) [`969bb54`](https://github.com/LedgerHQ/ledger-live/commit/969bb544f81538ddac1afe5cd8602c9f0469a643) Thanks [@thesan](https://github.com/thesan)! - Add the LNS upsell banners components to LLD
+
+- [#9241](https://github.com/LedgerHQ/ledger-live/pull/9241) [`0a4413d`](https://github.com/LedgerHQ/ledger-live/commit/0a4413dd5cf50967c27b39bbd7dd9222e6322a60) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add link param to mevProtection ff
+
+- [#9104](https://github.com/LedgerHQ/ledger-live/pull/9104) [`27a7992`](https://github.com/LedgerHQ/ledger-live/commit/27a7992c1f01ef82407d756013d8ad947980ebf9) Thanks [@Justkant](https://github.com/Justkant)! - fix: multiline error on input overflows over next item
+
+### Patch Changes
+
+- [#9231](https://github.com/LedgerHQ/ledger-live/pull/9231) [`e6b5d5d`](https://github.com/LedgerHQ/ledger-live/commit/e6b5d5dfd9f01faefd3bd040492e255e174661d9) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - Fix staking modal text overlap when too many words
+
+- Updated dependencies [[`969bb54`](https://github.com/LedgerHQ/ledger-live/commit/969bb544f81538ddac1afe5cd8602c9f0469a643), [`94a59f2`](https://github.com/LedgerHQ/ledger-live/commit/94a59f2030b8b25962e183919017a1e25454fdfb), [`0a4413d`](https://github.com/LedgerHQ/ledger-live/commit/0a4413dd5cf50967c27b39bbd7dd9222e6322a60), [`2f610d0`](https://github.com/LedgerHQ/ledger-live/commit/2f610d0a4ddafbd58cd0fb86fd989a08de5344d8), [`1114e29`](https://github.com/LedgerHQ/ledger-live/commit/1114e29f678113118f543445f48829439f809f7f)]:
+  - @ledgerhq/react-ui@0.19.0-nightly.0
+  - @ledgerhq/coin-evm@2.10.1-nightly.0
+  - @ledgerhq/types-live@6.60.0-nightly.0
+  - @ledgerhq/live-common@34.23.0-nightly.0
+  - @ledgerhq/coin-bitcoin@0.10.5-nightly.0
+  - @ledgerhq/coin-framework@2.0.1-nightly.0
+  - @ledgerhq/coin-aptos@1.6.1-nightly.0
+  - @ledgerhq/coin-cosmos@0.8.1-nightly.0
+  - @ledgerhq/coin-filecoin@1.5.5-nightly.0
+  - @ledgerhq/domain-service@1.2.19-nightly.0
+  - @ledgerhq/live-countervalues@0.4.1-nightly.0
+  - @ledgerhq/live-countervalues-react@0.2.23-nightly.0
+  - @ledgerhq/live-nft@0.5.8-nightly.0
+  - @ledgerhq/live-nft-react@0.5.8-nightly.0
+  - @ledgerhq/live-wallet@0.9.5-nightly.0
+
 ## 2.100.0
 
 ### Minor Changes

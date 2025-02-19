@@ -1,5 +1,39 @@
 # live-mobile
 
+## 3.67.0-nightly.0
+
+### Minor Changes
+
+- [#9265](https://github.com/LedgerHQ/ledger-live/pull/9265) [`d313b4a`](https://github.com/LedgerHQ/ledger-live/commit/d313b4a1fe8bde7086ce38d7432e91548accc826) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add safeAreaView to NftGallery to avoid trembling screen onscroll
+
+- [#9258](https://github.com/LedgerHQ/ledger-live/pull/9258) [`5837706`](https://github.com/LedgerHQ/ledger-live/commit/5837706a86838ed76e3e070fc1f829526148ce90) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - llm swap - new mobile navigation header
+
+- [#9268](https://github.com/LedgerHQ/ledger-live/pull/9268) [`889f7a7`](https://github.com/LedgerHQ/ledger-live/commit/889f7a76b6a4c4bc6625dc5a32b4e6a9ae7e3461) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Display correct cvs in the account card of the send flow
+
+- [#9241](https://github.com/LedgerHQ/ledger-live/pull/9241) [`0a4413d`](https://github.com/LedgerHQ/ledger-live/commit/0a4413dd5cf50967c27b39bbd7dd9222e6322a60) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add link param to mevProtection ff
+
+- [#9244](https://github.com/LedgerHQ/ledger-live/pull/9244) [`5c712f8`](https://github.com/LedgerHQ/ledger-live/commit/5c712f8cd88ad28f6482a626870ef028880f1a9e) Thanks [@thesan](https://github.com/thesan)! - Do not re-count devices multiple times after devices upgrades
+
+- [#9250](https://github.com/LedgerHQ/ledger-live/pull/9250) [`571b0b5`](https://github.com/LedgerHQ/ledger-live/commit/571b0b5e1b86688370eb41679805bf8923f45c19) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add user property to know if the user has the new add account
+
+### Patch Changes
+
+- Updated dependencies [[`94a59f2`](https://github.com/LedgerHQ/ledger-live/commit/94a59f2030b8b25962e183919017a1e25454fdfb), [`0a4413d`](https://github.com/LedgerHQ/ledger-live/commit/0a4413dd5cf50967c27b39bbd7dd9222e6322a60), [`ceef95c`](https://github.com/LedgerHQ/ledger-live/commit/ceef95c23b9a2b484ac63a1cd3264529c27b6920), [`1114e29`](https://github.com/LedgerHQ/ledger-live/commit/1114e29f678113118f543445f48829439f809f7f)]:
+  - @ledgerhq/coin-evm@2.10.1-nightly.0
+  - @ledgerhq/types-live@6.60.0-nightly.0
+  - @ledgerhq/live-common@34.23.0-nightly.0
+  - @ledgerhq/coin-stacks@0.5.5-nightly.0
+  - @ledgerhq/coin-framework@2.0.1-nightly.0
+  - @ledgerhq/coin-cosmos@0.8.1-nightly.0
+  - @ledgerhq/coin-elrond@0.3.5-nightly.0
+  - @ledgerhq/coin-filecoin@1.5.5-nightly.0
+  - @ledgerhq/domain-service@1.2.19-nightly.0
+  - @ledgerhq/live-countervalues@0.4.1-nightly.0
+  - @ledgerhq/live-countervalues-react@0.2.23-nightly.0
+  - @ledgerhq/live-nft@0.5.8-nightly.0
+  - @ledgerhq/live-nft-react@0.5.8-nightly.0
+  - @ledgerhq/live-wallet@0.9.5-nightly.0
+
 ## 3.66.0
 
 ### Minor Changes

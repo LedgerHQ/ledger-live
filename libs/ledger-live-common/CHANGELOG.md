@@ -1,5 +1,45 @@
 ## 34.5.0-next.4
 
+## 34.23.0-nightly.0
+
+### Minor Changes
+
+- [#9241](https://github.com/LedgerHQ/ledger-live/pull/9241) [`0a4413d`](https://github.com/LedgerHQ/ledger-live/commit/0a4413dd5cf50967c27b39bbd7dd9222e6322a60) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add link param to mevProtection ff
+
+- [#9143](https://github.com/LedgerHQ/ledger-live/pull/9143) [`1114e29`](https://github.com/LedgerHQ/ledger-live/commit/1114e29f678113118f543445f48829439f809f7f) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - remove uniswap from status call history
+
+### Patch Changes
+
+- Updated dependencies [[`94a59f2`](https://github.com/LedgerHQ/ledger-live/commit/94a59f2030b8b25962e183919017a1e25454fdfb), [`ceef95c`](https://github.com/LedgerHQ/ledger-live/commit/ceef95c23b9a2b484ac63a1cd3264529c27b6920), [`2f610d0`](https://github.com/LedgerHQ/ledger-live/commit/2f610d0a4ddafbd58cd0fb86fd989a08de5344d8)]:
+  - @ledgerhq/coin-evm@2.10.1-nightly.0
+  - @ledgerhq/coin-stacks@0.5.5-nightly.0
+  - @ledgerhq/coin-bitcoin@0.10.5-nightly.0
+  - @ledgerhq/coin-polkadot@2.0.2-nightly.0
+  - @ledgerhq/coin-vechain@2.4.5-nightly.0
+  - @ledgerhq/coin-framework@2.0.1-nightly.0
+  - @ledgerhq/coin-algorand@0.7.5-nightly.0
+  - @ledgerhq/coin-aptos@1.6.1-nightly.0
+  - @ledgerhq/coin-cardano@0.4.5-nightly.0
+  - @ledgerhq/coin-cosmos@0.8.1-nightly.0
+  - @ledgerhq/coin-elrond@0.3.5-nightly.0
+  - @ledgerhq/coin-filecoin@1.5.5-nightly.0
+  - @ledgerhq/coin-hedera@1.3.5-nightly.0
+  - @ledgerhq/coin-icon@0.6.5-nightly.0
+  - @ledgerhq/coin-internet_computer@1.5.5-nightly.0
+  - @ledgerhq/coin-near@0.8.1-nightly.0
+  - @ledgerhq/coin-solana@0.13.1-nightly.0
+  - @ledgerhq/coin-stellar@1.0.2-nightly.0
+  - @ledgerhq/coin-tezos@1.1.1-nightly.0
+  - @ledgerhq/coin-ton@0.5.5-nightly.0
+  - @ledgerhq/coin-tron@0.2.5-nightly.0
+  - @ledgerhq/coin-xrp@2.0.1-nightly.0
+  - @ledgerhq/device-core@0.4.14-nightly.0
+  - @ledgerhq/hw-app-eth@6.42.7-nightly.0
+  - @ledgerhq/live-countervalues@0.4.1-nightly.0
+  - @ledgerhq/live-countervalues-react@0.2.23-nightly.0
+  - @ledgerhq/live-nft@0.5.8-nightly.0
+  - @ledgerhq/live-wallet@0.9.5-nightly.0
+
 ## 34.22.0
 
 ### Minor Changes

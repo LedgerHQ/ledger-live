@@ -1,5 +1,15 @@
 # @ledgerhq/coin-bitcoin
 
+## 0.10.5-nightly.0
+
+### Patch Changes
+
+- [#9191](https://github.com/LedgerHQ/ledger-live/pull/9191) [`2f610d0`](https://github.com/LedgerHQ/ledger-live/commit/2f610d0a4ddafbd58cd0fb86fd989a08de5344d8) Thanks [@qperrot](https://github.com/qperrot)! - fix Send max with pending utxo
+
+- Updated dependencies [[`0a4413d`](https://github.com/LedgerHQ/ledger-live/commit/0a4413dd5cf50967c27b39bbd7dd9222e6322a60)]:
+  - @ledgerhq/types-live@6.60.0-nightly.0
+  - @ledgerhq/coin-framework@2.0.1-nightly.0
+
 ## 0.10.4
 
 ### Patch Changes

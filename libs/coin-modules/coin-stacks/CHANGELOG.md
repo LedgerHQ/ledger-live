@@ -1,5 +1,15 @@
 # @ledgerhq/coin-stacks
 
+## 0.5.5-nightly.0
+
+### Patch Changes
+
+- [#9262](https://github.com/LedgerHQ/ledger-live/pull/9262) [`ceef95c`](https://github.com/LedgerHQ/ledger-live/commit/ceef95c23b9a2b484ac63a1cd3264529c27b6920) Thanks [@Wozacosta](https://github.com/Wozacosta)! - fix: force custom network when using fees estimation calls from stacks sdk
+
+- Updated dependencies [[`0a4413d`](https://github.com/LedgerHQ/ledger-live/commit/0a4413dd5cf50967c27b39bbd7dd9222e6322a60)]:
+  - @ledgerhq/types-live@6.60.0-nightly.0
+  - @ledgerhq/coin-framework@2.0.1-nightly.0
+
 ## 0.5.4
 
 ### Patch Changes

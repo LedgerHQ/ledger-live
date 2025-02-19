@@ -1,5 +1,16 @@
 # @ledgerhq/coin-evm
 
+## 2.10.1-nightly.0
+
+### Patch Changes
+
+- [#9248](https://github.com/LedgerHQ/ledger-live/pull/9248) [`94a59f2`](https://github.com/LedgerHQ/ledger-live/commit/94a59f2030b8b25962e183919017a1e25454fdfb) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix (coin-tester): stop EVM coin tester smoothly
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@2.0.1-nightly.0
+  - @ledgerhq/domain-service@1.2.19-nightly.0
+  - @ledgerhq/evm-tools@1.4.0
+
 ## 2.10.0
 
 ### Minor Changes
