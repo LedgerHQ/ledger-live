@@ -61,7 +61,7 @@ export function useUpdateBannerViewModel({
         connectionType === "bluetooth" &&
         lastConnectedDevice?.modelId === DeviceModelId.nanoX &&
         lastSeenDeviceModelInfo?.deviceInfo.version &&
-        semver.lt(lastSeenDeviceModelInfo?.deviceInfo.version, "2.4.0")
+        semver.lt(lastSeenDeviceModelInfo?.deviceInfo.version, "2.2.0")
       ) {
         setUnsupportedUpdateDrawerOpened(true);
       } else {
@@ -103,6 +103,6 @@ export function useUpdateBannerViewModel({
         Platform.OS === "android" &&
         !!lastSeenDeviceModelInfo &&
         lastConnectedDevice?.deviceId === DeviceModelId.nanoX &&
-        semver.lt(lastSeenDeviceModelInfo?.deviceInfo.version, "2.4.0")),
+        semver.lt(lastSeenDeviceModelInfo?.deviceInfo.version, "2.2.0")),
   };
 }

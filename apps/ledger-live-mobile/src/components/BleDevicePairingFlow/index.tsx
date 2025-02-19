@@ -13,6 +13,12 @@ import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
 import { NavigationHeaderCloseButton } from "../NavigationHeaderCloseButton";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 import { useTrackOnboardingFlow } from "~/analytics/hooks/useTrackOnboardingFlow";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { DmkBleDevicesScanning } from "./DmkBleDevicesScanning";
+import { DmkBleDevicePairing } from "./DmkBleDevicePairing";
+import { urls } from "~/utils/urls";
+import { Linking } from "react-native";
+import { LegacyBleDevicesScanning } from "~/components/BleDevicePairingFlow/LegacyBleDevicesScanning";
 
 const TIMEOUT_AFTER_PAIRED_MS = 2000;
 
@@ -166,6 +172,11 @@ const BleDevicePairingFlow: React.FC<BleDevicePairingFlowProps> = ({
       setPairingFlowStep("scanning");
     }
   }, [isPaired]);
+  const isDmkTransportEnabled = useFeature("ldmkTransport")?.enabled;
+
+  const onOpenHelp = useCallback(() => {
+    Linking.openURL(urls.errors.PairingFailed);
+  }, []);
 
   // Requests consumer component to override the header
   useEffect(() => {
@@ -216,18 +227,37 @@ const BleDevicePairingFlow: React.FC<BleDevicePairingFlowProps> = ({
   return (
     <RequiresBLE>
       {pairingFlowStep === "pairing" && deviceToPair !== null ? (
-        <BleDevicePairing
-          deviceToPair={deviceToPair}
-          onPaired={onPaired}
-          onRetry={onRetryPairingFlow}
-        />
+        isDmkTransportEnabled ? (
+          <DmkBleDevicePairing
+            device={deviceToPair}
+            onPaired={onPaired}
+            onRetry={onRetryPairingFlow}
+            onOpenHelp={onOpenHelp}
+          />
+        ) : (
+          <BleDevicePairing
+            deviceToPair={deviceToPair}
+            onPaired={onPaired}
+            onRetry={onRetryPairingFlow}
+            onOpenHelp={onOpenHelp}
+          />
+        )
       ) : pairingFlowStep === "scanning" ? (
-        <BleDevicesScanning
-          filterByDeviceModelId={filterByDeviceModelId}
-          areKnownDevicesDisplayed={areKnownDevicesDisplayed}
-          areKnownDevicesPairable={areKnownDevicesPairable}
-          onDeviceSelect={onDeviceSelect}
-        />
+        isDmkTransportEnabled ? (
+          <DmkBleDevicesScanning
+            filterByDeviceModelId={filterByDeviceModelId}
+            areKnownDevicesDisplayed={areKnownDevicesDisplayed}
+            areKnownDevicesPairable={areKnownDevicesPairable}
+            onDeviceSelect={onDeviceSelect}
+          />
+        ) : (
+          <LegacyBleDevicesScanning
+            filterByDeviceModelId={filterByDeviceModelId}
+            areKnownDevicesDisplayed={areKnownDevicesDisplayed}
+            areKnownDevicesPairable={areKnownDevicesPairable}
+            onDeviceSelect={onDeviceSelect}
+          />
+        )
       ) : null}
     </RequiresBLE>
   );

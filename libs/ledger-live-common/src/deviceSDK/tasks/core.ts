@@ -10,6 +10,7 @@ import {
 import { Observable, from, of, throwError, timer } from "rxjs";
 import { catchError, concatMap, retry, switchMap, timeout } from "rxjs/operators";
 import { Transport, TransportRef } from "../transports/core";
+import { DmkError, GeneralDmkError } from "@ledgerhq/device-management-kit";
 
 export type SharedTaskEvent = { type: "error"; error: Error; retrying: boolean };
 
@@ -78,6 +79,8 @@ type ErrorClass = CustomErrorClassType | TransportStatusErrorClassType;
 // To be able to retry a command, the command needs to take an object containing a transport as its argument
 type CommandTransportArgs = { transport: Transport };
 
+const isDmkError = (error: any): error is DmkError => error && "_tag" in error;
+
 /**
  * Calls a command and retries it on given errors. The transport is refreshed before each retry.
  *
@@ -92,6 +95,7 @@ type CommandTransportArgs = { transport: Transport };
 export function retryOnErrorsCommandWrapper<CommandArgsWithoutTransportType, CommandEventsType>({
   command,
   allowedErrors,
+  allowedDmkErrors = [],
 }: {
   command: (
     args: CommandArgsWithoutTransportType & CommandTransportArgs,
@@ -100,6 +104,7 @@ export function retryOnErrorsCommandWrapper<CommandArgsWithoutTransportType, Com
     errorClass: ErrorClass;
     maxRetries: number | "infinite";
   }[];
+  allowedDmkErrors?: DmkError[];
 }) {
   // Returns the command wrapped into the retry mechanism
   // No need to pass the transport to the wrapped command
@@ -150,9 +155,12 @@ export function retryOnErrorsCommandWrapper<CommandArgsWithoutTransportType, Com
               if (maxRetries === "infinite" || sameErrorInARowCount < maxRetries) {
                 isAllowedError = true;
               }
-
               break;
             }
+          }
+
+          if (isDmkError(error)) {
+            isAllowedError = allowedDmkErrors.some(dmkError => dmkError._tag === error._tag);
           }
 
           if (isAllowedError) {

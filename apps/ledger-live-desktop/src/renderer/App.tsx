@@ -5,7 +5,7 @@ import { HashRouter as Router } from "react-router-dom";
 import { NftMetadataProvider } from "@ledgerhq/live-nft-react";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { getFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { DeviceManagementKitProvider } from "@ledgerhq/live-dmk";
+import { DeviceManagementKitProvider } from "@ledgerhq/live-dmk-desktop";
 import "./global.css";
 import "tippy.js/dist/tippy.css";
 import "tippy.js/animations/shift-away.css";
