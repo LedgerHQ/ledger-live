@@ -12,8 +12,8 @@ import {
 } from "@ledgerhq/live-common/currencies/index";
 import { setWalletAPIVersion } from "@ledgerhq/live-common/wallet-api/version";
 import { WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
-import { registerTransportModule } from "@ledgerhq/live-common/hw/index";
-import type { TransportModule } from "@ledgerhq/live-common/hw/index";
+import { registerTransportModule, type TransportModule } from "@ledgerhq/live-common/hw/index";
+import { DeviceManagementKitTransport } from "@ledgerhq/live-dmk";
 import { setDeviceMode } from "@ledgerhq/live-common/hw/actions/app";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { DescriptorEvent } from "@ledgerhq/hw-transport";
@@ -26,6 +26,7 @@ import { prepareCurrency } from "./bridge/cache";
 import BluetoothTransport from "./react-native-hw-transport-ble";
 import "./experimental";
 import logger, { ConsoleLogger } from "./logger";
+import { getFeature } from "@ledgerhq/live-common/lib/featureFlags/index";
 
 const consoleLogger = ConsoleLogger.getLogger();
 listen(log => {
@@ -203,9 +204,11 @@ registerTransportModule(httpdebug);
 // BLE is always the fallback choice because we always keep raw id in it
 registerTransportModule({
   id: "ble",
-  open: (id: string, timeoutMs?: number, context?: TraceContext) =>
-    BluetoothTransport.open(id, timeoutMs, context),
-  disconnect: id => BluetoothTransport.disconnectDevice(id),
+  open: () =>
+    // if (getFeature({ key: "ldmkTransport" })?.enabled) {
+    DeviceManagementKitTransport.open(),
+  // }
+  disconnect: id => DeviceManagementKitTransport.disconnectDevice(id),
 });
 
 if (process.env.NODE_ENV === "production") {
