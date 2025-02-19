@@ -170,8 +170,9 @@ describe("DmkSignerEth", () => {
         expect.objectContaining({
           deviceAction: expect.objectContaining({
             input: expect.objectContaining({
-              derivationPath: "path",
-              message: Uint8Array.from([0x01, 0x02, 0x03, 0x04, 0x05, 0x06]),
+              requiredUserInteraction: "sign-personal-message",
+              appName: "Ethereum",
+              task: expect.any(Function),
             }),
           }),
           sessionId: "sessionId",
