@@ -64,6 +64,8 @@ import ModalLock from "../ModalLock";
 import ProviderIcon from "../ProviderIcon";
 import { RootStackParamList } from "../RootNavigator/types/RootNavigator";
 import TermsFooter, { TermsProviders } from "../TermsFooter";
+import { isDmkError, isiOSPeerRemovedPairingError } from "@ledgerhq/live-dmk-mobile";
+// import { OpeningConnectionError } from "@ledgerhq/device-management-kit";
 
 export const Wrapper = styled(Flex).attrs({
   flex: 1,
@@ -661,7 +663,10 @@ export function renderError({
   // TODO Once we have the aligned Error renderings, the CTA list should be determined
   // by the error class, not patched like here.
   let showRetryIfAvailable = true;
-  if ((error as unknown) instanceof PeerRemovedPairing) {
+  if (
+    (error as unknown) instanceof PeerRemovedPairing ||
+    (isDmkError(error) && isiOSPeerRemovedPairingError(error))
+  ) {
     showRetryIfAvailable = false;
   }
 

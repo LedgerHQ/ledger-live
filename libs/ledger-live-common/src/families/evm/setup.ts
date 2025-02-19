@@ -23,7 +23,7 @@ import { EvmSigner } from "@ledgerhq/coin-evm/lib/types/signer";
 
 const createSigner: CreateSigner<EvmSigner> = (transport: Transport) => {
   if (isDmkTransport(transport)) {
-    return new DmkSignerEth(transport.sdk, transport.sessionId);
+    return new DmkSignerEth(transport.dmk, transport.sessionId);
   }
 
   return new LegacySignerEth(transport);
@@ -31,10 +31,10 @@ const createSigner: CreateSigner<EvmSigner> = (transport: Transport) => {
 
 const isDmkTransport = (
   transport: Transport,
-): transport is Transport & { sdk: DeviceManagementKit; sessionId: string } => {
+): transport is Transport & { dmk: DeviceManagementKit; sessionId: string } => {
   return (
-    "sdk" in transport &&
-    transport.sdk !== undefined &&
+    "dmk" in transport &&
+    transport.dmk !== undefined &&
     "sessionId" in transport &&
     transport.sessionId !== undefined
   );
