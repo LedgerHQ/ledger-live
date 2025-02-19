@@ -1,41 +1,41 @@
 {
   "calendar" : {
-    "today" : "Today",
-    "tomorrow" : "Tomorrow",
-    "yesterday" : "Yesterday",
-    "transactionDate" : "Transaction date"
+    "today" : "วันนี้",
+    "tomorrow" : "พรุ่งนี้",
+    "yesterday" : "เมื่อวาน",
+    "transactionDate" : "วันทำธุรกรรม"
   },
   "platform" : {
     "flows" : {
       "requestAccount" : {
-        "title" : "Select an account"
+        "title" : "เลือกบัญชี"
       },
       "broadcast" : {
         "toast" : {
-          "title" : "Transaction sent !",
-          "text" : "Click here to see operation details"
+          "title" : "ส่งธุรกรรมแล้ว!",
+          "text" : "คลิกที่นี่เพื่อดูรายละเอียดการดำเนินงาน"
         }
       }
     },
     "app" : {
       "informations" : {
-        "title" : "Information",
-        "website" : "Website"
+        "title" : "ข้อมูล",
+        "website" : "เว็บไซต์"
       }
     },
     "catalog" : {
       "title" : "Discover",
       "section" : {
-        "recentlyUsed" : "Recently used",
+        "recentlyUsed" : "ใช้ล่าสุด",
         "locallyLoaded" : "Locally Loaded Live Apps",
-        "browse" : "Browse"
+        "browse" : "สืบค้น"
       },
       "filter" : {
-        "categories" : "Categories",
-        "all" : "all"
+        "categories" : "หมวดหมู่",
+        "all" : "ทั้งหมด"
       },
       "branch" : {
-        "soon" : "Coming soon",
+        "soon" : "เร็ว ๆ นี้",
         "experimental" : "Experimental",
         "debug" : "Debug"
       },
@@ -48,110 +48,110 @@
         "tweetText" : "The next Ledger App should be..."
       },
       "pollCTA" : {
-        "title" : "Poll",
+        "title" : "แบบสำรวจ",
         "description" : "Which service do you want to see in Ledger Live?",
-        "button" : "Let’s vote!"
+        "button" : "มาโหวตกันเลย!"
       },
       "developerCTA" : {
-        "title" : "For Developers",
+        "title" : "สำหรับนักพัฒนา",
         "description" : "All the information you need to integrate your applications on Ledger Live.",
-        "button" : "Go to portal"
+        "button" : "ไปยังพอร์ทัล"
       },
       "warnings" : {
-        "notFound" : "Not found",
-        "retrySearchKeyword" : "Please retry the search with another keyword.",
+        "notFound" : "ไม่พบ",
+        "retrySearchKeyword" : "โปรดลองค้นหาอีกครั้งด้วยคีย์เวิร์ดคำอื่น",
         "retrySearchKeywordAndUrl" : "Please retry the search with another keyword or open <Link>{{search}}</Link> outside Ledger Live."
       }
     },
     "disclaimer" : {
-      "title" : "External Application",
-      "description" : "You are about to be redirected to an application not operated by Ledger.",
-      "legalAdvice" : "This application is not operated by Ledger. Ledger is not responsible for any loss of funds or quality of service of such application.\n\nAlways make sure to carefully verify the information displayed on your device.",
-      "checkbox" : "Do not remind me again.",
-      "CTA" : "Continue"
+      "title" : "แอปพลิเคชันภายนอก",
+      "description" : "คุณกำลังจะออกไปยังแอปพลิเคชันที่ไม่ได้ดำเนินการโดย Ledger",
+      "legalAdvice" : "แอปพลิเคชันนี้ไม่ได้ดำเนินการโดย Ledger Ledger ไม่รับผิดชอบต่อการสูญเสียเงินทุนหรือคุณภาพของบริการดังกล่าว\n\nโปรดตรวจสอบให้แน่ใจว่าได้ตรวจสอบข้อมูลที่แสดงบนอุปกรณ์ของคุณเสมอ",
+      "checkbox" : "ไม่ต้องเตือนฉันอีก",
+      "CTA" : "ดำเนินการต่อ"
     }
   },
   "common" : {
     "never" : "Never",
     "new" : "New",
-    "skip" : "Skip",
+    "skip" : "ข้าม",
     "apply" : "Apply",
-    "done" : "Done",
-    "confirm" : "Confirm",
-    "reject" : "Reject",
-    "cancel" : "Cancel",
-    "getSupport" : "Get support",
-    "delete" : "Remove account from portfolio",
-    "launch" : "Launch",
-    "continue" : "Continue",
+    "done" : "เสร็จสิ้น",
+    "confirm" : "ยืนยัน",
+    "reject" : "ปฏิเสธ",
+    "cancel" : "ยกเลิก",
+    "getSupport" : "รับการสนับสนุน",
+    "delete" : "นำบัญชีออกจากพอร์ตโฟลิโอ",
+    "launch" : "เปิด",
+    "continue" : "ดำเนินการต่อ",
     "previous" : "Previous",
-    "learnMore" : "Learn more",
-    "help" : "Help",
-    "needHelp" : "Need help?",
-    "areYouSure" : "Are you sure?",
-    "selectAccount" : "Select an account",
-    "selectAccountNoOption" : "No account matching \"{{accountName}}\"",
-    "selectCurrency" : "Choose a crypto asset",
-    "selectCurrencyNoOption" : "No crypto asset \"{{currencyName}}\"",
-    "selectCurrencyEmptyOption" : "No crypto asset",
+    "learnMore" : "เรียนรู้เพิ่มเติม",
+    "help" : "ช่วยเหลือ",
+    "needHelp" : "ต้องการความช่วยเหลือหรือไม่?",
+    "areYouSure" : "คุณแน่ใจหรือไม่?",
+    "selectAccount" : "เลือกบัญชี",
+    "selectAccountNoOption" : "ไม่มีชื่อบัญชีที่ตรงกับ \"{{accountName}}\"",
+    "selectCurrency" : "เลือกสินทรัพย์คริปโต",
+    "selectCurrencyNoOption" : "ไม่มีสินทรัพย์คริปโต \"{{currencyName}}\"",
+    "selectCurrencyEmptyOption" : "ไม่มีสินทรัพย์คริปโต",
     "selectValidatorNoOption" : "No validator matching \"{{accountName}}\"",
-    "selectNoResults" : "No results found matching \"{{query}}\"",
-    "sortBy" : "Sort by",
-    "save" : "Save",
+    "selectNoResults" : "ไม่พบผลลัพธ์ที่ตรงกับ \"{{query}}\"",
+    "sortBy" : "จัดเรียงตาม",
+    "save" : "บันทึก",
     "lock" : "Lock",
-    "showMore" : "Show more",
-    "backToMatchingURL" : "Back to {{appName}}",
-    "back" : "Back",
-    "adjustFees" : "Adjust fees",
-    "reset" : "Reset",
-    "retry" : "Retry",
-    "range" : "Range",
-    "stop" : "Stop",
-    "updateNow" : "Update now",
-    "close" : "Close",
-    "eastern" : "Eastern",
-    "western" : "Western",
-    "reverify" : "Re-verify",
-    "verify" : "Verify",
-    "verifyMyAddress" : "Verify my address",
-    "copy" : "Copy",
-    "copied" : "Copied",
-    "addressCopied" : "Address copied",
-    "addressCopiedSuspicious" : "Mismatch between the copied address and the one in the clipboard.",
+    "showMore" : "แสดงเพิ่มเติม",
+    "backToMatchingURL" : "กลับไปยัง {{appName}}",
+    "back" : "ย้อนกลับ",
+    "adjustFees" : "ปรับค่าธรรมเนียม",
+    "reset" : "รีเซ็ต",
+    "retry" : "ลองอีกครั้ง",
+    "range" : "ช่วง",
+    "stop" : "หยุด",
+    "updateNow" : "อัปเดตตอนนี้",
+    "close" : "ปิด",
+    "eastern" : "ตะวันออก",
+    "western" : "ตะวันตก",
+    "reverify" : "ตรวจสอบอีกครั้ง",
+    "verify" : "ตรวจสอบ",
+    "verifyMyAddress" : "ตรวจสอบ Address ของฉัน",
+    "copy" : "คัดลอก",
+    "copied" : "คัดลอกแล้ว",
+    "addressCopied" : "คัดลอก Address แล้ว",
+    "addressCopiedSuspicious" : "ข้อมูลของ Address ที่คัดลอกและ Address ในคลิปบอร์ดไม่ตรงกัน",
     "experimentalFeature" : "Experimental",
     "featureFlags" : "Feature flag",
     "ldmkEnabled" : "LDMK transport",
-    "information" : "Information",
-    "search" : "Search...",
-    "searchWithoutEllipsis" : "Search",
-    "manage" : "Manage",
-    "tryAgain" : "Try again",
+    "information" : "ข้อมูล",
+    "search" : "ค้นหา...",
+    "searchWithoutEllipsis" : "ค้นหา",
+    "manage" : "จัดการ",
+    "tryAgain" : "ลองอีกครั้ง",
     "lockScreen" : {
-      "title" : "Welcome back",
-      "description" : "Enter your password to continue",
-      "inputPlaceholder" : "Type your password",
-      "lostPassword" : "I lost my password"
+      "title" : "Welcome Back",
+      "description" : "ป้อนรหัสผ่านของคุณเพื่อดำเนินการต่อ",
+      "inputPlaceholder" : "ป้อนรหัสผ่านของคุณ",
+      "lostPassword" : "ฉันทำรหัสผ่านหาย"
     },
     "sync" : {
-      "syncing" : "Synchronizing...",
-      "upToDate" : "Synchronized",
-      "outdated" : "Paused",
-      "error" : "Synchronization error",
-      "refresh" : "Refresh",
-      "devTools" : "Dev tools",
-      "failingSync_one" : "Account failing to sync:",
-      "failingSync_other" : "Accounts failing to sync:"
+      "syncing" : "กำลังซิงค์โครไนซ์...",
+      "upToDate" : "ซิงโครไนซ์แล้ว",
+      "outdated" : "หยุดชั่วคราว",
+      "error" : "การซิงโครไนซ์ล้มเหลว",
+      "refresh" : "รีเฟรช",
+      "devTools" : "เครื่องมือ Dev",
+      "failingSync_one" : "ไม่สามารถซิงค์บัญชีได้ :",
+      "failingSync_other" : "ไม่สามารถซิงค์บัญชีได้ :"
     },
-    "exchange" : "Exchange",
-    "info" : "Info",
-    "connectDevice" : "Connect your device",
-    "add" : "Add",
-    "or" : "OR",
-    "clearAll" : "Clear all",
-    "buyLedger" : "Buy a Ledger",
-    "quote" : "Quote",
+    "exchange" : "แลกเปลี่ยน",
+    "info" : "ข้อมูล",
+    "connectDevice" : "เชื่อมต่ออุปกรณ์ของคุณ",
+    "add" : "เพิ่ม",
+    "or" : "หรือ",
+    "clearAll" : "ล้างทั้งหมด",
+    "buyLedger" : "ซื้อ Ledger",
+    "quote" : "โควตราคา",
     "memoTag" : {
-      "learnMore" : "Learn more about Tag/Memo"
+      "learnMore" : "เรียนรู้เพิ่มเติมเกี่ยวกับ Tag/Memo"
     }
   },
   "devices" : {
@@ -163,24 +163,24 @@
   },
   "operation" : {
     "type" : {
-      "IN" : "Received",
-      "OUT" : "Sent",
-      "NFT_IN" : "NFT Received",
-      "NFT_OUT" : "NFT Sent",
-      "CREATE" : "Created",
+      "IN" : "ได้รับแล้ว",
+      "OUT" : "ส่งแล้ว",
+      "NFT_IN" : "ได้รับ NFT แล้ว",
+      "NFT_OUT" : "ส่ง NFT แล้ว",
+      "CREATE" : "สร้างแล้ว",
       "REVEAL" : "Revealed",
       "DELEGATE" : "Delegated",
       "REDELEGATE" : "Redelegated",
       "UNDELEGATE" : "Undelegated",
-      "APPROVE" : "Approved",
-      "VOTE" : "Voted",
+      "APPROVE" : "อนุมัติแล้ว",
+      "VOTE" : "โหวตแล้ว",
       "FREEZE" : "Frozen",
       "UNFREEZE" : "Unfrozen",
       "UNDELEGATE_RESOURCE" : "Undelegated",
       "WITHDRAW_EXPIRE_UNFREEZE" : "Withdrawal",
       "LEGACYUNFREEZE" : "Unfrozen",
       "REWARD" : "Claimed reward",
-      "FEES" : "Fees",
+      "FEES" : "ค่าธรรมเนียม",
       "OPT_IN" : "Opt in",
       "OPT_OUT" : "Opt out",
       "CLOSE_ACCOUNT" : "Close account",
@@ -225,8 +225,8 @@
         "description" : "Re-submit the transaction with a higher network fee."
       },
       "cancel" : {
-        "title" : "Cancel",
-        "description" : "Sending 0 {{ticker}} to your own address."
+        "title" : "ยกเลิก",
+        "description" : "กำลังส่ง 0 {{ticker}} ไปยัง Address ของคุณเอง"
       },
       "steps" : {
         "method" : {
@@ -236,13 +236,13 @@
           "title" : "Fees"
         },
         "summary" : {
-          "title" : "Summary"
+          "title" : "สรุป"
         },
         "device" : {
-          "title" : "Device"
+          "title" : "อุปกรณ์"
         },
         "confirmation" : {
-          "title" : "Confirmation"
+          "title" : "การยืนยัน"
         }
       },
       "error" : {
@@ -284,10 +284,10 @@
     "feesAmount" : "Fees Amount"
   },
   "sidebar" : {
-    "card" : "Card",
+    "card" : "การ์ด",
     "menu" : "Menu",
-    "stars" : "Starred accounts",
-    "accounts" : "Accounts",
+    "stars" : "Starred Accounts",
+    "accounts" : "บัญชี",
     "manager" : "My Ledger",
     "earn" : "Earn",
     "exchange" : "Buy / Sell",
@@ -312,7 +312,7 @@
     "title" : "Swap",
     "tabs" : {
       "exchange" : "Swap",
-      "history" : "History"
+      "history" : "ประวัติ"
     },
     "form" : {
       "changeCTA" : "Change",
@@ -327,7 +327,7 @@
         "loadingQuotes" : "Loading quotes now",
         "loadingDescription" : "It will only take a moment to find the best options for you.",
         "name" : {
-          "title" : "Provider",
+          "title" : "ผู้ให้บริการ",
           "tooltip" : "Depending on the provider, you have to register with them by creating an account."
         },
         "rate" : {
@@ -341,7 +341,7 @@
       },
       "details" : {
         "label" : {
-          "provider" : "provider",
+          "provider" : "ผู้ให้บริการ",
           "rate" : "rate",
           "fees" : "Network Fees",
           "target" : "target account"
@@ -352,7 +352,7 @@
           "fees" : "lorem ipsum"
         },
         "noAccount" : "Create an account to receive {{name}}",
-        "noAccountCTA" : "Add account"
+        "noAccountCTA" : "เพิ่มบัญชี"
       },
       "from" : {
         "title" : "From",
@@ -553,7 +553,7 @@
       "title" : "Swap",
       "provider" : "Provider",
       "txid" : "Swap ID",
-      "status" : "Status",
+      "status" : "สถานะ",
       "statusTooltips" : {
         "expired" : "Please contact the swap provider with your swap ID for more information.",
         "refunded" : "Please contact the swap provider with your swap ID for more information.",
@@ -562,13 +562,13 @@
         "finished" : "Your swap was completed successfully.",
         "unknown" : "Please contact the swap provider with your swap ID for more information."
       },
-      "date" : "Date",
-      "from" : "From",
-      "fromAddress" : "Origin address",
-      "fromAddress_plural" : "Origin addresses",
-      "to" : "To",
-      "toProvider" : "Provider address",
-      "initialAmount" : "Initial amount",
+      "date" : "วันที่",
+      "from" : "จาก",
+      "fromAddress" : "Address ต้นทาง",
+      "fromAddress_plural" : "Address ต้นทาง",
+      "to" : "ถึง",
+      "toProvider" : "Address ผู้ให้บริการ",
+      "initialAmount" : "จำนวนเริ่มต้น",
       "creditedAmount" : "Credited amount"
     }
   },
@@ -579,16 +579,16 @@
       "description" : "Not enough funds? Don’t worry, you can securely buy, swap or receive crypto directly in Ledger Live.",
       "options" : {
         "buy" : {
-          "title" : "Buy",
+          "title" : "ซื้อ",
           "body" : "Buy with trusted  providers"
         },
         "swap" : {
           "title" : "Swap",
-          "label" : "Popular",
+          "label" : "ยอดนิยม",
           "body" : "Convert crypto to crypto securely"
         },
         "receive" : {
-          "title" : "Receive",
+          "title" : "รับ",
           "body" : "Receive crypto in your wallet"
         }
       }
@@ -599,43 +599,43 @@
     }
   },
   "lottieDebugger" : {
-    "buttonTitle" : "Test"
+    "buttonTitle" : "ทดสอบ"
   },
   "storylyDebugger" : {
-    "buttonTitle" : "Test"
+    "buttonTitle" : "ทดสอบ"
   },
   "postOnboardingDebugger" : {
-    "buttonTitle" : "Test"
+    "buttonTitle" : "ทดสอบ"
   },
   "vaultSigner" : {
     "modal" : {
       "title" : "Connect Vault",
       "info" : "Link your Ledger Vault workspace accounts and create transactions from Ledger Live by completing fields below. Locate info at Settings > External wallet signer.",
-      "info_link" : "Learn more",
+      "info_link" : "เรียนรู้เพิ่มเติม",
       "host" : {
         "title" : "URL Endpoint",
         "placeholder" : "ws://localhost:3030"
       },
       "workspace" : {
-        "title" : "Workspace name",
-        "placeholder" : "workspace"
+        "title" : "ชื่อเวิร์คสเปซ",
+        "placeholder" : "เวิร์คสเปซ"
       },
       "token" : {
-        "title" : "Operator API Token",
-        "placeholder" : "Token"
+        "title" : "API Token ของผู้ให้บริการ",
+        "placeholder" : "โทเค็น"
       },
-      "submit" : "Connect"
+      "submit" : "เชื่อมต่อ"
     }
   },
   "fullNode" : {
-    "status" : "Status",
-    "connect" : "Connect",
-    "disconnect" : "Disconnect",
-    "checkNodeSettings" : "Verify node settings",
-    "edit" : "Edit",
+    "status" : "สถานะ",
+    "connect" : "เชื่อมต่อ",
+    "disconnect" : "ยกเลิกการเชื่อมต่อ",
+    "checkNodeSettings" : "ตรวจสอบการตั้งค่าโหนด",
+    "edit" : "แก้ไข",
     "modal" : {
       "title" : "Connect Bitcoin full node",
-      "disconnectTitle" : "Disconnect full node",
+      "disconnectTitle" : "ยกเลิกการเชื่อมต่อ Full Node",
       "steps" : {
         "landing" : {
           "header" : "Start your full node. Don’t trust, verify.",
@@ -648,24 +648,24 @@
           "disclaimer" : "Running a full node requires a computer with sufficient resources and a broadband connection without data restrictions."
         },
         "node" : {
-          "title" : "Node",
+          "title" : "โหนด",
           "connectionSteps" : {
             "notConnected" : {
               "header" : "Enter your node parameters",
               "disclaimer" : "Your full node must be fully synchronized before connecting Ledger Live.",
               "fields" : {
                 "nodeHost" : {
-                  "title" : "Host",
+                  "title" : "โฮสต์",
                   "tooltip" : "Leave as default if node runs on this computer, or replace the node IP address and port number."
                 },
                 "rpcCredentials" : {
                   "title" : "RPC Credentials",
                   "tooltip" : "Enter the RPC username and password of your node, found in the bitcoin.conf file.",
-                  "usernamePlaceholder" : "Username",
-                  "passwordPlaceholder" : "Password"
+                  "usernamePlaceholder" : "ชื่อผู้ใช้",
+                  "passwordPlaceholder" : "รหัสผ่าน"
                 },
                 "tls" : {
-                  "title" : "Use TLS",
+                  "title" : "ใช้ TLS",
                   "tooltip" : "Enable Transport Layer Security, for example, when using a hosted node solution."
                 }
               }
@@ -679,13 +679,13 @@
               "description" : "You can now configure your full node to scan for your accounts on the blockchain."
             },
             "failure" : {
-              "header" : "Could not reach full node",
+              "header" : "ไม่สามารถเข้าถึง Full Node ได้",
               "description" : "Please ensure your node is fully synchronized and verify its connection settings."
             }
           }
         },
         "device" : {
-          "title" : "Device",
+          "title" : "อุปกรณ์",
           "connectionSteps" : {
             "pending" : {
               "header" : "Getting accounts from device",
@@ -694,14 +694,14 @@
             "success" : {
               "header" : "Accounts added to node configuration",
               "description" : "A configuration file was saved to the user data folder. It enables Ledger SatStack to connect to your full node and let it scan for your accounts on the blockchain.",
-              "cta" : "View user data"
+              "cta" : "ดูข้อมูลผู้ใช้"
             }
           }
         },
         "accounts" : {
-          "title" : "Accounts",
+          "title" : "บัญชี",
           "existing" : "Existing accounts to scan",
-          "toScan" : "Accounts to scan",
+          "toScan" : "บัญชีที่จะสแกน",
           "toScanDescription" : "Accounts to scan for each address type",
           "toScanTooltip" : "Increase only if you have 10+ BTC accounts.  Initial scan will be slower. "
         },
@@ -709,47 +709,47 @@
           "title" : "SatStack",
           "connectionSteps" : {
             "notConnected" : {
-              "header" : "Download and run Ledger SatStack",
-              "description" : "Ledger SatStack is a small application enabling Ledger Live to talk to your full node. Please download and run it before you continue.",
-              "disclaimer" : "SatStack must be running for Ledger Live to connect to your full node.  Consider setting it to launch automatically when your computer boots.",
-              "cta" : "Download SatStack"
+              "header" : "ดาวน์โหลดและเรียกใช้งาน Ledger SatStack",
+              "description" : "Ledger SatStack เป็นแอปพลิเคชันขนาดเล็กที่อนุญาตให้ Ledger Live พูดคุยกับ Full Node ของคุณ โปรดดาวน์โหลดและเรียกใช้งานก่อนที่จะดำเนินการต่อ",
+              "disclaimer" : "SatStack ต้องเปิดทำงานอยู่เพื่อให้ Ledger Live เชื่อมต่อกับ Full Node ของคุณ  โปรดพิจารณาตั้งค่าเพื่อให้เปิดอัตโนมัติเมื่อเปิดคอมพิวเตอร์ของคุณ",
+              "cta" : "ดาวน์โหลด SatStack"
             },
             "satstack-disconnected" : {
-              "header" : "Could not reach SatStack",
-              "description" : "Please verify that SatStack is running on this computer."
+              "header" : "ไม่สามารถเข้าถึง SatStack ได้",
+              "description" : "โปรดตรวจสอบว่า SatStack กำลังทำงานอยู่บนคอมพิวเตอร์เครื่องนี้"
             },
             "satstack-outdated" : {
-              "header" : "Please upgrade SatStack",
-              "description" : "The SatStack version you are using is too old and may contain bugs or incompatibilities."
+              "header" : "โปรดอัปเกรด SatStack",
+              "description" : "เวอร์ชันของ SatStack ที่คุณใช้นั้นเก่าเกินไป และอาจมีข้อบกพร่องหรือไม่สามารถเข้ากันได้"
             },
             "node-disconnected" : {
-              "header" : "Could not reach full node",
-              "description" : "Please verify that your node is reachable and that the connection settings you entered are correct."
+              "header" : "ไม่สามารถเข้าถึง Full Node ได้",
+              "description" : "โปรดตรวจสอบว่าโหนดของคุณสามารถเข้าถึงได้ และการตั้งค่าการเชื่อมต่อที่คุณป้อนนั้นถูกต้อง"
             },
             "invalid-chain" : {
-              "header" : "invalid-chain title",
+              "header" : "ชื่อ Chain ไม่ถูกต้อง",
               "description" : "invalid-chain description for tooltip"
             },
             "initializing" : {
-              "header" : "Loading",
+              "header" : "กำลังโหลด",
               "description" : ""
             },
             "ready" : {
-              "header" : "Ready",
-              "description" : "The full node is fully synced. Your Bitcoin account balances are now correct."
+              "header" : "พร้อมแล้ว",
+              "description" : "Full Node ซิงค์เสร็จสมบูรณ์แล้ว ยอดคงเหลือในบัญชี Bitcoin ของคุณถูกต้องแล้ว"
             },
             "syncing" : {
-              "header" : "Node sync in progress…",
+              "header" : "กำลังดำเนินการซิงค์โหนด...",
               "description" : "Recent transactions may not yet be visible, so Bitcoin account balances may be incorrect. If possible, run your node continuously to keep it in sync."
             },
             "scanning" : {
-              "header" : "Account scan in progress...",
+              "header" : "กำลังดำเนินการสแกนบัญชี...",
               "description" : "You can add your accounts once the account scan is completed. Any Bitcoin accounts previously added through Ledger's explorers were removed."
             }
           }
         },
         "disconnect" : {
-          "cta" : "Disconnect",
+          "cta" : "ยกเลิกการเชื่อมต่อ",
           "description" : "Are you sure? Disconnecting the full node will remove all Bitcoin accounts. You can add your accounts again using Ledger’s explorers."
         }
       }
@@ -757,12 +757,12 @@
   },
   "account" : {
     "subHeader" : {
-      "moreInfo" : "More info",
+      "moreInfo" : "ข้อมูลเพิ่มเติม",
       "cardTitle" : "Powered by {{team}}",
       "drawer" : {
-        "title" : "{{family}} integration",
+        "title" : "{{family}} Integration",
         "subTitle" : "The {{family}} integration has been done by the {{team}} team",
-        "description" : "Ledger Live is an open-source platform.",
+        "description" : "Ledger Live เป็นแพลตฟอร์ม Open-Source",
         "description2" : "Developers from anywhere in the world can integrate with our Ledger Live",
         "description3" : "This integration has been carried out by {{team}} in collaboration with Ledger",
         "description3Link" : "This integration has been carried out by <1><0>{{team}}</0></1> in collaboration with Ledger"
@@ -771,22 +771,22 @@
     "featureUnavailable" : {
       "title" : "The following feature is momentarily unavailable : {{feature}}. To know more please refer to {{support}}",
       "feature" : {
-        "history" : "History",
+        "history" : "ประวัติ",
         "swap" : "Swap",
-        "token_history" : "Token history",
+        "token_history" : "ประวัติโทเคน",
         "send_and_receive" : "Send & receive",
-        "send" : "Send",
-        "receive" : "Receive",
-        "sending_tokens" : "Sending tokens",
-        "receiving_tokens" : "Receiving tokens",
+        "send" : "ส่ง",
+        "receive" : "รับ",
+        "sending_tokens" : "กำลังส่งโทเคน",
+        "receiving_tokens" : "กำลังรับโทเคน",
         "staking" : "Staking",
         "claiming_staking_rewards" : "Claiming staking rewards"
       },
-      "support" : "support"
+      "support" : "การสนับสนุน"
     },
     "willBeDeprecatedBanner" : {
       "title" : "To optimize efficiencies, {{currencyName}} will not be supported on Ledger Live as of {{deprecatedDate}}. However, it will still be supported on Ledger hardware wallets. Please contact Ledger Customer Support if you would like assistance on this.",
-      "contactSupport" : "Contact Support"
+      "contactSupport" : "ติดต่อฝ่ายสนับสนุน"
     },
     "lastOperations" : "Latest operations",
     "contractAddress" : "Contract:",
@@ -794,14 +794,14 @@
     "emptyState" : {
       "title" : "No crypto assets yet?",
       "desc" : "Make sure the <1><0>{{managerAppName}}</0></1> app is installed and start receiving",
-      "descToken" : "Make sure the <1><0>{{managerAppName}}</0></1> app is installed and start receiving <3><0>{{ticker}}</0></3> and <5><0>{{tokenList}}</0> tokens</5>",
+      "descToken" : "ตรวจสอบให้แน่ใจว่าได้ติดตั้งแอป<1><0>{{managerAppName}}</0></1> แล้วและเริ่มรับ <3><0>{{ticker}}</0></3> และโทเคน <5><0>{{tokenList}}</0></5>",
       "buttons" : {
         "receiveFunds" : "Receive",
-        "buy" : "Buy"
+        "buy" : "ซื้อ"
       }
     },
     "settings" : {
-      "title" : "Edit account",
+      "title" : "แก้ไขบัญชี",
       "advancedLogs" : "Advanced",
       "advancedTips" : "This is a {{tag}} xpub. When importing it into a third-party wallet, choose the same derivation mode.",
       "accountName" : {
@@ -809,11 +809,11 @@
         "desc" : "Description of the account"
       },
       "unit" : {
-        "title" : "Unit",
-        "desc" : "Choose the unit to be used"
+        "title" : "หน่วย",
+        "desc" : "เลือกหน่วยที่จะใช้"
       }
     },
-    "availableBalance" : "Available balance",
+    "availableBalance" : "ยอดคงเหลือในบัญชีที่ใช้ได้",
     "frozenAssets" : "Frozen assets",
     "bandwidth" : "Bandwidth",
     "energy" : "Energy",
@@ -826,8 +826,8 @@
     "energyTooltip" : "Freeze assets to gain energy",
     "delegatedTooltip" : "Delegated assets are used in the voting process. This represents your total number of votes.",
     "undelegatingTooltip" : "Undelegated assets are in a timelock of {{timelockInDays}} days, before being available.",
-    "claimableRewards" : "Claimable Rewards",
-    "claimableRewardsTooltip" : "Currently, the option to claim USDC rewards is unavailable. Please use a third-party wallet for this purpose",
+    "claimableRewards" : "Reward ที่สามารถขอรับได้",
+    "claimableRewardsTooltip" : "ขณะนี้ตัวเลือกในการรับ USDC Reward ไม่พร้อมใช้งาน โปรดใช้ Wallet ของบุคคลที่สามเพื่อจุดประสงค์นี้",
     "banner" : {
       "redelegation" : {
         "title" : "In case you didn’t know...",
@@ -851,7 +851,7 @@
         "title" : "In case you didn’t know...",
         "description" : "The Ledger validator stakes your {{asset}} at a commission of {{commission}}%.",
         "cta" : "Stake with Ledger",
-        "linkText" : "Learn more",
+        "linkText" : "เรียนรู้เพิ่มเติม",
         "ethereum" : {
           "lido" : {
             "title" : "In case you didn’t know...",
@@ -859,7 +859,7 @@
             "cta" : "Stake with Lido"
           },
           "kiln" : {
-            "title" : "Don’t just HODL. Grow your ETH",
+            "title" : "อย่าเพียงแค่ HODL ทำให้ ETH ของคุณเติบโต",
             "description" : "Got more than 32 ETH? Earn passive rewards by securely staking your ETH with Kiln.",
             "cta" : "Stake with Kiln"
           }
@@ -876,50 +876,50 @@
   "exchange" : {
     "chooseProvider" : "Choose from {{providerCount}} provider",
     "chooseProviders" : "Choose from {{providerCount}} providers",
-    "title" : "Buy and sell crypto",
-    "reset" : "Reset flow",
+    "title" : "ซื้อและขายคริปโต",
+    "reset" : "รีเซ็ตโฟลว์",
     "verifyAddress" : "Please confirm the address displayed exactly matches the one shown on your device",
     "buy" : {
       "header" : "Buy crypto with our partners",
-      "title" : "Choose a provider to buy crypto",
-      "buyFrom" : "Buy from anywhere",
-      "cryptoSupported" : "crypto supported",
-      "payWith" : "Pay with card or SEPA",
-      "tab" : "Buy",
+      "title" : "เลือกผู้ให้บริการเพื่อซื้อคริปโต",
+      "buyFrom" : "ซื้อจากที่ใดก็ได้",
+      "cryptoSupported" : "รองรับคริปโต",
+      "payWith" : "จ่ายด้วยบัตรหรือ SEPA",
+      "tab" : "ซื้อ",
       "coinify" : {
         "header" : "Buy crypto with {{provider}}",
         "title" : "Buy crypto via <0>{{provider}}</0>",
-        "selectCrypto" : "Choose a crypto asset",
-        "selectAccount" : "Choose an account",
-        "continue" : "Continue",
-        "addAccount" : "Add account"
+        "selectCrypto" : "เลือกสินทรัพย์คริปโต",
+        "selectAccount" : "เลือกบัญชี",
+        "continue" : "ดำเนินการต่อ",
+        "addAccount" : "เพิ่มบัญชี"
       }
     },
     "sell" : {
       "header" : "Sell crypto with our partners",
       "title" : "Sell crypto via <0>{{provider}}</0>",
-      "tab" : "Sell",
-      "selectCrypto" : "Choose a crypto asset",
-      "selectAccount" : "Choose an account",
-      "continue" : "Continue"
+      "tab" : "ขาย",
+      "selectCrypto" : "เลือกสินทรัพย์คริปโต",
+      "selectAccount" : "เลือกบัญชี",
+      "continue" : "ดำเนินการต่อ"
     }
   },
   "card" : {
-    "backToCard" : "all cards"
+    "backToCard" : "บัตรทั้งหมด"
   },
   "lend" : {
     "title" : "Lend crypto",
     "tabs" : {
-      "dashboard" : "Dashboard",
+      "dashboard" : "แดชบอร์ด",
       "opened" : "Opened loans",
       "closed" : "Closed loans",
-      "history" : "History"
+      "history" : "ประวัติ"
     },
     "assets" : "Assets to lend",
-    "active" : "Approved accounts",
+    "active" : "บัญชีที่ได้รับอนุมัติ",
     "lendAsset" : "Lend",
     "account" : {
-      "amountSupplied" : "Amount deposited",
+      "amountSupplied" : "จำนวนที่ฝาก",
       "amountSuppliedTooltip" : "Amount lent to the network",
       "currencyAPY" : "Currency APY",
       "currencyAPYTooltip" : "Yearly return rate of a deposit that’s continuously compounded",
@@ -930,10 +930,10 @@
       "openLoans" : "Open loans",
       "closedLoans" : "Closed loans",
       "amountRedeemed" : "Amount withdrawn",
-      "date" : "Date",
+      "date" : "วันที่",
       "info" : "You can lend assets directly from your {{currency}} account and earn interest.",
       "howCompoundWorks" : "How does lending on Compound work?",
-      "lend" : "Deposit {{currency}}"
+      "lend" : "ฝาก {{currency}}"
     },
     "emptyState" : {
       "active" : {
@@ -944,27 +944,27 @@
       "closed" : {
         "title" : "Your closed loans will appear here",
         "description" : "You have not made any loans yet.",
-        "cta" : "Deposit"
+        "cta" : "ฝาก"
       },
       "opened" : {
         "title" : "Your opened loans will appear here",
         "description" : "You have not made any loans yet.",
-        "cta" : "Deposit"
+        "cta" : "ฝาก"
       },
       "history" : {
-        "title" : "History",
+        "title" : "ประวัติ",
         "description" : "View the history of all your loan transactions.",
-        "cta" : "Deposit"
+        "cta" : "ฝาก"
       }
     },
     "headers" : {
       "active" : {
-        "accounts" : "Account",
+        "accounts" : "บัญชี",
         "amountSupplied" : "Open loan",
-        "amountSuppliedTooltip" : "Amount deposited in the network",
+        "amountSuppliedTooltip" : "จำนวนที่ฝากในเครือข่าย",
         "accruedInterests" : "Interest balance",
         "accruedInterestsTooltip" : "Interest being earned on loans",
-        "status" : "Account status",
+        "status" : "สถานะบัญชี",
         "actions" : "Actions"
       },
       "status" : {
@@ -978,19 +978,19 @@
         "earning" : "Earning"
       },
       "closed" : {
-        "assetLended" : "Asset",
+        "assetLended" : "สินทรัพย์",
         "amountRedeemed" : "Withdrawal amount",
         "interestsEarned" : "Interest earned",
-        "date" : "Date"
+        "date" : "วันที่"
       },
       "opened" : {
-        "assetLended" : "Asset",
-        "amount" : "Amount",
+        "assetLended" : "สินทรัพย์",
+        "amount" : "จำนวน",
         "accruedInterest" : "Accrued interest",
-        "date" : "Date"
+        "date" : "วันที่"
       },
       "rates" : {
-        "allAssets" : "Asset",
+        "allAssets" : "สินทรัพย์",
         "totalBalance" : "Asset balance",
         "totalBalanceTooltip" : "Amount available to lend",
         "currentAPY" : "Deposit APY",
@@ -1002,61 +1002,61 @@
       "cta" : "Manage lending",
       "title" : "Manage loan",
       "enable" : {
-        "approve" : "Approve",
+        "approve" : "อนุมัติ",
         "manageLimit" : "Manage limit",
         "viewDetails" : "View details",
         "info" : "You have approved <0>{{amount}}</0> on this account. You can reduce the amount at a fee.",
         "infoNoLimit" : "You have fully approved this account. You can reduce the amount at a fee.",
         "approvedWithLimit" : "You have approved <0>{{value}}</0> on this account.",
-        "enabling" : "You can deposit assets once the account approval is confirmed.",
+        "enabling" : "คุณสามารถฝากสินทรัพย์ได้เมื่อการอนุมัติบัญชีเสร็จเรียบร้อย",
         "notEnabled" : "You need to approve this account before being able to lend assets.",
         "notEnoughApproved" : "You must increase the limit approved on your account to lend."
       },
       "supply" : {
-        "title" : "Deposit",
+        "title" : "ฝาก",
         "description" : "Enter the amount of assets to lend to the protocol."
       },
       "withdraw" : {
-        "title" : "Withdraw",
-        "description" : "Withdraw assets from the protocol to your Ledger account."
+        "title" : "ถอน",
+        "description" : "ถอนสินทรัพย์จาก Protocol ไปยังบัญชี Ledger ของคุณ"
       }
     },
     "enable" : {
-      "title" : "Approve account",
+      "title" : "อนุมัติบัญชี",
       "steps" : {
         "selectAccount" : {
-          "title" : "Select account",
+          "title" : "เลือกบัญชี",
           "selectLabel" : "Account to lend from",
-          "cta" : "Approve",
-          "alreadyEnabled" : "This account is approved"
+          "cta" : "อนุมัติ",
+          "alreadyEnabled" : "บัญชีนี้ได้รับการอนุมัติแล้ว"
         },
         "amount" : {
-          "title" : "Amount",
+          "title" : "จำนวน",
           "summary" : "I grant access to <0>{{contractName}}</0> smart contract on my account <0>{{accountName}}</0> for a <0>{{amount}}</0> amount",
-          "limit" : "limited {{amount}}",
+          "limit" : "จำกัดไว้ที่ {{amount}}",
           "noLimit" : "no limit {{assetName}}",
           "contractName" : "Compound {{currencyName}}",
           "advanced" : "Advanced",
-          "amountLabel" : "Amount to approve",
+          "amountLabel" : "จำนวนที่ต้องอนุมัติ",
           "amountLabelTooltip" : "This limits the amount available to the smart contract."
         },
         "connectDevice" : {
-          "title" : "Device"
+          "title" : "อุปกรณ์"
         },
         "confirmation" : {
-          "title" : "Confirmation",
+          "title" : "การยืนยัน",
           "success" : {
             "title" : "Operation sent successfully",
             "text" : "The approval was sent to the network for confirmation. You’ll be able to issue loans once it is confirmed.",
-            "done" : "Close",
+            "done" : "ปิด",
             "info" : "Transactions can take some time to be displayed in an explorer and to be confirmed."
           },
-          "broadcastError" : "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+          "broadcastError" : "ธุรกรรมของคุณอาจล้มเหลว โปรดรอสักครู่แล้วตรวจสอบประวัติธุรกรรมก่อนที่จะลองอีกครั้ง"
         }
       }
     },
     "withdraw" : {
-      "title" : "Withdraw assets",
+      "title" : "ถอนสินทรัพย์",
       "steps" : {
         "amount" : {
           "title" : "Amount",
@@ -1263,19 +1263,19 @@
         "followInstructions" : "Follow instruction appearing on your {{productName}}."
       },
       "backup" : {
-        "title" : "Backup for your Secret Recovery Phrase",
+        "title" : "การสำรองข้อมูล Secret Recovery Phrase ของคุณ",
         "description" : "With a digital encrypted backup, restore access to your wallet without your Secret Recovery Phrase.\n\nChoose if you’d like a digital backup:",
         "backupChoice" : {
-          "title" : "I want a digital backup",
+          "title" : "ฉันต้องการสำรองข้อมูลแบบดิจิทัล",
           "titleSelected" : "Ledger Recover",
-          "tag" : "Popular",
+          "tag" : "ยอดนิยม",
           "description" : "Subscribe to Ledger Recover for $9.99 per month. Start for free. Cancel anytime!",
-          "tryCta" : "Try it for free",
-          "redeemCodeCta" : "I have a redeem code",
-          "howItWorksCta" : "I want to know more"
+          "tryCta" : "ลองใช้งานฟรี",
+          "redeemCodeCta" : "ฉันมี Redeem Code",
+          "howItWorksCta" : "ฉันต้องการข้อมูลเพิ่มเติม"
         },
         "manualBackup" : {
-          "title" : "No, I’m good with paper",
+          "title" : "ไม่เป็นไร ฉันจดรหัสใส่กระดาษก็พอแล้ว",
           "description" : "Without a digital backup, the Recovery Sheet is your only way to restore wallet access. Don’t lose it.",
           "cta" : "I understand"
         }
@@ -4134,7 +4134,8 @@
       "walletSync" : "Ledger Sync",
       "walletSyncDesc" : "Sync your Ledger Live crypto accounts across different phones and computers.",
       "mevProtection" : "MEV Protection",
-      "mevProtectionDesc" : "Enable MEV Protection for more reliable transactions on Ethereum",
+      "mevProtectionDesc" : "Enable MEV Protection for more reliable transactions on Ethereum.",
+      "mevProtectionLearnMore" : "Privacy notice",
       "marketPerformanceWidget" : "Market Performance Widget",
       "marketPerformanceWidgetDesc" : "Enable this feature to view the top gainers and losers over selected timeframes on the portfolio page."
     },
@@ -5445,11 +5446,11 @@
       "description" : "The network fee might be too low. Please increase"
     },
     "NoSuchAppOnProvider" : {
-      "title" : "{{appName}} is not compatible with {{productName}}.",
+      "title" : "{{appName}} ไม่สามารถใช้ได้กับ {{productName}}",
       "titleOld" : "The {{appName}} app cannot be found for your specific configuration.",
       "description" : "<0>Unlock more with our devices.</0> To access this feature, upgrade to one of our compatible devices. Choose the best option for your needs and enjoy enhanced security.",
-      "exploreCTA" : "Explore compatible devices",
-      "learnMoreCTA" : "Learn more about Ledger Sync"
+      "exploreCTA" : "เช็คอุปกรณ์ที่ใช้งานร่วมกันได้",
+      "learnMoreCTA" : "เรียนรู้เพิ่มเติมเกี่ยวกับ Ledger Sync"
     },
     "PendingOperation" : {
       "description" : "You have incoming transactions pending. Please beware pending transactions can be reversed."
@@ -5921,11 +5922,11 @@
     },
     "WrongDeviceForAccountPayout" : {
       "title" : "Something went wrong",
-      "description" : "This receiving account does not belong to your device. Please change and retry."
+      "description" : "This receiving account does not belong to the device you have connected. Please change and retry"
     },
     "WrongDeviceForAccountRefund" : {
       "title" : "Something went wrong",
-      "description" : "This receiving account does not belong to your device for the refund. Please change and retry."
+      "description" : "This sending account does not belong to the device you have connected. Please change and retry"
     },
     "DeviceAppVerifyNotSupported" : {
       "title" : "App update required",
@@ -6443,12 +6444,12 @@
     "TransactionBroadcastError" : {
       "title" : "Transaction Broadcast Unsuccesful",
       "description" : "Your transaction failed to broadcast on the {{networkName}} network. Your {{currencyName}} have not been transferred and remain in your account.",
-      "helpCenterTitle" : "Help center : ",
-      "helpCenterDesc" : "Visit our Help center or contact us via the widget for assistance.",
-      "needHelp" : "Need help?",
-      "getHelp" : "Get Help",
-      "technicalErrorTitle" : "Technical error : ",
-      "saveLogs" : "Save logs"
+      "helpCenterTitle" : "ศูนย์ช่วยเหลือ : ",
+      "helpCenterDesc" : "ไปที่ศูนย์ช่วยเหลือของเราหรือติดต่อเราผ่านวิดเจ็ตเพื่อขอรับความช่วยเหลือ",
+      "needHelp" : "ต้องการความช่วยเหลือ ?",
+      "getHelp" : "ต้องการความช่วยเหลือ",
+      "technicalErrorTitle" : "ข้อผิดพลาดทางเทคนิค : ",
+      "saveLogs" : "บันทึก Log"
     },
     "NotEnoughBalanceForUnstaking" : {
       "message" : "Your available (non-staked) balance is currently {{currentBalance}} which is insufficient to pay for the network fees to unstake your {{assetName}}.",
@@ -6889,6 +6890,50 @@
       "confirm" : "Confirm",
       "address" : "Address",
       "transactionId" : "Transaction ID"
+    }
+  },
+  "lnsUpsell" : {
+    "banner" : {
+      "manager" : {
+        "optIn" : {
+          "title" : "It's time to upgrade",
+          "description" : "Upgrade to our latest devices with <0>{{discount}}% discount</0> for an enhanced security and a seamless experience.",
+          "cta" : "Level up my wallet",
+          "linkText" : "Learn more"
+        },
+        "optOut" : {
+          "title" : "It's time to upgrade",
+          "description" : "Upgrade to our latest devices with <0>{{discount}}% discount</0> for an enhanced security and a seamless experience.",
+          "cta" : "Level up my wallet",
+          "linkText" : "Learn more"
+        }
+      },
+      "accounts" : {
+        "optIn" : {
+          "title" : "It's time to upgrade",
+          "description" : "Ledger Nano S updates are ending soon. Upgrade to our latest devices with <0>{{discount}}% discount</0>.",
+          "cta" : "Level up my wallet",
+          "linkText" : "Learn more"
+        },
+        "optOut" : {
+          "title" : "It's time to upgrade",
+          "description" : "Ledger Nano S updates are ending soon. Upgrade to our latest devices with <0>{{discount}}% discount</0>.",
+          "cta" : "Level up my wallet",
+          "linkText" : "Learn more"
+        }
+      },
+      "notifications" : {
+        "optIn" : {
+          "description" : "Updates are ending soon. Upgrade now with {{discount}}% off for a seamless experience.",
+          "cta" : "Level up my wallet",
+          "linkText" : "Learn more"
+        },
+        "optOut" : {
+          "description" : "Updates are ending soon. Upgrade now with {{discount}}% off for a seamless experience.",
+          "cta" : "Level up my wallet",
+          "linkText" : "Learn more"
+        }
+      }
     }
   }
 }
