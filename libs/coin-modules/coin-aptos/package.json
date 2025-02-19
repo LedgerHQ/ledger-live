@@ -92,7 +92,6 @@
     "@ledgerhq/ledger-libs": "workspace:^",
     "@aptos-labs/ts-sdk": "^1.33.1",
     "@apollo/client": "^3.12.6",
-    "@noble/hashes": "1.7.0",
     "bignumber.js": "^9.1.2",
     "graphql": "^16.10.0",
     "invariant": "^2.2.4",
