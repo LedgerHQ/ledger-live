@@ -126,6 +126,7 @@ export function genAccount(id: number | string, opts: GenAccountOptions = {}): A
               poolId: "45",
               ticker: "ADA",
               name: "Cardano",
+              dRepHex: undefined,
               rewards: new BigNumber(42),
             },
             externalCredentials: [
@@ -178,6 +179,7 @@ export function genAccount(id: number | string, opts: GenAccountOptions = {}): A
               maxTxSize: "",
               maxValueSize: "",
               utxoCostPerByte: "",
+              minFeeRefScriptCostPerByte: "",
               languageView: {} as types.LanguageView,
             },
           };

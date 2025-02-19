@@ -118,6 +118,7 @@ function toProtocolParamsRaw({
   maxTxSize,
   maxValueSize,
   utxoCostPerByte,
+  minFeeRefScriptCostPerByte,
   languageView,
 }: ProtocolParams): ProtocolParamsRaw {
   return {
@@ -131,6 +132,7 @@ function toProtocolParamsRaw({
     maxTxSize,
     maxValueSize,
     utxoCostPerByte,
+    minFeeRefScriptCostPerByte,
     languageView,
   };
 }
@@ -146,6 +148,7 @@ function fromProtocolParamsRaw({
   maxTxSize,
   maxValueSize,
   utxoCostPerByte,
+  minFeeRefScriptCostPerByte,
   languageView,
 }: ProtocolParamsRaw): ProtocolParams {
   return {
@@ -159,6 +162,7 @@ function fromProtocolParamsRaw({
     maxTxSize,
     maxValueSize,
     utxoCostPerByte,
+    minFeeRefScriptCostPerByte,
     languageView,
   };
 }
@@ -168,6 +172,7 @@ function toDelegationRaw({
   poolId,
   ticker,
   name,
+  dRepHex,
   rewards,
 }: CardanoDelegation): CardanoDelegationRaw {
   return {
@@ -175,6 +180,7 @@ function toDelegationRaw({
     poolId,
     ticker,
     name,
+    dRepHex,
     rewards: rewards.toString(),
   };
 }
@@ -184,6 +190,7 @@ function fromDelegationRaw({
   poolId,
   ticker,
   name,
+  dRepHex,
   rewards,
 }: CardanoDelegationRaw): CardanoDelegation {
   return {
@@ -191,6 +198,7 @@ function fromDelegationRaw({
     poolId,
     ticker,
     name,
+    dRepHex,
     rewards: new BigNumber(rewards),
   };
 }
