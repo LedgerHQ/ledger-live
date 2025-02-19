@@ -59,12 +59,17 @@ const casperSpecs: AppSpec<Transaction> = {
 
       test: ({ accountBeforeTransaction, operation, account, transaction }) => {
         botTest("account spendable balance decreased with operation", () => {
-          console.log("SPEMDABLE: ", account.spendableBalance.toString());
+          console.log(
+            "accountBeforeTransaction.spendableBalance: ",
+            accountBeforeTransaction.spendableBalance.toString(),
+          );
+          console.log("SPENDABLE: ", account.spendableBalance.toString());
           console.log(
             "accountBeforeTransaction.spendableBalance.minus(operation.value): ",
             accountBeforeTransaction.spendableBalance.minus(operation.value).toString(),
           );
           console.log("operation.value: ", operation.value.toString());
+          console.log("operation: ", operation);
           console.log("transaction: ", transaction);
           expect(account.spendableBalance).toEqual(
             accountBeforeTransaction.spendableBalance.minus(operation.value),
