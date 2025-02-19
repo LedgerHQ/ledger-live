@@ -1,3 +1,7 @@
+# 2.100.0
+
+This release includes small security improvements, UI tweaks, and minor bug fixes.
+
 # 2.98.0
 
 Ledger Live now supports SPL tokens, enabling you to securely manage & swap more than 130 solana tokens.

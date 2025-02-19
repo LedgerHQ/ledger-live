@@ -55,6 +55,7 @@
     "nightly": "pnpm turbo nightly",
     "nightly:lld": "pnpm turbo nightly --filter=ledger-live-desktop",
     "test": "pnpm turbo test --concurrency=1",
+    "test:llm:ios:e2e": "pnpm turbo run e2e:ci --filter=live-mobile",
     "run:cli": "./apps/cli/bin/index.js",
     "lint": "pnpm turbo lint",
     "lint:fix": "pnpm turbo lint:fix",

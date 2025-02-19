@@ -1,25 +1,20 @@
 # @ledgerhq/coin-stacks
 
-## 0.5.4-nightly.2
+## 0.5.4
 
 ### Patch Changes
 
-- [#9137](https://github.com/LedgerHQ/ledger-live/pull/9137) [`50767e7`](https://github.com/LedgerHQ/ledger-live/commit/50767e711f09d057f2eaeaebd33f65de3dbce778) Thanks [@lawRathod](https://github.com/lawRathod)! - Fix transaction broadcast, and set stacks sdk to use our proxied url
+- Updated dependencies [[`58c1a9c`](https://github.com/LedgerHQ/ledger-live/commit/58c1a9c68b2ce2ebef9dbd7af00ae09efd7a29dc), [`ff40e9a`](https://github.com/LedgerHQ/ledger-live/commit/ff40e9a00d325e5b46cb069936ba2a5781c601b5)]:
+  - @ledgerhq/coin-framework@2.0.0
+  - @ledgerhq/cryptoassets@13.11.0
 
-## 0.5.4-nightly.1
-
-### Patch Changes
-
-- Updated dependencies [[`da67b55`](https://github.com/LedgerHQ/ledger-live/commit/da67b5511b22553f7e3e089eca2e363a5e3cbffe)]:
-  - @ledgerhq/cryptoassets@13.10.1-nightly.1
-  - @ledgerhq/coin-framework@2.0.0-nightly.1
-
-## 0.5.4-nightly.0
+## 0.5.4-next.0
 
 ### Patch Changes
 
-- Updated dependencies [[`58c1a9c`](https://github.com/LedgerHQ/ledger-live/commit/58c1a9c68b2ce2ebef9dbd7af00ae09efd7a29dc)]:
-  - @ledgerhq/coin-framework@2.0.0-nightly.0
+- Updated dependencies [[`58c1a9c`](https://github.com/LedgerHQ/ledger-live/commit/58c1a9c68b2ce2ebef9dbd7af00ae09efd7a29dc), [`ff40e9a`](https://github.com/LedgerHQ/ledger-live/commit/ff40e9a00d325e5b46cb069936ba2a5781c601b5)]:
+  - @ledgerhq/coin-framework@2.0.0-next.0
+  - @ledgerhq/cryptoassets@13.11.0-next.0
 
 ## 0.5.3
 

@@ -1,25 +1,28 @@
 # @ledgerhq/coin-tezos
 
-## 1.0.1-nightly.2
+## 1.1.0
+
+### Minor Changes
+
+- [#8908](https://github.com/LedgerHQ/ledger-live/pull/8908) [`5ad0782`](https://github.com/LedgerHQ/ledger-live/commit/5ad07824ab794b826b47cb1136bba239b1c44322) Thanks [@qperrot](https://github.com/qperrot)! - Fix device actions on tezos
 
 ### Patch Changes
 
-- [#9126](https://github.com/LedgerHQ/ledger-live/pull/9126) [`339a611`](https://github.com/LedgerHQ/ledger-live/commit/339a61190c8bd9bb125f7fd3e3fbdaa9b31fcb58) Thanks [@jprudent](https://github.com/jprudent)! - Fix addresses on operations
+- Updated dependencies [[`58c1a9c`](https://github.com/LedgerHQ/ledger-live/commit/58c1a9c68b2ce2ebef9dbd7af00ae09efd7a29dc), [`ff40e9a`](https://github.com/LedgerHQ/ledger-live/commit/ff40e9a00d325e5b46cb069936ba2a5781c601b5)]:
+  - @ledgerhq/coin-framework@2.0.0
+  - @ledgerhq/cryptoassets@13.11.0
 
-## 1.0.1-nightly.1
+## 1.1.0-next.0
 
-### Patch Changes
+### Minor Changes
 
-- Updated dependencies [[`da67b55`](https://github.com/LedgerHQ/ledger-live/commit/da67b5511b22553f7e3e089eca2e363a5e3cbffe)]:
-  - @ledgerhq/cryptoassets@13.10.1-nightly.1
-  - @ledgerhq/coin-framework@2.0.0-nightly.1
-
-## 1.0.1-nightly.0
+- [#8908](https://github.com/LedgerHQ/ledger-live/pull/8908) [`5ad0782`](https://github.com/LedgerHQ/ledger-live/commit/5ad07824ab794b826b47cb1136bba239b1c44322) Thanks [@qperrot](https://github.com/qperrot)! - Fix device actions on tezos
 
 ### Patch Changes
 
-- Updated dependencies [[`58c1a9c`](https://github.com/LedgerHQ/ledger-live/commit/58c1a9c68b2ce2ebef9dbd7af00ae09efd7a29dc)]:
-  - @ledgerhq/coin-framework@2.0.0-nightly.0
+- Updated dependencies [[`58c1a9c`](https://github.com/LedgerHQ/ledger-live/commit/58c1a9c68b2ce2ebef9dbd7af00ae09efd7a29dc), [`ff40e9a`](https://github.com/LedgerHQ/ledger-live/commit/ff40e9a00d325e5b46cb069936ba2a5781c601b5)]:
+  - @ledgerhq/coin-framework@2.0.0-next.0
+  - @ledgerhq/cryptoassets@13.11.0-next.0
 
 ## 1.0.0
 

@@ -153,7 +153,7 @@ for (const account of e2eDelegationAccounts) {
         await app.delegateDrawer.verifyTxTypeIs(transactionType);
 
         await app.delegateDrawer.providerIsVisible(account.delegate);
-        await app.delegateDrawer.amountValueIsVisible();
+        await app.delegateDrawer.amountValueIsVisible(account.delegate.account.currency.ticker);
         await app.delegateDrawer.operationTypeIsCorrect(transactionType);
         await app.drawer.closeDrawer();
 
@@ -222,7 +222,7 @@ for (const account of e2eDelegationAccountsWithoutBroadcast) {
           await app.delegateDrawer.verifyTxTypeIsVisible();
           await app.delegateDrawer.verifyTxTypeIs("Delegated");
           await app.delegateDrawer.providerIsVisible(account.delegate);
-          await app.delegateDrawer.amountValueIsVisible();
+          await app.delegateDrawer.amountValueIsVisible(account.delegate.account.currency.ticker);
           await app.delegateDrawer.operationTypeIsCorrect("Delegated");
           await app.drawer.closeDrawer();
         }

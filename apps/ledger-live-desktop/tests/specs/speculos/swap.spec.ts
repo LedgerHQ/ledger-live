@@ -129,8 +129,8 @@ for (const { swap, xrayTicket } of swaps) {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
         await performSwapUntilQuoteSelectionStep(app, electronApp, swap);
-
         const selectedProvider = await app.swap.selectExchange(electronApp);
+
         await performSwapUntilDeviceVerificationStep(app, electronApp, swap, selectedProvider);
         await app.speculos.verifyAmountsAndAcceptSwap(swap);
         await app.swapDrawer.verifyExchangeCompletedTextContent(swap.accountToCredit.currency.name);
@@ -138,6 +138,37 @@ for (const { swap, xrayTicket } of swaps) {
     );
   });
 }
+
+test.describe("Swap - Check Best Offer", () => {
+  const swap = new Swap(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "0.02", Fee.MEDIUM);
+  setupEnv(true);
+
+  test.beforeEach(async () => {
+    const accountPair: string[] = [swap.accountToDebit, swap.accountToCredit].map(acc =>
+      acc.currency.speculosApp.name.replace(/ /g, "_"),
+    );
+    setExchangeDependencies(accountPair.map(name => ({ name })));
+  });
+
+  test.use({
+    userdata: "speculos-tests-app",
+    speculosApp: app,
+  });
+
+  test(
+    `Swap ${swap.accountToDebit.currency.name} to ${swap.accountToCredit.currency.name}`,
+    {
+      annotation: { type: "TMS", description: "B2CQA-2327" },
+    },
+    async ({ app, electronApp }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
+      await performSwapUntilQuoteSelectionStep(app, electronApp, swap);
+      await app.swap.selectExchange(electronApp);
+      await app.swap.checkBestOffer(electronApp);
+    },
+  );
+});
 
 test.describe("Swap - Rejected on device", () => {
   const rejectedSwap = new Swap(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "0.02", Fee.MEDIUM);
@@ -165,6 +196,7 @@ test.describe("Swap - Rejected on device", () => {
 
       await performSwapUntilQuoteSelectionStep(app, electronApp, rejectedSwap);
       const selectedProvider = await app.swap.selectExchange(electronApp);
+
       await performSwapUntilDeviceVerificationStep(
         app,
         electronApp,
