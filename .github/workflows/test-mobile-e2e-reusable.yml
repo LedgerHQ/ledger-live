@@ -179,7 +179,7 @@ jobs:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
         id: upload
         with:
-          platform: ios
+          platform: ios-${{ env.SPECULOS_RUN == 'true' && 'speculos' || 'mocked' }}
           login: ${{ vars.ALLURE_USERNAME }}
           password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
           path: ios-test-artifacts
@@ -321,7 +321,7 @@ jobs:
       - name: Run Android Tests
         id: detox
         run: pnpm mobile e2e:ci -p android -t $([[ "$INPUT_SPECULOS" == "true" ]] && printf %s '--speculos') $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') --shard ${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
-        timeout-minutes: ${{ env.SPECULOS_RUN && 120 || 45 }}
+        timeout-minutes: ${{ env.SPECULOS_RUN == 'true' && 120 || 45 }}
         env:
           DETOX_INSTALL_TIMEOUT: 120000
           SEED: ${{ secrets.SEED_QAA_B2C }}
@@ -355,7 +355,7 @@ jobs:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
         id: upload
         with:
-          platform: android
+          platform: android-${{ env.SPECULOS_RUN == 'true' && 'speculos' || 'mocked' }}
           login: ${{ vars.ALLURE_USERNAME }}
           password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
           path: android-test-artifacts

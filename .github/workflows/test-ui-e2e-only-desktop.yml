@@ -170,7 +170,7 @@ jobs:
         if: ${{ !cancelled() }}
         uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
         with:
-          platform: linux
+          platform: linux-speculos
           login: ${{ vars.ALLURE_USERNAME }}
           password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
           path: ${{ env.ALLURE_RESULTS }}
