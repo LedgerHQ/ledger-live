@@ -1,34 +1,105 @@
-/**
- * Hook to filter out spam NFT operations based on a given spam score threshold.
- *
- * @param {number} threshold - The spam score threshold. NFT operations with a spam score higher than this will be filtered out.
- * @param {NFTOperations} nftOperations - The NFT operations to be filtered.
- * @param {Operation[]} currentNftPageOps - The current page of NFT operations to be filtered.
- *
- * @returns {{ data: Operation[] }} - An object containing the filtered NFT operations.
- *
- * @remarks
- * This hook retrieves NFT metadata, builds a metadata map with spam scores, and filters out NFT operations that exceed the spam score threshold.
- */
-import { NFTOperations } from "@ledgerhq/live-nft/types";
-import { Operation } from "@ledgerhq/types-live";
-
+import { getAccountCurrency } from "@ledgerhq/coin-framework/account/helpers";
+import { NFTResource, NFTOperations } from "@ledgerhq/live-nft/types";
+import {
+  Operation,
+  AccountLike,
+  DailyOperations,
+  NFTCollectionMetadataResponse,
+} from "@ledgerhq/types-live";
+import { useMemo } from "react";
 import { useNftCollectionMetadataBatch } from "../NftMetadataProvider";
 
-export function useSpamTxFiltering(
-  threshold: number,
-  nftOperations: NFTOperations,
-  currentNftPageOps: Operation[],
+type AccountMap = Record<string, AccountLike>;
+
+export function getFilteredNftOperations({
+  accountsMap,
+  groupedOperations,
+  spamFilteringTxEnabled,
+}: {
+  accountsMap: AccountMap;
+  groupedOperations: DailyOperations;
+  spamFilteringTxEnabled: boolean;
+}) {
+  return spamFilteringTxEnabled
+    ? groupedOperations?.sections
+        .flatMap(section => section.data)
+        .reduce((acc: NFTOperations, operation: Operation): NFTOperations => {
+          if (operation.type === "NFT_IN") {
+            const account = accountsMap[operation.accountId];
+            const contract = operation.contract || "";
+            acc[contract] = {
+              contract,
+              currencyId: getAccountCurrency(account).id,
+            };
+          }
+          return acc;
+        }, {})
+    : {};
+}
+
+export function filterSection(
+  operations: Operation[],
+  metadataMap: Map<string | undefined, number>,
+  threshold?: number,
 ) {
-  // get NFT metadata
-  const metadatas = useNftCollectionMetadataBatch(nftOperations);
-  // build metadata map
+  const filtered = new Map<string, Operation>();
+  operations.forEach(item => {
+    if (item.type === "NFT_IN") {
+      const spamScore = metadataMap.get(item.contract?.toLowerCase());
+
+      if (!spamScore || (threshold && spamScore <= threshold)) {
+        filtered.set(item.id, item);
+      }
+    } else {
+      filtered.set(item.id, item);
+    }
+  });
+
+  return Array.from(filtered.values());
+}
+
+export function filterGroupedOperations(
+  metadatas: Array<NFTResource<NonNullable<NFTCollectionMetadataResponse["result"]>>>,
+  groupedOperations: DailyOperations,
+  threshold?: number,
+): DailyOperations {
   const metadataMap = new Map(
     metadatas.map(meta => [meta.metadata?.contract.toLowerCase(), meta.metadata?.spamScore ?? 0]),
   );
-  // filter forbidden NFT operations
-  const data = currentNftPageOps.filter(
-    op => (metadataMap.get(op.contract?.toLowerCase()) ?? 0) <= threshold,
+
+  return {
+    ...groupedOperations,
+    sections: groupedOperations.sections.map(section => ({
+      ...section,
+      data: filterSection(section.data, metadataMap, threshold),
+    })),
+  };
+}
+
+export function useSpamTxFiltering(
+  spamFilteringTxEnabled: boolean,
+  accountsMap: AccountMap,
+  groupedOperations: DailyOperations,
+  setNftStatus: (metadata: Array<NFTResource>) => void,
+  threshold?: number,
+) {
+  const nftOperations = useMemo(
+    () =>
+      getFilteredNftOperations({
+        accountsMap,
+        groupedOperations,
+        spamFilteringTxEnabled,
+      }),
+    [accountsMap, groupedOperations, spamFilteringTxEnabled],
   );
-  return { data };
+
+  const metadatas = useNftCollectionMetadataBatch(nftOperations);
+  //setNftStatus(metadatas);
+  return useMemo(
+    (): DailyOperations =>
+      spamFilteringTxEnabled
+        ? filterGroupedOperations(metadatas, groupedOperations, threshold)
+        : groupedOperations,
+    [groupedOperations, metadatas, spamFilteringTxEnabled, threshold],
+  );
 }
