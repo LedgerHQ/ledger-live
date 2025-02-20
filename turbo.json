@@ -194,7 +194,7 @@
       "cache": true,
       "dependsOn": ["^build"],
       "inputs": [],
-      "outputs": ["apps/ledger-live-mobile/artifacts/**"]
+      "outputs": ["artifacts/**"]
     }
   }
 }
