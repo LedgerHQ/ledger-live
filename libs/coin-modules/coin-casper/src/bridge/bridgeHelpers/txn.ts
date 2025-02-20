@@ -4,7 +4,7 @@ import { log } from "@ledgerhq/logs";
 import { Unit } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import { DeployUtil } from "casper-js-sdk";
-import { encodeOperationId } from "../../../../operation";
+import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { CASPER_NETWORK } from "../../consts";
 import { casperAccountHashFromPublicKey, casperGetCLPublicKey, isAddressValid } from "./addresses";
 import { ITxnHistoryData } from "../../api/types";

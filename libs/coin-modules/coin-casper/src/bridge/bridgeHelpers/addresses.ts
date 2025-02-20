@@ -43,15 +43,6 @@ export function casperAddressFromPubKey(pubkey: Buffer, keySig: CLPublicKeyTag):
   return `${keySig.toString().padStart(2, "0")}${Buffer.from(pubkey).toString("hex")}`;
 }
 
-export function getCLPublicKey(address: string): CLPublicKey {
-  let checksummed = true;
-
-  if (address.toLowerCase() === address) checksummed = false;
-  if (address.toUpperCase() === address) checksummed = false;
-
-  return CLPublicKey.fromHex(address, checksummed);
-}
-
 function numberToBin(num: number) {
   let binStr = (num >>> 0).toString(2);
   while (binStr.length < 8) {

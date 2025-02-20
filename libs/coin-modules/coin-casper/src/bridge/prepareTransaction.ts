@@ -1,7 +1,7 @@
 import { AccountBridge } from "@ledgerhq/types-live";
 import { updateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { getEstimatedFees } from "./bridge/bridgeHelpers/fee";
-import { Transaction } from "./types";
+import { getEstimatedFees } from "./bridgeHelpers/fee";
+import { Transaction } from "../types";
 
 export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"] = async (
   account,
