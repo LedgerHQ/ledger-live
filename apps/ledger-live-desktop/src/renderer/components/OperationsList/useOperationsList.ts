@@ -10,7 +10,7 @@ import keyBy from "lodash/keyBy";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { BlockchainsType } from "@ledgerhq/live-nft/supported";
 import { useHideSpamCollection } from "~/renderer/hooks/nfts/useHideSpamCollection";
-import { useSpamTxFiltering } from "@ledgerhq/live-nft-react";
+import { useFilterNftSpams } from "@ledgerhq/live-nft-react";
 import logger from "~/renderer/logger";
 import { usePagination } from "LLD/hooks/usePagination";
 import {
@@ -104,7 +104,7 @@ export function useOperationsList({
   // to avoid multiple state rendering, we store the previous filtered data in an indexed ref object
   const previousFilteredNftData = useRef({});
 
-  const { data: filteredNftData } = useSpamTxFiltering(thresold, relatedNFtOps, currentPageNFTIN);
+  const { data: filteredNftData } = useFilterNftSpams(thresold, relatedNFtOps, currentPageNFTIN);
 
   previousFilteredNftData.current = {
     ...previousFilteredNftData.current,

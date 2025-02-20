@@ -26,9 +26,15 @@ export function useFilterNftSpams(
   const metadataMap = new Map(
     metadatas.map(meta => [meta.metadata?.contract.toLowerCase(), meta.metadata?.spamScore ?? 0]),
   );
+
+  const isFetching = !metadatas.every(meta => meta.status === "loaded");
+
   // filter forbidden NFT operations
-  const data = currentNftPageOps.filter(
-    op => (metadataMap.get(op.contract?.toLowerCase()) ?? 0) <= threshold,
-  );
+  const data = isFetching
+    ? []
+    : currentNftPageOps.filter(
+        op => (metadataMap.get(op.contract?.toLowerCase()) ?? 0) <= threshold,
+      );
+
   return { data };
 }
