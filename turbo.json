@@ -193,7 +193,8 @@
     "live-mobile#e2e:ci": {
       "cache": true,
       "dependsOn": ["^build"],
-      "inputs": []
+      "inputs": [],
+      "outputs": ["apps/ledger-live-mobile/artifacts/ios-test-artifacts**"]
     }
   }
 }
