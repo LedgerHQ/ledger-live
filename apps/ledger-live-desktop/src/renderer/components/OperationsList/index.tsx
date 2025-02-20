@@ -41,8 +41,7 @@ export function OperationsList({
     handleClickOperation,
     groupedOperations,
     getOperationProperties,
-    groupedOperations2,
-    hasMore
+    hasMore,
   } = useOperationsList({
     account,
     parentAccount,
@@ -66,10 +65,10 @@ export function OperationsList({
             }}
           />
         )}
-        {Object.entries(groupedOperations2).map(([key, data]) => {
+        {Object.entries(groupedOperations).map(([key, data]) => {
           return (
             <Box key={key}>
-              <SectionTitle date={new Date(key)} />
+              <SectionTitle date={new Date(parseInt(key, 10))} />
               <Box p={0}>
                 {data.map(operation => {
                   const properties = getOperationProperties(operation, account, parentAccount);
@@ -97,39 +96,6 @@ export function OperationsList({
             </Box>
           );
         })}
-        {/* {groupedOperations.sections?.map(
-          group =>
-            group.data.length > 0 && (
-              <Box key={group.day.toISOString()}>
-                <SectionTitle date={group.day} />
-                <Box p={0}>
-                  {group.data.map(operation => {
-                    const properties = getOperationProperties(operation, account, parentAccount);
-
-                    if (!properties) return null;
-
-                    const { accountOperation, parentAccountOperation, mainAccountOperation } =
-                      properties;
-                    return (
-                      <OperationComponent
-                        operation={operation}
-                        account={accountOperation}
-                        parentAccount={parentAccountOperation}
-                        key={`${accountOperation.id}_${operation.id}`}
-                        onOperationClick={handleClickOperation}
-                        t={t}
-                        withAccount={withAccount}
-                        editable={
-                          account &&
-                          isEditableOperation({ account: mainAccountOperation, operation })
-                        }
-                      />
-                    );
-                  })}
-                </Box>
-              </Box>
-            ),
-        )} */}
       </TableContainer>
       {hasMore ? (
         <ShowMore onClick={fetchMoreOperations}>

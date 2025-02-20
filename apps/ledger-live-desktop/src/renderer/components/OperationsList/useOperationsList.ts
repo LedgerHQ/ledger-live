@@ -1,4 +1,4 @@
-import { Operation, AccountLike, Account, DailyOperations } from "@ledgerhq/types-live";
+import { Operation, AccountLike, Account } from "@ledgerhq/types-live";
 import { useCallback, useRef } from "react";
 import { useSelector } from "react-redux";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
@@ -32,11 +32,6 @@ export type Props = {
 };
 
 const INITIAL_TO_SHOW = 20;
-
-const defaultDailyOperations: DailyOperations = {
-  sections: [],
-  completed: false,
-};
 
 export function useOperationsList({
   account,
@@ -74,22 +69,6 @@ export function useOperationsList({
     [account as AccountLike, parentAccount as AccountLike].filter(Boolean),
   );
   const accountsMap = keyBy(all, "id");
-
-  // group operations by day
-  /*  const groupedOperations: DailyOperations = account
-    ? groupAccountOperationsByDay(account, {
-        count: nbToShow,
-        withSubAccounts,
-        filterOperation,
-      })
-    : accounts
-      ? groupAccountsOperationsByDay(accounts, {
-          count: nbToShow,
-          withSubAccounts,
-          filterOperation,
-        })
-      : defaultDailyOperations; */
-
   // similar to groupedOperations but with section based data structure
   const allAccountOps = parseAccountOperations(
     account ? account.operations : accounts?.map(a => a.operations).flat(),
@@ -174,10 +153,9 @@ export function useOperationsList({
     nbToShow,
     handleClickOperation,
     fetchMoreOperations: loadMore,
-    groupedOperations: defaultDailyOperations,
+    groupedOperations: groupedOperations ? groupOperationsByDate(groupedOperations) : [],
     accountsMap,
     getOperationProperties,
-    groupedOperations2: groupOperationsByDate(groupedOperations),
     hasMore,
   };
 }
