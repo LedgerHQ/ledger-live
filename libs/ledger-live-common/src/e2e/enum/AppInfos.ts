@@ -25,7 +25,7 @@ export class AppInfos {
 
   static readonly TRON = new AppInfos("Tron");
 
-  static readonly RIPPLE = new AppInfos("Ripple");
+  static readonly RIPPLE = new AppInfos("XRP");
 
   static readonly CARDANO = new AppInfos("Cardano");
 
@@ -56,4 +56,6 @@ export class AppInfos {
   static readonly EXCHANGE = new AppInfos("Exchange");
 
   static readonly CELO = new AppInfos("Celo");
+
+  static readonly LTC = new AppInfos("Litecoin");
 }

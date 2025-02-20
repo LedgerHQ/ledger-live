@@ -21,7 +21,8 @@ type Props = StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.Platfor
 
 export function LiveApp({ route }: Props) {
   const { theme } = useTheme();
-  const { platform: appId, customDappURL, ...params } = route.params || {};
+  // For consistency with LLD, customDappUrl casing should be allowed for Swap
+  const { platform: appId, customDappURL, customDappUrl, ...params } = route.params || {};
   const { setParams } = useNavigation<Props["navigation"]>();
   const localManifest = useLocalLiveAppManifest(appId);
   const remoteManifest = useRemoteLiveAppManifest(appId);
@@ -35,19 +36,21 @@ export function LiveApp({ route }: Props) {
     });
   }, [manifest, setParams]);
 
-  if (route.params.customDappURL && manifest && manifest.params && "dappUrl" in manifest.params) {
+  const dappUrl = customDappURL || customDappUrl;
+
+  if (dappUrl && manifest && manifest.params && "dappUrl" in manifest.params) {
     manifest = {
       ...manifest,
       params: {
         ...manifest.params,
-        dappUrl: route.params.customDappURL,
+        dappUrl,
       },
     };
   }
-  if (route.params.customDappURL && manifest && manifest.dapp) {
+  if (dappUrl && manifest && manifest.dapp) {
     manifest = {
       ...manifest,
-      url: route.params.customDappURL,
+      url: dappUrl,
     };
   }
   return manifest ? (

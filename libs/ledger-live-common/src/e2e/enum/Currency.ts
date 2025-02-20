@@ -100,4 +100,5 @@ export class Currency {
     "multiverse_x",
     AppInfos.MULTIVERSE_X,
   );
+  static readonly LTC = new Currency("Litecoin", "LTC", "litecoin", AppInfos.LTC);
 }

@@ -128,7 +128,11 @@ const SwapOperationDetails = ({
   const { t } = useTranslation();
   const mainCurrency =
     fromCurrency.type === "CryptoCurrency" ? fromCurrency : fromCurrency.parentCurrency;
-  const url = getTransactionExplorer(getDefaultExplorerView(mainCurrency), operation.hash);
+  //Temporary feature before adding history to swap live app
+  const url =
+    provider === "lifi"
+      ? "https://scan.li.fi/tx/$hash".replace("$hash", operation.hash)
+      : getTransactionExplorer(getDefaultExplorerView(mainCurrency), operation.hash);
 
   useEffect(() => {
     const getProvideData = async () => {

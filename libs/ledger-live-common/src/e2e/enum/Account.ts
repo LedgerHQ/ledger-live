@@ -14,6 +14,14 @@ export class Account {
     public readonly nft?: Nft[],
   ) {}
 
+  static readonly LTC_1 = new Account(
+    Currency.LTC,
+    "Litecoin 1",
+    "ltc1qysx9g8cdypja73kc808jg7clcm5xud7tny9gp3",
+    undefined,
+    0,
+  );
+
   static readonly INJ_1 = new Account(
     Currency.INJ,
     "Injective 1",

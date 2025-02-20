@@ -1097,6 +1097,9 @@ importers:
       jotai:
         specifier: 2.10.1
         version: 2.10.1(@types/react@18.2.73)(react@18.3.1)
+      jotai-scope:
+        specifier: 0.7.3
+        version: 0.7.3(jotai@2.10.1(@types/react@18.2.73)(react@18.3.1))
       json-rpc-2.0:
         specifier: 0.2.19
         version: 0.2.19
@@ -23654,6 +23657,12 @@ packages:
 
   join-component@1.1.0:
     resolution: {integrity: sha512-bF7vcQxbODoGK1imE2P9GS9aw4zD0Sd+Hni68IMZLj7zRnquH7dXUmMw9hDI5S/Jzt7q+IyTXN0rSg2GI0IKhQ==}
+
+  jotai-scope@0.7.3:
+    resolution: {integrity: sha512-8MSlj62XwWE/AHXU0MKpNjvrl7ZBx38B4p/3474uayljrYIQEHgZDTTjTRZqvPeG/1H+4Owod7l0OTA4ztvA+g==}
+    engines: {node: '>=12.20.0'}
+    peerDependencies:
+      jotai: '>=2.9.3'
 
   jotai@2.10.1:
     resolution: {integrity: sha512-4FycO+BOTl2auLyF2Chvi6KTDqdsdDDtpaL/WHQMs8f3KS1E3loiUShQzAzFA/sMU5cJ0hz/RT1xum9YbG/zaA==}
@@ -56823,6 +56832,10 @@ snapshots:
       '@sideway/pinpoint': 2.0.0
 
   join-component@1.1.0: {}
+
+  jotai-scope@0.7.3(jotai@2.10.1(@types/react@18.2.73)(react@18.3.1)):
+    dependencies:
+      jotai: 2.10.1(@types/react@18.2.73)(react@18.3.1)
 
   jotai@2.10.1(@types/react@18.2.73)(react@18.3.1):
     optionalDependencies:

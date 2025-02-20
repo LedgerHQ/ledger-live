@@ -182,7 +182,7 @@ export const specs: Specs = {
     },
     dependency: "",
   },
-  Ripple: {
+  XRP: {
     currency: getCryptoCurrencyById("ripple"),
     appQuery: {
       model: DeviceModelId.nanoSP,
@@ -292,6 +292,14 @@ export const specs: Specs = {
     appQuery: {
       model: DeviceModelId.nanoSP,
       appName: "Celo",
+    },
+    dependency: "",
+  },
+  Litecoin: {
+    currency: getCryptoCurrencyById("litecoin"),
+    appQuery: {
+      model: DeviceModelId.nanoSP,
+      appName: "Litecoin",
     },
     dependency: "",
   },
