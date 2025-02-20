@@ -1,5 +1,18 @@
 # ledger-live-desktop
 
+## 2.101.0-nightly.1
+
+### Minor Changes
+
+- [#9279](https://github.com/LedgerHQ/ledger-live/pull/9279) [`32c7fc0`](https://github.com/LedgerHQ/ledger-live/commit/32c7fc025eaf7f2d1715012a5c97fd6200ff2982) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - Add different url to swap history for lifi
+
+- [#9214](https://github.com/LedgerHQ/ledger-live/pull/9214) [`aae075c`](https://github.com/LedgerHQ/ledger-live/commit/aae075c0ea9270670345c2aa525817f1bf8fbfaa) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Extract swap parameters from deeplink
+
+### Patch Changes
+
+- Updated dependencies [[`a548031`](https://github.com/LedgerHQ/ledger-live/commit/a5480317822ab9a20edea9a668b5b3ada25789bd), [`2d2525a`](https://github.com/LedgerHQ/ledger-live/commit/2d2525aa53aaec0ce0d61d1c88ac441842d95b07)]:
+  - @ledgerhq/live-common@34.23.0-nightly.1
+
 ## 2.101.0-nightly.0
 
 ### Minor Changes
