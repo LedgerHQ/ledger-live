@@ -26,7 +26,6 @@ import { prepareCurrency } from "./bridge/cache";
 import BluetoothTransport from "./react-native-hw-transport-ble";
 import "./experimental";
 import logger, { ConsoleLogger } from "./logger";
-import { getFeature } from "@ledgerhq/live-common/lib/featureFlags/index";
 
 const consoleLogger = ConsoleLogger.getLogger();
 listen(log => {
@@ -206,10 +205,7 @@ registerTransportModule(httpdebug);
 // BLE is always the fallback choice because we always keep raw id in it
 registerTransportModule({
   id: "ble",
-  open: () =>
-    // if (getFeature({ key: "ldmkTransport" })?.enabled) {
-    DeviceManagementKitTransport.open(),
-  // }
+  open: (...args) => DeviceManagementKitTransport.open(...args),
   disconnect: id => DeviceManagementKitTransport.disconnectDevice(id),
 });
 
