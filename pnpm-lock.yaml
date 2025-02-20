@@ -1893,9 +1893,6 @@ importers:
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
-      '@ledgerhq/ledger-libs':
-        specifier: workspace:^
-        version: link:../../ledgerjs
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../env

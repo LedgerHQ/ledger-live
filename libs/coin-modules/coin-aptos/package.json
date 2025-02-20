@@ -89,7 +89,6 @@
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
-    "@ledgerhq/ledger-libs": "workspace:^",
     "@aptos-labs/ts-sdk": "^1.33.1",
     "@apollo/client": "^3.12.6",
     "bignumber.js": "^9.1.2",
