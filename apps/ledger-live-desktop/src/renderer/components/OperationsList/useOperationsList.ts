@@ -71,7 +71,9 @@ export function useOperationsList({
   const accountsMap = keyBy(all, "id");
   // similar to groupedOperations but with section based data structure
   const allAccountOps = parseAccountOperations(
-    account ? account.operations : accounts?.map(a => a.operations).flat(),
+    account
+      ? account.operations
+      : (withSubAccounts ? all : accounts)?.map(a => a.operations).flat(),
   );
 
   const { opsWithoutNFTIN, opsWithNFTIN } = splitNftOperationsFromAllOperations(allAccountOps);
@@ -96,7 +98,7 @@ export function useOperationsList({
     nbToShow,
   );
 
-  const hasMore = skip + nbToShow < allAccountOps?.length;
+  const hasMore = nbToShow <= groupedOperations.length;
 
   const handleClickOperation = (
     operation: Operation,
