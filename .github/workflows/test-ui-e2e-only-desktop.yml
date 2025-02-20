@@ -91,312 +91,324 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
 
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@develop
-        id: setup-test-desktop
-        with:
-          build_type: ${{ inputs.build_type || 'testing' }}
-          skip_ruby: true
-          install_playwright: true
-          turborepo-server-port: ${{ steps.caches.outputs.port }}
+      # - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@develop
+      #   id: setup-test-desktop
+      #   with:
+      #     build_type: ${{ inputs.build_type || 'testing' }}
+      #     skip_ruby: true
+      #     install_playwright: true
+      #     turborepo-server-port: ${{ steps.caches.outputs.port }}
 
-      - name: Generate token
-        id: generate-token
-        uses: tibdex/github-app-token@v1
-        with:
-          app_id: ${{ secrets.GH_BOT_APP_ID }}
-          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+      # - name: Generate token
+      #   id: generate-token
+      #   uses: tibdex/github-app-token@v1
+      #   with:
+      #     app_id: ${{ secrets.GH_BOT_APP_ID }}
+      #     private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
 
-      - name: Retrieving coin apps
-        uses: actions/checkout@v4
-        with:
-          ref: master
-          repository: LedgerHQ/coin-apps
-          token: ${{ steps.generate-token.outputs.token }}
-          path: coin-apps
+      # - name: Retrieving coin apps
+      #   uses: actions/checkout@v4
+      #   with:
+      #     ref: master
+      #     repository: LedgerHQ/coin-apps
+      #     token: ${{ steps.generate-token.outputs.token }}
+      #     path: coin-apps
+
+      # - name: check docker images
+      #   run: docker images
+      #   shell: bash
+
+      # - name: config docker
+      #   run: dockerd --max-concurrent-downloads 2
+      #   shell: bash
 
       - name: Pull docker image
         run: docker pull ${{ env.SPECULOS_IMAGE_TAG }}
         shell: bash
 
-      - name: Set DISABLE_TRANSACTION_BROADCAST
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-broadcast@develop
-        with:
-          enable_broadcast: ${{ inputs.enable_broadcast }}
-
-      - name: Run playwright tests [Linux => xvfb-run]
-        id: tests
-        run: |
-          export SPECULOS_IMAGE_TAG=${{ env.SPECULOS_IMAGE_TAG }}
-          export COINAPPS=$PWD/coin-apps
-          export MOCK=0
-          if [ "${{ inputs.invert_filter }}" = true ]; then invert_filter="-invert"; fi
-          xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright:speculos --max-failures 50 ${INPUTS_TEST_FILTER:+--grep$invert_filter} "${{ inputs.test_filter }}" --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
-        env:
-          INPUTS_TEST_FILTER: ${{ inputs.test_filter }}
-          SEED: ${{ secrets.SEED_QAA_B2C }}
-          XRAY: ${{ inputs.export_to_xray }}
-          TEST_EXECUTION: ${{ inputs.test_execution }}
-          PROJECT_KEY: B2CQA
-
-      - name: Upload Allure Results
-        if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v4.3.0
-        with:
-          name: allure-results-${{ matrix.shardIndex }}
-          path: "apps/ledger-live-desktop/allure-results"
-
-      - name: Upload Xray Results
-        if: ${{ !cancelled() && inputs.export_to_xray }}
-        uses: actions/upload-artifact@v4.3.0
-        with:
-          name: xray-reports-${{ matrix.shardIndex }}
-          path: apps/ledger-live-desktop/tests/artifacts/xray/xray-report.json
-
-  report-to-allure:
-    name: "Create Allure Report and upload it"
-    runs-on: [ledger-live-medium]
-    needs: e2e-tests-linux
-    outputs:
-      test_result: ${{ steps.summary.outputs.test_result }}
-      status_color: ${{ steps.summary.outputs.status_color }}
-      status_emoji: ${{ steps.summary.outputs.status_emoji }}
-      report-url: ${{ steps.allure-server.outputs.report-url }}
-    if: ${{ !cancelled() }}
-    env:
-      ALLURE_RESULTS: "allure-results"
-    steps:
-      - name: Publish report on Allure Server
-        id: allure-server
-        if: ${{ !cancelled() }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
-        with:
-          platform: linux
-          login: ${{ vars.ALLURE_USERNAME }}
-          password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
-          path: ${{ env.ALLURE_RESULTS }}
-
-      - name: Get summary
-        if: ${{ !cancelled() && (inputs.slack_notif || github.event_name == 'schedule' )}}
-        id: summary
-        uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@develop
-        with:
-          allure-results-path: ${{ env.ALLURE_RESULTS }}
-          platform: linux
-
-  upload-to-xray:
-    name: "Upload to Xray"
-    runs-on: [ledger-live-medium]
-    env:
-      XRAY_CLIENT_ID: ${{ secrets.XRAY_CLIENT_ID }}
-      XRAY_CLIENT_SECRET: ${{ secrets.XRAY_CLIENT_SECRET }}
-      XRAY_API_URL: https://xray.cloud.getxray.app/api/v2
-      JIRA_URL: https://ledgerhq.atlassian.net/browse
-    needs: e2e-tests-linux
-    if: ${{ !cancelled() && inputs.export_to_xray }}
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ inputs.ref || github.sha }}
-
-      - name: Download Xray Results
-        uses: actions/download-artifact@v4.1.3
-        with:
-          path: "apps/ledger-live-desktop/artifacts/xray"
-          pattern: xray-reports-*
-          merge-multiple: false
-
-      - name: Extract and Aggregate Xray results
-        run: ./aggregate-xray-reports.sh
-
-      - name: Upload aggregated xray results
-        uses: actions/upload-artifact@v4.3.0
-        with:
-          name: aggregated-xray-reports
-          path: "apps/ledger-live-desktop/artifacts/xray/aggregated-xray-reports.json"
-
-      - name: Authenticate to Xray
-        id: authenticate
-        run: |
-          response=$(curl -H "Content-Type: application/json" -X POST --data '{"client_id": "${{ secrets.XRAY_CLIENT_ID }}", "client_secret": "${{ secrets.XRAY_CLIENT_SECRET }}"}' ${{ env.XRAY_API_URL }}/authenticate)
-          echo "xray_token=$response" >> $GITHUB_OUTPUT
-
-      - name: Publish merged report on Xray
-        id: publish-xray
-        run: |
-          response=$(curl -H "Content-Type: application/json" \
-                    -H "Authorization: Bearer ${{ steps.authenticate.outputs.xray_token }}" \
-                    -X POST \
-                    --data @apps/ledger-live-desktop/artifacts/xray/aggregated-xray-reports.json \
-                    ${{ env.XRAY_API_URL }}/import/execution)
-            key=$(echo $response | jq -r '.key')
-            echo "xray_key=$key" >> $GITHUB_OUTPUT
-
-      - name: Write Xray report in summary
+      - name: docker image
+        run: docker images
         shell: bash
-        run: echo "::notice title=Xray report URL::${{ env.JIRA_URL }}/${{ steps.publish-xray.outputs.xray_key }}"
 
-  notify-to-slack:
-    name: "Notify to slack"
-    runs-on: [ledger-live-medium]
-    needs: report-to-allure
-    if: ${{ !cancelled() && (inputs.slack_notif || github.event_name == 'schedule' )}}
-    steps:
-      - uses: actions/github-script@v7
-        name: prepare status
-        id: status
-        env:
-          STATUS_EMOJI: ${{ needs.report-to-allure.outputs.status_emoji }}
-          EXPORT_TO_XRAY: ${{ inputs.export_to_xray }}
-          TEST_EXECUTION: ${{ github.event.inputs.test_execution }}
-        with:
-          script: |
-            const fs = require("fs");
-            const path = require("path");
+  #     - name: Set DISABLE_TRANSACTION_BROADCAST
+  #       uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-broadcast@develop
+  #       with:
+  #         enable_broadcast: ${{ inputs.enable_broadcast }}
 
-            const [ owner, repo ] = "${{ github.repository }}".split("/");
+  #     - name: Run playwright tests [Linux => xvfb-run]
+  #       id: tests
+  #       run: |
+  #         export SPECULOS_IMAGE_TAG=${{ env.SPECULOS_IMAGE_TAG }}
+  #         export COINAPPS=$PWD/coin-apps
+  #         export MOCK=0
+  #         if [ "${{ inputs.invert_filter }}" = true ]; then invert_filter="-invert"; fi
+  #         xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright:speculos --max-failures 50 ${INPUTS_TEST_FILTER:+--grep$invert_filter} "${{ inputs.test_filter }}" --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+  #       env:
+  #         INPUTS_TEST_FILTER: ${{ inputs.test_filter }}
+  #         SEED: ${{ secrets.SEED_QAA_B2C }}
+  #         XRAY: ${{ inputs.export_to_xray }}
+  #         TEST_EXECUTION: ${{ inputs.test_execution }}
+  #         PROJECT_KEY: B2CQA
 
-            const jobs = await github.paginate(github.rest.actions.listJobsForWorkflowRunAttempt, {
-              owner,
-              repo,
-              run_id: "${{ github.run_id }}",
-              attempt_number: "${{ github.run_attempt }}",
-            });
+  #     - name: Upload Allure Results
+  #       if: ${{ !cancelled() }}
+  #       uses: actions/upload-artifact@v4.3.0
+  #       with:
+  #         name: allure-results-${{ matrix.shardIndex }}
+  #         path: "apps/ledger-live-desktop/allure-results"
 
-            const findJobUrl = os =>
-              jobs.find(job => job.name == `Live Desktop Tests (${os})`)?.html_url;
+  #     - name: Upload Xray Results
+  #       if: ${{ !cancelled() && inputs.export_to_xray }}
+  #       uses: actions/upload-artifact@v4.3.0
+  #       with:
+  #         name: xray-reports-${{ matrix.shardIndex }}
+  #         path: apps/ledger-live-desktop/tests/artifacts/xray/xray-report.json
 
-            const keys = {
-              linux: {
-                symbol: "🐧",
-                name: "Linux",
-                jobUrl: findJobUrl("Linux")
-              },
-            };
+  # report-to-allure:
+  #   name: "Create Allure Report and upload it"
+  #   runs-on: [ledger-live-medium]
+  #   needs: e2e-tests-linux
+  #   outputs:
+  #     test_result: ${{ steps.summary.outputs.test_result }}
+  #     status_color: ${{ steps.summary.outputs.status_color }}
+  #     status_emoji: ${{ steps.summary.outputs.status_emoji }}
+  #     report-url: ${{ steps.allure-server.outputs.report-url }}
+  #   if: ${{ !cancelled() }}
+  #   env:
+  #     ALLURE_RESULTS: "allure-results"
+  #   steps:
+  #     - name: Publish report on Allure Server
+  #       id: allure-server
+  #       if: ${{ !cancelled() }}
+  #       uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
+  #       with:
+  #         platform: linux
+  #         login: ${{ vars.ALLURE_USERNAME }}
+  #         password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
+  #         path: ${{ env.ALLURE_RESULTS }}
 
-            const report = {
-              linux: {
-                pass: ${{ needs.e2e-tests-linux.outputs.status == 'success' }},
-                status: "${{ needs.e2e-tests-linux.outputs.status }}",
-              }
-            };
-            const statusEmoji = process.env.STATUS_EMOJI;
+  #     - name: Get summary
+  #       if: ${{ !cancelled() && (inputs.slack_notif || github.event_name == 'schedule' )}}
+  #       id: summary
+  #       uses: LedgerHQ/ledger-live/tools/actions/composites/get-allure-summary@develop
+  #       with:
+  #         allure-results-path: ${{ env.ALLURE_RESULTS }}
+  #         platform: linux
 
-            let summary = `### Playwright Tests
-            `
+  # upload-to-xray:
+  #   name: "Upload to Xray"
+  #   runs-on: [ledger-live-medium]
+  #   env:
+  #     XRAY_CLIENT_ID: ${{ secrets.XRAY_CLIENT_ID }}
+  #     XRAY_CLIENT_SECRET: ${{ secrets.XRAY_CLIENT_SECRET }}
+  #     XRAY_API_URL: https://xray.cloud.getxray.app/api/v2
+  #     JIRA_URL: https://ledgerhq.atlassian.net/browse
+  #   needs: e2e-tests-linux
+  #   if: ${{ !cancelled() && inputs.export_to_xray }}
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #       with:
+  #         ref: ${{ inputs.ref || github.sha }}
 
-            summary += `|`
+  #     - name: Download Xray Results
+  #       uses: actions/download-artifact@v4.1.3
+  #       with:
+  #         path: "apps/ledger-live-desktop/artifacts/xray"
+  #         pattern: xray-reports-*
+  #         merge-multiple: false
 
-            const reportKeys = Object.keys(report);
-            const playwrightSuccess = Object.entries(report).every(([os, values]) => !!values.pass);
+  #     - name: Extract and Aggregate Xray results
+  #       run: ./aggregate-xray-reports.sh
 
-            reportKeys.forEach((k) => {
-              summary += ` [${keys[k].symbol} ${keys[k].name}](${keys[k].jobUrl}) |`;
-            });
+  #     - name: Upload aggregated xray results
+  #       uses: actions/upload-artifact@v4.3.0
+  #       with:
+  #         name: aggregated-xray-reports
+  #         path: "apps/ledger-live-desktop/artifacts/xray/aggregated-xray-reports.json"
 
-            summary += `
-            |`;
+  #     - name: Authenticate to Xray
+  #       id: authenticate
+  #       run: |
+  #         response=$(curl -H "Content-Type: application/json" -X POST --data '{"client_id": "${{ secrets.XRAY_CLIENT_ID }}", "client_secret": "${{ secrets.XRAY_CLIENT_SECRET }}"}' ${{ env.XRAY_API_URL }}/authenticate)
+  #         echo "xray_token=$response" >> $GITHUB_OUTPUT
 
-            for (let i = 0; i < reportKeys.length; i++) {
-              summary += ` :--: |`;
-            }
+  #     - name: Publish merged report on Xray
+  #       id: publish-xray
+  #       run: |
+  #         response=$(curl -H "Content-Type: application/json" \
+  #                   -H "Authorization: Bearer ${{ steps.authenticate.outputs.xray_token }}" \
+  #                   -X POST \
+  #                   --data @apps/ledger-live-desktop/artifacts/xray/aggregated-xray-reports.json \
+  #                   ${{ env.XRAY_API_URL }}/import/execution)
+  #           key=$(echo $response | jq -r '.key')
+  #           echo "xray_key=$key" >> $GITHUB_OUTPUT
 
-            summary += `
-            |`;
+  #     - name: Write Xray report in summary
+  #       shell: bash
+  #       run: echo "::notice title=Xray report URL::${{ env.JIRA_URL }}/${{ steps.publish-xray.outputs.xray_key }}"
 
-            Object.entries(report).forEach(([os, values]) => {
-              summary += ` ${values.pass ? statusEmoji : "❌"} (${values.status}) |`;
-            });
+  # notify-to-slack:
+  #   name: "Notify to slack"
+  #   runs-on: [ledger-live-medium]
+  #   needs: report-to-allure
+  #   if: ${{ !cancelled() && (inputs.slack_notif || github.event_name == 'schedule' )}}
+  #   steps:
+  #     - uses: actions/github-script@v7
+  #       name: prepare status
+  #       id: status
+  #       env:
+  #         STATUS_EMOJI: ${{ needs.report-to-allure.outputs.status_emoji }}
+  #         EXPORT_TO_XRAY: ${{ inputs.export_to_xray }}
+  #         TEST_EXECUTION: ${{ github.event.inputs.test_execution }}
+  #       with:
+  #         script: |
+  #           const fs = require("fs");
+  #           const path = require("path");
 
-            summary += `
-            ${{ steps.comment.outputs.body }}
-            `
+  #           const [ owner, repo ] = "${{ github.repository }}".split("/");
 
-            const output = {
-              summary,
-              actions: [{
-                // 20 chars max
-                label: "Regen. Screenshots",
-                // 20 chars max
-                identifier: "regen_screenshots",
-                // 40 chars max
-                description: "Will regenerate playwright screenshots",
-              }, {
-                // 20 chars max
-                label: "Run full LLD suite",
-                // 20 chars max
-                identifier: "lld_full_suite",
-                // 40 chars max
-                description: "Run the full e2e test suite for LLD",
-              }],
-            };
+  #           const jobs = await github.paginate(github.rest.actions.listJobsForWorkflowRunAttempt, {
+  #             owner,
+  #             repo,
+  #             run_id: "${{ github.run_id }}",
+  #             attempt_number: "${{ github.run_attempt }}",
+  #           });
 
-            const slackPayload = {
-              "attachments": [
-                {
-                  "color": "${{ needs.report-to-allure.outputs.status_color }}",
-                  "blocks": [
-                    {
-                      "type": "header",
-                      "text": {
-                        "type": "plain_text",
-                        "text": ":ledger-logo: Ledger Live Desktop E2E tests results on ${{ github.ref_name }}",
-                        "emoji": true
-                      }
-                    },
-                    {
-                      "type": "divider"
-                    },
-                    {
-                      "type": "section",
-                      "text": {
-                        "type": "mrkdwn",
-                        "text": `- 🐧 linux: ${statusEmoji} ${{ needs.report-to-allure.outputs.test_result || 'No test results' }}`
-                      }
-                    },
-                    {
-                      "type": "divider"
-                    },
-                    {
-                      "type": "section",
-                      "fields": [
-                        {
-                          "type": "mrkdwn",
-                          "text": "*Allure Report*\n<${{ needs.report-to-allure.outputs.report-url }}|allure-results-linux>"
-                        },
-                        {
-                          "type": "mrkdwn",
-                          "text": "*Workflow*\n<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow Run>"
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            };
+  #           const findJobUrl = os =>
+  #             jobs.find(job => job.name == `Live Desktop Tests (${os})`)?.html_url;
 
-            if (process.env.EXPORT_TO_XRAY === 'true') {
-              slackPayload.attachments[0].blocks.push({
-                "type": "section",
-                "fields": [
-                  {
-                    "type": "mrkdwn",
-                    "text": `*Xray Link*\n<https://ledgerhq.atlassian.net/browse/${process.env.TEST_EXECUTION}|Test Execution>`
-                  }
-                ]
-              });
-            }
+  #           const keys = {
+  #             linux: {
+  #               symbol: "🐧",
+  #               name: "Linux",
+  #               jobUrl: findJobUrl("Linux")
+  #             },
+  #           };
 
-            fs.writeFileSync("payload-slack-content.json", JSON.stringify(slackPayload), "utf-8");
+  #           const report = {
+  #             linux: {
+  #               pass: ${{ needs.e2e-tests-linux.outputs.status == 'success' }},
+  #               status: "${{ needs.e2e-tests-linux.outputs.status }}",
+  #             }
+  #           };
+  #           const statusEmoji = process.env.STATUS_EMOJI;
 
-      - name: Print Slack Payload Content
-        run: cat ${{ github.workspace }}/payload-slack-content.json
+  #           let summary = `### Playwright Tests
+  #           `
 
-      - name: Post to a Slack channel
-        id: slack
-        uses: slackapi/slack-github-action@v1.23.0
-        with:
-          channel-id: "C05FKJ7DFAP"
-          payload-file-path: ${{ github.workspace }}/payload-slack-content.json
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_LIVE_CI_BOT_TOKEN }}
-          STATUS_COLOR: ${{ needs.report-to-allure.outputs.status_color }}
+  #           summary += `|`
+
+  #           const reportKeys = Object.keys(report);
+  #           const playwrightSuccess = Object.entries(report).every(([os, values]) => !!values.pass);
+
+  #           reportKeys.forEach((k) => {
+  #             summary += ` [${keys[k].symbol} ${keys[k].name}](${keys[k].jobUrl}) |`;
+  #           });
+
+  #           summary += `
+  #           |`;
+
+  #           for (let i = 0; i < reportKeys.length; i++) {
+  #             summary += ` :--: |`;
+  #           }
+
+  #           summary += `
+  #           |`;
+
+  #           Object.entries(report).forEach(([os, values]) => {
+  #             summary += ` ${values.pass ? statusEmoji : "❌"} (${values.status}) |`;
+  #           });
+
+  #           summary += `
+  #           ${{ steps.comment.outputs.body }}
+  #           `
+
+  #           const output = {
+  #             summary,
+  #             actions: [{
+  #               // 20 chars max
+  #               label: "Regen. Screenshots",
+  #               // 20 chars max
+  #               identifier: "regen_screenshots",
+  #               // 40 chars max
+  #               description: "Will regenerate playwright screenshots",
+  #             }, {
+  #               // 20 chars max
+  #               label: "Run full LLD suite",
+  #               // 20 chars max
+  #               identifier: "lld_full_suite",
+  #               // 40 chars max
+  #               description: "Run the full e2e test suite for LLD",
+  #             }],
+  #           };
+
+  #           const slackPayload = {
+  #             "attachments": [
+  #               {
+  #                 "color": "${{ needs.report-to-allure.outputs.status_color }}",
+  #                 "blocks": [
+  #                   {
+  #                     "type": "header",
+  #                     "text": {
+  #                       "type": "plain_text",
+  #                       "text": ":ledger-logo: Ledger Live Desktop E2E tests results on ${{ github.ref_name }}",
+  #                       "emoji": true
+  #                     }
+  #                   },
+  #                   {
+  #                     "type": "divider"
+  #                   },
+  #                   {
+  #                     "type": "section",
+  #                     "text": {
+  #                       "type": "mrkdwn",
+  #                       "text": `- 🐧 linux: ${statusEmoji} ${{ needs.report-to-allure.outputs.test_result || 'No test results' }}`
+  #                     }
+  #                   },
+  #                   {
+  #                     "type": "divider"
+  #                   },
+  #                   {
+  #                     "type": "section",
+  #                     "fields": [
+  #                       {
+  #                         "type": "mrkdwn",
+  #                         "text": "*Allure Report*\n<${{ needs.report-to-allure.outputs.report-url }}|allure-results-linux>"
+  #                       },
+  #                       {
+  #                         "type": "mrkdwn",
+  #                         "text": "*Workflow*\n<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow Run>"
+  #                       }
+  #                     ]
+  #                   }
+  #                 ]
+  #               }
+  #             ]
+  #           };
+
+  #           if (process.env.EXPORT_TO_XRAY === 'true') {
+  #             slackPayload.attachments[0].blocks.push({
+  #               "type": "section",
+  #               "fields": [
+  #                 {
+  #                   "type": "mrkdwn",
+  #                   "text": `*Xray Link*\n<https://ledgerhq.atlassian.net/browse/${process.env.TEST_EXECUTION}|Test Execution>`
+  #                 }
+  #               ]
+  #             });
+  #           }
+
+  #           fs.writeFileSync("payload-slack-content.json", JSON.stringify(slackPayload), "utf-8");
+
+  #     - name: Print Slack Payload Content
+  #       run: cat ${{ github.workspace }}/payload-slack-content.json
+
+  #     - name: Post to a Slack channel
+  #       id: slack
+  #       uses: slackapi/slack-github-action@v1.23.0
+  #       with:
+  #         channel-id: "C05FKJ7DFAP"
+  #         payload-file-path: ${{ github.workspace }}/payload-slack-content.json
+  #       env:
+  #         SLACK_BOT_TOKEN: ${{ secrets.SLACK_LIVE_CI_BOT_TOKEN }}
+  #         STATUS_COLOR: ${{ needs.report-to-allure.outputs.status_color }}
