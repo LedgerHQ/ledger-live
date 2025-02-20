@@ -66,7 +66,6 @@ export const useTrackMyLedgerSectionEvents = ({
     }
 
     if (previousImageRemoveRequested.current === true && imageRemoveRequested === false && !error) {
-      console.warn("REMOVEEEEE");
       // user removed the custom lock screen image
       track("Custom Lock Screen Image removed", defaultPayload);
     }

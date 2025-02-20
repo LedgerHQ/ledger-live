@@ -5,7 +5,7 @@ import { Device } from "@ledgerhq/types-devices";
 import { UserRefusedAllowManager, UserRefusedOnDevice } from "@ledgerhq/errors";
 import { LedgerError } from "~/types/error";
 
-export type UseTrackAddAccountFlow = {
+export type UseTrackSwapFlow = {
   location: HOOKS_TRACKING_LOCATIONS.swapFlow | undefined;
   requestOpenApp: string | null | undefined;
   device: Device;
@@ -26,7 +26,7 @@ export const useTrackSwapFlow = ({
   device,
   error,
   requestOpenApp = undefined,
-}: UseTrackAddAccountFlow) => {
+}: UseTrackSwapFlow) => {
   const previousRequestOpenApp = useRef<string | null | undefined>(undefined);
 
   useEffect(() => {

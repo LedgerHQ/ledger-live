@@ -1,5 +1,5 @@
 import { renderHook } from "@testing-library/react-native";
-import { useTrackSwapFlow, UseTrackAddAccountFlow } from "./useTrackSwapFlow";
+import { useTrackSwapFlow, UseTrackSwapFlow } from "./useTrackSwapFlow";
 import { track } from "../segment";
 import { UserRefusedAllowManager, UserRefusedOnDevice } from "@ledgerhq/errors";
 import { CONNECTION_TYPES, HOOKS_TRACKING_LOCATIONS } from "./variables";
@@ -15,7 +15,7 @@ describe("useTrackSwapFlow", () => {
     wired: false,
   };
 
-  const defaultArgs: UseTrackAddAccountFlow = {
+  const defaultArgs: UseTrackSwapFlow = {
     location: HOOKS_TRACKING_LOCATIONS.swapFlow,
     device: deviceMock,
     requestOpenApp: null,
@@ -27,7 +27,7 @@ describe("useTrackSwapFlow", () => {
   });
 
   it("should not track events if location is not 'Swap Flow'", () => {
-    renderHook((props: UseTrackAddAccountFlow) => useTrackSwapFlow(props), {
+    renderHook((props: UseTrackSwapFlow) => useTrackSwapFlow(props), {
       // @ts-expect-error: forcing a wrong location for testing
       initialProps: { ...defaultArgs, location: "Other Location" },
     });
@@ -35,7 +35,7 @@ describe("useTrackSwapFlow", () => {
   });
 
   it("should track 'Secure Channel refused' when error is UserRefusedAllowManager", () => {
-    const { rerender } = renderHook((props: UseTrackAddAccountFlow) => useTrackSwapFlow(props), {
+    const { rerender } = renderHook((props: UseTrackSwapFlow) => useTrackSwapFlow(props), {
       initialProps: { ...defaultArgs, requestOpenApp: "Ethereum" },
     });
 
@@ -53,7 +53,7 @@ describe("useTrackSwapFlow", () => {
   });
 
   it("should track 'Open app denied' when previous requestOpenApp exists and error is UserRefusedOnDevice", () => {
-    const { rerender } = renderHook((props: UseTrackAddAccountFlow) => useTrackSwapFlow(props), {
+    const { rerender } = renderHook((props: UseTrackSwapFlow) => useTrackSwapFlow(props), {
       initialProps: { ...defaultArgs, requestOpenApp: "Bitcoin" },
     });
 
@@ -72,7 +72,7 @@ describe("useTrackSwapFlow", () => {
   });
 
   it("should track 'Open app accepted' when previous requestOpenApp exists and then requestOpenApp becomes null without error", () => {
-    const { rerender } = renderHook((props: UseTrackAddAccountFlow) => useTrackSwapFlow(props), {
+    const { rerender } = renderHook((props: UseTrackSwapFlow) => useTrackSwapFlow(props), {
       initialProps: { ...defaultArgs, requestOpenApp: "Ethereum" },
     });
 
@@ -93,7 +93,7 @@ describe("useTrackSwapFlow", () => {
   it("should use CONNECTION_TYPES.USB when the device is wired", () => {
     const wiredDevice = { ...deviceMock, wired: true };
 
-    const { rerender } = renderHook((props: UseTrackAddAccountFlow) => useTrackSwapFlow(props), {
+    const { rerender } = renderHook((props: UseTrackSwapFlow) => useTrackSwapFlow(props), {
       initialProps: { ...defaultArgs, device: wiredDevice, requestOpenApp: "Bitcoin" },
     });
 

@@ -8,7 +8,7 @@ import { LedgerError } from "~/types/error";
 export type UseTrackSendFlow = {
   location: HOOKS_TRACKING_LOCATIONS.sendFlow | undefined;
   device: Device;
-  requestOpenApp?: string | null | undefined;
+  requestOpenApp?: string | null;
   error: LedgerError | undefined | null;
 };
 

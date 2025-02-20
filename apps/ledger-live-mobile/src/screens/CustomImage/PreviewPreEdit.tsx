@@ -254,10 +254,19 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
         device,
         imageType,
         deviceModelId,
+        referral: params.referral,
       });
       setRawResultLoading(false);
     },
-    [navigation, setRawResultLoading, processorPreviewImage, device, imageType, deviceModelId],
+    [
+      navigation,
+      setRawResultLoading,
+      processorPreviewImage,
+      device,
+      imageType,
+      deviceModelId,
+      params.referral,
+    ],
   );
 
   const handlePreviewImageError = useCallback(
