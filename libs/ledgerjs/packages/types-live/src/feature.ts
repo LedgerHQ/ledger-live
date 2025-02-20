@@ -1,5 +1,6 @@
 import { ABTestingVariants } from "./ABTesting";
 import { ChainwatchNetwork } from "./chainwatch";
+import { LldNanoSUpsellBannersConfig } from "./lnsUpsell";
 import { StorylyInstanceID, StorylyInstanceType } from "./storyly";
 import { WalletSyncEnvironment, WalletSyncWatchConfig } from "./walletSync";
 
@@ -584,25 +585,8 @@ export type Feature_LlmRebornLP = Feature<{
 }>;
 
 export type Feature_LldNanoSUpsellBanners = Feature<{
-  opted_in: {
-    manager: boolean;
-    accounts: boolean;
-    notification_center: boolean;
-    img: string;
-    link: string;
-    learn_more: string;
-    "%": number;
-  };
-  opted_out: {
-    manager: boolean;
-    accounts: boolean;
-    notification_center: boolean;
-    portfolio: boolean;
-    img: string;
-    link: string;
-    learn_more: string;
-    "%": number;
-  };
+  opted_in: LldNanoSUpsellBannersConfig;
+  opted_out: LldNanoSUpsellBannersConfig & { portfolio: boolean };
 }>;
 
 /**
