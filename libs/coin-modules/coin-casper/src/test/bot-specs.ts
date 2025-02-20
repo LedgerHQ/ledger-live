@@ -22,9 +22,9 @@ const casperSpecs: AppSpec<Transaction> = {
   },
   genericDeviceAction: acceptTransaction,
   testTimeout: 6 * 60 * 1000,
-  minViableAmount: MIN_SAFE,
+  minViableAmount: MIN_SAFE * 2,
   transactionCheck: ({ maxSpendable }) => {
-    invariant(maxSpendable.gt(MIN_SAFE), "balance is too low");
+    invariant(maxSpendable.gt(MIN_SAFE * 2), "balance is too low");
   },
   mutations: [
     {
@@ -33,7 +33,7 @@ const casperSpecs: AppSpec<Transaction> = {
       maxRun: 1,
       testDestination: genericTestDestination,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
-        invariant(maxSpendable.gt(MIN_SAFE), "balance is too low");
+        invariant(maxSpendable.gt(MIN_SAFE * 2), "balance is too low");
         const sibling = pickSiblings(siblings, maxAccount);
         const recipient = sibling.freshAddress;
         const amount = maxSpendable.div(2).integerValue();
