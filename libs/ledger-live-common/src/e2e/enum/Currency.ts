@@ -101,4 +101,6 @@ export class Currency {
     AppInfos.MULTIVERSE_X,
   );
   static readonly LTC = new Currency("Litecoin", "LTC", "litecoin", AppInfos.LTC);
+  static readonly SOL_GIGA = new Currency("GIGACHAD", "GIGA", "solana", AppInfos.SOLANA);
+  static readonly SOL_WIF = new Currency("DOGWIFHAT", "WIF", "solana", AppInfos.SOLANA);
 }
