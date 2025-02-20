@@ -10,7 +10,7 @@ import { acceptTransaction } from "./speculos-deviceActions";
 import { CASPER_MINIMUM_VALID_AMOUNT_MOTES, MayBlockAccountError } from "../consts";
 import { getRandomTransferID } from "../common-logic";
 
-const MIN_SAFE = new BigNumber(CASPER_MINIMUM_VALID_AMOUNT_MOTES);
+const MIN_SAFE = new BigNumber(CASPER_MINIMUM_VALID_AMOUNT_MOTES * 2);
 const maxAccount = 6;
 
 const casperSpecs: AppSpec<Transaction> = {
