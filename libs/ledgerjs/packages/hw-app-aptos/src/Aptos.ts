@@ -15,10 +15,10 @@
  *  limitations under the License.
  ********************************************************************************/
 
-import BIPPath from "bip32-path";
 import { sha3_256 as sha3Hash } from "@noble/hashes/sha3";
 import Transport from "@ledgerhq/hw-transport";
 import { StatusCodes } from "@ledgerhq/errors";
+import { pathToBuffer } from "@ledgerhq/coin-aptos";
 
 const MAX_APDU_LEN = 255;
 const P1_NON_CONFIRM = 0x00;
@@ -43,21 +43,6 @@ export interface AddressData {
   chainCode: Buffer;
   address: string;
 }
-
-export const pathToBuffer = (originalPath: string): Buffer => {
-  const path = originalPath
-    .split("/")
-    .filter(value => value !== "m")
-    .map(value => (value.endsWith("'") || value.endsWith("h") ? value : value + "'"))
-    .join("/");
-  const pathNums: number[] = BIPPath.fromString(path).toPathArray();
-  const buf = Buffer.alloc(1 + pathNums.length * 4);
-  buf.writeUInt8(pathNums.length, 0);
-  for (const [i, num] of pathNums.entries()) {
-    buf.writeUInt32BE(num, 1 + i * 4);
-  }
-  return buf;
-};
 
 /**
  * Aptos API

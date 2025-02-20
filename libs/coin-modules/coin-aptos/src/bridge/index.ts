@@ -16,7 +16,7 @@ import createTransaction from "./createTransaction";
 import { getAccountShape } from "./synchronisation";
 import buildSignOperation from "./signOperation";
 import broadcast from "./broadcast";
-import { pathToBuffer } from "@ledgerhq/ledger-libs/packages/hw-app-aptos";
+import { pathToBuffer } from "../exchange";
 
 function buildCurrencyBridge(signerContext: SignerContext<AptosSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
