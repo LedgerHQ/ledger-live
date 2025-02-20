@@ -36,14 +36,20 @@ export function OperationsList({
   filterOperation,
 }: Props) {
   const { t } = useTranslation();
-  const { fetchMoreOperations, handleClickOperation, groupedOperations, getOperationProperties } =
-    useOperationsList({
-      account,
-      parentAccount,
-      accounts,
-      withSubAccounts,
-      filterOperation,
-    });
+  const {
+    fetchMoreOperations,
+    handleClickOperation,
+    groupedOperations,
+    getOperationProperties,
+    groupedOperations2,
+    hasMore
+  } = useOperationsList({
+    account,
+    parentAccount,
+    accounts,
+    withSubAccounts,
+    filterOperation,
+  });
 
   if (!account && !accounts) {
     console.warn("Preventing render OperationsList because not received account or accounts"); // eslint-disable-line no-console
@@ -60,7 +66,38 @@ export function OperationsList({
             }}
           />
         )}
-        {groupedOperations.sections?.map(
+        {Object.entries(groupedOperations2).map(([key, data]) => {
+          return (
+            <Box key={key}>
+              <SectionTitle date={new Date(key)} />
+              <Box p={0}>
+                {data.map(operation => {
+                  const properties = getOperationProperties(operation, account, parentAccount);
+
+                  if (!properties) return null;
+
+                  const { accountOperation, parentAccountOperation, mainAccountOperation } =
+                    properties;
+                  return (
+                    <OperationComponent
+                      operation={operation}
+                      account={accountOperation}
+                      parentAccount={parentAccountOperation}
+                      key={`${accountOperation.id}_${operation.id}`}
+                      onOperationClick={handleClickOperation}
+                      t={t}
+                      withAccount={withAccount}
+                      editable={
+                        account && isEditableOperation({ account: mainAccountOperation, operation })
+                      }
+                    />
+                  );
+                })}
+              </Box>
+            </Box>
+          );
+        })}
+        {/* {groupedOperations.sections?.map(
           group =>
             group.data.length > 0 && (
               <Box key={group.day.toISOString()}>
@@ -92,9 +129,9 @@ export function OperationsList({
                 </Box>
               </Box>
             ),
-        )}
+        )} */}
       </TableContainer>
-      {!groupedOperations?.completed ? (
+      {hasMore ? (
         <ShowMore onClick={fetchMoreOperations}>
           <span>{t("common.showMore")}</span>
           <IconAngleDown size={12} />

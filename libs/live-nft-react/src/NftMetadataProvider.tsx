@@ -131,7 +131,6 @@ export function useNftCollectionMetadataBatch(
 
   const hasAllProperties = (item: Item): item is Required<Item> =>
     !!item.contract && !!item.currencyId;
-
   const data = useMemo(
     () =>
       items.map(item => {
@@ -165,8 +164,6 @@ export function useNftCollectionMetadataBatch(
       >;
       return cachedData || { status: "queued" };
     });
-    console.log(items);
-    console.log(parsedItems);
     return parsedItems;
   }, [items, cache]);
 }
