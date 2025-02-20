@@ -24,9 +24,10 @@ export class DeviceManagementKitTransport extends Transport {
     this.tracer = tracer;
   }
 
-  static async open(device: DiscoveredDevice): Promise<DeviceManagementKitTransport> {
+  static async open(deviceOrId: DiscoveredDevice | string): Promise<DeviceManagementKitTransport> {
     const activeSessionId = activeDeviceSessionSubject.value?.sessionId;
 
+    console.log("CALLING OPEN WITH SESSION ID: ", activeSessionId, " AND DEVICE: ", deviceOrId);
     if (activeSessionId) {
       tracer.trace(`[open] checking existing session ${activeSessionId}`);
       const deviceSessionState: DeviceSessionState | null = await firstValueFrom(
@@ -43,10 +44,28 @@ export class DeviceManagementKitTransport extends Transport {
         tracer.trace("[open] reusing existing session and instantiating a new SdkTransport");
         return activeDeviceSessionSubject.value.transport;
       }
+    } else if (typeof deviceOrId === "string") {
+      const devicesObs = deviceManagementKit.listenToAvailableDevices();
+      const subscription = devicesObs.subscribe({
+        next: devices => {
+          if (devices.some(device => device.id === deviceOrId)) {
+            const [discoveredDevice] = devices.filter(device => device.id === deviceOrId);
+            tracer.trace(`[open] device found ${discoveredDevice.id}`);
+            subscription.unsubscribe();
+            deviceManagementKit.stopDiscovering();
+          }
+        },
+        complete: () => {
+          deviceManagementKit.stopDiscovering();
+        },
+        error: () => {
+          deviceManagementKit.stopDiscovering();
+          subscription.unsubscribe();
+        },
+      });
     }
-    const sessionId = await deviceManagementKit.connect({ device });
+    const sessionId = await deviceManagementKit.connect({ device: deviceOrId });
 
-    console.log("sessionId", sessionId);
     const transport = new DeviceManagementKitTransport(deviceManagementKit, sessionId);
     activeDeviceSessionSubject.next({ sessionId, transport });
 
@@ -89,10 +108,27 @@ export class DeviceManagementKitTransport extends Transport {
     return Promise.resolve();
   }
 
-  exchange(
-    _apdu: Buffer,
+  async exchange(
+    apdu: Buffer,
     { abortTimeoutMs: _abortTimeoutMs }: { abortTimeoutMs?: number } = {},
   ): Promise<Buffer> {
-    return super.exchange(_apdu, { abortTimeoutMs: _abortTimeoutMs });
+    const activeSessionId = activeDeviceSessionSubject.value?.sessionId;
+    if (!activeSessionId) {
+      throw new Error("No active session found");
+    }
+    return await this.dmk
+      .sendApdu({
+        sessionId: activeSessionId,
+        apdu: new Uint8Array(apdu),
+      })
+      .then((apduResponse: { data: Uint8Array; statusCode: Uint8Array }): Buffer => {
+        const response = Buffer.from([...apduResponse.data, ...apduResponse.statusCode]);
+        tracer.trace(`[exchange] <= ${response.toString("hex")}`);
+        return response;
+      })
+      .catch(e => {
+        console.error("[exchange] error", e);
+        throw e;
+      });
   }
 }
