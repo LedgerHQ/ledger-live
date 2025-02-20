@@ -1,17 +1,17 @@
 import { Application } from "../../../page";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 
-export async function runAddAccountTest(currency: Currency, tmsLink: string) {
+export async function runNetworkBasedAddAccountTest(currency: Currency, tmsLink: string) {
   const app = new Application();
 
-  describe("Add accounts", () => {
+  describe("Add accounts - Network Based", () => {
     beforeAll(async () => {
       await app.init({
         userdata: "skip-onboarding",
         speculosApp: currency.speculosApp,
         featureFlags: {
           llmNetworkBasedAddAccountFlow: {
-            enabled: false,
+            enabled: true,
             overridesRemote: true,
           },
         },
@@ -20,12 +20,15 @@ export async function runAddAccountTest(currency: Currency, tmsLink: string) {
     });
 
     $TmsLink(tmsLink);
-    it(`Perform an add account - ${currency.name}`, async () => {
-      await app.addAccount.openViaDeeplink();
+    it(`Perform a Network Based add account - ${currency.name}`, async () => {
+      await app.portfolio.addAccount();
+      await app.addAccount.importWithYourLedger();
       await app.common.performSearch(currency.name);
-      await app.addAccount.selectCurrency(currency.currencyId);
+      await app.receive.selectCurrency(currency.currencyId);
+      await app.receive.selectNetworkIfAsked(currency.currencyId);
 
-      const accountId = await app.addAccount.addFirstAccount(currency);
+      const accountId = await app.addAccount.addNetworkBasedFirstAccount(currency);
+      await app.portfolio.goToAccounts(currency.name);
       await app.assetAccountsPage.waitForAccountPageToLoad(currency.name);
       await app.assetAccountsPage.expectAccountsBalanceVisible();
       await app.common.goToAccount(accountId);

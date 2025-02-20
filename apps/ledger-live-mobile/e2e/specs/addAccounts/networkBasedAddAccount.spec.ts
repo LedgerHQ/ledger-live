@@ -16,7 +16,7 @@ describe("Add account from modal", () => {
       knownDevices: [knownDevice],
       featureFlags: {
         llmNetworkBasedAddAccountFlow: {
-          enabled: false,
+          enabled: true,
           overridesRemote: true,
         },
       },
@@ -34,17 +34,22 @@ describe("Add account from modal", () => {
 
   $TmsLink("B2CQA-101");
   it("add Bitcoin accounts", async () => {
-    await app.addAccount.selectCurrency(testedCurrency.toLowerCase());
+    await app.receive.selectCurrency(testedCurrency);
     await deviceAction.selectMockDevice();
     await deviceAction.openApp();
     await app.addAccount.waitAccountsDiscovery();
-    await app.addAccount.expectAccountDiscovery(testedCurrency, testedCurrency.toLowerCase(), 0);
+    await app.addAccount.expectNetworkBasedAccountDiscovery(
+      testedCurrency,
+      testedCurrency.toLowerCase(),
+      0,
+    );
     await app.addAccount.finishAccountsDiscovery();
-    await app.addAccount.tapSuccessCta();
+    await app.addAccount.tapCloseAddAccountCta();
   });
 
   $TmsLink("B2CQA-101");
   it("displays Bitcoin accounts page summary", async () => {
+    await app.portfolio.goToAccounts(testedCurrency);
     await app.assetAccountsPage.waitForAccountPageToLoad(testedCurrency);
     await app.assetAccountsPage.expectAccountsBalance(expectedBalance);
   });

@@ -47,7 +47,7 @@ describe("Receive Flow", () => {
     await openReceive();
     await app.receive.selectAsset("ETH");
     await app.receive.expectNumberOfAccountInListIsDisplayed("ethereum", 3);
-    await app.receive.expectNumberOfAccountInListIsDisplayed("op mainnet", 1);
+    await app.receive.expectNumberOfAccountInListIsDisplayed("optimism", 1);
   });
 
   $TmsLink("B2CQA-1856");
@@ -55,7 +55,7 @@ describe("Receive Flow", () => {
   it("Should create an account on a network", async () => {
     await openReceive();
     await app.receive.selectAsset("ETH");
-    await app.receive.selectNetwork("op mainnet");
+    await app.receive.selectNetwork("optimism");
     await app.receive.createAccount();
     first && (await deviceAction.selectMockDevice(), (first = false));
     await deviceAction.openApp();
@@ -71,7 +71,7 @@ describe("Receive Flow", () => {
     await openReceive();
     await app.common.performSearch("Polygon");
     await app.receive.selectAsset("POL");
-    await app.receive.selectNetwork("binance smart chain");
+    await app.receive.selectNetwork("bsc");
     first && (await deviceAction.selectMockDevice(), (first = false));
     await deviceAction.openApp();
     await app.receive.selectAccount("Binance Smart Chain 1");
