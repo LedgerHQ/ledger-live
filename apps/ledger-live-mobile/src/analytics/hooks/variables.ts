@@ -10,4 +10,5 @@ export enum HOOKS_TRACKING_LOCATIONS {
   addAccount = "Add Account",
   ledgerSyncFlow = "Ledger Sync",
   swapFlow = "Swap Flow",
+  onboardingFlow = "Onboarding Flow",
 }

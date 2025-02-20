@@ -8,13 +8,10 @@ import { LedgerError } from "~/types/error";
 export type UseTrackReceiveFlow = {
   location: HOOKS_TRACKING_LOCATIONS.receiveFlow | undefined;
   device: Device;
-  requestOpenApp?: string | null | undefined;
-  inWrongDeviceForAccount?:
-    | {
-        accountName: string;
-      }
-    | null
-    | undefined;
+  requestOpenApp?: string | null;
+  inWrongDeviceForAccount?: {
+    accountName: string;
+  } | null;
   error: LedgerError | undefined | null;
 };
 

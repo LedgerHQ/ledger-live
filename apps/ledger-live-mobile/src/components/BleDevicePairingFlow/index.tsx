@@ -11,6 +11,8 @@ import type { BleDevicePairingProps } from "./BleDevicePairing";
 import { track } from "~/analytics";
 import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
 import { NavigationHeaderCloseButton } from "../NavigationHeaderCloseButton";
+import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
+import { useTrackOnboardingFlow } from "~/analytics/hooks/useTrackOnboardingFlow";
 
 const TIMEOUT_AFTER_PAIRED_MS = 2000;
 
@@ -72,7 +74,7 @@ export type BleDevicePairingFlowProps = {
 
 // A "done" state to avoid having the BLE scanning on the device that we just paired
 // and to which messages are going to be exchanged via BLE
-type PairingFlowStep = "scanning" | "pairing" | "done";
+export type PairingFlowStep = "scanning" | "pairing" | "done";
 
 /**
  * Handles and renders a full BLE pairing flow: scanning and pairing steps
@@ -107,6 +109,12 @@ const BleDevicePairingFlow: React.FC<BleDevicePairingFlowProps> = ({
     },
     [setDeviceToPair, setPairingFlowStep],
   );
+
+  useTrackOnboardingFlow({
+    location: HOOKS_TRACKING_LOCATIONS.onboardingFlow,
+    device: deviceToPair,
+    isPaired,
+  });
 
   const onPaired = useCallback(
     (device: Device) => {
