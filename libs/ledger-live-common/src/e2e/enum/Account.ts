@@ -646,6 +646,18 @@ export class Account {
     "5izbyRCwfbvqkD8q5mGbbFvWUZ6ZL4C5PTosARVNagiv",
   );
 
+  static readonly SOL_GIGA_3 = new Account(
+    Currency.SOL_GIGA,
+    "Solana 3",
+    "H96UPk6G9ktsVFn1bY9DXZjWFjEoayUddfuXu68S8BES",
+    AccountType.SPL,
+    2,
+    undefined,
+    undefined,
+    undefined,
+    "CbqhB9yEsubMoDXf7AANreJh3szUATQudHn3ajtdrWgm",
+  );
+
   static readonly SOL_WIF_1 = new Account(
     Currency.SOL_WIF,
     "Solana 2",
