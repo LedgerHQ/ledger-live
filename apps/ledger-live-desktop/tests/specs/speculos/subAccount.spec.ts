@@ -6,6 +6,8 @@ import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
 import { Fee } from "@ledgerhq/live-common/e2e/enum/Fee";
 import { AccountType } from "@ledgerhq/live-common/e2e/enum/AccountType";
+import { getEnv } from "@ledgerhq/live-env";
+import { TransactionStatus } from "@ledgerhq/live-common/e2e/enum/TransactionStatus";
 
 const subAccounts = [
   { account: Account.ETH_USDT_1, xrayTicket1: "B2CQA-2577, B2CQA-1079", xrayTicket2: "B2CQA-2583" },
@@ -123,6 +125,75 @@ for (const token of subAccounts) {
     );
   });
 }
+
+test.describe("Send token - E2E", () => {
+  const transaction = new Transaction(
+    Account.SOL_GIGA_1,
+    Account.SOL_GIGA_2,
+    "0.5",
+    undefined,
+    "noTag",
+  );
+  test.use({
+    userdata: "skip-onboarding",
+    speculosApp: transaction.accountToDebit.currency.speculosApp,
+    cliCommands: [
+      (appjsonPath: string) => {
+        return CLI.liveData({
+          currency: transaction.accountToCredit.currency.currencyId,
+          index: transaction.accountToCredit.index,
+          add: true,
+          appjson: appjsonPath,
+        });
+      },
+      (appjsonPath: string) => {
+        return CLI.liveData({
+          currency: transaction.accountToDebit.currency.currencyId,
+          index: transaction.accountToDebit.index,
+          add: true,
+          appjson: appjsonPath,
+        });
+      },
+    ],
+  });
+
+  test(
+    `Send from ${transaction.accountToDebit.accountName} to ${transaction.accountToCredit.accountName} - ${transaction.accountToDebit.currency.name} - E2E test`,
+    {
+      annotation: {
+        type: "TMS",
+        description: "B2CQA-3055, B2CQA-3057",
+      },
+    },
+    async ({ app }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
+      await app.layout.goToAccounts();
+      await app.accounts.navigateToAccountByName(transaction.accountToDebit.accountName);
+      await app.account.navigateToTokenInAccount(transaction.accountToDebit);
+      await app.account.clickSend();
+      await app.send.craftTx(transaction);
+      await app.send.continueAmountModal();
+      await app.send.expectTxInfoValidity(transaction);
+      await app.send.clickContinueToDevice();
+
+      await app.speculos.signSendTransaction(transaction);
+      await app.send.expectTxSent();
+      await app.account.navigateToViewDetails();
+      await app.sendDrawer.addressValueIsVisible(transaction.accountToCredit.address);
+      await app.drawer.closeDrawer();
+      if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
+        await app.layout.goToAccounts();
+        await app.accounts.clickSyncBtnForAccount(transaction.accountToCredit.accountName);
+        await app.accounts.navigateToAccountByName(transaction.accountToCredit.accountName);
+        await app.account.navigateToTokenInAccount(transaction.accountToDebit);
+        //checker ici le graph qui monte quand j'envoie des fonds
+        await app.account.selectAndClickOnLastOperation(TransactionStatus.RECEIVED);
+        await app.sendDrawer.expectReceiverInfos(transaction);
+      }
+    },
+  );
+});
 
 const transactionsAddressInvalid = [
   {
