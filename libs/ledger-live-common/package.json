@@ -211,7 +211,7 @@
     "@xstate/react": "^1.6.3",
     "@zondax/ledger-casper": "^2.6.1",
     "@zondax/ledger-cosmos-js": "3.0.3",
-    "@zondax/ledger-filecoin": "^0.11.2",
+    "@zondax/ledger-filecoin": "^2.0.2",
     "@zondax/ledger-icp": "^0.7.0",
     "@zondax/ledger-stacks": "^1.0.2",
     "async": "^3.2.3",
