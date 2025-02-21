@@ -80,7 +80,7 @@ export const HiddenNftCollectionRow = ({
           <StyledFlex alignItems="center" onClick={onCopy}>
             <Flex alignItems="center" mr={2}>
               <Text ff="Inter|Medium" fontSize={3} mr={2}>
-                {splitAddress(contractAddress, 8)}
+                {contractAddress}
               </Text>
               <CryptoCurrencyIcon currency={getCryptoCurrencyById(network)} size={12} />
             </Flex>

@@ -1,5 +1,5 @@
 import { Operation, AccountLike, Account } from "@ledgerhq/types-live";
-import { useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
@@ -37,10 +37,9 @@ export function useOperationsList({
   account,
   parentAccount,
   accounts,
-  withSubAccounts, // TODO: check if we need to display sub accounts operations
+  withSubAccounts,
   filterOperation, // TODO: see if we need to filter operations
 }: Props) {
-  console.log("******************** useOperationsList ********************");
   const spamFilteringTxFeature = useFeature("lldSpamFilteringTx");
   const nftsFromSimplehashFeature = useFeature("nftsFromSimplehash");
   const thresold = Number(nftsFromSimplehashFeature?.params?.threshold) || 40;
@@ -85,7 +84,11 @@ export function useOperationsList({
   // to avoid multiple state rendering, we store the previous filtered data in an indexed ref object
   const previousFilteredNftData = useRef({});
 
-  const { data: filteredNftData } = useFilterNftSpams(thresold, relatedNFtOps, currentPageNFTIN);
+  const { filteredOps: filteredNftData, spamOps } = useFilterNftSpams(
+    thresold,
+    relatedNFtOps,
+    currentPageNFTIN,
+  );
 
   previousFilteredNftData.current = {
     ...previousFilteredNftData.current,
@@ -97,6 +100,15 @@ export function useOperationsList({
     currentPageOpsWithoutNFTIN,
     nbToShow,
   );
+
+  useEffect(() => {
+    console.log(">>> ", spamOps);
+
+    spamOps.forEach(op => {
+      // FIXME: typing issue
+      markNftAsSpam(op.collectionId, op.currencyId, op.spamScore);
+    });
+  }, [spamOps, markNftAsSpam]);
 
   const hasMore = nbToShow <= groupedOperations.length;
 

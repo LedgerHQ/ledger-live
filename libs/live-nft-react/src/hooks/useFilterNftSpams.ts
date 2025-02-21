@@ -10,14 +10,19 @@
  * @remarks
  * This hook retrieves NFT metadata, builds a metadata map with spam scores, and filters out NFT operations that exceed the spam score threshold.
  */
-import { NFTOperations } from "@ledgerhq/live-nft/types";
 import { Operation } from "@ledgerhq/types-live";
 
 import { useNftCollectionMetadataBatch } from "../NftMetadataProvider";
 
+type NftOp = {
+  contract: string;
+  currencyId: string;
+  operation: Operation;
+};
+
 export function useFilterNftSpams(
   threshold: number,
-  nftOperations: NFTOperations,
+  nftOperations: Record<string, NftOp>,
   currentNftPageOps: Operation[],
 ) {
   // get NFT metadata
@@ -29,12 +34,22 @@ export function useFilterNftSpams(
 
   const isFetching = !metadatas.every(meta => meta.status === "loaded");
 
+  const spamOps = Object.values(nftOperations)
+    .filter((nftOp: NftOp) => {
+      return (metadataMap.get(nftOp.contract?.toLowerCase()) ?? 0) > threshold;
+    })
+    .map(nftOp => ({
+      ...nftOp,
+      spamScore: metadataMap.get(nftOp.contract?.toLowerCase()) ?? 0,
+      collectionId: `${nftOp.operation.accountId}|${nftOp.contract}`,
+    }));
+
   // filter forbidden NFT operations
-  const data = isFetching
+  const filteredOps = isFetching
     ? []
     : currentNftPageOps.filter(
         op => (metadataMap.get(op.contract?.toLowerCase()) ?? 0) <= threshold,
       );
 
-  return { data };
+  return { filteredOps, spamOps };
 }
