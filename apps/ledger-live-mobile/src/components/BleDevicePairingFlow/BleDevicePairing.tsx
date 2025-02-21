@@ -16,6 +16,7 @@ import { BleDevicePairingProgress } from "./BleDevicePairingContent/BleDevicePai
 export type BleDevicePairingProps = {
   onPaired: (device: Device) => void;
   onRetry: () => void;
+  onOpenHelp: () => void;
   deviceToPair: Device;
 };
 
@@ -29,7 +30,12 @@ export type BleDevicePairingProps = {
  * @param onPaired Function called when pairing was successful
  * @param onRetry Function called when the user chooses to retry on unsuccessful pairing
  */
-const BleDevicePairing = ({ deviceToPair, onPaired, onRetry }: BleDevicePairingProps) => {
+const BleDevicePairing = ({
+  deviceToPair,
+  onPaired,
+  onRetry,
+  onOpenHelp,
+}: BleDevicePairingProps) => {
   const [deviceLocked, setDeviceLocked] = useState<Device | null>(null);
 
   const productName = getDeviceModel(deviceToPair.modelId).productName || deviceToPair.modelId;
@@ -46,10 +52,6 @@ const BleDevicePairing = ({ deviceToPair, onPaired, onRetry }: BleDevicePairingP
 
     setDeviceLocked(null);
   }, [deviceToPair, pairingError]);
-
-  const onOpenHelp = useCallback(() => {
-    Linking.openURL(urls.errors.PairingFailed);
-  }, []);
 
   useEffect(() => {
     if (isPaired) {
