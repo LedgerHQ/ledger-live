@@ -3,6 +3,7 @@
     "buyCTA": "Buy {{ currencyNameOrTicker }}"
   },
   "common": {
+    "whatIsYourName": "What is your name",
     "cancel": "Cancel",
     "apply": "Apply",
     "seeAll": "See all",
