@@ -120,6 +120,7 @@
     "addressCopiedSuspicious" : "Incompatibilidade entre o endereço copiado e o que está na área de transferência.",
     "experimentalFeature" : "Experimental",
     "featureFlags" : "Marcadores de funções",
+    "ldmkEnabled" : "Transporte LDMK",
     "information" : "Informações",
     "search" : "Pesquisar...",
     "searchWithoutEllipsis" : "Pesquisar",
@@ -448,8 +449,14 @@
       "ton_description" : "Para trocar Ton, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
       "spl_tokens_title" : "A Ledger Nano S™ não é compatível com a troca de tokens Solana",
       "spl_tokens_description" : "Para trocar tokens Solana, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+      "near_title" : "A Ledger Nano S™ não é compatível com trocas de Near",
+      "near_description" : "Para trocar o ativo Near, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
       "ada_title" : "A Ledger Nano S™ não é compatível com a troca de Cardano",
-      "ada_description" : "Para trocar Cardano, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™."
+      "ada_description" : "Para trocar Cardano, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+      "apt_title" : "A Ledger Nano S™ não suporta trocas de APTOS",
+      "apt_description" : "Para trocar o ativo APTOS, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+      "cosmos_title" : "A Ledger Nano S™ não é compatível com a troca de Cosmos",
+      "cosmos_description" : "Para trocar Cosmos, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™."
     },
     "providers" : {
       "title" : "Escolha um provedor para trocar cripto",
@@ -4127,7 +4134,8 @@
       "walletSync" : "Ledger Sync",
       "walletSyncDesc" : "Sincronize suas contas cripto em diferentes smartphones e computadores.",
       "mevProtection" : "Proteção MEV",
-      "mevProtectionDesc" : "Habilite a proteção MEV para transações mais confiáveis na Ethereum",
+      "mevProtectionDesc" : "Habilite a proteção MEV para realizar transações na Ethereum com mais confiança.",
+      "mevProtectionLearnMore" : "Declaração de privacidade",
       "marketPerformanceWidget" : "Widget Desempenho do Mercado",
       "marketPerformanceWidgetDesc" : "Ative esse recurso para visualizar as principais altas e baixas em períodos selecionados na página Portfólio."
     },
@@ -5914,11 +5922,11 @@
     },
     "WrongDeviceForAccountPayout" : {
       "title" : "Algo deu errado",
-      "description" : "Essa conta de recebimento não pertence ao seu dispositivo. Mude e tente novamente."
+      "description" : "Esta conta de recebimento não pertence ao dispositivo que você conectou. Mude e tente novamente"
     },
     "WrongDeviceForAccountRefund" : {
       "title" : "Algo deu errado",
-      "description" : "Essa conta de recebimento não pertence ao seu dispositivo. Mude e tente novamente."
+      "description" : "Esta conta de envio não pertence ao dispositivo que você conectou. Mude e tente novamente"
     },
     "DeviceAppVerifyNotSupported" : {
       "title" : "Atualização de aplicativo necessária",
@@ -6222,6 +6230,9 @@
     },
     "SolanaTokenAccounNotInitialized" : {
       "title" : "Conta não inicializada"
+    },
+    "SolanaTokenRecipientIsSenderATA" : {
+      "title" : "O endereço do destinatário é o mesmo que o endereço do remetente do token"
     },
     "SolanaMemoIsTooLong" : {
       "title" : "O memo é muito longo. O comprimento máximo é {{maxLength}}"
