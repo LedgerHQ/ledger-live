@@ -2,7 +2,7 @@ import { CLI } from "../../../utils/cliUtils";
 import { Application } from "../../../page";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 
-export async function runVerifyAddressTest(account: Account, tmsLink: string) {
+export async function runVerifyAddressTest(account: Account, tmsLinks: string[]) {
   const app = new Application();
 
   describe("Verify Address", () => {
@@ -23,7 +23,7 @@ export async function runVerifyAddressTest(account: Account, tmsLink: string) {
       await app.portfolio.waitForPortfolioPageToLoad();
     });
 
-    $TmsLink(tmsLink);
+    tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     it(`Verify address on ${account.currency.name}`, async () => {
       await app.accounts.openViaDeeplink();
       await app.common.goToAccountByName(account.accountName);

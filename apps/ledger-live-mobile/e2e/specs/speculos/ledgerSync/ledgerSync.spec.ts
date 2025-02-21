@@ -7,7 +7,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import { getFlags } from "../../../bridge/server";
 
 const app = new Application();
-const tmsLink = "B2CQA-2292, B2CQA-2293, B2CQA-2296";
+const tmsLinks = ["B2CQA-2292", "B2CQA-2293", "B2CQA-2296"];
 
 let cloudSyncApiBaseUrl = "";
 const ledgerKeyRingProtocolArgs = {
@@ -88,7 +88,7 @@ describe(`Ledger Sync Accounts`, () => {
     await app.settingsGeneral.navigateToLedgerSync();
   }
 
-  $TmsLink(tmsLink);
+  tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   it(`Synchronize one instance then delete the backup`, async () => {
     await app.accounts.openViaDeeplink();
     await app.accounts.expectAccountsNumber(0);
