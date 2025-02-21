@@ -4134,7 +4134,8 @@
       "walletSync" : "Ledger Sync",
       "walletSyncDesc" : "在不同的手机和电脑上同步您的 Ledger Live 加密货币账户。",
       "mevProtection" : "MEV 保护",
-      "mevProtectionDesc" : "启用 MEV 保护，确保以太坊上的交易更加可靠",
+      "mevProtectionDesc" : "启用 MEV Protection，确保以太坊上的交易更加可靠。",
+      "mevProtectionLearnMore" : "隐私声明",
       "marketPerformanceWidget" : "市场表现小组件",
       "marketPerformanceWidgetDesc" : "启用此功能可在资产组合页面上查看指定时间范围内获利最多和亏损最多的资产。"
     },
@@ -5921,11 +5922,11 @@
     },
     "WrongDeviceForAccountPayout" : {
       "title" : "出错了",
-      "description" : "此接收账户不属于您的设备。请更改并重试。"
+      "description" : "此接收账户不属于您已连接的设备。请更改并重试"
     },
     "WrongDeviceForAccountRefund" : {
       "title" : "出错了",
-      "description" : "此接收账户不属于您用于退款的设备。请更改并重试。"
+      "description" : "此发送账户不属于您已连接的设备。请更改并重试"
     },
     "DeviceAppVerifyNotSupported" : {
       "title" : "需要更新应用程序",
@@ -6889,6 +6890,58 @@
       "confirm" : "确认",
       "address" : "地址",
       "transactionId" : "交易 ID"
+    }
+  },
+  "lnsUpsell" : {
+    "banner" : {
+      "manager" : {
+        "optIn" : {
+          "title" : "现在就是升级的好时机",
+          "description" : "升级到我们的最新设备，立享 <0>{{discount}}% 折扣优惠</0>，加强安全保护，享受顺畅体验。",
+          "cta" : "升级我的钱包",
+          "linkText" : "了解更多"
+        },
+        "optOut" : {
+          "title" : "现在就是升级的好时机",
+          "description" : "升级到我们的最新设备，立享 <0>{{discount}}% 折扣优惠</0>，加强安全保护，享受顺畅体验。",
+          "cta" : "升级我的钱包",
+          "linkText" : "了解更多"
+        }
+      },
+      "accounts" : {
+        "optIn" : {
+          "title" : "现在就是升级的好时机",
+          "description" : "Ledger Nano S 更新活动即将结束。升级到我们的最新设备，立享 <0>{{discount}}% 折扣优惠</0>。",
+          "cta" : "升级我的钱包",
+          "linkText" : "了解更多"
+        },
+        "optOut" : {
+          "title" : "现在就是升级的好时机",
+          "description" : "Ledger Nano S 更新活动即将结束。升级到我们的最新设备，立享 <0>{{discount}}% 折扣优惠</0>。",
+          "cta" : "升级我的钱包",
+          "linkText" : "了解更多"
+        }
+      },
+      "portfolio" : {
+        "optOut" : {
+          "title" : "现在就是升级的好时机",
+          "description" : "升级到我们的最新设备，立享 <0>{{discount}}% 折扣优惠</0>，加强安全保护，享受顺畅体验。",
+          "cta" : "升级我的钱包",
+          "linkText" : "了解更多"
+        }
+      },
+      "notifications" : {
+        "optIn" : {
+          "description" : "更新活动即将结束。立即升级，享受顺畅体验，更有 {{discount}}% 折扣优惠。",
+          "cta" : "升级我的钱包",
+          "linkText" : "了解更多"
+        },
+        "optOut" : {
+          "description" : "更新活动即将结束。立即升级，享受顺畅体验，更有 {{discount}}% 折扣优惠。",
+          "cta" : "升级我的钱包",
+          "linkText" : "了解更多"
+        }
+      }
     }
   }
 }
