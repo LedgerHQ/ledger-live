@@ -809,6 +809,12 @@
     "SolanaTokenAccountFrozen" : {
       "title" : "Os ativos da conta de token estão congelados"
     },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "Conta não inicializada"
+    },
+    "SolanaTokenRecipientIsSenderATA" : {
+      "title" : "O endereço do destinatário é o mesmo que o endereço do remetente do token"
+    },
     "SolanaAddressOfEd25519" : {
       "title" : "Endereço fora da curva ed25519"
     },
@@ -2903,7 +2909,8 @@
       "analytics" : "Métricas",
       "analyticsDesc" : "Permitir que a Ledger colete dados de uso do aplicativo para ajudar a medir o desempenho do Ledger Live e aprimorar o aplicativo e a sua experiência.",
       "mevProtection" : "Proteção MEV",
-      "mevProtectionDesc" : "Habilite a proteção MEV para transações mais confiáveis na Ethereum",
+      "mevProtectionDesc" : "Habilite a proteção MEV para realizar transações na Ethereum com mais confiança.",
+      "mevProtectionLearnMore" : "Declaração de privacidade",
       "personalizedRecommendations" : "Experiência personalizada",
       "personalizedRecommendationsDesc" : "Permitir que a Ledger colete dados de uso do aplicativo para fornecer recomendações e conteúdo personalizados que correspondam às suas preferências e para ajudar a medir o desempenho de nossas campanhas de marketing.",
       "analyticsModal" : {
@@ -3351,7 +3358,7 @@
       },
       "form" : {
         "validate" : "Confirmar transação de troca",
-        "tab" : "Negociar",
+        "tab" : "Trocar",
         "button" : "Continuar",
         "from" : "De",
         "to" : "Para",
@@ -3460,8 +3467,8 @@
           "receive" : "Receber"
         },
         "placeholder" : "Selecionar",
-        "title" : "Negociar",
-        "cta" : "Negociar",
+        "title" : "Trocar",
+        "cta" : "Trocar",
         "from" : "De",
         "to" : "Para",
         "loading" : "Carregando...",
@@ -3512,7 +3519,9 @@
         "ada_title" : "A Ledger Nano S™ não é compatível com a troca de Cardano",
         "ada_description" : "Para trocar Cardano, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
         "apt_title" : "A Ledger Nano S™ não suporta trocas de APTOS",
-        "apt_description" : "Para trocar o ativo APTOS, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™."
+        "apt_description" : "Para trocar o ativo APTOS, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+        "cosmos_title" : "A Ledger Nano S™ não é compatível com a troca de Cosmos",
+        "cosmos_description" : "Para trocar Cosmos, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™."
       }
     },
     "lending" : {
@@ -4086,6 +4095,7 @@
       "ctaStopScan" : "Interromper varredura",
       "confirm" : "Confirmar",
       "scanningTitle" : "Procurando por contas existentes na blockchain...",
+      "whichAddressType" : "Aprenda a escolher um tipo de endereço",
       "sections" : {
         "importable" : {
           "title" : "Encontramos {{count}} conta",
@@ -6982,6 +6992,16 @@
   },
   "walletSync" : {
     "title" : "Ledger Sync",
+    "entryPoints" : {
+      "simpleCta" : {
+        "title" : "Ativar o Ledger Sync"
+      },
+      "card" : {
+        "title" : "Ledger Sync",
+        "description" : "Sincronize suas contas automaticamente, mesmo ao mudar para um novo telefone.",
+        "cta" : "Ativar o Ledger Sync"
+      }
+    },
     "activation" : {
       "screen" : {
         "title" : "Ativar o Ledger Sync para esse telefone?",
@@ -7219,6 +7239,14 @@
       "title" : "Selecione a rede blockchain à qual o ativo pertence",
       "detectedAccounts" : "{{count}} conta (detectada)",
       "detectedAccounts_plural" : "{{count}} contas (detectadas)"
+    }
+  },
+  "emptyList" : {
+    "accounts" : {
+      "title" : "Nenhuma conta encontrada",
+      "subTitle" : "Parece que você ainda não adicionou uma conta. Começar agora.",
+      "cta" : "Adicionar uma conta",
+      "link" : "Precisa de ajuda? Aprenda a criar uma conta no Ledger Live."
     }
   }
 }
