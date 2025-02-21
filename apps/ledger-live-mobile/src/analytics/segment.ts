@@ -16,7 +16,13 @@ import {
 } from "@react-navigation/native";
 import snakeCase from "lodash/snakeCase";
 import React, { MutableRefObject, useCallback } from "react";
-import { ABTestingVariants, FeatureId, Features, idsToLanguage } from "@ledgerhq/types-live";
+import {
+  ABTestingVariants,
+  Account,
+  FeatureId,
+  Features,
+  idsToLanguage,
+} from "@ledgerhq/types-live";
 import {
   hasNftInAccounts,
   GENESIS_PASS_COLLECTION_CONTRACT,
@@ -56,6 +62,7 @@ import { Maybe } from "../types/helpers";
 import { appStartupTime } from "../StartupTimeMarker";
 import { aggregateData, getUniqueModelIdList } from "../logic/modelIdList";
 import { getEnv } from "@ledgerhq/live-env";
+import { getParentAccount } from "@ledgerhq/coin-framework/lib/account/helpers";
 
 let sessionId = uuid();
 const appVersion = `${VersionNumber.appVersion || ""} (${VersionNumber.buildVersion || ""})`;
@@ -152,6 +159,49 @@ const getNewAddAccountsAttribues = () => {
   };
 };
 
+// This won't work with mocked accounts because they are considered as having fund even if in LLM it's displayed as 0
+const getTokensWithFunds = (accounts: Account[]): string[] => {
+  if (!accounts?.length) return [];
+
+  const uniqueTokens = new Set<string>();
+  const tokens: { ticker: string; name: string }[] = [];
+
+  for (const account of accounts) {
+    if (!account?.balance.isGreaterThan(0)) continue;
+    if (!account.currency) continue;
+
+    const parentAccount = getParentAccount(account, accounts);
+    if (!parentAccount?.currency?.name) continue;
+
+    tokens.push({
+      ticker: account.currency.ticker,
+      name: parentAccount.currency.name,
+    });
+
+    if (account.subAccounts?.length) {
+      for (const subAccount of account.subAccounts) {
+        if (!subAccount?.balance.isGreaterThan(0) || !subAccount.token) continue;
+
+        tokens.push({
+          ticker: subAccount.token.ticker,
+          name: parentAccount.currency.name,
+        });
+      }
+    }
+  }
+
+  const tokenWithFunds = tokens
+    .filter(token => {
+      const key = `${token.ticker}:${token.name}`;
+      if (uniqueTokens.has(key)) return false;
+      uniqueTokens.add(key);
+      return true;
+    })
+    .map(token => `${token.ticker} on ${token.name}`);
+
+  return tokenWithFunds;
+};
+
 const getMandatoryProperties = async (store: AppStore) => {
   const state: State = store.getState();
   const { user } = await getOrCreateUser();
@@ -217,6 +267,7 @@ const extraProperties = async (store: AppStore) => {
         ),
       ]
     : [];
+
   const blockchainsWithNftsOwned = accounts
     ? [
         ...new Set(
@@ -237,6 +288,7 @@ const extraProperties = async (store: AppStore) => {
   const rebornAttributes = getRebornAttributes();
   const mevProtectionAttributes = getMEVAttributes(state);
   const addAccountsAttributes = getNewAddAccountsAttribues();
+  const tokenWithFunds = getTokensWithFunds(accounts);
 
   // NOTE: Currently there no reliable way to uniquely identify devices from DeviceModelInfo.
   // So device counts is approximated as follows:
@@ -285,6 +337,7 @@ const extraProperties = async (store: AppStore) => {
     ...rebornAttributes,
     ...mevProtectionAttributes,
     ...addAccountsAttributes,
+    tokenWithFunds,
   };
 };
 
