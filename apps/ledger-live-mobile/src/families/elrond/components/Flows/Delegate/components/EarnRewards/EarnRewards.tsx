@@ -96,7 +96,7 @@ const EarnRewards = (props: EarnRewardsPropsType) => {
       <View style={styles.footer}>
         <Alert type="help" title={t("elrond.delegation.flow.steps.starter.warning.description")} />
 
-        <Button onPress={onNext} type="main" mt={6}>
+        <Button onPress={onNext} type="main" mt={6} testID="multiversx-delegation-start-button">
           <Trans i18nKey="elrond.delegation.flow.steps.starter.cta" />
         </Button>
       </View>

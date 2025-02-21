@@ -262,7 +262,7 @@ export const specs: Specs = {
     },
     dependency: "",
   },
-  Multiverse_X: {
+  Multivers_X: {
     currency: getCryptoCurrencyById("elrond"),
     appQuery: {
       model: DeviceModelId.nanoSP,
