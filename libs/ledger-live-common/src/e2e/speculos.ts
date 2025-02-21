@@ -371,10 +371,10 @@ export async function startSpeculos(
   }
 }
 
-export async function stopSpeculos(device: Device | undefined) {
-  if (device) {
-    log("engine", `test ${device.id} finished`);
-    await releaseSpeculosDevice(device.id);
+export async function stopSpeculos(deviceId: string | undefined) {
+  if (deviceId) {
+    log("engine", `test ${deviceId} finished`);
+    await releaseSpeculosDevice(deviceId);
   }
 }
 

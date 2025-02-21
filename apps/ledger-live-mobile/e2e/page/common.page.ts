@@ -112,7 +112,7 @@ export default class CommonPage {
 
   async addSpeculos(nanoApp: string, speculosAddress = "localhost") {
     const proxyPort = await bridge.findFreePort();
-    const speculosPort = await launchSpeculos(nanoApp, proxyPort);
+    const speculosPort = await launchSpeculos(nanoApp);
     await launchProxy(proxyPort, speculosAddress, speculosPort);
     await bridge.addKnownSpeculos(`${proxyAddress}:${proxyPort}`);
     return proxyPort;
