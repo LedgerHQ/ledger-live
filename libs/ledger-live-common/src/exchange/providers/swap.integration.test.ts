@@ -124,8 +124,8 @@ describe("fetchAndMergeProviderData", () => {
       lifi: {
         type: "CEX",
         displayName: "LI.FI",
-        name: "lifi",
-        needsBearerToken: false,
+        name: "LI.FI",
+        useInExchangeApp: true,
         termsOfUseUrl: "https://li.fi/legal/terms-and-conditions/",
         supportUrl: "https://discord.gg/jumperexchange",
         mainUrl: "https://li.fi/",
