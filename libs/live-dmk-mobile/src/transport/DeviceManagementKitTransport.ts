@@ -7,7 +7,7 @@ import {
 } from "@ledgerhq/device-management-kit";
 import { activeDeviceSessionSubject } from "@ledgerhq/live-dmk-shared";
 import { LocalTracer } from "@ledgerhq/logs";
-import { firstValueFrom } from "rxjs";
+import { catchError, firstValueFrom, of, switchMap } from "rxjs";
 import { deviceManagementKit } from "../hooks/useDeviceManagementKit";
 
 const tracer = new LocalTracer("live-dmk", { function: "DeviceManagementKitTransport" });
@@ -27,13 +27,15 @@ export class DeviceManagementKitTransport extends Transport {
   static async open(deviceOrId: DiscoveredDevice | string): Promise<DeviceManagementKitTransport> {
     const activeSessionId = activeDeviceSessionSubject.value?.sessionId;
 
-    console.log("CALLING OPEN WITH SESSION ID: ", activeSessionId, " AND DEVICE: ", deviceOrId);
+    tracer.trace("[open] activeSessionId: " + activeSessionId + " and deviceId: " + deviceOrId);
+
     if (activeSessionId) {
       tracer.trace(`[open] checking existing session ${activeSessionId}`);
+
       const deviceSessionState: DeviceSessionState | null = await firstValueFrom(
         deviceManagementKit.getDeviceSessionState({ sessionId: activeSessionId }),
       ).catch(e => {
-        console.error("[SDKTransport][open] error getting device session state", e);
+        tracer.trace("[SDKTransport][open] error getting device session state", e);
         return null;
       });
 
@@ -41,37 +43,56 @@ export class DeviceManagementKitTransport extends Transport {
         deviceSessionState?.deviceStatus !== DeviceStatus.NOT_CONNECTED &&
         activeDeviceSessionSubject.value?.transport
       ) {
-        tracer.trace("[open] reusing existing session and instantiating a new SdkTransport");
+        tracer.trace("[open] reusing existing session and instantiating a new DmkTransport");
         return activeDeviceSessionSubject.value.transport;
       }
-    } else if (typeof deviceOrId === "string") {
-      const devicesObs = deviceManagementKit.listenToAvailableDevices();
-      const subscription = devicesObs.subscribe({
-        next: devices => {
-          if (devices.some(device => device.id === deviceOrId)) {
-            const [discoveredDevice] = devices.filter(device => device.id === deviceOrId);
-            tracer.trace(`[open] device found ${discoveredDevice.id}`);
-            subscription.unsubscribe();
-            deviceManagementKit.stopDiscovering();
-          }
-        },
-        complete: () => {
-          deviceManagementKit.stopDiscovering();
-        },
-        error: () => {
-          deviceManagementKit.stopDiscovering();
-          subscription.unsubscribe();
-        },
-      });
     }
 
-    // @ts-expect-error here device is not a string
-    const sessionId = await deviceManagementKit.connect({ device: deviceOrId });
+    if (typeof deviceOrId === "string") {
+      const devicesObs = deviceManagementKit.listenToAvailableDevices();
+      tracer.trace("[open] listen to available devices");
 
-    const transport = new DeviceManagementKitTransport(deviceManagementKit, sessionId);
-    activeDeviceSessionSubject.next({ sessionId, transport });
+      const subscription = devicesObs.pipe(
+        switchMap(async devices => {
+          const found = devices.find(device => device.id === deviceOrId);
+          if (!found) {
+            tracer.trace("[open] device not found in available devices");
+            return undefined;
+          }
 
-    return transport;
+          tracer.trace(`[open] device found ${found.id}`);
+
+          const sessionId = await deviceManagementKit.connect({ device: found });
+          const transport = new DeviceManagementKitTransport(deviceManagementKit, sessionId);
+
+          activeDeviceSessionSubject.next({ sessionId, transport });
+          deviceManagementKit.stopDiscovering();
+
+          return transport;
+        }),
+        catchError(error => {
+          console.error("[open] error", error);
+          deviceManagementKit.stopDiscovering();
+          return of(undefined);
+        }),
+      );
+
+      const transport = await firstValueFrom(subscription);
+
+      if (transport) {
+        return transport;
+      }
+    } else {
+      const sessionId = await deviceManagementKit.connect({ device: deviceOrId });
+      const transport = new DeviceManagementKitTransport(deviceManagementKit, sessionId);
+      activeDeviceSessionSubject.next({ sessionId, transport });
+
+      return transport;
+    }
+
+    // TODO: Handle this case
+    tracer.trace("[open] no transport found");
+    throw new Error("No transport found");
   }
 
   static listen() {
@@ -85,14 +106,14 @@ export class DeviceManagementKitTransport extends Transport {
 
   listenToDisconnect = () => {
     const subscription = this.dmk.getDeviceSessionState({ sessionId: this.sessionId }).subscribe({
-      next: (state: { deviceStatus: any }) => {
+      next: (state: { deviceStatus: DeviceStatus }) => {
         if (state.deviceStatus === DeviceStatus.NOT_CONNECTED) {
           this.tracer.trace("[listenToDisconnect] Device disconnected, closing transport");
           activeDeviceSessionSubject.next(null);
           this.emit("disconnect");
         }
       },
-      error: (error: any) => {
+      error: (error: unknown) => {
         console.error("[listenToDisconnect] error", error);
         this.emit("disconnect");
         subscription.unsubscribe();
