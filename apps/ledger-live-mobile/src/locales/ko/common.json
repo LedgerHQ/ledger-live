@@ -809,6 +809,12 @@
     "SolanaTokenAccountFrozen" : {
       "title" : "토큰 계정 자산이 동결되었습니다"
     },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "계정이 초기화되지 않았습니다"
+    },
+    "SolanaTokenRecipientIsSenderATA" : {
+      "title" : "수령인 주소는 송신자 토큰 주소와 동일합니다"
+    },
     "SolanaAddressOfEd25519" : {
       "title" : "주소 끄기 ed25519 곡선"
     },
@@ -2904,6 +2910,7 @@
       "analyticsDesc" : "Ledger를 활성화하면 앱 사용 데이터를 수집하여 Ledger Live의 성능을 측정하고 앱과 사용자 경험을 모두를 향상시키는 데 도움이 됩니다.",
       "mevProtection" : "MEV 보호",
       "mevProtectionDesc" : "MEV 보호 기능을 활성화하여 이더리움을 보다 안정적으로 거래하세요",
+      "mevProtectionLearnMore" : "개인정보 관련 고지",
       "personalizedRecommendations" : "맞춤화된 경험",
       "personalizedRecommendationsDesc" : "Ledger를 활성화하면 앱 사용 데이터를 수집하여 사용자 선호도에 맞는 맞춤형 추천 및 콘텐츠를 제공하고 마케팅 캠페인 성과를 측정하는 데 도움이 됩니다.",
       "analyticsModal" : {
@@ -3351,7 +3358,7 @@
       },
       "form" : {
         "validate" : "스왑 트랜잭션을 검증하세요",
-        "tab" : "교환",
+        "tab" : "스왑",
         "button" : "계속",
         "from" : "수신",
         "to" : "발신",
@@ -3460,8 +3467,8 @@
           "receive" : "수령"
         },
         "placeholder" : "선택",
-        "title" : "교환",
-        "cta" : "교환",
+        "title" : "스왑",
+        "cta" : "스왑",
         "from" : "수신",
         "to" : "발신",
         "loading" : "로딩...",
@@ -3512,7 +3519,9 @@
         "ada_title" : "Ledger Nano S™는 카르다노 스왑을 지원하지 않습니다.",
         "ada_description" : "카르다노를 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요.",
         "apt_title" : "Ledger Nano S™는 Aptos 스왑을 지원하지 않습니다.",
-        "apt_description" : "Aptos 스왑 거래를 실행하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 Ledger 장치를 사용하세요."
+        "apt_description" : "Aptos 스왑 거래를 실행하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 Ledger 장치를 사용하세요.",
+        "cosmos_title" : "Ledger Nano S™는 Cosmos 스왑을 지원하지 않습니다.",
+        "cosmos_description" : "Cosmos 스왑 거래를 실행하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 Ledger 장치를 사용하세요."
       }
     },
     "lending" : {
@@ -4018,7 +4027,7 @@
       "desc" : "계정 추가를 취소할까요?",
       "v2" : {
         "title" : "계정 추가를 취소하시겠습니까?",
-        "desc" : "취소하면 어떤 계정도 Ledger Live에 추가되지 않습니다."
+        "desc" : "어떤 계정도 Ledger Live에 추가되지 않습니다."
       }
     },
     "imported" : "자산이 성공적으로 추가되었습니다",
@@ -4086,6 +4095,7 @@
       "ctaStopScan" : "스캔 중단",
       "confirm" : "확인",
       "scanningTitle" : "블록체인에 있는 기존 계정을 찾고 있습니다...",
+      "whichAddressType" : "주소 유형 선택 방법 알아보기",
       "sections" : {
         "importable" : {
           "title" : "{{count}}개의 계정을 찾았습니다",
@@ -7219,6 +7229,14 @@
       "title" : "자산이 속한 블록체인 네트워크를 선택하세요",
       "detectedAccounts" : "{{count}}개의 계정이 (감지됨)",
       "detectedAccounts_plural" : "{{count}}개의 계정이 (감지됨)"
+    }
+  },
+  "emptyList" : {
+    "accounts" : {
+      "title" : "발견된 계정이 없습니다",
+      "subTitle" : "계정을 추가하지 않은 것으로 보입니다. 지금 시작해보세요.",
+      "cta" : "계정 추가",
+      "link" : "도움이 필요하신가요? Ledger Live에 계정을 추가하는 방법을 알아보세요."
     }
   }
 }

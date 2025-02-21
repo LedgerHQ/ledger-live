@@ -809,6 +809,12 @@
     "SolanaTokenAccountFrozen" : {
       "title" : "Los activos de la cuenta de tokens están inmovilizados"
     },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "Cuenta no inicializada"
+    },
+    "SolanaTokenRecipientIsSenderATA" : {
+      "title" : "La dirección del receptor es la misma que la dirección del emisor del token"
+    },
     "SolanaAddressOfEd25519" : {
       "title" : "Dirección fuera de la curva ed25519"
     },
@@ -2903,7 +2909,8 @@
       "analytics" : "Análisis",
       "analyticsDesc" : "Permite que Ledger recopile los datos de uso de la aplicación para ayudarnos a medir el rendimiento de Ledger Live y mejorar tanto la aplicación como tu experiencia.",
       "mevProtection" : "Protección contra MEV",
-      "mevProtectionDesc" : "Activa Protección contra MEV para lograr transacciones más fiables en Ethereum",
+      "mevProtectionDesc" : "Activa la Protección contra MEV para lograr transacciones más fiables en Ethereum.",
+      "mevProtectionLearnMore" : "Aviso de privacidad",
       "personalizedRecommendations" : "Experiencia personalizada",
       "personalizedRecommendationsDesc" : "Permite que la aplicación de Ledger recopile los datos de uso de la aplicación para ofrecerte recomendaciones y contenido personalizados que se ajusten a tus preferencias y para ayudarnos a medir el rendimiento de nuestras campañas de marketing.",
       "analyticsModal" : {
@@ -3351,7 +3358,7 @@
       },
       "form" : {
         "validate" : "Confirmar transacción de permuta",
-        "tab" : "Cambia",
+        "tab" : "Permutar",
         "button" : "Continuar",
         "from" : "De",
         "to" : "A",
@@ -3460,8 +3467,8 @@
           "receive" : "Recibir"
         },
         "placeholder" : "Seleccionar",
-        "title" : "Cambia",
-        "cta" : "Cambia",
+        "title" : "Permutar",
+        "cta" : "Permutar",
         "from" : "De",
         "to" : "A",
         "loading" : "Cargando...",
@@ -3512,7 +3519,9 @@
         "ada_title" : "No es posible utilizar el Ledger Nano S™ para permutar Cardano",
         "ada_description" : "Para permutar Cardano, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
         "apt_title" : "No es posible usar el Ledger Nano S™ para permutar Aptos",
-        "apt_description" : "Para permutar Aptos, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™."
+        "apt_description" : "Para permutar Aptos, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
+        "cosmos_title" : "No es posible usar el Ledger Nano S™ para permutar Cosmos",
+        "cosmos_description" : "Para permutar Cosmos, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™."
       }
     },
     "lending" : {
@@ -4086,6 +4095,7 @@
       "ctaStopScan" : "Detener escaneo",
       "confirm" : "Confirmar",
       "scanningTitle" : "Buscando cuentas existentes en la cadena de bloques...",
+      "whichAddressType" : "Descubre cómo elegir el tipo de dirección",
       "sections" : {
         "importable" : {
           "title" : "Hemos encontrado {{count}} cuenta",
@@ -7219,6 +7229,14 @@
       "title" : "Selecciona la red de cadena de bloques a la que pertenece el activo",
       "detectedAccounts" : "{{count}} cuenta (detectada)",
       "detectedAccounts_plural" : "{{count}} cuentas (detectadas)"
+    }
+  },
+  "emptyList" : {
+    "accounts" : {
+      "title" : "No se encontraron cuentas",
+      "subTitle" : "Parece que todavía no has agregado ninguna cuenta. Es el momento de comenzar.",
+      "cta" : "Agregar una cuenta",
+      "link" : "¿Necesitas ayuda? Obtén más información sobre cómo agregar una cuenta a Ledger Live."
     }
   }
 }

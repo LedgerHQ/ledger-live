@@ -809,6 +809,12 @@
     "SolanaTokenAccountFrozen" : {
       "title" : "Token hesabı varlıkları donduruldu"
     },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "Hesap başlatılmadı"
+    },
+    "SolanaTokenRecipientIsSenderATA" : {
+      "title" : "Alıcının adresi, gönderenin token adresiyle aynı"
+    },
     "SolanaAddressOfEd25519" : {
       "title" : "Adres ed25519 eğrisi dışında"
     },
@@ -1411,7 +1417,7 @@
       "skipCTA" : "Daha sonra yapacağım"
     },
     "ongoing" : {
-      "resolving" : "Gereksinimler çözülüyor",
+      "resolving" : "Gereksinimler çözümleniyor",
       "progress" : "Uygulamalar yüklenirken Ledger Live'dan ayrılmayın.",
       "skippedInfo" : "Bazı uygulamalar mevcut değil. Henüz {{ productName }} için geliştirilmediler.",
       "skipped" : "Henüz {{ productName }} ile kullanılamıyor"
@@ -2256,7 +2262,7 @@
     "pinStep" : {
       "title" : "PIN kodu",
       "doneTitle" : "PIN kodu belirlendi",
-      "description" : "Tüm parolalar ve giriş kodları gibi PIN Kodu da {{productName}} cihazınızın kilidini açmanızı ve istenmeyen erişimleri önlemenizi sağlar.",
+      "description" : "PIN kodu, tüm parolalar ve giriş kodları gibi {{productName}} cihazınızın kilidini açmanızı ve istenmeyen erişimleri önlemenizi sağlar.",
       "continueOnDevice" : "{{productName}} cihazınızda PIN Kodunuzu belirleyin."
     },
     "seedStep" : {
@@ -2903,7 +2909,8 @@
       "analytics" : "Analiz",
       "analyticsDesc" : "Ledger Live'ın performansının ölçülebilmesi ve hem uygulamanın hem de deneyiminizin geliştirilebilmesi için uygulama kullanım verilerini Ledger'ın toplamasına izin verin.",
       "mevProtection" : "MEV Koruması",
-      "mevProtectionDesc" : "Ethereum'da daha güvenilir işlemler için MEV Korumasını etkinleştirin",
+      "mevProtectionDesc" : "Ethereum'da daha güvenilir işlemler için MEV Korumasını etkinleştirin.",
+      "mevProtectionLearnMore" : "Gizlilik bildirimi",
       "personalizedRecommendations" : "Kişiselleştirilmiş deneyim",
       "personalizedRecommendationsDesc" : "Size kişiselleştirilmiş öneriler ve tercihlerinize uygun içerikler sunabilmemiz ve pazarlama kampanyalarımızın performansını ölçebilmemiz için uygulama kullanım verilerini Ledger'ın toplamasına izin verin.",
       "analyticsModal" : {
@@ -3263,7 +3270,7 @@
         "adviceVerify" : "Adresinizi daima Ledger cihazınız ile doğrulamanızı öneririz",
         "sendWarning" : "Sadece {{network}} ağındaki token'ları gönderin. Başka bir ağdan gönderirseniz token'ları kalıcı olarak kaybedebilirsiniz.",
         "dashStakingWarning" : "Lütfen bu adresi staking ödüllerini almak için kullanmayın",
-        "bannerTitle" : "Kripto para borsalarından nasıl çekim yapabileceğinizi öğrenmek mi istiyorsunuz?"
+        "bannerTitle" : "Kripto para borsalarından çekim yapma rehberi"
       },
       "securityVerify" : {
         "title" : "Adres doğrulaması, bu işlemi güvenceye almak için çok önemlidir",
@@ -3351,7 +3358,7 @@
       },
       "form" : {
         "validate" : "Takas işlemini onayla",
-        "tab" : "Takas et",
+        "tab" : "Takas",
         "button" : "Devam",
         "from" : "Gönderici",
         "to" : "Alıcı",
@@ -3512,7 +3519,9 @@
         "ada_title" : "Ledger Nano S™, Cardano takasını desteklemez",
         "ada_description" : "Cardano takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın.",
         "apt_title" : "Ledger Nano S™, Aptos takasını desteklemez",
-        "apt_description" : "Aptos takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazı kullanın."
+        "apt_description" : "Aptos takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazı kullanın.",
+        "cosmos_title" : "Ledger Nano S™, Cosmos takasını desteklemez",
+        "cosmos_description" : "Cosmos takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazı kullanın."
       }
     },
     "lending" : {
@@ -4086,6 +4095,7 @@
       "ctaStopScan" : "Taramayı durdur",
       "confirm" : "Onayla",
       "scanningTitle" : "Blok Zincirindeki mevcut tüm hesaplar aranıyor...",
+      "whichAddressType" : "Adres türünün nasıl seçileceğini öğrenin",
       "sections" : {
         "importable" : {
           "title" : "{{count}} hesap bulundu",
@@ -6629,7 +6639,7 @@
     "commitRequested" : "Gördüğünüz şey hoşunuza gitti mi?\nO zaman böyle kalsın!",
     "confirmPicture" : "{{productName}} cihazında onaylayın",
     "landingPage" : {
-      "title" : "İstediğiniz bir dijital sanat eserini veya fotoğrafı seçin.\n{{productName}} cihazınızı özelleştirin.\nStax'iniz sizi yansıtsın.",
+      "title" : "İstediğiniz bir dijital sanat eserini veya fotoğrafı seçin.\n{{productName}} cihazınızı özelleştirin.\nCihazınız sizi yansıtsın.",
       "choosePicture" : "Bir resim seçin"
     },
     "confirmCrop" : "Kırpmayı onayla",
@@ -6824,7 +6834,7 @@
           "description" : "Herhangi bir miktarda ETH stake etmek için bir havuza katılıp ödüller alabilirsiniz."
         },
         "restaking" : {
-          "name" : "Yeniden Stake Etme",
+          "name" : "Yeniden Stake Edin",
           "description" : "Ek ödüller kazanmak için liquid token'larınızı yeniden stake edebilirsiniz."
         }
       },
@@ -7006,7 +7016,7 @@
     "success" : {
       "sync" : "Senkronizasyon başarılı",
       "syncDesc" : "Kripto hesaplarınızdaki değişiklikler artık senkronize telefonlar ve bilgisayarlardaki Ledger Live uygulamalarında otomatik olarak görüntülenecektir.",
-      "activation" : "Ledger Sync bu telefon için kapatıldı",
+      "activation" : "Ledger Sync bu telefon için açıldı",
       "syncAnother" : "Başka bir Ledger Live uygulamasıyla senkronize et",
       "close" : "Kapat"
     },
@@ -7219,6 +7229,14 @@
       "title" : "Varlığın ait olduğu blok zinciri ağını seçin",
       "detectedAccounts" : "{{count}} hesap (algılanan)",
       "detectedAccounts_plural" : "{{count}} hesap (algılanan)"
+    }
+  },
+  "emptyList" : {
+    "accounts" : {
+      "title" : "Hiçbir hesap bulunamadı",
+      "subTitle" : "Henüz bir hesap eklememişsiniz gibi görünüyor. Hemen başlayın.",
+      "cta" : "Hesap ekleyin",
+      "link" : "Yardım mı gerekli? Ledger Live'a nasıl hesap ekleyeceğinizi öğrenin."
     }
   }
 }
