@@ -7,7 +7,6 @@ import {
 } from "@ledgerhq/device-management-kit";
 import { DeviceManagementKitTransport } from "./DeviceManagementKitTransport";
 import { deviceManagementKit } from "../hooks/useDeviceManagementKit";
-// import { activeDeviceSessionSubject } from "../config/activeDeviceSession";
 
 let obs: Subject<DeviceSessionState> = new Subject<DeviceSessionState>();
 let transport: DeviceManagementKitTransport;

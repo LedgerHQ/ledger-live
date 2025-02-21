@@ -2,8 +2,7 @@ import { render, act } from "@testing-library/react";
 import { type Mock } from "vitest";
 import React from "react";
 import { of } from "rxjs";
-import { DeviceStatus } from "@ledgerhq/device-management-kit";
-import { DeviceManagementKitProvider, useDeviceManagementKit } from "./useDeviceManagementKit";
+import { DeviceManagementKit, DeviceStatus } from "@ledgerhq/device-management-kit";
 import { useDeviceSessionState } from "./useDeviceSessionState";
 
 vi.mock("@ledgerhq/device-management-kit", async importOriginal => {
@@ -31,20 +30,8 @@ vi.mock("@ledgerhq/device-management-kit", async importOriginal => {
   };
 });
 
-vi.mock("./useDeviceManagementKit", async importOriginal => {
-  const actual = await importOriginal<typeof import("./useDeviceManagementKit")>();
-  return {
-    ...actual,
-    useDeviceManagementKit: vi.fn(),
-  };
-});
-
-const Wrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <DeviceManagementKitProvider>{children}</DeviceManagementKitProvider>
-);
-
-const TestComponent: React.FC = () => {
-  const sessionState = useDeviceSessionState();
+const TestComponent: React.FC<{ dmk: DeviceManagementKit }> = ({ dmk }) => {
+  const sessionState = useDeviceSessionState(dmk);
   return (
     <div data-testid="device-status">
       {sessionState ? sessionState.deviceStatus : "No device connected"}
@@ -61,7 +48,6 @@ describe("useDeviceSessionState", () => {
     deviceManagementKitMock = {
       getDeviceSessionState: vi.fn(),
     };
-    (useDeviceManagementKit as Mock).mockReturnValue(deviceManagementKitMock);
 
     vi.spyOn(deviceManagementKitMock, "getDeviceSessionState").mockImplementation(
       ({ sessionId }: { sessionId: string }) => {
@@ -82,9 +68,7 @@ describe("useDeviceSessionState", () => {
     let result: ReturnType<typeof render> | undefined;
     await act(async () => {
       result = render(
-        <Wrapper>
-          <TestComponent />
-        </Wrapper>,
+        <TestComponent dmk={deviceManagementKitMock as unknown as DeviceManagementKit} />,
       );
     });
 
@@ -102,9 +86,7 @@ describe("useDeviceSessionState", () => {
     let result: ReturnType<typeof render> | undefined;
     await act(async () => {
       result = render(
-        <Wrapper>
-          <TestComponent />
-        </Wrapper>,
+        <TestComponent dmk={deviceManagementKitMock as unknown as DeviceManagementKit} />,
       );
     });
 

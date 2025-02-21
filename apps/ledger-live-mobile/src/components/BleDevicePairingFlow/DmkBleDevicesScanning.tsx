@@ -2,7 +2,7 @@ import React from "react";
 import { Device } from "@ledgerhq/types-devices";
 import { FlatList } from "react-native";
 import BleDeviceItem from "~/components/BleDevicePairingFlow/BleDeviceItem";
-import { deviceIdMap, useBleDevicesScanning } from "@ledgerhq/live-dmk";
+import { deviceIdMap, useBleDevicesScanning } from "@ledgerhq/live-dmk-mobile";
 import { DeviceModelId } from "@ledgerhq/devices";
 
 export type DmkBleDevicesScanningProps = {

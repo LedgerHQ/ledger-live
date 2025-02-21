@@ -1,10 +1,12 @@
-import { type DeviceSessionState, DeviceStatus } from "@ledgerhq/device-management-kit";
+import {
+  DeviceManagementKit,
+  type DeviceSessionState,
+  DeviceStatus,
+} from "@ledgerhq/device-management-kit";
 import { useState, useEffect } from "react";
 import { activeDeviceSessionSubject } from "../config/activeDeviceSession";
-import { useDeviceManagementKit } from "./useDeviceManagementKit";
 
-export const useDeviceSessionState = (): DeviceSessionState | undefined => {
-  const sdk = useDeviceManagementKit();
+export const useDeviceSessionState = (dmk: DeviceManagementKit): DeviceSessionState | undefined => {
   const [sessionState, setSessionState] = useState<DeviceSessionState | undefined>(undefined);
 
   useEffect(() => {
@@ -14,7 +16,7 @@ export const useDeviceSessionState = (): DeviceSessionState | undefined => {
           setSessionState(undefined);
         } else {
           const { sessionId } = session;
-          const stateSubscription = sdk.getDeviceSessionState({ sessionId }).subscribe({
+          const stateSubscription = dmk.getDeviceSessionState({ sessionId }).subscribe({
             next: (state: DeviceSessionState) => {
               state.deviceStatus !== DeviceStatus.NOT_CONNECTED
                 ? setSessionState(state)
@@ -29,7 +31,7 @@ export const useDeviceSessionState = (): DeviceSessionState | undefined => {
     });
 
     return () => subscription.unsubscribe();
-  }, [sdk]);
+  }, [dmk]);
 
   return sessionState;
 };

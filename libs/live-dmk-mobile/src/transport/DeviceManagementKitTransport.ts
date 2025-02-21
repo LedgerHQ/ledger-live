@@ -5,10 +5,10 @@ import {
   DeviceStatus,
   DiscoveredDevice,
 } from "@ledgerhq/device-management-kit";
-import { activeDeviceSessionSubject } from "../config/activeDeviceSession";
+import { activeDeviceSessionSubject } from "@ledgerhq/live-dmk-shared";
 import { LocalTracer } from "@ledgerhq/logs";
-import { deviceManagementKit } from "../hooks/useDeviceManagementKit";
 import { firstValueFrom } from "rxjs";
+import { deviceManagementKit } from "../hooks/useDeviceManagementKit";
 
 const tracer = new LocalTracer("live-dmk", { function: "DeviceManagementKitTransport" });
 
@@ -64,6 +64,8 @@ export class DeviceManagementKitTransport extends Transport {
         },
       });
     }
+
+    // @ts-expect-error here device is not a string
     const sessionId = await deviceManagementKit.connect({ device: deviceOrId });
 
     const transport = new DeviceManagementKitTransport(deviceManagementKit, sessionId);

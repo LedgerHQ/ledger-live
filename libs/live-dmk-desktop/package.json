@@ -1,7 +1,7 @@
 {
-  "name": "@ledgerhq/live-dmk",
-  "version": "0.5.0",
-  "description": "Ledger Device Management Kit transport module",
+  "name": "@ledgerhq/live-dmk-desktop",
+  "version": "0.1.0",
+  "description": "Ledger Device Management Kit transport module for LLD",
   "private": true,
   "license": "Apache-2.0",
   "keywords": [
@@ -14,15 +14,14 @@
   "bugs": {
     "url": "https://github.com/LedgerHQ/ledger-live/issues"
   },
-  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/env",
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/live-dmk-desktop",
   "main": "./lib-es/index.js",
   "types": "./lib-es/index.d.ts",
   "scripts": {
     "clean": "rimraf lib-es",
     "build": "tsc --project tsconfig.prod.json",
-    "prewatch": "pnpm build",
     "watch": "tsc --watch --project tsconfig.prod.json",
-    "watch:es": "tsc --watch -m esnext --moduleResolution bundler --outDir lib-es --project tsconfig.test.json",
+    "watch:es": "pnpm watch",
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
     "typecheck": "tsc --noEmit",
@@ -31,35 +30,20 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage"
   },
-  "typesVersions": {
-    "*": {
-      "*.json": [
-        "*.json"
-      ],
-      "*": [
-        "lib-es/*"
-      ],
-      "lib-es/*": [
-        "lib-es/*"
-      ]
-    }
-  },
   "dependencies": {
-    "@ledgerhq/device-transport-kit-web-hid": "1.0.1",
     "@ledgerhq/device-management-kit": "0.0.0-rnble-transport-20250219135033",
+    "@ledgerhq/device-transport-kit-web-hid": "0.0.0-rnble-transport-20250219135033",
     "@ledgerhq/hw-transport": "workspace:^",
+    "@ledgerhq/live-dmk-shared": "workspace:^",
     "@ledgerhq/logs": "^6.12.0",
     "@ledgerhq/types-devices": "workspace:^"
   },
   "devDependencies": {
-    "@ledgerhq/device-transport-kit-react-native-ble": "0.0.0-rnble-transport-20250219135033",
-    "@ledgerhq/device-transport-kit-web-hid": "1.0.1",
     "@testing-library/dom": "^9.3.4",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.1.0",
     "@types/node": "22.10.10",
     "@vitejs/plugin-react": "4.3.4",
-    "@vitest/coverage-istanbul": "3.0.7",
     "@vitest/coverage-v8": "2.1.8",
     "jsdom": "25.0.1",
     "react": "^18.3.1",
@@ -70,25 +54,8 @@
     "ws": "8.18.0"
   },
   "peerDependencies": {
-    "@ledgerhq/device-transport-kit-web-hid": "1.0.1",
-    "@ledgerhq/device-transport-kit-react-native-ble": "0.0.0-rnble-transport-20250219135033",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-native": ">0.70",
     "rxjs": "^7.8.1"
-  },
-  "peerDependenciesMeta": {
-    "@ledgerhq/device-transport-kit-web-hid": {
-      "optional": true
-    },
-    "@ledgerhq/device-transport-kit-react-native-ble": {
-      "optional": true
-    },
-    "react-dom": {
-      "optional": true
-    },
-    "react-native": {
-      "optional": true
-    }
   }
 }

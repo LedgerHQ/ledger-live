@@ -5,11 +5,10 @@ import {
   DiscoveredDevice,
 } from "@ledgerhq/device-management-kit";
 import Transport from "@ledgerhq/hw-transport";
+import { dmkToLedgerDeviceIdMap, activeDeviceSessionSubject } from "@ledgerhq/live-dmk-shared";
+import { LocalTracer } from "@ledgerhq/logs";
 import { DescriptorEvent } from "@ledgerhq/types-devices";
 import { firstValueFrom, Observer, startWith, pairwise, map } from "rxjs";
-import { LocalTracer } from "@ledgerhq/logs";
-import { deviceIdMap } from "../config/deviceIdMap";
-import { activeDeviceSessionSubject } from "../config/activeDeviceSession";
 import { deviceManagementKit } from "../hooks/useDeviceManagementKit";
 
 const tracer = new LocalTracer("live-dmk-tracer", { function: "DeviceManagementKitTransport" });
@@ -27,14 +26,14 @@ export class DeviceManagementKitTransport extends Transport {
 
   listenToDisconnect = () => {
     const subscription = this.dmk.getDeviceSessionState({ sessionId: this.sessionId }).subscribe({
-      next: (state: { deviceStatus: any }) => {
+      next: (state: { deviceStatus: DeviceStatus }) => {
         if (state.deviceStatus === DeviceStatus.NOT_CONNECTED) {
           tracer.trace("[listenToDisconnect] Device disconnected, closing transport");
           activeDeviceSessionSubject.next(null);
           this.emit("disconnect");
         }
       },
-      error: (error: any) => {
+      error: (error: unknown) => {
         console.error("[listenToDisconnect] error", error);
         this.emit("disconnect");
         subscription.unsubscribe();
@@ -85,12 +84,14 @@ export class DeviceManagementKitTransport extends Transport {
   }
 
   static listen = (observer: Observer<DescriptorEvent<string>>) => {
+    console.log("listen");
     const subscription = deviceManagementKit
       .listenToAvailableDevices()
       .pipe(
         startWith<DiscoveredDevice[]>([]),
         pairwise(),
         map(([prev, curr]) => {
+          console.log("map", prev, curr);
           const added = curr.filter(item => !prev.some(prevItem => prevItem.id === item.id));
           const removed = prev.filter(item => !curr.some(currItem => currItem.id === item.id));
           return { added, removed };
@@ -98,8 +99,9 @@ export class DeviceManagementKitTransport extends Transport {
       )
       .subscribe({
         next: ({ added, removed }) => {
+          console.log({ added, removed });
           for (const device of added) {
-            const id = deviceIdMap[device.deviceModel.model];
+            const id = dmkToLedgerDeviceIdMap[device.deviceModel.model];
 
             tracer.trace(`[listen] device added ${id}`);
             observer.next({
@@ -114,7 +116,7 @@ export class DeviceManagementKitTransport extends Transport {
           }
 
           for (const device of removed) {
-            const id = deviceIdMap[device.deviceModel.model];
+            const id = dmkToLedgerDeviceIdMap[device.deviceModel.model];
 
             tracer.trace(`[listen] device removed ${id}`);
             observer.next({

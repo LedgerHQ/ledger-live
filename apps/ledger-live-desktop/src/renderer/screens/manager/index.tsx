@@ -13,7 +13,10 @@ import Disconnected from "./Disconnected";
 import { setLastSeenDevice } from "~/renderer/actions/settings";
 import { useDispatch } from "react-redux";
 import { context } from "~/renderer/drawers/Provider";
-import { useDeviceSessionRefresherToggle } from "@ledgerhq/live-dmk";
+import {
+  useDeviceManagementKit,
+  useDeviceSessionRefresherToggle,
+} from "@ledgerhq/live-dmk-desktop";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 
@@ -24,7 +27,8 @@ const Manager = () => {
   const [result, setResult] = useState<Result | null>(null);
   const [hasReset, setHasReset] = useState(false);
   const ldmkTransportFlag = useFeature("ldmkTransport");
-  useDeviceSessionRefresherToggle(ldmkTransportFlag?.enabled ?? false);
+  const dmk = useDeviceManagementKit();
+  useDeviceSessionRefresherToggle(dmk, ldmkTransportFlag?.enabled ?? false);
 
   const onReset = useCallback(
     (apps?: string[] | null) => {

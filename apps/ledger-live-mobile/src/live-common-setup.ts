@@ -1,7 +1,7 @@
 import Config from "react-native-config";
 import { Observable, timer } from "rxjs";
 import { map, debounce } from "rxjs/operators";
-import { TraceContext, listen } from "@ledgerhq/logs";
+import { listen } from "@ledgerhq/logs";
 import HIDTransport from "@ledgerhq/react-native-hid";
 import withStaticURLs from "@ledgerhq/hw-transport-http";
 import { retry } from "@ledgerhq/live-common/promise";
@@ -13,7 +13,7 @@ import {
 import { setWalletAPIVersion } from "@ledgerhq/live-common/wallet-api/version";
 import { WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
 import { registerTransportModule, type TransportModule } from "@ledgerhq/live-common/hw/index";
-import { DeviceManagementKitTransport } from "@ledgerhq/live-dmk";
+import { DeviceManagementKitTransport } from "@ledgerhq/live-dmk-mobile";
 import { setDeviceMode } from "@ledgerhq/live-common/hw/actions/app";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { DescriptorEvent } from "@ledgerhq/hw-transport";
