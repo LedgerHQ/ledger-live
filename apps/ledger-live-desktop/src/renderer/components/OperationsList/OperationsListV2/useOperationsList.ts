@@ -7,10 +7,6 @@ import { shallowAccountsSelector } from "~/renderer/reducers/accounts";
 
 import { flattenAccounts, getMainAccount } from "@ledgerhq/live-common/account/index";
 import keyBy from "lodash/keyBy";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { BlockchainsType } from "@ledgerhq/live-nft/supported";
-import { useHideSpamCollection } from "~/renderer/hooks/nfts/useHideSpamCollection";
-import { useFilterNftSpams } from "@ledgerhq/live-nft-react";
 import logger from "~/renderer/logger";
 import { usePagination } from "LLD/hooks/usePagination";
 import {
@@ -19,7 +15,11 @@ import {
   groupOperationsByDate,
   parseAccountOperations,
   splitNftOperationsFromAllOperations,
-} from "./utils";
+} from "../utils";
+import { useFilterNftSpams } from "@ledgerhq/live-nft-react";
+import { useHideSpamCollection } from "~/renderer/hooks/nfts/useHideSpamCollection";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { BlockchainsType } from "@ledgerhq/live-nft/supported";
 
 export type Props = {
   account?: AccountLike;
