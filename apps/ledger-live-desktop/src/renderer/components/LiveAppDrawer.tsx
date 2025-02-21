@@ -35,6 +35,7 @@ import { HardwareUpdate, renderLoading } from "./DeviceAction/rendering";
 import { createCustomErrorClass } from "@ledgerhq/errors";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { HOOKS_TRACKING_LOCATIONS } from "../analytics/hooks/variables";
+import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 
 const Divider = styled(Box)`
   border: 1px solid ${p => p.theme.colors.palette.divider};
@@ -175,6 +176,7 @@ export const LiveAppDrawer = () => {
                 <HardwareUpdate
                   i18nKeyTitle="swap.wrongDevice.title"
                   i18nKeyDescription="swap.wrongDevice.description"
+                  i18nKeyValues={{ provider: getProviderName(data.provider) }}
                 />
               );
             }
