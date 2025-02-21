@@ -21,6 +21,7 @@ import ton from "@ledgerhq/coin-ton/specs";
 import tron from "@ledgerhq/coin-tron/specs";
 import vechain from "@ledgerhq/coin-vechain/specs";
 import xrp from "@ledgerhq/coin-xrp/specs";
+import mina from "@ledgerhq/coin-mina/specs";
 
 export default {
   celo,
@@ -46,4 +47,5 @@ export default {
   tron,
   vechain,
   xrp,
+  mina,
 };
