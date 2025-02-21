@@ -809,6 +809,12 @@
     "SolanaTokenAccountFrozen" : {
       "title" : "تمّ تجميد رموز أصول الحساب"
     },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "الحساب لم تتم تهيئته"
+    },
+    "SolanaTokenRecipientIsSenderATA" : {
+      "title" : "عنوان المستلم هو نفسه عنوان مرسل رمز التوكن"
+    },
     "SolanaAddressOfEd25519" : {
       "title" : "العنوان خارج منحنى ed25519"
     },
@@ -1047,6 +1053,9 @@
     },
     "AppManifestNotFoundError" : {
       "title" : "فشل تحميل تطبيق Swap Live"
+    },
+    "InvalidMemoMina" : {
+      "title" : "نص علامة الملاحظة (تسمية الوجهة) لا يمكن أن يكون أطول من 32 حرفاً"
     }
   },
   "crash" : {
@@ -2903,7 +2912,8 @@
       "analytics" : "تحليلات",
       "analyticsDesc" : "قم بتمكين Ledger من جمع بيانات استخدام التطبيق للمساعدة في قياس أداء Ledger Live وتحسين كلٍ من التطبيق وتجربتك.",
       "mevProtection" : "حماية الحد الأقصى للقيمة القابلة للاستخراج (MEV)",
-      "mevProtectionDesc" : "قم بتمكين حماية الحد الأقصى للقيمة القابلة للاستخراج (MEV) لمعاملات أكثر موثوقية على إيثريوم",
+      "mevProtectionDesc" : "قم بتمكين حماية الحد الأقصى للقيمة القابلة للاستخراج (MEV) لمعاملات أكثر موثوقية على إيثريوم.",
+      "mevProtectionLearnMore" : "إشعار الخصوصية",
       "personalizedRecommendations" : "تجربة مخصصة",
       "personalizedRecommendationsDesc" : "قم بتمكين Ledger من جمع بيانات استخدام التطبيق لتقديم توصيات مخصصة ومحتوى يطابق تفضيلاتك وللمساعدة في قياس أداء حملاتنا التسويقية.",
       "analyticsModal" : {
@@ -3351,7 +3361,7 @@
       },
       "form" : {
         "validate" : "تأكيد معاملة المبادلة",
-        "tab" : "تبادل",
+        "tab" : "مبادلة",
         "button" : "متابعة",
         "from" : "من",
         "to" : "إلى",
@@ -3460,8 +3470,8 @@
           "receive" : "تلقي"
         },
         "placeholder" : "اختر",
-        "title" : "تبادل",
-        "cta" : "استبدل",
+        "title" : "مبادلة",
+        "cta" : "مبادلة",
         "from" : "من",
         "to" : "إلى",
         "loading" : "جاري التحميل ...",
@@ -3512,7 +3522,9 @@
         "ada_title" : "™Ledger Nano S لا تدعم مبادلة كاردانو (Cardano)",
         "ada_description" : "لمبادلة كاردانو (Cardano)، استخدِم أي جهاز Ledger آخر متوافق مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
         "apt_title" : "™Ledger Nano S لا تدعم مبادلة Aptos",
-        "apt_description" : "لمبادلة Aptos، استخدم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax."
+        "apt_description" : "لمبادلة Aptos، استخدم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
+        "cosmos_title" : "™Ledger Nano S لا تدعم مبادلة Cosmos",
+        "cosmos_description" : "لمبادلة Cosmos، استخدم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax."
       }
     },
     "lending" : {
@@ -4018,7 +4030,7 @@
       "desc" : "هل أنت متأكد أنك تريد إلغاء إضافة حسابات؟",
       "v2" : {
         "title" : "إلغاء إضافة حساب؟",
-        "desc" : "لن تُضاف أي حسابات إلى Ledger Live."
+        "desc" : "لن يتم إضافة أي حساب إلى Ledger Live."
       }
     },
     "imported" : "تمت إضافة الأصل بنجاح",
@@ -4086,6 +4098,7 @@
       "ctaStopScan" : "إيقاف المسح الضوئي",
       "confirm" : "تأكيد",
       "scanningTitle" : "جارٍ البحث عن أي حسابات قائمة في سلسلة الكتل (Blockchain)...",
+      "whichAddressType" : "تعلّم كيفية اختيار نوع العنوان",
       "sections" : {
         "importable" : {
           "title" : "وجدنا {{count}} حساب",
@@ -7219,6 +7232,14 @@
       "title" : "اختر شبكة سلسلة الكتل (blockchain) التي ينتمي الأصل إليها",
       "detectedAccounts" : "{{count}} حساب (تم اكتشافه)",
       "detectedAccounts_plural" : "{{count}} حساب (تم اكتشافه)"
+    }
+  },
+  "emptyList" : {
+    "accounts" : {
+      "title" : "لم يتم العثور على حسابات",
+      "subTitle" : "يبدو أنك لم تقم بإضافة حساب بعد. ابدأ الآن.",
+      "cta" : "إضافة حساب",
+      "link" : "بحاجة إلى مساعدة؟ تعرَّف على كيفية إضافة حساب إلى Ledger Live."
     }
   }
 }

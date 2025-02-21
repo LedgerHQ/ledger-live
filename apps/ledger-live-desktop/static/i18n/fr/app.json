@@ -1867,7 +1867,8 @@
       "palletMethod" : "Méthode",
       "transferAmount" : "Montant transféré",
       "validatorsCount" : "Validateurs ({{number}})",
-      "version" : "Version"
+      "version" : "Version",
+      "accountCreationFee" : "Frais de création de compte"
     }
   },
   "operationList" : {
@@ -4135,6 +4136,7 @@
       "walletSyncDesc" : "Synchronisez vos comptes crypto Ledger Live sur différents téléphones et ordinateurs.",
       "mevProtection" : "Protection MEV",
       "mevProtectionDesc" : "Activez la protection contre la MEV pour des transactions plus fiables sur Ethereum.",
+      "mevProtectionLearnMore" : "Avis de confidentialité",
       "marketPerformanceWidget" : "Widget de suivi du marché",
       "marketPerformanceWidgetDesc" : "Activez cette fonctionnalité pour afficher sur la page Portefeuille le Top des hausses et le Top des baisses sur une période choisie."
     },
@@ -5437,6 +5439,11 @@
     "solana" : {
       "memo" : "Tag/mémo",
       "memoPlaceholder" : "Facultatif"
+    },
+    "mina" : {
+      "memoPlaceholder" : "Facultatif",
+      "memo" : "Mémo",
+      "memoWarningText" : "Le mémo peut être une séquence de caractères inférieure ou égale à 32 caractères"
     }
   },
   "errors" : {
@@ -5921,11 +5928,11 @@
     },
     "WrongDeviceForAccountPayout" : {
       "title" : "Une erreur est survenue",
-      "description" : "Ce compte bénéficiaire n’appartient pas à cet appareil Ledger. Veuillez le changer et réessayer."
+      "description" : "Ce compte bénéficiaire n’appartient pas à l’appareil Ledger que vous avez connecté. Veuillez le changer et réessayer."
     },
     "WrongDeviceForAccountRefund" : {
       "title" : "Une erreur est survenue",
-      "description" : "Le compte bénéficiaire de ce remboursement n’appartient pas à cet appareil Ledger. Veuillez le changer et réessayer."
+      "description" : "Ce compte émetteur n’appartient pas à l’appareil Ledger que vous avez connecté. Veuillez le changer et réessayer."
     },
     "DeviceAppVerifyNotSupported" : {
       "title" : "Mise à jour de l’app nécessaire",
@@ -6460,6 +6467,15 @@
         "swap" : "Échangez",
         "deposit" : "Déposez"
       }
+    },
+    "InvalidMemoMina" : {
+      "title" : "Le mémo ne peut pas dépasser 32 caractères"
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "Les frais de création de compte pour cette transaction s’élèveront à {{fee}}"
+    },
+    "AmountTooSmall" : {
+      "title" : "Le montant minimal requis pour cette transaction est {{amount}}"
     }
   },
   "cryptoOrg" : {
@@ -6889,6 +6905,50 @@
       "confirm" : "Confirmer",
       "address" : "Adresse",
       "transactionId" : "Identifiant de la transaction"
+    }
+  },
+  "lnsUpsell" : {
+    "banner" : {
+      "manager" : {
+        "optIn" : {
+          "title" : "Passez au niveau supérieur",
+          "description" : "Bénéficiez de <0>-{{discount}}% de réduction</0> sur nos wallets dernière génération. Passez à une expérience plus fluide et plus sécurisée dès maintenant.",
+          "cta" : "Choisir mon nouveau wallet",
+          "linkText" : "En savoir plus"
+        },
+        "optOut" : {
+          "title" : "Passez au niveau supérieur",
+          "description" : "Bénéficiez de <0>-{{discount}}% de réduction</0> sur nos wallets dernière génération. Passez à une expérience plus fluide et plus sécurisée dès maintenant.",
+          "cta" : "Choisir mon nouveau wallet",
+          "linkText" : "En savoir plus"
+        }
+      },
+      "accounts" : {
+        "optIn" : {
+          "title" : "Passez au niveau supérieur",
+          "description" : "Le Ledger Nano S ne recevra bientôt plus de mises à jour. Bénéficiez de <0>-{{discount}}% de réduction</0> sur nos derniers wallets.",
+          "cta" : "Choisir mon nouveau wallet",
+          "linkText" : "En savoir plus"
+        },
+        "optOut" : {
+          "title" : "Passez au niveau supérieur",
+          "description" : "Le Ledger Nano S ne recevra bientôt plus de mises à jour. Bénéficiez de <0>-{{discount}}% de réduction</0> sur nos derniers wallets.",
+          "cta" : "Choisir mon nouveau wallet",
+          "linkText" : "En savoir plus"
+        }
+      },
+      "notifications" : {
+        "optIn" : {
+          "description" : "Les mises à jour s’arrêtent bientôt. Pour une expérience fluide, passez à un wallet supérieur, avec -{{discount}}% de réduction.",
+          "cta" : "Choisir mon nouveau wallet",
+          "linkText" : "En savoir plus"
+        },
+        "optOut" : {
+          "description" : "Les mises à jour s’arrêtent bientôt. Pour une expérience fluide, passez à un wallet supérieur, avec -{{discount}}% de réduction.",
+          "cta" : "Choisir mon nouveau wallet",
+          "linkText" : "En savoir plus"
+        }
+      }
     }
   }
 }
