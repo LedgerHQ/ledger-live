@@ -40,7 +40,7 @@ describe("Receive different currency", () => {
 
     await app.receive.openViaDeeplink();
     await app.common.performSearch(currencyName);
-    await app.receive.selectCurrency(currencyName);
+    await app.receive.selectCurrency(currency.id);
     if (network) await app.receive.selectNetwork(network);
     first && (await deviceAction.selectMockDevice(), (first = false));
     await deviceAction.openApp();

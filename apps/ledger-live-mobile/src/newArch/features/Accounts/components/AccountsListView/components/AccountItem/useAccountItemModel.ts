@@ -44,6 +44,8 @@ const useAccountItemModel = ({
     currency.type === "CryptoCurrency" &&
     getTagDerivationMode(currency, account.derivationMode as DerivationMode);
 
+  const accountId = account.id;
+
   return {
     balance,
     accountName,
@@ -54,6 +56,7 @@ const useAccountItemModel = ({
     showUnit,
     hideBalanceInfo,
     withPlaceholder,
+    accountId,
   };
 };
 

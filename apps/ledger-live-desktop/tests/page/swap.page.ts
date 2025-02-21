@@ -267,6 +267,13 @@ export class SwapPage extends AppPage {
     await this.chooseAssetDrawer.chooseFromAsset(accountToSwapFrom.currency.name);
   }
 
+  @step("Check currency to swap from is $1")
+  async checkAssetFrom(electronApp: ElectronApplication, currency: string) {
+    const [, webview] = electronApp.windows();
+    const fromAccount = await webview.getByTestId(this.fromAccountCoinSelector).innerText();
+    expect(fromAccount).toContain(currency);
+  }
+
   @step("Expect asset or account selected $0 to be displayed")
   async expectSelectedAssetDisplayed(asset: string, electronApp: ElectronApplication) {
     const [, webview] = electronApp.windows();
@@ -286,6 +293,17 @@ export class SwapPage extends AppPage {
     const [, webview] = electronApp.windows();
     await webview.getByTestId(this.toAccountCoinSelector).click();
     await this.chooseAssetDrawer.chooseFromAsset(currency);
+  }
+
+  @step("Check currency to swap to is $1")
+  async checkAssetTo(electronApp: ElectronApplication, currency: string) {
+    const [, webview] = electronApp.windows();
+    const assetTo = await webview.getByTestId(this.toAccountCoinSelector).innerText();
+    if (currency === "") {
+      expect(assetTo).toContain("Choose asset");
+    } else {
+      expect(assetTo).toContain(currency);
+    }
   }
 
   @step("Verify swap amount error message is displayed: $2")
@@ -312,13 +330,13 @@ export class SwapPage extends AppPage {
   }
 
   @step("Go and wait for Swap app to be ready")
-  async goAndWaitForSwapToBeReady(swapFunction: () => Promise<void>) {
+  async goAndWaitForSwapToBeReady(swapFunction: () => Promise<void>, url?: string) {
     const successfulQuery = new Promise(resolve => {
       this.page.on("response", response => {
         if (
           response
             .url()
-            .startsWith("https://explorers.api.live.ledger.com/blockchain/v4/btc/fees") &&
+            .startsWith(url || "https://explorers.api.live.ledger.com/blockchain/v4/btc/fees") &&
           response.status() === 200
         ) {
           resolve(response);

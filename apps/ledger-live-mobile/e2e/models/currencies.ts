@@ -39,4 +39,3 @@ export function initTestAccounts(currencyIds: string[]) {
     genAccount("mock" + currencyId, { currency: getCryptoCurrencyById(currencyId) }),
   );
 }
-export const capitalize = (s: string) => s && s[0].toUpperCase() + s.slice(1);

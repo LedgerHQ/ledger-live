@@ -9,6 +9,12 @@ export async function runAddAccountTest(currency: Currency, tmsLink: string) {
       await app.init({
         userdata: "skip-onboarding",
         speculosApp: currency.speculosApp,
+        featureFlags: {
+          llmNetworkBasedAddAccountFlow: {
+            enabled: false,
+            overridesRemote: true,
+          },
+        },
       });
       await app.portfolio.waitForPortfolioPageToLoad();
     });

@@ -11,6 +11,7 @@ import { Account, AccountRaw } from "@ledgerhq/types-live";
 import { DeviceUSB, nanoSP_USB, nanoS_USB, nanoX_USB } from "../models/devices";
 import { MessageData, MockDeviceEvent, ServerData } from "./types";
 import { getDeviceModel } from "@ledgerhq/devices";
+import { SettingsSetOverriddenFeatureFlagsPlayload } from "~/actions/types";
 
 export const e2eBridgeServer = new Subject<ServerData>();
 
@@ -93,6 +94,10 @@ export async function loadConfig(fileName: string, agreed: true = true): Promise
   if (data.accounts.length) {
     await postMessage({ type: "importAccounts", id: uniqueId(), payload: data.accounts });
   }
+}
+
+export async function setFeatureFlags(flags: SettingsSetOverriddenFeatureFlagsPlayload) {
+  await postMessage({ type: "overrideFeatureFlags", id: uniqueId(), payload: flags });
 }
 
 export async function loadBleState(bleState: BleState) {

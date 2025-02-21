@@ -3,6 +3,7 @@ import { cliTools as algorand } from "../families/algorand/setup";
 import { cliTools as aptos } from "../families/aptos/setup";
 import { cliTools as bitcoin } from "../families/bitcoin/setup";
 import { cliTools as cardano } from "../families/cardano/setup";
+import { cliTools as casper } from "../families/casper/setup";
 import { cliTools as cosmos } from "../families/cosmos/setup";
 import { cliTools as elrond } from "../families/elrond/setup";
 import { cliTools as evm } from "../families/evm/setup";
@@ -27,6 +28,7 @@ export default {
   aptos,
   bitcoin,
   cardano,
+  casper,
   cosmos,
   elrond,
   evm,

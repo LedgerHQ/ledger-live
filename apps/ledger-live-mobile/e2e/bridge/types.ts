@@ -15,6 +15,7 @@ import { ExchangeRequestEvent } from "@ledgerhq/live-common/hw/actions/startExch
 import { CompleteExchangeRequestEvent } from "@ledgerhq/live-common/exchange/platform/types";
 import { RemoveImageEvent } from "@ledgerhq/live-common/hw/customLockScreenRemove";
 import { RenameDeviceEvent } from "@ledgerhq/live-common/hw/renameDevice";
+import { SettingsSetOverriddenFeatureFlagsPlayload } from "~/actions/types";
 
 export type ServerData =
   | {
@@ -61,6 +62,7 @@ export type MessageData =
       }[];
     }
   | { type: "importBle"; id: string; payload: BleState }
+  | { type: "overrideFeatureFlags"; id: string; payload: SettingsSetOverriddenFeatureFlagsPlayload }
   | { type: "setGlobals"; id: string; payload: { [key: string]: unknown } }
   | { type: "ACK"; id: string };
 
