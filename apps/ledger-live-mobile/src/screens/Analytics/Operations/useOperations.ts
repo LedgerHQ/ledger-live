@@ -6,7 +6,6 @@ import { Operation, AccountLike } from "@ledgerhq/types-live";
 import { useCallback } from "react";
 import { useSelector } from "react-redux";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { BlockchainsType } from "@ledgerhq/live-nft/lib/supported";
 import { useHideSpamCollection } from "~/hooks/nfts/useHideSpamCollection";
 
 import { useSpamTxFiltering } from "@ledgerhq/live-nft-react";
@@ -29,16 +28,7 @@ export function useOperations({ accounts, opCount, withSubAccounts }: Props) {
   const spamFilteringTxEnabled =
     (nftsFromSimplehashFeature?.enabled && spamFilteringTxFeature?.enabled) || false;
 
-  const { updateSpamCollection } = useHideSpamCollection();
-
-  const updateNftCollection = useCallback(
-    (metadata: Array<NFTResource>) => {
-      if (spamFilteringTxEnabled) {
-        updateSpamCollection(metadata);
-      }
-    },
-    [updateSpamCollection, spamFilteringTxEnabled],
-  );
+  const { hideSpamCollection } = useHideSpamCollection();
 
   const { hiddenNftCollections } = useNftCollectionsStatus();
   const shouldFilterTokenOpsZeroAmount = useSelector(
@@ -68,12 +58,7 @@ export function useOperations({ accounts, opCount, withSubAccounts }: Props) {
     filterOperation,
   });
 
-  const filteredData = useSpamTxFiltering(
-    spamFilteringTxEnabled,
-    accountsMap,
-    groupedOperations,
-    updateNftCollection,
-  );
+  const filteredData = useSpamTxFiltering(spamFilteringTxEnabled, accountsMap, groupedOperations);
   return {
     sections: filteredData?.sections,
     completed: filteredData?.completed,

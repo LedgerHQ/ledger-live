@@ -1,32 +1,33 @@
 import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { nftCollectionsStatusByNetworkSelector } from "~/reducers/settings";
-import { updateNftStatusBatch } from "~/actions/settings";
-
 import { BlockchainsType } from "@ledgerhq/live-nft/supported";
-import { NFTResource } from "@ledgerhq/live-nft/types";
+import { NftStatus } from "@ledgerhq/live-nft/types";
+import { nftCollectionsStatusByNetworkSelector } from "~/reducers/settings";
+import { updateNftStatus } from "~/actions/settings";
 
 export function useHideSpamCollection() {
-  const spamFilteringTxFeature = useFeature("llmSpamFilteringTx");
+  const spamFilteringTxFeature = useFeature("lldSpamFilteringTx");
   const nftsFromSimplehashFeature = useFeature("nftsFromSimplehash");
+
   const nftCollectionsStatusByNetwork = useSelector(nftCollectionsStatusByNetworkSelector);
 
   const dispatch = useDispatch();
 
-  const updateSpamCollection = useCallback(
-    (metadata: NFTResource[]) => {
-      if (metadata.length > 0 && metadata.every(contract => contract.status === "loaded")) {
-        console.log(nftCollectionsStatusByNetwork);
-        console.log(metadata);
-        //dispatch(updateNftStatusBatch(metadata));
+  const hideSpamCollection = useCallback(
+    (collection: string, blockchain: BlockchainsType) => {
+      const blockchainToCheck = nftCollectionsStatusByNetwork[blockchain] || {};
+      const elem = Object.entries(blockchainToCheck).find(([key, _]) => key === collection);
+
+      if (!elem) {
+        dispatch(updateNftStatus({ blockchain, collection, status: NftStatus.spam }));
       }
     },
     [dispatch, nftCollectionsStatusByNetwork],
   );
 
   return {
-    updateSpamCollection,
+    hideSpamCollection,
     enabled: (spamFilteringTxFeature?.enabled && nftsFromSimplehashFeature?.enabled) || false,
   };
 }

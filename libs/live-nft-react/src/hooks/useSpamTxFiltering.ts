@@ -80,7 +80,7 @@ export function useSpamTxFiltering(
   spamFilteringTxEnabled: boolean,
   accountsMap: AccountMap,
   groupedOperations: DailyOperations,
-  setNftStatus: (metadata: Array<NFTResource>) => void,
+  setNftStatus?: (metadata: Array<NFTResource>) => void,
   threshold?: number,
 ) {
   const nftOperations = useMemo(
