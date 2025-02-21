@@ -79,7 +79,8 @@
     "test": {
       "dependsOn": ["build"],
       "env": ["CI_OS"],
-      "outputs": []
+      "outputs": [],
+      "cache": false
     },
     "start": {
       "cache": false,
@@ -191,7 +192,7 @@
       "env": ["CI_OS"]
     },
     "live-mobile#e2e:ci": {
-      "cache": true,
+      "cache": false,
       "dependsOn": ["^build"],
       "inputs": []
     }
