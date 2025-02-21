@@ -1905,12 +1905,12 @@ importers:
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
-      '@noble/hashes':
-        specifier: 1.7.0
-        version: 1.7.0
       bignumber.js:
         specifier: ^9.1.2
         version: 9.1.2
+      bip32-path:
+        specifier: ^0.4.2
+        version: 0.4.2
       expect:
         specifier: ^27.4.6
         version: 27.5.1
@@ -4934,6 +4934,9 @@ importers:
 
   libs/ledgerjs/packages/hw-app-aptos:
     dependencies:
+      '@ledgerhq/coin-aptos':
+        specifier: workspace:^
+        version: link:../../../coin-modules/coin-aptos
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../errors
@@ -4943,9 +4946,6 @@ importers:
       '@noble/hashes':
         specifier: 1.6.1
         version: 1.6.1
-      bip32-path:
-        specifier: ^0.4.2
-        version: 0.4.2
     devDependencies:
       '@ledgerhq/hw-transport-mocker':
         specifier: workspace:^
@@ -21091,13 +21091,10 @@ packages:
     resolution: {integrity: sha512-06OKXQmKI0vuje++6lm7w1kO3rKsZAHio/4d9hwQuVAtExJ6RM92BnpzkDAV16ZheVN/FHKzNyY1BYLqXfujMw==}
     peerDependencies:
       expo: '*'
-      expo-constants: '*'
       expo-modules-core: '*'
       react: '*'
       react-native: '*'
     peerDependenciesMeta:
-      expo-constants:
-        optional: true
       expo-modules-core:
         optional: true
       react:
@@ -21109,13 +21106,10 @@ packages:
     resolution: {integrity: sha512-9tNY3OVO0jfiMzl7ngb6IOyR5VFzNoN5OOazUWoeGfmMqVB5kltTemRvKraK9JRbBKIw+SOYLEmF0sEqgFZ6OQ==}
     peerDependencies:
       expo: '*'
-      expo-constants: '*'
       expo-modules-core: '*'
       react: '*'
       react-native: '*'
     peerDependenciesMeta:
-      expo-constants:
-        optional: true
       expo-modules-core:
         optional: true
       react:
@@ -21313,13 +21307,10 @@ packages:
     resolution: {integrity: sha512-y8yDWjOi+rQRdO+HY+LnUlz8qzHerUaw/LUjKPU/mX8PRXP4UUPEEp5fjAwBU44xjNmYSHWZDwet4IBBE+yQUA==}
     peerDependencies:
       expo-constants: '*'
-      expo-modules-core: '*'
       react: '*'
       react-native: '*'
     peerDependenciesMeta:
       expo-constants:
-        optional: true
-      expo-modules-core:
         optional: true
       react:
         optional: true
@@ -35289,7 +35280,7 @@ snapshots:
 
   '@confio/ics23@0.6.8':
     dependencies:
-      '@noble/hashes': 1.7.0
+      '@noble/hashes': 1.6.1
       protobufjs: 6.11.4
 
   '@cosmjs/amino@0.26.8':
@@ -35326,7 +35317,7 @@ snapshots:
       '@cosmjs/encoding': 0.26.8
       '@cosmjs/math': 0.26.8
       '@cosmjs/utils': 0.26.8
-      '@noble/hashes': 1.7.0
+      '@noble/hashes': 1.6.1
       bn.js: 5.2.1
       elliptic: 6.5.5
       libsodium-wrappers: 0.7.13
@@ -39269,7 +39260,7 @@ snapshots:
       '@octokit/request-error': 5.1.0
       '@octokit/types': 13.5.0
       deprecation: 2.3.1
-      lru-cache: 10.2.0
+      lru-cache: 10.4.3
       universal-github-app-jwt: 1.1.2
       universal-user-agent: 6.0.1
 
@@ -39804,7 +39795,7 @@ snapshots:
 
   '@polkadot-api/substrate-bindings@0.0.1':
     dependencies:
-      '@noble/hashes': 1.7.0
+      '@noble/hashes': 1.6.1
       '@polkadot-api/utils': 0.0.1
       '@scure/base': 1.1.6
       scale-ts: 1.6.0
@@ -52648,7 +52639,6 @@ snapshots:
       expo: 51.0.39(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(expo-constants@14.5.1)(expo-modules-core@1.12.26)(metro-core@0.80.12)(metro@0.80.12)(react-native@0.75.4(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1)(typescript@5.4.3))(react@18.3.1)
       uuid: 3.4.0
     optionalDependencies:
-      expo-constants: 14.5.1(expo-modules-core@1.12.26)(expo@51.0.39)(react-native@0.75.4(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1)(typescript@5.4.3))(react@18.3.1)
       expo-modules-core: 1.12.26(expo-constants@14.5.1)(react-native@0.75.4(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1)(typescript@5.4.3))(react@18.3.1)
       react: 18.3.1
       react-native: 0.75.4(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1)(typescript@5.4.3)
@@ -52661,7 +52651,6 @@ snapshots:
       '@expo/env': 0.3.0
       expo: 51.0.39(@babel/core@7.24.3)(expo-modules-autolinking@1.11.2(expo-modules-core@1.12.26(react-native@0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3))(react@18.3.1))(react-native@0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3))(react@18.3.1))(expo-modules-core@1.12.26(react-native@0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3))(react@18.3.1))(react-native@0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3))(react@18.3.1)
     optionalDependencies:
-      expo-constants: 16.0.2(expo-modules-core@1.12.26(react-native@0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3))(react@18.3.1))(expo@51.0.39(@babel/core@7.24.3)(expo-modules-autolinking@1.11.2(expo-modules-core@1.12.26(react-native@0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3))(react@18.3.1))(react-native@0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3))(react@18.3.1))(expo-modules-core@1.12.26(react-native@0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3))(react@18.3.1))(react-native@0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3))(react@18.3.1))(react-native@0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3))(react@18.3.1)
       expo-modules-core: 1.12.26(react-native@0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3))(react@18.3.1)
       react: 18.3.1
       react-native: 0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3)
@@ -52674,7 +52663,6 @@ snapshots:
       '@expo/env': 0.3.0
       expo: 51.0.39(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(expo-constants@14.5.1)(expo-modules-core@1.12.26)(metro-core@0.80.12)(metro@0.80.12)(react-native@0.75.4(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1)(typescript@5.4.3))(react@18.3.1)
     optionalDependencies:
-      expo-constants: 16.0.2(expo-modules-core@1.12.26)(expo@51.0.39)(react-native@0.75.4(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1)(typescript@5.4.3))(react@18.3.1)
       expo-modules-core: 1.12.26(expo-constants@14.5.1)(react-native@0.75.4(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1)(typescript@5.4.3))(react@18.3.1)
       react: 18.3.1
       react-native: 0.75.4(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1)(typescript@5.4.3)
@@ -52686,8 +52674,6 @@ snapshots:
       '@expo/config': 9.0.4
       '@expo/env': 0.3.0
       expo: 51.0.39
-    optionalDependencies:
-      expo-constants: 16.0.2(expo@51.0.39)
     transitivePeerDependencies:
       - supports-color
 
@@ -52829,7 +52815,6 @@ snapshots:
       invariant: 2.2.4
     optionalDependencies:
       expo-constants: 14.5.1(expo-modules-core@1.12.26)(expo@51.0.39)(react-native@0.75.4(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1)(typescript@5.4.3))(react@18.3.1)
-      expo-modules-core: 1.12.26(expo-constants@14.5.1)(react-native@0.75.4(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1)(typescript@5.4.3))(react@18.3.1)
       react: 18.3.1
       react-native: 0.75.4(@babel/core@7.24.3)(@babel/preset-env@7.24.3(@babel/core@7.24.3))(@types/react@18.2.73)(metro-resolver@0.80.12)(metro-transform-worker@0.80.12)(react@18.3.1)(typescript@5.4.3)
 
@@ -52837,7 +52822,6 @@ snapshots:
     dependencies:
       invariant: 2.2.4
     optionalDependencies:
-      expo-modules-core: 1.12.26(react-native@0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3))(react@18.3.1)
       react: 18.3.1
       react-native: 0.75.4(@babel/core@7.24.3)(@types/react@18.2.73)(react@18.3.1)(typescript@5.4.3)
 
