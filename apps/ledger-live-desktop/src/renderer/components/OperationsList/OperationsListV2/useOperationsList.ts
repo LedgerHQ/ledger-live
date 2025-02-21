@@ -7,6 +7,10 @@ import { shallowAccountsSelector } from "~/renderer/reducers/accounts";
 
 import { flattenAccounts, getMainAccount } from "@ledgerhq/live-common/account/index";
 import keyBy from "lodash/keyBy";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { BlockchainEVM, BlockchainsType } from "@ledgerhq/live-nft/supported";
+import { useHideSpamCollection } from "~/renderer/hooks/nfts/useHideSpamCollection";
+import { useFilterNftSpams } from "@ledgerhq/live-nft-react";
 import logger from "~/renderer/logger";
 import { usePagination } from "LLD/hooks/usePagination";
 import {
@@ -16,10 +20,6 @@ import {
   parseAccountOperations,
   splitNftOperationsFromAllOperations,
 } from "../utils";
-import { useFilterNftSpams } from "@ledgerhq/live-nft-react";
-import { useHideSpamCollection } from "~/renderer/hooks/nfts/useHideSpamCollection";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { BlockchainsType } from "@ledgerhq/live-nft/supported";
 
 export type Props = {
   account?: AccountLike;
@@ -78,7 +78,7 @@ export function useOperationsList({
   const { opsWithoutNFTIN, opsWithNFTIN } = splitNftOperationsFromAllOperations(allAccountOps);
 
   const currentPageOpsWithoutNFTIN = opsWithoutNFTIN?.slice(0, nbToShow);
-  const currentPageNFTIN = opsWithNFTIN?.slice(skip ?? 0, nbToShow);
+  const currentPageNFTIN = opsWithNFTIN?.slice(skip, skip + nbToShow);
 
   const relatedNFtOps = buildContractIndexNftOperations(currentPageNFTIN, accountsMap);
   // to avoid multiple state rendering, we store the previous filtered data in an indexed ref object
@@ -92,7 +92,7 @@ export function useOperationsList({
 
   previousFilteredNftData.current = {
     ...previousFilteredNftData.current,
-    ...keyBy(filteredNftData, "id"),
+    ...keyBy(filteredNftData, "order"),
   };
 
   const groupedOperations = buildCurrentOperationsPage(
@@ -102,11 +102,8 @@ export function useOperationsList({
   );
 
   useEffect(() => {
-    console.log(">>> ", spamOps);
-
     spamOps.forEach(op => {
-      // FIXME: typing issue
-      markNftAsSpam(op.collectionId, op.currencyId, op.spamScore);
+      markNftAsSpam(op.collectionId, op.currencyId as BlockchainEVM, op.spamScore);
     });
   }, [spamOps, markNftAsSpam]);
 

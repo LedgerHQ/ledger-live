@@ -69,7 +69,7 @@ export function buildContractIndexNftOperations(
     (acc: CustomNFTOperations, operation: Operation): CustomNFTOperations => {
       const account = accountsMap[operation.accountId];
       const contract = operation.contract || "";
-      acc[contract] = {
+      acc[operation.id] = {
         contract,
         currencyId: getAccountCurrency(account).id,
         operation,

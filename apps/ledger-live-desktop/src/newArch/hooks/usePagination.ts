@@ -8,7 +8,7 @@ export function usePagination(initialCount: number, analyticsName?: string) {
   const loadMore = () => {
     if (analyticsName) track(analyticsName);
     setNbToShow(prev => prev + initialCount);
-    setSkip(prev => prev + nbToShow);
+    setSkip(prev => prev + initialCount);
   };
 
   return { nbToShow, loadMore, skip };
