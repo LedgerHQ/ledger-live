@@ -532,13 +532,6 @@ const MainSideBar = () => {
                     iconActiveColor="wallet"
                     onClick={handleClickRecover}
                     collapsed={secondAnim}
-                    NotifComponent={
-                      recoverFeature?.params?.isNew && (
-                        <CustomTag active type="plain" size="small">
-                          {t("common.new")}
-                        </CustomTag>
-                      )
-                    }
                   />
                 </FeatureToggle>
                 <SideBarListItem
