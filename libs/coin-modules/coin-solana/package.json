@@ -62,7 +62,7 @@
     "lodash": "^4.17.21",
     "object-hash": "^2.2.0",
     "rxjs": "^7.8.1",
-    "superstruct": "0.14.2"
+    "superstruct": "0.16.7"
   },
   "devDependencies": {
     "@faker-js/faker": "^8.4.1",

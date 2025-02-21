@@ -1,4 +1,3 @@
-import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets";
 import { PublicKey } from "@solana/web3.js";
 import { AccountLike } from "@ledgerhq/types-live";
 import { StakeMeta } from "./api/chain/account/stake";
@@ -34,10 +33,6 @@ export function decodeAccountIdWithTokenAccountAddress(accountIdWithTokenAccount
     accountId: accountIdWithTokenAccountAddress.slice(0, lastColonIndex),
     address: accountIdWithTokenAccountAddress.slice(lastColonIndex + 1),
   };
-}
-
-export function tokenIsListedOnLedger(currencyId: string, mint: string): boolean {
-  return findTokenByAddressInCurrency(mint, currencyId)?.type === "TokenCurrency";
 }
 
 export function stakeActions(stake: SolanaStake): StakeAction[] {

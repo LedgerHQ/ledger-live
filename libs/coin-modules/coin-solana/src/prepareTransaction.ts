@@ -12,9 +12,12 @@ import { ChainAPI } from "./api";
 import {
   getMaybeMintAccount,
   getMaybeTokenAccount,
+  getMaybeTokenMint,
+  getMaybeTokenMintProgram,
   getMaybeVoteAccount,
   getStakeAccountAddressWithSeed,
   getStakeAccountMinimumBalanceForRentExemption,
+  ParsedOnChainMintWithInfo,
 } from "./api/chain/web3";
 import {
   SolanaAccountNotFunded,
@@ -38,6 +41,8 @@ import {
   SolanaTokenAccountNotAllowed,
   SolanaMintAccountNotAllowed,
   SolanaTokenAccountWarning,
+  SolanaTokenNonTransferable,
+  SolanaRecipientMemoIsRequired,
 } from "./errors";
 import {
   decodeAccountIdWithTokenAccountAddress,
@@ -50,6 +55,7 @@ import type {
   SolanaAccount,
   SolanaStake,
   SolanaTokenAccount,
+  SolanaTokenProgram,
   StakeCreateAccountTransaction,
   StakeDelegateTransaction,
   StakeSplitTransaction,
@@ -65,7 +71,10 @@ import type {
 } from "./types";
 import { assertUnreachable } from "./utils";
 import { updateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { estimateFeeAndSpendable } from "./estimateMaxSpendable";
+import { estimateFeeAndSpendable, extimateTokenMaxSpendable } from "./estimateMaxSpendable";
+import { MemoTransferExt, TransferFeeConfigExt } from "./api/chain/account/tokenExtensions";
+import { calculateToken2022TransferFees } from "./helpers/token";
+import { TokenAccountInfo } from "./api/chain/account/token";
 
 async function deriveCommandDescriptor(
   mainAccount: SolanaAccount,
@@ -132,8 +141,11 @@ const deriveTokenTransferCommandDescriptor = async (
     throw new Error("subaccount not found");
   }
 
-  if ((subAccount as SolanaTokenAccount)?.state === "frozen") {
-    errors.amount = new SolanaTokenAccountFrozen();
+  const tokenAccount: SolanaTokenAccount = subAccount;
+
+  const stateErrorOrUndefined = validateAssociatedTokenAccountState(tokenAccount);
+  if (stateErrorOrUndefined) {
+    errors.amount = stateErrorOrUndefined;
   }
 
   await validateRecipientCommon(mainAccount, tx, errors, warnings, api, true);
@@ -144,11 +156,18 @@ const deriveTokenTransferCommandDescriptor = async (
     validateMemoCommon(memo, errors);
   }
 
-  const mintAddress = subAccount.token.contractAddress;
-  const mintDecimals = subAccount.token.units[0].magnitude;
+  const mintAddress = tokenAccount.token.contractAddress;
+  const mintDecimals = tokenAccount.token.units[0].magnitude;
+
+  const mintOrError = await getMaybeTokenMint(mintAddress, api);
+
+  if (!mintOrError) throw new Error(`Mint ${mintAddress} not found`);
+  if (mintOrError instanceof Error) throw mintOrError;
+
+  const tokenProgram = mintOrError.onChainAcc.data.program as SolanaTokenProgram;
 
   const senderAssociatedTokenAccountAddress = decodeAccountIdWithTokenAccountAddress(
-    subAccount.id,
+    tokenAccount.id,
   ).address;
 
   if (!errors.recipient && tx.recipient === senderAssociatedTokenAccountAddress) {
@@ -161,18 +180,22 @@ const deriveTokenTransferCommandDescriptor = async (
     walletAddress: "",
   };
 
-  const recipientDescriptorOrError = errors.recipient
-    ? defaultRecipientDescriptor
-    : await getTokenRecipient(tx.recipient, mintAddress, api);
+  const tokenRecipientOrError = errors.recipient
+    ? errors.recipient
+    : await getTokenRecipient(tx.recipient, mintAddress, tokenProgram, api);
 
-  if (!errors.recipient && recipientDescriptorOrError instanceof Error) {
-    errors.recipient = recipientDescriptorOrError;
+  if (!errors.recipient && tokenRecipientOrError instanceof Error) {
+    errors.recipient = tokenRecipientOrError;
   }
 
   const recipientDescriptor: TokenRecipientDescriptor =
-    recipientDescriptorOrError instanceof Error
+    tokenRecipientOrError instanceof Error
       ? defaultRecipientDescriptor
-      : recipientDescriptorOrError;
+      : tokenRecipientOrError.descriptor;
+
+  if (!(tokenRecipientOrError instanceof Error) && tokenRecipientOrError.recipientAccInfo) {
+    validateRecipientRequiredMemo(memo, tokenRecipientOrError.recipientAccInfo, errors);
+  }
 
   const assocAccRentExempt = recipientDescriptor.shouldCreateAsAssociatedTokenAccount
     ? await api.getAssocTokenAccMinNativeBalance()
@@ -192,11 +215,18 @@ const deriveTokenTransferCommandDescriptor = async (
     errors.amount = new AmountRequired();
   }
 
-  const txAmount = tx.useAllAmount ? subAccount.spendableBalance.toNumber() : tx.amount.toNumber();
+  const spendableBalance = await extimateTokenMaxSpendable(api, tokenAccount, tx);
+  const txAmount = tx.useAllAmount ? spendableBalance.toNumber() : tx.amount.toNumber();
 
-  if (!errors.amount && txAmount > subAccount.spendableBalance.toNumber()) {
+  if (!errors.amount && txAmount > spendableBalance.toNumber()) {
     errors.amount = new NotEnoughBalance();
   }
+
+  if (mintOrError.info.extensions?.some(ext => ext.extension === "nonTransferable")) {
+    throw new SolanaTokenNonTransferable();
+  }
+
+  const transferFeeCalculatedConfig = await getMaybeTransferFee(txAmount, mintOrError, api);
 
   return {
     command: {
@@ -208,6 +238,10 @@ const deriveTokenTransferCommandDescriptor = async (
       mintDecimals,
       recipientDescriptor: recipientDescriptor,
       memo: model.uiState.memo,
+      tokenProgram: tokenProgram,
+      extensions: {
+        transferFee: transferFeeCalculatedConfig,
+      },
     },
     fee: fee + assocAccRentExempt,
     warnings,
@@ -215,11 +249,33 @@ const deriveTokenTransferCommandDescriptor = async (
   };
 };
 
+async function getMaybeTransferFee(
+  txAmount: number,
+  mint: ParsedOnChainMintWithInfo,
+  api: ChainAPI,
+) {
+  const transferFeeConfigExt = mint.info.extensions?.find(
+    tokenExt => tokenExt.extension === "transferFeeConfig",
+  ) as TransferFeeConfigExt;
+  if (!transferFeeConfigExt) return;
+
+  const { epoch } = await api.getEpochInfo();
+
+  return calculateToken2022TransferFees({
+    transferAmount: txAmount,
+    transferFeeConfigState: transferFeeConfigExt.state,
+    currentEpoch: epoch,
+  });
+}
+
 async function getTokenRecipient(
   recipientAddress: string,
   mintAddress: string,
+  tokenProgram: SolanaTokenProgram,
   api: ChainAPI,
-): Promise<TokenRecipientDescriptor | Error> {
+): Promise<
+  { descriptor: TokenRecipientDescriptor; recipientAccInfo: TokenAccountInfo | undefined } | Error
+> {
   const recipientTokenAccount = await getMaybeTokenAccount(recipientAddress, api);
 
   if (recipientTokenAccount instanceof Error) {
@@ -234,6 +290,7 @@ async function getTokenRecipient(
     const recipientAssociatedTokenAccountAddress = await api.findAssocTokenAccAddress(
       recipientAddress,
       mintAddress,
+      tokenProgram,
     );
 
     const shouldCreateAsAssociatedTokenAccount = !(await isAccountFunded(
@@ -241,38 +298,46 @@ async function getTokenRecipient(
       api,
     ));
 
+    let associatedTokenAccount;
+
     if (!shouldCreateAsAssociatedTokenAccount) {
-      const associatedTokenAccount = await getMaybeTokenAccount(
+      associatedTokenAccount = await getMaybeTokenAccount(
         recipientAssociatedTokenAccountAddress,
         api,
       );
       if (associatedTokenAccount instanceof Error) throw recipientTokenAccount;
-      if (associatedTokenAccount?.state === "frozen") {
-        return new SolanaTokenAccountFrozen();
+      if (!associatedTokenAccount) {
+        // TODO create a better error
+        throw new Error(`Token account ${recipientAssociatedTokenAccountAddress} not found!`);
       }
+
+      const stateErrorOrUndefined = validateAssociatedTokenAccountState(associatedTokenAccount);
+      if (stateErrorOrUndefined) return stateErrorOrUndefined;
     }
 
     return {
-      walletAddress: recipientAddress,
-      shouldCreateAsAssociatedTokenAccount,
-      tokenAccAddress: recipientAssociatedTokenAccountAddress,
+      descriptor: {
+        walletAddress: recipientAddress,
+        shouldCreateAsAssociatedTokenAccount,
+        tokenAccAddress: recipientAssociatedTokenAccountAddress,
+      },
+      recipientAccInfo: associatedTokenAccount,
     };
   } else {
     if (recipientTokenAccount.mint.toBase58() !== mintAddress) {
       return new SolanaTokenAccountHoldsAnotherToken();
     }
-    if (recipientTokenAccount.state === "frozen") {
-      return new SolanaTokenAccountFrozen();
-    }
-    if (recipientTokenAccount.state !== "initialized") {
-      return new SolanaTokenAccounNotInitialized();
-    }
+    const stateErrorOrUndefined = validateAssociatedTokenAccountState(recipientTokenAccount);
+    if (stateErrorOrUndefined) return stateErrorOrUndefined;
   }
 
   return {
-    walletAddress: recipientTokenAccount.owner.toBase58(),
-    shouldCreateAsAssociatedTokenAccount: false,
-    tokenAccAddress: recipientAddress,
+    descriptor: {
+      walletAddress: recipientTokenAccount.owner.toBase58(),
+      shouldCreateAsAssociatedTokenAccount: false,
+      tokenAccAddress: recipientAddress,
+    },
+    recipientAccInfo: recipientTokenAccount,
   };
 }
 
@@ -286,10 +351,16 @@ async function deriveCreateAssociatedTokenAccountCommandDescriptor(
 
   const token = getTokenById(model.uiState.tokenId);
   const mint = token.contractAddress;
+  const tokenProgram = await getMaybeTokenMintProgram(mint, api);
+
+  if (!tokenProgram || tokenProgram instanceof Error) {
+    throw new Error("Mint not found");
+  }
 
   const associatedTokenAccountAddress = await api.findAssocTokenAccAddress(
     mainAccount.freshAddress,
     mint,
+    tokenProgram,
   );
 
   const { fee } = await estimateFeeAndSpendable(api, mainAccount, tx);
@@ -301,7 +372,7 @@ async function deriveCreateAssociatedTokenAccountCommandDescriptor(
   return {
     fee,
     command: {
-      kind: model.kind,
+      kind: "token.createATA",
       mint: mint,
       owner: mainAccount.freshAddress,
       associatedTokenAccountAddress,
@@ -660,6 +731,7 @@ async function validateRecipientCommon(
       }
     }
 
+    // TODO update to a shared method
     const mintTokenAccount = await getMaybeMintAccount(tx.recipient, api);
 
     if (mintTokenAccount instanceof Error) {
@@ -732,6 +804,37 @@ function validateAndTryGetStakeAccount(
   }
 
   return undefined;
+}
+
+function validateAssociatedTokenAccountState(
+  tokenAcc: SolanaTokenAccount | TokenAccountInfo,
+): undefined | Error {
+  if (tokenAcc.state === "frozen") {
+    return new SolanaTokenAccountFrozen();
+  }
+  // do not check initialized state on ledger accounts
+  if (!(tokenAcc as SolanaTokenAccount).id && tokenAcc.state !== "initialized") {
+    return new SolanaTokenAccounNotInitialized();
+  }
+}
+
+function validateRecipientRequiredMemo(
+  memo: string | undefined,
+  recipientAccInfo: TokenAccountInfo,
+  errors: Record<string, Error>,
+) {
+  if (!recipientAccInfo.extensions) return;
+
+  const isRecipientMemoRequired = recipientAccInfo.extensions?.find(
+    ext =>
+      ext.extension === "memoTransfer" &&
+      (ext as MemoTransferExt).state.requireIncomingTransferMemos,
+  );
+  if (isRecipientMemoRequired && !memo) {
+    errors.memo = new SolanaRecipientMemoIsRequired();
+    // LLM expects <transaction> as error key to disable continue button
+    errors.transaction = errors.memo;
+  }
 }
 
 export { prepareTransaction };
