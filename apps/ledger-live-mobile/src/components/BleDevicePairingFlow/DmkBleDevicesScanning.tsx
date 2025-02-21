@@ -2,7 +2,7 @@ import React from "react";
 import { Device } from "@ledgerhq/types-devices";
 import { FlatList } from "react-native";
 import BleDeviceItem from "~/components/BleDevicePairingFlow/BleDeviceItem";
-import { deviceIdMap, useBleDevicesScanning } from "@ledgerhq/live-dmk-mobile";
+import { useBleDevicesScanning } from "@ledgerhq/live-dmk-mobile";
 import { DeviceModelId } from "@ledgerhq/devices";
 
 export type DmkBleDevicesScanningProps = {
@@ -10,15 +10,7 @@ export type DmkBleDevicesScanningProps = {
 };
 
 export const DmkBleDevicesScanning = ({ onDeviceSelect }: DmkBleDevicesScanningProps) => {
-  const { scannedDevices, scanningBleError } = useBleDevicesScanning({
-    mapper: device => ({
-      deviceId: device.id,
-      deviceName: `${device.name}`,
-      wired: false,
-      modelId: `${deviceIdMap[device.deviceModel.model]}`,
-      isAlreadyKnown: false,
-    }),
-  });
+  const { scannedDevices, _scanningBleError } = useBleDevicesScanning();
 
   return (
     <FlatList

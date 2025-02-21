@@ -7,8 +7,6 @@ import {
 } from "@ledgerhq/device-management-kit";
 import { RNBleTransportFactory } from "@ledgerhq/device-transport-kit-react-native-ble";
 
-console.log("USING DMK BLE");
-
 export const deviceManagementKit = new DeviceManagementKitBuilder()
   .addTransport(RNBleTransportFactory)
   .addLogger(new ConsoleLogger(LogLevel.Debug))
