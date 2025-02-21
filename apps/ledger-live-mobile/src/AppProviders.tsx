@@ -15,7 +15,7 @@ import { CountervaluesMarketcap } from "@ledgerhq/live-countervalues-react/index
 import { InViewContextProvider } from "LLM/contexts/InViewContext";
 import { WalletSyncProvider } from "LLM/features/WalletSync/components/WalletSyncContext";
 import { AppDataStorageProvider } from "~/hooks/storageProvider/useAppDataStorage";
-import { DeviceManagementKitProvider } from "@ledgerhq/live-dmk";
+import { DeviceManagementKitProvider } from "@ledgerhq/live-dmk-mobile";
 
 type AppProvidersProps = {
   initialCountervalues?: CounterValuesStateRaw;
