@@ -60,6 +60,7 @@
     "@ledgerhq/coin-filecoin": "workspace:^",
     "@ledgerhq/coin-framework": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",
+    "@ledgerhq/device-management-kit": "0.0.0-rnble-transport-20250219135033",
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/domain-service": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
