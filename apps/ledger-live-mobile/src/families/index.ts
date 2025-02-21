@@ -3,7 +3,7 @@ export * from "./bitcoin";
 export * from "./cardano";
 export * from "./celo";
 export * from "./cosmos";
-export * from "./elrond";
+export * from "./multiversx";
 export * from "./evm";
 export * from "./hedera";
 export * from "./internet_computer";

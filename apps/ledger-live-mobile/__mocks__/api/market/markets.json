@@ -197,7 +197,7 @@
     "id": "usd-coin",
     "ledgerIds": [
       "optimism/erc20/usd_coin",
-      "elrond/esdt/555344432d633736663166",
+      "multiversx/esdt/555344432d633736663166",
       "polygon/erc20/usd_coin",
       "algorand/asa/31566704",
       "arbitrum/erc20/usd_coin",
