@@ -31,7 +31,6 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "@ledgerhq/device-management-kit": "0.0.0-rnble-transport-20250219135033",
     "@ledgerhq/device-transport-kit-web-hid": "0.0.0-rnble-transport-20250219135033",
     "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/live-dmk-shared": "workspace:^",
@@ -39,6 +38,7 @@
     "@ledgerhq/types-devices": "workspace:^"
   },
   "devDependencies": {
+    "@ledgerhq/device-management-kit": "0.0.0-rnble-transport-20250219135033",
     "@testing-library/dom": "^9.3.4",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.1.0",
@@ -54,6 +54,7 @@
     "ws": "8.18.0"
   },
   "peerDependencies": {
+    "@ledgerhq/device-management-kit": "0.0.0-rnble-transport-20250219135033",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "rxjs": "^7.8.1"
