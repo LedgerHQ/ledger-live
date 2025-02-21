@@ -21,7 +21,7 @@ const defaultConfig = {
   },
   testEnvironment: "node",
   coverageDirectory: "./coverage/",
-  coverageReporters: ["json", "lcov", "clover"],
+  coverageReporters: ["json", "lcov", "clover", "json-summary"],
   reporters,
   collectCoverage: true,
   coveragePathIgnorePatterns: ["src/__tests__"],

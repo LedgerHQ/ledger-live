@@ -8,7 +8,7 @@ module.exports = {
   },
   testEnvironment: "node",
   coverageDirectory: "./coverage/",
-  coverageReporters: ["json", "lcov", "clover"],
+  coverageReporters: ["json", "lcov", "clover", "json-summary"],
   collectCoverage: true,
   coveragePathIgnorePatterns: ["src/__tests__"],
   testRegex: ".(test|spec).[jt]sx?$",

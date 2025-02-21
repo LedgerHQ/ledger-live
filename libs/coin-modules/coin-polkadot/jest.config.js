@@ -3,6 +3,7 @@ module.exports = {
   preset: "ts-jest",
   coverageDirectory: "coverage",
   collectCoverageFrom: ["src/**/*.ts"],
+  coverageReporters: ["json", ["lcov", { projectRoot: "../" }], "json-summary"],
   testEnvironment: "node",
   testPathIgnorePatterns: ["lib/", "lib-es/", ".*\\.integ\\.test\\.[tj]s"],
   modulePathIgnorePatterns: ["src/test/coin-tester"],
