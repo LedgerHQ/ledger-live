@@ -6,6 +6,7 @@ export class Currency {
     public readonly ticker: string,
     public readonly currencyId: string,
     public readonly speculosApp: AppInfos,
+    public readonly contractAddress?: string,
   ) {}
 
   static readonly CELO = new Currency("Celo", "CELO", "celo", AppInfos.CELO);
@@ -101,4 +102,18 @@ export class Currency {
     AppInfos.MULTIVERSE_X,
   );
   static readonly LTC = new Currency("Litecoin", "LTC", "litecoin", AppInfos.LTC);
+  static readonly SOL_GIGA = new Currency(
+    "GIGACHAD",
+    "GIGA",
+    "solana",
+    AppInfos.SOLANA,
+    "63LfDmNb3MQ8mw9MtZ2To9bEA2M71kZUUGq5tiJxcqj9",
+  );
+  static readonly SOL_WIF = new Currency(
+    "DOGWIFHAT",
+    "WIF",
+    "solana",
+    AppInfos.SOLANA,
+    "EKpQGSJtjMFqKZ9KQanSqYXRcF8fBopzLHYxdM65zcjm",
+  );
 }
