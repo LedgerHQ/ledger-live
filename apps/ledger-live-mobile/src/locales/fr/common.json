@@ -809,6 +809,12 @@
     "SolanaTokenAccountFrozen" : {
       "title" : "Les actifs du compte de tokens sont gelés"
     },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "Compte non configuré"
+    },
+    "SolanaTokenRecipientIsSenderATA" : {
+      "title" : "L’adresse du bénéficiaire est identique à l’adresse de l’émetteur"
+    },
     "SolanaAddressOfEd25519" : {
       "title" : "Adresse en dehors de la courbe ed25519"
     },
@@ -2904,6 +2910,7 @@
       "analyticsDesc" : "Autorisez Ledger à collecter les données d’utilisation pour nous aider à mesurer la performance de Ledger Live, à améliorer l’application et votre expérience.",
       "mevProtection" : "Protection MEV",
       "mevProtectionDesc" : "Activez la protection contre la MEV pour des transactions plus fiables sur Ethereum.",
+      "mevProtectionLearnMore" : "Avis de confidentialité",
       "personalizedRecommendations" : "Expérience personnalisée",
       "personalizedRecommendationsDesc" : "Autorisez Ledger à collecter les données sur l’utilisation de l’application pour nous aider à vous proposer des recommandations personnalisées, des contenus adaptés à vos préférences et à mesurer l’efficacité de nos campagnes marketing.",
       "analyticsModal" : {
@@ -3460,7 +3467,7 @@
           "receive" : "Recevez"
         },
         "placeholder" : "Sélectionner",
-        "title" : "Échanger",
+        "title" : "Swap",
         "cta" : "Échanger",
         "from" : "De",
         "to" : "À",
@@ -3512,7 +3519,9 @@
         "ada_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de Cardano",
         "ada_description" : "Pour échanger des Cardano, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
         "apt_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange d’Aptos",
-        "apt_description" : "Pour échanger des Aptos, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™."
+        "apt_description" : "Pour échanger des Aptos, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+        "cosmos_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de Cosmos",
+        "cosmos_description" : "Pour échanger des Cosmos, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™."
       }
     },
     "lending" : {
@@ -4086,6 +4095,7 @@
       "ctaStopScan" : "Arrêter le balayage",
       "confirm" : "Confirmer",
       "scanningTitle" : "Recherche des comptes existant déjà sur la blockchain...",
+      "whichAddressType" : "Apprenez à choisir un type d’adresse",
       "sections" : {
         "importable" : {
           "title" : "{{count}} compte a été trouvé",
@@ -6982,6 +6992,16 @@
   },
   "walletSync" : {
     "title" : "Ledger Sync",
+    "entryPoints" : {
+      "simpleCta" : {
+        "title" : "Activez Ledger Sync"
+      },
+      "card" : {
+        "title" : "Ledger Sync",
+        "description" : "Synchronisez automatiquement vos comptes, même si vous changez de téléphone.",
+        "cta" : "Activer Ledger Sync"
+      }
+    },
     "activation" : {
       "screen" : {
         "title" : "Activer Ledger Sync pour ce téléphone ?",
@@ -7219,6 +7239,14 @@
       "title" : "Sélectionner le réseau de blockchain pour cet actif",
       "detectedAccounts" : "{{count}} compte (détecté)",
       "detectedAccounts_plural" : "{{count}} comptes (détectés)"
+    }
+  },
+  "emptyList" : {
+    "accounts" : {
+      "title" : "Aucun compte trouvé",
+      "subTitle" : "Vous n’avez pas encore ajouté de compte. Commencez dès maintenant.",
+      "cta" : "Ajouter un compte",
+      "link" : "Besoin d’aide ? Découvrez comment ajouter un compte sur Ledger Live."
     }
   }
 }
