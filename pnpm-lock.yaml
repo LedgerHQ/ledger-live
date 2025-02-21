@@ -319,6 +319,9 @@ importers:
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/cryptoassets
+      '@ledgerhq/device-management-kit':
+        specifier: 0.0.0-rnble-transport-20250219135033
+        version: 0.0.0-rnble-transport-20250219135033(rxjs@7.8.1)
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../../libs/ledgerjs/packages/devices
@@ -878,6 +881,9 @@ importers:
       '@ledgerhq/coin-stacks':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-stacks
+      '@ledgerhq/device-management-kit':
+        specifier: 0.0.0-rnble-transport-20250219135033
+        version: 0.0.0-rnble-transport-20250219135033(rxjs@7.8.1)
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../../libs/ledgerjs/packages/devices
@@ -6701,9 +6707,6 @@ importers:
 
   libs/live-dmk-desktop:
     dependencies:
-      '@ledgerhq/device-management-kit':
-        specifier: 0.0.0-rnble-transport-20250219135033
-        version: 0.0.0-rnble-transport-20250219135033(rxjs@7.8.1)
       '@ledgerhq/device-transport-kit-web-hid':
         specifier: 0.0.0-rnble-transport-20250219135033
         version: 0.0.0-rnble-transport-20250219135033(@ledgerhq/device-management-kit@0.0.0-rnble-transport-20250219135033(rxjs@7.8.1))(rxjs@7.8.1)
@@ -6720,6 +6723,9 @@ importers:
         specifier: workspace:^
         version: link:../ledgerjs/packages/types-devices
     devDependencies:
+      '@ledgerhq/device-management-kit':
+        specifier: 0.0.0-rnble-transport-20250219135033
+        version: 0.0.0-rnble-transport-20250219135033(rxjs@7.8.1)
       '@testing-library/dom':
         specifier: ^9.3.4
         version: 9.3.4
@@ -6762,9 +6768,6 @@ importers:
 
   libs/live-dmk-mobile:
     dependencies:
-      '@ledgerhq/device-management-kit':
-        specifier: 0.0.0-rnble-transport-20250219135033
-        version: 0.0.0-rnble-transport-20250219135033(rxjs@7.8.1)
       '@ledgerhq/device-transport-kit-react-native-ble':
         specifier: 0.0.0-rnble-transport-20250219135033
         version: 0.0.0-rnble-transport-20250219135033(@ledgerhq/device-management-kit@0.0.0-rnble-transport-20250219135033(rxjs@7.8.1))(react-native@0.76.3(react@18.3.1))(rxjs@7.8.1)
@@ -6781,6 +6784,9 @@ importers:
         specifier: workspace:^
         version: link:../ledgerjs/packages/types-devices
     devDependencies:
+      '@ledgerhq/device-management-kit':
+        specifier: 0.0.0-rnble-transport-20250219135033
+        version: 0.0.0-rnble-transport-20250219135033(rxjs@7.8.1)
       '@testing-library/dom':
         specifier: ^9.3.4
         version: 9.3.4
@@ -6823,9 +6829,6 @@ importers:
 
   libs/live-dmk-shared:
     dependencies:
-      '@ledgerhq/device-management-kit':
-        specifier: 0.0.0-rnble-transport-20250219135033
-        version: 0.0.0-rnble-transport-20250219135033(rxjs@7.8.1)
       '@ledgerhq/hw-transport':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-transport
@@ -6836,6 +6839,9 @@ importers:
         specifier: workspace:^
         version: link:../ledgerjs/packages/types-devices
     devDependencies:
+      '@ledgerhq/device-management-kit':
+        specifier: 0.0.0-rnble-transport-20250219135033
+        version: 0.0.0-rnble-transport-20250219135033(rxjs@7.8.1)
       '@testing-library/dom':
         specifier: ^9.3.4
         version: 9.3.4
