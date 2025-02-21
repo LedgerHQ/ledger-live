@@ -1,6 +1,7 @@
 import { by, element, waitFor, device, web } from "detox";
 import { Direction } from "detox/detox";
 import { findFreePort, close as closeBridge, init as initBridge } from "./bridge/server";
+import { allure } from "jest-allure2-reporter/api";
 
 import {
   startSpeculos,
