@@ -8,7 +8,10 @@ import SyncOnboardingDeviceConnection, {
 import SyncOnboardingManual, { SyncOnboardingScreenProps } from "./Manual";
 import CompletionScreen from "./Manual/CompletionScreen";
 import { useKeepScreenAwake } from "~/renderer/hooks/useKeepScreenAwake";
-import { useDeviceSessionRefresherToggle } from "@ledgerhq/live-dmk";
+import {
+  useDeviceManagementKit,
+  useDeviceSessionRefresherToggle,
+} from "@ledgerhq/live-dmk-desktop";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 export type DeviceConnectionRouteProps = RouteComponentProps<SyncOnboardingDeviceConnectionProps>;
@@ -18,7 +21,8 @@ const SyncOnboarding = () => {
   const ldmkTransportFlag = useFeature("ldmkTransport");
   const { path } = useRouteMatch();
   useKeepScreenAwake(true);
-  useDeviceSessionRefresherToggle(ldmkTransportFlag?.enabled ?? false);
+  const dmk = useDeviceManagementKit();
+  useDeviceSessionRefresherToggle(dmk, ldmkTransportFlag?.enabled ?? false);
 
   return (
     <Flex width="100%" height="100%" position="relative">
