@@ -1,7 +1,8 @@
 import { StacksMainnet, StacksTestnet } from "@stacks/network";
+import { getEnv } from "@ledgerhq/live-env";
 
 export const StacksNetwork = {
-  mainnet: new StacksMainnet(),
+  mainnet: new StacksMainnet({ url: getEnv("API_STACKS_ENDPOINT") }),
   testnet: new StacksTestnet(),
 };
 

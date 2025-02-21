@@ -16,3 +16,6 @@ export const OP_EQUAL = 0x87;
 export const OP_EQUALVERIFY = 0x88;
 export const OP_CHECKSIG = 0xac;
 export const OP_RETURN = 0x6a;
+
+// https://zips.z.cash/zip-0253
+export const ZCASH_NU6_ACTIVATION_HEIGHT = 2726400;

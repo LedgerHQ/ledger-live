@@ -8,6 +8,7 @@ import { openModal, closeModal } from "~/renderer/actions/modals";
 import { useTrackReceiveFlow } from "~/renderer/analytics/hooks/useTrackReceiveFlow";
 import { trackingEnabledSelector } from "~/renderer/reducers/settings";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
+import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 
 type State = {
   stepId: StepId;
@@ -28,7 +29,7 @@ const ReceiveModal = () => {
   const device = useSelector(getCurrentDevice);
 
   useTrackReceiveFlow({
-    location: "Receive Modal",
+    location: HOOKS_TRACKING_LOCATIONS.receiveModal,
     device,
     verifyAddressError,
     isTrackingEnabled: useSelector(trackingEnabledSelector),

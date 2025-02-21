@@ -4154,7 +4154,8 @@
       "walletSync": "Ledger Sync",
       "walletSyncDesc": "Sync your Ledger Live crypto accounts across different phones and computers.",
       "mevProtection": "MEV Protection",
-      "mevProtectionDesc": "Enable MEV Protection for more reliable transactions on Ethereum",
+      "mevProtectionDesc": "Enable MEV Protection for more reliable transactions on Ethereum.",
+      "mevProtectionLearnMore": "Privacy notice",
       "marketPerformanceWidget": "Market Performance Widget",
       "marketPerformanceWidgetDesc": "Enable this feature to view the top gainers and losers over selected timeframes on the portfolio page."
     },
@@ -5944,11 +5945,11 @@
     },
     "WrongDeviceForAccountPayout": {
       "title": "Something went wrong",
-      "description": "This receiving account does not belong to your device. Please change and retry."
+      "description": "This receiving account does not belong to the device you have connected. Please change and retry"
     },
     "WrongDeviceForAccountRefund": {
       "title": "Something went wrong",
-      "description": "This receiving account does not belong to your device for the refund. Please change and retry."
+      "description": "This sending account does not belong to the device you have connected. Please change and retry"
     },
     "DeviceAppVerifyNotSupported": {
       "title": "App update required",
@@ -6912,6 +6913,50 @@
       "confirm": "Confirm",
       "address": "Address",
       "transactionId": "Transaction ID"
+    }
+  },
+  "lnsUpsell": {
+    "banner": {
+      "manager": {
+        "optIn": {
+          "title": "It's time to upgrade",
+          "description": "Upgrade to our latest devices with <0>{{discount}}% discount</0> for an enhanced security and a seamless experience.",
+          "cta": "Level up my wallet",
+          "linkText": "Learn more"
+        },
+        "optOut": {
+          "title": "It's time to upgrade",
+          "description": "Upgrade to our latest devices with <0>{{discount}}% discount</0> for an enhanced security and a seamless experience.",
+          "cta": "Level up my wallet",
+          "linkText": "Learn more"
+        }
+      },
+      "accounts": {
+        "optIn": {
+          "title": "It's time to upgrade",
+          "description": "Ledger Nano S updates are ending soon. Upgrade to our latest devices with <0>{{discount}}% discount</0>.",
+          "cta": "Level up my wallet",
+          "linkText": "Learn more"
+        },
+        "optOut": {
+          "title": "It's time to upgrade",
+          "description": "Ledger Nano S updates are ending soon. Upgrade to our latest devices with <0>{{discount}}% discount</0>.",
+          "cta": "Level up my wallet",
+          "linkText": "Learn more"
+        }
+      },
+      "notifications": {
+        "optIn": {
+          "description": "Updates are ending soon. Upgrade now with {{discount}}% off for a seamless experience.",
+          "cta": "Level up my wallet",
+          "linkText": "Learn more"
+        },
+        "optOut": {
+          "description": "Updates are ending soon. Upgrade now with {{discount}}% off for a seamless experience.",
+          "cta": "Level up my wallet",
+          "linkText": "Learn more"
+        }
+      }
     }
   }
 }

@@ -305,11 +305,17 @@ export type SwapStateType = {
 
 // === EARN STATE ===
 
+export type OptionMetadata = { button: string; live_app: string; flow: string; link?: string };
+
 export type EarnState = {
   infoModal: {
     message?: string;
     messageTitle?: string;
     learnMoreLink?: string;
+  };
+  menuModal?: {
+    title?: string;
+    options: { label: string; metadata: OptionMetadata }[];
   };
 };
 

@@ -45,6 +45,20 @@ const locallySupportedFiats = [
   "ZAR",
 ];
 
+export const OFAC_CURRENCIES = [
+  "AFN",
+  "BYN",
+  "CUP",
+  "CUC",
+  "IRR",
+  "IQD",
+  "KPW",
+  "RUB",
+  "SDG",
+  "SYP",
+  "MMK",
+];
+
 async function initializeUserSupportedFiats() {
   const remoteSupportedTokens = await fetchSupportedFiatsTokens();
   let supportedTokens = [] as string[];
@@ -58,7 +72,9 @@ async function initializeUserSupportedFiats() {
   } else {
     supportedTokens = locallySupportedFiats;
   }
-  userSupportedFiats = supportedTokens.map(getFiatCurrencyByTicker);
+  userSupportedFiats = supportedTokens
+    .filter(currency => !OFAC_CURRENCIES.includes(currency))
+    .map(getFiatCurrencyByTicker);
 }
 
 async function fetchSupportedFiatsTokens(): Promise<string[]> {

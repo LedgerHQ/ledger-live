@@ -56,6 +56,7 @@ export const killAnvil = async (): Promise<void> => {
     cwd,
     log: Boolean(process.env.DEBUG),
     env: process.env,
+    commandOptions: ["--remove-orphans"],
   });
 };
 

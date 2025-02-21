@@ -5,6 +5,23 @@ import { Language as DeviceLanguages, languageIds } from "@ledgerhq/types-live";
  */
 export const LanguageIds = ["en", "fr", "de", "ru", "es", "ja", "tr", "ko", "zh", "pt"] as const;
 
+export const OFAC_LOCALES = [
+  "fa-AF",
+  "ps-AF",
+  "uz-AF",
+  "be-BY",
+  "es-CU",
+  "fa-IR",
+  "ar-IQ",
+  "ko-KP",
+  "ru-RU",
+  "nus-SD",
+  "ar-SD",
+  "ar-SY",
+  "fr-SY",
+  "my-MM",
+];
+
 /**
  * This is the only place new locale should be added.
  * @dev The first element is the default locale of the language.

@@ -23,10 +23,11 @@ import { useGeneralTermsAccepted } from "~/logic/terms";
 import { Writeable } from "~/types/helpers";
 import { lightTheme, darkTheme, Theme } from "../colors";
 import { track } from "~/analytics";
-import { setEarnInfoModal } from "~/actions/earn";
+import { makeSetEarnInfoModalAction, makeSetEarnMenuModalAction } from "~/actions/earn";
 import { blockPasswordLock } from "../actions/appstate";
 import { useStorylyContext } from "~/components/StorylyStories/StorylyProvider";
 import { navigationIntegration } from "../sentry";
+import { OptionMetadata } from "~/reducers/types";
 const TRACKING_EVENT = "deeplink_clicked";
 
 const themes: {
@@ -597,10 +598,25 @@ export const DeeplinksProvider = ({
               const learnMoreLink = searchParams.get("learnMoreLink") ?? "";
 
               dispatch(
-                setEarnInfoModal({
+                makeSetEarnInfoModalAction({
                   message,
                   messageTitle,
                   learnMoreLink,
+                }),
+              );
+              return;
+            }
+            if (searchParams.get("action") === "menu-modal") {
+              const title = searchParams.get("title") ?? "";
+              const options = searchParams.get("options") ?? "";
+
+              dispatch(
+                makeSetEarnMenuModalAction({
+                  title,
+                  options: JSON.parse(options) as {
+                    label: string;
+                    metadata: OptionMetadata;
+                  }[],
                 }),
               );
               return;
