@@ -1867,7 +1867,8 @@
       "palletMethod" : "Método",
       "transferAmount" : "Transferir importe",
       "validatorsCount" : "Validadores ({{number}})",
-      "version" : "Versión"
+      "version" : "Versión",
+      "accountCreationFee" : "Tarifa de creación de cuenta"
     }
   },
   "operationList" : {
@@ -4134,7 +4135,8 @@
       "walletSync" : "Ledger Sync",
       "walletSyncDesc" : "Sincroniza tus cuentas de cripto de Ledger Live entre distintos teléfonos y PCs.",
       "mevProtection" : "Protección contra MEV",
-      "mevProtectionDesc" : "Activa Protección contra MEV para lograr transacciones más fiables en Ethereum",
+      "mevProtectionDesc" : "Activa la Protección contra MEV para lograr transacciones más fiables en Ethereum.",
+      "mevProtectionLearnMore" : "Aviso de privacidad",
       "marketPerformanceWidget" : "Widget de rendimiento del mercado",
       "marketPerformanceWidgetDesc" : "Activa esta opción para ver los principales ganadores y perdedores en los periodos que selecciones en la página del portfolio."
     },
@@ -5437,6 +5439,11 @@
     "solana" : {
       "memo" : "Etiqueta/memo",
       "memoPlaceholder" : "Opcional"
+    },
+    "mina" : {
+      "memoPlaceholder" : "Opcional",
+      "memo" : "Memo",
+      "memoWarningText" : "El valor de un memo debe ser una cadena de 32 caracteres como máximo"
     }
   },
   "errors" : {
@@ -5921,11 +5928,11 @@
     },
     "WrongDeviceForAccountPayout" : {
       "title" : "Algo ha salido mal",
-      "description" : "La cuenta receptora no coincide con tu dispositivo. Cámbiala e inténtalo de nuevo."
+      "description" : "Esta cuenta receptora no pertenece al dispositivo que has conectado. Cámbiala e inténtalo de nuevo."
     },
     "WrongDeviceForAccountRefund" : {
       "title" : "Algo ha salido mal",
-      "description" : "La cuenta receptora no coincide con tu dispositivo para el reembolso. Cámbiala e inténtalo de nuevo."
+      "description" : "Esta cuenta de envío no pertenece al dispositivo que has conectado. Cámbiala e inténtalo de nuevo."
     },
     "DeviceAppVerifyNotSupported" : {
       "title" : "Es necesario actualizar la aplicación.",
@@ -6460,6 +6467,15 @@
         "swap" : "Permutar",
         "deposit" : "Depositar"
       }
+    },
+    "InvalidMemoMina" : {
+      "title" : "El texto de un memo no debe superar los 32 caracteres"
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "Esta transacción conlleva asociada una tarifa de creación de cuenta de {{fee}}"
+    },
+    "AmountTooSmall" : {
+      "title" : "La cantidad mínima necesaria para esta transacción es de {{amount}}"
     }
   },
   "cryptoOrg" : {
@@ -6889,6 +6905,50 @@
       "confirm" : "Confirmar",
       "address" : "Dirección",
       "transactionId" : "ID de la transacción"
+    }
+  },
+  "lnsUpsell" : {
+    "banner" : {
+      "manager" : {
+        "optIn" : {
+          "title" : "Es hora de actualizar",
+          "description" : "Pásate a uno de nuestros nuevos dispositivos con un <0>{{discount}}% de descuento</0> y disfruta de más seguridad sin complicaciones.",
+          "cta" : "Renovar mi billetera",
+          "linkText" : "Más información"
+        },
+        "optOut" : {
+          "title" : "Es hora de actualizar",
+          "description" : "Pásate a uno de nuestros nuevos dispositivos con un <0>{{discount}}% de descuento</0> y disfruta de más seguridad sin complicaciones.",
+          "cta" : "Renovar mi billetera",
+          "linkText" : "Más información"
+        }
+      },
+      "accounts" : {
+        "optIn" : {
+          "title" : "Es hora de actualizar",
+          "description" : "Pronto dejará de haber actualizaciones para el Ledger Nano S. Pásate a uno de nuestros nuevos dispositivos con un <0>{{discount}}% de descuento</0>.",
+          "cta" : "Renovar mi billetera",
+          "linkText" : "Más información"
+        },
+        "optOut" : {
+          "title" : "Es hora de actualizar",
+          "description" : "Pronto dejará de haber actualizaciones para el Ledger Nano S. Pásate a uno de nuestros nuevos dispositivos con un <0>{{discount}}% de descuento</0>.",
+          "cta" : "Renovar mi billetera",
+          "linkText" : "Más información"
+        }
+      },
+      "notifications" : {
+        "optIn" : {
+          "description" : "Pronto dejará de haber actualizaciones. Renueva ahora con un {{discount}}% de descuento y disfruta de una experiencia más fluida.",
+          "cta" : "Renovar mi billetera",
+          "linkText" : "Más información"
+        },
+        "optOut" : {
+          "description" : "Pronto dejará de haber actualizaciones. Renueva ahora con un {{discount}}% de descuento y disfruta de una experiencia más fluida.",
+          "cta" : "Renovar mi billetera",
+          "linkText" : "Más información"
+        }
+      }
     }
   }
 }
