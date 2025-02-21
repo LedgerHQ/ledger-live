@@ -1,10 +1,10 @@
-import { deviceManagementKit, useDeviceManagementKit } from "./useDeviceManagementKit";
 import { useCallback, useEffect, useState } from "react";
 import { DmkError } from "@ledgerhq/device-management-kit";
-import { DeviceManagementKitTransport } from "../transport/DeviceManagementKitTransport";
-import { activeDeviceSessionSubject } from "../config/activeDeviceSession";
 import { rnBleTransportIdentifier } from "@ledgerhq/device-transport-kit-react-native-ble";
+import { activeDeviceSessionSubject } from "@ledgerhq/live-dmk-shared";
 import { Device } from "@ledgerhq/types-devices";
+import { DeviceManagementKitTransport } from "../transport/DeviceManagementKitTransport";
+import { deviceManagementKit, useDeviceManagementKit } from "./useDeviceManagementKit";
 
 export type useBleDevicePairingArgs = {
   device: Device;

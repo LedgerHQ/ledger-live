@@ -1,10 +1,9 @@
 import { useRef, useEffect, useCallback } from "react";
 import { Subscription } from "rxjs";
+import { DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import { activeDeviceSessionSubject } from "../config/activeDeviceSession";
-import { useDeviceManagementKit } from "./useDeviceManagementKit";
 
-export const useDeviceSessionRefresherToggle = (enabled: boolean) => {
-  const sdk = useDeviceManagementKit();
+export const useDeviceSessionRefresherToggle = (dmk: DeviceManagementKit, enabled: boolean) => {
   const sessionId = useRef<string>();
   const sub = useRef<Subscription>();
   useEffect(() => {
@@ -15,7 +14,7 @@ export const useDeviceSessionRefresherToggle = (enabled: boolean) => {
           if (sessionId.current !== session.sessionId) {
             if (sessionId.current) {
               try {
-                sdk.toggleDeviceSessionRefresher({
+                dmk.toggleDeviceSessionRefresher({
                   sessionId: sessionId.current,
                   enabled: true,
                 });
@@ -28,7 +27,7 @@ export const useDeviceSessionRefresherToggle = (enabled: boolean) => {
             }
 
             sessionId.current = session.sessionId;
-            sdk.toggleDeviceSessionRefresher({
+            dmk.toggleDeviceSessionRefresher({
               sessionId: sessionId.current,
               enabled: false,
             });
@@ -41,24 +40,24 @@ export const useDeviceSessionRefresherToggle = (enabled: boolean) => {
       if (!enabled) return;
       sub.current?.unsubscribe();
       if (sessionId.current) {
-        sdk.toggleDeviceSessionRefresher({
+        dmk.toggleDeviceSessionRefresher({
           sessionId: sessionId.current,
           enabled: true,
         });
       }
     };
-  }, [sdk]);
+  }, [dmk]);
 
   const resetRefresherState = useCallback(() => {
     sub.current?.unsubscribe();
 
     if (sessionId.current) {
-      sdk.toggleDeviceSessionRefresher({
+      dmk.toggleDeviceSessionRefresher({
         sessionId: sessionId.current,
         enabled: true,
       });
     }
-  }, [sdk]);
+  }, [dmk]);
 
   return { resetRefresherState };
 };

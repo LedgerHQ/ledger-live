@@ -1,6 +1,6 @@
-import { useDeviceManagementKit } from "./useDeviceManagementKit";
 import { useEffect, useState } from "react";
 import { DiscoveredDevice } from "@ledgerhq/device-management-kit";
+import { useDeviceManagementKit } from "./useDeviceManagementKit";
 
 export const useBleDevicesScanning = <T = DiscoveredDevice>(
   {

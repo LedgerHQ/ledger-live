@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useBleDevicePairing } from "@ledgerhq/live-dmk";
+import { useBleDevicePairing } from "@ledgerhq/live-dmk-mobile";
 import { Device } from "@ledgerhq/types-devices";
 import { BleDevicePairingProgress } from "./BleDevicePairingContent/BleDevicePairingProgress";
 import { getDeviceModel } from "@ledgerhq/devices";
