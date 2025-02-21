@@ -87,6 +87,8 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyMantra: DEFAULT_FEATURE,
   currencyXion: DEFAULT_FEATURE,
   currencyZenrock: DEFAULT_FEATURE,
+  currencySonicBlaze: DEFAULT_FEATURE,
+  currencySonic: DEFAULT_FEATURE,
 };
 
 /**

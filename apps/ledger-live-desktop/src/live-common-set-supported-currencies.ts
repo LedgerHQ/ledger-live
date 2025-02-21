@@ -102,4 +102,6 @@ setSupportedCurrencies([
   "mantra",
   "xion",
   "zenrock",
+  "sonic",
+  "sonic_blaze",
 ]);
