@@ -1,5 +1,16 @@
 ## 34.5.0-next.4
 
+## 34.23.0-nightly.2
+
+### Minor Changes
+
+- [#8878](https://github.com/LedgerHQ/ledger-live/pull/8878) [`5fb1f95`](https://github.com/LedgerHQ/ledger-live/commit/5fb1f95615c53f511a9e3eb8a992620b36a11512) Thanks [@Canestin](https://github.com/Canestin)! - casper coin modularization
+
+### Patch Changes
+
+- Updated dependencies [[`fa6e94c`](https://github.com/LedgerHQ/ledger-live/commit/fa6e94cce42f4e0169c6a094f9f54361f5239120), [`5fb1f95`](https://github.com/LedgerHQ/ledger-live/commit/5fb1f95615c53f511a9e3eb8a992620b36a11512)]:
+  - @ledgerhq/coin-casper@1.4.0-nightly.0
+
 ## 34.23.0-nightly.1
 
 ### Minor Changes

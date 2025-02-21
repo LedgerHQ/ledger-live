@@ -1,5 +1,16 @@
 # live-mobile
 
+## 3.67.0-nightly.2
+
+### Minor Changes
+
+- [#8878](https://github.com/LedgerHQ/ledger-live/pull/8878) [`5fb1f95`](https://github.com/LedgerHQ/ledger-live/commit/5fb1f95615c53f511a9e3eb8a992620b36a11512) Thanks [@Canestin](https://github.com/Canestin)! - casper coin modularization
+
+### Patch Changes
+
+- Updated dependencies [[`5fb1f95`](https://github.com/LedgerHQ/ledger-live/commit/5fb1f95615c53f511a9e3eb8a992620b36a11512)]:
+  - @ledgerhq/live-common@34.23.0-nightly.2
+
 ## 3.67.0-nightly.1
 
 ### Minor Changes
