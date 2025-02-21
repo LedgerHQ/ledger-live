@@ -34,6 +34,7 @@ import Hide from "./Hide";
 import { track } from "~/renderer/analytics/segment";
 import { useAccountPath } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
+import RecoverStatusDot from "~/renderer/components/MainSideBar/RecoverStatusDot";
 
 type Location = Parameters<Exclude<PromptProps["message"], string>>[0];
 
@@ -532,6 +533,7 @@ const MainSideBar = () => {
                     iconActiveColor="wallet"
                     onClick={handleClickRecover}
                     collapsed={secondAnim}
+                    NotifComponent={<RecoverStatusDot collapsed={collapsed} />}
                   />
                 </FeatureToggle>
                 <SideBarListItem
