@@ -120,6 +120,7 @@
     "addressCopiedSuspicious" : "Incompatibilidade entre o endereço copiado e o que está na área de transferência.",
     "experimentalFeature" : "Experimental",
     "featureFlags" : "Marcadores de funções",
+    "ldmkEnabled" : "Transporte LDMK",
     "information" : "Informações",
     "search" : "Pesquisar...",
     "searchWithoutEllipsis" : "Pesquisar",
@@ -448,8 +449,14 @@
       "ton_description" : "Para trocar Ton, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
       "spl_tokens_title" : "A Ledger Nano S™ não é compatível com a troca de tokens Solana",
       "spl_tokens_description" : "Para trocar tokens Solana, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+      "near_title" : "A Ledger Nano S™ não é compatível com trocas de Near",
+      "near_description" : "Para trocar o ativo Near, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
       "ada_title" : "A Ledger Nano S™ não é compatível com a troca de Cardano",
-      "ada_description" : "Para trocar Cardano, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™."
+      "ada_description" : "Para trocar Cardano, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+      "apt_title" : "A Ledger Nano S™ não suporta trocas de APTOS",
+      "apt_description" : "Para trocar o ativo APTOS, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+      "cosmos_title" : "A Ledger Nano S™ não é compatível com a troca de Cosmos",
+      "cosmos_description" : "Para trocar Cosmos, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™."
     },
     "providers" : {
       "title" : "Escolha um provedor para trocar cripto",
@@ -4147,6 +4154,11 @@
       "debugAppsDesc" : "Exibe e permite abrir aplicativos da plataforma marcados como 'debug'.",
       "debugReactQuery" : "Permitir debug do ReactQuery",
       "debugReactQueryDesc" : "Exibir e permitir a abertura do console de debug do ReactQuery.",
+      "nfts" : {
+        "title" : "Coleções de NFTs ocultas",
+        "description" : "Redefinir a lista de coleções ocultas",
+        "reset" : "Redefinir"
+      },
       "exchangeDeveloperMode" : {
         "title" : "Exchange em Modo Desenvolvedor",
         "desc" : "Informe o provedor de Exchange",
@@ -6222,6 +6234,9 @@
     },
     "SolanaTokenAccounNotInitialized" : {
       "title" : "Conta não inicializada"
+    },
+    "SolanaTokenRecipientIsSenderATA" : {
+      "title" : "O endereço do destinatário é o mesmo que o endereço do remetente do token"
     },
     "SolanaMemoIsTooLong" : {
       "title" : "O memo é muito longo. O comprimento máximo é {{maxLength}}"
