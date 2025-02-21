@@ -4175,6 +4175,12 @@
       "debugAppsDesc": "Display and allow opening debug tagged platform apps.",
       "debugReactQuery": "Allow debug ReactQuery",
       "debugReactQueryDesc": "Display and allow opening debug ReactQuery console.",
+
+      "nfts": {
+        "title": "NFTs HiddenCollections",
+        "description": "Reset the hidden collections list",
+        "reset": "Reset"
+      },
       "exchangeDeveloperMode": {
         "title": "Exchange Dev Mode",
         "desc": "Add exchange provider's info",

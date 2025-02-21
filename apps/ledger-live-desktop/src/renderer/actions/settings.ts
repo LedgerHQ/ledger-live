@@ -26,6 +26,7 @@ import { useRefreshAccountsOrdering } from "~/renderer/actions/general";
 import { Language, Locale } from "~/config/languages";
 import { Layout } from "LLD/features/Collectibles/types/Layouts";
 import {
+  RESET_HIDDEN_NFT_COLLECTIONS,
   TOGGLE_MARKET_WIDGET,
   TOGGLE_MEMOTAG_INFO,
   TOGGLE_MEV,
@@ -262,6 +263,10 @@ export const updateNftStatus = (
 ) => ({
   type: UPDATE_NFT_COLLECTION_STATUS,
   payload: { blockchain, collectionId, status },
+});
+
+export const resetHiddenNftCollections = () => ({
+  type: RESET_HIDDEN_NFT_COLLECTIONS,
 });
 
 export const unhideOrdinalsAsset = (inscriptionId: string) => ({

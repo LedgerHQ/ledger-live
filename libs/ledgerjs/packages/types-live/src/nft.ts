@@ -93,6 +93,7 @@ export type NFTMetadataResponse = {
     properties: Array<Record<"key" | "value", string>>;
     links: Record<NFTMetadataLinksProviders, string>;
     staxImage?: string;
+    spamScore?: number;
   } | null;
 };
 
@@ -104,6 +105,7 @@ export type NFTCollectionMetadataResponse = {
   result?: {
     contract: string;
     tokenName: string | null;
+    spamScore?: number;
   } | null;
 };
 
