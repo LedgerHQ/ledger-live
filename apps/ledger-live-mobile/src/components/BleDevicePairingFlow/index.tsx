@@ -14,6 +14,8 @@ import { NavigationHeaderCloseButton } from "../NavigationHeaderCloseButton";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { DmkBleDevicesScanning } from "./DmkBleDevicesScanning";
 import { DmkBleDevicePairing } from "./DmkBleDevicePairing";
+import { urls } from "~/utils/urls";
+import { Linking } from "react-native";
 
 const TIMEOUT_AFTER_PAIRED_MS = 2000;
 
@@ -163,6 +165,10 @@ const BleDevicePairingFlow: React.FC<BleDevicePairingFlowProps> = ({
   }, [isPaired]);
   const isDmkTransportEnabled = useFeature("ldmkTransport")?.enabled;
 
+  const onOpenHelp = useCallback(() => {
+    Linking.openURL(urls.errors.PairingFailed);
+  }, []);
+
   // Requests consumer component to override the header
   useEffect(() => {
     if (pairingFlowStep === "scanning") {
@@ -217,12 +223,14 @@ const BleDevicePairingFlow: React.FC<BleDevicePairingFlowProps> = ({
             device={deviceToPair}
             onPaired={onPaired}
             onRetry={onRetryPairingFlow}
+            onOpenHelp={onOpenHelp}
           />
         ) : (
           <BleDevicePairing
             deviceToPair={deviceToPair}
             onPaired={onPaired}
             onRetry={onRetryPairingFlow}
+            onOpenHelp={onOpenHelp}
           />
         )
       ) : pairingFlowStep === "scanning" ? (

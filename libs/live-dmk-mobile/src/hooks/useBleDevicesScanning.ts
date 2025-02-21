@@ -1,13 +1,23 @@
 import { useEffect, useState } from "react";
 import { DiscoveredDevice } from "@ledgerhq/device-management-kit";
 import { useDeviceManagementKit } from "./useDeviceManagementKit";
+import { Device } from "@ledgerhq/types-devices";
+import { dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
 
-export const useBleDevicesScanning = <T = DiscoveredDevice>(
+const defaultMapper = (device: DiscoveredDevice): Device => ({
+  deviceId: device.id,
+  deviceName: `${device.name}`,
+  wired: false,
+  modelId: `${dmkToLedgerDeviceIdMap[device.deviceModel.model]}`,
+  isAlreadyKnown: false,
+});
+
+export const useBleDevicesScanning = <T = Device>(
   {
     mapper,
   }: {
     mapper: (device: DiscoveredDevice) => T;
-  } = { mapper: d => d as T },
+  } = { mapper: defaultMapper },
 ) => {
   const dmk = useDeviceManagementKit();
   const [scannedDevices, setScannedDevices] = useState<T[]>([]);
