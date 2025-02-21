@@ -4135,6 +4135,7 @@
       "walletSyncDesc" : "여러 휴대전화와 컴퓨터에서 Ledger Live 암호화폐 계정 동기화",
       "mevProtection" : "MEV 보호",
       "mevProtectionDesc" : "MEV 보호 기능을 활성화하여 이더리움을 보다 안정적으로 거래하세요",
+      "mevProtectionLearnMore" : "개인정보 관련 고지",
       "marketPerformanceWidget" : "마켓 퍼포먼스 위젯",
       "marketPerformanceWidgetDesc" : "이 기능을 활성화하면 포트폴리오 페이지에서 선택한 기간 동안 가장 큰 상승 및 하락을 기록한 코인을 확인할 수 있습니다."
     },
@@ -5921,11 +5922,11 @@
     },
     "WrongDeviceForAccountPayout" : {
       "title" : "문제가 발생했습니다",
-      "description" : "귀하의 장치와 연결된 수령 계정이 아닙니다. 변경 후 다시 시도하세요."
+      "description" : "이 수령 계정은 귀하가 연결한 장치의 계정이 아닙니다. 변경 후 다시 시도하세요."
     },
     "WrongDeviceForAccountRefund" : {
       "title" : "문제가 발생했습니다",
-      "description" : "귀하의 장치와 연결되어 환불에 사용할 수 있는 수령 계정이 아닙니다. 변경 후 다시 시도하세요."
+      "description" : "이 전송 계정은 귀하가 연결한 장치의 계정이 아닙니다. 변경 후 다시 시도하세요."
     },
     "DeviceAppVerifyNotSupported" : {
       "title" : "앱 업데이트가 필요합니다",
@@ -6889,6 +6890,58 @@
       "confirm" : "확인",
       "address" : "주소",
       "transactionId" : "트랜잭션 ID"
+    }
+  },
+  "lnsUpsell" : {
+    "banner" : {
+      "manager" : {
+        "optIn" : {
+          "title" : "장치 업그레이드 기회",
+          "description" : "최신 장치로 업그레이드하고 <0>{{discount}}% 할인 혜택</0>은 물론, 더 향상된 보안력과 원활한 사용자 경험을 누려보세요.",
+          "cta" : "내 지갑 업그레이드하기",
+          "linkText" : "자세히 알아보기"
+        },
+        "optOut" : {
+          "title" : "장치 업그레이드 기회",
+          "description" : "최신 장치로 업그레이드하고 <0>{{discount}}% 할인 혜택</0>은 물론, 더 향상된 보안력과 원활한 사용자 경험을 누려보세요.",
+          "cta" : "내 지갑 업그레이드하기",
+          "linkText" : "자세히 알아보기"
+        }
+      },
+      "accounts" : {
+        "optIn" : {
+          "title" : "장치 업그레이드 기회",
+          "description" : "Ledger Nano S 업데이트가 곧 종료됩니다. 최신 장치로 업그레이드하고 <0>{{discount}}% 할인 혜택</0>까지 누리세요.",
+          "cta" : "내 지갑 업그레이드하기",
+          "linkText" : "자세히 알아보기"
+        },
+        "optOut" : {
+          "title" : "장치 업그레이드 기회",
+          "description" : "Ledger Nano S 업데이트가 곧 종료됩니다. 최신 장치로 업그레이드하고 <0>{{discount}}% 할인 혜택</0>까지 누리세요.",
+          "cta" : "내 지갑 업그레이드하기",
+          "linkText" : "자세히 알아보기"
+        }
+      },
+      "portfolio" : {
+        "optOut" : {
+          "title" : "장치 업그레이드 기회",
+          "description" : "최신 장치로 업그레이드하고 <0>{{discount}}% 할인 혜택</0>은 물론, 더 향상된 보안력과 원활한 사용자 경험을 누려보세요.",
+          "cta" : "내 지갑 업그레이드하기",
+          "linkText" : "자세히 알아보기"
+        }
+      },
+      "notifications" : {
+        "optIn" : {
+          "description" : "업데이트가 곧 종료됩니다. 지급 업그레이드하고 {{discount}}% 할인 혜택은 물론, 더 원활한 사용자 경험을 즐겨보세요.",
+          "cta" : "내 지갑 업그레이드하기",
+          "linkText" : "자세히 알아보기"
+        },
+        "optOut" : {
+          "description" : "업데이트가 곧 종료됩니다. 지급 업그레이드하고 {{discount}}% 할인 혜택은 물론, 더 원활한 사용자 경험을 즐겨보세요.",
+          "cta" : "내 지갑 업그레이드하기",
+          "linkText" : "자세히 알아보기"
+        }
+      }
     }
   }
 }
