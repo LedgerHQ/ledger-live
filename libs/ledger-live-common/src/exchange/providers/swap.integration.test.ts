@@ -123,12 +123,12 @@ describe("fetchAndMergeProviderData", () => {
       },
       lifi: {
         type: "CEX",
+        displayName: "LI.FI",
         name: "lifi",
         needsBearerToken: false,
-        termsOfUseUrl:
-          "https://support.uniswap.org/hc/en-us/articles/30935100859661-Uniswap-Labs-Terms-of-Service",
-        supportUrl: "https://support.uniswap.org/hc/en-us/requests/new",
-        mainUrl: "https://li.fi/knowledge-hub/",
+        termsOfUseUrl: "https://li.fi/legal/terms-and-conditions/",
+        supportUrl: "https://discord.gg/jumperexchange",
+        mainUrl: "https://li.fi/",
         needsKYC: false,
         version: 2,
         publicKey: {

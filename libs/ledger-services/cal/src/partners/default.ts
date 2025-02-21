@@ -80,7 +80,7 @@ export const SWAP_DATA_CDN: Record<string, AdditionalProviderConfig> = {
   lifi: {
     useInExchangeApp: true,
     displayName: "LI.FI",
-    mainUrl: "https://li.fi/knowledge-hub/",
+    mainUrl: "https://li.fi/",
     needsKYC: false,
     supportUrl: "https://discord.gg/jumperexchange",
     termsOfUseUrl: "https://li.fi/legal/terms-and-conditions/",
