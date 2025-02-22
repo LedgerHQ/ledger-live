@@ -40,6 +40,7 @@ export function useOperationsList({
   withSubAccounts,
   filterOperation, // TODO: see if we need to filter operations
 }: Props) {
+  const allAccounts = useSelector(shallowAccountsSelector);
   const spamFilteringTxFeature = useFeature("lldSpamFilteringTx");
   const nftsFromSimplehashFeature = useFeature("nftsFromSimplehash");
   const thresold = Number(nftsFromSimplehashFeature?.params?.threshold) || 40;
@@ -49,20 +50,10 @@ export function useOperationsList({
     (nftsFromSimplehashFeature?.enabled && spamFilteringTxFeature?.enabled) || false;
 
   const { nbToShow, loadMore, skip } = usePagination(INITIAL_TO_SHOW, "FetchMoreOperations");
-
   const { hideSpamCollection } = useHideSpamCollection();
 
-  // TODO: place this callback in the right place
-  const markNftAsSpam = useCallback(
-    (collectionId: string, blockchain: BlockchainsType, spamScore: number) => {
-      if (spamFilteringTxEnabled && spamScore > thresold) {
-        hideSpamCollection(collectionId, blockchain);
-      }
-    },
-    [hideSpamCollection, spamFilteringTxEnabled, thresold],
-  );
-
-  const allAccounts = useSelector(shallowAccountsSelector);
+  // to avoid multiple state rendering, we store the previous filtered data in an indexed ref object
+  const previousFilteredNftData = useRef({});
 
   const all = flattenAccounts(accounts || []).concat(
     [account as AccountLike, parentAccount as AccountLike].filter(Boolean),
@@ -86,8 +77,6 @@ export function useOperationsList({
   const currentPageNFTIN = opsWithNFTIN?.slice(skip, skip + nbToShow);
 
   const relatedNFtOps = buildContractIndexNftOperations(currentPageNFTIN, accountsMap);
-  // to avoid multiple state rendering, we store the previous filtered data in an indexed ref object
-  const previousFilteredNftData = useRef({});
 
   const { filteredOps: filteredNftData, spamOps } = useFilterNftSpams(
     thresold,
@@ -105,6 +94,17 @@ export function useOperationsList({
     currentPageOpsWithoutNFTIN,
     nbToShow,
   );
+
+  // TODO: place this callback in the right place
+  const markNftAsSpam = useCallback(
+    (collectionId: string, blockchain: BlockchainsType, spamScore: number) => {
+      if (spamFilteringTxEnabled && spamScore > thresold) {
+        hideSpamCollection(collectionId, blockchain);
+      }
+    },
+    [hideSpamCollection, spamFilteringTxEnabled, thresold],
+  );
+
   useEffect(() => {
     spamOps.forEach(op => {
       markNftAsSpam(op.collectionId, op.currencyId as BlockchainEVM, op.spamScore);
@@ -165,12 +165,12 @@ export function useOperationsList({
 
   // TODO: use defaultDailyOperations with a flatten structure
   return {
-    nbToShow,
+    getOperationProperties,
     handleClickOperation,
     fetchMoreOperations: loadMore,
     groupedOperations: groupedOperations ? groupOperationsByDate(groupedOperations) : [],
     accountsMap,
-    getOperationProperties,
+    nbToShow,
     hasMore,
   };
 }
