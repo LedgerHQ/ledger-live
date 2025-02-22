@@ -9,7 +9,6 @@ module.exports = {
       },
     ],
   },
-  testMatch: ["/**/*.test.(ts|tsx)"],
   testEnvironment: "jsdom",
   testPathIgnorePatterns: ["lib/", "lib-es/"],
 };

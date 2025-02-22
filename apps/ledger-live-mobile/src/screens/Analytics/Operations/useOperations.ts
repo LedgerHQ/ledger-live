@@ -6,10 +6,8 @@ import { Operation, AccountLike } from "@ledgerhq/types-live";
 import { useCallback } from "react";
 import { useSelector } from "react-redux";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { useHideSpamCollection } from "~/hooks/nfts/useHideSpamCollection";
 
 import { useSpamTxFiltering } from "@ledgerhq/live-nft-react";
-import { NFTResource } from "@ledgerhq/live-nft/types";
 import keyBy from "lodash/keyBy";
 
 type Props = {
@@ -21,14 +19,10 @@ type Props = {
 export function useOperations({ accounts, opCount, withSubAccounts }: Props) {
   const spamFilteringTxFeature = useFeature("llmSpamFilteringTx");
   const nftsFromSimplehashFeature = useFeature("nftsFromSimplehash");
-  const thresold = Number(nftsFromSimplehashFeature?.params?.threshold) || 40;
-  //const nftCollectionsStatusByNetwork = useSelector(nftCollectionsStatusByNetworkSelector);
 
   //both features must be enabled to enable spam filtering
   const spamFilteringTxEnabled =
     (nftsFromSimplehashFeature?.enabled && spamFilteringTxFeature?.enabled) || false;
-
-  const { hideSpamCollection } = useHideSpamCollection();
 
   const { hiddenNftCollections } = useNftCollectionsStatus();
   const shouldFilterTokenOpsZeroAmount = useSelector(

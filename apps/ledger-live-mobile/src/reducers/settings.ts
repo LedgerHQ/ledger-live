@@ -377,21 +377,6 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     };
   },
 
-  [SettingsActionTypes.UPDATE_NFT_COLLECTION_STATUS_BATCH]: (state, action) => {
-    const metadata = (action as Action<SettingsUpdateNftCollectionStatus[]>).payload;
-    return {
-      state,
-      nftCollectionsStatusByNetwork: {
-        ...state.nftCollectionsStatusByNetwork,
-
-        [blockchain]: {
-          ...state.nftCollectionsStatusByNetwork[blockchain],
-          [collection]: status,
-        },
-      },
-    };
-  },
-
   [SettingsActionTypes.RESET_NFT_COLLECTION_STATUS]: state => {
     return {
       ...state,

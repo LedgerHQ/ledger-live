@@ -21,7 +21,7 @@ describe("useHideSpamCollection", () => {
     mockDispatch.mockClear();
   });
 
-  /* it("should dispatch updateNftStatus action if collection is not already marked with a status", () => {
+  it("should dispatch updateNftStatus action if collection is not already marked with a status", () => {
     const { result } = renderHook(() => useHideSpamCollection(), {
       overrideInitialState: (state: State) => ({
         ...state,
@@ -40,7 +40,7 @@ describe("useHideSpamCollection", () => {
         status: NftStatus.spam,
       }),
     );
-  });*/
+  });
 
   /*it("should not dispatch hideNftCollection action if collection is already marked with a status", () => {
     const { result } = renderHook(() => useHideSpamCollection(), {

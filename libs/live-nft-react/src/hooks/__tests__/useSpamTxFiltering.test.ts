@@ -9,7 +9,7 @@ import {
   MOCK_CACHE_WITHOUT_SPAMS,
   MOCK_ACCOUNTS,
   MOCK_GROUPED_OPS,
-} from "./nftMocks";
+} from "../__mocks__/nftMocks";
 
 // Mock the NftMetadataContext
 jest.mock("react", () => ({
