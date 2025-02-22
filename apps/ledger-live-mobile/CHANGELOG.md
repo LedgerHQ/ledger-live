@@ -1,5 +1,31 @@
 # live-mobile
 
+## 3.67.0-nightly.3
+
+### Minor Changes
+
+- [#9173](https://github.com/LedgerHQ/ledger-live/pull/9173) [`b196038`](https://github.com/LedgerHQ/ledger-live/commit/b196038904beed7a5140692d3006848c05626d55) Thanks [@adammino-ledger](https://github.com/adammino-ledger)! - Entrypoints for staking enabled for CRO using stakekit
+
+- [#9263](https://github.com/LedgerHQ/ledger-live/pull/9263) [`f0138f1`](https://github.com/LedgerHQ/ledger-live/commit/f0138f167117829549b432b0254d261789b98d48) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Add Ledger Sync Entry Points to Manager, Settings and Accounts pages
+
+### Patch Changes
+
+- Updated dependencies [[`e4d9a5c`](https://github.com/LedgerHQ/ledger-live/commit/e4d9a5ce6c3e8f2b3829f8f5772e7ba712a4a50c)]:
+  - @ledgerhq/types-live@6.60.0-nightly.1
+  - @ledgerhq/live-common@34.23.0-nightly.3
+  - @ledgerhq/coin-framework@2.0.1-nightly.1
+  - @ledgerhq/coin-cosmos@0.8.1-nightly.1
+  - @ledgerhq/coin-elrond@0.3.5-nightly.1
+  - @ledgerhq/coin-evm@2.10.1-nightly.1
+  - @ledgerhq/coin-filecoin@1.5.5-nightly.1
+  - @ledgerhq/coin-stacks@0.5.5-nightly.1
+  - @ledgerhq/domain-service@1.2.19-nightly.1
+  - @ledgerhq/live-countervalues@0.4.1-nightly.1
+  - @ledgerhq/live-countervalues-react@0.2.23-nightly.1
+  - @ledgerhq/live-nft@0.5.8-nightly.1
+  - @ledgerhq/live-nft-react@0.5.8-nightly.1
+  - @ledgerhq/live-wallet@0.9.5-nightly.1
+
 ## 3.67.0-nightly.2
 
 ### Minor Changes

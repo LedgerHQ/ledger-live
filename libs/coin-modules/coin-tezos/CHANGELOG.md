@@ -1,5 +1,17 @@
 # @ledgerhq/coin-tezos
 
+## 1.2.0-nightly.1
+
+### Minor Changes
+
+- [#9131](https://github.com/LedgerHQ/ledger-live/pull/9131) [`896b14d`](https://github.com/LedgerHQ/ledger-live/commit/896b14d89206a6d745ce5d446189e61bb8741542) Thanks [@jprudent](https://github.com/jprudent)! - api iterates over all operations
+
+### Patch Changes
+
+- Updated dependencies [[`e4d9a5c`](https://github.com/LedgerHQ/ledger-live/commit/e4d9a5ce6c3e8f2b3829f8f5772e7ba712a4a50c)]:
+  - @ledgerhq/types-live@6.60.0-nightly.1
+  - @ledgerhq/coin-framework@2.0.1-nightly.1
+
 ## 1.1.1-nightly.0
 
 ### Patch Changes

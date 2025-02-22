@@ -1,5 +1,35 @@
 # ledger-live-desktop
 
+## 2.101.0-nightly.3
+
+### Minor Changes
+
+- [#9199](https://github.com/LedgerHQ/ledger-live/pull/9199) [`e4d9a5c`](https://github.com/LedgerHQ/ledger-live/commit/e4d9a5ce6c3e8f2b3829f8f5772e7ba712a4a50c) Thanks [@thesan](https://github.com/thesan)! - Add the `feature_lld_NanoS_upsell_banners` flag
+
+- [#9173](https://github.com/LedgerHQ/ledger-live/pull/9173) [`b196038`](https://github.com/LedgerHQ/ledger-live/commit/b196038904beed7a5140692d3006848c05626d55) Thanks [@adammino-ledger](https://github.com/adammino-ledger)! - Entrypoints for staking enabled for CRO using stakekit
+
+- [#9300](https://github.com/LedgerHQ/ledger-live/pull/9300) [`b3bafae`](https://github.com/LedgerHQ/ledger-live/commit/b3bafaecc8b105b88e8e542236f9ddc2e5145460) Thanks [@cksanders](https://github.com/cksanders)! - Recover menu item to have dot if subscription is in progress
+
+- [#9297](https://github.com/LedgerHQ/ledger-live/pull/9297) [`b5eef81`](https://github.com/LedgerHQ/ledger-live/commit/b5eef811583dda9824b2193c991f21606433bd0e) Thanks [@cksanders](https://github.com/cksanders)! - Remove new tag from recover menu item
+
+### Patch Changes
+
+- Updated dependencies [[`e4d9a5c`](https://github.com/LedgerHQ/ledger-live/commit/e4d9a5ce6c3e8f2b3829f8f5772e7ba712a4a50c)]:
+  - @ledgerhq/types-live@6.60.0-nightly.1
+  - @ledgerhq/live-common@34.23.0-nightly.3
+  - @ledgerhq/coin-framework@2.0.1-nightly.1
+  - @ledgerhq/coin-aptos@1.6.1-nightly.1
+  - @ledgerhq/coin-bitcoin@0.10.5-nightly.1
+  - @ledgerhq/coin-cosmos@0.8.1-nightly.1
+  - @ledgerhq/coin-evm@2.10.1-nightly.1
+  - @ledgerhq/coin-filecoin@1.5.5-nightly.1
+  - @ledgerhq/domain-service@1.2.19-nightly.1
+  - @ledgerhq/live-countervalues@0.4.1-nightly.1
+  - @ledgerhq/live-countervalues-react@0.2.23-nightly.1
+  - @ledgerhq/live-nft@0.5.8-nightly.1
+  - @ledgerhq/live-nft-react@0.5.8-nightly.1
+  - @ledgerhq/live-wallet@0.9.5-nightly.1
+
 ## 2.101.0-nightly.2
 
 ### Minor Changes
