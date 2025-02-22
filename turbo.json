@@ -62,6 +62,7 @@
   "ui": "tui",
   "tasks": {
     "build": {
+      "cache": false,
       "dependsOn": ["^build"],
       "outputs": ["dist/**", "lib/**", "lib-es/**", "build/**"]
     },
@@ -79,7 +80,8 @@
     "test": {
       "dependsOn": ["build"],
       "env": ["CI_OS"],
-      "outputs": []
+      "outputs": [],
+      "cache": false
     },
     "start": {
       "cache": false,
@@ -157,6 +159,7 @@
       "outputs": ["lib/**", "lib-es/**"]
     },
     "@ledgerhq/live-common#typecheck": {
+      "cache": false,
       "dependsOn": ["build"],
       "env": ["CI_OS"],
       "outputs": []
@@ -191,7 +194,7 @@
       "env": ["CI_OS"]
     },
     "live-mobile#e2e:ci": {
-      "cache": true,
+      "cache": false,
       "dependsOn": ["^build"],
       "inputs": [],
       "outputs": ["artifacts/**"]
