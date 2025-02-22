@@ -71,7 +71,9 @@ export function useOperationsList({
   // similar to groupedOperations but with section based data structure
   const allAccountOps = parseAccountOperations(
     account
-      ? account.operations
+      ? filterOperation
+        ? account.operations.filter(operation => filterOperation(operation, account))
+        : account.operations
       : (withSubAccounts ? all : accounts)
           ?.map(a => a.operations)
           .flat()
