@@ -72,11 +72,14 @@ export function useOperationsList({
   const allAccountOps = parseAccountOperations(
     account
       ? account.operations
-      : (withSubAccounts ? all : accounts)?.map(a => a.operations).flat(),
+      : (withSubAccounts ? all : accounts)
+          ?.map(a => a.operations)
+          .flat()
+          .sort((a, b) => {
+            return new Date(b.date).getTime() - new Date(a.date).getTime();
+          }),
   );
-
   const { opsWithoutNFTIN, opsWithNFTIN } = splitNftOperationsFromAllOperations(allAccountOps);
-
   const currentPageOpsWithoutNFTIN = opsWithoutNFTIN?.slice(0, nbToShow);
   const currentPageNFTIN = opsWithNFTIN?.slice(skip, skip + nbToShow);
 
@@ -100,7 +103,6 @@ export function useOperationsList({
     currentPageOpsWithoutNFTIN,
     nbToShow,
   );
-
   useEffect(() => {
     spamOps.forEach(op => {
       markNftAsSpam(op.collectionId, op.currencyId as BlockchainEVM, op.spamScore);

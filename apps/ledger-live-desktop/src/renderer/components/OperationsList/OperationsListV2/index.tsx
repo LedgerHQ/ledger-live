@@ -36,7 +36,7 @@ export function OperationsList({
     filterOperation,
   });
 
-  if (!account && !accounts) {
+  if ((!account && !accounts) || Object.entries(groupedOperations).length === 0) {
     console.warn("Preventing render OperationsList because not received account or accounts"); // eslint-disable-line no-console
     return null;
   }

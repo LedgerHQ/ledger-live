@@ -33,7 +33,6 @@ export function useFilterNftSpams(
   );
 
   const isFetching = !metadatas.every(meta => meta.status === "loaded");
-
   const spamOps = Object.values(nftOperations)
     .filter((nftOp: NftOp) => {
       return (metadataMap.get(nftOp.contract?.toLowerCase()) ?? 0) > threshold;
