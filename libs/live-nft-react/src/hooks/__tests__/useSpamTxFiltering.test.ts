@@ -33,20 +33,13 @@ describe("useSpamTxFiltering", () => {
       cache: MOCK_CACHE_WITHOUT_SPAMS,
     });
     const { result } = renderHook(
-      () =>
-        useSpamTxFiltering(
-          true,
-          MOCK_ACCOUNTS as any,
-          MOCK_GROUPED_OPS as any,
-          () => console.log("set Status"),
-          70,
-        ),
+      () => useSpamTxFiltering(true, MOCK_ACCOUNTS as any, MOCK_GROUPED_OPS as any, () => {}, 70),
       {
         wrapper,
       },
     );
-
-    expect(true).toBe(true);
+    expect(result.current.completed).toBeFalsy();
+    expect(result.current.sections).toHaveLength(2);
   });
 
   it("should return empty sections where all the related transaction contains nft spams", () => {
@@ -55,14 +48,7 @@ describe("useSpamTxFiltering", () => {
       cache: MOCK_CACHE_WITH_ALL_SPAMS,
     });
     const { result } = renderHook(
-      () =>
-        useSpamTxFiltering(
-          true,
-          MOCK_ACCOUNTS as any,
-          MOCK_GROUPED_OPS as any,
-          () => console.log("set Status"),
-          50,
-        ),
+      () => useSpamTxFiltering(true, MOCK_ACCOUNTS as any, MOCK_GROUPED_OPS as any, () => {}, 50),
       {
         wrapper,
       },
