@@ -97,7 +97,6 @@ export class OperationsList extends PureComponent<Props, State> {
     } = this.props;
     const { nbToShow } = this.state;
     if (!account && !accounts) {
-      console.warn("Preventing render OperationsList because not received account or accounts"); // eslint-disable-line no-console
       return null;
     }
     const groupedOperations = account

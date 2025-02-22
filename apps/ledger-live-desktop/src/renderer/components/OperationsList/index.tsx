@@ -18,7 +18,6 @@ export function OperationsList(props: Props) {
 
   const { account, accounts } = props;
   if (!account && !accounts) {
-    console.warn("Preventing render OperationsList because not received account or accounts"); // eslint-disable-line no-console
     return null;
   }
   if (spamFilteringTxEnabled) {

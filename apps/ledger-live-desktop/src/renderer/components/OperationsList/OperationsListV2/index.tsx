@@ -20,7 +20,6 @@ export function OperationsList({
   title,
   filterOperation,
 }: Props) {
-  console.log("OperationsListV2 ====> 2");
   const { t } = useTranslation();
   const {
     fetchMoreOperations,
@@ -37,7 +36,6 @@ export function OperationsList({
   });
 
   if ((!account && !accounts) || Object.entries(groupedOperations).length === 0) {
-    console.warn("Preventing render OperationsList because not received account or accounts"); // eslint-disable-line no-console
     return null;
   }
   return (
