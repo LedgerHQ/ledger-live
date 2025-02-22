@@ -54,6 +54,8 @@ import { UpdateStep } from "../FirmwareUpdate";
 import { useTheme } from "styled-components/native";
 import KeyboardView from "~/components/KeyboardView";
 import { getEnv } from "@ledgerhq/live-env";
+import LedgerSyncEntryPoint from "LLM/features/LedgerSyncEntryPoint";
+import { EntryPoint } from "LLM/features/LedgerSyncEntryPoint/types";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<MyLedgerNavigatorStackParamList, ScreenName.MyLedgerDevice>
@@ -261,6 +263,9 @@ const AppsScreen = ({
   const latestFirmware = useLatestFirmware(lastSeenDevice?.deviceInfo);
   const showFwUpdateBanner = Boolean(latestFirmware);
 
+  const appsToUpdate = getEnv("MOCK_APP_UPDATE") ? deviceApps : update;
+  const showAppUpdate = appsToUpdate.length > 0;
+
   const sectionListRef = useRef<SectionList>(null);
 
   const { space } = useTheme();
@@ -317,13 +322,18 @@ const AppsScreen = ({
               <FirmwareUpdateBanner onBackFromUpdate={onBackFromUpdate} />
             </Flex>
           ) : null}
+          {!showAppUpdate && !showFwUpdateBanner ? (
+            <Flex m={6} mb={0}>
+              <LedgerSyncEntryPoint entryPoint={EntryPoint.manager} page="Manager" />
+            </Flex>
+          ) : null}
         </DeviceCard>
         <ProviderWarning />
         <Benchmarking state={state} />
         {
           <AppUpdateAll
             state={state}
-            appsToUpdate={getEnv("MOCK_APP_UPDATE") ? deviceApps : update}
+            appsToUpdate={appsToUpdate}
             dispatch={dispatch}
             isModalOpened={updateModalOpened}
           />
@@ -331,6 +341,7 @@ const AppsScreen = ({
       </Flex>
     ),
     [
+      appsToUpdate,
       device,
       deviceApps,
       deviceId,
@@ -343,9 +354,9 @@ const AppsScreen = ({
       onLanguageChange,
       pendingInstalls,
       result,
+      showAppUpdate,
       showFwUpdateBanner,
       state,
-      update,
       updateModalOpened,
     ],
   );

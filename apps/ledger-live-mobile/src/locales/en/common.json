@@ -6998,6 +6998,16 @@
   },
   "walletSync": {
     "title": "Ledger Sync",
+    "entryPoints": {
+      "simpleCta": {
+        "title": "Activate Ledger Sync"
+      },
+      "card": {
+        "title": "Ledger Sync",
+        "description": "Sync your accounts automatically, even when switching to a new phone.",
+        "cta": "Turn on Ledger Sync"
+      }
+    },
     "activation": {
       "screen": {
         "title": "Turn on Ledger Sync for this phone?",
