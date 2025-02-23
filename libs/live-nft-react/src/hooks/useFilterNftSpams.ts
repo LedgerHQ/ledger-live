@@ -50,5 +50,5 @@ export function useFilterNftSpams(
         op => (metadataMap.get(op.contract?.toLowerCase()) ?? 0) <= threshold,
       );
 
-  return { filteredOps, spamOps };
+  return { filteredOps, spamOps, isFetching };
 }

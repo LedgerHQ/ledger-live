@@ -33,7 +33,7 @@ describe("useSpamTxFiltering", () => {
       cache: MOCK_CACHE_WITHOUT_SPAMS,
     });
     const { result } = renderHook(
-      () => useSpamTxFiltering(true, MOCK_ACCOUNTS as any, MOCK_GROUPED_OPS as any, () => {}, 70),
+      () => useSpamTxFiltering(true, MOCK_ACCOUNTS as any, MOCK_GROUPED_OPS as any, 70),
       {
         wrapper,
       },
@@ -48,7 +48,7 @@ describe("useSpamTxFiltering", () => {
       cache: MOCK_CACHE_WITH_ALL_SPAMS,
     });
     const { result } = renderHook(
-      () => useSpamTxFiltering(true, MOCK_ACCOUNTS as any, MOCK_GROUPED_OPS as any, () => {}, 50),
+      () => useSpamTxFiltering(true, MOCK_ACCOUNTS as any, MOCK_GROUPED_OPS as any, 50),
       {
         wrapper,
       },
