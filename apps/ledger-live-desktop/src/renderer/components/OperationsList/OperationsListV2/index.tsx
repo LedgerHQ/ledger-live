@@ -10,6 +10,7 @@ import OperationComponent from "../Operation";
 import TableContainer, { TableHeader } from "../../TableContainer";
 import { isEditableOperation } from "@ledgerhq/live-common/operation";
 import { useOperationsList, Props } from "./useOperationsList";
+import { InfiniteLoader } from "@ledgerhq/react-ui/index";
 
 export function OperationsList({
   account,
@@ -27,6 +28,7 @@ export function OperationsList({
     groupedOperations,
     getOperationProperties,
     hasMore,
+    isFetchingMetadata,
   } = useOperationsList({
     account,
     parentAccount,
@@ -81,7 +83,11 @@ export function OperationsList({
           );
         })}
       </TableContainer>
-      {hasMore ? (
+      {isFetchingMetadata ? (
+        <Box p={3} alignItems="center">
+          <InfiniteLoader size={23} />
+        </Box>
+      ) : hasMore ? (
         <ShowMore onClick={fetchMoreOperations}>
           <span>{t("common.showMore")}</span>
           <IconAngleDown size={12} />

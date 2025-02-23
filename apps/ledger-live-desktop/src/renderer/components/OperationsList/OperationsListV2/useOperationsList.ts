@@ -7,7 +7,6 @@ import { shallowAccountsSelector } from "~/renderer/reducers/accounts";
 
 import { flattenAccounts, getMainAccount } from "@ledgerhq/live-common/account/index";
 import keyBy from "lodash/keyBy";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { BlockchainEVM, BlockchainsType } from "@ledgerhq/live-nft/supported";
 import { useHideSpamCollection } from "~/renderer/hooks/nfts/useHideSpamCollection";
 import { useFilterNftSpams } from "@ledgerhq/live-nft-react";
@@ -57,6 +56,7 @@ export function useOperationsList({
 
   // to avoid multiple state rendering, we store the previous filtered data in an indexed ref object
   const previousFilteredNftData = useRef({});
+  const spamOpsCache = useRef<string[]>([]);
 
   const all = flattenAccounts(accounts || []).concat(
     [account as AccountLike, parentAccount as AccountLike].filter(Boolean),
@@ -69,23 +69,28 @@ export function useOperationsList({
         ? account.operations.filter(operation => filterOperation(operation, account))
         : account.operations
       : (withSubAccounts ? all : accounts)
-          ?.map(a => a.operations)
-          .flat()
+          ?.flatMap(a =>
+            filterOperation
+              ? a.operations.filter(operation => filterOperation(operation, a))
+              : a.operations,
+          )
           .sort((a, b) => {
             return new Date(b.date).getTime() - new Date(a.date).getTime();
           }),
   );
   const { opsWithoutNFTIN, opsWithNFTIN } = splitNftOperationsFromAllOperations(allAccountOps);
   const currentPageOpsWithoutNFTIN = opsWithoutNFTIN?.slice(0, nbToShow);
-  const currentPageNFTIN = opsWithNFTIN?.slice(skip, skip + nbToShow);
+  const currentPageNFTIN = opsWithNFTIN
+    ?.filter(op => !spamOpsCache.current.includes(op.id))
+    .slice(skip, skip + INITIAL_TO_SHOW * 2);
 
   const relatedNFtOps = buildContractIndexNftOperations(currentPageNFTIN, accountsMap);
 
-  const { filteredOps: filteredNftData, spamOps } = useFilterNftSpams(
-    thresold,
-    relatedNFtOps,
-    currentPageNFTIN,
-  );
+  const {
+    filteredOps: filteredNftData,
+    spamOps,
+    isFetching,
+  } = useFilterNftSpams(thresold, relatedNFtOps, currentPageNFTIN);
 
   previousFilteredNftData.current = {
     ...previousFilteredNftData.current,
@@ -107,6 +112,8 @@ export function useOperationsList({
     },
     [hideSpamCollection, spamFilteringTxEnabled, thresold],
   );
+
+  spamOpsCache.current = spamOps.map(op => op.operation.id);
 
   useEffect(() => {
     spamOps.forEach(op => {
@@ -176,5 +183,6 @@ export function useOperationsList({
     accountsMap,
     nbToShow,
     hasMore,
+    isFetchingMetadata: isFetching,
   };
 }
