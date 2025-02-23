@@ -41,8 +41,12 @@ export function useOperationsList({
   filterOperation, // TODO: see if we need to filter operations
 }: Props) {
   const allAccounts = useSelector(shallowAccountsSelector);
-  const spamFilteringTxFeature = useFeature("lldSpamFilteringTx");
-  const nftsFromSimplehashFeature = useFeature("nftsFromSimplehash");
+  const {
+    hideSpamCollection,
+    spamFilteringTxFeature,
+    nftsFromSimplehashFeature,
+    nftCollectionsStatusByNetwork,
+  } = useHideSpamCollection();
   const thresold = Number(nftsFromSimplehashFeature?.params?.threshold) || 40;
 
   //both features must be enabled to enable spam filtering
@@ -50,7 +54,6 @@ export function useOperationsList({
     (nftsFromSimplehashFeature?.enabled && spamFilteringTxFeature?.enabled) || false;
 
   const { nbToShow, loadMore, skip } = usePagination(INITIAL_TO_SHOW, "FetchMoreOperations");
-  const { hideSpamCollection } = useHideSpamCollection();
 
   // to avoid multiple state rendering, we store the previous filtered data in an indexed ref object
   const previousFilteredNftData = useRef({});
@@ -107,9 +110,10 @@ export function useOperationsList({
 
   useEffect(() => {
     spamOps.forEach(op => {
-      markNftAsSpam(op.collectionId, op.currencyId as BlockchainEVM, op.spamScore);
+      if (!nftCollectionsStatusByNetwork[op.currencyId as BlockchainEVM])
+        markNftAsSpam(op.collectionId, op.currencyId as BlockchainEVM, op.spamScore);
     });
-  }, [spamOps, markNftAsSpam]);
+  }, [spamOps, markNftAsSpam, nftCollectionsStatusByNetwork]);
 
   const hasMore = nbToShow <= groupedOperations.length;
 

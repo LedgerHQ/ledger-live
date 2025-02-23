@@ -29,5 +29,8 @@ export function useHideSpamCollection() {
   return {
     hideSpamCollection,
     enabled: (spamFilteringTxFeature?.enabled && nftsFromSimplehashFeature?.enabled) || false,
+    nftCollectionsStatusByNetwork,
+    spamFilteringTxFeature,
+    nftsFromSimplehashFeature,
   };
 }
