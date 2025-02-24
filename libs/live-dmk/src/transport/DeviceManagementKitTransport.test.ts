@@ -13,6 +13,7 @@ let obs: Subject<DeviceSessionState> = new Subject<DeviceSessionState>();
 let transport: DeviceManagementKitTransport;
 describe("DeviceManagementKitTransport", () => {
   beforeAll(async () => {
+    vi.spyOn(deviceManagementKit, "toggleDeviceSessionRefresher").mockImplementation(vi.fn());
     vi.spyOn(deviceManagementKit, "listenToKnownDevices").mockImplementation(() => {
       return of<DiscoveredDevice[]>([
         {
