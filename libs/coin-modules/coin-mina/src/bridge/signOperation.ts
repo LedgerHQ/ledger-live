@@ -1,7 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";
 import { FeeNotLoaded } from "@ledgerhq/errors";
-// import * as minaAPI from "mina-ledger-js";
 import type { MinaOperation, MinaSignedTransaction, Transaction } from "../types/common";
 import type {
   Account,
@@ -16,7 +15,6 @@ import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { buildTransaction } from "./buildTransaction";
 import { reEncodeRawSignature } from "../common-logic";
 import invariant from "invariant";
-// import { buildTransaction } from "./js-buildTransaction";
 
 const buildOptimisticOperation = (
   account: Account,
@@ -79,7 +77,6 @@ export const buildSignOperation =
         const { signature } = (await signerContext(deviceId, signer =>
           signer.signTransaction(unsigned),
         )) as MinaSignature;
-        // log("debug", "requesting user signature", { signature, unsigned });
         invariant(signature, "signature should be defined if user accepted");
         const encodedSignature = reEncodeRawSignature(signature);
 
