@@ -11,6 +11,7 @@ import {
 import { MINA_TOKEN_ID } from "../consts";
 import { isValidAddress } from "../common-logic";
 import { RosettaBlockInfoResponse, RosettaTransaction } from "./rosetta/types";
+import { log } from "@ledgerhq/logs";
 
 export const getAccount = async (address: string): Promise<MinaAPIAccount> => {
   const networkStatus = await fetchNetworkStatus();
@@ -21,6 +22,11 @@ export const getAccount = async (address: string): Promise<MinaAPIAccount> => {
     balance = new BigNumber(resp.balances[0].metadata.total_balance);
     spendableBalance = new BigNumber(resp.balances[0].metadata.liquid_balance);
   } catch (e) {
+    log("info", "[mina] getAccount error:", {
+      address,
+      error: e,
+    });
+    // fail is expected for when account has no balance and no transactions
     /* empty */
   }
 
