@@ -1,6 +1,9 @@
 import React, { useCallback, useState } from "react";
 import { genAccount } from "@ledgerhq/live-common/mock/account";
-import { listSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
+import {
+  getCryptoCurrencyById,
+  listSupportedCurrencies,
+} from "@ledgerhq/live-common/currencies/index";
 import { useNavigation } from "@react-navigation/native";
 import { Alert as Confirm, ScrollView } from "react-native";
 import { Button, Checkbox, Flex, Text, IconsLegacy, Alert } from "@ledgerhq/native-ui";
@@ -19,16 +22,52 @@ import {
   initialState as liveWalletInitialState,
   accountUserDataExportSelector,
 } from "@ledgerhq/live-wallet/store";
+import { fakeAccounts } from "~/screens/Analytics/Operations/fakeData";
+import { Account } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 
 async function injectMockAccountsInDB(currencies: CryptoCurrency[], tokens: string) {
   const tokenIds = tokens.split(",").map(t => t.toLowerCase().trim());
   await saveAccounts({
     active: currencies.map(currency => {
-      const account = genAccount(String(Math.random()), {
+      /*   const account = genAccount(String(Math.random()), {
         currency,
         tokenIds,
-      });
+      }); */
+      const account: Account = {
+        type: "Account",
+        id: fakeAccounts[0].id,
+        seedIdentifier: "mock",
+        derivationMode: "",
+        index: fakeAccounts[0].index,
+        freshAddress: fakeAccounts[0].freshAddress,
+        freshAddressPath: fakeAccounts[0].freshAddressPath,
+        used: fakeAccounts[0].used,
+        balance: BigNumber(fakeAccounts[0].balance),
+        blockHeight: fakeAccounts[0].blockHeight,
+        currency: getCryptoCurrencyById(fakeAccounts[0].currencyId),
+        operations: fakeAccounts[0].operations.slice(0, 200),
+        pendingOperations: fakeAccounts[0].pendingOperations,
+        lastSyncDate: new Date(fakeAccounts[0].lastSyncDate),
+        subAccounts: fakeAccounts[0].subAccounts,
+        balanceHistoryCache: fakeAccounts[0].balanceHistoryCache,
+        swapHistory: fakeAccounts[0].swapHistory,
+        syncHash: fakeAccounts[0].syncHash,
+        nfts: fakeAccounts[0].nfts.map(nft => ({
+          ...nft,
+          amount: BigNumber(nft.amount),
+        })),
+        spendableBalance: BigNumber(fakeAccounts[0].spendableBalance),
+        name: fakeAccounts[0].name,
+        starred: fakeAccounts[0].starred,
+        creationDate: new Date(fakeAccounts[0].creationDate),
+        operationsCount: fakeAccounts[0].operationsCount,
+      };
+
+      console.log(JSON.stringify(account));
       const userData = accountUserDataExportSelector(liveWalletInitialState, { account });
+
+      console.log("useData", userData);
       return accountModel.encode([account, userData]);
     }),
   });
