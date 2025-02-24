@@ -3,26 +3,15 @@ import { SectionList, SectionListData, SectionListRenderItem } from "react-nativ
 import { Flex } from "@ledgerhq/native-ui";
 import { useSelector } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
-import {
-  Account,
-  AccountLike,
-  AccountLikeArray,
-  DailyOperationsSection,
-  Operation,
-} from "@ledgerhq/types-live";
-import { groupAccountsOperationsByDay } from "@ledgerhq/live-common/account/index";
+import { Account, AccountLikeArray, DailyOperationsSection, Operation } from "@ledgerhq/types-live";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/helpers";
 
 import { Trans } from "react-i18next";
-import { isAddressPoisoningOperation } from "@ledgerhq/live-common/operation";
 import { useRefreshAccountsOrdering } from "~/actions/general";
 import { flattenAccountsSelector } from "~/reducers/accounts";
 
 import NoOperationFooter from "~/components/NoOperationFooter";
 import NoMoreOperationFooter from "~/components/NoMoreOperationFooter";
-
-import EmptyStatePortfolio from "../Portfolio/EmptyStatePortfolio";
-import NoOpStatePortfolio from "../Portfolio/NoOpStatePortfolio";
 import OperationRow from "~/components/OperationRow";
 import SectionHeader from "~/components/SectionHeader";
 import LoadingFooter from "~/components/LoadingFooter";
@@ -32,7 +21,9 @@ import { TrackScreen } from "~/analytics";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
-import { filterTokenOperationsZeroAmountEnabledSelector } from "~/reducers/settings";
+import { useOperations } from "./useOperations";
+import EmptyStatePortfolio from "~/screens/Portfolio/EmptyStatePortfolio";
+import NoOpStatePortfolio from "~/screens/Portfolio/NoOpStatePortfolio";
 
 type Props = StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.AnalyticsOperations>;
 
@@ -57,23 +48,10 @@ export function Operations({ navigation, route }: Props) {
   const refreshAccountsOrdering = useRefreshAccountsOrdering();
   useFocusEffect(refreshAccountsOrdering);
 
-  const shouldFilterTokenOpsZeroAmount = useSelector(
-    filterTokenOperationsZeroAmountEnabledSelector,
-  );
-  const filterOperation = useCallback(
-    (operation: Operation, account: AccountLike) => {
-      // Remove operations linked to address poisoning
-      const removeZeroAmountTokenOp =
-        shouldFilterTokenOpsZeroAmount && isAddressPoisoningOperation(operation, account);
-
-      return !removeZeroAmountTokenOp;
-    },
-    [shouldFilterTokenOpsZeroAmount],
-  );
-  const { sections, completed } = groupAccountsOperationsByDay(accountsFiltered, {
-    count: opCount,
+  const { sections, completed } = useOperations({
+    accounts: accountsFiltered,
+    opCount,
     withSubAccounts: true,
-    filterOperation,
   });
 
   function ListEmptyComponent() {

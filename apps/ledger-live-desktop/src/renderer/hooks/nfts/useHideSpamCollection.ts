@@ -7,7 +7,7 @@ import { BlockchainsType } from "@ledgerhq/live-nft/supported";
 import { NftStatus } from "@ledgerhq/live-nft/types";
 
 export function useHideSpamCollection() {
-  const spamFilteringTxFeature = useFeature("spamFilteringTx");
+  const spamFilteringTxFeature = useFeature("lldSpamFilteringTx");
   const nftsFromSimplehashFeature = useFeature("nftsFromSimplehash");
 
   const nftCollectionsStatusByNetwork = useSelector(nftCollectionsStatusByNetworkSelector);
@@ -29,5 +29,8 @@ export function useHideSpamCollection() {
   return {
     hideSpamCollection,
     enabled: (spamFilteringTxFeature?.enabled && nftsFromSimplehashFeature?.enabled) || false,
+    nftCollectionsStatusByNetwork,
+    spamFilteringTxFeature,
+    nftsFromSimplehashFeature,
   };
 }
