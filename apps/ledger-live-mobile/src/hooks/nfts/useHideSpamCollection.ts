@@ -7,7 +7,7 @@ import { nftCollectionsStatusByNetworkSelector } from "~/reducers/settings";
 import { updateNftStatus } from "~/actions/settings";
 
 export function useHideSpamCollection() {
-  const spamFilteringTxFeature = useFeature("lldSpamFilteringTx");
+  const spamFilteringTxFeature = useFeature("llmSpamFilteringTx");
   const nftsFromSimplehashFeature = useFeature("nftsFromSimplehash");
 
   const nftCollectionsStatusByNetwork = useSelector(nftCollectionsStatusByNetworkSelector);

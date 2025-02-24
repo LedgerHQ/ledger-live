@@ -1,14 +1,11 @@
 import { filterTokenOperationsZeroAmountEnabledSelector } from "~/reducers/settings";
 import { useNftCollectionsStatus } from "~/hooks/nfts/useNftCollectionsStatus";
-import { groupAccountsOperationsByDay, flattenAccounts } from "@ledgerhq/live-common/account/index";
+import { groupAccountsOperationsByDay } from "@ledgerhq/live-common/account/index";
 import { isAddressPoisoningOperation } from "@ledgerhq/coin-framework/lib/operation";
 import { Operation, AccountLike } from "@ledgerhq/types-live";
 import { useCallback } from "react";
 import { useSelector } from "react-redux";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-
-import { useSpamTxFiltering } from "@ledgerhq/live-nft-react";
-import keyBy from "lodash/keyBy";
 
 type Props = {
   opCount: number;
@@ -42,19 +39,18 @@ export function useOperations({ accounts, opCount, withSubAccounts }: Props) {
     [hiddenNftCollections, shouldFilterTokenOpsZeroAmount],
   );
 
-  const all = flattenAccounts(accounts || []).filter(Boolean);
-
-  const accountsMap = keyBy(all, "id");
-
   const groupedOperations = groupAccountsOperationsByDay(accounts, {
     count: opCount,
     withSubAccounts,
     filterOperation,
   });
 
-  const filteredData = useSpamTxFiltering(spamFilteringTxEnabled, accountsMap, groupedOperations);
+  //const all = flattenAccounts(accounts || []).filter(Boolean);
+  // const accountsMap = keyBy(all, "id");
+  // const filteredData = useSpamTxFiltering(spamFilteringTxEnabled, accountsMap, groupedOperations);
   return {
-    sections: filteredData?.sections,
-    completed: filteredData?.completed,
+    sections: groupedOperations.sections,
+    completed: groupedOperations.completed,
+    spamFilteringTxEnabled,
   };
 }
