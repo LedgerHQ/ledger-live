@@ -1,5 +1,11 @@
 # @ledgerhq/cryptoassets
 
+## 13.12.0
+
+### Minor Changes
+
+- [#9119](https://github.com/LedgerHQ/ledger-live/pull/9119) [`da67b55`](https://github.com/LedgerHQ/ledger-live/commit/da67b5511b22553f7e3e089eca2e363a5e3cbffe) Thanks [@qperrot](https://github.com/qperrot)! - Fix ethereum testnet units
+
 ## 13.12.0-next.0
 
 ### Minor Changes

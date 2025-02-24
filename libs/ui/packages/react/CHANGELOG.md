@@ -1,5 +1,11 @@
 # @ledgerhq/react-ui
 
+## 0.19.0
+
+### Minor Changes
+
+- [#9172](https://github.com/LedgerHQ/ledger-live/pull/9172) [`969bb54`](https://github.com/LedgerHQ/ledger-live/commit/969bb544f81538ddac1afe5cd8602c9f0469a643) Thanks [@thesan](https://github.com/thesan)! - Add the LNS upsell banners components to LLD
+
 ## 0.19.0-next.0
 
 ### Minor Changes

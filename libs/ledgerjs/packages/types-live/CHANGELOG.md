@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.60.0
+
+### Minor Changes
+
+- [#9241](https://github.com/LedgerHQ/ledger-live/pull/9241) [`0a4413d`](https://github.com/LedgerHQ/ledger-live/commit/0a4413dd5cf50967c27b39bbd7dd9222e6322a60) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add link param to mevProtection ff
+
 ## 6.60.0-next.0
 
 ### Minor Changes

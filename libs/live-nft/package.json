@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-nft",
-  "version": "0.5.8-next.0",
+  "version": "0.5.8",
   "description": "Ledger Live NFT module",
   "keywords": [
     "Ledger"

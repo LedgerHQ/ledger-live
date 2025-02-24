@@ -1,5 +1,21 @@
 # @ledgerhq/coin-evm
 
+## 2.11.0
+
+### Minor Changes
+
+- [#9119](https://github.com/LedgerHQ/ledger-live/pull/9119) [`da67b55`](https://github.com/LedgerHQ/ledger-live/commit/da67b5511b22553f7e3e089eca2e363a5e3cbffe) Thanks [@qperrot](https://github.com/qperrot)! - Fix ethereum testnet units
+
+- [#9248](https://github.com/LedgerHQ/ledger-live/pull/9248) [`94a59f2`](https://github.com/LedgerHQ/ledger-live/commit/94a59f2030b8b25962e183919017a1e25454fdfb) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix (coin-tester): stop EVM coin tester smoothly
+
+### Patch Changes
+
+- Updated dependencies [[`da67b55`](https://github.com/LedgerHQ/ledger-live/commit/da67b5511b22553f7e3e089eca2e363a5e3cbffe)]:
+  - @ledgerhq/cryptoassets@13.12.0
+  - @ledgerhq/coin-framework@2.1.0
+  - @ledgerhq/domain-service@1.2.19
+  - @ledgerhq/evm-tools@1.4.0
+
 ## 2.11.0-next.0
 
 ### Minor Changes
