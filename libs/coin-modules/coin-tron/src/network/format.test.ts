@@ -13,7 +13,7 @@ describe("formatTrongridTrc20TxResponse", () => {
       },
       value: 1,
       transaction_id: "txId",
-      token_info: {},
+      token_info: { address: "addr" },
       type: "Approval",
     };
     const result = formatTrongridTrc20TxResponse(tx as unknown as Trc20API);
@@ -28,6 +28,8 @@ describe("formatTrongridTrc20TxResponse", () => {
       value: new BigNumber(1),
       fee: new BigNumber(1),
       hasFailed: false,
+      tokenType: "trc20",
+      tokenAddress: "addr",
     });
   });
 
@@ -56,6 +58,8 @@ describe("formatTrongridTrc20TxResponse", () => {
       value: new BigNumber(1),
       fee: new BigNumber(1),
       hasFailed: false,
+      tokenType: "trc20",
+      tokenAddress: "tokenId",
     });
   });
 });
