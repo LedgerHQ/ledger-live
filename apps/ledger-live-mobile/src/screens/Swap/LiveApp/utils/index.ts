@@ -22,10 +22,8 @@ export const trackSwapError = (error: Error, properties: Record<string, unknown>
   }
 };
 
-type TransformableObject = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [key: string]: any;
-};
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type TransformableObject = Record<string, any>;
 
 /**
  * Recursively transforms all number strings in an object into BigNumber instances.
