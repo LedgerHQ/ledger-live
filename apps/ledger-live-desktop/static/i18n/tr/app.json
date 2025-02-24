@@ -1237,7 +1237,7 @@
       "pinContent" : {
         "title" : "PIN kodu",
         "titleCompleted" : "PIN kodu belirlendi",
-        "description" : "Tüm parolalar ve giriş kodları gibi PIN Kodu da {{productName}} cihazınızın kilidini açmanızı ve istenmeyen erişimleri önlemenizi sağlar.",
+        "description" : "PIN kodu, tüm parolalar ve giriş kodları gibi {{productName}} cihazınızın kilidini açmanızı ve istenmeyen erişimleri önlemenizi sağlar.",
         "continueOnDevice" : "{{productName}} cihazınızda PIN Kodunuzu belirleyin"
       },
       "seedContent" : {
@@ -1867,7 +1867,8 @@
       "palletMethod" : "Yöntem",
       "transferAmount" : "Transfer Tutarı",
       "validatorsCount" : "Doğrulayıcılar ({{number}})",
-      "version" : "Sürüm"
+      "version" : "Sürüm",
+      "accountCreationFee" : "Hesap Oluşturma Ücreti"
     }
   },
   "operationList" : {
@@ -3809,7 +3810,7 @@
           "description" : "Herhangi bir miktarda ETH stake etmek için bir havuza katılıp ödüller alabilirsiniz."
         },
         "restaking" : {
-          "name" : "Yeniden Stake Etme",
+          "name" : "Yeniden Stake Edin",
           "description" : "Ek ödüller kazanmak için liquid token'larınızı yeniden stake edebilirsiniz."
         }
       },
@@ -4134,7 +4135,8 @@
       "walletSync" : "Ledger Sync",
       "walletSyncDesc" : "Ledger Live kripto hesaplarınızı farklı telefonlarda ve bilgisayarlarda senkronize edin.",
       "mevProtection" : "MEV Koruması",
-      "mevProtectionDesc" : "Ethereum'da daha güvenilir işlemler için MEV Korumasını etkinleştirin",
+      "mevProtectionDesc" : "Ethereum'da daha güvenilir işlemler için MEV Korumasını etkinleştirin.",
+      "mevProtectionLearnMore" : "Gizlilik bildirimi",
       "marketPerformanceWidget" : "Piyasa Performansı Widget'ı",
       "marketPerformanceWidgetDesc" : "Portföy sayfasında seçili zaman aralıklarında en çok yükselenler ve en çok düşenleri görüntülemek için bu özelliği etkinleştirin."
     },
@@ -5437,6 +5439,11 @@
     "solana" : {
       "memo" : "Etiket / Memo",
       "memoPlaceholder" : "Opsiyonel"
+    },
+    "mina" : {
+      "memoPlaceholder" : "Tercihe bağlı",
+      "memo" : "Memo",
+      "memoWarningText" : "Memo değeri, en fazla 32 karakterlik bir dize olabilir"
     }
   },
   "errors" : {
@@ -5921,11 +5928,11 @@
     },
     "WrongDeviceForAccountPayout" : {
       "title" : "Bir hata oluştu",
-      "description" : "Bu adres, bağlı cihazla uyuşmuyor. Lütfen değiştirin ve tekrar deneyin."
+      "description" : "Bu alıcı hesabı, bağladığınız cihaza ait değil. Lütfen değiştirin ve tekrar deneyin."
     },
     "WrongDeviceForAccountRefund" : {
       "title" : "Bir hata oluştu",
-      "description" : "Bu adres, bağlı cihazla uyuşmuyor ve iade almak için kullanılamaz. Lütfen cihazı değiştirin ve tekrar deneyin."
+      "description" : "Bu gönderici hesabı, bağladığınız cihaza ait değil. Lütfen değiştirin ve tekrar deneyin."
     },
     "DeviceAppVerifyNotSupported" : {
       "title" : "Uygulama güncellemesi gerekli",
@@ -6460,6 +6467,15 @@
         "swap" : "takas edin",
         "deposit" : "yatırın"
       }
+    },
+    "InvalidMemoMina" : {
+      "title" : "Memo metni 32 karakterden uzun olamaz"
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "Bu işlem için {{fee}} tutarında bir hesap oluşturma ücreti alınacaktır"
+    },
+    "AmountTooSmall" : {
+      "title" : "Bu işlem için gerekli minimum tutar: {{amount}}"
     }
   },
   "cryptoOrg" : {
@@ -6889,6 +6905,58 @@
       "confirm" : "Onayla",
       "address" : "Adres",
       "transactionId" : "İşlem Kimliği (TxID)"
+    }
+  },
+  "lnsUpsell" : {
+    "banner" : {
+      "manager" : {
+        "optIn" : {
+          "title" : "Model yükseltme zamanı",
+          "description" : "Yüksek güvenlik ve sorunsuz bir deneyim için en yeni cihazlarımıza <0>%{{discount}} indirimle</0> model yükseltin.",
+          "cta" : "Cüzdanımın modelini yükselt",
+          "linkText" : "Daha fazla bilgi"
+        },
+        "optOut" : {
+          "title" : "Model yükseltme zamanı",
+          "description" : "Yüksek güvenlik ve sorunsuz bir deneyim için en yeni cihazlarımıza <0>%{{discount}} indirimle</0> model yükseltin.",
+          "cta" : "Cüzdanımın modelini yükselt",
+          "linkText" : "Daha fazla bilgi"
+        }
+      },
+      "accounts" : {
+        "optIn" : {
+          "title" : "Model yükseltme zamanı",
+          "description" : "Ledger Nano S model yükseltme teklifleri yakında sona eriyor. En yeni cihazlarımıza <0>%{{discount}} indirimle</0> model yükseltin.",
+          "cta" : "Cüzdanımın modelini yükselt",
+          "linkText" : "Daha fazla bilgi"
+        },
+        "optOut" : {
+          "title" : "Model yükseltme zamanı",
+          "description" : "Ledger Nano S model yükseltme teklifleri yakında sona eriyor. En yeni cihazlarımıza <0>%{{discount}} indirimle</0> model yükseltin.",
+          "cta" : "Cüzdanımın modelini yükselt",
+          "linkText" : "Daha fazla bilgi"
+        }
+      },
+      "portfolio" : {
+        "optOut" : {
+          "title" : "Model yükseltme zamanı",
+          "description" : "Yüksek güvenlik ve sorunsuz bir deneyim için en yeni cihazlarımıza <0>%{{discount}} indirimle</0> model yükseltin.",
+          "cta" : "Cüzdan modelini yükselt",
+          "linkText" : "Daha fazla bilgi"
+        }
+      },
+      "notifications" : {
+        "optIn" : {
+          "description" : "Cihaz güncellemeleri yakında sona eriyor. Sorunsuz bir deneyim için %{{discount}} indirimle hemen model yükseltin.",
+          "cta" : "Cüzdanımın modelini yükselt",
+          "linkText" : "Daha fazla bilgi"
+        },
+        "optOut" : {
+          "description" : "Cihaz güncellemeleri yakında sona eriyor. Sorunsuz bir deneyim için %{{discount}} indirimle hemen model yükseltin.",
+          "cta" : "Cüzdanımın modelini yükselt",
+          "linkText" : "Daha fazla bilgi"
+        }
+      }
     }
   }
 }
