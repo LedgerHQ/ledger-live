@@ -110,8 +110,4 @@ describe(`Ledger Sync Accounts`, () => {
     await app.ledgerSync.closeDeletionSuccessPage();
     await device.enableSynchronization();
   });
-
-  afterAll(async () => {
-    await app?.common.removeSpeculos();
-  });
 });

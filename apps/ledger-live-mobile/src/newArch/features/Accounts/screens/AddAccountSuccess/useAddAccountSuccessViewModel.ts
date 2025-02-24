@@ -6,6 +6,8 @@ import { NavigatorName, ScreenName } from "~/const";
 import { NetworkBasedAddAccountNavigator } from "../AddAccount/types";
 import { AddAccountContexts } from "../AddAccount/enums";
 import { AccountLikeEnhanced } from "../ScanDeviceAccounts/types";
+import useAnalytics from "~/newArch/hooks/useAnalytics";
+import { track } from "~/analytics";
 
 export type Props = BaseComposite<
   StackNavigatorProps<NetworkBasedAddAccountNavigator, ScreenName.AddAccountsSuccess>
@@ -14,6 +16,7 @@ export default function useAddAccountSuccessViewModel({ route }: Props) {
   const { currency, accountsToAdd, context, onCloseNavigation } = route.params || {};
   const { colors, space } = useTheme();
   const navigation = useNavigation();
+  const { analyticsMetadata } = useAnalytics(context);
 
   const keyExtractor = useCallback((item: AccountLikeEnhanced) => item?.id, []);
 
@@ -21,11 +24,11 @@ export default function useAddAccountSuccessViewModel({ route }: Props) {
 
   const goToAccounts = useCallback(
     (accountId: string) => () => {
-      if (context === AddAccountContexts.AddAccounts)
+      if (context === AddAccountContexts.AddAccounts) {
         navigation.navigate(ScreenName.Account, {
           accountId,
         });
-      else
+      } else {
         navigation.navigate(NavigatorName.ReceiveFunds, {
           screen: ScreenName.ReceiveConfirmation,
           params: {
@@ -33,8 +36,12 @@ export default function useAddAccountSuccessViewModel({ route }: Props) {
             accountId,
           },
         });
+      }
+
+      const clickMetadata = analyticsMetadata[ScreenName.AddAccountsSuccess]?.onSelectAccount;
+      if (clickMetadata) track(clickMetadata.eventName, clickMetadata.payload);
     },
-    [navigation, route.params, context],
+    [navigation, route.params, context, analyticsMetadata],
   );
 
   return {

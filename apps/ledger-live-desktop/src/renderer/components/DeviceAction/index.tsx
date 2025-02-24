@@ -83,6 +83,9 @@ import { walletSelector } from "~/renderer/reducers/wallet";
 import { useTrackManagerSectionEvents } from "~/renderer/analytics/hooks/useTrackManagerSectionEvents";
 import { useTrackReceiveFlow } from "~/renderer/analytics/hooks/useTrackReceiveFlow";
 import { useTrackAddAccountModal } from "~/renderer/analytics/hooks/useTrackAddAccountModal";
+import { useTrackExchangeFlow } from "~/renderer/analytics/hooks/useTrackExchangeFlow";
+import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
+import { useTrackSyncFlow } from "~/renderer/analytics/hooks/useTrackSyncFlow";
 
 export type LedgerError = InstanceType<LedgerErrorConstructor<{ [key: string]: unknown }>>;
 
@@ -159,7 +162,7 @@ type InnerProps<P> = {
   analyticsPropertyFlow?: string;
   overridesPreferredDeviceModel?: DeviceModelId;
   inlineRetry?: boolean; // Set to false if the retry mechanism is handled externally.
-  location?: string;
+  location?: HOOKS_TRACKING_LOCATIONS;
 };
 
 type Props<H extends States, P> = InnerProps<P> & {
@@ -242,7 +245,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   const walletState = useSelector(walletSelector);
 
   useTrackManagerSectionEvents({
-    location,
+    location: location === HOOKS_TRACKING_LOCATIONS.managerDashboard ? location : undefined,
     device,
     allowManagerRequested: hookState.allowManagerRequested,
     clsImageRemoved: hookState.imageRemoved,
@@ -251,7 +254,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   });
 
   useTrackReceiveFlow({
-    location,
+    location: location === HOOKS_TRACKING_LOCATIONS.receiveModal ? location : undefined,
     device,
     error,
     inWrongDeviceForAccount,
@@ -259,13 +262,31 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   });
 
   useTrackAddAccountModal({
-    location,
+    location: location === HOOKS_TRACKING_LOCATIONS.addAccountModal ? location : undefined,
     device,
     error,
     isTrackingEnabled: useSelector(trackingEnabledSelector),
     requestOpenApp,
     userMustConnectDevice: !isLoading && !device,
     isLocked,
+  });
+
+  useTrackExchangeFlow({
+    location: location === HOOKS_TRACKING_LOCATIONS.exchange ? location : undefined,
+    device,
+    error,
+    isTrackingEnabled: useSelector(trackingEnabledSelector),
+    isRequestOpenAppExchange: requestOpenApp === "Exchange",
+  });
+
+  useTrackSyncFlow({
+    location: location === HOOKS_TRACKING_LOCATIONS.ledgerSync ? location : undefined,
+    device,
+    error,
+    allowManagerRequested: hookState.allowManagerRequested,
+    requestOpenApp,
+    isLedgerSyncAppOpen: appAndVersion?.name === "Ledger Sync",
+    isTrackingEnabled: useSelector(trackingEnabledSelector),
   });
 
   const type = useTheme().colors.palette.type;
@@ -346,7 +367,6 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   if (languageInstallationRequested) {
     return renderAllowLanguageInstallation({ modelId, type, t });
   }
-
   if (imageRemoveRequested) {
     const refused = error instanceof UserRefusedOnDevice;
     const noImage = error instanceof ImageDoesNotExistOnDevice;

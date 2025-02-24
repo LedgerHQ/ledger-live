@@ -2,6 +2,7 @@ import { renderHook } from "tests/testUtils";
 import { useTrackReceiveFlow, UseTrackReceiveFlow } from "./useTrackReceiveFlow";
 import { track } from "../segment";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
+import { CONNECTION_TYPES, HOOKS_TRACKING_LOCATIONS } from "./variables";
 
 jest.mock("../segment", () => ({
   track: jest.fn(),
@@ -15,7 +16,7 @@ describe("useTrackReceiveFlow", () => {
   };
 
   const defaultArgs: UseTrackReceiveFlow = {
-    location: "Receive Modal",
+    location: HOOKS_TRACKING_LOCATIONS.receiveModal,
     device: deviceMock,
     verifyAddressError: null,
     error: null,
@@ -38,7 +39,7 @@ describe("useTrackReceiveFlow", () => {
       "Open app denied",
       expect.objectContaining({
         deviceType: "europa",
-        connectionType: "BLE",
+        connectionType: CONNECTION_TYPES.BLE,
         platform: "LLD",
         page: "Receive",
       }),
@@ -55,7 +56,7 @@ describe("useTrackReceiveFlow", () => {
       "Address confirmation rejected",
       expect.objectContaining({
         deviceType: "europa",
-        connectionType: "BLE",
+        connectionType: CONNECTION_TYPES.BLE,
         platform: "LLD",
         page: "Receive",
       }),
@@ -72,7 +73,7 @@ describe("useTrackReceiveFlow", () => {
       "Wrong device association",
       expect.objectContaining({
         deviceType: "europa",
-        connectionType: "BLE",
+        connectionType: CONNECTION_TYPES.BLE,
         platform: "LLD",
         page: "Receive",
       }),
@@ -82,6 +83,7 @@ describe("useTrackReceiveFlow", () => {
 
   it("should not track events if location is not 'Receive Modal'", () => {
     renderHook((props: UseTrackReceiveFlow) => useTrackReceiveFlow(props), {
+      //@ts-expect-error location should be HOOKS_TRACKING_LOCATIONS enum
       initialProps: { ...defaultArgs, location: "Other Modal" },
     });
 
@@ -103,7 +105,7 @@ describe("useTrackReceiveFlow", () => {
       "Address confirmation rejected",
       expect.objectContaining({
         deviceType: "europa",
-        connectionType: "USB",
+        connectionType: CONNECTION_TYPES.USB,
         platform: "LLD",
         page: "Receive",
       }),

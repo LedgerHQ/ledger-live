@@ -482,7 +482,8 @@ platform :android do
           "android.injected.signing.key.alias" => ENV["ANDROID_KEY_ALIAS"],
           "android.injected.signing.key.password" => ENV["ANDROID_KEY_PASS"],
         },
-        project_dir: 'android/'
+        project_dir: 'android/',
+        flags: ' -Dorg.gradle.workers.max=3 -Dorg.gradle.jvmargs="-Xmx3g -XX:MaxMetaspaceSize=1g"'
       )
     end
   end

@@ -16,7 +16,7 @@ const ScannedAccountsSection = ({
   const hasCalledOnSelectAll = useRef(false);
   useEffect(() => {
     if (defaultSelected && onSelectAll && !hasCalledOnSelectAll.current) {
-      onSelectAll(accounts);
+      onSelectAll(accounts, true);
       hasCalledOnSelectAll.current = true; // to prevent maximum update depth error
     }
   }, [defaultSelected, accounts, onSelectAll]);

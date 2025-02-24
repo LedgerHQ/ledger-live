@@ -189,6 +189,12 @@
       "outputs": [],
       "dependsOn": ["build"],
       "env": ["CI_OS"]
+    },
+    "live-mobile#e2e:ci": {
+      "cache": true,
+      "dependsOn": ["^build"],
+      "inputs": [],
+      "outputs": ["artifacts/**"]
     }
   }
 }

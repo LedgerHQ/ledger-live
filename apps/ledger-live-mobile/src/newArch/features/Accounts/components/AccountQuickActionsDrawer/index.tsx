@@ -15,8 +15,9 @@ import { AnalyticContexts } from "LLM/hooks/useAnalytics/enums";
 type AccountListDrawerProps = {
   isOpen: boolean;
   onClose: () => void;
-  account: Account | TokenAccount | null;
+  account: Account | TokenAccount;
   currency: CryptoOrTokenCurrency;
+  sourceScreenName?: string;
 };
 
 const AccountQuickActionsDrawer = ({
@@ -24,13 +25,14 @@ const AccountQuickActionsDrawer = ({
   onClose,
   account,
   currency,
+  sourceScreenName,
 }: AccountListDrawerProps) => {
   const { actions } = useAccountQuickActionDrawerViewModel({
-    accounts: account ? [account as Account] : [],
+    account,
     currency,
   });
   const { colors, space } = useTheme();
-  const { analyticsMetadata } = useAnalytics(AnalyticContexts.AddAccounts);
+  const { analyticsMetadata } = useAnalytics(AnalyticContexts.AddAccounts, sourceScreenName);
   const pageTrackingEvent = analyticsMetadata.AddFunds?.onQuickActionOpen;
 
   return (

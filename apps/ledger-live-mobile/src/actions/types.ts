@@ -495,11 +495,14 @@ export type SwapPayload = UpdateProvidersPayload | UpdateTransactionPayload | Up
 // === EARN ACTIONS ==
 export enum EarnActionTypes {
   EARN_INFO_MODAL = "EARN_INFO_MODAL",
+  EARN_MENU_MODAL = "EARN_MENU_MODAL",
 }
 
 export type EarnSetInfoModalPayload = EarnState["infoModal"] | undefined;
 
-export type EarnPayload = EarnSetInfoModalPayload;
+export type EarnSetMenuModalPayload = EarnState["menuModal"] | undefined;
+
+export type EarnPayload = EarnSetInfoModalPayload | EarnSetMenuModalPayload;
 
 // === PROTECT ACTIONS ===
 export enum ProtectActionTypes {

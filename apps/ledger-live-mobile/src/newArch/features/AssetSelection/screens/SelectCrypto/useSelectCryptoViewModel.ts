@@ -16,7 +16,8 @@ import { AssetSelectionNavigationProps, CommonParams } from "../../types";
 import { useGroupedCurrenciesByProvider } from "@ledgerhq/live-common/deposit/index";
 import { LoadingBasedGroupedCurrencies } from "@ledgerhq/live-common/deposit/type";
 import { AddAccountContexts } from "LLM/features/Accounts/screens/AddAccount/enums";
-import { AnalyticMetadata } from "../../../../hooks/useAnalytics/types";
+import { AnalyticMetadata } from "LLM/hooks/useAnalytics/types";
+import { AnalyticPages } from "LLM/hooks/useAnalytics/enums";
 
 type SelectCryptoViewModelProps = Pick<CommonParams, "context"> & {
   filterCurrencyIds?: string[];
@@ -66,7 +67,7 @@ export default function useSelectCryptoViewModel({
           context,
           currency: curr.id,
           ...(context === AddAccountContexts.AddAccounts && { filterCurrencyIds }),
-          sourceScreenName: ScreenName.AddAccountsSelectCrypto,
+          sourceScreenName: AnalyticPages.AddAccountSelectAsset,
         });
         return;
       }
@@ -116,7 +117,12 @@ export default function useSelectCryptoViewModel({
   }, [onPressItem, paramsCurrency, providersLoadingStatus]);
 
   const debounceTrackOnSearchChange = debounce((newQuery: string) => {
-    track("asset_searched", { page: "Choose a crypto to secure", asset: newQuery });
+    const searchMetadata = analyticsMetadata.AddAccountsSelectCrypto?.onAssetSearch;
+    if (searchMetadata)
+      track(searchMetadata?.eventName, {
+        asset: newQuery,
+        ...searchMetadata.payload,
+      });
   }, 1500);
 
   const list = useMemo(

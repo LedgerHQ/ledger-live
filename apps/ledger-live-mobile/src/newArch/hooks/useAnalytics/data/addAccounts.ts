@@ -160,6 +160,7 @@ const getAddAccountsMetadata = (sourceScreenName?: string) => ({
         button: AnalyticButtons.FundMyAccount,
         page: AnalyticPages.AddAccountSuccess,
         flow: AnalyticFlows.AddAccount,
+        source: sourceScreenName,
       },
     },
     onAccessScreen: {
@@ -206,6 +207,28 @@ const getAddAccountsMetadata = (sourceScreenName?: string) => ({
         button: AnalyticButtons.Close,
         page: AnalyticPages.AddAccountSuccess,
         flow: AnalyticFlows.AddAccount,
+      },
+    },
+    onSelectAccount: {
+      eventName: AnalyticEvents.AccountClicked,
+      payload: {
+        page: AnalyticPages.AddAccountSuccess,
+      },
+    },
+  },
+  [ScreenName.AddAccountsWarning]: {
+    onClose: {
+      eventName: AnalyticEvents.ButtonClicked,
+      payload: {
+        button: AnalyticButtons.Close,
+        page: AnalyticPages.AddAccountWarning,
+        flow: AnalyticFlows.AddAccount,
+      },
+    },
+    onSelectAccount: {
+      eventName: AnalyticEvents.AccountClicked,
+      payload: {
+        page: AnalyticPages.AddAccountWarning,
       },
     },
   },

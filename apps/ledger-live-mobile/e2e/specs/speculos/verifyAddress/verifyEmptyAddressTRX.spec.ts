@@ -32,8 +32,4 @@ describe(`Verify Address warnings - ${account.currency.name}`, () => {
     await app.receive.expectReceivePageIsDisplayed(account.currency.ticker, account.accountName);
     await app.receive.expectTronNewAddressWarning();
   });
-
-  afterAll(async () => {
-    await app?.common.removeSpeculos();
-  });
 });

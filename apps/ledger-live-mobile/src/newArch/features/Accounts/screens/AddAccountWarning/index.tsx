@@ -3,7 +3,6 @@ import { StyleSheet } from "react-native";
 import { Flex, Icons, rgba, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { Account } from "@ledgerhq/types-live";
-import { ScreenName } from "~/const";
 import SafeAreaView from "~/components/SafeAreaView";
 import Circle from "~/components/Circle";
 import CloseWithConfirmation from "LLM/components/CloseWithConfirmation";
@@ -11,6 +10,7 @@ import VerticalGradientBackground from "../../components/VerticalGradientBackgro
 import AddFundsButton from "../../components/AddFundsButton";
 import useAddAccountWarningViewModel, { type Props } from "./useAddAccountWarningViewModel";
 import AnimatedAccountItem from "../../components/AccountsListView/components/AnimatedAccountItem";
+import { AnalyticPages } from "LLM/hooks/useAnalytics/enums";
 
 type ViewProps = ReturnType<typeof useAddAccountWarningViewModel>;
 
@@ -55,7 +55,7 @@ const View = ({
         <AddFundsButton
           accounts={[emptyAccount as Account]}
           currency={currency}
-          sourceScreenName={ScreenName.AddAccountsWarning}
+          sourceScreenName={AnalyticPages.AddAccountWarning}
         />
         <CloseWithConfirmation
           showButton

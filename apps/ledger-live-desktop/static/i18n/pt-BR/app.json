@@ -4134,7 +4134,8 @@
       "walletSync" : "Ledger Sync",
       "walletSyncDesc" : "Sincronize suas contas cripto em diferentes smartphones e computadores.",
       "mevProtection" : "Proteção MEV",
-      "mevProtectionDesc" : "Habilite a proteção MEV para transações mais confiáveis na Ethereum",
+      "mevProtectionDesc" : "Habilite a proteção MEV para realizar transações na Ethereum com mais confiança.",
+      "mevProtectionLearnMore" : "Declaração de privacidade",
       "marketPerformanceWidget" : "Widget Desempenho do Mercado",
       "marketPerformanceWidgetDesc" : "Ative esse recurso para visualizar as principais altas e baixas em períodos selecionados na página Portfólio."
     },
@@ -5921,11 +5922,11 @@
     },
     "WrongDeviceForAccountPayout" : {
       "title" : "Algo deu errado",
-      "description" : "Essa conta de recebimento não pertence ao seu dispositivo. Mude e tente novamente."
+      "description" : "Esta conta de recebimento não pertence ao dispositivo que você conectou. Mude e tente novamente"
     },
     "WrongDeviceForAccountRefund" : {
       "title" : "Algo deu errado",
-      "description" : "Essa conta de recebimento não pertence ao seu dispositivo. Mude e tente novamente."
+      "description" : "Esta conta de envio não pertence ao dispositivo que você conectou. Mude e tente novamente"
     },
     "DeviceAppVerifyNotSupported" : {
       "title" : "Atualização de aplicativo necessária",
@@ -6889,6 +6890,50 @@
       "confirm" : "Confirmar",
       "address" : "Endereço",
       "transactionId" : "ID da transação"
+    }
+  },
+  "lnsUpsell" : {
+    "banner" : {
+      "manager" : {
+        "optIn" : {
+          "title" : "É hora de subir de nível",
+          "description" : "Mude para os nossos dispositivos mais recentes com <0>{{discount}}% de desconto</0> e tenha uma segurança aprimorada e uma experiência perfeita.",
+          "cta" : "Avançar de carteira",
+          "linkText" : "Saiba mais"
+        },
+        "optOut" : {
+          "title" : "É hora de subir de nível",
+          "description" : "Avance para um dos nossos dispositivos mais recentes com <0>{{discount}}% de desconto</0> e tenha uma segurança aprimorada e uma experiência perfeita.",
+          "cta" : "Avançar para uma carteira melhor",
+          "linkText" : "Saiba mais"
+        }
+      },
+      "accounts" : {
+        "optIn" : {
+          "title" : "É hora de subir de nível",
+          "description" : "As atualizações da Ledger Nano S serão encerradas em breve. Mude para os nossos dispositivos mais recentes com <0>{{discount}}% de desconto</0>.",
+          "cta" : "Avançar de carteira",
+          "linkText" : "Saiba mais"
+        },
+        "optOut" : {
+          "title" : "É hora de subir de nível",
+          "description" : "As atualizações da Ledger Nano S serão encerradas em breve. Mude para nossos dispositivos mais recentes com <0>{{discount}}% de desconto</0>.",
+          "cta" : "Avançar de carteira",
+          "linkText" : "Saiba mais"
+        }
+      },
+      "notifications" : {
+        "optIn" : {
+          "description" : "As atualizações serão encerradas em breve. Suba de nível com {{discount}}% de desconto para ter uma experiência perfeita.",
+          "cta" : "Avançar de carteira",
+          "linkText" : "Saiba mais"
+        },
+        "optOut" : {
+          "description" : "As atualizações serão encerradas em breve. Suba de nível agora com {{discount}}% de desconto para ter uma experiência perfeita.",
+          "cta" : "Avançar de carteira",
+          "linkText" : "Saiba mais"
+        }
+      }
     }
   }
 }

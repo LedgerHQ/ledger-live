@@ -32,7 +32,7 @@ export class Currency {
   );
   static readonly sepETH = new Currency(
     "Ethereum Sepolia",
-    "𝚝ETH",
+    "ETH",
     "ethereum_sepolia",
     AppInfos.ETHEREUM_SEPOLIA,
   );

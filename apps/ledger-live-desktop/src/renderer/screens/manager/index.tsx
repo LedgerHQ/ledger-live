@@ -15,6 +15,7 @@ import { useDispatch } from "react-redux";
 import { context } from "~/renderer/drawers/Provider";
 import { useDeviceSessionRefresherToggle } from "@ledgerhq/live-dmk";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 
 const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectManager);
 const Manager = () => {
@@ -73,7 +74,7 @@ const Manager = () => {
           onResult={onResult}
           action={action}
           request={null}
-          location="Manager Dashboard"
+          location={HOOKS_TRACKING_LOCATIONS.managerDashboard}
         />
       ) : (
         <Disconnected onTryAgain={setHasReset} />

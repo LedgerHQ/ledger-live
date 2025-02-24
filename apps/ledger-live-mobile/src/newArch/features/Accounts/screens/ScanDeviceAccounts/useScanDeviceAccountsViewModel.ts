@@ -46,6 +46,7 @@ export default function useScanDeviceAccountsViewModel({
     inline,
     returnToSwap,
     onCloseNavigation,
+    context,
   } = route.params || {};
 
   const newAccountSchemes = useMemo(() => {
@@ -131,10 +132,10 @@ export default function useScanDeviceAccountsViewModel({
     [selectedIds],
   );
   const selectAll = useCallback(
-    (accounts: Account[]) => {
+    (accounts: Account[], autoSelect?: boolean) => {
       setSelectedIds(uniq([...selectedIds, ...accounts.map(a => a.id)]));
       const selectAllMetadata = analyticsMetadata?.AccountsFound?.onSelectAll;
-      if (selectAllMetadata)
+      if (selectAllMetadata && !autoSelect)
         track(selectAllMetadata.eventName, {
           ...selectAllMetadata.payload,
         });
@@ -285,6 +286,7 @@ export default function useScanDeviceAccountsViewModel({
           emptyAccount: alreadyEmptyAccount,
           emptyAccountName: alreadyEmptyAccountName,
           currency,
+          context,
         });
       } else if (CustomNoAssociatedAccounts) {
         navigation.replace(ScreenName.NoAssociatedAccounts, {
@@ -303,6 +305,7 @@ export default function useScanDeviceAccountsViewModel({
     currency,
     CustomNoAssociatedAccounts,
     scannedAccounts,
+    context,
   ]);
   return {
     alreadyEmptyAccount,

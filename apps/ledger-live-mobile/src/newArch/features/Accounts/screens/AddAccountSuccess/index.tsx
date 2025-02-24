@@ -2,7 +2,6 @@ import { Flex, Icons, rgba, Text } from "@ledgerhq/native-ui";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { FlatList, ListRenderItemInfo, StyleSheet, View as RNView } from "react-native";
-import { ScreenName } from "~/const";
 import { TrackScreen } from "~/analytics";
 import { AccountLikeEnhanced } from "../ScanDeviceAccounts/types";
 import SafeAreaView from "~/components/SafeAreaView";
@@ -13,6 +12,7 @@ import AddFundsButton from "../../components/AddFundsButton";
 import CloseWithConfirmation from "LLM/components/CloseWithConfirmation";
 import AnimatedAccountItem from "../../components/AccountsListView/components/AnimatedAccountItem";
 import useAddAccountSuccessViewModel, { type Props } from "./useAddAccountSuccessViewModel";
+import { AnalyticPages } from "LLM/hooks/useAnalytics/enums";
 
 type ViewProps = ReturnType<typeof useAddAccountSuccessViewModel>;
 
@@ -37,7 +37,7 @@ function View({
 
   return (
     <SafeAreaView edges={["left", "right", "bottom", "top"]} isFlex>
-      <TrackScreen category="AddAccounts" name="Success" currencyName={currency?.name} />
+      <TrackScreen category="AddAccounts" name="Success" currency={currency?.name} />
       <VerticalGradientBackground stopColor={getCurrencyColor(currency)} />
       <Flex alignItems="center" style={styles.root} pt={space[10]}>
         <RNView style={[styles.iconWrapper, { backgroundColor: rgba(statusColor, 0.1) }]}>
@@ -64,7 +64,7 @@ function View({
         <AddFundsButton
           accounts={accountsToAdd}
           currency={currency}
-          sourceScreenName={ScreenName.AddAccountsSuccess}
+          sourceScreenName={AnalyticPages.AddAccountSuccess}
         />
         <CloseWithConfirmation
           showButton

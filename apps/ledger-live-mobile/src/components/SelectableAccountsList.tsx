@@ -45,7 +45,7 @@ const selectAllHitSlop = {
 type Props = FlexBoxProps & {
   accounts: Account[];
   onPressAccount?: (_: Account) => void;
-  onSelectAll?: (_: Account[]) => void;
+  onSelectAll?: (_: Account[], autoSelect?: boolean) => void;
   onUnselectAll?: (_: Account[]) => void;
   selectedIds: string[];
   isDisabled?: boolean;

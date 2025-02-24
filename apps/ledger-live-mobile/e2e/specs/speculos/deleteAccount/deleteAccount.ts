@@ -34,9 +34,5 @@ export async function runDeleteAccountTest(account: Account, tmsLink: string) {
       await app.accounts.openViaDeeplink();
       await app.accounts.expectAccountsNumber(0);
     });
-
-    afterAll(async () => {
-      await app.common.removeSpeculos();
-    });
   });
 }

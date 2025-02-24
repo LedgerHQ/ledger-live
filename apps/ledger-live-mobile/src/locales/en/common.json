@@ -2909,7 +2909,8 @@
       "analytics": "Analytics",
       "analyticsDesc": "Enable Ledger to collect app usage data to help measure Ledger Live’s performance and enhance both the app and your experience.",
       "mevProtection": "MEV Protection",
-      "mevProtectionDesc": "Enable MEV Protection for more reliable transactions on Ethereum",
+      "mevProtectionDesc": "Enable MEV Protection for more reliable transactions on Ethereum.",
+      "mevProtectionLearnMore": "Privacy notice",
       "personalizedRecommendations": "Personalized experience",
       "personalizedRecommendationsDesc": "Enable Ledger to collect app usage data to provide personalized recommendations and content that match your preferences and to help measure the performance of our marketing campaigns.",
       "analyticsModal": {
@@ -7234,6 +7235,14 @@
       "title": "Select the blockchain network the asset belongs to",
       "detectedAccounts": "{{count}} account (detected)",
       "detectedAccounts_plural": "{{count}} accounts (detected)"
+    }
+  },
+  "emptyList": {
+    "accounts": {
+      "title": "No accounts found",
+      "subTitle": "Looks like you haven’t added an account yet. Get started now.",
+      "cta": "Add an account",
+      "link": "Need help? Learn how to add an account to Ledger\u00a0Live."
     }
   }
 }

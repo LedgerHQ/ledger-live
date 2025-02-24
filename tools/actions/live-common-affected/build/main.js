@@ -18895,13 +18895,13 @@ function main(ref) {
       const list = [
         ...new Set(
           stdout.split("\n").map((line) => {
-            const m = line.match(/live-common\/src\/([^/]+)\/([^/]+)/);
+            const m = line.match(/(live-common\/src\/([^/]+)\/([^/]+))|(coin-modules\/([^/]+))/);
             if (m) {
-              const [, first, second] = m;
-              if (first === "families") {
-                return `${first}/${second}`;
+              const [first, second, third] = m;
+              if (second === "families") {
+                return `${second}/${third}`;
               } else {
-                return first;
+                return second || first;
               }
             }
           }).filter(Boolean)

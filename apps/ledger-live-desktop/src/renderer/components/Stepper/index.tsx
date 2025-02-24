@@ -10,6 +10,7 @@ import { useSelector } from "react-redux";
 import { trackingEnabledSelector } from "~/renderer/reducers/settings";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { LedgerError } from "../DeviceAction";
+import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 
 export type BasicStepProps = {
   t: TFunction;
@@ -72,7 +73,7 @@ const Stepper = <T, StepProps>({
     [onStepChange, steps],
   );
   useTrackAddAccountModal({
-    location: "Add account modal",
+    location: HOOKS_TRACKING_LOCATIONS.addAccountModal,
     device: useSelector(getCurrentDevice),
     error: err,
     isTrackingEnabled: useSelector(trackingEnabledSelector),

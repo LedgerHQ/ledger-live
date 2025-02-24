@@ -19,6 +19,7 @@ import isEqual from "lodash/isEqual";
 import { orderAccountsByFiatValue } from "@ledgerhq/live-countervalues/portfolio";
 import { useCountervaluesState } from "@ledgerhq/live-countervalues-react/index";
 import { counterValueCurrencySelector } from "~/reducers/settings";
+import { TrackingEvent } from "../../enums";
 
 export interface Props {
   sourceScreenName?: ScreenName;
@@ -51,6 +52,10 @@ const useAccountsListViewModel = ({
 
   const accountsToDisplay = orderedAccountsByValue.slice(0, limitNumberOfAccounts);
 
+  const pageTrackingEvent = specificAccounts
+    ? TrackingEvent.AccountListSummary
+    : TrackingEvent.AccountsList;
+
   const refreshAccountsOrdering = useRefreshAccountsOrdering();
   useFocusEffect(refreshAccountsOrdering);
 
@@ -64,7 +69,7 @@ const useAccountsListViewModel = ({
         track("account_clicked", {
           currency: account.currency.name,
           account: defaultAccountName,
-          page: "Accounts",
+          page: pageTrackingEvent,
         });
         navigation.navigate(ScreenName.Account, {
           accountId: account.id,
@@ -73,7 +78,7 @@ const useAccountsListViewModel = ({
         track("account_clicked", {
           currency: account.token.parentCurrency.name,
           account: defaultAccountName,
-          page: "Accounts",
+          page: pageTrackingEvent,
         });
         navigation.navigate(NavigatorName.Accounts, {
           screen: ScreenName.Account,
@@ -85,7 +90,7 @@ const useAccountsListViewModel = ({
         });
       }
     },
-    [navigation, sourceScreenName, startNavigationTTITimer, walletState],
+    [navigation, sourceScreenName, startNavigationTTITimer, walletState, pageTrackingEvent],
   );
 
   return {
