@@ -12,7 +12,7 @@ import { deviceIdMap } from "../config/deviceIdMap";
 import { activeDeviceSessionSubject } from "../config/activeDeviceSession";
 import { deviceManagementKit } from "../hooks/useDeviceManagementKit";
 
-const tracer = new LocalTracer("live-dmk", { function: "DeviceManagementKitTransport" });
+const tracer = new LocalTracer("live-dmk-tracer", { function: "DeviceManagementKitTransport" });
 
 export class DeviceManagementKitTransport extends Transport {
   sessionId: string;

@@ -3,23 +3,17 @@ import { getAllEnvs } from "@ledgerhq/live-env";
 import { webFrame, ipcRenderer } from "electron";
 import { useCallback, useState } from "react";
 import { useTechnicalDateTimeFn } from "~/renderer/hooks/useDateFormatter";
-import logger, { memoryLogger } from "~/renderer/logger";
+import logger from "~/renderer/logger";
 import { useSelector } from "react-redux";
 import { accountsSelector } from "~/renderer/reducers/accounts";
+import { saveLogs } from "~/helpers/saveLogs";
 
 export function useExportLogs() {
   const getDateTxt = useTechnicalDateTimeFn();
   const accounts = useSelector(accountsSelector);
   const [exporting, setExporting] = useState(false);
 
-  const saveLogs = useCallback(async (path: Electron.SaveDialogReturnValue) => {
-    try {
-      const memoryLogsStr = JSON.stringify(memoryLogger.getMemoryLogs(), null, 2);
-      await ipcRenderer.invoke("save-logs", path, memoryLogsStr);
-    } catch (error) {
-      console.error("Error while requesting to save logs from the renderer process", error);
-    }
-  }, []);
+  const savelogsCB = useCallback(saveLogs, []);
 
   const exportLogs = useCallback(async () => {
     try {
@@ -43,12 +37,12 @@ export function useExportLogs() {
       });
 
       if (path) {
-        await saveLogs(path);
+        await savelogsCB(path);
       }
     } catch (error) {
       logger.critical(error as Error);
     }
-  }, [accounts, getDateTxt, saveLogs]);
+  }, [accounts, getDateTxt, savelogsCB]);
 
   const handleExportLogs = useCallback(async () => {
     if (exporting) return;

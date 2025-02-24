@@ -29,7 +29,8 @@
     "unimported": "unimported",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "posttest": "cp coverage/lcov.info ./lcov.info"
   },
   "typesVersions": {
     "*": {
@@ -60,6 +61,7 @@
     "@testing-library/react": "^16.1.0",
     "@types/node": "22.10.10",
     "@vitejs/plugin-react": "4.3.4",
+    "@vitest/coverage-istanbul": "3.0.7",
     "@vitest/coverage-v8": "2.1.8",
     "jsdom": "25.0.1",
     "vite": "6.0.7",
