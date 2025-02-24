@@ -9,13 +9,6 @@ function getDeviceTransactionConfig(_input: {
   status: TransactionStatus;
 }): Array<DeviceTransactionField> {
   const fields: Array<DeviceTransactionField> = [];
-
-  // fields.push({
-  //   type: "text",
-  //   label: "Memo",
-  //   value: input.transaction.memo ?? "",
-  // });
-
   return fields;
 }
 
