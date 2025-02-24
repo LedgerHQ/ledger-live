@@ -18,10 +18,6 @@ export const prepareTransaction: AccountBridge<
       })
     : t.amount;
 
-  // if (accountCreationFee.gt(0) && amount.lt(accountCreationFee)) {
-  //   amount = accountCreationFee;
-  // }
-
   const nonce = await getNonce(t, a.freshAddress);
 
   return updateTransaction(t, { fees: { fee, accountCreationFee }, amount, nonce });
