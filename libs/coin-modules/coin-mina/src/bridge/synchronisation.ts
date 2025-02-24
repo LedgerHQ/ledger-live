@@ -148,7 +148,7 @@ export const getAccountShape: GetAccountShape<MinaAccount> = async info => {
   // log("debug", "getAccountShape, address: ", { address });
   const { blockHeight, balance, spendableBalance } = await getAccount(address);
 
-  const rosettaTxns = await getTransactions(address, initialAccount?.operationsCount);
+  const rosettaTxns = await getTransactions(address, initialAccount?.operations.length);
   const newOperations = await Promise.all(
     rosettaTxns.flatMap(t => mapRosettaTxnToOperation(accountId, address, t)),
   );
