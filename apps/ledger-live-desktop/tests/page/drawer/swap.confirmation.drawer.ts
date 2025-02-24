@@ -12,6 +12,7 @@ export class SwapConfirmationDrawer extends Drawer {
   private exchangeError = this.page.locator("#error-CompleteExchangeError span").first();
   private swapCompletedMessage = this.page.getByTestId("swap-completed-message");
   private swapCompletedDescription = this.page.getByTestId("swap-completed-description");
+  private deviceActionError = this.page.getByTestId("error-description-deviceAction");
 
   @step("Verify amount to send: $0")
   async verifyAmountSent(amount: string, currency: string) {
@@ -62,5 +63,10 @@ export class SwapConfirmationDrawer extends Drawer {
       `Your Swap operation has been sent to the network for confirmation. Please wait for your transaction to be confirmed and for the provider to process and send your ${currencyToReceive}.`,
       { timeout: 60000 },
     );
+  }
+
+  async checkErrorMessage(errorMessage: string) {
+    const error = await this.deviceActionError.textContent();
+    expect(error).toContain(errorMessage);
   }
 }
