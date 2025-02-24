@@ -24,7 +24,7 @@ All logic related stuff either goes into `features` or `commands` folders, depen
 ### Code
 
 The code of the bot is commented to give insight of how thing work together.
-More informations on how the CI is orchestrated can be found here
+More information on how the CI is orchestrated can be found here
 
 ```
 src
@@ -32,7 +32,7 @@ src
     └── orchestrator
 ```
 
-> Deeper informations about the orchestrator can be found [here](./docs/orchestrator.md).
+> Deeper information about the orchestrator can be found [here](./docs/orchestrator.md).
 
 ## Commands
 
@@ -50,4 +50,4 @@ or
 ```
 
 We can always add more features in the future.  
-For more informations/inspiration, you can look into the commands already created as they all follow a similar pattern.
+For more information/inspiration, you can look into the commands already created as they all follow a similar pattern.
