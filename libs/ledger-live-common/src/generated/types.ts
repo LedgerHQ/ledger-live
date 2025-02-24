@@ -81,7 +81,7 @@ import type {
   TransactionRaw as minaTransactionRaw,
   TransactionStatus as minaTransactionStatus,
   TransactionStatusRaw as minaTransactionStatusRaw,
-} from "@ledgerhq/coin-mina/types";
+} from "@ledgerhq/coin-mina/types/index";
 import type {
   Transaction as nearTransaction,
   TransactionRaw as nearTransactionRaw,
