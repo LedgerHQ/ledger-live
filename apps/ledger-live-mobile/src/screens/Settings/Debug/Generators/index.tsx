@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import config from "react-native-config";
 import { getEnv } from "@ledgerhq/live-env";
 import { Alert as Confirmation } from "react-native";
-import { Alert, Flex, IconsLegacy } from "@ledgerhq/native-ui";
+import { Alert, Flex, Icons, IconsLegacy } from "@ledgerhq/native-ui";
 import { useDispatch } from "react-redux";
 import GenerateMockAccounts from "./GenerateMockAccounts";
 import GenerateMockAccountsNft from "./GenerateMockAccountsNFTs";
@@ -133,9 +133,9 @@ export default function Generators() {
         onPress={onWipeBLE}
       />
       <SettingsRow
-        title="Reset Nft Anti Spam"
-        desc="Remove all NFTs from the spam list"
-        iconLeft={<IconsLegacy.RefreshMedium size={24} color="black" />}
+        title="Reset HiddenCollections NFTs"
+        desc="Remove all NFTs from the HiddenCollection list"
+        iconLeft={<Icons.Nft size={"S"} color="black" />}
         onPress={onWipeAntiSpam}
       />
     </SettingsNavigationScrollView>
