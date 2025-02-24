@@ -63,7 +63,7 @@ exports[`mina currency bridge scanAccounts mina seed 1 2`] = `
     },
     {
       "accountId": "js:2:mina:B62qjWLs1W3J2fFGixeX49w1o7VvSGuMBNotnFhzs3PZ7PbtdFbhdeD:minabip44h",
-      "blockHash": "3NKanDHMoNwwkCVXrtshy7FoAUSu763WFe6zmaE2MEBRDBdweC1X",
+      "blockHash": "3NKHfaXxdMSUavUsYWhTJy4fzf3Bp5KzyCpbfKUHFZbqh9VSPrGP",
       "blockHeight": 428798,
       "extra": {
         "accountCreationFee": "0",
