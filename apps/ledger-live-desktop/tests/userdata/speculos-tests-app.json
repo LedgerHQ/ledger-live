@@ -3359,6 +3359,97 @@
       },
       {
         "data": {
+          "id": "js:2:litecoin:Ltub2Z3zWQ94zvRoVV9V5VzoFzgW7Vpa81crnJkudyEVoikGDxSpULMQqrnEikg6CYfNHwhgAJJNUDVhF9Gb1jGmfSr8NWDibx46vk5udyqar39:native_segwit",
+          "seedIdentifier": "04d4c71740b3836a2bf48edfd76a5dc3089f5101b63b95fde02f6eb713c07fe1d71057f413ef9f75337401d02af4f29299b5dea6a08631530cf2be3969ff57da32",
+          "used": false,
+          "derivationMode": "native_segwit",
+          "index": 0,
+          "freshAddress": "ltc1qysx9g8cdypja73kc808jg7clcm5xud7tny9gp3",
+          "freshAddressPath": "84'/2'/0'/0/0",
+          "blockHeight": 2848167,
+          "creationDate": "2025-02-19T09:20:11.975Z",
+          "operationsCount": 0,
+          "operations": [],
+          "pendingOperations": [],
+          "currencyId": "litecoin",
+          "lastSyncDate": "2025-02-19T09:20:11.975Z",
+          "balance": "0",
+          "spendableBalance": "0",
+          "balanceHistoryCache": {
+            "HOUR": { "balances": [], "latestDate": 1739955600000 },
+            "DAY": { "balances": [], "latestDate": 1739919600000 },
+            "WEEK": { "balances": [], "latestDate": 1739660400000 }
+          },
+          "xpub": "Ltub2Z3zWQ94zvRoVV9V5VzoFzgW7Vpa81crnJkudyEVoikGDxSpULMQqrnEikg6CYfNHwhgAJJNUDVhF9Gb1jGmfSr8NWDibx46vk5udyqar39",
+          "bitcoinResources": {
+            "utxos": [],
+            "walletAccount": {
+              "params": {
+                "xpub": "Ltub2Z3zWQ94zvRoVV9V5VzoFzgW7Vpa81crnJkudyEVoikGDxSpULMQqrnEikg6CYfNHwhgAJJNUDVhF9Gb1jGmfSr8NWDibx46vk5udyqar39",
+                "path": "84'/2'",
+                "index": 0,
+                "currency": "litecoin",
+                "network": "mainnet",
+                "derivationMode": "Native SegWit"
+              },
+              "xpub": {
+                "xpub": "Ltub2Z3zWQ94zvRoVV9V5VzoFzgW7Vpa81crnJkudyEVoikGDxSpULMQqrnEikg6CYfNHwhgAJJNUDVhF9Gb1jGmfSr8NWDibx46vk5udyqar39",
+                "data": {
+                  "txs": [],
+                  "addressCache": {
+                    "Litecoin-Native SegWit-Ltub2Z3zWQ94zvRoVV9V5VzoFzgW7Vpa81crnJkudyEVoikGDxSpULMQqrnEikg6CYfNHwhgAJJNUDVhF9Gb1jGmfSr8NWDibx46vk5udyqar39-0-1": "ltc1qj0g3ln3e3jhjy4t4hlymefvm44tlayx04e8565",
+                    "Litecoin-Native SegWit-Ltub2Z3zWQ94zvRoVV9V5VzoFzgW7Vpa81crnJkudyEVoikGDxSpULMQqrnEikg6CYfNHwhgAJJNUDVhF9Gb1jGmfSr8NWDibx46vk5udyqar39-0-2": "ltc1qpdegxy39r9e0snndcptn8f29jcxc4ehexdekgx",
+                    "Litecoin-Native SegWit-Ltub2Z3zWQ94zvRoVV9V5VzoFzgW7Vpa81crnJkudyEVoikGDxSpULMQqrnEikg6CYfNHwhgAJJNUDVhF9Gb1jGmfSr8NWDibx46vk5udyqar39-0-4": "ltc1qrrxpzrh09pvau92ugvcl86ysjkcjcutxzjylz5",
+                    "Litecoin-Native SegWit-Ltub2Z3zWQ94zvRoVV9V5VzoFzgW7Vpa81crnJkudyEVoikGDxSpULMQqrnEikg6CYfNHwhgAJJNUDVhF9Gb1jGmfSr8NWDibx46vk5udyqar39-0-5": "ltc1q30h4a07ap4t24sk2kxqjwsd7u5gl7y87sg8cal",
+                    "Litecoin-Native SegWit-Ltub2Z3zWQ94zvRoVV9V5VzoFzgW7Vpa81crnJkudyEVoikGDxSpULMQqrnEikg6CYfNHwhgAJJNUDVhF9Gb1jGmfSr8NWDibx46vk5udyqar39-0-0": "ltc1qysx9g8cdypja73kc808jg7clcm5xud7tny9gp3",
+                    "Litecoin-Native SegWit-Ltub2Z3zWQ94zvRoVV9V5VzoFzgW7Vpa81crnJkudyEVoikGDxSpULMQqrnEikg6CYfNHwhgAJJNUDVhF9Gb1jGmfSr8NWDibx46vk5udyqar39-0-8": "ltc1q8s377nentx434qtmpsa0gtgvksx5angfct2vgz",
+                    "Litecoin-Native SegWit-Ltub2Z3zWQ94zvRoVV9V5VzoFzgW7Vpa81crnJkudyEVoikGDxSpULMQqrnEikg6CYfNHwhgAJJNUDVhF9Gb1jGmfSr8NWDibx46vk5udyqar39-0-7": "ltc1q2gfvls8eqxdvlkws57lg7py4nnu0cth39fv783",
+                    "Litecoin-Native SegWit-Ltub2Z3zWQ94zvRoVV9V5VzoFzgW7Vpa81crnJkudyEVoikGDxSpULMQqrnEikg6CYfNHwhgAJJNUDVhF9Gb1jGmfSr8NWDibx46vk5udyqar39-0-3": "ltc1qz2ashacflzn4ar4mha0a40e9g2wql8kvzfw5kh",
+                    "Litecoin-Native SegWit-Ltub2Z3zWQ94zvRoVV9V5VzoFzgW7Vpa81crnJkudyEVoikGDxSpULMQqrnEikg6CYfNHwhgAJJNUDVhF9Gb1jGmfSr8NWDibx46vk5udyqar39-0-11": "ltc1qhmw9e3nx3wl5twtuad53qyzetnvx7pjy8zxfzc",
+                    "Litecoin-Native SegWit-Ltub2Z3zWQ94zvRoVV9V5VzoFzgW7Vpa81crnJkudyEVoikGDxSpULMQqrnEikg6CYfNHwhgAJJNUDVhF9Gb1jGmfSr8NWDibx46vk5udyqar39-0-10": "ltc1qa9e8qld99esvs60l4rukqwzhn7n760wcfxpt46",
+                    "Litecoin-Native SegWit-Ltub2Z3zWQ94zvRoVV9V5VzoFzgW7Vpa81crnJkudyEVoikGDxSpULMQqrnEikg6CYfNHwhgAJJNUDVhF9Gb1jGmfSr8NWDibx46vk5udyqar39-0-6": "ltc1qarkesx8agywuseyty0l5dq05chdd9pv3ezg8lf",
+                    "Litecoin-Native SegWit-Ltub2Z3zWQ94zvRoVV9V5VzoFzgW7Vpa81crnJkudyEVoikGDxSpULMQqrnEikg6CYfNHwhgAJJNUDVhF9Gb1jGmfSr8NWDibx46vk5udyqar39-0-14": "ltc1qd2v5ahu0juzml2v8fmrmy4ul5g70nujycs45d9",
+                    "Litecoin-Native SegWit-Ltub2Z3zWQ94zvRoVV9V5VzoFzgW7Vpa81crnJkudyEVoikGDxSpULMQqrnEikg6CYfNHwhgAJJNUDVhF9Gb1jGmfSr8NWDibx46vk5udyqar39-0-13": "ltc1q9s05u4jh4sjny2g4rgk4fezp0nk89jn3pevfm2",
+                    "Litecoin-Native SegWit-Ltub2Z3zWQ94zvRoVV9V5VzoFzgW7Vpa81crnJkudyEVoikGDxSpULMQqrnEikg6CYfNHwhgAJJNUDVhF9Gb1jGmfSr8NWDibx46vk5udyqar39-0-17": "ltc1qkuju0fauvntag43fv2dxwsam6ge246zyxxf62g",
+                    "Litecoin-Native SegWit-Ltub2Z3zWQ94zvRoVV9V5VzoFzgW7Vpa81crnJkudyEVoikGDxSpULMQqrnEikg6CYfNHwhgAJJNUDVhF9Gb1jGmfSr8NWDibx46vk5udyqar39-0-9": "ltc1q85qztnlm38j9uzlt65f5gh0j6m7jsmjfxxul4z",
+                    "Litecoin-Native SegWit-Ltub2Z3zWQ94zvRoVV9V5VzoFzgW7Vpa81crnJkudyEVoikGDxSpULMQqrnEikg6CYfNHwhgAJJNUDVhF9Gb1jGmfSr8NWDibx46vk5udyqar39-0-16": "ltc1q4t59p4kdk0ndeahxdsrytx5k9kpylfnynm6vvk",
+                    "Litecoin-Native SegWit-Ltub2Z3zWQ94zvRoVV9V5VzoFzgW7Vpa81crnJkudyEVoikGDxSpULMQqrnEikg6CYfNHwhgAJJNUDVhF9Gb1jGmfSr8NWDibx46vk5udyqar39-1-0": "ltc1qz9gl5th6y2kag9e5456mkr8vnjrkkc00s5tu9x",
+                    "Litecoin-Native SegWit-Ltub2Z3zWQ94zvRoVV9V5VzoFzgW7Vpa81crnJkudyEVoikGDxSpULMQqrnEikg6CYfNHwhgAJJNUDVhF9Gb1jGmfSr8NWDibx46vk5udyqar39-0-19": "ltc1qy508hz9llqx6j97vtp2y86tykvhv5szzwsjrh9",
+                    "Litecoin-Native SegWit-Ltub2Z3zWQ94zvRoVV9V5VzoFzgW7Vpa81crnJkudyEVoikGDxSpULMQqrnEikg6CYfNHwhgAJJNUDVhF9Gb1jGmfSr8NWDibx46vk5udyqar39-0-12": "ltc1qpwlyend4pp9a97cl8v9rhlykfhgncp5g2dvsfp",
+                    "Litecoin-Native SegWit-Ltub2Z3zWQ94zvRoVV9V5VzoFzgW7Vpa81crnJkudyEVoikGDxSpULMQqrnEikg6CYfNHwhgAJJNUDVhF9Gb1jGmfSr8NWDibx46vk5udyqar39-0-15": "ltc1q8ka5g6phshrnl65y8spmealunprkkaaslu0vmu",
+                    "Litecoin-Native SegWit-Ltub2Z3zWQ94zvRoVV9V5VzoFzgW7Vpa81crnJkudyEVoikGDxSpULMQqrnEikg6CYfNHwhgAJJNUDVhF9Gb1jGmfSr8NWDibx46vk5udyqar39-1-2": "ltc1qc6uqv6aqw0jd5xes2rwkdfec63ay2cdunj6uvg",
+                    "Litecoin-Native SegWit-Ltub2Z3zWQ94zvRoVV9V5VzoFzgW7Vpa81crnJkudyEVoikGDxSpULMQqrnEikg6CYfNHwhgAJJNUDVhF9Gb1jGmfSr8NWDibx46vk5udyqar39-1-3": "ltc1qcdwma3dnm243y289dz40aeeg4ug9hz3druurdk",
+                    "Litecoin-Native SegWit-Ltub2Z3zWQ94zvRoVV9V5VzoFzgW7Vpa81crnJkudyEVoikGDxSpULMQqrnEikg6CYfNHwhgAJJNUDVhF9Gb1jGmfSr8NWDibx46vk5udyqar39-1-5": "ltc1qp5c6p7mq6df8d93hzxycdk9h389nxc5wuuynag",
+                    "Litecoin-Native SegWit-Ltub2Z3zWQ94zvRoVV9V5VzoFzgW7Vpa81crnJkudyEVoikGDxSpULMQqrnEikg6CYfNHwhgAJJNUDVhF9Gb1jGmfSr8NWDibx46vk5udyqar39-0-18": "ltc1qmuftdccczqwrgzt8sal0wza2e2xtdmdqmd0lzl",
+                    "Litecoin-Native SegWit-Ltub2Z3zWQ94zvRoVV9V5VzoFzgW7Vpa81crnJkudyEVoikGDxSpULMQqrnEikg6CYfNHwhgAJJNUDVhF9Gb1jGmfSr8NWDibx46vk5udyqar39-1-6": "ltc1qd3p4v2qyxc2guxlduj52gyhvlsgkqcn6z5r57t",
+                    "Litecoin-Native SegWit-Ltub2Z3zWQ94zvRoVV9V5VzoFzgW7Vpa81crnJkudyEVoikGDxSpULMQqrnEikg6CYfNHwhgAJJNUDVhF9Gb1jGmfSr8NWDibx46vk5udyqar39-1-8": "ltc1q434nrg2jt3c0l88ce7wtn5qec4w7wp7w6za004",
+                    "Litecoin-Native SegWit-Ltub2Z3zWQ94zvRoVV9V5VzoFzgW7Vpa81crnJkudyEVoikGDxSpULMQqrnEikg6CYfNHwhgAJJNUDVhF9Gb1jGmfSr8NWDibx46vk5udyqar39-1-9": "ltc1qzslkqh5mwevp5l6racer76w970d0rqwjcapetf",
+                    "Litecoin-Native SegWit-Ltub2Z3zWQ94zvRoVV9V5VzoFzgW7Vpa81crnJkudyEVoikGDxSpULMQqrnEikg6CYfNHwhgAJJNUDVhF9Gb1jGmfSr8NWDibx46vk5udyqar39-1-12": "ltc1qmax8ec69r0q9zwvuwsc8hvpu2ez9v9q2c0k4e7",
+                    "Litecoin-Native SegWit-Ltub2Z3zWQ94zvRoVV9V5VzoFzgW7Vpa81crnJkudyEVoikGDxSpULMQqrnEikg6CYfNHwhgAJJNUDVhF9Gb1jGmfSr8NWDibx46vk5udyqar39-1-11": "ltc1qhm7tgsp96q7eqcg5pt9hjdzru5ukv48nqaf4uy",
+                    "Litecoin-Native SegWit-Ltub2Z3zWQ94zvRoVV9V5VzoFzgW7Vpa81crnJkudyEVoikGDxSpULMQqrnEikg6CYfNHwhgAJJNUDVhF9Gb1jGmfSr8NWDibx46vk5udyqar39-1-14": "ltc1q7dw00uwthhtj23j0cgl6gglck2tvt4r3lq8ume",
+                    "Litecoin-Native SegWit-Ltub2Z3zWQ94zvRoVV9V5VzoFzgW7Vpa81crnJkudyEVoikGDxSpULMQqrnEikg6CYfNHwhgAJJNUDVhF9Gb1jGmfSr8NWDibx46vk5udyqar39-1-15": "ltc1qn4w6c7g3f5wlm3wgzpj2mzs7wys0x39xtxpkd5",
+                    "Litecoin-Native SegWit-Ltub2Z3zWQ94zvRoVV9V5VzoFzgW7Vpa81crnJkudyEVoikGDxSpULMQqrnEikg6CYfNHwhgAJJNUDVhF9Gb1jGmfSr8NWDibx46vk5udyqar39-1-1": "ltc1qgqd6qkyjrt5y46rk4w8mc8qhnp68354k7nxm50",
+                    "Litecoin-Native SegWit-Ltub2Z3zWQ94zvRoVV9V5VzoFzgW7Vpa81crnJkudyEVoikGDxSpULMQqrnEikg6CYfNHwhgAJJNUDVhF9Gb1jGmfSr8NWDibx46vk5udyqar39-1-17": "ltc1q2wgvafkrj9fckvqcmspz6y4m9na7xgud2c3hxf",
+                    "Litecoin-Native SegWit-Ltub2Z3zWQ94zvRoVV9V5VzoFzgW7Vpa81crnJkudyEVoikGDxSpULMQqrnEikg6CYfNHwhgAJJNUDVhF9Gb1jGmfSr8NWDibx46vk5udyqar39-1-18": "ltc1q5s2rwcrr4jj4ke7xzl0f2vhcc37e4qyfe59zzf",
+                    "Litecoin-Native SegWit-Ltub2Z3zWQ94zvRoVV9V5VzoFzgW7Vpa81crnJkudyEVoikGDxSpULMQqrnEikg6CYfNHwhgAJJNUDVhF9Gb1jGmfSr8NWDibx46vk5udyqar39-1-4": "ltc1qxtyjnemxf4te0zhcx9xhccdhzlfsncfyl0ensl",
+                    "Litecoin-Native SegWit-Ltub2Z3zWQ94zvRoVV9V5VzoFzgW7Vpa81crnJkudyEVoikGDxSpULMQqrnEikg6CYfNHwhgAJJNUDVhF9Gb1jGmfSr8NWDibx46vk5udyqar39-1-7": "ltc1qewpmtwaxnrexp9t7zk8pwkjgs0dzsrdrg56nw9",
+                    "Litecoin-Native SegWit-Ltub2Z3zWQ94zvRoVV9V5VzoFzgW7Vpa81crnJkudyEVoikGDxSpULMQqrnEikg6CYfNHwhgAJJNUDVhF9Gb1jGmfSr8NWDibx46vk5udyqar39-1-10": "ltc1qzx4lpta8ehyqk7m9h5at0us0qe6jnsjtqzsryx",
+                    "Litecoin-Native SegWit-Ltub2Z3zWQ94zvRoVV9V5VzoFzgW7Vpa81crnJkudyEVoikGDxSpULMQqrnEikg6CYfNHwhgAJJNUDVhF9Gb1jGmfSr8NWDibx46vk5udyqar39-1-13": "ltc1qup3qu6ye0rmureds7jn63dervh572fvfm62ee7",
+                    "Litecoin-Native SegWit-Ltub2Z3zWQ94zvRoVV9V5VzoFzgW7Vpa81crnJkudyEVoikGDxSpULMQqrnEikg6CYfNHwhgAJJNUDVhF9Gb1jGmfSr8NWDibx46vk5udyqar39-1-16": "ltc1qwsgm6tfl58qfm2cx5chtmnvw60j3pfa5jfjqs6",
+                    "Litecoin-Native SegWit-Ltub2Z3zWQ94zvRoVV9V5VzoFzgW7Vpa81crnJkudyEVoikGDxSpULMQqrnEikg6CYfNHwhgAJJNUDVhF9Gb1jGmfSr8NWDibx46vk5udyqar39-1-19": "ltc1qaf0rpr2780luczaxqf6mzjh527xxj7vz7u4um9"
+                  }
+                }
+              }
+            }
+          },
+          "swapHistory": [],
+          "name": "Litecoin 1",
+          "starred": false
+        },
+        "version": 1
+      },
+      {
+        "data": {
           "id": "js:2:tron:TMGGi8n7kDkB8ws9wgunKf2SGNP4PjEyLL:",
           "seedIdentifier": "04c53a26b402bfc99b4d0560e874c2486d3f5d1a61a35f0ba44e9eabe11fe185ed718721b50ff43a1df0605f9d7c808ba59c10000276c8047b60627ae5bdbb652f",
           "used": false,
@@ -11430,6 +11521,114 @@
                   "fee": "716341757180607",
                   "transactionSequenceNumber": 287,
                   "contract": "0xdAC17F958D2ee523a2206206994597C13D831ec7"
+                }
+              ],
+              "pendingOperations": [],
+              "swapHistory": [],
+              "starred": false
+            },
+            {
+              "type": "TokenAccountRaw",
+              "id": "js:2:ethereum:0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6:+ethereum%2Ferc20%2Fusd~!underscore!~~!underscore!~coin",
+              "parentId": "js:2:ethereum:0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6:",
+              "tokenId": "ethereum/erc20/usd__coin",
+              "balance": "69917465",
+              "spendableBalance": "69917465",
+              "balanceHistoryCache": {
+                "HOUR": {
+                  "balances": [
+                    69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465,
+                    69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465,
+                    69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465,
+                    69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465,
+                    69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465,
+                    69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465,
+                    69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465,
+                    69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465,
+                    69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465,
+                    69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465,
+                    69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465,
+                    69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465,
+                    69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465,
+                    69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465,
+                    69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465,
+                    69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465,
+                    69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465,
+                    69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465,
+                    69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465,
+                    69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465,
+                    69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465,
+                    69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465,
+                    69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465,
+                    69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465,
+                    69917465
+                  ],
+                  "latestDate": 1739779200000
+                },
+                "DAY": {
+                  "balances": [
+                    0, 34177143, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465,
+                    69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465,
+                    69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465,
+                    69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465,
+                    69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465,
+                    69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465,
+                    69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465,
+                    69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465,
+                    69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465,
+                    69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465,
+                    69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465,
+                    69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465,
+                    69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465,
+                    69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465,
+                    69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465,
+                    69917465, 69917465, 69917465, 69917465, 69917465, 69917465
+                  ],
+                  "latestDate": 1739746800000
+                },
+                "WEEK": {
+                  "balances": [
+                    0, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465,
+                    69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465, 69917465,
+                    69917465, 69917465, 69917465
+                  ],
+                  "latestDate": 1739660400000
+                }
+              },
+              "creationDate": "2025-02-12T10:00:40.702Z",
+              "operationsCount": 2,
+              "operations": [
+                {
+                  "id": "js:2:ethereum:0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6:+ethereum%2Ferc20%2Fusd~!underscore!~~!underscore!~coin-0x518fda3f570b7d4cf8cef26f09cd760ccc8bffdcb01bac3e788f1449370d6925-IN-i0",
+                  "hash": "0x518fda3f570b7d4cf8cef26f09cd760ccc8bffdcb01bac3e788f1449370d6925",
+                  "type": "IN",
+                  "senders": ["0xdd3d72C53Ff982ff59853da71158bf1538b3Ceee"],
+                  "recipients": ["0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6"],
+                  "accountId": "js:2:ethereum:0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6:+ethereum%2Ferc20%2Fusd~!underscore!~~!underscore!~coin",
+                  "blockHash": "0x085cb6335aa52b83d93c02a4acd588f679170955bd896010183c40d2c1e242b5",
+                  "blockHeight": 20977398,
+                  "extra": {},
+                  "date": "2024-10-16T10:02:35.000Z",
+                  "value": "35740322",
+                  "fee": "541920000000000",
+                  "transactionSequenceNumber": 9318,
+                  "contract": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
+                },
+                {
+                  "id": "js:2:ethereum:0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6:+ethereum%2Ferc20%2Fusd~!underscore!~~!underscore!~coin-0x0ed793f7c5513b6f6a290298235d73a5953b4888342675d48ff0f7c08fc9dfc7-IN-i0",
+                  "hash": "0x0ed793f7c5513b6f6a290298235d73a5953b4888342675d48ff0f7c08fc9dfc7",
+                  "type": "IN",
+                  "senders": ["0xdd3d72C53Ff982ff59853da71158bf1538b3Ceee"],
+                  "recipients": ["0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6"],
+                  "accountId": "js:2:ethereum:0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6:+ethereum%2Ferc20%2Fusd~!underscore!~~!underscore!~coin",
+                  "blockHash": "0x444947fe6e954a2c300fdc395d6f6e4479518a14c211015feb8040000562fcff",
+                  "blockHeight": 20970055,
+                  "extra": {},
+                  "date": "2024-10-15T09:25:23.000Z",
+                  "value": "34177143",
+                  "fee": "809380000000000",
+                  "transactionSequenceNumber": 8094,
+                  "contract": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
                 }
               ],
               "pendingOperations": [],
@@ -20501,8 +20700,8 @@
           "pendingOperations": [],
           "currencyId": "ripple",
           "lastSyncDate": "2024-08-01T09:06:56.691Z",
-          "balance": "22000000",
-          "spendableBalance": "12000000",
+          "balance": "24000000",
+          "spendableBalance": "14000000",
           "balanceHistoryCache": {
             "HOUR": {
               "balances": [

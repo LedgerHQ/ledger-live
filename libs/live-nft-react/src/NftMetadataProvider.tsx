@@ -14,7 +14,14 @@ import {
   NFTMetadataContextState,
   NFTMetadataContextType,
   NFTResource,
+  NFTOperations,
 } from "@ledgerhq/live-nft/types";
+
+type Item = {
+  contract?: string;
+  tokenId?: string;
+  currencyId?: string;
+};
 
 const NftMetadataContext = createContext<NFTMetadataContextType>({
   cache: {},
@@ -49,40 +56,39 @@ export function useNftMetadata(
 }
 
 export function useNftMetadataBatch(
-  items: Array<{
-    contract: string | undefined;
-    tokenId: string | undefined;
-    currencyId: string | undefined;
-  }>,
+  items: Array<Item>,
 ): Array<NFTResource<NonNullable<NFTMetadataResponse["result"]>>> {
   const { cache, loadNFTMetadata } = useContext(NftMetadataContext);
 
-  const hasAllProperties = (item: { contract?: string; tokenId?: string; currencyId?: string }) =>
-    item.contract && item.tokenId && item.currencyId;
+  const hasAllProperties = (item: Item): item is Required<Item> =>
+    !!item.contract && !!item.tokenId && !!item.currencyId;
 
-  const data = items.map(item => {
-    const key = hasAllProperties(item)
-      ? getNftKey(item.contract!, item.tokenId!, item.currencyId!)
-      : "";
-    const cachedData = cache[key] as NFTResource<NonNullable<NFTMetadataResponse["result"]>>;
-    return { key, cachedData };
-  });
+  const data = useMemo(
+    () =>
+      items.map(item => {
+        const key = hasAllProperties(item)
+          ? getNftKey(item.contract, item.tokenId, item.currencyId)
+          : "";
+        const cachedData = cache[key] as NFTResource<NonNullable<NFTMetadataResponse["result"]>>;
+        return { key, cachedData };
+      }),
+    [items, cache],
+  );
 
   useEffect(() => {
     data.forEach(({ key, cachedData }) => {
+      if (cachedData && !isOutdated(cachedData)) return;
       const item = items.find(
-        i => hasAllProperties(i) && getNftKey(i.contract!, i.tokenId!, i.currencyId!) === key,
+        i => hasAllProperties(i) && getNftKey(i.contract, i.tokenId, i.currencyId) === key,
       );
       if (!item) return;
-      if (!cachedData || isOutdated(cachedData)) {
-        loadNFTMetadata(item.contract!, item.tokenId!, item.currencyId!);
-      }
+      hasAllProperties(item) && loadNFTMetadata(item.contract, item.tokenId, item.currencyId);
     });
   }, [items, loadNFTMetadata, cache, data]);
 
   return items.map(item => {
     const key = hasAllProperties(item)
-      ? getNftKey(item.contract!, item.tokenId!, item.currencyId!)
+      ? getNftKey(item.contract, item.tokenId, item.currencyId)
       : "";
     const cachedData = cache[key] as NFTResource<NonNullable<NFTMetadataResponse["result"]>>;
     return cachedData || { status: "queued" };
@@ -115,6 +121,51 @@ export function useNftCollectionMetadata(
       status: "queued",
     };
   }
+}
+
+export function useNftCollectionMetadataBatch(
+  operations: NFTOperations,
+): Array<NFTResource<NonNullable<NFTCollectionMetadataResponse["result"]>>> {
+  const items = Object.values(operations);
+  const { cache, loadCollectionMetadata } = useContext(NftMetadataContext);
+
+  const hasAllProperties = (item: Item): item is Required<Item> =>
+    !!item.contract && !!item.currencyId;
+  const data = useMemo(
+    () =>
+      items.map(item => {
+        const key = hasAllProperties(item)
+          ? getNftCollectionKey(item.contract, item.currencyId)
+          : "";
+        const cachedData = cache[key] as NFTResource<
+          NonNullable<NFTCollectionMetadataResponse["result"]>
+        >;
+        return { key, cachedData };
+      }),
+    [items, cache],
+  );
+
+  useEffect(() => {
+    data.forEach(({ key, cachedData }) => {
+      if (cachedData && !isOutdated(cachedData)) return;
+      const item = items.find(
+        i => hasAllProperties(i) && getNftCollectionKey(i.contract, i.currencyId) === key,
+      );
+      if (!item) return;
+      hasAllProperties(item) && loadCollectionMetadata(item.contract, item.currencyId);
+    });
+  }, [items, loadCollectionMetadata, cache, data]);
+
+  return useMemo(() => {
+    const parsedItems = items.map(item => {
+      const key = hasAllProperties(item) ? getNftCollectionKey(item.contract, item.currencyId) : "";
+      const cachedData = cache[key] as NFTResource<
+        NonNullable<NFTCollectionMetadataResponse["result"]>
+      >;
+      return cachedData || { status: "queued" };
+    });
+    return parsedItems;
+  }, [items, cache]);
 }
 
 type UseNFTResponse =

@@ -3,6 +3,7 @@ import { log } from "@ledgerhq/logs";
 import {
   type APIDelegationType,
   type APITransactionType,
+  AccountsGetOperationsOptions,
   isAPIDelegationType,
   isAPITransactionType,
 } from "../network/types";
@@ -24,23 +25,44 @@ export type Operation = {
   transactionSequenceNumber: number;
 };
 
+/**
+ * Returns list of "Transfer", "Delegate" and "Undelegate" Operations associated to an account.
+ * @param address Account address
+ * @param limit the maximum number of operations to return. Beware that's a weak limit, as explorers might not respect it.
+ * @param order whether to return operations starting from the top block or from the oldest block.
+ *   "Descending" returns newest operation first, "Ascending" returns oldest operation first.
+ *   It doesn't control the order of the operations in the result list:
+ *     operations are always returned sorted in descending order (newest first).
+ * @param minHeight retrieve operations from a specific block height until top most (inclusive).
+ * @param token a token to be used for pagination
+ * @returns a list of operations is descending (newest first) order and a token to be used for pagination
+ */
 export async function listOperations(
   address: string,
-  { token, limit }: { limit?: number; token?: string },
+  {
+    token,
+    limit,
+    sort,
+    minHeight,
+  }: { limit?: number; token?: string; sort: "Ascending" | "Descending"; minHeight: number },
 ): Promise<[Operation[], string]> {
-  let options: { lastId?: number; limit?: number } = { limit: limit };
+  let options: AccountsGetOperationsOptions = { limit, sort, "level.ge": minHeight };
   if (token) {
     options = { ...options, lastId: JSON.parse(token) };
   }
   const operations = await tzkt.getAccountOperations(address, options);
   const lastOperation = operations.slice(-1)[0];
+  // it's important to get the last id from the **unfiltered** operation list
+  // otherwise we might miss operations
   const nextToken = lastOperation ? JSON.stringify(lastOperation?.id) : "";
-  return [
-    operations
-      .filter(op => isAPITransactionType(op) || isAPIDelegationType(op))
-      .reduce((acc, op) => acc.concat(convertOperation(address, op)), [] as Operation[]),
-    nextToken,
-  ];
+  const filteredOperations = operations
+    .filter(op => isAPITransactionType(op) || isAPIDelegationType(op))
+    .reduce((acc, op) => acc.concat(convertOperation(address, op)), [] as Operation[]);
+  if (sort === "Ascending") {
+    //results are always sorted in descending order
+    filteredOperations.reverse();
+  }
+  return [filteredOperations, nextToken];
 }
 
 // note that "initiator" of APITransactionType is never used in the conversion

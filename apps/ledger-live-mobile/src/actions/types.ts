@@ -38,7 +38,7 @@ import { HandlersPayloads } from "@ledgerhq/live-wallet/store";
 import { ImportAccountsReduceInput } from "@ledgerhq/live-wallet/liveqr/importAccounts";
 import { Steps } from "LLM/features/WalletSync/types/Activation";
 import { NftStatus } from "@ledgerhq/live-nft/types";
-import { BlockchainEVM } from "@ledgerhq/live-nft/supported";
+import { BlockchainsType } from "@ledgerhq/live-nft/supported";
 
 //  === ACCOUNTS ACTIONS ===
 
@@ -245,6 +245,7 @@ export enum SettingsActionTypes {
   SHOW_TOKEN = "SHOW_TOKEN",
   BLACKLIST_TOKEN = "BLACKLIST_TOKEN",
   UPDATE_NFT_COLLECTION_STATUS = "UPDATE_NFT_COLLECTION_STATUS",
+  RESET_NFT_COLLECTION_STATUS = "RESET_NFT_COLLECTION_STATUS",
   SETTINGS_DISMISS_BANNER = "SETTINGS_DISMISS_BANNER",
   SETTINGS_SET_AVAILABLE_UPDATE = "SETTINGS_SET_AVAILABLE_UPDATE",
   DANGEROUSLY_OVERRIDE_STATE = "DANGEROUSLY_OVERRIDE_STATE",
@@ -325,7 +326,7 @@ export type SettingsFilterTokenOperationsZeroAmountPayload =
 export type SettingsShowTokenPayload = string;
 export type SettingsBlacklistTokenPayload = string;
 export type SettingsUpdateNftCollectionStatus = {
-  blockchain: BlockchainEVM;
+  blockchain: BlockchainsType;
   collection: string;
   status: NftStatus;
 };

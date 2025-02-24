@@ -34,5 +34,5 @@ jobs:
           SEED: ${{ secrets.SEED7 }}
           BOT_ENVIRONMENT: production
           # We don't run these currencies daily because fees are expensive
-          BOT_DISABLED_CURRENCIES: bitcoin,ethereum,qtum,decred,cardano,axelar,cosmos,secret_network,avalanche_c_chain,bsc,filecoin,tron,cronos,fantom,boba,telos_evm,polygon_zk_evm,polkadot
+          BOT_DISABLED_CURRENCIES: bitcoin,ethereum,qtum,decred,cardano,axelar,cosmos,secret_network,avalanche_c_chain,bsc,filecoin,tron,cronos,fantom,boba,desmos,sei_network,xion,velas_evm,umee,stargaze,klaytn,etherlink,telos_evm,polygon_zk_evm,polkadot,polygon_zk_evm_testnet,aptos_testnet,arbitrum_sepolia,base_sepolia,blast_sepolia,scroll_sepolia,zksync_sepolia,ethereum_sepolia,optimism_sepolia,linea_sepolia
           BOT_FILTER_FEATURES: send

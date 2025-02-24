@@ -26,6 +26,9 @@ import {
 import useAnalytics from "LLM/hooks/useAnalytics";
 import { AddAccountsNavigatorParamList } from "~/components/RootNavigator/types/AddAccountsNavigator";
 import { AnalyticContexts } from "LLM/hooks/useAnalytics/enums";
+import LedgerSyncEntryPoint from "LLM/features/LedgerSyncEntryPoint";
+import { EntryPoint } from "LLM/features/LedgerSyncEntryPoint/types";
+
 type NavigationProps = BaseComposite<
   StackNavigatorProps<AddAccountsNavigatorParamList, NavigatorName.AddAccounts>
 >;
@@ -113,6 +116,9 @@ export default function Navigator() {
           options={{
             headerTitle: "",
             headerLeft: () => <NavigationHeaderBackButton onPress={onPressBack} />,
+            headerRight: () => (
+              <LedgerSyncEntryPoint entryPoint={EntryPoint.accounts} page="Accounts" />
+            ),
           }}
         />
       )}

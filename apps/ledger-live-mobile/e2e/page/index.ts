@@ -32,12 +32,13 @@ import CeloManageAssetsPage from "./trade/celoManageAssets.page";
 
 import type { Account } from "@ledgerhq/types-live";
 import { DeviceLike } from "~/reducers/types";
-import { loadAccounts, loadBleState, loadConfig } from "../bridge/server";
+import { loadAccounts, loadBleState, loadConfig, setFeatureFlags } from "../bridge/server";
 import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { lastValueFrom, Observable } from "rxjs";
 import path from "path";
 import fs from "fs";
 import { getEnv } from "@ledgerhq/live-env";
+import { SettingsSetOverriddenFeatureFlagsPlayload } from "~/actions/types";
 
 type ApplicationOptions = {
   speculosApp?: AppInfos;
@@ -45,6 +46,7 @@ type ApplicationOptions = {
   userdata?: string;
   knownDevices?: DeviceLike[];
   testAccounts?: Account[];
+  featureFlags?: SettingsSetOverriddenFeatureFlagsPlayload;
 };
 
 export const getUserdataPath = (userdata: string) => {
@@ -103,6 +105,7 @@ export class Application {
     userdata,
     knownDevices,
     testAccounts,
+    featureFlags,
   }: ApplicationOptions) {
     let proxyPort = 0;
     if (speculosApp) {
@@ -122,6 +125,7 @@ export class Application {
 
     if (this.userdataSpeculos) await loadConfig(this.userdataSpeculos, true);
     else userdata && (await loadConfig(userdata, true));
+    featureFlags && (await setFeatureFlags(featureFlags));
     knownDevices && (await loadBleState({ knownDevices }));
     testAccounts && (await loadAccounts(testAccounts));
 

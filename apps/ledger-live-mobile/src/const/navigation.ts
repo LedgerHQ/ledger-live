@@ -664,4 +664,5 @@ export enum NavigatorName {
   AssetSelection = "AssetSelection",
   DeviceSelection = "DeviceSelection",
   Assets = "Assets",
+  SwapHistory = "SwapHistory",
 }

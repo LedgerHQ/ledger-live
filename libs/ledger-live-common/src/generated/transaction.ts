@@ -1,9 +1,9 @@
-import casper from "../families/casper/transaction";
 import celo from "../families/celo/transaction";
 import algorand from "@ledgerhq/coin-algorand/transaction";
 import aptos from "@ledgerhq/coin-aptos/transaction";
 import bitcoin from "@ledgerhq/coin-bitcoin/transaction";
 import cardano from "@ledgerhq/coin-cardano/transaction";
+import casper from "@ledgerhq/coin-casper/transaction";
 import cosmos from "@ledgerhq/coin-cosmos/transaction";
 import elrond from "@ledgerhq/coin-elrond/transaction";
 import evm from "@ledgerhq/coin-evm/transaction";
@@ -23,12 +23,12 @@ import vechain from "@ledgerhq/coin-vechain/transaction";
 import xrp from "@ledgerhq/coin-xrp/transaction";
 
 export default {
-  casper,
   celo,
   algorand,
   aptos,
   bitcoin,
   cardano,
+  casper,
   cosmos,
   elrond,
   evm,
