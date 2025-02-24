@@ -809,6 +809,12 @@
     "SolanaTokenAccountFrozen" : {
       "title" : "Vermögenswerte des Tokenkontos sind gesperrt"
     },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "Konto nicht initialisiert"
+    },
+    "SolanaTokenRecipientIsSenderATA" : {
+      "title" : "Die Empfängeradresse ist identisch mit der Adresse des Absendertokens"
+    },
     "SolanaAddressOfEd25519" : {
       "title" : "Adresse aus ed25519 Kurve"
     },
@@ -1047,6 +1053,9 @@
     },
     "AppManifestNotFoundError" : {
       "title" : "Fehler beim Laden der Swap Live-App"
+    },
+    "InvalidMemoMina" : {
+      "title" : "Der Memotext darf nicht länger als 32 Zeichen sein."
     }
   },
   "crash" : {
@@ -2903,7 +2912,8 @@
       "analytics" : "Analysen",
       "analyticsDesc" : "Ermöglicht Ledger die Erhebung von App-Nutzungsdaten, um die Leistung von Ledger Live zu messen und sowohl die App als auch dein Nutzungserlebnis zu optimieren.",
       "mevProtection" : "MEV-Schutz",
-      "mevProtectionDesc" : "Aktiviere den MEV-Schutz, um die Zuverlässigkeit von Ethereum-Transaktionen zu verbessern",
+      "mevProtectionDesc" : "Aktiviere den MEV-Schutz, um die Zuverlässigkeit von Ethereum-Transaktionen zu verbessern.",
+      "mevProtectionLearnMore" : "Datenschutzerklärung",
       "personalizedRecommendations" : "Personalisierte Nutzung",
       "personalizedRecommendationsDesc" : "Ermöglicht Ledger die Erhebung von App-Nutzungsdaten, um personalisierte Empfehlungen und Inhalte anzubieten, die deinen Vorlieben entsprechen, und um die Leistung unserer Marketingkampagnen zu messen.",
       "analyticsModal" : {
@@ -3351,7 +3361,7 @@
       },
       "form" : {
         "validate" : "Swap-Transaktion bestätigen",
-        "tab" : "Umtauschen",
+        "tab" : "Swappen",
         "button" : "Weiter",
         "from" : "Von",
         "to" : "An",
@@ -3460,8 +3470,8 @@
           "receive" : "Empfangen"
         },
         "placeholder" : "Auswählen",
-        "title" : "Umtauschen",
-        "cta" : "Umtauschen",
+        "title" : "Swappen",
+        "cta" : "Swappen",
         "from" : "Von",
         "to" : "An",
         "loading" : "Lade Daten...",
@@ -3512,7 +3522,9 @@
         "ada_title" : "Die Ledger Nano S™ unterstützt das Swappen von Cardano nicht",
         "ada_description" : "Zum Swappen von Cardano kannst du jedes sonstige kompatible Ledger-Gerät nutzen, z. B. Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ oder Ledger Stax™.",
         "apt_title" : "Ledger Nano S™ unterstützt das Swappen von Aptos nicht",
-        "apt_description" : "Zum Swappen von Aptos müsstest du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™."
+        "apt_description" : "Zum Swappen von Aptos müsstest du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
+        "cosmos_title" : "Ledger Nano S™ unterstützt das Swappen von Cosmos nicht",
+        "cosmos_description" : "Zum Swappen von Cosmos müsstest du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™."
       }
     },
     "lending" : {
@@ -4086,6 +4098,7 @@
       "ctaStopScan" : "Scannen stoppen",
       "confirm" : "Bestätigen",
       "scanningTitle" : "Nach vorhandenen Konten in der Blockchain wird gesucht …",
+      "whichAddressType" : "So wählst du einen Adresstyp aus",
       "sections" : {
         "importable" : {
           "title" : "Wir haben {{count}} Konto gefunden",
@@ -6982,6 +6995,16 @@
   },
   "walletSync" : {
     "title" : "Ledger Sync",
+    "entryPoints" : {
+      "simpleCta" : {
+        "title" : "Ledger Sync aktivieren"
+      },
+      "card" : {
+        "title" : "Ledger Sync",
+        "description" : "Synchronisiere deine Konten automatisch – auch beim Wechsel auf ein neues Smartphone.",
+        "cta" : "Ledger Sync einschalten"
+      }
+    },
     "activation" : {
       "screen" : {
         "title" : "Ledger Sync für dieses Smartphone einschalten?",
@@ -7219,6 +7242,14 @@
       "title" : "Blockchain-Netzwerk auswählen, zu dem der Vermögenswert gehört",
       "detectedAccounts" : "{{count}} Konto (erkannt)",
       "detectedAccounts_plural" : "{{count}} Konten (erkannt)"
+    }
+  },
+  "emptyList" : {
+    "accounts" : {
+      "title" : "Keine Konten gefunden",
+      "subTitle" : "Anscheinend hast du noch kein Konto hinzugefügt. Leg jetzt los.",
+      "cta" : "Konto hinzufügen",
+      "link" : "Brauchst du Hilfe? Finde heraus, wie du ein Konto zu Ledger Live hinzufügst."
     }
   }
 }
