@@ -23,10 +23,6 @@ export const isValidMemo = (memo: string): boolean => {
   return memo.length <= MAX_MEMO_LENGTH;
 };
 
-export const isImplicitAccount = (address: string): boolean => {
-  return !address.includes(".");
-};
-
 // Get the account number from the path
 export const getAccountNumFromPath = (path: string): number | undefined => {
   const parts = path.split("'/");
