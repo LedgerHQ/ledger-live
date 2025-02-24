@@ -18,7 +18,7 @@
   "bugs": {
     "url": "https://github.com/LedgerHQ/ledger-live/issues"
   },
-  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs/packages/hw-app-eth",
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/live-signer-evm",
   "publishConfig": {
     "access": "public"
   },
