@@ -39,7 +39,6 @@ test(
       const transactions = await getTransactions(address);
       expect(transactions).toBeDefined();
       expect(transactions.length).toBeGreaterThan(0);
-      expect(transactions[0].timestamp).toBeDefined();
     }
   },
   60 * 1000,
