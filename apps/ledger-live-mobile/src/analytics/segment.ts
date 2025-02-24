@@ -56,6 +56,7 @@ import { Maybe } from "../types/helpers";
 import { appStartupTime } from "../StartupTimeMarker";
 import { aggregateData, getUniqueModelIdList } from "../logic/modelIdList";
 import { getEnv } from "@ledgerhq/live-env";
+import { getTokensWithFunds } from "LLM/utils/getTokensWithFunds";
 
 let sessionId = uuid();
 const appVersion = `${VersionNumber.appVersion || ""} (${VersionNumber.buildVersion || ""})`;
@@ -217,6 +218,7 @@ const extraProperties = async (store: AppStore) => {
         ),
       ]
     : [];
+
   const blockchainsWithNftsOwned = accounts
     ? [
         ...new Set(
@@ -237,6 +239,7 @@ const extraProperties = async (store: AppStore) => {
   const rebornAttributes = getRebornAttributes();
   const mevProtectionAttributes = getMEVAttributes(state);
   const addAccountsAttributes = getNewAddAccountsAttribues();
+  const tokenWithFunds = getTokensWithFunds(accounts);
 
   // NOTE: Currently there no reliable way to uniquely identify devices from DeviceModelInfo.
   // So device counts is approximated as follows:
@@ -285,6 +288,7 @@ const extraProperties = async (store: AppStore) => {
     ...rebornAttributes,
     ...mevProtectionAttributes,
     ...addAccountsAttributes,
+    tokenWithFunds,
   };
 };
 
