@@ -9,6 +9,7 @@ export * from "./hooks/useFetchOrdinalByTokenId";
 export * from "./hooks/useSpamTxFiltering";
 export * from "./hooks/useFilterNftSpams";
 export * from "./hooks/helpers/ordinals";
+export * from "./hooks/helpers/operations";
 export * from "./hooks/helpers/index";
 export * from "./hooks/helpers/const";
 export * from "./hooks/types";
