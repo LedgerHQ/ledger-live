@@ -9,7 +9,6 @@ import type { AppSpec } from "@ledgerhq/coin-framework/bot/types";
 import { acceptTransaction } from "./speculos-deviceActions";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import { getRandomTransferID } from "./testUtils";
-// import {} from "./consts";
 
 const maxAccount = 6;
 // 0.1 MINA

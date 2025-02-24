@@ -1,8 +1,8 @@
 import React from "react";
 import AccountSubHeader from "~/components/AccountSubHeader";
 
-function InternetComputerAccountSubHeader() {
+function MinaAccountSubHeader() {
   return <AccountSubHeader family="Mina" team="Zondax" />;
 }
 
-export default InternetComputerAccountSubHeader;
+export default MinaAccountSubHeader;
