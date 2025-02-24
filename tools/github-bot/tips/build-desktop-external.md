@@ -42,7 +42,7 @@ Check other runs of the same workflow. If other branches are experiencing the sa
 
 You should be able to reproduce locally by simply running the commands in the same order.
 
-### Infrastucture issues
+### Infrastructure issues
 
 Consider the possibility of infrastructure issues.
 
