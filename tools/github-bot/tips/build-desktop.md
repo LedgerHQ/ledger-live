@@ -42,6 +42,6 @@ Check other runs of the same workflow. If other branches are experiencing the sa
 
 You should be able to reproduce locally by simply running the commands in the same order.
 
-### Infrastucture issues
+### Infrastructure issues
 
 Consider the possibility of infrastructure issues. If the error appears to be related to a slow network or a physical machine, it's possible that the problem is not related to the code. In this case, wait a bit and restart the job, or contact the infrastructure team if the problem persists.
