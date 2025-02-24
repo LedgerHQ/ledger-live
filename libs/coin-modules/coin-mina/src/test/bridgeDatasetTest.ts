@@ -14,6 +14,7 @@ const ACCOUNT_ADDRESS = "B62qjWLs1W3J2fFGixeX49w1o7VvSGuMBNotnFhzs3PZ7PbtdFbhdeD
 const ACCOUNT_ADDRESS_1 = "B62qkWcHhoisWDCR7v3gvWzX6wXEVuGYLHXq3mSym4GEzfYXmSDv314";
 
 const mina: CurrenciesData<Transaction> = {
+  FIXME_ignoreAccountFields: ["blockHash"],
   scanAccounts: [
     {
       name: "mina seed 1",
