@@ -24,7 +24,13 @@ export function TransactionBroadcastedContent(props: TransactionBroadcastedConte
   const swapDefaultTrack = useGetSwapTrackingProperties();
 
   return (
-    <Box height="100%" justifyContent="space-between" paddingTop={62} paddingBottom={15}>
+    <Box
+      height="100%"
+      justifyContent="space-between"
+      paddingTop={62}
+      paddingBottom={15}
+      maxWidth={"100%"}
+    >
       <TrackPage
         category="Swap"
         name={`ModalStep-finished`}
