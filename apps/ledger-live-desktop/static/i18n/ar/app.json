@@ -439,8 +439,8 @@
       "cta" : "انتقل إلى My Ledger"
     },
     "wrongDevice" : {
-      "title" : "™Ledger Nano S ليست متوافقة مع THORChain",
-      "description" : "™Ledger Nano S ليست متوافقة مع THORChain. يمكنك استخدام Ledger Nano S Plus أو Ledger Nano X أو Ledger Stax أو Ledger Flex لتجربة المبادلات عبر سلاسل الكتل المختلفة على THORChain عن طريق Ledger Live",
+      "title" : "™Ledger Nano S ليست متوافقة مع {{provider}}",
+      "description" : "Ledger Nano S ليست متوافقة مع {{provider}}. يمكنك استخدام Ledger Nano S Plus أو Ledger Nano X أو Ledger Stax أو Ledger Flex لتجربة المبادلات عبر سلاسل الكتل المختلفة على {{provider}} عبر Ledger Live",
       "cta" : "استكشف الأجهزة المتوافقة",
       "changeProvider" : "قم بالمبادلة مع مزود آخر"
     },
@@ -1867,7 +1867,8 @@
       "palletMethod" : "الطريقة",
       "transferAmount" : "مبلغ التحويل",
       "validatorsCount" : "({{number}}) مدقق",
-      "version" : "الإصدار"
+      "version" : "الإصدار",
+      "accountCreationFee" : "رسوم إنشاء الحساب"
     }
   },
   "operationList" : {
@@ -4155,6 +4156,11 @@
       "debugAppsDesc" : "عرض تطبيقات المنصة لتصحيح الأخطاء والسماح بفتحها.",
       "debugReactQuery" : "السماح بتصحيح أخطاء ReactQuery",
       "debugReactQueryDesc" : "عرض والسماح بفتح وحدة تحكم تصحيح أخطاء ReactQuery.",
+      "nfts" : {
+        "title" : "المجموعات المخفية للرموز غير القابلة للاستبدال",
+        "description" : "إعادة تعيين قائمة المجموعات المخفية",
+        "reset" : "إعادة تعيين"
+      },
       "exchangeDeveloperMode" : {
         "title" : "وضع المطور لمنصة التداول",
         "desc" : "إضافة معلومات مُزوّد منصة التداول",
@@ -5438,6 +5444,11 @@
     "solana" : {
       "memo" : "علامة/ملاحظة (تسمية الوجهة)",
       "memoPlaceholder" : "اختياري"
+    },
+    "mina" : {
+      "memoPlaceholder" : "اختياري",
+      "memo" : "ملاحظة (تسمية الوجهة)",
+      "memoWarningText" : "قيمة الملاحظة يمكن أن تكون سلسلةً أقصر من أو تساوي 32 حرفاً"
     }
   },
   "errors" : {
@@ -6461,6 +6472,15 @@
         "swap" : "مبادلة",
         "deposit" : "إيداع"
       }
+    },
+    "InvalidMemoMina" : {
+      "title" : "نص علامة الملاحظة (تسمية الوجهة) لا يمكن أن يكون أطول من 32 حرفاً"
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "هذه المعاملة ستُكلّف رسوم إنشاء حساب بقيمة {{fee}}"
+    },
+    "AmountTooSmall" : {
+      "title" : "الحد الأدنى للمبلغ المطلوب لهذه المعاملة هو {{amount}}"
     }
   },
   "cryptoOrg" : {
@@ -6918,6 +6938,14 @@
         "optOut" : {
           "title" : "حان وقت الترقية",
           "description" : "تحديثات Ledger Nano S ستنتهي قريباً. قم بالترقية إلى أحدث أجهزتنا مع خصم <0>{{discount}}%</0>",
+          "cta" : "ترقية محفظتي",
+          "linkText" : "تعرّف على المزيد"
+        }
+      },
+      "portfolio" : {
+        "optOut" : {
+          "title" : "حان وقت الترقية",
+          "description" : "قم بالترقية إلى أحدث أجهزتنا مع خصم <0>{{discount}}%</0> من أجل أمان مُحسّن وتجربة سلسة.",
           "cta" : "ترقية محفظتي",
           "linkText" : "تعرّف على المزيد"
         }
