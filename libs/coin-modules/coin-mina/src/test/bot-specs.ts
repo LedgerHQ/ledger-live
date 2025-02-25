@@ -20,7 +20,7 @@ const minaSpecs: AppSpec<Transaction> = {
   appQuery: {
     model: DeviceModelId.nanoSP,
     appName: "Mina",
-    appVersion: "1.4.1",
+    appVersion: "1.4.2",
   },
   genericDeviceAction: acceptTransaction,
   testTimeout: 15 * 60 * 1000,
