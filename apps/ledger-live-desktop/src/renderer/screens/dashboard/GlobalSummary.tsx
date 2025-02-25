@@ -4,7 +4,7 @@ import { BigNumber } from "bignumber.js";
 import { formatShort } from "@ledgerhq/live-common/currencies/index";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { BalanceHistoryData, PortfolioRange } from "@ledgerhq/types-live";
-import Chart from "~/renderer/components/Chart";
+import Chart, { GraphTrackingScreenName } from "~/renderer/components/Chart";
 import Box, { Card } from "~/renderer/components/Box";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import PlaceholderChart from "~/renderer/components/PlaceholderChart";
@@ -75,6 +75,7 @@ export default function PortfolioBalanceSummary({ range, chartColor, counterValu
             renderTickY={discreetMode ? () => "" : renderTickY}
             renderTooltip={renderTooltip}
             suggestedMin={suggestedMin}
+            screenName={GraphTrackingScreenName.Portfolio}
           />
         ) : (
           <PlaceholderChart
