@@ -113,7 +113,7 @@
   "scripts": {
     "clean": "rimraf lib lib-es",
     "build": "tsc --outDir lib --module commonjs --moduleResolution node10 && tsc -m ES6 --outDir lib-es",
-    "coverage": "jest --coverage --testPathIgnorePatterns='/bridge.integration.test.ts|node_modules|lib-es|lib/' --coveragePathIgnorePatterns='src/test|src/types|src/index.ts|src/bridge/bridge.fixture.ts' --passWithNoTests && mv coverage/coverage-final.json coverage/coverage-aptos.json",
+    "coverage": "jest --coverage --testPathIgnorePatterns='/bridge.integration.test.ts|node_modules|lib-es|lib/' --coveragePathIgnorePatterns='src/test|src/types|src/index.ts|src/bridge/bridge.fixture.ts' --passWithNoTests && mv coverage/coverage-final.json coverage/coverage-aptos.json && mv coverage/lcov.info coverage/aptos-lcov.info",
     "prewatch": "pnpm build",
     "watch": "tsc --watch",
     "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
