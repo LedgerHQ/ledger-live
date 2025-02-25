@@ -1,12 +1,11 @@
-import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
-import { SwapFormNavigatorParamList } from "~/components/RootNavigator/types/SwapFormNavigator";
-import { ScreenName } from "~/const";
+import { NavigationProp, NavigationState } from "@react-navigation/native";
 
 export const swapRedirectToHistory = (
-  navigation: StackNavigatorNavigation<SwapFormNavigatorParamList>,
+  _: Omit<NavigationProp<ReactNavigation.RootParamList>, "getState"> & {
+    getState(): NavigationState | undefined;
+  },
 ) => {
   return async () => {
-    navigation.replace(ScreenName.SwapHistory);
     return Promise.resolve(undefined);
   };
 };

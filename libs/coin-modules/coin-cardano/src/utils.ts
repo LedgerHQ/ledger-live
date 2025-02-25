@@ -1,4 +1,4 @@
 // the IDs of ledger stake pools to shows in lld and llm
 export const LEDGER_POOL_IDS: Array<string> = [
-  "c726c9da5615d5f9f6858c25bb13f81c4741eccd08ce32f3414f323f",
+  "4a9c9902c9538da900b10b716d5d1b214487455fdb06028b32ffa180",
 ];

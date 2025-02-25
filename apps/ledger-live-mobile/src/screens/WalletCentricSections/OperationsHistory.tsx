@@ -1,18 +1,15 @@
-import React, { memo, useMemo, useCallback } from "react";
+import React, { memo, useCallback } from "react";
 import { SectionList, SectionListRenderItemInfo } from "react-native";
 import { Button } from "@ledgerhq/native-ui";
-import { groupAccountsOperationsByDay } from "@ledgerhq/live-common/account/index";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 import {
-  AccountLike,
   AccountLikeArray,
   DailyOperationsSection,
   Operation,
   SubAccount,
 } from "@ledgerhq/types-live";
-import { isAddressPoisoningOperation } from "@ledgerhq/live-common/operation";
 import OperationRow from "~/components/OperationRow";
 import SectionHeader from "~/components/SectionHeader";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
@@ -20,7 +17,7 @@ import { ScreenName } from "~/const";
 import { parentAccountSelector } from "~/reducers/accounts";
 import { track } from "~/analytics";
 import { State } from "~/reducers/types";
-import { filterTokenOperationsZeroAmountEnabledSelector } from "~/reducers/settings";
+import { useOperations } from "../Analytics/Operations/useOperations";
 
 type Props = {
   accounts: AccountLikeArray;
@@ -31,38 +28,19 @@ const NB_OPERATIONS_TO_DISPLAY = 3;
 
 const keyExtractor = (operation: Operation) => operation.id;
 
-const renderSectionHeader = ({ section }: { section: { day: Date } }) => (
-  <SectionHeader day={section.day} />
-);
+const renderSectionHeader = ({ section }: { section: { day: Date } }) => {
+  return <SectionHeader day={section.day} />;
+};
 
 const OperationsHistory = ({ accounts, testID }: Props) => {
   const { t } = useTranslation();
   const navigation = useNavigation();
 
-  const shouldFilterTokenOpsZeroAmount = useSelector(
-    filterTokenOperationsZeroAmountEnabledSelector,
-  );
-  const filterOperation = useCallback(
-    (operation: Operation, account: AccountLike) => {
-      // Remove operations linked to address poisoning
-      const removeZeroAmountTokenOp =
-        shouldFilterTokenOpsZeroAmount && isAddressPoisoningOperation(operation, account);
-
-      return !removeZeroAmountTokenOp;
-    },
-    [shouldFilterTokenOpsZeroAmount],
-  );
-
-  const { sections, completed } = useMemo(
-    () =>
-      groupAccountsOperationsByDay(accounts, {
-        count: NB_OPERATIONS_TO_DISPLAY,
-        withSubAccounts: true,
-        filterOperation,
-      }),
-    [accounts, filterOperation],
-  );
-
+  const { sections, completed } = useOperations({
+    accounts,
+    opCount: NB_OPERATIONS_TO_DISPLAY,
+    withSubAccounts: true,
+  });
   const renderItem = useCallback(
     ({ item, index, section }: SectionListRenderItemInfo<Operation, DailyOperationsSection>) => {
       const account = accounts.find(a => a.id === item.accountId) as SubAccount;
@@ -94,6 +72,7 @@ const OperationsHistory = ({ accounts, testID }: Props) => {
       accountsIds: accounts.map(account => account.id),
     });
   }, [navigation, accounts]);
+  if (!sections) return null;
 
   return (
     <>
