@@ -26,6 +26,7 @@ jobs:
       - name: create release branch
         run: |
           git checkout -b $RELEASE_BRANCH
+          git push -u origin $RELEASE_BRANCH
       - name: Setup the caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         id: setup-caches
@@ -64,10 +65,18 @@ jobs:
           to_level: minor
       - name: enter prerelease mode
         run: pnpm changeset pre enter next
-      - name: commit
+      - name: Add changed files
         run: |
           git add .
-          git commit -m "chore(prerelease): :rocket: entering prerelease mode"
+      - name: commit new tokens
+        uses: planetscale/ghcommit-action@v0.1.6
+        with:
+          commit_message: "chore(prerelease) update cryptoassets"
+          repo: ${{ github.repository }}
+          branch: $RELEASE_BRANCH
+          file_pattern: '*'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Get date
         id: date
         run: |
