@@ -24,11 +24,12 @@ jobs:
   sonarqube:
     name: "SonarQube"
     needs: determine-affected
-    if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') || contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile')}}
+    if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') || contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile') || contains(needs.determine-affected.outputs.paths, 'coin-modules')}}
     runs-on: [ledger-live-4xlarge]
     env:
       MOBILE_AFFECTED: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile')}}
       DESKTOP_AFFECTED: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop')}}
+      COIN_MODULES_AFFECTED: ${{contains(needs.determine-affected.outputs.paths, 'coin-modules')}}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -63,6 +64,12 @@ jobs:
           pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
           pnpm build:llm:deps --api="http://127.0.0.1:${{ steps.caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
 
+      - name: Install and Build coin modules dependencies
+        if: ${{env.COIN_MODULES_AFFECTED == 'true'}}
+        run: |
+          pnpm i --filter=\"@ledgerhq/coin-*\" --no-frozen-lockfile --unsafe-perm
+          pnpm build:coin
+
       - name: Generate Unit test coverage for LLD only
         if: ${{env.DESKTOP_AFFECTED == 'true' && env.MOBILE_AFFECTED == 'false'}}
         run: |
@@ -83,6 +90,16 @@ jobs:
           pnpm desktop test:jest:coverage
           pnpm mobile test:jest:coverage
           cat apps/ledger-live-desktop/coverage/lcov.info apps/ledger-live-mobile/coverage/lcov.info > ./lcov.info
+          cat apps/ledger-live-desktop/coverage/lld-sonar-executionTests-report.xml > ./lld-sonar-executionTests-report.xml
+          cat apps/ledger-live-mobile/coverage/llm-sonar-executionTests-report.xml > ./llm-sonar-executionTests-report.xml
+
+      - name: Generate Unit test coverage for LLD & LLM
+        if: ${{env.DESKTOP_AFFECTED == 'true' && env.MOBILE_AFFECTED == 'true' && env.COIN_MODULES_AFFECTED == 'true'}}
+        run: |
+          pnpm desktop test:jest:coverage
+          pnpm mobile test:jest:coverage
+          pnpm coin:coverage
+          cat apps/ledger-live-desktop/coverage/lcov.info apps/ledger-live-mobile/coverage/lcov.info coverage/coin-modules-lcov.info > ./lcov.info
           cat apps/ledger-live-desktop/coverage/lld-sonar-executionTests-report.xml > ./lld-sonar-executionTests-report.xml
           cat apps/ledger-live-mobile/coverage/llm-sonar-executionTests-report.xml > ./llm-sonar-executionTests-report.xml
 

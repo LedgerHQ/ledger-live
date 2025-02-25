@@ -48,6 +48,7 @@
     "clean": "rimraf lib lib-es",
     "prebuild": "pnpm pbjs -t json -r ledger_swap -o src/generate-protocol.json ./protocol.proto",
     "build": "tsc && tsc -m esnext --moduleResolution bundler --outDir lib-es",
+    "coverage": "jest --coverage --passWithNoTests && mv coverage/coverage-final.json coverage/coverage-hw-app-exchange.json",
     "prewatch": "pnpm build",
     "watch": "tsc --watch",
     "watch:es": "tsc --watch -m esnext --moduleResolution bundler --outDir lib-es",

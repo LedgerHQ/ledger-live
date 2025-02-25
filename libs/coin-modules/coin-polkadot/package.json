@@ -109,6 +109,7 @@
   "scripts": {
     "clean": "rimraf lib lib-es",
     "build": "tsc --outDir lib --module commonjs --moduleResolution node10 && tsc -m ES6 --outDir lib-es",
+    "coverage": "jest --coverage --passWithNoTests && mv coverage/coverage-final.json coverage/coverage-polkadot.json && mv coverage/lcov.info coverage/polkadot-lcov.info",
     "prewatch": "pnpm build",
     "watch": "tsc --watch",
     "watch:es": "tsc --watch -m ES6 --outDir lib-es",
