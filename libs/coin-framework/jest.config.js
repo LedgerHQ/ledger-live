@@ -4,4 +4,13 @@ module.exports = {
   testEnvironment: "node",
   testPathIgnorePatterns: ["lib/", "lib-es/"],
   globalSetup: "<rootDir>/jest-global-setup.js",
+  collectCoverageFrom: [
+    "src/**/*.{ts,js,tsx}",
+    "!src/**/*.test.{ts,tsx}",
+    "!src/**/*.spec.{ts,tsx}",
+    "!src/**/__integration__/**",
+    "!src/**/__integrations__/**",
+    "!src/**/__tests__/**",
+  ],
+  coverageReporters: ["json", ["lcov", { projectRoot: "../" }], "json-summary"],
 };

@@ -44,6 +44,7 @@
   "scripts": {
     "clean": "rimraf lib lib-es",
     "build": "tsc && tsc -m esnext --moduleResolution bundler --outDir lib-es",
+    "coverage": "jest --coverage --passWithNoTests && mv coverage/coverage-final.json coverage/coverage-hw-app-xrp.json",
     "prewatch": "pnpm build",
     "watch": "tsc --watch",
     "watch:es": "tsc --watch -m esnext --moduleResolution bundler --outDir lib-es",
