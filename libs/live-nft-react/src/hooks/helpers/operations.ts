@@ -60,7 +60,7 @@ export const groupOperationsByDate = (ops: Operation[]) =>
   );
 
 type Section = {
-  day: string;
+  day: Date;
   data: Operation[];
 };
 
