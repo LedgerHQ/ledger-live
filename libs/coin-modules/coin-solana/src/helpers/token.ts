@@ -15,6 +15,10 @@ export function isTokenAccountFrozen(account: AccountLike): boolean {
   return account.type === "TokenAccount" && (account as SolanaTokenAccount)?.state === "frozen";
 }
 
+export function getTokenExtensions(account: AccountLike) {
+  return account.type === "TokenAccount" ? (account as SolanaTokenAccount)?.extensions : undefined;
+}
+
 export function getTokenAccountProgramId(program: SolanaTokenProgram): PublicKey {
   return program === PARSED_PROGRAMS.SPL_TOKEN_2022 ? TOKEN_2022_PROGRAM_ID : TOKEN_PROGRAM_ID;
 }

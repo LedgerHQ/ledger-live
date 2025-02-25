@@ -622,6 +622,79 @@ const solana: AppSpec<Transaction> = {
       },
       test: expectSourceBalanceChangeWithTxFee,
     },
+    {
+      name: "Transfer ~50% of token2022 with transfer fee extension + ATA creation",
+      maxRun: 1,
+      deviceAction: acceptTransferTokensWithATACreationTransaction,
+      transaction: ({ account, bridge, siblings, maxSpendable }) => {
+        invariant(maxSpendable.gt(0), "balance is 0");
+
+        const senderTokenAcc = findTokenAccountWithExtensionAndBalance(
+          account as SolanaAccount,
+          "transferFee",
+        );
+        invariant(
+          senderTokenAcc,
+          "Sender token2022 account with transfer fee extension and available balance not found",
+        );
+
+        const token = senderTokenAcc.token;
+        const siblingWithoutToken = siblings.find(
+          acc => !findTokenSubAccount(acc as SolanaAccount, token.id),
+        );
+        invariant(siblingWithoutToken, `Recipient without ${token.ticker} ATA not found`);
+
+        const amount = senderTokenAcc.balance.div(1.9 + 0.2 * Math.random()).integerValue();
+        const recipient = siblingWithoutToken.freshAddress;
+        const transaction = bridge.createTransaction(account);
+        const subAccountId = senderTokenAcc.id;
+
+        return {
+          transaction,
+          updates: [{ subAccountId }, { recipient }, { amount }],
+        };
+      },
+      expectStatusWarnings: _ => {
+        return {
+          recipient: new SolanaRecipientAssociatedTokenAccountWillBeFunded(),
+        };
+      },
+      test: expectSourceBalanceChangeWithTxFee,
+    },
+    {
+      name: "Transfer ~50% of token2022 with transfer fee extension to existing ATA",
+      maxRun: 1,
+      deviceAction: acceptTransferTokensTransaction,
+      transaction: ({ account, bridge, siblings, maxSpendable }) => {
+        invariant(maxSpendable.gt(0), "balance is 0");
+
+        const senderTokenAcc = findTokenAccountWithExtensionAndBalance(
+          account as SolanaAccount,
+          "transferFee",
+        );
+        invariant(
+          senderTokenAcc,
+          "Sender token2022 account with transfer fee extension and available balance not found",
+        );
+
+        const token = senderTokenAcc.token;
+        const siblingTokenAccount = siblings.find(acc =>
+          findTokenSubAccount(acc as SolanaAccount, token.id),
+        );
+        invariant(siblingTokenAccount, `Recipient without ${token.ticker} ATA not found`);
+
+        const amount = senderTokenAcc.balance.div(1.9 + 0.2 * Math.random()).integerValue();
+        const recipient = siblingTokenAccount.freshAddress;
+        const transaction = bridge.createTransaction(account);
+        const subAccountId = senderTokenAcc.id;
+
+        return {
+          transaction,
+          updates: [{ subAccountId }, { recipient }, { amount }],
+        };
+      },
+      test: expectSourceBalanceChangeWithTxFee,
+    },
   ],
 };
 

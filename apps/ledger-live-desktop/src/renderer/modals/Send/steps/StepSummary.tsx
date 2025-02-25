@@ -84,6 +84,7 @@ const StepSummary = (props: StepProps) => {
 
   const specific = currency ? getLLDCoinFamily(mainAccount.currency.family) : null;
   const SpecificSummaryNetworkFeesRow = specific?.StepSummaryNetworkFeesRow;
+  const SpecificSummaryAdditionalRows = specific?.StepSummaryAdditionalRows;
 
   const memo = lldMemoTag?.enabled
     ? getMemoTagValueByTransactionFamily(transaction)
@@ -320,6 +321,15 @@ const StepSummary = (props: StepProps) => {
               </Box>
             ) : null}
           </>
+        )}
+
+        {!!SpecificSummaryAdditionalRows && (
+          <SpecificSummaryAdditionalRows
+            account={account}
+            parentAccount={parentAccount}
+            transaction={transaction}
+            status={status}
+          />
         )}
 
         {!totalSpent.eq(amount) ? (

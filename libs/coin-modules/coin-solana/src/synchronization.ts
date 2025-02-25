@@ -51,6 +51,7 @@ import { DelegateInfo, WithdrawInfo } from "./api/chain/instruction/stake/types"
 import { PARSED_PROGRAMS } from "./api/chain/program/constants";
 import { tokenIsListedOnLedger } from "./helpers/token";
 import { MintExtensions } from "./api/chain/account/tokenExtensions";
+import coinConfig from "./config";
 
 type OnChainTokenAccount = Awaited<ReturnType<typeof getAccount>>["tokenAccounts"][number];
 
@@ -835,6 +836,7 @@ async function getAccount(
     reward: InflationReward | null;
   }[];
 }> {
+  const TOKEN_2022_ENABLED = coinConfig.getCoinConfig().token2022Enabled;
   const balanceLamportsWithContext = await api.getBalanceAndContext(address);
 
   const tokenAccounts = await api
@@ -842,10 +844,12 @@ async function getAccount(
     .then(res => res.value)
     .then(map(toTokenAccountWithInfo));
 
-  const token2022Accounts = await api
-    .getParsedToken2022AccountsByOwner(address)
-    .then(res => res.value)
-    .then(map(toTokenAccountWithInfo));
+  const token2022Accounts = TOKEN_2022_ENABLED
+    ? await api
+        .getParsedToken2022AccountsByOwner(address)
+        .then(res => res.value)
+        .then(map(toTokenAccountWithInfo))
+    : [];
 
   const stakeAccountsRaw = [
     // ...(await api.getStakeAccountsByStakeAuth(address)),

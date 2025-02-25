@@ -2,7 +2,7 @@ import BigNumber from "bignumber.js";
 import { SolanaAccount, SolanaStake, Transaction, TransactionStatus } from "../types";
 import { NotEnoughBalance } from "@ledgerhq/errors";
 import type { Account } from "@ledgerhq/types-live";
-import { ChainAPI, LATEST_BLOCKHASH_MOCK } from "../api";
+import { ChainAPI, LAST_VALID_BLOCK_HEIGHT_MOCK, LATEST_BLOCKHASH_MOCK } from "../api";
 import {
   SolanaStakeAccountIsNotDelegatable,
   SolanaStakeAccountValidatorIsUnchangeable,
@@ -54,9 +54,26 @@ const baseTx = {
 } as Transaction;
 
 const baseAPI = {
-  getLatestBlockhash: () => Promise.resolve(LATEST_BLOCKHASH_MOCK),
+  getLatestBlockhash: () =>
+    Promise.resolve({
+      blockhash: LATEST_BLOCKHASH_MOCK,
+      lastValidBlockHeight: LAST_VALID_BLOCK_HEIGHT_MOCK,
+    }),
   getFeeForMessage: (_msg: unknown) => Promise.resolve(testOnChainData.fees.lamportsPerSignature),
-} as unknown as ChainAPI;
+  getRecentPrioritizationFees: (_: string[]) => {
+    return Promise.resolve([
+      {
+        slot: 122422797,
+        prioritizationFee: 0,
+      },
+      {
+        slot: 122422797,
+        prioritizationFee: 0,
+      },
+    ]);
+  },
+  getSimulationComputeUnits: (_ixs: any[], _payer: any) => Promise.resolve(1000),
+} as ChainAPI;
 
 type StakeTestSpec = {
   activationState: SolanaStake["activation"]["state"];

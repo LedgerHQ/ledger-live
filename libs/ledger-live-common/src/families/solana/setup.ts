@@ -17,6 +17,9 @@ import { TransportStatusError, UpdateYourApp } from "@ledgerhq/errors";
 import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/setup";
 import { LatestFirmwareVersionRequired } from "../../errors";
 import type { Resolver } from "../../hw/getAddress/types";
+import { getCurrencyConfiguration } from "../../config";
+import { SolanaCoinConfig } from "@ledgerhq/coin-solana/lib/config";
+import { getCryptoCurrencyById } from "../../currencies";
 
 const TRUSTED_NAME_MIN_VERSION = "1.7.1";
 const MANAGER_APP_NAME = "Solana";
@@ -92,8 +95,13 @@ const createSigner: CreateSigner<SolanaSigner> = (transport: Transport) => {
   };
 };
 
+const getCurrencyConfig = () => {
+  return getCurrencyConfiguration<SolanaCoinConfig>(getCryptoCurrencyById("solana"));
+};
+
 const bridge: Bridge<Transaction, SolanaAccount, TransactionStatus> = createBridges(
   executeWithSigner(createSigner),
+  getCurrencyConfig,
 );
 
 const resolver: Resolver = createResolver(createSigner, solanaResolver);
