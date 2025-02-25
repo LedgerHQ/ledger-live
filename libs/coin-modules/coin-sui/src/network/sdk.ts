@@ -234,6 +234,9 @@ export const getOperations = async (
       (a, b) => Number(b.timestampMs) - Number(a.timestampMs),
     );
 
+    const cs = await api.getCheckpoint({ id: rawTransactions[0].checkpoint! });
+    console.log(cs);
+
     return rawTransactions.map(transaction => transactionToOperation(accountId, addr, transaction));
   });
 
