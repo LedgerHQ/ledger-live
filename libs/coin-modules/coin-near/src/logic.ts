@@ -54,17 +54,16 @@ export const getMaxAmount = (
 
   let pendingUnstakingAmount = new BigNumber(0);
   let pendingWithdrawingAmount = new BigNumber(0);
-  let pendingDefaultAmount = new BigNumber(0);
 
   account.pendingOperations.forEach(({ type, value, recipients }) => {
     const recipient = recipients[0];
 
-    if (type === "UNSTAKE" && recipient === selectedValidator?.validatorId) {
-      pendingUnstakingAmount = pendingUnstakingAmount.plus(value);
-    } else if (type === "WITHDRAW_UNSTAKED" && recipient === selectedValidator?.validatorId) {
-      pendingWithdrawingAmount = pendingWithdrawingAmount.plus(value);
-    } else {
-      pendingDefaultAmount = pendingDefaultAmount.plus(value);
+    if (recipient === selectedValidator?.validatorId) {
+      if (type === "UNSTAKE") {
+        pendingUnstakingAmount = pendingUnstakingAmount.plus(value);
+      } else if (type === "WITHDRAW_UNSTAKED") {
+        pendingWithdrawingAmount = pendingWithdrawingAmount.plus(value);
+      }
     }
   });
 
@@ -76,7 +75,7 @@ export const getMaxAmount = (
       maxAmount = selectedValidator?.available.minus(pendingWithdrawingAmount);
       break;
     default:
-      maxAmount = account.spendableBalance.minus(pendingDefaultAmount);
+      maxAmount = account.spendableBalance;
 
       if (fees) {
         maxAmount = maxAmount.minus(fees);
