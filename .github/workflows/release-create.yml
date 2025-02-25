@@ -46,7 +46,7 @@ jobs:
         with:
           commit_message: "chore(prerelease) update cryptoassets"
           repo: ${{ github.repository }}
-          branch: $RELEASE_BRANCH
+          branch: ${{ env.RELEASE_BRANCH }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: update sortByMarketcap snapshot
@@ -59,7 +59,7 @@ jobs:
         with:
           commit_message: "update sortByMarketcap snapshot"
           repo: ${{ github.repository }}
-          branch: $RELEASE_BRANCH
+          branch: ${{ env.RELEASE_BRANCH }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Move patch updates to minor
@@ -79,7 +79,7 @@ jobs:
         with:
           commit_message: "chore(prerelease) update cryptoassets"
           repo: ${{ github.repository }}
-          branch: $RELEASE_BRANCH
+          branch: ${{ env.RELEASE_BRANCH }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Get date
