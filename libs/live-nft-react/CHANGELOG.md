@@ -1,5 +1,11 @@
 # @ledgerhq/live-nft-react
 
+## 0.6.0-nightly.2
+
+### Minor Changes
+
+- [#9312](https://github.com/LedgerHQ/ledger-live/pull/9312) [`0061fb0`](https://github.com/LedgerHQ/ledger-live/commit/0061fb0f22a0e0422430c0b1bbb8b77955f8aba2) Thanks [@KVNLS](https://github.com/KVNLS)! - reintroduce spamTx for NFts operations
+
 ## 0.5.8-nightly.1
 
 ### Patch Changes

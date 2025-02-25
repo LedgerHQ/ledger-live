@@ -1,5 +1,28 @@
 # ledger-live-desktop
 
+## 2.101.0-nightly.4
+
+### Minor Changes
+
+- [#9327](https://github.com/LedgerHQ/ledger-live/pull/9327) [`d871189`](https://github.com/LedgerHQ/ledger-live/commit/d871189a0d5f102fd12a0f5016898804d54ae1de) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update Widget Analytics to be more usable
+
+- [#9312](https://github.com/LedgerHQ/ledger-live/pull/9312) [`0061fb0`](https://github.com/LedgerHQ/ledger-live/commit/0061fb0f22a0e0422430c0b1bbb8b77955f8aba2) Thanks [@KVNLS](https://github.com/KVNLS)! - reintroduce spamTx for NFts operations
+
+- [#9271](https://github.com/LedgerHQ/ledger-live/pull/9271) [`24dfbcf`](https://github.com/LedgerHQ/ledger-live/commit/24dfbcfebde65d3df47d815bc53c6c68d4e7bb0c) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - add lifi to partner backup service
+
+- [#9305](https://github.com/LedgerHQ/ledger-live/pull/9305) [`42da4d8`](https://github.com/LedgerHQ/ledger-live/commit/42da4d89a08e29459094547cd05775469f469954) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - fix nano S error message for multiple providers
+
+### Patch Changes
+
+- [#9326](https://github.com/LedgerHQ/ledger-live/pull/9326) [`c070447`](https://github.com/LedgerHQ/ledger-live/commit/c070447c02677a8d24b24195fe67cbfeace5e13a) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - fix swap id to long in completed swap drawer
+
+- Updated dependencies [[`ee205a0`](https://github.com/LedgerHQ/ledger-live/commit/ee205a01e1a26045e468735907039ad9be1c7f34), [`462ffcf`](https://github.com/LedgerHQ/ledger-live/commit/462ffcffc4e5965d3d2fcfb7980c4b3050d01b6a), [`0061fb0`](https://github.com/LedgerHQ/ledger-live/commit/0061fb0f22a0e0422430c0b1bbb8b77955f8aba2), [`4e48b2f`](https://github.com/LedgerHQ/ledger-live/commit/4e48b2fca669128837a0175f4b4f0246b0e5499f), [`ee205a0`](https://github.com/LedgerHQ/ledger-live/commit/ee205a01e1a26045e468735907039ad9be1c7f34), [`cda1c86`](https://github.com/LedgerHQ/ledger-live/commit/cda1c861bbb202d3b79e710f3f7b303f73248579), [`ee205a0`](https://github.com/LedgerHQ/ledger-live/commit/ee205a01e1a26045e468735907039ad9be1c7f34), [`24dfbcf`](https://github.com/LedgerHQ/ledger-live/commit/24dfbcfebde65d3df47d815bc53c6c68d4e7bb0c)]:
+  - @ledgerhq/coin-evm@2.11.0-nightly.2
+  - @ledgerhq/live-common@34.23.0-nightly.4
+  - @ledgerhq/live-nft-react@0.6.0-nightly.2
+  - @ledgerhq/coin-filecoin@1.5.5-nightly.2
+  - @ledgerhq/live-dmk@0.4.0-nightly.0
+
 ## 2.101.0-nightly.3
 
 ### Minor Changes

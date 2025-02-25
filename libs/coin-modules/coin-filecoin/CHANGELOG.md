@@ -1,5 +1,11 @@
 # @ledgerhq/coin-filecoin
 
+## 1.5.5-nightly.2
+
+### Patch Changes
+
+- [#9144](https://github.com/LedgerHQ/ledger-live/pull/9144) [`4e48b2f`](https://github.com/LedgerHQ/ledger-live/commit/4e48b2fca669128837a0175f4b4f0246b0e5499f) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Bot specs update
+
 ## 1.5.5-nightly.1
 
 ### Patch Changes

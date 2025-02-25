@@ -1,5 +1,23 @@
 # live-mobile
 
+## 3.67.0-nightly.4
+
+### Minor Changes
+
+- [#9228](https://github.com/LedgerHQ/ledger-live/pull/9228) [`b45f777`](https://github.com/LedgerHQ/ledger-live/commit/b45f777407cbb891ed44390f5a7a8bcd3fd6bfb7) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Update custom methods for gas and create drawer for gas
+
+- [#9312](https://github.com/LedgerHQ/ledger-live/pull/9312) [`cda1c86`](https://github.com/LedgerHQ/ledger-live/commit/cda1c861bbb202d3b79e710f3f7b303f73248579) Thanks [@KVNLS](https://github.com/KVNLS)! - reintroduce spamTX
+
+- [#9253](https://github.com/LedgerHQ/ledger-live/pull/9253) [`04aad35`](https://github.com/LedgerHQ/ledger-live/commit/04aad359a9fb2b5cf950b3919f0f31612ad26041) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add tokenWithFunds property to the analytics
+
+### Patch Changes
+
+- Updated dependencies [[`ee205a0`](https://github.com/LedgerHQ/ledger-live/commit/ee205a01e1a26045e468735907039ad9be1c7f34), [`462ffcf`](https://github.com/LedgerHQ/ledger-live/commit/462ffcffc4e5965d3d2fcfb7980c4b3050d01b6a), [`0061fb0`](https://github.com/LedgerHQ/ledger-live/commit/0061fb0f22a0e0422430c0b1bbb8b77955f8aba2), [`4e48b2f`](https://github.com/LedgerHQ/ledger-live/commit/4e48b2fca669128837a0175f4b4f0246b0e5499f), [`cda1c86`](https://github.com/LedgerHQ/ledger-live/commit/cda1c861bbb202d3b79e710f3f7b303f73248579), [`24dfbcf`](https://github.com/LedgerHQ/ledger-live/commit/24dfbcfebde65d3df47d815bc53c6c68d4e7bb0c)]:
+  - @ledgerhq/coin-evm@2.11.0-nightly.2
+  - @ledgerhq/live-common@34.23.0-nightly.4
+  - @ledgerhq/live-nft-react@0.6.0-nightly.2
+  - @ledgerhq/coin-filecoin@1.5.5-nightly.2
+
 ## 3.67.0-nightly.3
 
 ### Minor Changes

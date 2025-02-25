@@ -1,5 +1,27 @@
 ## 34.5.0-next.4
 
+## 34.23.0-nightly.4
+
+### Minor Changes
+
+- [#8931](https://github.com/LedgerHQ/ledger-live/pull/8931) [`ee205a0`](https://github.com/LedgerHQ/ledger-live/commit/ee205a01e1a26045e468735907039ad9be1c7f34) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Add dmk signer when using dmk transport
+
+- [#9323](https://github.com/LedgerHQ/ledger-live/pull/9323) [`462ffcf`](https://github.com/LedgerHQ/ledger-live/commit/462ffcffc4e5965d3d2fcfb7980c4b3050d01b6a) Thanks [@CremaFR](https://github.com/CremaFR)! - feat: swap lifi sends txId like thorswap for history status
+
+- [#9312](https://github.com/LedgerHQ/ledger-live/pull/9312) [`cda1c86`](https://github.com/LedgerHQ/ledger-live/commit/cda1c861bbb202d3b79e710f3f7b303f73248579) Thanks [@KVNLS](https://github.com/KVNLS)! - reintroduce spamTX
+
+- [#9271](https://github.com/LedgerHQ/ledger-live/pull/9271) [`24dfbcf`](https://github.com/LedgerHQ/ledger-live/commit/24dfbcfebde65d3df47d815bc53c6c68d4e7bb0c) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - add lifi to partner backup service
+
+### Patch Changes
+
+- Updated dependencies [[`ee205a0`](https://github.com/LedgerHQ/ledger-live/commit/ee205a01e1a26045e468735907039ad9be1c7f34), [`4e48b2f`](https://github.com/LedgerHQ/ledger-live/commit/4e48b2fca669128837a0175f4b4f0246b0e5499f), [`c78d6bc`](https://github.com/LedgerHQ/ledger-live/commit/c78d6bc5a5f77e3b9c844c8f67dd205995ce309f), [`24dfbcf`](https://github.com/LedgerHQ/ledger-live/commit/24dfbcfebde65d3df47d815bc53c6c68d4e7bb0c)]:
+  - @ledgerhq/coin-evm@2.11.0-nightly.2
+  - @ledgerhq/coin-filecoin@1.5.5-nightly.2
+  - @ledgerhq/coin-solana@0.13.1-nightly.2
+  - @ledgerhq/coin-cardano@0.4.5-nightly.2
+  - @ledgerhq/ledger-cal-service@0.3.0-nightly.0
+  - @ledgerhq/live-signer-evm@0.1.1-nightly.0
+
 ## 34.23.0-nightly.3
 
 ### Minor Changes

@@ -1,5 +1,11 @@
 # @ledgerhq/coin-cardano
 
+## 0.4.5-nightly.2
+
+### Patch Changes
+
+- [#9319](https://github.com/LedgerHQ/ledger-live/pull/9319) [`c78d6bc`](https://github.com/LedgerHQ/ledger-live/commit/c78d6bc5a5f77e3b9c844c8f67dd205995ce309f) Thanks [@qperrot](https://github.com/qperrot)! - Setup Ledger by Figment two as the default validator
+
 ## 0.4.5-nightly.1
 
 ### Patch Changes
