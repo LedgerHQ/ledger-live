@@ -54,7 +54,7 @@ export function Operations({ navigation, route }: Props) {
     accounts: accountsFiltered,
     opCount,
     withSubAccounts: true,
-    skipOp
+    skipOp,
   });
 
   function ListEmptyComponent() {
