@@ -439,8 +439,8 @@
       "cta" : "내 Ledger로 이동"
     },
     "wrongDevice" : {
-      "title" : "Ledger Nano S™는 THORChain과 호환되지 않습니다",
-      "description" : "Ledger Nano S는 THORChain과 호환되지 않습니다 Ledger Nano S Plus, Ledger Nano X, Ledger Stax, 또는 Ledger Flex로 Ledger Live를 통해 THORChain에서 크로스체인 스왑을 경험할 수 있습니다",
+      "title" : "Ledger Nano S™는 {{provider}}와(과) 호환되지 않습니다",
+      "description" : "Ledger Nano S는 {{provider}}와(과) 호환되지 않습니다 Ledger Nano S Plus, Ledger Nano X, Ledger Stax, 또는 Ledger Flex로 Ledger Live를 통해 {{provider}}에서 크로스체인 스왑을 경험할 수 있습니다",
       "cta" : "호환 가능한 장치 탐색",
       "changeProvider" : "다른 공급자를 통해 스왑"
     },
@@ -1867,7 +1867,8 @@
       "palletMethod" : "방법",
       "transferAmount" : "이전 금액",
       "validatorsCount" : "검증인 ({{number}})",
-      "version" : "버전"
+      "version" : "버전",
+      "accountCreationFee" : "계정 생성 수수료"
     }
   },
   "operationList" : {
@@ -4155,6 +4156,11 @@
       "debugAppsDesc" : "디버그 태그된 플랫폼 앱 열기를 표시하고 허용하세요.",
       "debugReactQuery" : "디버그 ReactQuery 허용",
       "debugReactQueryDesc" : "디버그 ReactQuery 콘솔을 표시하고 열 수 있도록 허용합니다.",
+      "nfts" : {
+        "title" : "숨겨진 NFT 컬렉션",
+        "description" : "숨겨진 컬렉션 목록을 재설정하세요",
+        "reset" : "재설정"
+      },
       "exchangeDeveloperMode" : {
         "title" : "거래소 개발 모드",
         "desc" : "거래소 공급자 정보 추가",
@@ -5438,6 +5444,11 @@
     "solana" : {
       "memo" : "태그 / 메모",
       "memoPlaceholder" : "선택 사항"
+    },
+    "mina" : {
+      "memoPlaceholder" : "선택 사항",
+      "memo" : "메모",
+      "memoWarningText" : "메모 값은 32자 이하의 문자열일 수 있습니다."
     }
   },
   "errors" : {
@@ -6461,6 +6472,15 @@
         "swap" : "스왑",
         "deposit" : "입금"
       }
+    },
+    "InvalidMemoMina" : {
+      "title" : "메모 텍스트는 32자를 초과할 수 없습니다."
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "이 트랜잭션에는 {{fee}}의 계정 생성 수수료가 부과됩니다."
+    },
+    "AmountTooSmall" : {
+      "title" : "이 트랜잭션에 필요한 최소 금액은 {{amount}}입니다"
     }
   },
   "cryptoOrg" : {
@@ -6918,6 +6938,14 @@
         "optOut" : {
           "title" : "장치 업그레이드 기회",
           "description" : "Ledger Nano S 업데이트가 곧 종료됩니다. 최신 장치로 업그레이드하고 <0>{{discount}}% 할인 혜택</0>까지 누리세요.",
+          "cta" : "내 지갑 업그레이드하기",
+          "linkText" : "자세히 알아보기"
+        }
+      },
+      "portfolio" : {
+        "optOut" : {
+          "title" : "장치 업그레이드 기회",
+          "description" : "최신 장치로 업그레이드하고 <0>{{discount}}% 할인 혜택</0>은 물론, 더 향상된 보안력과 원활한 사용자 경험을 누려보세요.",
           "cta" : "내 지갑 업그레이드하기",
           "linkText" : "자세히 알아보기"
         }
