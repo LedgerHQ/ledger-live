@@ -18,9 +18,8 @@ const minaSpecs: AppSpec<Transaction> = {
   name: "Mina",
   currency: getCryptoCurrencyById("mina"),
   appQuery: {
-    model: DeviceModelId.nanoSP,
+    model: DeviceModelId.nanoS,
     appName: "Mina",
-    appVersion: "1.4.1",
   },
   genericDeviceAction: acceptTransaction,
   testTimeout: 15 * 60 * 1000,
