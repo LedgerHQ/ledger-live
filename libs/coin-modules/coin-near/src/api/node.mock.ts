@@ -17,7 +17,6 @@ const handlers = [
       });
     }
 
-    console.log("Node mock passthrought:", data);
     return passthrough();
   }),
 ];
