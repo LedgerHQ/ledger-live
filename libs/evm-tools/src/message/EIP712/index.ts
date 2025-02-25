@@ -162,14 +162,14 @@ function formatDate(timestamp: string) {
     hour: "2-digit",
     minute: "2-digit",
     second: "2-digit",
-    timeZone: "GMT",
+    timeZone: "UTC",
     hour12: false,
   });
 
   const parts = formatter.formatToParts(date);
   const p = (type: string) => parts.find(p => p.type === type)?.value || "00";
 
-  return `${p("year")}-${p("month")}-${p("day")} ${p("hour")}:${p("minute")}:${p("second")} GMT`;
+  return `${p("year")}-${p("month")}-${p("day")} ${p("hour")}:${p("minute")}:${p("second")} UTC`;
 }
 
 /**
