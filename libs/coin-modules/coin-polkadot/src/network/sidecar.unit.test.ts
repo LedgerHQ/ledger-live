@@ -113,7 +113,7 @@ describe("getRegistry", () => {
       },
     }));
 
-    mockServer.listen();
+    mockServer.listen({ onUnhandledRequest: "error" });
   });
 
   beforeEach(() => {

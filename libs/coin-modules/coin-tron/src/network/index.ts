@@ -317,17 +317,16 @@ export async function fetchCurrentBlockHeight() {
 
 // For the moment, fetching transaction info is the only way to get fees from a transaction
 // Export for test purpose only
-export async function fetchTronTxDetail(txId: string) { //: Promise<TronTransactionInfo> {
-  // const { fee, blockNumber, withdraw_amount, unfreeze_amount } = await fetch(
-  //   `/wallet/gettransactioninfobyid?value=${encodeURIComponent(txId)}`,
-  // );
-  // return {
-  //   fee,
-  //   blockNumber,
-  //   withdraw_amount,
-  //   unfreeze_amount,
-  // };
-  return await fetch(`/wallet/gettransactioninfobyid?value=${encodeURIComponent(txId)}`);
+export async function fetchTronTxDetail(txId: string): Promise<TronTransactionInfo> {
+  const { fee, blockNumber, withdraw_amount, unfreeze_amount } = await fetch(
+    `/wallet/gettransactioninfobyid?value=${encodeURIComponent(txId)}`,
+  );
+  return {
+    fee,
+    blockNumber,
+    withdraw_amount,
+    unfreeze_amount,
+  };
 }
 
 async function getAllTransactions<T>(

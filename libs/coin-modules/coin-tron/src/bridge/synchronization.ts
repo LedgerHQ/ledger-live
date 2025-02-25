@@ -101,7 +101,8 @@ export const getAccountShape: GetAccountShape<TronAccount> = async (
     [],
   );
 
-  const trc20Tokens = get(acc, "trc20", []).reduce((accumulator: TronToken[], trc20: Record<string, string>) => {
+  const trc20Tokens = get(acc, "trc20", []).reduce(
+    (accumulator: TronToken[], trc20: Record<string, string>) => {
       const [[contractAddress, balance]] = Object.entries(trc20);
       const tokenInfo = findTokenByAddressInCurrency(contractAddress, currency.id);
       if (tokenInfo) {
