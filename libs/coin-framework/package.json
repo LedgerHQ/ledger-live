@@ -115,6 +115,7 @@
   "scripts": {
     "clean": "rm -rf lib lib-es",
     "build": "tsc && tsc -m esnext --moduleResolution bundler --outDir lib-es",
+    "coverageXXX": "jest --coverage --passWithNoTests && mv coverage/coverage-final.json coverage/coverage-coin-framework.json",
     "prewatch": "pnpm build",
     "watch": "tsc --watch",
     "watch:es": "tsc --watch -m esnext --moduleResolution bundler --outDir lib-es",
