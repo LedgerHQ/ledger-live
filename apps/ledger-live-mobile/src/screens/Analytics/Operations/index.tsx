@@ -30,9 +30,11 @@ type Props = StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.Analyti
 export function Operations({ navigation, route }: Props) {
   const accountsIds = route?.params?.accountsIds;
   const [opCount, setOpCount] = useState(50);
+  const [skipOp, setSkipOp] = useState(0);
 
   function onEndReached() {
     setOpCount(opCount + 50);
+    setSkipOp(opCount);
   }
 
   const accountsFromState = useSelector(flattenAccountsSelector);
@@ -52,6 +54,7 @@ export function Operations({ navigation, route }: Props) {
     accounts: accountsFiltered,
     opCount,
     withSubAccounts: true,
+    skipOp
   });
 
   function ListEmptyComponent() {
@@ -75,8 +78,6 @@ export function Operations({ navigation, route }: Props) {
     index,
     section,
   }) => {
-
-
     const account = allAccounts.find(a => a.id === item.accountId);
     const parentAccount =
       account && account.type !== "Account"
