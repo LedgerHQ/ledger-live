@@ -1,7 +1,11 @@
 import { test } from "../../fixtures/common";
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "../../utils/customJsonReporter";
+import { CLI } from "tests/utils/cliUtils";
+import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import { Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
+import { Fee } from "@ledgerhq/live-common/e2e/enum/Fee";
+import invariant from "invariant";
 
 const subAccounts = [
   { account: Account.ETH_USDT_1, xrayTicket1: "B2CQA-2577, B2CQA-1079", xrayTicket2: "B2CQA-2583" },
@@ -119,3 +123,246 @@ for (const token of subAccounts) {
     );
   });
 }
+
+const transactionsAddressInvalid = [
+  {
+    transaction: new Transaction(Account.ALGO_USDT_1, Account.ALGO_USDT_2, "0.1", Fee.MEDIUM),
+    recipient: Account.ALGO_USDT_2.address,
+    expectedErrorMessage: "Recipient account has not opted in the selected ASA.",
+    xrayTicket: "B2CQA-2702",
+  },
+  {
+    transaction: new Transaction(Account.SOL_GIGA_1, Account.SOL_WIF_2, "0.1", undefined),
+    recipient: Account.SOL_WIF_2.ataAddress,
+    expectedErrorMessage: "This associated token account holds another token",
+    xrayTicket: "B2CQA-3083",
+  },
+  {
+    transaction: new Transaction(Account.SOL_1, Account.SOL_GIGA_2, "0.1", undefined),
+    recipient: Account.SOL_GIGA_2.ataAddress,
+    expectedErrorMessage: "This is a token account. Input a regular wallet address",
+    xrayTicket: "B2CQA-3084",
+  },
+  {
+    transaction: new Transaction(Account.SOL_WIF_1, Account.SOL_WIF_2, "0.1", undefined),
+    recipient: Account.SOL_WIF_2.currency.contractAddress,
+    expectedErrorMessage: "This is a token address. Input a regular wallet address",
+    xrayTicket: "B2CQA-3085",
+  },
+  {
+    transaction: new Transaction(Account.SOL_WIF_1, Account.SOL_GIGA_2, "0.1", undefined),
+    recipient: Account.SOL_GIGA_2.currency.contractAddress,
+    expectedErrorMessage: "This is a token address. Input a regular wallet address",
+    xrayTicket: "B2CQA-3086",
+  },
+  {
+    transaction: new Transaction(Account.SOL_1, Account.SOL_WIF_2, "0.1", undefined),
+    recipient: Account.SOL_WIF_2.currency.contractAddress,
+    expectedErrorMessage: "This is a token address. Input a regular wallet address",
+    xrayTicket: "B2CQA-3087",
+  },
+];
+
+for (const transaction of transactionsAddressInvalid) {
+  test.describe("Send token - invalid address input", () => {
+    test.use({
+      userdata: "skip-onboarding",
+      speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
+      cliCommands: [
+        (appjsonPath: string) => {
+          return CLI.liveData({
+            currency: transaction.transaction.accountToDebit.currency.currencyId,
+            index: transaction.transaction.accountToDebit.index,
+            add: true,
+            appjson: appjsonPath,
+          });
+        },
+      ],
+    });
+
+    test(
+      `Send from ${transaction.transaction.accountToDebit.accountName} to ${transaction.transaction.accountToCredit.accountName} - ${transaction.transaction.accountToCredit.currency.name} - ${transaction.expectedErrorMessage}`,
+      {
+        annotation: {
+          type: "TMS",
+          description: transaction.xrayTicket,
+        },
+      },
+      async ({ app }) => {
+        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
+        await app.layout.openSendModalFromSideBar();
+        await app.send.selectDebitCurrency(transaction.transaction);
+        invariant(transaction.recipient, "Recipient address is not defined");
+        await app.send.fillRecipient(transaction.recipient);
+        await app.send.checkContinueButtonDisabled();
+        await app.send.checkErrorMessage(transaction.expectedErrorMessage);
+      },
+    );
+  });
+}
+
+const transactionsAddressValid = [
+  {
+    transaction: new Transaction(Account.SOL_GIGA_1, Account.SOL_GIGA_2, "0.1", undefined),
+    expectedErrorMessage:
+      "This is not a regular wallet address but an associated token account. Continue only if you know what you are doing",
+    xrayTicket: "B2CQA-3082",
+  },
+];
+
+for (const transaction of transactionsAddressValid) {
+  test.describe("Send token - valid address input", () => {
+    test.use({
+      userdata: "skip-onboarding",
+      speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
+      cliCommands: [
+        (appjsonPath: string) => {
+          return CLI.liveData({
+            currency: transaction.transaction.accountToDebit.currency.currencyId,
+            index: transaction.transaction.accountToDebit.index,
+            add: true,
+            appjson: appjsonPath,
+          });
+        },
+      ],
+    });
+
+    test(
+      `Send from ${transaction.transaction.accountToDebit.accountName} to ${transaction.transaction.accountToCredit.accountName} - ${transaction.transaction.accountToDebit.currency.name} - valid address input`,
+      {
+        annotation: {
+          type: "TMS",
+          description: transaction.xrayTicket,
+        },
+      },
+      async ({ app }) => {
+        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
+        await app.layout.openSendModalFromSideBar();
+        await app.send.selectDebitCurrency(transaction.transaction);
+        const recipientAddress = transaction.transaction.accountToCredit.ataAddress ?? "";
+        await app.send.fillRecipient(recipientAddress);
+
+        await app.send.checkContinueButtonEnable();
+        await app.send.checkInputWarningMessage(transaction.expectedErrorMessage);
+      },
+    );
+  });
+}
+
+const tokenTransactionInvalid = [
+  {
+    transaction: new Transaction(Account.BSC_BUSD_1, Account.BSC_BUSD_2, "1", Fee.FAST),
+    expectedWarningMessage: new RegExp(
+      /You need \d+\.\d+ BNB in your account to pay for transaction fees on the Binance Smart Chain network\. .*/,
+    ),
+    xrayTicket: "B2CQA-2700",
+  },
+  {
+    transaction: new Transaction(Account.ETH_USDT_2, Account.ETH_USDT_1, "1", Fee.FAST),
+    expectedWarningMessage: new RegExp(
+      /You need \d+\.\d+ ETH in your account to pay for transaction fees on the Ethereum network\. .*/,
+    ),
+    xrayTicket: "B2CQA-2701",
+  },
+  {
+    transaction: new Transaction(Account.ETH_USDT_1, Account.ETH_USDT_2, "10000", Fee.MEDIUM),
+    expectedWarningMessage: "Sorry, insufficient funds",
+    xrayTicket: "B2CQA-3043",
+  },
+];
+
+for (const transaction of tokenTransactionInvalid) {
+  test.describe("Send token (subAccount) - invalid amount input", () => {
+    test.use({
+      userdata: "skip-onboarding",
+      speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
+      cliCommands: [
+        (appjsonPath: string) => {
+          return CLI.liveData({
+            currency: transaction.transaction.accountToDebit.currency.currencyId,
+            index: transaction.transaction.accountToDebit.index,
+            add: true,
+            appjson: appjsonPath,
+          });
+        },
+      ],
+    });
+    test(
+      `Send from ${transaction.transaction.accountToDebit.accountName} to ${transaction.transaction.accountToCredit.accountName} - invalid amount input`,
+      {
+        annotation: {
+          type: "TMS",
+          description: transaction.xrayTicket,
+        },
+      },
+      async ({ app }) => {
+        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
+        await app.layout.goToAccounts();
+        await app.accounts.navigateToAccountByName(
+          transaction.transaction.accountToDebit.accountName,
+        );
+        await app.account.navigateToTokenInAccount(transaction.transaction.accountToDebit);
+        await app.account.clickSend();
+        await app.send.fillRecipient(transaction.transaction.accountToCredit.address);
+        await app.send.continue();
+        await app.send.fillAmount(transaction.transaction.amount);
+        await app.send.checkContinueButtonDisabled();
+        if (transaction.expectedWarningMessage instanceof RegExp) {
+          await app.send.checkAmountWarningMessage(transaction.expectedWarningMessage);
+        } else {
+          await app.send.checkErrorMessage(transaction.expectedWarningMessage);
+        }
+      },
+    );
+  });
+}
+
+test.describe("Send token (subAccount) - valid address & amount input", () => {
+  const tokenTransactionValid = new Transaction(
+    Account.ETH_USDT_1,
+    Account.ETH_USDT_2,
+    "1",
+    Fee.MEDIUM,
+  );
+  test.use({
+    userdata: "skip-onboarding",
+    speculosApp: tokenTransactionValid.accountToDebit.currency.speculosApp,
+    cliCommands: [
+      (appjsonPath: string) => {
+        return CLI.liveData({
+          currency: tokenTransactionValid.accountToDebit.currency.currencyId,
+          index: tokenTransactionValid.accountToDebit.index,
+          add: true,
+          appjson: appjsonPath,
+        });
+      },
+    ],
+  });
+
+  test(
+    `Send from ${tokenTransactionValid.accountToDebit.accountName} to ${tokenTransactionValid.accountToCredit.accountName} - valid address & amount input`,
+    {
+      annotation: {
+        type: "TMS",
+        description: "B2CQA-2703, B2CQA-475",
+      },
+    },
+    async ({ app }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
+      await app.layout.goToAccounts();
+      await app.accounts.navigateToAccountByName(tokenTransactionValid.accountToDebit.accountName);
+      await app.account.navigateToTokenInAccount(tokenTransactionValid.accountToDebit);
+      await app.account.clickSend();
+      await app.send.fillRecipient(tokenTransactionValid.accountToCredit.address);
+      await app.send.checkContinueButtonEnable();
+      await app.send.checkInputErrorVisibility("hidden");
+      await app.send.continue();
+      await app.send.fillAmount(tokenTransactionValid.amount);
+      await app.send.checkContinueButtonEnable();
+    },
+  );
+});

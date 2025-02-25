@@ -12,6 +12,7 @@ export class Account {
     public readonly ensName?: string,
     public readonly derivationMode?: string,
     public readonly nft?: Nft[],
+    public readonly ataAddress?: string,
   ) {}
 
   static readonly LTC_1 = new Account(
@@ -619,5 +620,53 @@ export class Account {
     "0x2268495dE776a536A5a9828b91F04d54d7d2Aa50",
     undefined,
     0,
+  );
+
+  static readonly SOL_GIGA_1 = new Account(
+    Currency.SOL_GIGA,
+    "Solana 1",
+    "HxoKQ5eu5MkqaAw7DaGVermrJqeNH8XkVnEKEpFuS9id",
+    AccountType.SPL,
+    0,
+    undefined,
+    undefined,
+    undefined,
+    "4JLL8NzonhGQyfrhvuTy4fGeskB7db4gZ9NxhPWDVa87",
+  );
+
+  static readonly SOL_GIGA_2 = new Account(
+    Currency.SOL_GIGA,
+    "Solana 2",
+    "6vSQTFcBoPfUKAdo8BQNJqqxU6UcBmd87HQoNSbgTMzH",
+    AccountType.SPL,
+    1,
+    undefined,
+    undefined,
+    undefined,
+    "5izbyRCwfbvqkD8q5mGbbFvWUZ6ZL4C5PTosARVNagiv",
+  );
+
+  static readonly SOL_WIF_1 = new Account(
+    Currency.SOL_WIF,
+    "Solana 2",
+    "HxoKQ5eu5MkqaAw7DaGVermrJqeNH8XkVnEKEpFuS9id",
+    AccountType.SPL,
+    0,
+    undefined,
+    undefined,
+    undefined,
+    "143nLxFLwxNtqEd2LxEJjjjLCsspcuxyt3y2FRuyFXdg",
+  );
+
+  static readonly SOL_WIF_2 = new Account(
+    Currency.SOL_WIF,
+    "Solana 2",
+    "6vSQTFcBoPfUKAdo8BQNJqqxU6UcBmd87HQoNSbgTMzH",
+    AccountType.SPL,
+    1,
+    undefined,
+    undefined,
+    undefined,
+    "2but8QCrAqoEHzQt16hwzte41yWrB4dae4WsStwqfX3h",
   );
 }
