@@ -1,11 +1,10 @@
 import { filterTokenOperationsZeroAmountEnabledSelector } from "~/reducers/settings";
 import { useNftCollectionsStatus } from "~/hooks/nfts/useNftCollectionsStatus";
-import { flattenAccounts, groupAccountsOperationsByDay } from "@ledgerhq/live-common/account/index";
+import { flattenAccounts } from "@ledgerhq/live-common/account/index";
 import { isAddressPoisoningOperation } from "@ledgerhq/coin-framework/lib/operation";
 import { Operation, AccountLike } from "@ledgerhq/types-live";
 import { useCallback, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import {
   buildContractIndexNftOperations,
   buildCurrentOperationsPage,
@@ -24,7 +23,6 @@ type Props = {
   withSubAccounts: boolean;
 };
 
-// TODO: withSubAccounts is not used in this function -> TO NOT FORGET
 export function useOperations({ accounts, opCount, withSubAccounts, skipOp }: Props) {
   const {
     hideSpamCollection,
@@ -33,7 +31,9 @@ export function useOperations({ accounts, opCount, withSubAccounts, skipOp }: Pr
     nftCollectionsStatusByNetwork,
   } = useHideSpamCollection();
 
-  const threshold = Number(nftsFromSimplehashFeature?.params?.threshold) ?? 40;
+  const threshold = nftsFromSimplehashFeature?.params?.threshold
+    ? Number(nftsFromSimplehashFeature?.params?.threshold)
+    : 40;
 
   //both features must be enabled to enable spam filtering
   const spamFilteringTxEnabled =
@@ -72,8 +72,10 @@ export function useOperations({ accounts, opCount, withSubAccounts, skipOp }: Pr
     [hiddenNftCollections, shouldFilterTokenOpsZeroAmount],
   );
 
+  const all = withSubAccounts ? flattenAccounts(accounts || []).filter(Boolean) : accounts;
+
   const allAccountOps = parseAccountOperations(
-    accounts
+    all
       ?.flatMap(a =>
         filterOperation
           ? a.operations.filter(operation => filterOperation(operation, a))
