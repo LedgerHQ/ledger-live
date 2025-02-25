@@ -9,6 +9,7 @@ import {
   buildContractIndexNftOperations,
   buildCurrentOperationsPage,
   groupOperationsByDateWithSections,
+  OrderedOperation,
   parseAccountOperations,
   splitNftOperationsFromAllOperations,
   useFilterNftSpams,
@@ -21,8 +22,10 @@ type Props = {
   opCount: number;
   accounts: AccountLike[];
   withSubAccounts: boolean;
+  skipOp: number;
 };
 
+// TODO: don't forget that withSubAccounts is used here
 export function useOperations({ accounts, opCount, withSubAccounts, skipOp }: Props) {
   const {
     hideSpamCollection,
@@ -45,7 +48,7 @@ export function useOperations({ accounts, opCount, withSubAccounts, skipOp }: Pr
   );
 
   // to avoid multiple state rendering, we store the previous filtered data in an indexed ref object
-  const previousFilteredNftData = useRef({});
+  const previousFilteredNftData = useRef<{ [key: string]: OrderedOperation }>({});
   const spamOpsCache = useRef<string[]>([]);
 
   // TODO: place this callback in the right place
@@ -89,7 +92,7 @@ export function useOperations({ accounts, opCount, withSubAccounts, skipOp }: Pr
   const { opsWithoutNFTIN, opsWithNFTIN } = splitNftOperationsFromAllOperations(allAccountOps);
   const currentPageOpsWithoutNFTIN = opsWithoutNFTIN?.slice(0, opCount);
   const currentPageNFTIN = opsWithNFTIN
-    ?.filter(op => !spamOpsCache.current.includes(op.id))
+    ?.filter(op => !spamOpsCache.current.includes(op.id) && !previousFilteredNftData.current[op.id])
     .slice(skipOp, opCount);
 
   const accountsMap = keyBy(accounts, "id");
@@ -114,7 +117,7 @@ export function useOperations({ accounts, opCount, withSubAccounts, skipOp }: Pr
 
   previousFilteredNftData.current = {
     ...previousFilteredNftData.current,
-    ...keyBy(filteredNftData, "order"),
+    ...keyBy(filteredNftData as OrderedOperation[], "id"),
   };
 
   const page = buildCurrentOperationsPage(
