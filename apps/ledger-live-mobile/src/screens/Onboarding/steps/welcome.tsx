@@ -188,7 +188,7 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
           <Text
             variant="h4"
             fontSize="27px"
-            lineHeight="32px"
+            lineHeight="36px"
             textAlign="center"
             fontWeight="semiBold"
             pb={8}

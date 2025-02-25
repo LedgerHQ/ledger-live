@@ -335,11 +335,11 @@ export default class Root extends Component {
                 <HookDynamicContentCards />
                 <TermsAndConditionMigrateLegacyData />
                 <QueuedDrawersContextProvider>
-                  <I18nextProvider i18n={i18n}>
-                    <LocaleProvider>
-                      <PlatformAppProviderWrapper>
-                        <FirebaseRemoteConfigProvider>
-                          <FirebaseFeatureFlagsProvider getFeature={getFeature}>
+                  <FirebaseRemoteConfigProvider>
+                    <FirebaseFeatureFlagsProvider getFeature={getFeature}>
+                      <I18nextProvider i18n={i18n}>
+                        <LocaleProvider>
+                          <PlatformAppProviderWrapper>
                             <SafeAreaProvider>
                               <PerformanceProvider>
                                 <StorylyProvider>
@@ -355,11 +355,11 @@ export default class Root extends Component {
                                 </StorylyProvider>
                               </PerformanceProvider>
                             </SafeAreaProvider>
-                          </FirebaseFeatureFlagsProvider>
-                        </FirebaseRemoteConfigProvider>
-                      </PlatformAppProviderWrapper>
-                    </LocaleProvider>
-                  </I18nextProvider>
+                          </PlatformAppProviderWrapper>
+                        </LocaleProvider>
+                      </I18nextProvider>
+                    </FirebaseFeatureFlagsProvider>
+                  </FirebaseRemoteConfigProvider>
                 </QueuedDrawersContextProvider>
               </>
             ) : (
