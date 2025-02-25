@@ -1,9 +1,9 @@
 import { fetchTronAccountTxs } from ".";
-import { setCoinConfig } from "../config";
+import coinConfig from "../config";
 
 describe("fetchTronAccountTxs", () => {
   beforeAll(() => {
-    setCoinConfig(() => ({
+    coinConfig.setCoinConfig(() => ({
       status: {
         type: "active",
       },
