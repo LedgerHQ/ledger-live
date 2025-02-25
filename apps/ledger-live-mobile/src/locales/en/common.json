@@ -4663,7 +4663,8 @@
       "tr": "Türk",
       "ja": "日本",
       "ko": "한국인",
-      "pt": "Português (Br)"
+      "pt": "Português (Br)",
+      "th": "ภาษาไทย"
     }
   },
   "deviceLocalization": {
@@ -4687,7 +4688,8 @@
       "german": "Deutsch",
       "brazilian": "Português (Br)",
       "russian": "Русский",
-      "turkish": "Türkçe"
+      "turkish": "Türkçe",
+      "thai": "ภาษาไทย"
     }
   },
   "FirmwareUpdateCheckId": {
