@@ -6726,6 +6726,7 @@
         "hide": "Hide {{count}} collection",
         "hiddenCollections": "Hidden collections",
         "hide_plural": "Hide {{count}} collections",
+        "empty": "No Hidden collections to show",
         "alertHide": "1 collection hidden. You can unhide them at any time in the gallery filter.",
         "alertHide_plural": "{{count}} collections hidden. You can unhide them at any time in the gallery filter."
       },
