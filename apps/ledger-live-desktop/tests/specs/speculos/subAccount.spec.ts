@@ -126,7 +126,7 @@ for (const token of subAccounts) {
   });
 }
 
-test.describe("Send token - E2E", () => {
+test.describe.only("Send token - E2E", () => {
   const transaction = new Transaction(
     Account.SOL_GIGA_1,
     Account.SOL_GIGA_2,
@@ -269,7 +269,7 @@ const transactionsAddressValid = [
 ];
 
 for (const transaction of transactionsAddressValid) {
-  test.describe.only("Send token - valid address input", () => {
+  test.describe("Send token - valid address input", () => {
     test.use({
       userdata: "skip-onboarding",
       speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
