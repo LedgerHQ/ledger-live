@@ -102,7 +102,9 @@ export function useOperations({ accounts, opCount, withSubAccounts, skipOp }: Pr
     currentPageNFTIN,
   );
 
-  spamOpsCache.current = spamOpsCache.current.concat(spamOps.map(op => op.operation.id));
+  spamOpsCache.current = [
+    ...new Set(spamOpsCache.current.concat(spamOps.map(op => op.operation.id))),
+  ];
 
   useEffect(() => {
     spamOps.forEach(op => {
