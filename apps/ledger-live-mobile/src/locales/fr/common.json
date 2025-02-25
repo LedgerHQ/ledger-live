@@ -1053,6 +1053,9 @@
     },
     "AppManifestNotFoundError" : {
       "title" : "Échec du chargement de l’app Live Swap"
+    },
+    "InvalidMemoMina" : {
+      "title" : "Le mémo ne peut pas dépasser 32 caractères"
     }
   },
   "crash" : {
@@ -1119,6 +1122,11 @@
       "fast" : "Rapide",
       "custom" : "Personnalisé",
       "blockCount" : "{{blockCount}} blocs"
+    },
+    "estimatedTime" : {
+      "slow" : "≈ 2-3 min",
+      "medium" : "≈ 30 sec",
+      "fast" : "≈ 15 sec"
     }
   },
   "signout" : {
@@ -6992,6 +7000,16 @@
   },
   "walletSync" : {
     "title" : "Ledger Sync",
+    "entryPoints" : {
+      "simpleCta" : {
+        "title" : "Activez Ledger Sync"
+      },
+      "card" : {
+        "title" : "Ledger Sync",
+        "description" : "Synchronisez automatiquement vos comptes, même si vous changez de téléphone.",
+        "cta" : "Activer Ledger Sync"
+      }
+    },
     "activation" : {
       "screen" : {
         "title" : "Activer Ledger Sync pour ce téléphone ?",
