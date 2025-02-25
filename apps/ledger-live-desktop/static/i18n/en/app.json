@@ -6694,6 +6694,24 @@
       "alreadySync": "I already turned it on",
       "learnMore": "How does Ledger Sync work?"
     },
+    "entryPoints": {
+      "accounts": {
+        "title": "Activate Ledger Sync"
+      },
+      "manager": {
+        "title": "Ledger Sync",
+        "description": "Sync your accounts automatically, even when switching to a new phone.",
+        "cta": "Turn on Ledger Sync"
+      },
+      "settings": {
+        "title": "Ledger Sync",
+        "description": "Sync your accounts automatically, even when switching to a new phone.",
+        "cta": "Turn on Ledger Sync"
+      },
+      "onboarding": {
+        "title": "Sync with another Ledger Live app"
+      }
+    },
     "manage": {
       "cta": "Manage",
       "synchronize": {
