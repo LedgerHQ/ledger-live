@@ -155,6 +155,7 @@ const PickAmount = (props: PickAmountPropsType) => {
                 inputStyle={styles.inputStyle}
                 isActive={true}
                 hasError={delegationBelowMinimum || delegationAboveMaximum}
+                testID="multiversx-delegation-amount-input"
               />
 
               <View style={styles.ratioButtonContainer}>
@@ -240,6 +241,7 @@ const PickAmount = (props: PickAmountPropsType) => {
                 event="Elrond DelegationAmountContinueBtn"
                 onPress={onContinue}
                 type="primary"
+                testID="multiversx-delegation-amount-continue"
                 title={<Trans i18nKey="elrond.delegation.flow.steps.amount.cta" />}
               />
             </View>

@@ -71,7 +71,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
         </View>
       </NavigationScrollView>
       <View style={[styles.footer]}>
-        <Button onPress={onNext} type="main" mt={6}>
+        <Button onPress={onNext} type="main" mt={6} testID="cardano-delegation-start-button">
           <Trans i18nKey="cardano.delegation.flow.steps.starter.cta" />
         </Button>
       </View>

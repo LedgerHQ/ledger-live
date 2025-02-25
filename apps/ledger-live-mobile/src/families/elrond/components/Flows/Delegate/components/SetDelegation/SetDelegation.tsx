@@ -31,6 +31,7 @@ import type { SetDelegationPropsType } from "./types";
 
 import styles from "./styles";
 import { useAccountUnit } from "~/hooks/useAccountUnit";
+import Config from "react-native-config";
 
 /*
  * Handle the component declaration.
@@ -114,6 +115,9 @@ const SetDelegation = (props: SetDelegationPropsType) => {
    */
 
   const handleAnimation = useCallback(() => {
+    if (Config.DETOX) {
+      return;
+    }
     const settings = [1, -1, 0];
     const sequence = settings.map((toValue, index) =>
       Animated.timing(animation, {
@@ -206,11 +210,13 @@ const SetDelegation = (props: SetDelegationPropsType) => {
         callback: onChangeAmount,
         i18nKey: "elrond.delegation.iDelegate",
         name: `${transactionAmount} ${unit.code}`,
+        testID: "multiversx-delegation-summary-amount",
       },
       {
         callback: onChangeValidator,
         i18nKey: "delegation.to",
         name: chosenValidator ? chosenValidator.identity.name || chosenValidator.contract : "",
+        testID: "multiversx-delegation-summary-validator",
       },
     ],
     [onChangeAmount, onChangeValidator, transactionAmount, chosenValidator, unit.code],
@@ -309,6 +315,7 @@ const SetDelegation = (props: SetDelegationPropsType) => {
                   numberOfLines={1}
                   style={styles.validatorSelectionText}
                   color={colors.primary}
+                  testID={summary.testID}
                 >
                   {summary.name}
                 </Text>
@@ -329,6 +336,7 @@ const SetDelegation = (props: SetDelegationPropsType) => {
           title={<Trans i18nKey="common.continue" />}
           containerStyle={styles.continueButton}
           onPress={onContinue}
+          testID="multiversx-summary-continue-button"
           disabled={!!bridgeError || Boolean(error)}
         />
       </View>

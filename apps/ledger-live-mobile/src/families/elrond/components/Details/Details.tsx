@@ -65,11 +65,19 @@ const Details = (props: DetailsPropsType) => {
       return (
         <View>
           {Boolean(name) && (
-            <Section title={t("operationDetails.extra.delegatedTo")} value={name} />
+            <Section
+              title={t("operationDetails.extra.delegatedTo")}
+              value={name}
+              testID="operationDetails-delegatedTo"
+            />
           )}
 
           {Boolean(amount) && (
-            <Section title={t("operationDetails.extra.delegatedAmount")} value={amount} />
+            <Section
+              title={t("operationDetails.extra.delegatedAmount")}
+              value={amount}
+              testID="operationDetails-delegatedAmount"
+            />
           )}
         </View>
       );
