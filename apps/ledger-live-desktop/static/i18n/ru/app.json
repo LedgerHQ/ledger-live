@@ -439,8 +439,8 @@
       "cta" : "Перейти в «Мой Ledger»"
     },
     "wrongDevice" : {
-      "title" : "Ledger Nano S™ не поддерживает THORChain.",
-      "description" : "THORChain не поддерживается устройством Ledger Nano S™. Для проведения кроссчейн-обмена через THORChain внутри Ledger Live используйте Ledger Nano S Plus, Ledger Nano X, Ledger Stax или Ledger Flex.",
+      "title" : "Ledger Nano S™ не поддерживает {{provider}}.",
+      "description" : "Ledger Nano S™ не поддерживает {{provider}}. Для проведения кроссчейн-обмена через {{provider}} внутри Ledger Live используйте Ledger Nano S Plus, Ledger Nano X, Ledger Stax или Ledger Flex.",
       "cta" : "Совместимые устройства",
       "changeProvider" : "Поменять оператора"
     },
@@ -1867,7 +1867,8 @@
       "palletMethod" : "Метод",
       "transferAmount" : "Сумма",
       "validatorsCount" : "Валидаторов: {{number}}",
-      "version" : "Версия приложения"
+      "version" : "Версия приложения",
+      "accountCreationFee" : "Комиссия за создание счёта"
     }
   },
   "operationList" : {
@@ -4155,6 +4156,11 @@
       "debugAppsDesc" : "Показывать и открывать отладочные приложения на платформе.",
       "debugReactQuery" : "Разрешить отладку ReactQuery",
       "debugReactQueryDesc" : "Показывать и одобрять запуск консоли отладки ReactQuery.",
+      "nfts" : {
+        "title" : "Скрытые коллекции NFT",
+        "description" : "Сбросить список скрытых коллекций",
+        "reset" : "Сбросить"
+      },
       "exchangeDeveloperMode" : {
         "title" : "Режим разработчика для приложения Exchange",
         "desc" : "Добавить информацию о поставщике обмена",
@@ -5438,6 +5444,11 @@
     "solana" : {
       "memo" : "Тег примечания/Memo",
       "memoPlaceholder" : "Опционально"
+    },
+    "mina" : {
+      "memoPlaceholder" : "Опционально",
+      "memo" : "Memo",
+      "memoWarningText" : "Значение Memo может быть строкой, длина которой не превышает или равна 32 символам"
     }
   },
   "errors" : {
@@ -6461,6 +6472,15 @@
         "swap" : "Обменяйте",
         "deposit" : "Пополните"
       }
+    },
+    "InvalidMemoMina" : {
+      "title" : "Содержимое Memo не может быть длиннее 32 символов"
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "Эта транзакция предполагает списание комиссии за создание счёта в {{fee}}"
+    },
+    "AmountTooSmall" : {
+      "title" : "Минимальная необходимая сумма для этой транзакции — {{amount}}"
     }
   },
   "cryptoOrg" : {
@@ -6918,6 +6938,14 @@
         "optOut" : {
           "title" : "Пора обновиться",
           "description" : "Ledger Nano S скоро перестанет обновляться. Перейдите на наши новые устройства со <0>скидкой {{discount}}%</0>.",
+          "cta" : "Прокачать кошелёк",
+          "linkText" : "Подробнее..."
+        }
+      },
+      "portfolio" : {
+        "optOut" : {
+          "title" : "Пора обновиться",
+          "description" : "Перейдите на наши новые устройства со <0>скидкой {{discount}}%</0> для ещё лучшей безопасности и удобства использования.",
           "cta" : "Прокачать кошелёк",
           "linkText" : "Подробнее..."
         }
