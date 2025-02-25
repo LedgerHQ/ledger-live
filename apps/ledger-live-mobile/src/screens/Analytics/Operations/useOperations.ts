@@ -1,6 +1,6 @@
 import { filterTokenOperationsZeroAmountEnabledSelector } from "~/reducers/settings";
 import { useNftCollectionsStatus } from "~/hooks/nfts/useNftCollectionsStatus";
-import { groupAccountsOperationsByDay } from "@ledgerhq/live-common/account/index";
+import { flattenAccounts, groupAccountsOperationsByDay } from "@ledgerhq/live-common/account/index";
 import { isAddressPoisoningOperation } from "@ledgerhq/coin-framework/lib/operation";
 import { Operation, AccountLike } from "@ledgerhq/types-live";
 import { useCallback, useRef } from "react";
@@ -8,6 +8,9 @@ import { useSelector } from "react-redux";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import {
   buildContractIndexNftOperations,
+  buildCurrentOperationsPage,
+  groupOperationsByDate,
+  groupOperationsByDateWithSections,
   parseAccountOperations,
   splitNftOperationsFromAllOperations,
   useFilterNftSpams,
@@ -34,10 +37,9 @@ export function useOperations({ accounts, opCount, withSubAccounts }: Props) {
     filterTokenOperationsZeroAmountEnabledSelector,
   );
 
-    // to avoid multiple state rendering, we store the previous filtered data in an indexed ref object
-    const previousFilteredNftData = useRef({});
-    const spamOpsCache = useRef<string[]>([]);
-  
+  // to avoid multiple state rendering, we store the previous filtered data in an indexed ref object
+  const previousFilteredNftData = useRef({});
+  const spamOpsCache = useRef<string[]>([]);
 
   const filterOperation = useCallback(
     (operation: Operation, account: AccountLike) => {
@@ -53,12 +55,11 @@ export function useOperations({ accounts, opCount, withSubAccounts }: Props) {
     [hiddenNftCollections, shouldFilterTokenOpsZeroAmount],
   );
 
-  const groupedOperations = groupAccountsOperationsByDay(accounts, {
+  const groupedOperationsOld = groupAccountsOperationsByDay(accounts, {
     count: opCount,
     withSubAccounts,
     filterOperation,
   });
-
 
   const allAccountOps = parseAccountOperations(
     accounts
@@ -74,33 +75,42 @@ export function useOperations({ accounts, opCount, withSubAccounts }: Props) {
 
   console.warn("allAccountOps", allAccountOps.length);
 
-   const { opsWithoutNFTIN, opsWithNFTIN } = splitNftOperationsFromAllOperations(allAccountOps);
+  const { opsWithoutNFTIN, opsWithNFTIN } = splitNftOperationsFromAllOperations(allAccountOps);
   const currentPageOpsWithoutNFTIN = opsWithoutNFTIN?.slice(0, opCount);
   const currentPageNFTIN = opsWithNFTIN
     ?.filter(op => !spamOpsCache.current.includes(op.id))
     .slice(0, opCount);
 
-    const all = flattenAccounts(accounts || []).filter(Boolean);
-    
-    const accountsMap = keyBy(all, "id");
-    
+  const accountsMap = keyBy(accounts, "id");
+
   const relatedNFtOps = buildContractIndexNftOperations(currentPageNFTIN, accountsMap);
 
-  console.log("relatedNFtOps", relatedNFtOps);
   const {
     filteredOps: filteredNftData,
     spamOps,
     isFetching,
   } = useFilterNftSpams(70, relatedNFtOps, currentPageNFTIN);
 
-
   spamOpsCache.current = spamOps.map(op => op.operation.id);
 
+  previousFilteredNftData.current = {
+    ...previousFilteredNftData.current,
+    ...keyBy(filteredNftData, "order"),
+  };
 
-  // const filteredData = useSpamTxFiltering(spamFilteringTxEnabled, accountsMap, groupedOperations);
+  const page = buildCurrentOperationsPage(
+    Object.values(previousFilteredNftData.current),
+    currentPageOpsWithoutNFTIN,
+    opCount,
+  );
+
+  const hasMore = opCount <= page?.length;
+
+  const groupedOperations = groupOperationsByDateWithSections(page);
+
   return {
     sections: groupedOperations.sections,
-    completed: groupedOperations.completed,
+    completed: !hasMore,
     spamFilteringTxEnabled,
   };
 }

@@ -75,6 +75,8 @@ export function Operations({ navigation, route }: Props) {
     index,
     section,
   }) => {
+
+
     const account = allAccounts.find(a => a.id === item.accountId);
     const parentAccount =
       account && account.type !== "Account"

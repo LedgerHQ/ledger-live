@@ -59,6 +59,31 @@ export const groupOperationsByDate = (ops: Operation[]) =>
     {} as Record<string, Operation[]>,
   );
 
+type Section = {
+  day: string;
+  data: Operation[];
+};
+
+export const groupOperationsByDateWithSections = (ops: Operation[]): { sections: Section[] } => {
+  const groupedOps = ops.reduce(
+    (acc, op) => {
+      const date = startOfDay(new Date(op.date)).toISOString();
+      if (!acc[date]) {
+        acc[date] = [];
+      }
+      acc[date].push(op);
+      return acc;
+    },
+    {} as Record<string, Operation[]>,
+  );
+
+  const sections = Object.keys(groupedOps).map(date => ({
+    day: new Date(date),
+    data: groupedOps[date],
+  }));
+
+  return { sections };
+};
 // alternative to getFilteredNftOperations that make processing before reducing
 
 export function buildContractIndexNftOperations(
