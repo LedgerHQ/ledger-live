@@ -1,5 +1,17 @@
 # @ledgerhq/coin-tester
 
+## 0.4.0
+
+### Minor Changes
+
+- [#9248](https://github.com/LedgerHQ/ledger-live/pull/9248) [`94a59f2`](https://github.com/LedgerHQ/ledger-live/commit/94a59f2030b8b25962e183919017a1e25454fdfb) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix (coin-tester): stop EVM coin tester smoothly
+
+## 0.4.0-next.0
+
+### Minor Changes
+
+- [#9248](https://github.com/LedgerHQ/ledger-live/pull/9248) [`94a59f2`](https://github.com/LedgerHQ/ledger-live/commit/94a59f2030b8b25962e183919017a1e25454fdfb) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix (coin-tester): stop EVM coin tester smoothly
+
 ## 0.3.0
 
 ### Minor Changes
