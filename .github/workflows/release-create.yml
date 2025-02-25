@@ -47,7 +47,6 @@ jobs:
           commit_message: "chore(prerelease) update cryptoassets"
           repo: ${{ github.repository }}
           branch: $RELEASE_BRANCH
-          file_pattern: '*'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: update sortByMarketcap snapshot
@@ -74,7 +73,6 @@ jobs:
           commit_message: "chore(prerelease) update cryptoassets"
           repo: ${{ github.repository }}
           branch: $RELEASE_BRANCH
-          file_pattern: '*'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Get date
