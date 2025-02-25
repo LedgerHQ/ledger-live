@@ -6,6 +6,11 @@ module.exports = {
   modulePathIgnorePatterns: [
     "/bridge.integration.test.ts", // this file is tested at the live-common level
   ],
-  collectCoverage: true,
-  coverageReporters: ["json", "html"],
+  collectCoverageFrom: [
+    "src/**/*.ts",
+    "!src/**/*.test.ts",
+    "!src/**/*.spec.ts",
+    "!src/test/**/*.ts",
+  ],
+  coverageReporters: ["json", ["lcov", { projectRoot: "../" }], "text"],
 };
