@@ -6,7 +6,7 @@ import { TronCoinConfig } from "../config";
 import { defaultTronResources } from "../logic/utils";
 import { Transaction, TronAccount } from "../types";
 import { createBridges } from "./index";
-import account1Fixture from "./fixtures/synchronization.account1.fixture.json";
+import account1Fixture from "./fixtures/synchronization.account.fixture.json";
 
 const tron = getCryptoCurrencyById("tron");
 const defaultSyncConfig = {
@@ -126,28 +126,41 @@ describe("Sync Accounts", () => {
     expect(account.tronResources).toEqual(defaultTronResources);
   });
 
-  it.each([
-    {
-      id: "TL24LCps5FKwp3PoU1MvrYrwhi5LU1tHre",
-      expectedAccount: JSON.parse(JSON.stringify(account1Fixture), reviver),
-    },
-    // "TAVrrARNdnjHgCGMQYeQV7hv4PSu7mVsMj",
-    // "THAe4BNVxp293qgyQEqXEkHMpPcqtG73bi",
-    // "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
-    // "TUxd6v64YTWkfpFpNDdtgc5Ps4SfGxwizT",
-    // "TY2ksFgpvb82TgGPwUSa7iseqPW5weYQyh",
-  ])(
-    "should always be sync without error for address %s",
-    async ({ id, expectedAccount }) => {
+  it(
+    "should always be sync without error",
+    async () => {
+      // GIVEN
+      const id = "TL24LCps5FKwp3PoU1MvrYrwhi5LU1tHre";
+
+      // WHEN
       const account = await syncAccount<Transaction, TronAccount>(bridge.accountBridge, {
         ...dummyAccount,
         id: `js:2:tron:${id}:`,
         freshAddress: id,
       });
 
+      // THEN
       expect(account.id).toEqual(`js:2:tron:${id}:`);
-
-      expect(account).toMatchObject(expectedAccount);
+      expect(account.freshAddress).toEqual("TL24LCps5FKwp3PoU1MvrYrwhi5LU1tHre");
+      expect(account.operations[account.operations.length - 1]).toEqual({
+        accountId: "js:2:tron:TL24LCps5FKwp3PoU1MvrYrwhi5LU1tHre:",
+        blockHash: null,
+        blockHeight: 24725965,
+        date: new Date("2020-11-04T14:36:33.000Z"),
+        extra: {},
+        fee: new BigNumber("0"),
+        hasFailed: false,
+        hash: "22f871f18d39b6c39e3c1495ba529169bee3fbefd59b504dac15becaff264920",
+        id: "js:2:tron:TL24LCps5FKwp3PoU1MvrYrwhi5LU1tHre:-22f871f18d39b6c39e3c1495ba529169bee3fbefd59b504dac15becaff264920-IN",
+        recipients: ["TL24LCps5FKwp3PoU1MvrYrwhi5LU1tHre"],
+        senders: ["TNDoSUL32A2KRqbEKXZQuPWgfBcA42sCwM"],
+        type: "IN",
+        value: new BigNumber("11234560"),
+      });
+      const separator = "%2F";
+      expect(account.subAccounts![0].id).toEqual(
+        `js:2:tron:TL24LCps5FKwp3PoU1MvrYrwhi5LU1tHre:+tron${separator}trc10${separator}1002000`,
+      );
     },
     15 * 1_000,
   );

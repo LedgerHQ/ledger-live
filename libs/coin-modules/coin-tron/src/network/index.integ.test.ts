@@ -1,8 +1,17 @@
-import { fetchTronAccount, fetchTronAccountTxs, fetchTronTxDetail, getAccount, getTronAccountNetwork } from ".";
+import {
+  fetchTronAccount,
+  fetchTronAccountTxs,
+  fetchTronTxDetail,
+  getAccount,
+  getTronAccountNetwork,
+} from ".";
 import coinConfig from "../config";
 import fetchTronTxs from "./fixtures/fetchTronAccountTxs.fixture.json";
 
-describe("TronGrid", () => {
+/**
+ * Tests used to help to develop and debug. Can't be reliable for the CI.
+ */
+describe.skip("TronGrid", () => {
   beforeAll(() => {
     coinConfig.setCoinConfig(() => ({
       status: {
@@ -59,19 +68,19 @@ describe("TronGrid", () => {
     });
   });
 
-  describe.only("fetchTronTxDetail", () => {
-    it("works", async () => {
+  describe("fetchTronTxDetail", () => {
+    it("retrieves details for a transaction", async () => {
       const elts =
         await fetchTronTxs.TL24LCps5FKwp3PoU1MvrYrwhi5LU1tHre[
           "428XjpfuumKvTadJgnfch1qNene43UrokeHgYu1CauQWzY8x1JTvnfoGTGYrt8M2giksdRcDPRBCQbYPdQHDqfzKJkoYpHJNZtZgNi4UW2RVF4YQ2Dk52RKuFD4utVXCUQjLE425frExMYWyDNNvb4tU3QP9i57WaAManuaFucAZGhq16q5oSXi7CX1NnrToboCQqpgWhUS8KXNi96DmrG9i99tNgxpHKML"
-        ].data; //.slice(80, 100);
+        ].data;
       const txInfo = {};
       for (const { txID } of elts) {
         const result = await fetchTronTxDetail(txID);
         Object.assign(txInfo, { [txID]: result });
       }
 
-      console.log(JSON.stringify(txInfo));
+      expect(Object.keys(txInfo).length).toEqual(5);
     });
   });
 });
