@@ -3,7 +3,7 @@ import { useNftCollectionsStatus } from "~/hooks/nfts/useNftCollectionsStatus";
 import { flattenAccounts, groupAccountsOperationsByDay } from "@ledgerhq/live-common/account/index";
 import { isAddressPoisoningOperation } from "@ledgerhq/coin-framework/lib/operation";
 import { Operation, AccountLike } from "@ledgerhq/types-live";
-import { useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import {
@@ -15,6 +15,8 @@ import {
   useFilterNftSpams,
 } from "@ledgerhq/live-nft-react";
 import keyBy from "lodash/keyBy";
+import { BlockchainEVM } from "@ledgerhq/live-nft/supported";
+import { useHideSpamCollection } from "~/hooks/nfts/useHideSpamCollection";
 
 type Props = {
   opCount: number;
@@ -24,8 +26,14 @@ type Props = {
 
 // TODO: withSubAccounts is not used in this function -> TO NOT FORGET
 export function useOperations({ accounts, opCount, withSubAccounts, skipOp }: Props) {
-  const spamFilteringTxFeature = useFeature("llmSpamFilteringTx");
-  const nftsFromSimplehashFeature = useFeature("nftsFromSimplehash");
+  const {
+    hideSpamCollection,
+    spamFilteringTxFeature,
+    nftsFromSimplehashFeature,
+    nftCollectionsStatusByNetwork,
+  } = useHideSpamCollection();
+
+  const threshold = Number(nftsFromSimplehashFeature?.params?.threshold) ?? 40;
 
   //both features must be enabled to enable spam filtering
   const spamFilteringTxEnabled =
@@ -39,6 +47,16 @@ export function useOperations({ accounts, opCount, withSubAccounts, skipOp }: Pr
   // to avoid multiple state rendering, we store the previous filtered data in an indexed ref object
   const previousFilteredNftData = useRef({});
   const spamOpsCache = useRef<string[]>([]);
+
+  // TODO: place this callback in the right place
+  const markNftAsSpam = useCallback(
+    (collectionId: string, blockchain: BlockchainEVM, spamScore: number) => {
+      if (spamFilteringTxEnabled && spamScore > threshold) {
+        hideSpamCollection(collectionId, blockchain);
+      }
+    },
+    [hideSpamCollection, spamFilteringTxEnabled, threshold],
+  );
 
   const filterOperation = useCallback(
     (operation: Operation, account: AccountLike) => {
@@ -72,18 +90,23 @@ export function useOperations({ accounts, opCount, withSubAccounts, skipOp }: Pr
     ?.filter(op => !spamOpsCache.current.includes(op.id))
     .slice(skipOp, opCount);
 
-
   const accountsMap = keyBy(accounts, "id");
 
   const relatedNFtOps = buildContractIndexNftOperations(currentPageNFTIN, accountsMap);
 
   const { filteredOps: filteredNftData, spamOps } = useFilterNftSpams(
-    70,
+    threshold,
     relatedNFtOps,
     currentPageNFTIN,
   );
 
   spamOpsCache.current = spamOpsCache.current.concat(spamOps.map(op => op.operation.id));
+
+  useEffect(() => {
+    spamOps.forEach(op => {
+      markNftAsSpam(op.collectionId, op.currencyId as BlockchainEVM, op.spamScore);
+    });
+  }, [spamOps, markNftAsSpam, nftCollectionsStatusByNetwork]);
 
   previousFilteredNftData.current = {
     ...previousFilteredNftData.current,
@@ -99,7 +122,6 @@ export function useOperations({ accounts, opCount, withSubAccounts, skipOp }: Pr
   const completed = page.length < opCount;
 
   const groupedOperations = groupOperationsByDateWithSections(page);
-
 
   return {
     sections: groupedOperations.sections,
