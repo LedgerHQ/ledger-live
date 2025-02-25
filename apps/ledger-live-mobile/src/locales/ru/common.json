@@ -1053,6 +1053,9 @@
     },
     "AppManifestNotFoundError" : {
       "title" : "Не удалось загрузить приложение Swap Live"
+    },
+    "InvalidMemoMina" : {
+      "title" : "Содержимое Memo не может быть длиннее 32 символов"
     }
   },
   "crash" : {
@@ -1119,6 +1122,11 @@
       "fast" : "Быстро",
       "custom" : "Пользовательская",
       "blockCount" : "Количество блоков: {{blockCount}}"
+    },
+    "estimatedTime" : {
+      "slow" : "≈ 2-3 min",
+      "medium" : "≈ 30 sec",
+      "fast" : "≈ 15 sec"
     }
   },
   "signout" : {
@@ -6992,6 +7000,16 @@
   },
   "walletSync" : {
     "title" : "Ledger Sync",
+    "entryPoints" : {
+      "simpleCta" : {
+        "title" : "Активируйте Ledger Sync"
+      },
+      "card" : {
+        "title" : "Ledger Sync",
+        "description" : "Синхронизируйте ваши счета в автоматическом режиме — даже при переходе на новый смартфон.",
+        "cta" : "Включить Ledger Sync"
+      }
+    },
     "activation" : {
       "screen" : {
         "title" : "Включить Ledger Sync для этого смартфона?",
