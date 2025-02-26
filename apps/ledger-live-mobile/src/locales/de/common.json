@@ -479,7 +479,7 @@
     },
     "MultiversXDecimalsLimitReached" : {
       "title" : "Maximale Dezimalstellengrenze erreicht",
-      "description" : "Bitte stellen Sie sicher, dass der angegebene Betrag 18 Dezimalstellen hat."
+      "description" : "Bitte stelle sicher, dass der angegebene Betrag 18 Dezimalstellen hat."
     },
     "MultiversXMinDelegatedAmountError" : {
       "title" : "Der delegierte Betrag muss mindestens {{formattedAmount}} betragen"
@@ -1119,6 +1119,11 @@
       "fast" : "Schnell",
       "custom" : "Benutzerdefiniert",
       "blockCount" : "{{blockCount}} Blöcke"
+    },
+    "estimatedTime" : {
+      "slow" : "≈ 2-3 min",
+      "medium" : "≈ 30 sec",
+      "fast" : "≈ 15 sec"
     }
   },
   "signout" : {
@@ -6992,6 +6997,16 @@
   },
   "walletSync" : {
     "title" : "Ledger Sync",
+    "entryPoints" : {
+      "simpleCta" : {
+        "title" : "Ledger Sync aktivieren"
+      },
+      "card" : {
+        "title" : "Ledger Sync",
+        "description" : "Synchronisiere deine Konten automatisch – auch beim Wechsel auf ein neues Smartphone.",
+        "cta" : "Ledger Sync einschalten"
+      }
+    },
     "activation" : {
       "screen" : {
         "title" : "Ledger Sync für dieses Smartphone einschalten?",
