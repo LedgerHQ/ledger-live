@@ -55,7 +55,12 @@ export interface ITxnHistoryData {
 export interface NodeResponseRoot<T> {
   jsonrpc: string;
   id: string;
-  result: T;
+  result?: T;
+  error: {
+    code: number;
+    message: string;
+    data: string;
+  };
 }
 
 export interface NNetworkStatusResponse {
@@ -109,5 +114,10 @@ export interface NAccountInfo {
 
 export interface NDeployMessagePutResponse {
   api_version: string;
-  deploy_hash: string;
+  error?: {
+    code: number;
+    message: string;
+    data: string;
+  };
+  deploy_hash?: string;
 }
