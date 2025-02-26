@@ -7,6 +7,9 @@ import {
 } from "~/renderer/drawers/OperationDetails/styledComponents";
 import Ellipsis from "~/renderer/components/Ellipsis";
 import { MinaOperation } from "@ledgerhq/live-common/families/mina/types";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import BigNumber from "bignumber.js";
 
 type OperationDetailsExtraProps = {
   operation: MinaOperation;
@@ -34,7 +37,13 @@ const OperationDetailsExtra = ({ operation }: OperationDetailsExtraProps) => {
         <OpDetailsTitle>
           <Trans i18nKey={`operationDetails.extra.accountCreationFee`} />
         </OpDetailsTitle>
-        <OpDetailsData>{extra.accountCreationFee}</OpDetailsData>
+        <OpDetailsData>
+          {formatCurrencyUnit(
+            getCryptoCurrencyById("mina").units[0],
+            new BigNumber(extra.accountCreationFee),
+            { showCode: true },
+          )}
+        </OpDetailsData>
       </OpDetailsSection>,
     );
   }
