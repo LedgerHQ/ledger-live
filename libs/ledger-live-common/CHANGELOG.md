@@ -1,5 +1,97 @@
 ## 34.5.0-next.4
 
+## 34.23.0
+
+### Minor Changes
+
+- [#9121](https://github.com/LedgerHQ/ledger-live/pull/9121) [`035be8c`](https://github.com/LedgerHQ/ledger-live/commit/035be8ccb81c61ee99688e0a4b078cb50d90dcf5) Thanks [@Wozacosta](https://github.com/Wozacosta)! - fix: zcash nu5/nu6
+
+- [#9219](https://github.com/LedgerHQ/ledger-live/pull/9219) [`175683f`](https://github.com/LedgerHQ/ledger-live/commit/175683f65ddfddbcbd39a9b4e0afb315ffdd95bd) Thanks [@KVNLS](https://github.com/KVNLS)! - Remove OFAC currencies and regions in LLM & LLD
+
+- [#9241](https://github.com/LedgerHQ/ledger-live/pull/9241) [`0a4413d`](https://github.com/LedgerHQ/ledger-live/commit/0a4413dd5cf50967c27b39bbd7dd9222e6322a60) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add link param to mevProtection ff
+
+### Patch Changes
+
+- Updated dependencies [[`42948ff`](https://github.com/LedgerHQ/ledger-live/commit/42948fffa9b435ea2f5f2c7bc9ef66071eadce4b), [`035be8c`](https://github.com/LedgerHQ/ledger-live/commit/035be8ccb81c61ee99688e0a4b078cb50d90dcf5), [`da67b55`](https://github.com/LedgerHQ/ledger-live/commit/da67b5511b22553f7e3e089eca2e363a5e3cbffe), [`94a59f2`](https://github.com/LedgerHQ/ledger-live/commit/94a59f2030b8b25962e183919017a1e25454fdfb), [`ceef95c`](https://github.com/LedgerHQ/ledger-live/commit/ceef95c23b9a2b484ac63a1cd3264529c27b6920), [`2f610d0`](https://github.com/LedgerHQ/ledger-live/commit/2f610d0a4ddafbd58cd0fb86fd989a08de5344d8), [`50767e7`](https://github.com/LedgerHQ/ledger-live/commit/50767e711f09d057f2eaeaebd33f65de3dbce778), [`339a611`](https://github.com/LedgerHQ/ledger-live/commit/339a61190c8bd9bb125f7fd3e3fbdaa9b31fcb58)]:
+  - @ledgerhq/hw-app-exchange@0.8.0
+  - @ledgerhq/hw-app-btc@10.6.0
+  - @ledgerhq/coin-bitcoin@0.11.0
+  - @ledgerhq/cryptoassets@13.12.0
+  - @ledgerhq/coin-evm@2.11.0
+  - @ledgerhq/coin-framework@2.1.0
+  - @ledgerhq/coin-stacks@0.6.0
+  - @ledgerhq/coin-tezos@1.2.0
+  - @ledgerhq/coin-algorand@0.7.5
+  - @ledgerhq/coin-aptos@1.6.1
+  - @ledgerhq/coin-cardano@0.4.5
+  - @ledgerhq/coin-cosmos@0.8.1
+  - @ledgerhq/coin-elrond@0.3.5
+  - @ledgerhq/coin-filecoin@1.5.5
+  - @ledgerhq/coin-hedera@1.3.5
+  - @ledgerhq/coin-icon@0.6.5
+  - @ledgerhq/coin-internet_computer@1.5.5
+  - @ledgerhq/coin-near@0.8.1
+  - @ledgerhq/coin-polkadot@2.0.2
+  - @ledgerhq/coin-solana@0.13.1
+  - @ledgerhq/coin-stellar@1.0.2
+  - @ledgerhq/coin-ton@0.5.5
+  - @ledgerhq/coin-tron@0.2.5
+  - @ledgerhq/coin-vechain@2.4.5
+  - @ledgerhq/coin-xrp@2.0.1
+  - @ledgerhq/hw-app-vet@0.2.15
+  - @ledgerhq/live-countervalues@0.4.1
+  - @ledgerhq/live-countervalues-react@0.2.23
+  - @ledgerhq/live-nft@0.5.8
+  - @ledgerhq/live-wallet@0.9.5
+  - @ledgerhq/device-core@0.4.14
+  - @ledgerhq/hw-app-eth@6.42.7
+
+## 34.23.0-next.0
+
+### Minor Changes
+
+- [#9121](https://github.com/LedgerHQ/ledger-live/pull/9121) [`035be8c`](https://github.com/LedgerHQ/ledger-live/commit/035be8ccb81c61ee99688e0a4b078cb50d90dcf5) Thanks [@Wozacosta](https://github.com/Wozacosta)! - fix: zcash nu5/nu6
+
+- [#9219](https://github.com/LedgerHQ/ledger-live/pull/9219) [`175683f`](https://github.com/LedgerHQ/ledger-live/commit/175683f65ddfddbcbd39a9b4e0afb315ffdd95bd) Thanks [@KVNLS](https://github.com/KVNLS)! - Remove OFAC currencies and regions in LLM & LLD
+
+- [#9241](https://github.com/LedgerHQ/ledger-live/pull/9241) [`0a4413d`](https://github.com/LedgerHQ/ledger-live/commit/0a4413dd5cf50967c27b39bbd7dd9222e6322a60) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add link param to mevProtection ff
+
+### Patch Changes
+
+- Updated dependencies [[`42948ff`](https://github.com/LedgerHQ/ledger-live/commit/42948fffa9b435ea2f5f2c7bc9ef66071eadce4b), [`035be8c`](https://github.com/LedgerHQ/ledger-live/commit/035be8ccb81c61ee99688e0a4b078cb50d90dcf5), [`da67b55`](https://github.com/LedgerHQ/ledger-live/commit/da67b5511b22553f7e3e089eca2e363a5e3cbffe), [`94a59f2`](https://github.com/LedgerHQ/ledger-live/commit/94a59f2030b8b25962e183919017a1e25454fdfb), [`ceef95c`](https://github.com/LedgerHQ/ledger-live/commit/ceef95c23b9a2b484ac63a1cd3264529c27b6920), [`2f610d0`](https://github.com/LedgerHQ/ledger-live/commit/2f610d0a4ddafbd58cd0fb86fd989a08de5344d8), [`50767e7`](https://github.com/LedgerHQ/ledger-live/commit/50767e711f09d057f2eaeaebd33f65de3dbce778), [`339a611`](https://github.com/LedgerHQ/ledger-live/commit/339a61190c8bd9bb125f7fd3e3fbdaa9b31fcb58)]:
+  - @ledgerhq/hw-app-exchange@0.8.0-next.0
+  - @ledgerhq/hw-app-btc@10.6.0-next.0
+  - @ledgerhq/coin-bitcoin@0.11.0-next.0
+  - @ledgerhq/cryptoassets@13.12.0-next.0
+  - @ledgerhq/coin-evm@2.11.0-next.0
+  - @ledgerhq/coin-framework@2.1.0-next.0
+  - @ledgerhq/coin-stacks@0.6.0-next.0
+  - @ledgerhq/coin-tezos@1.2.0-next.0
+  - @ledgerhq/coin-algorand@0.7.5-next.0
+  - @ledgerhq/coin-aptos@1.6.1-next.0
+  - @ledgerhq/coin-cardano@0.4.5-next.0
+  - @ledgerhq/coin-cosmos@0.8.1-next.0
+  - @ledgerhq/coin-elrond@0.3.5-next.0
+  - @ledgerhq/coin-filecoin@1.5.5-next.0
+  - @ledgerhq/coin-hedera@1.3.5-next.0
+  - @ledgerhq/coin-icon@0.6.5-next.0
+  - @ledgerhq/coin-internet_computer@1.5.5-next.0
+  - @ledgerhq/coin-near@0.8.1-next.0
+  - @ledgerhq/coin-polkadot@2.0.2-next.0
+  - @ledgerhq/coin-solana@0.13.1-next.0
+  - @ledgerhq/coin-stellar@1.0.2-next.0
+  - @ledgerhq/coin-ton@0.5.5-next.0
+  - @ledgerhq/coin-tron@0.2.5-next.0
+  - @ledgerhq/coin-vechain@2.4.5-next.0
+  - @ledgerhq/coin-xrp@2.0.1-next.0
+  - @ledgerhq/hw-app-vet@0.2.15-next.0
+  - @ledgerhq/live-countervalues@0.4.1-next.0
+  - @ledgerhq/live-countervalues-react@0.2.23-next.0
+  - @ledgerhq/live-nft@0.5.8-next.0
+  - @ledgerhq/live-wallet@0.9.5-next.0
+  - @ledgerhq/device-core@0.4.14-next.0
+  - @ledgerhq/hw-app-eth@6.42.7-next.0
+
 ## 34.22.0
 
 ### Minor Changes

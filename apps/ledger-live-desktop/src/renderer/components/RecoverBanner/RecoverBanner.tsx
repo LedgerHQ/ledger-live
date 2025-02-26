@@ -9,14 +9,7 @@ import { RecoverBannerType } from "./types";
 import ActionCard from "../ContentCards/ActionCard";
 import { Card } from "../Box";
 import styled from "styled-components";
-
-enum LedgerRecoverSubscriptionStateEnum {
-  BACKUP_DEVICE_CONNECTION = "BACKUP_DEVICE_CONNECTION",
-  BACKUP_DONE = "BACKUP_DONE",
-  BACKUP_VERIFY_IDENTITY = "BACKUP_VERIFY_IDENTITY",
-  NO_SUBSCRIPTION = "NO_SUBSCRIPTION",
-  STARGATE_SUBSCRIBE = "STARGATE_SUBSCRIBE",
-}
+import { LedgerRecoverSubscriptionStateEnum } from "~/types/recoverSubscriptionState";
 
 const maxStepNumber = Object.keys(LedgerRecoverSubscriptionStateEnum).length;
 

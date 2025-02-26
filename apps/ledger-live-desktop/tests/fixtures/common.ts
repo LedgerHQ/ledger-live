@@ -166,7 +166,7 @@ export const test = base.extend<TestFixtures>({
       await electronApp.close();
     } finally {
       if (device) {
-        await stopSpeculos(device);
+        await stopSpeculos(device.id);
       }
     }
   },

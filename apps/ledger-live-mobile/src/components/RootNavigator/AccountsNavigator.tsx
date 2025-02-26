@@ -29,6 +29,8 @@ import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
 import { track } from "~/analytics";
 import { NavigationProp, NavigationState, useNavigation, useRoute } from "@react-navigation/native";
 import { TrackingEvent } from "LLM/features/Accounts/enums";
+import LedgerSyncEntryPoint from "LLM/features/LedgerSyncEntryPoint";
+import { EntryPoint } from "LLM/features/LedgerSyncEntryPoint/types";
 
 const Stack = createStackNavigator<AccountsNavigatorParamList>();
 
@@ -115,6 +117,9 @@ export default function AccountsNavigator() {
           options={{
             headerTitle: "",
             headerLeft: () => <NavigationHeaderBackButton onPress={onPressBack} />,
+            headerRight: () => (
+              <LedgerSyncEntryPoint entryPoint={EntryPoint.accounts} page="Accounts" />
+            ),
           }}
         />
       )}

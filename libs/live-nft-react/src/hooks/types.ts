@@ -4,7 +4,7 @@ import {
   SimpleHashSpamReportResponse,
   SimpleHashRefreshResponse,
 } from "@ledgerhq/live-nft/api/types";
-import { ProtoNFT, FloorPrice } from "@ledgerhq/types-live";
+import { ProtoNFT, FloorPrice, Operation } from "@ledgerhq/types-live";
 import {
   UseInfiniteQueryResult,
   InfiniteData,
@@ -111,3 +111,5 @@ export enum RareSatRarity {
   HISTORICAL_EVENT = "historical_event",
   NON_STANDARD_SCRIPT = "non_standard_script",
 }
+
+export type OrderedOperation = Operation & { order: number };

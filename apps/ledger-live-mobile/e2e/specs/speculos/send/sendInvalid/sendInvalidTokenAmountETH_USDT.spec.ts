@@ -9,5 +9,5 @@ runSendInvalidTokenAmountTest(
   new RegExp(
     /You need \d+\.\d+ ETH in your account to pay for transaction fees on the Ethereum network\. .*/,
   ),
-  "B2CQA-2701",
+  ["B2CQA-2701"],
 );

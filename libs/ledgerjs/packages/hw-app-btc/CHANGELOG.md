@@ -1,5 +1,17 @@
 # @ledgerhq/hw-app-btc
 
+## 10.6.0
+
+### Minor Changes
+
+- [#9121](https://github.com/LedgerHQ/ledger-live/pull/9121) [`035be8c`](https://github.com/LedgerHQ/ledger-live/commit/035be8ccb81c61ee99688e0a4b078cb50d90dcf5) Thanks [@Wozacosta](https://github.com/Wozacosta)! - fix: zcash nu5/nu6
+
+## 10.6.0-next.0
+
+### Minor Changes
+
+- [#9121](https://github.com/LedgerHQ/ledger-live/pull/9121) [`035be8c`](https://github.com/LedgerHQ/ledger-live/commit/035be8ccb81c61ee99688e0a4b078cb50d90dcf5) Thanks [@Wozacosta](https://github.com/Wozacosta)! - fix: zcash nu5/nu6
+
 ## 10.5.0
 
 ### Minor Changes

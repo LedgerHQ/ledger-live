@@ -1,5 +1,85 @@
 # ledger-live-desktop
 
+## 2.101.0
+
+### Minor Changes
+
+- [#9223](https://github.com/LedgerHQ/ledger-live/pull/9223) [`42948ff`](https://github.com/LedgerHQ/ledger-live/commit/42948fffa9b435ea2f5f2c7bc9ef66071eadce4b) Thanks [@CremaFR](https://github.com/CremaFR)! - update error message for clarity
+
+- [#9172](https://github.com/LedgerHQ/ledger-live/pull/9172) [`969bb54`](https://github.com/LedgerHQ/ledger-live/commit/969bb544f81538ddac1afe5cd8602c9f0469a643) Thanks [@thesan](https://github.com/thesan)! - Add the LNS upsell banners components to LLD
+
+- [#9219](https://github.com/LedgerHQ/ledger-live/pull/9219) [`175683f`](https://github.com/LedgerHQ/ledger-live/commit/175683f65ddfddbcbd39a9b4e0afb315ffdd95bd) Thanks [@KVNLS](https://github.com/KVNLS)! - Remove OFAC currencies and regions in LLM & LLD
+
+- [#9241](https://github.com/LedgerHQ/ledger-live/pull/9241) [`0a4413d`](https://github.com/LedgerHQ/ledger-live/commit/0a4413dd5cf50967c27b39bbd7dd9222e6322a60) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add link param to mevProtection ff
+
+- [#9122](https://github.com/LedgerHQ/ledger-live/pull/9122) [`3d77058`](https://github.com/LedgerHQ/ledger-live/commit/3d77058bef9af3fa93f41c0c5128f4de5c5bfb93) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Add data tracking in the exchange flow
+
+- [#9104](https://github.com/LedgerHQ/ledger-live/pull/9104) [`27a7992`](https://github.com/LedgerHQ/ledger-live/commit/27a7992c1f01ef82407d756013d8ad947980ebf9) Thanks [@Justkant](https://github.com/Justkant)! - fix: multiline error on input overflows over next item
+
+- [#9231](https://github.com/LedgerHQ/ledger-live/pull/9231) [`e6b5d5d`](https://github.com/LedgerHQ/ledger-live/commit/e6b5d5dfd9f01faefd3bd040492e255e174661d9) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - Fix staking modal text overlap when too many words
+
+- [#9148](https://github.com/LedgerHQ/ledger-live/pull/9148) [`3aa93c0`](https://github.com/LedgerHQ/ledger-live/commit/3aa93c059f55b3c44dd5a2e771efd7c62387a7e6) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Add Tracking in the ledger sync flow and polish tracking implementation
+
+### Patch Changes
+
+- Updated dependencies [[`035be8c`](https://github.com/LedgerHQ/ledger-live/commit/035be8ccb81c61ee99688e0a4b078cb50d90dcf5), [`969bb54`](https://github.com/LedgerHQ/ledger-live/commit/969bb544f81538ddac1afe5cd8602c9f0469a643), [`da67b55`](https://github.com/LedgerHQ/ledger-live/commit/da67b5511b22553f7e3e089eca2e363a5e3cbffe), [`175683f`](https://github.com/LedgerHQ/ledger-live/commit/175683f65ddfddbcbd39a9b4e0afb315ffdd95bd), [`94a59f2`](https://github.com/LedgerHQ/ledger-live/commit/94a59f2030b8b25962e183919017a1e25454fdfb), [`0a4413d`](https://github.com/LedgerHQ/ledger-live/commit/0a4413dd5cf50967c27b39bbd7dd9222e6322a60), [`2f610d0`](https://github.com/LedgerHQ/ledger-live/commit/2f610d0a4ddafbd58cd0fb86fd989a08de5344d8)]:
+  - @ledgerhq/coin-bitcoin@0.11.0
+  - @ledgerhq/live-common@34.23.0
+  - @ledgerhq/react-ui@0.19.0
+  - @ledgerhq/cryptoassets@13.12.0
+  - @ledgerhq/coin-evm@2.11.0
+  - @ledgerhq/coin-framework@2.1.0
+  - @ledgerhq/types-live@6.60.0
+  - @ledgerhq/coin-aptos@1.6.1
+  - @ledgerhq/coin-cosmos@0.8.1
+  - @ledgerhq/coin-filecoin@1.5.5
+  - @ledgerhq/live-countervalues@0.4.1
+  - @ledgerhq/live-countervalues-react@0.2.23
+  - @ledgerhq/live-nft@0.5.8
+  - @ledgerhq/live-nft-react@0.5.8
+  - @ledgerhq/live-wallet@0.9.5
+  - @ledgerhq/domain-service@1.2.19
+
+## 2.101.0-next.0
+
+### Minor Changes
+
+- [#9223](https://github.com/LedgerHQ/ledger-live/pull/9223) [`42948ff`](https://github.com/LedgerHQ/ledger-live/commit/42948fffa9b435ea2f5f2c7bc9ef66071eadce4b) Thanks [@CremaFR](https://github.com/CremaFR)! - update error message for clarity
+
+- [#9172](https://github.com/LedgerHQ/ledger-live/pull/9172) [`969bb54`](https://github.com/LedgerHQ/ledger-live/commit/969bb544f81538ddac1afe5cd8602c9f0469a643) Thanks [@thesan](https://github.com/thesan)! - Add the LNS upsell banners components to LLD
+
+- [#9219](https://github.com/LedgerHQ/ledger-live/pull/9219) [`175683f`](https://github.com/LedgerHQ/ledger-live/commit/175683f65ddfddbcbd39a9b4e0afb315ffdd95bd) Thanks [@KVNLS](https://github.com/KVNLS)! - Remove OFAC currencies and regions in LLM & LLD
+
+- [#9241](https://github.com/LedgerHQ/ledger-live/pull/9241) [`0a4413d`](https://github.com/LedgerHQ/ledger-live/commit/0a4413dd5cf50967c27b39bbd7dd9222e6322a60) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add link param to mevProtection ff
+
+- [#9122](https://github.com/LedgerHQ/ledger-live/pull/9122) [`3d77058`](https://github.com/LedgerHQ/ledger-live/commit/3d77058bef9af3fa93f41c0c5128f4de5c5bfb93) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Add data tracking in the exchange flow
+
+- [#9104](https://github.com/LedgerHQ/ledger-live/pull/9104) [`27a7992`](https://github.com/LedgerHQ/ledger-live/commit/27a7992c1f01ef82407d756013d8ad947980ebf9) Thanks [@Justkant](https://github.com/Justkant)! - fix: multiline error on input overflows over next item
+
+- [#9231](https://github.com/LedgerHQ/ledger-live/pull/9231) [`e6b5d5d`](https://github.com/LedgerHQ/ledger-live/commit/e6b5d5dfd9f01faefd3bd040492e255e174661d9) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - Fix staking modal text overlap when too many words
+
+- [#9148](https://github.com/LedgerHQ/ledger-live/pull/9148) [`3aa93c0`](https://github.com/LedgerHQ/ledger-live/commit/3aa93c059f55b3c44dd5a2e771efd7c62387a7e6) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Add Tracking in the ledger sync flow and polish tracking implementation
+
+### Patch Changes
+
+- Updated dependencies [[`035be8c`](https://github.com/LedgerHQ/ledger-live/commit/035be8ccb81c61ee99688e0a4b078cb50d90dcf5), [`969bb54`](https://github.com/LedgerHQ/ledger-live/commit/969bb544f81538ddac1afe5cd8602c9f0469a643), [`da67b55`](https://github.com/LedgerHQ/ledger-live/commit/da67b5511b22553f7e3e089eca2e363a5e3cbffe), [`175683f`](https://github.com/LedgerHQ/ledger-live/commit/175683f65ddfddbcbd39a9b4e0afb315ffdd95bd), [`94a59f2`](https://github.com/LedgerHQ/ledger-live/commit/94a59f2030b8b25962e183919017a1e25454fdfb), [`0a4413d`](https://github.com/LedgerHQ/ledger-live/commit/0a4413dd5cf50967c27b39bbd7dd9222e6322a60), [`2f610d0`](https://github.com/LedgerHQ/ledger-live/commit/2f610d0a4ddafbd58cd0fb86fd989a08de5344d8)]:
+  - @ledgerhq/coin-bitcoin@0.11.0-next.0
+  - @ledgerhq/live-common@34.23.0-next.0
+  - @ledgerhq/react-ui@0.19.0-next.0
+  - @ledgerhq/cryptoassets@13.12.0-next.0
+  - @ledgerhq/coin-evm@2.11.0-next.0
+  - @ledgerhq/coin-framework@2.1.0-next.0
+  - @ledgerhq/types-live@6.60.0-next.0
+  - @ledgerhq/coin-aptos@1.6.1-next.0
+  - @ledgerhq/coin-cosmos@0.8.1-next.0
+  - @ledgerhq/coin-filecoin@1.5.5-next.0
+  - @ledgerhq/live-countervalues@0.4.1-next.0
+  - @ledgerhq/live-countervalues-react@0.2.23-next.0
+  - @ledgerhq/live-nft@0.5.8-next.0
+  - @ledgerhq/live-nft-react@0.5.8-next.0
+  - @ledgerhq/live-wallet@0.9.5-next.0
+  - @ledgerhq/domain-service@1.2.19-next.0
+
 ## 2.100.0
 
 ### Minor Changes

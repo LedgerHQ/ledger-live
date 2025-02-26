@@ -1,5 +1,35 @@
 # @ledgerhq/coin-stacks
 
+## 0.6.0
+
+### Minor Changes
+
+- [#9262](https://github.com/LedgerHQ/ledger-live/pull/9262) [`ceef95c`](https://github.com/LedgerHQ/ledger-live/commit/ceef95c23b9a2b484ac63a1cd3264529c27b6920) Thanks [@Wozacosta](https://github.com/Wozacosta)! - fix: force custom network when using fees estimation calls from stacks sdk
+
+- [#9137](https://github.com/LedgerHQ/ledger-live/pull/9137) [`50767e7`](https://github.com/LedgerHQ/ledger-live/commit/50767e711f09d057f2eaeaebd33f65de3dbce778) Thanks [@lawRathod](https://github.com/lawRathod)! - Fix transaction broadcast, and set stacks sdk to use our proxied url
+
+### Patch Changes
+
+- Updated dependencies [[`da67b55`](https://github.com/LedgerHQ/ledger-live/commit/da67b5511b22553f7e3e089eca2e363a5e3cbffe), [`0a4413d`](https://github.com/LedgerHQ/ledger-live/commit/0a4413dd5cf50967c27b39bbd7dd9222e6322a60)]:
+  - @ledgerhq/cryptoassets@13.12.0
+  - @ledgerhq/coin-framework@2.1.0
+  - @ledgerhq/types-live@6.60.0
+
+## 0.6.0-next.0
+
+### Minor Changes
+
+- [#9262](https://github.com/LedgerHQ/ledger-live/pull/9262) [`ceef95c`](https://github.com/LedgerHQ/ledger-live/commit/ceef95c23b9a2b484ac63a1cd3264529c27b6920) Thanks [@Wozacosta](https://github.com/Wozacosta)! - fix: force custom network when using fees estimation calls from stacks sdk
+
+- [#9137](https://github.com/LedgerHQ/ledger-live/pull/9137) [`50767e7`](https://github.com/LedgerHQ/ledger-live/commit/50767e711f09d057f2eaeaebd33f65de3dbce778) Thanks [@lawRathod](https://github.com/lawRathod)! - Fix transaction broadcast, and set stacks sdk to use our proxied url
+
+### Patch Changes
+
+- Updated dependencies [[`da67b55`](https://github.com/LedgerHQ/ledger-live/commit/da67b5511b22553f7e3e089eca2e363a5e3cbffe), [`0a4413d`](https://github.com/LedgerHQ/ledger-live/commit/0a4413dd5cf50967c27b39bbd7dd9222e6322a60)]:
+  - @ledgerhq/cryptoassets@13.12.0-next.0
+  - @ledgerhq/coin-framework@2.1.0-next.0
+  - @ledgerhq/types-live@6.60.0-next.0
+
 ## 0.5.4
 
 ### Patch Changes

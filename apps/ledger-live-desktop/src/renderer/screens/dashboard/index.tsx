@@ -145,7 +145,6 @@ export default function DashboardPage() {
             <AssetDistribution />
             {totalOperations > 0 && (
               <OperationsList
-                t={t}
                 accounts={accounts}
                 title={t("dashboard.recentActivity")}
                 withAccount

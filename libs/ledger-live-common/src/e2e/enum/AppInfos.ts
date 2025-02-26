@@ -47,7 +47,7 @@ export class AppInfos {
 
   static readonly NEAR = new AppInfos("Near");
 
-  static readonly MULTIVERSE_X = new AppInfos("Multiverse X");
+  static readonly MULTIVERS_X = new AppInfos("Multivers X");
 
   static readonly OSMOSIS = new AppInfos("Osmosis");
 

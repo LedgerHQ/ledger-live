@@ -40,6 +40,14 @@ import useTheme from "~/renderer/hooks/useTheme";
 import Tooltip from "./Tooltip";
 import { Data, Item } from "./types";
 import { startOfHour, startOfDay } from "@ledgerhq/live-countervalues/portfolio";
+import { track } from "~/renderer/analytics/segment";
+
+export enum GraphTrackingScreenName {
+  Account = "Account",
+  Asset = "Asset",
+  Market = "Market",
+  Portfolio = "Portfolio",
+}
 
 export type Props = {
   data: Data;
@@ -53,6 +61,7 @@ export type Props = {
   valueKey?: "value" | "countervalue";
   suggestedMin?: number;
   suggestedMax?: number;
+  screenName?: GraphTrackingScreenName;
 };
 
 const ChartContainer = styled.div.attrs<{
@@ -88,9 +97,11 @@ export default function Chart({
   renderTooltip,
   valueKey = "value",
   suggestedMin,
+  screenName,
 }: Props) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const chartRef = useRef<ChartJs | null>(null);
+  const timeoutRef = useRef<NodeJS.Timeout>();
   const theme = useTheme().colors.palette;
   const [tooltip, setTooltip] = useState<ChartTooltipModel>();
   const valueKeyRef = useRef(valueKey);
@@ -213,8 +224,29 @@ export default function Chart({
       });
     }
   }, [generateOptions, generatedData, valueKey]);
+
+  const onMouseEnterGraph = () => {
+    timeoutRef.current = setTimeout(() => {
+      track("charthover_entered", {
+        chart: screenName,
+        page: screenName,
+      });
+    }, 2000);
+  };
+
+  const onMouseLeaveGraph = () => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+  };
+
   return (
-    <ChartContainer height={height} data-testid="chart-container">
+    <ChartContainer
+      height={height}
+      data-testid="chart-container"
+      onMouseEnter={onMouseEnterGraph}
+      onMouseLeave={onMouseLeaveGraph}
+    >
       <canvas ref={canvasRef} />
       {tooltip && renderTooltip ? (
         <Tooltip tooltip={tooltip} renderTooltip={renderTooltip} color={color} data={data} />

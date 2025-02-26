@@ -150,6 +150,7 @@ app.on("ready", async () => {
   window.on(
     "resize",
     debounce(() => {
+      if (!window || window.isDestroyed()) return;
       const [width, height] = window.getSize();
       db.setKey("windowParams", `${window.name}.dimensions`, {
         width,
@@ -160,6 +161,7 @@ app.on("ready", async () => {
   window.on(
     "move",
     debounce(() => {
+      if (!window || window.isDestroyed()) return;
       const [x, y] = window.getPosition();
       db.setKey("windowParams", `${window.name}.positions`, {
         x,

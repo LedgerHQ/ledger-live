@@ -1,13 +1,13 @@
 import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { updateNftStatus } from "~/actions/settings";
-import { nftCollectionsStatusByNetworkSelector } from "~/reducers/settings";
 import { BlockchainsType } from "@ledgerhq/live-nft/supported";
 import { NftStatus } from "@ledgerhq/live-nft/types";
+import { nftCollectionsStatusByNetworkSelector } from "~/reducers/settings";
+import { updateNftStatus } from "~/actions/settings";
 
 export function useHideSpamCollection() {
-  const spamFilteringTxFeature = useFeature("spamFilteringTx");
+  const spamFilteringTxFeature = useFeature("llmSpamFilteringTx");
   const nftsFromSimplehashFeature = useFeature("nftsFromSimplehash");
 
   const nftCollectionsStatusByNetwork = useSelector(nftCollectionsStatusByNetworkSelector);

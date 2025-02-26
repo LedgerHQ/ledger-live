@@ -21,9 +21,9 @@ export default class SendPage {
   summaryRecipientEns = () => getElementById("send-summary-recipient-ens");
   summaryMemoTagId = "summary-memo-tag";
   summaryMemoTag = () => getElementById(this.summaryMemoTagId);
-  validationAmountId = "send-validation-amount";
-  validationAddressId = "send-validation-address";
-  validationEnsId = "send-validation-domain";
+  validationAmountId = "device-validation-amount";
+  validationAddressId = "device-validation-address";
+  validationEnsId = "device-validation-domain";
   getStep1HeaderTitle = () => getElementById("send-header-step1-title");
   recipientContinueButtonId = "recipient-continue-button";
   recipientInputId = "recipient-input";

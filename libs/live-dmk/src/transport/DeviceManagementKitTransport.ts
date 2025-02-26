@@ -71,6 +71,11 @@ export class DeviceManagementKitTransport extends Transport {
     tracer.trace("[open] No active session found, starting discovery");
     const [discoveredDevice] = await firstValueFrom(deviceManagementKit.listenToKnownDevices());
     const connectedSessionId = await deviceManagementKit.connect({ device: discoveredDevice });
+    // disable session refresher for the connected device as it is not needed and can cause issues
+    deviceManagementKit.toggleDeviceSessionRefresher({
+      sessionId: connectedSessionId,
+      enabled: false,
+    });
 
     tracer.trace("[open] Connected");
     const transport = new DeviceManagementKitTransport(deviceManagementKit, connectedSessionId);

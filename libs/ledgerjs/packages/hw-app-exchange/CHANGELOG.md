@@ -1,5 +1,17 @@
 # @ledgerhq/hw-app-exchange
 
+## 0.8.0
+
+### Minor Changes
+
+- [#9223](https://github.com/LedgerHQ/ledger-live/pull/9223) [`42948ff`](https://github.com/LedgerHQ/ledger-live/commit/42948fffa9b435ea2f5f2c7bc9ef66071eadce4b) Thanks [@CremaFR](https://github.com/CremaFR)! - update error message for clarity
+
+## 0.8.0-next.0
+
+### Minor Changes
+
+- [#9223](https://github.com/LedgerHQ/ledger-live/pull/9223) [`42948ff`](https://github.com/LedgerHQ/ledger-live/commit/42948fffa9b435ea2f5f2c7bc9ef66071eadce4b) Thanks [@CremaFR](https://github.com/CremaFR)! - update error message for clarity
+
 ## 0.7.0
 
 ### Minor Changes
