@@ -30,16 +30,14 @@ const Summary = (props: { account: MultiversXAccount }) => {
   const { account } = props;
   const [balance, setBalance] = useState<BigNumber>(account.spendableBalance);
   const [delegationsResources, setDelegationResources] = useState(
-    account.multiversxResources ? account.multiversxResources.delegations : [],
+    account?.multiversxResources?.delegations || [],
   );
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
   const unit = useAccountUnit(account);
   const fetchDelegations = useCallback(() => {
     setBalance(account.spendableBalance);
-    setDelegationResources(
-      account.multiversxResources ? account.multiversxResources.delegations : [],
-    );
+    setDelegationResources(account?.multiversxResources?.delegations || []);
     return () => {
       setBalance(account.spendableBalance);
       setDelegationResources(
