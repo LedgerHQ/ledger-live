@@ -62,7 +62,10 @@ const minaSpecs: AppSpec<Transaction> = {
       test: ({ accountBeforeTransaction, operation, account, transaction }) => {
         botTest("account spendable balance decreased with operation", () =>
           expect(account.spendableBalance).toEqual(
-            accountBeforeTransaction.spendableBalance.minus(operation.value),
+            accountBeforeTransaction.spendableBalance
+              .minus(operation.value)
+              .minus(operation.fee)
+              .minus((operation.extra as any).accountCreationFee),
           ),
         );
 

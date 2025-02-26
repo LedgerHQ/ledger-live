@@ -21,7 +21,7 @@ const buildOptimisticOperation = (
   transaction: Transaction,
   fee: BigNumber,
 ): MinaOperation => {
-  let value = new BigNumber(transaction.amount).plus(fee);
+  let value = new BigNumber(transaction.amount);
 
   if (transaction.fees?.accountCreationFee.gt(0)) {
     value = value.minus(transaction.fees.accountCreationFee);
