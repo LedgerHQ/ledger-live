@@ -64,7 +64,6 @@ const minaSpecs: AppSpec<Transaction> = {
           expect(account.spendableBalance).toEqual(
             accountBeforeTransaction.spendableBalance
               .minus(operation.value)
-              .minus(operation.fee)
               .minus((operation.extra as any).accountCreationFee),
           ),
         );
