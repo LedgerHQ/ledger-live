@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.102.0-next.1
+
+### Minor Changes
+
+- [#9343](https://github.com/LedgerHQ/ledger-live/pull/9343) [`b31f54f`](https://github.com/LedgerHQ/ledger-live/commit/b31f54f2be11573bdd93359b88ba43fb43e8d013) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix duplicated TXs in HIstory and Spams where not always marked as Spam"
+
 ## 2.102.0-next.0
 
 ### Minor Changes
