@@ -40,6 +40,7 @@ const OperationsHistory = ({ accounts, testID }: Props) => {
     accounts,
     opCount: NB_OPERATIONS_TO_DISPLAY,
     withSubAccounts: true,
+    skipOp: 0,
   });
   const renderItem = useCallback(
     ({ item, index, section }: SectionListRenderItemInfo<Operation, DailyOperationsSection>) => {
