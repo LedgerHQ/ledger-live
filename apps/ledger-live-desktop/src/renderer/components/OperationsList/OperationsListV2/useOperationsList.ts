@@ -18,7 +18,7 @@ import {
   groupOperationsByDate,
   parseAccountOperations,
   splitNftOperationsFromAllOperations,
-} from "../utils";
+} from "@ledgerhq/live-nft-react";
 
 export type Props = {
   account?: AccountLike;
@@ -37,7 +37,7 @@ export function useOperationsList({
   parentAccount,
   accounts,
   withSubAccounts,
-  filterOperation, // TODO: see if we need to filter operations
+  filterOperation,
 }: Props) {
   const allAccounts = useSelector(shallowAccountsSelector);
   const {
