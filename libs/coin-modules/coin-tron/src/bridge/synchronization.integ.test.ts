@@ -6,7 +6,6 @@ import { TronCoinConfig } from "../config";
 import { defaultTronResources } from "../logic/utils";
 import { Transaction, TronAccount } from "../types";
 import { createBridges } from "./index";
-import account1Fixture from "./fixtures/synchronization.account.fixture.json";
 
 const tron = getCryptoCurrencyById("tron");
 const defaultSyncConfig = {
@@ -57,47 +56,6 @@ const dummyAccount: TronAccount = {
     },
   },
   tronResources: {} as any,
-};
-
-const reviver = (key: string, value: unknown) => {
-  // Format date
-  if (
-    [
-      "date",
-      "creationDate",
-      "expiredAt",
-      "lastVotedDate",
-      "lastWithdrawnRewardDate",
-      // "lastSyncDate",
-      // "latestDate",
-    ].includes(key) === true
-  ) {
-    return value !== null
-      ? typeof value === "string"
-        ? new Date(value as string)
-        : new Date(value as number)
-      : new Date("1970-01-01T00:00:00.000Z");
-  }
-
-  // BigNumber conversion
-  if (["unwithdrawnReward"].includes(key) === true) {
-    return new BigNumber(value as string);
-  }
-
-  // Remove undesired properties as they always change
-  if (
-    [
-      "blockHeight",
-      "lastSyncDate",
-      "latestDate",
-      "energy",
-      "balanceHistoryCache", // Balance can be purged?
-    ].includes(key) === true
-  ) {
-    return undefined;
-  }
-
-  return value;
 };
 
 describe("Sync Accounts", () => {
