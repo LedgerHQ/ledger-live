@@ -56,7 +56,7 @@ export interface NodeResponseRoot<T> {
   jsonrpc: string;
   id: string;
   result?: T;
-  error: {
+  error?: {
     code: number;
     message: string;
     data: string;
@@ -114,10 +114,5 @@ export interface NAccountInfo {
 
 export interface NDeployMessagePutResponse {
   api_version: string;
-  error?: {
-    code: number;
-    message: string;
-    data: string;
-  };
-  deploy_hash?: string;
+  deploy_hash: string;
 }
