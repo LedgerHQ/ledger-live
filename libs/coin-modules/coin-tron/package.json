@@ -96,7 +96,6 @@
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/live-promise": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
-    "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
     "bignumber.js": "^9.1.2",
     "bs58check": "^2.1.2",
@@ -108,6 +107,7 @@
   },
   "devDependencies": {
     "@agrozyme/types-tronweb": "^5.3.2",
+    "@ledgerhq/types-cryptoassets": "workspace:^",
     "@types/bs58check": "^2.1.0",
     "@types/invariant": "^2.2.2",
     "@types/jest": "^29.5.10",

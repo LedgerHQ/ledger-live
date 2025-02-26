@@ -3490,9 +3490,6 @@ importers:
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/logs
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
@@ -3521,6 +3518,9 @@ importers:
       '@agrozyme/types-tronweb':
         specifier: ^5.3.2
         version: 5.3.2
+      '@ledgerhq/types-cryptoassets':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/types-cryptoassets
       '@types/bs58check':
         specifier: ^2.1.0
         version: 2.1.2
