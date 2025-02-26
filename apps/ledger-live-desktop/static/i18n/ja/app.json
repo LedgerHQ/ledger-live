@@ -439,8 +439,8 @@
       "cta" : "My Ledgerに移動"
     },
     "wrongDevice" : {
-      "title" : "Ledger Nano S™はTHORChainに対応していません",
-      "description" : "Ledger Nano SはTHORChainに対応していませんLedger Nano S Plus、Ledger Nano X、Ledger Stax、またはLedger Flexを使用して、Ledger LiveからTHORChainでのクロスチェーンスワップが可能です",
+      "title" : "Ledger Nano S™は、{{provider}}に対応していません",
+      "description" : "Ledger Nano Sは、{{provider}}に対応していませんLedger Nano S Plus、Ledger Nano X、Ledger Stax、またはLedger Flexを使用して、Ledger Liveから{{provider}}でのクロスチェーンスワップが可能です",
       "cta" : "対応デバイスを探す",
       "changeProvider" : "別のプロバイダーでスワップ"
     },
@@ -4155,6 +4155,11 @@
       "debugAppsDesc" : "デバッグとしてタグ付けされたプラットフォームアプリの表示と実行を許可します。",
       "debugReactQuery" : "ReactQueryのデバッグを許可する",
       "debugReactQueryDesc" : "ReactQueryデバッグコンソールを表示し、開くことを許可します。",
+      "nfts" : {
+        "title" : "NFT非表示コレクション",
+        "description" : "非表示コレクションリストをリセット",
+        "reset" : "リセット"
+      },
       "exchangeDeveloperMode" : {
         "title" : "Exchange開発者モード",
         "desc" : "Exchangeプロバイダーの情報を追加する",
@@ -6918,6 +6923,14 @@
         "optOut" : {
           "title" : "絶好のアップグレードチャンス！",
           "description" : "Ledger Nano Sのキャンペーンは間もなく終了です。<0>{{discount}}%OFF</0>で、当社の最新デバイスにアップグレードできます。",
+          "cta" : "ウォレットをレベルアップ",
+          "linkText" : "詳細はこちら"
+        }
+      },
+      "portfolio" : {
+        "optOut" : {
+          "title" : "アップグレードに絶好のチャンス！",
+          "description" : "<0>{{discount}}%割引</0>で、最新のデバイスにアップグレードしましょう！より使いやすく、強化されたセキュリティをお楽しみいただけます。",
           "cta" : "ウォレットをレベルアップ",
           "linkText" : "詳細はこちら"
         }
