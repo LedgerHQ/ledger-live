@@ -6,9 +6,22 @@ export async function verifyAppValidationStakeInfo(
   app: Application,
   delegation: Delegate,
   amount: string,
+  fees?: string,
 ) {
-  const currenciesForValidationAmount = [Currency.ATOM, Currency.NEAR, Currency.CELO];
-  const currenciesForValidationProvider = [Currency.ATOM, Currency.XTZ];
+  const currenciesForValidationAmount = [
+    Currency.ATOM,
+    Currency.NEAR,
+    Currency.CELO,
+    Currency.INJ,
+    Currency.OSMO,
+    Currency.MULTIVERS_X,
+  ];
+  const currenciesForValidationProvider = [
+    Currency.ATOM,
+    Currency.XTZ,
+    Currency.INJ,
+    Currency.OSMO,
+  ];
 
   const currency = delegation.account.currency;
   const provider = delegation.provider;
@@ -21,18 +34,37 @@ export async function verifyAppValidationStakeInfo(
   if (currenciesForValidationProvider.includes(currency)) {
     await app.deviceValidation.expectProvider(provider);
   }
+
+  if (fees) {
+    await app.deviceValidation.expectFees(fees);
+  }
 }
 
 export async function verifyStakeOperationDetailsInfo(
   app: Application,
   delegation: Delegate,
   amount: string,
+  fees?: string,
 ) {
-  const currenciesForProvider = [Currency.ATOM];
+  const currenciesForProvider = [Currency.ATOM, Currency.INJ, Currency.OSMO, Currency.MULTIVERS_X];
   const currenciesForRecipientAsProvider = [Currency.NEAR];
-  const currenciesForSender = [Currency.NEAR, Currency.CELO, Currency.XTZ];
-  const currenciesForAmount = [Currency.ATOM, Currency.NEAR];
-  const currenciesForDelegateType = [Currency.ATOM, Currency.SOL, Currency.XTZ];
+  const currenciesForSender = [Currency.NEAR, Currency.CELO, Currency.XTZ, Currency.MULTIVERS_X];
+  const currenciesForAmount = [
+    Currency.ATOM,
+    Currency.NEAR,
+    Currency.INJ,
+    Currency.OSMO,
+    Currency.MULTIVERS_X,
+  ];
+  const currenciesForDelegateType = [
+    Currency.ATOM,
+    Currency.SOL,
+    Currency.XTZ,
+    Currency.INJ,
+    Currency.OSMO,
+    Currency.ADA,
+    Currency.MULTIVERS_X,
+  ];
   const currenciesForStakeType = [Currency.NEAR];
   const currenciesForLockType = [Currency.CELO];
 
@@ -53,6 +85,9 @@ export async function verifyStakeOperationDetailsInfo(
   }
   if (currenciesForSender.includes(currency)) {
     await app.operationDetails.checkSender(delegation.account.address);
+  }
+  if (fees) {
+    await app.operationDetails.checkFees(fees);
   }
   if (currenciesForDelegateType.includes(currency)) {
     await app.operationDetails.checkTransactionType("DELEGATE");

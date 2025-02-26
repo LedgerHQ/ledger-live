@@ -4,6 +4,7 @@ import { step } from "tests/misc/reporters/step";
 import { NFTTransaction, Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
 
 export class SendModal extends Modal {
+  private accountDebitPlaceholder = this.page.locator("#account-debit-placeholder input");
   private drowdownAccount = this.page.locator('[data-testid="modal-content"] svg').nth(1);
   readonly recipientInput = this.page.getByTestId("send-recipient-input");
   readonly tagInput = this.page.getByTestId("memo-tag-input");
@@ -176,5 +177,15 @@ export class SendModal extends Modal {
       const warningText = await this.inputWarning.innerText();
       expect(warningText).toMatch(expectedWarningMessage);
     }
+  }
+
+  @step("Select currency to debit")
+  async selectDebitCurrency(tx: Transaction) {
+    await expect(this.accountDebitPlaceholder).toBeVisible();
+    await this.accountDebitPlaceholder.click();
+    await this.accountDebitPlaceholder.fill(tx.accountToDebit.currency.ticker);
+    await this.dropdownOptions
+      .locator(this.optionWithText(tx.accountToDebit.currency.ticker.toUpperCase()))
+      .click();
   }
 }

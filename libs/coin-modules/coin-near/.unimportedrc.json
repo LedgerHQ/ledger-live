@@ -10,5 +10,5 @@
     "src/specs.ts",
     "src/transaction.ts"
   ],
-  "ignoreUnimported": []
+  "ignoreUnimported": [ "src/api/node.mock.ts" ]
 }

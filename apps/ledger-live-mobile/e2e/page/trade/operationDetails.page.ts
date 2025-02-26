@@ -10,6 +10,7 @@ export default class OperationDetailsPage {
   delegatedAmountId = "operationDetails-delegatedAmount";
   providerId = "operationDetails-delegatedTo";
   senderId = "operationDetails-sender0";
+  feesId = "operationDetails-fees";
 
   "operationsType" = {
     OUT: "Sent",
@@ -58,6 +59,12 @@ export default class OperationDetailsPage {
   async checkSender(sender: string) {
     await scrollToId(this.senderId);
     await expect(getElementById(this.senderId)).toHaveText(sender);
+  }
+
+  @Step("Check Fees")
+  async checkFees(fees: string) {
+    await scrollToId(this.feesId);
+    await expect(getElementById(this.feesId)).toHaveText(fees);
   }
 
   @Step("Check transaction type")

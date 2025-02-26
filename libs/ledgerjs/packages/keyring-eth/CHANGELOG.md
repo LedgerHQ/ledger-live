@@ -1,29 +1,22 @@
 # @ledgerhq/keyring-eth
 
-## 0.2.21-nightly.2
+## 0.2.21
 
 ### Patch Changes
 
-- Updated dependencies [[`ee205a0`](https://github.com/LedgerHQ/ledger-live/commit/ee205a01e1a26045e468735907039ad9be1c7f34)]:
-  - @ledgerhq/coin-evm@2.11.0-nightly.2
+- Updated dependencies [[`da67b55`](https://github.com/LedgerHQ/ledger-live/commit/da67b5511b22553f7e3e089eca2e363a5e3cbffe), [`94a59f2`](https://github.com/LedgerHQ/ledger-live/commit/94a59f2030b8b25962e183919017a1e25454fdfb), [`0a4413d`](https://github.com/LedgerHQ/ledger-live/commit/0a4413dd5cf50967c27b39bbd7dd9222e6322a60)]:
+  - @ledgerhq/coin-evm@2.11.0
+  - @ledgerhq/types-live@6.60.0
+  - @ledgerhq/hw-app-eth@6.42.7
 
-## 0.2.21-nightly.1
-
-### Patch Changes
-
-- Updated dependencies [[`e4d9a5c`](https://github.com/LedgerHQ/ledger-live/commit/e4d9a5ce6c3e8f2b3829f8f5772e7ba712a4a50c)]:
-  - @ledgerhq/types-live@6.60.0-nightly.1
-  - @ledgerhq/coin-evm@2.10.1-nightly.1
-  - @ledgerhq/hw-app-eth@6.42.7-nightly.1
-
-## 0.2.21-nightly.0
+## 0.2.21-next.0
 
 ### Patch Changes
 
-- Updated dependencies [[`94a59f2`](https://github.com/LedgerHQ/ledger-live/commit/94a59f2030b8b25962e183919017a1e25454fdfb), [`0a4413d`](https://github.com/LedgerHQ/ledger-live/commit/0a4413dd5cf50967c27b39bbd7dd9222e6322a60)]:
-  - @ledgerhq/coin-evm@2.10.1-nightly.0
-  - @ledgerhq/types-live@6.60.0-nightly.0
-  - @ledgerhq/hw-app-eth@6.42.7-nightly.0
+- Updated dependencies [[`da67b55`](https://github.com/LedgerHQ/ledger-live/commit/da67b5511b22553f7e3e089eca2e363a5e3cbffe), [`94a59f2`](https://github.com/LedgerHQ/ledger-live/commit/94a59f2030b8b25962e183919017a1e25454fdfb), [`0a4413d`](https://github.com/LedgerHQ/ledger-live/commit/0a4413dd5cf50967c27b39bbd7dd9222e6322a60)]:
+  - @ledgerhq/coin-evm@2.11.0-next.0
+  - @ledgerhq/types-live@6.60.0-next.0
+  - @ledgerhq/hw-app-eth@6.42.7-next.0
 
 ## 0.2.20
 
