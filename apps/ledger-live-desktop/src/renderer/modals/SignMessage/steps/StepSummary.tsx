@@ -14,7 +14,9 @@ import { StepProps } from "../types";
 import { useAccountName } from "~/renderer/reducers/wallet";
 import AngleDown from "~/renderer/icons/AngleDown";
 import FormattedVal from "~/renderer/components/FormattedVal";
+import { getTokenUnit } from "~/renderer/utils";
 import { Account } from "@ledgerhq/types-live";
+import { Unit } from "@ledgerhq/types-cryptoassets";
 
 const Circle = styled.div`
   height: 32px;
@@ -64,19 +66,9 @@ const AdvancedMessageArea = styled.pre`
 `;
 
 const MessageProperty = memo(
-  ({
-    label,
-    value,
-    account,
-    contractAddress,
-  }: MessageProperties[0] & { account?: Account; contractAddress?: string | string[] }) => {
-    if (!value) return null;
-
-    const isPropertyAmount = label.includes("Amount") && account && contractAddress;
-
-    const tokenUnit = isPropertyAmount
-      ? account.subAccounts?.find(a => a.token.contractAddress === contractAddress)?.token.units[0]
-      : undefined;
+  ({ property, tokenUnit }: { property: MessageProperties[0]; tokenUnit: Unit | undefined }) => {
+    if (!property?.value) return null;
+    const value = property.value;
 
     return (
       <Box
@@ -85,7 +77,7 @@ const MessageProperty = memo(
         mb={20}
       >
         <Text ff="Inter|Medium" color="palette.text.shade40" fontSize={4}>
-          {label}
+          {property.label}
         </Text>
         <Text
           ff="Inter|Medium"
@@ -97,18 +89,16 @@ const MessageProperty = memo(
           {typeof value === "string" ? (
             <ValueWrapper>
               {tokenUnit ? (
-                <>
-                  <FormattedVal
-                    color={"palette.neutral.c100"}
-                    val={Number(value)}
-                    unit={tokenUnit}
-                    fontSize={3}
-                    disableRounding
-                    alwaysShowValue
-                    showCode
-                    inline
-                  />
-                </>
+                <FormattedVal
+                  color={"palette.neutral.c100"}
+                  val={Number(value)}
+                  unit={tokenUnit}
+                  fontSize={3}
+                  disableRounding
+                  alwaysShowValue
+                  showCode
+                  inline
+                />
               ) : (
                 value
               )}
@@ -137,10 +127,13 @@ const MessagePropertiesComp = memo(
 
     return properties ? (
       <Box flex="1">
-        {properties.map((p, i) => {
-          const props = { ...p, account, contractAddress };
-          return <MessageProperty key={i} {...props} />;
-        })}
+        {properties.map((p, i) => (
+          <MessageProperty
+            key={i}
+            property={p}
+            tokenUnit={getTokenUnit(p.label, account, contractAddress)}
+          />
+        ))}
       </Box>
     ) : null;
   },
