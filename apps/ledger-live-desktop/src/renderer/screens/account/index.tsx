@@ -107,7 +107,7 @@ const AccountPage = ({
   const AccountSubHeader = specific?.AccountSubHeader;
   const bgColor = useTheme().colors.palette.background.paper;
   const [shouldFilterTokenOpsZeroAmount] = useFilterTokenOperationsZeroAmount();
-  const { hiddenNftCollections } = useNftCollectionsStatus();
+  const { hiddenNftCollections } = useNftCollectionsStatus(true);
 
   const nftReworked = useFeature("lldNftsGalleryNewArch");
   const isNftReworkedEnabled = nftReworked?.enabled;
