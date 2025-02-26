@@ -439,8 +439,8 @@
       "cta" : "Перейти в «Мой Ledger»"
     },
     "wrongDevice" : {
-      "title" : "Ledger Nano S™ не поддерживает THORChain.",
-      "description" : "THORChain не поддерживается устройством Ledger Nano S™. Для проведения кроссчейн-обмена через THORChain внутри Ledger Live используйте Ledger Nano S Plus, Ledger Nano X, Ledger Stax или Ledger Flex.",
+      "title" : "Ledger Nano S™ не поддерживает {{provider}}.",
+      "description" : "Ledger Nano S™ не поддерживает {{provider}}. Для проведения кроссчейн-обмена через {{provider}} внутри Ledger Live используйте Ledger Nano S Plus, Ledger Nano X, Ledger Stax или Ledger Flex.",
       "cta" : "Совместимые устройства",
       "changeProvider" : "Поменять оператора"
     },
@@ -4155,6 +4155,11 @@
       "debugAppsDesc" : "Показывать и открывать отладочные приложения на платформе.",
       "debugReactQuery" : "Разрешить отладку ReactQuery",
       "debugReactQueryDesc" : "Показывать и одобрять запуск консоли отладки ReactQuery.",
+      "nfts" : {
+        "title" : "Скрытые коллекции NFT",
+        "description" : "Сбросить список скрытых коллекций",
+        "reset" : "Сбросить"
+      },
       "exchangeDeveloperMode" : {
         "title" : "Режим разработчика для приложения Exchange",
         "desc" : "Добавить информацию о поставщике обмена",
@@ -5723,7 +5728,7 @@
     },
     "MultiversXDecimalsLimitReached" : {
       "title" : "Достигнут лимит десятичных знаков",
-      "description" : "Убедитесь, что у указанной суммы 18 десятичных знаков."
+      "description" : "Убедитесь, что в указанной сумме до 18 десятичных знаков."
     },
     "MultiversXMinDelegatedAmountError" : {
       "title" : "Делегированная сумма должна быть не менее {{formattedAmount}}"
@@ -6918,6 +6923,14 @@
         "optOut" : {
           "title" : "Пора обновиться",
           "description" : "Ledger Nano S скоро перестанет обновляться. Перейдите на наши новые устройства со <0>скидкой {{discount}}%</0>.",
+          "cta" : "Прокачать кошелёк",
+          "linkText" : "Подробнее..."
+        }
+      },
+      "portfolio" : {
+        "optOut" : {
+          "title" : "Пора обновиться",
+          "description" : "Перейдите на наши новые устройства со <0>скидкой {{discount}}%</0> для ещё лучшей безопасности и удобства использования.",
           "cta" : "Прокачать кошелёк",
           "linkText" : "Подробнее..."
         }
