@@ -1,0 +1,175 @@
+name: Test Changeset Level Adjustment
+
+on:
+  workflow_dispatch:
+    inputs:
+      test_case:
+        description: 'Test case to run'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - patch-to-minor
+          - major-to-patch
+
+jobs:
+  test-patch-to-minor:
+    name: Test patch to minor conversion
+    runs-on: ubuntu-latest
+    if: github.event.inputs.test_case == 'all' || github.event.inputs.test_case == 'patch-to-minor'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Create test changesets
+        shell: bash
+        run: |
+          mkdir -p .changeset
+          # Create patch changeset
+          cat > .changeset/patch-change.md << 'EOF'
+          ---
+          "@scope/package-a": patch
+          "@scope/package-b": patch
+          ---
+          
+          This is a patch change for testing.
+          EOF
+          
+          # Create another changeset with mixed levels
+          cat > .changeset/mixed-change.md << 'EOF'
+          ---
+          "@scope/package-c": minor
+          "@scope/package-d": patch
+          "@scope/package-e": major
+          ---
+          
+          This is a mixed change for testing.
+          EOF
+          
+          # List the files created
+          echo "Created test changesets:"
+          find .changeset -type f | sort
+          cat .changeset/patch-change.md
+          cat .changeset/mixed-change.md
+
+      - name: Move patch to minor
+        uses: LedgerHQ/ledger-live/tools/actions/composites/adjust-changeset-level@develop
+        with:
+          from_level: patch
+          to_level: minor
+
+      - name: Verify results
+        shell: bash
+        run: |
+          echo "Verifying patch-change.md:"
+          cat .changeset/patch-change.md
+          if grep -q ': patch' .changeset/patch-change.md; then
+            echo "❌ Failed: patch-change.md still contains patch level"
+            exit 1
+          fi
+          if ! grep -q '"@scope/package-a": minor' .changeset/patch-change.md; then
+            echo "❌ Failed: package-a not converted to minor"
+            exit 1
+          fi
+          if ! grep -q '"@scope/package-b": minor' .changeset/patch-change.md; then
+            echo "❌ Failed: package-b not converted to minor"
+            exit 1
+          fi
+          
+          echo "Verifying mixed-change.md:"
+          cat .changeset/mixed-change.md
+          if ! grep -q '"@scope/package-c": minor' .changeset/mixed-change.md; then
+            echo "❌ Failed: package-c minor level was changed"
+            exit 1
+          fi
+          if grep -q '"@scope/package-d": patch' .changeset/mixed-change.md; then
+            echo "❌ Failed: package-d patch not converted to minor"
+            exit 1
+          fi
+          if ! grep -q '"@scope/package-e": major' .changeset/mixed-change.md; then
+            echo "❌ Failed: package-e major level was changed"
+            exit 1
+          fi
+          
+          echo "✅ All patch to minor tests passed!"
+
+  test-major-to-patch:
+    name: Test major to patch conversion
+    runs-on: ubuntu-latest
+    if: github.event.inputs.test_case == 'all' || github.event.inputs.test_case == 'major-to-patch'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Create test changesets
+        shell: bash
+        run: |
+          mkdir -p .changeset
+          # Create major changeset
+          cat > .changeset/major-change.md << 'EOF'
+          ---
+          "@scope/package-a": major
+          "@scope/package-b": major
+          ---
+          
+          This is a major change for testing.
+          EOF
+          
+          # Create another changeset with mixed levels
+          cat > .changeset/mixed-change.md << 'EOF'
+          ---
+          "@scope/package-c": minor
+          "@scope/package-d": patch
+          "@scope/package-e": major
+          ---
+          
+          This is a mixed change for testing.
+          EOF
+          
+          # List the files created
+          echo "Created test changesets:"
+          find .changeset -type f | sort
+          cat .changeset/major-change.md
+          cat .changeset/mixed-change.md
+
+      - name: Move major to patch
+        uses: LedgerHQ/ledger-live/tools/actions/composites/adjust-changeset-level@develop
+        with:
+          from_level: major
+          to_level: patch
+
+      - name: Verify results
+        shell: bash
+        run: |
+          echo "Verifying major-change.md:"
+          cat .changeset/major-change.md
+          if grep -q ': major' .changeset/major-change.md; then
+            echo "❌ Failed: major-change.md still contains major level"
+            exit 1
+          fi
+          if ! grep -q '"@scope/package-a": patch' .changeset/major-change.md; then
+            echo "❌ Failed: package-a not converted to patch"
+            exit 1
+          fi
+          if ! grep -q '"@scope/package-b": patch' .changeset/major-change.md; then
+            echo "❌ Failed: package-b not converted to patch"
+            exit 1
+          fi
+          
+          echo "Verifying mixed-change.md:"
+          cat .changeset/mixed-change.md
+          if ! grep -q '"@scope/package-c": minor' .changeset/mixed-change.md; then
+            echo "❌ Failed: package-c minor level was changed"
+            exit 1
+          fi
+          if ! grep -q '"@scope/package-d": patch' .changeset/mixed-change.md; then
+            echo "❌ Failed: package-d patch level was changed"
+            exit 1
+          fi
+          if grep -q '"@scope/package-e": major' .changeset/mixed-change.md; then
+            echo "❌ Failed: package-e major not converted to patch"
+            exit 1
+          fi
+          
+          echo "✅ All major to patch tests passed!"
