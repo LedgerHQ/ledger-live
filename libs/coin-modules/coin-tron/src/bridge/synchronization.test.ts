@@ -99,7 +99,8 @@ const reviver = (key: string, value: unknown) => {
     return typeof value === "string" ? new BigNumber(value as string) : value;
   }
   // Remove undesired properties as they always change
-  if (["lastSyncDate"].includes(key) === true) {
+  //FIXME: balanceHistoryCache
+  if (["lastSyncDate", "latestDate", "balanceHistoryCache"].includes(key) === true) {
     return undefined;
   }
 
