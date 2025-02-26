@@ -8,9 +8,6 @@ jobs:
     name: Test patch to minor conversion
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
       - name: Create test changesets
         shell: bash
         run: |
@@ -87,9 +84,6 @@ jobs:
     name: Test major to patch conversion
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
       - name: Create test changesets
         shell: bash
         run: |
