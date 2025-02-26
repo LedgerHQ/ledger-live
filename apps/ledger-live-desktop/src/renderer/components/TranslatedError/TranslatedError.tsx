@@ -18,6 +18,7 @@ type Props = {
   field?: "title" | "description" | "list";
   noLink?: boolean;
   fallback?: React.ReactNode;
+  dataTestId?: string;
 };
 
 type ErrorListProps = {
@@ -34,7 +35,13 @@ function ErrorList({ translation }: ErrorListProps) {
   );
 }
 
-export function TranslatedError({ error, fallback, field = "title", noLink }: Props): JSX.Element {
+export function TranslatedError({
+  error,
+  fallback,
+  field = "title",
+  noLink,
+  dataTestId,
+}: Props): JSX.Element {
   const { t } = useTranslation();
   const ldmkTransportFlag = useFeature("ldmkTransport");
 
@@ -97,7 +104,9 @@ export function TranslatedError({ error, fallback, field = "title", noLink }: Pr
 
   return (
     <>
-      <Trans i18nKey={translationKey} components={{ ...links }} values={args} />
+      <span data-testid={dataTestId}>
+        <Trans i18nKey={translationKey} components={{ ...links }} values={args} />
+      </span>
 
       {urls.errors[error.name] && !noLink && (
         <>

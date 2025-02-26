@@ -827,7 +827,11 @@ export const renderError = ({
         title={<TranslatedError error={tmpError as unknown as Error} noLink />}
         description={
           withDescription && (
-            <TranslatedError error={tmpError as unknown as Error} field="description" />
+            <TranslatedError
+              dataTestId="error-description-deviceAction"
+              error={tmpError as unknown as Error}
+              field="description"
+            />
           )
         }
         list={
