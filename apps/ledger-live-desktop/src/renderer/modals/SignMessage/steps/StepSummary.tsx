@@ -1,6 +1,6 @@
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import type { MessageProperties } from "@ledgerhq/types-live";
-import React, { memo, useEffect, useState } from "react";
+import React, { memo, useEffect, useMemo, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import styled from "styled-components";
 import Box from "~/renderer/components/Box";
@@ -66,9 +66,8 @@ const AdvancedMessageArea = styled.pre`
 `;
 
 const MessageProperty = memo(
-  ({ property, tokenUnit }: { property: MessageProperties[0]; tokenUnit: Unit | undefined }) => {
-    if (!property?.value) return null;
-    const value = property.value;
+  ({ label, value, tokenUnit }: MessageProperties[0] & { tokenUnit?: Unit }) => {
+    if (!value) return null;
 
     return (
       <Box
@@ -77,7 +76,7 @@ const MessageProperty = memo(
         mb={20}
       >
         <Text ff="Inter|Medium" color="palette.text.shade40" fontSize={4}>
-          {property.label}
+          {label}
         </Text>
         <Text
           ff="Inter|Medium"
@@ -86,23 +85,19 @@ const MessageProperty = memo(
           pl={2}
           style={{ maxWidth: "90%" }}
         >
-          {typeof value === "string" ? (
-            <ValueWrapper>
-              {tokenUnit ? (
-                <FormattedVal
-                  color={"palette.neutral.c100"}
-                  val={Number(value)}
-                  unit={tokenUnit}
-                  fontSize={3}
-                  disableRounding
-                  alwaysShowValue
-                  showCode
-                  inline
-                />
-              ) : (
-                value
-              )}
-            </ValueWrapper>
+          {tokenUnit ? (
+            <FormattedVal
+              color={"palette.text.shade90"}
+              val={Number(value)}
+              unit={tokenUnit}
+              fontSize={3}
+              disableRounding
+              alwaysShowValue
+              showCode
+              inline
+            />
+          ) : typeof value === "string" ? (
+            <ValueWrapper>{value}</ValueWrapper>
           ) : (
             <PropertiesList>
               {value?.map?.((v, i) => (
@@ -121,16 +116,20 @@ const MessageProperty = memo(
 MessageProperty.displayName = "MessageProperty";
 
 const MessagePropertiesComp = memo(
-  (props: { properties: MessageProperties | null } & { account: Account }) => {
-    const { properties, account } = props;
-    const contractAddress = properties?.find(p => p.label === "Token")?.value;
+  (props: {
+    properties: MessageProperties | null;
+    contractAddress?: string | string[];
+    account: Account;
+  }) => {
+    const { properties, account, contractAddress } = props;
 
     return properties ? (
       <Box flex="1">
         {properties.map((p, i) => (
           <MessageProperty
             key={i}
-            property={p}
+            label={p.label}
+            value={p.value}
             tokenUnit={getTokenUnit(p.label, account, contractAddress)}
           />
         ))}
@@ -149,6 +148,10 @@ export default function StepSummary({ account, message: messageData }: StepProps
   const accountName = useAccountName(account);
 
   const isACREWithdraw = "type" in messageData && messageData.type === "Withdraw";
+
+  const contractAddress = useMemo(() => {
+    return messageFields?.find(p => p.label === "Token")?.value;
+  }, [messageFields]);
 
   useEffect(() => {
     if (messageData.standard === "EIP712") {
@@ -181,7 +184,11 @@ export default function StepSummary({ account, message: messageData }: StepProps
 
       {!isACREWithdraw ? (
         messageData.standard === "EIP712" ? (
-          <MessagePropertiesComp properties={messageFields} account={account} />
+          <MessagePropertiesComp
+            properties={messageFields}
+            account={account}
+            contractAddress={contractAddress}
+          />
         ) : (
           <MessageProperty label={"message"} value={messageData.message} />
         )
