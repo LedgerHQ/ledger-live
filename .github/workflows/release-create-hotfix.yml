@@ -50,8 +50,8 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
       - name: create hotfix branch
         run: |
-          git checkout -b hotfix
-          git push -u origin hotfix
+          git checkout -b hotfix-angusbayley-test
+          git push -u origin hotfix-angusbayley-test
       - name: Setup the caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         id: setup-caches
@@ -86,7 +86,7 @@ jobs:
         with:
           commit_message: "chore(hotfix) :rocket: entering hotfix mode"
           repo: ${{ github.repository }}
-          branch: hotfix
+          branch: hotfix-angusbayley-test
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Get date
@@ -99,6 +99,6 @@ jobs:
             --title ":fire: Hotfix ${{ steps.date.outputs.date }} (targeting ${{ github.event.inputs.application }} ${{ github.event.inputs.tag_version }})"\
             -F ./.github/templates/hotfix.md \
             --base main \
-            --head hotfix
+            --head hotfix-angusbayley-test
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
