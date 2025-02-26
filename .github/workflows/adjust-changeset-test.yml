@@ -40,7 +40,7 @@ jobs:
           cat .changeset/mixed-change.md
 
       - name: Move patch to minor
-        uses: LedgerHQ/ledger-live/tools/actions/composites/adjust-changeset-level@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/adjust-changeset-level@support/fix-adjust-changeset-action
         with:
           from_level: patch
           to_level: minor
@@ -116,7 +116,7 @@ jobs:
           cat .changeset/mixed-change.md
 
       - name: Move major to patch
-        uses: LedgerHQ/ledger-live/tools/actions/composites/adjust-changeset-level@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/adjust-changeset-level@support/fix-adjust-changeset-action
         with:
           from_level: major
           to_level: patch
