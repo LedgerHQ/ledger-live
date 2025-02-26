@@ -100,7 +100,7 @@ jobs:
         with:
           commit_message: "chore(prerelease): :rocket: release prerelease [${{ env.LLD }}, ${{ env.LLM }}]"
           repo: ${{ github.repository }}
-          branch: $RELEASE_BRANCH
+          branch: ${{ github.ref_name }}
       - name: commit (from hotfix branch)
         if: ${{ startsWith(github.ref_name, 'hotfix') }}
         env:
@@ -111,7 +111,7 @@ jobs:
         with:
           commit_message: "chore(hotfix): :fire: hotfix prerelease [${{ env.LLD }}, ${{ env.LLM }}]"
           repo: ${{ github.repository }}
-          branch: $RELEASE_BRANCH
+          branch: ${{ github.ref_name }}
       - name: commit (from ${{ inputs.ref }} branch) workflow dispatch
         if: ${{ github.event_name == 'workflow_dispatch' }}
         env:
@@ -122,7 +122,7 @@ jobs:
         with:
           commit_message: "chore(prerelease): :rocket: ${{ inputs.ref }} prerelease [LLD(${{ steps.post-desktop-version.outputs.version }}), LLM(${{ steps.post-mobile-version.outputs.version }})]"
           repo: ${{ github.repository }}
-          branch: $RELEASE_BRANCH
+          branch: ${{ inputs.ref }}
       - name: authenticate with npm
         uses: actions/setup-node@v4
         with:
