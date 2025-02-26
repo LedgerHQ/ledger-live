@@ -7,7 +7,7 @@ import {
   SolanaStakeAccountIsNotDelegatable,
   SolanaStakeAccountValidatorIsUnchangeable,
 } from "../errors";
-import { testOnChainData } from "./test-onchain-data";
+import { testOnChainData } from "./test-onchain-data.fixture";
 import getTransactionStatus from "../getTransactionStatus";
 import { prepareTransaction } from "../prepareTransaction";
 import { PARSED_PROGRAMS } from "../api/chain/program/constants";

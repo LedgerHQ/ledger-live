@@ -28,7 +28,7 @@ import { compact } from "lodash/fp";
 import { assertUnreachable } from "./utils";
 import { getEnv } from "@ledgerhq/live-env";
 import { encodeAccountId } from "@ledgerhq/coin-framework/lib/account/accountId";
-import { testOnChainData } from "./tests/test-onchain-data";
+import { testOnChainData } from "./tests/test-onchain-data.fixture";
 
 const mainAccId = encodeAccountId({
   type: "js",
