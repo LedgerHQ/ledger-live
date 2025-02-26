@@ -187,6 +187,20 @@ const AccountPage = ({
       >
         <AccountHeaderActions account={account} parentAccount={parentAccount} />
       </Box>
+      {currencyConfig?.status.type === "migration" && (
+        <TopBanner
+          status="warning"
+          content={{
+            message: (
+              <Text fontFamily="Inter|Bold" color="neutral.c00" flex={1}>
+                {
+                  "The Migration Baner is beigin created. Just wait a moment please! Come back to you very soon. Thank you!"
+                }
+              </Text>
+            ),
+          }}
+        />
+      )}
       {currencyConfig?.status.type === "feature_unavailable" && (
         <TopBanner
           status="warning"

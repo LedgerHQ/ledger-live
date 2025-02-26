@@ -143,6 +143,20 @@ export function getListHeaderComponents({
           parentAccount={parentAccount}
         />
       </Box>,
+      currencyConfig?.status.type === "migration" && (
+        <View style={{ marginTop: 16 }}>
+          <Alert
+            key="deprecated_banner"
+            type="warning"
+            learnMoreKey="account.willBedeprecatedBanner.contactSupport"
+            learnMoreUrl={urls.contactSupportWebview.en}
+          >
+            {
+              "The Migration Baner is beigin created. Just wait a moment please! Come back to you very soon. Thank you!"
+            }
+          </Alert>
+        </View>
+      ),
       currencyConfig?.status.type === "will_be_deprecated" && (
         <View style={{ marginTop: 16 }}>
           <Alert
