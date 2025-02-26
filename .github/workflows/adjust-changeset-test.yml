@@ -1,23 +1,12 @@
 name: Test Changeset Level Adjustment
 
 on:
-  workflow_dispatch:
-    inputs:
-      test_case:
-        description: 'Test case to run'
-        required: true
-        default: 'all'
-        type: choice
-        options:
-          - all
-          - patch-to-minor
-          - major-to-patch
+  pull_request:
 
 jobs:
   test-patch-to-minor:
     name: Test patch to minor conversion
     runs-on: ubuntu-latest
-    if: github.event.inputs.test_case == 'all' || github.event.inputs.test_case == 'patch-to-minor'
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -97,7 +86,6 @@ jobs:
   test-major-to-patch:
     name: Test major to patch conversion
     runs-on: ubuntu-latest
-    if: github.event.inputs.test_case == 'all' || github.event.inputs.test_case == 'major-to-patch'
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
