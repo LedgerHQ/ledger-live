@@ -1,3 +1,4 @@
+import type { Account } from "@ledgerhq/types-live";
 import BIPPath from "bip32-path";
 
 export const pathToBuffer = (originalPath: string): Buffer => {
@@ -14,3 +15,7 @@ export const pathToBuffer = (originalPath: string): Buffer => {
   }
   return buf;
 };
+
+export function getSerializedAddressParameters(account: Account): Buffer {
+  return pathToBuffer(account.freshAddressPath);
+}
