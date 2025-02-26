@@ -134,5 +134,7 @@
     "@ledgerhq/native-modules-tools": "1.0.3",
     "@ledgerhq/pnpm-utils": "1.0.1"
   },
-  "changesets": []
+  "changesets": [
+    "gold-singers-begin"
+  ]
 }

@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.101.0-hotfix.0
+
+### Minor Changes
+
+- [#9365](https://github.com/LedgerHQ/ledger-live/pull/9365) [`b30d546`](https://github.com/LedgerHQ/ledger-live/commit/b30d546fd5b3158bdd570b635887e11b74576b19) Thanks [@angusbayley](https://github.com/angusbayley)! - important readme update
+
 ## 2.100.0
 
 ### Minor Changes
