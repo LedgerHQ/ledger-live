@@ -1,30 +1,28 @@
-import React, { memo, useCallback } from "react";
-import { SectionList, SectionListRenderItemInfo } from "react-native";
-import { Button } from "@ledgerhq/native-ui";
-import { useTranslation } from "react-i18next";
-import { useNavigation } from "@react-navigation/native";
-import { useSelector } from "react-redux";
+import React, { useCallback } from "react";
 import {
-  AccountLikeArray,
-  DailyOperationsSection,
   Operation,
+  DailyOperationsSection,
   SubAccount,
+  AccountLikeArray,
 } from "@ledgerhq/types-live";
+import { Button } from "@ledgerhq/native-ui";
+import { SectionListRenderItemInfo, SectionList } from "react-native";
+
+import { useSelector } from "react-redux";
 import OperationRow from "~/components/OperationRow";
-import SectionHeader from "~/components/SectionHeader";
-import { withDiscreetMode } from "~/context/DiscreetModeContext";
-import { ScreenName } from "~/const";
 import { parentAccountSelector } from "~/reducers/accounts";
-import { track } from "~/analytics";
+import SectionHeader from "~/components/SectionHeader";
 import { State } from "~/reducers/types";
-import { useOperations } from "../Analytics/Operations/useOperations";
+import { TFunction } from "react-i18next";
 
 type Props = {
   accounts: AccountLikeArray;
   testID?: string;
+  sections: DailyOperationsSection[];
+  completed: boolean;
+  goToAnalyticsOperations: () => void;
+  t: TFunction;
 };
-
-const NB_OPERATIONS_TO_DISPLAY = 3;
 
 const keyExtractor = (operation: Operation) => operation.id;
 
@@ -32,16 +30,14 @@ const renderSectionHeader = ({ section }: { section: { day: Date } }) => {
   return <SectionHeader day={section.day} />;
 };
 
-const OperationsHistory = ({ accounts, testID }: Props) => {
-  const { t } = useTranslation();
-  const navigation = useNavigation();
-
-  const { sections, completed } = useOperations({
-    accounts,
-    opCount: NB_OPERATIONS_TO_DISPLAY,
-    withSubAccounts: true,
-    skipOp: 0,
-  });
+export function OperationsHistoryList({
+  accounts,
+  testID,
+  sections,
+  completed,
+  goToAnalyticsOperations,
+  t,
+}: Props) {
   const renderItem = useCallback(
     ({ item, index, section }: SectionListRenderItemInfo<Operation, DailyOperationsSection>) => {
       const account = accounts.find(a => a.id === item.accountId) as SubAccount;
@@ -65,14 +61,6 @@ const OperationsHistory = ({ accounts, testID }: Props) => {
     [accounts],
   );
 
-  const goToAnalyticsOperations = useCallback(() => {
-    track("button_clicked", {
-      button: "See All Transactions",
-    });
-    navigation.navigate(ScreenName.AnalyticsOperations, {
-      accountsIds: accounts.map(account => account.id),
-    });
-  }, [navigation, accounts]);
   if (!sections) return null;
 
   return (
@@ -100,6 +88,4 @@ const OperationsHistory = ({ accounts, testID }: Props) => {
       ) : null}
     </>
   );
-};
-
-export default withDiscreetMode(memo<Props>(OperationsHistory));
+}
