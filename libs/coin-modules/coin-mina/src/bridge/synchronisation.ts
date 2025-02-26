@@ -102,7 +102,7 @@ export const mapRosettaTxnToOperation = async (
       const type = "OUT";
       ops.push({
         ...op,
-        value: value.plus(fee),
+        value: value.minus(accountCreationFee),
         type,
         id: encodeOperationId(accountId, hash, type),
       });
@@ -118,6 +118,7 @@ export const mapRosettaTxnToOperation = async (
       const type = "IN";
       ops.push({
         ...op,
+        value: value.minus(accountCreationFee),
         type,
         id: encodeOperationId(accountId, hash, type),
       });
