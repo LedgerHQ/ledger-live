@@ -70,12 +70,14 @@ jobs:
       CI_OS: "ubuntu-latest"
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
       SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:latest
-    runs-on: [ledger-live-4xlarge-e2e]
+    runs-on: [ledger-live-test]
     strategy:
       fail-fast: false
       matrix:
-        shardIndex: [1, 2, 3, 4, 5, 6]
-        shardTotal: [6]
+        # shardIndex: [1, 2, 3, 4, 5, 6]
+        # shardTotal: [6]
+        shardIndex: [1, 2, 3]
+        shardTotal: [3]
     steps:
       - uses: actions/checkout@v4
         with:
