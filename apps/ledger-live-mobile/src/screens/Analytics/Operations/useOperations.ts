@@ -25,7 +25,6 @@ type Props = {
   skipOp: number;
 };
 
-// TODO: don't forget that withSubAccounts is used here
 export function useOperations({ accounts, opCount, withSubAccounts, skipOp }: Props) {
   const {
     hideSpamCollection,
@@ -51,7 +50,6 @@ export function useOperations({ accounts, opCount, withSubAccounts, skipOp }: Pr
   const previousFilteredNftData = useRef<{ [key: string]: OrderedOperation }>({});
   const spamOpsCache = useRef<string[]>([]);
 
-  // TODO: place this callback in the right place
   const markNftAsSpam = useCallback(
     (collectionId: string, blockchain: BlockchainEVM, spamScore: number) => {
       if (spamFilteringTxEnabled && spamScore > threshold) {

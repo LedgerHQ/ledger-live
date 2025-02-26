@@ -135,7 +135,7 @@ export default function Generators() {
       <SettingsRow
         title="Reset HiddenCollections NFTs"
         desc="Remove all NFTs from the HiddenCollection list"
-        iconLeft={<Icons.Nft size={"M"} color="black" />}
+        iconLeft={<Icons.Nft size="M" color="black" />}
         onPress={onWipeAntiSpam}
       />
     </SettingsNavigationScrollView>

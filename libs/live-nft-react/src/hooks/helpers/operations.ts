@@ -15,6 +15,11 @@ type CustomNFTOperations = Record<
 
 type OrderedOperation = Operation & { order: number };
 
+type Section = {
+  day: Date;
+  data: Operation[];
+};
+
 function compareOps(op1: Operation, op2: Operation): number {
   if (op1.date !== op2.date) {
     return op2.date.getTime() - op1.date.getTime();
@@ -60,11 +65,6 @@ export const groupOperationsByDate = (ops: Operation[]) =>
     },
     {} as Record<string, Operation[]>,
   );
-
-type Section = {
-  day: Date;
-  data: Operation[];
-};
 
 export const groupOperationsByDateWithSections = (ops: Operation[]): { sections: Section[] } => {
   const groupedOps = ops.reduce(
