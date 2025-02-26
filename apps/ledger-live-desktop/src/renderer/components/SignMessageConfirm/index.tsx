@@ -13,45 +13,42 @@ import Text from "~/renderer/components/Text";
 import Box from "~/renderer/components/Box";
 import { getLLDCoinFamily } from "~/renderer/families";
 import FormattedVal from "~/renderer/components/FormattedVal";
+import { getTokenUnit } from "~/renderer/utils";
+import { Unit } from "@ledgerhq/types-cryptoassets";
 
 const FieldText = styled(Text).attrs(() => ({
   ml: 1,
   ff: "Inter|Medium",
   color: "palette.text.shade80",
   fontSize: 3,
-}))``;
+}))`
+  word-break: break-all;
+  text-align: right;
+  max-width: 80%;
+`;
 
 export type FieldComponentProps = {
-  account: Account;
   field: DeviceTransactionField;
-  contractAddress?: string;
+  tokenUnit: Unit | undefined;
 };
 
 export type FieldComponent = React.ComponentType<FieldComponentProps>;
 
-const TextField = ({ field, account, contractAddress }: FieldComponentProps) => {
-  const isPropertyAmount = field.label.includes("Amount") && contractAddress;
-
-  const unit = isPropertyAmount
-    ? account.subAccounts?.find(a => a.token.contractAddress === contractAddress)?.token.units[0]
-    : undefined;
-
+const TextField = ({ field, tokenUnit }: FieldComponentProps) => {
   return field.type === "text" ? (
     <SignMessageConfirmField label={field.label}>
       <FieldText>
-        {isPropertyAmount ? (
-          <>
-            <FormattedVal
-              color={"palette.neutral.c100"}
-              val={Number(field.value)}
-              unit={unit}
-              fontSize={3}
-              disableRounding
-              alwaysShowValue
-              showCode
-              inline
-            />
-          </>
+        {tokenUnit ? (
+          <FormattedVal
+            color={"palette.neutral.c100"}
+            val={Number(field.value)}
+            unit={tokenUnit}
+            fontSize={3}
+            disableRounding
+            alwaysShowValue
+            showCode
+            inline
+          />
         ) : (
           field.value
         )}
@@ -112,25 +109,22 @@ const SignMessageConfirm = ({ device, account, parentAccount, signMessageRequest
     }
   }
 
+  const contractAddress = (fields?.find(f => f.label === "Token") as { value: string })?.value;
+
   return (
     <Container>
       {!signMessageRequested.message ? (
         <Spinner size={30} />
       ) : (
         <>
-          <Box style={{ width: "100%", rowGap: 7 }} mb={20}>
-            {fields.map((field, i) => {
-              const contractAddress = fields?.find(f => f.label === "Token") as { value: string };
-
-              return (
-                <TextField
-                  key={i}
-                  field={field}
-                  account={mainAccount}
-                  contractAddress={contractAddress?.value}
-                />
-              );
-            })}
+          <Box style={{ width: "100%", rowGap: 10 }} mb={20}>
+            {fields.map((field, i) => (
+              <TextField
+                key={i}
+                field={field}
+                tokenUnit={getTokenUnit(field.label, mainAccount, contractAddress)}
+              />
+            ))}
           </Box>
 
           {renderVerifyUnwrapped({ modelId: device.modelId, type })}
