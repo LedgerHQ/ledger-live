@@ -24,7 +24,6 @@ const FieldText = styled(Text).attrs(() => ({
 }))`
   word-break: break-all;
   text-align: right;
-  max-width: 80%;
 `;
 
 export type FieldComponentProps = {
@@ -37,22 +36,20 @@ export type FieldComponent = React.ComponentType<FieldComponentProps>;
 const TextField = ({ field, tokenUnit }: FieldComponentProps) => {
   return field.type === "text" ? (
     <SignMessageConfirmField label={field.label}>
-      <FieldText>
-        {tokenUnit ? (
-          <FormattedVal
-            color={"palette.neutral.c100"}
-            val={Number(field.value)}
-            unit={tokenUnit}
-            fontSize={3}
-            disableRounding
-            alwaysShowValue
-            showCode
-            inline
-          />
-        ) : (
-          field.value
-        )}
-      </FieldText>
+      {tokenUnit ? (
+        <FormattedVal
+          color={"palette.text.shade80"}
+          val={Number(field.value)}
+          unit={tokenUnit}
+          fontSize={3}
+          disableRounding
+          alwaysShowValue
+          showCode
+          inline
+        />
+      ) : (
+        <FieldText>{field.value}</FieldText>
+      )}
     </SignMessageConfirmField>
   ) : null;
 };
