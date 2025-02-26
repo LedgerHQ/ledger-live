@@ -103,7 +103,6 @@ export function useOperationsList({
     nbToShow,
   );
 
-  // TODO: place this callback in the right place
   const markNftAsSpam = useCallback(
     (collectionId: string, blockchain: BlockchainsType, spamScore: number) => {
       if (spamFilteringTxEnabled && spamScore > thresold) {
