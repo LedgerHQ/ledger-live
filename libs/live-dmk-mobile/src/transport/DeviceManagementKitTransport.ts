@@ -5,10 +5,11 @@ import {
   DeviceStatus,
   DiscoveredDevice,
 } from "@ledgerhq/device-management-kit";
-import { activeDeviceSessionSubject } from "@ledgerhq/live-dmk-shared";
+import { activeDeviceSessionSubject, dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
 import { LocalTracer } from "@ledgerhq/logs";
-import { catchError, firstValueFrom, of, switchMap } from "rxjs";
+import { catchError, first, firstValueFrom, Observer, of, switchMap } from "rxjs";
 import { deviceManagementKit } from "../hooks/useDeviceManagementKit";
+import { DescriptorEvent } from "@ledgerhq/types-devices";
 
 const tracer = new LocalTracer("live-dmk", { function: "DeviceManagementKitTransport" });
 
@@ -28,6 +29,7 @@ export class DeviceManagementKitTransport extends Transport {
     const activeSessionId = activeDeviceSessionSubject.value?.sessionId;
 
     tracer.trace("[open] activeSessionId: " + activeSessionId + " and deviceId: " + deviceOrId);
+    console.log("[open] activeSessionId: " + activeSessionId + " and deviceId: " + deviceOrId);
 
     if (activeSessionId) {
       tracer.trace(`[open] checking existing session ${activeSessionId}`);
@@ -51,20 +53,23 @@ export class DeviceManagementKitTransport extends Transport {
     if (typeof deviceOrId === "string") {
       const devicesObs = deviceManagementKit.listenToAvailableDevices();
       tracer.trace("[open] listen to available devices");
+      console.log("listen to available devices");
 
       const subscription = devicesObs.pipe(
+        first(devices => devices.some(device => device.id === deviceOrId)),
         switchMap(async devices => {
           const found = devices.find(device => device.id === deviceOrId);
           if (!found) {
             tracer.trace("[open] device not found in available devices");
             return undefined;
           }
+          console.log("FOUND DEVICE => CONNECT", found);
 
           tracer.trace(`[open] device found ${found.id}`);
 
           const sessionId = await deviceManagementKit.connect({ device: found });
-          const transport = new DeviceManagementKitTransport(deviceManagementKit, sessionId);
 
+          const transport = new DeviceManagementKitTransport(deviceManagementKit, sessionId);
           activeDeviceSessionSubject.next({ sessionId, transport });
           deviceManagementKit.stopDiscovering();
 
@@ -95,13 +100,42 @@ export class DeviceManagementKitTransport extends Transport {
     throw new Error("No transport found");
   }
 
-  static listen() {
+  static listen(observer: Observer<DescriptorEvent<string>>) {
     const observable = deviceManagementKit.listenToAvailableDevices();
-    return observable.subscribe({
+    let unsubscribed = false;
+
+    const unsubscribe = () => {
+      if (unsubscribed) return;
+      unsubscribed = true;
+      deviceManagementKit.stopDiscovering();
+    };
+
+    observable.subscribe({
       next: devices => {
+        for (const device of devices) {
+          const id = dmkToLedgerDeviceIdMap[device.deviceModel.model];
+          observer.next({
+            type: "add",
+            descriptor: "",
+            device: device,
+            // @ts-expect-error types are not matching
+            deviceModel: {
+              id,
+            },
+          });
+        }
         console.log(devices);
       },
+      complete: observer.complete,
+      error: err => {
+        unsubscribe();
+        tracer.trace("[listen] error", err);
+        observer.error(err);
+      },
     });
+    return {
+      unsubscribe,
+    };
   }
 
   listenToDisconnect = () => {
@@ -127,7 +161,8 @@ export class DeviceManagementKitTransport extends Transport {
   };
 
   close() {
-    this.dmk.close();
+    // this.dmk.close();
+    this.dmk.stopDiscovering();
     return Promise.resolve();
   }
 
