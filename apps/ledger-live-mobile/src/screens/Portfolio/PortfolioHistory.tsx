@@ -28,10 +28,12 @@ export const PortfolioHistoryList = withDiscreetMode(
     onEndReached,
     opCount = 5,
     navigation,
+    skipOp = 0,
   }: {
     onEndReached?: () => void;
     opCount?: number;
     navigation: Props["navigation"];
+    skipOp?: number;
   }) => {
     const accounts = useSelector(accountsSelector);
     const allAccounts = useSelector(flattenAccountsSelector);
@@ -43,6 +45,7 @@ export const PortfolioHistoryList = withDiscreetMode(
       accounts,
       opCount,
       withSubAccounts: true,
+      skipOp,
     });
 
     function ListEmptyComponent() {
@@ -122,13 +125,20 @@ export const PortfolioHistoryList = withDiscreetMode(
 
 function PortfolioHistory({ navigation }: Props) {
   const [opCount, setOpCount] = useState(50);
+  const [skipOp, setSkipOp] = useState(0);
 
   function onEndReached() {
     setOpCount(opCount + 50);
+    setSkipOp(opCount);
   }
 
   return (
-    <PortfolioHistoryList navigation={navigation} opCount={opCount} onEndReached={onEndReached} />
+    <PortfolioHistoryList
+      navigation={navigation}
+      opCount={opCount}
+      onEndReached={onEndReached}
+      skipOp={skipOp}
+    />
   );
 }
 

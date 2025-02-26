@@ -15,20 +15,22 @@ type CustomNFTOperations = Record<
 
 type OrderedOperation = Operation & { order: number };
 
+function compareOps(op1: Operation, op2: Operation): number {
+  if (op1.date !== op2.date) {
+    return op2.date.getTime() - op1.date.getTime();
+  }
+  if (op1.transactionSequenceNumber !== undefined && op2.transactionSequenceNumber !== undefined) {
+    return op2.transactionSequenceNumber - op1.transactionSequenceNumber;
+  }
+  return 0;
+}
+
 export const parseAccountOperations = (operations: Operation[] | undefined) =>
   (operations || [])
     .map(flattenOperationWithInternalsAndNfts)
     .filter(op => op.length)
     .flat()
-    ?.sort((op1: Operation, op2: Operation) => {
-      return Number(
-        op1.date > op2.date ||
-          (op1.date === op2.date &&
-            op1.transactionSequenceNumber !== undefined &&
-            op2.transactionSequenceNumber !== undefined &&
-            op1.transactionSequenceNumber > op2.transactionSequenceNumber),
-      );
-    })
+    ?.sort((op1: Operation, op2: Operation) => compareOps(op1, op2))
     ?.map((o, index) => ({ ...o, order: index }));
 
 export const splitNftOperationsFromAllOperations = (operations: OrderedOperation[] | undefined) => {
