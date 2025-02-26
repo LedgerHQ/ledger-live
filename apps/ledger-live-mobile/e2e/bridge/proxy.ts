@@ -16,7 +16,7 @@ import { Buffer } from "buffer";
 import { getEnv } from "@ledgerhq/live-env";
 import invariant from "invariant";
 
-const proxySubscriptions: [number, Subscription][] = [];
+const proxySubscriptions = new Map<number, Subscription>();
 
 let transport: TransportModule;
 
@@ -51,8 +51,8 @@ export async function startProxy(
 
     const observable = job(options);
 
-    proxySubscriptions.push([
-      proxyPort,
+    proxySubscriptions.set(
+      speculosApiPort,
       observable.subscribe({
         next: message => {
           if (Array.isArray(message)) {
@@ -69,21 +69,21 @@ export async function startProxy(
         },
         complete: () => console.warn("Proxy stopped."),
       }),
-    ]);
+    );
   });
 }
 
 export function closeProxy(proxyPort?: number) {
   if (!proxyPort) {
-    for (const [, subscription] of proxySubscriptions) {
-      subscription.unsubscribe();
-    }
+    proxySubscriptions.forEach(sub => sub.unsubscribe());
+    proxySubscriptions.clear();
     return;
   }
-  const proxySubscription = proxySubscriptions.find(([port]) => port === proxyPort)?.[1];
-  if (proxySubscription) {
-    proxySubscription.unsubscribe();
-    proxySubscriptions.splice(proxySubscriptions.indexOf([proxyPort, proxySubscription]));
+
+  const subscription = proxySubscriptions.get(proxyPort);
+  if (subscription) {
+    subscription.unsubscribe();
+    proxySubscriptions.delete(proxyPort);
   }
 }
 

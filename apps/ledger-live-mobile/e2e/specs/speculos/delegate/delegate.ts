@@ -10,11 +10,11 @@ import { device } from "detox";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 import { getCurrencyManagerApp } from "../../../models/currencies";
 
-export async function runDelegateTest(delegation: Delegate, tmsLink: string) {
+export async function runDelegateTest(delegation: Delegate, tmsLinks: string[]) {
   const app = new Application();
 
-  $TmsLink(tmsLink);
-  describe(`Delegate`, () => {
+  tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+  describe("Delegate", () => {
     beforeAll(async () => {
       await app.init({
         speculosApp: delegation.account.currency.speculosApp,
@@ -69,10 +69,10 @@ export async function runDelegateTest(delegation: Delegate, tmsLink: string) {
   });
 }
 
-export async function runDelegateCelo(delegation: Delegate, tmsLink: string) {
+export async function runDelegateCelo(delegation: Delegate, tmsLinks: string[]) {
   const app = new Application();
 
-  $TmsLink(tmsLink);
+  tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   describe(`Delegate flow on CELO`, () => {
     beforeAll(async () => {
       await app.init({
@@ -117,11 +117,11 @@ export async function runDelegateCelo(delegation: Delegate, tmsLink: string) {
   });
 }
 
-export async function runDelegateTezos(delegation: Delegate, tmsLink: string) {
+export async function runDelegateTezos(delegation: Delegate, tmsLinks: string[]) {
   setEnv("DISABLE_TRANSACTION_BROADCAST", true);
   const app = new Application();
 
-  $TmsLink(tmsLink);
+  tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   describe(`Delegate flow on TEZOS`, () => {
     beforeAll(async () => {
       await app.init({
