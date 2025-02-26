@@ -154,16 +154,17 @@ export const fetchNetworkStatus = async (): Promise<NNetworkStatusResponse> => {
 export const fetchTxs = async (addr: string): Promise<ITxnHistoryData[]> => {
   let page = 1;
   const res: ITxnHistoryData[] = [];
+  const limit = 100;
 
-  const response = await casperIndexerWrapper<ITxnHistoryData>(
-    `/accounts/${addr}/ledgerlive-deploys?limit=100&page=${page}`,
+  let response = await casperIndexerWrapper<ITxnHistoryData>(
+    `/accounts/${addr}/ledgerlive-deploys?limit=${limit}&page=${page}`,
   );
   res.push(...response.data);
 
   while (response.pageCount > page) {
     page++;
-    const response = await casperIndexerWrapper<ITxnHistoryData>(
-      `/accounts/${addr}/ledgerlive-deploys?limit=100&page=${page}`,
+    response = await casperIndexerWrapper<ITxnHistoryData>(
+      `/accounts/${addr}/ledgerlive-deploys?limit=${limit}&page=${page}`,
     );
     res.push(...response.data);
   }
