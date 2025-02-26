@@ -1,5 +1,11 @@
 # @ledgerhq/coin-tron
 
+## 0.3.0-nightly.0
+
+### Minor Changes
+
+- [#9167](https://github.com/LedgerHQ/ledger-live/pull/9167) [`e50b750`](https://github.com/LedgerHQ/ledger-live/commit/e50b750a362e978046cfa2fde321ac3c3212630e) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Setup for alpaca api
+
 ## 0.2.5
 
 ### Patch Changes

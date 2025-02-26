@@ -1,5 +1,15 @@
 ## 34.5.0-next.4
 
+## 34.23.1-nightly.0
+
+### Patch Changes
+
+- Updated dependencies [[`e50b750`](https://github.com/LedgerHQ/ledger-live/commit/e50b750a362e978046cfa2fde321ac3c3212630e), [`e50b750`](https://github.com/LedgerHQ/ledger-live/commit/e50b750a362e978046cfa2fde321ac3c3212630e), [`bcff898`](https://github.com/LedgerHQ/ledger-live/commit/bcff89879272a42c4a68b8395ead975febfa96d0), [`cdd16b5`](https://github.com/LedgerHQ/ledger-live/commit/cdd16b5e7463adef601590591c838b3474ce46ee)]:
+  - @ledgerhq/coin-tezos@1.2.1-nightly.0
+  - @ledgerhq/coin-tron@0.3.0-nightly.0
+  - @ledgerhq/coin-stellar@1.1.0-nightly.0
+  - @ledgerhq/coin-near@0.8.2-nightly.0
+
 ## 34.23.0
 
 ### Minor Changes

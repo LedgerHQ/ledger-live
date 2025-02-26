@@ -1,5 +1,11 @@
 # @ledgerhq/coin-tezos
 
+## 1.2.1-nightly.0
+
+### Patch Changes
+
+- [#9167](https://github.com/LedgerHQ/ledger-live/pull/9167) [`e50b750`](https://github.com/LedgerHQ/ledger-live/commit/e50b750a362e978046cfa2fde321ac3c3212630e) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - coinconfig edit
+
 ## 1.2.0
 
 ### Minor Changes

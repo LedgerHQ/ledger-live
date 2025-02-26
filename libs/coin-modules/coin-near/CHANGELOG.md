@@ -1,5 +1,11 @@
 # @ledgerhq/coin-near
 
+## 0.8.2-nightly.0
+
+### Patch Changes
+
+- [#9314](https://github.com/LedgerHQ/ledger-live/pull/9314) [`cdd16b5`](https://github.com/LedgerHQ/ledger-live/commit/cdd16b5e7463adef601590591c838b3474ce46ee) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Fix getMaxAmount by not taking into account pendingOps with SpendingBalance
+
 ## 0.8.1
 
 ### Patch Changes

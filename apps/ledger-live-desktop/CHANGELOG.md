@@ -1,5 +1,18 @@
 # ledger-live-desktop
 
+## 2.102.0-nightly.0
+
+### Minor Changes
+
+- [#9325](https://github.com/LedgerHQ/ledger-live/pull/9325) [`d2bd6a7`](https://github.com/LedgerHQ/ledger-live/commit/d2bd6a7a886a89a9f6f808e07b194b451e9ceb2c) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add analytics on chart hover
+
+### Patch Changes
+
+- [#9338](https://github.com/LedgerHQ/ledger-live/pull/9338) [`cef6a63`](https://github.com/LedgerHQ/ledger-live/commit/cef6a631774a6c72915ddfcc6c82c5a6e043fa1b) Thanks [@qperrot](https://github.com/qperrot)! - fix first provider for cardano tests
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@34.23.1-nightly.0
+
 ## 2.101.0
 
 ### Minor Changes
