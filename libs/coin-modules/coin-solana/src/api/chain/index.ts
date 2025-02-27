@@ -244,6 +244,7 @@ export function getChainAPI(
 
         const signature = await conn.sendRawTransaction(buffer, {
           preflightCommitment: commitment,
+          skipPreflight: true,
         });
 
         if (!recentBlockhash) {
