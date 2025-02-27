@@ -439,8 +439,8 @@
       "cta" : "내 Ledger로 이동"
     },
     "wrongDevice" : {
-      "title" : "Ledger Nano S™는 THORChain과 호환되지 않습니다",
-      "description" : "Ledger Nano S는 THORChain과 호환되지 않습니다 Ledger Nano S Plus, Ledger Nano X, Ledger Stax, 또는 Ledger Flex로 Ledger Live를 통해 THORChain에서 크로스체인 스왑을 경험할 수 있습니다",
+      "title" : "Ledger Nano S™는 {{provider}}와(과) 호환되지 않습니다",
+      "description" : "Ledger Nano S는 {{provider}}와(과) 호환되지 않습니다 Ledger Nano S Plus, Ledger Nano X, Ledger Stax, 또는 Ledger Flex로 Ledger Live를 통해 {{provider}}에서 크로스체인 스왑을 경험할 수 있습니다",
       "cta" : "호환 가능한 장치 탐색",
       "changeProvider" : "다른 공급자를 통해 스왑"
     },
@@ -3753,7 +3753,66 @@
     },
     "token" : {
       "frozenStateWarning" : "계정 자산이 동결되었습니다!",
-      "transferWarning" : "Ledger Nano S™를 사용해 솔라나 토큰의 수령인 주소를 확인하려면 <0>다음 지침을 따르세요.</0>"
+      "transferWarning" : "Ledger Nano S™를 사용해 솔라나 토큰의 수령인 주소를 확인하려면 <0>다음 지침을 따르세요.</0>",
+      "transferFees" : {
+        "feesPercentHint" : "Token has {{feePercent}}% ({{feeBps}}bps) transfer fee. {{maxFee}} max",
+        "notice" : "Transfer fee {{fee}}%",
+        "tooltipHint" : "Percentage of transfer withheld for token creator",
+        "transferFeesLabel" : "Transfer fees"
+      },
+      "nonTransferable" : {
+        "notice" : "Token is non-transferable"
+      },
+      "interestRate" : {
+        "notice" : "Interest rate: {{rate}}%",
+        "tooltipHint" : "For cosmetic purposes only, no new tokens are created as a result of the interest"
+      },
+      "permanentDelegate" : {
+        "notice" : "Permanent delegate authority is enabled",
+        "initializationNotice" : "Permanent delegate authority is initialized but not enabled",
+        "tooltipHint" : "The delegate has the ability transfer or burn this token from your account"
+      },
+      "requiredMemoOnTransfer" : {
+        "notice" : "Required memo on transfer is enabled",
+        "tooltipHint" : "All incoming transfers to this account must have a memo"
+      },
+      "transferHook" : {
+        "notice" : "Transfer hook is enabled",
+        "initializationNotice" : "Transfer hook is initialized but not enabled",
+        "tooltipHint" : "Token has extra functionality handled by {{programAddress}} program"
+      },
+      "extensionsInfo" : {
+        "title" : "Solana token extensions",
+        "commonInfo" : "Token extensions are the next generation of the Solana Token standard. They introduce a new set of ways to extend the normal token functionality with additional features such as confidential transfers, permanent delegate, custom transfer logic, extended metadata, and much more.",
+        "permanentDelegate" : {
+          "title" : "Permanent delegate",
+          "permanentDelegateAddress" : "Current delegate authority is {{address}}",
+          "permanentDelegateNotSetup" : "Current delegate authority is not set up.",
+          "description" : "Permanent delegate is an authority which has unlimited delegate privileges over any account for that mint. The delegate could burn or transfer any amount of tokens, at any time, on their own authority."
+        },
+        "nonTransferable" : {
+          "title" : "Non-Transferrable Tokens",
+          "description" : "Such tokens are \"soul-bound\" and cannot be moved or burned, except by the token issuer."
+        },
+        "transferHook" : {
+          "title" : "Transfer hook",
+          "transferHookAddress" : "Current transfer hook program is {{address}}",
+          "transferHookNotSetup" : "Current transfer hook program is not set up.",
+          "description" : "Transfer hook gives a token issuers an ability to dictate how users and tokens interact. Instead of a normal transfer, issuer can insert custom logic into a program to be used with the transfer hook extension."
+        },
+        "transferFee" : {
+          "title" : "Transfer Fee",
+          "currentTransferFee" : "Current transfer fee is {{feePercent}}% ({{feeBps}}bps). Max {{maxFee}}.",
+          "description" : "Fees are charged on every transfer of a token and withheld on the recipient account, untouchable by the recipient."
+        },
+        "interestBearing" : {
+          "title" : "Interest-Bearing Tokens",
+          "currentInterestRate" : "Current interest rate is {{rate}}%.",
+          "accruedDelta" : "Accrued {{delta}}.",
+          "interestRateNotSetup" : "Current interest rate is set up to 0%.",
+          "description" : "Tokens that constantly grow or decrease in value according on its interest rate. No new tokens are ever created, the feature is entirely cosmetic."
+        }
+      }
     }
   },
   "ethereum" : {
@@ -4155,6 +4214,11 @@
       "debugAppsDesc" : "디버그 태그된 플랫폼 앱 열기를 표시하고 허용하세요.",
       "debugReactQuery" : "디버그 ReactQuery 허용",
       "debugReactQueryDesc" : "디버그 ReactQuery 콘솔을 표시하고 열 수 있도록 허용합니다.",
+      "nfts" : {
+        "title" : "숨겨진 NFT 컬렉션",
+        "description" : "숨겨진 컬렉션 목록을 재설정하세요",
+        "reset" : "재설정"
+      },
       "exchangeDeveloperMode" : {
         "title" : "거래소 개발 모드",
         "desc" : "거래소 공급자 정보 추가",
@@ -5437,7 +5501,8 @@
     },
     "solana" : {
       "memo" : "태그 / 메모",
-      "memoPlaceholder" : "선택 사항"
+      "memoPlaceholder" : "선택 사항",
+      "requiredMemoPlaceholder" : "Required"
     }
   },
   "errors" : {
@@ -6249,6 +6314,13 @@
     "SolanaTxConfirmationTimeout" : {
       "title" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
     },
+    "SolanaRecipientMemoIsRequired" : {
+      "title" : "Memo is required for recipient address"
+    },
+    "SolanaTokenNonTransferable" : {
+      "title" : "Token is non-transferable",
+      "description" : "Such tokens are \"soul-bound\" and cannot be transferred"
+    },
     "NotEnoughNftOwned" : {
       "title" : "사용 가능한 토큰 수를 초과했습니다"
     },
@@ -6918,6 +6990,14 @@
         "optOut" : {
           "title" : "장치 업그레이드 기회",
           "description" : "Ledger Nano S 업데이트가 곧 종료됩니다. 최신 장치로 업그레이드하고 <0>{{discount}}% 할인 혜택</0>까지 누리세요.",
+          "cta" : "내 지갑 업그레이드하기",
+          "linkText" : "자세히 알아보기"
+        }
+      },
+      "portfolio" : {
+        "optOut" : {
+          "title" : "장치 업그레이드 기회",
+          "description" : "최신 장치로 업그레이드하고 <0>{{discount}}% 할인 혜택</0>은 물론, 더 향상된 보안력과 원활한 사용자 경험을 누려보세요.",
           "cta" : "내 지갑 업그레이드하기",
           "linkText" : "자세히 알아보기"
         }
