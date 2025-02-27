@@ -92,6 +92,8 @@ import { trustchainStoreSelector } from "@ledgerhq/ledger-key-ring-protocol/stor
 import { walletSelector } from "~/reducers/wallet";
 import { exportWalletState, walletStateExportShouldDiffer } from "@ledgerhq/live-wallet/store";
 import { useSyncNFTsWithAccounts } from "./hooks/nfts/useSyncNFTsWithAccounts";
+import { registerTransports } from "./services/registerTransports";
+import LDMKTransportHeader from "./screens/Settings/Experimental/LDMKTransportHeader";
 
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();
@@ -120,6 +122,8 @@ function App() {
   const hasSeenAnalyticsOptInPrompt = useSelector(hasSeenAnalyticsOptInPromptSelector);
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const dispatch = useDispatch();
+
+  useEffect(() => registerTransports(store), []);
 
   useEffect(() => {
     if (
@@ -241,6 +245,7 @@ function App() {
       <SyncNewAccounts priority={5} />
       <TransactionsAlerts />
       <ExperimentalHeader />
+      <LDMKTransportHeader />
       <RootNavigator />
       <AnalyticsConsole />
       <PerformanceConsole />

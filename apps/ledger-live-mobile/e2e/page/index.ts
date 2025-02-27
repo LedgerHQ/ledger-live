@@ -38,6 +38,8 @@ import { lastValueFrom, Observable } from "rxjs";
 import path from "path";
 import fs from "fs";
 import { getEnv } from "@ledgerhq/live-env";
+import { registerTransports } from "~/services/registerTransports";
+import { store } from "~/context/store";
 
 type ApplicationOptions = {
   speculosApp?: AppInfos;
@@ -109,6 +111,7 @@ export class Application {
       proxyPort = await this.common.addSpeculos(speculosApp.name);
       process.env.DEVICE_PROXY_URL = `ws://localhost:${proxyPort}`;
       require("@ledgerhq/live-cli/src/live-common-setup");
+      registerTransports(store);
     }
 
     if (cliCommands?.length) {

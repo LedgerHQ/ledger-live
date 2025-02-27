@@ -2,7 +2,8 @@ import { useCallback, useEffect, useState } from "react";
 import { Observable, Subscription } from "rxjs";
 import { NativeModules, Platform } from "react-native";
 import Config from "react-native-config";
-import TransportBLE from "../../../react-native-hw-transport-ble";
+import getBLETransport from "../../../react-native-hw-transport-ble";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 const { BluetoothHelperModule } = NativeModules;
 
@@ -92,6 +93,8 @@ export function useEnableBluetooth(
 ) {
   const [observedTransportState, setObservedTransportState] = useState<string>("Unknown");
 
+  const isLDMKEnabled = !!useFeature("ldmkTransport")?.enabled;
+
   const promptBluetoothCallback = usePromptEnableBluetoothCallback();
 
   // Exposes a check and request enabling bluetooth services again (if needed)
@@ -117,9 +120,8 @@ export function useEnableBluetooth(
   // Observes the bluetooth state (if powered on or not)
   useEffect(() => {
     let sub: null | Subscription;
-
     if (isHookEnabled) {
-      sub = new Observable(TransportBLE.observeState).subscribe({
+      sub = new Observable(getBLETransport({ isLDMKEnabled }).observeState).subscribe({
         next: ({ type }: { type: string }) => setObservedTransportState(type),
       });
     }
@@ -128,7 +130,7 @@ export function useEnableBluetooth(
         sub.unsubscribe();
       }
     };
-  }, [isHookEnabled]);
+  }, [isHookEnabled, isLDMKEnabled]);
 
   let bluetoothServicesState: BluetoothServicesState = "disabled";
 
