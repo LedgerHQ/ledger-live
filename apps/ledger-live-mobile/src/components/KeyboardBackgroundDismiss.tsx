@@ -1,32 +1,26 @@
-import React, { PureComponent } from "react";
-import { Platform, TouchableWithoutFeedback, Keyboard, EmitterSubscription } from "react-native";
+import React from "react";
+import { Keyboard, TouchableWithoutFeedback, View, StyleProp, ViewStyle } from "react-native";
 
 type Props = {
-  children?: React.ReactNode;
+  children: React.ReactNode;
+  style?: StyleProp<ViewStyle>;
+  enabled?: boolean;
 };
 
-class KeyboardBackgroundDismiss extends PureComponent<Props> {
-  keyboardDidHideListener: EmitterSubscription | undefined;
-
-  // eslint-disable-next-line camelcase
-  UNSAFE_componentWillMount() {
-    if (Platform.OS === "android") {
-      this.keyboardDidHideListener = Keyboard.addListener("keyboardDidHide", Keyboard.dismiss);
-    }
+const SafeKeyboardView: React.FC<Props> = ({ children, style, enabled = true }) => {
+  if (!enabled) {
+    return <View style={style}>{children}</View>;
   }
 
-  componentWillUnmount() {
-    if (Platform.OS === "android") {
-      this.keyboardDidHideListener?.remove();
-    }
-  }
+  const onPress = () => {
+    Keyboard.dismiss();
+  };
 
-  render() {
-    const { children } = this.props;
-    return (
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>{children}</TouchableWithoutFeedback>
-    );
-  }
-}
+  return (
+    <TouchableWithoutFeedback onPress={onPress} accessible={false}>
+      <View style={[style, { flex: 1 }]}>{children}</View>
+    </TouchableWithoutFeedback>
+  );
+};
 
-export default KeyboardBackgroundDismiss;
+export default SafeKeyboardView;
