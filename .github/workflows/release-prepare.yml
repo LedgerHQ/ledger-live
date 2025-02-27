@@ -69,11 +69,11 @@ jobs:
         run: |
           git fetch origin develop main
 
-      - name: merge into main
-        run: |
-          git checkout main
-          git merge ${{ inputs.ref }} --no-ff
-          git push origin main
+      # - name: merge into main
+      #   run: |
+      #     git checkout main
+      #     git merge ${{ inputs.ref }} --no-ff
+      #     git push origin main
 
       - name: create PR to develop
         env:
@@ -84,11 +84,11 @@ jobs:
           git push origin support/release-merge-conflicts
           gh pr create --title ":rotating_light: Release merge conflicts" -F .github/templates/release-conflicts.md --base develop --head support/release-merge-conflicts
 
-  release-final:
-    name: "[Release] Publish packages and apps"
-    needs: prepare-release
-    uses: LedgerHQ/ledger-live/.github/workflows/release-final.yml@develop
-    with:
-      ref: main
-      caller: release-prepare
-    secrets: inherit
+  # release-final:
+  #   name: "[Release] Publish packages and apps"
+  #   needs: prepare-release
+  #   uses: LedgerHQ/ledger-live/.github/workflows/release-final.yml@develop
+  #   with:
+  #     ref: main
+  #     caller: release-prepare
+  #   secrets: inherit
