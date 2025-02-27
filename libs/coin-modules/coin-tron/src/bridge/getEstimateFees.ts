@@ -1,10 +1,10 @@
-import BigNumber from "bignumber.js";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
-import { Transaction } from "../types";
-import { fetchTronAccount } from "../network";
+import BigNumber from "bignumber.js";
 import { ACTIVATION_FEES, ACTIVATION_FEES_TRC_20, STANDARD_FEES_TRC_20 } from "../logic/constants";
-import { getEstimatedBlockSize, extractBandwidthInfo } from "../logic/utils";
-import { AccountTronAPI } from "../network/types";
+import { fetchTronAccount } from "../network";
+import type { AccountTronAPI } from "../network/types";
+import { Transaction } from "../types";
+import { extractBandwidthInfo, getEstimatedBlockSize } from "./utils";
 
 // see : https://developers.tron.network/docs/bandwith#section-bandwidth-points-consumption
 // 1. cost around 200 Bandwidth, if not enough check Free Bandwidth

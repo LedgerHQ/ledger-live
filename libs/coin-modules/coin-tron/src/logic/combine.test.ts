@@ -1,5 +1,6 @@
 import coinConfig from "../config";
-import { combine, decodeTransaction } from "./combine";
+import { combine } from "./combine";
+import { decodeTransaction } from "./utils";
 
 describe("combine", () => {
   beforeAll(() => {

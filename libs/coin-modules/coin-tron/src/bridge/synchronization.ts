@@ -10,16 +10,11 @@ import { Account, SubAccount, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import compact from "lodash/compact";
 import get from "lodash/get";
-import { getOperationsPageSize } from "../logic/pagination";
-import { isParentTx, txInfoToOperation } from "../logic/utils";
-import {
-  fetchCurrentBlockHeight,
-  fetchTronAccount,
-  fetchTronAccountTxs,
-  getTronResources,
-} from "../network";
-import { TronAccount, TrongridExtraTxInfo, TronOperation } from "../types";
 import { computeBalanceBridge } from "../logic";
+import { getOperationsPageSize } from "../logic/pagination";
+import { fetchCurrentBlockHeight, fetchTronAccount, fetchTronAccountTxs } from "../network";
+import { TronAccount, TrongridExtraTxInfo, TronOperation } from "../types";
+import { defaultTronResources, getTronResources, isParentTx, txInfoToOperation } from "./utils";
 
 type TronToken = {
   key: string;
@@ -47,8 +42,6 @@ export const getAccountShape: GetAccountShape<TronAccount> = async (
   });
 
   if (tronAcc.length === 0) {
-    const defaultTronResources = await getTronResources();
-
     return {
       id: accountId,
       blockHeight,
@@ -78,7 +71,7 @@ export const getAccountShape: GetAccountShape<TronAccount> = async (
   const tronResources = await getTronResources(acc, txs, cacheTransactionInfoById);
   // const tronResources = await getTronResources(acc);
   const spendableBalance = acc.balance ? new BigNumber(acc.balance) : new BigNumber(0);
-  const balance = computeBalanceBridge(acc);
+  const balance = await computeBalanceBridge(acc);
 
   const parentTxs = txs.filter(isParentTx);
   const parentOperations: TronOperation[] = compact(

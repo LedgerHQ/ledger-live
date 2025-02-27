@@ -1,9 +1,13 @@
 import type { Api } from "@ledgerhq/coin-framework/api/index";
+import { Account } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import { randomBytes } from "crypto";
 import dotenv from "dotenv";
 import TronWeb from "tronweb";
 import { createApi } from ".";
-import { createTronWeb } from "../logic";
+import { createTronWeb } from "../logic/utils";
+import { createTronTransaction } from "../network";
+import { Transaction } from "../types";
 
 const TRONGRID_URL = "https://api.shasta.trongrid.io";
 dotenv.config();
@@ -21,6 +25,7 @@ const wallet = {
  * Tron testnet: https://api.shasta.trongrid.io
  * Tron testnet faucet: https://shasta.tronex.io/
  * Create a tesnet account: https://stackoverflow.com/questions/66651807/how-to-create-a-tron-wallet-with-nodejs
+ * Testnet faucet: https://shasta.tronex.io/
  */
 describe("API", () => {
   let module: Api;
@@ -36,9 +41,7 @@ describe("API", () => {
     tronWeb = createTronWeb();
   });
 
-  // const privateKey = "ebb1ed363828cc0cf9fd9c73cdefa551dd3131757f0ba7be8e4d4f34cc2c19b2";
-
-  it("combine and broadcast a transaction successfully", async () => {
+  it("combine and broadcast a send transaction successfully", async () => {
     // GIVEN
     const amount = 100;
     const recipient = "TPswDDCAWhJAZGdHPidFg5nEf8TkNToDX1";
@@ -51,16 +54,15 @@ describe("API", () => {
     // const unsignedTx = await createTronTransaction(
     //   { freshAddress: wallet.address.base58 } as Account,
     //   {
-    //     recipient: "TPswDDCAWhJAZGdHPidFg5nEf8TkNToDX1",
+    //     recipient,
     //     amount: new BigNumber(amount),
     //   } as Transaction,
     //   null,
     // );
 
-    const signature = await tronWeb.trx.sign(unsignedTx.raw_data_hex, wallet.privateKey);
-    console.log("Signature:", signature);
+    // const signature = await tronWeb.trx.sign(unsignedTx.raw_data_hex, wallet.privateKey);
+    // console.log("Signature:", signature);
     const signedTrx = await tronWeb.trx.sign(unsignedTx, wallet.privateKey);
-    console.log("signedTrx:", signedTrx);
 
     // WHEN
     // const result = module.combine(rawTxHex, signature.slice(2));
