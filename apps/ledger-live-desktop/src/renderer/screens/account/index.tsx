@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { compose } from "redux";
 import { connect } from "react-redux";
-import { withTranslation } from "react-i18next";
+import { withTranslation, Trans } from "react-i18next";
 import { TFunction } from "i18next";
 import { Redirect } from "react-router";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
@@ -141,6 +141,11 @@ const AccountPage = ({
 
   const localizedContactSupportURL = useLocalizedUrl(urls.contactSupportWebview);
 
+  const supportLink = (currencyConfig?.status as { link?: string })?.link;
+  const openSupportLink = useCallback(() => {
+    openURL(supportLink || localizedContactSupportURL);
+  }, [supportLink, localizedContactSupportURL]);
+
   if (!account || !mainAccount || !currency) {
     return <Redirect to="/accounts" />;
   }
@@ -149,11 +154,6 @@ const AccountPage = ({
 
   const displayOrdinals =
     isOrdinalsEnabled && isBitcoinBasedAccount(account) && isBitcoinAccount(account);
-
-  const openFeatureUnvailableSupportLink = () => {
-    currencyConfig?.status.type === "feature_unavailable" &&
-      openURL(currencyConfig?.status.link || localizedContactSupportURL);
-  };
 
   return (
     <Box key={account.id}>
@@ -193,11 +193,22 @@ const AccountPage = ({
           content={{
             message: (
               <Text fontFamily="Inter|Bold" color="neutral.c00" flex={1}>
-                {
-                  "The Migration Baner is beigin created. Just wait a moment please! Come back to you very soon. Thank you!"
-                }
+                <Trans
+                  i18nKey="account.migrationBanner.title"
+                  values={{
+                    coinA: currencyConfig.status.coinA,
+                    coinB: currencyConfig.status.coinB,
+                  }}
+                  components={[
+                    <Link key={0} color="neutral.c00" alwaysUnderline onClick={openSupportLink} />,
+                  ]}
+                />
               </Text>
             ),
+          }}
+          link={{
+            text: t("account.migrationBanner.contactSupport"),
+            href: localizedContactSupportURL,
           }}
         />
       )}
@@ -211,11 +222,7 @@ const AccountPage = ({
                   feature: t(`account.featureUnavailable.feature.${currencyConfig.status.feature}`),
                   support: "",
                 })}
-                <Link
-                  color="neutral.c00"
-                  alwaysUnderline
-                  onClick={openFeatureUnvailableSupportLink}
-                >
+                <Link color="neutral.c00" alwaysUnderline onClick={openSupportLink}>
                   {t("account.featureUnavailable.support")}
                 </Link>
               </Text>

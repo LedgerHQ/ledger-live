@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import { LayoutChangeEvent, View } from "react-native";
+import { LayoutChangeEvent, View, Linking } from "react-native";
 import { isAccountEmpty, getMainAccount } from "@ledgerhq/live-common/account/index";
 import {
   AccountLike,
@@ -9,9 +9,10 @@ import {
   BalanceHistoryWithCountervalue,
 } from "@ledgerhq/types-live";
 import { CryptoCurrency, Currency } from "@ledgerhq/types-cryptoassets";
-import { Box, ColorPalette } from "@ledgerhq/native-ui";
+import { Box, ColorPalette, Text } from "@ledgerhq/native-ui";
 import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
-import { TFunction } from "react-i18next";
+import { TFunction, Trans } from "react-i18next";
+import styled from "styled-components/native";
 import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
 import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
 import { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
@@ -36,6 +37,10 @@ import { EditOperationCard } from "~/components/EditOperationCard";
 import Alert from "~/components/Alert";
 import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
 import { urls } from "~/utils/urls";
+
+const UnderlinedText = styled(Text)`
+  text-decoration-line: underline;
+`;
 
 type Props = {
   account?: AccountLike;
@@ -128,6 +133,11 @@ export function getListHeaderComponents({
     oldestEditableOperation &&
     isStuckOperation({ family: mainAccount.currency.family, operation: oldestEditableOperation });
 
+  const supportLink = (currencyConfig?.status as { link?: string })?.link;
+  const openSupportLink = () => {
+    Linking.openURL(supportLink || urls.contactSupportWebview.en);
+  };
+
   return {
     listHeaderComponents: [
       <Box mt={6} onLayout={onAccountCardLayout} key="AccountGraphCard">
@@ -146,14 +156,19 @@ export function getListHeaderComponents({
       currencyConfig?.status.type === "migration" && (
         <View style={{ marginTop: 16 }}>
           <Alert
-            key="deprecated_banner"
+            key="migration_banner"
             type="warning"
-            learnMoreKey="account.willBedeprecatedBanner.contactSupport"
+            learnMoreKey="account.migrationBanner.contactSupport"
             learnMoreUrl={urls.contactSupportWebview.en}
           >
-            {
-              "The Migration Baner is beigin created. Just wait a moment please! Come back to you very soon. Thank you!"
-            }
+            <Trans
+              i18nKey="account.migrationBanner.title"
+              values={{
+                coinA: currencyConfig.status.coinA,
+                coinB: currencyConfig.status.coinB,
+              }}
+              components={[<UnderlinedText onPress={openSupportLink} key="SupportLink" />]}
+            />
           </Alert>
         </View>
       ),

@@ -12,6 +12,8 @@ type ConfigStatus =
   | {
       type: "migration";
       chain: CryptoCurrencyId;
+      coinA: string;
+      coinB: string;
       link: string;
     }
   | {
