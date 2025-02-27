@@ -9,7 +9,6 @@ import { flattenAccounts, getMainAccount } from "@ledgerhq/live-common/account/i
 import keyBy from "lodash/keyBy";
 import { BlockchainEVM, BlockchainsType } from "@ledgerhq/live-nft/supported";
 import { useHideSpamCollection } from "~/renderer/hooks/nfts/useHideSpamCollection";
-import { OrderedOperation, useFilterNftSpams } from "@ledgerhq/live-nft-react";
 import logger from "~/renderer/logger";
 import { usePagination } from "LLD/hooks/usePagination";
 import {
@@ -18,6 +17,8 @@ import {
   groupOperationsByDate,
   parseAccountOperations,
   splitNftOperationsFromAllOperations,
+  OrderedOperation,
+  useFilterNftSpams,
 } from "@ledgerhq/live-nft-react";
 
 export type Props = {
