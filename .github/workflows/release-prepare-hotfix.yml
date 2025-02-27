@@ -86,6 +86,7 @@ jobs:
 
       - name: pull commit
         run: |
+          git stash
           git pull
 
       - name: fetch develop and main
