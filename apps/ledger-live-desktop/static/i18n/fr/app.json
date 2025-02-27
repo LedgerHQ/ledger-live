@@ -439,8 +439,8 @@
       "cta" : "Accéder à My Ledger"
     },
     "wrongDevice" : {
-      "title" : "Le Ledger Nano S™ n’est pas compatible avec THORChain",
-      "description" : "Le Ledger Nano S n’est pas compatible avec THORChain. Vous pouvez utiliser le Ledger Nano S Plus, Ledger Nano X, Ledger Stax ou Ledger Flex pour vos échanges inter-chaînes sur THORChain via Ledger Live",
+      "title" : "Le Ledger Nano S™ n’est pas compatible avec {{provider}}",
+      "description" : "Le Ledger Nano S™ n’est pas compatible avec {{provider}}. Vous pouvez utiliser le Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™ ou Ledger Flex™ pour vos échanges inter-chaînes sur {{provider}} via Ledger Live.",
       "cta" : "Voir les appareils compatibles",
       "changeProvider" : "Choisir un autre prestataire"
     },
@@ -1867,7 +1867,8 @@
       "palletMethod" : "Méthode",
       "transferAmount" : "Montant transféré",
       "validatorsCount" : "Validateurs ({{number}})",
-      "version" : "Version"
+      "version" : "Version",
+      "accountCreationFee" : "Frais de création de compte"
     }
   },
   "operationList" : {
@@ -4155,6 +4156,11 @@
       "debugAppsDesc" : "Affichez et autorisez l’ouverture des Platform Apps \"Debug\".",
       "debugReactQuery" : "Autoriser le débogage avec React Query",
       "debugReactQueryDesc" : "Affichez et autorisez l’ouverture de la console de débogage de React Query.",
+      "nfts" : {
+        "title" : "Collections de NFT masquées",
+        "description" : "Réinitialiser la liste des collections masquées",
+        "reset" : "Réinitialiser"
+      },
       "exchangeDeveloperMode" : {
         "title" : "Mode développeur Exchange",
         "desc" : "Ajoutez les informations sur le prestataire d’Exchange.",
@@ -5438,6 +5444,11 @@
     "solana" : {
       "memo" : "Tag/mémo",
       "memoPlaceholder" : "Facultatif"
+    },
+    "mina" : {
+      "memoPlaceholder" : "Facultatif",
+      "memo" : "Mémo",
+      "memoWarningText" : "Le mémo peut être une séquence de caractères inférieure ou égale à 32 caractères"
     }
   },
   "errors" : {
@@ -6461,6 +6472,15 @@
         "swap" : "Échangez",
         "deposit" : "Déposez"
       }
+    },
+    "InvalidMemoMina" : {
+      "title" : "Le mémo ne peut pas dépasser 32 caractères"
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "Les frais de création de compte pour cette transaction s’élèveront à {{fee}}"
+    },
+    "AmountTooSmall" : {
+      "title" : "Le montant minimal requis pour cette transaction est {{amount}}"
     }
   },
   "cryptoOrg" : {
@@ -6664,6 +6684,24 @@
       "cta" : "Activer Ledger Sync",
       "alreadySync" : "Je l’ai déjà activé",
       "learnMore" : "Comment fonctionne Ledger Sync ?"
+    },
+    "entryPoints" : {
+      "accounts" : {
+        "title" : "Activez Ledger Sync"
+      },
+      "manager" : {
+        "title" : "Ledger Sync",
+        "description" : "Synchronisez automatiquement vos comptes, même si vous changez de téléphone.",
+        "cta" : "Activer Ledger Sync"
+      },
+      "settings" : {
+        "title" : "Ledger Sync",
+        "description" : "Synchronisez automatiquement vos comptes, même si vous changez de téléphone.",
+        "cta" : "Activer Ledger Sync"
+      },
+      "onboarding" : {
+        "title" : "Synchroniser avec une autre application Ledger Live"
+      }
     },
     "manage" : {
       "cta" : "Gérer",
@@ -6918,6 +6956,14 @@
         "optOut" : {
           "title" : "Passez au niveau supérieur",
           "description" : "Le Ledger Nano S ne recevra bientôt plus de mises à jour. Bénéficiez de <0>-{{discount}}% de réduction</0> sur nos derniers wallets.",
+          "cta" : "Choisir mon nouveau wallet",
+          "linkText" : "En savoir plus"
+        }
+      },
+      "portfolio" : {
+        "optOut" : {
+          "title" : "Passez au niveau supérieur",
+          "description" : "Bénéficiez de <0>-{{discount}}% de réduction</0> sur nos wallets dernière génération. Passez à une expérience plus fluide et plus sécurisée dès maintenant.",
           "cta" : "Choisir mon nouveau wallet",
           "linkText" : "En savoir plus"
         }
