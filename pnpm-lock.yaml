@@ -3077,6 +3077,9 @@ importers:
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
+      '@ledgerhq/live-config':
+        specifier: workspace:^
+        version: link:../../live-config
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../env

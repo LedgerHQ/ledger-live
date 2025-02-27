@@ -11,4 +11,8 @@ export const solanaConfig: CurrencyLiveConfigDefinition = {
       token2022Enabled: false,
     } as SolanaCoinConfig,
   },
+  queuedInterval: {
+    type: "number",
+    default: 100,
+  },
 };

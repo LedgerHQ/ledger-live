@@ -23,7 +23,8 @@ const getAPI = makeLRUCache(
 );
 
 const getQueuedAPI = makeLRUCache(
-  (config: Config) => getAPI(config).then(api => queued(api)),
+  (config: Config) =>
+    getAPI(config).then(api => queued(api, LiveConfig.getValueByKey("queuedInterval"))),
   config => config.endpoint,
   minutes(1000),
 );
