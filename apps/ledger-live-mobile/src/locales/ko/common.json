@@ -1053,6 +1053,9 @@
     },
     "AppManifestNotFoundError" : {
       "title" : "Swap Live 앱을 로드하지 못했습니다"
+    },
+    "InvalidMemoMina" : {
+      "title" : "메모 텍스트는 32자를 초과할 수 없습니다."
     }
   },
   "crash" : {
@@ -1119,6 +1122,11 @@
       "fast" : "빠름",
       "custom" : "커스텀",
       "blockCount" : "{{blockCount}}개 블록"
+    },
+    "estimatedTime" : {
+      "slow" : "≈ 2~3분",
+      "medium" : "≈ 30초",
+      "fast" : "≈ 15초"
     }
   },
   "signout" : {
@@ -6992,6 +7000,16 @@
   },
   "walletSync" : {
     "title" : "Ledger 동기화",
+    "entryPoints" : {
+      "simpleCta" : {
+        "title" : "Ledger 동기화 활성화"
+      },
+      "card" : {
+        "title" : "Ledger 동기화",
+        "description" : "휴대폰 교체 시 계정을 자동으로 동기화하세요.",
+        "cta" : "Ledger 동기화 켜기"
+      }
+    },
     "activation" : {
       "screen" : {
         "title" : "이 휴대전화에서 Ledger 동기화를 켜시겠습니까?",
