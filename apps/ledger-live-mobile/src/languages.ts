@@ -28,14 +28,14 @@ export const languages = {
   th: "ภาษาไทย",
 };
 
-type localeKeys = keyof typeof allLocales;
-export const localeIds = Object.keys(allLocales) as localeKeys[];
+export type LocaleKeys = keyof typeof allLocales;
+export const localeIds = Object.keys(allLocales) as LocaleKeys[];
 
 /**
  * This is the list of languages that are supported in terms of in-app translations
  * and it is meant to appear in the settings.
  */
-export const supportedLocales: localeKeys[] = Config.LEDGER_DEBUG_ALL_LANGS
+export const supportedLocales: LocaleKeys[] = Config.LEDGER_DEBUG_ALL_LANGS
   ? localeIds
   : ["en", "fr", "es", "ru", "zh", "de", "tr", "ja", "ko", "pt", "th"];
 
@@ -83,7 +83,7 @@ export const locales = supportedLocales.reduce(
     obj[key] = allLocales[key]; // eslint-disable-line no-param-reassign
     return obj;
   },
-  {} as { [k in localeKeys]: ResourceLanguage },
+  {} as { [k in LocaleKeys]: ResourceLanguage },
 );
 
 /** For the "language" setting which is used for translations. */
