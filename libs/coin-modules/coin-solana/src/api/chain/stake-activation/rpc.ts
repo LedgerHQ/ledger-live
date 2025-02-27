@@ -35,10 +35,10 @@ export async function getStakeActivation(
   stakeAddress: PublicKey,
 ): Promise<StakeActivationData> {
   const [epochInfo, { stakeAccountOrErr, stakeAccountLamports }, stakeHistory] = await Promise.all([
-    connection.getEpochInfo(),
+    connection.getEpochInfo("confirmed"),
 
     (async () => {
-      const stakeAccount = await connection.getParsedAccountInfo(stakeAddress);
+      const stakeAccount = await connection.getParsedAccountInfo(stakeAddress, "confirmed");
       if (stakeAccount === null || stakeAccount.value === null) {
         throw new Error("Account not found");
       }
@@ -53,6 +53,7 @@ export async function getStakeActivation(
     (async () => {
       const stakeHistoryAccount = await connection.getParsedAccountInfo(
         SYSVAR_STAKE_HISTORY_PUBKEY,
+        "confirmed",
       );
       if (stakeHistoryAccount.value === null || !("parsed" in stakeHistoryAccount.value.data)) {
         throw new Error("StakeHistory not found");

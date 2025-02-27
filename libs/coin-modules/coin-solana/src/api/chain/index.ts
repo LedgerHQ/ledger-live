@@ -32,6 +32,8 @@ export type Config = {
   readonly endpoint: string;
 };
 
+type Finality = "confirmed" | "finalized";
+
 export type ChainAPI = Readonly<{
   getBalance: (address: string) => Promise<number>;
 
@@ -41,10 +43,14 @@ export type ChainAPI = Readonly<{
 
   getFeeForMessage: (message: VersionedMessage) => Promise<number | null>;
 
-  getBalanceAndContext: (address: string) => ReturnType<Connection["getBalanceAndContext"]>;
+  getBalanceAndContext: (
+    address: string,
+    commitmentOrConfig?: Commitment,
+  ) => ReturnType<Connection["getBalanceAndContext"]>;
 
   getParsedTokenAccountsByOwner: (
     address: string,
+    commitment?: Commitment,
   ) => ReturnType<Connection["getParsedTokenAccountsByOwner"]>;
 
   getStakeAccountsByStakeAuth: (
@@ -53,6 +59,7 @@ export type ChainAPI = Readonly<{
 
   getStakeAccountsByWithdrawAuth: (
     authAddr: string,
+    configOrCommitment?: Commitment,
   ) => ReturnType<Connection["getParsedProgramAccounts"]>;
 
   getStakeActivation: (stakeAccAddr: string) => ReturnType<typeof getStakeActivation>;
@@ -64,12 +71,17 @@ export type ChainAPI = Readonly<{
   getSignaturesForAddress: (
     address: string,
     opts?: SignaturesForAddressOptions,
+    commitment?: Finality,
   ) => ReturnType<Connection["getSignaturesForAddress"]>;
 
-  getParsedTransactions: (signatures: string[]) => ReturnType<Connection["getParsedTransactions"]>;
+  getParsedTransactions: (
+    signatures: string[],
+    commitmentOrConfig?: Finality,
+  ) => ReturnType<Connection["getParsedTransactions"]>;
 
   getAccountInfo: (
     address: string,
+    configOrCommitment?: Commitment,
   ) => Promise<Awaited<ReturnType<Connection["getParsedAccountInfo"]>>["value"]>;
 
   sendRawTransaction: (
@@ -119,7 +131,7 @@ export function getChainAPI(
     if (!_connection) {
       _connection = new Connection(config.endpoint, {
         ...(fetchMiddleware ? { fetchMiddleware } : {}),
-        commitment: "finalized",
+        commitment: "confirmed",
         confirmTransactionInitialTimeout: getEnv("SOLANA_TX_CONFIRMATION_TIMEOUT") || 0,
       });
     }
@@ -128,7 +140,7 @@ export function getChainAPI(
 
   return {
     getBalance: (address: string) =>
-      connection().getBalance(new PublicKey(address)).catch(remapErrors),
+      connection().getBalance(new PublicKey(address), "confirmed").catch(remapErrors),
 
     getLatestBlockhash: (commitmentOrConfig?: Commitment | GetLatestBlockhashConfig) =>
       connection().getLatestBlockhash(commitmentOrConfig).catch(remapErrors),
@@ -140,13 +152,17 @@ export function getChainAPI(
         .catch(remapErrors),
 
     getBalanceAndContext: (address: string) =>
-      connection().getBalanceAndContext(new PublicKey(address)).catch(remapErrors),
+      connection().getBalanceAndContext(new PublicKey(address), "confirmed").catch(remapErrors),
 
     getParsedTokenAccountsByOwner: (address: string) =>
       connection()
-        .getParsedTokenAccountsByOwner(new PublicKey(address), {
-          programId: TOKEN_PROGRAM_ID,
-        })
+        .getParsedTokenAccountsByOwner(
+          new PublicKey(address),
+          {
+            programId: TOKEN_PROGRAM_ID,
+          },
+          "confirmed" as Commitment,
+        )
         .catch(remapErrors),
 
     getStakeAccountsByStakeAuth: makeLRUCache(
@@ -161,6 +177,7 @@ export function getChainAPI(
                 },
               },
             ],
+            commitment: "confirmed",
           })
           .catch(remapErrors),
       (addr: string) => addr,
@@ -179,6 +196,7 @@ export function getChainAPI(
                 },
               },
             ],
+            commitment: "confirmed",
           })
           .catch(remapErrors),
       (addr: string) => addr,
@@ -195,19 +213,26 @@ export function getChainAPI(
 
     getVoteAccounts: () => connection().getVoteAccounts().catch(remapErrors),
 
-    getSignaturesForAddress: (address: string, opts?: SignaturesForAddressOptions) =>
-      connection().getSignaturesForAddress(new PublicKey(address), opts).catch(remapErrors),
+    getSignaturesForAddress: (
+      address: string,
+      opts?: SignaturesForAddressOptions,
+      commitment?: Finality,
+    ) =>
+      connection()
+        .getSignaturesForAddress(new PublicKey(address), opts, commitment)
+        .catch(remapErrors),
 
     getParsedTransactions: (signatures: string[]) =>
       connection()
         .getParsedTransactions(signatures, {
           maxSupportedTransactionVersion: 0,
+          commitment: "confirmed",
         })
         .catch(remapErrors),
 
     getAccountInfo: (address: string) =>
       connection()
-        .getParsedAccountInfo(new PublicKey(address))
+        .getParsedAccountInfo(new PublicKey(address), "confirmed")
         .then(r => r.value)
         .catch(remapErrors),
 
@@ -253,12 +278,12 @@ export function getChainAPI(
     },
 
     getAssocTokenAccMinNativeBalance: () =>
-      getMinimumBalanceForRentExemptAccount(connection()).catch(remapErrors),
+      getMinimumBalanceForRentExemptAccount(connection(), "confirmed").catch(remapErrors),
 
     getMinimumBalanceForRentExemption: (dataLength: number) =>
-      connection().getMinimumBalanceForRentExemption(dataLength).catch(remapErrors),
+      connection().getMinimumBalanceForRentExemption(dataLength, "confirmed").catch(remapErrors),
 
-    getEpochInfo: () => connection().getEpochInfo().catch(remapErrors),
+    getEpochInfo: () => connection().getEpochInfo("confirmed").catch(remapErrors),
 
     getRecentPrioritizationFees: (accounts: string[]) => {
       return connection()
@@ -289,6 +314,7 @@ export function getChainAPI(
       const rpcResponse = await connection().simulateTransaction(testTransaction, {
         replaceRecentBlockhash: true,
         sigVerify: false,
+        commitment: "confirmed",
       });
       return rpcResponse.value.err ? null : rpcResponse.value.unitsConsumed || null;
     },

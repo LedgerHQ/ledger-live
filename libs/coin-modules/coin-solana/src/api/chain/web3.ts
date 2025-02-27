@@ -27,7 +27,7 @@ import {
   TokenTransferCommand,
   TransferCommand,
 } from "../../types";
-import { drainSeqAsyncGen, median } from "../../utils";
+import { median } from "../../utils";
 import {
   parseTokenAccountInfo,
   tryParseAsTokenAccount,
@@ -83,55 +83,60 @@ export type TransactionDescriptor = {
   info: ConfirmedSignatureInfo;
 };
 
-async function* getTransactionsBatched(
-  address: string,
-  untilTxSignature: string | undefined,
-  api: ChainAPI,
-): AsyncGenerator<TransactionDescriptor[], void, unknown> {
-  // as per Ledger team - last 100 operations is a sane limit to begin with
-  const signatures = await api.getSignaturesForAddress(address, {
-    ...(untilTxSignature ? { until: untilTxSignature } : {}),
-    limit: 100,
-  });
-
-  // max req payload is 50K, around 200 transactions atm
-  // requesting 100 at a time to give some space for payload to change in future
-  const batchSize = 100;
-
-  for (const signaturesInfoBatch of chunk(signatures, batchSize)) {
-    const transactions = await api.getParsedTransactions(
-      signaturesInfoBatch.map(tx => tx.signature),
-    );
-    const txsDetails = transactions.reduce((acc, tx, index) => {
-      if (tx && !tx.meta?.err && tx.blockTime) {
-        acc.push({
-          info: signaturesInfoBatch[index],
-          parsed: tx,
-        });
-      }
-      return acc;
-    }, [] as TransactionDescriptor[]);
-
-    yield txsDetails;
-  }
-}
-
-async function* getTransactionsGen(
-  address: string,
-  untilTxSignature: string | undefined,
-  api: ChainAPI,
-): AsyncGenerator<TransactionDescriptor, void, undefined> {
-  for await (const txDetailsBatch of getTransactionsBatched(address, untilTxSignature, api)) {
-    yield* txDetailsBatch;
-  }
-}
-
-export function getTransactions(
+async function getTransactionsBatched(
   address: string,
   untilTxSignature: string | undefined,
   api: ChainAPI,
 ): Promise<TransactionDescriptor[]> {
-  return drainSeqAsyncGen(getTransactionsGen(address, untilTxSignature, api));
+  const txsDetails: TransactionDescriptor[] = [];
+  // as per Ledger team - last 100 operations is a sane limit to begin with
+  const signatures = await api.getSignaturesForAddress(
+    address,
+    {
+      ...(untilTxSignature ? { until: untilTxSignature } : {}),
+      limit: 100,
+    },
+    "confirmed",
+  );
+
+  if (!signatures.length) return txsDetails;
+  // max req payload is 50K, around 200 transactions atm
+  // requesting 100 at a time to give some space for payload to change in future
+  const batchSize = 100;
+  const signatureBatch = chunk(signatures, batchSize);
+
+  const transactionBatches = await Promise.allSettled(
+    signatureBatch.map(batch =>
+      api.getParsedTransactions(
+        batch.map(tx => tx.signature),
+        "confirmed",
+      ),
+    ),
+  );
+
+  for (const [batchIndex, transactionBatch] of transactionBatches.entries()) {
+    if (transactionBatch.status === "fulfilled") {
+      const transactions = transactionBatch.value.flat();
+
+      for (const [transactionIndex, tx] of transactions.entries()) {
+        if (tx && tx.meta && !tx.meta.err && tx.blockTime) {
+          txsDetails.push({
+            info: signatureBatch[batchIndex][transactionIndex],
+            parsed: tx,
+          });
+        }
+      }
+    }
+  }
+  return txsDetails;
+}
+
+export async function getTransactions(
+  address: string,
+  untilTxSignature: string | undefined,
+  api: ChainAPI,
+): Promise<TransactionDescriptor[]> {
+  return getTransactionsBatched(address, untilTxSignature, api);
 }
 
 export const buildTransferInstructions = async (
@@ -233,7 +238,7 @@ export const getMaybeMintAccount = async (
   address: string,
   api: ChainAPI,
 ): Promise<MintAccountInfo | undefined | Error> => {
-  const accInfo = await api.getAccountInfo(address);
+  const accInfo = await api.getAccountInfo(address, "confirmed");
 
   const mintAccount =
     accInfo !== null && "parsed" in accInfo.data ? tryParseAsMintAccount(accInfo.data) : undefined;
@@ -245,7 +250,7 @@ export const getMaybeTokenAccount = async (
   address: string,
   api: ChainAPI,
 ): Promise<TokenAccountInfo | undefined | Error> => {
-  const accInfo = await api.getAccountInfo(address);
+  const accInfo = await api.getAccountInfo(address, "confirmed");
 
   const tokenAccount =
     accInfo !== null && "parsed" in accInfo.data ? tryParseAsTokenAccount(accInfo.data) : undefined;
@@ -257,7 +262,7 @@ export async function getMaybeVoteAccount(
   address: string,
   api: ChainAPI,
 ): Promise<VoteAccountInfo | undefined | Error> {
-  const accInfo = await api.getAccountInfo(address);
+  const accInfo = await api.getAccountInfo(address, "confirmed");
   const voteAccount =
     accInfo !== null && "parsed" in accInfo.data ? tryParseAsVoteAccount(accInfo.data) : undefined;
 
@@ -269,7 +274,7 @@ export function getStakeAccountMinimumBalanceForRentExemption(api: ChainAPI) {
 }
 
 export async function getAccountMinimumBalanceForRentExemption(api: ChainAPI, address: string) {
-  const accInfo = await api.getAccountInfo(address);
+  const accInfo = await api.getAccountInfo(address, "confirmed");
   const accSpace = accInfo !== null && "parsed" in accInfo.data ? accInfo.data.space : 0;
 
   return api.getMinimumBalanceForRentExemption(accSpace);
