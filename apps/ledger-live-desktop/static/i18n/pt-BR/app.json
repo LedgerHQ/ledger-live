@@ -439,8 +439,8 @@
       "cta" : "Ir para Minha Ledger"
     },
     "wrongDevice" : {
-      "title" : "A Ledger Nano S™ não é compatível com a THORChain",
-      "description" : "A Ledger Nano S™ não é compatível com a THORChain Você pode usar a Ledger Nano S Plus, a Ledger Nano X, a Ledger Stax ou a Ledger Flex e realizar trocas cross-chain pela THORChain através do Ledger Live",
+      "title" : "A Ledger Nano S™ não é compatível com {{provider}}",
+      "description" : "A Ledger Nano S não é compatível com {{provider}}. Você pode usar a Ledger Nano S Plus, a Ledger Nano X, Ledger Stax ou a Ledger Flex para realizar trocas cross-chain via {{provider}} através do Ledger Live",
       "cta" : "Conheça os dispositivos compatíveis",
       "changeProvider" : "Trocar com outro provedor"
     },
@@ -3753,7 +3753,66 @@
     },
     "token" : {
       "frozenStateWarning" : "Os ativos da conta estão congelados!",
-      "transferWarning" : "Para verificar o endereço do destinatário para tokens Solana usando uma Ledger Nano S™, <0>siga essas instruções.</0>"
+      "transferWarning" : "Para verificar o endereço do destinatário para tokens Solana usando uma Ledger Nano S™, <0>siga essas instruções.</0>",
+      "transferFees" : {
+        "feesPercentHint" : "Token has {{feePercent}}% ({{feeBps}}bps) transfer fee. {{maxFee}} max",
+        "notice" : "Transfer fee {{fee}}%",
+        "tooltipHint" : "Percentage of transfer withheld for token creator",
+        "transferFeesLabel" : "Transfer fees"
+      },
+      "nonTransferable" : {
+        "notice" : "Token is non-transferable"
+      },
+      "interestRate" : {
+        "notice" : "Interest rate: {{rate}}%",
+        "tooltipHint" : "For cosmetic purposes only, no new tokens are created as a result of the interest"
+      },
+      "permanentDelegate" : {
+        "notice" : "Permanent delegate authority is enabled",
+        "initializationNotice" : "Permanent delegate authority is initialized but not enabled",
+        "tooltipHint" : "The delegate has the ability transfer or burn this token from your account"
+      },
+      "requiredMemoOnTransfer" : {
+        "notice" : "Required memo on transfer is enabled",
+        "tooltipHint" : "All incoming transfers to this account must have a memo"
+      },
+      "transferHook" : {
+        "notice" : "Transfer hook is enabled",
+        "initializationNotice" : "Transfer hook is initialized but not enabled",
+        "tooltipHint" : "Token has extra functionality handled by {{programAddress}} program"
+      },
+      "extensionsInfo" : {
+        "title" : "Solana token extensions",
+        "commonInfo" : "Token extensions are the next generation of the Solana Token standard. They introduce a new set of ways to extend the normal token functionality with additional features such as confidential transfers, permanent delegate, custom transfer logic, extended metadata, and much more.",
+        "permanentDelegate" : {
+          "title" : "Permanent delegate",
+          "permanentDelegateAddress" : "Current delegate authority is {{address}}",
+          "permanentDelegateNotSetup" : "Current delegate authority is not set up.",
+          "description" : "Permanent delegate is an authority which has unlimited delegate privileges over any account for that mint. The delegate could burn or transfer any amount of tokens, at any time, on their own authority."
+        },
+        "nonTransferable" : {
+          "title" : "Non-Transferrable Tokens",
+          "description" : "Such tokens are \"soul-bound\" and cannot be moved or burned, except by the token issuer."
+        },
+        "transferHook" : {
+          "title" : "Transfer hook",
+          "transferHookAddress" : "Current transfer hook program is {{address}}",
+          "transferHookNotSetup" : "Current transfer hook program is not set up.",
+          "description" : "Transfer hook gives a token issuers an ability to dictate how users and tokens interact. Instead of a normal transfer, issuer can insert custom logic into a program to be used with the transfer hook extension."
+        },
+        "transferFee" : {
+          "title" : "Transfer Fee",
+          "currentTransferFee" : "Current transfer fee is {{feePercent}}% ({{feeBps}}bps). Max {{maxFee}}.",
+          "description" : "Fees are charged on every transfer of a token and withheld on the recipient account, untouchable by the recipient."
+        },
+        "interestBearing" : {
+          "title" : "Interest-Bearing Tokens",
+          "currentInterestRate" : "Current interest rate is {{rate}}%.",
+          "accruedDelta" : "Accrued {{delta}}.",
+          "interestRateNotSetup" : "Current interest rate is set up to 0%.",
+          "description" : "Tokens that constantly grow or decrease in value according on its interest rate. No new tokens are ever created, the feature is entirely cosmetic."
+        }
+      }
     }
   },
   "ethereum" : {
@@ -4155,6 +4214,11 @@
       "debugAppsDesc" : "Exibe e permite abrir aplicativos da plataforma marcados como 'debug'.",
       "debugReactQuery" : "Permitir debug do ReactQuery",
       "debugReactQueryDesc" : "Exibir e permitir a abertura do console de debug do ReactQuery.",
+      "nfts" : {
+        "title" : "Coleções de NFTs ocultas",
+        "description" : "Redefinir a lista de coleções ocultas",
+        "reset" : "Redefinir"
+      },
       "exchangeDeveloperMode" : {
         "title" : "Exchange em Modo Desenvolvedor",
         "desc" : "Informe o provedor de Exchange",
@@ -5437,7 +5501,8 @@
     },
     "solana" : {
       "memo" : "Tag / Memo",
-      "memoPlaceholder" : "Opcional"
+      "memoPlaceholder" : "Opcional",
+      "requiredMemoPlaceholder" : "Required"
     }
   },
   "errors" : {
@@ -6249,6 +6314,13 @@
     "SolanaTxConfirmationTimeout" : {
       "title" : "Sua transação pode ter falhado. Aguarde um momento e verifique seu histórico de transações antes de tentar novamente."
     },
+    "SolanaRecipientMemoIsRequired" : {
+      "title" : "Memo is required for recipient address"
+    },
+    "SolanaTokenNonTransferable" : {
+      "title" : "Token is non-transferable",
+      "description" : "Such tokens are \"soul-bound\" and cannot be transferred"
+    },
     "NotEnoughNftOwned" : {
       "title" : "Você excedeu o número de tokens disponíveis"
     },
@@ -6918,6 +6990,14 @@
         "optOut" : {
           "title" : "É hora de subir de nível",
           "description" : "As atualizações da Ledger Nano S serão encerradas em breve. Mude para nossos dispositivos mais recentes com <0>{{discount}}% de desconto</0>.",
+          "cta" : "Avançar de carteira",
+          "linkText" : "Saiba mais"
+        }
+      },
+      "portfolio" : {
+        "optOut" : {
+          "title" : "É hora de subir de nível",
+          "description" : "Mude para os nossos dispositivos mais recentes com <0>{{discount}}% de desconto</0> e tenha uma segurança aprimorada e uma experiência perfeita.",
           "cta" : "Avançar de carteira",
           "linkText" : "Saiba mais"
         }
