@@ -1,8 +1,7 @@
 import { renderHook } from "tests/testUtils";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
-import { BlockchainEVM } from "@ledgerhq/live-nft/supported";
-import { NftStatus } from "@ledgerhq/live-nft/types";
 import { useNftCollectionsStatus } from "../useNftCollectionsStatus";
+import { mockNftCollectionStatusByNetwork } from "./shared";
 
 describe("useNftCollectionsStatus", () => {
   it("should returns only NFTs (contract) with  NftStatus !== whitelisted when FF is ON", () => {
@@ -15,23 +14,7 @@ describe("useNftCollectionsStatus", () => {
               enabled: true,
             },
           },
-          nftCollectionsStatusByNetwork: {
-            [BlockchainEVM.Ethereum]: {
-              collectionETHA: NftStatus.whitelisted,
-              collectionETHB: NftStatus.blacklisted,
-              collectionETHC: NftStatus.spam,
-              collectionETHD: NftStatus.spam,
-            },
-            [BlockchainEVM.Avalanche]: {
-              collectionAVAX1: NftStatus.blacklisted,
-              collectionAVAX2: NftStatus.spam,
-              collectionAVAX3: NftStatus.blacklisted,
-            },
-            [BlockchainEVM.Polygon]: {
-              collectionP1: NftStatus.blacklisted,
-              collectionP2: NftStatus.whitelisted,
-            },
-          },
+          nftCollectionsStatusByNetwork: mockNftCollectionStatusByNetwork,
         },
       },
     });
@@ -57,23 +40,7 @@ describe("useNftCollectionsStatus", () => {
               enabled: false,
             },
           },
-          nftCollectionsStatusByNetwork: {
-            [BlockchainEVM.Ethereum]: {
-              collectionETHA: NftStatus.whitelisted,
-              collectionETHB: NftStatus.blacklisted,
-              collectionETHC: NftStatus.spam,
-              collectionETHD: NftStatus.spam,
-            },
-            [BlockchainEVM.Avalanche]: {
-              collectionAVAX1: NftStatus.blacklisted,
-              collectionAVAX2: NftStatus.spam,
-              collectionAVAX3: NftStatus.blacklisted,
-            },
-            [BlockchainEVM.Polygon]: {
-              collectionP1: NftStatus.blacklisted,
-              collectionP2: NftStatus.whitelisted,
-            },
-          },
+          nftCollectionsStatusByNetwork: mockNftCollectionStatusByNetwork,
         },
       },
     });
@@ -99,23 +66,7 @@ describe("useNftCollectionsStatus", () => {
               enabled: false,
             },
           },
-          nftCollectionsStatusByNetwork: {
-            [BlockchainEVM.Ethereum]: {
-              collectionETHA: NftStatus.whitelisted,
-              collectionETHB: NftStatus.blacklisted,
-              collectionETHC: NftStatus.spam,
-              collectionETHD: NftStatus.spam,
-            },
-            [BlockchainEVM.Avalanche]: {
-              collectionAVAX1: NftStatus.blacklisted,
-              collectionAVAX2: NftStatus.spam,
-              collectionAVAX3: NftStatus.blacklisted,
-            },
-            [BlockchainEVM.Polygon]: {
-              collectionP1: NftStatus.blacklisted,
-              collectionP2: NftStatus.whitelisted,
-            },
-          },
+          nftCollectionsStatusByNetwork: mockNftCollectionStatusByNetwork,
         },
       },
     });
@@ -140,23 +91,7 @@ describe("useNftCollectionsStatus", () => {
               enabled: true,
             },
           },
-          nftCollectionsStatusByNetwork: {
-            [BlockchainEVM.Ethereum]: {
-              collectionETHA: NftStatus.whitelisted,
-              collectionETHB: NftStatus.blacklisted,
-              collectionETHC: NftStatus.spam,
-              collectionETHD: NftStatus.spam,
-            },
-            [BlockchainEVM.Avalanche]: {
-              collectionAVAX1: NftStatus.blacklisted,
-              collectionAVAX2: NftStatus.spam,
-              collectionAVAX3: NftStatus.blacklisted,
-            },
-            [BlockchainEVM.Polygon]: {
-              collectionP1: NftStatus.blacklisted,
-              collectionP2: NftStatus.whitelisted,
-            },
-          },
+          nftCollectionsStatusByNetwork: mockNftCollectionStatusByNetwork,
         },
       },
     });
