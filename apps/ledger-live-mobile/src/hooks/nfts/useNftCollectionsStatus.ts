@@ -17,17 +17,17 @@ export const nftCollectionParser = (
 
 export function useNftCollectionsStatus(forTx?: boolean) {
   const nftsFromSimplehashFeature = useFeature("nftsFromSimplehash");
-  const lldSpamFilteringTx = useFeature("lldSpamFilteringTx");
+  const llmSpamFilteringTx = useFeature("llmSpamFilteringTx");
   const nftCollectionsStatusByNetwork = useSelector(nftCollectionsStatusByNetworkSelector);
 
   const mayIncludeSpamsInTheList = !!nftsFromSimplehashFeature?.enabled;
 
   const filteredStatuses = useMemo(
     () =>
-      forTx && !lldSpamFilteringTx?.enabled
+      forTx && !llmSpamFilteringTx?.enabled
         ? [NftStatus.whitelisted, NftStatus.spam]
         : [NftStatus.whitelisted],
-    [forTx, lldSpamFilteringTx],
+    [forTx, llmSpamFilteringTx],
   );
 
   const list = useMemo(() => {
