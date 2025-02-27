@@ -24,7 +24,7 @@ const getAPI = makeLRUCache(
 
 const getQueuedAPI = makeLRUCache(
   (config: Config) =>
-    getAPI(config).then(api => queued(api, LiveConfig.getValueByKey("queuedInterval"))),
+    getAPI(config).then(api => queued(api, solanaCoinConfig.getCoinConfig().queuedInterval)),
   config => config.endpoint,
   minutes(1000),
 );
