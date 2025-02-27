@@ -22,17 +22,21 @@ export function useNftCollectionsStatus(forTx?: boolean) {
 
   const mayIncludeSpamsInTheList = !!nftsFromSimplehashFeature?.enabled;
 
+  const filteredStatuses = useMemo(
+    () =>
+      forTx && !lldSpamFilteringTx?.enabled
+        ? [NftStatus.whitelisted, NftStatus.spam]
+        : [NftStatus.whitelisted],
+    [forTx, lldSpamFilteringTx],
+  );
+
   const list = useMemo(() => {
     return nftCollectionParser(nftCollectionsStatusByNetwork, ([_, status]) =>
       mayIncludeSpamsInTheList
-        ? !(
-            forTx && !lldSpamFilteringTx?.enabled
-              ? [NftStatus.whitelisted, NftStatus.spam]
-              : [NftStatus.whitelisted]
-          ).includes(status)
+        ? !filteredStatuses.includes(status)
         : status === NftStatus.blacklisted,
     );
-  }, [nftCollectionsStatusByNetwork, mayIncludeSpamsInTheList, forTx, lldSpamFilteringTx]);
+  }, [nftCollectionsStatusByNetwork, mayIncludeSpamsInTheList, filteredStatuses]);
 
   const whitelisted = useMemo(() => {
     return nftCollectionParser(
