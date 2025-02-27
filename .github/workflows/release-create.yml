@@ -82,10 +82,10 @@ jobs:
           git pull --rebase origin $RELEASE_BRANCH  # make sure previous commit is included
           git stash pop
           git add .
-      - name: commit new tokens
+      - name: commit
         uses: planetscale/ghcommit-action@v0.1.6
         with:
-          commit_message: "chore(prerelease) update cryptoassets"
+          commit_message: "chore(prerelease): :rocket: entering prerelease mode"
           repo: ${{ github.repository }}
           branch: ${{ env.RELEASE_BRANCH }}
         env:
