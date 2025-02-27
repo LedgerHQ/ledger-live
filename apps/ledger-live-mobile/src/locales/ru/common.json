@@ -1119,6 +1119,11 @@
       "fast" : "Быстро",
       "custom" : "Пользовательская",
       "blockCount" : "Количество блоков: {{blockCount}}"
+    },
+    "estimatedTime" : {
+      "slow" : "≈ 2-3 мин.",
+      "medium" : "≈ 30 сек.",
+      "fast" : "≈ 15 сек."
     }
   },
   "signout" : {
@@ -4660,7 +4665,8 @@
       "tr" : "Türkçe",
       "ja" : "日本",
       "ko" : "한국어",
-      "pt" : "Português (Br)"
+      "pt" : "Português (Br)",
+      "th" : "ภาษาไทย"
     }
   },
   "deviceLocalization" : {
@@ -4684,7 +4690,8 @@
       "german" : "Deutsch",
       "brazilian" : "Português (Br)",
       "russian" : "Русский",
-      "turkish" : "Türkçe"
+      "turkish" : "Türkçe",
+      "thai" : "ภาษาไทย"
     }
   },
   "FirmwareUpdateCheckId" : {
@@ -6992,6 +6999,16 @@
   },
   "walletSync" : {
     "title" : "Ledger Sync",
+    "entryPoints" : {
+      "simpleCta" : {
+        "title" : "Активируйте Ledger Sync"
+      },
+      "card" : {
+        "title" : "Ledger Sync",
+        "description" : "Синхронизируйте ваши счета в автоматическом режиме — даже при переходе на новый смартфон.",
+        "cta" : "Включить Ledger Sync"
+      }
+    },
     "activation" : {
       "screen" : {
         "title" : "Включить Ledger Sync для этого смартфона?",
