@@ -35,6 +35,18 @@ function keyExtractor(item: Operation) {
   return item.id;
 }
 
+function ListEmptyComponent({ accountsFiltered }: { accountsFiltered: AccountLike[] }) {
+  if (accountsFiltered.length === 0) {
+    return <EmptyStatePortfolio />;
+  }
+
+  if (accountsFiltered.every(isAccountEmpty)) {
+    return <NoOpStatePortfolio />;
+  }
+
+  return null;
+}
+
 export function OperationsList({
   accountsFiltered,
   allAccounts,
@@ -43,18 +55,6 @@ export function OperationsList({
   onEndReached,
   onTransactionButtonPress,
 }: ListProps) {
-  function ListEmptyComponent() {
-    if (accountsFiltered.length === 0) {
-      return <EmptyStatePortfolio />;
-    }
-
-    if (accountsFiltered.every(isAccountEmpty)) {
-      return <NoOpStatePortfolio />;
-    }
-
-    return null;
-  }
-
   const renderItem: SectionListRenderItem<Operation, DailyOperationsSection> = ({
     item,
     index,

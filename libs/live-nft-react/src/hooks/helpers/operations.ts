@@ -1,6 +1,6 @@
-import { startOfDay } from "@ledgerhq/coin-framework/lib-es/account/balanceHistoryCache";
-import { getAccountCurrency } from "@ledgerhq/coin-framework/lib-es/account/helpers";
-import { flattenOperationWithInternalsAndNfts } from "@ledgerhq/coin-framework/lib-es/operation";
+import { startOfDay } from "@ledgerhq/coin-framework/account/balanceHistoryCache";
+import { getAccountCurrency } from "@ledgerhq/coin-framework/account/helpers";
+import { flattenOperationWithInternalsAndNfts } from "@ledgerhq/coin-framework/operation";
 import { AccountLike, Operation } from "@ledgerhq/types-live";
 type AccountMap = Record<string, AccountLike>;
 
@@ -20,13 +20,15 @@ type Section = {
   data: Operation[];
 };
 
-function compareOps(op1: Operation, op2: Operation): number {
-  if (op1.date !== op2.date) {
-    return op2.date.getTime() - op1.date.getTime();
+export function compareOps(op1: Operation, op2: Operation): number {
+  const dateComparison = op2.date.getTime() - op1.date.getTime();
+  if (dateComparison !== 0) {
+    return dateComparison;
   }
   if (op1.transactionSequenceNumber !== undefined && op2.transactionSequenceNumber !== undefined) {
     return op2.transactionSequenceNumber - op1.transactionSequenceNumber;
   }
+
   return 0;
 }
 
