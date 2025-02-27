@@ -316,7 +316,7 @@ export class SwapPage extends AppPage {
     if (!accountToDebit.accountType) {
       //error message is flickering and changing, so we need to wait for it to be stable
       await this.page.waitForTimeout(1000);
-      const errorSpan = await webview.locator('span[color*="error"]').textContent();
+      const errorSpan = await webview.getByTestId("from-account-error").textContent();
       expect(errorSpan).toMatch(message);
       //that specific amount error doesn't trigger quotes
       if (message instanceof RegExp) {

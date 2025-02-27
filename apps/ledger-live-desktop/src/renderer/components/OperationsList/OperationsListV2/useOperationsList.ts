@@ -9,7 +9,7 @@ import { flattenAccounts, getMainAccount } from "@ledgerhq/live-common/account/i
 import keyBy from "lodash/keyBy";
 import { BlockchainEVM, BlockchainsType } from "@ledgerhq/live-nft/supported";
 import { useHideSpamCollection } from "~/renderer/hooks/nfts/useHideSpamCollection";
-import { useFilterNftSpams } from "@ledgerhq/live-nft-react";
+import { OrderedOperation, useFilterNftSpams } from "@ledgerhq/live-nft-react";
 import logger from "~/renderer/logger";
 import { usePagination } from "LLD/hooks/usePagination";
 import {
@@ -55,7 +55,7 @@ export function useOperationsList({
   const { nbToShow, loadMore, skip } = usePagination(INITIAL_TO_SHOW, "FetchMoreOperations");
 
   // to avoid multiple state rendering, we store the previous filtered data in an indexed ref object
-  const previousFilteredNftData = useRef({});
+  const previousFilteredNftData = useRef<{ [key: string]: OrderedOperation }>({});
   const spamOpsCache = useRef<string[]>([]);
 
   const all = flattenAccounts(accounts || []).concat(
@@ -81,7 +81,7 @@ export function useOperationsList({
   const { opsWithoutNFTIN, opsWithNFTIN } = splitNftOperationsFromAllOperations(allAccountOps);
   const currentPageOpsWithoutNFTIN = opsWithoutNFTIN?.slice(0, nbToShow);
   const currentPageNFTIN = opsWithNFTIN
-    ?.filter(op => !spamOpsCache.current.includes(op.id))
+    ?.filter(op => !spamOpsCache.current.includes(op.id) && !previousFilteredNftData.current[op.id])
     .slice(skip, skip + INITIAL_TO_SHOW * 2);
 
   const relatedNFtOps = buildContractIndexNftOperations(currentPageNFTIN, accountsMap);
@@ -94,7 +94,7 @@ export function useOperationsList({
 
   previousFilteredNftData.current = {
     ...previousFilteredNftData.current,
-    ...keyBy(filteredNftData, "order"),
+    ...keyBy(filteredNftData as OrderedOperation[], "id"),
   };
 
   const groupedOperations = buildCurrentOperationsPage(
@@ -113,12 +113,13 @@ export function useOperationsList({
     [hideSpamCollection, spamFilteringTxEnabled, thresold],
   );
 
-  spamOpsCache.current = spamOps.map(op => op.operation.id);
+  spamOpsCache.current = [
+    ...new Set(spamOpsCache.current.concat(spamOps.map(op => op.operation.id))),
+  ];
 
   useEffect(() => {
     spamOps.forEach(op => {
-      if (!nftCollectionsStatusByNetwork[op.currencyId as BlockchainEVM])
-        markNftAsSpam(op.collectionId, op.currencyId as BlockchainEVM, op.spamScore);
+      markNftAsSpam(op.collectionId, op.currencyId as BlockchainEVM, op.spamScore);
     });
   }, [spamOps, markNftAsSpam, nftCollectionsStatusByNetwork]);
 

@@ -3,4 +3,4 @@ import { Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
 import { runSendValidAddressTest } from "../send";
 
 const transaction = new Transaction(Account.XRP_1, Account.XRP_2, "2", undefined, "noTag");
-runSendValidAddressTest(transaction, "B2CQA-2719");
+runSendValidAddressTest(transaction, ["B2CQA-2719"]);

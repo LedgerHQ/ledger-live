@@ -30,10 +30,10 @@ const beforeAllFunction = async (app: Application, transaction: Transaction) => 
   await app.portfolio.waitForPortfolioPageToLoad();
 };
 
-export async function runSendTest(transaction: Transaction, tmsLink: string) {
+export async function runSendTest(transaction: Transaction, tmsLinks: string[]) {
   const app = new Application();
 
-  $TmsLink(tmsLink);
+  tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   describe("Send from 1 account to another", () => {
     beforeAll(async () => {
       await beforeAllFunction(app, transaction);
@@ -71,12 +71,12 @@ export async function runSendTest(transaction: Transaction, tmsLink: string) {
 export async function runSendInvalidAddressTest(
   transaction: Transaction,
   expectedErrorMessage: string,
-  tmsLink: string,
+  tmsLinks: string[],
   accountName?: string,
 ) {
   const app = new Application();
 
-  $TmsLink(tmsLink);
+  tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   describe("Send - invalid address input", () => {
     beforeAll(async () => {
       await beforeAllFunction(app, transaction);
@@ -92,13 +92,13 @@ export async function runSendInvalidAddressTest(
 
 export async function runSendValidAddressTest(
   transaction: Transaction,
-  tmsLink: string,
+  tmsLinks: string[],
   accountName?: string,
   expectedWarningMessage?: string,
 ) {
   const app = new Application();
 
-  $TmsLink(tmsLink);
+  tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   describe("Send - valid address & amount input", () => {
     beforeAll(async () => {
       await beforeAllFunction(app, transaction);
@@ -123,11 +123,11 @@ export async function runSendValidAddressTest(
 export async function runSendInvalidAmountTest(
   transaction: Transaction,
   expectedErrorMessage: string,
-  tmsLink: string,
+  tmsLinks: string[],
 ) {
   const app = new Application();
 
-  $TmsLink(tmsLink);
+  tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   describe("Check invalid amount input error", () => {
     beforeAll(async () => {
       await beforeAllFunction(app, transaction);
@@ -148,11 +148,11 @@ export async function runSendInvalidAmountTest(
 export async function runSendInvalidTokenAmountTest(
   transaction: Transaction,
   expectedErrorMessage: RegExp | string,
-  tmsLink: string,
+  tmsLinks: string[],
 ) {
   const app = new Application();
 
-  $TmsLink(tmsLink);
+  tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   describe("Send token (subAccount) - invalid amount input", () => {
     beforeAll(async () => {
       await beforeAllFunction(app, transaction);
@@ -180,11 +180,11 @@ export async function runSendInvalidTokenAmountTest(
   });
 }
 
-export async function runSendMaxTest(transaction: Transaction, tmsLink: string) {
+export async function runSendMaxTest(transaction: Transaction, tmsLinks: string[]) {
   setEnv("DISABLE_TRANSACTION_BROADCAST", true);
   const app = new Application();
 
-  $TmsLink(tmsLink);
+  tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   describe("Verify send max user flow", () => {
     beforeAll(async () => {
       await beforeAllFunction(app, transaction);
@@ -205,11 +205,11 @@ export async function runSendMaxTest(transaction: Transaction, tmsLink: string) 
   });
 }
 
-export async function runSendENSTest(transaction: Transaction, tmsLink: string) {
+export async function runSendENSTest(transaction: Transaction, tmsLinks: string[]) {
   setEnv("DISABLE_TRANSACTION_BROADCAST", true);
   const app = new Application();
 
-  $TmsLink(tmsLink);
+  tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   describe("User sends funds to ENS address", () => {
     beforeAll(async () => {
       await beforeAllFunction(app, transaction);

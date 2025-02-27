@@ -4,4 +4,4 @@ import { runSendValidAddressTest } from "../send";
 import { Fee } from "@ledgerhq/live-common/e2e/enum/Fee";
 
 const transaction = new Transaction(Account.ETH_1, Account.ETH_2, "0.00001", Fee.MEDIUM);
-runSendValidAddressTest(transaction, "B2CQA-2715, B2CQA-2716");
+runSendValidAddressTest(transaction, ["B2CQA-2715", "B2CQA-2716"]);

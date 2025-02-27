@@ -7,6 +7,6 @@ const transaction = new Transaction(Account.ALGO_USDT_1, Account.ALGO_USDT_2, "0
 runSendInvalidAddressTest(
   transaction,
   "Recipient account has not opted in the selected ASA.",
-  "B2CQA-2702",
+  ["B2CQA-2702"],
   transaction.accountToDebit.currency.name,
 );
