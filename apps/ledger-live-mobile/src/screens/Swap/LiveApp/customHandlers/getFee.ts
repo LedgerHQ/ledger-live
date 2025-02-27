@@ -2,16 +2,41 @@ import { Strategy } from "@ledgerhq/coin-evm/lib/types/index";
 import { getMainAccount, getParentAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getAbandonSeedAddress } from "@ledgerhq/live-common/currencies/index";
-import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
+import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
-import { Account, AccountBridge, AccountLike } from "@ledgerhq/types-live";
+import { AccountLike } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { SEG_WIT_ABANDON_SEED_ADDRESS } from "../consts";
 
-import { getGasTracker } from "@ledgerhq/coin-evm/api/gasTracker/index";
-import { NavigationProp, NavigationState } from "@react-navigation/native";
-import { NavigatorName, ScreenName } from "~/const";
 import { convertToAtomicUnit, convertToNonAtomicUnit, getCustomFeesPerFamily } from "../utils";
+const getSegWitAbandonSeedAddress = (): string => "bc1qed3mqr92zvq2s782aqkyx785u23723w02qfrgs";
+
+type TransformableObject = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [key: string]: any;
+};
+
+export function transformToBigNumbers(obj: TransformableObject): TransformableObject {
+  if (typeof obj !== "object" || obj === null) {
+    return obj;
+  }
+
+  const transformedObj: TransformableObject = Array.isArray(obj) ? [] : {};
+
+  for (const key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      const value = obj[key];
+      if (typeof value === "string" && !isNaN(value as unknown as number)) {
+        transformedObj[key] = new BigNumber(value);
+      } else if (typeof value === "object") {
+        transformedObj[key] = transformToBigNumbers(value);
+      } else {
+        transformedObj[key] = value;
+      }
+    }
+  }
+
+  return transformedObj;
+}
 
 interface FeeParams {
   fromAccountId: string;
@@ -20,6 +45,7 @@ interface FeeParams {
   openDrawer: boolean;
   customFeeConfig: object;
   SWAP_VERSION: string;
+  gasLimit?: string;
 }
 
 export interface FeeData {
@@ -28,142 +54,76 @@ export interface FeeData {
   errors: TransactionStatus["errors"];
   warnings: TransactionStatus["warnings"];
   customFeeConfig: object;
+  hasDrawer: boolean;
+  gasLimit: BigNumber | null;
 }
-
-interface GenerateFeeDataParams {
-  account: AccountLike;
-  feePayingAccount: Account;
-  feesStrategy: Strategy;
-  fromAmount: BigNumber | undefined;
-  customFeeConfig: object;
-  bridge: AccountBridge<Transaction>;
-  baseTransaction: Transaction;
-}
-
-const getRecipientAddress = (
-  transactionFamily: Transaction["family"],
-  currencyId: string,
-): string => {
-  switch (transactionFamily) {
-    case "evm":
-      return getAbandonSeedAddress(currencyId);
-    case "bitcoin":
-      return SEG_WIT_ABANDON_SEED_ADDRESS;
-    default:
-      throw new Error(`Unsupported transaction family: ${transactionFamily}`);
-  }
-};
-
-const generateFeeData = async ({
-  account,
-  feePayingAccount,
-  feesStrategy = "medium",
-  fromAmount,
-  customFeeConfig,
-  bridge,
-  baseTransaction,
-}: GenerateFeeDataParams): Promise<FeeData> => {
-  const gasTracker = getGasTracker(feePayingAccount.currency);
-
-  const gasOptions = await gasTracker?.getGasOptions({ currency: feePayingAccount.currency });
-  const gasOption = gasOptions ? gasOptions[feesStrategy] : undefined;
-
-  const config = baseTransaction.family === "evm" ? gasOption : customFeeConfig;
-
-  const recipient = getRecipientAddress(baseTransaction.family, feePayingAccount.currency.id);
-  const transactionConfig: Transaction = {
-    ...baseTransaction,
-    subAccountId: account.type !== "Account" ? account.id : undefined,
-    recipient,
-    amount: fromAmount ?? new BigNumber(0),
-    feesStrategy,
-    ...config,
-  };
-
-  const preparedTransaction = bridge.updateTransaction(baseTransaction, transactionConfig);
-
-  const transactionStatus = await bridge.getTransactionStatus(
-    feePayingAccount,
-    preparedTransaction,
-  );
-
-  return {
-    feesStrategy,
-    estimatedFees: convertToNonAtomicUnit({
-      amount: transactionStatus.estimatedFees,
-      account: feePayingAccount,
-    }),
-    errors: transactionStatus.errors,
-    warnings: transactionStatus.warnings,
-    customFeeConfig: getCustomFeesPerFamily(preparedTransaction),
-  };
-};
 
 export const getFee =
-  (
-    accounts: AccountLike[],
-    navigation: Omit<NavigationProp<ReactNavigation.RootParamList>, "getState"> & {
-      getState(): NavigationState | undefined;
-    },
-  ) =>
+  (accounts: AccountLike[]) =>
   async ({ params }: { params: FeeParams }): Promise<FeeData> => {
-    const accountId = getAccountIdFromWalletAccountId(params.fromAccountId);
-    if (!accountId) {
-      throw new Error(`Invalid wallet account ID: ${params.fromAccountId}`);
+    const realFromAccountId = getAccountIdFromWalletAccountId(params.fromAccountId);
+    if (!realFromAccountId) {
+      return Promise.reject(new Error(`accountId ${params.fromAccountId} unknown`));
     }
 
-    const account = accounts.find(acc => acc.id === accountId);
-    if (!account) {
-      throw new Error(`Account not found: ${accountId}`);
+    const fromAccount = accounts.find(acc => acc.id === realFromAccountId);
+    if (!fromAccount) {
+      return Promise.reject(new Error(`accountId ${params.fromAccountId} unknown`));
     }
+    const fromParentAccount = getParentAccount(fromAccount, accounts);
 
-    const parentAccount =
-      account.type === "TokenAccount" ? getParentAccount(account, accounts) : undefined;
+    const mainAccount = getMainAccount(fromAccount, fromParentAccount);
+    const bridge = getAccountBridge(fromAccount, fromParentAccount);
 
-    const feePayingAccount = getMainAccount(account, parentAccount);
+    const subAccountId = fromAccount.type !== "Account" && fromAccount.id;
+    const transaction = bridge.createTransaction(mainAccount);
 
-    const amount = new BigNumber(params.fromAmount);
-    const atomicAmount = convertToAtomicUnit({ amount, account });
-
-    const bridge = getAccountBridge(account, feePayingAccount);
-    const baseTransaction = bridge.createTransaction(feePayingAccount);
-
-    if (params.openDrawer) {
-      return new Promise(resolve => {
-        navigation.navigate(NavigatorName.Fees, {
-          screen: ScreenName.FeeHomePage,
-          params: {
-            onSelect: async (feesStrategy, customFeeConfig) => {
-              const newFeeData = await generateFeeData({
-                account,
-                feePayingAccount,
-                feesStrategy,
-                fromAmount: atomicAmount,
-                customFeeConfig,
-                bridge,
-                baseTransaction,
-              });
-              resolve(newFeeData);
-              navigation.canGoBack() && navigation.goBack();
-            },
-            account,
-            feePayingAccount,
-            fromAmount: amount,
-            feesStrategy: params.feeStrategy,
-            customFeeConfig: params.customFeeConfig,
-            transaction: baseTransaction,
-          },
-        });
-      });
-    }
-
-    return await generateFeeData({
-      account,
-      feePayingAccount,
-      feesStrategy: params.feeStrategy,
-      fromAmount: atomicAmount,
-      customFeeConfig: params.customFeeConfig,
-      bridge,
-      baseTransaction,
+    const preparedTransaction = await bridge.prepareTransaction(mainAccount, {
+      ...transaction,
+      subAccountId,
+      recipient:
+        mainAccount.currency.id === "bitcoin"
+          ? getSegWitAbandonSeedAddress()
+          : getAbandonSeedAddress(mainAccount.currency.id),
+      amount: convertToAtomicUnit({
+        amount: new BigNumber(params.fromAmount),
+        account: fromAccount,
+      }),
+      feesStrategy: params.feeStrategy || "medium",
+      customGasLimit: params.gasLimit ? new BigNumber(params.gasLimit) : null,
+      ...transformToBigNumbers(params.customFeeConfig),
     });
+    const status = await bridge.getTransactionStatus(mainAccount, preparedTransaction);
+    const finalTx = preparedTransaction;
+    const customFeeConfig = transaction && getCustomFeesPerFamily(finalTx);
+
+    // filters out the custom fee config for chains without drawer
+    const hasDrawer = ["evm", "bitcoin"].includes(transaction.family);
+    if (!params.openDrawer) {
+      return {
+        feesStrategy: finalTx.feesStrategy,
+        estimatedFees: convertToNonAtomicUnit({
+          amount: status.estimatedFees,
+          account: mainAccount,
+        }),
+        errors: status.errors,
+        warnings: status.warnings,
+        customFeeConfig,
+        hasDrawer,
+        gasLimit: finalTx.gasLimit,
+      };
+    }
+
+    return {
+      feesStrategy: finalTx.feesStrategy,
+      estimatedFees: convertToNonAtomicUnit({
+        amount: status.estimatedFees,
+        account: mainAccount,
+      }),
+      errors: status.errors,
+      warnings: status.warnings,
+      customFeeConfig,
+      hasDrawer,
+      gasLimit: finalTx.gasLimit,
+    };
   };
