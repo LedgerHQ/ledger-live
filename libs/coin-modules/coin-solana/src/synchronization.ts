@@ -35,7 +35,6 @@ import { parseQuiet } from "./api/chain/program";
 import { InflationReward, ParsedTransaction, StakeActivationData } from "@solana/web3.js";
 import { ChainAPI } from "./api";
 import { ParsedOnChainTokenAccountWithInfo, toTokenAccountWithInfo } from "./api/chain/web3";
-import { drainSeq } from "./utils";
 import { estimateTxFee } from "./tx-fees";
 import { SolanaAccount, SolanaOperationExtra, SolanaStake, SolanaTokenAccount } from "./types";
 import { Operation, OperationType, TokenAccount } from "@ledgerhq/types-live";
