@@ -30,7 +30,7 @@ runs:
         echo "Adjusting changeset level from ${{ inputs.from_level }} to ${{ inputs.to_level }}"
         for file in .changeset/*.md; do
           if grep -q ": ${{ inputs.from_level }}" "$file"; then
-            # target the lines between the "---" yaml delimiters, replace ": patch" with ": minor"
+            # target the lines between the "---" yaml delimiters, replace e.g. ": patch" with ": minor"
             sed -i '/---/,/---/s/: ${{ inputs.from_level }}/: ${{ inputs.to_level }}/' "$file"
             echo "Updated $file to ${{ inputs.to_level }}"
           fi
