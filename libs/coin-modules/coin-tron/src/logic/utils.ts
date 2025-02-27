@@ -20,8 +20,8 @@ export function createTronWeb(trongridUrl?: string): TronWeb {
 /**
  * Convert `raw_data_hex` value from {@link https://developers.tron.network/reference/createtransaction|createTransaction API} to `raw_data` value.
  * The function try to find the correct Protobuf deserialization to use for inner (Contract)[] object.
- * @param rawTx 
- * @returns 
+ * @param rawTx
+ * @returns
  */
 export async function decodeTransaction(rawTx: string): Promise<{
   txID: string;
@@ -211,6 +211,7 @@ const convertNumberToContractType = (value: number): string => CONTRACT_TYPE[val
  * Convert for instance: "41FD49EDA0F23FF7EC1D03B52C3A45991C24CD440E" to "TZ4UXDV5ZhNW7fb2AMSbgfAEZ7hWsnYS2g"
  * @param address
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function convertHexToBase58(address: string): string {
   return TronWeb.address.fromHex(address);
 }

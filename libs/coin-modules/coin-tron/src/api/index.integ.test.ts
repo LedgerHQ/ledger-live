@@ -45,20 +45,19 @@ describe("API", () => {
     // GIVEN
     const amount = 100;
     const recipient = "TPswDDCAWhJAZGdHPidFg5nEf8TkNToDX1";
-    const unsignedTx = await tronWeb.transactionBuilder.sendTrx(
-      recipient,
-      amount,
-      wallet.address.base58,
-    );
-
-    // const unsignedTx = await createTronTransaction(
-    //   { freshAddress: wallet.address.base58 } as Account,
-    //   {
-    //     recipient,
-    //     amount: new BigNumber(amount),
-    //   } as Transaction,
-    //   null,
+    // const unsignedTx = await tronWeb.transactionBuilder.sendTrx(
+    //   recipient,
+    //   amount,
+    //   wallet.address.base58,
     // );
+    const unsignedTx = await createTronTransaction(
+      { freshAddress: wallet.address.base58 } as Account,
+      {
+        recipient,
+        amount: new BigNumber(amount),
+      } as Transaction,
+      null,
+    );
 
     // const signature = await tronWeb.trx.sign(unsignedTx.raw_data_hex, wallet.privateKey);
     // console.log("Signature:", signature);
