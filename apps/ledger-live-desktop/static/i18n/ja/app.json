@@ -439,8 +439,8 @@
       "cta" : "My Ledgerに移動"
     },
     "wrongDevice" : {
-      "title" : "Ledger Nano S™はTHORChainに対応していません",
-      "description" : "Ledger Nano SはTHORChainに対応していませんLedger Nano S Plus、Ledger Nano X、Ledger Stax、またはLedger Flexを使用して、Ledger LiveからTHORChainでのクロスチェーンスワップが可能です",
+      "title" : "Ledger Nano S™は、{{provider}}に対応していません",
+      "description" : "Ledger Nano Sは、{{provider}}に対応していませんLedger Nano S Plus、Ledger Nano X、Ledger Stax、またはLedger Flexを使用して、Ledger Liveから{{provider}}でのクロスチェーンスワップが可能です",
       "cta" : "対応デバイスを探す",
       "changeProvider" : "別のプロバイダーでスワップ"
     },
@@ -3753,7 +3753,66 @@
     },
     "token" : {
       "frozenStateWarning" : "アカウント資産が凍結されています！",
-      "transferWarning" : "Ledger Nano S™を使用してSolanaトークンの受取人アドレスを認証するには、<0>こちらの手順に従ってください。</0>"
+      "transferWarning" : "Ledger Nano S™を使用してSolanaトークンの受取人アドレスを認証するには、<0>こちらの手順に従ってください。</0>",
+      "transferFees" : {
+        "feesPercentHint" : "トークンには{{feePercent}}%（{{feeBps}}bps）の転送手数料がかかります。最大{{maxFee}}",
+        "notice" : "転送手数料{{fee}}%",
+        "tooltipHint" : "トークン作成者のために保留された転送の割合",
+        "transferFeesLabel" : "転送手数料"
+      },
+      "nonTransferable" : {
+        "notice" : "トークンの譲渡はできません"
+      },
+      "interestRate" : {
+        "notice" : "金利：{{rate}}%",
+        "tooltipHint" : "この金利は見かけ上の金利でしかなく、この金利の結果として新しいトークンが作成されるわけではありません"
+      },
+      "permanentDelegate" : {
+        "notice" : "恒久的なデリゲート権限が有効です",
+        "initializationNotice" : "恒久的なデリゲート権限が初期化されていますが、有効にはなっていません",
+        "tooltipHint" : "当該デリゲートは、お客様のアカウントからこのトークンを転送またはバーンすることができます"
+      },
+      "requiredMemoOnTransfer" : {
+        "notice" : "転送時に必要なメモが有効になっています",
+        "tooltipHint" : "このアカウントへの転送にはすべて、メモが必要です"
+      },
+      "transferHook" : {
+        "notice" : "転送フックが有効になっています",
+        "initializationNotice" : "転送フックが初期化されていますが、有効にはなっていません",
+        "tooltipHint" : "トークンには、{{programAddress}}プログラムによって処理される追加機能があります"
+      },
+      "extensionsInfo" : {
+        "title" : "Solanaトークン拡張機能",
+        "commonInfo" : "トークン拡張機能は、次世代のSolanaトークン規格です。これらの拡張機能には、極秘転送、恒久的なデリゲート、カスタム転送ロジック、拡張メタデータなど、通常のトークン機能を拡張する新しい方法が導入されています。",
+        "permanentDelegate" : {
+          "title" : "恒久的なデリゲート",
+          "permanentDelegateAddress" : "現在のデリゲート権限は{{address}}です。",
+          "permanentDelegateNotSetup" : "現在のデリゲート権限が設定されていません",
+          "description" : "恒久的なデリゲートは、そのミントのアカウントに対して無制限のデリゲート権限を持つ権限保有者です。当該デリゲートは、自分の権限で、いつでも、いくらでもトークンをバーンしたり転送したりすることができます。"
+        },
+        "nonTransferable" : {
+          "title" : "譲渡不可トークン",
+          "description" : "このようなトークンは「ソウルバウンド（譲渡・売買・移動不可）」であり、当該トークンの発行者以外には動かしたりバーンしたりすることはできません。"
+        },
+        "transferHook" : {
+          "title" : "転送フック",
+          "transferHookAddress" : "現在の転送フックプログラムは{{address}}です",
+          "transferHookNotSetup" : "現在の転送フックプログラムは設定されていません。",
+          "description" : "転送フックにより、トークン発行者は、ユーザーとトークンのやり取り方法を指定できるようになります。通常の転送の代わりに、発行者はカスタムロジックを、転送フック拡張機能で使用するプログラムに挿入できます。"
+        },
+        "transferFee" : {
+          "title" : "転送手数料",
+          "currentTransferFee" : "現在の転送手数料は{{feePercent}}%（{{feeBps}}bps）です。最大{{maxFee}}です。",
+          "description" : "手数料はトークンの転送ごとに請求され、受取人のアカウントで保留され、受取人はそれに触れることはできません。"
+        },
+        "interestBearing" : {
+          "title" : "利子付きトークン",
+          "currentInterestRate" : "現在の金利は{{rate}}%です。",
+          "accruedDelta" : "未収{{delta}}。",
+          "interestRateNotSetup" : "現在の金利は0％に設定されています。",
+          "description" : "金利に応じて、価値が継続的に増加または減少するトークンです。当該金利によって新しいトークンが作成されるわけではなく、この機能は完全に見かけ上のものです。"
+        }
+      }
     }
   },
   "ethereum" : {
@@ -4155,6 +4214,11 @@
       "debugAppsDesc" : "デバッグとしてタグ付けされたプラットフォームアプリの表示と実行を許可します。",
       "debugReactQuery" : "ReactQueryのデバッグを許可する",
       "debugReactQueryDesc" : "ReactQueryデバッグコンソールを表示し、開くことを許可します。",
+      "nfts" : {
+        "title" : "NFT非表示コレクション",
+        "description" : "非表示コレクションリストをリセット",
+        "reset" : "リセット"
+      },
       "exchangeDeveloperMode" : {
         "title" : "Exchange開発者モード",
         "desc" : "Exchangeプロバイダーの情報を追加する",
@@ -5437,7 +5501,8 @@
     },
     "solana" : {
       "memo" : "タグ/メモ",
-      "memoPlaceholder" : "任意"
+      "memoPlaceholder" : "任意",
+      "requiredMemoPlaceholder" : "必須"
     }
   },
   "errors" : {
@@ -6249,6 +6314,13 @@
     "SolanaTxConfirmationTimeout" : {
       "title" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
     },
+    "SolanaRecipientMemoIsRequired" : {
+      "title" : "受取人アドレスにはメモが必要です"
+    },
+    "SolanaTokenNonTransferable" : {
+      "title" : "トークンの譲渡はできません",
+      "description" : "そのようなトークンは「ソウルバウンド」で、譲渡することはできません"
+    },
     "NotEnoughNftOwned" : {
       "title" : "利用可能なトークン数を超えています"
     },
@@ -6918,6 +6990,14 @@
         "optOut" : {
           "title" : "絶好のアップグレードチャンス！",
           "description" : "Ledger Nano Sのキャンペーンは間もなく終了です。<0>{{discount}}%OFF</0>で、当社の最新デバイスにアップグレードできます。",
+          "cta" : "ウォレットをレベルアップ",
+          "linkText" : "詳細はこちら"
+        }
+      },
+      "portfolio" : {
+        "optOut" : {
+          "title" : "アップグレードに絶好のチャンス！",
+          "description" : "<0>{{discount}}%割引</0>で、最新のデバイスにアップグレードしましょう！より使いやすく、強化されたセキュリティをお楽しみいただけます。",
           "cta" : "ウォレットをレベルアップ",
           "linkText" : "詳細はこちら"
         }
