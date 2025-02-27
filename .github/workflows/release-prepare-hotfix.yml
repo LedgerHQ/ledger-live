@@ -94,12 +94,12 @@ jobs:
         run: |
           git fetch origin develop main
 
-      - name: merge into main
-        if: ${{ github.event.inputs.tag_version == 'latest' }}
-        run: |
-          git checkout main
-          git merge ${{ inputs.ref }} --no-ff
-          git push origin main
+      # - name: merge into main
+      #   if: ${{ github.event.inputs.tag_version == 'latest' }}
+      #   run: |
+      #     git checkout main
+      #     git merge ${{ inputs.ref }} --no-ff
+      #     git push origin main
 
       - name: create PR to develop
         if: ${{ github.event.inputs.tag_version == 'latest' }}
@@ -111,33 +111,33 @@ jobs:
           git push origin support/hotfix-merge-conflicts
           gh pr create --title ":rotating_light: Hotfix merge conflicts" -F .github/templates/hotfix-conflicts.md --base develop --head support/hotfix-merge-conflicts
 
-      - name: merge into release if present
-        if: ${{ github.event.inputs.tag_version == 'latest' }}
-        env:
-          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
-        run: |
-          if git checkout release
-          then
-            if git merge ${{ github.event.inputs.ref }} --no-ff
-            then
-              git push origin release
-            else
-              git merge --abort
-              git checkout ${{ github.event.inputs.ref }}
-              git checkout -b support/hotfix-release-merge-conflicts
-              git push origin support/hotfix-release-merge-conflicts
-              gh pr create --title ":rotating_light: Hotfix Release merge conflicts" -F .github/templates/hotfix-release-conflicts.md --base release --head support/hotfix-release-merge-conflicts
-            fi
-          fi
+  #     - name: merge into release if present
+  #       if: ${{ github.event.inputs.tag_version == 'latest' }}
+  #       env:
+  #         GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+  #       run: |
+  #         if git checkout release
+  #         then
+  #           if git merge ${{ github.event.inputs.ref }} --no-ff
+  #           then
+  #             git push origin release
+  #           else
+  #             git merge --abort
+  #             git checkout ${{ github.event.inputs.ref }}
+  #             git checkout -b support/hotfix-release-merge-conflicts
+  #             git push origin support/hotfix-release-merge-conflicts
+  #             gh pr create --title ":rotating_light: Hotfix Release merge conflicts" -F .github/templates/hotfix-release-conflicts.md --base release --head support/hotfix-release-merge-conflicts
+  #           fi
+  #         fi
 
-  release-final:
-    name: "[Release] Publish packages and apps"
-    needs: prepare-release
-    uses: LedgerHQ/ledger-live/.github/workflows/release-final.yml@develop
-    with:
-      # release from main if hotfixing the latest version, otherwise from the hotfix branch
-      # For more info about why we do this, see this doc:
-      # https://ledgerhq.atlassian.net/wiki/spaces/WALLETCO/pages/4710989838/LL+Incident+Recovery+-+Hotfix+in+all+cases
-      ref: ${{ github.event.inputs.tag_version == 'latest' && 'main' || 'hotfix' }}
-      caller: release-prepare-hotfix
-    secrets: inherit
+  # release-final:
+  #   name: "[Release] Publish packages and apps"
+  #   needs: prepare-release
+  #   uses: LedgerHQ/ledger-live/.github/workflows/release-final.yml@develop
+  #   with:
+  #     # release from main if hotfixing the latest version, otherwise from the hotfix branch
+  #     # For more info about why we do this, see this doc:
+  #     # https://ledgerhq.atlassian.net/wiki/spaces/WALLETCO/pages/4710989838/LL+Incident+Recovery+-+Hotfix+in+all+cases
+  #     ref: ${{ github.event.inputs.tag_version == 'latest' && 'main' || 'hotfix' }}
+  #     caller: release-prepare-hotfix
+  #   secrets: inherit
