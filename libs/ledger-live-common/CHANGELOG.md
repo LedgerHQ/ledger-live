@@ -1,5 +1,12 @@
 ## 34.5.0-next.4
 
+## 34.23.1-nightly.1
+
+### Patch Changes
+
+- Updated dependencies [[`163da32`](https://github.com/LedgerHQ/ledger-live/commit/163da32dac423444294896d8ff65174a093690aa)]:
+  - @ledgerhq/coin-solana@0.13.2-nightly.0
+
 ## 34.23.1-nightly.0
 
 ### Patch Changes

@@ -1,5 +1,18 @@
 # ledger-live-desktop
 
+## 2.102.0-nightly.1
+
+### Minor Changes
+
+- [#9357](https://github.com/LedgerHQ/ledger-live/pull/9357) [`0b7d689`](https://github.com/LedgerHQ/ledger-live/commit/0b7d689e64a479af53c36c7cec32933fd595bb24) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add a check during debounce on LLD resize and move events
+
+- [#9342](https://github.com/LedgerHQ/ledger-live/pull/9342) [`e6b7454`](https://github.com/LedgerHQ/ledger-live/commit/e6b7454fabca0d4679cbeec38cb5b62f81713b2e) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix duplicated TXs in HIstory and Spams where not always marked as Spam"
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@34.23.1-nightly.1
+
 ## 2.102.0-nightly.0
 
 ### Minor Changes

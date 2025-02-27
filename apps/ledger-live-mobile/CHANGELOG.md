@@ -1,5 +1,16 @@
 # live-mobile
 
+## 3.68.0-nightly.1
+
+### Minor Changes
+
+- [#9336](https://github.com/LedgerHQ/ledger-live/pull/9336) [`4c35e12`](https://github.com/LedgerHQ/ledger-live/commit/4c35e12fa89ac83d567ddf8bdc28b5a189c7669c) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Promise Concurrency during app start to reduce the llm startup time
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@34.23.1-nightly.1
+
 ## 3.67.1-nightly.0
 
 ### Patch Changes

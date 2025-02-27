@@ -1,5 +1,11 @@
 # @ledgerhq/coin-solana
 
+## 0.13.2-nightly.0
+
+### Patch Changes
+
+- [#9351](https://github.com/LedgerHQ/ledger-live/pull/9351) [`163da32`](https://github.com/LedgerHQ/ledger-live/commit/163da32dac423444294896d8ff65174a093690aa) Thanks [@qperrot](https://github.com/qperrot)! - Change calls interval from 500ms to 100ms
+
 ## 0.13.1
 
 ### Patch Changes
