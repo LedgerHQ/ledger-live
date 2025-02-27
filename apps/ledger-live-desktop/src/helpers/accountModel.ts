@@ -64,6 +64,15 @@ const accountModel: DataModel<AccountRaw, [Account, AccountUserData]> = createDa
           version = "2"; // replace version because no need to have the currencyId like used to do.
           break;
         }
+        case "aptos": {
+          if (freshAddressPath.match(/^44'\/637'\/[0-9]+'\/[0-9]+\/[0-9]+$/)) {
+            raw.freshAddressPath = (freshAddressPath as string)
+              .split("/")
+              .map(value => (value.endsWith("'") ? value : value + "'"))
+              .join("/");
+          }
+          break;
+        }
         default:
           // this case should never happen
           throw new Error(`unknown Account type=${type}`);
