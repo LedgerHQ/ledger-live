@@ -261,14 +261,31 @@ function extendTronTxExpirationTimeBy10mn(
   ) as unknown as Promise<SendTransactionDataSuccess>;
 }
 
-export const broadcastTron = async (trxTransaction: SendTransactionDataSuccess) => {
-  const result = await post(`/wallet/broadcasttransaction`, trxTransaction);
+type BroadcastSuccessResponseTronAPI = { result: true; txid: string };
+type BroadcastErrorResponseTronAPI = {
+  result?: boolean;
+  txid: string;
+  code: string;
+  message: string;
+};
+type BroadcastResponseTronAPI = BroadcastSuccessResponseTronAPI | BroadcastErrorResponseTronAPI;
+export const broadcastTron = async (
+  trxTransaction: SendTransactionDataSuccess & { signature: string[] },
+): Promise<string> => {
+  const result: BroadcastResponseTronAPI = await post(
+    "/wallet/broadcasttransaction",
+    trxTransaction,
+  );
 
-  if (result.code === "TRANSACTION_EXPIRATION_ERROR") {
-    throw new TronTransactionExpired();
+  if (result.result !== true) {
+    if (result.code === "TRANSACTION_EXPIRATION_ERROR") {
+      throw new TronTransactionExpired();
+    } else {
+      throw new Error(result.message);
+    }
   }
 
-  return result;
+  return result.txid;
 };
 
 type TronGridBroadcastResponse = {
