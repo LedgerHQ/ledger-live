@@ -40,20 +40,24 @@ export function createDataModel<R, M>(schema: DataSchema<R, M>): DataModel<R, M>
   function decodeModel(raw) {
     let { data } = raw;
 
-    if (data.currencyId == "crypto_org" && !data.cosmosResources) {
-      data.cosmosResources = {
-        delegations: [],
-        redelegations: [],
-        unbondings: [],
-        delegatedBalance: new BigNumber(0),
-        pendingRewardsBalance: new BigNumber(0),
-        unbondingBalance: new BigNumber(0),
-        withdrawAddress: data.freshAddress,
-        sequence: 0,
-      };
-    }
-    for (let i = raw.version; i < version; i++) {
-      data = migrations[i](data);
+    if (data.currencyId === "aptos" && migrations.length) {
+      data = migrations[0](data);
+    } else {
+      if (data.currencyId == "crypto_org" && !data.cosmosResources) {
+        data.cosmosResources = {
+          delegations: [],
+          redelegations: [],
+          unbondings: [],
+          delegatedBalance: new BigNumber(0),
+          pendingRewardsBalance: new BigNumber(0),
+          unbondingBalance: new BigNumber(0),
+          withdrawAddress: data.freshAddress,
+          sequence: 0,
+        };
+      }
+      for (let i = raw.version; i < version; i++) {
+        data = migrations[i](data);
+      }
     }
 
     data = decode(data);

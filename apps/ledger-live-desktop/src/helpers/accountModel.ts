@@ -64,8 +64,11 @@ const accountModel: DataModel<AccountRaw, [Account, AccountUserData]> = createDa
           version = "2"; // replace version because no need to have the currencyId like used to do.
           break;
         }
-        case "aptos": {
-          if (freshAddressPath.match(/^44'\/637'\/[0-9]+'\/[0-9]+\/[0-9]+$/)) {
+        case "js": {
+          if (
+            currencyId === "aptos" &&
+            freshAddressPath.match(/^44'\/637'\/[0-9]+'\/[0-9]+\/[0-9]+$/)
+          ) {
             raw.freshAddressPath = (freshAddressPath as string)
               .split("/")
               .map(value => (value.endsWith("'") ? value : value + "'"))
@@ -77,6 +80,9 @@ const accountModel: DataModel<AccountRaw, [Account, AccountUserData]> = createDa
           // this case should never happen
           throw new Error(`unknown Account type=${type}`);
       }
+
+      if (currencyId === "aptos") return raw;
+
       const id = `${type}:${version}:${currencyId}:${xpubOrAddress}:${derivationMode}`;
       return {
         ...raw,
