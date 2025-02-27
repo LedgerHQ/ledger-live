@@ -1,13 +1,9 @@
 import type { Api } from "@ledgerhq/coin-framework/api/index";
-import { Account } from "@ledgerhq/types-live";
-import BigNumber from "bignumber.js";
 import { randomBytes } from "crypto";
 import dotenv from "dotenv";
 import TronWeb from "tronweb";
 import { createApi } from ".";
 import { createTronWeb } from "../logic/utils";
-import { createTronTransaction } from "../network";
-import { Transaction } from "../types";
 
 const TRONGRID_URL = "https://api.shasta.trongrid.io";
 dotenv.config();
@@ -45,19 +41,19 @@ describe("API", () => {
     // GIVEN
     const amount = 100;
     const recipient = "TPswDDCAWhJAZGdHPidFg5nEf8TkNToDX1";
-    // const unsignedTx = await tronWeb.transactionBuilder.sendTrx(
-    //   recipient,
-    //   amount,
-    //   wallet.address.base58,
-    // );
-    const unsignedTx = await createTronTransaction(
-      { freshAddress: wallet.address.base58 } as Account,
-      {
-        recipient,
-        amount: new BigNumber(amount),
-      } as Transaction,
-      null,
+    const unsignedTx = await tronWeb.transactionBuilder.sendTrx(
+      recipient,
+      amount,
+      wallet.address.base58,
     );
+    // const unsignedTx = await createTronTransaction(
+    //   { freshAddress: wallet.address.base58 } as Account,
+    //   {
+    //     recipient,
+    //     amount: new BigNumber(amount),
+    //   } as Transaction,
+    //   null,
+    // );
 
     // const signature = await tronWeb.trx.sign(unsignedTx.raw_data_hex, wallet.privateKey);
     // console.log("Signature:", signature);
