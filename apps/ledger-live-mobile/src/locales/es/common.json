@@ -1053,6 +1053,9 @@
     },
     "AppManifestNotFoundError" : {
       "title" : "Error al cargar Aplicación Permuta de Live"
+    },
+    "InvalidMemoMina" : {
+      "title" : "El texto de un memo no debe superar los 32 caracteres"
     }
   },
   "crash" : {
@@ -1119,6 +1122,11 @@
       "fast" : "rápida",
       "custom" : "Personalizada",
       "blockCount" : "{{blockCount}} bloques"
+    },
+    "estimatedTime" : {
+      "slow" : "Aprox. 2-3 min",
+      "medium" : "Aprox. 30 seg",
+      "fast" : "Aprox. 15 seg"
     }
   },
   "signout" : {
@@ -6992,6 +7000,16 @@
   },
   "walletSync" : {
     "title" : "Ledger Sync",
+    "entryPoints" : {
+      "simpleCta" : {
+        "title" : "Activar Ledger Sync"
+      },
+      "card" : {
+        "title" : "Ledger Sync",
+        "description" : "Sincroniza tus cuentas automáticamente, incluso si cambias a un teléfono nuevo.",
+        "cta" : "Activar Ledger Sync"
+      }
+    },
     "activation" : {
       "screen" : {
         "title" : "¿Activar Ledger Sync para este teléfono?",
