@@ -59,7 +59,7 @@ exports[`mina currency bridge scanAccounts mina seed 1 2`] = `
         "B62qkdFWJSW8zaTBZjTVtmeU3rVxyUkNxPhKKW8T2JBtpj5XfdywLSM",
       ],
       "type": "IN",
-      "value": "4000000000",
+      "value": "3000000000",
     },
     {
       "accountId": "js:2:mina:B62qjWLs1W3J2fFGixeX49w1o7VvSGuMBNotnFhzs3PZ7PbtdFbhdeD:minabip44h",
