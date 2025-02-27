@@ -32,6 +32,9 @@ import {
   useDeviceManagementKit,
   useDeviceSessionRefresherToggle,
 } from "@ledgerhq/live-dmk-mobile";
+import { useBleDevicesScanning as useLegacyBleDevicesScanning } from "@ledgerhq/live-common/ble/hooks/useBleDevicesScanning";
+import getBLETransport from "../../react-native-hw-transport-ble";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 export type { SetHeaderOptionsRequest };
 
@@ -88,7 +91,16 @@ export default function SelectDevice({
 
   const knownDevices = useSelector(bleDevicesSelector);
   const navigation = useNavigation<Navigation["navigation"]>();
-  const { scannedDevices } = useBleDevicesScanning();
+
+  const isLDMKEnabled = !!useFeature("ldmkTransport")?.enabled;
+
+  const { scannedDevices: DMKscannedDevices } = useBleDevicesScanning(isLDMKEnabled);
+  const { scannedDevices: legacyScannedDevices } = useLegacyBleDevicesScanning({
+    bleTransportListen: getBLETransport({ isLDMKEnabled }).listen,
+    stopBleScanning,
+    enabled: !isLDMKEnabled,
+  });
+  const scannedDevices = isLDMKEnabled ? DMKscannedDevices : legacyScannedDevices;
 
   // Each time the user navigates back to the screen the BLE requirements are not enforced
   const [isBleRequired, setIsBleRequired] = useResetOnNavigationFocusState(false);
@@ -257,7 +269,7 @@ export default function SelectDevice({
   }, [dispatch]);
 
   const dmk = useDeviceManagementKit();
-  useDeviceSessionRefresherToggle(dmk, true);
+  useDeviceSessionRefresherToggle(dmk, isLDMKEnabled);
 
   // Makes sure that when loosing (screen) focus, the visibility of the bottom tab bar is reset
   useEffect(() => {

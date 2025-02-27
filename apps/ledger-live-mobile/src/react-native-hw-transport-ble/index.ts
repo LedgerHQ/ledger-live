@@ -1,17 +1,31 @@
 import Config from "react-native-config";
+import BleTransport from "@ledgerhq/react-native-hw-transport-ble";
+import { DeviceManagementKitTransport } from "@ledgerhq/live-dmk-mobile";
 import makeMock from "./makeMock";
 import createAPDUMock from "../logic/createAPDUMock";
-import { DeviceManagementKitTransport } from "@ledgerhq/live-dmk-mobile";
 
 const names: { [key: string]: string } = {};
-const transport = Config.MOCK
-  ? makeMock({
+
+/**
+ * Retrieves the appropriate BLE transport instance based on environment configuration and feature flags.
+ *
+ * - If `Config.MOCK` is `true`, it returns a mock transport for testing.
+ * - If `isLDMKEnabled` is `true`, it returns `DeviceManagementKitTransport`.
+ * - Otherwise, it defaults to `BleTransport`.
+ *
+ * @param {Object} options - Configuration options.
+ * @param {boolean} options.isLDMKEnabled - Flag to enable Device Management Kit transport.
+ * @returns {typeof BleTransport} The selected transport instance.
+ */
+const getBLETransport = ({ isLDMKEnabled }: { isLDMKEnabled: boolean }) => {
+  if (Config.MOCK) {
+    return makeMock({
       // TODO E2E: This could be dynamically set in bridge/server.js
       createTransportDeviceMock: (id: string, name: string, serviceUUID: string) => {
         names[id] = name;
         const serviceUUIDs = [serviceUUID];
         const apduMock = createAPDUMock({
-          setDeviceName: name => {
+          setDeviceName: (name: string) => {
             names[id] = name;
             return Promise.resolve();
           },
@@ -36,6 +50,15 @@ const transport = Config.MOCK
           serviceUUIDs,
         };
       },
-    })
-  : DeviceManagementKitTransport;
-export default transport;
+    });
+  } else {
+    // when not in MOCK mode, return DeviceManagementKitTransport if enabled,
+    // otherwise BleTransport. Asserting the type of DeviceManagementKitTransport
+    // to match BleTransport.
+    return isLDMKEnabled
+      ? (DeviceManagementKitTransport as unknown as typeof BleTransport)
+      : BleTransport;
+  }
+};
+
+export default getBLETransport;
