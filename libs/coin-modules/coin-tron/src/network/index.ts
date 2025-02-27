@@ -12,12 +12,7 @@ import take from "lodash/take";
 import TronWeb from "tronweb";
 import { TronTransactionExpired } from "../types/errors";
 import coinConfig from "../config";
-import {
-  abiEncodeTrc20Transfer,
-  defaultTronResources,
-  extractBandwidthInfo,
-  hexToAscii,
-} from "../logic/utils";
+import { abiEncodeTrc20Transfer, extractBandwidthInfo, hexToAscii } from "./utils";
 import type {
   FreezeTransactionData,
   LegacyUnfreezeTransactionData,
@@ -269,6 +264,11 @@ type BroadcastErrorResponseTronAPI = {
   message: string;
 };
 type BroadcastResponseTronAPI = BroadcastSuccessResponseTronAPI | BroadcastErrorResponseTronAPI;
+/**
+ * @see https://github.com/tronprotocol/java-tron/blob/develop/framework/src/main/java/org/tron/core/services/http/BroadcastServlet.java
+ * @param trxTransaction
+ * @returns Transaction ID
+ */
 export const broadcastTron = async (
   trxTransaction: SendTransactionDataSuccess & { signature: string[] },
 ): Promise<string> => {
@@ -627,154 +627,6 @@ export const voteTronSuperRepresentatives = async (
   };
   return await post(`/wallet/votewitnessaccount`, payload);
 };
-
-export async function getTronResources(
-  acc?: Record<string, any>,
-  txs?: TrongridTxInfo[],
-  cacheTransactionInfoById: Record<string, TronTransactionInfo> = {},
-): Promise<TronResources> {
-  if (!acc) {
-    return defaultTronResources;
-  }
-
-  const delegatedFrozenBandwidth = get(acc, "delegated_frozenV2_balance_for_bandwidth", undefined);
-  const delegatedFrozenEnergy = get(
-    acc,
-    "account_resource.delegated_frozenV2_balance_for_energy",
-    undefined,
-  );
-
-  const frozenBalances: { type?: string; amount?: number }[] = get(acc, "frozenV2", undefined);
-
-  const legacyFrozenBandwidth = get(acc, "frozen[0]", undefined);
-  const legacyFrozenEnergy = get(acc, "account_resource.frozen_balance_for_energy", undefined);
-
-  const legacyFrozen = {
-    bandwidth: legacyFrozenBandwidth
-      ? {
-          amount: new BigNumber(legacyFrozenBandwidth.frozen_balance),
-          expiredAt: new Date(legacyFrozenBandwidth.expire_time),
-        }
-      : undefined,
-    energy: legacyFrozenEnergy
-      ? {
-          amount: new BigNumber(legacyFrozenEnergy.frozen_balance),
-          expiredAt: new Date(legacyFrozenEnergy.expire_time),
-        }
-      : undefined,
-  };
-
-  const { frozenEnergy, frozenBandwidth } = frozenBalances.reduce(
-    (accum, cur) => {
-      const amount = new BigNumber(cur?.amount ?? 0);
-      if (cur.type === "ENERGY") {
-        accum.frozenEnergy = accum.frozenEnergy.plus(amount);
-      } else if (cur.type === undefined) {
-        accum.frozenBandwidth = accum.frozenBandwidth.plus(amount);
-      }
-      return accum;
-    },
-    {
-      frozenEnergy: new BigNumber(0),
-      frozenBandwidth: new BigNumber(0),
-    },
-  );
-
-  const unFrozenBalances: {
-    type: string;
-    unfreeze_amount: number;
-    unfreeze_expire_time: number;
-  }[] = get(acc, "unfrozenV2", undefined);
-
-  const unFrozen: { bandwidth: UnFrozenInfo[]; energy: UnFrozenInfo[] } = unFrozenBalances
-    ? unFrozenBalances.reduce(
-        (accum, cur) => {
-          if (cur && cur.type === "ENERGY") {
-            accum.energy.push({
-              amount: new BigNumber(cur.unfreeze_amount),
-              expireTime: new Date(cur.unfreeze_expire_time),
-            });
-          } else if (cur) {
-            accum.bandwidth.push({
-              amount: new BigNumber(cur.unfreeze_amount),
-              expireTime: new Date(cur.unfreeze_expire_time),
-            });
-          }
-          return accum;
-        },
-        { bandwidth: [] as UnFrozenInfo[], energy: [] as UnFrozenInfo[] },
-      )
-    : { bandwidth: [], energy: [] };
-
-  const encodedAddress = encode58Check(acc.address);
-  const tronNetworkInfo = await getTronAccountNetwork(encodedAddress);
-  const unwithdrawnReward = await getUnwithdrawnReward(encodedAddress);
-  const energy = tronNetworkInfo.energyLimit.minus(tronNetworkInfo.energyUsed);
-  const bandwidth = extractBandwidthInfo(tronNetworkInfo);
-
-  const frozen = {
-    bandwidth: frozenBandwidth.isGreaterThan(0)
-      ? {
-          amount: frozenBandwidth,
-        }
-      : undefined,
-    energy: frozenEnergy.isGreaterThan(0)
-      ? {
-          amount: frozenEnergy,
-        }
-      : undefined,
-  };
-  const delegatedFrozen = {
-    bandwidth: delegatedFrozenBandwidth
-      ? {
-          amount: new BigNumber(delegatedFrozenBandwidth),
-        }
-      : undefined,
-    energy: delegatedFrozenEnergy
-      ? {
-          amount: new BigNumber(delegatedFrozenEnergy),
-        }
-      : undefined,
-  };
-  const tronPower = new BigNumber(get(frozen, "bandwidth.amount", 0))
-    .plus(get(frozen, "energy.amount", 0))
-    .plus(get(delegatedFrozen, "bandwidth.amount", 0))
-    .plus(get(delegatedFrozen, "energy.amount", 0))
-    .plus(get(legacyFrozen, "energy.amount", 0))
-    .plus(get(legacyFrozen, "bandwidth.amount", 0))
-    .dividedBy(1000000)
-    .integerValue(BigNumber.ROUND_FLOOR)
-    .toNumber();
-  const votes = get(acc, "votes", []).map((v: any) => ({
-    address: v.vote_address,
-    voteCount: v.vote_count,
-  }));
-  const lastWithdrawnRewardDate = acc.latest_withdraw_time
-    ? new Date(acc.latest_withdraw_time)
-    : undefined;
-
-  // TODO: rely on the account object when trongrid will provide this info.
-  const getLastVotedDate = (txs: TrongridTxInfo[]): Date | null | undefined => {
-    const lastOp = txs.find(({ type }) => type === "VoteWitnessContract");
-    return lastOp ? lastOp.date : null;
-  };
-  const lastVotedDate = txs ? getLastVotedDate(txs) : undefined;
-
-  return {
-    energy,
-    bandwidth,
-    frozen,
-    unFrozen,
-    delegatedFrozen,
-    legacyFrozen,
-    votes,
-    tronPower,
-    unwithdrawnReward,
-    lastWithdrawnRewardDate,
-    lastVotedDate,
-    cacheTransactionInfoById,
-  };
-}
 
 export const getUnwithdrawnReward = async (addr: string): Promise<BigNumber> => {
   try {

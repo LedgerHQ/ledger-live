@@ -1,5 +1,5 @@
 import { broadcastTron } from "../network";
-import { decodeTransaction } from "./combine";
+import { decodeTransaction } from "./utils";
 
 export async function broadcast(transaction: string): Promise<string> {
   const { rawTx, signature } = extractTxAndSignature(transaction);
