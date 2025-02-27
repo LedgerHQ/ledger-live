@@ -15,17 +15,28 @@ export const nftCollectionParser = (
       .map(([contract]) => contract),
   );
 
-export function useNftCollectionsStatus() {
+export function useNftCollectionsStatus(forTx?: boolean) {
   const nftsFromSimplehashFeature = useFeature("nftsFromSimplehash");
+  const llmSpamFilteringTx = useFeature("llmSpamFilteringTx");
   const nftCollectionsStatusByNetwork = useSelector(nftCollectionsStatusByNetworkSelector);
 
-  const hideSpam = Boolean(nftsFromSimplehashFeature?.enabled);
+  const mayIncludeSpamsInTheList = !!nftsFromSimplehashFeature?.enabled;
+
+  const filteredStatuses = useMemo(
+    () =>
+      forTx && !llmSpamFilteringTx?.enabled
+        ? [NftStatus.whitelisted, NftStatus.spam]
+        : [NftStatus.whitelisted],
+    [forTx, llmSpamFilteringTx],
+  );
 
   const list = useMemo(() => {
     return nftCollectionParser(nftCollectionsStatusByNetwork, ([_, status]) =>
-      hideSpam ? status !== NftStatus.whitelisted : status === NftStatus.blacklisted,
+      mayIncludeSpamsInTheList
+        ? !filteredStatuses.includes(status)
+        : status === NftStatus.blacklisted,
     );
-  }, [nftCollectionsStatusByNetwork, hideSpam]);
+  }, [nftCollectionsStatusByNetwork, mayIncludeSpamsInTheList, filteredStatuses]);
 
   const whitelisted = useMemo(() => {
     return nftCollectionParser(

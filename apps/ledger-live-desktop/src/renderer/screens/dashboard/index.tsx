@@ -67,7 +67,7 @@ export default function DashboardPage() {
   useAutoRedirectToPostOnboarding();
 
   const [shouldFilterTokenOpsZeroAmount] = useFilterTokenOperationsZeroAmount();
-  const { hiddenNftCollections } = useNftCollectionsStatus();
+  const { hiddenNftCollections } = useNftCollectionsStatus(true);
   const filterOperations = useCallback(
     (operation: Operation, account: AccountLike) => {
       // Remove operations linked to address poisoning
