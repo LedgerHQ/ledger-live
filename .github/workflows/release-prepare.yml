@@ -63,8 +63,7 @@ jobs:
       - name: pull commit
         run: |
           git stash
-          git fetch origin ${{ inputs.ref }}
-          git pull --rebase origin ${{ inputs.ref }}
+          git pull origin ${{ inputs.ref }}
 
       - name: fetch develop and main
         run: |
