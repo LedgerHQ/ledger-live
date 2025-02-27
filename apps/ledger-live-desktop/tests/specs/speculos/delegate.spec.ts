@@ -46,7 +46,7 @@ const e2eDelegationAccounts = [
 
 const e2eDelegationAccountsWithoutBroadcast = [
   {
-    delegate: new Delegate(Account.ADA_1, "0.01", "LBF2 - Ledger by Figment 2"),
+    delegate: new Delegate(Account.ADA_1, "0.01", "LBF3 - Ledger by Figment 3"),
     xrayTicket: "B2CQA-3023",
   },
   {
@@ -200,11 +200,19 @@ for (const account of e2eDelegationAccountsWithoutBroadcast) {
 
         await app.account.startStakingFlowFromMainStakeButton();
         await app.delegate.continue();
-        await app.delegate.verifyFirstProviderName(account.delegate.provider);
+
+        if (account.delegate.account.currency.name == Currency.ADA.name) {
+          await app.delegate.openSearchProviderModal();
+          await app.delegate.inputProvider("Ledger by Figment 3");
+          await app.delegate.selectProviderByName(account.delegate.provider);
+        } else {
+          await app.delegate.verifyFirstProviderName(account.delegate.provider);
+        }
+
         await app.delegate.continue();
 
         if (account.delegate.account.currency.name == Currency.ADA.name) {
-          await app.delegate.verifyValidatorName("Ledger by Figment 2 [LBF2]");
+          await app.delegate.verifyValidatorName("Ledger by Figment 3 [LBF3]");
           await app.delegate.verifyFeesVisible();
           await app.delegate.continue();
         } else {
