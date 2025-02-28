@@ -43,7 +43,7 @@ export function createDataModel<R, M>(schema: DataSchema<R, M>): DataModel<R, M>
 
     // Set 'change' and 'address_index' levels to be hardened for Aptos derivation path
     if (currencyId === "aptos" && freshAddressPath.match(/^44'\/637'\/[0-9]+'\/[0-9]+\/[0-9]+$/)) {
-      data.freshAddressPath = (freshAddressPath as string)
+      data.freshAddressPath = freshAddressPath
         .split("/")
         .map(value => (value.endsWith("'") ? value : value + "'"))
         .join("/");
