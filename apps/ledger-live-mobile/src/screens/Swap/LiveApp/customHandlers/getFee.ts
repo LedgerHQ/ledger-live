@@ -5,8 +5,9 @@ import { getAbandonSeedAddress } from "@ledgerhq/live-common/currencies/index";
 import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
 import { AccountLike } from "@ledgerhq/types-live";
+import { NavigationProp, NavigationState } from "@react-navigation/native";
 import BigNumber from "bignumber.js";
-
+import { NavigatorName, ScreenName } from "~/const";
 import { convertToAtomicUnit, convertToNonAtomicUnit, getCustomFeesPerFamily } from "../utils";
 const getSegWitAbandonSeedAddress = (): string => "bc1qed3mqr92zvq2s782aqkyx785u23723w02qfrgs";
 
@@ -59,7 +60,12 @@ export interface FeeData {
 }
 
 export const getFee =
-  (accounts: AccountLike[]) =>
+  (
+    accounts: AccountLike[],
+    navigation: Omit<NavigationProp<ReactNavigation.RootParamList>, "getState"> & {
+      getState(): NavigationState | undefined;
+    },
+  ) =>
   async ({ params }: { params: FeeParams }): Promise<FeeData> => {
     const realFromAccountId = getAccountIdFromWalletAccountId(params.fromAccountId);
     if (!realFromAccountId) {
@@ -99,19 +105,39 @@ export const getFee =
 
     // filters out the custom fee config for chains without drawer
     const hasDrawer = ["evm", "bitcoin"].includes(transaction.family);
-    if (!params.openDrawer) {
-      return {
-        feesStrategy: finalTx.feesStrategy,
-        estimatedFees: convertToNonAtomicUnit({
-          amount: status.estimatedFees,
-          account: mainAccount,
-        }),
-        errors: status.errors,
-        warnings: status.warnings,
-        customFeeConfig,
-        hasDrawer,
-        gasLimit: finalTx.gasLimit,
-      };
+
+    if (params.openDrawer) {
+      return new Promise(resolve => {
+        navigation.navigate(NavigatorName.Fees, {
+          screen: ScreenName.FeeHomePage,
+          params: {
+            onSelect: async (feesStrategy, customFeeConfig) => {
+              const newFeeData = {
+                // little hack to make sure we do not return null (for bitcoin for instance)
+                feesStrategy: finalTx.feesStrategy || "custom",
+                estimatedFees: convertToNonAtomicUnit({
+                  amount: status.estimatedFees,
+                  account: mainAccount,
+                }),
+                errors: status.errors,
+                warnings: status.warnings,
+                customFeeConfig,
+                hasDrawer,
+                gasLimit: finalTx.gasLimit,
+              };
+
+              resolve(newFeeData);
+              navigation.canGoBack() && navigation.goBack();
+            },
+            account: fromAccount,
+            feePayingAccount: mainAccount,
+            fromAmount: new BigNumber(params.fromAmount),
+            feesStrategy: params.feeStrategy,
+            customFeeConfig: params.customFeeConfig,
+            transaction: transaction,
+          },
+        });
+      });
     }
 
     return {
