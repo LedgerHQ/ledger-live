@@ -40,8 +40,9 @@ export const Default: StoryObj<NotificationCardProps> = {};
 
 export const LNSNotificationCard: StoryObj<NotificationCardProps> = {
   args: {
-    title: undefined,
-    description: "Updates are ending soon. Upgrade now with 20% off for a seamless experience.",
+    title: "",
+    description:
+      "Explore our newer devices like Ledger Flex™, designed for today’s crypto ecosystem, and enjoy an exclusive 20% upgrade discount as a valued Nano S™ user.",
     cta: "Level up my wallet",
     icon: "SparksFill",
     isHighlighted: true,
