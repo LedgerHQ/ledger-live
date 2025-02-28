@@ -26,7 +26,6 @@ jobs:
       - name: create release branch
         run: |
           git checkout -b $RELEASE_BRANCH
-          git push -u origin $RELEASE_BRANCH
       - name: Setup the caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         id: setup-caches
@@ -38,34 +37,16 @@ jobs:
         run: pnpm build:libs
       - name: import CAL tokens
         run: pnpm import:cal-tokens
-      - name: Add changed files
+      - name: commit new tokens
         run: |
           git add .
-      - name: commit new tokens
-        uses: planetscale/ghcommit-action@v0.1.6
-        with:
-          commit_message: "chore(prerelease) update cryptoassets"
-          repo: ${{ github.repository }}
-          branch: ${{ env.RELEASE_BRANCH }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          git commit -m 'chore(prerelease) update cryptoassets' || echo "No new tokens added"
       - name: update sortByMarketcap snapshot
         run: pnpm common jest --runTestsByPath src/currencies/sortByMarketcap.test.ts -u
-      - name: Add changed files
-        run: |
-          git stash
-          git fetch origin $RELEASE_BRANCH          # make sure previous commit is included
-          git pull --rebase origin $RELEASE_BRANCH  # make sure previous commit is included
-          git stash pop
-          git add .
       - name: commit sortByMarketcap.test.ts
-        uses: planetscale/ghcommit-action@v0.1.6
-        with:
-          commit_message: "update sortByMarketcap snapshot"
-          repo: ${{ github.repository }}
-          branch: ${{ env.RELEASE_BRANCH }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git add .
+          git commit -m 'update sortByMarketcap snapshot' || echo "No changes in snapshot of sortByMarketcap.test.ts"
       - name: Move patch updates to minor
         # For more info about why we do this, see this doc:
         # https://ledgerhq.atlassian.net/wiki/spaces/WALLETCO/pages/4710989838/LL+Incident+Recovery+-+Hotfix+in+all+cases
@@ -75,27 +56,17 @@ jobs:
           to_level: minor
       - name: enter prerelease mode
         run: pnpm changeset pre enter next
-      - name: Add changed files
-        run: |
-          git stash
-          git fetch origin $RELEASE_BRANCH          # make sure previous commit is included
-          git pull --rebase origin $RELEASE_BRANCH  # make sure previous commit is included
-          git stash pop
-          git add .
       - name: commit
-        uses: planetscale/ghcommit-action@v0.1.6
-        with:
-          commit_message: "chore(prerelease): :rocket: entering prerelease mode"
-          repo: ${{ github.repository }}
-          branch: ${{ env.RELEASE_BRANCH }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git add .
+          git commit -m "chore(prerelease): :rocket: entering prerelease mode"
       - name: Get date
         id: date
         run: |
           echo "date=$(date +%F)" >> $GITHUB_OUTPUT
-      - name: create PR
+      - name: push
         run: |
+          git push origin $RELEASE_BRANCH
           gh pr create --title ":rocket: Release ${{ steps.date.outputs.date }}" -F .github/templates/release.md --base main --head $RELEASE_BRANCH
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
