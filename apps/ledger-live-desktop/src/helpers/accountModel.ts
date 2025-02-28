@@ -68,7 +68,6 @@ const accountModel: DataModel<AccountRaw, [Account, AccountUserData]> = createDa
           // this case should never happen
           throw new Error(`unknown Account type=${type}`);
       }
-
       const id = `${type}:${version}:${currencyId}:${xpubOrAddress}:${derivationMode}`;
       return {
         ...raw,
