@@ -39,9 +39,14 @@ export function createDataModel<R, M>(schema: DataSchema<R, M>): DataModel<R, M>
 
   function decodeModel(raw) {
     let { data } = raw;
+    const { currencyId, freshAddressPath } = data;
 
-    if (data.currencyId === "aptos" && migrations.length) {
-      data = migrations[0](data);
+    // Set 'change' and 'address_index' levels to be hardened for Aptos derivation path
+    if (currencyId === "aptos" && freshAddressPath.match(/^44'\/637'\/[0-9]+'\/[0-9]+\/[0-9]+$/)) {
+      data.freshAddressPath = (freshAddressPath as string)
+        .split("/")
+        .map(value => (value.endsWith("'") ? value : value + "'"))
+        .join("/");
     } else {
       if (data.currencyId == "crypto_org" && !data.cosmosResources) {
         data.cosmosResources = {
