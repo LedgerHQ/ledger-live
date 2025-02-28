@@ -5,10 +5,9 @@ export const getTokenUnit = (
   account?: Account,
   contractAddress?: string | string[],
 ) => {
-  const unit =
-    label.includes("Amount") && account && contractAddress
-      ? account.subAccounts?.find(a => a.token.contractAddress === contractAddress)?.token.units[0]
-      : undefined;
+  if (!label.includes("Amount") || !account || !contractAddress) return undefined;
 
-  return unit;
+  const address = Array.isArray(contractAddress) ? contractAddress[0] : contractAddress;
+
+  return account.subAccounts?.find(a => a.token.contractAddress === address)?.token.units[0];
 };
