@@ -18,14 +18,18 @@ import {
   lastSeenDeviceSelector,
 } from "~/reducers/settings";
 import { useSwapLiveAppCustomHandlers } from "./hooks/useSwapLiveAppCustomHandlers";
+import { useSwapLiveAppTranslateUrlParams } from "./hooks/useSwapLiveAppTranslateUrlParams";
 
 type Props = {
   manifest: LiveAppManifest;
+  params: Record<string, string>;
   setWebviewState: React.Dispatch<React.SetStateAction<WebviewState>>;
 };
 
-export function WebView({ manifest, setWebviewState }: Props) {
+export function WebView({ manifest, params, setWebviewState }: Props) {
   const customHandlers = useSwapLiveAppCustomHandlers(manifest);
+  const urlParams = useSwapLiveAppTranslateUrlParams(JSON.parse(params));
+  console.log("urlParams", urlParams);
   const { theme } = useTheme();
   const { language } = useSettings();
   const { ticker: currencyTicker } = useSelector(counterValueCurrencySelector);
@@ -57,7 +61,8 @@ export function WebView({ manifest, setWebviewState }: Props) {
             lastSeenDevice: lastSeenDevice?.modelId,
             discreetMode: discreet ? "true" : "false",
             OS: Platform.OS,
-            platform: "LLM", // need consitent format with LLD, Platform doesn't work
+            platform: "LLM", // need consistent format with LLD, Platform doesn't work
+            ...urlParams,
           }}
         />
       </Flex>

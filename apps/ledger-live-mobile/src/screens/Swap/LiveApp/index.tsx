@@ -28,7 +28,8 @@ import { WebView } from "./WebView";
 const DEFAULT_MANIFEST_ID =
   process.env.DEFAULT_SWAP_MANIFEST_ID || DEFAULT_FEATURES.ptxSwapLiveApp.params?.manifest_id;
 
-export function SwapLiveApp() {
+export function SwapLiveApp({ route }) {
+  const { params } = route;
   const { t } = useTranslation();
   const ptxSwapLiveAppMobile = useFeature("ptxSwapLiveAppMobile");
 
@@ -77,7 +78,11 @@ export function SwapLiveApp() {
   return (
     <PanGestureHandler onHandlerStateChange={onGesture} activeOffsetX={[0, 10]}>
       <Flex flex={1} testID="swap-form-tab">
-        <WebView manifest={manifest} setWebviewState={setWebviewState} />
+        <WebView
+          manifest={manifest}
+          setWebviewState={setWebviewState}
+          params={JSON.stringify(params)}
+        />
       </Flex>
     </PanGestureHandler>
   );
