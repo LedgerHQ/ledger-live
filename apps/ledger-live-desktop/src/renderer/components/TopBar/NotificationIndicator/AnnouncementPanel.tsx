@@ -1,9 +1,7 @@
 import React, { useCallback, useMemo } from "react";
-import { t } from "i18next";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
 import { useDispatch } from "react-redux";
-import { Flex, Icons } from "@ledgerhq/react-ui";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import TriangleWarning from "~/renderer/icons/TriangleWarning";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
@@ -286,20 +284,7 @@ export function AnnouncementPanel() {
       <TrackPage category="Notification Center" name="notification_center_news" />
 
       <Box py="32px">
-        {lnsUpsellBannerModel && (
-          <Flex flexDirection="column" rowGap="16px">
-            <DateRowContainer style={{ margin: 0 }}>
-              <DateLabel>
-                <Icons.PinLocation
-                  size="XS"
-                  style={{ verticalAlign: "text-bottom", marginRight: 4 }}
-                />
-                {t("informationCenter.announcement.pinned")}
-              </DateLabel>
-            </DateRowContainer>
-            <LNSNotificationBanner model={lnsUpsellBannerModel} />
-          </Flex>
-        )}
+        {lnsUpsellBannerModel && <LNSNotificationBanner model={lnsUpsellBannerModel} />}
 
         {groups.map((group, index) => (
           <React.Fragment key={index}>
