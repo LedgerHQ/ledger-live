@@ -51,7 +51,7 @@ export default function BleDevicesScanning({
 }: BleDevicesScanningProps) {
   const { t } = useTranslation();
 
-  const isLDMKEnabled = !!useFeature("ldmkTransport")?.enabled;
+  const isLDMKEnabled = Boolean(useFeature("ldmkTransport")?.enabled);
 
   const productName =
     filterByDeviceModelId && !Array.isArray(filterByDeviceModelId)

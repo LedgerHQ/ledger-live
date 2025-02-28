@@ -93,7 +93,7 @@ export function useEnableBluetooth(
 ) {
   const [observedTransportState, setObservedTransportState] = useState<string>("Unknown");
 
-  const isLDMKEnabled = !!useFeature("ldmkTransport")?.enabled;
+  const isLDMKEnabled = Boolean(useFeature("ldmkTransport")?.enabled);
 
   const promptBluetoothCallback = usePromptEnableBluetoothCallback();
 

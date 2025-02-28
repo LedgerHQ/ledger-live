@@ -31,7 +31,7 @@ export default function Scanning({ onTimeout, onError, onSelect, deviceModelIds 
   const knownDevices = useSelector(bleDevicesSelector);
   const [devices, setDevices] = useState<TransportBleDevice[]>([]);
 
-  const isLDMKEnabled = !!useFeature("ldmkTransport")?.enabled;
+  const isLDMKEnabled = Boolean(useFeature("ldmkTransport")?.enabled);
 
   const filteredDevices = useMemo(() => {
     if (!deviceModelIds) return devices;

@@ -8,23 +8,14 @@ import { registerTransportModule, type TransportModule } from "@ledgerhq/live-co
 import { getDeviceModel } from "@ledgerhq/devices";
 import { DescriptorEvent } from "@ledgerhq/hw-transport";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { Store } from "redux";
-import { overriddenFeatureFlagsSelector } from "~/reducers/settings";
 import getBLETransport from "~/react-native-hw-transport-ble";
-import { getFeature } from "@ledgerhq/live-common/featureFlags/firebaseFeatureFlags";
 
 /**
  * Registers transport modules for different connection types (BLE, HID, HTTP Debug).
  *
- * @param {Store} store - The Redux store instance, used to fetch feature flags.
+ * @param {boolean} isLDMKEnabled - Flag to enable or disable LDMK support.
  */
-export const registerTransports = (store: Store) => {
-  const isLDMKEnabled = !!((store: Store) => {
-    const state = store.getState();
-    const localOverrides = overriddenFeatureFlagsSelector(state);
-    return getFeature({ key: "ldmkTransport", localOverrides })?.enabled;
-  })(store);
-
+export const registerTransports = (isLDMKEnabled: boolean) => {
   if (Config.BLE_LOG_LEVEL) getBLETransport({ isLDMKEnabled }).setLogLevel(Config.BLE_LOG_LEVEL);
 
   // Add support of HID (experimental until we stabilize it)

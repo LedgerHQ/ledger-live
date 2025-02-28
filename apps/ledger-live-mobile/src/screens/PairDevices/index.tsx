@@ -79,7 +79,7 @@ function PairDevicesInner({ navigation, route }: NavigationProps) {
   const dispatchRedux = useDispatch();
   const [{ error, status, device, skipCheck, name }, dispatch] = useReducer(reducer, initialState);
 
-  const isLDMKEnabled = !!useFeature("ldmkTransport")?.enabled;
+  const isLDMKEnabled = Boolean(useFeature("ldmkTransport")?.enabled);
 
   const unmounted = useRef(false);
   useEffect(

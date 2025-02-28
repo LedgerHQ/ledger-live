@@ -92,7 +92,7 @@ export default function SelectDevice({
   const knownDevices = useSelector(bleDevicesSelector);
   const navigation = useNavigation<Navigation["navigation"]>();
 
-  const isLDMKEnabled = !!useFeature("ldmkTransport")?.enabled;
+  const isLDMKEnabled = Boolean(useFeature("ldmkTransport")?.enabled);
 
   const { scannedDevices: DMKscannedDevices } = useBleDevicesScanning(isLDMKEnabled);
   const { scannedDevices: legacyScannedDevices } = useLegacyBleDevicesScanning({

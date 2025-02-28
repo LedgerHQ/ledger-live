@@ -119,11 +119,12 @@ function walletExportSelector(state: State) {
 function App() {
   const accounts = useSelector(accountsSelector);
   const analyticsFF = useFeature("llmAnalyticsOptInPrompt");
+  const isLDMKEnabled = Boolean(useFeature("ldmkTransport")?.enabled);
   const hasSeenAnalyticsOptInPrompt = useSelector(hasSeenAnalyticsOptInPromptSelector);
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const dispatch = useDispatch();
 
-  useEffect(() => registerTransports(store), []);
+  useEffect(() => registerTransports(isLDMKEnabled), [isLDMKEnabled]);
 
   useEffect(() => {
     if (
