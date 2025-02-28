@@ -25,7 +25,7 @@ type Props = {
   skipOp: number;
 };
 
-export function useOperations({ accounts, opCount, withSubAccounts, skipOp }: Props) {
+export function useOperationsV2({ accounts, opCount, withSubAccounts, skipOp }: Props) {
   const {
     hideSpamCollection,
     spamFilteringTxFeature,
@@ -131,6 +131,5 @@ export function useOperations({ accounts, opCount, withSubAccounts, skipOp }: Pr
   return {
     sections: groupedOperations.sections,
     completed,
-    spamFilteringTxEnabled,
   };
 }

@@ -1,8 +1,8 @@
 import React from "react";
 
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
-import { useOperations } from "~/screens/Analytics/Operations/useOperations";
-import { OperationsList } from "~/screens/Analytics/Operations/operationsList";
+import { useOperationsV2 } from "~/screens/Analytics/Operations/useOperationsV2";
+import { OperationsList } from "~/screens/Analytics/Operations/OperationsList";
 import { PortfolioHistoryNewProps, PortfolioHistoryProps } from "./types";
 
 const View = withDiscreetMode(
@@ -37,7 +37,7 @@ const PortfolioHistoryListWithoutSpams = ({
     <View
       accounts={accounts}
       {...rest}
-      {...useOperations({
+      {...useOperationsV2({
         accounts,
         opCount,
         skipOp,
