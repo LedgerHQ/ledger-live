@@ -50,7 +50,13 @@ export default function SelectCrypto({
     onPressItem,
     debounceTrackOnSearchChange,
     providersLoadingStatus,
-  } = useSelectCryptoViewModel({ context, filterCurrencyIds, paramsCurrency, analyticsMetadata });
+  } = useSelectCryptoViewModel({
+    context,
+    filterCurrencyIds,
+    paramsCurrency,
+    analyticsMetadata,
+    path: route?.path,
+  });
 
   const renderList = useCallback(
     (items: CryptoOrTokenCurrency[]) => (

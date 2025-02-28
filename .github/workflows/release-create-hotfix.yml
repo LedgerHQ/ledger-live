@@ -51,6 +51,7 @@ jobs:
       - name: create hotfix branch
         run: |
           git checkout -b hotfix
+          git push -u origin hotfix
       - name: Setup the caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         id: setup-caches
@@ -77,17 +78,23 @@ jobs:
 
       - name: enter prerelease mode
         run: pnpm changeset pre enter hotfix
-      - name: commit
+      - name: git add
         run: |
           git add .
-          git commit -m "chore(hotfix) :rocket: entering hotfix mode"
+      - name: commit changes
+        uses: planetscale/ghcommit-action@v0.1.6
+        with:
+          commit_message: "chore(hotfix) :rocket: entering hotfix mode"
+          repo: ${{ github.repository }}
+          branch: hotfix
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Get date
         id: date
         run: |
           echo "date=$(date +%F)" >> $GITHUB_OUTPUT
-      - name: push
+      - name: create PR to main
         run: |
-          git push origin hotfix
           gh pr create \
             --title ":fire: Hotfix ${{ steps.date.outputs.date }} (targeting ${{ github.event.inputs.application }} ${{ github.event.inputs.tag_version }})"\
             -F ./.github/templates/hotfix.md \

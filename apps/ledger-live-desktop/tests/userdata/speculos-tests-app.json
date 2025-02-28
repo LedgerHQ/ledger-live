@@ -20700,8 +20700,8 @@
           "pendingOperations": [],
           "currencyId": "ripple",
           "lastSyncDate": "2024-08-01T09:06:56.691Z",
-          "balance": "24000000",
-          "spendableBalance": "14000000",
+          "balance": "29000000",
+          "spendableBalance": "19000000",
           "balanceHistoryCache": {
             "HOUR": {
               "balances": [

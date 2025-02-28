@@ -4,7 +4,7 @@ import {
   trustchainSelector,
 } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { useDispatch, useSelector } from "react-redux";
-import { setFlow } from "~/renderer/actions/walletSync";
+import { setDrawerVisibility, setFlow } from "~/renderer/actions/walletSync";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
 import { useTrustchainSdk } from "./useTrustchainSdk";
 import { TrustchainResult, TrustchainResultType } from "@ledgerhq/ledger-key-ring-protocol/types";
@@ -14,9 +14,19 @@ import {
   TrustchainAlreadyInitializedWithOtherSeed,
 } from "@ledgerhq/ledger-key-ring-protocol/errors";
 import { track } from "~/renderer/analytics/segment";
+import { AnalyticsPage } from "./useLedgerSyncAnalytics";
+import { saveSettings, setLastOnboardedDevice } from "~/renderer/actions/settings";
+import { useHistory } from "react-router";
 
-export function useAddMember({ device }: { device: Device | null }) {
+export function useAddMember({
+  device,
+  sourcePage,
+}: {
+  device: Device | null;
+  sourcePage?: AnalyticsPage;
+}) {
   const dispatch = useDispatch();
+  const history = useHistory();
   const sdk = useTrustchainSdk();
   const memberCredentials = useSelector(memberCredentialsSelector);
   const trustchain = useSelector(trustchainSelector);
@@ -33,19 +43,26 @@ export function useAddMember({ device }: { device: Device | null }) {
     (trustchainResult: TrustchainResult) => {
       dispatch(setTrustchain(trustchainResult.trustchain));
       track("ledgersync_activated");
-      dispatch(
-        setFlow({
-          flow: Flow.Activation,
-          step: Step.ActivationLoading,
-          nextStep:
-            trustchainResult.type === TrustchainResultType.created
-              ? Step.ActivationFinal
-              : Step.SynchronizationFinal,
-          hasTrustchainBeenCreated: trustchainResult.type === TrustchainResultType.created,
-        }),
-      );
+      if (sourcePage === AnalyticsPage.Onboarding) {
+        dispatch(saveSettings({ hasCompletedOnboarding: true }));
+        dispatch(setLastOnboardedDevice(device));
+        history.push("/");
+        dispatch(setDrawerVisibility(false));
+      } else {
+        dispatch(
+          setFlow({
+            flow: Flow.Activation,
+            step: Step.ActivationLoading,
+            nextStep:
+              trustchainResult.type === TrustchainResultType.created
+                ? Step.ActivationFinal
+                : Step.SynchronizationFinal,
+            hasTrustchainBeenCreated: trustchainResult.type === TrustchainResultType.created,
+          }),
+        );
+      }
     },
-    [dispatch],
+    [device, dispatch, history, sourcePage],
   );
 
   const handleMissingDevice = useCallback(() => {

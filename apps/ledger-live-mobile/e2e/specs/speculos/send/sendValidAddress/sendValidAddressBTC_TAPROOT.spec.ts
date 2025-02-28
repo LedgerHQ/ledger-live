@@ -9,4 +9,4 @@ const transaction = new Transaction(
   "0.00001",
   Fee.MEDIUM,
 );
-runSendValidAddressTest(transaction, "B2CQA-2725");
+runSendValidAddressTest(transaction, ["B2CQA-2725"]);
