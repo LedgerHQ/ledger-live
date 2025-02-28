@@ -155,6 +155,54 @@ for (const { swap, xrayTicket } of swaps) {
   });
 }
 
+const checkProviders = [
+  {
+    swap: new Swap(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "0.02", Fee.MEDIUM),
+    xrayTicket: "B2CQA-2750",
+  },
+];
+
+for (const { swap, xrayTicket } of checkProviders) {
+  test.describe.only("Swap - Provider redirection)", () => {
+    setupEnv(true);
+
+    const accPair: string[] = [swap.accountToDebit, swap.accountToCredit].map(acc =>
+      acc.currency.speculosApp.name.replace(/ /g, "_"),
+    );
+
+    test.beforeEach(async () => {
+      setExchangeDependencies(
+        accPair.map(appName => ({
+          name: appName,
+        })),
+      );
+    });
+
+    test.use({
+      userdata: "speculos-tests-app",
+      speculosApp: app,
+    });
+
+    test(
+      "Swap test provider",
+      {
+        annotation: {
+          type: "TMS",
+          description: xrayTicket,
+        },
+      },
+      async ({ app, electronApp }) => {
+        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
+        await performSwapUntilQuoteSelectionStep(app, electronApp, swap);
+        //changer selectExchange par select selectExternalExchange et rename selectExchange en selectNativeExchange
+        const selectedProvider = await app.swap.selectExchange(electronApp);
+        console.log(selectedProvider);
+      },
+    );
+  });
+}
+
 test.describe("Swap - Check Best Offer", () => {
   const swap = new Swap(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "0.02", Fee.MEDIUM);
   setupEnv(true);
