@@ -1,0 +1,42 @@
+{
+  "id": "CoinbaseStaking",
+  "private": false,
+  "name": "Coinbase Staking",
+  "url": "https://cdp.coinbase.com/delegate-ui/ui",
+  "homepageUrl": "https://coinbase.com",
+  "icon": "",
+  "platforms": ["ios", "android", "desktop"],
+  "apiVersion": "^2.0.0",
+  "manifestVersion": "2",
+  "branch": "stable",
+  "categories": ["DeFi"],
+  "currencies": ["ethereum", "ethereum_holesky"],
+  "highlight": false,
+  "content": {
+    "description": {
+      "en": "A fast, simple, and secure way to earn rewards. No minimum amount of ETH required"
+    },
+    "shortDescription": {
+      "en": "coinbase.com"
+    }
+  },
+  "domains": ["https://*"],
+  "visibility": "complete",
+  "permissions": [],
+  "dapp": {
+    "provider": "evm",
+    "nanoApp": "Coinbase",
+    "networks": [
+      {
+        "currency": "ethereum",
+        "chainID": 1,
+        "nodeURL": "https://eth-dapps.api.live.ledger.com"
+      },
+      {
+        "currency": "ethereum_holesky",
+        "chainID": 17000,
+        "nodeURL": "https://chain-proxy.wallet.coinbase.com?targetName=ethereum-holesky"
+      }
+    ]
+  }
+}

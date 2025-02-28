@@ -1,0 +1,62 @@
+{
+  "$schema": "https://live-app-catalog.ledger.com/schema.json",
+  "id": "kiln-widget",
+  "author": "kiln.fi",
+  "private": false,
+  "name": "Kiln Widget",
+  "url": "https://earn-live.widget.testnet.kiln.fi/earn",
+  "homepageUrl": "https://earn-live.widget.testnet.kiln.fi/earn",
+  "icon": "https://cdn.live.ledger.com/icons/platform/kiln.png",
+  "platforms": ["ios", "android", "desktop"],
+  "apiVersion": "^2.0.0",
+  "manifestVersion": "2",
+  "branch": "stable",
+  "categories": ["DeFi", "stake/earn/manage"],
+  "currencies": ["ethereum", "opt", "sepol", "bsc", "base", "arbi"],
+  "highlight": true,
+  "content": {
+    "description": {
+      "en": "description"
+    },
+    "shortDescription": {
+      "en": "shortDescription"
+    }
+  },
+  "domains": ["http://", "https://"],
+  "visibility": "complete",
+  "permissions": [
+    "account.list",
+    "account.request",
+    "currency.list",
+    "account.receive",
+    "message.sign",
+    "transaction.sign",
+    "transaction.signAndBroadcast",
+    "wallet.capabilities",
+    "wallet.info",
+    "wallet.userId",
+    "storage.get",
+    "storage.set"
+  ],
+  "dapp": {
+    "provider": "evm",
+    "nanoApp": "Ethereum",
+    "networks": [
+      {
+        "currency": "ethereum",
+        "chainID": 1,
+        "nodeURL": "https://eth-dapps.api.live.ledger.com"
+      },
+      {
+        "currency": "bsc",
+        "chainID": 56,
+        "nodeURL": "https://bsc-dapps.api.live.ledger.com"
+      },
+      {
+        "currency": "arbitrum",
+        "chainID": 42170,
+        "nodeURL": "https://arb-dapps.api.live.ledger.com"
+      }
+    ]
+  }
+}

@@ -1,0 +1,91 @@
+{
+  "enabled": true,
+  "params": {
+    "list": [
+      "mantra",
+      "xion",
+      "ethereum",
+      "solana",
+      "tezos",
+      "cosmos",
+      "osmo",
+      "celo",
+      "near",
+      "elrond",
+      "quicksilver",
+      "persistence",
+      "onomy",
+      "axelar",
+      "cardano",
+      "dydx",
+      "injective"
+    ],
+    "redirects": [
+      {
+        "assetId": "tron",
+        "platform": "stakekit",
+        "name": "StakeKit",
+        "queryParams": {
+          "yieldId": "tron-trx-native-staking"
+        }
+      },
+      {
+        "assetId": "crypto_org",
+        "platform": "stakekit",
+        "name": "StakeKit",
+        "queryParams": {
+          "yieldId": "cronos-cro-native-staking"
+        }
+      },
+      {
+        "assetId": "bsc",
+        "platform": "stakekit",
+        "name": "StakeKit",
+        "queryParams": {
+          "yieldId": "bsc-bnb-native-staking"
+        }
+      },
+      {
+        "assetId": "ethereum/erc20/polygon_ecosystem_token",
+        "platform": "stakekit",
+        "name": "StakeKit",
+        "queryParams": {
+          "yieldId": "ethereum-matic-native-staking"
+        }
+      },
+      {
+        "assetId": "polkadot",
+        "platform": "stakekit",
+        "name": "StakeKit",
+        "queryParams": {
+          "yieldId": "polkadot-dot-validator-staking"
+        }
+      },
+      {
+        "assetId": "ethereum/erc20/usd_tether__erc20_",
+        "useTokenAccount": true,
+        "platform": "kiln-widget",
+        "name": "Kiln",
+        "queryParams": {
+          "chainId": 1
+        }
+      },
+      {
+        "assetId": "ethereum/erc20/usd__coin",
+        "platform": "kiln-widget",
+        "name": "Kiln",
+        "queryParams": {
+          "chainId": 1
+        }
+      },
+      {
+        "assetId": "avalanche_c_chain",
+        "platform": "stakekit",
+        "name": "StakeKit",
+        "queryParams": {
+          "yieldId": "avalanche-avax-liquid-staking"
+        }
+      }
+    ]
+  }
+}

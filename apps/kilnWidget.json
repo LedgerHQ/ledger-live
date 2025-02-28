@@ -1,0 +1,70 @@
+{
+  "$schema": "https://live-app-catalog.ledger.com/schema.json",
+  "id": "kiln-widget",
+  "author": "kiln.fi",
+  "private": false,
+  "name": "Kiln DeFi",
+  "url": "https://ledger-earn.widget.testnet.kiln.fi/earn",
+  "homepageUrl": "https://ledger-earn.widget.testnet.kiln.fi/earn",
+  "icon": "https://cdn.live.ledger.com/icons/platform/kiln-app.png",
+  "platforms": ["ios", "android", "desktop"],
+  "apiVersion": "^2.0.0",
+  "manifestVersion": "2",
+  "branch": "stable",
+  "categories": ["DeFi", "stake/earn/manage"],
+  "currencies": [
+    "ethereum",
+    "ethereum/**",
+    "arbitrum",
+    "arbitrum/**",
+    "arbitrum_sepolia",
+    "optimism",
+    "optimism/**",
+    "sepolia",
+    "bsc",
+    "base_sepolia",
+    "base"
+  ],
+  "highlight": true,
+  "content": {
+    "description": {
+      "en": "ledger-earn.widget"
+    },
+    "shortDescription": {
+      "en": "ledger-earn.widget"
+    }
+  },
+  "domains": ["https://"],
+  "visibility": "complete",
+  "dapp": {
+    "provider": "evm",
+    "nanoApp": "Ethereum",
+    "networks": [
+      {
+        "currency": "ethereum",
+        "chainID": 1,
+        "nodeURL": "https://eth-dapps.api.live.ledger.com"
+      },
+      {
+        "currency": "ethereum/erc20/usd__coin",
+        "chainID": 1,
+        "nodeURL": "https://eth-dapps.api.live.ledger.com"
+      },
+      {
+        "currency": "ethereum/erc20/usd_tether__erc20_",
+        "chainID": 1,
+        "nodeURL": "https://eth-dapps.api.live.ledger.com"
+      },
+      {
+        "currency": "bsc",
+        "chainID": 56,
+        "nodeURL": "https://bsc-dapps.api.live.ledger.com"
+      },
+      {
+        "currency": "arbitrum",
+        "chainID": 42170,
+        "nodeURL": "https://arb-dapps.api.live.ledger.com"
+      }
+    ]
+  }
+}
