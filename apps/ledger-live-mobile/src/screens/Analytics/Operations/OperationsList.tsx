@@ -1,13 +1,7 @@
 import React from "react";
 import { SectionList, SectionListData, SectionListRenderItem } from "react-native";
 import { Flex } from "@ledgerhq/native-ui";
-import {
-  Account,
-  AccountLike,
-  AccountLikeArray,
-  DailyOperationsSection,
-  Operation,
-} from "@ledgerhq/types-live";
+import { Account, AccountLike, DailyOperationsSection, Operation } from "@ledgerhq/types-live";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/helpers";
 
 import { Trans } from "react-i18next";
@@ -21,15 +15,7 @@ import Button from "~/components/Button";
 import { TrackScreen } from "~/analytics";
 import EmptyStatePortfolio from "~/screens/Portfolio/EmptyStatePortfolio";
 import NoOpStatePortfolio from "~/screens/Portfolio/NoOpStatePortfolio";
-
-type ListProps = {
-  onEndReached?: () => void;
-  onTransactionButtonPress?: () => void;
-  sections: DailyOperationsSection[];
-  accountsFiltered: AccountLike[];
-  allAccounts: AccountLikeArray;
-  completed: boolean;
-};
+import { ListProps } from "./types";
 
 function keyExtractor(item: Operation) {
   return item.id;

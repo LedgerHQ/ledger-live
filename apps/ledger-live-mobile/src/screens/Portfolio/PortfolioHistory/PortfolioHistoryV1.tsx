@@ -1,15 +1,10 @@
-import React, { useCallback } from "react";
-import { useSelector } from "react-redux";
+import React from "react";
 
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
-import { OperationsList } from "~/screens/Analytics/Operations/operationsList";
-import { AccountLike, Operation } from "@ledgerhq/types-live";
+import { OperationsList } from "~/screens/Analytics/Operations/OperationsList";
 
-import { groupAccountsOperationsByDay } from "@ledgerhq/live-common/account/index";
-import { isAddressPoisoningOperation } from "@ledgerhq/coin-framework/lib/operation";
-import { useNftCollectionsStatus } from "~/hooks/nfts/useNftCollectionsStatus";
-import { filterTokenOperationsZeroAmountEnabledSelector } from "~/reducers/settings";
 import { PortfolioHistoryProps } from "./types";
+import { useOperationsV1 } from "~/screens/Analytics/Operations/useOperationsV1";
 
 export const PortfolioHistoryList = withDiscreetMode(
   ({
@@ -19,30 +14,7 @@ export const PortfolioHistoryList = withDiscreetMode(
     onTransactionButtonPress,
     opCount = 5,
   }: PortfolioHistoryProps) => {
-    const { hiddenNftCollections } = useNftCollectionsStatus();
-    const shouldFilterTokenOpsZeroAmount = useSelector(
-      filterTokenOperationsZeroAmountEnabledSelector,
-    );
-
-    const filterOperation = useCallback(
-      (operation: Operation, account: AccountLike) => {
-        // Remove operations linked to address poisoning
-        const removeZeroAmountTokenOp =
-          shouldFilterTokenOpsZeroAmount && isAddressPoisoningOperation(operation, account);
-        // Remove operations coming from an NFT collection considered spam
-        const opFromBlacklistedNftCollection = operation?.nftOperations?.find(op =>
-          hiddenNftCollections.includes(`${account.id}|${op?.contract}`),
-        );
-        return !opFromBlacklistedNftCollection && !removeZeroAmountTokenOp;
-      },
-      [hiddenNftCollections, shouldFilterTokenOpsZeroAmount],
-    );
-
-    const { sections, completed } = groupAccountsOperationsByDay(accounts, {
-      count: opCount,
-      withSubAccounts: true,
-      filterOperation,
-    });
+    const { completed, sections } = useOperationsV1(accounts, opCount);
 
     return (
       <OperationsList

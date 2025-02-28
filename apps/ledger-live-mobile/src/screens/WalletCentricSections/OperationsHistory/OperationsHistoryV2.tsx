@@ -1,43 +1,14 @@
-import React, { memo, useCallback } from "react";
-import { TFunction, useTranslation } from "react-i18next";
-import { useNavigation } from "@react-navigation/native";
-import { AccountLikeArray, DailyOperationsSection } from "@ledgerhq/types-live";
+import React, { memo } from "react";
+import { useTranslation } from "react-i18next";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
-import { ScreenName } from "~/const";
-import { track } from "~/analytics";
-import { useOperations } from "~/screens/Analytics/Operations/useOperations";
-import { OperationsHistoryList } from "./operationsHistoryList";
+import { useOperationsV2 } from "~/screens/Analytics/Operations/useOperationsV2";
+import { OperationsHistoryList } from "./OperationsHistoryList";
+import { Props, ViewProps } from "./types";
 
-type ViewProps = {
-  accounts: AccountLikeArray;
-  testID?: string;
-  sections: DailyOperationsSection[];
-  completed: boolean;
-  goToAnalyticsOperations: () => void;
-  t: TFunction;
-};
-
-type Props = {
-  accounts: AccountLikeArray;
-  testID?: string;
-  opCount: number;
-  skipOp: number;
-};
-
-const useOperationsViewModel = ({ accounts, opCount, skipOp }: Props) => {
+const useOperationsViewModel = ({ accounts, opCount, skipOp = 0 }: Props) => {
   const { t } = useTranslation();
-  const navigation = useNavigation();
 
-  const goToAnalyticsOperations = useCallback(() => {
-    track("button_clicked", {
-      button: "See All Transactions",
-    });
-    navigation.navigate(ScreenName.AnalyticsOperations, {
-      accountsIds: accounts.map(account => account.id),
-    });
-  }, [navigation, accounts]);
-
-  const { sections, completed } = useOperations({
+  const { sections, completed } = useOperationsV2({
     accounts,
     opCount,
     skipOp,
@@ -47,7 +18,6 @@ const useOperationsViewModel = ({ accounts, opCount, skipOp }: Props) => {
   return {
     sections,
     completed,
-    goToAnalyticsOperations,
     t,
   };
 };
@@ -65,11 +35,18 @@ const View = ({ accounts, testID, sections, completed, goToAnalyticsOperations, 
   );
 };
 
-const OperationsHistoryV2 = ({ accounts, skipOp, opCount, testID }: Props) => {
+const OperationsHistoryV2 = ({
+  accounts,
+  skipOp,
+  opCount,
+  testID,
+  goToAnalyticsOperations,
+}: Props) => {
   return (
     <View
       accounts={accounts}
       testID={testID}
+      goToAnalyticsOperations={goToAnalyticsOperations}
       {...useOperationsViewModel({ accounts, opCount, skipOp })}
     />
   );

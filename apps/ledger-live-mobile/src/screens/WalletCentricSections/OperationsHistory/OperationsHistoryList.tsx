@@ -1,10 +1,5 @@
 import React, { useCallback } from "react";
-import {
-  Operation,
-  DailyOperationsSection,
-  SubAccount,
-  AccountLikeArray,
-} from "@ledgerhq/types-live";
+import { Operation, DailyOperationsSection, SubAccount } from "@ledgerhq/types-live";
 import { Button } from "@ledgerhq/native-ui";
 import { SectionListRenderItemInfo, SectionList } from "react-native";
 
@@ -13,16 +8,8 @@ import OperationRow from "~/components/OperationRow";
 import { parentAccountSelector } from "~/reducers/accounts";
 import SectionHeader from "~/components/SectionHeader";
 import { State } from "~/reducers/types";
-import { TFunction } from "react-i18next";
-
-type Props = {
-  accounts: AccountLikeArray;
-  testID?: string;
-  sections: DailyOperationsSection[];
-  completed: boolean;
-  goToAnalyticsOperations: () => void;
-  t: TFunction;
-};
+import { ViewProps } from "./types";
+import { useTranslation } from "react-i18next";
 
 const keyExtractor = (operation: Operation) => operation.id;
 
@@ -36,8 +23,9 @@ export function OperationsHistoryList({
   sections,
   completed,
   goToAnalyticsOperations,
-  t,
-}: Props) {
+}: ViewProps) {
+  const { t } = useTranslation();
+
   const renderItem = useCallback(
     ({ item, index, section }: SectionListRenderItemInfo<Operation, DailyOperationsSection>) => {
       const account = accounts.find(a => a.id === item.accountId) as SubAccount;
