@@ -1,5 +1,13 @@
 # ledger-live-desktop
 
+## 2.102.0-nightly.2
+
+### Minor Changes
+
+- [#9370](https://github.com/LedgerHQ/ledger-live/pull/9370) [`26e1359`](https://github.com/LedgerHQ/ledger-live/commit/26e1359150d8dff5ab8ea0314274acfc0695425f) Thanks [@themooneer](https://github.com/themooneer)! - retro compatibility on spam filter FF rollback
+
+- [#9334](https://github.com/LedgerHQ/ledger-live/pull/9334) [`1151062`](https://github.com/LedgerHQ/ledger-live/commit/1151062247f79ad9567a7bda03a28097c86f103a) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - Add Ledger Sync Entry Points to Onboarding, Manager, Settings and Accounts pages
+
 ## 2.102.0-nightly.1
 
 ### Minor Changes

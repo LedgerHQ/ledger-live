@@ -1,5 +1,15 @@
 # live-mobile
 
+## 3.68.0-nightly.2
+
+### Minor Changes
+
+- [#9370](https://github.com/LedgerHQ/ledger-live/pull/9370) [`26e1359`](https://github.com/LedgerHQ/ledger-live/commit/26e1359150d8dff5ab8ea0314274acfc0695425f) Thanks [@themooneer](https://github.com/themooneer)! - retro compatibility on spam filter FF rollback
+
+- [#9383](https://github.com/LedgerHQ/ledger-live/pull/9383) [`b5608be`](https://github.com/LedgerHQ/ledger-live/commit/b5608be55cee7cb28a8d3a0f37b1963f8d76ab18) Thanks [@themooneer](https://github.com/themooneer)! - can inject explicitly an AddAccounts context when the root path is add-account.
+
+- [#9281](https://github.com/LedgerHQ/ledger-live/pull/9281) [`98f37f4`](https://github.com/LedgerHQ/ledger-live/commit/98f37f496ae3e69ac225bc93abbfcaa6e259191f) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix an issue on ios that could lead to a crash when there is an input with a KeyboardAvoidingView component.
+
 ## 3.68.0-nightly.1
 
 ### Minor Changes
