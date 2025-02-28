@@ -11342,8 +11342,8 @@
           "pendingOperations": [],
           "currencyId": "ethereum",
           "lastSyncDate": "2024-08-01T09:06:57.283Z",
-          "balance": "23405814577004878",
-          "spendableBalance": "23405814577004878",
+          "balance": "50400000000000000",
+          "spendableBalance": "50400000000000000",
           "balanceHistoryCache": {
             "HOUR": {
               "balances": [
