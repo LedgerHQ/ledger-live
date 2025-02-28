@@ -160,6 +160,6 @@ describe("getTokenUnit", () => {
   });
 
   it("should return undefined if label does not contain 'Amount'", () => {
-    expect(getTokenUnit("NotAmount", mockedAccount, "0xContractAddress")).toBeUndefined();
+    expect(getTokenUnit("Other", mockedAccount, "0xContractAddress")).toBeUndefined();
   });
 });
