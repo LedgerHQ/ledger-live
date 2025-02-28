@@ -18,6 +18,8 @@ let api: SuiClient | null = null;
 
 const TRANSACTIONS_REQUEST_LIMIT = 100;
 
+const BLOCK_HEIGHT = 5; // sui has no block height metainfo, we use it simulate proper icon statuses in apps
+
 // tx.getData().
 
 /**
@@ -64,9 +66,8 @@ async function withApi(execute: AsyncApiFunction): Promise<any> {
 export const getAccount = async (addr: string) =>
   withApi(async api => {
     const [balance] = await Promise.all([api.getBalance({ owner: addr })]);
-
     return {
-      // blockHeight,
+      blockHeight: BLOCK_HEIGHT * 2,
       balance: BigNumber(balance.totalBalance),
       // additionalBalance: BigNumber(additionalBalance),
       // nonce,
@@ -77,7 +78,8 @@ export const getAccount = async (addr: string) =>
  * Returns true if account is the signer
  */
 function isSender(addr: string, transaction?: TransactionBlockData): boolean {
-  return transaction?.sender === addr;
+  const prefix = addr.startsWith("0x") ? "" : "0x";
+  return transaction?.sender === prefix + addr;
 }
 
 /**
@@ -174,12 +176,11 @@ function transactionToOperation(
   console.log("transactionToOperation", transaction, address);
   const type = getOperationType(address, transaction.transaction?.data);
   const hash = transaction.digest;
-
   return {
     id: encodeOperationId(accountId, hash, type),
     accountId,
     blockHash: hash,
-    blockHeight: 0, // Required by Operation type
+    blockHeight: BLOCK_HEIGHT, // Required by Operation type
     date: getOperationDate(transaction), // Required by Operation type
     extra: {}, // Required by Operation type
     fee: getOperationFee(transaction),
@@ -213,6 +214,7 @@ export const getOperations = async (
         showEvents: true,
         showObjectChanges: true,
         showBalanceChanges: true,
+        showEffects: true,
       },
       limit: TRANSACTIONS_REQUEST_LIMIT,
     });
