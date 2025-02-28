@@ -145,9 +145,9 @@ const mockedAccount: Account = {
 describe("getTokenUnit", () => {
   it("should return the token unit when contractAddress matches", () => {
     expect(getTokenUnit("Amount", mockedAccount, "0xContractAddress")).toEqual({
-      name: "ether",
-      code: "ETH",
-      magnitude: 18,
+      name: "USD Coin",
+      code: "USDC",
+      magnitude: 6,
     });
   });
 
