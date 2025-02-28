@@ -6,13 +6,12 @@ import { Account, SubAccount, TokenAccount } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import compact from "lodash/compact";
 import drop from "lodash/drop";
-import get from "lodash/get";
 import sumBy from "lodash/sumBy";
 import take from "lodash/take";
 import TronWeb from "tronweb";
 import { TronTransactionExpired } from "../types/errors";
 import coinConfig from "../config";
-import { abiEncodeTrc20Transfer, extractBandwidthInfo, hexToAscii } from "./utils";
+import { abiEncodeTrc20Transfer, hexToAscii } from "./utils";
 import type {
   FreezeTransactionData,
   LegacyUnfreezeTransactionData,
@@ -24,12 +23,10 @@ import type {
   SuperRepresentativeData,
   Transaction,
   TronResource,
-  TronResources,
   TronTransactionInfo,
   TrongridTxInfo,
   UnDelegateResourceTransactionData,
   UnFreezeTransactionData,
-  UnFrozenInfo,
   WithdrawExpireUnfreezeTransactionData,
 } from "../types";
 import {

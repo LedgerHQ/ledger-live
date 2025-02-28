@@ -11,6 +11,7 @@ import type {
   TronResources,
   TronTransactionInfo,
 } from "../types";
+import { getTronResources as getTronResourcesLogic } from "../logic/utils";
 import { getTronAccountNetwork, getUnwithdrawnReward } from "../network";
 import { encode58Check } from "../network/format";
 
@@ -251,7 +252,7 @@ export async function getTronResources(
   const lastVotedDate = txs ? getLastVotedDate(txs) : undefined;
 
   return {
-    ...getTronResources(acc),
+    ...getTronResourcesLogic(acc),
     energy,
     bandwidth,
     unwithdrawnReward,
