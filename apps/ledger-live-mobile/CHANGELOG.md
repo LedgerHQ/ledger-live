@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.68.0-nightly.3
+
+### Minor Changes
+
+- [#9376](https://github.com/LedgerHQ/ledger-live/pull/9376) [`09df0ad`](https://github.com/LedgerHQ/ledger-live/commit/09df0adb4c461bd4b694dda37e1a28da4905e546) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - SWAP LLM fix the custom method to get fees
+
 ## 3.68.0-nightly.2
 
 ### Minor Changes
