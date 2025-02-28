@@ -4971,9 +4971,6 @@ importers:
 
   libs/ledgerjs/packages/hw-app-aptos:
     dependencies:
-      '@ledgerhq/coin-framework':
-        specifier: workspace:^
-        version: link:../../../coin-framework
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../errors
