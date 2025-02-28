@@ -47,22 +47,23 @@ export function createDataModel<R, M>(schema: DataSchema<R, M>): DataModel<R, M>
         .split("/")
         .map(value => (value.endsWith("'") ? value : value + "'"))
         .join("/");
-    } else {
-      if (data.currencyId == "crypto_org" && !data.cosmosResources) {
-        data.cosmosResources = {
-          delegations: [],
-          redelegations: [],
-          unbondings: [],
-          delegatedBalance: new BigNumber(0),
-          pendingRewardsBalance: new BigNumber(0),
-          unbondingBalance: new BigNumber(0),
-          withdrawAddress: data.freshAddress,
-          sequence: 0,
-        };
-      }
-      for (let i = raw.version; i < version; i++) {
-        data = migrations[i](data);
-      }
+    }
+
+    if (currencyId == "crypto_org" && !data.cosmosResources) {
+      data.cosmosResources = {
+        delegations: [],
+        redelegations: [],
+        unbondings: [],
+        delegatedBalance: new BigNumber(0),
+        pendingRewardsBalance: new BigNumber(0),
+        unbondingBalance: new BigNumber(0),
+        withdrawAddress: data.freshAddress,
+        sequence: 0,
+      };
+    }
+
+    for (let i = raw.version; i < version; i++) {
+      data = migrations[i](data);
     }
 
     data = decode(data);

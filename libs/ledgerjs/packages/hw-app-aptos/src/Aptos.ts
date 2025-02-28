@@ -18,7 +18,7 @@
 import { sha3_256 as sha3Hash } from "@noble/hashes/sha3";
 import Transport from "@ledgerhq/hw-transport";
 import { StatusCodes } from "@ledgerhq/errors";
-import { bip32asBuffer } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { bip32asBuffer } from "../../hw-app-btc/lib/bip32";
 
 const MAX_APDU_LEN = 255;
 const P1_NON_CONFIRM = 0x00;
