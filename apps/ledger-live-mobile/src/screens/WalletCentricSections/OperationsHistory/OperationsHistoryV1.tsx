@@ -31,7 +31,7 @@ const OperationsHistoryV1 = ({ accounts, testID, opCount }: Props) => {
     });
   }, [navigation, accounts]);
 
-  const { hiddenNftCollections } = useNftCollectionsStatus();
+  const { hiddenNftCollections } = useNftCollectionsStatus(true);
   const shouldFilterTokenOpsZeroAmount = useSelector(
     filterTokenOperationsZeroAmountEnabledSelector,
   );

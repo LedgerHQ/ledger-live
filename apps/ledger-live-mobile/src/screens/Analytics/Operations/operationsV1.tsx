@@ -42,7 +42,7 @@ export function OperationListV1({ navigation, route }: Props) {
     navigation.navigate(ScreenName.PortfolioOperationHistory);
   }, [navigation]);
 
-  const { hiddenNftCollections } = useNftCollectionsStatus();
+  const { hiddenNftCollections } = useNftCollectionsStatus(true);
   const shouldFilterTokenOpsZeroAmount = useSelector(
     filterTokenOperationsZeroAmountEnabledSelector,
   );
