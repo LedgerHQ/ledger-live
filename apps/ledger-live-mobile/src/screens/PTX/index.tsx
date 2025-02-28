@@ -82,6 +82,9 @@ export function PtxScreen({ route, config }: Props) {
         params.account = accountToWalletAPIAccount(walletState, account, parentAccount).id;
       }
     }
+
+    if (params?.goToURL) params.goToURL = decodeURIComponent(params.goToURL);
+
     return params;
   }, [walletState, accounts, manifest?.apiVersion, params]);
 

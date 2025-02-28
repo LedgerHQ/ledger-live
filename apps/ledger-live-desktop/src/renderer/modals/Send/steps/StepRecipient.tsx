@@ -88,6 +88,7 @@ const StepRecipient = ({
             <Box flow={1}>
               <Label>{t("send.steps.details.selectAccountDebit")}</Label>
               <SelectAccount
+                id="account-debit-placeholder"
                 withSubAccounts
                 enforceHideEmptySubAccounts
                 autoFocus={!openedFromAccount && !forceAutoFocusOnMemoField}

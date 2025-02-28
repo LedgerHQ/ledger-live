@@ -1,5 +1,31 @@
 # @ledgerhq/coin-evm
 
+## 2.12.0
+
+### Minor Changes
+
+- [#8931](https://github.com/LedgerHQ/ledger-live/pull/8931) [`ee205a0`](https://github.com/LedgerHQ/ledger-live/commit/ee205a01e1a26045e468735907039ad9be1c7f34) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Add dmk signer when using dmk transport
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@2.1.1
+  - @ledgerhq/domain-service@1.2.20
+  - @ledgerhq/evm-tools@1.4.0
+
+## 2.12.0-next.0
+
+### Minor Changes
+
+- [#8931](https://github.com/LedgerHQ/ledger-live/pull/8931) [`ee205a0`](https://github.com/LedgerHQ/ledger-live/commit/ee205a01e1a26045e468735907039ad9be1c7f34) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Add dmk signer when using dmk transport
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@2.1.1-next.0
+  - @ledgerhq/domain-service@1.2.20-next.0
+  - @ledgerhq/evm-tools@1.4.0
+
 ## 2.11.0
 
 ### Minor Changes

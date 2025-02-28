@@ -1,5 +1,17 @@
 # @ledgerhq/types-live
 
+## 6.61.0
+
+### Minor Changes
+
+- [#9199](https://github.com/LedgerHQ/ledger-live/pull/9199) [`e4d9a5c`](https://github.com/LedgerHQ/ledger-live/commit/e4d9a5ce6c3e8f2b3829f8f5772e7ba712a4a50c) Thanks [@thesan](https://github.com/thesan)! - Add the `feature_lld_NanoS_upsell_banners` flag
+
+## 6.61.0-next.0
+
+### Minor Changes
+
+- [#9199](https://github.com/LedgerHQ/ledger-live/pull/9199) [`e4d9a5c`](https://github.com/LedgerHQ/ledger-live/commit/e4d9a5ce6c3e8f2b3829f8f5772e7ba712a4a50c) Thanks [@thesan](https://github.com/thesan)! - Add the `feature_lld_NanoS_upsell_banners` flag
+
 ## 6.60.0
 
 ### Minor Changes

@@ -1,5 +1,6 @@
 import { ABTestingVariants } from "./ABTesting";
 import { ChainwatchNetwork } from "./chainwatch";
+import { LldNanoSUpsellBannersConfig } from "./lnsUpsell";
 import { StorylyInstanceID, StorylyInstanceType } from "./storyly";
 import { WalletSyncEnvironment, WalletSyncWatchConfig } from "./walletSync";
 
@@ -196,6 +197,8 @@ export type Features = CurrencyFeatures & {
   web3hub: Feature_web3hub;
   llmMarketQuickActions: DefaultFeature;
   spamFilteringTx: Feature_SpamFilteringTx;
+  lldSpamFilteringTx: DefaultFeature;
+  llmSpamFilteringTx: DefaultFeature;
   llmMemoTag: Feature_MemoTag;
   lldMemoTag: Feature_MemoTag;
   ldmkTransport: Feature_LdmkTransport;
@@ -207,6 +210,7 @@ export type Features = CurrencyFeatures & {
   llmAccountListUI: DefaultFeature;
   llmLedgerSyncEntryPoints: Feature_LlmLedgerSyncEntryPoints;
   lldLedgerSyncEntryPoints: Feature_LldLedgerSyncEntryPoints;
+  lldNanoSUpsellBanners: Feature_LldNanoSUpsellBanners;
 };
 
 /**
@@ -581,6 +585,12 @@ export type Feature_PtxSwapExodusProvider = DefaultFeature;
 export type Feature_LlmRebornLP = Feature<{
   variant: ABTestingVariants;
 }>;
+
+export type Feature_LldNanoSUpsellBanners = Feature<{
+  opted_in: LldNanoSUpsellBannersConfig;
+  opted_out: LldNanoSUpsellBannersConfig & { portfolio: boolean };
+}>;
+
 /**
  * Utils types.
  */

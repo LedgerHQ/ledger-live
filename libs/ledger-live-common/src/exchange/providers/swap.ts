@@ -141,6 +141,27 @@ const DEFAULT_SWAP_PROVIDERS: Record<string, ProviderConfig & Partial<Additional
       "hex",
     ),
   },
+  lifi: {
+    type: "CEX",
+    name: "lifi",
+    needsBearerToken: false,
+    termsOfUseUrl: "https://li.fi/legal/terms-and-conditions/",
+    supportUrl: "https://discord.gg/jumperexchange",
+    mainUrl: "https://li.fi/",
+    needsKYC: false,
+    version: 2,
+    publicKey: {
+      curve: "secp256k1",
+      data: Buffer.from(
+        "04e5f4fa0f28dec3b1f52934f29bd91ab862b003a531d67ba3864e3ba4303be8e815a619ee6f78e8079acf46f0d0d8fc664be2f343d1c9a20c4d2420f51a56ccea",
+        "hex",
+      ),
+    },
+    signature: Buffer.from(
+      "3045022100b7d3413de4f6daebf98ad8aa7fd5323f13240fd7193f4c9b86ea2d75b73c123e022040dd20af62fb537c6c2361912c010f1c99f748ed8f6a0031becd7c8d9db35839",
+      "hex",
+    ),
+  },
 };
 
 export const dexProvidersContractAddress: { [key: string]: string } = {

@@ -439,8 +439,8 @@
       "cta": "Go to My Ledger"
     },
     "wrongDevice": {
-      "title": "Ledger Nano S™ is not compatible with THORChain",
-      "description": "Ledger Nano S is not compatible with THORChain. You can use Ledger Nano S Plus, Ledger Nano X, Ledger Stax, or Ledger Flex to experience cross-chain swaps on THORChain via Ledger Live",
+      "title": "Ledger Nano S™ is not compatible with {{provider}}",
+      "description": "Ledger Nano S is not compatible with {{provider}}. You can use Ledger Nano S Plus, Ledger Nano X, Ledger Stax, or Ledger Flex to experience cross-chain swaps on {{provider}} via Ledger Live",
       "cta": "Explore compatible devices",
       "changeProvider": "Swap with another provider"
     },
@@ -4175,6 +4175,12 @@
       "debugAppsDesc": "Display and allow opening debug tagged platform apps.",
       "debugReactQuery": "Allow debug ReactQuery",
       "debugReactQueryDesc": "Display and allow opening debug ReactQuery console.",
+
+      "nfts": {
+        "title": "NFTs HiddenCollections",
+        "description": "Reset the hidden collections list",
+        "reset": "Reset"
+      },
       "exchangeDeveloperMode": {
         "title": "Exchange Dev Mode",
         "desc": "Add exchange provider's info",
@@ -6941,6 +6947,14 @@
         "optOut": {
           "title": "It's time to upgrade",
           "description": "Ledger Nano S updates are ending soon. Upgrade to our latest devices with <0>{{discount}}% discount</0>.",
+          "cta": "Level up my wallet",
+          "linkText": "Learn more"
+        }
+      },
+      "portfolio": {
+        "optOut": {
+          "title": "It's time to upgrade",
+          "description": "Upgrade to our latest devices with <0>{{discount}}% discount</0> for an enhanced security and a seamless experience.",
           "cta": "Level up my wallet",
           "linkText": "Learn more"
         }

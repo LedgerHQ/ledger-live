@@ -957,9 +957,11 @@ const OpenSwapBtn = () => {
 export const HardwareUpdate = ({
   i18nKeyTitle,
   i18nKeyDescription,
+  i18nKeyValues,
 }: {
   i18nKeyTitle: string;
   i18nKeyDescription: string;
+  i18nKeyValues?: Record<string, string>;
 }) => (
   <Wrapper>
     <Header>
@@ -967,10 +969,10 @@ export const HardwareUpdate = ({
     </Header>
     <Flex alignItems="center" flexDirection="column" rowGap="16px" mr="40px" ml="40px">
       <Title variant="body" color="palette.text.shade100">
-        <Trans i18nKey={i18nKeyTitle} />
+        <Trans i18nKey={i18nKeyTitle} values={i18nKeyValues} />
       </Title>
       <Text variant="body" color="palette.text.shade60" textAlign="center">
-        <Trans i18nKey={i18nKeyDescription} />
+        <Trans i18nKey={i18nKeyDescription} values={i18nKeyValues} />
       </Text>
     </Flex>
     <ButtonFooter>

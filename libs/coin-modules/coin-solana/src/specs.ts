@@ -484,6 +484,7 @@ const solana: AppSpec<Transaction> = {
     {
       name: "Transfer ~50% of spl token with ATA creation",
       maxRun: 1,
+      feature: "tokens",
       deviceAction: acceptTransferTokensWithATACreationTransaction,
       transaction: ({ account, bridge, siblings, maxSpendable }) => {
         invariant(maxSpendable.gt(0), "balance is 0");
@@ -517,6 +518,7 @@ const solana: AppSpec<Transaction> = {
     {
       name: "Transfer ~50% of spl token to existing ATA",
       maxRun: 1,
+      feature: "tokens",
       deviceAction: acceptTransferTokensTransaction,
       transaction: ({ account, bridge, siblings, maxSpendable }) => {
         invariant(maxSpendable.gt(0), "balance is 0");

@@ -1,12 +1,11 @@
 import { knownDevices } from "../../models/devices";
 import DeviceAction from "../../models/DeviceAction";
 import { Application } from "../../page";
-import { capitalize } from "../../models/currencies";
 
 const app = new Application();
 let deviceAction: DeviceAction;
 
-const testedCurrency = "bitcoin";
+const testedCurrency = "Bitcoin";
 const expectedBalance = "1.19576\u00a0BTC";
 const knownDevice = knownDevices.nanoX;
 
@@ -15,6 +14,12 @@ describe("Add account from modal", () => {
     await app.init({
       userdata: "skip-onboarding",
       knownDevices: [knownDevice],
+      featureFlags: {
+        llmNetworkBasedAddAccountFlow: {
+          enabled: false,
+          overridesRemote: true,
+        },
+      },
     });
     deviceAction = new DeviceAction(knownDevice);
 
@@ -29,11 +34,11 @@ describe("Add account from modal", () => {
 
   $TmsLink("B2CQA-101");
   it("add Bitcoin accounts", async () => {
-    await app.addAccount.selectCurrency(testedCurrency);
+    await app.addAccount.selectCurrency(testedCurrency.toLowerCase());
     await deviceAction.selectMockDevice();
     await deviceAction.openApp();
     await app.addAccount.waitAccountsDiscovery();
-    await app.addAccount.expectAccountDiscovery(capitalize(testedCurrency), testedCurrency, 0);
+    await app.addAccount.expectAccountDiscovery(testedCurrency, testedCurrency.toLowerCase(), 0);
     await app.addAccount.finishAccountsDiscovery();
     await app.addAccount.tapSuccessCta();
   });

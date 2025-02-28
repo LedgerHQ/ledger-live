@@ -2,7 +2,11 @@ import { Platform } from "react-native";
 import invariant from "invariant";
 import { Subject } from "rxjs";
 import { store } from "~/context/store";
-import { importSettings, setLastConnectedDevice } from "~/actions/settings";
+import {
+  importSettings,
+  setLastConnectedDevice,
+  setOverriddenFeatureFlags,
+} from "~/actions/settings";
 import { importStore as importAccountsRaw } from "~/actions/accounts";
 import { acceptGeneralTerms } from "~/logic/terms";
 import { navigate } from "~/rootnavigation";
@@ -15,6 +19,7 @@ import { getAllEnvs, setEnv } from "@ledgerhq/live-env";
 import { getAllFeatureFlags } from "@ledgerhq/live-common/e2e/index";
 import { DeviceModelId } from "@ledgerhq/devices";
 import Config from "react-native-config";
+import { SettingsSetOverriddenFeatureFlagsPlayload } from "~/actions/types";
 
 export const e2eBridgeClient = new Subject<MessageData>();
 
@@ -99,6 +104,12 @@ function onMessage(event: WebSocketMessageEvent) {
       }
       case "importBle": {
         store.dispatch(importBle(msg.payload));
+        break;
+      }
+      case "overrideFeatureFlags": {
+        store.dispatch(
+          setOverriddenFeatureFlags(msg.payload as SettingsSetOverriddenFeatureFlagsPlayload),
+        );
         break;
       }
       case "navigate":

@@ -77,6 +77,7 @@ import type { WalletSyncNavigatorStackParamList } from "./WalletSyncNavigator";
 import { DeviceSelectionNavigatorParamsList } from "LLM/features/DeviceSelection/types";
 import { AssetSelectionNavigatorParamsList } from "LLM/features/AssetSelection/types";
 import { AssetsNavigatorParamsList } from "LLM/features/Assets/types";
+import { FeesNavigatorParamsList } from "./FeesNavigator";
 
 export type NavigateInput<
   ParamList extends ParamListBase = ParamListBase,
@@ -117,6 +118,7 @@ export type BaseNavigatorStackParamList = {
     defaultCurrencyId?: string;
     defaultTicker?: string;
     customDappURL?: string;
+    customDappUrl?: string;
     uri?: string;
     requestId?: string;
     sessionTopic?: string;
@@ -224,6 +226,7 @@ export type BaseNavigatorStackParamList = {
   [NavigatorName.RequestAccount]: NavigatorScreenParams<RequestAccountNavigatorParamList> & {
     onClose?: () => void;
   };
+  [NavigatorName.Fees]: NavigatorScreenParams<FeesNavigatorParamsList>;
   [NavigatorName.Card]?: NavigatorScreenParams<PtxNavigatorParamList>;
   [NavigatorName.Exchange]?: NavigatorScreenParams<PtxNavigatorParamList>;
   [NavigatorName.ExchangeStack]: NavigatorScreenParams<ExchangeStackNavigatorParamList> & {

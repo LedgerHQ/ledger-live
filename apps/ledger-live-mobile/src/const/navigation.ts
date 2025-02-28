@@ -186,6 +186,8 @@ export enum ScreenName {
   VoteValidation = "VoteValidation",
   VoteValidationError = "VoteValidationError",
   VoteValidationSuccess = "VoteValidationSuccess",
+  FeeHomePage = "FeeHomePage",
+  FeeCustomFeePage = "FeeCustomFeePage",
 
   // celo
   CeloRegistrationValidationSuccess = "CeloRegistrationValidationSuccess",
@@ -592,6 +594,7 @@ export enum NavigatorName {
   SignMessage = "SignMessage",
   Swap = "SwapNavigator",
   Earn = "EarnNavigator",
+  Fees = "FeesNavigator",
   TezosDelegationFlow = "TezosDelegationFlow",
   TronVoteFlow = "TronVoteFlow",
   Unfreeze = "Unfreeze",
@@ -664,4 +667,5 @@ export enum NavigatorName {
   AssetSelection = "AssetSelection",
   DeviceSelection = "DeviceSelection",
   Assets = "Assets",
+  SwapHistory = "SwapHistory",
 }

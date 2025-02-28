@@ -11,7 +11,7 @@ import sumBy from "lodash/sumBy";
 import take from "lodash/take";
 import TronWeb from "tronweb";
 import { TronTransactionExpired } from "../types/errors";
-import { getCoinConfig } from "../config";
+import coinConfig from "../config";
 import {
   abiEncodeTrc20Transfer,
   defaultTronResources,
@@ -53,7 +53,7 @@ import {
 } from "./types";
 import { stringify } from "querystring";
 
-const getBaseApiUrl = () => getCoinConfig().explorer.url;
+const getBaseApiUrl = () => coinConfig.getCoinConfig().explorer.url;
 
 async function post<T, U extends object = any>(endPoint: string, body: T): Promise<U> {
   const { data } = await network<U, T>({

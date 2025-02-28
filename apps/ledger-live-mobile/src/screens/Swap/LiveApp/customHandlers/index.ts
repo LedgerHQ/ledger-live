@@ -6,8 +6,7 @@ import { getTransactionByHash } from "./getTransactionByHash";
 import { saveSwapToHistory } from "./saveSwapToHistory";
 import { swapRedirectToHistory } from "./swapRedirectToHistory";
 
-import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
-import { SwapFormNavigatorParamList } from "~/components/RootNavigator/types/SwapFormNavigator";
+import { NavigationProp, NavigationState } from "@react-navigation/native";
 
 export const swapCustomHandlers = ({
   accounts,
@@ -16,9 +15,11 @@ export const swapCustomHandlers = ({
 }: {
   accounts: AccountLike[];
   dispatch: Dispatch;
-  navigation: StackNavigatorNavigation<SwapFormNavigatorParamList>;
+  navigation: Omit<NavigationProp<ReactNavigation.RootParamList>, "getState"> & {
+    getState(): NavigationState | undefined;
+  };
 }) => ({
-  "custom.getFee": getFee(accounts),
+  "custom.getFee": getFee(accounts, navigation),
   "custom.getTransactionByHash": getTransactionByHash(accounts),
   "custom.saveSwapToHistory": saveSwapToHistory(accounts, dispatch),
   "custom.swapRedirectToHistory": swapRedirectToHistory(navigation),

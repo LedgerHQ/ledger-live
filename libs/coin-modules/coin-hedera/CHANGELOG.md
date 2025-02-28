@@ -1,5 +1,23 @@
 # @ledgerhq/coin-hedera
 
+## 1.3.6
+
+### Patch Changes
+
+- Updated dependencies [[`e4d9a5c`](https://github.com/LedgerHQ/ledger-live/commit/e4d9a5ce6c3e8f2b3829f8f5772e7ba712a4a50c)]:
+  - @ledgerhq/types-live@6.61.0
+  - @ledgerhq/coin-framework@2.1.1
+  - @ledgerhq/live-countervalues@0.4.2
+
+## 1.3.6-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`e4d9a5c`](https://github.com/LedgerHQ/ledger-live/commit/e4d9a5ce6c3e8f2b3829f8f5772e7ba712a4a50c)]:
+  - @ledgerhq/types-live@6.61.0-next.0
+  - @ledgerhq/coin-framework@2.1.1-next.0
+  - @ledgerhq/live-countervalues@0.4.2-next.0
+
 ## 1.3.5
 
 ### Patch Changes

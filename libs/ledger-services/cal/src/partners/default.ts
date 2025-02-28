@@ -77,6 +77,15 @@ export const SWAP_DATA_CDN: Record<string, AdditionalProviderConfig> = {
     mainUrl: "https://www.thorswap.finance/",
     needsKYC: false,
   },
+  lifi: {
+    useInExchangeApp: true,
+    displayName: "LI.FI",
+    mainUrl: "https://li.fi/",
+    needsKYC: false,
+    supportUrl: "https://discord.gg/jumperexchange",
+    termsOfUseUrl: "https://li.fi/legal/terms-and-conditions/",
+    type: "CEX",
+  },
   uniswap: {
     type: "DEX",
     useInExchangeApp: false,

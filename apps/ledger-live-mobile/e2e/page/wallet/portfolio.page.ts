@@ -70,6 +70,7 @@ export default class PortfolioPage {
     await tapByElement(this.earnButton());
   }
 
+  @Step("Click on Add account button in portfolio")
   async addAccount() {
     await scrollToId(this.addAccountCta, this.emptyPortfolioListId);
     await tapById(this.addAccountCta);
@@ -92,7 +93,7 @@ export default class PortfolioPage {
     await tapByElement(this.lastTransactionAmount());
   }
 
-  @Step("Go to accounts")
+  @Step("Go to asset's accounts from portfolio")
   async goToAccounts(currencyName: string) {
     await tapById(this.assetRowNameId(currencyName));
   }

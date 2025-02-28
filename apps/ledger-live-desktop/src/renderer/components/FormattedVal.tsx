@@ -128,7 +128,7 @@ function FormattedVal(props: Props) {
     <T {...p} color={color || marketColor}>
       {withIcon ? (
         <Box horizontal alignItems="center">
-          <Box mr={1}>
+          <Box data-testId={`arrow-${isNegative ? "down" : "up"}`} mr={1}>
             <I color={marketColor}>
               {isNegative ? (
                 <Icons.ArrowDownRight size={"M"} />
