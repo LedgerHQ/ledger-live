@@ -36,6 +36,7 @@ For a smooth and quick integration:
     *   [signTransaction](#signtransaction)
         *   [Parameters](#parameters-2)
         *   [Examples](#examples-2)
+*   [bippath](#bippath)
 
 ### Aptos
 
@@ -113,3 +114,12 @@ const signature = await aptos.signTransaction("44'/144'/0'/0/0", "12000022800000
 ```
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<{signature: [Buffer](https://nodejs.org/api/buffer.html)}>** a signature as hex string
+
+### bippath
+
+BIP32 Path Handling for Bitcoin Wallets
+
+This file provides utility functions to handle BIP32 paths,
+which are commonly used in hierarchical deterministic (HD) wallets.
+It includes functions to convert BIP32 paths to and from different formats,
+extract components from extended public keys (xpubs), and manipulate path elements.
