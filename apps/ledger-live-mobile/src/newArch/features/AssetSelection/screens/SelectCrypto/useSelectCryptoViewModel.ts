@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
 import debounce from "lodash/debounce";
 import { useNavigation } from "@react-navigation/core";
 
@@ -8,8 +7,6 @@ import { findCryptoCurrencyByKeyword } from "@ledgerhq/live-common/currencies/in
 
 import { NavigatorName, ScreenName } from "~/const";
 import { track } from "~/analytics";
-import { flattenAccountsSelector } from "~/reducers/accounts";
-import { findAccountByCurrency } from "~/logic/deposit";
 
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { AssetSelectionNavigationProps, CommonParams } from "../../types";
@@ -24,6 +21,7 @@ type SelectCryptoViewModelProps = Pick<CommonParams, "context"> & {
   paramsCurrency?: string;
   sourceScreenName?: string;
   analyticsMetadata: AnalyticMetadata;
+  path?: string;
 };
 
 export default function useSelectCryptoViewModel({
@@ -31,14 +29,13 @@ export default function useSelectCryptoViewModel({
   filterCurrencyIds,
   paramsCurrency,
   analyticsMetadata,
+  path,
 }: SelectCryptoViewModelProps) {
   const { t } = useTranslation();
   const filterCurrencyIdsSet = useMemo(
     () => (filterCurrencyIds ? new Set(filterCurrencyIds) : null),
     [filterCurrencyIds],
   );
-
-  const accounts = useSelector(flattenAccountsSelector);
   const navigation = useNavigation<AssetSelectionNavigationProps["navigation"]>();
 
   const { result, loadingStatus: providersLoadingStatus } = useGroupedCurrenciesByProvider(
@@ -74,36 +71,25 @@ export default function useSelectCryptoViewModel({
 
       const isToken = curr.type === "TokenCurrency";
       const currency = isToken ? curr.parentCurrency : curr;
-      const currencyAccounts = findAccountByCurrency(accounts, currency);
-      const isAddAccountContext = context === AddAccountContexts.AddAccounts;
+      const isAddAccountContext =
+        context === AddAccountContexts.AddAccounts || path?.includes("add-account");
 
-      if (currencyAccounts.length > 0 && !isAddAccountContext) {
-        // If we found one or more accounts of the currency then we select account
-        navigation.navigate(NavigatorName.AddAccounts, {
-          screen: ScreenName.SelectAccounts,
-          params: {
-            currency,
-          },
-        });
-      } else {
-        // If we didn't find any account of the parent currency then we add one
-        navigation.navigate(NavigatorName.DeviceSelection, {
-          screen: ScreenName.SelectDevice,
-          params: {
-            currency,
-            createTokenAccount: isToken || undefined,
-            context,
-          },
-        });
-      }
+      navigation.navigate(NavigatorName.DeviceSelection, {
+        screen: ScreenName.SelectDevice,
+        params: {
+          currency,
+          createTokenAccount: isToken || undefined,
+          context: isAddAccountContext ? AddAccountContexts.AddAccounts : context,
+        },
+      });
     },
     [
       currenciesByProvider,
-      accounts,
       navigation,
       filterCurrencyIds,
       context,
       analyticsMetadata.AddAccountsSelectCrypto?.onAssetClick,
+      path,
     ],
   );
 

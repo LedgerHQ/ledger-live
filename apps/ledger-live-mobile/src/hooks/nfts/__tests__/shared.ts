@@ -1,3 +1,4 @@
+import { NftStatus } from "@ledgerhq/live-nft/lib/types";
 import { BlockchainEVM } from "@ledgerhq/live-nft/supported";
 
 export const nftCollectionsStatusByNetwork = {
@@ -29,4 +30,23 @@ export const nftCollectionsStatusByNetwork = {
   [BlockchainEVM.Sei]: {},
   [BlockchainEVM.Xai]: {},
   [BlockchainEVM.Zora]: {},
+};
+
+export const mockNftCollectionStatusByNetwork2 = {
+  ...nftCollectionsStatusByNetwork,
+  [BlockchainEVM.Ethereum]: {
+    collectionETHA: NftStatus.whitelisted,
+    collectionETHB: NftStatus.blacklisted,
+    collectionETHC: NftStatus.spam,
+    collectionETHD: NftStatus.spam,
+  },
+  [BlockchainEVM.Avalanche]: {
+    collectionAVAX1: NftStatus.blacklisted,
+    collectionAVAX2: NftStatus.spam,
+    collectionAVAX3: NftStatus.blacklisted,
+  },
+  [BlockchainEVM.Polygon]: {
+    collectionP1: NftStatus.blacklisted,
+    collectionP2: NftStatus.whitelisted,
+  },
 };

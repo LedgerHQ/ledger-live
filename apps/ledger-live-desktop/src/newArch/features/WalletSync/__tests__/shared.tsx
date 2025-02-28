@@ -5,6 +5,9 @@ import { getSdk } from "@ledgerhq/ledger-key-ring-protocol/index";
 import { EMPTY } from "rxjs";
 import { Flow, initialStateWalletSync, Step } from "~/renderer/reducers/walletSync";
 import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
+import { AnalyticsPage } from "../hooks/useLedgerSyncAnalytics";
+import { useActivationDrawer } from "../../LedgerSyncEntryPoints/hooks/useActivationDrawer";
+import WalletSyncDrawer from "../components/Drawer";
 
 export const INSTANCES: Array<TrustchainMember> = [
   {
@@ -56,9 +59,13 @@ export const simpleTrustChain = {
   trustchainId: "trustchainId",
 };
 
-export const WalletSyncTestApp = () => (
-  <>
-    <div id="modals"></div>
-    <WalletSyncRow />
-  </>
-);
+export const WalletSyncTestApp = () => {
+  const { closeDrawer } = useActivationDrawer();
+  return (
+    <>
+      <div id="modals"></div>
+      <WalletSyncRow />
+      <WalletSyncDrawer currentPage={AnalyticsPage.SettingsGeneral} onClose={closeDrawer} />
+    </>
+  );
+};

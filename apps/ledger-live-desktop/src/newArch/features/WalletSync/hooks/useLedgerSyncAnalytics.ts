@@ -35,6 +35,9 @@ export enum AnalyticsPage {
   LedgerSyncSettings = "Ledger Sync Settings",
 
   Accounts = "Accounts",
+  Manager = "Manager",
+  Onboarding = "Onboarding",
+  Settings = "Settings",
   LedgerSyncAccounts = "Ledger Sync Accounts",
 }
 

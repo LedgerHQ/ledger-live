@@ -24,12 +24,12 @@ export enum Options {
   DESKTOP = "desktop",
 }
 
-export default function SynchWithQRCodeStep() {
+export default function SynchWithQRCodeStep({ sourcePage }: { sourcePage?: AnalyticsPage }) {
   const { t } = useTranslation();
   const controls = useAnimation();
   const [currentOption, setCurrentOption] = useState<Options>(Options.MOBILE);
 
-  const { startQRCodeProcessing, url, error, isLoading } = useQRCode();
+  const { startQRCodeProcessing, url, error, isLoading } = useQRCode({ sourcePage });
   console.log("url", url);
   useEffect(() => {
     startQRCodeProcessing();

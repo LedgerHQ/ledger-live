@@ -15,6 +15,12 @@ import { urls } from "~/config/urls";
 import AnalyticsOptInPrompt from "LLD/features/AnalyticsOptInPrompt/screens";
 import { useAnalyticsOptInPrompt } from "LLD/features/AnalyticsOptInPrompt/hooks/useCommonLogic";
 import { EntryPoint } from "LLD/features/AnalyticsOptInPrompt/types/AnalyticsOptInPromptNavigator";
+import LedgerSyncEntryPoint from "LLD/features/LedgerSyncEntryPoints";
+import { EntryPoint as LSEntryPoint } from "LLD/features/LedgerSyncEntryPoints/types";
+import { useActivationDrawer } from "LLD/features/LedgerSyncEntryPoints/hooks/useActivationDrawer";
+import WalletSyncDrawer from "LLD/features/WalletSync/components/Drawer";
+import { AnalyticsPage } from "LLD/features/WalletSync/hooks/useLedgerSyncAnalytics";
+import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 
 const StyledLink = styled(Text)`
   text-decoration: underline;
@@ -85,16 +91,17 @@ const Description = styled(Text)`
 
 export function Welcome() {
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
+  const trustchain = useSelector(trustchainSelector);
   const { t } = useTranslation();
   const history = useHistory();
   const dispatch = useDispatch();
   const { colors } = useTheme();
 
   useEffect(() => {
-    if (hasCompletedOnboarding) {
+    if (hasCompletedOnboarding && !trustchain) {
       history.push("/onboarding/select-device");
     }
-  }, [hasCompletedOnboarding, history]);
+  }, [hasCompletedOnboarding, history, trustchain]);
 
   const urlBuyNew = useLocalizedUrl(urls.buyNew);
   const buyNanoX = () => openURL(urlBuyNew);
@@ -157,6 +164,13 @@ export function Welcome() {
     onSubmit,
   };
 
+  const { openDrawer, closeDrawer } = useActivationDrawer();
+
+  const setupLedgerSync = () => {
+    acceptTerms();
+    openDrawer();
+  };
+
   return (
     <WelcomeContainer>
       <LeftContainer>
@@ -209,6 +223,15 @@ export function Welcome() {
           >
             {t("onboarding.screens.welcome.buyLink")}
           </Button>
+          <LedgerSyncEntryPoint
+            entryPoint={LSEntryPoint.onboarding}
+            needEligibleDevice={false}
+            onPress={() => {
+              isFeatureFlagsAnalyticsPrefDisplayed
+                ? openAnalyticsOptInPrompt("Onboarding", setupLedgerSync)
+                : setupLedgerSync();
+            }}
+          />
           {__DEV__ ? (
             <Button
               mt="24px"
@@ -258,6 +281,7 @@ export function Welcome() {
           <AnalyticsOptInPrompt {...extendedAnalyticsOptInPromptProps} />
         )}
       </RightContainer>
+      <WalletSyncDrawer currentPage={AnalyticsPage.Onboarding} onClose={closeDrawer} />
     </WelcomeContainer>
   );
 }
