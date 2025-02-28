@@ -39,7 +39,7 @@ export default function AssetsList({ route }: Props) {
         <SafeAreaView edges={["left", "right", "bottom"]} isFlex style={{ marginHorizontal: 16 }}>
           {showHeader && (
             <Text variant="h1Inter" fontWeight="semiBold" fontSize={28} paddingY={2}>
-              {t("assets.title")}
+              {"newArch > AssetsList screen" || t("assets.title")}
             </Text>
           )}
           {syncPending && (

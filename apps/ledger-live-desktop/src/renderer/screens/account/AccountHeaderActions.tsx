@@ -30,6 +30,7 @@ import {
   ReceiveActionDefault,
   SellActionDefault,
   SendActionDefault,
+  StakeActionDefault,
   SwapActionDefault,
 } from "./AccountActionsDefault";
 import { useGetSwapTrackingProperties } from "~/renderer/screens/exchange/Swap2/utils/index";
@@ -129,10 +130,14 @@ const ActionItem = ({
   return Action;
 };
 
+/** Overriding action -- replace family actons with actions for specific tokens  */
+const STABLECOINS = ["ethereum/erc20/usd_tether__erc20_"]; //, "ethereum/erc20/usd__coin"];
+
 const AccountHeaderSettingsButtonComponent = ({ account, parentAccount, openModal, t }: Props) => {
   const mainAccount = getMainAccount(account, parentAccount);
   const currency = getAccountCurrency(account);
   const history = useHistory();
+
   const onWalletConnectLiveApp = useCallback(() => {
     setTrackingSource("account header actions");
     const params = {
@@ -189,33 +194,108 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
   const contrastText = useTheme().colors.palette.text.shade60;
   const swapDefaultTrack = useGetSwapTrackingProperties();
   const specific = getLLDCoinFamily(mainAccount.currency.family);
+  // Do we need to add getLLDTokenFamily actions here?
+  console.log(
+    { specific },
+    "manage = specific.accountHeaderManageActions... fns",
+    JSON.stringify(specific.accountHeaderManageActions),
+  );
 
-  const stakeProgramsFeatureFlag = useFeature("stakePrograms");
-  const listFlag = stakeProgramsFeatureFlag?.params?.list ?? [];
+  /** When its Earn, 
+   * 
+    *  {
+        accountActionsTestId: "stake-button",
+        contrastText: "rgba(255, 255, 255, 0.6)",
+        currency: {
+          type: "CryptoCurrency",
+          id: "ethereum",
+          coinType: 60,
+          name: "Ethereum",
+          managerAppName: "Ethereum",
+        },
+        event: "button_clicked2",
+        eventProperties: {
+          currency: "ETH",
+          currencyName: "Ethereum",
+          page: "Page Account",
+          button: "stake",
+        },
+        icon: () => {},
+        key: "Stake",
+        label: "Earn",
+      }
+   */
+
+  const stakeProgramsFeatureFlag = useFeature("stakePrograms"); // TODO: here
+  const stakeProgramsList = stakeProgramsFeatureFlag?.params?.list ?? [];
   const stakeProgramsEnabled = stakeProgramsFeatureFlag?.enabled ?? false;
 
+  console.log({ listFlag: stakeProgramsList });
+
   const manage = specific?.accountHeaderManageActions;
+  console.log({ manage });
+
   let manageList: ManageAction[] = [];
   if (manage) {
     const familyManageActions = manage({ account, parentAccount });
     manageList = familyManageActions && familyManageActions.length > 0 ? familyManageActions : [];
   }
 
+  console.log(`>> manageList:: `, { manageList }); // this is empty for some reason. TODO: why? is it because the _family_ issue? Why do we check this twice? We could just do as the below does - if there's 3rd party staking option available, we show the button and redirect....
+
   const SendAction = specific?.accountActions?.SendAction || SendActionDefault;
   const ReceiveAction = specific?.accountActions?.ReceiveAction || ReceiveActionDefault;
   const currency = getAccountCurrency(account);
+  const history = useHistory();
 
   const { isCurrencyAvailable } = useRampCatalog();
 
   const availableOnBuy = !!currency && isCurrencyAvailable(currency.id, "onRamp");
   const availableOnSell = !!currency && isCurrencyAvailable(currency.id, "offRamp");
-  const availableOnStake = stakeProgramsEnabled && listFlag.includes(currency.id || "");
+
+  const availableOnStake = stakeProgramsEnabled && stakeProgramsList.includes(currency.id || "");
+
+  console.log(`>>> available on stake? ${availableOnStake}...`);
+
+  const accountCurrency = account.type === "Account" ? account.currency : account.token;
+
+  // TODO: this is a token account specific action.
+  const isTokenInvestable =
+    account.type === "TokenAccount" && STABLECOINS.includes(account.token.id); //  === "ethereum/erc20/usd_tether__erc20_";
+
+  // redirection to a third party live app list - should be exclusive with the list of native staking currencies... else we might risk duplicate buttons to stake? p
+  const shouldStakeWithThirdParty = isTokenInvestable && !availableOnStake;
+
+  // onRedirectToStake // investRedirection FIXME: We cannot redirect to all discover apps ?
+  const investTokenWithThirdParty = useCallback(
+    (manifestId?: string) => {
+      // TODO: add tracking etc
+      const value = manifestId ? `/platform/${manifestId}` : "/platform/kiln-app"; // TODO: will be kiln-widget or kiln-defi
+      console.log(`>>> value is ${value}...`, `state:`, {
+        accountId: account.id,
+        returnTo: `/account/${account.id}`, // or earn
+        currency: accountCurrency,
+        // asset: "eth_0x94a9D9AC8a22534E3FaCa9F4e7F2E2cf85d5E4C8",
+      });
+
+      history.push({
+        pathname: value,
+        state: {
+          accountId: account.id, // if dapp, need to use the different account id than if live app redirection
+          returnTo: `/account/${account.id}`, // or earn
+          currency: accountCurrency,
+          chainId: "",
+          // asset: "eth_0x94a9D9AC8a22534E3FaCa9F4e7F2E2cf85d5E4C8",
+        },
+      });
+    },
+    [history, account.id, accountCurrency],
+  );
 
   // don't show buttons until we know whether or not we can show swap button, otherwise possible click jacking
   const showButtons = !!getAvailableProviders();
   const availableOnSwap = currenciesAll.includes(currency.id);
 
-  const history = useHistory();
   const buttonSharedTrackingFields = useMemo(
     () => ({
       currency: currency.ticker,
@@ -285,8 +365,8 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
     });
   }, [openModal, parentAccount, account, buttonSharedTrackingFields]);
 
-  const manageActions: RenderActionParams[] = manageList
-    .filter(item => (availableOnStake && item.key === "Stake") || item.key !== "Stake")
+  const familyHeaderActions: RenderActionParams[] = manageList
+    // .filter(item => (availableOnStake && item.key === "Stake") || item.key !== "Stake") // TODO: this is where we filter out via the flag
     .map(item => ({
       ...item,
       contrastText,
@@ -297,16 +377,32 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
       },
     }));
 
+  console.info(`After filter, the manageActions are..`, familyHeaderActions);
+
   const buyHeader = <BuyActionDefault onClick={() => onBuySell("buy")} />;
   const sellHeader = <SellActionDefault onClick={() => onBuySell("sell")} />;
   const swapHeader = <SwapActionDefault onClick={onSwap} />;
-  const manageActionsHeader = manageActions.map(item => (
+  const manageActionsHeader = familyHeaderActions.map(item => (
     <ActionItem {...item} key={item.accountActionsTestId} />
   ));
 
+  // TODO: should be stakeWithThirdParty or stakeRedirectionHeaderAction ?
+  const stakeTokenHeaderAction = (
+    // <StakeActionDefault onClick={() => investTokenWithThirdParty("earn")} />
+    // TODO: do we need to add the platform navigator?
+    <StakeActionDefault onClick={() => investTokenWithThirdParty("stakekit")} /> //"/platform/stakekit"
+  );
+
+  const redirectToEarnHeaderAction = (
+    <StakeActionDefault
+      onClick={() => investTokenWithThirdParty("earn")}
+      iconComponent={<>redirect</>}
+    />
+  );
+
   const NonEmptyAccountHeader = (
     <FadeInButtonsContainer data-testid="account-buttons-group" show={showButtons}>
-      {manageActions.length > 0 ? manageActionsHeader : null}
+      {familyHeaderActions.length > 0 ? manageActionsHeader : null}
       {availableOnSwap ? swapHeader : null}
       {availableOnBuy ? buyHeader : null}
       {availableOnSell && sellHeader}
@@ -314,6 +410,8 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
         <SendAction account={account} parentAccount={parentAccount} onClick={onSend} />
       ) : null}
       <ReceiveAction account={account} parentAccount={parentAccount} onClick={onReceive} />
+      {availableOnStake ? stakeTokenHeaderAction : null}
+      {redirectToEarnHeaderAction}
     </FadeInButtonsContainer>
   );
 

@@ -18,6 +18,10 @@ import electronAppUniversalProtocolClient from "electron-app-universal-protocol-
 
 Store.initRenderer();
 
+// app.setAsDefaultProtocolClient("ledgerlive"); // for dev - but opens Beta or prodiuction now
+// app.setAsDefaultProtocolClient("electron");
+// No longer need this! use https://github.com/Lord-Kamina/SwiftDefaultApps?tab=readme-ov-file
+
 const gotLock = app.requestSingleInstanceLock();
 const { LEDGER_CONFIG_DIRECTORY } = process.env;
 const userDataDirectory = LEDGER_CONFIG_DIRECTORY || app.getPath("userData");

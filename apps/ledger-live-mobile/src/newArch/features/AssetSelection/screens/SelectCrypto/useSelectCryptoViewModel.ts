@@ -46,6 +46,8 @@ export default function useSelectCryptoViewModel({
   ) as LoadingBasedGroupedCurrencies;
   const { currenciesByProvider, sortedCryptoCurrencies } = result;
 
+  console.log(">>> currenciesByProvider", currenciesByProvider);
+
   const onPressItem = useCallback(
     (curr: CryptoCurrency | TokenCurrency) => {
       const clickMetadata = analyticsMetadata.AddAccountsSelectCrypto?.onAssetClick;

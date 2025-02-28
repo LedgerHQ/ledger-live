@@ -124,6 +124,7 @@ export const useMarketActions = ({ currency, page, currenciesAll }: MarketAction
     ],
   );
 
+  // TODO: useStakeFlow could be used here ?
   const onStake = useCallback(
     (e: React.SyntheticEvent<HTMLButtonElement>) => {
       e.preventDefault();
@@ -152,6 +153,8 @@ export const useMarketActions = ({ currency, page, currenciesAll }: MarketAction
   const stakeProgramsEnabled = stakeProgramsFeatureFlag?.enabled ?? false;
   const availableOnStake =
     stakeProgramsEnabled && listFlag.includes(currency?.internalCurrency?.id || "");
+
+  // TODO: lift this up out of market actions into a more global place if the logic is shared with account actions
 
   return {
     openAddAccounts,

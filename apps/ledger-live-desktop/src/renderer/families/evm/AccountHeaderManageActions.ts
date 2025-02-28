@@ -8,11 +8,16 @@ import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLo
 import { useHistory } from "react-router";
 import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
 import { walletSelector } from "~/renderer/reducers/wallet";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/lib-es/currencies";
 
 type Props = {
   account: AccountLike;
   parentAccount?: Account | null;
 };
+
+const PARTNER_STAKING_CURRENCY_IDS = ["ethereum", "bsc", "polygon"]; // maybe "ethereum/erc20/polygon_ecosystem_token" ?
+
+const STABLECOINS = ["ethereum/erc20/usd_tether__erc20_", "ethereum/erc20/usd__coin"];
 
 const AccountHeaderActions = ({ account, parentAccount }: Props) => {
   const dispatch = useDispatch();
@@ -20,9 +25,33 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
   const label = useGetStakeLabelLocaleBased();
   const walletState = useSelector(walletSelector);
 
+  // const {ticker }  = getCryptoCurrencyById(account.currency.id);
+
   const isEthereumAccount = account.type === "Account" && account.currency.id === "ethereum";
   const isBscAccount = account.type === "Account" && account.currency.id === "bsc";
   const isPOLAccount = account.type === "Account" && account.currency.id === "polygon";
+
+  // TODO: this is a token account thing, so we should not add here to family account actions. It can be done on the AccountHeaderActions screen itself.
+  const isStablecoinAccount =
+    account.type === "TokenAccount" && STABLECOINS.includes(account.token.id); //  === "ethereum/erc20/usd_tether__erc20_";
+
+  console.log(`>>> is x account?`, { isEthereumAccount, isBscAccount, isPOLAccount });
+
+  const onClickKiln = useCallback(
+    (someParam?: string) => {
+      const value = "/platform/kiln"; // TODO: will be kiln-widget or kiln-defi
+
+      history.push({
+        pathname: value,
+        state: {
+          // yieldId,
+          accountId: account.id,
+          returnTo: `/account/${account.id}`, // or earn
+        },
+      });
+    },
+    [account.id, history],
+  );
 
   const onClickStakekit = useCallback(
     (yieldId: string) => {
@@ -58,15 +87,26 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
     }
   }, [account, dispatch, parentAccount, walletState]);
 
+  // TODO: this is a token account thing, so we should not add here to family account actions. It can be done on the AccountHeaderActions screen itself.
   const getStakeAction = useCallback(() => {
-    if (isEthereumAccount) {
+    if (isStablecoinAccount) {
+      onClickKiln("stablecoin");
+    } else if (isEthereumAccount) {
       onClickStakeModal();
     } else if (isBscAccount) {
       onClickStakekit("bsc-bnb-native-staking");
     } else if (isPOLAccount) {
       onClickStakekit("ethereum-matic-native-staking");
     }
-  }, [isEthereumAccount, isBscAccount, onClickStakeModal, onClickStakekit, isPOLAccount]);
+  }, [
+    isStablecoinAccount,
+    isEthereumAccount,
+    isBscAccount,
+    isPOLAccount,
+    onClickKiln,
+    onClickStakeModal,
+    onClickStakekit,
+  ]);
 
   if (isEthereumAccount || isBscAccount || isPOLAccount) {
     return [

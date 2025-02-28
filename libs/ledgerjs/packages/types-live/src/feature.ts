@@ -1,3 +1,4 @@
+import { CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { ABTestingVariants } from "./ABTesting";
 import { ChainwatchNetwork } from "./chainwatch";
 import { LldNanoSUpsellBannersConfig } from "./lnsUpsell";
@@ -267,8 +268,26 @@ export type Feature_SwapWalletApiPartnerList = Feature<{
   list: string[];
 }>;
 
-export type Feature_StakePrograms = Feature<{
+export type RedirectQueryParam<P> = P extends "stakekit"
+  ? {
+      yieldId: string;
+    }
+  : P extends "kiln-widget"
+    ? {
+        chaidId: number;
+      }
+    : unknown;
+
+export type Feature_StakePrograms<Provider = "stakekit" | "kiln-widget"> = Feature<{
   list: string[];
+  redirectList: Record<
+    CryptoCurrency["id"] | TokenCurrency["id"],
+    {
+      platform: Provider;
+      name: string;
+      queryParams?: RedirectQueryParam<Provider>;
+    }
+  >;
 }>;
 
 export type Feature_StakeAccountBanner = Feature<{ [blockchainName: string]: any }>;

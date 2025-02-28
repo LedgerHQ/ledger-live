@@ -7,6 +7,9 @@ import IconSell from "~/renderer/icons/Plus";
 import IconReceive from "~/renderer/icons/Receive";
 import IconSend from "~/renderer/icons/Send";
 import IconSwap from "~/renderer/icons/Swap";
+import IconCoins from "~/renderer/icons/Coins";
+import IconAngleUp from "~/renderer/icons/AngleUp";
+import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
 
 type Props = {
   onClick: () => void;
@@ -82,6 +85,27 @@ export const SellActionDefault = ({ onClick }: { onClick: () => void }) => {
       iconComponent={<IconSell size={14} />}
       labelComponent={<Trans i18nKey="accounts.contextMenu.sell" />}
       accountActionsTestId={"sell-button"}
+    />
+  );
+};
+export const StakeActionDefault = ({
+  onClick,
+  ...rest
+}: { onClick: () => void } & Record<string, unknown>) => {
+  const label = useGetStakeLabelLocaleBased();
+  return (
+    <ActionDefault
+      onClick={onClick}
+      iconComponent={<IconAngleUp size={14} />}
+      // iconComponent={<IconCoins size={14} />}
+      labelComponent={<Trans i18nKey={label} />}
+      accountActionsTestId={"stake-token-button"}
+      key="Stake Token"
+      event="button_clicked2"
+      eventProperties={{
+        button: "stake",
+      }}
+      {...rest}
     />
   );
 };

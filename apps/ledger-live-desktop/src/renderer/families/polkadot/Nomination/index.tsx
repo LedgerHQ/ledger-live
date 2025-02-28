@@ -117,6 +117,8 @@ const Nomination = ({ account }: { account: PolkadotAccount }) => {
       collapsed: otherRows,
     };
   }, [unlockings, unlockedBalance]);
+
+  // TODO: include this
   const onEarnRewards = useCallback(() => {
     history.push({
       pathname: "/platform/stakekit",

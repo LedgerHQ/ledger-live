@@ -21,6 +21,7 @@ type Props = {
 
 const useStakeFlow = () => {
   const history = useHistory();
+  // TODO: extend to include keys from the partner staking currencies
   const { params: { list } = { list: undefined } } = useFeature("stakePrograms") || {};
   const dispatch = useDispatch();
 

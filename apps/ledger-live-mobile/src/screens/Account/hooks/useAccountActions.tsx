@@ -18,7 +18,7 @@ import perFamilyAccountActions from "../../../generated/accountActions";
 
 import ZeroBalanceDisabledModalContent from "~/components/FabActions/modals/ZeroBalanceDisabledModalContent";
 import { ActionButtonEvent } from "~/components/FabActions";
-import { useCanShowStake } from "./useCanShowStake";
+import { useCanShowStake } from "../../../newArch/hooks/useCanShowStake";
 import { PtxToast } from "~/components/Toast/PtxToast";
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { walletSelector } from "~/reducers/wallet";

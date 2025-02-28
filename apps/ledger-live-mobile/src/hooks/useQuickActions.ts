@@ -50,6 +50,8 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
 
   const canBeBought = !currency || isCurrencyAvailable(currency.id, "onRamp");
   const canBeSold = !currency || currency.id === "bitcoin";
+
+  //
   const canBeStaked =
     stakePrograms?.enabled && (!currency || stakePrograms?.params?.list.includes(currency?.id));
   const canBeRecovered = recoverEntryPoint?.enabled;
