@@ -5721,17 +5721,17 @@
       "title" : "No se encontró ninguna cuenta",
       "description" : "Algo ha salido mal con el cálculo de la dirección, inténtalo de nuevo o contacta al Soporte de Ledger"
     },
-    "ElrondDecimalsLimitReached" : {
+    "MultiversXDecimalsLimitReached" : {
       "title" : "Límite máximo de decimales alcanzado",
       "description" : "Asegúrate de que el importe proporcionado tenga 18 decimales."
     },
-    "ElrondMinDelegatedAmountError" : {
+    "MultiversXMinDelegatedAmountError" : {
       "title" : "La cantidad delegada debe ser al menos {{formattedAmount}}"
     },
-    "ElrondMinUndelegatedAmountError" : {
+    "MultiversXMinUndelegatedAmountError" : {
       "title" : "La cantidad desdelegada debe ser al menos {{formattedAmount}}"
     },
-    "ElrondDelegationBelowMinimumError" : {
+    "MultiversXDelegationBelowMinimumError" : {
       "title" : "La delegación restante no puede ser menor a {{formattedAmount}}"
     },
     "NotEnoughEGLDForFees" : {

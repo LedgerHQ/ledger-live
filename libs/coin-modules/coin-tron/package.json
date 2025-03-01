@@ -96,7 +96,6 @@
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/live-promise": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
-    "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
     "bignumber.js": "^9.1.2",
     "bs58check": "^2.1.2",
@@ -108,12 +107,13 @@
   },
   "devDependencies": {
     "@agrozyme/types-tronweb": "^5.3.2",
+    "@ledgerhq/types-cryptoassets": "workspace:^",
     "@types/bs58check": "^2.1.0",
     "@types/invariant": "^2.2.2",
     "@types/jest": "^29.5.10",
     "@types/lodash": "^4.14.191",
     "jest": "^29.7.0",
-    "msw": "^2.0.11",
+    "msw": "^2.2.13",
     "ts-jest": "^29.1.1",
     "typescript": "^5.4.5"
   },

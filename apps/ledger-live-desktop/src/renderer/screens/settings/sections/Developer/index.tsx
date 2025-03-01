@@ -111,7 +111,10 @@ const Default = () => {
         <WalletSyncTester />
       </FeatureToggle>
 
-      <SimpleHashTools />
+      <FeatureToggle featureId="nftsFromSimplehash">
+        <SimpleHashTools />
+      </FeatureToggle>
+
       <BrazeTools />
 
       <ResetHiddenCollections />

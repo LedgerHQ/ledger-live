@@ -87,42 +87,30 @@ jobs:
         with:
           from_level: major
           to_level: patch
-      - name: Add changed files
-        run: |
-          git add .
       - name: commit (from release branch)
         if: ${{ startsWith(github.ref_name, 'release') }}
         env:
           LLD: LLD(${{ steps.post-desktop-version.outputs.version }})
           LLM: LLM(${{ steps.post-mobile-version.outputs.version }})
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        uses: planetscale/ghcommit-action@v0.1.6
-        with:
-          commit_message: "chore(prerelease): :rocket: release prerelease [${{ env.LLD }}, ${{ env.LLM }}]"
-          repo: ${{ github.repository }}
-          branch: ${{ github.ref_name }}
+        run: |
+          git add . &&
+          git commit -m "chore(prerelease): :rocket: release prerelease [${{ env.LLD }}, ${{ env.LLM }}]" ||
+          echo ""
       - name: commit (from hotfix branch)
         if: ${{ startsWith(github.ref_name, 'hotfix') }}
         env:
           LLD: LLD(${{ steps.post-desktop-version.outputs.version }})
           LLM: LLM(${{ steps.post-mobile-version.outputs.version }})
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        uses: planetscale/ghcommit-action@v0.1.6
-        with:
-          commit_message: "chore(hotfix): :fire: hotfix prerelease [${{ env.LLD }}, ${{ env.LLM }}]"
-          repo: ${{ github.repository }}
-          branch: ${{ github.ref_name }}
+        run: |
+          git add . &&
+          git commit -m "chore(hotfix): :fire: hotfix prerelease [${{ env.LLD }}, ${{ env.LLM }}]" ||
+          echo ""
       - name: commit (from ${{ inputs.ref }} branch) workflow dispatch
         if: ${{ github.event_name == 'workflow_dispatch' }}
-        env:
-          LLD: LLD(${{ steps.post-desktop-version.outputs.version }})
-          LLM: LLM(${{ steps.post-mobile-version.outputs.version }})
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        uses: planetscale/ghcommit-action@v0.1.6
-        with:
-          commit_message: "chore(prerelease): :rocket: ${{ inputs.ref }} prerelease [LLD(${{ steps.post-desktop-version.outputs.version }}), LLM(${{ steps.post-mobile-version.outputs.version }})]"
-          repo: ${{ github.repository }}
-          branch: ${{ inputs.ref }}
+        run: |
+          git add .
+          git commit -m "chore(prerelease): :rocket: ${{ inputs.ref }} prerelease [LLD(${{ steps.post-desktop-version.outputs.version }}), LLM(${{ steps.post-mobile-version.outputs.version }})]" ||
+          echo ""
       - name: authenticate with npm
         uses: actions/setup-node@v4
         with:
@@ -131,6 +119,16 @@ jobs:
         run: pnpm changeset publish --no-git-tag
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPMJS_TOKEN }}
+      - name: push changes (push event)
+        if: ${{ github.event_name == 'push' }}
+        run: |
+          git pull --rebase
+          git push origin ${{ github.ref_name }}
+      - name: push changes (other events)
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        run: |
+          git pull --rebase
+          git push origin ${{ inputs.ref }}
       - uses: actions/github-script@v7
         name: trigger prerelease build for desktop
         if: ${{ steps.desktop-version.outputs.version != steps.post-desktop-version.outputs.version }}

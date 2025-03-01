@@ -7,6 +7,7 @@ import { reverseRecord } from "../helpers";
 export const FAMILIES_MAPPING_WAPI_TO_LL = {
   ethereum: "evm",
   ripple: "xrp",
+  elrond: "multiversx",
 } as const;
 
 export const FAMILIES_MAPPING_LL_TO_WAPI = reverseRecord(FAMILIES_MAPPING_WAPI_TO_LL);

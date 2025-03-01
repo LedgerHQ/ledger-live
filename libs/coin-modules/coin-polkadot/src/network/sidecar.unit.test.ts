@@ -33,7 +33,7 @@ describe("getAccount", () => {
       },
     }));
 
-    mockServer.listen();
+    mockServer.listen({ onUnhandledRequest: "error" });
   });
 
   beforeEach(() => {
@@ -113,7 +113,7 @@ describe("getRegistry", () => {
       },
     }));
 
-    mockServer.listen();
+    mockServer.listen({ onUnhandledRequest: "error" });
   });
 
   beforeEach(() => {

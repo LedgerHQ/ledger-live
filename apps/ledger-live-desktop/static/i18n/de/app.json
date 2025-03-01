@@ -5721,17 +5721,17 @@
       "title" : "Entschuldigung, es wurden keine Konten gefunden",
       "description" : "Bei der Adressberechnung ist etwas schief gelaufen, versuchen Sie es erneut oder wenden Sie sich an den Ledger-Support"
     },
-    "ElrondDecimalsLimitReached" : {
+    "MultiversXDecimalsLimitReached" : {
       "title" : "Maximale Dezimalstellengrenze erreicht",
       "description" : "Bitte stellen Sie sicher, dass der angegebene Betrag 18 Dezimalstellen hat."
     },
-    "ElrondMinDelegatedAmountError" : {
+    "MultiversXMinDelegatedAmountError" : {
       "title" : "Der delegierte Betrag muss mindestens {{formattedAmount}} betragen"
     },
-    "ElrondMinUndelegatedAmountError" : {
+    "MultiversXMinUndelegatedAmountError" : {
       "title" : "Undelegierter Betrag muss mindestens {{formattedAmount}} betragen"
     },
-    "ElrondDelegationBelowMinimumError" : {
+    "MultiversXDelegationBelowMinimumError" : {
       "title" : "Verbleibende Delegierung darf nicht kleiner als {{formattedAmount}} sein"
     },
     "NotEnoughEGLDForFees" : {

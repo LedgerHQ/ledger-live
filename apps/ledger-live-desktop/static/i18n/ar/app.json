@@ -5721,17 +5721,17 @@
       "title" : "عذراً، لم يتم العثور على حسابات",
       "description" : "حدث خطأ ما في حساب العنوان، حاول مرة أخرى أو قم بالتواصل مع دعم Ledger"
     },
-    "ElrondDecimalsLimitReached" : {
+    "MultiversXDecimalsLimitReached" : {
       "title" : "تم الوصول إلى الحد الأقصى من الكسور العشرية",
       "description" : "يُرجى التأكد من أن المبلغ المُقدَّم به 18 كسراً عشرياً."
     },
-    "ElrondMinDelegatedAmountError" : {
+    "MultiversXMinDelegatedAmountError" : {
       "title" : "يجب أن يكون المبلغ المفوض على الأقل {{formattedAmount}}"
     },
-    "ElrondMinUndelegatedAmountError" : {
+    "MultiversXMinUndelegatedAmountError" : {
       "title" : "يجب أن يكون المبلغ غير المفوض على الأقل {{formattedAmount}}"
     },
-    "ElrondDelegationBelowMinimumError" : {
+    "MultiversXDelegationBelowMinimumError" : {
       "title" : "لا يمكن أن يكون التفويض المتبقي أقل من {{formattedAmount}}"
     },
     "NotEnoughEGLDForFees" : {

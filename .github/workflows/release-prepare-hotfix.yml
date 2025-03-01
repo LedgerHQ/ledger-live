@@ -71,23 +71,14 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: pnpm changeset version
 
-      - name: git add
+      - name: commit
         run: |
           git add .
+          git commit -m "chore(hotfix): :fire: hotfix release [skip ci]"
 
-      - name: commit
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        uses: planetscale/ghcommit-action@v0.1.6
-        with:
-          commit_message: "chore(hotfix): :fire: hotfix release [skip ci]"
-          repo: ${{ github.repository }}
-          branch: ${{ inputs.ref }}
-
-      - name: pull commit
+      - name: push changes
         run: |
-          git stash
-          git pull
+          git push origin ${{ inputs.ref }}
 
       - name: fetch develop and main
         if: ${{ github.event.inputs.tag_version == 'latest' }}
