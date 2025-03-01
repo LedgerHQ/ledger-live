@@ -1,5 +1,16 @@
 # @ledgerhq/cryptoassets
 
+## 13.13.0-nightly.0
+
+### Minor Changes
+
+- [#8757](https://github.com/LedgerHQ/ledger-live/pull/8757) [`1461449`](https://github.com/LedgerHQ/ledger-live/commit/146144941c13e60182da8d79592f706d12a6f00e) Thanks [@Wozacosta](https://github.com/Wozacosta)! - chore: Rebranding from 'Elrond' to 'MultiversX'
+
+### Patch Changes
+
+- Updated dependencies [[`1461449`](https://github.com/LedgerHQ/ledger-live/commit/146144941c13e60182da8d79592f706d12a6f00e)]:
+  - @ledgerhq/live-env@2.6.0-nightly.0
+
 ## 13.12.0
 
 ### Minor Changes

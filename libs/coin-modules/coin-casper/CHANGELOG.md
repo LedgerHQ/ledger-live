@@ -1,5 +1,16 @@
 # @ledgerhq/coin-casper
 
+## 1.4.0-nightly.2
+
+### Patch Changes
+
+- Updated dependencies [[`1461449`](https://github.com/LedgerHQ/ledger-live/commit/146144941c13e60182da8d79592f706d12a6f00e)]:
+  - @ledgerhq/cryptoassets@13.13.0-nightly.0
+  - @ledgerhq/live-env@2.6.0-nightly.0
+  - @ledgerhq/coin-framework@2.1.1-nightly.0
+  - @ledgerhq/types-live@6.60.0
+  - @ledgerhq/live-network@2.0.5-nightly.0
+
 ## 1.4.0-nightly.1
 
 ### Patch Changes

@@ -1,5 +1,37 @@
 # ledger-live-desktop
 
+## 2.102.0-nightly.3
+
+### Minor Changes
+
+- [#9385](https://github.com/LedgerHQ/ledger-live/pull/9385) [`2803634`](https://github.com/LedgerHQ/ledger-live/commit/28036342d812dd1c24646117879e01d05fae8307) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Hide SimpleHashTool when FF off
+
+- [#8757](https://github.com/LedgerHQ/ledger-live/pull/8757) [`1461449`](https://github.com/LedgerHQ/ledger-live/commit/146144941c13e60182da8d79592f706d12a6f00e) Thanks [@Wozacosta](https://github.com/Wozacosta)! - chore: Rebranding from 'Elrond' to 'MultiversX'
+
+### Patch Changes
+
+- Updated dependencies [[`1461449`](https://github.com/LedgerHQ/ledger-live/commit/146144941c13e60182da8d79592f706d12a6f00e), [`3940ec0`](https://github.com/LedgerHQ/ledger-live/commit/3940ec0a39195e858f23383dd4126fb40cb353ac), [`2662b57`](https://github.com/LedgerHQ/ledger-live/commit/2662b579343398d38ff5e2d0b25a35cccbc143ce)]:
+  - @ledgerhq/types-cryptoassets@7.20.0-nightly.0
+  - @ledgerhq/cryptoassets@13.13.0-nightly.0
+  - @ledgerhq/live-common@34.24.0-nightly.2
+  - @ledgerhq/live-env@2.6.0-nightly.0
+  - @ledgerhq/live-nft-react@0.6.0-nightly.0
+  - @ledgerhq/coin-framework@2.1.1-nightly.0
+  - @ledgerhq/coin-bitcoin@0.11.1-nightly.0
+  - @ledgerhq/coin-cosmos@0.8.2-nightly.0
+  - @ledgerhq/coin-evm@2.11.1-nightly.0
+  - @ledgerhq/coin-filecoin@1.5.6-nightly.0
+  - @ledgerhq/domain-service@1.2.19
+  - @ledgerhq/types-live@6.60.0
+  - @ledgerhq/live-countervalues@0.4.2-nightly.0
+  - @ledgerhq/live-countervalues-react@0.2.24-nightly.0
+  - @ledgerhq/live-nft@0.5.9-nightly.0
+  - @ledgerhq/live-wallet@0.9.6-nightly.0
+  - @ledgerhq/coin-aptos@1.6.2-nightly.0
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.3.2-nightly.0
+  - @ledgerhq/ledger-key-ring-protocol@0.5.4-nightly.0
+  - @ledgerhq/live-network@2.0.5-nightly.0
+
 ## 2.102.0-nightly.2
 
 ### Minor Changes

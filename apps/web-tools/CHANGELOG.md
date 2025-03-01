@@ -1,5 +1,26 @@
 # web-tools
 
+## 0.15.0-nightly.2
+
+### Minor Changes
+
+- [#8757](https://github.com/LedgerHQ/ledger-live/pull/8757) [`1461449`](https://github.com/LedgerHQ/ledger-live/commit/146144941c13e60182da8d79592f706d12a6f00e) Thanks [@Wozacosta](https://github.com/Wozacosta)! - chore: Rebranding from 'Elrond' to 'MultiversX'
+
+### Patch Changes
+
+- Updated dependencies [[`1461449`](https://github.com/LedgerHQ/ledger-live/commit/146144941c13e60182da8d79592f706d12a6f00e), [`2662b57`](https://github.com/LedgerHQ/ledger-live/commit/2662b579343398d38ff5e2d0b25a35cccbc143ce)]:
+  - @ledgerhq/types-cryptoassets@7.20.0-nightly.0
+  - @ledgerhq/cryptoassets@13.13.0-nightly.0
+  - @ledgerhq/live-common@34.24.0-nightly.2
+  - @ledgerhq/live-env@2.6.0-nightly.0
+  - @ledgerhq/coin-framework@2.1.1-nightly.0
+  - @ledgerhq/domain-service@1.2.19
+  - @ledgerhq/types-live@6.60.0
+  - @ledgerhq/live-wallet@0.9.6-nightly.0
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.3.2-nightly.0
+  - @ledgerhq/ledger-key-ring-protocol@0.5.4-nightly.0
+  - @ledgerhq/hw-app-eth@6.42.8-nightly.0
+
 ## 0.14.3-nightly.1
 
 ### Patch Changes

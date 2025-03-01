@@ -1,5 +1,13 @@
 # @ledgerhq/device-core
 
+## 0.4.15-nightly.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/types-live@6.60.0
+  - @ledgerhq/live-network@2.0.5-nightly.0
+
 ## 0.4.14
 
 ### Patch Changes

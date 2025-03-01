@@ -1,5 +1,55 @@
 ## 34.5.0-next.4
 
+## 34.24.0-nightly.2
+
+### Minor Changes
+
+- [#8757](https://github.com/LedgerHQ/ledger-live/pull/8757) [`1461449`](https://github.com/LedgerHQ/ledger-live/commit/146144941c13e60182da8d79592f706d12a6f00e) Thanks [@Wozacosta](https://github.com/Wozacosta)! - chore: Rebranding from 'Elrond' to 'MultiversX'
+
+### Patch Changes
+
+- [#9386](https://github.com/LedgerHQ/ledger-live/pull/9386) [`2662b57`](https://github.com/LedgerHQ/ledger-live/commit/2662b579343398d38ff5e2d0b25a35cccbc143ce) Thanks [@qperrot](https://github.com/qperrot)! - Fix specs for Celo and ICON
+
+- Updated dependencies [[`1461449`](https://github.com/LedgerHQ/ledger-live/commit/146144941c13e60182da8d79592f706d12a6f00e), [`2662b57`](https://github.com/LedgerHQ/ledger-live/commit/2662b579343398d38ff5e2d0b25a35cccbc143ce)]:
+  - @ledgerhq/hw-app-multiversx@6.22.0-nightly.0
+  - @ledgerhq/cryptoassets@13.13.0-nightly.0
+  - @ledgerhq/coin-multiversx@0.2.0-nightly.0
+  - @ledgerhq/live-env@2.6.0-nightly.0
+  - @ledgerhq/coin-icon@0.6.6-nightly.0
+  - @ledgerhq/coin-framework@2.1.1-nightly.0
+  - @ledgerhq/coin-algorand@0.7.6-nightly.0
+  - @ledgerhq/coin-bitcoin@0.11.1-nightly.0
+  - @ledgerhq/coin-cardano@0.4.6-nightly.0
+  - @ledgerhq/coin-casper@1.4.0-nightly.2
+  - @ledgerhq/coin-cosmos@0.8.2-nightly.0
+  - @ledgerhq/coin-evm@2.11.1-nightly.0
+  - @ledgerhq/coin-filecoin@1.5.6-nightly.0
+  - @ledgerhq/coin-near@0.8.2-nightly.1
+  - @ledgerhq/coin-polkadot@2.0.3-nightly.0
+  - @ledgerhq/coin-solana@0.13.2-nightly.1
+  - @ledgerhq/coin-stacks@0.6.1-nightly.0
+  - @ledgerhq/coin-stellar@1.1.0-nightly.1
+  - @ledgerhq/coin-tezos@1.2.1-nightly.1
+  - @ledgerhq/coin-ton@0.5.6-nightly.0
+  - @ledgerhq/coin-tron@0.3.0-nightly.1
+  - @ledgerhq/coin-vechain@2.4.6-nightly.0
+  - @ledgerhq/coin-xrp@2.0.2-nightly.0
+  - @ledgerhq/live-countervalues@0.4.2-nightly.0
+  - @ledgerhq/live-countervalues-react@0.2.24-nightly.0
+  - @ledgerhq/live-nft@0.5.9-nightly.0
+  - @ledgerhq/live-wallet@0.9.6-nightly.0
+  - @ledgerhq/coin-aptos@1.6.2-nightly.0
+  - @ledgerhq/coin-hedera@1.3.6-nightly.0
+  - @ledgerhq/coin-internet_computer@1.5.6-nightly.0
+  - @ledgerhq/hw-app-vet@0.2.16-nightly.0
+  - @ledgerhq/ledger-cal-service@0.3.0-nightly.1
+  - @ledgerhq/ledger-trust-service@0.2.1-nightly.0
+  - @ledgerhq/live-network@2.0.5-nightly.0
+  - @ledgerhq/speculos-transport@0.1.10-nightly.0
+  - @ledgerhq/live-signer-evm@0.1.1-nightly.1
+  - @ledgerhq/hw-app-eth@6.42.8-nightly.0
+  - @ledgerhq/device-core@0.4.15-nightly.0
+
 ## 34.23.1-nightly.1
 
 ### Patch Changes
