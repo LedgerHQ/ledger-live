@@ -439,8 +439,8 @@
       "cta" : "Accéder à My Ledger"
     },
     "wrongDevice" : {
-      "title" : "Le Ledger Nano S™ n’est pas compatible avec THORChain",
-      "description" : "Le Ledger Nano S n’est pas compatible avec THORChain. Vous pouvez utiliser le Ledger Nano S Plus, Ledger Nano X, Ledger Stax ou Ledger Flex pour vos échanges inter-chaînes sur THORChain via Ledger Live",
+      "title" : "Le Ledger Nano S™ n’est pas compatible avec {{provider}}",
+      "description" : "Le Ledger Nano S™ n’est pas compatible avec {{provider}}. Vous pouvez utiliser le Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™ ou Ledger Flex™ pour vos échanges inter-chaînes sur {{provider}} via Ledger Live.",
       "cta" : "Voir les appareils compatibles",
       "changeProvider" : "Choisir un autre prestataire"
     },
@@ -4155,6 +4155,11 @@
       "debugAppsDesc" : "Affichez et autorisez l’ouverture des Platform Apps \"Debug\".",
       "debugReactQuery" : "Autoriser le débogage avec React Query",
       "debugReactQueryDesc" : "Affichez et autorisez l’ouverture de la console de débogage de React Query.",
+      "nfts" : {
+        "title" : "Collections de NFT masquées",
+        "description" : "Réinitialiser la liste des collections masquées",
+        "reset" : "Réinitialiser"
+      },
       "exchangeDeveloperMode" : {
         "title" : "Mode développeur Exchange",
         "desc" : "Ajoutez les informations sur le prestataire d’Exchange.",
@@ -6665,10 +6670,28 @@
       "alreadySync" : "Je l’ai déjà activé",
       "learnMore" : "Comment fonctionne Ledger Sync ?"
     },
+    "entryPoints" : {
+      "accounts" : {
+        "title" : "Activez Ledger Sync"
+      },
+      "manager" : {
+        "title" : "Ledger Sync",
+        "description" : "Synchronisez automatiquement vos comptes, même si vous changez de téléphone.",
+        "cta" : "Activer Ledger Sync"
+      },
+      "settings" : {
+        "title" : "Ledger Sync",
+        "description" : "Synchronisez automatiquement vos comptes, même si vous changez de téléphone.",
+        "cta" : "Activer Ledger Sync"
+      },
+      "onboarding" : {
+        "title" : "Synchroniser avec une autre application Ledger Live"
+      }
+    },
     "manage" : {
       "cta" : "Gérer",
       "synchronize" : {
-        "label" : "Synchroniser avec une autre application Ledger Live",
+        "label" : "Synchroniser avec une autre application Ledger Live",
         "description" : "Synchronisez vos comptes crypto Ledger Live sur différents téléphones et ordinateurs."
       },
       "backup" : {
@@ -6918,6 +6941,14 @@
         "optOut" : {
           "title" : "Passez au niveau supérieur",
           "description" : "Le Ledger Nano S ne recevra bientôt plus de mises à jour. Bénéficiez de <0>-{{discount}}% de réduction</0> sur nos derniers wallets.",
+          "cta" : "Choisir mon nouveau wallet",
+          "linkText" : "En savoir plus"
+        }
+      },
+      "portfolio" : {
+        "optOut" : {
+          "title" : "Passez au niveau supérieur",
+          "description" : "Bénéficiez de <0>-{{discount}}% de réduction</0> sur nos wallets dernière génération. Passez à une expérience plus fluide et plus sécurisée dès maintenant.",
           "cta" : "Choisir mon nouveau wallet",
           "linkText" : "En savoir plus"
         }
