@@ -35,7 +35,8 @@
     "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/live-dmk-shared": "workspace:^",
     "@ledgerhq/logs": "^6.12.0",
-    "@ledgerhq/types-devices": "workspace:^"
+    "@ledgerhq/types-devices": "workspace:^",
+    "react-native-ble-plx": "3.2.1"
   },
   "devDependencies": {
     "@ledgerhq/device-management-kit": "0.0.0-rnble-transport-20250226091520",

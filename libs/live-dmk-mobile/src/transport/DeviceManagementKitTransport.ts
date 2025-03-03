@@ -1,15 +1,37 @@
 import Transport from "@ledgerhq/hw-transport";
 import {
+  DeviceId,
   DeviceManagementKit,
   type DeviceSessionState,
   DeviceStatus,
   DiscoveredDevice,
 } from "@ledgerhq/device-management-kit";
 import { activeDeviceSessionSubject, dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
-import { LocalTracer } from "@ledgerhq/logs";
-import { catchError, first, firstValueFrom, Observer, of, switchMap } from "rxjs";
+import { LocalTracer, TraceContext } from "@ledgerhq/logs";
+import { firstValueFrom, of, from, throwError } from "rxjs";
+import { first, filter, tap, switchMap, catchError, timeout } from "rxjs/operators";
 import { deviceManagementKit } from "../hooks/useDeviceManagementKit";
-import { DescriptorEvent } from "@ledgerhq/types-devices";
+import type {
+  Observer as TransportObserver,
+  Subscription as TransportSubscription,
+} from "@ledgerhq/hw-transport";
+import { HwTransportError } from "../../../ledgerjs/packages/errors/lib";
+import { BleManager as RNBleManager } from "react-native-ble-plx";
+
+class BlePlxManager {
+  private static _instance: RNBleManager;
+
+  static get instance(): RNBleManager {
+    if (!this._instance) {
+      this._instance = new RNBleManager();
+    }
+    return this._instance;
+  }
+
+  static onStateChange(listener: (state: string) => void, emitCurrentState?: boolean) {
+    return this.instance.onStateChange(listener, emitCurrentState);
+  }
+}
 
 const tracer = new LocalTracer("live-dmk", { function: "DeviceManagementKitTransport" });
 
@@ -21,15 +43,79 @@ export class DeviceManagementKitTransport extends Transport {
     super();
     this.sessionId = sessionId;
     this.dmk = dmk;
-    this.listenToDisconnect();
     this.tracer = tracer;
+    this.listenToDisconnect();
   }
 
-  static async open(deviceOrId: DiscoveredDevice | string): Promise<DeviceManagementKitTransport> {
+  static setLogLevel(_level: string): void {
+    console.warn("setLogLevel not implemented", _level);
+  }
+
+  static observeState(
+    observer: TransportObserver<{ type: string; available: boolean }>,
+  ): TransportSubscription {
+    const subscription = BlePlxManager.instance.onStateChange((type: string) => {
+      observer.next({
+        type,
+        available: type === "PoweredOn",
+      });
+    }, true);
+    return {
+      unsubscribe: () => subscription.remove(),
+    };
+  }
+
+  static async disconnectDevice(deviceId: DeviceId, context?: TraceContext): Promise<void> {
+    const device = deviceManagementKit
+      .listConnectedDevices()
+      .find(device => device.id === deviceId);
+
+    if (!device) {
+      tracer.trace(`[disconnect] no connected device found for id ${deviceId}`, context);
+      throw new Error(`Device ${deviceId} is not connected`);
+    }
+
+    tracer.trace(`[disconnect] device found ${device.id}`, context);
+    console.warn("FOUND CONNECTED DEVICE => DISCONNECT", device);
+
+    const disconnectCall$ = from(
+      deviceManagementKit.disconnect({ sessionId: device.sessionId }),
+    ).pipe(
+      catchError(error => {
+        tracer.trace(`[disconnect] error on disconnect call for ${device.id}`, context);
+        return throwError(() => error);
+      }),
+    );
+
+    const waitForDisconnect$ = deviceManagementKit
+      .getDeviceSessionState({ sessionId: device.sessionId })
+      .pipe(
+        filter((state: DeviceSessionState) => state.deviceStatus === DeviceStatus.NOT_CONNECTED),
+        first(),
+        tap(() => tracer.trace(`[disconnect] device ${device.id} is now disconnected`, context)),
+        timeout(10000),
+      );
+
+    return firstValueFrom(disconnectCall$.pipe(switchMap(() => waitForDisconnect$))).then(
+      () => undefined,
+    );
+  }
+
+  static async open(
+    deviceOrId: DiscoveredDevice | string,
+    timeoutMs?: number,
+    context?: TraceContext,
+  ): Promise<DeviceManagementKitTransport> {
     const activeSessionId = activeDeviceSessionSubject.value?.sessionId;
 
-    tracer.trace("[open] activeSessionId: " + activeSessionId + " and deviceId: " + deviceOrId);
-    console.log("[open] activeSessionId: " + activeSessionId + " and deviceId: " + deviceOrId);
+    tracer.trace(
+      "[open] activeSessionId: " + activeSessionId + " and deviceId: " + deviceOrId,
+      context,
+    );
+    console.log(
+      "[open] activeSessionId: " + activeSessionId + " and deviceId: " + deviceOrId,
+      context,
+    );
 
     if (activeSessionId) {
       tracer.trace(`[open] checking existing session ${activeSessionId}`);
@@ -45,14 +131,16 @@ export class DeviceManagementKitTransport extends Transport {
         deviceSessionState?.deviceStatus !== DeviceStatus.NOT_CONNECTED &&
         activeDeviceSessionSubject.value?.transport
       ) {
-        tracer.trace("[open] reusing existing session and instantiating a new DmkTransport");
-        return activeDeviceSessionSubject.value.transport;
+        tracer.trace(
+          "[open] reusing existing session and instantiating a new DmkTransport",
+          context,
+        );
       }
     }
 
     if (typeof deviceOrId === "string") {
       const devicesObs = deviceManagementKit.listenToAvailableDevices();
-      tracer.trace("[open] listen to available devices");
+      tracer.trace("[open] listen to available devices", context);
       console.log("listen to available devices");
 
       const subscription = devicesObs.pipe(
@@ -65,7 +153,7 @@ export class DeviceManagementKitTransport extends Transport {
           }
           console.log("FOUND DEVICE => CONNECT", found);
 
-          tracer.trace(`[open] device found ${found.id}`);
+          tracer.trace(`[open] device found ${found.id}`, context);
 
           const sessionId = await deviceManagementKit.connect({ device: found });
 
@@ -100,9 +188,13 @@ export class DeviceManagementKitTransport extends Transport {
     throw new Error("No transport found");
   }
 
-  static listen(observer: Observer<DescriptorEvent<string>>) {
+  static listen(
+    observer: TransportObserver<any, HwTransportError>,
+    context?: TraceContext,
+  ): TransportSubscription {
     const observable = deviceManagementKit.listenToAvailableDevices();
     let unsubscribed = false;
+    tracer.trace("Listening for devices ...", context);
 
     const unsubscribe = () => {
       if (unsubscribed) return;
@@ -114,11 +206,11 @@ export class DeviceManagementKitTransport extends Transport {
       next: devices => {
         for (const device of devices) {
           const id = dmkToLedgerDeviceIdMap[device.deviceModel.model];
+          tracer.trace(`[listen] device found ${device.id}`, context);
           observer.next({
             type: "add",
             descriptor: "",
             device: device,
-            // @ts-expect-error types are not matching
             deviceModel: {
               id,
             },

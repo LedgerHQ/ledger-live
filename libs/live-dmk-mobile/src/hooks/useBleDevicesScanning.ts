@@ -4,7 +4,7 @@ import { useDeviceManagementKit } from "./useDeviceManagementKit";
 import { Device } from "@ledgerhq/types-devices";
 import { dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
 
-const defaultMapper = (device: DiscoveredDevice): Device => ({
+const useBleDevicesScanningDefaultMapper = (device: DiscoveredDevice): Device => ({
   deviceId: device.id,
   deviceName: `${device.name}`,
   wired: false,
@@ -13,17 +13,19 @@ const defaultMapper = (device: DiscoveredDevice): Device => ({
 });
 
 export const useBleDevicesScanning = <T = Device>(
+  enabled: boolean = false,
   {
     mapper,
   }: {
     mapper: (device: DiscoveredDevice) => T;
-  } = { mapper: defaultMapper },
+  } = { mapper: useBleDevicesScanningDefaultMapper },
 ) => {
   const dmk = useDeviceManagementKit();
   const [scannedDevices, setScannedDevices] = useState<T[]>([]);
   const [scanningBleError, setScanningBleError] = useState<Error | null>(null);
 
   useEffect(() => {
+    if (!enabled) return;
     const subscription = dmk.listenToAvailableDevices().subscribe({
       next: devices => setScannedDevices(devices.map(mapper)),
       error: error => {
@@ -39,7 +41,7 @@ export const useBleDevicesScanning = <T = Device>(
       dmk.stopDiscovering();
       subscription.unsubscribe();
     };
-  }, [dmk]);
+  }, [dmk, enabled]);
 
   return {
     scannedDevices,
