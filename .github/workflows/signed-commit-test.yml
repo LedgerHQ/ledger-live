@@ -57,12 +57,7 @@ jobs:
         run: |
           echo "This is a third dummy file" > dummy3.txt
           git add .
-
       - name: commit the new way, but using GH app token, not GITHUB_TOKEN
-        run: |
-          git add .
-          git commit -m "dummy commit 3"
-      - name: commit with ghcommit action
         uses: planetscale/ghcommit-action@v0.1.6
         with:
           commit_message: "chore(prerelease) update cryptoassets"
