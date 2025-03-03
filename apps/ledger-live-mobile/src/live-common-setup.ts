@@ -23,7 +23,7 @@ import { Platform } from "react-native";
 import { setSecp256k1Instance } from "@ledgerhq/live-common/families/bitcoin/logic";
 import { setGlobalOnBridgeError } from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { prepareCurrency } from "./bridge/cache";
-import BluetoothTransport from "./react-native-hw-transport-ble";
+// import BluetoothTransport from "./react-native-hw-transport-ble";
 import "./experimental";
 import logger, { ConsoleLogger } from "./logger";
 
@@ -139,7 +139,7 @@ setSupportedCurrencies([
   "sonic_blaze",
 ]);
 
-if (Config.BLE_LOG_LEVEL) BluetoothTransport.setLogLevel(Config.BLE_LOG_LEVEL);
+// if (Config.BLE_LOG_LEVEL) BluetoothTransport.setLogLevel(Config.BLE_LOG_LEVEL);
 if (Config.FORCE_PROVIDER && !isNaN(parseInt(Config.FORCE_PROVIDER, 10)))
   setEnv("FORCE_PROVIDER", parseInt(Config.FORCE_PROVIDER, 10));
 // Add support of HID (experimental until we stabilize it)
@@ -205,8 +205,8 @@ registerTransportModule(httpdebug);
 // BLE is always the fallback choice because we always keep raw id in it
 registerTransportModule({
   id: "ble",
-  open: (...args) => DeviceManagementKitTransport.open(...args),
-  disconnect: id => DeviceManagementKitTransport.disconnectDevice(id),
+  open: (...args) => DeviceManagementKitTransport.open(args[0]),
+  disconnect: id => DeviceManagementKitTransport.disconnect(id),
 });
 
 if (process.env.NODE_ENV === "production") {
