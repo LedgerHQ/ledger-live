@@ -1,0 +1,306 @@
+{
+  "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9": {
+    "data": [
+      {
+        "owner_permission": {
+          "keys": [
+            {
+              "address": "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
+              "weight": 1
+            }
+          ],
+          "threshold": 1,
+          "permission_name": "owner"
+        },
+        "account_resource": {
+          "energy_window_optimized": true,
+          "frozen_balance_for_energy": {
+            "frozen_balance": 26000000,
+            "expire_time": 1580573091000
+          },
+          "latest_consume_time_for_energy": 1581943389000,
+          "energy_window_size": 28800000
+        },
+        "active_permission": [
+          {
+            "operations": "7fff1fc0033e0000000000000000000000000000000000000000000000000000",
+            "keys": [
+              {
+                "address": "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
+                "weight": 1
+              }
+            ],
+            "threshold": 1,
+            "id": 2,
+            "type": "Active",
+            "permission_name": "active"
+          }
+        ],
+        "address": "41ae18eb0a9e067f8884058470ed187f44135d816d",
+        "create_time": 1556974023000,
+        "latest_opration_time": 1653052509000,
+        "free_asset_net_usageV2": [
+          {
+            "value": 0,
+            "key": "1002897"
+          },
+          {
+            "value": 0,
+            "key": "1002775"
+          },
+          {
+            "value": 0,
+            "key": "1002830"
+          },
+          {
+            "value": 0,
+            "key": "1002962"
+          },
+          {
+            "value": 0,
+            "key": "1002876"
+          },
+          {
+            "value": 0,
+            "key": "1002398"
+          },
+          {
+            "value": 0,
+            "key": "1002573"
+          },
+          {
+            "value": 0,
+            "key": "1002881"
+          },
+          {
+            "value": 0,
+            "key": "1002927"
+          },
+          {
+            "value": 0,
+            "key": "1002736"
+          },
+          {
+            "value": 0,
+            "key": "1002814"
+          },
+          {
+            "value": 0,
+            "key": "1002858"
+          },
+          {
+            "value": 0,
+            "key": "1002000"
+          },
+          {
+            "value": 0,
+            "key": "1004031"
+          }
+        ],
+        "assetV2": [
+          {
+            "value": 10000000,
+            "key": "1002897"
+          },
+          {
+            "value": 5000000,
+            "key": "1002775"
+          },
+          {
+            "value": 10000000,
+            "key": "1002830"
+          },
+          {
+            "value": 10000000,
+            "key": "1002962"
+          },
+          {
+            "value": 10000000,
+            "key": "1002876"
+          },
+          {
+            "value": 5000000,
+            "key": "1002398"
+          },
+          {
+            "value": 5000000,
+            "key": "1002573"
+          },
+          {
+            "value": 10000000,
+            "key": "1002881"
+          },
+          {
+            "value": 10000000,
+            "key": "1002927"
+          },
+          {
+            "value": 5000000,
+            "key": "1002736"
+          },
+          {
+            "value": 10000000,
+            "key": "1002814"
+          },
+          {
+            "value": 10000000,
+            "key": "1002858"
+          },
+          {
+            "value": 26888000,
+            "key": "1002000"
+          },
+          {
+            "value": 9856699,
+            "key": "1004031"
+          }
+        ],
+        "frozenV2": [
+          {},
+          {
+            "type": "ENERGY"
+          },
+          {
+            "type": "TRON_POWER"
+          }
+        ],
+        "balance": 1781772,
+        "trc20": [
+          {
+            "TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7": "46825830"
+          },
+          {
+            "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t": "376"
+          }
+        ],
+        "latest_consume_free_time": 1653052509000,
+        "account_name": "467265657a6542616e6477697468",
+        "votes": [
+          {
+            "vote_address": "TLyqzVGLV1srkB7dToTAEqgDSfPtXRJZYH",
+            "vote_count": 15
+          },
+          {
+            "vote_address": "TGj1Ej1qRzL9feLTLhjwgxXF4Ct6GTWg2U",
+            "vote_count": 1
+          },
+          {
+            "vote_address": "TCZvvbn4SCVyNhCAt1L8Kp1qk5rtMiKdBB",
+            "vote_count": 2
+          }
+        ],
+        "latest_withdraw_time": 1652964336000,
+        "net_window_size": 28800000,
+        "net_window_optimized": true
+      }
+    ],
+    "success": true,
+    "meta": {
+      "at": 1739525587774,
+      "page_size": 1
+    }
+  },
+  "TL24LCps5FKwp3PoU1MvrYrwhi5LU1tHre": {
+    "data": [
+      {
+        "owner_permission": {
+          "keys": [
+            {
+              "address": "TL24LCps5FKwp3PoU1MvrYrwhi5LU1tHre",
+              "weight": 1
+            }
+          ],
+          "threshold": 1,
+          "permission_name": "owner"
+        },
+        "account_resource": {
+          "energy_window_optimized": true,
+          "frozen_balance_for_energy": {
+            "frozen_balance": 1000000,
+            "expire_time": 1670681610000
+          },
+          "latest_consume_time_for_energy": 1738601502000,
+          "energy_window_size": 28800000
+        },
+        "active_permission": [
+          {
+            "operations": "7fff1fc0033e0300000000000000000000000000000000000000000000000000",
+            "keys": [
+              {
+                "address": "TL24LCps5FKwp3PoU1MvrYrwhi5LU1tHre",
+                "weight": 1
+              }
+            ],
+            "threshold": 1,
+            "id": 2,
+            "type": "Active",
+            "permission_name": "active"
+          }
+        ],
+        "address": "416e3b44b96104b26f84057974a1f0c9880f7c9b13",
+        "create_time": 1604500590000,
+        "allowance": 5228413,
+        "latest_opration_time": 1738601610000,
+        "free_asset_net_usageV2": [
+          {
+            "value": 0,
+            "key": "1002000"
+          },
+          {
+            "value": 0,
+            "key": "1005065"
+          },
+          {
+            "value": 0,
+            "key": "1004031"
+          }
+        ],
+        "assetV2": [
+          {
+            "value": 899000,
+            "key": "1002000"
+          },
+          {
+            "value": 8888880000,
+            "key": "1005065"
+          },
+          {
+            "value": 7137907,
+            "key": "1004031"
+          }
+        ],
+        "frozenV2": [
+          {},
+          {
+            "amount": 402000000,
+            "type": "ENERGY"
+          },
+          {
+            "type": "TRON_POWER"
+          }
+        ],
+        "balance": 1100002,
+        "trc20": [
+          {
+            "TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7": "1000000"
+          },
+          {
+            "TCFLL5dx5ZJdKnWuesXxi1VPwjLVmWZZy9": "1234000000000000000"
+          },
+          {
+            "TXL6rJbvmjD46zeN1JssfgxvSo99qC8MRT": "13409316000000000000"
+          }
+        ],
+        "latest_consume_free_time": 1738601502000,
+        "latest_withdraw_time": 1728404070000,
+        "net_window_size": 28800000,
+        "net_window_optimized": true
+      }
+    ],
+    "success": true,
+    "meta": {
+      "at": 1739542070527,
+      "page_size": 1
+    }
+  }
+}

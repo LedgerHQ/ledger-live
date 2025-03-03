@@ -9,7 +9,7 @@ import {
   isIncompleteState,
   distribute,
 } from "@ledgerhq/live-common/apps/index";
-import { useAppsRunner } from "@ledgerhq/live-common/apps/react";
+import { useAppsRunner, useAppsSections } from "@ledgerhq/live-common/apps/react";
 import NavigationGuard from "~/renderer/components/NavigationGuard";
 import Quit from "~/renderer/icons/Quit";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -31,6 +31,9 @@ import {
   lastSeenCustomImageSelector,
 } from "~/renderer/reducers/settings";
 import { useAppDataStorageProvider } from "~/renderer/hooks/storage-provider/useAppDataStorage";
+import LedgerSyncEntryPoint from "LLD/features/LedgerSyncEntryPoints";
+import { EntryPoint } from "LLD/features/LedgerSyncEntryPoints/types";
+import manager from "@ledgerhq/live-common/manager/index";
 
 const Container = styled.div`
   display: flex;
@@ -182,6 +185,15 @@ const DeviceDashboard = ({
   const disableFirmwareUpdate = state.installQueue.length > 0 || state.uninstallQueue.length > 0;
 
   const [hasCustomLockScreen, setHasCustomLockScreen] = useState(result.customImageBlocks !== 0);
+  const { update } = useAppsSections(state, {
+    query: "",
+    appFilter: "all",
+    sort: {
+      type: "marketcap",
+      order: "desc",
+    },
+  });
+  const isFirmwareDeprecated = manager.firmwareUnsupported(device.modelId, deviceInfo);
 
   return (
     <>
@@ -227,6 +239,9 @@ const DeviceDashboard = ({
           setHasCustomLockScreen={setHasCustomLockScreen}
         />
         <ProviderWarning />
+        {!firmware && !isFirmwareDeprecated && update.length === 0 ? (
+          <LedgerSyncEntryPoint entryPoint={EntryPoint.manager} />
+        ) : null}
         <AppList
           optimisticState={optimisticState}
           state={state}

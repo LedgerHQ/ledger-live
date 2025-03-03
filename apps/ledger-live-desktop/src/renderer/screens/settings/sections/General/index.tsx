@@ -19,6 +19,12 @@ import { useInitSupportedCounterValues } from "~/renderer/hooks/useInitSupported
 import { FeatureToggle, useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import MarketPerformanceWidgetRow from "./MarketPerformanceWidget";
 import MevProtectionRow from "./MevProtection";
+import { useEntryPoint } from "LLD/features/LedgerSyncEntryPoints/hooks/useEntryPoint";
+import { EntryPoint } from "LLD/features/LedgerSyncEntryPoints/types";
+import LedgerSyncEntryPoint from "LLD/features/LedgerSyncEntryPoints";
+import WalletSyncDrawer from "LLD/features/WalletSync/components/Drawer";
+import { AnalyticsPage } from "LLD/features/WalletSync/hooks/useLedgerSyncAnalytics";
+import { useActivationDrawer } from "LLD/features/LedgerSyncEntryPoints/hooks/useActivationDrawer";
 
 const SectionGeneral = () => {
   const hasPassword = useSelector(hasPasswordSelector);
@@ -26,11 +32,15 @@ const SectionGeneral = () => {
   useInitSupportedCounterValues();
   const lldAnalyticsOptInPromptFlag = useFeature("lldAnalyticsOptInPrompt");
   const llMevProtectionFeatureFlag = useFeature("llMevProtection");
+  const { shouldDisplayEntryPoint } = useEntryPoint(EntryPoint.settings);
   const mevLearnMoreLink = llMevProtectionFeatureFlag?.params?.link?.trim() || undefined;
+  const { closeDrawer } = useActivationDrawer();
+
   return (
     <>
       <TrackPage category="Settings" name="Display" />
       <Body>
+        <LedgerSyncEntryPoint entryPoint={EntryPoint.settings} />
         <Row
           title={t("settings.display.counterValue")}
           desc={t("settings.display.counterValueDesc")}
@@ -59,7 +69,7 @@ const SectionGeneral = () => {
           <ThemeSelect />
         </Row>
 
-        <FeatureToggle featureId="lldWalletSync">
+        {!shouldDisplayEntryPoint ? (
           <Row
             title={t("settings.display.walletSync")}
             desc={t("settings.display.walletSyncDesc")}
@@ -68,7 +78,7 @@ const SectionGeneral = () => {
           >
             <WalletSync />
           </Row>
-        </FeatureToggle>
+        ) : null}
 
         <FeatureToggle featureId="marketperformanceWidgetDesktop">
           <Row
@@ -132,6 +142,7 @@ const SectionGeneral = () => {
           </Row>
         )}
       </Body>
+      <WalletSyncDrawer currentPage={AnalyticsPage.SettingsGeneral} onClose={closeDrawer} />
     </>
   );
 };

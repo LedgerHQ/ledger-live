@@ -9,7 +9,6 @@ import { flattenAccounts, getMainAccount } from "@ledgerhq/live-common/account/i
 import keyBy from "lodash/keyBy";
 import { BlockchainEVM, BlockchainsType } from "@ledgerhq/live-nft/supported";
 import { useHideSpamCollection } from "~/renderer/hooks/nfts/useHideSpamCollection";
-import { OrderedOperation, useFilterNftSpams } from "@ledgerhq/live-nft-react";
 import logger from "~/renderer/logger";
 import { usePagination } from "LLD/hooks/usePagination";
 import {
@@ -18,7 +17,9 @@ import {
   groupOperationsByDate,
   parseAccountOperations,
   splitNftOperationsFromAllOperations,
-} from "../utils";
+  OrderedOperation,
+  useFilterNftSpams,
+} from "@ledgerhq/live-nft-react";
 
 export type Props = {
   account?: AccountLike;
@@ -37,7 +38,7 @@ export function useOperationsList({
   parentAccount,
   accounts,
   withSubAccounts,
-  filterOperation, // TODO: see if we need to filter operations
+  filterOperation,
 }: Props) {
   const allAccounts = useSelector(shallowAccountsSelector);
   const {
@@ -103,7 +104,6 @@ export function useOperationsList({
     nbToShow,
   );
 
-  // TODO: place this callback in the right place
   const markNftAsSpam = useCallback(
     (collectionId: string, blockchain: BlockchainsType, spamScore: number) => {
       if (spamFilteringTxEnabled && spamScore > thresold) {

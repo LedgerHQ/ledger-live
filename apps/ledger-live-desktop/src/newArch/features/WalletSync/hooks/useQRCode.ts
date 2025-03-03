@@ -8,7 +8,7 @@ import {
 } from "@ledgerhq/ledger-key-ring-protocol/errors";
 import { MemberCredentials } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { useDispatch, useSelector } from "react-redux";
-import { setFlow, setQrCodePinCode } from "~/renderer/actions/walletSync";
+import { setDrawerVisibility, setFlow, setQrCodePinCode } from "~/renderer/actions/walletSync";
 import { Flow, Step } from "~/renderer/reducers/walletSync";
 import {
   trustchainSelector,
@@ -22,11 +22,15 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { track } from "~/renderer/analytics/segment";
 import { QueryKey } from "./type.hooks";
 import { useInstanceName } from "./useInstanceName";
+import { AnalyticsPage } from "./useLedgerSyncAnalytics";
+import { saveSettings } from "~/renderer/actions/settings";
+import { useHistory } from "react-router";
 
 const MIN_TIME_TO_REFRESH = 30_000;
 
-export function useQRCode() {
+export function useQRCode({ sourcePage }: { sourcePage?: AnalyticsPage }) {
   const queryClient = useQueryClient();
+  const history = useHistory();
   const dispatch = useDispatch();
   const trustchain = useSelector(trustchainSelector);
   const memberCredentials = useSelector(memberCredentialsSelector);
@@ -87,14 +91,20 @@ export function useQRCode() {
         dispatch(setTrustchain(newTrustchain));
         if (!trustchain) track("ledgersync_activated");
       }
-      dispatch(
-        setFlow({
-          flow: Flow.Synchronize,
-          step: Step.SynchronizeLoading,
-          nextStep: Step.Synchronized,
-          hasTrustchainBeenCreated: false,
-        }),
-      );
+      if (sourcePage === AnalyticsPage.Onboarding) {
+        dispatch(saveSettings({ hasCompletedOnboarding: true }));
+        history.push("/");
+        dispatch(setDrawerVisibility(false));
+      } else {
+        dispatch(
+          setFlow({
+            flow: Flow.Synchronize,
+            step: Step.SynchronizeLoading,
+            nextStep: Step.Synchronized,
+            hasTrustchainBeenCreated: false,
+          }),
+        );
+      }
       queryClient.invalidateQueries({ queryKey: [QueryKey.getMembers] });
       setUrl(null);
       dispatch(setQrCodePinCode(null));
