@@ -68,7 +68,9 @@ export class DeviceManagementKitTransport extends Transport {
     }
 
     tracer.trace("[open] No active session found, starting discovery");
-    const [discoveredDevice] = await firstValueFrom(deviceManagementKit.listenToAvailableDevices());
+    const [discoveredDevice] = await firstValueFrom(
+      deviceManagementKit.listenToAvailableDevices({}),
+    );
     const connectedSessionId = await deviceManagementKit.connect({ device: discoveredDevice });
 
     tracer.trace("[open] Connected");
@@ -81,7 +83,7 @@ export class DeviceManagementKitTransport extends Transport {
   static listen = (observer: Observer<DescriptorEvent<string>>) => {
     console.log("listen");
     const subscription = deviceManagementKit
-      .listenToAvailableDevices()
+      .listenToAvailableDevices({})
       .pipe(
         startWith<DiscoveredDevice[]>([]),
         pairwise(),
@@ -136,6 +138,10 @@ export class DeviceManagementKitTransport extends Transport {
 
   close: () => Promise<void> = () => Promise.resolve();
 
+  disconnect = () => {
+    this.dmk.disconnect({ sessionId: this.sessionId });
+  };
+
   async exchange(apdu: Buffer): Promise<Buffer> {
     tracer.trace(`[exchange] => ${apdu.toString("hex")}`);
 
@@ -144,7 +150,7 @@ export class DeviceManagementKitTransport extends Transport {
     // If the device is not connected, connect to new session
     if (!devices.some(device => device.sessionId === this.sessionId)) {
       const [discoveredDevice] = await firstValueFrom(
-        deviceManagementKit.listenToAvailableDevices(),
+        deviceManagementKit.listenToAvailableDevices({}),
       );
       const connectedSessionId = await deviceManagementKit.connect({ device: discoveredDevice });
       this.sessionId = connectedSessionId;

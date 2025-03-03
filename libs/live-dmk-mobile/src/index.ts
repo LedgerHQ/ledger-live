@@ -1,4 +1,4 @@
 export { useDeviceSessionRefresherToggle, useDeviceSessionState } from "@ledgerhq/live-dmk-shared";
+export { DeviceManagementKitTransport } from "./transport/DeviceManagementKitTransport";
+export { isAllowedOnboardingStatePollingErrorDmk } from "./errors";
 export * from "./hooks";
-export * from "./transport/DeviceManagementKitTransport";
-export * from "./errors";

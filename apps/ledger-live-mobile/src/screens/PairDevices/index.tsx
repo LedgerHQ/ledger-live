@@ -3,12 +3,12 @@ import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useDispatch, useSelector } from "react-redux";
 import { timeout, tap } from "rxjs/operators";
-import { v4 as uuid } from "uuid";
+// import { v4 as uuid } from "uuid";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
 import { getDeviceName } from "@ledgerhq/live-common/device/use-cases/getDeviceNameUseCase";
 import { listAppsUseCase } from "@ledgerhq/live-common/device/use-cases/listAppsUseCase";
 import { DeviceModelId } from "@ledgerhq/devices";
-import { delay } from "@ledgerhq/live-common/promise";
+// import { delay } from "@ledgerhq/live-common/promise";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useTheme } from "@react-navigation/native";
 import { TransportBleDevice } from "@ledgerhq/live-common/ble/types";
@@ -126,10 +126,12 @@ function PairDevicesInner({ navigation, route }: NavigationProps) {
       });
 
       try {
-        const transport = await TransportBLE.open(bleDevice.id, undefined, {
-          correlationId: uuid(),
-          origin: tracer.getContext(),
-        });
+        // const transport = await TransportBLE.open(bleDevice.id, undefined, {
+        //   correlationId: uuid(),
+        //   origin: tracer.getContext(),
+        // });
+        const transport = await TransportBLE.open(bleDevice.id);
+
         if (unmounted.current) return;
 
         try {
@@ -201,10 +203,10 @@ function PairDevicesInner({ navigation, route }: NavigationProps) {
             skipCheck: false,
           });
         } finally {
-          transport.close();
+          await transport.close();
           // eslint-disable-next-line @typescript-eslint/no-empty-function
-          await TransportBLE.disconnectDevice(device.deviceId).catch(() => {});
-          await delay(500);
+          // await TransportBLE.disconnectDevice(device.deviceId).catch(() => {});
+          // await delay(500);
         }
       } catch (error) {
         if (unmounted.current) return;
