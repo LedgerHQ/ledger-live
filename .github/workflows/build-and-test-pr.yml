@@ -2,7 +2,7 @@ name: "[PR] Build and Test"
 on:
   merge_group:
     types: [checks_requested]
-  pull_request:
+  # pull_request:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
