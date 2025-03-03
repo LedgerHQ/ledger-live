@@ -6,7 +6,7 @@ import { useNftAPI } from "@ledgerhq/live-nft-react";
 import SettingsRow from "~/components/SettingsRow";
 
 const PRODUCTION_URL = "https://nft.api.live.ledger.com";
-const STAGING_URL = "https://nft.api.live.ledger-stg.com";
+const STAGING_URL = "https://nft.api.live.ledger-test.com";
 
 const NftMetadataServiceRow = () => {
   const currentUrlValue = getEnv("NFT_ETH_METADATA_SERVICE");
