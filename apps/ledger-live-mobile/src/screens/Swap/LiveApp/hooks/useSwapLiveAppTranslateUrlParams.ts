@@ -6,6 +6,7 @@
  */
 
 import { AccountLike } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import { useMemo } from "react";
 
 type SwapLiveUrlParams = {
@@ -13,9 +14,12 @@ type SwapLiveUrlParams = {
   amountFrom?: string;
 };
 
-export const useSwapLiveAppTranslateUrlParams = (
-  params: Record<string, AccountLike>,
-): SwapLiveUrlParams => {
+type Params = {
+  defaultAccount?: AccountLike;
+  defaultAmount?: BigNumber;
+};
+
+export const useSwapLiveAppTranslateUrlParams = (params: Params): SwapLiveUrlParams => {
   return useMemo(() => {
     const newParams: SwapLiveUrlParams = {};
     if (params.defaultAccount) {
