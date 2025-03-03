@@ -3,11 +3,14 @@ import { Subscription } from "rxjs";
 import { DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import { activeDeviceSessionSubject } from "../config/activeDeviceSession";
 
-export const useDeviceSessionRefresherToggle = (dmk: DeviceManagementKit, enabled: boolean) => {
+export const useDeviceSessionRefresherToggle = (
+  dmk: DeviceManagementKit | null,
+  enabled: boolean,
+) => {
   const sessionId = useRef<string>();
   const sub = useRef<Subscription>();
   useEffect(() => {
-    if (!enabled) return;
+    if (!enabled || !dmk) return;
     sub.current = activeDeviceSessionSubject.subscribe({
       next: session => {
         if (session) {
@@ -37,7 +40,7 @@ export const useDeviceSessionRefresherToggle = (dmk: DeviceManagementKit, enable
     });
 
     return () => {
-      if (!enabled) return;
+      if (!enabled || !dmk) return;
       sub.current?.unsubscribe();
       if (sessionId.current) {
         dmk.toggleDeviceSessionRefresher({
@@ -49,6 +52,7 @@ export const useDeviceSessionRefresherToggle = (dmk: DeviceManagementKit, enable
   }, [dmk]);
 
   const resetRefresherState = useCallback(() => {
+    if (!dmk) return;
     sub.current?.unsubscribe();
 
     if (sessionId.current) {

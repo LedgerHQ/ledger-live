@@ -6726,6 +6726,9 @@ importers:
       '@ledgerhq/device-management-kit':
         specifier: 0.0.0-rnble-transport-20250226091520
         version: 0.0.0-rnble-transport-20250226091520(rxjs@7.8.1)
+      '@ledgerhq/live-common':
+        specifier: workspace:^
+        version: link:../ledger-live-common
       '@testing-library/dom':
         specifier: ^9.3.4
         version: 9.3.4
@@ -6787,6 +6790,9 @@ importers:
       '@ledgerhq/device-management-kit':
         specifier: 0.0.0-rnble-transport-20250226091520
         version: 0.0.0-rnble-transport-20250226091520(rxjs@7.8.1)
+      '@ledgerhq/live-common':
+        specifier: workspace:^
+        version: link:../ledger-live-common
       '@testing-library/dom':
         specifier: ^9.3.4
         version: 9.3.4

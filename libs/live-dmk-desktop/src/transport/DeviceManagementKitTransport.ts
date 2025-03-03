@@ -9,7 +9,7 @@ import { dmkToLedgerDeviceIdMap, activeDeviceSessionSubject } from "@ledgerhq/li
 import { LocalTracer } from "@ledgerhq/logs";
 import { DescriptorEvent } from "@ledgerhq/types-devices";
 import { firstValueFrom, Observer, startWith, pairwise, map } from "rxjs";
-import { deviceManagementKit } from "../hooks/useDeviceManagementKit";
+import { DeviceManagementKitInstance } from "../hooks/useDeviceManagementKit";
 
 const tracer = new LocalTracer("live-dmk", { function: "DeviceManagementKitTransport" });
 
@@ -52,7 +52,7 @@ export class DeviceManagementKitTransport extends Transport {
     if (activeSessionId) {
       tracer.trace(`[open] checking existing session ${activeSessionId}`);
       const deviceSessionState: DeviceSessionState | null = await firstValueFrom(
-        deviceManagementKit.getDeviceSessionState({ sessionId: activeSessionId }),
+        DeviceManagementKitInstance().getDeviceSessionState({ sessionId: activeSessionId }),
       ).catch(e => {
         console.error("[SDKTransport][open] error getting device session state", e);
         return null;
@@ -68,11 +68,18 @@ export class DeviceManagementKitTransport extends Transport {
     }
 
     tracer.trace("[open] No active session found, starting discovery");
-    const [discoveredDevice] = await firstValueFrom(deviceManagementKit.listenToAvailableDevices());
-    const connectedSessionId = await deviceManagementKit.connect({ device: discoveredDevice });
+    const [discoveredDevice] = await firstValueFrom(
+      DeviceManagementKitInstance().listenToAvailableDevices(),
+    );
+    const connectedSessionId = await DeviceManagementKitInstance().connect({
+      device: discoveredDevice,
+    });
 
     tracer.trace("[open] Connected");
-    const transport = new DeviceManagementKitTransport(deviceManagementKit, connectedSessionId);
+    const transport = new DeviceManagementKitTransport(
+      DeviceManagementKitInstance(),
+      connectedSessionId,
+    );
     activeDeviceSessionSubject.next({ sessionId: connectedSessionId, transport });
 
     return transport;
@@ -80,7 +87,7 @@ export class DeviceManagementKitTransport extends Transport {
 
   static listen = (observer: Observer<DescriptorEvent<string>>) => {
     console.log("listen");
-    const subscription = deviceManagementKit
+    const subscription = DeviceManagementKitInstance()
       .listenToAvailableDevices()
       .pipe(
         startWith<DiscoveredDevice[]>([]),
@@ -144,9 +151,11 @@ export class DeviceManagementKitTransport extends Transport {
     // If the device is not connected, connect to new session
     if (!devices.some(device => device.sessionId === this.sessionId)) {
       const [discoveredDevice] = await firstValueFrom(
-        deviceManagementKit.listenToAvailableDevices(),
+        DeviceManagementKitInstance().listenToAvailableDevices(),
       );
-      const connectedSessionId = await deviceManagementKit.connect({ device: discoveredDevice });
+      const connectedSessionId = await DeviceManagementKitInstance().connect({
+        device: discoveredDevice,
+      });
       this.sessionId = connectedSessionId;
     }
 
