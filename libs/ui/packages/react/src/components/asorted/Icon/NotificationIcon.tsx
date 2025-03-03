@@ -2,7 +2,7 @@ import React from "react";
 import styled, { css } from "styled-components";
 
 import * as Icons from "@ledgerhq/icons-ui/react";
-import { Box } from "../..";
+import { Box } from "../../layout";
 
 type IconKey = keyof typeof Icons;
 type WrapperType = "round" | "square";
