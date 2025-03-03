@@ -439,8 +439,8 @@
       "cta" : "انتقل إلى My Ledger"
     },
     "wrongDevice" : {
-      "title" : "™Ledger Nano S ليست متوافقة مع THORChain",
-      "description" : "™Ledger Nano S ليست متوافقة مع THORChain. يمكنك استخدام Ledger Nano S Plus أو Ledger Nano X أو Ledger Stax أو Ledger Flex لتجربة المبادلات عبر سلاسل الكتل المختلفة على THORChain عن طريق Ledger Live",
+      "title" : "™Ledger Nano S ليست متوافقة مع {{provider}}",
+      "description" : "Ledger Nano S ليست متوافقة مع {{provider}}. يمكنك استخدام Ledger Nano S Plus أو Ledger Nano X أو Ledger Stax أو Ledger Flex لتجربة المبادلات عبر سلاسل الكتل المختلفة على {{provider}} عبر Ledger Live",
       "cta" : "استكشف الأجهزة المتوافقة",
       "changeProvider" : "قم بالمبادلة مع مزود آخر"
     },
@@ -4155,6 +4155,11 @@
       "debugAppsDesc" : "عرض تطبيقات المنصة لتصحيح الأخطاء والسماح بفتحها.",
       "debugReactQuery" : "السماح بتصحيح أخطاء ReactQuery",
       "debugReactQueryDesc" : "عرض والسماح بفتح وحدة تحكم تصحيح أخطاء ReactQuery.",
+      "nfts" : {
+        "title" : "المجموعات المخفية للرموز غير القابلة للاستبدال",
+        "description" : "إعادة تعيين قائمة المجموعات المخفية",
+        "reset" : "إعادة تعيين"
+      },
       "exchangeDeveloperMode" : {
         "title" : "وضع المطور لمنصة التداول",
         "desc" : "إضافة معلومات مُزوّد منصة التداول",
@@ -6665,6 +6670,24 @@
       "alreadySync" : "لقد قمت بتشغيلها بالفعل",
       "learnMore" : "كيف تعمل مزامنة Ledger؟"
     },
+    "entryPoints" : {
+      "accounts" : {
+        "title" : "Activate Ledger Sync"
+      },
+      "manager" : {
+        "title" : "Ledger Sync",
+        "description" : "Sync your accounts automatically, even when switching to a new phone.",
+        "cta" : "Turn on Ledger Sync"
+      },
+      "settings" : {
+        "title" : "Ledger Sync",
+        "description" : "Sync your accounts automatically, even when switching to a new phone.",
+        "cta" : "Turn on Ledger Sync"
+      },
+      "onboarding" : {
+        "title" : "Sync with another Ledger Live app"
+      }
+    },
     "manage" : {
       "cta" : "إدارة",
       "synchronize" : {
@@ -6918,6 +6941,14 @@
         "optOut" : {
           "title" : "حان وقت الترقية",
           "description" : "تحديثات Ledger Nano S ستنتهي قريباً. قم بالترقية إلى أحدث أجهزتنا مع خصم <0>{{discount}}%</0>",
+          "cta" : "ترقية محفظتي",
+          "linkText" : "تعرّف على المزيد"
+        }
+      },
+      "portfolio" : {
+        "optOut" : {
+          "title" : "حان وقت الترقية",
+          "description" : "قم بالترقية إلى أحدث أجهزتنا مع خصم <0>{{discount}}%</0> من أجل أمان مُحسّن وتجربة سلسة.",
           "cta" : "ترقية محفظتي",
           "linkText" : "تعرّف على المزيد"
         }
