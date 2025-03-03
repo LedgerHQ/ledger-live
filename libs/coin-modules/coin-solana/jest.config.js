@@ -24,4 +24,10 @@ module.exports = {
     ],
   },
   transformIgnorePatterns: [`node_modules/.pnpm/(?!(${transformIncludePatterns.join("|")}))`],
+  reporters: [
+    [
+      "jest-sonar",
+      { outputName: "solana-sonar-executionTests-report.xml", reportedFilePath: "absolute" },
+    ],
+  ],
 };
