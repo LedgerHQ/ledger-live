@@ -308,6 +308,9 @@ export const broadcastHexTron = async (rawTransaction: string): Promise<string> 
   return result.txid;
 };
 
+/**
+ * {@link https://github.com/tronprotocol/java-tron/blob/develop/framework/src/main/java/org/tron/core/services/http/GetAccountServlet.java | Tron Framework}
+ */
 export async function fetchTronAccount(addr: string): Promise<AccountTronAPI[]> {
   try {
     const data = await fetch(`/v1/accounts/${addr}`);
@@ -315,13 +318,6 @@ export async function fetchTronAccount(addr: string): Promise<AccountTronAPI[]> 
   } catch (e) {
     return [];
   }
-}
-
-export async function getAccount(address: string) {
-  return await post("/wallet/getaccount", {
-    address,
-    visible: true,
-  });
 }
 
 export async function fetchCurrentBlockHeight() {

@@ -1,6 +1,12 @@
 import { TrongridTxType } from "../types";
 
+/**
+ * TronProtocol Account datamodel.
+ * Beware as `address` property is NOT base58 encoded.
+ */
 export type AccountTronAPI = {
+  // Be careful as the address in NOT base58 encoded
+  address: string;
   account_name?: string;
   balance?: number;
   account_resource?: {

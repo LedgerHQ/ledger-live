@@ -1,6 +1,9 @@
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import type { Account, OperationType } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
+import { type AccountInfo, getTronResources as getTronResourcesLogic } from "../logic/utils";
+import { getTronAccountNetwork, getUnwithdrawnReward } from "../network";
+import { encode58Check } from "../network/format";
 import type {
   BandwidthInfo,
   NetworkInfo,
@@ -11,9 +14,6 @@ import type {
   TronResources,
   TronTransactionInfo,
 } from "../types";
-import { getTronResources as getTronResourcesLogic } from "../logic/utils";
-import { getTronAccountNetwork, getUnwithdrawnReward } from "../network";
-import { encode58Check } from "../network/format";
 
 const parentTx = [
   "TransferContract",
@@ -178,7 +178,6 @@ export const txInfoToOperation = (
   return undefined;
 };
 
-//FIXME duplication with network/utils::extractBandwidthInfo
 export const extractBandwidthInfo = (
   networkInfo: NetworkInfo | null | undefined,
 ): BandwidthInfo => {
@@ -234,7 +233,7 @@ export const defaultTronResources: TronResources = {
 };
 
 export async function getTronResources(
-  acc: Record<string, any>,
+  acc: AccountInfo & { address: string },
   txs?: TrongridTxInfo[],
   cacheTransactionInfoById: Record<string, TronTransactionInfo> = {},
 ): Promise<TronResources> {
