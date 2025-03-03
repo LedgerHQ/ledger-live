@@ -12,8 +12,8 @@ import NavigationScrollView from "~/components/NavigationScrollView";
 import { urls } from "~/utils/urls";
 import { TrackScreen } from "~/analytics";
 import Illustration from "~/images/illustration/Illustration";
-import EarnLight from "~/images/illustration/Light/_003.png";
-import EarnDark from "~/images/illustration/Dark/_003.png";
+import EarnLight from "~/images/illustration/Light/_003.webp";
+import EarnDark from "~/images/illustration/Dark/_003.webp";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { NearStakingFlowParamList } from "./types";
 
