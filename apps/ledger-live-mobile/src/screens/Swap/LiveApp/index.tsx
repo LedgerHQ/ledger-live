@@ -22,6 +22,8 @@ import { initialWebviewState } from "~/components/Web3AppWebview/helpers";
 import { WebviewState } from "~/components/Web3AppWebview/types";
 import { WebView } from "./WebView";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { AccountLike } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 
 // set the default manifest ID for the production swap live app
 // in case the FF is failing to load the manifest ID
@@ -29,7 +31,12 @@ import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 const DEFAULT_MANIFEST_ID =
   process.env.DEFAULT_SWAP_MANIFEST_ID || DEFAULT_FEATURES.ptxSwapLiveApp.params?.manifest_id;
 
-type Props = StackNavigatorProps;
+type SwapParams = {
+  defaultAccount: AccountLike;
+  defaultAmount: BigNumber;
+};
+
+type Props = StackNavigatorProps<SwapParams>;
 
 export function SwapLiveApp({ route }: Props) {
   const { params } = route;
