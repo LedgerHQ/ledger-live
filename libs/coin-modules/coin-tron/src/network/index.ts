@@ -320,9 +320,17 @@ export async function fetchTronAccount(addr: string): Promise<AccountTronAPI[]> 
   }
 }
 
-export async function fetchCurrentBlockHeight() {
+export async function getLastBlock(): Promise<{
+  height: number;
+  hash: string;
+  time: Date;
+}> {
   const data = await fetch(`/wallet/getnowblock`);
-  return data.block_header.raw_data.number;
+  return {
+    height: data.block_header.raw_data.number,
+    hash: data.blockID,
+    time: new Date(data.block_header.raw_data.timestamp),
+  };
 }
 
 // For the moment, fetching transaction info is the only way to get fees from a transaction
