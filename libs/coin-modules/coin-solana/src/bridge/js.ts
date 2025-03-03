@@ -35,7 +35,6 @@ const getQueuedAndCachedAPI = makeLRUCache(
 export function createBridges(signerContext: SignerContext<SolanaSigner>) {
   return makeBridges({
     getAPI,
-    getQueuedAPI,
     getQueuedAndCachedAPI,
     signerContext,
   });

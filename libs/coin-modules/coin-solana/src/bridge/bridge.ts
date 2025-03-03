@@ -150,12 +150,10 @@ function getPreloadStrategy() {
 
 export function makeBridges({
   getAPI,
-  getQueuedAPI,
   getQueuedAndCachedAPI,
   signerContext,
 }: {
   getAPI: (config: Config) => Promise<ChainAPI>;
-  getQueuedAPI: (config: Config) => Promise<ChainAPI>;
   getQueuedAndCachedAPI: (config: Config) => Promise<ChainAPI>;
   signerContext: SignerContext<SolanaSigner>;
 }): {
@@ -163,7 +161,7 @@ export function makeBridges({
   accountBridge: AccountBridge<Transaction, SolanaAccount, TransactionStatus>;
 } {
   const getAddress = resolver(signerContext);
-  const { sync, scan } = makeSyncAndScan(getQueuedAPI, getAddress);
+  const { sync, scan } = makeSyncAndScan(getAPI, getAddress);
 
   const accountBridge: AccountBridge<Transaction, SolanaAccount, TransactionStatus> = {
     createTransaction,
