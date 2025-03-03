@@ -1,17 +1,13 @@
-import {
-  fetchTronAccount,
-  fetchTronAccountTxs,
-  fetchTronTxDetail,
-  getAccount,
-  getTronAccountNetwork,
-} from ".";
+import { fetchTronAccount, fetchTronAccountTxs, fetchTronTxDetail, getTronAccountNetwork } from ".";
 import coinConfig from "../config";
 import fetchTronTxs from "./fixtures/fetchTronAccountTxs.fixture.json";
 
 /**
  * Tests used to help to develop and debug. Can't be reliable for the CI.
  */
-describe.skip("TronGrid", () => {
+describe("TronGrid", () => {
+  const address = "TY2ksFgpvb82TgGPwUSa7iseqPW5weYQyh";
+
   beforeAll(() => {
     coinConfig.setCoinConfig(() => ({
       status: {
@@ -28,13 +24,7 @@ describe.skip("TronGrid", () => {
       "maps all fields correctly",
       async () => {
         // WHEN
-        // const addr = "TL24LCps5FKwp3PoU1MvrYrwhi5LU1tHre";
-        // const addr = "TAVrrARNdnjHgCGMQYeQV7hv4PSu7mVsMj";
-        // const addr = "THAe4BNVxp293qgyQEqXEkHMpPcqtG73bi";
-        // const addr = "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9";
-        // const addr = "TUxd6v64YTWkfpFpNDdtgc5Ps4SfGxwizT";
-        const addr = "TY2ksFgpvb82TgGPwUSa7iseqPW5weYQyh";
-        const results = await fetchTronAccountTxs(addr, txs => txs.length < 100, {});
+        const results = await fetchTronAccountTxs(address, txs => txs.length < 100, {});
 
         // THEN
         expect(results).not.toHaveLength(0);
@@ -44,27 +34,29 @@ describe.skip("TronGrid", () => {
   });
 
   describe("fetchTronAccount", () => {
-    it("works", async () => {
-      // const result = await fetchTronAccount("TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9");
-      const result = await fetchTronAccount("TL24LCps5FKwp3PoU1MvrYrwhi5LU1tHre");
+    it("retrieves exactly one element", async () => {
+      const result = await fetchTronAccount(address);
 
-      expect(result).toBeUndefined();
-    });
-  });
-
-  describe("getAccount", () => {
-    it("works", async () => {
-      const result = await getAccount("TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9");
-
-      expect(result).toBeUndefined();
+      expect(result).toHaveLength(1);
+      expect(result[0]).toHaveProperty("balance");
     });
   });
 
   describe("getTronAccountNetwork", () => {
     it("works", async () => {
-      const result = await getTronAccountNetwork("41ae18eb0a9e067f8884058470ed187f44135d816d");
+      const result = await getTronAccountNetwork(address);
 
-      expect(result).toBeUndefined();
+      expect(result.family).toEqual("tron");
+      for (const p of [
+        "freeNetUsed",
+        "freeNetLimit",
+        "netUsed",
+        "netLimit",
+        "energyUsed",
+        "energyLimit",
+      ]) {
+        expect(result).toHaveProperty(p);
+      }
     });
   });
 
