@@ -1,6 +1,6 @@
-import { startOfDay } from "@ledgerhq/coin-framework/lib-es/account/balanceHistoryCache";
-import { getAccountCurrency } from "@ledgerhq/coin-framework/lib-es/account/helpers";
-import { flattenOperationWithInternalsAndNfts } from "@ledgerhq/coin-framework/lib-es/operation";
+import { startOfDay } from "@ledgerhq/coin-framework/account/balanceHistoryCache";
+import { getAccountCurrency } from "@ledgerhq/coin-framework/account/helpers";
+import { flattenOperationWithInternalsAndNfts } from "@ledgerhq/coin-framework/operation";
 import { AccountLike, Operation } from "@ledgerhq/types-live";
 type AccountMap = Record<string, AccountLike>;
 
@@ -15,20 +15,29 @@ type CustomNFTOperations = Record<
 
 type OrderedOperation = Operation & { order: number };
 
+type Section = {
+  day: Date;
+  data: Operation[];
+};
+
+export function compareOps(op1: Operation, op2: Operation): number {
+  const dateComparison = op2.date.getTime() - op1.date.getTime();
+  if (dateComparison !== 0) {
+    return dateComparison;
+  }
+  if (op1.transactionSequenceNumber !== undefined && op2.transactionSequenceNumber !== undefined) {
+    return op2.transactionSequenceNumber - op1.transactionSequenceNumber;
+  }
+
+  return 0;
+}
+
 export const parseAccountOperations = (operations: Operation[] | undefined) =>
   (operations || [])
     .map(flattenOperationWithInternalsAndNfts)
     .filter(op => op.length)
     .flat()
-    ?.sort((op1: Operation, op2: Operation) => {
-      return Number(
-        op1.date > op2.date ||
-          (op1.date === op2.date &&
-            op1.transactionSequenceNumber !== undefined &&
-            op2.transactionSequenceNumber !== undefined &&
-            op1.transactionSequenceNumber > op2.transactionSequenceNumber),
-      );
-    })
+    ?.sort((op1: Operation, op2: Operation) => compareOps(op1, op2))
     ?.map((o, index) => ({ ...o, order: index }));
 
 export const splitNftOperationsFromAllOperations = (operations: OrderedOperation[] | undefined) => {
@@ -59,6 +68,26 @@ export const groupOperationsByDate = (ops: Operation[]) =>
     {} as Record<string, Operation[]>,
   );
 
+export const groupOperationsByDateWithSections = (ops: Operation[]): { sections: Section[] } => {
+  const groupedOps = ops.reduce(
+    (acc, op) => {
+      const date = startOfDay(new Date(op.date)).toISOString();
+      if (!acc[date]) {
+        acc[date] = [];
+      }
+      acc[date].push(op);
+      return acc;
+    },
+    {} as Record<string, Operation[]>,
+  );
+
+  const sections = Object.keys(groupedOps).map(date => ({
+    day: new Date(date),
+    data: groupedOps[date],
+  }));
+
+  return { sections };
+};
 // alternative to getFilteredNftOperations that make processing before reducing
 
 export function buildContractIndexNftOperations(
