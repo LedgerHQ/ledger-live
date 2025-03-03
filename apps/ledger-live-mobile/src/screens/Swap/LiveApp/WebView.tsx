@@ -28,7 +28,7 @@ type Props = {
 
 export function WebView({ manifest, params, setWebviewState }: Props) {
   const customHandlers = useSwapLiveAppCustomHandlers(manifest);
-  const urlParams = useSwapLiveAppTranslateUrlParams(JSON.parse(params));
+  const urlParams = useSwapLiveAppTranslateUrlParams(params);
   const { theme } = useTheme();
   const { language } = useSettings();
   const { ticker: currencyTicker } = useSelector(counterValueCurrencySelector);

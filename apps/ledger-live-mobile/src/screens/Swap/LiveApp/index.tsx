@@ -78,11 +78,7 @@ export function SwapLiveApp({ route }) {
   return (
     <PanGestureHandler onHandlerStateChange={onGesture} activeOffsetX={[0, 10]}>
       <Flex flex={1} testID="swap-form-tab">
-        <WebView
-          manifest={manifest}
-          setWebviewState={setWebviewState}
-          params={JSON.stringify(params)}
-        />
+        <WebView manifest={manifest} setWebviewState={setWebviewState} params={params} />
       </Flex>
     </PanGestureHandler>
   );
