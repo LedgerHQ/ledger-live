@@ -1,14 +1,14 @@
-export type APTToken = [
-  string, // CAL id
-  string, // network
-  string, // name
+export type AptosToken = [
+  string, // id
   string, // ticker
-  string, // address
+  string, // name
+  string, // contractAddress
   number, // decimals
+  boolean?, // delisted
 ];
 
 import tokens from "./apt.json";
 
 export { default as hash } from "./apt-hash.json";
 
-export default tokens as APTToken[];
+export default tokens as AptosToken[];
