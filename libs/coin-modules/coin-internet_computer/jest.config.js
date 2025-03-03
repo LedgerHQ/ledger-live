@@ -12,4 +12,10 @@ module.exports = {
   testEnvironment: "node",
   testPathIgnorePatterns: ["lib/", "lib-es/"],
   passWithNoTests: true,
+  reporters: [
+    [
+      "jest-sonar",
+      { outputName: "icp-sonar-executionTests-report.xml", reportedFilePath: "absolute" },
+    ],
+  ],
 };

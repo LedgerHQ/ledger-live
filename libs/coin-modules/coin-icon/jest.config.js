@@ -13,4 +13,10 @@ module.exports = {
     "!src/test/**/*.ts",
   ],
   coverageReporters: ["json", ["lcov", { projectRoot: "../" }], "text"],
+  reporters: [
+    [
+      "jest-sonar",
+      { outputName: "icon-sonar-executionTests-report.xml", reportedFilePath: "absolute" },
+    ],
+  ],
 };
