@@ -106,7 +106,8 @@ const SignMessageConfirm = ({ device, account, parentAccount, signMessageRequest
     }
   }
 
-  const contractAddress = (fields?.find(f => f.label === "Token") as { value: string })?.value;
+  const f = fields?.find(f => f.label === "Token");
+  const contractAddress = f && "value" in f && typeof f.value === "string" ? f.value : undefined;
 
   return (
     <Container>

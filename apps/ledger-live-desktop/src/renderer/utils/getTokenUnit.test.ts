@@ -1,6 +1,6 @@
 import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { getTokenUnit } from "./getTokenUnit"; // Remplace par le bon chemin
+import { getTokenUnit } from "./getTokenUnit";
 
 const mockedAccount: Account = {
   type: "Account",
@@ -149,6 +149,26 @@ describe("getTokenUnit", () => {
       code: "USDC",
       magnitude: 6,
     });
+  });
+
+  it("should return the token unit when contractAddress is an array and first element matches", () => {
+    expect(
+      getTokenUnit("Amount", mockedAccount, ["0xContractAddress", "0xAnotherAddress"]),
+    ).toEqual({
+      name: "USD Coin",
+      code: "USDC",
+      magnitude: 6,
+    });
+  });
+
+  it("should return undefined if contractAddress is an array and no match", () => {
+    expect(
+      getTokenUnit("Amount", mockedAccount, ["0xWrongToken", "0xAnotherWrongToken"]),
+    ).toBeUndefined();
+  });
+
+  it("should return undefined if contractAddress is an empty array", () => {
+    expect(getTokenUnit("Amount", mockedAccount, [])).toBeUndefined();
   });
 
   it("should return undefined if contractAddress does not match", () => {
