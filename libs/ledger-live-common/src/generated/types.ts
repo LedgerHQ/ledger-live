@@ -71,17 +71,17 @@ import type {
   TransactionStatusRaw as internet_computerTransactionStatusRaw,
 } from "@ledgerhq/coin-internet_computer/types/index";
 import type {
-  Transaction as multiversxTransaction,
-  TransactionRaw as multiversxTransactionRaw,
-  TransactionStatus as multiversxTransactionStatus,
-  TransactionStatusRaw as multiversxTransactionStatusRaw,
-} from "@ledgerhq/coin-multiversx/types";
-import type {
   Transaction as minaTransaction,
   TransactionRaw as minaTransactionRaw,
   TransactionStatus as minaTransactionStatus,
   TransactionStatusRaw as minaTransactionStatusRaw,
 } from "@ledgerhq/coin-mina/types/index";
+import type {
+  Transaction as multiversxTransaction,
+  TransactionRaw as multiversxTransactionRaw,
+  TransactionStatus as multiversxTransactionStatus,
+  TransactionStatusRaw as multiversxTransactionStatusRaw,
+} from "@ledgerhq/coin-multiversx/types";
 import type {
   Transaction as nearTransaction,
   TransactionRaw as nearTransactionRaw,
@@ -156,8 +156,8 @@ export type Transaction =
   | hederaTransaction
   | iconTransaction
   | internet_computerTransaction
-  | multiversxTransaction
   | minaTransaction
+  | multiversxTransaction
   | nearTransaction
   | polkadotTransaction
   | solanaTransaction
@@ -182,8 +182,8 @@ export type TransactionRaw =
   | hederaTransactionRaw
   | iconTransactionRaw
   | internet_computerTransactionRaw
-  | multiversxTransactionRaw
   | minaTransactionRaw
+  | multiversxTransactionRaw
   | nearTransactionRaw
   | polkadotTransactionRaw
   | solanaTransactionRaw
@@ -208,8 +208,8 @@ export type TransactionStatus =
   | hederaTransactionStatus
   | iconTransactionStatus
   | internet_computerTransactionStatus
-  | multiversxTransactionStatus
   | minaTransactionStatus
+  | multiversxTransactionStatus
   | nearTransactionStatus
   | polkadotTransactionStatus
   | solanaTransactionStatus
@@ -234,8 +234,8 @@ export type TransactionStatusRaw =
   | hederaTransactionStatusRaw
   | iconTransactionStatusRaw
   | internet_computerTransactionStatusRaw
-  | multiversxTransactionStatusRaw
   | minaTransactionStatusRaw
+  | multiversxTransactionStatusRaw
   | nearTransactionStatusRaw
   | polkadotTransactionStatusRaw
   | solanaTransactionStatusRaw
