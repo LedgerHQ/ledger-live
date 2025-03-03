@@ -9,7 +9,7 @@ const PRODUCTION_URL = "https://nft.api.live.ledger.com";
 const STAGING_URL = "https://nft.api.live.ledger-test.com";
 
 const NftMetadataServiceRow = () => {
-  const currentUrlValue = getEnv("NFT_ETH_METADATA_SERVICE");
+  const currentUrlValue = getEnv("NFT_METADATA_SERVICE");
 
   const { clearCache } = useNftAPI();
 
@@ -20,7 +20,7 @@ const NftMetadataServiceRow = () => {
   const onChange = useCallback(
     (enabled: boolean) => {
       setStagingNftMetadataService(enabled);
-      setEnvUnsafe("NFT_ETH_METADATA_SERVICE", enabled ? STAGING_URL : PRODUCTION_URL);
+      setEnvUnsafe("NFT_METADATA_SERVICE", enabled ? STAGING_URL : PRODUCTION_URL);
       clearCache();
     },
     [clearCache],
