@@ -1876,6 +1876,9 @@ importers:
       jest:
         specifier: ^29.7.0
         version: 29.7.0
+      jest-sonar:
+        specifier: 0.2.16
+        version: 0.2.16
       ts-jest:
         specifier: ^29.1.1
         version: 29.1.5(jest@29.7.0)(typescript@5.4.3)
@@ -1955,6 +1958,9 @@ importers:
       jest:
         specifier: ^29.7.0
         version: 29.7.0
+      jest-sonar:
+        specifier: 0.2.16
+        version: 0.2.16
       react:
         specifier: ^18.3.1
         version: 18.3.1
@@ -2100,6 +2106,9 @@ importers:
       jest-file-snapshot:
         specifier: ^0.5.0
         version: 0.5.0
+      jest-sonar:
+        specifier: 0.2.16
+        version: 0.2.16
       object-hash:
         specifier: ^2.2.0
         version: 2.2.0
@@ -2173,6 +2182,9 @@ importers:
       jest:
         specifier: ^29.7.0
         version: 29.7.0
+      jest-sonar:
+        specifier: 0.2.16
+        version: 0.2.16
       ts-jest:
         specifier: ^29.1.1
         version: 29.1.5(jest@29.7.0)(typescript@5.4.3)
@@ -2343,6 +2355,85 @@ importers:
       jest:
         specifier: ^29.7.0
         version: 29.7.0
+      jest-sonar:
+        specifier: 0.2.16
+        version: 0.2.16
+      ts-jest:
+        specifier: ^29.1.1
+        version: 29.1.5(jest@29.7.0)(typescript@5.4.3)
+
+  libs/coin-modules/coin-elrond:
+    dependencies:
+      '@elrondnetwork/erdjs':
+        specifier: 11.0.0
+        version: 11.0.0
+      '@elrondnetwork/erdjs-network-providers':
+        specifier: ^1.1.2
+        version: 1.2.0
+      '@ledgerhq/coin-framework':
+        specifier: workspace:^
+        version: link:../../coin-framework
+      '@ledgerhq/cryptoassets':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/cryptoassets
+      '@ledgerhq/devices':
+        specifier: workspace:*
+        version: link:../../ledgerjs/packages/devices
+      '@ledgerhq/errors':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/errors
+      '@ledgerhq/live-env':
+        specifier: workspace:^
+        version: link:../../env
+      '@ledgerhq/live-network':
+        specifier: workspace:^
+        version: link:../../live-network
+      '@ledgerhq/live-promise':
+        specifier: workspace:^
+        version: link:../../promise
+      '@ledgerhq/logs':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/logs
+      '@ledgerhq/types-cryptoassets':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/types-cryptoassets
+      '@ledgerhq/types-live':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/types-live
+      bech32:
+        specifier: ^1.1.3
+        version: 1.1.4
+      bignumber.js:
+        specifier: ^9.1.2
+        version: 9.1.2
+      expect:
+        specifier: ^27.4.6
+        version: 27.5.1
+      invariant:
+        specifier: ^2.2.2
+        version: 2.2.4
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
+      rxjs:
+        specifier: ^7.8.1
+        version: 7.8.1
+    devDependencies:
+      '@types/invariant':
+        specifier: ^2.2.37
+        version: 2.2.37
+      '@types/jest':
+        specifier: ^29.5.10
+        version: 29.5.12
+      '@types/lodash':
+        specifier: ^4.17.7
+        version: 4.17.7
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0
+      jest-sonar:
+        specifier: 0.2.16
+        version: 0.2.16
       ts-jest:
         specifier: ^29.1.1
         version: 29.1.5(jest@29.7.0)(typescript@5.4.3)
@@ -2464,6 +2555,9 @@ importers:
       jest-expect-message:
         specifier: ^1.1.3
         version: 1.1.3
+      jest-sonar:
+        specifier: 0.2.16
+        version: 0.2.16
       msw:
         specifier: ^2.2.12
         version: 2.3.4(typescript@5.4.3)
@@ -2543,6 +2637,9 @@ importers:
       jest:
         specifier: ^29.7.0
         version: 29.7.0
+      jest-sonar:
+        specifier: 0.2.16
+        version: 0.2.16
       ts-jest:
         specifier: ^29.1.1
         version: 29.1.5(jest@29.7.0)(typescript@5.4.3)
@@ -2604,6 +2701,9 @@ importers:
       jest:
         specifier: ^29.7.0
         version: 29.7.0
+      jest-sonar:
+        specifier: 0.2.16
+        version: 0.2.16
       ts-jest:
         specifier: ^29.1.1
         version: 29.1.5(jest@29.7.0)(typescript@5.4.3)
@@ -2677,6 +2777,9 @@ importers:
       jest:
         specifier: ^29.7.0
         version: 29.7.0
+      jest-sonar:
+        specifier: 0.2.16
+        version: 0.2.16
       ts-jest:
         specifier: ^29.1.1
         version: 29.1.5(jest@29.7.0)(typescript@5.4.3)
@@ -2756,6 +2859,9 @@ importers:
       jest:
         specifier: ^29.7.0
         version: 29.7.0
+      jest-sonar:
+        specifier: 0.2.16
+        version: 0.2.16
       ts-jest:
         specifier: ^29.1.1
         version: 29.1.5(jest@29.7.0)(typescript@5.4.3)
@@ -2811,6 +2917,9 @@ importers:
       jest:
         specifier: ^29.7.0
         version: 29.7.0
+      jest-sonar:
+        specifier: 0.2.16
+        version: 0.2.16
       ts-jest:
         specifier: ^29.1.1
         version: 29.1.5(jest@29.7.0)(typescript@5.6.3)
@@ -2953,10 +3062,10 @@ importers:
         version: 29.7.0
       msw:
         specifier: ^2.0.11
-        version: 2.3.4(typescript@5.4.3)
+      jest-sonar:
+        specifier: 0.2.16
       ts-jest:
         specifier: ^29.1.1
-        version: 29.1.5(jest@29.7.0)(typescript@5.4.3)
 
   libs/coin-modules/coin-polkadot:
     dependencies:
@@ -3060,6 +3169,9 @@ importers:
       jest-expect-message:
         specifier: ^1.1.3
         version: 1.1.3
+      jest-sonar:
+        specifier: 0.2.16
+        version: 0.2.16
       msw:
         specifier: ^2.2.13
         version: 2.3.4(typescript@5.6.3)
@@ -3166,6 +3278,9 @@ importers:
       msw:
         specifier: 2.7.3
         version: 2.7.3(typescript@5.4.3)
+      jest-sonar:
+        specifier: 0.2.16
+        version: 0.2.16
       ts-jest:
         specifier: ^29.1.1
         version: 29.1.5(jest@29.7.0)(typescript@5.4.3)
@@ -3257,6 +3372,9 @@ importers:
       jest:
         specifier: ^29.7.0
         version: 29.7.0
+      jest-sonar:
+        specifier: 0.2.16
+        version: 0.2.16
       ripple-keypairs:
         specifier: ^2.0.0
         version: 2.0.0
@@ -3330,6 +3448,9 @@ importers:
       msw:
         specifier: ^2.7.3
         version: 2.7.3(@types/node@22.10.10)(typescript@5.4.3)
+      jest-sonar:
+        specifier: 0.2.16
+        version: 0.2.16
       ts-jest:
         specifier: ^29.1.1
         version: 29.1.5(jest@29.7.0(@types/node@22.10.10))(typescript@5.4.3)
@@ -3412,6 +3533,9 @@ importers:
       jest:
         specifier: ^29.7.0
         version: 29.7.0
+      jest-sonar:
+        specifier: 0.2.16
+        version: 0.2.16
       ts-jest:
         specifier: ^29.1.4
         version: 29.1.5(jest@29.7.0)(typescript@5.6.3)
@@ -3494,6 +3618,9 @@ importers:
       jest:
         specifier: ^29.7.0
         version: 29.7.0
+      jest-sonar:
+        specifier: 0.2.16
+        version: 0.2.16
       ts-jest:
         specifier: ^29.1.1
         version: 29.1.5(jest@29.7.0)(typescript@5.4.3)
@@ -3570,6 +3697,9 @@ importers:
       jest:
         specifier: ^29.7.0
         version: 29.7.0
+      jest-sonar:
+        specifier: 0.2.16
+        version: 0.2.16
       msw:
         specifier: ^2.2.13
         version: 2.3.4(typescript@5.6.3)
@@ -3643,6 +3773,9 @@ importers:
       jest:
         specifier: ^29.7.0
         version: 29.7.0
+      jest-sonar:
+        specifier: 0.2.16
+        version: 0.2.16
       ts-jest:
         specifier: ^29.1.1
         version: 29.1.5(jest@29.7.0)(typescript@5.4.3)
@@ -3707,6 +3840,9 @@ importers:
       jest:
         specifier: ^29.7.0
         version: 29.7.0
+      jest-sonar:
+        specifier: 0.2.16
+        version: 0.2.16
       ripple-keypairs:
         specifier: ^2.0.0
         version: 2.0.0

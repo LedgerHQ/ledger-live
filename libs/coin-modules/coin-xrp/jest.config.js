@@ -12,4 +12,10 @@ module.exports = {
   ],
   coverageReporters: ["json", ["lcov", { projectRoot: "../" }], "text"],
   workerThreads: true,
+  reporters: [
+    [
+      "jest-sonar",
+      { outputName: "xrp-sonar-executionTests-report.xml", reportedFilePath: "absolute" },
+    ],
+  ],
 };

@@ -66,7 +66,7 @@
     "desktop": "pnpm --filter ledger-live-desktop",
     "cli": "pnpm --filter live-cli",
     "coin": "pnpm --filter coin-framework",
-    "coin:coverage": "pnpm turbo coverage --filter=\"@ledgerhq/coin-*\" --concurrency=2 && mkdir -p coverage/json-summary coverage/lcov-summary && mv libs/coin-modules/**/coverage/*.json coverage/json-summary && mv libs/coin-modules/**/coverage/*-lcov.info coverage/lcov-summary && pnpm exec nyc merge coverage/json-summary coverage/coverage-final.json && find coverage/lcov-summary -name '*-lcov.info' -exec cat {} + > coverage/coin-modules-lcov.info && pnpm exec nyc report -t coverage/coverage-final.json --report-dir coverage --reporter=html-spa",
+    "coin:coverage": "pnpm turbo coverage --filter=\"@ledgerhq/coin-*\" --concurrency=2 && mkdir -p coverage/json-summary coverage/lcov-summary coverage/xml-sonar && mv libs/coin-modules/**/coverage/*.json coverage/json-summary && mv libs/coin-modules/**/coverage/*-lcov.info coverage/lcov-summary && mv libs/coin-modules/**/coverage/*-executionTests-report.xml coverage/xml-sonar && pnpm exec nyc merge coverage/json-summary coverage/coverage-final.json && find coverage/lcov-summary -exec cat {} + > coverage/coin-modules-lcov.info && find coverage/xml-sonar -exec cat {} + > coverage/coin-modules-sonar-executionTests-report.xml && pnpm exec nyc report -t coverage/coverage-final.json --report-dir coverage --reporter=html-spa",
     "coin:coverage:clean": "rm -rf coverage && rm -rf libs/coin-modules/**/coverage",
     "coin:algorand": "pnpm --filter coin-algorand",
     "coin:aptos": "pnpm --filter coin-aptos",

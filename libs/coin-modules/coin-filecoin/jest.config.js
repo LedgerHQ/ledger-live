@@ -11,4 +11,10 @@ module.exports = {
   coverageDirectory: "coverage",
   testEnvironment: "node",
   testPathIgnorePatterns: ["lib/", "lib-es/", ".integration.test.ts"],
+  reporters: [
+    [
+      "jest-sonar",
+      { outputName: "filecoin-sonar-executionTests-report.xml", reportedFilePath: "absolute" },
+    ],
+  ],
 };

@@ -11,4 +11,10 @@ module.exports = {
   preset: "ts-jest",
   testEnvironment: "node",
   testPathIgnorePatterns: ["lib/", "lib-es/", ".*\\.integ\\.test\\.[tj]s"],
+  reporters: [
+    [
+      "jest-sonar",
+      { outputName: "tron-sonar-executionTests-report.xml", reportedFilePath: "absolute" },
+    ],
+  ],
 };
