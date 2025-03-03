@@ -1053,6 +1053,9 @@
     },
     "AppManifestNotFoundError" : {
       "title" : "无法加载 Swap Live 应用程序"
+    },
+    "InvalidMemoMina" : {
+      "title" : "备忘标签文本不可超过 32 个字符"
     }
   },
   "crash" : {
@@ -1119,6 +1122,11 @@
       "fast" : "快",
       "custom" : "自定义",
       "blockCount" : "{{blockCount}}个区块"
+    },
+    "estimatedTime" : {
+      "slow" : "约 2-3 分钟",
+      "medium" : "约 30 秒",
+      "fast" : "约 15 秒"
     }
   },
   "signout" : {
@@ -6715,6 +6723,7 @@
         "hide" : "隐藏 {{count}} 件藏品",
         "hiddenCollections" : "隐藏藏品",
         "hide_plural" : "隐藏 {{count}} 件藏品",
+        "empty" : "No Hidden collections to show",
         "alertHide" : "已隐藏 1 件藏品。您可以随时在藏品库筛选条件中取消隐藏。",
         "alertHide_plural" : "已隐藏 {{count}} 件藏品。您可以随时在藏品库筛选条件中取消隐藏。"
       },
@@ -6992,6 +7001,16 @@
   },
   "walletSync" : {
     "title" : "Ledger Sync",
+    "entryPoints" : {
+      "simpleCta" : {
+        "title" : "激活 Ledger Sync"
+      },
+      "card" : {
+        "title" : "Ledger Sync",
+        "description" : "即使换用新手机，也能自动同步您的账户。",
+        "cta" : "开启 Ledger Sync"
+      }
+    },
     "activation" : {
       "screen" : {
         "title" : "为该手机开启 Ledger Sync？",
