@@ -2,4 +2,4 @@
 "live-mobile": minor
 ---
 
-Start Exchange drawer onclose should only be called once
+Start and Complete Exchange drawer onclose should only be called once
