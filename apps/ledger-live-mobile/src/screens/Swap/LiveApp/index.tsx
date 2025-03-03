@@ -21,6 +21,7 @@ import GenericErrorView from "~/components/GenericErrorView";
 import { initialWebviewState } from "~/components/Web3AppWebview/helpers";
 import { WebviewState } from "~/components/Web3AppWebview/types";
 import { WebView } from "./WebView";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 
 // set the default manifest ID for the production swap live app
 // in case the FF is failing to load the manifest ID
@@ -28,7 +29,9 @@ import { WebView } from "./WebView";
 const DEFAULT_MANIFEST_ID =
   process.env.DEFAULT_SWAP_MANIFEST_ID || DEFAULT_FEATURES.ptxSwapLiveApp.params?.manifest_id;
 
-export function SwapLiveApp({ route }) {
+type Props = StackNavigatorProps;
+
+export function SwapLiveApp({ route }: Props) {
   const { params } = route;
   const { t } = useTranslation();
   const ptxSwapLiveAppMobile = useFeature("ptxSwapLiveAppMobile");
