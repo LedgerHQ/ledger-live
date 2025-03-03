@@ -1,6 +1,6 @@
 /**
  * @file bip32.ts
- * @description BIP32 Path Handling for Bitcoin Wallets
+ * @description BIP32 Path Handling for Aptos Wallets
  *
  * This file provides utility functions to handle BIP32 paths,
  * which are commonly used in hierarchical deterministic (HD) wallets.
