@@ -11,4 +11,10 @@ module.exports = {
   coverageDirectory: "coverage",
   testEnvironment: "node",
   testPathIgnorePatterns: ["lib/", "lib-es/"],
+  reporters: [
+    [
+      "jest-sonar",
+      { outputName: "near-sonar-executionTests-report.xml", reportedFilePath: "absolute" },
+    ],
+  ],
 };

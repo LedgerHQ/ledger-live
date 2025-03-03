@@ -13,4 +13,10 @@ module.exports = {
   preset: "ts-jest",
   testEnvironment: "node",
   testPathIgnorePatterns: ["lib/", "lib-es/"],
+  reporters: [
+    [
+      "jest-sonar",
+      { outputName: "vechain-sonar-executionTests-report.xml", reportedFilePath: "absolute" },
+    ],
+  ],
 };
