@@ -1,0 +1,71 @@
+name: "Signed commit test"
+
+on:
+  pull_request:
+
+jobs:
+  signed-commit-test:
+    name: Signed commit test
+    runs-on: ubuntu-24.04
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
+      RELEASE_BRANCH: "commit-test-branch"
+    steps:
+      - name: generate token
+        id: generate-token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.GH_BOT_APP_ID }}
+          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+      - uses: actions/checkout@v4
+        with:
+          ref: develop
+          token: ${{ steps.generate-token.outputs.token }}
+      - name: Setup git user
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
+      - name: create branch
+        run: |
+          git checkout -b ${{ env.RELEASE_BRANCH }}
+      - name: Create dummy file
+        run: |
+          echo "This is a dummy file" > dummy.txt
+          git add .
+      - name: commit with ghcommit action
+        uses: planetscale/ghcommit-action@v0.1.6
+        with:
+          commit_message: "dummy commit 1"
+          repo: ${{ github.repository }}
+          branch: ${{ env.RELEASE_BRANCH }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Add changed files
+        run: |
+          git stash
+          git fetch origin $RELEASE_BRANCH          # make sure previous commit is included
+          git pull --rebase origin $RELEASE_BRANCH  # make sure previous commit is included
+      - name: Create dummy file 2
+        run: |
+          echo "This is a second dummy file" > dummy2.txt
+          git add .
+      - name: commit the old way
+        run: |
+          git add .
+          git commit -m "dummy commit 2"
+          git push origin $RELEASE_BRANCH
+      - name: Create dummy file 3
+        run: |
+          echo "This is a third dummy file" > dummy3.txt
+          git add .
+
+      - name: commit the new way, but using GH app token, not GITHUB_TOKEN
+        run: |
+          git add .
+          git commit -m "dummy commit 3"
+      - name: commit with ghcommit action
+        uses: planetscale/ghcommit-action@v0.1.6
+        with:
+          commit_message: "chore(prerelease) update cryptoassets"
+          repo: ${{ github.repository }}
+          branch: ${{ env.RELEASE_BRANCH }}
+        env:
+          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
