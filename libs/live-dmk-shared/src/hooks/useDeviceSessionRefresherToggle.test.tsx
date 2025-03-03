@@ -2,7 +2,7 @@ import { renderHook } from "@testing-library/react";
 import { type Mock } from "vitest";
 import { DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import { activeDeviceSessionSubject } from "../config/activeDeviceSession";
-import { useDeviceSessionRefresherToggle } from "./useDeviceSessionRefresherToggle";
+import { useDisableDeviceSessionRefresher } from "./useDeviceSessionRefresherToggle";
 
 vi.mock("@ledgerhq/device-management-kit", async importOriginal => {
   const actual = await importOriginal<typeof import("@ledgerhq/device-management-kit")>();
@@ -47,7 +47,7 @@ describe("useDeviceSessionRefresherToggle", () => {
   describe("enabled = true", () => {
     it("should not toggle the device session refresher off if there is no active session", () => {
       renderHook(() =>
-        useDeviceSessionRefresherToggle(
+        useDisableDeviceSessionRefresher(
           deviceManagementKitMock as unknown as DeviceManagementKit,
           true,
         ),
@@ -65,7 +65,7 @@ describe("useDeviceSessionRefresherToggle", () => {
       });
 
       renderHook(() =>
-        useDeviceSessionRefresherToggle(
+        useDisableDeviceSessionRefresher(
           deviceManagementKitMock as unknown as DeviceManagementKit,
           true,
         ),
@@ -84,7 +84,7 @@ describe("useDeviceSessionRefresherToggle", () => {
       });
 
       const { rerender } = renderHook(() =>
-        useDeviceSessionRefresherToggle(
+        useDisableDeviceSessionRefresher(
           deviceManagementKitMock as unknown as DeviceManagementKit,
           true,
         ),
@@ -128,7 +128,7 @@ describe("useDeviceSessionRefresherToggle", () => {
       });
 
       const { unmount } = renderHook(() =>
-        useDeviceSessionRefresherToggle(
+        useDisableDeviceSessionRefresher(
           deviceManagementKitMock as unknown as DeviceManagementKit,
           true,
         ),
@@ -152,7 +152,7 @@ describe("useDeviceSessionRefresherToggle", () => {
     it("should do nothing if the hook is unmounted and there is no active session", () => {
       activeDeviceSessionSubject.next(null);
       const { unmount } = renderHook(() =>
-        useDeviceSessionRefresherToggle(
+        useDisableDeviceSessionRefresher(
           deviceManagementKitMock as unknown as DeviceManagementKit,
           true,
         ),
@@ -164,7 +164,7 @@ describe("useDeviceSessionRefresherToggle", () => {
     describe("resetRefresherState", () => {
       it("should be defined", () => {
         const { result } = renderHook(() =>
-          useDeviceSessionRefresherToggle(
+          useDisableDeviceSessionRefresher(
             deviceManagementKitMock as unknown as DeviceManagementKit,
             true,
           ),
@@ -174,7 +174,7 @@ describe("useDeviceSessionRefresherToggle", () => {
 
       it("should not unsubscribe if there is no active device session", () => {
         const { result } = renderHook(() =>
-          useDeviceSessionRefresherToggle(
+          useDisableDeviceSessionRefresher(
             deviceManagementKitMock as unknown as DeviceManagementKit,
             true,
           ),
@@ -193,7 +193,7 @@ describe("useDeviceSessionRefresherToggle", () => {
         });
 
         const { result } = renderHook(() =>
-          useDeviceSessionRefresherToggle(
+          useDisableDeviceSessionRefresher(
             deviceManagementKitMock as unknown as DeviceManagementKit,
             true,
           ),
@@ -210,7 +210,7 @@ describe("useDeviceSessionRefresherToggle", () => {
   describe("enabled = false", () => {
     it("should not toggle the device session refresher on if there is no active session", () => {
       renderHook(() =>
-        useDeviceSessionRefresherToggle(
+        useDisableDeviceSessionRefresher(
           deviceManagementKitMock as unknown as DeviceManagementKit,
           false,
         ),
@@ -228,7 +228,7 @@ describe("useDeviceSessionRefresherToggle", () => {
       });
 
       renderHook(() =>
-        useDeviceSessionRefresherToggle(
+        useDisableDeviceSessionRefresher(
           deviceManagementKitMock as unknown as DeviceManagementKit,
           false,
         ),
@@ -246,7 +246,7 @@ describe("useDeviceSessionRefresherToggle", () => {
       });
 
       const { unmount } = renderHook(() =>
-        useDeviceSessionRefresherToggle(
+        useDisableDeviceSessionRefresher(
           deviceManagementKitMock as unknown as DeviceManagementKit,
           false,
         ),

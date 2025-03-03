@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { DiscoveredDevice } from "@ledgerhq/device-management-kit";
-import { useDeviceManagementKit } from "./useDeviceManagementKit";
-import { Device } from "@ledgerhq/types-devices";
+import { rnBleTransportIdentifier } from "@ledgerhq/device-transport-kit-react-native-ble";
 import { dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
+import { Device } from "@ledgerhq/types-devices";
+import { useDeviceManagementKit } from "./useDeviceManagementKit";
 
 const defaultMapper = (device: DiscoveredDevice): Device => ({
   deviceId: device.id,
@@ -24,17 +25,22 @@ export const useBleDevicesScanning = <T = Device>(
   const [scanningBleError, setScanningBleError] = useState<Error | null>(null);
 
   useEffect(() => {
-    const subscription = dmk.listenToAvailableDevices().subscribe({
-      next: devices => setScannedDevices(devices.map(mapper)),
-      error: error => {
-        dmk.stopDiscovering();
-        setScanningBleError(error);
-      },
-      complete: () => {
-        dmk.stopDiscovering();
-        subscription.unsubscribe();
-      },
-    });
+    const subscription = dmk
+      .listenToAvailableDevices({
+        // NOTE: useBleDeviceScanning should only scan using BLE Transports
+        transport: rnBleTransportIdentifier,
+      })
+      .subscribe({
+        next: devices => setScannedDevices(devices.map(mapper)),
+        error: error => {
+          dmk.stopDiscovering();
+          setScanningBleError(error);
+        },
+        complete: () => {
+          dmk.stopDiscovering();
+          subscription.unsubscribe();
+        },
+      });
     return () => {
       dmk.stopDiscovering();
       subscription.unsubscribe();

@@ -1,7 +1,8 @@
 import Config from "react-native-config";
+// import BleTransport from "@ledgerhq/react-native-hw-transport-ble";
+import { DeviceManagementKitTransport } from "@ledgerhq/live-dmk-mobile";
 import makeMock from "./makeMock";
 import createAPDUMock from "../logic/createAPDUMock";
-import { DeviceManagementKitTransport } from "@ledgerhq/live-dmk-mobile";
 
 const names: { [key: string]: string } = {};
 const transport = Config.MOCK
@@ -38,4 +39,5 @@ const transport = Config.MOCK
       },
     })
   : DeviceManagementKitTransport;
+
 export default transport;
