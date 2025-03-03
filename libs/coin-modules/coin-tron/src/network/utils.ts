@@ -1,5 +1,4 @@
 import BigNumber from "bignumber.js";
-import type { BandwidthInfo, NetworkInfo } from "../types";
 
 // see: https://solidity.readthedocs.io/en/v0.6.1/abi-spec.html#function-selector-and-argument-encoding
 export const abiEncodeTrc20Transfer = (address: string, amount: BigNumber): string => {
@@ -11,26 +10,3 @@ export const abiEncodeTrc20Transfer = (address: string, amount: BigNumber): stri
 };
 
 export const hexToAscii = (hex: string): string => Buffer.from(hex, "hex").toString("ascii");
-
-//FIXME duplication with bridge/utils::extractBandwidthInfo
-export const extractBandwidthInfo = (
-  networkInfo: NetworkInfo | null | undefined,
-): BandwidthInfo => {
-  // Calculate bandwidth info :
-  if (networkInfo) {
-    const { freeNetUsed, freeNetLimit, netUsed, netLimit } = networkInfo;
-    return {
-      freeUsed: freeNetUsed,
-      freeLimit: freeNetLimit,
-      gainedUsed: netUsed,
-      gainedLimit: netLimit,
-    };
-  }
-
-  return {
-    freeUsed: new BigNumber(0),
-    freeLimit: new BigNumber(0),
-    gainedUsed: new BigNumber(0),
-    gainedLimit: new BigNumber(0),
-  };
-};

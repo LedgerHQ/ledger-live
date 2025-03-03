@@ -46,25 +46,11 @@ describe("API", () => {
       amount,
       wallet.address.base58,
     );
-    // const unsignedTx = await createTronTransaction(
-    //   { freshAddress: wallet.address.base58 } as Account,
-    //   {
-    //     recipient,
-    //     amount: new BigNumber(amount),
-    //   } as Transaction,
-    //   null,
-    // );
 
-    // const signature = await tronWeb.trx.sign(unsignedTx.raw_data_hex, wallet.privateKey);
-    // console.log("Signature:", signature);
     const signedTrx = await tronWeb.trx.sign(unsignedTx, wallet.privateKey);
 
     // WHEN
-    // const result = module.combine(rawTxHex, signature.slice(2));
-    const result = module.combine(
-      signedTrx.raw_data_hex,
-      signedTrx!.signature![0] as unknown as string,
-    );
+    const result = module.combine(signedTrx.raw_data_hex, signedTrx.signature![0]);
     const txId = await module.broadcast(result);
 
     // THEN

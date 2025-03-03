@@ -224,7 +224,7 @@ function convertBufferToString(address: Buffer): string {
   return TronWeb.utils.bytes.bytesToString(address);
 }
 
-type AccountInfo = {
+export type AccountInfo = {
   account_resource?: {
     delegated_frozenV2_balance_for_energy?: number;
     frozen_balance_for_energy?: {

@@ -71,7 +71,7 @@ export const getAccountShape: GetAccountShape<TronAccount> = async (
   const tronResources = await getTronResources(acc, txs, cacheTransactionInfoById);
   // const tronResources = await getTronResources(acc);
   const spendableBalance = acc.balance ? new BigNumber(acc.balance) : new BigNumber(0);
-  const balance = await computeBalanceBridge(acc);
+  const balance = computeBalanceBridge(acc);
 
   const parentTxs = txs.filter(isParentTx);
   const parentOperations: TronOperation[] = compact(
