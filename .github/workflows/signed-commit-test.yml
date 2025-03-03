@@ -26,6 +26,7 @@ jobs:
       - name: create branch
         run: |
           git checkout -b ${{ env.RELEASE_BRANCH }}
+          git push -u origin ${{ env.RELEASE_BRANCH }}
       - name: Create dummy file
         run: |
           echo "This is a dummy file" > dummy.txt
