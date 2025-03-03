@@ -4,7 +4,7 @@ import { rnBleTransportIdentifier } from "@ledgerhq/device-transport-kit-react-n
 import { activeDeviceSessionSubject } from "@ledgerhq/live-dmk-shared";
 import { Device } from "@ledgerhq/types-devices";
 import { DeviceManagementKitTransport } from "../transport/DeviceManagementKitTransport";
-import { deviceManagementKit, useDeviceManagementKit } from "./useDeviceManagementKit";
+import { useDeviceManagementKit } from "./useDeviceManagementKit";
 
 export type useBleDevicePairingArgs = {
   device: Device;
@@ -23,6 +23,7 @@ export const useBleDevicePairing = ({
   const [pairingError, setPairingError] = useState<DmkError | null>(null);
   const connectDevice = useCallback(async () => {
     try {
+      if (!dmk) return;
       const sessionId = await dmk.connect({
         device: {
           id: device.deviceId,
@@ -31,7 +32,7 @@ export const useBleDevicePairing = ({
           deviceModel: device.modelId,
         },
       });
-      const transport = new DeviceManagementKitTransport(deviceManagementKit, sessionId);
+      const transport = new DeviceManagementKitTransport(dmk, sessionId);
       activeDeviceSessionSubject.next({ sessionId, transport });
       setIsPaired(true);
     } catch (error) {

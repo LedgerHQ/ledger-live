@@ -39,6 +39,7 @@
   },
   "devDependencies": {
     "@ledgerhq/device-management-kit": "0.0.0-rnble-transport-20250303160138",
+    "@ledgerhq/live-common": "workspace:^",
     "@testing-library/dom": "^9.3.4",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.1.0",

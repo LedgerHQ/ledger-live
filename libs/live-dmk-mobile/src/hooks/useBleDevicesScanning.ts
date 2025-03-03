@@ -26,7 +26,7 @@ export const useBleDevicesScanning = <T = Device>(
   const [scanningBleError, setScanningBleError] = useState<Error | null>(null);
 
   useEffect(() => {
-    if (!enabled) return;
+    if (!dmk) return;
     const subscription = dmk
       .listenToAvailableDevices({
         // NOTE: useBleDeviceScanning should only scan using BLE Transports

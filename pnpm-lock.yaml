@@ -6820,6 +6820,9 @@ importers:
       '@ledgerhq/device-management-kit':
         specifier: 0.0.0-rnble-transport-20250303160138
         version: 0.0.0-rnble-transport-20250303160138(rxjs@7.8.1)
+      '@ledgerhq/live-common':
+        specifier: workspace:^
+        version: link:../ledger-live-common
       '@testing-library/dom':
         specifier: ^9.3.4
         version: 9.3.4
@@ -6884,6 +6887,9 @@ importers:
       '@ledgerhq/device-management-kit':
         specifier: 0.0.0-rnble-transport-20250303160138
         version: 0.0.0-rnble-transport-20250303160138(rxjs@7.8.1)
+      '@ledgerhq/live-common':
+        specifier: workspace:^
+        version: link:../ledger-live-common
       '@testing-library/dom':
         specifier: ^9.3.4
         version: 9.3.4
@@ -26142,6 +26148,9 @@ packages:
   nwsapi@2.2.16:
     resolution: {integrity: sha512-F1I/bimDpj3ncaNDhfyMWuFqmQDBwDB0Fogc2qpL3BWvkQteFD/8BzWuIRl83rq0DXfm8SGt/HFhLXZyljTXcQ==}
 
+  nwsapi@2.2.7:
+    resolution: {integrity: sha512-ub5E4+FBPKwAZx0UwIQOjYWGHTEq5sPqHQNRN8Z9e4A7u3Tj1weLJsL59yH9vmvqEtBHaOmT6cYQKIZOxp35FQ==}
+
   nyc@15.1.0:
     resolution: {integrity: sha512-jMW04n9SxKdKi1ZMGhvUTHBN0EICCRkHemEoE5jm6mTYcqcdas0ATzgUgejlQUHMvpnOZqGB5Xxsv9KxJW1j8A==}
     engines: {node: '>=8.9'}
@@ -33465,7 +33474,7 @@ snapshots:
 
   '@babel/helper-define-polyfill-provider@0.6.1':
     dependencies:
-      '@babel/helper-compilation-targets': 7.26.5
+      '@babel/helper-compilation-targets': 7.25.9
       '@babel/helper-plugin-utils': 7.25.9
       debug: 4.3.4
       lodash.debounce: 4.0.8
@@ -33476,7 +33485,7 @@ snapshots:
   '@babel/helper-define-polyfill-provider@0.6.1(@babel/core@7.24.3)':
     dependencies:
       '@babel/core': 7.24.3
-      '@babel/helper-compilation-targets': 7.26.5
+      '@babel/helper-compilation-targets': 7.25.9
       '@babel/helper-plugin-utils': 7.25.9
       debug: 4.3.4
       lodash.debounce: 4.0.8
@@ -33487,7 +33496,7 @@ snapshots:
   '@babel/helper-define-polyfill-provider@0.6.1(@babel/core@7.26.7)':
     dependencies:
       '@babel/core': 7.26.7
-      '@babel/helper-compilation-targets': 7.26.5
+      '@babel/helper-compilation-targets': 7.25.9
       '@babel/helper-plugin-utils': 7.25.9
       debug: 4.3.4
       lodash.debounce: 4.0.8
@@ -58508,7 +58517,7 @@ snapshots:
       http-proxy-agent: 5.0.0
       https-proxy-agent: 5.0.1
       is-potential-custom-element-name: 1.0.1
-      nwsapi: 2.2.16
+      nwsapi: 2.2.7
       parse5: 7.1.2
       saxes: 6.0.0
       symbol-tree: 3.2.4
@@ -61193,6 +61202,8 @@ snapshots:
   numeral@2.0.6: {}
 
   nwsapi@2.2.16: {}
+
+  nwsapi@2.2.7: {}
 
   nyc@15.1.0:
     dependencies:

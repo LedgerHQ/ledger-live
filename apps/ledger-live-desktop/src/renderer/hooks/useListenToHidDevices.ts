@@ -13,8 +13,6 @@ export const useListenToHidDevices = () => {
 
   const deviceManagementKit = useDeviceManagementKit();
 
-  console.log("deviceManagementKit", deviceManagementKit.close);
-
   useEffect(() => {
     let sub: Subscription;
 
