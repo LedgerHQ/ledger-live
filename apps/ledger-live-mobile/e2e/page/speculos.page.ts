@@ -3,6 +3,7 @@ import {
   signSendTransaction,
   signDelegationTransaction,
   activateContractData,
+  activateExpertMode,
 } from "@ledgerhq/live-common/e2e/speculos";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
@@ -14,18 +15,23 @@ export default class SpeculosPage {
     await expectValidAddressDevice(account, addressDisplayed);
   }
 
-  @Step("Sign Send Transaction")
+  @Step("Sign Send Transaction on Speculos")
   async signSendTransaction(tx: Transaction) {
     await signSendTransaction(tx);
   }
 
-  @Step("Sign Delegation Transaction")
+  @Step("Sign Delegation Transaction on Speculos")
   async signDelegationTransaction(delegation: Delegate) {
     await signDelegationTransaction(delegation);
   }
 
-  @Step("Activate contract data")
+  @Step("Activate contract data on Speculos")
   async activateContractData() {
     await activateContractData();
+  }
+
+  @Step("Activate export mode on Speculos")
+  async activateExpertMode() {
+    await activateExpertMode();
   }
 }

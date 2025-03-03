@@ -477,17 +477,17 @@
       "title" : "Entschuldigung, es wurde kein Konto gefunden",
       "description" : "Bei der Adressberechnung ist etwas schief gelaufen. Bitte versuchen Sie es erneut. Wenn das Problem weiterhin besteht, speichern Sie bitte Ihre Protokolle über die Schaltfläche unten und stellen Sie sie dem Ledger-Support zur Verfügung."
     },
-    "ElrondDecimalsLimitReached" : {
+    "MultiversXDecimalsLimitReached" : {
       "title" : "Maximale Dezimalstellengrenze erreicht",
       "description" : "Bitte stellen Sie sicher, dass der angegebene Betrag 18 Dezimalstellen hat."
     },
-    "ElrondMinDelegatedAmountError" : {
+    "MultiversXMinDelegatedAmountError" : {
       "title" : "Der delegierte Betrag muss mindestens {{formattedAmount}} betragen"
     },
-    "ElrondMinUndelegatedAmountError" : {
+    "MultiversXMinUndelegatedAmountError" : {
       "title" : "Undelegierter Betrag muss mindestens {{formattedAmount}} betragen"
     },
-    "ElrondDelegationBelowMinimumError" : {
+    "MultiversXDelegationBelowMinimumError" : {
       "title" : "Verbleibende Delegierung darf nicht kleiner als {{formattedAmount}} sein"
     },
     "NotEnoughVTHO" : {

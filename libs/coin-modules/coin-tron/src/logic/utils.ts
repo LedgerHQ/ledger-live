@@ -9,7 +9,9 @@ import type {
   TronOperation,
   TronOperationMode,
   TronResources,
+  UnFrozenInfo,
 } from "../types";
+import get from "lodash/get";
 
 // see: https://solidity.readthedocs.io/en/v0.6.1/abi-spec.html#function-selector-and-argument-encoding
 export const abiEncodeTrc20Transfer = (address: string, amount: BigNumber): string => {
@@ -233,3 +235,164 @@ export const defaultTronResources: TronResources = {
   lastVotedDate: undefined,
   cacheTransactionInfoById: {},
 };
+
+type AccountInfo = {
+  account_resource?: {
+    delegated_frozenV2_balance_for_energy?: number;
+    frozen_balance_for_energy?: {
+      frozen_balance: number;
+      expire_time: number;
+    };
+  };
+  delegated_frozenV2_balance_for_bandwidth?: number;
+  frozen?: {
+    frozen_balance: number;
+    expire_time: number;
+  }[];
+  frozenV2?: {
+    type?: "ENERGY" | "TRON_POWER" | string;
+    amount?: number;
+  }[];
+  latest_withdraw_time?: number;
+  unfrozenV2?: {
+    type?: "ENERGY" | string;
+    unfreeze_amount: number;
+    unfreeze_expire_time: number;
+  }[];
+  votes?: {
+    vote_address: string;
+    vote_count: number;
+  }[];
+};
+export function getTronResources(
+  acc?: AccountInfo,
+): Omit<
+  TronResources,
+  "energy" | "bandwidth" | "unwithdrawnReward" | "lastVotedDate" | "cacheTransactionInfoById"
+> {
+  if (!acc) {
+    return defaultTronResources;
+  }
+
+  const delegatedFrozenBandwidth = get(acc, "delegated_frozenV2_balance_for_bandwidth", undefined);
+  const delegatedFrozenEnergy = get(
+    acc,
+    "account_resource.delegated_frozenV2_balance_for_energy",
+    undefined,
+  );
+
+  const frozenBalances: { type?: string; amount?: number }[] = get(acc, "frozenV2", []);
+
+  const legacyFrozenBandwidth = get(acc, "frozen[0]", undefined);
+  const legacyFrozenEnergy = get(acc, "account_resource.frozen_balance_for_energy", undefined);
+
+  const legacyFrozen = {
+    bandwidth: legacyFrozenBandwidth
+      ? {
+          amount: new BigNumber(legacyFrozenBandwidth.frozen_balance),
+          expiredAt: new Date(legacyFrozenBandwidth.expire_time),
+        }
+      : undefined,
+    energy: legacyFrozenEnergy
+      ? {
+          amount: new BigNumber(legacyFrozenEnergy.frozen_balance),
+          expiredAt: new Date(legacyFrozenEnergy.expire_time),
+        }
+      : undefined,
+  };
+
+  const { frozenEnergy, frozenBandwidth } = frozenBalances.reduce(
+    (accum, cur) => {
+      const amount = new BigNumber(cur?.amount ?? 0);
+      if (cur.type === "ENERGY") {
+        accum.frozenEnergy = accum.frozenEnergy.plus(amount);
+      } else if (cur.type === undefined) {
+        accum.frozenBandwidth = accum.frozenBandwidth.plus(amount);
+      }
+      return accum;
+    },
+    {
+      frozenEnergy: new BigNumber(0),
+      frozenBandwidth: new BigNumber(0),
+    },
+  );
+
+  const unFrozenBalances: {
+    type?: string;
+    unfreeze_amount: number;
+    unfreeze_expire_time: number;
+  }[] = get(acc, "unfrozenV2", []);
+
+  const unFrozen: { bandwidth: UnFrozenInfo[]; energy: UnFrozenInfo[] } = unFrozenBalances
+    ? unFrozenBalances.reduce(
+        (accum, cur) => {
+          if (cur && cur.type === "ENERGY") {
+            accum.energy.push({
+              amount: new BigNumber(cur.unfreeze_amount),
+              expireTime: new Date(cur.unfreeze_expire_time),
+            });
+          } else if (cur) {
+            accum.bandwidth.push({
+              amount: new BigNumber(cur.unfreeze_amount),
+              expireTime: new Date(cur.unfreeze_expire_time),
+            });
+          }
+          return accum;
+        },
+        { bandwidth: [] as UnFrozenInfo[], energy: [] as UnFrozenInfo[] },
+      )
+    : { bandwidth: [], energy: [] };
+
+  const frozen = {
+    bandwidth: frozenBandwidth.isGreaterThan(0)
+      ? {
+          amount: frozenBandwidth,
+        }
+      : undefined,
+    energy: frozenEnergy.isGreaterThan(0)
+      ? {
+          amount: frozenEnergy,
+        }
+      : undefined,
+  };
+  const delegatedFrozen = {
+    bandwidth: delegatedFrozenBandwidth
+      ? {
+          amount: new BigNumber(delegatedFrozenBandwidth),
+        }
+      : undefined,
+    energy: delegatedFrozenEnergy
+      ? {
+          amount: new BigNumber(delegatedFrozenEnergy),
+        }
+      : undefined,
+  };
+  const tronPower = new BigNumber(get(frozen, "bandwidth.amount", 0))
+    .plus(get(frozen, "energy.amount", 0))
+    .plus(get(delegatedFrozen, "bandwidth.amount", 0))
+    .plus(get(delegatedFrozen, "energy.amount", 0))
+    .plus(get(legacyFrozen, "energy.amount", 0))
+    .plus(get(legacyFrozen, "bandwidth.amount", 0))
+    .dividedBy(1_000_000)
+    .integerValue(BigNumber.ROUND_FLOOR)
+    .toNumber();
+
+  const votes = get(acc, "votes", []).map((v: any) => ({
+    address: v.vote_address,
+    voteCount: v.vote_count,
+  }));
+
+  const lastWithdrawnRewardDate = acc.latest_withdraw_time
+    ? new Date(acc.latest_withdraw_time)
+    : undefined;
+
+  return {
+    frozen,
+    unFrozen,
+    delegatedFrozen,
+    legacyFrozen,
+    votes,
+    tronPower,
+    lastWithdrawnRewardDate,
+  };
+}
