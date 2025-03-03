@@ -93,30 +93,22 @@ jobs:
           if [[ "$COIN_MODULES_AFFECTED" == "true" ]]; then 
             pnpm coin:coverage 
             cat coverage/coin-modules-lcov.info >> ./lcov.info 
+            cat coverage/coin-modules-sonar-executionTests-report.xml >> ./coin-modules-sonar-executionTests-report.xml
           fi
 
-      - name: SonarQubeScan desktop only
-        if: ${{env.DESKTOP_AFFECTED == 'true' && env.MOBILE_AFFECTED == 'false'}}
+      - name: SonarQubeScan
+        if: >
+          ${{ env.DESKTOP_AFFECTED == 'true' || env.MOBILE_AFFECTED == 'true' || env.COIN_MODULES_AFFECTED == 'true' }}
         uses: SonarSource/sonarqube-scan-action@v4
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           args: >
-            -Dsonar.sources=apps/ledger-live-desktop,libs
-            -Dsonar.testExecutionReportPaths=lld-sonar-executionTests-report.xml
-
-      - name: SonarQubeScan mobile only
-        if: ${{env.MOBILE_AFFECTED == 'true' && env.DESKTOP_AFFECTED == 'false'}}
-        uses: SonarSource/sonarqube-scan-action@v4
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        with:
-          args: >
-            -Dsonar.sources=apps/ledger-live-mobile,libs
-            -Dsonar.testExecutionReportPaths=llm-sonar-executionTests-report.xml
-
-      - name: SonarQubeScan desktop and mobile
-        if: ${{env.DESKTOP_AFFECTED == 'true' && env.MOBILE_AFFECTED == 'true'}}
-        uses: SonarSource/sonarqube-scan-action@v4
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+            -Dsonar.sources=
+            ${{ env.DESKTOP_AFFECTED == 'true' && 'apps/ledger-live-desktop,' || '' }}
+            ${{ env.MOBILE_AFFECTED == 'true' && 'apps/ledger-live-mobile,' || '' }}
+            libs
+            -Dsonar.testExecutionReportPaths=
+            ${{ env.DESKTOP_AFFECTED == 'true' && 'lld-sonar-executionTests-report.xml,' || '' }}
+            ${{ env.MOBILE_AFFECTED == 'true' && 'llm-sonar-executionTests-report.xml,' || '' }}
+            ${{ env.COIN_MODULES_AFFECTED == 'true' && 'coin-modules-sonar-executionTests-report.xml' || '' }}

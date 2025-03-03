@@ -13,4 +13,10 @@ module.exports = {
   coverageReporters: ["json", ["lcov", { projectRoot: "../" }], "text"],
   testEnvironment: "node",
   testPathIgnorePatterns: ["lib/", "lib-es/", ".integration.test.ts"],
+  reporters: [
+    [
+      "jest-sonar",
+      { outputName: "elrond-sonar-executionTests-report.xml", reportedFilePath: "absolute" },
+    ],
+  ],
 };

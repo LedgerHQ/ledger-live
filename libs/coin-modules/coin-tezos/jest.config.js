@@ -10,4 +10,10 @@ module.exports = {
     "!src/test/**/*.ts",
   ],
   coverageReporters: ["json", ["lcov", { projectRoot: "../" }], "text"],
+  reporters: [
+    [
+      "jest-sonar",
+      { outputName: "tezos-sonar-executionTests-report.xml", reportedFilePath: "absolute" },
+    ],
+  ],
 };

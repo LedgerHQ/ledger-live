@@ -12,4 +12,10 @@ module.exports = {
   coverageReporters: ["json", ["lcov", { projectRoot: "../" }], "text"],
   testPathIgnorePatterns: ["lib/", "lib-es/", ".*\\.integ\\.test\\.[tj]s"],
   workerThreads: true,
+  reporters: [
+    [
+      "jest-sonar",
+      { outputName: "boilerplate-sonar-executionTests-report.xml", reportedFilePath: "absolute" },
+    ],
+  ],
 };
