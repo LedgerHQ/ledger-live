@@ -1053,6 +1053,9 @@
     },
     "AppManifestNotFoundError" : {
       "title" : "スワップLiveアプリの読み込みに失敗しました"
+    },
+    "InvalidMemoMina" : {
+      "title" : "メモに入力できる文字数は32文字以内です"
     }
   },
   "crash" : {
@@ -1119,6 +1122,11 @@
       "fast" : "高速",
       "custom" : "カスタム",
       "blockCount" : "{{blockCount}}ブロック"
+    },
+    "estimatedTime" : {
+      "slow" : "≈ 2-3分",
+      "medium" : "≈ 30秒",
+      "fast" : "≈ 15秒"
     }
   },
   "signout" : {
@@ -6715,6 +6723,7 @@
         "hide" : "{{count}}個のコレクションを非表示",
         "hiddenCollections" : "非表示のNFTコレクション",
         "hide_plural" : "{{count}}個のコレクションを非表示",
+        "empty" : "No Hidden collections to show",
         "alertHide" : "1件のコレクションが非表示です。ギャラリーフィルターから、いつでも再表示可能です。",
         "alertHide_plural" : "{{count}}件のコレクションが非表示です。ギャラリーフィルターから、いつでも再表示可能です。"
       },
@@ -6992,6 +7001,16 @@
   },
   "walletSync" : {
     "title" : "Ledger同期",
+    "entryPoints" : {
+      "simpleCta" : {
+        "title" : "Ledger Syncを有効化する"
+      },
+      "card" : {
+        "title" : "Ledger Sync",
+        "description" : "新しいスマートフォンでも、アカウントが自動的に同期されます。",
+        "cta" : "Ledger Syncをオンにする"
+      }
+    },
     "activation" : {
       "screen" : {
         "title" : "このスマートフォンに対してLedger同期をオンにしますか？",
