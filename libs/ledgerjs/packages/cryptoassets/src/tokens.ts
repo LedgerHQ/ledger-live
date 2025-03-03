@@ -14,7 +14,7 @@ import { tokens as mainnetTokens } from "./data/evm/1";
 import { tokens as bnbTokens } from "./data/evm/56";
 import filecoinTokens from "./data/filecoin-erc20";
 import spltokens, { SPLToken } from "./data/spl";
-import apttokens, { APTToken } from "./data/apt";
+import aptTokens, { AptosToken } from "./data/apt";
 import { ERC20Token } from "./types";
 
 const emptyArray = [];
@@ -56,7 +56,7 @@ addTokens(filecoinTokens.map(convertERC20));
 // Solana tokens
 addTokens(spltokens.map(convertSplTokens));
 // Aptos tokens
-addTokens(apttokens.map(convertAptTokens));
+addTokens(aptTokens.map(convertAptTokens));
 
 type TokensListOptions = {
   withDelisted: boolean;
@@ -426,20 +426,28 @@ function convertSplTokens([id, network, name, symbol, address, decimals]: SPLTok
   };
 }
 
-function convertAptTokens([id, network, name, symbol, address, decimals]: APTToken): TokenCurrency {
+function convertAptTokens([
+  id,
+  ticker,
+  name,
+  address,
+  decimals,
+  delisted,
+]: AptosToken): TokenCurrency {
   return {
     type: "TokenCurrency",
     id,
     contractAddress: address,
-    parentCurrency: getCryptoCurrencyById(network),
+    parentCurrency: getCryptoCurrencyById("aptos"),
     name,
     tokenType: "apt",
-    ticker: symbol,
+    ticker,
     disableCountervalue: false,
+    delisted,
     units: [
       {
         name,
-        code: symbol,
+        code: ticker,
         magnitude: decimals,
       },
     ],
