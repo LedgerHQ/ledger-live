@@ -15,4 +15,10 @@ module.exports = {
   testEnvironment: "node",
   testPathIgnorePatterns: ["lib/", "lib-es/", ".integration.test.ts"],
   modulePathIgnorePatterns: ["__tests__/fixtures"],
+  reporters: [
+    [
+      "jest-sonar",
+      { outputName: "bitcoin-sonar-executionTests-report.xml", reportedFilePath: "absolute" },
+    ],
+  ],
 };

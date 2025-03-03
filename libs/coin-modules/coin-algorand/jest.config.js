@@ -12,4 +12,10 @@ module.exports = {
   coverageReporters: ["json", ["lcov", { projectRoot: "../" }], "text"],
   testEnvironment: "node",
   testPathIgnorePatterns: ["lib/", "lib-es/"],
+  reporters: [
+    [
+      "jest-sonar",
+      { outputName: "algorand-sonar-executionTests-report.xml", reportedFilePath: "absolute" },
+    ],
+  ],
 };

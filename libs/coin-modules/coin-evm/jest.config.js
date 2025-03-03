@@ -18,4 +18,10 @@ module.exports = {
     "__tests__/integration/bridge.integration.test.ts", // this file is tested at the live-common level
   ],
   setupFilesAfterEnv: ["jest-expect-message", "dotenv/config"],
+  reporters: [
+    [
+      "jest-sonar",
+      { outputName: "evm-sonar-executionTests-report.xml", reportedFilePath: "absolute" },
+    ],
+  ],
 };
