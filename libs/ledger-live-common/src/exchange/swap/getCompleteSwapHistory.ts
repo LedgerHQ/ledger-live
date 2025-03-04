@@ -79,19 +79,10 @@ const getCompleteSwapHistory = (accounts: AccountLike[]): SwapHistorySection[] =
     const { swapHistory } = account;
 
     const mapFn = getSwapOperationMap(account, accounts);
-    console.warn({
-      D: "getCompleteSwapHistory swapHistory",
-      "account.id": account.id,
-      swapHistory,
-    });
+
     if (swapHistory) {
       const mappedSwapHistory = swapHistory.map(mapFn);
 
-      console.warn({
-        D: "getCompleteSwapHistory mappedSwapHistory",
-        "account.id": account.id,
-        mappedSwapHistory,
-      });
       if (mappedSwapHistory) {
         const filteredMappdSwapOperations = <MappedSwapOperation[]>(
           mappedSwapHistory.filter(Boolean)
