@@ -11,17 +11,13 @@ type AptosToken = [
   boolean?, // delisted
 ];
 
-export const importAptosTokens = async (outputDir: string) => {
+export const importAptosTokens = async (outputDir: string, standard: string) => {
   try {
-    console.log("importing aptos tokens...");
-    const { tokens, hash } = await fetchTokensFromCALService({ blockchain_name: "aptos" }, [
-      "id",
-      "ticker",
-      "name",
-      "contract_address",
-      "decimals",
-      "delisted",
-    ]);
+    console.log(`importing aptos ${standard} tokens...`);
+    const { tokens, hash } = await fetchTokensFromCALService(
+      { blockchain_name: "aptos", standard: standard },
+      ["id", "ticker", "name", "contract_address", "decimals", "delisted"],
+    );
     const aptosTokens: AptosToken[] = tokens.map(token => {
       return [
         token.id,
@@ -33,7 +29,7 @@ export const importAptosTokens = async (outputDir: string) => {
       ];
     });
 
-    const filePath = path.join(outputDir, "apt");
+    const filePath = path.join(outputDir, `apt_${standard}`);
     const aptosTypeStringified = `export type AptosToken = [
   string, // id
   string, // ticker
@@ -52,15 +48,15 @@ export const importAptosTokens = async (outputDir: string) => {
       `${filePath}.ts`,
       `${aptosTypeStringified}
 
-import tokens from "./apt.json";
+import tokens from "./apt_${standard}.json";
 
-${hash ? `export { default as hash } from "./apt-hash.json";` : ""}
+${hash ? `export { default as hash } from "./apt_${standard}-hash.json";` : ""}
 
 export default tokens as AptosToken[];
 `,
     );
 
-    console.log("importing aptos tokens success");
+    console.log(`importing aptos ${standard} tokens success`);
   } catch (err) {
     console.error(err);
   }
