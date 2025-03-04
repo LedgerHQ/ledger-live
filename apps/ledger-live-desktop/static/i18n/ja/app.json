@@ -1867,7 +1867,8 @@
       "palletMethod" : "方法",
       "transferAmount" : "送付額",
       "validatorsCount" : "バリデータ（{{number}}）",
-      "version" : "バージョン"
+      "version" : "バージョン",
+      "accountCreationFee" : "アカウント作成手数料"
     }
   },
   "operationList" : {
@@ -5443,6 +5444,11 @@
     "solana" : {
       "memo" : "タグ/メモ",
       "memoPlaceholder" : "任意"
+    },
+    "mina" : {
+      "memoPlaceholder" : "任意",
+      "memo" : "メモ",
+      "memoWarningText" : "メモの値は32文字以内の文字列で入力可能です"
     }
   },
   "errors" : {
@@ -6466,6 +6472,15 @@
         "swap" : "スワップ",
         "deposit" : "入金"
       }
+    },
+    "InvalidMemoMina" : {
+      "title" : "メモに入力できる文字数は32文字以内です"
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "このトランザクションには、{{fee}}のアカウント作成手数料が発生します"
+    },
+    "AmountTooSmall" : {
+      "title" : "このトランザクションに最低限必要な金額は、{{amount}}です"
     }
   },
   "cryptoOrg" : {
@@ -6669,6 +6684,24 @@
       "cta" : "Ledger Syncをオンにする",
       "alreadySync" : "すでにオンにしました",
       "learnMore" : "Ledger Syncの仕組みは？"
+    },
+    "entryPoints" : {
+      "accounts" : {
+        "title" : "Ledger Syncを有効化する"
+      },
+      "manager" : {
+        "title" : "Ledger Sync",
+        "description" : "新しいスマートフォンでも、アカウントが自動的に同期されます。",
+        "cta" : "Ledger Syncをオンにする"
+      },
+      "settings" : {
+        "title" : "Ledger Sync",
+        "description" : "新しいスマートフォンでも、アカウントが自動的に同期されます。",
+        "cta" : "Ledger Syncをオンにする"
+      },
+      "onboarding" : {
+        "title" : "別のLedger Liveアプリと同期する"
+      }
     },
     "manage" : {
       "cta" : "管理",
