@@ -16,7 +16,7 @@ export const Container = styled.div`
   flex-direction: column;
   flex: 1;
   height: 100%;
-  margin: 20px;
+  margin-top: 20px;
 `;
 
 export const Wrapper = styled(Box).attrs(() => ({
