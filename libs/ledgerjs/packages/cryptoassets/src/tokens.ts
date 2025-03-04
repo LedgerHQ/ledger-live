@@ -14,7 +14,8 @@ import { tokens as mainnetTokens } from "./data/evm/1";
 import { tokens as bnbTokens } from "./data/evm/56";
 import filecoinTokens from "./data/filecoin-erc20";
 import spltokens, { SPLToken } from "./data/spl";
-import aptTokens, { AptosToken } from "./data/apt";
+import aptCoinTokens, { AptosToken as AptosCoinToken } from "./data/apt_coin";
+import aptFATokens, { AptosToken as AptosFAToken } from "./data/apt_fungible_asset";
 import { ERC20Token } from "./types";
 
 const emptyArray = [];
@@ -55,8 +56,10 @@ addTokens(jettonTokens.map(convertJettonToken));
 addTokens(filecoinTokens.map(convertERC20));
 // Solana tokens
 addTokens(spltokens.map(convertSplTokens));
-// Aptos tokens
-addTokens(aptTokens.map(convertAptTokens));
+// Aptos Legacy Coin tokens
+addTokens(aptCoinTokens.map(convertAptCoinTokens));
+// Aptos fungible assets tokens
+addTokens(aptFATokens.map(convertAptFaTokens));
 
 type TokensListOptions = {
   withDelisted: boolean;
@@ -425,22 +428,17 @@ function convertSplTokens([id, network, name, symbol, address, decimals]: SPLTok
     ],
   };
 }
-
-function convertAptTokens([
-  id,
-  ticker,
-  name,
-  address,
-  decimals,
-  delisted,
-]: AptosToken): TokenCurrency {
+function convertAptosTokens(
+  tokenType: "coin" | "fungible_asset",
+  [id, ticker, name, address, decimals, delisted]: AptosCoinToken | AptosFAToken,
+): TokenCurrency {
   return {
     type: "TokenCurrency",
     id,
     contractAddress: address,
     parentCurrency: getCryptoCurrencyById("aptos"),
     name,
-    tokenType: "apt",
+    tokenType,
     ticker,
     disableCountervalue: false,
     delisted,
@@ -452,6 +450,14 @@ function convertAptTokens([
       },
     ],
   };
+}
+
+function convertAptCoinTokens(token: AptosCoinToken): TokenCurrency {
+  return convertAptosTokens("coin", token);
+}
+
+function convertAptFaTokens(token: AptosFAToken): TokenCurrency {
+  return convertAptosTokens("fungible_asset", token);
 }
 
 function convertCardanoNativeTokens([
