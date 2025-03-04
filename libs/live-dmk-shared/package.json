@@ -43,9 +43,10 @@
     "@testing-library/react": "^16.1.0",
     "@types/node": "22.10.10",
     "@vitejs/plugin-react": "4.3.4",
-    "@vitest/coverage-v8": "2.1.8",
+    "@vitest/coverage-istanbul": "3.0.7",
     "jsdom": "25.0.1",
     "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "rxjs": "^7.8.1",
     "vite": "6.0.7",
     "vitest": "2.1.9",
@@ -54,6 +55,7 @@
   "peerDependencies": {
     "@ledgerhq/device-management-kit": "0.0.0-rnble-transport-20250303160138",
     "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "rxjs": "^7.8.1"
   }
 }

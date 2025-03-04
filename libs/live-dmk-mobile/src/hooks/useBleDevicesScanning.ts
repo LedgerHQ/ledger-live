@@ -14,6 +14,7 @@ const defaultMapper = (device: DiscoveredDevice): Device => ({
 });
 
 export const useBleDevicesScanning = <T = Device>(
+  enabled: boolean = false,
   {
     mapper,
   }: {
@@ -25,6 +26,7 @@ export const useBleDevicesScanning = <T = Device>(
   const [scanningBleError, setScanningBleError] = useState<Error | null>(null);
 
   useEffect(() => {
+    if (!enabled) return;
     const subscription = dmk
       .listenToAvailableDevices({
         // NOTE: useBleDeviceScanning should only scan using BLE Transports
@@ -45,7 +47,7 @@ export const useBleDevicesScanning = <T = Device>(
       dmk.stopDiscovering();
       subscription.unsubscribe();
     };
-  }, [dmk]);
+  }, [dmk, enabled]);
 
   return {
     scannedDevices,
