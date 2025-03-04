@@ -30,10 +30,10 @@ function getDefaultDefaultColors({ primary }: ColorPalette): Record<WrapperType,
   };
 }
 
-type Props = {
+type Props = Readonly<{
   icon: IconKey;
   variant: WrapperType;
-};
+}>;
 
 export default function NotificationIcon({ icon, variant = "round" }: Props) {
   const { colors } = useTheme();
