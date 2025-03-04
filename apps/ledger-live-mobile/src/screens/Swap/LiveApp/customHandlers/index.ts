@@ -7,8 +7,6 @@ import { getTransactionByHash } from "./getTransactionByHash";
 import { saveSwapToHistory } from "./saveSwapToHistory";
 import { swapRedirectToHistory } from "./swapRedirectToHistory";
 
-// export type NavigationType = StackNavigatorNavigation<SwapFormNavigatorParamList>;
-
 export type NavigationType = Omit<NavigationProp<ReactNavigation.RootParamList>, "getState"> & {
   getState(): NavigationState | undefined;
 };
