@@ -31,12 +31,6 @@ function isDefaultAccountSwapParamsList(
   return (params as DefaultAccountSwapParamList).defaultAccount !== undefined;
 }
 
-type Props = {
-  route: {
-    params: DefaultAccountSwapParamList;
-  };
-};
-
 export function SwapLiveApp({
   route,
 }: StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapTab>) {
