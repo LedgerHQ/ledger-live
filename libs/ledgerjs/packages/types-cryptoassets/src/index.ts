@@ -171,7 +171,9 @@ export type CryptoCurrencyId =
   | "zksync_sepolia"
   | "mantra"
   | "xion"
-  | "zenrock";
+  | "zenrock"
+  | "sonic"
+  | "sonic_blaze";
 
 export type LedgerExplorerId =
   | "btc"

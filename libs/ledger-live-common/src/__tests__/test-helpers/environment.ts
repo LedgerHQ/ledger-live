@@ -108,6 +108,8 @@ setSupportedCurrencies([
   "aptos_testnet",
   "xion",
   "zenrock",
+  "sonic",
+  "sonic_blaze",
 ]);
 LiveConfig.setConfig(liveConfig);
 

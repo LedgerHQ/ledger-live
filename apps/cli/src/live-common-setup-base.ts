@@ -108,6 +108,8 @@ setSupportedCurrencies([
   "mantra",
   "xion",
   "zenrock",
+  "sonic",
+  "sonic_blaze",
 ]);
 
 for (const k in process.env) setEnvUnsafe(k as EnvName, process.env[k]);

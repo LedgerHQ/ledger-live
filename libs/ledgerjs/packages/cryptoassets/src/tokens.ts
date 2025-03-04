@@ -8,6 +8,7 @@ import vechainTokens, { Vip180Token } from "./data/vip180";
 import esdttokens, { MultiversXESDTToken } from "./data/esdt";
 import asatokens, { AlgorandASAToken } from "./data/asa";
 import { tokens as polygonTokens } from "./data/evm/137";
+import { tokens as sonicTokens } from "./data/evm/146";
 import trc10tokens, { TRC10Token } from "./data/trc10";
 import trc20tokens, { TRC20Token } from "./data/trc20";
 import { tokens as mainnetTokens } from "./data/evm/1";
@@ -54,6 +55,8 @@ addTokens(jettonTokens.map(convertJettonToken));
 addTokens(filecoinTokens.map(convertERC20));
 // Solana tokens
 addTokens(spltokens.map(convertSplTokens));
+// Sonic
+addTokens(sonicTokens.map(convertERC20));
 
 type TokensListOptions = {
   withDelisted: boolean;
