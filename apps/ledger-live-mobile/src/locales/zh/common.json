@@ -1053,6 +1053,9 @@
     },
     "AppManifestNotFoundError" : {
       "title" : "无法加载 Swap Live 应用程序"
+    },
+    "InvalidMemoMina" : {
+      "title" : "备忘标签文本不可超过 32 个字符"
     }
   },
   "crash" : {
@@ -4665,7 +4668,8 @@
       "tr" : "Türk",
       "ja" : "日本語",
       "ko" : "한국어",
-      "pt" : "Português (Br)"
+      "pt" : "Português (Br)",
+      "th" : "ภาษาไทย"
     }
   },
   "deviceLocalization" : {
@@ -4689,7 +4693,8 @@
       "german" : "Deutsch",
       "brazilian" : "Português (Br)",
       "russian" : "Русский",
-      "turkish" : "Türkçe"
+      "turkish" : "Türkçe",
+      "thai" : "ภาษาไทย"
     }
   },
   "FirmwareUpdateCheckId" : {
@@ -6720,6 +6725,7 @@
         "hide" : "隐藏 {{count}} 件藏品",
         "hiddenCollections" : "隐藏藏品",
         "hide_plural" : "隐藏 {{count}} 件藏品",
+        "empty" : "No Hidden collections to show",
         "alertHide" : "已隐藏 1 件藏品。您可以随时在藏品库筛选条件中取消隐藏。",
         "alertHide_plural" : "已隐藏 {{count}} 件藏品。您可以随时在藏品库筛选条件中取消隐藏。"
       },

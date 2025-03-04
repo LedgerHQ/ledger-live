@@ -1867,7 +1867,8 @@
       "palletMethod" : "Método",
       "transferAmount" : "Transferir importe",
       "validatorsCount" : "Validadores ({{number}})",
-      "version" : "Versión"
+      "version" : "Versión",
+      "accountCreationFee" : "Tarifa de creación de cuenta"
     }
   },
   "operationList" : {
@@ -5443,6 +5444,11 @@
     "solana" : {
       "memo" : "Etiqueta/memo",
       "memoPlaceholder" : "Opcional"
+    },
+    "mina" : {
+      "memoPlaceholder" : "Opcional",
+      "memo" : "Memo",
+      "memoWarningText" : "El valor de un memo debe ser una cadena de 32 caracteres como máximo"
     }
   },
   "errors" : {
@@ -6466,6 +6472,15 @@
         "swap" : "Permutar",
         "deposit" : "Depositar"
       }
+    },
+    "InvalidMemoMina" : {
+      "title" : "El texto de un memo no debe superar los 32 caracteres"
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "Esta transacción conlleva asociada una tarifa de creación de cuenta de {{fee}}"
+    },
+    "AmountTooSmall" : {
+      "title" : "La cantidad mínima necesaria para esta transacción es de {{amount}}"
     }
   },
   "cryptoOrg" : {
@@ -6669,6 +6684,24 @@
       "cta" : "Activar Ledger Sync",
       "alreadySync" : "Ya lo he activado",
       "learnMore" : "¿Cómo funciona Ledger Sync?"
+    },
+    "entryPoints" : {
+      "accounts" : {
+        "title" : "Activar Ledger Sync"
+      },
+      "manager" : {
+        "title" : "Ledger Sync",
+        "description" : "Sincroniza tus cuentas automáticamente, incluso si cambias a un teléfono nuevo.",
+        "cta" : "Activar Ledger Sync"
+      },
+      "settings" : {
+        "title" : "Ledger Sync",
+        "description" : "Sincroniza tus cuentas automáticamente, incluso si cambias a un teléfono nuevo.",
+        "cta" : "Activar Ledger Sync"
+      },
+      "onboarding" : {
+        "title" : "Sincronizar con otra aplicación Ledger Live"
+      }
     },
     "manage" : {
       "cta" : "Administrar",

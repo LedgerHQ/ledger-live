@@ -1053,6 +1053,9 @@
     },
     "AppManifestNotFoundError" : {
       "title" : "Swap Live 앱을 로드하지 못했습니다"
+    },
+    "InvalidMemoMina" : {
+      "title" : "메모 텍스트는 32자를 초과할 수 없습니다."
     }
   },
   "crash" : {
@@ -4665,7 +4668,8 @@
       "tr" : "Türk",
       "ja" : "日本",
       "ko" : "한국어",
-      "pt" : "Português (Br)"
+      "pt" : "Português (Br)",
+      "th" : "ภาษาไทย"
     }
   },
   "deviceLocalization" : {
@@ -4689,7 +4693,8 @@
       "german" : "Deutsch",
       "brazilian" : "Português (Br)",
       "russian" : "Русский",
-      "turkish" : "Türkçe"
+      "turkish" : "Türkçe",
+      "thai" : "ภาษาไทย"
     }
   },
   "FirmwareUpdateCheckId" : {
@@ -6720,6 +6725,7 @@
         "hide" : "{{count}}개의 컬렉션 숨기기",
         "hiddenCollections" : "숨겨진 컬렉션",
         "hide_plural" : "{{count}}개의 컬렉션 숨기기",
+        "empty" : "No Hidden collections to show",
         "alertHide" : "1개의 컬렉션을 숨겼습니다. 갤러리 필터에서 언제든지 숨김을 해제할 수 있습니다.",
         "alertHide_plural" : "{{count}}개의 컬렉션을 숨겼습니다. 갤러리 필터에서 언제든지 숨김을 해제할 수 있습니다."
       },

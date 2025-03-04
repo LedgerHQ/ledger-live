@@ -1867,7 +1867,8 @@
       "palletMethod" : "方法",
       "transferAmount" : "转移数额",
       "validatorsCount" : "验证者 ({{number}})",
-      "version" : "版本"
+      "version" : "版本",
+      "accountCreationFee" : "账户创建费"
     }
   },
   "operationList" : {
@@ -5443,6 +5444,11 @@
     "solana" : {
       "memo" : "标签/备忘标签",
       "memoPlaceholder" : "可选"
+    },
+    "mina" : {
+      "memoPlaceholder" : "可选",
+      "memo" : "备忘标签",
+      "memoWarningText" : "备忘标签的值可以是小于或等于 32 个字符的字符串"
     }
   },
   "errors" : {
@@ -6466,6 +6472,15 @@
         "swap" : "互换",
         "deposit" : "存款"
       }
+    },
+    "InvalidMemoMina" : {
+      "title" : "备忘标签文本不可超过 32 个字符"
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "此交易将产生 {{fee}} 的账户创建费"
+    },
+    "AmountTooSmall" : {
+      "title" : "此交易的最低数额要求为 {{amount}}"
     }
   },
   "cryptoOrg" : {
@@ -6669,6 +6684,24 @@
       "cta" : "开启 Ledger Sync",
       "alreadySync" : "我已经开启了",
       "learnMore" : "Ledger Sync 如何运作？"
+    },
+    "entryPoints" : {
+      "accounts" : {
+        "title" : "激活 Ledger Sync"
+      },
+      "manager" : {
+        "title" : "Ledger Sync",
+        "description" : "即使换用新手机，也能自动同步您的账户。",
+        "cta" : "开启 Ledger Sync"
+      },
+      "settings" : {
+        "title" : "Ledger Sync",
+        "description" : "即使换用新手机，也能自动同步您的账户。",
+        "cta" : "开启 Ledger Sync"
+      },
+      "onboarding" : {
+        "title" : "与另一个 Ledger Live 应用程序同步"
+      }
     },
     "manage" : {
       "cta" : "管理",

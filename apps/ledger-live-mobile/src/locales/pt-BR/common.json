@@ -482,13 +482,13 @@
       "description" : "Certifique-se de que a quantia fornecida tenha 18 decimais."
     },
     "MultiversXMinDelegatedAmountError" : {
-      "title" : "Quantia delegada deve ser de pelo menos {{formattedAmount}}"
+      "title" : "A quantia mínima para delegar é {{formattedAmount}}"
     },
     "MultiversXMinUndelegatedAmountError" : {
-      "title" : "Quantia desdelegada deve ser de pelo menos {{formattedAmount}}"
+      "title" : "A quantia mínima para desdelegar é {{formattedAmount}}"
     },
     "MultiversXDelegationBelowMinimumError" : {
-      "title" : "Delegação restante não pode ser menos que {{formattedAmount}}"
+      "title" : "O restante na delegação não pode ser menor que {{formattedAmount}}"
     },
     "NotEnoughVTHO" : {
       "title" : "Fundos VTHO insuficientes",
@@ -1053,6 +1053,9 @@
     },
     "AppManifestNotFoundError" : {
       "title" : "Falha ao carregar o aplicativo Swap Live"
+    },
+    "InvalidMemoMina" : {
+      "title" : "O texto do memo não pode ter mais de 32 caracteres"
     }
   },
   "crash" : {
@@ -4665,7 +4668,8 @@
       "tr" : "Türk",
       "ja" : "日本",
       "ko" : "한국어",
-      "pt" : "Português (Br)"
+      "pt" : "Português (Br)",
+      "th" : "ภาษาไทย"
     }
   },
   "deviceLocalization" : {
@@ -4689,7 +4693,8 @@
       "german" : "Deutsch",
       "brazilian" : "Português (Br)",
       "russian" : "Русский",
-      "turkish" : "Türkçe"
+      "turkish" : "Türkçe",
+      "thai" : "ภาษาไทย"
     }
   },
   "FirmwareUpdateCheckId" : {
@@ -6720,6 +6725,7 @@
         "hide" : "Ocultar {{count}} coleção",
         "hiddenCollections" : "Coleções ocultas",
         "hide_plural" : "Ocultar {{count}} coleções",
+        "empty" : "No Hidden collections to show",
         "alertHide" : "1 coleção oculta. Você pode desoculta-las a qualquer momento no filtro da galeria.",
         "alertHide_plural" : "{{count}} coleções ocultas. Você pode desoculta-las a qualquer momento no filtro da galeria."
       },

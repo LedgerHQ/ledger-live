@@ -1867,7 +1867,8 @@
       "palletMethod" : "Método",
       "transferAmount" : "Transferir Quantia",
       "validatorsCount" : "Validadores ({{number}})",
-      "version" : "Versão"
+      "version" : "Versão",
+      "accountCreationFee" : "Taxa de Criação de Conta"
     }
   },
   "operationList" : {
@@ -5443,6 +5444,11 @@
     "solana" : {
       "memo" : "Tag / Memo",
       "memoPlaceholder" : "Opcional"
+    },
+    "mina" : {
+      "memoPlaceholder" : "Opcional",
+      "memo" : "Memo",
+      "memoWarningText" : "O valor do memo pode ser uma string menor ou igual a 32 caracteres"
     }
   },
   "errors" : {
@@ -5731,13 +5737,13 @@
       "description" : "Certifique-se de que a quantia fornecida tenha 18 decimais."
     },
     "MultiversXMinDelegatedAmountError" : {
-      "title" : "Quantia delegada deve ser de pelo menos {{formattedAmount}}"
+      "title" : "A quantia mínima para delegar é {{formattedAmount}}"
     },
     "MultiversXMinUndelegatedAmountError" : {
-      "title" : "Quantia desdelegada deve ser de pelo menos {{formattedAmount}}"
+      "title" : "A quantia mínima para desdelegar é {{formattedAmount}}"
     },
     "MultiversXDelegationBelowMinimumError" : {
-      "title" : "Delegação restante não pode ser menos que {{formattedAmount}}"
+      "title" : "O restante na delegação não pode ser menor que {{formattedAmount}}"
     },
     "NotEnoughEGLDForFees" : {
       "title" : "EGLD insuficientes para pagar as taxas de transação",
@@ -6466,6 +6472,15 @@
         "swap" : "Trocar",
         "deposit" : "Depositar"
       }
+    },
+    "InvalidMemoMina" : {
+      "title" : "O texto do memo não pode ter mais de 32 caracteres"
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "Esta transação incorrerá em uma taxa de criação de conta de {{fee}}"
+    },
+    "AmountTooSmall" : {
+      "title" : "A quantia mínima exigida para esta transação é {{amount}}"
     }
   },
   "cryptoOrg" : {
@@ -6669,6 +6684,24 @@
       "cta" : "Ative o Ledger Sync",
       "alreadySync" : "Já ativei",
       "learnMore" : "Como o Ledger Sync funciona?"
+    },
+    "entryPoints" : {
+      "accounts" : {
+        "title" : "Activate Ledger Sync"
+      },
+      "manager" : {
+        "title" : "Ledger Sync",
+        "description" : "Sync your accounts automatically, even when switching to a new phone.",
+        "cta" : "Turn on Ledger Sync"
+      },
+      "settings" : {
+        "title" : "Ledger Sync",
+        "description" : "Sync your accounts automatically, even when switching to a new phone.",
+        "cta" : "Turn on Ledger Sync"
+      },
+      "onboarding" : {
+        "title" : "Sync with another Ledger Live app"
+      }
     },
     "manage" : {
       "cta" : "Gerenciar",

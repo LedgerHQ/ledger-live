@@ -477,18 +477,18 @@
       "title" : "ขออภัย ไม่พบบัญชี",
       "description" : "มีบางอย่างผิดปกติในการคำนวณ Address โปรดลองอีกครั้ง หากปัญหายังคงอยู่ โปรดบันทึก Log ของคุณโดยใช้ปุ่มด้านล่าง และส่งให้ Ledger Support"
     },
-    "ElrondDecimalsLimitReached" : {
-      "title" : "ถึงจำนวนทศนิยมสูงสุดแล้ว",
-      "description" : "โปรดตรวจสอบให้แน่ใจว่าจำนวนที่ระบุมีทศนิยม 18 ตำแหน่ง"
+    "MultiversXDecimalsLimitReached" : {
+      "title" : "Maximum decimals limit reached",
+      "description" : "Please make sure that the amount provided has 18 decimals."
     },
-    "ElrondMinDelegatedAmountError" : {
-      "title" : "จำนวนที่ Delegate ต้องมีอย่างน้อย {{formattedAmount}}"
+    "MultiversXMinDelegatedAmountError" : {
+      "title" : "Delegated amount must be at least {{formattedAmount}}"
     },
-    "ElrondMinUndelegatedAmountError" : {
-      "title" : "จำนวนที่ Undelegate ต้องมีอย่างน้อย {{formattedAmount}}"
+    "MultiversXMinUndelegatedAmountError" : {
+      "title" : "Undelegated amount must be at least {{formattedAmount}}"
     },
-    "ElrondDelegationBelowMinimumError" : {
-      "title" : "การจะ Delegate ได้ต้องเหลือไม่น้อยกว่า {{formattedAmount}}"
+    "MultiversXDelegationBelowMinimumError" : {
+      "title" : "Remaining delegation can't be less than {{formattedAmount}}"
     },
     "NotEnoughVTHO" : {
       "title" : "ขออภัย เงินทุน VTHO ไม่เพียงพอ",
@@ -1053,6 +1053,9 @@
     },
     "AppManifestNotFoundError" : {
       "title" : "โหลดแอป Swap Live ไม่สำเร็จ"
+    },
+    "InvalidMemoMina" : {
+      "title" : "Memo text cannot be longer than 32 characters"
     }
   },
   "crash" : {
@@ -2898,8 +2901,8 @@
       "themeDesc" : "ตั้งค่าธีม UI ของแอป",
       "themes" : {
         "system" : "ระบบ",
-        "dark" : "มืด",
-        "light" : "อ่อน",
+        "dark" : "โหมดกลางคืน",
+        "light" : "โหมดกลางวัน",
         "dusk" : "Dusk"
       },
       "counterValueDesc" : "เลือกสกุลเงินสำหรับยอดคงเหลือและการดำเนินงาน",
@@ -2946,7 +2949,7 @@
       "DateFormatModal" : {
         "title" : "รูปแบบวันที่",
         "default" : "ค่าเริ่มต้น",
-        "dayFirst" : "ดด/วว/ปปปป",
+        "dayFirst" : "วว/ดด/ปปปป",
         "monthFirst" : "ดด/วว/ปปปป"
       }
     },
@@ -3036,7 +3039,7 @@
         "title" : "การแจ้งเตือนราคา",
         "desc" : "ตั้งค่าการแจ้งราคาสำหรับเหรียญที่คุณชื่นชอบเพื่อให้คุณไม่พลาดกับทุกการเคลื่อนไหวในตลาด"
       },
-      "disclaimer" : "ข้อมูลและความเป็นส่วนตัวของคุณเป็นสิ่งสำคัญสำหรับเราที่ Ledger เราจะไม่เปิดเผยข้อมูลที่เก็บรวบรวมแก่พาร์ทเนอร์ของเราเป็นอันขาด"
+      "disclaimer" : "Ledger ให้ความสำคัญกับข้อมูลและความเป็นส่วนตัวของคุณอย่างยิ่ง และไม่มีนโยบายเปิดเผยข้อมูลแก่พาร์ทเนอร์"
     },
     "help" : {
       "title" : "ช่วยเหลือ",
@@ -3059,7 +3062,7 @@
       "repairDeviceDesc" : "หากคุณประสบปัญหาในการอัปเดตอุปกรณ์ของคุณและไม่สามารถเริ่มการอัปเดตใหม่ได้ คุณสามารถลองทำสิ่งนี้เพื่อซ่อมแซมอุปกรณ์ของคุณ"
     },
     "experimental" : {
-      "title" : "Experimental features",
+      "title" : "Experimental Features",
       "desc" : "ลองใช้ Experimental Features และบอกให้เราทราบว่าคุณคิดเห็นอย่างไร",
       "disclaimer" : "สิ่งเหล่านี้เป็น Experimental Features ที่เราให้บริการ \"ตามที่เป็น\" สำหรับชุมชนผู้เชี่ยวชาญด้านเทคโนโลยีของเรา โดยอาจมีการเปลี่ยนแปลง ทำลาย หรือนำออกได้ทุกเมื่อ ทั้งนี้การเปิดใช้งานจะถือว่าคุณยินยอมใช้งานตามความเสี่ยงของคุณเอง",
       "provider" : "การตั้งค่าแบบ Experimental “ผู้ให้บริการ My Ledger ({{forcedProvider}})” อาจแสดงระบบปฏิบัติการและแอปที่ยังไม่ได้เปิดตัว ซึ่งอาจนำไปสู่ปัญหาความเข้ากันได้ คุณสามารถปิดใช้งานได้ในการตั้งค่า",
@@ -4665,7 +4668,8 @@
       "tr" : "Türk",
       "ja" : "日本",
       "ko" : "한국인",
-      "pt" : "Português (Br)"
+      "pt" : "Português (Br)",
+      "th" : "ภาษาไทย"
     }
   },
   "deviceLocalization" : {
@@ -4689,7 +4693,8 @@
       "german" : "Deutsch",
       "brazilian" : "Português (Br)",
       "russian" : "Русский",
-      "turkish" : "Türkçe"
+      "turkish" : "Türkçe",
+      "thai" : "ภาษาไทย"
     }
   },
   "FirmwareUpdateCheckId" : {
@@ -6720,6 +6725,7 @@
         "hide" : "ซ่อน {{count}} คอลเลกชัน",
         "hiddenCollections" : "คอลเลกชันที่ซ่อนอยู่",
         "hide_plural" : "ซ่อน {{count}} คอลเลกชัน",
+        "empty" : "No Hidden collections to show",
         "alertHide" : "ซ่อนคอลเลกชัน 1 รายการ คุณสามารถยกเลิกการซ่อนได้ตลอดเวลาในตัวกรองแกลเลอรี",
         "alertHide_plural" : "ซ่อนคอลเลกชัน {{count}} รายการ คุณสามารถยกเลิกการซ่อนได้ตลอดเวลาในตัวกรองแกลเลอรี"
       },
@@ -7012,7 +7018,7 @@
         "title" : "เปิดใช้ Ledger Sync สำหรับโทรศัพท์เครื่องนี้หรือไม่?",
         "description" : "เป็นการซิงค์บัญชีคริปโตของคุณโดยอัตโนมัติในโทรศัพท์และคอมพิวเตอร์ทั้งหมดของคุณ แม้ว่าจะเปลี่ยนไปใช้อุปกรณ์ใหม่ก็ตาม",
         "mainCta" : "เปิด Ledger Sync",
-        "secondCta" : "ฉันเปิดแล้ว",
+        "secondCta" : "ซิงค์กับแอป Ledger Live อีกแอปหนึ่ง",
         "learnMore" : "Ledger Sync ทำงานอย่างไร?"
       }
     },
@@ -7053,7 +7059,7 @@
         "success" : "แอป Ledger Live ของคุณจะไม่ซิงค์อีกต่อไป",
         "successHint" : "คุณสามารถเปิดการซิงค์อีกครั้งได้ตลอดเวลา",
         "confirm" : {
-          "delete" : "ใช่ ลบ",
+          "delete" : "ใช่ ลบการซิงค์",
           "cancel" : "ดำเนินการซิงค์ต่อ",
           "title" : "แน่ใจไหมว่าต้องการลบการซิงค์?",
           "desc" : "บัญชีคริปโตของคุณบนโทรศัพท์และคอมพิวเตอร์ที่แตกต่างกันจะหยุดการซิงค์ ซึ่งไม่มีผลกระทบต่อเงินทุนของคุณในทางใดทางหนึ่ง"
@@ -7112,7 +7118,7 @@
             "steps" : {
               "step1" : "ตรวจสอบให้แน่ใจว่าเปิดใช้งาน Ledger Sync ในแอปใดแอปหนึ่งของคุณแล้ว",
               "step2" : "เปิดแอป Ledger Live ที่คุณต้องการซิงค์",
-              "step3" : "ไปที่ <0>การตั้งค่า</0> <1>></1> <0>ทั่วไป</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>ฉันเปิดแล้ว</0> <1>></1> <0>สแกน QR Code</0>",
+              "step3" : "ไปที่ <0>การตั้งค่า</0> <1>></1> <0>ทั่วไป</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>ซิงค์กับแอป Ledger Live อีกแอปหนึ่ง</0> <1>></1> <0>สแกน QR Code</0>",
               "step4" : "สแกน QR Code"
             }
           }
@@ -7125,7 +7131,7 @@
             "steps" : {
               "step1" : "ตรวจสอบให้แน่ใจว่าเปิดใช้งาน Ledger Sync ในแอปใดแอปหนึ่งของคุณแล้ว",
               "step2" : "เปิด Ledger Live ที่คุณต้องการซิงค์ด้วย",
-              "step3" : "ไปที่ <0>การตั้งค่า</0> <1>></1> <0>ทั่วไป</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>ฉันเปิดแล้ว</0> <1>></1> <0>แสดง QR</0>",
+              "step3" : "ไปที่ <0>การตั้งค่า</0> <1>></1> <0>ทั่วไป</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>ซิงค์กับแอป Ledger Live อีกแอปหนึ่ง</0> <1>></1> <0>แสดง QR</0>",
               "step4" : "สแกน QR Code"
             }
           }

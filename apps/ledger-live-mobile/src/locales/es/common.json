@@ -1053,6 +1053,9 @@
     },
     "AppManifestNotFoundError" : {
       "title" : "Error al cargar Aplicación Permuta de Live"
+    },
+    "InvalidMemoMina" : {
+      "title" : "El texto de un memo no debe superar los 32 caracteres"
     }
   },
   "crash" : {
@@ -4665,7 +4668,8 @@
       "tr" : "Türk",
       "ja" : "日本",
       "ko" : "한국어",
-      "pt" : "Português (Br)"
+      "pt" : "Português (Br)",
+      "th" : "ภาษาไทย"
     }
   },
   "deviceLocalization" : {
@@ -4689,7 +4693,8 @@
       "german" : "Alemán",
       "brazilian" : "Português (Br)",
       "russian" : "Ruso",
-      "turkish" : "Türkçe"
+      "turkish" : "Türkçe",
+      "thai" : "ภาษาไทย"
     }
   },
   "FirmwareUpdateCheckId" : {
@@ -6720,6 +6725,7 @@
         "hide" : "Ocultar {{count}} colección",
         "hiddenCollections" : "Colecciones ocultas",
         "hide_plural" : "Ocultar {{count}} colecciones",
+        "empty" : "No Hidden collections to show",
         "alertHide" : "1 colección oculta. Puedes volver a mostrarla desde el filtro de la galería.",
         "alertHide_plural" : "{{count}} colecciones ocultas. Puedes volver a mostrarlas desde el filtro de la galería."
       },
