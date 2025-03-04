@@ -203,7 +203,7 @@ for (const account of e2eDelegationAccountsWithoutBroadcast) {
 
         if (account.delegate.account.currency.name == Currency.ADA.name) {
           await app.delegate.openSearchProviderModal();
-          await app.delegate.inputProvider("Ledger by Figment 3");
+          await app.delegate.inputProvider(account.delegate.provider);
           await app.delegate.selectProviderByName(account.delegate.provider);
         } else {
           await app.delegate.verifyFirstProviderName(account.delegate.provider);
