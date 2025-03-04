@@ -1867,7 +1867,8 @@
       "palletMethod" : "Methode",
       "transferAmount" : "Betrag transferieren",
       "validatorsCount" : "Validatoren ({{number}})",
-      "version" : "Version"
+      "version" : "Version",
+      "accountCreationFee" : "Kontoerstellungsgebühr"
     }
   },
   "operationList" : {
@@ -5443,6 +5444,11 @@
     "solana" : {
       "memo" : "Tag/Memo",
       "memoPlaceholder" : "Optional"
+    },
+    "mina" : {
+      "memoPlaceholder" : "Optional",
+      "memo" : "Memo",
+      "memoWarningText" : "Der Wert von Memo kann eine Zeichenfolge mit maximal 32 Zeichen sein"
     }
   },
   "errors" : {
@@ -5728,7 +5734,7 @@
     },
     "MultiversXDecimalsLimitReached" : {
       "title" : "Maximale Dezimalstellengrenze erreicht",
-      "description" : "Bitte stellen Sie sicher, dass der angegebene Betrag 18 Dezimalstellen hat."
+      "description" : "Bitte stelle sicher, dass der angegebene Betrag 18 Dezimalstellen hat."
     },
     "MultiversXMinDelegatedAmountError" : {
       "title" : "Der delegierte Betrag muss mindestens {{formattedAmount}} betragen"
@@ -6466,6 +6472,15 @@
         "swap" : "Swappen",
         "deposit" : "Einzahlen"
       }
+    },
+    "InvalidMemoMina" : {
+      "title" : "Der Memotext darf nicht länger als 32 Zeichen sein."
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "Für diese Transaktion fällt eine Kontoerstellungsgebühr in Höhe von {{fee}} an"
+    },
+    "AmountTooSmall" : {
+      "title" : "Der Mindestbetrag für diese Transaktion beläuft sich auf {{amount}}"
     }
   },
   "cryptoOrg" : {
@@ -6669,6 +6684,24 @@
       "cta" : "Ledger Sync einschalten",
       "alreadySync" : "Ich habe es bereits eingeschaltet",
       "learnMore" : "Wie funktioniert Ledger Sync?"
+    },
+    "entryPoints" : {
+      "accounts" : {
+        "title" : "Ledger Sync aktivieren"
+      },
+      "manager" : {
+        "title" : "Ledger Sync",
+        "description" : "Synchronisiere deine Konten automatisch – auch beim Wechsel auf ein neues Smartphone.",
+        "cta" : "Ledger Sync einschalten"
+      },
+      "settings" : {
+        "title" : "Ledger Sync",
+        "description" : "Synchronisiere deine Konten automatisch – auch beim Wechsel auf ein neues Smartphone.",
+        "cta" : "Ledger Sync einschalten"
+      },
+      "onboarding" : {
+        "title" : "Mit einer anderen Ledger Live-App synchronisieren"
+      }
     },
     "manage" : {
       "cta" : "Verwalten",
