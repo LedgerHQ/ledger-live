@@ -4,6 +4,7 @@ import AccountSubHeader from "./AccountSubHeader";
 import sendRecipientFields from "./SendRecipientFields";
 import AccountBalanceSummaryFooter from "./AccountBalanceSummaryFooter";
 import StakeBanner from "./StakeBanner";
+import StepSummaryAdditionalRows from "./StepSummaryAdditionalRows";
 import { SolanaFamily } from "./types";
 import operationDetails from "./operationDetails";
 import sendAmountFields from "./SendAmountFields";
@@ -15,6 +16,7 @@ const family: SolanaFamily = {
   AccountSubHeader,
   sendRecipientFields,
   AccountBalanceSummaryFooter,
+  StepSummaryAdditionalRows,
   StakeBanner,
   operationDetails,
   sendAmountFields,

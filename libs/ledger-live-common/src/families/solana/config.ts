@@ -1,12 +1,15 @@
-import { ConfigInfo } from "@ledgerhq/live-config/LiveConfig";
+import { SolanaCoinConfig } from "@ledgerhq/coin-solana/config";
+import { CurrencyLiveConfigDefinition } from "../../config";
 
-export const solanaConfig: Record<string, ConfigInfo> = {
+export const solanaConfig: CurrencyLiveConfigDefinition = {
   config_currency_solana: {
     type: "object",
     default: {
       status: {
         type: "active",
       },
-    },
+      token2022Enabled: false,
+      queuedInterval: 100,
+    } as SolanaCoinConfig,
   },
 };

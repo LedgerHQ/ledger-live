@@ -14,22 +14,12 @@ describe("getWalletAPITransactionSignFlowInfos", () => {
         model: {
           kind: "transfer",
           uiState: {},
-          commandDescriptor: {
-            command: {
-              kind: "transfer",
-              amount: 100000,
-              sender: "0xABCDEF",
-              recipient: "0xABCDEFG",
-            },
-            fee: 0,
-            errors: {},
-            warnings: {},
-          },
         },
       };
 
-      const expectedLiveTx: Partial<Transaction> = {
+      const expectedLiveTx: Transaction = {
         ...solanaTx,
+        model: { ...solanaTx.model, commandDescriptor: undefined },
       };
 
       const { canEditFees, hasFeesProvided, liveTx } = sol.getWalletAPITransactionSignFlowInfos({
@@ -54,29 +44,12 @@ describe("getWalletAPITransactionSignFlowInfos", () => {
           uiState: {
             subAccountId: "", // Automatically replaced by LL
           },
-          commandDescriptor: {
-            command: {
-              kind: "token.transfer",
-              amount: 100000,
-              mintAddress: "0xABCDE",
-              mintDecimals: 6,
-              ownerAddress: "0xABCDEF",
-              ownerAssociatedTokenAccountAddress: "0xABCDEF",
-              recipientDescriptor: {
-                shouldCreateAsAssociatedTokenAccount: false,
-                tokenAccAddress: "0xABCDEFG",
-                walletAddress: "0xABCDEFG",
-              },
-            },
-            fee: 0,
-            errors: {},
-            warnings: {},
-          },
         },
       };
 
-      const expectedLiveTx: Partial<Transaction> = {
+      const expectedLiveTx: Transaction = {
         ...solanaTx,
+        model: { ...solanaTx.model, commandDescriptor: undefined },
         subAccountId: "subAccountId",
       };
 
