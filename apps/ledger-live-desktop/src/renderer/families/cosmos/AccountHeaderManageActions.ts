@@ -1,6 +1,7 @@
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { canDelegate } from "@ledgerhq/live-common/families/cosmos/logic";
 import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
+import { uiConfig } from "@ledgerhq/live-common/families/cosmos/uiConfig";
 import { SubAccount } from "@ledgerhq/types-live";
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
@@ -26,6 +27,7 @@ const AccountHeaderActions = ({ account, parentAccount, source }: Props) => {
   const earnRewardEnabled = canDelegate(mainAccount);
   const hasDelegations = cosmosResources.delegations.length > 0;
   const isCroAccount = account.type === "Account" && account.currency.id === "crypto_org";
+  console.log({uiConfig})
 
   const onClickStakekit = useCallback(() => {
     const value = "/platform/stakekit";
@@ -47,6 +49,17 @@ const AccountHeaderActions = ({ account, parentAccount, source }: Props) => {
       });
     }
   }, [history, account, dispatch, earnRewardEnabled, parentAccount]);
+
+  const onClickManage = useCallback(() => {
+    console.log("HERE")
+      dispatch(
+        openModal("MODAL_COSMOS_MANAGE", {
+          account,
+          uiConfig,
+          source,
+        }),
+      );
+  }, [account, earnRewardEnabled, hasDelegations, dispatch, parentAccount, source]);
 
   const onClick = useCallback(() => {
     if (account.type !== "Account") return;
@@ -75,6 +88,18 @@ const AccountHeaderActions = ({ account, parentAccount, source }: Props) => {
   if (parentAccount) return null;
   const disabledLabel = earnRewardEnabled ? "" : t("cosmos.delegation.minSafeWarning");
   return [
+    {
+      key: "Manage",
+      onClick: onClickManage,
+      icon: IconCoins,
+      label: "Totot",
+      tooltip: disabledLabel,
+      event: "button_clicked2",
+      eventProperties: {
+        button: "stake",
+      },
+      accountActionsTestId: "stake-button",
+    },
     {
       key: "Stake",
       onClick: isCroAccount ? onClickStakekit : onClick,
