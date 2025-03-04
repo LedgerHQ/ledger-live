@@ -38,7 +38,10 @@ const icon: AppSpec<Transaction> = {
   genericDeviceAction: acceptTransaction,
   testTimeout: 2 * 60 * 1000,
   transactionCheck: ({ maxSpendable }) => {
-    invariant(maxSpendable.gt(EXISTENTIAL_DEPOSIT_RECOMMENDED_MARGIN), "balance is too low");
+    invariant(
+      maxSpendable.gt(EXISTENTIAL_DEPOSIT_RECOMMENDED_MARGIN.multipliedBy(2)),
+      "balance is too low",
+    );
   },
   test: ({ operation, optimisticOperation }) => {
     const opExpected: Record<string, any> = toOperationRaw({

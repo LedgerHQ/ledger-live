@@ -559,6 +559,7 @@ export const DEFAULT_FEATURES: Features = {
       },
     },
   },
+  llmThai: DEFAULT_FEATURE,
 };
 
 // Firebase SDK treat JSON values as strings

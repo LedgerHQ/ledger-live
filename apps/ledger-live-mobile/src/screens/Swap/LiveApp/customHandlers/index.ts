@@ -19,7 +19,7 @@ export const swapCustomHandlers = ({
     getState(): NavigationState | undefined;
   };
 }) => ({
-  "custom.getFee": getFee(accounts),
+  "custom.getFee": getFee(accounts, navigation),
   "custom.getTransactionByHash": getTransactionByHash(accounts),
   "custom.saveSwapToHistory": saveSwapToHistory(accounts, dispatch),
   "custom.swapRedirectToHistory": swapRedirectToHistory(navigation),

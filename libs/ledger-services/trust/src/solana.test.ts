@@ -13,7 +13,7 @@ describe("solana", () => {
     it.each([
       ["prod", "https://nft.api.live.ledger.com"],
       [undefined, "https://nft.api.live.ledger.com"],
-      ["test", "https://nft.api.live.ledger-stg.com"],
+      ["test", "https://nft.api.live.ledger-test.com"],
     ])("fetch the correct %s service environement", async (env, baseUrl) => {
       // Given
       const ownerAddress = "SOL_ADDR";
@@ -64,7 +64,7 @@ describe("solana", () => {
     it.each([
       ["prod", "https://nft.api.live.ledger.com"],
       [undefined, "https://nft.api.live.ledger.com"],
-      ["test", "https://nft.api.live.ledger-stg.com"],
+      ["test", "https://nft.api.live.ledger-test.com"],
     ])("fetch the correct %s service environement", async (env, baseUrl) => {
       // Given
       const ownerAddress = "SOL_ADDR";
