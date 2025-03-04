@@ -1,12 +1,12 @@
 import React, { useMemo, useState, useCallback, useRef } from "react";
-import { FlatList, LayoutChangeEvent, ListRenderItemInfo, Linking } from "react-native";
+import { FlatList, LayoutChangeEvent, ListRenderItemInfo } from "react-native";
 import Animated, { useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
 import { useSelector } from "react-redux";
-import { useTranslation, Trans } from "react-i18next";
-import { Box, Flex, Text } from "@ledgerhq/native-ui";
+import { useTranslation } from "react-i18next";
+import { Box, Flex } from "@ledgerhq/native-ui";
 import { getCurrencyColor, isCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/helpers";
-import styled, { useTheme } from "styled-components/native";
+import { useTheme } from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import isEqual from "lodash/isEqual";
@@ -32,19 +32,13 @@ import AssetDynamicContent from "./AssetDynamicContent";
 import AssetMarketSection from "./AssetMarketSection";
 import AssetGraph from "./AssetGraph";
 import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
-import { View } from "react-native-animatable";
-import Alert from "~/components/Alert";
-import { urls } from "~/utils/urls";
 import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useGroupedCurrenciesByProvider } from "@ledgerhq/live-common/deposit/index";
 import { LoadingBasedGroupedCurrencies, LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { AddAccountContexts } from "LLM/features/Accounts/screens/AddAccount/enums";
-
-const UnderlinedText = styled(Text)`
-  text-decoration-line: underline;
-`;
+import WarningBannerStatus from "~/components/WarningBannerStatus";
 
 const AnimatedFlatListWithRefreshControl = Animated.createAnimatedComponent(
   accountSyncRefreshControl(FlatList),
@@ -156,11 +150,6 @@ const AssetScreen = ({ route }: NavigationProps) => {
     }
   }
 
-  const supportLink = (currencyConfig?.status as { link?: string })?.link;
-  const openSupportLink = useCallback(() => {
-    Linking.openURL(supportLink || urls.contactSupportWebview.en);
-  }, [supportLink]);
-
   const data = useMemo(
     () => [
       <Box
@@ -178,40 +167,11 @@ const AssetScreen = ({ route }: NavigationProps) => {
           accountsAreEmpty={cryptoAccountsEmpty}
         />
       </Box>,
-      currencyConfig?.status.type === "migration" && (
-        <View style={{ marginTop: 16 }}>
-          <Alert
-            key="migration_banner"
-            type="warning"
-            learnMoreKey="account.migrationBanner.contactSupport"
-            learnMoreUrl={urls.contactSupportWebview.en}
-          >
-            <Trans
-              i18nKey="account.migrationBanner.title"
-              values={{
-                coinA: currencyConfig.status.coinA,
-                coinB: currencyConfig.status.coinB,
-              }}
-              components={[<UnderlinedText onPress={openSupportLink} key="SupportLink" />]}
-            />
-          </Alert>
-        </View>
-      ),
-      currencyConfig?.status.type === "will_be_deprecated" && (
-        <View style={{ marginTop: 16 }}>
-          <Alert
-            key="deprecated_banner"
-            type="warning"
-            learnMoreKey="account.willBedeprecatedBanner.contactSupport"
-            learnMoreUrl={urls.contactSupportWebview.en}
-          >
-            {t("account.willBedeprecatedBanner.title", {
-              currencyName: currency.name,
-              deprecatedDate: currencyConfig.status.deprecated_date,
-            })}
-          </Alert>
-        </View>
-      ),
+      <WarningBannerStatus
+        currencyConfig={currencyConfig}
+        currency={currency}
+        key="WarningBanner"
+      />,
       <SectionContainer px={6} isFirst key="AssetDynamicContent">
         <SectionTitle title={t("account.quickActions")} containerProps={{ mb: 6 }} />
         <FabAssetActions
@@ -263,7 +223,6 @@ const AssetScreen = ({ route }: NavigationProps) => {
       defaultAccount,
       onAddAccount,
       currencyConfig,
-      openSupportLink,
     ],
   );
 

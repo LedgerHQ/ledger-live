@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import { LayoutChangeEvent, View, Linking } from "react-native";
+import { LayoutChangeEvent } from "react-native";
 import { isAccountEmpty, getMainAccount } from "@ledgerhq/live-common/account/index";
 import {
   AccountLike,
@@ -9,10 +9,9 @@ import {
   BalanceHistoryWithCountervalue,
 } from "@ledgerhq/types-live";
 import { CryptoCurrency, Currency } from "@ledgerhq/types-cryptoassets";
-import { Box, ColorPalette, Text } from "@ledgerhq/native-ui";
+import { Box, ColorPalette } from "@ledgerhq/native-ui";
 import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
-import { TFunction, Trans } from "react-i18next";
-import styled from "styled-components/native";
+import { TFunction } from "react-i18next";
 import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
 import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
 import { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
@@ -34,13 +33,8 @@ import {
 } from "~/components/FabActions/actionsList/account";
 import { ActionButtonEvent } from "~/components/FabActions";
 import { EditOperationCard } from "~/components/EditOperationCard";
-import Alert from "~/components/Alert";
 import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
-import { urls } from "~/utils/urls";
-
-const UnderlinedText = styled(Text)`
-  text-decoration-line: underline;
-`;
+import WarningBannerStatus from "~/components/WarningBannerStatus";
 
 type Props = {
   account?: AccountLike;
@@ -133,11 +127,6 @@ export function getListHeaderComponents({
     oldestEditableOperation &&
     isStuckOperation({ family: mainAccount.currency.family, operation: oldestEditableOperation });
 
-  const supportLink = (currencyConfig?.status as { link?: string })?.link;
-  const openSupportLink = () => {
-    Linking.openURL(supportLink || urls.contactSupportWebview.en);
-  };
-
   return {
     listHeaderComponents: [
       <Box mt={6} onLayout={onAccountCardLayout} key="AccountGraphCard">
@@ -153,40 +142,11 @@ export function getListHeaderComponents({
           parentAccount={parentAccount}
         />
       </Box>,
-      currencyConfig?.status.type === "migration" && (
-        <View style={{ marginTop: 16 }}>
-          <Alert
-            key="migration_banner"
-            type="warning"
-            learnMoreKey="account.migrationBanner.contactSupport"
-            learnMoreUrl={urls.contactSupportWebview.en}
-          >
-            <Trans
-              i18nKey="account.migrationBanner.title"
-              values={{
-                coinA: currencyConfig.status.coinA,
-                coinB: currencyConfig.status.coinB,
-              }}
-              components={[<UnderlinedText onPress={openSupportLink} key="SupportLink" />]}
-            />
-          </Alert>
-        </View>
-      ),
-      currencyConfig?.status.type === "will_be_deprecated" && (
-        <View style={{ marginTop: 16 }}>
-          <Alert
-            key="deprecated_banner"
-            type="warning"
-            learnMoreKey="account.willBedeprecatedBanner.contactSupport"
-            learnMoreUrl={urls.contactSupportWebview.en}
-          >
-            {t("account.willBedeprecatedBanner.title", {
-              currencyName: currency.name,
-              deprecatedDate: currencyConfig.status.deprecated_date,
-            })}
-          </Alert>
-        </View>
-      ),
+      <WarningBannerStatus
+        currencyConfig={currencyConfig}
+        currency={currency}
+        key="WarningBannerStatus"
+      />,
       <Header key="Header" />,
       !!AccountSubHeader && (
         <Box bg={colors.background.main} key="AccountSubHeader">
