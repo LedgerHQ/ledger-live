@@ -1867,7 +1867,8 @@
       "palletMethod" : "Метод",
       "transferAmount" : "Сумма",
       "validatorsCount" : "Валидаторов: {{number}}",
-      "version" : "Версия приложения"
+      "version" : "Версия приложения",
+      "accountCreationFee" : "Комиссия за создание счёта"
     }
   },
   "operationList" : {
@@ -5443,6 +5444,11 @@
     "solana" : {
       "memo" : "Тег примечания/Memo",
       "memoPlaceholder" : "Опционально"
+    },
+    "mina" : {
+      "memoPlaceholder" : "Опционально",
+      "memo" : "Memo",
+      "memoWarningText" : "Значение Memo может быть строкой, длина которой не превышает или равна 32 символам"
     }
   },
   "errors" : {
@@ -5728,7 +5734,7 @@
     },
     "MultiversXDecimalsLimitReached" : {
       "title" : "Достигнут лимит десятичных знаков",
-      "description" : "Убедитесь, что у указанной суммы 18 десятичных знаков."
+      "description" : "Убедитесь, что в указанной сумме до 18 десятичных знаков."
     },
     "MultiversXMinDelegatedAmountError" : {
       "title" : "Делегированная сумма должна быть не менее {{formattedAmount}}"
@@ -6466,6 +6472,15 @@
         "swap" : "Обменяйте",
         "deposit" : "Пополните"
       }
+    },
+    "InvalidMemoMina" : {
+      "title" : "Содержимое Memo не может быть длиннее 32 символов"
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "Эта транзакция предполагает списание комиссии за создание счёта в {{fee}}"
+    },
+    "AmountTooSmall" : {
+      "title" : "Минимальная необходимая сумма для этой транзакции — {{amount}}"
     }
   },
   "cryptoOrg" : {
@@ -6669,6 +6684,24 @@
       "cta" : "Включить Ledger Sync",
       "alreadySync" : "Уже включено",
       "learnMore" : "Как работает Ledger Sync?"
+    },
+    "entryPoints" : {
+      "accounts" : {
+        "title" : "Активируйте Ledger Sync"
+      },
+      "manager" : {
+        "title" : "Ledger Sync",
+        "description" : "Синхронизируйте ваши счета в автоматическом режиме — даже при переходе на новый смартфон.",
+        "cta" : "Включить Ledger Sync"
+      },
+      "settings" : {
+        "title" : "Ledger Sync",
+        "description" : "Синхронизируйте ваши счета в автоматическом режиме — даже при переходе на новый смартфон.",
+        "cta" : "Включить Ledger Sync"
+      },
+      "onboarding" : {
+        "title" : "Синхронизировать с другим приложением Ledger Live"
+      }
     },
     "manage" : {
       "cta" : "Настроить",
