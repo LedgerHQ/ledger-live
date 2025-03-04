@@ -6943,50 +6943,40 @@
     "banner": {
       "manager": {
         "optIn": {
-          "title": "It's time to upgrade",
-          "description": "Upgrade to our latest devices with <0>{{discount}}% discount</0> for an enhanced security and a seamless experience.",
-          "cta": "Level up my wallet",
-          "linkText": "Learn more"
+          "title": "Limited memory, limited experience",
+          "description": "Upgrade your Nano S to a newer Ledger — like the Ledger Flex — for more memory, the latest security enhancements, fresh features, and <0>an exclusive {{discount}}% off</>.",
+          "cta": "Upgrade my Ledger"
         },
         "optOut": {
-          "title": "It's time to upgrade",
-          "description": "Upgrade to our latest devices with <0>{{discount}}% discount</0> for an enhanced security and a seamless experience.",
-          "cta": "Level up my wallet",
-          "linkText": "Learn more"
+          "description": "The limited memory of your Ledger Nano S restricts your access to the latest features, blockchain changes and security enhancements. For long-term use, upgrade to a newer Ledger device.",
+          "cta": "Why should I upgrade?"
         }
       },
       "accounts": {
         "optIn": {
-          "title": "It's time to upgrade",
-          "description": "Ledger Nano S updates are ending soon. Upgrade to our latest devices with <0>{{discount}}% discount</0>.",
-          "cta": "Level up my wallet",
-          "linkText": "Learn more"
+          "title": "Limited memory, limited experience",
+          "description": "Upgrade your Nano S to a newer Ledger — like the Ledger Flex — for more memory, the latest security enhancements, fresh features, and <0>an exclusive {{discount}}% off</>.",
+          "cta": "Upgrade my Ledger"
         },
         "optOut": {
-          "title": "It's time to upgrade",
-          "description": "Ledger Nano S updates are ending soon. Upgrade to our latest devices with <0>{{discount}}% discount</0>.",
-          "cta": "Level up my wallet",
-          "linkText": "Learn more"
+          "description": "The limited memory of your Ledger Nano S restricts your access to the latest features, blockchain changes and security enhancements. For long-term use, upgrade to a newer Ledger device.",
+          "cta": "Why should I upgrade?"
         }
       },
       "portfolio": {
         "optOut": {
-          "title": "It's time to upgrade",
-          "description": "Upgrade to our latest devices with <0>{{discount}}% discount</0> for an enhanced security and a seamless experience.",
-          "cta": "Level up my wallet",
-          "linkText": "Learn more"
+          "description": "The limited memory of your Ledger Nano S restricts your access to the latest features, blockchain changes and security enhancements. For long-term use, upgrade to a newer Ledger device.",
+          "cta": "Why should I upgrade?"
         }
       },
-      "notifications": {
+      "notification_center": {
         "optIn": {
-          "description": "Updates are ending soon. Upgrade now with {{discount}}% off for a seamless experience.",
-          "cta": "Level up my wallet",
-          "linkText": "Learn more"
+          "description": "Upgrade your Nano S to a newer Ledger — like the Ledger Flex — for more memory, the latest security enhancements, fresh features, and an exclusive {{discount}}% off.",
+          "cta": "Upgrade my Ledger"
         },
         "optOut": {
-          "description": "Updates are ending soon. Upgrade now with {{discount}}% off for a seamless experience.",
-          "cta": "Level up my wallet",
-          "linkText": "Learn more"
+          "description": "The limited memory of your Ledger Nano S restricts your access to the latest features, blockchain changes and security enhancements. For long-term use, upgrade to a newer Ledger device.",
+          "cta": "Why should I upgrade?"
         }
       }
     }
