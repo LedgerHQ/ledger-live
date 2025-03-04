@@ -29,8 +29,8 @@ import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { e2eBridgeClient } from "../../../e2e/bridge/client";
 
 const illustrations = {
-  dark: require("~/images/illustration/Dark/_080.png"),
-  light: require("~/images/illustration/Light/_080.png"),
+  dark: require("~/images/illustration/Dark/_080.webp"),
+  light: require("~/images/illustration/Light/_080.webp"),
 };
 
 type Props = {

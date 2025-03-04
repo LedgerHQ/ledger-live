@@ -16,8 +16,8 @@ function EmptyList({ search }: EmptyListProps) {
         style={{ width: 164, height: 164 }}
         source={
           colors.palette.type === "light"
-            ? require("~/images/marketNoResultslight.png")
-            : require("~/images/marketNoResultsdark.png")
+            ? require("~/images/marketNoResultslight.webp")
+            : require("~/images/marketNoResultsdark.webp")
         }
       />
       <Text textAlign="center" variant="h4" my={3}>
