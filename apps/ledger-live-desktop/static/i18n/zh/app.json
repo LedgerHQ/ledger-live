@@ -439,8 +439,8 @@
       "cta" : "前往 My Ledger（我的 Ledger）"
     },
     "wrongDevice" : {
-      "title" : "Ledger Nano S™ 不兼容 THORChain",
-      "description" : "Ledger Nano S 不兼容 THORChain。您可以使用 Ledger Nano S Plus、Ledger Nano X、Ledger Stax 或 Ledger Flex 通过 Ledger Live 体验 THORChain 的跨链互换",
+      "title" : "Ledger Nano S™ 与 {{provider}} 不兼容",
+      "description" : "Ledger Nano S 与 {{provider}} 不兼容。您可以使用 Ledger Nano S Plus、Ledger Nano X、Ledger Stax 或 Ledger Flex 通过 Ledger Live 体验 {{provider}} 的跨链互换",
       "cta" : "浏览兼容设备",
       "changeProvider" : "使用其他提供商进行互换"
     },
@@ -4155,6 +4155,11 @@
       "debugAppsDesc" : "显示并允许打开调试标记的平台应用程序。",
       "debugReactQuery" : "允许调试 ReactQuery",
       "debugReactQueryDesc" : "显示并允许打开调试 ReactQuery 控制台。",
+      "nfts" : {
+        "title" : "NFTs HiddenCollections",
+        "description" : "重置隐藏藏品列表",
+        "reset" : "重置"
+      },
       "exchangeDeveloperMode" : {
         "title" : "兑换开发模式",
         "desc" : "添加兑换提供商的信息",
@@ -6665,6 +6670,24 @@
       "alreadySync" : "我已经开启了",
       "learnMore" : "Ledger Sync 如何运作？"
     },
+    "entryPoints" : {
+      "accounts" : {
+        "title" : "激活 Ledger Sync"
+      },
+      "manager" : {
+        "title" : "Ledger Sync",
+        "description" : "即使换用新手机，也能自动同步您的账户。",
+        "cta" : "开启 Ledger Sync"
+      },
+      "settings" : {
+        "title" : "Ledger Sync",
+        "description" : "即使换用新手机，也能自动同步您的账户。",
+        "cta" : "开启 Ledger Sync"
+      },
+      "onboarding" : {
+        "title" : "与另一个 Ledger Live 应用程序同步"
+      }
+    },
     "manage" : {
       "cta" : "管理",
       "synchronize" : {
@@ -6918,6 +6941,14 @@
         "optOut" : {
           "title" : "现在就是升级的好时机",
           "description" : "Ledger Nano S 更新活动即将结束。升级到我们的最新设备，立享 <0>{{discount}}% 折扣优惠</0>。",
+          "cta" : "升级我的钱包",
+          "linkText" : "了解更多"
+        }
+      },
+      "portfolio" : {
+        "optOut" : {
+          "title" : "现在就是升级的好时机",
+          "description" : "升级到我们的最新设备，立享 <0>{{discount}}% 折扣优惠</0>，加强安全保护，享受顺畅体验。",
           "cta" : "升级我的钱包",
           "linkText" : "了解更多"
         }
