@@ -76,13 +76,13 @@ jobs:
           git add .
 
       - name: commit
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         uses: planetscale/ghcommit-action@v0.1.6
         with:
           commit_message: "chore(hotfix): :fire: hotfix release [skip ci]"
           repo: ${{ github.repository }}
           branch: ${{ inputs.ref }}
+        env:
+          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
 
       - name: pull commit
         run: |
