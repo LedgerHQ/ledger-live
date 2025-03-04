@@ -1119,6 +1119,11 @@
       "fast" : "hızlı",
       "custom" : "Özel",
       "blockCount" : "{{blockCount}} blok"
+    },
+    "estimatedTime" : {
+      "slow" : "≈ 2-3 min",
+      "medium" : "≈ 30 sec",
+      "fast" : "≈ 15 sec"
     }
   },
   "signout" : {
@@ -4660,7 +4665,8 @@
       "tr" : "Türkçe",
       "ja" : "Japonca",
       "ko" : "Korece",
-      "pt" : "Portekizce (Br)"
+      "pt" : "Portekizce (Br)",
+      "th" : "ภาษาไทย"
     }
   },
   "deviceLocalization" : {
@@ -4684,7 +4690,8 @@
       "german" : "Almanca",
       "brazilian" : "Portekizce (Br)",
       "russian" : "Rusça",
-      "turkish" : "Türkçe"
+      "turkish" : "Türkçe",
+      "thai" : "ภาษาไทย"
     }
   },
   "FirmwareUpdateCheckId" : {
@@ -6992,6 +6999,16 @@
   },
   "walletSync" : {
     "title" : "Ledger Sync",
+    "entryPoints" : {
+      "simpleCta" : {
+        "title" : "Ledger Sync'i etkinleştirin"
+      },
+      "card" : {
+        "title" : "Ledger Sync",
+        "description" : "Yeni bir telefona geçerken bile hesaplarınızı otomatik olarak senkronize edin.",
+        "cta" : "Ledger Sync'i Aç"
+      }
+    },
     "activation" : {
       "screen" : {
         "title" : "Bu telefon için Ledger Sync açılsın mı?",

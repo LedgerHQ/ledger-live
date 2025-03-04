@@ -1119,6 +1119,11 @@
       "fast" : "快",
       "custom" : "自定义",
       "blockCount" : "{{blockCount}}个区块"
+    },
+    "estimatedTime" : {
+      "slow" : "约 2-3 分钟",
+      "medium" : "约 30 秒",
+      "fast" : "约 15 秒"
     }
   },
   "signout" : {
@@ -4660,7 +4665,8 @@
       "tr" : "Türk",
       "ja" : "日本語",
       "ko" : "한국어",
-      "pt" : "Português (Br)"
+      "pt" : "Português (Br)",
+      "th" : "ภาษาไทย"
     }
   },
   "deviceLocalization" : {
@@ -4684,7 +4690,8 @@
       "german" : "Deutsch",
       "brazilian" : "Português (Br)",
       "russian" : "Русский",
-      "turkish" : "Türkçe"
+      "turkish" : "Türkçe",
+      "thai" : "ภาษาไทย"
     }
   },
   "FirmwareUpdateCheckId" : {
@@ -6992,6 +6999,16 @@
   },
   "walletSync" : {
     "title" : "Ledger Sync",
+    "entryPoints" : {
+      "simpleCta" : {
+        "title" : "激活 Ledger Sync"
+      },
+      "card" : {
+        "title" : "Ledger Sync",
+        "description" : "即使换用新手机，也能自动同步您的账户。",
+        "cta" : "开启 Ledger Sync"
+      }
+    },
     "activation" : {
       "screen" : {
         "title" : "为该手机开启 Ledger Sync？",
