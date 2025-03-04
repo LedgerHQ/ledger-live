@@ -1,5 +1,17 @@
 # @ledgerhq/coin-solana
 
+## 0.14.0-next.0
+
+### Minor Changes
+
+- [#9144](https://github.com/LedgerHQ/ledger-live/pull/9144) [`4e48b2f`](https://github.com/LedgerHQ/ledger-live/commit/4e48b2fca669128837a0175f4b4f0246b0e5499f) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Bot specs update
+
+### Patch Changes
+
+- Updated dependencies [[`e4d9a5c`](https://github.com/LedgerHQ/ledger-live/commit/e4d9a5ce6c3e8f2b3829f8f5772e7ba712a4a50c)]:
+  - @ledgerhq/types-live@6.61.0-next.0
+  - @ledgerhq/coin-framework@2.1.1-next.0
+
 ## 0.13.1
 
 ### Patch Changes
