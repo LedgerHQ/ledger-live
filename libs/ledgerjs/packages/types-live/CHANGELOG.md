@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.61.0-nightly.0
+
+### Minor Changes
+
+- [#9345](https://github.com/LedgerHQ/ledger-live/pull/9345) [`ede6db0`](https://github.com/LedgerHQ/ledger-live/commit/ede6db0b94193cc9072aeb87e90f4098f0434af0) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Add thai language support
+
 ## 6.60.0
 
 ### Minor Changes

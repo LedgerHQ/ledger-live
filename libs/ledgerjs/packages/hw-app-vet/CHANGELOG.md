@@ -1,5 +1,12 @@
 # @ledgerhq/hw-app-vet
 
+## 0.2.16-nightly.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/cryptoassets@13.13.0-nightly.1
+
 ## 0.2.16-nightly.0
 
 ### Patch Changes

@@ -1,5 +1,19 @@
 # @ledgerhq/live-nft-react
 
+## 0.6.0-nightly.1
+
+### Minor Changes
+
+- [#9355](https://github.com/LedgerHQ/ledger-live/pull/9355) [`495be72`](https://github.com/LedgerHQ/ledger-live/commit/495be729c036b4c03ccb4f7c415af81c5c80d695) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix NFTs spam filtering in Transaction History
+
+### Patch Changes
+
+- Updated dependencies [[`ede6db0`](https://github.com/LedgerHQ/ledger-live/commit/ede6db0b94193cc9072aeb87e90f4098f0434af0), [`bdfa413`](https://github.com/LedgerHQ/ledger-live/commit/bdfa4139fcbceabfd05a57e69b05e9ccf10efbe1)]:
+  - @ledgerhq/types-live@6.61.0-nightly.0
+  - @ledgerhq/live-nft@0.6.0-nightly.1
+  - @ledgerhq/coin-framework@2.1.1-nightly.1
+  - @ledgerhq/cryptoassets@13.13.0-nightly.1
+
 ## 0.6.0-nightly.0
 
 ### Minor Changes

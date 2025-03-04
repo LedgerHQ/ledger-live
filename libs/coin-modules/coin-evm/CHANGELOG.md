@@ -1,5 +1,21 @@
 # @ledgerhq/coin-evm
 
+## 2.12.0-nightly.1
+
+### Minor Changes
+
+- [#9402](https://github.com/LedgerHQ/ledger-live/pull/9402) [`bdfa413`](https://github.com/LedgerHQ/ledger-live/commit/bdfa4139fcbceabfd05a57e69b05e9ccf10efbe1) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update Staging NFT Metadata service url + Rename env variable
+
+### Patch Changes
+
+- Updated dependencies [[`7931e5f`](https://github.com/LedgerHQ/ledger-live/commit/7931e5f6bf379eee7b80f5a95f13b6e96140ac5a), [`bdfa413`](https://github.com/LedgerHQ/ledger-live/commit/bdfa4139fcbceabfd05a57e69b05e9ccf10efbe1)]:
+  - @ledgerhq/evm-tools@1.5.0-nightly.1
+  - @ledgerhq/live-env@2.6.0-nightly.1
+  - @ledgerhq/coin-framework@2.1.1-nightly.1
+  - @ledgerhq/domain-service@1.2.20-nightly.0
+  - @ledgerhq/cryptoassets@13.13.0-nightly.1
+  - @ledgerhq/live-network@2.0.5-nightly.1
+
 ## 2.11.1-nightly.0
 
 ### Patch Changes

@@ -1,5 +1,19 @@
 # @ledgerhq/coin-tron
 
+## 0.3.0-nightly.2
+
+### Minor Changes
+
+- [#9381](https://github.com/LedgerHQ/ledger-live/pull/9381) [`663f03d`](https://github.com/LedgerHQ/ledger-live/commit/663f03d7e00dec395bc1338b62e9015d79450d65) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Support combine for Tron
+
+### Patch Changes
+
+- Updated dependencies [[`ede6db0`](https://github.com/LedgerHQ/ledger-live/commit/ede6db0b94193cc9072aeb87e90f4098f0434af0)]:
+  - @ledgerhq/types-live@6.61.0-nightly.0
+  - @ledgerhq/coin-framework@2.1.1-nightly.1
+  - @ledgerhq/cryptoassets@13.13.0-nightly.1
+  - @ledgerhq/live-network@2.0.5-nightly.1
+
 ## 0.3.0-nightly.1
 
 ### Patch Changes

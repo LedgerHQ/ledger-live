@@ -1,5 +1,39 @@
 # live-mobile
 
+## 3.68.0-nightly.5
+
+### Minor Changes
+
+- [#9367](https://github.com/LedgerHQ/ledger-live/pull/9367) [`e33bc89`](https://github.com/LedgerHQ/ledger-live/commit/e33bc895f33d03cede6ba363b54df78351e47d3a) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Remove gesture handler for swipe back in LLM swap
+
+- [#9345](https://github.com/LedgerHQ/ledger-live/pull/9345) [`ede6db0`](https://github.com/LedgerHQ/ledger-live/commit/ede6db0b94193cc9072aeb87e90f4098f0434af0) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Add thai language support
+
+- [#9355](https://github.com/LedgerHQ/ledger-live/pull/9355) [`495be72`](https://github.com/LedgerHQ/ledger-live/commit/495be729c036b4c03ccb4f7c415af81c5c80d695) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix NFTs spam filtering in Transaction History
+
+- [#9402](https://github.com/LedgerHQ/ledger-live/pull/9402) [`bdfa413`](https://github.com/LedgerHQ/ledger-live/commit/bdfa4139fcbceabfd05a57e69b05e9ccf10efbe1) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update Staging NFT Metadata service url + Rename env variable
+
+### Patch Changes
+
+- Updated dependencies [[`ede6db0`](https://github.com/LedgerHQ/ledger-live/commit/ede6db0b94193cc9072aeb87e90f4098f0434af0), [`495be72`](https://github.com/LedgerHQ/ledger-live/commit/495be729c036b4c03ccb4f7c415af81c5c80d695), [`bdfa413`](https://github.com/LedgerHQ/ledger-live/commit/bdfa4139fcbceabfd05a57e69b05e9ccf10efbe1)]:
+  - @ledgerhq/types-live@6.61.0-nightly.0
+  - @ledgerhq/live-common@34.24.0-nightly.3
+  - @ledgerhq/live-nft-react@0.6.0-nightly.1
+  - @ledgerhq/coin-evm@2.12.0-nightly.1
+  - @ledgerhq/live-nft@0.6.0-nightly.1
+  - @ledgerhq/live-env@2.6.0-nightly.1
+  - @ledgerhq/coin-framework@2.1.1-nightly.1
+  - @ledgerhq/coin-cosmos@0.8.2-nightly.1
+  - @ledgerhq/coin-filecoin@1.5.6-nightly.1
+  - @ledgerhq/coin-multiversx@0.2.0-nightly.1
+  - @ledgerhq/coin-stacks@0.6.1-nightly.1
+  - @ledgerhq/domain-service@1.2.20-nightly.0
+  - @ledgerhq/live-countervalues@0.4.2-nightly.1
+  - @ledgerhq/live-countervalues-react@0.2.24-nightly.1
+  - @ledgerhq/live-wallet@0.9.6-nightly.1
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.3.2-nightly.1
+  - @ledgerhq/ledger-key-ring-protocol@0.5.4-nightly.1
+  - @ledgerhq/live-network@2.0.5-nightly.1
+
 ## 3.68.0-nightly.4
 
 ### Minor Changes
