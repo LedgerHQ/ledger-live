@@ -8,7 +8,6 @@ import { LockedDeviceError, PeerRemovedPairing } from "@ledgerhq/errors";
 import { BleDevicePeerRemoved } from "~/components/BleDevicePairingFlow/BleDevicePairingContent/BleDevicePeerRemoved";
 import { BleDeviceLocked } from "~/components/BleDevicePairingFlow/BleDevicePairingContent/BleDeviceLocked";
 import { Flex } from "@ledgerhq/native-ui";
-import UnlockDeviceDrawer from "~/components/UnlockDeviceDrawer";
 
 export const DmkBleDevicePairing = ({
   device,
