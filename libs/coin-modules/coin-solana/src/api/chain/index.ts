@@ -247,7 +247,7 @@ export function getChainAPI(
     },
 
     findAssocTokenAccAddress: (owner: string, mint: string) => {
-      return getAssociatedTokenAddress(new PublicKey(mint), new PublicKey(owner))
+      return getAssociatedTokenAddress(new PublicKey(mint), new PublicKey(owner), true)
         .then(r => r.toBase58())
         .catch(remapErrors);
     },
