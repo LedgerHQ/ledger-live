@@ -478,7 +478,7 @@
       "description" : "Adres hesaplamasında bir hata oluştu. Lütfen tekrar deneyin. Sorun devam ederse, lütfen aşağıdaki butonu kullanarak loglarınızı kaydedin ve Ledger Destek'e gönderin."
     },
     "MultiversXDecimalsLimitReached" : {
-      "title" : "Maksimum ondalık basamağı sınırına ulaşıldı",
+      "title" : "Maksimum ondalık basamak sınırına ulaşıldı",
       "description" : "Lütfen belirtilen tutarın 18 ondalık basamağının olduğundan emin olun."
     },
     "MultiversXMinDelegatedAmountError" : {
@@ -1053,6 +1053,9 @@
     },
     "AppManifestNotFoundError" : {
       "title" : "Takas Live Uygulaması yüklenemedi"
+    },
+    "InvalidMemoMina" : {
+      "title" : "Memo metni 32 karakterden uzun olamaz"
     }
   },
   "crash" : {
@@ -4665,7 +4668,8 @@
       "tr" : "Türkçe",
       "ja" : "Japonca",
       "ko" : "Korece",
-      "pt" : "Portekizce (Br)"
+      "pt" : "Portekizce (Br)",
+      "th" : "ภาษาไทย"
     }
   },
   "deviceLocalization" : {
@@ -4689,7 +4693,8 @@
       "german" : "Almanca",
       "brazilian" : "Portekizce (Br)",
       "russian" : "Rusça",
-      "turkish" : "Türkçe"
+      "turkish" : "Türkçe",
+      "thai" : "ภาษาไทย"
     }
   },
   "FirmwareUpdateCheckId" : {
@@ -6720,6 +6725,7 @@
         "hide" : "{{count}} koleksiyonu gizle",
         "hiddenCollections" : "Gizli koleksiyonlar",
         "hide_plural" : "{{count}} koleksiyonu gizle",
+        "empty" : "No Hidden collections to show",
         "alertHide" : "1 koleksiyon gizlendi. Dilediğiniz zaman galeri filtresinden tekrar görünür yapabilirsiniz.",
         "alertHide_plural" : "{{count}} koleksiyon gizlendi. Dilediğiniz zaman galeri filtresinden tekrar görünür yapabilirsiniz."
       },
