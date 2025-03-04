@@ -23,10 +23,6 @@ jobs:
           token: ${{ steps.generate-token.outputs.token }}
       - name: Setup git user
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
-      - name: create branch
-        run: |
-          git checkout -b ${{ env.RELEASE_BRANCH }}
-          git push -u origin ${{ env.RELEASE_BRANCH }}
       - name: Create dummy file 3
         run: |
           echo "This is a third dummy file" > dummy3.txt
