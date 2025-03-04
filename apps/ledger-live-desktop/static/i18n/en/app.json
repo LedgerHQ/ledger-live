@@ -1867,7 +1867,8 @@
       "palletMethod": "Method",
       "transferAmount": "Transfer Amount",
       "validatorsCount": "Validators ({{number}})",
-      "version": "Version"
+      "version": "Version",
+      "accountCreationFee": "Account Creation Fee"
     }
   },
   "operationList": {
@@ -5467,6 +5468,11 @@
     "solana": {
       "memo": "Tag / Memo",
       "memoPlaceholder": "Optional"
+    },
+    "mina": {
+      "memoPlaceholder": "Optional",
+      "memo": "Memo",
+      "memoWarningText": "The value of memo can be a string shorter than or equal to 32 characters"
     }
   },
   "errors": {
@@ -6490,6 +6496,15 @@
         "swap": "Swap",
         "deposit": "Deposit"
       }
+    }, 
+    "InvalidMemoMina": {
+      "title": "Memo text cannot be longer than 32 characters"
+    },
+    "AccountCreationFeeWarning": {
+      "title": "This transaction will incur an account creation fee of {{fee}}"
+    },
+    "AmountTooSmall": {
+      "title": "Minimum required amount for this transaction is {{amount}}"
     }
   },
   "cryptoOrg": {

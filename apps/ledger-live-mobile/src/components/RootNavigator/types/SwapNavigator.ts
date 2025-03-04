@@ -27,6 +27,7 @@ import {
   SolanaAccount,
   Transaction as SolanaTransaction,
 } from "@ledgerhq/live-common/families/solana/types";
+import type { Transaction as MinaTransaction } from "@ledgerhq/live-common/families/mina/types";
 import type { Transaction as StacksTransaction } from "@ledgerhq/live-common/families/stacks/types";
 import type { Transaction as StellarTransaction } from "@ledgerhq/live-common/families/stellar/types";
 import type { Transaction as TonTransaction } from "@ledgerhq/live-common/families/ton/types";
@@ -268,6 +269,13 @@ export type SwapNavigatorParamList = {
     account: Account;
     parentId?: string;
     transaction: ICPTransaction;
+    currentNavigation: ScreenName.SignTransactionSummary | ScreenName.SignTransactionSummary;
+  };
+  [ScreenName.MinaEditMemo]: {
+    accountId: string;
+    account: Account;
+    parentId?: string;
+    transaction: MinaTransaction;
     currentNavigation: ScreenName.SignTransactionSummary | ScreenName.SignTransactionSummary;
   };
 
