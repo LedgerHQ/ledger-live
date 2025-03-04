@@ -106,7 +106,8 @@ export class delegateModal extends Modal {
 
   @step("Input provider is $0")
   async inputProvider(provider: string) {
-    await this.inputSearchField.fill(provider);
+    const providerTicker = provider.split(" - ")[0];
+    await this.inputSearchField.fill(providerTicker);
   }
 
   @step("Get selected provider name ")

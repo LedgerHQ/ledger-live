@@ -14,6 +14,7 @@ export default function SelectPoolSearchBox({
   return (
     <Box mx={6} mt={3} mb={4}>
       <SearchInput
+        testID="delegation-search-pool-input"
         returnKeyType="search"
         maxLength={50}
         onChange={setSearchQuery}
