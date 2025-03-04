@@ -1,6 +1,6 @@
 import React from "react";
 import { Image, ImageStyle, StyleProp } from "react-native";
-import illustakingPng from "./illustaking.png";
+import illustakingPng from "./illustaking.webp";
 
 const defaultStyle = {
   width: 113,
