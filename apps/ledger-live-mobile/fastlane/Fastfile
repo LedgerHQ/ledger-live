@@ -53,6 +53,8 @@ platform :ios do
 
   before_all do
     set_version_number
+    xcodes(select_for_current_build_only: true)
+
   end
 
   # =============================== PRIVATE ===============================
