@@ -1867,7 +1867,8 @@
       "palletMethod" : "Yöntem",
       "transferAmount" : "Transfer Tutarı",
       "validatorsCount" : "Doğrulayıcılar ({{number}})",
-      "version" : "Sürüm"
+      "version" : "Sürüm",
+      "accountCreationFee" : "Hesap Oluşturma Ücreti"
     }
   },
   "operationList" : {
@@ -5443,6 +5444,11 @@
     "solana" : {
       "memo" : "Etiket / Memo",
       "memoPlaceholder" : "Opsiyonel"
+    },
+    "mina" : {
+      "memoPlaceholder" : "Tercihe bağlı",
+      "memo" : "Memo",
+      "memoWarningText" : "Memo değeri, en fazla 32 karakterlik bir dize olabilir"
     }
   },
   "errors" : {
@@ -5727,7 +5733,7 @@
       "description" : "Adres hesaplamasında bir hata oluştu; tekrar deneyin veya Ledger Destek ile iletişime geçin"
     },
     "MultiversXDecimalsLimitReached" : {
-      "title" : "Maksimum ondalık basamağı sınırına ulaşıldı",
+      "title" : "Maksimum ondalık basamak sınırına ulaşıldı",
       "description" : "Lütfen belirtilen tutarın 18 ondalık basamağının olduğundan emin olun."
     },
     "MultiversXMinDelegatedAmountError" : {
@@ -6466,6 +6472,15 @@
         "swap" : "takas edin",
         "deposit" : "yatırın"
       }
+    },
+    "InvalidMemoMina" : {
+      "title" : "Memo metni 32 karakterden uzun olamaz"
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "Bu işlem için {{fee}} tutarında bir hesap oluşturma ücreti alınacaktır"
+    },
+    "AmountTooSmall" : {
+      "title" : "Bu işlem için gerekli minimum tutar: {{amount}}"
     }
   },
   "cryptoOrg" : {
@@ -6669,6 +6684,24 @@
       "cta" : "Ledger Sync'i Aç",
       "alreadySync" : "Zaten açtım",
       "learnMore" : "Ledger Sync nasıl çalışır?"
+    },
+    "entryPoints" : {
+      "accounts" : {
+        "title" : "Ledger Sync'i etkinleştirin"
+      },
+      "manager" : {
+        "title" : "Ledger Sync",
+        "description" : "Yeni bir telefona geçerken bile hesaplarınızı otomatik olarak senkronize edin.",
+        "cta" : "Ledger Sync'i Aç"
+      },
+      "settings" : {
+        "title" : "Ledger Sync",
+        "description" : "Yeni bir telefona geçerken bile hesaplarınızı otomatik olarak senkronize edin.",
+        "cta" : "Ledger Sync'i Aç"
+      },
+      "onboarding" : {
+        "title" : "Başka bir Ledger Live uygulamasıyla senkronize et"
+      }
     },
     "manage" : {
       "cta" : "Yönet",
