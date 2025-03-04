@@ -36,7 +36,7 @@ const casperIndexerWrapper = async <T>(path: string) => {
   try {
     const rawResponse = await network<IndexerResponseRoot<T>>({
       method: "GET",
-      url: `${url}`,
+      url,
     });
     log("http", url);
 
@@ -153,20 +153,20 @@ export const fetchNetworkStatus = async (): Promise<NNetworkStatusResponse> => {
 
 export const fetchTxs = async (addr: string): Promise<ITxnHistoryData[]> => {
   let page = 1;
-  const res: ITxnHistoryData[] = [];
+  let res: ITxnHistoryData[] = [];
   const limit = 100;
 
   let response = await casperIndexerWrapper<ITxnHistoryData>(
     `/accounts/${addr}/ledgerlive-deploys?limit=${limit}&page=${page}`,
   );
-  res.push(...response.data);
+  res = res.concat(response.data);
 
   while (response.pageCount > page) {
     page++;
     response = await casperIndexerWrapper<ITxnHistoryData>(
       `/accounts/${addr}/ledgerlive-deploys?limit=${limit}&page=${page}`,
     );
-    res.push(...response.data);
+    res = res.concat(response.data);
   }
   return res;
 };
