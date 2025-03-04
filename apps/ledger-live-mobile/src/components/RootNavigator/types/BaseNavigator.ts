@@ -17,6 +17,7 @@ import { AssetSelectionNavigatorParamsList } from "LLM/features/AssetSelection/t
 import { AssetsNavigatorParamsList } from "LLM/features/Assets/types";
 import { DeviceSelectionNavigatorParamsList } from "LLM/features/DeviceSelection/types";
 import type { Web3HubStackParamList } from "LLM/features/Web3Hub/types";
+// eslint-disable-next-line no-restricted-imports
 import type { PropertyPath } from "lodash";
 import { NavigatorName, ScreenName } from "~/const";
 import type { FirmwareUpdateProps } from "~/screens/FirmwareUpdate";
