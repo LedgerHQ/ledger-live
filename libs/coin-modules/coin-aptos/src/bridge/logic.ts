@@ -4,12 +4,14 @@ import {
   InputEntryFunctionData,
   MoveResource,
   WriteSetChange,
+  WriteSetChangeWriteResource,
 } from "@aptos-labs/ts-sdk";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import {
+  APTOS_ASSET_ID,
   APTOS_COIN_CHANGE,
   BATCH_TRANSFER_TYPES,
   DELEGATION_POOL_TYPES,
@@ -17,7 +19,14 @@ import {
   TRANSFER_TYPES,
   WRITE_RESOURCE,
 } from "../constants";
-import type { AptosMoveResource, AptosTransaction, TransactionOptions } from "../types";
+import type {
+  AptosFungibleStoreResourceData,
+  AptosMoveResource,
+  AptosTransaction,
+  TransactionOptions,
+} from "../types";
+import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
+import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets";
 
 export const DEFAULT_GAS = new BigNumber(200);
 export const DEFAULT_GAS_PRICE = new BigNumber(100);
@@ -88,9 +97,11 @@ export const txsToOps = (
   info: { address: string },
   id: string,
   txs: (AptosTransaction | null)[],
-): Operation[] => {
+): [Operation[], Operation[]] => {
+  // TODO: consider treating the APT ans the coin and don't make spatial return list for it
   const { address } = info;
   const ops: Operation[] = [];
+  const opsTokens: Operation[] = [];
 
   txs.forEach(tx => {
     if (tx !== null) {
@@ -107,7 +118,7 @@ export const txsToOps = (
         return; // skip transaction without functions in payload
       }
 
-      const { amount_in, amount_out } = getAptosAmounts(tx, address);
+      const { coinID, amount_in, amount_out } = getCoinAmounts(tx, address); // to do get amount info for tokens
       op.value = calculateAmount(tx.sender, address, op.fee, amount_in, amount_out);
       op.type = compareAddress(tx.sender, address) ? DIRECTION.OUT : DIRECTION.IN;
       op.senders.push(tx.sender);
@@ -121,11 +132,26 @@ export const txsToOps = (
 
       op.hasFailed = !tx.success;
       op.id = encodeOperationId(id, tx.hash, op.type);
-      if (op.type !== DIRECTION.UNKNOWN) ops.push(op);
+
+      if (op.type !== DIRECTION.UNKNOWN) {
+        if (coinID === null) {
+          return;
+        } else if (coinID == APTOS_ASSET_ID) {
+          ops.push(op); // if not aptos then should be tokens
+        } else {
+          const token = findTokenByAddressInCurrency(coinID.toLowerCase(), "aptos");
+          console.log("Rabl 5: token", token);
+          if (token != undefined) {
+            op.accountId = encodeTokenAccountId(id, token);
+            op.id = encodeOperationId(op.accountId, tx.hash, op.type); // TODO: duplication line 134
+            opsTokens.push(op);
+          }
+        }
+      }
     }
   });
 
-  return ops;
+  return [ops, opsTokens];
 };
 
 export function compareAddress(addressA: string, addressB: string) {
@@ -179,74 +205,169 @@ export function processRecipients(
   }
 }
 
-function checkWriteSets(tx: AptosTransaction, event: Event, event_name: string): boolean {
-  return tx.changes.some(change => {
-    return isChangeOfAptos(change, event, event_name);
-  });
-}
-
-export function isChangeOfAptos(
-  writeSetChange: WriteSetChange,
+function getEventCoinAddress(
+  change: WriteSetChangeWriteResource,
   event: Event,
   event_name: string,
-): boolean {
-  // to validate the event is related to Aptos Tokens we need to find change of type "write_resource"
-  // with the same guid as event
-  if (writeSetChange.type !== WRITE_RESOURCE) {
-    return false;
-  }
+): string | null {
+  const change_data = change.data;
 
-  if (!("data" in writeSetChange)) {
-    return false;
-  }
+  const mr = change_data as MoveResource<AptosMoveResource>; // -> this is data that we want to parse
 
-  const change_data = writeSetChange.data;
-
-  if (!("type" in change_data)) {
-    return false;
-  }
-
-  const mr = change_data as MoveResource<AptosMoveResource>;
-
-  if (mr.type !== APTOS_COIN_CHANGE) {
-    return false;
+  if (!(event_name in mr.data)) {
+    return null;
   }
 
   const change_event_data = mr.data[event_name];
+  if (
+    change_event_data.guid.id.addr != event.guid.account_address ||
+    change_event_data.guid.id.creation_num != event.guid.creation_number
+  ) {
+    return null;
+  }
 
-  return (
-    change_event_data.guid.id.addr === event.guid.account_address &&
-    change_event_data.guid.id.creation_num === event.guid.creation_number
-  );
+  //"0x1::coin::CoinStore<0xf22bede237a07e121b56d91a491eb7bcdfd1f5907926a9e58338f964a01b17fa::asset::USDT>"
+
+  const address = extractAddress(mr.type);
+
+  return address;
 }
 
-export function getAptosAmounts(
+function getEventFAAddress(
+  change: WriteSetChangeWriteResource,
+  event: Event,
+  _event_name: string,
+): string | null {
+  const change_data = change.data;
+
+  if (change_data.type != "0x1::fungible_asset::FungibleStore") {
+    return null;
+  }
+
+  const mr = change_data as MoveResource<AptosFungibleStoreResourceData>;
+
+  if (change.address != event.data.store) {
+    return null;
+  }
+
+  return mr.data.metadata.inner;
+}
+
+function getResourceAddress(
   tx: AptosTransaction,
-  address: string,
-): { amount_in: BigNumber; amount_out: BigNumber } {
-  let amount_in = new BigNumber(0);
-  let amount_out = new BigNumber(0);
-  // collect all events related to the address and calculate the overall amounts
-  tx.events.forEach(event => {
-    if (compareAddress(event.guid.account_address, address)) {
-      switch (event.type) {
-        case "0x1::coin::WithdrawEvent":
-          if (checkWriteSets(tx, event, "withdraw_events")) {
-            amount_out = amount_out.plus(event.data.amount);
-          }
-          break;
-        case "0x1::coin::DepositEvent":
-          if (checkWriteSets(tx, event, "deposit_events")) {
-            amount_in = amount_in.plus(event.data.amount);
-          }
-          break;
+  event: Event,
+  event_name: string,
+  getAddressProcessor: (
+    change: WriteSetChangeWriteResource,
+    event: Event,
+    event_name: string,
+  ) => string | null,
+): string | null {
+  for (const change of tx.changes) {
+    if (isWriteSetChangeWriteResource(change)) {
+      const address = getAddressProcessor(change, event, event_name);
+      if (address !== null) {
+        return address;
       }
     }
-  });
-  return { amount_in, amount_out };
+  }
+  return null;
 }
 
-export function calculateAmount(
+// export function isChangeOfAptos(
+//   writeSetChange: WriteSetChange,
+//   event: Event,
+//   event_name: string,
+// ): boolean {
+//   // to validate the event is related to Aptos Tokens we need to find change of type "write_resource"
+//   // with the same guid as event
+//   if (writeSetChange.type !== WRITE_RESOURCE) {
+//     return false;
+//   }
+
+//   if (!("data" in writeSetChange)) {
+//     return false;
+//   }
+
+//   const change_data = writeSetChange.data;
+
+//   if (!("type" in change_data)) {
+//     return false;
+//   }
+
+//   const mr = change_data as MoveResource<AptosMoveResource>;
+// }
+
+function isWriteSetChangeWriteResource(
+  change: WriteSetChange,
+): change is WriteSetChangeWriteResource {
+  return (change as WriteSetChangeWriteResource).data !== undefined;
+}
+
+export function getCoinAmounts( // TODO: nmae should be
+  tx: AptosTransaction,
+  address: string,
+): { coinID: string | null; amount_in: BigNumber; amount_out: BigNumber } {
+  let coinID: string | null = null;
+  let amount_in = new BigNumber(0);
+  let amount_out = new BigNumber(0);
+
+  //TODO: check if it possible to have events for the different coins/FA in one transaction
+
+  // return tx.changes.some(change => {
+  //   return isChangeOfAptos(change, event, event_name);
+  // });
+
+  // collect all events related to the address and calculate the overall amounts
+  tx.events.forEach(event => {
+    switch (event.type) {
+      // thoughts:
+      // there can be different events in the transaction,
+      // we need to define te events that are releated to the specific coin.
+      // this means that for each event we need to find the tokenID
+      // and sum up the amount that are related to the specific tokens
+      // after thea we will be able to filter the transactions
+
+      case "0x1::coin::WithdrawEvent":
+        if (compareAddress(event.guid.account_address, address)) {
+          coinID = getResourceAddress(tx, event, "withdraw_events", getEventCoinAddress);
+          amount_out = amount_out.plus(event.data.amount);
+          // COIN
+          // TODO: make change of coins
+        }
+
+        break;
+      case "0x1::coin::DepositEvent":
+        if (compareAddress(event.guid.account_address, address)) {
+          coinID = getResourceAddress(tx, event, "deposit_events", getEventCoinAddress);
+          amount_in = amount_in.plus(event.data.amount);
+          // COIN
+          // TODO: make change of coins
+          // TODO: check if we can transfer FA with coiin events
+        }
+        break;
+
+      // FA
+      case "0x1::fungible_asset::Deposit": // should support both coin and FA trasfers
+        console.log("Rabl 6: 0x1::fungible_asset::Deposit: ", event);
+        coinID = getResourceAddress(tx, event, "deposit_events", getEventFAAddress);
+        console.log("Rabl 6: 0x1::fungible_asset::Deposit: coin id : ", coinID);
+        amount_in = amount_in.plus(event.data.amount);
+
+        break;
+      case "0x1::fungible_asset::Withdraw":
+        console.log("Rabl 7: 0x1::fungible_asset::WithdrawEvent: ", event);
+        coinID = getResourceAddress(tx, event, "deposit_events", getEventFAAddress);
+        amount_in = amount_in.plus(event.data.amount);
+        break;
+      // TODO: parse events for FA
+      // TODO: make change of FA
+    }
+  });
+  return { coinID, amount_in, amount_out }; // TOOD: manage situation when there are several coinID from the events parsing
+}
+
+export function calculateAmount( // NO changes
   sender: string,
   address: string,
   fee: BigNumber,
@@ -262,4 +383,14 @@ export function calculateAmount(
   // to show positive amount on the send transaction (ex: in "cancel" tx, when amount will be returned to our account)
   // we need to make it negative
   return is_sender ? amount_out.minus(amount_in) : amount_in.minus(amount_out);
+}
+
+/**
+ * Extracts the address from a string like "0x1::coin::CoinStore<address::module::type>"
+ * @param {string} str - The input string containing the address.
+ * @returns {string | null} - The extracted address or null if not found.
+ */
+export function extractAddress(str: string): string | null {
+  const match = str.match(/<([^>]+)>/);
+  return match ? match[1] : null;
 }
