@@ -439,8 +439,8 @@
       "cta" : "Zu My Ledger wechseln"
     },
     "wrongDevice" : {
-      "title" : "Ledger Nano S™ ist nicht kompatibel mit THORChain",
-      "description" : "Die Ledger Nano S ist nicht mit THORChain kompatibel. Du kannst Ledger Nano S Plus, Ledger Nano X, Ledger Stax oder Ledger Flex verwenden, um blockchainübergreifende Swaps auf THORChain über Ledger Live durchzuführen.",
+      "title" : "Ledger Nano S™ ist nicht mit {{provider}} kompatibel",
+      "description" : "Ledger Nano S ist nicht mit {{provider}} kompatibel. Du kannst Ledger Nano S Plus, Ledger Nano X, Ledger Stax oder Ledger Flex verwenden, um blockchainübergreifende Swaps bei {{provider}} über Ledger Live durchzuführen.",
       "cta" : "Kompatible Geräte entdecken",
       "changeProvider" : "Bei anderem Anbieter swappen"
     },
@@ -4155,6 +4155,11 @@
       "debugAppsDesc" : "Anzeigen und Öffnen von Debug-getaggten Plattform-Apps erlauben.",
       "debugReactQuery" : "Debuggen von ReactQuery erlauben",
       "debugReactQueryDesc" : "Zeige die Konsole zum Debuggen von ReactQuery an und erlaube es, sie zu öffnen.",
+      "nfts" : {
+        "title" : "Ausgeblendete NFT-Sammlungen",
+        "description" : "Liste der ausgeblendeten NFT-Sammlungen zurücksetzen",
+        "reset" : "Zurücksetzen"
+      },
       "exchangeDeveloperMode" : {
         "title" : "Entwicklermodus für Börsen",
         "desc" : "Info des Börsenanbieters hinzufügen",
@@ -5723,7 +5728,7 @@
     },
     "MultiversXDecimalsLimitReached" : {
       "title" : "Maximale Dezimalstellengrenze erreicht",
-      "description" : "Bitte stellen Sie sicher, dass der angegebene Betrag 18 Dezimalstellen hat."
+      "description" : "Bitte stelle sicher, dass der angegebene Betrag 18 Dezimalstellen hat."
     },
     "MultiversXMinDelegatedAmountError" : {
       "title" : "Der delegierte Betrag muss mindestens {{formattedAmount}} betragen"
@@ -6918,6 +6923,14 @@
         "optOut" : {
           "title" : "Zeit für ein Upgrade",
           "description" : "Bald gibt es keine Updates mehr für die Ledger Nano S. Jetzt auf eines unserer aktuellen Geräte aufrüsten – mit <0>{{discount}} % Rabatt</0>.",
+          "cta" : "Neue Wallet zulegen",
+          "linkText" : "Weitere Informationen"
+        }
+      },
+      "portfolio" : {
+        "optOut" : {
+          "title" : "Zeit für ein Upgrade",
+          "description" : "Jetzt auf eines unserer aktuellen Geräte aufrüsten: <0>{{discount}} % Rabatt</0> für mehr Sicherheit und ein nahtloses Erlebnis.",
           "cta" : "Neue Wallet zulegen",
           "linkText" : "Weitere Informationen"
         }

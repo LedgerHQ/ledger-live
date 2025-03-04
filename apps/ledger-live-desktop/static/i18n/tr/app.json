@@ -439,8 +439,8 @@
       "cta" : "My Ledger'a Git"
     },
     "wrongDevice" : {
-      "title" : "Ledger Nano S™, THORChain ile uyumlu değildir",
-      "description" : "Ledger Nano S, THORChain ile uyumlu değildir. Ledger Live üzerinden THORChain'de zincirler arası takas işlemleri yapmak için Ledger Nano S Plus, Ledger Nano X, Ledger Stax veya Ledger Flex cihazlarını kullanabilirsiniz",
+      "title" : "Ledger Nano S™, {{provider}} ile uyumlu değildir",
+      "description" : "Ledger Nano S, {{provider}} ile uyumlu değildir. Ledger Live üzerinden {{provider}} aracılığıyla zincirler arası takas işlemleri yapmak için Ledger Nano S Plus, Ledger Nano X, Ledger Stax veya Ledger Flex cihazlarını kullanabilirsiniz",
       "cta" : "Uyumlu cihazları keşfedin",
       "changeProvider" : "Başka bir sağlayıcıyla takas edin"
     },
@@ -4155,6 +4155,11 @@
       "debugAppsDesc" : "Hata ayıklama etiketli platform uygulamalarını görüntüleme ve açmaya izin verin.",
       "debugReactQuery" : "ReactQuery hata ayıklamasına izin ver",
       "debugReactQueryDesc" : "ReactQuery hata ayıklaması konsolunu görüntüleme ve açmaya izin ver",
+      "nfts" : {
+        "title" : "Gizli NFT Koleksiyonları",
+        "description" : "Gizli koleksiyonlar listesini sıfırlayın",
+        "reset" : "Sıfırla"
+      },
       "exchangeDeveloperMode" : {
         "title" : "Exchange Geliştirici Modu",
         "desc" : "Exchange sağlayıcısı bilgilerini ekleyin",
@@ -5722,7 +5727,7 @@
       "description" : "Adres hesaplamasında bir hata oluştu; tekrar deneyin veya Ledger Destek ile iletişime geçin"
     },
     "MultiversXDecimalsLimitReached" : {
-      "title" : "Maksimum ondalık basamağı sınırına ulaşıldı",
+      "title" : "Maksimum ondalık basamak sınırına ulaşıldı",
       "description" : "Lütfen belirtilen tutarın 18 ondalık basamağının olduğundan emin olun."
     },
     "MultiversXMinDelegatedAmountError" : {
@@ -6919,6 +6924,14 @@
           "title" : "Model yükseltme zamanı",
           "description" : "Ledger Nano S model yükseltme teklifleri yakında sona eriyor. En yeni cihazlarımıza <0>%{{discount}} indirimle</0> model yükseltin.",
           "cta" : "Cüzdanımın modelini yükselt",
+          "linkText" : "Daha fazla bilgi"
+        }
+      },
+      "portfolio" : {
+        "optOut" : {
+          "title" : "Model yükseltme zamanı",
+          "description" : "Yüksek güvenlik ve sorunsuz bir deneyim için en yeni cihazlarımıza <0>%{{discount}} indirimle</0> model yükseltin.",
+          "cta" : "Cüzdan modelini yükselt",
           "linkText" : "Daha fazla bilgi"
         }
       },

@@ -439,8 +439,8 @@
       "cta" : "Ir para Minha Ledger"
     },
     "wrongDevice" : {
-      "title" : "A Ledger Nano S™ não é compatível com a THORChain",
-      "description" : "A Ledger Nano S™ não é compatível com a THORChain Você pode usar a Ledger Nano S Plus, a Ledger Nano X, a Ledger Stax ou a Ledger Flex e realizar trocas cross-chain pela THORChain através do Ledger Live",
+      "title" : "A Ledger Nano S™ não é compatível com {{provider}}",
+      "description" : "A Ledger Nano S não é compatível com {{provider}}. Você pode usar a Ledger Nano S Plus, a Ledger Nano X, Ledger Stax ou a Ledger Flex para realizar trocas cross-chain via {{provider}} através do Ledger Live",
       "cta" : "Conheça os dispositivos compatíveis",
       "changeProvider" : "Trocar com outro provedor"
     },
@@ -4155,6 +4155,11 @@
       "debugAppsDesc" : "Exibe e permite abrir aplicativos da plataforma marcados como 'debug'.",
       "debugReactQuery" : "Permitir debug do ReactQuery",
       "debugReactQueryDesc" : "Exibir e permitir a abertura do console de debug do ReactQuery.",
+      "nfts" : {
+        "title" : "Coleções de NFTs ocultas",
+        "description" : "Redefinir a lista de coleções ocultas",
+        "reset" : "Redefinir"
+      },
       "exchangeDeveloperMode" : {
         "title" : "Exchange em Modo Desenvolvedor",
         "desc" : "Informe o provedor de Exchange",
@@ -5726,13 +5731,13 @@
       "description" : "Certifique-se de que a quantia fornecida tenha 18 decimais."
     },
     "MultiversXMinDelegatedAmountError" : {
-      "title" : "Quantia delegada deve ser de pelo menos {{formattedAmount}}"
+      "title" : "A quantia mínima para delegar é {{formattedAmount}}"
     },
     "MultiversXMinUndelegatedAmountError" : {
-      "title" : "Quantia desdelegada deve ser de pelo menos {{formattedAmount}}"
+      "title" : "A quantia mínima para desdelegar é {{formattedAmount}}"
     },
     "MultiversXDelegationBelowMinimumError" : {
-      "title" : "Delegação restante não pode ser menos que {{formattedAmount}}"
+      "title" : "O restante na delegação não pode ser menor que {{formattedAmount}}"
     },
     "NotEnoughEGLDForFees" : {
       "title" : "EGLD insuficientes para pagar as taxas de transação",
@@ -6918,6 +6923,14 @@
         "optOut" : {
           "title" : "É hora de subir de nível",
           "description" : "As atualizações da Ledger Nano S serão encerradas em breve. Mude para nossos dispositivos mais recentes com <0>{{discount}}% de desconto</0>.",
+          "cta" : "Avançar de carteira",
+          "linkText" : "Saiba mais"
+        }
+      },
+      "portfolio" : {
+        "optOut" : {
+          "title" : "É hora de subir de nível",
+          "description" : "Mude para os nossos dispositivos mais recentes com <0>{{discount}}% de desconto</0> e tenha uma segurança aprimorada e uma experiência perfeita.",
           "cta" : "Avançar de carteira",
           "linkText" : "Saiba mais"
         }

@@ -1119,6 +1119,11 @@
       "fast" : "سريع",
       "custom" : "مُخصّص",
       "blockCount" : "{{blockCount}} كتل"
+    },
+    "estimatedTime" : {
+      "slow" : "≈ 2-3 min",
+      "medium" : "≈ 30 sec",
+      "fast" : "≈ 15 sec"
     }
   },
   "signout" : {
@@ -6992,6 +6997,16 @@
   },
   "walletSync" : {
     "title" : "مزامنة Ledger",
+    "entryPoints" : {
+      "simpleCta" : {
+        "title" : "تنشيط مزامنة Ledger"
+      },
+      "card" : {
+        "title" : "مزامنة Ledger",
+        "description" : "قم بمزامنة حساباتك تلقائياً، حتى عند التبديل إلى هاتف جديد.",
+        "cta" : "تشغيل مزامنة Ledger"
+      }
+    },
     "activation" : {
       "screen" : {
         "title" : "تشغيل مزامنة Ledger لهذا الهاتف؟",
