@@ -143,6 +143,10 @@ export class DeviceManagementKitTransport extends Transport {
 
   close: () => Promise<void> = () => Promise.resolve();
 
+  disconnect = () => {
+    this.dmk.disconnect({ sessionId: this.sessionId });
+  };
+
   async exchange(apdu: Buffer): Promise<Buffer> {
     tracer.trace(`[exchange] => ${apdu.toString("hex")}`);
 
