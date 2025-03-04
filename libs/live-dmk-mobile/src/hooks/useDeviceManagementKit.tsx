@@ -10,7 +10,7 @@ import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 let instance: DeviceManagementKit | null = null;
 
-export const DeviceManagementKitInstance = (): DeviceManagementKit => {
+export const getDeviceManagementKit = (): DeviceManagementKit => {
   if (!instance) {
     instance = new DeviceManagementKitBuilder()
       .addTransport(RNBleTransportFactory)
@@ -32,7 +32,7 @@ export const DeviceManagementKitProvider: React.FC<Props> = ({ children }) => {
 
   const deviceManagementKit = useMemo(() => {
     if (!ldmkTransportFlag) return null;
-    return DeviceManagementKitInstance();
+    return getDeviceManagementKit();
   }, [ldmkTransportFlag]);
 
   if (!ldmkTransportFlag || deviceManagementKit === null) {
