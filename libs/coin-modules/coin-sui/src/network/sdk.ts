@@ -1,4 +1,9 @@
-import { getFullnodeUrl, SuiClient } from "@mysten/sui/client";
+import {
+  getFullnodeUrl,
+  PaginatedTransactionResponse,
+  QueryTransactionBlocksParams,
+  SuiClient,
+} from "@mysten/sui/client";
 // import { Transaction, TransactionData } from "@mysten/sui/transactions";
 import { TransactionBlockData, SuiTransactionBlockResponse } from "@mysten/sui/client";
 import { Transaction } from "@mysten/sui/transactions";
@@ -173,7 +178,6 @@ function transactionToOperation(
   address: string,
   transaction: SuiTransactionBlockResponse,
 ): Operation {
-  console.log("transactionToOperation", transaction, address);
   const type = getOperationType(address, transaction.transaction?.data);
   const hash = transaction.digest;
   return {
@@ -200,37 +204,13 @@ function transactionToOperation(
 export const getOperations = async (
   accountId: string,
   addr: string,
-  startAt: number,
+  inCursor?: string | null | undefined,
+  outCursor?: string | null | undefined,
 ): Promise<Operation[]> =>
   withApi(async api => {
-    if (startAt) {
-      //
-    }
-
-    const senderTx = await api.queryTransactionBlocks({
-      filter: { FromAddress: addr },
-      options: {
-        showInput: true,
-        showEvents: true,
-        showObjectChanges: true,
-        showBalanceChanges: true,
-        showEffects: true,
-      },
-      limit: TRANSACTIONS_REQUEST_LIMIT,
-    });
-    const recipientTx = await api.queryTransactionBlocks({
-      filter: { ToAddress: addr },
-      options: {
-        showInput: true,
-        showEvents: true,
-        showObjectChanges: true,
-        showBalanceChanges: true,
-        showEffects: true, // To get transaction status and gas fee details
-      },
-      limit: TRANSACTIONS_REQUEST_LIMIT,
-    });
-
-    const rawTransactions = [...senderTx.data, ...recipientTx.data].sort(
+    const sentOps = await loadOperation({ api, type: "OUT", addr, cursor: outCursor });
+    const receivedOps = await loadOperation({ api, type: "IN", addr, cursor: inCursor });
+    const rawTransactions = [...sentOps, ...receivedOps].sort(
       (a, b) => Number(b.timestampMs) - Number(a.timestampMs),
     );
 
@@ -270,4 +250,33 @@ export const createTransaction = (address: string) => {
   tx.setSenderIfNotSet(address);
   console.log("createTransaction tx", tx);
   return tx;
+};
+
+// load from curos point or from begining until we reach the end
+const loadOperation = async (params: {
+  api: SuiClient;
+  type: OperationType;
+  addr: string;
+  cursor?: string | null | undefined;
+}): Promise<PaginatedTransactionResponse["data"]> => {
+  const { api, addr, type, cursor } = params;
+  const filter: QueryTransactionBlocksParams["filter"] =
+    type === "IN" ? { ToAddress: addr } : { FromAddress: addr };
+  const { data, nextCursor, hasNextPage } = await api.queryTransactionBlocks({
+    filter,
+    cursor,
+    order: "ascending",
+    options: {
+      showInput: true,
+      showEffects: true, // To get transaction status and gas fee details
+    },
+    limit: TRANSACTIONS_REQUEST_LIMIT,
+  });
+
+  if (hasNextPage) {
+    const newData = await loadOperation({ api, type, addr, cursor: nextCursor });
+    return [...newData, ...data];
+  }
+
+  return data;
 };

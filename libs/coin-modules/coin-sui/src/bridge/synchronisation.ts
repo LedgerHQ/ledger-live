@@ -6,13 +6,11 @@ import {
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { getAccount, getOperations } from "../network";
 import { SuiAccount } from "../types";
+import { OperationType, type Operation } from "@ledgerhq/types-live";
 
 export const getAccountShape: GetAccountShape<SuiAccount> = async info => {
   const { address, initialAccount, currency, derivationMode } = info;
   const oldOperations = initialAccount?.operations || [];
-
-  // Needed for incremental synchronisation
-  const startAt = oldOperations.length ? (oldOperations[0].blockHeight || 0) + 1 : 0;
 
   const accountId = encodeAccountId({
     type: "js",
@@ -25,8 +23,11 @@ export const getAccountShape: GetAccountShape<SuiAccount> = async info => {
   // get the current account balance state depending your api implementation
   const { blockHeight, balance, additionalBalance, nonce } = await getAccount(address);
 
+  // Needed for incremental synchronisation
+  const startAtIn = latestHash(oldOperations, "IN");
+  const startAtOut = latestHash(oldOperations, "OUT");
   // Merge new operations with the previously synced ones
-  const newOperations = await getOperations(accountId, address, startAt);
+  const newOperations = await getOperations(accountId, address, startAtIn, startAtOut);
   const operations = mergeOps(oldOperations, newOperations);
 
   const shape = {
@@ -45,3 +46,7 @@ export const getAccountShape: GetAccountShape<SuiAccount> = async info => {
 };
 
 export const sync = makeSync({ getAccountShape });
+
+function latestHash(operations: Operation[], type: OperationType) {
+  return operations.find(el => type === el.type)?.blockHash ?? null;
+}
