@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -34,6 +34,7 @@ const PlatformCompleteExchange: React.FC<Props> = ({
   const [transaction, setTransaction] = useState<Transaction>();
   const [signedOperation, setSignedOperation] = useState<SignedOperation>();
   const [error, setError] = useState<Error>();
+  const hasPopped = useRef(false);
 
   useEffect(() => {
     if (signedOperation) {
@@ -50,7 +51,11 @@ const PlatformCompleteExchange: React.FC<Props> = ({
   }, [onResult, error]);
 
   const onClose = useCallback(() => {
-    navigation.pop();
+    // Prevent onClose being called twice
+    if (!hasPopped.current) {
+      navigation.pop();
+    }
+    hasPopped.current = true;
   }, [navigation]);
 
   const onCompleteExchange = useCallback(
