@@ -1867,7 +1867,8 @@
       "palletMethod" : "الطريقة",
       "transferAmount" : "مبلغ التحويل",
       "validatorsCount" : "({{number}}) مدقق",
-      "version" : "الإصدار"
+      "version" : "الإصدار",
+      "accountCreationFee" : "رسوم إنشاء الحساب"
     }
   },
   "operationList" : {
@@ -5443,6 +5444,11 @@
     "solana" : {
       "memo" : "علامة/ملاحظة (تسمية الوجهة)",
       "memoPlaceholder" : "اختياري"
+    },
+    "mina" : {
+      "memoPlaceholder" : "اختياري",
+      "memo" : "ملاحظة (تسمية الوجهة)",
+      "memoWarningText" : "قيمة الملاحظة يمكن أن تكون سلسلةً أقصر من أو تساوي 32 حرفاً"
     }
   },
   "errors" : {
@@ -6466,6 +6472,15 @@
         "swap" : "مبادلة",
         "deposit" : "إيداع"
       }
+    },
+    "InvalidMemoMina" : {
+      "title" : "نص علامة الملاحظة (تسمية الوجهة) لا يمكن أن يكون أطول من 32 حرفاً"
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "هذه المعاملة ستُكلّف رسوم إنشاء حساب بقيمة {{fee}}"
+    },
+    "AmountTooSmall" : {
+      "title" : "الحد الأدنى للمبلغ المطلوب لهذه المعاملة هو {{amount}}"
     }
   },
   "cryptoOrg" : {
@@ -6669,6 +6684,24 @@
       "cta" : "تشغيل مزامنة Ledger",
       "alreadySync" : "لقد قمت بتشغيلها بالفعل",
       "learnMore" : "كيف تعمل مزامنة Ledger؟"
+    },
+    "entryPoints" : {
+      "accounts" : {
+        "title" : "Activate Ledger Sync"
+      },
+      "manager" : {
+        "title" : "Ledger Sync",
+        "description" : "Sync your accounts automatically, even when switching to a new phone.",
+        "cta" : "Turn on Ledger Sync"
+      },
+      "settings" : {
+        "title" : "Ledger Sync",
+        "description" : "Sync your accounts automatically, even when switching to a new phone.",
+        "cta" : "Turn on Ledger Sync"
+      },
+      "onboarding" : {
+        "title" : "Sync with another Ledger Live app"
+      }
     },
     "manage" : {
       "cta" : "إدارة",
