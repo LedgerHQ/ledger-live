@@ -140,7 +140,6 @@ export const txsToOps = (
           ops.push(op); // if not aptos then should be tokens
         } else {
           const token = findTokenByAddressInCurrency(coinID.toLowerCase(), "aptos");
-          console.log("Rabl 5: token", token);
           if (token != undefined) {
             op.accountId = encodeTokenAccountId(id, token);
             op.id = encodeOperationId(op.accountId, tx.hash, op.type); // TODO: duplication line 134
@@ -349,14 +348,11 @@ export function getCoinAmounts( // TODO: nmae should be
 
       // FA
       case "0x1::fungible_asset::Deposit": // should support both coin and FA trasfers
-        console.log("Rabl 6: 0x1::fungible_asset::Deposit: ", event);
         coinID = getResourceAddress(tx, event, "deposit_events", getEventFAAddress);
-        console.log("Rabl 6: 0x1::fungible_asset::Deposit: coin id : ", coinID);
         amount_in = amount_in.plus(event.data.amount);
 
         break;
       case "0x1::fungible_asset::Withdraw":
-        console.log("Rabl 7: 0x1::fungible_asset::WithdrawEvent: ", event);
         coinID = getResourceAddress(tx, event, "deposit_events", getEventFAAddress);
         amount_in = amount_in.plus(event.data.amount);
         break;
