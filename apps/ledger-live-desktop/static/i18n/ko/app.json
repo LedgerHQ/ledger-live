@@ -1867,7 +1867,8 @@
       "palletMethod" : "방법",
       "transferAmount" : "이전 금액",
       "validatorsCount" : "검증인 ({{number}})",
-      "version" : "버전"
+      "version" : "버전",
+      "accountCreationFee" : "계정 생성 수수료"
     }
   },
   "operationList" : {
@@ -5443,6 +5444,11 @@
     "solana" : {
       "memo" : "태그 / 메모",
       "memoPlaceholder" : "선택 사항"
+    },
+    "mina" : {
+      "memoPlaceholder" : "선택 사항",
+      "memo" : "메모",
+      "memoWarningText" : "메모 값은 32자 이하의 문자열일 수 있습니다."
     }
   },
   "errors" : {
@@ -6466,6 +6472,15 @@
         "swap" : "스왑",
         "deposit" : "입금"
       }
+    },
+    "InvalidMemoMina" : {
+      "title" : "메모 텍스트는 32자를 초과할 수 없습니다."
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "이 트랜잭션에는 {{fee}}의 계정 생성 수수료가 부과됩니다."
+    },
+    "AmountTooSmall" : {
+      "title" : "이 트랜잭션에 필요한 최소 금액은 {{amount}}입니다"
     }
   },
   "cryptoOrg" : {
@@ -6669,6 +6684,24 @@
       "cta" : "Ledger 동기화 켜기",
       "alreadySync" : "장치를 이미 켰습니다",
       "learnMore" : "Ledger 동기화는 어떤 원리인가요?"
+    },
+    "entryPoints" : {
+      "accounts" : {
+        "title" : "Ledger 동기화 활성화"
+      },
+      "manager" : {
+        "title" : "Ledger 동기화",
+        "description" : "휴대폰 교체 시 계정을 자동으로 동기화하세요.",
+        "cta" : "Ledger 동기화 켜기"
+      },
+      "settings" : {
+        "title" : "Ledger 동기화",
+        "description" : "휴대폰 교체 시 계정을 자동으로 동기화하세요.",
+        "cta" : "Ledger 동기화 켜기"
+      },
+      "onboarding" : {
+        "title" : "다른 Ledger Live 앱과 동기화"
+      }
     },
     "manage" : {
       "cta" : "관리",
