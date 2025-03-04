@@ -19,16 +19,17 @@ import {
 } from "~/reducers/settings";
 import { useSwapLiveAppCustomHandlers } from "./hooks/useSwapLiveAppCustomHandlers";
 import { useSwapLiveAppTranslateUrlParams } from "./hooks/useSwapLiveAppTranslateUrlParams";
+import { DefaultAccountSwapParamList } from "../types";
 
 type Props = {
   manifest: LiveAppManifest;
-  params: Record<string, string>;
+  params: DefaultAccountSwapParamList | null;
   setWebviewState: React.Dispatch<React.SetStateAction<WebviewState>>;
 };
 
 export function WebView({ manifest, params, setWebviewState }: Props) {
   const customHandlers = useSwapLiveAppCustomHandlers(manifest);
-  const urlParams = useSwapLiveAppTranslateUrlParams(params);
+  const urlParams = useSwapLiveAppTranslateUrlParams(params || {});
   const { theme } = useTheme();
   const { language } = useSettings();
   const { ticker: currencyTicker } = useSelector(counterValueCurrencySelector);

@@ -5,28 +5,21 @@
  *  defaultAccount -> fromAccountId
  */
 
-import { AccountLike } from "@ledgerhq/types-live";
-import BigNumber from "bignumber.js";
 import { useMemo } from "react";
+import { DefaultAccountSwapParamList } from "../../types";
 
 type SwapLiveUrlParams = {
   fromAccountId?: string;
   amountFrom?: string;
 };
 
-type Params = {
-  defaultAccount?: AccountLike;
-  defaultAmount?: BigNumber;
-};
-
-export const useSwapLiveAppTranslateUrlParams = (params: Params): SwapLiveUrlParams => {
+export const useSwapLiveAppTranslateUrlParams = (
+  params: DefaultAccountSwapParamList,
+): SwapLiveUrlParams => {
   return useMemo(() => {
     const newParams: SwapLiveUrlParams = {};
     if (params.defaultAccount) {
       newParams.fromAccountId = params.defaultAccount?.id;
-    }
-    if (params.defaultAmount) {
-      newParams.amountFrom = params.defaultAmount?.toString();
     }
     return newParams;
   }, [params]);

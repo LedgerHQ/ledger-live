@@ -21,9 +21,10 @@ import GenericErrorView from "~/components/GenericErrorView";
 import { initialWebviewState } from "~/components/Web3AppWebview/helpers";
 import { WebviewState } from "~/components/Web3AppWebview/types";
 import { WebView } from "./WebView";
+import { DefaultAccountSwapParamList } from "../types";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
-import { AccountLike } from "@ledgerhq/types-live";
-import BigNumber from "bignumber.js";
+import { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
+import { ScreenName } from "~/const";
 
 // set the default manifest ID for the production swap live app
 // in case the FF is failing to load the manifest ID
@@ -31,14 +32,21 @@ import BigNumber from "bignumber.js";
 const DEFAULT_MANIFEST_ID =
   process.env.DEFAULT_SWAP_MANIFEST_ID || DEFAULT_FEATURES.ptxSwapLiveApp.params?.manifest_id;
 
-type SwapParams = {
-  defaultAccount: AccountLike;
-  defaultAmount: BigNumber;
+function isDefaultAccountSwapParamsList(
+  params: DefaultAccountSwapParamList | unknown,
+): params is DefaultAccountSwapParamList {
+  return (params as DefaultAccountSwapParamList).defaultAccount !== undefined;
+}
+
+type Props = {
+  route: {
+    params: DefaultAccountSwapParamList;
+  };
 };
 
-type Props = StackNavigatorProps<SwapParams>;
-
-export function SwapLiveApp({ route }: Props) {
+export function SwapLiveApp({
+  route,
+}: StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapTab>) {
   const { params } = route;
   const { t } = useTranslation();
   const ptxSwapLiveAppMobile = useFeature("ptxSwapLiveAppMobile");
@@ -64,6 +72,8 @@ export function SwapLiveApp({ route }: Props) {
 
   const navigation = useNavigation();
 
+  const defaultParams = isDefaultAccountSwapParamsList(params) ? params : null;
+
   const onGesture = (event: HandlerStateChangeEvent<PanGestureHandlerEventPayload>) => {
     // PanGestureHandler callback for swiping left to right to fix issue with <Tab.Navigator>
     if (event.nativeEvent.state === State.END && event.nativeEvent.translationX > 10) {
@@ -88,7 +98,7 @@ export function SwapLiveApp({ route }: Props) {
   return (
     <PanGestureHandler onHandlerStateChange={onGesture} activeOffsetX={[0, 10]}>
       <Flex flex={1} testID="swap-form-tab">
-        <WebView manifest={manifest} setWebviewState={setWebviewState} params={params} />
+        <WebView manifest={manifest} setWebviewState={setWebviewState} params={defaultParams} />
       </Flex>
     </PanGestureHandler>
   );
