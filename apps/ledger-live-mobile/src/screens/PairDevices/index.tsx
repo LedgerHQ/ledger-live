@@ -3,16 +3,16 @@ import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useDispatch, useSelector } from "react-redux";
 import { timeout, tap } from "rxjs/operators";
-// import { v4 as uuid } from "uuid";
+import { v4 as uuid } from "uuid";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
 import { getDeviceName } from "@ledgerhq/live-common/device/use-cases/getDeviceNameUseCase";
 import { listAppsUseCase } from "@ledgerhq/live-common/device/use-cases/listAppsUseCase";
 import { DeviceModelId } from "@ledgerhq/devices";
-// import { delay } from "@ledgerhq/live-common/promise";
+import { delay } from "@ledgerhq/live-common/promise";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useTheme } from "@react-navigation/native";
 import { TransportBleDevice } from "@ledgerhq/live-common/ble/types";
-import TransportBLE from "../../react-native-hw-transport-ble";
+import getBLETransport from "../../react-native-hw-transport-ble";
 import { GENUINE_CHECK_TIMEOUT } from "~/utils/constants";
 import { addKnownDevice } from "~/actions/ble";
 import { setHasInstalledAnyApp, setLastSeenDeviceInfo, setReadOnlyMode } from "~/actions/settings";
@@ -30,6 +30,7 @@ import { ScreenName } from "~/const";
 import { BaseOnboardingNavigatorParamList } from "~/components/RootNavigator/types/BaseOnboardingNavigator";
 import { lastValueFrom } from "rxjs";
 import { LocalTracer } from "@ledgerhq/logs";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 type NavigationProps = RootComposite<
   | StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.PairDevices>
@@ -77,6 +78,8 @@ function PairDevicesInner({ navigation, route }: NavigationProps) {
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const dispatchRedux = useDispatch();
   const [{ error, status, device, skipCheck, name }, dispatch] = useReducer(reducer, initialState);
+
+  const isLDMKEnabled = Boolean(useFeature("ldmkTransport")?.enabled);
 
   const unmounted = useRef(false);
   useEffect(
@@ -126,11 +129,11 @@ function PairDevicesInner({ navigation, route }: NavigationProps) {
       });
 
       try {
-        // const transport = await TransportBLE.open(bleDevice.id, undefined, {
-        //   correlationId: uuid(),
-        //   origin: tracer.getContext(),
-        // });
-        const transport = await TransportBLE.open(bleDevice.id);
+        const transport = await getBLETransport({ isLDMKEnabled }).open(bleDevice.id, undefined, {
+          correlationId: uuid(),
+          origin: tracer.getContext(),
+        });
+        //const transport = await getBLETransport({ isLDMKEnabled }).open(bleDevice.id);
 
         if (unmounted.current) return;
 
@@ -205,8 +208,10 @@ function PairDevicesInner({ navigation, route }: NavigationProps) {
         } finally {
           await transport.close();
           // eslint-disable-next-line @typescript-eslint/no-empty-function
-          // await TransportBLE.disconnectDevice(device.deviceId).catch(() => {});
-          // await delay(500);
+          await getBLETransport({ isLDMKEnabled })
+            .disconnectDevice(device.deviceId)
+            .catch(() => {});
+          await delay(500);
         }
       } catch (error) {
         if (unmounted.current) return;
@@ -214,7 +219,7 @@ function PairDevicesInner({ navigation, route }: NavigationProps) {
         onError(error as Error);
       }
     },
-    [dispatchRedux, hasCompletedOnboarding, onError, tracer],
+    [dispatchRedux, hasCompletedOnboarding, onError, tracer, isLDMKEnabled],
   );
   const onBypassGenuine = useCallback(() => {
     navigation.setParams({
