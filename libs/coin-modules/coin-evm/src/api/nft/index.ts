@@ -16,9 +16,7 @@ export const getNftMetadata = async (
 ): Promise<NFTMetadataResponse[]> => {
   const { data }: { data: NFTMetadataResponse[] } = await network({
     method: "POST",
-    url: `${getEnv("NFT_ETH_METADATA_SERVICE")}/v1/ethereum/${
-      params.chainId
-    }/contracts/tokens/infos`,
+    url: `${getEnv("NFT_METADATA_SERVICE")}/v1/ethereum/${params.chainId}/contracts/tokens/infos`,
     data: input,
   });
 
@@ -38,7 +36,7 @@ export const getNftCollectionMetadata = async (
 ): Promise<NFTCollectionMetadataResponse[]> => {
   const { data }: { data: NFTCollectionMetadataResponse[] } = await network({
     method: "POST",
-    url: `${getEnv("NFT_ETH_METADATA_SERVICE")}/v1/ethereum/${params.chainId}/contracts/infos`,
+    url: `${getEnv("NFT_METADATA_SERVICE")}/v1/ethereum/${params.chainId}/contracts/infos`,
     data: input,
   });
 

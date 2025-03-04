@@ -1,11 +1,11 @@
-import BigNumber from "bignumber.js";
-import { firstValueFrom, reduce } from "rxjs";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import { Account, AccountBridge, SyncConfig, TransactionCommon } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
+import { firstValueFrom, reduce } from "rxjs";
 import { TronCoinConfig } from "../config";
-import { defaultTronResources } from "../logic/utils";
 import { Transaction, TronAccount } from "../types";
 import { createBridges } from "./index";
+import { defaultTronResources } from "./utils";
 
 const tron = getCryptoCurrencyById("tron");
 const defaultSyncConfig = {

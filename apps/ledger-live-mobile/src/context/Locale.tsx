@@ -11,6 +11,7 @@ import { DEFAULT_LANGUAGE_LOCALE, getDefaultLanguageLocale, locales } from "../l
 import { setLanguage } from "~/actions/settings";
 import { useDispatch } from "react-redux";
 import { useSettings } from "~/hooks";
+import { useSupportedLocales } from "~/hooks/languages/useSupportedLocales";
 
 try {
   if ("__setDefaultTimeZone" in Intl.DateTimeFormat) {
@@ -42,7 +43,19 @@ type Props = {
   children: React.ReactNode;
 };
 
-const SUPPORTED_LANGUAGES = ["en", "fr", "es", "ru", "zh", "de", "tr", "ja", "ko", "pt"] as const;
+const SUPPORTED_LANGUAGES = [
+  "en",
+  "fr",
+  "es",
+  "ru",
+  "zh",
+  "de",
+  "tr",
+  "ja",
+  "ko",
+  "pt",
+  "th",
+] as const;
 
 export type SupportedLanguages = (typeof SUPPORTED_LANGUAGES)[number];
 
@@ -63,8 +76,9 @@ function getLocaleState(i18n: typeof i18next): LocaleState {
 const LocaleContext = React.createContext(getLocaleState(i18next));
 export default function LocaleProvider({ children }: Props) {
   const { language } = useSettings();
+  const supportedLocales = useSupportedLocales();
   const dispatch = useDispatch();
-  const currentLanguage = SUPPORTED_LANGUAGES.includes(language as SupportedLanguages)
+  const currentLanguage = supportedLocales.includes(language as SupportedLanguages)
     ? language
     : DEFAULT_LANGUAGE_LOCALE;
 

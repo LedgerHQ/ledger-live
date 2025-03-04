@@ -4,7 +4,7 @@ import { TRANSACTION_DETAIL_FIXTURE, TRANSACTION_FIXTURE, TRC20_FIXTURE } from "
 import coinConfig from "../config";
 import { fetchTronAccountTxs } from ".";
 
-export const TRON_BASE_URL_TEST = "https://httpbin.org";
+const TRON_BASE_URL_TEST = "https://httpbin.org";
 
 const handlers = [
   http.get(`${TRON_BASE_URL_TEST}/v1/accounts/:addr/transactions`, () => {

@@ -1,242 +1,230 @@
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import type { Account, OperationType } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
-import type {
-  BandwidthInfo,
-  NetworkInfo,
-  Transaction,
-  TrongridTxInfo,
-  TronOperation,
-  TronOperationMode,
-  TronResources,
-  UnFrozenInfo,
-} from "../types";
+import { createHash } from "crypto";
+import TronWeb from "tronweb";
+import coinConfig from "../config";
 import get from "lodash/get";
+import BigNumber from "bignumber.js";
+import { TronResources, UnFrozenInfo } from "../types";
 
-// see: https://solidity.readthedocs.io/en/v0.6.1/abi-spec.html#function-selector-and-argument-encoding
-export const abiEncodeTrc20Transfer = (address: string, amount: BigNumber): string => {
-  const encodedAddress = address.padStart(64, "0");
-  const hexAmount = amount.toNumber().toString(16); // convert to hexadecimal
-
-  const encodedAmount = hexAmount.padStart(64, "0");
-  return encodedAddress.concat(encodedAmount);
-};
-
-export const hexToAscii = (hex: string): string => Buffer.from(hex, "hex").toString("ascii");
-
-const parentTx = [
-  "TransferContract",
-  "VoteWitnessContract",
-  "WithdrawBalanceContract",
-  "ExchangeTransactionContract",
-  "FreezeBalanceV2Contract",
-  "UnfreezeBalanceV2Contract",
-  "WithdrawExpireUnfreezeContract",
-  "UnDelegateResourceContract",
-  "FreezeBalanceContract",
-  "UnfreezeBalanceContract",
-  "ContractApproval",
-];
-
-export const isParentTx = (tx: TrongridTxInfo): boolean => parentTx.includes(tx.type);
-
-// This is an estimation, there is no endpoint to calculate the real size of a block before broadcasting it.
-export const getEstimatedBlockSize = (a: Account, t: Transaction): BigNumber => {
-  switch (t.mode) {
-    case "send": {
-      const subAccount =
-        t.subAccountId && a.subAccounts ? a.subAccounts.find(sa => sa.id === t.subAccountId) : null;
-
-      if (subAccount && subAccount.type === "TokenAccount") {
-        if (subAccount.token.tokenType === "trc10") return new BigNumber(285);
-        if (subAccount.token.tokenType === "trc20") return new BigNumber(350);
-      }
-
-      return new BigNumber(270);
-    }
-
-    case "freeze":
-    case "unfreeze":
-    case "claimReward":
-    case "withdrawExpireUnfreeze":
-    case "unDelegateResource":
-    case "legacyUnfreeze":
-      return new BigNumber(260);
-
-    case "vote":
-      return new BigNumber(290 + t.votes.length * 19);
-
-    default:
-      return new BigNumber(0);
+export function createTronWeb(trongridUrl?: string): TronWeb {
+  if (!trongridUrl) {
+    trongridUrl = coinConfig.getCoinConfig().explorer.url;
   }
-};
 
-export const getOperationTypefromMode = (mode: TronOperationMode): OperationType => {
-  switch (mode) {
-    case "send":
-      return "OUT";
+  const HttpProvider = TronWeb.providers.HttpProvider;
+  const fullNode = new HttpProvider(trongridUrl);
+  const solidityNode = new HttpProvider(trongridUrl);
+  const eventServer = new HttpProvider(trongridUrl);
+  return new TronWeb(fullNode, solidityNode, eventServer);
+}
 
-    case "freeze":
-      return "FREEZE";
+/**
+ * Convert `raw_data_hex` value from {@link https://developers.tron.network/reference/createtransaction|createTransaction API} to `raw_data` value.
+ * The function try to find the correct Protobuf deserialization to use for inner (Contract)[] object.
+ * @param rawTx
+ * @returns
+ */
+export async function decodeTransaction(rawTx: string): Promise<{
+  txID: string;
+  raw_data: Record<string, any>;
+  raw_data_hex: string;
+}> {
+  const { Transaction } = (globalThis as unknown as any).TronWebProto;
+  const transaction = Transaction.raw.deserializeBinary(Buffer.from(rawTx, "hex"));
 
-    case "unfreeze":
-      return "UNFREEZE";
+  return {
+    txID: createHash("sha256").update(Buffer.from(rawTx, "hex")).digest("hex"),
+    raw_data: convertTxFromRaw(transaction),
+    raw_data_hex: rawTx,
+  };
+}
 
-    case "vote":
-      return "VOTE";
+/**
+ * @see https://github.com/tronprotocol/protocol/blob/master/core/Tron.proto#L431
+ * @param tx
+ */
+function convertTxFromRaw(tx: any) {
+  let transactionRawData: any = {
+    ref_block_bytes: convertBufferToHex(tx.getRefBlockBytes()),
+    ref_block_hash: convertBufferToHex(tx.getRefBlockHash()),
+    expiration: tx.getExpiration(),
+    contract: tx.getContractList().map(convertContractFromRaw),
+    timestamp: tx.getTimestamp(),
+  };
 
-    case "claimReward":
-      return "REWARD";
-
-    case "withdrawExpireUnfreeze":
-      return "WITHDRAW_EXPIRE_UNFREEZE";
-
-    case "unDelegateResource":
-      return "UNDELEGATE_RESOURCE";
-
-    case "legacyUnfreeze":
-      return "LEGACY_UNFREEZE";
-
-    default:
-      return "OUT";
-  }
-};
-
-const getOperationType = (
-  tx: TrongridTxInfo,
-  accountAddr: string,
-): OperationType | null | undefined => {
-  switch (tx.type) {
-    case "TransferContract":
-    case "TransferAssetContract":
-    case "TriggerSmartContract":
-      return tx.from === accountAddr ? "OUT" : "IN";
-
-    case "ContractApproval":
-      return "APPROVE";
-
-    case "ExchangeTransactionContract":
-      return "OUT";
-
-    case "VoteWitnessContract":
-      return "VOTE";
-
-    case "WithdrawBalanceContract":
-      return "REWARD";
-
-    case "FreezeBalanceContract":
-    case "FreezeBalanceV2Contract":
-      return "FREEZE";
-
-    case "UnfreezeBalanceV2Contract":
-      return "UNFREEZE";
-
-    case "WithdrawExpireUnfreezeContract":
-      return "WITHDRAW_EXPIRE_UNFREEZE";
-
-    case "UnDelegateResourceContract":
-      return "UNDELEGATE_RESOURCE";
-
-    case "UnfreezeBalanceContract":
-      return "LEGACY_UNFREEZE";
-
-    default:
-      return undefined;
-  }
-};
-
-export const txInfoToOperation = (
-  id: string,
-  address: string,
-  tx: TrongridTxInfo,
-): TronOperation | null | undefined => {
-  const {
-    txID,
-    date,
-    from,
-    to,
-    type,
-    value = new BigNumber(0),
-    fee = new BigNumber(0),
-    blockHeight,
-    extra = {},
-    hasFailed,
-  } = tx;
-  const hash = txID;
-  const operationType = getOperationType(tx, address);
-
-  if (operationType) {
-    return {
-      id: encodeOperationId(id, hash, operationType),
-      hash,
-      type: operationType,
-      value: operationType === "OUT" && type === "TransferContract" ? value.plus(fee) : value,
-      // fee is not charged in TRC tokens
-      fee: fee,
-      blockHeight,
-      blockHash: null,
-      accountId: id,
-      senders: [from],
-      recipients: to ? [to] : [],
-      date,
-      extra,
-      hasFailed,
+  if (tx.getRefBlockNum()) {
+    transactionRawData = {
+      ...transactionRawData,
+      ref_block_num: tx.getRefBlockNum(),
     };
   }
 
-  return undefined;
-};
-
-export const extractBandwidthInfo = (
-  networkInfo: NetworkInfo | null | undefined,
-): BandwidthInfo => {
-  // Calculate bandwidth info :
-  if (networkInfo) {
-    const { freeNetUsed, freeNetLimit, netUsed, netLimit } = networkInfo;
-    return {
-      freeUsed: freeNetUsed,
-      freeLimit: freeNetLimit,
-      gainedUsed: netUsed,
-      gainedLimit: netLimit,
+  if (tx.getFeeLimit()) {
+    transactionRawData = {
+      ...transactionRawData,
+      fee_limit: tx.getFeeLimit(),
     };
+  }
+
+  if (tx.getData()) {
+    transactionRawData = {
+      ...transactionRawData,
+      data: tx.getData(),
+    };
+  }
+
+  if (tx.getScripts()) {
+    transactionRawData = {
+      ...transactionRawData,
+      scripts: tx.getScripts(),
+    };
+  }
+
+  return transactionRawData;
+}
+
+/**
+ * @see https://github.com/tronprotocol/protocol/blob/master/core/contract/balance_contract.proto#L32
+ * @param contract
+ */
+function convertContractFromRaw(contract: any) {
+  let value;
+  switch (contract.getType()) {
+    case 1:
+      value = convertTransferContractFromRaw(contract);
+      break;
+    case 2:
+      value = convertTransferAssetContractFromRaw(contract);
+      break;
+    case 31:
+      value = convertTriggerSmartContractFromRaw(contract);
+      break;
+    default:
+      throw new Error(
+        `Missing deserializer for this contract: "${contract.getParameter().getTypeUrl()}"`,
+      );
   }
 
   return {
-    freeUsed: new BigNumber(0),
-    freeLimit: new BigNumber(0),
-    gainedUsed: new BigNumber(0),
-    gainedLimit: new BigNumber(0),
+    type: convertNumberToContractType(contract.getType()),
+    parameter: {
+      value,
+      type_url: contract.getParameter().getTypeUrl(),
+    },
+    // provider: contract.getProvider(),
+    // Permission_id: contract.getPermissionId(),
   };
-};
+}
 
-export const defaultTronResources: TronResources = {
-  frozen: {
-    bandwidth: undefined,
-    energy: undefined,
-  },
-  unFrozen: {
-    bandwidth: undefined,
-    energy: undefined,
-  },
-  delegatedFrozen: {
-    bandwidth: undefined,
-    energy: undefined,
-  },
-  legacyFrozen: {
-    bandwidth: undefined,
-    energy: undefined,
-  },
-  votes: [],
-  tronPower: 0,
-  energy: new BigNumber(0),
-  bandwidth: extractBandwidthInfo(null),
-  unwithdrawnReward: new BigNumber(0),
-  lastWithdrawnRewardDate: undefined,
-  lastVotedDate: undefined,
-  cacheTransactionInfoById: {},
-};
+function convertTransferContractFromRaw(contract: any) {
+  const { TransferContract } = (globalThis as unknown as any).TronWebProto;
+  const transferContract = TransferContract.deserializeBinary(contract.getParameter().getValue());
 
-type AccountInfo = {
+  // Expected address format in Contract are in Hex and not in Base58,
+  // despite what (tron API portal may say)[https://developers.tron.network/reference/createtransaction]
+  return {
+    amount: transferContract.getAmount(),
+    owner_address: convertBufferToHex(transferContract.getOwnerAddress()),
+    to_address: convertBufferToHex(transferContract.getToAddress()),
+  };
+}
+
+function convertTransferAssetContractFromRaw(contract: any) {
+  const { TransferAssetContract } = (globalThis as unknown as any).TronWebProto;
+  const transferContract = TransferAssetContract.deserializeBinary(
+    contract.getParameter().getValue(),
+  );
+
+  // Expected address format in Contract are in Hex and not in Base58,
+  // despite what (tron API portal may say)[https://developers.tron.network/reference/transferasset]
+  return {
+    amount: transferContract.getAmount(),
+    asset_name: convertBufferToString(transferContract.getAssetName()),
+    owner_address: convertBufferToHex(transferContract.getOwnerAddress()),
+    to_address: convertBufferToHex(transferContract.getToAddress()),
+  };
+}
+
+function convertTriggerSmartContractFromRaw(contract: any) {
+  const { TriggerSmartContract } = (globalThis as unknown as any).TronWebProto;
+  const transferContract = TriggerSmartContract.deserializeBinary(
+    contract.getParameter().getValue(),
+  );
+
+  // Expected address format in Contract are in Hex and not in Base58,
+  // despite what (tron API portal may say)[https://developers.tron.network/reference/triggersmartcontract]
+  return {
+    data: convertBufferToHex(transferContract.getData()),
+    owner_address: convertBufferToHex(transferContract.getOwnerAddress()),
+    contract_address: convertBufferToHex(transferContract.getContractAddress()),
+  };
+}
+
+/**
+ * @see https://github.com/tronprotocol/protocol/blob/master/core/Tron.proto#L338
+ */
+const CONTRACT_TYPE: Record<number, string> = {
+  0: "AccountCreateContract",
+  1: "TransferContract",
+  2: "TransferAssetContract",
+  3: "VoteAssetContract",
+  4: "VoteWitnessContract",
+  5: "WitnessCreateContract",
+  6: "AssetIssueContract",
+  8: "WitnessUpdateContract",
+  9: "ParticipateAssetIssueContract",
+  10: "AccountUpdateContract",
+  11: "FreezeBalanceContract",
+  12: "UnfreezeBalanceContract",
+  13: "WithdrawBalanceContract",
+  14: "UnfreezeAssetContract",
+  15: "UpdateAssetContract",
+  16: "ProposalCreateContract",
+  17: "ProposalApproveContract",
+  18: "ProposalDeleteContract",
+  19: "SetAccountIdContract",
+  20: "CustomContract",
+  30: "CreateSmartContract",
+  31: "TriggerSmartContract",
+  32: "GetContract",
+  33: "UpdateSettingContract",
+  41: "ExchangeCreateContract",
+  42: "ExchangeInjectContract",
+  43: "ExchangeWithdrawContract",
+  44: "ExchangeTransactionContract",
+  45: "UpdateEnergyLimitContract",
+  46: "AccountPermissionUpdateContract",
+  48: "ClearABIContract",
+  49: "UpdateBrokerageContract",
+  51: "ShieldedTransferContract",
+  52: "MarketSellAssetContract",
+  53: "MarketCancelOrderContract",
+  54: "FreezeBalanceV2Contract",
+  55: "UnfreezeBalanceV2Contract",
+  56: "WithdrawExpireUnfreezeContract",
+  57: "DelegateResourceContract",
+  58: "UnDelegateResourceContract",
+  59: "CancelAllUnfreezeV2Contract",
+};
+const convertNumberToContractType = (value: number): string => CONTRACT_TYPE[value];
+
+/**
+ * Convert for instance: "41FD49EDA0F23FF7EC1D03B52C3A45991C24CD440E" to "TZ4UXDV5ZhNW7fb2AMSbgfAEZ7hWsnYS2g"
+ * @param address
+ */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function convertHexToBase58(address: string): string {
+  return TronWeb.address.fromHex(address);
+}
+
+function convertBufferToHex(address: Buffer): string {
+  return (TronWeb.utils.bytes.byteArray2hexStr(address) as string).toLowerCase();
+}
+
+function convertBufferToString(address: Buffer): string {
+  return TronWeb.utils.bytes.bytesToString(address);
+}
+
+export type AccountInfo = {
   account_resource?: {
     delegated_frozenV2_balance_for_energy?: number;
     frozen_balance_for_energy?: {
@@ -265,15 +253,11 @@ type AccountInfo = {
   }[];
 };
 export function getTronResources(
-  acc?: AccountInfo,
+  acc: AccountInfo,
 ): Omit<
   TronResources,
   "energy" | "bandwidth" | "unwithdrawnReward" | "lastVotedDate" | "cacheTransactionInfoById"
 > {
-  if (!acc) {
-    return defaultTronResources;
-  }
-
   const delegatedFrozenBandwidth = get(acc, "delegated_frozenV2_balance_for_bandwidth", undefined);
   const delegatedFrozenEnergy = get(
     acc,
