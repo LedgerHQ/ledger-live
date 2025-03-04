@@ -8,8 +8,7 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import { render, screen, fireEvent } from "tests/testUtils";
 import { openURL } from "~/renderer/linking";
 import { track } from "~/renderer/analytics/segment";
-import { LNSBannerCard } from "../components/LNSBannerCard";
-import { useLNSUpsellBannerModel } from "../hooks/useLNSUpsellBannerModel";
+import { LNSUpsellBanner } from "../components/LNSUpsellBanner";
 
 jest.mock("~/renderer/linking", () => ({
   openURL: jest.fn(),
@@ -19,7 +18,7 @@ jest.mock("~/renderer/analytics/segment", () => ({
   track: jest.fn(),
 }));
 
-describe("LNSBannerCard", () => {
+describe("LNSUpsellBanner ", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -63,20 +62,6 @@ describe("LNSBannerCard", () => {
       });
     });
 
-    it("should track click on learn more", () => {
-      renderBanner({});
-      fireEvent.click(screen.getByText(t(`lnsUpsell.banner.${location}.optIn.linkText`)));
-
-      expect(openURL).toHaveBeenCalledTimes(1);
-      expect(openURL).toHaveBeenCalledWith("https://example.com/learn-more");
-      expect(track).toHaveBeenCalledTimes(1);
-      expect(track).toHaveBeenCalledWith("button_clicked", {
-        button: "learn more",
-        link: "https://example.com/learn-more",
-        page,
-      });
-    });
-
     it("should render the banner for opted out users", () => {
       renderBanner({ isOptIn: false });
       fireEvent.click(screen.getByText(t(`lnsUpsell.banner.${location}.optOut.cta`)));
@@ -92,14 +77,13 @@ describe("LNSBannerCard", () => {
       isOptIn = true,
       devicesModelList = [DeviceModelId.nanoS],
     }) {
-      const learn_more = "https://example.com/learn-more";
-      const defaultParams = { [location]: ffLocationEnabled, learn_more, "%": 10, img: "" };
+      const defaultParams = { [location]: ffLocationEnabled, "%": 10, img: "" };
       const ffParams = {
         opted_in: { ...defaultParams, link: "https://example.com/optInCta" },
         opted_out: { ...defaultParams, link: "https://example.com/optOutCta" },
       };
 
-      render(<Banner />, {
+      render(<LNSUpsellBanner location={location} />, {
         initialState: {
           settings: {
             shareAnalytics: true,
@@ -111,10 +95,6 @@ describe("LNSBannerCard", () => {
           },
         },
       });
-    }
-
-    function Banner() {
-      return <LNSBannerCard model={useLNSUpsellBannerModel(location)} />;
     }
   });
 });

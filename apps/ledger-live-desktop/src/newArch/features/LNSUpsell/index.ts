@@ -1,3 +1,2 @@
-export { LNSBannerCard } from "./components/LNSBannerCard";
-export { LNSNotificationBanner } from "./components/LNSNotificationBanner";
-export { useLNSUpsellBannerModel } from "./hooks/useLNSUpsellBannerModel";
+export * from "./components/LNSUpsellBanner";
+export * from "./hooks/useShowLNSUpsellBanner";

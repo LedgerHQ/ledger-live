@@ -32,7 +32,7 @@ import {
 } from "~/renderer/reducers/settings";
 import { useAppDataStorageProvider } from "~/renderer/hooks/storage-provider/useAppDataStorage";
 import LedgerSyncEntryPoint from "LLD/features/LedgerSyncEntryPoints";
-import { LNSBannerCard, useLNSUpsellBannerModel } from "LLD/features/LNSUpsell";
+import { LNSUpsellBanner } from "LLD/features/LNSUpsell";
 import { EntryPoint } from "LLD/features/LedgerSyncEntryPoints/types";
 import manager from "@ledgerhq/live-common/manager/index";
 
@@ -196,8 +196,6 @@ const DeviceDashboard = ({
   });
   const isFirmwareDeprecated = manager.firmwareUnsupported(device.modelId, deviceInfo);
 
-  const lnsUpsellBannerModel = useLNSUpsellBannerModel("manager");
-
   return (
     <>
       {renderFirmwareUpdateBanner
@@ -245,7 +243,7 @@ const DeviceDashboard = ({
         {!firmware && !isFirmwareDeprecated && update.length === 0 ? (
           <>
             <LedgerSyncEntryPoint entryPoint={EntryPoint.manager} />
-            <LNSBannerCard model={lnsUpsellBannerModel} />
+            <LNSUpsellBanner location="manager" />
           </>
         ) : null}
         <AppList

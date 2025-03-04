@@ -1,37 +1,34 @@
 import React from "react";
-import styled, { css } from "styled-components";
+import styled, { css, useTheme } from "styled-components";
 
 import * as Icons from "@ledgerhq/icons-ui/react";
 import { Box } from "../../layout";
+import { type ColorPalette, rgba } from "../../../styles";
 
 type IconKey = keyof typeof Icons;
 type WrapperType = "round" | "square";
 
 type IconPallet = { fg: string; bg: string };
 
-const colorsByIcon: Partial<Record<IconKey, Partial<Record<WrapperType, Partial<IconPallet>>>>> = {
-  Warning: {
-    round: {
-      fg: "warning.c80",
-      bg: "warning.c30",
-    },
-    square: {
-      fg: "warning.c80",
-      bg: "warning.c30",
-    },
-  },
-};
+function getColorsByIcon(
+  colors: ColorPalette,
+): Partial<Record<IconKey, Partial<Record<WrapperType, Partial<IconPallet>>>>> {
+  const { warning } = colors;
 
-const defaultDefaultColors: Record<WrapperType, IconPallet> = {
-  round: {
-    fg: "primary.c90",
-    bg: "primary.c30",
-  },
-  square: {
-    fg: "primary.c80",
-    bg: "primary.c10",
-  },
-};
+  return {
+    Warning: {
+      round: { fg: warning.c80, bg: warning.c30 },
+      square: { fg: warning.c80, bg: warning.c30 },
+    },
+  };
+}
+
+function getDefaultDefaultColors({ primary }: ColorPalette): Record<WrapperType, IconPallet> {
+  return {
+    round: { fg: primary.c90, bg: primary.c30 },
+    square: { fg: primary.c80, bg: rgba(primary.c80, 0.08) },
+  };
+}
 
 type Props = {
   icon: IconKey;
@@ -39,11 +36,12 @@ type Props = {
 };
 
 export default function NotificationIcon({ icon, variant = "round" }: Props) {
+  const { colors } = useTheme();
+  const defaultColors = getDefaultDefaultColors(colors)[variant];
   const safeIcon: IconKey = icon in Icons ? icon : "Information";
   const Icon = Icons[safeIcon];
-  const colors = colorsByIcon[safeIcon]?.[variant];
-  const iconColor = colors?.fg ?? defaultDefaultColors[variant].fg;
-  const iconBgColor = colors?.bg ?? defaultDefaultColors[variant].bg;
+  const { fg: iconColor = defaultColors.fg, bg: iconBgColor = defaultColors.bg } =
+    getColorsByIcon(colors)[safeIcon]?.[variant] ?? {};
 
   return (
     <Wrapper backgroundColor={iconBgColor} variant={variant}>

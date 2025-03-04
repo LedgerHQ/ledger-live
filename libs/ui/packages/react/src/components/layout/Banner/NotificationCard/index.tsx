@@ -2,16 +2,16 @@ import React, { type ReactEventHandler, type ReactNode } from "react";
 import styled from "styled-components";
 
 import * as Icons from "@ledgerhq/icons-ui/react";
-import { NotificationIcon, Text } from "../../../asorted";
-import { Link } from "../../../cta";
+import { NotificationIcon } from "../../../asorted";
+import Text from "../../../asorted/Text";
 import type { Props as GridBoxProps } from "../../Grid";
 import { Grid, Flex } from "../..";
 
 type IconKey = keyof typeof Icons;
 
-export type NotificationCardProps = GridBoxProps & {
+type Props = GridBoxProps & {
   title?: string;
-  cta?: string;
+  cta?: ReactNode;
   description?: ReactNode;
   icon: IconKey;
   isHighlighted?: boolean;
@@ -27,13 +27,11 @@ export default function NotificationCard({
   isHighlighted,
   onClick,
   ...boxProps
-}: NotificationCardProps) {
+}: Props) {
   const handleCTAClick: ReactEventHandler = event => {
     event.stopPropagation();
     onClick(event);
   };
-
-  const ctaColor = isHighlighted ? "primary.c80" : "neutral.c100";
 
   return (
     <Wrapper {...boxProps} isHighlighted={isHighlighted} onClick={handleCTAClick}>
@@ -47,11 +45,7 @@ export default function NotificationCard({
         {description && (
           <Desc color={isHighlighted ? "neutral.c100" : "neutral.c80"}>{description}</Desc>
         )}
-        {cta && (
-          <Cta color={ctaColor} onClick={handleCTAClick}>
-            {cta}
-          </Cta>
-        )}
+        {cta}
       </Flex>
     </Wrapper>
   );
@@ -64,11 +58,7 @@ const Desc = styled(Text).attrs({ variant: "small" })`
   font-weight: 500;
 `;
 
-const Cta = styled(Link).attrs({ alignSelf: "start" })`
-  font-size: 13px;
-`;
-
-const Wrapper = styled(Grid)<Pick<NotificationCardProps, "isHighlighted">>`
+const Wrapper = styled(Grid)<Pick<Props, "isHighlighted">>`
   background-color: ${p => (p.isHighlighted ? p.theme.colors.opacityDefault.c05 : "transparent")};
 
   cursor: pointer;

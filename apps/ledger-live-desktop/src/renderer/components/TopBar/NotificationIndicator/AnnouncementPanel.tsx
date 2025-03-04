@@ -16,7 +16,7 @@ import TrackPage from "~/renderer/analytics/TrackPage";
 import { urls } from "~/config/urls";
 import { useDateFormatted } from "~/renderer/hooks/useDateFormatter";
 import LogContentCardWrapper from "LLD/features/DynamicContent/components/LogContentCardWrapper";
-import { LNSNotificationBanner, useLNSUpsellBannerModel } from "LLD/features/LNSUpsell";
+import { LNSUpsellBanner } from "LLD/features/LNSUpsell";
 
 const DateRowContainer = styled.div`
   padding: 4px 16px;
@@ -251,8 +251,6 @@ export function AnnouncementPanel() {
     [notificationsCards],
   );
 
-  const lnsUpsellBannerModel = useLNSUpsellBannerModel("notification_center");
-
   if (!notificationsCards) {
     return (
       <PanelContainer>
@@ -284,7 +282,7 @@ export function AnnouncementPanel() {
       <TrackPage category="Notification Center" name="notification_center_news" />
 
       <Box py="32px">
-        {lnsUpsellBannerModel && <LNSNotificationBanner model={lnsUpsellBannerModel} />}
+        <LNSUpsellBanner location="notification_center" />
 
         {groups.map((group, index) => (
           <React.Fragment key={index}>
