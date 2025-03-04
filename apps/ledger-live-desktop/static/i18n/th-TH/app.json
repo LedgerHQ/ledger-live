@@ -1867,7 +1867,8 @@
       "palletMethod" : "วิธีการ",
       "transferAmount" : "จำนวนที่โอน",
       "validatorsCount" : "({{number}}) ผู้ตรวจสอบ ",
-      "version" : "เวอร์ชัน"
+      "version" : "เวอร์ชัน",
+      "accountCreationFee" : "Account Creation Fee"
     }
   },
   "operationList" : {
@@ -4097,7 +4098,7 @@
       "currencies" : "สินทรัพย์คริปโต",
       "help" : "ช่วยเหลือ",
       "about" : "เกี่ยวกับ",
-      "experimental" : "Experimental features",
+      "experimental" : "Experimental Features",
       "accounts" : "บัญชี",
       "developer" : "นักพัฒนา"
     },
@@ -4627,9 +4628,9 @@
   },
   "theme" : {
     "system" : "เลือกธีมระบบ",
-    "light" : "อ่อน",
+    "light" : "โหมดกลางวัน",
     "dusk" : "Dusk",
-    "dark" : "มืด"
+    "dark" : "โหมดกลางคืน"
   },
   "toastOverlay" : {
     "toastType" : {
@@ -5443,6 +5444,11 @@
     "solana" : {
       "memo" : "Tag / Memo",
       "memoPlaceholder" : "ไม่บังคับ"
+    },
+    "mina" : {
+      "memoPlaceholder" : "Optional",
+      "memo" : "Memo",
+      "memoWarningText" : "The value of memo can be a string shorter than or equal to 32 characters"
     }
   },
   "errors" : {
@@ -5725,19 +5731,6 @@
     "NoAddressesFound" : {
       "title" : "ขออภัย ไม่พบบัญชี",
       "description" : "มีบางอย่างผิดปกติในการคำนวณ Address ลองอีกครั้งหรือติดต่อ Ledger Support"
-    },
-    "ElrondDecimalsLimitReached" : {
-      "title" : "ถึงจำนวนทศนิยมสูงสุดแล้ว",
-      "description" : "โปรดตรวจสอบให้แน่ใจว่าจำนวนที่ระบุมีทศนิยม 18 ตำแหน่ง"
-    },
-    "ElrondMinDelegatedAmountError" : {
-      "title" : "จำนวนที่ Delegate ต้องมีอย่างน้อย {{formattedAmount}}"
-    },
-    "ElrondMinUndelegatedAmountError" : {
-      "title" : "จำนวนที่ Undelegate ต้องมีอย่างน้อย {{formattedAmount}}"
-    },
-    "ElrondDelegationBelowMinimumError" : {
-      "title" : "การจะ Delegate ได้ต้องเหลือไม่น้อยกว่า {{formattedAmount}}"
     },
     "MultiversXDecimalsLimitReached" : {
       "title" : "Maximum decimals limit reached",
@@ -6479,6 +6472,15 @@
         "swap" : "Swap",
         "deposit" : "ฝาก"
       }
+    },
+    "InvalidMemoMina" : {
+      "title" : "Memo text cannot be longer than 32 characters"
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "This transaction will incur an account creation fee of {{fee}}"
+    },
+    "AmountTooSmall" : {
+      "title" : "Minimum required amount for this transaction is {{amount}}"
     }
   },
   "cryptoOrg" : {
@@ -6680,8 +6682,26 @@
       "title" : "เปิดใช้งาน Ledger Sync สำหรับคอมพิวเตอร์เครื่องนี้หรือไม่?",
       "description" : "ซิงค์บัญชีคริปโตของคุณโดยอัตโนมัติในโทรศัพท์และคอมพิวเตอร์ทั้งหมดของคุณ แม้ว่าจะเปลี่ยนไปใช้อุปกรณ์ใหม่ก็ตาม",
       "cta" : "เปิด Ledger Sync",
-      "alreadySync" : "ฉันเปิดแล้ว",
+      "alreadySync" : "ซิงค์กับแอป Ledger Live อีกแอปหนึ่ง",
       "learnMore" : "Ledger Sync ทำงานอย่างไร?"
+    },
+    "entryPoints" : {
+      "accounts" : {
+        "title" : "Activate Ledger Sync"
+      },
+      "manager" : {
+        "title" : "Ledger Sync",
+        "description" : "Sync your accounts automatically, even when switching to a new phone.",
+        "cta" : "Turn on Ledger Sync"
+      },
+      "settings" : {
+        "title" : "Ledger Sync",
+        "description" : "Sync your accounts automatically, even when switching to a new phone.",
+        "cta" : "Turn on Ledger Sync"
+      },
+      "onboarding" : {
+        "title" : "Sync with another Ledger Live app"
+      }
     },
     "manage" : {
       "cta" : "จัดการ",
@@ -6782,7 +6802,7 @@
           "steps" : {
             "step1" : "ตรวจสอบให้แน่ใจว่าเปิดใช้งาน Ledger Sync ในแอปใดแอปหนึ่งของคุณแล้ว",
             "step2" : "เปิดแอป Ledger Live ที่คุณต้องการซิงค์",
-            "step3" : "ไปที่ <0>การตั้งค่า</0> > <0>ทั่วไป</0> > <0>Ledger Sync</0> > <0>ฉันเปิดแล้ว</0> > <0>แสดง QR</0>",
+            "step3" : "ไปที่ <0>การตั้งค่า</0> > <0>ทั่วไป</0> > <0>Ledger Sync</0> > <0>ซิงค์กับแอป Ledger Live อีกแอปหนึ่ง</0> > <0>แสดง QR</0>",
             "step4" : "สแกน QR Code"
           }
         },
@@ -6791,7 +6811,7 @@
           "steps" : {
             "step1" : "ตรวจสอบให้แน่ใจว่าเปิดใช้งาน Ledger Sync ในแอปใดแอปหนึ่งของคุณแล้ว",
             "step2" : "เปิดแอป Ledger Live ที่คุณต้องการซิงค์",
-            "step3" : "ไปที่ <0>การตั้งค่า</0> > <0>ทั่วไป</0> > <0>Ledger Sync</0> > <0>ฉันเปิดแล้ว</0> > <0>ใช้ Ledger ของคุณ</0>",
+            "step3" : "ไปที่ <0>การตั้งค่า</0> > <0>ทั่วไป</0> > <0>Ledger Sync</0> > <0>ซิงค์กับแอป Ledger Live อีกแอปหนึ่ง</0> > <0>ใช้ Ledger ของคุณ</0>",
             "step4" : "เชื่อมต่อ Ledger ของคุณ"
           }
         }
