@@ -172,6 +172,7 @@ const renderWithReactQuery = (
   };
 
   return {
+    store,
     user: userEvent.setup(userEventOptions),
     QueryClient,
     ...rntlRender(ui, { wrapper: ProvidersWrapper, ...renderOptions }),

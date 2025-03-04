@@ -39,8 +39,8 @@ import {
   personalizedRecommendationsEnabledSelector,
   hasSeenAnalyticsOptInPromptSelector,
   mevProtectionSelector,
-  readOnlyModeEnabledSelector,
   seenDevicesSelector,
+  isRebornSelector,
 } from "../reducers/settings";
 import { bleDevicesSelector } from "../reducers/ble";
 import { DeviceLike, State } from "../reducers/types";
@@ -198,7 +198,8 @@ const extraProperties = async (store: AppStore) => {
     : {};
 
   const onboardingHasDevice = onboardingHasDeviceSelector(state);
-  const isReborn = readOnlyModeEnabledSelector(state);
+  const isReborn = isRebornSelector(state);
+
   const notifications = notificationsSelector(state);
   const notificationsOptedIn = {
     notificationsAllowed: notifications.areNotificationsAllowed,

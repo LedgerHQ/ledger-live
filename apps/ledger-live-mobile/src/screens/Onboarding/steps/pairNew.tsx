@@ -1,7 +1,7 @@
 import React, { useCallback, memo } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { Flex, IconsLegacy } from "@ledgerhq/native-ui";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { NavigatorName, ScreenName } from "~/const";
 import { ConnectDevice } from "./setupDevice/scenes";
 import { TrackScreen } from "~/analytics";
@@ -10,6 +10,8 @@ import {
   completeOnboarding,
   setHasBeenRedirectedToPostOnboarding,
   setHasBeenUpsoldProtect,
+  setIsReborn,
+  setOnboardingHasDevice,
 } from "~/actions/settings";
 import { useNavigationInterceptor } from "../onboardingContext";
 import useNotifications from "~/logic/notifications";
@@ -23,6 +25,7 @@ import { BaseOnboardingNavigatorParamList } from "~/components/RootNavigator/typ
 import styled from "styled-components/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Button from "~/components/PreventDoubleClickButton";
+import { hasCompletedOnboardingSelector } from "~/reducers/settings";
 
 const StyledContainerView = styled(Flex)`
   padding-left: 16px;
@@ -73,6 +76,7 @@ export default memo(function () {
   const { resetCurrentStep } = useNavigationInterceptor();
 
   const { deviceModelId, showSeedWarning, isProtectFlow, fromAccessExistingWallet } = route.params;
+  const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
 
   const onFinish = useCallback(() => {
     if (isProtectFlow && deviceModelId) {
@@ -81,6 +85,10 @@ export default memo(function () {
         deviceModelId,
       });
       return;
+    }
+    dispatch(setIsReborn(false));
+    if (!hasCompletedOnboarding) {
+      dispatch(setOnboardingHasDevice(true));
     }
     dispatch(completeOnboarding());
     resetCurrentStep();
@@ -107,6 +115,7 @@ export default memo(function () {
     isProtectFlow,
     deviceModelId,
     dispatch,
+    hasCompletedOnboarding,
     resetCurrentStep,
     navigation,
     fromAccessExistingWallet,
