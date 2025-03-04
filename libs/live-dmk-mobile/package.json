@@ -35,7 +35,8 @@
     "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/live-dmk-shared": "workspace:^",
     "@ledgerhq/logs": "^6.12.0",
-    "@ledgerhq/types-devices": "workspace:^"
+    "@ledgerhq/types-devices": "workspace:^",
+    "react-native-ble-plx": "3.2.1"
   },
   "devDependencies": {
     "@ledgerhq/device-management-kit": "0.0.0-rnble-transport-20250303160138",
@@ -45,7 +46,6 @@
     "@types/node": "22.10.10",
     "@vitejs/plugin-react": "4.3.4",
     "@vitest/coverage-istanbul": "3.0.7",
-    "@vitest/coverage-v8": "2.1.8",
     "jsdom": "25.0.1",
     "react": "^18.3.1",
     "react-native": "0.76.3",

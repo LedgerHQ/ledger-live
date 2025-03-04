@@ -1,5 +1,4 @@
-import React, { ReactNode, useCallback, useEffect, useState } from "react";
-import { Linking } from "react-native";
+import React, { ReactNode, useEffect, useState } from "react";
 import { useBleDevicePairing } from "@ledgerhq/live-common/ble/hooks/useBleDevicePairing";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { getDeviceModel } from "@ledgerhq/devices";
@@ -7,7 +6,6 @@ import { Flex } from "@ledgerhq/native-ui";
 
 import { LockedDeviceError, PeerRemovedPairing } from "@ledgerhq/errors";
 import UnlockDeviceDrawer from "../UnlockDeviceDrawer";
-import { urls } from "~/utils/urls";
 import { BleDevicePaired } from "./BleDevicePairingContent/BleDevicePaired";
 import { BleDevicePeerRemoved } from "./BleDevicePairingContent/BleDevicePeerRemoved";
 import { BleDeviceLocked } from "./BleDevicePairingContent/BleDeviceLocked";
