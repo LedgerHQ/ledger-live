@@ -35,7 +35,6 @@ import { parseQuiet } from "./api/chain/program";
 import { InflationReward, ParsedTransaction, StakeActivationData } from "@solana/web3.js";
 import { ChainAPI } from "./api";
 import { ParsedOnChainTokenAccountWithInfo, toTokenAccountWithInfo } from "./api/chain/web3";
-import { drainSeq } from "./utils";
 import { estimateTxFee } from "./tx-fees";
 import { SolanaAccount, SolanaOperationExtra, SolanaStake, SolanaTokenAccount } from "./types";
 import { Operation, OperationType, TokenAccount } from "@ledgerhq/types-live";
@@ -723,16 +722,16 @@ async function getAccount(
     reward: InflationReward | null;
   }[];
 }> {
-  const balanceLamportsWithContext = await api.getBalanceAndContext(address);
+  const balanceLamportsWithContext = await api.getBalanceAndContext(address, "confirmed");
 
   const tokenAccounts = await api
-    .getParsedTokenAccountsByOwner(address)
+    .getParsedTokenAccountsByOwner(address, "confirmed")
     .then(res => res.value)
     .then(map(toTokenAccountWithInfo));
 
   const stakeAccountsRaw = [
     // ...(await api.getStakeAccountsByStakeAuth(address)),
-    ...(await api.getStakeAccountsByWithdrawAuth(address)),
+    ...(await api.getStakeAccountsByWithdrawAuth(address, "confirmed")),
   ];
 
   const stakeAccounts = flow(
@@ -749,8 +748,8 @@ async function getAccount(
   );
   */
 
-  const stakes = await drainSeq(
-    stakeAccounts.map(account => async () => {
+  const stakes = await Promise.all(
+    stakeAccounts.map(async account => {
       return {
         account,
         activation: await api.getStakeActivation(account.onChainAcc.pubkey.toBase58()),
