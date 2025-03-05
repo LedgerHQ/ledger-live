@@ -31,7 +31,6 @@ export function LNSUpsellBanner({ location, ...boxProps }: Props): ReactElement 
               {t(`lnsUpsell.${tracking}.cta`)}
             </Button>
           }
-          maxHeight={175}
           borderRadius="5px"
           onClick={handleCTAClick}
         />
