@@ -1,5 +1,19 @@
 # @ledgerhq/coin-algorand
 
+## 0.6.6-next.1
+
+### Patch Changes
+
+- [#9386](https://github.com/LedgerHQ/ledger-live/pull/9386) [`2662b57`](https://github.com/LedgerHQ/ledger-live/commit/2662b579343398d38ff5e2d0b25a35cccbc143ce) Thanks [@qperrot](https://github.com/qperrot)! - Fix specs for Celo and ICON
+
+- Updated dependencies [[`0a59343`](https://github.com/LedgerHQ/ledger-live/commit/0a59343b591dab4e886c21cb47f7339231997331), [`ede6db0`](https://github.com/LedgerHQ/ledger-live/commit/ede6db0b94193cc9072aeb87e90f4098f0434af0), [`1461449`](https://github.com/LedgerHQ/ledger-live/commit/146144941c13e60182da8d79592f706d12a6f00e), [`bdfa413`](https://github.com/LedgerHQ/ledger-live/commit/bdfa4139fcbceabfd05a57e69b05e9ccf10efbe1)]:
+  - @ledgerhq/types-cryptoassets@7.20.0-next.1
+  - @ledgerhq/cryptoassets@13.13.0-next.2
+  - @ledgerhq/types-live@6.61.0-next.1
+  - @ledgerhq/live-env@2.6.0-next.2
+  - @ledgerhq/coin-framework@2.1.1-next.1
+  - @ledgerhq/live-network@2.0.5-next.2
+
 ## 0.6.6-next.0
 
 ### Patch Changes

@@ -1,5 +1,23 @@
 # @ledgerhq/live-nft
 
+## 0.6.0-next.1
+
+### Minor Changes
+
+- [#9403](https://github.com/LedgerHQ/ledger-live/pull/9403) [`358a988`](https://github.com/LedgerHQ/ledger-live/commit/358a9880d9b1c4800340686410a421d0dfc8efb1) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update NMS version to v2
+
+- [#9402](https://github.com/LedgerHQ/ledger-live/pull/9402) [`bdfa413`](https://github.com/LedgerHQ/ledger-live/commit/bdfa4139fcbceabfd05a57e69b05e9ccf10efbe1) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update Staging NFT Metadata service url + Rename env variable
+
+### Patch Changes
+
+- Updated dependencies [[`0a59343`](https://github.com/LedgerHQ/ledger-live/commit/0a59343b591dab4e886c21cb47f7339231997331), [`ede6db0`](https://github.com/LedgerHQ/ledger-live/commit/ede6db0b94193cc9072aeb87e90f4098f0434af0), [`1461449`](https://github.com/LedgerHQ/ledger-live/commit/146144941c13e60182da8d79592f706d12a6f00e), [`bdfa413`](https://github.com/LedgerHQ/ledger-live/commit/bdfa4139fcbceabfd05a57e69b05e9ccf10efbe1)]:
+  - @ledgerhq/types-cryptoassets@7.20.0-next.1
+  - @ledgerhq/cryptoassets@13.13.0-next.2
+  - @ledgerhq/types-live@6.61.0-next.1
+  - @ledgerhq/live-env@2.6.0-next.2
+  - @ledgerhq/coin-framework@2.1.1-next.1
+  - @ledgerhq/live-network@2.0.5-next.2
+
 ## 0.5.9-next.0
 
 ### Patch Changes

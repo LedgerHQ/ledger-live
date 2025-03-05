@@ -1,5 +1,23 @@
 # @ledgerhq/coin-solana
 
+## 0.14.0-next.1
+
+### Minor Changes
+
+- [#9264](https://github.com/LedgerHQ/ledger-live/pull/9264) [`d71f331`](https://github.com/LedgerHQ/ledger-live/commit/d71f33164714757ebda60e98932c3aa3b58a57ea) Thanks [@Justkant](https://github.com/Justkant)! - feat: SPL 2022 support
+
+### Patch Changes
+
+- [#9351](https://github.com/LedgerHQ/ledger-live/pull/9351) [`163da32`](https://github.com/LedgerHQ/ledger-live/commit/163da32dac423444294896d8ff65174a093690aa) Thanks [@qperrot](https://github.com/qperrot)! - Change calls interval from 500ms to 100ms
+
+- Updated dependencies [[`0a59343`](https://github.com/LedgerHQ/ledger-live/commit/0a59343b591dab4e886c21cb47f7339231997331), [`ede6db0`](https://github.com/LedgerHQ/ledger-live/commit/ede6db0b94193cc9072aeb87e90f4098f0434af0), [`1461449`](https://github.com/LedgerHQ/ledger-live/commit/146144941c13e60182da8d79592f706d12a6f00e), [`bdfa413`](https://github.com/LedgerHQ/ledger-live/commit/bdfa4139fcbceabfd05a57e69b05e9ccf10efbe1)]:
+  - @ledgerhq/types-cryptoassets@7.20.0-next.1
+  - @ledgerhq/cryptoassets@13.13.0-next.2
+  - @ledgerhq/types-live@6.61.0-next.1
+  - @ledgerhq/live-env@2.6.0-next.2
+  - @ledgerhq/coin-framework@2.1.1-next.1
+  - @ledgerhq/live-network@2.0.5-next.2
+
 ## 0.14.0-next.0
 
 ### Minor Changes
