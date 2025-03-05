@@ -271,6 +271,7 @@ export enum SettingsActionTypes {
   SET_MARKET_FILTER_BY_STARRED_ACCOUNTS = "SET_MARKET_FILTER_BY_STARRED_ACCOUNTS",
   SET_SENSITIVE_ANALYTICS = "SET_SENSITIVE_ANALYTICS",
   SET_ONBOARDING_HAS_DEVICE = "SET_ONBOARDING_HAS_DEVICE",
+  SET_IS_REBORN = "SET_IS_REBORN",
   SET_NOTIFICATIONS = "SET_NOTIFICATIONS",
   SET_NEVER_CLICKED_ON_ALLOW_NOTIFICATIONS_BUTTON = "SET_NEVER_CLICKED_ON_ALLOW_NOTIFICATIONS_BUTTON",
   WALLET_TAB_NAVIGATOR_LAST_VISITED_TAB = "WALLET_TAB_NAVIGATOR_LAST_VISITED_TAB",
@@ -368,6 +369,7 @@ export type SettingsSetHasOrderedNanoPayload = SettingsState["hasOrderedNano"];
 export type SettingsSetMarketCounterCurrencyPayload = SettingsState["marketCounterCurrency"];
 export type SettingsSetSensitiveAnalyticsPayload = SettingsState["sensitiveAnalytics"];
 export type SettingsSetOnboardingHasDevicePayload = SettingsState["onboardingHasDevice"];
+export type SettingsSetIsRebornPayload = SettingsState["isReborn"];
 
 export type SettingsSetOnboardingTypePayload = SettingsState["onboardingType"];
 
@@ -448,6 +450,7 @@ export type SettingsPayload =
   | SettingsSetMarketCounterCurrencyPayload
   | SettingsSetSensitiveAnalyticsPayload
   | SettingsSetOnboardingHasDevicePayload
+  | SettingsSetIsRebornPayload
   | SettingsSetNotificationsPayload
   | SettingsDangerouslyOverrideStatePayload
   | DangerouslyOverrideStatePayload

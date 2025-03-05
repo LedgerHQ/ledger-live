@@ -1,10 +1,12 @@
 import type { Account, AccountBridge } from "@ledgerhq/types-live";
-import type { Transaction } from "./types";
+import type { SolanaTokenAccount, Transaction } from "./types";
 import BigNumber from "bignumber.js";
 import { ChainAPI } from "./api";
-import { getStakeAccountMinimumBalanceForRentExemption } from "./api/chain/web3";
+import { getMaybeTokenMint, getStakeAccountMinimumBalanceForRentExemption } from "./api/chain/web3";
 import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
 import { estimateTxFee } from "./tx-fees";
+import { calculateToken2022TransferFees } from "./helpers/token";
+import { TransferFeeConfigExt } from "./api/chain/account/tokenExtensions";
 
 export const estimateFeeAndSpendable = async (
   api: ChainAPI,
@@ -49,6 +51,40 @@ export const estimateFeeAndSpendable = async (
   }
 };
 
+function isTransferTx(tx: Transaction | undefined | null): boolean {
+  return !!tx && (tx.model.kind === "token.transfer" || tx.model.kind === "transfer");
+}
+
+export async function extimateTokenMaxSpendable(
+  api: ChainAPI,
+  account: SolanaTokenAccount,
+  tx?: Transaction | undefined | null,
+) {
+  if (
+    isTransferTx(tx) &&
+    account.extensions?.transferFee &&
+    account.extensions.transferFee.feeBps > 0
+  ) {
+    const mint = await getMaybeTokenMint(account.token.contractAddress, api);
+    if (!mint || mint instanceof Error) return account.spendableBalance;
+    const transferFeeConfig = mint.info.extensions?.find(
+      ext => ext.extension === "transferFeeConfig",
+    ) as TransferFeeConfigExt;
+    if (!transferFeeConfig) return account.spendableBalance;
+
+    const { epoch } = await api.getEpochInfo();
+
+    const { transferAmountExcludingFee } = calculateToken2022TransferFees({
+      transferAmount: account.spendableBalance.toNumber(),
+      transferFeeConfigState: transferFeeConfig.state,
+      currentEpoch: epoch,
+    });
+    return BigNumber(transferAmountExcludingFee);
+  }
+
+  return account.spendableBalance;
+}
+
 export const estimateMaxSpendableWithAPI = async (
   {
     account,
@@ -63,10 +99,8 @@ export const estimateMaxSpendableWithAPI = async (
     case "Account":
       return (await estimateFeeAndSpendable(api, mainAccount, transaction)).spendable;
     case "TokenAccount":
-      return account.spendableBalance;
+      return extimateTokenMaxSpendable(api, account, transaction);
   }
-
-  throw new Error("not supported account type");
 };
 
 export default estimateMaxSpendableWithAPI;

@@ -1,56 +1,16 @@
 # @ledgerhq/live-cli
 
-## 24.13.0-nightly.3
+## 24.12.2-next.0
 
 ### Patch Changes
 
-- Updated dependencies [[`ede6db0`](https://github.com/LedgerHQ/ledger-live/commit/ede6db0b94193cc9072aeb87e90f4098f0434af0), [`bdfa413`](https://github.com/LedgerHQ/ledger-live/commit/bdfa4139fcbceabfd05a57e69b05e9ccf10efbe1)]:
-  - @ledgerhq/live-common@34.24.0-nightly.3
-  - @ledgerhq/live-env@2.6.0-nightly.1
-  - @ledgerhq/coin-framework@2.1.1-nightly.1
-  - @ledgerhq/coin-bitcoin@0.11.1-nightly.1
-  - @ledgerhq/device-core@0.4.15-nightly.1
-  - @ledgerhq/live-countervalues@0.4.2-nightly.1
-  - @ledgerhq/live-wallet@0.9.6-nightly.1
-  - @ledgerhq/hw-ledger-key-ring-protocol@0.3.2-nightly.1
-  - @ledgerhq/ledger-key-ring-protocol@0.5.4-nightly.1
-  - @ledgerhq/cryptoassets@13.13.0-nightly.1
-  - @ledgerhq/live-network@2.0.5-nightly.1
-
-## 24.13.0-nightly.2
-
-### Minor Changes
-
-- [#8757](https://github.com/LedgerHQ/ledger-live/pull/8757) [`1461449`](https://github.com/LedgerHQ/ledger-live/commit/146144941c13e60182da8d79592f706d12a6f00e) Thanks [@Wozacosta](https://github.com/Wozacosta)! - chore: Rebranding from 'Elrond' to 'MultiversX'
-
-### Patch Changes
-
-- Updated dependencies [[`1461449`](https://github.com/LedgerHQ/ledger-live/commit/146144941c13e60182da8d79592f706d12a6f00e), [`2662b57`](https://github.com/LedgerHQ/ledger-live/commit/2662b579343398d38ff5e2d0b25a35cccbc143ce)]:
-  - @ledgerhq/cryptoassets@13.13.0-nightly.0
-  - @ledgerhq/live-common@34.24.0-nightly.2
-  - @ledgerhq/live-env@2.6.0-nightly.0
-  - @ledgerhq/coin-framework@2.1.1-nightly.0
-  - @ledgerhq/coin-bitcoin@0.11.1-nightly.0
-  - @ledgerhq/live-countervalues@0.4.2-nightly.0
-  - @ledgerhq/live-wallet@0.9.6-nightly.0
-  - @ledgerhq/hw-ledger-key-ring-protocol@0.3.2-nightly.0
-  - @ledgerhq/ledger-key-ring-protocol@0.5.4-nightly.0
-  - @ledgerhq/live-network@2.0.5-nightly.0
-  - @ledgerhq/device-core@0.4.15-nightly.0
-
-## 24.12.2-nightly.1
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/live-common@34.23.1-nightly.1
-
-## 24.12.2-nightly.0
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/live-common@34.23.1-nightly.0
+- Updated dependencies [[`ee205a0`](https://github.com/LedgerHQ/ledger-live/commit/ee205a01e1a26045e468735907039ad9be1c7f34), [`462ffcf`](https://github.com/LedgerHQ/ledger-live/commit/462ffcffc4e5965d3d2fcfb7980c4b3050d01b6a), [`5fb1f95`](https://github.com/LedgerHQ/ledger-live/commit/5fb1f95615c53f511a9e3eb8a992620b36a11512), [`e4d9a5c`](https://github.com/LedgerHQ/ledger-live/commit/e4d9a5ce6c3e8f2b3829f8f5772e7ba712a4a50c), [`a548031`](https://github.com/LedgerHQ/ledger-live/commit/a5480317822ab9a20edea9a668b5b3ada25789bd), [`2d2525a`](https://github.com/LedgerHQ/ledger-live/commit/2d2525aa53aaec0ce0d61d1c88ac441842d95b07), [`cda1c86`](https://github.com/LedgerHQ/ledger-live/commit/cda1c861bbb202d3b79e710f3f7b303f73248579), [`1114e29`](https://github.com/LedgerHQ/ledger-live/commit/1114e29f678113118f543445f48829439f809f7f), [`24dfbcf`](https://github.com/LedgerHQ/ledger-live/commit/24dfbcfebde65d3df47d815bc53c6c68d4e7bb0c)]:
+  - @ledgerhq/live-common@34.24.0-next.0
+  - @ledgerhq/coin-framework@2.1.1-next.0
+  - @ledgerhq/coin-bitcoin@0.11.1-next.0
+  - @ledgerhq/device-core@0.4.15-next.0
+  - @ledgerhq/live-countervalues@0.4.2-next.0
+  - @ledgerhq/live-wallet@0.9.6-next.0
 
 ## 24.12.1
 

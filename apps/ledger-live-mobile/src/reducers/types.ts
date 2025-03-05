@@ -243,6 +243,7 @@ export type SettingsState = {
   marketCounterCurrency: string | null | undefined;
   sensitiveAnalytics: boolean;
   onboardingHasDevice: boolean | null;
+  isReborn: boolean | null;
   onboardingType: OnboardingType | null;
   customLockScreenType: ImageType | null;
   customLockScreenBackup: {

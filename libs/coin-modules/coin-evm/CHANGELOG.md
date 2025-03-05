@@ -1,32 +1,17 @@
 # @ledgerhq/coin-evm
 
-## 2.12.0-nightly.1
+## 2.12.0-next.0
 
 ### Minor Changes
 
-- [#9402](https://github.com/LedgerHQ/ledger-live/pull/9402) [`bdfa413`](https://github.com/LedgerHQ/ledger-live/commit/bdfa4139fcbceabfd05a57e69b05e9ccf10efbe1) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update Staging NFT Metadata service url + Rename env variable
+- [#8931](https://github.com/LedgerHQ/ledger-live/pull/8931) [`ee205a0`](https://github.com/LedgerHQ/ledger-live/commit/ee205a01e1a26045e468735907039ad9be1c7f34) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Add dmk signer when using dmk transport
 
 ### Patch Changes
 
-- Updated dependencies [[`7931e5f`](https://github.com/LedgerHQ/ledger-live/commit/7931e5f6bf379eee7b80f5a95f13b6e96140ac5a), [`bdfa413`](https://github.com/LedgerHQ/ledger-live/commit/bdfa4139fcbceabfd05a57e69b05e9ccf10efbe1)]:
-  - @ledgerhq/evm-tools@1.5.0-nightly.1
-  - @ledgerhq/live-env@2.6.0-nightly.1
-  - @ledgerhq/coin-framework@2.1.1-nightly.1
-  - @ledgerhq/domain-service@1.2.20-nightly.0
-  - @ledgerhq/cryptoassets@13.13.0-nightly.1
-  - @ledgerhq/live-network@2.0.5-nightly.1
-
-## 2.11.1-nightly.0
-
-### Patch Changes
-
-- Updated dependencies [[`1461449`](https://github.com/LedgerHQ/ledger-live/commit/146144941c13e60182da8d79592f706d12a6f00e)]:
-  - @ledgerhq/cryptoassets@13.13.0-nightly.0
-  - @ledgerhq/live-env@2.6.0-nightly.0
-  - @ledgerhq/coin-framework@2.1.1-nightly.0
-  - @ledgerhq/domain-service@1.2.19
-  - @ledgerhq/evm-tools@1.4.1-nightly.0
-  - @ledgerhq/live-network@2.0.5-nightly.0
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@2.1.1-next.0
+  - @ledgerhq/domain-service@1.2.20-next.0
+  - @ledgerhq/evm-tools@1.4.0
 
 ## 2.11.0
 

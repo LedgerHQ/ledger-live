@@ -1,8 +1,6 @@
-import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets";
 import { PublicKey } from "@solana/web3.js";
-import { AccountLike } from "@ledgerhq/types-live";
 import { StakeMeta } from "./api/chain/account/stake";
-import { SolanaStake, SolanaTokenAccount, StakeAction } from "./types";
+import { SolanaStake, StakeAction } from "./types";
 import { assertUnreachable } from "./utils";
 
 export type Awaited<T> = T extends PromiseLike<infer U> ? U : T;
@@ -34,10 +32,6 @@ export function decodeAccountIdWithTokenAccountAddress(accountIdWithTokenAccount
     accountId: accountIdWithTokenAccountAddress.slice(0, lastColonIndex),
     address: accountIdWithTokenAccountAddress.slice(lastColonIndex + 1),
   };
-}
-
-export function tokenIsListedOnLedger(currencyId: string, mint: string): boolean {
-  return findTokenByAddressInCurrency(mint, currencyId)?.type === "TokenCurrency";
 }
 
 export function stakeActions(stake: SolanaStake): StakeAction[] {
@@ -108,8 +102,4 @@ export function stakeActivePercent(stake: SolanaStake) {
     return 0;
   }
   return (stake.activation.active / amount) * 100;
-}
-
-export function isTokenAccountFrozen(account: AccountLike) {
-  return account.type === "TokenAccount" && (account as SolanaTokenAccount)?.state === "frozen";
 }

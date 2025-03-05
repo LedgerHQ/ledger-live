@@ -17,7 +17,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 import { SeedPhraseType, StorylyInstanceID } from "@ledgerhq/types-live";
@@ -29,7 +29,9 @@ import DesyncOverlay from "./DesyncOverlay";
 import {
   completeOnboarding,
   setHasOrderedNano,
+  setIsReborn,
   setLastConnectedDevice,
+  setOnboardingHasDevice,
   setReadOnlyMode,
 } from "~/actions/settings";
 import InstallSetOfApps from "~/components/DeviceAction/InstallSetOfApps";
@@ -40,6 +42,7 @@ import ContinueOnEuropa from "./assets/ContinueOnEuropa";
 import type { SyncOnboardingScreenProps } from "./SyncOnboardingScreenProps";
 import { useIsFocused } from "@react-navigation/native";
 import { useKeepScreenAwake } from "~/hooks/useKeepScreenAwake";
+import { hasCompletedOnboardingSelector } from "~/reducers/settings";
 
 const { BodyText, SubtitleText } = VerticalTimeline;
 
@@ -136,6 +139,7 @@ const ContinueOnDeviceWithAnim: React.FC<{
  * The desync alert message overlay is rendered from this component to better handle relative position
  * with the vertical timeline.
  */
+
 export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
   navigation,
   device,
@@ -146,6 +150,7 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
 }) => {
   const { t } = useTranslation();
   const dispatchRedux = useDispatch();
+  const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const deviceInitialApps = useFeature("deviceInitialApps");
 
   const productName = getDeviceModel(device.modelId).productName || device.modelId;
@@ -457,6 +462,10 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
       setIsPollingOn(false);
       // At this step, device has been successfully setup so it can be saved in
       // the list of known devices
+      dispatchRedux(setIsReborn(false));
+      if (!hasCompletedOnboarding) {
+        dispatchRedux(setOnboardingHasDevice(true));
+      }
       if (!addedToKnownDevices.current) {
         addedToKnownDevices.current = true;
         addToKnownDevices();
@@ -478,7 +487,13 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
         readyRedirectTimerRef.current = null;
       }
     };
-  }, [companionStepKey, addToKnownDevices, handleOnboardingDone]);
+  }, [
+    companionStepKey,
+    addToKnownDevices,
+    handleOnboardingDone,
+    dispatchRedux,
+    hasCompletedOnboarding,
+  ]);
 
   useEffect(
     () =>

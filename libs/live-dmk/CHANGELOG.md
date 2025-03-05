@@ -1,6 +1,6 @@
 # @ledgerhq/live-dmk
 
-## 0.4.0-nightly.0
+## 0.4.0-next.0
 
 ### Minor Changes
 

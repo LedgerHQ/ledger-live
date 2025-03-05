@@ -1,31 +1,16 @@
 # @ledgerhq/coin-stellar
 
-## 1.1.0-nightly.2
-
-### Patch Changes
-
-- Updated dependencies [[`ede6db0`](https://github.com/LedgerHQ/ledger-live/commit/ede6db0b94193cc9072aeb87e90f4098f0434af0)]:
-  - @ledgerhq/types-live@6.61.0-nightly.0
-  - @ledgerhq/coin-framework@2.1.1-nightly.1
-  - @ledgerhq/cryptoassets@13.13.0-nightly.1
-  - @ledgerhq/live-network@2.0.5-nightly.1
-
-## 1.1.0-nightly.1
-
-### Patch Changes
-
-- Updated dependencies [[`1461449`](https://github.com/LedgerHQ/ledger-live/commit/146144941c13e60182da8d79592f706d12a6f00e)]:
-  - @ledgerhq/types-cryptoassets@7.20.0-nightly.0
-  - @ledgerhq/cryptoassets@13.13.0-nightly.0
-  - @ledgerhq/coin-framework@2.1.1-nightly.0
-  - @ledgerhq/types-live@6.60.0
-  - @ledgerhq/live-network@2.0.5-nightly.0
-
-## 1.1.0-nightly.0
+## 1.1.0-next.0
 
 ### Minor Changes
 
 - [#9175](https://github.com/LedgerHQ/ledger-live/pull/9175) [`bcff898`](https://github.com/LedgerHQ/ledger-live/commit/bcff89879272a42c4a68b8395ead975febfa96d0) Thanks [@jprudent](https://github.com/jprudent)! - Stellar api get all operations from 0
+
+### Patch Changes
+
+- Updated dependencies [[`e4d9a5c`](https://github.com/LedgerHQ/ledger-live/commit/e4d9a5ce6c3e8f2b3829f8f5772e7ba712a4a50c)]:
+  - @ledgerhq/types-live@6.61.0-next.0
+  - @ledgerhq/coin-framework@2.1.1-next.0
 
 ## 1.0.2
 

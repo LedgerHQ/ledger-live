@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-tezos": patch
+"@ledgerhq/coin-tezos": minor
 ---
 
 coinconfig edit

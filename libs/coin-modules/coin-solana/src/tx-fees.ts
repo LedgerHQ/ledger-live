@@ -6,6 +6,7 @@ import { LEDGER_VALIDATOR_DEFAULT, assertUnreachable } from "./utils";
 import { VersionedTransaction as OnChainTransaction } from "@solana/web3.js";
 import { log } from "@ledgerhq/logs";
 import { getStakeAccountAddressWithSeed } from "./api/chain/web3";
+import { PARSED_PROGRAMS } from "./api/chain/program/constants";
 
 const DEFAULT_TX_FEE = 5000;
 
@@ -178,6 +179,7 @@ const createDummyTokenTransferTx = (address: string): Transaction => {
             tokenAccAddress: randomAddresses[2],
             shouldCreateAsAssociatedTokenAccount: true,
           },
+          tokenProgram: PARSED_PROGRAMS.SPL_TOKEN,
         },
         ...commandDescriptorCommons,
       },
