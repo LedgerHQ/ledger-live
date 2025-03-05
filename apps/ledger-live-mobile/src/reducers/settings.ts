@@ -82,6 +82,7 @@ import type {
   SettingsSetMevProtectionPayload,
   SettingsUpdateNftCollectionStatus,
   SettingsSetSelectedTabPortfolioAssetsPayload,
+  SettingsSetIsRebornPayload,
 } from "../actions/types";
 import {
   SettingsActionTypes,
@@ -158,6 +159,7 @@ export const INITIAL_STATE: SettingsState = {
   marketCounterCurrency: null,
   sensitiveAnalytics: false,
   onboardingHasDevice: null,
+  isReborn: null,
   notifications: {
     areNotificationsAllowed: true,
     announcementsCategory: true,
@@ -535,6 +537,11 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     onboardingHasDevice: (action as Action<SettingsSetOnboardingHasDevicePayload>).payload,
   }),
 
+  [SettingsActionTypes.SET_IS_REBORN]: (state, action) => ({
+    ...state,
+    isReborn: (action as Action<SettingsSetIsRebornPayload>).payload,
+  }),
+
   [SettingsActionTypes.SET_ONBOARDING_TYPE]: (state, action) => ({
     ...state,
     onboardingType: (action as Action<SettingsSetOnboardingTypePayload>).payload,
@@ -887,6 +894,7 @@ export const marketCounterCurrencySelector = (state: State) => state.settings.ma
 export const customImageBackupSelector = (state: State) => state.settings.customLockScreenBackup;
 export const sensitiveAnalyticsSelector = (state: State) => state.settings.sensitiveAnalytics;
 export const onboardingHasDeviceSelector = (state: State) => state.settings.onboardingHasDevice;
+export const isRebornSelector = (state: State) => state.settings.isReborn;
 export const onboardingTypeSelector = (state: State) => state.settings.onboardingType;
 export const hasClosedNetworkBannerSelector = (state: State) =>
   state.settings.depositFlow.hasClosedNetworkBanner;

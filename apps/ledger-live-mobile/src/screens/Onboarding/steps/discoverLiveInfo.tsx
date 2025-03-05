@@ -7,7 +7,12 @@ import styled, { useTheme } from "styled-components/native";
 import { useDispatch } from "react-redux";
 import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
 import { Image, ImageProps } from "react-native";
-import { completeOnboarding, setOnboardingHasDevice, setReadOnlyMode } from "~/actions/settings";
+import {
+  completeOnboarding,
+  setIsReborn,
+  setOnboardingHasDevice,
+  setReadOnlyMode,
+} from "~/actions/settings";
 import { useRebornFlow } from "LLM/features/Reborn/hooks/useRebornFlow";
 import { NavigatorName, ScreenName } from "~/const";
 import { screen, track } from "~/analytics";
@@ -78,7 +83,6 @@ const Item = ({
     dispatch(completeOnboarding());
     dispatch(setReadOnlyMode(true));
     onClick("Explore without a device");
-    dispatch(setOnboardingHasDevice(false));
 
     navigation.reset({
       index: 0,
@@ -88,9 +92,10 @@ const Item = ({
 
   const pressExplore = useCallback(() => {
     exploreLedger();
+    dispatch(setIsReborn(true));
     dispatch(setOnboardingHasDevice(false));
     onClick("Explore without a device");
-  }, [exploreLedger, dispatch, onClick]);
+  }, [dispatch, exploreLedger, onClick]);
 
   const pressBuy = useCallback(() => {
     buyLedger();

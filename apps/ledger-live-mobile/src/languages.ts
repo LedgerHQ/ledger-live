@@ -25,23 +25,24 @@ export const languages = {
   tr: "Türkçe",
   zh: "简体中文",
   ar: "العربية",
+  th: "ภาษาไทย",
 };
 
-type localeKeys = keyof typeof allLocales;
-export const localeIds = Object.keys(allLocales) as localeKeys[];
+export type LocaleKeys = keyof typeof allLocales;
+export const localeIds = Object.keys(allLocales) as LocaleKeys[];
 
 /**
  * This is the list of languages that are supported in terms of in-app translations
  * and it is meant to appear in the settings.
  */
-export const supportedLocales: localeKeys[] = Config.LEDGER_DEBUG_ALL_LANGS
+export const supportedLocales: LocaleKeys[] = Config.LEDGER_DEBUG_ALL_LANGS
   ? localeIds
-  : ["en", "fr", "es", "ru", "zh", "de", "tr", "ja", "ko", "pt"];
+  : ["en", "fr", "es", "ru", "zh", "de", "tr", "ja", "ko", "pt", "th"];
 
 export type Locale = keyof typeof languages;
 
 /**
- * This maps the supported locales from live to theiur equivalent languages on the device.
+ * This maps the supported locales from live to their equivalent languages on the device.
  * It is to be used for suggesting the user to change their device language according to their Live
  * language.
  */
@@ -53,6 +54,7 @@ export const localeIdToDeviceLanguage: { [key in Locale]?: Language } = {
   ru: "russian",
   de: "german",
   tr: "turkish",
+  th: "thai",
 };
 
 /**
@@ -81,7 +83,7 @@ export const locales = supportedLocales.reduce(
     obj[key] = allLocales[key]; // eslint-disable-line no-param-reassign
     return obj;
   },
-  {} as { [k in localeKeys]: ResourceLanguage },
+  {} as { [k in LocaleKeys]: ResourceLanguage },
 );
 
 /** For the "language" setting which is used for translations. */
@@ -114,6 +116,7 @@ const languageLocaleToDefaultLocaleMap: {
   tr: "tr-TR",
   zh: "zh-CN",
   ar: "ar-EG",
+  th: "th-TH",
 };
 
 /** For the "region" setting which is used for dates & numbers formatting. */

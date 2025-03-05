@@ -1,5 +1,6 @@
 import invariant from "invariant";
 import React from "react";
+import BigNumber from "bignumber.js";
 import { Linking, View } from "react-native";
 import { Trans } from "react-i18next";
 import { Link } from "@ledgerhq/native-ui";
@@ -15,6 +16,8 @@ import { DeviceModelId } from "@ledgerhq/devices";
 import Alert from "~/components/Alert";
 import { urls } from "~/utils/urls";
 import LText from "~/components/LText";
+import { useAccountUnit } from "~/hooks";
+import { DataRowUnitValue } from "~/components/ValidateOnDeviceDataRow";
 
 type SolanaFieldComponentProps = {
   account: SolanaAccount | SolanaTokenAccount;
@@ -46,7 +49,33 @@ const Warning = ({ transaction, device }: SolanaFieldComponentProps) => {
   return null;
 };
 
+const TokenTranferFeeField = ({ account, transaction, field }: SolanaFieldComponentProps) => {
+  invariant(transaction.family === "solana", "expect solana transaction");
+  invariant(
+    transaction.model.commandDescriptor?.command.kind === "token.transfer",
+    "expect token.transfer transaction",
+  );
+  invariant(
+    transaction.model.commandDescriptor.command.extensions?.transferFee !== undefined,
+    "expect token.transfer transaction with transfer fee extension",
+  );
+  const unit = useAccountUnit(account);
+  return (
+    <DataRowUnitValue
+      label={field.label}
+      unit={unit}
+      value={
+        new BigNumber(
+          transaction.model.commandDescriptor.command.extensions.transferFee.transferFee,
+        )
+      }
+    />
+  );
+};
+
 export default {
   warning: Warning,
-  fieldComponents: {},
+  fieldComponents: {
+    "solana.token.transferFee": TokenTranferFeeField,
+  },
 };

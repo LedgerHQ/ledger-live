@@ -1,5 +1,17 @@
 # @ledgerhq/coin-cardano
 
+## 0.5.0-next.0
+
+### Minor Changes
+
+- [#9319](https://github.com/LedgerHQ/ledger-live/pull/9319) [`c78d6bc`](https://github.com/LedgerHQ/ledger-live/commit/c78d6bc5a5f77e3b9c844c8f67dd205995ce309f) Thanks [@qperrot](https://github.com/qperrot)! - Setup Ledger by Figment two as the default validator
+
+### Patch Changes
+
+- Updated dependencies [[`e4d9a5c`](https://github.com/LedgerHQ/ledger-live/commit/e4d9a5ce6c3e8f2b3829f8f5772e7ba712a4a50c)]:
+  - @ledgerhq/types-live@6.61.0-next.0
+  - @ledgerhq/coin-framework@2.1.1-next.0
+
 ## 0.4.5
 
 ### Patch Changes

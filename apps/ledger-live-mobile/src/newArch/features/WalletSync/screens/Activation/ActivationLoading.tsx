@@ -13,7 +13,7 @@ import { useTheme } from "styled-components/native";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { hasCompletedOnboardingSelector } from "~/reducers/settings";
-import { completeOnboarding } from "~/actions/settings";
+import { completeOnboarding, setIsReborn, setOnboardingHasDevice } from "~/actions/settings";
 import PreventNativeBack from "~/components/PreventNativeBack";
 
 type Props = BaseComposite<
@@ -34,6 +34,8 @@ export function ActivationLoading({ route }: Props) {
   useEffect(() => {
     if (!hasCompletedOnboarding) {
       dispatch(completeOnboarding());
+      dispatch(setIsReborn(false));
+      dispatch(setOnboardingHasDevice(true));
     }
   }, [dispatch, hasCompletedOnboarding]);
 

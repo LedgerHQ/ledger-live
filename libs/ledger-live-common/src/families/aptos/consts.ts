@@ -1,0 +1,3 @@
+export const APTOS_NON_HARDENED_DERIVATION_PATH_REGEX = /^44'\/637'\/[0-9]+'\/[0-9]+\/[0-9]+$/;
+export const APTOS_NON_HARDENED_DERIVATION_PATH = "44'/637'/0'/0/0";
+export const APTOS_HARDENED_DERIVATION_PATH = "44'/637'/0'/0'/0'";

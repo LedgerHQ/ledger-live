@@ -25,8 +25,8 @@ export function SwapLiveApp() {
   const { t } = useTranslation();
   const ptxSwapLiveAppMobile = useFeature("ptxSwapLiveAppMobile");
 
-  const APP_MANIFEST_NOT_FOUND_ERROR = new Error(t("errors.AppManifestUnknown.title"));
-  const APP_MANIFEST_UNKNOWN_ERROR = new Error(t("errors.AppManifestNotFoundError.title"));
+  const APP_MANIFEST_NOT_FOUND_ERROR = new Error(t("errors.AppManifestNotFoundError.title"));
+  const APP_MANIFEST_UNKNOWN_ERROR = new Error(t("errors.AppManifestUnknownError.title"));
 
   const swapLiveAppManifestID =
     (ptxSwapLiveAppMobile?.params?.manifest_id as string) || DEFAULT_MANIFEST_ID;

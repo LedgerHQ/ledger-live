@@ -4,4 +4,5 @@ module.exports = {
   testEnvironment: "node",
   testRegex: ".integ.test.ts$",
   testPathIgnorePatterns: ["lib/", "lib-es/"],
+  setupFiles: ["dotenv/config"],
 };

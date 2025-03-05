@@ -2,7 +2,7 @@ name: "[Code Quality Check] Sonar Scan"
 
 on:
   schedule:
-    - cron: "9 19 * * 1-5" # every working day at 7pm we will do a daily scan on develop
+    - cron: "0 2 * * 1-5" # every working day at 2am we will do a daily scan on develop
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}

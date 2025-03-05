@@ -1,5 +1,17 @@
 # @ledgerhq/coin-tron
 
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#9167](https://github.com/LedgerHQ/ledger-live/pull/9167) [`e50b750`](https://github.com/LedgerHQ/ledger-live/commit/e50b750a362e978046cfa2fde321ac3c3212630e) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Setup for alpaca api
+
+### Patch Changes
+
+- Updated dependencies [[`e4d9a5c`](https://github.com/LedgerHQ/ledger-live/commit/e4d9a5ce6c3e8f2b3829f8f5772e7ba712a4a50c)]:
+  - @ledgerhq/types-live@6.61.0-next.0
+  - @ledgerhq/coin-framework@2.1.1-next.0
+
 ## 0.2.5
 
 ### Patch Changes

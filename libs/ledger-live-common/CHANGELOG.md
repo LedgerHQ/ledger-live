@@ -1,5 +1,62 @@
 ## 34.5.0-next.4
 
+## 34.24.0-next.0
+
+### Minor Changes
+
+- [#8931](https://github.com/LedgerHQ/ledger-live/pull/8931) [`ee205a0`](https://github.com/LedgerHQ/ledger-live/commit/ee205a01e1a26045e468735907039ad9be1c7f34) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Add dmk signer when using dmk transport
+
+- [#9323](https://github.com/LedgerHQ/ledger-live/pull/9323) [`462ffcf`](https://github.com/LedgerHQ/ledger-live/commit/462ffcffc4e5965d3d2fcfb7980c4b3050d01b6a) Thanks [@CremaFR](https://github.com/CremaFR)! - feat: swap lifi sends txId like thorswap for history status
+
+- [#8878](https://github.com/LedgerHQ/ledger-live/pull/8878) [`5fb1f95`](https://github.com/LedgerHQ/ledger-live/commit/5fb1f95615c53f511a9e3eb8a992620b36a11512) Thanks [@Canestin](https://github.com/Canestin)! - casper coin modularization
+
+- [#9199](https://github.com/LedgerHQ/ledger-live/pull/9199) [`e4d9a5c`](https://github.com/LedgerHQ/ledger-live/commit/e4d9a5ce6c3e8f2b3829f8f5772e7ba712a4a50c) Thanks [@thesan](https://github.com/thesan)! - Add the `feature_lld_NanoS_upsell_banners` flag
+
+- [#9202](https://github.com/LedgerHQ/ledger-live/pull/9202) [`a548031`](https://github.com/LedgerHQ/ledger-live/commit/a5480317822ab9a20edea9a668b5b3ada25789bd) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Support deeplinks for Swap in LLM
+
+- [#9226](https://github.com/LedgerHQ/ledger-live/pull/9226) [`2d2525a`](https://github.com/LedgerHQ/ledger-live/commit/2d2525aa53aaec0ce0d61d1c88ac441842d95b07) Thanks [@adammino-ledger](https://github.com/adammino-ledger)! - Remove decoding url on LLD/LLM shared helper and add encoding just to LLM
+
+- [#9312](https://github.com/LedgerHQ/ledger-live/pull/9312) [`cda1c86`](https://github.com/LedgerHQ/ledger-live/commit/cda1c861bbb202d3b79e710f3f7b303f73248579) Thanks [@KVNLS](https://github.com/KVNLS)! - reintroduce spamTX
+
+- [#9143](https://github.com/LedgerHQ/ledger-live/pull/9143) [`1114e29`](https://github.com/LedgerHQ/ledger-live/commit/1114e29f678113118f543445f48829439f809f7f) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - remove uniswap from status call history
+
+- [#9271](https://github.com/LedgerHQ/ledger-live/pull/9271) [`24dfbcf`](https://github.com/LedgerHQ/ledger-live/commit/24dfbcfebde65d3df47d815bc53c6c68d4e7bb0c) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - add lifi to partner backup service
+
+### Patch Changes
+
+- Updated dependencies [[`e50b750`](https://github.com/LedgerHQ/ledger-live/commit/e50b750a362e978046cfa2fde321ac3c3212630e), [`fa6e94c`](https://github.com/LedgerHQ/ledger-live/commit/fa6e94cce42f4e0169c6a094f9f54361f5239120), [`ee205a0`](https://github.com/LedgerHQ/ledger-live/commit/ee205a01e1a26045e468735907039ad9be1c7f34), [`5fb1f95`](https://github.com/LedgerHQ/ledger-live/commit/5fb1f95615c53f511a9e3eb8a992620b36a11512), [`e50b750`](https://github.com/LedgerHQ/ledger-live/commit/e50b750a362e978046cfa2fde321ac3c3212630e), [`4e48b2f`](https://github.com/LedgerHQ/ledger-live/commit/4e48b2fca669128837a0175f4b4f0246b0e5499f), [`c78d6bc`](https://github.com/LedgerHQ/ledger-live/commit/c78d6bc5a5f77e3b9c844c8f67dd205995ce309f), [`bcff898`](https://github.com/LedgerHQ/ledger-live/commit/bcff89879272a42c4a68b8395ead975febfa96d0), [`896b14d`](https://github.com/LedgerHQ/ledger-live/commit/896b14d89206a6d745ce5d446189e61bb8741542), [`24dfbcf`](https://github.com/LedgerHQ/ledger-live/commit/24dfbcfebde65d3df47d815bc53c6c68d4e7bb0c)]:
+  - @ledgerhq/coin-tezos@1.3.0-next.0
+  - @ledgerhq/coin-casper@1.4.0-next.0
+  - @ledgerhq/coin-evm@2.12.0-next.0
+  - @ledgerhq/coin-tron@0.3.0-next.0
+  - @ledgerhq/coin-filecoin@1.6.0-next.0
+  - @ledgerhq/coin-solana@0.14.0-next.0
+  - @ledgerhq/coin-cardano@0.5.0-next.0
+  - @ledgerhq/coin-stellar@1.1.0-next.0
+  - @ledgerhq/ledger-cal-service@0.3.0-next.0
+  - @ledgerhq/live-signer-evm@0.1.1-next.0
+  - @ledgerhq/coin-framework@2.1.1-next.0
+  - @ledgerhq/coin-algorand@0.7.6-next.0
+  - @ledgerhq/coin-aptos@1.6.2-next.0
+  - @ledgerhq/coin-bitcoin@0.11.1-next.0
+  - @ledgerhq/coin-cosmos@0.8.2-next.0
+  - @ledgerhq/coin-elrond@0.3.6-next.0
+  - @ledgerhq/coin-hedera@1.3.6-next.0
+  - @ledgerhq/coin-icon@0.6.6-next.0
+  - @ledgerhq/coin-internet_computer@1.5.6-next.0
+  - @ledgerhq/coin-near@0.8.2-next.0
+  - @ledgerhq/coin-polkadot@2.0.3-next.0
+  - @ledgerhq/coin-stacks@0.6.1-next.0
+  - @ledgerhq/coin-ton@0.5.6-next.0
+  - @ledgerhq/coin-vechain@2.4.6-next.0
+  - @ledgerhq/coin-xrp@2.0.2-next.0
+  - @ledgerhq/device-core@0.4.15-next.0
+  - @ledgerhq/hw-app-eth@6.42.8-next.0
+  - @ledgerhq/live-countervalues@0.4.2-next.0
+  - @ledgerhq/live-countervalues-react@0.2.24-next.0
+  - @ledgerhq/live-nft@0.5.9-next.0
+  - @ledgerhq/live-wallet@0.9.6-next.0
+
 ## 34.23.0
 
 ### Minor Changes

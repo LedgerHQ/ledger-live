@@ -288,7 +288,7 @@ export default function useScanDeviceAccountsViewModel({
           currency,
           context,
         });
-      } else if (CustomNoAssociatedAccounts) {
+      } else if (!scannedAccounts.length && CustomNoAssociatedAccounts) {
         navigation.replace(ScreenName.NoAssociatedAccounts, {
           CustomNoAssociatedAccounts,
         });
