@@ -1,5 +1,20 @@
 # @ledgerhq/coin-near
 
+## 0.9.0-next.1
+
+### Minor Changes
+
+- [#9314](https://github.com/LedgerHQ/ledger-live/pull/9314) [`cdd16b5`](https://github.com/LedgerHQ/ledger-live/commit/cdd16b5e7463adef601590591c838b3474ce46ee) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Fix getMaxAmount by not taking into account pendingOps with SpendingBalance
+
+### Patch Changes
+
+- Updated dependencies [[`8675df1`](https://github.com/LedgerHQ/ledger-live/commit/8675df12c24067877358f27e1e7c66f739ff0c78), [`0a59343`](https://github.com/LedgerHQ/ledger-live/commit/0a59343b591dab4e886c21cb47f7339231997331), [`ede6db0`](https://github.com/LedgerHQ/ledger-live/commit/ede6db0b94193cc9072aeb87e90f4098f0434af0), [`1461449`](https://github.com/LedgerHQ/ledger-live/commit/146144941c13e60182da8d79592f706d12a6f00e)]:
+  - @ledgerhq/types-live@6.61.0-next.1
+  - @ledgerhq/coin-framework@2.2.0-next.1
+  - @ledgerhq/types-cryptoassets@7.20.0-next.0
+  - @ledgerhq/cryptoassets@13.13.0-next.0
+  - @ledgerhq/live-network@2.0.5-next.0
+
 ## 0.8.2-next.0
 
 ### Patch Changes

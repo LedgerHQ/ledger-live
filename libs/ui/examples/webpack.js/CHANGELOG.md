@@ -1,5 +1,12 @@
 # webpack.js-example
 
+## 0.1.16-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/react-ui@0.19.1-next.0
+
 ## 0.1.15
 
 ### Patch Changes
