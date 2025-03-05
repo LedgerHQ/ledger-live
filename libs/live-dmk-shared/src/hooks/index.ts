@@ -1,2 +1,2 @@
-export { useDisableDeviceSessionRefresher as useDeviceSessionRefresherToggle } from "./useDeviceSessionRefresherToggle";
+export { useDisableDeviceSessionRefresher } from "./useDeviceSessionRefresherToggle";
 export { useDeviceSessionState } from "./useDeviceSessionState";

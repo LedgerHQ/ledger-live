@@ -27,11 +27,7 @@ import { useDebouncedRequireBluetooth } from "../RequiresBLE/hooks/useRequireBlu
 import RequiresBluetoothDrawer from "../RequiresBLE/RequiresBluetoothDrawer";
 import QueuedDrawer from "../QueuedDrawer";
 import { DeviceList } from "./DeviceList";
-import {
-  useBleDevicesScanning,
-  useDeviceManagementKit,
-  useDeviceSessionRefresherToggle,
-} from "@ledgerhq/live-dmk-mobile";
+import { useBleDevicesScanning } from "@ledgerhq/live-dmk-mobile";
 
 export type { SetHeaderOptionsRequest };
 
@@ -255,9 +251,6 @@ export default function SelectDevice({
       dispatch(updateMainNavigatorVisibility(true));
     };
   }, [dispatch]);
-
-  const dmk = useDeviceManagementKit();
-  useDeviceSessionRefresherToggle(dmk, true);
 
   // Makes sure that when loosing (screen) focus, the visibility of the bottom tab bar is reset
   useEffect(() => {
