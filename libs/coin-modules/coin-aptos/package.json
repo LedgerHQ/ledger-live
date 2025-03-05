@@ -100,6 +100,7 @@
     "rxjs": "^7.8.1"
   },
   "devDependencies": {
+    "@ledgerhq/types-cryptoassets": "workspace:^",
     "@faker-js/faker": "^9.4.0",
     "@types/invariant": "^2.2.37",
     "@types/jest": "^29.5.14",
