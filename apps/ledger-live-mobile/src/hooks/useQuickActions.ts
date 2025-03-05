@@ -12,6 +12,7 @@ import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/Ba
 import { EntryOf } from "~/types/helpers";
 import { accountsCountSelector, areAccountsEmptySelector } from "../reducers/accounts";
 import { readOnlyModeEnabledSelector } from "../reducers/settings";
+import { useStake } from "~/newArch/hooks/useStake/useStake";
 
 export type QuickAction = {
   disabled: boolean;
@@ -43,15 +44,17 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
   const hasCurrency = currency ? !!accounts?.some(({ balance }) => balance.gt(0)) : hasFunds;
 
   const recoverEntryPoint = useFeature("protectServicesMobile");
-  const stakePrograms = useFeature("stakePrograms");
 
   const ptxServiceCtaExchangeDrawer = useFeature("ptxServiceCtaExchangeDrawer");
   const isPtxServiceCtaExchangeDrawerDisabled = !(ptxServiceCtaExchangeDrawer?.enabled ?? true);
 
   const canBeBought = !currency || isCurrencyAvailable(currency.id, "onRamp");
   const canBeSold = !currency || currency.id === "bitcoin";
-  const canBeStaked =
-    stakePrograms?.enabled && (!currency || stakePrograms?.params?.list.includes(currency?.id));
+
+  const { canStakeUsingLedgerLive, canStakeUsingPlatformApp } = useStake({
+    currencyId: currency?.id,
+  });
+
   const canBeRecovered = recoverEntryPoint?.enabled;
 
   const quickActionsList = useMemo(() => {
@@ -125,7 +128,24 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
       };
     }
 
-    if (canBeStaked) {
+    // TODO: replace with params from hook when working
+    if (canStakeUsingPlatformApp) {
+      list.STAKE = {
+        disabled: readOnlyModeEnabled,
+        route: [
+          ScreenName.PlatformApp,
+          {
+            platform: "kiln-widget",
+            name: "Kiln Widget",
+            accountId: accounts?.[0]?.id,
+            ...{ yieldId: undefined, chainId: "1" },
+          },
+        ],
+        icon: IconsLegacy.CoinsMedium,
+      };
+    }
+
+    if (canStakeUsingLedgerLive || !currency) {
       list.STAKE = {
         disabled: readOnlyModeEnabled,
         route: [
@@ -170,17 +190,19 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
 
     return list;
   }, [
+    readOnlyModeEnabled,
+    hasCurrency,
     currency,
     hasCurrencyAccounts,
-    hasCurrency,
-    hasFunds,
     isPtxServiceCtaExchangeDrawerDisabled,
-    readOnlyModeEnabled,
-    route,
+    hasFunds,
     canBeBought,
     canBeSold,
-    canBeStaked,
+    canStakeUsingPlatformApp,
+    canStakeUsingLedgerLive,
     canBeRecovered,
+    accounts,
+    route,
   ]);
 
   return { quickActionsList };

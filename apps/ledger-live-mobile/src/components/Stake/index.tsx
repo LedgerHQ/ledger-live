@@ -3,18 +3,21 @@ import { useMemo, useLayoutEffect, useCallback } from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
 import { listCurrencies, filterCurrencies } from "@ledgerhq/live-common/currencies/helpers";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { NavigatorName, ScreenName } from "~/const";
 import type { StackNavigatorProps, BaseComposite } from "../RootNavigator/types/helpers";
 import type { StakeNavigatorParamList } from "../RootNavigator/types/StakeNavigator";
 
 import { useStakingDrawer } from "./useStakingDrawer";
+import { useStake } from "~/newArch/hooks/useStake/useStake";
 
 type Props = BaseComposite<StackNavigatorProps<StakeNavigatorParamList, ScreenName.Stake>>;
 
 const StakeFlow = ({ route }: Props) => {
-  const featureFlag = useFeature("stakePrograms");
-  const currencies = route?.params?.currencies || featureFlag?.params?.list;
+  const { enabledCurrencies, partnerSupportedTokens } = useStake({
+    accountId: route?.params?.account?.id,
+    currencyId: route?.params?.currencies?.length === 1 ? route?.params?.currencies[0] : undefined,
+  });
+  const currencies = route?.params?.currencies || enabledCurrencies.concat(partnerSupportedTokens);
   const navigation = useNavigation<StackNavigationProp<{ [key: string]: object | undefined }>>();
   const parentRoute = route?.params?.parentRoute;
   const account = route?.params?.account;
@@ -33,6 +36,7 @@ const StakeFlow = ({ route }: Props) => {
     entryPoint: route.params.entryPoint,
   });
 
+  // FIXME: The returned account includes non-serialisable Date fields, which causes the navigation to fail.
   const requestAccount = useCallback(() => {
     if (cryptoCurrencies.length === 1) {
       // Navigate to the second screen when there is only one currency
