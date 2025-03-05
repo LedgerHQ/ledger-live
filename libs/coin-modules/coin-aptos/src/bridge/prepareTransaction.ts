@@ -1,6 +1,6 @@
 import type { Account } from "@ledgerhq/types-live";
+import { findSubAccountById, isTokenAccount } from "@ledgerhq/coin-framework/account/index";
 import BigNumber from "bignumber.js";
-
 import { AptosAPI } from "../api";
 import { getEstimatedGas } from "./getFeesForTransaction";
 import type { Transaction } from "../types";
@@ -25,10 +25,13 @@ const prepareTransaction = async (
 
   const aptosClient = new AptosAPI(account.currency.id);
 
+  const tokenAccount = findSubAccountById(account, transaction.subAccountId ?? "");
+  const fromTokenAccount = tokenAccount && isTokenAccount(tokenAccount);
+
   if (transaction.useAllAmount) {
     // we will use this amount in simulation, to estimate gas
     transaction.amount = getMaxSendBalance(
-      account.spendableBalance,
+      fromTokenAccount ? tokenAccount.spendableBalance : account.spendableBalance,
       new BigNumber(DEFAULT_GAS),
       new BigNumber(DEFAULT_GAS_PRICE),
     );
@@ -39,7 +42,7 @@ const prepareTransaction = async (
   if (transaction.useAllAmount) {
     // correct the transaction amount according to estimated fees
     transaction.amount = getMaxSendBalance(
-      account.spendableBalance,
+      fromTokenAccount ? tokenAccount.spendableBalance : account.spendableBalance,
       BigNumber(estimate.maxGasAmount),
       BigNumber(estimate.gasUnitPrice),
     );
