@@ -61,7 +61,7 @@ export default function cryptoFactory(currency: Currency): ICrypto {
       break;
     }
     case "bitcoin_testnet": {
-      const network = coininfo.bitcoin.test.toBitcoinJS();
+      const network = coininfo.bitcoin.regtest.toBitcoinJS();
       res = new crypto.Bitcoin({ network });
       break;
     }

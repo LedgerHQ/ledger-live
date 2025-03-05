@@ -388,10 +388,14 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     supportsNativeSegwit: true,
     family: "bitcoin",
     blockAvgTime: 15 * 60,
+    // NOTE: revert, doesnt fix anything
     bitcoinLikeInfo: {
-      P2PKH: 0,
-      P2SH: 5,
-      XPUBVersion: 0x0488b21e,
+      P2PKH: 111,
+      P2SH: 196,
+      XPUBVersion: 0x043587cf,
+      // P2PKH: 0,
+      // P2SH: 5,
+      // XPUBVersion: 0x0488b21e,
     },
     explorerViews: [
       {
