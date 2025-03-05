@@ -1,9 +1,10 @@
-import BigNumber from "bignumber.js";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
-import { Transaction } from "../types";
-import { fetchTronAccount } from "../network";
+import BigNumber from "bignumber.js";
 import { ACTIVATION_FEES, ACTIVATION_FEES_TRC_20, STANDARD_FEES_TRC_20 } from "../logic/constants";
-import { getEstimatedBlockSize, extractBandwidthInfo } from "../logic/utils";
+import { fetchTronAccount } from "../network";
+import type { AccountTronAPI } from "../network/types";
+import { Transaction } from "../types";
+import { extractBandwidthInfo, getEstimatedBlockSize } from "./utils";
 
 // see : https://developers.tron.network/docs/bandwith#section-bandwidth-points-consumption
 // 1. cost around 200 Bandwidth, if not enough check Free Bandwidth
@@ -29,8 +30,8 @@ const getFeesFromAccountActivation = async (
   transaction: Transaction,
   tokenAccount?: TokenAccount | null,
 ): Promise<BigNumber> => {
-  const [recipientAccount]: [undefined | { trc20?: Record<string, string>[] }] =
-    await fetchTronAccount(transaction.recipient);
+  const recipientAccounts = await fetchTronAccount(transaction.recipient);
+  const recipientAccount: AccountTronAPI | undefined = recipientAccounts[0];
   const { gainedUsed, gainedLimit } = extractBandwidthInfo(transaction.networkInfo);
   const available = gainedLimit.minus(gainedUsed);
   const estimatedBandwidthCost = getEstimatedBlockSize(account, transaction);

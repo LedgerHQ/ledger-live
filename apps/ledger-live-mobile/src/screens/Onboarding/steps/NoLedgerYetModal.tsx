@@ -32,7 +32,7 @@ export function NoLedgerYetModal({ onClose, isOpen }: Props) {
   const { navigateToRebornFlow, rebornFeatureFlagEnabled } = useRebornFlow(true);
 
   const identifyUser = useCallback(
-    (hasDevice: boolean) => {
+    (hasDevice: boolean | null) => {
       dispatch(setOnboardingHasDevice(hasDevice));
       updateIdentify();
     },
@@ -52,7 +52,7 @@ export function NoLedgerYetModal({ onClose, isOpen }: Props) {
   const exploreLedger = useCallback(() => {
     dispatch(setHasOrderedNano(false));
     navigation.navigate(ScreenName.OnboardingModalDiscoverLive);
-    identifyUser(false);
+    identifyUser(null);
     track("button_clicked", {
       button: "Explore the app",
       page: "Onboarding Get Started",

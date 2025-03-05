@@ -81,7 +81,7 @@ export const mocks: AppManifest[] = [
       "dash",
       "tron/**",
       "tezos",
-      "elrond/**",
+      "multiversx/**",
       "ethereum_classic",
       "zcash",
       "decred",

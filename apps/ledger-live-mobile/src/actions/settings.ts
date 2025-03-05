@@ -72,6 +72,7 @@ import {
   SettingsSetMevProtectionPayload,
   SettingsUpdateNftCollectionStatus,
   SettingsSetSelectedTabPortfolioAssetsPayload,
+  SettingsSetIsRebornPayload,
 } from "./types";
 import { ImageType } from "~/components/CustomImage/types";
 
@@ -219,6 +220,9 @@ export const setSensitiveAnalytics = createAction<SettingsSetSensitiveAnalyticsP
 );
 export const setOnboardingHasDevice = createAction<SettingsSetOnboardingHasDevicePayload>(
   SettingsActionTypes.SET_ONBOARDING_HAS_DEVICE,
+);
+export const setIsReborn = createAction<SettingsSetIsRebornPayload>(
+  SettingsActionTypes.SET_IS_REBORN,
 );
 export const setOnboardingType = createAction<SettingsSetOnboardingTypePayload>(
   SettingsActionTypes.SET_ONBOARDING_TYPE,

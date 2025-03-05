@@ -20,7 +20,7 @@ export const NetworkError = ({ handleTryAgain }: { handleTryAgain: () => void })
   const { locale } = useLocale();
 
   return (
-    <Flex flex={1} justifyContent="center">
+    <Flex flex="auto">
       <GenericErrorView
         exportLogIcon={IconsLegacy.ImportMedium}
         exportLogIconPosition="right"

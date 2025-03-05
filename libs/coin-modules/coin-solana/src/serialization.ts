@@ -94,8 +94,12 @@ export function assignToTokenAccountRaw(
   tokenAccountRaw: TokenAccountRaw,
 ) {
   const solanaTokenAccount = tokenAccount as SolanaTokenAccount;
+  const solanaTokenAccountRaw = tokenAccountRaw as SolanaTokenAccountRaw;
   if (solanaTokenAccount.state) {
-    (tokenAccountRaw as SolanaTokenAccountRaw).state = solanaTokenAccount.state;
+    solanaTokenAccountRaw.state = solanaTokenAccount.state;
+  }
+  if (solanaTokenAccount.extensions) {
+    solanaTokenAccountRaw.extensions = JSON.stringify(solanaTokenAccount.extensions);
   }
 }
 
@@ -103,8 +107,12 @@ export function assignFromTokenAccountRaw(
   tokenAccountRaw: TokenAccountRaw,
   tokenAccount: TokenAccount,
 ) {
-  const stateRaw = (tokenAccountRaw as SolanaTokenAccountRaw).state;
-  if (stateRaw) {
-    (tokenAccount as SolanaTokenAccount).state = stateRaw;
+  const solanaTokenAccount = tokenAccount as SolanaTokenAccount;
+  const solanaTokenAccountRaw = tokenAccountRaw as SolanaTokenAccountRaw;
+  if (solanaTokenAccountRaw.state) {
+    solanaTokenAccount.state = solanaTokenAccountRaw.state;
+  }
+  if (solanaTokenAccountRaw.extensions) {
+    solanaTokenAccount.extensions = JSON.parse(solanaTokenAccountRaw.extensions);
   }
 }

@@ -69,7 +69,7 @@ const validators = [
     xrayTicket: "B2CQA-2732, B2CQA-2765",
   },
   {
-    delegate: new Delegate(Account.ADA_2, "0.01", "LBF3 - Ledger by Figment 3"),
+    delegate: new Delegate(Account.ADA_2, "0.01", "LBF2 - Ledger by Figment 2"),
     xrayTicket: "B2CQA-2766",
   },
   {
@@ -200,7 +200,15 @@ for (const account of e2eDelegationAccountsWithoutBroadcast) {
 
         await app.account.startStakingFlowFromMainStakeButton();
         await app.delegate.continue();
-        await app.delegate.verifyFirstProviderName(account.delegate.provider);
+
+        if (account.delegate.account.currency.name == Currency.ADA.name) {
+          await app.delegate.openSearchProviderModal();
+          await app.delegate.inputProvider(account.delegate.provider);
+          await app.delegate.selectProviderByName(account.delegate.provider);
+        } else {
+          await app.delegate.verifyFirstProviderName(account.delegate.provider);
+        }
+
         await app.delegate.continue();
 
         if (account.delegate.account.currency.name == Currency.ADA.name) {

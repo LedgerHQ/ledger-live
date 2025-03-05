@@ -194,6 +194,8 @@ const StepReceiveFunds = (props: StepProps) => {
     receiveStakingFlowConfig?.params?.[receivedCurrencyId]?.enabled;
   const isDirectStakingEnabledForAccount =
     !!receivedCurrencyId && receiveStakingFlowConfig?.params?.[receivedCurrencyId]?.direct;
+  const isSPLToken =
+    account && account.type === "TokenAccount" && account.token.parentCurrency.family === "solana";
 
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
   invariant(account && mainAccount, "No account given");
@@ -249,7 +251,8 @@ const StepReceiveFunds = (props: StepProps) => {
       !receiveNFTMode &&
       !receiveTokenMode &&
       isStakingEnabledForAccount &&
-      !isFromPostOnboardingEntryPoint
+      !isFromPostOnboardingEntryPoint &&
+      !isSPLToken
     ) {
       track("button_clicked2", {
         button: "continue",
@@ -295,6 +298,7 @@ const StepReceiveFunds = (props: StepProps) => {
     transitionTo,
     completeAction,
     walletState,
+    isSPLToken,
   ]);
 
   // when address need verification we trigger it on device

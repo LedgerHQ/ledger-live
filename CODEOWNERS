@@ -27,23 +27,42 @@ libs/live-wallet/                                        @ledgerhq/live-hub
 libs/ledger-key-ring-protocol/                           @ledgerhq/live-hub
 libs/hw-ledger-key-ring-protocol/                        @ledgerhq/live-hub
 
-# Blockchain team
-.github/**/bot-*.yml                                     @ledgerhq/live-blockchain-support
-**/live-common-set*.ts                                   @ledgerhq/live-blockchain-support
-apps/**/families/                                        @ledgerhq/live-blockchain-support
-apps/cli/src/commands/blockchain                         @ledgerhq/live-blockchain-support
-apps/web-tools/                                          @ledgerhq/live-blockchain-support
-libs/coin-*/                                             @ledgerhq/live-blockchain-support
-libs/domain-service/                                     @ledgerhq/live-blockchain-support
-libs/evm-tools/                                          @ledgerhq/live-blockchain-support
-libs/ledger-live-common/src/bot/                         @ledgerhq/live-blockchain-support
-libs/ledger-live-common/src/families/                    @ledgerhq/live-blockchain-support
-libs/ledgerjs/packages/cryptoassets/                     @ledgerhq/live-blockchain-support
-libs/ledgerjs/packages/hw-app-*/                         @ledgerhq/live-blockchain-support
-libs/ledgerjs/packages/types-cryptoassets/               @ledgerhq/live-blockchain-support
-libs/live-config/                                        @ledgerhq/live-blockchain-support
-libs/live-network/                                       @ledgerhq/live-blockchain-support
-libs/live-services/                                      @ledgerhq/live-blockchain-support
+# Coin integration team
+.github/**/bot-*.yml                                     @ledgerhq/coin-integration
+**/live-common-set*.ts                                   @ledgerhq/coin-integration
+apps/**/families/                                        @ledgerhq/coin-integration
+apps/cli/src/commands/blockchain                         @ledgerhq/coin-integration
+apps/web-tools/                                          @ledgerhq/coin-integration
+libs/coin-*/                                             @ledgerhq/coin-integration
+libs/domain-service/                                     @ledgerhq/coin-integration
+libs/evm-tools/                                          @ledgerhq/coin-integration
+libs/ledger-live-common/src/bot/                         @ledgerhq/coin-integration
+libs/ledger-live-common/src/families/                    @ledgerhq/coin-integration
+libs/ledgerjs/packages/cryptoassets/                     @ledgerhq/coin-integration
+libs/ledgerjs/packages/hw-app-*/                         @ledgerhq/coin-integration
+libs/ledgerjs/packages/types-cryptoassets/               @ledgerhq/coin-integration
+libs/live-config/                                        @ledgerhq/coin-integration
+libs/live-network/                                       @ledgerhq/coin-integration
+libs/live-services/                                      @ledgerhq/coin-integration
+
+# Shared with partners
+## Blockchain support
+libs/coin-modules/coin-aptos/                                            @ledgerhq/coin-integration @ledgerhq/blockchain-support
+libs/coin-modules/coin-near/                                             @ledgerhq/coin-integration @ledgerhq/blockchain-support
+
+## Zondax
+libs/coin-modules/coin-casper/                                           @ledgerhq/coin-integration @ledgerhq/blockchain-support @ledgerhq/ledger-partner-zondax
+libs/coin-modules/coin-filecoin/                                         @ledgerhq/coin-integration @ledgerhq/blockchain-support @ledgerhq/ledger-partner-zondax
+libs/coin-modules/coin-internet_computer/                                @ledgerhq/coin-integration @ledgerhq/blockchain-support @ledgerhq/ledger-partner-zondax
+libs/coin-modules/coin-mina/                                             @ledgerhq/coin-integration @ledgerhq/blockchain-support @ledgerhq/ledger-partner-zondax
+libs/coin-modules/coin-stacks/                                           @ledgerhq/coin-integration @ledgerhq/blockchain-support @ledgerhq/ledger-partner-zondax
+libs/coin-modules/coin-ton/                                              @ledgerhq/coin-integration @ledgerhq/blockchain-support @ledgerhq/ledger-partner-zondax
+
+## Hoodies
+# libs/coin-modules/coin-sui/                                              @ledgerhq/coin-integration @ledgerhq/blockchain-support @ledgerhq/ledger-partner-hoodies
+
+## Blockydevs
+# libs/coin-modules/coin-hedera/                                           @ledgerhq/coin-integration @ledgerhq/blockchain-support @ledgerhq/ledger-partner-blockydevs
 
 # PTX team
 apps/cli/src/commands/ptx                                            					@ledgerhq/ptx

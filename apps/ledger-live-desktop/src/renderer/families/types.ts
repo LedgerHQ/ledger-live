@@ -295,6 +295,16 @@ export type LLDCoinFamily<
   StepSummaryNetworkFeesRow?: React.ComponentType<SummaryNetworkFeesRowProps>;
 
   /**
+   * Allow to add specific component in Send modal at the end of Summary Step
+   */
+  StepSummaryAdditionalRows?: React.ComponentType<{
+    account: A | SubAccount;
+    parentAccount: A | null | undefined;
+    transaction: T;
+    status: TS;
+  }>;
+
+  /**
    * It was for Hedera specifc, when we do not find any account it show a specific component
    */
   NoAssociatedAccounts?: React.ComponentType<AddAccountsStepProps>;

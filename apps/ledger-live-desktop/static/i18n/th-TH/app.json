@@ -5739,6 +5739,19 @@
     "ElrondDelegationBelowMinimumError" : {
       "title" : "การจะ Delegate ได้ต้องเหลือไม่น้อยกว่า {{formattedAmount}}"
     },
+    "MultiversXDecimalsLimitReached" : {
+      "title" : "Maximum decimals limit reached",
+      "description" : "Please make sure that the amount provided has 18 decimals."
+    },
+    "MultiversXMinDelegatedAmountError" : {
+      "title" : "Delegated amount must be at least {{formattedAmount}}"
+    },
+    "MultiversXMinUndelegatedAmountError" : {
+      "title" : "Undelegated amount must be at least {{formattedAmount}}"
+    },
+    "MultiversXDelegationBelowMinimumError" : {
+      "title" : "Remaining delegation can't be less than {{formattedAmount}}"
+    },
     "NotEnoughEGLDForFees" : {
       "title" : "EGLD ไม่เพียงพอที่จะชำระค่าธรรมเนียมธุรกรรม",
       "description" : "โปรดส่ง EGLD ไปยังบัญชีของคุณเพื่อชำระค่าธุรกรรม"

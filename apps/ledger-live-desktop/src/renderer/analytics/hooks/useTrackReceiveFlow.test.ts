@@ -1,8 +1,8 @@
 import { renderHook } from "tests/testUtils";
 import { useTrackReceiveFlow, UseTrackReceiveFlow } from "./useTrackReceiveFlow";
 import { track } from "../segment";
-import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { CONNECTION_TYPES, HOOKS_TRACKING_LOCATIONS } from "./variables";
+import { UserRefusedOnDevice, UserRefusedAddress } from "@ledgerhq/errors";
 
 jest.mock("../segment", () => ({
   track: jest.fn(),
@@ -47,9 +47,11 @@ describe("useTrackReceiveFlow", () => {
     );
   });
 
-  it("should track 'Address confirmation rejected' when verifyAddressError has name 'UserRefusedAddress'", () => {
+  it("should track 'Address confirmation rejected' when verifyAddressError is an instance of UserRefusedAddress", () => {
+    const verifyAddressError = new UserRefusedAddress();
+
     renderHook((props: UseTrackReceiveFlow) => useTrackReceiveFlow(props), {
-      initialProps: { ...defaultArgs, verifyAddressError: { name: "UserRefusedAddress" } },
+      initialProps: { ...defaultArgs, verifyAddressError },
     });
 
     expect(track).toHaveBeenCalledWith(
@@ -92,12 +94,13 @@ describe("useTrackReceiveFlow", () => {
 
   it("should include correct connection type based on device.wired", () => {
     const wiredDeviceMock = { ...deviceMock, wired: true };
+    const verifyAddressError = new UserRefusedAddress();
 
     renderHook((props: UseTrackReceiveFlow) => useTrackReceiveFlow(props), {
       initialProps: {
         ...defaultArgs,
         device: wiredDeviceMock,
-        verifyAddressError: { name: "UserRefusedAddress" },
+        verifyAddressError,
       },
     });
 

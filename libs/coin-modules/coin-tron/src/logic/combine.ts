@@ -1,3 +1,7 @@
-export function combine(_tx: string, _signature: string, _pubkey?: string): string {
-  throw Error("Not implemented yet");
+/**
+ * Returns a signed transaction for later used with {@link broadcast} function.
+ * @returns Serialized Transaction (in its raw_data_tx form) and Signature
+ */
+export function combine(tx: string, signature: string): string {
+  return `${tx.length.toString(16).padStart(4, "0")}${tx}${signature}`;
 }

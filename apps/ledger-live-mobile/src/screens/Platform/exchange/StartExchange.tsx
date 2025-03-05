@@ -1,7 +1,7 @@
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useIsFocused } from "@react-navigation/native";
 import { Flex } from "@ledgerhq/native-ui";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import DeviceActionModal from "~/components/DeviceActionModal";
@@ -23,9 +23,14 @@ export default function PlatformStartExchange({ navigation, route }: Props) {
   const action = useStartExchangeDeviceAction();
   const [device, setDevice] = useState<Device>();
   const isFocused = useIsFocused();
+  const hasPopped = useRef(false);
 
   const onClose = useCallback(() => {
-    navigation.pop();
+    // Prevent onClose being called twice
+    if (!hasPopped.current) {
+      navigation.pop();
+    }
+    hasPopped.current = true;
   }, [navigation]);
 
   const onResult = useCallback(

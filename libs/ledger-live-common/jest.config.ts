@@ -40,7 +40,7 @@ const defaultConfig = {
   testEnvironment: "node",
   reporters,
   setupFiles: ["./jest.polyfills.js"],
-  coveragePathIgnorePatterns: ["src/__tests__/test-helpers"],
+  coveragePathIgnorePatterns: ["src/__tests__/test-helpers", "src/wallet-api/SmartWebsocket.ts"], // Type issue with event in SmartWebsocket.ts breaking coverage report
   modulePathIgnorePatterns: [
     "__tests__/fixtures",
     "__tests__/migration",

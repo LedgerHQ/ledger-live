@@ -55,6 +55,12 @@ export function cached(api: ChainAPI): ChainAPI {
       minutes(1),
     ),
 
+    getParsedToken2022AccountsByOwner: makeLRUCache(
+      api.getParsedToken2022AccountsByOwner,
+      cacheKeyAddress,
+      minutes(1),
+    ),
+
     // cached by default in api
     getStakeAccountsByStakeAuth: api.getStakeAccountsByStakeAuth,
     getStakeAccountsByWithdrawAuth: api.getStakeAccountsByWithdrawAuth,
@@ -99,5 +105,6 @@ export function cached(api: ChainAPI): ChainAPI {
     ),
 
     config: api.config,
+    connection: api.connection,
   };
 }

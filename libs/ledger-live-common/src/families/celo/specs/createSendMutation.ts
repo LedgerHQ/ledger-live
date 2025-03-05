@@ -6,7 +6,7 @@ import type { Transaction } from "../types";
 
 const maxAccount = 10;
 const currency = getCryptoCurrencyById("celo");
-export const minimalAmount = parseCurrencyUnit(currency.units[0], "0.001");
+export const minimalAmount = parseCurrencyUnit(currency.units[0], "0.01");
 
 export const createSend50PercentMutation = (): MutationSpec<Transaction> => ({
   name: "Celo: Move 50% to another account",
