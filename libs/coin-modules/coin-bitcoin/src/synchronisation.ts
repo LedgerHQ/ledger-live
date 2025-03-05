@@ -11,11 +11,11 @@ import {
   isNativeSegwitDerivationMode,
   isTaprootDerivationMode,
 } from "@ledgerhq/coin-framework/derivation";
-import { BitcoinAccount, BitcoinOutput } from "./types";
+import { BitcoinAccount, BitcoinOutput, BtcOperation } from "./types";
 import { perCoinLogic } from "./logic";
 import wallet from "./wallet-btc";
 import { mapTxToOperations } from "./logic";
-import { DerivationMode, Operation } from "@ledgerhq/types-live";
+import { DerivationMode } from "@ledgerhq/types-live";
 import { decodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { BitcoinXPub, SignerContext } from "./signer";
@@ -52,11 +52,100 @@ const fromWalletUtxo = (utxo: WalletOutput, changeAddresses: Set<string>): Bitco
   };
 };
 
+/**
+ * Removes replaced Bitcoin transactions based on inputs and RBF logic.
+ *
+ * This function is used primarily to handle Replace-By-Fee (RBF) transactions.
+ * In some situations, we might fetch both the original (unconfirmed) transaction
+ * and the one that replaces it (usually with a higher fee). Without deduplication, both can
+ * remain displayed, confusing the user—especially when the replaced one never confirms.
+ *
+ * Key Rules:
+ * - A UTXO (input) can only be spent once.
+ * - If multiple transactions share an input, we keep the one that is:
+ *   1. Confirmed (has a `blockHeight`) over an unconfirmed one.
+ *   2. Of higher `blockHeight` if both are confirmed or both are unconfirmed.
+ *   3. Of later `date` if both share the same `blockHeight` (or lack thereof).
+ * - Coinbase transactions (with input starting with all 0s) are always kept.
+ * - Transactions without extra.inputs (usually `OUT` transactions) are always kept.
+ *
+ * Outcome:
+ * The result is a filtered list of operations, cleaned of unconfirmed or superseded
+ * transactions that were replaced using RBF logic or similar.
+ *
+ * @param operations An array of BtcOperation items (e.g. from sync).
+ * @returns A filtered array of operations with replaced transactions removed.
+ *  The original order of operations is preserved.
+ */
+export const removeReplaced = (operations: BtcOperation[]): BtcOperation[] => {
+  // used to track the most recent operation for each input.
+  const txByInput = new Map<string, BtcOperation>();
+
+  // ensures we maintain a list of unique transactions by hash.
+  const uniqueOperations = new Map<string, BtcOperation>(); // Keep track of unique transactions
+
+  for (const op of operations) {
+    if (op.extra?.inputs?.length) {
+      for (const input of op.extra.inputs) {
+        // Ensure coinbase transactions are always stored
+        if (
+          op.extra.inputs.some((input: string) =>
+            input.startsWith("0000000000000000000000000000000000000000000000000000000000000000"),
+          )
+        ) {
+          uniqueOperations.set(op.hash, op);
+          continue; // ✅ Skip processing further, but KEEP it
+        }
+        const existingOp = txByInput.get(input);
+        if (existingOp) {
+          const isExistingConfirmed = typeof existingOp.blockHeight === "number";
+          const isNewOpConfirmed = typeof op.blockHeight === "number";
+
+          if (isExistingConfirmed && !isNewOpConfirmed) {
+            continue; // Keep the confirmed transaction
+          }
+
+          if (!isExistingConfirmed && isNewOpConfirmed) {
+            uniqueOperations.delete(existingOp.hash); // Remove unconfirmed transaction
+            txByInput.set(input, op); // Store the confirmed transaction
+          } else {
+            // Compare block height first
+            if ((op.blockHeight ?? -1) > (existingOp.blockHeight ?? -1)) {
+              uniqueOperations.delete(existingOp.hash);
+              txByInput.set(input, op);
+            } else if ((op.blockHeight ?? -1) === (existingOp.blockHeight ?? -1)) {
+              if (new Date(op.date) > new Date(existingOp.date)) {
+                uniqueOperations.delete(existingOp.hash);
+                txByInput.set(input, op);
+              } else if (new Date(op.date) < new Date(existingOp.date)) {
+                continue; // If date is older, disregard
+              } else {
+                // edge case, date equal, keep both
+                uniqueOperations.set(op.hash, op);
+                continue;
+              }
+            }
+          }
+        } else {
+          txByInput.set(input, op);
+        }
+
+        uniqueOperations.set(op.hash, op);
+      }
+    } else {
+      // Store transactions without inputs (they shouldn't be removed)
+      uniqueOperations.set(op.hash, op);
+    }
+  }
+
+  return operations.filter(op => uniqueOperations.has(op.hash));
+};
+
 // wallet-btc limitation: returns all transactions twice (for each side of the tx)
 // so we need to deduplicate them...
-const deduplicateOperations = (operations: (Operation | undefined)[]): Operation[] => {
+const deduplicateOperations = (operations: (BtcOperation | undefined)[]): BtcOperation[] => {
   const seen = new Set();
-  const out: Operation[] = [];
+  const out: BtcOperation[] = [];
   let j = 0;
 
   for (const operation of operations) {
@@ -114,7 +203,7 @@ export function makeGetAccountShape(signerContext: SignerContext): GetAccountSha
         currency,
       ));
 
-    const oldOperations = initialAccount?.operations || [];
+    const oldOperations = (initialAccount?.operations || []) as BtcOperation[];
     const currentBlock = await walletAccount.xpub.explorer.getCurrentBlock();
 
     const blockHeight = currentBlock?.height || 0;
@@ -138,7 +227,9 @@ export function makeGetAccountShape(signerContext: SignerContext): GetAccountSha
       .flat();
 
     const newUniqueOperations = deduplicateOperations(newOperations);
-    const operations = mergeOps(oldOperations, newUniqueOperations);
+
+    const _operations = mergeOps(oldOperations, newUniqueOperations);
+    const operations = removeReplaced(_operations as BtcOperation[]);
 
     const rawUtxos = await wallet.getAccountUnspentUtxos(walletAccount);
     const utxos = rawUtxos.map(utxo => fromWalletUtxo(utxo, changeAddresses));
@@ -203,6 +294,7 @@ export const postSync = (initial: BitcoinAccount, synced: BitcoinAccount) => {
   if (perCoin) {
     const { postBuildBitcoinResources, syncReplaceAddress } = perCoin;
 
+    // FIXME: unused, can remove?
     if (postBuildBitcoinResources) {
       syncedBtc.bitcoinResources = postBuildBitcoinResources(syncedBtc, syncedBtc.bitcoinResources);
     }

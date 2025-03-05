@@ -7,13 +7,14 @@ import type {
   Transaction,
   NetworkInfo,
   UtxoStrategy,
+  BtcOperation,
 } from "./types";
 import { $Shape } from "utility-types";
 import type { TX, Input as WalletInput, Output as WalletOutput } from "./wallet-btc";
 import { BigNumber } from "bignumber.js";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import type { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
-import type { Account, Operation, OperationType } from "@ledgerhq/types-live";
+import type { Account, OperationType } from "@ledgerhq/types-live";
 
 // correspond ~ to min relay fees but determined empirically for a tx to be accepted by network
 const minFees: Partial<Record<CryptoCurrencyId | "LBRY" | "groestcoin" | "osmo", number>> = {
@@ -169,8 +170,8 @@ export const mapTxToOperations = (
   accountId: string,
   accountAddresses: Set<string>,
   changeAddresses: Set<string>,
-): $Shape<Operation[]> => {
-  const operations: Operation[] = [];
+): $Shape<BtcOperation[]> => {
+  const operations: BtcOperation[] = [];
   const txId = tx.id;
   const fee = new BigNumber(tx.fees ?? 0);
   const blockHeight = tx.block?.height;
@@ -184,8 +185,10 @@ export const mapTxToOperations = (
   const accountInputs: WalletInput[] = [];
   const accountOutputs: WalletOutput[] = [];
   const syncReplaceAddress = perCoinLogic[currencyId]?.syncReplaceAddress;
+  const inputs = new Set<`${string}-${number}`>(); // txid-outputIndex
 
   for (const input of tx.inputs) {
+    inputs.add(`${input.output_hash}-${input.output_index}`);
     if (input.address) {
       senders.add(syncReplaceAddress ? syncReplaceAddress(input.address) : input.address);
 
@@ -303,7 +306,7 @@ export const mapTxToOperations = (
         accountId,
         date,
         hasFailed,
-        extra: {},
+        extra: { inputs: Array.from(inputs) },
       });
     }
   }
