@@ -208,7 +208,6 @@ const legacyDerivations: Partial<Record<CryptoCurrency["id"], DerivationMode[]>>
   solana: ["solanaMain", "solanaSub"],
   solana_devnet: ["solanaMain", "solanaSub"],
   solana_testnet: ["solanaMain", "solanaSub"],
-  aptos: ["aptos"],
 };
 
 export const asDerivationMode = (derivationMode: string): DerivationMode => {
@@ -322,7 +321,6 @@ export const runAccountDerivationScheme = (
   }).replace(/[_/]+$/, "");
 const disableBIP44: Record<string, boolean> = {
   aeternity: true,
-  aptos: true,
   tezos: true,
   // current workaround, device app does not seem to support bip44
   stellar: true,
