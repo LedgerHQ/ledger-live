@@ -10,15 +10,16 @@ import { APTOS_ASSET_ID, APTOS_COIN_CHANGE, DIRECTION } from "../../constants";
 import {
   calculateAmount,
   compareAddress,
-  getAptosAmounts,
+  getCoinAndAmounts,
   getFunctionAddress,
-  isChangeOfAptos,
+  getResourceAddress,
   isTestnet,
   processRecipients,
   getMaxSendBalance,
   normalizeTransactionOptions,
   getBlankOperation,
   txsToOps,
+  getEventCoinAddress,
 } from "../../bridge/logic";
 import type { AptosTransaction, TransactionOptions } from "../../types";
 
@@ -294,8 +295,8 @@ describe("Aptos sync logic ", () => {
     });
   });
 
-  describe("isChangeOfAptos", () => {
-    it("should return true for a valid change of Aptos", () => {
+  describe("getResourceAddress", () => {
+    it("should return coin name from the change", () => {
       const change = {
         type: "write_resource",
         data: {
@@ -313,6 +314,15 @@ describe("Aptos sync logic ", () => {
         },
       } as unknown as WriteSetChange;
 
+      const tx: AptosTransaction = {
+        hash: "0x123",
+        block: { hash: "0xabc", height: 1 },
+        timestamp: "1000000",
+        sequence_number: "1",
+        version: "1",
+        changes: [change],
+      } as unknown as AptosTransaction;
+
       const event = {
         guid: {
           account_address: "0x11",
@@ -321,11 +331,11 @@ describe("Aptos sync logic ", () => {
         type: "0x1::coin::WithdrawEvent",
       } as Event;
 
-      const result = isChangeOfAptos(change, event, "withdraw_events");
-      expect(result).toBe(true);
+      const result = getResourceAddress(tx, event, "withdraw_events", getEventCoinAddress);
+      expect(result).toEqual(APTOS_ASSET_ID);
     });
 
-    it("should return false for an invalid change of Aptos", () => {
+    it("should return null for not finding the valid coin in change", () => {
       const change = {
         type: "write_resource",
         data: {
@@ -343,6 +353,15 @@ describe("Aptos sync logic ", () => {
         },
       } as unknown as WriteSetChange;
 
+      const tx: AptosTransaction = {
+        hash: "0x123",
+        block: { hash: "0xabc", height: 1 },
+        timestamp: "1000000",
+        sequence_number: "1",
+        version: "1",
+        changes: [change],
+      } as unknown as AptosTransaction;
+
       const event = {
         guid: {
           account_address: "0x11",
@@ -351,106 +370,12 @@ describe("Aptos sync logic ", () => {
         type: "0x1::coin::WithdrawEvent",
       } as Event;
 
-      const result = isChangeOfAptos(change, event, "withdraw_events");
-      expect(result).toBe(false);
-    });
-
-    it("should return false for a change with a different WriteSet type", () => {
-      const change = {
-        type: "write_module",
-        data: {},
-      } as unknown as WriteSetChange;
-
-      const event = {
-        guid: {
-          account_address: "0x1",
-          creation_number: "1",
-        },
-        type: "0x1::coin::WithdrawEvent",
-      } as Event;
-
-      const result = isChangeOfAptos(change, event, "withdraw_events");
-      expect(result).toBe(false);
-    });
-
-    it("should return false if no data in WriteSet Change", () => {
-      const change = {
-        type: "write_resource",
-      } as unknown as WriteSetChange;
-
-      const event = {
-        guid: {
-          account_address: "0x11",
-          creation_number: "2",
-        },
-        type: "0x1::coin::WithdrawEvent",
-      } as Event;
-
-      const result = isChangeOfAptos(change, event, "withdraw_events");
-      expect(result).toBe(false);
-    });
-
-    it("should return false if no type in change data", () => {
-      const change = {
-        type: "write_resource",
-        data: {
-          data: {
-            withdraw_events: {
-              guid: {
-                id: {
-                  addr: "0x11",
-                  creation_num: "2",
-                },
-              },
-            },
-          },
-        },
-      } as unknown as WriteSetChange;
-
-      const event = {
-        guid: {
-          account_address: "0x11",
-          creation_number: "2",
-        },
-        type: "0x1::coin::WithdrawEvent",
-      } as Event;
-
-      const result = isChangeOfAptos(change, event, "withdraw_events");
-      expect(result).toBe(false);
-    });
-
-    it("should return false for a change with a different WriteSet Change type", () => {
-      const change = {
-        type: "write_resource",
-        data: {
-          type: "0x1::coin::CoinStore<0x1::aptos_coin::ANY_OTHER_COIN>",
-          data: {
-            withdraw_events: {
-              guid: {
-                id: {
-                  addr: "0x11",
-                  creation_num: "2",
-                },
-              },
-            },
-          },
-        },
-      } as unknown as WriteSetChange;
-
-      const event = {
-        guid: {
-          account_address: "0x11",
-          creation_number: "2",
-        },
-        type: "0x1::coin::WithdrawEvent",
-      } as Event;
-
-      const result = isChangeOfAptos(change, event, "withdraw_events");
-      expect(result).toBe(false);
+      const result = getResourceAddress(tx, event, "withdraw_events", getEventCoinAddress);
+      expect(result).toBe(null);
     });
   });
 
-  describe("getAptosAmounts", () => {
+  describe("getCoinAndAmounts", () => {
     it("should calculate the correct amounts for withdraw and deposit events", () => {
       const tx = {
         events: [
@@ -504,10 +429,11 @@ describe("Aptos sync logic ", () => {
       } as unknown as AptosTransaction;
 
       const address = "0x11";
-      const result = getAptosAmounts(tx, address);
+      const result = getCoinAndAmounts(tx, address);
 
       expect(result.amount_in).toEqual(new BigNumber(50));
       expect(result.amount_out).toEqual(new BigNumber(100));
+      expect(result.coin_id).toEqual(APTOS_ASSET_ID);
     });
 
     it("should return zero amounts if no matching events are found", () => {
@@ -563,10 +489,11 @@ describe("Aptos sync logic ", () => {
       } as unknown as AptosTransaction;
 
       const address = "0x11";
-      const result = getAptosAmounts(tx, address);
+      const result = getCoinAndAmounts(tx, address);
 
       expect(result.amount_in).toEqual(new BigNumber(0));
       expect(result.amount_out).toEqual(new BigNumber(0));
+      expect(result.coin_id).toEqual(null);
     });
 
     it("should handle transactions with other events", () => {
@@ -586,10 +513,11 @@ describe("Aptos sync logic ", () => {
       } as unknown as AptosTransaction;
 
       const address = "0x1";
-      const result = getAptosAmounts(tx, address);
+      const result = getCoinAndAmounts(tx, address);
 
       expect(result.amount_in).toEqual(new BigNumber(0));
       expect(result.amount_out).toEqual(new BigNumber(0));
+      expect(result.coin_id).toEqual(null);
     });
   });
 
@@ -717,7 +645,7 @@ describe("Aptos sync logic ", () => {
         } as unknown as AptosTransaction,
       ];
 
-      const result = txsToOps({ address }, id, txs);
+      const [result, _] = txsToOps({ address }, id, txs);
 
       expect(result).toHaveLength(1);
       expect(result[0]).toEqual({
@@ -763,7 +691,7 @@ describe("Aptos sync logic ", () => {
         } as unknown as AptosTransaction,
       ];
 
-      const result = txsToOps({ address }, id, txs);
+      const [result, _] = txsToOps({ address }, id, txs);
 
       expect(result).toHaveLength(0);
     });
@@ -792,7 +720,7 @@ describe("Aptos sync logic ", () => {
         } as unknown as AptosTransaction,
       ];
 
-      const result = txsToOps({ address }, id, txs);
+      const [result, _] = txsToOps({ address }, id, txs);
 
       expect(result).toHaveLength(0);
     });
@@ -867,7 +795,7 @@ describe("Aptos sync logic ", () => {
         } as unknown as AptosTransaction,
       ];
 
-      const result = txsToOps({ address }, id, txs);
+      const [result, _token_result] = txsToOps({ address }, id, txs);
 
       expect(result).toHaveLength(1);
       expect(result[0].hasFailed).toBe(true);
