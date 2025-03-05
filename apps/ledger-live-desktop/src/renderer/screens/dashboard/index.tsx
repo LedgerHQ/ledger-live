@@ -34,7 +34,7 @@ import { Grid } from "@ledgerhq/react-ui";
 import AnalyticsOptInPrompt from "LLD/features/AnalyticsOptInPrompt/screens";
 import { useDisplayOnPortfolioAnalytics } from "LLD/features/AnalyticsOptInPrompt/hooks/useDisplayOnPortfolio";
 import PortfolioContentCards from "LLD/features/DynamicContent/components/PortfolioContentCards";
-import { LNSUpsellBanner, useShowLNSUpsellBanner } from "LLD/features/LNSUpsell";
+import { LNSUpsellBanner, useLNSUpsellBannerState } from "LLD/features/LNSUpsell";
 import useActionCards from "~/renderer/hooks/useActionCards";
 import { useAutoRedirectToPostOnboarding } from "~/renderer/hooks/useAutoRedirectToPostOnboarding";
 import { useNftCollectionsStatus } from "~/renderer/hooks/nfts/useNftCollectionsStatus";
@@ -91,7 +91,7 @@ export default function DashboardPage() {
   const { isFeatureFlagsAnalyticsPrefDisplayed, analyticsOptInPromptProps } =
     useDisplayOnPortfolioAnalytics();
 
-  const isLNSUpsellBannerShown = useShowLNSUpsellBanner("portfolio");
+  const isLNSUpsellBannerShown = useLNSUpsellBannerState("portfolio").isShown;
 
   return (
     <>

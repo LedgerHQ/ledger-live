@@ -30,27 +30,27 @@ describe("LNSUpsellBanner ", () => {
   ] as const)("on the $page page", ({ location, page }) => {
     it("should not render if the feature flag is disabled", () => {
       renderBanner({ ffEnabled: false });
-      expect(screen.queryByText(t(`lnsUpsell.banner.${location}.optIn.cta`))).toBeNull();
+      expect(screen.queryByText(t(`lnsUpsell.opted_in.cta`))).toBeNull();
     });
 
     it("should not render if the location param is disabled on the feature flag", () => {
       renderBanner({ ffLocationEnabled: false });
-      expect(screen.queryByText(t(`lnsUpsell.banner.${location}.optIn.cta`))).toBeNull();
+      expect(screen.queryByText(t(`lnsUpsell.opted_in.cta`))).toBeNull();
     });
 
     it("should not render if the user uses another device", () => {
       renderBanner({ devicesModelList: [DeviceModelId.nanoSP] });
-      expect(screen.queryByText(t(`lnsUpsell.banner.${location}.optIn.cta`))).toBeNull();
+      expect(screen.queryByText(t(`lnsUpsell.opted_in.cta`))).toBeNull();
     });
 
     it("should not render if the user has no devices", () => {
       renderBanner({ devicesModelList: [] });
-      expect(screen.queryByText(t(`lnsUpsell.banner.${location}.optIn.cta`))).toBeNull();
+      expect(screen.queryByText(t(`lnsUpsell.opted_in.cta`))).toBeNull();
     });
 
     it("should track click on the cta", () => {
       renderBanner({});
-      fireEvent.click(screen.getByText(t(`lnsUpsell.banner.${location}.optIn.cta`)));
+      fireEvent.click(screen.getByText(t(`lnsUpsell.opted_in.cta`)));
 
       expect(openURL).toHaveBeenCalledTimes(1);
       expect(openURL).toHaveBeenCalledWith("https://example.com/optInCta");
@@ -64,7 +64,7 @@ describe("LNSUpsellBanner ", () => {
 
     it("should render the banner for opted out users", () => {
       renderBanner({ isOptIn: false });
-      fireEvent.click(screen.getByText(t(`lnsUpsell.banner.${location}.optOut.cta`)));
+      fireEvent.click(screen.getByText(t(`lnsUpsell.opted_out.cta`)));
 
       expect(openURL).toHaveBeenCalledTimes(1);
       expect(openURL).toHaveBeenCalledWith("https://example.com/optOutCta");

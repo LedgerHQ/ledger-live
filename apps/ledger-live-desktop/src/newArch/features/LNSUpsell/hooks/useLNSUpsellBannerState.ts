@@ -5,16 +5,20 @@ import {
   devicesModelListSelector,
   sharePersonalizedRecommendationsSelector,
 } from "~/renderer/reducers/settings";
-import type { LNSBannerLocation } from "../types";
+import type { LNSBannerLocation, LNSBannerState } from "../types";
 
-export function useShowLNSUpsellBanner(location: LNSBannerLocation): boolean {
+export function useLNSUpsellBannerState(location: LNSBannerLocation): LNSBannerState {
   const isOptIn = useSelector(sharePersonalizedRecommendationsSelector);
   const ff = useFeature("lldNanoSUpsellBanners");
-  const params = ff?.params?.[isOptIn ? "opted_in" : "opted_out"];
+  const tracking = isOptIn ? "opted_in" : "opted_out";
+  const params = ff?.params?.[tracking];
 
   const devicesModelList = useSelector(devicesModelListSelector);
   const hasOnlySeenLNS =
     devicesModelList.length === 1 && devicesModelList[0] === DeviceModelId.nanoS;
 
-  return Boolean(ff?.enabled && params?.[location as keyof typeof params] && hasOnlySeenLNS);
+  type KeyOfParams = keyof LNSBannerState["params"];
+  const isShown = Boolean(ff?.enabled && params?.[location as KeyOfParams] && hasOnlySeenLNS);
+
+  return { isShown, params, tracking };
 }
