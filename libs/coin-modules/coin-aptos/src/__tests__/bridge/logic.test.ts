@@ -6,7 +6,12 @@ import {
 } from "@aptos-labs/ts-sdk";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { APTOS_ASSET_ID, APTOS_COIN_CHANGE, DIRECTION } from "../../constants";
+import {
+  APTOS_ASSET_ID,
+  APTOS_COIN_CHANGE,
+  APTOS_FUNGIBLE_STORE,
+  DIRECTION,
+} from "../../constants";
 import {
   calculateAmount,
   compareAddress,
@@ -20,11 +25,15 @@ import {
   getBlankOperation,
   txsToOps,
   getEventCoinAddress,
+  getEventFAAddress,
 } from "../../bridge/logic";
 import type { AptosTransaction, TransactionOptions } from "../../types";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets";
 
 jest.mock("@ledgerhq/cryptoassets", () => ({
   getCryptoCurrencyById: jest.fn(),
+  findTokenByAddressInCurrency: jest.fn(),
 }));
 
 describe("Aptos logic ", () => {
@@ -373,10 +382,166 @@ describe("Aptos sync logic ", () => {
       const result = getResourceAddress(tx, event, "withdraw_events", getEventCoinAddress);
       expect(result).toBe(null);
     });
+
+    it("should return null for not finding the event name in change", () => {
+      const change = {
+        type: "write_resource",
+        data: {
+          type: APTOS_COIN_CHANGE,
+          data: {
+            other_events: {
+              guid: {
+                id: {
+                  addr: "0x12",
+                  creation_num: "2",
+                },
+              },
+            },
+          },
+        },
+      } as unknown as WriteSetChange;
+
+      const tx: AptosTransaction = {
+        hash: "0x123",
+        block: { hash: "0xabc", height: 1 },
+        timestamp: "1000000",
+        sequence_number: "1",
+        version: "1",
+        changes: [change],
+      } as unknown as AptosTransaction;
+
+      const event = {
+        guid: {
+          account_address: "0x11",
+          creation_number: "1",
+        },
+        type: "0x1::coin::WithdrawEvent",
+      } as Event;
+
+      const result = getResourceAddress(tx, event, "withdraw_events", getEventCoinAddress);
+      expect(result).toBe(null);
+    });
+
+    it("should return fungible asset address", () => {
+      const change = {
+        type: "write_resource",
+        address: "0xsomeaddress",
+        data: {
+          type: APTOS_FUNGIBLE_STORE,
+          data: {
+            metadata: {
+              inner: "0xassetaddress",
+            },
+          },
+        },
+      } as unknown as WriteSetChange;
+
+      const tx: AptosTransaction = {
+        hash: "0x123",
+        block: { hash: "0xabc", height: 1 },
+        timestamp: "1000000",
+        sequence_number: "1",
+        version: "1",
+        changes: [change],
+      } as unknown as AptosTransaction;
+
+      const event = {
+        guid: {
+          account_address: "0x0",
+          creation_number: "0",
+        },
+        type: "0x1::fungible_asset::Deposit",
+        data: {
+          amount: "100",
+          store: "0xsomeaddress",
+        },
+      } as Event;
+
+      const result = getResourceAddress(tx, event, "withdraw_events", getEventFAAddress);
+      expect(result).toEqual("0xassetaddress");
+    });
+
+    it("should return null address instead of fungible asset when wrong type", () => {
+      const change = {
+        type: "write_resource",
+        address: "0xsomeaddress",
+        data: {
+          type: APTOS_COIN_CHANGE,
+          data: {
+            metadata: {
+              inner: "0xassetaddress",
+            },
+          },
+        },
+      } as unknown as WriteSetChange;
+
+      const tx: AptosTransaction = {
+        hash: "0x123",
+        block: { hash: "0xabc", height: 1 },
+        timestamp: "1000000",
+        sequence_number: "1",
+        version: "1",
+        changes: [change],
+      } as unknown as AptosTransaction;
+
+      const event = {
+        guid: {
+          account_address: "0x0",
+          creation_number: "0",
+        },
+        type: "0x1::fungible_asset::Deposit",
+        data: {
+          amount: "100",
+          store: "0xsomeaddress",
+        },
+      } as Event;
+
+      const result = getResourceAddress(tx, event, "withdraw_events", getEventFAAddress);
+      expect(result).toEqual(null);
+    });
+
+    it("should return null address instead of fungible asset when wrong event address", () => {
+      const change = {
+        type: "write_resource",
+        address: "0xsomeaddress",
+        data: {
+          type: APTOS_FUNGIBLE_STORE,
+          data: {
+            metadata: {
+              inner: "0xassetaddress",
+            },
+          },
+        },
+      } as unknown as WriteSetChange;
+
+      const tx: AptosTransaction = {
+        hash: "0x123",
+        block: { hash: "0xabc", height: 1 },
+        timestamp: "1000000",
+        sequence_number: "1",
+        version: "1",
+        changes: [change],
+      } as unknown as AptosTransaction;
+
+      const event = {
+        guid: {
+          account_address: "0x0",
+          creation_number: "0",
+        },
+        type: "0x1::fungible_asset::Deposit",
+        data: {
+          amount: "100",
+          store: "0xwrongaddress",
+        },
+      } as Event;
+
+      const result = getResourceAddress(tx, event, "withdraw_events", getEventFAAddress);
+      expect(result).toEqual(null);
+    });
   });
 
   describe("getCoinAndAmounts", () => {
-    it("should calculate the correct amounts for withdraw and deposit events", () => {
+    it("should calculate the correct legacy coins amounts for withdraw and deposit events", () => {
       const tx = {
         events: [
           {
@@ -575,7 +740,7 @@ describe("Aptos sync logic ", () => {
   });
 
   describe("txsToOps", () => {
-    it("should convert transactions to operations correctly", () => {
+    it("should convert Aptos transactions to operations correctly", () => {
       const address = "0x11";
       const id = "test-id";
       const txs: AptosTransaction[] = [
@@ -801,4 +966,207 @@ describe("Aptos sync logic ", () => {
       expect(result[0].hasFailed).toBe(true);
     });
   });
+
+  //   jest.mock("@ledgerhq/cryptoassets", () => ({
+  //   findTokenByAddressInCurrency: jest.fn(),
+  // }));
+
+  // describe("Aptos token logic", () => {
+  //   describe("txsToOps", () => {
+  //     it("should convert token transactions to operations correctly", () => {
+  //       const address = "0x11";
+  //       const id = "test-id";
+
+  //       const token = {
+  //         type: "TokenCurrency",
+  //         id: "aptos_token",
+  //         name: "Aptos Token",
+  //         ticker: "APT",
+  //         units: [{ name: "APT", code: "APT", magnitude: 6 }],
+  //         contractAddress: "SOME::COIN::ADDRESS",
+  //         tokenType: "coin",
+  //         parentCurrency: {
+  //           type: "CryptoCurrency",
+  //           id: "aptos",
+  //           name: "Aptos",
+  //           ticker: "APT",
+  //           units: [{ name: "APT", code: "APT", magnitude: 6 }],
+  //           color: "#000000",
+  //           family: "aptos",
+  //           scheme: "aptos",
+  //           explorerViews: [],
+  //           managerAppName: "Aptos",
+  //           coinType: 637,
+  //         },
+  //       };
+
+  //       (findTokenByAddressInCurrency as jest.Mock).mockReturnValue(token);
+
+  //       const txs: AptosTransaction[] = [
+  //         {
+  //           hash: "0x123",
+  //           sender: "0x11",
+  //           gas_used: "200",
+  //           gas_unit_price: "100",
+  //           success: true,
+  //           payload: {
+  //             type: "entry_function_payload",
+  //             function: "0x1::coin::transfer",
+  //             type_arguments: [],
+  //             arguments: ["0x12", 100],
+  //           } as EntryFunctionPayloadResponse,
+  //           events: [
+  //             {
+  //               type: "0x1::coin::WithdrawEvent",
+  //               guid: {
+  //                 account_address: "0x11",
+  //                 creation_number: "1",
+  //               },
+  //               data: {
+  //                 amount: "100",
+  //               },
+  //             },
+  //             {
+  //               type: "0x1::coin::DepositEvent",
+  //               guid: {
+  //                 account_address: "0x12",
+  //                 creation_number: "2",
+  //               },
+  //               data: {
+  //                 amount: "100",
+  //               },
+  //             },
+  //           ],
+  //           changes: [
+  //             {
+  //               type: "write_resource",
+  //               data: {
+  //                 type: `0x1::coin::CoinStore<some::coin::address>`,
+  //                 data: {
+  //                   withdraw_events: {
+  //                     guid: {
+  //                       id: {
+  //                         addr: "0x11",
+  //                         creation_num: "1",
+  //                       },
+  //                     },
+  //                   },
+  //                   deposit_events: {
+  //                     guid: {
+  //                       id: {
+  //                         addr: "0x12",
+  //                         creation_num: "2",
+  //                       },
+  //                     },
+  //                   },
+  //                 },
+  //               },
+  //             },
+  //           ],
+  //           block: { hash: "0xabc", height: 1 },
+  //           timestamp: "1000000",
+  //           sequence_number: "1",
+  //         } as unknown as AptosTransaction,
+  //       ];
+
+  //       const [_, coin_result] = txsToOps({ address }, id, txs);
+
+  //       expect(coin_result).toHaveLength(1);
+  //       expect(coin_result[0]).toEqual({
+  //         id: expect.any(String),
+  //         hash: "0x123",
+  //         type: DIRECTION.OUT,
+  //         value: new BigNumber(20100),
+  //         fee: new BigNumber(20000),
+  //         blockHash: "0xabc",
+  //         blockHeight: 1,
+  //         senders: ["0x11"],
+  //         recipients: ["0x12"],
+  //         accountId: expect.any(String),
+  //         date: new Date(1000),
+  //         extra: { version: undefined },
+  //         transactionSequenceNumber: 1,
+  //         hasFailed: false,
+  //       });
+  //     });
+
+  //     it("should skip transactions with unknown tokens", () => {
+  //       const address = "0x11";
+  //       const id = "test-id";
+
+  //       (findTokenByAddressInCurrency as jest.Mock).mockReturnValue(undefined);
+
+  //       const txs: AptosTransaction[] = [
+  //         {
+  //           hash: "0x123",
+  //           sender: "0x11",
+  //           gas_used: "200",
+  //           gas_unit_price: "100",
+  //           success: true,
+  //           payload: {
+  //             type: "entry_function_payload",
+  //             function: "0x1::coin::transfer",
+  //             type_arguments: [],
+  //             arguments: ["0x12", 100],
+  //           } as EntryFunctionPayloadResponse,
+  //           events: [
+  //             {
+  //               type: "0x1::coin::WithdrawEvent",
+  //               guid: {
+  //                 account_address: "0x11",
+  //                 creation_number: "1",
+  //               },
+  //               data: {
+  //                 amount: "100",
+  //               },
+  //             },
+  //             {
+  //               type: "0x1::coin::DepositEvent",
+  //               guid: {
+  //                 account_address: "0x12",
+  //                 creation_number: "2",
+  //               },
+  //               data: {
+  //                 amount: "100",
+  //               },
+  //             },
+  //           ],
+  //           changes: [
+  //             {
+  //               type: "write_resource",
+  //               data: {
+  //                 type: `0x1::coin::CoinStore<some::coin::address>`,
+  //                 data: {
+  //                   withdraw_events: {
+  //                     guid: {
+  //                       id: {
+  //                         addr: "0x11",
+  //                         creation_num: "1",
+  //                       },
+  //                     },
+  //                   },
+  //                   deposit_events: {
+  //                     guid: {
+  //                       id: {
+  //                         addr: "0x12",
+  //                         creation_num: "2",
+  //                       },
+  //                     },
+  //                   },
+  //                 },
+  //               },
+  //             },
+  //           ],
+  //           block: { hash: "0xabc", height: 1 },
+  //           timestamp: "1000000",
+  //           sequence_number: "1",
+  //         } as unknown as AptosTransaction,
+  //       ];
+
+  //       const [_, coin_result] = txsToOps({ address }, id, txs);
+
+  //       expect(coin_result).toHaveLength(0);
+  //     });
+  //   });
+  // });
 });
