@@ -2133,8 +2133,8 @@ importers:
         specifier: ^1.0.3
         version: 1.0.4
       '@stricahq/typhonjs':
-        specifier: ^2.0.0
-        version: 2.0.0
+        specifier: ^3.0.0
+        version: 3.0.0
       bech32:
         specifier: ^1.1.3
         version: 1.1.4
@@ -4323,8 +4323,8 @@ importers:
         specifier: ^1.7.2
         version: 1.7.2(react@18.3.1)(rxjs@7.8.1)
       '@stricahq/typhonjs':
-        specifier: ^2.0.0
-        version: 2.0.0
+        specifier: ^3.0.0
+        version: 3.0.0
       '@taquito/ledger-signer':
         specifier: ^20.0.0
         version: 20.0.1
@@ -15835,8 +15835,8 @@ packages:
   '@stricahq/cbors@1.0.2':
     resolution: {integrity: sha512-6ePsEiq7EGHA5IiPn9poA7sF5iXPqt30kKw3pjR/BhP7S+XHZNu/OPumESWnVl4AM+IEYC2x9eL+4qRPsTPVww==}
 
-  '@stricahq/typhonjs@2.0.0':
-    resolution: {integrity: sha512-4EdoVAht+hKDaBT1m0qCBQsi5unP9ghM4eUUKGcQcQQiEUZGsP8CgxcGuQbsXL1/LU5wNKoBnxWXUiylZD9uRQ==}
+  '@stricahq/typhonjs@3.0.0':
+    resolution: {integrity: sha512-sccJ0hqlvlCPzG8dm89Jb6QgxCXR0BSjFxmDwGT7cYvYBNRtTq+ctipdQfnR7Zq1lNs907V/AQSDU1YcUsqnkw==}
 
   '@styled-system/background@5.1.2':
     resolution: {integrity: sha512-jtwH2C/U6ssuGSvwTN3ri/IyjdHb8W9X/g8Y0JLcrH02G+BW3OS8kZdHphF1/YyRklnrKrBT2ngwGUK6aqqV3A==}
@@ -45351,7 +45351,7 @@ snapshots:
       bignumber.js: 9.1.2
       buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
 
-  '@stricahq/typhonjs@2.0.0':
+  '@stricahq/typhonjs@3.0.0':
     dependencies:
       '@stricahq/cbors': 1.0.2
       bech32: 2.0.0
@@ -48410,7 +48410,7 @@ snapshots:
       loader-utils: 2.0.4
       make-dir: 3.1.0
       schema-utils: 2.7.1
-      webpack: 5.94.0
+      webpack: 5.94.0(webpack-cli@4.10.0)
 
   babel-loader@9.1.3(@babel/core@7.24.3)(webpack@5.94.0(esbuild@0.19.12)):
     dependencies:
@@ -48595,7 +48595,7 @@ snapshots:
 
   babel-plugin-styled-components@2.1.4(@babel/core@7.24.3)(styled-components@5.3.11(@babel/core@7.24.3)(react-dom@18.3.1(react@18.3.1))(react-is@18.3.1)(react@18.3.1)):
     dependencies:
-      '@babel/helper-annotate-as-pure': 7.25.9
+      '@babel/helper-annotate-as-pure': 7.22.5
       '@babel/helper-module-imports': 7.24.3
       '@babel/plugin-syntax-jsx': 7.24.1(@babel/core@7.24.3)
       lodash: 4.17.21
@@ -48606,7 +48606,7 @@ snapshots:
 
   babel-plugin-styled-components@2.1.4(@babel/core@7.24.3)(styled-components@5.3.11(@babel/core@7.24.3)(react-is@18.3.1)(react@18.3.1)):
     dependencies:
-      '@babel/helper-annotate-as-pure': 7.25.9
+      '@babel/helper-annotate-as-pure': 7.22.5
       '@babel/helper-module-imports': 7.24.3
       '@babel/plugin-syntax-jsx': 7.24.1(@babel/core@7.24.3)
       lodash: 4.17.21
@@ -53393,7 +53393,7 @@ snapshots:
     dependencies:
       loader-utils: 2.0.4
       schema-utils: 3.3.0
-      webpack: 5.94.0
+      webpack: 5.94.0(webpack-cli@4.10.0)
 
   file-selector@0.6.0:
     dependencies:
@@ -54469,7 +54469,7 @@ snapshots:
       pretty-error: 4.0.0
       tapable: 2.2.1
     optionalDependencies:
-      webpack: 5.94.0
+      webpack: 5.94.0(webpack-cli@4.10.0)
 
   htmlparser2@6.1.0:
     dependencies:
@@ -65224,7 +65224,7 @@ snapshots:
       schema-utils: 3.3.0
       serialize-javascript: 6.0.2
       terser: 5.36.0
-      webpack: 5.94.0
+      webpack: 5.94.0(webpack-cli@4.10.0)
     transitivePeerDependencies:
       - metro
 
@@ -67223,7 +67223,7 @@ snapshots:
       mime-types: 2.1.35
       range-parser: 1.2.1
       schema-utils: 4.2.0
-      webpack: 5.94.0
+      webpack: 5.94.0(webpack-cli@4.10.0)
 
   webpack-dev-middleware@6.1.2(webpack@5.94.0(esbuild@0.19.12)):
     dependencies:
