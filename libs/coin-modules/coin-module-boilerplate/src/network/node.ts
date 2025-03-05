@@ -9,7 +9,7 @@ const getNodeUrl = () => coinConfig.getCoinConfig().nodeUrl;
 // NOTE: add NODE_BOILERPLATE to libs/env/src/env.ts
 
 // txPayload needs to be unsigned
-export const simulate = async (serializedTx: string): Promise<number> => {
+export const simulate = async (): Promise<number> => {
   // @ts-expect-error: add NODE_BOILERPLATE to libs/env/src/env.ts
   const url = `${getEnv("NODE_BOILERPLATE")}/simulate`;
   const { data } = await network({
