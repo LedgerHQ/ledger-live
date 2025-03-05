@@ -80,6 +80,11 @@ export function cached(api: ChainAPI): ChainAPI {
     ),
 
     getSignaturesForAddress: makeLRUCache(api.getSignaturesForAddress, cacheKeyByArgs, seconds(30)),
+    getSignaturesForAddresses: makeLRUCache(
+      api.getSignaturesForAddresses,
+      cacheKeyByArgs,
+      seconds(30),
+    ),
 
     getMinimumBalanceForRentExemption: makeLRUCache(
       api.getMinimumBalanceForRentExemption,

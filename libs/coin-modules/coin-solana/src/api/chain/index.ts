@@ -73,6 +73,12 @@ export type ChainAPI = Readonly<{
     opts?: SignaturesForAddressOptions,
   ) => ReturnType<Connection["getSignaturesForAddress"]>;
 
+  getSignaturesForAddresses: (
+    arr: Array<{ address: string; opts?: SignaturesForAddressOptions }>,
+  ) => Promise<
+    Array<{ jsonrpc: string; result: Awaited<ReturnType<Connection["getSignaturesForAddress"]>> }>
+  >;
+
   getParsedTransactions: (signatures: string[]) => ReturnType<Connection["getParsedTransactions"]>;
 
   getAccountInfo: (
@@ -216,6 +222,28 @@ export function getChainAPI(
 
     getSignaturesForAddress: (address: string, opts?: SignaturesForAddressOptions) =>
       connection().getSignaturesForAddress(new PublicKey(address), opts).catch(remapErrors),
+
+    getSignaturesForAddresses: async (
+      arr: Array<{ address: string; opts?: SignaturesForAddressOptions }>,
+    ): Promise<
+      Array<{ jsonrpc: string; result: Awaited<ReturnType<Connection["getSignaturesForAddress"]>> }>
+    > => {
+      if (arr.length === 0) return [];
+      const payload = arr.map(i => ({
+        jsonrpc: "2.0",
+        method: "getSignaturesForAddress",
+        params: [i.address, i.opts ?? {}],
+        id: `${i.address}_${Date.now()}`,
+      }));
+      const res = await fetch("https://solana.coin.ledger.com", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+      return await res.json();
+    },
 
     getParsedTransactions: (signatures: string[]) =>
       connection()
