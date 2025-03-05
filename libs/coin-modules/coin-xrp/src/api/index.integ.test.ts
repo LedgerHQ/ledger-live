@@ -4,7 +4,7 @@ import { decode, encodeForSigning } from "ripple-binary-codec";
 import { sign } from "ripple-keypairs";
 
 describe("Xrp Api", () => {
-  let module: Api;
+  let module: Api<void>;
   const address = "rh1HPuRVsYYvThxG2Bs1MfjmrVC73S16Fb";
   const bigAddress = "rUxSkt6hQpWxXQwTNRUCYYRQ7BC2yRA3F8"; // An account with more that 4000 txs
   const emptyAddress = "rKtXXTVno77jhu6tto1MAXjepyuaKaLcqB"; // Account with no transaction (at the time of this writing)
@@ -21,7 +21,12 @@ describe("Xrp Api", () => {
       const amount = BigInt(100);
 
       // When
-      const result = await module.estimateFees(address, amount);
+      const result = await module.estimateFees({
+        type: "send",
+        sender: address,
+        amount,
+        recipient: "",
+      });
 
       // Then
       expect(result).toEqual(BigInt(10));

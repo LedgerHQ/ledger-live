@@ -1,7 +1,9 @@
 import { AccountBridge } from "@ledgerhq/types-live";
-import { Transaction } from "../types";
+import { BoilerplateToken, Transaction } from "../types";
 import { craftTransaction, estimateFees } from "../common-logic";
 import { getNextSequence } from "../network/node";
+import BigNumber from "bignumber.js";
+import { TransactionIntent } from "@ledgerhq/coin-framework/lib/api/types";
 
 export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"] = async (
   account,
@@ -9,15 +11,16 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
 ) => {
   const seq = await getNextSequence(account.freshAddress);
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const craftedTransaction = await craftTransaction(
     { address: account.freshAddress, nextSequenceNumber: seq },
     { amount: transaction.amount, recipient: transaction.recipient },
   );
 
-  const fee = await estimateFees(craftedTransaction.serializedTransaction);
+  const fee = await estimateFees({} as TransactionIntent<BoilerplateToken>);
 
-  if (transaction.fee !== fee) {
-    return { ...transaction, fee };
+  if (transaction.fee !== new BigNumber(fee.toString())) {
+    return { ...transaction, fee: new BigNumber(fee.toString()) };
   }
 
   return transaction;
