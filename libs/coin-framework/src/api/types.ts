@@ -14,7 +14,7 @@ export type Operation = {
   senders: string[];
   recipients: string[];
   date: Date;
-  transactionSequenceNumber: number;
+  transactionSequenceNumber?: number;
   // Field containing dedicated value for each blockchain
   details?: Record<string, unknown>;
 };
