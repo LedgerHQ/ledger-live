@@ -75,7 +75,6 @@ export class DeviceManagementKitTransport extends Transport {
             tracer.trace("[open] device not found in available devices");
             throw new Error("Device not found");
           }
-          console.log("FOUND DEVICE => CONNECT", found);
 
           console.log("[DeviceManagementKitTransport][open] device found", found);
           tracer.trace(`[open] device found ${found.id}`);
