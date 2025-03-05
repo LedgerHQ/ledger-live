@@ -89,14 +89,13 @@ export const mergeSubAccounts = (
  */
 export const getSubAccountShape = async (
   currency: CryptoCurrency,
-  address: string, // TODO: this should be redundant
+  address: string,
   parentId: string,
   token: TokenCurrency,
   operations: Operation[],
 ): Promise<TokenAccount> => {
   const aptosClient = new AptosAPI(currency.id);
-  //const { xpubOrAddress: address } = decodeAccountId(parentId); // TODO
-  const tokenAccountId = encodeTokenAccountId(parentId, token); // TODO
+  const tokenAccountId = encodeTokenAccountId(parentId, token);
 
   let balance = new BigNumber(0);
   if (token.tokenType == "coin") {
@@ -125,11 +124,9 @@ export const getSubAccountShape = async (
  */
 export const getSubAccounts = async (
   infos: AccountShapeInfo<Account>,
-  address: string, //TODO: this should be redundant
+  address: string,
   accountId: string,
   lastTokenOperations: Operation[],
-  //blacklistedTokenIds: string[] = [],
-  //swapHistoryMap: Map<TokenCurrency, TokenAccount["swapHistory"]>,
 ): Promise<TokenAccount[]> => {
   const { currency } = infos;
 
@@ -138,7 +135,7 @@ export const getSubAccounts = async (
     (acc, operation) => {
       const { accountId } = decodeOperationId(operation.id);
       const { token } = decodeTokenAccountId(accountId);
-      if (!token) return acc; // || blacklistedTokenIds.includes(token.id)
+      if (!token) return acc; // TODO: do we need to check blacklistedTokenIds
 
       if (!acc.has(token)) {
         acc.set(token, []);
@@ -182,7 +179,6 @@ export const getAccountShape: GetAccountShape = async info => {
   const startAt = (oldOperations[0]?.extra as any)?.version;
 
   const aptosClient = new AptosAPI(currency.id);
-  // get resources
   const { balance, transactions, blockHeight } = await aptosClient.getAccountInfo(address, startAt);
 
   const [newOperations, tokenOperations]: [Operation[], Operation[]] = txsToOps(
