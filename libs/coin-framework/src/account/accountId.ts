@@ -31,7 +31,7 @@ export function safeDecodeTokenId(encodedTokenId: string): string {
 
 export function encodeAccountId({
   type,
-  version, // TODO: what is the version
+  version,
   currencyId,
   xpubOrAddress,
   derivationMode,
