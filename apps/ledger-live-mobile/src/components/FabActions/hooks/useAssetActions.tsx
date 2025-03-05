@@ -3,21 +3,25 @@ import { AccountLikeArray } from "@ledgerhq/types-live";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { IconsLegacy } from "@ledgerhq/native-ui";
-import { getParentAccount, isTokenAccount } from "@ledgerhq/live-common/account/index";
+import {
+  getAccountCurrency,
+  getParentAccount,
+  isTokenAccount,
+} from "@ledgerhq/live-common/account/index";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { NavigatorName, ScreenName } from "~/const";
 import { readOnlyModeEnabledSelector } from "~/reducers/settings";
-import { ActionButtonEvent, NavigationParamsType } from "..";
+import { ActionButtonEvent } from "..";
 import ZeroBalanceDisabledModalContent from "../modals/ZeroBalanceDisabledModalContent";
 import { sharedSwapTracking } from "~/screens/Swap/utils";
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { PtxToast } from "../../Toast/PtxToast";
 import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
+import { useStake } from "~/newArch/hooks/useStake/useStake";
 import { flattenAccountsSelector } from "~/reducers/accounts";
 import { useStake } from "~/newArch/hooks/useStake/useStake";
-import { n } from "node_modules/msw/lib/core/GraphQLHandler-bom2Dn82";
 
 type useAssetActionsProps = {
   currency?: CryptoCurrency | TokenCurrency;
@@ -53,7 +57,6 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
     [accounts],
   );
 
-  console.log({ defaultAccount });
   const availableOnSwap = currency && currenciesAll.includes(currency.id);
 
   const { isCurrencyAvailable } = useRampCatalog();
@@ -61,17 +64,17 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
   const canBeBought = !!currency && isCurrencyAvailable(currency.id, "onRamp");
   const canBeSold = !!currency && isCurrencyAvailable(currency.id, "offRamp");
 
-  const { canStakeCurrency, navigationParams: stakeNavigationParams } = useStake({
-    currencyId: currency?.id,
-    accountId: defaultAccount?.id,
-  });
-
-  console.log(`>> canStakeCurrency: ${canStakeCurrency}`, { stakeNavigationParams });
-
   const totalAccounts = useSelector(flattenAccountsSelector);
   const parentAccount = isTokenAccount(defaultAccount)
     ? getParentAccount(defaultAccount, totalAccounts)
     : undefined;
+
+  const accountCurrency = !defaultAccount ? null : getAccountCurrency(defaultAccount);
+
+  const assetId = !currency ? accountCurrency?.id : currency.id;
+
+  const { getCanStakeCurrency } = useStake();
+  const canStakeCurrency = !assetId ? false : getCanStakeCurrency(assetId);
 
   const actions = useMemo<ActionButtonEvent[]>(() => {
     const isPtxServiceCtaScreensDisabled = !(ptxServiceCtaScreens?.enabled ?? true);
@@ -156,7 +159,7 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
                   },
                 ]
               : []),
-            ...(canStakeCurrency && !!currency
+            ...(canStakeCurrency && assetId
               ? [
                   {
                     label: t(stakeLabel),
@@ -164,10 +167,18 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
                     event: "button_clicked",
                     eventProperties: {
                       button: "stake",
-                      currency: currency.ticker || currency.id.toUpperCase(),
+                      currency: currency?.ticker || assetId.toUpperCase(),
                       flow: "stake",
                     },
-                    navigationParams: stakeNavigationParams ?? [],
+                    navigationParams: [
+                      NavigatorName.StakeFlow,
+                      {
+                        screen: ScreenName.Stake,
+                        params: {
+                          currencies: [assetId],
+                        },
+                      },
+                    ] as const,
                   },
                 ]
               : []),
@@ -248,7 +259,7 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
     parentAccount,
     canStakeCurrency,
     stakeLabel,
-    stakeNavigationParams,
+    assetId,
   ]);
 
   return {

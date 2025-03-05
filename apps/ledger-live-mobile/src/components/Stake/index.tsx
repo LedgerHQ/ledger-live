@@ -13,10 +13,7 @@ import { useStake } from "~/newArch/hooks/useStake/useStake";
 type Props = BaseComposite<StackNavigatorProps<StakeNavigatorParamList, ScreenName.Stake>>;
 
 const StakeFlow = ({ route }: Props) => {
-  const { enabledCurrencies, partnerSupportedTokens } = useStake({
-    accountId: route?.params?.account?.id,
-    currencyId: route?.params?.currencies?.length === 1 ? route?.params?.currencies[0] : undefined,
-  });
+  const { enabledCurrencies, partnerSupportedTokens } = useStake();
   const currencies = route?.params?.currencies || enabledCurrencies.concat(partnerSupportedTokens);
   const navigation = useNavigation<StackNavigationProp<{ [key: string]: object | undefined }>>();
   const parentRoute = route?.params?.parentRoute;
@@ -36,7 +33,6 @@ const StakeFlow = ({ route }: Props) => {
     entryPoint: route.params.entryPoint,
   });
 
-  // FIXME: The returned account includes non-serialisable Date fields, which causes the navigation to fail.
   const requestAccount = useCallback(() => {
     if (cryptoCurrencies.length === 1) {
       // Navigate to the second screen when there is only one currency

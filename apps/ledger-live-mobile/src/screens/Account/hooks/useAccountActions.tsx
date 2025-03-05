@@ -51,12 +51,12 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
 
   const currency = getAccountCurrency(account);
 
-  //  const { isOpen, onModalHide, onClose } = useRootDrawerContext(); TODO: Do we need to check for open drawers? We are not in a modal here.
+  const { getCanStakeUsingLedgerLive, getCanStakeUsingPlatformApp, getRouteParamsForPlatformApp } =
+    useStake();
 
-  const { canStakeCurrency, navigationParams } = useStake({
-    currencyId: currency.id,
-    accountId: account.id,
-  });
+  const canStakeUsingLedgerLive = getCanStakeUsingLedgerLive(currency.id);
+  const canStakeUsingPlatformApp = getCanStakeUsingPlatformApp(currency.id);
+  const canOnlyStakeUsingLedgerLive = canStakeUsingLedgerLive && !canStakeUsingPlatformApp;
 
   const balance = getAccountSpendableBalance(account);
   const isZeroBalance = !balance.gt(0);
@@ -194,30 +194,22 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
     Icon: IconsLegacy.ArrowBottomMedium,
     ...extraReceiveActionParams,
   };
-
-  const StakeAction = !canStakeCurrency
-    ? []
-    : {
+  const StakeAction = canStakeUsingPlatformApp
+    ? {
         id: "stake",
+        disabled: isZeroBalance,
         navigationParams: [
           NavigatorName.Base,
-          {
-            screen: ScreenName.NoFunds,
-            params: {
-              account,
-              parentAccount,
-              entryPoint: "stake",
-            },
-          },
+          getRouteParamsForPlatformApp(account, walletState, parentAccount),
         ],
         label: t("account.stake"),
-        Icon: IconsLegacy.CoinsMedium,
+        Icon: IconsLegacy.BedMedium,
         eventProperties: {
           currency: currency.ticker,
         },
-      };
+      }
+    : null;
 
-  // TODO: Shall we get this in the useStake hook and do the token specific OR family specific main actions choice there?
   const familySpecificMainActions: Array<ActionButtonEvent> =
     (decorators &&
       decorators.getMainActions &&
@@ -230,14 +222,15 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
       })) ||
     [];
 
-  console.log({ familySpecificMainActions });
-
   const mainActions = [
     ...(availableOnSwap ? [actionButtonSwap] : []),
     ...(!readOnlyModeEnabled && canBeBought ? [actionButtonBuy] : []),
     ...(!readOnlyModeEnabled && canBeSold ? [actionButtonSell] : []),
+    ...(!readOnlyModeEnabled && canStakeUsingPlatformApp && StakeAction ? [StakeAction] : []),
     ...(!readOnlyModeEnabled
-      ? familySpecificMainActions.filter(action => action.id !== "stake" || canStakeCurrency)
+      ? familySpecificMainActions.filter(
+          action => action.id !== "stake" || canOnlyStakeUsingLedgerLive,
+        ) // filter out family stake action if we cannot stake using ledger live or if account can be staked with a third-party platform app
       : []),
     ...(!readOnlyModeEnabled ? [SendAction] : []),
     ReceiveAction,
