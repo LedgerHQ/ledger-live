@@ -11,7 +11,7 @@ import { NavigatorName, ScreenName } from "~/const";
 import { convertToAtomicUnit, convertToNonAtomicUnit, getCustomFeesPerFamily } from "../utils";
 
 // Constants
-const CHAINS_WITH_FEE_DRAWER = ["evm", "bitcoin"];
+const CHAINS_WITH_FEE_DRAWER = ["evm"];
 const getSegWitAbandonSeedAddress = (): string => "bc1qed3mqr92zvq2s782aqkyx785u23723w02qfrgs";
 
 // Types
