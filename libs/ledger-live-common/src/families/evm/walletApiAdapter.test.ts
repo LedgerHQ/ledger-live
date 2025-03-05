@@ -256,7 +256,7 @@ describe("getWalletAPITransactionSignFlowInfos", () => {
 
       const { canEditFees, hasFeesProvided, liveTx } = evm.getWalletAPITransactionSignFlowInfos({
         walletApiTransaction: ethPlatformTx,
-        account: { currency: { ethereumLikeInfo: { chainId: 1 } } } as Account,
+        account: { type: "Account", currency: { ethereumLikeInfo: { chainId: 1 } } } as Account,
       });
 
       expect(canEditFees).toBe(true);

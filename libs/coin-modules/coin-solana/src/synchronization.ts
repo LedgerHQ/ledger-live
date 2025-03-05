@@ -4,20 +4,19 @@ import BigNumber from "bignumber.js";
 import { emptyHistoryCache, encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import {
   getAccountMinimumBalanceForRentExemption,
+  getMaybeTokenMint,
+  getTokenAccruedInterestDelta,
   getTransactions,
   ParsedOnChainStakeAccountWithInfo,
   toStakeAccountWithInfo,
   TransactionDescriptor,
 } from "./api/chain/web3";
-import { getTokenById } from "@ledgerhq/cryptoassets";
+import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import {
   Awaited,
   encodeAccountIdWithTokenAccountAddress,
   isStakeLockUpInForce,
-  tokenIsListedOnLedger,
-  toTokenId,
-  toTokenMint,
   withdrawableFromStake,
 } from "./logic";
 import {
@@ -34,24 +33,25 @@ import {
   sum,
 } from "lodash/fp";
 import { parseQuiet } from "./api/chain/program";
-import {
-  InflationReward,
-  ParsedTransactionMeta,
-  ParsedMessageAccount,
-  ParsedTransaction,
-  StakeActivationData,
-} from "@solana/web3.js";
+import { InflationReward, ParsedTransaction, StakeActivationData } from "@solana/web3.js";
 import { ChainAPI } from "./api";
-import {
-  ParsedOnChainTokenAccountWithInfo,
-  /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
-  toTokenAccountWithInfo,
-} from "./api/chain/web3";
+import { ParsedOnChainTokenAccountWithInfo, toTokenAccountWithInfo } from "./api/chain/web3";
 import { drainSeq } from "./utils";
 import { estimateTxFee } from "./tx-fees";
-import { SolanaAccount, SolanaOperationExtra, SolanaStake } from "./types";
+import {
+  SolanaAccount,
+  SolanaOperationExtra,
+  SolanaStake,
+  SolanaTokenAccount,
+  SolanaTokenAccountExtensions,
+  SolanaTokenProgram,
+} from "./types";
 import { Operation, OperationType, TokenAccount } from "@ledgerhq/types-live";
 import { DelegateInfo, WithdrawInfo } from "./api/chain/instruction/stake/types";
+import { PARSED_PROGRAMS } from "./api/chain/program/constants";
+import { tokenIsListedOnLedger } from "./helpers/token";
+import { MintExtensions } from "./api/chain/account/tokenExtensions";
+import coinConfig from "./config";
 
 type OnChainTokenAccount = Awaited<ReturnType<typeof getAccount>>["tokenAccounts"][number];
 
@@ -90,18 +90,23 @@ export const getAccountShapeWithAPI = async (
   const subAccByMint = pipe(
     () => mainInitialAcc?.subAccounts ?? [],
     filter((subAcc): subAcc is TokenAccount => subAcc.type === "TokenAccount"),
-    keyBy(subAcc => toTokenMint(subAcc.token.id)),
+    keyBy(subAcc => subAcc.token.contractAddress),
     v => new Map(toPairs(v)),
   )();
 
   const nextSubAccs: TokenAccount[] = [];
 
   for (const [mint, accs] of onChainTokenAccsByMint.entries()) {
-    if (!tokenIsListedOnLedger(mint)) {
+    if (!tokenIsListedOnLedger(currency.id, mint)) {
       continue;
     }
 
-    const assocTokenAccAddress = await api.findAssocTokenAccAddress(mainAccAddress, mint);
+    const tokenProgram = accs[0].onChainAcc.account.data.program as SolanaTokenProgram;
+    const assocTokenAccAddress = await api.findAssocTokenAccAddress(
+      mainAccAddress,
+      mint,
+      tokenProgram,
+    );
 
     const assocTokenAcc = accs.find(
       ({ onChainAcc: { pubkey } }) => pubkey.toBase58() === assocTokenAccAddress,
@@ -113,7 +118,7 @@ export const getAccountShapeWithAPI = async (
 
     const subAcc = subAccByMint.get(mint);
 
-    const lastSyncedTxSignature = subAcc?.operations?.[0].hash;
+    const lastSyncedTxSignature = subAcc?.operations?.[0]?.hash;
 
     const txs = await getTransactions(
       assocTokenAcc.onChainAcc.pubkey.toBase58(),
@@ -121,17 +126,30 @@ export const getAccountShapeWithAPI = async (
       api,
     );
 
+    const mintInfo =
+      tokenProgram === PARSED_PROGRAMS.SPL_TOKEN_2022
+        ? await getMaybeTokenMint(mint, api)
+        : undefined;
+
+    const mintExtensions =
+      mintInfo && !(mintInfo instanceof Error) ? mintInfo.info.extensions : undefined;
+
     const nextSubAcc =
       subAcc === undefined
-        ? newSubAcc({
+        ? await newSubAcc({
+            api,
+            currencyId: currency.id,
             mainAccountId,
             assocTokenAcc,
             txs,
+            mintExtensions,
           })
-        : patchedSubAcc({
+        : await patchedSubAcc({
+            api,
             subAcc,
             assocTokenAcc,
             txs,
+            mintExtensions,
           });
 
     nextSubAccs.push(nextSubAcc);
@@ -232,9 +250,7 @@ export const getAccountShapeWithAPI = async (
   }
 
   const shape: Partial<SolanaAccount> = {
-    // uncomment when tokens are supported
-    // subAccounts as undefined makes TokenList disappear in desktop
-    //subAccounts: nextSubAccs,
+    subAccounts: nextSubAccs,
     id: mainAccountId,
     blockHeight,
     balance: mainAccBalance.plus(totalStakedBalance),
@@ -256,21 +272,31 @@ export const getAccountShapeWithAPI = async (
   return shape;
 };
 
-function newSubAcc({
+async function newSubAcc({
+  api,
+  currencyId,
   mainAccountId,
   assocTokenAcc,
   txs,
+  mintExtensions,
 }: {
+  api: ChainAPI;
+  currencyId: string;
   mainAccountId: string;
   assocTokenAcc: OnChainTokenAccount;
   txs: TransactionDescriptor[];
-}): TokenAccount {
+  mintExtensions: MintExtensions | undefined;
+}): Promise<SolanaTokenAccount> {
   const firstTx = txs[txs.length - 1];
 
-  const creationDate = new Date((firstTx.info.blockTime ?? Date.now() / 1000) * 1000);
+  const creationDate = new Date((firstTx?.info.blockTime ?? Date.now() / 1000) * 1000);
 
-  const tokenId = toTokenId(assocTokenAcc.info.mint.toBase58());
-  const tokenCurrency = getTokenById(tokenId);
+  const mint = assocTokenAcc.info.mint.toBase58();
+  const tokenCurrency = findTokenByAddressInCurrency(mint, currencyId);
+
+  if (!tokenCurrency) {
+    throw new Error(`token for mint "${mint}" not found`);
+  }
 
   const accosTokenAccPubkey = assocTokenAcc.onChainAcc.pubkey;
 
@@ -283,6 +309,11 @@ function newSubAcc({
 
   const newOps = compact(txs.map(tx => txToTokenAccOperation(tx, assocTokenAcc, accountId)));
 
+  const extensions =
+    mintExtensions || assocTokenAcc.info.extensions
+      ? await toSolanaTokenAccExtensions(api, assocTokenAcc, mintExtensions)
+      : undefined;
+
   return {
     balance,
     balanceHistoryCache: emptyHistoryCache,
@@ -294,32 +325,102 @@ function newSubAcc({
     pendingOperations: [],
     spendableBalance: balance,
     swapHistory: [],
+    extensions,
     token: tokenCurrency,
+    state: assocTokenAcc.info.state,
     type: "TokenAccount",
   };
 }
 
-function patchedSubAcc({
+async function patchedSubAcc({
+  api,
   subAcc,
   assocTokenAcc,
   txs,
+  mintExtensions,
 }: {
+  api: ChainAPI;
   subAcc: TokenAccount;
   assocTokenAcc: OnChainTokenAccount;
   txs: TransactionDescriptor[];
-}): TokenAccount {
+  mintExtensions: MintExtensions | undefined;
+}): Promise<SolanaTokenAccount> {
   const balance = new BigNumber(assocTokenAcc.info.tokenAmount.amount);
 
   const newOps = compact(txs.map(tx => txToTokenAccOperation(tx, assocTokenAcc, subAcc.id)));
 
   const totalOps = mergeOps(subAcc.operations, newOps);
+  const extensions =
+    mintExtensions || assocTokenAcc.info.extensions
+      ? await toSolanaTokenAccExtensions(api, assocTokenAcc, mintExtensions)
+      : undefined;
 
   return {
     ...subAcc,
     balance,
     spendableBalance: balance,
     operations: totalOps,
+    state: assocTokenAcc.info.state,
+    extensions,
   };
+}
+
+async function toSolanaTokenAccExtensions(
+  api: ChainAPI,
+  assocTokenAcc: OnChainTokenAccount,
+  mintExtensions?: MintExtensions,
+) {
+  const extensions = [...(mintExtensions || []), ...(assocTokenAcc.info.extensions || [])];
+  return extensions.reduce<Promise<SolanaTokenAccountExtensions>>(async (prevPromise, tokenExt) => {
+    const acc = await prevPromise;
+    switch (tokenExt.extension) {
+      case "interestBearingConfig": {
+        const delta = await getTokenAccruedInterestDelta(
+          api,
+          BigNumber(assocTokenAcc.info.tokenAmount.amount),
+          assocTokenAcc.info.tokenAmount.decimals,
+          assocTokenAcc.info.mint.toBase58(),
+          assocTokenAcc.info.owner.toBase58(),
+        );
+        return {
+          ...acc,
+          interestRate: {
+            rateBps: tokenExt.state.currentRate,
+            accruedDelta: delta?.toNumber(),
+          },
+        };
+      }
+      case "nonTransferable":
+        return { ...acc, nonTransferable: true };
+      case "permanentDelegate":
+        return {
+          ...acc,
+          permanentDelegate: { delegateAddress: tokenExt.state?.delegate?.toBase58() },
+        };
+      case "memoTransfer":
+        return { ...acc, requiredMemoOnTransfer: !!tokenExt.state.requireIncomingTransferMemos };
+      case "transferFeeConfig": {
+        const { epoch } = await api.getEpochInfo();
+        const { newerTransferFee, olderTransferFee } = tokenExt.state;
+        const transferFee = epoch >= newerTransferFee.epoch ? newerTransferFee : olderTransferFee;
+        return {
+          ...acc,
+          transferFee: {
+            feeBps: transferFee.transferFeeBasisPoints,
+            maxFee: transferFee.maximumFee,
+          },
+        };
+      }
+      case "transferHook": {
+        return {
+          ...acc,
+          transferHook: { programAddress: tokenExt.state?.programId?.toBase58() },
+        };
+      }
+      default:
+        return acc;
+    }
+  }, Promise.resolve({}));
 }
 
 function txToMainAccOperation(
@@ -358,26 +459,7 @@ function txToMainAccOperation(
     balanceDelta,
   });
 
-  const accum = {
-    senders: [] as string[],
-    recipients: [] as string[],
-  };
-
-  const { senders, recipients } =
-    opType === "IN" || opType === "OUT"
-      ? message.accountKeys.reduce((acc, account, i) => {
-          const delta = new BigNumber(postBalances[i]).minus(new BigNumber(preBalances[i]));
-          if (delta.lt(0)) {
-            const shouldConsiderAsSender = i > 0 || !delta.negated().eq(txFee);
-            if (shouldConsiderAsSender) {
-              acc.senders.push(account.pubkey.toBase58());
-            }
-          } else if (delta.gt(0)) {
-            acc.recipients.push(account.pubkey.toBase58());
-          }
-          return acc;
-        }, accum)
-      : accum;
+  const { senders, recipients } = getMainSendersRecipients(tx, opType, txFee, accountAddress);
 
   const txHash = tx.info.signature;
   const txDate = new Date(tx.info.blockTime * 1000);
@@ -425,7 +507,7 @@ function getOpExtra(
   const { instructions } = tx.parsed.transaction.message;
   const parsedIxs = instructions
     .map(ix => parseQuiet(ix))
-    .filter(({ program }) => program !== "spl-memo");
+    .filter(({ program }) => program !== PARSED_PROGRAMS.SPL_MEMO);
 
   if (tx.info.memo !== null) {
     extra.memo = dropMemoLengthPrefixIfAny(tx.info.memo);
@@ -467,8 +549,14 @@ function txToTokenAccOperation(
     return undefined;
   }
 
+  const { message } = tx.parsed.transaction;
   const assocTokenAccIndex = tx.parsed.transaction.message.accountKeys.findIndex(v =>
     v.pubkey.equals(assocTokenAcc.onChainAcc.pubkey),
+  );
+
+  const accountOwner = assocTokenAcc.info.owner.toBase58();
+  const accountOwnerIndex = message.accountKeys.findIndex(
+    pma => pma.pubkey.toBase58() === accountOwner,
   );
 
   if (assocTokenAccIndex < 0) {
@@ -485,14 +573,15 @@ function txToTokenAccOperation(
     new BigNumber(preTokenBalance?.uiTokenAmount.amount ?? 0),
   );
 
+  const isFeePayer = accountOwnerIndex === 0;
+  const txFee = new BigNumber(tx.parsed.meta.fee);
+
   const opType = getTokenAccOperationType({ tx: tx.parsed.transaction, delta });
 
   const txHash = tx.info.signature;
+  const opFee = isFeePayer ? txFee : new BigNumber(0);
 
-  const { senders, recipients } = getTokenSendersRecipients({
-    meta: tx.parsed.meta,
-    accounts: tx.parsed.transaction.message.accountKeys,
-  });
+  const { senders, recipients } = getTokenSendersRecipients(tx);
 
   return {
     id: encodeOperationId(accountId, txHash, opType),
@@ -501,7 +590,7 @@ function txToTokenAccOperation(
     hash: txHash,
     date: new Date(tx.info.blockTime * 1000),
     blockHeight: tx.info.slot,
-    fee: new BigNumber(0),
+    fee: opFee,
     recipients,
     senders,
     value: delta.abs(),
@@ -522,7 +611,7 @@ function getMainAccOperationType({
   isFeePayer: boolean;
   balanceDelta: BigNumber;
 }): OperationType {
-  const type = getMainAccOperationTypeFromTx(tx);
+  const type = getMainAccOperationTypeFromTx(tx, isFeePayer);
 
   if (type !== undefined) {
     return type;
@@ -537,12 +626,66 @@ function getMainAccOperationType({
         : "NONE";
 }
 
-function getMainAccOperationTypeFromTx(tx: ParsedTransaction): OperationType | undefined {
-  const { instructions } = tx.message;
+function getMainSendersRecipients(
+  tx: TransactionDescriptor,
+  opType: OperationType,
+  txFee: BigNumber,
+  accountAddress: string,
+) {
+  const initialSendersRecipients = {
+    senders: [] as string[],
+    recipients: [] as string[],
+  };
+  if (!tx.parsed.meta) {
+    return initialSendersRecipients;
+  }
 
-  const parsedIxs = instructions
-    .map(ix => parseQuiet(ix))
-    .filter(({ program }) => program !== "spl-memo" && program !== "unknown");
+  const { message } = tx.parsed.transaction;
+  const { postTokenBalances, preBalances, postBalances } = tx.parsed.meta;
+
+  if (opType === "FEES") {
+    // SPL transfer to existing ATA. FEES operation is shown for the main account
+    return getTokenSendersRecipients(tx);
+  }
+
+  if (opType === "OPT_IN") {
+    // Associated token account created
+    const incomingTokens =
+      postTokenBalances?.filter(tokenBalance => tokenBalance.owner === accountAddress) || [];
+
+    initialSendersRecipients.senders = incomingTokens.map(token => token.mint);
+    initialSendersRecipients.recipients = incomingTokens.map(token => {
+      return message.accountKeys[token.accountIndex].pubkey.toBase58();
+    }) || [accountAddress];
+
+    return initialSendersRecipients;
+  }
+
+  if (opType === "IN" || opType === "OUT") {
+    const isAccFeePayer = (accIndex: number) => accIndex === 0;
+
+    return message.accountKeys.reduce((acc, account, i) => {
+      const delta = new BigNumber(postBalances[i]).minus(new BigNumber(preBalances[i]));
+      if (delta.lt(0)) {
+        const shouldConsiderAsSender = !isAccFeePayer(i) || !delta.negated().eq(txFee);
+        if (shouldConsiderAsSender) {
+          acc.senders.push(account.pubkey.toBase58());
+        }
+      } else if (delta.gt(0)) {
+        acc.recipients.push(account.pubkey.toBase58());
+      }
+      return acc;
+    }, initialSendersRecipients);
+  }
+
+  return initialSendersRecipients;
+}
+
+function getMainAccOperationTypeFromTx(
+  tx: ParsedTransaction,
+  isFeePayer: boolean,
+): OperationType | undefined {
+  const parsedIxs = parseTxInstructions(tx);
 
   if (parsedIxs.length === 3) {
     const [first, second, third] = parsedIxs;
@@ -563,20 +706,23 @@ function getMainAccOperationTypeFromTx(tx: ParsedTransaction): OperationType | u
     const first = parsedIxs[0];
 
     switch (first.program) {
-      case "spl-associated-token-account":
-        switch (first.instruction.type) {
-          case "associate":
-            return "OPT_IN";
+      case PARSED_PROGRAMS.SPL_ASSOCIATED_TOKEN_ACCOUNT:
+        if (first.instruction.type === "associate") {
+          return isFeePayer ? "OPT_OUT" : "OPT_IN";
         }
-        // needed for lint
         break;
-      case "spl-token":
+      case PARSED_PROGRAMS.SPL_TOKEN:
+      case PARSED_PROGRAMS.SPL_TOKEN_2022:
         switch (first.instruction.type) {
           case "closeAccount":
             return "OPT_OUT";
+          case "freezeAccount":
+            return "FREEZE";
+          case "thawAccount":
+            return "UNFREEZE";
         }
         break;
-      case "stake":
+      case PARSED_PROGRAMS.STAKE:
         switch (first.instruction.type) {
           case "delegate":
             return "DELEGATE";
@@ -594,36 +740,34 @@ function getMainAccOperationTypeFromTx(tx: ParsedTransaction): OperationType | u
   return undefined;
 }
 
-function getTokenSendersRecipients({
-  meta,
-  accounts,
-}: {
-  meta: ParsedTransactionMeta;
-  accounts: ParsedMessageAccount[];
-}) {
-  const { preTokenBalances, postTokenBalances } = meta;
-  return accounts.reduce(
-    (accum, account, i) => {
-      const preTokenBalance = preTokenBalances?.find(b => b.accountIndex === i);
-      const postTokenBalance = postTokenBalances?.find(b => b.accountIndex === i);
-      if (preTokenBalance && postTokenBalance) {
-        const tokenDelta = new BigNumber(postTokenBalance.uiTokenAmount.amount).minus(
-          new BigNumber(preTokenBalance.uiTokenAmount.amount),
-        );
+function getTokenSendersRecipients(tx: TransactionDescriptor) {
+  const initialSendersRecipients = {
+    senders: [] as string[],
+    recipients: [] as string[],
+  };
 
-        if (tokenDelta.lt(0)) {
-          accum.senders.push(account.pubkey.toBase58());
-        } else if (tokenDelta.gt(0)) {
-          accum.recipients.push(account.pubkey.toBase58());
-        }
+  if (!tx.parsed.meta) {
+    return initialSendersRecipients;
+  }
+
+  const accounts = tx.parsed.transaction.message.accountKeys;
+  const { preTokenBalances, postTokenBalances } = tx.parsed.meta;
+
+  return accounts.reduce((accum, account, i) => {
+    const preTokenBalance = preTokenBalances?.find(b => b.accountIndex === i);
+    const postTokenBalance = postTokenBalances?.find(b => b.accountIndex === i);
+    if (preTokenBalance || postTokenBalance) {
+      const tokenDelta = new BigNumber(postTokenBalance?.uiTokenAmount.amount ?? 0).minus(
+        new BigNumber(preTokenBalance?.uiTokenAmount.amount ?? 0),
+      );
+      if (tokenDelta.lt(0)) {
+        accum.senders.push(postTokenBalance?.owner || account.pubkey.toBase58());
+      } else if (tokenDelta.gt(0)) {
+        accum.recipients.push(postTokenBalance?.owner || account.pubkey.toBase58());
       }
-      return accum;
-    },
-    {
-      senders: [] as string[],
-      recipients: [] as string[],
-    },
-  );
+    }
+    return accum;
+  }, initialSendersRecipients);
 }
 
 function getTokenAccOperationType({
@@ -633,23 +777,39 @@ function getTokenAccOperationType({
   tx: ParsedTransaction;
   delta: BigNumber;
 }): OperationType {
-  const { instructions } = tx.message;
-  const [mainIx, ...otherIxs] = instructions
-    .map(ix => parseQuiet(ix))
-    .filter(({ program }) => program !== "spl-memo" && program !== "unknown");
+  const parsedIxs = parseTxInstructions(tx);
+  const [mainIx, ...otherIxs] = parsedIxs;
 
   if (mainIx !== undefined && otherIxs.length === 0) {
     switch (mainIx.program) {
-      case "spl-associated-token-account":
+      case PARSED_PROGRAMS.SPL_ASSOCIATED_TOKEN_ACCOUNT:
+        if (mainIx.instruction.type === "associate") {
+          return "NONE"; // ATA opt-in operation is added to the main account
+        }
+        break;
+      case PARSED_PROGRAMS.SPL_TOKEN:
+      case PARSED_PROGRAMS.SPL_TOKEN_2022:
         switch (mainIx.instruction.type) {
-          case "associate":
-            return "OPT_IN";
+          case "freezeAccount":
+            return "FREEZE";
+          case "thawAccount":
+            return "UNFREEZE";
+          case "burn":
+            return "BURN";
         }
     }
   }
 
   const fallbackType = delta.eq(0) ? "NONE" : delta.gt(0) ? "IN" : "OUT";
   return fallbackType;
+}
+
+function parseTxInstructions(tx: ParsedTransaction) {
+  return tx.message.instructions
+    .map(ix => parseQuiet(ix))
+    .filter(
+      ({ program }) => program !== PARSED_PROGRAMS.SPL_MEMO && program !== PARSED_PROGRAMS.UNKNOWN,
+    );
 }
 
 function dropMemoLengthPrefixIfAny(memo: string) {
@@ -676,16 +836,20 @@ async function getAccount(
     reward: InflationReward | null;
   }[];
 }> {
+  const TOKEN_2022_ENABLED = coinConfig.getCoinConfig().token2022Enabled;
   const balanceLamportsWithContext = await api.getBalanceAndContext(address);
 
-  const tokenAccounts: ParsedOnChainTokenAccountWithInfo[] = [];
-
-  // no tokens for the first release
-  /*await api
+  const tokenAccounts = await api
     .getParsedTokenAccountsByOwner(address)
-    .then((res) => res.value)
+    .then(res => res.value)
     .then(map(toTokenAccountWithInfo));
-    */
+
+  const token2022Accounts = TOKEN_2022_ENABLED
+    ? await api
+        .getParsedToken2022AccountsByOwner(address)
+        .then(res => res.value)
+        .then(map(toTokenAccountWithInfo))
+    : [];
 
   const stakeAccountsRaw = [
     // ...(await api.getStakeAccountsByStakeAuth(address)),
@@ -723,7 +887,7 @@ async function getAccount(
   return {
     balance,
     blockHeight,
-    tokenAccounts,
+    tokenAccounts: [...tokenAccounts, ...token2022Accounts],
     stakes,
   };
 }

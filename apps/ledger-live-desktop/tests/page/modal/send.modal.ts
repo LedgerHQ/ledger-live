@@ -4,10 +4,10 @@ import { step } from "tests/misc/reporters/step";
 import { NFTTransaction, Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
 
 export class SendModal extends Modal {
+  private accountDebitPlaceholder = this.page.locator("#account-debit-placeholder input");
   private drowdownAccount = this.page.locator('[data-testid="modal-content"] svg').nth(1);
   readonly recipientInput = this.page.getByTestId("send-recipient-input");
   readonly tagInput = this.page.getByTestId("memo-tag-input");
-  readonly continueButton = this.page.getByRole("button", { name: "continue" });
   private checkDeviceLabel = this.page.locator(
     "text=Double-check the transaction details on your Ledger device before signing.",
   );
@@ -23,6 +23,7 @@ export class SendModal extends Modal {
   readonly inputError = this.page.locator("id=input-error"); // no data-testid because css style is applied
   readonly insufficientFundsWarning = this.page.getByTestId("insufficient-funds-warning");
   readonly inputWarning = this.page.locator("id=input-warning");
+  readonly cryptoAmountField = this.page.getByTestId("modal-amount-field");
 
   async selectAccount(name: string) {
     await this.drowdownAccount.click();
@@ -35,7 +36,7 @@ export class SendModal extends Modal {
 
   @step("Click `Continue` button")
   async clickContinueToDevice() {
-    await this.continueButton.click();
+    await this.continue();
     await expect(this.checkDeviceLabel).toBeVisible();
   }
 
@@ -73,15 +74,15 @@ export class SendModal extends Modal {
     await this.fillRecipient(tx.accountToCredit.ensName || tx.accountToCredit.address);
     const displayedAddress = await this.ENSAddressLabel.innerText();
     expect(displayedAddress).toEqual(tx.accountToCredit.address);
-    await this.continueButton.click();
+    await this.continue();
     await this.chooseFeeStrategy(tx.speed);
-    await this.continueButton.click();
+    await this.continue();
   }
 
   @step("Fill tx information")
   async craftTx(tx: Transaction) {
     await this.fillRecipientInfo(tx);
-    await this.continueButton.click();
+    await this.continue();
 
     if (tx.memoTag === "noTag") {
       await this.noTagButton.click();
@@ -104,7 +105,7 @@ export class SendModal extends Modal {
 
     const displayedNftName = await this.nftNameDisplayed.innerText();
     expect(displayedNftName).toEqual(expect.stringContaining(tx.nft.nftName));
-    await this.continueButton.click();
+    await this.continue();
   }
 
   @step("Verify tx information before confirming")
@@ -114,6 +115,7 @@ export class SendModal extends Modal {
 
     const displayedAmount = await this.amountDisplayedValue.innerText();
     expect(displayedAmount).toEqual(expect.stringContaining(tx.amount));
+    expect(displayedAmount).toEqual(expect.stringContaining(tx.accountToDebit.currency.ticker));
     if (tx.accountToCredit.ensName) {
       const displayedEns = await this.recipientEnsDisplayed.innerText();
       expect(displayedEns).toEqual(tx.accountToCredit.ensName);
@@ -128,11 +130,6 @@ export class SendModal extends Modal {
   @step("Check continue button enable")
   async checkContinueButtonEnable() {
     await expect(this.continueButton).toBeEnabled();
-  }
-
-  @step("Click `Continue` button")
-  async clickContinue() {
-    await this.continueButton.click();
   }
 
   @step("Check continue button disabled")
@@ -180,5 +177,15 @@ export class SendModal extends Modal {
       const warningText = await this.inputWarning.innerText();
       expect(warningText).toMatch(expectedWarningMessage);
     }
+  }
+
+  @step("Select currency to debit")
+  async selectDebitCurrency(tx: Transaction) {
+    await expect(this.accountDebitPlaceholder).toBeVisible();
+    await this.accountDebitPlaceholder.click();
+    await this.accountDebitPlaceholder.fill(tx.accountToDebit.currency.ticker);
+    await this.dropdownOptions
+      .locator(this.optionWithText(tx.accountToDebit.currency.ticker.toUpperCase()))
+      .click();
   }
 }

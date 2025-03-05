@@ -1,6 +1,4 @@
-import { findTokenById } from "@ledgerhq/cryptoassets";
 import { PublicKey } from "@solana/web3.js";
-import { TokenAccount } from "@ledgerhq/types-live";
 import { StakeMeta } from "./api/chain/account/stake";
 import { SolanaStake, StakeAction } from "./types";
 import { assertUnreachable } from "./utils";
@@ -34,22 +32,6 @@ export function decodeAccountIdWithTokenAccountAddress(accountIdWithTokenAccount
     accountId: accountIdWithTokenAccountAddress.slice(0, lastColonIndex),
     address: accountIdWithTokenAccountAddress.slice(lastColonIndex + 1),
   };
-}
-
-export function toTokenId(mint: string): string {
-  return `solana/spl/${mint}`;
-}
-
-export function toTokenMint(tokenId: string): string {
-  return tokenId.split("/")[2];
-}
-
-export function toSubAccMint(subAcc: TokenAccount): string {
-  return toTokenMint(subAcc.token.id);
-}
-
-export function tokenIsListedOnLedger(mint: string): boolean {
-  return findTokenById(toTokenId(mint))?.type === "TokenCurrency";
 }
 
 export function stakeActions(stake: SolanaStake): StakeAction[] {

@@ -34,7 +34,11 @@ function OperationDetailsExtra({ account, operation }: Props) {
 
   return (
     <>
-      <Section title={t("operationDetails.extra.stakedAmount")} value={formattedAmount} />
+      <Section
+        title={t("operationDetails.extra.stakedAmount")}
+        value={formattedAmount}
+        testID="operationDetails-delegatedAmount"
+      />
     </>
   );
 }

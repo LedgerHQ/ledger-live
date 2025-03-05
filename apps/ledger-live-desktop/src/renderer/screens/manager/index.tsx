@@ -13,6 +13,9 @@ import Disconnected from "./Disconnected";
 import { setLastSeenDevice } from "~/renderer/actions/settings";
 import { useDispatch } from "react-redux";
 import { context } from "~/renderer/drawers/Provider";
+import { useDeviceSessionRefresherToggle } from "@ledgerhq/live-dmk";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 
 const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectManager);
 const Manager = () => {
@@ -20,6 +23,9 @@ const Manager = () => {
   const { setDrawer } = useContext(context);
   const [result, setResult] = useState<Result | null>(null);
   const [hasReset, setHasReset] = useState(false);
+  const ldmkTransportFlag = useFeature("ldmkTransport");
+  useDeviceSessionRefresherToggle(ldmkTransportFlag?.enabled ?? false);
+
   const onReset = useCallback(
     (apps?: string[] | null) => {
       setRestoreApps(apps ?? []);
@@ -29,6 +35,7 @@ const Manager = () => {
     },
     [setDrawer],
   );
+
   const dispatch = useDispatch();
   const refreshDeviceInfo = useCallback(() => {
     if (result?.device) {
@@ -47,7 +54,9 @@ const Manager = () => {
       });
     }
   }, [result, dispatch]);
-  const onResult = useCallback((result: Result) => setResult(result), []);
+  const onResult = useCallback((result: Result) => {
+    setResult(result);
+  }, []);
   return (
     <>
       <SyncSkipUnderPriority priority={999} />
@@ -61,7 +70,12 @@ const Manager = () => {
           onRefreshDeviceInfo={refreshDeviceInfo}
         />
       ) : !hasReset ? (
-        <DeviceAction onResult={onResult} action={action} request={null} />
+        <DeviceAction
+          onResult={onResult}
+          action={action}
+          request={null}
+          location={HOOKS_TRACKING_LOCATIONS.managerDashboard}
+        />
       ) : (
         <Disconnected onTryAgain={setHasReset} />
       )}

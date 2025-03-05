@@ -1,11 +1,5 @@
 import BigNumber from "bignumber.js";
-import {
-  SolanaAccount,
-  SolanaStake,
-  Transaction,
-  TransactionModel,
-  TransactionStatus,
-} from "./types";
+import { SolanaTokenAccountRaw, Transaction, TransactionModel } from "./types";
 import scanAccounts1 from "./datasets/solana.scanAccounts.1";
 import {
   AmountRequired,
@@ -14,16 +8,17 @@ import {
   NotEnoughBalance,
   RecipientRequired,
 } from "@ledgerhq/errors";
+import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { AccountRaw, CurrenciesData, DatasetTest } from "@ledgerhq/types-live";
 import {
   SolanaAccountNotFunded,
   SolanaAddressOffEd25519,
   SolanaInvalidValidator,
   SolanaMemoIsTooLong,
-  /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
   SolanaRecipientAssociatedTokenAccountWillBeFunded,
   SolanaStakeAccountNotFound,
   SolanaStakeAccountRequired,
-  /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
   SolanaTokenAccountHoldsAnotherToken,
   SolanaValidatorRequired,
 } from "./errors";
@@ -32,42 +27,8 @@ import createTransaction from "./createTransaction";
 import { compact } from "lodash/fp";
 import { assertUnreachable } from "./utils";
 import { getEnv } from "@ledgerhq/live-env";
-import { ChainAPI } from "./api";
-import {
-  SolanaStakeAccountIsNotDelegatable,
-  SolanaStakeAccountValidatorIsUnchangeable,
-} from "./errors";
-import getTransactionStatus from "./getTransactionStatus";
-import { prepareTransaction } from "./prepareTransaction";
-import type { Account, CurrenciesData, DatasetTest } from "@ledgerhq/types-live";
-import { encodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
-import { LATEST_BLOCKHASH_MOCK } from "./api/chain";
-
-// do not change real properties or the test will break
-const testOnChainData = {
-  //  --- real props ---
-  unfundedAddress: "7b6Q3ap8qRzfyvDw1Qce3fUV8C7WgFNzJQwYNTJm3KQo",
-  // 0/0
-  fundedSenderAddress: "AQbkEagmPgmsdAfS4X8V8UyJnXXjVPMvjeD15etqQ3Jh",
-  fundedSenderBalance: new BigNumber(83389840),
-  // 1000/0
-  fundedAddress: "ARRKL4FT4LMwpkhUw4xNbfiHqR7UdePtzGLvkszgydqZ",
-  wSolSenderAssocTokenAccAddress: "8RtwWeqdFz4EFuZU3MAadfYMWSdRMamjFrfq6BXkHuNN",
-  wSolSenderAssocTokenAccBalance: new BigNumber(7960720),
-  // 1000/0, mint - wrapped sol
-  wSolFundedAccountAssocTokenAccAddress: "Ax69sAxqBSdT3gMAUqXb8pUvgxSLCiXfTitMALEnFZTS",
-  // 0/0
-  notWSolTokenAccAddress: "Hsm3S2rhX4HwxYBaCyqgJ1cCtFyFSBu6HLy1bdvh7fKs",
-  validatorAddress: "9QU2QSxhb24FUX3Tu2FpczXjpK3VYrvRudywSZaM29mF",
-  fees: {
-    stakeAccountRentExempt: 2282880,
-    systemAccountRentExempt: 890880,
-    lamportsPerSignature: 5000,
-  },
-  // ---  maybe outdated or not real, fine for tests ---
-  offEd25519Address: "6D8GtWkKJgToM5UoiByHqjQCCC9Dq1Hh7iNmU4jKSs14",
-  offEd25519Address2: "12rqwuEgBYiGhBrDJStCiqEtzQpTTiZbh7teNVLuYcFA",
-};
+import { encodeAccountId } from "@ledgerhq/coin-framework/lib/account/accountId";
+import { testOnChainData } from "./tests/test-onchain-data.fixture";
 
 const mainAccId = encodeAccountId({
   type: "js",
@@ -77,11 +38,15 @@ const mainAccId = encodeAccountId({
   derivationMode: "solanaMain",
 });
 
-/* eslint-disable-next-line @typescript-eslint/no-unused-vars */
 const wSolSubAccId = encodeAccountIdWithTokenAccountAddress(
   mainAccId,
   testOnChainData.wSolSenderAssocTokenAccAddress,
 );
+
+const wSolToken = findTokenByAddressInCurrency(
+  "So11111111111111111111111111111111111111112",
+  "solana",
+) as TokenCurrency;
 
 const fees = (signatureCount: number) =>
   new BigNumber(signatureCount * testOnChainData.fees.lamportsPerSignature);
@@ -128,7 +93,7 @@ const solana: CurrenciesData<Transaction> = {
         },
         ...transferTests(),
         ...stakingTests(),
-        //...tokenTests()
+        ...tokenTests(),
       ],
     },
   ],
@@ -141,7 +106,7 @@ export const dataset: DatasetTest<Transaction> = {
   },
 };
 
-function makeAccount(freshAddress: string) {
+function makeAccount(freshAddress: string): AccountRaw {
   return {
     id: mainAccId,
     seedIdentifier: "",
@@ -155,6 +120,19 @@ function makeAccount(freshAddress: string) {
     currencyId: "solana",
     lastSyncDate: "",
     balance: "0",
+    subAccounts: [makeSubTokenAccount()],
+  };
+}
+
+function makeSubTokenAccount(): SolanaTokenAccountRaw {
+  return {
+    type: "TokenAccountRaw",
+    id: wSolSubAccId,
+    parentId: mainAccId,
+    tokenId: wSolToken.id,
+    balance: "0",
+    operations: [],
+    pendingOperations: [],
   };
 }
 
@@ -168,15 +146,12 @@ type TransactionTestSpec = Exclude<
 
 function recipientRequired(): TransactionTestSpec[] {
   const models: TransactionModel[] = [
-    // uncomment when tokens are supported
-    /*
     {
       kind: "token.transfer",
       uiState: {
-        subAccountId: "",
+        subAccountId: wSolSubAccId,
       },
     },
-    */
     {
       kind: "transfer",
       uiState: {},
@@ -429,8 +404,6 @@ function transferTests(): TransactionTestSpec[] {
   ];
 }
 
-// uncomment when tokens are supported
-/* eslint-disable-next-line @typescript-eslint/no-unused-vars */
 function tokenTests(): TransactionTestSpec[] {
   return [
     {
@@ -495,7 +468,7 @@ function tokenTests(): TransactionTestSpec[] {
         warnings: {},
         estimatedFees: fees(1),
         amount: testOnChainData.wSolSenderAssocTokenAccBalance.dividedBy(2),
-        totalSpent: zero,
+        totalSpent: testOnChainData.wSolSenderAssocTokenAccBalance.dividedBy(2),
       },
     },
     {
@@ -518,7 +491,7 @@ function tokenTests(): TransactionTestSpec[] {
         warnings: {},
         estimatedFees: fees(1),
         amount: testOnChainData.wSolSenderAssocTokenAccBalance.dividedBy(2),
-        totalSpent: zero,
+        totalSpent: testOnChainData.wSolSenderAssocTokenAccBalance.dividedBy(2),
       },
     },
     {
@@ -537,8 +510,7 @@ function tokenTests(): TransactionTestSpec[] {
       expectedStatus: {
         errors: {},
         warnings: {
-          recipient: new SolanaAccountNotFunded(),
-          recipientAssociatedTokenAccount: new SolanaRecipientAssociatedTokenAccountWillBeFunded(),
+          recipient: new SolanaRecipientAssociatedTokenAccountWillBeFunded(),
         },
         // this fee is dynamic, skip
         //estimatedFees: new BigNumber(2044280),
@@ -937,178 +909,6 @@ function stakingTests(): TransactionTestSpec[] {
     },
   ];
 }
-
-const baseAccount = {
-  balance: new BigNumber(0),
-  spendableBalance: new BigNumber(0),
-} as Account;
-
-const baseTx = {
-  family: "solana",
-  recipient: "",
-  amount: new BigNumber(0),
-} as Transaction;
-
-const baseAPI = {
-  getLatestBlockhash: () => Promise.resolve(LATEST_BLOCKHASH_MOCK),
-  getFeeForMessage: (_msg: unknown) => Promise.resolve(testOnChainData.fees.lamportsPerSignature),
-  getRecentPrioritizationFees: (_: string[]) => {
-    return Promise.resolve([
-      {
-        slot: 122422797,
-        prioritizationFee: 0,
-      },
-      {
-        slot: 122422797,
-        prioritizationFee: 0,
-      },
-    ]);
-  },
-  getSimulationComputeUnits: (_ixs: any[], _payer: any) => Promise.resolve(1000),
-} as ChainAPI;
-
-type StakeTestSpec = {
-  activationState: SolanaStake["activation"]["state"];
-  txModel: Transaction["model"];
-  expectedErrors: Record<string, Error>;
-};
-
-/**
- * Some business logic can not be described in terms of transactions and expected status
- * in the test datasets, like stake activation/deactivation, because stake activation is
- * not determenistic and changes with time. Hence the tests here to mock data
- * to be determenistic.
- */
-
-describe("solana staking", () => {
-  test("stake.delegate :: status is error: stake account is not delegatable", async () => {
-    const stakeDelegateModel: Transaction["model"] & {
-      kind: "stake.delegate";
-    } = {
-      kind: "stake.delegate",
-      uiState: {
-        stakeAccAddr: testOnChainData.unfundedAddress,
-        voteAccAddr: testOnChainData.validatorAddress,
-      },
-    };
-
-    const stakeTests: StakeTestSpec[] = [
-      {
-        activationState: "activating",
-        txModel: stakeDelegateModel,
-        expectedErrors: {
-          fee: new NotEnoughBalance(),
-          stakeAccAddr: new SolanaStakeAccountIsNotDelegatable(),
-        },
-      },
-      {
-        activationState: "active",
-        txModel: stakeDelegateModel,
-        expectedErrors: {
-          fee: new NotEnoughBalance(),
-          stakeAccAddr: new SolanaStakeAccountIsNotDelegatable(),
-        },
-      },
-      {
-        activationState: "deactivating",
-        txModel: {
-          ...stakeDelegateModel,
-          uiState: {
-            ...stakeDelegateModel.uiState,
-            voteAccAddr: testOnChainData.unfundedAddress,
-          },
-        },
-        expectedErrors: {
-          fee: new NotEnoughBalance(),
-          stakeAccAddr: new SolanaStakeAccountValidatorIsUnchangeable(),
-        },
-      },
-    ];
-
-    for (const stakeTest of stakeTests) {
-      await runStakeTest(stakeTest);
-    }
-  });
-});
-
-async function runStakeTest(stakeTestSpec: StakeTestSpec) {
-  const api = {
-    ...baseAPI,
-    getMinimumBalanceForRentExemption: () =>
-      Promise.resolve(testOnChainData.fees.stakeAccountRentExempt),
-    getAccountInfo: () => {
-      return Promise.resolve({ data: mockedVoteAccount } as any);
-    },
-  } as ChainAPI;
-
-  const account: SolanaAccount = {
-    ...baseAccount,
-    freshAddress: testOnChainData.fundedSenderAddress,
-    solanaResources: {
-      stakes: [
-        {
-          stakeAccAddr: testOnChainData.unfundedAddress,
-          delegation: {
-            stake: 1,
-            voteAccAddr: testOnChainData.validatorAddress,
-          },
-          activation: {
-            state: stakeTestSpec.activationState,
-          },
-        } as SolanaStake,
-      ],
-      unstakeReserve: BigNumber(0),
-    },
-  };
-
-  const tx: Transaction = {
-    ...baseTx,
-    model: stakeTestSpec.txModel,
-  };
-
-  const preparedTx = await prepareTransaction(account, tx, api);
-  const status = await getTransactionStatus(account, preparedTx);
-
-  const expectedStatus: TransactionStatus = {
-    amount: new BigNumber(0),
-    estimatedFees: new BigNumber(testOnChainData.fees.lamportsPerSignature),
-    totalSpent: new BigNumber(testOnChainData.fees.lamportsPerSignature),
-    errors: stakeTestSpec.expectedErrors,
-    warnings: {},
-  };
-
-  expect(status).toEqual(expectedStatus);
-}
-
-const mockedVoteAccount = {
-  parsed: {
-    info: {
-      authorizedVoters: [
-        {
-          authorizedVoter: "EvnRmnMrd69kFdbLMxWkTn1icZ7DCceRhvmb2SJXqDo4",
-          epoch: 283,
-        },
-      ],
-      authorizedWithdrawer: "EvnRmnMrd69kFdbLMxWkTn1icZ7DCceRhvmb2SJXqDo4",
-      commission: 7,
-      epochCredits: [
-        {
-          credits: "98854605",
-          epoch: 283,
-          previousCredits: "98728105",
-        },
-      ],
-      lastTimestamp: { slot: 122422797, timestamp: 1645796249 },
-      nodePubkey: "EvnRmnMrd69kFdbLMxWkTn1icZ7DCceRhvmb2SJXqDo4",
-      priorVoters: [],
-      rootSlot: 122422766,
-      votes: [{ confirmationCount: 1, slot: 122422797 }],
-    },
-    type: "vote",
-  },
-  program: "vote",
-  space: 3731,
-};
 
 describe("Solana bridge", () => {
   test.todo(

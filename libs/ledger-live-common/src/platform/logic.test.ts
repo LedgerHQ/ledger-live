@@ -185,8 +185,10 @@ describe("completeExchangeLogic", () => {
         exchange: {
           fromAccount,
           fromParentAccount,
+          fromCurrency: fromAccount.token,
           toAccount: undefined,
           toParentAccount: undefined,
+          toCurrency: undefined,
         },
         transaction: expectedTransaction,
         binaryPayload: "binaryPayload",
@@ -242,8 +244,10 @@ describe("completeExchangeLogic", () => {
         exchange: {
           fromAccount,
           fromParentAccount: undefined,
+          fromCurrency: fromAccount.currency,
           toAccount: undefined,
           toParentAccount: undefined,
+          toCurrency: undefined,
         },
         transaction: expectedTransaction,
         binaryPayload: "binaryPayload",

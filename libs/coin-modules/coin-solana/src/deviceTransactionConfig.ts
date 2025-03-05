@@ -1,9 +1,10 @@
 import BigNumber from "bignumber.js";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
-import type { CommonDeviceTransactionField as DeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
+import type { CommonDeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type {
   CommandDescriptor,
+  SolanaExtraDeviceTransactionField,
   StakeCreateAccountCommand,
   StakeDelegateCommand,
   StakeSplitCommand,
@@ -16,6 +17,10 @@ import type {
 } from "./types";
 
 // do not show fields like 'To', 'Recipient', etc., as per Ledger policy
+
+type DeviceTransactionField = CommonDeviceTransactionField | SolanaExtraDeviceTransactionField;
+
+export type SolanaExtraDeviceFields = SolanaExtraDeviceTransactionField["type"];
 
 function getDeviceTransactionConfig({
   account,
@@ -73,46 +78,27 @@ function fieldsForTransfer(_command: TransferCommand): DeviceTransactionField[] 
 function fieldsForTokenTransfer(command: TokenTransferCommand): DeviceTransactionField[] {
   const fields: Array<DeviceTransactionField> = [];
 
-  if (command.recipientDescriptor.shouldCreateAsAssociatedTokenAccount) {
-    fields.push({
-      type: "address",
-      label: "Create token acct",
-      address: command.recipientDescriptor.tokenAccAddress,
-    });
-
-    fields.push({
-      type: "address",
-      label: "From mint",
-      address: command.mintAddress,
-    });
-    fields.push({
-      type: "address",
-      label: "Funded by",
-      address: command.ownerAddress,
-    });
-  }
-
   fields.push({
     type: "amount",
     label: "Transfer tokens",
   });
 
+  if (command.extensions?.transferFee && command.extensions.transferFee.feeBps > 0) {
+    fields.push({
+      type: "solana.token.transferFee",
+      label: "Transfer fee",
+    });
+  }
+
   fields.push({
-    type: "address",
-    address: command.ownerAssociatedTokenAccountAddress,
-    label: "From",
+    type: "text",
+    value: "Solana",
+    label: "Network",
   });
 
   fields.push({
-    type: "address",
-    address: command.ownerAddress,
-    label: "Owner",
-  });
-
-  fields.push({
-    type: "address",
-    address: command.ownerAddress,
-    label: "Fee payer",
+    type: "fees",
+    label: "Max network fees",
   });
 
   return fields;

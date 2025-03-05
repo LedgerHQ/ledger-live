@@ -38,6 +38,14 @@ interface RenderReturn {
   user: ReturnType<typeof userEvent.setup>;
 }
 
+type DeepPartial<T> = T extends Function
+  ? T
+  : T extends Array<infer U>
+    ? Array<DeepPartial<U>>
+    : T extends object
+      ? { [P in keyof T]?: DeepPartial<T[P]> }
+      : T;
+
 function render(
   ui: JSX.Element,
   {
@@ -79,13 +87,18 @@ function render(
   };
 }
 
-function renderHook<Result>(
-  hook: () => Result,
+function renderHook<Result, Props = undefined>(
+  hook: (props: Props) => Result,
   {
+    initialProps,
     initialState = {},
     //initialRoute = "/",
     store = createStore({ state: { ...(initialState || {}) } as State, dbMiddleware }),
-  },
+  }: {
+    initialProps?: Props;
+    initialState?: DeepPartial<State>;
+    store?: ReturnType<typeof createStore>;
+  } = {},
 ) {
   const queryClient = new QueryClient();
   function Wrapper({ children }: ChildrenProps): JSX.Element {
@@ -103,7 +116,7 @@ function renderHook<Result>(
   return {
     store,
 
-    ...rtlRenderHook(hook, { wrapper: Wrapper as React.ComponentType }),
+    ...rtlRenderHook(hook, { wrapper: Wrapper as React.ComponentType, initialProps }),
   };
 }
 

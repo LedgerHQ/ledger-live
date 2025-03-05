@@ -1,17 +1,23 @@
 import { NavigatorScreenParams } from "@react-navigation/core";
 import { NavigatorName, ScreenName } from "~/const";
 import { DeviceSelectionNavigatorParamsList } from "../DeviceSelection/types";
-import { NetworkBasedAddAccountNavigator } from "../Accounts/screens/AddAccount/types";
+import {
+  AddAccountContextType,
+  NetworkBasedAddAccountNavigator,
+} from "../Accounts/screens/AddAccount/types";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { AnalyticMetadata } from "../../hooks/useAnalytics/types";
 export type CommonParams = {
-  context?: "addAccounts" | "receiveFunds";
+  context?: AddAccountContextType;
   onSuccess?: () => void;
   currency?: string;
   inline?: boolean;
+  sourceScreenName?: string;
 };
 
 export type SelectNetworkRouteParams = CommonParams & {
   filterCurrencyIds?: string[];
+  analyticsMetadata?: AnalyticMetadata;
 };
 export type AssetSelectionNavigatorParamsList = {
   [ScreenName.AddAccountsSelectCrypto]: CommonParams & {

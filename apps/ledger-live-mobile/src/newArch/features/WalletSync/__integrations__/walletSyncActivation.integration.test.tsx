@@ -36,7 +36,7 @@ describe("WalletSyncActivation", () => {
               },
             },
           },
-          lastSeenDevice: LAST_SEEN_DEVICE,
+          seenDevice: [LAST_SEEN_DEVICE],
         },
         ble: {
           ...state.ble,
@@ -54,8 +54,6 @@ describe("WalletSyncActivation", () => {
         name: "Turn on Ledger Sync",
       }),
     );
-
-    await user.press(screen.getByText(/use my ledger/i));
 
     expect(await screen.findByText(/Choose a Ledger device/i)).toBeVisible();
 

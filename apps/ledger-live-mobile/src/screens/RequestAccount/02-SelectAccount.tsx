@@ -4,7 +4,7 @@ import { Trans } from "react-i18next";
 import type { Account, AccountLike, SubAccount } from "@ledgerhq/types-live";
 import { useSelector } from "react-redux";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
-import { CryptoCurrency, CryptoOrTokenCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useGetAccountIds } from "@ledgerhq/live-common/wallet-api/react";
 import { accountsByCryptoCurrencyScreenSelector } from "~/reducers/accounts";
 import { TrackScreen } from "~/analytics";
@@ -24,8 +24,7 @@ import { RequestAccountNavigatorParamList } from "~/components/RootNavigator/typ
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { Flex } from "@ledgerhq/native-ui";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { useGroupedCurrenciesByProvider } from "@ledgerhq/live-common/deposit/index";
-import { LoadingBasedGroupedCurrencies } from "@ledgerhq/live-common/deposit/type";
+import { AddAccountContexts } from "LLM/features/Accounts/screens/AddAccount/enums";
 
 const SEARCH_KEYS = [
   "name",
@@ -118,48 +117,30 @@ function SelectAccount({ navigation, route }: Props) {
     [onSelect],
   );
 
-  const { result, loadingStatus: providersLoadingStatus } = useGroupedCurrenciesByProvider(
-    true,
-  ) as LoadingBasedGroupedCurrencies;
-
-  const { currenciesByProvider } = result;
-
-  const provider = useMemo(
-    () =>
-      currenciesByProvider.find(elem =>
-        elem.currenciesByNetwork.some(
-          currencyByNetwork =>
-            (currencyByNetwork as CryptoCurrency | TokenCurrency).id === currency.id,
-        ),
-      ),
-    [currenciesByProvider, currency],
-  );
+  const navigateOnAddAccountSuccess = useCallback(() => {
+    navigation.navigate(NavigatorName.RequestAccount, {
+      screen: ScreenName.RequestAccountsSelectAccount,
+      params: {
+        ...route.params,
+      },
+    });
+  }, [route.params, navigation]);
 
   const onAddAccount = useCallback(() => {
     if (llmNetworkBasedAddAccountFlow?.enabled) {
-      if (provider && provider?.currenciesByNetwork.length > 1) {
-        navigation.navigate(NavigatorName.AssetSelection, {
-          screen: ScreenName.SelectNetwork,
-          params: {
-            currency: currency.id,
-            inline: true,
-            context: "addAccounts",
-            onSuccess: () =>
-              navigation.navigate(ScreenName.RequestAccountsSelectAccount, route.params),
-          },
-        });
-      } else {
-        navigation.navigate(NavigatorName.DeviceSelection, {
-          screen: ScreenName.SelectDevice,
-          params: {
-            currency: currency as CryptoCurrency,
-            context: "addAccounts",
-            inline: true,
-            onSuccess: () =>
-              navigation.navigate(ScreenName.RequestAccountsSelectAccount, route.params),
-          },
-        });
-      }
+      navigation.navigate(NavigatorName.DeviceSelection, {
+        screen: ScreenName.SelectDevice,
+        params: {
+          currency:
+            currency.type === "TokenCurrency"
+              ? currency.parentCurrency
+              : (currency as CryptoCurrency),
+          context: AddAccountContexts.AddAccounts,
+          inline: true,
+          sourceScreenName: ScreenName.RequestAccountsSelectAccount,
+          onSuccess: navigateOnAddAccountSuccess,
+        },
+      });
     } else {
       navigation.navigate(NavigatorName.RequestAccountsAddAccounts, {
         screen: ScreenName.AddAccountsSelectDevice,
@@ -170,16 +151,19 @@ function SelectAccount({ navigation, route }: Props) {
         },
       });
     }
-  }, [currency, navigation, route.params, llmNetworkBasedAddAccountFlow?.enabled, provider]);
+  }, [
+    currency,
+    navigation,
+    route.params,
+    llmNetworkBasedAddAccountFlow?.enabled,
+    navigateOnAddAccountSuccess,
+  ]);
 
   const renderFooter = useCallback(
     () =>
       allowAddAccount ? (
         <View style={styles.buttonContainer}>
           <Button
-            disabled={
-              llmNetworkBasedAddAccountFlow?.enabled && providersLoadingStatus === "pending"
-            }
             containerStyle={styles.button}
             event="ExchangeStartBuyFlow"
             type="primary"
@@ -199,13 +183,7 @@ function SelectAccount({ navigation, route }: Props) {
           />
         </View>
       ) : null,
-    [
-      allowAddAccount,
-      currency.name,
-      onAddAccount,
-      llmNetworkBasedAddAccountFlow?.enabled,
-      providersLoadingStatus,
-    ],
+    [allowAddAccount, currency.name, onAddAccount, llmNetworkBasedAddAccountFlow?.enabled],
   );
 
   const renderList = useCallback(

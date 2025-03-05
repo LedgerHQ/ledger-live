@@ -1,7 +1,7 @@
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
 import { ManagerPage } from "../../page/manager.page";
-import { FirmwareUpdateModal } from "../../page/modal/firmware.update.modal";
+import { FirmwareUpdate } from "../../page/drawer/firmwareUpdate.drawer";
 import { DeviceAction } from "../../models/DeviceAction";
 import { Layout } from "../../component/layout.component";
 
@@ -11,7 +11,7 @@ test.use({ userdata: "skip-onboarding" });
 // this e2e is only testing the very old firmware update path.
 test("Firmware Update @smoke", async ({ page }) => {
   const managerPage = new ManagerPage(page);
-  const firmwareUpdateModal = new FirmwareUpdateModal(page);
+  const firmwareUpdateDrawer = new FirmwareUpdate(page);
   const deviceAction = new DeviceAction(page);
   const layout = new Layout(page);
 
@@ -31,27 +31,27 @@ test("Firmware Update @smoke", async ({ page }) => {
   });
 
   await test.step("MCU download step", async () => {
-    await firmwareUpdateModal.continue();
-    await firmwareUpdateModal.downloadProgress.waitFor({ state: "visible" });
+    await firmwareUpdateDrawer.installUpdate();
+    await firmwareUpdateDrawer.downloadProgress.waitFor({ state: "visible" });
     // await expect.soft(firmwareUpdateModal.container).toHaveScreenshot("download-mcu-progress.png");
   });
 
   await test.step("MCU flash step", async () => {
     await deviceAction.complete(); // .complete() install full firmware -> flash mcu
-    await firmwareUpdateModal.flashProgress.waitFor({ state: "visible" });
+    await firmwareUpdateDrawer.flashProgress.waitFor({ state: "visible" });
     // await expect.soft(firmwareUpdateModal.container).toHaveScreenshot("flash-mcu-progress.png");
   });
 
   await test.step("Firmware update done", async () => {
     await deviceAction.complete(); // .complete() flash mcu -> completed
-    await firmwareUpdateModal.waitForDeviceInfo(); // 2nd step to get the latest device info
-    await firmwareUpdateModal.updateDone.waitFor({ state: "visible" });
+    await firmwareUpdateDrawer.waitForDeviceInfo(); // 2nd step to get the latest device info
+    await firmwareUpdateDrawer.updateDone.waitFor({ state: "visible" });
     // await expect.soft(firmwareUpdateModal.container).toHaveScreenshot("flash-mcu-done.png");
   });
 
   await test.step("Modal is closed", async () => {
     // TODO rewrite this to fit a drawer model, not a modal one.
-    await firmwareUpdateModal.drawerClose.click();
+    await firmwareUpdateDrawer.drawerClose.click();
     await expect.soft(page).toHaveScreenshot("modal-closed.png");
   });
 });

@@ -1,5 +1,51 @@
 # @ledgerhq/types-live
 
+## 6.61.0-next.0
+
+### Minor Changes
+
+- [#9199](https://github.com/LedgerHQ/ledger-live/pull/9199) [`e4d9a5c`](https://github.com/LedgerHQ/ledger-live/commit/e4d9a5ce6c3e8f2b3829f8f5772e7ba712a4a50c) Thanks [@thesan](https://github.com/thesan)! - Add the `feature_lld_NanoS_upsell_banners` flag
+
+## 6.60.0
+
+### Minor Changes
+
+- [#9241](https://github.com/LedgerHQ/ledger-live/pull/9241) [`0a4413d`](https://github.com/LedgerHQ/ledger-live/commit/0a4413dd5cf50967c27b39bbd7dd9222e6322a60) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add link param to mevProtection ff
+
+## 6.60.0-next.0
+
+### Minor Changes
+
+- [#9241](https://github.com/LedgerHQ/ledger-live/pull/9241) [`0a4413d`](https://github.com/LedgerHQ/ledger-live/commit/0a4413dd5cf50967c27b39bbd7dd9222e6322a60) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add link param to mevProtection ff
+
+## 6.59.0
+
+### Minor Changes
+
+- [#9018](https://github.com/LedgerHQ/ledger-live/pull/9018) [`11c3b8b`](https://github.com/LedgerHQ/ledger-live/commit/11c3b8b27bc4fa996757c58ec7f5beac90c7a425) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LS - LLD Entry Points feature flag added
+
+- [#8988](https://github.com/LedgerHQ/ledger-live/pull/8988) [`a231c50`](https://github.com/LedgerHQ/ledger-live/commit/a231c5084a24acb0e49efeb3c7ab1f5dbc6fd94b) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Swap: find currency 'from' and 'to' in wallet-api server
+
+- [#8119](https://github.com/LedgerHQ/ledger-live/pull/8119) [`41b153a`](https://github.com/LedgerHQ/ledger-live/commit/41b153adb98ce8de3336563694204d83905dba0e) Thanks [@Justkant](https://github.com/Justkant)! - Solana spl tokens support
+
+- [#8981](https://github.com/LedgerHQ/ledger-live/pull/8981) [`d15a240`](https://github.com/LedgerHQ/ledger-live/commit/d15a2402bbd7f39353059c1cc2f74b9ac0876d3d) Thanks [@vcluzeau-ledger](https://github.com/vcluzeau-ledger)! - Recover: removes unused loginURI and modify homeURI to new requirements
+
+- [#9017](https://github.com/LedgerHQ/ledger-live/pull/9017) [`1524353`](https://github.com/LedgerHQ/ledger-live/commit/152435384370b729183b7898308cbc1f8b61e451) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LS - LLM Entry Points feature flag added
+
+## 6.59.0-next.0
+
+### Minor Changes
+
+- [#9018](https://github.com/LedgerHQ/ledger-live/pull/9018) [`11c3b8b`](https://github.com/LedgerHQ/ledger-live/commit/11c3b8b27bc4fa996757c58ec7f5beac90c7a425) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LS - LLD Entry Points feature flag added
+
+- [#8988](https://github.com/LedgerHQ/ledger-live/pull/8988) [`a231c50`](https://github.com/LedgerHQ/ledger-live/commit/a231c5084a24acb0e49efeb3c7ab1f5dbc6fd94b) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Swap: find currency 'from' and 'to' in wallet-api server
+
+- [#8119](https://github.com/LedgerHQ/ledger-live/pull/8119) [`41b153a`](https://github.com/LedgerHQ/ledger-live/commit/41b153adb98ce8de3336563694204d83905dba0e) Thanks [@Justkant](https://github.com/Justkant)! - Solana spl tokens support
+
+- [#8981](https://github.com/LedgerHQ/ledger-live/pull/8981) [`d15a240`](https://github.com/LedgerHQ/ledger-live/commit/d15a2402bbd7f39353059c1cc2f74b9ac0876d3d) Thanks [@vcluzeau-ledger](https://github.com/vcluzeau-ledger)! - Recover: removes unused loginURI and modify homeURI to new requirements
+
+- [#9017](https://github.com/LedgerHQ/ledger-live/pull/9017) [`1524353`](https://github.com/LedgerHQ/ledger-live/commit/152435384370b729183b7898308cbc1f8b61e451) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LS - LLM Entry Points feature flag added
+
 ## 6.58.0
 
 ### Minor Changes

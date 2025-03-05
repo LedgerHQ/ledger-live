@@ -37,7 +37,7 @@ type Data = {
     deviceModelId: string;
     firmware: {
       version: string;
-    }
+    };
   };
 };
 
@@ -49,9 +49,12 @@ type LogMeta = {
 
 //splits mobile acc string
 function decodeMobileAccountId(message: string) {
-  const temp = message.toString()
-  const tempInput = temp.replace('schedule ', '');
-  const accountList = tempInput.split(',').map(account => account.trim()).filter(account => account !== '');
+  const temp = message.toString();
+  const tempInput = temp.replace("schedule ", "");
+  const accountList = tempInput
+    .split(",")
+    .map(account => account.trim())
+    .filter(account => account !== "");
   return accountList;
 }
 
@@ -111,7 +114,6 @@ const Header = ({
   logsMeta?: LogMeta;
   onFiles: (files: FileList) => void;
 }) => {
-
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
   const [lastClickedButton, setLastClickedButton] = useState<string | null>(null);
 
@@ -123,7 +125,9 @@ const Header = ({
         tempInput.value = decodeAccountId(accountId).xpubOrAddress;
       } else {
         const cmdStart = `ledger-live sync --id ${decodeAccountId(accountId).xpubOrAddress} --currency ${decodeAccountId(accountId).currencyId}`;
-        tempInput.value = decodeAccountId(accountId).derivationMode ? `${cmdStart} -s ${decodeAccountId(accountId).derivationMode}` : cmdStart;
+        tempInput.value = decodeAccountId(accountId).derivationMode
+          ? `${cmdStart} -s ${decodeAccountId(accountId).derivationMode}`
+          : cmdStart;
       }
       tempInput.select();
       document.execCommand("copy");
@@ -141,15 +145,15 @@ const Header = ({
 
   const linkToExplorer = (accountId: string) => {
     try {
-      const {currencyId, xpubOrAddress} = decodeAccountId(accountId);
+      const { currencyId, xpubOrAddress } = decodeAccountId(accountId);
       const currency = findCryptoCurrencyById(currencyId);
       if (currency && currency.explorerViews && currency.explorerViews.length > 0) {
         const explorerView = currency.explorerViews[0];
         let url: any = explorerView.address;
         if (url) {
-          url = url.replace('$address', xpubOrAddress);
-          url = url.replace('validators', 'address') //for mintscan explorers linked as /validator 
-          window.open(url, '_blank');
+          url = url.replace("$address", xpubOrAddress);
+          url = url.replace("validators", "address"); //for mintscan explorers linked as /validator
+          window.open(url, "_blank");
         }
       }
     } catch (e) {
@@ -164,7 +168,9 @@ const Header = ({
       if (currencyInfo && currencyInfo.explorerViews && currencyInfo.explorerViews.length > 0) {
         const explorerView = currencyInfo.explorerViews[0];
         if (explorerView.address) {
-          const isValidFamily = ["bitcoin", "cardano", "tezos", "stacks"].includes(currencyInfo.family);
+          const isValidFamily = ["bitcoin", "cardano", "tezos", "stacks"].includes(
+            currencyInfo.family,
+          );
           return !isValidFamily;
         }
       }
@@ -270,23 +276,25 @@ const Header = ({
 
   const installedApps: any = logs.find(log => log.data?.result?.installed);
   const mobileModel: any = logs.find(log => log.data?.result?.deviceModelId);
-  const mobileVersion: any = logs.find(log => log.data?.result?.firmware.version)
-  let deviceLog: any = logs.find(log => log.data?.deviceModelId && log.data?.deviceVersion && log.data?.modelIdList);
-  let findMobileAccounts: any, decodedMobileAccounts: any ;
-  let deviceModel: any, deviceVersion: any;;
+  const mobileVersion: any = logs.find(log => log.data?.result?.firmware.version);
+  let deviceLog: any = logs.find(
+    log => log.data?.deviceModelId && log.data?.deviceVersion && log.data?.modelIdList,
+  );
+  let findMobileAccounts: any, decodedMobileAccounts: any;
+  let deviceModel: any, deviceVersion: any;
   let listAccounts: string[] | any = [];
 
-  if(logsMeta?.userAgent) {
+  if (logsMeta?.userAgent) {
     listAccounts = accountsIds;
-    if(deviceLog != null) {
-    deviceModel = deviceLog.deviceModelId;
-    deviceVersion = deviceLog.deviceVersion;
+    if (deviceLog != null) {
+      deviceModel = deviceLog.deviceModelId;
+      deviceVersion = deviceLog.deviceVersion;
     }
-  } else if(logs.find(log => log.message.startsWith("schedule js:2"))){
+  } else if (logs.find(log => log.message.startsWith("schedule js:2"))) {
     findMobileAccounts = logs.find(log => log.message.startsWith("schedule js:2"));
     decodedMobileAccounts = decodeMobileAccountId(findMobileAccounts.message);
     listAccounts = decodedMobileAccounts;
-    if(mobileModel) {
+    if (mobileModel) {
       deviceModel = mobileModel.data?.result?.deviceModelId;
       deviceVersion = mobileVersion.data?.result?.firmware.version;
       deviceLog = 1;
@@ -300,9 +308,9 @@ const Header = ({
 
         {apdusLogs.length ? (
           <Button download="apdus" href={href}>
-            {apdusLogs.length} APDUs 
+            {apdusLogs.length} APDUs
           </Button>
-        ) : null} 
+        ) : null}
 
         <Button download="app.json" href={appJsonHref}>
           app.json with user accounts
@@ -319,19 +327,22 @@ const Header = ({
         <HeaderRow>
           <details>
             <summary>
-              <strong>user has {installedApps.data?.result?.installed?.length} apps installed</strong>
+              <strong>
+                user has {installedApps.data?.result?.installed?.length} apps installed
+              </strong>
             </summary>
             <ul>
               <pre>
-                <code style={{color: 'red'}}>NOTE </code>
-                <code> 
-                  apps could be outdated if firmware is outdated, and might still say &quot;latest version&quot;
+                <code style={{ color: "red" }}>NOTE </code>
+                <code>
+                  apps could be outdated if firmware is outdated, and might still say &quot;latest
+                  version&quot;
                 </code>
               </pre>
               {installedApps.data?.result?.installed?.map((app: App, i: number) => {
-                const isLatestVersion = app.updated
+                const isLatestVersion = app.updated;
                 const versionStatusStyle = {
-                  color: isLatestVersion ? 'green' : 'red'
+                  color: isLatestVersion ? "green" : "red",
                 };
                 return (
                   <li key={i}>
@@ -339,7 +350,9 @@ const Header = ({
                       <code>
                         {app.name} | {app.version}
                         <span style={versionStatusStyle}>
-                          {isLatestVersion ? ' - latest version' : ` - ${app.availableVersion} update available`}
+                          {isLatestVersion
+                            ? " - latest version"
+                            : ` - ${app.availableVersion} update available`}
                         </span>
                       </code>
                     </pre>
@@ -384,7 +397,7 @@ const Header = ({
         </HeaderRow>
       ) : null}
 
-      {listAccounts? (
+      {listAccounts ? (
         <HeaderRow>
           <details>
             <summary>
@@ -392,20 +405,34 @@ const Header = ({
             </summary>
             <ul>
               <pre>
-                <code style={{color: 'red'}}>NOTE </code>
-                <code> 
+                <code style={{ color: "red" }}>NOTE </code>
+                <code>
                   explorer button <b>will not</b> work for UTXO based accounts
                 </code>
               </pre>
               {listAccounts.map((id: string, i: number) => (
                 <li key={i}>
                   <pre>
-                    <button onClick={() => handleCopyClick(id, i, true)} style={{ marginRight: "2px" }}>copy</button>
+                    <button
+                      onClick={() => handleCopyClick(id, i, true)}
+                      style={{ marginRight: "2px" }}
+                    >
+                      copy
+                    </button>
                     {copiedIndex === i && lastClickedButton === "address" && <span>Copied!</span>}
-                    <button onClick={() => handleCopyClick(id, i, false)} style={{ margin: "0 2px" }}>copy CLI</button>
+                    <button
+                      onClick={() => handleCopyClick(id, i, false)}
+                      style={{ margin: "0 2px" }}
+                    >
+                      copy CLI
+                    </button>
                     {copiedIndex === i && lastClickedButton === "xpub" && <span>Copied!</span>}
-                    {isValid(id) && <button onClick={() => linkToExplorer(id)} style={{ margin: "2px 2px" }}>explorer</button>}
-                  <code>{id}</code>
+                    {isValid(id) && (
+                      <button onClick={() => linkToExplorer(id)} style={{ margin: "2px 2px" }}>
+                        explorer
+                      </button>
+                    )}
+                    <code>{id}</code>
                   </pre>
                 </li>
               ))}
@@ -516,24 +543,6 @@ const columns = [
   },
 ];
 
-/*
-const getTrProps = (state, p) => {
-  if (!p) return;
-  const { original } = p;
-  return {
-    style: {
-      opacity: original.level === "debug" ? 0.7 : 1,
-      color:
-        original.level === "error"
-          ? "#C00"
-          : original.level === "warn"
-            ? "#F90"
-            : "#000"
-    }
-  };
-};
-*/
-
 class Logs extends Component<{
   logs: Log[];
 }> {
@@ -561,11 +570,11 @@ class HeaderEmptyState extends Component<{
           LogsViewer
         </h1>
         <p>
-          Select a <code>*.json</code> log exported from Ledger Live (<code>Ctrl+E</code> / Export
-          Logs)
+          Select a <code>*.json</code> or <code>*.txt</code> log exported from Ledger Live ({" "}
+          <code>Ctrl+E</code> / Export Logs )
         </p>
         <p>
-          <input type="file" onChange={this.onChange} accept=".json" />
+          <input type="file" onChange={this.onChange} accept=".json,.txt" />
         </p>
       </header>
     );
@@ -590,7 +599,7 @@ class LogsViewer extends Component {
   };
   onFiles = (files: FileList) => {
     for (let i = 0, f; (f = files[i]); i++) {
-      if (!f.type.match("application/json")) {
+      if (!f.type.match("application/json") && !f.type.match("text/plain")) {
         continue;
       }
       const reader = new FileReader();

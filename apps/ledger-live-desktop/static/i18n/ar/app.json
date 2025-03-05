@@ -120,6 +120,7 @@
     "addressCopiedSuspicious" : "عدم تطابق العنوان المنسوخ والعنوان الموجود في ذاكرة النصوص.",
     "experimentalFeature" : "تجريبي",
     "featureFlags" : "علامة الميزة",
+    "ldmkEnabled" : "نقل LDMK",
     "information" : "معلومات",
     "search" : "جارٍ البحث...",
     "searchWithoutEllipsis" : "بحث",
@@ -200,7 +201,8 @@
       "STAKE" : "مُكدَّس",
       "UNSTAKE" : "غير مُكدَّس",
       "WITHDRAW_UNSTAKED" : "مسحوب",
-      "SENDING" : "إرسال"
+      "SENDING" : "إرسال",
+      "BURN" : "محروق"
     },
     "edit" : {
       "title" : "التسريع أو الإلغاء",
@@ -437,8 +439,8 @@
       "cta" : "انتقل إلى My Ledger"
     },
     "wrongDevice" : {
-      "title" : "™Ledger Nano S ليست متوافقة مع THORChain",
-      "description" : "™Ledger Nano S ليست متوافقة مع THORChain. يمكنك استخدام Ledger Nano S Plus أو Ledger Nano X أو Ledger Stax أو Ledger Flex لتجربة المبادلات عبر سلاسل الكتل المختلفة على THORChain عن طريق Ledger Live",
+      "title" : "™Ledger Nano S ليست متوافقة مع {{provider}}",
+      "description" : "Ledger Nano S ليست متوافقة مع {{provider}}. يمكنك استخدام Ledger Nano S Plus أو Ledger Nano X أو Ledger Stax أو Ledger Flex لتجربة المبادلات عبر سلاسل الكتل المختلفة على {{provider}} عبر Ledger Live",
       "cta" : "استكشف الأجهزة المتوافقة",
       "changeProvider" : "قم بالمبادلة مع مزود آخر"
     },
@@ -447,8 +449,14 @@
       "ton_description" : "لمبادلة Ton، استخدِم أي جهاز Ledger آخر متوافق مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
       "spl_tokens_title" : "™Ledger Nano S لا تدعم مبادلة رموز سولانا (Solana)",
       "spl_tokens_description" : "لمبادلة رموز سولانا (Solana)، استخدِم أي جهاز Ledger آخر متوافق مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
+      "near_title" : "™Ledger Nano S لا تدعم مبادلة Near",
+      "near_description" : "لمبادلة Near، استخدم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
       "ada_title" : "™Ledger Nano S لا تدعم مبادلة كاردانو (Cardano)",
-      "ada_description" : "لمبادلة كاردانو (Cardano)، استخدِم أي جهاز Ledger آخر متوافق مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax."
+      "ada_description" : "لمبادلة كاردانو (Cardano)، استخدِم أي جهاز Ledger آخر متوافق مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
+      "apt_title" : "™Ledger Nano S لا تدعم مبادلة Aptos",
+      "apt_description" : "لمبادلة Aptos، استخدم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
+      "cosmos_title" : "™Ledger Nano S لا تدعم مبادلة Cosmos",
+      "cosmos_description" : "لمبادلة Cosmos، استخدم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax."
     },
     "providers" : {
       "title" : "اختر أحد المزودين لمبادلة الأصول المشفرة",
@@ -1515,21 +1523,21 @@
     },
     "recoverBanner" : {
       "subscribeDone" : {
-        "title" : "أكمِل إضافة بطاقة الدفع الخاصة بك",
-        "description" : "استعد بشكل موثوق مع Ledger Recover.",
+        "title" : "تذكير: أكمِل تسجيل الاشتراك في Ledger Recover",
+        "description" : "أنت على بعد خطوتين فقط من أن تصبح مُؤمَّناً.",
         "primaryCta" : "إضافة بطاقة",
         "secondaryCta" : "ربّما في وقت لاحق"
       },
       "verifyIdentity" : {
-        "title" : "أكمِل تأكيد هويتك",
-        "description" : "استعد بشكل موثوق مع Ledger Recover.",
-        "primaryCta" : "تحقق",
+        "title" : "تذكير: أكمِل تسجيل الاشتراك في Ledger Recover",
+        "description" : "أنت على بعد خطوة واحدة فقط من أن تصبح مُؤمَّناً.",
+        "primaryCta" : "التحقق من الهويّة",
         "secondaryCta" : "ربّما في وقت لاحق"
       },
       "connectDevice" : {
-        "title" : "توصيل جهازك Ledger",
-        "description" : "أنت على بعد خطوة واحدة من Ledger Recover.",
-        "primaryCta" : "اتصال",
+        "title" : "تذكير: أكمِل تسجيل الاشتراك في Ledger Recover",
+        "description" : "هذه هي الخطوة الأخيرة لضمان استرداد الوصول إلى المحفظة.",
+        "primaryCta" : "توصيل الجهاز",
         "secondaryCta" : "ربّما في وقت لاحق"
       }
     },
@@ -3742,6 +3750,10 @@
           }
         }
       }
+    },
+    "token" : {
+      "frozenStateWarning" : "تمّ تجميد أصول الحساب!",
+      "transferWarning" : "للتحقق من عنوان المستلم لرموز سولانا (Solana) باستخدام ™Ledger Nano S، <0>يرجى اتباع هذه التعليمات.</0>"
     }
   },
   "ethereum" : {
@@ -4122,7 +4134,8 @@
       "walletSync" : "مزامنة Ledger",
       "walletSyncDesc" : "قم بمزامنة حسابات الأصول المشفرة خاصتك على Ledger Live عبر هواتف وأجهزة كمبيوتر مختلفة.",
       "mevProtection" : "حماية الحد الأقصى للقيمة القابلة للاستخراج (MEV)",
-      "mevProtectionDesc" : "قم بتمكين حماية الحد الأقصى للقيمة القابلة للاستخراج (MEV) لمعاملات أكثر موثوقية على إيثريوم",
+      "mevProtectionDesc" : "قم بتمكين حماية الحد الأقصى للقيمة القابلة للاستخراج (MEV) لمعاملات أكثر موثوقية على إيثريوم.",
+      "mevProtectionLearnMore" : "إشعار الخصوصية",
       "marketPerformanceWidget" : "أداة أداء السوق",
       "marketPerformanceWidgetDesc" : "قم بتمكين هذه الميزة لعرض أعلى الرابحين وأعلى الخاسرين خلال الفترات الزمنية المختارة في صفحة المحفظة الاستثمارية."
     },
@@ -4142,6 +4155,11 @@
       "debugAppsDesc" : "عرض تطبيقات المنصة لتصحيح الأخطاء والسماح بفتحها.",
       "debugReactQuery" : "السماح بتصحيح أخطاء ReactQuery",
       "debugReactQueryDesc" : "عرض والسماح بفتح وحدة تحكم تصحيح أخطاء ReactQuery.",
+      "nfts" : {
+        "title" : "المجموعات المخفية للرموز غير القابلة للاستبدال",
+        "description" : "إعادة تعيين قائمة المجموعات المخفية",
+        "reset" : "إعادة تعيين"
+      },
       "exchangeDeveloperMode" : {
         "title" : "وضع المطور لمنصة التداول",
         "desc" : "إضافة معلومات مُزوّد منصة التداول",
@@ -5708,17 +5726,17 @@
       "title" : "عذراً، لم يتم العثور على حسابات",
       "description" : "حدث خطأ ما في حساب العنوان، حاول مرة أخرى أو قم بالتواصل مع دعم Ledger"
     },
-    "ElrondDecimalsLimitReached" : {
+    "MultiversXDecimalsLimitReached" : {
       "title" : "تم الوصول إلى الحد الأقصى من الكسور العشرية",
       "description" : "يُرجى التأكد من أن المبلغ المُقدَّم به 18 كسراً عشرياً."
     },
-    "ElrondMinDelegatedAmountError" : {
+    "MultiversXMinDelegatedAmountError" : {
       "title" : "يجب أن يكون المبلغ المفوض على الأقل {{formattedAmount}}"
     },
-    "ElrondMinUndelegatedAmountError" : {
+    "MultiversXMinUndelegatedAmountError" : {
       "title" : "يجب أن يكون المبلغ غير المفوض على الأقل {{formattedAmount}}"
     },
-    "ElrondDelegationBelowMinimumError" : {
+    "MultiversXDelegationBelowMinimumError" : {
       "title" : "لا يمكن أن يكون التفويض المتبقي أقل من {{formattedAmount}}"
     },
     "NotEnoughEGLDForFees" : {
@@ -5909,11 +5927,11 @@
     },
     "WrongDeviceForAccountPayout" : {
       "title" : "حدث خطأ ما",
-      "description" : "عنوان التلقي هذا لا يتطابق مع جهازك المتصل. يُرجى تغييره وإعادة المحاولة."
+      "description" : "حساب التلقي هذا لا ينتمي إلى الجهاز الذي قمت بتوصيله. يُرجى تغييره وإعادة المحاولة"
     },
     "WrongDeviceForAccountRefund" : {
       "title" : "حدث خطأ ما",
-      "description" : "عنوان التلقي هذا لا يتطابق مع جهازك المتصل ولا يمكن استخدامه لاسترجاع الأموال. يُرجى تغييره وإعادة المحاولة."
+      "description" : "حساب الإرسال هذا لا ينتمي إلى الجهاز الذي قمت بتوصيله. يُرجى تغييره وإعادة المحاولة"
     },
     "DeviceAppVerifyNotSupported" : {
       "title" : "مطلوب تحديث التطبيق",
@@ -6196,6 +6214,30 @@
     },
     "SolanaAccountNotFunded" : {
       "title" : "الحساب غير ممول"
+    },
+    "SolanaTokenAccountHoldsAnotherToken" : {
+      "title" : "حساب رمز التوكن المرتبط هذا يحتفظ برمز توكن آخر"
+    },
+    "SolanaTokenAccountWarning" : {
+      "title" : "هذا ليس عنوان محفظة عادي لكنه حساب رمز توكن مرتبط. تابع فقط إذا كنت تعلم ماذا تفعل"
+    },
+    "SolanaTokenAccountNotAllowed" : {
+      "title" : "هذا حساب رمز توكن. أدخِل عنوان محفظة عادي"
+    },
+    "SolanaMintAccountNotAllowed" : {
+      "title" : "هذا عنوان رمز توكن. أدخِل عنوان محفظة عادي"
+    },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "سيتمّ تمويل الحساب"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "تمّ تجميد رموز أصول الحساب"
+    },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "لم يتمّ بدء الحساب"
+    },
+    "SolanaTokenRecipientIsSenderATA" : {
+      "title" : "عنوان المستلم هو نفسه عنوان مرسل رمز التوكن"
     },
     "SolanaMemoIsTooLong" : {
       "title" : "الملاحظة طويلة جداً. الحد الأقصى للطول هو {{maxLength}}"
@@ -6725,17 +6767,19 @@
         "mobile" : {
           "description" : "المزامنة مع تطبيق Ledger Live على هاتف آخر",
           "steps" : {
-            "step1" : "افتح تطبيق Ledger Live الذي تريد مزامنته",
-            "step2" : "انتقل إلى <0>Settings (الإعدادات)</0> > <0>General (عام)</0> > <0>Ledger Sync (مزامنة Ledger)</0> > <0>Turn on sync (تشغيل المزامنة)</0> > <0>Show QR (إظهار كود QR)</0>",
-            "step3" : "مسح ضوئي لكود QR"
+            "step1" : "تأكد من أن مزامنة Ledger Sync مُفعَّلة على أحد تطبيقاتك.",
+            "step2" : "افتح تطبيق Ledger Live الذي تريد مزامنته.",
+            "step3" : "انتقل إلى <0>Settings (إعدادات)</0> > <0>General (عامة)</0> > <0>Ledger Sync (مزامنة Ledger Sync)</0> > <0>I already turned it on (قمت بتشغيلها بالفعل)</0> > <0>Show QR (عرض كود QR)</0>",
+            "step4" : "امسح كود QR ضوئياً."
           }
         },
         "desktop" : {
           "description" : "مزامنة حساباتك عن طريق تطبيق Ledger Live آخر",
           "steps" : {
-            "step1" : "افتح تطبيق Ledger Live الذي تريد مزامنته",
-            "step2" : "انتقل إلى <0>Settings (الإعدادات)</0> > <0>General (عام)</0> > <0>Ledger Sync (مزامنة Ledger)</0> > <0>Turn on sync (تشغيل المزامنة)</0> > <0>Use your Ledger (استخدم جهازك Ledger)</0>",
-            "step3" : "توصيل جهازك Ledger"
+            "step1" : "تأكد من أن مزامنة Ledger Sync مُفعَّلة على أحد تطبيقاتك.",
+            "step2" : "افتح تطبيق Ledger Live الذي تريد مزامنته.",
+            "step3" : "انتقل إلى <0>Settings (إعدادات)</0> > <0>General (عامة)</0> > <0>Ledger Sync (مزامنة Ledger Sync)</0> > <0>I already turned it on (قمت بتشغيلها بالفعل)</0> > <0>Use your Ledger (استخدام Ledger خاصتك)</0>",
+            "step4" : "قم بتوصيل جهازك Ledger."
           }
         }
       },
@@ -6853,7 +6897,56 @@
       "transactionId" : "مُعرف المعاملة"
     }
   },
-  "ldmkFeatureFlagWarning" : {
-    "title" : "مع تحويل LDMK"
+  "lnsUpsell" : {
+    "banner" : {
+      "manager" : {
+        "optIn" : {
+          "title" : "حان وقت الترقية",
+          "description" : "قم بالترقية إلى أحدث أجهزتنا مع خصم <0>{{discount}}%</0> من أجل أمان مُحسّن وتجربة سلسة.",
+          "cta" : "ترقية محفظتي",
+          "linkText" : "تعرّف على المزيد"
+        },
+        "optOut" : {
+          "title" : "حان وقت الترقية",
+          "description" : "قم بالترقية إلى أحدث أجهزتنا مع خصم <0>{{discount}}%</0> من أجل أمان مُحسّن وتجربة سلسة.",
+          "cta" : "ترقية محفظتي",
+          "linkText" : "تعرّف على المزيد"
+        }
+      },
+      "accounts" : {
+        "optIn" : {
+          "title" : "حان وقت الترقية",
+          "description" : "تحديثات Ledger Nano S ستنتهي قريباً. قم بالترقية إلى أحدث أجهزتنا مع خصم <0>{{discount}}%</0>",
+          "cta" : "ترقية محفظتي",
+          "linkText" : "تعرّف على المزيد"
+        },
+        "optOut" : {
+          "title" : "حان وقت الترقية",
+          "description" : "تحديثات Ledger Nano S ستنتهي قريباً. قم بالترقية إلى أحدث أجهزتنا مع خصم <0>{{discount}}%</0>",
+          "cta" : "ترقية محفظتي",
+          "linkText" : "تعرّف على المزيد"
+        }
+      },
+      "portfolio" : {
+        "optOut" : {
+          "title" : "حان وقت الترقية",
+          "description" : "قم بالترقية إلى أحدث أجهزتنا مع خصم <0>{{discount}}%</0> من أجل أمان مُحسّن وتجربة سلسة.",
+          "cta" : "ترقية محفظتي",
+          "linkText" : "تعرّف على المزيد"
+        }
+      },
+      "notifications" : {
+        "optIn" : {
+          "description" : "التحديثات ستنتهي قريباً. قم بالترقية الآن مع خصم {{discount}}% من أجل تجربة سلسة.",
+          "cta" : "ترقية محفظتي",
+          "linkText" : "تعرّف على المزيد"
+        },
+        "optOut" : {
+          "description" : "التحديثات ستنتهي قريباً. قم بالترقية الآن مع خصم {{discount}}% من أجل تجربة سلسة.",
+          "cta" : "ترقية محفظتي",
+          "linkText" : "تعرّف على المزيد"
+        }
+      }
+    }
   }
 }

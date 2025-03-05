@@ -1,5 +1,6 @@
 import { ABTestingVariants } from "./ABTesting";
 import { ChainwatchNetwork } from "./chainwatch";
+import { LldNanoSUpsellBannersConfig } from "./lnsUpsell";
 import { StorylyInstanceID, StorylyInstanceType } from "./storyly";
 import { WalletSyncEnvironment, WalletSyncWatchConfig } from "./walletSync";
 
@@ -128,6 +129,8 @@ export type CurrencyFeatures = {
   currencyMantra: DefaultFeature;
   currencyXion: DefaultFeature;
   currencyZenrock: DefaultFeature;
+  currencySonic: DefaultFeature;
+  currencySonicBlaze: DefaultFeature;
 };
 
 /**
@@ -196,15 +199,21 @@ export type Features = CurrencyFeatures & {
   web3hub: Feature_web3hub;
   llmMarketQuickActions: DefaultFeature;
   spamFilteringTx: Feature_SpamFilteringTx;
+  lldSpamFilteringTx: DefaultFeature;
+  llmSpamFilteringTx: DefaultFeature;
   llmMemoTag: Feature_MemoTag;
   lldMemoTag: Feature_MemoTag;
   ldmkTransport: Feature_LdmkTransport;
-  llMevProtection: DefaultFeature;
+  llMevProtection: Feature_LlMevProtection;
   llmNetworkBasedAddAccountFlow: DefaultFeature;
   llCounterValueGranularitiesRates: Feature_LlCounterValueGranularitiesRates;
   llmRebornLP: Feature_LlmRebornLP;
   llmRebornFlex: DefaultFeature;
   llmAccountListUI: DefaultFeature;
+  llmLedgerSyncEntryPoints: Feature_LlmLedgerSyncEntryPoints;
+  lldLedgerSyncEntryPoints: Feature_LldLedgerSyncEntryPoints;
+  lldNanoSUpsellBanners: Feature_LldNanoSUpsellBanners;
+  llmThai: DefaultFeature;
 };
 
 /**
@@ -353,7 +362,6 @@ export type Feature_ProtectServicesMobile = Feature<{
     };
   };
   account: {
-    loginURI: string;
     homeURI: string;
   };
   protectId: string;
@@ -383,7 +391,6 @@ export type Feature_ProtectServicesDesktop = Feature<{
   };
   account: {
     homeURI: string;
-    loginURI: string;
   };
   protectId: string;
 }>;
@@ -532,9 +539,25 @@ export type Feature_LlmWalletSync = Feature<{
   learnMoreLink: string;
 }>;
 
+export type Feature_LlmLedgerSyncEntryPoints = Feature<{
+  manager: boolean;
+  accounts: boolean;
+  settings: boolean;
+}>;
+export type Feature_LldLedgerSyncEntryPoints = Feature<{
+  manager: boolean;
+  accounts: boolean;
+  settings: boolean;
+  onboarding: boolean;
+}>;
+
 export type Feature_LlCounterValueGranularitiesRates = Feature<{
   daily: number;
   hourly: number;
+}>;
+
+export type Feature_LlMevProtection = Feature<{
+  link: string | null;
 }>;
 
 export type Feature_CounterValue = DefaultFeature;
@@ -565,6 +588,12 @@ export type Feature_PtxSwapExodusProvider = DefaultFeature;
 export type Feature_LlmRebornLP = Feature<{
   variant: ABTestingVariants;
 }>;
+
+export type Feature_LldNanoSUpsellBanners = Feature<{
+  opted_in: LldNanoSUpsellBannersConfig;
+  opted_out: LldNanoSUpsellBannersConfig & { portfolio: boolean };
+}>;
+
 /**
  * Utils types.
  */

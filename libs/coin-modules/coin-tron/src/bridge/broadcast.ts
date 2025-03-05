@@ -1,7 +1,8 @@
-import { Account, Operation, SignedOperation } from "@ledgerhq/types-live";
+import type { Account, AccountBridge, Operation, SignedOperation } from "@ledgerhq/types-live";
 import { broadcastTron } from "../network";
+import type { Transaction } from "../types";
 
-const broadcast = async ({
+const broadcast: AccountBridge<Transaction>["broadcast"] = async ({
   signedOperation: { signature, operation, rawData },
 }: {
   account: Account;
@@ -12,11 +13,7 @@ const broadcast = async ({
     txID: operation.hash,
     signature: [signature],
   };
-  const submittedTransaction = await broadcastTron(transaction);
-
-  if (submittedTransaction.result !== true) {
-    throw new Error(submittedTransaction.resultMessage);
-  }
+  await broadcastTron(transaction);
 
   return operation;
 };

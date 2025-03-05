@@ -34,6 +34,7 @@ import Hide from "./Hide";
 import { track } from "~/renderer/analytics/segment";
 import { useAccountPath } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
+import RecoverStatusDot from "~/renderer/components/MainSideBar/RecoverStatusDot";
 
 type Location = Parameters<Exclude<PromptProps["message"], string>>[0];
 
@@ -182,20 +183,6 @@ const SideBarScrollContainer = styled(Box)`
   }
 `;
 
-const LDMKTransportFlag = styled.div`
-  z-index: 51;
-  position: absolute;
-  top: 0;
-  right: 0;
-  transform: translate(100%, 0);
-  padding: 5px;
-  background: ${p => p.theme.colors.palette.opacityPurple.c90};
-  color: ${p => p.theme.colors.palette.text.shade100};
-  font-weight: bold;
-  border-radius: 0 0 4px 0;
-  opacity: 0.8;
-`;
-
 const TagContainerExperimental = ({ collapsed }: { collapsed: boolean }) => {
   const isExperimental = useExperimental();
   const hasFullNodeConfigured = useEnv("SATSTACK"); // NB remove once full node is not experimental
@@ -235,6 +222,23 @@ const TagContainerFeatureFlags = ({ collapsed }: { collapsed: boolean }) => {
   ) : null;
 };
 
+const TagContainerLDMK = ({ collapsed }: { collapsed: boolean }) => {
+  const ldmkTransportFlag = useFeature("ldmkTransport");
+  const { t } = useTranslation();
+  return ldmkTransportFlag?.enabled && ldmkTransportFlag?.params?.warningVisible ? (
+    <Tag
+      data-testid="drawer-ldmk-button"
+      to={{
+        pathname: "/settings/developer",
+      }}
+      onClick={() => setTrackingSource("sidebar")}
+    >
+      <Icons.UsbC size="S" color="primary.c80" />
+      <TagText collapsed={collapsed}>{t("common.ldmkEnabled")}</TagText>
+    </Tag>
+  ) : null;
+};
+
 // Check if the selected tab is a Live-App under discovery tab
 const checkLiveAppTabSelection = (location: Location, liveAppPaths: Array<string>) =>
   liveAppPaths.find((liveTab: string) => location?.pathname?.includes(liveTab));
@@ -259,7 +263,6 @@ const MainSideBar = () => {
   const referralProgramConfig = useFeature("referralProgramDesktopSidebar");
   const recoverFeature = useFeature("protectServicesDesktop");
   const recoverHomePath = useAccountPath(recoverFeature);
-  const ldmkTransportFlag = useFeature("ldmkTransport");
 
   const handleCollapse = useCallback(() => {
     dispatch(setSidebarCollapsed(!collapsed));
@@ -394,9 +397,6 @@ const MainSideBar = () => {
             </Collapser>
 
             <SideBarScrollContainer>
-              {ldmkTransportFlag?.enabled && ldmkTransportFlag?.params?.warningVisible && (
-                <LDMKTransportFlag>{t("ldmkFeatureFlagWarning.title")}</LDMKTransportFlag>
-              )}
               <TopGradient />
               <Space of={60} />
               <SideBarList collapsed={secondAnim}>
@@ -533,13 +533,7 @@ const MainSideBar = () => {
                     iconActiveColor="wallet"
                     onClick={handleClickRecover}
                     collapsed={secondAnim}
-                    NotifComponent={
-                      recoverFeature?.params?.isNew && (
-                        <CustomTag active type="plain" size="small">
-                          {t("common.new")}
-                        </CustomTag>
-                      )
-                    }
+                    NotifComponent={<RecoverStatusDot collapsed={collapsed} />}
                   />
                 </FeatureToggle>
                 <SideBarListItem
@@ -571,6 +565,7 @@ const MainSideBar = () => {
             <Box pt={4}>
               <TagContainerExperimental collapsed={!secondAnim} />
               <TagContainerFeatureFlags collapsed={!secondAnim} />
+              <TagContainerLDMK collapsed={!secondAnim} />
             </Box>
           </SideBar>
         );

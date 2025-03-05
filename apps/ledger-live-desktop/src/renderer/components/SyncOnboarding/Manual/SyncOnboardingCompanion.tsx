@@ -20,12 +20,13 @@ import {
 } from "@ledgerhq/live-common/hw/extractOnboardingState";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useCustomPath } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
-import { lastSeenDeviceSelector } from "~/renderer/reducers/settings";
+import { lastSeenDeviceSelector, trackingEnabledSelector } from "~/renderer/reducers/settings";
 import { DesyncOverlay } from "./DesyncOverlay";
 import SeedStep, { SeedPathStatus } from "./SeedStep";
 import { analyticsFlowName, StepText } from "./shared";
 import OnboardingAppInstallStep from "../../OnboardingAppInstall";
 import { getOnboardingStatePolling } from "@ledgerhq/live-common/hw/getOnboardingStatePolling";
+import { isAllowedOnboardingStatePollingErrorDmk } from "@ledgerhq/live-dmk";
 import ContinueOnDeviceWithAnim from "./ContinueOnDeviceWithAnim";
 import { RecoverState } from "~/renderer/screens/recover/Player";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -35,6 +36,8 @@ import { setDrawer } from "~/renderer/drawers/Provider";
 import LockedDeviceDrawer from "./LockedDeviceDrawer";
 import { LockedDeviceError } from "@ledgerhq/errors";
 import { useRecoverRestoreOnboarding } from "~/renderer/hooks/useRecoverRestoreOnboarding";
+import { useTrackOnboardingFlow } from "~/renderer/analytics/hooks/useTrackOnboardingFlow";
+import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 
 const READY_REDIRECT_DELAY_MS = 2000;
 const POLLING_PERIOD_MS = 1000;
@@ -114,6 +117,13 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
   const deviceToRestore = useSelector(lastSeenDeviceSelector) as DeviceModelInfo | null | undefined;
   const lastCompanionStepKey = useRef<StepKey>();
   const [seedPathStatus, setSeedPathStatus] = useState<SeedPathStatus>("choice_new_or_restore");
+
+  useTrackOnboardingFlow({
+    location: HOOKS_TRACKING_LOCATIONS.onboardingFlow,
+    device: device,
+    isTrackingEnabled: useSelector(trackingEnabledSelector),
+    seedPathStatus: seedPathStatus,
+  });
 
   const servicesConfig = useFeature("protectServicesDesktop");
 
@@ -245,6 +255,7 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
     device: device || null,
     pollingPeriodMs: POLLING_PERIOD_MS,
     stopPolling: !isPollingOn,
+    allowedErrorChecks: [isAllowedOnboardingStatePollingErrorDmk],
   });
 
   const handleDeviceReady = useCallback(() => {

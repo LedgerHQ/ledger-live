@@ -1,4 +1,6 @@
 export {
+  parseMintAccountInfo,
+  tryParseAsMintAccount,
   tryParseAsTokenAccount,
   parseTokenAccountInfo,
   tryParseAsVoteAccount,

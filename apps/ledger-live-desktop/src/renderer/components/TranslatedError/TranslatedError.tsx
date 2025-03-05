@@ -5,6 +5,7 @@
 
 import React, { useEffect, useMemo } from "react";
 import { Trans, useTranslation } from "react-i18next";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import logger from "~/renderer/logger";
 import Text from "../Text";
 import ExternalLink from "../ExternalLink";
@@ -17,6 +18,7 @@ type Props = {
   field?: "title" | "description" | "list";
   noLink?: boolean;
   fallback?: React.ReactNode;
+  dataTestId?: string;
 };
 
 type ErrorListProps = {
@@ -33,8 +35,15 @@ function ErrorList({ translation }: ErrorListProps) {
   );
 }
 
-export function TranslatedError({ error, fallback, field = "title", noLink }: Props): JSX.Element {
+export function TranslatedError({
+  error,
+  fallback,
+  field = "title",
+  noLink,
+  dataTestId,
+}: Props): JSX.Element {
   const { t } = useTranslation();
+  const ldmkTransportFlag = useFeature("ldmkTransport");
 
   const errorName = error?.name;
 
@@ -65,7 +74,22 @@ export function TranslatedError({ error, fallback, field = "title", noLink }: Pr
     }
   }, [isValidError, error]);
 
-  if (!error || !isValidError) return <></>;
+  if (!error || !isValidError) {
+    // NOTE: Temporary handling of DMK errors
+    if (ldmkTransportFlag?.enabled && error && "_tag" in error) {
+      if (field === "description") {
+        const errorMessage =
+          "originalError" in error
+            ? (error.originalError as Error).message
+            : (error._tag as string);
+
+        return <Text>{errorMessage}</Text>;
+      }
+      return <Text>{error._tag as string}</Text>;
+    }
+
+    return <></>;
+  }
 
   if (!translation) {
     if (fallback) return <>{fallback}</>;
@@ -80,7 +104,9 @@ export function TranslatedError({ error, fallback, field = "title", noLink }: Pr
 
   return (
     <>
-      <Trans i18nKey={translationKey} components={{ ...links }} values={args} />
+      <span data-testid={dataTestId}>
+        <Trans i18nKey={translationKey} components={{ ...links }} values={args} />
+      </span>
 
       {urls.errors[error.name] && !noLink && (
         <>

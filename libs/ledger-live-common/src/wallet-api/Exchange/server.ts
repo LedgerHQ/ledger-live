@@ -11,8 +11,9 @@ import {
   getMainAccount,
   makeEmptyTokenAccount,
 } from "@ledgerhq/coin-framework/account/index";
-import { AccountLike } from "@ledgerhq/types-live";
-import { findTokenById } from "@ledgerhq/cryptoassets";
+import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { AccountLike, getCurrencyForAccount, TokenAccount } from "@ledgerhq/types-live";
+import { findTokenById, listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets";
 import {
   ExchangeCompleteParams,
   ExchangeCompleteResult,
@@ -23,7 +24,7 @@ import {
   ExchangeStartSellParams,
   SwapLiveError,
 } from "@ledgerhq/wallet-api-exchange-module";
-import { decodePayloadProtobuf } from "@ledgerhq/hw-app-exchange";
+import { decodeSwapPayload } from "@ledgerhq/hw-app-exchange";
 import { TrackingAPI } from "./tracking";
 import { AppManifest } from "../types";
 import {
@@ -77,7 +78,7 @@ type ExchangeStartParamsUiRequest =
   | {
       exchangeType: "SWAP";
       provider: string;
-      exchange: Exchange;
+      exchange: Partial<Exchange>;
     };
 
 type ExchangeUiHooks = {
@@ -199,7 +200,7 @@ export const handlers = ({
 
           // TODO: check logic for EmptyTokenAccount
           let toParentAccount = getParentAccount(toAccount, accounts);
-          let newTokenAccount;
+          let newTokenAccount: TokenAccount | undefined;
           if (params.tokenCurrency) {
             const currency = findTokenById(params.tokenCurrency);
             if (!currency) {
@@ -213,16 +214,25 @@ export const handlers = ({
             }
           }
 
+          const toCurrency = await getToCurrency(
+            params.hexBinaryPayload,
+            toAccount,
+            newTokenAccount,
+          );
+
           exchange = {
             fromAccount,
             fromParentAccount,
+            fromCurrency: getCurrencyForAccount(fromAccount),
             toAccount: newTokenAccount ? newTokenAccount : toAccount,
             toParentAccount,
+            toCurrency,
           };
         } else {
           exchange = {
             fromAccount,
             fromParentAccount,
+            fromCurrency: getCurrencyForAccount(fromAccount),
           };
         }
 
@@ -233,7 +243,7 @@ export const handlers = ({
 
         const { liveTx } = getWalletAPITransactionSignFlowInfos({
           walletApiTransaction: transaction,
-          account: mainFromAccount,
+          account: fromAccount,
         });
 
         if (liveTx.family !== mainFromAccountFamily) {
@@ -253,7 +263,7 @@ export const handlers = ({
         const subAccountId =
           fromParentAccount && fromParentAccount.id !== fromAccount.id ? fromAccount.id : undefined;
 
-        const bridgeTx = accountBridge.createTransaction(mainFromAccount);
+        const bridgeTx = accountBridge.createTransaction(fromAccount);
         /**
          * We append the `recipient` to the tx created from `createTransaction`
          * to avoid having userGasLimit reset to null for ETH txs
@@ -275,7 +285,7 @@ export const handlers = ({
         let magnitudeAwareRate;
         if (params.exchangeType === "SWAP") {
           // Get amountExpectedTo and magnitudeAwareRate from binary payload
-          const decodePayload = await decodePayloadProtobuf(params.hexBinaryPayload);
+          const decodePayload = await decodeSwapPayload(params.hexBinaryPayload);
           amountExpectedTo = new BigNumber(decodePayload.amountToWallet.toString());
           magnitudeAwareRate = tx.amount && amountExpectedTo.dividedBy(tx.amount);
         }
@@ -412,4 +422,26 @@ function extractSellStartParam(
       fromParentAccount,
     },
   };
+}
+
+async function getToCurrency(
+  binaryPayload: string,
+  toAccount: AccountLike,
+  newTokenAccount?: TokenAccount,
+): Promise<CryptoOrTokenCurrency> {
+  const { payoutAddress: tokenAddress, currencyTo } = await decodeSwapPayload(binaryPayload);
+
+  // In case of an SPL Token recipient and no TokenAccount exists.
+  if (
+    toAccount.type !== "TokenAccount" && // it must no be a SPL Token
+    toAccount.currency.id === "solana" && // the target account must be a SOL Account
+    tokenAddress !== toAccount.freshAddress
+  ) {
+    const splTokenCurrency = listTokensForCryptoCurrency(toAccount.currency).find(
+      tk => tk.tokenType === "spl" && tk.ticker === currencyTo,
+    )!;
+    return splTokenCurrency;
+  }
+
+  return newTokenAccount?.token ?? getCurrencyForAccount(toAccount);
 }

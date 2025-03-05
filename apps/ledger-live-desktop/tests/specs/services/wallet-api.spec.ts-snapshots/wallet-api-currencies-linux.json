@@ -145,6 +145,24 @@
   },
   {
     "type": "CryptoCurrency",
+    "id": "solana_testnet",
+    "ticker": "SOL",
+    "name": "Solana testnet",
+    "family": "solana",
+    "color": "#000",
+    "decimals": 9
+  },
+  {
+    "type": "CryptoCurrency",
+    "id": "solana_devnet",
+    "ticker": "SOL",
+    "name": "Solana devnet",
+    "family": "solana",
+    "color": "#000",
+    "decimals": 9
+  },
+  {
+    "type": "CryptoCurrency",
     "id": "ripple",
     "ticker": "XRP",
     "name": "XRP",
@@ -466,6 +484,24 @@
     "family": "near",
     "color": "#000",
     "decimals": 24
+  },
+  {
+    "type": "CryptoCurrency",
+    "id": "aptos",
+    "ticker": "APT",
+    "name": "Aptos",
+    "family": "aptos",
+    "color": "#231F20",
+    "decimals": 8
+  },
+  {
+    "type": "CryptoCurrency",
+    "id": "aptos_testnet",
+    "ticker": "APT",
+    "name": "Aptos (Testnet)",
+    "family": "aptos",
+    "color": "#FFCD29",
+    "decimals": 8
   },
   {
     "type": "CryptoCurrency",
@@ -826,5 +862,23 @@
     "family": "cosmos",
     "color": "#080c44",
     "decimals": 6
+  },
+  {
+    "type": "CryptoCurrency",
+    "id": "sonic",
+    "ticker": "S",
+    "name": "Sonic",
+    "family": "ethereum",
+    "color": "#FFFFFF",
+    "decimals": 18
+  },
+  {
+    "type": "CryptoCurrency",
+    "id": "sonic_blaze",
+    "ticker": "S",
+    "name": "Sonic Blaze",
+    "family": "ethereum",
+    "color": "#FFFFFF",
+    "decimals": 18
   }
 ]

@@ -15,12 +15,6 @@ import { openModal } from "~/renderer/actions/modals";
 import { useHideEmptyTokenAccounts } from "~/renderer/actions/settings";
 import { Icons } from "@ledgerhq/react-ui";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { setDrawerVisibility as setLedgerSyncDrawerVisibility } from "~/renderer/actions/walletSync";
-import { useFlows } from "LLD/features/WalletSync/hooks/useFlows";
-import {
-  AnalyticsPage,
-  useLedgerSyncAnalytics,
-} from "LLD/features/WalletSync/hooks/useLedgerSyncAnalytics";
 
 const Separator = styled.div`
   background-color: ${p => p.theme.colors.palette.divider};
@@ -53,15 +47,7 @@ const OptionsButton = () => {
 
   const lldLedgerSyncFF = useFeature("lldWalletSync");
   const isLedgerSyncEnabled = lldLedgerSyncFF?.enabled;
-  const { goToWelcomeScreenWalletSync } = useFlows();
 
-  const { onClickTrack } = useLedgerSyncAnalytics();
-
-  const openLedgerSyncDrawer = () => {
-    goToWelcomeScreenWalletSync();
-    onClickTrack({ button: "Access Ledger Sync", page: AnalyticsPage.Accounts });
-    dispatch(setLedgerSyncDrawerVisibility(true));
-  };
   const items: ItemType[] = [
     {
       key: "exportOperations",
@@ -70,14 +56,7 @@ const OptionsButton = () => {
       onClick: () => onOpenModal("MODAL_EXPORT_OPERATIONS"),
     },
     ...(isLedgerSyncEnabled
-      ? [
-          {
-            key: "exportAccounts",
-            label: t("accounts.optionsMenu.ledgerSync"),
-            icon: <Icons.Refresh size="S" />,
-            onClick: openLedgerSyncDrawer,
-          },
-        ]
+      ? []
       : [
           {
             key: "exportAccounts",

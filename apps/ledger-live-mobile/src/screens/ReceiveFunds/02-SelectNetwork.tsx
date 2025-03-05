@@ -7,7 +7,7 @@ import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/hooks
 
 import { BannerCard, Flex, Text } from "@ledgerhq/native-ui";
 import { useDispatch, useSelector } from "react-redux";
-import { ScreenName } from "~/const";
+import { NavigatorName, ScreenName } from "~/const";
 import { track, TrackScreen } from "~/analytics";
 import { flattenAccountsSelector } from "~/reducers/accounts";
 import { ReceiveFundsStackParamList } from "~/components/RootNavigator/types/ReceiveFundsNavigator";
@@ -21,6 +21,8 @@ import BigCurrencyRow from "~/components/BigCurrencyRow";
 import { findAccountByCurrency } from "~/logic/deposit";
 import { AccountLike } from "@ledgerhq/types-live";
 import { urls } from "~/utils/urls";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { AddAccountContexts } from "LLM/features/Accounts/screens/AddAccount/enums";
 
 type CryptoWithAccounts = { crypto: CryptoCurrency; accounts: AccountLike[] };
 
@@ -35,6 +37,7 @@ const AnimatedView = Animatable.View;
 export default function SelectNetwork({ navigation, route }: Props) {
   const provider = route?.params?.provider;
   const filterCurrencyIds = route?.params?.filterCurrencyIds;
+  const llmNetworkBasedAddAccountFlow = useFeature("llmNetworkBasedAddAccountFlow");
 
   const networks = useMemo(
     () =>
@@ -87,6 +90,26 @@ export default function SelectNetwork({ navigation, route }: Props) {
     [accounts, sortedCryptoCurrencies],
   );
 
+  const goToDeviceSelection = useCallback(
+    (currency: CryptoCurrency, createTokenAccount?: boolean) => {
+      if (llmNetworkBasedAddAccountFlow?.enabled) {
+        navigation.replace(NavigatorName.DeviceSelection, {
+          screen: ScreenName.SelectDevice,
+          params: {
+            currency,
+            context: AddAccountContexts.ReceiveFunds,
+          },
+        });
+      } else {
+        navigation.navigate(ScreenName.ReceiveAddAccountSelectDevice, {
+          currency,
+          ...(createTokenAccount && { createTokenAccount }),
+        });
+      }
+    },
+    [llmNetworkBasedAddAccountFlow?.enabled, navigation],
+  );
+
   const onPressItem = useCallback(
     (currency: CryptoCurrency | TokenCurrency) => {
       track("network_clicked", {
@@ -122,19 +145,14 @@ export default function SelectNetwork({ navigation, route }: Props) {
           });
         } else {
           // if we didn't find any account of the parent currency we add and create one
-          navigation.navigate(ScreenName.ReceiveAddAccountSelectDevice, {
-            currency: cryptoToSend.parentCurrency,
-            createTokenAccount: true,
-          });
+          goToDeviceSelection(cryptoToSend.parentCurrency, true);
         }
       } else {
         // else we create a currency account
-        navigation.navigate(ScreenName.ReceiveAddAccountSelectDevice, {
-          currency: cryptoToSend,
-        });
+        goToDeviceSelection(cryptoToSend);
       }
     },
-    [accounts, navigation, provider],
+    [accounts, navigation, provider, goToDeviceSelection],
   );
 
   const hideBanner = useCallback(() => {

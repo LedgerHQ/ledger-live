@@ -6,7 +6,7 @@ import { getDescription } from "../../utils/customJsonReporter";
 const currencies = [
   {
     currency: Currency.BTC,
-    xrayTicket: "B2CQA-2499, B2CQA-2644, B2CQA-2672, B2CQA-786, B2CQA-2073",
+    xrayTicket: "B2CQA-2499, B2CQA-2644, B2CQA-2672, B2CQA-2073",
   },
   { currency: Currency.ETH, xrayTicket: "B2CQA-2503, B2CQA-929, B2CQA-2645, B2CQA-2673" },
   { currency: Currency.ETC, xrayTicket: "B2CQA-2502, B2CQA-2646, B2CQA-2674" },

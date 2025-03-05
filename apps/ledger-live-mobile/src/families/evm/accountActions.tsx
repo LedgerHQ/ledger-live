@@ -42,7 +42,19 @@ function getNavigatorParams({
     ];
   }
 
-  if (account.type === "Account" && account.currency.id === "bsc") {
+  if (
+    account.type === "Account" &&
+    (account.currency.id === "bsc" || account.currency.id === "polygon")
+  ) {
+    const getYieldId = () => {
+      if (account.currency.id === "bsc") {
+        return "bsc-bnb-native-staking";
+      }
+      if (account.currency.id === "polygon") {
+        return "ethereum-matic-native-staking";
+      }
+    };
+
     return [
       ScreenName.PlatformApp,
       {
@@ -50,7 +62,7 @@ function getNavigatorParams({
           platform: "stakekit",
           name: "StakeKit",
           accountId: account.id,
-          yieldId: "bsc-bnb-native-staking",
+          yieldId: getYieldId(),
         },
       },
     ];
@@ -95,7 +107,9 @@ const getMainActions = ({
 }: Props): ActionButtonEvent[] => {
   if (
     account.type === "Account" &&
-    (account.currency.id === "ethereum" || account.currency.id === "bsc")
+    (account.currency.id === "ethereum" ||
+      account.currency.id === "bsc" ||
+      account.currency.id === "polygon")
   ) {
     const label = getStakeLabelLocaleBased();
 
@@ -105,6 +119,18 @@ const getMainActions = ({
       parentRoute,
       walletState,
     });
+    const getCurrentCurrency = () => {
+      if (account.currency.id === "ethereum") {
+        return "ETH";
+      }
+      if (account.currency.id === "bsc") {
+        return "BNB";
+      }
+
+      if (account.currency.id === "polygon") {
+        return "POL";
+      }
+    };
 
     return [
       {
@@ -113,7 +139,7 @@ const getMainActions = ({
         label: <Trans i18nKey={label} />,
         Icon: IconsLegacy.CoinsMedium,
         eventProperties: {
-          currency: account.currency.id === "ethereum" ? "ETH" : "BNB",
+          currency: getCurrentCurrency(),
         },
       },
     ];

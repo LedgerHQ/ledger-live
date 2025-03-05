@@ -6,6 +6,7 @@ import BuyDevicePage from "./discover/buyDevice.page";
 import CommonPage from "./common.page";
 import CryptoDrawer from "./liveApps/cryptoDrawer";
 import CustomLockscreenPage from "./stax/customLockscreen.page";
+import DeviceValidationPage from "./trade/deviceValidation.page";
 import DiscoverPage from "./discover/discover.page";
 import DummyWalletApp from "./liveApps/dummyWalletApp.webView";
 import WalletAPIReceivePage from "./liveApps/walletAPIReceive";
@@ -27,15 +28,17 @@ import StakePage from "./trade/stake.page";
 import SwapPage from "./trade/swap.page";
 import TransfertMenuDrawer from "./wallet/transferMenu.drawer";
 import WalletTabNavigatorPage from "./wallet/walletTabNavigator.page";
+import CeloManageAssetsPage from "./trade/celoManageAssets.page";
 
 import type { Account } from "@ledgerhq/types-live";
 import { DeviceLike } from "~/reducers/types";
-import { loadAccounts, loadBleState, loadConfig } from "../bridge/server";
+import { loadAccounts, loadBleState, loadConfig, setFeatureFlags } from "../bridge/server";
 import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { lastValueFrom, Observable } from "rxjs";
 import path from "path";
 import fs from "fs";
 import { getEnv } from "@ledgerhq/live-env";
+import { SettingsSetOverriddenFeatureFlagsPlayload } from "~/actions/types";
 
 type ApplicationOptions = {
   speculosApp?: AppInfos;
@@ -43,6 +46,7 @@ type ApplicationOptions = {
   userdata?: string;
   knownDevices?: DeviceLike[];
   testAccounts?: Account[];
+  featureFlags?: SettingsSetOverriddenFeatureFlagsPlayload;
 };
 
 export const getUserdataPath = (userdata: string) => {
@@ -60,6 +64,7 @@ export class Application {
   public common = new CommonPage();
   public cryptoDrawer = new CryptoDrawer();
   public customLockscreen = new CustomLockscreenPage();
+  public deviceValidation = new DeviceValidationPage();
   public discover = new DiscoverPage();
   public dummyWalletApp = new DummyWalletApp();
   public walletAPIReceive = new WalletAPIReceivePage();
@@ -81,6 +86,7 @@ export class Application {
   public swap = new SwapPage();
   public transfertMenu = new TransfertMenuDrawer();
   public walletTabNavigator = new WalletTabNavigatorPage();
+  public celoManageAssets = new CeloManageAssetsPage();
 
   constructor(userdata?: string) {
     if (!getEnv("MOCK")) {
@@ -99,6 +105,7 @@ export class Application {
     userdata,
     knownDevices,
     testAccounts,
+    featureFlags,
   }: ApplicationOptions) {
     let proxyPort = 0;
     if (speculosApp) {
@@ -118,6 +125,7 @@ export class Application {
 
     if (this.userdataSpeculos) await loadConfig(this.userdataSpeculos, true);
     else userdata && (await loadConfig(userdata, true));
+    featureFlags && (await setFeatureFlags(featureFlags));
     knownDevices && (await loadBleState({ knownDevices }));
     testAccounts && (await loadAccounts(testAccounts));
 

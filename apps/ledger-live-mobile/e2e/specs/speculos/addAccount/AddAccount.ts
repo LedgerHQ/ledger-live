@@ -1,20 +1,26 @@
 import { Application } from "../../../page";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 
-export async function runAddAccountTest(currency: Currency, tmsLink: string) {
+export async function runAddAccountTest(currency: Currency, tmsLinks: string[]) {
   const app = new Application();
 
-  describe(`Add accounts - ${currency.name}`, () => {
+  describe("Add accounts", () => {
     beforeAll(async () => {
       await app.init({
         userdata: "skip-onboarding",
         speculosApp: currency.speculosApp,
+        featureFlags: {
+          llmNetworkBasedAddAccountFlow: {
+            enabled: false,
+            overridesRemote: true,
+          },
+        },
       });
       await app.portfolio.waitForPortfolioPageToLoad();
     });
 
-    $TmsLink(tmsLink);
-    it(`Perform an add account`, async () => {
+    tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+    it(`Perform an add account - ${currency.name}`, async () => {
       await app.addAccount.openViaDeeplink();
       await app.common.performSearch(currency.name);
       await app.addAccount.selectCurrency(currency.currencyId);
@@ -26,10 +32,6 @@ export async function runAddAccountTest(currency: Currency, tmsLink: string) {
       await app.account.expectAccountBalanceVisible(accountId);
       await app.account.expectOperationHistoryVisible(accountId);
       await app.account.expectAddressIndex(0);
-    });
-
-    afterAll(async () => {
-      await app.common.removeSpeculos();
     });
   });
 }

@@ -7,10 +7,14 @@ protocols:
 
 beforePack: scripts/beforePack.js
 afterSign: scripts/notarize.js
-afterPack: scripts/afterPack.js
 
 directories:
   buildResources: "build-nightly"
+
+dmg:
+  window:
+    width: 540
+    height: 460
 
 mac:
   artifactName: ${name}-${version}-${os}.${ext}
@@ -19,7 +23,6 @@ mac:
   entitlements: build-nightly/mac/entitlements.plist
   entitlementsInherit: build-nightly/mac/entitlements.plist
   icon: build-nightly/icon.icns
-  mergeASARs: false
   target:
     - target: dmg
       arch:

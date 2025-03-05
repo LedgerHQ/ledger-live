@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tron",
-  "version": "0.2.1",
+  "version": "0.3.0-next.0",
   "description": "Ledger Tron Coin integration",
   "keywords": [
     "Ledger",
@@ -93,10 +93,10 @@
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",
-    "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/live-promise": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
+    "@ledgerhq/types-cryptoassets": "workspace:^", 
     "@ledgerhq/types-live": "workspace:^",
     "bignumber.js": "^9.1.2",
     "bs58check": "^2.1.2",
@@ -108,27 +108,29 @@
   },
   "devDependencies": {
     "@agrozyme/types-tronweb": "^5.3.2",
+    "@ledgerhq/types-cryptoassets": "workspace:^",
     "@types/bs58check": "^2.1.0",
     "@types/invariant": "^2.2.2",
     "@types/jest": "^29.5.10",
     "@types/lodash": "^4.14.191",
+    "dotenv": "^16.4.5",
     "jest": "^29.7.0",
-    "msw": "^2.0.11",
+    "msw": "^2.2.13",
     "ts-jest": "^29.1.1",
     "typescript": "^5.4.5"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
-    "build": "tsc && tsc -m ES6 --outDir lib-es",
+    "build": "tsc && tsc -m esnext --moduleResolution bundler --outDir lib-es",
     "coverage": "jest --coverage --testPathIgnorePatterns='/bridge.integration.test.ts|node_modules|lib-es|lib/' --passWithNoTests && mv coverage/coverage-final.json coverage/coverage-tron.json",
     "prewatch": "pnpm build",
     "watch": "tsc --watch",
-    "watch:es": "tsc --watch -m ES6 --outDir lib-es",
+    "watch:es": "tsc --watch -m esnext --moduleResolution bundler --outDir lib-es",
     "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
-    "test-integ": "jest --config=jest.integ.config.js",
+    "test-integ": "DOTENV_CONFIG_PATH=.env.integ.test jest --config=jest.integ.config.js",
     "unimported": "unimported"
   }
 }

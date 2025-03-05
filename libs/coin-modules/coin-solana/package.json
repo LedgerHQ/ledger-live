@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-solana",
-  "version": "0.11.1",
+  "version": "0.14.0-next.0",
   "description": "Ledger Solana Coin integration",
   "keywords": [
     "Ledger",
@@ -62,7 +62,7 @@
     "lodash": "^4.17.21",
     "object-hash": "^2.2.0",
     "rxjs": "^7.8.1",
-    "superstruct": "0.14.2"
+    "superstruct": "0.16.7"
   },
   "devDependencies": {
     "@faker-js/faker": "^8.4.1",
@@ -76,7 +76,7 @@
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
-    "build": "tsc && tsc -m ES6 --outDir lib-es",
+    "build": "tsc --outDir lib --module commonjs --moduleResolution node10 && tsc -m ES6 --outDir lib-es",
     "coverage": "jest --coverage --testPathIgnorePatterns='/bridge.integration.test.ts|node_modules|lib-es|lib/' --passWithNoTests && mv coverage/coverage-final.json coverage/coverage-solana.json",
     "prewatch": "pnpm build",
     "watch": "tsc --watch",

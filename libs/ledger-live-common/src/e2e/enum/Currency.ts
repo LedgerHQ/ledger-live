@@ -6,7 +6,12 @@ export class Currency {
     public readonly ticker: string,
     public readonly currencyId: string,
     public readonly speculosApp: AppInfos,
+    public readonly contractAddress?: string,
   ) {}
+
+  static readonly CELO = new Currency("Celo", "CELO", "celo", AppInfos.CELO);
+
+  static readonly INJ = new Currency("Injective", "INJ", "injective", AppInfos.INJECTIVE);
 
   static readonly BTC = new Currency("Bitcoin", "BTC", "bitcoin", AppInfos.BITCOIN);
 
@@ -28,7 +33,7 @@ export class Currency {
   );
   static readonly sepETH = new Currency(
     "Ethereum Sepolia",
-    "𝚝ETH",
+    "ETH",
     "ethereum_sepolia",
     AppInfos.ETHEREUM_SEPOLIA,
   );
@@ -90,10 +95,20 @@ export class Currency {
   static readonly POL_UNI = new Currency("Uniswap (PoS)", "UNI", "polygon", AppInfos.POLYGON);
   static readonly NEAR = new Currency("NEAR", "NEAR", "near", AppInfos.NEAR);
   static readonly OSMO = new Currency("Osmosis", "OSMO", "osmo", AppInfos.OSMOSIS);
-  static readonly MULTIVERS_X = new Currency(
-    "Multiverse X",
-    "EGLD",
-    "multiverse_x",
-    AppInfos.MULTIVERSE_X,
+  static readonly MULTIVERS_X = new Currency("MultiversX", "EGLD", "elrond", AppInfos.MULTIVERS_X);
+  static readonly LTC = new Currency("Litecoin", "LTC", "litecoin", AppInfos.LTC);
+  static readonly SOL_GIGA = new Currency(
+    "GIGACHAD",
+    "GIGA",
+    "solana",
+    AppInfos.SOLANA,
+    "63LfDmNb3MQ8mw9MtZ2To9bEA2M71kZUUGq5tiJxcqj9",
+  );
+  static readonly SOL_WIF = new Currency(
+    "DOGWIFHAT",
+    "WIF",
+    "solana",
+    AppInfos.SOLANA,
+    "EKpQGSJtjMFqKZ9KQanSqYXRcF8fBopzLHYxdM65zcjm",
   );
 }

@@ -12,7 +12,24 @@ export class Account {
     public readonly ensName?: string,
     public readonly derivationMode?: string,
     public readonly nft?: Nft[],
+    public readonly ataAddress?: string,
   ) {}
+
+  static readonly LTC_1 = new Account(
+    Currency.LTC,
+    "Litecoin 1",
+    "ltc1qysx9g8cdypja73kc808jg7clcm5xud7tny9gp3",
+    undefined,
+    0,
+  );
+
+  static readonly INJ_1 = new Account(
+    Currency.INJ,
+    "Injective 1",
+    "inj1hyz3lqavdc28jfph0wlwh5d2026r5elkmxxpwr",
+    undefined,
+    0,
+  );
 
   static readonly APTOS_1 = new Account(
     Currency.APT,
@@ -555,7 +572,7 @@ export class Account {
     0,
   );
 
-  static readonly EMPTY = new Account(Currency.BTC, "Empty", " ");
+  static readonly EMPTY = new Account(Currency.BTC, "Empty", "");
 
   static readonly ETH_2_LOWER_CASE = new Account(
     Currency.ETH,
@@ -573,11 +590,83 @@ export class Account {
     0,
   );
 
+  static readonly MULTIVERS_X_2 = new Account(
+    Currency.MULTIVERS_X,
+    "MultiversX 2",
+    "erd10nxfga5uavl7pr8k5qptk49h2983erxznj7z3kpw28937z7gmf5sc7shug",
+    undefined,
+    1,
+  );
+
   static readonly OSMO_1 = new Account(
     Currency.OSMO,
     "Osmosis 1",
     "osmo1w7v2v6v8z3r3d8x8h7yjv6w2k3c5w3z7w6v8v8",
     undefined,
     0,
+  );
+
+  static readonly OSMO_2 = new Account(
+    Currency.OSMO,
+    "Osmosis 2",
+    "osmo12d854g9mut943gu5ncyhalapukttkddnyy4dkg",
+    undefined,
+    1,
+  );
+
+  static readonly CELO_1 = new Account(
+    Currency.CELO,
+    "Celo 1",
+    "0x2268495dE776a536A5a9828b91F04d54d7d2Aa50",
+    undefined,
+    0,
+  );
+
+  static readonly SOL_GIGA_1 = new Account(
+    Currency.SOL_GIGA,
+    "Solana 1",
+    "HxoKQ5eu5MkqaAw7DaGVermrJqeNH8XkVnEKEpFuS9id",
+    AccountType.SPL,
+    0,
+    undefined,
+    undefined,
+    undefined,
+    "4JLL8NzonhGQyfrhvuTy4fGeskB7db4gZ9NxhPWDVa87",
+  );
+
+  static readonly SOL_GIGA_2 = new Account(
+    Currency.SOL_GIGA,
+    "Solana 2",
+    "6vSQTFcBoPfUKAdo8BQNJqqxU6UcBmd87HQoNSbgTMzH",
+    AccountType.SPL,
+    1,
+    undefined,
+    undefined,
+    undefined,
+    "5izbyRCwfbvqkD8q5mGbbFvWUZ6ZL4C5PTosARVNagiv",
+  );
+
+  static readonly SOL_WIF_1 = new Account(
+    Currency.SOL_WIF,
+    "Solana 2",
+    "HxoKQ5eu5MkqaAw7DaGVermrJqeNH8XkVnEKEpFuS9id",
+    AccountType.SPL,
+    0,
+    undefined,
+    undefined,
+    undefined,
+    "143nLxFLwxNtqEd2LxEJjjjLCsspcuxyt3y2FRuyFXdg",
+  );
+
+  static readonly SOL_WIF_2 = new Account(
+    Currency.SOL_WIF,
+    "Solana 2",
+    "6vSQTFcBoPfUKAdo8BQNJqqxU6UcBmd87HQoNSbgTMzH",
+    AccountType.SPL,
+    1,
+    undefined,
+    undefined,
+    undefined,
+    "2but8QCrAqoEHzQt16hwzte41yWrB4dae4WsStwqfX3h",
   );
 }

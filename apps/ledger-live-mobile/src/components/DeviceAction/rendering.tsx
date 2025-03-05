@@ -904,7 +904,7 @@ export function renderExchange({
 }) {
   switch (exchangeType) {
     case 0x00: // swap
-      return <div>{"Confirm swap on your device"}</div>;
+      return <Text>{t("DeviceAction.confirmSwapOnDevice")}</Text>;
     case 0x01: // sell
     case 0x02: // fund
       return renderSecureTransferDeviceConfirmation({
@@ -914,7 +914,7 @@ export function renderExchange({
         theme,
       });
     default:
-      return <CenteredText>{"Confirm exchange on your device"}</CenteredText>;
+      return <CenteredText>{t("DeviceAction.confirmExchangeOnDevice")}</CenteredText>;
   }
 }
 

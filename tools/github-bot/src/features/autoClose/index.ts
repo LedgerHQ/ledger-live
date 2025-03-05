@@ -13,7 +13,7 @@ export function autoClose(app: Probot) {
 
     if (
       repository.repo !== "ledger-live" ||
-      login !== "ldg-smartling-sa" ||
+      login !== "smartling-github-connector[bot]" ||
       !/^smartling-(content-updated|translation-completed)-.+/.test(branch)
     ) {
       return;

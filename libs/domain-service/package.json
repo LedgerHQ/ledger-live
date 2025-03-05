@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/domain-service",
   "description": "Ledger service responsible for domain handling",
-  "version": "1.2.17",
+  "version": "1.2.20-next.0",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -55,10 +55,10 @@
   ],
   "scripts": {
     "clean": "rm -rf lib lib-es",
-    "build": "tsc && tsc -m ES6 --outDir lib-es",
+    "build": "tsc && tsc -m esnext --moduleResolution bundler --outDir lib-es",
     "prewatch": "pnpm build",
     "watch": "tsc --watch",
-    "watch:es": "tsc --watch -m ES6 --outDir lib-es",
+    "watch:es": "tsc --watch -m esnext --moduleResolution bundler --outDir lib-es",
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
     "test": "cross-env TZ=America/New_York jest",
@@ -78,7 +78,7 @@
     "@testing-library/jest-dom": "^6.1.5",
     "@testing-library/react": "^14.1.2",
     "@types/jest": "^29.5.10",
-    "@types/node": "^20.8.10",
+    "@types/node": "^22.10.10",
     "@types/testing-library__jest-dom": "^5.14.5",
     "cross-env": "^7.0.3",
     "eslint-plugin-jest": "^27.4.2",

@@ -14,7 +14,7 @@ const app = new Application();
 let deviceAction: DeviceAction;
 
 const testedCurrency = "cosmos";
-const defaultValidator = "Ledger";
+const defaultProvider = "Ledger";
 const testAccount = initTestAccounts([testedCurrency])[0];
 const knownDevice = knownDevices.nanoX;
 
@@ -53,14 +53,19 @@ describe("Cosmos delegate flow", () => {
     await app.stake.selectCurrency(testedCurrency);
     await app.common.selectAccount(testAccount.id);
 
-    await app.stake.setAmount(delegatedPercent);
-    await app.stake.expectRemainingAmount(delegatedPercent, formattedAmount(unit, remainingAmount));
-    await app.stake.validateAmount();
+    await app.stake.setAmountPercent(testedCurrency, delegatedPercent);
+    await app.stake.expectRemainingAmount(
+      testedCurrency,
+      delegatedPercent,
+      formattedAmount(unit, remainingAmount),
+    );
+    await app.stake.validateAmount(testedCurrency);
     await app.stake.expectDelegatedAmount(
+      testedCurrency,
       formattedAmount(unit, delegatedAmount, { showAllDigits: true, showCode: true }),
     );
-    await app.stake.expectValidator(defaultValidator);
-    await app.stake.summaryContinue();
+    await app.stake.expectProvider(testedCurrency, defaultProvider);
+    await app.stake.summaryContinue(testedCurrency);
     await deviceAction.selectMockDevice();
     await deviceAction.openApp();
     await app.common.successClose();

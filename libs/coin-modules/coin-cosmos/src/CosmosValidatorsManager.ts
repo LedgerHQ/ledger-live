@@ -42,7 +42,7 @@ export class CosmosValidatorsManager {
 
   private cacheValidators = makeLRUCache(
     async (): Promise<CosmosValidatorItem[]> => {
-      const url = `${this._endPoint}/cosmos/staking/${this._version}/validators?status=BOND_STATUS_BONDED&pagination.limit=175`;
+      const url = `${this._endPoint}/cosmos/staking/${this._version}/validators?status=BOND_STATUS_BONDED&pagination.limit=200`;
       const { data } = await network({
         url,
         method: "GET",

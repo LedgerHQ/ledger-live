@@ -120,6 +120,7 @@
     "addressCopiedSuspicious" : "Unstimmigkeit zwischen der kopierten Adresse und der in der Zwischenablage.",
     "experimentalFeature" : "Experimentell",
     "featureFlags" : "Feature-Flag",
+    "ldmkEnabled" : "LDMK-Transport",
     "information" : "Information",
     "search" : "Suche...",
     "searchWithoutEllipsis" : "Suchen nach",
@@ -200,7 +201,8 @@
       "STAKE" : "Gestaket",
       "UNSTAKE" : "Nicht mehr gestaket",
       "WITHDRAW_UNSTAKED" : "Ausgezahlt",
-      "SENDING" : "Senden"
+      "SENDING" : "Senden",
+      "BURN" : "Verbrannt"
     },
     "edit" : {
       "title" : "Beschleunigen oder Abbrechen",
@@ -437,8 +439,8 @@
       "cta" : "Zu My Ledger wechseln"
     },
     "wrongDevice" : {
-      "title" : "Ledger Nano S™ ist nicht kompatibel mit THORChain",
-      "description" : "Die Ledger Nano S ist nicht mit THORChain kompatibel. Du kannst Ledger Nano S Plus, Ledger Nano X, Ledger Stax oder Ledger Flex verwenden, um blockchainübergreifende Swaps auf THORChain über Ledger Live durchzuführen.",
+      "title" : "Ledger Nano S™ ist nicht mit {{provider}} kompatibel",
+      "description" : "Ledger Nano S ist nicht mit {{provider}} kompatibel. Du kannst Ledger Nano S Plus, Ledger Nano X, Ledger Stax oder Ledger Flex verwenden, um blockchainübergreifende Swaps bei {{provider}} über Ledger Live durchzuführen.",
       "cta" : "Kompatible Geräte entdecken",
       "changeProvider" : "Bei anderem Anbieter swappen"
     },
@@ -447,8 +449,14 @@
       "ton_description" : "Zum Swappen von Ton kannst du jedes sonstige kompatible Ledger-Gerät nutzen, z. B. Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ oder Ledger Stax™.",
       "spl_tokens_title" : "Die Ledger Nano S™ unterstützt das Swappen von Solana-Token nicht",
       "spl_tokens_description" : "Zum Swappen von Solana-Token kannst du jedes sonstige kompatible Ledger-Gerät nutzen, z. B. Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ oder Ledger Stax™.",
+      "near_title" : "Ledger Nano S™ unterstützt das Swappen von Near nicht",
+      "near_description" : "Zum Swappen müsstest du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
       "ada_title" : "Die Ledger Nano S™ unterstützt das Swappen von Cardano nicht",
-      "ada_description" : "Zum Swappen von Cardano kannst du jedes sonstige kompatible Ledger-Gerät nutzen, z. B. Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ oder Ledger Stax™."
+      "ada_description" : "Zum Swappen von Cardano kannst du jedes sonstige kompatible Ledger-Gerät nutzen, z. B. Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ oder Ledger Stax™.",
+      "apt_title" : "Ledger Nano S™ unterstützt das Swappen von Aptos nicht",
+      "apt_description" : "Zum Swappen von Aptos müsstest du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
+      "cosmos_title" : "Ledger Nano S™ unterstützt das Swappen von Cosmos nicht",
+      "cosmos_description" : "Zum Swappen von Cosmos müsstest du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™."
     },
     "providers" : {
       "title" : "Wähle einen Anbieter für das Swappen von Kryptowährungen",
@@ -1515,21 +1523,21 @@
     },
     "recoverBanner" : {
       "subscribeDone" : {
-        "title" : "Hinzufügen deiner Zahlungskarte abschließen",
-        "description" : "Zuverlässige Wiederherstellung mit Ledger Recover.",
+        "title" : "Erinnerung: Schließe die Anmeldung für Ledger Recover ab",
+        "description" : "Du musst noch zwei Schritte bis zum optimalen Schutz zurücklegen.",
         "primaryCta" : "Karte hinzufügen",
         "secondaryCta" : "Vielleicht später"
       },
       "verifyIdentity" : {
-        "title" : "Identitätsnachweis abschließen",
-        "description" : "Zuverlässige Wiederherstellung mit Ledger Recover.",
-        "primaryCta" : "Bestätigen",
+        "title" : "Erinnerung: Schließe die Anmeldung für Ledger Recover ab",
+        "description" : "Du musst noch einen Schritt bis zum optimalen Schutz zurücklegen.",
+        "primaryCta" : "Identität verifizieren",
         "secondaryCta" : "Vielleicht später"
       },
       "connectDevice" : {
-        "title" : "Ledger-Gerät verbinden",
-        "description" : "Nur noch ein Schritt, und schon kannst du Ledger Recover nutzen.",
-        "primaryCta" : "Verbinden",
+        "title" : "Erinnerung: Schließe die Anmeldung für Ledger Recover ab",
+        "description" : "Das ist der letzte Schritt, um die Wiederherstellung des Zugriffs auf deine Wallet zu gewährleisten.",
+        "primaryCta" : "Gerät verbinden",
         "secondaryCta" : "Vielleicht später"
       }
     },
@@ -3742,6 +3750,10 @@
           }
         }
       }
+    },
+    "token" : {
+      "frozenStateWarning" : "Kontovermögenswerte sind gesperrt!",
+      "transferWarning" : "Zum Verifizieren der Empfängeradresse für Solana-Token mit einer Ledger Nano S™ <0>befolge diese Anweisungen</0>."
     }
   },
   "ethereum" : {
@@ -4122,7 +4134,8 @@
       "walletSync" : "Ledger Sync",
       "walletSyncDesc" : "Synchronisiere deine Ledger Live-Kryptokonten auf verschiedenen Smartphones und Computern.",
       "mevProtection" : "MEV-Schutz",
-      "mevProtectionDesc" : "Aktiviere den MEV-Schutz, um die Zuverlässigkeit von Ethereum-Transaktionen zu verbessern",
+      "mevProtectionDesc" : "Aktiviere den MEV-Schutz, um die Zuverlässigkeit von Ethereum-Transaktionen zu verbessern.",
+      "mevProtectionLearnMore" : "Datenschutzerklärung",
       "marketPerformanceWidget" : "Marktperformance-Widget",
       "marketPerformanceWidgetDesc" : "Aktiviere diese Funktion, um auf der Portfolioseite die größten Gewinner und Verlierer über ausgewählte Zeiträume anzuzeigen."
     },
@@ -4142,6 +4155,11 @@
       "debugAppsDesc" : "Anzeigen und Öffnen von Debug-getaggten Plattform-Apps erlauben.",
       "debugReactQuery" : "Debuggen von ReactQuery erlauben",
       "debugReactQueryDesc" : "Zeige die Konsole zum Debuggen von ReactQuery an und erlaube es, sie zu öffnen.",
+      "nfts" : {
+        "title" : "Ausgeblendete NFT-Sammlungen",
+        "description" : "Liste der ausgeblendeten NFT-Sammlungen zurücksetzen",
+        "reset" : "Zurücksetzen"
+      },
       "exchangeDeveloperMode" : {
         "title" : "Entwicklermodus für Börsen",
         "desc" : "Info des Börsenanbieters hinzufügen",
@@ -5708,17 +5726,17 @@
       "title" : "Entschuldigung, es wurden keine Konten gefunden",
       "description" : "Bei der Adressberechnung ist etwas schief gelaufen, versuchen Sie es erneut oder wenden Sie sich an den Ledger-Support"
     },
-    "ElrondDecimalsLimitReached" : {
+    "MultiversXDecimalsLimitReached" : {
       "title" : "Maximale Dezimalstellengrenze erreicht",
       "description" : "Bitte stellen Sie sicher, dass der angegebene Betrag 18 Dezimalstellen hat."
     },
-    "ElrondMinDelegatedAmountError" : {
+    "MultiversXMinDelegatedAmountError" : {
       "title" : "Der delegierte Betrag muss mindestens {{formattedAmount}} betragen"
     },
-    "ElrondMinUndelegatedAmountError" : {
+    "MultiversXMinUndelegatedAmountError" : {
       "title" : "Undelegierter Betrag muss mindestens {{formattedAmount}} betragen"
     },
-    "ElrondDelegationBelowMinimumError" : {
+    "MultiversXDelegationBelowMinimumError" : {
       "title" : "Verbleibende Delegierung darf nicht kleiner als {{formattedAmount}} sein"
     },
     "NotEnoughEGLDForFees" : {
@@ -5909,11 +5927,11 @@
     },
     "WrongDeviceForAccountPayout" : {
       "title" : "Etwas ist schief gelaufen",
-      "description" : "Das Empfängerkonto ist diesem Gerät nicht zugeordnet. Bitte nutze das korrekte Gerät und versuche es noch einmal."
+      "description" : "Das empfangende Konto gehört nicht zum verbundenen Gerät. Bitte wechsle es und versuche es dann noch einmal."
     },
     "WrongDeviceForAccountRefund" : {
       "title" : "Etwas ist schief gelaufen",
-      "description" : "Das Empfängerkonto für die Rückerstattung ist diesem Gerät nicht zugeordnet. Bitte nutze das korrekte Gerät und versuche es noch einmal."
+      "description" : "Das versendende Konto gehört nicht zum verbundenen Gerät. Bitte wechsle es und versuche es dann noch einmal."
     },
     "DeviceAppVerifyNotSupported" : {
       "title" : "App-Update erforderlich",
@@ -6196,6 +6214,30 @@
     },
     "SolanaAccountNotFunded" : {
       "title" : "Konto nicht gedeckt"
+    },
+    "SolanaTokenAccountHoldsAnotherToken" : {
+      "title" : "Dieses zugeordnete Tokenkonto enthält ein weiteres Token"
+    },
+    "SolanaTokenAccountWarning" : {
+      "title" : "Das ist keine reguläre Wallet-Adresse, sondern ein verbundenes Tokenkonto. Du solltest den Vorgang nur fortsetzen, wenn du genau weißt, was du tust."
+    },
+    "SolanaTokenAccountNotAllowed" : {
+      "title" : "Das ist ein Tokenkonto. Bitte gib eine reguläre Wallet-Adresse ein."
+    },
+    "SolanaMintAccountNotAllowed" : {
+      "title" : "Das ist eine Tokenadresse. Bitte gib eine reguläre Wallet-Adresse ein."
+    },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "Konto wird gedeckt"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "Vermögenswerte des Tokenkontos sind gesperrt"
+    },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "Konto nicht initialisiert"
+    },
+    "SolanaTokenRecipientIsSenderATA" : {
+      "title" : "Die Empfängeradresse ist identisch mit der Adresse des Absendertokens"
     },
     "SolanaMemoIsTooLong" : {
       "title" : "Memo ist zu lang. Maximale Länge beträgt {{maxLength}}"
@@ -6725,17 +6767,19 @@
         "mobile" : {
           "description" : "Synchronisiere mit der Ledger Live-App auf einem anderen Smartphone",
           "steps" : {
-            "step1" : "Öffne die Ledger Live-App, die du synchronisieren möchtest.",
-            "step2" : "Gehe zu <0>Settings</0> (Einstellungen) > <0>General</0> (Allgemein) > <0>Ledger Sync</0> > <0>Turn on sync</0> (Sync einschalten) > <0>Show QR</0> (QR-Code anzeigen)",
-            "step3" : "QR-Code scannen"
+            "step1" : "Vergewissere dich, dass Ledger Sync in einer deiner Apps aktiviert ist.",
+            "step2" : "Öffne die Ledger Live-App, die du synchronisieren möchtest.",
+            "step3" : "Gehe zu <0>Settings</0> (Einstellungen) > <0>General</0> (Allgemein) > <0>Ledger Sync</0> > <0>I already turned it on</0> (Ich habe Sync schon aktiviert) > <0>Show QR</0> (QR-Code anzeigen).",
+            "step4" : "Scanne den QR-Code."
           }
         },
         "desktop" : {
           "description" : "Deine Konten mit einer anderen Ledger Live-App synchronisieren",
           "steps" : {
-            "step1" : "Öffne die Ledger Live-App, die du synchronisieren möchtest.",
-            "step2" : "Gehe zu <0>Settings</0> (Einstellungen) > <0>General</0> (Allgemein) > <0>Ledger Sync</0> > <0>Turn on sync</0> (Sync einschalten) > <0>Use your Ledger</0> (Dein Ledger-Gerät verwenden)",
-            "step3" : "Ledger-Gerät verbinden"
+            "step1" : "Vergewissere dich, dass Ledger Sync in einer deiner Apps aktiviert ist.",
+            "step2" : "Öffne die Ledger Live-App, die du synchronisieren möchtest.",
+            "step3" : "Gehe zu <0>Settings</0> (Einstellungen) > <0>General</0> (Allgemein) > <0>Ledger Sync</0> > <0>I already turned it on</0> (Ich habe Sync schon aktiviert) > <0>Use your Ledger</0> (Dein Ledger-Gerät verwenden).",
+            "step4" : "Stelle eine Verbindung mit deinem Ledger-Gerät her."
           }
         }
       },
@@ -6853,7 +6897,56 @@
       "transactionId" : "Transaktions-ID"
     }
   },
-  "ldmkFeatureFlagWarning" : {
-    "title" : "Mit LDMK-Transport"
+  "lnsUpsell" : {
+    "banner" : {
+      "manager" : {
+        "optIn" : {
+          "title" : "Zeit für ein Upgrade",
+          "description" : "Jetzt auf eines unserer aktuellen Geräte aufrüsten: <0>{{discount}} % Rabatt</0> für mehr Sicherheit und ein nahtloses Erlebnis.",
+          "cta" : "Neue Wallet zulegen",
+          "linkText" : "Weitere Informationen"
+        },
+        "optOut" : {
+          "title" : "Zeit für ein Upgrade",
+          "description" : "Jetzt auf eines unserer aktuellen Geräte aufrüsten: <0>{{discount}} % Rabatt</0> für mehr Sicherheit und ein nahtloses Erlebnis.",
+          "cta" : "Neue Wallet zulegen",
+          "linkText" : "Weitere Informationen"
+        }
+      },
+      "accounts" : {
+        "optIn" : {
+          "title" : "Zeit für ein Upgrade",
+          "description" : "Bald gibt es keine Updates mehr für die Ledger Nano S. Jetzt auf eines unserer aktuellen Geräte aufrüsten – mit <0>{{discount}} % Rabatt</0>.",
+          "cta" : "Neue Wallet zulegen",
+          "linkText" : "Weitere Informationen"
+        },
+        "optOut" : {
+          "title" : "Zeit für ein Upgrade",
+          "description" : "Bald gibt es keine Updates mehr für die Ledger Nano S. Jetzt auf eines unserer aktuellen Geräte aufrüsten – mit <0>{{discount}} % Rabatt</0>.",
+          "cta" : "Neue Wallet zulegen",
+          "linkText" : "Weitere Informationen"
+        }
+      },
+      "portfolio" : {
+        "optOut" : {
+          "title" : "Zeit für ein Upgrade",
+          "description" : "Jetzt auf eines unserer aktuellen Geräte aufrüsten: <0>{{discount}} % Rabatt</0> für mehr Sicherheit und ein nahtloses Erlebnis.",
+          "cta" : "Neue Wallet zulegen",
+          "linkText" : "Weitere Informationen"
+        }
+      },
+      "notifications" : {
+        "optIn" : {
+          "description" : "Updates gibt es nicht mehr lange. Jetzt aufrüsten: <0>{{discount}} % Rabatt</0> für ein nahtloses Erlebnis.",
+          "cta" : "Neue Wallet zulegen",
+          "linkText" : "Weitere Informationen"
+        },
+        "optOut" : {
+          "description" : "Updates gibt es nicht mehr lange. Jetzt aufrüsten: <0>{{discount}} % Rabatt</0> für ein nahtloses Erlebnis.",
+          "cta" : "Neue Wallet zulegen",
+          "linkText" : "Weitere Informationen"
+        }
+      }
+    }
   }
 }

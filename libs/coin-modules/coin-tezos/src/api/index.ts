@@ -1,5 +1,6 @@
 import {
   IncorrectTypeError,
+  Operation,
   Pagination,
   type Api,
   type Transaction as ApiTransaction,
@@ -16,6 +17,7 @@ import {
   rawEncode,
 } from "../logic";
 import api from "../network/tzkt";
+import { log } from "@ledgerhq/logs";
 
 export function createApi(config: TezosConfig): Api {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
@@ -65,5 +67,62 @@ async function estimate(addr: string, amount: bigint): Promise<bigint> {
   return estimatedFees.estimatedFees;
 }
 
-const operations = (address: string, { limit, start }: Pagination) =>
-  listOperations(address, { limit, lastId: start });
+type PaginationState = {
+  readonly pageSize: number;
+  readonly maxIterations: number; // a security to avoid infinite loop
+  currentIteration: number;
+  readonly minHeight: number;
+  continueIterations: boolean;
+  nextCursor?: string;
+  accumulator: Operation[];
+};
+
+async function fetchNextPage(address: string, state: PaginationState): Promise<PaginationState> {
+  const [operations, newNextCursor] = await listOperations(address, {
+    limit: state.pageSize,
+    token: state.nextCursor,
+    sort: "Ascending",
+    minHeight: state.minHeight,
+  });
+  const newCurrentIteration = state.currentIteration + 1;
+  let continueIteration = newNextCursor !== "";
+  if (newCurrentIteration >= state.maxIterations) {
+    log("coin:tezos", "(api/operations): max iterations reached", state.maxIterations);
+    continueIteration = false;
+  }
+  const accumulated = operations.concat(state.accumulator);
+  return {
+    ...state,
+    continueIterations: continueIteration,
+    currentIteration: newCurrentIteration,
+    nextCursor: newNextCursor,
+    accumulator: accumulated,
+  };
+}
+
+async function operationsFromHeight(
+  address: string,
+  start: number,
+): Promise<[Operation[], string]> {
+  const firstState: PaginationState = {
+    pageSize: 200,
+    maxIterations: 10,
+    currentIteration: 0,
+    minHeight: start,
+    continueIterations: true,
+    accumulator: [],
+  };
+
+  let state = await fetchNextPage(address, firstState);
+  while (state.continueIterations) {
+    state = await fetchNextPage(address, state);
+  }
+  return [state.accumulator, state.nextCursor || ""];
+}
+
+async function operations(
+  address: string,
+  { minHeight }: Pagination,
+): Promise<[Operation[], string]> {
+  return operationsFromHeight(address, minHeight);
+}

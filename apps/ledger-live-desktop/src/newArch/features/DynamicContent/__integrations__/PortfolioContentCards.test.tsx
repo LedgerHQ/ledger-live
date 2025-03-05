@@ -106,7 +106,11 @@ describe("PortfolioContentCards", () => {
     expect(logContentCardClick).not.toHaveBeenCalled();
     expect(track).not.toHaveBeenCalledWith("contentcard_clicked", expect.any(Object));
     act(() => cta0.click());
-    expect(logContentCardClick).toHaveBeenCalledWith(asBrazeCard(Cards[0]));
+    expect(logContentCardClick).toHaveBeenCalledTimes(1);
+    expect(logContentCardClick).toHaveBeenCalledWith({
+      ...asBrazeCard(Cards[0]),
+      url: Cards[0].id,
+    });
     expect(track).toHaveBeenCalledWith("contentcard_clicked", {
       contentcard: "Foo",
       link: "ledger-live://deep-link",

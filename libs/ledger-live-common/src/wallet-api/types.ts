@@ -17,7 +17,7 @@ export type {
 
 export type { WalletAPIServer } from "@ledgerhq/wallet-api-server";
 
-export {
+export type {
   CurrencyType as WalletAPICurrencyType,
   TokenStandard as WalletAPITokenStandard,
 } from "@ledgerhq/wallet-api-core";

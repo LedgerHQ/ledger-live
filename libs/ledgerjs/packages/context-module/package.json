@@ -10,9 +10,9 @@
   "types": "lib/index.d.ts",
   "scripts": {
     "clean": "rimraf lib lib-es",
-    "build": "tsc -p src && tsc -p src -m ES6 --outDir lib-es",
+    "build": "tsc -p src && tsc -p src -m ES6 --moduleResolution bundler --outDir lib-es",
     "watch": "tsc --watch",
-    "watch:es": "tsc --watch -m ES6 --outDir lib-es",
+    "watch:es": "tsc --watch -m esnext --moduleResolution bundler --outDir lib-es",
     "test": "jest"
   },
   "keywords": [],
@@ -20,7 +20,7 @@
   "devDependencies": {
     "@tsconfig/recommended": "^1.0.6",
     "@types/jest": "^29.5.10",
-    "@types/node": "^20.8.10",
+    "@types/node": "^22.10.10",
     "jest": "^29.7.0",
     "rimraf": "^4.4.1",
     "ts-jest": "^29.1.1",

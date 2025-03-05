@@ -36,9 +36,9 @@ export {
   setSupportedCurrencies,
 } from "@ledgerhq/coin-framework/currencies";
 
-export { getCurrencyColor, ColorableCurrency } from "./color";
+export { getCurrencyColor, type ColorableCurrency } from "./color";
 export { formatShort } from "./formatShort";
 export * from "./helpers";
 export { sortCurrenciesByIds, currenciesByMarketcap } from "./sortByMarketcap";
-export { listSupportedFiats } from "./support";
+export { listSupportedFiats, OFAC_CURRENCIES } from "./support";
 export { valueFromUnit } from "./valueFromUnit";

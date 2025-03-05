@@ -17,7 +17,8 @@ const getMainActions = ({
   parentAccount: Account;
   parentRoute: RouteProp<ParamListBase, ScreenName>;
 }): ActionButtonEvent[] => {
-  const delegationDisabled = account.solanaResources?.stakes.length > 1;
+  const delegationDisabled =
+    account.balance.isZero() || account.spendableBalance.isZero() ? true : false;
   const label = getStakeLabelLocaleBased();
 
   const navigationParams: NavigationParamsType = delegationDisabled

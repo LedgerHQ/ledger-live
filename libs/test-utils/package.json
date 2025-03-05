@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/test-utils",
-  "version": "0.2.22",
+  "version": "0.2.27-next.0",
   "private": true,
   "description": "Dummy apps and utils for tests",
   "keywords": [
@@ -11,7 +11,7 @@
   "types": "lib/index.d.ts",
   "scripts": {
     "clean": "rimraf lib lib-es",
-    "build": "tsc && tsc -m ES6 --outDir lib-es",
+    "build": "tsc && tsc -m esnext --moduleResolution bundler --outDir lib-es",
     "unimported": "unimported"
   },
   "dependencies": {

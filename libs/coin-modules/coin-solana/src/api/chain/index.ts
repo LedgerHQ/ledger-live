@@ -1,4 +1,5 @@
 import {
+  TOKEN_2022_PROGRAM_ID,
   TOKEN_PROGRAM_ID,
   getAssociatedTokenAddress,
   getMinimumBalanceForRentExemptAccount,
@@ -8,21 +9,27 @@ import {
   FetchMiddleware,
   VersionedMessage,
   PublicKey,
-  sendAndConfirmRawTransaction,
   SignaturesForAddressOptions,
   StakeProgram,
   TransactionInstruction,
   ComputeBudgetProgram,
   VersionedTransaction,
   TransactionMessage,
+  SendTransactionError,
+  BlockhashWithExpiryBlockHeight,
+  Commitment,
+  GetLatestBlockhashConfig,
 } from "@solana/web3.js";
 import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
 import { getEnv } from "@ledgerhq/live-env";
 import { NetworkError } from "@ledgerhq/errors";
 import { Awaited } from "../../logic";
 import { getStakeActivation } from "./stake-activation";
+import { getTokenAccountProgramId } from "../../helpers/token";
+import { SolanaTokenProgram } from "../../types";
 
 export const LATEST_BLOCKHASH_MOCK = "EEbZs6DmDyDjucyYbo3LwVJU7pQYuVopYcYTSEZXskW3";
+export const LAST_VALID_BLOCK_HEIGHT_MOCK = 280064048;
 
 export type Config = {
   readonly endpoint: string;
@@ -31,13 +38,19 @@ export type Config = {
 export type ChainAPI = Readonly<{
   getBalance: (address: string) => Promise<number>;
 
-  getLatestBlockhash: () => Promise<string>;
+  getLatestBlockhash: (
+    commitmentOrConfig?: Commitment | GetLatestBlockhashConfig,
+  ) => Promise<BlockhashWithExpiryBlockHeight>;
 
   getFeeForMessage: (message: VersionedMessage) => Promise<number | null>;
 
   getBalanceAndContext: (address: string) => ReturnType<Connection["getBalanceAndContext"]>;
 
   getParsedTokenAccountsByOwner: (
+    address: string,
+  ) => ReturnType<Connection["getParsedTokenAccountsByOwner"]>;
+
+  getParsedToken2022AccountsByOwner: (
     address: string,
   ) => ReturnType<Connection["getParsedTokenAccountsByOwner"]>;
 
@@ -66,9 +79,16 @@ export type ChainAPI = Readonly<{
     address: string,
   ) => Promise<Awaited<ReturnType<Connection["getParsedAccountInfo"]>>["value"]>;
 
-  sendRawTransaction: (buffer: Buffer) => ReturnType<Connection["sendRawTransaction"]>;
+  sendRawTransaction: (
+    buffer: Buffer,
+    recentBlockhash?: BlockhashWithExpiryBlockHeight,
+  ) => ReturnType<Connection["sendRawTransaction"]>;
 
-  findAssocTokenAccAddress: (owner: string, mint: string) => Promise<string>;
+  findAssocTokenAccAddress: (
+    owner: string,
+    mint: string,
+    program: SolanaTokenProgram,
+  ) => Promise<string>;
 
   getAssocTokenAccMinNativeBalance: () => Promise<number>;
 
@@ -86,6 +106,7 @@ export type ChainAPI = Readonly<{
   ) => Promise<number | null>;
 
   config: Config;
+  connection: Connection;
 }>;
 
 // Naive mode, allow us to filter in sentry all this error comming from Sol RPC node
@@ -105,23 +126,24 @@ export function getChainAPI(
           fetch(url, options);
         };
 
+  let _connection: Connection;
   const connection = () => {
-    return new Connection(config.endpoint, {
-      ...(fetchMiddleware ? { fetchMiddleware } : {}),
-      commitment: "finalized",
-      confirmTransactionInitialTimeout: getEnv("SOLANA_TX_CONFIRMATION_TIMEOUT") || 0,
-    });
+    if (!_connection) {
+      _connection = new Connection(config.endpoint, {
+        ...(fetchMiddleware ? { fetchMiddleware } : {}),
+        commitment: "finalized",
+        confirmTransactionInitialTimeout: getEnv("SOLANA_TX_CONFIRMATION_TIMEOUT") || 0,
+      });
+    }
+    return _connection;
   };
 
   return {
     getBalance: (address: string) =>
       connection().getBalance(new PublicKey(address)).catch(remapErrors),
 
-    getLatestBlockhash: () =>
-      connection()
-        .getLatestBlockhash()
-        .then(r => r.blockhash)
-        .catch(remapErrors),
+    getLatestBlockhash: (commitmentOrConfig?: Commitment | GetLatestBlockhashConfig) =>
+      connection().getLatestBlockhash(commitmentOrConfig).catch(remapErrors),
 
     getFeeForMessage: (msg: VersionedMessage) =>
       connection()
@@ -136,6 +158,13 @@ export function getChainAPI(
       connection()
         .getParsedTokenAccountsByOwner(new PublicKey(address), {
           programId: TOKEN_PROGRAM_ID,
+        })
+        .catch(remapErrors),
+
+    getParsedToken2022AccountsByOwner: (address: string) =>
+      connection()
+        .getParsedTokenAccountsByOwner(new PublicKey(address), {
+          programId: TOKEN_2022_PROGRAM_ID,
         })
         .catch(remapErrors),
 
@@ -201,14 +230,48 @@ export function getChainAPI(
         .then(r => r.value)
         .catch(remapErrors),
 
-    sendRawTransaction: (buffer: Buffer) => {
-      return sendAndConfirmRawTransaction(connection(), buffer, {
-        commitment: "confirmed",
-      }).catch(remapErrors);
+    sendRawTransaction: (buffer: Buffer, recentBlockhash?: BlockhashWithExpiryBlockHeight) => {
+      return (async () => {
+        const conn = connection();
+
+        const commitment = "confirmed";
+
+        const signature = await conn.sendRawTransaction(buffer, {
+          preflightCommitment: commitment,
+        });
+
+        if (!recentBlockhash) {
+          recentBlockhash = await conn.getLatestBlockhash(commitment);
+        }
+        const { value: status } = await conn.confirmTransaction(
+          {
+            blockhash: recentBlockhash.blockhash,
+            lastValidBlockHeight: recentBlockhash.lastValidBlockHeight,
+            signature,
+          },
+          commitment,
+        );
+        if (status.err) {
+          if (signature != null) {
+            throw new SendTransactionError({
+              action: "send",
+              signature: signature,
+              transactionMessage: `Status: (${JSON.stringify(status)})`,
+            });
+          }
+          throw new Error(`Raw transaction ${signature} failed (${JSON.stringify(status)})`);
+        }
+        return signature;
+      })().catch(remapErrors);
     },
 
-    findAssocTokenAccAddress: (owner: string, mint: string) => {
-      return getAssociatedTokenAddress(new PublicKey(mint), new PublicKey(owner))
+    findAssocTokenAccAddress: (owner: string, mint: string, program: SolanaTokenProgram) => {
+      return getAssociatedTokenAddress(
+        new PublicKey(mint),
+        new PublicKey(owner),
+        undefined,
+        getTokenAccountProgramId(program),
+      )
         .then(r => r.toBase58())
         .catch(remapErrors);
     },
@@ -245,7 +308,7 @@ export function getChainAPI(
           // RecentBlockhash can by any public key during simulation
           // since 'replaceRecentBlockhash' is set to 'true' below
           recentBlockhash: PublicKey.default.toString(),
-        }).compileToV0Message(),
+        }).compileToLegacyMessage(),
       );
       const rpcResponse = await connection().simulateTransaction(testTransaction, {
         replaceRecentBlockhash: true,
@@ -255,5 +318,6 @@ export function getChainAPI(
     },
 
     config,
+    connection: connection(),
   };
 }

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-cli",
-  "version": "24.10.2",
+  "version": "24.12.2-next.0",
   "description": "ledger-live CLI version",
   "repository": {
     "type": "git",
@@ -33,7 +33,6 @@
     "@ledgerhq/device-core": "workspace:^",
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",
-    "@ledgerhq/ledger-key-ring-protocol": "workspace:^",
     "@ledgerhq/hw-app-btc": "workspace:^",
     "@ledgerhq/hw-ledger-key-ring-protocol": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:^",
@@ -42,6 +41,7 @@
     "@ledgerhq/hw-transport-node-hid": "workspace:^",
     "@ledgerhq/hw-transport-node-speculos": "workspace:^",
     "@ledgerhq/hw-transport-node-speculos-http": "workspace:^",
+    "@ledgerhq/ledger-key-ring-protocol": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/live-config": "workspace:^",
     "@ledgerhq/live-countervalues": "workspace:^",
@@ -78,7 +78,7 @@
     "@types/express": "4.17.21",
     "@types/invariant": "2.2.37",
     "@types/lodash": "4.17.7",
-    "@types/node": "20.12.12",
+    "@types/node": "22.10.10",
     "@types/pako": "2.0.3",
     "@types/qrcode-terminal": "0.12.2",
     "@types/ws": "8.5.10",

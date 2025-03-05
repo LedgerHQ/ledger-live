@@ -3,7 +3,11 @@
  */
 
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { lastSeenDeviceSelector, INITIAL_STATE as SETTINGS_INITIAL_STATE } from "./settings";
+import {
+  lastSeenDeviceSelector,
+  INITIAL_STATE as SETTINGS_INITIAL_STATE,
+  localeSelector,
+} from "./settings";
 import { State } from ".";
 import { aDeviceInfoBuilder } from "@ledgerhq/live-common/mock/fixtures/aDeviceInfo";
 
@@ -46,5 +50,37 @@ describe("lastSeenDeviceSelector", () => {
 
       expect(lastSeenDeviceSelector(state)).toBeNull();
     });
+  });
+
+  it("should return en-US when the locale is not set", () => {
+    const state = {
+      ...({} as State),
+      settings: {
+        ...SETTINGS_INITIAL_STATE,
+      },
+    };
+    expect(localeSelector(state)).toEqual("en-US");
+  });
+
+  it("should return fr-FR when the locale is set", () => {
+    const state = {
+      ...({} as State),
+      settings: {
+        ...SETTINGS_INITIAL_STATE,
+        locale: "fr-FR",
+      },
+    };
+    expect(localeSelector(state)).toEqual("fr-FR");
+  });
+
+  it("should return en-US when the locale is set to OFAC locale", () => {
+    const state = {
+      ...({} as State),
+      settings: {
+        ...SETTINGS_INITIAL_STATE,
+        locale: "fa-AF",
+      },
+    };
+    expect(localeSelector(state)).toEqual("en-US");
   });
 });

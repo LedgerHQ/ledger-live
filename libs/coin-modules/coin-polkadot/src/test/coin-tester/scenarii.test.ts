@@ -1,9 +1,10 @@
+import console from "console";
 import { executeScenario } from "@ledgerhq/coin-tester/main";
 import { killSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
 import { killChopsticksAndSidecar } from "./chopsticks-sidecar";
 import { PolkadotScenario } from "./scenarii/Polkadot";
 
-global.console = require("console");
+global.console = console;
 jest.setTimeout(300_000);
 
 export const defaultNanoApp = { firmware: "2.3.0" as const, version: "100.0.5" as const };

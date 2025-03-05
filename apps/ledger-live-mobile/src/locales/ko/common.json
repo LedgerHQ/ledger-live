@@ -477,17 +477,17 @@
       "title" : "죄송하지만 발견된 계정이 없습니다",
       "description" : "주소 계산에 문제가 발생했습니다. 다시 시도해 주세요. 문제가 지속될 경우, 아래 버튼을 이용해 로그를 저장하고 Ledger 지원 부서로 보내주세요."
     },
-    "ElrondDecimalsLimitReached" : {
+    "MultiversXDecimalsLimitReached" : {
       "title" : "최대 소수점 제한에 도달했습니다.",
       "description" : "제공된 금액이 소수점 이하 18자리인지 확인하세요."
     },
-    "ElrondMinDelegatedAmountError" : {
+    "MultiversXMinDelegatedAmountError" : {
       "title" : "위임된 금액은 {{formattedAmount}} 이상이어야 합니다"
     },
-    "ElrondMinUndelegatedAmountError" : {
+    "MultiversXMinUndelegatedAmountError" : {
       "title" : "위임되지 않은 금액은 {{formattedAmount}} 이상이어야 합니다."
     },
-    "ElrondDelegationBelowMinimumError" : {
+    "MultiversXDelegationBelowMinimumError" : {
       "title" : "남은 위임은 {{formattedAmount}}보다 작을 수 없습니다"
     },
     "NotEnoughVTHO" : {
@@ -790,6 +790,30 @@
     },
     "SolanaAccountNotFunded" : {
       "title" : "자금이 입금되지 않은 계정"
+    },
+    "SolanaTokenAccountHoldsAnotherToken" : {
+      "title" : "이 연관된 토큰 계정은 다른 토큰을 보유하고 있습니다."
+    },
+    "SolanaTokenAccountWarning" : {
+      "title" : "이것은 일반 지갑 주소가 아니라 연관된 토큰 계정입니다. 프로세스를 제대로 이해하는 경우에만 계속 진행하세요"
+    },
+    "SolanaTokenAccountNotAllowed" : {
+      "title" : "이것은 토큰 계정입니다. 일반 지갑 주소를 입력하세요"
+    },
+    "SolanaMintAccountNotAllowed" : {
+      "title" : "이것은 토큰 주소입니다. 일반 지갑 주소를 입력하세요"
+    },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "계정에 자금이 지원됩니다"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "토큰 계정 자산이 동결되었습니다"
+    },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "계정이 초기화되지 않았습니다"
+    },
+    "SolanaTokenRecipientIsSenderATA" : {
+      "title" : "수령인 주소는 송신자 토큰 주소와 동일합니다"
     },
     "SolanaAddressOfEd25519" : {
       "title" : "주소 끄기 ed25519 곡선"
@@ -1095,6 +1119,11 @@
       "fast" : "빠름",
       "custom" : "커스텀",
       "blockCount" : "{{blockCount}}개 블록"
+    },
+    "estimatedTime" : {
+      "slow" : "≈ 2~3분",
+      "medium" : "≈ 30초",
+      "fast" : "≈ 15초"
     }
   },
   "signout" : {
@@ -2375,16 +2404,16 @@
     },
     "recoverBanner" : {
       "subscribeDone" : {
-        "title" : "결제 카드 추가 완료",
-        "description" : "Ledger Recover로 안심하고 복구하세요."
+        "title" : "알림: Ledger Recover 구독을 완료하세요",
+        "description" : "이제 두 단계만 거치면 완료됩니다."
       },
       "verifyIdentity" : {
-        "title" : "신원 인증을 완료하세요",
-        "description" : "Ledger Recover로 안심하고 복구하세요."
+        "title" : "알림: Ledger Recover 구독을 완료하세요",
+        "description" : "이제 한 단계만 거치면 완료됩니다."
       },
       "connectDevice" : {
-        "title" : "마지막 단계: Ledger 장치 연결",
-        "description" : "한 단계만 더 완료하면 Ledger Recover를 사용하실 수 있습니다."
+        "title" : "알림: Ledger Recover 구독을 완료하세요",
+        "description" : "지갑 액세스 복구를 보장하는 마지막 단계입니다."
       }
     }
   },
@@ -2886,6 +2915,7 @@
       "analyticsDesc" : "Ledger를 활성화하면 앱 사용 데이터를 수집하여 Ledger Live의 성능을 측정하고 앱과 사용자 경험을 모두를 향상시키는 데 도움이 됩니다.",
       "mevProtection" : "MEV 보호",
       "mevProtectionDesc" : "MEV 보호 기능을 활성화하여 이더리움을 보다 안정적으로 거래하세요",
+      "mevProtectionLearnMore" : "개인정보 관련 고지",
       "personalizedRecommendations" : "맞춤화된 경험",
       "personalizedRecommendationsDesc" : "Ledger를 활성화하면 앱 사용 데이터를 수집하여 사용자 선호도에 맞는 맞춤형 추천 및 콘텐츠를 제공하고 마케팅 캠페인 성과를 측정하는 데 도움이 됩니다.",
       "analyticsModal" : {
@@ -3104,7 +3134,7 @@
       "title" : "개발자",
       "desc" : "다양한 개발자 특징을 시험해 보고 의견을 나누어 주세요.",
       "customManifest" : {
-        "title" : "커스텀 플랫폼 Manifest 불러오기"
+        "title" : "Manifest 로드"
       },
       "exchangeDeveloperMode" : {
         "title" : "거래소 개발 모드",
@@ -3333,7 +3363,7 @@
       },
       "form" : {
         "validate" : "스왑 트랜잭션을 검증하세요",
-        "tab" : "교환",
+        "tab" : "스왑",
         "button" : "계속",
         "from" : "수신",
         "to" : "발신",
@@ -3442,8 +3472,8 @@
           "receive" : "수령"
         },
         "placeholder" : "선택",
-        "title" : "교환",
-        "cta" : "교환",
+        "title" : "스왑",
+        "cta" : "스왑",
         "from" : "수신",
         "to" : "발신",
         "loading" : "로딩...",
@@ -3489,8 +3519,14 @@
         "ton_description" : "Ton을 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요.",
         "spl_tokens_title" : "Ledger Nano S™는 솔라나 토큰 스왑을 지원하지 않습니다.",
         "spl_tokens_description" : "솔라노 토큰을 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요.",
+        "near_title" : "Ledger Nano S™는 Near 스왑을 지원하지 않습니다.",
+        "near_description" : "Near 스왑 거래를 실행하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 Ledger 장치를 사용하세요.",
         "ada_title" : "Ledger Nano S™는 카르다노 스왑을 지원하지 않습니다.",
-        "ada_description" : "카르다노를 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요."
+        "ada_description" : "카르다노를 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요.",
+        "apt_title" : "Ledger Nano S™는 Aptos 스왑을 지원하지 않습니다.",
+        "apt_description" : "Aptos 스왑 거래를 실행하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 Ledger 장치를 사용하세요.",
+        "cosmos_title" : "Ledger Nano S™는 Cosmos 스왑을 지원하지 않습니다.",
+        "cosmos_description" : "Cosmos 스왑 거래를 실행하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 Ledger 장치를 사용하세요."
       }
     },
     "lending" : {
@@ -3996,7 +4032,7 @@
       "desc" : "계정 추가를 취소할까요?",
       "v2" : {
         "title" : "계정 추가를 취소하시겠습니까?",
-        "desc" : "취소하면 어떤 계정도 Ledger Live에 추가되지 않습니다."
+        "desc" : "어떤 계정도 Ledger Live에 추가되지 않습니다."
       }
     },
     "imported" : "자산이 성공적으로 추가되었습니다",
@@ -4064,6 +4100,7 @@
       "ctaStopScan" : "스캔 중단",
       "confirm" : "확인",
       "scanningTitle" : "블록체인에 있는 기존 계정을 찾고 있습니다...",
+      "whichAddressType" : "주소 유형 선택 방법 알아보기",
       "sections" : {
         "importable" : {
           "title" : "{{count}}개의 계정을 찾았습니다",
@@ -4071,10 +4108,6 @@
         },
         "creatable" : {
           "title" : "새 계정"
-        },
-        "imported" : {
-          "title" : "계정이 이미 포트폴리오({{count}})에 있습니다",
-          "title_plural" : "계정이 이미 포트폴리오에 있습니다 ({{count}})"
         },
         "migrate" : {
           "title" : "업데이트할 계정"
@@ -4161,7 +4194,9 @@
     "installApp" : "{{appName}} 앱 설치 {{percentage}}",
     "installAppDescription" : "설치가 완료될 때까지 기다려 주세요",
     "listApps" : "앱 의존성 확인",
-    "listAppsDescription" : "모든 필수 앱이 설치되었는지 확인할 때까지 기다려 주세요"
+    "listAppsDescription" : "모든 필수 앱이 설치되었는지 확인할 때까지 기다려 주세요",
+    "confirmExchangeOnDevice" : "장치에서 교환 거래 확인",
+    "confirmSwapOnDevice" : "장치에서 스왑 거래 확인"
   },
   "SelectDevice" : {
     "title" : "새로운 장치 페어링",
@@ -5982,6 +6017,10 @@
         "description" : "SOL 암호화폐를 검증인에게 위임하여 보상을 받을 수 있습니다."
       },
       "reserveWarning" : "지갑에 {{amount}}이상의 SOL을 확보하여 지분을 비활성화하고 인출하는 데 필요한 네트워크 수수료를 충당하세요."
+    },
+    "token" : {
+      "frozenStateWarning" : "계정 자산이 동결되었습니다!",
+      "transferWarning" : "Ledger Nano S™를 사용해 솔라나 토큰의 수령인 주소를 확인하려면 <0>다음 지침을 따르세요.</0>"
     }
   },
   "near" : {
@@ -6958,6 +6997,16 @@
   },
   "walletSync" : {
     "title" : "Ledger 동기화",
+    "entryPoints" : {
+      "simpleCta" : {
+        "title" : "Ledger 동기화 활성화"
+      },
+      "card" : {
+        "title" : "Ledger 동기화",
+        "description" : "휴대폰 교체 시 계정을 자동으로 동기화하세요.",
+        "cta" : "Ledger 동기화 켜기"
+      }
+    },
     "activation" : {
       "screen" : {
         "title" : "이 휴대전화에서 Ledger 동기화를 켜시겠습니까?",
@@ -7061,9 +7110,10 @@
           "explanation" : {
             "title" : "Ledger Live 앱으로 스캔하고 계정을 동기화하세요",
             "steps" : {
-              "step1" : "동기화하려는 Ledger Live 앱을 엽니다.",
-              "step2" : "Go to <0>설정</0> <1>></1> <0>일반</0> <1>></1> <0>Ledger 동기화</0> <1>></1> <0>Ledger 동기화 켜기</0> <1>></1> <0>QR 코드 스캔</0>",
-              "step3" : "QR 코드 스캔"
+              "step1" : "앱 중 하나에서 Ledger Sync가 활성화되어 있는지 확인하세요.",
+              "step2" : "동기화하려는 Ledger Live 앱을 엽니다.",
+              "step3" : "<0>설정</0> <1>></1> <0>일반</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>이미 켰습니다</0> <1>></1> <0>QR 코드 스캔</0>으로 차례로 이동하세요",
+              "step4" : "QR 코드를 스캔합니다."
             }
           }
         },
@@ -7073,9 +7123,10 @@
           "explanation" : {
             "title" : "다른 휴대전화나 컴퓨터에서 Ledger Live와 동기화하려면...",
             "steps" : {
-              "step1" : "동기화하려는 Ledger Live를 엽니다.",
-              "step2" : "Go to <0>설정</0> <1>></1> <0>일반</0> <1>></1> <0>Ledger 동기화</0> <1>></1> <0>Ledger 동기화 켜기</0> <1>></1> <0>QR 표시</0>",
-              "step3" : "QR 코드 스캔"
+              "step1" : "앱 중 하나에서 Ledger Sync가 활성화되어 있는지 확인하세요.",
+              "step2" : "동기화하려는 Ledger Live를 엽니다.",
+              "step3" : "<0>설정</0> <1>></1> <0>일반</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>이미 켰습니다</0> <1>></1> <0>QR 표시</0>로 차례로 이동하세요",
+              "step4" : "QR 코드를 스캔합니다."
             }
           }
         },
@@ -7193,6 +7244,14 @@
       "title" : "자산이 속한 블록체인 네트워크를 선택하세요",
       "detectedAccounts" : "{{count}}개의 계정이 (감지됨)",
       "detectedAccounts_plural" : "{{count}}개의 계정이 (감지됨)"
+    }
+  },
+  "emptyList" : {
+    "accounts" : {
+      "title" : "발견된 계정이 없습니다",
+      "subTitle" : "계정을 추가하지 않은 것으로 보입니다. 지금 시작해보세요.",
+      "cta" : "계정 추가",
+      "link" : "도움이 필요하신가요? Ledger Live에 계정을 추가하는 방법을 알아보세요."
     }
   }
 }

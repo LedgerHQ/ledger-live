@@ -30,7 +30,6 @@ import {
   trackingEnabledSelector,
   languageSelector,
   localeSelector,
-  lastSeenDeviceSelector,
   sensitiveAnalyticsSelector,
   onboardingHasDeviceSelector,
   notificationsSelector,
@@ -40,9 +39,10 @@ import {
   personalizedRecommendationsEnabledSelector,
   hasSeenAnalyticsOptInPromptSelector,
   mevProtectionSelector,
-  readOnlyModeEnabledSelector,
+  seenDevicesSelector,
+  isRebornSelector,
 } from "../reducers/settings";
-import { knownDevicesSelector } from "../reducers/ble";
+import { bleDevicesSelector } from "../reducers/ble";
 import { DeviceLike, State } from "../reducers/types";
 import { satisfactionSelector } from "../reducers/ratings";
 import { accountsSelector } from "../reducers/accounts";
@@ -56,6 +56,7 @@ import { Maybe } from "../types/helpers";
 import { appStartupTime } from "../StartupTimeMarker";
 import { aggregateData, getUniqueModelIdList } from "../logic/modelIdList";
 import { getEnv } from "@ledgerhq/live-env";
+import { getTokensWithFunds } from "LLM/utils/getTokensWithFunds";
 
 let sessionId = uuid();
 const appVersion = `${VersionNumber.appVersion || ""} (${VersionNumber.buildVersion || ""})`;
@@ -124,10 +125,11 @@ const getLedgerSyncAttributes = (state: State) => {
 const getRebornAttributes = () => {
   if (!analyticsFeatureFlagMethod) return false;
   const reborn = analyticsFeatureFlagMethod("llmRebornLP");
+  const isFFEnabled = reborn?.enabled;
 
   return {
-    llmRebornLP_A: reborn?.params?.variant === ABTestingVariants.variantA,
-    llmRebornLP_B: reborn?.params?.variant === ABTestingVariants.variantB,
+    llmRebornLP_A: isFFEnabled ? reborn?.params?.variant === ABTestingVariants.variantA : false,
+    llmRebornLP_B: isFFEnabled ? reborn?.params?.variant === ABTestingVariants.variantB : false,
   };
 };
 
@@ -139,6 +141,15 @@ const getMEVAttributes = (state: State) => {
 
   return {
     MEVProtectionActivated: !mevProtection?.enabled ? "Null" : hasMEVActivated ? "Yes" : "No",
+  };
+};
+
+const getNewAddAccountsAttribues = () => {
+  if (!analyticsFeatureFlagMethod) return false;
+  const llmNetworkBasedAddAccountFlow = analyticsFeatureFlagMethod("llmNetworkBasedAddAccountFlow");
+
+  return {
+    hasNewAddAccounts: llmNetworkBasedAddAccountFlow?.enabled ? "Yes" : "No",
   };
 };
 
@@ -169,10 +180,11 @@ const extraProperties = async (store: AppStore) => {
   const customImageType = customImageTypeSelector(state);
   const language = sensitiveAnalytics ? null : languageSelector(state);
   const region = sensitiveAnalytics ? null : localeSelector(state);
-  const devices = knownDevicesSelector(state);
+  const devices = seenDevicesSelector(state);
+  const bleDevices = bleDevicesSelector(state);
   const satisfaction = satisfactionSelector(state);
   const accounts = accountsSelector(state);
-  const lastDevice = lastSeenDeviceSelector(state) || devices[devices.length - 1];
+  const lastDevice = devices.at(-1) || bleDevices.at(-1);
   const deviceInfo = lastDevice
     ? {
         deviceVersion: lastDevice.deviceInfo?.version,
@@ -186,7 +198,8 @@ const extraProperties = async (store: AppStore) => {
     : {};
 
   const onboardingHasDevice = onboardingHasDeviceSelector(state);
-  const isReborn = readOnlyModeEnabledSelector(state);
+  const isReborn = isRebornSelector(state);
+
   const notifications = notificationsSelector(state);
   const notificationsOptedIn = {
     notificationsAllowed: notifications.areNotificationsAllowed,
@@ -206,6 +219,7 @@ const extraProperties = async (store: AppStore) => {
         ),
       ]
     : [];
+
   const blockchainsWithNftsOwned = accounts
     ? [
         ...new Set(
@@ -224,7 +238,17 @@ const extraProperties = async (store: AppStore) => {
 
   const ledgerSyncAtributes = getLedgerSyncAttributes(state);
   const rebornAttributes = getRebornAttributes();
-  const mevProtectionAtributes = getMEVAttributes(state);
+  const mevProtectionAttributes = getMEVAttributes(state);
+  const addAccountsAttributes = getNewAddAccountsAttribues();
+  const tokenWithFunds = getTokensWithFunds(accounts);
+
+  // NOTE: Currently there no reliable way to uniquely identify devices from DeviceModelInfo.
+  // So device counts is approximated as follows:
+  // Each model of device seen which was not connected in Bluetooth is counted as a 1 device.
+  const seenBleModels = bleDevices.map(d => d.modelId);
+  const usbDeviceModelSeen = devices.filter(d => !seenBleModels.includes(d.modelId));
+  const devicesCount = bleDevices.length + usbDeviceModelSeen.length;
+  const modelIdQtyList = { ...aggregateData(bleDevices), ...aggregateData(usbDeviceModelSeen) };
 
   return {
     ...mandatoryProperties,
@@ -239,8 +263,8 @@ const extraProperties = async (store: AppStore) => {
     platformOS: Platform.OS,
     platformVersion: Platform.Version,
     sessionId,
-    devicesCount: devices.length,
-    modelIdQtyList: aggregateData(devices),
+    devicesCount,
+    modelIdQtyList,
     modelIdList: getUniqueModelIdList(devices),
     isReborn,
     onboardingHasDevice,
@@ -263,7 +287,9 @@ const extraProperties = async (store: AppStore) => {
     stakingProvidersEnabled: stakingProvidersCount || "flag not loaded",
     ...ledgerSyncAtributes,
     ...rebornAttributes,
-    ...mevProtectionAtributes,
+    ...mevProtectionAttributes,
+    ...addAccountsAttributes,
+    tokenWithFunds,
   };
 };
 

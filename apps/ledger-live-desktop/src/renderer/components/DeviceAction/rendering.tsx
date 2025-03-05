@@ -24,7 +24,7 @@ import {
 } from "@ledgerhq/live-common/errors";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { closeAllModal } from "~/renderer/actions/modals";
 import Animation from "~/renderer/animations";
 import Button from "~/renderer/components/Button";
@@ -57,7 +57,6 @@ import {
   Text,
   Theme,
 } from "@ledgerhq/react-ui";
-import { LockAltMedium } from "@ledgerhq/react-ui/assets/icons";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import DeviceIllustration from "~/renderer/components/DeviceIllustration";
 import { Account } from "@ledgerhq/types-live";
@@ -642,7 +641,7 @@ export const renderLockedDeviceError = ({
   return (
     <Wrapper id="error-locked-device">
       <ErrorBody
-        Icon={LockAltMedium}
+        Icon={IconsLegacy.LockAltMedium}
         title={t("errors.LockedDeviceError.title")}
         description={
           productName
@@ -828,7 +827,11 @@ export const renderError = ({
         title={<TranslatedError error={tmpError as unknown as Error} noLink />}
         description={
           withDescription && (
-            <TranslatedError error={tmpError as unknown as Error} field="description" />
+            <TranslatedError
+              dataTestId="error-description-deviceAction"
+              error={tmpError as unknown as Error}
+              field="description"
+            />
           )
         }
         list={
@@ -911,13 +914,7 @@ export const renderConnectYourDevice = ({
   <Wrapper>
     <Header />
     <AnimationWrapper>
-      <Animation
-        animation={getDeviceAnimation(
-          modelId,
-          type,
-          unresponsive ? "enterPinCode" : "plugAndPinCode",
-        )}
-      />
+      <Animation animation={getDeviceAnimation(modelId, type, "enterPinCode")} />
     </AnimationWrapper>
     <Footer>
       <Title>
@@ -964,9 +961,11 @@ const OpenSwapBtn = () => {
 export const HardwareUpdate = ({
   i18nKeyTitle,
   i18nKeyDescription,
+  i18nKeyValues,
 }: {
   i18nKeyTitle: string;
   i18nKeyDescription: string;
+  i18nKeyValues?: Record<string, string>;
 }) => (
   <Wrapper>
     <Header>
@@ -974,10 +973,10 @@ export const HardwareUpdate = ({
     </Header>
     <Flex alignItems="center" flexDirection="column" rowGap="16px" mr="40px" ml="40px">
       <Title variant="body" color="palette.text.shade100">
-        <Trans i18nKey={i18nKeyTitle} />
+        <Trans i18nKey={i18nKeyTitle} values={i18nKeyValues} />
       </Title>
       <Text variant="body" color="palette.text.shade60" textAlign="center">
-        <Trans i18nKey={i18nKeyDescription} />
+        <Trans i18nKey={i18nKeyDescription} values={i18nKeyValues} />
       </Text>
     </Flex>
     <ButtonFooter>
@@ -1084,8 +1083,8 @@ export const renderSwapDeviceConfirmation = ({
   stateSettings: SettingsState;
   walletState: WalletState;
 }) => {
-  const sourceAccountCurrency = getAccountCurrency(exchange.fromAccount);
-  const targetAccountCurrency = getAccountCurrency(exchange.toAccount);
+  const sourceAccountCurrency = exchange.fromCurrency;
+  const targetAccountCurrency = exchange.toCurrency;
   const sourceAccountName =
     accountNameSelector(walletState, {
       accountId: exchange.fromAccount.id,

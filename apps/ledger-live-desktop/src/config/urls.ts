@@ -4,6 +4,7 @@ export const supportLinkByTokenType = {
   trc20: "https://support.ledger.com/article/360013062159-zd",
   asa: "https://support.ledger.com/article/360015896040-zd",
   nfts: "https://support.ledger.com/article/4404389453841-zd",
+  spl: "https://support.ledger.com/article/7723954701469-zd",
 };
 
 const errors: Record<string, string> = {
@@ -98,7 +99,7 @@ export const urls = {
   algorandStakingRewards: "https://support.ledger.com/article/360015897740-zd",
   nearStakingRewards: "https://support.ledger.com/article/360020450619-zd",
   polkadotFeesInfo: "https://support.ledger.com/article/360016289919-zd",
-  elrondStaking: "https://support.ledger.com/article/7228337345693-zd",
+  multiversxStaking: "https://support.ledger.com/article/7228337345693-zd",
   xpubLearnMore: "https://support.ledger.com/article/360011069619-zd",
   ledgerValidator: "https://www.ledger.com/staking",
   // Banners
@@ -145,14 +146,16 @@ export const urls = {
   cryptoOrg: {
     website: "https://cronos-pos.org",
   },
-  elrond: {
-    website: "https://elrond.com",
+  multiversx: {
+    website: "https://multiversx.com",
   },
   figment: {
     website: "https://www.figment.io",
   },
   solana: {
     staking: "https://support.ledger.com/article/4731749170461-zd",
+    splTokenInfo:
+      "https://support.ledger.com/article/Verify-Solana-Address-from-Token-Account-Address",
     recipient_info: "https://support.ledger.com",
     ledgerByChorusOneTC: "https://chorus.one/tos",
     ledgerByFigmentTC:

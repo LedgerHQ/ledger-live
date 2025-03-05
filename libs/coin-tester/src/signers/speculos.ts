@@ -116,6 +116,7 @@ export async function killSpeculos() {
     cwd,
     log: Boolean(process.env.DEBUG),
     env: process.env,
+    commandOptions: ["--remove-orphans"],
   });
 }
 

@@ -140,6 +140,53 @@ export class SwapPage extends AppPage {
     throw new Error("No valid providers found");
   }
 
+  @step("Get all swap providers available")
+  async getAllSwapProviders(electronApp: ElectronApplication) {
+    const [, webview] = electronApp.windows();
+    return await webview
+      .locator(
+        '[data-testid^="quote-container-"][data-testid$="-fixed"], [data-testid^="quote-container-"][data-testid$="-float"]',
+      )
+      .allTextContents();
+  }
+
+  @step("Extract quotes and fees")
+  async extractQuotesAndFees(quoteContainers: string[]) {
+    const quotes = quoteContainers
+      .map(quote => {
+        const match = quote.match(/\$(\d+\.\d+).*?Network Fees[^$]*\$(\d+\.\d+)/);
+        if (match) {
+          const rate = parseFloat(match[1]);
+          const fees = parseFloat(match[2]);
+          return { rate, fees, quote };
+        }
+        return undefined;
+      })
+      .filter(quote => quote !== undefined);
+
+    if (quotes.length === 0) {
+      throw new Error("No quotes found");
+    }
+    return quotes;
+  }
+
+  @step('Check "Best Offer" corresponds to the best quote')
+  async checkBestOffer(electronApp: ElectronApplication) {
+    const quoteContainers = await this.getAllSwapProviders(electronApp);
+    try {
+      const quotes = await this.extractQuotesAndFees(quoteContainers);
+      const bestOffer = quotes.reduce<{ rate: number; fees: number; quote: string } | null>(
+        (max, current) =>
+          current && (!max || current.rate - current.fees > max.rate - max.fees) ? current : max,
+        null,
+      );
+      expect(bestOffer?.quote).toContain("Best Offer");
+    } catch (error) {
+      console.error("Error checking Best offer:", error);
+    }
+  }
+
+  @step("Wait for exchange to be available")
   async waitForExchangeToBeAvailable() {
     return waitFor(() => this.exchangeButton.isEnabled(), 250, 10000);
   }
@@ -220,6 +267,13 @@ export class SwapPage extends AppPage {
     await this.chooseAssetDrawer.chooseFromAsset(accountToSwapFrom.currency.name);
   }
 
+  @step("Check currency to swap from is $1")
+  async checkAssetFrom(electronApp: ElectronApplication, currency: string) {
+    const [, webview] = electronApp.windows();
+    const fromAccount = await webview.getByTestId(this.fromAccountCoinSelector).innerText();
+    expect(fromAccount).toContain(currency);
+  }
+
   @step("Expect asset or account selected $0 to be displayed")
   async expectSelectedAssetDisplayed(asset: string, electronApp: ElectronApplication) {
     const [, webview] = electronApp.windows();
@@ -241,6 +295,17 @@ export class SwapPage extends AppPage {
     await this.chooseAssetDrawer.chooseFromAsset(currency);
   }
 
+  @step("Check currency to swap to is $1")
+  async checkAssetTo(electronApp: ElectronApplication, currency: string) {
+    const [, webview] = electronApp.windows();
+    const assetTo = await webview.getByTestId(this.toAccountCoinSelector).innerText();
+    if (currency === "") {
+      expect(assetTo).toContain("Choose asset");
+    } else {
+      expect(assetTo).toContain(currency);
+    }
+  }
+
   @step("Verify swap amount error message is displayed: $2")
   async verifySwapAmountErrorMessageIsDisplayed(
     electronApp: ElectronApplication,
@@ -251,7 +316,7 @@ export class SwapPage extends AppPage {
     if (!accountToDebit.accountType) {
       //error message is flickering and changing, so we need to wait for it to be stable
       await this.page.waitForTimeout(1000);
-      const errorSpan = await webview.locator('span[color*="error"]').textContent();
+      const errorSpan = await webview.getByTestId("from-account-error").textContent();
       expect(errorSpan).toMatch(message);
       //that specific amount error doesn't trigger quotes
       if (message instanceof RegExp) {
@@ -262,5 +327,24 @@ export class SwapPage extends AppPage {
       await expect(webview.locator(this.errorSpan(message))).toBeVisible();
     }
     await expect(webview.getByTestId(`execute-button`)).not.toBeEnabled();
+  }
+
+  @step("Go and wait for Swap app to be ready")
+  async goAndWaitForSwapToBeReady(swapFunction: () => Promise<void>, url?: string) {
+    const successfulQuery = new Promise(resolve => {
+      this.page.on("response", response => {
+        if (
+          response
+            .url()
+            .startsWith(url || "https://explorers.api.live.ledger.com/blockchain/v4/btc/fees") &&
+          response.status() === 200
+        ) {
+          resolve(response);
+        }
+      });
+    });
+
+    await swapFunction();
+    expect(await successfulQuery).toBeDefined();
   }
 }

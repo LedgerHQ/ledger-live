@@ -9,7 +9,6 @@ import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
 import {
   canNominate,
-  isStash,
   hasExternalController,
   hasExternalStash,
   hasPendingOperationType,
@@ -144,15 +143,16 @@ export default function Nominations(props: Props) {
   );
 
   const onEarnRewards = useCallback(() => {
-    isStash(account)
-      ? onNavigate({
-          route: NavigatorName.PolkadotNominateFlow,
-          screen: ScreenName.PolkadotNominateSelectValidators,
-        })
-      : onNavigate({
-          route: NavigatorName.PolkadotBondFlow,
-          screen: ScreenName.PolkadotBondStarted,
-        });
+    onNavigate({
+      route: NavigatorName.Base,
+      screen: ScreenName.PlatformApp,
+      params: {
+        platform: "stakekit",
+        name: "StakeKit",
+        accountId: account.id,
+        yieldId: "polkadot-dot-validator-staking",
+      },
+    });
   }, [account, onNavigate]);
 
   const onNominate = useCallback(() => {

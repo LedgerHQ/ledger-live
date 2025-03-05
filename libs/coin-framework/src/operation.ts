@@ -173,6 +173,7 @@ export function getOperationAmountNumber(op: Operation): BigNumber {
     case "OPT_OUT":
     case "SLASH":
     case "LOCK":
+    case "BURN":
       return op.value.negated();
 
     case "FREEZE":

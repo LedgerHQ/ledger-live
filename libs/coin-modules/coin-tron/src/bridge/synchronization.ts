@@ -10,15 +10,11 @@ import { Account, SubAccount, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import compact from "lodash/compact";
 import get from "lodash/get";
+import { computeBalanceBridge } from "../logic";
 import { getOperationsPageSize } from "../logic/pagination";
-import { isParentTx, txInfoToOperation } from "../logic/utils";
-import {
-  fetchCurrentBlockHeight,
-  fetchTronAccount,
-  fetchTronAccountTxs,
-  getTronResources,
-} from "../network";
+import { getLastBlock, fetchTronAccount, fetchTronAccountTxs } from "../network";
 import { TronAccount, TrongridExtraTxInfo, TronOperation } from "../types";
+import { defaultTronResources, getTronResources, isParentTx, txInfoToOperation } from "./utils";
 
 type TronToken = {
   key: string;
@@ -34,7 +30,7 @@ export const getAccountShape: GetAccountShape<TronAccount> = async (
   { initialAccount, currency, address, derivationMode },
   syncConfig,
 ) => {
-  const blockHeight = await fetchCurrentBlockHeight();
+  const { height: blockHeight } = await getLastBlock();
   const tronAcc = await fetchTronAccount(address);
 
   const accountId = encodeAccountId({
@@ -46,8 +42,6 @@ export const getAccountShape: GetAccountShape<TronAccount> = async (
   });
 
   if (tronAcc.length === 0) {
-    const defaultTronResources = await getTronResources();
-
     return {
       id: accountId,
       blockHeight,
@@ -57,7 +51,6 @@ export const getAccountShape: GetAccountShape<TronAccount> = async (
   }
 
   const acc = tronAcc[0];
-  const spendableBalance = acc.balance ? new BigNumber(acc.balance) : new BigNumber(0);
   const cacheTransactionInfoById = initialAccount
     ? {
         ...(initialAccount?.tronResources?.cacheTransactionInfoById || {}),
@@ -76,44 +69,9 @@ export const getAccountShape: GetAccountShape<TronAccount> = async (
   );
 
   const tronResources = await getTronResources(acc, txs, cacheTransactionInfoById);
-  const balance = spendableBalance
-    .plus(tronResources.frozen.bandwidth ? tronResources.frozen.bandwidth.amount : new BigNumber(0))
-    .plus(tronResources.frozen.energy ? tronResources.frozen.energy.amount : new BigNumber(0))
-    .plus(
-      tronResources.delegatedFrozen.bandwidth
-        ? tronResources.delegatedFrozen.bandwidth.amount
-        : new BigNumber(0),
-    )
-    .plus(
-      tronResources.delegatedFrozen.energy
-        ? tronResources.delegatedFrozen.energy.amount
-        : new BigNumber(0),
-    )
-
-    .plus(
-      tronResources.unFrozen.energy
-        ? tronResources.unFrozen.energy.reduce((accum, cur) => {
-            return accum.plus(cur.amount);
-          }, new BigNumber(0))
-        : new BigNumber(0),
-    )
-    .plus(
-      tronResources.unFrozen.bandwidth
-        ? tronResources.unFrozen.bandwidth.reduce((accum, cur) => {
-            return accum.plus(cur.amount);
-          }, new BigNumber(0))
-        : new BigNumber(0),
-    )
-    .plus(
-      tronResources.legacyFrozen.bandwidth
-        ? tronResources.legacyFrozen.bandwidth.amount
-        : new BigNumber(0),
-    )
-    .plus(
-      tronResources.legacyFrozen.energy
-        ? tronResources.legacyFrozen.energy.amount
-        : new BigNumber(0),
-    );
+  // const tronResources = await getTronResources(acc);
+  const spendableBalance = acc.balance ? new BigNumber(acc.balance) : new BigNumber(0);
+  const balance = computeBalanceBridge(acc);
 
   const parentTxs = txs.filter(isParentTx);
   const parentOperations: TronOperation[] = compact(
@@ -121,14 +79,14 @@ export const getAccountShape: GetAccountShape<TronAccount> = async (
   );
 
   const trc10Tokens = get(acc, "assetV2", []).reduce(
-    (accumulator: TronToken[], { key, value }: { key: string; value: string }) => {
+    (accumulator: TronToken[], { key, value }: { key: string; value: number }) => {
       const tokenInfo = findTokenById(`tron/trc10/${key}`);
       if (tokenInfo) {
         accumulator.push({
           key,
           type: "trc10",
           tokenId: tokenInfo.id,
-          balance: value,
+          balance: value.toString(),
         });
       }
       return accumulator;
@@ -136,19 +94,22 @@ export const getAccountShape: GetAccountShape<TronAccount> = async (
     [],
   );
 
-  const trc20Tokens = get(acc, "trc20", []).reduce((accumulator: TronToken[], trc20: TronToken) => {
-    const [[contractAddress, balance]] = Object.entries(trc20);
-    const tokenInfo = findTokenByAddressInCurrency(contractAddress, currency.id);
-    if (tokenInfo) {
-      accumulator.push({
-        key: contractAddress,
-        type: "trc20",
-        tokenId: tokenInfo.id,
-        balance,
-      });
-    }
-    return accumulator;
-  }, []);
+  const trc20Tokens = get(acc, "trc20", []).reduce(
+    (accumulator: TronToken[], trc20: Record<string, string>) => {
+      const [[contractAddress, balance]] = Object.entries(trc20);
+      const tokenInfo = findTokenByAddressInCurrency(contractAddress, currency.id);
+      if (tokenInfo) {
+        accumulator.push({
+          key: contractAddress,
+          type: "trc20",
+          tokenId: tokenInfo.id,
+          balance,
+        });
+      }
+      return accumulator;
+    },
+    [],
+  );
 
   const { blacklistedTokenIds = [] } = syncConfig;
 

@@ -1,6 +1,4 @@
 import { Page } from "@playwright/test";
-import { step } from "tests/misc/reporters/step";
-
 export abstract class PageHolder {
   constructor(protected page: Page) {}
 }
@@ -21,15 +19,6 @@ export abstract class Component extends PageHolder {
 
   async waitForPageDomContentLoadedState() {
     return await this.page.waitForLoadState("domcontentloaded");
-  }
-
-  async waitForPageLoadState() {
-    return await this.page.waitForLoadState("load");
-  }
-
-  @step("Wait for network calls to be completed")
-  async waitForPageNetworkIdleState() {
-    return await this.page.waitForLoadState("networkidle");
   }
 }
 

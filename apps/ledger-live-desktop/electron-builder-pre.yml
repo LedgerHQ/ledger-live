@@ -7,15 +7,22 @@ protocols:
 
 beforePack: scripts/beforePack.js
 afterSign: scripts/notarize.js
-afterPack: scripts/afterPack.js
+
+directories:
+  buildResources: "build-rc"
+
+dmg:
+  window:
+    width: 540
+    height: 460
 
 mac:
   artifactName: ${name}-${version}-${os}.${ext}
   category: public.app-category.wallet
   hardenedRuntime: true
-  entitlements: build/mac/entitlements.plist
-  entitlementsInherit: build/mac/entitlements.plist
-  mergeASARs: false
+  entitlements: build-rc/mac/entitlements.plist
+  entitlementsInherit: build-rc/mac/entitlements.plist
+  icon: build-rc/icon.icns
   target:
     - target: dmg
       arch:
@@ -34,7 +41,7 @@ linux:
 
 win:
   artifactName: ${name}-${version}-${os}-${arch}.${ext}
-  icon: build/windows/app.ico
+  icon: build-rc/windows/app.ico
   sign: scripts/sign-windows.js
   signingHashAlgorithms:
     - sha256
@@ -47,10 +54,10 @@ nsis:
   oneClick: false
   perMachine: true
   allowToChangeInstallationDirectory: true
-  installerIcon: build/windows/installer.ico
-  installerSidebar: build/windows/installerSidebar.bmp
-  uninstallerIcon: build/windows/uninstaller.ico
-  uninstallerSidebar: build/windows/uninstallerSidebar.bmp
+  installerIcon: build-rc/windows/installer.ico
+  installerSidebar: build-rc/windows/installerSidebar.bmp
+  uninstallerIcon: build-rc/windows/uninstaller.ico
+  uninstallerSidebar: build-rc/windows/uninstallerSidebar.bmp
 
 includeSubNodeModules: true
 files:

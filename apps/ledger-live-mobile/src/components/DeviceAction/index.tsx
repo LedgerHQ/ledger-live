@@ -25,7 +25,6 @@ import {
   InitSwapResult,
 } from "@ledgerhq/live-common/exchange/swap/types";
 import { AppAndVersion } from "@ledgerhq/live-common/hw/connectApp";
-import { LedgerErrorConstructor } from "@ledgerhq/errors/lib/helpers";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { setLastSeenDeviceInfo } from "~/actions/settings";
 import ValidateOnDevice from "../ValidateOnDevice";
@@ -58,18 +57,14 @@ import ModalLock from "../ModalLock";
 import { walletSelector } from "~/reducers/wallet";
 import { settingsStoreSelector } from "~/reducers/settings";
 import { RootStackParamList } from "../RootNavigator/types/RootNavigator";
-
-type LedgerError = InstanceType<LedgerErrorConstructor<{ [key: string]: unknown }>>;
+import { LedgerError } from "~/types/error";
 
 type Status = PartialNullable<{
   appAndVersion: AppAndVersion;
   device: Device;
   unresponsive: boolean;
   isLocked: boolean;
-  error: LedgerError & {
-    name?: string;
-    managerAppName?: string;
-  };
+  error: LedgerError;
   isLoading: boolean;
   allowManagerRequested: boolean;
   allowRenamingRequested: boolean;

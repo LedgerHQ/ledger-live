@@ -429,7 +429,7 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
         if: ${{ !cancelled() }}
         with:
-          platform: linux
+          platform: linux-mocked
           login: ${{ vars.ALLURE_USERNAME }}
           password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
           path: allure-results-linux

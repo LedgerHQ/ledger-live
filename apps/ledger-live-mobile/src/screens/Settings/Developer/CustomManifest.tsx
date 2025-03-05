@@ -1,9 +1,14 @@
 import React, { useState, useCallback, useLayoutEffect } from "react";
-import { TextInput, StyleSheet, TouchableOpacity, TouchableOpacityProps } from "react-native";
+import {
+  TextInput,
+  StyleSheet,
+  TouchableOpacity,
+  TouchableOpacityProps,
+  Alert,
+} from "react-native";
 import { useTheme, CompositeScreenProps } from "@react-navigation/native";
 import { useLocalLiveAppContext } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
-import { Box, Text } from "@ledgerhq/native-ui";
-import NavigationScrollView from "~/components/NavigationScrollView";
+import { Box, Icons, Text } from "@ledgerhq/native-ui";
 import { ScreenName } from "~/const";
 import KeyboardView from "~/components/KeyboardView";
 import ImportIcon from "~/icons/Import";
@@ -11,9 +16,7 @@ import type { SettingsNavigatorStackParamList } from "~/components/RootNavigator
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import AppCard from "~/screens/Platform/Catalog/AppCard";
-import Plus from "~/icons/Plus";
 import Trash from "~/icons/Trash";
-import { DEFAULT_MANIFEST } from "./manifests/metamask";
 import { LAGADO_MANIFEST, LAGADO_MANIFEST_BUST, LAGADO_MANIFEST_NOCACHE } from "./manifests/lagado";
 import {
   ONEINCH_MANIFEST,
@@ -26,6 +29,8 @@ import {
   HEADERS_MANIFEST_BUST,
   HEADERS_MANIFEST_NOCACHE,
 } from "./manifests/headerSniffer";
+import { ScrollView } from "react-native-gesture-handler";
+import Clipboard from "@react-native-clipboard/clipboard";
 
 const DebuggerButton: React.ComponentType<{
   onPress: TouchableOpacityProps["onPress"];
@@ -33,7 +38,7 @@ const DebuggerButton: React.ComponentType<{
 }> = ({ onPress, text }) => {
   const { colors } = useTheme();
   return (
-    <>
+    <Box flexDirection="row">
       {text && (
         <Text flex={1} ml={4} variant="body" fontWeight="semiBold">
           {text}
@@ -42,7 +47,7 @@ const DebuggerButton: React.ComponentType<{
       <TouchableOpacity style={styles.buttons} onPress={onPress}>
         <ImportIcon size={18} color={colors.grey} />
       </TouchableOpacity>
-    </>
+    </Box>
   );
 };
 
@@ -53,7 +58,30 @@ const AddButton: React.ComponentType<{
   const { colors } = useTheme();
   return (
     <TouchableOpacity style={styles.buttons} onPress={onPress} disabled={disabled}>
-      <Plus size={18} color={disabled ? colors.grey : colors.black} />
+      <Icons.Plus size="S" color={disabled ? colors.grey : colors.black} />
+    </TouchableOpacity>
+  );
+};
+
+const DeleteTextButton: React.ComponentType<{
+  onPress: TouchableOpacityProps["onPress"];
+  disabled: boolean;
+}> = ({ onPress, disabled }) => {
+  const { colors } = useTheme();
+  return (
+    <TouchableOpacity style={styles.buttons} onPress={onPress} disabled={disabled}>
+      <Icons.Close size="S" color={disabled ? colors.grey : colors.black} />
+    </TouchableOpacity>
+  );
+};
+
+const PasteButton: React.ComponentType<{
+  onPress: TouchableOpacityProps["onPress"];
+}> = ({ onPress }) => {
+  const { colors } = useTheme();
+  return (
+    <TouchableOpacity style={styles.buttons} onPress={onPress}>
+      <Icons.Paste size="S" color={colors.grey} />
     </TouchableOpacity>
   );
 };
@@ -92,13 +120,29 @@ export default function CustomManifest({ navigation }: Props) {
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <Box flexDirection="row">
-          <DebuggerButton onPress={() => onChange(JSON.stringify(JSON.parse(DEFAULT_MANIFEST)))} />
+        <Box flexDirection="row" alignItems="center">
+          <PasteButton
+            onPress={async () => {
+              const text = await Clipboard.getString();
+
+              setManifest(text);
+            }}
+          />
+          <DeleteTextButton
+            disabled={manifest === null}
+            onPress={() => {
+              setManifest(null);
+            }}
+          />
           <AddButton
             disabled={manifest === null}
             onPress={() => {
-              manifest !== null && addLocalManifest(JSON.parse(manifest));
-              setManifest(null);
+              try {
+                manifest !== null && addLocalManifest(JSON.parse(manifest));
+                setManifest(null);
+              } catch (e) {
+                Alert.alert("Invalid JSON");
+              }
             }}
           />
         </Box>
@@ -108,30 +152,30 @@ export default function CustomManifest({ navigation }: Props) {
 
   return (
     <KeyboardView>
-      <NavigationScrollView>
+      <ScrollView>
         <TextInput
           style={[
             styles.input,
             {
               borderColor: colors.border,
+              color: colors.text,
             },
           ]}
           value={manifest === null ? "" : manifest}
           onChangeText={onChange}
           placeholder="Paste your manifest json"
+          placeholderTextColor={"#a3a7ad"}
           multiline
           autoCorrect={false}
           scrollEnabled={false}
         />
         <>
-          <AddButton
-            disabled={manifest === null}
-            onPress={() => {
-              manifest !== null && addLocalManifest(JSON.parse(manifest));
-              setManifest(null);
-            }}
-          />
-          <Box flexDirection="row" marginTop={20}>
+          <Text flex={1} ml={4} mb={4} variant="h3" fontWeight="semiBold" color={colors.fog}>
+            {"Example Manifests"}
+          </Text>
+        </>
+        <>
+          <Box mt={5}>
             <DebuggerButton
               onPress={() => onChange(JSON.stringify(JSON.parse(LAGADO_MANIFEST)))}
               text="Lagado"
@@ -140,16 +184,19 @@ export default function CustomManifest({ navigation }: Props) {
               onPress={() => onChange(JSON.stringify(JSON.parse(LAGADO_MANIFEST_BUST)))}
               text="Lagado cachebust"
             />
+          </Box>
+          <Box>
             <DebuggerButton
               onPress={() => onChange(JSON.stringify(JSON.parse(LAGADO_MANIFEST_NOCACHE)))}
               text="Lagado nocache"
             />
-          </Box>
-          <Box flexDirection="row">
+
             <DebuggerButton
               onPress={() => onChange(JSON.stringify(JSON.parse(ONEINCH_MANIFEST)))}
               text="1inch"
             />
+          </Box>
+          <Box>
             <DebuggerButton
               onPress={() => onChange(JSON.stringify(JSON.parse(ONEINCH_MANIFEST_V3)))}
               text="1inch v3"
@@ -158,16 +205,19 @@ export default function CustomManifest({ navigation }: Props) {
               onPress={() => onChange(JSON.stringify(JSON.parse(ONEINCH_MANIFEST_BUST)))}
               text="1inch cachebust"
             />
+          </Box>
+          <Box>
             <DebuggerButton
               onPress={() => onChange(JSON.stringify(JSON.parse(ONEINCH_MANIFEST_NOCACHE)))}
               text="1inch nocache"
             />
-          </Box>
-          <Box flexDirection="row">
+
             <DebuggerButton
               onPress={() => onChange(JSON.stringify(JSON.parse(HEADERS_MANIFEST)))}
               text="Headers Sniffer"
             />
+          </Box>
+          <Box>
             <DebuggerButton
               onPress={() => onChange(JSON.stringify(JSON.parse(HEADERS_MANIFEST_BUST)))}
               text="Headers Sniffer cachebust"
@@ -180,6 +230,11 @@ export default function CustomManifest({ navigation }: Props) {
         </>
 
         <>
+          {list.length > 0 && (
+            <Text flex={1} ml={4} mb={4} variant="h3" fontWeight="semiBold" color={colors.fog}>
+              {"Loaded Manifests"}
+            </Text>
+          )}
           {list.map(m => {
             return (
               <Box key={m.id} flexDirection="row">
@@ -208,7 +263,7 @@ export default function CustomManifest({ navigation }: Props) {
             );
           })}
         </>
-      </NavigationScrollView>
+      </ScrollView>
     </KeyboardView>
   );
 }
@@ -231,9 +286,12 @@ const styles = StyleSheet.create({
     flex: 1,
     borderWidth: 1,
     marginBottom: 16,
+    height: 60,
+    marginHorizontal: 10,
+    padding: 5,
   },
   buttons: {
-    paddingVertical: 8,
-    paddingHorizontal: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 12,
   },
 });

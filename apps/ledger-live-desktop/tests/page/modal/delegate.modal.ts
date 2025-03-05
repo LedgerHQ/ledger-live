@@ -4,7 +4,6 @@ import { step } from "tests/misc/reporters/step";
 
 export class delegateModal extends Modal {
   private titleProvider = this.page.getByTestId("modal-provider-title");
-  private delegateContinueButton = this.page.getByText("Continue");
   private rowProvider = this.page.getByTestId("modal-provider-row");
   private searchOpenButton = this.page.getByText("Show all");
   private searchCloseButton = this.page.getByText("Show less");
@@ -14,9 +13,27 @@ export class delegateModal extends Modal {
     this.page.getByTestId(`stake-provider-container-${stakeProviderID}`);
   private detailsButton = this.page.getByRole("button", { name: "View details" });
   private validatorTC = this.page.getByTestId("ledger-validator-tc");
+  private validatorName = this.page.getByTestId("validator-name-label");
+  private feesSummaryStep = this.page.getByTestId("fees-amount-step-summary");
+  private successMessageLabel = this.page.getByTestId("success-message-label");
+  readonly delegateToEarnRewardsButton = this.page.getByRole("button", {
+    name: "Delegate to earn rewards",
+  });
+  private delegateStarterInfos = this.page.getByTestId("delegation-starter-infos");
+  private delegateTezosProvider = this.page.getByTestId("validator-name-tezos");
+  private warningBox = this.page.getByTestId("warning-box");
+  private celoLockButton = this.page.getByTestId("celo-lock-button");
+  private celoVoteButton = this.page.getByTestId("celo-vote-button");
+  private celoActivateVoteButton = this.page.getByTestId("celo-activate-vote-button");
+  private celoRevokeVoteButton = this.page.getByTestId("celo-revoke-vote-button");
+  private celoUnlockButton = this.page.getByTestId("celo-unlock-button");
+  private celoWithdrawButton = this.page.getByTestId("celo-withdraw-button");
+  private lockInfoCeloWarning = this.page.getByTestId("lock-info-celo");
   private checkIcon = this.page
     .getByTestId("check-icon")
     .locator('path[fill]:not([fill="transparent"])');
+  readonly spendableBanner = this.page.getByTestId("modal-spendable-banner");
+  readonly cryptoAmountField = this.page.getByTestId("modal-amount-field");
 
   @step("Get title provider on row $0")
   async getTitleProvider(row: number): Promise<string> {
@@ -24,6 +41,18 @@ export class delegateModal extends Modal {
     const titleProvider = await this.titleProvider.nth(row - 1).textContent();
     expect(titleProvider).not.toBeNull();
     return titleProvider!;
+  }
+
+  @step("Get spendable banner value")
+  async getSpendableBannerValue() {
+    const amountValue = await this.spendableBanner.textContent();
+    return parseInt(amountValue!.replace(/[^0-9.]/g, ""));
+  }
+
+  @step("Get crypto amount")
+  async getCryptoAmount() {
+    const valueAmount = await this.cryptoAmountField.inputValue();
+    return parseInt(valueAmount);
   }
 
   @step("Verify first provider name is $0")
@@ -56,23 +85,18 @@ export class delegateModal extends Modal {
 
   @step("Verify continue button is disabled")
   async verifyContinueDisabled() {
-    await expect(this.delegateContinueButton).toBeDisabled();
+    await expect(this.continueButton).toBeDisabled();
   }
 
   @step("Verify continue button is enabled")
   async verifyContinueEnabled() {
-    await expect(this.delegateContinueButton).toBeEnabled();
+    await expect(this.continueButton).toBeEnabled();
   }
 
   @step("Verify provider TC contains $0")
   async verifyProviderTC(provider: string) {
     const providerTC = await this.validatorTC.textContent();
     expect(providerTC).toContain(provider);
-  }
-
-  @step("Click on continue button - delegate")
-  async continueDelegate() {
-    await this.delegateContinueButton.click();
   }
 
   @step("Click on search provider button")
@@ -82,7 +106,8 @@ export class delegateModal extends Modal {
 
   @step("Input provider is $0")
   async inputProvider(provider: string) {
-    await this.inputSearchField.fill(provider);
+    const providerTicker = provider.split(" - ")[0];
+    await this.inputSearchField.fill(providerTicker);
   }
 
   @step("Get selected provider name ")
@@ -123,5 +148,54 @@ export class delegateModal extends Modal {
     } else {
       await this.cryptoAmountField.fill(amount);
     }
+  }
+
+  @step("Verify success message")
+  async verifySuccessMessage() {
+    await expect(this.successMessageLabel).toBeVisible();
+  }
+
+  @step("Verify validator name is $0")
+  async verifyValidatorName(validatorName: string) {
+    const validator = await this.validatorName.allInnerTexts();
+    expect(validator).toContain(validatorName);
+  }
+
+  @step("Verify fees summary step")
+  async verifyFeesVisible() {
+    await expect(this.feesSummaryStep).toBeVisible();
+  }
+
+  @step("Click on delegate to earn rewards button")
+  async clickDelegateToEarnRewardsButton() {
+    await expect(this.delegateStarterInfos).toBeVisible();
+    await this.delegateToEarnRewardsButton.click();
+  }
+
+  @step("Verify delegate infos for $0 and $1")
+  async verifyTezosDelegateInfos(currency: string, validator: string) {
+    await expect(this.delegateTezosProvider).toBeVisible();
+    expect(await this.delegateTezosProvider.innerText()).toContain(validator);
+    await expect(this.warningBox).toBeVisible();
+  }
+
+  @step("Verify Celo manage asset modal is visible")
+  async checkCeloManageAssetModal() {
+    await expect(this.celoLockButton).toBeVisible();
+    await expect(this.celoVoteButton).toBeVisible();
+    await expect(this.celoActivateVoteButton).toBeVisible();
+    await expect(this.celoRevokeVoteButton).toBeVisible();
+    await expect(this.celoUnlockButton).toBeVisible();
+    await expect(this.celoWithdrawButton).toBeVisible();
+  }
+
+  @step("Click on lock button for CELO")
+  async clickCeloLockButton() {
+    await this.celoLockButton.click();
+  }
+
+  @step("Check alert message is visible when locking CELO")
+  async verifyLockInfoCeloWarning() {
+    await expect(this.lockInfoCeloWarning).toBeVisible();
   }
 }

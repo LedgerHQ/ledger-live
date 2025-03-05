@@ -1,4 +1,4 @@
-import { Button, Flex, IconsLegacy } from "@ledgerhq/native-ui";
+import { Button, Flex, Icons, IconsLegacy } from "@ledgerhq/native-ui";
 import { ParamListBase, useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import React, { useCallback, useState } from "react";
@@ -40,7 +40,7 @@ export const NavigationHeaderCloseButton: React.FC<Props> = React.memo(({ onPres
       onPress={() => (onPress ? onPress() : navigation.popToTop())}
     >
       <Flex p={6}>
-        <IconsLegacy.CloseMedium size={24} color={color || "neutral.c100"} />
+        <Icons.Close color={color || "neutral.c100"} />
       </Flex>
     </Touchable>
   );
@@ -166,7 +166,7 @@ export const NavigationHeaderCloseButtonAdvanced: React.FC<AdvancedProps> = Reac
     const renderCloseElement = useCallback(() => {
       if (showButton && buttonText)
         return (
-          <Button size="large" testID="button-create-account" onPress={onPress}>
+          <Button size="large" testID="button-close-add-account" onPress={onPress}>
             {buttonText}
           </Button>
         );

@@ -1,46 +1,25 @@
-import React, { useCallback, useState } from "react";
-
+import React from "react";
 import { Button } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
-import { track } from "~/analytics";
-import { Account, AccountLike } from "@ledgerhq/types-live";
-
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import AccountListDrawer from "../AccountListDrawer";
 import AccountQuickActionsDrawer from "../AccountQuickActionsDrawer";
+import useAddFundsButtonViewModel, { type Props } from "./useAddFundsButtonViewModel";
 
-export default function AddFundsButton({
+type ViewProps = ReturnType<typeof useAddFundsButtonViewModel>;
+
+function View({
+  isAccountListDrawerOpen,
+  isAccountQuickActionsDrawerOpen,
+  selectedAccount,
   accounts,
   currency,
-}: {
-  accounts: Account[];
-  currency: CryptoOrTokenCurrency;
-}) {
+  openFundOrAccountListDrawer,
+  closeAccountListDrawer,
+  handleOnSelectAccount,
+  handleOnCloseQuickActions,
+  sourceScreenName,
+}: ViewProps) {
   const { t } = useTranslation();
-  const [isAccountListDrawerOpen, setIsAccountListDrawerOpen] = useState<boolean>(false);
-  const [isAccountQuickActionsDrawerOpen, setIsAccountQuickActionsDrawerOpen] =
-    useState<boolean>(false);
-  const [selectedAccount, setSelectedAccount] = useState<AccountLike | null>(
-    accounts.length === 1 ? accounts[0] : null,
-  );
-  const openFundOrAccountListDrawer = () => {
-    track("button_clicked", { button: "Add a new account" });
-    if (accounts.length === 1) {
-      setIsAccountQuickActionsDrawerOpen(true);
-    } else setIsAccountListDrawerOpen(true);
-  };
-
-  const closeAccountListDrawer = () => setIsAccountListDrawerOpen(false);
-
-  const handleOnSelectAccoount = useCallback((account: AccountLike) => {
-    closeAccountListDrawer();
-    setSelectedAccount(account);
-    setIsAccountQuickActionsDrawerOpen(true);
-  }, []);
-
-  const handleOnCloseQuickActions = () => {
-    setIsAccountQuickActionsDrawerOpen(false);
-  };
 
   return (
     <>
@@ -55,17 +34,23 @@ export default function AddFundsButton({
       <AccountListDrawer
         isOpen={isAccountListDrawerOpen}
         onClose={closeAccountListDrawer}
-        onBack={closeAccountListDrawer}
         data={accounts}
-        onPressAccount={handleOnSelectAccoount}
+        onPressAccount={handleOnSelectAccount}
+        sourceScreenName={sourceScreenName}
       />
-      <AccountQuickActionsDrawer
-        isOpen={isAccountQuickActionsDrawerOpen}
-        onClose={handleOnCloseQuickActions}
-        onBack={handleOnCloseQuickActions}
-        account={selectedAccount}
-        currency={currency}
-      />
+      {selectedAccount && (
+        <AccountQuickActionsDrawer
+          isOpen={isAccountQuickActionsDrawerOpen}
+          onClose={handleOnCloseQuickActions}
+          account={selectedAccount}
+          currency={currency}
+          sourceScreenName={sourceScreenName}
+        />
+      )}
     </>
   );
 }
+
+const AddFundsButton: React.FC<Props> = props => <View {...useAddFundsButtonViewModel(props)} />;
+
+export default AddFundsButton;

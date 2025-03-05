@@ -18,7 +18,7 @@ import { setDeviceMode } from "@ledgerhq/live-common/hw/actions/app";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { DescriptorEvent } from "@ledgerhq/hw-transport";
 import VersionNumber from "react-native-version-number";
-import type { DeviceModelId } from "@ledgerhq/types-devices";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 import { Platform } from "react-native";
 import { setSecp256k1Instance } from "@ledgerhq/live-common/families/bitcoin/logic";
 import { setGlobalOnBridgeError } from "@ledgerhq/live-common/bridge/useBridgeTransaction";
@@ -53,6 +53,8 @@ setSupportedCurrencies([
   "bsc",
   "polkadot",
   "solana",
+  "solana_testnet",
+  "solana_devnet",
   "ripple",
   "litecoin",
   "polygon",
@@ -78,7 +80,7 @@ setSupportedCurrencies([
   "bitcoin_testnet",
   "ethereum_sepolia",
   "ethereum_holesky",
-  "elrond",
+  "elrond", // NOTE: legacy 'multiversx' name, kept for compatibility
   "hedera",
   "cardano",
   "osmosis",
@@ -133,6 +135,8 @@ setSupportedCurrencies([
   "mantra",
   "xion",
   "zenrock",
+  "sonic",
+  "sonic_blaze",
 ]);
 
 if (Config.BLE_LOG_LEVEL) BluetoothTransport.setLogLevel(Config.BLE_LOG_LEVEL);
@@ -186,7 +190,9 @@ if (__DEV__ && Config.DEVICE_PROXY_URL) {
     map(({ type, descriptor }) => ({
       type,
       id: `httpdebug|${descriptor}`,
-      deviceModel: getDeviceModel((Config?.FALLBACK_DEVICE_MODEL_ID as DeviceModelId) || "nanoX"),
+      deviceModel: getDeviceModel(
+        (Config?.FALLBACK_DEVICE_MODEL_ID as DeviceModelId) || DeviceModelId.nanoX,
+      ),
       wired: Config?.FALLBACK_DEVICE_WIRED === "YES",
       name: descriptor,
     })),

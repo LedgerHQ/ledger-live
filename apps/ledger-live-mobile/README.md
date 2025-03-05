@@ -230,3 +230,4 @@ It is possible to run Ledger Live Mobile on an emulator and connect to a Nano th
 
 - [Deep Linking 🔗](https://github.com/LedgerHQ/ledger-live/wiki/LLM:DeepLinking)
 - [UI Theming 🎨](https://github.com/LedgerHQ/ledger-live/wiki/LLM:Theming)
+

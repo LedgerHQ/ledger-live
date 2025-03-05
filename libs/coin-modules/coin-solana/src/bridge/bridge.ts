@@ -28,6 +28,8 @@ import {
   assignToAccountRaw,
   fromOperationExtraRaw,
   toOperationExtraRaw,
+  assignFromTokenAccountRaw,
+  assignToTokenAccountRaw,
 } from "../serialization";
 
 function makePrepare(getChainAPI: (config: Config) => Promise<ChainAPI>) {
@@ -178,6 +180,8 @@ export function makeBridges({
     toOperationExtraRaw,
     fromOperationExtraRaw,
     getSerializedAddressParameters,
+    assignFromTokenAccountRaw,
+    assignToTokenAccountRaw,
   };
 
   const currencyBridge: CurrencyBridge = {

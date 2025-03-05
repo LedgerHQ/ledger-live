@@ -24,8 +24,10 @@ const HeroCard = ContentCardBuilder<Props>(
           {tag && <Tag label={tag} />}
           {(title || secondaryText) && (
             <Flex alignItems={centeredText ? "center" : "start"}>
-              {title && <Title label={title} hasSecondaryText={!!secondaryText} />}
-              {secondaryText && <SecondaryText label={secondaryText} />}
+              {title && (
+                <Title label={title} hasSecondaryText={!!secondaryText} isCentered={centeredText} />
+              )}
+              {secondaryText && <SecondaryText isCentered={centeredText} label={secondaryText} />}
             </Flex>
           )}
           {cta && (

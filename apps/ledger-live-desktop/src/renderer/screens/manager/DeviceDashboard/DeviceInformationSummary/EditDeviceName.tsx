@@ -13,6 +13,7 @@ import getDeviceNameMaxLength from "@ledgerhq/live-common/hw/getDeviceNameMaxLen
 import renameDevice from "@ledgerhq/live-common/hw/renameDevice";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import { DeviceInfo } from "@ledgerhq/types-live";
+import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 
 const action = createAction(renameDevice);
 
@@ -144,6 +145,7 @@ const EditDeviceName: React.FC<Props> = ({
               inlineRetry={false}
               onResult={onSuccess}
               onError={(error: Error) => setActionError(error)}
+              location={HOOKS_TRACKING_LOCATIONS.managerDashboard}
             />
           </Flex>
         ) : (

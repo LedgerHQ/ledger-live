@@ -5,7 +5,7 @@ import {
   isEIP712Message,
   sortObjectAlphabetically,
 } from "../../../message/EIP712/index";
-import { dynamicCAL, messageNotInCAL } from "../../fixtures/dynamicCAL";
+import { dynamicCAL, messageNotInCAL, messageNotInCALSchemaHash } from "../../fixtures/dynamicCAL";
 import complexMessage from "../../fixtures/messages/5.json";
 import messageInCAL from "../../fixtures/messages/2.json";
 
@@ -63,6 +63,60 @@ describe("evm-tools", () => {
               message: {},
             }),
           ).toBe(true);
+        });
+        it("should find filters when matching data is not in first position of array", async () => {
+          const dynamicCALWithMultipleItems = [
+            { eip712_signatures: { "0xdifferentContract": { differentHash: "wrong" } } },
+            {
+              eip712_signatures: {
+                [messageNotInCAL.domain.verifyingContract.toLowerCase()]: {
+                  [messageNotInCALSchemaHash]: "found",
+                },
+              },
+            },
+          ];
+
+          (axios.get as jest.Mock).mockReturnValueOnce({
+            data: dynamicCALWithMultipleItems,
+          });
+
+          const result = await getFiltersForMessage(messageNotInCAL, false, "http://CAL-ADDRESS");
+          expect(result).toEqual("found");
+        });
+
+        it("should handle empty eip712_signatures objects in array", async () => {
+          const dynamicCALWithEmptyItems = [
+            { eip712_signatures: {} },
+            {
+              eip712_signatures: {
+                [messageNotInCAL.domain.verifyingContract.toLowerCase()]: {
+                  [messageNotInCALSchemaHash]: "found",
+                },
+              },
+            },
+          ];
+
+          (axios.get as jest.Mock).mockReturnValueOnce({
+            data: dynamicCALWithEmptyItems,
+          });
+
+          const result = await getFiltersForMessage(messageNotInCAL, false, "http://CAL-ADDRESS");
+          expect(result).toEqual("found");
+        });
+
+        it("should fallback to static file when no matching data found in any array position", async () => {
+          const dynamicCALWithNoMatch = [
+            { eip712_signatures: { "0xcontract1": { hash1: "wrong1" } } },
+            { eip712_signatures: { "0xcontract2": { hash2: "wrong2" } } },
+          ];
+
+          (axios.get as jest.Mock).mockReturnValueOnce({
+            data: dynamicCALWithNoMatch,
+          });
+
+          const result = await getFiltersForMessage(messageInCAL, false, "http://CAL-ADDRESS");
+          const schemaHash = "d8e4f2bd77f7562e99ea5df4adb127291a2bfbc225ae55450038f27f";
+          expect(result).toEqual(CAL[`1:0x7f268357a8c2552623316e2562d90e642bb538e5:${schemaHash}`]);
         });
       });
 

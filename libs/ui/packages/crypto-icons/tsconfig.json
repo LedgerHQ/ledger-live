@@ -6,7 +6,9 @@
     "baseUrl": ".",
     "rootDir": "./src",
     "outDir": ".",
-    "noEmit": true
+    "noEmit": true,
+    "moduleResolution": "bundler",
+    "module": "esnext"
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "react", "native"]

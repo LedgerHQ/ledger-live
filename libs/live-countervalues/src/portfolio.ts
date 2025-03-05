@@ -476,10 +476,11 @@ export const orderAccountsByFiatValue = (
   accounts: Account[] | TokenAccount[],
   counterValueState: CounterValuesState,
   to: Currency,
+  fullBalance: boolean = true,
 ) => {
   const accountsWithValue = accounts.map(account => {
     const value = calculate(counterValueState, {
-      value: account.spendableBalance.toNumber(),
+      value: (fullBalance ? account.balance : account.spendableBalance).toNumber(),
       from: getAccountCurrency(account),
       to,
       disableRounding: true,

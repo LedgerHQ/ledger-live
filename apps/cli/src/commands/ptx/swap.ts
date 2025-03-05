@@ -169,8 +169,10 @@ const exec = async (opts: SwapJobOpts) => {
   const exchange: ExchangeSwap = {
     fromAccount,
     fromParentAccount,
+    fromCurrency: fromAccount.type === "TokenAccount" ? fromAccount.token : fromAccount.currency,
     toAccount,
     toParentAccount,
+    toCurrency: toAccount.type === "TokenAccount" ? toAccount.token : toAccount.currency,
   };
 
   const exchangeRates = await getExchangeRates({ exchange, transaction });

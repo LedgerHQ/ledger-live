@@ -4,12 +4,11 @@ import { useTheme } from "styled-components";
 import SelectInput, {
   Props as SelectInputProps,
 } from "@ledgerhq/react-ui/components/form/SelectInput/index";
-import { Text, Flex as FlexBox } from "@ledgerhq/react-ui";
+import { Text, Flex as FlexBox, IconsLegacy } from "@ledgerhq/react-ui";
 import {
   ValueContainer,
   MixedProps as ValueContainerProps,
 } from "@ledgerhq/react-ui/components/form/SelectInput/ValueContainer";
-import { ChevronBottomMedium, ChevronTopMedium } from "@ledgerhq/react-ui/assets/icons";
 
 export type Props<O> = SelectInputProps<O> & {
   searchable?: boolean;
@@ -31,7 +30,9 @@ function DropdownControl<O extends OptionTypeBase>(props: ControlProps<O, false>
 function DropdownValueContainer<O extends OptionTypeBase>(
   props: ValueContainerProps<O, false> & { label?: React.ReactNode },
 ) {
-  const ChevronIcon = props.selectProps.menuIsOpen ? ChevronTopMedium : ChevronBottomMedium;
+  const ChevronIcon = props.selectProps.menuIsOpen
+    ? IconsLegacy.ChevronTopMedium
+    : IconsLegacy.ChevronBottomMedium;
   // @ts-expect-error This label prop is inherited from the original component props but it is not handled well in the react-select bindings
   const { label } = props.selectProps;
 

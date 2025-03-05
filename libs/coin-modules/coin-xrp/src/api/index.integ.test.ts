@@ -6,6 +6,7 @@ import { sign } from "ripple-keypairs";
 describe("Xrp Api", () => {
   let module: Api;
   const address = "rh1HPuRVsYYvThxG2Bs1MfjmrVC73S16Fb";
+  const bigAddress = "rUxSkt6hQpWxXQwTNRUCYYRQ7BC2yRA3F8"; // An account with more that 4000 txs
   const emptyAddress = "rKtXXTVno77jhu6tto1MAXjepyuaKaLcqB"; // Account with no transaction (at the time of this writing)
   const xrpPubKey = process.env["PUB_KEY"]!;
   const xrpSecretKey = process.env["SECRET_KEY"]!;
@@ -30,7 +31,7 @@ describe("Xrp Api", () => {
   describe("listOperations", () => {
     it("returns a list regarding address parameter", async () => {
       // When
-      const [tx, _] = await module.listOperations(address, { limit: 200 });
+      const [tx, _] = await module.listOperations(address, { minHeight: 200 });
 
       // Then
       expect(tx.length).toBe(200);
@@ -42,15 +43,20 @@ describe("Xrp Api", () => {
       });
     });
 
-    it("returns paginated operations", async () => {
+    it("returns all operations", async () => {
       // When
-      const [tx, idx] = await module.listOperations(address, { limit: 200 });
-      const [tx2, _] = await module.listOperations(address, { limit: 200, start: idx });
-      tx.push(...tx2);
-
+      const [tx, _] = await module.listOperations(bigAddress, { minHeight: 0 });
       // Then
       const checkSet = new Set(tx.map(elt => elt.hash));
       expect(checkSet.size).toEqual(tx.length);
+      // the first transaction is returned
+      expect(tx[0].block.height).toEqual(73126713);
+      expect(tx[0].hash.toUpperCase).toEqual(
+        "0FC3792449E5B1E431D45E3606017D10EC1FECC8EDF988A98E36B8FE0C33ACAE",
+      );
+      // 200 is the default XRP explorer hard limit,
+      // so here we are checking that this limit is bypassed
+      expect(tx.length).toBeGreaterThan(200);
     });
   });
 
@@ -92,6 +98,8 @@ describe("Xrp Api", () => {
         recipient: "rKRtUG15iBsCQRgrkeUEg5oX4Ae2zWZ89z",
         amount: BigInt(10),
         fee: BigInt(1),
+        memos: [{ data: "01", format: "02", type: "03" }],
+        destinationTag: 123,
       });
 
       // Then

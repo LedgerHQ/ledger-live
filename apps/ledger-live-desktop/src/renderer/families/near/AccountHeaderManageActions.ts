@@ -17,7 +17,7 @@ const AccountHeaderActions: NearFamily["accountHeaderManageActions"] = ({
   const mainAccount = getMainAccount(account, parentAccount);
   const { nearResources } = mainAccount;
   const stakingEnabled = canStake(mainAccount);
-  const hasStakingPositions = nearResources.stakingPositions.length > 0;
+  const hasStakingPositions = nearResources?.stakingPositions.length > 0;
 
   const onClick = useCallback(() => {
     if (!stakingEnabled) {

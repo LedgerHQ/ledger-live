@@ -49,7 +49,7 @@ function AmountField({ account, status, field }: FieldComponentProps) {
       label={field.label}
       unit={unit}
       value={status.amount}
-      testID="send-validation-amount"
+      testID="device-validation-amount"
     />
   );
 }
@@ -65,7 +65,7 @@ function FeesField({ account, parentAccount, status, field }: FieldComponentProp
 function AddressField({ field }: FieldComponentProps) {
   invariant(field.type === "address", "AddressField invalid");
   return (
-    <TextValueField label={field.label} value={field.address} testID="send-validation-address" />
+    <TextValueField label={field.label} value={field.address} testID="device-validation-address" />
   );
 }
 
@@ -73,7 +73,13 @@ function AddressField({ field }: FieldComponentProps) {
 // in case we want specific styles for addresses.
 function TextField({ field }: FieldComponentProps) {
   invariant(field.type === "text", "TextField invalid");
-  return <TextValueField label={field.label} value={field.value} />;
+  return (
+    <TextValueField
+      label={field.label}
+      value={field.value}
+      testID={"device-validation-" + field.label.toLowerCase().replace(/\s+/g, "-")}
+    />
+  );
 }
 
 const commonFieldComponents: Record<string, FieldComponent> = {
@@ -96,6 +102,7 @@ type SubComponentCommonProps = {
   parentAccount?: Account | null | undefined;
   transaction: Transaction;
   status: TransactionStatus;
+  device: Device;
 };
 
 export default function ValidateOnDevice({
@@ -174,6 +181,7 @@ export default function ValidateOnDevice({
           flexGrow: 1,
           justifyContent: "center",
         }}
+        testID="device-validation-scroll-view"
       >
         <Flex alignItems="center">
           <AnimationContainer>
@@ -188,6 +196,7 @@ export default function ValidateOnDevice({
               parentAccount={parentAccount}
               transaction={transaction}
               status={status}
+              device={device}
             />
           ) : (
             <TitleText>{titleWording}</TitleText>
@@ -223,6 +232,7 @@ export default function ValidateOnDevice({
                 transaction={transaction}
                 recipientWording={recipientWording}
                 status={status}
+                device={device}
               />
             ) : null}
           </DataRowsContainer>

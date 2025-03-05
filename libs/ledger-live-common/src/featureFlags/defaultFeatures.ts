@@ -87,6 +87,8 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyMantra: DEFAULT_FEATURE,
   currencyXion: DEFAULT_FEATURE,
   currencyZenrock: DEFAULT_FEATURE,
+  currencySonicBlaze: DEFAULT_FEATURE,
+  currencySonic: DEFAULT_FEATURE,
 };
 
 /**
@@ -154,9 +156,7 @@ export const DEFAULT_FEATURES: Features = {
       bannerSubscriptionNotification: false,
       account: {
         homeURI:
-          "ledgerlive://recover/protect-simu?redirectTo=account&source=lld-sidebar-navigation&ajs_recover_source=lld-sidebar-navigation&ajs_recover_campaign=recover-launch",
-        loginURI:
-          "ledgerlive://recover/protect-simu?redirectTo=login&source=lld-welcome-login&ajs_recover_source=lld-welcome-login&ajs_recover_campaign=recover-launch",
+          "ledgerlive://recover/protect-simu?source=lld-sidebar-navigation&ajs_recover_source=lld-sidebar-navigation&ajs_recover_campaign=recover-launch",
       },
       compatibleDevices: [],
       discoverTheBenefitsLink: "https://www.ledger.com/recover",
@@ -306,9 +306,7 @@ export const DEFAULT_FEATURES: Features = {
       compatibleDevices: [],
       account: {
         homeURI:
-          "ledgerlive://recover/protect-simu?redirectTo=account&source=llm-myledger-access-card&ajs_prop_source=llm-myledger-access-card&ajs_prop_campaign=recover-launch",
-        loginURI:
-          "ledgerlive://recover/protect-simu?redirectTo=login&source=llm-myledger-access-card&ajs_prop_source=llm-myledger-access-card&ajs_prop_campaign=recover-launch",
+          "ledgerlive://recover/protect-simu?source=llm-myledger-access-card&ajs_prop_source=llm-myledger-access-card&ajs_prop_campaign=recover-launch",
       },
       managerStatesData: {
         NEW: {
@@ -497,6 +495,8 @@ export const DEFAULT_FEATURES: Features = {
   web3hub: DEFAULT_FEATURE,
   llmMarketQuickActions: DEFAULT_FEATURE,
   spamFilteringTx: DEFAULT_FEATURE,
+  lldSpamFilteringTx: DEFAULT_FEATURE,
+  llmSpamFilteringTx: DEFAULT_FEATURE,
   llmMemoTag: DEFAULT_FEATURE,
   lldMemoTag: DEFAULT_FEATURE,
   ldmkTransport: {
@@ -505,7 +505,10 @@ export const DEFAULT_FEATURES: Features = {
       warningVisible: true,
     },
   },
-  llMevProtection: DEFAULT_FEATURE,
+  llMevProtection: {
+    ...DEFAULT_FEATURE,
+    params: { link: null },
+  },
   llmNetworkBasedAddAccountFlow: DEFAULT_FEATURE,
   llCounterValueGranularitiesRates: {
     ...DEFAULT_FEATURE,
@@ -517,6 +520,48 @@ export const DEFAULT_FEATURES: Features = {
   llmRebornLP: { ...DEFAULT_FEATURE, params: { variant: ABTestingVariants.variantA } },
   llmRebornFlex: DEFAULT_FEATURE,
   llmAccountListUI: DEFAULT_FEATURE,
+  llmLedgerSyncEntryPoints: {
+    ...DEFAULT_FEATURE,
+    params: {
+      manager: true,
+      accounts: true,
+      settings: true,
+    },
+  },
+  lldLedgerSyncEntryPoints: {
+    ...DEFAULT_FEATURE,
+    params: {
+      manager: true,
+      accounts: true,
+      settings: true,
+      onboarding: true,
+    },
+  },
+  lldNanoSUpsellBanners: {
+    ...DEFAULT_FEATURE,
+    params: {
+      opted_in: {
+        manager: true,
+        accounts: true,
+        notification_center: true,
+        img: "", // TODO
+        link: "", // TODO
+        learn_more: "", // TODO
+        "%": 10,
+      },
+      opted_out: {
+        manager: true,
+        accounts: true,
+        notification_center: true,
+        portfolio: true,
+        img: "", // TODO
+        link: "", // TODO
+        learn_more: "", // TODO
+        "%": 10,
+      },
+    },
+  },
+  llmThai: DEFAULT_FEATURE,
 };
 
 // Firebase SDK treat JSON values as strings

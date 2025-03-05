@@ -28,6 +28,7 @@ import MockAppUpdate from "./MockAppUpdate";
 import EnableAnalyticsConsole from "./EnableAnalyticsConsole";
 import BrazeTools from "./BrazeTools";
 import { RecoverUpsellRow } from "./RecoverUpsellRow";
+import ResetHiddenCollections from "./NftsTools";
 
 const Default = () => {
   const { t } = useTranslation();
@@ -110,8 +111,13 @@ const Default = () => {
         <WalletSyncTester />
       </FeatureToggle>
 
-      <SimpleHashTools />
+      <FeatureToggle featureId="nftsFromSimplehash">
+        <SimpleHashTools />
+      </FeatureToggle>
+
       <BrazeTools />
+
+      <ResetHiddenCollections />
 
       {__DEV__ && (
         <Row

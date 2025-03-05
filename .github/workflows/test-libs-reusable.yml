@@ -23,7 +23,7 @@ jobs:
   test-libraries:
     name: "Test Libraries"
     env:
-      NODE_OPTIONS: "--max-old-space-size=8192"
+      NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
       CI_OS: ubuntu-22.04
 
@@ -37,6 +37,7 @@ jobs:
         id: setup-caches
         with:
           skip-turbo-cache: "false"
+          install-proto: true
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}

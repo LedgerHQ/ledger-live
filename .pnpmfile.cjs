@@ -64,7 +64,7 @@ function readPackage(pkg, context) {
       }),
       /* @celo/* packages */
       addDependencies("@celo/connect", {
-        "web3": pkg.peerDependencies?.web3 ?? "1.10",
+        web3: pkg.peerDependencies?.web3 ?? "1.10",
       }),
       /*  @cosmjs/* packages */
       addDependencies("@cosmjs/proto-signing", {
@@ -164,6 +164,7 @@ function readPackage(pkg, context) {
       addDependencies("@sentry/react-native", {
         tslib: "*",
         promise: "*",
+        metro: "*",
       }),
       addDependencies("react-native-text-input-mask", {
         tslib: "*",

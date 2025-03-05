@@ -78,7 +78,10 @@ const ActivationFlow = ({
         return (
           <>
             <TrackScreen category={AnalyticsPage.ActivateLedgerSync} />
-            <Activation onSyncMethodPress={navigateToChooseSyncMethod} />
+            <Activation
+              onSyncMethodPress={onCreateKey}
+              navigateToChooseSyncMethod={navigateToChooseSyncMethod}
+            />
           </>
         );
       case Steps.ChooseSyncMethod:

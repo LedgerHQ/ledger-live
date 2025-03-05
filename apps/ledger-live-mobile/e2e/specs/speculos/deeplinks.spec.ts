@@ -7,8 +7,8 @@ const nanoApp = AppInfos.ETHEREUM;
 
 const ethereumLong = "ethereum";
 const bitcoinLong = "bitcoin";
-const arbitrumLong = "arbitrum";
-const bobaLong = "boba";
+const zksync = "zksync";
+const scroll = "scroll";
 
 $TmsLink("B2CQA-1837");
 describe("DeepLinks Tests", () => {
@@ -97,6 +97,6 @@ describe("DeepLinks Tests", () => {
     await app.portfolio.openViaDeeplink();
     await app.portfolio.waitForPortfolioPageToLoad();
     await app.receive.receiveViaDeeplink(ethereumLong);
-    await app.receive.expectSecondStepNetworks([ethereumLong, arbitrumLong, bobaLong]);
+    await app.receive.expectSecondStepNetworks([ethereumLong, zksync, scroll]);
   });
 });

@@ -3,12 +3,11 @@
     "compilerOptions": {
       "declaration": true,
       "declarationMap": true,
-      "module": "commonjs",
       "downlevelIteration": true,
       "lib": ["es2020", "dom"],
-      "outDir": "lib",
-      "exactOptionalPropertyTypes": true
+      "exactOptionalPropertyTypes": true,
+      "module": "esnext",
+      "moduleResolution": "bundler",
     },
-    "include": ["src/**/*", "deviceTransactionConfig.ts", "transaction.ts"]
+    "include": ["src/**/*"]
   }
-  

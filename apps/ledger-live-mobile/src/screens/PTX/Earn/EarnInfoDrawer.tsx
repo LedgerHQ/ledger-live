@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Linking } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { useTheme } from "styled-components/native";
-import { setEarnInfoModal } from "~/actions/earn";
+import { makeSetEarnInfoModalAction } from "~/actions/earn";
 import { Track } from "~/analytics";
 import Circle from "~/components/Circle";
 import QueuedDrawer from "~/components/QueuedDrawer";
@@ -18,7 +18,7 @@ export function EarnInfoDrawer() {
   const openModal = useCallback(() => setModalOpened(true), []);
 
   const closeModal = useCallback(async () => {
-    await dispatch(setEarnInfoModal({}));
+    await dispatch(makeSetEarnInfoModalAction(undefined));
     await setModalOpened(false);
   }, [dispatch]);
   const { message, messageTitle, learnMoreLink } = useSelector(earnInfoModalSelector);

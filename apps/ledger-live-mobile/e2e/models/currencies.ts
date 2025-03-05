@@ -13,6 +13,7 @@ import {
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { AccountLike } from "@ledgerhq/types-live";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
+import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 
 export const COSMOS_MIN_SAFE = new BigNumber(100000); // 100000 uAtom
 export const COSMOS_MIN_FEES = new BigNumber(6000);
@@ -32,6 +33,8 @@ export const formattedAmount = (
 
 export const getAccountUnit = (account: AccountLike) => getAccountCurrency(account).units[0];
 export const getAccountName = (account: AccountLike) => getDefaultAccountName(account);
+export const getCurrencyManagerApp = (currencyId: string) =>
+  findCryptoCurrencyById(currencyId)?.managerAppName.toLowerCase().split(" ")[0];
 
 export function initTestAccounts(currencyIds: string[]) {
   setSupportedCurrencies(currencyIds as CryptoCurrencyId[]);
@@ -39,4 +42,3 @@ export function initTestAccounts(currencyIds: string[]) {
     genAccount("mock" + currencyId, { currency: getCryptoCurrencyById(currencyId) }),
   );
 }
-export const capitalize = (s: string) => s && s[0].toUpperCase() + s.slice(1);

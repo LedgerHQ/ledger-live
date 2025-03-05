@@ -1080,33 +1080,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerViews: [],
   },
-  elrond: {
-    type: "CryptoCurrency",
-    id: "elrond",
-    coinType: CoinType.MULTIVERSX,
-    name: "MultiversX",
-    managerAppName: "MultiversX",
-    ticker: "EGLD",
-    scheme: "elrond",
-    color: "#23F7DD",
-    family: "elrond",
-    blockAvgTime: 6,
-    deviceTicker: "EGLD",
-    units: [
-      {
-        name: "EGLD",
-        code: "EGLD",
-        magnitude: 18,
-      },
-    ],
-    explorerViews: [
-      {
-        tx: "https://explorer.elrond.com/transactions/$hash",
-        address: "https://explorer.elrond.com/accounts/$address",
-      },
-    ],
-    keywords: ["elrond"],
-  },
   eos: {
     type: "CryptoCurrency",
     id: "eos",
@@ -1792,6 +1765,34 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
     keywords: ["xmr", "monero"],
+  },
+  elrond: {
+    type: "CryptoCurrency",
+    // id: "multiversx",
+    id: "elrond",
+    coinType: CoinType.MULTIVERSX,
+    name: "MultiversX",
+    managerAppName: "MultiversX",
+    ticker: "EGLD",
+    scheme: "multiversx",
+    color: "#23F7DD",
+    family: "multiversx",
+    blockAvgTime: 6,
+    deviceTicker: "EGLD",
+    units: [
+      {
+        name: "EGLD",
+        code: "EGLD",
+        magnitude: 18,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://explorer.multiversx.com/transactions/$hash",
+        address: "https://explorer.multiversx.com/accounts/$address",
+      },
+    ],
+    keywords: ["multiversx"],
   },
   musicoin: {
     type: "CryptoCurrency",
@@ -2836,7 +2837,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       {
         name: "TOMO",
         code: "TOMO",
-        magnitude: 8,
+        magnitude: 18,
       },
     ],
     explorerViews: [
@@ -3254,7 +3255,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     deviceTicker: "ETH",
     scheme: "eth_sepolia",
     color: "#ff0000",
-    units: ethereumUnits("ether", "ETH").map(makeTestnetUnit),
+    units: ethereumUnits("ether", "ETH"),
     isTestnetFor: "ethereum",
     disableCountervalue: true,
     family: "evm",
@@ -3280,7 +3281,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     deviceTicker: "ETH",
     scheme: "eth_holesky",
     color: "#00ff00",
-    units: ethereumUnits("ether", "ETH").map(makeTestnetUnit),
+    units: ethereumUnits("ether", "ETH"),
     isTestnetFor: "ethereum",
     disableCountervalue: true,
     family: "evm",
@@ -3535,6 +3536,51 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   // ethereum nanoapp currencies
   // Light Integrations are at the end of the list until we figure out a way to fix the ticker/managerApp collisions
+  sonic: {
+    type: "CryptoCurrency",
+    id: "sonic",
+    coinType: CoinType.ETH,
+    name: "Sonic",
+    managerAppName: "Ethereum",
+    ticker: "S",
+    scheme: "sonic",
+    color: "#FFFFFF",
+    family: "evm",
+    units: ethereumUnits("S", "S"),
+    ethereumLikeInfo: {
+      chainId: 146,
+    },
+    explorerViews: [
+      {
+        tx: "https://sonicscan.org/tx/$hash",
+        address: "https://sonicscan.org/address/$address",
+        token: "https://sonicscan.org/token/$contractAddress?a=$address",
+      },
+    ],
+  },
+  sonic_blaze: {
+    type: "CryptoCurrency",
+    id: "sonic_blaze",
+    isTestnetFor: "sonic",
+    coinType: CoinType.ETH,
+    name: "Sonic Blaze",
+    managerAppName: "Ethereum",
+    ticker: "S",
+    scheme: "sonic_blaze",
+    color: "#FFFFFF",
+    family: "evm",
+    units: ethereumUnits("S", "S"),
+    ethereumLikeInfo: {
+      chainId: 57054,
+    },
+    explorerViews: [
+      {
+        tx: "https://testnet.sonicscan.org/tx/$hash",
+        address: "https://testnet.sonicscan.org/address/$address",
+        token: "https://testnet.sonicscan.org/token/$contractAddress?a=$address",
+      },
+    ],
+  },
   arbitrum: {
     type: "CryptoCurrency",
     id: "arbitrum",
@@ -3568,7 +3614,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     scheme: "arbitrum_sepolia",
     color: "#ff0000",
     family: "evm",
-    units: ethereumUnits("ether", "ETH").map(makeTestnetUnit),
+    units: ethereumUnits("ether", "ETH"),
     isTestnetFor: "arbitrum",
     disableCountervalue: true,
     ethereumLikeInfo: {
@@ -3780,7 +3826,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     scheme: "optimism_sepolia",
     color: "#FF0000",
     family: "evm",
-    units: ethereumUnits("ether", "ETH").map(makeTestnetUnit),
+    units: ethereumUnits("ether", "ETH"),
     isTestnetFor: "optimism",
     ethereumLikeInfo: {
       chainId: 11155420,
@@ -4002,7 +4048,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     scheme: "polygon_zk_evm_testnet",
     color: "#E58247",
     family: "evm",
-    units: ethereumUnits("ETH", "ETH").map(makeTestnetUnit),
+    units: ethereumUnits("ETH", "ETH"),
     disableCountervalue: true,
     isTestnetFor: "polygon_zk_evm",
     ethereumLikeInfo: {
@@ -4049,7 +4095,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     scheme: "base_sepolia",
     color: "#FF0000",
     family: "evm",
-    units: ethereumUnits("ETH", "ETH").map(makeTestnetUnit),
+    units: ethereumUnits("ETH", "ETH"),
     disableCountervalue: true,
     isTestnetFor: "base",
     ethereumLikeInfo: {
@@ -4163,7 +4209,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     scheme: "linea_sepolia",
     color: "#ff0000",
     family: "evm",
-    units: ethereumUnits("ETH", "ETH").map(makeTestnetUnit),
+    units: ethereumUnits("ETH", "ETH"),
     disableCountervalue: false,
     isTestnetFor: "linea",
     ethereumLikeInfo: {
@@ -4210,7 +4256,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     scheme: "blast_sepolia",
     color: "#ff0000",
     family: "evm",
-    units: ethereumUnits("ETH", "ETH").map(makeTestnetUnit),
+    units: ethereumUnits("ETH", "ETH"),
     disableCountervalue: false,
     isTestnetFor: "blast",
     ethereumLikeInfo: {
@@ -4257,7 +4303,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     scheme: "scroll_sepolia",
     color: "#ff0000",
     family: "evm",
-    units: ethereumUnits("ETH", "ETH").map(makeTestnetUnit),
+    units: ethereumUnits("ETH", "ETH"),
     disableCountervalue: false,
     isTestnetFor: "scroll",
     ethereumLikeInfo: {
@@ -4325,7 +4371,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     scheme: "zksync_sepolia",
     color: "#ff0000",
     family: "evm",
-    units: ethereumUnits("ETH", "ETH").map(makeTestnetUnit),
+    units: ethereumUnits("ETH", "ETH"),
     ethereumLikeInfo: {
       chainId: 300,
     },

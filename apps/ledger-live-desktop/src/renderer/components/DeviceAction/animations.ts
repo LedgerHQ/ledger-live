@@ -32,72 +32,10 @@ import NANO_S_DARK_firmwareUpdating from "~/renderer/animations/nanoS/2FirmwareU
 import NANO_S_LIGHT_installLoading from "~/renderer/animations/nanoS/8InstallLoading/light.json";
 // @ts-ignore
 import NANO_S_DARK_installLoading from "~/renderer/animations/nanoS/8InstallLoading/dark.json";
-
-// NANO X
-// @ts-ignore
-import NANO_X_LIGHT_plugAndPinCode from "~/renderer/animations/nanoX/1PlugAndPinCode/light.json";
-// @ts-ignore
-import NANO_X_DARK_plugAndPinCode from "~/renderer/animations/nanoX/1PlugAndPinCode/dark.json";
-// @ts-ignore
-import NANO_X_LIGHT_enterPinCode from "~/renderer/animations/nanoX/3EnterPinCode/light.json";
-// @ts-ignore
-import NANO_X_DARK_enterPinCode from "~/renderer/animations/nanoX/3EnterPinCode/dark.json";
-// @ts-ignore
-import NANO_X_LIGHT_quitApp from "~/renderer/animations/nanoX/4QuitApp/light.json";
-// @ts-ignore
-import NANO_X_DARK_quitApp from "~/renderer/animations/nanoX/4QuitApp/dark.json";
-// @ts-ignore
-import NANO_X_LIGHT_openApp from "~/renderer/animations/nanoX/6OpenApp/light.json";
-// @ts-ignore
-import NANO_X_DARK_openApp from "~/renderer/animations/nanoX/6OpenApp/dark.json";
-// @ts-ignore
-import NANO_X_LIGHT_validate from "~/renderer/animations/nanoX/7Validate/light.json";
-// @ts-ignore
-import NANO_X_DARK_validate from "~/renderer/animations/nanoX/7Validate/dark.json";
-// @ts-ignore
-import NANO_X_LIGHT_firmwareUpdating from "~/renderer/animations/nanoX/2FirmwareUpdating/light.json";
-// @ts-ignore
-import NANO_X_DARK_firmwareUpdating from "~/renderer/animations/nanoX/2FirmwareUpdating/dark.json";
-// @ts-ignore
-import NANO_X_LIGHT_installLoading from "~/renderer/animations/nanoX/8InstallLoading/light.json";
-// @ts-ignore
-import NANO_X_DARK_installLoading from "~/renderer/animations/nanoX/8InstallLoading/dark.json";
 // @ts-ignore
 import NANO_X_LIGHT_recoverWithProtect from "~/renderer/animations/nanoX/RecoverWithProtect/light.json";
 // @ts-ignore
 import NANO_X_DARK_recoverWithProtect from "~/renderer/animations/nanoX/RecoverWithProtect/dark.json";
-// NANO SP
-// @ts-ignore
-import NANO_SP_LIGHT_plugAndPinCode from "~/renderer/animations/nanoSP/1PlugAndPinCode/light.json";
-// @ts-ignore
-import NANO_SP_DARK_plugAndPinCode from "~/renderer/animations/nanoSP/1PlugAndPinCode/dark.json";
-// @ts-ignore
-import NANO_SP_LIGHT_enterPinCode from "~/renderer/animations/nanoSP/3EnterPinCode/light.json";
-// @ts-ignore
-import NANO_SP_DARK_enterPinCode from "~/renderer/animations/nanoSP/3EnterPinCode/dark.json";
-// @ts-ignore
-import NANO_SP_LIGHT_quitApp from "~/renderer/animations/nanoSP/4QuitApp/light.json";
-// @ts-ignore
-import NANO_SP_DARK_quitApp from "~/renderer/animations/nanoSP/4QuitApp/dark.json";
-// @ts-ignore
-import NANO_SP_LIGHT_openApp from "~/renderer/animations/nanoSP/6OpenApp/light.json";
-// @ts-ignore
-import NANO_SP_DARK_openApp from "~/renderer/animations/nanoSP/6OpenApp/dark.json";
-// @ts-ignore
-import NANO_SP_LIGHT_validate from "~/renderer/animations/nanoSP/7Validate/light.json";
-// @ts-ignore
-import NANO_SP_DARK_validate from "~/renderer/animations/nanoSP/7Validate/dark.json";
-// @ts-ignore
-import NANO_SP_LIGHT_firmwareUpdating from "~/renderer/animations/nanoSP/2FirmwareUpdating/light.json";
-// @ts-ignore
-import NANO_SP_DARK_firmwareUpdating from "~/renderer/animations/nanoSP/2FirmwareUpdating/dark.json";
-// @ts-ignore
-import NANO_SP_LIGHT_installLoading from "~/renderer/animations/nanoSP/8InstallLoading/light.json";
-// @ts-ignore
-import NANO_SP_DARK_installLoading from "~/renderer/animations/nanoSP/8InstallLoading/dark.json";
-
-// NANO BLUE
-
 // @ts-ignore
 import BLUE_LIGHT_plugAndPinCode from "~/renderer/animations/blue/1PlugAndPinCode/data.json";
 // @ts-ignore
@@ -110,49 +48,86 @@ import BLUE_LIGHT_allowManager from "~/renderer/animations/blue/5AllowManager/da
 import BLUE_LIGHT_openApp from "~/renderer/animations/blue/6OpenApp/data.json";
 // @ts-ignore
 import BLUE_LIGHT_validate from "~/renderer/animations/blue/7Validate/data.json";
-
-// STAX
-
-// @ts-ignore
-import STAX_enterPin from "~/renderer/animations/stax/enterPIN.json";
-// @ts-ignore
-import STAX_verifyAddress from "~/renderer/animations/stax/verifyAddress.json";
-// @ts-ignore
-import STAX_signTransaction from "~/renderer/animations/stax/signTransaction.json";
-// @ts-ignore
-import STAX_allowConnection from "~/renderer/animations/stax/allowConnection.json";
-// @ts-ignore
-import STAX_confirmLockscreen from "~/renderer/animations/stax/confirmLockscreen.json";
 // @ts-ignore
 import STAX_USB_connection_success from "~/renderer/animations/stax/USBConnectionSuccess.json";
 // @ts-ignore
-import STAX_plug_and_pin from "~/renderer/animations/stax/USBConnectionAndPin.json";
+import STAX_confirmLockscreen from "~/renderer/animations/stax/confirmLockscreen.json";
+
+/**
+ * ⬆️ The imports above are old assets used somewhere and no new assets to replace them ⬆️
+ */
+
+/****** ⬇️ NEW ASSETS START @13.12.2024 ⬇️ *****/
 
 // @ts-ignore
-import EUROPA_LIGHT_enterPin from "~/renderer/animations/europa/light/enterPIN.json";
+import STAX_DARK_PIN from "~/renderer/animations/stax/dark/pin.json";
+// // @ts-ignore
+// import STAX_DARK_PAIRING from "~/renderer/animations/stax/dark/pairing.json";
 // @ts-ignore
-import EUROPA_LIGHT_signTransaction from "~/renderer/animations/europa/light/signTransaction.json";
+import STAX_DARK_PAIRED from "~/renderer/animations/stax/dark/paired.json";
 // @ts-ignore
-import EUROPA_LIGHT_allowConnection from "~/renderer/animations/europa/light/allowConnection.json";
+import STAX_DARK_CONTINUE from "~/renderer/animations/stax/dark/continue.json";
 // @ts-ignore
-import EUROPA_LIGHT_confirmLockscreen from "~/renderer/animations/europa/light/confirmLockscreen.json";
+import STAX_LIGHT_PIN from "~/renderer/animations/stax/light/pin.json";
+// // @ts-ignore
+// import STAX_LIGHT_PAIRING from "~/renderer/animations/stax/light/pairing.json";
 // @ts-ignore
-import EUROPA_LIGHT_USB_connection_success from "~/renderer/animations/europa/light/connectionSuccess.json";
+import STAX_LIGHT_PAIRED from "~/renderer/animations/stax/light/paired.json";
+// @ts-ignore
+import STAX_LIGHT_CONTINUE from "~/renderer/animations/stax/light/continue.json";
 
 // @ts-ignore
-import EUROPA_DARK_enterPin from "~/renderer/animations/europa/dark/enterPIN.json";
+import FLEX_DARK_PIN from "~/renderer/animations/flex/dark/pin.json";
+// // @ts-ignore
+// import FLEX_DARK_PAIRING from "~/renderer/animations/flex/dark/pairing.json";
 // @ts-ignore
-import EUROPA_DARK_signTransaction from "~/renderer/animations/europa/dark/signTransaction.json";
+import FLEX_DARK_PAIRED from "~/renderer/animations/flex/dark/paired.json";
 // @ts-ignore
-import EUROPA_DARK_allowConnection from "~/renderer/animations/europa/dark/allowConnection.json";
+import FLEX_DARK_CONTINUE from "~/renderer/animations/flex/dark/continue.json";
 // @ts-ignore
-import EUROPA_DARK_confirmLockscreen from "~/renderer/animations/europa/dark/confirmLockscreen.json";
+import FLEX_LIGHT_PIN from "~/renderer/animations/flex/light/pin.json";
+// // @ts-ignore
+// import FLEX_LIGHT_PAIRING from "~/renderer/animations/flex/light/pairing.json";
 // @ts-ignore
-import EUROPA_DARK_USB_connection_success from "~/renderer/animations/europa/dark/connectionSuccess.json";
+import FLEX_LIGHT_PAIRED from "~/renderer/animations/flex/light/paired.json";
 // @ts-ignore
-import EUROPA_DARK_onboarding_success from "~/renderer/animations/europa/dark/onboardingSuccess.json";
+import FLEX_LIGHT_CONTINUE from "~/renderer/animations/flex/light/continue.json";
+
 // @ts-ignore
-import EUROPA_LIGHT_onboarding_success from "~/renderer/animations/europa/light/onboardingSuccess.json";
+import NANOX_DARK_PIN from "~/renderer/animations/nanoX/dark/pin.json";
+// // @ts-ignore
+// import NANOX_DARK_PAIRING from "~/renderer/animations/nanoX/dark/pairing.json";
+// @ts-ignore
+import NANOX_DARK_PAIRED from "~/renderer/animations/nanoX/dark/paired.json";
+// @ts-ignore
+import NANOX_DARK_CONTINUE from "~/renderer/animations/nanoX/dark/continue.json";
+// @ts-ignore
+import NANOX_LIGHT_PIN from "~/renderer/animations/nanoX/light/pin.json";
+// // @ts-ignore
+// import NANOX_LIGHT_PAIRING from "~/renderer/animations/nanoX/light/pairing.json";
+// @ts-ignore
+import NANOX_LIGHT_PAIRED from "~/renderer/animations/nanoX/light/paired.json";
+// @ts-ignore
+import NANOX_LIGHT_CONTINUE from "~/renderer/animations/nanoX/light/continue.json";
+
+// @ts-ignore
+import NANOSP_DARK_PIN from "~/renderer/animations/nanoSP/dark/pin.json";
+// @ts-ignore
+import NANOSP_DARK_CONTINUE from "~/renderer/animations/nanoSP/dark/continue.json";
+// @ts-ignore
+import NANOSP_LIGHT_PIN from "~/renderer/animations/nanoSP/light/pin.json";
+// @ts-ignore
+import NANOSP_LIGHT_CONTINUE from "~/renderer/animations/nanoSP/light/continue.json";
+
+// Flex onboarding success animation
+import FLEX_LIGHT_ONBOARDING_SUCCESS from "~/renderer/animations/flex/light/onboardingSuccess.json";
+import FLEX_DARK_ONBOARDING_SUCCESS from "~/renderer/animations/flex/dark/onboardingSuccess.json";
+
+import FLEX_LIGHT_CONFIRM_LOCKSCREEN from "~/renderer/animations/flex/light/confirmLockscreen.json";
+import FLEX_DARK_CONFIRM_LOCKSCREEN from "~/renderer/animations/flex/dark/confirmLockscreen.json";
+
+import STAX_LIGHT_CONFIRM_LOCKSCREEN from "~/renderer/animations/stax/light/frame.json";
+import STAX_DARK_CONFIRM_LOCKSCREEN from "~/renderer/animations/stax/dark/frame.json";
 
 /* eslint-enable camelcase */
 type ThemedAnimation = Record<Theme["theme"], Record<string, unknown>>;
@@ -225,209 +200,211 @@ const nanoS: DeviceAnimations = {
 
 const nanoX: DeviceAnimations = {
   plugAndPinCode: {
-    light: NANO_X_LIGHT_plugAndPinCode,
-    dark: NANO_X_DARK_plugAndPinCode,
+    light: NANOX_LIGHT_PIN,
+    dark: NANOX_DARK_PIN,
   },
   enterPinCode: {
-    light: NANO_X_LIGHT_enterPinCode,
-    dark: NANO_X_DARK_enterPinCode,
+    light: NANOX_LIGHT_PIN,
+    dark: NANOX_DARK_PIN,
   },
   quitApp: {
-    light: NANO_X_LIGHT_quitApp,
-    dark: NANO_X_DARK_quitApp,
+    light: NANOX_LIGHT_CONTINUE,
+    dark: NANOX_DARK_CONTINUE,
   },
   allowManager: {
-    light: NANO_X_LIGHT_validate,
-    dark: NANO_X_DARK_validate,
+    light: NANOX_LIGHT_CONTINUE,
+    dark: NANOX_DARK_CONTINUE,
   },
   openApp: {
-    light: NANO_X_LIGHT_openApp,
-    dark: NANO_X_DARK_openApp,
+    light: NANOX_LIGHT_CONTINUE,
+    dark: NANOX_DARK_CONTINUE,
   },
   verify: {
-    light: NANO_X_LIGHT_validate,
-    dark: NANO_X_DARK_validate,
+    light: NANOX_LIGHT_CONTINUE,
+    dark: NANOX_DARK_CONTINUE,
   },
   sign: {
-    light: NANO_X_LIGHT_validate,
-    dark: NANO_X_DARK_validate,
+    light: NANOX_LIGHT_CONTINUE,
+    dark: NANOX_DARK_CONTINUE,
   },
   firmwareUpdating: {
-    light: NANO_X_LIGHT_firmwareUpdating,
-    dark: NANO_X_DARK_firmwareUpdating,
+    light: NANOX_LIGHT_PIN,
+    dark: NANOX_DARK_PIN,
   },
   installLoading: {
-    light: NANO_X_LIGHT_installLoading,
-    dark: NANO_X_DARK_installLoading,
+    light: NANOX_LIGHT_CONTINUE,
+    dark: NANOX_DARK_CONTINUE,
   },
-  confirmLockscreen: {
-    light: STAX_confirmLockscreen,
-    dark: STAX_confirmLockscreen,
-  },
+  // confirmLockscreen: {
+  //   light: NANOX_LIGHT_CONTINUE,
+  //   dark: NANOX_DARK_CONTINUE,
+  // },
   recoverWithProtect: {
-    light: NANO_X_LIGHT_recoverWithProtect,
-    dark: NANO_X_DARK_recoverWithProtect,
+    light: NANOX_LIGHT_PAIRED,
+    dark: NANOX_DARK_PAIRED,
   },
   connectionSuccess: {
-    light: STAX_USB_connection_success,
-    dark: STAX_USB_connection_success,
+    light: NANOX_LIGHT_PAIRED,
+    dark: NANOX_DARK_PAIRED,
   },
 };
 
 const nanoSP: DeviceAnimations = {
   plugAndPinCode: {
-    light: NANO_SP_LIGHT_plugAndPinCode,
-    dark: NANO_SP_DARK_plugAndPinCode,
+    light: NANOSP_LIGHT_PIN,
+    dark: NANOSP_DARK_PIN,
   },
   enterPinCode: {
-    light: NANO_SP_LIGHT_enterPinCode,
-    dark: NANO_SP_DARK_enterPinCode,
+    light: NANOSP_LIGHT_PIN,
+    dark: NANOSP_DARK_PIN,
   },
   quitApp: {
-    light: NANO_SP_LIGHT_quitApp,
-    dark: NANO_SP_DARK_quitApp,
+    light: NANOSP_LIGHT_CONTINUE,
+    dark: NANOSP_DARK_CONTINUE,
   },
   allowManager: {
-    light: NANO_SP_LIGHT_validate,
-    dark: NANO_SP_DARK_validate,
+    light: NANOSP_LIGHT_CONTINUE,
+    dark: NANOSP_DARK_CONTINUE,
   },
   openApp: {
-    light: NANO_SP_LIGHT_openApp,
-    dark: NANO_SP_DARK_openApp,
+    light: NANOSP_LIGHT_CONTINUE,
+    dark: NANOSP_DARK_CONTINUE,
   },
   verify: {
-    light: NANO_SP_LIGHT_validate,
-    dark: NANO_SP_DARK_validate,
+    light: NANOSP_LIGHT_CONTINUE,
+    dark: NANOSP_DARK_CONTINUE,
   },
   sign: {
-    light: NANO_SP_LIGHT_validate,
-    dark: NANO_SP_DARK_validate,
+    light: NANOSP_LIGHT_CONTINUE,
+    dark: NANOSP_DARK_CONTINUE,
   },
   firmwareUpdating: {
-    light: NANO_SP_LIGHT_firmwareUpdating,
-    dark: NANO_SP_DARK_firmwareUpdating,
+    light: NANOSP_LIGHT_PIN,
+    dark: NANOSP_DARK_PIN,
   },
   installLoading: {
-    light: NANO_SP_LIGHT_installLoading,
-    dark: NANO_SP_DARK_installLoading,
+    light: NANOSP_LIGHT_CONTINUE,
+    dark: NANOSP_DARK_CONTINUE,
   },
-  confirmLockscreen: {
-    light: STAX_confirmLockscreen,
-    dark: STAX_confirmLockscreen,
-  },
+  // confirmLockscreen: {
+  //   light: NANOSP_LIGHT_CONTINUE,
+  //   dark: NANOSP_DARK_CONTINUE,
+  // },
   recoverWithProtect: {
-    light: NANO_X_LIGHT_recoverWithProtect,
-    dark: NANO_X_DARK_recoverWithProtect,
+    light: NANOSP_LIGHT_CONTINUE,
+    dark: NANOSP_DARK_CONTINUE,
   },
   connectionSuccess: {
-    light: STAX_USB_connection_success,
-    dark: STAX_USB_connection_success,
+    light: NANOSP_LIGHT_CONTINUE,
+    dark: NANOSP_DARK_CONTINUE,
   },
 };
 
 const stax: DeviceAnimations = {
   plugAndPinCode: {
-    light: STAX_plug_and_pin,
-    dark: STAX_plug_and_pin,
+    light: STAX_LIGHT_PIN,
+    dark: STAX_DARK_PIN,
   },
   enterPinCode: {
-    light: STAX_enterPin,
-    dark: STAX_enterPin,
+    light: STAX_LIGHT_PIN,
+    dark: STAX_DARK_PIN,
   },
   quitApp: {
-    light: STAX_allowConnection,
-    dark: STAX_allowConnection,
+    light: STAX_LIGHT_CONTINUE,
+    dark: STAX_DARK_CONTINUE,
   },
   allowManager: {
-    light: STAX_allowConnection,
-    dark: STAX_allowConnection,
+    light: STAX_LIGHT_CONTINUE,
+    dark: STAX_DARK_CONTINUE,
   },
   openApp: {
-    light: STAX_allowConnection,
-    dark: STAX_allowConnection,
+    light: STAX_LIGHT_CONTINUE,
+    dark: STAX_DARK_CONTINUE,
   },
   verify: {
-    light: STAX_verifyAddress,
-    dark: STAX_verifyAddress,
+    light: STAX_LIGHT_CONTINUE,
+    dark: STAX_DARK_CONTINUE,
   },
   sign: {
-    light: STAX_signTransaction,
-    dark: STAX_signTransaction,
+    light: STAX_LIGHT_CONTINUE,
+    dark: STAX_DARK_CONTINUE,
   },
   firmwareUpdating: {
-    light: STAX_enterPin,
-    dark: STAX_enterPin,
+    light: STAX_LIGHT_PIN,
+    dark: STAX_DARK_PIN,
   },
   installLoading: {
-    light: STAX_allowConnection,
-    dark: STAX_allowConnection,
+    light: STAX_LIGHT_CONTINUE,
+    dark: STAX_DARK_CONTINUE,
   },
   confirmLockscreen: {
-    light: STAX_confirmLockscreen,
-    dark: STAX_confirmLockscreen,
+    light: STAX_LIGHT_CONFIRM_LOCKSCREEN,
+    dark: STAX_DARK_CONFIRM_LOCKSCREEN,
   },
   recoverWithProtect: {
-    light: NANO_X_LIGHT_recoverWithProtect,
-    dark: NANO_X_DARK_recoverWithProtect,
+    light: STAX_LIGHT_PAIRED,
+    dark: STAX_DARK_PAIRED,
   },
   connectionSuccess: {
-    light: STAX_USB_connection_success,
-    dark: STAX_USB_connection_success,
+    light: STAX_LIGHT_PAIRED,
+    dark: STAX_DARK_PAIRED,
   },
 };
 
 const europa: DeviceAnimations<AnimationKey | "onboardingSuccess"> = {
   plugAndPinCode: {
-    light: EUROPA_LIGHT_enterPin,
-    dark: EUROPA_DARK_enterPin,
+    light: FLEX_LIGHT_PIN,
+    dark: FLEX_DARK_PIN,
   },
   enterPinCode: {
-    light: EUROPA_LIGHT_enterPin,
-    dark: EUROPA_DARK_enterPin,
+    light: FLEX_LIGHT_PIN,
+    dark: FLEX_DARK_PIN,
   },
   quitApp: {
-    light: EUROPA_LIGHT_allowConnection,
-    dark: EUROPA_DARK_allowConnection,
+    light: FLEX_LIGHT_CONTINUE,
+    dark: FLEX_DARK_CONTINUE,
   },
   allowManager: {
-    light: EUROPA_LIGHT_allowConnection,
-    dark: EUROPA_DARK_allowConnection,
+    light: FLEX_LIGHT_CONTINUE,
+    dark: FLEX_DARK_CONTINUE,
   },
   openApp: {
-    light: EUROPA_LIGHT_allowConnection,
-    dark: EUROPA_DARK_allowConnection,
+    light: FLEX_LIGHT_CONTINUE,
+    dark: FLEX_DARK_CONTINUE,
   },
   verify: {
-    light: EUROPA_LIGHT_allowConnection,
-    dark: EUROPA_DARK_allowConnection,
+    light: FLEX_LIGHT_CONTINUE,
+    dark: FLEX_DARK_CONTINUE,
   },
   sign: {
-    light: EUROPA_LIGHT_signTransaction,
-    dark: EUROPA_DARK_signTransaction,
+    light: FLEX_LIGHT_CONTINUE,
+    dark: FLEX_DARK_CONTINUE,
   },
   firmwareUpdating: {
-    light: EUROPA_LIGHT_enterPin,
-    dark: EUROPA_DARK_enterPin,
+    light: FLEX_LIGHT_PIN,
+    dark: FLEX_DARK_PIN,
   },
   installLoading: {
-    light: EUROPA_LIGHT_allowConnection,
-    dark: EUROPA_DARK_allowConnection,
+    light: FLEX_LIGHT_CONTINUE,
+    dark: FLEX_DARK_CONTINUE,
   },
+  // Keep
   confirmLockscreen: {
-    light: EUROPA_LIGHT_confirmLockscreen,
-    dark: EUROPA_DARK_confirmLockscreen,
+    light: FLEX_LIGHT_CONFIRM_LOCKSCREEN,
+    dark: FLEX_DARK_CONFIRM_LOCKSCREEN,
   },
   recoverWithProtect: {
-    light: NANO_X_LIGHT_recoverWithProtect,
-    dark: NANO_X_DARK_recoverWithProtect,
+    light: FLEX_LIGHT_PAIRED,
+    dark: FLEX_DARK_PAIRED,
   },
   connectionSuccess: {
-    light: EUROPA_LIGHT_USB_connection_success,
-    dark: EUROPA_DARK_USB_connection_success,
+    light: FLEX_LIGHT_PAIRED,
+    dark: FLEX_DARK_PAIRED,
   },
+  // Keep
   onboardingSuccess: {
-    light: EUROPA_LIGHT_onboarding_success,
-    dark: EUROPA_DARK_onboarding_success,
+    light: FLEX_LIGHT_ONBOARDING_SUCCESS,
+    dark: FLEX_DARK_ONBOARDING_SUCCESS,
   },
 };
 

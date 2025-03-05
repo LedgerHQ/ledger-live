@@ -1,5 +1,45 @@
 # @ledgerhq/cryptoassets
 
+## 13.12.0
+
+### Minor Changes
+
+- [#9119](https://github.com/LedgerHQ/ledger-live/pull/9119) [`da67b55`](https://github.com/LedgerHQ/ledger-live/commit/da67b5511b22553f7e3e089eca2e363a5e3cbffe) Thanks [@qperrot](https://github.com/qperrot)! - Fix ethereum testnet units
+
+## 13.12.0-next.0
+
+### Minor Changes
+
+- [#9119](https://github.com/LedgerHQ/ledger-live/pull/9119) [`da67b55`](https://github.com/LedgerHQ/ledger-live/commit/da67b5511b22553f7e3e089eca2e363a5e3cbffe) Thanks [@qperrot](https://github.com/qperrot)! - Fix ethereum testnet units
+
+## 13.11.0
+
+### Minor Changes
+
+- [#9091](https://github.com/LedgerHQ/ledger-live/pull/9091) [`ff40e9a`](https://github.com/LedgerHQ/ledger-live/commit/ff40e9a00d325e5b46cb069936ba2a5781c601b5) Thanks [@meriadec](https://github.com/meriadec)! - fix(cryptoassets): update TOMO magnitude to 18
+
+## 13.11.0-next.0
+
+### Minor Changes
+
+- [#9091](https://github.com/LedgerHQ/ledger-live/pull/9091) [`ff40e9a`](https://github.com/LedgerHQ/ledger-live/commit/ff40e9a00d325e5b46cb069936ba2a5781c601b5) Thanks [@meriadec](https://github.com/meriadec)! - fix(cryptoassets): update TOMO magnitude to 18
+
+## 13.10.0
+
+### Minor Changes
+
+- [#8119](https://github.com/LedgerHQ/ledger-live/pull/8119) [`41b153a`](https://github.com/LedgerHQ/ledger-live/commit/41b153adb98ce8de3336563694204d83905dba0e) Thanks [@Justkant](https://github.com/Justkant)! - Solana spl tokens support
+
+- [#8934](https://github.com/LedgerHQ/ledger-live/pull/8934) [`9534f17`](https://github.com/LedgerHQ/ledger-live/commit/9534f17247e1472b0fee8b993a83264f4e4ab363) Thanks [@Canestin](https://github.com/Canestin)! - Remove Misleading Casper Token Support in Cryptoassets Data
+
+## 13.10.0-next.0
+
+### Minor Changes
+
+- [#8119](https://github.com/LedgerHQ/ledger-live/pull/8119) [`41b153a`](https://github.com/LedgerHQ/ledger-live/commit/41b153adb98ce8de3336563694204d83905dba0e) Thanks [@Justkant](https://github.com/Justkant)! - Solana spl tokens support
+
+- [#8934](https://github.com/LedgerHQ/ledger-live/pull/8934) [`9534f17`](https://github.com/LedgerHQ/ledger-live/commit/9534f17247e1472b0fee8b993a83264f4e4ab363) Thanks [@Canestin](https://github.com/Canestin)! - Remove Misleading Casper Token Support in Cryptoassets Data
+
 ## 13.9.0
 
 ### Minor Changes

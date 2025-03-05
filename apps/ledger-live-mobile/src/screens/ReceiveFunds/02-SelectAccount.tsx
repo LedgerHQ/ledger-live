@@ -21,6 +21,7 @@ import { walletSelector } from "~/reducers/wallet";
 import { accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { AddAccountContexts } from "LLM/features/Accounts/screens/AddAccount/enums";
 
 type SubAccountEnhanced = SubAccount & {
   parentAccount: Account;
@@ -132,8 +133,11 @@ function ReceiveSelectAccount({
       navigationAccount.navigate(NavigatorName.DeviceSelection, {
         screen: ScreenName.SelectDevice,
         params: {
-          currency: currency as CryptoCurrency,
-          context: "addAccounts",
+          currency:
+            currency.type === "TokenCurrency"
+              ? currency.parentCurrency
+              : (currency as CryptoCurrency),
+          context: AddAccountContexts.AddAccounts,
           inline: true,
         },
       });
@@ -191,7 +195,9 @@ function ReceiveSelectAccount({
           onPress={createNewAccount}
           testID="button-create-account"
         >
-          {t("transfer.receive.selectAccount.cta")}
+          {llmNetworkBasedAddAccountFlow?.enabled
+            ? t("addAccounts.addNewOrExisting")
+            : t("transfer.receive.selectAccount.cta")}
         </Button>
       </Flex>
     </>

@@ -53,6 +53,7 @@ const AccountHeaderManageActions: CeloFamily["accountHeaderManageActions"] = ({
       eventProperties: {
         button: "stake",
       },
+      accountActionsTestId: "stake-button",
     },
   ];
 };

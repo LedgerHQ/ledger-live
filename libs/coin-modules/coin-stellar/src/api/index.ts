@@ -14,6 +14,7 @@ import {
   listOperations,
   lastBlock,
 } from "../logic";
+import { ListOperationsOptions } from "../logic/listOperations";
 
 export function createApi(config: StellarConfig): Api {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
@@ -67,7 +68,46 @@ function compose(tx: string, signature: string, pubkey?: string): string {
   return combine(tx, signature, pubkey);
 }
 
-const operations = async (
+async function operations(
   address: string,
-  { limit, start }: Pagination,
-): Promise<[Operation[], number]> => listOperations(address, { limit, cursor: start });
+  { minHeight }: Pagination,
+): Promise<[Operation[], string]> {
+  return operationsFromHeight(address, minHeight);
+}
+
+type PaginationState = {
+  readonly pageSize: number;
+  readonly heightLimit: number;
+  continueIterations: boolean;
+  apiNextCursor?: string;
+  accumulator: Operation[];
+};
+
+async function operationsFromHeight(
+  address: string,
+  minHeight: number,
+): Promise<[Operation[], string]> {
+  const state: PaginationState = {
+    pageSize: 200,
+    heightLimit: minHeight,
+    continueIterations: true,
+    accumulator: [],
+  };
+
+  // unfortunately, the stellar API does not support an option to filter by min height
+  // so the only strategy to get ALL operations is to iterate over all of them in descending order
+  // until we reach the desired minHeight
+  while (state.continueIterations) {
+    const options: ListOperationsOptions = { limit: state.pageSize, order: "desc" };
+    if (state.apiNextCursor) {
+      options.cursor = state.apiNextCursor;
+    }
+    const [operations, nextCursor] = await listOperations(address, options);
+    const filteredOperations = operations.filter(op => op.block.height >= state.heightLimit);
+    state.accumulator.push(...filteredOperations);
+    state.apiNextCursor = nextCursor;
+    state.continueIterations = operations.length === filteredOperations.length && nextCursor !== "";
+  }
+
+  return [state.accumulator, state.apiNextCursor ? state.apiNextCursor : ""];
+}

@@ -2,10 +2,10 @@ import { CLI } from "../../../utils/cliUtils";
 import { Application } from "../../../page";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 
-export async function runVerifyAddressTest(account: Account, tmsLink: string) {
+export async function runVerifyAddressTest(account: Account, tmsLinks: string[]) {
   const app = new Application();
 
-  describe(`Verify Address - ${account.currency.name}`, () => {
+  describe("Verify Address", () => {
     beforeAll(async () => {
       await app.init({
         speculosApp: account.currency.speculosApp,
@@ -23,7 +23,7 @@ export async function runVerifyAddressTest(account: Account, tmsLink: string) {
       await app.portfolio.waitForPortfolioPageToLoad();
     });
 
-    $TmsLink(tmsLink);
+    tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     it(`Verify address on ${account.currency.name}`, async () => {
       await app.accounts.openViaDeeplink();
       await app.common.goToAccountByName(account.accountName);
@@ -33,10 +33,6 @@ export async function runVerifyAddressTest(account: Account, tmsLink: string) {
       await app.speculos.expectValidAddressDevice(account, displayedAddress);
       await app.receive.expectReceivePageIsDisplayed(account.currency.ticker, account.accountName);
       await app.receive.expectAddressIsCorrect(displayedAddress);
-    });
-
-    afterAll(async () => {
-      await app?.common.removeSpeculos();
     });
   });
 }

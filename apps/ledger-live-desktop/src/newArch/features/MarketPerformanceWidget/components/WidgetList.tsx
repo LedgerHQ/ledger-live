@@ -41,7 +41,7 @@ function WidgetRow({ data, index, range, enableNewFeature }: PropsBodyElem) {
   const history = useHistory();
 
   const onCurrencyClick = useCallback(() => {
-    track("widget_asset_clicked", {
+    track("widgetAsset_clicked", {
       asset: data.name,
       page: "Portfolio",
     });

@@ -26,7 +26,7 @@ setSupportedCurrencies([
   "dash",
   "tron",
   "tezos",
-  "elrond",
+  "elrond", // NOTE: legacy 'multiversx' name, kept for compatibility
   "ethereum_classic",
   "zcash",
   "decred",
@@ -46,6 +46,8 @@ setSupportedCurrencies([
   "hedera",
   "cardano",
   "solana",
+  "solana_testnet",
+  "solana_devnet",
   "osmosis",
   "fantom",
   "moonbeam",
@@ -106,6 +108,8 @@ setSupportedCurrencies([
   "mantra",
   "xion",
   "zenrock",
+  "sonic",
+  "sonic_blaze",
 ]);
 
 for (const k in process.env) setEnvUnsafe(k as EnvName, process.env[k]);

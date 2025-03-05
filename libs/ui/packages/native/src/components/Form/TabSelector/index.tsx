@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Pressable, LayoutChangeEvent } from "react-native";
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from "react-native-reanimated";
 import styled from "styled-components/native";
@@ -28,17 +28,29 @@ const Tab = styled(Flex)`
   justify-content: center;
 `;
 
-type TabSelectorProps = {
-  labels: { id: string; value: string }[];
-  onToggle: (value: string) => void;
+type TabSelectorProps<T extends string> = {
+  labels: { id: T; value: string }[];
+  initialTab?: T extends infer K ? K : never;
+  onToggle: (value: T) => void;
 };
 
-export default function TabSelector({ labels, onToggle }: TabSelectorProps): JSX.Element {
-  const translateX = useSharedValue(0);
+export default function TabSelector<T extends string>({
+  labels,
+  initialTab,
+  onToggle,
+}: TabSelectorProps<T>): JSX.Element {
   const [containerWidth, setContainerWidth] = useState(0);
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  const initialIndex = initialTab ? labels.findIndex((l) => l.id === initialTab) : 0;
+  const translateX = useSharedValue(0);
+  const [selectedIndex, setSelectedIndex] = useState(initialIndex);
 
-  const handlePress = (id: string, index: number) => {
+  useEffect(() => {
+    if (containerWidth > 0) {
+      translateX.value = (containerWidth / labels.length) * initialIndex;
+    }
+  }, [containerWidth, labels.length, initialIndex]);
+
+  const handlePress = (id: T, index: number) => {
     setSelectedIndex(index);
     translateX.value = (containerWidth / labels.length) * index;
     if (selectedIndex !== index) onToggle(id);

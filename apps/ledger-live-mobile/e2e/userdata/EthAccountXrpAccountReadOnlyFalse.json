@@ -29,29 +29,6 @@
       "discreetMode": false,
       "preferredDeviceModel": "nanoX",
       "hasInstalledApps": true,
-      "lastSeenDevice": {
-        "modelId": "nanoX",
-        "deviceInfo": {
-          "version": "2.2.2",
-          "mcuVersion": "2.30",
-          "seVersion": "2.2.2",
-          "majMin": "2.2",
-          "providerName": null,
-          "targetId": 855638020,
-          "hasDevFirmware": false,
-          "seTargetId": 855638020,
-          "isOSU": false,
-          "isBootloader": false,
-          "isRecoveryMode": false,
-          "managerAllowed": false,
-          "pinValidated": true,
-          "onboarded": true,
-          "bootloaderVersion": "1.16",
-          "hardwareVersion": 0,
-          "languageId": 1
-        },
-        "apps": []
-      },
       "devicesModelList": ["nanoX"],
       "lastSeenCustomImage": {
         "size": 0,

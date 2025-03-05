@@ -17,6 +17,7 @@ type TabSelectorStoryArgs = {
   labels3: { id: string; value: string }[];
   labels4: { id: string; value: string }[];
   onToggle: (value: string) => void;
+  initialTab?: string;
 };
 
 export const TabSelectorStory = (args: TabSelectorStoryArgs) => {
@@ -30,13 +31,13 @@ export const TabSelectorStory = (args: TabSelectorStoryArgs) => {
         <TabSelector labels={args.labels} onToggle={handleToggle} />
       </View>
       <View style={{ padding: 20, height: 80, width: 500 }}>
-        <TabSelector labels={args.labels2} onToggle={handleToggle} />
+        <TabSelector labels={args.labels2} onToggle={handleToggle} initialTab="tab2" />
       </View>
       <View style={{ padding: 20, height: 80, width: 500 }}>
         <TabSelector labels={args.labels3} onToggle={handleToggle} />
       </View>
       <View style={{ padding: 20, height: 80, width: 500 }}>
-        <TabSelector labels={args.labels4} onToggle={handleToggle} />
+        <TabSelector labels={args.labels4} onToggle={handleToggle} initialTab="tab3" />
       </View>
     </>
   );

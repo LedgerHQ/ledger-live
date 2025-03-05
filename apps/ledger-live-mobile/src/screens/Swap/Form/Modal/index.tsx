@@ -9,7 +9,7 @@ import { swapAcceptProvider } from "~/actions/settings";
 import { useAnalytics } from "~/analytics";
 import { sharedSwapTracking } from "../../utils";
 import { CompleteExchangeError } from "@ledgerhq/live-common/exchange/error";
-import { knownDevicesSelector } from "~/reducers/ble";
+import { lastSeenDeviceSelector } from "~/reducers/settings";
 
 export function Modal({
   confirmed,
@@ -27,7 +27,7 @@ export function Modal({
   exchangeRate?: ExchangeRate;
 }) {
   const { track } = useAnalytics();
-  const [device] = useSelector(knownDevicesSelector);
+  const device = useSelector(lastSeenDeviceSelector);
   const dispatch = useDispatch();
   const [error, setError] = useState<Error>();
   const provider = exchangeRate?.provider;

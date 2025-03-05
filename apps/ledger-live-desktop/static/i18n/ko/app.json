@@ -120,6 +120,7 @@
     "addressCopiedSuspicious" : "복사된 주소와 클립보드 주소가 일치하지 않습니다.",
     "experimentalFeature" : "실험",
     "featureFlags" : "기능 플래그",
+    "ldmkEnabled" : "LDMK 전송",
     "information" : "정보",
     "search" : "검색 중...",
     "searchWithoutEllipsis" : "검색",
@@ -200,7 +201,8 @@
       "STAKE" : "스테이킹 완료",
       "UNSTAKE" : "언스테이킹 완료",
       "WITHDRAW_UNSTAKED" : "출금됨",
-      "SENDING" : "보내기"
+      "SENDING" : "보내기",
+      "BURN" : "소각됨"
     },
     "edit" : {
       "title" : "속도 올리기 또는 취소",
@@ -437,8 +439,8 @@
       "cta" : "내 Ledger로 이동"
     },
     "wrongDevice" : {
-      "title" : "Ledger Nano S™는 THORChain과 호환되지 않습니다",
-      "description" : "Ledger Nano S는 THORChain과 호환되지 않습니다 Ledger Nano S Plus, Ledger Nano X, Ledger Stax, 또는 Ledger Flex로 Ledger Live를 통해 THORChain에서 크로스체인 스왑을 경험할 수 있습니다",
+      "title" : "Ledger Nano S™는 {{provider}}와(과) 호환되지 않습니다",
+      "description" : "Ledger Nano S는 {{provider}}와(과) 호환되지 않습니다 Ledger Nano S Plus, Ledger Nano X, Ledger Stax, 또는 Ledger Flex로 Ledger Live를 통해 {{provider}}에서 크로스체인 스왑을 경험할 수 있습니다",
       "cta" : "호환 가능한 장치 탐색",
       "changeProvider" : "다른 공급자를 통해 스왑"
     },
@@ -447,8 +449,14 @@
       "ton_description" : "Ton을 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요.",
       "spl_tokens_title" : "Ledger Nano S™는 솔라나 토큰 스왑을 지원하지 않습니다.",
       "spl_tokens_description" : "솔라노 토큰을 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요.",
+      "near_title" : "Ledger Nano S™는 Near 스왑을 지원하지 않습니다.",
+      "near_description" : "Near 스왑 거래를 실행하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 Ledger 장치를 사용하세요.",
       "ada_title" : "Ledger Nano S™는 카르다노 스왑을 지원하지 않습니다.",
-      "ada_description" : "카르다노를 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요."
+      "ada_description" : "카르다노를 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요.",
+      "apt_title" : "Ledger Nano S™는 Aptos 스왑을 지원하지 않습니다.",
+      "apt_description" : "Aptos 스왑 거래를 실행하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 Ledger 장치를 사용하세요.",
+      "cosmos_title" : "Ledger Nano S™는 Cosmos 스왑을 지원하지 않습니다.",
+      "cosmos_description" : "Cosmos 스왑 거래를 실행하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 Ledger 장치를 사용하세요."
     },
     "providers" : {
       "title" : "암호화폐를 스왑할 공급자를 선택하세요",
@@ -1515,21 +1523,21 @@
     },
     "recoverBanner" : {
       "subscribeDone" : {
-        "title" : "결제 카드 추가 완료",
-        "description" : "Ledger Recover로 안심하고 복구하세요.",
+        "title" : "알림: Ledger Recover 구독을 완료하세요",
+        "description" : "이제 두 단계만 거치면 완료됩니다.",
         "primaryCta" : "카드 추가",
         "secondaryCta" : "다음에 결정하기"
       },
       "verifyIdentity" : {
-        "title" : "신원 인증을 완료하세요",
-        "description" : "Ledger Recover로 안심하고 복구하세요.",
-        "primaryCta" : "확인",
+        "title" : "알림: Ledger Recover 구독을 완료하세요",
+        "description" : "이제 한 단계만 거치면 완료됩니다.",
+        "primaryCta" : "신원 인증",
         "secondaryCta" : "다음에 결정하기"
       },
       "connectDevice" : {
-        "title" : "Ledger 장치에 연결합니다",
-        "description" : "한 단계만 더 완료하면 Ledger Recover를 사용하실 수 있습니다.",
-        "primaryCta" : "연결",
+        "title" : "알림: Ledger Recover 구독을 완료하세요",
+        "description" : "지갑 액세스 복구를 보장하는 마지막 단계입니다.",
+        "primaryCta" : "장치 연결",
         "secondaryCta" : "다음에 결정하기"
       }
     },
@@ -3742,6 +3750,10 @@
           }
         }
       }
+    },
+    "token" : {
+      "frozenStateWarning" : "계정 자산이 동결되었습니다!",
+      "transferWarning" : "Ledger Nano S™를 사용해 솔라나 토큰의 수령인 주소를 확인하려면 <0>다음 지침을 따르세요.</0>"
     }
   },
   "ethereum" : {
@@ -4123,6 +4135,7 @@
       "walletSyncDesc" : "여러 휴대전화와 컴퓨터에서 Ledger Live 암호화폐 계정 동기화",
       "mevProtection" : "MEV 보호",
       "mevProtectionDesc" : "MEV 보호 기능을 활성화하여 이더리움을 보다 안정적으로 거래하세요",
+      "mevProtectionLearnMore" : "개인정보 관련 고지",
       "marketPerformanceWidget" : "마켓 퍼포먼스 위젯",
       "marketPerformanceWidgetDesc" : "이 기능을 활성화하면 포트폴리오 페이지에서 선택한 기간 동안 가장 큰 상승 및 하락을 기록한 코인을 확인할 수 있습니다."
     },
@@ -4142,6 +4155,11 @@
       "debugAppsDesc" : "디버그 태그된 플랫폼 앱 열기를 표시하고 허용하세요.",
       "debugReactQuery" : "디버그 ReactQuery 허용",
       "debugReactQueryDesc" : "디버그 ReactQuery 콘솔을 표시하고 열 수 있도록 허용합니다.",
+      "nfts" : {
+        "title" : "숨겨진 NFT 컬렉션",
+        "description" : "숨겨진 컬렉션 목록을 재설정하세요",
+        "reset" : "재설정"
+      },
       "exchangeDeveloperMode" : {
         "title" : "거래소 개발 모드",
         "desc" : "거래소 공급자 정보 추가",
@@ -5708,17 +5726,17 @@
       "title" : "죄송하지만 발견된 계정이 없습니다",
       "description" : "주소 계산에 문제가 발생했습니다. 재시도하거나 Ledger 지원 부서에 연락하세요"
     },
-    "ElrondDecimalsLimitReached" : {
+    "MultiversXDecimalsLimitReached" : {
       "title" : "최대 소수점 제한에 도달했습니다.",
       "description" : "제공된 금액이 소수점 이하 18자리인지 확인하세요."
     },
-    "ElrondMinDelegatedAmountError" : {
+    "MultiversXMinDelegatedAmountError" : {
       "title" : "위임된 금액은 {{formattedAmount}} 이상이어야 합니다"
     },
-    "ElrondMinUndelegatedAmountError" : {
+    "MultiversXMinUndelegatedAmountError" : {
       "title" : "위임되지 않은 금액은 {{formattedAmount}} 이상이어야 합니다."
     },
-    "ElrondDelegationBelowMinimumError" : {
+    "MultiversXDelegationBelowMinimumError" : {
       "title" : "남은 위임은 {{formattedAmount}}보다 작을 수 없습니다"
     },
     "NotEnoughEGLDForFees" : {
@@ -5909,11 +5927,11 @@
     },
     "WrongDeviceForAccountPayout" : {
       "title" : "문제가 발생했습니다",
-      "description" : "귀하의 장치와 연결된 수령 계정이 아닙니다. 변경 후 다시 시도하세요."
+      "description" : "이 수령 계정은 귀하가 연결한 장치의 계정이 아닙니다. 변경 후 다시 시도하세요."
     },
     "WrongDeviceForAccountRefund" : {
       "title" : "문제가 발생했습니다",
-      "description" : "귀하의 장치와 연결되어 환불에 사용할 수 있는 수령 계정이 아닙니다. 변경 후 다시 시도하세요."
+      "description" : "이 전송 계정은 귀하가 연결한 장치의 계정이 아닙니다. 변경 후 다시 시도하세요."
     },
     "DeviceAppVerifyNotSupported" : {
       "title" : "앱 업데이트가 필요합니다",
@@ -6196,6 +6214,30 @@
     },
     "SolanaAccountNotFunded" : {
       "title" : "자금이 입금되지 않은 계정"
+    },
+    "SolanaTokenAccountHoldsAnotherToken" : {
+      "title" : "이 연관된 토큰 계정은 다른 토큰을 보유하고 있습니다."
+    },
+    "SolanaTokenAccountWarning" : {
+      "title" : "이것은 일반 지갑 주소가 아니라 연관된 토큰 계정입니다. 프로세스를 제대로 이해하는 경우에만 계속 진행하세요"
+    },
+    "SolanaTokenAccountNotAllowed" : {
+      "title" : "이것은 토큰 계정입니다. 일반 지갑 주소를 입력하세요"
+    },
+    "SolanaMintAccountNotAllowed" : {
+      "title" : "이것은 토큰 주소입니다. 일반 지갑 주소를 입력하세요"
+    },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "계정에 자금이 지원됩니다"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "토큰 계정 자산이 동결되었습니다"
+    },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "계정이 초기화되지 않았습니다"
+    },
+    "SolanaTokenRecipientIsSenderATA" : {
+      "title" : "수령인 주소는 송신자 토큰 주소와 동일합니다"
     },
     "SolanaMemoIsTooLong" : {
       "title" : "메모가 너무 깁니다. 최대 길이는 {{maxLength}}입니다."
@@ -6725,17 +6767,19 @@
         "mobile" : {
           "description" : "다른 전화기에서 Ledger Live와 동기화",
           "steps" : {
-            "step1" : "동기화하려는 Ledger Live 앱을 엽니다.",
-            "step2" : "<0>설정</0> > <0>일반</0> > <0>Ledger 동기화</0> > <0>동기화 켜기</0> > <0>QR 표시</0>로 차례로 이동합니다",
-            "step3" : "QR 코드 스캔"
+            "step1" : "앱 중 하나에서 Ledger Sync가 활성화되어 있는지 확인하세요.",
+            "step2" : "동기화하려는 Ledger Live 앱을 엽니다.",
+            "step3" : "<0>설정</0> > <0>일반</0> > <0>Ledger Sync</0> > <0>이미 켰습니다</0> > <0>QR 표시</0>로 차례로 이동하세요",
+            "step4" : "QR 코드를 스캔합니다."
           }
         },
         "desktop" : {
           "description" : "내 계정을 다른 Ledger Live 앱과 동기화",
           "steps" : {
-            "step1" : "동기화하려는 Ledger Live 앱을 엽니다.",
-            "step2" : "<0>설정</0> > <0>일반</0> > <0>Ledger 동기화</0> > <0>동기화 켜기</0> > <0>\u001D Ledger 사용하기</0>로 차례로 이동합니다",
-            "step3" : "Ledger 장치에 연결합니다"
+            "step1" : "앱 중 하나에서 Ledger Sync가 활성화되어 있는지 확인하세요.",
+            "step2" : "동기화하려는 Ledger Live 앱을 엽니다.",
+            "step3" : "<0>설정</0> > <0>일반</0> > <0>Ledger Sync</0> > <0>이미 켰습니다</0> > <0>내 Ledger 사용</0>으로 차례로 이동하세요",
+            "step4" : "Ledger를 연결합니다."
           }
         }
       },
@@ -6853,7 +6897,56 @@
       "transactionId" : "트랜잭션 ID"
     }
   },
-  "ldmkFeatureFlagWarning" : {
-    "title" : "LDMK 전송 사용"
+  "lnsUpsell" : {
+    "banner" : {
+      "manager" : {
+        "optIn" : {
+          "title" : "장치 업그레이드 기회",
+          "description" : "최신 장치로 업그레이드하고 <0>{{discount}}% 할인 혜택</0>은 물론, 더 향상된 보안력과 원활한 사용자 경험을 누려보세요.",
+          "cta" : "내 지갑 업그레이드하기",
+          "linkText" : "자세히 알아보기"
+        },
+        "optOut" : {
+          "title" : "장치 업그레이드 기회",
+          "description" : "최신 장치로 업그레이드하고 <0>{{discount}}% 할인 혜택</0>은 물론, 더 향상된 보안력과 원활한 사용자 경험을 누려보세요.",
+          "cta" : "내 지갑 업그레이드하기",
+          "linkText" : "자세히 알아보기"
+        }
+      },
+      "accounts" : {
+        "optIn" : {
+          "title" : "장치 업그레이드 기회",
+          "description" : "Ledger Nano S 업데이트가 곧 종료됩니다. 최신 장치로 업그레이드하고 <0>{{discount}}% 할인 혜택</0>까지 누리세요.",
+          "cta" : "내 지갑 업그레이드하기",
+          "linkText" : "자세히 알아보기"
+        },
+        "optOut" : {
+          "title" : "장치 업그레이드 기회",
+          "description" : "Ledger Nano S 업데이트가 곧 종료됩니다. 최신 장치로 업그레이드하고 <0>{{discount}}% 할인 혜택</0>까지 누리세요.",
+          "cta" : "내 지갑 업그레이드하기",
+          "linkText" : "자세히 알아보기"
+        }
+      },
+      "portfolio" : {
+        "optOut" : {
+          "title" : "장치 업그레이드 기회",
+          "description" : "최신 장치로 업그레이드하고 <0>{{discount}}% 할인 혜택</0>은 물론, 더 향상된 보안력과 원활한 사용자 경험을 누려보세요.",
+          "cta" : "내 지갑 업그레이드하기",
+          "linkText" : "자세히 알아보기"
+        }
+      },
+      "notifications" : {
+        "optIn" : {
+          "description" : "업데이트가 곧 종료됩니다. 지급 업그레이드하고 {{discount}}% 할인 혜택은 물론, 더 원활한 사용자 경험을 즐겨보세요.",
+          "cta" : "내 지갑 업그레이드하기",
+          "linkText" : "자세히 알아보기"
+        },
+        "optOut" : {
+          "description" : "업데이트가 곧 종료됩니다. 지급 업그레이드하고 {{discount}}% 할인 혜택은 물론, 더 원활한 사용자 경험을 즐겨보세요.",
+          "cta" : "내 지갑 업그레이드하기",
+          "linkText" : "자세히 알아보기"
+        }
+      }
+    }
   }
 }

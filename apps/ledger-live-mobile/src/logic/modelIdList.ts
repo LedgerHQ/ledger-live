@@ -1,6 +1,6 @@
-import { DeviceLike } from "../reducers/types";
+import type { DeviceModelInfo } from "@ledgerhq/types-live";
 
-export const aggregateData = (devices: DeviceLike[]) => {
+export const aggregateData = (devices: Pick<DeviceModelInfo, "modelId">[]) => {
   const aggregatedData = new Map<string, number>();
 
   devices.forEach(device => {
@@ -14,6 +14,6 @@ export const aggregateData = (devices: DeviceLike[]) => {
   return Object.fromEntries(aggregatedData.entries());
 };
 
-export const getUniqueModelIdList = (devices: DeviceLike[]) => [
+export const getUniqueModelIdList = (devices: DeviceModelInfo[]) => [
   ...new Set(devices.map(d => d.modelId)),
 ];

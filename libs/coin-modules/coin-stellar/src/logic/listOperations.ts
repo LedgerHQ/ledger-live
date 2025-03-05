@@ -18,24 +18,27 @@ export type Operation = {
   transactionSequenceNumber: number;
 };
 
+export type ListOperationsOptions = {
+  limit?: number;
+  cursor?: string;
+  order: "asc" | "desc";
+};
+
 export async function listOperations(
   address: string,
-  { limit, cursor }: { limit: number; cursor?: number | undefined },
-): Promise<[Operation[], number]> {
+  { limit, cursor, order }: ListOperationsOptions,
+): Promise<[Operation[], string]> {
   // Fake accountId
   const accountId = "";
-  const operations = await fetchOperations({
+  const [operations, nextCursor] = await fetchOperations({
     accountId,
     addr: address,
-    order: "asc",
+    order: order,
     limit,
-    cursor: cursor?.toString(),
+    cursor: cursor,
   });
 
-  return [
-    operations.map(convertToCoreOperation(address)),
-    parseInt(operations.slice(-1)[0].extra.pagingToken ?? "0"),
-  ];
+  return [operations.map(convertToCoreOperation(address)), nextCursor];
 }
 
 const convertToCoreOperation = (address: string) => (operation: StellarOperation) => {

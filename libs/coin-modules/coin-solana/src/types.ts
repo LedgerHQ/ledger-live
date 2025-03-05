@@ -3,12 +3,16 @@ import {
   Account,
   AccountRaw,
   Operation,
+  TokenAccount,
+  TokenAccountRaw,
   TransactionCommon,
   TransactionCommonRaw,
   TransactionStatusCommon,
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
 import { ValidatorsAppValidator } from "./validator-app";
+import { TokenAccountState } from "./api/chain/account/token";
+import { PARSED_PROGRAMS } from "./api/chain/program/constants";
 
 export type TransferCommand = {
   kind: "transfer";
@@ -73,6 +77,15 @@ export type TokenRecipientDescriptor = {
   shouldCreateAsAssociatedTokenAccount: boolean;
 };
 
+export type TransferFeeCalculated = {
+  maxTransferFee: number;
+  transferFee: number;
+  feePercent: number;
+  feeBps: number;
+  transferAmountIncludingFee: number;
+  transferAmountExcludingFee: number;
+};
+
 export type TokenTransferCommand = {
   kind: "token.transfer";
   ownerAddress: string;
@@ -82,6 +95,10 @@ export type TokenTransferCommand = {
   mintAddress: string;
   mintDecimals: number;
   memo?: string | undefined;
+  tokenProgram: SolanaTokenProgram;
+  extensions?: {
+    transferFee?: TransferFeeCalculated | undefined;
+  };
 };
 
 export type Command =
@@ -263,6 +280,38 @@ export type SolanaAccountRaw = AccountRaw & {
   solanaResources: SolanaResourcesRaw;
 };
 
+type Base58PubKey = string;
+export type SolanaTokenAccountExtensions = {
+  permanentDelegate?: {
+    delegateAddress: Base58PubKey | undefined;
+  };
+  nonTransferable?: boolean;
+  interestRate?: {
+    rateBps: number;
+    accruedDelta: number | undefined;
+  };
+  transferFee?: {
+    feeBps: number;
+    maxFee: number;
+  };
+  requiredMemoOnTransfer?: boolean;
+  transferHook?: {
+    programAddress: Base58PubKey | undefined;
+  };
+};
+
+export type SolanaTokenProgram =
+  | typeof PARSED_PROGRAMS.SPL_TOKEN
+  | typeof PARSED_PROGRAMS.SPL_TOKEN_2022;
+export type SolanaTokenAccount = TokenAccount & {
+  state?: TokenAccountState;
+  extensions?: SolanaTokenAccountExtensions | undefined;
+};
+export type SolanaTokenAccountRaw = TokenAccountRaw & {
+  state?: TokenAccountState;
+  extensions?: string;
+};
+
 export type TransactionStatus = TransactionStatusCommon;
 
 export type TransactionStatusRaw = TransactionStatusCommonRaw;
@@ -288,4 +337,9 @@ export type SolanaOperationExtra = {
 export type SolanaOperationExtraRaw = {
   memo?: string | undefined;
   stake?: ExtraStakeInfoRaw;
+};
+
+export type SolanaExtraDeviceTransactionField = {
+  type: "solana.token.transferFee";
+  label: string;
 };

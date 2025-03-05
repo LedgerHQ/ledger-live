@@ -9,8 +9,14 @@ import { BaseComposite, RootNavigation } from "~/components/RootNavigator/types/
 import { DeviceModelId } from "@ledgerhq/devices";
 import EuropaCompletionView from "./EuropaCompletionView";
 import StaxCompletionView from "./StaxCompletionView";
-import { useDispatch } from "react-redux";
-import { setHasBeenRedirectedToPostOnboarding, setHasBeenUpsoldProtect } from "~/actions/settings";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  setHasBeenRedirectedToPostOnboarding,
+  setHasBeenUpsoldProtect,
+  setIsReborn,
+  setOnboardingHasDevice,
+} from "~/actions/settings";
+import { hasCompletedOnboardingSelector } from "~/reducers/settings";
 
 type Props = BaseComposite<
   StackScreenProps<SyncOnboardingStackParamList, ScreenName.SyncOnboardingCompletion>
@@ -19,11 +25,16 @@ type Props = BaseComposite<
 const CompletionScreen = ({ navigation, route }: Props) => {
   const { device } = route.params;
   const dispatch = useDispatch();
+  const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
 
   useEffect(() => {
+    if (!hasCompletedOnboarding) {
+      dispatch(setOnboardingHasDevice(true));
+    }
+    dispatch(setIsReborn(false));
     dispatch(setHasBeenUpsoldProtect(false));
     dispatch(setHasBeenRedirectedToPostOnboarding(false));
-  }, [dispatch]);
+  }, [dispatch, hasCompletedOnboarding]);
 
   const hasRedirected = React.useRef(false);
 

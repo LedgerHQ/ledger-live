@@ -5,12 +5,13 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
-    "moduleResolution": "node",
     "pretty": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "sourceMap": true,
     "strict": true,
-    "target": "ES6"
+    "target": "ESNext",
+    "moduleResolution": "NodeNext",
+    "module": "NodeNext"
   }
 }

@@ -120,6 +120,7 @@
     "addressCopiedSuspicious" : "コピーしたアドレスとクリップボードのアドレスが一致しません。",
     "experimentalFeature" : "試験的",
     "featureFlags" : "機能フラグ",
+    "ldmkEnabled" : "LDMKトランスポート",
     "information" : "インフォメーション",
     "search" : "検索…",
     "searchWithoutEllipsis" : "検索",
@@ -200,7 +201,8 @@
       "STAKE" : "ステーキング済み",
       "UNSTAKE" : "ステーキング解除済み",
       "WITHDRAW_UNSTAKED" : "引き出し済み",
-      "SENDING" : "送信中"
+      "SENDING" : "送信中",
+      "BURN" : "バーン済み"
     },
     "edit" : {
       "title" : "速度を上げる、またはキャンセルする",
@@ -437,8 +439,8 @@
       "cta" : "My Ledgerに移動"
     },
     "wrongDevice" : {
-      "title" : "Ledger Nano S™はTHORChainに対応していません",
-      "description" : "Ledger Nano SはTHORChainに対応していませんLedger Nano S Plus、Ledger Nano X、Ledger Stax、またはLedger Flexを使用して、Ledger LiveからTHORChainでのクロスチェーンスワップが可能です",
+      "title" : "Ledger Nano S™は、{{provider}}に対応していません",
+      "description" : "Ledger Nano Sは、{{provider}}に対応していませんLedger Nano S Plus、Ledger Nano X、Ledger Stax、またはLedger Flexを使用して、Ledger Liveから{{provider}}でのクロスチェーンスワップが可能です",
       "cta" : "対応デバイスを探す",
       "changeProvider" : "別のプロバイダーでスワップ"
     },
@@ -447,8 +449,14 @@
       "ton_description" : "Tonをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。",
       "spl_tokens_title" : "Ledger Nano S™はSolanaトークンのスワップに対応していません",
       "spl_tokens_description" : "Solanaトークンをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。",
+      "near_title" : "Ledger Nano S™はNearのスワップに対応していません",
+      "near_description" : "Nearをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。",
       "ada_title" : "Ledger Nano S™はCardanoのスワップに対応していません",
-      "ada_description" : "Cardanoをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。"
+      "ada_description" : "Cardanoをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。",
+      "apt_title" : "Ledger Nano S™はAptosのスワップに対応していません",
+      "apt_description" : "Aptosをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。",
+      "cosmos_title" : "Ledger Nano S™はCosmosのスワップに対応していません",
+      "cosmos_description" : "Cosmosをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。"
     },
     "providers" : {
       "title" : "暗号資産のスワップに利用するプロバイダーを選択",
@@ -778,7 +786,7 @@
     },
     "willBeDeprecatedBanner" : {
       "title" : "効率を最適化するため、{{deprecatedDate}}以降、{{currencyName}}はLedger Liveではサポートされなくなります。ただし、Ledgerハードウェアウォレットでは引き続きサポートされます。この件に関してご不明な点などがございましたら、Ledgerカスタマーサポートまでご連絡ください。",
-      "contactSupport" : "サポートへのお問い合わせ"
+      "contactSupport" : "サポートへお問い合わせ"
     },
     "lastOperations" : "最近の取引",
     "contractAddress" : "コントラクト：",
@@ -1515,21 +1523,21 @@
     },
     "recoverBanner" : {
       "subscribeDone" : {
-        "title" : "お支払いカードの追加を完了する",
-        "description" : "Ledger Recoverを使用して確実に復元する。",
+        "title" : "Ledger Recoverのサブスクリプション契約が完了していません",
+        "description" : "安全の確保まで残り2ステップです。",
         "primaryCta" : "カードを追加する",
         "secondaryCta" : "後で"
       },
       "verifyIdentity" : {
-        "title" : "本人認証を完了する",
-        "description" : "Ledger Recoverを使用して確実に復元する。",
-        "primaryCta" : "認証する",
+        "title" : "Ledger Recoverのサブスクリプション契約が完了していません",
+        "description" : "安全の確保まで残り1ステップです。",
+        "primaryCta" : "本人認証を行う",
         "secondaryCta" : "後で"
       },
       "connectDevice" : {
-        "title" : "Ledgerを接続する",
-        "description" : "Ledger Recoverまであと1歩です。",
-        "primaryCta" : "接続",
+        "title" : "Ledger Recoverのサブスクリプション契約が完了していません",
+        "description" : "これが、ウォレットへのアクセス復元を確実にするための最後のステップです。",
+        "primaryCta" : "デバイスを接続",
         "secondaryCta" : "後で"
       }
     },
@@ -2042,12 +2050,12 @@
         "cta" : "My Ledgerに移動",
         "old" : {
           "warning" : "デバイスのファームウェアのバージョンが古いため、アップデートできません。Ledgerサポートに連絡して、デバイスを交換してください。",
-          "cta" : "サポートへのお問い合わせ"
+          "cta" : "サポートへお問い合わせ"
         },
         "cta2" : "ファームウェアをアップデート"
       },
       "latest" : "ファームウェアバージョン{{version}}が利用可能です",
-      "contactSupport" : "サポートへのお問い合わせ",
+      "contactSupport" : "サポートへお問い合わせ",
       "deprecated" : "デバイスのファームウェアのバージョンが古いため、アップデートできません。Ledgerサポートに連絡して、デバイスを交換してください。",
       "prepareSeed" : "念のために、24単語のリカバリーフレーズがリカバリーシートに書き留められており、利用可能であることを確認してください。",
       "disclaimerTitle" : "<1>ファームウェアバージョン{{version}}</1>をインストールします。",
@@ -2294,7 +2302,7 @@
       }
     },
     "memoTag" : {
-      "title" : "タグ/メモがご必要ですか？",
+      "title" : "タグ/メモが必要ですか？",
       "description" : "この資産を取引所から受け取る際に、<0>タグ/メモ</0>が必要になる場合があります。その場合、1234などの数値を任意に組み合わせて使用できます。"
     }
   },
@@ -3742,6 +3750,10 @@
           }
         }
       }
+    },
+    "token" : {
+      "frozenStateWarning" : "アカウント資産が凍結されています！",
+      "transferWarning" : "Ledger Nano S™を使用してSolanaトークンの受取人アドレスを認証するには、<0>こちらの手順に従ってください。</0>"
     }
   },
   "ethereum" : {
@@ -4122,7 +4134,8 @@
       "walletSync" : "Ledger同期",
       "walletSyncDesc" : "さまざまな携帯電話やコンピューター間でLedger Live暗号資産アカウントを同期します。",
       "mevProtection" : "MEV保護",
-      "mevProtectionDesc" : "MEV保護を有効にすると、イーサリアムでのトランザクションの信頼性が高まります",
+      "mevProtectionDesc" : "MEV保護を有効にすると、イーサリアムでのトランザクションの信頼性が高まります。",
+      "mevProtectionLearnMore" : "プライバシーに関する通知",
       "marketPerformanceWidget" : "マーケットパフォーマンスウィジェット",
       "marketPerformanceWidgetDesc" : "この機能を有効化すると、ポートフォリオページで選択した時間枠の、上昇率上位と下落率上位が表示されます。"
     },
@@ -4142,6 +4155,11 @@
       "debugAppsDesc" : "デバッグとしてタグ付けされたプラットフォームアプリの表示と実行を許可します。",
       "debugReactQuery" : "ReactQueryのデバッグを許可する",
       "debugReactQueryDesc" : "ReactQueryデバッグコンソールを表示し、開くことを許可します。",
+      "nfts" : {
+        "title" : "NFT非表示コレクション",
+        "description" : "非表示コレクションリストをリセット",
+        "reset" : "リセット"
+      },
       "exchangeDeveloperMode" : {
         "title" : "Exchange開発者モード",
         "desc" : "Exchangeプロバイダーの情報を追加する",
@@ -4694,7 +4712,7 @@
     },
     "modals" : {
       "recoverySeedWarning" : {
-        "contactSupportCTA" : "サポートへのお問い合わせ",
+        "contactSupportCTA" : "サポートへお問い合わせ",
         "continueCTA" : "続行",
         "title" : "箱の中身を確認してください。",
         "description" : "{{device}}にPINコードまたはリカバリーフレーズが付属していた場合、そのデバイスは安全ではありません。絶対に使用せず、Ledgerサポートに連絡してください。",
@@ -5285,7 +5303,7 @@
           "title" : " USB接続の問題が解決されませんか？",
           "desc" : "全ての解決策を試しても解決できない場合は、Ledgerサポートまでご連絡ください。まだ試していない解決策がある場合は、それらの手順を実行してください。",
           "back" : "ポートフォリオに戻る",
-          "cta" : "サポートへのお問い合わせ",
+          "cta" : "サポートへお問い合わせ",
           "cta2" : "戻る"
         },
         "repair" : {
@@ -5708,17 +5726,17 @@
       "title" : "アカウントが見つかりませんでした。",
       "description" : "アドレス計算時に問題が発生しました。再試行するか、Ledgerサポートにお問い合わせください。"
     },
-    "ElrondDecimalsLimitReached" : {
+    "MultiversXDecimalsLimitReached" : {
       "title" : "小数点以下の最大桁数に達しました",
       "description" : "指定された量の小数点以下が18桁であることをご確認ください。"
     },
-    "ElrondMinDelegatedAmountError" : {
+    "MultiversXMinDelegatedAmountError" : {
       "title" : "デリゲート解除の数量は{{formattedAmount}}以上必要です"
     },
-    "ElrondMinUndelegatedAmountError" : {
+    "MultiversXMinUndelegatedAmountError" : {
       "title" : "デリゲート解除の数量は{{formattedAmount}}以上必要です"
     },
-    "ElrondDelegationBelowMinimumError" : {
+    "MultiversXDelegationBelowMinimumError" : {
       "title" : "残りのデリゲートは{{formattedAmount}}を下回ることはできません"
     },
     "NotEnoughEGLDForFees" : {
@@ -5909,11 +5927,11 @@
     },
     "WrongDeviceForAccountPayout" : {
       "title" : "問題が発生しました。",
-      "description" : "この受取アカウントはお客様のデバイスに属していません。変更して再試行してください。"
+      "description" : "この受取アカウントは、お客様が接続したデバイスに属していません。変更して再試行してください。"
     },
     "WrongDeviceForAccountRefund" : {
       "title" : "問題が発生しました。",
-      "description" : "この受取アカウントは、お客様の払い戻し対象のデバイスに属していません。変更して再試行してください。"
+      "description" : "この送付アカウントは、お客様が接続したデバイスに属していません。変更して再試行してください。"
     },
     "DeviceAppVerifyNotSupported" : {
       "title" : "アプリのアップデートが必要です。",
@@ -6197,6 +6215,30 @@
     "SolanaAccountNotFunded" : {
       "title" : "アカウントに資金がありません"
     },
+    "SolanaTokenAccountHoldsAnotherToken" : {
+      "title" : "この関連トークンアカウントは別のトークンを保持しています"
+    },
+    "SolanaTokenAccountWarning" : {
+      "title" : "これは通常のウォレットアドレスではなく、関連するトークンアカウントです。自分が何をしているのか理解している場合にのみ、続行してください"
+    },
+    "SolanaTokenAccountNotAllowed" : {
+      "title" : "これはトークンアカウントです。通常のウォレットアドレスを入力してください"
+    },
+    "SolanaMintAccountNotAllowed" : {
+      "title" : "これはトークンアドレスです。通常のウォレットアドレスを入力してください"
+    },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "アカウントに入金されます"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "トークンアカウントの資産が凍結されています"
+    },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "アカウントが初期化されていません"
+    },
+    "SolanaTokenRecipientIsSenderATA" : {
+      "title" : "送付者のトークンアドレスと同じ受取アドレスです"
+    },
     "SolanaMemoIsTooLong" : {
       "title" : "Memo(メモ)が長すぎます。最長{{maxLength}}以内で入力してください。"
     },
@@ -6230,11 +6272,11 @@
     },
     "CardanoFeeTooHigh" : {
       "title" : "ネットワーク手数料が異常に高いです。",
-      "description" : "ADAトランザクションは一時的にご利用いただけません。アカウントを再同期して再試行するか、サポートがご必要な場合はサポートにご連絡ください。"
+      "description" : "ADAトランザクションは一時的にご利用いただけません。アカウントを再同期して再試行するか、サポートが必要な場合はサポートにご連絡ください。"
     },
     "CardanoInvalidProtoParams" : {
       "title" : "Cardanoのプロトコルパラメータが無効です",
-      "description" : "ADAトランザクションは一時的にご利用いただけません。アカウントを再同期して再試行するか、サポートがご必要な場合はサポートにご連絡ください。"
+      "description" : "ADAトランザクションは一時的にご利用いただけません。アカウントを再同期して再試行するか、サポートが必要な場合はサポートにご連絡ください。"
     },
     "StacksMemoTooLong" : {
       "title" : "メモの長さが長すぎます"
@@ -6408,7 +6450,7 @@
       "title" : "トランザクションのブロードキャストに失敗",
       "description" : "トランザクションは{{networkName}}ネットワーク上でブロードキャストできませんでした。お客様の{{currencyName}}は転送されておらず、アカウントに残っています。",
       "helpCenterTitle" : "ヘルプセンター： ",
-      "helpCenterDesc" : "サポートがご必要な場合は、当社のヘルプセンターをご覧いただくか、ウィジェットからご連絡ください。",
+      "helpCenterDesc" : "サポートが必要な場合は、当社のヘルプセンターをご覧いただくか、ウィジェットからご連絡ください。",
       "needHelp" : "お困りですか？",
       "getHelp" : "ヘルプ",
       "technicalErrorTitle" : "技術的なエラー： ",
@@ -6472,7 +6514,7 @@
         "remove" : "現在の画像を削除する",
         "selectNft" : "NFTを選択",
         "nftEmptyStateTitle" : "表示できるNFTがありません",
-        "nftEmptyStateDescription" : "NFTをウォレットに追加して始めます。"
+        "nftEmptyStateDescription" : "NFTをウォレットに追加しましょう。"
       },
       "adjust" : {
         "stepLabel" : "クロップ",
@@ -6725,17 +6767,19 @@
         "mobile" : {
           "description" : "別のスマホのLedger Liveアプリと同期",
           "steps" : {
-            "step1" : "同期したいLedger Liveアプリを開く",
-            "step2" : "<0>設定 </0>> <0>一般</0> > <0>Ledger Sync</0> > <0>同期をオンにする</0> > <0>QRを表示</0>に移動",
-            "step3" : "QRコードをスキャン"
+            "step1" : "アプリの1つでLedger Syncが有効になっていることを確認する。",
+            "step2" : "同期したいLedger Liveアプリを開く。",
+            "step3" : "<0>設定</0> > <0>一般</0> > <0>Ledger Sync</0> > <0>すでにオンにしました</0> > <0>QRを表示</0>に移動する。",
+            "step4" : "QRコードをスキャンする。"
           }
         },
         "desktop" : {
           "description" : "アカウントを別のLedger Liveアプリと同期します",
           "steps" : {
-            "step1" : "同期したいLedger Liveアプリを開く",
-            "step2" : "<0>設定</0> > <0>一般</0> > <0>Ledger Sync</0> > <0>同期をオンにする</0> > <0>Ledgerを使用</0>に移動",
-            "step3" : "Ledgerを接続する"
+            "step1" : "アプリの1つでLedger Syncが有効になっていることを確認する。",
+            "step2" : "同期したいLedger Liveアプリを開く。",
+            "step3" : "<0>設定</0> > <0>一般</0> > <0>Ledger Sync</0> > <0>すでにオンにしました</0> > <0>Ledgerを使う</0>に移動する。",
+            "step4" : "Ledgerを接続する。"
           }
         }
       },
@@ -6853,7 +6897,56 @@
       "transactionId" : "トランザクションID"
     }
   },
-  "ldmkFeatureFlagWarning" : {
-    "title" : "LDMKトランスポートを使用"
+  "lnsUpsell" : {
+    "banner" : {
+      "manager" : {
+        "optIn" : {
+          "title" : "アップグレードに絶好のチャンス！",
+          "description" : "<0>{{discount}}%割引</0>で、当社の最新のデバイスにアップグレードしましょう！より使いやすく、強化されたセキュリティをお楽しみいただけます。",
+          "cta" : "ウォレットをレベルアップ",
+          "linkText" : "詳細はこちら"
+        },
+        "optOut" : {
+          "title" : "アップグレードに絶好のチャンス！",
+          "description" : "<0>{{discount}}%割引</0>で、当社の最新のデバイスにアップグレードしましょう！より使いやすく、強化されたセキュリティをお楽しみいただけます。",
+          "cta" : "ウォレットをレベルアップ",
+          "linkText" : "詳細はこちら"
+        }
+      },
+      "accounts" : {
+        "optIn" : {
+          "title" : "絶好のアップグレードチャンス！",
+          "description" : "Ledger Nano Sのアップデートが間もなく終了します。<0>{{discount}}%OFF</0>で、最新デバイスにアップグレードしましょう。",
+          "cta" : "ウォレットをレベルアップ",
+          "linkText" : "詳細はこちら"
+        },
+        "optOut" : {
+          "title" : "絶好のアップグレードチャンス！",
+          "description" : "Ledger Nano Sのキャンペーンは間もなく終了です。<0>{{discount}}%OFF</0>で、当社の最新デバイスにアップグレードできます。",
+          "cta" : "ウォレットをレベルアップ",
+          "linkText" : "詳細はこちら"
+        }
+      },
+      "portfolio" : {
+        "optOut" : {
+          "title" : "アップグレードに絶好のチャンス！",
+          "description" : "<0>{{discount}}%割引</0>で、最新のデバイスにアップグレードしましょう！より使いやすく、強化されたセキュリティをお楽しみいただけます。",
+          "cta" : "ウォレットをレベルアップ",
+          "linkText" : "詳細はこちら"
+        }
+      },
+      "notifications" : {
+        "optIn" : {
+          "description" : "キャンペーンがまもなく終了します。今ならデバイスのアップグレードが{{discount}}%OFF！より快適な体験をお楽しみいただけます。",
+          "cta" : "ウォレットをレベルアップ",
+          "linkText" : "詳細はこちら"
+        },
+        "optOut" : {
+          "description" : "キャンペーンは間もなく終了します。今ならデバイスのアップグレードが{{discount}}%OFF！より快適な体験をお楽しみいただけます。",
+          "cta" : "ウォレットをレベルアップ",
+          "linkText" : "詳細はこちら"
+        }
+      }
+    }
   }
 }

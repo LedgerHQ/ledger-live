@@ -116,6 +116,7 @@ function StakingAmount({ navigation, route }: Props) {
                 inputStyle={styles.inputStyle}
                 hasError={!!error}
                 hasWarning={!!warning}
+                testID="near-delegation-amount-input"
               />
               <LText
                 style={[styles.fieldStatus]}
@@ -195,6 +196,7 @@ function StakingAmount({ navigation, route }: Props) {
                 onPress={onNext}
                 title={<Trans i18nKey="near.staking.flow.steps.amount.cta" />}
                 type="primary"
+                testID="near-delegation-amount-continue"
               />
             </View>
           </View>

@@ -1,9 +1,14 @@
 import { by, element, waitFor, device, web } from "detox";
 import { Direction } from "detox/detox";
 import { findFreePort, close as closeBridge, init as initBridge } from "./bridge/server";
+import { allure } from "jest-allure2-reporter/api";
 
-import { startSpeculos, stopSpeculos, specs } from "@ledgerhq/live-common/e2e/speculos";
-import { SpeculosDevice } from "@ledgerhq/speculos-transport";
+import {
+  startSpeculos,
+  stopSpeculos,
+  specs,
+  takeScreenshot,
+} from "@ledgerhq/live-common/e2e/speculos";
 import invariant from "invariant";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { startProxy, closeProxy } from "./bridge/proxy";
@@ -24,7 +29,24 @@ export const accountIdParam = "?accountId=";
 const BASE_PORT = 30000;
 const MAX_PORT = 65535;
 let portCounter = BASE_PORT; // Counter for generating unique ports
-const speculosDevices: [number, SpeculosDevice][] = [];
+
+export function setupEnvironment() {
+  setEnv("DISABLE_APP_VERSION_REQUIREMENTS", true);
+
+  if (process.env.MOCK == "0") {
+    setEnv("MOCK", "");
+    process.env.MOCK = "";
+  } else {
+    setEnv("MOCK", "1");
+    process.env.MOCK = "1";
+  }
+
+  if (process.env.DISABLE_TRANSACTION_BROADCAST == "0") {
+    setEnv("DISABLE_TRANSACTION_BROADCAST", false);
+  } else if (getEnv("MOCK") != "1") {
+    setEnv("DISABLE_TRANSACTION_BROADCAST", true);
+  }
+}
 
 function sync_delay(ms: number) {
   const done = new Int32Array(new SharedArrayBuffer(4));
@@ -191,9 +213,7 @@ export async function launchApp() {
       detoxURLBlacklistRegex:
         '\\(".*sdk.*.braze.*",".*.googleapis.com/.*",".*clients3.google.com.*",".*tron.coin.ledger.com/wallet/getBrokerage.*"\\)',
       mock: getEnv("MOCK") ? getEnv("MOCK") : "0",
-      disable_broadcast: getEnv("DISABLE_TRANSACTION_BROADCAST")
-        ? getEnv("DISABLE_TRANSACTION_BROADCAST")
-        : "1",
+      disable_broadcast: getEnv("DISABLE_TRANSACTION_BROADCAST") ? 1 : 0,
     },
     languageAndLocale: {
       language: "en-US",
@@ -206,7 +226,7 @@ export async function launchApp() {
   return port;
 }
 
-export async function launchSpeculos(appName: string, proxyPort: number) {
+export async function launchSpeculos(appName: string) {
   // Ensure the portCounter stays within the valid port range
   if (portCounter > MAX_PORT) {
     portCounter = BASE_PORT;
@@ -223,8 +243,8 @@ export async function launchSpeculos(appName: string, proxyPort: number) {
   const speculosApiPort = speculosDevice.ports.apiPort;
   invariant(speculosApiPort, "[E2E Setup] speculosApiPort not defined");
   setEnv("SPECULOS_API_PORT", speculosApiPort);
-  speculosDevices.push([proxyPort, speculosDevice]);
-  console.warn(`Speculos started on ${proxyPort}`);
+  speculosDevices.set(speculosApiPort, speculosDevice.id);
+  console.warn(`Speculos started on ${speculosApiPort}`);
   return speculosApiPort;
 }
 
@@ -237,19 +257,26 @@ export async function launchProxy(
   await startProxy(proxyPort, speculosAddress, speculosPort);
 }
 
-export async function deleteSpeculos(proxyPort?: number) {
-  if (!proxyPort) {
-    for (const [address] of speculosDevices) {
-      await deleteSpeculos(address);
-    }
+export async function deleteSpeculos(apiPort?: number) {
+  if (!apiPort) {
+    await Promise.all(Array.from(speculosDevices.keys()).map(async port => deleteSpeculos(port)));
     return;
   }
-  if (proxyPort) closeProxy(proxyPort);
-  const speculosDevice = speculosDevices.find(([number]) => number === proxyPort)?.[1];
-  if (speculosDevice) {
-    await stopSpeculos(speculosDevice);
-    speculosDevices.splice(speculosDevices.indexOf([proxyPort, speculosDevice]));
-    console.warn(`Speculos stopped on ${proxyPort}`);
+
+  closeProxy(apiPort);
+  if (speculosDevices.has(apiPort)) {
+    const speculosId = speculosDevices.get(apiPort);
+    if (speculosId) await stopSpeculos(speculosId);
+    speculosDevices.delete(apiPort);
+    console.warn(`Speculos successfully stopped on port ${apiPort}`);
   }
   setEnv("SPECULOS_API_PORT", 0);
+}
+
+export async function takeSpeculosScreenshot() {
+  for (const [apiPort] of speculosDevices) {
+    const speculosScreenshot = await takeScreenshot(apiPort);
+    speculosScreenshot &&
+      (await allure.attachment("Speculos Screenshot", speculosScreenshot, "image/png"));
+  }
 }

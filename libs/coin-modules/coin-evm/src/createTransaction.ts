@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { Account, AccountBridge } from "@ledgerhq/types-live";
+import { AccountBridge, AccountLike } from "@ledgerhq/types-live";
 import { Transaction as EvmTransaction } from "./types";
 import { DEFAULT_GAS_LIMIT } from "./transaction";
 
@@ -8,6 +8,16 @@ import { DEFAULT_GAS_LIMIT } from "./transaction";
  * the actual nonce will be set by `prepareForSignOperation`
  */
 export const DEFAULT_NONCE = -1;
+
+const getChainId = (account: AccountLike): number => {
+  if (account.type === "Account") {
+    return account.currency.ethereumLikeInfo?.chainId || 0;
+  }
+  if (account.type === "TokenAccount") {
+    return account.token.parentCurrency.ethereumLikeInfo?.chainId || 0;
+  }
+  return 0;
+};
 
 /**
  * EVM Transaction factory.
@@ -24,7 +34,7 @@ export const createTransaction: AccountBridge<EvmTransaction>["createTransaction
   maxPriorityFeePerGas: new BigNumber(0),
   gasLimit: DEFAULT_GAS_LIMIT,
   nonce: DEFAULT_NONCE,
-  chainId: (account as Account).currency?.ethereumLikeInfo?.chainId || 0,
+  chainId: getChainId(account),
   feesStrategy: "medium",
   type: 2,
 });

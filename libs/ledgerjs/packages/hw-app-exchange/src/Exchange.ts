@@ -35,6 +35,7 @@ const CHECK_REFUND_ADDRESS = 0x09;
 // const CHECK_REFUND_ADDRESS_NO_DISPLAY = 0x0c;
 const SIGN_COIN_TRANSACTION = 0x0a;
 const CHECK_ASSET_IN_AND_DISPLAY = 0x0b;
+const SEND_PKI_CERTIFICATE = 0x0e;
 const GET_CHALLENGE = 0x10;
 const SEND_TRUSTED_NAME_DESCRIPTOR = 0x11;
 
@@ -347,6 +348,23 @@ export default class Exchange {
     );
     maybeThrowProtocolError(result);
     return result.slice(0, 4).readUInt32BE();
+  }
+
+  async sendPKICertificate(descriptor: Buffer, signature: Buffer): Promise<void> {
+    const result: Buffer = await this.transport.send(
+      0xe0,
+      SEND_PKI_CERTIFICATE,
+      this.transactionRate,
+      this.transactionType,
+      Buffer.concat([
+        descriptor,
+        Buffer.from("15", "hex"),
+        Buffer.from([signature.length]),
+        signature,
+      ]),
+      this.allowedStatuses,
+    );
+    maybeThrowProtocolError(result);
   }
 
   async sendTrustedDescriptor(buffer: Buffer): Promise<void> {

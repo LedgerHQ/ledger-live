@@ -89,7 +89,7 @@ jobs:
         id: caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         with:
-          skip-pod-cache: "false"
+          skip-pod-cache: "true"
           skip-turbo-cache: "false"
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
@@ -130,9 +130,7 @@ jobs:
         shell: bash
       - name: Create iOS simulator
         id: simulator
-        run: |
-          ID=$(xcrun simctl create "iPhone 15" "iPhone 15")
-          echo "id=$ID" >> $GITHUB_OUTPUT
+        run: xcrun simctl create "iOS Simulator" "iPhone 15"
       - name: Build iOS app for Detox test run
         if: steps.detox-build.outputs.cache-hit != 'true'
         run: pnpm mobile e2e:ci -p ios -b
@@ -150,14 +148,14 @@ jobs:
       - name: Test iOS app
         id: detox
         timeout-minutes: 75
-        run: pnpm mobile e2e:ci -p ios -t $([[ "$INPUT_SPECULOS" == "true" ]] && printf %s '--speculos')
+        run: pnpm test:llm:ios:e2e --api="http://127.0.0.1:${{ steps.caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo" -- -p ios -t $([[ "$INPUT_SPECULOS" == "true" ]] && printf %s '--speculos')
         env:
           SEED: ${{ secrets.SEED_QAA_B2C }}
           INPUT_SPECULOS: ${{ env.SPECULOS_RUN }}
       - name: Delete iOS simulator
-        if: ${{ always() && steps.simulator.outputs.id }}
+        if: ${{ always() }}
         run: |
-          xcrun simctl delete ${{ steps.simulator.outputs.id }}
+          xcrun simctl list devices | grep 'iOS Simulator' | awk -F '[()]' '{print $2}' | xargs -I {} sh -c 'echo "Deleting simulator: {}"; xcrun simctl delete {} || echo "Failed to delete: {}"'
       - name: Upload test artifacts
         uses: actions/upload-artifact@v4
         if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
@@ -181,7 +179,7 @@ jobs:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
         id: upload
         with:
-          platform: ios
+          platform: ios-${{ env.SPECULOS_RUN == 'true' && 'speculos' || 'mocked' }}
           login: ${{ vars.ALLURE_USERNAME }}
           password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
           path: ios-test-artifacts
@@ -205,7 +203,7 @@ jobs:
       AVD_ARCH: x86_64
       AVD_PROFILE: pixel_7_pro
       AVD_TARGET: google_apis
-      AVD_NAME: "Pixel_7_Pro_API_35"
+      AVD_NAME: "Android_Emulator"
       AVD_CORES: 4
       AVD_RAM_SIZE: 4096M
       AVD_OPTIONS: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
@@ -219,10 +217,10 @@ jobs:
         shardIndex: [1, 2, 3]
         shardTotal: [3, 1]
         exclude:
-          - shardIndex: ${{ (github.event.inputs.speculos_tests == 'false' || github.event_name == 'push' || github.event_name == 'pull_request') && '2' }}
-          - shardIndex: ${{ (github.event.inputs.speculos_tests == 'false' || github.event_name == 'push' || github.event_name == 'pull_request') && '3' }}
-          - shardTotal: ${{ (github.event.inputs.speculos_tests == 'false' || github.event_name == 'push' || github.event_name == 'pull_request') && '3' }}
-          - shardTotal: ${{ github.event.inputs.speculos_tests != 'false' && github.event_name != 'push' && github.event_name != 'pull_request' && '1' }}
+          - shardIndex: ${{ (github.event.inputs.speculos_tests == 'false' || github.event_name == 'push' || github.event_name == 'pull_request' || github.event_name == 'merge_group') && '2' }}
+          - shardIndex: ${{ (github.event.inputs.speculos_tests == 'false' || github.event_name == 'push' || github.event_name == 'pull_request' || github.event_name == 'merge_group') && '3' }}
+          - shardTotal: ${{ (github.event.inputs.speculos_tests == 'false' || github.event_name == 'push' || github.event_name == 'pull_request' || github.event_name == 'merge_group') && '3' }}
+          - shardTotal: ${{ github.event.inputs.speculos_tests != 'false' && github.event_name != 'push' && github.event_name != 'pull_request' && github.event_name != 'merge_group' && '1' }}
 
     steps:
       - uses: actions/checkout@v4
@@ -323,7 +321,7 @@ jobs:
       - name: Run Android Tests
         id: detox
         run: pnpm mobile e2e:ci -p android -t $([[ "$INPUT_SPECULOS" == "true" ]] && printf %s '--speculos') $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') --shard ${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
-        timeout-minutes: ${{ env.SPECULOS_RUN && 120 || 45 }}
+        timeout-minutes: ${{ env.SPECULOS_RUN == 'true' && 120 || 45 }}
         env:
           DETOX_INSTALL_TIMEOUT: 120000
           SEED: ${{ secrets.SEED_QAA_B2C }}
@@ -357,7 +355,7 @@ jobs:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
         id: upload
         with:
-          platform: android
+          platform: android-${{ env.SPECULOS_RUN == 'true' && 'speculos' || 'mocked' }}
           login: ${{ vars.ALLURE_USERNAME }}
           password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
           path: android-test-artifacts
@@ -411,7 +409,8 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: "artifacts-${{ matrix.platform }}"
-          name: ${{ matrix.platform }}-test-artifacts
+          pattern: ${{ matrix.platform }}-test-artifacts-*
+          merge-multiple: true
 
       - name: Format Xray results
         run: apps/ledger-live-mobile/e2e/xray.formater.sh artifacts-${{ matrix.platform }} ${{ matrix.platform }} ${{ env.TEST_EXECUTION}}
@@ -426,7 +425,10 @@ jobs:
       - name: Authenticate to Xray
         id: authenticate
         run: |
-          response=$(curl -H "Content-Type: application/json" -X POST --data '{"client_id": "${{ env.XRAY_CLIENT_ID }}", "client_secret": "${{ env.XRAY_CLIENT_SECRET }}"}' ${{ env.XRAY_API_URL }}/authenticate)
+          response=$(curl -H "Content-Type: application/json" -X POST \
+                    --data '{"client_id": "${{ env.XRAY_CLIENT_ID }}", "client_secret": "${{ env.XRAY_CLIENT_SECRET }}"}' \
+                    ${{ env.XRAY_API_URL }}/authenticate)
+          echo "Xray Authentication Response: $response"
           echo "xray_token=$response" >> $GITHUB_OUTPUT
       - name: Publish report on Xray
         id: publish-xray
@@ -436,8 +438,9 @@ jobs:
                     -X POST \
                     --data @artifacts-${{ matrix.platform }}/xray_report.json \
                     ${{ env.XRAY_API_URL }}/import/execution)
-            key=$(echo $response | jq -r '.key')
-            echo "xray_key=$key" >> $GITHUB_OUTPUT
+          echo "Xray Report Response: $response"
+          key=$(echo $response | jq -r '.key')
+          echo "xray_key=$key" >> $GITHUB_OUTPUT
       - name: Write Xray report link in summary
         shell: bash
         run: echo "::notice title=${{ matrix.platform }} Xray report URL::${{ env.JIRA_URL }}/${{ steps.publish-xray.outputs.xray_key }}"

@@ -120,6 +120,7 @@
     "addressCopiedSuspicious": "Mismatch between the copied address and the one in the clipboard.",
     "experimentalFeature": "Experimental",
     "featureFlags": "Feature flag",
+    "ldmkEnabled": "LDMK transport",
     "information": "Information",
     "search": "Search...",
     "searchWithoutEllipsis": "Search",
@@ -200,7 +201,8 @@
       "STAKE": "Staked",
       "UNSTAKE": "Unstaked",
       "WITHDRAW_UNSTAKED": "Withdrawn",
-      "SENDING": "Sending"
+      "SENDING": "Sending",
+      "BURN": "Burned"
     },
     "edit": {
       "title": "Speed up or Cancel",
@@ -437,8 +439,8 @@
       "cta": "Go to My Ledger"
     },
     "wrongDevice": {
-      "title": "Ledger Nano S™ is not compatible with THORChain",
-      "description": "Ledger Nano S is not compatible with THORChain. You can use Ledger Nano S Plus, Ledger Nano X, Ledger Stax, or Ledger Flex to experience cross-chain swaps on THORChain via Ledger Live",
+      "title": "Ledger Nano S™ is not compatible with {{provider}}",
+      "description": "Ledger Nano S is not compatible with {{provider}}. You can use Ledger Nano S Plus, Ledger Nano X, Ledger Stax, or Ledger Flex to experience cross-chain swaps on {{provider}} via Ledger Live",
       "cta": "Explore compatible devices",
       "changeProvider": "Swap with another provider"
     },
@@ -447,8 +449,14 @@
       "ton_description": "To swap Ton, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
       "spl_tokens_title": "Ledger Nano S™ does not support swapping Solana tokens",
       "spl_tokens_description": "To swap Solana tokens, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+      "near_title": "Ledger Nano S™ does not support swapping Near",
+      "near_description": "To swap Near, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
       "ada_title": "Ledger Nano S™ does not support swapping Cardano",
-      "ada_description": "To swap Cardano, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
+      "ada_description": "To swap Cardano, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+      "apt_title": "Ledger Nano S™ does not support swapping Aptos",
+      "apt_description": "To swap Aptos, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+      "cosmos_title": "Ledger Nano S™ does not support swapping Cosmos",
+      "cosmos_description": "To swap Cosmos, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
     },
     "providers": {
       "title": "Choose a provider to swap crypto",
@@ -1515,21 +1523,21 @@
     },
     "recoverBanner": {
       "subscribeDone": {
-        "title": "Finish adding your payment card",
-        "description": "Restore reliably with Ledger Recover.",
+        "title": "Reminder: Finish subscribing to Ledger Recover",
+        "description": "You're just two steps away from being secured.",
         "primaryCta": "Add card",
         "secondaryCta": "Maybe later"
       },
       "verifyIdentity": {
-        "title": "Finish verifying your identity",
-        "description": "Restore reliably with Ledger Recover.",
-        "primaryCta": "Verify",
+        "title": "Reminder: Finish subscribing to Ledger Recover",
+        "description": "You're just one step away from being secured.",
+        "primaryCta": "Verify identity",
         "secondaryCta": "Maybe later"
       },
       "connectDevice": {
-        "title": "Connect your Ledger",
-        "description": "You're 1 step away from Ledger Recover.",
-        "primaryCta": "Connect",
+        "title": "Reminder: Finish subscribing to Ledger Recover",
+        "description": "It's your final step to ensure wallet access recovery.",
+        "primaryCta": "Connect device",
         "secondaryCta": "Maybe later"
       }
     },
@@ -3758,6 +3766,69 @@
           }
         }
       }
+    },
+    "token": {
+      "frozenStateWarning": "Account assets are frozen!",
+      "transferWarning": "To verify the recipient address for Solana tokens using a Ledger Nano S™, <0>follow these instructions.</0>",
+      "transferFees": {
+        "feesPercentHint": "Token has {{feePercent}}% ({{feeBps}}bps) transfer fee. {{maxFee}} max",
+        "notice": "Transfer fee {{fee}}%",
+        "tooltipHint": "Percentage of transfer withheld for token creator",
+        "transferFeesLabel": "Transfer fees"
+      },
+      "nonTransferable": {
+        "notice": "Token is non-transferable"
+      },
+      "interestRate": {
+        "notice": "Interest rate: {{rate}}%",
+        "tooltipHint": "For cosmetic purposes only, no new tokens are created as a result of the interest"
+      },
+      "permanentDelegate": {
+        "notice": "Permanent delegate authority is enabled",
+        "initializationNotice": "Permanent delegate authority is initialized but not enabled",
+        "tooltipHint": "The delegate has the ability transfer or burn this token from your account"
+      },
+      "requiredMemoOnTransfer": {
+        "notice": "Required memo on transfer is enabled",
+        "tooltipHint": "All incoming transfers to this account must have a memo"
+      },
+      "transferHook": {
+        "notice": "Transfer hook is enabled",
+        "initializationNotice": "Transfer hook is initialized but not enabled",
+        "tooltipHint": "Token has extra functionality handled by {{programAddress}} program"
+      },
+      "extensionsInfo": {
+        "title": "Solana token extensions",
+        "commonInfo": "Token extensions are the next generation of the Solana Token standard. They introduce a new set of ways to extend the normal token functionality with additional features such as confidential transfers, permanent delegate, custom transfer logic, extended metadata, and much more.",
+        "permanentDelegate": {
+          "title": "Permanent delegate",
+          "permanentDelegateAddress": "Current delegate authority is {{address}}",
+          "permanentDelegateNotSetup": "Current delegate authority is not set up.",
+          "description": "Permanent delegate is an authority which has unlimited delegate privileges over any account for that mint. The delegate could burn or transfer any amount of tokens, at any time, on their own authority."
+        },
+        "nonTransferable": {
+          "title": "Non-Transferrable Tokens",
+          "description": "Such tokens are \"soul-bound\" and cannot be moved or burned, except by the token issuer."
+        },
+        "transferHook": {
+          "title": "Transfer hook",
+          "transferHookAddress": "Current transfer hook program is {{address}}",
+          "transferHookNotSetup": "Current transfer hook program is not set up.",
+          "description": "Transfer hook gives a token issuers an ability to dictate how users and tokens interact. Instead of a normal transfer, issuer can insert custom logic into a program to be used with the transfer hook extension."
+        },
+        "transferFee": {
+          "title": "Transfer Fee",
+          "currentTransferFee": "Current transfer fee is {{feePercent}}% ({{feeBps}}bps). Max {{maxFee}}.",
+          "description": "Fees are charged on every transfer of a token and withheld on the recipient account, untouchable by the recipient."
+        },
+        "interestBearing": {
+          "title": "Interest-Bearing Tokens",
+          "currentInterestRate": "Current interest rate is {{rate}}%.",
+          "accruedDelta": "Accrued {{delta}}.",
+          "interestRateNotSetup": "Current interest rate is set up to 0%.",
+          "description": "Tokens that constantly grow or decrease in value according on its interest rate. No new tokens are ever created, the feature is entirely cosmetic."
+        }
+      }
     }
   },
   "ethereum": {
@@ -4142,7 +4213,8 @@
       "walletSync": "Ledger Sync",
       "walletSyncDesc": "Sync your Ledger Live crypto accounts across different phones and computers.",
       "mevProtection": "MEV Protection",
-      "mevProtectionDesc": "Enable MEV Protection for more reliable transactions on Ethereum",
+      "mevProtectionDesc": "Enable MEV Protection for more reliable transactions on Ethereum.",
+      "mevProtectionLearnMore": "Privacy notice",
       "marketPerformanceWidget": "Market Performance Widget",
       "marketPerformanceWidgetDesc": "Enable this feature to view the top gainers and losers over selected timeframes on the portfolio page."
     },
@@ -4162,6 +4234,12 @@
       "debugAppsDesc": "Display and allow opening debug tagged platform apps.",
       "debugReactQuery": "Allow debug ReactQuery",
       "debugReactQueryDesc": "Display and allow opening debug ReactQuery console.",
+
+      "nfts": {
+        "title": "NFTs HiddenCollections",
+        "description": "Reset the hidden collections list",
+        "reset": "Reset"
+      },
       "exchangeDeveloperMode": {
         "title": "Exchange Dev Mode",
         "desc": "Add exchange provider's info",
@@ -5447,7 +5525,8 @@
     },
     "solana": {
       "memo": "Tag / Memo",
-      "memoPlaceholder": "Optional"
+      "memoPlaceholder": "Optional",
+      "requiredMemoPlaceholder": "Required"
     }
   },
   "errors": {
@@ -5731,17 +5810,17 @@
       "title": "Sorry, no accounts were found",
       "description": "Something went wrong with the address calculation, try again or contact Ledger Support"
     },
-    "ElrondDecimalsLimitReached": {
+    "MultiversXDecimalsLimitReached": {
       "title": "Maximum decimals limit reached",
       "description": "Please make sure that the amount provided has 18 decimals."
     },
-    "ElrondMinDelegatedAmountError": {
+    "MultiversXMinDelegatedAmountError": {
       "title": "Delegated amount must be at least {{formattedAmount}}"
     },
-    "ElrondMinUndelegatedAmountError": {
+    "MultiversXMinUndelegatedAmountError": {
       "title": "Undelegated amount must be at least {{formattedAmount}}"
     },
-    "ElrondDelegationBelowMinimumError": {
+    "MultiversXDelegationBelowMinimumError": {
       "title": "Remaining delegation can't be less than {{formattedAmount}}"
     },
     "NotEnoughEGLDForFees": {
@@ -5932,11 +6011,11 @@
     },
     "WrongDeviceForAccountPayout": {
       "title": "Something went wrong",
-      "description": "This receiving account does not belong to your device. Please change and retry."
+      "description": "This receiving account does not belong to the device you have connected. Please change and retry"
     },
     "WrongDeviceForAccountRefund": {
       "title": "Something went wrong",
-      "description": "This receiving account does not belong to your device for the refund. Please change and retry."
+      "description": "This sending account does not belong to the device you have connected. Please change and retry"
     },
     "DeviceAppVerifyNotSupported": {
       "title": "App update required",
@@ -6220,6 +6299,30 @@
     "SolanaAccountNotFunded": {
       "title": "Account not funded"
     },
+    "SolanaTokenAccountHoldsAnotherToken": {
+      "title": "This associated token account holds another token"
+    },
+    "SolanaTokenAccountWarning": {
+      "title": "This is not a regular wallet address but an associated token account. Continue only if you know what you are doing"
+    },
+    "SolanaTokenAccountNotAllowed": {
+      "title": "This is a token account. Input a regular wallet address"
+    },
+    "SolanaMintAccountNotAllowed": {
+      "title": "This is a token address. Input a regular wallet address"
+    },
+    "SolanaAssociatedTokenAccountWillBeFunded": {
+      "title": "Account will be funded"
+    },
+    "SolanaTokenAccountFrozen": {
+      "title": "Token account assets are frozen"
+    },
+    "SolanaTokenAccounNotInitialized": {
+      "title": "Account not initialized"
+    },
+    "SolanaTokenRecipientIsSenderATA": {
+      "title": "Recipient address is the same as the sender token address"
+    },
     "SolanaMemoIsTooLong": {
       "title": "Memo is too long. Max length is {{maxLength}}"
     },
@@ -6234,6 +6337,13 @@
     },
     "SolanaTxConfirmationTimeout": {
       "title": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+    },
+    "SolanaRecipientMemoIsRequired": {
+      "title": "Memo is required for recipient address"
+    },
+    "SolanaTokenNonTransferable": {
+      "title": "Token is non-transferable",
+      "description": "Such tokens are \"soul-bound\" and cannot be transferred"
     },
     "NotEnoughNftOwned": {
       "title": "You have exceeded the number of available tokens"
@@ -6651,6 +6761,24 @@
       "alreadySync": "I already turned it on",
       "learnMore": "How does Ledger Sync work?"
     },
+    "entryPoints": {
+      "accounts": {
+        "title": "Activate Ledger Sync"
+      },
+      "manager": {
+        "title": "Ledger Sync",
+        "description": "Sync your accounts automatically, even when switching to a new phone.",
+        "cta": "Turn on Ledger Sync"
+      },
+      "settings": {
+        "title": "Ledger Sync",
+        "description": "Sync your accounts automatically, even when switching to a new phone.",
+        "cta": "Turn on Ledger Sync"
+      },
+      "onboarding": {
+        "title": "Sync with another Ledger Live app"
+      }
+    },
     "manage": {
       "cta": "Manage",
       "synchronize": {
@@ -6748,17 +6876,19 @@
         "mobile": {
           "description": "Sync with the Ledger Live app on another phone",
           "steps": {
-            "step1": "Open the Ledger Live app you want to sync",
-            "step2": "Go to <0>Settings</0> > <0>General</0> > <0>Ledger Sync</0> > <0>Turn on sync</0> > <0>Show QR</0>",
-            "step3": "Scan QR code"
+            "step1": "Make sure Ledger Sync is activated on one of your apps.",
+            "step2": "Open the Ledger Live app you want to sync.",
+            "step3": "Go to <0>Settings</0> > <0>General</0> > <0>Ledger Sync</0> > <0>I already turned it on</0> > <0>Show QR</0>",
+            "step4": "Scan QR code."
           }
         },
         "desktop": {
           "description": "Synchronize your accounts with another Ledger Live app",
           "steps": {
-            "step1": "Open the Ledger Live app you want to sync",
-            "step2": "Go to <0>Settings</0> > <0>General</0> > <0>Ledger Sync</0> > <0>Turn on sync</0> > <0>Use your Ledger</0>",
-            "step3": "Connect your Ledger"
+            "step1": "Make sure Ledger Sync is activated on one of your apps.",
+            "step2": "Open the Ledger Live app you want to sync.",
+            "step3": "Go to <0>Settings</0> > <0>General</0> > <0>Ledger Sync</0> > <0>I already turned it on</0> > <0>Use your Ledger</0>",
+            "step4": "Connect your Ledger."
           }
         }
       },
@@ -6876,7 +7006,56 @@
       "transactionId": "Transaction ID"
     }
   },
-  "ldmkFeatureFlagWarning": {
-    "title": "With LDMK transport"
+  "lnsUpsell": {
+    "banner": {
+      "manager": {
+        "optIn": {
+          "title": "It's time to upgrade",
+          "description": "Upgrade to our latest devices with <0>{{discount}}% discount</0> for an enhanced security and a seamless experience.",
+          "cta": "Level up my wallet",
+          "linkText": "Learn more"
+        },
+        "optOut": {
+          "title": "It's time to upgrade",
+          "description": "Upgrade to our latest devices with <0>{{discount}}% discount</0> for an enhanced security and a seamless experience.",
+          "cta": "Level up my wallet",
+          "linkText": "Learn more"
+        }
+      },
+      "accounts": {
+        "optIn": {
+          "title": "It's time to upgrade",
+          "description": "Ledger Nano S updates are ending soon. Upgrade to our latest devices with <0>{{discount}}% discount</0>.",
+          "cta": "Level up my wallet",
+          "linkText": "Learn more"
+        },
+        "optOut": {
+          "title": "It's time to upgrade",
+          "description": "Ledger Nano S updates are ending soon. Upgrade to our latest devices with <0>{{discount}}% discount</0>.",
+          "cta": "Level up my wallet",
+          "linkText": "Learn more"
+        }
+      },
+      "portfolio": {
+        "optOut": {
+          "title": "It's time to upgrade",
+          "description": "Upgrade to our latest devices with <0>{{discount}}% discount</0> for an enhanced security and a seamless experience.",
+          "cta": "Level up my wallet",
+          "linkText": "Learn more"
+        }
+      },
+      "notifications": {
+        "optIn": {
+          "description": "Updates are ending soon. Upgrade now with {{discount}}% off for a seamless experience.",
+          "cta": "Level up my wallet",
+          "linkText": "Learn more"
+        },
+        "optOut": {
+          "description": "Updates are ending soon. Upgrade now with {{discount}}% off for a seamless experience.",
+          "cta": "Level up my wallet",
+          "linkText": "Learn more"
+        }
+      }
+    }
   }
 }

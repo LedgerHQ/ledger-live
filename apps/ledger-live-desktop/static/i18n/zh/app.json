@@ -120,6 +120,7 @@
     "addressCopiedSuspicious" : "复制的地址和剪贴板中的地址不匹配。",
     "experimentalFeature" : "实验性功能",
     "featureFlags" : "功能标志",
+    "ldmkEnabled" : "LDMK 传输",
     "information" : "信息",
     "search" : "搜索...",
     "searchWithoutEllipsis" : "搜索",
@@ -200,7 +201,8 @@
       "STAKE" : "已权益质押",
       "UNSTAKE" : "已解除权益质押",
       "WITHDRAW_UNSTAKED" : "已提取",
-      "SENDING" : "发送"
+      "SENDING" : "发送",
+      "BURN" : "已销毁"
     },
     "edit" : {
       "title" : "加速或取消",
@@ -437,8 +439,8 @@
       "cta" : "前往 My Ledger（我的 Ledger）"
     },
     "wrongDevice" : {
-      "title" : "Ledger Nano S™ 不兼容 THORChain",
-      "description" : "Ledger Nano S 不兼容 THORChain。您可以使用 Ledger Nano S Plus、Ledger Nano X、Ledger Stax 或 Ledger Flex 通过 Ledger Live 体验 THORChain 的跨链互换",
+      "title" : "Ledger Nano S™ 与 {{provider}} 不兼容",
+      "description" : "Ledger Nano S 与 {{provider}} 不兼容。您可以使用 Ledger Nano S Plus、Ledger Nano X、Ledger Stax 或 Ledger Flex 通过 Ledger Live 体验 {{provider}} 的跨链互换",
       "cta" : "浏览兼容设备",
       "changeProvider" : "使用其他提供商进行互换"
     },
@@ -447,8 +449,14 @@
       "ton_description" : "要互换 TON，请使用任何其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
       "spl_tokens_title" : "Ledger Nano S™ 不支持互换 Solana 代币",
       "spl_tokens_description" : "要互换 Solana 代币，请使用任何其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
+      "near_title" : "Ledger Nano S™ 不支持互换 Near",
+      "near_description" : "要互换 Near，请使用其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
       "ada_title" : "Ledger Nano S™ 不支持互换 Cardano",
-      "ada_description" : "要互换 Cardano，请使用任何其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。"
+      "ada_description" : "要互换 Cardano，请使用任何其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
+      "apt_title" : "Ledger Nano S™ 不支持互换 Aptos",
+      "apt_description" : "要互换 Aptos，请使用其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
+      "cosmos_title" : "Ledger Nano S™ 不支持互换 Cosmos",
+      "cosmos_description" : "要互换 Cosmos，请使用其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。"
     },
     "providers" : {
       "title" : "选择一个供应方来互换加密货币",
@@ -1515,21 +1523,21 @@
     },
     "recoverBanner" : {
       "subscribeDone" : {
-        "title" : "完成添加支付卡",
-        "description" : "使用 Ledger Recover 可靠地恢复。",
+        "title" : "提醒：完成订阅 Ledger Recover 服务",
+        "description" : "完成最后两步，让您的设备及资金得到安全保障。",
         "primaryCta" : "添加卡",
         "secondaryCta" : "以后再说"
       },
       "verifyIdentity" : {
-        "title" : "完成身份验证",
-        "description" : "使用 Ledger Recover 可靠地恢复。",
-        "primaryCta" : "验证",
+        "title" : "提醒：完成订阅 Ledger Recover 服务",
+        "description" : "完成最后一步，让您的设备及资金得到安全保障。",
+        "primaryCta" : "验证身份",
         "secondaryCta" : "以后再说"
       },
       "connectDevice" : {
-        "title" : "连接 Ledger 设备",
-        "description" : "还差一步即可使用 Ledger Recover。",
-        "primaryCta" : "连接",
+        "title" : "提醒：完成订阅 Ledger Recover 服务",
+        "description" : "这是您确保能恢复钱包访问权限的最后一步。",
+        "primaryCta" : "连接设备",
         "secondaryCta" : "以后再说"
       }
     },
@@ -3742,6 +3750,10 @@
           }
         }
       }
+    },
+    "token" : {
+      "frozenStateWarning" : "账户资产已冻结！",
+      "transferWarning" : "要使用 Ledger Nano S™ 验证 Solana 代币的接收人地址，<0>请按照以下说明操作。</0>"
     }
   },
   "ethereum" : {
@@ -4122,7 +4134,8 @@
       "walletSync" : "Ledger Sync",
       "walletSyncDesc" : "在不同的手机和电脑上同步您的 Ledger Live 加密货币账户。",
       "mevProtection" : "MEV 保护",
-      "mevProtectionDesc" : "启用 MEV 保护，确保以太坊上的交易更加可靠",
+      "mevProtectionDesc" : "启用 MEV Protection，确保以太坊上的交易更加可靠。",
+      "mevProtectionLearnMore" : "隐私声明",
       "marketPerformanceWidget" : "市场表现小组件",
       "marketPerformanceWidgetDesc" : "启用此功能可在资产组合页面上查看指定时间范围内获利最多和亏损最多的资产。"
     },
@@ -4142,6 +4155,11 @@
       "debugAppsDesc" : "显示并允许打开调试标记的平台应用程序。",
       "debugReactQuery" : "允许调试 ReactQuery",
       "debugReactQueryDesc" : "显示并允许打开调试 ReactQuery 控制台。",
+      "nfts" : {
+        "title" : "NFTs HiddenCollections",
+        "description" : "重置隐藏藏品列表",
+        "reset" : "重置"
+      },
       "exchangeDeveloperMode" : {
         "title" : "兑换开发模式",
         "desc" : "添加兑换提供商的信息",
@@ -5708,17 +5726,17 @@
       "title" : "抱歉，没有找到账户",
       "description" : "地址计算出错，请重试或联系 Ledger 客服"
     },
-    "ElrondDecimalsLimitReached" : {
+    "MultiversXDecimalsLimitReached" : {
       "title" : "已达到小数位数限制",
       "description" : "请确保所提供的数额有 18 位小数。"
     },
-    "ElrondMinDelegatedAmountError" : {
+    "MultiversXMinDelegatedAmountError" : {
       "title" : "已委托数额必须至少为 {{formattedAmount}}"
     },
-    "ElrondMinUndelegatedAmountError" : {
+    "MultiversXMinUndelegatedAmountError" : {
       "title" : "未委托数额必须至少为 {{formattedAmount}}"
     },
-    "ElrondDelegationBelowMinimumError" : {
+    "MultiversXDelegationBelowMinimumError" : {
       "title" : "剩余委托不能少于 {{formattedAmount}}"
     },
     "NotEnoughEGLDForFees" : {
@@ -5909,11 +5927,11 @@
     },
     "WrongDeviceForAccountPayout" : {
       "title" : "出错了",
-      "description" : "此接收账户不属于您的设备。请更改并重试。"
+      "description" : "此接收账户不属于您已连接的设备。请更改并重试"
     },
     "WrongDeviceForAccountRefund" : {
       "title" : "出错了",
-      "description" : "此接收账户不属于您用于退款的设备。请更改并重试。"
+      "description" : "此发送账户不属于您已连接的设备。请更改并重试"
     },
     "DeviceAppVerifyNotSupported" : {
       "title" : "需要更新应用程序",
@@ -6196,6 +6214,30 @@
     },
     "SolanaAccountNotFunded" : {
       "title" : "账户没有资金"
+    },
+    "SolanaTokenAccountHoldsAnotherToken" : {
+      "title" : "该关联代币账户持有另一种代币"
+    },
+    "SolanaTokenAccountWarning" : {
+      "title" : "这不是普通钱包地址，而是关联代币账户。继续之前，请务必清楚您在做什么"
+    },
+    "SolanaTokenAccountNotAllowed" : {
+      "title" : "这是一个代币账户。请输入普通钱包地址"
+    },
+    "SolanaMintAccountNotAllowed" : {
+      "title" : "这是一个代币地址。请输入普通钱包地址"
+    },
+    "SolanaAssociatedTokenAccountWillBeFunded" : {
+      "title" : "账户将获得资金"
+    },
+    "SolanaTokenAccountFrozen" : {
+      "title" : "代币账户资产已冻结"
+    },
+    "SolanaTokenAccounNotInitialized" : {
+      "title" : "账户未初始化"
+    },
+    "SolanaTokenRecipientIsSenderATA" : {
+      "title" : "接收者地址与发送者代币地址相同"
     },
     "SolanaMemoIsTooLong" : {
       "title" : "Memo 标签太长。最大长度为 {{maxLength}}"
@@ -6725,17 +6767,19 @@
         "mobile" : {
           "description" : "与另一部手机上的 Ledger Live 应用程序同步",
           "steps" : {
-            "step1" : "打开您要同步的 Ledger Live 应用程序",
-            "step2" : "前往<0>设置</0> > <0>常规</0> > <0>Ledger Sync</0> > <0>开启同步</0> > <0>显示二维码</0>",
-            "step3" : "扫描二维码"
+            "step1" : "确保您已在其中一个应用程序上激活 Ledger Sync。",
+            "step2" : "打开您要同步的 Ledger Live 应用程序。",
+            "step3" : "前往<0>“设置”</0> > <0>常规</0> > <0>Ledger Sync</0> > <0>我已打开</0> > <0>显示二维码</0>",
+            "step4" : "扫描二维码。"
           }
         },
         "desktop" : {
           "description" : "将您的账户与另一个 Ledger Live 应用程序同步",
           "steps" : {
-            "step1" : "打开您要同步的 Ledger Live 应用程序",
-            "step2" : "前往<0>设置</0> > <0>常规</0> > <0>Ledger Sync</0> > <0>开启同步</0> > <0>使用您的 Ledger</0>",
-            "step3" : "连接 Ledger 设备"
+            "step1" : "确保您已在其中一个应用程序上激活 Ledger Sync。",
+            "step2" : "打开您要同步的 Ledger Live 应用程序。",
+            "step3" : "前往<0>“设置”</0> > <0>常规</0> > <0>Ledger Sync</0> > <0>我已打开</0> > <0>使用您的 Ledger 设备</0>",
+            "step4" : "连接 Ledger 设备。"
           }
         }
       },
@@ -6853,7 +6897,56 @@
       "transactionId" : "交易 ID"
     }
   },
-  "ldmkFeatureFlagWarning" : {
-    "title" : "使用 LDMK transport"
+  "lnsUpsell" : {
+    "banner" : {
+      "manager" : {
+        "optIn" : {
+          "title" : "现在就是升级的好时机",
+          "description" : "升级到我们的最新设备，立享 <0>{{discount}}% 折扣优惠</0>，加强安全保护，享受顺畅体验。",
+          "cta" : "升级我的钱包",
+          "linkText" : "了解更多"
+        },
+        "optOut" : {
+          "title" : "现在就是升级的好时机",
+          "description" : "升级到我们的最新设备，立享 <0>{{discount}}% 折扣优惠</0>，加强安全保护，享受顺畅体验。",
+          "cta" : "升级我的钱包",
+          "linkText" : "了解更多"
+        }
+      },
+      "accounts" : {
+        "optIn" : {
+          "title" : "现在就是升级的好时机",
+          "description" : "Ledger Nano S 更新活动即将结束。升级到我们的最新设备，立享 <0>{{discount}}% 折扣优惠</0>。",
+          "cta" : "升级我的钱包",
+          "linkText" : "了解更多"
+        },
+        "optOut" : {
+          "title" : "现在就是升级的好时机",
+          "description" : "Ledger Nano S 更新活动即将结束。升级到我们的最新设备，立享 <0>{{discount}}% 折扣优惠</0>。",
+          "cta" : "升级我的钱包",
+          "linkText" : "了解更多"
+        }
+      },
+      "portfolio" : {
+        "optOut" : {
+          "title" : "现在就是升级的好时机",
+          "description" : "升级到我们的最新设备，立享 <0>{{discount}}% 折扣优惠</0>，加强安全保护，享受顺畅体验。",
+          "cta" : "升级我的钱包",
+          "linkText" : "了解更多"
+        }
+      },
+      "notifications" : {
+        "optIn" : {
+          "description" : "更新活动即将结束。立即升级，享受顺畅体验，更有 {{discount}}% 折扣优惠。",
+          "cta" : "升级我的钱包",
+          "linkText" : "了解更多"
+        },
+        "optOut" : {
+          "description" : "更新活动即将结束。立即升级，享受顺畅体验，更有 {{discount}}% 折扣优惠。",
+          "cta" : "升级我的钱包",
+          "linkText" : "了解更多"
+        }
+      }
+    }
   }
 }

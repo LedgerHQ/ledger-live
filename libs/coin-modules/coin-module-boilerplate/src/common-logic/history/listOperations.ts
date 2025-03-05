@@ -11,11 +11,10 @@ import { getTransactions } from "../../network/indexer";
  */
 export async function listOperations(
   address: string,
-  { limit, start }: Pagination,
-): Promise<[Operation[], number]> {
-  const transactions = await getTransactions(address, { from: start || 0, size: limit });
-
-  return [transactions.map(convertToCoreOperation(address)), transactions.length];
+  page: Pagination,
+): Promise<[Operation[], string]> {
+  const transactions = await getTransactions(address, { from: page.minHeight });
+  return [transactions.map(convertToCoreOperation(address)), ""];
 }
 
 const convertToCoreOperation = (address: string) => (operation: any) => {

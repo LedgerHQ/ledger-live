@@ -75,7 +75,7 @@ export default function StakingStarted({ navigation, route }: Props) {
         <View>
           <Alert type="info" title={t("near.staking.flow.steps.starter.warning.description")} />
         </View>
-        <Button onPress={onNext} type="main" mt={6}>
+        <Button onPress={onNext} type="main" mt={6} testID="near-delegation-start-button">
           <Trans i18nKey="near.staking.flow.steps.starter.cta" />
         </Button>
       </View>

@@ -142,15 +142,15 @@ const envDefinitions = {
     def: "https://polkadot-fullnodes.api.live.ledger.com",
     desc: "Polkadot Node",
   },
-  ELROND_API_ENDPOINT: {
+  MULTIVERSX_API_ENDPOINT: {
     parser: stringParser,
     def: "https://elrond.coin.ledger.com",
-    desc: "Elrond API url",
+    desc: "MultiversX API url",
   },
-  ELROND_DELEGATION_API_ENDPOINT: {
+  MULTIVERSX_DELEGATION_API_ENDPOINT: {
     parser: stringParser,
     def: "https://delegations-elrond.coin.ledger.com",
-    desc: "Elrond DELEGATION API url",
+    desc: "MultiversX DELEGATION API url",
   },
   API_STELLAR_HORIZON: {
     parser: stringParser,
@@ -571,7 +571,7 @@ const envDefinitions = {
     parser: stringArrayParser,
     desc: "set the currencies where NFT is active",
   },
-  NFT_ETH_METADATA_SERVICE: {
+  NFT_METADATA_SERVICE: {
     def: "https://nft.api.live.ledger.com",
     parser: stringParser,
     desc: "service uri used to get the metadata of an nft",

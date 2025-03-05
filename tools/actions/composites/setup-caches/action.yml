@@ -100,6 +100,14 @@ runs:
           ~/.cocoapods
         key: ${{ runner.os }}-pods-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock') }}
 
+    - name: Clear LLM pods
+      if: inputs.skip-pod-cache == 'true' && runner.os == 'macOS'
+      shell: bash
+      run: |
+          rm -rf ~/.cocoapods/
+          rm -rf ~/Library/Caches/CocoaPods
+          rm -rf apps/ledger-live-mobile/ios/Pods
+
     - name: TurboRepo local caching server
       id: turborepo-cache-server
       if: steps.aws.conclusion == 'success' && inputs.skip_turbo_cache != 'true'

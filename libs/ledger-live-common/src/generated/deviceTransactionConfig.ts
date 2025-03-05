@@ -1,16 +1,16 @@
-import aptos from "../families/aptos/deviceTransactionConfig";
-import casper from "../families/casper/deviceTransactionConfig";
 import celo from "../families/celo/deviceTransactionConfig";
 import algorand from "@ledgerhq/coin-algorand/deviceTransactionConfig";
+import aptos from "@ledgerhq/coin-aptos/deviceTransactionConfig";
 import bitcoin from "@ledgerhq/coin-bitcoin/deviceTransactionConfig";
 import cardano from "@ledgerhq/coin-cardano/deviceTransactionConfig";
+import casper from "@ledgerhq/coin-casper/deviceTransactionConfig";
 import cosmos from "@ledgerhq/coin-cosmos/deviceTransactionConfig";
-import elrond from "@ledgerhq/coin-elrond/deviceTransactionConfig";
 import evm from "@ledgerhq/coin-evm/deviceTransactionConfig";
 import hedera from "@ledgerhq/coin-hedera/deviceTransactionConfig";
 import filecoin from "@ledgerhq/coin-filecoin/deviceTransactionConfig";
 import internet_computer from "@ledgerhq/coin-internet_computer/deviceTransactionConfig";
 import icon from "@ledgerhq/coin-icon/deviceTransactionConfig";
+import multiversx from "@ledgerhq/coin-multiversx/deviceTransactionConfig";
 import near from "@ledgerhq/coin-near/deviceTransactionConfig";
 import polkadot from "@ledgerhq/coin-polkadot/deviceTransactionConfig";
 import solana from "@ledgerhq/coin-solana/deviceTransactionConfig";
@@ -22,19 +22,19 @@ import tron from "@ledgerhq/coin-tron/deviceTransactionConfig";
 import xrp from "@ledgerhq/coin-xrp/deviceTransactionConfig";
 
 export default {
-  aptos,
-  casper,
   celo,
   algorand,
+  aptos,
   bitcoin,
   cardano,
+  casper,
   cosmos,
-  elrond,
   evm,
   hedera,
   filecoin,
   internet_computer,
   icon,
+  multiversx,
   near,
   polkadot,
   solana,
@@ -45,8 +45,8 @@ export default {
   tron,
   xrp,
 };
-import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_aptos } from "../families/aptos/deviceTransactionConfig";
-import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_casper } from "../families/casper/deviceTransactionConfig";
+import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_aptos } from "@ledgerhq/coin-aptos/bridge/deviceTransactionConfig";
+import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_casper } from "@ledgerhq/coin-casper/bridge/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_filecoin } from "@ledgerhq/coin-filecoin/bridge/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_stacks } from "@ledgerhq/coin-stacks/bridge/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_polkadot } from "@ledgerhq/coin-polkadot/bridge/deviceTransactionConfig";

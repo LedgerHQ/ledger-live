@@ -1,12 +1,13 @@
 import { useSelector } from "react-redux";
 import { BaseNavigation } from "~/components/RootNavigator/types/helpers";
 import { readOnlyModeEnabledSelector } from "~/reducers/settings";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { NavigatorName } from "~/const";
 import { useCallback, useMemo } from "react";
 import { track } from "~/analytics";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { AddAccountContexts } from "../../enums";
 
 type AddAccountScreenProps = {
   currency?: CryptoCurrency | TokenCurrency | null;
@@ -24,6 +25,7 @@ const useSelectAddAccountMethodViewModel = ({
   const llmNetworkBasedAddAccountFlow = useFeature("llmNetworkBasedAddAccountFlow");
   const isReadOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const isWalletSyncEnabled = walletSyncFeatureFlag?.enabled;
+  const route = useRoute();
   const hasCurrency = !!currency;
 
   const navigationParams = useMemo(() => {
@@ -31,18 +33,24 @@ const useSelectAddAccountMethodViewModel = ({
       if (currency?.type === "TokenCurrency") {
         return {
           token: currency,
-          ...(llmNetworkBasedAddAccountFlow?.enabled && { context: "addAccounts" }),
+          ...(llmNetworkBasedAddAccountFlow?.enabled && {
+            context: AddAccountContexts.AddAccounts,
+          }),
         };
       } else {
         return {
           currency,
-          ...(llmNetworkBasedAddAccountFlow?.enabled && { context: "addAccounts" }),
+          ...(llmNetworkBasedAddAccountFlow?.enabled && {
+            context: AddAccountContexts.AddAccounts,
+          }),
         };
       }
     } else {
-      return llmNetworkBasedAddAccountFlow?.enabled ? { context: "addAccounts" } : {};
+      return llmNetworkBasedAddAccountFlow?.enabled
+        ? { context: AddAccountContexts.AddAccounts, sourceScreenName: route.name }
+        : {};
     }
-  }, [hasCurrency, currency, llmNetworkBasedAddAccountFlow?.enabled]);
+  }, [hasCurrency, currency, llmNetworkBasedAddAccountFlow?.enabled, route.name]);
 
   const trackButtonClick = useCallback((button: string) => {
     track("button_clicked", {

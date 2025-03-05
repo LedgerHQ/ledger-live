@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-vechain",
-  "version": "2.4.1",
+  "version": "2.4.6-next.0",
   "description": "Ledger VeChain Coin integration",
   "keywords": [
     "Ledger",
@@ -80,7 +80,7 @@
   "license": "Apache-2.0",
   "scripts": {
     "clean": "rimraf lib lib-es",
-    "build": "tsc && tsc -m ES6 --outDir lib-es",
+    "build": "tsc && tsc -m esnext --moduleResolution bundler --outDir lib-es",
     "coverage": "jest --coverage --testPathIgnorePatterns='/bridge.integration.test.ts|node_modules|lib-es|lib/' --passWithNoTests && mv coverage/coverage-final.json coverage/coverage-vechain.json",
     "prewatch": "pnpm build",
     "watch": "tsc --watch",

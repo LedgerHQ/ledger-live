@@ -38,7 +38,7 @@ import { HandlersPayloads } from "@ledgerhq/live-wallet/store";
 import { ImportAccountsReduceInput } from "@ledgerhq/live-wallet/liveqr/importAccounts";
 import { Steps } from "LLM/features/WalletSync/types/Activation";
 import { NftStatus } from "@ledgerhq/live-nft/types";
-import { BlockchainEVM } from "@ledgerhq/live-nft/supported";
+import { BlockchainsType } from "@ledgerhq/live-nft/supported";
 
 //  === ACCOUNTS ACTIONS ===
 
@@ -245,6 +245,7 @@ export enum SettingsActionTypes {
   SHOW_TOKEN = "SHOW_TOKEN",
   BLACKLIST_TOKEN = "BLACKLIST_TOKEN",
   UPDATE_NFT_COLLECTION_STATUS = "UPDATE_NFT_COLLECTION_STATUS",
+  RESET_NFT_COLLECTION_STATUS = "RESET_NFT_COLLECTION_STATUS",
   SETTINGS_DISMISS_BANNER = "SETTINGS_DISMISS_BANNER",
   SETTINGS_SET_AVAILABLE_UPDATE = "SETTINGS_SET_AVAILABLE_UPDATE",
   DANGEROUSLY_OVERRIDE_STATE = "DANGEROUSLY_OVERRIDE_STATE",
@@ -270,6 +271,7 @@ export enum SettingsActionTypes {
   SET_MARKET_FILTER_BY_STARRED_ACCOUNTS = "SET_MARKET_FILTER_BY_STARRED_ACCOUNTS",
   SET_SENSITIVE_ANALYTICS = "SET_SENSITIVE_ANALYTICS",
   SET_ONBOARDING_HAS_DEVICE = "SET_ONBOARDING_HAS_DEVICE",
+  SET_IS_REBORN = "SET_IS_REBORN",
   SET_NOTIFICATIONS = "SET_NOTIFICATIONS",
   SET_NEVER_CLICKED_ON_ALLOW_NOTIFICATIONS_BUTTON = "SET_NEVER_CLICKED_ON_ALLOW_NOTIFICATIONS_BUTTON",
   WALLET_TAB_NAVIGATOR_LAST_VISITED_TAB = "WALLET_TAB_NAVIGATOR_LAST_VISITED_TAB",
@@ -292,6 +294,7 @@ export enum SettingsActionTypes {
   CLEAR_DISMISSED_CONTENT_CARDS = "CLEAR_DISMISSED_CONTENT_CARDS",
   SET_LEDGER_SYNC_ONBOARDING = "SET_LEDGER_SYNC_ONBOARDING",
   SET_MEV_PROTECTION = "SET_MEV_PROTECTION",
+  SET_SELECTED_TAB_PORTFOLIO_ASSETS = "SET_SELECTED_TAB_PORTFOLIO_ASSETS",
 
   ADD_STARRED_MARKET_COINS = "ADD_STARRED_MARKET_COINS",
   REMOVE_STARRED_MARKET_COINS = "REMOVE_STARRED_MARKET_COINS",
@@ -324,7 +327,7 @@ export type SettingsFilterTokenOperationsZeroAmountPayload =
 export type SettingsShowTokenPayload = string;
 export type SettingsBlacklistTokenPayload = string;
 export type SettingsUpdateNftCollectionStatus = {
-  blockchain: BlockchainEVM;
+  blockchain: BlockchainsType;
   collection: string;
   status: NftStatus;
 };
@@ -346,7 +349,7 @@ export type SettingsSetLastSeenCustomImagePayload = {
   imageHash: string;
 };
 export type SettingsLastSeenDevicePayload = NonNullable<
-  SettingsState["lastSeenDevice"]
+  SettingsState["seenDevices"][number]
 >["deviceInfo"];
 export type SettingsLastSeenDeviceInfoPayload = DeviceModelInfo;
 export type SettingsLastSeenDeviceLanguagePayload = DeviceInfo["languageId"];
@@ -366,6 +369,7 @@ export type SettingsSetHasOrderedNanoPayload = SettingsState["hasOrderedNano"];
 export type SettingsSetMarketCounterCurrencyPayload = SettingsState["marketCounterCurrency"];
 export type SettingsSetSensitiveAnalyticsPayload = SettingsState["sensitiveAnalytics"];
 export type SettingsSetOnboardingHasDevicePayload = SettingsState["onboardingHasDevice"];
+export type SettingsSetIsRebornPayload = SettingsState["isReborn"];
 
 export type SettingsSetOnboardingTypePayload = SettingsState["onboardingType"];
 
@@ -406,6 +410,8 @@ export type SettingsSetMevProtectionPayload = boolean;
 
 export type SettingsAddStarredMarketcoinsPayload = Unpacked<SettingsState["starredMarketCoins"]>;
 export type SettingsRemoveStarredMarketcoinsPayload = Unpacked<SettingsState["starredMarketCoins"]>;
+export type SettingsSetSelectedTabPortfolioAssetsPayload =
+  SettingsState["selectedTabPortfolioAssets"];
 
 export type SettingsPayload =
   | SettingsImportPayload
@@ -444,6 +450,7 @@ export type SettingsPayload =
   | SettingsSetMarketCounterCurrencyPayload
   | SettingsSetSensitiveAnalyticsPayload
   | SettingsSetOnboardingHasDevicePayload
+  | SettingsSetIsRebornPayload
   | SettingsSetNotificationsPayload
   | SettingsDangerouslyOverrideStatePayload
   | DangerouslyOverrideStatePayload
@@ -463,6 +470,7 @@ export type SettingsPayload =
   | SettingsClearDismissedContentCardsPayload
   | SettingsSetFromLedgerSyncOnboardingPayload
   | SettingsSetMevProtectionPayload
+  | SettingsSetSelectedTabPortfolioAssetsPayload
   | SettingsAddStarredMarketcoinsPayload
   | SettingsRemoveStarredMarketcoinsPayload;
 
@@ -491,11 +499,14 @@ export type SwapPayload = UpdateProvidersPayload | UpdateTransactionPayload | Up
 // === EARN ACTIONS ==
 export enum EarnActionTypes {
   EARN_INFO_MODAL = "EARN_INFO_MODAL",
+  EARN_MENU_MODAL = "EARN_MENU_MODAL",
 }
 
 export type EarnSetInfoModalPayload = EarnState["infoModal"] | undefined;
 
-export type EarnPayload = EarnSetInfoModalPayload;
+export type EarnSetMenuModalPayload = EarnState["menuModal"] | undefined;
+
+export type EarnPayload = EarnSetInfoModalPayload | EarnSetMenuModalPayload;
 
 // === PROTECT ACTIONS ===
 export enum ProtectActionTypes {

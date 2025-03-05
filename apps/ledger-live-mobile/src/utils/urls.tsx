@@ -106,7 +106,7 @@ export const urls = {
   cardanoStaking: "https://support.ledger.com/article/7880073204253-zd",
   algorandStaking: "https://support.ledger.com/article/360015897740-zd",
   polkadotStaking: "https://support.ledger.com/article/360018131260-zd",
-  elrondStaking: "https://support.ledger.com/article/360016750819-zd",
+  multiversxStaking: "https://support.ledger.com/article/360016750819-zd",
   nearStakingRewards: "https://support.ledger.com/article/360020450619-zd",
   swap: {
     info: "https://www.ledger.com/swap?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=swap_intro",
@@ -159,8 +159,8 @@ export const urls = {
   supportPage: "https://support.ledger.com/",
   maxSpendable: "https://support.ledger.com/article/360012960679-zd",
   receiveVerifyAddress: "https://support.ledger.com/?redirect=false",
-  elrond: {
-    website: "https://elrond.com",
+  multiversx: {
+    website: "https://multiversx.com",
   },
   cryptoOrg: {
     website: "https://cronos-pos.org",
@@ -168,6 +168,8 @@ export const urls = {
   solana: {
     supportPage: "https://support.ledger.com",
     stakingPage: "https://support.ledger.com/article/4731749170461-zd",
+    splTokenInfo:
+      "https://support.ledger.com/article/Verify-Solana-Address-from-Token-Account-Address",
   },
   resources: {
     gettingStarted:

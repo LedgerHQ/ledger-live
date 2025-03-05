@@ -30,12 +30,10 @@ const T = styled(Box).attrs((p: { color?: string; inline?: boolean; ff?: string 
   width: ${p => (p.inline ? "" : "100%")};
   overflow: hidden;
 `;
-const I = ({ color, children }: { color?: string; children: React.ReactNode }) => (
+const I = ({ color = undefined, children }: { color?: string; children: React.ReactNode }) => (
   <Box color={color}>{children}</Box>
 );
-I.defaultProps = {
-  color: undefined,
-};
+
 export type OwnProps = {
   unit?: Unit;
   val?: BigNumber | number;
@@ -130,7 +128,7 @@ function FormattedVal(props: Props) {
     <T {...p} color={color || marketColor}>
       {withIcon ? (
         <Box horizontal alignItems="center">
-          <Box mr={1}>
+          <Box data-testId={`arrow-${isNegative ? "down" : "up"}`} mr={1}>
             <I color={marketColor}>
               {isNegative ? (
                 <Icons.ArrowDownRight size={"M"} />

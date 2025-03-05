@@ -3,6 +3,8 @@ export class AppInfos {
 
   static readonly BITCOIN = new AppInfos("Bitcoin");
 
+  static readonly INJECTIVE = new AppInfos("Injective");
+
   static readonly APTOS = new AppInfos("Aptos");
 
   static readonly BITCOIN_TESTNET = new AppInfos("Bitcoin Test");
@@ -23,7 +25,7 @@ export class AppInfos {
 
   static readonly TRON = new AppInfos("Tron");
 
-  static readonly RIPPLE = new AppInfos("Ripple");
+  static readonly RIPPLE = new AppInfos("XRP");
 
   static readonly CARDANO = new AppInfos("Cardano");
 
@@ -45,11 +47,15 @@ export class AppInfos {
 
   static readonly NEAR = new AppInfos("Near");
 
-  static readonly MULTIVERSE_X = new AppInfos("Multiverse X");
+  static readonly MULTIVERS_X = new AppInfos("Multivers X");
 
   static readonly OSMOSIS = new AppInfos("Osmosis");
 
   static readonly LS = new AppInfos("LedgerSync");
 
   static readonly EXCHANGE = new AppInfos("Exchange");
+
+  static readonly CELO = new AppInfos("Celo");
+
+  static readonly LTC = new AppInfos("Litecoin");
 }

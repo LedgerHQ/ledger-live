@@ -15,6 +15,7 @@ import {
   VersionedTransaction as OnChainTransaction,
   TransactionInstruction,
   TransactionMessage,
+  BlockhashWithExpiryBlockHeight,
 } from "@solana/web3.js";
 import { ChainAPI } from "./api";
 
@@ -22,16 +23,23 @@ export const buildTransactionWithAPI = async (
   address: string,
   transaction: Transaction,
   api: ChainAPI,
-): Promise<readonly [OnChainTransaction, (signature: Buffer) => OnChainTransaction]> => {
-  const instructions = await buildInstructions(api, transaction);
-
-  const recentBlockhash = await api.getLatestBlockhash();
+): Promise<
+  readonly [
+    OnChainTransaction,
+    BlockhashWithExpiryBlockHeight,
+    (signature: Buffer) => OnChainTransaction,
+  ]
+> => {
+  const [instructions, recentBlockhash] = await Promise.all([
+    buildInstructions(api, transaction),
+    api.getLatestBlockhash(),
+  ]);
 
   const feePayer = new PublicKey(address);
 
   const tm = new TransactionMessage({
     payerKey: feePayer,
-    recentBlockhash,
+    recentBlockhash: recentBlockhash.blockhash,
     instructions,
   });
 
@@ -39,6 +47,7 @@ export const buildTransactionWithAPI = async (
 
   return [
     tx,
+    recentBlockhash,
     (signature: Buffer) => {
       tx.addSignature(new PublicKey(address), signature);
       return tx;
@@ -70,7 +79,7 @@ async function buildInstructionsForCommand(
     case "token.transfer":
       return buildTokenTransferInstructions(api, command);
     case "token.createATA":
-      return buildCreateAssociatedTokenAccountInstruction(command);
+      return buildCreateAssociatedTokenAccountInstruction(api, command);
     case "stake.createAccount":
       return buildStakeCreateAccountInstructions(api, command);
     case "stake.delegate":

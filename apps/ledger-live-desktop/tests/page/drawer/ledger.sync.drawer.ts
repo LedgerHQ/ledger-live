@@ -6,7 +6,7 @@ import { extractNumberFromText } from "tests/utils/textParserUtils";
 export class LedgerSyncDrawer extends Drawer {
   private syncAccountsButton = this.page.getByRole("button", { name: "Turn on Ledger Sync" });
   private closeLedgerSyncButton = this.page.getByRole("button", { name: "Close" });
-  private manageBackupButton = this.page.getByTestId("walletSync-manage-backup");
+  private deleteSyncButton = this.page.getByText("Delete sync");
   private confirmBackupDeletionButton = this.page.getByRole("button", { name: "Yes, delete" });
   private successTextElement = this.page
     .locator("span", { hasText: "Ledger Sync turned on for" })
@@ -28,10 +28,12 @@ export class LedgerSyncDrawer extends Drawer {
     await this.closeLedgerSyncButton.click();
   }
 
-  @step("Open the Manage Key section")
-  async manageBackup() {
-    await expect(this.manageBackupButton).toBeVisible();
-    await this.manageBackupButton.click({ force: true });
+  @step("Delete Sync")
+  async deleteSync() {
+    await this.deleteSyncButton.click();
+    if (await this.deleteSyncButton.isVisible()) {
+      await this.deleteSyncButton.click();
+    }
   }
 
   @step("Confirm the deletion of the data")
@@ -42,7 +44,7 @@ export class LedgerSyncDrawer extends Drawer {
 
   @step("Destroy the trustchain - Delete the data")
   async destroyTrustchain() {
-    await this.manageBackup();
+    await this.deleteSync();
     await this.confirmBackupDeletion();
   }
 

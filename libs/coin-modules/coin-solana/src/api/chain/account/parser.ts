@@ -3,8 +3,32 @@ import { create } from "superstruct";
 import { PARSED_PROGRAMS } from "../program/constants";
 import { ParsedInfo } from "../validators";
 import { StakeAccount, StakeAccountInfo, StakeHistoryEntry } from "./stake";
-import { TokenAccount, TokenAccountInfo } from "./token";
+import { MintAccountInfo, TokenAccount, TokenAccountInfo } from "./token";
 import { VoteAccount, VoteAccountInfo } from "./vote";
+import { isTokenProgram } from "../../../helpers/token";
+
+export function parseMintAccountInfo(info: unknown): MintAccountInfo {
+  return create(info, MintAccountInfo);
+}
+
+export function tryParseAsMintAccount(
+  data: ParsedAccountData,
+): MintAccountInfo | undefined | Error {
+  const routine = () => {
+    const info = create(data.parsed, ParsedInfo);
+
+    if (isTokenProgram(data.program)) {
+      const parsed = create(info, TokenAccount);
+      if (parsed.type === "mint") {
+        return parseMintAccountInfo(parsed.info);
+      }
+    }
+
+    return undefined;
+  };
+
+  return onThrowReturnError(routine);
+}
 
 export function parseTokenAccountInfo(info: unknown): TokenAccountInfo {
   return create(info, TokenAccountInfo);
@@ -16,7 +40,7 @@ export function tryParseAsTokenAccount(
   const routine = () => {
     const info = create(data.parsed, ParsedInfo);
 
-    if (data.program === "spl-token") {
+    if (isTokenProgram(data.program)) {
       const parsed = create(info, TokenAccount);
       if (parsed.type === "account") {
         return parseTokenAccountInfo(parsed.info);

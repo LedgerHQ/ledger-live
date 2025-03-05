@@ -122,7 +122,12 @@ const StepSummary = ({ account, transaction, eventType, transitionTo }: StepProp
               <Container my={1}>
                 <BakerImage size={32} baker={baker} />
                 <Ellipsis>
-                  <Text ff="Inter|SemiBold" color="palette.text.shade100" fontSize={3}>
+                  <Text
+                    data-testid="validator-name-tezos"
+                    ff="Inter|SemiBold"
+                    color="palette.text.shade100"
+                    fontSize={3}
+                  >
                     {getBakerName(baker, transaction.recipient)}
                   </Text>
                 </Ellipsis>

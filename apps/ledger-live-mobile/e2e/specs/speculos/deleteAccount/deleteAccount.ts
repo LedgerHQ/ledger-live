@@ -2,10 +2,10 @@ import { CLI } from "../../../utils/cliUtils";
 import { Application } from "../../../page";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 
-export async function runDeleteAccountTest(account: Account, tmsLink: string) {
+export async function runDeleteAccountTest(account: Account, tmsLinks: string[]) {
   const app = new Application();
 
-  describe(`Delete account - ${account.accountName}`, () => {
+  describe("Delete account", () => {
     beforeAll(async () => {
       await app.init({
         speculosApp: account.currency.speculosApp,
@@ -23,8 +23,8 @@ export async function runDeleteAccountTest(account: Account, tmsLink: string) {
       await app.portfolio.waitForPortfolioPageToLoad();
     });
 
-    $TmsLink(tmsLink);
-    it(`Perform a delete account`, async () => {
+    tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+    it(`Perform a delete account - ${account.accountName}`, async () => {
       await app.accounts.openViaDeeplink();
       await app.common.expectAccountName(account.accountName);
       await app.common.goToAccountByName(account.accountName);
@@ -33,10 +33,6 @@ export async function runDeleteAccountTest(account: Account, tmsLink: string) {
       await app.account.confirmAccountDelete();
       await app.accounts.openViaDeeplink();
       await app.accounts.expectAccountsNumber(0);
-    });
-
-    afterAll(async () => {
-      await app.common.removeSpeculos();
     });
   });
 }

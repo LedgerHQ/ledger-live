@@ -7,6 +7,7 @@ import {
   mockGroupedCurrenciesBySingleProviderData,
   mockGroupedCurrenciesWithMultipleProviderData,
 } from "./mockData";
+import { AddAccountContexts } from "../../Accounts/screens/AddAccount/enums";
 
 const MockUseRoute = useRoute as jest.Mock;
 const MockUseGroupedCurrenciesByProvider = useGroupedCurrenciesByProvider as jest.Mock;
@@ -39,7 +40,7 @@ describe("Asset Selection test suite", () => {
   it("should render crypto selection screen when no currency is defined in the navigation route showing a loader", () => {
     MockUseRoute.mockReturnValue({
       params: {
-        context: "addAccounts",
+        context: AddAccountContexts.AddAccounts,
       },
     });
 
@@ -62,7 +63,7 @@ describe("Asset Selection test suite", () => {
   it("should render crypto selection screen with empty list when useGroupedCurrenciesByProvider finish loading with empty result", () => {
     MockUseRoute.mockReturnValue({
       params: {
-        context: "addAccounts",
+        context: AddAccountContexts.AddAccounts,
       },
     });
 
@@ -79,7 +80,7 @@ describe("Asset Selection test suite", () => {
   it("should display a list of cryptocurrencies when useGroupedCurrenciesByProvider successfully loads data", () => {
     MockUseRoute.mockReturnValue({
       params: {
-        context: "addAccounts",
+        context: AddAccountContexts.AddAccounts,
       },
     });
 
@@ -98,7 +99,7 @@ describe("Asset Selection test suite", () => {
   it("should navigate to network selection when currency has more than one network provider", () => {
     MockUseRoute.mockReturnValue({
       params: {
-        context: "addAccounts",
+        context: AddAccountContexts.AddAccounts,
         currency: "ethereum",
       },
     });

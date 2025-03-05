@@ -20,6 +20,7 @@ import {
 import {
   preferredDeviceModelSelector,
   storeSelector as settingsSelector,
+  trackingEnabledSelector,
 } from "~/renderer/reducers/settings";
 import { DeviceModelId } from "@ledgerhq/devices";
 import AutoRepair from "~/renderer/components/AutoRepair";
@@ -79,8 +80,15 @@ import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getNoSuchAppProviderLearnMoreMetadataPerApp, isDeviceNotOnboardedError } from "./utils";
 import { useKeepScreenAwake } from "~/renderer/hooks/useKeepScreenAwake";
 import { walletSelector } from "~/renderer/reducers/wallet";
+import { useTrackManagerSectionEvents } from "~/renderer/analytics/hooks/useTrackManagerSectionEvents";
+import { useTrackReceiveFlow } from "~/renderer/analytics/hooks/useTrackReceiveFlow";
+import { useTrackAddAccountModal } from "~/renderer/analytics/hooks/useTrackAddAccountModal";
+import { useTrackExchangeFlow } from "~/renderer/analytics/hooks/useTrackExchangeFlow";
+import { useTrackSendFlow } from "~/renderer/analytics/hooks/useTrackSendFlow";
+import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
+import { useTrackSyncFlow } from "~/renderer/analytics/hooks/useTrackSyncFlow";
 
-type LedgerError = InstanceType<LedgerErrorConstructor<{ [key: string]: unknown }>>;
+export type LedgerError = InstanceType<LedgerErrorConstructor<{ [key: string]: unknown }>>;
 
 type PartialNullable<T> = {
   [P in keyof T]?: T[P] | null;
@@ -132,6 +140,7 @@ type States = PartialNullable<{
   completeExchangeResult: Transaction;
   completeExchangeError: Error;
   imageRemoveRequested: boolean;
+  imageRemoved: boolean;
   installingApp: boolean;
   progress: number;
   listingApps: boolean;
@@ -154,6 +163,7 @@ type InnerProps<P> = {
   analyticsPropertyFlow?: string;
   overridesPreferredDeviceModel?: DeviceModelId;
   inlineRetry?: boolean; // Set to false if the retry mechanism is handled externally.
+  location?: HOOKS_TRACKING_LOCATIONS;
 };
 
 type Props<H extends States, P> = InnerProps<P> & {
@@ -182,6 +192,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   overridesPreferredDeviceModel,
   inlineRetry = true,
   analyticsPropertyFlow,
+  location,
 }: Props<H, P> & {
   request?: R;
 }) => {
@@ -233,6 +244,59 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   const swapDefaultTrack = useGetSwapTrackingProperties();
   const stateSettings = useSelector(settingsSelector);
   const walletState = useSelector(walletSelector);
+
+  useTrackManagerSectionEvents({
+    location: location === HOOKS_TRACKING_LOCATIONS.managerDashboard ? location : undefined,
+    device,
+    allowManagerRequested: hookState.allowManagerRequested,
+    clsImageRemoved: hookState.imageRemoved,
+    error,
+    isTrackingEnabled: useSelector(trackingEnabledSelector),
+  });
+
+  useTrackReceiveFlow({
+    location: location === HOOKS_TRACKING_LOCATIONS.receiveModal ? location : undefined,
+    device,
+    error,
+    inWrongDeviceForAccount,
+    isTrackingEnabled: useSelector(trackingEnabledSelector),
+  });
+
+  useTrackAddAccountModal({
+    location: location === HOOKS_TRACKING_LOCATIONS.addAccountModal ? location : undefined,
+    device,
+    error,
+    isTrackingEnabled: useSelector(trackingEnabledSelector),
+    requestOpenApp,
+    userMustConnectDevice: !isLoading && !device,
+    isLocked,
+  });
+
+  useTrackExchangeFlow({
+    location: location === HOOKS_TRACKING_LOCATIONS.exchange ? location : undefined,
+    device,
+    error,
+    isTrackingEnabled: useSelector(trackingEnabledSelector),
+    isRequestOpenAppExchange: requestOpenApp === "Exchange",
+  });
+
+  useTrackSyncFlow({
+    location: location === HOOKS_TRACKING_LOCATIONS.ledgerSync ? location : undefined,
+    device,
+    error,
+    allowManagerRequested: hookState.allowManagerRequested,
+    requestOpenApp,
+    isLedgerSyncAppOpen: appAndVersion?.name === "Ledger Sync",
+    isTrackingEnabled: useSelector(trackingEnabledSelector),
+  });
+
+  useTrackSendFlow({
+    location: location === HOOKS_TRACKING_LOCATIONS.sendModal ? location : undefined,
+    device,
+    error,
+    inWrongDeviceForAccount,
+    isTrackingEnabled: useSelector(trackingEnabledSelector),
+  });
 
   const type = useTheme().colors.palette.type;
 
@@ -312,7 +376,6 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   if (languageInstallationRequested) {
     return renderAllowLanguageInstallation({ modelId, type, t });
   }
-
   if (imageRemoveRequested) {
     const refused = error instanceof UserRefusedOnDevice;
     const noImage = error instanceof ImageDoesNotExistOnDevice;
@@ -613,11 +676,13 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
  * @prop request: an object that is the input of that action
  * @prop Result optional: an action produces a result, this gives a component to render it
  * @prop onResult optional: an action produces a result, this gives a callback to be called with it
+ * @prop location optional: an action might need to know the location for analytics
  */
 
 export default function DeviceAction<R, H extends States, P>({
   action,
   request,
+  location,
   ...props
 }: InnerProps<P> & {
   action: Action<R, H, P>;
@@ -633,6 +698,7 @@ export default function DeviceAction<R, H extends States, P>({
       status={hookState}
       request={request}
       payload={payload}
+      location={location}
       {...props}
     />
   );

@@ -19,10 +19,12 @@ import { useMaybeAccountName } from "~/reducers/wallet";
 import { setAccountName } from "@ledgerhq/live-wallet/store";
 import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
 import type { ScanDeviceAccountsNavigationProps, ScanDeviceAccountsViewModelProps } from "./types";
+import { track } from "~/analytics";
 
 export default function useScanDeviceAccountsViewModel({
   existingAccounts,
   blacklistedTokenIds,
+  analyticsMetadata,
 }: ScanDeviceAccountsViewModelProps) {
   const [scanning, setScanning] = useState(true);
   const navigation = useNavigation<ScanDeviceAccountsNavigationProps["navigation"]>();
@@ -44,6 +46,7 @@ export default function useScanDeviceAccountsViewModel({
     inline,
     returnToSwap,
     onCloseNavigation,
+    context,
   } = route.params || {};
 
   const newAccountSchemes = useMemo(() => {
@@ -96,16 +99,25 @@ export default function useScanDeviceAccountsViewModel({
     setCancelled(false);
     startSubscription();
   }, [startSubscription]);
-  const stopSubscription = useCallback((syncUI = true) => {
-    if (scanSubscription.current) {
-      scanSubscription.current.unsubscribe();
-      scanSubscription.current = null;
+  const stopSubscription = useCallback(
+    (syncUI = true) => {
+      if (scanSubscription.current) {
+        scanSubscription.current.unsubscribe();
+        scanSubscription.current = null;
 
-      if (syncUI) {
-        setScanning(false);
+        if (syncUI) {
+          setScanning(false);
+          const stopScanMetadata = analyticsMetadata?.ScanDeviceAccounts?.onStopScan;
+          if (stopScanMetadata)
+            track(stopScanMetadata.eventName, {
+              ...stopScanMetadata.payload,
+            });
+        }
       }
-    }
-  }, []);
+    },
+    [analyticsMetadata?.ScanDeviceAccounts?.onStopScan],
+  );
+
   const quitFlow = useCallback(() => {
     navigation.navigate(NavigatorName.Accounts);
   }, [navigation]);
@@ -120,10 +132,15 @@ export default function useScanDeviceAccountsViewModel({
     [selectedIds],
   );
   const selectAll = useCallback(
-    (accounts: Account[]) => {
+    (accounts: Account[], autoSelect?: boolean) => {
       setSelectedIds(uniq([...selectedIds, ...accounts.map(a => a.id)]));
+      const selectAllMetadata = analyticsMetadata?.AccountsFound?.onSelectAll;
+      if (selectAllMetadata && !autoSelect)
+        track(selectAllMetadata.eventName, {
+          ...selectAllMetadata.payload,
+        });
     },
-    [selectedIds],
+    [selectedIds, analyticsMetadata?.AccountsFound?.onSelectAll],
   );
   const unselectAll = useCallback(
     (accounts: Account[]) => {
@@ -143,23 +160,36 @@ export default function useScanDeviceAccountsViewModel({
         renamings: {}, // renaming was done in scannedAccounts directly.. (see if we want later to change this paradigm)
       }),
     );
+    const { onSuccess } = route.params;
 
     if (inline) {
       navigation.goBack();
-    } else if (navigation.replace) {
-      const { onSuccess } = route.params;
-      if (onSuccess)
+      if (onSuccess) {
         onSuccess({
           scannedAccounts,
           selected: accountsToAdd,
         });
-      else
-        navigation.replace(ScreenName.AddAccountsSuccess, {
-          ...route.params,
-          currency,
-          accountsToAdd: accountsToAdd,
-        });
-    }
+      }
+    } else
+      navigation.replace(ScreenName.AddAccountsSuccess, {
+        ...route.params,
+        currency,
+        accountsToAdd: accountsToAdd,
+      });
+
+    const continueMetadata = analyticsMetadata?.AccountsFound?.onContinue;
+    if (continueMetadata)
+      track(continueMetadata.eventName, {
+        ...continueMetadata.payload,
+      });
+
+    const successMetadata = analyticsMetadata?.AccountsFound?.onAccountsAdded;
+    if (successMetadata)
+      track(successMetadata.eventName, {
+        ...successMetadata.payload,
+        currency,
+        amount: accountsToAdd.length,
+      });
   }, [
     currency,
     inline,
@@ -169,6 +199,8 @@ export default function useScanDeviceAccountsViewModel({
     scannedAccounts,
     selectedIds,
     dispatch,
+    analyticsMetadata?.AccountsFound?.onContinue,
+    analyticsMetadata?.AccountsFound?.onAccountsAdded,
   ]);
 
   const onCancel = useCallback(() => {
@@ -209,6 +241,10 @@ export default function useScanDeviceAccountsViewModel({
   const noImportableAccounts = !sections.some(
     s => s.id === "importable" || s.id === "creatable" || s.id === "migrate",
   );
+  // We don't show already imported accounts in the UI
+  const sanitizedSections = sections.filter(s => s.id !== "imported");
+  const hasImportableAccounts = sections.find(s => s.id === "importable" && s.data.length > 0);
+
   const CustomNoAssociatedAccounts =
     currency.type === "CryptoCurrency"
       ? noAssociatedAccountsByFamily[currency.family as keyof typeof noAssociatedAccountsByFamily]
@@ -245,19 +281,21 @@ export default function useScanDeviceAccountsViewModel({
 
   useEffect(() => {
     if (!cantCreateAccount && !isAddingAccounts && !scanning) {
-      if (alreadyEmptyAccount) {
+      if (alreadyEmptyAccount && !hasImportableAccounts) {
         navigation.replace(ScreenName.AddAccountsWarning, {
           emptyAccount: alreadyEmptyAccount,
           emptyAccountName: alreadyEmptyAccountName,
           currency,
+          context,
         });
-      } else if (CustomNoAssociatedAccounts) {
+      } else if (!scannedAccounts.length && CustomNoAssociatedAccounts) {
         navigation.replace(ScreenName.NoAssociatedAccounts, {
           CustomNoAssociatedAccounts,
         });
       }
     }
   }, [
+    hasImportableAccounts,
     cantCreateAccount,
     isAddingAccounts,
     alreadyEmptyAccount,
@@ -266,6 +304,8 @@ export default function useScanDeviceAccountsViewModel({
     navigation,
     currency,
     CustomNoAssociatedAccounts,
+    scannedAccounts,
+    context,
   ]);
   return {
     alreadyEmptyAccount,
@@ -284,7 +324,7 @@ export default function useScanDeviceAccountsViewModel({
     restartSubscription,
     scannedAccounts,
     scanning,
-    sections,
+    sections: sanitizedSections,
     selectAll,
     selectedIds,
     showAllCreatedAccounts,

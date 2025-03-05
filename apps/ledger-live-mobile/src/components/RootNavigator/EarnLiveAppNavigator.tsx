@@ -14,6 +14,7 @@ import { EarnScreen } from "~/screens/PTX/Earn";
 import { shallowAccountsSelector } from "~/reducers/accounts";
 import { EarnInfoDrawer } from "~/screens/PTX/Earn/EarnInfoDrawer";
 import { useStakingDrawer } from "../Stake/useStakingDrawer";
+import { EarnMenuDrawer } from "~/screens/PTX/Earn/EarnMenuDrawer";
 
 const Stack = createStackNavigator<EarnLiveAppNavigatorParamList>();
 
@@ -120,6 +121,7 @@ const Earn = (props: NavigationProps) => {
         }}
       />
       <EarnInfoDrawer />
+      <EarnMenuDrawer />
     </>
   );
 };
