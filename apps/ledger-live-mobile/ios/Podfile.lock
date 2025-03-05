@@ -2063,11 +2063,11 @@ DEPENDENCIES:
   - "EXConstants (from `../../../node_modules/.pnpm/expo-constants@16.0.2_expo-modules-core@1.12.26_react-native@0.75.4_@babel+core@7.24.3_@types_rproegwlxlnson7miipd77adb4/node_modules/expo-constants/ios`)"
   - "EXImageLoader (from `../../../node_modules/.pnpm/expo-image-loader@4.7.0_expo-modules-core@1.12.26_react-native@0.75.4_@babel+core@7.24.3_@typ_6lnceoomhdx2gskrzh3nbqbw6q/node_modules/expo-image-loader/ios`)"
   - "Expo (from `../../../node_modules/.pnpm/expo@51.0.39_@babel+core@7.24.3_expo-modules-autolinking@1.11.2_expo-modules-core@1.12.26_rea_a6krvppzciulhzjjfyufkkkhg4/node_modules/expo`)"
-  - "ExpoAsset (from `../../../node_modules/.pnpm/expo-asset@10.0.10_6swtssrbgxqycpc7eps5a4xxjq/node_modules/expo-asset/ios`)"
+  - "ExpoAsset (from `../../../node_modules/.pnpm/expo-asset@10.0.10_expo-file-system@17.0.1_expo-modules-core@1.12.26_react-native@0.75.4_@bab_lnmx4qhzwpn7nobe66agjs5v2y/node_modules/expo-asset/ios`)"
   - "ExpoCamera (from `../../../node_modules/.pnpm/expo-camera@15.0.16_expo-modules-core@1.12.26_react-native@0.75.4_@babel+core@7.24.3_@types+r_f5ob5xec66l7k42vwrxpwsenf4/node_modules/expo-camera/ios`)"
   - "ExpoCrypto (from `../../../node_modules/.pnpm/expo-crypto@13.0.2_expo-modules-core@1.12.26_react-native@0.75.4_@babel+core@7.24.3_@types+re_todxpdtsn6tlsvb5azr7ednmdm/node_modules/expo-crypto/ios`)"
   - "ExpoFileSystem (from `../../../node_modules/.pnpm/expo-file-system@17.0.1_expo-modules-core@1.12.26_react-native@0.75.4_@babel+core@7.24.3_@typ_cuhvtwl6c2ijkfb5cuyrmzofaq/node_modules/expo-file-system/ios`)"
-  - "ExpoFont (from `../../../node_modules/.pnpm/expo-font@12.0.10_expo-asset@10.0.10_6swtssrbgxqycpc7eps5a4xxjq__expo-modules-core@1.12.26_re_qg2bfisrdnkkvqenrfscjlqydm/node_modules/expo-font/ios`)"
+  - "ExpoFont (from `../../../node_modules/.pnpm/expo-font@12.0.10_expo-asset@10.0.10_expo-file-system@17.0.1_expo-modules-core@1.12.26_react-_jntmhhw2d4ar7hp7wf2sn2dko4/node_modules/expo-font/ios`)"
   - "ExpoImageManipulator (from `../../../node_modules/.pnpm/expo-image-manipulator@12.0.5_expo-modules-core@1.12.26_react-native@0.75.4_@babel+core@7.24._vjbct5shbb5aymg52seyzyxcae/node_modules/expo-image-manipulator/ios`)"
   - "ExpoKeepAwake (from `../../../node_modules/.pnpm/expo-keep-awake@13.0.2_expo-modules-core@1.12.26_react-native@0.75.4_@babel+core@7.24.3_@type_asiyjifmzpnjeiinhrzsdrphgq/node_modules/expo-keep-awake/ios`)"
   - "ExpoModulesCore (from `../../../node_modules/.pnpm/expo-modules-core@1.12.26_react-native@0.75.4_@babel+core@7.24.3_@types+react@18.2.73_react@1_wpnpqrz774uzlazihm4t4kzp4m/node_modules/expo-modules-core`)"
@@ -2225,7 +2225,7 @@ EXTERNAL SOURCES:
   Expo:
     :path: "../../../node_modules/.pnpm/expo@51.0.39_@babel+core@7.24.3_expo-modules-autolinking@1.11.2_expo-modules-core@1.12.26_rea_a6krvppzciulhzjjfyufkkkhg4/node_modules/expo"
   ExpoAsset:
-    :path: "../../../node_modules/.pnpm/expo-asset@10.0.10_6swtssrbgxqycpc7eps5a4xxjq/node_modules/expo-asset/ios"
+    :path: "../../../node_modules/.pnpm/expo-asset@10.0.10_expo-file-system@17.0.1_expo-modules-core@1.12.26_react-native@0.75.4_@bab_lnmx4qhzwpn7nobe66agjs5v2y/node_modules/expo-asset/ios"
   ExpoCamera:
     :path: "../../../node_modules/.pnpm/expo-camera@15.0.16_expo-modules-core@1.12.26_react-native@0.75.4_@babel+core@7.24.3_@types+r_f5ob5xec66l7k42vwrxpwsenf4/node_modules/expo-camera/ios"
   ExpoCrypto:
@@ -2233,7 +2233,7 @@ EXTERNAL SOURCES:
   ExpoFileSystem:
     :path: "../../../node_modules/.pnpm/expo-file-system@17.0.1_expo-modules-core@1.12.26_react-native@0.75.4_@babel+core@7.24.3_@typ_cuhvtwl6c2ijkfb5cuyrmzofaq/node_modules/expo-file-system/ios"
   ExpoFont:
-    :path: "../../../node_modules/.pnpm/expo-font@12.0.10_expo-asset@10.0.10_6swtssrbgxqycpc7eps5a4xxjq__expo-modules-core@1.12.26_re_qg2bfisrdnkkvqenrfscjlqydm/node_modules/expo-font/ios"
+    :path: "../../../node_modules/.pnpm/expo-font@12.0.10_expo-asset@10.0.10_expo-file-system@17.0.1_expo-modules-core@1.12.26_react-_jntmhhw2d4ar7hp7wf2sn2dko4/node_modules/expo-font/ios"
   ExpoImageManipulator:
     :path: "../../../node_modules/.pnpm/expo-image-manipulator@12.0.5_expo-modules-core@1.12.26_react-native@0.75.4_@babel+core@7.24._vjbct5shbb5aymg52seyzyxcae/node_modules/expo-image-manipulator/ios"
   ExpoKeepAwake:
