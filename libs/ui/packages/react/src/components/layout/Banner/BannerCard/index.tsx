@@ -86,7 +86,6 @@ const Wrapper = styled(Flex)<Pick<Props, "image" | "tag">>`
   padding: 16px;
   padding-top: ${p => (p.tag ? "16px" : "24px")};
   padding-right: 50%;
-  flex-basis: 100%;
 
   position: relative;
   flex-direction: column;
