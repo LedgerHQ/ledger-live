@@ -13,10 +13,11 @@ import { getWalletApiIdFromAccountId } from "@ledgerhq/live-common/wallet-api/co
 interface Props {
   providers: ListProvider[];
   accountId: string;
+  walletApiAccountId: string;
   onClose(callback: () => void): void;
 }
 
-export function EvmStakingDrawerBody({ providers, accountId, onClose }: Props) {
+export function EvmStakingDrawerBody({ providers, accountId, walletApiAccountId, onClose }: Props) {
   const navigation = useNavigation<StackNavigationProp<ParamListBase, string, NavigatorName>>();
 
   const { track, page } = useAnalytics();
@@ -24,9 +25,17 @@ export function EvmStakingDrawerBody({ providers, accountId, onClose }: Props) {
   const onProviderPress = useCallback(
     ({ manifest, provider }: { manifest: LiveAppManifest; provider: ListProvider }) => {
       if (manifest) {
-        const customDappURL =
-          provider.queryParams &&
-          appendQueryParamsToDappURL(manifest, provider.queryParams)?.toString();
+        const isDappBrowser_deprecated =
+          manifest?.params && ("dappUrl" in manifest.params || "dappURL" in manifest.params);
+        const isDapp = "dapp" in manifest;
+        const isLiveApp = !isDapp && !isDappBrowser_deprecated;
+
+        /** If the manifest is for a live app, send the wallet api account id instead of LL account id. */
+        const customDappURL = appendQueryParamsToDappURL(manifest, {
+          ...(provider?.queryParams ?? {}),
+          ...(isLiveApp ? { accountId: walletApiAccountId } : {}),
+        })?.toString();
+
         track("button_clicked", {
           button: provider.id,
           page,
@@ -35,13 +44,15 @@ export function EvmStakingDrawerBody({ providers, accountId, onClose }: Props) {
           navigation.navigate(ScreenName.PlatformApp, {
             platform: manifest.id,
             name: manifest.name,
-            accountId: manifest?.dapp ? accountId : getWalletApiIdFromAccountId(accountId),
+            accountId: isDapp ? accountId : getWalletApiIdFromAccountId(accountId),
+            walletAccountId: walletApiAccountId,
+            ledgerAccountId: accountId,
             ...(customDappURL ? { customDappURL } : {}),
           });
         });
       }
     },
-    [track, page, navigation, accountId, onClose],
+    [walletApiAccountId, track, page, onClose, navigation, accountId],
   );
 
   return (

@@ -54,9 +54,9 @@ import DateFromNow from "~/components/DateFromNow";
 import AccountBanner from "~/components/AccountBanner";
 import { getAccountBannerProps as getCosmosBannerProps } from "../utils";
 import ValidatorImage from "../shared/ValidatorImage";
-import { useCanShowStake } from "~/screens/Account/hooks/useCanShowStake";
 import { useAccountName } from "~/reducers/wallet";
 import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useStake } from "~/newArch/hooks/useStake/useStake";
 
 type Props = {
   account: CosmosAccount;
@@ -99,7 +99,7 @@ function Delegations({ account }: Props) {
   });
   const [delegation, setDelegation] = useState<CosmosMappedDelegation>();
   const [undelegation, setUndelegation] = useState<CosmosMappedUnbonding>();
-  const canShowStake = useCanShowStake(currency);
+  const { getCanStakeCurrency } = useStake();
   const [banner, setBanner] = useState<AccountBannerState & { description: string; cta: string }>({
     display: false,
     description: "",
@@ -180,9 +180,9 @@ function Delegations({ account }: Props) {
     setBanner({
       ...state,
       ...bannerText,
-      display: state.display && canShowStake,
+      display: state.display && getCanStakeCurrency(currency.id),
     });
-  }, [account, t, canShowStake]);
+  }, [account, t, getCanStakeCurrency, currency.id]);
 
   const onRedelegateLedger = () => {
     const { validatorSrcAddress, ledgerValidator } = { ...banner };

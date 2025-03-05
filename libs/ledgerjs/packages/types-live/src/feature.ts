@@ -274,8 +274,25 @@ export type Feature_SwapWalletApiPartnerList = Feature<{
   list: string[];
 }>;
 
-export type Feature_StakePrograms = Feature<{
+export type RedirectQueryParam<P> = "stakekit" extends P
+  ? {
+      yieldId: string;
+    }
+  : "kiln-widget" extends P
+    ? {
+        chaidId: number;
+      }
+    : unknown;
+
+export type Feature_StakePrograms<ManifestId = "stakekit" | "kiln-widget"> = Feature<{
   list: string[];
+  redirects: Array<{
+    platform: ManifestId;
+    /** @developer asssetId resolves to string but is either CryptoCurrency["id"] | TokenCurrency["id"]; */
+    assetId: string;
+    name: string;
+    queryParams?: Record<string, string> & RedirectQueryParam<ManifestId>;
+  }>;
 }>;
 
 export type Feature_StakeAccountBanner = Feature<{ [blockchainName: string]: any }>;

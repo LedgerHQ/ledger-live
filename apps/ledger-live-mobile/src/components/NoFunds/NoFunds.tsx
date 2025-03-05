@@ -12,19 +12,23 @@ import { NavigatorName, ScreenName } from "~/const";
 import { TrackScreen, useAnalytics, track } from "~/analytics";
 import type { NoFundsNavigatorParamList } from "../RootNavigator/types/NoFundsNavigator";
 import { StackNavigatorProps } from "../RootNavigator/types/helpers";
-import { Currency } from "@ledgerhq/types-cryptoassets";
+import { Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
+import { getAccountCurrency } from "@ledgerhq/coin-framework/lib/account/helpers";
 
-const useText = (entryPoint: "noFunds" | "getFunds", currency: Currency) => {
+const useText = (
+  entryPoint: "noFunds" | "getFunds",
+  ticker: Currency["ticker"] | TokenCurrency["ticker"],
+) => {
   const { t } = useTranslation();
 
   const textMap = {
     noFunds: {
-      title: t("stake.noFundsModal.text", { coin: currency.ticker }),
+      title: t("stake.noFundsModal.text", { coin: ticker }),
       body: t("stake.noFundsModal.description"),
     },
     getFunds: {
-      title: t("stake.getFundsModal.text", { coin: currency.ticker }),
+      title: t("stake.getFundsModal.text", { coin: ticker }),
       body: undefined,
     },
   };
@@ -51,9 +55,9 @@ type ButtonItem = {
 export default function NoFunds({ route }: Props) {
   const { t } = useTranslation();
   const { data: currenciesAll } = useFetchCurrencyAll();
-  const { account, parentAccount, entryPoint } = route?.params;
+  const { account, parentAccount, entryPoint } = route?.params; // TODO: All we need is the accountId, parentId, and currency. We should refactor this to pass only those serializable values.
   const navigation = useNavigation();
-  const currency = parentAccount?.currency || account?.currency;
+  const currency = getAccountCurrency(account);
 
   const { isCurrencyAvailable } = useRampCatalog();
 
@@ -138,7 +142,7 @@ export default function NoFunds({ route }: Props) {
     },
   ];
 
-  const text = useText(entryPoint === "get-funds" ? "getFunds" : "noFunds", account.currency);
+  const text = useText(entryPoint === "get-funds" ? "getFunds" : "noFunds", currency.ticker);
 
   return (
     <Flex style={{ height: "100%" }} justifyContent="center">

@@ -2,7 +2,7 @@ import React from "react";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import { Trans } from "react-i18next";
-import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
+import { isAccountEmpty, isTokenAccount } from "@ledgerhq/live-common/account/index";
 import { ParamListBase, RouteProp } from "@react-navigation/native";
 import { ActionButtonEvent, NavigationParamsType } from "~/components/FabActions";
 import { NavigatorName, ScreenName } from "~/const";
@@ -10,6 +10,8 @@ import BigNumber from "bignumber.js";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
 import { WalletState } from "@ledgerhq/live-wallet/store";
+import { StakingDrawerNavigationProps } from "~/components/Stake/types";
+import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
 
 const ethMagnitude = getCryptoCurrencyById("ethereum").units[0].magnitude ?? 18;
 
@@ -43,7 +45,12 @@ const getAccountType = (account: AccountLike): AccountTypeGetterProps => {
   return { isEthAccount, isPOLAccount, isBscAccount, isAvaxAccount, isStakekit };
 };
 
-function getNavigatorParams({ parentRoute, account, parentAccount }: Props): NavigationParamsType {
+function getNavigatorParams({
+  parentRoute,
+  account,
+  parentAccount,
+  walletState,
+}: Props): NavigationParamsType {
   const { isPOLAccount, isBscAccount, isAvaxAccount, isStakekit } = getAccountType(account);
 
   if (isAccountEmpty(account)) {
@@ -85,13 +92,20 @@ function getNavigatorParams({ parentRoute, account, parentAccount }: Props): Nav
     ];
   }
 
-  const params = {
+  const walletApiAccount = accountToWalletAPIAccount(walletState, account, parentAccount);
+
+  const params: {
+    screen: ScreenName;
+    drawer: StakingDrawerNavigationProps;
+    params: ParamListBase;
+  } = {
     screen: parentRoute.name,
     drawer: {
       id: "EvmStakingDrawer",
       props: {
         singleProviderRedirectMode: true,
         accountId: account.id,
+        walletApiAccountId: walletApiAccount.id,
         has32Eth: account.spendableBalance.gt(ETH_LIMIT),
       },
     },
@@ -155,7 +169,9 @@ const getMainActions = ({
         label: <Trans i18nKey={label} />,
         Icon: IconsLegacy.CoinsMedium,
         eventProperties: {
-          currency: getCurrentCurrency(),
+          currency:
+            getCurrentCurrency() ||
+            (isTokenAccount(account) ? account.token.ticker : account.currency.ticker),
         },
       },
     ];

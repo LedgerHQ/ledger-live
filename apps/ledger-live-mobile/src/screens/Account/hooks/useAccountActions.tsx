@@ -18,10 +18,10 @@ import perFamilyAccountActions from "../../../generated/accountActions";
 
 import ZeroBalanceDisabledModalContent from "~/components/FabActions/modals/ZeroBalanceDisabledModalContent";
 import { ActionButtonEvent } from "~/components/FabActions";
-import { useCanShowStake } from "./useCanShowStake";
 import { PtxToast } from "~/components/Toast/PtxToast";
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { walletSelector } from "~/reducers/wallet";
+import { useStake } from "~/newArch/hooks/useStake/useStake";
 
 type Props = {
   account: AccountLike;
@@ -50,7 +50,13 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
   );
 
   const currency = getAccountCurrency(account);
-  const canShowStake = useCanShowStake(currency);
+
+  const { getCanStakeUsingLedgerLive, getCanStakeUsingPlatformApp, getRouteParamsForPlatformApp } =
+    useStake();
+
+  const canStakeUsingLedgerLive = getCanStakeUsingLedgerLive(currency.id);
+  const canStakeUsingPlatformApp = getCanStakeUsingPlatformApp(currency.id);
+  const canOnlyStakeUsingLedgerLive = canStakeUsingLedgerLive && !canStakeUsingPlatformApp;
 
   const balance = getAccountSpendableBalance(account);
   const isZeroBalance = !balance.gt(0);
@@ -188,6 +194,21 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
     Icon: IconsLegacy.ArrowBottomMedium,
     ...extraReceiveActionParams,
   };
+  const StakeAction = canStakeUsingPlatformApp
+    ? {
+        id: "stake",
+        disabled: isZeroBalance,
+        navigationParams: [
+          NavigatorName.Base,
+          getRouteParamsForPlatformApp(account, walletState, parentAccount),
+        ],
+        label: t("account.stake"),
+        Icon: IconsLegacy.BedMedium,
+        eventProperties: {
+          currency: currency.ticker,
+        },
+      }
+    : null;
 
   const familySpecificMainActions: Array<ActionButtonEvent> =
     (decorators &&
@@ -205,8 +226,11 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
     ...(availableOnSwap ? [actionButtonSwap] : []),
     ...(!readOnlyModeEnabled && canBeBought ? [actionButtonBuy] : []),
     ...(!readOnlyModeEnabled && canBeSold ? [actionButtonSell] : []),
+    ...(!readOnlyModeEnabled && canStakeUsingPlatformApp && StakeAction ? [StakeAction] : []),
     ...(!readOnlyModeEnabled
-      ? familySpecificMainActions.filter(action => action.id !== "stake" || canShowStake)
+      ? familySpecificMainActions.filter(
+          action => action.id !== "stake" || canOnlyStakeUsingLedgerLive,
+        ) // filter out family stake action if we cannot stake using ledger live or if account can be staked with a third-party platform app
       : []),
     ...(!readOnlyModeEnabled ? [SendAction] : []),
     ReceiveAction,
