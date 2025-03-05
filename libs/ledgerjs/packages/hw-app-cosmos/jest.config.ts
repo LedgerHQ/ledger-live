@@ -7,8 +7,17 @@ export default {
     "src/**/*.ts",
     "!src/**/*.test.{ts,tsx}",
     "!src/**/*.spec.{ts,tsx}",
-    "!tests/**/*.test.{ts,tsx}",
-    "!tests/**/*.spec.{ts,tsx}",
+    "!src/**/__tests__/**",
+    "!tests/**",
   ],
-  coverageReporters: ["json", ["lcov", { projectRoot: "../" }], "json-summary"],
+  coverageReporters: ["json", ["lcov", { projectRoot: "../" }], "json-summary", "text"],
+  reporters: [
+    [
+      "jest-sonar",
+      {
+        outputName: "hw-app-cosmos-sonar-executionTests-report.xml",
+        reportedFilePath: "absolute",
+      },
+    ],
+  ],
 };
