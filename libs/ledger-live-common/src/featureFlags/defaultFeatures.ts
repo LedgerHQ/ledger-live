@@ -546,7 +546,6 @@ export const DEFAULT_FEATURES: Features = {
         notification_center: true,
         img: "", // TODO
         link: "", // TODO
-        learn_more: "", // TODO
         "%": 10,
       },
       opted_out: {
@@ -556,7 +555,6 @@ export const DEFAULT_FEATURES: Features = {
         portfolio: true,
         img: "", // TODO
         link: "", // TODO
-        learn_more: "", // TODO
         "%": 10,
       },
     },

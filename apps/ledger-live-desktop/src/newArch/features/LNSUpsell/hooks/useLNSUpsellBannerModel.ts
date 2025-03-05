@@ -1,28 +1,18 @@
-import { useSelector } from "react-redux";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { track } from "~/renderer/analytics/segment";
 import { openURL } from "~/renderer/linking";
-import { sharePersonalizedRecommendationsSelector } from "~/renderer/reducers/settings";
 import {
   AnalyticsButton,
   AnalyticsPage,
-  type LNSBannerModel,
   type LNSBannerLocation,
+  type LNSBannerModel,
+  type LNSBannerState,
 } from "../types";
+import { useLNSUpsellBannerState } from "./useLNSUpsellBannerState";
 
-export function useLNSUpsellBannerModel(location: LNSBannerLocation): LNSBannerModel | null {
-  const isOptIn = useSelector(sharePersonalizedRecommendationsSelector);
-  const ff = useFeature("lldNanoSUpsellBanners");
-  const params = ff?.params?.[isOptIn ? "opted_in" : "opted_out"];
+export function useLNSUpsellBannerModel(location: LNSBannerLocation): LNSBannerModel {
+  const state = useLNSUpsellBannerState(location);
 
-  // TODO add the LNS only users filtering logic
-
-  if (!ff?.enabled || !params?.[location as keyof typeof params]) {
-    return null;
-  }
-
-  const tracking = isOptIn ? "optIn" : "optOut";
-  const { "%": discount, img: image, link: ctaLink, learn_more: learnMoreLink } = params;
+  const { "%": discount, img: image, link: ctaLink } = state.params ?? {};
   const analitycsPage = AnalyticsPageMap[location];
 
   const handleCTAClick = () => {
@@ -31,18 +21,13 @@ export function useLNSUpsellBannerModel(location: LNSBannerLocation): LNSBannerM
       link: ctaLink,
       page: analitycsPage,
     });
-    openURL(ctaLink);
-  };
-  const handleLearnMoreLink = () => {
-    track("button_clicked", {
-      button: AnalyticsButton.LearnMore,
-      link: learnMoreLink,
-      page: analitycsPage,
-    });
-    openURL(learnMoreLink);
+    ctaLink && openURL(ctaLink);
   };
 
-  return { location, discount, image, tracking, handleCTAClick, handleLearnMoreLink };
+  const tracking = state.tracking;
+  const variant = getVariant(location, state);
+
+  return { variant, discount, image, tracking, handleCTAClick };
 }
 
 const AnalyticsPageMap: Record<LNSBannerLocation, AnalyticsPage> = {
@@ -51,3 +36,9 @@ const AnalyticsPageMap: Record<LNSBannerLocation, AnalyticsPage> = {
   portfolio: AnalyticsPage.Portfolio,
   notification_center: AnalyticsPage.NotificationPanel,
 };
+
+function getVariant(location: LNSBannerLocation, state: LNSBannerState): LNSBannerModel["variant"] {
+  if (!state.isShown) return "none";
+  if (state.tracking === "opted_out" || location === "notification_center") return "notification";
+  return "banner";
+}
