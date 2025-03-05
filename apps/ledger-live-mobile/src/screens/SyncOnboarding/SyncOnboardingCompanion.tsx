@@ -43,6 +43,8 @@ import type { SyncOnboardingScreenProps } from "./SyncOnboardingScreenProps";
 import { useIsFocused } from "@react-navigation/native";
 import { useKeepScreenAwake } from "~/hooks/useKeepScreenAwake";
 import { hasCompletedOnboardingSelector } from "~/reducers/settings";
+import { useTrackOnboardingFlow } from "~/analytics/hooks/useTrackOnboardingFlow";
+import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 
 const { BodyText, SubtitleText } = VerticalTimeline;
 
@@ -56,6 +58,13 @@ type Step = {
   estimatedTime?: number;
   renderBody?: (isDisplayed?: boolean) => ReactNode;
 };
+
+export type SeedPathStatus =
+  | "choice_new_or_restore"
+  | "new_seed"
+  | "choice_restore_direct_or_recover"
+  | "restore_seed"
+  | "recover_seed";
 
 export type SyncOnboardingCompanionProps = {
   /**
@@ -162,13 +171,13 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
     CompanionStepKey.EarlySecurityCheckCompleted,
   );
   const lastCompanionStepKey = useRef<CompanionStepKey>();
-  const [seedPathStatus, setSeedPathStatus] = useState<
-    | "choice_new_or_restore"
-    | "new_seed"
-    | "choice_restore_direct_or_recover"
-    | "restore_seed"
-    | "recover_seed"
-  >("choice_new_or_restore");
+  const [seedPathStatus, setSeedPathStatus] = useState<SeedPathStatus>("choice_new_or_restore");
+
+  useTrackOnboardingFlow({
+    location: HOOKS_TRACKING_LOCATIONS.onboardingFlow,
+    device,
+    seedPathStatus,
+  });
 
   const servicesConfig = useFeature("protectServicesMobile");
 
