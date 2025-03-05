@@ -15,6 +15,8 @@ import { useRoute } from "@react-navigation/native";
 import { useRebornFlow } from "LLM/features/Reborn/hooks/useRebornFlow";
 import { useSelector } from "react-redux";
 import { hasOrderedNanoSelector, readOnlyModeEnabledSelector } from "~/reducers/settings";
+import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
+import { EntryOf } from "~/types/helpers";
 
 export type ModalOnDisabledClickComponentProps = {
   account?: AccountLike;
@@ -27,7 +29,9 @@ export type ModalOnDisabledClickComponentProps = {
   };
 };
 
-export type NavigationParamsType = readonly [name: string, options: object];
+export type NavigationParamsType =
+  | readonly [name: string, options: object]
+  | EntryOf<BaseNavigatorStackParamList>;
 
 export type ActionButtonEventProps = {
   navigationParams?: NavigationParamsType;

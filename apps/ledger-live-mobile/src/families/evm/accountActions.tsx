@@ -22,7 +22,7 @@ type Props = {
   parentRoute: RouteProp<ParamListBase, ScreenName>;
   walletState: WalletState;
 };
-
+// TODO: mv to useStake hook
 function getNavigatorParams({
   parentRoute,
   account,
@@ -70,6 +70,7 @@ function getNavigatorParams({
 
   const walletApiAccount = accountToWalletAPIAccount(walletState, account, parentAccount);
 
+  // TODO: use wallet api account in useStake hook...
   const params = {
     screen: parentRoute.name,
     drawer: {
@@ -119,18 +120,6 @@ const getMainActions = ({
       parentRoute,
       walletState,
     });
-    const getCurrentCurrency = () => {
-      if (account.currency.id === "ethereum") {
-        return "ETH";
-      }
-      if (account.currency.id === "bsc") {
-        return "BNB";
-      }
-
-      if (account.currency.id === "polygon") {
-        return "POL";
-      }
-    };
 
     return [
       {
@@ -139,7 +128,7 @@ const getMainActions = ({
         label: <Trans i18nKey={label} />,
         Icon: IconsLegacy.CoinsMedium,
         eventProperties: {
-          currency: getCurrentCurrency(),
+          currency: getCryptoCurrencyById(account.currency.id).ticker,
         },
       },
     ];
