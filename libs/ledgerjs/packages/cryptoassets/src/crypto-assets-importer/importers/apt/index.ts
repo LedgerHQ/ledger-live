@@ -18,16 +18,14 @@ export const importAptosTokens = async (outputDir: string, standard: string) => 
       { blockchain_name: "aptos", standard: standard },
       ["id", "ticker", "name", "contract_address", "decimals", "delisted"],
     );
-    const aptosTokens: AptosToken[] = tokens.map(token => {
-      return [
+    const aptosTokens: AptosToken[] = tokens.map(token => ([
         token.id,
         token.ticker,
         token.name,
         token.contract_address,
         token.decimals,
         token.delisted,
-      ];
-    });
+      ]));
 
     const filePath = path.join(outputDir, `apt_${standard}`);
     const aptosTypeStringified = `export type AptosToken = [
