@@ -1,5 +1,13 @@
 # @ledgerhq/coin-module-boilerplate
 
+## 1.0.3
+
+### Patch Changes
+
+- Updated dependencies [[`e4d9a5c`](https://github.com/LedgerHQ/ledger-live/commit/e4d9a5ce6c3e8f2b3829f8f5772e7ba712a4a50c)]:
+  - @ledgerhq/types-live@6.61.0
+  - @ledgerhq/coin-framework@2.1.1
+
 ## 1.0.3-next.0
 
 ### Patch Changes
