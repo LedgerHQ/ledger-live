@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
-import { estimateFeesNetworkInfo } from "./estimateFees";
 import { NetworkInfo } from "../types";
+import { estimateFees } from "./estimateFees";
 
 const mockGetServerInfos = jest.fn();
 jest.mock("../network", () => ({
@@ -23,7 +23,7 @@ describe("estimateFees", () => {
     });
 
     // When
-    const result = await estimateFeesNetworkInfo();
+    const result = await estimateFees();
 
     // Then
     expect(mockGetServerInfos).toHaveBeenCalledTimes(1);
@@ -44,7 +44,7 @@ describe("estimateFees", () => {
     } satisfies NetworkInfo;
 
     // When
-    const result = await estimateFeesNetworkInfo(networkInfo);
+    const result = await estimateFees(networkInfo);
 
     // Then
     expect(mockGetServerInfos).toHaveBeenCalledTimes(0);
