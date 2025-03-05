@@ -52,12 +52,6 @@ jobs:
         run: |
           git fetch origin develop
 
-      - name: Export environment variables for Bash
-        run: |
-          echo "DESKTOP_AFFECTED=${{ env.DESKTOP_AFFECTED }}" >> $GITHUB_ENV
-          echo "MOBILE_AFFECTED=${{ env.MOBILE_AFFECTED }}" >> $GITHUB_ENV
-          echo "COIN_MODULES_AFFECTED=${{ env.COIN_MODULES_AFFECTED }}" >> $GITHUB_ENV
-
       - name: Install and Build desktop dependencies
         if: ${{env.DESKTOP_AFFECTED == 'true'}}
         run: |
@@ -78,19 +72,19 @@ jobs:
 
       - name: Generate Unit test coverage for affected components
         run: |
-          if [[ "$DESKTOP_AFFECTED" == "true" ]]; then 
+          if [[ ${{ env.DESKTOP_AFFECTED == 'true' }} ]]; then 
             pnpm desktop test:jest:coverage 
             cat apps/ledger-live-desktop/coverage/lcov.info >> ./lcov.info 
             cat apps/ledger-live-desktop/coverage/lld-sonar-executionTests-report.xml >> ./lld-sonar-executionTests-report.xml 
           fi
 
-          if [[ "$MOBILE_AFFECTED" == "true" ]]; then 
+          if [[ ${{ env.MOBILE_AFFECTED == 'true' }} ]]; then 
             pnpm mobile test:jest:coverage 
             cat apps/ledger-live-mobile/coverage/lcov.info >> ./lcov.info 
             cat apps/ledger-live-mobile/coverage/llm-sonar-executionTests-report.xml >> ./llm-sonar-executionTests-report.xml 
           fi
 
-          if [[ "$COIN_MODULES_AFFECTED" == "true" ]]; then 
+          if [[ ${{ env.COIN_MODULES_AFFECTED == 'true' }} ]]; then 
             pnpm coin:coverage 
             cat coverage/coin-modules-lcov.info >> ./lcov.info 
             cat coverage/coin-modules-sonar-executionTests-report.xml >> ./coin-modules-sonar-executionTests-report.xml
