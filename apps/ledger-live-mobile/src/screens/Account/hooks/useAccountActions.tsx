@@ -18,7 +18,7 @@ import perFamilyAccountActions from "../../../generated/accountActions";
 
 import ZeroBalanceDisabledModalContent from "~/components/FabActions/modals/ZeroBalanceDisabledModalContent";
 import { ActionButtonEvent } from "~/components/FabActions";
-import { useCanShowStake } from "./useCanShowStake";
+import { useStake } from "~/newArch/hooks/useStake/useStake";
 import { PtxToast } from "~/components/Toast/PtxToast";
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { walletSelector } from "~/reducers/wallet";
@@ -50,7 +50,13 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
   );
 
   const currency = getAccountCurrency(account);
-  const canShowStake = useCanShowStake(currency);
+
+  //  const { isOpen, onModalHide, onClose } = useRootDrawerContext(); TODO: Do we need to check for open drawers? We are not in a modal here.
+
+  const { canStakeCurrency, navigationParams } = useStake({
+    currencyId: currency.id,
+    accountId: account.id,
+  });
 
   const balance = getAccountSpendableBalance(account);
   const isZeroBalance = !balance.gt(0);
@@ -189,6 +195,29 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
     ...extraReceiveActionParams,
   };
 
+  const StakeAction = !canStakeCurrency
+    ? []
+    : {
+        id: "stake",
+        navigationParams: [
+          NavigatorName.Base,
+          {
+            screen: ScreenName.NoFunds,
+            params: {
+              account,
+              parentAccount,
+              entryPoint: "stake",
+            },
+          },
+        ],
+        label: t("account.stake"),
+        Icon: IconsLegacy.CoinsMedium,
+        eventProperties: {
+          currency: currency.ticker,
+        },
+      };
+
+  // TODO: Shall we get this in the useStake hook and do the token specific OR family specific main actions choice there?
   const familySpecificMainActions: Array<ActionButtonEvent> =
     (decorators &&
       decorators.getMainActions &&
@@ -201,12 +230,14 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
       })) ||
     [];
 
+  console.log({ familySpecificMainActions });
+
   const mainActions = [
     ...(availableOnSwap ? [actionButtonSwap] : []),
     ...(!readOnlyModeEnabled && canBeBought ? [actionButtonBuy] : []),
     ...(!readOnlyModeEnabled && canBeSold ? [actionButtonSell] : []),
     ...(!readOnlyModeEnabled
-      ? familySpecificMainActions.filter(action => action.id !== "stake" || canShowStake)
+      ? familySpecificMainActions.filter(action => action.id !== "stake" || canStakeCurrency)
       : []),
     ...(!readOnlyModeEnabled ? [SendAction] : []),
     ReceiveAction,
