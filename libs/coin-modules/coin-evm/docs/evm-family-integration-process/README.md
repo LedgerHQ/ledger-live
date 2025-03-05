@@ -63,8 +63,8 @@ Here are the steps to handle the new currencies (ERC20) tokens, if relevant:
 
 No change should be needed on Ledger Live side since tokens are automatically imported from CAL at the release stage, cf:
 
-- this GitHub Action [`.github/workflows/test-release-create.yml`](https://github.com/LedgerHQ/ledger-live/blob/develop/.github/workflows/test-release-create.yml)
-- the `import:cal-tokens` job in the [`ledger-js` package](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/ledgerjs/package.json)
+- this GitHub Action [`.github/workflows/release-create.yml`](https://github.com/LedgerHQ/ledger-live/blob/develop/.github/workflows/release-create.yml)
+- the `import:cal-tokens` job in the [`cryptoassets` package](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/ledgerjs/packages/cryptoassets/package.json)
 
 ## Counter values support (fiat prices)
 
