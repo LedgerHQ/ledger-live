@@ -94,7 +94,7 @@ const convertFunctionPayloadResponseToInputEntryFunctionData = (
 
 export const txsToOps = (
   info: { address: string },
-  id: string, // TODO: what is ID
+  id: string,
   txs: (AptosTransaction | null)[],
 ): [Operation[], Operation[]] => {
   const { address } = info;
@@ -273,7 +273,7 @@ export function getResourceAddress(
     if (isWriteSetChangeWriteResource(change)) {
       const address = getAddressProcessor(change, event, event_name);
       if (address !== null) {
-        // TODO: potential issue if we have several
+        // TODO: potential issue if we have several changes that fits conditions
         return address;
       }
     }
