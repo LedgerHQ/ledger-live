@@ -36,6 +36,7 @@ const OperationsHistory = ({ accounts, testID }: InitialProps) => {
     <OperationsHistoryV1
       accounts={accounts}
       opCount={NB_OPERATIONS_TO_DISPLAY}
+      testID={testID}
       goToAnalyticsOperations={goToAnalyticsOperations}
     />
   );
