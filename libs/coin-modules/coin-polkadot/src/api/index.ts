@@ -1,6 +1,8 @@
 import type {
   Api,
   Transaction as ApiTransaction,
+  Fees,
+  Intent,
   Operation,
   Pagination,
 } from "@ledgerhq/coin-framework/api/index";
@@ -43,9 +45,12 @@ async function craft(address: string, transaction: ApiTransaction): Promise<stri
   return extrinsic.toHex();
 }
 
-async function estimate(addr: string, amount: bigint): Promise<bigint> {
-  const tx = await craftEstimationTransaction(addr, amount);
-  return estimateFees(tx);
+async function estimate(intent: Intent): Promise<Fees> {
+  const tx = await craftEstimationTransaction(intent.sender, intent.amount);
+  const estimatedFees = await estimateFees(tx);
+  return {
+    standard: estimatedFees,
+  };
 }
 
 async function operations(

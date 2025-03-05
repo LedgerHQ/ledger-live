@@ -21,10 +21,14 @@ describe("Xrp Api", () => {
       const amount = BigInt(100);
 
       // When
-      const result = await module.estimateFees(address, amount);
+      const result = await module.estimateFees({
+        sender: address,
+        amount,
+        recipient: "",
+      });
 
       // Then
-      expect(result).toEqual(BigInt(10));
+      expect(result.standard).toEqual(BigInt(10));
     });
   });
 

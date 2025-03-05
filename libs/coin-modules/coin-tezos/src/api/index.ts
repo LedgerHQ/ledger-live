@@ -1,5 +1,7 @@
 import {
+  Fees,
   IncorrectTypeError,
+  Intent,
   Operation,
   Pagination,
   type Api,
@@ -16,8 +18,8 @@ import {
   lastBlock,
   rawEncode,
 } from "../logic";
-import api from "../network/tzkt";
 import { log } from "@ledgerhq/logs";
+import api from "../network/tzkt";
 
 export function createApi(config: TezosConfig): Api {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
@@ -51,20 +53,22 @@ async function craft(
   return rawEncode(contents);
 }
 
-async function estimate(addr: string, amount: bigint): Promise<bigint> {
-  const accountInfo = await api.getAccountByAddress(addr);
+export async function estimate(intent: Intent): Promise<Fees> {
+  const accountInfo = await api.getAccountByAddress(intent.recipient);
   if (accountInfo.type !== "user") throw new Error("unexpected account type");
 
   const estimatedFees = await estimateFees({
     account: {
-      address: addr,
+      address: intent.recipient,
       revealed: accountInfo.revealed,
       balance: BigInt(accountInfo.balance),
       xpub: accountInfo.publicKey,
     },
-    transaction: { mode: "send", recipient: addr, amount: amount },
+    transaction: { mode: "send", recipient: intent.recipient, amount: intent.amount },
   });
-  return estimatedFees.estimatedFees;
+  return {
+    standard: estimatedFees.estimatedFees,
+  };
 }
 
 type PaginationState = {
