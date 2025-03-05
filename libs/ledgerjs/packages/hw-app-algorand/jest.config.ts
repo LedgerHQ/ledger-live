@@ -7,9 +7,17 @@ export default {
     "src/**/*.ts",
     "!src/**/*.test.{ts,tsx}",
     "!src/**/*.spec.{ts,tsx}",
-    "!src/**/__integration__/**",
-    "!src/**/__integrations__/**",
     "!src/**/__tests__/**",
+    "!tests/**",
   ],
-  coverageReporters: ["json", ["lcov", { projectRoot: "../" }], "json-summary"],
+  coverageReporters: ["json", ["lcov", { projectRoot: "../" }], "json-summary", "text"],
+  reporters: [
+    [
+      "jest-sonar",
+      {
+        outputName: "hw-app-algorand-sonar-executionTests-report.xml",
+        reportedFilePath: "absolute",
+      },
+    ],
+  ],
 };
