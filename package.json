@@ -218,7 +218,7 @@
       "rn-fetch-blob@0.12.0": "patches/rn-fetch-blob@0.12.0.patch",
       "react-native-image-crop-tools@1.6.4": "patches/react-native-image-crop-tools@1.6.4.patch",
       "asyncstorage-down@4.2.0": "patches/asyncstorage-down@4.2.0.patch",
-      "detox@20.33.0": "patches/detox@20.33.0.patch",
+      "detox": "patches/detox.patch",
       "usb@2.9.0": "patches/usb@2.9.0.patch",
       "react-native-video@5.2.1": "patches/react-native-video@5.2.1.patch",
       "@changesets/get-github-info@0.6.0": "patches/@changesets__get-github-info@0.6.0.patch",
