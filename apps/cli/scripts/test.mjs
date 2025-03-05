@@ -1,6 +1,6 @@
 #!/usr/bin/env zx
 
-const p = await $`node --disable-warning=DEP0040 ./bin/index.js version`;
+const p = await $`./bin/index.js version`;
 
 const acceptedWarnings = [
   "bigint: Failed to load bindings, pure JS will be used (try npm run rebuild?)", // https://ledgerhq.atlassian.net/browse/LIVE-5477

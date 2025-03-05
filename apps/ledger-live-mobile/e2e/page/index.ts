@@ -111,7 +111,6 @@ export class Application {
     if (speculosApp) {
       proxyPort = await this.common.addSpeculos(speculosApp.name);
       process.env.DEVICE_PROXY_URL = `ws://localhost:${proxyPort}`;
-      require("@ledgerhq/live-cli/src/live-common-setup");
     }
 
     if (cliCommands?.length) {

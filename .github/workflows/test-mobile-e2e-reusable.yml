@@ -259,7 +259,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --no-frozen-lockfile --unsafe-perm
+          pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="live-cli*..." --filter="@ledgerhq/dummy-*-app..." --no-frozen-lockfile --unsafe-perm
       - name: Build dependencies
         run: |
           pnpm build:llm:deps --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
@@ -313,6 +313,9 @@ jobs:
           speculos_tag: ${{ env.SPECULOS_IMAGE_TAG }}
           bot_id: ${{ secrets.GH_BOT_APP_ID }}
           bot_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+      - name: Build CLI
+        if: ${{ env.SPECULOS_RUN == 'true' }}
+        run: pnpm build:cli --api="http://127.0.0.1:${{ steps.caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
       - name: Set DISABLE_TRANSACTION_BROADCAST
         if: ${{ env.SPECULOS_RUN == 'true' }}
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-env@develop
