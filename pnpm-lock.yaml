@@ -6709,7 +6709,7 @@ importers:
     dependencies:
       '@ledgerhq/device-transport-kit-web-hid':
         specifier: 0.0.0-rnble-transport-20250303160138
-        version: 0.0.0-rnble-transport-20250303160138(@ledgerhq/device-management-kit@0.0.0-rnble-transport-20250303160138(rxjs@7.8.1))(rxjs@7.8.1)
+        version: 0.0.0-rnble-transport-20250303160138(@ledgerhq/device-management-kit@0.0.0-rnble-transport-20250226091520(rxjs@7.8.1))(rxjs@7.8.1)
       '@ledgerhq/hw-transport':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-transport
@@ -6724,8 +6724,11 @@ importers:
         version: link:../ledgerjs/packages/types-devices
     devDependencies:
       '@ledgerhq/device-management-kit':
-        specifier: 0.0.0-rnble-transport-20250303160138
-        version: 0.0.0-rnble-transport-20250303160138(rxjs@7.8.1)
+        specifier: 0.0.0-rnble-transport-20250226091520
+        version: 0.0.0-rnble-transport-20250226091520(rxjs@7.8.1)
+      '@ledgerhq/live-common':
+        specifier: workspace:^
+        version: link:../ledger-live-common
       '@testing-library/dom':
         specifier: ^9.3.4
         version: 9.3.4
@@ -6787,6 +6790,9 @@ importers:
       '@ledgerhq/device-management-kit':
         specifier: 0.0.0-rnble-transport-20250303160138
         version: 0.0.0-rnble-transport-20250303160138(rxjs@7.8.1)
+      '@ledgerhq/live-common':
+        specifier: workspace:^
+        version: link:../ledger-live-common
       '@testing-library/dom':
         specifier: ^9.3.4
         version: 9.3.4
@@ -12243,6 +12249,11 @@ packages:
 
   '@ledgerhq/cryptoassets-evm-signatures@13.5.2':
     resolution: {integrity: sha512-OjjzuiMMEIYEbXeueJB6mXwlvYhru28b43buAVOeggZ2XmdlT0kBvt7Cjn4bDPqff/glWR7vQdytIr7b77m2EQ==}
+
+  '@ledgerhq/device-management-kit@0.0.0-rnble-transport-20250226091520':
+    resolution: {integrity: sha512-aYQPjDxMvsoxXOTFZ+ch9DVNbsM0cKe07M/wMtZrMct342XXtibu+LEmQrlB1qgXVF1PFxi9Vy7K6Eq2Z4ejfA==}
+    peerDependencies:
+      rxjs: ^7.8.1
 
   '@ledgerhq/device-management-kit@0.0.0-rnble-transport-20250303160138':
     resolution: {integrity: sha512-rtAjJNjxMua7G1hPekIKsctAwLahgruix90HteNSdocnW+qLpp3SFZ9KSNxuOF8I5dphn/Kki+pAT9AhEdgHIw==}
@@ -39420,6 +39431,25 @@ snapshots:
       '@ledgerhq/live-env': 2.4.1
       axios: 1.7.7
 
+  '@ledgerhq/device-management-kit@0.0.0-rnble-transport-20250226091520(rxjs@7.8.1)':
+    dependencies:
+      '@sentry/minimal': 6.19.7
+      axios: 1.7.9
+      inversify: 6.2.2(reflect-metadata@0.2.2)
+      inversify-logger-middleware: 3.1.0
+      isomorphic-ws: 5.0.0(ws@8.18.0)
+      purify-ts: 2.1.0
+      reflect-metadata: 0.2.2
+      rxjs: 7.8.1
+      semver: 7.7.1
+      url: 0.11.4
+      uuid: 11.0.5
+      ws: 8.18.0
+      xstate: 5.19.2
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+
   '@ledgerhq/device-management-kit@0.0.0-rnble-transport-20250303160138(rxjs@7.8.1)':
     dependencies:
       '@sentry/minimal': 6.19.7
@@ -39449,9 +39479,9 @@ snapshots:
       rxjs: 7.8.1
       uuid: 10.0.0
 
-  '@ledgerhq/device-transport-kit-web-hid@0.0.0-rnble-transport-20250303160138(@ledgerhq/device-management-kit@0.0.0-rnble-transport-20250303160138(rxjs@7.8.1))(rxjs@7.8.1)':
+  '@ledgerhq/device-transport-kit-web-hid@0.0.0-rnble-transport-20250303160138(@ledgerhq/device-management-kit@0.0.0-rnble-transport-20250226091520(rxjs@7.8.1))(rxjs@7.8.1)':
     dependencies:
-      '@ledgerhq/device-management-kit': 0.0.0-rnble-transport-20250303160138(rxjs@7.8.1)
+      '@ledgerhq/device-management-kit': 0.0.0-rnble-transport-20250226091520(rxjs@7.8.1)
       '@sentry/minimal': 6.19.7
       purify-ts: 2.1.0
       rxjs: 7.8.1

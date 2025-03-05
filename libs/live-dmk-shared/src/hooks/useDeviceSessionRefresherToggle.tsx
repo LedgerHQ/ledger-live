@@ -5,19 +5,22 @@ import { activeDeviceSessionSubject } from "../config/activeDeviceSession";
 
 /**
  * Hook to disable the device session refresher when the device is connected.
- * @param {DeviceManagementKit} dmk Instance of DeviceManagementKit
+ * @param {DeviceManagementKit | null} dmk Instance of DeviceManagementKit
  * @param {boolean} ffEnabled Whether the feature flag is enabled
  * @returns a function to reenable the device session refresher or undefined when:
  *   - the feature flag is disabled
  *   - there are no active device sessions
  */
-export const useDisableDeviceSessionRefresher = (dmk: DeviceManagementKit, ffEnabled: boolean) => {
+export const useDisableDeviceSessionRefresher = (
+  dmk: DeviceManagementKit | null,
+  ffEnabled: boolean,
+) => {
   const sessionId = useRef<string>();
   const sub = useRef<Subscription>();
   const enableRefresher = useRef<() => void>();
 
   useEffect(() => {
-    if (!ffEnabled) return;
+    if (!ffEnabled || !dmk) return;
     sub.current = activeDeviceSessionSubject.subscribe({
       next: session => {
         console.log("[useDisableDeviceSessionRefresher] session", session);
@@ -39,7 +42,7 @@ export const useDisableDeviceSessionRefresher = (dmk: DeviceManagementKit, ffEna
     });
 
     return () => {
-      if (!ffEnabled) return;
+      if (!ffEnabled || !dmk) return;
       sub.current?.unsubscribe();
     };
   }, [dmk]);

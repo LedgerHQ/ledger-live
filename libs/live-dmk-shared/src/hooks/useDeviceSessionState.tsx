@@ -6,10 +6,13 @@ import {
 import { useState, useEffect } from "react";
 import { activeDeviceSessionSubject } from "../config/activeDeviceSession";
 
-export const useDeviceSessionState = (dmk: DeviceManagementKit): DeviceSessionState | undefined => {
+export const useDeviceSessionState = (
+  dmk: DeviceManagementKit | null,
+): DeviceSessionState | undefined => {
   const [sessionState, setSessionState] = useState<DeviceSessionState | undefined>(undefined);
 
   useEffect(() => {
+    if (!dmk) return;
     const subscription = activeDeviceSessionSubject.subscribe({
       next: session => {
         if (!session) {
