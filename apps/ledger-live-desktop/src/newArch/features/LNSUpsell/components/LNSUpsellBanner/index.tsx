@@ -1,6 +1,6 @@
 import { t } from "i18next";
 import { Trans } from "react-i18next";
-import React from "react";
+import React, { ReactElement } from "react";
 import { BannerCard, Button, Icons, Link, NotificationCard, Text } from "@ledgerhq/react-ui";
 import type { FlexBoxProps } from "@ledgerhq/react-ui/components/layout/Flex/index";
 import { useLNSUpsellBannerModel } from "../../hooks/useLNSUpsellBannerModel";
@@ -8,7 +8,7 @@ import type { LNSBannerLocation } from "../../types";
 
 type Props = FlexBoxProps & { location: LNSBannerLocation };
 
-export function LNSUpsellBanner({ location, ...boxProps }: Props) {
+export function LNSUpsellBanner({ location, ...boxProps }: Props): ReactElement | null {
   const { variant, discount, image, tracking, handleCTAClick } = useLNSUpsellBannerModel(location);
 
   switch (variant) {
@@ -19,19 +19,16 @@ export function LNSUpsellBanner({ location, ...boxProps }: Props) {
       return (
         <BannerCard
           {...boxProps}
-          title={t(`lnsUpsell.banner.${location}.${tracking}.title`)}
+          title={t(`lnsUpsell.${tracking}.title`)}
           description={
-            <Trans
-              i18nKey={`lnsUpsell.banner.${location}.${tracking}.description`}
-              values={{ discount }}
-            >
+            <Trans i18nKey={`lnsUpsell.${tracking}.description`} values={{ discount }}>
               <Text color="primary.c80" />
             </Trans>
           }
           image={image}
           cta={
             <Button variant="main" outline={false}>
-              {t(`lnsUpsell.banner.${location}.${tracking}.cta`)}
+              {t(`lnsUpsell.${tracking}.cta`)}
             </Button>
           }
           maxHeight={175}
@@ -44,10 +41,10 @@ export function LNSUpsellBanner({ location, ...boxProps }: Props) {
       return (
         <NotificationCard
           {...boxProps}
-          description={t(`lnsUpsell.banner.${location}.${tracking}.description`, { discount })}
+          description={t(`lnsUpsell.${tracking}.description`, { discount })}
           cta={
             <Link alignSelf="start" color="primary.c80" size="small">
-              {t(`lnsUpsell.banner.${location}.${tracking}.cta`)}
+              {t(`lnsUpsell.${tracking}.cta`)}
               <Icons.ExternalLink size="S" style={{ marginLeft: "8px", verticalAlign: "middle" }} />
             </Link>
           }

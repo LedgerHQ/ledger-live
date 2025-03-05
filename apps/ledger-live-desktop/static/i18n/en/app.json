@@ -6940,45 +6940,14 @@
     }
   },
   "lnsUpsell": {
-    "banner": {
-      "manager": {
-        "optIn": {
-          "title": "Limited memory, limited experience",
-          "description": "Upgrade your Nano S to a newer Ledger — like the Ledger Flex — for more memory, the latest security enhancements, fresh features, and <0>an exclusive {{discount}}% off</>.",
-          "cta": "Upgrade my Ledger"
-        },
-        "optOut": {
-          "description": "The limited memory of your Ledger Nano S restricts your access to the latest features, blockchain changes and security enhancements. For long-term use, upgrade to a newer Ledger device.",
-          "cta": "Why should I upgrade?"
-        }
-      },
-      "accounts": {
-        "optIn": {
-          "title": "Limited memory, limited experience",
-          "description": "Upgrade your Nano S to a newer Ledger — like the Ledger Flex — for more memory, the latest security enhancements, fresh features, and <0>an exclusive {{discount}}% off</>.",
-          "cta": "Upgrade my Ledger"
-        },
-        "optOut": {
-          "description": "The limited memory of your Ledger Nano S restricts your access to the latest features, blockchain changes and security enhancements. For long-term use, upgrade to a newer Ledger device.",
-          "cta": "Why should I upgrade?"
-        }
-      },
-      "portfolio": {
-        "optOut": {
-          "description": "The limited memory of your Ledger Nano S restricts your access to the latest features, blockchain changes and security enhancements. For long-term use, upgrade to a newer Ledger device.",
-          "cta": "Why should I upgrade?"
-        }
-      },
-      "notification_center": {
-        "optIn": {
-          "description": "Upgrade your Nano S to a newer Ledger — like the Ledger Flex — for more memory, the latest security enhancements, fresh features, and an exclusive {{discount}}% off.",
-          "cta": "Upgrade my Ledger"
-        },
-        "optOut": {
-          "description": "The limited memory of your Ledger Nano S restricts your access to the latest features, blockchain changes and security enhancements. For long-term use, upgrade to a newer Ledger device.",
-          "cta": "Why should I upgrade?"
-        }
-      }
+    "opted_in": {
+      "title": "Limited memory, limited experience",
+      "description": "Upgrade your Nano S to a newer Ledger — like the Ledger Flex — for more memory, the latest security enhancements, fresh features, and <0>an exclusive {{discount}}% off</>.",
+      "cta": "Upgrade my Ledger"
+    },
+    "opted_out": {
+      "description": "The limited memory of your Ledger Nano S restricts your access to the latest features, blockchain changes and security enhancements. For long-term use, upgrade to a newer Ledger device.",
+      "cta": "Why should I upgrade?"
     }
   }
 }
