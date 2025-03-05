@@ -158,24 +158,6 @@ export const getSubAccounts = async (
   return Promise.all(subAccountsPromises);
 };
 
-// export const getSyncHash = (
-//   currency: CryptoCurrency,
-//   blacklistedTokenIds: string[] = [],
-// ): string => {
-
-//   const config = getCoinConfig(currency).info;
-//   const { node = {}, explorer = {} } = config;
-
-//   const stringToHash =
-//     getCALHash(currency) +
-//     blacklistedTokenIds.join("") +
-//     isNftSupported +
-//     JSON.stringify(node) +
-//     JSON.stringify(explorer);>
-
-//   return `0x${murmurhash(stringToHash).result().toString(16)}`;
-// };
-
 export const getAccountShape: GetAccountShape = async info => {
   const { address, initialAccount, currency, derivationMode, rest } = info;
 
@@ -212,19 +194,12 @@ export const getAccountShape: GetAccountShape = async info => {
 
   const newSubAccounts = await getSubAccounts(info, address, accountId, tokenOperations);
 
-  // const lastTokenOperations: Operation[] = [];
-  // for (const tokenOperation of tokenOperations) {
-  //   const newSubAccounts = await getSubAccounts(info, accountId, lastTokenOperations);
-  // }
-
-  //const syncHash = getSyncHash(currency, blacklistedTokenIds);
+  // TODO: validate correctness of cache and mergeSubAccounts
   const shouldSyncFromScratch = initialAccount === undefined;
 
   const subAccounts = shouldSyncFromScratch
     ? newSubAccounts
     : mergeSubAccounts(initialAccount, newSubAccounts); // Merging potential new subAccouns while preserving the references
-
-  // const subAccounts = newSubAccounts;
 
   const shape: Partial<AptosAccount> = {
     type: "Account",
