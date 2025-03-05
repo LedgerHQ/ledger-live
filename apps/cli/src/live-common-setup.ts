@@ -23,13 +23,6 @@ import SpeculosHttpTransport, {
   SpeculosHttpTransportOpts,
 } from "@ledgerhq/hw-transport-node-speculos-http";
 
-checkLibs({
-  NotEnoughBalance,
-  React,
-  log,
-  Transport,
-});
-
 let idCounter = 0;
 const mockTransports: Record<string, any> = {};
 const recordStores: Record<string, RecordStore> = {};
