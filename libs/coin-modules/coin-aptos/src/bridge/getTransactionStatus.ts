@@ -1,4 +1,3 @@
-import { BigNumber } from "bignumber.js";
 import {
   NotEnoughBalance,
   RecipientRequired,
@@ -8,6 +7,8 @@ import {
   AmountRequired,
 } from "@ledgerhq/errors";
 import type { Account } from "@ledgerhq/types-live";
+import { findSubAccountById, isTokenAccount } from "@ledgerhq/coin-framework/account/index";
+import { BigNumber } from "bignumber.js";
 import type { Transaction, TransactionStatus } from "../types";
 
 import { AccountAddress } from "@aptos-labs/ts-sdk";
@@ -16,30 +17,44 @@ const getTransactionStatus = async (a: Account, t: Transaction): Promise<Transac
   const errors: Record<string, Error> = {};
   const warnings = {};
 
+  if (!t.recipient) {
+    errors.recipient = new RecipientRequired();
+  }
+
+  if (!AccountAddress.isValid({ input: t.recipient }).valid && !errors.recipient) {
+    errors.recipient = new InvalidAddress("", { currencyName: a.currency.name });
+  }
+
+  if (t.recipient === a.freshAddress && !errors.recipient) {
+    errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
+  }
+
   if (!t.fees) {
     errors.fees = new FeeNotLoaded();
   }
 
   const estimatedFees = t.fees || BigNumber(0);
 
-  if (t.amount.eq(0)) {
+  if (t.amount.lte(0)) {
     errors.amount = new AmountRequired();
   }
 
-  const amount = t.amount;
+  const tokenAccount = findSubAccountById(a, t.subAccountId ?? "");
+  const fromTokenAccount = tokenAccount && isTokenAccount(tokenAccount);
 
-  const totalSpent = BigNumber(t.amount).plus(estimatedFees);
+  const amount = t.useAllAmount
+    ? fromTokenAccount
+      ? tokenAccount.balance
+      : a.spendableBalance.minus(estimatedFees)
+    : BigNumber(t.amount);
 
-  if (totalSpent.gt(a.balance) && !errors.amount) {
+  const totalSpent = amount.plus(estimatedFees);
+
+  if (
+    (fromTokenAccount ? amount.gt(tokenAccount.balance) : amount.gt(a.balance)) &&
+    !errors.amount
+  ) {
     errors.amount = new NotEnoughBalance();
-  }
-
-  if (!t.recipient) {
-    errors.recipient = new RecipientRequired();
-  } else if (AccountAddress.isValid({ input: t.recipient }).valid === false && !errors.recipient) {
-    errors.recipient = new InvalidAddress("", { currencyName: a.currency.name });
-  } else if (t.recipient === a.freshAddress && !errors.recipient) {
-    errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
   }
 
   return Promise.resolve({
