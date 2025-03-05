@@ -30,6 +30,7 @@ import {
   GetAccountTransactionsDataQuery,
   GetAccountTransactionsDataGtQueryVariables,
 } from "./graphql/types";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 const getApiEndpoint = (currencyId: string) =>
   isTestnet(currencyId) ? getEnv("APTOS_TESTNET_API_ENDPOINT") : getEnv("APTOS_API_ENDPOINT");
@@ -68,7 +69,7 @@ export class AptosAPI {
 
   async getAccountInfo(address: string, startAt: string) {
     const [balance, transactions, blockHeight] = await Promise.all([
-      this.getBalance(address, APTOS_ASSET_ID),
+      this.getCoinBalance(address, APTOS_ASSET_ID),
       this.fetchTransactions(address, startAt),
       this.getHeight(),
     ]);
@@ -146,7 +147,17 @@ export class AptosAPI {
     return pendingTx.data.hash;
   }
 
-  async getBalance(address: string, contract_address: string): Promise<BigNumber> {
+  async getBalance(address: string, token: TokenCurrency): Promise<BigNumber> {
+    let balance = new BigNumber(0);
+    if (token.tokenType == "coin") {
+      balance = await this.getCoinBalance(address, token.contractAddress);
+    } else {
+      balance = await this.getFABalance(address, token.contractAddress);
+    }
+    return balance;
+  }
+
+  async getCoinBalance(address: string, contract_address: string): Promise<BigNumber> {
     try {
       const [balanceStr] = await this.aptosClient.view<[string]>({
         payload: {

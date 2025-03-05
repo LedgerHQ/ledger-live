@@ -97,12 +97,8 @@ export const getSubAccountShape = async (
   const aptosClient = new AptosAPI(currency.id);
   const tokenAccountId = encodeTokenAccountId(parentId, token);
 
-  let balance = new BigNumber(0);
-  if (token.tokenType == "coin") {
-    balance = await aptosClient.getBalance(address, token.contractAddress);
-  } else {
-    balance = await aptosClient.getFABalance(address, token.contractAddress);
-  }
+  const balance = await aptosClient.getBalance(address, token);
+
   return {
     type: "TokenAccount",
     id: tokenAccountId,
