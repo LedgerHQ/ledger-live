@@ -768,6 +768,10 @@
         "description3Link": "This integration has been carried out by <1><0>{{team}}</0></1> in collaboration with Ledger"
       }
     },
+    "migrationBanner": {
+      "title": "{{coinA}} is migrating to {{coinB}}. Follow this <0>link</0> to know more or contact the support if you need assistance.",
+      "contactSupport": "Contact support"
+    },
     "featureUnavailable": {
       "title": "The following feature is momentarily unavailable : {{feature}}. To know more please refer to {{support}}",
       "feature": {
