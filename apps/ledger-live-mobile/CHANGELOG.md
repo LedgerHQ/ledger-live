@@ -1,5 +1,20 @@
 # live-mobile
 
+## 3.69.0-nightly.0
+
+### Minor Changes
+
+- [#9404](https://github.com/LedgerHQ/ledger-live/pull/9404) [`c5b24ad`](https://github.com/LedgerHQ/ledger-live/commit/c5b24addaabf076bf975ea417059a19d89785127) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Android BLE scanning: fix location permissions & location services issues
+
+- [#9410](https://github.com/LedgerHQ/ledger-live/pull/9410) [`4afbc96`](https://github.com/LedgerHQ/ledger-live/commit/4afbc96dae8eb2e53e14ce5edabbfce6594a3527) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - SWAP LLM redicret to swap history and show previous transactions
+
+- [#9443](https://github.com/LedgerHQ/ledger-live/pull/9443) [`dc115be`](https://github.com/LedgerHQ/ledger-live/commit/dc115be2816ac86939b7052d06234094fa06b94c) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - fix: use flatten account for sign transaction flow
+
+### Patch Changes
+
+- Updated dependencies [[`4afbc96`](https://github.com/LedgerHQ/ledger-live/commit/4afbc96dae8eb2e53e14ce5edabbfce6594a3527)]:
+  - @ledgerhq/live-common@34.25.0-nightly.0
+
 ## 3.68.0
 
 ### Minor Changes

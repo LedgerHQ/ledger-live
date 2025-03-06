@@ -1,5 +1,11 @@
 ## 34.5.0-next.4
 
+## 34.25.0-nightly.0
+
+### Minor Changes
+
+- [#9410](https://github.com/LedgerHQ/ledger-live/pull/9410) [`4afbc96`](https://github.com/LedgerHQ/ledger-live/commit/4afbc96dae8eb2e53e14ce5edabbfce6594a3527) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - SWAP LLM redicret to swap history and show previous transactions
+
 ## 34.24.0
 
 ### Minor Changes
