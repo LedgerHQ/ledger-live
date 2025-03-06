@@ -7,7 +7,7 @@ import {
   WriteSetChangeWriteResource,
 } from "@aptos-labs/ts-sdk";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import type { Account, Operation, OperationType } from "@ledgerhq/types-live";
+import type { Account, Operation, OperationType, TokenAccount } from "@ledgerhq/types-live";
 import { findSubAccountById, isTokenAccount } from "@ledgerhq/coin-framework/account/index";
 import BigNumber from "bignumber.js";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
@@ -358,4 +358,23 @@ export function calculateAmount(
   // to show positive amount on the send transaction (ex: in "cancel" tx, when amount will be returned to our account)
   // we need to make it negative
   return is_sender ? amount_out.minus(amount_in) : amount_in.minus(amount_out);
+}
+
+/**
+ * Extracts the address from a string like "0x1::coin::CoinStore<address::module::type>"
+ * @param {string} str - The input string containing the address.
+ * @returns {string | null} - The extracted address or null if not found.
+ */
+export function extractAddress(str: string): string | null {
+  const match = str.match(/<([^>]+)>/);
+  return match ? match[1] : null;
+}
+
+export function getTokenAccount(
+  account: Account,
+  transaction: Transaction,
+): TokenAccount | undefined {
+  const tokenAccount = findSubAccountById(account, transaction.subAccountId ?? "");
+  const fromTokenAccount = tokenAccount && isTokenAccount(tokenAccount);
+  return fromTokenAccount ? tokenAccount : undefined;
 }
