@@ -26,6 +26,7 @@ export const DELEGATION_POOL_TYPES: MoveStructId[] = [
 
 export const APTOS_ASSET_ID: MoveStructId = "0x1::aptos_coin::AptosCoin";
 export const APTOS_COIN_CHANGE: MoveStructId = `0x1::coin::CoinStore<${APTOS_ASSET_ID}>`;
+export const APTOS_FUNGIBLE_STORE: MoveStructId = "0x1::fungible_asset::FungibleStore";
 
 export enum DIRECTION {
   IN = "IN",

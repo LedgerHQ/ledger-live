@@ -69,6 +69,16 @@ export type TransactionRaw = TransactionCommonRaw & {
   errors?: string;
 };
 
+export type AptosFungibleStoreResourceData = {
+  balance: BigNumber;
+  frozen: boolean;
+  metadata: { inner: string };
+};
+
+export type AptosMoveResourceData = {
+  guid: { id: { addr: string; creation_num: string } };
+};
+
 export type AptosMoveResource = {
-  [key: string]: { guid: { id: { addr: string; creation_num: string } } };
+  [key: string]: AptosMoveResourceData;
 };
