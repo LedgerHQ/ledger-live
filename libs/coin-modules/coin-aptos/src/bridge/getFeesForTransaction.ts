@@ -76,7 +76,11 @@ export const getFee = async (
 
 const CACHE = makeLRUCache(
   getFee,
-  (account: Account, transaction: Transaction) => `${account.id}-${transaction.amount.toString()}}`,
+  (account: Account, transaction: Transaction) => {
+    const tokenAccount = findSubAccountById(account, transaction.subAccountId ?? "");
+    const fromTokenAccount = tokenAccount && isTokenAccount(tokenAccount);
+    return `${fromTokenAccount ? tokenAccount.id : account.id}-${transaction.amount.toString()}}`;
+  },
   seconds(30),
 );
 
