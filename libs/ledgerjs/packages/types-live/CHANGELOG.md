@@ -1,5 +1,15 @@
 # @ledgerhq/types-live
 
+## 6.62.0-next.0
+
+### Minor Changes
+
+- [#9362](https://github.com/LedgerHQ/ledger-live/pull/9362) [`8675df1`](https://github.com/LedgerHQ/ledger-live/commit/8675df12c24067877358f27e1e7c66f739ff0c78) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Fix Aptos derivation path account metadata
+
+- [#9292](https://github.com/LedgerHQ/ledger-live/pull/9292) [`0a59343`](https://github.com/LedgerHQ/ledger-live/commit/0a59343b591dab4e886c21cb47f7339231997331) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feature (lld,llm): integrate Sonic
+
+- [#9345](https://github.com/LedgerHQ/ledger-live/pull/9345) [`ede6db0`](https://github.com/LedgerHQ/ledger-live/commit/ede6db0b94193cc9072aeb87e90f4098f0434af0) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Add thai language support
+
 ## 6.61.0
 
 ### Minor Changes

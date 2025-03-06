@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-countervalues-react",
-  "version": "0.2.24",
+  "version": "0.2.25-next.0",
   "description": "Ledger Live countervalues React module",
   "keywords": [
     "Ledger"
