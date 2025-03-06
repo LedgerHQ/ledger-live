@@ -86,8 +86,8 @@ export async function preload(currency: CryptoCurrency): Promise<ERC20Token[] | 
   return erc20;
 }
 
-export function hydrate(value: ERC20Token[] | null | undefined, currency: CryptoCurrency): void {
-  if (!value) {
+export function hydrate(value: unknown, currency: CryptoCurrency): void {
+  if (!value || !Array.isArray(value)) {
     const { chainId } = currency.ethereumLikeInfo || {};
     const tokens = tokensByChainId[chainId as keyof typeof tokensByChainId] || [];
     addTokens(tokens.map(convertERC20));
