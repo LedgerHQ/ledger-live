@@ -102,7 +102,6 @@ export type CryptoCurrencyId =
   | "stratis"
   | "stellar"
   | "stride"
-  | "sui"
   | "osmosis"
   | "shyft"
   | "tezos"

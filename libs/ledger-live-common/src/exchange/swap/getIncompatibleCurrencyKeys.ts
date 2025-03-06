@@ -8,6 +8,7 @@ const INCOMPATIBLE_NANO_S_TOKENS_KEYS: Keys = {
     title: "swap.incompatibility.spl_tokens_title",
     description: "swap.incompatibility.spl_tokens_description",
   },
+  // @ts-ignore sui is not yet integratted in the types
   sui: {
     title: "swap.incompatibility.sui_tokens_title",
     description: "swap.incompatibility.sui_tokens_description",
@@ -63,6 +64,7 @@ const INCOMPATIBLE_NANO_S_CURRENCY_KEYS: Keys = {
     title: "swap.incompatibility.dydx_title",
     description: "swap.incompatibility.dydx_description",
   },
+  // @ts-ignore sui is not yet integratted in the types
   sui: {
     title: "swap.incompatibility.dydx_title",
     description: "swap.incompatibility.dydx_description",
