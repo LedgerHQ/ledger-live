@@ -28,6 +28,7 @@ import { getAllFeatureFlags } from "@ledgerhq/live-common/e2e/index";
 import { getAllEnvs } from "@ledgerhq/live-env";
 import { ipcRenderer } from "electron";
 import { memoryLogger } from "~/renderer/logger";
+import { getJSONStringifyReplacer } from "~/helpers/saveLogs";
 
 const mockListAppsResult = (
   appDesc: string,
@@ -288,7 +289,8 @@ window.saveLogs = async (path: string): Promise<void> => {
 
   try {
     // Serializes ourself with `stringify` to avoid "object could not be cloned" errors from the electron IPC serializer.
-    const memoryLogsStr = JSON.stringify(memoryLogs, null, 2);
+    //Uses getJSONStringifyReplacer to replace circular references with "[Circular]"
+    const memoryLogsStr = JSON.stringify(memoryLogs, getJSONStringifyReplacer(), 2);
     // Requests the main process to save logs in a file
     await ipcRenderer.invoke(
       "save-logs",

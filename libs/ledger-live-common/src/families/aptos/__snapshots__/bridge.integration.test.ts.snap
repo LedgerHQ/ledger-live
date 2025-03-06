@@ -5,10 +5,10 @@ exports[`aptos currency bridge scanAccounts aptos seed 1 1`] = `
   {
     "balance": "30100",
     "currencyId": "aptos",
-    "derivationMode": "",
+    "derivationMode": "aptos",
     "freshAddress": "0x445fa0013887abd1a0c14acdec6e48090e0ad3fed3e08202aac15ca14f3be26b",
-    "freshAddressPath": "44'/637'/0'/0/0",
-    "id": "js:2:aptos:d1a8c6a1cdd52dd40c7ea61ee4571fb51fcae440a594c1eca18636928f1d3956:",
+    "freshAddressPath": "44'/637'/0'/0'/0'",
+    "id": "js:2:aptos:d1a8c6a1cdd52dd40c7ea61ee4571fb51fcae440a594c1eca18636928f1d3956:aptos",
     "index": 0,
     "operationsCount": 5,
     "pendingOperations": [],
@@ -22,10 +22,10 @@ exports[`aptos currency bridge scanAccounts aptos seed 1 1`] = `
   {
     "balance": "20000",
     "currencyId": "aptos",
-    "derivationMode": "",
+    "derivationMode": "aptos",
     "freshAddress": "0xd20fa44192f94ba086ab16bfdf57e43ff118ada69b4c66fa9b9a9223cbc068c1",
-    "freshAddressPath": "44'/637'/1'/0/0",
-    "id": "js:2:aptos:6a7712fdac0cb4ed27076c707e7798be52cf6c93a2d43d5cf9b874d0a45a111e:",
+    "freshAddressPath": "44'/637'/1'/0'/0'",
+    "id": "js:2:aptos:6a7712fdac0cb4ed27076c707e7798be52cf6c93a2d43d5cf9b874d0a45a111e:aptos",
     "index": 1,
     "operationsCount": 1,
     "pendingOperations": [],
@@ -39,10 +39,10 @@ exports[`aptos currency bridge scanAccounts aptos seed 1 1`] = `
   {
     "balance": "0",
     "currencyId": "aptos",
-    "derivationMode": "",
+    "derivationMode": "aptos",
     "freshAddress": "0xf4bf78be42e07959793c98c7e8345bb948bf10b8e6baac5e368eab66d09a9671",
-    "freshAddressPath": "44'/637'/2'/0/0",
-    "id": "js:2:aptos:8ffc0c2e141ead220f05b30fa01ce9a3783c5a157219f922b02ec194308b1b45:",
+    "freshAddressPath": "44'/637'/2'/0'/0'",
+    "id": "js:2:aptos:8ffc0c2e141ead220f05b30fa01ce9a3783c5a157219f922b02ec194308b1b45:aptos",
     "index": 2,
     "operationsCount": 0,
     "pendingOperations": [],
@@ -60,7 +60,7 @@ exports[`aptos currency bridge scanAccounts aptos seed 1 2`] = `
 [
   [
     {
-      "accountId": "js:2:aptos:d1a8c6a1cdd52dd40c7ea61ee4571fb51fcae440a594c1eca18636928f1d3956:",
+      "accountId": "js:2:aptos:d1a8c6a1cdd52dd40c7ea61ee4571fb51fcae440a594c1eca18636928f1d3956:aptos",
       "blockHash": "0x4c000b55c435dc0d1040d26a7ee782fb7e151748d41ea9126ebe6bbbf2e95111",
       "blockHeight": 266342014,
       "extra": {
@@ -69,7 +69,7 @@ exports[`aptos currency bridge scanAccounts aptos seed 1 2`] = `
       "fee": "900",
       "hasFailed": false,
       "hash": "0x1e85342da3a81f9c3a30c585677d3e50101d5731dcaf31cc157a3c694e6aece8",
-      "id": "js:2:aptos:d1a8c6a1cdd52dd40c7ea61ee4571fb51fcae440a594c1eca18636928f1d3956:-0x1e85342da3a81f9c3a30c585677d3e50101d5731dcaf31cc157a3c694e6aece8-IN",
+      "id": "js:2:aptos:d1a8c6a1cdd52dd40c7ea61ee4571fb51fcae440a594c1eca18636928f1d3956:aptos-0x1e85342da3a81f9c3a30c585677d3e50101d5731dcaf31cc157a3c694e6aece8-IN",
       "recipients": [
         "0x445fa0013887abd1a0c14acdec6e48090e0ad3fed3e08202aac15ca14f3be26b",
       ],
@@ -81,7 +81,7 @@ exports[`aptos currency bridge scanAccounts aptos seed 1 2`] = `
       "value": "100000",
     },
     {
-      "accountId": "js:2:aptos:d1a8c6a1cdd52dd40c7ea61ee4571fb51fcae440a594c1eca18636928f1d3956:",
+      "accountId": "js:2:aptos:d1a8c6a1cdd52dd40c7ea61ee4571fb51fcae440a594c1eca18636928f1d3956:aptos",
       "blockHash": "0x46de657932759f16ffcda6ef6ace41996f263287e538d3e0f5cbf85994695247",
       "blockHeight": 266316843,
       "extra": {
@@ -90,7 +90,7 @@ exports[`aptos currency bridge scanAccounts aptos seed 1 2`] = `
       "fee": "900",
       "hasFailed": false,
       "hash": "0x3c586d8c15c76848fbd3c84ddfbf11a1a07c92734da4dd8d530c9f23a0e7744c",
-      "id": "js:2:aptos:d1a8c6a1cdd52dd40c7ea61ee4571fb51fcae440a594c1eca18636928f1d3956:-0x3c586d8c15c76848fbd3c84ddfbf11a1a07c92734da4dd8d530c9f23a0e7744c-IN",
+      "id": "js:2:aptos:d1a8c6a1cdd52dd40c7ea61ee4571fb51fcae440a594c1eca18636928f1d3956:aptos-0x3c586d8c15c76848fbd3c84ddfbf11a1a07c92734da4dd8d530c9f23a0e7744c-IN",
       "recipients": [
         "0x445fa0013887abd1a0c14acdec6e48090e0ad3fed3e08202aac15ca14f3be26b",
       ],
@@ -102,7 +102,7 @@ exports[`aptos currency bridge scanAccounts aptos seed 1 2`] = `
       "value": "20000",
     },
     {
-      "accountId": "js:2:aptos:d1a8c6a1cdd52dd40c7ea61ee4571fb51fcae440a594c1eca18636928f1d3956:",
+      "accountId": "js:2:aptos:d1a8c6a1cdd52dd40c7ea61ee4571fb51fcae440a594c1eca18636928f1d3956:aptos",
       "blockHash": "0xc546b75fd87fb75a2f328bebffade4ccf3345844eec4d2b6cf82e042fe9a7661",
       "blockHeight": 266313878,
       "extra": {
@@ -111,7 +111,7 @@ exports[`aptos currency bridge scanAccounts aptos seed 1 2`] = `
       "fee": "99900",
       "hasFailed": false,
       "hash": "0x5f2c2f597ab912dff9fe413b503036edbcc5488c03a4606f11eef868ed68258e",
-      "id": "js:2:aptos:d1a8c6a1cdd52dd40c7ea61ee4571fb51fcae440a594c1eca18636928f1d3956:-0x5f2c2f597ab912dff9fe413b503036edbcc5488c03a4606f11eef868ed68258e-IN",
+      "id": "js:2:aptos:d1a8c6a1cdd52dd40c7ea61ee4571fb51fcae440a594c1eca18636928f1d3956:aptos-0x5f2c2f597ab912dff9fe413b503036edbcc5488c03a4606f11eef868ed68258e-IN",
       "recipients": [
         "0x445fa0013887abd1a0c14acdec6e48090e0ad3fed3e08202aac15ca14f3be26b",
       ],
@@ -123,7 +123,7 @@ exports[`aptos currency bridge scanAccounts aptos seed 1 2`] = `
       "value": "20000",
     },
     {
-      "accountId": "js:2:aptos:d1a8c6a1cdd52dd40c7ea61ee4571fb51fcae440a594c1eca18636928f1d3956:",
+      "accountId": "js:2:aptos:d1a8c6a1cdd52dd40c7ea61ee4571fb51fcae440a594c1eca18636928f1d3956:aptos",
       "blockHash": "0x1bbe17059abba7dc500aca2eb174c217e71f3dcd7486cd4b27dc6136cce8a60a",
       "blockHeight": 266315762,
       "extra": {
@@ -132,7 +132,7 @@ exports[`aptos currency bridge scanAccounts aptos seed 1 2`] = `
       "fee": "900",
       "hasFailed": false,
       "hash": "0xb74e3ab13f7a00faeb51c0e251602f53d387a64ac9fea7c76a8be3d0bf6f7a19",
-      "id": "js:2:aptos:d1a8c6a1cdd52dd40c7ea61ee4571fb51fcae440a594c1eca18636928f1d3956:-0xb74e3ab13f7a00faeb51c0e251602f53d387a64ac9fea7c76a8be3d0bf6f7a19-IN",
+      "id": "js:2:aptos:d1a8c6a1cdd52dd40c7ea61ee4571fb51fcae440a594c1eca18636928f1d3956:aptos-0xb74e3ab13f7a00faeb51c0e251602f53d387a64ac9fea7c76a8be3d0bf6f7a19-IN",
       "recipients": [
         "0x445fa0013887abd1a0c14acdec6e48090e0ad3fed3e08202aac15ca14f3be26b",
       ],
@@ -144,7 +144,7 @@ exports[`aptos currency bridge scanAccounts aptos seed 1 2`] = `
       "value": "10000",
     },
     {
-      "accountId": "js:2:aptos:d1a8c6a1cdd52dd40c7ea61ee4571fb51fcae440a594c1eca18636928f1d3956:",
+      "accountId": "js:2:aptos:d1a8c6a1cdd52dd40c7ea61ee4571fb51fcae440a594c1eca18636928f1d3956:aptos",
       "blockHash": "0xf37ce698cf2e6d9e4a0048cd6d09fb3f19f417ab8251a3cc1f19b8d0e503538f",
       "blockHeight": 266342506,
       "extra": {
@@ -153,7 +153,7 @@ exports[`aptos currency bridge scanAccounts aptos seed 1 2`] = `
       "fee": "99900",
       "hasFailed": false,
       "hash": "0xf980601fe40ad1dab0cc68fe08d2bc95c73e2a21c6d257475e0879394638058e",
-      "id": "js:2:aptos:d1a8c6a1cdd52dd40c7ea61ee4571fb51fcae440a594c1eca18636928f1d3956:-0xf980601fe40ad1dab0cc68fe08d2bc95c73e2a21c6d257475e0879394638058e-OUT",
+      "id": "js:2:aptos:d1a8c6a1cdd52dd40c7ea61ee4571fb51fcae440a594c1eca18636928f1d3956:aptos-0xf980601fe40ad1dab0cc68fe08d2bc95c73e2a21c6d257475e0879394638058e-OUT",
       "recipients": [
         "0xd20fa44192f94ba086ab16bfdf57e43ff118ada69b4c66fa9b9a9223cbc068c1",
       ],
@@ -167,7 +167,7 @@ exports[`aptos currency bridge scanAccounts aptos seed 1 2`] = `
   ],
   [
     {
-      "accountId": "js:2:aptos:6a7712fdac0cb4ed27076c707e7798be52cf6c93a2d43d5cf9b874d0a45a111e:",
+      "accountId": "js:2:aptos:6a7712fdac0cb4ed27076c707e7798be52cf6c93a2d43d5cf9b874d0a45a111e:aptos",
       "blockHash": "0xf37ce698cf2e6d9e4a0048cd6d09fb3f19f417ab8251a3cc1f19b8d0e503538f",
       "blockHeight": 266342506,
       "extra": {
@@ -176,7 +176,7 @@ exports[`aptos currency bridge scanAccounts aptos seed 1 2`] = `
       "fee": "99900",
       "hasFailed": false,
       "hash": "0xf980601fe40ad1dab0cc68fe08d2bc95c73e2a21c6d257475e0879394638058e",
-      "id": "js:2:aptos:6a7712fdac0cb4ed27076c707e7798be52cf6c93a2d43d5cf9b874d0a45a111e:-0xf980601fe40ad1dab0cc68fe08d2bc95c73e2a21c6d257475e0879394638058e-IN",
+      "id": "js:2:aptos:6a7712fdac0cb4ed27076c707e7798be52cf6c93a2d43d5cf9b874d0a45a111e:aptos-0xf980601fe40ad1dab0cc68fe08d2bc95c73e2a21c6d257475e0879394638058e-IN",
       "recipients": [
         "0xd20fa44192f94ba086ab16bfdf57e43ff118ada69b4c66fa9b9a9223cbc068c1",
       ],
