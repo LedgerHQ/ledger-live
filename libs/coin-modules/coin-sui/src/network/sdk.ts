@@ -16,7 +16,7 @@ import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
 
 type AsyncApiFunction<T> = (api: SuiClient) => Promise<T>;
-type ApiFunction<T> = (api: SuiClient) => T;
+// type ApiFunction<T> = (api: SuiClient) => T;
 
 const rpcUrl = getFullnodeUrl("devnet");
 
@@ -31,7 +31,7 @@ const BLOCK_HEIGHT = 5; // sui has no block height metainfo, we use it simulate 
 /**
  * Connects to Sui Api
  */
-async function withApi<T>(execute: ApiFunction<T> | AsyncApiFunction<T>) {
+async function withApi<T>(execute: AsyncApiFunction<T>) {
   console.log("SDK withApi");
   if (!api) {
     api = new SuiClient({ url: rpcUrl });
@@ -243,21 +243,28 @@ const loadOperation = async (params: {
   const { api, addr, type, cursor } = params;
   const filter: QueryTransactionBlocksParams["filter"] =
     type === "IN" ? { ToAddress: addr } : { FromAddress: addr };
-  const { data, nextCursor, hasNextPage } = await api.queryTransactionBlocks({
-    filter,
-    cursor,
-    order: "ascending",
-    options: {
-      showInput: true,
-      showEffects: true, // To get transaction status and gas fee details
-    },
-    limit: TRANSACTIONS_REQUEST_LIMIT,
-  });
 
-  if (hasNextPage) {
-    const newData = await loadOperation({ api, type, addr, cursor: nextCursor });
-    return [...newData, ...data];
+  try {
+    console.log("loadOperation", cursor);
+    const { data, nextCursor, hasNextPage } = await api.queryTransactionBlocks({
+      filter,
+      cursor,
+      order: "ascending",
+      options: {
+        showInput: true,
+        showEffects: true, // To get transaction status and gas fee details
+      },
+      limit: TRANSACTIONS_REQUEST_LIMIT,
+    });
+
+    if (hasNextPage) {
+      const newData = await loadOperation({ api, type, addr, cursor: nextCursor });
+      return [...newData, ...data];
+    }
+
+    return data;
+  } catch (error) {
+    console.error(error);
+    return [];
   }
-
-  return data;
 };
