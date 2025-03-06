@@ -4,11 +4,11 @@ import { useNavigation } from "@react-navigation/native";
 import { useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { usePTXCustomHandlers } from "~/components/WebPTXPlayer/CustomHandlers";
-import { accountsSelector } from "~/reducers/accounts";
+import { flattenAccountsSelector } from "~/reducers/accounts";
 import { swapCustomHandlers } from "../customHandlers";
 
 export function useSwapLiveAppCustomHandlers(manifest: LiveAppManifest) {
-  const accounts = useSelector(accountsSelector);
+  const accounts = useSelector(flattenAccountsSelector);
   const ptxCustomHandlers = usePTXCustomHandlers(manifest, accounts);
   const dispatch = useDispatch();
   const navigation = useNavigation();
