@@ -7,13 +7,6 @@
 - Updated dependencies []:
   - @ledgerhq/hw-app-eth@6.42.8
 
-## 1.2.22-next.1
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/hw-app-eth@6.42.8-next.1
-
 ## 1.2.22-next.0
 
 ### Patch Changes

@@ -5,6 +5,7 @@ import LocationPermissionDenied from "./LocationPermissionDenied";
 type Props = {
   children?: ReactNode | undefined;
   forceOpenSettingsOnErrorButton?: boolean;
+  required: boolean;
 };
 
 /**
@@ -21,15 +22,16 @@ type Props = {
 const AndroidRequiresLocationPermission: React.FC<Props> = ({
   children,
   forceOpenSettingsOnErrorButton = false,
+  required = true,
 }) => {
-  const { hasPermission, neverAskAgain, requestForPermissionAgain } =
-    useAndroidLocationPermission();
+  const { hasPermission, neverAskAgain, requestForPermissionAgain } = useAndroidLocationPermission({
+    isHookEnabled: required,
+  });
 
+  if (!required || hasPermission === "granted") return children;
   if (hasPermission === "unknown") return null; // Prevents blink
 
-  return hasPermission === "granted" ? (
-    <>{children}</>
-  ) : (
+  return (
     <LocationPermissionDenied
       neverAskAgain={neverAskAgain}
       onRetry={requestForPermissionAgain}

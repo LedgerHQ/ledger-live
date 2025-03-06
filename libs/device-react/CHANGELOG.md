@@ -7,13 +7,6 @@
 - Updated dependencies []:
   - @ledgerhq/device-core@0.4.15
 
-## 0.2.21-next.1
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/device-core@0.4.15-next.1
-
 ## 0.2.21-next.0
 
 ### Patch Changes

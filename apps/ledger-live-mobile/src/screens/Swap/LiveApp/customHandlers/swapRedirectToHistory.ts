@@ -1,11 +1,8 @@
-import { NavigationProp, NavigationState } from "@react-navigation/native";
+import { ScreenName } from "~/const";
+import { NavigationType } from ".";
 
-export const swapRedirectToHistory = (
-  _: Omit<NavigationProp<ReactNavigation.RootParamList>, "getState"> & {
-    getState(): NavigationState | undefined;
-  },
-) => {
+export const swapRedirectToHistory = (navigation: NavigationType) => {
   return async () => {
-    return Promise.resolve(undefined);
+    return navigation.navigate(ScreenName.SwapHistory);
   };
 };
