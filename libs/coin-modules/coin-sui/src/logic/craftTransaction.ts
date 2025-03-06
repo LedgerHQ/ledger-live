@@ -16,15 +16,11 @@ export type CreateExtrinsicArg = {
 
 export async function craftTransaction(
   address: string,
-  nonceToUse: number,
+  _nonceToUse: number,
   extractExtrinsicArg: CreateExtrinsicArg,
-  forceLatestParams: boolean = false,
+  _forceLatestParams: boolean = false,
 ): Promise<CoreTransaction> {
-  console.log("craftTransaction", address, nonceToUse, extractExtrinsicArg, forceLatestParams);
-
   const unsigned = await suiAPI.createTransaction(address, extractExtrinsicArg);
-
-  console.log("craftTransaction unsigned", unsigned);
 
   return {
     executeTransactionBlock: suiAPI.executeTransactionBlock,

@@ -37,9 +37,9 @@ const getExtra = (
     palletMethod: MODE_TO_PALLET_METHOD.send,
   };
 
-  if (transaction.mode == "send" && transaction.useAllAmount) {
-    extra.palletMethod = MODE_TO_PALLET_METHOD["sendMax"];
-  }
+  // if (transaction.mode == "send" && transaction.useAllAmount) {
+  //   extra.palletMethod = MODE_TO_PALLET_METHOD["sendMax"];
+  // }
 
   switch (type) {
     case "OUT":
@@ -125,7 +125,7 @@ function optimisticOpForTransfer(
     recipients: [transaction.recipient].filter(Boolean),
     accountId: account.id,
     transactionSequenceNumber: getNonce(account),
-    date: new Date(),
+    date: new Date(), // TODO: use transaction date
     extra,
   };
 }

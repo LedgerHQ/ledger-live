@@ -19,7 +19,6 @@ export const getTransactionStatus: AccountBridge<
   SuiAccount,
   TransactionStatus
 >["getTransactionStatus"] = async (account, transaction) => {
-  console.log("getTransactionStatus", account, transaction);
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
   const amount = new BigNumber(transaction?.amount || 0);

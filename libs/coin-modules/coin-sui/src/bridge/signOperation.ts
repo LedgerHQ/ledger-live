@@ -21,10 +21,8 @@ export const buildSignOperation =
   (
     signerContext: SignerContext<SuiSigner>,
   ): AccountBridge<Transaction, SuiAccount>["signOperation"] =>
-  test =>
+  ({ account, deviceId, transaction }) =>
     new Observable(subscriber => {
-      console.log("buildSignOperation test", test);
-      const { account, deviceId, transaction } = test;
       async function main() {
         subscriber.next({
           type: "device-signature-requested",
@@ -42,17 +40,14 @@ export const buildSignOperation =
             transaction,
           }),
         };
+
         const { executeTransactionBlock, unsigned } = await buildTransaction(
           account,
           transactionToSign,
           true,
         );
 
-        console.log("buildSignOperation unsigned", unsigned);
-
         const signData = messageWithIntent("TransactionData", unsigned);
-
-        console.log("buildSignOperation signData", signData);
 
         const { signature } = await signerContext(deviceId, signer =>
           signer.signTransaction(account.freshAddressPath, signData),
@@ -68,50 +63,13 @@ export const buildSignOperation =
           signatureScheme: "ED25519",
           publicKey,
         });
-        console.log(
-          "buildSignOperation publicKey",
-          publicKey.toSuiPublicKey(),
-          publicKey.toBase64(),
-        );
-        console.log(
-          "buildSignOperation serializedSignature",
-          serializedSignature,
-          "account.freshAddress",
-          account.freshAddress,
-        );
-
-        const keypair = new Ed25519Keypair();
-
-        console.log(
-          "buildSignOperation keypair.signTransaction",
-          (await keypair.signTransaction(unsigned)).signature,
-        );
-
-        const test = await verifyTransactionSignature(
-          unsigned,
-          (await keypair.signTransaction(unsigned)).signature,
-          {
-            // optionally verify that the signature is valid for a specific address
-            address: keypair.getPublicKey().toSuiAddress(),
-          },
-        );
-
-        console.log(
-          "buildSignOperation test",
-          test,
-          test.toSuiAddress() !== (await keypair.toSuiAddress()),
-          "test.toSuiAddress()",
-          test.toSuiAddress(),
-          "(await keypair.toSuiAddress())",
-          await keypair.toSuiAddress(),
-        );
 
         const verify = await verifyTransactionSignature(unsigned, serializedSignature, {
           address: "0x" + account.freshAddress,
         });
         console.log("buildSignOperation verify", verify);
 
-        const result = executeTransactionBlock({
+        const result = await executeTransactionBlock({
           transactionBlock: unsigned,
           signature: serializedSignature,
           options: {
@@ -119,20 +77,17 @@ export const buildSignOperation =
           },
         });
 
-        console.log("executeTransactionBlock result", result);
+        console.log("buildSignOperation result", result);
 
         subscriber.next({
           type: "device-signature-granted",
         });
 
-        console.log("buildOptimisticOperation transactionToSign", transactionToSign.fees);
         const operation = buildOptimisticOperation(
           account,
           transactionToSign,
           transactionToSign.fees ?? new BigNumber(0),
         );
-
-        console.log("buildSignOperation operation", operation);
 
         subscriber.next({
           type: "signed",

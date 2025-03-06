@@ -22,8 +22,6 @@ const rpcUrl = getFullnodeUrl("devnet");
 
 let api: SuiClient | null = null;
 
-console.log("SDK");
-
 const TRANSACTIONS_REQUEST_LIMIT = 100;
 
 const BLOCK_HEIGHT = 5; // sui has no block height metainfo, we use it simulate proper icon statuses in apps
@@ -32,17 +30,12 @@ const BLOCK_HEIGHT = 5; // sui has no block height metainfo, we use it simulate 
  * Connects to Sui Api
  */
 async function withApi<T>(execute: AsyncApiFunction<T>) {
-  console.log("SDK withApi");
   if (!api) {
     api = new SuiClient({ url: rpcUrl });
   }
 
-  // try {
   const result = await execute(api);
   return result;
-  // } catch (error) {
-  //   console.error("error", error);
-  // }
 }
 
 /**
@@ -206,10 +199,11 @@ export const paymentInfo = async (sender: string, fakeTransaction: any) =>
     const [coin] = tx.splitCoins(tx.gas, [fakeTransaction.amount.toNumber()]);
     tx.transferObjects([coin], fakeTransaction.recipient);
     const txb = await tx.build({ client: api });
-    const result = await api.dryRunTransactionBlock({ transactionBlock: txb });
-    const fees = getTotalGasUsed(result.effects);
-    console.log("paymentInfo result", fees);
+    const dryRunTxResponse = await api.dryRunTransactionBlock({ transactionBlock: txb });
+    const fees = getTotalGasUsed(dryRunTxResponse.effects);
     return {
+      gasBudget: dryRunTxResponse.input.gasData.budget,
+      totalGasUsed: fees,
       fees,
     };
   });
@@ -218,14 +212,12 @@ export const submitExtrinsic = async (extrinsic: string) => extrinsic; // TODO: 
 
 export const createTransaction = async (address: string, transaction: any) =>
   withApi(async api => {
-    console.log("createTransaction address", address, "createTransaction transaction", transaction);
     const tx = new Transaction();
     tx.setSender(ensureAddressFormat(address));
 
     const [coin] = tx.splitCoins(tx.gas, [transaction.amount.toNumber()]);
     tx.transferObjects([coin], transaction.recipient);
 
-    console.log("createTransaction bytes", tx.serialize());
     return tx.build({ client: api });
   });
 
@@ -244,27 +236,21 @@ const loadOperation = async (params: {
   const filter: QueryTransactionBlocksParams["filter"] =
     type === "IN" ? { ToAddress: addr } : { FromAddress: addr };
 
-  try {
-    console.log("loadOperation", cursor);
-    const { data, nextCursor, hasNextPage } = await api.queryTransactionBlocks({
-      filter,
-      cursor,
-      order: "ascending",
-      options: {
-        showInput: true,
-        showEffects: true, // To get transaction status and gas fee details
-      },
-      limit: TRANSACTIONS_REQUEST_LIMIT,
-    });
+  const { data, nextCursor, hasNextPage } = await api.queryTransactionBlocks({
+    filter,
+    cursor,
+    order: "ascending",
+    options: {
+      showInput: true,
+      showEffects: true, // To get transaction status and gas fee details
+    },
+    limit: TRANSACTIONS_REQUEST_LIMIT,
+  });
 
-    if (hasNextPage) {
-      const newData = await loadOperation({ api, type, addr, cursor: nextCursor });
-      return [...newData, ...data];
-    }
-
-    return data;
-  } catch (error) {
-    console.error(error);
-    return [];
+  if (hasNextPage) {
+    const newData = await loadOperation({ api, type, addr, cursor: nextCursor });
+    return [...newData, ...data];
   }
+
+  return data;
 };

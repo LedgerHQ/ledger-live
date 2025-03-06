@@ -19,7 +19,6 @@ export const createTransaction: AccountBridge<Transaction>["createTransaction"] 
     fees: null,
     errors: {},
   };
-  console.log("createTransaction", transaction);
   return transaction;
 };
 

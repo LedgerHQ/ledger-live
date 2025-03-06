@@ -8,10 +8,10 @@ export async function estimateFees(sender: string, transaction: any): Promise<bi
   // await loadSui();
 
   // const fakeSignedTx = await fakeSignExtrinsic(unsigned, registry);
-  const { fees } = await suiAPI.paymentInfo(sender, transaction);
+  const { fees, gasBudget } = await suiAPI.paymentInfo(sender, transaction);
   // if (payment) {
   //   //
   // }
   // return BigInt(payment?.partialFee);
-  return BigInt(fees);
+  return BigInt(gasBudget);
 }

@@ -10,7 +10,6 @@ import { getAccountUnit } from "./utils";
 import type { Transaction, TransactionRaw } from "../types";
 
 export const formatTransaction = (transaction: Transaction, account: Account): string => {
-  console.log("formatTransaction", transaction, account);
   const { mode, amount, recipient, useAllAmount } = transaction;
   return `
 ${mode.toUpperCase()} ${
@@ -27,7 +26,6 @@ ${mode.toUpperCase()} ${
 };
 
 export const fromTransactionRaw = (transaction: TransactionRaw): Transaction => {
-  console.log("fromTransactionRaw", transaction);
   const common = fromTransactionCommonRaw(transaction);
   return {
     ...common,
@@ -40,12 +38,11 @@ export const fromTransactionRaw = (transaction: TransactionRaw): Transaction => 
 
 export const toTransactionRaw = (transaction: Transaction): TransactionRaw => {
   const common = toTransactionCommonRaw(transaction);
-  console.log("toTransactionRaw", transaction);
   return {
     ...common,
     family: transaction.family,
     mode: transaction.mode,
-    fees: transaction.fees?.toString() || "", // TODO: fix
+    fees: transaction.fees?.toString() || "",
   };
 };
 

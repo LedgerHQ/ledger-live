@@ -10,11 +10,7 @@ export const extractExtrinsicArg = (
   amount: transaction.amount,
   recipient: transaction.recipient,
   isFirstBond: isFirstBond(account),
-  // validators: transaction.validators,
   useAllAmount: transaction.useAllAmount,
-  // rewardDestination: transaction.rewardDestination,
-  // numSlashingSpans: account.suiResources?.numSlashingSpans,
-  // era: transaction.era,
 });
 
 /**

@@ -21,21 +21,21 @@ export default async function getEstimatedFees({
 }): Promise<BigNumber> {
   // await loadSui();
 
-  console.log("getEstimatedFees transaction", transaction, "account", account);
-
   const t = {
     ...transaction,
     recipient: getAbandonSeedAddress(account.currency.id),
     // Always use a fake recipient to estimate fees
     amount: calculateAmount({
       account,
-      transaction: { ...transaction, fees: new BigNumber(transaction.fees || 0) },
+      transaction: {
+        ...transaction,
+        fees: new BigNumber(transaction.fees || 0),
+      },
     }), // Remove fees if present since we are fetching fees
   };
 
-  const tx = await buildTransaction(account, t);
-  console.log("getEstimatedFees tx", tx);
+  // const tx = await buildTransaction(account, t);
+  // console.log("getEstimatedFees tx", tx);
   const fees = await estimateFees(account.freshAddress, t);
-  console.log("getEstimatedFees fees", fees);
   return new BigNumber(fees.toString());
 }

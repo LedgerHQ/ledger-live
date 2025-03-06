@@ -11,7 +11,6 @@ import { OperationType, type Operation } from "@ledgerhq/types-live";
 export const getAccountShape: GetAccountShape<SuiAccount> = async info => {
   const { address, initialAccount, currency, derivationMode } = info;
   const oldOperations = initialAccount?.operations || [];
-  console.log("getAccount", oldOperations);
   const accountId = encodeAccountId({
     type: "js",
     version: "2",
@@ -45,7 +44,6 @@ export const getAccountShape: GetAccountShape<SuiAccount> = async info => {
       nonce,
     },
   };
-  console.log("getAccount shape", shape, operations);
   return { ...shape, operations };
 };
 
