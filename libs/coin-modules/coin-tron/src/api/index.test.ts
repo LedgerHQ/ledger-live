@@ -67,7 +67,12 @@ describe("createApi", () => {
     await api.broadcast("transaction");
     api.combine("tx", "signature", "pubkey");
     await api.craftTransaction("address", {} as Transaction, "pubkey");
-    await api.estimateFees({} as Intent);
+    await api.estimateFees({
+      sender: "address",
+      recipient: "address",
+      amount: BigInt(10),
+      standard: "trc10",
+    } as Intent);
     await api.getBalance("address");
     await api.lastBlock();
     await api.listOperations("address", {} as Pagination);
@@ -76,7 +81,12 @@ describe("createApi", () => {
     expect(broadcast).toHaveBeenCalledWith("transaction");
     expect(combine).toHaveBeenCalledWith("tx", "signature", "pubkey");
     expect(craftTransaction).toHaveBeenCalledWith("address", {}, "pubkey");
-    expect(estimateFees).toHaveBeenCalledWith({});
+    expect(estimateFees).toHaveBeenCalledWith({
+      sender: "address",
+      recipient: "address",
+      amount: BigInt(10),
+      standard: "trc10",
+    } as Intent);
     expect(getBalance).toHaveBeenCalledWith("address");
     expect(lastBlock).toHaveBeenCalled();
     expect(listOperations).toHaveBeenCalledWith("address", {});

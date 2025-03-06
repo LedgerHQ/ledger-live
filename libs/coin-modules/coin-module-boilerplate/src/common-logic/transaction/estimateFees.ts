@@ -1,4 +1,3 @@
-import BigNumber from "bignumber.js";
 import { simulate } from "../../network/node";
 import { SimulationError } from "../../types/errors";
 import { Fees, Intent } from "@ledgerhq/coin-framework/lib/api/types";
