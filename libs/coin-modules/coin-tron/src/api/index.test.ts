@@ -9,7 +9,12 @@ import {
 } from "../logic";
 import coinConfig from "../config";
 import { TronConfig } from "../config";
-import { Api, TransactionIntent, Pagination, Transaction } from "@ledgerhq/coin-framework/api/types";
+import {
+  Api,
+  TransactionIntent,
+  Pagination,
+  Transaction,
+} from "@ledgerhq/coin-framework/api/types";
 import { createApi } from ".";
 
 jest.mock("../config", () => ({
