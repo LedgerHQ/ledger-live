@@ -22,12 +22,18 @@ export const getAccountShape: GetAccountShape<SuiAccount> = async info => {
 
   const { blockHeight, nonce, balance } = await getAccount(address);
 
-  // Needed for incremental synchronisation
-  const startAtIn = latestHash(oldOperations, "IN");
-  const startAtOut = latestHash(oldOperations, "OUT");
   // Merge new operations with the previously synced ones
-  const newOperations = await getOperations(accountId, address, startAtIn, startAtOut);
-  const operations = mergeOps(oldOperations, newOperations);
+  let operations: Operation[] = [];
+  try {
+    // Needed for incremental synchronisation
+    const startAtIn = latestHash(oldOperations, "IN");
+    const startAtOut = latestHash(oldOperations, "OUT");
+    const newOperations = await getOperations(accountId, address, startAtIn, startAtOut);
+    operations = mergeOps(oldOperations, newOperations);
+  } catch (e) {
+    // if we could sync with existing transaction - we start from the beggining, rewritting transaction history
+    operations = await getOperations(accountId, address);
+  }
 
   const shape = {
     id: accountId,
