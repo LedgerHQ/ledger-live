@@ -73,9 +73,9 @@ export class DeviceManagementKitTransport extends Transport {
     );
     const connectedSessionId = await deviceManagementKit.connect({ device: discoveredDevice });
     // disable session refresher for the connected device as it is not needed and can cause issues
-    deviceManagementKit.toggleDeviceSessionRefresher({
+    deviceManagementKit.disableDeviceSessionRefresher({
       sessionId: connectedSessionId,
-      enabled: false,
+      blockerId: "live-dmk-transport",
     });
 
     tracer.trace("[open] Connected");

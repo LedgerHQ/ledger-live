@@ -5,7 +5,7 @@ import {
   LogLevel,
 } from "@ledgerhq/device-management-kit";
 import { webHidTransportFactory } from "@ledgerhq/device-transport-kit-web-hid";
-import { LedgerLiveLogger } from "../services/LedgerLiveLogger";
+import { LedgerLiveLogger } from "@ledgerhq/live-dmk-shared";
 
 // TODO lower the level of the logger once useFeature("ldmkTransport") is removed and new transport goes to production
 export const deviceManagementKit = new DeviceManagementKitBuilder()
