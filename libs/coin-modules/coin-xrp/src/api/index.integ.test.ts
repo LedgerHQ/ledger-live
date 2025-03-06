@@ -28,7 +28,7 @@ describe("Xrp Api", () => {
       });
 
       // Then
-      expect(result.standard).toEqual(BigInt(10));
+      expect(result).toEqual(BigInt(10));
     });
   });
 

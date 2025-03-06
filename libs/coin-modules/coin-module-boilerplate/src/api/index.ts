@@ -1,4 +1,4 @@
-import type { Api, Fees, Intent } from "@ledgerhq/coin-framework/api/index";
+import type { Api, TransactionIntent } from "@ledgerhq/coin-framework/api/index";
 import coinConfig, { type BoilerplateConfig } from "../config";
 import {
   broadcast,
@@ -47,11 +47,11 @@ async function craft(
 }
 
 //
-async function estimate(intent: Intent): Promise<Fees> {
+async function estimate(transactionIntent: TransactionIntent): Promise<bigint> {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { serializedTransaction } = await craftTransaction(
-    { address: intent.sender },
-    { amount: new BigNumber(intent.amount.toString()) },
+    { address: transactionIntent.sender },
+    { amount: new BigNumber(transactionIntent.amount.toString()) },
   );
-  return await estimateFees({} as Intent);
+  return await estimateFees({} as TransactionIntent);
 }

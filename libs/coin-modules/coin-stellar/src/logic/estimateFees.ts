@@ -1,4 +1,4 @@
-import { Fees, Intent } from "@ledgerhq/coin-framework/lib/api/types";
+import { TransactionIntent } from "@ledgerhq/coin-framework/lib/api/types";
 import { fetchBaseFee } from "../network";
 
 /**
@@ -6,9 +6,7 @@ import { fetchBaseFee } from "../network";
  * @see {@link https://developers.stellar.org/docs/learn/fundamentals/fees-resource-limits-metering#inclusion-fee}
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export async function estimateFees(intent: Intent): Promise<Fees> {
+export async function estimateFees(transactionIntent: TransactionIntent): Promise<bigint> {
   const baseFee = await fetchBaseFee();
-  return {
-    standard: BigInt(baseFee.recommendedFee),
-  };
+  return BigInt(baseFee.recommendedFee);
 }

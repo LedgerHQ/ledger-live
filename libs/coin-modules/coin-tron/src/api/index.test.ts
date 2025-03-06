@@ -9,7 +9,7 @@ import {
 } from "../logic";
 import coinConfig from "../config";
 import { TronConfig } from "../config";
-import { Api, Intent, Pagination, Transaction } from "@ledgerhq/coin-framework/api/types";
+import { Api, TransactionIntent, Pagination, Transaction } from "@ledgerhq/coin-framework/api/types";
 import { createApi } from ".";
 
 jest.mock("../config", () => ({
@@ -72,7 +72,7 @@ describe("createApi", () => {
       recipient: "address",
       amount: BigInt(10),
       standard: "trc10",
-    } as Intent);
+    } as TransactionIntent);
     await api.getBalance("address");
     await api.lastBlock();
     await api.listOperations("address", {} as Pagination);
@@ -86,7 +86,7 @@ describe("createApi", () => {
       recipient: "address",
       amount: BigInt(10),
       standard: "trc10",
-    } as Intent);
+    } as TransactionIntent);
     expect(getBalance).toHaveBeenCalledWith("address");
     expect(lastBlock).toHaveBeenCalled();
     expect(listOperations).toHaveBeenCalledWith("address", {});

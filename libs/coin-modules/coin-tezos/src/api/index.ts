@@ -1,7 +1,6 @@
 import {
-  Fees,
   IncorrectTypeError,
-  Intent,
+  TransactionIntent,
   Operation,
   Pagination,
   type Api,
@@ -53,22 +52,24 @@ async function craft(
   return rawEncode(contents);
 }
 
-export async function estimate(intent: Intent): Promise<Fees> {
-  const accountInfo = await api.getAccountByAddress(intent.recipient);
+export async function estimate(transactionIntent: TransactionIntent): Promise<bigint> {
+  const accountInfo = await api.getAccountByAddress(transactionIntent.recipient);
   if (accountInfo.type !== "user") throw new Error("unexpected account type");
 
   const estimatedFees = await estimateFees({
     account: {
-      address: intent.recipient,
+      address: transactionIntent.recipient,
       revealed: accountInfo.revealed,
       balance: BigInt(accountInfo.balance),
       xpub: accountInfo.publicKey,
     },
-    transaction: { mode: "send", recipient: intent.recipient, amount: intent.amount },
+    transaction: {
+      mode: "send",
+      recipient: transactionIntent.recipient,
+      amount: transactionIntent.amount,
+    },
   });
-  return {
-    standard: estimatedFees.estimatedFees,
-  };
+  return estimatedFees.estimatedFees;
 }
 
 type PaginationState = {

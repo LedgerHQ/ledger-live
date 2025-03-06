@@ -31,15 +31,13 @@ export type Asset = {
   native: bigint;
 };
 
-export type Intent = {
+export type TransactionIntent = {
   sender: string;
   recipient: string;
   amount: bigint;
   contractAddress?: string;
   standard?: "trc10" | "trc20";
 };
-
-export type Fees = { [feeOption: string]: bigint };
 
 // TODO rename start to minHeight
 //       and add a `token: string` field to the pagination if we really need to support pagination
@@ -52,7 +50,7 @@ export type Api = {
   broadcast: (tx: string) => Promise<string>;
   combine: (tx: string, signature: string, pubkey?: string) => string;
   craftTransaction: (address: string, transaction: Transaction, pubkey?: string) => Promise<string>;
-  estimateFees: (intent: Intent) => Promise<Fees>;
+  estimateFees: (transactionIntent: TransactionIntent) => Promise<bigint>;
   getBalance: (address: string) => Promise<Asset | bigint>;
   lastBlock: () => Promise<BlockInfo>;
   listOperations: (address: string, pagination: Pagination) => Promise<[Operation[], string]>;

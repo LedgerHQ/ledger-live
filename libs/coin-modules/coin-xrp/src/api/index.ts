@@ -3,8 +3,7 @@ import type {
   Operation,
   Transaction as ApiTransaction,
   Pagination,
-  Fees,
-  Intent,
+  TransactionIntent,
 } from "@ledgerhq/coin-framework/api/index";
 import { log } from "@ledgerhq/logs";
 import coinConfig, { type XrpConfig } from "../config";
@@ -41,11 +40,9 @@ async function craft(address: string, transaction: ApiTransaction): Promise<stri
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-async function estimate(intent: Intent): Promise<Fees> {
+async function estimate(transactionIntent: TransactionIntent): Promise<bigint> {
   const fees = await estimateFees();
-  return {
-    standard: fees.fee,
-  };
+  return fees.fee;
 }
 
 type PaginationState = {
