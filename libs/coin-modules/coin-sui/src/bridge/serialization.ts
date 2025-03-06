@@ -1,26 +1,12 @@
-import { Account, AccountRaw, OperationExtra, OperationExtraRaw } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
-import type {
-  SuiAccount,
-  SuiAccountRaw,
-  SuiResourcesRaw,
-  SuiResources,
-  SuiOperationExtra,
-  SuiOperationExtraRaw,
-} from "../types";
+import { Account, AccountRaw } from "@ledgerhq/types-live";
+import type { SuiAccount, SuiAccountRaw, SuiResourcesRaw, SuiResources } from "../types";
 
-export function toSuiResourcesRaw(resources: SuiResources): SuiResourcesRaw {
-  const { nonce } = resources;
-  return {
-    nonce,
-  };
+export function toSuiResourcesRaw(_resources: SuiResources): SuiResourcesRaw {
+  return {};
 }
 
-export function fromSuiResourcesRaw(resources: SuiResourcesRaw): SuiResources {
-  const { nonce } = resources;
-  return {
-    nonce,
-  };
+export function fromSuiResourcesRaw(_resources: SuiResourcesRaw): SuiResources {
+  return {};
 }
 
 export function assignToAccountRaw(account: Account, accountRaw: AccountRaw) {
@@ -35,25 +21,4 @@ export function assignFromAccountRaw(accountRaw: AccountRaw, account: Account) {
   if (suiResourcesRaw) {
     (account as SuiAccount).suiResources = fromSuiResourcesRaw(suiResourcesRaw);
   }
-}
-
-export function fromOperationExtraRaw(extraRaw: OperationExtraRaw) {
-  if (extraRaw) {
-    //
-  }
-
-  const extra: SuiOperationExtra = {
-    palletMethod: "balances.transferKeepAlive",
-  };
-
-  return extra;
-}
-
-export function toOperationExtraRaw(extra: OperationExtra) {
-  if (extra) {
-    //
-  }
-  const extraRaw: SuiOperationExtraRaw = {};
-
-  return extraRaw;
 }

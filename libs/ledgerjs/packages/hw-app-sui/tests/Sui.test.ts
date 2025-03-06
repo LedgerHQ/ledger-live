@@ -48,17 +48,3 @@ test("getPublicKey (rejected by user)", async () => {
     new Error("Ledger device: Condition of use not satisfied (denied by the user?) (0x6985)"),
   );
 });
-
-// TODO: add test for signTransaction
-// test("signTransaction", async () => {
-//   const transport = await openTransportReplayer(
-//     RecordStore.fromString(`
-//     =>
-//     <=
-//     `),
-//   );
-//   const sui = new Sui(transport);
-//   const txn = "";
-//   const { signature } = await sui.signTransaction("44'/784'/0'/0'/0'", txn);
-//   expect(Buffer.from(signature).toString("hex")).toEqual("");
-// });

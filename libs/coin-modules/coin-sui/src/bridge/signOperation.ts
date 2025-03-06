@@ -1,18 +1,16 @@
-import { Observable } from "rxjs";
 import { BigNumber } from "bignumber.js";
+import { Observable } from "rxjs";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import type { AccountBridge } from "@ledgerhq/types-live";
+import { messageWithIntent, toSerializedSignature } from "@mysten/sui/cryptography";
+import { Ed25519PublicKey } from "@mysten/sui/keypairs/ed25519";
 import { verifyTransactionSignature } from "@mysten/sui/verify";
-import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
-import { messageWithIntent } from "@mysten/sui/cryptography";
-import { toSerializedSignature } from "@mysten/sui/cryptography";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import type { SuiAccount, SuiSigner, Transaction } from "../types";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
 import { buildTransaction } from "./buildTransaction";
 import { calculateAmount } from "./utils";
-// import { signExtrinsic } from "../logic";
-import { Ed25519PublicKey } from "@mysten/sui/keypairs/ed25519";
+import type { SuiAccount, SuiSigner, Transaction } from "../types";
+import { ensureAddressFormat } from "../utils";
 
 /**
  * Sign Transaction with Ledger hardware
@@ -41,11 +39,7 @@ export const buildSignOperation =
           }),
         };
 
-        const { executeTransactionBlock, unsigned } = await buildTransaction(
-          account,
-          transactionToSign,
-          true,
-        );
+        const { unsigned } = await buildTransaction(account, transactionToSign);
 
         const signData = messageWithIntent("TransactionData", unsigned);
 
@@ -64,20 +58,14 @@ export const buildSignOperation =
           publicKey,
         });
 
-        const verify = await verifyTransactionSignature(unsigned, serializedSignature, {
-          address: "0x" + account.freshAddress,
-        });
-        console.log("buildSignOperation verify", verify);
-
-        const result = await executeTransactionBlock({
-          transactionBlock: unsigned,
-          signature: serializedSignature,
-          options: {
-            showEffects: true,
-          },
-        });
-
-        console.log("buildSignOperation result", result);
+        if (!transaction.skipVerify) {
+          const verify = await verifyTransactionSignature(unsigned, serializedSignature, {
+            address: ensureAddressFormat(account.freshAddress),
+          });
+          if (!verify) {
+            throw new Error("verifyTransactionSignature failed");
+          }
+        }
 
         subscriber.next({
           type: "device-signature-granted",
@@ -94,6 +82,10 @@ export const buildSignOperation =
           signedOperation: {
             operation,
             signature: Buffer.from(signature).toString("base64"),
+            rawData: {
+              serializedSignature,
+              unsigned: Buffer.from(unsigned).toString("base64"),
+            },
           },
         });
       }

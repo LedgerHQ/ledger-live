@@ -1,3 +1,4 @@
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import buildConConfig, { type CurrencyConfig } from "@ledgerhq/coin-framework/config";
 
 export type SuiConfig = {
@@ -9,6 +10,11 @@ export type SuiConfig = {
 
 export type SuiCoinConfig = CurrencyConfig & SuiConfig;
 
-const coinConfig = buildConConfig<SuiCoinConfig>();
+type CoinConfigType = {
+  setCoinConfig: (config: (currency?: CryptoCurrency) => SuiCoinConfig) => void;
+  getCoinConfig: (currency?: CryptoCurrency) => SuiCoinConfig;
+};
+
+const coinConfig: CoinConfigType = buildConConfig<SuiCoinConfig>();
 
 export default coinConfig;

@@ -3312,6 +3312,9 @@ importers:
       '@ledgerhq/coin-framework':
         specifier: workspace:^
         version: link:../../coin-framework
+      '@ledgerhq/coin-tester':
+        specifier: workspace:^
+        version: link:../../coin-tester
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/cryptoassets
@@ -3321,6 +3324,9 @@ importers:
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
+      '@ledgerhq/hw-app-sui':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/hw-app-sui
       '@ledgerhq/hw-transport-node-hid':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/hw-transport-node-hid
@@ -3339,12 +3345,9 @@ importers:
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
-      '@mysten/bcs':
-        specifier: 1.4.0
-        version: 1.4.0
       '@mysten/sui':
         specifier: 1.21.1
-        version: 1.21.1(typescript@5.6.3)
+        version: 1.21.1
       bignumber.js:
         specifier: ^9.1.2
         version: 9.1.2
@@ -3364,12 +3367,6 @@ importers:
       '@faker-js/faker':
         specifier: ^8.4.1
         version: 8.4.1
-      '@ledgerhq/coin-tester':
-        specifier: workspace:^
-        version: link:../../coin-tester
-      '@ledgerhq/hw-app-sui':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/hw-app-sui
       '@types/invariant':
         specifier: ^2.2.2
         version: 2.2.37
@@ -3379,36 +3376,12 @@ importers:
       '@types/lodash':
         specifier: ^4.14.191
         version: 4.17.7
-      chalk:
-        specifier: ^4.1.2
-        version: 4.1.2
-      docker-compose:
-        specifier: ^1.1.0
-        version: 1.1.0
-      dotenv:
-        specifier: ^16.4.5
-        version: 16.4.5
-      eslint-plugin-jest:
-        specifier: ^27.4.2
-        version: 27.9.0(@typescript-eslint/eslint-plugin@6.21.0(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.4.3))(eslint@8.57.0)(typescript@5.4.3))(eslint@8.57.0)(jest@29.7.0(ts-node@10.9.2(typescript@5.6.3)))(typescript@5.6.3)
       jest:
         specifier: ^29.7.0
-        version: 29.7.0(ts-node@10.9.2(typescript@5.6.3))
-      jest-expect-message:
-        specifier: ^1.1.3
-        version: 1.1.3
-      msw:
-        specifier: ^2.2.13
-        version: 2.3.4(typescript@5.6.3)
+        version: 29.7.0
       ts-jest:
         specifier: ^29.1.1
-        version: 29.2.5(jest@29.7.0(ts-node@10.9.2(typescript@5.6.3)))(typescript@5.6.3)
-      ts-node:
-        specifier: ^10.9.2
-        version: 10.9.2(typescript@5.6.3)
-      typescript:
-        specifier: ^5.4.5
-        version: 5.6.3
+        version: 29.2.5(jest@29.7.0)
 
   libs/coin-modules/coin-tezos:
     dependencies:
@@ -5705,15 +5678,9 @@ importers:
 
   libs/ledgerjs/packages/hw-app-sui:
     dependencies:
-      '@ledgerhq/hw-transport':
-        specifier: ^6.31.0
-        version: 6.31.4
       '@mysten/ledgerjs-hw-app-sui':
         specifier: 0.4.2
         version: 0.4.2
-      fast-sha256:
-        specifier: ^1.3.0
-        version: 1.3.0
     devDependencies:
       '@ledgerhq/hw-transport-mocker':
         specifier: workspace:^
@@ -12528,9 +12495,6 @@ packages:
 
   '@mysten/bcs@1.3.0':
     resolution: {integrity: sha512-V3V9GwIXEiUS7y8hkCwH3oseWpxs75YOOtfy7xdfyAdSftlFpTYgj5elclwYx8pgHdzg7pHdy6no77LHYGQCaQ==}
-
-  '@mysten/bcs@1.4.0':
-    resolution: {integrity: sha512-YwDYspceLt8b7v6ohPvy8flQEi+smtfSG5d2A98CbUA48XBmOqTSPNmpw9wsZVVnrH2avr+BS5uVhDZT+EquYA==}
 
   '@mysten/ledgerjs-hw-app-sui@0.4.2':
     resolution: {integrity: sha512-Ypcb7WHyno16RodUI9CFzHQg/Fy6xl+itgr1D4g7Rdo6sUWBKn83p9s9wldG6wvJv+d4QlilXz/HcEgqrlu5pA==}
@@ -31945,11 +31909,10 @@ snapshots:
     optionalDependencies:
       graphql: 16.10.0
 
-  '@0no-co/graphqlsp@1.12.16(graphql@16.10.0)(typescript@5.6.3)':
+  '@0no-co/graphqlsp@1.12.16(graphql@16.10.0)':
     dependencies:
-      '@gql.tada/internal': 1.0.8(graphql@16.10.0)(typescript@5.6.3)
+      '@gql.tada/internal': 1.0.8(graphql@16.10.0)
       graphql: 16.10.0
-      typescript: 5.6.3
 
   '@aashutoshrathi/word-wrap@1.2.6': {}
 
@@ -38058,18 +38021,16 @@ snapshots:
       '@formatjs/intl-localematcher': 0.5.4
       tslib: 2.6.2
 
-  '@gql.tada/cli-utils@1.6.3(graphql@16.10.0)(typescript@5.6.3)':
+  '@gql.tada/cli-utils@1.6.3(graphql@16.10.0)':
     dependencies:
-      '@0no-co/graphqlsp': 1.12.16(graphql@16.10.0)(typescript@5.6.3)
-      '@gql.tada/internal': 1.0.8(graphql@16.10.0)(typescript@5.6.3)
+      '@0no-co/graphqlsp': 1.12.16(graphql@16.10.0)
+      '@gql.tada/internal': 1.0.8(graphql@16.10.0)
       graphql: 16.10.0
-      typescript: 5.6.3
 
-  '@gql.tada/internal@1.0.8(graphql@16.10.0)(typescript@5.6.3)':
+  '@gql.tada/internal@1.0.8(graphql@16.10.0)':
     dependencies:
       '@0no-co/graphql.web': 1.0.11(graphql@16.10.0)
       graphql: 16.10.0
-      typescript: 5.6.3
 
   '@graphql-typed-document-node/core@3.2.0(graphql@15.8.0)':
     dependencies:
@@ -39559,16 +39520,12 @@ snapshots:
     dependencies:
       bs58: 6.0.0
 
-  '@mysten/bcs@1.4.0':
-    dependencies:
-      bs58: 6.0.0
-
   '@mysten/ledgerjs-hw-app-sui@0.4.2':
     dependencies:
       '@ledgerhq/hw-transport': 6.31.4
       fast-sha256: 1.3.0
 
-  '@mysten/sui@1.21.1(typescript@5.6.3)':
+  '@mysten/sui@1.21.1':
     dependencies:
       '@graphql-typed-document-node/core': 3.2.0(graphql@16.10.0)
       '@mysten/bcs': 1.3.0
@@ -39578,7 +39535,7 @@ snapshots:
       '@scure/bip39': 1.3.0
       '@suchipi/femver': 1.0.0
       bech32: 2.0.0
-      gql.tada: 1.8.10(graphql@16.10.0)(typescript@5.6.3)
+      gql.tada: 1.8.10(graphql@16.10.0)
       graphql: 16.10.0
       jose: 5.9.6
       poseidon-lite: 0.2.1
@@ -54557,13 +54514,12 @@ snapshots:
       p-cancelable: 3.0.0
       responselike: 2.0.1
 
-  gql.tada@1.8.10(graphql@16.10.0)(typescript@5.6.3):
+  gql.tada@1.8.10(graphql@16.10.0):
     dependencies:
       '@0no-co/graphql.web': 1.0.11(graphql@16.10.0)
-      '@0no-co/graphqlsp': 1.12.16(graphql@16.10.0)(typescript@5.6.3)
-      '@gql.tada/cli-utils': 1.6.3(graphql@16.10.0)(typescript@5.6.3)
-      '@gql.tada/internal': 1.0.8(graphql@16.10.0)(typescript@5.6.3)
-      typescript: 5.6.3
+      '@0no-co/graphqlsp': 1.12.16(graphql@16.10.0)
+      '@gql.tada/cli-utils': 1.6.3(graphql@16.10.0)
+      '@gql.tada/internal': 1.0.8(graphql@16.10.0)
     transitivePeerDependencies:
       - '@gql.tada/svelte-support'
       - '@gql.tada/vue-support'
@@ -66382,18 +66338,17 @@ snapshots:
       typescript: 5.4.3
       yargs-parser: 21.1.1
 
-  ts-jest@29.2.5(jest@29.7.0(ts-node@10.9.2(typescript@5.6.3)))(typescript@5.6.3):
+  ts-jest@29.2.5(jest@29.7.0):
     dependencies:
       bs-logger: 0.2.6
       ejs: 3.1.10
       fast-json-stable-stringify: 2.1.0
-      jest: 29.7.0(ts-node@10.9.2(typescript@5.6.3))
+      jest: 29.7.0
       jest-util: 29.7.0
       json5: 2.2.3
       lodash.memoize: 4.1.2
       make-error: 1.3.6
       semver: 7.6.3
-      typescript: 5.6.3
       yargs-parser: 21.1.1
 
   ts-jest@29.2.5(jest@29.7.0)(typescript@5.4.3):

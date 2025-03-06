@@ -5,11 +5,18 @@ import { Transaction } from "../types";
 
 /**
  * Broadcast the signed transaction
- * @param {signature: string, operation: string} signedOperation
+ * @param {Object} params - The parameters for broadcasting the transaction.
+ * @param {Object} params.signedOperation - The signed operation to be broadcasted.
+ * @param {Object} params.signedOperation.operation - The operation details.
+ * @param {Object} params.signedOperation.rawData - The raw data of the signed operation.
+ * @returns {Promise<Object>} The operation with the hash of the transaction.
  */
 export const broadcast: AccountBridge<Transaction>["broadcast"] = async ({
-  signedOperation: { signature, operation },
+  signedOperation: { operation, rawData },
 }) => {
-  const hash = await logicBroadcast(signature);
+  const hash = await logicBroadcast(
+    rawData!.unsigned as string,
+    rawData!.serializedSignature as string,
+  );
   return patchOperationWithHash(operation, hash);
 };

@@ -1,42 +1,41 @@
 import { AccountBridge } from "@ledgerhq/types-live";
 import { updateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { InvalidAddressBecauseDestinationIsAlsoSource, RecipientRequired } from "@ledgerhq/errors";
-import { estimateMaxSpendable } from "./estimateMaxSpendable";
 import type { SuiAccount, Transaction } from "../types";
-import getEstimatedFees from "./getFeesForTransaction";
+import { estimateMaxSpendable } from "./estimateMaxSpendable";
+import getFeesForTransaction from "./getFeesForTransaction";
+import BigNumber from "bignumber.js";
 
 /**
  * Calculate fees for the current transaction
- * @param {SuiAccount} account
- * @param {Transaction} transaction
+ * @function prepareTransaction
+ * @description Prepares a transaction by calculating the amount, fees, and validating the recipient address.
+ * @param {SuiAccount} account - The account from which the transaction is being prepared.
+ * @param {Transaction} transaction - The transaction object containing details such as amount, fees, and recipient.
+ * @returns {Promise<Transaction>} A promise that resolves to the updated transaction object.
  */
 export const prepareTransaction: AccountBridge<
   Transaction,
   SuiAccount
 >["prepareTransaction"] = async (account, transaction) => {
   let amount = transaction.amount;
-  if (transaction.useAllAmount) {
-    const spendable = await estimateMaxSpendable({ account, transaction });
+  const spendable = await estimateMaxSpendable({ account, transaction });
+  if (transaction.useAllAmount || amount.gt(spendable)) {
     amount = spendable;
   }
 
-  let fees = transaction.fees;
-  fees = await getEstimatedFees({
-    account,
-    transaction,
-  });
-
-  const errors: Record<string, Error> = {};
-  if (!transaction.recipient) {
-    errors.recipient = new RecipientRequired();
-  } else if (account.freshAddress === transaction.recipient) {
-    errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
-  } // TODO: add check for same valid sui address
+  let fees: BigNumber;
+  try {
+    fees = await getFeesForTransaction({
+      account,
+      transaction,
+    });
+  } catch (e) {
+    fees = BigNumber(0);
+  }
 
   const patch: Partial<Transaction> = {
     amount,
     fees,
-    errors,
   };
 
   return updateTransaction(transaction, patch);

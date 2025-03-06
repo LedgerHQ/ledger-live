@@ -1,4 +1,3 @@
-// import { GetPublicKeyResult, SignTransactionResult, GetVersionResult } from "@mysten/ledgerjs-hw-app-sui";
 import Sui from "@ledgerhq/hw-app-sui";
 
 export type SuiAddress = {

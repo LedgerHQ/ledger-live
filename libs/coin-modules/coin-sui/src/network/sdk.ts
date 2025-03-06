@@ -6,7 +6,7 @@ import {
   ExecuteTransactionBlockParams,
   TransactionEffects,
 } from "@mysten/sui/client";
-import { TransactionBlockData, SuiTransactionBlockResponse } from "@mysten/sui/client";
+import { TransactionBlockData, SuiTransactionBlockResponse, SuiCallArg } from "@mysten/sui/client";
 import { Transaction } from "@mysten/sui/transactions";
 import { BigNumber } from "bignumber.js";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
@@ -15,8 +15,11 @@ import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 
 import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
 
+import type { Transaction as TransactionType } from "../types";
+import type { CreateExtrinsicArg } from "../logic/craftTransaction";
+import { ensureAddressFormat } from "../utils";
+
 type AsyncApiFunction<T> = (api: SuiClient) => Promise<T>;
-// type ApiFunction<T> = (api: SuiClient) => T;
 
 const rpcUrl = getFullnodeUrl("devnet");
 
@@ -38,58 +41,55 @@ async function withApi<T>(execute: AsyncApiFunction<T>) {
   return result;
 }
 
+export const getBalanceCached = makeLRUCache(
+  ({ api, owner }: { api: SuiClient; owner: string }) => api.getBalance({ owner }),
+  (params: { api: SuiClient; owner: string }) => params.owner,
+  minutes(1),
+);
+
 /**
  * Get account balance
  */
 export const getAccount = async (addr: string) =>
   withApi(async api => {
-    const [balance] = await Promise.all([api.getBalance({ owner: addr })]);
+    const balance = await getBalanceCached({ api, owner: addr });
     return {
       blockHeight: BLOCK_HEIGHT * 2,
-      nonce: 0,
       balance: BigNumber(balance.totalBalance),
     };
   });
 
 /**
  * Returns true if account is the signer
- * TODO: move to utils
  */
-function ensureAddressFormat(addr: string): `0x${string}` {
-  return (addr.startsWith("0x") ? addr : `0x${addr}`) as `0x${string}`;
-}
-
-/**
- * Returns true if account is the signer
- */
-function isSender(addr: string, transaction?: TransactionBlockData): boolean {
+export function isSender(addr: string, transaction?: TransactionBlockData): boolean {
   return transaction?.sender === ensureAddressFormat(addr);
 }
 
 /**
  * Map transaction to an Operation Type
  */
-function getOperationType(addr: string, transaction?: TransactionBlockData): OperationType {
+export function getOperationType(addr: string, transaction?: TransactionBlockData): OperationType {
   return isSender(addr, transaction) ? "OUT" : "IN";
 }
 
 /**
  * Extract senders from transaction
  */
-const getOperationSenders = (transaction?: TransactionBlockData): string[] => {
+export const getOperationSenders = (transaction?: TransactionBlockData): string[] => {
   return transaction?.sender ? [transaction?.sender] : [];
 };
 
 /**
  * Extract recipients from transaction
  */
-const getOperationRecipients = (transaction?: TransactionBlockData): string[] => {
+export const getOperationRecipients = (transaction?: TransactionBlockData): string[] => {
   if (transaction?.transaction.kind === "ProgrammableTransaction") {
     if (!transaction?.transaction?.inputs) return [];
     const recipients: string[] = [];
-    transaction.transaction.inputs.map(({ valueType, value }: any) => {
-      if (valueType === "address") {
-        recipients.push(value);
+    transaction.transaction.inputs.map((input: SuiCallArg) => {
+      if ("valueType" in input && input.valueType === "address") {
+        recipients.push(String(input.value));
       }
     });
     return recipients;
@@ -100,16 +100,23 @@ const getOperationRecipients = (transaction?: TransactionBlockData): string[] =>
 /**
  * Extract value from transaction
  */
-const getOperationAmount = (
+export const getOperationAmount = (
   address: string,
   transaction: SuiTransactionBlockResponse,
 ): BigNumber => {
   let amount = new BigNumber(0);
   if (!transaction?.balanceChanges) return amount;
   for (const balanceChange of transaction.balanceChanges) {
-    // @ts-expect-error TODO:fix
-    if (balanceChange.owner.AddressOwner === address) {
-      amount = amount.plus(balanceChange.amount);
+    if (
+      typeof balanceChange.owner !== "string" &&
+      "AddressOwner" in balanceChange.owner &&
+      balanceChange.owner.AddressOwner === address
+    ) {
+      if (balanceChange.amount[0] === "-") {
+        amount = amount.minus(balanceChange.amount);
+      } else {
+        amount = amount.plus(balanceChange.amount);
+      }
     }
   }
   return amount;
@@ -118,23 +125,27 @@ const getOperationAmount = (
 /**
  * Extract fee from transaction
  */
-const getOperationFee = (transaction: any): BigNumber => {
-  return BigNumber(transaction.effects.gasUsed.computationCost).plus(
-    BigNumber(transaction.effects.gasUsed.nonRefundableStorageFee),
-  );
+export const getOperationFee = (transaction: SuiTransactionBlockResponse): BigNumber => {
+  const gas = transaction.effects!.gasUsed;
+
+  const computationCost = BigNumber(gas.computationCost);
+  const storageCost = BigNumber(gas.storageCost);
+  const storageRebate = BigNumber(gas.storageRebate);
+
+  return computationCost.plus(storageCost).minus(storageRebate);
 };
 
 /**
  * Extract date from transaction
  */
-const getOperationDate = (transaction: any): Date => {
-  return new Date(parseInt(transaction.timestampMs));
+export const getOperationDate = (transaction: SuiTransactionBlockResponse): Date => {
+  return new Date(parseInt(transaction.timestampMs!));
 };
 
 /**
  * Map the Sui history transaction to a Ledger Live Operation
  */
-function transactionToOperation(
+export function transactionToOperation(
   accountId: string,
   address: string,
   transaction: SuiTransactionBlockResponse,
@@ -177,11 +188,6 @@ export const getOperations = async (
     return rawTransactions.map(transaction => transactionToOperation(accountId, addr, transaction));
   });
 
-export const getPreloadedData = () => ({
-  // Add any preloaded data fields here
-  networkInfo: {},
-});
-
 const getTotalGasUsed = (effects?: TransactionEffects | null): bigint => {
   const gasSummary = effects?.gasUsed;
   if (!gasSummary) return BigInt(0);
@@ -192,7 +198,7 @@ const getTotalGasUsed = (effects?: TransactionEffects | null): bigint => {
   );
 };
 
-export const paymentInfo = async (sender: string, fakeTransaction: any) =>
+export const paymentInfo = async (sender: string, fakeTransaction: TransactionType) =>
   withApi(async api => {
     const tx = new Transaction();
     tx.setSender(ensureAddressFormat(sender));
@@ -208,9 +214,7 @@ export const paymentInfo = async (sender: string, fakeTransaction: any) =>
     };
   });
 
-export const submitExtrinsic = async (extrinsic: string) => extrinsic; // TODO: implement
-
-export const createTransaction = async (address: string, transaction: any) =>
+export const createTransaction = async (address: string, transaction: CreateExtrinsicArg) =>
   withApi(async api => {
     const tx = new Transaction();
     tx.setSender(ensureAddressFormat(address));
@@ -221,9 +225,10 @@ export const createTransaction = async (address: string, transaction: any) =>
     return tx.build({ client: api });
   });
 
-export const executeTransactionBlock = async (params: ExecuteTransactionBlockParams) => {
-  return api?.executeTransactionBlock(params);
-};
+export const executeTransactionBlock = async (params: ExecuteTransactionBlockParams) =>
+  withApi(async api => {
+    return api.executeTransactionBlock(params);
+  });
 
 // load from curos point or from begining until we reach the end
 const loadOperation = async (params: {
@@ -242,6 +247,7 @@ const loadOperation = async (params: {
     order: "ascending",
     options: {
       showInput: true,
+      showBalanceChanges: true,
       showEffects: true, // To get transaction status and gas fee details
     },
     limit: TRANSACTIONS_REQUEST_LIMIT,

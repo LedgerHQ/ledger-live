@@ -12,16 +12,12 @@ import type { Account, AccountRaw } from "@ledgerhq/types-live";
 /**
  * Sui account resources
  */
-export type SuiResources = {
-  nonce: number;
-};
+export type SuiResources = object;
 
 /**
  * Sui account resources from raw JSON
  */
-export type SuiResourcesRaw = {
-  nonce: number;
-};
+export type SuiResourcesRaw = object;
 
 /**
  * Sui transaction
@@ -29,9 +25,11 @@ export type SuiResourcesRaw = {
 export type Transaction = TransactionCommon & {
   mode: string;
   family: "sui";
+  amount: BigNumber | null;
   fees?: BigNumber | null;
   errors: Record<string, Error>;
-  // add here all transaction-specific fields if you implement other modes than "send"
+  skipVerify?: boolean;
+  // add here all transaction-specific fields when implement other modes than "send"
 };
 
 /**
@@ -49,13 +47,10 @@ export type TransactionRaw = TransactionCommonRaw & {
  * You can for instance add a list of validators for Proof-of-Stake blockchains,
  * or any volatile data that could not be set as constants in the code (staking progress, fee estimation variables, etc.)
  */
-export type SuiPreloadData = {
-  somePreloadedData: Record<any, any>;
-};
+export type SuiPreloadData = object;
 
 export type SuiAccount = Account & {
-  // ...
-  // // On some blockchain, an account can have resources (gained, delegated, ...)
+  // On some blockchain, an account can have resources (gained, delegated, ...)
   suiResources?: SuiResources;
 };
 
@@ -71,12 +66,6 @@ export type SuiOperationRaw = OperationRaw<SuiOperationExtraRaw>;
 
 export type SuiOperationExtra = {
   transferAmount?: BigNumber;
-  palletMethod: PalletMethod;
-  bondedAmount?: BigNumber;
-  unbondedAmount?: BigNumber;
-  withdrawUnbondedAmount?: BigNumber;
-  validatorStash?: string | undefined;
-  validators?: string[] | undefined;
 };
 export type SuiOperationExtraRaw = Record<string, string>;
 
@@ -87,13 +76,7 @@ export type TransferCommand = {
   amount: number;
 };
 
-export type PalletMethod =
-  | "balances.transfer"
-  | "balances.transferKeepAlive"
-  | "balances.transferAllowDeath";
-
 export type Command = TransferCommand;
-// | TokenTransferCommand
 
 export type CommandDescriptor = {
   command: Command;

@@ -3,6 +3,7 @@ import type { GetAddressFn } from "@ledgerhq/coin-framework/bridge/getAddressWra
 import type { SignerContext } from "@ledgerhq/coin-framework/signer";
 import type { GetAddressOptions } from "@ledgerhq/coin-framework/derivation";
 import type { SuiSigner } from "../types";
+import { ensureAddressFormat } from "../utils";
 
 const resolver = (signerContext: SignerContext<SuiSigner>): GetAddressFn => {
   return async (deviceId: string, { path, verify }: GetAddressOptions) => {
@@ -11,12 +12,11 @@ const resolver = (signerContext: SignerContext<SuiSigner>): GetAddressFn => {
     const result = await signerContext(deviceId, signer => signer.getPublicKey(path, verify));
 
     if (!result.address || !result.publicKey) {
-      console.error("Failed to get address from device");
       throw Error("Failed to get address from device");
     }
 
     return {
-      address: Buffer.from(result.address).toString("hex"),
+      address: ensureAddressFormat(Buffer.from(result.address).toString("hex")),
       publicKey: Buffer.from(result.publicKey).toString("hex"),
       path,
     };
