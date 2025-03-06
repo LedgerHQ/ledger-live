@@ -52,13 +52,13 @@ async function craft(
   return rawEncode(contents);
 }
 
-export async function estimate(transactionIntent: TransactionIntent): Promise<bigint> {
+async function estimate(transactionIntent: TransactionIntent): Promise<bigint> {
   const accountInfo = await api.getAccountByAddress(transactionIntent.recipient);
   if (accountInfo.type !== "user") throw new Error("unexpected account type");
 
   const estimatedFees = await estimateFees({
     account: {
-      address: transactionIntent.recipient,
+      address: transactionIntent.sender,
       revealed: accountInfo.revealed,
       balance: BigInt(accountInfo.balance),
       xpub: accountInfo.publicKey,

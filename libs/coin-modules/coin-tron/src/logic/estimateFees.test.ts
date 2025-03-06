@@ -21,7 +21,6 @@ describe("estimateFees", () => {
       sender: "sender1",
       recipient: "recipient1",
       amount: BigInt(1000),
-      contractAddress: "contract1",
       standard: "trc20",
     };
     const result = await estimateFees(transactionIntent);

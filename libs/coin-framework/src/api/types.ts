@@ -35,8 +35,8 @@ export type TransactionIntent = {
   sender: string;
   recipient: string;
   amount: bigint;
-  contractAddress?: string;
-  standard?: "trc10" | "trc20";
+  tokenAddress?: string;
+  standard?: string;
 };
 
 // TODO rename start to minHeight
