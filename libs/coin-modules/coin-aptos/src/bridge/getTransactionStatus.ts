@@ -7,11 +7,11 @@ import {
   AmountRequired,
 } from "@ledgerhq/errors";
 import type { Account } from "@ledgerhq/types-live";
-import { findSubAccountById, isTokenAccount } from "@ledgerhq/coin-framework/account/index";
 import { BigNumber } from "bignumber.js";
 import type { Transaction, TransactionStatus } from "../types";
 
 import { AccountAddress } from "@aptos-labs/ts-sdk";
+import { getTokenAccount } from "./logic";
 
 const getTransactionStatus = async (a: Account, t: Transaction): Promise<TransactionStatus> => {
   const errors: Record<string, Error> = {};
@@ -39,11 +39,10 @@ const getTransactionStatus = async (a: Account, t: Transaction): Promise<Transac
     errors.amount = new AmountRequired();
   }
 
-  const tokenAccount = findSubAccountById(a, t.subAccountId ?? "");
-  const fromTokenAccount = tokenAccount && isTokenAccount(tokenAccount);
+  const tokenAccount = getTokenAccount(a, t);
 
   const amount = t.useAllAmount
-    ? fromTokenAccount
+    ? tokenAccount
       ? BigNumber(tokenAccount.spendableBalance)
       : BigNumber(a.spendableBalance.minus(estimatedFees))
     : BigNumber(t.amount);
@@ -51,7 +50,7 @@ const getTransactionStatus = async (a: Account, t: Transaction): Promise<Transac
   const totalSpent = BigNumber(amount.plus(estimatedFees));
 
   if (
-    fromTokenAccount
+    tokenAccount
       ? tokenAccount.spendableBalance.isLessThan(totalSpent) &&
         a.spendableBalance.isLessThan(estimatedFees)
       : a.spendableBalance.isLessThan(totalSpent) && !errors.amount

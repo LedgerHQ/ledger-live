@@ -7,7 +7,7 @@ import {
   WriteSetChangeWriteResource,
 } from "@aptos-labs/ts-sdk";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import type { Account, Operation, OperationType } from "@ledgerhq/types-live";
+import type { Account, Operation, OperationType, TokenAccount } from "@ledgerhq/types-live";
 import { findSubAccountById, isTokenAccount } from "@ledgerhq/coin-framework/account/index";
 import BigNumber from "bignumber.js";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
@@ -397,4 +397,13 @@ export function calculateAmount( // NO changes
 export function extractAddress(str: string): string | null {
   const match = str.match(/<([^>]+)>/);
   return match ? match[1] : null;
+}
+
+export function getTokenAccount(
+  account: Account,
+  transaction: Transaction,
+): TokenAccount | undefined {
+  const tokenAccount = findSubAccountById(account, transaction.subAccountId ?? "");
+  const fromTokenAccount = tokenAccount && isTokenAccount(tokenAccount);
+  return fromTokenAccount ? tokenAccount : undefined;
 }

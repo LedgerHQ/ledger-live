@@ -1,12 +1,11 @@
 import { Ed25519PublicKey } from "@aptos-labs/ts-sdk";
 import { log } from "@ledgerhq/logs";
 import type { Account } from "@ledgerhq/types-live";
-import { findSubAccountById, isTokenAccount } from "@ledgerhq/coin-framework/account/index";
 import BigNumber from "bignumber.js";
 import { makeLRUCache, seconds } from "@ledgerhq/live-network/cache";
 import { AptosAPI } from "../api";
 import buildTransaction from "./buildTransaction";
-import { DEFAULT_GAS, DEFAULT_GAS_PRICE, ESTIMATE_GAS_MUL } from "./logic";
+import { DEFAULT_GAS, DEFAULT_GAS_PRICE, ESTIMATE_GAS_MUL, getTokenAccount } from "./logic";
 import type { Transaction, TransactionErrors } from "../types";
 
 type IGetEstimatedGasReturnType = {
@@ -50,10 +49,9 @@ export const getFee = async (
 
       const expectedGas = gasPrice.multipliedBy(gasLimit);
 
-      const tokenAccount = findSubAccountById(account, transaction.subAccountId ?? "");
-      const fromTokenAccount = tokenAccount && isTokenAccount(tokenAccount);
+      const tokenAccount = getTokenAccount(account, transaction);
 
-      const isUnderMaxSpendable = fromTokenAccount
+      const isUnderMaxSpendable = tokenAccount
         ? transaction.amount.isLessThanOrEqualTo(tokenAccount.spendableBalance) &&
           expectedGas.isLessThan(account.spendableBalance)
         : transaction.amount.plus(expectedGas).isLessThanOrEqualTo(account.spendableBalance);
@@ -79,9 +77,8 @@ export const getFee = async (
 const CACHE = makeLRUCache(
   getFee,
   (account: Account, transaction: Transaction) => {
-    const tokenAccount = findSubAccountById(account, transaction.subAccountId ?? "");
-    const fromTokenAccount = tokenAccount && isTokenAccount(tokenAccount);
-    return `${fromTokenAccount ? tokenAccount.id : account.id}-${transaction.amount.toString()}}`;
+    const tokenAccount = getTokenAccount(account, transaction);
+    return `${tokenAccount ? tokenAccount.id : account.id}-${transaction.amount.toString()}}`;
   },
   seconds(30),
 );
