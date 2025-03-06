@@ -7,6 +7,7 @@ import { useGetSwapTrackingProperties } from "../../utils/index";
 import { Text } from "@ledgerhq/react-ui";
 import ErrorNoBorder from "~/renderer/icons/ErrorNoBorder";
 import { SwapLiveError } from "@ledgerhq/live-common/exchange/swap/types";
+import ErrorIcon from "~/renderer/components/ErrorIcon";
 
 const ContentBox = styled(Box)`
   display: flex;
@@ -81,7 +82,7 @@ export default function WebviewErrorDrawer(error?: SwapLiveError) {
       <TrackPage category="Swap" name="Webview error drawer" {...swapDefaultTrack} {...error} />
       <Box mt={3} flow={4} mx={5}>
         <Logo>
-          <ErrorNoBorder size={44} />
+          <ErrorIcon size={24} error={error} />
         </Logo>
         <ErrorTitle>
           <Trans i18nKey={titleKey} />
