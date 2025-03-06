@@ -48,6 +48,11 @@ describe("LNSUpsellBanner ", () => {
       expect(screen.queryByText(t(`lnsUpsell.opted_in.cta`))).toBeNull();
     });
 
+    it("should not render if the user swapped currencies at least twice", () => {
+      renderBanner({ swapHistory: [{}, {}] });
+      expect(screen.queryByText(t(`lnsUpsell.opted_in.cta`))).toBeNull();
+    });
+
     it("should track click on the cta", () => {
       renderBanner({});
       fireEvent.click(screen.getByText(t(`lnsUpsell.opted_in.cta`)));
@@ -76,6 +81,7 @@ describe("LNSUpsellBanner ", () => {
       ffLocationEnabled = true,
       isOptIn = true,
       devicesModelList = [DeviceModelId.nanoS],
+      swapHistory = [] as unknown[],
     }) {
       const defaultParams = { [location]: ffLocationEnabled, "%": 10, img: "" };
       const ffParams = {
@@ -94,6 +100,7 @@ describe("LNSUpsellBanner ", () => {
               lldNanoSUpsellBanners: { enabled: ffEnabled, params: ffParams },
             },
           },
+          accounts: [{ swapHistory }],
         },
       });
     }
