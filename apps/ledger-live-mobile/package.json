@@ -5,7 +5,7 @@
   "scripts": {
     "postinstall": "zx ./scripts/post.mjs",
     "pod": "cd ios && bundle exec pod install --repo-update",
-    "start": "react-native start",
+    "start": "NODE_OPTIONS=--max-old-space-size=8192 react-native start",
     "conf": "react-native config",
     "doc": "react-native doctor",
     "bundle:ios": "react-native bundle --entry-file index.js --bundle-output main.jsbundle",
@@ -173,6 +173,7 @@
     "react-native-animatable": "1.4.0",
     "react-native-biometrics": "3.0.1",
     "react-native-ble-plx": "3.2.1",
+    "react-native-bundle-splitter": "3.0.1",
     "react-native-config": "1.5.3",
     "react-native-device-info": "11.1.0",
     "react-native-easy-markdown": "2.0.0",

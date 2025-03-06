@@ -3,71 +3,11 @@ import { createStackNavigator, TransitionPresets } from "@react-navigation/stack
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
 import { ScreenName } from "~/const";
-
-import DebugBenchmarkQRStream from "~/screens/Settings/Debug/Broken/BenchmarkQRStream";
-import DebugBLE from "~/screens/Settings/Debug/Connectivity/BLE";
-import DebugBLEBenchmark from "~/screens/Settings/Debug/Connectivity/BLEBenchmark";
-import DebugConfiguration from "~/screens/Settings/Debug/Configuration";
-import DebugConnectivity, {
-  connectivityHeaderOptions,
-} from "~/screens/Settings/Debug/Connectivity";
-import DebugCrash from "~/screens/Settings/Debug/Debugging/Crashes";
-import DebugCustomImageGraphics from "~/screens/Settings/Debug/Features/CustomImageGraphics";
-import DebugDebugging from "~/screens/Settings/Debug/Debugging";
-import DebugEnv from "~/screens/Settings/Debug/Configuration/DebugEnv";
-import DebugExport from "~/screens/Settings/Debug/Features/ExportAccounts";
-import DebugFeatureFlags from "~/screens/FeatureFlagsSettings";
-import DebugFeatures from "~/screens/Settings/Debug/Features";
-import DebugFetchCustomImage, {
-  debugFetchCustomImageHeaderOptions,
-} from "~/screens/Settings/Debug/Features/FetchCustomImage";
-import DebugFirmwareUpdate from "~/screens/Settings/Debug/Features/FirmwareUpdate";
-import DebugGenerators from "~/screens/Settings/Debug/Generators";
-import DebugHttpTransport from "~/screens/Settings/Debug/Connectivity/DebugHttpTransport";
-import DebugInformation from "~/screens/Settings/Debug/Information";
-import DebugInstallSetOfApps from "~/screens/Settings/Debug/Features/InstallSetOfApps";
-import DebugPerformance from "~/screens/Settings/Debug/Performance";
-import DebugLogs from "~/screens/Settings/Debug/Debugging/Logs";
-import DebugLottie from "~/screens/Settings/Debug/Features/Lottie";
-import DebugNetwork from "~/screens/Settings/Debug/Debugging/Network";
-import DebugCommandSender from "~/screens/Settings/Debug/Connectivity/CommandSender";
-import DebugPlayground from "~/screens/Settings/Debug/Playground";
-import DebugBluetoothAndLocationServices from "~/screens/Settings/Debug/Debugging/BluetoothAndLocationServices";
-import DebugSettings from "~/screens/Settings/Debug";
-import DebugSnackbars from "~/screens/Settings/Debug/Features/Snackbars";
-import DebugTransactionsAlerts from "~/screens/Settings/Debug/Features/TransactionsAlerts";
-import DebugStore from "~/screens/Settings/Debug/Debugging/Store";
-import DebugStoryly from "~/screens/Settings/Debug/Features/Storyly";
-import DebugSwap from "~/screens/Settings/Debug/Features/Swap";
-import DebugVideos from "~/screens/Settings/Debug/Features/Videos";
-
-import Settings from "~/screens/Settings";
-import AccountsSettings from "~/screens/Settings/Accounts";
-import AboutSettings from "~/screens/Settings/About";
-import Resources from "~/screens/Settings/Resources";
-import GeneralSettings from "~/screens/Settings/General";
-import CountervalueSettings from "~/screens/Settings/General/CountervalueSettings";
-import NotificationsSettings from "~/screens/Settings/Notifications";
-import HelpSettings from "~/screens/Settings/Help";
-import RegionSettings from "~/screens/Settings/General/Region";
-import CurrenciesList from "~/screens/Settings/CryptoAssets/Currencies/CurrenciesList";
-import CurrencySettings from "~/screens/Settings/CryptoAssets/Currencies/CurrencySettings";
-import ExperimentalSettings from "~/screens/Settings/Experimental";
-import DeveloperSettings, {
-  DeveloperCustomManifest,
-  ExchangeDeveloperMode,
-} from "~/screens/Settings/Developer";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import Button from "../Button";
 import HelpButton from "~/screens/Settings/HelpButton";
-import OnboardingStepLanguage from "~/screens/Onboarding/steps/language";
-import { GenerateMockAccountSelectScreen } from "~/screens/Settings/Debug/Generators/GenerateMockAccountsSelect";
 import { useNoNanoBuyNanoWallScreenOptions } from "~/context/NoNanoBuyNanoWall";
-import PostOnboardingDebugScreen from "~/screens/PostOnboarding/PostOnboardingDebugScreen";
 import { SettingsNavigatorStackParamList } from "./types/SettingsNavigator";
-import DebugTermsOfUse from "~/screens/Settings/Debug/Features/TermsOfUse";
-import CameraPermissions from "~/screens/Settings/Debug/Debugging/CameraPermissions";
-import BleEDevicePairingScreen from "~/screens/Settings/Debug/Features/BleDevicePairingScreen";
 import EditCurrencyUnits from "~/screens/Settings/CryptoAssets/Currencies/EditCurrencyUnits";
 import {
   EmptyScreen,
@@ -75,6 +15,64 @@ import {
   TestScreenWithDrawerForcingToBeOpened,
   TestScreenWithDrawerRequestingToBeOpened,
 } from "LLM/components/QueuedDrawer/TestScreens";
+import { connectivityHeaderOptions } from "~/screens/Settings/Debug/Connectivity";
+import { debugFetchCustomImageHeaderOptions } from "~/screens/Settings/Debug/Features/FetchCustomImage";
+
+import {
+  SettingsScreen,
+  CountervalueSettings,
+  RegionSettings,
+  GeneralSettings,
+  AccountsSettings,
+  NotificationsSettings,
+  AboutSettings,
+  HelpSettings,
+  Resources,
+  CurrenciesList,
+  CurrencySettings,
+  ExperimentalSettings,
+  DeveloperCustomManifest,
+  ExchangeDeveloperMode,
+  DeveloperSettings,
+  CameraPermissions,
+  DebugBLE,
+  BleEDevicePairingScreen,
+  DebugTermsOfUse,
+  DebugBLEBenchmark,
+  DebugBenchmarkQRStream,
+  DebugBluetoothAndLocationServices,
+  DebugCommandSender,
+  DebugConfiguration,
+  DebugConnectivity,
+  DebugCrash,
+  DebugCustomImageGraphics,
+  DebugDebugging,
+  DebugEnv,
+  DebugExport,
+  DebugFeatures,
+  DebugFeatureFlags,
+  DebugFetchCustomImage,
+  DebugGenerators,
+  DebugHttpTransport,
+  DebugInformation,
+  DebugInstallSetOfApps,
+  DebugLogs,
+  DebugLottie,
+  DebugPerformance,
+  DebugPlayground,
+  DebugSnackbars,
+  DebugStore,
+  DebugSwap,
+  DebugTransactionsAlerts,
+  DebugVideos,
+  DebugStoryly,
+  DebugNetwork,
+  DebugSettings,
+  DebugFirmwareUpdate,
+  OnboardingStepLanguage,
+  GenerateMockAccountSelectScreen,
+  PostOnboardingDebugScreen,
+} from "./LazyNavigator/SettingsNavigator.lazy";
 
 const Stack = createStackNavigator<SettingsNavigatorStackParamList>();
 
@@ -89,7 +87,7 @@ export default function SettingsNavigator() {
     <Stack.Navigator screenOptions={stackNavConfig}>
       <Stack.Screen
         name={ScreenName.SettingsScreen}
-        component={Settings}
+        component={SettingsScreen}
         options={{
           title: t("settings.header"),
           headerRight: () => <HelpButton />,
