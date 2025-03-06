@@ -9,6 +9,7 @@ import { AptosAPI } from "../api";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { AptosSigner } from "../types";
 import { signTransaction } from "../network";
+import { findSubAccountById } from "@ledgerhq/coin-framework/account/helpers";
 
 export const getAddress = (a: Account) => ({
   address: a.freshAddress,
@@ -45,14 +46,15 @@ const buildSignOperation =
           recipients.push(transaction.recipient);
         }
 
+        const subAccount =
+          !!transaction.subAccountId && findSubAccountById(account, transaction.subAccountId);
+
         // build optimistic operation
         const operation: Operation = {
           id: encodeOperationId(accountId, hash, type),
           hash,
           type,
-          value: transaction.useAllAmount
-            ? account.balance.minus(fee)
-            : transaction.amount.plus(fee),
+          value: subAccount ? fee : transaction.amount.plus(fee),
           fee,
           extra,
           blockHash: null,
@@ -62,6 +64,20 @@ const buildSignOperation =
           accountId,
           date: new Date(),
           transactionSequenceNumber: Number(rawTx.sequence_number),
+          subOperations: subAccount
+            ? [
+                {
+                  id: encodeOperationId(subAccount.id, "", "OUT"),
+                  type: "OUT",
+                  accountId: transaction.subAccountId,
+                  senders: [account.freshAddress],
+                  recipients: [transaction.recipient],
+                  value: transaction.amount,
+                  fee,
+                  date: new Date(),
+                } as Operation,
+              ]
+            : [],
         };
 
         o.next({
