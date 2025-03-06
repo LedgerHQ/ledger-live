@@ -1,5 +1,63 @@
 ## 34.5.0-next.4
 
+## 34.25.0-next.0
+
+### Minor Changes
+
+- [#9264](https://github.com/LedgerHQ/ledger-live/pull/9264) [`d71f331`](https://github.com/LedgerHQ/ledger-live/commit/d71f33164714757ebda60e98932c3aa3b58a57ea) Thanks [@Justkant](https://github.com/Justkant)! - feat: SPL 2022 support
+
+- [#9362](https://github.com/LedgerHQ/ledger-live/pull/9362) [`8675df1`](https://github.com/LedgerHQ/ledger-live/commit/8675df12c24067877358f27e1e7c66f739ff0c78) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Fix Aptos derivation path account metadata
+
+- [#9345](https://github.com/LedgerHQ/ledger-live/pull/9345) [`ede6db0`](https://github.com/LedgerHQ/ledger-live/commit/ede6db0b94193cc9072aeb87e90f4098f0434af0) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Add thai language support
+
+- [#8757](https://github.com/LedgerHQ/ledger-live/pull/8757) [`1461449`](https://github.com/LedgerHQ/ledger-live/commit/146144941c13e60182da8d79592f706d12a6f00e) Thanks [@Wozacosta](https://github.com/Wozacosta)! - chore: Rebranding from 'Elrond' to 'MultiversX'
+
+- [#9386](https://github.com/LedgerHQ/ledger-live/pull/9386) [`2662b57`](https://github.com/LedgerHQ/ledger-live/commit/2662b579343398d38ff5e2d0b25a35cccbc143ce) Thanks [@qperrot](https://github.com/qperrot)! - Fix specs for Celo and ICON
+
+### Patch Changes
+
+- Updated dependencies [[`163da32`](https://github.com/LedgerHQ/ledger-live/commit/163da32dac423444294896d8ff65174a093690aa), [`d71f331`](https://github.com/LedgerHQ/ledger-live/commit/d71f33164714757ebda60e98932c3aa3b58a57ea), [`8675df1`](https://github.com/LedgerHQ/ledger-live/commit/8675df12c24067877358f27e1e7c66f739ff0c78), [`c2d4d1a`](https://github.com/LedgerHQ/ledger-live/commit/c2d4d1a915e10f9bda5b041715d3e925528c178a), [`0a59343`](https://github.com/LedgerHQ/ledger-live/commit/0a59343b591dab4e886c21cb47f7339231997331), [`1461449`](https://github.com/LedgerHQ/ledger-live/commit/146144941c13e60182da8d79592f706d12a6f00e), [`2662b57`](https://github.com/LedgerHQ/ledger-live/commit/2662b579343398d38ff5e2d0b25a35cccbc143ce), [`358a988`](https://github.com/LedgerHQ/ledger-live/commit/358a9880d9b1c4800340686410a421d0dfc8efb1), [`e5066a0`](https://github.com/LedgerHQ/ledger-live/commit/e5066a04fa0252d049d976d452888b790e6e5b2a), [`cdd16b5`](https://github.com/LedgerHQ/ledger-live/commit/cdd16b5e7463adef601590591c838b3474ce46ee), [`bdfa413`](https://github.com/LedgerHQ/ledger-live/commit/bdfa4139fcbceabfd05a57e69b05e9ccf10efbe1), [`663f03d`](https://github.com/LedgerHQ/ledger-live/commit/663f03d7e00dec395bc1338b62e9015d79450d65)]:
+  - @ledgerhq/coin-solana@0.15.0-next.0
+  - @ledgerhq/hw-app-aptos@6.32.0-next.0
+  - @ledgerhq/coin-aptos@1.7.0-next.0
+  - @ledgerhq/coin-framework@2.2.0-next.0
+  - @ledgerhq/coin-tron@0.4.0-next.0
+  - @ledgerhq/cryptoassets@13.13.0-next.0
+  - @ledgerhq/crypto-icons-ui@1.9.0-next.0
+  - @ledgerhq/coin-evm@2.13.0-next.0
+  - @ledgerhq/hw-app-multiversx@6.22.0-next.0
+  - @ledgerhq/coin-multiversx@0.2.0-next.0
+  - @ledgerhq/live-env@2.6.0-next.0
+  - @ledgerhq/coin-icon@0.7.0-next.0
+  - @ledgerhq/live-nft@0.6.0-next.0
+  - @ledgerhq/coin-near@0.9.0-next.0
+  - @ledgerhq/ledger-trust-service@0.3.0-next.0
+  - @ledgerhq/hw-app-eth@6.42.9-next.0
+  - @ledgerhq/coin-algorand@0.7.7-next.0
+  - @ledgerhq/coin-bitcoin@0.11.2-next.0
+  - @ledgerhq/coin-cardano@0.5.1-next.0
+  - @ledgerhq/coin-casper@1.4.1-next.0
+  - @ledgerhq/coin-cosmos@0.8.3-next.0
+  - @ledgerhq/coin-filecoin@1.6.1-next.0
+  - @ledgerhq/coin-hedera@1.3.7-next.0
+  - @ledgerhq/coin-internet_computer@1.5.7-next.0
+  - @ledgerhq/coin-polkadot@2.0.4-next.0
+  - @ledgerhq/coin-stacks@0.6.2-next.0
+  - @ledgerhq/coin-stellar@1.1.1-next.0
+  - @ledgerhq/coin-tezos@1.3.1-next.0
+  - @ledgerhq/coin-ton@0.5.7-next.0
+  - @ledgerhq/coin-vechain@2.4.7-next.0
+  - @ledgerhq/coin-xrp@2.0.3-next.0
+  - @ledgerhq/device-core@0.4.16-next.0
+  - @ledgerhq/live-countervalues@0.4.3-next.0
+  - @ledgerhq/live-countervalues-react@0.2.25-next.0
+  - @ledgerhq/live-signer-evm@0.1.2-next.0
+  - @ledgerhq/live-wallet@0.9.7-next.0
+  - @ledgerhq/hw-app-vet@0.2.16-next.0
+  - @ledgerhq/ledger-cal-service@0.3.1-next.0
+  - @ledgerhq/live-network@2.0.5-next.0
+  - @ledgerhq/speculos-transport@0.1.10-next.0
+
 ## 34.24.0
 
 ### Minor Changes

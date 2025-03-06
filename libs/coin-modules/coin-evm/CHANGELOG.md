@@ -1,5 +1,27 @@
 # @ledgerhq/coin-evm
 
+## 2.13.0-next.0
+
+### Minor Changes
+
+- [#9292](https://github.com/LedgerHQ/ledger-live/pull/9292) [`0a59343`](https://github.com/LedgerHQ/ledger-live/commit/0a59343b591dab4e886c21cb47f7339231997331) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feature (lld,llm): integrate Sonic
+
+- [#9403](https://github.com/LedgerHQ/ledger-live/pull/9403) [`358a988`](https://github.com/LedgerHQ/ledger-live/commit/358a9880d9b1c4800340686410a421d0dfc8efb1) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update NMS version to v2
+
+- [#9257](https://github.com/LedgerHQ/ledger-live/pull/9257) [`e5066a0`](https://github.com/LedgerHQ/ledger-live/commit/e5066a04fa0252d049d976d452888b790e6e5b2a) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - doc (coin-evm): fix misleading doc on SVG naming convention
+
+- [#9402](https://github.com/LedgerHQ/ledger-live/pull/9402) [`bdfa413`](https://github.com/LedgerHQ/ledger-live/commit/bdfa4139fcbceabfd05a57e69b05e9ccf10efbe1) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update Staging NFT Metadata service url + Rename env variable
+
+### Patch Changes
+
+- Updated dependencies [[`7931e5f`](https://github.com/LedgerHQ/ledger-live/commit/7931e5f6bf379eee7b80f5a95f13b6e96140ac5a), [`8675df1`](https://github.com/LedgerHQ/ledger-live/commit/8675df12c24067877358f27e1e7c66f739ff0c78), [`0a59343`](https://github.com/LedgerHQ/ledger-live/commit/0a59343b591dab4e886c21cb47f7339231997331), [`1461449`](https://github.com/LedgerHQ/ledger-live/commit/146144941c13e60182da8d79592f706d12a6f00e), [`bdfa413`](https://github.com/LedgerHQ/ledger-live/commit/bdfa4139fcbceabfd05a57e69b05e9ccf10efbe1)]:
+  - @ledgerhq/evm-tools@1.5.0-next.0
+  - @ledgerhq/coin-framework@2.2.0-next.0
+  - @ledgerhq/cryptoassets@13.13.0-next.0
+  - @ledgerhq/live-env@2.6.0-next.0
+  - @ledgerhq/domain-service@1.2.21-next.0
+  - @ledgerhq/live-network@2.0.5-next.0
+
 ## 2.12.0
 
 ### Minor Changes

@@ -1,11 +1,7 @@
 {
 <<<<<<< HEAD:libs/coin-modules/coin-multiversx/package.json
   "name": "@ledgerhq/coin-multiversx",
-  "version": "0.1.9",
-=======
-  "name": "@ledgerhq/coin-elrond",
-  "version": "0.3.6",
->>>>>>> 1ab74f760e (chore(release): :rocket: prepare release [skip ci]):libs/coin-modules/coin-elrond/package.json
+  "version": "0.2.0-next.0",
   "description": "Ledger MultiversX Coin integration",
   "keywords": [
     "Ledger",
