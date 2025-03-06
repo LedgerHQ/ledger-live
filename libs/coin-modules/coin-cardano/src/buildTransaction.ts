@@ -53,7 +53,8 @@ function getRewardWithdrawalCertificate(account: CardanoAccount): TyphonTypes.Wi
     return null;
   }
 
-  const stakeCredential = getAccountStakeCredential(account.xpub as string, account.index);
+  if (!account.xpub) throw new Error("Account xpub is missing");
+  const stakeCredential = getAccountStakeCredential(account.xpub, account.index);
   const stakeKeyHashCredential: TyphonTypes.HashCredential = {
     hash: Buffer.from(stakeCredential.key, "hex"),
     type: TyphonTypes.HashType.ADDRESS,

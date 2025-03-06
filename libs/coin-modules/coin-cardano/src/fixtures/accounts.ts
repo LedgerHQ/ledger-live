@@ -1,9 +1,11 @@
 import { BigNumber } from "bignumber.js";
-import { CardanoAccount } from "../types";
+import { CardanoAccount, CardanoDelegation } from "../types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { BalanceHistoryCache } from "@ledgerhq/types-live";
 
-export const getCardanoTestnetAccount1 = (): CardanoAccount => ({
+export const getCardanoTestnetAccount = (params: {
+  delegation?: Partial<CardanoDelegation>;
+}): CardanoAccount => ({
   type: "Account",
   id: "cardano-testnet-1",
   xpub: "2b7203eaac6970424a3c03c6523d73d5c5c8608bbdb2da6cac0fa818a550070226ff4d533833edaf32c8153559089195376128ae9f533a5e89fc4c256a50f6df",
@@ -71,7 +73,7 @@ export const getCardanoTestnetAccount1 = (): CardanoAccount => ({
         },
       },
     ],
-    delegation: undefined,
+    delegation: params.delegation as any,
     protocolParams: {} as any,
   },
 });

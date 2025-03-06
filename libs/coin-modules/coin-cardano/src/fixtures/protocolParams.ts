@@ -12,5 +12,9 @@ export const getProtocolParams = (): ProtocolParams => ({
   maxValueSize: "5000",
   utxoCostPerByte: "4310",
   minFeeRefScriptCostPerByte: "15",
-  languageView: {} as any,
+  languageView: {
+    PlutusScriptV1: [],
+    PlutusScriptV2: [],
+    PlutusScriptV3: [],
+  },
 });
