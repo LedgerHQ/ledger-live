@@ -53,9 +53,10 @@ export const getFee = async (
       const tokenAccount = findSubAccountById(account, transaction.subAccountId ?? "");
       const fromTokenAccount = tokenAccount && isTokenAccount(tokenAccount);
 
-      const isUnderMaxSpendable = transaction.amount
-        .plus(expectedGas)
-        .isLessThan(fromTokenAccount ? tokenAccount.spendableBalance : account.spendableBalance);
+      const isUnderMaxSpendable = fromTokenAccount
+        ? transaction.amount.isLessThanOrEqualTo(tokenAccount.spendableBalance) &&
+          expectedGas.isLessThan(account.spendableBalance)
+        : transaction.amount.plus(expectedGas).isLessThanOrEqualTo(account.spendableBalance);
 
       if (isUnderMaxSpendable && !completedTx.success) {
         // we want to skip INSUFFICIENT_BALANCE error because it will be processed by getTransactionStatus
@@ -63,6 +64,7 @@ export const getFee = async (
           throw Error(`Simulation failed with following error: ${completedTx.vm_status}`);
         }
       }
+
       res.fees = expectedGas;
       res.estimate.maxGasAmount = gasLimit.toString();
       res.estimate.gasUnitPrice = completedTx.gas_unit_price;
