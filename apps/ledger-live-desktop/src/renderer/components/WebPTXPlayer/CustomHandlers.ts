@@ -82,10 +82,10 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
             );
           },
           "custom.exchange.error": ({ error }) => {
-            if (!isDrawerOpen) {
-              dispatch(closePlatformAppDrawer());
-              setDrawer(WebviewErrorDrawer, error);
-            }
+            // if (!isDrawerOpen) {
+            dispatch(closePlatformAppDrawer());
+            setDrawer(WebviewErrorDrawer, error);
+            // }
             return Promise.resolve();
           },
         },
