@@ -1,4 +1,4 @@
-import { ACTIVATION_FEES, ACTIVATION_FEES_TRC_20 } from "./constants";
+import { ACTIVATION_FEES_TRC_20, STANDARD_FEES_NATIF } from "./constants";
 import type { TransactionIntent } from "@ledgerhq/coin-framework/api/index";
 
 export async function estimateFees(transactionIntent: TransactionIntent): Promise<bigint> {
@@ -7,7 +7,7 @@ export async function estimateFees(transactionIntent: TransactionIntent): Promis
   if (transactionIntent.standard === "trc20") {
     fees += BigInt(ACTIVATION_FEES_TRC_20.toString());
   } else {
-    fees += BigInt(ACTIVATION_FEES.toString());
+    fees += BigInt(STANDARD_FEES_NATIF.toString());
   }
   return fees;
 }
