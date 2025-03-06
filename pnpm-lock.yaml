@@ -3321,6 +3321,9 @@ importers:
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
+      '@ledgerhq/hw-transport-node-hid':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/hw-transport-node-hid
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../env
@@ -3336,6 +3339,9 @@ importers:
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
+      '@mysten/bcs':
+        specifier: 1.4.0
+        version: 1.4.0
       '@mysten/sui':
         specifier: 1.21.1
         version: 1.21.1(typescript@5.6.3)
@@ -5700,13 +5706,13 @@ importers:
   libs/ledgerjs/packages/hw-app-sui:
     dependencies:
       '@ledgerhq/hw-transport':
-        specifier: 6.31.4
+        specifier: ^6.31.0
         version: 6.31.4
       '@mysten/ledgerjs-hw-app-sui':
         specifier: 0.4.2
         version: 0.4.2
       fast-sha256:
-        specifier: 1.3.0
+        specifier: ^1.3.0
         version: 1.3.0
     devDependencies:
       '@ledgerhq/hw-transport-mocker':
@@ -12522,6 +12528,9 @@ packages:
 
   '@mysten/bcs@1.3.0':
     resolution: {integrity: sha512-V3V9GwIXEiUS7y8hkCwH3oseWpxs75YOOtfy7xdfyAdSftlFpTYgj5elclwYx8pgHdzg7pHdy6no77LHYGQCaQ==}
+
+  '@mysten/bcs@1.4.0':
+    resolution: {integrity: sha512-YwDYspceLt8b7v6ohPvy8flQEi+smtfSG5d2A98CbUA48XBmOqTSPNmpw9wsZVVnrH2avr+BS5uVhDZT+EquYA==}
 
   '@mysten/ledgerjs-hw-app-sui@0.4.2':
     resolution: {integrity: sha512-Ypcb7WHyno16RodUI9CFzHQg/Fy6xl+itgr1D4g7Rdo6sUWBKn83p9s9wldG6wvJv+d4QlilXz/HcEgqrlu5pA==}
@@ -39547,6 +39556,10 @@ snapshots:
       bech32: 2.0.0
 
   '@mysten/bcs@1.3.0':
+    dependencies:
+      bs58: 6.0.0
+
+  '@mysten/bcs@1.4.0':
     dependencies:
       bs58: 6.0.0
 

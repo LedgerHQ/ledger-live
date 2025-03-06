@@ -14,7 +14,6 @@ import type { Account, AccountRaw } from "@ledgerhq/types-live";
  */
 export type SuiResources = {
   nonce: number;
-  additionalBalance: BigNumber;
 };
 
 /**
@@ -22,7 +21,6 @@ export type SuiResources = {
  */
 export type SuiResourcesRaw = {
   nonce: number;
-  additionalBalance: string;
 };
 
 /**
@@ -82,7 +80,24 @@ export type SuiOperationExtra = {
 };
 export type SuiOperationExtraRaw = Record<string, string>;
 
+export type TransferCommand = {
+  kind: "transfer";
+  sender: string;
+  recipient: string;
+  amount: number;
+};
+
 export type PalletMethod =
   | "balances.transfer"
   | "balances.transferKeepAlive"
   | "balances.transferAllowDeath";
+
+export type Command = TransferCommand;
+// | TokenTransferCommand
+
+export type CommandDescriptor = {
+  command: Command;
+  fee: number;
+  warnings: Record<string, Error>;
+  errors: Record<string, Error>;
+};

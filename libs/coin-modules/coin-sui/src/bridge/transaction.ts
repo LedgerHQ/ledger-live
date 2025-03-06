@@ -9,11 +9,10 @@ import { BigNumber } from "bignumber.js";
 import { getAccountUnit } from "./utils";
 import type { Transaction, TransactionRaw } from "../types";
 
-export const formatTransaction = (
-  { mode, amount, recipient, useAllAmount }: Transaction,
-  account: Account,
-): string =>
-  `
+export const formatTransaction = (transaction: Transaction, account: Account): string => {
+  console.log("formatTransaction", transaction, account);
+  const { mode, amount, recipient, useAllAmount } = transaction;
+  return `
 ${mode.toUpperCase()} ${
     useAllAmount
       ? "MAX"
@@ -25,25 +24,28 @@ ${mode.toUpperCase()} ${
             disableRounding: true,
           })
   }${recipient ? `\nTO ${recipient}` : ""}`;
+};
 
-export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
-  const common = fromTransactionCommonRaw(tr);
+export const fromTransactionRaw = (transaction: TransactionRaw): Transaction => {
+  console.log("fromTransactionRaw", transaction);
+  const common = fromTransactionCommonRaw(transaction);
   return {
     ...common,
-    family: tr.family,
-    mode: tr.mode,
-    fees: tr.fees ? BigNumber(tr.fees) : null,
+    family: transaction.family,
+    mode: transaction.mode,
+    fees: transaction.fees ? BigNumber(transaction.fees) : null,
     errors: {},
   };
 };
 
-export const toTransactionRaw = (t: Transaction): TransactionRaw => {
-  const common = toTransactionCommonRaw(t);
+export const toTransactionRaw = (transaction: Transaction): TransactionRaw => {
+  const common = toTransactionCommonRaw(transaction);
+  console.log("toTransactionRaw", transaction);
   return {
     ...common,
-    family: t.family,
-    mode: t.mode,
-    fees: t.fees?.toString() || "", // TODO: fix
+    family: transaction.family,
+    mode: transaction.mode,
+    fees: transaction.fees?.toString() || "", // TODO: fix
   };
 };
 

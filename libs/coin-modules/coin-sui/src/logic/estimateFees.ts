@@ -3,15 +3,15 @@ import { fakeSignExtrinsic } from "./signTransaction";
 import suiAPI from "../network";
 import { CoreTransaction } from "../types";
 
-export async function estimateFees({ unsigned }: CoreTransaction): Promise<bigint> {
-  console.log("estimateFees", unsigned);
+export async function estimateFees(sender: string, transaction: any): Promise<bigint> {
+  console.log("estimateFees", transaction);
   // await loadSui();
 
   // const fakeSignedTx = await fakeSignExtrinsic(unsigned, registry);
-  // const payment = await suiAPI.paymentInfo(fakeSignedTx);
+  const { fees } = await suiAPI.paymentInfo(sender, transaction);
   // if (payment) {
   //   //
   // }
   // return BigInt(payment?.partialFee);
-  return BigInt(0);
+  return BigInt(fees);
 }

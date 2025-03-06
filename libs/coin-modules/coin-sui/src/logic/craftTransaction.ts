@@ -1,9 +1,6 @@
 import BigNumber from "bignumber.js";
 import type { CoreTransaction } from "../types";
 import suiAPI from "../network";
-import { TransactionPayloadInfo } from "../types";
-
-const EXTRINSIC_VERSION = 4;
 
 export type CreateExtrinsicArg = {
   mode: any;
@@ -24,22 +21,13 @@ export async function craftTransaction(
   forceLatestParams: boolean = false,
 ): Promise<CoreTransaction> {
   console.log("craftTransaction", address, nonceToUse, extractExtrinsicArg, forceLatestParams);
-  // await loadSui();
 
-  // const { registry } = await suiAPI.getRegistry();
-  // const registry = await suiAPI.getRegistry()
-  if (extractExtrinsicArg) {
-    //
-  }
+  const unsigned = await suiAPI.createTransaction(address, extractExtrinsicArg);
 
-  // if (forceLatestParams) {
-  //   //
-  // }
-
-  const unsigned = await suiAPI.createTransaction(address);
+  console.log("craftTransaction unsigned", unsigned);
 
   return {
-    // registry,
+    executeTransactionBlock: suiAPI.executeTransactionBlock,
     unsigned,
   };
 }

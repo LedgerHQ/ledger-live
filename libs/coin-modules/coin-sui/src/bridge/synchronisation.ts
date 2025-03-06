@@ -11,7 +11,7 @@ import { OperationType, type Operation } from "@ledgerhq/types-live";
 export const getAccountShape: GetAccountShape<SuiAccount> = async info => {
   const { address, initialAccount, currency, derivationMode } = info;
   const oldOperations = initialAccount?.operations || [];
-
+  console.log("getAccount", oldOperations);
   const accountId = encodeAccountId({
     type: "js",
     version: "2",
@@ -20,8 +20,7 @@ export const getAccountShape: GetAccountShape<SuiAccount> = async info => {
     derivationMode,
   });
 
-  // get the current account balance state depending your api implementation
-  const { blockHeight, balance, additionalBalance, nonce } = await getAccount(address);
+  const { blockHeight, nonce, balance } = await getAccount(address);
 
   // Needed for incremental synchronisation
   const startAtIn = latestHash(oldOperations, "IN");
@@ -38,10 +37,9 @@ export const getAccountShape: GetAccountShape<SuiAccount> = async info => {
     blockHeight,
     suiResources: {
       nonce,
-      additionalBalance,
     },
   };
-
+  console.log("getAccount shape", shape, operations);
   return { ...shape, operations };
 };
 

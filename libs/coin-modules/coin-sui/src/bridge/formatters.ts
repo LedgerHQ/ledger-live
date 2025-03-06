@@ -22,14 +22,6 @@ function formatAccountSpecifics(account: SuiAccount): string {
 
   str += formatCurrencyUnit(unit, account.spendableBalance, formatConfig) + " spendable. ";
 
-  if (suiResources.additionalBalance.gt(0)) {
-    str += formatCurrencyUnit(unit, suiResources.additionalBalance, formatConfig) + " additional. ";
-  }
-
-  if (suiResources.nonce) {
-    str += "\nonce : " + suiResources.nonce;
-  }
-
   return str;
 }
 

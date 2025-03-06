@@ -3,88 +3,74 @@ import {
   PaginatedTransactionResponse,
   QueryTransactionBlocksParams,
   SuiClient,
+  ExecuteTransactionBlockParams,
+  TransactionEffects,
 } from "@mysten/sui/client";
-// import { Transaction, TransactionData } from "@mysten/sui/transactions";
 import { TransactionBlockData, SuiTransactionBlockResponse } from "@mysten/sui/client";
 import { Transaction } from "@mysten/sui/transactions";
 import { BigNumber } from "bignumber.js";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
 
-// import { getEnv } from "@ledgerhq/live-env";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 
-import { makeLRUCache, minutes, hours } from "@ledgerhq/live-network/cache";
+import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
 
-type AsyncApiFunction = (api: SuiClient) => Promise<any>;
+type AsyncApiFunction<T> = (api: SuiClient) => Promise<T>;
+type ApiFunction<T> = (api: SuiClient) => T;
 
 const rpcUrl = getFullnodeUrl("devnet");
 
 let api: SuiClient | null = null;
 
+console.log("SDK");
+
 const TRANSACTIONS_REQUEST_LIMIT = 100;
 
 const BLOCK_HEIGHT = 5; // sui has no block height metainfo, we use it simulate proper icon statuses in apps
 
-// tx.getData().
-
 /**
  * Connects to Sui Api
  */
-async function withApi(execute: AsyncApiFunction): Promise<any> {
-  // If client is instanciated already, ensure it is connected & ready
-  // if (api) {
-  //   try {
-  //     await api.isReady;
-  //   } catch (err) {
-  //     api = null;
-  //   }
-  // }
-
+async function withApi<T>(execute: ApiFunction<T> | AsyncApiFunction<T>) {
+  console.log("SDK withApi");
   if (!api) {
     api = new SuiClient({ url: rpcUrl });
   }
 
-  try {
-    const res = await execute(api);
-
-    return res;
-  } catch {
-    // Handle Error or Retry
-    // await disconnect();
-  }
+  // try {
+  const result = await execute(api);
+  return result;
+  // } catch (error) {
+  //   console.error("error", error);
+  // }
 }
 
 /**
- * Disconnects Sui Api
- */
-// export const disconnect = async () => {
-//   if (api) {
-//     const disconnecting = api;
-//     api = null;
-//     await disconnecting.close();
-//   }
-// };
-
-/**
- * Get account balances and nonce
+ * Get account balance
  */
 export const getAccount = async (addr: string) =>
   withApi(async api => {
     const [balance] = await Promise.all([api.getBalance({ owner: addr })]);
     return {
       blockHeight: BLOCK_HEIGHT * 2,
+      nonce: 0,
       balance: BigNumber(balance.totalBalance),
-      // additionalBalance: BigNumber(additionalBalance),
-      // nonce,
     };
   });
 
 /**
  * Returns true if account is the signer
+ * TODO: move to utils
+ */
+function ensureAddressFormat(addr: string): `0x${string}` {
+  return (addr.startsWith("0x") ? addr : `0x${addr}`) as `0x${string}`;
+}
+
+/**
+ * Returns true if account is the signer
  */
 function isSender(addr: string, transaction?: TransactionBlockData): boolean {
-  const prefix = addr.startsWith("0x") ? "" : "0x";
-  return transaction?.sender === prefix + addr;
+  return transaction?.sender === ensureAddressFormat(addr);
 }
 
 /**
@@ -93,24 +79,6 @@ function isSender(addr: string, transaction?: TransactionBlockData): boolean {
 function getOperationType(addr: string, transaction?: TransactionBlockData): OperationType {
   return isSender(addr, transaction) ? "OUT" : "IN";
 }
-
-/**
- * Map transaction to a correct Operation Value (affecting account balance)
- */
-// function getOperationAmount(transaction: Transaction, addr: string): BigNumber {
-//   return isSender(transaction, addr)
-//     ? BigNumber(transaction.value).plus(transaction.fees)
-//     : BigNumber(transaction.value);
-// }
-
-/**
- * Extract extra from transaction if any
- */
-// function getOperationExtra(transaction: Transaction): Record<string, any> {
-//   return {
-//     additionalField: transaction.additionalField,
-//   };
-// }
 
 /**
  * Extract senders from transaction
@@ -184,15 +152,14 @@ function transactionToOperation(
     id: encodeOperationId(accountId, hash, type),
     accountId,
     blockHash: hash,
-    blockHeight: BLOCK_HEIGHT, // Required by Operation type
-    date: getOperationDate(transaction), // Required by Operation type
-    extra: {}, // Required by Operation type
+    blockHeight: BLOCK_HEIGHT,
+    date: getOperationDate(transaction),
+    extra: {},
     fee: getOperationFee(transaction),
     hasFailed: transaction.effects?.status.status != "success",
     hash,
     recipients: getOperationRecipients(transaction.transaction?.data),
     senders: getOperationSenders(transaction.transaction?.data),
-    // transactionSequenceNumber: isSender(transaction, address) ? transaction.nonce : undefined,
     type,
     value: getOperationAmount(address, transaction),
   };
@@ -222,34 +189,48 @@ export const getPreloadedData = () => ({
   networkInfo: {},
 });
 
-export const paymentInfo = makeLRUCache(
-  signedTx => signedTx, // TODO: implement
-  signedTx => signedTx,
-  minutes(5),
-);
+const getTotalGasUsed = (effects?: TransactionEffects | null): bigint => {
+  const gasSummary = effects?.gasUsed;
+  if (!gasSummary) return BigInt(0);
+  return (
+    BigInt(gasSummary.computationCost) +
+    BigInt(gasSummary.storageCost) -
+    BigInt(gasSummary.storageRebate)
+  );
+};
+
+export const paymentInfo = async (sender: string, fakeTransaction: any) =>
+  withApi(async api => {
+    const tx = new Transaction();
+    tx.setSender(ensureAddressFormat(sender));
+    const [coin] = tx.splitCoins(tx.gas, [fakeTransaction.amount.toNumber()]);
+    tx.transferObjects([coin], fakeTransaction.recipient);
+    const txb = await tx.build({ client: api });
+    const result = await api.dryRunTransactionBlock({ transactionBlock: txb });
+    const fees = getTotalGasUsed(result.effects);
+    console.log("paymentInfo result", fees);
+    return {
+      fees,
+    };
+  });
 
 export const submitExtrinsic = async (extrinsic: string) => extrinsic; // TODO: implement
 
-export const getRegistry = makeLRUCache(
-  () =>
-    new Promise(resolve => {
-      resolve({
-        // TODO: implement
-        createType: () => ({
-          addSignature: () => "",
-          toHex: () => "",
-        }),
-      });
-    }),
-  () => "sui",
-  hours(1),
-);
+export const createTransaction = async (address: string, transaction: any) =>
+  withApi(async api => {
+    console.log("createTransaction address", address, "createTransaction transaction", transaction);
+    const tx = new Transaction();
+    tx.setSender(ensureAddressFormat(address));
 
-export const createTransaction = (address: string) => {
-  const tx = new Transaction();
-  tx.setSenderIfNotSet(address);
-  console.log("createTransaction tx", tx);
-  return tx;
+    const [coin] = tx.splitCoins(tx.gas, [transaction.amount.toNumber()]);
+    tx.transferObjects([coin], transaction.recipient);
+
+    console.log("createTransaction bytes", tx.serialize());
+    return tx.build({ client: api });
+  });
+
+export const executeTransactionBlock = async (params: ExecuteTransactionBlockParams) => {
+  return api?.executeTransactionBlock(params);
 };
 
 // load from curos point or from begining until we reach the end

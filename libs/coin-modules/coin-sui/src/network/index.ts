@@ -4,8 +4,8 @@ import {
   getPreloadedData,
   paymentInfo,
   submitExtrinsic,
-  getRegistry,
   createTransaction,
+  executeTransactionBlock,
 } from "./sdk";
 
 export {
@@ -14,7 +14,6 @@ export {
   getPreloadedData, // adjust with needs of preloaded data
   paymentInfo,
   submitExtrinsic,
-  getRegistry,
 };
 
 export default {
@@ -27,6 +26,6 @@ export default {
 
   paymentInfo,
   submitExtrinsic,
-  getRegistry,
   createTransaction,
+  executeTransactionBlock,
 };

@@ -24,6 +24,8 @@ export const prepareTransaction: AccountBridge<
     transaction,
   });
 
+  console.log("prepareTransaction fees", fees, transaction.fees, !sameFees(fees, transaction.fees));
+
   if (!sameFees(fees, transaction.fees)) {
     return { ...transaction, fees };
   }

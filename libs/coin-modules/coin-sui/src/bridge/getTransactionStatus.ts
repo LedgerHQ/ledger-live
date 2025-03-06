@@ -19,10 +19,11 @@ export const getTransactionStatus: AccountBridge<
   SuiAccount,
   TransactionStatus
 >["getTransactionStatus"] = async (account, transaction) => {
+  console.log("getTransactionStatus", account, transaction);
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
   const amount = new BigNumber(transaction?.amount || 0);
-  const estimatedFees = new BigNumber(0);
+  const estimatedFees = new BigNumber(transaction?.fees || 0);
   const totalSpent = amount.plus(estimatedFees);
 
   if (account) {

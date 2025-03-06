@@ -10,18 +10,16 @@ import type {
 } from "../types";
 
 export function toSuiResourcesRaw(resources: SuiResources): SuiResourcesRaw {
-  const { nonce, additionalBalance } = resources;
+  const { nonce } = resources;
   return {
     nonce,
-    additionalBalance: additionalBalance?.toString(),
   };
 }
 
 export function fromSuiResourcesRaw(resources: SuiResourcesRaw): SuiResources {
-  const { nonce, additionalBalance } = resources;
+  const { nonce } = resources;
   return {
     nonce,
-    additionalBalance: BigNumber(additionalBalance),
   };
 }
 
