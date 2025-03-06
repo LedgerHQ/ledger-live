@@ -212,6 +212,7 @@ export type Features = CurrencyFeatures & {
   lldLedgerSyncEntryPoints: Feature_LldLedgerSyncEntryPoints;
   lldNanoSUpsellBanners: Feature_LldNanoSUpsellBanners;
   llmThai: DefaultFeature;
+  lldThai: DefaultFeature;
 };
 
 /**
