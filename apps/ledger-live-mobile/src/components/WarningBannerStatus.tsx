@@ -33,7 +33,7 @@ const WarningBannerStatus = ({ currencyConfig, currency }: Props) => {
 
   if (currencyConfig?.status.type === "migration") {
     return (
-      <View style={{ marginTop: 16 }}>
+      <View testID="migration-banner" style={{ marginTop: 16 }}>
         <Alert
           key="migration_banner"
           type="warning"
@@ -55,7 +55,7 @@ const WarningBannerStatus = ({ currencyConfig, currency }: Props) => {
 
   if (currencyConfig?.status.type === "will_be_deprecated") {
     return (
-      <View style={{ marginTop: 16 }}>
+      <View testID="deprecated-banner" style={{ marginTop: 16 }}>
         <Alert
           key="deprecated_banner"
           type="warning"

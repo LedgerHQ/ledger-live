@@ -41,6 +41,7 @@ const AccountWarningBanner = ({ currency }: Props) => {
     <>
       {currencyConfig?.status.type === "migration" && (
         <TopBanner
+          testId="migration-banner"
           status="warning"
           content={{
             message: (
@@ -66,6 +67,7 @@ const AccountWarningBanner = ({ currency }: Props) => {
       )}
       {currencyConfig?.status.type === "feature_unavailable" && (
         <TopBanner
+          testId="feature-unavailable-banner"
           status="warning"
           content={{
             message: (
@@ -84,6 +86,7 @@ const AccountWarningBanner = ({ currency }: Props) => {
       )}
       {currencyConfig?.status.type === "will_be_deprecated" && (
         <TopBanner
+          testId="deprecated-banner"
           status="warning"
           content={{
             message: t("account.willBeDeprecatedBanner.title", {
