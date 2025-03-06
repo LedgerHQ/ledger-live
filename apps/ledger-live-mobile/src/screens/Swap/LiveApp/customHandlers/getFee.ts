@@ -5,9 +5,9 @@ import { getAbandonSeedAddress } from "@ledgerhq/live-common/currencies/index";
 import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
 import { AccountLike } from "@ledgerhq/types-live";
-import { NavigationProp, NavigationState } from "@react-navigation/native";
 import BigNumber from "bignumber.js";
 import { NavigatorName, ScreenName } from "~/const";
+import { NavigationType } from ".";
 import { convertToAtomicUnit, convertToNonAtomicUnit, getCustomFeesPerFamily } from "../utils";
 
 // Constants
@@ -39,10 +39,6 @@ export interface FeeData {
   hasDrawer: boolean;
   gasLimit: BigNumber | null;
 }
-
-type NavigationType = Omit<NavigationProp<ReactNavigation.RootParamList>, "getState"> & {
-  getState(): NavigationState | undefined;
-};
 
 // Helper functions
 export function transformToBigNumbers(obj: TransformableObject): TransformableObject {
