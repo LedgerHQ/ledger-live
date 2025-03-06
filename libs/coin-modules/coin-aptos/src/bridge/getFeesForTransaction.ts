@@ -1,6 +1,7 @@
 import { Ed25519PublicKey } from "@aptos-labs/ts-sdk";
 import { log } from "@ledgerhq/logs";
 import type { Account } from "@ledgerhq/types-live";
+import { findSubAccountById, isTokenAccount } from "@ledgerhq/coin-framework/account/index";
 import BigNumber from "bignumber.js";
 import { makeLRUCache, seconds } from "@ledgerhq/live-network/cache";
 import { AptosAPI } from "../api";
@@ -49,9 +50,12 @@ export const getFee = async (
 
       const expectedGas = gasPrice.multipliedBy(gasLimit);
 
+      const tokenAccount = findSubAccountById(account, transaction.subAccountId ?? "");
+      const fromTokenAccount = tokenAccount && isTokenAccount(tokenAccount);
+
       const isUnderMaxSpendable = transaction.amount
         .plus(expectedGas)
-        .isLessThan(account.spendableBalance);
+        .isLessThan(fromTokenAccount ? tokenAccount.spendableBalance : account.spendableBalance);
 
       if (isUnderMaxSpendable && !completedTx.success) {
         // we want to skip INSUFFICIENT_BALANCE error because it will be processed by getTransactionStatus
