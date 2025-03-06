@@ -44,15 +44,17 @@ const getTransactionStatus = async (a: Account, t: Transaction): Promise<Transac
 
   const amount = t.useAllAmount
     ? fromTokenAccount
-      ? tokenAccount.balance
-      : a.spendableBalance.minus(estimatedFees)
+      ? BigNumber(tokenAccount.spendableBalance)
+      : BigNumber(a.spendableBalance.minus(estimatedFees))
     : BigNumber(t.amount);
 
-  const totalSpent = amount.plus(estimatedFees);
+  const totalSpent = BigNumber(amount.plus(estimatedFees));
 
   if (
-    (fromTokenAccount ? amount.gt(tokenAccount.balance) : amount.gt(a.balance)) &&
-    !errors.amount
+    fromTokenAccount
+      ? tokenAccount.spendableBalance.isLessThan(totalSpent) &&
+        a.spendableBalance.isLessThan(estimatedFees)
+      : a.spendableBalance.isLessThan(totalSpent) && !errors.amount
   ) {
     errors.amount = new NotEnoughBalance();
   }

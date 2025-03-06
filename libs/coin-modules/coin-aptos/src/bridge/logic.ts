@@ -7,7 +7,8 @@ import {
   WriteSetChangeWriteResource,
 } from "@aptos-labs/ts-sdk";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import type { Operation, OperationType } from "@ledgerhq/types-live";
+import type { Account, Operation, OperationType } from "@ledgerhq/types-live";
+import { findSubAccountById, isTokenAccount } from "@ledgerhq/coin-framework/account/index";
 import BigNumber from "bignumber.js";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import {
@@ -22,6 +23,7 @@ import type {
   AptosFungibleStoreResourceData,
   AptosMoveResource,
   AptosTransaction,
+  Transaction,
   TransactionOptions,
 } from "../types";
 import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
@@ -38,13 +40,21 @@ export function isTestnet(currencyId: string): boolean {
 }
 
 export const getMaxSendBalance = (
-  amount: BigNumber,
+  account: Account,
+  transaction: Transaction,
   gas: BigNumber,
   gasPrice: BigNumber,
 ): BigNumber => {
+  const tokenAccount = findSubAccountById(account, transaction.subAccountId ?? "");
+  const fromTokenAccount = tokenAccount && isTokenAccount(tokenAccount);
+
   const totalGas = gas.multipliedBy(gasPrice);
 
-  return amount.gt(totalGas) ? amount.minus(totalGas) : new BigNumber(0);
+  return fromTokenAccount
+    ? tokenAccount.spendableBalance
+    : account.spendableBalance.gt(totalGas)
+      ? account.spendableBalance.minus(totalGas)
+      : new BigNumber(0);
 };
 
 export function normalizeTransactionOptions(options: TransactionOptions): TransactionOptions {

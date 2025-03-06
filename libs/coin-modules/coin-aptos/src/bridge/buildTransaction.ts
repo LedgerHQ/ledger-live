@@ -26,14 +26,30 @@ const getPayload = (
 ): InputEntryFunctionData => {
   if (tokenAccount && isTokenAccount(tokenAccount)) {
     const { tokenType } = tokenAccount.token;
-    if (SUPPORTED_TOKEN_TYPES.includes(tokenType))
+
+    if (!SUPPORTED_TOKEN_TYPES.includes(tokenType)) {
+      throw new Error(`Token type ${tokenType} not supported`);
+    }
+
+    if (tokenType === "fungible_asset") {
       return {
-        function: `0x1::${tokenType}::transfer`,
+        function: `0x1::primary_fungible_store::transfer`,
+        typeArguments: ["0x1::fungible_asset::Metadata"],
+        functionArguments: [
+          [tokenAccount.token.contractAddress],
+          transaction.recipient,
+          transaction.amount.toString(),
+        ],
+      };
+    }
+
+    if (tokenType === "coin") {
+      return {
+        function: `0x1::coin::transfer`,
         typeArguments: [tokenAccount.token.contractAddress],
         functionArguments: [transaction.recipient, transaction.amount.toString()],
       };
-
-    throw new Error(`Token type ${tokenType} not supported`);
+    }
   }
 
   return {
