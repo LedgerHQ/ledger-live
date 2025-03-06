@@ -5,10 +5,7 @@ import type { LNSBannerLocation, LNSBannerVariant } from "LLD/features/LNSUpsell
 import { anonymousUserNotificationsSelector } from "~/renderer/reducers/settings";
 import { updateAnonymousUserNotifications } from "~/renderer/actions/settings";
 
-export function useLNSUpsellViewNotification(
-  location: LNSBannerLocation,
-  variant: LNSBannerVariant,
-) {
+export function useViewNotification(location: LNSBannerLocation, variant: LNSBannerVariant) {
   const dispatch = useDispatch();
   const viewed = useSelector(anonymousUserNotificationsSelector).LNSUpsell;
 
