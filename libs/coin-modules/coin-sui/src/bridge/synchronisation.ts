@@ -31,7 +31,7 @@ export const getAccountShape: GetAccountShape<SuiAccount> = async info => {
     const newOperations = await getOperations(accountId, address, startAtIn, startAtOut);
     operations = mergeOps(oldOperations, newOperations);
   } catch (e) {
-    // if we could sync with existing transaction - we start from the beggining, rewritting transaction history
+    // if we could NOT sync with existing transaction - we start from the beggining, rewritting transaction history
     operations = await getOperations(accountId, address);
   }
 
