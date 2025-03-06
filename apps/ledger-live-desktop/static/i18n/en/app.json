@@ -769,7 +769,7 @@
       }
     },
     "migrationBanner": {
-      "title": "{{coinA}} is migrating to {{coinB}}. Follow this <0>link</0> to know more or contact the support if you need assistance.",
+      "title": "{{from}} is migrating to {{to}}. Follow this <0>link</0> to know more or contact the support if you need assistance.",
       "contactSupport": "Contact support"
     },
     "featureUnavailable": {

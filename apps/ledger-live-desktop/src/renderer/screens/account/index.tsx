@@ -1,12 +1,11 @@
 import React, { useCallback } from "react";
 import { compose } from "redux";
 import { connect } from "react-redux";
-import { withTranslation, Trans } from "react-i18next";
+import { withTranslation } from "react-i18next";
 import { TFunction } from "i18next";
 import { Redirect } from "react-router";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
-import { Text, Link } from "@ledgerhq/react-ui";
 import { isAddressPoisoningOperation } from "@ledgerhq/live-common/operation";
 import { getCurrencyColor } from "~/renderer/getCurrencyColor";
 import { accountSelector } from "~/renderer/reducers/accounts";
@@ -29,6 +28,7 @@ import NftCollections from "LLD/features/Collectibles/Nfts/Collections";
 import OrdinalsAccount from "LLD/features/Collectibles/Ordinals/screens/Account";
 import BalanceSummary from "./BalanceSummary";
 import AccountHeader from "./AccountHeader";
+import AccountWarningBanner from "./AccountWarningBanner";
 import AccountHeaderActions, { AccountHeaderSettingsButton } from "./AccountHeaderActions";
 import EmptyStateAccount from "./EmptyStateAccount";
 import TokensList from "./TokensList";
@@ -36,15 +36,9 @@ import { AccountStakeBanner } from "~/renderer/screens/account/AccountStakeBanne
 import { AccountLike, Account, Operation } from "@ledgerhq/types-live";
 import { State } from "~/renderer/reducers";
 import { getLLDCoinFamily } from "~/renderer/families";
-import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
-import TopBanner from "~/renderer/components/TopBanner";
-import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
-import { urls } from "~/config/urls";
-import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { isBitcoinBasedAccount, isBitcoinAccount } from "@ledgerhq/live-common/account/typeGuards";
 import { useNftCollectionsStatus } from "~/renderer/hooks/nfts/useNftCollectionsStatus";
-import { openURL } from "~/renderer/linking";
 
 type Params = {
   id: string;
@@ -131,21 +125,6 @@ const AccountPage = ({
 
   const currency = mainAccount?.currency;
 
-  let currencyConfig: CurrencyConfig | undefined = undefined;
-
-  try {
-    currencyConfig = getCurrencyConfiguration(currency!);
-  } catch (err) {
-    console.warn(err);
-  }
-
-  const localizedContactSupportURL = useLocalizedUrl(urls.contactSupportWebview);
-
-  const supportLink = (currencyConfig?.status as { link?: string })?.link;
-  const openSupportLink = useCallback(() => {
-    openURL(supportLink || localizedContactSupportURL);
-  }, [supportLink, localizedContactSupportURL]);
-
   if (!account || !mainAccount || !currency) {
     return <Redirect to="/accounts" />;
   }
@@ -187,64 +166,7 @@ const AccountPage = ({
       >
         <AccountHeaderActions account={account} parentAccount={parentAccount} />
       </Box>
-      {currencyConfig?.status.type === "migration" && (
-        <TopBanner
-          status="warning"
-          content={{
-            message: (
-              <Text fontFamily="Inter|Bold" color="neutral.c00" flex={1}>
-                <Trans
-                  i18nKey="account.migrationBanner.title"
-                  values={{
-                    coinA: currencyConfig.status.coinA,
-                    coinB: currencyConfig.status.coinB,
-                  }}
-                  components={[
-                    <Link key={0} color="neutral.c00" alwaysUnderline onClick={openSupportLink} />,
-                  ]}
-                />
-              </Text>
-            ),
-          }}
-          link={{
-            text: t("account.migrationBanner.contactSupport"),
-            href: localizedContactSupportURL,
-          }}
-        />
-      )}
-      {currencyConfig?.status.type === "feature_unavailable" && (
-        <TopBanner
-          status="warning"
-          content={{
-            message: (
-              <Text fontFamily="Inter|Bold" color="neutral.c00" flex={1}>
-                {t("account.featureUnavailable.title", {
-                  feature: t(`account.featureUnavailable.feature.${currencyConfig.status.feature}`),
-                  support: "",
-                })}
-                <Link color="neutral.c00" alwaysUnderline onClick={openSupportLink}>
-                  {t("account.featureUnavailable.support")}
-                </Link>
-              </Text>
-            ),
-          }}
-        />
-      )}
-      {currencyConfig?.status.type === "will_be_deprecated" && (
-        <TopBanner
-          status="warning"
-          content={{
-            message: t("account.willBeDeprecatedBanner.title", {
-              currencyName: currency.name,
-              deprecatedDate: currencyConfig.status.deprecated_date,
-            }),
-          }}
-          link={{
-            text: t("account.willBeDeprecatedBanner.contactSupport"),
-            href: localizedContactSupportURL,
-          }}
-        />
-      )}
+      <AccountWarningBanner currency={currency} />
       {AccountSubHeader ? (
         <AccountSubHeader account={account} parentAccount={parentAccount} />
       ) : null}

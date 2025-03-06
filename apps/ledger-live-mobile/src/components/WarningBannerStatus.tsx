@@ -43,8 +43,8 @@ const WarningBannerStatus = ({ currencyConfig, currency }: Props) => {
           <Trans
             i18nKey="account.migrationBanner.title"
             values={{
-              coinA: currencyConfig.status.coinA,
-              coinB: currencyConfig.status.coinB,
+              from: currencyConfig.status.from,
+              to: currencyConfig.status.to,
             }}
             components={[<UnderlinedText onPress={openSupportLink} key="SupportLink" />]}
           />
