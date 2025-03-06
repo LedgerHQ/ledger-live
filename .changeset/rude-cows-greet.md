@@ -1,6 +1,6 @@
 ---
-"@ledgerhq/coin-icon": patch
-"@ledgerhq/live-common": patch
+"@ledgerhq/coin-icon": minor
+"@ledgerhq/live-common": minor
 ---
 
 Fix specs for Celo and ICON
