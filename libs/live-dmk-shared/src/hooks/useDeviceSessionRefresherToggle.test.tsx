@@ -15,7 +15,7 @@ vi.mock("@ledgerhq/device-management-kit", async importOriginal => {
         getDeviceSessionState: vi.fn(),
         startDiscovering: vi.fn(),
         connect: vi.fn(),
-        toggleDeviceSessionRefresher: vi.fn(),
+        disableDeviceSessionRefresher: vi.fn(),
       }),
     })),
     ConsoleLogger: vi.fn(),
@@ -30,13 +30,13 @@ vi.mock("@ledgerhq/device-management-kit", async importOriginal => {
 describe("useDeviceSessionRefresherToggle", () => {
   let deviceManagementKitMock: {
     getDeviceSessionState: Mock;
-    toggleDeviceSessionRefresher: Mock;
+    disableDeviceSessionRefresher: Mock;
   };
 
   beforeEach(() => {
     deviceManagementKitMock = {
       getDeviceSessionState: vi.fn(),
-      toggleDeviceSessionRefresher: vi.fn(),
+      disableDeviceSessionRefresher: vi.fn(),
     };
   });
 
@@ -52,7 +52,7 @@ describe("useDeviceSessionRefresherToggle", () => {
           true,
         ),
       );
-      expect(deviceManagementKitMock.toggleDeviceSessionRefresher).not.toHaveBeenCalled();
+      expect(deviceManagementKitMock.disableDeviceSessionRefresher).not.toHaveBeenCalled();
     });
 
     it("should toggle the device session refresher off on the current active session", async () => {
@@ -71,7 +71,7 @@ describe("useDeviceSessionRefresherToggle", () => {
         ),
       );
 
-      expect(deviceManagementKitMock.toggleDeviceSessionRefresher).toHaveBeenCalledOnce();
+      expect(deviceManagementKitMock.disableDeviceSessionRefresher).toHaveBeenCalledOnce();
     });
 
     it("should turn off the device session refresher on the new active session and turn it on for the previous active one", async () => {
@@ -90,7 +90,7 @@ describe("useDeviceSessionRefresherToggle", () => {
         ),
       );
 
-      expect(deviceManagementKitMock.toggleDeviceSessionRefresher).toHaveBeenCalledWith({
+      expect(deviceManagementKitMock.disableDeviceSessionRefresher).toHaveBeenCalledWith({
         sessionId: "valid-session-1",
         enabled: false,
       });
@@ -105,17 +105,17 @@ describe("useDeviceSessionRefresherToggle", () => {
 
       rerender();
 
-      expect(deviceManagementKitMock.toggleDeviceSessionRefresher).toHaveBeenCalledWith({
+      expect(deviceManagementKitMock.disableDeviceSessionRefresher).toHaveBeenCalledWith({
         sessionId: "valid-session-1",
         enabled: true,
       });
 
-      expect(deviceManagementKitMock.toggleDeviceSessionRefresher).toHaveBeenCalledWith({
+      expect(deviceManagementKitMock.disableDeviceSessionRefresher).toHaveBeenCalledWith({
         sessionId: "valid-session-2",
         enabled: false,
       });
 
-      expect(deviceManagementKitMock.toggleDeviceSessionRefresher).toHaveBeenCalledTimes(3);
+      expect(deviceManagementKitMock.disableDeviceSessionRefresher).toHaveBeenCalledTimes(3);
     });
 
     it("should reset the current device session refresher state when the hook is unmounted", () => {
@@ -134,19 +134,19 @@ describe("useDeviceSessionRefresherToggle", () => {
         ),
       );
 
-      expect(deviceManagementKitMock.toggleDeviceSessionRefresher).toHaveBeenCalledWith({
+      expect(deviceManagementKitMock.disableDeviceSessionRefresher).toHaveBeenCalledWith({
         sessionId: "valid-session-1",
         enabled: false,
       });
 
       unmount();
 
-      expect(deviceManagementKitMock.toggleDeviceSessionRefresher).toHaveBeenCalledWith({
+      expect(deviceManagementKitMock.disableDeviceSessionRefresher).toHaveBeenCalledWith({
         sessionId: "valid-session-1",
         enabled: true,
       });
 
-      expect(deviceManagementKitMock.toggleDeviceSessionRefresher).toHaveBeenCalledTimes(2);
+      expect(deviceManagementKitMock.disableDeviceSessionRefresher).toHaveBeenCalledTimes(2);
     });
 
     it("should do nothing if the hook is unmounted and there is no active session", () => {
@@ -158,7 +158,7 @@ describe("useDeviceSessionRefresherToggle", () => {
         ),
       );
       unmount();
-      expect(deviceManagementKitMock.toggleDeviceSessionRefresher).not.toHaveBeenCalled();
+      expect(deviceManagementKitMock.disableDeviceSessionRefresher).not.toHaveBeenCalled();
     });
 
     describe("resetRefresherState", () => {
@@ -169,7 +169,7 @@ describe("useDeviceSessionRefresherToggle", () => {
             true,
           ),
         );
-        expect(result.current.resetRefresherState).toBeDefined();
+        expect(result.current).toBeDefined();
       });
 
       it("should not unsubscribe if there is no active device session", () => {
@@ -179,8 +179,8 @@ describe("useDeviceSessionRefresherToggle", () => {
             true,
           ),
         );
-        result.current.resetRefresherState();
-        expect(deviceManagementKitMock.toggleDeviceSessionRefresher).not.toHaveBeenCalled();
+        expect(result.current).not.toBeDefined();
+        expect(deviceManagementKitMock.disableDeviceSessionRefresher).not.toHaveBeenCalled();
       });
 
       it("should unsubscribe if there is an active device session", () => {
@@ -198,8 +198,8 @@ describe("useDeviceSessionRefresherToggle", () => {
             true,
           ),
         );
-        result.current.resetRefresherState();
-        expect(deviceManagementKitMock.toggleDeviceSessionRefresher).toHaveBeenCalledWith({
+        result?.current?.();
+        expect(deviceManagementKitMock.disableDeviceSessionRefresher).toHaveBeenCalledWith({
           sessionId: "valid-session-1",
           enabled: true,
         });
@@ -215,7 +215,7 @@ describe("useDeviceSessionRefresherToggle", () => {
           false,
         ),
       );
-      expect(deviceManagementKitMock.toggleDeviceSessionRefresher).not.toHaveBeenCalled();
+      expect(deviceManagementKitMock.disableDeviceSessionRefresher).not.toHaveBeenCalled();
     });
 
     it("should not toggle the device session refresher on even if there is an active session", () => {
@@ -233,7 +233,7 @@ describe("useDeviceSessionRefresherToggle", () => {
           false,
         ),
       );
-      expect(deviceManagementKitMock.toggleDeviceSessionRefresher).not.toHaveBeenCalled();
+      expect(deviceManagementKitMock.disableDeviceSessionRefresher).not.toHaveBeenCalled();
     });
 
     it("should not do anything on unmount", () => {
@@ -252,7 +252,7 @@ describe("useDeviceSessionRefresherToggle", () => {
         ),
       );
       unmount();
-      expect(deviceManagementKitMock.toggleDeviceSessionRefresher).not.toHaveBeenCalled();
+      expect(deviceManagementKitMock.disableDeviceSessionRefresher).not.toHaveBeenCalled();
     });
   });
 });

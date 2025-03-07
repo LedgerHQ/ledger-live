@@ -10,7 +10,7 @@ export type DmkBleDevicesScanningProps = {
 };
 
 export const DmkBleDevicesScanning = ({ onDeviceSelect }: DmkBleDevicesScanningProps) => {
-  const { scannedDevices, _scanningBleError } = useBleDevicesScanning();
+  const { scannedDevices } = useBleDevicesScanning(true);
 
   return (
     <FlatList

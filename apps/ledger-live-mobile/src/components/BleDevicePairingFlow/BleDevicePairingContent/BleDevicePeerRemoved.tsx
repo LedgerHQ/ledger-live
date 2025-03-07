@@ -1,8 +1,8 @@
 import { Button, Flex, IconsLegacy } from "@ledgerhq/native-ui";
 import GenericErrorView from "~/components/GenericErrorView";
 import { Trans } from "react-i18next";
+import { BleError } from "@ledgerhq/live-common/ble/types";
 import React from "react";
-import { BleError } from "@ledgerhq/live-common/lib/ble/types";
 
 export const BleDevicePeerRemoved = ({
   pairingError,
