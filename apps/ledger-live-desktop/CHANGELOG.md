@@ -1,5 +1,17 @@
 # ledger-live-desktop
 
+## 2.103.0-nightly.1
+
+### Minor Changes
+
+- [#9444](https://github.com/LedgerHQ/ledger-live/pull/9444) [`300b914`](https://github.com/LedgerHQ/ledger-live/commit/300b91439c30058c62c628836e5659f74ff592f2) Thanks [@CremaFR](https://github.com/CremaFR)! - feat: more coins for nano s incomp banner
+
+### Patch Changes
+
+- Updated dependencies [[`dcea0f8`](https://github.com/LedgerHQ/ledger-live/commit/dcea0f880728c808fffe5b09410eec614083f04b), [`300b914`](https://github.com/LedgerHQ/ledger-live/commit/300b91439c30058c62c628836e5659f74ff592f2)]:
+  - @ledgerhq/coin-evm@2.13.0-nightly.0
+  - @ledgerhq/live-common@34.25.0-nightly.1
+
 ## 2.102.1-nightly.0
 
 ### Patch Changes

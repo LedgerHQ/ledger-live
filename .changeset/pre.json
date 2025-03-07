@@ -137,8 +137,10 @@
     "@ledgerhq/pnpm-utils": "1.0.1"
   },
   "changesets": [
+    "famous-jobs-sort",
     "good-trains-hope",
     "late-papayas-march",
+    "popular-brooms-argue",
     "tender-rabbits-visit"
   ]
 }

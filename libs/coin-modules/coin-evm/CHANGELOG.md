@@ -1,5 +1,11 @@
 # @ledgerhq/coin-evm
 
+## 2.13.0-nightly.0
+
+### Minor Changes
+
+- [#9446](https://github.com/LedgerHQ/ledger-live/pull/9446) [`dcea0f8`](https://github.com/LedgerHQ/ledger-live/commit/dcea0f880728c808fffe5b09410eec614083f04b) Thanks [@Justkant](https://github.com/Justkant)! - fix: potential wrong type for the hydrate value
+
 ## 2.12.0
 
 ### Minor Changes
