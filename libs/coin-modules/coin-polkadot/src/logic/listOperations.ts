@@ -42,17 +42,18 @@ const convertToCoreOperation = (address: string) => (operation: PolkadotOperatio
     transactionSequenceNumber,
   } = operation;
   return {
-    hash,
-    address,
+    tx: {
+      hash,
+      fees: BigInt(fee.toString()),
+      block: {
+        height: blockHeight ?? 0,
+        time: date,
+      },
+    },
     type,
     value: BigInt(value.toString()),
-    fee: BigInt(fee.toString()),
-    block: {
-      height: blockHeight ?? 0,
-    },
     senders,
     recipients,
-    date,
     transactionSequenceNumber: transactionSequenceNumber ?? 0,
   };
 };

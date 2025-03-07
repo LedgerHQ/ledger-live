@@ -35,19 +35,21 @@ const convertToCoreOperation = (address: string) => (operation: any) => {
   }
 
   return {
-    hash,
-    address,
+    tx: {
+      hash,
+      fees: feeValue,
+      block: {
+        height: inLedger,
+        hash,
+        time: date,
+      },
+    },
     type,
     value,
-    fee: feeValue,
-    block: {
-      height: inLedger,
-      hash,
-      time: date,
-    },
     senders: [Account],
     recipients: [Destination],
     date: new Date(date),
     transactionSequenceNumber: Sequence,
+    operationIndex: 0,
   };
 };
