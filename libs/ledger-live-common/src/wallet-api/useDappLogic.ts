@@ -235,9 +235,22 @@ export function useDappLogic({
 
   const currentNetwork = useMemo(() => {
     if (!currentAccount) {
+      console.log(`>> No current account in useDappLogic. **`);
       return undefined;
     }
     return manifest.dapp?.networks.find(network => {
+      console.log(
+        `*** >> Manifest network.currency: ${network.currency} - does it match account currency?`,
+        {
+          currentAccountCurrency:
+            currentAccount.type === "TokenAccount"
+              ? currentAccount.token.id
+              : currentAccount.currency.id,
+          currentAccountType: currentAccount.type,
+          parentAccountCurrency: currentParentAccount?.currency?.id,
+          network,
+        },
+      );
       return (
         network.currency ===
         (currentAccount.type === "TokenAccount"

@@ -36,8 +36,8 @@ export function useStake({
   const featureFlag = useFeature("stakePrograms");
 
   const enabledCurrencies = featureFlag?.params?.list || [];
-  const redirects = featureFlag?.params?.redirects || {};
-  const partnerSupportedTokens = Object.keys(redirects || []);
+  const redirects = featureFlag?.params?.redirects.length ? featureFlag.params.redirects : [];
+  const partnerSupportedTokens = (redirects || []).map(r => r?.assetId);
 
   const canStakeUsingPlatformApp = !currencyId
     ? false
@@ -45,7 +45,7 @@ export function useStake({
   const canStakeUsingLedgerLive = !currencyId ? false : enabledCurrencies.includes(currencyId);
   const canStakeCurrency = canStakeUsingPlatformApp || canStakeUsingLedgerLive;
 
-  const partner = !currencyId ? null : redirects[currencyId] ?? null;
+  const partner = !currencyId ? null : redirects.find(r => r.assetId === currencyId) ?? null;
   const localManifest = useLocalLiveAppManifest(partner?.platform);
   const remoteManifest = useRemoteLiveAppManifest(partner?.platform);
   const manifest: LiveAppManifest | undefined = remoteManifest || localManifest;
@@ -60,20 +60,26 @@ export function useStake({
         partner?.queryParams &&
         appendQueryParamsToDappURL(manifest, partner.queryParams)?.toString();
 
-      console.log(`>> getting route.... customDappURL: ${customDappURL}`);
+      console.log(
+        `>> getting route.... customDappURL: ${customDappURL} - returning PlatformApp navigator params.`,
+      );
       return [
-        ScreenName.PlatformApp,
+        NavigatorName.Base,
         {
-          platform: manifest.id,
-          name: manifest.name,
-          accountId,
-          yieldId: partner?.queryParams?.yieldId,
-          chainId: partner?.queryParams?.chainId,
-          customDappURL: customDappURL || undefined,
+          screen: ScreenName.PlatformApp,
+          params: {
+            platform: manifest.id,
+            name: manifest.name,
+            accountId,
+            yieldId: partner?.queryParams?.yieldId,
+            chainId: partner?.queryParams?.chainId,
+            customDappURL: customDappURL || undefined,
+          },
         },
       ];
-    } else if (canStakeUsingLedgerLive || !currencyId) {
-      console.log(`>> getting route.... StakeFlow`, { currencyId, parentRoute });
+    }
+    if (canStakeUsingLedgerLive || !currencyId) {
+      );
       return [
         NavigatorName.StakeFlow,
         {
@@ -86,7 +92,10 @@ export function useStake({
         },
       ];
     }
-    console.error(`>>> No staking route found for currencyId: ${currencyId}.`);
+    console.error(
+      `>>> Cannot stake, No currency provided, or no staking route found for currencyId: ${currencyId}. Returning null as navigation params.`,
+    );
+    // TODO: assert or error here?
     return null;
   }, [
     canStakeUsingPlatformApp,

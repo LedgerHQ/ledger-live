@@ -1,9 +1,13 @@
 import { useMemo } from "react";
-import { AccountLikeArray } from "@ledgerhq/types-live";
+import { AccountLikeArray, TokenAccount } from "@ledgerhq/types-live";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { IconsLegacy } from "@ledgerhq/native-ui";
-import { getParentAccount, isTokenAccount } from "@ledgerhq/live-common/account/index";
+import {
+  getMainAccount,
+  getParentAccount,
+  isTokenAccount,
+} from "@ledgerhq/live-common/account/index";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
@@ -17,7 +21,6 @@ import { flattenAccountsSelector } from "~/reducers/accounts";
 import { PtxToast } from "../../Toast/PtxToast";
 import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
 import { useStake } from "~/newArch/hooks/useStake/useStake";
-import { n } from "node_modules/msw/lib/core/GraphQLHandler-bom2Dn82";
 
 type useAssetActionsProps = {
   currency?: CryptoCurrency | TokenCurrency;
@@ -53,7 +56,6 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
     [accounts],
   );
 
-  console.log({ defaultAccount });
   const availableOnSwap = currency && currenciesAll.includes(currency.id);
 
   const { isCurrencyAvailable } = useRampCatalog();
@@ -61,17 +63,19 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
   const canBeBought = !!currency && isCurrencyAvailable(currency.id, "onRamp");
   const canBeSold = !!currency && isCurrencyAvailable(currency.id, "offRamp");
 
-  const { canStakeCurrency, navigationParams: stakeNavigationParams } = useStake({
-    currencyId: currency?.id,
-    accountId: defaultAccount?.id,
-  });
-
-  console.log(`>> canStakeCurrency: ${canStakeCurrency}`, { stakeNavigationParams });
-
   const totalAccounts = useSelector(flattenAccountsSelector);
   const parentAccount = isTokenAccount(defaultAccount)
     ? getParentAccount(defaultAccount, totalAccounts)
     : undefined;
+
+  const accountCurrency = isTokenAccount(defaultAccount)
+    ? (defaultAccount as TokenAccount)?.token?.id
+    : defaultAccount?.currency?.id;
+
+  const { canStakeCurrency, navigationParams: stakeNavigationParams } = useStake({
+    currencyId: currency?.id ?? accountCurrency,
+    accountId: isTokenAccount(defaultAccount) ? defaultAccount.parentId : defaultAccount?.id,
+  });
 
   const actions = useMemo<ActionButtonEvent[]>(() => {
     const isPtxServiceCtaScreensDisabled = !(ptxServiceCtaScreens?.enabled ?? true);
