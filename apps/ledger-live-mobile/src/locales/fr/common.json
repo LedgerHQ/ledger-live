@@ -1119,6 +1119,11 @@
       "fast" : "Rapide",
       "custom" : "Personnalisé",
       "blockCount" : "{{blockCount}} blocs"
+    },
+    "estimatedTime" : {
+      "slow" : "≈ 2 à 3 min",
+      "medium" : "≈ 30 sec",
+      "fast" : "≈ 15 sec"
     }
   },
   "signout" : {
@@ -6992,6 +6997,16 @@
   },
   "walletSync" : {
     "title" : "Ledger Sync",
+    "entryPoints" : {
+      "simpleCta" : {
+        "title" : "Activez Ledger Sync"
+      },
+      "card" : {
+        "title" : "Ledger Sync",
+        "description" : "Synchronisez automatiquement vos comptes, même si vous changez de téléphone.",
+        "cta" : "Activer Ledger Sync"
+      }
+    },
     "activation" : {
       "screen" : {
         "title" : "Activer Ledger Sync pour ce téléphone ?",

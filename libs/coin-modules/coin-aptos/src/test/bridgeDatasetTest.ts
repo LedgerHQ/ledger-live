@@ -28,7 +28,7 @@ const aptos: CurrenciesData<Transaction> = {
         derivationMode: "",
         index: 0,
         freshAddress: "0x445fa0013887abd1a0c14acdec6e48090e0ad3fed3e08202aac15ca14f3be26b",
-        freshAddressPath: "44'/637'/0'/0/0",
+        freshAddressPath: "44'/637'/0'/0'/0'",
         blockHeight: 286066372,
         creationDate: "2024-12-18T12:26:31.070Z",
         operationsCount: 5,

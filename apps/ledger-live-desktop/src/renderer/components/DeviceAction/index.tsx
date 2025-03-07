@@ -84,6 +84,7 @@ import { useTrackManagerSectionEvents } from "~/renderer/analytics/hooks/useTrac
 import { useTrackReceiveFlow } from "~/renderer/analytics/hooks/useTrackReceiveFlow";
 import { useTrackAddAccountModal } from "~/renderer/analytics/hooks/useTrackAddAccountModal";
 import { useTrackExchangeFlow } from "~/renderer/analytics/hooks/useTrackExchangeFlow";
+import { useTrackSendFlow } from "~/renderer/analytics/hooks/useTrackSendFlow";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 import { useTrackSyncFlow } from "~/renderer/analytics/hooks/useTrackSyncFlow";
 
@@ -286,6 +287,14 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     allowManagerRequested: hookState.allowManagerRequested,
     requestOpenApp,
     isLedgerSyncAppOpen: appAndVersion?.name === "Ledger Sync",
+    isTrackingEnabled: useSelector(trackingEnabledSelector),
+  });
+
+  useTrackSendFlow({
+    location: location === HOOKS_TRACKING_LOCATIONS.sendModal ? location : undefined,
+    device,
+    error,
+    inWrongDeviceForAccount,
     isTrackingEnabled: useSelector(trackingEnabledSelector),
   });
 

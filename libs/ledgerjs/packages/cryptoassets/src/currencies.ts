@@ -3536,6 +3536,51 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   // ethereum nanoapp currencies
   // Light Integrations are at the end of the list until we figure out a way to fix the ticker/managerApp collisions
+  sonic: {
+    type: "CryptoCurrency",
+    id: "sonic",
+    coinType: CoinType.ETH,
+    name: "Sonic",
+    managerAppName: "Ethereum",
+    ticker: "S",
+    scheme: "sonic",
+    color: "#FFFFFF",
+    family: "evm",
+    units: ethereumUnits("S", "S"),
+    ethereumLikeInfo: {
+      chainId: 146,
+    },
+    explorerViews: [
+      {
+        tx: "https://sonicscan.org/tx/$hash",
+        address: "https://sonicscan.org/address/$address",
+        token: "https://sonicscan.org/token/$contractAddress?a=$address",
+      },
+    ],
+  },
+  sonic_blaze: {
+    type: "CryptoCurrency",
+    id: "sonic_blaze",
+    isTestnetFor: "sonic",
+    coinType: CoinType.ETH,
+    name: "Sonic Blaze",
+    managerAppName: "Ethereum",
+    ticker: "S",
+    scheme: "sonic_blaze",
+    color: "#FFFFFF",
+    family: "evm",
+    units: ethereumUnits("S", "S"),
+    ethereumLikeInfo: {
+      chainId: 57054,
+    },
+    explorerViews: [
+      {
+        tx: "https://testnet.sonicscan.org/tx/$hash",
+        address: "https://testnet.sonicscan.org/address/$address",
+        token: "https://testnet.sonicscan.org/token/$contractAddress?a=$address",
+      },
+    ],
+  },
   arbitrum: {
     type: "CryptoCurrency",
     id: "arbitrum",

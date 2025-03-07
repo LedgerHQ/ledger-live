@@ -15,7 +15,7 @@ import LocationHelperModule, {
  *
  * @returns the callback
  */
-export function useAndroidPromptEnableLocationCallback() {
+function useAndroidPromptEnableLocationCallback() {
   return useCallback(async (): Promise<CheckAndRequestResponse | "LOCATION_MODULE_THREW_ERROR"> => {
     try {
       if (Platform.OS === "android") {

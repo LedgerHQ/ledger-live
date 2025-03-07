@@ -51,7 +51,7 @@ export class NFTDrawer extends Drawer {
 
     const { data } = await axios({
       method: "GET",
-      url: `${getEnv("NFT_ETH_METADATA_SERVICE")}/v1/marketdata/${account.currency.currencyId}/1/contract/${nft}/floor-price`,
+      url: `${getEnv("NFT_METADATA_SERVICE")}/v2/marketdata/${account.currency.currencyId}/1/contract/${nft}/floor-price`,
     });
 
     expect(data.value).toEqual(parseFloat(floorPrice));

@@ -34,7 +34,7 @@ export const buildSignOperation =
         };
         const loadConfig: LoadConfig = {
           cryptoassetsBaseURL: getEnv("DYNAMIC_CAL_BASE_URL"),
-          nftExplorerBaseURL: getEnv("NFT_ETH_METADATA_SERVICE") + "/v1/ethereum",
+          nftExplorerBaseURL: getEnv("NFT_METADATA_SERVICE") + "/v1/ethereum",
         };
 
         o.next({

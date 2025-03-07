@@ -1,109 +1,122 @@
-import { OperationType } from "@ledgerhq/types-live";
-import { TrongridTxInfo, TrongridTxType } from "../types";
-import { getTronResources, txInfoToOperation } from "./utils";
 import BigNumber from "bignumber.js";
+import coinConfig from "../config";
+import { decodeTransaction, getTronResources } from "./utils";
 
-jest.mock("@ledgerhq/coin-framework/operation", () => ({
-  encodeOperationId: jest.fn(() => "encodedOpId"),
-}));
-
-let mockTx: TrongridTxInfo;
-
-const TRX_MAGNITUDE = 1_000_000; // Magnitude 6
-
-const testingMap: Record<TrongridTxType, OperationType> = {
-  TransferContract: "IN",
-  TransferAssetContract: "IN",
-  TriggerSmartContract: "IN",
-  ContractApproval: "APPROVE",
-  ExchangeTransactionContract: "OUT",
-  VoteWitnessContract: "VOTE",
-  WithdrawBalanceContract: "REWARD",
-  FreezeBalanceContract: "FREEZE",
-  FreezeBalanceV2Contract: "FREEZE",
-  UnfreezeBalanceV2Contract: "UNFREEZE",
-  WithdrawExpireUnfreezeContract: "WITHDRAW_EXPIRE_UNFREEZE",
-  UnDelegateResourceContract: "UNDELEGATE_RESOURCE",
-  UnfreezeBalanceContract: "LEGACY_UNFREEZE",
-};
-
-describe("txInfoToOperation", () => {
-  beforeEach(() => {
-    mockTx = {} as TrongridTxInfo;
+describe("decodeTransaction", () => {
+  beforeAll(() => {
+    coinConfig.setCoinConfig(() => ({
+      status: {
+        type: "active",
+      },
+      explorer: {
+        url: "http://localhost",
+      },
+    }));
   });
 
-  it.each(Object.keys(testingMap))(
-    `should return correct operation type for %p trongrid tx type`,
-    trongridTxType => {
-      const tx: TrongridTxInfo = {
-        ...mockTx,
-        type: trongridTxType as TrongridTxType,
-      };
+  it("creates a TRX transaction in TronWeb format", async () => {
+    const result = await decodeTransaction(
+      "0a020ee522082e5fc67747a428af40f0e2ace4d3325a66080112620a2d747970652e676f6f676c65617069732e636f6d2f70726f746f636f6c2e5472616e73666572436f6e747261637412310a1541fd49eda0f23ff7ec1d03b52c3a45991c24cd440e12154198927ffb9f554dc4a453c64b2e553a02d6df514b18e80770fd9ca9e4d332",
+    );
 
-      expect(txInfoToOperation("accountId", "address", tx)?.type).toEqual(
-        testingMap[trongridTxType as keyof Record<TrongridTxType, OperationType>],
-      );
-    },
-  );
-
-  it.each(["TransferContract", "TransferAssetContract", "TriggerSmartContract"])(
-    "should return OUT operation type when from is equal to user address for %p trongrid tx type",
-    trongridTxType => {
-      const tx: TrongridTxInfo = {
-        ...mockTx,
-        type: trongridTxType as TrongridTxType,
-        from: "address",
-      };
-
-      expect(txInfoToOperation("accountId", "address", tx)?.type).toEqual("OUT");
-    },
-  );
-
-  it("should return undefined operation type for unknown tx type", () => {
-    const tx: TrongridTxInfo = {
-      ...mockTx,
-      type: "Unknown" as TrongridTxType,
-    };
-
-    expect(txInfoToOperation("accountId", "address", tx)).toBeUndefined();
+    expect(result).toEqual({
+      // visible: true,
+      txID: "477eaebbf508f7e2030f52917d34d264cfef5764d7f73eda582708e5762ceb25",
+      raw_data: {
+        contract: [
+          {
+            parameter: {
+              value: {
+                amount: 1000,
+                owner_address: "41fd49eda0f23ff7ec1d03b52c3a45991c24cd440e",
+                to_address: "4198927ffb9f554dc4a453c64b2e553a02d6df514b",
+              },
+              type_url: "type.googleapis.com/protocol.TransferContract",
+            },
+            type: "TransferContract",
+          },
+        ],
+        ref_block_bytes: "0ee5",
+        ref_block_hash: "2e5fc67747a428af",
+        expiration: 1740477510000,
+        timestamp: 1740477451901,
+      },
+      raw_data_hex:
+        "0a020ee522082e5fc67747a428af40f0e2ace4d3325a66080112620a2d747970652e676f6f676c65617069732e636f6d2f70726f746f636f6c2e5472616e73666572436f6e747261637412310a1541fd49eda0f23ff7ec1d03b52c3a45991c24cd440e12154198927ffb9f554dc4a453c64b2e553a02d6df514b18e80770fd9ca9e4d332",
+    });
   });
 
-  it("should return correct encoded operation id", () => {
-    const tx: TrongridTxInfo = {
-      ...mockTx,
-      type: "TransferContract",
-      txID: "txId",
-    };
+  it("creates a TRC10 transaction in TronWeb format", async () => {
+    const result = await decodeTransaction(
+      "0a0204472208f9107c334bf13f4a4080c68fbfd4325a730802126f0a32747970652e676f6f676c65617069732e636f6d2f70726f746f636f6c2e5472616e736665724173736574436f6e747261637412390a0731303031333034121541b183301d6301fae224c6ab9b28b19b6d1625bf231a154198927ffb9f554dc4a453c64b2e553a02d6df514b206470a3fb8bbfd432",
+    );
 
-    expect(txInfoToOperation("accountId", "address", tx)?.id).toEqual("encodedOpId");
+    expect(result).toEqual({
+      // visible: true,
+      txID: "db5ca128181ff7d8ab7b77d95c6a89e28325cae9066791182c6b8cb42200cfc9",
+      raw_data: {
+        contract: [
+          {
+            parameter: {
+              value: {
+                amount: 100,
+                asset_name: "1001304",
+                owner_address: "41b183301d6301fae224c6ab9b28b19b6d1625bf23",
+                to_address: "4198927ffb9f554dc4a453c64b2e553a02d6df514b",
+              },
+              type_url: "type.googleapis.com/protocol.TransferAssetContract",
+            },
+            type: "TransferAssetContract",
+          },
+        ],
+        ref_block_bytes: "0447",
+        ref_block_hash: "f9107c334bf13f4a",
+        expiration: 1740667872000,
+        timestamp: 1740667813283,
+      },
+      raw_data_hex:
+        "0a0204472208f9107c334bf13f4a4080c68fbfd4325a730802126f0a32747970652e676f6f676c65617069732e636f6d2f70726f746f636f6c2e5472616e736665724173736574436f6e747261637412390a0731303031333034121541b183301d6301fae224c6ab9b28b19b6d1625bf231a154198927ffb9f554dc4a453c64b2e553a02d6df514b206470a3fb8bbfd432",
+    });
+  });
+
+  it("creates a TRC20 transaction in TronWeb format", async () => {
+    const result = await decodeTransaction(
+      "0a02054a22089334553fd5c2cb624098abbfbfd4325aae01081f12a9010a31747970652e676f6f676c65617069732e636f6d2f70726f746f636f6c2e54726967676572536d617274436f6e747261637412740a1541fd49eda0f23ff7ec1d03b52c3a45991c24cd440e12154142a1e39aefa49290f2b3f9ed688d7cecf86cd6e02244a9059cbb00000000000000000000004115208ef33a926919ed270e2fa61367b2da3753da0000000000000000000000000000000000000000000000000000000000000032708de6bbbfd43290018094ebdc03",
+    );
+
+    expect(result).toEqual({
+      // visible: true,
+      txID: "a28a5946f7c805abf1ebaebd9832bdcbd8578c51a948e8cc1dff6a1c20f578ef",
+      raw_data: {
+        contract: [
+          {
+            parameter: {
+              value: {
+                data: "a9059cbb00000000000000000000004115208ef33a926919ed270e2fa61367b2da3753da0000000000000000000000000000000000000000000000000000000000000032",
+                owner_address: "41fd49eda0f23ff7ec1d03b52c3a45991c24cd440e",
+                contract_address: "4142a1e39aefa49290f2b3f9ed688d7cecf86cd6e0",
+              },
+              type_url: "type.googleapis.com/protocol.TriggerSmartContract",
+            },
+            type: "TriggerSmartContract",
+          },
+        ],
+        ref_block_bytes: "054a",
+        ref_block_hash: "9334553fd5c2cb62",
+        expiration: 1740668655000,
+        fee_limit: 1000000000,
+        timestamp: 1740668597005,
+      },
+      raw_data_hex:
+        "0a02054a22089334553fd5c2cb624098abbfbfd4325aae01081f12a9010a31747970652e676f6f676c65617069732e636f6d2f70726f746f636f6c2e54726967676572536d617274436f6e747261637412740a1541fd49eda0f23ff7ec1d03b52c3a45991c24cd440e12154142a1e39aefa49290f2b3f9ed688d7cecf86cd6e02244a9059cbb00000000000000000000004115208ef33a926919ed270e2fa61367b2da3753da0000000000000000000000000000000000000000000000000000000000000032708de6bbbfd43290018094ebdc03",
+    });
   });
 });
 
+const TRX_MAGNITUDE = 1_000_000; // Magnitude 6
+
 describe.only("getTronResources", () => {
   const parameters = [
-    {
-      name: "undefined",
-      account: undefined,
-      expected: {
-        bandwidth: {
-          freeLimit: new BigNumber(0),
-          freeUsed: new BigNumber(0),
-          gainedLimit: new BigNumber(0),
-          gainedUsed: new BigNumber(0),
-        },
-        cacheTransactionInfoById: {},
-        delegatedFrozen: { bandwidth: undefined, energy: undefined },
-        energy: new BigNumber(0),
-        frozen: { bandwidth: undefined, energy: undefined },
-        lastVotedDate: undefined,
-        lastWithdrawnRewardDate: undefined,
-        legacyFrozen: { bandwidth: undefined, energy: undefined },
-        tronPower: 0,
-        unFrozen: { bandwidth: undefined, energy: undefined },
-        unwithdrawnReward: new BigNumber(0),
-        votes: [],
-      },
-    },
     {
       name: "empty",
       account: {},

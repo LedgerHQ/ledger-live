@@ -1,39 +1,23 @@
-import React, { memo, useMemo, useState, useCallback } from "react";
-import { SectionList, SectionListData, SectionListRenderItem } from "react-native";
-import { Flex } from "@ledgerhq/native-ui";
-import { useSelector } from "react-redux";
-import { useFocusEffect } from "@react-navigation/native";
-import { Account, AccountLikeArray, DailyOperationsSection, Operation } from "@ledgerhq/types-live";
-import { isAccountEmpty } from "@ledgerhq/live-common/account/helpers";
+import React, { memo, useCallback, useMemo } from "react";
 
-import { Trans } from "react-i18next";
-import { useRefreshAccountsOrdering } from "~/actions/general";
-import { flattenAccountsSelector } from "~/reducers/accounts";
-
-import NoOperationFooter from "~/components/NoOperationFooter";
-import NoMoreOperationFooter from "~/components/NoMoreOperationFooter";
-import OperationRow from "~/components/OperationRow";
-import SectionHeader from "~/components/SectionHeader";
-import LoadingFooter from "~/components/LoadingFooter";
-import Button from "~/components/Button";
 import { ScreenName } from "~/const";
-import { TrackScreen } from "~/analytics";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
-import { useOperations } from "./useOperations";
-import EmptyStatePortfolio from "~/screens/Portfolio/EmptyStatePortfolio";
-import NoOpStatePortfolio from "~/screens/Portfolio/NoOpStatePortfolio";
+import { useHideSpamCollection } from "~/hooks/nfts/useHideSpamCollection";
+import { OperationListV1 } from "./OperationsV1";
+import { OperationListV2 } from "./OperationsV2";
+import { AccountLikeArray } from "@ledgerhq/types-live";
+import { useFocusEffect } from "@react-navigation/core";
+import { useSelector } from "react-redux";
+import { useRefreshAccountsOrdering } from "~/actions/general";
+import { flattenAccountsSelector } from "~/reducers/accounts";
 
 type Props = StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.AnalyticsOperations>;
 
 export function Operations({ navigation, route }: Props) {
   const accountsIds = route?.params?.accountsIds;
-  const [opCount, setOpCount] = useState(50);
-
-  function onEndReached() {
-    setOpCount(opCount + 50);
-  }
+  const { enabled: spamFilteringTxEnabled } = useHideSpamCollection();
 
   const accountsFromState = useSelector(flattenAccountsSelector);
   const accountsFiltered = useMemo(
@@ -48,100 +32,22 @@ export function Operations({ navigation, route }: Props) {
   const refreshAccountsOrdering = useRefreshAccountsOrdering();
   useFocusEffect(refreshAccountsOrdering);
 
-  const { sections, completed } = useOperations({
-    accounts: accountsFiltered,
-    opCount,
-    withSubAccounts: true,
-  });
-
-  function ListEmptyComponent() {
-    if (accountsFiltered.length === 0) {
-      return <EmptyStatePortfolio />;
-    }
-
-    if (accountsFiltered.every(isAccountEmpty)) {
-      return <NoOpStatePortfolio />;
-    }
-
-    return null;
-  }
-
-  function keyExtractor(item: Operation) {
-    return item.id;
-  }
-
-  const renderItem: SectionListRenderItem<Operation, DailyOperationsSection> = ({
-    item,
-    index,
-    section,
-  }) => {
-    const account = allAccounts.find(a => a.id === item.accountId);
-    const parentAccount =
-      account && account.type !== "Account"
-        ? (allAccounts.find(a => a.id === account.parentId) as Account)
-        : null;
-
-    if (!account) return null;
-
-    return (
-      <OperationRow
-        operation={item}
-        parentAccount={parentAccount}
-        account={account}
-        multipleAccounts={accountsFiltered.length > 1}
-        isLast={section.data.length - 1 === index}
-      />
-    );
-  };
-
-  function renderSectionHeader({
-    section,
-  }: {
-    section: SectionListData<Operation, DailyOperationsSection>;
-  }) {
-    return <SectionHeader day={section.day} />;
-  }
-
   const onTransactionButtonPress = useCallback(() => {
     navigation.navigate(ScreenName.PortfolioOperationHistory);
   }, [navigation]);
 
-  return (
-    <Flex flex={1} px={4}>
-      <SectionList
-        sections={sections}
-        style={{ flex: 1 }}
-        contentContainerStyle={{ flexGrow: 1 }}
-        keyExtractor={keyExtractor}
-        renderItem={renderItem}
-        renderSectionHeader={renderSectionHeader}
-        stickySectionHeadersEnabled={false}
-        onEndReached={onEndReached}
-        showsVerticalScrollIndicator={false}
-        ListFooterComponent={
-          !completed ? (
-            !onEndReached ? (
-              <Flex m={8}>
-                <Button
-                  event="View Transactions"
-                  type="lightPrimary"
-                  title={<Trans i18nKey="common.seeAll" />}
-                  onPress={onTransactionButtonPress}
-                />
-              </Flex>
-            ) : (
-              <LoadingFooter />
-            )
-          ) : accountsFiltered.every(isAccountEmpty) ? null : sections.length ? (
-            <NoMoreOperationFooter />
-          ) : (
-            <NoOperationFooter />
-          )
-        }
-        ListEmptyComponent={ListEmptyComponent}
-      />
-      <TrackScreen category="Analytics" name="Operations" />
-    </Flex>
+  return spamFilteringTxEnabled ? (
+    <OperationListV2
+      accountsFiltered={accountsFiltered}
+      allAccounts={allAccounts}
+      onTransactionButtonPress={onTransactionButtonPress}
+    />
+  ) : (
+    <OperationListV1
+      accountsFiltered={accountsFiltered}
+      allAccounts={allAccounts}
+      onTransactionButtonPress={onTransactionButtonPress}
+    />
   );
 }
 

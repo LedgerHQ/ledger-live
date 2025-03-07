@@ -91,6 +91,7 @@ function StatusOkHeader() {
         ff="Inter|SemiBold"
         fontSize="18px"
         lineHeight="21.78px"
+        textAlign="center"
       >
         <Trans i18nKey="informationCenter.serviceStatus.statusOk.title" />
       </Text>
@@ -100,6 +101,7 @@ function StatusOkHeader() {
         ff="Inter|Regular"
         fontSize="13px"
         lineHeight="16px"
+        textAlign="center"
       >
         <Trans i18nKey="informationCenter.serviceStatus.statusOk.description">
           <FakeLink onClick={() => openURL(urls.ledgerStatus)} />

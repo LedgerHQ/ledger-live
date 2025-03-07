@@ -129,6 +129,8 @@ export type CurrencyFeatures = {
   currencyMantra: DefaultFeature;
   currencyXion: DefaultFeature;
   currencyZenrock: DefaultFeature;
+  currencySonic: DefaultFeature;
+  currencySonicBlaze: DefaultFeature;
 };
 
 /**
@@ -211,6 +213,8 @@ export type Features = CurrencyFeatures & {
   llmLedgerSyncEntryPoints: Feature_LlmLedgerSyncEntryPoints;
   lldLedgerSyncEntryPoints: Feature_LldLedgerSyncEntryPoints;
   lldNanoSUpsellBanners: Feature_LldNanoSUpsellBanners;
+  llmThai: DefaultFeature;
+  lldThai: DefaultFeature;
 };
 
 /**

@@ -67,6 +67,11 @@ const metroConfig = {
         inlineRequires: true,
       },
     }),
+    minifierConfig: {
+      compress: {
+        drop_console: true,
+      },
+    },
   },
   resolver: {
     unstable_enableSymlinks: true,

@@ -53,6 +53,7 @@ export async function runDelegateTest(delegation: Delegate, tmsLinks: string[]) 
         await app.stake.setAmount(currencyId, delegation.amount);
         await app.stake.validateAmount(currencyId);
       } else {
+        await app.stake.selectValidator(currencyId, delegation.provider);
         await app.stake.verifyFeesVisible(currencyId);
         fees = await app.stake.getDisplayedFees(currencyId);
       }

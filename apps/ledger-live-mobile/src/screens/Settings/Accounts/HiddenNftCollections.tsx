@@ -14,6 +14,7 @@ import { updateNftStatus } from "~/actions/settings";
 import { State } from "~/reducers/types";
 import { nftCollectionsStatusByNetworkSelector } from "~/reducers/settings";
 import { BlockchainEVM, BlockchainsType } from "@ledgerhq/live-nft/supported";
+import { useTranslation } from "react-i18next";
 
 const CollectionFlatList = styled(FlatList)`
   min-height: 100%;
@@ -80,9 +81,11 @@ const HiddenNftCollectionRow = ({
             </Text>
           </CollectionNameSkeleton>
         </Flex>
-        <TouchableOpacity onPress={onUnhide}>
-          <IconsLegacy.CloseMedium color="neutral.c100" size={24} />
-        </TouchableOpacity>
+        {!loading && (
+          <TouchableOpacity onPress={onUnhide}>
+            <IconsLegacy.CloseMedium color="neutral.c100" size={24} />
+          </TouchableOpacity>
+        )}
       </Flex>
     </Flex>
   );
@@ -90,7 +93,7 @@ const HiddenNftCollectionRow = ({
 
 const HiddenNftCollections = () => {
   const collections = useSelector(nftCollectionsStatusByNetworkSelector);
-
+  const { t } = useTranslation();
   const dispatch = useDispatch();
 
   const [collectionsCount, setCollectionsCount] = useState(MAX_COLLECTIONS_FIRST_RENDER);
@@ -151,6 +154,11 @@ const HiddenNftCollections = () => {
           renderItem={renderItem}
           keyExtractor={keyExtractor}
           onEndReached={onEndReached}
+          ListEmptyComponent={() => (
+            <Flex p={6} alignItems="center">
+              <Text variant="bodyLineHeight">{t("wallet.nftGallery.filters.empty")}</Text>
+            </Flex>
+          )}
         />
       </Flex>
     </Box>

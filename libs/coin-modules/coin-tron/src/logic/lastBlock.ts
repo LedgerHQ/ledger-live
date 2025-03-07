@@ -1,5 +1,6 @@
 import type { BlockInfo } from "@ledgerhq/coin-framework/api/index";
+import { getLastBlock } from "../network";
 
-export function lastBlock(): Promise<BlockInfo> {
-  throw Error("Not implemented yet");
+export async function lastBlock(): Promise<BlockInfo> {
+  return await getLastBlock();
 }

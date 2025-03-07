@@ -30,6 +30,8 @@ export default class StakePage {
   currencyRow = (currencyId: string) => `currency-row-${currencyId}`;
   zeroAssetText = "0\u00a0ATOM";
   celoLockAmountInput = "celo-lock-amount-input";
+  searchPoolInput = "delegation-search-pool-input";
+  providerRow = (providerTicker: string) => `provider-row-${providerTicker}`;
 
   async selectCurrency(currencyId: string) {
     const id = this.currencyRow(currencyId);
@@ -67,6 +69,15 @@ export default class StakePage {
   @Step("Expect provider in summary")
   async expectProvider(currencyId: string, provider: string) {
     expect(await this.delegationSummaryValidator(currencyId)).toEqual(provider);
+  }
+
+  @Step("Select new provider")
+  async selectValidator(currencyId: string, provider: string) {
+    const ticker = provider.split(" - ")[0];
+    await tapById(this.delegationSummaryValidatorId(currencyId));
+    await typeTextById(this.searchPoolInput, ticker);
+    await waitForElementById(this.searchPoolInput);
+    await tapById(this.providerRow(ticker));
   }
 
   @Step("Verify fees visible in summary")
