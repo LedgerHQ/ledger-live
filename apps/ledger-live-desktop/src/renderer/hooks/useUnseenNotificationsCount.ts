@@ -9,7 +9,7 @@ export function useUnseenNotificationsCount(): number {
 
   const anonymousUserNotifications = useSelector(anonymousUserNotificationsSelector);
   const isLNSNotifShown = useLNSUpsellBannerState("notification_center").isShown;
-  const hasPendingLnsBannerNotif = isLNSNotifShown && !anonymousUserNotifications.LNSUpsell;
+  const lnsBannerCount = isLNSNotifShown && !anonymousUserNotifications.LNSUpsell ? 1 : 0;
 
-  return baseCount + Number(hasPendingLnsBannerNotif);
+  return baseCount + lnsBannerCount;
 }
