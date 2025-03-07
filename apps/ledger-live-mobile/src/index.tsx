@@ -91,6 +91,8 @@ import { exportMarketSelector } from "./reducers/market";
 import { trustchainStoreSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { walletSelector } from "~/reducers/wallet";
 import { exportWalletState, walletStateExportShouldDiffer } from "@ledgerhq/live-wallet/store";
+import { registerTransports } from "./services/registerTransports";
+import LDMKTransportHeader from "./screens/Settings/Experimental/LDMKTransportHeader";
 
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();
@@ -116,9 +118,12 @@ function walletExportSelector(state: State) {
 function App() {
   const accounts = useSelector(accountsSelector);
   const analyticsFF = useFeature("llmAnalyticsOptInPrompt");
+  const isLDMKEnabled = Boolean(useFeature("ldmkTransport")?.enabled);
   const hasSeenAnalyticsOptInPrompt = useSelector(hasSeenAnalyticsOptInPromptSelector);
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const dispatch = useDispatch();
+
+  useEffect(() => registerTransports(isLDMKEnabled), [isLDMKEnabled]);
 
   useEffect(() => {
     if (
@@ -238,6 +243,7 @@ function App() {
       <SyncNewAccounts priority={5} />
       <TransactionsAlerts />
       <ExperimentalHeader />
+      <LDMKTransportHeader />
       <RootNavigator />
       <AnalyticsConsole />
       <PerformanceConsole />

@@ -8,7 +8,7 @@ import { useSelector } from "react-redux";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { Device, DeviceModelId } from "@ledgerhq/types-devices";
 import { IconsLegacy } from "@ledgerhq/native-ui";
-import TransportBLE from "../../react-native-hw-transport-ble";
+import getBLETransport from "../../react-native-hw-transport-ble";
 import { bleDevicesSelector } from "~/reducers/ble";
 import Animation from "../Animation";
 import BleDeviceItem from "./BleDeviceItem";
@@ -19,6 +19,7 @@ import { TrackScreen, track } from "~/analytics";
 import { useResetOnNavigationFocusState } from "~/helpers/useResetOnNavigationFocusState";
 import LocationPermissionDenied from "../RequiresLocation/LocationPermissionDenied";
 import LocationDisabled from "../RequiresLocation/LocationDisabled";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 export type FilterByDeviceModelId = null | DeviceModelId;
 const CANT_SEE_DEVICE_TIMEOUT = 5000;
@@ -49,6 +50,8 @@ export default function BleDevicesScanning({
   areKnownDevicesPairable,
 }: BleDevicesScanningProps) {
   const { t } = useTranslation();
+
+  const isLDMKEnabled = !!useFeature("ldmkTransport")?.enabled;
 
   const productName =
     filterByDeviceModelId && !Array.isArray(filterByDeviceModelId)
@@ -110,7 +113,7 @@ export default function BleDevicesScanning({
   }, [filterByDeviceModelId]);
 
   const { scannedDevices, scanningBleError } = useBleDevicesScanning({
-    bleTransportListen: TransportBLE.listen,
+    bleTransportListen: getBLETransport({ isLDMKEnabled }).listen,
     stopBleScanning,
     filterByDeviceModelIds,
     filterOutDevicesByDeviceIds,

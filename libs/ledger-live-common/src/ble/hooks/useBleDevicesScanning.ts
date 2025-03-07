@@ -32,6 +32,7 @@ export type UseBleDevicesScanningOptions = {
   filterByDeviceModelIds?: DeviceModelId[];
   filterOutDevicesByDeviceIds?: DeviceId[];
   restartScanningTimeoutMs?: number;
+  enabled?: boolean;
 };
 
 const DEFAULT_DEVICE_NAME = "Device";
@@ -62,6 +63,7 @@ const DEFAULT_RESTART_SCANNING_TIMEOUT_MS = 4000;
  * @param restartScanningTimeoutMs When a restart is needed (on some specific errors, or for the first restart
  * that makes the scanning more resilient to a previously paired device with which a communication was happening),
  * time in ms after which the restart is actually happening
+ * @param enabled flag to enable the hook
  * @returns An object containing:
  * - scannedDevices: list of ScannedDevice found by the scanning
  * - scanningBleError: if an error occurred, a BleError, otherwise null
@@ -72,6 +74,7 @@ export const useBleDevicesScanning = ({
   filterByDeviceModelIds,
   filterOutDevicesByDeviceIds,
   restartScanningTimeoutMs = DEFAULT_RESTART_SCANNING_TIMEOUT_MS,
+  enabled = true,
 }: UseBleDevicesScanningDependencies &
   UseBleDevicesScanningOptions): UseBleDevicesScanningResult => {
   const [scanningBleError, setScanningBleError] = useState<ScanningBleError>(null);
@@ -85,7 +88,7 @@ export const useBleDevicesScanning = ({
   const [isRestartNeeded, setIsRestartNeeded] = useState<boolean>(true);
 
   useEffect(() => {
-    if (stopBleScanning) {
+    if (stopBleScanning || !enabled) {
       return;
     }
 
@@ -170,6 +173,7 @@ export const useBleDevicesScanning = ({
     stopBleScanning,
     filterByDeviceModelIds,
     filterOutDevicesByDeviceIds,
+    enabled,
   ]);
 
   // Triggers after a defined time a restart of the scanning if needed
