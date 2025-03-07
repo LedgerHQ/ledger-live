@@ -5,7 +5,6 @@ import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import { useGetSwapTrackingProperties } from "../../utils/index";
 import { BoxedIcon, Text } from "@ledgerhq/react-ui";
-import ErrorNoBorder from "~/renderer/icons/ErrorNoBorder";
 import { SwapLiveError } from "@ledgerhq/live-common/exchange/swap/types";
 import ErrorIcon from "~/renderer/components/ErrorIcon";
 
