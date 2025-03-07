@@ -1,70 +1,69 @@
-import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import type { Action, Device } from "@ledgerhq/live-common/hw/actions/types";
+import {
+  TransportStatusError,
+  UserRefusedDeviceNameChange,
+  UserRefusedOnDevice,
+} from "@ledgerhq/errors";
 import {
   DeviceNotOnboarded,
   ImageDoesNotExistOnDevice,
   LatestFirmwareVersionRequired,
 } from "@ledgerhq/live-common/errors";
 import {
-  TransportStatusError,
-  UserRefusedDeviceNameChange,
-  UserRefusedOnDevice,
-} from "@ledgerhq/errors";
-import { useTranslation } from "react-i18next";
-import { useNavigation, useTheme } from "@react-navigation/native";
-import { useTheme as useThemeFromStyledComponents } from "styled-components/native";
-import { Flex, Text, Icons } from "@ledgerhq/native-ui";
-import type { AppRequest } from "@ledgerhq/live-common/hw/actions/app";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import type { AccountLike, AnyMessage, DeviceInfo } from "@ledgerhq/types-live";
-import { Transaction } from "@ledgerhq/live-common/generated/types";
-import {
-  ExchangeSwap,
   ExchangeRate,
+  ExchangeSwap,
   InitSwapResult,
 } from "@ledgerhq/live-common/exchange/swap/types";
+import { Transaction } from "@ledgerhq/live-common/generated/types";
+import type { AppRequest } from "@ledgerhq/live-common/hw/actions/app";
+import type { Action, Device } from "@ledgerhq/live-common/hw/actions/types";
 import { AppAndVersion } from "@ledgerhq/live-common/hw/connectApp";
+import { Flex, Icons, Text } from "@ledgerhq/native-ui";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { AccountLike, AnyMessage, DeviceInfo } from "@ledgerhq/types-live";
+import { T, useNavigation, useTheme } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
+import React, { useEffect } from "react";
+import { useTranslation } from "react-i18next";
+import { useDispatch, useSelector } from "react-redux";
+import { useTheme as useThemeFromStyledComponents } from "styled-components/native";
 import { setLastSeenDeviceInfo } from "~/actions/settings";
-import ValidateOnDevice from "../ValidateOnDevice";
-import ValidateMessageOnDevice from "../ValidateMessageOnDevice";
-import {
-  renderWarningOutdated,
-  renderConnectYourDevice,
-  renderLoading,
-  renderAllowOpeningApp,
-  renderRequestQuitApp,
-  renderRequiresAppInstallation,
-  renderAllowManager,
-  renderInWrongAppForAccount,
-  renderError,
-  renderDeviceNotOnboarded,
-  renderBootloaderStep,
-  renderExchange,
-  renderConfirmSwap,
-  LoadingAppInstall,
-  AutoRepair,
-  renderAllowLanguageInstallation,
-  renderAllowRemoveCustomLockscreen,
-  RequiredFirmwareUpdate,
-} from "./rendering";
-import PreventNativeBack from "../PreventNativeBack";
-import SkipLock from "../behaviour/SkipLock";
-import DeviceActionProgress from "../DeviceActionProgress";
-import { PartialNullable } from "~/types/helpers";
-import ModalLock from "../ModalLock";
-import { walletSelector } from "~/reducers/wallet";
-import { settingsStoreSelector } from "~/reducers/settings";
-import { RootStackParamList } from "../RootNavigator/types/RootNavigator";
-import { LedgerError } from "~/types/error";
-import { useTrackMyLedgerSectionEvents } from "~/analytics/hooks/useTrackMyLedgerEvents";
-import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
-import { useTrackReceiveFlow } from "~/analytics/hooks/useTrackReceiveFlow";
-import { useTrackSendFlow } from "~/analytics/hooks/useTrackSendFlow";
 import { useTrackAddAccountFlow } from "~/analytics/hooks/useTrackAddAccountFlow";
 import { useTrackLedgerSyncFlow } from "~/analytics/hooks/useTrackLedgerSyncFlow";
+import { useTrackMyLedgerSectionEvents } from "~/analytics/hooks/useTrackMyLedgerEvents";
+import { useTrackReceiveFlow } from "~/analytics/hooks/useTrackReceiveFlow";
+import { useTrackSendFlow } from "~/analytics/hooks/useTrackSendFlow";
 import { useTrackSwapFlow } from "~/analytics/hooks/useTrackSwapFlow";
+import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
+import { settingsStoreSelector } from "~/reducers/settings";
+import { walletSelector } from "~/reducers/wallet";
+import { LedgerError } from "~/types/error";
+import { PartialNullable } from "~/types/helpers";
+import SkipLock from "../behaviour/SkipLock";
+import DeviceActionProgress from "../DeviceActionProgress";
+import ModalLock from "../ModalLock";
+import PreventNativeBack from "../PreventNativeBack";
+import { RootStackParamList } from "../RootNavigator/types/RootNavigator";
+import ValidateMessageOnDevice from "../ValidateMessageOnDevice";
+import ValidateOnDevice from "../ValidateOnDevice";
+import {
+  AutoRepair,
+  LoadingAppInstall,
+  renderAllowLanguageInstallation,
+  renderAllowManager,
+  renderAllowOpeningApp,
+  renderAllowRemoveCustomLockscreen,
+  renderBootloaderStep,
+  renderConnectYourDevice,
+  renderDeviceNotOnboarded,
+  renderError,
+  renderExchange,
+  renderInWrongAppForAccount,
+  renderLoading,
+  renderRequestQuitApp,
+  renderRequiresAppInstallation,
+  renderWarningOutdated,
+  RequiredFirmwareUpdate,
+} from "./rendering";
 
 type Status = PartialNullable<{
   appAndVersion: AppAndVersion;
@@ -206,9 +205,6 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
     deviceStreamingProgress,
     displayUpgradeWarning,
     passWarning,
-    initSwapRequested,
-    initSwapError,
-    initSwapResult,
     installingLanguage,
     languageInstallationRequested,
     imageRemoveRequested,
@@ -431,35 +427,34 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
   }
 
   if (completeExchangeStarted && !completeExchangeResult && !completeExchangeError) {
+    const swapRequest = {
+      ...request,
+      colors,
+      selectedDevice,
+      theme,
+      walletState,
+      settingsState,
+      estimatedFees: status.estimatedFees,
+    } as {
+      selectedDevice: Device;
+      provider: string;
+      transaction: Transaction;
+      exchangeRate: ExchangeRate;
+      exchange: ExchangeSwap;
+      colors: T["colors"];
+      theme: typeof theme;
+      amountExpectedTo?: string;
+      estimatedFees?: string;
+      walletState: ReturnType<typeof walletSelector>;
+      settingsState: ReturnType<typeof settingsStoreSelector>;
+    };
+
     return renderExchange({
+      swapRequest,
       exchangeType: (request as { exchangeType: number })?.exchangeType,
       t,
       device: device!,
       theme,
-    });
-  }
-
-  if (initSwapRequested && !initSwapResult && !initSwapError) {
-    const req = request as {
-      device: Device;
-      transaction: Transaction;
-      exchangeRate: ExchangeRate;
-      exchange: ExchangeSwap;
-      amountExpectedTo?: string;
-      estimatedFees?: string;
-    };
-    return renderConfirmSwap({
-      t,
-      device: selectedDevice,
-      colors,
-      theme,
-      transaction: req?.transaction,
-      exchangeRate: req?.exchangeRate,
-      exchange: req?.exchange,
-      amountExpectedTo: status.amountExpectedTo,
-      estimatedFees: status.estimatedFees,
-      walletState,
-      settingsState,
     });
   }
 
