@@ -8,6 +8,11 @@ const INCOMPATIBLE_NANO_S_TOKENS_KEYS: Keys = {
     title: "swap.incompatibility.spl_tokens_title",
     description: "swap.incompatibility.spl_tokens_description",
   },
+  // @ts-expect-error sui is not yet integratted in the types
+  sui: {
+    title: "swap.incompatibility.sui_tokens_title",
+    description: "swap.incompatibility.sui_tokens_description",
+  },
   solana_testnet: {
     title: "swap.incompatibility.spl_tokens_title",
     description: "swap.incompatibility.spl_tokens_description",
@@ -50,6 +55,19 @@ const INCOMPATIBLE_NANO_S_CURRENCY_KEYS: Keys = {
   cosmos_testnet: {
     title: "swap.incompatibility.cosmos_title",
     description: "swap.incompatibility.cosmos_description",
+  },
+  osmo: {
+    title: "swap.incompatibility.osmo_title",
+    description: "swap.incompatibility.osmo_description",
+  },
+  dydx: {
+    title: "swap.incompatibility.dydx_title",
+    description: "swap.incompatibility.dydx_description",
+  },
+  // @ts-expect-error sui is not yet integratted in the types
+  sui: {
+    title: "swap.incompatibility.dydx_title",
+    description: "swap.incompatibility.dydx_description",
   },
 };
 

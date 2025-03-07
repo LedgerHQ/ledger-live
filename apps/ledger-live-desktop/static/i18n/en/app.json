@@ -449,6 +449,8 @@
       "ton_description": "To swap Ton, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
       "spl_tokens_title": "Ledger Nano S™ does not support swapping Solana tokens",
       "spl_tokens_description": "To swap Solana tokens, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+      "sui_tokens_title": "Ledger Nano S™ does not support swapping Sui tokens",
+      "sui_tokens_description": "To swap Sui tokens, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
       "near_title": "Ledger Nano S™ does not support swapping Near",
       "near_description": "To swap Near, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
       "ada_title": "Ledger Nano S™ does not support swapping Cardano",
@@ -456,7 +458,13 @@
       "apt_title": "Ledger Nano S™ does not support swapping Aptos",
       "apt_description": "To swap Aptos, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
       "cosmos_title": "Ledger Nano S™ does not support swapping Cosmos",
-      "cosmos_description": "To swap Cosmos, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
+      "cosmos_description": "To swap Cosmos, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+      "osmo_title": "Ledger Nano S™ does not support swapping Osmosis",
+      "osmo_description": "To swap Osmosis, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+      "dydx_title": "Ledger Nano S™ does not support swapping dYdX",
+      "dydx_description": "To swap dYdX, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+      "sui_title": "Ledger Nano S™ does not support swapping Sui",
+      "sui_description": "To swap Sui, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
     },
     "providers": {
       "title": "Choose a provider to swap crypto",
