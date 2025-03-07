@@ -40,14 +40,15 @@ jobs:
           pnpm build:lld:deps --api="http://127.0.0.1:${{ steps.caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
           pnpm build:llm:deps --api="http://127.0.0.1:${{ steps.caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
 
-      - name: Generate Unit test coverage for LLD & LLM
+      - name: Generate Unit test coverage for LLD & LLM & Coin modules
         run: |
           pnpm desktop test:jest:coverage
           pnpm mobile test:jest:coverage
+          pnpm coin:coverage
 
       - name: Merge lcov files
         run: |
-          cat apps/ledger-live-desktop/coverage/lcov.info apps/ledger-live-mobile/coverage/lcov.info > ./lcov.info
+          cat apps/ledger-live-desktop/coverage/lcov.info apps/ledger-live-mobile/coverage/lcov.info blockchain-support-coverage/lcov.info > ./lcov.info
       - name: Copy test execution files
         run: |
           cat apps/ledger-live-desktop/coverage/lld-sonar-executionTests-report.xml > ./lld-sonar-executionTests-report.xml
