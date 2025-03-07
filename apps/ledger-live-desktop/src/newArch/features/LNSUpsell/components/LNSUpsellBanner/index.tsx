@@ -53,7 +53,11 @@ function View({
       return (
         <NotificationCard
           {...boxProps}
-          description={t(`lnsUpsell.${tracking}.description`, { discount })}
+          description={
+            <Trans i18nKey={`lnsUpsell.${tracking}.description`} values={{ discount }}>
+              <span />
+            </Trans>
+          }
           cta={
             <Link alignSelf="start" color="primary.c80" size="small">
               {t(`lnsUpsell.${tracking}.cta`)}
