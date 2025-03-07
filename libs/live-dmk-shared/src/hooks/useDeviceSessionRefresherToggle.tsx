@@ -11,13 +11,16 @@ import { activeDeviceSessionSubject } from "../config/activeDeviceSession";
  *   - the feature flag is disabled
  *   - there are no active device sessions
  */
-export const useDisableDeviceSessionRefresher = (dmk: DeviceManagementKit, ffEnabled: boolean) => {
+export const useDisableDeviceSessionRefresher = (
+  dmk: DeviceManagementKit | null,
+  ffEnabled: boolean,
+) => {
   const sessionId = useRef<string>();
   const sub = useRef<Subscription>();
   const enableRefresher = useRef<() => void>();
 
   useEffect(() => {
-    if (!ffEnabled) return;
+    if (!ffEnabled || !dmk) return;
     sub.current = activeDeviceSessionSubject.subscribe({
       next: session => {
         console.log("[useDisableDeviceSessionRefresher] session", session);
@@ -39,7 +42,7 @@ export const useDisableDeviceSessionRefresher = (dmk: DeviceManagementKit, ffEna
     });
 
     return () => {
-      if (!ffEnabled) return;
+      if (!ffEnabled || !dmk) return;
       sub.current?.unsubscribe();
     };
   }, [dmk]);

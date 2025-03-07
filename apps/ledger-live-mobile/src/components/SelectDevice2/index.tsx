@@ -61,7 +61,6 @@ type Props = {
 
 export default function SelectDevice({
   onSelect,
-  stopBleScanning,
   requestToSetHeaderOptions,
   isChoiceDrawerDisplayedOnAddDevice = true,
   hasPostOnboardingEntryPointCard,
