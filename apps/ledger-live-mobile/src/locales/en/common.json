@@ -3465,6 +3465,7 @@
         "CTAButton": "Add account"
       },
       "history": {
+        "button": "Go to history",
         "tab": "History",
         "disclaimer": "Your swap mobile transactions are not synchronized with Ledger Live Desktop",
         "exportButton": "Export operations",
