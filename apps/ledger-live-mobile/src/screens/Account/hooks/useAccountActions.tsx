@@ -53,10 +53,11 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
 
   //  const { isOpen, onModalHide, onClose } = useRootDrawerContext(); TODO: Do we need to check for open drawers? We are not in a modal here.
 
-  const { canStakeCurrency, navigationParams } = useStake({
-    currencyId: currency.id,
-    accountId: account.id,
-  });
+  const { canStakeCurrencyUsingLedgerLive, canStakeCurrencyUsingPlatformApp, navigationParams } =
+    useStake({
+      currencyId: currency.id,
+      accountId: account.id,
+    });
 
   const balance = getAccountSpendableBalance(account);
   const isZeroBalance = !balance.gt(0);
@@ -237,7 +238,9 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
     ...(!readOnlyModeEnabled && canBeBought ? [actionButtonBuy] : []),
     ...(!readOnlyModeEnabled && canBeSold ? [actionButtonSell] : []),
     ...(!readOnlyModeEnabled
-      ? familySpecificMainActions.filter(action => action.id !== "stake" || canStakeCurrency)
+      ? familySpecificMainActions.filter(
+          action => action.id !== "stake" || canStakeCurrencyUsingLedgerLive,
+        )
       : []),
     ...(!readOnlyModeEnabled ? [SendAction] : []),
     ReceiveAction,
