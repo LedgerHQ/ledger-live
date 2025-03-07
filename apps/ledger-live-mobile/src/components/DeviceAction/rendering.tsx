@@ -40,7 +40,11 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { ParamListBase } from "@react-navigation/native";
 import isFirmwareUpdateVersionSupported from "@ledgerhq/live-common/hw/isFirmwareUpdateVersionSupported";
 import ProviderIcon from "../ProviderIcon";
-import { currencySettingsForAccountSelector, lastSeenDeviceSelector } from "~/reducers/settings";
+import {
+  currencySettingsForAccountSelector,
+  lastSeenDeviceSelector,
+  settingsStoreSelector,
+} from "~/reducers/settings";
 import { urls } from "~/utils/urls";
 import Alert from "../Alert";
 import { lighten, Theme } from "../../colors";
@@ -64,6 +68,8 @@ import { SettingsState } from "~/reducers/types";
 import { RootStackParamList } from "../RootNavigator/types/RootNavigator";
 import { isSyncOnboardingSupported } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import { T } from "@react-navigation/native";
+import { walletSelector } from "~/reducers/wallet";
 
 export const Wrapper = styled(Flex).attrs({
   flex: 1,
@@ -236,6 +242,7 @@ export function renderConfirmSwap({
   t,
   device,
   theme,
+  provider,
   transaction,
   exchangeRate,
   exchange,
@@ -246,6 +253,7 @@ export function renderConfirmSwap({
 }: RawProps & {
   device: Device;
   transaction: Transaction;
+  provider: string;
   exchangeRate: ExchangeRate;
   exchange: ExchangeSwap;
   amountExpectedTo?: string | null;
@@ -253,8 +261,9 @@ export function renderConfirmSwap({
   walletState: WalletState;
   settingsState: SettingsState;
 }) {
-  const providerName = getProviderName(exchangeRate.provider);
-  const noticeType = getNoticeType(exchangeRate.provider);
+  console.log('%capps/ledger-live-mobile/src/components/DeviceAction/rendering.tsx:264 provider', 'color: #007acc;', provider);
+  const providerName = provider;
+  const noticeType = getNoticeType(provider);
   const alertProperties = noticeType.learnMore ? { learnMoreUrl: urls.swap.learnMore } : {};
   const fromAccountName = accountNameWithDefaultSelector(walletState, exchange.fromAccount);
   const toAccountName = accountNameWithDefaultSelector(walletState, exchange.toAccount);
@@ -298,7 +307,7 @@ export function renderConfirmSwap({
             <Text>
               <CurrencyUnitValue
                 unit={unitTo}
-                value={amountExpectedTo ? new BigNumber(amountExpectedTo) : exchangeRate.toAmount}
+                value={amountExpectedTo ? new BigNumber(amountExpectedTo) : exchange.toAmount}
                 disableRounding
                 showCode
               />
@@ -308,7 +317,7 @@ export function renderConfirmSwap({
           <FieldItem title={t("DeviceAction.swap2.provider")}>
             <Flex flexDirection="row" alignItems="center">
               <Flex paddingRight={2}>
-                <ProviderIcon size="XXS" name={exchangeRate.provider} />
+                <ProviderIcon size="XXS" name={provider} />
               </Flex>
 
               <Text>{providerName}</Text>
@@ -343,7 +352,7 @@ export function renderConfirmSwap({
           </FieldItem>
         </Flex>
 
-        <TermsFooter provider={exchangeRate.provider as TermsProviders} />
+        <TermsFooter provider={provider as TermsProviders} />
       </Wrapper>
     </ScrollView>
   );
@@ -894,17 +903,44 @@ export function renderLoading({
 }
 
 export function renderExchange({
+  swapRequest,
   exchangeType,
   t,
   device,
   theme,
 }: RawProps & {
+  swapRequest: {
+    provider: string;
+    selectedDevice: Device;
+    transaction: Transaction;
+    exchangeRate: ExchangeRate;
+    exchange: ExchangeSwap;
+    colors: T["colors"];
+    theme: typeof theme;
+    amountExpectedTo?: string;
+    estimatedFees?: string;
+    walletState: ReturnType<typeof walletSelector>;
+    settingsState: ReturnType<typeof settingsStoreSelector>;
+  };
   exchangeType: number;
   device: Device;
 }) {
   switch (exchangeType) {
     case 0x00: // swap
-      return <Text>{t("DeviceAction.confirmSwapOnDevice")}</Text>;
+      return renderConfirmSwap({
+        t,
+        provider: swapRequest.provider,
+        device: swapRequest.selectedDevice,
+        colors: swapRequest.colors,
+        theme: swapRequest.theme,
+        transaction: swapRequest?.transaction,
+        exchangeRate: swapRequest?.exchangeRate,
+        exchange: swapRequest?.exchange,
+        amountExpectedTo: swapRequest.amountExpectedTo,
+        estimatedFees: swapRequest.estimatedFees,
+        walletState: swapRequest.walletState,
+        settingsState: swapRequest.settingsState,
+      });
     case 0x01: // sell
     case 0x02: // fund
       return renderSecureTransferDeviceConfirmation({

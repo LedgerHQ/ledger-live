@@ -107,7 +107,6 @@ export function Confirmation({
   const tokenCurrency =
     fromAccount && fromAccount.type === "TokenAccount" ? fromAccount.token : null;
   const navigation = useNavigation<NavigationProp>();
-
   const onComplete = useCallback(
     ({
       magnitudeAwareRate,
@@ -242,7 +241,7 @@ export function Confirmation({
       </QueuedDrawer>
     );
   }
-
+console.log('%capps/ledger-live-mobile/src/screens/Swap/Form/Modal/Confirmation.tsx:244', 'color: #007acc;');
   return (
     <QueuedDrawer isRequestingToBeOpened={isOpen} preventBackdropClick onClose={onCancel}>
       <SyncSkipUnderPriority priority={100} />

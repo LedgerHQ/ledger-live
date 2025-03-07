@@ -12,7 +12,7 @@ import {
   UserRefusedOnDevice,
 } from "@ledgerhq/errors";
 import { useTranslation } from "react-i18next";
-import { useNavigation, useTheme } from "@react-navigation/native";
+import { T, useNavigation, useTheme } from "@react-navigation/native";
 import { useTheme as useThemeFromStyledComponents } from "styled-components/native";
 import { Flex, Text, Icons } from "@ledgerhq/native-ui";
 import type { AppRequest } from "@ledgerhq/live-common/hw/actions/app";
@@ -373,7 +373,31 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
   }
 
   if (completeExchangeStarted && !completeExchangeResult && !completeExchangeError) {
+    const swapRequest = {
+      ...request,
+      colors,
+      selectedDevice,
+      theme,
+      walletState,
+      settingsState,
+      amountExpectedTo: status.amountExpectedTo,
+      estimatedFees: status.estimatedFees,
+    } as {
+      selectedDevice: Device;
+      provider: string;
+      transaction: Transaction;
+      exchangeRate: ExchangeRate;
+      exchange: ExchangeSwap;
+      colors: T["colors"];
+      theme: typeof theme;
+      amountExpectedTo?: string;
+      estimatedFees?: string;
+      walletState: ReturnType<typeof walletSelector>;
+      settingsState: ReturnType<typeof settingsStoreSelector>;
+    };
+
     return renderExchange({
+      swapRequest,
       exchangeType: (request as { exchangeType: number })?.exchangeType,
       t,
       device: device!,
@@ -381,29 +405,29 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
     });
   }
 
-  if (initSwapRequested && !initSwapResult && !initSwapError) {
-    const req = request as {
-      device: Device;
-      transaction: Transaction;
-      exchangeRate: ExchangeRate;
-      exchange: ExchangeSwap;
-      amountExpectedTo?: string;
-      estimatedFees?: string;
-    };
-    return renderConfirmSwap({
-      t,
-      device: selectedDevice,
-      colors,
-      theme,
-      transaction: req?.transaction,
-      exchangeRate: req?.exchangeRate,
-      exchange: req?.exchange,
-      amountExpectedTo: status.amountExpectedTo,
-      estimatedFees: status.estimatedFees,
-      walletState,
-      settingsState,
-    });
-  }
+  // if (initSwapRequested && !initSwapResult && !initSwapError) {
+  //   const req = request as {
+  //     device: Device;
+  //     transaction: Transaction;
+  //     exchangeRate: ExchangeRate;
+  //     exchange: ExchangeSwap;
+  //     amountExpectedTo?: string;
+  //     estimatedFees?: string;
+  //   };
+  //   return renderConfirmSwap({
+  //     t,
+  //     device: selectedDevice,
+  //     colors,
+  //     theme,
+  //     transaction: req?.transaction,
+  //     exchangeRate: req?.exchangeRate,
+  //     exchange: req?.exchange,
+  //     amountExpectedTo: status.amountExpectedTo,
+  //     estimatedFees: status.estimatedFees,
+  //     walletState,
+  //     settingsState,
+  //   });
+  // }
 
   if (allowOpeningRequestedWording || requestOpenApp) {
     // requestOpenApp for Nano S 1.3.1 (need to ask user to open the app.)
