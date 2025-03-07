@@ -10,7 +10,7 @@ import pt from "../../../static/i18n/pt-BR/app.json";
 import ru from "../../../static/i18n/ru/app.json";
 import tr from "../../../static/i18n/tr/app.json";
 import zh from "../../../static/i18n/zh/app.json";
-import th from "../../../static/i18n/th-TH/app.json";
+import th from "../../../static/i18n/th/app.json";
 
 export const i18_DEFAULT_NAMESPACE = "app";
 
