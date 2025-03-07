@@ -39,12 +39,12 @@ export function isTestnet(currencyId: string): boolean {
 }
 
 export const getMaxSendBalance = (
-  account: Account,
-  transaction: Transaction,
   gas: BigNumber,
   gasPrice: BigNumber,
+  account: Account,
+  transaction?: Transaction,
 ): BigNumber => {
-  const tokenAccount = findSubAccountById(account, transaction.subAccountId ?? "");
+  const tokenAccount = findSubAccountById(account, transaction?.subAccountId ?? "");
   const fromTokenAccount = tokenAccount && isTokenAccount(tokenAccount);
 
   const totalGas = gas.multipliedBy(gasPrice);
