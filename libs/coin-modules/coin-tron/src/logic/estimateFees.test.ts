@@ -19,7 +19,7 @@ describe("estimateFees", () => {
       sender: "sender1",
       recipient: "recipient1",
       amount: BigInt(1000),
-      standard: "trc10",
+      tokenAddress: "1002000",
     };
 
     const result = await estimateFees(transactionIntent);
