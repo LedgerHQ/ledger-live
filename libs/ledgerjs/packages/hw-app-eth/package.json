@@ -39,11 +39,13 @@
     "@ledgerhq/types-live": "workspace:^",
     "axios": "1.7.7",
     "bignumber.js": "^9.1.2",
-    "semver": "^7.3.5"
+    "semver": "^7.3.5",
+    "jest-sonar": "0.2.16"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
     "build": "tsc && tsc -m esnext --moduleResolution bundler --outDir lib-es",
+    "coverage": "jest --coverage --passWithNoTests && mv coverage/coverage-final.json coverage/coverage-hw-app-eth.json && mv coverage/lcov.info coverage/hw-app-eth-lcov.info",
     "prewatch": "pnpm build",
     "watch": "tsc --watch",
     "watch:es": "tsc --watch -m esnext --moduleResolution bundler --outDir lib-es",
