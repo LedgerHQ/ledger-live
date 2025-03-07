@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/crypto-icons-ui": major
+"@ledgerhq/crypto-icons-ui": minor
 ---
 
 Add logo for FLT token to ledger live. Token is already listed.
