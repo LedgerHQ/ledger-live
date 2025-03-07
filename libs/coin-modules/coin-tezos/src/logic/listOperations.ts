@@ -70,7 +70,7 @@ function convertOperation(
   address: string,
   operation: APITransactionType | APIDelegationType,
 ): Operation {
-  const { amount, hash, storageFee, sender, timestamp, type, counter } = operation;
+  const { amount, hash, sender, timestamp, type, counter } = operation;
 
   let targetAddress = undefined;
   if (isAPITransactionType(operation)) {
@@ -89,6 +89,11 @@ function convertOperation(
 
   const senders = sender?.address ? [sender.address] : [];
 
+  const fee =
+    BigInt(operation.storageFee ?? 0) +
+    BigInt(operation.bakerFee ?? 0) +
+    BigInt(operation.allocationFee ?? 0);
+
   return {
     // hash id defined nullable in the tzkt API, but I wonder when it would be null ?
     hash: hash ?? "",
@@ -96,7 +101,7 @@ function convertOperation(
     type: type,
     value: BigInt(amount),
     // storageFee for transaction is always present
-    fee: BigInt(storageFee ?? 0),
+    fee: fee,
     block: {
       hash: operation.block,
       height: operation.level,
