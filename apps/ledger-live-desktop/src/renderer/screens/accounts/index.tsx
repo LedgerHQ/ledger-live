@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 import { Account, AccountLike } from "@ledgerhq/types-live";
+import { LNSUpsellBanner } from "LLD/features/LNSUpsell";
 import TrackPage, { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import { Redirect } from "react-router";
@@ -37,6 +38,7 @@ export default function AccountsPage() {
     },
     [history],
   );
+
   if (!accounts.length) {
     return <Redirect to="/" />;
   }
@@ -50,6 +52,7 @@ export default function AccountsPage() {
       />
       <AccountsHeader />
       <AccountList onAccountClick={onAccountClick} accounts={accounts} range={range} mode={mode} />
+      <LNSUpsellBanner location="accounts" mb={30} />
     </Box>
   );
 }
