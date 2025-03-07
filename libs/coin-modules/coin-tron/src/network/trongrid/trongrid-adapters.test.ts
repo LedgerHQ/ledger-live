@@ -1,37 +1,121 @@
-import BigNumber from "bignumber.js";
-import { TrongridTxInfo } from "../../types";
+import { fromBigNumberToBigInt } from "@ledgerhq/coin-framework/utils";
 import { fromTrongridTxInfoToOperation } from "./trongrid-adapters";
+import { TrongridTxInfo } from "../../types";
+
+// Mock fromBigNumberToBigInt
+jest.mock("@ledgerhq/coin-framework/utils", () => ({
+  fromBigNumberToBigInt: jest.fn(),
+}));
 
 describe("fromTrongridTxInfoToOperation", () => {
-  it("should convert TrongridTxInfo to Operation", () => {
-    const trongridTx: TrongridTxInfo = {
-      txID: "txID",
-      from: "from",
-      tokenId: "tokenId",
-      type: "TransferContract",
-      hasFailed: false,
-      value: new BigNumber(1),
-      fee: new BigNumber(2),
-      blockHeight: 1,
-      to: "to",
-      date: new Date(),
+  const mockUserAddress = "from";
+
+  const mockTrongridTxInfo: TrongridTxInfo = {
+    txID: "tx123",
+    blockHeight: 10,
+    date: 1627843345,
+    fee: "1000", // Fee as string (simulating BigNumber)
+    value: "5000", // Value as string (simulating BigNumber)
+    from: "from",
+    to: "to",
+    tokenType: "trc42",
+    tokenAddressOrId: "boo",
+  } as unknown as TrongridTxInfo;
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    (fromBigNumberToBigInt as jest.Mock).mockImplementation(
+      (value: string, defaultValue: bigint) => (value != null ? BigInt(value) : defaultValue),
+    );
+  });
+
+  it("should correctly transform a TrongridTxInfo to an Operation", () => {
+    const result = fromTrongridTxInfoToOperation(mockTrongridTxInfo, mockUserAddress);
+
+    expect(result.tx.hash).toBe("tx123");
+    expect(result.tx.block.height).toBe(10);
+    expect(result.tx.block.time).toBe(1627843345);
+    expect(result.tx.fees).toBe(BigInt(1000));
+    expect(result.operationIndex).toBe(0);
+    expect(result.type).toBe("OUT");
+    expect(result.value).toBe(BigInt(5000));
+    expect(result.senders).toEqual(["from"]);
+    expect(result.recipients).toEqual(["to"]);
+    expect(result.asset).toEqual({
+      standard: "trc42",
+      tokenAddressOrId: "boo",
+    });
+  });
+
+  it("should return IN operation type when the user address is the recipient", () => {
+    const txInfo = {
+      ...mockTrongridTxInfo,
+      from: "randomAddress",
+      to: mockUserAddress,
     };
 
-    const result = fromTrongridTxInfoToOperation(trongridTx);
+    const result = fromTrongridTxInfoToOperation(txInfo, mockUserAddress);
 
-    expect(result).toEqual({
-      hash: "txID",
-      address: "from",
-      type: trongridTx.type,
-      value: BigInt(1),
-      fee: BigInt(2),
-      block: { height: 1 },
-      senders: ["from"],
-      recipients: ["to"],
-      date: trongridTx.date,
-      details: {
-        tokenId: "tokenId",
-      },
-    });
+    expect(result.type).toBe("IN");
+  });
+
+  it("should return OUT operation type when the user address is the sender", () => {
+    const txInfo = {
+      ...mockTrongridTxInfo,
+      from: mockUserAddress,
+      to: "randomAddress",
+    };
+
+    const result = fromTrongridTxInfoToOperation(txInfo, mockUserAddress);
+
+    expect(result.type).toBe("OUT");
+  });
+
+  it("should handle missing blockHeight gracefully", () => {
+    const txInfo = {
+      ...mockTrongridTxInfo,
+      blockHeight: undefined,
+    };
+
+    const result = fromTrongridTxInfoToOperation(txInfo, mockUserAddress);
+
+    expect(result.tx.block.height).toBe(0); // default value
+  });
+
+  it("should return undefined asset (not a token) when type / tokenAddr is undefined", () => {
+    const txInfo = {
+      ...mockTrongridTxInfo,
+      tokenType: undefined,
+      tokenAddressOrId: undefined,
+    };
+
+    const result = fromTrongridTxInfoToOperation(txInfo, mockUserAddress);
+
+    expect(result.asset).toBeUndefined();
+  });
+
+  it("should return UNKNOWN operation in default case", () => {
+    const txInfo = {
+      ...mockTrongridTxInfo,
+      from: mockUserAddress,
+      to: mockUserAddress,
+    };
+
+    const result = fromTrongridTxInfoToOperation(txInfo, mockUserAddress);
+
+    expect(result.type).toBe("UNKNOWN");
+  });
+
+  it("should handle missing fee or value gracefully", () => {
+    const txInfo = {
+      ...mockTrongridTxInfo,
+      fee: undefined,
+      value: undefined,
+    };
+
+    const result = fromTrongridTxInfoToOperation(txInfo, mockUserAddress);
+
+    expect(result.tx.fees).toBe(BigInt(0));
+    expect(result.value).toBe(BigInt(0));
   });
 });

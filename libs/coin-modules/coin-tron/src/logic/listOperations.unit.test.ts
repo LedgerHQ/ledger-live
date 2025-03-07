@@ -24,8 +24,8 @@ describe("listOperations", () => {
     ];
 
     const mockOperations: Partial<Operation>[] = [
-      { hash: "tx1", value: BigInt(0) },
-      { hash: "tx2", value: BigInt(42) },
+      { tx: { hash: "tx1" } as any, value: BigInt(0) },
+      { tx: { hash: "tx2" } as any, value: BigInt(42) },
     ];
 
     (fetchTronAccountTxs as jest.Mock).mockResolvedValue(mockTxs);

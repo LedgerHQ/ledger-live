@@ -40,6 +40,8 @@ export const formatTrongridTrc20TxResponse = (tx: Trc20API): TrongridTxInfo | nu
       date,
       type: txType,
       tokenId: tokenId,
+      tokenAddressOrId: token_info.address,
+      tokenType: "trc20",
       from,
       to,
       blockHeight,
@@ -104,6 +106,9 @@ export const formatTrongridTxResponse = (
       date,
       type,
       tokenId,
+      // TRX native is TransferContract
+      tokenType: type === "TransferAssetContract" ? "trc10" : undefined,
+      tokenAddressOrId: tokenId,
       from,
       to,
       value: !value.isNaN() ? value : new BigNumber(0),

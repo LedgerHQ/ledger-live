@@ -5,18 +5,28 @@ export type BlockInfo = {
 };
 
 export type Operation = {
-  hash: string;
-  address: string;
   type: string;
-  value: bigint;
-  fee: bigint;
-  block: BlockInfo;
+  // This operation corresponds to the index-th event triggered bu the original transaction
+  operationIndex: number;
   senders: string[];
   recipients: string[];
-  date: Date;
-  transactionSequenceNumber?: number;
+  value: bigint;
+  // Asset is not defined when dealing with native currency
+  asset?: AssetInfo;
   // Field containing dedicated value for each blockchain
   details?: Record<string, unknown>;
+  tx: {
+    // One tx can trigger multiple operations, hence multiple operations with the same hash
+    hash: string;
+    // In which block this operation's related tx was included
+    block: BlockInfo;
+    fees: bigint;
+  };
+};
+
+export type AssetInfo = {
+  standard: string;
+  tokenAddressOrId: string;
 };
 
 export type Transaction = {
