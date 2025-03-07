@@ -72,7 +72,7 @@ env:
 jobs:
   detox-tests-ios:
     name: "LLM - iOS Detox Tests"
-    runs-on: [m1, ARM64]
+    runs-on: [m4, ARM64]
     if: ${{ !inputs.speculos_tests && github.event_name != 'schedule' }}
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
@@ -315,7 +315,7 @@ jobs:
           bot_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
       - name: Set DISABLE_TRANSACTION_BROADCAST
         if: ${{ env.SPECULOS_RUN == 'true' }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-env@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-broadcast@develop
         with:
           enable_broadcast: ${{ inputs.enable_broadcast }}
       - name: Run Android Tests
