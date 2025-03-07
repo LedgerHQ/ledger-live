@@ -1,3 +1,4 @@
+import { CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { ABTestingVariants } from "./ABTesting";
 import { ChainwatchNetwork } from "./chainwatch";
 import { LldNanoSUpsellBannersConfig } from "./lnsUpsell";
@@ -271,9 +272,27 @@ export type Feature_SwapWalletApiPartnerList = Feature<{
   list: string[];
 }>;
 
-export type Feature_StakePrograms = Feature<{
-  list: string[];
-}>;
+export type RedirectQueryParam<P> = "stakekit" extends P
+  ? {
+      yieldId: string;
+    }
+  : "kiln-widget" | "kilnWidget" extends P
+    ? {
+        chaidId: number;
+      }
+    : unknown;
+
+export type Feature_StakePrograms<ManifestId = "stakekit" | "kiln-widget" | "kilnWidget"> =
+  Feature<{
+    list: string[];
+    redirects: Array<{
+      platform: ManifestId;
+      /** @developer asssetId resolves to string but the enum types are provided for clarity. */
+      assetId: string | CryptoCurrency["id"] | TokenCurrency["id"];
+      name: string;
+      queryParams?: Record<string, string> & RedirectQueryParam<ManifestId>;
+    }>;
+  }>;
 
 export type Feature_StakeAccountBanner = Feature<{ [blockchainName: string]: any }>;
 
