@@ -131,4 +131,13 @@ describe("buildTransaction Test", () => {
     });
     expect(generateTransactionArgs[2]).toEqual({ maxGasAmount: "100", gasUnitPrice: "200" });
   });
+
+  it("should throw error if token is not supported", async () => {
+    const account = createFixtureAccountWithSubAccount("not_supported_token_type");
+    const transaction = createFixtureTransactionWithSubAccount();
+    const aptosClient = new AptosAPI(account.currency.id);
+    expect(async () => await buildTransaction(account, transaction, aptosClient)).rejects.toThrow(
+      "Token type not_supported_token_type not supported",
+    );
+  });
 });
