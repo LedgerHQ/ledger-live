@@ -116,7 +116,9 @@ function Delegations({ account }: Props) {
   const data = useMemo<DelegationDrawerProps["data"]>(() => {
     const d = delegation;
 
-    return d
+    const poolId = d && d.poolId ? d.poolId : undefined;
+
+    return poolId
       ? [
           {
             label: t("cardano.delegation.pool"),
@@ -128,14 +130,14 @@ function Delegations({ account }: Props) {
                 style={[styles.valueText]}
                 color="live"
               >
-                {d.name ?? d.poolId ?? ""}
+                {d?.name ?? poolId ?? ""}
               </LText>
             ),
           },
           {
             label: t("cardano.delegation.poolId"),
             Component: (
-              <Touchable onPress={() => onOpenExplorer(d.poolId)} event="DelegationOpenExplorer">
+              <Touchable onPress={() => onOpenExplorer(poolId)} event="DelegationOpenExplorer">
                 <LText
                   numberOfLines={1}
                   semiBold
@@ -143,7 +145,7 @@ function Delegations({ account }: Props) {
                   style={[styles.valueText]}
                   color="live"
                 >
-                  {d.poolId}
+                  {poolId}
                 </LText>
               </Touchable>
             ),
@@ -172,7 +174,7 @@ function Delegations({ account }: Props) {
                 style={[styles.valueText]}
                 color="live"
               >
-                {d.status
+                {d?.status
                   ? t("cardano.delegation.drawer.active")
                   : t("cardano.delegation.drawer.inactive")}
               </LText>
@@ -229,7 +231,7 @@ function Delegations({ account }: Props) {
         account={account}
         ValidatorImage={({ size }) => (
           <PoolImage
-            isLedger={LEDGER_POOL_IDS.includes(delegation?.poolId || "")}
+            isLedger={delegation?.poolId ? LEDGER_POOL_IDS.includes(delegation.poolId) : false}
             name={delegation?.name ?? delegation?.poolId ?? ""}
             size={size}
           />
