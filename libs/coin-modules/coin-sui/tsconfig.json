@@ -3,6 +3,7 @@
   "compilerOptions": {
     "declaration": true,
     "declarationMap": true,
+    "module": "NodeNext",
     "downlevelIteration": true,
     "lib": ["es2020", "dom"],
     "rootDir": "./src",
