@@ -145,9 +145,11 @@ for (const { swap, xrayTicket } of swaps) {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
         await performSwapUntilQuoteSelectionStep(app, electronApp, swap);
+        await app.swap.fillInOriginCurrencyAmount(electronApp, swap.amount);
         const selectedProvider = await app.swap.selectExchange(electronApp);
 
         await performSwapUntilDeviceVerificationStep(app, electronApp, swap, selectedProvider);
+        await app.swapDrawer.verifyAmountSent(swap.amount, swap.accountToDebit.currency.ticker);
         await app.speculos.verifyAmountsAndAcceptSwap(swap);
         await app.swapDrawer.verifyExchangeCompletedTextContent(swap.accountToCredit.currency.name);
       },
@@ -260,6 +262,7 @@ test.describe("Swap - Rejected on device", () => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
       await performSwapUntilQuoteSelectionStep(app, electronApp, rejectedSwap);
+      await app.swap.fillInOriginCurrencyAmount(electronApp, rejectedSwap.amount);
       const selectedProvider = await app.swap.selectExchange(electronApp);
 
       await performSwapUntilDeviceVerificationStep(
@@ -267,6 +270,10 @@ test.describe("Swap - Rejected on device", () => {
         electronApp,
         rejectedSwap,
         selectedProvider,
+      );
+      await app.swapDrawer.verifyAmountSent(
+        rejectedSwap.amount,
+        rejectedSwap.accountToDebit.currency.ticker,
       );
       await app.speculos.verifyAmountsAndRejectSwap(rejectedSwap);
       await app.swapDrawer.verifyExchangeErrorTextContent("Operation denied on device");
@@ -385,6 +392,7 @@ for (const { swap, xrayTicket } of tooLowAmountForQuoteSwaps) {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
         await performSwapUntilQuoteSelectionStep(app, electronApp, swap);
+        await app.swap.fillInOriginCurrencyAmount(electronApp, swap.amount);
         const errorMessage = swap.accountToDebit.accountType
           ? "Not enough balance."
           : new RegExp(
@@ -423,6 +431,68 @@ for (const { swap, xrayTicket } of tooLowAmountForQuoteSwaps) {
   });
 }
 
+const swapWithSendMax = [
+  {
+    swap: new Swap(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "sendMax", Fee.MEDIUM),
+    xrayTicket: "B2CQA-2110",
+  },
+  /*{
+    swap: new Swap(Account.ETH_1, Account.SOL_1, "sendMax", Fee.MEDIUM),
+    xrayTicket: "B2CQA-2110",
+  },*/
+];
+
+for (const { swap, xrayTicket } of swapWithSendMax) {
+  test.describe.only("Swap - Swap with Send Max", () => {
+    test.beforeAll(async () => {
+      process.env.SWAP_DISABLE_APPS_INSTALL = "true";
+      process.env.SWAP_API_BASE = "https://swap-stg.ledger-test.com/v5";
+      process.env.DISABLE_TRANSACTION_BROADCAST = "true";
+    });
+
+    const accPair: string[] = [swap.accountToDebit, swap.accountToCredit].map(acc =>
+      acc.currency.speculosApp.name.replace(/ /g, "_"),
+    );
+
+    test.beforeEach(async () => {
+      setExchangeDependencies(
+        accPair.map(appName => ({
+          name: appName,
+        })),
+      );
+    });
+
+    test.afterAll(async () => {
+      delete process.env.SWAP_DISABLE_APPS_INSTALL;
+      delete process.env.SWAP_API_BASE;
+      delete process.env.DISABLE_TRANSACTION_BROADCAST;
+    });
+
+    test.use({
+      userdata: "speculos-tests-app",
+      speculosApp: app,
+    });
+
+    test(
+      `Swap ${swap.accountToDebit.currency.name} to ${swap.accountToCredit.currency.name}`,
+      {
+        annotation: {
+          type: "TMS",
+          description: xrayTicket,
+        },
+      },
+      async ({ app, electronApp }) => {
+        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+        await performSwapUntilQuoteSelectionStep(app, electronApp, swap);
+        await app.swap.clickSendMax(electronApp);
+        const selectedProvider = await app.swap.selectExchange(electronApp);
+        await performSwapUntilDeviceVerificationStep(app, electronApp, swap, selectedProvider);
+        await app.speculos.verifyAmountsAndAcceptSwap(swap);
+        await app.swapDrawer.verifyExchangeCompletedTextContent(swap.accountToCredit.currency.name);
+      },
+    );
+  });
+}
 const swapEntryPoint = {
   swap: new Swap(Account.BTC_NATIVE_SEGWIT_1, Account.ETH_1, "0.0006", Fee.MEDIUM),
 };
@@ -567,7 +637,6 @@ async function performSwapUntilQuoteSelectionStep(
   await app.swapDrawer.selectAccountByName(swap.accountToDebit);
   await app.swap.selectAssetTo(electronApp, swap.accountToCredit.currency.name);
   await app.swapDrawer.selectAccountByName(swap.accountToCredit);
-  await app.swap.fillInOriginCurrencyAmount(electronApp, swap.amount);
 }
 
 async function performSwapUntilDeviceVerificationStep(
@@ -583,9 +652,7 @@ async function performSwapUntilDeviceVerificationStep(
 
   swap.setAmountToReceive(amountTo);
   swap.setFeesAmount(fees);
-
   await app.swapDrawer.verifyAmountToReceive(amountTo);
-  await app.swapDrawer.verifyAmountSent(swap.amount, swap.accountToDebit.currency.ticker);
   await app.swapDrawer.verifySourceAccount(swap.accountToDebit.currency.name);
   await app.swapDrawer.verifyTargetCurrency(swap.accountToCredit.currency.name);
   await app.swapDrawer.verifyProvider(selectedProvider);
