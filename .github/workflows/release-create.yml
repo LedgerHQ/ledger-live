@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-24.04
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
-      RELEASE_BRANCH: "release"
+      RELEASE_BRANCH: "release-test-angsbayley"
     steps:
       - name: generate token
         id: generate-token
