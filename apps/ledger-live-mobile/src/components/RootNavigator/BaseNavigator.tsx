@@ -19,7 +19,6 @@ import EditDeviceName from "~/screens/EditDeviceName";
 import ScanRecipient from "~/screens/SendFunds/ScanRecipient";
 import Main from "./MainNavigator";
 import { ErrorHeaderInfo } from "./BaseOnboardingNavigator";
-import SettingsNavigator from "./SettingsNavigator";
 import BuyDeviceNavigator from "./BuyDeviceNavigator";
 import ReceiveFundsNavigator from "./ReceiveFundsNavigator";
 import SendFundsNavigator from "./SendFundsNavigator";
@@ -96,6 +95,7 @@ import DeviceSelectionNavigator from "LLM/features/DeviceSelection/Navigator";
 import AssetSelectionNavigator from "LLM/features/AssetSelection/Navigator";
 import AssetsListNavigator from "LLM/features/Assets/Navigator";
 import FeesNavigator from "./FeesNavigator";
+import { SettingsNavigator } from "./LazyNavigator/BaseNavigator.lazy";
 
 const Stack = createStackNavigator<BaseNavigatorStackParamList>();
 
