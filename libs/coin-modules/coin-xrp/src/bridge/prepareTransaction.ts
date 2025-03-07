@@ -1,6 +1,6 @@
 import { AccountBridge } from "@ledgerhq/types-live";
 import { Transaction } from "../types";
-import { estimateFees } from "../logic/estimateFees";
+import { estimateFees } from "../logic";
 
 export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"] = async (
   _account,
