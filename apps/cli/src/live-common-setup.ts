@@ -1,10 +1,6 @@
 export * from "./live-common-setup-base";
-import React from "react";
 import invariant from "invariant";
 import { openTransportReplayer, RecordStore } from "@ledgerhq/hw-transport-mocker";
-import Transport from "@ledgerhq/hw-transport";
-import { NotEnoughBalance } from "@ledgerhq/errors";
-import { log } from "@ledgerhq/logs";
 import { Observable } from "rxjs";
 import { map } from "rxjs/operators";
 import createTransportHttp from "@ledgerhq/hw-transport-http";
@@ -15,7 +11,6 @@ import {
   disconnect,
 } from "@ledgerhq/live-common/hw/index";
 import { retry } from "@ledgerhq/live-common/promise";
-import { checkLibs } from "@ledgerhq/live-common/sanityChecks";
 import { closeAllSpeculosDevices } from "@ledgerhq/live-common/load/speculos";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { liveConfig } from "@ledgerhq/live-common/config/sharedConfig";
