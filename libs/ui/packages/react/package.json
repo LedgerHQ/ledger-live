@@ -119,7 +119,7 @@
     "babel-loader": "^8.0.0",
     "csstype": "^3.0.11",
     "embla-carousel": "8.0.0-rc17",
-    "esbuild": "^0.19.0",
+    "esbuild": "^0.25.0",
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-storybook": "^0.6.15",
