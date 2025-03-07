@@ -1,4 +1,9 @@
-import { createFixtureAccount, createFixtureTransaction } from "../../bridge/bridge.fixture";
+import {
+  createFixtureAccount,
+  createFixtureAccountWithSubAccount,
+  createFixtureTransaction,
+  createFixtureTransactionWithSubAccount,
+} from "../../bridge/bridge.fixture";
 import buildTransaction from "../../bridge/buildTransaction";
 import { AptosAPI } from "../../api";
 import { normalizeTransactionOptions } from "../../bridge/logic";
@@ -26,8 +31,12 @@ jest.mock("../../api", () => {
   };
 });
 
+afterEach(() => {
+  jest.clearAllMocks();
+});
+
 describe("buildTransaction Test", () => {
-  it("should return tx", async () => {
+  it("should return transaction for main account", async () => {
     const account = createFixtureAccount();
     const transaction = createFixtureTransaction();
     const aptosClient = new AptosAPI(account.currency.id);
@@ -54,7 +63,71 @@ describe("buildTransaction Test", () => {
     expect(generateTransactionArgs[1]).toEqual({
       function: "0x1::aptos_account::transfer_coins",
       typeArguments: ["0x1::aptos_coin::AptosCoin"],
-      functionArguments: ["", "0"],
+      functionArguments: ["recipient", "0"],
+    });
+    expect(generateTransactionArgs[2]).toEqual({ maxGasAmount: "100", gasUnitPrice: "200" });
+  });
+
+  it("should return transaction for token account of type fungible asset", async () => {
+    const account = createFixtureAccountWithSubAccount("fungible_asset");
+    const transaction = createFixtureTransactionWithSubAccount();
+    const aptosClient = new AptosAPI(account.currency.id);
+    const result = await buildTransaction(account, transaction, aptosClient);
+
+    const expected = "tx";
+
+    expect(result).toBe(expected);
+
+    const mockedNormalizeTransactionOptions = jest.mocked(normalizeTransactionOptions);
+
+    expect(mockedNormalizeTransactionOptions).toHaveBeenCalledTimes(1);
+    expect(generateTransaction).toHaveBeenCalledTimes(1);
+
+    const generateTransactionArgs: [string, InputEntryFunctionData, TransactionOptions][] =
+      generateTransaction.mock.calls[0];
+
+    expect(mockedNormalizeTransactionOptions.mock.calls[0][0]).toEqual({
+      maxGasAmount: "0",
+      gasUnitPrice: "0",
+    });
+
+    expect(generateTransactionArgs[0]).toBe("address");
+    expect(generateTransactionArgs[1]).toEqual({
+      function: "0x1::primary_fungible_store::transfer",
+      typeArguments: ["0x1::fungible_asset::Metadata"],
+      functionArguments: [["contract_address"], "recipient", "0"],
+    });
+    expect(generateTransactionArgs[2]).toEqual({ maxGasAmount: "100", gasUnitPrice: "200" });
+  });
+
+  it("should return transaction for token account of type fungible asset", async () => {
+    const account = createFixtureAccountWithSubAccount("coin");
+    const transaction = createFixtureTransactionWithSubAccount();
+    const aptosClient = new AptosAPI(account.currency.id);
+    const result = await buildTransaction(account, transaction, aptosClient);
+
+    const expected = "tx";
+
+    expect(result).toBe(expected);
+
+    const mockedNormalizeTransactionOptions = jest.mocked(normalizeTransactionOptions);
+
+    expect(mockedNormalizeTransactionOptions).toHaveBeenCalledTimes(1);
+    expect(generateTransaction).toHaveBeenCalledTimes(1);
+
+    const generateTransactionArgs: [string, InputEntryFunctionData, TransactionOptions][] =
+      generateTransaction.mock.calls[0];
+
+    expect(mockedNormalizeTransactionOptions.mock.calls[0][0]).toEqual({
+      maxGasAmount: "0",
+      gasUnitPrice: "0",
+    });
+
+    expect(generateTransactionArgs[0]).toBe("address");
+    expect(generateTransactionArgs[1]).toEqual({
+      function: "0x1::coin::transfer",
+      typeArguments: ["contract_address"],
+      functionArguments: ["recipient", "0"],
     });
     expect(generateTransactionArgs[2]).toEqual({ maxGasAmount: "100", gasUnitPrice: "200" });
   });
