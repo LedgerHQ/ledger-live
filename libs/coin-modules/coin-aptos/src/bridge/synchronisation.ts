@@ -89,21 +89,15 @@ export const mergeSubAccounts = (
  */
 export const getSubAccountShape = async (
   currency: CryptoCurrency,
-  address: string, // TODO: this should be redundant
+  address: string,
   parentId: string,
   token: TokenCurrency,
   operations: Operation[],
 ): Promise<TokenAccount> => {
   const aptosClient = new AptosAPI(currency.id);
-  //const { xpubOrAddress: address } = decodeAccountId(parentId); // TODO
-  const tokenAccountId = encodeTokenAccountId(parentId, token); // TODO
+  const tokenAccountId = encodeTokenAccountId(parentId, token);
+  const balance = await aptosClient.getBalance(address, token);
 
-  let balance = new BigNumber(0);
-  if (token.tokenType == "coin") {
-    balance = await aptosClient.getBalance(address, token.contractAddress);
-  } else {
-    balance = await aptosClient.getFABalance(address, token.contractAddress);
-  }
   return {
     type: "TokenAccount",
     id: tokenAccountId,
@@ -125,11 +119,9 @@ export const getSubAccountShape = async (
  */
 export const getSubAccounts = async (
   infos: AccountShapeInfo<Account>,
-  address: string, //TODO: this should be redundant
+  address: string,
   accountId: string,
   lastTokenOperations: Operation[],
-  //blacklistedTokenIds: string[] = [],
-  //swapHistoryMap: Map<TokenCurrency, TokenAccount["swapHistory"]>,
 ): Promise<TokenAccount[]> => {
   const { currency } = infos;
 
@@ -138,7 +130,7 @@ export const getSubAccounts = async (
     (acc, operation) => {
       const { accountId } = decodeOperationId(operation.id);
       const { token } = decodeTokenAccountId(accountId);
-      if (!token) return acc; // || blacklistedTokenIds.includes(token.id)
+      if (!token) return acc; // TODO: do we need to check blacklistedTokenIds
 
       if (!acc.has(token)) {
         acc.set(token, []);
@@ -157,24 +149,6 @@ export const getSubAccounts = async (
 
   return Promise.all(subAccountsPromises);
 };
-
-// export const getSyncHash = (
-//   currency: CryptoCurrency,
-//   blacklistedTokenIds: string[] = [],
-// ): string => {
-
-//   const config = getCoinConfig(currency).info;
-//   const { node = {}, explorer = {} } = config;
-
-//   const stringToHash =
-//     getCALHash(currency) +
-//     blacklistedTokenIds.join("") +
-//     isNftSupported +
-//     JSON.stringify(node) +
-//     JSON.stringify(explorer);>
-
-//   return `0x${murmurhash(stringToHash).result().toString(16)}`;
-// };
 
 export const getAccountShape: GetAccountShape = async info => {
   const { address, initialAccount, currency, derivationMode, rest } = info;
@@ -212,19 +186,12 @@ export const getAccountShape: GetAccountShape = async info => {
 
   const newSubAccounts = await getSubAccounts(info, address, accountId, tokenOperations);
 
-  // const lastTokenOperations: Operation[] = [];
-  // for (const tokenOperation of tokenOperations) {
-  //   const newSubAccounts = await getSubAccounts(info, accountId, lastTokenOperations);
-  // }
-
-  //const syncHash = getSyncHash(currency, blacklistedTokenIds);
+  // TODO: validate correctness of cache and mergeSubAccounts
   const shouldSyncFromScratch = initialAccount === undefined;
 
   const subAccounts = shouldSyncFromScratch
     ? newSubAccounts
     : mergeSubAccounts(initialAccount, newSubAccounts); // Merging potential new subAccouns while preserving the references
-
-  // const subAccounts = newSubAccounts;
 
   const shape: Partial<AptosAccount> = {
     type: "Account",
