@@ -41,3 +41,32 @@ index 30228c5a84e07a54de75b1977b316dde6d7b6790..7583d901eebb2cedcaf6b2420e8caad3
    } catch (e) {
      // We silence @react-native-community/cli missing as it is no
      // longer a dependency
+diff --git a/React/Base/RCTBridge.mm b/React/Base/RCTBridge.mm
+index 8a44d2ae74889e04ca6847181fab4c3287cd9e67..e6e7d6d2480ab8bdb99563a09e875ab4167dfc02 100644
+--- a/React/Base/RCTBridge.mm
++++ b/React/Base/RCTBridge.mm
+@@ -313,6 +313,7 @@ - (instancetype)initWithDelegate:(id<RCTBridgeDelegate>)delegate
+ 
+ - (void)dealloc
+ {
++  RCTBridge *batchedBridge = self.batchedBridge;
+   /**
+    * This runs only on the main thread, but crashes the subclass
+    * RCTAssertMainQueue();
+@@ -332,7 +333,15 @@ - (void)dealloc
+     RCTExecuteOnMainQueue(^{
+       facebook::react::jsinspector_modern::getInspectorInstance().removePage(*inspectorPageId);
+       inspectorPageId.reset();
+-      inspectorTarget.reset();
++      if (batchedBridge) {
++        [batchedBridge
++            dispatchBlock:^{
++              inspectorTarget.reset();
++            }
++                    queue:RCTJSThread];
++      } else {
++        inspectorTarget.reset();
++      }
+     });
+   }
+ }

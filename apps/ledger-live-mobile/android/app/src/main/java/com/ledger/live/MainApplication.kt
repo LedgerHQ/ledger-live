@@ -15,7 +15,6 @@ import com.facebook.react.defaults.DefaultReactNativeHost
 import com.facebook.react.soloader.OpenSourceMergedSoMapping
 import com.facebook.soloader.SoLoader
 import expo.modules.ApplicationLifecycleDispatcher
-import expo.modules.ExpoModulesPackage
 import expo.modules.ReactNativeHostWrapper
 
 class MainApplication : Application(), ReactApplication {
@@ -36,7 +35,6 @@ class MainApplication : Application(), ReactApplication {
                   add(NativeModulesPackage())
                   add(ReactVideoPackage())
                   add(BackgroundRunnerPackager())
-                  add(ExpoModulesPackage())
                 }
 
             override fun getJSMainModuleName(): String = "index"
