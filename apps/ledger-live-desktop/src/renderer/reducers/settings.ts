@@ -20,6 +20,7 @@ import { CryptoCurrency, Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { getEnv } from "@ledgerhq/live-env";
 import {
   LanguageIds,
+  LanguageIdsNotFeatureFlagged,
   Languages,
   Language,
   Locale,
@@ -143,7 +144,7 @@ export const getInitialLanguageAndLocale = (): { language: Language; locale: Loc
   const systemLocal = getAppLocale();
 
   // Find language from system locale (i.e., en, fr, es ...)
-  const languageId = LanguageIds.find(lang => systemLocal.startsWith(lang));
+  const languageId = LanguageIdsNotFeatureFlagged.find(lang => systemLocal.startsWith(lang));
 
   // If language found, try to find corresponding locale
   if (languageId) {
