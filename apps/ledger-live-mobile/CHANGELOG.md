@@ -1,5 +1,31 @@
 # live-mobile
 
+## 3.69.0-nightly.2
+
+### Minor Changes
+
+- [#9397](https://github.com/LedgerHQ/ledger-live/pull/9397) [`0d91c67`](https://github.com/LedgerHQ/ledger-live/commit/0d91c6779fd1c90286eb22bbc4915d0ef49018e3) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Clean all unused png files
+
+- [#9344](https://github.com/LedgerHQ/ledger-live/pull/9344) [`cc00249`](https://github.com/LedgerHQ/ledger-live/commit/cc002495f3e107aba283a3aa4abca90954de6d76) Thanks [@Canestin](https://github.com/Canestin)! - add banner to warn users about the migration
+
+### Patch Changes
+
+- [#9406](https://github.com/LedgerHQ/ledger-live/pull/9406) [`d4ada37`](https://github.com/LedgerHQ/ledger-live/commit/d4ada370a2d974dda1459c1d203059e925bbc09d) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - remove btc from fee drawer
+
+- Updated dependencies [[`cc00249`](https://github.com/LedgerHQ/ledger-live/commit/cc002495f3e107aba283a3aa4abca90954de6d76)]:
+  - @ledgerhq/coin-framework@2.2.0-nightly.0
+  - @ledgerhq/coin-cosmos@0.8.3-nightly.0
+  - @ledgerhq/coin-evm@2.13.0-nightly.1
+  - @ledgerhq/coin-filecoin@1.6.1-nightly.0
+  - @ledgerhq/coin-multiversx@0.2.1-nightly.0
+  - @ledgerhq/coin-stacks@0.6.2-nightly.0
+  - @ledgerhq/live-common@34.25.0-nightly.2
+  - @ledgerhq/live-countervalues@0.4.3-nightly.0
+  - @ledgerhq/live-countervalues-react@0.2.25-nightly.0
+  - @ledgerhq/live-nft@0.5.10-nightly.0
+  - @ledgerhq/live-nft-react@0.6.1-nightly.0
+  - @ledgerhq/live-wallet@0.9.7-nightly.0
+
 ## 3.69.0-nightly.1
 
 ### Minor Changes

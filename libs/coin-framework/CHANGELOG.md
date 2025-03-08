@@ -1,5 +1,11 @@
 # @ledgerhq/coin-framework
 
+## 2.2.0-nightly.0
+
+### Minor Changes
+
+- [#9344](https://github.com/LedgerHQ/ledger-live/pull/9344) [`cc00249`](https://github.com/LedgerHQ/ledger-live/commit/cc002495f3e107aba283a3aa4abca90954de6d76) Thanks [@Canestin](https://github.com/Canestin)! - add banner to warn users about the migration
+
 ## 2.1.1
 
 ### Patch Changes
