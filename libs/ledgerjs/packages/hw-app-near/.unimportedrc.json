@@ -1,3 +1,4 @@
 {
-  "entry": ["src/Near.ts"]
+  "entry": ["src/Near.ts"],
+  "ignoreUnused": ["jest-sonar"]
 }
