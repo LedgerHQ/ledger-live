@@ -5034,6 +5034,9 @@ importers:
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
+      jest-sonar:
+        specifier: 0.2.16
+        version: 0.2.16
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -5077,6 +5080,9 @@ importers:
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
+      jest-sonar:
+        specifier: 0.2.16
+        version: 0.2.16
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -5150,6 +5156,9 @@ importers:
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
+      jest-sonar:
+        specifier: 0.2.16
+        version: 0.2.16
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -5190,6 +5199,9 @@ importers:
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
+      jest-sonar:
+        specifier: 0.2.16
+        version: 0.2.16
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -5244,6 +5256,9 @@ importers:
       bignumber.js:
         specifier: ^9.1.2
         version: 9.1.2
+      jest-sonar:
+        specifier: 0.2.16
+        version: 0.2.16
       semver:
         specifier: ^7.3.5
         version: 7.5.4
@@ -5327,6 +5342,9 @@ importers:
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.4.3))
+      jest-sonar:
+        specifier: 0.2.16
+        version: 0.2.16
       secp256k1:
         specifier: 5.0.0
         version: 5.0.0
@@ -5364,6 +5382,9 @@ importers:
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
+      jest-sonar:
+        specifier: 0.2.16
+        version: 0.2.16
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -5425,6 +5446,9 @@ importers:
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
+      jest-sonar:
+        specifier: 0.2.16
+        version: 0.2.16
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -5468,6 +5492,9 @@ importers:
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
+      jest-sonar:
+        specifier: 0.2.16
+        version: 0.2.16
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -5517,6 +5544,9 @@ importers:
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
+      jest-sonar:
+        specifier: 0.2.16
+        version: 0.2.16
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -5554,6 +5584,9 @@ importers:
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
+      jest-sonar:
+        specifier: 0.2.16
+        version: 0.2.16
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -5597,6 +5630,9 @@ importers:
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
+      jest-sonar:
+        specifier: 0.2.16
+        version: 0.2.16
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -5640,6 +5676,9 @@ importers:
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
+      jest-sonar:
+        specifier: 0.2.16
+        version: 0.2.16
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -5680,6 +5719,9 @@ importers:
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
+      jest-sonar:
+        specifier: 0.2.16
+        version: 0.2.16
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -5723,6 +5765,9 @@ importers:
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
+      jest-sonar:
+        specifier: 0.2.16
+        version: 0.2.16
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -5757,6 +5802,9 @@ importers:
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
+      jest-sonar:
+        specifier: 0.2.16
+        version: 0.2.16
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -5803,6 +5851,9 @@ importers:
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
+      jest-sonar:
+        specifier: 0.2.16
+        version: 0.2.16
       source-map-support:
         specifier: ^0.5.21
         version: 0.5.21
@@ -5837,6 +5888,9 @@ importers:
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
+      jest-sonar:
+        specifier: 0.2.16
+        version: 0.2.16
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
