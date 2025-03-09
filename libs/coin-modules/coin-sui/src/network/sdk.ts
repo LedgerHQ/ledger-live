@@ -38,12 +38,18 @@ async function withApi<T>(execute: AsyncApiFunction<T>) {
   return result;
 }
 
+const getBalanceCached = makeLRUCache(
+  ({ api, owner }: { api: SuiClient; owner: string }) => api.getBalance({ owner }),
+  (params: { api: SuiClient; owner: string }) => params.owner,
+  minutes(1),
+);
+
 /**
  * Get account balance
  */
 export const getAccount = async (addr: string) =>
   withApi(async api => {
-    const [balance] = await Promise.all([api.getBalance({ owner: addr })]);
+    const balance = await getBalanceCached({ api, owner: addr });
     return {
       blockHeight: BLOCK_HEIGHT * 2,
       nonce: 0,
@@ -109,7 +115,11 @@ const getOperationAmount = (
   for (const balanceChange of transaction.balanceChanges) {
     // @ts-expect-error TODO:fix
     if (balanceChange.owner.AddressOwner === address) {
-      amount = amount.plus(balanceChange.amount);
+      if (balanceChange.amount[0] === "-") {
+        amount = amount.minus(balanceChange.amount);
+      } else {
+        amount = amount.plus(balanceChange.amount);
+      }
     }
   }
   return amount;
@@ -118,17 +128,17 @@ const getOperationAmount = (
 /**
  * Extract fee from transaction
  */
-const getOperationFee = (transaction: any): BigNumber => {
-  return BigNumber(transaction.effects.gasUsed.computationCost).plus(
-    BigNumber(transaction.effects.gasUsed.nonRefundableStorageFee),
+const getOperationFee = (transaction: SuiTransactionBlockResponse): BigNumber => {
+  return BigNumber(transaction.effects!.gasUsed.computationCost).plus(
+    BigNumber(transaction.effects!.gasUsed.nonRefundableStorageFee),
   );
 };
 
 /**
  * Extract date from transaction
  */
-const getOperationDate = (transaction: any): Date => {
-  return new Date(parseInt(transaction.timestampMs));
+const getOperationDate = (transaction: SuiTransactionBlockResponse): Date => {
+  return new Date(parseInt(transaction.timestampMs!));
 };
 
 /**
@@ -154,7 +164,7 @@ function transactionToOperation(
     recipients: getOperationRecipients(transaction.transaction?.data),
     senders: getOperationSenders(transaction.transaction?.data),
     type,
-    value: getOperationAmount(address, transaction),
+    value: getOperationAmount(`0x${address}`, transaction),
   };
 }
 
@@ -242,6 +252,7 @@ const loadOperation = async (params: {
     order: "ascending",
     options: {
       showInput: true,
+      showBalanceChanges: true,
       showEffects: true, // To get transaction status and gas fee details
     },
     limit: TRANSACTIONS_REQUEST_LIMIT,
