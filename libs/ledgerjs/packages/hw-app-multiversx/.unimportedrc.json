@@ -1,5 +1,5 @@
 {
   "entry": ["src/MultiversX.ts"],
   "ignoreUnimported": [],
-  "ignoreUnused": ["axios"]
+  "ignoreUnused": ["axios", "jest-sonar"]
 }

@@ -1,3 +1,4 @@
 {
-  "entry": ["src/Tezos.ts"]
+  "entry": ["src/Tezos.ts"],
+  "ignoreUnused": ["jest-sonar"]
 }

@@ -1,3 +1,4 @@
 {
-  "entry": ["src/Helium.ts"]
+  "entry": ["src/Helium.ts"],
+  "ignoreUnused": ["jest-sonar"]
 }
