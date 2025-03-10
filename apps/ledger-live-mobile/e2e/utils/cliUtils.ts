@@ -6,11 +6,12 @@ import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import { CloudSyncSDK, UpdateEvent } from "@ledgerhq/live-wallet/lib/cloudsync";
 import { DistantState as LiveData, liveSlug } from "@ledgerhq/live-wallet/lib/walletsync";
 import walletsync from "@ledgerhq/live-wallet/lib/walletsync/root";
+import { of } from "rxjs";
 
 type LiveDataOpts = {
   currency: string;
   index: number | undefined;
-  appjson: string;
+  appjson: string | undefined;
   add: boolean;
 };
 
@@ -38,7 +39,7 @@ type LedgerSyncOpts = {
   pull: boolean;
   data?: string;
   version?: number;
-  cloudSyncApiBaseUrl?: string
+  cloudSyncApiBaseUrl?: string;
 };
 
 type AppJsonSchema = {
@@ -121,19 +122,25 @@ export const CLI = {
 
     //@todo: Split into it's own function
     if (push) {
-      return cloudSyncSDK.push(
-        { rootId, walletSyncEncryptionKey, applicationPath },
-        { pubkey: pubKey, privatekey: privateKey },
-        JSON.parse(data!) as LiveData,
-      );
+      return cloudSyncSDK
+        .push(
+          { rootId, walletSyncEncryptionKey, applicationPath },
+          { pubkey: pubKey, privatekey: privateKey },
+          JSON.parse(data!) as LiveData,
+        )
+        .then((result: void) => JSON.stringify(result, null, 2));
     }
 
     //@todo: Split into it's own function
     if (pull) {
-      return cloudSyncSDK.pull(
-        { rootId, walletSyncEncryptionKey, applicationPath },
-        { pubkey: pubKey, privatekey: privateKey },
-      );
+      return cloudSyncSDK
+        .pull(
+          { rootId, walletSyncEncryptionKey, applicationPath },
+          { pubkey: pubKey, privatekey: privateKey },
+        )
+        .then((result: void) =>
+          JSON.stringify({ result, updateEvent: latestUpdateEvent }, null, 2),
+        );
     }
   },
   liveData: function (opts: LiveDataOpts) {
@@ -145,9 +152,9 @@ export const CLI = {
           },
         } as AppJsonSchema);
 
-    const existingIds = appjsondata.data.accounts.map((a: any) => a.data.id);
+    const existingIds = appjsondata.data.accounts.map((a: AccountRaw) => a.data.id);
 
-    const append = appjsondata.data.accounts
+    const append = accounts
       .filter((a: Account) => !existingIds.includes(a.id))
       .map((account: Account) => ({
         data: toAccountRaw(account),
@@ -155,6 +162,11 @@ export const CLI = {
       }));
     appjsondata.data.accounts = appjsondata.data.accounts.concat(append);
 
-    fs.writeFileSync(opts.appjson, JSON.stringify(appjsondata), "utf-8");
+    if (opts.appjson) {
+      fs.writeFileSync(opts.appjson, JSON.stringify(appjsondata), "utf-8");
+      return of(append.length + " accounts added.");
+    } else {
+      return of(JSON.stringify(appjsondata));
+    }
   },
 };
