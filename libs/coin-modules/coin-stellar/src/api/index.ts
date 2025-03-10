@@ -2,7 +2,7 @@ import type {
   Api,
   Operation,
   Pagination,
-  Transaction as ApiTransaction,
+  TransactionIntent,
 } from "@ledgerhq/coin-framework/api/index";
 import coinConfig, { type StellarConfig } from "../config";
 import {
@@ -31,32 +31,23 @@ export function createApi(config: StellarConfig): Api<StellarToken> {
   };
 }
 
-type Supplement = {
-  assetCode?: string | undefined;
-  assetIssuer?: string | undefined;
-  memoType?: string | null | undefined;
-  memoValue?: string | null | undefined;
-};
-function isSupplement(supplement: unknown): supplement is Supplement {
-  return typeof supplement === "object";
-}
-async function craft(address: string, transaction: ApiTransaction): Promise<string> {
-  const supplement = isSupplement(transaction.supplement)
+async function craft(transactionIntent: TransactionIntent<StellarToken>): Promise<string> {
+  const fees = await estimateFees();
+  const supplement = transactionIntent.asset
     ? {
-        assetCode: transaction.supplement?.assetCode,
-        assetIssuer: transaction.supplement?.assetIssuer,
-        memoType: transaction.supplement?.memoType,
-        memoValue: transaction.supplement?.memoValue,
+        assetCode: transactionIntent.asset.assetCode,
+        assetIssuer: transactionIntent.asset.assetIssuer,
       }
     : {};
   const tx = await craftTransaction(
-    { address },
+    { address: transactionIntent.sender },
     {
-      ...transaction,
+      type: transactionIntent.type,
+      recipient: transactionIntent.recipient,
+      amount: transactionIntent.amount,
+      fee: fees,
       assetCode: supplement?.assetCode,
       assetIssuer: supplement?.assetIssuer,
-      memoType: supplement?.memoType,
-      memoValue: supplement?.memoValue,
     },
   );
   return tx.xdr;

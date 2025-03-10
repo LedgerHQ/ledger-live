@@ -9,12 +9,7 @@ import {
 } from "../logic";
 import coinConfig from "../config";
 import { TronConfig } from "../config";
-import {
-  Api,
-  TransactionIntent,
-  Pagination,
-  Transaction,
-} from "@ledgerhq/coin-framework/api/types";
+import { Api, Pagination, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import { createApi } from ".";
 import { TronToken } from "../types";
 
@@ -72,7 +67,7 @@ describe("createApi", () => {
     // Simulate calling all methods
     await api.broadcast("transaction");
     api.combine("tx", "signature", "pubkey");
-    await api.craftTransaction("address", {} as Transaction, "pubkey");
+    await api.craftTransaction({} as TransactionIntent<TronToken>);
     await api.estimateFees({
       type: "send",
       sender: "address",
@@ -90,7 +85,6 @@ describe("createApi", () => {
     // Test that each of the methods was called with correct arguments
     expect(broadcast).toHaveBeenCalledWith("transaction");
     expect(combine).toHaveBeenCalledWith("tx", "signature", "pubkey");
-    expect(craftTransaction).toHaveBeenCalledWith("address", {}, "pubkey");
     expect(estimateFees).toHaveBeenCalledWith({
       type: "send",
       sender: "address",
@@ -101,6 +95,7 @@ describe("createApi", () => {
         tokenId: "1002000",
       },
     } satisfies TransactionIntent<TronToken>);
+    expect(craftTransaction).toHaveBeenCalledWith({});
     expect(getBalance).toHaveBeenCalledWith("address");
     expect(lastBlock).toHaveBeenCalled();
     expect(listOperations).toHaveBeenCalledWith("address", {});
