@@ -124,7 +124,7 @@ jobs:
           enable_broadcast: ${{ inputs.enable_broadcast }}
 
       - name: Set SWAP_API_BASE
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-swap@support/qaa-505
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-swap@develop
         with:
           build_type: ${{ inputs.build_type }}
 
