@@ -439,8 +439,8 @@
       "cta" : "내 Ledger로 이동"
     },
     "wrongDevice" : {
-      "title" : "Ledger Nano S™는 THORChain과 호환되지 않습니다",
-      "description" : "Ledger Nano S는 THORChain과 호환되지 않습니다 Ledger Nano S Plus, Ledger Nano X, Ledger Stax, 또는 Ledger Flex로 Ledger Live를 통해 THORChain에서 크로스체인 스왑을 경험할 수 있습니다",
+      "title" : "Ledger Nano S™는 {{provider}}와(과) 호환되지 않습니다",
+      "description" : "Ledger Nano S는 {{provider}}와(과) 호환되지 않습니다 Ledger Nano S Plus, Ledger Nano X, Ledger Stax, 또는 Ledger Flex로 Ledger Live를 통해 {{provider}}에서 크로스체인 스왑을 경험할 수 있습니다",
       "cta" : "호환 가능한 장치 탐색",
       "changeProvider" : "다른 공급자를 통해 스왑"
     },
@@ -3753,7 +3753,66 @@
     },
     "token" : {
       "frozenStateWarning" : "계정 자산이 동결되었습니다!",
-      "transferWarning" : "Ledger Nano S™를 사용해 솔라나 토큰의 수령인 주소를 확인하려면 <0>다음 지침을 따르세요.</0>"
+      "transferWarning" : "Ledger Nano S™를 사용해 솔라나 토큰의 수령인 주소를 확인하려면 <0>다음 지침을 따르세요.</0>",
+      "transferFees" : {
+        "feesPercentHint" : "토큰에는 {{feePercent}}%({{feeBps}}bps)의 전송 수수료가 부과됩니다. 최대 {{maxFee}}",
+        "notice" : "전송 수수료 {{fee}}%",
+        "tooltipHint" : "토큰 생성자의 전송 보류 비율",
+        "transferFeesLabel" : "전송 수수료"
+      },
+      "nonTransferable" : {
+        "notice" : "토큰은 전송할 수 없습니다"
+      },
+      "interestRate" : {
+        "notice" : "이자율: {{rate}}%",
+        "tooltipHint" : "표시의 목적에만 해당하는 경우에는, 해당 이자의 결과로 실제 토큰이 생성되지 않습니다."
+      },
+      "permanentDelegate" : {
+        "notice" : "영구 위임 권한이 활성화되었습니다.",
+        "initializationNotice" : "영구 위임 권한이 초기화되었지만 활성화되지 않았습니다",
+        "tooltipHint" : "위임인은 귀하의 계정에서 이 토큰을 전송하거나 소각할 수 있습니다"
+      },
+      "requiredMemoOnTransfer" : {
+        "notice" : "전송 시 필수 메모가 활성화되었습니다",
+        "tooltipHint" : "이 계좌로 들어오는 모든 입금 거래에는 메모가 필요합니다"
+      },
+      "transferHook" : {
+        "notice" : "전송 후크가 활성화되었습니다",
+        "initializationNotice" : "전송 후크가 초기화되었지만 활성화되지는 않았습니다",
+        "tooltipHint" : "토큰에는 {{programAddress}} 프로그램에서 처리하는 추가 기능이 있습니다."
+      },
+      "extensionsInfo" : {
+        "title" : "솔라나 토큰 확장 프로그램",
+        "commonInfo" : "토큰 확장 프로그램은 솔라나 토큰 표준의 차세대 버전으로, 기밀 전송, 영구 위임, 사용자 정의 전송 로직, 확장된 메타데이터 등과 같은 추가 기능을 사용하여 일반 토큰 기능을 확장하는 새로운 방법을 소개합니다.",
+        "permanentDelegate" : {
+          "title" : "영구 위임",
+          "permanentDelegateAddress" : "현재 위임 권한은 {{address}}입니다",
+          "permanentDelegateNotSetup" : "현재 위임 권한이 설정되지 않았습니다.",
+          "description" : "영구 위임은 해당 민팅과 관련된 모든 계정에 대해 무제한 위임 권한을 갖는 권한입니다 위임인은 자신의 권한에 따라 언제든지 토큰을 소각하거나 전송할 수 있습니다."
+        },
+        "nonTransferable" : {
+          "title" : "전송 불가능 토큰",
+          "description" : "그러한 토큰은 \"소울 바운드\" 토큰으로, 토큰 발행자를 제외하고는 전송이나 소각이 불가능합니다."
+        },
+        "transferHook" : {
+          "title" : "전송 후크",
+          "transferHookAddress" : "현재 전송 후크 프로그램은 {{address}}입니다",
+          "transferHookNotSetup" : "현재 전송 후크 프로그램이 설정되지 않았습니다.",
+          "description" : "전송 후크는 토큰 발행자에게 사용자와 토큰이 상호 작용하는 방식을 지정할 수 있는 기능을 제공합니다. 발행자는 일반적인 전송 대신 전송 후크 확장 프로그램과 함께 사용할 수 있는 사용자 정의 로직을 프로그램에 삽입할 수 있습니다."
+        },
+        "transferFee" : {
+          "title" : "전송 수수료",
+          "currentTransferFee" : "현재 전송 수수료는 {{feePercent}}%({{feeBps}}bps)입니다. 최대 {{maxFee}}.",
+          "description" : "토큰을 전송할 때마다 수수료가 부과되며 수령인이 건드릴 수 없는 수령인 계정에서 원천징수됩니다."
+        },
+        "interestBearing" : {
+          "title" : "이자부 토큰",
+          "currentInterestRate" : "현재 이자율은 {{rate}}%입니다.",
+          "accruedDelta" : "{{delta}}(이)가 발생했습니다.",
+          "interestRateNotSetup" : "현재 이자율은 0%로 설정되어 있습니다.",
+          "description" : "이자율에 따라 가치가 지속적으로 증가하거나 감소하는 토큰입니다. 새로운 토큰이 생성되지 않으며 이 기능은 전적으로 표시 기능만 있습니다."
+        }
+      }
     }
   },
   "ethereum" : {
@@ -4155,6 +4214,11 @@
       "debugAppsDesc" : "디버그 태그된 플랫폼 앱 열기를 표시하고 허용하세요.",
       "debugReactQuery" : "디버그 ReactQuery 허용",
       "debugReactQueryDesc" : "디버그 ReactQuery 콘솔을 표시하고 열 수 있도록 허용합니다.",
+      "nfts" : {
+        "title" : "숨겨진 NFT 컬렉션",
+        "description" : "숨겨진 컬렉션 목록을 재설정하세요",
+        "reset" : "재설정"
+      },
       "exchangeDeveloperMode" : {
         "title" : "거래소 개발 모드",
         "desc" : "거래소 공급자 정보 추가",
@@ -5437,7 +5501,8 @@
     },
     "solana" : {
       "memo" : "태그 / 메모",
-      "memoPlaceholder" : "선택 사항"
+      "memoPlaceholder" : "선택 사항",
+      "requiredMemoPlaceholder" : "필수 항목"
     }
   },
   "errors" : {
@@ -6249,6 +6314,13 @@
     "SolanaTxConfirmationTimeout" : {
       "title" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
     },
+    "SolanaRecipientMemoIsRequired" : {
+      "title" : "수령인 주소에 메모가 필요합니다"
+    },
+    "SolanaTokenNonTransferable" : {
+      "title" : "토큰은 전송할 수 없습니다",
+      "description" : "그러한 토큰은 \"소울 바운드\" 토큰으로, 전송이나 소각이 불가능합니다."
+    },
     "NotEnoughNftOwned" : {
       "title" : "사용 가능한 토큰 수를 초과했습니다"
     },
@@ -6918,6 +6990,14 @@
         "optOut" : {
           "title" : "장치 업그레이드 기회",
           "description" : "Ledger Nano S 업데이트가 곧 종료됩니다. 최신 장치로 업그레이드하고 <0>{{discount}}% 할인 혜택</0>까지 누리세요.",
+          "cta" : "내 지갑 업그레이드하기",
+          "linkText" : "자세히 알아보기"
+        }
+      },
+      "portfolio" : {
+        "optOut" : {
+          "title" : "장치 업그레이드 기회",
+          "description" : "최신 장치로 업그레이드하고 <0>{{discount}}% 할인 혜택</0>은 물론, 더 향상된 보안력과 원활한 사용자 경험을 누려보세요.",
           "cta" : "내 지갑 업그레이드하기",
           "linkText" : "자세히 알아보기"
         }
