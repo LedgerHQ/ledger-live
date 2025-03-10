@@ -82,6 +82,10 @@ jobs:
     outputs:
       status: ${{ steps.detox.outcome }}
     steps:
+      - run: sw_vers
+        shell: bash
+      - run: xcodebuild -version
+        shell: bash
       - uses: actions/checkout@v4
         with:
           ref: ${{ inputs.ref || github.sha }}
