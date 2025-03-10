@@ -16,6 +16,7 @@ import SkipSelectDevice from "../SkipSelectDevice";
 import AddAccountsHeaderRightClose from "./AddAccountsHeaderRightClose";
 import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
 import { useAppDeviceAction, useSelectDevice } from "~/hooks/deviceActions";
+import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 
 type Props = StackNavigatorProps<AddAccountsNavigatorParamList, ScreenName.AddAccountsSelectDevice>;
 
@@ -107,6 +108,7 @@ export default function AddAccountsSelectDevice({ navigation, route }: Props) {
         onSelectDeviceLink={() => selectDevice(null)}
         analyticsPropertyFlow={analyticsPropertyFlow || "add account"}
         registerDeviceSelection={registerDeviceSelection}
+        location={HOOKS_TRACKING_LOCATIONS.addAccount}
       />
     </SafeAreaView>
   );

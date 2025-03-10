@@ -22,12 +22,15 @@ import {
   RenderImageLoadRequested,
   RenderLoadingImage,
 } from "./stepsRendering";
+import { useTrackOnboardingFlow } from "~/analytics/hooks/useTrackOnboardingFlow";
+import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 
 type Props = {
   device: Device;
   deviceModelId: CLSSupportedDeviceModelId;
   hexImage: string;
   source?: ComponentProps<typeof Image>["source"];
+  referral?: string;
   onStart?: () => void;
   onResult?: ({ imageHash, imageSize }: { imageHash: string; imageSize: number }) => void;
   onSkip?: () => void;
@@ -53,6 +56,7 @@ const CustomImageDeviceAction: React.FC<Props & { remountMe: () => void }> = ({
   onSkip,
   source,
   remountMe,
+  referral,
 }) => {
   const action = useStaxLoadImageDeviceAction();
   const commandRequest = useMemo(() => ({ hexImage, deviceModelId }), [hexImage, deviceModelId]);
@@ -95,6 +99,16 @@ const CustomImageDeviceAction: React.FC<Props & { remountMe: () => void }> = ({
     loadingImage,
     progress,
   } = status;
+
+  useTrackOnboardingFlow({
+    location:
+      referral === HOOKS_TRACKING_LOCATIONS.onboardingFlow
+        ? HOOKS_TRACKING_LOCATIONS.onboardingFlow
+        : undefined,
+    device,
+    isCLSLoading: progress !== undefined,
+  });
+
   const [error, setError] = useState<null | Error>(null);
   useEffect(() => {
     if (CLSError) {

@@ -7,6 +7,7 @@ import styled from "styled-components/native";
 import { PartialNullable } from "~/types/helpers";
 import QueuedDrawer from "./QueuedDrawer";
 import DeviceAction from "./DeviceAction";
+import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 
 const DeviceActionContainer = styled(Flex).attrs({
   flexDirection: "row",
@@ -16,6 +17,7 @@ type Props<Req, Stt, Res> = {
   action: Action<Req, Stt, Res>;
   device: Device | null | undefined;
   request?: Req;
+  location?: HOOKS_TRACKING_LOCATIONS;
   onClose?: () => void;
   onError?: (error: Error) => void;
   onModalHide?: () => void;
@@ -30,6 +32,7 @@ export default function DeviceActionModal<Req, Stt, Res>({
   action,
   device,
   request,
+  location,
   onClose,
   onResult,
   onError,
@@ -80,6 +83,7 @@ export default function DeviceActionModal<Req, Stt, Res>({
                   renderOnResult={renderOnResult}
                   onSelectDeviceLink={onSelectDeviceLink}
                   analyticsPropertyFlow={analyticsPropertyFlow}
+                  location={location}
                 />
               </DeviceActionContainer>
               {showAlert && <Alert type="info" title={t("DeviceAction.stayInTheAppPlz")} />}

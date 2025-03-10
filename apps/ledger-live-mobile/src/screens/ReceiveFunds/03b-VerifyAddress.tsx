@@ -27,6 +27,9 @@ import { urls } from "~/utils/urls";
 import { ReceiveFundsStackParamList } from "~/components/RootNavigator/types/ReceiveFundsNavigator";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { e2eBridgeClient } from "../../../e2e/bridge/client";
+import { useTrackReceiveFlow } from "~/analytics/hooks/useTrackReceiveFlow";
+import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
+import { lastConnectedDeviceSelector } from "~/reducers/settings";
 
 const illustrations = {
   dark: require("~/images/illustration/Dark/_080.png"),
@@ -52,6 +55,12 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   const { t } = useTranslation();
   const [error, setError] = useState<Error | null>(null);
+
+  useTrackReceiveFlow({
+    location: HOOKS_TRACKING_LOCATIONS.receiveFlow,
+    device: useSelector(lastConnectedDeviceSelector),
+    error,
+  });
 
   const onModalClose = useCallback(() => {
     setError(null);

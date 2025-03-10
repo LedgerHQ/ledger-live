@@ -20,6 +20,7 @@ import { ScreenName } from "~/const";
 import { BaseOnboardingNavigatorParamList } from "~/components/RootNavigator/types/BaseOnboardingNavigator";
 import { BleSaveDeviceNamePayload } from "~/actions/types";
 import { useRenameDeviceAction } from "~/hooks/deviceActions";
+import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 
 const mapDispatchToProps = {
   saveBleDeviceName,
@@ -174,6 +175,7 @@ function EditDeviceName({ navigation, route, saveBleDeviceName }: Props) {
               action={action}
               onClose={onClose}
               onResult={onSuccess}
+              location={HOOKS_TRACKING_LOCATIONS.myLedgerDashboard}
             />
           ) : null}
         </KeyboardView>
