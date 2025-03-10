@@ -1119,6 +1119,11 @@
       "fast" : "빠름",
       "custom" : "커스텀",
       "blockCount" : "{{blockCount}}개 블록"
+    },
+    "estimatedTime" : {
+      "slow" : "≈ 2~3분",
+      "medium" : "≈ 30초",
+      "fast" : "≈ 15초"
     }
   },
   "signout" : {
@@ -2613,6 +2618,10 @@
         "description3" : "이 통합은 Ledger와 협력을 통해 {{team}} 에서 수행했습니다.",
         "description3Link" : "이 통합은 Ledger와 협력을 통해 <1><0>{{team}}</0></1>에서 수행했습니다."
       }
+    },
+    "migrationBanner" : {
+      "title" : "{{from}}가 {{to}}으로 마이그레이션되고 있습니다. <0>이 링크</0>에서 자세한 내용을 알아보고, 도움이 필요한 경우 지원팀에 문의하세요.",
+      "contactSupport" : "지원 부서 연락"
     },
     "willBedeprecatedBanner" : {
       "title" : "효율성을 최적화하기 위해 {{currencyName}}은 {{deprecatedDate}}부터 Ledger Live에서 지원되지 않습니다. 그러나 Ledger 하드웨어 지갑에서는 계속 지원됩니다. 이와 관련하여 도움이 필요하다면 Ledger 고객 지원팀에 문의하세요.",
@@ -6992,6 +7001,16 @@
   },
   "walletSync" : {
     "title" : "Ledger 동기화",
+    "entryPoints" : {
+      "simpleCta" : {
+        "title" : "Ledger 동기화 활성화"
+      },
+      "card" : {
+        "title" : "Ledger 동기화",
+        "description" : "휴대폰 교체 시 계정을 자동으로 동기화하세요.",
+        "cta" : "Ledger 동기화 켜기"
+      }
+    },
     "activation" : {
       "screen" : {
         "title" : "이 휴대전화에서 Ledger 동기화를 켜시겠습니까?",
