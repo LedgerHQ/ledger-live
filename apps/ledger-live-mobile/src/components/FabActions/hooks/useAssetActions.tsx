@@ -15,6 +15,7 @@ import { sharedSwapTracking } from "~/screens/Swap/utils";
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { PtxToast } from "../../Toast/PtxToast";
 import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
+import { flattenAccountsSelector } from "~/reducers/accounts";
 import { useStake } from "~/newArch/hooks/useStake/useStake";
 import { n } from "node_modules/msw/lib/core/GraphQLHandler-bom2Dn82";
 
