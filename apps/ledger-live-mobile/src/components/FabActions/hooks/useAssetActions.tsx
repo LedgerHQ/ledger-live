@@ -13,7 +13,6 @@ import { ActionButtonEvent, NavigationParamsType } from "..";
 import ZeroBalanceDisabledModalContent from "../modals/ZeroBalanceDisabledModalContent";
 import { sharedSwapTracking } from "~/screens/Swap/utils";
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
-import { flattenAccountsSelector } from "~/reducers/accounts";
 import { PtxToast } from "../../Toast/PtxToast";
 import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
 import { useStake } from "~/newArch/hooks/useStake/useStake";
