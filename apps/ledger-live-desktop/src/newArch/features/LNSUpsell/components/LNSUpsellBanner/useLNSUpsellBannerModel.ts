@@ -1,13 +1,13 @@
-import { track } from "~/renderer/analytics/segment";
-import { openURL } from "~/renderer/linking";
+import { useLNSUpsellBannerState } from "LLD/features/LNSUpsell/hooks/useLNSUpsellBannerState";
 import {
   AnalyticsButton,
   AnalyticsPage,
   type LNSBannerLocation,
   type LNSBannerModel,
   type LNSBannerState,
-} from "../types";
-import { useLNSUpsellBannerState } from "./useLNSUpsellBannerState";
+} from "LLD/features/LNSUpsell/types";
+import { track } from "~/renderer/analytics/segment";
+import { openURL } from "~/renderer/linking";
 
 export function useLNSUpsellBannerModel(location: LNSBannerLocation): LNSBannerModel {
   const state = useLNSUpsellBannerState(location);
