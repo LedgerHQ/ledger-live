@@ -3114,6 +3114,9 @@ importers:
       invariant:
         specifier: ^2.2.2
         version: 2.2.4
+      ky:
+        specifier: 1.7.5
+        version: 1.7.5
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
@@ -24200,6 +24203,10 @@ packages:
 
   kuler@2.0.0:
     resolution: {integrity: sha512-Xq9nH7KlWZmXAtodXDDRE7vs6DU1gTU8zYDHDiWLSip45Egwq3plLHzPn27NgvzL2r1LMPC1vdqh98sQxtqj4A==}
+
+  ky@1.7.5:
+    resolution: {integrity: sha512-HzhziW6sc5m0pwi5M196+7cEBtbt0lCYi67wNsiwMUmz833wloE0gbzJPWKs1gliFKQb34huItDQX97LyOdPdA==}
+    engines: {node: '>=18'}
 
   kysely@0.27.3:
     resolution: {integrity: sha512-lG03Ru+XyOJFsjH3OMY6R/9U38IjDPfnOfDgO3ynhbDr+Dz8fak+X6L62vqu3iybQnj+lG84OttBuU9KY3L9kA==}
@@ -57939,6 +57946,8 @@ snapshots:
       - supports-color
 
   kuler@2.0.0: {}
+
+  ky@1.7.5: {}
 
   kysely@0.27.3: {}
 
