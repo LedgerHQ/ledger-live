@@ -13,6 +13,7 @@ import Breadcrumb from "~/renderer/components/Breadcrumb";
 import HelpSideBar from "~/renderer/modals/Help";
 import BreadCrumbNewArch from "LLD/components/BreadCrumb";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import TrackPage from "~/renderer/analytics/TrackPage";
 
 // TODO: ActivityIndicator
 import ActivityIndicator from "./ActivityIndicator";
@@ -149,6 +150,7 @@ const TopBar = () => {
           </Box>
         </Box>
       </Inner>
+      <TrackPage category="TopBar" discreetMode={discreetMode} />
     </Container>
   );
 };
