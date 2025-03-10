@@ -53,51 +53,47 @@ export const getUserdataPath = (userdata: string) => {
   return path.resolve("e2e", "userdata", `${userdata}.json`);
 };
 
-export class Application {
-  public userdataSpeculos: string | undefined = undefined;
-  public userdataPath: string | undefined = undefined;
-  public assetAccountsPage = new AssetAccountsPage();
-  public account = new AccountPage();
-  public accounts = new AccountsPage();
-  public addAccount = new AddAccountDrawer();
-  public buyDevice = new BuyDevicePage();
-  public common = new CommonPage();
-  public cryptoDrawer = new CryptoDrawer();
-  public customLockscreen = new CustomLockscreenPage();
-  public deviceValidation = new DeviceValidationPage();
-  public discover = new DiscoverPage();
-  public dummyWalletApp = new DummyWalletApp();
-  public walletAPIReceive = new WalletAPIReceivePage();
-  public ledgerSync = new LedgerSyncPage();
-  public manager = new ManagerPage();
-  public market = new MarketPage();
-  public nftGallery = new NftGalleryPage();
-  public nftViewer = new NftViewerPage();
-  public onboarding = new OnboardingStepsPage();
-  public operationDetails = new OperationDetailsPage();
-  public passwordEntry = new PasswordEntryPage();
-  public portfolio = new PortfolioPage();
-  public receive = new ReceivePage();
-  public send = new SendPage();
-  public settings = new SettingsPage();
-  public settingsGeneral = new SettingsGeneralPage();
-  public speculos = new SpeculosPage();
-  public stake = new StakePage();
-  public swap = new SwapPage();
-  public transfertMenu = new TransfertMenuDrawer();
-  public walletTabNavigator = new WalletTabNavigatorPage();
-  public celoManageAssets = new CeloManageAssetsPage();
+const lazyInit = <T>(PageClass: new () => T) => {
+  let instance: T | null = null;
+  return () => {
+    if (!instance) instance = new PageClass();
+    return instance;
+  };
+};
 
-  constructor(userdata?: string) {
-    if (!getEnv("MOCK")) {
-      // Create a temporary userdata file for Speculos tests
-      const originalUserdata = userdata || "skip-onboarding";
-      this.userdataSpeculos = `temp-userdata-${Date.now()}`;
-      this.userdataPath = getUserdataPath(this.userdataSpeculos);
-      const originalFilePath = getUserdataPath(originalUserdata);
-      fs.copyFileSync(originalFilePath, this.userdataPath);
-    }
-  }
+export class Application {
+  public userdataPath: string | undefined = undefined;
+  private assetAccountsPageInstance = lazyInit(AssetAccountsPage);
+  private accountPageInstance = lazyInit(AccountPage);
+  private accountsPageInstance = lazyInit(AccountsPage);
+  private addAccountDrawerInstance = lazyInit(AddAccountDrawer);
+  private buyDevicePageInstance = lazyInit(BuyDevicePage);
+  private commonPageInstance = lazyInit(CommonPage);
+  private cryptoDrawerInstance = lazyInit(CryptoDrawer);
+  private customLockscreenPageInstance = lazyInit(CustomLockscreenPage);
+  private deviceValidationPageInstance = lazyInit(DeviceValidationPage);
+  private discoverPageInstance = lazyInit(DiscoverPage);
+  private dummyWalletAppInstance = lazyInit(DummyWalletApp);
+  private walletAPIReceivePageInstance = lazyInit(WalletAPIReceivePage);
+  private ledgerSyncPageInstance = lazyInit(LedgerSyncPage);
+  private managerPageInstance = lazyInit(ManagerPage);
+  private marketPageInstance = lazyInit(MarketPage);
+  private nftGalleryPageInstance = lazyInit(NftGalleryPage);
+  private nftViewerPageInstance = lazyInit(NftViewerPage);
+  private onboardingPageInstance = lazyInit(OnboardingStepsPage);
+  private operationDetailsPageInstance = lazyInit(OperationDetailsPage);
+  private passwordEntryPageInstance = lazyInit(PasswordEntryPage);
+  private portfolioPageInstance = lazyInit(PortfolioPage);
+  private receivePageInstance = lazyInit(ReceivePage);
+  private sendPageInstance = lazyInit(SendPage);
+  private settingsPageInstance = lazyInit(SettingsPage);
+  private settingsGeneralPageInstance = lazyInit(SettingsGeneralPage);
+  private speculosPageInstance = lazyInit(SpeculosPage);
+  private stakePageInstance = lazyInit(StakePage);
+  private swapPageInstance = lazyInit(SwapPage);
+  private transfertMenuDrawerInstance = lazyInit(TransfertMenuDrawer);
+  private walletTabNavigatorPageInstance = lazyInit(WalletTabNavigatorPage);
+  private celoManageAssetsPageInstance = lazyInit(CeloManageAssetsPage);
 
   async init({
     speculosApp,
@@ -108,11 +104,16 @@ export class Application {
     featureFlags,
   }: ApplicationOptions) {
     let proxyPort = 0;
+    const userdataSpeculos = `temp-userdata-${Date.now()}`;
+    this.userdataPath = getUserdataPath(userdataSpeculos);
+
     if (speculosApp) {
       proxyPort = await this.common.addSpeculos(speculosApp.name);
       process.env.DEVICE_PROXY_URL = `ws://localhost:${proxyPort}`;
       require("@ledgerhq/live-cli/src/live-common-setup");
     }
+    if (!getEnv("MOCK"))
+      fs.copyFileSync(getUserdataPath(userdata || "skip-onboarding"), this.userdataPath);
 
     if (cliCommands?.length) {
       for (const cmd of cliCommands) {
@@ -123,13 +124,107 @@ export class Application {
       }
     }
 
-    if (this.userdataSpeculos) await loadConfig(this.userdataSpeculos, true);
-    else userdata && (await loadConfig(userdata, true));
+    if (!getEnv("MOCK")) {
+      await loadConfig(userdataSpeculos, true);
+      fs.existsSync(this.userdataPath) && fs.unlinkSync(this.userdataPath);
+    } else userdata && (await loadConfig(userdata, true));
+
     featureFlags && (await setFeatureFlags(featureFlags));
     knownDevices && (await loadBleState({ knownDevices }));
     testAccounts && (await loadAccounts(testAccounts));
+  }
 
-    const userdataSpeculosPath = getUserdataPath(this.userdataSpeculos!);
-    if (fs.existsSync(userdataSpeculosPath)) fs.unlinkSync(userdataSpeculosPath);
+  public get assetAccountsPage() {
+    return this.assetAccountsPageInstance();
+  }
+  public get account() {
+    return this.accountPageInstance();
+  }
+  public get accounts() {
+    return this.accountsPageInstance();
+  }
+  public get addAccount() {
+    return this.addAccountDrawerInstance();
+  }
+  public get buyDevice() {
+    return this.buyDevicePageInstance();
+  }
+  public get common() {
+    return this.commonPageInstance();
+  }
+  public get cryptoDrawer() {
+    return this.cryptoDrawerInstance();
+  }
+  public get customLockscreen() {
+    return this.customLockscreenPageInstance();
+  }
+  public get deviceValidation() {
+    return this.deviceValidationPageInstance();
+  }
+  public get discover() {
+    return this.discoverPageInstance();
+  }
+  public get dummyWalletApp() {
+    return this.dummyWalletAppInstance();
+  }
+  public get walletAPIReceive() {
+    return this.walletAPIReceivePageInstance();
+  }
+  public get ledgerSync() {
+    return this.ledgerSyncPageInstance();
+  }
+  public get manager() {
+    return this.managerPageInstance();
+  }
+  public get market() {
+    return this.marketPageInstance();
+  }
+  public get nftGallery() {
+    return this.nftGalleryPageInstance();
+  }
+  public get nftViewer() {
+    return this.nftViewerPageInstance();
+  }
+  public get onboarding() {
+    return this.onboardingPageInstance();
+  }
+  public get operationDetails() {
+    return this.operationDetailsPageInstance();
+  }
+  public get passwordEntry() {
+    return this.passwordEntryPageInstance();
+  }
+  public get portfolio() {
+    return this.portfolioPageInstance();
+  }
+  public get receive() {
+    return this.receivePageInstance();
+  }
+  public get send() {
+    return this.sendPageInstance();
+  }
+  public get settings() {
+    return this.settingsPageInstance();
+  }
+  public get settingsGeneral() {
+    return this.settingsGeneralPageInstance();
+  }
+  public get speculos() {
+    return this.speculosPageInstance();
+  }
+  public get stake() {
+    return this.stakePageInstance();
+  }
+  public get swap() {
+    return this.swapPageInstance();
+  }
+  public get transfertMenu() {
+    return this.transfertMenuDrawerInstance();
+  }
+  public get walletTabNavigator() {
+    return this.walletTabNavigatorPageInstance();
+  }
+  public get celoManageAssets() {
+    return this.celoManageAssetsPageInstance();
   }
 }
