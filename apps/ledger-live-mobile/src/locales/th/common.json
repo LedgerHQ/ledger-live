@@ -261,7 +261,7 @@
       "description" : "โปรดบันทึก Log ของคุณโดยใช้ปุ่มด้านล่าง และส่งให้ Ledger Support"
     },
     "DeviceNameInvalid" : {
-      "title" : "โปรดตั้งชื่ออุปกรณ์โดยไม่มี '{{invalidCharacters}}}'"
+      "title" : "โปรดตั้งชื่ออุปกรณ์โดยไม่มี '{{invalidCharacters}}'"
     },
     "DeviceOnDashboardExpected" : {
       "title" : "อุปกรณ์ไม่ได้อยู่บนแดชบอร์ด",
@@ -2941,7 +2941,7 @@
       "DateFormatModal" : {
         "title" : "รูปแบบวันที่",
         "default" : "ค่าเริ่มต้น",
-        "dayFirst" : "ดด/วว/ปปปป",
+        "dayFirst" : "วว/ดด/ปปปป",
         "monthFirst" : "ดด/วว/ปปปป"
       }
     },
@@ -4490,7 +4490,7 @@
   "FirmwareUpdate" : {
     "banner" : {
       "title" : "มีการอัปเดตระบบปฏิบัติการที่พร้อมใช้งาน",
-      "descriptionDeviceName" : "แตะเพื่ออัปเดต “{{deviceName}}}” เป็น OS เวอร์ชัน {{firmwareVersion}}",
+      "descriptionDeviceName" : "แตะเพื่ออัปเดต “{{deviceName}}” เป็น OS เวอร์ชัน {{firmwareVersion}}",
       "descriptionProductName" : "แตะเพื่ออัปเดต {{productName}} เป็น OS เวอร์ชัน {{firmwareVersion}}"
     },
     "title" : "อัปเดตระบบปฏิบัติการ",
@@ -4515,7 +4515,7 @@
     "waitForFirmwareUpdate" : "รอให้การอัปเดตระบบปฏิบัติการเสร็จสิ้นบนอุปกรณ์ของคุณ",
     "waitForInstallationToFinish" : "รอให้การติดตั้งบน {{deviceName}} ของคุณเสร็จสิ้น",
     "batteryLow" : "แบตเตอรี่ {{productName}} ต่ำเกินไปที่จะอัปเดต",
-    "batteryLowDescription" : "ในการเริ่มต้นการอัปเดตระบบปฏิบัติการ จำเป็นต้องชาร์จ {{lowBatteryPercentage}}}% เป็นอย่างน้อย มิฉะนั้นจะต้องชาร์จ {{productName}} ของคุณ",
+    "batteryLowDescription" : "ในการเริ่มต้นการอัปเดตระบบปฏิบัติการ จำเป็นต้องชาร์จ {{lowBatteryPercentage}}% เป็นอย่างน้อย มิฉะนั้นจะต้องชาร์จ {{productName}} ของคุณ",
     "updateCancelled" : "การติดตั้งการอัปเดต OS ถูกยกเลิกเมื่อ {{deviceName}}",
     "updateCancelledDescription" : "หากมีข้อผิดพลาด โปรดรีสตาร์ทการอัปเดต",
     "updateNotYetComplete" : "กำลังอัปเดต OS",
@@ -5503,10 +5503,10 @@
         "steps" : {
           "amount" : {
             "allAssetsUsed" : "เลือกสินทรัพย์ทั้งหมดแล้ว",
-            "assetsRemaining" : "สินทรัพย์ที่เหลือที่มอบหมาย: <0>{{amount}}}</0>",
+            "assetsRemaining" : "สินทรัพย์ที่เหลือที่มอบหมาย: <0>{{amount}}</0>",
             "minAmount" : "จำนวนขั้นต่ำ: <0>{{min}}</0>",
             "incorrectAmount" : "จำนวนสูงสุด: <0>{{max}}</0>",
-            "minRemaining" : "เหลือขั้นต่ำ: <0>{{min}}}</0>"
+            "minRemaining" : "เหลือขั้นต่ำ: <0>{{min}}</0>"
           },
           "verification" : {
             "success" : {
@@ -5792,7 +5792,7 @@
       "oversubscribed" : "สมัครติดตามเกิน ({{nominatorsCount}})",
       "oversubscribedInfo" : "เฉพาะผู้เสนอชื่อ {{maxNominatorRewardedPerValidator}} อันดับแรกที่มีจำนวนการผูกมัดสูงสุดเท่านั้นที่จะได้รับ Reward",
       "hasPendingBondOperation" : "การดำเนินการผูกมัดยังรอการยืนยัน",
-      "externalControllerUnsupported" : "บัญชี Stash นี้ควบคุมโดยบัญชีแยกต่างหาก ซึ่งมี Address คือ <0>{{controllerAddress}}}</0> ในการ Stake กับ Ledger Live คุณต้องตั้งค่าบัญชี Stash นี้เป็นผู้ควบคุมเอง",
+      "externalControllerUnsupported" : "บัญชี Stash นี้ควบคุมโดยบัญชีแยกต่างหาก ซึ่งมี Address คือ <0>{{controllerAddress}}</0> ในการ Stake กับ Ledger Live คุณต้องตั้งค่าบัญชี Stash นี้เป็นผู้ควบคุมเอง",
       "externalStashUnsupported" : "บัญชีนี้เป็นผู้ควบคุมบัญชี Stsh แยกต่างหากซึ่งมี Address ที่ <0>{{stashAddress}}</0 > ในการ Stake กับ Ledger Live คุณต้องตั้งค่าบัญชี Stash นี้เป็นผู้ควบคุมเอง",
       "showInactiveNominations" : "แสดงการเสนอชื่อทั้งหมด ({{count}})",
       "hideInactiveNominations" : "แสดงเฉพาะการเสนอชื่อที่ใช้งานเท่านั้น",
