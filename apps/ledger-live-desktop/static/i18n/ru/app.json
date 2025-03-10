@@ -439,8 +439,8 @@
       "cta" : "Перейти в «Мой Ledger»"
     },
     "wrongDevice" : {
-      "title" : "Ledger Nano S™ не поддерживает THORChain.",
-      "description" : "THORChain не поддерживается устройством Ledger Nano S™. Для проведения кроссчейн-обмена через THORChain внутри Ledger Live используйте Ledger Nano S Plus, Ledger Nano X, Ledger Stax или Ledger Flex.",
+      "title" : "Ledger Nano S™ не поддерживает {{provider}}.",
+      "description" : "Ledger Nano S™ не поддерживает {{provider}}. Для проведения кроссчейн-обмена через {{provider}} внутри Ledger Live используйте Ledger Nano S Plus, Ledger Nano X, Ledger Stax или Ledger Flex.",
       "cta" : "Совместимые устройства",
       "changeProvider" : "Поменять оператора"
     },
@@ -767,6 +767,10 @@
         "description3" : "Эта интеграция проведена {{team}} в сотрудничестве с Ledger.",
         "description3Link" : "Эта интеграция проведена <1><0>{{team}}</0></1> в сотрудничестве с Ledger."
       }
+    },
+    "migrationBanner" : {
+      "title" : "{{from}} становится {{to}}. Перейдите по <0>ссылке</0>, чтобы узнать больше или связаться с Поддержкой при необходимости.",
+      "contactSupport" : "Написать в Поддержку"
     },
     "featureUnavailable" : {
       "title" : "В данный момент недоступна эта функция: {{feature}}. Обратитесь в {{support}} за подробностями.",
@@ -4155,6 +4159,11 @@
       "debugAppsDesc" : "Показывать и открывать отладочные приложения на платформе.",
       "debugReactQuery" : "Разрешить отладку ReactQuery",
       "debugReactQueryDesc" : "Показывать и одобрять запуск консоли отладки ReactQuery.",
+      "nfts" : {
+        "title" : "Скрытые коллекции NFT",
+        "description" : "Сбросить список скрытых коллекций",
+        "reset" : "Сбросить"
+      },
       "exchangeDeveloperMode" : {
         "title" : "Режим разработчика для приложения Exchange",
         "desc" : "Добавить информацию о поставщике обмена",
@@ -6918,6 +6927,14 @@
         "optOut" : {
           "title" : "Пора обновиться",
           "description" : "Ledger Nano S скоро перестанет обновляться. Перейдите на наши новые устройства со <0>скидкой {{discount}}%</0>.",
+          "cta" : "Прокачать кошелёк",
+          "linkText" : "Подробнее..."
+        }
+      },
+      "portfolio" : {
+        "optOut" : {
+          "title" : "Пора обновиться",
+          "description" : "Перейдите на наши новые устройства со <0>скидкой {{discount}}%</0> для ещё лучшей безопасности и удобства использования.",
           "cta" : "Прокачать кошелёк",
           "linkText" : "Подробнее..."
         }
