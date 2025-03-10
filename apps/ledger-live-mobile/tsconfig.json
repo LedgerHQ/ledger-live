@@ -20,7 +20,9 @@
       "LLM/*": ["src/newArch/*"],
       "@tests/*": ["__tests__/*"],
       "@mocks/*": ["__mocks__/*"]
-    }
+    },
+    "module": "commonjs",
+    "moduleResolution": "node"
   },
   "include": ["src/**/*", "e2e/**/*", "**/*.d.ts", "services/**/*"],
   "exclude": ["node_modules", "babel.config.js", "metro.config.js", "jest.config.js", "**/*.js"]

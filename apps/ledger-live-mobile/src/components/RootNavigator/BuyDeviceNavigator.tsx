@@ -4,10 +4,8 @@ import { useTheme } from "styled-components/native";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { ScreenName } from "~/const";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
-import GetDevice from "~/screens/GetDeviceScreen";
-import GetFlex from "LLM/features/Reborn/screens/UpsellFlex";
-import PurchaseDevice from "~/screens/PurchaseDevice";
 import { BuyDeviceNavigatorParamList } from "./types/BuyDeviceNavigator";
+import { GetFlex, GetDevice, PurchaseDevice } from "./LazyNavigator/BuyDeviceNavigator.lazy";
 
 const Stack = createStackNavigator<BuyDeviceNavigatorParamList>();
 
