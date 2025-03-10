@@ -1,5 +1,4 @@
 import BigNumber from "bignumber.js";
-import { TOKEN_TRANSFER_MAX_FEE } from "../../constants";
 import getDeviceTransactionConfig from "../../deviceTransactionConfig";
 import {
   account,
@@ -34,11 +33,6 @@ describe("deviceTransactionConfig", () => {
           label: "To",
           address: transaction.recipient,
         },
-        {
-          type: "amount",
-          label: "Amount",
-        },
-        { type: "fees", label: "Fee" },
         { type: "text", label: "Comment", value: "validComment" },
       ]);
     });
@@ -66,7 +60,6 @@ describe("deviceTransactionConfig", () => {
           label: "Amount",
           value: "ALL YOUR TONs",
         },
-        { type: "fees", label: "Fee" },
         { type: "text", label: "Comment", value: "validComment" },
       ]);
     });
@@ -86,16 +79,6 @@ describe("deviceTransactionConfig", () => {
             type: "address",
             label: "To",
             address: jettonTransaction.recipient,
-          },
-          {
-            type: "text",
-            label: "Jetton units",
-            value: jettonTransaction.amount.toString(),
-          },
-          {
-            type: "text",
-            label: "Amount",
-            value: TOKEN_TRANSFER_MAX_FEE,
           },
         ]);
       }
