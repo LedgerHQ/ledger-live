@@ -8,6 +8,7 @@ import {
   tapById,
   typeTextByElement,
   waitForElementById,
+  getIdOfElement,
 } from "../helpers";
 import { expect } from "detox";
 import jestExpect from "expect";
@@ -24,7 +25,10 @@ export default class CommonPage {
   successViewDetailsButtonId = "success-view-details-button";
   closeButton = () => getElementById("NavigationHeaderCloseButton");
 
-  accoundCardId = (id: string) => "account-card-" + id;
+  accountCardPrefix = "account-card-";
+  accountCardRegExp = (id = ".*") => new RegExp(this.accountCardPrefix + id);
+  accountCardId = (id: string) => this.accountCardPrefix + id;
+  accountCard = (id: string) => getElementById(this.accountCardRegExp(id));
   accountRowId = (accountId: string) => `account-row-${accountId}`;
   baseAccountName = "account-row-name-";
   accountNameRegExp = new RegExp(`${this.baseAccountName}.*`);
@@ -61,9 +65,21 @@ export default class CommonPage {
   }
 
   async selectAccount(accountId: string) {
-    const id = this.accoundCardId(accountId);
+    const id = this.accountCardId(accountId);
     await waitForElementById(id);
     await tapById(id);
+  }
+
+  @Step("Select the first displayed account")
+  async selectFirstAccount() {
+    await tapById(this.accountCardRegExp());
+  }
+
+  async getAccountId(index: number) {
+    return (await getIdOfElement(this.accountCardRegExp(), index)).replace(
+      this.accountCardPrefix,
+      "",
+    );
   }
 
   @Step("Go to the account")
