@@ -16,7 +16,8 @@ import {
   lastBlock,
   listOperations,
 } from "../logic";
-import { XrpOperation } from "../types";
+import { ListOperationsOptions, XrpOperation } from "../types";
+import { stat } from "fs";
 
 export function createApi(config: XrpConfig): Api {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
@@ -58,11 +59,15 @@ async function operationsFromHeight(
   minHeight: number,
 ): Promise<[XrpOperation[], string]> {
   async function fetchNextPage(state: PaginationState): Promise<PaginationState> {
-    const [operations, apiNextCursor] = await listOperations(address, {
+    const options: ListOperationsOptions = {
       limit: state.pageSize,
       minHeight: state.minHeight,
       order: "asc",
-    });
+    };
+    if (state.apiNextCursor) {
+      options.token = state.apiNextCursor;
+    }
+    const [operations, apiNextCursor] = await listOperations(address, options);
     const newCurrentIteration = state.currentIteration + 1;
     let continueIteration = true;
     if (apiNextCursor === "") {
