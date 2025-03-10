@@ -6,11 +6,9 @@ import { discoverDevices } from "@ledgerhq/live-common/hw/index";
 import { CompositeScreenProps, useNavigation, useIsFocused } from "@react-navigation/native";
 import { Text, Flex, IconsLegacy, Box, ScrollContainer } from "@ledgerhq/native-ui";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { useBleDevicesScanning } from "@ledgerhq/live-common/ble/hooks/useBleDevicesScanning";
 import { usePostOnboardingEntryPointVisibleOnWallet } from "@ledgerhq/live-common/postOnboarding/hooks/usePostOnboardingEntryPointVisibleOnWallet";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import SafeAreaView from "../SafeAreaView";
-import TransportBLE from "../../react-native-hw-transport-ble";
 import { TrackScreen, track } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
 import { bleDevicesSelector } from "~/reducers/ble";
@@ -29,6 +27,14 @@ import { useDebouncedRequireBluetooth } from "../RequiresBLE/hooks/useRequireBlu
 import RequiresBluetoothDrawer from "../RequiresBLE/RequiresBluetoothDrawer";
 import QueuedDrawer from "../QueuedDrawer";
 import { DeviceList } from "./DeviceList";
+import {
+  useBleDevicesScanning,
+  useDeviceManagementKit,
+  useDeviceSessionRefresherToggle,
+} from "@ledgerhq/live-dmk-mobile";
+import { useBleDevicesScanning as useLegacyBleDevicesScanning } from "@ledgerhq/live-common/ble/hooks/useBleDevicesScanning";
+import getBLETransport from "../../react-native-hw-transport-ble";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 export type { SetHeaderOptionsRequest };
 
@@ -85,10 +91,16 @@ export default function SelectDevice({
 
   const knownDevices = useSelector(bleDevicesSelector);
   const navigation = useNavigation<Navigation["navigation"]>();
-  const { scannedDevices } = useBleDevicesScanning({
-    bleTransportListen: TransportBLE.listen,
+
+  const isLDMKEnabled = Boolean(useFeature("ldmkTransport")?.enabled);
+
+  const { scannedDevices: DMKscannedDevices } = useBleDevicesScanning(isLDMKEnabled);
+  const { scannedDevices: legacyScannedDevices } = useLegacyBleDevicesScanning({
+    bleTransportListen: getBLETransport({ isLDMKEnabled }).listen,
     stopBleScanning,
+    enabled: !isLDMKEnabled,
   });
+  const scannedDevices = isLDMKEnabled ? DMKscannedDevices : legacyScannedDevices;
 
   // Each time the user navigates back to the screen the BLE requirements are not enforced
   const [isBleRequired, setIsBleRequired] = useResetOnNavigationFocusState(false);
@@ -255,6 +267,9 @@ export default function SelectDevice({
       dispatch(updateMainNavigatorVisibility(true));
     };
   }, [dispatch]);
+
+  const dmk = useDeviceManagementKit();
+  useDeviceSessionRefresherToggle(dmk, isLDMKEnabled);
 
   // Makes sure that when loosing (screen) focus, the visibility of the bottom tab bar is reset
   useEffect(() => {
