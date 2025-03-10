@@ -13,7 +13,6 @@ import {
   encodeTokenAccountId,
 } from "@ledgerhq/coin-framework/account/index";
 import { AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import BigNumber from "bignumber.js";
 
 /**
  * List of properties of a sub account that can be updated when 2 "identical" accounts are found
@@ -96,7 +95,6 @@ export const getSubAccountShape = async (
 ): Promise<TokenAccount> => {
   const aptosClient = new AptosAPI(currency.id);
   const tokenAccountId = encodeTokenAccountId(parentId, token);
-
   const balance = await aptosClient.getBalance(address, token);
 
   return {
@@ -175,6 +173,7 @@ export const getAccountShape: GetAccountShape = async info => {
   const startAt = (oldOperations[0]?.extra as any)?.version;
 
   const aptosClient = new AptosAPI(currency.id);
+  // get resources
   const { balance, transactions, blockHeight } = await aptosClient.getAccountInfo(address, startAt);
 
   const [newOperations, tokenOperations]: [Operation[], Operation[]] = txsToOps(
