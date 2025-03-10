@@ -1119,6 +1119,11 @@
       "fast" : "高速",
       "custom" : "カスタム",
       "blockCount" : "{{blockCount}}ブロック"
+    },
+    "estimatedTime" : {
+      "slow" : "≈ 2-3分",
+      "medium" : "≈ 30秒",
+      "fast" : "≈ 15秒"
     }
   },
   "signout" : {
@@ -2613,6 +2618,10 @@
         "description3" : "この統合は、 {{team}}がLedgerと共同で実施しました",
         "description3Link" : "この統合は、<1><0>{{team}}</0></1>がLedgerと共同で実施しました"
       }
+    },
+    "migrationBanner" : {
+      "title" : "{{from}}は{{to}}に移行しています。詳細については、こちらの<0>リンク</0>をご参照いただくか、サポートがご必要な場合はサポートにご連絡ください。",
+      "contactSupport" : "サポートへお問い合わせ"
     },
     "willBedeprecatedBanner" : {
       "title" : "効率を最適化するため、{{deprecatedDate}}以降、{{currencyName}}はLedger Liveではサポートされなくなります。ただし、Ledgerハードウェアウォレットでは引き続きサポートされます。この件に関してご不明な点などがございましたら、Ledgerカスタマーサポートまでご連絡ください。",
@@ -6992,6 +7001,16 @@
   },
   "walletSync" : {
     "title" : "Ledger同期",
+    "entryPoints" : {
+      "simpleCta" : {
+        "title" : "Ledger Syncを有効化する"
+      },
+      "card" : {
+        "title" : "Ledger Sync",
+        "description" : "新しいスマートフォンでも、アカウントが自動的に同期されます。",
+        "cta" : "Ledger Syncをオンにする"
+      }
+    },
     "activation" : {
       "screen" : {
         "title" : "このスマートフォンに対してLedger同期をオンにしますか？",
