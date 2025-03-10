@@ -9,14 +9,13 @@ import {
 } from "../../helpers";
 import { getEnv } from "@ledgerhq/live-env";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
+import CommonPage from "../common.page";
 
 const baseLink = "add-account";
 const isMock = getEnv("MOCK");
 
-export default class AddAccountDrawer {
+export default class AddAccountDrawer extends CommonPage {
   deselectAllButtonId = "add-accounts-deselect-all";
-  accountCardRegExp = (id = ".*") => new RegExp(`account-card-${id}`);
-  accountCard = (id: string) => getElementById(this.accountCardRegExp(id));
   accountId = (currency: string, index: number) =>
     isMock ? `mock:1:${currency}:MOCK_${currency}_${index}:` : `js:2:${currency}:.*`;
   accountTitleId = (accountName: string, index: number) =>
@@ -46,6 +45,7 @@ export default class AddAccountDrawer {
   @Step("Select currency")
   async selectCurrency(currencyId: string) {
     const id = this.currencyRow(currencyId);
+    await waitForElementById(id);
     await scrollToId(id);
     await tapById(id);
   }
@@ -78,11 +78,8 @@ export default class AddAccountDrawer {
     await this.waitAccountsDiscovery();
     await this.expectAccountDiscovery(currency.name, currency.id);
     await tapById(this.deselectAllButtonId);
-    await tapById(this.accountCardRegExp(), 0);
-    const accountId = (await getIdOfElement(this.accountCardRegExp(), 0)).replace(
-      /^account-card-/,
-      "",
-    );
+    await this.selectFirstAccount();
+    const accountId = await this.getAccountId(0);
     await this.finishAccountsDiscovery();
     await this.tapSuccessCta();
     return accountId;
