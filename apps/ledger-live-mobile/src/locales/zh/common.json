@@ -830,6 +830,13 @@
     "SolanaTxConfirmationTimeout" : {
       "title" : "您的交易可能失败了。请稍等片刻后检查交易记录，然后重试。"
     },
+    "SolanaRecipientMemoIsRequired" : {
+      "title" : "接收方地址需附加备忘标签"
+    },
+    "SolanaTokenNonTransferable" : {
+      "title" : "代币不可转让",
+      "description" : "此类代币为“灵魂绑定”代币，不可转让"
+    },
     "CardanoMinAmountError" : {
       "title" : "最小可发送数额为 {{amount}} ADA"
     },
@@ -3526,7 +3533,13 @@
         "apt_title" : "Ledger Nano S™ 不支持互换 Aptos",
         "apt_description" : "要互换 Aptos，请使用其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
         "cosmos_title" : "Ledger Nano S™ 不支持互换 Cosmos",
-        "cosmos_description" : "要互换 Cosmos，请使用其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。"
+        "cosmos_description" : "要互换 Cosmos，请使用其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
+        "osmo_title" : "Ledger Nano S™ does not support swapping Osmosis",
+        "osmo_description" : "To swap Osmosis, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+        "dydx_title" : "Ledger Nano S™ does not support swapping dYdX",
+        "dydx_description" : "To swap dYdX, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+        "sui_title" : "Ledger Nano S™ does not support swapping Sui",
+        "sui_description" : "To swap Sui, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
       }
     },
     "lending" : {
@@ -4665,7 +4678,8 @@
       "tr" : "Türk",
       "ja" : "日本語",
       "ko" : "한국어",
-      "pt" : "Português (Br)"
+      "pt" : "Português (Br)",
+      "th" : "ภาษาไทย"
     }
   },
   "deviceLocalization" : {
@@ -4689,7 +4703,8 @@
       "german" : "Deutsch",
       "brazilian" : "Português (Br)",
       "russian" : "Русский",
-      "turkish" : "Türkçe"
+      "turkish" : "Türkçe",
+      "thai" : "ภาษาไทย"
     }
   },
   "FirmwareUpdateCheckId" : {
@@ -6020,7 +6035,67 @@
     },
     "token" : {
       "frozenStateWarning" : "账户资产已冻结！",
-      "transferWarning" : "要使用 Ledger Nano S™ 验证 Solana 代币的接收人地址，<0>请按照以下说明操作。</0>"
+      "transferWarning" : "要使用 Ledger Nano S™ 验证 Solana 代币的接收人地址，<0>请按照以下说明操作。</0>",
+      "transferFees" : {
+        "title" : "转账费用",
+        "feesPercentHint" : "代币转账费用为 {{feePercent}}%（{{feeBps}} 个基点）（最高为 {{maxFee}}）",
+        "notice" : "转账费用 {{fee}}%",
+        "tooltipHint" : "归属代币创建者的转账百分比"
+      },
+      "nonTransferable" : {
+        "notice" : "代币不可转让"
+      },
+      "interestRate" : {
+        "notice" : "利率为 {{rate}}%",
+        "tooltipHint" : "仅用作视觉效果展示，利息不会产生新代币"
+      },
+      "permanentDelegate" : {
+        "notice" : "永久委托权限已启用",
+        "initializationNotice" : "永久委托权限已初始化但未启用",
+        "initializedNoticeTooltipHint" : "委托方可从您的账户转移或销毁该代币",
+        "tooltipHint" : "{{delegateAddress}}<0></0> 可从您的账户转移或销毁该代币"
+      },
+      "requiredMemoOnTransfer" : {
+        "notice" : "转账必需备忘标签已启用",
+        "tooltipHint" : "所有转入该账户的交易均需附加备忘标签"
+      },
+      "transferHook" : {
+        "notice" : "转账钩子已启用",
+        "initializationNotice" : "转账钩子已初始化但未启用",
+        "tooltipHint" : "代币具备由 {{programAddress}} 程序处理的额外功能<0></0>"
+      },
+      "extensionsInfo" : {
+        "title" : "Solana 代币扩展",
+        "commonInfo" : "代币扩展是新一代的 Solana 代币标准。它采用一系列新方法来扩展常规的代币功能，包括机密转账、永久委托、自定义转账逻辑、扩展元数据等额外功能。",
+        "permanentDelegate" : {
+          "title" : "永久委托",
+          "permanentDelegateAddress" : "当前委托权限为 {{address}}",
+          "permanentDelegateNotSetup" : "当前委托权限未设置。",
+          "description" : "永久委托是指对该铸币下所有账户拥有不受限制的委托权限。委托方可随时自行销毁或转移任意数额的代币。"
+        },
+        "nonTransferable" : {
+          "title" : "不可转让代币",
+          "description" : "此类代币为“灵魂绑定”代币，仅可由代币发行者进行转移或销毁。"
+        },
+        "transferHook" : {
+          "title" : "转账钩子",
+          "transferHookAddress" : "当前转账钩子程序为 {{address}}",
+          "transferHookNotSetup" : "当前转账钩子程序未设置。",
+          "description" : "转账钩子可让代币发行者决定用户与代币的交互方式。与常规转账不同，发行者可将自定义逻辑插入到与转账钩子扩展程序结合使用的程序中。"
+        },
+        "transferFee" : {
+          "title" : "转账费用",
+          "currentTransferFee" : "当前转账费用为 {{feePercent}}%（{{feeBps}} 个基点）。最高为 {{maxFee}}。",
+          "description" : "每笔代币转账均需收取费用，并由接收方账户代为保管，接收方不可动用该部分代币。"
+        },
+        "interestBearing" : {
+          "title" : "计息代币",
+          "currentInterestRate" : "当前利率为 {{rate}}%。",
+          "accruedDelta" : "应计 {{delta}}。",
+          "interestRateNotSetup" : "当前利率设置为 0%。",
+          "description" : "代币价值根据利率持续增减。此功能仅为效果展示，不会实际产生新代币。"
+        }
+      }
     }
   },
   "near" : {
@@ -6720,6 +6795,7 @@
         "hide" : "隐藏 {{count}} 件藏品",
         "hiddenCollections" : "隐藏藏品",
         "hide_plural" : "隐藏 {{count}} 件藏品",
+        "empty" : "没有可显示的隐藏藏品",
         "alertHide" : "已隐藏 1 件藏品。您可以随时在藏品库筛选条件中取消隐藏。",
         "alertHide_plural" : "已隐藏 {{count}} 件藏品。您可以随时在藏品库筛选条件中取消隐藏。"
       },
