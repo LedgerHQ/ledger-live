@@ -6670,6 +6670,24 @@
       "alreadySync" : "すでにオンにしました",
       "learnMore" : "Ledger Syncの仕組みは？"
     },
+    "entryPoints" : {
+      "accounts" : {
+        "title" : "Ledger Syncを有効化する"
+      },
+      "manager" : {
+        "title" : "Ledger Sync",
+        "description" : "新しいスマートフォンでも、アカウントが自動的に同期されます。",
+        "cta" : "Ledger Syncをオンにする"
+      },
+      "settings" : {
+        "title" : "Ledger Sync",
+        "description" : "新しいスマートフォンでも、アカウントが自動的に同期されます。",
+        "cta" : "Ledger Syncをオンにする"
+      },
+      "onboarding" : {
+        "title" : "別のLedger Liveアプリと同期する"
+      }
+    },
     "manage" : {
       "cta" : "管理",
       "synchronize" : {
@@ -6898,55 +6916,14 @@
     }
   },
   "lnsUpsell" : {
-    "banner" : {
-      "manager" : {
-        "optIn" : {
-          "title" : "アップグレードに絶好のチャンス！",
-          "description" : "<0>{{discount}}%割引</0>で、当社の最新のデバイスにアップグレードしましょう！より使いやすく、強化されたセキュリティをお楽しみいただけます。",
-          "cta" : "ウォレットをレベルアップ",
-          "linkText" : "詳細はこちら"
-        },
-        "optOut" : {
-          "title" : "アップグレードに絶好のチャンス！",
-          "description" : "<0>{{discount}}%割引</0>で、当社の最新のデバイスにアップグレードしましょう！より使いやすく、強化されたセキュリティをお楽しみいただけます。",
-          "cta" : "ウォレットをレベルアップ",
-          "linkText" : "詳細はこちら"
-        }
-      },
-      "accounts" : {
-        "optIn" : {
-          "title" : "絶好のアップグレードチャンス！",
-          "description" : "Ledger Nano Sのアップデートが間もなく終了します。<0>{{discount}}%OFF</0>で、最新デバイスにアップグレードしましょう。",
-          "cta" : "ウォレットをレベルアップ",
-          "linkText" : "詳細はこちら"
-        },
-        "optOut" : {
-          "title" : "絶好のアップグレードチャンス！",
-          "description" : "Ledger Nano Sのキャンペーンは間もなく終了です。<0>{{discount}}%OFF</0>で、当社の最新デバイスにアップグレードできます。",
-          "cta" : "ウォレットをレベルアップ",
-          "linkText" : "詳細はこちら"
-        }
-      },
-      "portfolio" : {
-        "optOut" : {
-          "title" : "アップグレードに絶好のチャンス！",
-          "description" : "<0>{{discount}}%割引</0>で、最新のデバイスにアップグレードしましょう！より使いやすく、強化されたセキュリティをお楽しみいただけます。",
-          "cta" : "ウォレットをレベルアップ",
-          "linkText" : "詳細はこちら"
-        }
-      },
-      "notifications" : {
-        "optIn" : {
-          "description" : "キャンペーンがまもなく終了します。今ならデバイスのアップグレードが{{discount}}%OFF！より快適な体験をお楽しみいただけます。",
-          "cta" : "ウォレットをレベルアップ",
-          "linkText" : "詳細はこちら"
-        },
-        "optOut" : {
-          "description" : "キャンペーンは間もなく終了します。今ならデバイスのアップグレードが{{discount}}%OFF！より快適な体験をお楽しみいただけます。",
-          "cta" : "ウォレットをレベルアップ",
-          "linkText" : "詳細はこちら"
-        }
-      }
+    "opted_in" : {
+      "title" : "メモリ不足による制限",
+      "description" : "お持ちのNano Sを最新のLedger（Ledger Flexなど）にアップグレードしていただくと、より多くのメモリ、最新のセキュリティ強化、複数の新機能をお楽しみいただけます。今なら、<0>{{discount}}%OFFの限定特典</0>をご利用いただけます。",
+      "cta" : "Ledgerをアップグレード"
+    },
+    "opted_out" : {
+      "description" : "Ledger Nano Sの限られたメモリでは、複数の最新機能、ブロックチェーンの変更、セキュリティ強化も制限されます。ぜひ、新しいLedgerデバイスへのアップグレードをご検討ください。",
+      "cta" : "アップグレードすべき理由とは？"
     }
   }
 }
