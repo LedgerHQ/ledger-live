@@ -6670,10 +6670,28 @@
       "alreadySync" : "Je l’ai déjà activé",
       "learnMore" : "Comment fonctionne Ledger Sync ?"
     },
+    "entryPoints" : {
+      "accounts" : {
+        "title" : "Activez Ledger Sync"
+      },
+      "manager" : {
+        "title" : "Ledger Sync",
+        "description" : "Synchronisez automatiquement vos comptes, même si vous changez de téléphone.",
+        "cta" : "Activer Ledger Sync"
+      },
+      "settings" : {
+        "title" : "Ledger Sync",
+        "description" : "Synchronisez automatiquement vos comptes, même si vous changez de téléphone.",
+        "cta" : "Activer Ledger Sync"
+      },
+      "onboarding" : {
+        "title" : "Synchroniser avec une autre application Ledger Live"
+      }
+    },
     "manage" : {
       "cta" : "Gérer",
       "synchronize" : {
-        "label" : "Synchroniser avec une autre application Ledger Live",
+        "label" : "Synchroniser avec une autre application Ledger Live",
         "description" : "Synchronisez vos comptes crypto Ledger Live sur différents téléphones et ordinateurs."
       },
       "backup" : {
@@ -6898,55 +6916,14 @@
     }
   },
   "lnsUpsell" : {
-    "banner" : {
-      "manager" : {
-        "optIn" : {
-          "title" : "Passez au niveau supérieur",
-          "description" : "Bénéficiez de <0>-{{discount}}% de réduction</0> sur nos wallets dernière génération. Passez à une expérience plus fluide et plus sécurisée dès maintenant.",
-          "cta" : "Choisir mon nouveau wallet",
-          "linkText" : "En savoir plus"
-        },
-        "optOut" : {
-          "title" : "Passez au niveau supérieur",
-          "description" : "Bénéficiez de <0>-{{discount}}% de réduction</0> sur nos wallets dernière génération. Passez à une expérience plus fluide et plus sécurisée dès maintenant.",
-          "cta" : "Choisir mon nouveau wallet",
-          "linkText" : "En savoir plus"
-        }
-      },
-      "accounts" : {
-        "optIn" : {
-          "title" : "Passez au niveau supérieur",
-          "description" : "Le Ledger Nano S ne recevra bientôt plus de mises à jour. Bénéficiez de <0>-{{discount}}% de réduction</0> sur nos derniers wallets.",
-          "cta" : "Choisir mon nouveau wallet",
-          "linkText" : "En savoir plus"
-        },
-        "optOut" : {
-          "title" : "Passez au niveau supérieur",
-          "description" : "Le Ledger Nano S ne recevra bientôt plus de mises à jour. Bénéficiez de <0>-{{discount}}% de réduction</0> sur nos derniers wallets.",
-          "cta" : "Choisir mon nouveau wallet",
-          "linkText" : "En savoir plus"
-        }
-      },
-      "portfolio" : {
-        "optOut" : {
-          "title" : "Passez au niveau supérieur",
-          "description" : "Bénéficiez de <0>-{{discount}}% de réduction</0> sur nos wallets dernière génération. Passez à une expérience plus fluide et plus sécurisée dès maintenant.",
-          "cta" : "Choisir mon nouveau wallet",
-          "linkText" : "En savoir plus"
-        }
-      },
-      "notifications" : {
-        "optIn" : {
-          "description" : "Les mises à jour s’arrêtent bientôt. Pour une expérience fluide, passez à un wallet supérieur, avec -{{discount}}% de réduction.",
-          "cta" : "Choisir mon nouveau wallet",
-          "linkText" : "En savoir plus"
-        },
-        "optOut" : {
-          "description" : "Les mises à jour s’arrêtent bientôt. Pour une expérience fluide, passez à un wallet supérieur, avec -{{discount}}% de réduction.",
-          "cta" : "Choisir mon nouveau wallet",
-          "linkText" : "En savoir plus"
-        }
-      }
+    "opted_in" : {
+      "title" : "Mémoire limitée, expérience limitée",
+      "description" : "Passez du Ledger Nano S à un modèle plus récent, tel que le Ledger Flex. À la clé : plus de mémoire, les dernières améliorations de sécurité, de nouvelles fonctionnalités et <0>une réduction exclusive de {{discount}}%</0>.",
+      "cta" : "Choisir mon wallet"
+    },
+    "opted_out" : {
+      "description" : "Avec sa mémoire limitée, votre Ledger Nano S vous prive des dernières fonctionnalités, innovations blockchain et améliorations de sécurité. Pour en bénéficier, choisissez un wallet Ledger plus récent.",
+      "cta" : "Pourquoi monter en gamme ?"
     }
   }
 }
