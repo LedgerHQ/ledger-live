@@ -50,9 +50,7 @@ import StyledStatusBar from "~/components/StyledStatusBar";
 import AnalyticsConsole from "~/components/AnalyticsConsole";
 import DebugTheme from "~/components/DebugTheme";
 import useDBSaveEffect from "~/components/DBSave";
-import useAppStateListener from "~/components/useAppStateListener";
 import SyncNewAccounts from "~/bridge/SyncNewAccounts";
-
 import SegmentSetup from "~/analytics/SegmentSetup";
 import HookSentry from "~/components/HookSentry";
 import HookNotifications from "~/notifications/HookNotifications";
@@ -138,7 +136,6 @@ function App() {
   ]);
 
   useAccountsWithFundsListener(accounts, updateIdentify);
-  useAppStateListener();
   useFetchCurrencyAll();
   useFetchCurrencyFrom();
   useListenToHidDevices();

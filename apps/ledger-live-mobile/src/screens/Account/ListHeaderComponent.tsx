@@ -17,7 +17,6 @@ import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
 import { MultiversXAccount } from "@ledgerhq/live-common/families/multiversx/types";
 import { NearAccount } from "@ledgerhq/live-common/families/near/types";
 import { isEditableOperation, isStuckOperation } from "@ledgerhq/live-common/operation";
-import Header from "./Header";
 import AccountGraphCard from "~/components/AccountGraphCard";
 import SubAccountsList from "./SubAccountsList";
 import NftCollectionsList from "./NftCollectionsList";
@@ -35,6 +34,7 @@ import { ActionButtonEvent } from "~/components/FabActions";
 import { EditOperationCard } from "~/components/EditOperationCard";
 import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
 import WarningBannerStatus from "~/components/WarningBannerStatus";
+import ErrorWarning from "./ErrorWarning";
 
 type Props = {
   account?: AccountLike;
@@ -151,7 +151,7 @@ export function getListHeaderComponents({
         currency={currency}
         key="WarningBannerStatus"
       />,
-      <Header key="Header" />,
+      <ErrorWarning key="Header" />,
       !!AccountSubHeader && (
         <Box bg={colors.background.main} key="AccountSubHeader">
           <AccountSubHeader account={account} parentAccount={parentAccount} />
