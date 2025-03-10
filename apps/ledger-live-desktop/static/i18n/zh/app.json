@@ -6670,6 +6670,24 @@
       "alreadySync" : "我已经开启了",
       "learnMore" : "Ledger Sync 如何运作？"
     },
+    "entryPoints" : {
+      "accounts" : {
+        "title" : "激活 Ledger Sync"
+      },
+      "manager" : {
+        "title" : "Ledger Sync",
+        "description" : "即使换用新手机，也能自动同步您的账户。",
+        "cta" : "开启 Ledger Sync"
+      },
+      "settings" : {
+        "title" : "Ledger Sync",
+        "description" : "即使换用新手机，也能自动同步您的账户。",
+        "cta" : "开启 Ledger Sync"
+      },
+      "onboarding" : {
+        "title" : "与另一个 Ledger Live 应用程序同步"
+      }
+    },
     "manage" : {
       "cta" : "管理",
       "synchronize" : {
@@ -6898,55 +6916,14 @@
     }
   },
   "lnsUpsell" : {
-    "banner" : {
-      "manager" : {
-        "optIn" : {
-          "title" : "现在就是升级的好时机",
-          "description" : "升级到我们的最新设备，立享 <0>{{discount}}% 折扣优惠</0>，加强安全保护，享受顺畅体验。",
-          "cta" : "升级我的钱包",
-          "linkText" : "了解更多"
-        },
-        "optOut" : {
-          "title" : "现在就是升级的好时机",
-          "description" : "升级到我们的最新设备，立享 <0>{{discount}}% 折扣优惠</0>，加强安全保护，享受顺畅体验。",
-          "cta" : "升级我的钱包",
-          "linkText" : "了解更多"
-        }
-      },
-      "accounts" : {
-        "optIn" : {
-          "title" : "现在就是升级的好时机",
-          "description" : "Ledger Nano S 更新活动即将结束。升级到我们的最新设备，立享 <0>{{discount}}% 折扣优惠</0>。",
-          "cta" : "升级我的钱包",
-          "linkText" : "了解更多"
-        },
-        "optOut" : {
-          "title" : "现在就是升级的好时机",
-          "description" : "Ledger Nano S 更新活动即将结束。升级到我们的最新设备，立享 <0>{{discount}}% 折扣优惠</0>。",
-          "cta" : "升级我的钱包",
-          "linkText" : "了解更多"
-        }
-      },
-      "portfolio" : {
-        "optOut" : {
-          "title" : "现在就是升级的好时机",
-          "description" : "升级到我们的最新设备，立享 <0>{{discount}}% 折扣优惠</0>，加强安全保护，享受顺畅体验。",
-          "cta" : "升级我的钱包",
-          "linkText" : "了解更多"
-        }
-      },
-      "notifications" : {
-        "optIn" : {
-          "description" : "更新活动即将结束。立即升级，享受顺畅体验，更有 {{discount}}% 折扣优惠。",
-          "cta" : "升级我的钱包",
-          "linkText" : "了解更多"
-        },
-        "optOut" : {
-          "description" : "更新活动即将结束。立即升级，享受顺畅体验，更有 {{discount}}% 折扣优惠。",
-          "cta" : "升级我的钱包",
-          "linkText" : "了解更多"
-        }
-      }
+    "opted_in" : {
+      "title" : "内存有限，体验受限",
+      "description" : "将您的 Nano S 升级到 Ledger Flex 等新款 Ledger 设备，即可享受 <0>{{discount}}% 专属折扣</>，解锁更多内存、全新功能和最新增强安全保护。",
+      "cta" : "升级 Ledger 设备"
+    },
+    "opted_out" : {
+      "description" : "Ledger Nano S 内存有限，影响您访问最新功能、区块链变更和增强安全保护。为保证长期使用体验，请升级到新款 Ledger 设备。",
+      "cta" : "为什么应该升级？"
     }
   }
 }
