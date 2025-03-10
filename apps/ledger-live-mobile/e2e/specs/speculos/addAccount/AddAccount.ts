@@ -23,7 +23,7 @@ export async function runAddAccountTest(currency: Currency, tmsLinks: string[]) 
     it(`Perform an add account - ${currency.name}`, async () => {
       await app.addAccount.openViaDeeplink();
       await app.common.performSearch(currency.name);
-      await app.addAccount.selectCurrency(currency.currencyId);
+      await app.addAccount.selectCurrency(currency.id);
 
       const accountId = await app.addAccount.addFirstAccount(currency);
       await app.assetAccountsPage.waitForAccountPageToLoad(currency.name);

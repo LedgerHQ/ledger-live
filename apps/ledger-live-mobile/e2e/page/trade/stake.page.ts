@@ -109,7 +109,7 @@ export default class StakePage {
   @Step("Validate the amount entered")
   async validateAmount(currencyId: string) {
     await tapById(this.delegationAmountContinueId(currencyId));
-    if (currencyId !== Currency.CELO.currencyId) {
+    if (currencyId !== Currency.CELO.id) {
       await waitForElementById(this.delegationSummaryAmountId(currencyId));
     }
   }
