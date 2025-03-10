@@ -4,6 +4,5 @@ export type LldNanoSUpsellBannersConfig = {
   notification_center: boolean;
   img: string;
   link: string;
-  learn_more: string;
   "%": number;
 };
