@@ -58,7 +58,10 @@ export function useStakingDrawer({
         (action: { id: string }) => action.id === "stake",
       )?.navigationParams;
 
-      if (!stakeFlow) return null;
+      if (!stakeFlow) {
+        console.error("No stake flow implemented yet for account type or currency", account);
+        return null; // TODO: check for token specific stake flow via hook - i.e. partner redirection stake flow
+      }
 
       const [name, options] = stakeFlow;
 

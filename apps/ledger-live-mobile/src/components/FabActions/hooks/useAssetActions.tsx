@@ -1,22 +1,26 @@
 import { useMemo } from "react";
-import { AccountLikeArray } from "@ledgerhq/types-live";
+import { AccountLikeArray, TokenAccount } from "@ledgerhq/types-live";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { IconsLegacy } from "@ledgerhq/native-ui";
-import { getParentAccount, isTokenAccount } from "@ledgerhq/live-common/account/index";
+import {
+  getMainAccount,
+  getParentAccount,
+  isTokenAccount,
+} from "@ledgerhq/live-common/account/index";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { useRoute } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "~/const";
 import { readOnlyModeEnabledSelector } from "~/reducers/settings";
-import { ActionButtonEvent } from "..";
+import { ActionButtonEvent, NavigationParamsType } from "..";
 import ZeroBalanceDisabledModalContent from "../modals/ZeroBalanceDisabledModalContent";
 import { sharedSwapTracking } from "~/screens/Swap/utils";
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { flattenAccountsSelector } from "~/reducers/accounts";
 import { PtxToast } from "../../Toast/PtxToast";
 import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
+import { useStake } from "~/newArch/hooks/useStake/useStake";
 
 type useAssetActionsProps = {
   currency?: CryptoCurrency | TokenCurrency;
@@ -34,7 +38,6 @@ const iconStake = IconsLegacy.CoinsMedium;
 export default function useAssetActions({ currency, accounts }: useAssetActionsProps): {
   mainActions: ActionButtonEvent[];
 } {
-  const route = useRoute();
   const { data: currenciesAll } = useFetchCurrencyAll();
 
   const ptxServiceCtaScreens = useFeature("ptxServiceCtaScreens");
@@ -52,6 +55,7 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
     () => (accounts && accounts.length === 1 ? accounts[0] : undefined),
     [accounts],
   );
+
   const availableOnSwap = currency && currenciesAll.includes(currency.id);
 
   const { isCurrencyAvailable } = useRampCatalog();
@@ -59,15 +63,19 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
   const canBeBought = !!currency && isCurrencyAvailable(currency.id, "onRamp");
   const canBeSold = !!currency && isCurrencyAvailable(currency.id, "offRamp");
 
-  const featureFlag = useFeature("stakePrograms");
-  const stakeFlagEnabled = featureFlag?.enabled;
-  const listFlag = featureFlag?.params?.list;
-
-  const canBeStaken = stakeFlagEnabled && listFlag && currency && listFlag.includes(currency?.id);
   const totalAccounts = useSelector(flattenAccountsSelector);
   const parentAccount = isTokenAccount(defaultAccount)
     ? getParentAccount(defaultAccount, totalAccounts)
     : undefined;
+
+  const accountCurrency = isTokenAccount(defaultAccount)
+    ? (defaultAccount as TokenAccount)?.token?.id
+    : defaultAccount?.currency?.id;
+
+  const { canStakeCurrency, navigationParams: stakeNavigationParams } = useStake({
+    currencyId: currency?.id ?? accountCurrency,
+    accountId: isTokenAccount(defaultAccount) ? defaultAccount.parentId : defaultAccount?.id,
+  });
 
   const actions = useMemo<ActionButtonEvent[]>(() => {
     const isPtxServiceCtaScreensDisabled = !(ptxServiceCtaScreens?.enabled ?? true);
@@ -152,7 +160,7 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
                   },
                 ]
               : []),
-            ...(canBeStaken
+            ...(canStakeCurrency && !!currency
               ? [
                   {
                     label: t(stakeLabel),
@@ -160,19 +168,10 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
                     event: "button_clicked",
                     eventProperties: {
                       button: "stake",
-                      currency: currency?.id?.toUpperCase(),
+                      currency: currency.ticker || currency.id.toUpperCase(),
                       flow: "stake",
                     },
-                    navigationParams: [
-                      NavigatorName.StakeFlow,
-                      {
-                        screen: ScreenName.Stake,
-                        params: {
-                          currencies: [currency?.id],
-                          parentRoute: route,
-                        },
-                      },
-                    ] as const,
+                    navigationParams: stakeNavigationParams ?? [],
                   },
                 ]
               : []),
@@ -240,20 +239,20 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
           ]),
     ];
   }, [
-    ptxServiceCtaScreens,
-    areAccountsBalanceEmpty,
-    availableOnSwap,
+    ptxServiceCtaScreens?.enabled,
     canBeBought,
-    canBeSold,
-    canBeStaken,
-    currency,
-    defaultAccount,
-    hasAccounts,
-    parentAccount,
-    readOnlyModeEnabled,
-    stakeLabel,
     t,
-    route,
+    currency,
+    canBeSold,
+    areAccountsBalanceEmpty,
+    hasAccounts,
+    readOnlyModeEnabled,
+    availableOnSwap,
+    defaultAccount,
+    parentAccount,
+    canStakeCurrency,
+    stakeLabel,
+    stakeNavigationParams,
   ]);
 
   return {
