@@ -6670,6 +6670,24 @@
       "alreadySync" : "장치를 이미 켰습니다",
       "learnMore" : "Ledger 동기화는 어떤 원리인가요?"
     },
+    "entryPoints" : {
+      "accounts" : {
+        "title" : "Ledger 동기화 활성화"
+      },
+      "manager" : {
+        "title" : "Ledger 동기화",
+        "description" : "휴대폰 교체 시 계정을 자동으로 동기화하세요.",
+        "cta" : "Ledger 동기화 켜기"
+      },
+      "settings" : {
+        "title" : "Ledger 동기화",
+        "description" : "휴대폰 교체 시 계정을 자동으로 동기화하세요.",
+        "cta" : "Ledger 동기화 켜기"
+      },
+      "onboarding" : {
+        "title" : "다른 Ledger Live 앱과 동기화"
+      }
+    },
     "manage" : {
       "cta" : "관리",
       "synchronize" : {
@@ -6898,55 +6916,14 @@
     }
   },
   "lnsUpsell" : {
-    "banner" : {
-      "manager" : {
-        "optIn" : {
-          "title" : "장치 업그레이드 기회",
-          "description" : "최신 장치로 업그레이드하고 <0>{{discount}}% 할인 혜택</0>은 물론, 더 향상된 보안력과 원활한 사용자 경험을 누려보세요.",
-          "cta" : "내 지갑 업그레이드하기",
-          "linkText" : "자세히 알아보기"
-        },
-        "optOut" : {
-          "title" : "장치 업그레이드 기회",
-          "description" : "최신 장치로 업그레이드하고 <0>{{discount}}% 할인 혜택</0>은 물론, 더 향상된 보안력과 원활한 사용자 경험을 누려보세요.",
-          "cta" : "내 지갑 업그레이드하기",
-          "linkText" : "자세히 알아보기"
-        }
-      },
-      "accounts" : {
-        "optIn" : {
-          "title" : "장치 업그레이드 기회",
-          "description" : "Ledger Nano S 업데이트가 곧 종료됩니다. 최신 장치로 업그레이드하고 <0>{{discount}}% 할인 혜택</0>까지 누리세요.",
-          "cta" : "내 지갑 업그레이드하기",
-          "linkText" : "자세히 알아보기"
-        },
-        "optOut" : {
-          "title" : "장치 업그레이드 기회",
-          "description" : "Ledger Nano S 업데이트가 곧 종료됩니다. 최신 장치로 업그레이드하고 <0>{{discount}}% 할인 혜택</0>까지 누리세요.",
-          "cta" : "내 지갑 업그레이드하기",
-          "linkText" : "자세히 알아보기"
-        }
-      },
-      "portfolio" : {
-        "optOut" : {
-          "title" : "장치 업그레이드 기회",
-          "description" : "최신 장치로 업그레이드하고 <0>{{discount}}% 할인 혜택</0>은 물론, 더 향상된 보안력과 원활한 사용자 경험을 누려보세요.",
-          "cta" : "내 지갑 업그레이드하기",
-          "linkText" : "자세히 알아보기"
-        }
-      },
-      "notifications" : {
-        "optIn" : {
-          "description" : "업데이트가 곧 종료됩니다. 지급 업그레이드하고 {{discount}}% 할인 혜택은 물론, 더 원활한 사용자 경험을 즐겨보세요.",
-          "cta" : "내 지갑 업그레이드하기",
-          "linkText" : "자세히 알아보기"
-        },
-        "optOut" : {
-          "description" : "업데이트가 곧 종료됩니다. 지급 업그레이드하고 {{discount}}% 할인 혜택은 물론, 더 원활한 사용자 경험을 즐겨보세요.",
-          "cta" : "내 지갑 업그레이드하기",
-          "linkText" : "자세히 알아보기"
-        }
-      }
+    "opted_in" : {
+      "title" : "메모리가 제한되면 경험도 제한되니까요",
+      "description" : "Ledger Flex와 같은 최신 Ledger 장치로 Nano S를 업그레이드하여 더 많은 메모리, 최신 보안 업데이트, 새로운 기능 및 <0>독점적인 {{discount}}% 할인 혜택</>을 누려보세요.",
+      "cta" : "내 Ledger 업그레이드"
+    },
+    "opted_out" : {
+      "description" : "Ledger Nano S의 제한된 메모리로 인해 최신 기능, 블록체인 변경 사항 및 보안 업데이트에 대한 액세스가 제한됩니다. 장기적으로 사용하려면 최신 Ledger 장치로 업그레이드하세요.",
+      "cta" : "업그레이드가 필요한 이유는 무엇인가요?"
     }
   }
 }
