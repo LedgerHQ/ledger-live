@@ -1,21 +1,23 @@
 import React, { memo } from "react";
 import { useSelector } from "react-redux";
-import { useGlobalSyncState } from "@ledgerhq/live-common/bridge/react/index";
-import { useTheme } from "styled-components/native";
 import { Box } from "@ledgerhq/native-ui";
 import { networkErrorSelector } from "~/reducers/appstate";
 import HeaderErrorTitle from "~/components/HeaderErrorTitle";
+import useAppStateListener from "~/components/useAppStateListener";
 
-const Header = () => {
-  const { error } = useGlobalSyncState();
-  const networkError = useSelector(networkErrorSelector);
-  const { colors } = useTheme();
-
-  return error ? (
-    <Box bg={colors.background.main} pt={16}>
-      <HeaderErrorTitle withDescription error={networkError || error} />
-    </Box>
-  ) : null;
+type ErrorHeaderProps = {
+  error: Error;
 };
 
-export default memo(Header);
+const Error = ({ error }: ErrorHeaderProps) => {
+  useAppStateListener();
+  const networkError = useSelector(networkErrorSelector);
+
+  return (
+    <Box paddingY={16}>
+      <HeaderErrorTitle withDescription error={networkError || error} />
+    </Box>
+  );
+};
+
+export default memo(Error);
