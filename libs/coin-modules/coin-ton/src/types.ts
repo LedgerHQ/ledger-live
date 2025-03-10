@@ -1,5 +1,7 @@
 import {
+  Account,
   Operation,
+  SubAccount,
   TransactionCommon,
   TransactionCommonRaw,
   TransactionStatusCommon,
@@ -43,6 +45,10 @@ export type TonPayloadJettonTransfer = {
   customPayload: TonCell | null;
   forwardAmount: bigint;
   forwardPayload: TonCell | null;
+  knownJetton: {
+    jettonId: number;
+    workchain: number;
+  } | null;
 };
 
 export type TonPayloadNftTransfer = {
@@ -60,7 +66,91 @@ export type TonPayloadComment = {
   text: string;
 };
 
-export type TonPayloadFormat = TonPayloadComment | TonPayloadJettonTransfer | TonPayloadNftTransfer;
+export type TonPayloadUnsafe = {
+  type: "unsafe";
+  message: TonCell;
+};
+
+export type TonPayloadJettonBurn = {
+  type: "jetton-burn";
+  queryId: bigint | null;
+  amount: bigint;
+  responseDestination: Address;
+  customPayload: TonCell | Buffer | null;
+};
+
+export type TonPayloadAddWhitelist = {
+  type: "add-whitelist";
+  queryId: bigint | null;
+  address: Address;
+};
+
+export type TonPayloadSingleNominatorWithdraw = {
+  type: "single-nominator-withdraw";
+  queryId: bigint | null;
+  amount: bigint;
+};
+
+export type TonPayloadSingleNominatorChangeValidator = {
+  type: "single-nominator-change-validator";
+  queryId: bigint | null;
+  address: Address;
+};
+
+export type TonPayloadTonStakersDeposit = {
+  type: "tonstakers-deposit";
+  queryId: bigint | null;
+  appId: bigint | null;
+};
+
+export type TonPayloadVoteForProposal = {
+  type: "vote-for-proposal";
+  queryId: bigint | null;
+  votingAddress: Address;
+  expirationDate: number;
+  vote: boolean;
+  needConfirmation: boolean;
+};
+
+export type TonPayloadChangeDnsRecord = {
+  type: "change-dns-record";
+  queryId: bigint | null;
+  record:
+    | {
+        type: "wallet";
+        value: {
+          address: Address;
+          capabilities: {
+            isWallet: boolean;
+          } | null;
+        } | null;
+      }
+    | {
+        type: "unknown";
+        key: Buffer;
+        value: TonCell | null;
+      };
+};
+
+export type TonPayloadTokenBridgePaySwap = {
+  type: "token-bridge-pay-swap";
+  queryId: bigint | null;
+  swapId: Buffer;
+};
+
+export type TonPayloadFormat =
+  | TonPayloadComment
+  | TonPayloadJettonTransfer
+  | TonPayloadNftTransfer
+  | TonPayloadUnsafe
+  | TonPayloadJettonBurn
+  | TonPayloadAddWhitelist
+  | TonPayloadSingleNominatorWithdraw
+  | TonPayloadSingleNominatorChangeValidator
+  | TonPayloadTonStakersDeposit
+  | TonPayloadVoteForProposal
+  | TonPayloadChangeDnsRecord
+  | TonPayloadTokenBridgePaySwap;
 
 export interface TonTransaction {
   to: Address;
@@ -79,4 +169,16 @@ export type TonOperationExtra = {
   comment: TonComment;
   lt: string;
   explorerHash: string;
+};
+
+export type KnownJetton = {
+  symbol: string;
+  masterAddress: Address;
+};
+
+export type TonSubAccount = SubAccount & {
+  jettonWallet: string;
+};
+export type TonAccount = Omit<Account, "subAccounts"> & {
+  subAccounts?: TonSubAccount[];
 };

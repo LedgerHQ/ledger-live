@@ -3570,14 +3570,14 @@ importers:
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
       '@ton/core':
-        specifier: ^0.56.3
-        version: 0.56.3(@ton/crypto@3.3.0)
+        specifier: ^0.60.1
+        version: 0.60.1(@ton/crypto@3.3.0)
       '@ton/crypto':
         specifier: ^3.3.0
         version: 3.3.0
       '@ton/ton':
-        specifier: ^13.11.1
-        version: 13.11.2(@ton/core@0.56.3(@ton/crypto@3.3.0))(@ton/crypto@3.3.0)
+        specifier: ^15.2.1
+        version: 15.2.1(@ton/core@0.60.1(@ton/crypto@3.3.0))(@ton/crypto@3.3.0)
       bignumber.js:
         specifier: ^9.1.2
         version: 9.1.2
@@ -4496,11 +4496,11 @@ importers:
         specifier: ^20.0.0
         version: 20.0.1
       '@ton-community/ton-ledger':
-        specifier: ^7.0.1
-        version: 7.0.1(@ton/core@0.56.3(@ton/crypto@3.3.0))
+        specifier: ^7.2.0
+        version: 7.2.0(@ton/core@0.60.1(@ton/crypto@3.3.0))
       '@ton/core':
-        specifier: ^0.56.3
-        version: 0.56.3(@ton/crypto@3.3.0)
+        specifier: ^0.60.1
+        version: 0.60.1(@ton/crypto@3.3.0)
       '@ton/crypto':
         specifier: ^3.3.0
         version: 3.3.0
@@ -16531,13 +16531,13 @@ packages:
       react: '>=16.8'
       react-dom: '>=16.8'
 
-  '@ton-community/ton-ledger@7.0.1':
-    resolution: {integrity: sha512-4QDjG9D/c3vKyApKa36KfqyE0UcPn/ExSJvCb8Cd03BdhMiZQNvm7tJsKg12lslPCIbl1dW9ZC6fg1RvqAAqnQ==}
+  '@ton-community/ton-ledger@7.2.0':
+    resolution: {integrity: sha512-y3bb+l3RqN5muISVBLNBc3NbfU8FFcSjuB6rJcvP2K/YAKFtEIREpXsobQtI5NhTmRV7WwWuio4labc+QJwozg==}
     peerDependencies:
       '@ton/core': '>=0.52.2'
 
-  '@ton/core@0.56.3':
-    resolution: {integrity: sha512-HVkalfqw8zqLLPehtq0CNhu5KjVzc7IrbDwDHPjGoOSXmnqSobiWj8a5F+YuWnZnEbQKtrnMGNOOjVw4LG37rg==}
+  '@ton/core@0.60.1':
+    resolution: {integrity: sha512-8FwybYbfkk57C3l9gvnlRhRBHbLYmeu0LbB1z9N+dhDz0Z+FJW8w0TJlks8CgHrAFxsT3FlR2LsqFnsauMp38w==}
     peerDependencies:
       '@ton/crypto': '>=3.2.0'
 
@@ -16547,10 +16547,10 @@ packages:
   '@ton/crypto@3.3.0':
     resolution: {integrity: sha512-/A6CYGgA/H36OZ9BbTaGerKtzWp50rg67ZCH2oIjV1NcrBaCK9Z343M+CxedvM7Haf3f/Ee9EhxyeTp0GKMUpA==}
 
-  '@ton/ton@13.11.2':
-    resolution: {integrity: sha512-EPqW+ZTe0MmfqguJEIGMuAqTAFRKMEce95HlDx8h6CGn2y3jiMgV1/oO+WpDIOiX+1wnTu+xtajk8JTWr8nKRQ==}
+  '@ton/ton@15.2.1':
+    resolution: {integrity: sha512-ICzozzATRfymkVfFVZrfVpKnCc5PLxAVeaB62mx/HsgllsjnR64UuoLuE6hqWHcA3/Hft9YLGdk2/rOHGZM6qA==}
     peerDependencies:
-      '@ton/core': '>=0.56.0'
+      '@ton/core': '>=0.60.0'
       '@ton/crypto': '>=3.2.0'
 
   '@tootallnate/once@1.1.2':
@@ -46505,14 +46505,14 @@ snapshots:
       react-dom: 18.3.1(react@18.3.1)
       tippy.js: 6.3.7
 
-  '@ton-community/ton-ledger@7.0.1(@ton/core@0.56.3(@ton/crypto@3.3.0))':
+  '@ton-community/ton-ledger@7.2.0(@ton/core@0.60.1(@ton/crypto@3.3.0))':
     dependencies:
       '@ledgerhq/hw-transport': 6.31.4
-      '@ton/core': 0.56.3(@ton/crypto@3.3.0)
+      '@ton/core': 0.60.1(@ton/crypto@3.3.0)
       '@ton/crypto': 3.3.0
       teslabot: 1.5.0
 
-  '@ton/core@0.56.3(@ton/crypto@3.3.0)':
+  '@ton/core@0.60.1(@ton/crypto@3.3.0)':
     dependencies:
       '@ton/crypto': 3.3.0
       symbol.inspect: 1.0.1
@@ -46527,9 +46527,9 @@ snapshots:
       jssha: 3.2.0
       tweetnacl: 1.0.3
 
-  '@ton/ton@13.11.2(@ton/core@0.56.3(@ton/crypto@3.3.0))(@ton/crypto@3.3.0)':
+  '@ton/ton@15.2.1(@ton/core@0.60.1(@ton/crypto@3.3.0))(@ton/crypto@3.3.0)':
     dependencies:
-      '@ton/core': 0.56.3(@ton/crypto@3.3.0)
+      '@ton/core': 0.60.1(@ton/crypto@3.3.0)
       '@ton/crypto': 3.3.0
       axios: 1.7.9
       dataloader: 2.2.2
