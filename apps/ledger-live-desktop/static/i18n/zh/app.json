@@ -439,8 +439,8 @@
       "cta" : "前往 My Ledger（我的 Ledger）"
     },
     "wrongDevice" : {
-      "title" : "Ledger Nano S™ 不兼容 THORChain",
-      "description" : "Ledger Nano S 不兼容 THORChain。您可以使用 Ledger Nano S Plus、Ledger Nano X、Ledger Stax 或 Ledger Flex 通过 Ledger Live 体验 THORChain 的跨链互换",
+      "title" : "Ledger Nano S™ 与 {{provider}} 不兼容",
+      "description" : "Ledger Nano S 与 {{provider}} 不兼容。您可以使用 Ledger Nano S Plus、Ledger Nano X、Ledger Stax 或 Ledger Flex 通过 Ledger Live 体验 {{provider}} 的跨链互换",
       "cta" : "浏览兼容设备",
       "changeProvider" : "使用其他提供商进行互换"
     },
@@ -3753,7 +3753,66 @@
     },
     "token" : {
       "frozenStateWarning" : "账户资产已冻结！",
-      "transferWarning" : "要使用 Ledger Nano S™ 验证 Solana 代币的接收人地址，<0>请按照以下说明操作。</0>"
+      "transferWarning" : "要使用 Ledger Nano S™ 验证 Solana 代币的接收人地址，<0>请按照以下说明操作。</0>",
+      "transferFees" : {
+        "feesPercentHint" : "代币转账费用为 {{feePercent}}%（{{feeBps}} 个基点）。最高为 {{maxFee}}",
+        "notice" : "转账费用 {{fee}}%",
+        "tooltipHint" : "归属代币创建者的转账百分比",
+        "transferFeesLabel" : "转账费用"
+      },
+      "nonTransferable" : {
+        "notice" : "代币不可转让"
+      },
+      "interestRate" : {
+        "notice" : "利率：{{rate}}%",
+        "tooltipHint" : "仅用作视觉效果展示，利息不会产生新代币"
+      },
+      "permanentDelegate" : {
+        "notice" : "永久委托权限已启用",
+        "initializationNotice" : "永久委托权限已初始化但未启用",
+        "tooltipHint" : "委托方可从您的账户转移或销毁该代币"
+      },
+      "requiredMemoOnTransfer" : {
+        "notice" : "转账必需备忘标签已启用",
+        "tooltipHint" : "所有转入该账户的交易均需附加备忘标签"
+      },
+      "transferHook" : {
+        "notice" : "转账钩子已启用",
+        "initializationNotice" : "转账钩子已初始化但未启用",
+        "tooltipHint" : "代币具备由 {{programAddress}} 程序处理的额外功能"
+      },
+      "extensionsInfo" : {
+        "title" : "Solana 代币扩展",
+        "commonInfo" : "代币扩展是新一代的 Solana 代币标准。它采用一系列新方法来扩展常规的代币功能，包括机密转账、永久委托、自定义转账逻辑、扩展元数据等额外功能。",
+        "permanentDelegate" : {
+          "title" : "永久委托",
+          "permanentDelegateAddress" : "当前委托权限为 {{address}}",
+          "permanentDelegateNotSetup" : "当前委托权限未设置。",
+          "description" : "永久委托是指对该铸币下所有账户拥有不受限制的委托权限。委托方可随时自行销毁或转移任意数额的代币。"
+        },
+        "nonTransferable" : {
+          "title" : "不可转让代币",
+          "description" : "此类代币为“灵魂绑定”代币，仅可由代币发行者进行转移或销毁。"
+        },
+        "transferHook" : {
+          "title" : "转账钩子",
+          "transferHookAddress" : "当前转账钩子程序为 {{address}}",
+          "transferHookNotSetup" : "当前转账钩子程序未设置。",
+          "description" : "转账钩子可让代币发行者决定用户与代币的交互方式。与常规转账不同，发行者可将自定义逻辑插入到与转账钩子扩展程序结合使用的程序中。"
+        },
+        "transferFee" : {
+          "title" : "转账费用",
+          "currentTransferFee" : "当前转账费用为 {{feePercent}}%（{{feeBps}} 个基点）。最高为 {{maxFee}}。",
+          "description" : "每笔代币转账均需收取费用，并由接收方账户代为保管，接收方不可动用该部分代币。"
+        },
+        "interestBearing" : {
+          "title" : "计息代币",
+          "currentInterestRate" : "当前利率为 {{rate}}%。",
+          "accruedDelta" : "应计 {{delta}}。",
+          "interestRateNotSetup" : "当前利率设置为 0%。",
+          "description" : "代币价值根据利率持续增减。此功能仅为效果展示，不会实际产生新代币。"
+        }
+      }
     }
   },
   "ethereum" : {
@@ -4155,6 +4214,11 @@
       "debugAppsDesc" : "显示并允许打开调试标记的平台应用程序。",
       "debugReactQuery" : "允许调试 ReactQuery",
       "debugReactQueryDesc" : "显示并允许打开调试 ReactQuery 控制台。",
+      "nfts" : {
+        "title" : "NFTs HiddenCollections",
+        "description" : "重置隐藏藏品列表",
+        "reset" : "重置"
+      },
       "exchangeDeveloperMode" : {
         "title" : "兑换开发模式",
         "desc" : "添加兑换提供商的信息",
@@ -5437,7 +5501,8 @@
     },
     "solana" : {
       "memo" : "标签/备忘标签",
-      "memoPlaceholder" : "可选"
+      "memoPlaceholder" : "可选",
+      "requiredMemoPlaceholder" : "必填"
     }
   },
   "errors" : {
@@ -6249,6 +6314,13 @@
     "SolanaTxConfirmationTimeout" : {
       "title" : "您的交易可能失败了。请稍等片刻后检查交易记录，然后重试。"
     },
+    "SolanaRecipientMemoIsRequired" : {
+      "title" : "接收方地址需附加备忘标签"
+    },
+    "SolanaTokenNonTransferable" : {
+      "title" : "代币不可转让",
+      "description" : "此类代币为“灵魂绑定”代币，不可转让"
+    },
     "NotEnoughNftOwned" : {
       "title" : "您已超过可用代币的数量"
     },
@@ -6918,6 +6990,14 @@
         "optOut" : {
           "title" : "现在就是升级的好时机",
           "description" : "Ledger Nano S 更新活动即将结束。升级到我们的最新设备，立享 <0>{{discount}}% 折扣优惠</0>。",
+          "cta" : "升级我的钱包",
+          "linkText" : "了解更多"
+        }
+      },
+      "portfolio" : {
+        "optOut" : {
+          "title" : "现在就是升级的好时机",
+          "description" : "升级到我们的最新设备，立享 <0>{{discount}}% 折扣优惠</0>，加强安全保护，享受顺畅体验。",
           "cta" : "升级我的钱包",
           "linkText" : "了解更多"
         }
