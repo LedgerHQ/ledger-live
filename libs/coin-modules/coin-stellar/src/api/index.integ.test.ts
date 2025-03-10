@@ -22,7 +22,7 @@ describe("Stellar Api", () => {
       const amount = BigInt(100_000);
 
       // When
-      const result = await module.estimateFees(address, amount);
+      const result = await module.estimateFees({ sender: address, recipient: "address", amount });
 
       // Then
       expect(result).toEqual(BigInt(100));

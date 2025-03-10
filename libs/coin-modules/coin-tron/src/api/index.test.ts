@@ -9,7 +9,12 @@ import {
 } from "../logic";
 import coinConfig from "../config";
 import { TronConfig } from "../config";
-import { Api, Pagination, Transaction } from "@ledgerhq/coin-framework/api/types";
+import {
+  Api,
+  TransactionIntent,
+  Pagination,
+  Transaction,
+} from "@ledgerhq/coin-framework/api/types";
 import { createApi } from ".";
 
 jest.mock("../config", () => ({
@@ -67,7 +72,12 @@ describe("createApi", () => {
     await api.broadcast("transaction");
     api.combine("tx", "signature", "pubkey");
     await api.craftTransaction("address", {} as Transaction, "pubkey");
-    await api.estimateFees("address", BigInt(0));
+    await api.estimateFees({
+      sender: "address",
+      recipient: "address",
+      amount: BigInt(10),
+      standard: "trc10",
+    } as TransactionIntent);
     await api.getBalance("address");
     await api.lastBlock();
     await api.listOperations("address", {} as Pagination);
@@ -76,7 +86,12 @@ describe("createApi", () => {
     expect(broadcast).toHaveBeenCalledWith("transaction");
     expect(combine).toHaveBeenCalledWith("tx", "signature", "pubkey");
     expect(craftTransaction).toHaveBeenCalledWith("address", {}, "pubkey");
-    expect(estimateFees).toHaveBeenCalledWith("address", BigInt(0));
+    expect(estimateFees).toHaveBeenCalledWith({
+      sender: "address",
+      recipient: "address",
+      amount: BigInt(10),
+      standard: "trc10",
+    } as TransactionIntent);
     expect(getBalance).toHaveBeenCalledWith("address");
     expect(lastBlock).toHaveBeenCalled();
     expect(listOperations).toHaveBeenCalledWith("address", {});
