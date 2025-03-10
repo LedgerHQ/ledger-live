@@ -4,7 +4,7 @@ export class Currency {
   constructor(
     public readonly name: string,
     public readonly ticker: string,
-    public readonly currencyId: string,
+    public readonly id: string,
     public readonly speculosApp: AppInfos,
     public readonly contractAddress?: string,
   ) {}

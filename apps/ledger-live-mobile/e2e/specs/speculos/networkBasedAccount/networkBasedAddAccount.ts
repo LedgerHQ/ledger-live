@@ -24,8 +24,8 @@ export async function runNetworkBasedAddAccountTest(currency: Currency, tmsLink:
       await app.portfolio.addAccount();
       await app.addAccount.importWithYourLedger();
       await app.common.performSearch(currency.name);
-      await app.receive.selectCurrency(currency.currencyId);
-      await app.receive.selectNetworkIfAsked(currency.currencyId);
+      await app.receive.selectCurrency(currency.id);
+      await app.receive.selectNetworkIfAsked(currency.id);
 
       const accountId = await app.addAccount.addNetworkBasedFirstAccount(currency);
       await app.portfolio.goToAccounts(currency.name);

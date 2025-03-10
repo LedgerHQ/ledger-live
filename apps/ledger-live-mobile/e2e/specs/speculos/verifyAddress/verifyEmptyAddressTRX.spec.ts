@@ -12,7 +12,7 @@ describe(`Verify Address warnings - ${account.currency.name}`, () => {
       cliCommands: [
         () => {
           return CLI.liveData({
-            currency: account.currency.currencyId,
+            currency: account.currency.id,
             index: account.index,
             appjson: app.userdataPath,
             add: true,

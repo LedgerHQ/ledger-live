@@ -76,7 +76,7 @@ export default class AddAccountDrawer {
   @Step("Add only first discovered account")
   async addFirstAccount(currency: Currency) {
     await this.waitAccountsDiscovery();
-    await this.expectAccountDiscovery(currency.name, currency.currencyId);
+    await this.expectAccountDiscovery(currency.name, currency.id);
     await tapById(this.deselectAllButtonId);
     await tapById(this.accountCardRegExp(), 0);
     const accountId = (await getIdOfElement(this.accountCardRegExp(), 0)).replace(
@@ -109,10 +109,7 @@ export default class AddAccountDrawer {
   @Step("Add only first discovered account")
   async addNetworkBasedFirstAccount(currency: Currency) {
     await this.waitAccountsDiscovery();
-    const accountId = await this.expectNetworkBasedAccountDiscovery(
-      currency.name,
-      currency.currencyId,
-    );
+    const accountId = await this.expectNetworkBasedAccountDiscovery(currency.name, currency.id);
     await tapById(this.deselectAllButtonId);
     await tapById(this.accountItemRegExp(accountId));
     await this.finishAccountsDiscovery();
