@@ -110,6 +110,33 @@ export class SwapPage extends AppPage {
     await this.customFeeTextbox.fill(amount);
   }
 
+  @step("Select available no native provider")
+  async selectExternalExchange(electronApp: ElectronApplication) {
+    const [, webview] = electronApp.windows();
+    await expect(webview.getByTestId("number-of-quotes")).toBeVisible();
+    const providersList = await webview
+      .locator("//span[@data-testid='quote-card-provider-name']")
+      .allTextContents();
+
+    const providersNoNative = providersList.filter(providerName => {
+      const provider = Object.values(Provider).find(p => p.uiName === providerName);
+      return provider && !provider.isNative;
+    });
+
+    for (const providerName of providersNoNative) {
+      const providerLocator = webview
+        .locator(`//span[@data-testid='quote-card-provider-name' and text()='${providerName}']`)
+        .first();
+
+      await providerLocator.isVisible();
+      await providerLocator.click();
+
+      return providerName;
+    }
+
+    throw new Error("No valid providers found");
+  }
+
   @step("Select available provider")
   async selectExchange(electronApp: ElectronApplication) {
     const [, webview] = electronApp.windows();
@@ -194,7 +221,14 @@ export class SwapPage extends AppPage {
   @step("Click Exchange button")
   async clickExchangeButton(electronApp: ElectronApplication, provider: string) {
     const [, webview] = electronApp.windows();
+    console.log(await webview.getByRole("button", { name: `Swap with ${provider}` }));
     await webview.getByRole("button", { name: `Swap with ${provider}` }).click();
+  }
+
+  @step("Go to provider live app")
+  async goToProviderLiveApp(electronApp: ElectronApplication, provider: string) {
+    const [, webview] = electronApp.windows();
+    await webview.getByRole("button", { name: `Continue with ${provider}` }).click();
   }
 
   async confirmExchange() {

@@ -157,7 +157,7 @@ for (const { swap, xrayTicket } of swaps) {
 
 const checkProviders = [
   {
-    swap: new Swap(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "0.02", Fee.MEDIUM),
+    swap: new Swap(Account.ETH_1, Account.ETH_USDT_1, "0.03", Fee.MEDIUM),
     xrayTicket: "B2CQA-2750",
   },
 ];
@@ -184,7 +184,7 @@ for (const { swap, xrayTicket } of checkProviders) {
     });
 
     test(
-      "Swap test provider",
+      "Swap test provider redirection",
       {
         annotation: {
           type: "TMS",
@@ -195,9 +195,12 @@ for (const { swap, xrayTicket } of checkProviders) {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
         await performSwapUntilQuoteSelectionStep(app, electronApp, swap);
-        //changer selectExchange par select selectExternalExchange et rename selectExchange en selectNativeExchange
-        const selectedProvider = await app.swap.selectExchange(electronApp);
-        console.log(selectedProvider);
+        const selectedProvider = await app.swap.selectExternalExchange(electronApp);
+        await app.swap.goToProviderLiveApp(electronApp, selectedProvider);
+        // verifier call API ? pour checker que c'est bien redirigé ?
+        // Comment est fait la redirection ? l'envoie de la data (compte debité, compte crédité, montant)?
+        await app.liveApp.check1inch(electronApp, selectedProvider);
+        //await app.liveApp.verifyLiveAppTitle(selectedProvider.toLowerCase());
       },
     );
   });
