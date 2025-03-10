@@ -1,9 +1,9 @@
 import { getServerInfos, getTransactions, GetTransactionsOptions } from "../network";
 import type { XrplOperation } from "../network/types";
-import { XrpMemo, XrpOperation } from "../types";
+import { ListOperationsOptions, XrpMemo, XrpOperation } from "../types";
 import { RIPPLE_EPOCH } from "./utils";
 
-type Order = "asc" | "desc";
+
 /**
  * Returns list of "Payment" Operations associated to an account.
  * @param address Account address
@@ -19,19 +19,7 @@ type Order = "asc" | "desc";
  */
 export async function listOperations(
   address: string,
-  {
-    limit,
-    minHeight,
-    token,
-    order,
-  }: {
-    // pagination:
-    limit?: number;
-    token?: string;
-    order?: Order;
-    // filters:
-    minHeight?: number;
-  },
+  { limit, minHeight, token, order }: ListOperationsOptions,
 ): Promise<[XrpOperation[], string]> {
   const serverInfo = await getServerInfos();
   const ledgers = serverInfo.info.complete_ledgers.split("-");
