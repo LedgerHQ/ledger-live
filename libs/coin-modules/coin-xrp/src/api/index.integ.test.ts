@@ -4,7 +4,7 @@ import { decode, encodeForSigning } from "ripple-binary-codec";
 import { sign } from "ripple-keypairs";
 
 describe("Xrp Api", () => {
-  let module: Api;
+  let module: Api<void>;
   const address = "rh1HPuRVsYYvThxG2Bs1MfjmrVC73S16Fb";
   const bigAddress = "rUxSkt6hQpWxXQwTNRUCYYRQ7BC2yRA3F8"; // An account with more that 4000 txs
   const emptyAddress = "rKtXXTVno77jhu6tto1MAXjepyuaKaLcqB"; // Account with no transaction (at the time of this writing)
@@ -93,19 +93,17 @@ describe("Xrp Api", () => {
   describe("craftTransaction", () => {
     it("returns a raw transaction", async () => {
       // When
-      const result = await module.craftTransaction(address, {
+      const result = await module.craftTransaction({
         type: "send",
+        sender: address,
         recipient: "rKRtUG15iBsCQRgrkeUEg5oX4Ae2zWZ89z",
         amount: BigInt(10),
-        fee: BigInt(1),
-        memos: [{ data: "01", format: "02", type: "03" }],
-        destinationTag: 123,
       });
 
       // Then
-      expect(result.slice(0, 34)).toEqual("12000022800000002400025899201B002D");
+      expect(result.slice(0, 34)).toEqual("12000022800000002400025899201B0054");
       expect(result.slice(38)).toEqual(
-        "61400000000000000A68400000000000000181142A6ADC782DAFDDB464E434B684F01416B8A33B208314CA26FB6B0EF6859436C2037BA0A9913208A59B98",
+        "61400000000000000A68400000000000000A81142A6ADC782DAFDDB464E434B684F01416B8A33B208314CA26FB6B0EF6859436C2037BA0A9913208A59B98",
       );
     });
   });

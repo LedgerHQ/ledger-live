@@ -1,4 +1,4 @@
-import type { Api } from "@ledgerhq/coin-framework/api/index";
+import type { Api, TransactionIntent } from "@ledgerhq/coin-framework/api/index";
 import coinConfig, { type BoilerplateConfig } from "../config";
 import {
   broadcast,
@@ -11,8 +11,9 @@ import {
   listOperations,
 } from "../common-logic";
 import BigNumber from "bignumber.js";
+import { BoilerplateToken } from "../types";
 
-export function createApi(config: BoilerplateConfig): Api {
+export function createApi(config: BoilerplateConfig): Api<BoilerplateToken> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
@@ -26,21 +27,13 @@ export function createApi(config: BoilerplateConfig): Api {
   };
 }
 
-async function craft(
-  address: string,
-  transaction: {
-    recipient: string;
-    amount: bigint;
-    fee: bigint;
-  },
-): Promise<string> {
-  const nextSequenceNumber = await getNextValidSequence(address);
+async function craft(transactionIntent: TransactionIntent<BoilerplateToken>): Promise<string> {
+  const nextSequenceNumber = await getNextValidSequence(transactionIntent.sender);
   const tx = await craftTransaction(
-    { address, nextSequenceNumber },
+    { address: transactionIntent.sender, nextSequenceNumber },
     {
-      recipient: transaction.recipient,
-      amount: new BigNumber(transaction.amount.toString()),
-      fee: new BigNumber(transaction.fee.toString()),
+      recipient: transactionIntent.recipient,
+      amount: new BigNumber(transactionIntent.amount.toString()),
     },
   );
   return tx.serializedTransaction;
