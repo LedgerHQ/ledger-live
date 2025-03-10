@@ -60,7 +60,7 @@ const TopBar = () => {
   const handleDiscreet = useCallback(() => {
     dispatch(setDiscreetMode(!discreetMode));
     track("button_clicked", {
-      button: "discreet mode",
+      button: "Discreet mode",
       toggle: !discreetMode ? "ON" : "OFF",
     });
   }, [discreetMode, dispatch]);
