@@ -7,6 +7,9 @@
 
 import { useMemo } from "react";
 import { DefaultAccountSwapParamList } from "../../types";
+import { useSelector } from "react-redux";
+import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
+import { walletSelector } from "~/reducers/wallet";
 
 type SwapLiveUrlParams = {
   fromAccountId?: string;
@@ -16,11 +19,19 @@ type SwapLiveUrlParams = {
 export const useSwapLiveAppTranslateUrlParams = (
   params: DefaultAccountSwapParamList,
 ): SwapLiveUrlParams => {
+  const walletState = useSelector(walletSelector);
+
   return useMemo(() => {
     const newParams: SwapLiveUrlParams = {};
+
     if (params.defaultAccount) {
-      newParams.fromAccountId = params.defaultAccount?.id;
+      newParams.fromAccountId = accountToWalletAPIAccount(
+        walletState,
+        params.defaultAccount,
+        params?.defaultParentAccount,
+      ).id;
     }
+
     return newParams;
-  }, [params]);
+  }, [params, walletState]);
 };
