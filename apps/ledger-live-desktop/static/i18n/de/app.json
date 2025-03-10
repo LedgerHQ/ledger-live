@@ -5728,7 +5728,7 @@
     },
     "MultiversXDecimalsLimitReached" : {
       "title" : "Maximale Dezimalstellengrenze erreicht",
-      "description" : "Bitte stellen Sie sicher, dass der angegebene Betrag 18 Dezimalstellen hat."
+      "description" : "Bitte stelle sicher, dass der angegebene Betrag 18 Dezimalstellen hat."
     },
     "MultiversXMinDelegatedAmountError" : {
       "title" : "Der delegierte Betrag muss mindestens {{formattedAmount}} betragen"
@@ -6670,6 +6670,24 @@
       "alreadySync" : "Ich habe es bereits eingeschaltet",
       "learnMore" : "Wie funktioniert Ledger Sync?"
     },
+    "entryPoints" : {
+      "accounts" : {
+        "title" : "Ledger Sync aktivieren"
+      },
+      "manager" : {
+        "title" : "Ledger Sync",
+        "description" : "Synchronisiere deine Konten automatisch – auch beim Wechsel auf ein neues Smartphone.",
+        "cta" : "Ledger Sync einschalten"
+      },
+      "settings" : {
+        "title" : "Ledger Sync",
+        "description" : "Synchronisiere deine Konten automatisch – auch beim Wechsel auf ein neues Smartphone.",
+        "cta" : "Ledger Sync einschalten"
+      },
+      "onboarding" : {
+        "title" : "Mit einer anderen Ledger Live-App synchronisieren"
+      }
+    },
     "manage" : {
       "cta" : "Verwalten",
       "synchronize" : {
@@ -6898,55 +6916,14 @@
     }
   },
   "lnsUpsell" : {
-    "banner" : {
-      "manager" : {
-        "optIn" : {
-          "title" : "Zeit für ein Upgrade",
-          "description" : "Jetzt auf eines unserer aktuellen Geräte aufrüsten: <0>{{discount}} % Rabatt</0> für mehr Sicherheit und ein nahtloses Erlebnis.",
-          "cta" : "Neue Wallet zulegen",
-          "linkText" : "Weitere Informationen"
-        },
-        "optOut" : {
-          "title" : "Zeit für ein Upgrade",
-          "description" : "Jetzt auf eines unserer aktuellen Geräte aufrüsten: <0>{{discount}} % Rabatt</0> für mehr Sicherheit und ein nahtloses Erlebnis.",
-          "cta" : "Neue Wallet zulegen",
-          "linkText" : "Weitere Informationen"
-        }
-      },
-      "accounts" : {
-        "optIn" : {
-          "title" : "Zeit für ein Upgrade",
-          "description" : "Bald gibt es keine Updates mehr für die Ledger Nano S. Jetzt auf eines unserer aktuellen Geräte aufrüsten – mit <0>{{discount}} % Rabatt</0>.",
-          "cta" : "Neue Wallet zulegen",
-          "linkText" : "Weitere Informationen"
-        },
-        "optOut" : {
-          "title" : "Zeit für ein Upgrade",
-          "description" : "Bald gibt es keine Updates mehr für die Ledger Nano S. Jetzt auf eines unserer aktuellen Geräte aufrüsten – mit <0>{{discount}} % Rabatt</0>.",
-          "cta" : "Neue Wallet zulegen",
-          "linkText" : "Weitere Informationen"
-        }
-      },
-      "portfolio" : {
-        "optOut" : {
-          "title" : "Zeit für ein Upgrade",
-          "description" : "Jetzt auf eines unserer aktuellen Geräte aufrüsten: <0>{{discount}} % Rabatt</0> für mehr Sicherheit und ein nahtloses Erlebnis.",
-          "cta" : "Neue Wallet zulegen",
-          "linkText" : "Weitere Informationen"
-        }
-      },
-      "notifications" : {
-        "optIn" : {
-          "description" : "Updates gibt es nicht mehr lange. Jetzt aufrüsten: <0>{{discount}} % Rabatt</0> für ein nahtloses Erlebnis.",
-          "cta" : "Neue Wallet zulegen",
-          "linkText" : "Weitere Informationen"
-        },
-        "optOut" : {
-          "description" : "Updates gibt es nicht mehr lange. Jetzt aufrüsten: <0>{{discount}} % Rabatt</0> für ein nahtloses Erlebnis.",
-          "cta" : "Neue Wallet zulegen",
-          "linkText" : "Weitere Informationen"
-        }
-      }
+    "opted_in" : {
+      "title" : "Eingeschränkter Speicher, eingeschränkte Nutzung",
+      "description" : "Führe ein Upgrade deiner Nano S auf ein neueres Ledger-Gerät durch – z. B. die Ledger Flex – und profitiere von mehr Speicherplatz, den neuesten Sicherheitsverbesserungen, innovativen Funktionen und <0>einem exklusiven Rabatt in Höhe von {{discount}} %</0>.",
+      "cta" : "Ledger-Upgrade durchführen"
+    },
+    "opted_out" : {
+      "description" : "Der begrenzte Speicher deiner Ledger Nano S schränkt deinen Zugang zu aktuellen Funktionen, Blockchain-Änderungen und Sicherheitsverbesserungen ein. Für die längerfristige Nutzung solltest du auf ein neueres Ledger-Gerät aufrüsten.",
+      "cta" : "Warum ist ein Upgrade empfehlenswert?"
     }
   }
 }
