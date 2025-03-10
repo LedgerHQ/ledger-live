@@ -439,8 +439,8 @@
       "cta" : "My Ledger'a Git"
     },
     "wrongDevice" : {
-      "title" : "Ledger Nano S™, THORChain ile uyumlu değildir",
-      "description" : "Ledger Nano S, THORChain ile uyumlu değildir. Ledger Live üzerinden THORChain'de zincirler arası takas işlemleri yapmak için Ledger Nano S Plus, Ledger Nano X, Ledger Stax veya Ledger Flex cihazlarını kullanabilirsiniz",
+      "title" : "Ledger Nano S™, {{provider}} ile uyumlu değildir",
+      "description" : "Ledger Nano S, {{provider}} ile uyumlu değildir. Ledger Live üzerinden {{provider}} aracılığıyla zincirler arası takas işlemleri yapmak için Ledger Nano S Plus, Ledger Nano X, Ledger Stax veya Ledger Flex cihazlarını kullanabilirsiniz",
       "cta" : "Uyumlu cihazları keşfedin",
       "changeProvider" : "Başka bir sağlayıcıyla takas edin"
     },
@@ -3753,7 +3753,66 @@
     },
     "token" : {
       "frozenStateWarning" : "Hesap varlıkları donduruldu!",
-      "transferWarning" : "Ledger Nano S™ kullanarak Solana token'ları için alıcı adresini doğrulamak üzere <0>bu yönergeleri uygulayın.</0>"
+      "transferWarning" : "Ledger Nano S™ kullanarak Solana token'ları için alıcı adresini doğrulamak üzere <0>bu yönergeleri uygulayın.</0>",
+      "transferFees" : {
+        "feesPercentHint" : "Bu token için %{{feePercent}} ({{feeBps}} bps) transfer ücreti alınır. Maks. {{maxFee}}",
+        "notice" : "Transfer ücreti: %{{fee}}",
+        "tooltipHint" : "Token oluşturucu için alıkoyulan transfer yüzdesi",
+        "transferFeesLabel" : "Transfer ücretleri"
+      },
+      "nonTransferable" : {
+        "notice" : "Bu token transfer edilemez"
+      },
+      "interestRate" : {
+        "notice" : "Faiz oranı: %{{rate}}",
+        "tooltipHint" : "Sadece gösterim amaçlıdır, faiz sonucunda hiçbir yeni token oluşturulmamaktadır"
+      },
+      "permanentDelegate" : {
+        "notice" : "Kalıcı Yetkili otoritesi etkinleştirilmiş",
+        "initializationNotice" : "Kalıcı Yetkili otoritesi başlatılmış, ama etkinleştirilmemiş",
+        "tooltipHint" : "Yetkili kişi, bu token'ı hesabınızdan transfer edebilir veya yakabilir"
+      },
+      "requiredMemoOnTransfer" : {
+        "notice" : "Transferlerde zorunlu memo etkinleştirilmiş",
+        "tooltipHint" : "Bu hesaba gelen tüm transferlerde memo olması gerekir"
+      },
+      "transferHook" : {
+        "notice" : "Transfer Kancası etkinleştirilmiş",
+        "initializationNotice" : "Transfer Kancası başlatılmış, ama etkinleştirilmemiş",
+        "tooltipHint" : "Token, {{programAddress}} programı tarafından gerçekleştirilen ekstra işlevlere sahip"
+      },
+      "extensionsInfo" : {
+        "title" : "Solana token uzantıları",
+        "commonInfo" : "Token uzantıları, Solana Token standardının yeni neslidir. Normal token işlevlerini gizli transferler, kalıcı yetkili, özel transfer mantığı, genişletilmiş meta veriler vb. gibi ek özelliklerle genişletmeyi sağlayan birtakım yöntemler sunarlar.",
+        "permanentDelegate" : {
+          "title" : "Kalıcı Yetkili (Permanent Delegate)",
+          "permanentDelegateAddress" : "Mevcut yetkili: {{address}}",
+          "permanentDelegateNotSetup" : "Mevcut yetkili belirlenmemiş.",
+          "description" : "Kalıcı Yetkili (Permanent Delegate), mevzubahis mint'leme için herhangi bir hesap üzerinde sınırsız yetki ayrıcalıklarına sahip olan bir yetkilidir. Yetkili, istediği miktarda token'ı, istediği zaman kendi takdirine bağlı olarak yakabilir veya transfer edebilir."
+        },
+        "nonTransferable" : {
+          "title" : "Transfer Edilemez Token'lar",
+          "description" : "Bu token'lar \"soul-bound\" olup sadece token'ı çıkartan kişi tarafından taşınabilir veya yakılabilir."
+        },
+        "transferHook" : {
+          "title" : "Transfer Kancası (Transfer Hook)",
+          "transferHookAddress" : "Mevcut Transfer Kancası programı: {{address}}",
+          "transferHookNotSetup" : "Mevcut Transfer Kancası programı belirlenmemiş.",
+          "description" : "Transfer Kancası (Transfer Hook), token çıkartanlara kullanıcılarla token'ların nasıl etkileşim kuracağını belirleme olanağını sunar. Token çıkartanlar normal bir transfer yerine, Transfer Kancası uzantısıyla kullanılacak özel bir mantığı bir programa ekleyebilir."
+        },
+        "transferFee" : {
+          "title" : "Transfer Ücreti",
+          "currentTransferFee" : "Güncel transfer ücreti: %{{feePercent}} ({{feeBps}} bps). Maks. {{maxFee}}.",
+          "description" : "Ücret her token transferinde alınır ve alıcının kullanamayacağı bir şekilde hesapta bloke edilir."
+        },
+        "interestBearing" : {
+          "title" : "Faiz İçeren Token'lar",
+          "currentInterestRate" : "Güncel faiz oranı: %{{rate}}.",
+          "accruedDelta" : "Tahakkuk eden: {{delta}}.",
+          "interestRateNotSetup" : "Güncel faiz oranı %0 olarak belirlenmiştir.",
+          "description" : "Faiz oranına bağlı olarak değeri sürekli artan veya azalan token'lar. Hiçbir zaman yeni token'lar oluşturulmaz, özellik tamamen gösterim amaçlıdır."
+        }
+      }
     }
   },
   "ethereum" : {
@@ -4155,6 +4214,11 @@
       "debugAppsDesc" : "Hata ayıklama etiketli platform uygulamalarını görüntüleme ve açmaya izin verin.",
       "debugReactQuery" : "ReactQuery hata ayıklamasına izin ver",
       "debugReactQueryDesc" : "ReactQuery hata ayıklaması konsolunu görüntüleme ve açmaya izin ver",
+      "nfts" : {
+        "title" : "Gizli NFT Koleksiyonları",
+        "description" : "Gizli koleksiyonlar listesini sıfırlayın",
+        "reset" : "Sıfırla"
+      },
       "exchangeDeveloperMode" : {
         "title" : "Exchange Geliştirici Modu",
         "desc" : "Exchange sağlayıcısı bilgilerini ekleyin",
@@ -5437,7 +5501,8 @@
     },
     "solana" : {
       "memo" : "Etiket / Memo",
-      "memoPlaceholder" : "Opsiyonel"
+      "memoPlaceholder" : "Opsiyonel",
+      "requiredMemoPlaceholder" : "Gerekli"
     }
   },
   "errors" : {
@@ -6249,6 +6314,13 @@
     "SolanaTxConfirmationTimeout" : {
       "title" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
     },
+    "SolanaRecipientMemoIsRequired" : {
+      "title" : "Alıcı adresi için memo gereklidir"
+    },
+    "SolanaTokenNonTransferable" : {
+      "title" : "Bu token transfer edilemez",
+      "description" : "Bu token'lar \"soul-bound\" olup transfer edilemez"
+    },
     "NotEnoughNftOwned" : {
       "title" : "Mevcut token sayısını aştınız"
     },
@@ -6919,6 +6991,14 @@
           "title" : "Model yükseltme zamanı",
           "description" : "Ledger Nano S model yükseltme teklifleri yakında sona eriyor. En yeni cihazlarımıza <0>%{{discount}} indirimle</0> model yükseltin.",
           "cta" : "Cüzdanımın modelini yükselt",
+          "linkText" : "Daha fazla bilgi"
+        }
+      },
+      "portfolio" : {
+        "optOut" : {
+          "title" : "Model yükseltme zamanı",
+          "description" : "Yüksek güvenlik ve sorunsuz bir deneyim için en yeni cihazlarımıza <0>%{{discount}} indirimle</0> model yükseltin.",
+          "cta" : "Cüzdan modelini yükselt",
           "linkText" : "Daha fazla bilgi"
         }
       },
