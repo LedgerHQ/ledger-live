@@ -439,8 +439,8 @@
       "cta" : "Ir a Mi Ledger"
     },
     "wrongDevice" : {
-      "title" : "El Ledger Nano S™ no es compatible con THORChain.",
-      "description" : "El Ledger Nano S™ no es compatible con THORChain. Puedes usar el Ledger Nano S Plus, el Ledger Nano X, el Ledger Stax o el Ledger Flex para permutas intercadena en THORChain desde Ledger Live.",
+      "title" : "El Ledger Nano S™ no es compatible con {{provider}}",
+      "description" : "El Ledger Nano S no es compatible con {{provider}}. Puedes usar el Ledger Nano S Plus, el Ledger Nano X, el Ledger Stax o el Ledger Flex para permutas intercadena en {{provider}} desde Ledger Live.",
       "cta" : "Explorar dispositivos compatibles",
       "changeProvider" : "Permutar con otro proveedor"
     },
@@ -3753,7 +3753,66 @@
     },
     "token" : {
       "frozenStateWarning" : "Los activos de la cuenta están inmovilizados.",
-      "transferWarning" : "Para verificar la dirección del receptor de los tokens de Solana con un Ledger Nano S™, <0>sigue estas instrucciones</0>."
+      "transferWarning" : "Para verificar la dirección del receptor de los tokens de Solana con un Ledger Nano S™, <0>sigue estas instrucciones</0>.",
+      "transferFees" : {
+        "feesPercentHint" : "El token tiene una tarifa de transferencia del {{feePercent}}% ({{feeBps}} bps). {{maxFee}} máx.",
+        "notice" : "Tarifa de transferencia del {{fee}}%",
+        "tooltipHint" : "Porcentaje de transferencia retenido para el creador del token",
+        "transferFeesLabel" : "Tarifas de transferencia"
+      },
+      "nonTransferable" : {
+        "notice" : "El token no es transferible"
+      },
+      "interestRate" : {
+        "notice" : "Tasa de interés: {{rate}}%",
+        "tooltipHint" : "Sólo con fines estéticos. No se crean token nuevos a raíz del interés"
+      },
+      "permanentDelegate" : {
+        "notice" : "La autoridad delegada permanente está activada",
+        "initializationNotice" : "La autoridad delegada permanente está iniciada pero no activada",
+        "tooltipHint" : "El delegado tiene la capacidad de transferir o quemar este token desde tu cuenta"
+      },
+      "requiredMemoOnTransfer" : {
+        "notice" : "Está habilitado el requisito de memo en transferencia",
+        "tooltipHint" : "Todas las transferencias entrantes a esta cuenta deben tener un memo"
+      },
+      "transferHook" : {
+        "notice" : "El hook de transferencia está activado",
+        "initializationNotice" : "El hook de transferencia ha sido iniciado pero no activado",
+        "tooltipHint" : "El token tiene una funcionalidad adicional que gestiona el programa {{programAddress}}"
+      },
+      "extensionsInfo" : {
+        "title" : "Extensiones de tokens de Solana",
+        "commonInfo" : "Las extensiones de tokens son la nueva generación del estándar de tokens de Solana. Estas extensiones introducen una serie de maneras de ampliar la funcionalidad normal del token, añadiendo características como las transferencias confidenciales, el delegado permanente, la lógica de transferencia personalizada, los metadatos ampliados y muchas más.",
+        "permanentDelegate" : {
+          "title" : "Delegado permanente",
+          "permanentDelegateAddress" : "La autoridad delegada actual es {{address}}",
+          "permanentDelegateNotSetup" : "La autoridad delegada actual no ha sido definida.",
+          "description" : "El delegado permanente es una autoridad que tiene privilegios delegados ilimitados sobre cualquier cuenta referida a esa acuñación. El delegado puede quemar o transferir la cantidad de tokens que desee, en cualquier momento, en virtud de su propia autoridad."
+        },
+        "nonTransferable" : {
+          "title" : "Tokens no transferibles",
+          "description" : "Estos tokens son \"soul-bound\" (vinculados a la identidad) y no se pueden mover ni quemar. Sólo puede hacerlo quien emite el token."
+        },
+        "transferHook" : {
+          "title" : "Hook de transferencia",
+          "transferHookAddress" : "El programa de hook de transferencia actual es {{address}}",
+          "transferHookNotSetup" : "El programa de hook de transferencia actual no ha sido definido.",
+          "description" : "El hook de transferencia permite a los emisores del token decidir la forma en que se realizará la interacción entre los usuarios y los tokens. En lugar de realizarse una transferencia normal, el emisor puede insertar una lógica personalizada en un programa para aplicarla a través de la extensión de hook de transferencia."
+        },
+        "transferFee" : {
+          "title" : "Tarifa de transferencia",
+          "currentTransferFee" : "La tarifa de transferencia actual es de un {{feePercent}}% ({{feeBps}} bps). Máx. {{maxFee}}.",
+          "description" : "Las tarifas se cobran por cada transferencia de un token y se retienen en la cuenta del destinatario, quien no puede tocarlas."
+        },
+        "interestBearing" : {
+          "title" : "Tokens con interés asociado",
+          "currentInterestRate" : "La tasa de interés actual es del {{rate}}%.",
+          "accruedDelta" : "Acumulado: {{delta}}.",
+          "interestRateNotSetup" : "La tasa de interés actual se ha fijado al 0%.",
+          "description" : "Tokens cuyo valor aumenta o disminuye constantemente según su propia tasa de interés. Nunca se crean tokens nuevos, esta característica es simplemente estética."
+        }
+      }
     }
   },
   "ethereum" : {
@@ -4155,6 +4214,11 @@
       "debugAppsDesc" : "Mostrar y permitir la utilización de aplicaciones de plataforma etiquetadas como de depuración.",
       "debugReactQuery" : "Permitir ReactQuery de depuración",
       "debugReactQueryDesc" : "Mostrar y permitir abrir la consola ReactQuery de depuración.",
+      "nfts" : {
+        "title" : "Colecciones ocultas de NFTs",
+        "description" : "Restablecer la lista de colecciones ocultas",
+        "reset" : "Restablecer"
+      },
       "exchangeDeveloperMode" : {
         "title" : "Modo de desarrollador del exchange",
         "desc" : "Añadir información del proveedor del exchange",
@@ -5437,7 +5501,8 @@
     },
     "solana" : {
       "memo" : "Etiqueta/memo",
-      "memoPlaceholder" : "Opcional"
+      "memoPlaceholder" : "Opcional",
+      "requiredMemoPlaceholder" : "Obligatoria"
     }
   },
   "errors" : {
@@ -6249,6 +6314,13 @@
     "SolanaTxConfirmationTimeout" : {
       "title" : "Tu transacción puede haber fallado. Espera un momento y comprueba el historial de transacciones antes de intentarlo de nuevo."
     },
+    "SolanaRecipientMemoIsRequired" : {
+      "title" : "Se requiere una memo para la dirección del destinatario"
+    },
+    "SolanaTokenNonTransferable" : {
+      "title" : "El token no es transferible",
+      "description" : "Estos tokens \"soul-bound\" (vinculados a la identidad) y no se pueden transferir."
+    },
     "NotEnoughNftOwned" : {
       "title" : "Has superado la cantidad de tokens disponibles"
     },
@@ -6918,6 +6990,14 @@
         "optOut" : {
           "title" : "Es hora de actualizar",
           "description" : "Pronto dejará de haber actualizaciones para el Ledger Nano S. Pásate a uno de nuestros nuevos dispositivos con un <0>{{discount}}% de descuento</0>.",
+          "cta" : "Renovar mi billetera",
+          "linkText" : "Más información"
+        }
+      },
+      "portfolio" : {
+        "optOut" : {
+          "title" : "Es hora de actualizar",
+          "description" : "Pásate a uno de nuestros nuevos dispositivos con un <0>{{discount}}% de descuento</0> y disfruta de más seguridad sin complicaciones.",
           "cta" : "Renovar mi billetera",
           "linkText" : "Más información"
         }
