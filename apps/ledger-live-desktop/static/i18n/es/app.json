@@ -6670,6 +6670,24 @@
       "alreadySync" : "Ya lo he activado",
       "learnMore" : "¿Cómo funciona Ledger Sync?"
     },
+    "entryPoints" : {
+      "accounts" : {
+        "title" : "Activar Ledger Sync"
+      },
+      "manager" : {
+        "title" : "Ledger Sync",
+        "description" : "Sincroniza tus cuentas automáticamente, incluso si cambias a un teléfono nuevo.",
+        "cta" : "Activar Ledger Sync"
+      },
+      "settings" : {
+        "title" : "Ledger Sync",
+        "description" : "Sincroniza tus cuentas automáticamente, incluso si cambias a un teléfono nuevo.",
+        "cta" : "Activar Ledger Sync"
+      },
+      "onboarding" : {
+        "title" : "Sincronizar con otra aplicación Ledger Live"
+      }
+    },
     "manage" : {
       "cta" : "Administrar",
       "synchronize" : {
@@ -6898,55 +6916,14 @@
     }
   },
   "lnsUpsell" : {
-    "banner" : {
-      "manager" : {
-        "optIn" : {
-          "title" : "Es hora de actualizar",
-          "description" : "Pásate a uno de nuestros nuevos dispositivos con un <0>{{discount}}% de descuento</0> y disfruta de más seguridad sin complicaciones.",
-          "cta" : "Renovar mi billetera",
-          "linkText" : "Más información"
-        },
-        "optOut" : {
-          "title" : "Es hora de actualizar",
-          "description" : "Pásate a uno de nuestros nuevos dispositivos con un <0>{{discount}}% de descuento</0> y disfruta de más seguridad sin complicaciones.",
-          "cta" : "Renovar mi billetera",
-          "linkText" : "Más información"
-        }
-      },
-      "accounts" : {
-        "optIn" : {
-          "title" : "Es hora de actualizar",
-          "description" : "Pronto dejará de haber actualizaciones para el Ledger Nano S. Pásate a uno de nuestros nuevos dispositivos con un <0>{{discount}}% de descuento</0>.",
-          "cta" : "Renovar mi billetera",
-          "linkText" : "Más información"
-        },
-        "optOut" : {
-          "title" : "Es hora de actualizar",
-          "description" : "Pronto dejará de haber actualizaciones para el Ledger Nano S. Pásate a uno de nuestros nuevos dispositivos con un <0>{{discount}}% de descuento</0>.",
-          "cta" : "Renovar mi billetera",
-          "linkText" : "Más información"
-        }
-      },
-      "portfolio" : {
-        "optOut" : {
-          "title" : "Es hora de actualizar",
-          "description" : "Pásate a uno de nuestros nuevos dispositivos con un <0>{{discount}}% de descuento</0> y disfruta de más seguridad sin complicaciones.",
-          "cta" : "Renovar mi billetera",
-          "linkText" : "Más información"
-        }
-      },
-      "notifications" : {
-        "optIn" : {
-          "description" : "Pronto dejará de haber actualizaciones. Renueva ahora con un {{discount}}% de descuento y disfruta de una experiencia más fluida.",
-          "cta" : "Renovar mi billetera",
-          "linkText" : "Más información"
-        },
-        "optOut" : {
-          "description" : "Pronto dejará de haber actualizaciones. Renueva ahora con un {{discount}}% de descuento y disfruta de una experiencia más fluida.",
-          "cta" : "Renovar mi billetera",
-          "linkText" : "Más información"
-        }
-      }
+    "opted_in" : {
+      "title" : "Si la memoria es limitada, la experiencia también lo será",
+      "description" : "Cambia tu Nano S por un dispositivo Ledger más moderno, como el Ledger Flex, para disponer de más memoria, de las mejoras de seguridad más recientes y de nuevas funciones. También tenemos reservado, solo para ti, un <0>{{discount}} % de descuento</>.",
+      "cta" : "Renovar mi Ledger"
+    },
+    "opted_out" : {
+      "description" : "La memoria limitada de tu Ledger Nano S restringe tu acceso a las opciones más recientes, a cambios en la blockchain y a mejoras de seguridad. Cambia a un dispositivo Ledger más moderno para garantizar un uso prolongado.",
+      "cta" : "¿Por qué debería renovar mi dispositivo?"
     }
   }
 }
