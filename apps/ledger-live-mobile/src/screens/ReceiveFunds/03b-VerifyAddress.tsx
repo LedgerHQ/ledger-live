@@ -32,8 +32,8 @@ import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 import { lastConnectedDeviceSelector } from "~/reducers/settings";
 
 const illustrations = {
-  dark: require("~/images/illustration/Dark/_080.png"),
-  light: require("~/images/illustration/Light/_080.png"),
+  dark: require("~/images/illustration/Dark/_080.webp"),
+  light: require("~/images/illustration/Light/_080.webp"),
 };
 
 type Props = {

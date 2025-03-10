@@ -27,10 +27,10 @@ import { BaseOnboardingNavigatorParamList } from "~/components/RootNavigator/typ
 import Config from "react-native-config";
 
 const slidesImages = [
-  require("../../../../assets/images/onboarding/stories/slide1.png"),
-  require("../../../../assets/images/onboarding/stories/slide2.png"),
-  require("../../../../assets/images/onboarding/stories/slide3.png"),
-  require("../../../../assets/images/onboarding/stories/slide4.png"),
+  require("../../../../assets/images/onboarding/stories/slide1.webp"),
+  require("../../../../assets/images/onboarding/stories/slide2.webp"),
+  require("../../../../assets/images/onboarding/stories/slide3.webp"),
+  require("../../../../assets/images/onboarding/stories/slide4.webp"),
 ];
 
 const StyledSafeAreaView = styled(SafeAreaView)`
