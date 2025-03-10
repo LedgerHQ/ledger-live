@@ -1119,6 +1119,11 @@
       "fast" : "快",
       "custom" : "自定义",
       "blockCount" : "{{blockCount}}个区块"
+    },
+    "estimatedTime" : {
+      "slow" : "约 2-3 分钟",
+      "medium" : "约 30 秒",
+      "fast" : "约 15 秒"
     }
   },
   "signout" : {
@@ -2613,6 +2618,10 @@
         "description3" : "此集成由 {{team}} 与 Ledger 协作实施。",
         "description3Link" : "此集成由 <1><0>{{team}}</0></1> 与 Ledger 协作实施"
       }
+    },
+    "migrationBanner" : {
+      "title" : "{{from}} 正在迁移至 {{to}}。请点击此<0>链接</0>了解详情，如需帮助，请联系客服。",
+      "contactSupport" : "联系客服"
     },
     "willBedeprecatedBanner" : {
       "title" : "为了优化效率，自 {{deprecatedDate}} 起，Ledger Live 将不再支持 {{currencyName}}。但 Ledger 硬件钱包将继续支持该币种。如需这方面的帮助，请联系 Ledger 客服。",
@@ -6992,6 +7001,16 @@
   },
   "walletSync" : {
     "title" : "Ledger Sync",
+    "entryPoints" : {
+      "simpleCta" : {
+        "title" : "激活 Ledger Sync"
+      },
+      "card" : {
+        "title" : "Ledger Sync",
+        "description" : "即使换用新手机，也能自动同步您的账户。",
+        "cta" : "开启 Ledger Sync"
+      }
+    },
     "activation" : {
       "screen" : {
         "title" : "为该手机开启 Ledger Sync？",
