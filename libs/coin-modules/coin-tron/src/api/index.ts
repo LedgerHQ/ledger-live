@@ -1,4 +1,5 @@
 import {
+  TransactionIntent,
   // IncorrectTypeError,
   // Pagination,
   type Api,
@@ -21,7 +22,7 @@ export function createApi(config: TronConfig): Api {
   return {
     broadcast,
     combine,
-    craftTransaction,
+    craftTransaction: craft,
     estimateFees,
     getBalance,
     lastBlock,
