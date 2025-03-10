@@ -28,3 +28,7 @@ export function createApi(config: TronConfig): Api {
     listOperations,
   };
 }
+
+async function craft(transactionIntent: TransactionIntent): Promise<string> {
+  return craftTransaction(transactionIntent);
+}

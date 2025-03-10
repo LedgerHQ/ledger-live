@@ -48,7 +48,7 @@ import { stringify } from "querystring";
 
 const getBaseApiUrl = () => coinConfig.getCoinConfig().explorer.url;
 
-async function post<T, U extends object = any>(endPoint: string, body: T): Promise<U> {
+export async function post<T, U extends object = any>(endPoint: string, body: T): Promise<U> {
   const { data } = await network<U, T>({
     method: "POST",
     url: `${getBaseApiUrl()}${endPoint}`,
@@ -237,7 +237,7 @@ export const createTronTransaction = async (
   }
 };
 
-function extendTronTxExpirationTimeBy10mn(
+export async function extendTronTxExpirationTimeBy10mn(
   preparedTransaction: any,
 ): Promise<SendTransactionDataSuccess> {
   const VAULT_EXPIRATION_TIME = 600;

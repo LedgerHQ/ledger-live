@@ -31,6 +31,14 @@ export type Asset = {
   native: bigint;
 };
 
+export type TransactionIntent = {
+  sender: string;
+  recipient: string;
+  amount: bigint;
+  tokenAddress?: string;
+  standard?: string;
+};
+
 // TODO rename start to minHeight
 //       and add a `token: string` field to the pagination if we really need to support pagination
 //       (which is not the case for now)
