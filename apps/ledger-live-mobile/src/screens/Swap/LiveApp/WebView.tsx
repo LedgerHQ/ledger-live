@@ -2,7 +2,7 @@ import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { currentAccountAtom } from "@ledgerhq/live-common/wallet-api/useDappLogic";
 import { Flex } from "@ledgerhq/native-ui";
-import React, { useEffect, useMemo } from "react";
+import React from "react";
 import { Platform } from "react-native";
 import { useSelector } from "react-redux";
 import { useTheme } from "styled-components/native";
