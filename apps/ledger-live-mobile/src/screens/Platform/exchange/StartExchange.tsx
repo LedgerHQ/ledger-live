@@ -63,9 +63,4 @@ export default function PlatformStartExchange({ navigation, route }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-    padding: 32,
-  },
-});
+const styles = StyleSheet.create({ root: { flex: 1 } });
