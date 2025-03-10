@@ -1,4 +1,4 @@
-import React, { forwardRef } from "react";
+import React, { forwardRef, useState } from "react";
 import { ActivityIndicator, StyleSheet, View } from "react-native";
 import { WebView as RNWebView } from "react-native-webview";
 import Config from "react-native-config";
@@ -41,8 +41,10 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       ref,
       onStateChange,
     );
+    const [error, setError] = useState(false);
 
     const reloadWebView = () => {
+      setError(false);
       webviewRef.current?.reload();
     };
 
@@ -68,14 +70,17 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         originWhitelist={manifest.domains}
         allowsInlineMediaPlayback
         onMessage={onMessage}
-        onError={onLoadError}
+        onError={() => {
+          onLoadError();
+          setError(true);
+        }}
         onOpenWindow={onOpenWindow}
         overScrollMode="content"
         bounces={false}
         mediaPlaybackRequiresUserAction={false}
         automaticallyAdjustContentInsets={false}
         scrollEnabled={true}
-        style={styles.webview}
+        style={styles(error).webview}
         renderError={() => <NetworkError handleTryAgain={reloadWebView} />}
         testID="wallet-api-webview"
         webviewDebuggingEnabled={__DEV__}
@@ -93,31 +98,33 @@ WalletAPIWebview.displayName = "WalletAPIWebview";
 
 function renderLoading() {
   return (
-    <View style={styles.center}>
+    <View style={styles().center}>
       <ActivityIndicator size="small" />
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-  },
-  center: {
-    flex: 1,
-    flexDirection: "column",
-    alignItems: "center",
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    justifyContent: "center",
-  },
-  webview: {
-    flex: 1,
-    width: "100%",
-    height: "100%",
-    backgroundColor: "transparent",
-  },
-});
+const styles = (error = false) =>
+  StyleSheet.create({
+    root: {
+      flex: 1,
+    },
+    center: {
+      flex: 1,
+      flexDirection: "column",
+      alignItems: "center",
+      position: "absolute",
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      justifyContent: "center",
+    },
+    webview: {
+      display: error ? "none" : "flex",
+      flex: 1,
+      width: "100%",
+      height: "100%",
+      backgroundColor: "transparent",
+    },
+  });
