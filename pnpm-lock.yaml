@@ -927,9 +927,6 @@ importers:
       '@ledgerhq/ledger-key-ring-protocol':
         specifier: workspace:^
         version: link:../../libs/ledger-key-ring-protocol
-      '@ledgerhq/live-common':
-        specifier: workspace:^
-        version: link:../../libs/ledger-live-common
       '@ledgerhq/live-config':
         specifier: workspace:^
         version: link:../../libs/live-config
@@ -1363,9 +1360,9 @@ importers:
       '@ledgerhq/hw-transport-node-speculos-http':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/hw-transport-node-speculos-http
-      '@ledgerhq/live-cli':
+      '@ledgerhq/live-common':
         specifier: workspace:^
-        version: link:../cli/dist
+        version: link:../../libs/ledger-live-common
       '@ledgerhq/speculos-transport':
         specifier: workspace:^
         version: link:../../libs/speculos-transport
