@@ -245,7 +245,7 @@
       "description" : "ไม่รองรับการยืนยันแอป"
     },
     "DeviceGenuineSocketEarlyClose" : {
-      "title" : "ขออภัย ลองอีกครั้ง (genuine-close)",
+      "title" : "ขออภัย ลองอีกครั้ง (Genuine-close)",
       "description" : null
     },
     "DeviceHalted" : {
@@ -295,7 +295,7 @@
       "title" : "ID การโอนควรเป็นจำนวนบวกที่น้อยกว่า {{maxTransferId}}"
     },
     "MayBlockAccount" : {
-      "title" : "บัญชีของคุณจะมีจำนวนคงเหลือต่ำกว่าที่กำหนด {{minAmount}} เพื่อทำการส่ง"
+      "title" : "ยอดคงเหลือในบัญชีของคุณจะต่ำกว่า {{minAmount}} ซึ่งเป็นขั้นต่ำสำหรับการส่ง"
     },
     "InvalidMinimumAmount" : {
       "title" : "จำนวนขั้นต่ำที่จะโอนคือ {{minAmount}}"
@@ -309,7 +309,7 @@
       "description" : "คุณสมบัติการส่ง NFT ใช้ได้กับ Nano X และ Nano S+ เท่านั้น โปรดไปที่แพลตฟอร์มการสนับสนุนลูกค้าของเราเพื่อดูวิธีส่ง NFT ด้วย Nano S"
     },
     "Touch ID Error" : {
-      "title" : "การยืนยันตัวตนด้วย Biometrics ล้มเหลว",
+      "title" : "การยืนยันตัวตนด้วยไบโอเมทริกซ์ล้มเหลว",
       "description" : "โปรดใช้รหัสผ่านของคุณหรือรีเซ็ตแอป"
     },
     "Error" : {
@@ -341,15 +341,15 @@
       "title" : "การประมาณค่าธรรมเนียมเครือข่ายล้มเหลว เนื่องจากปัญหาทางเทคนิค ลองอีกครั้งหรือเปลี่ยนสินทรัพย์"
     },
     "FeeRequired" : {
-      "title" : "ต้องมีค่าธรรมเนียม"
+      "title" : "มีค่าธรรมเนียม"
     },
     "FirmwareOrAppUpdateRequired" : {
       "title" : "ต้องอัปเดตระบบปฏิบัติการหรือแอป",
-      "description" : "โปรดใช้ My Ledger เพื่อถอนการติดตั้งแอปทั้งหมด จากนั้นตรวจสอบว่ามีการอัปเดตระบบปฏิบัติการหรือไม่ก่อนที่จะติดตั้งใหม่"
+      "description" : "โปรดใช้ My Ledger เพื่อถอนการติดตั้งแอปทั้งหมด จากนั้นตรวจสอบว่ามีการอัปเดตเฟิร์มแวร์หรือไม่ก่อนที่จะติดตั้งใหม่"
     },
     "LatestFirmwareVersionRequired" : {
-      "title" : "อัปเดตระบบปฏิบัติการอุปกรณ์",
-      "description" : "โปรดอัปเดตระบบปฏิบัติการอุปกรณ์ของคุณเป็นเวอร์ชันล่าสุดเพื่อเข้าถึงคุณสมบัตินี้"
+      "title" : "อัปเดตเฟิร์มแวร์อุปกรณ์",
+      "description" : "โปรดอัปเดตเฟิร์มแวร์อุปกรณ์ของคุณเป็นเวอร์ชันล่าสุดเพื่อเข้าถึงคุณสมบัตินี้"
     },
     "GenuineCheckFailed" : {
       "title" : "การยืนยันอุปกรณ์ล้มเหลว",
@@ -360,27 +360,27 @@
       "description" : "โปรดลองอีกครั้ง หากปัญหายังคงอยู่ โปรดบันทึก Log ของคุณโดยใช้ปุ่มด้านล่าง และส่งให้ Ledger Support"
     },
     "ImageCommitRefusedOnDevice" : {
-      "title" : "ละทิ้ง Lock Screen Picture บน {{productName}}",
-      "description" : "หากภาพนี้ไม่ดีพอ ก็ลองอีกครั้งด้วยภาพอื่นได้",
+      "title" : "ทิ้งภาพล็อกสกรีนบน {{productName}}",
+      "description" : "หากภาพนี้ไม่เหมาะ คุณสามารถลองอีกครั้งด้วยภาพอื่นได้",
       "primaryCTA" : "อัปโหลดอีกภาพ"
     },
     "ImageLoadRefusedOnDevice" : {
-      "title" : "การโหลด Lock Screen Picture ถูกยกเลิกบน {{productName}}",
-      "description" : "หากภาพนี้ไม่ดีพอ ก็ลองอีกครั้งด้วยภาพอื่นได้",
+      "title" : "การโหลดภาพล็อกสกรีนถูกยกเลิกบน {{productName}}",
+      "description" : "หากภาพนี้ไม่เหมาะ คุณสามารถลองอีกครั้งด้วยภาพอื่นได้",
       "primaryCTA" : "อัปโหลดอีกภาพ"
     },
     "ImageDoesNotExistOnDevice" : {
-      "title" : "ไม่มี Lock Screen Picture",
-      "description" : "Lock Screen Picture ถูกลบออกไปก่อนหน้านี้"
+      "title" : "ไม่มีภาพ Lock Screen",
+      "description" : "ภาพ Lock Screen ถูกลบออกไปก่อนหน้านี้"
     },
     "InvalidAddress" : {
-      "title" : "นี่ไม่ใช่ Address {{currencyName}} ที่ถูกต้อง"
+      "title" : "นี่ไม่ใช่ {{currencyName}} Address ที่ถูกต้อง"
     },
     "InvalidNonce" : {
       "title" : "จำเป็นต้องมีตัวเลข Nonce"
     },
     "InvalidAddressBecauseAlreadyDelegated" : {
-      "title" : "บัญชีของคุณได้รับมอบหมายไปยังผู้ตรวจสอบนี้แล้ว"
+      "title" : "บัญชีของคุณได้รับการ Delegate ไปยังผู้ตรวจสอบนี้แล้ว"
     },
     "InvalidAddressBecauseDestinationIsAlsoSource" : {
       "title" : "บัญชีปลายทางและบัญชีต้นทางต้องไม่เหมือนกัน"
@@ -416,7 +416,7 @@
       "description" : "โปรดลองอีกครั้ง หากปัญหายังคงอยู่ โปรดบันทึก Log ของคุณโดยใช้ปุ่มด้านล่าง และส่งให้ Ledger Support"
     },
     "ManagerAPIsFail" : {
-      "title" : "ขออภัย บริการ My Ledger ไม่พร้อมใช้งาน",
+      "title" : "ขออภัย บริการ My Ledger ยังไม่พร้อมใช้งาน",
       "description" : "โปรดตรวจสอบสถานะเครือข่าย"
     },
     "ManagerAppAlreadyInstalled" : {
@@ -463,10 +463,10 @@
       "title" : "ค่าธรรมเนียมสูงสุดต่ำเกินไป ธุรกรรมของคุณอาจยังรอดำเนินการอยู่สักพัก"
     },
     "MaxPriorityFeeLowerThanInitial" : {
-      "title" : "Priority Fee ต่ำเกินไป โปรดระบุจำนวนที่มากกว่ามูลค่า Priority Fee ของธุรกรรมเริ่มต้น"
+      "title" : "Priority Fee ที่ป้อนต่ำเกินไป โปรดระบุจำนวนที่มากกว่ามูลค่า Priority Fee ของธุรกรรมเริ่มต้น"
     },
     "NetworkDown" : {
-      "title" : "ขออภัย ดูเหมือนว่าอินเทอร์เน็ตจะไม่ทำงาน",
+      "title" : "ขออภัย ดูเหมือนว่าจะใช้อินเทอร์เน็ตไม่ได้",
       "description" : "โปรดตรวจสอบการเชื่อมต่ออินเทอร์เน็ต"
     },
     "NetworkError" : {
@@ -477,18 +477,18 @@
       "title" : "ขออภัย ไม่พบบัญชี",
       "description" : "มีบางอย่างผิดปกติในการคำนวณ Address โปรดลองอีกครั้ง หากปัญหายังคงอยู่ โปรดบันทึก Log ของคุณโดยใช้ปุ่มด้านล่าง และส่งให้ Ledger Support"
     },
-    "ElrondDecimalsLimitReached" : {
-      "title" : "ถึงจำนวนทศนิยมสูงสุดแล้ว",
-      "description" : "โปรดตรวจสอบให้แน่ใจว่าจำนวนที่ระบุมีทศนิยม 18 ตำแหน่ง"
+    "MultiversXDecimalsLimitReached" : {
+      "title" : "Maximum decimals limit reached",
+      "description" : "Please make sure that the amount provided has 18 decimals."
     },
-    "ElrondMinDelegatedAmountError" : {
-      "title" : "จำนวนที่ได้รับมอบหมายต้องมีอย่างน้อย {{formattedAmount}}"
+    "MultiversXMinDelegatedAmountError" : {
+      "title" : "Delegated amount must be at least {{formattedAmount}}"
     },
-    "ElrondMinUndelegatedAmountError" : {
-      "title" : "จำนวนที่ยกเลิกการมอบหมายต้องมีอย่างน้อย {{formattedAmount}}"
+    "MultiversXMinUndelegatedAmountError" : {
+      "title" : "Undelegated amount must be at least {{formattedAmount}}"
     },
-    "ElrondDelegationBelowMinimumError" : {
-      "title" : "การมอบหมายที่เหลือต้องไม่น้อยกว่า {{formattedAmount}}"
+    "MultiversXDelegationBelowMinimumError" : {
+      "title" : "Remaining delegation can't be less than {{formattedAmount}}"
     },
     "NotEnoughVTHO" : {
       "title" : "ขออภัย เงินทุน VTHO ไม่เพียงพอ",
@@ -511,7 +511,7 @@
       "description" : "โปรดตรวจสอบให้แน่ใจว่าบัญชีมีเงินทุนเพียงพอ"
     },
     "NotEnoughBalanceForUnstaking" : {
-      "message" : "ยอดคงเหลือ(ที่ไม่มีการ Stake) ที่คุณสามารถใช้ได้ คือ {{currentBalance}} เป็นจำนวนที่ไม่เพียงพอสำหรับการจ่ายค่าธรรมเนียมเครือข่ายเพื่อ Unstake {{assetName}} ของคุณ ",
+      "message" : "ยอดคงเหลือ (ที่ไม่มีการ Stake) ที่คุณสามารถใช้ได้ คือ {{currentBalance}} เป็นจำนวนที่ไม่เพียงพอสำหรับการจ่ายค่าธรรมเนียมเครือข่ายเพื่อ Unstake {{assetName}} ของคุณ ",
       "oneCta" : "<cta1>{{cta1Label}}</cta1> {{assetName}} ลงในบัญชีของคุณ",
       "twoCtas" : "<cta1>{{cta1Label}}</cta1> หรือ <cta2>{{cta2Label}}</cta2> {{assetName}} ลงในบัญชีของคุณ",
       "threeCtas" : "<cta1>{{cta1Label}}</cta1>, <cta2>{{cta2Label}}</cta2> หรือ <cta3>{{cta3Label}}</cta3> {{assetName}} ลงในบัญชีของคุณ",
@@ -531,13 +531,13 @@
     },
     "NotEnoughGas" : {
       "title" : "คุณต้องมี {{fees}} {{ticker}} ในบัญชีของคุณเพื่อจ่ายค่าธรรมเนียมธุรกรรมบนเครือข่าย {{cryptoName}}  <link0>ซื้อ {{ticker}}</link0> หรือฝากเงินเพิ่มเติมเข้าในบัญชีของคุณ",
-      "description" : "โปรดส่งเหรียญบางส่วนไปยังบัญชีของคุณเพื่อชำระค่าธุรกรรมโทเค็น"
+      "description" : "โปรดส่งเหรียญบางส่วนไปยังบัญชีของคุณเพื่อชำระค่าธุรกรรมโทเคน"
     },
     "NotEnoughGasSwap" : {
-      "title" : "คุณต้องมี {{fees}} {{ticker}} เป็นค่าธรรมเนียมเครือข่ายเพื่อสวอปในขณะที่คุณอยู่ในเครือข่าย {{cryptoName}} <link0>ซื้อ {{ticker}}</link0>"
+      "title" : "คุณต้องมี {{fees}} {{ticker}} เป็นค่าธรรมเนียมเครือข่ายเพื่อ Swap ในขณะที่คุณอยู่ในเครือข่าย {{cryptoName}} <link0>ซื้อ {{ticker}}</link0>"
     },
     "NotEnoughBalanceToDelegate" : {
-      "title" : "ยอดคงเหลือไม่เพียงพอที่จะมอบหมาย"
+      "title" : "ยอดคงเหลือไม่เพียงพอที่จะ Delegate"
     },
     "NotEnoughBalanceInParentAccount" : {
       "title" : "ยอดคงเหลือในบัญชีหลักไม่เพียงพอ"
@@ -549,7 +549,7 @@
       "title" : "ยอดคงเหลือในบัญชีต้องไม่ต่ำกว่า {{minimumAmount}}"
     },
     "NotEnoughBalanceBecauseDestinationNotCreated" : {
-      "title" : "จำเป็นต้องมีขั้นต่ำ {{minimalAmount}} ในการเปิดใช้งานที่อยู่ผู้รับ"
+      "title" : "จำเป็นต้องมีขั้นต่ำ {{minimalAmount}} ในการเปิดใช้งาน Address ผู้รับ"
     },
     "PairingFailed" : {
       "title" : "การจับคู่ไม่สำเร็จ",
@@ -565,7 +565,7 @@
     },
     "PeerRemovedPairing" : {
       "title" : "ต้องจับคู่ {{ productName }} ของคุณอีกครั้ง",
-      "description" : "ไปที่การตั้งค่าบลูทูธของโทรศัพท์ แล้วลืม {{ productName }} จากนั้นกลับมาที่ Ledger Live แล้วลองอีกครั้ง"
+      "description" : "ไปที่การตั้งค่าบลูทูธของโทรศัพท์ แล้วกดลืม {{ productName }} จากนั้นกลับมาที่ Ledger Live แล้วลองอีกครั้ง"
     },
     "SelectExchangesLoadError" : {
       "title" : "โหลดไม่ได้",
@@ -599,16 +599,16 @@
       "description" : "{{message}} โปรดลองอีกครั้ง หากปัญหายังคงอยู่ โปรดบันทึก Log ของคุณโดยใช้ปุ่มด้านล่าง และส่งให้ Ledger Support"
     },
     "TronNoFrozenForBandwidth" : {
-      "title" : "ไม่มีสินทรัพย์ที่จะยกเลิกการ Freeze",
-      "description" : "คุณไม่มีสินทรัพย์ Bandwidth ที่จะยกเลิกการ Freeze"
+      "title" : "ไม่มีสินทรัพย์ที่สามารถ Unfreeze ได้",
+      "description" : "คุณไม่มีสินทรัพย์ Bandwidth ที่สามารถ Unfreeze ได้"
     },
     "TronNoFrozenForEnergy" : {
-      "title" : "ไม่มีสินทรัพย์ที่จะยกเลิกการ Freeze",
-      "description" : "คุณไม่มีสินทรัพย์ Energy ที่จะยกเลิกการ Freeze"
+      "title" : "ไม่มีสินทรัพย์ที่สามารถ Unfreeze ได้",
+      "description" : "คุณไม่มีสินทรัพย์ Energy ที่สามารถ Unfreeze ได้"
     },
     "TronLegacyUnfreezeNotExpired" : {
-      "title" : "การยกเลิกการระงับยังไม่สามารถใช้งานได้",
-      "description" : "โปรดรอ 3 วันหลังจากการดำเนินการระงับครั้งสุดท้ายของคุณ"
+      "title" : "การ Unfreeze ยังไม่สามารถใช้งานได้",
+      "description" : "โปรดรอ 3 วันหลังจากการดำเนินการ Freeze ครั้งสุดท้ายของคุณ"
     },
     "TronVoteRequired" : {
       "title" : "ต้องมีอย่างน้อย 1 โหวต"
@@ -619,7 +619,7 @@
     },
     "TronRewardNotAvailable" : {
       "title" : "ยังไม่สามารถรับ Reward ได้",
-      "description" : "โปรดรอ 24 ชั่วโมงระหว่างการรับแต่ละครั้ง"
+      "description" : "โปรดรอ 24 ชั่วโมงก่อนที่จะยื่นคำขอแต่ละครั้ง"
     },
     "TronNoReward" : {
       "title" : "ไม่มี Reward ให้รับ"
@@ -628,7 +628,7 @@
       "title" : "จำนวนที่จะ Freeze ต้องไม่น้อยกว่า 1"
     },
     "TronSendTrc20ToNewAccountForbidden" : {
-      "title" : "ก่อนอื่นคุณต้องส่งอย่างน้อย 0.1 TRX ไปยัง Address นี้เพื่อเปิดใช้งานการรับโทเค็น TRC20",
+      "title" : "ก่อนอื่นคุณต้องส่งอย่างน้อย 0.1 TRX ไปยัง Address นี้เพื่อเปิดใช้งานการรับโทเคน TRC20",
       "description" : "หากต้องการเปิดใช้งาน ให้ส่ง TRX หรือ TRC10 ไปยังบัญชีก่อน จากนั้นจะสามารถรับ TRC20 ได้"
     },
     "TronUnexpectedFees" : {
@@ -645,7 +645,7 @@
       "title" : "Energy ต่ำเกินความจำเป็น คุณอาจต้องจ่ายค่าธรรมเนียมสูงสุด 50 TRX"
     },
     "TronNoUnfrozenResource" : {
-      "title" : "ไม่มีทรัพยากรที่ Unfreeze แล้วเพื่อถอน"
+      "title" : "ไม่มีทรัพยากรที่ Unfreeze แล้วที่ถอนได้"
     },
     "TronInvalidUnDelegateResourceAmount" : {
       "title" : "ทรัพยากรที่ Delegate ไม่เพียงพอ"
@@ -656,11 +656,11 @@
     },
     "UpdateYourApp" : {
       "title" : "ต้องอัปเดตแอป",
-      "description" : "โปรดถอนการติดตั้ง จากนั้นติดตั้งแอป {{managerAppName}} ใน My Ledger",
+      "description" : "โปรดถอนการติดตั้ง จากนั้นติดตั้งแอป {{managerAppName}} อีกครั้งใน My Ledger",
       "primaryCTA" : "เปิด My Ledger"
     },
     "UserRefusedAllowManager" : {
-      "title" : "ปฏิเสธการเชื่อมต่อที่ปลอดภัยบนอุปกรณ์",
+      "title" : "การเชื่อมต่อที่ปลอดภัยถูกปฏิเสธบนอุปกรณ์นี้",
       "description" : "โปรดอนุญาตการเชื่อมต่อที่ปลอดภัยบนอุปกรณ์ของคุณแล้วลองอีกครั้ง"
     },
     "UserRefusedAddress" : {
@@ -672,8 +672,8 @@
       "description" : ""
     },
     "UserRefusedFirmwareUpdate" : {
-      "title" : "การอัปเดตระบบปฏิบัติการถูกยกเลิกบนอุปกรณ์",
-      "description" : "คุณยกเลิกการอัปเดตระบบปฏิบัติการ โปรดลองอีกครั้ง หากปัญหายังคงอยู่ โปรดบันทึก Log ของคุณโดยใช้ปุ่มด้านล่าง และส่งให้ Ledger Support"
+      "title" : "การอัปเดตเฟิร์มแวร์ถูกยกเลิกบนอุปกรณ์",
+      "description" : "คุณยกเลิกการอัปเดตเฟิร์มแวร์ โปรดลองอีกครั้ง หากปัญหายังคงอยู่ โปรดบันทึก Log ของคุณโดยใช้ปุ่มด้านล่าง และส่งให้ Ledger Support"
     },
     "UserRefusedOnDevice" : {
       "title" : "การดำเนินการถูกยกเลิกบนอุปกรณ์",
@@ -703,7 +703,7 @@
     },
     "UnexpectedBootloader" : {
       "title" : "ขออภัย อุปกรณ์ของคุณต้องไม่อยู่ในโหมด Bootloader",
-      "description" : "โปรดรีสตาร์ทอุปกรณ์โดยไม่แตะปุ่มเมื่อโลโก้ปรากฏขึ้น โปรดลองอีกครั้ง หากปัญหายังคงอยู่ โปรดบันทึก Log ของคุณโดยใช้ปุ่มด้านล่าง และส่งให้ Ledger Support"
+      "description" : "โปรดรีสตาร์ทอุปกรณ์โดยไม่แตะปุ่มใด ๆ เมื่อโลโก้ปรากฏขึ้น โปรดลองอีกครั้ง หากปัญหายังคงอยู่ โปรดบันทึก Log ของคุณโดยใช้ปุ่มด้านล่าง และส่งให้ Ledger Support"
     },
     "UnavailableTezosOriginatedAccountReceive" : {
       "title" : "ไม่สามารถรับในบัญชีย่อยได้ โปรดเลือกบัญชีหลัก",
@@ -711,10 +711,10 @@
     },
     "UnavailableTezosOriginatedAccountSend" : {
       "title" : "ยังไม่สามารถส่งจากบัญชีย่อยได้",
-      "description" : "คุณสมบัตินี้จะถูกเพิ่มในขั้นตอนต่อไป เนื่องจากการเปลี่ยนแปลงที่นำมาใช้เมื่อเร็ว ๆ นี้โดยการอัปเดตของ Babylon"
+      "description" : "ฟีเจอร์นี้จะถูกเพิ่มในขั้นตอนต่อไป เนื่องจากมีการเปลี่ยนแปลงจากการอัปเดต Babylon"
     },
     "RecommendUndelegation" : {
-      "title" : "โปรดยกเลิกการมอบหมายบัญชีก่อนที่จะลบออก"
+      "title" : "โปรด Undelegate บัญชีก่อนที่จะลบออก"
     },
     "RecommendSubAccountsToEmpty" : {
       "title" : "โปรดล้างบัญชีย่อยทั้งหมดก่อน"
@@ -723,13 +723,13 @@
       "title" : "ไม่รองรับรูปแบบ Legacy Address อีกต่อไป"
     },
     "SourceHasMultiSign" : {
-      "title" : "โปรดปิดใช้งานการลงชื่อหลายครั้งเพื่อส่ง {{currencyName}}"
+      "title" : "โปรดปิดใช้งาน Multisign เพื่อส่ง {{currencyName}}"
     },
     "DustLimit" : {
-      "title" : "จำนวนต่ำกว่าขีดจำกัดของ Dust"
+      "title" : "จำนวนต่ำกว่าลิมิตของ Dust"
     },
     "StratisDown2021Warning" : {
-      "description" : "บล็อกเชน Stratis ได้มีการพัฒนาและอาจทำงานไม่ถูกต้องอีกต่อไป การสนับสนุนบล็อกเชน Stratis ดั้งเดิมจะยังคงอยู่จนถึงวันที่ 16 ตุลาคม 2021"
+      "description" : "บล็อกเชน Stratis มีการเปลี่ยนแปลงและอาจทำงานผิดพลาด การสนับสนุนบล็อกเชน Stratis ดั้งเดิมจะยังคงอยู่จนถึงวันที่ 16 ตุลาคม 2021"
     },
     "SwapExchangeRateAmountTooLow" : {
       "title" : "จำนวนต้องมากกว่า {{minAmountFromFormatted}}"
@@ -751,10 +751,10 @@
       "title" : "Address ที่เลือกบางแห่งไม่ใช่ผู้ตรวจสอบ"
     },
     "PolkadotLowBondedBalance" : {
-      "title" : "สินทรัพย์ที่ถูกผูกมัด (Bonded) ทั้งหมดจะไม่มีการผูกมัด (Unbonded) หาก < 1 DOT"
+      "title" : "สินทรัพย์ที่ถูกผูกมัดทั้งหมดจะไม่มีการผูกมัดหาก < 1 DOT"
     },
     "PolkadotNoUnlockedBalance" : {
-      "title" : "คุณไม่มีสินทรัพย์ที่ไม่มีการผูกมัด (Unbonded)"
+      "title" : "คุณไม่มีสินทรัพย์ที่ไม่มีการผูกมัด"
     },
     "PolkadotNoNominations" : {
       "title" : "คุณไม่มี Nomination"
@@ -772,7 +772,7 @@
       "title" : "ยอดคงเหลือในบัญชีที่ผูกมัดของคุณควรมีอย่างน้อย {{minimumBondBalance}}"
     },
     "PolkadotMaxUnbonding" : {
-      "title" : "คุณใช้งานเกินขีดจำกัดการยกเลิกการผูกมัด"
+      "title" : "คุณได้ทำการการยกเลิกการผูกมัดเกินกำหนด"
     },
     "PolkadotValidatorsRequired" : {
       "title" : "คุณต้องเลือกผู้ตรวจสอบอย่างน้อยหนึ่งรายการ"
@@ -781,7 +781,7 @@
       "title" : "Taproot Mainnet ยังไม่เปิดใช้งาน"
     },
     "NotEnoughNftOwned" : {
-      "title" : "คุณใช้มีโทเค็นเกินจำนวนที่มีอยู่แล้ว"
+      "title" : "คุณใช้มีจำนวนโทเคนเกินกว่าที่สามารถจัดเก็บได้"
     },
     "generic" : {
       "title" : "{{message}}",
@@ -789,13 +789,13 @@
       "primaryCTA" : "ลองอีกครั้ง"
     },
     "SolanaAccountNotFunded" : {
-      "title" : "ยังไม่ได้ฝากเข้าบัญชี"
+      "title" : "ยังไม่มีเงินทุนเข้าบัญชี"
     },
     "SolanaTokenAccountHoldsAnotherToken" : {
       "title" : "บัญชีโทเคนที่เกี่ยวข้องนี้มีโทเคนอื่น"
     },
     "SolanaTokenAccountWarning" : {
-      "title" : "นี่ไม่ใช่ Wallet Address ปกติแต่เป็นบัญชีโทเคนที่เชื่อมโยง ดำเนินการต่อเมื่อคุณรู้ว่าคุณกำลังทำอะไรอยู่"
+      "title" : "นี่ไม่ใช่ Wallet Address ปกติแต่เป็นบัญชีโทเคนที่เกี่ยวข้องกัน ดำเนินการต่อ ถ้าคุณรู้ว่าคุณกำลังทำอะไรอยู่!"
     },
     "SolanaTokenAccountNotAllowed" : {
       "title" : "นี่เป็นบัญชีโทเคน ป้อน Wallet Address ปกติ"
@@ -813,22 +813,29 @@
       "title" : "ไม่มีการเริ่มใช้บัญชี"
     },
     "SolanaTokenRecipientIsSenderATA" : {
-      "title" : "Address ผู้รับจะเหมือนกับ Address โทเคนของผู้ส่ง"
+      "title" : "Address ผู้รับเหมือนกับ Address โทเคนของผู้ส่ง"
     },
     "SolanaAddressOfEd25519" : {
-      "title" : "Address นอกเส้นโค้ง ed25519"
+      "title" : "Address อยู่นอกความปลอดภัยแบบ Ed25519"
     },
     "SolanaMemoIsTooLong" : {
       "title" : "Memo ยาวเกินไป ความยาวสูงสุดคือ {{maxLength}}"
     },
     "SolanaUseAllAmountStakeWarning" : {
-      "title" : "ตรวจสอบให้แน่ใจว่าคุณมียอดคงเหลือในบัญชี (Balance) เพียงพอสำหรับค่าธรรมเนียมธุรกรรมในอนาคต"
+      "title" : "ตรวจสอบให้แน่ใจว่าคุณมียอดคงเหลือในบัญชีเพียงพอสำหรับค่าธรรมเนียมธุรกรรมในอนาคต"
     },
     "SolanaTxSimulationFailedWhilePendingOp" : {
       "title" : "ธุรกรรมก่อนหน้านี้ของคุณยังไม่ได้รับการประมวลผล โปรดรอสักครู่ แล้วตรวจสอบประวัติธุรกรรมก่อนที่จะลองอีกครั้ง"
     },
     "SolanaTxConfirmationTimeout" : {
       "title" : "ธุรกรรมของคุณอาจล้มเหลว โปรดรอสักครู่ แล้วตรวจสอบประวัติธุรกรรมก่อนที่จะลองอีกครั้ง"
+    },
+    "SolanaRecipientMemoIsRequired" : {
+      "title" : "Memo is required for recipient address"
+    },
+    "SolanaTokenNonTransferable" : {
+      "title" : "Token is non-transferable",
+      "description" : "Such tokens are \"soul-bound\" and cannot be transferred"
     },
     "CardanoMinAmountError" : {
       "title" : "จำนวนขั้นต่ำที่สามารถส่งได้คือ {{amount}} ADA"
@@ -848,7 +855,7 @@
       "description" : "ธุรกรรม ADA ไม่สามารถใช้งานได้ชั่วคราว โปรดซิงค์บัญชีของคุณอีกครั้งและลองอีกครั้ง หรือติดต่อฝ่ายสนับสนุนหากคุณต้องการความช่วยเหลือ"
     },
     "CardanoInvalidProtoParams" : {
-      "title" : "พารามิเตอร์โปรโตคอล Cardano ไม่ถูกต้อง",
+      "title" : "พารามิเตอร์โพรโทคอล Cardano ไม่ถูกต้อง",
       "description" : "ธุรกรรม ADA ไม่สามารถใช้งานได้ชั่วคราว โปรดซิงค์บัญชีของคุณอีกครั้งและลองอีกครั้ง หรือติดต่อฝ่ายสนับสนุนหากคุณต้องการความช่วยเหลือ"
     },
     "StacksMemoTooLong" : {
@@ -887,14 +894,14 @@
       "title" : "ไม่มีบัญชี Stellar"
     },
     "StellarSourceHasMultiSign" : {
-      "title" : "โปรดปิดใช้งานการลงชื่อหลายครั้งเพื่อทำธุรกรรม Stellar"
+      "title" : "โปรดปิดใช้งาน Multisign เพื่อทำธุรกรรม Stellar"
     },
     "StellarBurnAddressError" : {
       "title" : "เกิดปัญหาขณะพยายามเพิ่มบัญชี Stellar"
     },
     "ImageLoadFromGalleryError" : {
       "title" : "การโหลดภาพจากแกลเลอรีล้มเหลว",
-      "description" : "โปรดลองอีกครั้งด้วยภาพอื่น"
+      "description" : "โปรดลองอีกครั้งด้วยรูปภาพอื่น"
     },
     "ImageDownloadError" : {
       "title" : "ไม่สามารถดาวน์โหลดภาพได้",
@@ -935,7 +942,7 @@
       "title" : "ยังไม่ได้สร้างบัญชีผู้รับ Protocol ต้องมีการโอน {{formattedNewAccountStorageCost}} เพื่อสร้าง"
     },
     "NearNewNamedAccountError" : {
-      "title" : "ยังไม่ได้สร้างบัญชีผู้รับ ต้องสร้างใน Wallet NEAR"
+      "title" : "ยังไม่ได้สร้างบัญชีผู้รับ ต้องสร้างใน NEAR Wallet"
     },
     "NearActivationFeeNotCovered" : {
       "title" : "จำนวนนี้ไม่ครอบคลุมค่าจัดเก็บ {{formattedNewAccountStorageCost}}"
@@ -986,11 +993,11 @@
       "title" : "Memo จำเป็นต้องเป็นตัวเลข"
     },
     "InvalidRecipientForTokenTransfer" : {
-      "title" : "ผู้รับสำหรับการโอนโทเค็นไม่ถูกต้อง ประเภทบัญชีที่รองรับสำหรับการโอนโทเค็นคือ: [f0, f4, 0x]"
+      "title" : "ผู้รับโอนโทเคนไม่ถูกต้อง ประเภทบัญชีที่รองรับสำหรับการโอนโทเคนคือ: [f0, f4, 0x]"
     },
     "FilecoinFeeEstimationFailed" : {
       "title" : "ขออภัย การประเมินค่าธรรมเนียมล้มเหลว",
-      "description" : "การประมาณค่าธรรมเนียมบนเครือข่ายล้มเหลว ตรวจสอบข้อมูลอินพุต ธุรกรรมที่มีแนวโน้มจะล้มเหลวมากที่สุด"
+      "description" : "การประมาณค่าธรรมเนียมบนเครือข่ายล้มเหลว ตรวจสอบข้อมูลอินพุต ธุรกรรมมีแนวโน้มที่จะล้มเหลวสูง"
     },
     "FirmwareNotRecognized" : {
       "title" : "ผู้ให้บริการไม่ถูกต้อง",
@@ -1000,7 +1007,7 @@
       "title" : "ค่าอาจน้อยเกินไป โปรดเพิ่ม"
     },
     "SequenceNumberError" : {
-      "title" : "ข้อผิดพลาดหมายเลขลำดับ",
+      "title" : "ข้อผิดพลาดของหมายเลขลำดับ",
       "description" : "โปรดปิดหน้าต่างแล้วลองอีกครั้งในภายหลัง"
     },
     "TonCommentInvalid" : {
@@ -1027,7 +1034,7 @@
       "description" : "โปรดลองอีกครั้งในภายหลังหรือติดต่อ Ledger Support"
     },
     "TonExcessFee" : {
-      "title" : "ซึ่งถือเป็นการโอนโทเคน คุณจะจ่ายค่าธรรมเนียม 0.1 TON และส่วนเกินจะได้รับการคืนให้กับคุณ"
+      "title" : "ซึ่งถือเป็นการโอนโทเคน คุณจะจ่ายค่าธรรมเนียม 0.1 TON และเงินทุนส่วนเกินจะถูกคืนให้คุณ"
     },
     "TonNotEnoughBalanceInParentAccount" : {
       "title" : "เงินทุนในบัญชีหลัก (TON) ไม่เพียงพอในการคำนวณค่าธรรมเนียม ยอดคงเหลือขั้นต่ำคือ 0.1 TON"
@@ -1060,7 +1067,7 @@
   },
   "bluetooth" : {
     "required" : "ขออภัย ดูเหมือนว่าบลูทูธถูกปิดใช้งาน",
-    "locationRequiredTitle" : "ต้องเปิดใช้งานตำแหน่งสำหรับบลูทูธ LE",
+    "locationRequiredTitle" : "ต้องเปิดใช้งานตำแหน่งสำหรับบลูทูธพลังงานต่ำ",
     "locationRequiredMessage" : "ต้องมีสิทธิ์เข้าถึงตำแหน่งบน Android เพื่อแสดงรายการอุปกรณ์บลูทูธ LE",
     "checkEnabled" : "โปรดเปิดใช้งานบลูทูธในการตั้งค่าโทรศัพท์ของคุณ",
     "tryEnablingAgain" : "ลองเปิดใช้งานบลูทูธอีกครั้ง",
@@ -1088,7 +1095,7 @@
     "open" : "เปิดการอนุญาตแอป",
     "authorize" : "อนุญาต",
     "bluetooth" : {
-      "modalTitle" : "ต้องได้รับอนุญาตให้จับคู่ Ledger ผ่านบลูทูธ",
+      "modalTitle" : "ต้องให้อนุญาตที่จะจับคู่ Ledger ผ่านบลูทูธก่อน",
       "modalDescriptionBase" : "หากต้องการจับคู่ Ledger ผ่านบลูทูธ คุณต้องอนุญาตให้ Ledger Live สแกนหาอุปกรณ์ใกล้เคียง",
       "modalDescriptionSettingsVariant" : "หากต้องการจับคู่ Ledger ผ่านบลูทูธ คุณต้องอนุญาตให้ Ledger Live สแกนหาอุปกรณ์ใกล้เคียงในการตั้งค่าโทรศัพท์ของคุณ",
       "modalButtonLabelBase" : "อนุญาต",
@@ -1105,7 +1112,7 @@
       "title" : "อนุญาตกล้อง",
       "authorizeDescription" : "โปรดอนุญาตให้กล้องสแกน QR Code",
       "authorizeButtonTitle" : "อนุญาต",
-      "goToSettingsDescription" : "โปรดอนุญาตให้กล้องในการตั้งค่าเพื่อสแกน QR Code",
+      "goToSettingsDescription" : "โปรดอนุญาตให้ใช้กล้องในการตั้งค่า เพื่อสแกน QR Code",
       "goToSettingsButtonTitle" : "ไปที่การตั้งค่า"
     }
   },
@@ -1119,6 +1126,11 @@
       "fast" : "เร็ว",
       "custom" : "กำหนดเอง",
       "blockCount" : "{{blockCount}} บล็อก"
+    },
+    "estimatedTime" : {
+      "slow" : "≈ 2-3 min",
+      "medium" : "≈ 30 sec",
+      "fast" : "≈ 15 sec"
     }
   },
   "signout" : {
@@ -1136,7 +1148,7 @@
         "description" : "ป้อนรหัสผ่านของคุณเพื่อดำเนินการต่อ",
         "authenticate" : "โปรดตรวจสอบความถูกต้องด้วยแอป Ledger Live"
       },
-      "denied" : "ไม่ได้เปิดใช้งาน Auth Security เนื่องจากโทรศัพท์ของคุณไม่สามารถตรวจสอบความถูกต้องได้",
+      "denied" : "ไม่ได้เปิดใช้งาน Auth Security เนื่องจากไม่สามารถตรวจสอบความถูกต้องโทรศัพท์ของคุณได้",
       "title" : "การตรวจสอบความถูกต้องล้มเหลว",
       "buttons" : {
         "tryAgain" : "ลองอีกครั้ง",
@@ -1169,7 +1181,7 @@
   },
   "reset" : {
     "title" : "ถอนการติดตั้งแล้วติดตั้ง Ledger Live ใหม่",
-    "description" : "โปรดถอนการติดตั้ง จากนั้นติดตั้งแอปบนโทรศัพท์ของคุณอีกครั้งเพื่อลบข้อมูล Ledger Live รวมถึงบัญชีและการตั้งค่า",
+    "description" : "โปรดถอนการติดตั้ง จากนั้นลองติดตั้งแอปบนโทรศัพท์ของคุณอีกครั้งเพื่อลบข้อมูล Ledger Live รวมถึงบัญชีและการตั้งค่า",
     "button" : "รีเซ็ต",
     "warning" : "การรีเซ็ต Ledger Live จะลบประวัติธุรกรรมการ Swap สำหรับบัญชีทั้งหมดของคุณ"
   },
@@ -1178,7 +1190,7 @@
     "month" : "1M",
     "year" : "1Y",
     "all" : "ทั้งหมด",
-    "graphNotSupported" : "ไม่สามารถใช้กราฟสำหรับโทเคนนี้ได้"
+    "graphNotSupported" : "ไม่สามารถแสดงผลด้วยกราฟได้สำหรับโทเคนนี้ได้"
   },
   "carousel" : {
     "title" : "ปิดแบนเนอร์หรือไม่?",
@@ -1202,17 +1214,17 @@
       },
       "stakeCosmos" : {
         "title" : "Stake COSMOS",
-        "description" : "Delegate ATOM ของคุณแล้วรับ Reward วันนี้"
+        "description" : "Delegate ATOM ของคุณเพื่อรับ Reward วันนี้"
       },
       "familyPack" : {
         "title" : "Family Pack",
-        "description" : "ลดราคาสำหรับ Nano S แพ็ค 3 เหมาะสำหรับเป็นของขวัญหรืออุปกรณ์สำรอง",
+        "description" : "Nano S แพ็ค 3 กำลังลดราคาอยู่เหมาะสำหรับเป็นของขวัญหรืออุปกรณ์สำรอง",
         "cta" : "ซื้อตอนนี้"
       },
       "familyPackX" : {
         "title" : "Ledger Nano X Family Pack",
-        "description" : "ลดราคาสำหรับ Nano X แพ็ค 3 เหมาะสำหรับเป็นของขวัญหรืออุปกรณ์สำรอง",
-        "cta" : "รับราคาที่ลดลงตอนนี้"
+        "description" : "Nano X แพ็ค 3 กำลังลดราคาอยู่เหมาะสำหรับเป็นของขวัญหรืออุปกรณ์สำรอง",
+        "cta" : "ตอนนี้ได้ราคาสุดคุ้ม"
       },
       "buyCrypto" : {
         "title" : "ซื้อคริปโต",
@@ -1221,7 +1233,7 @@
       },
       "swap" : {
         "title" : "Swap คริปโต",
-        "description" : "Swap คริปโตกว่า 100 เหรียญพร้อมบริการดูแลเต็มรูปแบบกับพาร์ทเนอร์ของเรา",
+        "description" : "Swap คริปโตได้มากกว่า 100 เหรียญพร้อมบริการดูแลเต็มรูปแบบกับพาร์ทเนอร์ของเรา",
         "cta" : "Swap ตอนนี้"
       },
       "algorand" : {
@@ -1246,7 +1258,7 @@
       },
       "lido" : {
         "title" : "Stake ETH กับ Lido",
-        "description" : "รับ Reward โดยการ Stake ETH อย่างปลอดภัยกับ Lido",
+        "description" : "รับ Reward ด้วยการ Stake ETH อย่างปลอดภัยกับ Lido",
         "cta" : "Stake ตอนนี้"
       },
       "market" : {
@@ -1256,19 +1268,19 @@
       },
       "manageCard" : {
         "title" : "ขอแนะนำ CL Card",
-        "description" : "สั่งซื้อและจัดการ CL Card powered by Ledger",
+        "description" : "สั่งซื้อและจัดการ CL Card ที่ออกโดย Ledger",
         "cta" : "เรียนรู้เพิ่มเติม"
       },
       "discoverWeb3" : {
         "title" : "ค้นพบ Web3",
-        "description" : "ค้นพบทุกอย่างเกี่ยวกับ web3 จนกว่าอุปกรณ์ของคุณจะมาถึง!",
+        "description" : "ค้นพบทุกอย่างเกี่ยวกับ Web3 จนกว่าอุปกรณ์ของคุณจะมาถึง!",
         "cta" : "Discover"
       }
     }
   },
   "ratings" : {
     "init" : {
-      "title" : "ชอบแอปของเราหรือเปล่า",
+      "title" : "ชอบแอปของเราหรือเปล่า?",
       "description" : "ข้อเสนอแนะของคุณเป็นสิ่งสำคัญสำหรับการปรับปรุง Ledger Live",
       "cta" : {
         "enjoy" : "ยอดเยี่ยม",
@@ -1277,8 +1289,8 @@
       }
     },
     "enjoy" : {
-      "title" : "สนุกกับการใช้ Ledger Live หรือเปล่า?\nมาแชร์คอมเมนต์กัน!",
-      "description" : "ให้คะแนนเราสูง ๆ ใน App Store",
+      "title" : "สนุกกับการใช้ Ledger Live หรือเปล่า?\nมาแบ่งปันความประทับใจกันเถอะ!",
+      "description" : "ขอคะแนนดี ๆ ให้เราบน App Store ด้วยนะ",
       "cta" : {
         "rate" : "ให้คะแนน Ledger Live",
         "notNow" : "ไม่ใช่ตอนนี้"
@@ -1286,7 +1298,7 @@
     },
     "disappointed" : {
       "title" : "ช่วยเราสร้างผลิตภัณฑ์ที่ดีกว่าสำหรับคุณ",
-      "description" : "หากต้องการความช่วยเหลือเพิ่มเติมหรือต้องการให้เราติดต่อกลับ โปรดใช้ Live Chat ของเรา",
+      "description" : "หากต้องการความช่วยเหลือเพิ่มเติมหรือต้องการให้เราติดต่อกลับ โปรดใช้ Live Chat",
       "here" : "ที่นี่",
       "cta" : {
         "sendFeedback" : "ส่งข้อเสนอแนะ",
@@ -1308,7 +1320,7 @@
     },
     "1" : {
       "title" : "เข้าถึง DeFi และ NFT",
-      "desc" : "โต้ตอบอย่างปลอดภัยกับแอปพลิเคชัน DeFi ที่เชื่อถือได้โดยตรงจากแอป"
+      "desc" : "ลองใช้อย่างปลอดภัยกับแอปพลิเคชัน DeFi ที่เชื่อถือได้โดยตรงจากแอป"
     },
     "2" : {
       "title" : "กุญแจสู่ Web3",
@@ -1321,20 +1333,20 @@
     "title" : "คุณต้องมี Ledger",
     "desc" : "เพื่อความปลอดภัยของคุณ\n Ledger Live จะทำงานร่วมกับ Ledger เท่านั้น",
     "cta" : "ซื้อ Ledger ตอนนี้",
-    "footer" : "ฉันมี Ledger อยู่แล้ว ติดตั้ง",
+    "footer" : "ฉันมี Ledger อยู่แล้ว ติดตั้งตอนนี้",
     "bannerTitle" : "ความปลอดภัยระดับสูงสำหรับคริปโตและ NFT ของคุณ",
     "bannerTitle2" : "คุณจะต้องมี Ledger จึงจะสามารถซื้อขายได้",
     "bannerSubtitle" : "กับ Ledger Flex",
     "bannerButtonTitle" : "สำรวจ Flex",
     "bannerButtonTitle2" : "ซื้อ Ledger",
-    "setupCta" : "ฉันมี Ledger อยู่แล้ว ตั้งค่าเลย"
+    "setupCta" : "ฉันมี Ledger อยู่แล้ว ติดตั้งตอนนี้"
   },
   "postBuyDeviceSetupNanoWall" : {
-    "title" : "ได้รับ Ledger หรือยัง",
-    "desc" : "เมื่อได้ Ledger แล้ว ให้ตั้งค่าเพื่อปลดล็อกคุณสมบัติทั้งหมดของแอป Ledger Live",
-    "cta" : "ตั้งค่า Ledger ของฉัน",
-    "bannerTitle" : "ได้รับ Ledger ของคุณหรือยัง",
-    "bannerCta" : "เริ่มการตั้งค่า",
+    "title" : "ได้รับ Ledger หรือยัง?",
+    "desc" : "เมื่อได้ Ledger แล้ว ให้ตั้งค่าเพื่อปลดล็อกฟีเจอร์ทั้งหมดของแอป Ledger Live",
+    "cta" : "ติดตั้ง Ledger ของฉัน",
+    "bannerTitle" : "ได้รับ Ledger แล้วหรือยัง?",
+    "bannerCta" : "เริ่มการติดตั้ง",
     "continue" : "ดำเนินการต่อ"
   },
   "purchaseDevice" : {
@@ -1377,7 +1389,7 @@
       },
       "ledgerApps" : {
         "title" : "แอป",
-        "desc" : "สำรวจแอปของพาร์ทเนอร์ของ Ledger ได้ในที่เดียว"
+        "desc" : "สำรวจแอปพาร์ทเนอร์ของ Ledger ได้ในที่เดียว"
       },
       "browseWeb3" : {
         "title" : "สำรวจ Web3",
@@ -1388,12 +1400,12 @@
         "desc" : "ทำให้คริปโตของคุณเติบโตผ่านการ Stake และการให้ยืม"
       },
       "mint" : {
-        "title" : "Mint",
-        "desc" : "Mint NFT จากแคมเปญสุดเอ็กซ์คลูซีฟบนตลาด [L]"
+        "title" : "สร้าง",
+        "desc" : "สร้าง NFT จากแคมเปญสุดเอ็กซ์คลูซีฟบนตลาด [L]"
       },
       "referralProgram" : {
         "title" : "แนะนำเพื่อน",
-        "desc" : "เมื่อเพื่อนของคุณซื้อ Ledger ทั้งคุณและเพื่อนจะได้รับ $20 ใน BTC"
+        "desc" : "เมื่อเพื่อนของคุณซื้อ Ledger ทั้งคุณและเพื่อนจะได้รับ BTC มูลค่า $20 USD"
       },
       "filter" : {
         "all" : "ทั้งหมด"
@@ -1404,9 +1416,9 @@
   },
   "installSetOfApps" : {
     "restore" : {
-      "title" : "ติดตั้งแอปเดียวกันกับบน {{deviceName}} หรือไม่",
-      "titleNoDeviceName" : "ติดตั้งแอปเดียวกันกับบนอุปกรณ์ Ledger ก่อนหน้านี้หรือไม่",
-      "installCTA" : "Restore ตอนนี้",
+      "title" : "ติดตั้งแอปเดียวกันกับบน {{deviceName}} หรือไม่?",
+      "titleNoDeviceName" : "ติดตั้งแอปเดียวกันกับบนอุปกรณ์ Ledger ก่อนหน้านี้หรือไม่?",
+      "installCTA" : "กู้คืนตอนนี้",
       "skipCTA" : "ฉันจะดำเนินการในภายหลัง"
     },
     "landing" : {
@@ -1426,7 +1438,7 @@
   "onboarding" : {
     "stepWelcome" : {
       "title" : "ยินดีต้อนรับสู่ Ledger",
-      "subtitle" : "เราทำให้ Digital Ownership ปลอดภัยและเรียบง่าย",
+      "subtitle" : "เราทำให้การเจ้าของสินทรัพย์ดิจิทัลปลอดภัยและเรียบง่าย",
       "start" : "เริ่มต้นกันเลย",
       "noDevice" : "ไม่มีอุปกรณ์?",
       "buy" : "ซื้อ {{fullDeviceName}}",
@@ -1439,14 +1451,14 @@
       "title" : "มาเริ่มกันเลย",
       "noLedgerYet" : "ฉันยังไม่มี Ledger",
       "noLedgerYetModal" : {
-        "title" : "ผู้ใช้นับล้าน 0 แฮ็ก",
+        "title" : "ผู้ใช้นับล้าน ไม่เคยถูกแฮ็ก",
         "desc" : "สบายใจหายห่วงด้วย Ledger ที่ช่วยรักษาความปลอดภัยให้กับสินทรัพย์ดิจิทัลของคุณ",
         "buy" : "ซื้อ Ledger",
         "explore" : "สำรวจแอปนี้"
       },
       "setupLedger" : {
         "title" : "ตั้งค่า Ledger ของคุณ",
-        "subtitle" : "เลือกว่า Ledger ของคุณเป็นอุปกรณ์เครื่องใหม่หรือได้รับการรีเซ็ต"
+        "subtitle" : "เลือกว่า Ledger ของคุณเป็นอุปกรณ์เครื่องใหม่หรือได้รับการรีเซ็ตมาก่อน"
       },
       "accessWallet" : {
         "title" : "เข้าถึง Wallet ของคุณ",
@@ -1479,10 +1491,10 @@
         "title" : "รักษาความปลอดภัยให้กับสินทรัพย์คริปโตทั้งหมดของคุณ"
       },
       "1" : {
-        "title" : "จับตาดูตลาดอยู่เสมอ"
+        "title" : "จับตาดูตลาดอยู่ตลอด"
       },
       "2" : {
-        "title" : "ค้นพบแอปและเรียนรู้เกี่ยวกับ web3"
+        "title" : "ค้นพบแอปและเรียนรู้เกี่ยวกับ Web3"
       },
       "3" : {
         "title" : "รักษาคริปโตและ NFT ของคุณให้ปลอดภัย"
@@ -1491,16 +1503,16 @@
     "stepLanguage" : {
       "title" : "เลือกภาษาของคุณ",
       "cta" : "ดำเนินการต่อ",
-      "changeDeviceLanguage" : "{{language}} ยังสามารถใช้งานได้สำหรับ {{deviceName}} ของคุณ",
-      "changeDeviceLanguageDescription" : "คุณต้องการเปลี่ยนภาษาเป็น {{language}} หรือไม่",
+      "changeDeviceLanguage" : "{{language}} ยังสามารถใช้งานได้บน {{deviceName}} ของคุณ",
+      "changeDeviceLanguageDescription" : "คุณต้องการเปลี่ยนภาษาเป็น {{language}} หรือไม่?",
       "warning" : {
         "title" : "เริ่มต้นใช้งานเป็นภาษาอังกฤษ",
         "cta" : "เข้าใจแล้ว!",
-        "desc" : "เราขอแนะนำภาษาเพิ่มเติม เพื่อช่วยในการเตรียมความพร้อมใช้งาน Ledger โปรดทราบว่าขณะนี้ประสบการณ์ Ledger ส่วนที่เหลือมีให้บริการเป็นภาษาอังกฤษเท่านั้น"
+        "desc" : "เราขอแนะนำภาษาเพิ่มเติม เพื่อช่วยคุณในการเตรียมความพร้อมใช้งาน Ledger โปรดทราบว่าขณะนี้ประสบการณ์ Ledger ส่วนที่เหลือมีให้บริการเป็นภาษาอังกฤษเท่านั้น"
       },
       "RestartModal" : {
         "title" : "ต้องรีสตาร์ท",
-        "paragraph" : "ภาษาที่เลือกต้องมีแอปพลิเคชันเพื่อรีสตาร์ท แน่ใจไหมว่าต้องการดำเนินการต่อ"
+        "paragraph" : "ต้องทำการรีสตาร์ทแอปพลิเคชันเพื่อใช้งานภาษาที่เลือก แน่ใจไหมว่าต้องการดำเนินการต่อ?"
       }
     },
     "stepSelectDevice" : {
@@ -1519,7 +1531,7 @@
         "section" : "ติดตั้ง Ledger {{model}} ของคุณ",
         "title" : "สร้าง Wallet ใหม่",
         "subTitle" : "ซึ่งจะเป็นการสร้าง Secret Recovery Phrase ใหม่",
-        "desc" : "มาเริ่มต้นและติดตั้งอุปกรณ์ของคุณกันเลย",
+        "desc" : "มาเริ่มต้นและติดตั้งอุปกรณ์ของคุณกันเลย!",
         "label" : "30 นาที"
       },
       "devicePairing" : {
@@ -1541,9 +1553,9 @@
       },
       "restoreDevice" : {
         "label" : "กู้คืนอุปกรณ์",
-        "title" : "กู้คืนด้วย Secret Recovery Rhrase",
+        "title" : "กู้คืนโดยใช้ Secret Recovery Phrase",
         "subTitle" : "คุณจะต้องสามารถเข้าถึง Secret Recovery Phrase ของคุณได้",
-        "desc" : "ใช้ Recovery Phrase ที่มีอยู่เพื่อกู้คืน Private Key ของคุณบน Nano เครื่องใหม่!"
+        "desc" : "ใช้ Recovery Phrase ที่มีอยู่เพื่อกู้คืน Private Key ของคุณบน Nano ใหม่!"
       },
       "recovery" : "มี Recovery Phrase แล้ว?",
       "protect" : {
@@ -1551,7 +1563,7 @@
         "subTitle" : "คุณต้องมีการสมัครใช้งาน Ledger Recover",
         "drawer" : {
           "title" : "ใช้ Ledger Nano X",
-          "desc" : "Ledger Recover Soft Launch ให้บริการสำหรับ Ledger Nano X โดยเฉพาะ",
+          "desc" : "บริการ Soft Launch ของ Ledger Recover ให้บริการสำหรับ Ledger Nano X โดยเฉพาะ",
           "buyNanoX" : "ซื้อ Ledger Nano X",
           "discoverBenefits" : "ค้นพบประโยชน์ต่าง ๆ"
         }
@@ -1572,7 +1584,7 @@
       "2" : {
         "label" : "ข้อมูลเบื้องต้น",
         "title" : "ใช้งานแบบออฟไลน์",
-        "desc" : "Ledger Live ช่วยให้คุณสามารถซื้อ ขาย จัดการ แลกเปลี่ยน และรับคริปโตในขณะที่ยังคงได้รับการปกป้อง คุณจะตรวจสอบทุกธุรกรรมคริปโตด้วย Nano ของคุณ"
+        "desc" : "Ledger Live ช่วยให้คุณสามารถซื้อ ขาย จัดการ แลกเปลี่ยน และรับคริปโตในขณะที่ยังคงได้รับการปกป้อง คุณสามารถตรวจสอบทุกธุรกรรมคริปโตได้ด้วย Nano ของคุณ"
       },
       "3" : {
         "label" : "ข้อมูลเบื้องต้น",
@@ -1592,10 +1604,10 @@
         "title" : "วิธีที่ดีที่สุดเพื่อเริ่มต้น:",
         "bullets" : {
           "0" : {
-            "label" : "วางแผน 30 นาทีและใช้เวลา"
+            "label" : "จัดเวลา 30 นาทีและค่อย ๆ ทำ"
           },
           "1" : {
-            "label" : "คว้าปากกามาเขียนด้วย"
+            "label" : "เอาปากกามาจดด้วย"
           },
           "2" : {
             "label" : "เลือกใช้สถานที่เงียบและปลอดภัยตามลำพัง"
@@ -1627,7 +1639,7 @@
           },
           "1" : {
             "title" : "สืบค้น",
-            "label" : "ศึกษาวิธีโต้ตอบกับอุปกรณ์ของคุณด้วยการอ่านคำแนะนำบนหน้าจอ"
+            "label" : "ศึกษาวิธีใช้งานอุปกรณ์ของคุณด้วยการอ่านคำแนะนำบนหน้าจอ"
           },
           "2" : {
             "title" : "เลือก “ตั้งค่าเป็นอุปกรณ์ใหม่”",
@@ -1644,7 +1656,7 @@
         "title" : "รหัส PIN",
         "desc" : "รหัส PIN ของคุณเป็นชั้นความปลอดภัยชั้นแรก ซึ่งจะรักษาความปลอดภัยทางกายภาพในการเข้าถึง Nano และ Private Key ของคุณ รหัส PIN ของคุณต้องมีความยาว 4 ถึง 8 หลัก",
         "checkboxDesc" : "ฉันเข้าใจว่าต้องตั้งค่า PIN ด้วยตนเองและเก็บไว้เป็นส่วนตัว",
-        "cta" : "ติดค่ารหัส PIN"
+        "cta" : "ติดตั้งรหัส PIN"
       },
       "pinCodeSetup" : {
         "bullets" : {
@@ -1719,7 +1731,7 @@
         "bullets" : {
           "0" : {
             "title" : "นำ Recovery Sheet ของคุณออกมา",
-            "label" : "หยิบ Recovery Sheet เปล่าที่รวมอยู่ใน Nano ของคุณ โปรดติดต่อฝ่ายสนับสนุน Ledger หาก Recovery Sheet ไม่ใช่เอกสารเปล่า"
+            "label" : "หยิบ Recovery Sheet เปล่าที่มีอยู่ใน Nano ของคุณ โปรดติดต่อฝ่ายสนับสนุน Ledger หาก Recovery Sheet ไม่ใช่เอกสารเปล่า"
           },
           "1" : {
             "title" : "ทำขั้นตอนนี้ซ้ำกับคำอื่น ๆ ทุกคำ!",
@@ -1745,7 +1757,7 @@
             "label" : "ป้อนคำเหล่านี้ใน Hardware Wallet เท่านั้น ไม่ใช่ในคอมพิวเตอร์หรือโทรศัพท์"
           },
           "1" : {
-            "label" : "อย่าแชร์ 24 คำของคุณกับใคร แม้แต่กับ Ledger ก็ตาม"
+            "label" : "อย่าแชร์วลีกู้คืน 24 คำของคุณกับใคร แม้แต่กับ Ledger ก็ตาม"
           }
         },
         "cta" : "ปิด",
@@ -1758,7 +1770,7 @@
               "label" : "<bold>ห้าม</bold>ป้อน Recovery Phrase บนคอมพิวเตอร์ โทรศัพท์ หรืออุปกรณ์อื่นใด ห้ามถ่ายรูป Recovery Phrase"
             },
             "1" : {
-              "label" : "ห้ามแชร์ 24 คำของคุณกับใครก็ตาม"
+              "label" : "ห้ามแชร์วลีกู้คืน 24 คำของคุณกับใครก็ตาม"
             },
             "2" : {
               "label" : "เก็บไว้ในที่ปลอดภัยและลับสายตา<bold>เสมอ</bold>"
@@ -1802,7 +1814,7 @@
     "stepRecoveryPhrase" : {
       "importRecoveryPhrase" : {
         "title" : "กู้คืนจาก Recovery Phrase",
-        "desc" : "กู้คืน Nano ของคุณจาก Recovery Phrase เพื่อกู้คืน เปลี่ยน หรือสำรองข้อมูล Ledger Hardware Wallet ของคุณ",
+        "desc" : "กู้คืน Nano ของคุณโดย Recovery Phrase เพื่อกู้คืน เปลี่ยน หรือสำรองข้อมูล Ledger Hardware Wallet ของคุณ",
         "desc_1" : "Nano ของคุณจะกู้คืน Private Key ของคุณและคุณจะสามารถเข้าถึงและจัดการคริปโตของคุณได้",
         "cta" : "ตกลง เริ่มเลย!",
         "warning" : {
@@ -1829,7 +1841,7 @@
           },
           "1" : {
             "title" : "สืบค้น",
-            "label" : "ศึกษาวิธีโต้ตอบกับอุปกรณ์ของคุณด้วยการอ่านคำแนะนำบนหน้าจอ"
+            "label" : "ศึกษาวิธีใช้งานอุปกรณ์ของคุณด้วยการอ่านคำแนะนำบนหน้าจอ"
           },
           "2" : {
             "title" : "เลือก \"กู้คืนจาก Recovery Phrase\"",
@@ -1845,7 +1857,7 @@
         "title" : "ป้อน Recovery Phrase ของคุณ",
         "paragraph1" : "Recovery Phrase คือรายชื่อคำที่คุณสำรองไว้เมื่อคุณตั้งค่า Wallet เป็นครั้งแรก ซึ่งเป็นความลับ",
         "paragraph2" : "Ledger จะไม่เก็บสำเนา Recovery Phrase ของคุณ",
-        "checkboxDesc" : "ฉันเข้าใจว่าหากฉันทำ Recovery Phrase หาย ฉันจะไม่สามารถเข้าถึงคริปโตของฉันได้ในกรณีที่ฉันไม่สามารถเข้าถึง Nano ได้",
+        "checkboxDesc" : "ฉันเข้าใจว่าหากฉันทำ Recovery Phrase หาย ฉันจะไม่สามารถเข้าถึงคริปโตของฉันได้ในกรณีที่ฉันไม่สามารถเข้าถึง Nano ของฉันได้",
         "bullets" : {
           "0" : {
             "title" : "หยิบ Recovery Phrase ของคุณ"
@@ -1881,25 +1893,25 @@
         "cta" : "ได้เวลาจับคู่ Nano"
       },
       "nanoS" : {
-        "title" : "เชื่อมต่อ Nano ของฉัน",
+        "title" : "เชื่อมต่อกับ Nano ของฉัน",
         "desc" : "นี่เป็นครั้งแรกที่คุณตั้งค่า Nano ของคุณด้วยโทรศัพท์เครื่องนี้ มาเชื่อมต่ออุปกรณ์ของคุณแบบรวดเร็วกันเถอะ",
         "cta" : "มาเชื่อมต่อ My Nano กันเลย"
       },
       "nanoSP" : {
-        "title" : "เชื่อมต่อ Nano ของฉัน",
+        "title" : "เชื่อมต่อกับ Nano ของฉัน",
         "desc" : "นี่เป็นครั้งแรกที่คุณตั้งค่า Nano ของคุณด้วยโทรศัพท์เครื่องนี้ มาเชื่อมต่ออุปกรณ์ของคุณแบบรวดเร็วกันเถอะ",
         "cta" : "มาเชื่อมต่อ My Nano กันเลย"
       },
       "blue" : {
         "title" : "เชื่อมต่อ Blue ของคุณ",
-        "desc" : "นี่เป็นครั้งแรกที่คุณติดตั้ง Blue ของคุณด้วยโทรศัพท์เครื่องนี้ มาเชื่อมต่ออุปกรณ์ของคุณแบบรวดเร็วกันเถอะ",
+        "desc" : "นี่เป็นครั้งแรกที่คุณติดตั้งอุปกรณ์ Blue ของคุณด้วยโทรศัพท์เครื่องนี้ มาเชื่อมต่ออุปกรณ์ของคุณแบบรวดเร็วกันเถอะ",
         "cta" : "มาเชื่อมต่อ My Blue กันเลย"
       },
       "infoModal" : {
         "title" : "ฉันสามารถค้นหาชื่ออุปกรณ์ของฉันได้ที่ไหน?",
         "desc" : "บนอุปกรณ์ของคุณ เลือก การตั้งค่า > ทั่วไป > ชื่ออุปกรณ์",
         "title_1" : "จะติดตั้งการเชื่อมต่อบลูทูธได้อย่างไร?",
-        "title_2" : "ฉันจะใช้ Nano X โดยไม่มีบลูทูธได้อย่างไร",
+        "title_2" : "ฉันจะใช้ Nano X โดยไม่มีบลูทูธได้อย่างไร?",
         "desc_1" : "ใช้ <1>สาย OTG</1> เพื่อเชื่อมต่อ Ledger Nano X ของคุณกับสมาร์ทโฟน Android (ไม่รองรับ iOS) จัดการคริปโตของคุณด้วย Ledger Live บนมือถือหรือแอปอื่น ๆ ที่เข้ากันได้ (เว็บ)",
         "bullets" : {
           "0" : {
@@ -1915,16 +1927,16 @@
         }
       },
       "errorInfoModal" : {
-        "title" : "มีบางอย่างผิดปกติหรือไม่",
+        "title" : "มีบางอย่างผิดปกติหรือไม่?",
         "title_1" : "ฉันมี Android",
         "title_2" : "อัปเดตเวอร์ชัน Android",
-        "desc" : "หากคุณประสบปัญหาบลูทูธกับ Nano X ของคุณ โปรดนำการจับคู่ออกและลืม Nano X บนโทรศัพท์ของคุณ จากนั้นลองจับคู่อีกครั้ง",
+        "desc" : "หากคุณประสบปัญหาบลูทูธกับ Nano X ของคุณ โปรดถอดการจับคู่และถอนการเชื่อมต่อบลูทูธกับ Nano X บนอุปกรณ์ของคุณ จากนั้นลองจับคู่อีกครั้ง",
         "desc_1" : "อาจใช้เวลาสักครู่ก่อนที่คำขอจับคู่บลูทูธจะปรากฏขึ้น อย่าลืมตรวจสอบและยืนยันรหัสการจับคู่ทั้งบน Nano X และบนโทรศัพท์ของคุณ",
         "desc_2" : "ตรวจสอบการตั้งค่าบลูทูธในโทรศัพท์ของคุณว่าตรวจพบ Ledger Nano X หรือไม่ หากตรวจไม่พบ ตรวจสอบให้แน่ใจว่าเปิดบลูทูธบน Ledger Nano X แล้ว",
         "desc_3" : "บริการระบุตำแหน่งที่ตั้ง",
-        "desc_4" : "หากตรวจไม่พบ Ledger Nano X ในแอปมือถือของคุณเมื่อพยายามจับคู่ โปรดลองใช้วิธีแก้ปัญหาต่อไปนี้:",
-        "desc_5" : "แอปมือถือ Ledger ขอให้คุณอนุญาตบริการตำแหน่งเมื่อยังไม่ได้เปิดใช้งาน แต่ในบางครั้งคราว ระบบอาจตรวจพบได้ไม่ถูกต้องในโทรศัพท์บางรุ่น โปรดทราบว่าแอปมือถือ Ledger ไม่เคยใช้ข้อมูลตำแหน่งของคุณ การอนุญาตนี้จำเป็นสำหรับบลูทูธในระบบ Android เท่านั้น",
-        "desc_6" : "ผู้ใช้บางคนรายงานว่าได้แก้ไขปัญหาการเชื่อมต่อได้โดยการอัปเดตเวอร์ชัน Android ที่ใช้งานบนโทรศัพท์เป็นเวอร์ชันใหม่กว่า โปรดตรวจสอบกับผู้ผลิตโทรศัพท์ของคุณว่ามีการอัปเดตหรือไม่",
+        "desc_4" : "หากตรวจไม่พบ Ledger Nano X ในแอปมือถือของคุณเมื่อทำการจับคู่ โปรดลองใช้วิธีแก้ปัญหาต่อไปนี้:",
+        "desc_5" : "แอปมือถือ Ledger ขอให้คุณอนุญาตให้บริการตำแหน่งถ้าคุณยังไม่ได้เปิดใช้งาน แต่ในโทรศัพท์บางรุ่นระบบอาจตรวจพบไม่พบ โปรดทราบว่าแอปมือถือ Ledger ไม่เคยใช้ข้อมูลตำแหน่งของคุณ การอนุญาตนี้จำเป็นสำหรับบลูทูธในระบบ Android เท่านั้น",
+        "desc_6" : "ผู้ใช้บางคนรายงานว่าได้แก้ไขปัญหาการเชื่อมต่อได้โดยการอัปเดตเวอร์ชัน Android ที่ใช้งานบนโทรศัพท์เป็นเวอร์ชันที่ใหม่กว่า โปรดตรวจสอบกับผู้ผลิตโทรศัพท์ของคุณว่ามีการอัปเดตหรือไม่",
         "link" : "เรียนรู้เพิ่มเติม",
         "bullets" : {
           "0" : {
@@ -1943,7 +1955,7 @@
       },
       "protectConnectionInformationModal" : {
         "title" : "การเชื่อมต่อ Ledger Nano X",
-        "description" : "เช็คให้แน่ใจว่า Ledger อยู่ใกล้โทรศัพท์แล้วลองอีกครั้ง <LinkBluethooth>ปัญหาการเชื่อมต่อ Bluetooth®\n</LinkBluethooth>\nหาก Bluetooth ® ทำงานอยู่ คุณอาจต้องอัปเดตระบบปฏิบัติการของ Ledger ลองอัปเดตระบบปฏิบัติการ หรือติดต่อ Ledger Support เพื่อขอความช่วยเหลือ ",
+        "description" : "เช็คให้แน่ใจว่า Ledger อยู่ใกล้โทรศัพท์ของคุณแล้วลองอีกครั้ง <LinkBluethooth>ปัญหาการเชื่อมต่อ Bluetooth® \n</LinkBluethooth>\nหาก Bluetooth ® ทำงานอยู่ คุณอาจต้องอัปเดตระบบปฏิบัติการของ Ledger ลองอัปเดตระบบปฏิบัติการ หรือติดต่อ Ledger Support เพื่อขอความช่วยเหลือ ",
         "learnHowToUpdate" : "ศึกษาวิธีอัปเดต"
       }
     },
@@ -1964,7 +1976,7 @@
       },
       "warning" : {
         "title" : "จะต้องซิงค์เดสก์ท็อปของคุณและแอปมือถือด้วยตัวเอง",
-        "desc" : "Ledger Live เคารพความเป็นส่วนตัวของคุณและจัดเก็บข้อมูลของคุณไว้ในเครื่อง หากคุณเปลี่ยนบัญชีและการตั้งค่าในโทรศัพท์ของคุณ คุณจะต้องทำเช่นเดียวกันในคอมพิวเตอร์ของคุณด้วย รวมถึงในทิศทางตรงกันข้าม ธุรกรรมของคุณจะซิงโครไนซ์กับบล็อกเชนเสมอ",
+        "desc" : "Ledger Live เคารพความเป็นส่วนตัวของคุณและจัดเก็บข้อมูลของคุณไว้ในเครื่อง หากคุณเปลี่ยนบัญชีและการตั้งค่าในโทรศัพท์ของคุณ คุณจะต้องทำเช่นเดียวกันในคอมพิวเตอร์ของคุณด้วย และในทางกลับกันด้วย ธุรกรรมของคุณจะซิงโครไนซ์กับบล็อกเชนเสมอ",
         "cta" : "เข้าใจแล้ว!"
       }
     },
@@ -1984,11 +1996,11 @@
       }
     },
     "stepWriteRecovery" : {
-      "step1" : "เขียน<1><1>คำที่ 1</1></1> ในรายการที่ 1 บน Recovery Sheet เปล่า",
+      "step1" : "เขียน<1><1>คำที่ 1</1></1> ในรายการที่ 1 บน Recovery Sheet ที่ยังไม่มีข้อมูล",
       "step2" : "กดปุ่มขวาแล้วเขียนคำทั้ง 24 คำลงไปต่อ",
       "step3" : "ยืนยัน Recovery Phrase ทีละคำ: เลือกคำแล้วยืนยันโดยกดปุ่มทั้งสองปุ่มพร้อมกัน",
       "modal" : {
-        "step1" : "จัดเก็บ Recovery Phrase 24 คำของคุณในที่ปลอดภัยและห่างไกลสายตา",
+        "step1" : "จัดเก็บ Recovery Phrase 24 คำของคุณในที่ปลอดภัยและซ่อนให้พ้นสายตา",
         "step2" : "ตรวจสอบให้แน่ใจว่าคุณเป็นบุคคลเดียวที่มี Recovery Phrase",
         "step3" : "Ledger จะไม่บันทึก Recovery Phrase ของคุณ",
         "step4" : "ห้ามใช้อุปกรณ์ที่มี Recovery Phrase หรือ PIN ที่ติดตั้งไว้แล้ว"
@@ -1999,7 +2011,7 @@
       "descConfigured" : "เปิดใช้งาน Password Lock เรียบร้อยแล้ว",
       "setPassword" : "ตั้งรหัสผ่าน",
       "modal" : {
-        "step1" : "รักษารหัสผ่านของคุณให้ปลอดภัย ห้ามแชร์กับผู้ใด",
+        "step1" : "รักษารหัสผ่านของคุณให้ปลอดภัย ห้ามแชร์กับผู้อื่น",
         "step2" : "รักษารหัสผ่านของคุณให้ปลอดภัย การทำรหัสผ่านหาย หมายถึง การรีเซ็ต Ledger Live และการโหลดบัญชีอีกครั้ง",
         "step3" : "การรีเซ็ต Ledger Live ไม่มีผลกระทบต่อสินทรัพย์คริปโตของคุณ"
       }
@@ -2014,7 +2026,7 @@
       "label" : "แบบทดสอบ",
       "modal" : {
         "success" : "ยินดีด้วย!",
-        "fail" : "ตอบไม่ถูก!"
+        "fail" : "ไม่ถูกต้อง!"
       },
       "coins" : {
         "title" : "ในฐานะผู้ใช้ Ledger คริปโตของฉันเก็บไว้ที่:",
@@ -2041,7 +2053,7 @@
       "privateKey" : {
         "title" : "เมื่อฉันเชื่อมต่อ My Ledger Nano กับแอป Ledger Live Private Key ของฉันคือ...",
         "answers" : {
-          "correct" : "อยู่แบบออฟไลน์",
+          "correct" : "ยังออฟไลน์อยู่",
           "wrong" : "เชื่อมต่ออินเทอร์เน็ตเพียงสั้น ๆ"
         },
         "modal" : {
@@ -2052,8 +2064,8 @@
       "final" : {
         "successTitle" : "เป็น Pro อยู่แล้ว!",
         "successText" : "คุณพร้อมที่จะจัดการคริปโตของคุณอย่างปลอดภัยแล้ว\n\n เหลืออีกเพียงขั้นตอนเดียวเอง!",
-        "failTitle" : "คุณจะเป็นโปรในเร็ว ๆ นี้...",
-        "failText" : "อย่ากังวลไป Ledger อยู่ที่นี่เพื่อคอยชี้นำคุณตลอดเส้นทาง คุณจะรู้สึกสะดวกสบายเป็นพิเศษเกี่ยวกับความปลอดภัยของคริปโต เหลืออีกเพียงขั้นตอนเดียวเอง!",
+        "failTitle" : "คุณจะเป็น Pro ในเร็ว ๆ นี้...",
+        "failText" : "อย่ากังวลไป Ledger อยู่ที่นี่เพื่อคอยแนะนำคุณตลอดเส้นทาง คุณจะรู้สึกสะดวกสบายเป็นพิเศษเกี่ยวกับความปลอดภัยของคริปโต เหลืออีกเพียงขั้นตอนเดียวเอง!",
         "cta" : "ขั้นตอนถัดไป"
       },
       "nextQuestion" : "คำถามถัดไป",
@@ -2061,14 +2073,14 @@
     },
     "warning" : {
       "recoveryPhrase" : {
-        "title" : "อย่าใช้วลีการกู้คืนที่คุณไม่ได้สร้างขึ้นด้วยตัวเอง",
-        "desc" : "รหัส PIN และ Recovery Phrase ของ Hardware Wallet Ledger ของคุณควรได้รับการเริ่มใช้โดยคุณและคุณเท่านั้น อย่าใช้ผลิตภัณฑ์และติดต่อฝ่ายสนับสนุนลูกค้าของเรา หากคุณได้รับอุปกรณ์ที่มี Seed Word อยู่แล้วหรือมีรหัส PIN เริ่มต้นอยู่แล้ว",
+        "title" : "อย่าใช้ Recovery Phrase ที่คุณไม่ได้สร้างขึ้นด้วยตัวเอง",
+        "desc" : "รหัส PIN และ Recovery Phrase ของ Hardware Wallet Ledger ของคุณควรได้รับการตั้งค่าโดยคุณและคุณเท่านั้น อย่าใช้ผลิตภัณฑ์และติดต่อฝ่ายสนับสนุนลูกค้าของเรา หากคุณได้รับอุปกรณ์ที่มี Seed Word อยู่แล้วหรือมีรหัส PIN เริ่มต้นอยู่แล้ว",
         "supportLink" : "ติดต่อฝ่ายสนับสนุนลูกค้า"
       },
       "seed" : {
         "title" : "โปรดตรวจสอบผลิตภัณฑ์ภายในกล่อง",
-        "desc" : "หาก {{deviceName}} ของคุณมาพร้อมกับรหัส PIN หรือวลีการกู้คืน ดังนั้นแล้วอุปกรณ์จะไม่ปลอดภัยสำหรับการใช้งาน และคุณควรติดต่อฝ่ายสนับสนุนของ Ledger",
-        "warning" : "ใช้เฉพาะวลีการกู้คืนที่อุปกรณ์ของคุณแสดงเมื่อติดตั้งอุปกรณ์เท่านั้น",
+        "desc" : "หาก {{deviceName}} ของคุณมาพร้อมกับรหัส PIN หรือ Recovery Phrase แสดงว่าอุปกรณ์ไม่ปลอดภัยสำหรับการใช้งาน และคุณควรติดต่อ Ledger Support",
+        "warning" : "ใช้เฉพาะ Recovery Phrase ที่อุปกรณ์ของคุณแสดงเมื่อติดตั้งอุปกรณ์เท่านั้น",
         "continueCTA" : "ดำเนินการต่อ",
         "contactSupportCTA" : "ติดต่อฝ่ายสนับสนุน"
       }
@@ -2110,7 +2122,7 @@
     }
   },
   "earlySecurityCheck" : {
-    "title" : "การตรวจสอบ Genuine Check และการอัปเดตระบบปฏิบัติการ",
+    "title" : "Genuine Check และตรวจสอบการอัปเดต OS",
     "idle" : {
       "learnMore" : "เรียนรู้เพิ่มเติมเกี่ยวกับ Genuine Check",
       "checkCta" : "ตรวจสอบ {{ productName }}"
@@ -2120,7 +2132,7 @@
     },
     "earlySecurityCheckMandatoryDrawer" : {
       "title" : "ยกเลิก Genuine Check และการอัปเดตระบบปฏิบัติการหรือไม่?",
-      "description" : "Genuine Check นี้จำเป็นสำหรับการดำเนินการติดตั้ง {{productName}} ของคุณต่อไปโดยใช้แอป Ledger Live",
+      "description" : "Genuine Check นี้จำเป็นสำหรับการดำเนินการติดตั้ง {{productName}} ของคุณต่อโดยใช้แอป Ledger Live",
       "resumeCta" : "เริ่มต้นการตรวจสอบใหม่",
       "cancelCta" : "ยกเลิกการตรวจสอบ"
     },
@@ -2131,7 +2143,7 @@
       "cancelCta" : "ยกเลิกการติดตั้ง",
       "notFoundEntity" : {
         "title" : "เริ่ม Genuine Check อีกครั้ง",
-        "description" : "คุณจะต้องปิดใช้งานการตั้งค่า \"ผู้ให้บริการ My Ledger ของฉัน\" ก่อน หากต้องการปิดการใช้งาน ให้เปิด \"การตั้งค่า\" ของ Ledger Live โดยเลือก \"คุณสมบัติเชิงปฏิบัติการ\" แล้วกดปิด \"ผู้ให้บริการ Ledger ของฉัน\"",
+        "description" : "คุณจะต้องปิดใช้งานการตั้งค่า \"ผู้ให้บริการ My Ledger\" ก่อน หากต้องการปิดการใช้งาน ให้เปิด \"การตั้งค่า\" ของ Ledger Live โดยเลือก \"Experimental Features\" แล้วกดปิด \"ผู้ให้บริการ My Ledger\"",
         "settingsCta" : "ไปที่การตั้งค่า"
       }
     },
@@ -2159,22 +2171,22 @@
       },
       "refused" : {
         "title" : "Genuine Check ถูกปฏิเสธ",
-        "description" : "Genuine Check นี้จำเป็นสำหรับการดำเนินการตั้งค่า {{productName}} ของคุณต่อไปโดยใช้แอป Ledger Live",
-        "cta" : "กลับมา Check ต่อ"
+        "description" : "Genuine Check นี้จำเป็นสำหรับการดำเนินการตั้งค่า {{productName}} ของคุณต่อโดยใช้แอป Ledger Live",
+        "cta" : "เริ่มต้นการตรวจสอบใหม่"
       },
       "error" : {
         "title" : "Genuine Check",
-        "description" : "Genuine Check ช่วยให้แน่ใจว่า {{productName}} ของคุณเป็น Ledger อย่างเป็นทางการ"
+        "description" : "Genuine Check ช่วยให้แน่ใจว่า {{productName}} ของคุณเป็นเครื่องแท้ของ Ledger"
       }
     },
     "firmwareUpdateCheckStep" : {
       "active" : {
-        "title" : "การตรวจสอบการอัปเดตระบบปฏิบัติการ",
+        "title" : "ตรวจสอบการอัปเดต OS",
         "description" : "ซึ่งเป็นการตรวจสอบว่าระบบปฏิบัติการ {{productName}} ของคุณเป็นปัจจุบันหรือไม่ "
       },
       "completed" : {
         "noUpdateAvailable" : {
-          "title" : "{{productName}} OS เป็นปัจจุบันแล้ว"
+          "title" : "{{productName}} OS ได้รับการอัปเดตล่าสุดแล้ว"
         }
       },
       "error" : {
@@ -2182,22 +2194,22 @@
         "skipCta" : "ข้ามการอัปเดต"
       },
       "refused" : {
-        "title" : "เวอร์ชันของระบบปฏิบัติการ {{firmwareVersion}} พร้อมใช้งานแล้ว",
+        "title" : "OS เวอร์ชัน {{firmwareVersion}} พร้อมใช้งานแล้ว",
         "description" : "เราขอแนะนำให้ทำการอัปเดตนี้เพื่อรับประโยชน์จากความปลอดภัยและฟังก์ชันการทำงานล่าสุด",
         "updateCta" : "อัปเดต {{ productName }}",
         "skipCta" : "ข้ามการอัปเดต"
       },
       "inactive" : {
-        "title" : "การตรวจสอบการอัปเดตระบบปฏิบัติการ",
+        "title" : "ตรวจสอบการอัปเดต OS",
         "description" : "ซึ่งเป็นการตรวจสอบว่าระบบปฏิบัติการ {{productName}} ของคุณเป็นปัจจุบันหรือไม่ "
       }
     },
     "firmwareUpdateAvailableDrawer" : {
-      "title" : "การอัปเดตระบบปฏิบัติการ {{productName}} พร้อมใช้งานแล้ว",
+      "title" : "มีการอัปเดต {{productName}} OS ที่พร้อมใช้งาน",
       "description" : "อัปเดต {{productName}} ของคุณเพื่อรับประโยชน์จากความปลอดภัยและฟังก์ชันการทำงานล่าสุด",
       "descriptionVersion" : "เวอร์ชัน {{firmwareVersion}}",
       "updateCta" : "อัปเดตตอนนี้",
-      "seeWhatsInUpdateCta" : "ดูว่ามีอะไรบ้างในอัปเดตนี้"
+      "seeWhatsInUpdateCta" : "ดูว่ามีอะไรบ้างในการอัปเดตนี้"
     }
   },
   "syncOnboarding" : {
@@ -2206,11 +2218,11 @@
     "deviceSelection" : {
       "title" : "เลือก Ledger ที่คุณต้องการติดตั้ง:",
       "brand" : "Ledger",
-      "setupTime" : "{{time}} น.",
-      "notCompatible" : "ไม่มีความเข้ากันได้กับ iPhone",
+      "setupTime" : "{{time}} นาที",
+      "notCompatible" : "ไม่สามารถเข้ากันได้กับ iPhone",
       "modal" : {
         "title" : "Ledger Nano S และ Ledger Nano S Plus ไม่ได้รับการรองรับบนอุปกรณ์ iOS",
-        "desc" : "ใช้ Ledger Nano S หรือ Ledger Nano S Plus ของคุณกับ Ledger Live บนคอมพิวเตอร์ของคุณ"
+        "desc" : "ใช้ Ledger Nano S หรือ Ledger Nano S Plus กับ Ledger Live บนคอมพิวเตอร์ของคุณ"
       }
     },
     "scanning" : {
@@ -2252,10 +2264,10 @@
       "title" : "ต้องการความช่วยเหลือเกี่ยวกับคู่มือการติดตั้งหรือไม่?",
       "description" : "Lorem Elsass ipsum aliquam bissame Ober schae ffolsheim gehts messti de Bischheim tellus blottkopf, dui sed libero. hopla libero, placerat leo eget Gal.",
       "docCta" : "ดูคำถามที่พบบ่อยของเรา",
-      "supportCta" : "พูดคุยกับมนุษย์"
+      "supportCta" : "พูดคุยกับเจ้าหน้าที่"
     },
     "earlySecurityCheckCompletedStep" : {
-      "title" : "{{productName}} เป็นของแท้",
+      "title" : "{{productName}} เป็นอุปกรณ์ของแท้",
       "subtitle" : "ปลอดภัยที่จะใช้ {{productName}} นี้ คุณสามารถดำเนินการตั้งค่าได้",
       "description" : "แตะที่ {{productName}} เพื่อเริ่มการติดตั้ง"
     },
@@ -2279,7 +2291,7 @@
       },
       "selectionRestore" : {
         "title" : "กู้คืน",
-        "desc" : "ช่วยให้คุณสามารถกู้คืนการเข้าถึงสินทรัพย์ที่มีอยู่ด้วย Secret Recovery Rhrase ของคุณหรือโดยใช้ Ledger Recover"
+        "desc" : "ช่วยให้คุณสามารถกู้คืนการเข้าถึงสินทรัพย์ที่มีอยู่ด้วย Secret Recovery Phrase ของคุณหรือโดยใช้ Ledger Recover"
       },
       "selectionContinueOnDevice" : "เลือกตัวเลือกที่เกี่ยวข้องกับ {{productName}} ของคุณ",
       "newSeedDescription" : "ต้องการเรียนรู้เพิ่มเติมเกี่ยวกับ Secret Recovery Phrase หรือเปล่า? ดูวิดีโอเหล่านี้สิ:",
@@ -2293,12 +2305,12 @@
     },
     "backup" : {
       "title" : "การสำรองข้อมูล Secret Recovery Phrase ของคุณ",
-      "description" : "ด้วยการสำรองข้อมูลที่ได้รับการเข้ารหัสแบบดิจิทัล กู้คืนการเข้าถึง Wallet ของคุณโดยไม่ต้องใช้ Secret Recovery Phrase\n\nเลือกว่าคุณต้องการสำรองข้อมูลแบบดิจิทัลหรือไม่",
+      "description" : "ด้วยการสำรองข้อมูลที่ได้รับการเข้ารหัสแบบดิจิทัล กู้คืนการเข้าถึง Wallet ของคุณโดยไม่ต้องใช้ Secret Recovery Phrase\n\nเลือกว่าคุณต้องการสำรองข้อมูลแบบดิจิทัลหรือไม่:",
       "backupChoice" : {
         "title" : "ฉันต้องการสำรองข้อมูลแบบดิจิทัล",
         "titleSelected" : "Ledger Recover",
         "tag" : "ยอดนิยม",
-        "description" : "สมัครใช้งาน Ledger Recover ในราคา $9.99 ต่อเดือน เริ่มได้ฟรี ยกเลิกได้ทุกเมื่อ!",
+        "description" : "สมัครใช้งาน Ledger Recover ในราคา 9.99 USD ต่อเดือน เริ่มได้ฟรี ยกเลิกได้ทุกเมื่อ!",
         "tryCta" : "ลองใช้งานฟรี",
         "redeemCodeCta" : "ฉันมี Redeem Code",
         "howItWorksCta" : "ฉันต้องการข้อมูลเพิ่มเติม"
@@ -2358,7 +2370,7 @@
         "description" : "คุณสามารถซื้อคริปโตจากพาร์ทเนอร์ของเราหรือติดตั้ง Wallet ของคุณได้"
       },
       "title" : "เริ่มต้นด้วยการเพิ่มสินทรัพย์ที่คุณชื่นชอบลงใน Wallet ของคุณ",
-      "subtitle" : "Ledger รองรับเหรียญและโทเค็นมากกว่า 6,000 รายการ",
+      "subtitle" : "Ledger รองรับเหรียญและโทเคนมากกว่า 6,000 รายการ",
       "addAccount" : "หรือเพิ่มบัญชี"
     },
     "noOpState" : {
@@ -2372,7 +2384,7 @@
       "title" : "แนะนำ"
     },
     "topGainers" : {
-      "title" : "Market gainers (24H)",
+      "title" : "Market Gainers (24 ชม.)",
       "seeMarket" : "ดูทั้งหมด"
     },
     "walletBalance" : "ยอดคงเหลือในวอลเล็ต",
@@ -2404,11 +2416,11 @@
       },
       "verifyIdentity" : {
         "title" : "การแจ้งเตือน: สมัครใช้งาน Ledger Recover ให้แล้วเสร็จ",
-        "description" : "สินทรัพย์ปลอดภัยในอีกแค่ขั้นตอนเดียว"
+        "description" : "สินทรัพย์จะปลอดภัยในอีกแค่ขั้นตอนเดียว"
       },
       "connectDevice" : {
         "title" : "การแจ้งเตือน: สมัครใช้งาน Ledger Recover ให้แล้วเสร็จ",
-        "description" : "เป็นขั้นตอนสุดท้ายเพื่อให้แน่ใจถึงการกู้คืนการเข้าถึง Wallet"
+        "description" : "เป็นขั้นตอนสุดท้ายเพื่อให้แน่ใจว่าการกู้คืนการเข้าถึง Wallet สำเร็จ"
       }
     }
   },
@@ -2499,7 +2511,7 @@
       "OPT_OUT" : "เลือกไม่เข้าร่วม",
       "CLOSE_ACCOUNT" : "ปิดบัญชี",
       "APPROVE" : "เปิดใช้งานแล้ว",
-      "BOND" : "ผูกมัดสินทรัพย์",
+      "BOND" : "ผูกมัด",
       "UNBOND" : "ยกเลิกการผูกมัดสินทรัพย์",
       "REWARD_PAYOUT" : "Reward",
       "SLASH" : "Slash",
@@ -2561,13 +2573,13 @@
       "redelegatedFrom" : "Redelegate จาก",
       "redelegatedTo" : "Redelegate ไปยัง",
       "redelegatedAmount" : "จำนวนที่ Redelegate",
-      "undelegated" : "Undelegate เรียบร้อยแล้ว ({{amount}})",
+      "undelegated" : "Undelegate ({{amount}}) เรียบร้อยแล้ว",
       "undelegatedFrom" : "Undelegate จาก",
       "undelegatedAmount" : "จำนวนที่ Undelegate",
       "withdrawnFrom" : "ถอนจาก",
       "withdrawnAmount" : "จำนวนที่ถอน",
       "rewardFrom" : "Reward จาก",
-      "rewardAmount" : "จำนวนที่ได้เก็บ",
+      "rewardAmount" : "จำนวนที่สะสมได้",
       "memo" : "Memo",
       "assetId" : "ID สินทรัพย์",
       "rewards" : "Reward ที่ได้รับ",
@@ -2576,17 +2588,17 @@
       "withdrawUnbondedAmount" : "ถอนจำนวนที่ไม่ได้ผูกมัด",
       "palletMethod" : "วิธีการ",
       "transferAmount" : "จำนวนที่โอน",
-      "validatorsCount" : "ผู้ตรวจสอบ ({{number}})",
+      "validatorsCount" : "({{number}}) ผู้ตรวจสอบ",
       "storageLimit" : "พื้นที่เก็บสูงสุด",
       "gasLimit" : "จำนวน Gas สูงสุดที่ยอมจ่าย",
       "id" : "Id",
       "autoClaimedRewards" : "Reward ที่ขอรับอัตโนมัติ",
-      "stakedAmount" : "จำนวนที่ Stake"
+      "stakedAmount" : "จำนวนที่ Stake แล้ว"
     },
     "multipleAddresses" : "ทำไมต้องหลาย Address?",
-    "tokenName" : "ชื่อโทเค็น",
-    "collectionContract" : "สัญญาโทเค็น",
-    "tokenId" : "ID (NFT) ของโทเค็น",
+    "tokenName" : "ชื่อโทเคน",
+    "collectionContract" : "สัญญาโทเคน",
+    "tokenId" : "ID ของโทเคน (NFT)",
     "quantity" : "ปริมาณ"
   },
   "operationList" : {
@@ -2596,8 +2608,8 @@
   "selectableAccountsList" : {
     "deselectAll" : "ยกเลิกการเลือกทั้งหมด",
     "selectAll" : "เลือกทั้งหมด",
-    "tokenCount" : "+1 โทเค็น",
-    "tokenCount_plural" : "+{{count}} โทเค็น",
+    "tokenCount" : "+1 โทเคน",
+    "tokenCount_plural" : "+{{count}} โทเคน",
     "subaccountCount" : "+1 บัญชีย่อย",
     "subaccountCount_plural" : "+{{count}} บัญชีย่อย"
   },
@@ -2609,13 +2621,13 @@
         "title" : "{{family}} Integration",
         "subTitle" : "ดำเนินการ {{family}} Integration แล้วโดยทีม {{team}}",
         "description" : "Ledger Live เป็นแพลตฟอร์ม Open-Source",
-        "description2" : "นักพัฒนาจากทุกที่ในโลกสามารถผสานกับ Ledger Live ของเราได้",
+        "description2" : "นักพัฒนาซอฟต์แวร์จากทุกที่ในโลกสามารถเชื่อมต่อกับ Ledger Live ของเราได้",
         "description3" : "Integration นี้ดำเนินการโดย {{team}} ด้วยความร่วมมือกับ Ledger",
         "description3Link" : "การดำเนินการนี้เป็นความร่วมมือระหว่าง <1><0>{{team}}</0></1> และ Ledger"
       }
     },
     "willBedeprecatedBanner" : {
-      "title" : "เพื่อปรับปรุงประสิทธิภาพ จะไม่มีการรองรับ {{currencyName}} ใน Ledger Live ตั้งแต่วันที่ {{deprecatedDate}} อย่างไรก็ตาม สกุลเงินจะยังคงได้รับการสนับสนุนบน Hardware Wallet ของ Ledger โปรดติดต่อฝ่ายสนับสนุนลูกค้าของ Ledger หากคุณต้องการความช่วยเหลือเกี่ยวกับเรื่องนี้",
+      "title" : "เพื่อปรับปรุงประสิทธิภาพ จะไม่มีการรองรับ {{currencyName}} ใน Ledger Live ตั้งแต่วันที่ {{deprecatedDate}} อย่างไรก็ตาม สกุลเงินจะยังคงได้รับการสนับสนุนบน Hardware Wallet ของ Ledger โปรดติดต่อฝ่ายสนับสนุนลูกค้าของ Ledger หากคุณต้องการความช่วยเหลือในเรื่องนี้",
       "contactSupport" : "ติดต่อฝ่ายสนับสนุน"
     },
     "tokens" : {
@@ -2651,7 +2663,7 @@
     "receive" : "รับ",
     "buy" : "ซื้อ",
     "walletconnect" : "WalletConnect",
-    "stake" : "สเตก",
+    "stake" : "Stake",
     "yield" : "ผลตอบแทน",
     "sell" : "ขาย",
     "swap" : "Swap",
@@ -2661,7 +2673,7 @@
       "title" : "ยังไม่มีสินทรัพย์คริปโตหรือไม่",
       "desc" : "ตรวจสอบให้แน่ใจว่าได้ติดตั้งแอป <1><0>{{managerAppName}}</0></1> แล้วและเริ่มรับ",
       "descWithBuy" : "ตรวจสอบแอป <1><0>{{managerAppName}}</0></1> ที่ติดตั้งเพื่อให้คุณสามารถซื้อหรือรับ <3><0>{{currencyTicker}}</0></3>",
-      "descToken" : "ตรวจสอบให้แน่ใจว่าได้ติดตั้งแแอป <1><0>{{managerAppName}}</0></1> แล้วและเริ่มรับ <3><0>{{currencyTicker}}</0></3> และโทเค็น <5><0>{{tokenType}}</0> </5>",
+      "descToken" : "ตรวจสอบให้แน่ใจว่าได้ติดตั้งแแอป <1><0>{{managerAppName}}</0></1> แล้วและเริ่มรับ <3><0>{{currencyTicker}}</0></3> และโทเคน <5><0>{{tokenType}}</0> </5>",
       "buttons" : {
         "receiveFunds" : "รับ",
         "buyCrypto" : "ซื้อ"
@@ -2671,7 +2683,7 @@
     "settings" : {
       "header" : "การตั้งค่าบัญชี",
       "title" : "แก้ไขบัญชี",
-      "advancedLogs" : "บันทึกขั้นสูง",
+      "advancedLogs" : "Log ขั้นสูง",
       "accountName" : {
         "title" : "ชื่อบัญชี",
         "desc" : "คำอธิบายบัญชี",
@@ -2739,15 +2751,15 @@
     "delegatedAssets" : "สินทรัพย์ที่ Delegate",
     "undelegating" : "กำลัง Undelegate",
     "delegation" : {
-      "sectionLabel" : "การ Delegation",
-      "addDelegation" : "เพิ่มการ Delegation",
+      "sectionLabel" : "การ Delegate",
+      "addDelegation" : "เพิ่มการ Delegate",
       "info" : {
         "title" : "รับ Reward",
         "cta" : "รับ Reward"
       }
     },
     "claimReward" : {
-      "sectionLabel" : "Rewards",
+      "sectionLabel" : "Reward",
       "cta" : "ขอรับ"
     },
     "undelegation" : {
@@ -2772,14 +2784,14 @@
     },
     "earn" : "Earn",
     "quickActions" : "ดำเนินการอย่างรวดเร็ว",
-    "referralProgram" : "แนะนำเพื่อนและรับ Bitcoin มูลค่า $20",
+    "referralProgram" : "แนะนำเพื่อนและรับ Bitcoin มูลค่า 20 USD",
     "banner" : {
       "redelegation" : {
-        "description" : "ในกรณีที่คุณไม่ทราบ ผู้ตรวจสอบ Ledger Stake ด้วยค่าคอมมิชชันที่ต่ำกว่าผู้ตรวจสอบที่คุณกำลังใช้อยู่",
-        "cta" : "มอบหมายใหม่"
+        "description" : "ในกรณีที่คุณไม่ทราบ ผู้ตรวจสอบ Ledger สามารถ Stake ด้วยค่าคอมมิชชันที่ต่ำกว่าผู้ตรวจสอบที่คุณกำลังใช้อยู่",
+        "cta" : "Redelegate"
       },
       "delegation" : {
-        "description" : "ในกรณีที่คุณไม่ทราบ ผู้ตรวจสอบ Ledger จะ Stake {{asset}} ของคุณด้วยค่าคอมมิชชั่นที่ต่ำ",
+        "description" : "ในกรณีที่คุณไม่ทราบ ผู้ตรวจสอบ Ledger จะ Stake {{asset}} ของคุณด้วยค่าคอมมิชชั่นที่ไม่แพง",
         "cta" : "Stake ตอนนี้"
       }
     }
@@ -2823,18 +2835,18 @@
     "noResultsDesc" : "โปรดตรวจสอบการสะกดและลองอีกครั้ง",
     "readOnly" : {
       "moreCrypto" : {
-        "title" : "+ อื่น ๆ อีกกว่า 6000 รายการ",
-        "subtitle" : "Ledger รองรับเหรียญและโทเค็นมากกว่า 6000 รายการ"
+        "title" : "+ อื่น ๆ อีกกว่า 6,000 รายการ",
+        "subtitle" : "Ledger รองรับเหรียญและโทเคนมากกว่า 6,000 รายการ"
       }
     }
   },
   "distribution" : {
     "header" : "การจัดสรรสินทรัพย์",
-    "list" : "การจัดสรรสินทรัพย์ ({{count}})",
+    "list" : "การจัดสรร ({{count}}) สินทรัพย์",
     "assets" : "สินทรัพย์",
     "assets_plural" : "สินทรัพย์",
     "total" : "ยอดคงเหลือทั้งหมด:",
-    "listAccount" : "การจัดสรรสินทรัพย์ ({{count}})",
+    "listAccount" : "การจัดสรร ({{count}}) สินทรัพย์",
     "title" : "สินทรัพย์",
     "moreAssets" : "เพิ่มอีก"
   },
@@ -2862,7 +2874,7 @@
     },
     "github" : {
       "title" : "Github",
-      "desc" : "ตรวจสอบรหัสของเรา"
+      "desc" : "ตรวจสอบโค้ดของเรา"
     },
     "status" : {
       "title" : "สถานะ Ledger",
@@ -2876,7 +2888,7 @@
       "title" : "ทั่วไป",
       "desc" : "กำหนดการตั้งค่า Ledger Live ทั่วไป",
       "carousel" : "คำแนะนำ",
-      "carouselDesc" : "เราจะแสดงการ์ดพร้อมีเคล็ดลับส่วนบุคคลและข้อเสนอพิเศษล่าสุดของเราสำหรับคุณโดยเฉพาะ",
+      "carouselDesc" : "เราจะแสดงการ์ดพร้อมมีเคล็ดลับส่วนบุคคลและข้อเสนอพิเศษล่าสุดของเราสำหรับคุณโดยเฉพาะ",
       "language" : "ภาษาที่แสดง",
       "languageDesc" : "ตั้งค่าภาษาที่แสดงใน Ledger Live",
       "dateFormat" : "รูปแบบวันที่",
@@ -2885,17 +2897,17 @@
       "walletSyncDesc" : "ซิงค์บัญชีคริปโต Ledger Live ของคุณระหว่างโทรศัพท์และคอมพิวเตอร์เครื่องอื่น ๆ",
       "region" : "ภูมิภาค",
       "regionDesc" : "เลือกภูมิภาคของคุณเพื่ออัปเดตรูปแบบของวันที่ เวลา และสกุลเงิน",
-      "password" : "Lock แอป",
-      "passwordDesc" : "ตั้งรหัสผ่านเพื่อ Lock แอป Ledger Live",
+      "password" : "ล็อกแอป",
+      "passwordDesc" : "ตั้งรหัสผ่านเพื่อล็อกแอป Ledger Live",
       "passwordDescBioCompat" : "ตั้งรหัสผ่านหรือ {{biometricsType}} เพื่อล็อกแอป Ledger Live",
       "counterValue" : "สกุลเงินที่ต้องการ",
       "theme" : "ธีม",
       "themeDesc" : "ตั้งค่าธีม UI ของแอป",
       "themes" : {
         "system" : "ระบบ",
-        "dark" : "มืด",
-        "light" : "อ่อน",
-        "dusk" : "สลัว"
+        "dark" : "โหมดกลางคืน",
+        "light" : "โหมดกลางวัน",
+        "dusk" : "Dusk"
       },
       "counterValueDesc" : "เลือกสกุลเงินสำหรับยอดคงเหลือและการดำเนินงาน",
       "exchange" : "ให้คะแนนผู้ให้บริการ",
@@ -2903,16 +2915,16 @@
       "stock" : "ตัวบ่งชี้ตลาดประจำภูมิภาค",
       "stockDesc" : "เลือกฝั่งตะวันตกเพื่อแสดงการเพิ่มขึ้นของตลาดเป็นสีเขียว หรือฝั่งตะวันออกเพื่อแสดงเป็นสีแดง",
       "reportErrors" : "การรายงานบั๊ก",
-      "reportErrorsDesc" : "ส่งรายงานเพื่อช่วย Ledger ปรับปรุงผลิตภัณฑ์โดยอัตโนมัติ",
+      "reportErrorsDesc" : "ส่งรายงานบั๊กเพื่อช่วย Ledger ปรับปรุงผลิตภัณฑ์โดยอัตโนมัติ",
       "developerMode" : "โหมดนักพัฒนา",
       "developerModeDesc" : "แสดงแอปของนักพัฒนาใน My Ledger และเปิดใช้งานแอป Testnet",
       "analytics" : "การวิเคราะห์",
-      "analyticsDesc" : "เปิดใช้งาน Ledger เพื่อรวบรวมข้อมูลการใช้งานแอปเพื่อช่วยวัดประสิทธิภาพของ Ledger Live และปรับปรุงทั้งแอปและประสบการณ์ของคุณ",
-      "mevProtection" : "การปกป้อง MEV",
+      "analyticsDesc" : "เปิดให้ Ledger รวบรวมข้อมูลการใช้งานแอปเพื่อวัดประสิทธิภาพของ Ledger Live และปรับปรุงการใช้งานแอปและประสบการณ์ของคุณ",
+      "mevProtection" : "MEV Protection",
       "mevProtectionDesc" : "Enable MEV Protection for more reliable transactions on Ethereum.",
       "mevProtectionLearnMore" : "Privacy notice",
       "personalizedRecommendations" : "ประสบการณ์ที่เป็นส่วนตัว",
-      "personalizedRecommendationsDesc" : "เปิดใช้งาน Ledger เพื่อรวบรวมข้อมูลการใช้งานแอปเพื่อให้คำแนะนำและเนื้อหาส่วนบุคคลที่ตรงกับความต้องการของคุณ และเพื่อช่วยวัดประสิทธิภาพของแคมเปญการตลาดของเรา",
+      "personalizedRecommendationsDesc" : "เปิดให้ Ledger รวบรวมข้อมูลการใช้งานแอปเพื่อให้คำแนะนำและเนื้อหาที่ตรงกับความสนใจของคุณ และช่วยวัดประสิทธิภาพของแคมเปญการตลาดของเรา",
       "analyticsModal" : {
         "title" : "แชร์การวิเคราะห์",
         "desc" : "เปิดใช้งานการวิเคราะห์เพื่อช่วย Ledger ปรับปรุงประสบการณ์สำหรับผู้ใช้",
@@ -2921,7 +2933,7 @@
         "bullet2" : "เปลี่ยนเส้นทางไปยังหน้าเว็บ",
         "bullet3" : "การดำเนินการ: ส่ง, รับ, ล็อก ฯลฯ",
         "bullet4" : "เลื่อนไปยังท้ายหน้า",
-        "bullet5" : "การติดตั้ง (ถอนการติดตั้ง) และเวอร์ชันของแอป",
+        "bullet5" : "การติดตั้งหรือถอนการติดตั้ง และเวอร์ชันของแอป",
         "bullet6" : "จำนวนบัญชี สกุลเงิน และการดำเนินงาน",
         "bullet7" : "ระยะเวลาเซสชันโดยรวมและหน้า",
         "bullet8" : "ประเภทและเฟิร์มแวร์ของอุปกรณ์ Ledger"
@@ -2931,13 +2943,13 @@
       "technicalDataModal" : {
         "title" : "ข้อมูลทางเทคนิค",
         "desc" : "Ledger จะรวบรวมข้อมูลทางเทคนิคที่ไม่ระบุชื่อโดยอัตโนมัติเพื่อปรับปรุงประสบการณ์ผู้ใช้",
-        "bullet1" : "ID แอปพลิเคชันที่ไม่ซ้ำกันแบบไม่สามารถระบุตัวตน",
-        "bullet2" : "เวอร์ชัน Ledger Live, ภูมิภาคของระบบปฏิบัติการ, ภาษาและภูมิภาค"
+        "bullet1" : "รหัสแอปพลิเคชันเฉพาะที่ไม่ระบุตัวตน (Anonymous unique application ID)",
+        "bullet2" : "เวอร์ชัน Ledger Live, ภูมิภาคของ OS, ภาษาและภูมิภาค"
       },
-      "hideEmptyTokenAccounts" : "ซ่อนบัญชีโทเค็นที่ว่างเปล่า",
-      "hideEmptyTokenAccountsDesc" : "จะมีการซ่อนบัญชีโทเค็นที่ว่างเปล่าทั้งหมดในหน้าสินทรัพย์",
-      "filterTokenOperationsZeroAmount" : "ซ่อนธุรกรรมโทเค็นเมื่อค่าเป็น 0",
-      "filterTokenOperationsZeroAmountDesc" : "การซ่อนธุรกรรมโทเค็นที่ไม่มีค่าสามารถป้องกันการโจมตีด้วยการปลอมแปลงที่อยู่ที่อาจเกิดขึ้น บน Eth, Polygon, BSC, Tron ได้...",
+      "hideEmptyTokenAccounts" : "ซ่อนบัญชีโทเคนที่ว่างเปล่า",
+      "hideEmptyTokenAccountsDesc" : "จะมีการซ่อนบัญชีโทเคนที่ว่างเปล่าทั้งหมดในหน้าสินทรัพย์",
+      "filterTokenOperationsZeroAmount" : "ซ่อนธุรกรรมโทเคนเมื่อค่าเป็น 0",
+      "filterTokenOperationsZeroAmountDesc" : "การซ่อนธุรกรรมโทเคนที่ไม่มีค่าสามารถป้องกันการโจมตีด้วยการปลอมแปลงที่อยู่ที่อาจเกิดขึ้น บน ETH, Polygon, BSC, Tron ได้...",
       "DateFormatModal" : {
         "title" : "รูปแบบวันที่",
         "default" : "ค่าเริ่มต้น",
@@ -2958,14 +2970,14 @@
       "header" : "บัญชี",
       "title" : "บัญชี",
       "desc" : "จัดการการแสดงสินทรัพย์ในแอป",
-      "hideTokenCTA" : "ซ่อนโทเค็น",
+      "hideTokenCTA" : "ซ่อนโทเคน",
       "showContractCTA" : "แสดงสัญญา",
-      "blacklistedTokens" : "รายชื่อโทเค็นที่ซ่อนอยู่",
-      "blacklistedTokensDesc" : "คุณสามารถซ่อนโทเค็นได้โดยไปที่รายการบัญชี จากนั้นกดค้างที่โทเค็นและเลือก 'ซ่อนโทเค็น'",
+      "blacklistedTokens" : "รายชื่อโทเคนที่ซ่อนอยู่",
+      "blacklistedTokensDesc" : "คุณสามารถซ่อนโทเคนได้โดยไปที่รายการบัญชี จากนั้นกดค้างที่โทเคนและเลือก 'ซ่อนโทเคน'",
       "blacklistedTokensModal" : {
-        "title" : "ซ่อนโทเค็น",
+        "title" : "ซ่อนโทเคน",
         "desc" : "การดำเนินการนี้จะซ่อนบัญชี <1><0>{tokenName}</0></1> ทั้งหมด โดยคุณสามารถแสดงบัญชีอีกครั้งได้โดยใช้ <3>การตั้งค่า > บัญชี</3>",
-        "confirm" : "ซ่อนโทเค็น"
+        "confirm" : "ซ่อนโทเคน"
       },
       "hideNFTCollectionCTA" : "ซ่อนคอลเลกชัน",
       "hideNFTCollectionModal" : {
@@ -3031,7 +3043,7 @@
         "title" : "การแจ้งเตือนราคา",
         "desc" : "ตั้งค่าการแจ้งราคาสำหรับเหรียญที่คุณชื่นชอบเพื่อให้คุณไม่พลาดกับทุกการเคลื่อนไหวในตลาด"
       },
-      "disclaimer" : "ข้อมูลและความเป็นส่วนตัวของคุณเป็นสิ่งสำคัญสำหรับเราที่ Ledger เราจะไม่เปิดเผยข้อมูลที่เก็บรวบรวมแก่พาร์ทเนอร์ของเราเป็นอันขาด"
+      "disclaimer" : "Ledger ให้ความสำคัญกับข้อมูลและความเป็นส่วนตัวของคุณอย่างยิ่ง และไม่มีนโยบายเปิดเผยข้อมูลแก่พาร์ทเนอร์"
     },
     "help" : {
       "title" : "ช่วยเหลือ",
@@ -3044,22 +3056,22 @@
       "clearCache" : "ล้างแคช",
       "clearCacheDesc" : "จะมีการสแกนธุรกรรมบนเครือข่ายและจะมีการคำนวณบัญชีของคุณใหม่",
       "clearCacheModal" : "คุณแน่ใจหรือไม่?",
-      "clearCacheModalDesc" : "การสแกนธุรกรรมบนเครือข่ายที่สดใหม่และสมบูรณ์จะเสร็จสิ้น ประวัติบัญชีจะถูกสร้างขึ้นใหม่และยอดคงเหลือจะถูกคำนวณใหม่",
+      "clearCacheModalDesc" : "การสแกนธุรกรรมบนเครือข่ายอีกรอบอย่างครบถ้วนจะถูกดำเนินการ ประวัติบัญชีจะถูกสร้างขึ้นใหม่และยอดคงเหลือจะถูกคำนวณใหม่",
       "clearCacheButton" : "ล้าง",
       "exportLogs" : "บันทึก Log",
-      "exportLogsDesc" : "อาจต้องเซฟบันทึกของ Ledger Live เพื่อจุดประสงค์ในการแก้ไขปัญหา",
+      "exportLogsDesc" : "อาจต้องเซฟ Log ของ Ledger Live เพื่อจุดประสงค์ในการแก้ไขปัญหา",
       "hardReset" : "รีเซ็ต Ledger Live",
       "hardResetDesc" : "การดำเนินการนี้ไม่มีผลกระทบต่อสินทรัพย์ของคุณ ลบข้อมูลทั้งหมดใน Ledger Live รวมถึงข้อมูลบัญชี ประวัติธุรกรรม และการตั้งค่า ใช้อุปกรณ์ Ledger เพื่อรีโหลดและจัดการสินทรัพย์คริปโตของคุณบน Ledger Live ที่ว่างเปล่า",
       "repairDevice" : "ซ่อมแซมอุปกรณ์ Ledger ของคุณ",
       "repairDeviceDesc" : "หากคุณประสบปัญหาในการอัปเดตอุปกรณ์ของคุณและไม่สามารถเริ่มการอัปเดตใหม่ได้ คุณสามารถลองทำสิ่งนี้เพื่อซ่อมแซมอุปกรณ์ของคุณ"
     },
     "experimental" : {
-      "title" : "Experimental features",
+      "title" : "Experimental Features",
       "desc" : "ลองใช้ Experimental Features และบอกให้เราทราบว่าคุณคิดเห็นอย่างไร",
-      "disclaimer" : "สิ่งเหล่านี้เป็น Experimental Features ที่เราให้บริการ \"ตามที่เป็น\" สำหรับชุมชนผู้เชี่ยวชาญด้านเทคโนโลยีของเรา โดยอาจมีการเปลี่ยนแปลง ทำลาย หรือนำออกได้ทุกเมื่อ ทั้งนี้การเปิดใช้งานจะถือว่าคุณยินยอมใช้งานตามความเสี่ยงของคุณเอง",
+      "disclaimer" : "สิ่งเหล่านี้เป็น Experimental Features ที่เราให้บริการ \"ตามที่เป็น\" สำหรับกลุ่มคนที่เชี่ยวชาญด้านเทคโนโลยีโดยอาจมีการเปลี่ยนแปลง ทำงานไม่ได้ หรือนำออกได้ทุกเมื่อทั้งนี้การเปิดใช้งานจะถือว่าคุณยินยอมใช้งานตามความเสี่ยงของคุณเอง",
       "provider" : "การตั้งค่าแบบ Experimental “ผู้ให้บริการ My Ledger ({{forcedProvider}})” อาจแสดงระบบปฏิบัติการและแอปที่ยังไม่ได้เปิดตัว ซึ่งอาจนำไปสู่ปัญหาความเข้ากันได้ คุณสามารถปิดใช้งานได้ในการตั้งค่า",
       "providerDevMode" : "การตั้งค่าแบบ Experimental “ผู้ให้บริการ My Ledger ({{forcedProvider}})” และ “โหมดนักพัฒนา” อาจแสดงระบบปฏิบัติการและแอปที่ยังไม่ได้เปิดตัว ซึ่งอาจนำไปสู่ปัญหาความเข้ากันได้ คุณสามารถปิดใช้งานได้ในการตั้งค่า",
-      "devMode" : "การตั้งค่าแบบ Experimental “โหมดนักพัฒนา” อาจแสดงระบบปฏิบัติการและแอปที่ยังไม่ได้เปิดตัว ซึ่งอาจนำไปสู่ปัญหาความเข้ากันได้ คุณสามารถปิดใช้งานได้ในการตั้งค่า",
+      "devMode" : "การตั้งค่าแบบ Experimental ใน “โหมดนักพัฒนา” อาจแสดงระบบปฏิบัติการและแอปที่ยังไม่ได้เปิดตัว ซึ่งอาจนำไปสู่ปัญหาความเข้ากันได้ คุณสามารถปิดใช้งานได้ในการตั้งค่า",
       "providerCTA" : "ไปที่การตั้งค่า",
       "experimentalFeatures" : {
         "experimentalIntegrations" : {
@@ -3075,19 +3087,19 @@
           "description" : "การเปลี่ยนผู้ให้บริการแอปใน My Ledger อาจทำให้ไม่สามารถติดตั้งหรือถอนการติดตั้งแอปบนอุปกรณ์ Ledger ของคุณได้"
         },
         "experimentalExplorers" : {
-          "title" : "Experimental Explorers API",
+          "title" : "API สำหรับ Experimental Explorers",
           "description" : "ทดลองใช้เวอร์ชันที่กำลังจะมาของ Blockchain Explorers ของ Ledger การเปลี่ยนแปลงการตั้งค่านี้อาจส่งผลต่อยอดคงเหลือในบัญชีและการซิงโครไนซ์ รวมถึงคุณสมบัติการส่งด้วย"
         },
         "1559DeactivateGate" : {
           "title" : "ปิดใช้งานเกต Priority Fee ขั้นต่ำสำหรับ EIP1559",
-          "description" : "วิธีนี้เป็นการอนุญาตให้สามารถส่งธุรกรรมได้โดยไม่เสีย Priority Fee ขั้นต่ำใด ๆ ที่คาดไว้ ซึ่งอาจส่งผลให้ธุรกรรมติดอยู่ใน Mempool ถาวร"
+          "description" : "วิธีนี้อนุญาตให้ทำธุรกรรมได้โดยไม่ต้องจ่าย Priority Fee ขั้นต่ำ ซึ่งอาจส่งผลให้ธุรกรรมติดอยู่ใน Mempool ถาวร"
         },
         "1559CustomPriorityLowerGate" : {
-          "title" : "เกณฑ์ Priority Fee ที่กำหนดเอง",
+          "title" : "เกต Priority Fee ที่กำหนดเอง",
           "description" : "ปรับแต่งเปอร์เซ็นต์ของ Priority Fee ขั้นต่ำที่ประมาณที่ให้อนุญาตสำหรับธุรกรรม EIP1559 ขั้นสูง"
         },
         "1559CustomBaseFeeMultiplier" : {
-          "title" : "ตัวคูณที่กำหนดเองสำหรับ Base Fee",
+          "title" : "ตัวคูณที่กำหนดเองสำหรับค่าธรรมเนียมพื้นฐาน",
           "description" : "ปรับแต่งตัวคูณที่ใช้สำหรับค่าธรรมเนียมพื้นฐานที่ประกอบเป็น maxFeePerGas ของธุรกรรม EIP1559"
         },
         "experimentalListAppsV2" : {
@@ -3096,11 +3108,11 @@
         },
         "experimentalSwap" : {
           "title" : "อินเทอร์เฟซ SWAP ใหม่",
-          "description" : "ใช้อินเทอร์เฟซ Swap แบบ Experimental ใหม่"
+          "description" : "ใช้อินเทอร์เฟซใหม่ของการ Swap แบบ Experimental "
         },
         "experimentalEnableNetworkLogs" : {
           "title" : "เปิดใช้งาน Log เครือข่าย",
-          "description" : "เปิดใช้งาน Log เครือข่ายในคอนโซล (Log ข้อผิดพลาดจะเปิดใช้งานอยู่เสมอ)"
+          "description" : "เปิดทำการ Log เครือข่ายในคอนโซล (จะทำการ Log ข้อผิดพลาดอย่างต่อเนื่อง)"
         }
       },
       "developerFeatures" : {
@@ -3127,7 +3139,7 @@
     },
     "developer" : {
       "title" : "นักพัฒนา",
-      "desc" : "ลองใช้คุณสมบัติสำหรับนักพัฒนาและแจ้งให้เราทราบว่าคุณคิดอย่างไร",
+      "desc" : "ลองใช้ฟีเจอร์สำหรับนักพัฒนาและบอกเราว่าคุณคิดอย่างไร",
       "customManifest" : {
         "title" : "โหลด Manifest"
       },
@@ -3141,20 +3153,20 @@
     },
     "debug" : {
       "title" : "Debug",
-      "desc" : "ใช้ด้วยความเสี่ยงของคุณเอง – เครืองมือนักพัฒนา",
+      "desc" : "ใช้งานโดยต้องยอมรับความเสี่ยงเอง – เครืองมือนักพัฒนา",
       "featureFlagsTitle" : "Feature Flags ที่กำหนดไว้ซึ่งใช้ใน Ledger Live",
-      "featureFlagsDesc" : "จะมีการรีเซ็ตค่าที่แทนที่หากมีการเริ่มใช้งานแอปอีกครั้ง จะรับเฉพาะสตริง JSON เท่านั้น",
+      "featureFlagsDesc" : "จะมีการรีเซ็ตค่าที่แทนที่ไปหากมีการเริ่มใช้งานแอปอีกครั้ง จะรับเฉพาะสตริง JSON เท่านั้น",
       "featureFlagsEdit" : "แก้ไข",
       "featureFlagsRestore" : "กู้คืน",
       "featureFlagsRestoreAll" : "กู้คืนค่า Flag ทั้งหมด",
       "featureFlagsTabAll" : "ทั้งหมด",
       "featureFlagsTabGroups" : "กลุ่ม",
-      "firebaseProject" : "โปรเจกต์ Firebase ที่เป็นเป้าหมายของรุ่นการสร้างนี้:",
-      "showBannerDesc" : "แสดงแบนเนอร์เมื่อมีการแทนที่ Flag",
-      "bannerTitle" : "มีการเขียนทับ Flag เฉพาะแห่ง",
+      "firebaseProject" : "โปรเจกต์ Firebase ที่เป็นเป้าหมายของ Build นี้:",
+      "showBannerDesc" : "แสดงแบนเนอร์เมื่อมีการแทนที่ด้วย Flag",
+      "bannerTitle" : "Flags ที่ถูกปรับเปลี่ยนในตัวเครื่อง",
       "features" : {
         "firmwareUpdate" : {
-          "headerTitle" : "แก้ไขข้อบกพร่องในการอัปเดตเฟิร์มแวร์"
+          "headerTitle" : "Debug การอัปเดตระบบปฏิบัติการ"
         }
       }
     }
@@ -3171,8 +3183,8 @@
         "title" : "คุณสมบัตินี้ไม่สามารถใช้งานได้ชั่วคราวเพื่อให้สอดคล้องกับการอัปเดตล่าสุดของ Apple บน App Store คุณยังสามารถเข้าถึง Ledger Live ได้บนเดสก์ท็อป"
       },
       "drawer" : {
-        "title" : "ปิดใช้งานสำหรับ ซื้อ สวอป และขายแล้ว",
-        "description" : "คุณสมบัติเหล่านี้ได้รับการปิดใช้งานไว้ชั่วคราวบน iOS เพื่อให้สอดคล้องกับการอัปเดตล่าสุดของ Apple บน App Store <emphasized>คุณยังสามารถเข้าถึง Ledger Live ได้บนเดสก์ท็อป</emphasized>",
+        "title" : "ปิดใช้งานการซื้อ, Swap, และขายแล้ว",
+        "description" : "ฟีเจอร์เหล่านี้ได้รับการปิดใช้งานไว้ชั่วคราวบน iOS เพื่อให้สอดคล้องกับการอัปเดตล่าสุดของ Apple บน App Store <emphasized>คุณยังสามารถเข้าถึง Ledger Live ได้บนเดสก์ท็อป</emphasized>",
         "checkboxLabel" : "ไม่ต้องเตือนฉันอีก",
         "cta" : "เข้าใจแล้ว",
         "link" : "เรียนรู้เพิ่มเติม"
@@ -3182,37 +3194,37 @@
   "transfer" : {
     "recipient" : {
       "input" : "ป้อน Address",
-      "inputEns" : "ป้อนที่อยู่หรือ ENS"
+      "inputEns" : "ป้อน Address หรือ ENS"
     },
     "memoTag" : {
       "input" : "ป้อน Tag/Memo",
       "title" : "ไม่ใช้ Tag/Memo?",
-      "description" : "เงินทุนของคุณจะสูญหายไปหากคุณไม่เพิ่ม Tag/Memo เมื่อส่งไปยัง Exchange ที่มีตัวกลางหรือวอลเล็ตที่มีผู้รับฝากทรัพย์สิน (Custodial)",
+      "description" : "เงินทุนของคุณจะสูญหายไปหากคุณไม่เพิ่ม Tag/Memo เมื่อส่งไปยัง Exchange ที่มีตัวกลางหรือวอลเล็ตที่มีผู้รับฝากทรัพย์สิน",
       "cta" : "เพิ่ม Tag",
       "ignore" : "ไม่เพิ่ม Tag",
       "learnMore" : "เรียนรู้เพิ่มเติมเกี่ยวกับ Tag/Memo"
     },
     "send" : {
       "title" : "ส่ง",
-      "description" : "ส่งคริปโตไปยังวอลเล็ตอื่น"
+      "description" : "ส่งคริปโตไปยัง Wallet อื่น"
     },
     "fees" : {
       "title" : "แก้ไขค่าธรรมเนียม"
     },
     "receive" : {
       "title" : "รับ",
-      "description" : "รับคริปโตจากวอลเล็ตอื่น",
-      "titleReadOnly" : "ที่อยู่ที่ไม่ได้ตรวจสอบ",
+      "description" : "รับคริปโตจาก Wallet อื่น",
+      "titleReadOnly" : "Address ที่ไม่ได้รับยืนยัน",
       "headerTitle" : "สินทรัพย์คริปโต",
-      "titleDevice" : "เชื่อมต่อุปกรณ์",
-      "verifySkipped" : "ไม่มีการยืนยันเลขบัญชี (Address) รับของคุณบนอุปกรณ์ Ledger โปรดตรวจสอบเลขบัญชี (Address) {{accountType}} ของคุณเพื่อใช้งานอย่างปลอดภัย",
-      "verifyPending" : "โปรดตรวจสอบว่าเลขบัญชี (Address) {{currencyName}} ที่แสดงบนอุปกรณ์ Ledger ของคุณตรงกับที่อยู่ที่แสดงบนโทรศัพท์ของคุณทุกประการ",
+      "titleDevice" : "เชื่อมต่ออุปกรณ์",
+      "verifySkipped" : "Address ในการรับของคุณยังไม่ได้รับการยืนยันบนอุปกรณ์ Ledger ของคุณ โปรดตรวจสอบ Address {{accountType}} ของคุณเพื่อใช้งานอย่างปลอดภัย",
+      "verifyPending" : "โปรดตรวจสอบว่า Address {{currencyName}} ที่แสดงบนอุปกรณ์ Ledger ของคุณตรงกับที่อยู่ที่แสดงบนโทรศัพท์ของคุณทุกประการ",
       "verified" : "ยืนยัน Address แล้ว ตรวจสอบอีกครั้งหากคุณคัดลอกหรือสแกน",
       "verifyAgain" : "ตรวจสอบอีกครั้ง",
       "noAccount" : "ไม่พบบัญชี",
       "address" : "Address สำหรับบัญชี",
-      "copyAddress" : "คัดลอกเลขบัญชี (Address)",
-      "shareAddress" : "แชร์เลขบัญชี (Address)",
+      "copyAddress" : "คัดลอก Address",
+      "shareAddress" : "แชร์ Address",
       "addressCopied" : "คัดลอก Address ในคลิปบอร์ดแล้ว",
       "taprootWarning" : "ตรวจสอบให้แน่ใจว่าผู้ส่งรองรับ Taproot",
       "memoTag" : {
@@ -3251,55 +3263,55 @@
         "addingAccount" : "ไม่พบบัญชี กำลังสร้างบัญชีใหม่สำหรับ {{currencyName}}..."
       },
       "verifyAddress" : {
-        "title" : "ตรวจสอบที่อยู่",
-        "subtitle" : "ตรวจสอบเลขบัญชี (Address) ที่แสดงบนอุปกรณ์ของคุณว่าตรงกับที่เห็นด้านล่างนี้ เมื่อคุณแน่ใจแล้ว คุณสามารถคลิกอนุมัติบนอุปกรณ์ของคุณได้",
+        "title" : "ตรวจสอบ Address",
+        "subtitle" : "ตรวจสอบ Address ที่แสดงบนอุปกรณ์ของคุณว่าตรงกับที่เห็นด้านล่างนี้ เมื่อคุณแน่ใจแล้ว คุณสามารถคลิกอนุมัติบนอุปกรณ์ของคุณได้",
         "cancel" : {
-          "title" : "คุณเพิ่งปฏิเสธเลขบัญชี (Address) นี้",
+          "title" : "คุณเพิ่งปฏิเสธ Address นี้",
           "subtitle" : "หากดำเนินการนี้ผิดพลาด คุณสามารถลองอีกครั้งได้โดยคลิกปุ่มด้านล่าง",
           "info" : "หากคุณแน่ใจว่า Address ไม่ตรงกัน โทรศัพท์ของคุณอาจไม่ปลอดภัย เราขอแนะนำให้คุณ<0>ติดต่อเราโดยเร็วที่สุด</0>"
         }
       },
       "receiveConfirmation" : {
-        "utxoWarning" : "เพื่อเหตุผลด้านความเป็นส่วนตัว จะมีการสร้างเลขบัญชี (Address) ใหม่สำหรับทุกธุรกรรม โดยยังคงสามารถใช้เลขบัญชี (Address) ก่อนหน้านี้ได้",
+        "utxoWarning" : "เพื่อเหตุผลด้านความเป็นส่วนตัว จะมีการสร้าง Address ใหม่สำหรับทุกธุรกรรม โดยยังคงสามารถใช้ Address ก่อนหน้านี้ได้",
         "title" : "รับ {{currencyTicker}}",
         "onCurrencyName" : "บน {{currencyName}}",
         "copyAdress" : "คัดลอก Address",
         "addressCopied" : "คัดลอก Address แล้ว!",
-        "addressVerified" : "ตรวจสอบเลขบัญชี (Address) แล้ว",
-        "verifyAddress" : "ตรวจสอบเลขบัญชี (Address) ของคุณ",
+        "addressVerified" : "ตรวจสอบ Address แล้ว",
+        "verifyAddress" : "ตรวจสอบ Address ของคุณ",
         "adviceVerify" : "เราขอแนะนำให้ยืนยัน Address ของคุณด้วยอุปกรณ์ Ledger เสมอ",
-        "sendWarning" : "ส่งเฉพาะโทเค็นจากเครือข่าย {{network}} การส่งจากเครือข่ายอื่นอาจส่งผลให้สูญเสียโทเค็นของคุณถาวร",
+        "sendWarning" : "ส่งเฉพาะโทเคนจากเครือข่าย {{network}} การส่งจากเครือข่ายอื่นอาจส่งผลให้สูญเสียโทเคนของคุณถาวร",
         "dashStakingWarning" : "โปรดตรวจสอบให้แน่ใจว่าคุณไม่ได้ใช้ Address นี้ในการรับ Reward จากการ Stake",
-        "bannerTitle" : "เรียนรู้วิธีถอนจากการแลกเปลี่ยน?"
+        "bannerTitle" : "เรียนรู้วิธีถอนจาก Exchange?"
       },
       "securityVerify" : {
         "title" : "การตรวจสอบ Address เป็นสิ่งสำคัญสำหรับการรักษาความปลอดภัยของธุรกรรมนี้",
-        "subtitle1" : "ตรวจสอบให้แน่ใจว่าได้เปรียบเทียบเฉพาะเลขบัญชี (Address) ที่วาง (หลังจากที่คุณคัดลอกมาจาก Ledger Live) กับเลขบัญชี (Address) ที่ปรากฏบน Trusted Display ของ Ledger (หน้าจออุปกรณ์ Ledger) เท่านั้น โดยทั้งคู่จะต้องเหมือนกัน",
+        "subtitle1" : "ตรวจสอบให้แน่ใจว่าได้เปรียบเทียบเฉพาะ Address ที่วาง (หลังจากที่คุณคัดลอกมาจาก Ledger Live) กับ Address ที่ปรากฏบน Trusted Display ของ Ledger เท่านั้น (หน้าจอของอุปกรณ์ Ledger) โดยทั้งคู่จะต้องเหมือนกัน",
         "subtitle2" : "การตรวจสอบนี้จะช่วยหยุด Address Replacement Attack",
         "verifyCta" : "ตรวจสอบ Address ของฉัน",
         "dontVerifyCta" : "เปิดเผย Address โดยไม่ต้องตรวจสอบ"
       },
       "securityDontVerify" : {
         "title" : "ไม่ต้องตรวจสอบ?",
-        "subtitle" : "การไม่ตรวจสอบเพิ่มโอกาสในการถูกสแกมเพื่อให้ส่งสินทรัพย์ไปยังเลขบัญชี (Address) ที่ไม่ถูกต้อง",
+        "subtitle" : "การไม่ตรวจสอบเพิ่มโอกาสในการถูกสแกมเพื่อให้ส่งสินทรัพย์ไปยัง Address ที่ไม่ถูกต้อง",
         "doNotRemindAgain" : "ไม่ต้องเตือนฉันอีก",
         "no" : "ตรวจสอบ",
         "yes" : "ไม่ต้องตรวจสอบ"
       },
       "toastMessages" : {
         "accountImported" : "เราได้นำเข้าบัญชี {{currencyTicker}} ให้กับคุณแล้ว ",
-        "why" : "ขอสาเหตุ",
+        "why" : "โปรดบอกสาเหตุให้เราทราบ",
         "addressVerified" : "Address ของคุณได้รับการยืนยันแล้ว"
       },
       "notSynced" : {
-        "text" : "การซิงค์โครไนซ์",
-        "desc" : "อาจใช้เวลาสักครู่หากคุณมีธุรกรรมจำนวนมากหรือหากคุณมีการเชื่อมต่ออินเทอร์เน็ตที่ช้า"
+        "text" : "กำลังซิงโครไนซ์",
+        "desc" : "อาจใช้เวลาสักครู่หากคุณมีธุรกรรมจำนวนมากหรือการเชื่อมต่ออินเทอร์เน็ตช้า"
       },
       "readOnly" : {
         "title" : "ฝาก",
         "text" : "โปรดใช้ความระมัดระวัง",
-        "desc" : "คุณกำลังดูเลขบัญชี (Address) ซึ่งไม่ได้รับการตรวจสอบ ตรวจสอบเลขบัญชี (Address) บนอุปกรณ์ของคุณเพื่อใช้งานอย่างปลอดภัย",
-        "verify" : "เลขบัญชี (Address) {{accountType}} ไม่ได้รับการตรวจสอบ ตรวจสอบเลขบัญชี (Address) บนอุปกรณ์ของคุณเพื่อใช้งานอย่างปลอดภัย"
+        "desc" : "คุณกำลังดู Address ซึ่งไม่ได้รับการตรวจสอบ ตรวจสอบ Address บนอุปกรณ์ของคุณเพื่อใช้งานอย่างปลอดภัย",
+        "verify" : "Address {{accountType}} ไม่ได้รับการตรวจสอบ ตรวจสอบ Address บนอุปกรณ์ของคุณเพื่อใช้งานอย่างปลอดภัย"
       },
       "noResultsFound" : "ไม่พบสินทรัพย์คริปโต",
       "noResultsDesc" : "โปรดตรวจสอบการสะกดและลองอีกครั้ง"
@@ -3368,12 +3380,12 @@
         "balance" : "ยอดคงเหลือในบัญชี <0>123</0>",
         "fromAccount" : "เลือกบัญชี",
         "toAccount" : "เลือกบัญชี",
-        "paraswapCTA" : "กำลังมองหา Paraswap หรือเปล่า ตอนนี้ถูกย้ายไปยังแท็บ Discover แล้ว!",
+        "paraswapCTA" : "กำลังมองหา Paraswap หรือเปล่า? ตอนนี้ถูกย้ายไปยังแท็บ Discover แล้ว!",
         "quote" : "โควตราคา",
         "receive" : "รับ",
         "amount" : {
           "useMax" : "ใช้สูงสุด",
-          "available" : "พร้อมใช้งานทั้งหมด"
+          "available" : "จำนวนพร้อมใช้งานทั้งหมด"
         },
         "noAsset" : {
           "title" : "คุณไม่มีสินทรัพย์ที่จะ Swap",
@@ -3444,18 +3456,18 @@
         "button" : "ไปที่ My Ledger"
       },
       "emptyState" : {
-        "title" : "ไม่มี {{currency}}",
+        "title" : "ไม่มีบัญชี {{currency}}",
         "description" : "คุณต้องเพิ่มบัญชีก่อนทำการ Swap {{currency}}",
         "CTAButton" : "เพิ่มบัญชี"
       },
       "history" : {
         "tab" : "ประวัติ",
-        "disclaimer" : "ธุรกรรมการสวอปบนมือถือไม่ได้รับการซิงค์โครไนซ์กับ Ledger Live Desktop",
+        "disclaimer" : "ธุรกรรม Swap บนมือถือไม่ได้รับการซิงค์โครไนซ์กับ Ledger Live Desktop",
         "exportButton" : "ส่งออกการดำเนินการ",
-        "exportFilename" : "การดำเนินการสวอป",
+        "exportFilename" : "การดำเนินการ Swap",
         "empty" : {
-          "title" : "การสวอปก่อนหน้านี้ของคุณจะปรากฏที่นี่",
-          "desc" : "คุณยังไม่ได้ทำการ Swap หรือ Ledger Live ถูกรีเซ็ตในระหว่างนี้"
+          "title" : "การ Swap ก่อนหน้านี้ของคุณจะปรากฏที่นี่",
+          "desc" : "คุณยังไม่ได้ทำการ Swap หรือ Ledger Live กำลังถูกรีเซ็ตอยู่ในขณะนี้"
         }
       }
     },
@@ -3463,7 +3475,7 @@
       "form" : {
         "ratesDrawer" : {
           "title" : "อัตรา",
-          "quote" : "เสนอราคา",
+          "quote" : "โควตราคา",
           "receive" : "รับ"
         },
         "placeholder" : "เลือก",
@@ -3479,11 +3491,11 @@
           "accept" : "ยอมรับ"
         },
         "notAvailable" : {
-          "title" : "ยังไม่มีบริการสวอปในพื้นที่ของคุณ",
-          "content" : "โปรดอดทนรอเล็กน้อย<br/>เราจะเปิดตัวฟีเจอร์นี้เร็วๆ นี้"
+          "title" : "Swap ยังไม่พรัอมให้บริการในพื้นที่ของคุณ",
+          "content" : "โปรดอดทนอีกนิด<br/>ฟีเจอร์ใหม่นี้จะเปิดตัวในไม่ช้า"
         },
         "amount" : {
-          "useMax" : "Use Max"
+          "useMax" : "ใช้สูงสุด"
         },
         "details" : {
           "label" : {
@@ -3500,33 +3512,39 @@
             "title" : "จาก"
           },
           "to" : {
-            "title" : "ถึง"
+            "title" : "ไปยัง"
           }
         },
         "providers" : {
-          "noProviders" : "ไม่พบผลลัพธ์ ไม่พบ Quote ราคาสำหรับการตั้งค่าปัจจุบัน"
+          "noProviders" : "ไม่พบผลลัพธ์ ไม่พบโควตราคาตามการตั้งค่าปัจจุบัน"
         }
       },
       "incompatibility" : {
         "explore_compatible_devices" : "สำรวจอุปกรณ์ที่เข้ากันได้",
         "contact_support" : "ติดต่อฝ่ายสนับสนุนลูกค้า",
         "ton_title" : "Ledger Nano S™ ไม่รองรับการ Swap Ton",
-        "ton_description" : "เพื่อ Swap Ton ให้ใช้อุปกรณ์ Ledger ที่เข้ากันอื่น ๆ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™",
-        "spl_tokens_title" : "Ledger Nano S™ ไม่รองรับการสวอปโทเค็น Solana",
-        "spl_tokens_description" : "เพื่อ Swap โทเค็น Solana ให้ใช้อุปกรณ์ Ledger ที่เข้ากันอื่น ๆ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™",
+        "ton_description" : "ในการ Swap Ton ให้ใช้อุปกรณ์ Ledger ที่เข้ากันได้อื่น ๆ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™",
+        "spl_tokens_title" : "Ledger Nano S™ ไม่รองรับการ Swap โทเคน Solana",
+        "spl_tokens_description" : "ในการ Swap โทเคน Solana ให้ทำธุรกรรมผ่านอุปกรณ์ Ledger รุ่นอื่นที่เข้ากันได้ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™",
         "near_title" : "Ledger Nano S™ ไม่รองรับการ Swap Near",
         "near_description" : "เพื่อ Swap Near ให้ใช้อุปกรณ์ Ledger ที่เข้ากันอื่น ๆ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™",
         "ada_title" : "Ledger Nano S™ ไม่รองรับการ Swap Cardano",
-        "ada_description" : "ในการสวอป Cardano ให้ใช้อุปกรณ์ Ledger ที่เข้ากันได้อื่น ๆ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™",
+        "ada_description" : "เพื่อ Swap Cardano ให้ทำธุรกรรมผ่านอุปกรณ์ Ledger รุ่นอื่นที่เข้ากันได้ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™",
         "apt_title" : "Ledger Nano S™ ไม่รองรับการ Swap Aptos",
         "apt_description" : "เพื่อ Swap Aptos ให้ใช้อุปกรณ์ Ledger ที่เข้ากันอื่น ๆ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™",
         "cosmos_title" : "Ledger Nano S™ ไม่รองรับการ Swap Cosmos",
-        "cosmos_description" : "เพื่อ Swap Cosmos ให้ใช้อุปกรณ์ Ledger ที่เข้ากันอื่น ๆ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™"
+        "cosmos_description" : "เพื่อ Swap Cosmos ให้ใช้อุปกรณ์ Ledger ที่เข้ากันอื่น ๆ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™",
+        "osmo_title" : "Ledger Nano S™ does not support swapping Osmosis",
+        "osmo_description" : "To swap Osmosis, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+        "dydx_title" : "Ledger Nano S™ does not support swapping dYdX",
+        "dydx_description" : "To swap dYdX, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+        "sui_title" : "Ledger Nano S™ does not support swapping Sui",
+        "sui_description" : "To swap Sui, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
       }
     },
     "lending" : {
       "title" : "ให้ยืมคริปโต",
-      "titleTransferTab" : "ผลกำไร",
+      "titleTransferTab" : "Earn",
       "descriptionTransferTab" : "รับ Passive Income",
       "actionTitle" : "ให้ยืม",
       "accountActions" : {
@@ -3542,13 +3560,13 @@
         "amountSupplied" : "จำนวนที่ฝาก",
         "amountSuppliedTooltip" : "จำนวนที่ให้ยืมไปยังเครือข่าย",
         "currencyAPY" : "อัตราผลตอบแทนต่อปีของสกุลเงิน",
-        "currencyAPYTooltip" : "อัตราผลตอบแทนต่อปีของเงินฝากที่ทบต้นอย่างต่อเนื่อง",
-        "accruedInterests" : "ยอดคงเหลือดอกเบี้ย",
+        "currencyAPYTooltip" : "อัตราผลตอบแทนต่อปีของสินทรัพย์ที่ฝากไว้ทบต้น",
+        "accruedInterests" : "ยอดดอกเบี้ย",
         "accruedInterestsTooltip" : "ดอกเบี้ยที่เกิดขึ้นจากสินทรัพย์ที่ให้ยืมของคุณ",
         "interestEarned" : "ดอกเบี้ยที่ได้รับ",
         "interestEarnedTooltip" : "ดอกเบี้ยที่คุณได้รับหลังจากการถอน",
-        "openLoans" : "เปิดสินเชื่อ",
-        "closedLoans" : "สินเชื่อที่ปิด"
+        "openLoans" : "ให้สินเชื่อ",
+        "closedLoans" : "ประวัติการให้สินเชื่อในอดีต"
       },
       "banners" : {
         "needApproval" : "คุณต้องอนุมัติบัญชีนี้ก่อนจึงสามารถให้ยืมสินทรัพย์ได้",
@@ -3563,7 +3581,7 @@
         "tabTitle" : "แดชบอร์ด",
         "assetsTitle" : "สินทรัพย์ที่จะให้ยืม",
         "accountsTitle" : "บัญชีที่ได้รับอนุมัติ",
-        "emptySateDescription" : "คุณสามารถยืมสินทรัพย์จากบัญชี Ethereum ของคุณโดยตรงและรับดอกเบี้ยได้",
+        "emptySateDescription" : "คุณสามารถให้ยืมสินทรัพย์จากบัญชี Ethereum ของคุณโดยตรงและรับดอกเบี้ยได้",
         "apy" : "อัตราผลตอบแทนต่อปี {{value}}",
         "activeAccount" : {
           "account" : "บัญชี",
@@ -3582,8 +3600,8 @@
         }
       },
       "closedLoans" : {
-        "tabTitle" : "สินเชื่อที่ปิด",
-        "description" : "ดูสินเชื่อที่คุณถอนออกทั้งหมดและดอกเบี้ยที่คุณได้รับ",
+        "tabTitle" : "ประวัติการให้สินเชื่อในอดีต",
+        "description" : "ดูสินเชื่อที่คุณถอนออกมาทั้งหมดและดอกเบี้ยที่คุณได้รับ",
         "cta" : "ให้ยืมสินทรัพย์"
       },
       "history" : {
@@ -3600,18 +3618,18 @@
       "info" : {
         "1" : {
           "label" : "ขั้นตอนที่ 1 จาก 3",
-          "title" : "การอนุมัติบัญชีช่วยให้ Protocol สามารถประมวลผลสินเชื่อในอนาคตได้",
-          "description" : "คุณต้องอนุญาตให้สัญญาอัจฉริยะ (Smart Contract) ของ Compound สามารถโอนสินทรัพย์ไปยัง Protocol ได้ถึงจำนวนหนึ่ง การอนุมัติบัญชีจะทำให้ protocol สามารถดำเนินการสินเชื่อในอนาคตได้"
+          "title" : "การอนุมัติบัญชีช่วยให้โพรโทคอลสามารถประมวลผลสินเชื่อในอนาคตได้",
+          "description" : "คุณต้องอนุญาตให้ Compound Smart Contract สามารถโอนสินทรัพย์ไปยังโพรโทคอลได้ถึงจำนวนหนึ่ง การอนุมัติบัญชีจะทำให้ protocol สามารถดำเนินการสินเชื่อในอนาคตได้"
         },
         "2" : {
           "label" : "ขั้นตอนที่ 2 จาก 3",
           "title" : "ฝากสินทรัพย์เพื่อรับดอกเบี้ย",
-          "description" : "เมื่อบัญชีได้รับการอนุมัติแล้ว คุณสามารถเลือกจำนวนสินทรัพย์ที่คุณต้องการให้ยืมและออกธุรกรรมไปยัง Protocol ได้ ดอกเบี้ยจะสะสมทันทีหลังจากการทำธุรกรรมได้รับการยืนยัน"
+          "description" : "เมื่อบัญชีได้รับการอนุมัติแล้ว คุณสามารถเลือกจำนวนสินทรัพย์ที่คุณต้องการให้ยืมและออกธุรกรรมไปยังโพรโทคอลได้ ดอกเบี้ยจะสะสมทันทีหลังจากการทำธุรกรรมได้รับการยืนยัน"
         },
         "3" : {
           "label" : "ขั้นตอนที่ 3 จาก 3",
           "title" : "ถอนสินทรัพย์ได้ทุกเมื่อ",
-          "description" : "คุณสามารถถอนสินทรัพย์ของคุณและรับดอกเบี้ยได้ตลอดเวลา บางส่วน หรือทั้งหมด ได้โดยตรงจากบัญชี Ledger ของคุณ",
+          "description" : "คุณสามารถถอนสินทรัพย์ของคุณและรับดอกเบี้ยโดยตรงจากบัญชี Ledger ของคุณได้ตลอดเวลา ทั้งดอกเบี้ยบางส่วนหรือทั้งหมด",
           "cta" : "ให้ยืมตอนนี้"
         },
         "title" : "ให้ยืมคริปโต"
@@ -3643,8 +3661,8 @@
           "stepRange" : "ขั้นตอนที่ {{currentStep}} จาก {{totalSteps}}"
         },
         "selectAccount" : {
-          "enabledAccountsAmount" : "คุณมี {{number}} บัญชีที่ได้อนุมัติ {{amount}}",
-          "enabledAccountsAmount_plural" : "คุณมี {{number}} บัญชีที่ได้อนุมัติ {{amount}}",
+          "enabledAccountsAmount" : "คุณมี {{number}} บัญชีที่ได้อนุมัติจำนวน {{amount}}",
+          "enabledAccountsAmount_plural" : "คุณมี {{number}} บัญชีที่ได้อนุมัติจำนวน {{amount}}",
           "enabledAccountsNoLimit" : "คุณมี {{number}} บัญชีที่ได้อนุมัติจำนวน {{ currency }} แบบไม่จำกัด",
           "enabledAccountsNoLimit_plural" : "คุณมี {{number}} บัญชีที่ได้อนุมัติจำนวน {{ currency }} แบบไม่จำกัด",
           "noEnabledAccounts" : "คุณต้องอนุมัติบัญชีก่อนจึงสามารถให้ยืมได้"
@@ -3664,7 +3682,7 @@
           "noLimit" : "ไม่มีลิมิต"
         },
         "amount" : {
-          "totalAvailable" : "พร้อมใช้งานทั้งหมด"
+          "totalAvailable" : "จำนวนพร้อมใช้งานทั้งหมด"
         },
         "validation" : {
           "success" : "ส่งการดำเนินการเรียบร้อยแล้ว",
@@ -3717,7 +3735,7 @@
     },
     "walletConnect" : {
       "title" : "WalletConnect",
-      "description" : "เชื่อมต่อ Wallet ของคุณกับ dApps"
+      "description" : "เชื่อมต่อ Wallet ของคุณกับ DApps"
     },
     "recover" : {
       "title" : "Ledger Recover",
@@ -3745,7 +3763,7 @@
       "description" : "ธุรกรรมนี้อาจใช้เวลานานในการตรวจสอบและลงนามเนื่องจากบัญชีมีเหรียญจำนวนมาก",
       "title" : "ข้อความ UTXO"
     },
-    "highFeeModal" : "โปรดระวัง ค่าธรรมเนียมเครือข่ายจะสูงกว่าจำนวนอยู่ <1>10%</1> คุณต้องการดำเนินการต่อหรือไม่?",
+    "highFeeModal" : "โปรดระวัง ค่าธรรมเนียมเครือข่ายนี้สูงกว่า <1>10%</1> ของมูลค่าสินทรัพย์ คุณต้องการดำเนินการต่อหรือไม่?",
     "scan" : {
       "title" : "สแกน QR Code",
       "descBottom" : "สแกน QR Code",
@@ -3772,7 +3790,7 @@
       "scan" : "สแกน QR Code",
       "enterAddress" : "ป้อน Address",
       "input" : "ป้อน Address",
-      "verifyAddress" : "โปรดตรวจสอบว่า Address ตรงกับที่ผู้รับแชร์",
+      "verifyAddress" : "โปรดตรวจสอบว่า Address ตรงกับที่ผู้รับส่งมาให้",
       "domainService" : {
         "reverse" : "Address นี้เชื่อมโยงกับ {{domain}}",
         "forward" : "นี่เป็น ENS Address ที่ถูกต้อง",
@@ -3787,31 +3805,31 @@
       }
     },
     "amount" : {
-      "available" : "พร้อมใช้งานทั้งหมด",
+      "available" : "จำนวนพร้อมใช้งานทั้งหมด",
       "useMax" : "ใช้สูงสุด",
       "loadingNetwork" : "กำลังโหลดค่าธรรมเนียมเครือข่าย...",
       "noRateProvider" : "ไม่สามารถใช้ได้",
       "quantityAvailable" : "ปริมาณที่ใช้ได้"
     },
     "summary" : {
-      "subaccountsWarning" : "คุณจะต้องเติมสกุลเงิน {{ currency }} ในบัญชีนี้เพื่อส่งโทเค็นของบัญชีนี้",
-      "tag" : "แท็ก (ตัวเลือก)",
+      "subaccountsWarning" : "คุณจะต้องเติมสกุลเงิน {{ currency }} ในบัญชีนี้เพื่อส่งโทเคนของบัญชีนี้",
+      "tag" : "แท็ก (ใส่หรือไม่ก็ได้)",
       "validateTag" : "ตรวจสอบแท็ก",
       "total" : "ยอดรวม",
       "amount" : "จำนวน",
       "from" : "จาก",
       "to" : "ถึง",
-      "infoTotalTitle" : "หักทั้งหมด",
+      "infoTotalTitle" : "ตัดทั้งหมด",
       "infoTotalDesc" : "รวมจำนวนธุรกรรมและค่าธรรมเนียมเครือข่ายที่เลือก",
-      "gasFee" : "Gas Fee",
-      "gasLimit" : "จำนวน Gas สูงสุดที่ยอมจ่าย",
-      "gasPrice" : "ค่าธรรมเนียม (Gas Price)",
+      "gasFee" : "ค่าแก๊ส",
+      "gasLimit" : "ค่าแก๊สสูงสุดที่ยอมจ่าย",
+      "gasPrice" : "ค่าแก๊ส",
       "maxFee" : "ค่าธรรมเนียมสูงสุด",
       "maxPriorityFee" : "Priority Fee สูงสุด",
       "nextBlock" : "บล็อกถัดไป",
       "suggested" : "แนะนำ",
       "maxFees" : "ค่าธรรมเนียมสูงสุด",
-      "validateGasLimit" : "ตรวจสอบจำนวน Gas สูงสุดที่ยอมจ่าย",
+      "validateGasLimit" : "ตรวจสอบค่าแก๊สสูงสุดที่ยอมจ่าย",
       "fees" : "ค่าธรรมเนียม",
       "maxEstimatedFee" : "ค่าธรรมเนียมที่ประมาณสูงสุด",
       "validateFees" : "ตรวจสอบค่าธรรมเนียม",
@@ -3829,13 +3847,13 @@
       "quantity" : "ปริมาณ"
     },
     "validation" : {
-      "message" : "บนอุปกรณ์ของคุณ ให้ยืนยันธุรกรรมเพื่อลงชื่ออย่างปลอดภัย",
+      "message" : "ให้ยืนยันธุรกรรมเพื่อลงชื่ออย่างปลอดภัยบนอุปกรณ์ของคุณ",
       "sent" : "ส่งธุรกรรมแล้ว",
       "amount" : "จำนวน",
       "fees" : "ค่าธรรมเนียม",
       "confirm" : "ยอดคงเหลือในบัญชีของคุณจะอัปเดตเมื่อเครือข่ายได้ยืนยันธุรกรรมแล้ว",
       "button" : {
-        "details" : "ชมรายละเอียด",
+        "details" : "ดูรายละเอียด",
         "retry" : "ลองใหม่"
       }
     },
@@ -3843,9 +3861,9 @@
       "title" : "ค่าธรรมเนียมเครือข่าย",
       "titleMaxFees" : "ค่าธรรมเนียมเครือข่ายสูงสุด",
       "validate" : "ยืนยัน",
-      "required" : "ต้องมีค่าธรรมเนียม",
-      "chooseGas" : "เลือกค่าธรรมเนียม (Gas Price)",
-      "higherFaster" : "ค่าธรรมเนียม (Gas Price) ที่สูงขึ้นหมายถึงการยืนยันที่เร็วขึ้น",
+      "required" : "มีค่าธรรมเนียม",
+      "chooseGas" : "เลือกค่าแก๊ส",
+      "higherFaster" : "ค่าแก๊สที่สูงขึ้นหมายถึงการยืนยันที่เร็วขึ้น",
       "edit" : {
         "title" : "เลือกหน่วย"
       },
@@ -3878,7 +3896,7 @@
       "networkfee" : "ค่าธรรมเนียมเครือข่าย = {{amount}}",
       "maxFee" : "ค่าธรรมเนียมสูงสุด = {{amount}}",
       "maxPriorityFee" : "Priority Fee สูงสุด = {{amount}}",
-      "gasPrice" : "ราคาแก๊ส = {{amount}}"
+      "gasPrice" : "ค่าแก๊ส = {{amount}}"
     },
     "speedUp" : {
       "title" : "เร่งความเร็ว",
@@ -3886,12 +3904,12 @@
     },
     "cancel" : {
       "title" : "ยกเลิก",
-      "description" : "กำลังส่ง 0 {{ticker}} ไปยังเลขที่บัญชี (Address) ของคุณเอง"
+      "description" : "กำลังส่ง 0 {{ticker}} ไปยัง Address ของคุณเอง"
     },
     "error" : {
       "notEnoughFundsToCancel" : "การยกเลิกธุรกรรมไม่สามารถทำได้ เนื่องจากคุณมีเงินทุนไม่เพียงพอในบัญชี",
       "notEnoughFundsToSpeedup" : "ไม่สามารถเร่งดำเนินการธุรกรรมได้ เนื่องจากคุณมีเงินทุนไม่เพียงพอในบัญชี",
-      "notlowestNonceToSpeedup" : "ไม่สามารถใช้งานคุณสมบัติเร่งความเร็วได้ ธุรกรรมของคุณอยู่ระหว่างดำเนินการ เนื่องจากธุรกรรมก่อนหน้านี้ติดขัดอยู่ คุณสามารถรอรับการยืนยัน เร่งความเร็ว และยกเลิกได้",
+      "notlowestNonceToSpeedup" : "ไม่สามารถใช้งานฟีเจอร์ Speed up ได้ ธุรกรรมของคุณอยู่ระหว่างรอดำเนินการ เนื่องจากการทำธุรกรรมก่อนหน้าติดขัด คุณสามารถรอรับการยืนยัน เร่งความเร็ว และยกเลิกได้",
       "TransactionHasBeenValidatedError" : {
         "title" : "เร่งความเร็วหรือยกเลิกไม่ได้",
         "description" : "ธุรกรรมนี้ได้รับการตรวจสอบแล้ว"
@@ -3911,7 +3929,7 @@
   "freeze" : {
     "stepperHeader" : {
       "info" : "รับ Reward",
-      "selectAmount" : "ระงับ",
+      "selectAmount" : "Freeze",
       "summary" : "สรุป",
       "selectDevice" : "เลือกอุปกรณ์",
       "connectDevice" : "เชื่อมต่ออุปกรณ์",
@@ -3922,23 +3940,23 @@
       "steps" : {
         "0" : "สินทรัพย์ที่มอบหมายยังเป็นของคุณ",
         "1" : "คุณสามารถยกเลิกการระงับสินทรัพย์ของคุณได้ทุกเมื่อ และทรัพย์สินเหล่านั้นจะสามารถเข้าถึงได้หลังจากช่วงยกเลิกการระงับ 14 วัน",
-        "2" : "ระงับและโหวตอย่างปลอดภัยโดยใช้อุปกรณ์ Ledger ของคุณ"
+        "2" : "Freeze และโหวตอย่างปลอดภัยโดยใช้อุปกรณ์ Ledger ของคุณ"
       },
       "howVotingWorks" : "หลักการโหวต",
       "cta" : "ดำเนินการต่อ"
     },
     "amount" : {
-      "available" : "พร้อมใช้งานทั้งหมด",
+      "available" : "จำนวนพร้อมใช้งานทั้งหมด",
       "noRateProvider" : "ไม่สามารถใช้ได้",
-      "infoLabel" : "Bandwidth หรือ Energy?"
+      "infoLabel" : "Bandwidth หรือ Energy"
     },
     "validation" : {
-      "message" : "ตรวจสอบเสมอว่าอุปกรณ์ของคุณแสดงเลขบัญชี (Address) ตรงตามที่ได้รับมาในตอนแรกอย่างแน่นอน",
-      "success" : "สินทรัพย์ที่ถูกระงับ",
+      "message" : "ตรวจสอบเสมอว่าอุปกรณ์ของคุณแสดง Address ตรงตามที่มอบให้คุณในตอนแรก",
+      "success" : "สินทรัพย์ที่ถูก Freeze",
       "amount" : "จำนวน",
-      "info" : "คุณจะเริ่มได้รับ {{resource}} เมื่อเครือข่ายได้ยืนยันการระงับแล้ว คุณยังจะสามารถโหวตให้กับ Super Representative ในไม่ช้าเพื่อรับ Reward อีกด้วย",
+      "info" : "คุณจะเริ่มได้รับ {{resource}} เมื่อเครือข่ายได้ยืนยันการ Freeze แล้ว คุณยังจะสามารถโหวตให้กับ Super Representative ในไม่ช้าเพื่อรับ Reward อีกด้วย",
       "button" : {
-        "pending" : "ธุรกรรมที่กำลังได้รับการตรวจสอบ",
+        "pending" : "ธุรกรรมกำลังได้รับการตรวจสอบ",
         "pendingDesc" : "โปรดรอสักครู่ก่อนโหวต",
         "vote" : "โหวต",
         "voteTimer" : "0:{{time}}",
@@ -3985,7 +4003,7 @@
   },
   "vote" : {
     "stepperHeader" : {
-      "selectValidator" : "Cast votes",
+      "selectValidator" : "Cast Votes",
       "castVote" : "การโหวตของฉัน",
       "selectDevice" : "เลือกอุปกรณ์",
       "connectDevice" : "เชื่อมต่ออุปกรณ์",
@@ -4008,7 +4026,7 @@
       "removeVotes" : "นำการโหวตออก"
     },
     "validation" : {
-      "message" : "ตรวจสอบเสมอว่าอุปกรณ์ของคุณแสดง Address ตรงตามที่ได้รับมาในตอนแรกอย่างแน่นอน",
+      "message" : "ตรวจสอบเสมอว่าอุปกรณ์ของคุณแสดง Address ตรงตามที่มอบให้คุณในตอนแรก",
       "success" : "ได้ส่งการโหวตของคุณเรียบร้อยแล้ว",
       "info" : "",
       "button" : {
@@ -4032,7 +4050,7 @@
     },
     "imported" : "เพิ่มสินทรัพย์เรียบร้อยแล้ว",
     "added" : "เพิ่มบัญชีในพอร์ตโฟลิโอของคุณแล้ว",
-    "added_plural" : "เพิ่มบัญชีในพอร์ตโฟลิโอของคุณแล้ว {{count}} บัญชี",
+    "added_plural" : "เพิ่ม {{count}} บัญชีในพอร์ตโฟลิโอของคุณแล้ว",
     "sections" : {
       "importable" : {
         "title" : "เพิ่มบัญชีที่มีอยู่"
@@ -4041,7 +4059,7 @@
         "title" : "เพิ่มบัญชีใหม่"
       },
       "imported" : {
-        "title" : "บัญชีที่อยู่ในพอร์ตโฟลิโออยู่แล้ว ({{length}}) บัญชี"
+        "title" : "มีบัญชีที่อยู่ในพอร์ตโฟลิโออยู่แล้ว ({{length}}) บัญชี"
       },
       "migrate" : {
         "title" : "บัญชีที่จะอัปเดต"
@@ -4062,10 +4080,10 @@
     "noAccountToCreate" : "ไม่สามารถสร้างบัญชี<1><0>{{currencyName}}</></> ได้ เริ่มกระบวนการใหม่และซิงค์บัญชีของคุณ",
     "cantCreateAccount" : "ไม่สามารถเพิ่มบัญชีใหม่ได้ก่อนที่จะได้รับสินทรัพย์ในบัญชี {{accountName}}</></> ของคุณ",
     "tokens" : {
-      "title" : "เพิ่มโทเค็น",
+      "title" : "เพิ่มโทเคน",
       "createParentCurrencyAccount" : "เพิ่มบัญชี {{parrentCurrencyName}}",
       "generic" : {
-        "disclaimer" : "{{token}} ({{ticker}}) เป็นโทเค็น {{tokenType}}\nคุณสามารถรับโทเค็นในบัญชี {{currency}} ได้โดยตรง",
+        "disclaimer" : "{{token}} ({{ticker}}) เป็นโทเคน {{tokenType}}\nคุณสามารถรับโทเคนในบัญชี {{currency}} ได้โดยตรง",
         "learnMore" : "เรียนรู้เพิ่มเติมเกี่ยวกับ {{tokenType}}"
       }
     },
@@ -4074,7 +4092,7 @@
       "title" : "จะเลือก Address ประเภทใด?",
       "subtitle" : "เพิ่มบัญชีใหม่",
       "native_segwit" : {
-        "title" : "Native Segwit",
+        "title" : "Native SegWit",
         "desc" : "ยอดเยี่ยมทุกด้าน ค่าธรรมเนียมต่อธุรกรรมต่ำ การตรวจจับข้อผิดพลาด และรองรับ Lightning Network บาง Wallet/Exchange อาจต้องเพิ่มการรองรับ"
       },
       "segwit" : {
@@ -4083,7 +4101,7 @@
       },
       "legacy" : {
         "title" : "Legacy",
-        "desc" : "Address ดั้งเดิมของ {{currency}} ค่าธรรมเนียมต่อธุรกรรมสูงสุด บาง Wallet/Exchange รองรับประเภทนี้เท่านั้น"
+        "desc" : "Address ดั้งเดิมของ {{currency}} ค่าธรรมเนียมต่อธุรกรรมสูงสุด บาง Wallet/Exchange ยังรองรับประเภทนี้เท่านั้น"
       },
       "taproot" : {
         "title" : "Taproot",
@@ -4111,34 +4129,34 @@
       "retryScanning" : "ลองอีกครั้ง"
     },
     "addAccountsSuccess" : {
-      "ctaAddFunds" : "เติมเงินไปยังบัญชีของฉัน",
+      "ctaAddFunds" : "เติมเงินทุนไปยังบัญชีของฉัน",
       "ctaClose" : "ปิด"
     },
     "addAccountsWarning" : {
       "cantCreateAccount" : {
         "title" : "เราเพิ่มบัญชีใหม่ไม่ได้",
-        "body" : "ไม่สามารถเพิ่มบัญชีใหม่ก่อนที่จะได้รับสินทรัพย์ในบัญชี {{accountName}} ของคุณ"
+        "body" : "ไม่สามารถเพิ่มบัญชีใหม่เพื่อรับสินทรัพย์ในบัญชี {{accountName}} ของคุณ"
       },
       "noAccountToCreate" : {
         "title" : "เราไม่สามารถเพิ่มบัญชี {{currency}} ใหม่ได้"
       }
     },
-    "chooseAccountToFund" : "เลือกบัญชีเพื่อเติมเงิน"
+    "chooseAccountToFund" : "เลือกบัญชีเพื่อเติมเงินทุน"
   },
   "DeviceAction" : {
     "stayInTheAppPlz" : "อยู่ในแอป Ledger Live และเก็บ Ledger ของคุณไว้ใกล้ ๆ",
     "allowAppPermission" : "เปิดแอป {{wording}} บนอุปกรณ์ของคุณ",
-    "allowAppPermissionSubtitleToken" : "เพื่อจัดการโทเค็น {{token}} ของคุณ",
+    "allowAppPermissionSubtitleToken" : "เพื่อจัดการโทเคน {{token}} ของคุณ",
     "allowManagerPermission" : "อนุญาตการเชื่อมต่อที่ปลอดภัยด้วย Ledger",
     "allowRenaming" : "อนุญาตให้เปลี่ยนชื่อบน {{productName}} ของคุณ",
-    "allowRemoveCustomLockscreen" : "ยืนยันการนำภาพบน {{productName}} ของคุณออก",
+    "allowRemoveCustomLockscreen" : "ยืนยันการนำรูปภาพบน {{productName}} ของคุณออก",
     "allowSecureConnection" : "อนุญาตการเชื่อมต่อที่ปลอดภัยด้วย Ledger",
     "loading" : "กำลังโหลด...",
     "turnOnAndUnlockDevice" : "เปิดเครื่องและปลดล็อกอุปกรณ์ของคุณ",
     "connectAndUnlockDevice" : "เชื่อมต่อและปลดล็อกอุปกรณ์ของคุณ",
-    "connectAnotherDevice" : "เชื่อมต่อ Ledger อื่น",
+    "connectAnotherDevice" : "เชื่อมต่อกับ Ledger เครื่องอื่น",
     "unlockDevice" : "ปลดล็อกอุปกรณ์ของคุณ",
-    "outdated" : "เวอร์ชันแอปล้าสมัย",
+    "outdated" : "เวอร์ชันแอปล้าสมัยแล้ว",
     "outdatedDesc" : "มีการอัปเดตที่สำคัญสำหรับแอปพลิเคชัน {{appName}} บนอุปกรณ์ของคุณ โปรดไปที่ My Ledger เพื่ออัปเดต",
     "quitApp" : "ออกจากแอปพลิเคชันบนอุปกรณ์ของคุณ",
     "appNotInstalled" : "โปรดติดตั้งแอป {{appName}}",
@@ -4153,20 +4171,20 @@
       "description" : "คลิกที่ \"ดำเนินการต่อ\" เพื่ออัปเดต"
     },
     "verifyAddress" : {
-      "title" : "ตรวจสอบเลขบัญชี (Address) บนอุปกรณ์",
-      "description" : "โปรดตรวจสอบว่าเลขบัญชี (Address) {{currencyName}} ที่แสดงบน Ledger Live ตรงกับที่แสดงบนอุปกรณ์ Ledger โทรศัพท์ของคุณ"
+      "title" : "ตรวจสอบเลข Address บนอุปกรณ์",
+      "description" : "โปรดตรวจสอบว่า Address {{currencyName}} ที่แสดงบน Ledger Live ตรงกับที่แสดงบนอุปกรณ์ Ledger โทรศัพท์ของคุณ"
     },
     "confirmSwap" : {
-      "title" : "ยืนยันการดำเนินการสวอปบนอุปกรณ์",
+      "title" : "ยืนยันการดำเนินการ Swap บนอุปกรณ์",
       "alert" : {
-        "default" : "ตรวจสอบรายละเอียดการสวอปบนอุปกรณ์ของคุณก่อนส่ง มีการแลกเปลี่ยนเลขบัญชี (Address) อย่างปลอดภัย ดังนั้นคุณจึงไม่ต้องตรวจสอบรายการเหล่านั้น",
-        "provider" : "ตรวจสอบรายละเอียดการสวอปบนอุปกรณ์ของคุณก่อนส่ง {{providerName}} อาจต้องดำเนินการตรวจสอบเพิ่มเติมสำหรับบางธุรกรรม ส่งผลให้เกิดความล่าช้า"
+        "default" : "ตรวจสอบรายละเอียดการ Swap บนอุปกรณ์ของคุณก่อนส่ง มีการแลกเปลี่ยน Address อย่างปลอดภัย ดังนั้นคุณไม่จำเป็นต้องตรวจสอบรายการเหล่านั้น",
+        "provider" : "ตรวจสอบรายละเอียดการ Swap บนอุปกรณ์ของคุณก่อนส่ง {{providerName}} อาจต้องดำเนินการตรวจสอบเพิ่มเติมสำหรับบางธุรกรรม ส่งผลให้เกิดความล่าช้า"
       },
       "acceptTerms" : "ในการตรวจสอบธุรกรรมนี้ ฉันยอมรับ\n<0><0>เงื่อนไขการใช้งานของ </0>{{provider}}</0>",
-      "notice" : "ตรวจสอบรายละเอียดการสวอปบนอุปกรณ์ของคุณก่อนส่ง มีการแลกเปลี่ยนเลขบัญชี (Address) อย่างปลอดภัย ดังนั้นคุณจึงไม่ต้องตรวจสอบรายการเหล่านั้น"
+      "notice" : "ตรวจสอบรายละเอียดการ Swap บนอุปกรณ์ของคุณก่อนส่ง มีการแลกเปลี่ยน Address อย่างปลอดภัย ดังนั้นคุณจึงไม่ต้องตรวจสอบรายการเหล่านั้น"
     },
     "swap2" : {
-      "notice" : "ตรวจสอบรายละเอียดการสวอปบนอุปกรณ์ของคุณก่อนส่ง มีการแลกเปลี่ยนเลขบัญชี (Address) อย่างปลอดภัย ดังนั้นคุณจึงไม่ต้องตรวจสอบรายการเหล่านั้น",
+      "notice" : "ตรวจสอบรายละเอียดการ Swap บนอุปกรณ์ของคุณก่อนส่ง มีการแลกเปลี่ยน Address อย่างปลอดภัย ดังนั้นคุณจึงไม่ต้องตรวจสอบรายการเหล่านั้น",
       "amountSent" : "จำนวนที่จะส่ง",
       "amountReceived" : "จำนวนที่จะได้รับ",
       "provider" : "ผู้ให้บริการ",
@@ -4176,17 +4194,17 @@
     },
     "confirmSell" : {
       "title" : "ยืนยันการดำเนินการขายบนอุปกรณ์",
-      "alert" : "ตรวจสอบรายละเอียดการสวอปบนอุปกรณ์ของคุณก่อนส่ง มีการแลกเปลี่ยนเลขบัญชี (Address) อย่างปลอดภัย ดังนั้นคุณจึงไม่ต้องตรวจสอบรายการเหล่านั้น"
+      "alert" : "ตรวจสอบรายละเอียดการ Swap บนอุปกรณ์ของคุณก่อนส่ง มีการแลกเปลี่ยน Address อย่างปลอดภัย ดังนั้นคุณจึงไม่ต้องตรวจสอบรายการเหล่านั้น"
     },
     "confirmFund" : {
       "title" : "ยืนยันธุรกรรมเงินทุน",
-      "alert" : "ตรวจสอบรายละเอียดเงินทุนบนอุปกรณ์ของคุณก่อนที่จะส่ง มีการแลกเปลี่ยนเลขที่บัญชี (Address) อย่างปลอดภัย ดังนั้นคุณจึงไม่ต้องตรวจสอบรายการเหล่านั้น"
+      "alert" : "ตรวจสอบรายละเอียดเงินทุนบนอุปกรณ์ของคุณก่อนที่จะส่ง มีการแลกเปลี่ยน Address อย่างปลอดภัย ดังนั้นคุณจึงไม่ต้องตรวจสอบรายการเหล่านั้น"
     },
     "button" : {
       "openManager" : "เปิด My Ledger",
       "openOnboarding" : "ติดตั้งอุปกรณ์"
     },
-    "installApp" : "{{appName}} การติดตั้งแอป {{percentage}}",
+    "installApp" : "การติดตั้งแอป {{appName}} {{percentage}}",
     "installAppDescription" : "โปรดรอสักครู่จนกว่าการติดตั้งจะเสร็จสิ้น",
     "listApps" : "กำลังตรวจสอบการขึ้นต่อกันของแอป",
     "listAppsDescription" : "โปรดรอสักครู่ในขณะที่เราตรวจสอบให้แน่ใจว่าคุณมีแอปที่จำเป็นทั้งหมด",
@@ -4215,7 +4233,7 @@
       },
       "genuineCheck" : {
         "title" : "เปิดใช้งาน Ledger Manager บน {{productName}} ของคุณ",
-        "accept" : "โปรดอย่าปิด Nano X ของคุณ ตรวจสอบให้แน่ใจว่าคุณอนุญาต <1>Ledger Manager</1>"
+        "accept" : "โปรดอย่าปิด Nano X ของคุณ ตรวจสอบให้แน่ใจว่าคุณได้อนุญาต <1>Ledger Manager</1>"
       },
       "genuineCheckPending" : {
         "title" : "ตรวจสอบว่าอุปกรณ์เป็นของแท้หรือไม่..."
@@ -4236,8 +4254,8 @@
         "description" : ""
       },
       "receiveVerify" : {
-        "title" : "ตรวจสอบเลขบัญชี (Address) บนอุปกรณ์",
-        "description" : "โปรดตรวจสอบว่าเลขบัญชี (Address) {{currencyName}} ที่แสดงบนอุปกรณ์ Ledger Live ตรงกับเลขที่บัญชี (Address)ที่แสดงบนอุปกรณ์ Ledger ของคุณทุกประการ",
+        "title" : "ตรวจสอบเลข Address บนอุปกรณ์",
+        "description" : "โปรดตรวจสอบว่า Address {{currencyName}} ที่แสดงบนอุปกรณ์ Ledger Live ตรงกับ Address ที่แสดงบนอุปกรณ์ Ledger ของคุณทุกประการ",
         "action" : "ดำเนินการต่อ"
       },
       "getDeviceName" : {
@@ -4272,7 +4290,7 @@
     },
     "GenuineCheck" : {
       "title" : "ตรวจสอบการยืนยันความถูกต้องของอุปกรณ์",
-      "accept" : "โปรดอย่าปิด Nano X ของคุณ ตรวจสอบให้แน่ใจว่าคุณอนุญาต <1>Ledger Manager</1>",
+      "accept" : "โปรดอย่าปิด Nano X ของคุณ ตรวจสอบให้แน่ใจว่าคุณได้อนุญาต <1>Ledger Manager</1>",
       "info" : "ขั้นตอนนี้มีไว้เพื่อให้แน่ใจว่า Nano ของคุณเป็นของแท้"
     },
     "ScanningHeader" : {
@@ -4326,8 +4344,8 @@
     "appsCatalog" : "แค็ตตาล็อกแอป",
     "installedApps" : "ติดตั้งแอปแล้ว",
     "noAppNeededForToken" : "ติดตั้งแอป {{appName}} สำหรับ {{tokenName}}",
-    "tokenAppDisclaimer" : "{{tokenName}} เป็นโทเค็น {{tokenType}} ที่ใช้แอป {{appName}} เพื่อจัดการ {{tokenName}} <1>ให้ติดตั้งแอป {{appName}}</1> และส่งโทเค็น<3>ไปยังบัญชี {{appName}} ของคุณ</3>",
-    "tokenAppDisclaimerInstalled" : "{{tokenName}} เป็นโทเค็น {{tokenType}} ที่ใช้แอป {{appName}} เพื่อจัดการ {{tokenName}} <1>ให้เปิดแอป {{appName}}</1> และส่งโทเค็น<3>ไปยังบัญชี {{appName}} ของคุณ</3>",
+    "tokenAppDisclaimer" : "{{tokenName}} เป็นโทเคน {{tokenType}} ที่ใช้แอป {{appName}} เพื่อจัดการ {{tokenName}} <1>ให้ติดตั้งแอป {{appName}}</1> และส่งโทเคน<3>ไปยังบัญชี {{appName}} ของคุณ</3>",
+    "tokenAppDisclaimerInstalled" : "{{tokenName}} เป็นโทเคน {{tokenType}} ที่ใช้แอป {{appName}} เพื่อจัดการ {{tokenName}} <1>ให้เปิดแอป {{appName}}</1> และส่งโทเคน<3>ไปยังบัญชี {{appName}} ของคุณ</3>",
     "goToAccounts" : "ไปที่บัญชี",
     "intallParentApp" : "ติดตั้งแอป {{appName}}",
     "readOnly" : {
@@ -4392,8 +4410,8 @@
     "myApps" : "แอปบล็อกเชนของฉัน",
     "token" : {
       "title" : "โทเคน {{appName}}",
-      "noAppNeeded" : "{{tokenName}} เป็นโทเค็นที่ใช้แอป {{appName}} ไม่มีแอปที่จะติดตั้ง",
-      "installApp" : "{{tokenName}} เป็นโทเค็นที่ใช้แอป {{appName}} ติดตั้งแอป {{appName}} เพื่อให้สามารถจัดการโทเค็นของคุณได้"
+      "noAppNeeded" : "{{tokenName}} เป็นโทเคนที่ใช้แอป {{appName}} ไม่มีแอปที่จะติดตั้ง",
+      "installApp" : "{{tokenName}} เป็นโทเคนที่ใช้แอป {{appName}} ติดตั้งแอป {{appName}} เพื่อให้สามารถจัดการโทเคนของคุณได้"
     },
     "update" : {
       "title" : "อัปเดต",
@@ -4494,7 +4512,7 @@
       "descriptionProductName" : "แตะเพื่ออัปเดต {{productName}} เป็น OS เวอร์ชัน {{firmwareVersion}}"
     },
     "title" : "อัปเดตระบบปฏิบัติการ",
-    "beginUpdate" : "เริ่มการอัปเดตระบบปฏิบัติการ",
+    "beginUpdate" : "เริ่มการอัปเดต OS",
     "updateDevice" : "การอัปเดต {{deviceName}} OS",
     "releaseNotesTitle" : "การอัปเดต OS นี้มีอะไรบ้าง?",
     "updateDone" : "{{deviceName}} OS ของคุณเป็นปัจจุบันแล้ว",
@@ -4515,8 +4533,8 @@
     "waitForFirmwareUpdate" : "รอให้การอัปเดตระบบปฏิบัติการเสร็จสิ้นบนอุปกรณ์ของคุณ",
     "waitForInstallationToFinish" : "รอให้การติดตั้งบน {{deviceName}} ของคุณเสร็จสิ้น",
     "batteryLow" : "แบตเตอรี่ {{productName}} ต่ำเกินไปที่จะอัปเดต",
-    "batteryLowDescription" : "ในการเริ่มต้นการอัปเดตระบบปฏิบัติการ จำเป็นต้องชาร์จ {{lowBatteryPercentage}}% เป็นอย่างน้อย มิฉะนั้นจะต้องชาร์จ {{productName}} ของคุณ",
-    "updateCancelled" : "การติดตั้งการอัปเดต OS ถูกยกเลิกเมื่อ {{deviceName}}",
+    "batteryLowDescription" : "ในการเริ่มต้นการอัปเดตระบบปฏิบัติการ จำเป็นต้องมีแบตเตอรี่อย่างน้อย {{lowBatteryPercentage}}% มิฉะนั้นคุณจะต้องชาร์จ {{productName}} ของคุณก่อน",
+    "updateCancelled" : "การติดตั้งการอัปเดต OS ได้ถูกยกเลิกบน {{deviceName}} แล้ว",
     "updateCancelledDescription" : "หากมีข้อผิดพลาด โปรดรีสตาร์ทการอัปเดต",
     "updateNotYetComplete" : "กำลังอัปเดต OS",
     "updateNotYetCompleteDescription" : "การตั้งค่าและแอปของคุณอาจไม่ได้รับการกู้คืนอย่างถูกต้องหากคุณยกเลิกการอัปเดตตอนนี้",
@@ -4533,7 +4551,7 @@
     "retryBatteryCheck" : "ลองอีกครั้งหลังจากเสียบสายแล้ว",
     "Notifications" : {
       "confirmOnDevice" : "เราต้องการให้คุณยืนยันบนอุปกรณ์",
-      "preparingUpdate" : "กำลังโอนการอัปเดต เราจะแจ้งให้คุณทราบเมื่อเราดำเนินการเสร็จสิ้น",
+      "preparingUpdate" : "กำลังส่งการอัปเดต เราจะแจ้งให้คุณทราบเมื่อเราดำเนินการเสร็จสิ้น",
       "installing" : "กำลังติดตั้ง {{progress}}%"
     },
     "Installing" : {
@@ -4550,11 +4568,11 @@
       "prepareUpdate" : {
         "earlySecurityCheck" : {
           "titlePreparingUpdate" : "กำลังเตรียมการอัปเดตสำหรับการติดตั้ง",
-          "description" : "กำลังโอนการอัปเดตไปยัง {{deviceName}}"
+          "description" : "กำลังส่งการอัปเดตไปยัง {{deviceName}}"
         },
         "titleBackingUp" : "กำลังเตรียมการอัปเดตสำหรับการติดตั้ง",
         "titleTransferring" : "กำลังโอนการอัปเดต",
-        "description" : "กำลังสำรองข้อมูลการตั้งค่า\nและแอปต่าง ๆ ของคุณ กำลังโอนการอัปเดตไปยัง {{deviceName}}"
+        "description" : "กำลังสำรองข้อมูลการตั้งค่าและแอปต่าง ๆ ของคุณ กำลังโอนการอัปเดตไปยัง {{deviceName}}"
       },
       "installUpdate" : {
         "titleInactive" : "ติดตั้งการอัปเดต",
@@ -4569,18 +4587,18 @@
         },
         "titleInactive" : "กู้คืนแอปและการตั้งค่า",
         "description" : "ระบบจะกู้คืนการตั้งค่าและแอปบล็อกเชนของคุณ",
-        "restoreLockScreenPicture" : "กำลังกู้คืนภาพหน้าจอล็อค",
+        "restoreLockScreenPicture" : "กำลังกู้คืนภาพ Lock Screen",
         "restoreLanguage" : "กำลังกู้คืนภาษา",
-        "imageLoadRequested" : "แตะที่ “โหลดรูป“ เพื่อกู้คืน Lock Screen Picture",
-        "imageCommitRequested" : "แตะที่ “เก็บไว้” \nเพื่อยืนยัน Lock Screen Picture ของคุณ",
+        "imageLoadRequested" : "แตะที่ “โหลดภาพ“ เพื่อกู้คืน ภาพล็อกสกรีน",
+        "imageCommitRequested" : "แตะที่ “เก็บไว้” \nเพื่อยืนยันภาพล็อกสกรีนของคุณ",
         "allowLanguageInstallation" : "แตะ “อนุญาต” เพื่อกู้คืนภาษา",
         "allowAppsRestoration" : "แตะ “อนุญาต” เพื่อกู้คืนแอป",
         "errors" : {
           "description" : "หากเป็นข้อผิดพลาด ลองใหม่ตอนนี้",
-          "LanguageInstallRefusedOnDevice" : "ยกเลิกการ Restore ภาษาเมื่อ {{deviceName}}",
-          "ImageLoadRefusedOnDevice" : "การกู้คืน Lock Screen Picture ถูกยกเลิกเมื่อ {{deviceName}}",
-          "ImageCommitRefusedOnDevice" : "การกู้คืน Lock Screen Picture ถูกยกเลิกเมื่อ {{deviceName}}",
-          "UserRefusedAllowManager" : "ยกเลิกการกู้คืนแอปเมื่อ {{deviceName}}"
+          "LanguageInstallRefusedOnDevice" : "ยกเลิกการกู้คืนภาษาบน {{deviceName}}",
+          "ImageLoadRefusedOnDevice" : "การกู้คืนภาพบน Lock Screen ถูกยกเลิกบน {{deviceName}}",
+          "ImageCommitRefusedOnDevice" : "การกู้คืนภาพบน Lock Screen ถูกยกเลิกบน {{deviceName}}",
+          "UserRefusedAllowManager" : "ยกเลิกการกู้คืนแอปบน {{deviceName}}"
         },
         "installingApps" : "กำลังติดตั้งแอป"
       }
@@ -4590,7 +4608,7 @@
       "title" : "การอัปเดตระบบปฏิบัติการ",
       "description" : "อัปเดตระบบปฏิบัติการ Ledger Nano ของคุณโดยเชื่อมต่อกับแอปพลิเคชัน Ledger Live บนเดสก์ท็อป",
       "pleaseConnectUsbTitle" : "ต้องใช้สาย USB",
-      "pleaseConnectUsbDescription" : "หากต้องการเริ่มการอัปเดตระบบปฏิบัติการ ให้เสียบสาย USB จาก {{deviceName}} เข้ากับโทรศัพท์มือถือของคุณ"
+      "pleaseConnectUsbDescription" : "หากต้องการเริ่มการอัปเดตเฟิร์มแวร์ให้เสียบสาย USB จาก {{deviceName}} เข้ากับโทรศัพท์มือถือของคุณ"
     },
     "updateStatusErrors" : {
       "errors" : {
@@ -4626,7 +4644,7 @@
   "firmwareUpdateRequired" : {
     "updateAvailableFromLLM" : {
       "title" : "ต้องอัปเดตระบบปฏิบัติการ",
-      "description" : "ในการดำเนินการนี้ คุณต้องอัปเดตระบบปฏิบัติการของ {{ deviceName }} ของคุณก่อน",
+      "description" : "ในการดำเนินการนี้ คุณต้องอัปเดตเฟิร์มแวร์ของ {{ deviceName }} ของคุณก่อน",
       "cta" : "ไปที่ My Ledger"
     },
     "updateNotAvailableFromLLM" : {
@@ -4660,7 +4678,8 @@
       "tr" : "Türk",
       "ja" : "日本",
       "ko" : "한국인",
-      "pt" : "Português (Br)"
+      "pt" : "Português (Br)",
+      "th" : "ภาษาไทย"
     }
   },
   "deviceLocalization" : {
@@ -4674,7 +4693,7 @@
     "languageInstalledDesc" : "ตอนนี้อุปกรณ์ของคุณเป็นภาษาที่คุณเลือกแล้ว",
     "firmwareUpdatePrompt" : {
       "title" : "ตั้งค่า {{deviceName}} ของคุณในภาษา {{language}} หรือไม่?",
-      "description" : "{{deviceName}} ของคุณสามารถใช้ภาษา {{language}} ได้แล้วในตอนนี้ คุณสามารถตั้งค่าตอนนี้หรือเปลี่ยนภาษาอุปกรณ์ของคุณได้ทุกเมื่อจาก My Ledger"
+      "description" : "{{deviceName}} ของคุณสามารถใช้ภาษา {{language}} ได้แล้วในตอนนี้ คุณสามารถตั้งค่าตอนนี้หรือเปลี่ยนภาษาอุปกรณ์ของคุณได้ทุกเมื่อผ่าน My Ledger"
     },
     "installingLanguage" : "กำลังติดตั้งภาษา",
     "languages" : {
@@ -4684,7 +4703,8 @@
       "german" : "Deutsch",
       "brazilian" : "Português (Br)",
       "russian" : "Русский",
-      "turkish" : "Türkçe"
+      "turkish" : "Türkçe",
+      "thai" : "ภาษาไทย"
     }
   },
   "FirmwareUpdateCheckId" : {
@@ -4710,11 +4730,11 @@
   "algorand" : {
     "token" : "ASA (สินทรัพย์)",
     "claimRewards" : {
-      "title" : "Rewards",
+      "title" : "Reward",
       "button" : "ขอรับ",
       "stepperHeader" : {
         "info" : "รับ Reward",
-        "starter" : "Rewards",
+        "starter" : "Reward",
         "connectDevice" : "เชื่อมต่ออุปกรณ์",
         "verification" : "การยืนยัน",
         "stepRange" : "ขั้นตอนที่ {{currentStep}} จาก {{totalSteps}}"
@@ -4722,7 +4742,7 @@
       "flow" : {
         "steps" : {
           "info" : {
-            "description" : "มอบหมาย Algo ของคุณเพื่อรับ Reward ในขณะที่รักษาความปลอดภัยและการควบคุมสินทรัพย์ของคุณอย่างเต็มที่",
+            "description" : "มอบหมาย Algo ของคุณเพื่อรับ Reward ในขณะที่ยังรักษาความปลอดภัยและจัดการสินทรัพย์ของคุณอย่างเต็มที่",
             "steps" : {
               "0" : "ต้องมียอดคงเหลือขั้นต่ำ 1 Algo เพื่อรับ Reward",
               "1" : "เพิ่มยอดคงเหลือในบัญชีเพื่อเพิ่ม Reward",
@@ -4746,7 +4766,7 @@
             "pending" : {
               "title" : "กำลังประกาศธุรกรรม..."
             },
-            "broadcastError" : "ธุรกรรมของคุณอาจล้มเหลว โปรดกลับมาตรวจสอบอีกครั้งในอีกสักครู่ เพื่อให้แน่ใจว่าธุรกรรมของคุณไม่ผ่าน ก่อนที่จะลองอีกครั้ง"
+            "broadcastError" : "ธุรกรรมของคุณอาจล้มเหลว โปรดกลับมาตรวจสอบอีกครั้งในอีกสักครู่ เพื่อให้แน่ใจว่าธุรกรรมของคุณไม่สำเร็จ ก่อนที่จะลองอีกครั้ง"
           }
         }
       }
@@ -4775,7 +4795,7 @@
             "pending" : {
               "title" : "กำลังประกาศธุรกรรม..."
             },
-            "broadcastError" : "ธุรกรรมของคุณอาจล้มเหลว โปรดกลับมาตรวจสอบอีกครั้งในอีกสักครู่ เพื่อให้แน่ใจว่าธุรกรรมของคุณไม่ผ่าน ก่อนที่จะลองอีกครั้ง"
+            "broadcastError" : "ธุรกรรมของคุณอาจล้มเหลว โปรดกลับมาตรวจสอบอีกครั้งในอีกสักครู่ เพื่อให้แน่ใจว่าธุรกรรมของคุณไม่สำเร็จ ก่อนที่จะลองอีกครั้ง"
           }
         }
       }
@@ -4787,29 +4807,29 @@
         "title" : "ยอดคงเหลือทั้งหมดไม่รวม Reward จากการ Staking"
       },
       "delegationUnavailable" : {
-        "title" : "การมอบหมายไม่พร้อมใช้งาน",
-        "description" : "ในบัญชีของคุณมียอดคงเหลือที่ใช้ได้ไม่เพียงพอสำหรับการเริ่มต้นการมอบหมายใหม่"
+        "title" : "การ Delegation ไม่พร้อมใช้งาน",
+        "description" : "ในบัญชีของคุณมียอดคงเหลือที่ใช้ได้ไม่เพียงพอสำหรับการเริ่มต้นการ Delegate ใหม่"
       }
     },
     "undelegation" : {
-      "undelegate" : "ยกเลิกการมอบหมาย",
-      "undelegationMessage" : "โดยการยกเลิกการมอบหมาย คุณจะไม่ได้รับ Reward ใด ๆ สำหรับ Epoch ปัจจุบันและที่กำลังจะมาถึง",
-      "verificationSuccessTitle" : "คุณได้ยกเลิกการมอบหมายสินทรัพย์ของคุณสำเร็จแล้ว"
+      "undelegate" : "Undelegate",
+      "undelegationMessage" : "การ Undelegate คุณจะไม่ได้รับ Reward ใด ๆ จากการ Epoch ในปัจจุบันและที่กำลังจะมาถึง",
+      "verificationSuccessTitle" : "คุณได้ Undelegate สินทรัพย์ของคุณสำเร็จแล้ว"
     },
     "delegation" : {
       "pool" : "Pool",
       "poolId" : "Pool Id",
       "selectPool" : "เลือก Pool",
       "pools" : "Pools",
-      "delegationEarn" : "คุณสามารถรับ ADA Reward ได้ด้วยการมอบหมายสินทรัพย์ของคุณ",
-      "delegatingFrom" : "กำลังมอบหมายจาก",
-      "delegatingTo" : "กำลังมอบหมายไปยัง",
-      "info" : "วิธีใช้งานการมอบหมาย",
-      "header" : "การมอบหมาย",
-      "delegate" : "มอบหมาย",
-      "redelegate" : "มอบหมายใหม่",
+      "delegationEarn" : "คุณสามารถรับ ADA Reward ได้ด้วยการ Delegate สินทรัพย์ของคุณ",
+      "delegatingFrom" : "กำลัง Delegate จาก",
+      "delegatingTo" : "กำลัง Delegate ไปยัง",
+      "info" : "วิธีใช้งานการ Delegation?",
+      "header" : "การ Delegation",
+      "delegate" : "Delegate",
+      "redelegate" : "Redelegate",
       "estYield" : "ผลตอบแทนโดยประมาณ",
-      "totalStake" : "Stake ทั้งหมด",
+      "totalStake" : "จำนวน Stake ทั้งหมด",
       "commission" : "คอมมิชชัน",
       "cost" : "ค่าใช้จ่าย",
       "select" : "เลือก",
@@ -4819,7 +4839,7 @@
       "stakeKeyRegistrationDepositRefund" : "คืนเงินยอดฝากจากการลงทะเบียน Stake Key",
       "stepperHeader" : {
         "starter" : "รับ Reward",
-        "validator" : "มอบหมายสินทรัพย์",
+        "validator" : "Delegate สินทรัพย์",
         "summary" : "สรุป",
         "verification" : "การยืนยัน",
         "selectDevice" : "เลือกอุปกรณ์",
@@ -4831,15 +4851,15 @@
           "starter" : {
             "description" : "คุณสามารถรับ Reward ได้ด้วยการมอบหมาย ADA ของคุณไปยัง Pool",
             "steps" : {
-              "0" : "คุณยังคงเป็นเจ้าของสินทรัพย์ที่มอบหมาย",
-              "1" : "มอบหมายโดยใช้อุปกรณ์ Ledger ของคุณ",
-              "2" : "สามารถมอบหมายสินทรัพย์ใหม่ไปยังกลุ่มอื่นได้ หรือคุณสามารถเลือกยกเลิกการมอบหมายได้ทุกเมื่อ"
+              "0" : "คุณยังคงเป็นเจ้าของสินทรัพย์ที่ Delegate ไว้",
+              "1" : "Delegate โดยใช้อุปกรณ์ Ledger ของคุณ",
+              "2" : "สามารถ Delegate สินทรัพย์ใหม่ไปยัง Pool อื่นได้ หรือคุณสามารถเลือก Undelegate ได้ทุกเมื่อ"
             },
             "cta" : "ดำเนินการต่อ"
           },
           "validator" : {
-            "validators" : "ผู้ตรวจสอบ (Validator)",
-            "myDelegations" : "การมอบหมายของฉัน",
+            "validators" : "ผู้ตรวจสอบ",
+            "myDelegations" : "การ Delegation ของฉัน",
             "cta" : "ดำเนินการต่อ",
             "estYield" : "ผลตอบแทนโดยประมาณ: {{amount}}",
             "totalAvailable" : "จำนวนที่ใช้ได้: <0>{{amount}}</0>",
@@ -4848,7 +4868,7 @@
           },
           "verification" : {
             "success" : {
-              "title" : "คุณได้มอบหมายสินทรัพย์ของคุณเรียบร้อยแล้ว",
+              "title" : "คุณได้ Delegate สินทรัพย์ของคุณเรียบร้อยแล้ว",
               "text" : "ยอดคงเหลือในบัญชีของคุณจะอัปเดตเมื่อเครือข่ายได้ยืนยันธุรกรรมแล้ว",
               "cta" : "ดูรายละเอียด"
             },
@@ -4861,10 +4881,10 @@
       },
       "drawer" : {
         "status" : "สถานะ",
-        "rewards" : "Rewards",
+        "rewards" : "Reward",
         "active" : "ใช้งานอยู่",
         "inactive" : "ไม่มีการใช้งาน",
-        "redelegatedFrom" : "มอบหมายใหม่จาก"
+        "redelegatedFrom" : "Redelegate จาก"
       }
     }
   },
@@ -4872,7 +4892,7 @@
     "info" : {
       "available" : {
         "title" : "CELO ที่มีอยู่",
-        "description" : "จำนวนนี้ใช้แล้วหมดไป"
+        "description" : "จำนวนที่สามารถใช้จ่ายได้"
       },
       "lockedBalance" : {
         "title" : "ยอดคงเหลือที่ล็อกไว้",
@@ -4961,14 +4981,14 @@
       "flow" : {
         "steps" : {
           "starter" : {
-            "description" : "คุณสามารถรับ Reward ได้ด้วยการมอบหมายสินทรัพย์ CELO ของคุณให้กับผู้ตรวจสอบ",
+            "description" : "คุณสามารถรับ Reward ได้ด้วยการ Delegate สินทรัพย์ CELO ของคุณให้กับผู้ตรวจสอบ",
             "bullet" : {
-              "0" : "คุณยังคงเป็นเจ้าของสินทรัพย์ที่มอบหมาย",
-              "1" : "มอบหมายโดยใช้อุปกรณ์ Ledger ของคุณ",
+              "0" : "คุณยังคงเป็นเจ้าของสินทรัพย์ที่ Delegate ไว้",
+              "1" : "Delegate โดยใช้อุปกรณ์ Ledger ของคุณ",
               "2" : "สินทรัพย์จะพร้อมใช้งานหลังจากการยกเลิกการมอบหมาย"
             },
             "warning" : {
-              "description" : "เลือกผู้ตรวจสอบของคุณอย่างชาญฉลาด: สินทรัพย์ที่คุณมอบหมายบางส่วนอาจสูญหายไปอย่างถาวรหากผู้ตรวจสอบทำงานอย่างไม่เหมาะสม"
+              "description" : "เลือกผู้ตรวจสอบของคุณอย่างชาญฉลาด: สินทรัพย์ที่คุณ Delegate บางส่วนอาจสูญหายไปอย่างถาวรหากผู้ตรวจสอบทำงานอย่างไม่เหมาะสม"
             },
             "cta" : "ดำเนินการต่อ"
           },
@@ -5098,7 +5118,7 @@
           "title" : "การยืนยัน",
           "success" : {
             "title" : "ถอนธุรกรรมที่ส่งเรียบร้อยแล้ว",
-            "text" : "จะมีการเครดิตจำนวนที่ถอนเข้าไปในยอดคงเหลือที่คุณใช้ได้",
+            "text" : "จำนวนที่ถอนจะเพิ่มเข้าไปในยอดคงเหลือที่คุณใช้ได้",
             "cta" : "ดูรายละเอียด"
           },
           "broadcastError" : "ธุรกรรมของคุณอาจล้มเหลว โปรดรอสักครู่ แล้วตรวจสอบประวัติธุรกรรมก่อนที่จะลองอีกครั้ง"
@@ -5115,13 +5135,13 @@
           "amount" : {
             "available" : "ที่ใช้ได้",
             "max" : "สูงสุด",
-            "waitingTitle" : "จำนวนไม่พร้อมสำหรับการถอน",
+            "waitingTitle" : "จำนวนที่ไม่พร้อมสำหรับการถอน",
             "waitingPeriod" : "คุณต้องรอจนถึงวันที่ {{date}} จึงจะถอนจำนวนนี้ออกได้"
           },
           "verification" : {
             "success" : {
               "title" : "ถอนสินทรัพย์ของคุณเรียบร้อยแล้ว",
-              "text" : "จะมีการเครดิตจำนวนที่ถอนเข้าไปในยอดคงเหลือที่คุณใช้ได้"
+              "text" : "จำนวนที่ถอนจะเพิ่มเข้าไปในยอดคงเหลือที่คุณใช้ได้"
             }
           }
         }
@@ -5129,7 +5149,7 @@
     },
     "emptyState" : {
       "description" : "คุณสามารถรับ CELO Reward ได้โดยการ Delegate สินทรัพย์ของคุณ",
-      "info" : "วิธีใช้งานการ Delegation?",
+      "info" : "Delegation ทำงานยังไง",
       "delegation" : "รับ Reward"
     },
     "earnRewards" : {
@@ -5149,19 +5169,19 @@
     "info" : {
       "available" : {
         "title" : "{{currencyTicker}} คงเหลือ",
-        "description" : "จำนวนนี้ใช้แล้วหมดไป"
+        "description" : "จำนวนที่สามารถใช้จ่ายได้"
       },
       "delegated" : {
-        "title" : "สินทรัพย์ที่ Delegate",
-        "description" : "สินทรัพย์ที่ Delegate จะใช้สำหรับการโหวต {{currencyName}} นี่คือจำนวนการโหวตทั้งหมดของคุณ"
+        "title" : "สินทรัพย์ที่ได้ Delegate ไปแล้ว",
+        "description" : "สินทรัพย์ที่ Delegate ไปเพื่อการโหวต {{currencyName}} นี่คือจำนวนการโหวตทั้งหมดของคุณ"
       },
       "undelegating" : {
-        "title" : "กำลังยกเลิกการมอบหมาย",
+        "title" : "กำลังทำการ Undelegate",
         "description" : "สินทรัพย์ที่ทำการ Undelegate แล้วจะถูกล็อกอยู่ {{numberOfDays}} วัน ก่อนจะทำธุรกรรมอื่นได้"
       },
       "delegationUnavailable" : {
-        "title" : "การมอบหมายไม่พร้อมใช้งาน",
-        "description" : "ในบัญชีของคุณมียอดคงเหลือที่ใช้ได้ไม่เพียงพอสำหรับการเริ่มต้นการ Delegateใหม่"
+        "title" : "การ Delegate ยังไม่พร้อมใช้งาน",
+        "description" : "ในบัญชีของคุณมียอดคงเหลือที่ใช้ได้ไม่เพียงพอสำหรับการเริ่มต้นการ Delegate ใหม่"
       },
       "claimable" : {
         "title" : "Reward ที่สามารถขอรับได้",
@@ -5169,11 +5189,11 @@
       }
     },
     "delegation" : {
-      "delegationEarn" : "คุณสามารถรับ Reward {{ticker}} ได้ด้วยการมอบหมายสินทรัพย์ของคุณ",
-      "info" : "วิธีใช้งานการ Delegation?",
+      "delegationEarn" : "คุณสามารถรับ Reward {{ticker}} ได้ด้วยการ Delegate สินทรัพย์ของคุณ",
+      "info" : "Delegation ทำงานยังไง",
       "claimRewards" : "ขอรับ Reward",
       "claimAvailableRewards" : "ขอรับ {{amount}}",
-      "header" : "การ Delegation",
+      "header" : "การ Delegate",
       "Amount" : "จำนวน",
       "noRewards" : "ไม่มี Reward",
       "delegate" : "Delegate",
@@ -5181,7 +5201,7 @@
       "redelegate" : "Redelegate",
       "reward" : "ขอรับ Reward",
       "estYield" : "ผลตอบแทนโดยประมาณ",
-      "totalStake" : "Stake ทั้งหมด",
+      "totalStake" : "จำนวน Stake ทั้งหมด",
       "commission" : "คอมมิชชัน",
       "iDelegate" : "ฉัน Delegate",
       "stepperHeader" : {
@@ -5200,7 +5220,7 @@
             "description" : "Delegate {{ticker}} ของคุณ เพื่อรับ Reward อย่างปลอดภัย โดยยังคงควบคุมสินทรัพย์ของคุณเองได้",
             "steps" : {
               "0" : "สินทรัพย์ที่ Delegate ยังเป็นของคุณ",
-              "1" : "คุณจะต้องรอ {{numberOfDays}} วันเพื่อให้การ Undelegation เสร็จสมบูรณ์",
+              "1" : "คุณจะต้องรอ {{numberOfDays}} วันเพื่อให้การ Undelegate เสร็จสมบูรณ์",
               "2" : "Delegate ด้วยอุปกรณ์ Ledger ของคุณได้อย่างปลอดภัย"
             },
             "warning" : {
@@ -5210,7 +5230,7 @@
           },
           "validator" : {
             "validators" : "ผู้ตรวจสอบ",
-            "myDelegations" : "การมอบหมายของฉัน",
+            "myDelegations" : "การ Delegate ของฉัน",
             "cta" : "ดำเนินการต่อ",
             "estYield" : "ผลตอบแทนโดยประมาณ: {{amount}}",
             "totalAvailable" : "จำนวนที่ใช้ได้: <0>{{amount}}</0>",
@@ -5227,7 +5247,7 @@
           },
           "verification" : {
             "success" : {
-              "title" : "คุณได้มอบหมายสินทรัพย์ของคุณเรียบร้อยแล้ว",
+              "title" : "คุณได้ Delegate สินทรัพย์ของคุณเรียบร้อยแล้ว",
               "text" : "ยอดคงเหลือในบัญชีของคุณจะอัปเดตเมื่อเครือข่ายได้ยืนยันธุรกรรมแล้ว",
               "cta" : "ดูรายละเอียด"
             },
@@ -5240,18 +5260,18 @@
       },
       "drawer" : {
         "status" : "สถานะ",
-        "rewards" : "Rewards",
+        "rewards" : "Reward",
         "active" : "ใช้งานอยู่",
         "inactive" : "ไม่มีการใช้งาน",
         "completionDate" : "วันที่เสร็จสมบูรณ์",
-        "redelegatedFrom" : "มอบหมายใหม่จาก"
+        "redelegatedFrom" : "Redelegate จาก"
       }
     },
     "redelegation" : {
       "estYield" : "ผลตอบแทนโดยประมาณ",
       "stepperHeader" : {
         "validator" : "เลือกผู้ตรวจสอบใหม่",
-        "amountSubTitle" : "จำนวนที่จะมอบหมายใหม่",
+        "amountSubTitle" : "จำนวนที่จะ Redelegate",
         "amountTitle" : "{{from}} → {{to}}",
         "summary" : "สรุป",
         "selectDevice" : "เลือกอุปกรณ์",
@@ -5262,7 +5282,7 @@
         "steps" : {
           "validator" : {
             "validators" : "ผู้ตรวจสอบ",
-            "myDelegations" : "การมอบหมายของฉัน",
+            "myDelegations" : "การ Delegation ของฉัน",
             "cta" : "ดำเนินการต่อ",
             "estYield" : "ผลตอบแทนโดยประมาณ: {{amount}}",
             "totalAvailable" : "จำนวนที่ใช้ได้: <0>{{amount}}</0>",
@@ -5270,12 +5290,12 @@
             "noResultsFound" : "ไม่พบผู้ตรวจสอบสำหรับ <0>{{search}}</0>"
           },
           "amount" : {
-            "newRedelegatedBalance" : "ยอดรวมใหม่สำหรับ <0>{{name}}</0> หลังการดำเนินการ: <0>{{amount}}</0>",
+            "newRedelegatedBalance" : "ยอดรวมใหม่ของ <0>{{name}}</0> หลังการดำเนินการ: <0>{{amount}}</0>",
             "allAssetsUsed" : "สินทรัพย์ทั้งหมดที่ใช้ไป"
           },
           "verification" : {
             "success" : {
-              "title" : "คุณได้มอบหมายสินทรัพย์ของคุณใหม่เรียบร้อยแล้ว",
+              "title" : "คุณได้ Redelegate สินทรัพย์ของคุณใหม่เรียบร้อยแล้ว",
               "text" : "ยอดคงเหลือในบัญชีของคุณจะอัปเดตเมื่อเครือข่ายได้ยืนยันธุรกรรมแล้ว",
               "cta" : "ดูรายละเอียด"
             },
@@ -5289,7 +5309,7 @@
     },
     "undelegation" : {
       "stepperHeader" : {
-        "amountSubTitle" : "จำนวนที่จะยกเลิกการมอบหมาย",
+        "amountSubTitle" : "จำนวนที่จะ Undelegate",
         "summary" : "สรุป",
         "selectDevice" : "เลือกอุปกรณ์",
         "connectDevice" : "เชื่อมต่ออุปกรณ์",
@@ -5298,11 +5318,11 @@
       "flow" : {
         "steps" : {
           "amount" : {
-            "allAssetsUsed" : "ยกเลิกการมอบหมายสินทรัพย์ทั้งหมดแล้ว"
+            "allAssetsUsed" : "สินทรัพย์ที่ Undelegate แล้ว"
           },
           "verification" : {
             "success" : {
-              "title" : "คุณได้ยกเลิกการมอบหมายสินทรัพย์ของคุณสำเร็จแล้ว",
+              "title" : "คุณได้ Undelegate สินทรัพย์ของคุณสำเร็จแล้ว",
               "text" : "ยอดคงเหลือในบัญชีของคุณจะอัปเดตเมื่อเครือข่ายได้ยืนยันธุรกรรมแล้ว",
               "cta" : "ดูรายละเอียด"
             },
@@ -5327,20 +5347,20 @@
         "steps" : {
           "method" : {
             "youEarned" : "คุณได้รับ",
-            "byDelegationAssetsTo" : "โดยการมอบหมายสินทรัพย์ให้กับ",
+            "byDelegationAssetsTo" : "โดยการ Delegate สินทรัพย์ให้กับ",
             "claimReward" : "Cash in",
             "claimRewardCompound" : "Compound",
             "claimRewardInfo" : "ระบบจะรับให้ตอนนี้และเพิ่มไปยังยอดคงเหลือที่ใช้ได้ของคุณ",
-            "claimRewardCompoundInfo" : "ระบบจะรับให้ตอนนี้และมอบหมายให้ผู้ตรวจสอบคนเดียวกันโดยอัตโนมัติ",
+            "claimRewardCompoundInfo" : "ระบบจะรับให้ตอนนี้และจะ Delegate ให้ผู้ตรวจสอบที่คุณกำลังใช้อยู่โดยอัตโนมัติ",
             "compoundOrCashIn" : "Compound หรือ Cash in?",
             "claimRewardTooltip" : "Reward จะถูกเพิ่มเข้าไปในยอดคงเหลือที่ใช้ได้",
-            "claimRewardCompoundTooltip" : "Reward จะถูกเพิ่มเข้าไปในจำนวนที่ได้รับมอบหมาย",
+            "claimRewardCompoundTooltip" : "Reward จะถูกเพิ่มเข้าไปในจำนวนที่ Delegate",
             "cta" : "ดำเนินการต่อ"
           },
           "verification" : {
             "success" : {
               "title" : "คุณได้รับรางวัลเรียบร้อยแล้ว ระบบได้เพิ่มไปยังยอดคงเหลือที่ใช้ได้ของคุณแล้ว",
-              "titleCompound" : "รางวัลของคุณถูกมอบไปยังผู้ตรวจสอบคนเดียวกัน",
+              "titleCompound" : "รางวัลของคุณถูก Delegate ไปยังผู้ตรวจสอบเดียวกัน",
               "text" : "ยอดคงเหลือในบัญชีของคุณจะอัปเดตเมื่อเครือข่ายได้ยืนยันธุรกรรมแล้ว",
               "cta" : "ดูรายละเอียด"
             },
@@ -5361,16 +5381,16 @@
         "description" : "สามารถโอนจำนวนนี้ได้"
       },
       "delegated" : {
-        "title" : "สินทรัพย์ที่ Stake",
+        "title" : "สินทรัพย์ที่ Stake แล้ว",
         "description" : "ผู้ให้บริการ Staking จะใช้สินทรัพย์ที่ Stake ทางอ้อมเพื่อดำเนินการกับโหนดผู้ตรวจสอบ ประมวลผลธุรกรรม และรักษาความปลอดภัยของเครือข่ายโดยการเข้าร่วมในกลไกฉันทามติ"
       },
       "undelegating" : {
         "title" : "การถอนที่รอดำเนินการ",
-        "description" : "สินทรัพย์ที่ไม่ได้ Stake จะต้องผ่านช่วงเวลาการปลดข้อผูกพัน 10 วัน ก่อนที่จะสามารถถอนออกได้"
+        "description" : "สินทรัพย์ที่ Unstake จะต้องผ่านช่วงเวลาการปลดข้อผูกพัน 10 วัน ก่อนที่จะสามารถถอนออกได้"
       },
       "delegationUnavailable" : {
-        "title" : "การมอบหมายไม่พร้อมใช้งาน",
-        "description" : "ในบัญชีของคุณมียอดคงเหลือที่ใช้ได้ไม่เพียงพอสำหรับการเริ่มต้นการมอบหมายใหม่"
+        "title" : "การ Delegation ไม่พร้อมใช้งาน",
+        "description" : "ในบัญชีของคุณมียอดคงเหลือที่ใช้ได้ไม่เพียงพอสำหรับการเริ่มต้นการ Delegate ใหม่"
       }
     },
     "delegation" : {
@@ -5385,11 +5405,11 @@
       "undelegate" : "Unstake",
       "reward" : "ขอรับ Reward",
       "commission" : "คอมมิชชัน",
-      "iDelegate" : "ฉันมอบหมาย",
+      "iDelegate" : "ฉัน Delegate",
       "totalStake" : "Stake ทั้งหมด",
       "stepperHeader" : {
         "starter" : "รับ Reward",
-        "validator" : "มอบหมายสินทรัพย์",
+        "validator" : "Delegate สินทรัพย์",
         "amountSubTitle" : "จำนวนที่จะ Stake",
         "summary" : "สรุป",
         "verification" : "การยืนยัน",
@@ -5445,7 +5465,7 @@
       },
       "drawer" : {
         "status" : "สถานะ",
-        "rewards" : "Rewards",
+        "rewards" : "Reward",
         "active" : "ใช้งานอยู่",
         "inactive" : "ไม่มีการใช้งาน",
         "completionDate" : "วันที่เสร็จสมบูรณ์",
@@ -5479,7 +5499,7 @@
           "verification" : {
             "success" : {
               "claimRewardsSuccess" : "คุณได้รับรางวัลเรียบร้อยแล้ว ระบบได้เพิ่มไปยังยอดคงเหลือที่ใช้ได้ของคุณแล้ว",
-              "reDelegateRewardsSuccess" : "รางวัลถูก Stake ไปยังผู้ให้บริการ Staking รายเดียวกัน",
+              "reDelegateRewardsSuccess" : "Reward ของคุณได้ถูก Stake ไปยังผู้ให้บริการ Staking รายเดียวกัน",
               "text" : "ยอดคงเหลือในบัญชีของคุณจะอัปเดตเมื่อเครือข่ายได้ยืนยันธุรกรรมแล้ว",
               "cta" : "ดูรายละเอียด"
             },
@@ -5503,7 +5523,7 @@
         "steps" : {
           "amount" : {
             "allAssetsUsed" : "เลือกสินทรัพย์ทั้งหมดแล้ว",
-            "assetsRemaining" : "สินทรัพย์ที่เหลือที่มอบหมาย: <0>{{amount}}</0>",
+            "assetsRemaining" : "สินทรัพย์ที่เหลือที่ Delegate ได้: <0>{{amount}}</0>",
             "minAmount" : "จำนวนขั้นต่ำ: <0>{{min}}</0>",
             "incorrectAmount" : "จำนวนสูงสุด: <0>{{max}}</0>",
             "minRemaining" : "เหลือขั้นต่ำ: <0>{{min}}</0>"
@@ -5557,7 +5577,7 @@
   },
   "tezos" : {
     "AccountHeader" : {
-      "title" : "คุณสามารถรับ Reward ได้โดยการมอบหมายบัญชีของคุณ",
+      "title" : "คุณสามารถรับ Reward ได้โดยการ Delegate บัญชีของคุณ",
       "btn" : "รับ Reward"
     },
     "delegation" : {
@@ -5574,7 +5594,7 @@
       "header" : "โหวต ({{total}})",
       "Amount" : "จำนวน",
       "noRewards" : "ไม่มี Reward",
-      "warnDisableStakingMessage" : "คุณสมบัติ Staking สำหรับ Tron ไม่สามารถใช้งานได้ในขณะนี้",
+      "warnDisableStakingMessage" : "ฟีเจอร์ Staking สำหรับ Tron ไม่สามารถใช้งานได้ในตอนนี้",
       "votes" : {
         "title" : "การโหวต",
         "description" : "โหวตเลือกตัวแทนหนึ่งคนหรือมากกว่านั้นเพื่อเริ่มรับ Reward",
@@ -5595,7 +5615,7 @@
           "srOrCandidate" : "SR หรือ Candidate?",
           "description" : "โหวตเลือก Super Representative ตั้งแต่หนึ่งคนขึ้นไปเพื่อเริ่มรับ Reward",
           "button" : {
-            "continue" : "Cast votes"
+            "continue" : "Cast Votes"
           }
         },
         "selectValidator" : {
@@ -5616,9 +5636,9 @@
             "title" : "รับ Reward",
             "description" : "มอบหมาย TRX ให้กับ Candidate บุคคลที่สามเพื่อรับ Reward คลิกที่ดำเนินการต่อเพื่อ Freeze สินทรัพย์และโหวต",
             "bullet" : {
-              "delegate" : "สินทรัพย์ที่มอบหมายยังเป็นของคุณ",
-              "access" : "สามารถยกเลิกการระงับสำหรับสินทรัพย์ที่ถูกระงับได้ในทันทีและจะสามารถเข้าถึงได้หลังจากช่วงยกเลิกการระงับ 14 วัน",
-              "ledger" : "มอบหมายด้วยอุปกรณ์ Ledger ของคุณได้อย่างปลอดภัย"
+              "delegate" : "สินทรัพย์ที่ Delegate ยังเป็นของคุณ",
+              "access" : "สามารถ Unfreeze สินทรัพย์ที่ถูก Freeze ได้ในทันทีและจะสามารถเข้าถึงได้หลังจากช่วง Unfreezing 14 วัน",
+              "ledger" : "Delegate ด้วยอุปกรณ์ Ledger ของคุณได้อย่างปลอดภัย"
             },
             "button" : {
               "cta" : "ดำเนินการต่อ"
@@ -5635,7 +5655,7 @@
       },
       "unfreeze" : {
         "title" : "Unfreeze",
-        "description" : "ยกเลิกการระงับ TRX เพื่อให้กลับมาอยู่ในยอดคงเหลือที่มีอยู่ของคุณ คุณจะไม่สามารถรับ Reward ได้อีกต่อไป สินทรัพย์จะพร้อมใช้งานหลังจากช่วงเวลา Unfreeze 14 วัน"
+        "description" : "Unfreeze TRX เพื่อเพิ่มกลับมาอยู่ในยอดคงเหลือที่มีอยู่ของคุณ คุณจะไม่สามารถรับ Reward ได้อีกต่อไป สินทรัพย์จะพร้อมใช้งานหลังจากช่วงยกเลิกการระงับ 14 วัน"
       },
       "vote" : {
         "title" : "โหวต",
@@ -5645,7 +5665,7 @@
     "info" : {
       "available" : {
         "title" : "TRX ที่มีอยู่",
-        "description" : "จำนวนนี้ใช้แล้วหมดไป"
+        "description" : "จำนวนที่สามารถใช้จ่ายได้"
       },
       "frozen" : {
         "title" : "ถูก Freeze",
@@ -5653,7 +5673,7 @@
       },
       "bandwidth" : {
         "title" : "Bandwidth",
-        "description" : "Bandwidth Points ใช้ในการทำธุรกรรมแทนที่จะจ่ายค่าธรรมเนียมเครือข่าย TRX เลือก Bandwidth เพื่อเพิ่มการทำธุรกรรมฟรีรายวันของคุณ"
+        "description" : "Bandwidth Point ใช้ในการทำธุรกรรมแทนการจ่ายค่าธรรมเนียมเครือข่าย TRX เลือก Bandwidth เพื่อเพิ่มการทำธุรกรรมฟรีรายวันของคุณ"
       },
       "energy" : {
         "title" : "Energy",
@@ -5661,7 +5681,7 @@
       },
       "claimRewards" : {
         "title" : "Reward การโหวต",
-        "description" : "TRX ที่สร้างขึ้นเป็น Reward ในระหว่างการผลิตบล็อกสามารถรับได้ทุก 24 ชั่วโมง"
+        "description" : "TRX ที่สร้างขึ้นเป็น Reward ในระหว่างการผลิตบล็อกสามารถรับได้ทุก ๆ 24 ชั่วโมง"
       },
       "superRepresentative" : {
         "title" : "Super Representative (SR)",
@@ -5669,7 +5689,7 @@
       },
       "candidates" : {
         "title" : "Candidate",
-        "description" : "มีการคัดเลือกบุคคล 127 โดยการโหวตจากชุมชนผู้ถือโทเค็นทั้งหมด ระบบจะสุ่มคะแนนโหวตทุกๆ 6 ชั่วโมง"
+        "description" : "มีการคัดเลือก 127 บุคคลโดยการโหวตจากชุมชนผู้ถือโทเคนทั้งหมด ระบบจะสุ่มคะแนนโหวตทุก ๆ 6 ชั่วโมง"
       }
     },
     "receive" : {
@@ -5726,7 +5746,7 @@
             "pending" : {
               "title" : "กำลังประกาศธุรกรรม..."
             },
-            "broadcastError" : "ธุรกรรมของคุณอาจล้มเหลว โปรดกลับมาตรวจสอบอีกครั้งในอีกสักครู่ เพื่อให้แน่ใจว่าธุรกรรมของคุณไม่ผ่าน ก่อนที่จะลองอีกครั้ง"
+            "broadcastError" : "ธุรกรรมของคุณอาจล้มเหลว โปรดกลับมาตรวจสอบอีกครั้งในอีกสักครู่ เพื่อให้แน่ใจว่าธุรกรรมของคุณไม่สำเร็จ ก่อนที่จะลองอีกครั้ง"
           }
         }
       }
@@ -5734,8 +5754,8 @@
   },
   "polkadot" : {
     "lockedBalance" : "ยอดคงเหลือที่ผูกมัด",
-    "unlockingBalance" : "กำลังยกเลิกการผูกมัดยอดคงเหลือ",
-    "unlockedBalance" : "ยอดคงเหลือที่ถอนค้ำประกัน",
+    "unlockingBalance" : "ยอดคงเหลือที่กำลังยกเลิกการผูกมัด",
+    "unlockedBalance" : "ยอดคงเหลือที่ไม่มีการผูกมัด",
     "networkFees" : "ค่าธรรมเนียมเครือข่ายจะกำหนดตามฉันทามติของ Polkadot โดยอัตโนมัติ คุณจะไม่สามารถตรวจสอบค่าธรรมเนียมเหล่านี้บนอุปกรณ์ของคุณได้",
     "bondedBalanceBelowMinimum" : "ในฐานะผู้เสนอชื่อ ต้องใช้จำนวนขั้นต่ำ {{minimumBondBalance}} เพื่อยื่นความจำนงในการเสนอชื่อ",
     "info" : {
@@ -5744,7 +5764,7 @@
         "description" : "คุณสามารถส่งจำนวนนี้ได้ตลอดเวลา"
       },
       "locked" : {
-        "title" : "สินทรัพย์ที่ผูกมัดอยู่",
+        "title" : "สินทรัพย์ที่ผูกมัด",
         "description" : "ต้องมีการผูกมัดสินทรัพย์ไว้กับผู้ตรวจสอบที่ได้รับการเสนอชื่อก่อนรับ Reward"
       },
       "unlocking" : {
@@ -5753,18 +5773,18 @@
       },
       "unlocked" : {
         "title" : "สินทรัพย์ที่ไม่มีการผูกมัด",
-        "description" : "ตอนนี้สินทรัพย์ที่ไม่มีการผูกมัดสามารถย้ายได้โดยใช้การดำเนินการถอน"
+        "description" : "ตอนนี้สินทรัพย์ที่ไม่มีการผูกมัดสามารถย้ายได้โดยการดำเนินการถอน"
       },
       "electionOpen" : {
         "title" : "กำลังดำเนินการเลือกตั้งผู้ตรวจสอบ",
-        "description" : "ยังทำการเลือกผู้ตรวจสอบ (Validator) คนใหม่อยู่ในขณะนี้ ดังนั้นจะไม่สามารถใช้การ Staking ได้สูงสุดเป็นเวลา 15 นาที"
+        "description" : "กำลังทำการเลือกผู้ตรวจสอบใหม่อยู่ในขณะนี้ ดังนั้นจะไม่สามารถทำการ Staking ได้นานสุดไม่เกิน 15 นาที"
       },
-      "notEnoughBonded" : "จำนวนที่ค้ำประกันไม่เพียงพอ"
+      "notEnoughBonded" : "จำนวนที่ผูกมัดไม่เพียงพอ"
     },
     "nomination" : {
       "emptyState" : {
         "title" : "รับ Reward",
-        "description" : "คุณสามารถรับ Reward ได้โดยการผูกมัดสินทรัพย์แล้วเสนอชื่อผู้ตรวจสอบของคุ",
+        "description" : "คุณสามารถรับ Reward ได้โดยการผูกมัดสินทรัพย์แล้วเสนอชื่อผู้ตรวจสอบของคุณ",
         "info" : "การเสนอชื่อทำงานอย่างไร?",
         "cta" : "รับ Reward"
       },
@@ -5773,27 +5793,27 @@
       "chill" : "ล้างการเสนอชื่อ",
       "setController" : "เปลี่ยนผู้ควบคุม",
       "status" : "สถานะ",
-      "totalStake" : "Stake ทั้งหมด",
-      "amount" : "จำนวนที่ค้ำประกัน",
+      "totalStake" : "จำนวน Stake ทั้งหมด",
+      "amount" : "จำนวนที่ผูกมัด",
       "commission" : "คอมมิชชัน",
       "active" : "ใช้งานอยู่",
       "activeInfo" : "ผู้ตรวจสอบนี้ได้รับเลือกและกำลังรวบรวม Reward จากสินทรัพย์ที่มีการผูกมัดของคุณ",
       "inactive" : "ไม่มีการใช้งาน",
-      "inactiveInfo" : "ผู้ตรวจสอบนี้ได้รับเลือกและไม่ได้รวบรวม Reward จากสินทรัพย์ที่มีการค้ำประกันของคุณ",
+      "inactiveInfo" : "ผู้ตรวจสอบนี้ได้รับเลือกและไม่ได้รวบรวม Reward จากสินทรัพย์ที่มีการผูกมัดของคุณ",
       "waiting" : "ไม่ได้รับเลือก",
-      "waitingInfo" : "ผู้ตรวจสอบนี้ไม่ได้รับเลือก ดังนั้นจึงไม่ได้สะสม Reward",
+      "waitingInfo" : "ผู้ตรวจสอบนี้ไม่ได้รับเลือก ดังนั้นคุณจะไม่ได้ Reward",
       "notValidator" : "ไม่ใช่ผู้ตรวจสอบ",
       "notValidatorInfo" : "Address นี้ไม่ใช่ผู้ตรวจสอบอีกต่อไป",
       "elected" : "ได้รับเลือก",
       "electedInfo" : "ผู้ตรวจสอบนี้ได้รับเลือกแล้วและกำลังรวบรวม Reward สำหรับผู้เสนอชื่อ",
       "nominators" : "ผู้เสนอชื่อ",
       "nominatorsCount" : "ผู้เสนอชื่อ {{nominatorsCount}} คน",
-      "nominatorsInfo" : "ผู้ตรวจสอบ (Validator) ได้รับเลือกจากผู้เสนอชื่อ {{count}} คน",
+      "nominatorsInfo" : "ผู้ตรวจสอบได้รับเลือกจากผู้เสนอชื่อ {{count}} คน",
       "oversubscribed" : "สมัครติดตามเกิน ({{nominatorsCount}})",
       "oversubscribedInfo" : "เฉพาะผู้เสนอชื่อ {{maxNominatorRewardedPerValidator}} อันดับแรกที่มีจำนวนการผูกมัดสูงสุดเท่านั้นที่จะได้รับ Reward",
       "hasPendingBondOperation" : "การดำเนินการผูกมัดยังรอการยืนยัน",
       "externalControllerUnsupported" : "บัญชี Stash นี้ควบคุมโดยบัญชีแยกต่างหาก ซึ่งมี Address คือ <0>{{controllerAddress}}</0> ในการ Stake กับ Ledger Live คุณต้องตั้งค่าบัญชี Stash นี้เป็นผู้ควบคุมเอง",
-      "externalStashUnsupported" : "บัญชีนี้เป็นผู้ควบคุมบัญชี Stsh แยกต่างหากซึ่งมี Address ที่ <0>{{stashAddress}}</0 > ในการ Stake กับ Ledger Live คุณต้องตั้งค่าบัญชี Stash นี้เป็นผู้ควบคุมเอง",
+      "externalStashUnsupported" : "บัญชีนี้เป็นผู้ควบคุมบัญชี Stash แยกต่างหากซึ่งมี Address ที่ <0>{{stashAddress}}</0 > ในการ Stake กับ Ledger Live คุณต้องตั้งค่าบัญชี Stash นี้เป็นผู้ควบคุมเอง",
       "showInactiveNominations" : "แสดงการเสนอชื่อทั้งหมด ({{count}})",
       "hideInactiveNominations" : "แสดงเฉพาะการเสนอชื่อที่ใช้งานเท่านั้น",
       "noActiveNominations" : "ไม่มีการเสนอชื่อที่ใช้งานอยู่",
@@ -5821,7 +5841,7 @@
       },
       "nominate" : {
         "title" : "เสนอชื่อ",
-        "description" : "เลือกผู้ตรวจสอบได้สูงสุด 16 คน ตรวจสอบให้แน่ใจว่าการเสนอชื่ออยู่ในสถานะเปิดใช้งานอยู่ เพื่อรับ Reward"
+        "description" : "เลือกได้สูงสุด 16 ผู้ตรวจสอบ ตรวจสอบให้แน่ใจว่าการเสนอชื่ออยู่ในสถานะเปิดใช้งานอยู่ เพื่อรับ Reward"
       },
       "chill" : {
         "title" : "ล้างการเสนอชื่อ",
@@ -5855,7 +5875,7 @@
     },
     "bond" : {
       "rewardDestination" : {
-        "label" : "ปลายทาง Reward",
+        "label" : "Reward ไปที่",
         "stash" : "ยอดคงเหลือในบัญชีที่ใช้ได้",
         "stashDescription" : "ระบบได้โอน Reward ไปยังยอดคงเหลือที่ใช้ได้ของคุณแล้ว",
         "staked" : "ยอดคงเหลือที่ผูกมัด",
@@ -5875,7 +5895,7 @@
         "starter" : {
           "description" : "คุณสามารถรับ Reward ได้โดยการผูกมัดสินทรัพย์ของคุณแล้วเสนอชื่อผู้ตรวจสอบ",
           "bullet" : ["คุณยังคงเป็นเจ้าของสินทรัพย์ที่ผูกมัดไว้", "เสนอชื่อโดยใช้อุปกรณ์ Ledger ของคุณ", "สินทรัพย์จะพร้อมใช้งานอีกครั้ง 28 วันหลังยกเลิกการผูกมัด"],
-          "help" : "วิธีใช้งานการเสนอชื่อ",
+          "help" : "การเสนอชื่อทำงานอย่างไร?",
           "warning" : "เลือกผู้ตรวจสอบของคุณอย่างชาญฉลาด: สินทรัพย์ที่คุณผูกมัดไว้บางส่วนอาจสูญหายไปอย่างถาวรหากผู้ตรวจสอบทำงานอย่างไม่เหมาะสม"
         },
         "amount" : {
@@ -5973,7 +5993,7 @@
         "validation" : {
           "success" : {
             "title" : "ส่งธุรกรรมเรียบร้อยแล้ว",
-            "description" : "คุณจะเห็นการดำเนินการของคุณในประวัติ เมื่อเครือข่ายได้ยืนยันธุรกรรมแล้ว"
+            "description" : "คุณจะเห็นการดำเนินการของคุณในประวัติธุรกรรม เมื่อเครือข่ายได้ยืนยันธุรกรรมแล้ว"
           }
         }
       }
@@ -5984,7 +6004,7 @@
       "iDelegate" : "ฉันมอบหมาย",
       "iActivate" : "ฉันเปิดใช้งาน",
       "iReactivate" : "ฉันเปิดใช้งานอีกครั้ง",
-      "iDeactivate" : "ฉันยกเลิกการมอบหมาย",
+      "iDeactivate" : "ฉันต้องการ Undelegate",
       "iWithdraw" : "ฉันถอน",
       "totalStake" : "Stake ทั้งหมด",
       "commission" : "คอมมิชชัน",
@@ -6003,26 +6023,86 @@
         "activating" : "กำลังเปิดใช้งาน",
         "deactivating" : "กำลังปิดใช้งาน"
       },
-      "delegationEarn" : "คุณสามารถรับ Reward สำหรับ SOL ได้ด้วยการมอบหมายสินทรัพย์ของคุณ",
-      "info" : "วิธีใช้งานการมอบหมาย",
+      "delegationEarn" : "คุณสามารถรับ Reward สำหรับ SOL ได้ด้วยการ Delegate สินทรัพย์ของคุณ",
+      "info" : "วิธีใช้งานการ Delegate?",
       "broadcastSuccessTitle" : "ส่งการดำเนินการแล้ว",
-      "broadcastSuccessDescription" : "สถานะของการมอบหมายจะได้รับการอัปเดตเมื่อมีการยืนยันธุรกรรม",
-      "delegatedTo" : "มอบหมายไปยัง",
+      "broadcastSuccessDescription" : "สถานะของการ Delegate จะได้รับการอัปเดตเมื่อมีการยืนยันธุรกรรม",
+      "delegatedTo" : "ได้ Delegate ไปแล้วที่",
       "started" : {
-        "description" : "คุณสามารถรับ Reward ได้ด้วยการมอบหมายสินทรัพย์ SOL ของคุณให้กับผู้ตรวจสอบ"
+        "description" : "คุณสามารถรับ Reward ได้ด้วยการ Delegate สินทรัพย์ SOL ของคุณให้กับผู้ตรวจสอบ"
       },
       "reserveWarning" : "โปรดตรวจสอบให้แน่ใจว่าคุณมีอย่างน้อย {{amount}} SOL ใน Wallet ของคุณเพื่อให้ครอบคลุมค่าธรรมเนียมเครือข่ายในอนาคต เพื่อปิดใช้งานและถอน Stake ของคุณ"
     },
     "token" : {
-      "frozenStateWarning" : "สินทรัพย์บัญชีถูกระงับ!",
-      "transferWarning" : "ในการตรวจสอบที่อยู่ผู้รับสำหรับโทเค็น Solana โดยใช้ Ledger Nano S™ ให้<0>ทำตามคำแนะนำต่อไปนี้</0>"
+      "frozenStateWarning" : "สินทรัพย์บัญชีถูก Freeze!",
+      "transferWarning" : "ในการตรวจสอบ Address ผู้รับสำหรับโทเคน Solana โดยใช้ Ledger Nano S™ ให้<0>ทำตามคำแนะนำต่อไปนี้</0>",
+      "transferFees" : {
+        "title" : "Transfer fees",
+        "feesPercentHint" : "Token has {{feePercent}}% ({{feeBps}}bps) transfer fee ({{maxFee}} max)",
+        "notice" : "Transfer fee {{fee}}%",
+        "tooltipHint" : "Percentage of transfer withheld for token creator"
+      },
+      "nonTransferable" : {
+        "notice" : "Token is non-transferable"
+      },
+      "interestRate" : {
+        "notice" : "Interest rate {{rate}}%",
+        "tooltipHint" : "For cosmetic purposes only, no new tokens are created as a result of the interest"
+      },
+      "permanentDelegate" : {
+        "notice" : "Permanent delegate authority is enabled",
+        "initializationNotice" : "Permanent delegate authority is initialized but not enabled",
+        "initializedNoticeTooltipHint" : "The delegate has the ability transfer or burn this token from your account",
+        "tooltipHint" : "{{delegateAddress}}<0></0> has the ability transfer or burn this token from your account"
+      },
+      "requiredMemoOnTransfer" : {
+        "notice" : "Required memo on transfer is enabled",
+        "tooltipHint" : "All incoming transfers to this account must have a memo"
+      },
+      "transferHook" : {
+        "notice" : "Transfer hook is enabled",
+        "initializationNotice" : "Transfer hook is initialized but not enabled",
+        "tooltipHint" : "Token has extra functionality handled by {{programAddress}}<0></0>"
+      },
+      "extensionsInfo" : {
+        "title" : "Solana token extensions",
+        "commonInfo" : "Token extensions are the next generation of the Solana Token standard. They introduce a new set of ways to extend the normal token functionality with additional features such as confidential transfers, permanent delegate, custom transfer logic, extended metadata, and much more.",
+        "permanentDelegate" : {
+          "title" : "Permanent delegate",
+          "permanentDelegateAddress" : "Current delegate authority is {{address}}",
+          "permanentDelegateNotSetup" : "Current delegate authority is not set up.",
+          "description" : "Permanent delegate is an authority which has unlimited delegate privileges over any account for that mint. The delegate could burn or transfer any amount of tokens, at any time, on their own authority."
+        },
+        "nonTransferable" : {
+          "title" : "Non-Transferrable Tokens",
+          "description" : "Such tokens are \"soul-bound\" and cannot be moved or burned, except by the token issuer."
+        },
+        "transferHook" : {
+          "title" : "Transfer hook",
+          "transferHookAddress" : "Current transfer hook program is {{address}}",
+          "transferHookNotSetup" : "Current transfer hook program is not set up.",
+          "description" : "Transfer hook gives a token issuers an ability to dictate how users and tokens interact. Instead of a normal transfer, issuer can insert custom logic into a program to be used with the transfer hook extension."
+        },
+        "transferFee" : {
+          "title" : "Transfer Fee",
+          "currentTransferFee" : "Current transfer fee is {{feePercent}}% ({{feeBps}}bps). Max {{maxFee}}.",
+          "description" : "Fees are charged on every transfer of a token and withheld on the recipient account, untouchable by the recipient."
+        },
+        "interestBearing" : {
+          "title" : "Interest-Bearing Tokens",
+          "currentInterestRate" : "Current interest rate is {{rate}}%.",
+          "accruedDelta" : "Accrued {{delta}}.",
+          "interestRateNotSetup" : "Current interest rate is set up to 0%.",
+          "description" : "Tokens that constantly grow or decrease in value according on its interest rate. No new tokens are ever created, the feature is entirely cosmetic."
+        }
+      }
     }
   },
   "near" : {
     "info" : {
       "available" : {
         "title" : "NEAR ที่ใช้ได้",
-        "description" : "จำนวนนี้ใช้แล้วหมดไป"
+        "description" : "จำนวนที่สามารถใช้จ่ายได้"
       },
       "storageUsage" : {
         "title" : "ยอดคงเหลือขั้นต่ำ",
@@ -6075,10 +6155,10 @@
     },
     "staking" : {
       "sectionLabel" : "Staking Position",
-      "info" : "วิธีใช้งาน Staking",
+      "info" : "วิธีใช้งาน Staking?",
       "add" : "เพิ่ม",
       "stakingEarn" : "คุณสามารถรับ Reward สำหรับ NEAR ได้ด้วยการ Staking สินทรัพย์ของคุณ",
-      "totalStake" : "Stake ทั้งหมด",
+      "totalStake" : "จำนวน Stake ทั้งหมด",
       "commission" : "คอมมิชชัน",
       "iStake" : "ฉัน Stake",
       "actions" : {
@@ -6130,31 +6210,31 @@
     }
   },
   "delegation" : {
-    "overdelegated" : "มอบหมายมากเกินไป",
-    "delegationSendWarnDesc" : "จำนวนที่จะส่งจะถูกหักออกจากบัญชีที่ได้รับมอบหมายของคุณ",
-    "delegationReceiveWarnDesc" : "จำนวนที่ได้รับในบัญชีที่ได้รับมอบหมาย จะถูกเพิ่มเข้าไปในจำนวนเงินที่ Stake ทั้งหมด เลือกบัญชีอื่นหากต้องการหลีกเลี่ยงสิ่งนี้",
-    "iDelegateMy" : "ฉันได้มอบหมาย",
-    "undelegateMy" : "ยกเลิกการมอบหมาย",
-    "warnUndelegation" : "บัญชีของคุณจะถูกยกเลิกการมอบหมาย",
-    "warnDelegation" : "การมอบหมายสิทธิ์การโหวตของคุณไม่ได้เป็นการรับประกัน Reward ใด ๆ จากผู้ตรวจสอบของคุณ",
+    "overdelegated" : "Overdelegated",
+    "delegationSendWarnDesc" : "จำนวนที่จะส่งจะถูกหักออกจากบัญชีที่คุณใช้ Delegate",
+    "delegationReceiveWarnDesc" : "จำนวนที่ได้รับใน Delegated Account จะถูกเพิ่มเข้าไปในจำนวนเงินที่ Stake ทั้งหมด เลือกบัญชีอื่นหากต้องการหลีกเลี่ยงสิ่งนี้",
+    "iDelegateMy" : "ฉัน Delegate",
+    "undelegateMy" : "Undelegate",
+    "warnUndelegation" : "บัญชีของคุณจะถูก Undelegate",
+    "warnDelegation" : "การ Delegate สิทธิ์การโหวตของคุณไม่ได้เป็นการรับประกัน Reward ใด ๆ จากผู้ตรวจสอบของคุณ",
     "to" : "จาก",
     "from" : "ถึง",
     "yield" : "ผลตอบแทนโดยประมาณ",
     "forAnEstYield" : "โดยมี ผลตอบแทนโดยประมาณที่",
     "yieldPerYear" : "{{yield}} / ปี",
-    "yieldInfos" : "อัตราผลตอบแทนให้บริการโดย",
+    "yieldInfos" : "อัตราผลตอบแทนได้มาจาก",
     "termsAndPrivacy" : "ฉันได้อ่านและยอมรับ <1>เงื่อนไขการใช้งาน Ledger Live</1> และ <3>นโยบายความเป็นส่วนตัว</3>",
-    "delegation" : "การมอบหมาย",
+    "delegation" : "การ Delegate",
     "viewDetails" : "ดูรายละเอียด",
     "validator" : "ผู้ตรวจสอบ",
     "validatorGroup" : "กลุ่มผู้ตรวจสอบ",
     "validatorAddress" : "Address ผู้ตรวจสอบ",
-    "delegatedAccount" : "บัญชีที่ได้รับมอบหมาย",
+    "delegatedAccount" : "บัญชีที่ได้รับการ Delegate",
     "duration" : "ระยะเวลา",
     "transactionID" : "ID ธุรกรรม",
     "receive" : "รับเพิ่ม",
     "changeValidator" : "เปลี่ยนผู้ตรวจสอบ",
-    "endDelegation" : "ยุติการมอบหมาย",
+    "endDelegation" : "ยุติการ Delegate",
     "durationForDays0" : "ตอนนี้",
     "durationForDays" : "เป็นเวลาหนึ่งวัน",
     "durationForDays_plural" : "เป็นเวลา {{count}} วัน",
@@ -6164,11 +6244,11 @@
     "selectValidatorTitle" : "เลือกผู้ตรวจสอบ",
     "started" : {
       "title" : "รับ Reward",
-      "description" : "มอบหมายบัญชี Tezos ของคุณให้ผู้ตรวจสอบบุคคลที่สาม เพื่อรับ Reward อย่างปลอดภัย และควบคุมทรัพย์สินของคุณ",
+      "description" : "มอบหมายบัญชี Tezos ของคุณให้ผู้ตรวจสอบบุคคลที่สาม เพื่อรับ Reward อย่างปลอดภัย และจัดการสินทรัพย์ของคุณ",
       "steps" : {
-        "0" : "บัญชีที่มอบหมายยังเป็นของคุณ",
+        "0" : "บัญชีที่ Delegate ยังเป็นของคุณ",
         "1" : "คุณสามารถจัดการสินทรัพย์ของคุณได้ตลอดเวลา",
-        "2" : "มอบหมายด้วยอุปกรณ์ Ledger ของคุณได้อย่างปลอดภัย"
+        "2" : "Delegate ด้วยอุปกรณ์ Ledger ของคุณได้อย่างปลอดภัย"
       },
       "cta" : "Delegate เพื่อรับ Reward"
     },
@@ -6178,7 +6258,7 @@
     },
     "broadcastSuccessDescription" : {
       "delegate" : "ประกาศธุรกรรมการ Delegate เรียบร้อยแล้ว คุณควรได้รับ Reward แรกในเวลาประมาณ 40 วัน ทั้งนี้ขึ้นอยู่กับผู้ตรวจสอบ",
-      "undelegate" : "การมอบหมายบัญชีของคุณจะยุติลงเมื่อได้รับการยืนยันการดำเนินการ โดยคุณสามารถ Delegate บัญชีอีกครั้งได้ทุกเมื่อ"
+      "undelegate" : "การ Delegate บัญชีของคุณจะยุติลงเมื่อได้รับการยืนยันการดำเนินการ โดยคุณสามารถ Delegate บัญชีอีกครั้งได้ทุกเมื่อ"
     },
     "summaryTitle" : "สรุป",
     "goToAccount" : "ไปที่บัญชี",
@@ -6193,16 +6273,16 @@
   "ValidateOnDevice" : {
     "title" : {
       "send" : "โปรดยืนยันการทำธุรกรรมใน {{productName}} ของคุณ",
-      "freeze" : "บนอุปกรณ์ของคุณ โปรดยืนยันเพื่อเสร็จสิ้นการดำเนินการ",
-      "unfreeze" : "บนอุปกรณ์ของคุณ โปรดยืนยันเพื่อเสร็จสิ้นการดำเนินการ",
-      "claimReward" : "บนอุปกรณ์ของคุณ โปรดยืนยันเพื่อเสร็จสิ้นการดำเนินการ",
-      "legacyUnfreeze" : "บนอุปกรณ์ของคุณ โปรดยืนยันเพื่อเสร็จสิ้นการดำเนินการ",
-      "withdrawExpireUnfreeze" : "บนอุปกรณ์ของคุณ โปรดยืนยันเพื่อเสร็จสิ้นการดำเนินการ",
-      "undelegateResource" : "บนอุปกรณ์ของคุณ โปรดยืนยันเพื่อเสร็จสิ้นการดำเนินการ",
-      "vote" : "บนอุปกรณ์ของคุณ โปรดยืนยันเพื่อเสร็จสิ้นการดำเนินการ",
-      "delegate" : "บนอุปกรณ์ของคุณ โปรดยืนยันเพื่อเสร็จสิ้นการดำเนินการ",
-      "redelegate" : "บนอุปกรณ์ของคุณ โปรดยืนยันเพื่อเสร็จสิ้นการดำเนินการ",
-      "undelegate" : "บนอุปกรณ์ของคุณ โปรดยืนยันเพื่อเสร็จสิ้นการดำเนินการ"
+      "freeze" : "โปรดยืนยันเพื่อเสร็จสิ้นการดำเนินการบนอุปกรณ์ของคุณ",
+      "unfreeze" : "โปรดยืนยันเพื่อเสร็จสิ้นการดำเนินการบนอุปกรณ์ของคุณ",
+      "claimReward" : "โปรดยืนยันเพื่อเสร็จสิ้นการดำเนินการบนอุปกรณ์ของคุณ",
+      "legacyUnfreeze" : "โปรดยืนยันเพื่อเสร็จสิ้นการดำเนินการบนอุปกรณ์ของคุณ",
+      "withdrawExpireUnfreeze" : "โปรดยืนยันเพื่อเสร็จสิ้นการดำเนินการบนอุปกรณ์ของคุณ",
+      "undelegateResource" : "โปรดยืนยันเพื่อเสร็จสิ้นการดำเนินการบนอุปกรณ์ของคุณ",
+      "vote" : "โปรดยืนยันเพื่อเสร็จสิ้นการดำเนินการบนอุปกรณ์ของคุณ",
+      "delegate" : "โปรดยืนยันเพื่อเสร็จสิ้นการดำเนินการบนอุปกรณ์ของคุณ",
+      "redelegate" : "โปรดยืนยันเพื่อเสร็จสิ้นการดำเนินการบนอุปกรณ์ของคุณ",
+      "undelegate" : "โปรดยืนยันเพื่อเสร็จสิ้นการดำเนินการบนอุปกรณ์ของคุณ"
     },
     "warning" : "ตรวจสอบให้แน่ใจว่า Address ที่แสดงบน Ledger ของคุณตรงกับ Address ของ {{recipientWording}}",
     "recipientWording" : {
@@ -6226,8 +6306,8 @@
       "freeze" : "Freeze โทเคนเพื่อรับ Bandwidth หรือ Energy และรับ TRON Power (TP) ในจำนวนที่เท่ากัน",
       "unfreeze" : "คะแนน {{resource}} ของคุณจะลดลง และคะแนนโหวตทั้งหมดของคุณจะถูกยกเลิก",
       "legacyUnfreeze" : "คะแนน {{resource}} ของคุณจะลดลง และคะแนนโหวตทั้งหมดของคุณจะถูกยกเลิก",
-      "claimReward" : "สามารถขอรับ Rewards ได้ทุก ๆ 24 ชั่วโมง",
-      "withdrawExpireUnfreeze" : "ทรัพยากรที่ถูก Unfreeze ซึ่งผ่านช่วงการ Unfreeze แล้วจะถูกถอนออก",
+      "claimReward" : "สามารถขอรับ Reward ได้ทุก ๆ 24 ชั่วโมง",
+      "withdrawExpireUnfreeze" : "ทรัพยากรที่ถูก Unfreeze ซึ่งผ่านช่วงช่วงยกเลิกการระงับมาแล้ว จะถูกถอนออก",
       "unDelegateResource" : "ยกเลิกการมอบหมาย {{resource}}",
       "cosmos" : {
         "claimReward" : "หากผู้ตรวจสอบที่เลือกมี Reward ที่รอดำเนินการ Reward เหล่านั้นจะถูกรับโดยอัตโนมัติ",
@@ -6245,7 +6325,7 @@
     "validatorAddress" : "Address ผู้ตรวจสอบ",
     "validatorName" : "ชื่อผู้ตรวจสอบ",
     "rewardAmount" : "จำนวน Reward",
-    "undelegatedAmount" : "จำนวนที่ไม่ได้มอบหมาย",
+    "undelegatedAmount" : "จำนวนที่ Undelegate",
     "memo" : "Memo"
   },
   "Terms" : {
@@ -6289,7 +6369,7 @@
         "confirm" : "ยืนยัน",
         "cancel" : "ยกเลิก",
         "address" : "Address สำหรับบัญชี {{currency}}",
-        "warning" : "Address {0} ของคุณไม่ได้รับการยืนยันบนอุปกรณ์ Ledger ของคุณ โปรดตรวจสอบเพื่อความปลอดภัย"
+        "warning" : "Address ของคุณไม่ได้รับการยืนยันบนอุปกรณ์ Ledger ของคุณ โปรดตรวจสอบเพื่อความปลอดภัย"
       },
       "bullets" : {
         "whereToBuy" : "ซื้อได้จากทุกหนทุกแห่ง",
@@ -6305,7 +6385,7 @@
       "wantToSell" : "ฉันต้องการขาย",
       "connectDevice" : "เชื่อมต่ออุปกรณ์ของคุณ",
       "title" : "ขายคริปโตผ่านพาร์ทเนอร์ของเรา",
-      "description" : "ขายสินทรัพย์คริปโตโดยตรงจากบัญชี Ledger ของคุณผ่าน Coinify และรับเงิน Fiat ในบัญชีธนาคารของคุณ",
+      "description" : "ขายสินทรัพย์คริปโตโดยตรงจากบัญชี Ledger ของคุณผ่าน Coinify และรับเงินตราในบัญชีธนาคารของคุณ",
       "CTAButton" : "ขายตอนนี้",
       "emptyState" : {
         "title" : "ไม่มีบัญชี {{currency}}",
@@ -6323,18 +6403,18 @@
   "banner" : {
     "exchangeBuyCrypto" : {
       "title" : "ซื้อคริปโต",
-      "description" : "ซื้อสินทรัพย์คริปโตผ่าน Coinify และรับโดยตรงใน Ledger ของคุณ"
+      "description" : "ซื้อสินทรัพย์คริปโตผ่าน Coinify และรับคริปโตโดยตรงใน Ledger ของคุณ"
     },
     "swap" : {
       "title" : "Swap คริปโต",
-      "description" : "Swa สินทรัพย์คริปโตโดยตรงจากบัญชี Ledger ของคุณกับพาร์ทเนอร์ของเรา"
+      "description" : "Swap สินทรัพย์คริปโตโดยตรงจากบัญชี Ledger ของคุณกับพาร์ทเนอร์ของเรา"
     }
   },
   "walletconnect" : {
     "message" : "ข้อความ",
     "from" : "จาก",
-    "successTitle" : "ลงชื่อข้อความแล้ว",
-    "successDescription" : "คุณได้ลงนามในข้อความที่ได้รับจากแอปพลิเคชันของบุคคลที่สาม",
+    "successTitle" : "ลงชื่อในข้อความแล้ว",
+    "successDescription" : "คุณได้ลงชื่อในข้อความที่ได้รับจากแอปพลิเคชันของบุคคลที่สาม",
     "stepperHeader" : {
       "summary" : "สรุป",
       "selectDevice" : "เลือกอุปกรณ์",
@@ -6410,7 +6490,7 @@
       },
       "developerCTA" : {
         "title" : "สำหรับนักพัฒนา",
-        "description" : "ทุกสิ่งที่คุณต้องการเพื่อประสานรวมแอปพลิเคชันของคุณบน Ledger Live"
+        "description" : "นี่คือข้อมูลทั้งหมดที่คุณต้องการเพื่อเชื่อมแอปพลิเคชันของคุณบน Ledger Live"
       },
       "warnings" : {
         "notFound" : "ไม่พบ",
@@ -6457,7 +6537,7 @@
       },
       "developerCTA" : {
         "title" : "สำหรับนักพัฒนา",
-        "description" : "ทุกสิ่งที่คุณต้องการเพื่อประสานรวมแอปพลิเคชันของคุณบน Ledger Live"
+        "description" : "นี่คือข้อมูลทั้งหมดที่คุณต้องการเพื่อเชื่อมแอปพลิเคชันของคุณบน Ledger Live"
       }
     },
     "disclaimer" : {
@@ -6490,8 +6570,8 @@
         "topGainers" : "Top Gainers",
         "topLosers" : "Top Losers",
         "marketCap" : "อันดับ",
-        "asc" : "ลำดับ (มูลค่าหลักทรัพย์ตามราคาตลาด) จากน้อยไปมาก",
-        "desc" : "รายละเอียดลำดับ (มูลค่าหลักทรัพย์ตามราคาตลาด)"
+        "asc" : "อันดับ (มูลค่าหลักทรัพย์ตามราคาตลาด) จากน้อยไปมาก",
+        "desc" : "ลำดับ (มูลค่าหลักทรัพย์ตามราคาตลาด) จากมากไปน้อย"
       },
       "currency" : "สกุลเงิน",
       "time" : "เวลา",
@@ -6509,14 +6589,14 @@
       "priceStatistics" : "สถิติราคา",
       "price" : "ราคา",
       "tradingVolume" : "ปริมาณการซื้อขาย",
-      "24hLowHight" : "ต่ำ 24 ชม. / สูง 24 ชม.",
-      "7dLowHigh" : "ต่ำ 7 วัน / สูง 7 วัน",
+      "24hLowHight" : "ต่ำสุดของ 24 ชม./สูงสุดของ 24 ชม.",
+      "7dLowHigh" : "ต่ำสุดของ 7 วัน/สูงสุดของ 7 วัน",
       "allTimeHigh" : "สูงสุดตลอดกาล",
       "allTimeLow" : "ต่ำสุดตลอดกาล",
       "marketCapRank" : "อันดับมูลค่าหลักทรัพย์ตามราคาตลาด",
-      "marketCapDominance" : "สัดส่วนมูลค่าหลักทรัพย์ตามราคาตลาด",
+      "marketCapDominance" : "อัตราสัดส่วนการครองตลาด",
       "supply" : "อุปทาน",
-      "circulatingSupply" : "อุปทานหมุนเวียน",
+      "circulatingSupply" : "จำนวนเหรียญหรือโทเคนที่หมุนเวียน",
       "totalSupply" : "อุปทานรวม",
       "maxSupply" : "อุปทานสูงสุด",
       "assetNotSupportedOnLedgerLive" : "Ledger Live ไม่รองรับสินทรัพย์นี้"
@@ -6525,7 +6605,7 @@
       "1h" : "1H",
       "24h" : "24H",
       "7d" : "7D",
-      "30d" : "30 วัน",
+      "30d" : "30D",
       "1y" : "1Y"
     },
     "warnings" : {
@@ -6561,7 +6641,7 @@
     "designedForStax" : {
       "title" : "<0>ออกแบบมาสำหรับ</0><1>Ledger</1><2>Stax</2>",
       "drawer" : {
-        "description" : "NFT นี้มีภาพเพิ่มเติมของ NFT ซึ่งออกแบบมาโดยเฉพาะสำหรับหน้าจอ E Ink ของ Ledger Stax\n\nภาพนี้จะถูกใช้เมื่อคุณตั้งค่า NFT นี้เป็นหน้าจอล็อคของคุณ",
+        "description" : "NFT นี้มีภาพเพิ่มเติมของ NFT ซึ่งออกแบบมาโดยเฉพาะสำหรับหน้าจอ E Ink  ของ Ledger Stax\n\nภาพนี้จะถูกใช้เมื่อคุณตั้งค่า NFT นี้เป็นหน้าจอล็อคของคุณ",
         "cta" : "เข้าใจแล้ว"
       }
     },
@@ -6574,7 +6654,7 @@
       "tokenIdCopied" : "คัดลอก ID โทเคนแล้ว!",
       "quantity" : "ปริมาณ",
       "attributes" : {
-        "floorPrice" : "ราคาพื้น"
+        "floorPrice" : "ราคาฟลอร์"
       }
     },
     "viewerModal" : {
@@ -6603,13 +6683,13 @@
   "hedera" : {
     "name" : "Hedera",
     "createHederaAccountHelp" : {
-      "text" : "โปรดดูบทความสนับสนุนนี้สำหรับ",
+      "text" : "โปรดอ้างอิงบทความสนับสนุนนี้สำหรับ",
       "link" : "วิธีสร้างบัญชี Hedera",
       "title" : "เราสร้างบัญชี Hedera ใหม่ไม่ได้",
       "description" : "ในระบบนิเวศ Hedera มีเพียงบริการที่เลือกเท่านั้นที่สามารถสร้างบัญชีใหม่ได้ แม้ว่า Ledger จะไม่มีบริการนี้ แต่ก็มีทางเลือกอื่นที่สามารถเลือกใช้ได้ คุณจะสามารถเพิ่มบัญชี Hedera บน Ledger Live ได้เมื่อสร้างบัญชีแล้ว"
     },
     "currentAddress" : {
-      "messageIfVirtual" : "Address {{name}} ของคุณไม่สามารถยืนยันได้บนอุปกรณ์ Ledger ของคุณ ใช้ด้วยความเสี่ยงของคุณเอง"
+      "messageIfVirtual" : "Address {{name}} ของคุณไม่สามารถยืนยันได้บนอุปกรณ์ Ledger ของคุณ ใช้งานโดยต้องยอมรับความเสี่ยงเอง"
     }
   },
   "asset" : {
@@ -6619,7 +6699,7 @@
     }
   },
   "customImage" : {
-    "title" : "Lock Screen Picture",
+    "title" : "ภาพล็อกสกรีน",
     "change" : "เปลี่ยน",
     "drawer" : {
       "options" : {
@@ -6628,18 +6708,18 @@
         "remove" : "นำภาพปัจจุบันออก"
       }
     },
-    "toastRemove" : "ลบ Lock Screen Picture แล้ว",
+    "toastRemove" : "ลบภาพล็อกสกรีนแล้ว",
     "cropImage" : "ครอบตัดภาพ",
     "chooseConstrast" : "เลือกคอนทราสต์",
     "uploadAnotherImage" : "อัปโหลดอีกภาพ",
     "rotateImage" : "หมุน",
-    "allowPreview" : "แตะที่ “โหลดภาพ” เพื่อปรับแต่งหน้าจอล็อค",
+    "allowPreview" : "แตะที่ “โหลดภาพ” เพื่อปรับแต่งหน้าจอล็อกสกรีน",
     "loadingPicture" : "กำลังโหลด...",
     "loadingPictureAlmostOver" : "แค่นี้เอง!",
     "commitRequested" : "ชอบสิ่งที่เห็น?\nเก็บไว้เลยสิ!",
     "confirmPicture" : "ยืนยันบน {{productName}}",
     "landingPage" : {
-      "title" : "เลือก Digital Art หรือภาพถ่ายใดก็ได้\nปรับแต่ง {{productName}}\nให้เป็นของคุณเอง",
+      "title" : "เลือก Digital Art หรือรูปภาพใดก็ได้\nปรับแต่ง {{productName}}\nให้เป็นของคุณเอง",
       "choosePicture" : "เลือกภาพ"
     },
     "confirmCrop" : "ยืนยันการครอบตัด",
@@ -6668,8 +6748,8 @@
       "viewWallet" : "สำรวจพอร์ตโฟลิโอของฉัน"
     },
     "entryPointCard" : {
-      "title" : "ขั้นตอนต่อไปสำหรับ {{productName}} ของคุณคืออะไร",
-      "description" : "โอนสินทรัพย์ของคุณจาก Exchange หรือ Wallet ใด ๆ ซื้อคริปโต ปรับแต่งหน้าจอล็อค หรือสมัครใช้งาน Ledger Recover",
+      "title" : "ขั้นตอนต่อไปสำหรับ {{productName}} ของคุณคืออะไร?",
+      "description" : "โอนสินทรัพย์ของคุณจาก Exchange หรือ Wallet, ซื้อคริปโต, ปรับแต่งหน้าจอล็อกสกรีน หรือสมัครใช้งาน Ledger Recover",
       "buttonLabel" : "ดูว่ามีอะไรอีกบ้าง"
     },
     "actions" : {
@@ -6715,6 +6795,7 @@
         "hide" : "ซ่อน {{count}} คอลเลกชัน",
         "hiddenCollections" : "คอลเลกชันที่ซ่อนอยู่",
         "hide_plural" : "ซ่อน {{count}} คอลเลกชัน",
+        "empty" : "ไม่มีคอลเลกชันที่ซ่อนอยู่ให้แสดง",
         "alertHide" : "ซ่อนคอลเลกชัน 1 รายการ คุณสามารถยกเลิกการซ่อนได้ตลอดเวลาในตัวกรองแกลเลอรี",
         "alertHide_plural" : "ซ่อนคอลเลกชัน {{count}} รายการ คุณสามารถยกเลิกการซ่อนได้ตลอดเวลาในตัวกรองแกลเลอรี"
       },
@@ -6781,18 +6862,18 @@
   "stake" : {
     "ethereum_deprecated" : {
       "title" : "ทำให้ ETH ที่คุณถือครองเติบโต",
-      "subTitle" : "Stake ETH ของคุณและเพิ่มการถือครองโดยรับ Reward รายวันโดยตรงไปยัง Ledger Live ของคุณ",
+      "subTitle" : "Stake ETH ของคุณและเพิ่มสินทรัพย์ของคุณโดยรับ Reward รายวันโดยตรงบน Ledger Live ของคุณ",
       "tagMinimum" : "ต้องใช้ {{min}} ETH",
       "close" : "ปิด",
       "providers" : {
         "kiln_pooling" : {
           "title" : "Kiln Staking Pool",
-          "description" : "Stake โดยไม่มีขั้นต่ำ รับ Reward ที่ทบต้นโดยอัตโนมัติโดยไม่มีระยะเวลาล็อก",
+          "description" : "Stake ได้ไม่มีขั้นต่ำ รับ Reward ที่ทบต้นโดยอัตโนมัติโดยไม่มีระยะเวลาล็อก",
           "supportLink" : "ดูข้อมูลเพิ่มเติมเกี่ยวกับ Kiln Pooling"
         },
         "stader-eth" : {
           "title" : "Stader Labs",
-          "description" : "Stake โดยไม่มีขั้นต่ำ รับ Reward ที่ทบต้นโดยอัตโนมัติด้วยการเข้าถึงสภาพคล่องทันที",
+          "description" : "Stake ได้ไม่มีขั้นต่ำ รับ Reward ที่ทบต้นโดยอัตโนมัติด้วยการเข้าถึงสภาพคล่องทันที",
           "supportLink" : "ดูข้อมูลเพิ่มเติมเกี่ยวกับ Stader"
         },
         "lido" : {
@@ -6802,13 +6883,13 @@
         },
         "figment" : {
           "title" : "Figment",
-          "tag" : "ต้องใช้ 32 ETH",
-          "description" : "สเตกมากกว่า 32 ETH ผ่านผู้ตรวจสอบ (Validator) เฉพาะของเราและรับ Reward ที่ส่งไปยังบัญชีของคุณโดยอัตโนมัติ",
+          "tag" : "ขั้นต่ำ 32 ETH",
+          "description" : "Stake มากกว่า 32 ETH ผ่านผู้ตรวจสอบเฉพาะของเราและรับ Reward ที่ส่งไปยังบัญชีของคุณโดยอัตโนมัติ",
           "supportLink" : "ดูข้อมูลเพิ่มเติมเกี่ยวกับ Figment"
         },
         "kiln" : {
           "title" : "Kiln Solo Staking",
-          "tag" : "ต้องใช้ 32 ETH",
+          "tag" : "ขั้นต่ำ 32 ETH",
           "description" : "Stake มากกว่า 32 ETH ไปยังผู้ตรวจสอบเฉพาะ และรับ Reward ได้อย่างง่ายดาย",
           "supportLink" : "ดูข้อมูลเพิ่มเติมเกี่ยวกับ Kiln"
         }
@@ -6823,10 +6904,10 @@
         },
         "liquid" : {
           "name" : "Liquid",
-          "description" : "คุณสามารถ Stake ETH และรับรางวัลในโทเค็น Liquid คุณจะยังคงสามารถเทรดและเข้าร่วมกิจกรรม DeFi ได้"
+          "description" : "คุณสามารถ Stake ETH และรับรางวัลในโทเคน Liquid คุณจะยังคงสามารถเทรดและเข้าร่วมกิจกรรม DeFi ได้"
         },
         "protocol" : {
-          "name" : "Protocol",
+          "name" : "โพรโทคอล",
           "description" : "คุณสามารถ Stake ชุดของ 32 ETH และรับ Reward แบบ Full Node ใน ETH"
         },
         "pooling" : {
@@ -6835,11 +6916,11 @@
         },
         "restaking" : {
           "name" : "Restaking",
-          "description" : "คุณสามารถ Restake โทเค็น Liquid เพื่อรับ Reward เพิ่มเติม"
+          "description" : "คุณสามารถ Restake โทเคน Liquid เพื่อรับ Reward เพิ่มเติม"
         }
       },
       "howItWorks" : "วิธีใช้งาน ETH Staking",
-      "lst" : "จำเป็นต้องมีโทเค็น Liquid",
+      "lst" : "จำเป็นต้องมีโทเคน Liquid",
       "noMinimum" : "ไม่มีขั้นต่ำ",
       "provider" : {
         "figment" : {
@@ -6874,16 +6955,16 @@
       "requiredMinimum" : "ต้องใช้ {{min}} ETH",
       "rewardsStrategy" : {
         "auto-compounded" : "Reward ที่ทบต้นอัตโนมัติ",
-        "basic" : "Rewards",
-        "daily" : "Rewards รายวัน",
-        "eigenlayer_points" : "Eigenlayer Points",
+        "basic" : "Reward",
+        "daily" : "Reward รายวัน",
+        "eigenlayer_points" : "EigenLayer Point",
         "validator" : "Reward ของผู้ตรวจสอบ"
       }
     },
     "noFundsModal" : {
-      "title" : "ซื้อ, Swap หรือรับ",
+      "title" : "ซื้อ, Swap หรือ รับ",
       "text" : "คุณมี {{coin}} ไม่เพียงพอที่จะ Stake ได้",
-      "description" : "เงินทุนไม่เพียงพอหรือไม่ ไม่ต้องกังวล เพราะคุณสามารถซื้อ Swap หรือรับคริปโตได้โดยตรงใน Ledger Live",
+      "description" : "เงินทุนไม่เพียงพอหรือไม่? ไม่ต้องกังวล เพราะคุณสามารถซื้อ Swap หรือรับคริปโตได้โดยตรงใน Ledger Live",
       "options" : {
         "buy" : {
           "title" : "ซื้อ",
@@ -6919,7 +7000,7 @@
             "title" : "Ledger Live จะไม่เก็บรวบรวมข้อมูลเกี่ยวกับ:",
             "adresses" : "สินทรัพย์ของคุณ",
             "balance" : "พอร์ตโฟลิโอของคุณ",
-            "personnalInfos" : "ข้อมูลส่วนบุคคลของคุณ (เช่น ชื่อหรือ Email Address ของคุณ)"
+            "personnalInfos" : "ข้อมูลส่วนบุคคลของคุณ (เช่น ชื่อหรืออีเมลของคุณ)"
           },
           "moreOptions" : "จัดการการตั้งค่าที่ต้องการ",
           "ctas" : {
@@ -6940,7 +7021,7 @@
         },
         "personalizedExp" : {
           "title" : "การปรับแต่งส่วนบุคคล",
-          "description" : "เพื่อรับคำแนะนำและเนื้อหาที่ตรงกับความต้องการของคุณ และเพื่อช่วยให้เราวัดประสิทธิภาพของแคมเปญการตลาด เราจะแชร์ข้อมูลการใช้งานแอป รวมถึงการคลิก การเข้าชมหน้าเว็บ และข้อมูลการแปลง"
+          "description" : "เพื่อรับคำแนะนำและเนื้อหาที่ตรงกับความต้องการของคุณ และเพื่อช่วยให้เราวัดประสิทธิภาพของแคมเปญการตลาด เราจะแชร์ข้อมูลการใช้งานแอป รวมถึงการคลิก และ การเข้าชมหน้าเว็บ"
         },
         "ctas" : {
           "notNow" : "ไม่ใช่ตอนนี้",
@@ -6957,11 +7038,11 @@
     "variantB" : {
       "main" : {
         "title" : "มาช่วยกันปรับปรุง Ledger Live ไปด้วยกัน",
-        "description" : "การแชร์ข้อมูล Analytics ของ Ledger Live ช่วยให้เราเข้าใจวิธีที่ผู้คนใช้ Ledger Live แก้ไขข้อบกพร่อง และมอบประสบการณ์การใช้งานที่ดียิ่งขึ้น",
+        "description" : "การแชร์ข้อมูล Analytics ของ Ledger Live ช่วยให้เราเข้าใจวิธีที่ผู้คนใช้ Ledger Live, ให้เราแก้ไขข้อบกพร่อง และมอบประสบการณ์การใช้งานที่ดียิ่งขึ้น",
         "bulletPoints" : {
           "1" : "ข้อมูลการวิเคราะห์ประกอบด้วยจำนวนการเยี่ยมชมหน้าและการคลิก",
           "2" : "เราจะไม่รวบรวมหรือดูข้อมูลใด ๆ เกี่ยวกับยอดคงเหลือ บัญชี และพอร์ตโฟลิโอของคุณ",
-          "3" : "การวิเคราะห์จะไม่สามารถระบุตัวตนได้อย่างสิ้นเชิง เราไม่สามารถดูหรือรวบรวมข้อมูลส่วนบุคคลของคุณได้"
+          "3" : "การวิเคราะห์ไม่สามารถทำให้ระบุตัวตนได้ เราไม่สามารถดูหรือรวบรวมข้อมูลส่วนบุคคลของคุณได้"
         },
         "ctas" : {
           "refuse" : "ปฏิเสธ",
@@ -6992,12 +7073,22 @@
   },
   "walletSync" : {
     "title" : "Ledger Sync",
+    "entryPoints" : {
+      "simpleCta" : {
+        "title" : "Activate Ledger Sync"
+      },
+      "card" : {
+        "title" : "Ledger Sync",
+        "description" : "Sync your accounts automatically, even when switching to a new phone.",
+        "cta" : "Turn on Ledger Sync"
+      }
+    },
     "activation" : {
       "screen" : {
         "title" : "เปิดใช้ Ledger Sync สำหรับโทรศัพท์เครื่องนี้หรือไม่?",
         "description" : "เป็นการซิงค์บัญชีคริปโตของคุณโดยอัตโนมัติในโทรศัพท์และคอมพิวเตอร์ทั้งหมดของคุณ แม้ว่าจะเปลี่ยนไปใช้อุปกรณ์ใหม่ก็ตาม",
         "mainCta" : "เปิด Ledger Sync",
-        "secondCta" : "ฉันเปิดแล้ว",
+        "secondCta" : "ซิงค์กับแอป Ledger Live อีกแอปหนึ่ง",
         "learnMore" : "Ledger Sync ทำงานอย่างไร?"
       }
     },
@@ -7010,8 +7101,8 @@
     },
     "loading" : {
       "title" : "รอสักครู่...",
-      "activation" : "การดำเนินการนี้จะใช้เวลาสูงสุด 30 วินาที\nโปรดเปิดหน้าจอนี้ไว้",
-      "synch" : "เรากำลังอัปเดตอินสแตนซ์ที่ได้ซิงค์..."
+      "activation" : "การดำเนินการนี้จะใช้เวลาไม่เกิน 30 วินาที\nโปรดเปิดหน้าจอนี้ไว้",
+      "synch" : "เรากำลังอัปเดตอินสแตนซ์ที่ซิงค์ไว้..."
     },
     "success" : {
       "sync" : "ซิงค์เรียบร้อย!",
@@ -7028,29 +7119,29 @@
       "unauthorizeMember" : {
         "error" : {
           "title" : "แอปนี้ไม่ซิงค์อีกต่อไป",
-          "description" : "เปิดใช้งาน Ledger Sync บน Ledger Live นี้หรือแอปที่คุณกำลังซิงค์ด้วย",
+          "description" : "เปิดใช้งาน Ledger Sync บน Ledger Live นี้หรือบนอุปกรณ์ที่คุณกำลังซิงค์ด้วย",
           "cta" : "เปิด Ledger Sync"
         }
       },
       "manageKey" : {
         "title" : "ลบการซิงค์",
-        "description" : "บัญชีคริปโตของคุณในโทรศัพท์และคอมพิวเตอร์ที่แตกต่างกันจะหยุดการซิงค์",
+        "description" : "บัญชีคริปโตของคุณในโทรศัพท์และคอมพิวเตอร์แต่ละเครื่องจะหยุดการซิงค์กัน",
         "success" : "แอป Ledger Live ของคุณจะไม่ซิงค์อีกต่อไป",
         "successHint" : "คุณสามารถเปิดการซิงค์อีกครั้งได้ตลอดเวลา",
         "confirm" : {
-          "delete" : "ใช่ ลบ",
-          "cancel" : "ซิงค์ต่อไป",
+          "delete" : "ใช่ ลบการซิงค์",
+          "cancel" : "ดำเนินการซิงค์ต่อ",
           "title" : "แน่ใจไหมว่าต้องการลบการซิงค์?",
           "desc" : "บัญชีคริปโตของคุณบนโทรศัพท์และคอมพิวเตอร์ที่แตกต่างกันจะหยุดการซิงค์ ซึ่งไม่มีผลกระทบต่อเงินทุนของคุณในทางใดทางหนึ่ง"
         },
         "error" : {
           "title" : "แอปนี้ไม่ซิงค์อีกต่อไป",
-          "description" : "เปิดใช้งาน Ledger Sync บน Ledger Live นี้หรือแอปที่คุณกำลังซิงค์ด้วย",
+          "description" : "เปิดใช้งาน Ledger Sync บน Ledger Live นี้หรือบนอุปกรณ์ที่คุณกำลังซิงค์ด้วย",
           "cta" : "เปิด Ledger Sync"
         }
       },
       "manageInstances" : {
-        "title" : "Ledger Live ได้รับการซิงค์ทั่วทุกอุปกรณ์แล้ว",
+        "title" : "Ledger Live ได้ทำการซิงค์อุปกรณ์เหล่านี้แล้ว:",
         "remove" : "นำออก"
       },
       "synchronizedInstances" : {
@@ -7075,7 +7166,7 @@
       },
       "errors" : {
         "fetching" : "เกิดข้อผิดพลาดขณะดึงข้อมูลอินสแตนซ์ที่ซิงโครไนซ์แล้ว",
-        "ledgerSyncUnavailable" : "Ledger Sync ไม่สามารถใช้งานได้ชั่วคราวเนื่องจากปัญหาทางเทคนิคบางประการของเรา เรากำลังทำงานเพื่อแก้ไข"
+        "ledgerSyncUnavailable" : "Ledger Sync ไม่สามารถใช้งานได้ชั่วคราวเนื่องจากปัญหาทางเทคนิคบางประการจากฝั่งเรา เรากำลังทำงานเพื่อแก้ไขอยู่"
       }
     },
     "synchronize" : {
@@ -7097,7 +7188,7 @@
             "steps" : {
               "step1" : "ตรวจสอบให้แน่ใจว่าเปิดใช้งาน Ledger Sync ในแอปใดแอปหนึ่งของคุณแล้ว",
               "step2" : "เปิดแอป Ledger Live ที่คุณต้องการซิงค์",
-              "step3" : "ไปที่ <0>การตั้งค่า</0> <1>></1> <0>ทั่วไป</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>ฉันเปิดแล้ว</0> <1>></1> <0>สแกน QR Code</0>",
+              "step3" : "ไปที่ <0>การตั้งค่า</0> <1>></1> <0>ทั่วไป</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>ซิงค์กับแอป Ledger Live อีกแอปหนึ่ง</0> <1>></1> <0>สแกน QR Code</0>",
               "step4" : "สแกน QR Code"
             }
           }
@@ -7110,7 +7201,7 @@
             "steps" : {
               "step1" : "ตรวจสอบให้แน่ใจว่าเปิดใช้งาน Ledger Sync ในแอปใดแอปหนึ่งของคุณแล้ว",
               "step2" : "เปิด Ledger Live ที่คุณต้องการซิงค์ด้วย",
-              "step3" : "ไปที่ <0>การตั้งค่า</0> <1>></1> <0>ทั่วไป</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>ฉันเปิดแล้ว</0> <1>></1> <0>แสดง QR</0>",
+              "step3" : "ไปที่ <0>การตั้งค่า</0> <1>></1> <0>ทั่วไป</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>ซิงค์กับแอป Ledger Live อีกแอปหนึ่ง</0> <1>></1> <0>แสดง QR</0>",
               "step4" : "สแกน QR Code"
             }
           }
@@ -7120,7 +7211,7 @@
           "desc" : "ป้อนรหัสที่แสดงในคอมพิวเตอร์ของคุณ เพื่อซิงค์บัญชีคริปโตของคุณระหว่างทั้งสองแอป",
           "error" : {
             "title" : "รหัสไม่ตรงกัน",
-            "desc" : "ตรวจสอบให้แน่ใจว่ารหัสที่คุณพิมพ์เป็นรหัสที่แสดงบนอินสแตนซ์ Ledger Live อื่น",
+            "desc" : "ตรวจสอบให้แน่ใจว่ารหัสที่คุณพิมพ์เป็นรหัสที่แสดงบนอินสแตนซ์อื่นของ Ledger Live",
             "tryAgain" : "ลองอีกครั้ง"
           }
         },
@@ -7133,19 +7224,19 @@
         },
         "scannedOldQrCode" : {
           "title" : "ต้องอัปเดต Ledger Live",
-          "desc" : "หากต้องการซิงค์ต่อ ให้อัปเดตแอป Ledger Live ที่ไม่เป็นปัจจุบัน",
+          "desc" : "หากต้องการซิงค์ต่อ ให้อัปเดตแอป Ledger Live ให้เป็นเวอร์ชันล่าสุดก่อน",
           "info" : "ดูข้อมูลเพิ่มเติมเกี่ยวกับวิธีอัปเดตได้ที่<0>บทความนี้<0>",
           "cta" : "เข้าใจแล้ว"
         },
         "unbacked" : {
           "title" : "ไม่พบการซิงค์",
-          "description" : "เปิดใช้งาน Ledger Sync บน Ledger Live นี้หรือแอปที่คุณกำลังซิงค์ด้วย",
+          "description" : "เปิดใช้งาน Ledger Sync บน Ledger Live นี้หรือบนอุปกรณ์ที่คุณกำลังซิงค์ด้วย",
           "cta" : "เปิด Ledger Sync"
         },
         "unbackedOnboarding" : {
           "title" : "ไม่พบการซิงค์",
           "description" : "กลับมาที่นี่หลังจากที่คุณเปิดการซิงค์สำหรับแอป Ledger Live อื่นแล้ว จากนั้นเลือก \"ลองอีกครั้ง\"",
-          "info" : "หากไม่ได้เปิดใช้งาน Ledger Sync ในที่ใดเลย ให้ดำเนินการต่อโดยไม่มี Ledger Sync",
+          "info" : "หากไม่ได้เปิดใช้งาน Ledger Sync มาก่อนเลย ให้ดำเนินการต่อโดยไม่มี Ledger Sync",
           "cta" : "ลองอีกครั้ง",
           "cancel" : "ดำเนินการต่อโดยไม่ซิงค์"
         },
@@ -7189,7 +7280,7 @@
       },
       "manifestsList" : {
         "title" : "สำรวจ",
-        "description" : "ค้นพบที่สุดของ web3 ที่ Ledger ช่วยสรรหา"
+        "description" : "ค้นพบที่สุดของ Web3 ที่ Ledger ช่วยสรรหา"
       },
       "label" : {
         "clearSigning" : "Clear Signing"
@@ -7200,7 +7291,7 @@
         "title" : "Discover"
       },
       "header" : {
-        "title" : "สำรวจ web3",
+        "title" : "สำรวจ Web3",
         "placeholder" : "ค้นหาหรือพิมพ์ URL"
       },
       "clearSigning" : {
