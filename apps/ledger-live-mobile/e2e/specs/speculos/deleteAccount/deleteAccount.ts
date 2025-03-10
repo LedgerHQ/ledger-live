@@ -12,7 +12,7 @@ export async function runDeleteAccountTest(account: Account, tmsLinks: string[])
         cliCommands: [
           async () => {
             return CLI.liveData({
-              currency: account.currency.currencyId,
+              currency: account.currency.id,
               index: account.index,
               appjson: app.userdataPath,
               add: true,
