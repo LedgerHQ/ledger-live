@@ -830,6 +830,13 @@
     "SolanaTxConfirmationTimeout" : {
       "title" : "ربما تكون معاملتك قد فشلت. يُرجى الانتظار لحظة ثم تحقق من سجل المعاملات قبل المحاولة مرة أخرى."
     },
+    "SolanaRecipientMemoIsRequired" : {
+      "title" : "الملاحظة (تسمية الوجهة) مطلوبة من أجل عنوان المستلم"
+    },
+    "SolanaTokenNonTransferable" : {
+      "title" : "رمز التوكن غير قابل للتحويل",
+      "description" : "رموز التوكن تلك هي ”soul-bound (رموز مرتبطة بالروح)“ ولا يمكن تحويلها"
+    },
     "CardanoMinAmountError" : {
       "title" : "الحد الأدنى للمبلغ القابل للإرسال هو {{amount}} ADA"
     },
@@ -1119,6 +1126,11 @@
       "fast" : "سريع",
       "custom" : "مُخصّص",
       "blockCount" : "{{blockCount}} كتل"
+    },
+    "estimatedTime" : {
+      "slow" : "≈ 2-3 دقائق",
+      "medium" : "≈ 30 ثانية",
+      "fast" : "≈ 15 ثانية"
     }
   },
   "signout" : {
@@ -6015,7 +6027,67 @@
     },
     "token" : {
       "frozenStateWarning" : "تمّ تجميد أصول الحساب!",
-      "transferWarning" : "للتحقق من عنوان المستلم لرموز سولانا (Solana) باستخدام ™Ledger Nano S، <0>يرجى اتباع هذه التعليمات.</0>"
+      "transferWarning" : "للتحقق من عنوان المستلم لرموز سولانا (Solana) باستخدام ™Ledger Nano S، <0>يرجى اتباع هذه التعليمات.</0>",
+      "transferFees" : {
+        "title" : "رسوم التحويل",
+        "feesPercentHint" : "رمز التوكن عليه رسوم تحويل %{{feePercent}} ({{feeBps}} نقطة أساس) ({{maxFee}} بحد أقصى)",
+        "notice" : "رسوم التحويل %{{fee}}",
+        "tooltipHint" : "النسبة المئوية من التحويل المحتجزة من أجل منشئ رمز التوكن"
+      },
+      "nonTransferable" : {
+        "notice" : "رمز التوكن غير قابل للتحويل"
+      },
+      "interestRate" : {
+        "notice" : "مُعدل الفائدة %{{rate}}",
+        "tooltipHint" : "من أجل الأغراض التجميلية فقط، لم يتم إنشاء أي رموز توكن جديدة نتيجةً للفائدة"
+      },
+      "permanentDelegate" : {
+        "notice" : "سُلطة المُفوِّض الدائم (Permanent delegate) مُمكّنة",
+        "initializationNotice" : "سُلطة المُفوِّض الدائم (Permanent delegate) بدأت لكنها غير مُمكّنة",
+        "initializedNoticeTooltipHint" : "المُفوِّض لديه القدرة على تحويل أو حرق رمز التوكن هذا من حسابك",
+        "tooltipHint" : "{{delegateAddress}}<0></0> لديه القدرة على تحويل أو حرق رمز التوكن هذا من حسابك"
+      },
+      "requiredMemoOnTransfer" : {
+        "notice" : "الملاحظة (تسمية الوجهة) الإلزامية على التحويل مُمكّنة",
+        "tooltipHint" : "كل التحويلات الواردة إلى هذا الحساب يجب أن تكون مصحوبةً بملاحظة (تسمية الوجهة)"
+      },
+      "transferHook" : {
+        "notice" : "خُطّاف التحويل (Transfer hook) مُمكّن",
+        "initializationNotice" : "خُطّاف التحويل (Transfer hook) بدأ لكنه غير مُمكّن",
+        "tooltipHint" : "رمز التوكن له وظيفة إضافية يتم التعامل معها بواسطة {{programAddress}}<0></0>"
+      },
+      "extensionsInfo" : {
+        "title" : "ملحقات رموز سولانا (Solana)",
+        "commonInfo" : "ملحقات الرموز هي الجيل القادم من معيار رمز سولانا (Solana). إنها تقدّم مجموعة جديدة من الطرق لتمديد وظيفة رمز التوكن العادية بميزات إضافية؛ مثل التحويلات السرية، والمُفوِّض الدائم (Permanent Delegate)، ومنطق التحويل المخصص، والبيانات الوصفية الممتدة، والكثير غير ذلك.",
+        "permanentDelegate" : {
+          "title" : "المُفوِّض الدائم (Permanent Delegate)",
+          "permanentDelegateAddress" : "سلطة المُفوِّض الحالية هي {{address}}",
+          "permanentDelegateNotSetup" : "سلطة المُفوِّض الحالية لم يتم إعدادها.",
+          "description" : "المُفوِّض الدائم (Permanent Delegate) هو سلطة لديها امتيازات تفويض غير محدودة على أي حساب من أجل ذلك السكّ. المُفوِّض يمكن أن يقوم بحرق أو تحويل أي مبلغ من رموز التوكن، في أي وقت، ضمن سلطته."
+        },
+        "nonTransferable" : {
+          "title" : "الرموز غير القابلة للتحويل",
+          "description" : "رموز التوكن تلك هي ”soul-bound (رموز مرتبطة بالروح)“ ولا يمكن نقلها أو حرقها إلا بواسطة مُصدر رمز التوكن."
+        },
+        "transferHook" : {
+          "title" : "خُطّاف التحويل (Transfer hook)",
+          "transferHookAddress" : "برنامج خُطّاف التحويل (Transfer hook) الحالي هو {{address}}",
+          "transferHookNotSetup" : "برنامج خُطّاف التحويل (Transfer hook) الحالي لم يتم إعداده.",
+          "description" : "خُطّاف التحويل (Transfer hook) يمنح مُصدري رموز التوكن قدرة على إملاء كيفية تفاعل المستخدمين ورموز التوكن. بدلاً من التحويل العادي، يمكن للمُصدر أن يُدخِل منطقاً مخصصاً في برنامج سيتم استخدامه مع ملحق خُطّاف التحويل (Transfer hook)."
+        },
+        "transferFee" : {
+          "title" : "رسوم التحويل",
+          "currentTransferFee" : "رسوم التحويل الحالية هي %{{feePercent}} ({{feeBps}} نقطة أساس (bps) ). أقصى حد {{maxFee}}.",
+          "description" : "يتم فرض الرسوم على كل تحويل لرمز توكن وتُحجز على حساب المستلم، ولا يمكن للمستلم المساس بها."
+        },
+        "interestBearing" : {
+          "title" : "رموز التوكن المُدرة للفائدة",
+          "currentInterestRate" : "مُعدل الفائدة الحالي هو %{{rate}}.",
+          "accruedDelta" : "المتراكمة {{delta}}.",
+          "interestRateNotSetup" : "مُعدل الفائدة الحالي تم تعيينه ليكون %0.",
+          "description" : "رموز التوكن التي تنمو أو تنخفض قيمتها باستمرار وفقاً لمعدل فائدتها. لا يتم إنشاء أي رموز توكن جديدة على الإطلاق، الميزة تجميلية بشكل كامل."
+        }
+      }
     }
   },
   "near" : {
@@ -6992,6 +7064,16 @@
   },
   "walletSync" : {
     "title" : "مزامنة Ledger",
+    "entryPoints" : {
+      "simpleCta" : {
+        "title" : "تنشيط مزامنة Ledger"
+      },
+      "card" : {
+        "title" : "مزامنة Ledger",
+        "description" : "قم بمزامنة حساباتك تلقائياً، حتى عند التبديل إلى هاتف جديد.",
+        "cta" : "تشغيل مزامنة Ledger"
+      }
+    },
     "activation" : {
       "screen" : {
         "title" : "تشغيل مزامنة Ledger لهذا الهاتف؟",
