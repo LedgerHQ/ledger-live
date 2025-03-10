@@ -1119,6 +1119,11 @@
       "fast" : "Schnell",
       "custom" : "Benutzerdefiniert",
       "blockCount" : "{{blockCount}} Blöcke"
+    },
+    "estimatedTime" : {
+      "slow" : "≈ 2–3 Min.",
+      "medium" : "≈ 30 Sek.",
+      "fast" : "≈ 15 Sek."
     }
   },
   "signout" : {
@@ -2613,6 +2618,10 @@
         "description3" : "Diese Integration wurde von {{team}} in Zusammenarbeit mit Ledger durchgeführt",
         "description3Link" : "Diese Integration wurde von <1><0>{{team}}</0></1> in Zusammenarbeit mit Ledger durchgeführt"
       }
+    },
+    "migrationBanner" : {
+      "title" : "{{from}} migriert zu {{to}}. Folge diesem <0>Link</0>, um mehr zu erfahren, oder wende dich an den Kundenservice, falls du Hilfe benötigst.",
+      "contactSupport" : "Support kontaktieren"
     },
     "willBedeprecatedBanner" : {
       "title" : "Um die Effizienz zu steigern, wird {{currencyName}} ab dem {{deprecatedDate}} nicht mehr in Ledger Live unterstützt. Auf den Hardware-Wallets von Ledger bleibt die Unterstützung jedoch bestehen. Wenn du Hilfe benötigst, wende dich bitte an den Ledger-Kundenservice.",
@@ -6992,6 +7001,16 @@
   },
   "walletSync" : {
     "title" : "Ledger Sync",
+    "entryPoints" : {
+      "simpleCta" : {
+        "title" : "Ledger Sync aktivieren"
+      },
+      "card" : {
+        "title" : "Ledger Sync",
+        "description" : "Synchronisiere deine Konten automatisch – auch beim Wechsel auf ein neues Smartphone.",
+        "cta" : "Ledger Sync einschalten"
+      }
+    },
     "activation" : {
       "screen" : {
         "title" : "Ledger Sync für dieses Smartphone einschalten?",
