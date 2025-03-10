@@ -142,6 +142,7 @@ export default function Nominations(props: Props) {
     [navigation, account.id],
   );
 
+  // TODO: replace quickfix with action from useStake
   const onEarnRewards = useCallback(() => {
     onNavigate({
       route: NavigatorName.Base,
