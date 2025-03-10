@@ -1,15 +1,14 @@
-import {
-  findSubAccountById,
-  getMainAccount,
-  isTokenAccount,
-} from "@ledgerhq/coin-framework/account/index";
+import { getMainAccount, isTokenAccount } from "@ledgerhq/coin-framework/account/index";
 import type { Account, AccountBridge, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { fetchAccountInfo } from "./bridge/bridgeHelpers/api";
-import type { Transaction } from "./types";
-import { buildTonTransaction, getTonEstimatedFees } from "./utils";
+import type { TonAccount, Transaction } from "./types";
+import { buildTonTransaction, findSubAccountById, getTonEstimatedFees } from "./utils";
 
-const estimateMaxSpendable: AccountBridge<Transaction, Account>["estimateMaxSpendable"] = async ({
+const estimateMaxSpendable: AccountBridge<
+  Transaction,
+  TonAccount
+>["estimateMaxSpendable"] = async ({
   account,
   parentAccount,
   transaction,
@@ -18,7 +17,7 @@ const estimateMaxSpendable: AccountBridge<Transaction, Account>["estimateMaxSpen
   parentAccount?: Account | null | undefined;
   transaction?: Transaction | null | undefined;
 }): Promise<BigNumber> => {
-  const mainAccount = getMainAccount(account, parentAccount);
+  const mainAccount = getMainAccount(account, parentAccount) as TonAccount;
   let balance = mainAccount.spendableBalance;
 
   if (balance.eq(0)) return balance;
@@ -45,14 +44,11 @@ const estimateMaxSpendable: AccountBridge<Transaction, Account>["estimateMaxSpen
     return subAccount.spendableBalance;
   }
 
-  const estimatedFees = transaction
-    ? transaction.fees ??
-      (await getTonEstimatedFees(
-        mainAccount,
-        accountInfo.status === "uninit",
-        buildTonTransaction(transaction, accountInfo.seqno, mainAccount),
-      ))
-    : BigNumber(0);
+  let estimatedFees = BigNumber(0);
+  if (transaction) {
+    const tonTx = buildTonTransaction(transaction, accountInfo.seqno, mainAccount);
+    estimatedFees = await getTonEstimatedFees(mainAccount, accountInfo.status === "uninit", tonTx);
+  }
 
   if (balance.lte(estimatedFees)) return new BigNumber(0);
 
