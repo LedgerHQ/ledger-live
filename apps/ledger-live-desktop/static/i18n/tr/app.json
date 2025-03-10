@@ -5727,7 +5727,7 @@
       "description" : "Adres hesaplamasında bir hata oluştu; tekrar deneyin veya Ledger Destek ile iletişime geçin"
     },
     "MultiversXDecimalsLimitReached" : {
-      "title" : "Maksimum ondalık basamağı sınırına ulaşıldı",
+      "title" : "Maksimum ondalık basamak sınırına ulaşıldı",
       "description" : "Lütfen belirtilen tutarın 18 ondalık basamağının olduğundan emin olun."
     },
     "MultiversXMinDelegatedAmountError" : {
@@ -6670,6 +6670,24 @@
       "alreadySync" : "Zaten açtım",
       "learnMore" : "Ledger Sync nasıl çalışır?"
     },
+    "entryPoints" : {
+      "accounts" : {
+        "title" : "Ledger Sync'i etkinleştirin"
+      },
+      "manager" : {
+        "title" : "Ledger Sync",
+        "description" : "Yeni bir telefona geçerken bile hesaplarınızı otomatik olarak senkronize edin.",
+        "cta" : "Ledger Sync'i Aç"
+      },
+      "settings" : {
+        "title" : "Ledger Sync",
+        "description" : "Yeni bir telefona geçerken bile hesaplarınızı otomatik olarak senkronize edin.",
+        "cta" : "Ledger Sync'i Aç"
+      },
+      "onboarding" : {
+        "title" : "Başka bir Ledger Live uygulamasıyla senkronize et"
+      }
+    },
     "manage" : {
       "cta" : "Yönet",
       "synchronize" : {
@@ -6898,55 +6916,14 @@
     }
   },
   "lnsUpsell" : {
-    "banner" : {
-      "manager" : {
-        "optIn" : {
-          "title" : "Model yükseltme zamanı",
-          "description" : "Yüksek güvenlik ve sorunsuz bir deneyim için en yeni cihazlarımıza <0>%{{discount}} indirimle</0> model yükseltin.",
-          "cta" : "Cüzdanımın modelini yükselt",
-          "linkText" : "Daha fazla bilgi"
-        },
-        "optOut" : {
-          "title" : "Model yükseltme zamanı",
-          "description" : "Yüksek güvenlik ve sorunsuz bir deneyim için en yeni cihazlarımıza <0>%{{discount}} indirimle</0> model yükseltin.",
-          "cta" : "Cüzdanımın modelini yükselt",
-          "linkText" : "Daha fazla bilgi"
-        }
-      },
-      "accounts" : {
-        "optIn" : {
-          "title" : "Model yükseltme zamanı",
-          "description" : "Ledger Nano S model yükseltme teklifleri yakında sona eriyor. En yeni cihazlarımıza <0>%{{discount}} indirimle</0> model yükseltin.",
-          "cta" : "Cüzdanımın modelini yükselt",
-          "linkText" : "Daha fazla bilgi"
-        },
-        "optOut" : {
-          "title" : "Model yükseltme zamanı",
-          "description" : "Ledger Nano S model yükseltme teklifleri yakında sona eriyor. En yeni cihazlarımıza <0>%{{discount}} indirimle</0> model yükseltin.",
-          "cta" : "Cüzdanımın modelini yükselt",
-          "linkText" : "Daha fazla bilgi"
-        }
-      },
-      "portfolio" : {
-        "optOut" : {
-          "title" : "Model yükseltme zamanı",
-          "description" : "Yüksek güvenlik ve sorunsuz bir deneyim için en yeni cihazlarımıza <0>%{{discount}} indirimle</0> model yükseltin.",
-          "cta" : "Cüzdan modelini yükselt",
-          "linkText" : "Daha fazla bilgi"
-        }
-      },
-      "notifications" : {
-        "optIn" : {
-          "description" : "Cihaz güncellemeleri yakında sona eriyor. Sorunsuz bir deneyim için %{{discount}} indirimle hemen model yükseltin.",
-          "cta" : "Cüzdanımın modelini yükselt",
-          "linkText" : "Daha fazla bilgi"
-        },
-        "optOut" : {
-          "description" : "Cihaz güncellemeleri yakında sona eriyor. Sorunsuz bir deneyim için %{{discount}} indirimle hemen model yükseltin.",
-          "cta" : "Cüzdanımın modelini yükselt",
-          "linkText" : "Daha fazla bilgi"
-        }
-      }
+    "opted_in" : {
+      "title" : "Sınırlı bellek, sınırlı deneyim",
+      "description" : "Daha fazla bellek, en son güvenlik güncellemeleri, yeni özellikler ve <0>%{{discount}} oranında özel bir indirim</> için Nano S cihazınızın modelini Ledger Flex gibi daha yeni bir Ledger modeline yükseltin.",
+      "cta" : "Ledger modelimi yükselt"
+    },
+    "opted_out" : {
+      "description" : "Ledger Nano S cihazınızdaki sınırlı bellek en yeni özelliklere, blok zinciri değişikliklerine ve güvenlik güncellemelerine erişiminizi kısıtlar. Uzun vadeli kullanım için daha yeni bir Ledger cihazına model yükseltin.",
+      "cta" : "Cihazımın modelimi neden yükseltmeliyim?"
     }
   }
 }
