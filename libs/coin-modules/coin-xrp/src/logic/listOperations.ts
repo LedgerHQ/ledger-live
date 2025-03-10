@@ -1,5 +1,5 @@
 import { getServerInfos, getTransactions, GetTransactionsOptions } from "../network";
-import type { AccountTxResponse, XrplOperation } from "../network/types";
+import type { XrplOperation } from "../network/types";
 import { ListOperationsOptions, XrpMemo, XrpOperation } from "../types";
 import { RIPPLE_EPOCH } from "./utils";
 

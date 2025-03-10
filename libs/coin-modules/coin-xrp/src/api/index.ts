@@ -17,7 +17,6 @@ import {
   listOperations,
 } from "../logic";
 import { ListOperationsOptions, XrpOperation } from "../types";
-import { stat } from "fs";
 
 export function createApi(config: XrpConfig): Api {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
