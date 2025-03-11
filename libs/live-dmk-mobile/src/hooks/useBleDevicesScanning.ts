@@ -14,7 +14,6 @@ const defaultMapper = (device: DiscoveredDevice): Device => ({
 });
 
 export const useBleDevicesScanning = <T = Device>(
-  enabled: boolean = false,
   {
     mapper,
   }: {
@@ -47,7 +46,7 @@ export const useBleDevicesScanning = <T = Device>(
       dmk.stopDiscovering();
       subscription.unsubscribe();
     };
-  }, [dmk, enabled]);
+  }, [dmk]);
 
   return {
     scannedDevices,

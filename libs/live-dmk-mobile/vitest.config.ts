@@ -9,6 +9,7 @@ export default defineConfig({
     // setupFiles: ["./tests.setup.ts"],
     exclude: ["node_modules", "lib-es"],
     silent: false,
+    include: ["src/**/*.test.*"],
     printConsoleTrace: true,
     coverage: {
       enabled: true,

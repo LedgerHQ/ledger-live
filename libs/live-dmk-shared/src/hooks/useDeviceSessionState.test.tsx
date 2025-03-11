@@ -5,31 +5,6 @@ import { of } from "rxjs";
 import { DeviceManagementKit, DeviceStatus } from "@ledgerhq/device-management-kit";
 import { useDeviceSessionState } from "./useDeviceSessionState";
 
-vi.mock("@ledgerhq/device-management-kit", async importOriginal => {
-  const actual = await importOriginal<typeof import("@ledgerhq/device-management-kit")>();
-  return {
-    ...actual,
-    DeviceManagementKitBuilder: vi.fn(() => ({
-      addLogger: vi.fn().mockReturnThis(),
-      addTransport: vi.fn().mockReturnThis(),
-      build: vi.fn().mockReturnValue({
-        getDeviceSessionState: vi.fn(),
-        startDiscovering: vi.fn(),
-        connect: vi.fn(),
-      }),
-    })),
-    BuiltinTransports: {
-      USB: "USB",
-    },
-    ConsoleLogger: vi.fn(),
-    LogLevel: { Debug: "debug" },
-    DeviceStatus: {
-      NOT_CONNECTED: "not_connected",
-      CONNECTED: "connected",
-    },
-  };
-});
-
 const TestComponent: React.FC<{ dmk: DeviceManagementKit }> = ({ dmk }) => {
   const sessionState = useDeviceSessionState(dmk);
   return (
