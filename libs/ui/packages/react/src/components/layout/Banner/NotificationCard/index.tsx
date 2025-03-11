@@ -59,7 +59,10 @@ const Desc = styled(Text).attrs({ variant: "small" })`
 `;
 
 const Wrapper = styled(Grid)<Pick<Props, "isHighlighted">>`
-  background-color: ${p => (p.isHighlighted ? p.theme.colors.opacityDefault.c05 : "transparent")};
+  background-color: ${({ isHighlighted, theme: { colors } }) => {
+    if (!isHighlighted) return "transparent";
+    return colors.type === "dark" ? colors.opacityDefault.c05 : colors.neutral.c00;
+  }};
 
   cursor: pointer;
   padding: 12px;

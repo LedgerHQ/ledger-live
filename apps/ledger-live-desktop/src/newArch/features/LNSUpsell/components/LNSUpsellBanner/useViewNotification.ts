@@ -10,7 +10,7 @@ export function useViewNotification(location: LNSBannerLocation, variant: LNSBan
   const viewed = useSelector(anonymousUserNotificationsSelector).LNSUpsell;
 
   useEffect(() => {
-    if (variant !== "notification" || location !== "notification_center" || viewed) return;
+    if (variant.type !== "notification" || location !== "notification_center" || viewed) return;
 
     const viewedAt = Date.now();
     setTimeout(

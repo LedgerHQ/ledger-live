@@ -1,6 +1,6 @@
 import { t } from "i18next";
 import { Trans } from "react-i18next";
-import React, { ReactElement } from "react";
+import React, { type ReactElement } from "react";
 import { BannerCard, Button, Icons, Link, NotificationCard, Text } from "@ledgerhq/react-ui";
 import type { FlexBoxProps } from "@ledgerhq/react-ui/components/layout/Flex/index";
 import type { LNSBannerLocation, LNSBannerModel } from "../../types";
@@ -9,7 +9,7 @@ import { useViewNotification } from "./useViewNotification";
 
 type Props = FlexBoxProps & { location: LNSBannerLocation };
 
-export function LNSUpsellBanner({ location, ...boxProps }: Props): ReactElement | null {
+export function LNSUpsellBanner({ location, ...boxProps }: Props) {
   return <View {...useLNSUpsellBannerModel(location)} location={location} {...boxProps} />;
 }
 
@@ -17,14 +17,13 @@ function View({
   location,
   variant,
   discount,
-  image,
   tracking,
   handleCTAClick,
   ...boxProps
-}: Props & LNSBannerModel) {
+}: Props & LNSBannerModel): ReactElement | null {
   useViewNotification(location, variant);
 
-  switch (variant) {
+  switch (variant.type) {
     case "none":
       return null;
 
@@ -38,12 +37,12 @@ function View({
               <Text color="primary.c80" />
             </Trans>
           }
-          image={image}
           cta={
             <Button variant="main" outline={false}>
               {t(`lnsUpsell.${tracking}.cta`)}
             </Button>
           }
+          image={variant.image}
           borderRadius="5px"
           onClick={handleCTAClick}
         />
@@ -64,7 +63,7 @@ function View({
               <Icons.ExternalLink size="S" style={{ marginLeft: "8px", verticalAlign: "middle" }} />
             </Link>
           }
-          icon="SparksFill"
+          icon={variant.icon}
           onClick={handleCTAClick}
           isHighlighted
         />
