@@ -40,9 +40,11 @@ import fs from "fs";
 import { getEnv } from "@ledgerhq/live-env";
 import { SettingsSetOverriddenFeatureFlagsPlayload } from "~/actions/types";
 
+type CliCommand = () => Observable<unknown> | Promise<unknown> | string;
+
 type ApplicationOptions = {
   speculosApp?: AppInfos;
-  cliCommands?: (() => Observable<unknown> | Promise<unknown> | string)[];
+  cliCommands?: CliCommand[];
   userdata?: string;
   knownDevices?: DeviceLike[];
   testAccounts?: Account[];
@@ -60,6 +62,13 @@ const lazyInit = <T>(PageClass: new () => T) => {
     return instance;
   };
 };
+
+async function executeCliCommand(cmd: CliCommand) {
+  const promise = await cmd();
+  const result = promise instanceof Observable ? await lastValueFrom(promise) : await promise;
+  // eslint-disable-next-line no-console
+  console.log("CLI result: ", result);
+}
 
 export class Application {
   public userdataPath: string | undefined = undefined;
@@ -103,25 +112,15 @@ export class Application {
     testAccounts,
     featureFlags,
   }: ApplicationOptions) {
-    let proxyPort = 0;
     const userdataSpeculos = `temp-userdata-${Date.now()}`;
     this.userdataPath = getUserdataPath(userdataSpeculos);
 
-    if (speculosApp) {
-      proxyPort = await this.common.addSpeculos(speculosApp.name);
-      process.env.DEVICE_PROXY_URL = `ws://localhost:${proxyPort}`;
-      require("@ledgerhq/live-cli/src/live-common-setup");
-    }
     if (!getEnv("MOCK"))
       fs.copyFileSync(getUserdataPath(userdata || "skip-onboarding"), this.userdataPath);
 
-    if (cliCommands?.length) {
-      for (const cmd of cliCommands) {
-        const promise = await cmd();
-        const result = promise instanceof Observable ? await lastValueFrom(promise) : await promise;
-        // eslint-disable-next-line no-console
-        console.log("CLI result: ", result);
-      }
+    if (speculosApp) await this.common.addSpeculos(speculosApp.name);
+    for (const cmd of cliCommands || []) {
+      await executeCliCommand(cmd);
     }
 
     if (!getEnv("MOCK")) {
