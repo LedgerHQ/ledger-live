@@ -287,5 +287,8 @@ DEPENDENCIES
   fastlane-plugin-versioning_android
   semver2 (~> 3.4, >= 3.4.2)
 
+RUBY VERSION
+   ruby 3.3.0p0
+
 BUNDLED WITH
    2.5.7
