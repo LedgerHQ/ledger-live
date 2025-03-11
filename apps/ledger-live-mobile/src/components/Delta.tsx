@@ -44,13 +44,9 @@ function Delta({
 
   const roundedDelta = parseFloat(delta.toFixed(0));
 
-    if (roundedDelta === 0) {
-      return (
-        <Text variant={"large"} color="neutral.c70" fontWeight={"semiBold"} {...textProperties}>
-          -
-        </Text>
-      );
-    }
+  if (roundedDelta === 0) {
+    return percentPlaceholder;
+  }
 
   const [color, ArrowIcon, sign] =
     roundedDelta > 0
