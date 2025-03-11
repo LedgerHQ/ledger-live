@@ -13,7 +13,17 @@ import {
 import { expect } from "detox";
 import jestExpect from "expect";
 import DeviceAction from "../models/DeviceAction";
-import * as bridge from "../bridge/server";
+import {
+  open,
+  addDevicesBT,
+  addDevicesUSB,
+  addKnownSpeculos,
+  removeKnownSpeculos,
+  findFreePort,
+} from "../bridge/server";
+
+import { unregisterAllTransportModules } from "@ledgerhq/live-common/hw/index";
+import { CLI } from "../utils/cliUtils";
 
 import { launchSpeculos, deleteSpeculos } from "../helpers";
 const proxyAddress = "localhost";
@@ -109,17 +119,17 @@ export default class CommonPage {
 
   async addDeviceViaBluetooth(device = knownDevices.nanoX) {
     const deviceAction = new DeviceAction(device);
-    await bridge.addDevicesBT(device);
+    await addDevicesBT(device);
     await waitForElementById(this.scannedDeviceRow(device.id));
     await tapById(this.scannedDeviceRow(device.id));
     await waitForElementById(this.blePairingLoadingId);
-    await bridge.open();
+    await open();
     await deviceAction.accessManager();
   }
 
   async addDeviceViaUSB(device: ModelId) {
     const nano = getUSBDevice(device);
-    await bridge.addDevicesUSB(nano);
+    await addDevicesUSB(nano);
     await scrollToId(this.pluggedDeviceRow(nano));
     await waitForElementById(this.pluggedDeviceRow(nano));
     await tapById(this.pluggedDeviceRow(nano));
@@ -127,16 +137,19 @@ export default class CommonPage {
   }
 
   async addSpeculos(nanoApp: string, speculosAddress = "localhost") {
-    const proxyPort = await bridge.findFreePort();
+    unregisterAllTransportModules();
+    const proxyPort = await findFreePort();
     const speculosPort = await launchSpeculos(nanoApp);
     await launchProxy(proxyPort, speculosAddress, speculosPort);
-    await bridge.addKnownSpeculos(`${proxyAddress}:${proxyPort}`);
-    return proxyPort;
+    await addKnownSpeculos(`${proxyAddress}:${proxyPort}`);
+    process.env.DEVICE_PROXY_URL = `ws://localhost:${proxyPort}`;
+    CLI.registerProxyTransport(process.env.DEVICE_PROXY_URL);
+    return speculosPort;
   }
 
-  async removeSpeculos(proxyPort?: number) {
-    await deleteSpeculos(proxyPort);
-    proxyPort && (await bridge.removeKnownSpeculos(`${proxyAddress}:${proxyPort}`));
+  async removeSpeculos(apiPort?: number) {
+    const proxyPort = await deleteSpeculos(apiPort);
+    await removeKnownSpeculos(`${proxyAddress}:${proxyPort}`);
   }
 
   @Step("Select a known device")

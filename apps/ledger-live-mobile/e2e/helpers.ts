@@ -97,7 +97,7 @@ export async function IsIdVisible(id: string | RegExp) {
 }
 
 export async function tapById(id: string | RegExp, index = 0) {
-  return getElementById(id, index).tap();
+  return await getElementById(id, index).tap();
 }
 
 export async function tapByText(text: string | RegExp, index = 0) {
@@ -264,14 +264,15 @@ export async function deleteSpeculos(apiPort?: number) {
     return;
   }
 
-  closeProxy(apiPort);
   if (speculosDevices.has(apiPort)) {
     const speculosId = speculosDevices.get(apiPort);
     if (speculosId) await stopSpeculos(speculosId);
     speculosDevices.delete(apiPort);
     console.warn(`Speculos successfully stopped on port ${apiPort}`);
-  }
+  } else console.warn(`Speculos not found on port ${apiPort}`);
   setEnv("SPECULOS_API_PORT", 0);
+  const proxyPrort = closeProxy(apiPort);
+  return proxyPrort;
 }
 
 export async function takeSpeculosScreenshot() {
