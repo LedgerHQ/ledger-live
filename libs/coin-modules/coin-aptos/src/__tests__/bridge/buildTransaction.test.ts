@@ -61,7 +61,7 @@ describe("buildTransaction Test", () => {
 
     expect(generateTransactionArgs[0]).toBe("address");
     expect(generateTransactionArgs[1]).toEqual({
-      function: "0x1::aptos_account::transfer_coins",
+      function: "0x1::aptos_account::transfer",
       typeArguments: ["0x1::aptos_coin::AptosCoin"],
       functionArguments: ["recipient", "0"],
     });
@@ -100,7 +100,7 @@ describe("buildTransaction Test", () => {
     expect(generateTransactionArgs[2]).toEqual({ maxGasAmount: "100", gasUnitPrice: "200" });
   });
 
-  it("should return transaction for token account of type fungible asset", async () => {
+  it("should return transaction for token account of type coin", async () => {
     const account = createFixtureAccountWithSubAccount("coin");
     const transaction = createFixtureTransactionWithSubAccount();
     const aptosClient = new AptosAPI(account.currency.id);
@@ -125,7 +125,7 @@ describe("buildTransaction Test", () => {
 
     expect(generateTransactionArgs[0]).toBe("address");
     expect(generateTransactionArgs[1]).toEqual({
-      function: "0x1::coin::transfer",
+      function: "0x1::aptos_account::transfer_coins",
       typeArguments: ["contract_address"],
       functionArguments: ["recipient", "0"],
     });

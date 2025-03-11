@@ -45,7 +45,7 @@ const getPayload = (
 
     if (tokenType === "coin") {
       return {
-        function: `0x1::coin::transfer`,
+        function: `0x1::aptos_account::transfer_coins`,
         typeArguments: [tokenAccount.token.contractAddress],
         functionArguments: [transaction.recipient, transaction.amount.toString()],
       };
@@ -53,7 +53,7 @@ const getPayload = (
   }
 
   return {
-    function: "0x1::aptos_account::transfer_coins",
+    function: "0x1::aptos_account::transfer",
     typeArguments: [APTOS_ASSET_ID],
     functionArguments: [transaction.recipient, transaction.amount.toString()],
   };
