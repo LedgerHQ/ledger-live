@@ -139,7 +139,7 @@ export const txsToOps = (
         } else {
           const token = findTokenByAddressInCurrency(coin_id.toLowerCase(), "aptos");
           // skip tokens that are not in the CAL
-          if (token != undefined) {
+          if (token !== undefined) {
             op.accountId = encodeTokenAccountId(id, token);
             op.id = encodeOperationId(op.accountId, tx.hash, op.type);
             opsTokens.push(op);
@@ -246,13 +246,13 @@ export function getEventFAAddress(
 ): string | null {
   const change_data = change.data;
 
-  if (change_data.type != APTOS_FUNGIBLE_STORE) {
+  if (change_data.type !== APTOS_FUNGIBLE_STORE) {
     return null;
   }
 
   const mr = change_data as MoveResource<AptosFungibleStoreResourceData>;
 
-  if (change.address != event.data.store) {
+  if (change.address !== event.data.store) {
     return null;
   }
 
@@ -301,7 +301,7 @@ export function getCoinAndAmounts(
       case "0x1::coin::WithdrawEvent":
         if (compareAddress(event.guid.account_address, address)) {
           coin_id = getResourceAddress(tx, event, "withdraw_events", getEventCoinAddress);
-          if (coin_id != null) {
+          if (coin_id !== null) {
             amount_out = amount_out.plus(event.data.amount);
           }
         }
@@ -309,7 +309,7 @@ export function getCoinAndAmounts(
       case "0x1::coin::DepositEvent":
         if (compareAddress(event.guid.account_address, address)) {
           coin_id = getResourceAddress(tx, event, "deposit_events", getEventCoinAddress);
-          if (coin_id != null) {
+          if (coin_id !== null) {
             amount_in = amount_in.plus(event.data.amount);
           }
           // TODO: check if we can have coin events during transferring FA
@@ -317,13 +317,13 @@ export function getCoinAndAmounts(
         break;
       case "0x1::fungible_asset::Deposit":
         coin_id = getResourceAddress(tx, event, "deposit_events", getEventFAAddress);
-        if (coin_id != null) {
+        if (coin_id !== null) {
           amount_in = amount_in.plus(event.data.amount);
         }
         break;
       case "0x1::fungible_asset::Withdraw":
         coin_id = getResourceAddress(tx, event, "withdraw_events", getEventFAAddress);
-        if (coin_id != null) {
+        if (coin_id !== null) {
           amount_in = amount_in.plus(event.data.amount);
         }
         break;

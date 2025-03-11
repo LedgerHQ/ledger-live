@@ -149,7 +149,7 @@ export class AptosAPI {
 
   async getBalance(address: string, token: TokenCurrency): Promise<BigNumber> {
     let balance = new BigNumber(0);
-    if (token.tokenType == "coin") {
+    if (token.tokenType === "coin") {
       balance = await this.getCoinBalance(address, token.contractAddress);
     } else {
       balance = await this.getFABalance(address, token.contractAddress);
