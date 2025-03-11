@@ -1,5 +1,11 @@
 # @ledgerhq/icons-ui
 
+## 1.9.0
+
+### Minor Changes
+
+- [#9292](https://github.com/LedgerHQ/ledger-live/pull/9292) [`0a59343`](https://github.com/LedgerHQ/ledger-live/commit/0a59343b591dab4e886c21cb47f7339231997331) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feature (lld,llm): integrate Sonic
+
 ## 1.9.0-next.0
 
 ### Minor Changes

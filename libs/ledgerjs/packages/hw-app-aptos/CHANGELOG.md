@@ -1,5 +1,11 @@
 # @ledgerhq/hw-app-aptos
 
+## 6.32.0
+
+### Minor Changes
+
+- [#9362](https://github.com/LedgerHQ/ledger-live/pull/9362) [`8675df1`](https://github.com/LedgerHQ/ledger-live/commit/8675df12c24067877358f27e1e7c66f739ff0c78) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Fix Aptos derivation path account metadata
+
 ## 6.32.0-next.0
 
 ### Minor Changes
