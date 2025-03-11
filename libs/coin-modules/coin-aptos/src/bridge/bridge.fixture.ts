@@ -7,7 +7,7 @@ import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 const currency = getCryptoCurrencyById("aptos");
 
-export function createFixtureAccount(): AptosAccount {
+export function createFixtureAccount(account?: Partial<AptosAccount>): AptosAccount {
   const freshAddress = {
     address: "address",
     derivationPath: "derivation_path",
@@ -22,8 +22,8 @@ export function createFixtureAccount(): AptosAccount {
     freshAddress: freshAddress.address,
     freshAddressPath: freshAddress.derivationPath,
     used: true,
-    balance: new BigNumber(0),
-    spendableBalance: new BigNumber(0),
+    balance: account?.balance || new BigNumber(0),
+    spendableBalance: account?.spendableBalance || new BigNumber(0),
     creationDate: faker.date.past(),
     blockHeight: faker.number.int({ min: 100_000, max: 200_000 }),
     currency,
