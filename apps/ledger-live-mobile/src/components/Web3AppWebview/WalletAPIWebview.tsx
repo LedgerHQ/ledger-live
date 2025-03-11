@@ -80,7 +80,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         mediaPlaybackRequiresUserAction={false}
         automaticallyAdjustContentInsets={false}
         scrollEnabled={true}
-        style={styles(error).webview}
+        style={[styles.webview, { display: error ? "none" : "flex" }]}
         renderError={() => <NetworkError handleTryAgain={reloadWebView} />}
         testID="wallet-api-webview"
         webviewDebuggingEnabled={__DEV__}
@@ -98,33 +98,31 @@ WalletAPIWebview.displayName = "WalletAPIWebview";
 
 function renderLoading() {
   return (
-    <View style={styles().center}>
+    <View style={styles.center}>
       <ActivityIndicator size="small" />
     </View>
   );
 }
 
-const styles = (error = false) =>
-  StyleSheet.create({
-    root: {
-      flex: 1,
-    },
-    center: {
-      flex: 1,
-      flexDirection: "column",
-      alignItems: "center",
-      position: "absolute",
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      justifyContent: "center",
-    },
-    webview: {
-      display: error ? "none" : "flex",
-      flex: 1,
-      width: "100%",
-      height: "100%",
-      backgroundColor: "transparent",
-    },
-  });
+const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+  },
+  center: {
+    flex: 1,
+    flexDirection: "column",
+    alignItems: "center",
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: "center",
+  },
+  webview: {
+    flex: 1,
+    width: "100%",
+    height: "100%",
+    backgroundColor: "transparent",
+  },
+});
