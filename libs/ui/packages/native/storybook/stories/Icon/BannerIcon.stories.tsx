@@ -1,6 +1,5 @@
-import type { Meta, StoryObj } from "@storybook/react";
-
-import * as Icons from "@ledgerhq/icons-ui/react";
+import type { Meta, StoryObj } from "@storybook/react-native";
+import * as Icons from "@ledgerhq/icons-ui/native";
 import BannerIcon from "../../../src/components/Icon/BannerIcon";
 
 const meta: Meta<typeof BannerIcon> = {
