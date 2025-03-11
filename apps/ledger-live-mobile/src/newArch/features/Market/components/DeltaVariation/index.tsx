@@ -15,12 +15,22 @@ function DeltaVariation({ value, percent, ...props }: Props) {
 
   const absDelta = Math.abs(delta);
 
+  const roundedDelta = parseFloat(delta.toFixed(2));
+
+  if (roundedDelta === 0) {
+    return (
+      <Text variant={"large"} color="neutral.c60" fontWeight={"semiBold"}>
+        -
+      </Text>
+    );
+  }
+
   const [color, ArrowIcon, sign] =
     delta !== 0
       ? delta > 0
         ? ["success.c50", IconsLegacy.ArrowEvolutionUpMedium, "+"]
         : ["error.c50", IconsLegacy.ArrowEvolutionDownMedium, "-"]
-      : ["neutral.c100", null, ""];
+      : ["neutral.c100", null, "-"];
 
   return (
     <Flex flexDirection="row" alignItems="center">
