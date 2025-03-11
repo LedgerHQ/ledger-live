@@ -59,11 +59,19 @@ export const addressesAreEqual = (addr1: string, addr2: string) => {
   }
 };
 
+/**
+ * Returns the known jetton ID and workchain for a given token address.
+ * Returns null if the token is not found in the known jettons list.
+ */
 function getKnownJettonId(tokenAddress: string, knownJettons: KnownJetton[]) {
   const index = knownJettons.findIndex(jetton => jetton.masterAddress.toString() === tokenAddress);
   return index > -1 ? { jettonId: index, workchain: WORKCHAIN } : null;
 }
 
+/**
+ * Finds a sub-account by its ID in a TON account.
+ * Returns undefined if no matching sub-account is found.
+ */
 export function findSubAccountById(account: TonAccount, id: string): TonSubAccount | undefined {
   return account.subAccounts?.find(a => a.id === id) as TonSubAccount | undefined;
 }
@@ -87,7 +95,7 @@ export function buildTonTransaction(
   }
 
   // if there is a sub account, the transaction is a token transfer
-  const subAccount = findSubAccountById(account, subAccountId ?? "") as TonSubAccount | undefined;
+  const subAccount = findSubAccountById(account, subAccountId ?? "");
 
   if (subAccount && !subAccount.jettonWallet) {
     throw new Error("[ton] jetton wallet not found");

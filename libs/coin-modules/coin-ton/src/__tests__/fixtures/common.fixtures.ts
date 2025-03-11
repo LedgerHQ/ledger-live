@@ -8,8 +8,7 @@ import {
   TonResponseWalletInfo,
   TonTransactionsList,
 } from "../../bridge/bridgeHelpers/api.types";
-import type { TonSubAccount, Transaction } from "../../types";
-import { TonAccount } from "../../types";
+import type { TonAccount, TonSubAccount, Transaction } from "../../types";
 
 export const mockAddress = "UQDzd8aeBOU-jqYw_ZSuZjceI5p-F4b7HMprAsUJAtRPbMol";
 export const mockAccountId =

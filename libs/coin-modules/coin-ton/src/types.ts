@@ -161,10 +161,6 @@ export interface TonTransaction {
   amount: bigint;
   stateInit?: StateInit;
   payload?: TonPayloadFormat;
-  walletSpecifiers?: {
-    subwalletId?: number;
-    includeWalletOp: boolean;
-  };
 }
 
 export interface TonCell extends Cell {}
