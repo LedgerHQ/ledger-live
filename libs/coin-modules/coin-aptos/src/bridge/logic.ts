@@ -239,6 +239,16 @@ export function getEventCoinAddress(
   return address;
 }
 
+/**
+ * Extracts the address from a string like "0x1::coin::CoinStore<address::module::type>"
+ * @param {string} str - The input string containing the address.
+ * @returns {string | null} - The extracted address or null if not found.
+ */
+function extractAddress(str: string): string | null {
+  const match = str.match(/<([^>]+)>/);
+  return match ? match[1] : null;
+}
+
 export function getEventFAAddress(
   change: WriteSetChangeWriteResource,
   event: Event,
