@@ -1,7 +1,7 @@
 import { Application } from "../../../page";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 
-export async function runAddAccountTest(currency: Currency, tmsLink: string) {
+export async function runAddAccountTest(currency: Currency, tmsLinks: string[]) {
   const app = new Application();
 
   describe("Add accounts", () => {
@@ -19,7 +19,7 @@ export async function runAddAccountTest(currency: Currency, tmsLink: string) {
       await app.portfolio.waitForPortfolioPageToLoad();
     });
 
-    $TmsLink(tmsLink);
+    tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     it(`Perform an add account - ${currency.name}`, async () => {
       await app.addAccount.openViaDeeplink();
       await app.common.performSearch(currency.name);

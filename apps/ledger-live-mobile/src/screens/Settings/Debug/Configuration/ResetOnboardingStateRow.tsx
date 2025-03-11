@@ -6,6 +6,8 @@ import {
   setHasBeenRedirectedToPostOnboarding,
   setHasBeenUpsoldProtect,
   setHasOrderedNano,
+  setIsReborn,
+  setOnboardingHasDevice,
   setReadOnlyMode,
 } from "~/actions/settings";
 import { RebootContext } from "~/context/Reboot";
@@ -30,6 +32,8 @@ export default function ResetOnboardingStateRow() {
         dispatch(removeKnownDevices(knownDevices.map(d => d.id)));
         dispatch(setHasBeenUpsoldProtect(false));
         dispatch(setHasBeenRedirectedToPostOnboarding(false));
+        dispatch(setIsReborn(null));
+        dispatch(setOnboardingHasDevice(null));
         unacceptGeneralTerms();
         requestAnimationFrame(() => {
           reboot();

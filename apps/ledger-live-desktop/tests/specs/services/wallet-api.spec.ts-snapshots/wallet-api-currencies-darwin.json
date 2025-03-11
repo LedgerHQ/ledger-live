@@ -862,5 +862,23 @@
     "family": "cosmos",
     "color": "#080c44",
     "decimals": 6
+  },
+  {
+    "type": "CryptoCurrency",
+    "id": "sonic",
+    "ticker": "S",
+    "name": "Sonic",
+    "family": "ethereum",
+    "color": "#FFFFFF",
+    "decimals": 18
+  },
+  {
+    "type": "CryptoCurrency",
+    "id": "sonic_blaze",
+    "ticker": "S",
+    "name": "Sonic Blaze",
+    "family": "ethereum",
+    "color": "#FFFFFF",
+    "decimals": 18
   }
 ]

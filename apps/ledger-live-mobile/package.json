@@ -1,6 +1,6 @@
 {
   "name": "live-mobile",
-  "version": "3.68.0",
+  "version": "3.69.0",
   "private": true,
   "scripts": {
     "postinstall": "zx ./scripts/post.mjs",
@@ -78,10 +78,10 @@
     "@formatjs/intl-pluralrules": "5.2.12",
     "@formatjs/intl-relativetimeformat": "11.2.12",
     "@ledgerhq/coin-cosmos": "workspace:^",
-    "@ledgerhq/coin-elrond": "workspace:^",
     "@ledgerhq/coin-evm": "workspace:^",
     "@ledgerhq/coin-filecoin": "workspace:^",
     "@ledgerhq/coin-framework": "workspace:^",
+    "@ledgerhq/coin-multiversx": "workspace:^",
     "@ledgerhq/coin-stacks": "workspace:^",
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/domain-service": "workspace:^",
@@ -279,7 +279,7 @@
     "babel-jest": "29.7.0",
     "body-parser": "1.20.3",
     "cors": "2.8.5",
-    "detox": "20.33.0",
+    "detox": "20.34.4",
     "detox-allure2-adapter": "1.0.0-alpha.12",
     "eslint-import-resolver-typescript": "3.6.1",
     "eslint-plugin-detox": "1.0.0",

@@ -4,4 +4,4 @@ import { runSendTest } from "../send/send";
 import { Fee } from "@ledgerhq/live-common/e2e/enum/Fee";
 
 const transaction = new Transaction(Account.DOGE_1, Account.DOGE_2, "0.01", Fee.SLOW);
-runSendTest(transaction, "B2CQA-2573");
+runSendTest(transaction, ["B2CQA-2573"]);
