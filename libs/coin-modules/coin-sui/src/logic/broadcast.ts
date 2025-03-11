@@ -1,8 +1,14 @@
 import suiAPI from "../network";
 // import { loadSui } from "./loadSui";
 
-export async function broadcast(signature: string): Promise<string> {
-  console.log("broadcast", signature);
+export async function broadcast(unsigned: string, serializedSignature: string): Promise<string> {
+  const result = await suiAPI.executeTransactionBlock({
+    transactionBlock: unsigned,
+    signature: serializedSignature,
+    options: {
+      showEffects: true,
+    },
+  });
   // await loadSui();
-  return await suiAPI.submitExtrinsic(signature);
+  return result?.digest ?? "";
 }

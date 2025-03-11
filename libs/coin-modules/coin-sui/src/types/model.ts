@@ -1,5 +1,3 @@
-import { ExecuteTransactionBlockParams, SuiTransactionBlockResponse } from "@mysten/sui/client";
-
 export type SuiOperationMode = "send";
 
 // type TypeRegistry = any;
@@ -21,8 +19,5 @@ export type TransactionPayloadInfo = {
 
 export type CoreTransaction = {
   // registry: TypeRegistry;
-  executeTransactionBlock: (
-    params: ExecuteTransactionBlockParams,
-  ) => Promise<SuiTransactionBlockResponse | undefined>;
   unsigned: Uint8Array;
 };

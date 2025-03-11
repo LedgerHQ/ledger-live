@@ -23,7 +23,6 @@ export async function craftTransaction(
   const unsigned = await suiAPI.createTransaction(address, extractExtrinsicArg);
 
   return {
-    executeTransactionBlock: suiAPI.executeTransactionBlock,
     unsigned,
   };
 }

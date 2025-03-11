@@ -41,11 +41,7 @@ export const buildSignOperation =
           }),
         };
 
-        const { executeTransactionBlock, unsigned } = await buildTransaction(
-          account,
-          transactionToSign,
-          true,
-        );
+        const { unsigned } = await buildTransaction(account, transactionToSign, true);
 
         const signData = messageWithIntent("TransactionData", unsigned);
 
@@ -69,16 +65,6 @@ export const buildSignOperation =
         });
         console.log("buildSignOperation verify", verify);
 
-        const result = await executeTransactionBlock({
-          transactionBlock: unsigned,
-          signature: serializedSignature,
-          options: {
-            showEffects: true,
-          },
-        });
-
-        console.log("buildSignOperation result", result);
-
         subscriber.next({
           type: "device-signature-granted",
         });
@@ -94,6 +80,10 @@ export const buildSignOperation =
           signedOperation: {
             operation,
             signature: Buffer.from(signature).toString("base64"),
+            rawData: {
+              serializedSignature,
+              unsigned: Buffer.from(unsigned).toString("base64"),
+            },
           },
         });
       }
