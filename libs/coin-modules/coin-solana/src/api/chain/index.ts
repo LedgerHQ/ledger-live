@@ -24,7 +24,6 @@ import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
 import { getEnv } from "@ledgerhq/live-env";
 import { NetworkError } from "@ledgerhq/errors";
 import { Awaited } from "../../logic";
-import { getStakeActivation } from "./stake-activation";
 import { getTokenAccountProgramId } from "../../helpers/token";
 import { SolanaTokenProgram } from "../../types";
 
@@ -62,8 +61,6 @@ export type ChainAPI = Readonly<{
     authAddr: string,
   ) => ReturnType<Connection["getParsedProgramAccounts"]>;
 
-  getStakeActivation: (stakeAccAddr: string) => ReturnType<typeof getStakeActivation>;
-
   getInflationReward: (addresses: string[]) => ReturnType<Connection["getInflationReward"]>;
 
   getVoteAccounts: () => ReturnType<Connection["getVoteAccounts"]>;
@@ -78,6 +75,10 @@ export type ChainAPI = Readonly<{
   getAccountInfo: (
     address: string,
   ) => Promise<Awaited<ReturnType<Connection["getParsedAccountInfo"]>>["value"]>;
+
+  getMultipleAccounts: (
+    addresses: string[],
+  ) => Promise<Awaited<ReturnType<Connection["getMultipleParsedAccounts"]>>["value"]>;
 
   sendRawTransaction: (
     buffer: Buffer,
@@ -131,7 +132,7 @@ export function getChainAPI(
     if (!_connection) {
       _connection = new Connection(config.endpoint, {
         ...(fetchMiddleware ? { fetchMiddleware } : {}),
-        commitment: "finalized",
+        commitment: "confirmed",
         confirmTransactionInitialTimeout: getEnv("SOLANA_TX_CONFIRMATION_TIMEOUT") || 0,
       });
     }
@@ -204,9 +205,6 @@ export function getChainAPI(
       minutes(3),
     ),
 
-    getStakeActivation: (stakeAccAddr: string) =>
-      getStakeActivation(connection(), new PublicKey(stakeAccAddr)).catch(remapErrors),
-
     getInflationReward: (addresses: string[]) =>
       connection()
         .getInflationReward(addresses.map(addr => new PublicKey(addr)))
@@ -227,6 +225,12 @@ export function getChainAPI(
     getAccountInfo: (address: string) =>
       connection()
         .getParsedAccountInfo(new PublicKey(address))
+        .then(r => r.value)
+        .catch(remapErrors),
+
+    getMultipleAccounts: (addresses: string[]) =>
+      connection()
+        .getMultipleParsedAccounts(addresses.map(address => new PublicKey(address)))
         .then(r => r.value)
         .catch(remapErrors),
 
