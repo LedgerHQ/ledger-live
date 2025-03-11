@@ -1,5 +1,17 @@
 # @ledgerhq/evm-tools
 
+## 1.5.0
+
+### Minor Changes
+
+- [#9158](https://github.com/LedgerHQ/ledger-live/pull/9158) [`7931e5f`](https://github.com/LedgerHQ/ledger-live/commit/7931e5f6bf379eee7b80f5a95f13b6e96140ac5a) Thanks [@Canestin](https://github.com/Canestin)! - change uniswap signmessage modal
+
+### Patch Changes
+
+- Updated dependencies [[`1461449`](https://github.com/LedgerHQ/ledger-live/commit/146144941c13e60182da8d79592f706d12a6f00e), [`bdfa413`](https://github.com/LedgerHQ/ledger-live/commit/bdfa4139fcbceabfd05a57e69b05e9ccf10efbe1)]:
+  - @ledgerhq/live-env@2.6.0
+  - @ledgerhq/cryptoassets-evm-signatures@13.5.4
+
 ## 1.5.0-next.0
 
 ### Minor Changes

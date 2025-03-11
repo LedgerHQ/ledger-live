@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/ledger-libs",
   "private": true,
-  "version": "0.2.0-next.0",
+  "version": "0.2.0",
   "scripts": {},
   "dependencies": {
     "axios": "1.7.7",

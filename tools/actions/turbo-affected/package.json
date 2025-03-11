@@ -1,6 +1,6 @@
 {
   "name": "@actions/turbo-affected",
-  "version": "1.3.0-next.0",
+  "version": "1.3.0",
   "description": "Returns a list of affected packages, and optionnally if particular has been affected",
   "author": "Valentin D. Pinkman <valentin.d.pinkman@icloud.com>",
   "license": "MIT",
