@@ -57,17 +57,20 @@ export const mergeSubAccounts = (
       continue;
     }
 
-    const updates: Partial<TokenAccount> = {};
+    const updates: Partial<TokenAccount> & { [key: string]: any } = {};
     for (const { name, isOps } of updatableSubAccountProperties) {
       if (!isOps) {
-        // @ts-expect-error FIXME: fix typings
-        if (newSubAccount[name] !== duplicatedAccount[name]) {
-          // @ts-expect-error FIXME: fix typings
-          updates[name] = newSubAccount[name];
+        if (
+          newSubAccount[name as keyof TokenAccount] !==
+          duplicatedAccount[name as keyof TokenAccount]
+        ) {
+          updates[name] = newSubAccount[name as keyof TokenAccount];
         }
       } else {
-        // @ts-expect-error FIXME: fix typings
-        updates[name] = mergeOps(duplicatedAccount[name], newSubAccount[name]);
+        updates[name] = mergeOps(
+          duplicatedAccount[name as keyof TokenAccount] as Operation[],
+          newSubAccount[name as keyof TokenAccount] as Operation[],
+        );
       }
     }
     // Updating the operationsCount in case the mergeOps changed it
