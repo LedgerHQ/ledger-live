@@ -133,7 +133,7 @@ export const txsToOps = (
       if (op.type !== DIRECTION.UNKNOWN) {
         if (coin_id === null) {
           return;
-        } else if (coin_id == APTOS_ASSET_ID) {
+        } else if (coin_id === APTOS_ASSET_ID) {
           op.id = encodeOperationId(id, tx.hash, op.type);
           ops.push(op); // if not aptos then should be tokens
         } else {
@@ -218,8 +218,8 @@ export function getEventCoinAddress(
 
   const change_event_data = mr.data[event_name];
   if (
-    change_event_data.guid.id.addr != event.guid.account_address ||
-    change_event_data.guid.id.creation_num != event.guid.creation_number
+    change_event_data.guid.id.addr !== event.guid.account_address ||
+    change_event_data.guid.id.creation_num !== event.guid.creation_number
   ) {
     return null;
   }
