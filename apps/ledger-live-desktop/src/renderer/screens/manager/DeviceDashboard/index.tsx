@@ -32,6 +32,7 @@ import {
 } from "~/renderer/reducers/settings";
 import { useAppDataStorageProvider } from "~/renderer/hooks/storage-provider/useAppDataStorage";
 import LedgerSyncEntryPoint from "LLD/features/LedgerSyncEntryPoints";
+import { LNSUpsellBanner } from "LLD/features/LNSUpsell";
 import { EntryPoint } from "LLD/features/LedgerSyncEntryPoints/types";
 import manager from "@ledgerhq/live-common/manager/index";
 
@@ -240,7 +241,10 @@ const DeviceDashboard = ({
         />
         <ProviderWarning />
         {!firmware && !isFirmwareDeprecated && update.length === 0 ? (
-          <LedgerSyncEntryPoint entryPoint={EntryPoint.manager} />
+          <>
+            <LedgerSyncEntryPoint entryPoint={EntryPoint.manager} />
+            <LNSUpsellBanner location="manager" />
+          </>
         ) : null}
         <AppList
           optimisticState={optimisticState}

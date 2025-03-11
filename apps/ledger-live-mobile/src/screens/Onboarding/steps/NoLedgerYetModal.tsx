@@ -12,7 +12,7 @@ import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/O
 import { TrackScreen, track, updateIdentify } from "~/analytics";
 import Illustration from "~/images/illustration/Illustration";
 import { useRebornFlow } from "LLM/features/Reborn/hooks/useRebornFlow";
-import ImageLedger from "~/images/double-ledger.png";
+import ImageLedger from "~/images/double-ledger.webp";
 
 type Props = {
   onClose: () => void;

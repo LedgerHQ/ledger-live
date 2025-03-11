@@ -41,8 +41,8 @@ import {
   ExternalStashUnsupportedWarning,
 } from "./UnsupportedWarning";
 import Illustration from "~/images/illustration/Illustration";
-import EarnLight from "~/images/illustration/Light/_003.png";
-import EarnDark from "~/images/illustration/Dark/_003.png";
+import EarnLight from "~/images/illustration/Light/_003.webp";
+import EarnDark from "~/images/illustration/Dark/_003.webp";
 import FirstLetterIcon from "~/components/FirstLetterIcon";
 import { useAccountUnit } from "~/hooks/useAccountUnit";
 

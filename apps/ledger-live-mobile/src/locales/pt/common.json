@@ -3533,7 +3533,13 @@
         "apt_title" : "A Ledger Nano S™ não suporta trocas de APTOS",
         "apt_description" : "Para trocar o ativo APTOS, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
         "cosmos_title" : "A Ledger Nano S™ não é compatível com a troca de Cosmos",
-        "cosmos_description" : "Para trocar Cosmos, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™."
+        "cosmos_description" : "Para trocar Cosmos, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+        "osmo_title" : "Ledger Nano S™ does not support swapping Osmosis",
+        "osmo_description" : "To swap Osmosis, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+        "dydx_title" : "Ledger Nano S™ does not support swapping dYdX",
+        "dydx_description" : "To swap dYdX, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+        "sui_title" : "Ledger Nano S™ does not support swapping Sui",
+        "sui_description" : "To swap Sui, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
       }
     },
     "lending" : {
