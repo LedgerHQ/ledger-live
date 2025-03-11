@@ -1,5 +1,15 @@
 # @ledgerhq/coin-tezos
 
+## 1.3.1-nightly.1
+
+### Patch Changes
+
+- [#9194](https://github.com/LedgerHQ/ledger-live/pull/9194) [`ce00b67`](https://github.com/LedgerHQ/ledger-live/commit/ce00b67011b7ff554af7e0ee82696dc4ea0b632f) Thanks [@jprudent](https://github.com/jprudent)! - Tesos tx fee is now the sum of storageFee + bakerFee + allocationFee
+
+- Updated dependencies [[`5abde51`](https://github.com/LedgerHQ/ledger-live/commit/5abde5192d32f493ece2f99aec0e2de0c411f9e5)]:
+  - @ledgerhq/types-live@6.62.0-nightly.0
+  - @ledgerhq/coin-framework@2.2.0-nightly.1
+
 ## 1.3.1-nightly.0
 
 ### Patch Changes

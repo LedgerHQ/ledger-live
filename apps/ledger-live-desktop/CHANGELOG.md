@@ -1,5 +1,33 @@
 # ledger-live-desktop
 
+## 2.103.0-nightly.3
+
+### Minor Changes
+
+- [#9476](https://github.com/LedgerHQ/ledger-live/pull/9476) [`b9290c1`](https://github.com/LedgerHQ/ledger-live/commit/b9290c1a3255bf53859d40730303b99cc8ffff3d) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - Feature: Add analytics on discreet mode
+
+- [#9328](https://github.com/LedgerHQ/ledger-live/pull/9328) [`7dfac7f`](https://github.com/LedgerHQ/ledger-live/commit/7dfac7ffd8465ca074f05850ad05e1253180bb85) Thanks [@thesan](https://github.com/thesan)! - Render LNS upsell banners
+
+- [#9459](https://github.com/LedgerHQ/ledger-live/pull/9459) [`dca3f8c`](https://github.com/LedgerHQ/ledger-live/commit/dca3f8c3561f95c70121e358590709c272b38122) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix Overflow in Settings for LedgerSync Entry point
+
+### Patch Changes
+
+- Updated dependencies [[`5abde51`](https://github.com/LedgerHQ/ledger-live/commit/5abde5192d32f493ece2f99aec0e2de0c411f9e5), [`ab40d22`](https://github.com/LedgerHQ/ledger-live/commit/ab40d222399232d0748751bc9b9c97b91185131f)]:
+  - @ledgerhq/types-live@6.62.0-nightly.0
+  - @ledgerhq/live-common@34.25.0-nightly.3
+  - @ledgerhq/coin-framework@2.2.0-nightly.1
+  - @ledgerhq/coin-aptos@1.6.3-nightly.1
+  - @ledgerhq/coin-bitcoin@0.11.2-nightly.1
+  - @ledgerhq/coin-cosmos@0.8.3-nightly.1
+  - @ledgerhq/coin-evm@2.13.0-nightly.2
+  - @ledgerhq/coin-filecoin@1.6.1-nightly.1
+  - @ledgerhq/domain-service@1.2.21-nightly.0
+  - @ledgerhq/live-countervalues@0.4.3-nightly.1
+  - @ledgerhq/live-countervalues-react@0.2.25-nightly.1
+  - @ledgerhq/live-nft@0.5.10-nightly.1
+  - @ledgerhq/live-nft-react@0.6.1-nightly.1
+  - @ledgerhq/live-wallet@0.9.7-nightly.1
+
 ## 2.103.0-nightly.2
 
 ### Minor Changes

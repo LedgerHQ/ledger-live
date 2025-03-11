@@ -1,5 +1,17 @@
 # @ledgerhq/coin-cardano
 
+## 0.6.0-nightly.1
+
+### Minor Changes
+
+- [#9412](https://github.com/LedgerHQ/ledger-live/pull/9412) [`ab40d22`](https://github.com/LedgerHQ/ledger-live/commit/ab40d222399232d0748751bc9b9c97b91185131f) Thanks [@qperrot](https://github.com/qperrot)! - Add abstain vote delegation to accounts which isn't already delegating
+
+### Patch Changes
+
+- Updated dependencies [[`5abde51`](https://github.com/LedgerHQ/ledger-live/commit/5abde5192d32f493ece2f99aec0e2de0c411f9e5)]:
+  - @ledgerhq/types-live@6.62.0-nightly.0
+  - @ledgerhq/coin-framework@2.2.0-nightly.1
+
 ## 0.5.1-nightly.0
 
 ### Patch Changes

@@ -1,5 +1,29 @@
 # live-mobile
 
+## 3.69.0-nightly.3
+
+### Minor Changes
+
+- [#9317](https://github.com/LedgerHQ/ledger-live/pull/9317) [`5abde51`](https://github.com/LedgerHQ/ledger-live/commit/5abde5192d32f493ece2f99aec0e2de0c411f9e5) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Add additional data tracking in LLM
+
+### Patch Changes
+
+- Updated dependencies [[`5abde51`](https://github.com/LedgerHQ/ledger-live/commit/5abde5192d32f493ece2f99aec0e2de0c411f9e5), [`ab40d22`](https://github.com/LedgerHQ/ledger-live/commit/ab40d222399232d0748751bc9b9c97b91185131f)]:
+  - @ledgerhq/types-live@6.62.0-nightly.0
+  - @ledgerhq/live-common@34.25.0-nightly.3
+  - @ledgerhq/coin-framework@2.2.0-nightly.1
+  - @ledgerhq/coin-cosmos@0.8.3-nightly.1
+  - @ledgerhq/coin-evm@2.13.0-nightly.2
+  - @ledgerhq/coin-filecoin@1.6.1-nightly.1
+  - @ledgerhq/coin-multiversx@0.2.1-nightly.1
+  - @ledgerhq/coin-stacks@0.6.2-nightly.1
+  - @ledgerhq/domain-service@1.2.21-nightly.0
+  - @ledgerhq/live-countervalues@0.4.3-nightly.1
+  - @ledgerhq/live-countervalues-react@0.2.25-nightly.1
+  - @ledgerhq/live-nft@0.5.10-nightly.1
+  - @ledgerhq/live-nft-react@0.6.1-nightly.1
+  - @ledgerhq/live-wallet@0.9.7-nightly.1
+
 ## 3.69.0-nightly.2
 
 ### Minor Changes

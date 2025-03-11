@@ -137,13 +137,19 @@
     "@ledgerhq/pnpm-utils": "1.0.1"
   },
   "changesets": [
+    "big-rats-smoke",
     "famous-jobs-sort",
     "five-scissors-travel",
     "good-trains-hope",
     "late-papayas-march",
     "popular-brooms-argue",
+    "real-weeks-do",
     "sharp-geese-exist",
     "slimy-suns-speak",
+    "swift-paws-call",
+    "tame-fans-perform",
+    "tasty-eggs-retire",
+    "tasty-readers-divide",
     "tender-rabbits-visit"
   ]
 }
