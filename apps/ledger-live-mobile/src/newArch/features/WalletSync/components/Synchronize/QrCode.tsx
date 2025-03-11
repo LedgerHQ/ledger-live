@@ -89,7 +89,7 @@ const QrCode = ({ qrCodeValue }: Props) => {
         {qrCodeValue ? (
           <QRCode
             value={qrCodeValue}
-            logo={require("~/images/bigSquareLogo.png")}
+            logo={require("~/images/bigSquareLogo.webp")}
             logoSize={65}
             size={QRCodeSize}
           />

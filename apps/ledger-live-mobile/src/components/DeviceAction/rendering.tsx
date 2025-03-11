@@ -1085,7 +1085,7 @@ export const AutoRepair = ({
 };
 
 const HARDWARE_UPDATE_ASSETS: Partial<Record<DeviceModelId, number>> = {
-  nanoS: require("../../../assets/images/swap/nanoSBackdropFilter.png"),
+  nanoS: require("../../../assets/images/swap/nanoSBackdropFilter.webp"),
 };
 
 export const HardwareUpdate = ({

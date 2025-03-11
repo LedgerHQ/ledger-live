@@ -3,71 +3,50 @@ import styled from "styled-components";
 
 import { StyleProvider } from "../../../../styles";
 import { Icons } from "../../../../assets";
-import { Text } from "../../../asorted";
-import { Button, Link } from "../../../cta";
+import Text from "../../../asorted/Text";
+import { Button } from "../../../cta";
 import Tag from "../../../Tag";
 import type { FlexBoxProps } from "../../Flex";
 import { Flex } from "../..";
 
-export type BannerCardProps = FlexBoxProps & {
+type Props = FlexBoxProps & {
   title: string;
-  cta?: string;
-  linkText?: string;
+  cta?: ReactNode;
   description?: ReactNode;
   descriptionWidth?: number;
   tag?: string;
   image?: string;
 
   onClick: ReactEventHandler;
-  onLinkClick?: ReactEventHandler;
   onClose?: ReactEventHandler;
 };
 
 export default function BannerCard({
   title,
   cta,
-  linkText,
   description,
   descriptionWidth,
   tag,
   image,
   onClick,
-  onLinkClick,
   onClose,
   ...boxProps
-}: BannerCardProps) {
+}: Props) {
   const handleClose: ReactEventHandler = event => {
     event.stopPropagation();
     onClose?.(event);
   };
-  const handleCTAClick: ReactEventHandler = event => {
+  const handleClick: ReactEventHandler = event => {
     event.stopPropagation();
     onClick(event);
   };
-  const handleLinkClick: ReactEventHandler = event => {
-    event.stopPropagation();
-    onLinkClick?.(event);
-  };
 
   return (
-    <Wrapper {...boxProps} image={image} tag={tag} onClick={handleCTAClick}>
+    <Wrapper {...boxProps} image={image} tag={tag} onClick={handleClick}>
       {tag && <StyledTag>{tag}</StyledTag>}
       <Title>{title}</Title>
       {description && <Desc maxWidth={descriptionWidth}>{description}</Desc>}
-      <Flex columnGap={5}>
-        {cta && (
-          <Button variant="main" outline={false} onClick={handleCTAClick}>
-            {cta}
-          </Button>
-        )}
-        {linkText && (
-          <Link onClick={handleLinkClick}>
-            <Text variant="body" fontSize={14} flexShrink={1}>
-              {linkText}
-            </Text>
-          </Link>
-        )}
-      </Flex>
+      <Flex columnGap={5}>{cta}</Flex>
       {onClose && (
         <StyleProvider selectedPalette="dark">
           <CloseButton data-testid="portfolio-card-close-button" onClick={handleClose} />
@@ -96,7 +75,7 @@ const Desc = styled(Text).attrs({ variant: "small", color: "neutral.c70" })`
   padding-bottom: 8px;
 `;
 
-const Wrapper = styled(Flex)<Pick<BannerCardProps, "image" | "tag">>`
+const Wrapper = styled(Flex)<Pick<Props, "image" | "tag">>`
   background-color: ${p => p.theme.colors.background.card};
   background-image: ${p => (p.image ? `url("${p.image}")` : "none")};
   background-position: right center;
@@ -107,7 +86,6 @@ const Wrapper = styled(Flex)<Pick<BannerCardProps, "image" | "tag">>`
   padding: 16px;
   padding-top: ${p => (p.tag ? "16px" : "24px")};
   padding-right: 50%;
-  flex-basis: 100%;
 
   position: relative;
   flex-direction: column;

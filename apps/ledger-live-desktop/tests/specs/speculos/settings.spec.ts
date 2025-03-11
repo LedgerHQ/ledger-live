@@ -32,7 +32,10 @@ test.describe("Settings", () => {
       await app.settings.goToAccountsTab();
       await app.settings.clickHideEmptyTokenAccountsToggle();
       await app.layout.goToAccounts();
-      await app.accounts.verifyChildrenTokensAreNotVisible(Account.ETH_1.accountName);
+      await app.accounts.verifyChildrenTokensAreNotVisible(
+        Account.ETH_1.accountName,
+        Account.ETH_USDT_1.currency,
+      );
     },
   );
 });
