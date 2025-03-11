@@ -477,17 +477,17 @@
       "title" : "Aucun compte trouvé",
       "description" : "Une erreur est survenue lors du calcul de l’adresse. Si le problème persiste, enregistrez vos logs en utilisant le bouton ci-dessous et transmettez-les à l’Assistance Ledger."
     },
-    "ElrondDecimalsLimitReached" : {
+    "MultiversXDecimalsLimitReached" : {
       "title" : "Nombre maximal de décimales atteint",
       "description" : "Veuillez vous assurer que le montant indiqué comporte 18 décimales."
     },
-    "ElrondMinDelegatedAmountError" : {
+    "MultiversXMinDelegatedAmountError" : {
       "title" : "Le montant délégué doit être d’au moins {{formattedAmount}}."
     },
-    "ElrondMinUndelegatedAmountError" : {
+    "MultiversXMinUndelegatedAmountError" : {
       "title" : "La délégation arrêtée doit être d’au moins {{formattedAmount}}."
     },
-    "ElrondDelegationBelowMinimumError" : {
+    "MultiversXDelegationBelowMinimumError" : {
       "title" : "Le montant restant à déléguer ne peut pas être inférieur à {{formattedAmount}}."
     },
     "NotEnoughVTHO" : {
@@ -829,6 +829,13 @@
     },
     "SolanaTxConfirmationTimeout" : {
       "title" : "Échec probable de votre transaction. Patientez un instant puis vérifiez l’historique des transactions avant de réessayer."
+    },
+    "SolanaRecipientMemoIsRequired" : {
+      "title" : "Un mémo est nécessaire pour l’adresse du bénéficiaire"
+    },
+    "SolanaTokenNonTransferable" : {
+      "title" : "Le token n’est pas transférable",
+      "description" : "Ces tokens sont des tokens soulbound et ne peuvent pas être transférés."
     },
     "CardanoMinAmountError" : {
       "title" : "Montant minimal pouvant être envoyé : {{amount}} ADA"
@@ -4665,7 +4672,8 @@
       "tr" : "Türkçe",
       "ja" : "日本語",
       "ko" : "한국어",
-      "pt" : "Português (Br)"
+      "pt" : "Português (Br)",
+      "th" : "ภาษาไทย"
     }
   },
   "deviceLocalization" : {
@@ -4689,7 +4697,8 @@
       "german" : "Deutsch",
       "brazilian" : "Português (Br)",
       "russian" : "Русский",
-      "turkish" : "Türkçe"
+      "turkish" : "Türkçe",
+      "thai" : "ภาษาไทย"
     }
   },
   "FirmwareUpdateCheckId" : {
@@ -6020,7 +6029,67 @@
     },
     "token" : {
       "frozenStateWarning" : "Les actifs du compte sont gelés",
-      "transferWarning" : "Pour vérifier l’adresse du bénéficiaire des tokens Solana avec un Ledger Nano S™, <0>suivez ces instructions</0>."
+      "transferWarning" : "Pour vérifier l’adresse du bénéficiaire des tokens Solana avec un Ledger Nano S™, <0>suivez ces instructions</0>.",
+      "transferFees" : {
+        "title" : "Frais de transfert",
+        "feesPercentHint" : "Le token a des frais de transfert de {{feePercent}}% ({{feeBps}} bps). Max : {{maxFee}}",
+        "notice" : "Frais de transfert : {{fee}}%",
+        "tooltipHint" : "Pourcentage du transfert prélevé pour le créateur du token."
+      },
+      "nonTransferable" : {
+        "notice" : "Le token n’est pas transférable"
+      },
+      "interestRate" : {
+        "notice" : "Taux d’intérêt : {{rate}}%",
+        "tooltipHint" : "À des fins visuelles uniquement : aucun nouveau token n’est créé avec cet intérêt."
+      },
+      "permanentDelegate" : {
+        "notice" : "L’autorité Délégué permanent est activée",
+        "initializationNotice" : "L’autorité Délégué permanent est initialisée mais n’est pas activée",
+        "initializedNoticeTooltipHint" : "Le délégué peut transférer ou brûler ce token dans votre compte.",
+        "tooltipHint" : "{{delegateAddress}}<0></0> peut transférer ou brûler ce token dans votre compte."
+      },
+      "requiredMemoOnTransfer" : {
+        "notice" : "Mémo requis est activé",
+        "tooltipHint" : "Tous les transferts entrants vers ce compte doivent avoir un mémo."
+      },
+      "transferHook" : {
+        "notice" : "Transfer Hook est activé",
+        "initializationNotice" : "Transfer Hook est configuré mais n’est pas activé",
+        "tooltipHint" : "Le token a une fonctionnalité supplémentaire gérée par {{programAddress}}<0></0>"
+      },
+      "extensionsInfo" : {
+        "title" : "Extensions de tokens Solana",
+        "commonInfo" : "Les extensions de tokens constituent la nouvelle génération de la norme pour tokens de Solana. Ils présentent un nouvel ensemble de méthodes permettant d’ajouter des caractéristiques supplémentaires aux tokens, telles que les transferts confidentiels, les délégués permanents, la logique de transfert personnalisée, les métadonnées étendues, et bien plus.",
+        "permanentDelegate" : {
+          "title" : "Délégué permanent",
+          "permanentDelegateAddress" : "L’autorité de délégation actuelle est {{address}}",
+          "permanentDelegateNotSetup" : "L’autorité de délégation actuelle n’est pas configurée.",
+          "description" : "Un délégué permanent est une autorité qui dispose de pouvoirs de délégation illimités sur n’importe quel compte pour ce minage. Ce délégué peut ainsi brûler ou transférer n’importe quelle quantité de tokens, à n’importe quel moment et à son gré."
+        },
+        "nonTransferable" : {
+          "title" : "Tokens non transférables",
+          "description" : "Ces tokens sont des tokens soulbound et ne peuvent être ni transférés ni brûlés, sauf par l’émetteur du token."
+        },
+        "transferHook" : {
+          "title" : "Transfer Hook",
+          "transferHookAddress" : "Le programme actuel de l’extension Transfert Hook est {{address}}",
+          "transferHookNotSetup" : "Le programme actuel de l’extension Transfert Hook n’est pas configuré.",
+          "description" : "L’extension Transfert Hook permet à l’émetteur d’un token de déterminer la manière dont les utilisateurs et les tokens interagissent. À la place d’un transfert normal, l’émetteur peut insérer une logique personnalisée dans un programme à utiliser avec l’extension Transfert Hook."
+        },
+        "transferFee" : {
+          "title" : "Frais de transfert",
+          "currentTransferFee" : "Frais de transfert actuels : {{feePercent}}% ({{feeBps}} bps). Max : {{maxFee}}.",
+          "description" : "Des frais sont facturés sur chaque transfert de token et prélevés sur le compte du destinataire, qui ne peut pas y toucher."
+        },
+        "interestBearing" : {
+          "title" : "Tokens porteurs d’intérêts",
+          "currentInterestRate" : "Taux d’intérêt actuel : {{rate}}%.",
+          "accruedDelta" : "Accumulé {{delta}}.",
+          "interestRateNotSetup" : "Le taux d’intérêt actuel est fixé à 0%.",
+          "description" : "Tokens dont la valeur augmente ou diminue constamment en fonction de leur taux d’intérêt. Fonctionnalité purement visuelle : aucun nouveau token n’est créé."
+        }
+      }
     }
   },
   "near" : {
@@ -6720,6 +6789,7 @@
         "hide" : "Masquer {{count}} collection",
         "hiddenCollections" : "Collections masquées",
         "hide_plural" : "Masquer {{count}} collections",
+        "empty" : "Aucune collection masquée",
         "alertHide" : "1 collection masquée. Vous pouvez restaurer sa visibilité à tout moment à partir des filtres de la galerie.",
         "alertHide_plural" : "{{count}} collections masquées. Vous pouvez restaurer leur visibilité à tout moment à partir des filtres de la galerie."
       },

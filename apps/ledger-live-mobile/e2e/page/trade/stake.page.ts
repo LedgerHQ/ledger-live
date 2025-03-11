@@ -4,8 +4,11 @@ import {
   tapById,
   typeTextById,
   waitForElementById,
+  getElementById,
 } from "../../helpers";
+import { expect as detoxExpect } from "detox";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
+import invariant from "invariant";
 
 export default class StakePage {
   delegationSummaryValidatorId = (currencyId: string) =>
@@ -20,12 +23,15 @@ export default class StakePage {
     `${currencyId}-delegate-ratio-${delegatedPercent}%`;
   delegationAmountInput = (currencyId: string) => `${currencyId}-delegation-amount-input`;
   allAssetsUsedText = (currencyId: string) => `${currencyId}-all-assets-used-text`;
+  delegationFees = (currencyId: string) => `${currencyId}-delegation-summary-fees`;
   summaryContinueButtonId = (currencyId: string) => `${currencyId}-summary-continue-button`;
   delegationStartId = (currencyId: string) => `${currencyId}-delegation-start-button`;
   delegationAmountContinueId = (currencyId: string) => `${currencyId}-delegation-amount-continue`;
   currencyRow = (currencyId: string) => `currency-row-${currencyId}`;
   zeroAssetText = "0\u00a0ATOM";
   celoLockAmountInput = "celo-lock-amount-input";
+  searchPoolInput = "delegation-search-pool-input";
+  providerRow = (providerTicker: string) => `provider-row-${providerTicker}`;
 
   async selectCurrency(currencyId: string) {
     const id = this.currencyRow(currencyId);
@@ -65,6 +71,27 @@ export default class StakePage {
     expect(await this.delegationSummaryValidator(currencyId)).toEqual(provider);
   }
 
+  @Step("Select new provider")
+  async selectValidator(currencyId: string, provider: string) {
+    const ticker = provider.split(" - ")[0];
+    await tapById(this.delegationSummaryValidatorId(currencyId));
+    await typeTextById(this.searchPoolInput, ticker);
+    await waitForElementById(this.searchPoolInput);
+    await tapById(this.providerRow(ticker));
+  }
+
+  @Step("Verify fees visible in summary")
+  async verifyFeesVisible(currencyId: string) {
+    await detoxExpect(getElementById(this.delegationFees(currencyId))).toBeVisible();
+  }
+
+  @Step("Get fees displayed in summary")
+  async getDisplayedFees(currencyId: string) {
+    const fees = getTextOfElement(this.delegationFees(currencyId));
+    invariant(fees, "Fees empty in summary");
+    return fees;
+  }
+
   @Step("Expect assets remaining after delegation")
   async expectRemainingAmount(
     currencyId: string,
@@ -95,7 +122,9 @@ export default class StakePage {
 
   @Step("Click on continue button in summary")
   async summaryContinue(currencyId: string) {
-    await tapById(this.summaryContinueButtonId(currencyId));
+    const id = this.summaryContinueButtonId(currencyId);
+    await waitForElementById(id);
+    await tapById(id);
   }
 
   @Step("Set Celo lock amount")

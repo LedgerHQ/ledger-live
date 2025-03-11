@@ -29,7 +29,7 @@ function PostWelcomeSelection() {
   const [modalOpen, setModalOpen] = useState(false);
 
   const openModal = () => {
-    identifyUser(false);
+    identifyUser(null);
     setModalOpen(true);
     track("button_clicked", {
       button: "I don’t have a Ledger yet",
@@ -57,13 +57,13 @@ function PostWelcomeSelection() {
 
   const setupLedger = () => {
     dispatch(setReadOnlyMode(false));
-    identifyUser(true);
+    identifyUser(null);
     navigation.navigate(ScreenName.OnboardingDeviceSelection);
   };
 
   const accessExistingWallet = () => {
     dispatch(setReadOnlyMode(false));
-    identifyUser(true);
+    identifyUser(null);
     navigation.navigate(ScreenName.OnboardingWelcomeBack);
   };
 

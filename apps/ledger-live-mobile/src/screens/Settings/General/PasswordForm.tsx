@@ -1,8 +1,6 @@
 import React, { memo, useCallback, useState } from "react";
 import { View, StyleSheet } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
-import { useTheme } from "@react-navigation/native";
 import LText from "~/components/LText";
 import KeyboardView from "~/components/KeyboardView";
 import TranslatedError from "~/components/TranslatedError";
@@ -19,7 +17,6 @@ type Props = {
 
 const PasswordForm = ({ onChange, onSubmit, error, placeholder, value }: Props) => {
   const { t } = useTranslation();
-  const { colors } = useTheme();
   const [secureTextEntry, setSecureTextEntry] = useState(true);
 
   const toggleSecureTextEntry = useCallback(() => {
@@ -27,39 +24,37 @@ const PasswordForm = ({ onChange, onSubmit, error, placeholder, value }: Props) 
   }, []);
 
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
-      <KeyboardView>
-        <View style={styles.body}>
-          <PasswordInput
-            inline
-            autoFocus
-            error={error}
-            onChange={onChange}
-            onSubmit={onSubmit}
-            toggleSecureTextEntry={toggleSecureTextEntry}
-            secureTextEntry={secureTextEntry}
-            placeholder={placeholder}
-            password={value}
-            testID="password-text-input"
-          />
-        </View>
-        {error && (
-          <LText style={styles.errorStyle} color="alert">
-            <TranslatedError error={error} />
-          </LText>
-        )}
-        <View style={styles.footer}>
-          <Button
-            event="SubmitPassword"
-            type={"main"}
-            onPress={onSubmit}
-            disabled={!!error || value.length === 0}
-          >
-            {t("common.confirm")}
-          </Button>
-        </View>
-      </KeyboardView>
-    </SafeAreaView>
+    <KeyboardView behavior="padding">
+      <View style={styles.body}>
+        <PasswordInput
+          inline
+          autoFocus
+          error={error}
+          onChange={onChange}
+          onSubmit={onSubmit}
+          toggleSecureTextEntry={toggleSecureTextEntry}
+          secureTextEntry={secureTextEntry}
+          placeholder={placeholder}
+          password={value}
+          testID="password-text-input"
+        />
+      </View>
+      {error && (
+        <LText style={styles.errorStyle} color="alert">
+          <TranslatedError error={error} />
+        </LText>
+      )}
+      <View style={styles.footer}>
+        <Button
+          event="SubmitPassword"
+          type={"main"}
+          onPress={onSubmit}
+          disabled={!!error || value.length === 0}
+        >
+          {t("common.confirm")}
+        </Button>
+      </View>
+    </KeyboardView>
   );
 };
 

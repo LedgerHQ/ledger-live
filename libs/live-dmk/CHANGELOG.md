@@ -1,5 +1,17 @@
 # @ledgerhq/live-dmk
 
+## 0.5.0
+
+### Minor Changes
+
+- [#9347](https://github.com/LedgerHQ/ledger-live/pull/9347) [`127c090`](https://github.com/LedgerHQ/ledger-live/commit/127c0906f738ccc3ee84a194ca2aee642ecbb358) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Add LL logger in live-dmk
+
+## 0.5.0-next.0
+
+### Minor Changes
+
+- [#9347](https://github.com/LedgerHQ/ledger-live/pull/9347) [`127c090`](https://github.com/LedgerHQ/ledger-live/commit/127c0906f738ccc3ee84a194ca2aee642ecbb358) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Add LL logger in live-dmk
+
 ## 0.4.0
 
 ### Minor Changes

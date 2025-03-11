@@ -6,6 +6,7 @@ export default class DeviceValidationPage {
   validationAmount = () => getElementById("device-validation-amount");
   validationAddress = () => getElementById("device-validation-address");
   validationProvider = () => getElementById("device-validation-provider");
+  validationFees = () => getElementById("device-validation-transaction-fee");
 
   @Step("Expect device validation screen to be displayed")
   async expectDeviceValidationScreen() {
@@ -25,5 +26,10 @@ export default class DeviceValidationPage {
   @Step("Expect provider in device validation screen")
   async expectProvider(provider: string) {
     await expect(this.validationProvider()).toHaveText(provider);
+  }
+
+  @Step("Expect fees in device validation screen")
+  async expectFees(fees: string) {
+    await expect(this.validationFees()).toHaveText(fees);
   }
 }

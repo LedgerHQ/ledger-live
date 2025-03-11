@@ -5,6 +5,7 @@ import { ParsedInfo } from "../validators";
 import { StakeAccount, StakeAccountInfo, StakeHistoryEntry } from "./stake";
 import { MintAccountInfo, TokenAccount, TokenAccountInfo } from "./token";
 import { VoteAccount, VoteAccountInfo } from "./vote";
+import { isTokenProgram } from "../../../helpers/token";
 
 export function parseMintAccountInfo(info: unknown): MintAccountInfo {
   return create(info, MintAccountInfo);
@@ -16,7 +17,7 @@ export function tryParseAsMintAccount(
   const routine = () => {
     const info = create(data.parsed, ParsedInfo);
 
-    if (data.program === PARSED_PROGRAMS.SPL_TOKEN) {
+    if (isTokenProgram(data.program)) {
       const parsed = create(info, TokenAccount);
       if (parsed.type === "mint") {
         return parseMintAccountInfo(parsed.info);
@@ -39,7 +40,7 @@ export function tryParseAsTokenAccount(
   const routine = () => {
     const info = create(data.parsed, ParsedInfo);
 
-    if (data.program === PARSED_PROGRAMS.SPL_TOKEN) {
+    if (isTokenProgram(data.program)) {
       const parsed = create(info, TokenAccount);
       if (parsed.type === "account") {
         return parseTokenAccountInfo(parsed.info);

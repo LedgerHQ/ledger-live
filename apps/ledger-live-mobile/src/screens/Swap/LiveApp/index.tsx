@@ -9,14 +9,7 @@ import {
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
-import { useNavigation } from "@react-navigation/core";
 import { useTranslation } from "react-i18next";
-import {
-  HandlerStateChangeEvent,
-  PanGestureHandler,
-  PanGestureHandlerEventPayload,
-  State,
-} from "react-native-gesture-handler";
 import GenericErrorView from "~/components/GenericErrorView";
 import { initialWebviewState } from "~/components/Web3AppWebview/helpers";
 import { WebviewState } from "~/components/Web3AppWebview/types";
@@ -32,8 +25,8 @@ export function SwapLiveApp() {
   const { t } = useTranslation();
   const ptxSwapLiveAppMobile = useFeature("ptxSwapLiveAppMobile");
 
-  const APP_MANIFEST_NOT_FOUND_ERROR = new Error(t("errors.AppManifestUnknown.title"));
-  const APP_MANIFEST_UNKNOWN_ERROR = new Error(t("errors.AppManifestNotFoundError.title"));
+  const APP_MANIFEST_NOT_FOUND_ERROR = new Error(t("errors.AppManifestNotFoundError.title"));
+  const APP_MANIFEST_UNKNOWN_ERROR = new Error(t("errors.AppManifestUnknownError.title"));
 
   const swapLiveAppManifestID =
     (ptxSwapLiveAppMobile?.params?.manifest_id as string) || DEFAULT_MANIFEST_ID;
@@ -51,15 +44,6 @@ export function SwapLiveApp() {
 
   const manifest: LiveAppManifest | undefined = !localManifest ? remoteManifest : localManifest;
 
-  const navigation = useNavigation();
-
-  const onGesture = (event: HandlerStateChangeEvent<PanGestureHandlerEventPayload>) => {
-    // PanGestureHandler callback for swiping left to right to fix issue with <Tab.Navigator>
-    if (event.nativeEvent.state === State.END && event.nativeEvent.translationX > 10) {
-      navigation.goBack();
-    }
-  };
-
   if (!manifest || isWebviewError) {
     return (
       <Flex flex={1} justifyContent="center" alignItems="center">
@@ -75,10 +59,8 @@ export function SwapLiveApp() {
   }
 
   return (
-    <PanGestureHandler onHandlerStateChange={onGesture} activeOffsetX={[0, 10]}>
-      <Flex flex={1} testID="swap-form-tab">
-        <WebView manifest={manifest} setWebviewState={setWebviewState} />
-      </Flex>
-    </PanGestureHandler>
+    <Flex flex={1} testID="swap-form-tab">
+      <WebView manifest={manifest} setWebviewState={setWebviewState} />
+    </Flex>
   );
 }

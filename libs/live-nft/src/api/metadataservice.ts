@@ -16,7 +16,7 @@ export const getFloorPrice = async (
   try {
     const { data } = await network({
       method: "GET",
-      url: `${getEnv("NFT_ETH_METADATA_SERVICE")}/v1/marketdata/${nft.currencyId}/${
+      url: `${getEnv("NFT_METADATA_SERVICE")}/v2/marketdata/${nft.currencyId}/${
         currency?.ethereumLikeInfo?.chainId
       }/contract/${nft.contract}/floor-price`,
     });

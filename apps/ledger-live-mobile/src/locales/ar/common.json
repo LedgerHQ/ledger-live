@@ -477,17 +477,17 @@
       "title" : "عفوًا، لم يتم العثور على أي حساب",
       "description" : "حدث خطأ ما في حساب العنوان. يرجى إعادة المحاولة مرة أخرى. إذا استمرت المشكلة، يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمها إلى فريق دعم Ledger."
     },
-    "ElrondDecimalsLimitReached" : {
+    "MultiversXDecimalsLimitReached" : {
       "title" : "تم الوصول إلى الحد الأقصى من الكسور العشرية",
       "description" : "يُرجى التأكد من أن المبلغ المُقدَّم به 18 كسراً عشرياً."
     },
-    "ElrondMinDelegatedAmountError" : {
+    "MultiversXMinDelegatedAmountError" : {
       "title" : "يجب أن يكون المبلغ المفوض على الأقل {{formattedAmount}}"
     },
-    "ElrondMinUndelegatedAmountError" : {
+    "MultiversXMinUndelegatedAmountError" : {
       "title" : "يجب أن يكون المبلغ غير المفوض على الأقل {{formattedAmount}}"
     },
-    "ElrondDelegationBelowMinimumError" : {
+    "MultiversXDelegationBelowMinimumError" : {
       "title" : "لا يمكن أن يكون التفويض المتبقي أقل من {{formattedAmount}}"
     },
     "NotEnoughVTHO" : {
@@ -829,6 +829,13 @@
     },
     "SolanaTxConfirmationTimeout" : {
       "title" : "ربما تكون معاملتك قد فشلت. يُرجى الانتظار لحظة ثم تحقق من سجل المعاملات قبل المحاولة مرة أخرى."
+    },
+    "SolanaRecipientMemoIsRequired" : {
+      "title" : "Memo is required for recipient address"
+    },
+    "SolanaTokenNonTransferable" : {
+      "title" : "Token is non-transferable",
+      "description" : "Such tokens are \"soul-bound\" and cannot be transferred"
     },
     "CardanoMinAmountError" : {
       "title" : "الحد الأدنى للمبلغ القابل للإرسال هو {{amount}} ADA"
@@ -4665,7 +4672,8 @@
       "tr" : "Türk",
       "ja" : "日本",
       "ko" : "한국어",
-      "pt" : "Português (Br)"
+      "pt" : "Português (Br)",
+      "th" : "ภาษาไทย"
     }
   },
   "deviceLocalization" : {
@@ -4689,7 +4697,8 @@
       "german" : "Deutsch",
       "brazilian" : "Português (Br)",
       "russian" : "Русский",
-      "turkish" : "Türkçe"
+      "turkish" : "Türkçe",
+      "thai" : "ภาษาไทย"
     }
   },
   "FirmwareUpdateCheckId" : {
@@ -6020,7 +6029,67 @@
     },
     "token" : {
       "frozenStateWarning" : "تمّ تجميد أصول الحساب!",
-      "transferWarning" : "للتحقق من عنوان المستلم لرموز سولانا (Solana) باستخدام ™Ledger Nano S، <0>يرجى اتباع هذه التعليمات.</0>"
+      "transferWarning" : "للتحقق من عنوان المستلم لرموز سولانا (Solana) باستخدام ™Ledger Nano S، <0>يرجى اتباع هذه التعليمات.</0>",
+      "transferFees" : {
+        "title" : "Transfer fees",
+        "feesPercentHint" : "Token has {{feePercent}}% ({{feeBps}}bps) transfer fee ({{maxFee}} max)",
+        "notice" : "Transfer fee {{fee}}%",
+        "tooltipHint" : "Percentage of transfer withheld for token creator"
+      },
+      "nonTransferable" : {
+        "notice" : "Token is non-transferable"
+      },
+      "interestRate" : {
+        "notice" : "Interest rate {{rate}}%",
+        "tooltipHint" : "For cosmetic purposes only, no new tokens are created as a result of the interest"
+      },
+      "permanentDelegate" : {
+        "notice" : "Permanent delegate authority is enabled",
+        "initializationNotice" : "Permanent delegate authority is initialized but not enabled",
+        "initializedNoticeTooltipHint" : "The delegate has the ability transfer or burn this token from your account",
+        "tooltipHint" : "{{delegateAddress}}<0></0> has the ability transfer or burn this token from your account"
+      },
+      "requiredMemoOnTransfer" : {
+        "notice" : "Required memo on transfer is enabled",
+        "tooltipHint" : "All incoming transfers to this account must have a memo"
+      },
+      "transferHook" : {
+        "notice" : "Transfer hook is enabled",
+        "initializationNotice" : "Transfer hook is initialized but not enabled",
+        "tooltipHint" : "Token has extra functionality handled by {{programAddress}}<0></0>"
+      },
+      "extensionsInfo" : {
+        "title" : "Solana token extensions",
+        "commonInfo" : "Token extensions are the next generation of the Solana Token standard. They introduce a new set of ways to extend the normal token functionality with additional features such as confidential transfers, permanent delegate, custom transfer logic, extended metadata, and much more.",
+        "permanentDelegate" : {
+          "title" : "Permanent delegate",
+          "permanentDelegateAddress" : "Current delegate authority is {{address}}",
+          "permanentDelegateNotSetup" : "Current delegate authority is not set up.",
+          "description" : "Permanent delegate is an authority which has unlimited delegate privileges over any account for that mint. The delegate could burn or transfer any amount of tokens, at any time, on their own authority."
+        },
+        "nonTransferable" : {
+          "title" : "Non-Transferrable Tokens",
+          "description" : "Such tokens are \"soul-bound\" and cannot be moved or burned, except by the token issuer."
+        },
+        "transferHook" : {
+          "title" : "Transfer hook",
+          "transferHookAddress" : "Current transfer hook program is {{address}}",
+          "transferHookNotSetup" : "Current transfer hook program is not set up.",
+          "description" : "Transfer hook gives a token issuers an ability to dictate how users and tokens interact. Instead of a normal transfer, issuer can insert custom logic into a program to be used with the transfer hook extension."
+        },
+        "transferFee" : {
+          "title" : "Transfer Fee",
+          "currentTransferFee" : "Current transfer fee is {{feePercent}}% ({{feeBps}}bps). Max {{maxFee}}.",
+          "description" : "Fees are charged on every transfer of a token and withheld on the recipient account, untouchable by the recipient."
+        },
+        "interestBearing" : {
+          "title" : "Interest-Bearing Tokens",
+          "currentInterestRate" : "Current interest rate is {{rate}}%.",
+          "accruedDelta" : "Accrued {{delta}}.",
+          "interestRateNotSetup" : "Current interest rate is set up to 0%.",
+          "description" : "Tokens that constantly grow or decrease in value according on its interest rate. No new tokens are ever created, the feature is entirely cosmetic."
+        }
+      }
     }
   },
   "near" : {
@@ -6720,6 +6789,7 @@
         "hide" : "إخفاء {{count}} مجموعة",
         "hiddenCollections" : "المجموعات المخفية",
         "hide_plural" : "إخفاء {{count}} مجموعة",
+        "empty" : "No Hidden collections to show",
         "alertHide" : "تم إخفاء 1 مجموعة. يمكنك إلغاء إخفائها في أي وقت من تصفية المعرض.",
         "alertHide_plural" : "تم إخفاء {{count}} مجموعة. يمكنك إلغاء إخفائها في أي وقت من تصفية المعرض."
       },

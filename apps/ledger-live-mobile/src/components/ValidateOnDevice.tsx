@@ -77,7 +77,7 @@ function TextField({ field }: FieldComponentProps) {
     <TextValueField
       label={field.label}
       value={field.value}
-      testID={"send-validation-" + field.label.toLowerCase()}
+      testID={"device-validation-" + field.label.toLowerCase().replace(/\s+/g, "-")}
     />
   );
 }

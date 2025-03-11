@@ -1080,33 +1080,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerViews: [],
   },
-  elrond: {
-    type: "CryptoCurrency",
-    id: "elrond",
-    coinType: CoinType.MULTIVERSX,
-    name: "MultiversX",
-    managerAppName: "MultiversX",
-    ticker: "EGLD",
-    scheme: "elrond",
-    color: "#23F7DD",
-    family: "elrond",
-    blockAvgTime: 6,
-    deviceTicker: "EGLD",
-    units: [
-      {
-        name: "EGLD",
-        code: "EGLD",
-        magnitude: 18,
-      },
-    ],
-    explorerViews: [
-      {
-        tx: "https://explorer.elrond.com/transactions/$hash",
-        address: "https://explorer.elrond.com/accounts/$address",
-      },
-    ],
-    keywords: ["elrond"],
-  },
   eos: {
     type: "CryptoCurrency",
     id: "eos",
@@ -1792,6 +1765,34 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
     keywords: ["xmr", "monero"],
+  },
+  elrond: {
+    type: "CryptoCurrency",
+    // id: "multiversx",
+    id: "elrond",
+    coinType: CoinType.MULTIVERSX,
+    name: "MultiversX",
+    managerAppName: "MultiversX",
+    ticker: "EGLD",
+    scheme: "multiversx",
+    color: "#23F7DD",
+    family: "multiversx",
+    blockAvgTime: 6,
+    deviceTicker: "EGLD",
+    units: [
+      {
+        name: "EGLD",
+        code: "EGLD",
+        magnitude: 18,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://explorer.multiversx.com/transactions/$hash",
+        address: "https://explorer.multiversx.com/accounts/$address",
+      },
+    ],
+    keywords: ["multiversx"],
   },
   musicoin: {
     type: "CryptoCurrency",
@@ -3535,6 +3536,51 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   // ethereum nanoapp currencies
   // Light Integrations are at the end of the list until we figure out a way to fix the ticker/managerApp collisions
+  sonic: {
+    type: "CryptoCurrency",
+    id: "sonic",
+    coinType: CoinType.ETH,
+    name: "Sonic",
+    managerAppName: "Ethereum",
+    ticker: "S",
+    scheme: "sonic",
+    color: "#FFFFFF",
+    family: "evm",
+    units: ethereumUnits("S", "S"),
+    ethereumLikeInfo: {
+      chainId: 146,
+    },
+    explorerViews: [
+      {
+        tx: "https://sonicscan.org/tx/$hash",
+        address: "https://sonicscan.org/address/$address",
+        token: "https://sonicscan.org/token/$contractAddress?a=$address",
+      },
+    ],
+  },
+  sonic_blaze: {
+    type: "CryptoCurrency",
+    id: "sonic_blaze",
+    isTestnetFor: "sonic",
+    coinType: CoinType.ETH,
+    name: "Sonic Blaze",
+    managerAppName: "Ethereum",
+    ticker: "S",
+    scheme: "sonic_blaze",
+    color: "#FFFFFF",
+    family: "evm",
+    units: ethereumUnits("S", "S"),
+    ethereumLikeInfo: {
+      chainId: 57054,
+    },
+    explorerViews: [
+      {
+        tx: "https://testnet.sonicscan.org/tx/$hash",
+        address: "https://testnet.sonicscan.org/address/$address",
+        token: "https://testnet.sonicscan.org/token/$contractAddress?a=$address",
+      },
+    ],
+  },
   arbitrum: {
     type: "CryptoCurrency",
     id: "arbitrum",

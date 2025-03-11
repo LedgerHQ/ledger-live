@@ -477,17 +477,17 @@
       "title" : "Entschuldigung, es wurde kein Konto gefunden",
       "description" : "Bei der Adressberechnung ist etwas schief gelaufen. Bitte versuchen Sie es erneut. Wenn das Problem weiterhin besteht, speichern Sie bitte Ihre Protokolle über die Schaltfläche unten und stellen Sie sie dem Ledger-Support zur Verfügung."
     },
-    "ElrondDecimalsLimitReached" : {
+    "MultiversXDecimalsLimitReached" : {
       "title" : "Maximale Dezimalstellengrenze erreicht",
-      "description" : "Bitte stellen Sie sicher, dass der angegebene Betrag 18 Dezimalstellen hat."
+      "description" : "Bitte stelle sicher, dass der angegebene Betrag 18 Dezimalstellen hat."
     },
-    "ElrondMinDelegatedAmountError" : {
+    "MultiversXMinDelegatedAmountError" : {
       "title" : "Der delegierte Betrag muss mindestens {{formattedAmount}} betragen"
     },
-    "ElrondMinUndelegatedAmountError" : {
+    "MultiversXMinUndelegatedAmountError" : {
       "title" : "Undelegierter Betrag muss mindestens {{formattedAmount}} betragen"
     },
-    "ElrondDelegationBelowMinimumError" : {
+    "MultiversXDelegationBelowMinimumError" : {
       "title" : "Verbleibende Delegierung darf nicht kleiner als {{formattedAmount}} sein"
     },
     "NotEnoughVTHO" : {
@@ -829,6 +829,13 @@
     },
     "SolanaTxConfirmationTimeout" : {
       "title" : "Ihre Transaktion ist möglicherweise fehlgeschlagen. Bitte warten Sie einen Moment und prüfen Sie vor einem erneuten Versuch zunächst den Transaktionsverlauf."
+    },
+    "SolanaRecipientMemoIsRequired" : {
+      "title" : "Für die Empfängeradresse ist ein Memo erforderlich."
+    },
+    "SolanaTokenNonTransferable" : {
+      "title" : "Das Token ist nicht übertragbar",
+      "description" : "Es handelt sich hierbei um so genannte „Soulbound-Token“, die nicht übertragen werden können"
     },
     "CardanoMinAmountError" : {
       "title" : "Der Mindestbetrag, der versendet werden kann, ist {{amount}} ADA"
@@ -4665,7 +4672,8 @@
       "tr" : "Türkisch",
       "ja" : "Japanisch",
       "ko" : "Koreanisch",
-      "pt" : "Português (Br)"
+      "pt" : "Português (Br)",
+      "th" : "ภาษาไทย"
     }
   },
   "deviceLocalization" : {
@@ -4689,7 +4697,8 @@
       "german" : "Deutsch",
       "brazilian" : "Português (Br)",
       "russian" : "Russisch",
-      "turkish" : "Türkçe"
+      "turkish" : "Türkçe",
+      "thai" : "ภาษาไทย"
     }
   },
   "FirmwareUpdateCheckId" : {
@@ -6020,7 +6029,67 @@
     },
     "token" : {
       "frozenStateWarning" : "Kontovermögenswerte sind gesperrt!",
-      "transferWarning" : "Zum Verifizieren der Empfängeradresse für Solana-Token mit einer Ledger Nano S™ <0>befolge diese Anweisungen</0>."
+      "transferWarning" : "Zum Verifizieren der Empfängeradresse für Solana-Token mit einer Ledger Nano S™ <0>befolge diese Anweisungen</0>.",
+      "transferFees" : {
+        "title" : "Überweisungsgebühren",
+        "feesPercentHint" : "Für das Token fällt eine Übertragungsgebühr in Höhe von {{feePercent}} % ({{feeBps}} bps) an (max. {{maxFee}})",
+        "notice" : "Überweisungsgebühr {{fee}} %",
+        "tooltipHint" : "Prozentualer Anteil der Überweisung, der für den Tokenersteller einbehalten wird"
+      },
+      "nonTransferable" : {
+        "notice" : "Das Token ist nicht übertragbar"
+      },
+      "interestRate" : {
+        "notice" : "Zinssatz {{rate}} %",
+        "tooltipHint" : "Nur für optische Zwecke; es werden durch die Zinsen keine neuen Token erstellt"
+      },
+      "permanentDelegate" : {
+        "notice" : "Die permanente Delegierungsbefugnis ist aktiviert",
+        "initializationNotice" : "Die permanente Delegierungsbefugnis ist initialisiert, aber nicht aktiviert",
+        "initializedNoticeTooltipHint" : "Der Delegierte kann dieses Token von deinem Konto übertragen oder es verbrennen",
+        "tooltipHint" : "{{delegateAddress}}<0></0> kann dieses Token von deinem Konto übertragen oder es verbrennen"
+      },
+      "requiredMemoOnTransfer" : {
+        "notice" : "Erforderliches Überweisungsmemo ist aktiviert",
+        "tooltipHint" : "Alle eingehenden Überweisungen auf dieses Konto müssen ein Memo aufweisen"
+      },
+      "transferHook" : {
+        "notice" : "Transfer-Hook ist aktiviert",
+        "initializationNotice" : "Transfer-Hook ist initialisiert, aber nicht aktiviert",
+        "tooltipHint" : "Token verfügt über zusätzliche Funktionen, die von {{programAddress}} verwaltet werden<0></0>"
+      },
+      "extensionsInfo" : {
+        "title" : "Erweiterungen für Solana-Token",
+        "commonInfo" : "Token-Erweiterungen sind die nächste Generation des Solana-Tokenstandards. Sie führen eine Anzahl neuer Verfahren ein, um die normale Tokenfunktionalität um zusätzliche Funktionen wie vertrauliche Überweisungen, permanente Delegierung, eine benutzerdefinierte Überweisungslogik, erweiterte Metadaten und vieles mehr zu erweitern.",
+        "permanentDelegate" : {
+          "title" : "Permanente Delegierung",
+          "permanentDelegateAddress" : "Die aktuelle permanente Delegierungsbefugnis ist {{address}}",
+          "permanentDelegateNotSetup" : "Die aktuelle permanente Delegierungsbefugnis ist nicht eingerichtet.",
+          "description" : "Ein permanenter Delegierter ist eine Befugnis, die unbeschränkte Delegierungsrechte für jedes Konto dieses Mints hat. Der Delegierte ist befugt, nach eigenem Ermessen jederzeit eine beliebige Anzahl von Token zu verbrennen oder zu überweisen."
+        },
+        "nonTransferable" : {
+          "title" : "Nicht-übertragbare Token",
+          "description" : "Es handelt sich hierbei um so genannte „Soulbound-Token“, die ausschließlich vom Aussteller verschoben oder verbrannt werden können."
+        },
+        "transferHook" : {
+          "title" : "Transfer-Hook",
+          "transferHookAddress" : "Das aktuelle Transfer-Hook-Programm ist {{address}}",
+          "transferHookNotSetup" : "Das aktuelle Transfer-Hook-Programm ist nicht eingerichtet.",
+          "description" : "Mit Transfer-Hooks hat ein Tokenaussteller die Möglichkeit, die Interaktion zwischen Benutzern und Token vorzugeben. Anstelle einer normalen Überweisung kann der Aussteller eine eigene Logik in ein Programm einfügen, das mit der Transfer-Hook-Erweiterung verwendet werden soll."
+        },
+        "transferFee" : {
+          "title" : "Überweisungsgebühr",
+          "currentTransferFee" : "Die aktuelle Überweisungsgebühr beträgt {{feePercent}} % ({{feeBps}} bps). Max. {{maxFee}}.",
+          "description" : "Bei jeder Überweisung eines Tokens werden Gebühren erhoben und auf dem Empfängerkonto einbehalten, sodass der Empfänger keinen Zugriff darauf hat."
+        },
+        "interestBearing" : {
+          "title" : "Verzinsliche Token",
+          "currentInterestRate" : "Der aktuelle Zinssatz beträgt {{rate}} %.",
+          "accruedDelta" : "{{delta}} aufgelaufen.",
+          "interestRateNotSetup" : "Der aktuelle Zinssatz ist eingerichtet auf 0 %.",
+          "description" : "Token, deren Wert sich je nach Zinssatz stetig erhöht oder verringert. Es werden nie neue Token erstellt, die Funktion ist rein optischer Natur."
+        }
+      }
     }
   },
   "near" : {
@@ -6720,6 +6789,7 @@
         "hide" : "{{count}} Sammlung ausblenden",
         "hiddenCollections" : "Ausgeblendete Sammlungen",
         "hide_plural" : "{{count}} Sammlungen ausblenden",
+        "empty" : "Es gibt keine ausgeblendeten Sammlungen",
         "alertHide" : "1 Sammlung ist ausgeblendet. Du kannst sie mit dem Galeriefilter jederzeit wieder einblenden.",
         "alertHide_plural" : "{{count}} Sammlungen ausgeblendet. Du kannst sie mit dem Galeriefilter jederzeit wieder einblenden."
       },

@@ -114,8 +114,8 @@ export const getMockedMethods = (): {
                   programId: new PublicKey(
                     Buffer.from(
                       "06ddf6e1d765a193d9cbe146ceeb79ac1cb485ed5f5b37913a8cf5857eff00a9",
-                      "hex"
-                    )
+                      "hex",
+                    ),
                   ),
                 },
               ],
@@ -139,9 +139,7 @@ export const getMockedMethods = (): {
             "Program ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL consumed 20880 of 200000 compute units",
             "Program ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL success",
           ],
-          postBalances: [
-            83389840, 10000000, 151314748907, 1, 1089991680, 1009200, 898174080,
-          ],
+          postBalances: [83389840, 10000000, 151314748907, 1, 1089991680, 1009200, 898174080],
           postTokenBalances: [
             {
               accountIndex: 1,
@@ -154,9 +152,7 @@ export const getMockedMethods = (): {
               },
             },
           ],
-          preBalances: [
-            93394840, 0, 151314748907, 1, 1089991680, 1009200, 898174080,
-          ],
+          preBalances: [93394840, 0, 151314748907, 1, 1089991680, 1009200, 898174080],
           preTokenBalances: [],
           rewards: [],
           status: { Ok: null },
@@ -169,8 +165,8 @@ export const getMockedMethods = (): {
                 pubkey: new PublicKey(
                   Buffer.from(
                     "8bc4d3e507c0550e3d02ffb5f6daf0772240af8a09e32d236615b4a227243702",
-                    "hex"
-                  )
+                    "hex",
+                  ),
                 ),
                 signer: true,
                 writable: true,
@@ -179,8 +175,8 @@ export const getMockedMethods = (): {
                 pubkey: new PublicKey(
                   Buffer.from(
                     "6e6279fa638560ce9c178033f5b88eacfb5fba6d46ec5902769f1b09eaabc017",
-                    "hex"
-                  )
+                    "hex",
+                  ),
                 ),
                 signer: false,
                 writable: true,
@@ -189,8 +185,8 @@ export const getMockedMethods = (): {
                 pubkey: new PublicKey(
                   Buffer.from(
                     "069b8857feab8184fb687f634618c035dac439dc1aeb3b5598a0f00000000001",
-                    "hex"
-                  )
+                    "hex",
+                  ),
                 ),
                 signer: false,
                 writable: false,
@@ -204,8 +200,8 @@ export const getMockedMethods = (): {
                 pubkey: new PublicKey(
                   Buffer.from(
                     "06ddf6e1d765a193d9cbe146ceeb79ac1cb485ed5f5b37913a8cf5857eff00a9",
-                    "hex"
-                  )
+                    "hex",
+                  ),
                 ),
                 signer: false,
                 writable: false,
@@ -214,8 +210,8 @@ export const getMockedMethods = (): {
                 pubkey: new PublicKey(
                   Buffer.from(
                     "06a7d517192c5c51218cc94c3d4af17f58daee089ba1fd44e3dbd98a00000000",
-                    "hex"
-                  )
+                    "hex",
+                  ),
                 ),
                 signer: false,
                 writable: false,
@@ -224,8 +220,8 @@ export const getMockedMethods = (): {
                 pubkey: new PublicKey(
                   Buffer.from(
                     "8c97258f4e2489f1bb3d1029148e0d830b5a1399daff1084048e7bd8dbe9f859",
-                    "hex"
-                  )
+                    "hex",
+                  ),
                 ),
                 signer: false,
                 writable: false,
@@ -261,8 +257,8 @@ export const getMockedMethods = (): {
                 programId: new PublicKey(
                   Buffer.from(
                     "8c97258f4e2489f1bb3d1029148e0d830b5a1399daff1084048e7bd8dbe9f859",
-                    "hex"
-                  )
+                    "hex",
+                  ),
                 ),
               },
             ],
@@ -298,8 +294,8 @@ export const getMockedMethods = (): {
                 pubkey: new PublicKey(
                   Buffer.from(
                     "5c1c77c3d1e8edad4cfb2b2f7e4497d0d83f19e176713876a1d01eeb30a9bf3f",
-                    "hex"
-                  )
+                    "hex",
+                  ),
                 ),
                 signer: true,
                 writable: true,
@@ -308,8 +304,8 @@ export const getMockedMethods = (): {
                 pubkey: new PublicKey(
                   Buffer.from(
                     "8bc4d3e507c0550e3d02ffb5f6daf0772240af8a09e32d236615b4a227243702",
-                    "hex"
-                  )
+                    "hex",
+                  ),
                 ),
                 signer: false,
                 writable: true,
@@ -388,9 +384,7 @@ export const getMockedMethods = (): {
   {
     method: "getParsedTransactions",
     params: [
-      [
-        "A29zPnK1jPr2tGziTnaAvSnadYR2kLCv9sPywj9FJsaEFjtpwmUonspN3WJgz4u6XWmjtVpoFsDrygEnvW51cgk",
-      ],
+      ["A29zPnK1jPr2tGziTnaAvSnadYR2kLCv9sPywj9FJsaEFjtpwmUonspN3WJgz4u6XWmjtVpoFsDrygEnvW51cgk"],
     ],
     answer: [
       {
@@ -438,8 +432,8 @@ export const getMockedMethods = (): {
                   programId: new PublicKey(
                     Buffer.from(
                       "06ddf6e1d765a193d9cbe146ceeb79ac1cb485ed5f5b37913a8cf5857eff00a9",
-                      "hex"
-                    )
+                      "hex",
+                    ),
                   ),
                 },
               ],
@@ -463,9 +457,7 @@ export const getMockedMethods = (): {
             "Program ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL consumed 20880 of 200000 compute units",
             "Program ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL success",
           ],
-          postBalances: [
-            83389840, 10000000, 151314748907, 1, 1089991680, 1009200, 898174080,
-          ],
+          postBalances: [83389840, 10000000, 151314748907, 1, 1089991680, 1009200, 898174080],
           postTokenBalances: [
             {
               accountIndex: 1,
@@ -478,9 +470,7 @@ export const getMockedMethods = (): {
               },
             },
           ],
-          preBalances: [
-            93394840, 0, 151314748907, 1, 1089991680, 1009200, 898174080,
-          ],
+          preBalances: [93394840, 0, 151314748907, 1, 1089991680, 1009200, 898174080],
           preTokenBalances: [],
           rewards: [],
           status: { Ok: null },
@@ -493,8 +483,8 @@ export const getMockedMethods = (): {
                 pubkey: new PublicKey(
                   Buffer.from(
                     "8bc4d3e507c0550e3d02ffb5f6daf0772240af8a09e32d236615b4a227243702",
-                    "hex"
-                  )
+                    "hex",
+                  ),
                 ),
                 signer: true,
                 writable: true,
@@ -503,8 +493,8 @@ export const getMockedMethods = (): {
                 pubkey: new PublicKey(
                   Buffer.from(
                     "6e6279fa638560ce9c178033f5b88eacfb5fba6d46ec5902769f1b09eaabc017",
-                    "hex"
-                  )
+                    "hex",
+                  ),
                 ),
                 signer: false,
                 writable: true,
@@ -513,8 +503,8 @@ export const getMockedMethods = (): {
                 pubkey: new PublicKey(
                   Buffer.from(
                     "069b8857feab8184fb687f634618c035dac439dc1aeb3b5598a0f00000000001",
-                    "hex"
-                  )
+                    "hex",
+                  ),
                 ),
                 signer: false,
                 writable: false,
@@ -528,8 +518,8 @@ export const getMockedMethods = (): {
                 pubkey: new PublicKey(
                   Buffer.from(
                     "06ddf6e1d765a193d9cbe146ceeb79ac1cb485ed5f5b37913a8cf5857eff00a9",
-                    "hex"
-                  )
+                    "hex",
+                  ),
                 ),
                 signer: false,
                 writable: false,
@@ -538,8 +528,8 @@ export const getMockedMethods = (): {
                 pubkey: new PublicKey(
                   Buffer.from(
                     "06a7d517192c5c51218cc94c3d4af17f58daee089ba1fd44e3dbd98a00000000",
-                    "hex"
-                  )
+                    "hex",
+                  ),
                 ),
                 signer: false,
                 writable: false,
@@ -548,8 +538,8 @@ export const getMockedMethods = (): {
                 pubkey: new PublicKey(
                   Buffer.from(
                     "8c97258f4e2489f1bb3d1029148e0d830b5a1399daff1084048e7bd8dbe9f859",
-                    "hex"
-                  )
+                    "hex",
+                  ),
                 ),
                 signer: false,
                 writable: false,
@@ -585,8 +575,8 @@ export const getMockedMethods = (): {
                 programId: new PublicKey(
                   Buffer.from(
                     "8c97258f4e2489f1bb3d1029148e0d830b5a1399daff1084048e7bd8dbe9f859",
-                    "hex"
-                  )
+                    "hex",
+                  ),
                 ),
               },
             ],
@@ -646,8 +636,7 @@ export const getMockedMethods = (): {
                 epoch: 304,
               },
             ],
-            authorizedWithdrawer:
-              "EvnRmnMrd69kFdbLMxWkTn1icZ7DCceRhvmb2SJXqDo4",
+            authorizedWithdrawer: "EvnRmnMrd69kFdbLMxWkTn1icZ7DCceRhvmb2SJXqDo4",
             commission: 7,
             epochCredits: [
               { credits: "83658257", epoch: 241, previousCredits: "83257955" },
@@ -833,10 +822,7 @@ export const getMockedMethods = (): {
       executable: false,
       lamports: 4207299066554,
       owner: new PublicKey(
-        Buffer.from(
-          "0761481d357474bb7c4d7624ebd3bdb3d8355e73d11043fc0da3538000000000",
-          "hex"
-        )
+        Buffer.from("0761481d357474bb7c4d7624ebd3bdb3d8355e73d11043fc0da3538000000000", "hex"),
       ),
       rentEpoch: 304,
     },
@@ -891,18 +877,42 @@ export const getMockedMethods = (): {
   { method: "getLatestBlockhash", params: [], answer: LATEST_BLOCKHASH_MOCK },
   {
     method: "getRecentPrioritizationFees",
-    params: [
-      ["AQbkEagmPgmsdAfS4X8V8UyJnXXjVPMvjeD15etqQ3Jh"]
+    params: [["AQbkEagmPgmsdAfS4X8V8UyJnXXjVPMvjeD15etqQ3Jh"]],
+    answer: [
+      [
+        {
+          slot: 122422797,
+          prioritizationFee: 0,
+        },
+        {
+          slot: 122422797,
+          prioritizationFee: 0,
+        },
+      ],
     ],
-    answer: [[
-      {
-        slot: 122422797,
-        prioritizationFee: 0,
+  },
+  {
+    method: "getAccountInfo",
+    params: ["So11111111111111111111111111111111111111112"],
+    answer: {
+      data: {
+        parsed: {
+          info: {
+            decimals: 9,
+            freezeAuthority: null,
+            isInitialized: true,
+            mintAuthority: null,
+            supply: 0,
+          },
+          type: "mint",
+        },
+        program: "spl-token",
+        space: 82,
       },
-      {
-        slot: 122422797,
-        prioritizationFee: 0,
-      },
-    ]],
+      executable: false,
+      lamports: 419787401967,
+      owner: new PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"),
+      rentEpoch: 304,
+    },
   },
 ];
