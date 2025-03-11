@@ -544,18 +544,16 @@ export const DEFAULT_FEATURES: Features = {
         manager: true,
         accounts: true,
         notification_center: true,
+        link: "https://shop.ledger.com/pages/ledger-nano-s-upgrade-program",
         img: "", // TODO
-        link: "", // TODO
-        "%": 10,
+        "%": 20,
       },
       opted_out: {
         manager: true,
         accounts: true,
         notification_center: true,
         portfolio: true,
-        img: "", // TODO
-        link: "", // TODO
-        "%": 10,
+        link: "https://support.ledger.com/article/Ledger-Nano-S-Limitations?redirect=false",
       },
     },
   },
