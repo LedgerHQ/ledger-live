@@ -79,7 +79,8 @@ const completeExchange = (
         //   We must set the amount to 0 at this stage to avoid issues during the transaction.
         // - This ensures proper handling of Thorswap-ERC20-specific transactions.
         if (
-          provider.toLocaleLowerCase() === "thorswap" &&
+          (provider.toLocaleLowerCase() === "thorswap" ||
+            provider.toLocaleLowerCase() === "lifi") &&
           transaction.subAccountId &&
           transaction.family === "evm"
         ) {
