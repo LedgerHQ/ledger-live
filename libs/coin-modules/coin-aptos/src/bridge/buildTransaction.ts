@@ -53,7 +53,7 @@ const getPayload = (
   }
 
   return {
-    function: "0x1::aptos_account::transfer",
+    function: "0x1::aptos_account::transfer_coins",
     typeArguments: [APTOS_ASSET_ID],
     functionArguments: [transaction.recipient, transaction.amount.toString()],
   };

@@ -61,7 +61,7 @@ describe("buildTransaction Test", () => {
 
     expect(generateTransactionArgs[0]).toBe("address");
     expect(generateTransactionArgs[1]).toEqual({
-      function: "0x1::aptos_account::transfer",
+      function: "0x1::aptos_account::transfer_coins",
       typeArguments: ["0x1::aptos_coin::AptosCoin"],
       functionArguments: ["recipient", "0"],
     });
