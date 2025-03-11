@@ -44,7 +44,7 @@ export default function PlatformStartExchange({ navigation, route }: Props) {
   const requestToSetHeaderOptions = useCallback(() => undefined, []);
   const request = useMemo(() => route.params.request, [route.params.request]);
   return (
-    <SafeAreaView style={styles.root}>
+    <SafeAreaView style={styles.root} edges={["bottom"]}>
       <Flex px={16} py={8} flex={1}>
         <SelectDevice2
           onSelect={setDevice}
