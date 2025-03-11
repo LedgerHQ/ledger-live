@@ -24,9 +24,47 @@ export type Operation = {
   };
 };
 
+/*
+  Examples :
+
+  https://tronscan.org/#/token/1002000
+  trc10
+  {
+    standard: "trc10",
+    tokenId: "1002000",
+  }
+  
+  https://tronscan.org/#/token20/TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t
+  trc20 
+  {
+    standard: "trc20",
+    contractAddress: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+  }
+
+  https://etherscan.io/token/0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48
+  erc20
+  {
+    standard: erc20,
+    contractAddress: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+  }
+
+  https://stellarchain.io/assets/USDC-GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN
+  stellar USDC
+  {
+    standard: "asset_contract",
+    tokenIssuer: "GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
+    tokenId: "USDC",
+    contractAddress: "adefce59aee52968f76061d494c2525b75659fa4296a65f499ef29e56477e496"
+  }
+*/
 export type AssetInfo = {
   standard: string;
-  tokenAddressOrId: string;
+  // ID / Code of the token
+  tokenId?: string;
+  // Address of the token's smart contract if there is one
+  contractAddress?: string;
+  // Account that deployed the token, even if it's a native token implementation or a smart contract
+  tokenIssuer?: string;
 };
 
 export type Transaction = {
