@@ -28,15 +28,16 @@ export const estimateFeeAndSpendable = async (
       };
     }
     case "stake.createAccount": {
-      const stakeAccRentExempt = await getStakeAccountMinimumBalanceForRentExemption(api);
-      const unstakeReserve =
-        (await estimateTxFee(api, account.freshAddress, "stake.undelegate")) +
-        (await estimateTxFee(api, account.freshAddress, "stake.withdraw"));
+      const [stakeAccRentExempt, undelegateFee, withdrawFee] = await Promise.all([
+        getStakeAccountMinimumBalanceForRentExemption(api),
+        estimateTxFee(api, account.freshAddress, "stake.undelegate"),
+        estimateTxFee(api, account.freshAddress, "stake.withdraw"),
+      ]);
 
       return {
         fee: txFee + stakeAccRentExempt,
         spendable: BigNumber.max(
-          spendableBalance.minus(stakeAccRentExempt).minus(unstakeReserve),
+          spendableBalance.minus(stakeAccRentExempt).minus(undelegateFee + withdrawFee),
           0,
         ),
       };

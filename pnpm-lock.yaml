@@ -3163,9 +3163,15 @@ importers:
       jest:
         specifier: ^29.7.0
         version: 29.7.0
+      msw:
+        specifier: 2.7.3
+        version: 2.7.3(typescript@5.4.3)
       ts-jest:
         specifier: ^29.1.1
         version: 29.1.5(jest@29.7.0)(typescript@5.4.3)
+      uuid:
+        specifier: 11.1.0
+        version: 11.1.0
 
   libs/coin-modules/coin-stacks:
     dependencies:
@@ -11879,10 +11885,6 @@ packages:
 
   '@inquirer/core@8.2.0':
     resolution: {integrity: sha512-pexNF9j2orvMMTgoQ/uKOw8V6/R7x/sIDwRwXRhl4i0pPSh6paRzFehpFKpfMbqix1/+gzCekhYTmVbQpWkVjQ==}
-    engines: {node: '>=18'}
-
-  '@inquirer/figures@1.0.1':
-    resolution: {integrity: sha512-mtup3wVKia3ZwULPHcbs4Mor8Voi+iIXEWD7wCNbIO6lYR62oPCTQyrddi5OMYVXHzeCSoneZwJuS8sBvlEwDw==}
     engines: {node: '>=18'}
 
   '@inquirer/figures@1.0.11':
@@ -30741,8 +30743,8 @@ packages:
     resolution: {integrity: sha512-pMZTvIkT1d+TFGvDOqodOclx0QWkkgi6Tdoa8gC8ffGAAqz9pzPTZWAybbsHHoED/ztMtkv/VoYTYyShUn81hA==}
     engines: {node: '>= 0.4.0'}
 
-  uuid@11.0.5:
-    resolution: {integrity: sha512-508e6IcKLrhxKdBbcA2b4KQZlLVp2+J5UwQ6F7Drckkc5N9ZJwFa4TgWtsww9UG8fGHbm6gbV19TdM5pQ4GaIA==}
+  uuid@11.1.0:
+    resolution: {integrity: sha512-0/A9rDy9P7cJ+8w1c9WD9V//9Wj15Ce2MPz8Ri6032usz+NfePxx5AcN3bN+r6ZL6jEo066/yNYB3tn4pQEx+A==}
     hasBin: true
 
   uuid@2.0.1:
@@ -38080,12 +38082,28 @@ snapshots:
       '@inquirer/core': 8.2.0
       '@inquirer/type': 1.3.1
 
+  '@inquirer/confirm@5.1.7':
+    dependencies:
+      '@inquirer/core': 10.1.8
+      '@inquirer/type': 3.0.5
+
   '@inquirer/confirm@5.1.7(@types/node@22.10.10)':
     dependencies:
       '@inquirer/core': 10.1.8(@types/node@22.10.10)
       '@inquirer/type': 3.0.5(@types/node@22.10.10)
     optionalDependencies:
       '@types/node': 22.10.10
+
+  '@inquirer/core@10.1.8':
+    dependencies:
+      '@inquirer/figures': 1.0.11
+      '@inquirer/type': 3.0.5
+      ansi-escapes: 4.3.2
+      cli-width: 4.1.0
+      mute-stream: 2.0.0
+      signal-exit: 4.1.0
+      wrap-ansi: 6.2.0
+      yoctocolors-cjs: 2.1.2
 
   '@inquirer/core@10.1.8(@types/node@22.10.10)':
     dependencies:
@@ -38102,7 +38120,7 @@ snapshots:
 
   '@inquirer/core@8.2.0':
     dependencies:
-      '@inquirer/figures': 1.0.1
+      '@inquirer/figures': 1.0.11
       '@inquirer/type': 1.3.1
       '@types/mute-stream': 0.0.4
       '@types/node': 20.12.12
@@ -38116,11 +38134,11 @@ snapshots:
       strip-ansi: 6.0.1
       wrap-ansi: 6.2.0
 
-  '@inquirer/figures@1.0.1': {}
-
   '@inquirer/figures@1.0.11': {}
 
   '@inquirer/type@1.3.1': {}
+
+  '@inquirer/type@3.0.5': {}
 
   '@inquirer/type@3.0.5(@types/node@22.10.10)':
     optionalDependencies:
@@ -39140,7 +39158,7 @@ snapshots:
       rxjs: 7.8.1
       semver: 7.6.3
       url: 0.11.4
-      uuid: 11.0.5
+      uuid: 11.1.0
       ws: 8.18.0
       xstate: 5.19.2
     transitivePeerDependencies:
@@ -39169,7 +39187,7 @@ snapshots:
       '@sentry/minimal': 6.19.7
       purify-ts: 2.1.0
       rxjs: 7.8.1
-      uuid: 11.0.5
+      uuid: 11.1.0
 
   '@ledgerhq/domain-service@1.2.12':
     dependencies:
@@ -60127,6 +60145,31 @@ snapshots:
     transitivePeerDependencies:
       - '@types/node'
 
+  msw@2.7.3(typescript@5.4.3):
+    dependencies:
+      '@bundled-es-modules/cookie': 2.0.1
+      '@bundled-es-modules/statuses': 1.0.1
+      '@bundled-es-modules/tough-cookie': 0.1.6
+      '@inquirer/confirm': 5.1.7
+      '@mswjs/interceptors': 0.37.6
+      '@open-draft/deferred-promise': 2.2.0
+      '@open-draft/until': 2.1.0
+      '@types/cookie': 0.6.0
+      '@types/statuses': 2.0.5
+      graphql: 16.10.0
+      headers-polyfill: 4.0.3
+      is-node-process: 1.2.0
+      outvariant: 1.4.3
+      path-to-regexp: 6.3.0
+      picocolors: 1.1.1
+      strict-event-emitter: 0.5.1
+      type-fest: 4.37.0
+      yargs: 17.7.2
+    optionalDependencies:
+      typescript: 5.4.3
+    transitivePeerDependencies:
+      - '@types/node'
+
   multi-sort-stream@1.0.4: {}
 
   multibase@0.6.1:
@@ -67023,7 +67066,7 @@ snapshots:
 
   utils-merge@1.0.1: {}
 
-  uuid@11.0.5: {}
+  uuid@11.1.0: {}
 
   uuid@2.0.1: {}
 
