@@ -16,6 +16,7 @@ import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
 
 import type { Transaction as TransactionType } from "../types";
+import type { CreateExtrinsicArg } from "../logic/craftTransaction";
 
 type AsyncApiFunction<T> = (api: SuiClient) => Promise<T>;
 
@@ -62,7 +63,7 @@ export const getAccount = async (addr: string) =>
  * Returns true if account is the signer
  * TODO: move to utils
  */
-function ensureAddressFormat(addr: string): `0x${string}` {
+export function ensureAddressFormat(addr: string): `0x${string}` {
   return (addr.startsWith("0x") ? addr : `0x${addr}`) as `0x${string}`;
 }
 
@@ -221,7 +222,7 @@ export const paymentInfo = async (sender: string, fakeTransaction: TransactionTy
 
 export const submitExtrinsic = async (extrinsic: string) => extrinsic; // TODO: implement
 
-export const createTransaction = async (address: string, transaction: TransactionType) =>
+export const createTransaction = async (address: string, transaction: CreateExtrinsicArg) =>
   withApi(async api => {
     const tx = new Transaction();
     tx.setSender(ensureAddressFormat(address));
