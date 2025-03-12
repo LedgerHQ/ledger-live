@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-filecoin",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "description": "Ledger Filecoin Coin integration",
   "keywords": [
     "Ledger",
