@@ -131,9 +131,13 @@ const getOperationAmount = (
  * Extract fee from transaction
  */
 const getOperationFee = (transaction: SuiTransactionBlockResponse): BigNumber => {
-  return BigNumber(transaction.effects!.gasUsed.computationCost).plus(
-    BigNumber(transaction.effects!.gasUsed.nonRefundableStorageFee),
-  );
+  const gas = transaction.effects!.gasUsed;
+
+  const computationCost = BigNumber(gas.computationCost);
+  const storageCost = BigNumber(gas.storageCost);
+  const storageRebate = BigNumber(gas.storageRebate);
+
+  return computationCost.plus(storageCost).minus(storageRebate);
 };
 
 /**
