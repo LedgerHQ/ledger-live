@@ -8,8 +8,12 @@ import { BigNumber } from "bignumber.js";
 
 /**
  * Returns the maximum possible amount for transaction
+ * @typedef {Object} EstimateMaxSpendableParams
+ * @property {SuiAccount} account - The account from which to estimate the maximum spendable amount.
+ * @property {SuiAccount} [parentAccount] - The parent account, if applicable.
+ * @property {Transaction} transaction - The transaction details for which to estimate the maximum spendable amount.
  *
- * @param {Object} param - the account, parentAccount and transaction
+ * @returns {Promise<BigNumber>} The estimated maximum spendable amount.
  */
 export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpendable"] = async ({
   account,

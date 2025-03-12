@@ -29,6 +29,7 @@ export type SuiResourcesRaw = {
 export type Transaction = TransactionCommon & {
   mode: string;
   family: "sui";
+  amount: BigNumber | null;
   fees?: BigNumber | null;
   errors: Record<string, Error>;
   // add here all transaction-specific fields when implement other modes than "send"

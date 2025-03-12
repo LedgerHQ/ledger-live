@@ -1,15 +1,14 @@
 import type { SuiAccount, Transaction } from "../types";
 import { craftTransaction, type CreateExtrinsicArg } from "../logic";
-import { isFirstBond, getNonce } from "./utils";
+import { getNonce } from "./utils";
 
 export const extractExtrinsicArg = (
-  account: SuiAccount,
+  _account: SuiAccount,
   transaction: Transaction,
 ): CreateExtrinsicArg => ({
   mode: transaction.mode,
   amount: transaction.amount,
   recipient: transaction.recipient,
-  isFirstBond: isFirstBond(account),
   useAllAmount: transaction.useAllAmount,
 });
 

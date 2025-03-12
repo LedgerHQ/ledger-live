@@ -15,8 +15,9 @@ import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 
 import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
 
+import type { Transaction as TransactionType } from "../types";
+
 type AsyncApiFunction<T> = (api: SuiClient) => Promise<T>;
-// type ApiFunction<T> = (api: SuiClient) => T;
 
 const rpcUrl = getFullnodeUrl("devnet");
 
@@ -202,7 +203,7 @@ const getTotalGasUsed = (effects?: TransactionEffects | null): bigint => {
   );
 };
 
-export const paymentInfo = async (sender: string, fakeTransaction: any) =>
+export const paymentInfo = async (sender: string, fakeTransaction: TransactionType) =>
   withApi(async api => {
     const tx = new Transaction();
     tx.setSender(ensureAddressFormat(sender));
@@ -220,7 +221,7 @@ export const paymentInfo = async (sender: string, fakeTransaction: any) =>
 
 export const submitExtrinsic = async (extrinsic: string) => extrinsic; // TODO: implement
 
-export const createTransaction = async (address: string, transaction: any) =>
+export const createTransaction = async (address: string, transaction: TransactionType) =>
   withApi(async api => {
     const tx = new Transaction();
     tx.setSender(ensureAddressFormat(address));

@@ -7,8 +7,13 @@ import getEstimatedFees from "./getFeesForTransaction";
 
 /**
  * Calculate fees for the current transaction
- * @param {SuiAccount} account
- * @param {Transaction} transaction
+ * @function prepareTransaction
+ * @description Prepares a transaction by calculating the amount, fees, and validating the recipient address.
+ * @param {SuiAccount} account - The account from which the transaction is being prepared.
+ * @param {Transaction} transaction - The transaction object containing details such as amount, fees, and recipient.
+ * @returns {Promise<Transaction>} A promise that resolves to the updated transaction object.
+ * @throws {RecipientRequired} If the recipient address is not provided.
+ * @throws {InvalidAddressBecauseDestinationIsAlsoSource} If the recipient address is the same as the account's fresh address.
  */
 export const prepareTransaction: AccountBridge<
   Transaction,

@@ -4,6 +4,13 @@ import { AccountBridge } from "@ledgerhq/types-live";
 import type { SuiAccount, Transaction, TransactionStatus } from "../types";
 import { isValidSuiAddress } from "@mysten/sui/utils";
 
+/**
+ * Get the status of a transaction.
+ * @function getTransactionStatus
+ * @param {SuiAccount} account - The account associated with the transaction.
+ * @param {Transaction} transaction - The transaction object containing details such as amount, fees, and recipient.
+ * @returns {Promise<Object>} A promise that resolves to an object containing the transaction status, including errors, warnings, estimated fees, amount, and total spent.
+ */
 export const getTransactionStatus: AccountBridge<
   Transaction,
   SuiAccount,
