@@ -268,7 +268,7 @@ export function renderConfirmSwap({
   }).unit;
 
   return (
-    <ScrollView>
+    <ScrollView testID="confirm-swap-on-device">
       <Wrapper width="100%">
         <Alert type="primary" {...alertProperties}>
           {t(`DeviceAction.confirmSwap.alert.${noticeType.message}`, {

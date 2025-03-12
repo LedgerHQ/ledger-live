@@ -4,10 +4,13 @@ import {
   signDelegationTransaction,
   activateContractData,
   activateExpertMode,
+  verifyAmountsAndAcceptSwap,
+  setExchangeDependencies,
 } from "@ledgerhq/live-common/e2e/speculos";
 import { TransactionType } from "@ledgerhq/live-common/e2e/models/Transaction";
 import { DelegateType } from "@ledgerhq/live-common/e2e/models/Delegate";
 import { AccountType } from "@ledgerhq/live-common/e2e/enum/Account";
+import { SwapType } from "@ledgerhq/live-common/e2e/models/Swap";
 
 export default class SpeculosPage {
   @Step("Verify receive address correctness on device")
@@ -33,5 +36,18 @@ export default class SpeculosPage {
   @Step("Activate export mode on Speculos")
   async activateExpertMode() {
     await activateExpertMode();
+  }
+
+  @Step("Verify amounts and accept swap")
+  async verifyAmountsAndAcceptSwap(swap: SwapType) {
+    await verifyAmountsAndAcceptSwap(swap);
+  }
+
+  async setExchangeDependencies(swap: SwapType) {
+    setExchangeDependencies(
+      [swap.accountToDebit, swap.accountToCredit].map(acc => ({
+        name: acc.currency.speculosApp.name.replace(/ /g, "_"),
+      })),
+    );
   }
 }
