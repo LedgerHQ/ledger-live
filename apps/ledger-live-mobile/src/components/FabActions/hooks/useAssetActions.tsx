@@ -3,7 +3,11 @@ import { AccountLikeArray } from "@ledgerhq/types-live";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { IconsLegacy } from "@ledgerhq/native-ui";
-import { getParentAccount, isTokenAccount } from "@ledgerhq/live-common/account/index";
+import {
+  getAccountCurrency,
+  getParentAccount,
+  isTokenAccount,
+} from "@ledgerhq/live-common/account/index";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
@@ -64,12 +68,9 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
     ? getParentAccount(defaultAccount, totalAccounts)
     : undefined;
 
-    : defaultAccount?.currency?.id;
-    : isTokenAccount(defaultAccount)
-      ? defaultAccount?.token?.id
-      : defaultAccount?.currency?.id;
+  const accountCurrency = !defaultAccount ? null : getAccountCurrency(defaultAccount);
 
-  const assetId = currency?.id ?? accountCurrency;
+  const assetId = !currency ? accountCurrency?.id : currency.id;
 
   const { getCanStakeCurrency } = useStake();
   const canStakeCurrency = !assetId ? false : getCanStakeCurrency(assetId);
