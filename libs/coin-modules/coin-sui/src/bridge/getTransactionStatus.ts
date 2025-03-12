@@ -1,5 +1,5 @@
 import { BigNumber } from "bignumber.js";
-import { InvalidAddress } from "@ledgerhq/errors";
+import { InvalidAddress, RecipientRequired } from "@ledgerhq/errors";
 import { AccountBridge } from "@ledgerhq/types-live";
 import type { SuiAccount, Transaction, TransactionStatus } from "../types";
 import { isValidSuiAddress } from "@mysten/sui/utils";
@@ -27,7 +27,9 @@ export const getTransactionStatus: AccountBridge<
   }
 
   if (transaction) {
-    if (transaction.recipient && !isValidSuiAddress(transaction.recipient)) {
+    if (!transaction.recipient) {
+      errors.recipient = new RecipientRequired();
+    } else if (transaction.recipient && !isValidSuiAddress(transaction.recipient)) {
       errors.recipient = new InvalidAddress(undefined, {
         currencyName: account.currency.name,
       });
