@@ -1,8 +1,10 @@
-import buildSignOperation from "./signOperation";
-
 import { BigNumber } from "bignumber.js";
-
+import buildSignOperation from "./signOperation";
 import { SuiSigner, SuiAccount } from "../types";
+import coinConfig from "../config";
+
+jest.mock("../config");
+const mockGetConfig = jest.mocked(coinConfig.getCoinConfig);
 
 const createFixtureAccount = () =>
   ({
@@ -44,7 +46,12 @@ const createFixtureTransaction = (overrides = {}) => ({
 
 describe("signOperation", () => {
   // Global setup
-  const fakeSignature = new Uint8Array(64).fill(0x42); // Create fakeSignature
+  const scheme = new Uint8Array([1]);
+  const signature = new Uint8Array(64).fill(0x42);
+
+  const fakeSignature = new Uint8Array(scheme.length + signature.length);
+  fakeSignature.set(scheme);
+  fakeSignature.set(signature, scheme.length);
   const fakeSigner = {
     getPublicKey: jest.fn().mockResolvedValue({
       publicKey: new Uint8Array(32).fill(0x01),
@@ -60,6 +67,16 @@ describe("signOperation", () => {
     fn(fakeSigner);
   const signOperation = buildSignOperation(signerContext);
   const deviceId = "dummyDeviceId";
+
+  beforeAll(() => {
+    mockGetConfig.mockImplementation((): any => {
+      return {
+        node: {
+          url: "",
+        },
+      };
+    });
+  });
 
   it("returns events in the right order", done => {
     // GIVEN
@@ -80,7 +97,7 @@ describe("signOperation", () => {
     ];
     let eventIdx = 0;
 
-    signOperation({ account, deviceId, transaction }).forEach(e => {
+    signOperation({ account, deviceId, transaction }).forEach((e: { type: string }) => {
       try {
         expect(e.type).toEqual(expectedEvent[eventIdx].type);
         eventIdx++;

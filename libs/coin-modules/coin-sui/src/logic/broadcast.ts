@@ -1,5 +1,4 @@
 import suiAPI from "../network";
-// import { loadSui } from "./loadSui";
 
 export async function broadcast(unsigned: string, serializedSignature: string): Promise<string> {
   const result = await suiAPI.executeTransactionBlock({
@@ -9,6 +8,5 @@ export async function broadcast(unsigned: string, serializedSignature: string): 
       showEffects: true,
     },
   });
-  // await loadSui();
   return result?.digest ?? "";
 }

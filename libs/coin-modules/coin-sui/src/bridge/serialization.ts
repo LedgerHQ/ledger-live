@@ -1,5 +1,4 @@
 import { Account, AccountRaw, OperationExtra, OperationExtraRaw } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
 import type {
   SuiAccount,
   SuiAccountRaw,
@@ -43,7 +42,7 @@ export function fromOperationExtraRaw(extraRaw: OperationExtraRaw) {
   }
 
   const extra: SuiOperationExtra = {
-    palletMethod: "balances.transferKeepAlive",
+    palletMethod: "balances.transfer",
   };
 
   return extra;

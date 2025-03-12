@@ -21,19 +21,19 @@ export function getAccountUnit(account: AccountLike) {
 /**
  * Returns true if account must do a first bond - false for a bond extra
  *
- * @param {Account} a
+ * @param {Account} _account
  */
-export const isFirstBond = (a: SuiAccount): boolean => !!a; // TODO: implement
+export const isFirstBond = (_account: SuiAccount): boolean => true; // TODO: implement
 
 /**
  * Returns nonce for an account
  *
- * @param {Account} a
+ * @param {Account} account
  */
-export const getNonce = (a: SuiAccount): number => {
-  const lastPendingOp = a.pendingOperations[0];
+export const getNonce = (account: SuiAccount): number => {
+  const lastPendingOp = account.pendingOperations[0];
   const nonce = Math.max(
-    a.suiResources?.nonce || 0,
+    account.suiResources?.nonce || 0,
     lastPendingOp && typeof lastPendingOp.transactionSequenceNumber === "number"
       ? lastPendingOp.transactionSequenceNumber + 1
       : 0,
@@ -42,20 +42,24 @@ export const getNonce = (a: SuiAccount): number => {
 };
 
 /**
- * Calculate the real spendable
+ * Calculate the maximum amount that can be sent from the account after deducting fees.
  *
- * @param {*} a
- * @param {*} t
+ * @param {SuiAccount} account - The account from which the amount is being sent.
+ * @param {Transaction} transaction - The transaction details including fees.
+ * @returns {BigNumber} - The maximum amount that can be sent, or 0 if insufficient balance.
  */
-const calculateMaxSend = (a: SuiAccount, t: Transaction): BigNumber => {
-  const amount = a.spendableBalance.minus(t.fees || 0);
+const calculateMaxSend = (account: SuiAccount, transaction: Transaction): BigNumber => {
+  const amount = account.spendableBalance.minus(transaction.fees || 0);
   return amount.lt(0) ? new BigNumber(0) : amount;
 };
 
 /**
- * Calculates correct amount if useAllAmount
+ * Calculates the amount to be sent in a transaction based on the account's balance and transaction details.
  *
- * @param {*} param
+ * @param {Object} params - The parameters for the calculation.
+ * @param {SuiAccount} params.account - The account from which the amount is being sent.
+ * @param {Transaction} params.transaction - The transaction details including the amount and fees.
+ * @returns {BigNumber} - The calculated amount that can be sent, ensuring it does not exceed the maximum allowed or fall below zero.
  */
 export const calculateAmount = ({
   account,

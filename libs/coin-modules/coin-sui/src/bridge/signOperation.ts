@@ -1,18 +1,15 @@
-import { Observable } from "rxjs";
 import { BigNumber } from "bignumber.js";
+import { Observable } from "rxjs";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import type { AccountBridge } from "@ledgerhq/types-live";
+import { messageWithIntent, toSerializedSignature } from "@mysten/sui/cryptography";
+import { Ed25519PublicKey } from "@mysten/sui/keypairs/ed25519";
 import { verifyTransactionSignature } from "@mysten/sui/verify";
-import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
-import { messageWithIntent } from "@mysten/sui/cryptography";
-import { toSerializedSignature } from "@mysten/sui/cryptography";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import type { SuiAccount, SuiSigner, Transaction } from "../types";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
 import { buildTransaction } from "./buildTransaction";
 import { calculateAmount } from "./utils";
-// import { signExtrinsic } from "../logic";
-import { Ed25519PublicKey } from "@mysten/sui/keypairs/ed25519";
+import type { SuiAccount, SuiSigner, Transaction } from "../types";
 
 /**
  * Sign Transaction with Ledger hardware
@@ -63,7 +60,9 @@ export const buildSignOperation =
         const verify = await verifyTransactionSignature(unsigned, serializedSignature, {
           address: "0x" + account.freshAddress,
         });
-        console.log("buildSignOperation verify", verify);
+        if (!verify) {
+          // TODO: handle case
+        }
 
         subscriber.next({
           type: "device-signature-granted",

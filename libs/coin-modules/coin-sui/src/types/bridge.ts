@@ -31,7 +31,7 @@ export type Transaction = TransactionCommon & {
   family: "sui";
   fees?: BigNumber | null;
   errors: Record<string, Error>;
-  // add here all transaction-specific fields if you implement other modes than "send"
+  // add here all transaction-specific fields when implement other modes than "send"
 };
 
 /**
@@ -54,8 +54,7 @@ export type SuiPreloadData = {
 };
 
 export type SuiAccount = Account & {
-  // ...
-  // // On some blockchain, an account can have resources (gained, delegated, ...)
+  // On some blockchain, an account can have resources (gained, delegated, ...)
   suiResources?: SuiResources;
 };
 
@@ -71,7 +70,7 @@ export type SuiOperationRaw = OperationRaw<SuiOperationExtraRaw>;
 
 export type SuiOperationExtra = {
   transferAmount?: BigNumber;
-  palletMethod: PalletMethod;
+  palletMethod?: PalletMethod;
   bondedAmount?: BigNumber;
   unbondedAmount?: BigNumber;
   withdrawUnbondedAmount?: BigNumber;
@@ -87,13 +86,9 @@ export type TransferCommand = {
   amount: number;
 };
 
-export type PalletMethod =
-  | "balances.transfer"
-  | "balances.transferKeepAlive"
-  | "balances.transferAllowDeath";
+export type PalletMethod = "balances.transfer";
 
 export type Command = TransferCommand;
-// | TokenTransferCommand
 
 export type CommandDescriptor = {
   command: Command;

@@ -1,9 +1,6 @@
 export type SuiOperationMode = "send";
 
-// type TypeRegistry = any;
-
 export type TransactionPayloadInfo = {
-  // after runtime upgrade
   address: string;
   blockHash: string;
   era: `0x${string}`;
@@ -18,6 +15,5 @@ export type TransactionPayloadInfo = {
 };
 
 export type CoreTransaction = {
-  // registry: TypeRegistry;
   unsigned: Uint8Array;
 };

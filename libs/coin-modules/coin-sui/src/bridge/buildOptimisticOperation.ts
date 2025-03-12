@@ -1,14 +1,10 @@
 import BigNumber from "bignumber.js";
 import type { Account, OperationType } from "@ledgerhq/types-live";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import {
-  getNonce,
-  //  isFirstBond
-} from "./utils";
+import { getNonce } from "./utils";
 import {
   CommandDescriptor,
   TransferCommand,
-  PalletMethod,
   SuiAccount,
   SuiOperation,
   SuiOperationExtra,
@@ -22,24 +18,12 @@ const MODE_TO_TYPE: Record<SuiOperationMode | "default", OperationType> = {
   default: "OUT",
 };
 
-const MODE_TO_PALLET_METHOD: Record<SuiOperationMode | "sendMax", PalletMethod> = {
-  send: "balances.transferKeepAlive",
-  sendMax: "balances.transferAllowDeath",
-} as const;
-
 const getExtra = (
   type: string,
-  account: SuiAccount,
+  _account: SuiAccount,
   transaction: Transaction,
 ): SuiOperationExtra => {
-  const extra: SuiOperationExtra = {
-    // palletMethod: MODE_TO_PALLET_METHOD[transaction.mode],
-    palletMethod: MODE_TO_PALLET_METHOD.send,
-  };
-
-  // if (transaction.mode == "send" && transaction.useAllAmount) {
-  //   extra.palletMethod = MODE_TO_PALLET_METHOD["sendMax"];
-  // }
+  const extra: SuiOperationExtra = {};
 
   switch (type) {
     case "OUT":
@@ -54,7 +38,6 @@ export const buildOptimisticOperation = (
   transaction: Transaction,
   fee: BigNumber,
 ): SuiOperation => {
-  // const { commandDescriptor } = transaction.model;
   const commandDescriptor: CommandDescriptor = {
     command: {
       kind: "transfer" as const,
@@ -86,7 +69,7 @@ function buildOptimisticOperationForCommand(
     case "transfer":
       return optimisticOpForTransfer(account, transaction, command, commandDescriptor);
     default:
-      // @ts-expect-error fix type
+      // @ts-expect-error TODO: fix type
       return assertUnreachable(command);
   }
 }
@@ -94,33 +77,22 @@ function buildOptimisticOperationForCommand(
 function optimisticOpForTransfer(
   account: Account,
   transaction: Transaction,
-  command: TransferCommand,
+  _command: TransferCommand,
   commandDescriptor: CommandDescriptor,
 ): SuiOperation {
-  // const type = MODE_TO_TYPE[transaction.mode] ?? MODE_TO_TYPE.default;
-  const fee = BigNumber(0);
   const type = MODE_TO_TYPE.default;
-  const value = type === "OUT" ? new BigNumber(transaction.amount).plus(fee) : new BigNumber(fee);
+  const value =
+    type === "OUT"
+      ? new BigNumber(transaction.amount).plus(commandDescriptor.fee)
+      : new BigNumber(commandDescriptor.fee);
   const extra = getExtra(type, account, transaction);
 
   const commons = optimisticOpcommons(commandDescriptor);
   return {
     ...commons,
-    // id: encodeOperationId(account.id, "", "OUT"),
-    // type: "OUT",
-    // accountId: account.id,
-    // senders: [account.freshAddress],
-    // recipients: [transaction.recipient],
-    // value: new BigNumber(command.amount).plus(commons.fee ?? 0),
-    // extra: getOpExtras(command),
-
     id: encodeOperationId(account.id, "", type),
-    hash: "",
     type,
     value,
-    fee,
-    blockHash: null,
-    blockHeight: null,
     senders: [account.freshAddress],
     recipients: [transaction.recipient].filter(Boolean),
     accountId: account.id,
@@ -136,7 +108,6 @@ function optimisticOpcommons(commandDescriptor: CommandDescriptor) {
     fee: new BigNumber(commandDescriptor.fee),
     blockHash: null,
     blockHeight: null,
-    date: new Date(),
     extra: {},
   };
 }
