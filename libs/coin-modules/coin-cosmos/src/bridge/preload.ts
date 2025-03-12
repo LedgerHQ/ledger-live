@@ -2,10 +2,10 @@ import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 import { CosmosValidatorsManager } from "../CosmosValidatorsManager";
-import cryptoFactory from "../chain/chain";
 import cosmosCoinConfig from "../config";
 import { asSafeCosmosPreloadData, setCosmosPreloadData } from "../preloadedData";
 import type { CosmosCurrencyConfig, CosmosValidatorItem } from "../types";
+import cryptoFactory from "../chain/chain";
 
 export const getPreloadStrategy = () => ({
   preloadMaxAge: 30 * 1000,
@@ -32,11 +32,14 @@ export const hydrate = (
   currency: CryptoCurrency,
 ) => {
   if (!data || typeof data !== "object") return;
+  const { config, validators } = data;
+
+  if (!config || typeof config !== "object" || !config.lcd || !config.minGasPrice) return;
   const relatedImpl = cryptoFactory(currency.id);
-  relatedImpl.lcd = data.config.lcd;
-  relatedImpl.minGasPrice = data.config.minGasPrice;
-  relatedImpl.ledgerValidator = data.config?.ledgerValidator;
-  const { validators } = data;
+  relatedImpl.lcd = config.lcd;
+  relatedImpl.minGasPrice = config.minGasPrice;
+  relatedImpl.ledgerValidator = config?.ledgerValidator;
+
   if (!validators || typeof validators !== "object" || !Array.isArray(validators)) return;
   const cosmosValidatorsManager = new CosmosValidatorsManager(getCryptoCurrencyById(currency.id));
   cosmosValidatorsManager.hydrateValidators(validators);
