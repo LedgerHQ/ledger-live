@@ -55,7 +55,12 @@ export interface ITxnHistoryData {
 export interface NodeResponseRoot<T> {
   jsonrpc: string;
   id: string;
-  result: T;
+  result?: T;
+  error?: {
+    code: number;
+    message: string;
+    data: string;
+  };
 }
 
 export interface NNetworkStatusResponse {

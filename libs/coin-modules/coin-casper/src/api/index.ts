@@ -1,5 +1,4 @@
 import { log } from "@ledgerhq/logs";
-import { AxiosRequestConfig, AxiosResponse } from "axios";
 
 import {
   NDeployMessagePutResponse,
@@ -13,7 +12,7 @@ import {
   NStateRootHashResponse,
 } from "./types";
 
-import network from "@ledgerhq/live-network/network";
+import network from "@ledgerhq/live-network";
 import { AccessRights, CLURef, DeployUtil } from "casper-js-sdk";
 import { getEnv } from "@ledgerhq/live-env";
 
@@ -33,53 +32,60 @@ const getCasperNodeURL = (): string => {
 
 const casperIndexerWrapper = async <T>(path: string) => {
   const url = getCasperIndexerURL(path);
-  const getResponse = async (page: number) => {
-    // We force data to this way as network func is not using the correct param type. Changing that func will generate errors in other implementations
-    const opts: AxiosRequestConfig = {
+
+  try {
+    const rawResponse = await network<IndexerResponseRoot<T>>({
       method: "GET",
-      url: `${url}?limit=100&page=${page}`,
-    };
+      url,
+    });
+    log("http", url);
 
-    const rawResponse = await network(opts);
-    // We force data to this way as network func is not using the correct param type. Changing that func will generate errors in other implementations
-    const { data } = rawResponse as AxiosResponse<IndexerResponseRoot<T>>;
-
+    const { data, status } = rawResponse;
+    if (status >= 300) {
+      log("http", url, data);
+    }
     return data;
-  };
-
-  let page = 1;
-  const res: T[] = [];
-
-  const data = await getResponse(page);
-  const { pageCount } = data;
-  res.push(...data.data);
-
-  while (page <= pageCount) {
-    page++;
-    const data = await getResponse(page);
-    res.push(...data.data);
+  } catch (error) {
+    log("error", "Casper indexer error: ", error);
+    throw error;
   }
-
-  log("http", url);
-  return res;
 };
 
 const casperNodeWrapper = async <T>(payload: NodeRPCPayload) => {
   const url = getCasperNodeURL();
 
-  // We force data to this way as network func is not using the correct param type. Changing that func will generate errors in other implementations
-  const opts: AxiosRequestConfig = {
-    method: "POST",
-    url,
-    data: payload,
-  };
-  const rawResponse = await network(opts);
+  try {
+    const rawResponse = await network<NodeResponseRoot<T>>({
+      method: "POST",
+      url,
+      data: payload,
+    });
+    log("http", `${url} - ${payload.method}`);
 
-  // We force data to this way as network func is not using the correct param type. Changing that func will generate errors in other implementations
-  const { data } = rawResponse as AxiosResponse<NodeResponseRoot<T>>;
+    const { data, status } = rawResponse;
 
-  log("http", url);
-  return data.result;
+    if (status >= 300) {
+      log("http", `${url} - Status: ${status}`, data);
+      throw new Error(`HTTP error: ${status}`);
+    }
+
+    if (data.error) {
+      const errorMessage = data.error.message + ". " + data.error.data || "Unknown error";
+      log("http", `${payload.method} - ${errorMessage}`);
+      throw new Error(`Casper node error: ${errorMessage}`);
+    }
+
+    if (!data.result) {
+      throw new Error(`Casper node returned no result for method: ${payload.method}`);
+    }
+
+    return data.result;
+  } catch (error) {
+    log("error", `Failed to execute ${payload.method}`, error);
+    throw error instanceof Error
+      ? error
+      : new Error(`Unknown error during Casper node request: ${String(error)}`);
+  }
 };
 
 export const fetchAccountStateInfo = async (
@@ -88,28 +94,38 @@ export const fetchAccountStateInfo = async (
   purseUref: CLURef | undefined;
   accountHash: string | undefined;
 }> => {
-  const accountStateInfo = await casperNodeWrapper<NAccountInfo>({
-    jsonrpc: "2.0",
-    method: "state_get_account_info",
-    params: {
-      public_key: publicKey,
-    },
-    id: 1,
-  });
+  try {
+    const accountStateInfo = await casperNodeWrapper<NAccountInfo>({
+      jsonrpc: "2.0",
+      method: "state_get_account_info",
+      params: {
+        public_key: publicKey,
+      },
+      id: 1,
+    });
 
-  if (!accountStateInfo) {
-    return {
-      purseUref: undefined,
-      accountHash: undefined,
-    };
+    if (!accountStateInfo) {
+      return {
+        purseUref: undefined,
+        accountHash: undefined,
+      };
+    }
+
+    const accountHash = accountStateInfo.account.account_hash.split("-")[2];
+    const purseURefString = accountStateInfo.account.main_purse.split("-")[1];
+
+    const uRef = new CLURef(Buffer.from(purseURefString, "hex"), AccessRights.READ_ADD_WRITE);
+
+    return { purseUref: uRef, accountHash };
+  } catch (error) {
+    if (error instanceof Error && error.message.includes("ValueNotFound")) {
+      return {
+        purseUref: undefined,
+        accountHash: undefined,
+      };
+    }
+    throw error;
   }
-
-  const accountHash = accountStateInfo.account.account_hash.split("-")[2];
-  const purseURefString = accountStateInfo.account.main_purse.split("-")[1];
-
-  const uRef = new CLURef(Buffer.from(purseURefString, "hex"), AccessRights.READ_ADD_WRITE);
-
-  return { purseUref: uRef, accountHash };
 };
 
 export const fetchBalance = async (purseUref: CLURef): Promise<NAccountBalance> => {
@@ -146,10 +162,23 @@ export const fetchNetworkStatus = async (): Promise<NNetworkStatusResponse> => {
 };
 
 export const fetchTxs = async (addr: string): Promise<ITxnHistoryData[]> => {
-  const response = await casperIndexerWrapper<ITxnHistoryData>(
-    `/accounts/${addr}/ledgerlive-deploys`,
+  let page = 1;
+  let res: ITxnHistoryData[] = [];
+  const limit = 100;
+
+  let response = await casperIndexerWrapper<ITxnHistoryData>(
+    `/accounts/${addr}/ledgerlive-deploys?limit=${limit}&page=${page}`,
   );
-  return response;
+  res = res.concat(response.data);
+
+  while (response.pageCount > page) {
+    page++;
+    response = await casperIndexerWrapper<ITxnHistoryData>(
+      `/accounts/${addr}/ledgerlive-deploys?limit=${limit}&page=${page}`,
+    );
+    res = res.concat(response.data);
+  }
+  return res;
 };
 
 export const broadcastTx = async (
