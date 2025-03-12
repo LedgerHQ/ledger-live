@@ -173,7 +173,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       zenrock,
       sonic,
       sonic_blaze: sonicBlaze,
-      mina: mina,
+      mina,
     }),
     [
       aptos,
