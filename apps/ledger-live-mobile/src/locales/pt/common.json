@@ -1060,6 +1060,9 @@
     },
     "AppManifestNotFoundError" : {
       "title" : "Falha ao carregar o aplicativo Swap Live"
+    },
+    "InvalidMemoMina" : {
+      "title" : "O texto do memo não pode ter mais de 32 caracteres"
     }
   },
   "crash" : {
@@ -2626,6 +2629,10 @@
         "description3Link" : "Esta integração foi realizada por <1><0>{{team}}</0></1> em colaboração com a Ledger"
       }
     },
+    "migrationBanner" : {
+      "title" : "{{from}} está migrando para {{to}}. Siga este <0>link</0> para saber mais ou entre em contato com o suporte se precisar de ajuda.",
+      "contactSupport" : "Falar com o suporte"
+    },
     "willBedeprecatedBanner" : {
       "title" : "Para otimizar a eficiência, {{currencyName}} não será mais compatível com o Ledger Live a partir de {{deprecatedDate}}. No entanto, este ativo ainda será compatível com as carteiras hardware Ledger. Fale com o Suporte ao Cliente Ledger para obter ajuda com isso.",
       "contactSupport" : "Falar com o suporte"
@@ -3534,12 +3541,12 @@
         "apt_description" : "Para trocar o ativo APTOS, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
         "cosmos_title" : "A Ledger Nano S™ não é compatível com a troca de Cosmos",
         "cosmos_description" : "Para trocar Cosmos, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
-        "osmo_title" : "Ledger Nano S™ does not support swapping Osmosis",
-        "osmo_description" : "To swap Osmosis, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
-        "dydx_title" : "Ledger Nano S™ does not support swapping dYdX",
-        "dydx_description" : "To swap dYdX, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
-        "sui_title" : "Ledger Nano S™ does not support swapping Sui",
-        "sui_description" : "To swap Sui, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
+        "osmo_title" : "A Ledger Nano S™ não é compatível com a troca de Osmosis",
+        "osmo_description" : "Para trocar Osmosis, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+        "dydx_title" : "A Ledger Nano S™ não é compatível com trocas de dYdX",
+        "dydx_description" : "Para trocar o ativo dYdX, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+        "sui_title" : "A Ledger Nano S™ não é compatível com a troca de Sui",
+        "sui_description" : "Para trocar Sui, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™."
       }
     },
     "lending" : {
