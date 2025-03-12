@@ -1,5 +1,5 @@
 import React from "react";
-import type { Account } from "@ledgerhq/types-live";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import { Trans } from "react-i18next";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
@@ -17,7 +17,7 @@ const ethMagnitude = getCryptoCurrencyById("ethereum").units[0].magnitude ?? 18;
 const ETH_LIMIT = BigNumber(32).times(BigNumber(10).pow(ethMagnitude));
 
 type Props = {
-  account: Account;
+  account: AccountLike;
   parentAccount: Account;
   parentRoute: RouteProp<ParamListBase, ScreenName>;
   walletState: WalletState;
@@ -29,6 +29,13 @@ function getNavigatorParams({
   parentAccount,
   walletState,
 }: Props): NavigationParamsType {
+  const isBscAccount = account.type === "Account" && account.currency.id === "bsc";
+  const isAvaxAccount = account.type === "Account" && account.currency.id === "avalanche_c_chain";
+  const isPOLAccount =
+    account.type === "TokenAccount" &&
+    account.token.id === "ethereum/erc20/polygon_ecosystem_token";
+  const isStakekit = isBscAccount || isPOLAccount || isAvaxAccount;
+
   if (isAccountEmpty(account)) {
     return [
       NavigatorName.NoFundsFlow,
@@ -42,16 +49,16 @@ function getNavigatorParams({
     ];
   }
 
-  if (
-    account.type === "Account" &&
-    (account.currency.id === "bsc" || account.currency.id === "polygon")
-  ) {
+  if (isStakekit) {
     const getYieldId = () => {
-      if (account.currency.id === "bsc") {
+      if (isBscAccount) {
         return "bsc-bnb-native-staking";
       }
-      if (account.currency.id === "polygon") {
+      if (isPOLAccount) {
         return "ethereum-matic-native-staking";
+      }
+      if (isAvaxAccount) {
+        return "avalanche-avax-liquid-staking";
       }
     };
 
@@ -105,12 +112,14 @@ const getMainActions = ({
   parentRoute,
   walletState,
 }: Props): ActionButtonEvent[] => {
-  if (
-    account.type === "Account" &&
-    (account.currency.id === "ethereum" ||
-      account.currency.id === "bsc" ||
-      account.currency.id === "polygon")
-  ) {
+  const isBscAccount = account.type === "Account" && account.currency.id === "bsc";
+  const isAvaxAccount = account.type === "Account" && account.currency.id === "avalanche_c_chain";
+  const isPOLAccount =
+    account.type === "TokenAccount" &&
+    account.token.id === "ethereum/erc20/polygon_ecosystem_token";
+  const isStakekit = isBscAccount || isPOLAccount || isAvaxAccount;
+
+  if (isStakekit) {
     const label = getStakeLabelLocaleBased();
 
     const navigationParams = getNavigatorParams({
@@ -120,15 +129,18 @@ const getMainActions = ({
       walletState,
     });
     const getCurrentCurrency = () => {
-      if (account.currency.id === "ethereum") {
+      if (account.type === "Account" && account.currency.id === "ethereum") {
         return "ETH";
       }
-      if (account.currency.id === "bsc") {
+      if (isBscAccount) {
         return "BNB";
       }
 
-      if (account.currency.id === "polygon") {
+      if (isPOLAccount) {
         return "POL";
+      }
+      if (isAvaxAccount) {
+        return "AVAX";
       }
     };
 
