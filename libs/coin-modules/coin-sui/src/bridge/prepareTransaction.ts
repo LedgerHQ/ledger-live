@@ -20,8 +20,8 @@ export const prepareTransaction: AccountBridge<
   SuiAccount
 >["prepareTransaction"] = async (account, transaction) => {
   let amount = transaction.amount;
-  if (transaction.useAllAmount) {
-    const spendable = await estimateMaxSpendable({ account, transaction });
+  const spendable = await estimateMaxSpendable({ account, transaction });
+  if (transaction.useAllAmount || amount.gt(spendable)) {
     amount = spendable;
   }
 
