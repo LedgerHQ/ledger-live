@@ -9,6 +9,7 @@ import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
 import { Fee } from "@ledgerhq/live-common/e2e/enum/Fee";
 import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
+import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
 
 import { ElementHelpers } from "./helpers/elementHelpers";
 import { CLI } from "./utils/cliUtils";
@@ -32,6 +33,7 @@ type AccountType = typeof Account;
 type TransactionType = typeof Transaction;
 type FeeType = typeof Fee;
 type AppInfosType = typeof AppInfos;
+type SwapType = typeof Swap;
 
 declare global {
   var IS_FAILED: boolean;
@@ -48,6 +50,7 @@ declare global {
   var Transaction: TransactionType;
   var Fee: FeeType;
   var AppInfos: AppInfosType;
+  var Swap: SwapType;
 
   var waitForElementById: typeof ElementHelpers.waitForElementById;
   var waitForElementByText: typeof ElementHelpers.waitForElementByText;
@@ -67,6 +70,12 @@ declare global {
   var scrollToId: typeof ElementHelpers.scrollToId;
   var getTextOfElement: typeof ElementHelpers.getTextOfElement;
   var getIdOfElement: typeof ElementHelpers.getIdOfElement;
+  var getWebElementByTestId: typeof ElementHelpers.getWebElementByTestId;
+  var getWebElementsWithText: typeof ElementHelpers.getWebElementsWithText;
+  var getWebElementsText: typeof ElementHelpers.getWebElementsText;
+  var waitWebElementByTestId: typeof ElementHelpers.waitWebElementByTestId;
+  var tapWebElementByTestId: typeof ElementHelpers.tapWebElementByTestId;
+  var typeTextByWebTestId: typeof ElementHelpers.typeTextByWebTestId;
 }
 
 export default async () => {
@@ -85,6 +94,7 @@ export default async () => {
   global.Transaction = Transaction;
   global.Fee = Fee;
   global.AppInfos = AppInfos;
+  global.Swap = Swap;
 
   global.waitForElementById = ElementHelpers.waitForElementById;
   global.waitForElementByText = ElementHelpers.waitForElementByText;
@@ -104,4 +114,10 @@ export default async () => {
   global.scrollToId = ElementHelpers.scrollToId;
   global.getTextOfElement = ElementHelpers.getTextOfElement;
   global.getIdOfElement = ElementHelpers.getIdOfElement;
+  global.getWebElementByTestId = ElementHelpers.getWebElementByTestId;
+  global.getWebElementsWithText = ElementHelpers.getWebElementsWithText;
+  global.getWebElementsText = ElementHelpers.getWebElementsText;
+  global.waitWebElementByTestId = ElementHelpers.waitWebElementByTestId;
+  global.tapWebElementByTestId = ElementHelpers.tapWebElementByTestId;
+  global.typeTextByWebTestId = ElementHelpers.typeTextByWebTestId;
 };
