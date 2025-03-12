@@ -1060,6 +1060,9 @@
     },
     "AppManifestNotFoundError" : {
       "title" : "Échec du chargement de l’app Live Swap"
+    },
+    "InvalidMemoMina" : {
+      "title" : "Le mémo ne peut pas dépasser 32 caractères"
     }
   },
   "crash" : {
@@ -2625,6 +2628,10 @@
         "description3" : "Cette intégration a été réalisée par {{team}} en collaboration avec Ledger.",
         "description3Link" : "Cette intégration a été réalisée par <1><0>{{team}}</0></1> en collaboration avec Ledger."
       }
+    },
+    "migrationBanner" : {
+      "title" : "{{from}} migre vers {{to}}. Cliquez <0>ici</0> pour en savoir plus ou contactez l’Assistance si vous avez besoin d’aide.",
+      "contactSupport" : "Contacter l’Assistance"
     },
     "willBedeprecatedBanner" : {
       "title" : "Pour une meilleure performance, Ledger Live ne prendra plus en charge {{currencyName}} à partir du {{deprecatedDate}}. Cette monnaie restera prise en charge par les wallets physiques Ledger. Veuillez contacter l’Assistance Ledger pour toute question.",
