@@ -29,20 +29,18 @@ export const getAccountShape: GetAccountShape<Account> = async (info, syncConfig
   const isInitSync = lastPagingToken === "";
 
   const newOperations =
-    (await fetchAllOperations({
+    (await fetchAllOperations(
       accountId,
-      addr: address,
-      order: isInitSync ? "desc" : "asc",
-      cursor: lastPagingToken,
+      address,
+      isInitSync ? "desc" : "asc",
+      lastPagingToken,
       // For an account with a particularly high number of historical transactions,
       // retrieving all the data would take a considerable amount of time and is likely to
       // fail due to poor network connection quality or other reasons. Therefore, we set a
       // limit on the number of retrieval operations here.
       // If users want to access historical records from earlier, I would suggest they use a professional blockchain explorer.
-      maxOperations: isInitSync
-        ? getEnv("API_STELLAR_HORIZON_INITIAL_FETCH_MAX_OPERATIONS")
-        : undefined,
-    })) || [];
+      isInitSync ? getEnv("API_STELLAR_HORIZON_INITIAL_FETCH_MAX_OPERATIONS") : undefined,
+    )) || [];
 
   const allOperations = mergeOps(oldOperations, newOperations) as StellarOperation[];
   const assetOperations: StellarOperation[] = [];

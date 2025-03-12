@@ -193,19 +193,13 @@ export async function fetchAccount(addr: string): Promise<{
  *
  * @return {Operation[]}
  */
-export async function fetchAllOperations({
-  accountId,
-  addr,
-  order,
-  cursor = "",
-  maxOperations,
-}: {
-  accountId: string;
-  addr: string;
-  order: "asc" | "desc";
-  cursor: string | undefined;
-  maxOperations: number | undefined;
-}): Promise<StellarOperation[]> {
+export async function fetchAllOperations(
+  accountId: string,
+  addr: string,
+  order: "asc" | "desc",
+  cursor: string = "",
+  maxOperations?: number,
+): Promise<StellarOperation[]> {
   if (!addr) {
     return [];
   }
