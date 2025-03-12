@@ -171,12 +171,12 @@
       "REVEAL" : "เปิดเผยแล้ว",
       "DELEGATE" : "Delegate เรียบร้อยแล้ว",
       "REDELEGATE" : "Redelegate เรียบร้อยแล้ว",
-      "UNDELEGATE" : "Undelegate เรียบร้อยแล้ว",
+      "UNDELEGATE" : "Undelegate แล้ว",
       "APPROVE" : "อนุมัติแล้ว",
       "VOTE" : "โหวตแล้ว",
       "FREEZE" : "ถูกระงับ",
       "UNFREEZE" : "ไม่ได้ถูกระงับ",
-      "UNDELEGATE_RESOURCE" : "Undelegate เรียบร้อยแล้ว",
+      "UNDELEGATE_RESOURCE" : "Undelegate แล้ว",
       "WITHDRAW_EXPIRE_UNFREEZE" : "การถอน",
       "LEGACYUNFREEZE" : "ไม่ได้ถูกระงับ",
       "REWARD" : "Reward ที่ขอรับแล้ว",
@@ -449,8 +449,8 @@
       "ton_description" : "ในการ Swap Ton ให้ใช้อุปกรณ์ Ledger ที่เข้ากันได้อื่น ๆ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™",
       "spl_tokens_title" : "Ledger Nano S™ ไม่รองรับการ Swap โทเคน Solana",
       "spl_tokens_description" : "ในการ Swap โทเคน Solana ให้ทำธุรกรรมผ่านอุปกรณ์ Ledger รุ่นอื่นที่เข้ากันได้ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™",
-      "sui_tokens_title" : "Ledger Nano S™ does not support swapping Sui tokens",
-      "sui_tokens_description" : "To swap Sui tokens, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+      "sui_tokens_title" : "Ledger Nano S™ ไม่รองรับการ Swap โทเคน Sui",
+      "sui_tokens_description" : "ในการ Swap โทเคน Sui ให้ทำธุรกรรมผ่านอุปกรณ์ Ledger รุ่นอื่นที่ใช้ได้ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™",
       "near_title" : "Ledger Nano S™ ไม่รองรับการ Swap Near",
       "near_description" : "เพื่อ Swap Near ให้ใช้อุปกรณ์ Ledger ที่เข้ากันอื่น ๆ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™",
       "ada_title" : "Ledger Nano S™ ไม่รองรับการ Swap Cardano",
@@ -459,12 +459,12 @@
       "apt_description" : "เพื่อ Swap Aptos ให้ใช้อุปกรณ์ Ledger ที่เข้ากันอื่น ๆ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™",
       "cosmos_title" : "Ledger Nano S™ ไม่รองรับการ Swap Cosmos",
       "cosmos_description" : "เพื่อ Swap Cosmos ให้ใช้อุปกรณ์ Ledger ที่เข้ากันอื่น ๆ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™",
-      "osmo_title" : "Ledger Nano S™ does not support swapping Osmosis",
-      "osmo_description" : "To swap Osmosis, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
-      "dydx_title" : "Ledger Nano S™ does not support swapping dYdX",
-      "dydx_description" : "To swap dYdX, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
-      "sui_title" : "Ledger Nano S™ does not support swapping Sui",
-      "sui_description" : "To swap Sui, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
+      "osmo_title" : "Ledger Nano S™ ไม่รองรับการ Swap Osmosis",
+      "osmo_description" : "เพื่อ Swap Osmosis ให้ทำธุรกรรมผ่านอุปกรณ์ Ledger รุ่นอื่นที่ใช้ได้ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™",
+      "dydx_title" : "Ledger Nano S™ ไม่รองรับการ Swap dYdX",
+      "dydx_description" : "เพื่อ Swap dYdX ให้ทำธุรกรรมผ่านอุปกรณ์ Ledger รุ่นอื่นที่ใช้ได้ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™",
+      "sui_title" : "Ledger Nano S™ ไม่รองรับการ Swap Sui",
+      "sui_description" : "ในการ Swap Sui ให้ทำธุรกรรมผ่านอุปกรณ์ Ledger รุ่นอื่นที่ใช้ได้ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™"
     },
     "providers" : {
       "title" : "เลือกผู้ให้บริการเพื่อ Swap คริปโต",
@@ -776,6 +776,10 @@
         "description3Link" : "การดำเนินการนี้เป็นความร่วมมือระหว่าง <1><0>{{team}}</0></1>และ Ledger"
       }
     },
+    "migrationBanner" : {
+      "title" : "{{from}} กำลัง Migrate ไปที่ {{to}} ติดตาม<0>ลิงก์</0>นี้เพื่อเรียนรู้เพิ่มเติมหรือติดต่อฝ่ายสนับสนุนหากคุณต้องการขอความช่วยเหลือ",
+      "contactSupport" : "ติดต่อฝ่ายสนับสนุน"
+    },
     "featureUnavailable" : {
       "title" : "ฟีเจอร์ต่อไปนี้ไม่พร้อมใช้งานในขณะนี้: {{feature}} หากต้องการทราบข้อมูลเพิ่มเติม โปรดดูที่ {{support}}",
       "feature" : {
@@ -827,7 +831,7 @@
     "energy" : "Energy",
     "stake" : "Stake",
     "delegatedAssets" : "สินทรัพย์ที่มอบหมาย",
-    "undelegating" : "กำลังยกเลิกการมอบหมาย",
+    "undelegating" : "กำลังทำการ Undelegate",
     "availableBalanceTooltip" : "จำนวนที่สามารถใช้จ่ายได้",
     "frozenAssetsTooltip" : "สินทรัพย์ที่ถูก Freeze จะใช้ในกระบวนการโหวต Tron ซึ่งแสดงถึงจำนวนการโหวตทั้งหมดของคุณ",
     "bandwidthTooltip" : "Freeze สินทรัพย์เพื่อรับ Bandwidth",
@@ -1833,7 +1837,7 @@
     "to" : "ไปยัง",
     "identifier" : "ID ธุรกรรม",
     "viewOperation" : "ดูใน Explorer",
-    "showMore" : "แสดง {{recipients}} เพิ่ม",
+    "showMore" : "แสดงเพิ่มอีก {{recipients}} ",
     "showLess" : "แสดงน้อยลง",
     "tokenOperations" : "การดำเนินการโทเคน",
     "subAccountOperations" : "การดำเนินงานบัญชีย่อย",
@@ -1859,7 +1863,7 @@
       "redelegatedFrom" : "Redelegate จาก",
       "redelegatedTo" : "Redelegate ไปยัง",
       "redelegatedAmount" : "จำนวนที่ Redelegate",
-      "undelegated" : "Undelegate เรียบร้อยแล้ว",
+      "undelegated" : "Undelegate แล้ว",
       "undelegatedFrom" : "Undelegate จาก",
       "undelegatedAmount" : "จำนวนที่ Undelegate",
       "withdrawnFrom" : "ถอนจาก",
@@ -1875,7 +1879,8 @@
       "palletMethod" : "วิธีการ",
       "transferAmount" : "จำนวนที่โอน",
       "validatorsCount" : "({{number}}) ผู้ตรวจสอบ ",
-      "version" : "เวอร์ชัน"
+      "version" : "เวอร์ชัน",
+      "accountCreationFee" : "Account Creation Fee"
     }
   },
   "operationList" : {
@@ -4157,7 +4162,7 @@
   },
   "settings" : {
     "title" : "การตั้งค่า",
-    "discreet" : "Toggle Discreet Mode",
+    "discreet" : "โหมดซ่อนมูลค่าสินทรัพย์",
     "helpButton" : "ช่วยเหลือ",
     "tabs" : {
       "display" : "ทั่วไป",
@@ -4535,7 +4540,7 @@
     },
     "hardResetModal" : {
       "title" : "รีเซ็ต Ledger Live",
-      "desc" : "รีเซ็ต Ledger Live เพื่อลบการตั้งค่าและบัญชีทั้งหมดบนคอมพิวเตอร์ของคุณ จากนั้นคุณสามารถเลือกรหัสผ่านและเพิ่มบัญชีกลับด้วยอุปกรณ์ Ledger ของคุณได้ Private Key ที่ให้สิทธิ์เข้าถึงสินทรัพย์คริปโตของคุณจะยังคงปลอดภัยบนอุปกรณ์ Ledger ของคุณและได้รับการสำรองข้อมูลด้วย Recovery Phrase",
+      "desc" : "รีเซ็ต Ledger Live เพื่อลบการตั้งค่าและบัญชีทั้งหมดบนคอมพิวเตอร์ของคุณ จากนั้นคุณสามารถเลือกรหัสผ่านและเพิ่มบัญชีอีกครั้งด้วยอุปกรณ์ Ledger ของคุณได้ Private Key ที่ให้สิทธิ์เข้าถึงสินทรัพย์คริปโตของคุณจะยังคงปลอดภัยบนอุปกรณ์ Ledger ของคุณและได้รับการสำรองข้อมูลด้วย Recovery Phrase",
       "warning" : "การรีเซ็ต Ledger Live จะลบประวัติธุรกรรมการ Swap สำหรับบัญชีทั้งหมดของคุณ"
     },
     "softResetModal" : {
@@ -4563,7 +4568,7 @@
     },
     "repairDevice" : {
       "title" : "ซ่อมแซมอุปกรณ์ Ledger ของคุณ",
-      "descSettings" : "ใช้สิ่งนี้เพื่อกู้คืนอุปกรณ์ Ledger ของคุณหากเกิดการหยุดทำงานระหว่างการอัปเดตเฟิร์มแวร์",
+      "descSettings" : "ใช้เครื่องมือนี้เพื่อกู้คืนอุปกรณ์ Ledger ของคุณหากเกิดการหยุดทำงานระหว่างการอัปเดตเฟิร์มแวร์",
       "desc" : "สำหรับผู้ใช้ Ledger Nano S โปรดเลือกสถานะที่แสดงบนอุปกรณ์ของคุณ สำหรับผู้ใช้ Nano X และ Blue โปรดดูศูนย์ช่วยเหลือ",
       "button" : "ซ่อมแซม"
     },
@@ -4675,7 +4680,7 @@
     "noAccounts" : "ไม่มีบัญชีที่จะส่งออก",
     "selectedAccounts" : "บัญชีที่จะรวม",
     "selectedAccounts_plural" : "({{count}}) บัญชีที่จะรวมกัน",
-    "disclaimer" : "มูลค่าเทียบเท่าในข้อมูลส่งออกมีไว้เพื่อให้บริการข้อมูลเท่านั้น อย่าใช้ข้อมูลดังเพื่อวัตถุประสงค์ด้านการบัญชี ภาษี กฎระเบียบ หรือวัตถุประสงค์ทางกฎหมาย เนื่องจากข้อมูลดังกล่าวเป็นเพียงการประมาณราคาสินทรัพย์ในเวลาทำธุรกรรมและส่งออกภายใต้วิธีการประเมินมูลค่าที่ผู้ให้บริการของเรา Kaiko จัดเตรียมไว้"
+    "disclaimer" : "มูลค่าเทียบเท่าในข้อมูลส่งออกมีไว้เพื่อให้บริการข้อมูลเท่านั้น อย่าใช้ข้อมูลนี้เพื่อวัตถุประสงค์ด้านการบัญชี ภาษี กฎระเบียบ หรือวัตถุประสงค์ทางกฎหมาย เนื่องจากข้อมูลดังกล่าวเป็นเพียงการประมาณราคาสินทรัพย์ในเวลาทำธุรกรรมและส่งออกภายใต้วิธีการประเมินมูลค่าที่ผู้ให้บริการของเรา Kaiko จัดเตรียมไว้"
   },
   "language" : {
     "system" : "ใช้ภาษาของระบบ",
@@ -5511,6 +5516,11 @@
       "memo" : "Tag / Memo",
       "memoPlaceholder" : "ไม่บังคับ",
       "requiredMemoPlaceholder" : "Required"
+    },
+    "mina" : {
+      "memoPlaceholder" : "Optional",
+      "memo" : "Memo",
+      "memoWarningText" : "The value of memo can be a string shorter than or equal to 32 characters"
     }
   },
   "errors" : {
@@ -6541,6 +6551,15 @@
         "swap" : "Swap",
         "deposit" : "ฝาก"
       }
+    },
+    "InvalidMemoMina" : {
+      "title" : "Memo text cannot be longer than 32 characters"
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "This transaction will incur an account creation fee of {{fee}}"
+    },
+    "AmountTooSmall" : {
+      "title" : "Minimum required amount for this transaction is {{amount}}"
     }
   },
   "cryptoOrg" : {
@@ -6606,7 +6625,7 @@
         "allowPreview" : "แตะที่ “โหลดภาพ” เพื่อ\nปรับแต่งภาพ ภาพล็อกสกรีนของคุณ",
         "allowConfirmPreview" : "แตะที่ “โหลดภาพ“ เพื่อ\nกู้คืน ภาพล็อกสกรีนของคุณ",
         "loadingPicture" : "กำลังติดตั้ง...",
-        "voila" : "แค่นี้เอง!",
+        "voila" : "ครบถ้วนแล้ว!",
         "imageLoaded" : "โหลดภาพบน {{productName}}",
         "confirmPicture" : "ชอบสิ่งที่เห็น?\nเก็บไว้เลยสิ!",
         "confirmRestorePicture" : "แตะที่ “เก็บไว้” เพื่อ\nยืนยันภาพล็อกสกรีนของคุณ",
@@ -6991,55 +7010,14 @@
     }
   },
   "lnsUpsell" : {
-    "banner" : {
-      "manager" : {
-        "optIn" : {
-          "title" : "It's time to upgrade",
-          "description" : "Upgrade to our latest devices with <0>{{discount}}% discount</0> for an enhanced security and a seamless experience.",
-          "cta" : "Level up my wallet",
-          "linkText" : "Learn more"
-        },
-        "optOut" : {
-          "title" : "It's time to upgrade",
-          "description" : "Upgrade to our latest devices with <0>{{discount}}% discount</0> for an enhanced security and a seamless experience.",
-          "cta" : "Level up my wallet",
-          "linkText" : "Learn more"
-        }
-      },
-      "accounts" : {
-        "optIn" : {
-          "title" : "It's time to upgrade",
-          "description" : "Ledger Nano S updates are ending soon. Upgrade to our latest devices with <0>{{discount}}% discount</0>.",
-          "cta" : "Level up my wallet",
-          "linkText" : "Learn more"
-        },
-        "optOut" : {
-          "title" : "It's time to upgrade",
-          "description" : "Ledger Nano S updates are ending soon. Upgrade to our latest devices with <0>{{discount}}% discount</0>.",
-          "cta" : "Level up my wallet",
-          "linkText" : "Learn more"
-        }
-      },
-      "portfolio" : {
-        "optOut" : {
-          "title" : "It's time to upgrade",
-          "description" : "Upgrade to our latest devices with <0>{{discount}}% discount</0> for an enhanced security and a seamless experience.",
-          "cta" : "Level up my wallet",
-          "linkText" : "Learn more"
-        }
-      },
-      "notifications" : {
-        "optIn" : {
-          "description" : "Updates are ending soon. Upgrade now with {{discount}}% off for a seamless experience.",
-          "cta" : "Level up my wallet",
-          "linkText" : "Learn more"
-        },
-        "optOut" : {
-          "description" : "Updates are ending soon. Upgrade now with {{discount}}% off for a seamless experience.",
-          "cta" : "Level up my wallet",
-          "linkText" : "Learn more"
-        }
-      }
+    "opted_in" : {
+      "title" : "อย่าให้หน่วยความจำที่จำกัด จำกัดประสบการณ์ของคุณไปด้วย",
+      "description" : "อัปเกรด Nano S ของคุณเป็น Ledger รุ่นใหม่กว่า —เช่น Ledger Flex — เพื่อเพิ่มหน่วยความจำ, มาตรฐานความปลอดภัยที่อัปเดตล่าสุด, ฟีเจอร์ใหม่ และ <0>ส่วนลดพิเศษ {{discount}}%</>",
+      "cta" : "อัปเกรด My Ledger"
+    },
+    "opted_out" : {
+      "description" : "หน่วยความจำที่จำกัดของ Ledger Nano S ของคุณจะยับยั้งการเข้าถึงฟีเจอร์ล่าสุด การเปลี่ยนแปลงบล็อกเชน และการเพิ่มความปลอดภัยให้กับคุณ เพื่อการใช้งานระยะยาว ควรอัปเกรดเป็นอุปกรณ์ Ledger รุ่นใหม่กว่า",
+      "cta" : "ทำไมฉันจึงควรอัปเกรด?"
     }
   }
 }
