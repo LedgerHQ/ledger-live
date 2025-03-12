@@ -78,7 +78,6 @@ export class DeviceManagementKitTransport extends Transport {
     }
 
     tracer.trace(`[disconnect] device found ${device.id}`, context);
-    console.warn("FOUND CONNECTED DEVICE => DISCONNECT", device);
 
     const disconnectCall$ = from(
       getDeviceManagementKit().disconnect({ sessionId: device.sessionId }),
@@ -114,14 +113,9 @@ export class DeviceManagementKitTransport extends Transport {
       "[open] activeSessionId: " + activeSessionId + " and deviceId: " + deviceOrId,
       context,
     );
-    console.log(
-      "[open] activeSessionId: " + activeSessionId + " and deviceId: " + deviceOrId,
-      context,
-    );
 
     if (activeSessionId) {
       tracer.trace(`[open] checking existing session ${activeSessionId}`);
-      console.log("[open] checking existing session " + activeSessionId);
 
       const deviceSessionState: DeviceSessionState | null = await firstValueFrom(
         getDeviceManagementKit().getDeviceSessionState({ sessionId: activeSessionId }),
@@ -140,9 +134,14 @@ export class DeviceManagementKitTransport extends Transport {
 
       console.log("[open] deviceSessionState", deviceSessionState, context);
 
+      const connectedDevice = getDeviceManagementKit().getConnectedDevice({
+        sessionId: activeSessionId,
+      });
+
       if (
         deviceSessionState?.deviceStatus !== DeviceStatus.NOT_CONNECTED &&
-        activeDeviceSessionSubject.value?.transport
+        activeDeviceSessionSubject.value?.transport &&
+        connectedDevice.id === deviceOrId
       ) {
         tracer.trace(
           "[open] reusing existing session and instantiating a new DmkTransport",
@@ -176,7 +175,6 @@ export class DeviceManagementKitTransport extends Transport {
             tracer.trace("[open] device not found in available devices", context);
             throw new Error("Device not found");
           }
-          console.log("FOUND DEVICE => CONNECT", found, context);
 
           console.log("[DeviceManagementKitTransport][open] device found", found, context);
           tracer.trace(`[open] device found ${found.id}`, context);
@@ -298,7 +296,7 @@ export class DeviceManagementKitTransport extends Transport {
   };
 
   close() {
-    console.log("[close]");
+    tracer.trace("[close] closing transport");
     // this.dmk.stopDiscovering();
     return Promise.resolve();
   }
@@ -310,7 +308,7 @@ export class DeviceManagementKitTransport extends Transport {
     try {
       this.dmk.disconnect({ sessionId: this.sessionId });
     } catch (error) {
-      console.error("[disconnect] error", error);
+      tracer.trace("[disconnect] error", { error });
     }
   }
 
@@ -332,9 +330,10 @@ export class DeviceManagementKitTransport extends Transport {
         tracer.trace(`[exchange] <= ${response.toString("hex")}`);
         return response;
       })
-      .catch(e => {
-        console.error("[exchange] error", e);
-        throw e;
+      .catch(error => {
+        tracer.trace("[exchange] error", { error });
+        console.error("[exchange] error", error);
+        throw error;
       });
   }
 }

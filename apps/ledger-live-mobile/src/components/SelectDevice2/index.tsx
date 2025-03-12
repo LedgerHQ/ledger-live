@@ -27,11 +27,7 @@ import { useDebouncedRequireBluetooth } from "../RequiresBLE/hooks/useRequireBlu
 import RequiresBluetoothDrawer from "../RequiresBLE/RequiresBluetoothDrawer";
 import QueuedDrawer from "../QueuedDrawer";
 import { DeviceList } from "./DeviceList";
-import {
-  useBleDevicesScanning,
-  useDeviceManagementKit,
-  useDisableDeviceSessionRefresher,
-} from "@ledgerhq/live-dmk-mobile";
+import { useBleDevicesScanning, useDeviceManagementKit } from "@ledgerhq/live-dmk-mobile";
 import { useBleDevicesScanning as useLegacyBleDevicesScanning } from "@ledgerhq/live-common/ble/hooks/useBleDevicesScanning";
 import getBLETransport from "../../react-native-hw-transport-ble";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
@@ -74,6 +70,7 @@ export default function SelectDevice({
   withMyLedgerTracking,
   filterByDeviceModelId,
   children,
+  stopBleScanning,
 }: Props) {
   const [USBDevice, setUSBDevice] = useState<Device | undefined>();
   const [ProxyDevice, setProxyDevice] = useState<Device | undefined>();
@@ -266,9 +263,6 @@ export default function SelectDevice({
       dispatch(updateMainNavigatorVisibility(true));
     };
   }, [dispatch]);
-
-  const dmk = useDeviceManagementKit();
-  useDisableDeviceSessionRefresher(dmk, isLDMKEnabled);
 
   // Makes sure that when loosing (screen) focus, the visibility of the bottom tab bar is reset
   useEffect(() => {
