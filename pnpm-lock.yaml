@@ -4362,8 +4362,8 @@ importers:
         specifier: 3.0.3
         version: 3.0.3(@types/node@22.10.10)(eslint@8.57.0)(lodash@4.17.21)(prettier@3.2.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.1.3)
       '@zondax/ledger-filecoin':
-        specifier: ^0.11.2
-        version: 0.11.2
+        specifier: ^2.0.2
+        version: 2.0.2
       '@zondax/ledger-icp':
         specifier: ^0.7.0
         version: 0.7.0
@@ -12171,6 +12171,9 @@ packages:
   '@ledgerhq/cryptoassets-evm-signatures@13.5.2':
     resolution: {integrity: sha512-OjjzuiMMEIYEbXeueJB6mXwlvYhru28b43buAVOeggZ2XmdlT0kBvt7Cjn4bDPqff/glWR7vQdytIr7b77m2EQ==}
 
+  '@ledgerhq/cryptoassets@6.37.0':
+    resolution: {integrity: sha512-xwrDKTS9koQBNNzc7CqgV6zfGHvNFWJjlIL0Kc4O4DVWYR2vUdztUHcvwHD1KPjxNYhVnsgIopmtq47fHt3nMg==}
+
   '@ledgerhq/device-management-kit@0.6.1':
     resolution: {integrity: sha512-ce4oM6zToJQvLzmnBAgq+hI7aTzJQxbnWYVG32Gr0ZLnb1wn+lcRHAH7KIp+neoYrOxwMJ21j0aWb6vSYmLlcw==}
     peerDependencies:
@@ -12199,6 +12202,9 @@ packages:
 
   '@ledgerhq/evm-tools@1.3.0':
     resolution: {integrity: sha512-NeMhQlcEJRkgM4Yaap+Xngm2wIib3wUoXJTvIbBt8L/yJu5A0fN8v84pprh50JC7e1X0sL4r8do8XqdxXb9Gpg==}
+
+  '@ledgerhq/hw-app-eth@6.29.7':
+    resolution: {integrity: sha512-8ijfmsZdnaaWg5Ne+Zsu4y22Ba+VyGy1Nq7cuhM+1Uz1dpQDwrbbFlYqluqi17c4hRP0uaaPDLvyitxNelllNQ==}
 
   '@ledgerhq/hw-transport-mocker@6.29.4':
     resolution: {integrity: sha512-CLDIpQ/eqU8qrCYGY9MyHa+oMgqs6PuNkWtqbcaS4AzNx8L/9bv7y8CZwCjxX6oB/2ZEq42RlL6oZ6Ou3oHnoQ==}
@@ -17479,8 +17485,8 @@ packages:
       '@babel/core': ^7.17.5
       '@types/node': ^17.0.21
 
-  '@zondax/ledger-filecoin@0.11.2':
-    resolution: {integrity: sha512-S7dTCxSiB9cBQQc2zhLKQolU3EPVQD2tozXKnd5XTfIqBMkFP8Hi/6f7u3a196V3knMR62Sf4gsEM/cVV5QhAg==}
+  '@zondax/ledger-filecoin@2.0.2':
+    resolution: {integrity: sha512-n3HgiWVYk2Mnnc21ZpsRWhqOqjzueiGpVN5ctpyfeQ17KKYtICtyWKZSqxEVPGrM9USMrH4ftLne67ztJQ95Lg==}
 
   '@zondax/ledger-icp@0.7.0':
     resolution: {integrity: sha512-kJhGUQJZGA0iRYmUag5PMkcQyG0zFFn3nCfvhhV6E+J9aYJ2KgCGJE+2lbnoeKMhsy1EOJrIKPvpG23Pt4l0Qg==}
@@ -18007,6 +18013,9 @@ packages:
 
   axios@0.21.4:
     resolution: {integrity: sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg==}
+
+  axios@0.26.1:
+    resolution: {integrity: sha512-fPwcX4EvnSHuInCMItEhAGnaSEXRBjtzh9fOtsE6E1G6p7vl7edEeZe11QHf18+6+9gR5PbKV/sGKNaD8YaMeA==}
 
   axios@1.7.4:
     resolution: {integrity: sha512-DukmaFRnY6AzAALSH4J2M3k6PkaC+MfaAGdEERRWcC9q3/TWQwLpHR8ZRLKTdQ3aBDL64EdluRDjJqKw+BPZEw==}
@@ -30684,6 +30693,9 @@ packages:
   varint@5.0.2:
     resolution: {integrity: sha512-lKxKYG6H03yCZUpAGOPOsMcGxd1RHCu1iKvEHYDPmTyq2HueGhD73ssNBqqQWfvYs04G9iUFRvmAVLW20Jw6ow==}
 
+  varint@6.0.0:
+    resolution: {integrity: sha512-cXEIW6cfr15lFv563k4GuVuW/fiwjknytD37jIOLSdSWuOI6WnO/oKwmP2FQTU2l01LP8/M5TSAJpzUaGe3uWg==}
+
   varuint-bitcoin@1.1.2:
     resolution: {integrity: sha512-4EVb+w4rx+YfVM32HQX42AbbT7/1f5zwAYhIujKXKk8NQK+JfRVl3pqT3hjNn/L+RstigmGGKVwHA/P0wgITZw==}
 
@@ -38860,6 +38872,10 @@ snapshots:
       '@ledgerhq/live-env': 2.4.1
       axios: 1.7.7
 
+  '@ledgerhq/cryptoassets@6.37.0':
+    dependencies:
+      invariant: 2.2.4
+
   '@ledgerhq/device-management-kit@0.6.1(rxjs@7.8.1)':
     dependencies:
       '@sentry/minimal': 6.19.7
@@ -38924,6 +38940,18 @@ snapshots:
       '@ledgerhq/live-env': 2.4.1
       axios: 1.7.7
       crypto-js: 4.2.0
+
+  '@ledgerhq/hw-app-eth@6.29.7':
+    dependencies:
+      '@ethersproject/abi': 5.7.0
+      '@ethersproject/rlp': 5.7.0
+      '@ledgerhq/cryptoassets': 6.37.0
+      '@ledgerhq/errors': 6.19.1
+      '@ledgerhq/hw-transport': 6.31.4
+      '@ledgerhq/hw-transport-mocker': 6.29.4
+      '@ledgerhq/logs': 6.12.0
+      axios: 0.26.1
+      bignumber.js: 9.1.2
 
   '@ledgerhq/hw-transport-mocker@6.29.4':
     dependencies:
@@ -47712,10 +47740,13 @@ snapshots:
       - webpack-sources
       - whiskers
 
-  '@zondax/ledger-filecoin@0.11.2':
+  '@zondax/ledger-filecoin@2.0.2':
     dependencies:
       '@babel/runtime': 7.24.1
-      '@ledgerhq/hw-transport': 5.51.1
+      '@ledgerhq/cryptoassets': 6.37.0
+      '@ledgerhq/hw-app-eth': 6.29.7
+      '@ledgerhq/hw-transport': 6.31.4
+      varint: 6.0.0
 
   '@zondax/ledger-icp@0.7.0':
     dependencies:
@@ -48317,6 +48348,10 @@ snapshots:
     dependencies:
       follow-redirects: 1.15.6
 
+  axios@0.26.1:
+    dependencies:
+      follow-redirects: 1.15.6
+
   axios@1.7.4:
     dependencies:
       follow-redirects: 1.15.6
@@ -48598,7 +48633,7 @@ snapshots:
 
   babel-plugin-styled-components@2.1.4(@babel/core@7.24.3)(styled-components@5.3.11(@babel/core@7.24.3)(react-dom@18.3.1(react@18.3.1))(react-is@18.3.1)(react@18.3.1)):
     dependencies:
-      '@babel/helper-annotate-as-pure': 7.22.5
+      '@babel/helper-annotate-as-pure': 7.25.9
       '@babel/helper-module-imports': 7.24.3
       '@babel/plugin-syntax-jsx': 7.24.1(@babel/core@7.24.3)
       lodash: 4.17.21
@@ -48609,7 +48644,7 @@ snapshots:
 
   babel-plugin-styled-components@2.1.4(@babel/core@7.24.3)(styled-components@5.3.11(@babel/core@7.24.3)(react-is@18.3.1)(react@18.3.1)):
     dependencies:
-      '@babel/helper-annotate-as-pure': 7.22.5
+      '@babel/helper-annotate-as-pure': 7.25.9
       '@babel/helper-module-imports': 7.24.3
       '@babel/plugin-syntax-jsx': 7.24.1(@babel/core@7.24.3)
       lodash: 4.17.21
@@ -66626,6 +66661,8 @@ snapshots:
   value-equal@1.0.1: {}
 
   varint@5.0.2: {}
+
+  varint@6.0.0: {}
 
   varuint-bitcoin@1.1.2:
     dependencies:
