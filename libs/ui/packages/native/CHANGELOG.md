@@ -1,5 +1,11 @@
 # @ledgerhq/native-ui
 
+## 0.30.0-nightly.0
+
+### Minor Changes
+
+- [#9477](https://github.com/LedgerHQ/ledger-live/pull/9477) [`a9bc76f`](https://github.com/LedgerHQ/ledger-live/commit/a9bc76f64ce80ed60b943f1daaa088fd410f856c) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Fix Thai high prio UI issues
+
 ## 0.29.1
 
 ### Patch Changes

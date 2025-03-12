@@ -1,5 +1,11 @@
 ## 34.5.0-next.4
 
+## 34.25.0-nightly.4
+
+### Minor Changes
+
+- [#9495](https://github.com/LedgerHQ/ledger-live/pull/9495) [`450afb3`](https://github.com/LedgerHQ/ledger-live/commit/450afb3dce381f4c42fb50311b4a9429876572ff) Thanks [@CremaFR](https://github.com/CremaFR)! - feat: lifi ERC20
+
 ## 34.25.0-nightly.3
 
 ### Minor Changes

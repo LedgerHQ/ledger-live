@@ -1,5 +1,23 @@
 # live-mobile
 
+## 3.69.0-nightly.4
+
+### Minor Changes
+
+- [#9474](https://github.com/LedgerHQ/ledger-live/pull/9474) [`e49445b`](https://github.com/LedgerHQ/ledger-live/commit/e49445bed6c549398e4d88f2916c4617b1ad4bf6) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Fix large padding on Swap connect device screen
+
+- [#9486](https://github.com/LedgerHQ/ledger-live/pull/9486) [`00e7a32`](https://github.com/LedgerHQ/ledger-live/commit/00e7a320e78b0b6f04535af5e5f92151d8c88d63) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - Feat: reverse the order displayed on Market asset page
+
+- [#9485](https://github.com/LedgerHQ/ledger-live/pull/9485) [`f7b5967`](https://github.com/LedgerHQ/ledger-live/commit/f7b5967aa5e3ff1ba2148f2136425c412293de08) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - Add analytics on discreet mode
+
+- [#9477](https://github.com/LedgerHQ/ledger-live/pull/9477) [`a9bc76f`](https://github.com/LedgerHQ/ledger-live/commit/a9bc76f64ce80ed60b943f1daaa088fd410f856c) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Fix Thai high prio UI issues
+
+### Patch Changes
+
+- Updated dependencies [[`450afb3`](https://github.com/LedgerHQ/ledger-live/commit/450afb3dce381f4c42fb50311b4a9429876572ff), [`a9bc76f`](https://github.com/LedgerHQ/ledger-live/commit/a9bc76f64ce80ed60b943f1daaa088fd410f856c)]:
+  - @ledgerhq/live-common@34.25.0-nightly.4
+  - @ledgerhq/native-ui@0.30.0-nightly.0
+
 ## 3.69.0-nightly.3
 
 ### Minor Changes

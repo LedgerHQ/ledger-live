@@ -1,5 +1,18 @@
 # ledger-live-desktop
 
+## 2.103.0-nightly.4
+
+### Minor Changes
+
+- [#9453](https://github.com/LedgerHQ/ledger-live/pull/9453) [`3d3dbbe`](https://github.com/LedgerHQ/ledger-live/commit/3d3dbbed13b5dc3f57223ea0bfd16580297de2e5) Thanks [@thesan](https://github.com/thesan)! - Exclude users with 2 or more swaps from the LNS upsell campaign
+
+- [#9453](https://github.com/LedgerHQ/ledger-live/pull/9453) [`11ffe18`](https://github.com/LedgerHQ/ledger-live/commit/11ffe1802262ba0e93c05b6554f10e40b1aa5045) Thanks [@thesan](https://github.com/thesan)! - Signal unseen LNS upsell notif
+
+### Patch Changes
+
+- Updated dependencies [[`450afb3`](https://github.com/LedgerHQ/ledger-live/commit/450afb3dce381f4c42fb50311b4a9429876572ff)]:
+  - @ledgerhq/live-common@34.25.0-nightly.4
+
 ## 2.103.0-nightly.3
 
 ### Minor Changes
