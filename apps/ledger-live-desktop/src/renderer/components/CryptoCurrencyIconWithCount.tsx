@@ -22,10 +22,19 @@ const Wrapper = styled.div<{
   ${p =>
     p.doubleIcon
       ? `
-  margin-right: -12px;`
+        padding-right: 10px;
+        > :nth-child(2) {
+            position: absolute;
+            bottom: -10px;
+            left: 2px;
+            border: 2px solid transparent;
+        }
+      `
       : `
-  display: flex;
-  align-items: center;`}
+    display: flex;
+    align-items: center;
+  `}
+  position: relative;
 
   line-height: ${p => (p.bigger ? "18px" : "18px")};
   font-size: ${p => (p.bigger ? "12px" : "12px")};
@@ -33,25 +42,24 @@ const Wrapper = styled.div<{
   > :nth-child(2) {
     margin-top: ${p => (p.bigger ? "-14px" : "-12px")};
     margin-left: ${p => (p.bigger ? "10px" : "8px")};
-
-    border: 2px solid transparent;
   }
 `;
 
 const CryptoCurrencyIconWithCount = ({ currency, bigger, withTooltip, inactive, count }: Props) => {
+  const cuscount = 15;
   const theme = useTheme();
   const color = inactive
     ? theme.colors.palette.text.shade60
     : getCurrencyColor(currency, theme.colors.palette.background.paper);
   const size = bigger ? 20 : 16;
-  const fontSize = size / 2 + (count < 10 ? 2 : count >= 100 ? -2 : 0);
+  const fontSize = size / 2 + (cuscount < 10 ? 2 : cuscount >= 100 ? -2 : 0);
   const content = (
-    <Wrapper doubleIcon={count > 0} bigger={bigger}>
+    <Wrapper doubleIcon={true} bigger={bigger}>
       <CryptoCurrencyIcon inactive={inactive} currency={currency} size={size} />
-      {count > 0 && (
+      {true && (
         <TokenIconWrapper>
           <TokenIcon color={color} size={size} fontSize={fontSize}>
-            {`+${count}`}
+            {`+${cuscount}`}
           </TokenIcon>
         </TokenIconWrapper>
       )}
