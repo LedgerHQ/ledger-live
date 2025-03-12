@@ -261,7 +261,7 @@
       "description" : "โปรดบันทึก Log ของคุณโดยใช้ปุ่มด้านล่าง และส่งให้ Ledger Support"
     },
     "DeviceNameInvalid" : {
-      "title" : "โปรดตั้งชื่ออุปกรณ์โดยไม่มี '{{invalidCharacters}}'"
+      "title" : "โปรดตั้งชื่ออุปกรณ์โดยไม่มี '{{invalidCharacters}}}'"
     },
     "DeviceOnDashboardExpected" : {
       "title" : "อุปกรณ์ไม่ได้อยู่บนแดชบอร์ด",
@@ -1060,6 +1060,9 @@
     },
     "AppManifestNotFoundError" : {
       "title" : "โหลดแอป Swap Live ไม่สำเร็จ"
+    },
+    "InvalidMemoMina" : {
+      "title" : "Memo text cannot be longer than 32 characters"
     }
   },
   "crash" : {
@@ -2497,12 +2500,12 @@
       "CREATE" : "สร้างแล้ว",
       "REVEAL" : "เปิดเผยแล้ว",
       "DELEGATE" : "Delegate เรียบร้อยแล้ว",
-      "UNDELEGATE" : "Undelegate เรียบร้อยแล้ว",
+      "UNDELEGATE" : "Undelegate แล้ว",
       "REDELEGATE" : "Redelegate เรียบร้อยแล้ว",
       "VOTE" : "โหวตแล้ว",
       "FREEZE" : "ถูก Freeze",
       "UNFREEZE" : "Unfreeze แล้ว",
-      "UNDELEGATE_RESOURCE" : "Undelegate เรียบร้อยแล้ว",
+      "UNDELEGATE_RESOURCE" : "Undelegate แล้ว",
       "WITHDRAW_EXPIRE_UNFREEZE" : "การถอน",
       "LEGACYUNFREEZE" : "Unfreeze แล้ว",
       "REWARD" : "Reward ที่ขอรับแล้ว",
@@ -2625,6 +2628,10 @@
         "description3" : "Integration นี้ดำเนินการโดย {{team}} ด้วยความร่วมมือกับ Ledger",
         "description3Link" : "การดำเนินการนี้เป็นความร่วมมือระหว่าง <1><0>{{team}}</0></1> และ Ledger"
       }
+    },
+    "migrationBanner" : {
+      "title" : "{{from}} กำลัง Migrate ไปที่ {{to}} ติดตาม<0>ลิงก์</0>นี้เพื่อเรียนรู้เพิ่มเติมหรือติดต่อฝ่ายสนับสนุนหากคุณต้องการขอความช่วยเหลือ",
+      "contactSupport" : "ติดต่อฝ่ายสนับสนุน"
     },
     "willBedeprecatedBanner" : {
       "title" : "เพื่อปรับปรุงประสิทธิภาพ จะไม่มีการรองรับ {{currencyName}} ใน Ledger Live ตั้งแต่วันที่ {{deprecatedDate}} อย่างไรก็ตาม สกุลเงินจะยังคงได้รับการสนับสนุนบน Hardware Wallet ของ Ledger โปรดติดต่อฝ่ายสนับสนุนลูกค้าของ Ledger หากคุณต้องการความช่วยเหลือในเรื่องนี้",
@@ -2749,7 +2756,7 @@
     "bandwidth" : "Bandwidth",
     "energy" : "Energy",
     "delegatedAssets" : "สินทรัพย์ที่ Delegate",
-    "undelegating" : "กำลัง Undelegate",
+    "undelegating" : "กำลังทำการ Undelegate",
     "delegation" : {
       "sectionLabel" : "การ Delegate",
       "addDelegation" : "เพิ่มการ Delegate",
@@ -3534,12 +3541,12 @@
         "apt_description" : "เพื่อ Swap Aptos ให้ใช้อุปกรณ์ Ledger ที่เข้ากันอื่น ๆ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™",
         "cosmos_title" : "Ledger Nano S™ ไม่รองรับการ Swap Cosmos",
         "cosmos_description" : "เพื่อ Swap Cosmos ให้ใช้อุปกรณ์ Ledger ที่เข้ากันอื่น ๆ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™",
-        "osmo_title" : "Ledger Nano S™ does not support swapping Osmosis",
-        "osmo_description" : "To swap Osmosis, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
-        "dydx_title" : "Ledger Nano S™ does not support swapping dYdX",
-        "dydx_description" : "To swap dYdX, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
-        "sui_title" : "Ledger Nano S™ does not support swapping Sui",
-        "sui_description" : "To swap Sui, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
+        "osmo_title" : "Ledger Nano S™ ไม่รองรับการ Swap Osmosis",
+        "osmo_description" : "เพื่อ Swap Osmosis ให้ทำธุรกรรมผ่านอุปกรณ์ Ledger รุ่นอื่นที่ใช้ได้ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™",
+        "dydx_title" : "Ledger Nano S™ ไม่รองรับการ Swap dYdX",
+        "dydx_description" : "เพื่อ Swap dYdX ให้ทำธุรกรรมผ่านอุปกรณ์ Ledger รุ่นอื่นที่ใช้ได้ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™",
+        "sui_title" : "Ledger Nano S™ ไม่รองรับการ Swap Sui",
+        "sui_description" : "ในการ Swap Sui ให้ทำธุรกรรมผ่านอุปกรณ์ Ledger รุ่นอื่นที่ใช้ได้ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™"
       }
     },
     "lending" : {
@@ -5523,10 +5530,10 @@
         "steps" : {
           "amount" : {
             "allAssetsUsed" : "เลือกสินทรัพย์ทั้งหมดแล้ว",
-            "assetsRemaining" : "สินทรัพย์ที่เหลือที่ Delegate ได้: <0>{{amount}}</0>",
+            "assetsRemaining" : "สินทรัพย์ที่เหลือที่ Delegate ได้: <0>{{amount}}}</0>",
             "minAmount" : "จำนวนขั้นต่ำ: <0>{{min}}</0>",
             "incorrectAmount" : "จำนวนสูงสุด: <0>{{max}}</0>",
-            "minRemaining" : "เหลือขั้นต่ำ: <0>{{min}}</0>"
+            "minRemaining" : "เหลือขั้นต่ำ: <0>{{min}}}</0>"
           },
           "verification" : {
             "success" : {
@@ -5812,7 +5819,7 @@
       "oversubscribed" : "สมัครติดตามเกิน ({{nominatorsCount}})",
       "oversubscribedInfo" : "เฉพาะผู้เสนอชื่อ {{maxNominatorRewardedPerValidator}} อันดับแรกที่มีจำนวนการผูกมัดสูงสุดเท่านั้นที่จะได้รับ Reward",
       "hasPendingBondOperation" : "การดำเนินการผูกมัดยังรอการยืนยัน",
-      "externalControllerUnsupported" : "บัญชี Stash นี้ควบคุมโดยบัญชีแยกต่างหาก ซึ่งมี Address คือ <0>{{controllerAddress}}</0> ในการ Stake กับ Ledger Live คุณต้องตั้งค่าบัญชี Stash นี้เป็นผู้ควบคุมเอง",
+      "externalControllerUnsupported" : "บัญชี Stash นี้ควบคุมโดยบัญชีแยกต่างหาก ซึ่งมี Address คือ <0>{{controllerAddress}}}</0> ในการ Stake กับ Ledger Live คุณต้องตั้งค่าบัญชี Stash นี้เป็นผู้ควบคุมเอง",
       "externalStashUnsupported" : "บัญชีนี้เป็นผู้ควบคุมบัญชี Stash แยกต่างหากซึ่งมี Address ที่ <0>{{stashAddress}}</0 > ในการ Stake กับ Ledger Live คุณต้องตั้งค่าบัญชี Stash นี้เป็นผู้ควบคุมเอง",
       "showInactiveNominations" : "แสดงการเสนอชื่อทั้งหมด ({{count}})",
       "hideInactiveNominations" : "แสดงเฉพาะการเสนอชื่อที่ใช้งานเท่านั้น",
@@ -6715,7 +6722,7 @@
     "rotateImage" : "หมุน",
     "allowPreview" : "แตะที่ “โหลดภาพ” เพื่อปรับแต่งหน้าจอล็อกสกรีน",
     "loadingPicture" : "กำลังโหลด...",
-    "loadingPictureAlmostOver" : "แค่นี้เอง!",
+    "loadingPictureAlmostOver" : "ครบถ้วนแล้ว!",
     "commitRequested" : "ชอบสิ่งที่เห็น?\nเก็บไว้เลยสิ!",
     "confirmPicture" : "ยืนยันบน {{productName}}",
     "landingPage" : {
