@@ -1060,6 +1060,9 @@
     },
     "AppManifestNotFoundError" : {
       "title" : "Swap Live 앱을 로드하지 못했습니다"
+    },
+    "InvalidMemoMina" : {
+      "title" : "메모 텍스트는 32자를 초과할 수 없습니다."
     }
   },
   "crash" : {
@@ -2625,6 +2628,10 @@
         "description3" : "이 통합은 Ledger와 협력을 통해 {{team}} 에서 수행했습니다.",
         "description3Link" : "이 통합은 Ledger와 협력을 통해 <1><0>{{team}}</0></1>에서 수행했습니다."
       }
+    },
+    "migrationBanner" : {
+      "title" : "{{from}}가 {{to}}으로 마이그레이션되고 있습니다. <0>이 링크</0>에서 자세한 내용을 알아보고, 도움이 필요한 경우 지원팀에 문의하세요.",
+      "contactSupport" : "지원 부서 연락"
     },
     "willBedeprecatedBanner" : {
       "title" : "효율성을 최적화하기 위해 {{currencyName}}은 {{deprecatedDate}}부터 Ledger Live에서 지원되지 않습니다. 그러나 Ledger 하드웨어 지갑에서는 계속 지원됩니다. 이와 관련하여 도움이 필요하다면 Ledger 고객 지원팀에 문의하세요.",
