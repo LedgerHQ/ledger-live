@@ -22,7 +22,10 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
 
   const isEthereumAccount = account.type === "Account" && account.currency.id === "ethereum";
   const isBscAccount = account.type === "Account" && account.currency.id === "bsc";
-  const isPOLAccount = account.type === "Account" && account.currency.id === "polygon";
+  const isPOLAccount =
+    account.type === "TokenAccount" &&
+    account.token.id === "ethereum/erc20/polygon_ecosystem_token";
+  const isAvaxAccount = account.type === "Account" && account.currency.id === "avalanche_c_chain";
 
   const onClickStakekit = useCallback(
     (yieldId: string) => {
@@ -65,8 +68,17 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
       onClickStakekit("bsc-bnb-native-staking");
     } else if (isPOLAccount) {
       onClickStakekit("ethereum-matic-native-staking");
+    } else if (isAvaxAccount) {
+      onClickStakekit("avalanche-avax-liquid-staking");
     }
-  }, [isEthereumAccount, isBscAccount, onClickStakeModal, onClickStakekit, isPOLAccount]);
+  }, [
+    isEthereumAccount,
+    isBscAccount,
+    isAvaxAccount,
+    onClickStakeModal,
+    onClickStakekit,
+    isPOLAccount,
+  ]);
 
   if (isEthereumAccount || isBscAccount || isPOLAccount) {
     return [
