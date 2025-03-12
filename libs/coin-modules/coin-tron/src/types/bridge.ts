@@ -77,7 +77,7 @@ export type TrongridTxInfo = {
   date: Date;
   type: TrongridTxType;
   tokenId?: string;
-  tokenAddressOrId?: string;
+  tokenAddress?: string;
   tokenType?: string;
   from: string;
   to?: string;

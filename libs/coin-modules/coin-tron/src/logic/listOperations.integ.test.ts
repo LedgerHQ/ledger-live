@@ -1,6 +1,7 @@
 import { listOperations } from "./listOperations";
 import coinConfig from "../config";
 import { Operation } from "@ledgerhq/coin-framework/api/types";
+import { TronToken } from "../types";
 
 describe("listOperations", () => {
   beforeAll(() => {
@@ -21,7 +22,7 @@ describe("listOperations", () => {
     // 255 as of 17/02/2025
     const historySize = 255;
 
-    let operations: Operation[];
+    let operations: Operation<TronToken>[];
 
     const testingAccount = "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9";
 
@@ -123,27 +124,36 @@ describe("listOperations", () => {
           // Sends 5.911874 LOVE from TWBEcQ57vbFSEhrQCvsHLDuSb39wprpsEX to TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9
           const txHash = "242591f43c74e45bf4c5c423be2f600c9a53237bde4c793faff5f3120f8745d7";
           const operation = operations.find(op => op.tx.hash === txHash);
-          expect(operation).toBeDefined();
-          expect(operation!.type).toEqual("IN");
-          expect(operation!.value).toEqual(BigInt(5.911874 * magnitudeMultiplier));
-          expect(operation!.recipients.includes(testingAccount)).toEqual(true);
-          expect(operation!.senders.includes("TWBEcQ57vbFSEhrQCvsHLDuSb39wprpsEX")).toEqual(true);
-          expect(operation!.asset?.standard).toEqual("trc10");
-          expect(operation!.asset?.tokenAddressOrId).toEqual("1004031");
-          expect(operation!.operationIndex).toEqual(0);
+          expect(operation).toMatchObject(
+            expect.objectContaining({
+              type: "IN",
+              value: BigInt(5.911874 * magnitudeMultiplier),
+              recipients: [testingAccount],
+              senders: ["TWBEcQ57vbFSEhrQCvsHLDuSb39wprpsEX"],
+              asset: {
+                standard: "trc10",
+                tokenId: "1004031",
+              },
+              operationIndex: 0,
+            }),
+          );
         });
 
         it("should return TRC10 OUT operations correctly", () => {
           // https://tronscan.org/#/transaction/aad221c56cda364f6c8404298fb4132af850c07ae701e1b2af0c981ae38f2b35
           const txHash = "aad221c56cda364f6c8404298fb4132af850c07ae701e1b2af0c981ae38f2b35";
           const operation = operations.find(op => op.tx.hash === txHash);
-          expect(operation).toBeDefined();
-          expect(operation!.type).toEqual("OUT");
-          expect(operation!.value).toEqual(BigInt(1 * magnitudeMultiplier));
-          expect(operation!.senders.includes(testingAccount)).toEqual(true);
-          expect(operation!.asset?.standard).toEqual("trc10");
-          expect(operation!.asset?.tokenAddressOrId).toEqual("1002000");
-          expect(operation!.operationIndex).toEqual(0);
+          expect(operation).toMatchObject({
+            type: "OUT",
+            value: BigInt(1 * magnitudeMultiplier),
+            senders: [testingAccount],
+            recipients: ["TVKG4gUar24bpAVrDv4GSzyDRtPkjPkogL"],
+            asset: {
+              standard: "trc10",
+              tokenId: "1002000",
+            },
+            operationIndex: 0,
+          });
         });
       });
 
@@ -153,14 +163,17 @@ describe("listOperations", () => {
           // Receive 0.000376 USDT from TUgU8FRUFSUfxTAoSPsaUBzJgSwpUuJs9N
           const txHash = "548f235c69eaab2aedaddb5b4763303316d02c2ec4d25617cc3c2a26e1b4a201";
           const operation = operations.find(op => op.tx.hash === txHash);
-          expect(operation).toBeDefined();
-          expect(operation!.type).toEqual("IN");
-          expect(operation!.value).toEqual(BigInt(0.000376 * magnitudeMultiplier));
-          expect(operation!.recipients.includes(testingAccount)).toEqual(true);
-          expect(operation?.senders.includes("TUgU8FRUFSUfxTAoSPsaUBzJgSwpUuJs9N")).toBeTruthy();
-          expect(operation!.asset?.standard).toEqual("trc20");
-          expect(operation?.asset?.tokenAddressOrId).toEqual("TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t");
-          expect(operation!.operationIndex).toEqual(0);
+          expect(operation).toMatchObject({
+            type: "IN",
+            value: BigInt(0.000376 * magnitudeMultiplier),
+            senders: ["TUgU8FRUFSUfxTAoSPsaUBzJgSwpUuJs9N"],
+            recipients: [testingAccount],
+            asset: {
+              standard: "trc20",
+              contractAddress: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+            },
+            operationIndex: 0,
+          });
         });
 
         it("should return TRC20 OUT operations correctly", () => {
@@ -168,14 +181,19 @@ describe("listOperations", () => {
           // Send 0.1 WINkLink to TLAhq1ds7UR339t48TpzYcJWtfGnXk1KzX
           const txHash = "c0d12c09cf82ddc3d095b1542f017f1093d76266236ea39a72968ab00e4cb976";
           const operation = operations.find(op => op.tx.hash === txHash);
-          expect(operation).toBeDefined();
-          expect(operation!.type).toEqual("OUT");
-          expect(operation!.value).toEqual(BigInt(0.1 * magnitudeMultiplier));
-          expect(operation!.senders.includes(testingAccount)).toEqual(true);
-          expect(operation!.recipients.includes("TLAhq1ds7UR339t48TpzYcJWtfGnXk1KzX")).toBeTruthy();
-          expect(operation!.asset?.standard).toEqual("trc20");
-          expect(operation?.asset?.tokenAddressOrId).toEqual("TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7");
-          expect(operation!.operationIndex).toEqual(0);
+          expect(operation).toMatchObject(
+            expect.objectContaining({
+              type: "OUT",
+              value: BigInt(0.1 * magnitudeMultiplier),
+              senders: [testingAccount],
+              recipients: ["TLAhq1ds7UR339t48TpzYcJWtfGnXk1KzX"],
+              asset: {
+                standard: "trc20",
+                contractAddress: "TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
+              },
+              operationIndex: 0,
+            }),
+          );
         });
       });
 

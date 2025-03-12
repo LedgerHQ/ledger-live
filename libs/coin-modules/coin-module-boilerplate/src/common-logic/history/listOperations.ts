@@ -1,5 +1,6 @@
 import type { Operation, Pagination } from "@ledgerhq/coin-framework/api/index";
 import { getTransactions } from "../../network/indexer";
+import { BoilerplateToken } from "../../types";
 
 /**
  * Returns list of operations associated to an account.
@@ -12,7 +13,7 @@ import { getTransactions } from "../../network/indexer";
 export async function listOperations(
   address: string,
   page: Pagination,
-): Promise<[Operation[], string]> {
+): Promise<[Operation<BoilerplateToken>[], string]> {
   const transactions = await getTransactions(address, { from: page.minHeight });
   return [transactions.map(convertToCoreOperation(address)), ""];
 }

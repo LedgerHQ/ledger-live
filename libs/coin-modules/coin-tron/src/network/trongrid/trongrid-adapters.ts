@@ -1,33 +1,27 @@
 import { Operation } from "@ledgerhq/coin-framework/api/types";
 import { fromBigNumberToBigInt } from "@ledgerhq/coin-framework/utils";
-import { TrongridTxInfo } from "../../types";
+import type { TrongridTxInfo, TronToken } from "../../types";
 
 export function fromTrongridTxInfoToOperation(
   trongridTxInfo: TrongridTxInfo,
   userAddress: string,
-): Operation {
+): Operation<TronToken> {
   return {
+    operationIndex: 0,
     tx: {
       hash: trongridTxInfo.txID,
       block: { height: trongridTxInfo.blockHeight || 0, time: trongridTxInfo.date },
       fees: fromBigNumberToBigInt<bigint>(trongridTxInfo.fee, BigInt(0)),
     },
-    operationIndex: 0,
-    type: getOperationType(trongridTxInfo, userAddress),
+    type: inferOperationType(trongridTxInfo, userAddress),
     value: fromBigNumberToBigInt<bigint>(trongridTxInfo.value, BigInt(0)),
     senders: [trongridTxInfo.from],
     recipients: trongridTxInfo.to != null ? [trongridTxInfo.to] : [],
-    asset:
-      trongridTxInfo.tokenType != null
-        ? {
-            standard: trongridTxInfo.tokenType,
-            tokenAddressOrId: trongridTxInfo.tokenAddressOrId as string,
-          }
-        : undefined,
+    asset: inferAssetInfo(trongridTxInfo),
   };
 }
 
-function getOperationType(trongridTxInfo: TrongridTxInfo, userAddress: string): string {
+function inferOperationType(trongridTxInfo: TrongridTxInfo, userAddress: string): string {
   switch (true) {
     case trongridTxInfo.from === userAddress &&
       trongridTxInfo.to != null &&
@@ -37,5 +31,25 @@ function getOperationType(trongridTxInfo: TrongridTxInfo, userAddress: string): 
       return "IN";
     default:
       return "UNKNOWN";
+  }
+}
+
+function inferAssetInfo(trongridTxInfo: TrongridTxInfo): TronToken | undefined {
+  switch (true) {
+    case trongridTxInfo.tokenType === "trc10":
+      return {
+        standard: "trc10",
+        // if tokenType is trc10, tokenId is always defined
+        tokenId: trongridTxInfo.tokenId as string,
+      };
+    case trongridTxInfo.tokenType === "trc20":
+      return {
+        standard: "trc20",
+        // if tokenType is trc20, contractAddress is always defined
+        contractAddress: trongridTxInfo.tokenAddress as string,
+      };
+    default:
+      // asset is undefined when dealing with native currency
+      return undefined;
   }
 }
