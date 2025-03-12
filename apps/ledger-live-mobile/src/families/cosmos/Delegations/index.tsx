@@ -99,7 +99,7 @@ function Delegations({ account }: Props) {
   });
   const [delegation, setDelegation] = useState<CosmosMappedDelegation>();
   const [undelegation, setUndelegation] = useState<CosmosMappedUnbonding>();
-  const { canStakeCurrency } = useStake({ currencyId: currency.id, accountId: account.id });
+  const { getCanStakeCurrency } = useStake();
   const [banner, setBanner] = useState<AccountBannerState & { description: string; cta: string }>({
     display: false,
     description: "",
@@ -166,9 +166,9 @@ function Delegations({ account }: Props) {
     setBanner({
       ...state,
       ...bannerText,
-      display: state.display && canStakeCurrency,
+      display: state.display && getCanStakeCurrency(currency.id),
     });
-  }, [account, t, canStakeCurrency]);
+  }, [account, t, getCanStakeCurrency, currency.id]);
 
   const onRedelegateLedger = () => {
     const { validatorSrcAddress, ledgerValidator } = { ...banner };

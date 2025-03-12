@@ -51,9 +51,7 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
   const canBeBought = !currency || isCurrencyAvailable(currency.id, "onRamp");
   const canBeSold = !currency || currency.id === "bitcoin";
 
-  const { canStakeUsingLedgerLive, canStakeUsingPlatformApp } = useStake({
-    currencyId: currency?.id,
-  });
+  const { getCanStakeUsingLedgerLive, getCanStakeUsingPlatformApp } = useStake();
 
   const canBeRecovered = recoverEntryPoint?.enabled;
 
@@ -129,7 +127,7 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
     }
 
     // TODO: replace with params from hook when working
-    if (canStakeUsingPlatformApp) {
+    if (getCanStakeUsingPlatformApp) {
       list.STAKE = {
         disabled: readOnlyModeEnabled,
         route: [
@@ -145,7 +143,7 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
       };
     }
 
-    if (canStakeUsingLedgerLive || !currency) {
+    if (getCanStakeUsingLedgerLive || !currency) {
       list.STAKE = {
         disabled: readOnlyModeEnabled,
         route: [
@@ -198,8 +196,8 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
     hasFunds,
     canBeBought,
     canBeSold,
-    canStakeUsingPlatformApp,
-    canStakeUsingLedgerLive,
+    getCanStakeUsingPlatformApp,
+    getCanStakeUsingLedgerLive,
     canBeRecovered,
     accounts,
     route,

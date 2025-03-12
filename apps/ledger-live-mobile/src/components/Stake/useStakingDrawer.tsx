@@ -1,13 +1,15 @@
 import { useCallback } from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { ParamListBase, RouteProp } from "@react-navigation/native";
-import { Account } from "@ledgerhq/types-live";
+import { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { NavigatorName, ScreenName } from "~/const";
 import perFamilyAccountActions from "../../generated/accountActions";
 import { useSelector } from "react-redux";
 import { walletSelector } from "~/reducers/wallet";
+import { useStake } from "~/newArch/hooks/useStake/useStake";
+import { isAccountEmpty, getMainAccount } from "@ledgerhq/coin-framework/lib/account/helpers";
 
-/** Open the stake flow for a given account from any navigator. Returns to parent route on completion. */
+/** Open the family main actions stake flow for a given account from any navigator. Returns to parent route on completion. */
 export function useStakingDrawer({
   navigation,
   parentRoute,
@@ -21,9 +23,11 @@ export function useStakingDrawer({
 }) {
   const walletState = useSelector(walletSelector);
 
+  const { getRouteToStake } = useStake(); // (account, parentAccount) => void
+
   return useCallback(
-    (account: Account, parentAccount?: Account) => {
-      if (alwaysShowNoFunds) {
+    (account: Account | TokenAccount | AccountLike, parentAccount?: Account) => {
+      if (alwaysShowNoFunds || isAccountEmpty(account)) {
         // get funds to stake with
         navigation.navigate(NavigatorName.Base, {
           screen: NavigatorName.NoFundsFlow,
@@ -37,6 +41,15 @@ export function useStakingDrawer({
             },
           },
         });
+
+        return;
+      }
+
+      const redirectionParams = getRouteToStake(account, walletState, parentAccount);
+
+      if (redirectionParams) {
+        // called onSuccess in the SelectAccount flow
+        navigation.navigate(NavigatorName.Base, redirectionParams);
         return;
       }
 
@@ -54,16 +67,19 @@ export function useStakingDrawer({
             parentRoute,
           })) ||
         [];
-      const stakeFlow = familySpecificMainActions.find(
+      const familyStakeFlow = familySpecificMainActions.find(
         (action: { id: string }) => action.id === "stake",
       )?.navigationParams;
 
-      if (!stakeFlow) {
-        console.error("No stake flow implemented yet for account type or currency", account);
-        return null; // TODO: check for token specific stake flow via hook - i.e. partner redirection stake flow
+      if (!familyStakeFlow) {
+        const mainAccount = getMainAccount(account, parentAccount);
+        console.error(
+          `useStakingDrawer: familyStakeFlow - No stake flow implemented yet for ${mainAccount.currency.family} family`,
+        );
+        return null;
       }
 
-      const [name, options] = stakeFlow;
+      const [name, options] = familyStakeFlow;
 
       // one level deep navigation
       if (!options.screen) {
@@ -91,6 +107,6 @@ export function useStakingDrawer({
         },
       });
     },
-    [alwaysShowNoFunds, parentRoute, navigation, entryPoint, walletState],
+    [alwaysShowNoFunds, getRouteToStake, walletState, parentRoute, navigation, entryPoint],
   );
 }

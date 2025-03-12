@@ -14,10 +14,7 @@ type Props = BaseComposite<StackNavigatorProps<StakeNavigatorParamList, ScreenNa
 
 // This should be a navigator...
 const StakeFlow = ({ route }: Props) => {
-  const { enabledCurrencies, partnerSupportedTokens } = useStake({
-    accountId: route?.params?.account?.id,
-    currencyId: route?.params?.currencies?.length === 1 ? route?.params?.currencies[0] : undefined,
-  });
+  const { enabledCurrencies, partnerSupportedTokens } = useStake();
   const currencies = route?.params?.currencies || enabledCurrencies.concat(partnerSupportedTokens);
   const navigation = useNavigation<StackNavigationProp<{ [key: string]: object | undefined }>>();
   const parentRoute = route?.params?.parentRoute;

@@ -30,7 +30,7 @@ export type ModalOnDisabledClickComponentProps = {
 };
 
 export type NavigationParamsType =
-  | readonly [name: string, options: object]
+  | (readonly [name: string, options: object] & { length: 2 })
   | EntryOf<BaseNavigatorStackParamList>;
 
 export type ActionButtonEventProps = {

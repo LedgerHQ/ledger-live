@@ -259,6 +259,7 @@ export function useDappLogic({
       );
     });
   }, [currentAccount, manifest.dapp?.networks]);
+  }, [currentAccount, currentParentAccount?.currency?.id, manifest.dapp?.networks]);
 
   const currentAddress = useMemo(() => {
     return currentAccount?.type === "Account"

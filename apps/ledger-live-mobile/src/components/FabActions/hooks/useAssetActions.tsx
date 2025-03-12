@@ -1,19 +1,15 @@
 import { useMemo } from "react";
-import { AccountLikeArray, TokenAccount } from "@ledgerhq/types-live";
+import { AccountLikeArray } from "@ledgerhq/types-live";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { IconsLegacy } from "@ledgerhq/native-ui";
-import {
-  getMainAccount,
-  getParentAccount,
-  isTokenAccount,
-} from "@ledgerhq/live-common/account/index";
+import { getParentAccount, isTokenAccount } from "@ledgerhq/live-common/account/index";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { NavigatorName, ScreenName } from "~/const";
 import { readOnlyModeEnabledSelector } from "~/reducers/settings";
-import { ActionButtonEvent, NavigationParamsType } from "..";
+import { ActionButtonEvent } from "..";
 import ZeroBalanceDisabledModalContent from "../modals/ZeroBalanceDisabledModalContent";
 import { sharedSwapTracking } from "~/screens/Swap/utils";
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
@@ -68,14 +64,15 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
     ? getParentAccount(defaultAccount, totalAccounts)
     : undefined;
 
-  const accountCurrency = isTokenAccount(defaultAccount)
-    ? (defaultAccount as TokenAccount)?.token?.id
     : defaultAccount?.currency?.id;
+    : isTokenAccount(defaultAccount)
+      ? defaultAccount?.token?.id
+      : defaultAccount?.currency?.id;
 
-  const { canStakeCurrency, navigationParams: stakeNavigationParams } = useStake({
-    currencyId: currency?.id ?? accountCurrency,
-    accountId: isTokenAccount(defaultAccount) ? defaultAccount.parentId : defaultAccount?.id,
-  });
+  const assetId = currency?.id ?? accountCurrency;
+
+  const { getCanStakeCurrency } = useStake();
+  const canStakeCurrency = !assetId ? false : getCanStakeCurrency(assetId);
 
   const actions = useMemo<ActionButtonEvent[]>(() => {
     const isPtxServiceCtaScreensDisabled = !(ptxServiceCtaScreens?.enabled ?? true);
@@ -160,7 +157,7 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
                   },
                 ]
               : []),
-            ...(canStakeCurrency && !!currency
+            ...(canStakeCurrency && assetId
               ? [
                   {
                     label: t(stakeLabel),
@@ -168,10 +165,18 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
                     event: "button_clicked",
                     eventProperties: {
                       button: "stake",
-                      currency: currency.ticker || currency.id.toUpperCase(),
+                      currency: currency?.ticker || assetId.toUpperCase(),
                       flow: "stake",
                     },
-                    navigationParams: stakeNavigationParams ?? [],
+                    navigationParams: [
+                      NavigatorName.StakeFlow,
+                      {
+                        screen: ScreenName.Stake,
+                        params: {
+                          currency: assetId,
+                        },
+                      },
+                    ] as const,
                   },
                 ]
               : []),
@@ -250,9 +255,9 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
     availableOnSwap,
     defaultAccount,
     parentAccount,
-    canStakeCurrency,
     stakeLabel,
-    stakeNavigationParams,
+    assetId,
+    canStakeCurrency,
   ]);
 
   return {

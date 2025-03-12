@@ -53,14 +53,10 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
 
   //  const { isOpen, onModalHide, onClose } = useRootDrawerContext(); TODO: Do we need to check for open drawers? We are not in a modal here.
 
-  const {
-    canStakeUsingLedgerLive,
-    canStakeUsingPlatformApp,
-    navigationParams: stakeNavigationParams,
-  } = useStake({
-    currencyId: currency.id,
-    accountId: account.id,
-  });
+  const { getCanStakeUsingLedgerLive, getCanStakeUsingPlatformApp, getRouteToStake } = useStake();
+
+  const canStakeUsingLedgerLive = getCanStakeUsingLedgerLive(currency.id);
+  const canStakeUsingPlatformApp = getCanStakeUsingPlatformApp(currency.id);
 
   const balance = getAccountSpendableBalance(account);
   const isZeroBalance = !balance.gt(0);
@@ -198,23 +194,15 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
     Icon: IconsLegacy.ArrowBottomMedium,
     ...extraReceiveActionParams,
   };
-  // TODO: What if account balance is 0?
   const StakeAction =
-    canStakeUsingPlatformApp && stakeNavigationParams && account.balance.gt(0)
+    canStakeUsingPlatformApp && account.balance.gt(0)
       ? {
           id: "stake",
-          navigationParams: stakeNavigationParams,
-          // [
-          //   NavigatorName.Base,
-          //   {
-          //     screen: ScreenName.NoFunds, // Should be no funds iff no funds in account?
-          //     params: {
-          //       account,
-          //       parentAccount,
-          //       entryPoint: "stake",
-          //     },
-          //   },
-          // ],
+
+          navigationParams: [
+            NavigatorName.Base,
+            getRouteToStake(account, walletState, parentAccount),
+          ],
           label: t("account.stake"),
           Icon: IconsLegacy.CoinsMedium,
           eventProperties: {
@@ -236,7 +224,6 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
       })) ||
     [];
 
-  console.log({ familySpecificMainActions });
 
   const mainActions = [
     ...(availableOnSwap ? [actionButtonSwap] : []),
@@ -252,7 +239,6 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
     ReceiveAction,
   ];
 
-  console.log({ mainActions });
 
   const familySpecificSecondaryActions =
     (decorators &&
