@@ -44,6 +44,7 @@ export const getAccountShape: GetAccountShape<SuiAccount> = async info => {
     operations = await getOperations(accountId, address);
   }
 
+  operations.sort((a, b) => b.date.valueOf() - a.date.valueOf());
   const shape = {
     id: accountId,
     balance,
