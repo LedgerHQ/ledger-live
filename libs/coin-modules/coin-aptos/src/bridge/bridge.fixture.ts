@@ -22,8 +22,8 @@ export function createFixtureAccount(account?: Partial<AptosAccount>): AptosAcco
     freshAddress: freshAddress.address,
     freshAddressPath: freshAddress.derivationPath,
     used: true,
-    balance: account?.balance || new BigNumber(0),
-    spendableBalance: account?.spendableBalance || new BigNumber(0),
+    balance: new BigNumber(0),
+    spendableBalance: new BigNumber(0),
     creationDate: faker.date.past(),
     blockHeight: faker.number.int({ min: 100_000, max: 200_000 }),
     currency,
@@ -33,10 +33,14 @@ export function createFixtureAccount(account?: Partial<AptosAccount>): AptosAcco
     lastSyncDate: new Date(),
     balanceHistoryCache: emptyHistoryCache,
     swapHistory: [],
+    ...account,
   };
 }
 
-export function createFixtureAccountWithSubAccount(tokenType: string): AptosAccount {
+export function createFixtureAccountWithSubAccount(
+  tokenType: string,
+  account?: Partial<AptosAccount>,
+): AptosAccount {
   const freshAddress = {
     address: "address",
     derivationPath: "derivation_path",
@@ -86,21 +90,23 @@ export function createFixtureAccountWithSubAccount(tokenType: string): AptosAcco
         swapHistory: [],
       },
     ],
+    ...account,
   };
 }
 
 export function createFixtureTransaction(tx?: Partial<Transaction>): Transaction {
   const transaction: Transaction = {
-    amount: tx?.amount || new BigNumber(0),
-    recipient: tx?.recipient || "recipient",
-    useAllAmount: tx?.useAllAmount || false,
+    amount: new BigNumber(0),
+    recipient: "recipient",
+    useAllAmount: false,
     family: "aptos",
-    mode: tx?.mode || "send",
-    fees: tx?.fees || null,
+    mode: "send",
+    fees: null,
     options: {
       maxGasAmount: BigNumber(0).toString(),
       gasUnitPrice: BigNumber(0).toString(),
     },
+    ...tx,
   };
 
   return transaction;
@@ -108,17 +114,18 @@ export function createFixtureTransaction(tx?: Partial<Transaction>): Transaction
 
 export function createFixtureTransactionWithSubAccount(tx?: Partial<Transaction>): Transaction {
   const transaction: Transaction = {
-    amount: tx?.amount || new BigNumber(0),
-    recipient: tx?.recipient || "recipient",
-    useAllAmount: tx?.useAllAmount || false,
+    amount: new BigNumber(0),
+    recipient: "recipient",
+    useAllAmount: false,
     family: "aptos",
-    mode: tx?.mode || "send",
-    fees: tx?.fees || null,
+    mode: "send",
+    fees: null,
     options: {
       maxGasAmount: BigNumber(0).toString(),
       gasUnitPrice: BigNumber(0).toString(),
     },
     subAccountId: "1",
+    ...tx,
   };
 
   return transaction;
