@@ -13,6 +13,7 @@ overrides:
   '@hashgraph/sdk>@hashgraph/cryptography': 1.1.2
   '@hashgraph/sdk>@grpc/grpc-js': 1.6.7
   '@ethersproject/providers>ws': 7.5.10
+  elliptic: 6.6.1
 
 packageExtensionsChecksum: 505470d279d34dbf557b1005424e3d1d
 
@@ -20455,11 +20456,8 @@ packages:
     resolution: {integrity: sha512-B+ZM+RXvRqQaAmkMlO/oSe5nMUOaUnyfGYCEHoR8wrXsZR2mA0XVibsxV1bvTwxdRWah1PkQqso2EzhILGHtEQ==}
     engines: {node: '>=0.10.0'}
 
-  elliptic@6.5.4:
-    resolution: {integrity: sha512-iLhC6ULemrljPZb+QutR5TQGB+pdW6KGD5RSegS+8sorOZT+rdQFbsQFJgvN3eRqNALqJer4oQ16YvJHlU8hzQ==}
-
-  elliptic@6.5.5:
-    resolution: {integrity: sha512-7EjbcmUm17NQFu4Pmgmq2olYMj8nwMnpcddByChSUjArp8F5DQWcIcpriwO4ZToLNAJig0yiyjswfyGNje/ixw==}
+  elliptic@6.6.1:
+    resolution: {integrity: sha512-RaddvvMatK2LJHqFJ+YA4WysVN5Ita9E35botqIYspQ4TkRAlCicdzKOjlyv/1Za5RyTNn7di//eEV0uTAfe3g==}
 
   embla-carousel-autoplay@8.4.0:
     resolution: {integrity: sha512-AJHXrnaY+Tf4tb/+oItmJSpz4P0WvS62GrW5Z4iFY3zsH0mkKcijzd04LIkj0P4DkTazIBEuXple+nUVmuMsrQ==}
@@ -35406,7 +35404,7 @@ snapshots:
       '@cosmjs/utils': 0.24.1
       bip39: 3.1.0
       bn.js: 4.12.0
-      elliptic: 6.5.5
+      elliptic: 6.6.1
       js-sha3: 0.8.0
       libsodium-wrappers: 0.7.13
       pbkdf2: 3.1.2
@@ -35421,7 +35419,7 @@ snapshots:
       '@cosmjs/utils': 0.26.8
       '@noble/hashes': 1.7.0
       bn.js: 5.2.1
-      elliptic: 6.5.5
+      elliptic: 6.6.1
       libsodium-wrappers: 0.7.13
 
   '@cosmjs/crypto@0.31.3':
@@ -35431,7 +35429,7 @@ snapshots:
       '@cosmjs/utils': 0.31.3
       '@noble/hashes': 1.7.0
       bn.js: 5.2.1
-      elliptic: 6.5.5
+      elliptic: 6.6.1
       libsodium-wrappers-sumo: 0.7.13
 
   '@cosmjs/encoding@0.24.1':
@@ -36539,7 +36537,7 @@ snapshots:
       '@ethersproject/logger': 5.7.0
       '@ethersproject/properties': 5.7.0
       bn.js: 5.2.1
-      elliptic: 6.5.4
+      elliptic: 6.6.1
       hash.js: 1.1.7
 
   '@ethersproject/solidity@5.7.0':
@@ -37784,7 +37782,7 @@ snapshots:
     dependencies:
       bignumber.js: 9.1.2
       crypto-js: 4.2.0
-      elliptic: 6.5.5
+      elliptic: 6.6.1
       expo-crypto: 10.2.0
       expo-random: 12.3.0
       js-base64: 3.7.7
@@ -37894,7 +37892,7 @@ snapshots:
       '@iov/encoding': 2.1.0
       bip39: 3.1.0
       bn.js: 4.12.0
-      elliptic: 6.5.5
+      elliptic: 6.6.1
       js-sha3: 0.8.0
       libsodium-wrappers: 0.7.13
       pbkdf2: 3.1.2
@@ -38808,7 +38806,7 @@ snapshots:
       bip39: 3.1.0
       buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
       crypto-js: 4.2.0
-      elliptic: 6.5.5
+      elliptic: 6.6.1
       sha.js: 2.4.11
 
   '@keplr-wallet/proto-types@0.12.89':
@@ -45373,7 +45371,7 @@ snapshots:
       bn.js: 5.2.1
       buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
       chai: 4.4.1
-      elliptic: 6.5.4
+      elliptic: 6.6.1
       hash.js: 1.1.7
       pbkdf2: 3.1.2
 
@@ -45728,7 +45726,7 @@ snapshots:
       blakejs: 1.2.1
       bs58check: 3.0.1
       buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
-      elliptic: 6.5.5
+      elliptic: 6.6.1
       typedarray-to-buffer: 4.0.0
 
   '@testing-library/dom@9.3.4':
@@ -45890,7 +45888,7 @@ snapshots:
     dependencies:
       asn1.js: 5.4.1
       base64url: 3.0.1
-      elliptic: 6.5.5
+      elliptic: 6.6.1
 
   '@trysound/sax@0.2.0': {}
 
@@ -47070,7 +47068,7 @@ snapshots:
       '@types/node': 10.17.60
       aes-js: 3.0.0
       bn.js: 4.12.0
-      elliptic: 6.5.4
+      elliptic: 6.6.1
       hash.js: 1.1.3
       js-sha3: 0.5.7
       scrypt-js: 2.0.4
@@ -49202,7 +49200,7 @@ snapshots:
       browserify-rsa: 4.1.0
       create-hash: 1.2.0
       create-hmac: 1.1.7
-      elliptic: 6.5.5
+      elliptic: 6.6.1
       hash-base: 3.0.4
       inherits: 2.0.4
       parse-asn1: 5.1.7
@@ -50262,7 +50260,7 @@ snapshots:
   create-ecdh@4.0.4:
     dependencies:
       bn.js: 4.12.0
-      elliptic: 6.5.5
+      elliptic: 6.6.1
 
   create-hash@1.2.0:
     dependencies:
@@ -51581,17 +51579,7 @@ snapshots:
 
   elegant-spinner@1.0.1: {}
 
-  elliptic@6.5.4:
-    dependencies:
-      bn.js: 4.12.0
-      brorand: 1.1.0
-      hash.js: 1.1.7
-      hmac-drbg: 1.0.1
-      inherits: 2.0.4
-      minimalistic-assert: 1.0.1
-      minimalistic-crypto-utils: 1.0.1
-
-  elliptic@6.5.5:
+  elliptic@6.6.1:
     dependencies:
       bn.js: 4.12.0
       brorand: 1.1.0
@@ -52594,7 +52582,7 @@ snapshots:
   eth-lib@0.1.29:
     dependencies:
       bn.js: 4.12.0
-      elliptic: 6.5.5
+      elliptic: 6.6.1
       nano-json-stream-parser: 0.1.2
       servify: 0.1.12
       ws: 3.3.3
@@ -52607,7 +52595,7 @@ snapshots:
   eth-lib@0.2.8:
     dependencies:
       bn.js: 4.12.0
-      elliptic: 6.5.5
+      elliptic: 6.6.1
       xhr-request-promise: 0.1.3
 
   ethereum-bloom-filters@1.0.10:
@@ -57730,7 +57718,7 @@ snapshots:
       '@types/elliptic': 6.4.18
       asn1.js: 5.4.1
       bn.js: 4.12.0
-      elliptic: 6.5.5
+      elliptic: 6.6.1
 
   keygrip@1.1.0:
     dependencies:
@@ -63775,13 +63763,13 @@ snapshots:
 
   secp256k1@4.0.3:
     dependencies:
-      elliptic: 6.5.5
+      elliptic: 6.6.1
       node-addon-api: 2.0.2
       node-gyp-build: 4.8.0
 
   secp256k1@5.0.0:
     dependencies:
-      elliptic: 6.5.5
+      elliptic: 6.6.1
       node-addon-api: 5.1.0
       node-gyp-build: 4.8.0
 
@@ -65314,7 +65302,7 @@ snapshots:
       '@vechain/ethers': 4.0.27-5
       bignumber.js: 7.2.1
       blakejs: 1.2.1
-      elliptic: 6.5.4
+      elliptic: 6.6.1
       fast-json-stable-stringify: 2.1.0
       js-sha3: 0.5.7
       rlp: 2.2.7
@@ -65373,7 +65361,7 @@ snapshots:
       bindings: 1.5.0
       bn.js: 4.12.0
       create-hmac: 1.1.7
-      elliptic: 6.5.5
+      elliptic: 6.6.1
       nan: 2.20.0
 
   tiny-secp256k1@1.1.7:
@@ -65381,7 +65369,7 @@ snapshots:
       bindings: 1.5.0
       bn.js: 4.12.0
       create-hmac: 1.1.7
-      elliptic: 6.5.5
+      elliptic: 6.6.1
       nan: 2.20.0
 
   tiny-typed-emitter@2.1.0: {}
