@@ -776,6 +776,10 @@
         "description3Link" : "Cette intégration a été réalisée par <1><0>{{team}}</0></1> en collaboration avec Ledger."
       }
     },
+    "migrationBanner" : {
+      "title" : "{{from}} migre vers {{to}}. Cliquez <0>ici</0> pour en savoir plus ou contactez l’Assistance si vous avez besoin d’aide.",
+      "contactSupport" : "Contacter l’Assistance"
+    },
     "featureUnavailable" : {
       "title" : "La fonctionnalité suivante est temporairement indisponible : {{feature}}. Pour plus d’informations, veuillez contacter l’{{support}}.",
       "feature" : {
@@ -1875,7 +1879,8 @@
       "palletMethod" : "Méthode",
       "transferAmount" : "Montant transféré",
       "validatorsCount" : "Validateurs ({{number}})",
-      "version" : "Version"
+      "version" : "Version",
+      "accountCreationFee" : "Frais de création de compte"
     }
   },
   "operationList" : {
@@ -5511,6 +5516,11 @@
       "memo" : "Tag/mémo",
       "memoPlaceholder" : "Facultatif",
       "requiredMemoPlaceholder" : "Requis"
+    },
+    "mina" : {
+      "memoPlaceholder" : "Facultatif",
+      "memo" : "Mémo",
+      "memoWarningText" : "Le mémo peut être une séquence de caractères inférieure ou égale à 32 caractères"
     }
   },
   "errors" : {
@@ -6541,6 +6551,15 @@
         "swap" : "Échangez",
         "deposit" : "Déposez"
       }
+    },
+    "InvalidMemoMina" : {
+      "title" : "Le mémo ne peut pas dépasser 32 caractères"
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "Les frais de création de compte pour cette transaction s’élèveront à {{fee}}"
+    },
+    "AmountTooSmall" : {
+      "title" : "Le montant minimal requis pour cette transaction est {{amount}}"
     }
   },
   "cryptoOrg" : {
@@ -6991,55 +7010,14 @@
     }
   },
   "lnsUpsell" : {
-    "banner" : {
-      "manager" : {
-        "optIn" : {
-          "title" : "Passez au niveau supérieur",
-          "description" : "Bénéficiez de <0>-{{discount}}% de réduction</0> sur nos wallets dernière génération. Passez à une expérience plus fluide et plus sécurisée dès maintenant.",
-          "cta" : "Choisir mon nouveau wallet",
-          "linkText" : "En savoir plus"
-        },
-        "optOut" : {
-          "title" : "Passez au niveau supérieur",
-          "description" : "Bénéficiez de <0>-{{discount}}% de réduction</0> sur nos wallets dernière génération. Passez à une expérience plus fluide et plus sécurisée dès maintenant.",
-          "cta" : "Choisir mon nouveau wallet",
-          "linkText" : "En savoir plus"
-        }
-      },
-      "accounts" : {
-        "optIn" : {
-          "title" : "Passez au niveau supérieur",
-          "description" : "Le Ledger Nano S ne recevra bientôt plus de mises à jour. Bénéficiez de <0>-{{discount}}% de réduction</0> sur nos derniers wallets.",
-          "cta" : "Choisir mon nouveau wallet",
-          "linkText" : "En savoir plus"
-        },
-        "optOut" : {
-          "title" : "Passez au niveau supérieur",
-          "description" : "Le Ledger Nano S ne recevra bientôt plus de mises à jour. Bénéficiez de <0>-{{discount}}% de réduction</0> sur nos derniers wallets.",
-          "cta" : "Choisir mon nouveau wallet",
-          "linkText" : "En savoir plus"
-        }
-      },
-      "portfolio" : {
-        "optOut" : {
-          "title" : "Passez au niveau supérieur",
-          "description" : "Bénéficiez de <0>-{{discount}}% de réduction</0> sur nos wallets dernière génération. Passez à une expérience plus fluide et plus sécurisée dès maintenant.",
-          "cta" : "Choisir mon nouveau wallet",
-          "linkText" : "En savoir plus"
-        }
-      },
-      "notifications" : {
-        "optIn" : {
-          "description" : "Les mises à jour s’arrêtent bientôt. Pour une expérience fluide, passez à un wallet supérieur, avec -{{discount}}% de réduction.",
-          "cta" : "Choisir mon nouveau wallet",
-          "linkText" : "En savoir plus"
-        },
-        "optOut" : {
-          "description" : "Les mises à jour s’arrêtent bientôt. Pour une expérience fluide, passez à un wallet supérieur, avec -{{discount}}% de réduction.",
-          "cta" : "Choisir mon nouveau wallet",
-          "linkText" : "En savoir plus"
-        }
-      }
+    "opted_in" : {
+      "title" : "Mémoire limitée, expérience limitée",
+      "description" : "Passez du Ledger Nano S à un modèle plus récent, tel que le Ledger Flex. À la clé : plus de mémoire, les dernières améliorations de sécurité, de nouvelles fonctionnalités et <0>une réduction exclusive de {{discount}}%</0>.",
+      "cta" : "Choisir mon wallet"
+    },
+    "opted_out" : {
+      "description" : "Avec sa mémoire limitée, votre Ledger Nano S vous prive des dernières fonctionnalités, innovations blockchain et améliorations de sécurité. Pour en bénéficier, choisissez un wallet Ledger plus récent.",
+      "cta" : "Pourquoi monter en gamme ?"
     }
   }
 }
