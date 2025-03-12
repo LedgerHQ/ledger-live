@@ -4,10 +4,12 @@ import {
   signDelegationTransaction,
   activateContractData,
   activateExpertMode,
+  verifyAmountsAndAcceptSwap,
 } from "@ledgerhq/live-common/e2e/speculos";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
 import { Delegate } from "@ledgerhq/live-common/e2e/models/Delegate";
+import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
 
 export default class SpeculosPage {
   @Step("Verify receive address correctness on device")
@@ -33,5 +35,10 @@ export default class SpeculosPage {
   @Step("Activate export mode on Speculos")
   async activateExpertMode() {
     await activateExpertMode();
+  }
+
+  @Step("Verify amounts and accept swap")
+  async verifyAmountsAndAcceptSwap(swap: Swap) {
+    await verifyAmountsAndAcceptSwap(swap);
   }
 }

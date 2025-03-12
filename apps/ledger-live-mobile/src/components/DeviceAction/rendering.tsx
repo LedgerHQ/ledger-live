@@ -904,7 +904,7 @@ export function renderExchange({
 }) {
   switch (exchangeType) {
     case 0x00: // swap
-      return <Text>{t("DeviceAction.confirmSwapOnDevice")}</Text>;
+      return <Text testID="confirm-swap-on-device">{t("DeviceAction.confirmSwapOnDevice")}</Text>;
     case 0x01: // sell
     case 0x02: // fund
       return renderSecureTransferDeviceConfirmation({

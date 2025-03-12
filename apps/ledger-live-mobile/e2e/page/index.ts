@@ -26,6 +26,7 @@ import SettingsPage from "./settings/settings.page";
 import SpeculosPage from "./speculos.page";
 import StakePage from "./trade/stake.page";
 import SwapPage from "./trade/swap.page";
+import SwapLiveAppPage from "./liveApps/swapLiveApp";
 import TransfertMenuDrawer from "./wallet/transferMenu.drawer";
 import WalletTabNavigatorPage from "./wallet/walletTabNavigator.page";
 import CeloManageAssetsPage from "./trade/celoManageAssets.page";
@@ -45,6 +46,10 @@ type CliCommand = () => Observable<unknown> | Promise<unknown> | string;
 type ApplicationOptions = {
   speculosApp?: AppInfos;
   cliCommands?: CliCommand[];
+  cliCommandsOnApp?: {
+    app: AppInfos;
+    cmd: CliCommand;
+  }[];
   userdata?: string;
   knownDevices?: DeviceLike[];
   testAccounts?: Account[];
@@ -99,6 +104,7 @@ export class Application {
   private settingsGeneralPageInstance = lazyInit(SettingsGeneralPage);
   private speculosPageInstance = lazyInit(SpeculosPage);
   private stakePageInstance = lazyInit(StakePage);
+  private swapLiveAppInstance = lazyInit(SwapLiveAppPage);
   private swapPageInstance = lazyInit(SwapPage);
   private transfertMenuDrawerInstance = lazyInit(TransfertMenuDrawer);
   private walletTabNavigatorPageInstance = lazyInit(WalletTabNavigatorPage);
@@ -107,6 +113,7 @@ export class Application {
   async init({
     speculosApp,
     cliCommands,
+    cliCommandsOnApp,
     userdata,
     knownDevices,
     testAccounts,
@@ -117,6 +124,12 @@ export class Application {
 
     if (!getEnv("MOCK"))
       fs.copyFileSync(getUserdataPath(userdata || "skip-onboarding"), this.userdataPath);
+
+    for (const { app, cmd } of cliCommandsOnApp || []) {
+      const proxyPort = await this.common.addSpeculos(app.name);
+      await executeCliCommand(cmd);
+      this.common.removeSpeculos(proxyPort);
+    }
 
     if (speculosApp) await this.common.addSpeculos(speculosApp.name);
     for (const cmd of cliCommands || []) {
@@ -216,6 +229,9 @@ export class Application {
   }
   public get swap() {
     return this.swapPageInstance();
+  }
+  public get swapLiveApp() {
+    return this.swapLiveAppInstance();
   }
   public get transfertMenu() {
     return this.transfertMenuDrawerInstance();
