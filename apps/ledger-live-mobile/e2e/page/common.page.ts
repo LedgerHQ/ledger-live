@@ -39,7 +39,7 @@ export default class CommonPage {
   @Step("Perform search")
   async performSearch(text: string) {
     await waitForElementById(this.searchBarId);
-    await typeTextByElement(this.searchBar(), text, false);
+    await typeTextByElement(this.searchBar(), text);
   }
 
   async expectSearch(text: string) {

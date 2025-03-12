@@ -14,6 +14,8 @@ export default class SwapPage {
   sendMaxToggle = () => getElementById("exchange-send-max-toggle");
   termsAcceptButton = () => getElementById("terms-accept-button");
   termsCloseButton = () => getElementById("terms-close-button");
+  confirmSwapOnDeviceDrawerId = "confirm-swap-on-device";
+  swapHistoryEmptyTitleId = "swap-history-empty-title";
 
   async openViaDeeplink() {
     await openDeeplink(this.baseLink);
@@ -72,5 +74,15 @@ export default class SwapPage {
   async expectTerms() {
     await expect(this.termsAcceptButton()).toBeVisible();
     await expect(this.termsCloseButton()).toBeVisible();
+  }
+
+  @Step("Wait for device confirm drawer")
+  async waitForDeviceConfirmDrawer() {
+    await waitForElementById(this.confirmSwapOnDeviceDrawerId);
+  }
+
+  @Step("Wait for empty swap history")
+  async waitForEmptyHistory() {
+    await waitForElementById(this.swapHistoryEmptyTitleId);
   }
 }
