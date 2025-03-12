@@ -1,8 +1,16 @@
 import { BigNumber } from "bignumber.js";
-import { InvalidAddress, RecipientRequired } from "@ledgerhq/errors";
+import {
+  NotEnoughBalance,
+  RecipientRequired,
+  InvalidAddress,
+  InvalidAddressBecauseDestinationIsAlsoSource,
+  AmountRequired,
+  FeeNotLoaded,
+} from "@ledgerhq/errors";
 import { AccountBridge } from "@ledgerhq/types-live";
 import type { SuiAccount, Transaction, TransactionStatus } from "../types";
 import { isValidSuiAddress } from "@mysten/sui/utils";
+import { ensureAddressFormat } from "../utils";
 
 /**
  * Get the status of a transaction.
@@ -22,17 +30,30 @@ export const getTransactionStatus: AccountBridge<
   const estimatedFees = new BigNumber(transaction?.fees || 0);
   const totalSpent = amount.plus(estimatedFees);
 
-  if (account) {
-    //
-  }
-
   if (transaction) {
     if (!transaction.recipient) {
       errors.recipient = new RecipientRequired();
-    } else if (transaction.recipient && !isValidSuiAddress(transaction.recipient)) {
+    } else if (!isValidSuiAddress(transaction.recipient)) {
       errors.recipient = new InvalidAddress(undefined, {
         currencyName: account.currency.name,
       });
+    } else if (
+      ensureAddressFormat(account.freshAddress) === ensureAddressFormat(transaction.recipient)
+    ) {
+      errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
+    }
+
+    if (amount.lte(0) && !transaction.useAllAmount) {
+      errors.amount = new AmountRequired();
+    }
+    if (totalSpent.eq(0) && transaction.useAllAmount) {
+      errors.amount = new NotEnoughBalance();
+    }
+    if (totalSpent.gt(account.balance)) {
+      errors.amount = new NotEnoughBalance();
+    }
+    if (!transaction.fees) {
+      errors.fees = new FeeNotLoaded();
     }
   }
 

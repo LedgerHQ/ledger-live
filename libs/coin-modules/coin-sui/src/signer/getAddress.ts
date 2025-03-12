@@ -2,8 +2,8 @@ import { log } from "@ledgerhq/logs";
 import type { GetAddressFn } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import type { SignerContext } from "@ledgerhq/coin-framework/signer";
 import type { GetAddressOptions } from "@ledgerhq/coin-framework/derivation";
-import { ensureAddressFormat } from "../network/sdk";
 import type { SuiSigner } from "../types";
+import { ensureAddressFormat } from "../utils";
 
 const resolver = (signerContext: SignerContext<SuiSigner>): GetAddressFn => {
   return async (deviceId: string, { path, verify }: GetAddressOptions) => {

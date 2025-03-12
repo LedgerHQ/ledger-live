@@ -17,6 +17,7 @@ import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
 
 import type { Transaction as TransactionType } from "../types";
 import type { CreateExtrinsicArg } from "../logic/craftTransaction";
+import { ensureAddressFormat } from "../utils";
 
 type AsyncApiFunction<T> = (api: SuiClient) => Promise<T>;
 
@@ -58,14 +59,6 @@ export const getAccount = async (addr: string) =>
       balance: BigNumber(balance.totalBalance),
     };
   });
-
-/**
- * Returns true if account is the signer
- * TODO: move to utils
- */
-export function ensureAddressFormat(addr: string): `0x${string}` {
-  return (addr.startsWith("0x") ? addr : `0x${addr}`) as `0x${string}`;
-}
 
 /**
  * Returns true if account is the signer
@@ -170,7 +163,7 @@ function transactionToOperation(
     recipients: getOperationRecipients(transaction.transaction?.data),
     senders: getOperationSenders(transaction.transaction?.data),
     type,
-    value: getOperationAmount(`0x${address}`, transaction),
+    value: getOperationAmount(address, transaction),
   };
 }
 

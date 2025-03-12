@@ -8,9 +8,9 @@ import { Ed25519PublicKey } from "@mysten/sui/keypairs/ed25519";
 import { verifyTransactionSignature } from "@mysten/sui/verify";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
 import { buildTransaction } from "./buildTransaction";
-import { ensureAddressFormat } from "../network/sdk";
 import { calculateAmount } from "./utils";
 import type { SuiAccount, SuiSigner, Transaction } from "../types";
+import { ensureAddressFormat } from "../utils";
 
 /**
  * Sign Transaction with Ledger hardware
