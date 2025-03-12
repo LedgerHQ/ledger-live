@@ -3262,6 +3262,9 @@ importers:
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
+      '@ledgerhq/live-env':
+        specifier: workspace:^
+        version: link:../../env
       '@ledgerhq/live-network':
         specifier: workspace:^
         version: link:../../live-network
@@ -48598,7 +48601,7 @@ snapshots:
 
   babel-plugin-styled-components@2.1.4(@babel/core@7.24.3)(styled-components@5.3.11(@babel/core@7.24.3)(react-dom@18.3.1(react@18.3.1))(react-is@18.3.1)(react@18.3.1)):
     dependencies:
-      '@babel/helper-annotate-as-pure': 7.22.5
+      '@babel/helper-annotate-as-pure': 7.25.9
       '@babel/helper-module-imports': 7.24.3
       '@babel/plugin-syntax-jsx': 7.24.1(@babel/core@7.24.3)
       lodash: 4.17.21
@@ -48609,7 +48612,7 @@ snapshots:
 
   babel-plugin-styled-components@2.1.4(@babel/core@7.24.3)(styled-components@5.3.11(@babel/core@7.24.3)(react-is@18.3.1)(react@18.3.1)):
     dependencies:
-      '@babel/helper-annotate-as-pure': 7.22.5
+      '@babel/helper-annotate-as-pure': 7.25.9
       '@babel/helper-module-imports': 7.24.3
       '@babel/plugin-syntax-jsx': 7.24.1(@babel/core@7.24.3)
       lodash: 4.17.21
