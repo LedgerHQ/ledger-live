@@ -2,4 +2,4 @@
 "live-mobile": minor
 ---
 
-Enhance reborn analytics
+Fix swap deeplink

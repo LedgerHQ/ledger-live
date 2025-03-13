@@ -29,3 +29,13 @@ export type XrpOperation = {
     memos?: XrpMemo[];
   };
 };
+
+type Order = "asc" | "desc";
+export type ListOperationsOptions = {
+  // pagination:
+  limit?: number;
+  token?: string;
+  order?: Order;
+  // filters:
+  minHeight?: number;
+};

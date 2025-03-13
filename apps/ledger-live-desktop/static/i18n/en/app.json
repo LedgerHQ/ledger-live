@@ -7021,12 +7021,12 @@
   "lnsUpsell": {
     "opted_in": {
       "title": "Limited memory, limited experience",
-      "description": "Upgrade your Nano S to a newer Ledger — like the Ledger Flex — for more memory, the latest security enhancements, fresh features, and <0>an exclusive {{discount}}% off</>.",
+      "description": "Upgrade your Ledger Nano S to a newer Ledger — like the Ledger Flex — for more memory, the latest security enhancements, fresh features, and <0>an exclusive {{discount}}% off</>.",
       "cta": "Upgrade my Ledger"
     },
     "opted_out": {
       "description": "The limited memory of your Ledger Nano S restricts your access to the latest features, blockchain changes and security enhancements. For long-term use, upgrade to a newer Ledger device.",
-      "cta": "Why should I upgrade?"
+      "cta": "Learn more"
     }
   }
 }

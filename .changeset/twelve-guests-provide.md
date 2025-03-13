@@ -2,4 +2,4 @@
 "ledger-live-desktop": minor
 ---
 
-Add analytics in the onboarding flow
+Remove hook disabling dmk refresher
