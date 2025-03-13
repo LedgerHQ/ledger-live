@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { BaseInput } from "..";
 import { type InputProps as BaseInputType } from "../BaseInput/index";
 import styled, { useTheme } from "styled-components/native";
@@ -11,6 +11,7 @@ import { AnimatedNotchedLabel } from "./AnimatedNotchedLabel";
 export type InputStatus = "default" | "focused" | "filled" | "error";
 export interface AnimatedInputProps extends BaseInputType {
   style?: StyleProp<ViewStyle>;
+  largeMode?: boolean;
 }
 
 type InputContainerProps = {
@@ -32,6 +33,7 @@ const AnimatedInput = (
     onBlur: onBlurCallback,
     error,
     value,
+    largeMode = false,
     ...rest
   } = textInputProps;
 
@@ -41,8 +43,15 @@ const AnimatedInput = (
     onBlurCallback,
   });
 
+  const [height, setHeight] = useState<number>(48);
+
   const inputStatus = getInputStatus({ focused, hasError: !!error, hasValue: !!value });
   const displayClearCross = inputStatus === "error" || inputStatus === "focused";
+
+  const handleContentSizeChange = (event: any) => {
+    const newHeight = event.nativeEvent.contentSize.height;
+    setHeight(newHeight + 40);
+  };
 
   return (
     <InputContainer status={inputStatus} style={style}>
@@ -54,13 +63,16 @@ const AnimatedInput = (
         onFocus={onFocus}
         onBlur={onBlur}
         error={error}
+        multiline={largeMode}
         value={value}
         color={theme ? inputTextColor[inputStatus]({ theme }) : "neutral.c100"}
         inputContainerStyle={{
           backgroundColor: "none",
           borderColor: theme ? inputStatusColors[inputStatus]({ theme }) : "neutral.c100",
           borderRadius: 8,
-          height: inputStatus !== "error" ? 56 : 48,
+          height: inputStatus !== "error" ? (height < 48 ? 48 : height) : height,
+          paddingTop: largeMode ? 14 : 0,
+          paddingRight: largeMode ? 30 : 0,
         }}
         baseInputContainerStyle={{
           paddingRight: displayClearCross ? 8 : 14,
@@ -70,6 +82,8 @@ const AnimatedInput = (
         }}
         inputErrorColor={theme ? inputStatusColors[inputStatus]({ theme }) : "neutral.c100"}
         showErrorIcon
+        onContentSizeChange={largeMode ? handleContentSizeChange : undefined}
+        largeMode={largeMode}
         {...rest}
       />
     </InputContainer>
