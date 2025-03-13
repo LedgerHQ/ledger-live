@@ -30,7 +30,7 @@ function MarketGraph({
   const { t } = useTranslation();
   const { colors } = useTheme();
 
-  const ranges = RANGES.map(r => ({ label: t(`market.range.${r}`), value: r }));
+  const ranges = RANGES.map(r => ({ label: t(`market.range.${r}`), value: r })).reverse();
 
   const rangesLabels = ranges.map(({ label }) => label);
 

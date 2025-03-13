@@ -12,7 +12,7 @@ import { openURL } from "~/renderer/linking";
 export function useLNSUpsellBannerModel(location: LNSBannerLocation): LNSBannerModel {
   const state = useLNSUpsellBannerState(location);
 
-  const { "%": discount, img: image, link: ctaLink } = state.params ?? {};
+  const { "%": discount, link: ctaLink } = state.params ?? {};
   const analitycsPage = AnalyticsPageMap[location];
 
   const handleCTAClick = () => {
@@ -27,7 +27,7 @@ export function useLNSUpsellBannerModel(location: LNSBannerLocation): LNSBannerM
   const tracking = state.tracking;
   const variant = getVariant(location, state);
 
-  return { variant, discount, image, tracking, handleCTAClick };
+  return { variant, discount, tracking, handleCTAClick };
 }
 
 const AnalyticsPageMap: Record<LNSBannerLocation, AnalyticsPage> = {
@@ -38,7 +38,12 @@ const AnalyticsPageMap: Record<LNSBannerLocation, AnalyticsPage> = {
 };
 
 function getVariant(location: LNSBannerLocation, state: LNSBannerState): LNSBannerModel["variant"] {
-  if (!state.isShown) return "none";
-  if (state.tracking === "opted_out" || location === "notification_center") return "notification";
-  return "banner";
+  if (!state.isShown) return { type: "none" };
+
+  if (state.tracking === "opted_out" || location === "notification_center") {
+    const icon = state.tracking === "opted_in" ? "SparksFill" : "Nano";
+    return { type: "notification", icon };
+  }
+
+  return { type: "banner", image: state.params?.img };
 }
