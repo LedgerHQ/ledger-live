@@ -154,7 +154,11 @@ export function flattenOperationWithInternalsAndNfts(op: Operation): Operation[]
   return ops;
 }
 
-export function getOperationAmountNumber(op: Operation, getFeeInstead?: boolean): BigNumber {
+export function getOperationAmountNumber(
+  op: Operation,
+  fromSubAccount?: boolean,
+  getFeeInstead?: boolean,
+): BigNumber {
   switch (op.type) {
     case "IN":
     case "REWARD":
@@ -174,7 +178,11 @@ export function getOperationAmountNumber(op: Operation, getFeeInstead?: boolean)
     case "SLASH":
     case "LOCK":
     case "BURN":
-      return getFeeInstead ? op.fee.negated() : op.value.negated();
+      return getFeeInstead
+        ? op.fee.negated()
+        : fromSubAccount
+          ? op.value.minus(op.fee).negated()
+          : op.value.negated();
 
     case "FREEZE":
     case "UNFREEZE":
