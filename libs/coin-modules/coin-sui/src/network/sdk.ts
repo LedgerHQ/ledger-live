@@ -217,8 +217,6 @@ export const paymentInfo = async (sender: string, fakeTransaction: TransactionTy
     };
   });
 
-export const submitExtrinsic = async (extrinsic: string) => extrinsic; // TODO: implement
-
 export const createTransaction = async (address: string, transaction: CreateExtrinsicArg) =>
   withApi(async api => {
     const tx = new Transaction();

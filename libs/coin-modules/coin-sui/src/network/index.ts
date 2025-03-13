@@ -3,19 +3,24 @@ import {
   getOperations,
   getPreloadedData,
   paymentInfo,
-  submitExtrinsic,
   createTransaction,
   executeTransactionBlock,
 } from "./sdk";
 
-export { getAccount, getOperations, getPreloadedData, paymentInfo, submitExtrinsic };
+export {
+  getAccount,
+  getOperations,
+  getPreloadedData,
+  paymentInfo,
+  createTransaction,
+  executeTransactionBlock,
+};
 
 export default {
   getAccount,
   getOperations,
   getPreloadedData,
   paymentInfo,
-  submitExtrinsic,
   createTransaction,
   executeTransactionBlock,
 };
