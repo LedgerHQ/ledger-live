@@ -5,11 +5,10 @@
     "declarationMap": true,
     "downlevelIteration": true,
     "lib": ["es2020", "dom"],
+    "rootDir": "./src",
     "exactOptionalPropertyTypes": true,
     "module": "ESNext",
-    "moduleResolution": "bundler",
-    "rootDir": "./src",
-    "outDir": "lib",
+    "moduleResolution": "bundler"
   },
   "include": ["src/**/*"]
 }
