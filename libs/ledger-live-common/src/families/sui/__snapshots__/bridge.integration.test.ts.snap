@@ -14,9 +14,7 @@ exports[`sui currency bridge scanAccounts sui seed 1 1`] = `
     "pendingOperations": [],
     "seedIdentifier": "e5fb8c817b97e9e9aec677b9e822e8a60c7471624f36b701c94560b88195a8e7",
     "spendableBalance": "120986992960",
-    "suiResources": {
-      "nonce": 0,
-    },
+    "suiResources": {},
     "swapHistory": [],
     "syncHash": undefined,
     "used": true,
@@ -33,9 +31,7 @@ exports[`sui currency bridge scanAccounts sui seed 1 1`] = `
     "pendingOperations": [],
     "seedIdentifier": "e5fb8c817b97e9e9aec677b9e822e8a60c7471624f36b701c94560b88195a8e7",
     "spendableBalance": "1000000000",
-    "suiResources": {
-      "nonce": 0,
-    },
+    "suiResources": {},
     "swapHistory": [],
     "syncHash": undefined,
     "used": true,
@@ -52,9 +48,7 @@ exports[`sui currency bridge scanAccounts sui seed 1 1`] = `
     "pendingOperations": [],
     "seedIdentifier": "e5fb8c817b97e9e9aec677b9e822e8a60c7471624f36b701c94560b88195a8e7",
     "spendableBalance": "0",
-    "suiResources": {
-      "nonce": 0,
-    },
+    "suiResources": {},
     "swapHistory": [],
     "syncHash": undefined,
     "used": false,
