@@ -6,3 +6,12 @@ export type LldNanoSUpsellBannersConfig = {
   img?: string;
   "%"?: number;
 };
+
+export type LlmNanoSUpsellBannersConfig = {
+  manager: boolean;
+  accounts: boolean;
+  notification_center: boolean;
+  wallet?: boolean;
+  link: string;
+  "%"?: number;
+};
