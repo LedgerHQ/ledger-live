@@ -10,11 +10,12 @@ export enum TX_STATUS {
 
 export const WRITE_RESOURCE = "write_resource";
 
-export const TRANSFER_TYPES: MoveStructId[] = [
+export const COIN_TRANSFER_TYPES: MoveStructId[] = [
   "0x1::aptos_account::transfer",
   "0x1::aptos_account::transfer_coins",
   "0x1::coin::transfer",
 ];
+export const FA_TRANSFER_TYPES: MoveStructId[] = ["0x1::primary_fungible_store::transfer"];
 export const BATCH_TRANSFER_TYPES: MoveStructId[] = [
   "0x1::aptos_account::batch_transfer",
   "0x1::aptos_account::batch_transfer_coins",

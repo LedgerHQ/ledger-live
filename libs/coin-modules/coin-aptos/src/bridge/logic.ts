@@ -16,9 +16,11 @@ import {
   BATCH_TRANSFER_TYPES,
   DELEGATION_POOL_TYPES,
   DIRECTION,
-  TRANSFER_TYPES,
+  COIN_TRANSFER_TYPES,
+  FA_TRANSFER_TYPES,
 } from "../constants";
 import type {
+  AptosFungibleoObjectCoreResourceData,
   AptosFungibleStoreResourceData,
   AptosMoveResource,
   AptosTransaction,
@@ -175,7 +177,7 @@ export function processRecipients(
 ): void {
   // get recipients buy 3 groups
   if (
-    (TRANSFER_TYPES.includes(payload.function) ||
+    (COIN_TRANSFER_TYPES.includes(payload.function) ||
       DELEGATION_POOL_TYPES.includes(payload.function)) &&
     payload.functionArguments &&
     payload.functionArguments.length > 0 &&
@@ -183,6 +185,15 @@ export function processRecipients(
   ) {
     // 1. Transfer like functions (includes some delegation pool functions)
     op.recipients.push(payload.functionArguments[0].toString());
+  } else if (
+    FA_TRANSFER_TYPES.includes(payload.function) &&
+    payload.functionArguments &&
+    payload.functionArguments.length > 1 &&
+    typeof payload.functionArguments[0] === "object" &&
+    typeof payload.functionArguments[1] === "string"
+  ) {
+    // 1. Transfer like functions (includes some delegation pool functions)
+    op.recipients.push(payload.functionArguments[1].toString());
   } else if (
     BATCH_TRANSFER_TYPES.includes(payload.function) &&
     payload.functionArguments &&
@@ -287,6 +298,22 @@ function isWriteSetChangeWriteResource(
   return (change as WriteSetChangeWriteResource).data !== undefined;
 }
 
+export function checkFAOwner(tx: AptosTransaction, event: Event, user_address: string): boolean {
+  for (const change of tx.changes) {
+    if (isWriteSetChangeWriteResource(change)) {
+      const storeData = change.data as MoveResource<AptosFungibleoObjectCoreResourceData>;
+      if (
+        change.address == event.data.store &&
+        storeData.type == "0x1::object::ObjectCore" &&
+        storeData.data.owner == user_address
+      ) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
 export function getCoinAndAmounts(
   tx: AptosTransaction,
   address: string,
@@ -316,15 +343,19 @@ export function getCoinAndAmounts(
         }
         break;
       case "0x1::fungible_asset::Deposit":
-        coin_id = getResourceAddress(tx, event, "deposit_events", getEventFAAddress);
-        if (coin_id !== null) {
-          amount_in = amount_in.plus(event.data.amount);
+        if (checkFAOwner(tx, event, address)) {
+          coin_id = getResourceAddress(tx, event, "deposit_events", getEventFAAddress);
+          if (coin_id !== null) {
+            amount_in = amount_in.plus(event.data.amount);
+          }
         }
         break;
       case "0x1::fungible_asset::Withdraw":
-        coin_id = getResourceAddress(tx, event, "withdraw_events", getEventFAAddress);
-        if (coin_id !== null) {
-          amount_in = amount_in.plus(event.data.amount);
+        if (checkFAOwner(tx, event, address)) {
+          coin_id = getResourceAddress(tx, event, "withdraw_events", getEventFAAddress);
+          if (coin_id !== null) {
+            amount_in = amount_in.plus(event.data.amount);
+          }
         }
         break;
     }
