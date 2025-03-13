@@ -185,11 +185,6 @@ export const getOperations = async (
     return rawTransactions.map(transaction => transactionToOperation(accountId, addr, transaction));
   });
 
-export const getPreloadedData = () => ({
-  // Add any preloaded data fields here
-  networkInfo: {},
-});
-
 const getTotalGasUsed = (effects?: TransactionEffects | null): bigint => {
   const gasSummary = effects?.gasUsed;
   if (!gasSummary) return BigInt(0);

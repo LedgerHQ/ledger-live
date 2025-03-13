@@ -47,9 +47,7 @@ export type TransactionRaw = TransactionCommonRaw & {
  * You can for instance add a list of validators for Proof-of-Stake blockchains,
  * or any volatile data that could not be set as constants in the code (staking progress, fee estimation variables, etc.)
  */
-export type SuiPreloadData = {
-  somePreloadedData: Record<any, any>;
-};
+export type SuiPreloadData = object;
 
 export type SuiAccount = Account & {
   // On some blockchain, an account can have resources (gained, delegated, ...)
