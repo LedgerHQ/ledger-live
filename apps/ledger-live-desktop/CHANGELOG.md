@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.104.0-next.1
+
+### Minor Changes
+
+- [#9521](https://github.com/LedgerHQ/ledger-live/pull/9521) [`1846649`](https://github.com/LedgerHQ/ledger-live/commit/184664903c2f79e1c754cc08502766ba28c3e44d) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - Add trademark to devices names
+
 ## 2.104.0-next.0
 
 ### Minor Changes
