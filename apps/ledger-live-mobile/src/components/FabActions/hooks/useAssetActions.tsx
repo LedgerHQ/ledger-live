@@ -174,7 +174,7 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
                       {
                         screen: ScreenName.Stake,
                         params: {
-                          currency: assetId,
+                          currencies: [assetId],
                         },
                       },
                     ] as const,

@@ -57,9 +57,8 @@ export default function NoFunds({ route }: Props) {
   const { data: currenciesAll } = useFetchCurrencyAll();
   const { account, parentAccount, entryPoint } = route?.params; // TODO: All we need is the accountId, parentId, and currency. We should refactor this to pass only those serializable values.
   const navigation = useNavigation();
-  const accountCurrency = getAccountCurrency(account);
+  const currency = getAccountCurrency(account);
 
-  const currency = parentAccount?.currency || accountCurrency;
 
   const { isCurrencyAvailable } = useRampCatalog();
 

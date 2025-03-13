@@ -12,7 +12,6 @@ import { useStake } from "~/newArch/hooks/useStake/useStake";
 
 type Props = BaseComposite<StackNavigatorProps<StakeNavigatorParamList, ScreenName.Stake>>;
 
-// This should be a navigator...
 const StakeFlow = ({ route }: Props) => {
   const { enabledCurrencies, partnerSupportedTokens } = useStake();
   const currencies = route?.params?.currencies || enabledCurrencies.concat(partnerSupportedTokens);
