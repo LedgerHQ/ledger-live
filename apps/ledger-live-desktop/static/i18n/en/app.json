@@ -440,7 +440,7 @@
     },
     "wrongDevice": {
       "title": "Ledger Nano S™ is not compatible with {{provider}}",
-      "description": "Ledger Nano S is not compatible with {{provider}}. You can use Ledger Nano S Plus, Ledger Nano X, Ledger Stax, or Ledger Flex to experience cross-chain swaps on {{provider}} via Ledger Live",
+      "description": "Ledger Nano S™ is not compatible with {{provider}}. You can use Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™, or Ledger Flex™ to experience cross-chain swaps on {{provider}} via Ledger Live",
       "cta": "Explore compatible devices",
       "changeProvider": "Swap with another provider"
     },
@@ -2053,7 +2053,7 @@
       "dontHaveSeed": "Don't have your recovery phrase? ",
       "followTheGuide": "Follow our step by step update guide",
       "removeApps": "Uninstall all apps before updating",
-      "update": "{{productName} OS update",
+      "update": "{{productName}} OS update",
       "updateBtn": "Update firmware",
       "installUpdate": "Install update",
       "banner": {
