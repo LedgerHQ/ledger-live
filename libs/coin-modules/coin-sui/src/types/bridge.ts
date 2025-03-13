@@ -12,16 +12,12 @@ import type { Account, AccountRaw } from "@ledgerhq/types-live";
 /**
  * Sui account resources
  */
-export type SuiResources = {
-  nonce: number;
-};
+export type SuiResources = object;
 
 /**
  * Sui account resources from raw JSON
  */
-export type SuiResourcesRaw = {
-  nonce: number;
-};
+export type SuiResourcesRaw = object;
 
 /**
  * Sui transaction

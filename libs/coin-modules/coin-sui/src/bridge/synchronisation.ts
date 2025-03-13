@@ -29,7 +29,7 @@ export const getAccountShape: GetAccountShape<SuiAccount> = async info => {
     derivationMode,
   });
 
-  const { blockHeight, nonce, balance } = await getAccount(address);
+  const { blockHeight, balance } = await getAccount(address);
 
   // Merge new operations with the previously synced ones
   let operations: Operation[] = [];
@@ -51,9 +51,7 @@ export const getAccountShape: GetAccountShape<SuiAccount> = async info => {
     spendableBalance: balance,
     operationsCount: operations.length,
     blockHeight,
-    suiResources: {
-      nonce,
-    },
+    suiResources: {},
   };
   return { ...shape, operations };
 };

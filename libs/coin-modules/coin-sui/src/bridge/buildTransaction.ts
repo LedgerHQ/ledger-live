@@ -1,6 +1,5 @@
 import type { SuiAccount, Transaction } from "../types";
 import { craftTransaction, type CreateExtrinsicArg } from "../logic";
-import { getNonce } from "./utils";
 
 export const extractExtrinsicArg = (
   _account: SuiAccount,
@@ -25,7 +24,6 @@ export const buildTransaction = async (
 ) => {
   return craftTransaction(
     account.freshAddress,
-    getNonce(account),
     extractExtrinsicArg(account, transaction),
     forceLatestParams,
   );

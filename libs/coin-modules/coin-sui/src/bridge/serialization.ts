@@ -1,18 +1,12 @@
 import { Account, AccountRaw } from "@ledgerhq/types-live";
 import type { SuiAccount, SuiAccountRaw, SuiResourcesRaw, SuiResources } from "../types";
 
-export function toSuiResourcesRaw(resources: SuiResources): SuiResourcesRaw {
-  const { nonce } = resources;
-  return {
-    nonce,
-  };
+export function toSuiResourcesRaw(_resources: SuiResources): SuiResourcesRaw {
+  return {};
 }
 
-export function fromSuiResourcesRaw(resources: SuiResourcesRaw): SuiResources {
-  const { nonce } = resources;
-  return {
-    nonce,
-  };
+export function fromSuiResourcesRaw(_resources: SuiResourcesRaw): SuiResources {
+  return {};
 }
 
 export function assignToAccountRaw(account: Account, accountRaw: AccountRaw) {

@@ -1,7 +1,6 @@
 import BigNumber from "bignumber.js";
 import type { Account, OperationType } from "@ledgerhq/types-live";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { getNonce } from "./utils";
 import {
   CommandDescriptor,
   TransferCommand,
@@ -96,7 +95,6 @@ function optimisticOpForTransfer(
     senders: [account.freshAddress],
     recipients: [transaction.recipient].filter(Boolean),
     accountId: account.id,
-    transactionSequenceNumber: getNonce(account),
     date: new Date(), // TODO: use transaction date
     extra,
   };

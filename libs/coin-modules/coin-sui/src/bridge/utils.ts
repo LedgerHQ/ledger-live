@@ -23,29 +23,6 @@ export function getAccountUnit(account: AccountLike): {
 }
 
 /**
- * Returns true if account must do a first bond - false for a bond extra
- *
- * @param {Account} _account
- */
-export const isFirstBond = (_account: SuiAccount): boolean => true; // TODO: implement
-
-/**
- * Returns nonce for an account
- *
- * @param {Account} account
- */
-export const getNonce = (account: SuiAccount): number => {
-  const lastPendingOp = account.pendingOperations[0];
-  const nonce = Math.max(
-    account.suiResources?.nonce || 0,
-    lastPendingOp && typeof lastPendingOp.transactionSequenceNumber === "number"
-      ? lastPendingOp.transactionSequenceNumber + 1
-      : 0,
-  );
-  return nonce;
-};
-
-/**
  * Calculate the maximum amount that can be sent from the account after deducting fees.
  *
  * @param {SuiAccount} account - The account from which the amount is being sent.

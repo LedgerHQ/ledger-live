@@ -55,7 +55,6 @@ export const getAccount = async (addr: string) =>
     const balance = await getBalanceCached({ api, owner: addr });
     return {
       blockHeight: BLOCK_HEIGHT * 2,
-      nonce: 0,
       balance: BigNumber(balance.totalBalance),
     };
   });
