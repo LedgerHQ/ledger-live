@@ -39,7 +39,7 @@ export const buildSignOperation =
           }),
         };
 
-        const { unsigned } = await buildTransaction(account, transactionToSign, true);
+        const { unsigned } = await buildTransaction(account, transactionToSign);
 
         const signData = messageWithIntent("TransactionData", unsigned);
 

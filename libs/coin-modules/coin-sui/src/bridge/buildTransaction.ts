@@ -15,16 +15,7 @@ export const extractExtrinsicArg = (
  *
  * @param {Account} account
  * @param {Transaction} transaction
- * @param {boolean} forceLatestParams - forces the use of latest transaction params
  */
-export const buildTransaction = async (
-  account: SuiAccount,
-  transaction: Transaction,
-  forceLatestParams = false,
-) => {
-  return craftTransaction(
-    account.freshAddress,
-    extractExtrinsicArg(account, transaction),
-    forceLatestParams,
-  );
+export const buildTransaction = async (account: SuiAccount, transaction: Transaction) => {
+  return craftTransaction(account.freshAddress, extractExtrinsicArg(account, transaction));
 };
