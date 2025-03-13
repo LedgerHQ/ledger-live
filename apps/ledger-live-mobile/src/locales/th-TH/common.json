@@ -261,7 +261,7 @@
       "description" : "โปรดบันทึก Log ของคุณโดยใช้ปุ่มด้านล่าง และส่งให้ Ledger Support"
     },
     "DeviceNameInvalid" : {
-      "title" : "โปรดตั้งชื่ออุปกรณ์โดยไม่มี '{{invalidCharacters}}}'"
+      "title" : "โปรดตั้งชื่ออุปกรณ์โดยไม่มี '{{invalidCharacters}}'"
     },
     "DeviceOnDashboardExpected" : {
       "title" : "อุปกรณ์ไม่ได้อยู่บนแดชบอร์ด",
@@ -5508,10 +5508,10 @@
         "steps" : {
           "amount" : {
             "allAssetsUsed" : "เลือกสินทรัพย์ทั้งหมดแล้ว",
-            "assetsRemaining" : "สินทรัพย์ที่เหลือที่ Delegate ได้: <0>{{amount}}}</0>",
+            "assetsRemaining" : "สินทรัพย์ที่เหลือที่ Delegate ได้: <0>{{amount}}</0>",
             "minAmount" : "จำนวนขั้นต่ำ: <0>{{min}}</0>",
             "incorrectAmount" : "จำนวนสูงสุด: <0>{{max}}</0>",
-            "minRemaining" : "เหลือขั้นต่ำ: <0>{{min}}}</0>"
+            "minRemaining" : "เหลือขั้นต่ำ: <0>{{min}}</0>"
           },
           "verification" : {
             "success" : {
@@ -5797,7 +5797,7 @@
       "oversubscribed" : "สมัครติดตามเกิน ({{nominatorsCount}})",
       "oversubscribedInfo" : "เฉพาะผู้เสนอชื่อ {{maxNominatorRewardedPerValidator}} อันดับแรกที่มีจำนวนการผูกมัดสูงสุดเท่านั้นที่จะได้รับ Reward",
       "hasPendingBondOperation" : "การดำเนินการผูกมัดยังรอการยืนยัน",
-      "externalControllerUnsupported" : "บัญชี Stash นี้ควบคุมโดยบัญชีแยกต่างหาก ซึ่งมี Address คือ <0>{{controllerAddress}}}</0> ในการ Stake กับ Ledger Live คุณต้องตั้งค่าบัญชี Stash นี้เป็นผู้ควบคุมเอง",
+      "externalControllerUnsupported" : "บัญชี Stash นี้ควบคุมโดยบัญชีแยกต่างหาก ซึ่งมี Address คือ <0>{{controllerAddress}}</0> ในการ Stake กับ Ledger Live คุณต้องตั้งค่าบัญชี Stash นี้เป็นผู้ควบคุมเอง",
       "externalStashUnsupported" : "บัญชีนี้เป็นผู้ควบคุมบัญชี Stash แยกต่างหากซึ่งมี Address ที่ <0>{{stashAddress}}</0 > ในการ Stake กับ Ledger Live คุณต้องตั้งค่าบัญชี Stash นี้เป็นผู้ควบคุมเอง",
       "showInactiveNominations" : "แสดงการเสนอชื่อทั้งหมด ({{count}})",
       "hideInactiveNominations" : "แสดงเฉพาะการเสนอชื่อที่ใช้งานเท่านั้น",
