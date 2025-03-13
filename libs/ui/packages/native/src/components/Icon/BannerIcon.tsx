@@ -7,9 +7,9 @@ import { ColorPalette } from "../../styles";
 import { Flex } from "../Layout";
 
 type IconKey = keyof typeof Icons;
-type IconPallet = { fg: string; bg: string };
+type IconPalette = { fg: string; bg: string };
 
-function getColorsByIcon(colors: ColorPalette): Partial<Record<IconKey, Partial<IconPallet>>> {
+function getColorsByIcon(colors: ColorPalette): Partial<Record<IconKey, Partial<IconPalette>>> {
   const { warning } = colors;
 
   return {
@@ -17,7 +17,7 @@ function getColorsByIcon(colors: ColorPalette): Partial<Record<IconKey, Partial<
   };
 }
 
-function getDefaultDefaultColors({ primary }: ColorPalette): IconPallet {
+function getDefaultDefaultColors({ primary }: ColorPalette): IconPalette {
   return { fg: primary.c80, bg: primary.c80 };
 }
 
@@ -44,8 +44,8 @@ function IconContainer({ color, children }: PropsWithChildren<{ color: string }>
   const { theme } = useTheme();
 
   return (
-    <Flex alignItems="center" justifyContent="center" width={52} height={52}>
-      <IconBg viewBox="0 0 52 52">
+    <Flex width={52} height={52} alignItems="center" justifyContent="center">
+      <IconBg viewBox="0 0 52 52" fill="none">
         <Defs>
           <VGradient
             id="fillGrad"
@@ -95,8 +95,6 @@ function VGradient({ id, gradient }: VGradientProps) {
 const IconBg = styled(Svg).attrs({ xmlns: "http://www.w3.org/2000/svg" })`
   position: absolute;
   inset: 0;
-  fill: none;
-  rotate: ${(p) => (p.theme.colors.type === "dark" ? "0deg" : "180deg")};
 `;
 
 const BorderSquare = styled(Square)`
