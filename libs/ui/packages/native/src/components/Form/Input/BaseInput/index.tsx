@@ -35,6 +35,12 @@ export type InputProps<T = string> = Omit<CommonProps, "value" | "onChange"> & {
     | ((props: InputProps<T>, ref: React.RefObject<{ clear: () => void }>) => React.ReactNode)
     | React.ReactNode;
   /**
+   * A function that will render some content at the bottom right of the input.
+   */
+  renderBottomRight?:
+    | ((props: InputProps<T>, ref: React.RefObject<{ clear: () => void }>) => React.ReactNode)
+    | React.ReactNode;
+  /**
    * Triggered when the input value is updated.
    */
   onChange?: (value: T) => void;
@@ -81,6 +87,10 @@ export type InputProps<T = string> = Omit<CommonProps, "value" | "onChange"> & {
    * Optional text color parameter.
    */
   color?: string;
+  /**
+   * If true, inputBottomRight will replace inputRight.
+   */
+  largeMode?: boolean;
 };
 
 const InputContainer = styled.View<Partial<CommonProps> & { focus?: boolean; hasBorder?: boolean }>`
@@ -94,6 +104,7 @@ const InputContainer = styled.View<Partial<CommonProps> & { focus?: boolean; has
   color: ${(p) => p.theme.colors.neutral.c100};
   align-items: center;
   padding: 0px 16px;
+  position: relative;
 
   ${(p) =>
     p.disabled &&
@@ -163,6 +174,12 @@ export const InputRenderRightContainer = styled(FlexBox).attrs(() => ({
   paddingLeft: "8px",
 }))``;
 
+export const InputRenderBottomRightContainer = styled(FlexBox)`
+  position: absolute;
+  bottom: 2px;
+  right: 8px;
+`;
+
 // Yes, this is dirty. If you can figure out a better way please change the code :).
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const IDENTITY = (_: any): any => _;
@@ -177,6 +194,7 @@ function Input<T = string>(props: InputProps<T>, ref?: any): JSX.Element {
     error,
     renderLeft,
     renderRight,
+    renderBottomRight,
     serialize = IDENTITY,
     deserialize = IDENTITY,
     containerStyle,
@@ -190,6 +208,7 @@ function Input<T = string>(props: InputProps<T>, ref?: any): JSX.Element {
     color,
     inputErrorColor = "error.c50",
     showErrorIcon = false,
+    largeMode,
     ...textInputProps
   } = props;
 
@@ -242,7 +261,17 @@ function Input<T = string>(props: InputProps<T>, ref?: any): JSX.Element {
           }}
           style={{ ...(color ? { color: color } : {}), ...baseInputContainerStyle }}
         />
-        {typeof renderRight === "function" ? renderRight(props, inputRef) : renderRight}
+        {largeMode
+          ? renderBottomRight && (
+              <InputRenderBottomRightContainer>
+                {typeof renderBottomRight === "function"
+                  ? renderBottomRight(props, inputRef)
+                  : renderBottomRight}
+              </InputRenderBottomRightContainer>
+            )
+          : typeof renderRight === "function"
+            ? renderRight(props, inputRef)
+            : renderRight}
       </InputContainer>
       {!!error && !disabled && (
         <FlexBox
