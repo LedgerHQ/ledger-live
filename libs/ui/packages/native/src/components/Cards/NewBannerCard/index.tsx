@@ -1,6 +1,6 @@
 import React, { type ReactNode } from "react";
-import { TouchableOpacity } from "react-native";
-
+import { Pressable } from "react-native";
+import { useTheme } from "styled-components/native";
 import * as Icons from "@ledgerhq/icons-ui/native";
 import { BannerIcon } from "../../Icon";
 import { Flex } from "../../Layout";
@@ -30,12 +30,14 @@ export default function NewBannerCard({
   borderRadius = 12,
   ...styledProps
 }: Props) {
+  const { theme } = useTheme();
+
   return (
-    <TouchableOpacity onPress={onPress}>
+    <Pressable onPress={onPress} style={(p) => [{ opacity: p.pressed ? 0.2 : 1.0 }]}>
       <Flex
         flexDirection="row"
         alignItems="center"
-        bg="opacityDefault.c05"
+        bg={theme === "dark" ? "opacityDefault.c05" : "neutral.c00"}
         p={p}
         borderRadius={borderRadius}
         {...styledProps}
@@ -79,6 +81,6 @@ export default function NewBannerCard({
           </Flex>
         </Flex>
       </Flex>
-    </TouchableOpacity>
+    </Pressable>
   );
 }
