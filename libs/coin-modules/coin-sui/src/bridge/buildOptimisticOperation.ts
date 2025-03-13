@@ -68,7 +68,7 @@ function buildOptimisticOperationForCommand(
     case "transfer":
       return optimisticOpForTransfer(account, transaction, command, commandDescriptor);
     default:
-      // @ts-expect-error TODO: fix type
+      // @ts-expect-error Seem like a bug in TS, remove once more commands are added
       return assertUnreachable(command);
   }
 }
