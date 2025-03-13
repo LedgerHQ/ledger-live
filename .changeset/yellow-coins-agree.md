@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-xrp": patch
+"@ledgerhq/coin-xrp": minor
 ---
 
 Fix: iteration on api/listOperations
