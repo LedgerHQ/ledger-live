@@ -1,7 +1,7 @@
 import { AccountRaw, CurrenciesData, DatasetTest } from "@ledgerhq/types-live";
 import { Transaction } from "../types";
 
-const ADDR = "0x602324e8a56c2d52affb6513fe9797bd76c3b3b7360ca10c0b241bf885d521c2";
+const ADDR = "0x7d20dcdb2bca4f508ea9613994683eb4e76e9c4ed371169677c1be02aaf0b58e";
 
 const suiAccount: AccountRaw = {
   id: `js:1:sui:${ADDR}:`,
