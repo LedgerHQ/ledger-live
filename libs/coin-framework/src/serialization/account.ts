@@ -76,6 +76,9 @@ export function fromAccountRaw(rawAccount: AccountRaw, fromRaw?: FromFamiliyRaw)
   const feesCurrency = feesCurrencyId
     ? findCryptoCurrencyById(feesCurrencyId) || findTokenById(feesCurrencyId)
     : undefined;
+  
+  // console.log({creationDate, lastSyncDate})
+
 
   const res: Account = {
     type: "Account",
@@ -127,6 +130,7 @@ export function fromAccountRaw(rawAccount: AccountRaw, fromRaw?: FromFamiliyRaw)
   }
 
   if (fromRaw?.assignFromAccountRaw) {
+    // debugger;
     fromRaw.assignFromAccountRaw(rawAccount, res);
   }
 
@@ -178,6 +182,7 @@ export function toAccountRaw(account: Account, toFamilyRaw?: ToFamiliyRaw): Acco
   const convertOperation = (op: Operation) =>
     toOperationRaw(op, undefined, toFamilyRaw?.toOperationExtraRaw);
 
+  // console.log({creationDate})
   const res: AccountRaw = {
     id,
     seedIdentifier,
@@ -188,7 +193,7 @@ export function toAccountRaw(account: Account, toFamilyRaw?: ToFamiliyRaw): Acco
     freshAddressPath,
     blockHeight,
     syncHash,
-    creationDate: creationDate.toISOString(),
+    creationDate: !isNaN(creationDate.getTime()) ? creationDate.toISOString() : new Date().toISOString(),
     operationsCount,
     operations: operations.map(convertOperation),
     pendingOperations: pendingOperations.map(convertOperation),

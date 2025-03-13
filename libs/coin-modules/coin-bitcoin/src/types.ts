@@ -7,6 +7,7 @@ import {
   TransactionCommonRaw,
   TransactionStatusCommon,
   TransactionStatusCommonRaw,
+  Operation
 } from "@ledgerhq/types-live";
 
 export type BitcoinInput = {
@@ -171,4 +172,11 @@ export type BitcoinAccount = Account & { bitcoinResources: BitcoinResources };
 
 export type BitcoinAccountRaw = AccountRaw & {
   bitcoinResources: BitcoinResourcesRaw;
+};
+
+export type BtcOperation = Operation<BtcOperationExtra>;
+export type BtcOperationExtra = {
+  inputs?: string[] | undefined;
+  replacedBy?: string | undefined;
+  replaces?: string | undefined;
 };

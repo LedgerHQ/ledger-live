@@ -98,6 +98,7 @@ class Bitcoin extends Base {
   }
 
   validateAddress(address: string): boolean {
+    console.log({address})
     try {
       // This prefix check is to avoid returning false in cases where a valid base58 address also happens
       // to be a valid bech32(m) string (but invalid segwit address).

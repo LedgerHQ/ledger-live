@@ -64,6 +64,7 @@ class Xpub {
   }
 
   async syncAddress(account: number, index: number, needReorg: boolean): Promise<boolean> {
+    console.log(`in syncaddress for account ${account} and index ${index}`)
     const address = await this.crypto.getAddress(this.derivationMode, this.xpub, account, index);
 
     this.storage.addAddress(
@@ -78,6 +79,7 @@ class Xpub {
       account,
       index,
     });
+    console.log({hasPendings})
     if (hasPendings) {
       this.storage.removePendingTxs({ account, index });
     }
@@ -111,13 +113,16 @@ class Xpub {
 
   // TODO : test fail case + incremental
   async sync(): Promise<void> {
+    console.log(`xpub sync()`)
     this.freshAddressIndex = 0;
     const highestBlockFromStorage = this.storage.getHighestBlockHeightAndHash();
     let needReorg = !!highestBlockFromStorage;
+    debugger;
     if (highestBlockFromStorage) {
       const highestBlockFromExplorer = await this.explorer.getBlockByHeight(
         highestBlockFromStorage.height,
       );
+      console.log({highestBlockFromExplorer, highestBlockFromStorage})
       if (highestBlockFromExplorer?.hash === highestBlockFromStorage.hash) {
         needReorg = false;
       }
@@ -373,6 +378,10 @@ class Xpub {
         inserted += this.storage.appendTxs(txs); // insert not pending tx
       }
     } while (token); // loop until no more txs, if there is a token it means there is more txs to fetch
+    if (address == "mm2Zu8sBttErVbhrDzN9okeqGwcFWZaK3A") {
+      // debugger;
+      console.log({inserted})
+    }
     inserted += this.storage.appendTxs(pendingTxs); // insert pending tx
     return inserted;
   }

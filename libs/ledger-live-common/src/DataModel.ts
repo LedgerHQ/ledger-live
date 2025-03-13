@@ -55,6 +55,7 @@ export function createDataModel<R, M>(schema: DataSchema<R, M>): DataModel<R, M>
     for (let i = raw.version; i < version; i++) {
       data = migrations[i](data);
     }
+    console.log({DataModeldata: data})
 
     data = decode(data);
     return data;

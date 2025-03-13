@@ -47,7 +47,7 @@ export const toOperationRaw = (
     blockHash,
     blockHeight,
     extra,
-    date: date.toISOString(),
+    date: !isNaN(date.getTime()) ? date.toISOString() : new Date().toISOString(),
     value: value.toFixed(),
     fee: fee.toString(),
   };

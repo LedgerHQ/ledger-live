@@ -150,6 +150,7 @@ class StepImport extends PureComponent<
             const hasAlreadyBeenScanned = !!scannedAccounts.find(a => account.id === a.id);
             const hasAlreadyBeenImported = !!existingAccounts.find(a => account.id === a.id);
             const isNewAccount = isAccountEmpty(account);
+            console.log({isNewAccount, account})
             if (!isNewAccount && !hasAlreadyBeenImported) {
               onlyNewAccounts = false;
             }

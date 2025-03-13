@@ -50,6 +50,7 @@ export const buildSignOperation =
 
         const networkParams = getNetworkParameters(currency.id);
         const sigHashType = networkParams.sigHash;
+        console.log({networkParams, sigHashType})
         if (isNaN(sigHashType)) {
           throw new Error("sigHashType should not be NaN");
         }

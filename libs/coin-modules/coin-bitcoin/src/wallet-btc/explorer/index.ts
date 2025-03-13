@@ -27,12 +27,12 @@ class BitcoinLikeExplorer implements IExplorer {
   }
 
   async broadcast(tx: string): Promise<{ data: { result: string } }> {
-    const url = `${this.baseUrl}/tx/send`;
+    const url = `${this.baseUrl}/tx`;
     // TODO: check
     const res = await network({
       method: "POST",
       url,
-      data: { tx },
+      data: tx,
     });
     return res;
   }
@@ -54,7 +54,7 @@ class BitcoinLikeExplorer implements IExplorer {
       url: `${this.baseUrl}/blocks/tip/hash`,
     });
     const hash = res.data;
-    console.log({ res, hash });
+    // console.log({ res, hash });
     const { data } = await network({
       method: "GET",
       url: `${this.baseUrl}/block/${hash}`,
@@ -68,14 +68,14 @@ class BitcoinLikeExplorer implements IExplorer {
       method: "GET",
       url: `${this.baseUrl}/block-height/${height}`,
     });
-    console.log({res})
+    // console.log({res})
 
     const hash = res.data;
     const { data } = await network({
       method: "GET",
       url: `${this.baseUrl}/block/${hash}`,
     });
-    return data[0] ? { height: data[0].height, hash: data[0].hash, time: data[0].timestamp } : null;
+    return  { height: data.height, hash , time: data.timestamp };
   }
 
   async getFees(): Promise<{ [key: string]: number }> {
@@ -99,7 +99,10 @@ class BitcoinLikeExplorer implements IExplorer {
       batch_size: nbMax,
     };
     const pendingsTxs = await this.fetchPendingTxs(address, params);
+    // console.log({pendingsTxs})
+    // const txsMassaged =  txs.map(tx => this.transformEsploraTxToLedger(tx, currentBlockHeight));
     pendingsTxs.forEach(tx => this.hydrateTx(address, tx));
+    // console.log({pendingsTxs})
     return pendingsTxs;
   }
 
@@ -107,19 +110,19 @@ class BitcoinLikeExplorer implements IExplorer {
     address: Address,
     params: ExplorerParams,
   ): Promise<{ txs: TX[]; nextPageToken: string | null }> {
-    console.log({params})
+    // console.log({params})
     const res = await network({
       method: "GET",
       url: `${this.baseUrl}/address/${address.address}/txs`,
       params: { verbosity: "Minimal", ...params },
     });
-    if (address.address == "bcrt1q04el7x4s9g58h6hc0u5a39vylnunu2ym5k66je") {
-      console.log({RESHERE: res})
+    if (address.address == "mm2Zu8sBttErVbhrDzN9okeqGwcFWZaK3A") {
+      // console.log({RESHERE: res})
     }
     // console.log({res})
     const txs = res.data;
     const nextPageToken = null;// data.token;
-    console.log({txs})
+    // console.log({txs})
     if (!txs) {
       return { nextPageToken, txs: [] };
     }
@@ -192,11 +195,13 @@ class BitcoinLikeExplorer implements IExplorer {
   }
   
   transformEsploraTxToLedger(tx: any, currentBlockHeight: number): any {
-    console.log({txstatus: tx.status})
+    // console.log({txstatus: tx.status})
     return {
       id: tx.txid,
       hash: tx.txid,
-      received_at: tx.status.confirmed ? new Date(tx.status.block_time * 1000).toISOString() : undefined, // Convert timestamp to ISO format
+      // NOTE: if received_at is undefined, the received utxos aren't displayed
+      // we're mak
+      received_at: tx.status.confirmed ? new Date(tx.status.block_time * 1000).toISOString() : new Date().toISOString(),// undefined, // Convert timestamp to ISO format
       lock_time: tx.locktime,
       fees: tx.fee.toString(),
       inputs: tx.vin.map((input: any) => ({
@@ -221,6 +226,7 @@ class BitcoinLikeExplorer implements IExplorer {
             hash: tx.status.block_hash,
             height: tx.status.block_height,
             time: new Date(tx.status.block_time * 1000).toISOString(),
+          // NOTE: should default on this one also?
           }
         : null,
       tx_index: 0, // Not provided by Esplora
@@ -246,7 +252,7 @@ class BitcoinLikeExplorer implements IExplorer {
     token: string | null,
   ): Promise<{ txs: TX[]; nextPageToken: string | null }> {
     const currentBlockHeight = (await this.getCurrentBlock())?.height || 0;
-    console.log({currentBlockHeight})
+    // console.log({currentBlockHeight, isPending})
     const params: ExplorerParams = {
       batch_size: batchSize,
     };
@@ -272,22 +278,21 @@ class BitcoinLikeExplorer implements IExplorer {
     let txs: TX[] = [];
     let nextPageToken: string | null = null;
     if (isPending) {
+      if (address.address == "mm2Zu8sBttErVbhrDzN9okeqGwcFWZaK3A") {
+        // debugger;
+      }
       txs = await this.fetchPendingTxs(address, params);
     } else {
       const result = await this.fetchTxs(address, params);
       txs = result.txs;
-      if (address.address == "bcrt1q04el7x4s9g58h6hc0u5a39vylnunu2ym5k66je") {
-          console.log("HI")
-          console.log({result, txs})
-      }
       nextPageToken = result.nextPageToken;
     }
 
     const hydratedTxs: TX[] = [];
     
-    console.log(`before tx massage`)
+    // console.log(`before tx massage`)
     const txsMassaged =  txs.map(tx => this.transformEsploraTxToLedger(tx, currentBlockHeight));
-    console.log({txsMassaged})
+    // console.log({txsMassaged})
 
     // faster than mapping
     txsMassaged.forEach(tx => {
@@ -295,8 +300,8 @@ class BitcoinLikeExplorer implements IExplorer {
       hydratedTxs.push(tx);
     });
 
-    if (address.address == "bcrt1q04el7x4s9g58h6hc0u5a39vylnunu2ym5k66je") {
-      console.log({txs, txsMassaged, hydratedTxs, nextPageToken})
+    if (address.address == "mm2Zu8sBttErVbhrDzN9okeqGwcFWZaK3A") {
+      // console.log({txs, txsMassaged, hydratedTxs, nextPageToken})
     }
     return { txs: hydratedTxs, nextPageToken };
   }

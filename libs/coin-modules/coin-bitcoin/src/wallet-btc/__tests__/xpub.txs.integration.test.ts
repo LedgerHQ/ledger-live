@@ -268,6 +268,7 @@ describe.skip("testing xpub legacy transactions", () => {
 });
 
 // TODO: complete when Praline ready
+// NOTE: interesting
 describe.skip("Build transactions", () => {
   const network = coininfo.bitcoin.regtest.toBitcoinJS();
 

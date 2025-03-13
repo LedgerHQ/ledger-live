@@ -373,6 +373,7 @@ export const getSeedIdentifierDerivation = (
 };
 // return an array of ways to derivate, by convention the latest is the standard one.
 export const getDerivationModesForCurrency = (currency: CryptoCurrency): DerivationMode[] => {
+  // NOTE: cool here also
   let all: DerivationMode[] = [];
   if (currency.id in legacyDerivations) {
     all = all.concat(legacyDerivations[currency.id] || []);

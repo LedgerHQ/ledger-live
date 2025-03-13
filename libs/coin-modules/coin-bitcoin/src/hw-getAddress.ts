@@ -13,6 +13,7 @@ const resolver = (signerContext: SignerContext): GetAddressFn => {
     { currency, path, verify, derivationMode, forceFormat }: GetAddressOptions,
   ) => {
     const format = (forceFormat as AddressFormat) || getAddressFormatDerivationMode(derivationMode);
+    console.log({currency, path, verify, derivationMode, forceFormat})
 
     let result;
     try {
@@ -22,8 +23,10 @@ const resolver = (signerContext: SignerContext): GetAddressFn => {
           format,
         }),
       )) as BitcoinAddress;
+      console.log({result})
     } catch (e: any) {
       // TODO Should normalize error returned from ledgerjs
+        console.log({e})
       if (
         e &&
         e.message &&
@@ -35,6 +38,7 @@ const resolver = (signerContext: SignerContext): GetAddressFn => {
     }
 
     const { bitcoinAddress, publicKey, chainCode } = result;
+    console.log({publicKey})
 
     log(
       "hw",

@@ -16,6 +16,7 @@ import { isConfirmedOperation } from "@ledgerhq/live-common/operation";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { State } from "~/renderer/reducers";
 import { useAccountName } from "~/renderer/reducers/wallet";
+import { Badge } from "@ledgerhq/react-ui/index";
 
 const OperationRow = styled(Box).attrs(() => ({
   horizontal: true,
@@ -67,6 +68,9 @@ function OperationComponent({
 
   const isOptimistic = operation.blockHeight === null;
   const currency = getAccountCurrency(account);
+  const replacedBy = operation.extra && operation.extra.replacedBy;
+  const replaces = operation.extra && operation.extra.replaces;
+  console.log({operation, replacedBy, replaces})
 
   const isConfirmed = isConfirmedOperation(operation, mainAccount, confirmationsNb);
   return (
@@ -92,6 +96,7 @@ function OperationComponent({
       />
       {withAccount && <AccountCell accountName={accountName} currency={currency} />}
       {withAddress ? <AddressCell operation={operation} /> : <Box flex="1" />}
+      {replacedBy && "Replaced"}
       <AmountCell operation={operation} currency={currency} unit={unit} isConfirmed={isConfirmed} />
     </OperationRow>
   );

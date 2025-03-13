@@ -113,7 +113,11 @@ Operation[] {
     existingIds[o.id] = o;
   }
 
+  // debugger;
   // only keep the newFetched that are not in existing. this array will be mutated
+  // NOTE:
+  // HERE, situation where operation ids are the same for different operations
+  // "js:2:bitcoin_testnet:tpubDCbwjyAbvD1sVuouyxFfnxsh5droysVSgv8rwXbKoU7SajBCGTpWdnkFMGQNkxS4yKGi1Ha1C7N6qeNeevgwSHqMpH2q6QAXpcKzHjS7EuZ:"
   let newOps = newFetched
     .filter(o => !existingIds[o.id] || !sameOp(existingIds[o.id], o))
     .sort((a, b) => b.date.valueOf() - a.date.valueOf());
@@ -134,6 +138,7 @@ Operation[] {
 
   for (const o of existing) {
     // prepend all the new ops that have higher date
+    // NOTE: breaks when date is invalid on newOps
     while (newOps.length > 0 && newOps[0].date >= o.date) {
       all.push(newOps.shift() as Operation);
     }

@@ -60,6 +60,7 @@ function makeDescriptor({
   const accountPath = runAccountDerivationScheme(scheme, currency, {
     account: index,
   });
+  console.log({keyOrigin, accountPath, scheme})
   return {
     external: tmpl(`[${keyOrigin}/${accountPath}]${xpub}/0/*`),
     internal: tmpl(`[${keyOrigin}/${accountPath}]${xpub}/1/*`),

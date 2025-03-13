@@ -72,6 +72,7 @@ export function groupAddAccounts(
   });
   const sections: AddAccountsSection[] = [];
 
+  console.log({existingAccounts, scannedAccountsWithoutMigrate, scannedAccounts ,importableAccounts})
   if (importableAccounts.length) {
     sections.push({
       id: "importable",

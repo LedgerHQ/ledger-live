@@ -11,7 +11,7 @@ import {
   isNativeSegwitDerivationMode,
   isTaprootDerivationMode,
 } from "@ledgerhq/coin-framework/derivation";
-import { BitcoinAccount, BitcoinOutput } from "./types";
+import { BitcoinAccount, BitcoinOutput, BtcOperation } from "./types";
 import { perCoinLogic } from "./logic";
 import wallet from "./wallet-btc";
 import { mapTxToOperations } from "./logic";
@@ -52,11 +52,43 @@ const fromWalletUtxo = (utxo: WalletOutput, changeAddresses: Set<string>): Bitco
   };
 };
 
+const markReplacements = (operations: BtcOperation[]): BtcOperation[] => {
+  const txByInput = new Map<string, BtcOperation>();
+
+  for (const op of operations) {
+    if (op.extra && "inputs" in op.extra && Array.isArray(op.extra.inputs)) {
+      debugger;
+      for (const input of op.extra.inputs) {
+        const existingOp = txByInput.get(input);
+        if (existingOp) {
+          // Ensure both transactions have an `extra` field initialized
+          if (!existingOp.extra) existingOp.extra = {};
+          if (!op.extra) op.extra = {};
+
+          // Determine which transaction is newer (replacement)
+          if (new Date(op.date) > new Date(existingOp.date)) {
+            op.extra.replaces = existingOp.hash; // New tx replaces old one
+            existingOp.extra.replacedBy = op.hash; // Old tx was replaced
+          } else if (existingOp.hash !== op.hash) {
+            existingOp.extra.replaces = op.hash; // Old tx replaces new one (unexpected case)
+            op.extra.replacedBy = existingOp.hash; // New tx was replaced (unexpected case)
+          }
+        }
+        // Store the most recent transaction for the given input
+        txByInput.set(input, op);
+      }
+    }
+  }
+  debugger;
+  return operations;
+};
+
 // wallet-btc limitation: returns all transactions twice (for each side of the tx)
 // so we need to deduplicate them...
-const deduplicateOperations = (operations: (Operation | undefined)[]): Operation[] => {
+// NOTE: maybe improve here?
+const deduplicateOperations = (operations: (BtcOperation | undefined)[]): BtcOperation[] => {
   const seen = new Set();
-  const out: Operation[] = [];
+  const out: BtcOperation[] = [];
   let j = 0;
 
   for (const operation of operations) {
@@ -69,10 +101,14 @@ const deduplicateOperations = (operations: (Operation | undefined)[]): Operation
   }
 
   return out;
+  // return out;
+  // return markReplacements(out);
 };
 
 export function makeGetAccountShape(signerContext: SignerContext): GetAccountShape<BitcoinAccount> {
   return async info => {
+    console.log(`----SYNCHRONISATION----`);
+    console.log({info});
     const { currency, index, derivationPath, derivationMode, initialAccount, deviceId } = info;
     // In case we get a full derivation path, extract the seed identification part
     // 44'/0'/0'/0/0 --> 44'/0'
@@ -81,6 +117,7 @@ export function makeGetAccountShape(signerContext: SignerContext): GetAccountSha
     const accountPath = `${rootPath}/${index}'`;
 
     const paramXpub = initialAccount ? decodeAccountId(initialAccount.id).xpubOrAddress : undefined;
+    // NOTE: here interesting
 
     const xpub = await generateXpubIfNeeded(paramXpub, {
       deviceId,
@@ -114,7 +151,7 @@ export function makeGetAccountShape(signerContext: SignerContext): GetAccountSha
         currency,
       ));
 
-    const oldOperations = initialAccount?.operations || [];
+    const oldOperations = (initialAccount?.operations || []) as BtcOperation[];
     const currentBlock = await walletAccount.xpub.explorer.getCurrentBlock();
 
     const blockHeight = currentBlock?.height || 0;
@@ -137,11 +174,28 @@ export function makeGetAccountShape(signerContext: SignerContext): GetAccountSha
       ?.map(tx => mapTxToOperations(tx, currency.id, accountId, accountAddresses, changeAddresses))
       .flat();
 
+    if (xpub === "tpubDCbwjyAbvD1sVuouyxFfnxsh5droysVSgv8rwXbKoU7SajBCGTpWdnkFMGQNkxS4yKGi1Ha1C7N6qeNeevgwSHqMpH2q6QAXpcKzHjS7EuZ") {
+      // debugger;
+    }
+    
+
     const newUniqueOperations = deduplicateOperations(newOperations);
-    const operations = mergeOps(oldOperations, newUniqueOperations);
+    
+    const oldOperationsPending = oldOperations.filter(op => (op.blockHeight === null || op.blockHeight === undefined));
+    const checkIfReplacedOperations = markReplacements([...newUniqueOperations, ...oldOperationsPending]);
+
+    const nonPendingOldOperations = oldOperations.filter(op => !!op.blockHeight || op.blockHeight === 0);
+    const operations = mergeOps(nonPendingOldOperations, checkIfReplacedOperations);
+    console.log({oldOperations, newUniqueOperations, operations})
+    if (operations && operations.length > 0){ 
+      // debugger;
+    }
+    // debugger;
 
     const rawUtxos = await wallet.getAccountUnspentUtxos(walletAccount);
     const utxos = rawUtxos.map(utxo => fromWalletUtxo(utxo, changeAddresses));
+    console.log({rawUtxos, utxos})
+    // NOTE: seem correct
 
     return {
       id: accountId,
@@ -188,6 +242,7 @@ async function generateXpubIfNeeded(
     XPUBVersion: number;
   };
 
+  // NOTE: check
   return signerContext(deviceId, currency, signer =>
     signer.getWalletXpub({
       path: accountPath,
@@ -203,6 +258,7 @@ export const postSync = (initial: BitcoinAccount, synced: BitcoinAccount) => {
   if (perCoin) {
     const { postBuildBitcoinResources, syncReplaceAddress } = perCoin;
 
+    // NOTE: unused, can remove?
     if (postBuildBitcoinResources) {
       syncedBtc.bitcoinResources = postBuildBitcoinResources(syncedBtc, syncedBtc.bitcoinResources);
     }

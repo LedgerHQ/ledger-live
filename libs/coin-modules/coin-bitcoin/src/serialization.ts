@@ -72,6 +72,7 @@ export function toBitcoinResourcesRaw(r: BitcoinResources): BitcoinResourcesRaw 
 }
 
 export function fromBitcoinResourcesRaw(r: BitcoinResourcesRaw): BitcoinResources {
+  console.log({fromBitcoinResourcesRaw: r})
   return {
     utxos: r.utxos.map(fromBitcoinOutputRaw),
     walletAccount: r.walletAccount && wallet.importFromSerializedAccountSync(r.walletAccount),
@@ -90,5 +91,6 @@ export function assignToAccountRaw(account: Account, accountRaw: AccountRaw) {
 export function assignFromAccountRaw(accountRaw: AccountRaw, account: Account) {
   const bitcoinResourcesRaw = (accountRaw as BitcoinAccountRaw).bitcoinResources;
   if (bitcoinResourcesRaw)
+    // debugger;
     (account as BitcoinAccount).bitcoinResources = fromBitcoinResourcesRaw(bitcoinResourcesRaw);
 }

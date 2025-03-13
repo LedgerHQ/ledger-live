@@ -117,6 +117,7 @@ export class OperationsList extends PureComponent<Props, State> {
       [account as AccountLike, parentAccount as AccountLike].filter(Boolean),
     );
     const accountsMap = keyBy(all, "id");
+    console.log({groupedOperations})
     return (
       <>
         <TableContainer id="operation-list">

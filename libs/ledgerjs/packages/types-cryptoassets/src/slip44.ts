@@ -14,6 +14,7 @@ export enum CoinType {
   BTC_GOLD = 156,
   BTC_PRIVATE = 183,
   BTC_TESTNET = 1,
+  // BTC_REGTEST = 2,
   CALLISTO = 820,
   CARDANO = 1815,
   CELO = 52752,

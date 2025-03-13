@@ -63,6 +63,8 @@ export const fromOperationRaw = (
 };
 
 export function fromAccountRaw(rawAccount: AccountRaw): Account {
+  console.log({rawAccount})
+  // debugger;
   const currency = getCryptoCurrencyById(rawAccount.currencyId);
   const bridge = getAccountBridgeByFamily(currency.family, rawAccount.id);
 

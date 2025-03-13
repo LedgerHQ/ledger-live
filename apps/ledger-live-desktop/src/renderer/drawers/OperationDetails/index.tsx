@@ -720,6 +720,10 @@ const OperationDetailsExtra = ({ operation }: OperationDetailsExtraProps) => {
   // Safety type checks
   if (operation.extra && typeof operation.extra === "object" && !Array.isArray(operation.extra)) {
     jsx = Object.entries(operation.extra as Object).map(([key, value]) => {
+      if (Array.isArray(value)) {
+        value = value.join(", ");
+        console.log("here")
+      }
       if (typeof value === "object" || typeof value === "function") return null;
       return (
         <OpDetailsSection key={key}>
@@ -728,6 +732,7 @@ const OperationDetailsExtra = ({ operation }: OperationDetailsExtraProps) => {
           </OpDetailsTitle>
           <OpDetailsData>
             <Ellipsis>{value}</Ellipsis>
+                        <CopyWithFeedback text={value} />
           </OpDetailsData>
         </OpDetailsSection>
       );

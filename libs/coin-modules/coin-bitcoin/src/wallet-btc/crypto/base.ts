@@ -91,6 +91,7 @@ class Base implements ICrypto {
     account: number,
     index: number,
   ): Promise<string> {
+    // NOTE: modify here
     const publicKeyBuffer: Buffer = await this.getPubkeyAt(xpub, account, index);
     const publicKeyHash160: Buffer = bjs.crypto.hash160(publicKeyBuffer);
     const words: number[] = bech32.toWords(publicKeyHash160);

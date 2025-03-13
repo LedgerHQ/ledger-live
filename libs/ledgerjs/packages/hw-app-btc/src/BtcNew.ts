@@ -483,6 +483,7 @@ const H = 0x80000000; //HARDENED from bip32
 const VALID_COIN_TYPES = [
   0, // Bitcoin
   1, // Bitcoin (Testnet)
+  // 2, // Bitcoin (Regtest)
   88, // Qtum
 ];
 

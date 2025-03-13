@@ -55,6 +55,7 @@ class BitcoinLikeWallet {
     if (!this.storages[storageId]) {
       this.storages[storageId] = new BitcoinLikeStorage();
     }
+    // console.log({paramsAccount: params})
     return {
       params,
       xpub: new Xpub({
@@ -92,6 +93,7 @@ class BitcoinLikeWallet {
 
   async getAccountUnspentUtxos(account: Account): Promise<Output[]> {
     const addresses = await account.xpub.getXpubAddresses();
+    console.log({getAccountUnspentUtxosAddresses: addresses})
     return flatten(
       await Promise.all(
         addresses.map(address => account.xpub.storage.getAddressUnspentUtxos(address)),
@@ -343,6 +345,8 @@ class BitcoinLikeWallet {
 
   importFromSerializedAccountSync(account: SerializedAccount): Account {
     const xpub = this.instantiateXpubFromSerializedAccount(account);
+    console.log(`importFromSerializedAccountSync: ${account.xpub.data}`)
+    console.log({xpubdata: account.xpub.data})
 
     xpub.storage.loadSync(account.xpub.data);
 

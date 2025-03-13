@@ -7,6 +7,7 @@ import type {
   Transaction,
   NetworkInfo,
   UtxoStrategy,
+  BtcOperation,
 } from "./types";
 import { $Shape } from "utility-types";
 import type { TX, Input as WalletInput, Output as WalletOutput } from "./wallet-btc";
@@ -69,8 +70,10 @@ type UTXOStatus =
   | { excluded: false; reason?: undefined };
 
 export const getUTXOStatus = (utxo: BitcoinOutput, utxoStrategy: UtxoStrategy): UTXOStatus => {
+  console.log({excludeUTXO: utxoStrategy.excludeUTXOs, utxo})
   if (!utxo.blockHeight && !utxo.isChange) {
     // exclude pending and not change utxo
+    console.log({utxo})
     return {
       excluded: true,
       reason: "pickPendingUtxo",
@@ -169,8 +172,8 @@ export const mapTxToOperations = (
   accountId: string,
   accountAddresses: Set<string>,
   changeAddresses: Set<string>,
-): $Shape<Operation[]> => {
-  const operations: Operation[] = [];
+): $Shape<BtcOperation[]> => {
+  const operations: BtcOperation[] = [];
   const txId = tx.id;
   const fee = new BigNumber(tx.fees ?? 0);
   const blockHeight = tx.block?.height;
@@ -180,12 +183,19 @@ export const mapTxToOperations = (
   const recipients: string[] = [];
   let type: OperationType = "OUT";
   let value = new BigNumber(0);
+  // NOTE: assuming no transaction failed
   const hasFailed = false;
   const accountInputs: WalletInput[] = [];
   const accountOutputs: WalletOutput[] = [];
   const syncReplaceAddress = perCoinLogic[currencyId]?.syncReplaceAddress;
+  if (txId == "be4538c10f0fdf21d21a775667dfa4e468a9a9b352f7b65530f0985322413e71"){
+  // debugger;
+  }
+  const inputs = new Set<string>(); // txid - outputIndex
 
+  // NOTE: if sender = sender, transaction is probably rbf'd
   for (const input of tx.inputs) {
+    inputs.add(`${input.output_hash}-${input.output_index}`);
     if (input.address) {
       senders.add(syncReplaceAddress ? syncReplaceAddress(input.address) : input.address);
 
@@ -198,6 +208,8 @@ export const mapTxToOperations = (
       }
     }
   }
+  console.log({inputs})
+  debugger;
 
   // All inputs of a same transaction have the same sequence
   const transactionSequenceNumber =
@@ -213,6 +225,7 @@ export const mapTxToOperations = (
 
   for (const output of tx.outputs) {
     // ledger explorer returns "unknown" as recipient for OP_RETURN outputs, we don't want to display it in our UI
+    // debugger;
     if (output.address && !output.address.includes("unknown")) {
       if (!accountAddresses.has(output.address)) {
         // The output doesn't belong to this account
@@ -221,6 +234,8 @@ export const mapTxToOperations = (
           (tx.outputs.length === 1 || // The transaction has only 1 output
             output.output_index < changeOutputIndex) // The output isn't the change output
         ) {
+          // NOTE: what is syncReplaceAddress
+          // NOTE: only for bitcoinCash
           recipients.push(syncReplaceAddress ? syncReplaceAddress(output.address) : output.address);
         }
       } else {
@@ -289,6 +304,9 @@ export const mapTxToOperations = (
     if (accountOutputCount > 0) {
       value = finalAmount;
       type = "IN";
+      if (accountId == "js:2:bitcoin_testnet:tpubDCbwjyAbvD1sVuouyxFfnxsh5droysVSgv8rwXbKoU7SajBCGTpWdnkFMGQNkxS4yKGi1Ha1C7N6qeNeevgwSHqMpH2q6QAXpcKzHjS7EuZ:") {
+        // debugger
+      }
       operations.push({
         id: encodeOperationId(accountId, txId, type),
         hash: txId,
@@ -303,7 +321,10 @@ export const mapTxToOperations = (
         accountId,
         date,
         hasFailed,
-        extra: {},
+        // NOTE: should add in "OUT" operations also (?)
+        extra: {
+            inputs: Array.from(inputs),
+        },
       });
     }
   }

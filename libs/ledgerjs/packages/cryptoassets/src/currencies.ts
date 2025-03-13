@@ -377,6 +377,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     type: "CryptoCurrency",
     id: "bitcoin",
     coinType: CoinType.BTC,
+    // coinType: CoinType.BTC_REGTEST,
     name: "Bitcoin",
     managerAppName: "Bitcoin",
     ticker: "BTC",
@@ -3218,9 +3219,11 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
   },
   // Testnets
+  // NOTE: need something here?
   bitcoin_testnet: {
     type: "CryptoCurrency",
     id: "bitcoin_testnet",
+    // coinType: CoinType.BTC_REGTEST,
     coinType: CoinType.BTC_TESTNET,
     name: "Bitcoin Testnet",
     managerAppName: "Bitcoin Test",
@@ -3243,8 +3246,8 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     },
     explorerViews: [
       {
-        tx: "https://live.blockcypher.com/btc-testnet/tx/$hash",
-        address: "https://live.blockcypher.com/btc-testnet/address/$address",
+        tx: "http://localhost:5000/tx/$hash",
+        address: "http://localhost:5000/address/$address",
       },
     ],
     explorerId: "btc_testnet",

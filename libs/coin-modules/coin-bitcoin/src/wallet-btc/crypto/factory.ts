@@ -6,7 +6,9 @@ export default function cryptoFactory(currency: Currency): ICrypto {
   let res: ICrypto;
   switch (currency) {
     case "bitcoin": {
-      const network = coininfo.bitcoin.main.toBitcoinJS();
+      // const network = coininfo.bitcoin.main.toBitcoinJS();
+      const network = coininfo.bitcoin.regtest.toBitcoinJS();
+      console.log({network})
       res = new crypto.Bitcoin({ network });
       break;
     }

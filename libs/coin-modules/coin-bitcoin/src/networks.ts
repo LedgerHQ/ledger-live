@@ -3,6 +3,8 @@ import type { BitcoinLikeNetworkParameters } from "./types";
 import { BitcoinLikeFeePolicy, BitcoinLikeSigHashType } from "./types";
 
 export const getNetworkParameters = (networkName: string): BitcoinLikeNetworkParameters => {
+  // NOTE: here also ?
+  console.log({networkName})
   if (networkName === "bitcoin") {
     return {
       identifier: "btc",

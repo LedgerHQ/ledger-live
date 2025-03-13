@@ -24,6 +24,7 @@ class BitcoinLikeStorage implements IStorage {
   // only needed to handle the case when the input
   // is seen before the output (typically explorer
   // returning unordered tx within the same block)
+  // NOTE: not really used?
   spentUtxos: { [key: string]: Input[] } = {};
 
   hasTx(txFilter: { account: number; index: number }): boolean {
@@ -37,6 +38,7 @@ class BitcoinLikeStorage implements IStorage {
 
   hasPendingTx(txFilter: { account: number; index: number }): boolean {
     const index = `${txFilter.account}-${txFilter.index}`;
+    console.log({hasPendingIndex: index, thisTxs: this.txs, allAccountIndex: this.accountIndex, accountIndex: this.accountIndex[index]})
     return (
       !!this.accountIndex[index] &&
       this.accountIndex[index].map(i => this.txs[i]).some(tx => !tx.block)
@@ -101,6 +103,8 @@ class BitcoinLikeStorage implements IStorage {
 
       // we reject already seen tx
       if (this.txs[this.primaryIndex[index]]) {
+        console.log(`rejecting`)
+        debugger;
         return;
       }
       const idx = this.txs.push(tx) - 1;
@@ -110,6 +114,9 @@ class BitcoinLikeStorage implements IStorage {
       this.accountIndex[`${tx.account}-${tx.index}`].push(idx);
       this.unspentUtxos[indexAddress] = this.unspentUtxos[indexAddress] || [];
       this.spentUtxos[indexAddress] = this.spentUtxos[indexAddress] || [];
+
+      debugger;
+      // NOTE: doc here
 
       tx.outputs.forEach(output => {
         if (output.address === tx.address) {
@@ -159,6 +166,7 @@ class BitcoinLikeStorage implements IStorage {
   }
 
   removeTxs(txsFilter: { account: number; index: number }): void {
+    console.log({removeTxsFilter: txsFilter})
     const newTxs: TX[] = [];
     this.primaryIndex = {};
     this.accountIndex = {};
@@ -166,6 +174,8 @@ class BitcoinLikeStorage implements IStorage {
       // clean
       const indexAddress = tx.address;
       const index = `${indexAddress}-${tx.id}`;
+      console.log(`indexAddress: ${indexAddress}, index: ${index}, tx: ${tx.id}`)
+      debugger;
 
       if (tx.account !== txsFilter.account || tx.index !== txsFilter.index) {
         this.primaryIndex[index] = newTxs.push(tx) - 1;
@@ -175,13 +185,16 @@ class BitcoinLikeStorage implements IStorage {
       delete this.unspentUtxos[indexAddress];
       delete this.spentUtxos[indexAddress];
     });
+    console.log({newTxs})
     this.txs = newTxs;
     this.createAccountIndex();
   }
 
   // We are a bit ugly because we can't rely undo unspentUTXO
   // So we clean the address and rebuild without the pendings
+  // TODO: check this one
   removePendingTxs(txsFilter: { account: number; index: number }): void {
+    console.log({removePendingTxsFilter: txsFilter})
     const newTxs: TX[] = [];
     const txsToReAdd: TX[] = [];
     this.primaryIndex = {};
@@ -204,6 +217,7 @@ class BitcoinLikeStorage implements IStorage {
       delete this.spentUtxos[indexAddress];
     });
 
+    console.log({newTxs})
     this.txs = newTxs;
     this.createAccountIndex();
     this.appendTxs(txsToReAdd);
@@ -224,6 +238,10 @@ class BitcoinLikeStorage implements IStorage {
   }
 
   loadSync(data: { txs: TX[]; addressCache: Record<string, string> }) {
+    console.log("STORAGE LOADSYNC")
+    debugger;
+    console.log({data})
+    console.log({STORAGETHIS: this})
     this.txs = [];
     this.primaryIndex = {};
     this.accountIndex = {};
@@ -266,6 +284,8 @@ class BitcoinLikeStorage implements IStorage {
    * load account data(txs, UTXOs, index...) from app.json
    */
   async load(data: { txs: TX[]; addressCache: Record<string, string> }): Promise<void> {
+    // NOTE: doesn't seem to be called when launching app
+    console.log({storageLoad: data}) 
     return this.loadSync(data);
   }
 

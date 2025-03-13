@@ -79,7 +79,10 @@ const accountModel: DataModel<AccountRaw, [Account, AccountUserData]> = createDa
     // ^- Each time a modification is brought to the model, add here a migration function here
   ],
 
-  decode: (raw: AccountRaw) => [fromAccountRaw(raw), accountRawToAccountUserData(raw)],
+  decode: (raw: AccountRaw) => {
+    console.log("in LLD decode")
+    return [fromAccountRaw(raw), accountRawToAccountUserData(raw)]
+  },
   encode: ([account, userData]: [Account, AccountUserData]): AccountRaw =>
     toAccountRaw(
       {
