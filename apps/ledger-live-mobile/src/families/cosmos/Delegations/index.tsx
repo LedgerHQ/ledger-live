@@ -70,7 +70,7 @@ function Delegations({ account }: Props) {
   const { t } = useTranslation();
   const mainAccount = getMainAccount(account) as CosmosAccount;
   const delegations: CosmosMappedDelegation[] = useCosmosFamilyMappedDelegations(mainAccount);
-
+  const isCroAccount = account.type === "Account" && account.currency.id === "crypto_org";
   const currency = getAccountCurrency(mainAccount);
   const unit = useAccountUnit(account);
   const navigation = useNavigation();
@@ -133,19 +133,33 @@ function Delegations({ account }: Props) {
     },
     [navigation, account.id],
   );
-
-  const onDelegate = useCallback(() => {
+  const goToStakekit = useCallback(() => {
     onNavigate({
-      route: NavigatorName.CosmosDelegationFlow,
-      screen:
-        delegations.length === 0
-          ? ScreenName.CosmosDelegationValidator
-          : ScreenName.CosmosDelegationStarted,
+      route: NavigatorName.Base,
+      screen: ScreenName.PlatformApp,
       params: {
-        source: route,
+        platform: "stakekit",
+        name: "StakeKit",
+        accountId: account.id,
+        yieldId: "cronos-cro-native-staking",
       },
     });
-  }, [onNavigate, delegations, route]);
+  }, [account.id, onNavigate]);
+
+  const onDelegate = useCallback(() => {
+    isCroAccount
+      ? goToStakekit()
+      : onNavigate({
+          route: NavigatorName.CosmosDelegationFlow,
+          screen:
+            delegations.length === 0
+              ? ScreenName.CosmosDelegationValidator
+              : ScreenName.CosmosDelegationStarted,
+          params: {
+            source: route,
+          },
+        });
+  }, [onNavigate, delegations, route, goToStakekit, isCroAccount]);
 
   const onRedelegate = useCallback(() => {
     onNavigate({
@@ -196,19 +210,21 @@ function Delegations({ account }: Props) {
   };
 
   const onCollectRewards = useCallback(() => {
-    onNavigate({
-      route: NavigatorName.CosmosClaimRewardsFlow,
-      screen: delegation
-        ? ScreenName.CosmosClaimRewardsMethod
-        : ScreenName.CosmosClaimRewardsValidator,
-      params: delegation
-        ? {
-            validator: delegation.validator,
-            value: delegation.pendingRewards,
-          }
-        : {},
-    });
-  }, [onNavigate, delegation]);
+    isCroAccount
+      ? goToStakekit()
+      : onNavigate({
+          route: NavigatorName.CosmosClaimRewardsFlow,
+          screen: delegation
+            ? ScreenName.CosmosClaimRewardsMethod
+            : ScreenName.CosmosClaimRewardsValidator,
+          params: delegation
+            ? {
+                validator: delegation.validator,
+                value: delegation.pendingRewards,
+              }
+            : {},
+        });
+  }, [onNavigate, delegation, isCroAccount, goToStakekit]);
 
   const onUndelegate = useCallback(() => {
     onNavigate({
