@@ -72,12 +72,6 @@ export type SuiOperationRaw = OperationRaw<SuiOperationExtraRaw>;
 
 export type SuiOperationExtra = {
   transferAmount?: BigNumber;
-  palletMethod?: PalletMethod;
-  bondedAmount?: BigNumber;
-  unbondedAmount?: BigNumber;
-  withdrawUnbondedAmount?: BigNumber;
-  validatorStash?: string | undefined;
-  validators?: string[] | undefined;
 };
 export type SuiOperationExtraRaw = Record<string, string>;
 
@@ -87,8 +81,6 @@ export type TransferCommand = {
   recipient: string;
   amount: number;
 };
-
-export type PalletMethod = "balances.transfer";
 
 export type Command = TransferCommand;
 

@@ -3,7 +3,7 @@ import type { SuiOperationExtra, SuiOperationExtraRaw } from "../types";
 
 export function fromOperationExtraRaw(extraRaw: OperationExtraRaw) {
   if (extraRaw) {
-    //
+    // reserved for future use
   }
 
   const extra: SuiOperationExtra = {};
@@ -13,7 +13,7 @@ export function fromOperationExtraRaw(extraRaw: OperationExtraRaw) {
 
 export function toOperationExtraRaw(extra: OperationExtra) {
   if (extra) {
-    //
+    // reserved for future use
   }
   const extraRaw: SuiOperationExtraRaw = {};
 
