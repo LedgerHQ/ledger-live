@@ -151,6 +151,16 @@ export class DeviceManagementKitTransport extends Transport {
           "[open] reusing existing session and instantiating a new DmkTransport",
           context,
         );
+        if (!activeDeviceSessionSubject.value.reenableRefresher) {
+          activeDeviceSessionSubject.next({
+            ...activeDeviceSessionSubject.value,
+            reenableRefresher: getDeviceManagementKit().disableDeviceSessionRefresher({
+              sessionId: activeSessionId,
+              blockerId: "[transport] DeviceManagementKitTransport LLM",
+            }),
+          });
+        }
+
         return activeDeviceSessionSubject.value.transport;
       }
     }
@@ -183,14 +193,14 @@ export class DeviceManagementKitTransport extends Transport {
           console.log("[DeviceManagementKitTransport][open] sessionId", sessionId);
 
           const transport = new DeviceManagementKitTransport(getDeviceManagementKit(), sessionId);
-          activeDeviceSessionSubject.next({ sessionId, transport });
           console.log(
             "[DeviceManagementKitTransport][open] toggling off device session refresher (not needed on LLM for now)",
           );
-          getDeviceManagementKit().disableDeviceSessionRefresher({
+          const reenableRefresher = getDeviceManagementKit().disableDeviceSessionRefresher({
             sessionId,
             blockerId: "[transport] DeviceManagementKitTransport LLM",
           });
+          activeDeviceSessionSubject.next({ sessionId, transport, reenableRefresher });
           console.log("[DeviceManagementKitTransport][open] stop discovering");
           getDeviceManagementKit().stopDiscovering();
 
@@ -213,8 +223,12 @@ export class DeviceManagementKitTransport extends Transport {
       const sessionId = await getDeviceManagementKit().connect({ device: deviceOrId });
       console.log("[DeviceManagementKitTransport][open] sessionId", sessionId);
       const transport = new DeviceManagementKitTransport(getDeviceManagementKit(), sessionId);
+      const reenableRefresher = getDeviceManagementKit().disableDeviceSessionRefresher({
+        sessionId,
+        blockerId: "[transport] DeviceManagementKitTransport LLM",
+      });
       console.log("[DeviceManagementKitTransport][open] toggle device session refresher");
-      activeDeviceSessionSubject.next({ sessionId, transport });
+      activeDeviceSessionSubject.next({ sessionId, transport, reenableRefresher });
 
       return transport;
     }

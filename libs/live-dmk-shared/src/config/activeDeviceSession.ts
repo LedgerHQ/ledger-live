@@ -12,4 +12,5 @@ type DMKTransport = Transport & {
 export const activeDeviceSessionSubject = new BehaviorSubject<{
   sessionId: string;
   transport: DMKTransport;
+  reenableRefresher?: () => void;
 } | null>(null);
