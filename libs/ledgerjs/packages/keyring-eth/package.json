@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/keyring-eth",
-  "version": "0.2.23",
+  "version": "0.2.24-next.0",
   "description": "Ledger keyring eth module",
   "private": true,
   "files": [

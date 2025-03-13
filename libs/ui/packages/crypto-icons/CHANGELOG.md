@@ -1,5 +1,13 @@
 # @ledgerhq/icons-ui
 
+## 1.10.0-next.0
+
+### Minor Changes
+
+- [#9245](https://github.com/LedgerHQ/ledger-live/pull/9245) [`3ed81b0`](https://github.com/LedgerHQ/ledger-live/commit/3ed81b059f9d8755b58a966bd6647dd34a840378) Thanks [@DatDraggy](https://github.com/DatDraggy)! - Add logo for FLT token to ledger live. Token is already listed.
+  Contract address (ethereum):
+  FLT - 0x236501327e701692a281934230af0b6be8df3353
+
 ## 1.9.0
 
 ### Minor Changes

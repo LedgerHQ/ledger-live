@@ -1,5 +1,19 @@
 # @ledgerhq/coin-casper
 
+## 1.5.0-next.0
+
+### Minor Changes
+
+- [#9364](https://github.com/LedgerHQ/ledger-live/pull/9364) [`cb74786`](https://github.com/LedgerHQ/ledger-live/commit/cb74786fe27bfe894317965ddb2a11744a86eaef) Thanks [@lawRathod](https://github.com/lawRathod)! - Fixes error handling on casper api
+
+- [#9472](https://github.com/LedgerHQ/ledger-live/pull/9472) [`9c4c82e`](https://github.com/LedgerHQ/ledger-live/commit/9c4c82e8e81aaadfc1132f0a25812be094e54453) Thanks [@KVNLS](https://github.com/KVNLS)! - Fix elliptic library version used
+
+### Patch Changes
+
+- Updated dependencies [[`5abde51`](https://github.com/LedgerHQ/ledger-live/commit/5abde5192d32f493ece2f99aec0e2de0c411f9e5), [`cc00249`](https://github.com/LedgerHQ/ledger-live/commit/cc002495f3e107aba283a3aa4abca90954de6d76)]:
+  - @ledgerhq/types-live@6.63.0-next.0
+  - @ledgerhq/coin-framework@2.3.0-next.0
+
 ## 1.4.1
 
 ### Patch Changes
