@@ -1310,7 +1310,7 @@
           "contactSupportCTA" : "ติดต่อ Ledger Support",
           "notFoundEntityError" : {
             "title" : "เริ่ม Genuine Check อีกครั้ง",
-            "description" : "คุณต้องปิดใช้งานการตั้งค่า \"ผู้ให้บริการ My Ledger ({{providerNumber}}})\" ก่อน หากต้องการปิดใช้งาน ให้เปิด “การตั้งค่า” บน Ledger Live แล้วเลือก “Experimental Features” แล้ว Toggle เพื่อปิด “ผู้ให้บริการ My Ledger”"
+            "description" : "คุณต้องปิดใช้งานการตั้งค่า \"ผู้ให้บริการ My Ledger ({{providerNumber}})\" ก่อน หากต้องการปิดใช้งาน ให้เปิด “การตั้งค่า” บน Ledger Live แล้วเลือก “Experimental Features” แล้ว Toggle เพื่อปิด “ผู้ให้บริการ My Ledger”"
           },
           "deviceNotGenuineError" : {
             "title" : "{{productName}} นี้ไม่ใช่ของแท้",
@@ -2460,7 +2460,7 @@
     "chooseName" : "เลือกชื่อ",
     "placeholder" : "Tony's Stax",
     "remainingCharacters" : "เหลืออีก {{ remainingCharacters }} ตัวอักษร",
-    "renamed" : "{{ productName }} เปลี่ยนชื่อเป็น \n“{{ name }}}” แล้ว "
+    "renamed" : "{{ productName }} เปลี่ยนชื่อเป็น \n“{{ name }}” แล้ว "
   },
   "removeCustomLockscreen" : {
     "title" : "นำภาพ Lock Screen Picture ออก",
@@ -5330,7 +5330,7 @@
         "anotherComputer" : {
           "title" : "ลองใช้คอมพิวเตอร์เครื่องอื่น",
           "bullets" : {
-            "0" : "ไปที่ <0>{{link}}}</0> บนคอมพิวเตอร์เครื่องอื่นเพื่อดาวน์โหลดและติดตั้ง Ledger Live",
+            "0" : "ไปที่ <0>{{link}}</0> บนคอมพิวเตอร์เครื่องอื่นเพื่อดาวน์โหลดและติดตั้ง Ledger Live",
             "1" : "เชื่อมต่อและปลดล็อกอุปกรณ์ของคุณเพื่อดูว่าตรวจพบหรือไม่"
           }
         }
@@ -6118,7 +6118,7 @@
       "description" : "เปิดแอป '{{managerAppName}}' บนอุปกรณ์ของคุณ"
     },
     "DeviceNameInvalid" : {
-      "title" : "โปรดเลือกชื่ออุปกรณ์ที่ไม่มี '{{invalidCharacters}}}'"
+      "title" : "โปรดเลือกชื่ออุปกรณ์ที่ไม่มี '{{invalidCharacters}}'"
     },
     "LedgerAPIErrorWithMessage" : {
       "title" : "{{message}}",
