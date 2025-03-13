@@ -18,7 +18,7 @@ function DeltaVariation({ value, percent, ...props }: Props) {
 
   if (roundedDelta === 0) {
     return (
-      <Text variant={"large"} color="neutral.c60" fontWeight={"semiBold"}>
+      <Text variant="large" color="neutral.c60" fontWeight="semiBold">
         -
       </Text>
     );
@@ -29,7 +29,7 @@ function DeltaVariation({ value, percent, ...props }: Props) {
       ? ["success.c50", IconsLegacy.ArrowEvolutionUpMedium, "+"]
       : roundedDelta < 0.0
         ? ["error.c50", IconsLegacy.ArrowEvolutionDownMedium, "-"]
-        : ["neutral.c70", null, ""];
+        : ["neutral.c70", null, "-"];
 
   return (
     <Flex flexDirection="row" alignItems="center">

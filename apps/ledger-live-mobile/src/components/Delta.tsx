@@ -34,7 +34,7 @@ function Delta({
   const { t } = useTranslation();
 
   const percentPlaceholder = fallbackToPercentPlaceholder ? (
-    <Text variant={"large"} color="neutral.c60" fontWeight={"semiBold"} {...textProperties}>
+    <Text variant="large" color="neutral.c60" fontWeight="semiBold" {...textProperties}>
       -
     </Text>
   ) : null;
