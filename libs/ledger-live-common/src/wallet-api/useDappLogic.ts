@@ -94,6 +94,7 @@ function useDappAccountLogic({
   manifest: AppManifest;
   accounts: AccountLike[];
   currentAccountHistDb?: CurrentAccountHistDB;
+  initialAccountId?: string;
 }) {
   const [initialAccountSelected, setInitialAccountSelected] = useState(false);
   const { currencyIds } = usePermission(manifest);
