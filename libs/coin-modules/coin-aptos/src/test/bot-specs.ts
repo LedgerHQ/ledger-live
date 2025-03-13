@@ -6,7 +6,7 @@ import type { Transaction } from "../types";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { genericTestDestination, pickSiblings, botTest } from "@ledgerhq/coin-framework/bot/specs";
 import type { AppSpec } from "@ledgerhq/coin-framework/bot/types";
-import { acceptTokenTransaction, acceptTransaction } from "./speculos-deviceActions";
+import { acceptTransaction } from "./speculos-deviceActions";
 
 const MIN_SAFE = new BigNumber(0.0001);
 const maxAccount = 6;
