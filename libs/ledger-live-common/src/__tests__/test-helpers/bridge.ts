@@ -42,8 +42,27 @@ const blacklistOpsSumEq = {
 
 function expectBalanceIsOpsSum(a) {
   expect(a.balance).toEqual(
-    a.operations.reduce((sum, op) => sum.plus(getOperationAmountNumber(op)), new BigNumber(0)),
+    a.operations
+      .reduce((sum, op) => sum.plus(getOperationAmountNumber(op)), new BigNumber(0))
+      .plus(getFeesFromSubAccountOps(a.subAccounts)),
   );
+}
+
+function getFeesFromSubAccountOps(subAccounts) {
+  let total = BigNumber(0);
+
+  if (!subAccounts) return total;
+
+  subAccounts.forEach(
+    sa =>
+      (total = total.plus(
+        sa.operations.reduce((sum, op) => {
+          return sum.plus(getOperationAmountNumber(op, true));
+        }, new BigNumber(0)),
+      )),
+  );
+
+  return total;
 }
 
 const defaultSyncConfig = {

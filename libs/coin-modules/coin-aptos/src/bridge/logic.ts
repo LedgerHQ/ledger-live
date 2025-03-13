@@ -306,6 +306,11 @@ export function getCoinAndAmounts(
           }
         }
         break;
+      case "0x1::transaction_fee::FeeStatement":
+        if (!tx.success) {
+          coin_id = APTOS_ASSET_ID;
+        }
+        break;
       case "0x1::coin::DepositEvent":
         if (compareAddress(event.guid.account_address, address)) {
           coin_id = getResourceAddress(tx, event, "deposit_events", getEventCoinAddress);
