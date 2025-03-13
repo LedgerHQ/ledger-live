@@ -58,11 +58,13 @@ export const buildSignOperation =
           publicKey,
         });
 
-        const verify = await verifyTransactionSignature(unsigned, serializedSignature, {
-          address: ensureAddressFormat(account.freshAddress),
-        });
-        if (!verify) {
-          // TODO: handle case
+        if (!transaction.skipVerify) {
+          const verify = await verifyTransactionSignature(unsigned, serializedSignature, {
+            address: ensureAddressFormat(account.freshAddress),
+          });
+          if (!verify) {
+            throw new Error("verifyTransactionSignature failed");
+          }
         }
 
         subscriber.next({

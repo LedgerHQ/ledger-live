@@ -32,6 +32,7 @@ export type Transaction = TransactionCommon & {
   amount: BigNumber | null;
   fees?: BigNumber | null;
   errors: Record<string, Error>;
+  skipVerify?: boolean;
   // add here all transaction-specific fields when implement other modes than "send"
 };
 
