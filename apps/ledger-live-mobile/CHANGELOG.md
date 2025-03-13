@@ -1,5 +1,145 @@
 # live-mobile
 
+## 3.69.0
+
+### Minor Changes
+
+- [#9370](https://github.com/LedgerHQ/ledger-live/pull/9370) [`26e1359`](https://github.com/LedgerHQ/ledger-live/commit/26e1359150d8dff5ab8ea0314274acfc0695425f) Thanks [@themooneer](https://github.com/themooneer)! - retro compatibility on spam filter FF rollback
+
+- [#9264](https://github.com/LedgerHQ/ledger-live/pull/9264) [`d71f331`](https://github.com/LedgerHQ/ledger-live/commit/d71f33164714757ebda60e98932c3aa3b58a57ea) Thanks [@Justkant](https://github.com/Justkant)! - feat: SPL 2022 support
+
+- [#9383](https://github.com/LedgerHQ/ledger-live/pull/9383) [`b5608be`](https://github.com/LedgerHQ/ledger-live/commit/b5608be55cee7cb28a8d3a0f37b1963f8d76ab18) Thanks [@themooneer](https://github.com/themooneer)! - can inject explicitly an AddAccounts context when the root path is add-account.
+
+- [#9427](https://github.com/LedgerHQ/ledger-live/pull/9427) [`e7cd2f9`](https://github.com/LedgerHQ/ledger-live/commit/e7cd2f930fc69412cee5487dc1daf9bcffb90973) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Fix misaligned Web3AppWebview network error component
+
+- [#9289](https://github.com/LedgerHQ/ledger-live/pull/9289) [`9fe0d02`](https://github.com/LedgerHQ/ledger-live/commit/9fe0d02610563a108cf1faa255dd059fd9df2520) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add proper dev app for ios
+
+- [#9281](https://github.com/LedgerHQ/ledger-live/pull/9281) [`98f37f4`](https://github.com/LedgerHQ/ledger-live/commit/98f37f496ae3e69ac225bc93abbfcaa6e259191f) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix an issue on ios that could lead to a crash when there is an input with a KeyboardAvoidingView component.
+
+- [#9413](https://github.com/LedgerHQ/ledger-live/pull/9413) [`b92c044`](https://github.com/LedgerHQ/ledger-live/commit/b92c0449543634c9c92edfd0303b82ac53bfdccb) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Minify bundle with terser to remove .log
+
+- [#9367](https://github.com/LedgerHQ/ledger-live/pull/9367) [`e33bc89`](https://github.com/LedgerHQ/ledger-live/commit/e33bc895f33d03cede6ba363b54df78351e47d3a) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Remove gesture handler for swipe back in LLM swap
+
+- [#9379](https://github.com/LedgerHQ/ledger-live/pull/9379) [`4e93349`](https://github.com/LedgerHQ/ledger-live/commit/4e9334968b497b8cbc4c5702ca1c4b9403bdf3c3) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Enhance reborn analytics
+
+- [#9292](https://github.com/LedgerHQ/ledger-live/pull/9292) [`0a59343`](https://github.com/LedgerHQ/ledger-live/commit/0a59343b591dab4e886c21cb47f7339231997331) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feature (lld,llm): integrate Sonic
+
+- [#9345](https://github.com/LedgerHQ/ledger-live/pull/9345) [`ede6db0`](https://github.com/LedgerHQ/ledger-live/commit/ede6db0b94193cc9072aeb87e90f4098f0434af0) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Add thai language support
+
+- [#8757](https://github.com/LedgerHQ/ledger-live/pull/8757) [`1461449`](https://github.com/LedgerHQ/ledger-live/commit/146144941c13e60182da8d79592f706d12a6f00e) Thanks [@Wozacosta](https://github.com/Wozacosta)! - chore: Rebranding from 'Elrond' to 'MultiversX'
+
+- [#9398](https://github.com/LedgerHQ/ledger-live/pull/9398) [`619ae4c`](https://github.com/LedgerHQ/ledger-live/commit/619ae4c03c433d859ba5a1fc33de6ec2c1ec5790) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Start and Complete Exchange drawer onclose should only be called once
+
+- [#9355](https://github.com/LedgerHQ/ledger-live/pull/9355) [`495be72`](https://github.com/LedgerHQ/ledger-live/commit/495be729c036b4c03ccb4f7c415af81c5c80d695) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix NFTs spam filtering in Transaction History
+
+- [#9388](https://github.com/LedgerHQ/ledger-live/pull/9388) [`79a6b9c`](https://github.com/LedgerHQ/ledger-live/commit/79a6b9ce13e0c0a23db92870d14ecd471ce970fb) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - SWAP LLM fix to open Fees Drawer
+
+- [#9336](https://github.com/LedgerHQ/ledger-live/pull/9336) [`4c35e12`](https://github.com/LedgerHQ/ledger-live/commit/4c35e12fa89ac83d567ddf8bdc28b5a189c7669c) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Promise Concurrency during app start to reduce the llm startup time
+
+- [#9411](https://github.com/LedgerHQ/ledger-live/pull/9411) [`d4fabf9`](https://github.com/LedgerHQ/ledger-live/commit/d4fabf9b8d93348022a24fb1e2bf9872b24a0928) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - fix: swap llm display correct error message
+
+- [#9422](https://github.com/LedgerHQ/ledger-live/pull/9422) [`3b2e5e0`](https://github.com/LedgerHQ/ledger-live/commit/3b2e5e0f65d66f30183a74edc24b178914078fd6) Thanks [@VicAlbr](https://github.com/VicAlbr)! - fix ada delegation - LLM & LLD
+
+- [#9396](https://github.com/LedgerHQ/ledger-live/pull/9396) [`b5b8ad2`](https://github.com/LedgerHQ/ledger-live/commit/b5b8ad22d7a0e20592952d68dfbecbf2b25268d6) Thanks [@themooneer](https://github.com/themooneer)! - Navigate to CustomNoAssociatedAccounts if exists and if no scanned accounts on add account v2
+
+- [#9402](https://github.com/LedgerHQ/ledger-live/pull/9402) [`bdfa413`](https://github.com/LedgerHQ/ledger-live/commit/bdfa4139fcbceabfd05a57e69b05e9ccf10efbe1) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update Staging NFT Metadata service url + Rename env variable
+
+- [#9376](https://github.com/LedgerHQ/ledger-live/pull/9376) [`09df0ad`](https://github.com/LedgerHQ/ledger-live/commit/09df0adb4c461bd4b694dda37e1a28da4905e546) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - SWAP LLM fix the custom method to get fees
+
+### Patch Changes
+
+- Updated dependencies [[`d71f331`](https://github.com/LedgerHQ/ledger-live/commit/d71f33164714757ebda60e98932c3aa3b58a57ea), [`8675df1`](https://github.com/LedgerHQ/ledger-live/commit/8675df12c24067877358f27e1e7c66f739ff0c78), [`0a59343`](https://github.com/LedgerHQ/ledger-live/commit/0a59343b591dab4e886c21cb47f7339231997331), [`ede6db0`](https://github.com/LedgerHQ/ledger-live/commit/ede6db0b94193cc9072aeb87e90f4098f0434af0), [`1461449`](https://github.com/LedgerHQ/ledger-live/commit/146144941c13e60182da8d79592f706d12a6f00e), [`3940ec0`](https://github.com/LedgerHQ/ledger-live/commit/3940ec0a39195e858f23383dd4126fb40cb353ac), [`2662b57`](https://github.com/LedgerHQ/ledger-live/commit/2662b579343398d38ff5e2d0b25a35cccbc143ce), [`358a988`](https://github.com/LedgerHQ/ledger-live/commit/358a9880d9b1c4800340686410a421d0dfc8efb1), [`495be72`](https://github.com/LedgerHQ/ledger-live/commit/495be729c036b4c03ccb4f7c415af81c5c80d695), [`e5066a0`](https://github.com/LedgerHQ/ledger-live/commit/e5066a04fa0252d049d976d452888b790e6e5b2a), [`bdfa413`](https://github.com/LedgerHQ/ledger-live/commit/bdfa4139fcbceabfd05a57e69b05e9ccf10efbe1)]:
+  - @ledgerhq/live-common@34.25.0
+  - @ledgerhq/types-live@6.62.0
+  - @ledgerhq/coin-framework@2.2.0
+  - @ledgerhq/types-cryptoassets@7.20.0
+  - @ledgerhq/coin-evm@2.13.0
+  - @ledgerhq/coin-multiversx@0.2.0
+  - @ledgerhq/live-env@2.6.0
+  - @ledgerhq/live-nft-react@0.7.0
+  - @ledgerhq/live-nft@0.6.0
+  - @ledgerhq/coin-cosmos@0.8.3
+  - @ledgerhq/coin-filecoin@1.6.1
+  - @ledgerhq/coin-stacks@0.6.2
+  - @ledgerhq/domain-service@1.2.21
+  - @ledgerhq/live-countervalues@0.4.3
+  - @ledgerhq/live-countervalues-react@0.2.25
+  - @ledgerhq/live-wallet@0.9.7
+  - @ledgerhq/native-ui@0.29.1
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.3.2
+  - @ledgerhq/ledger-key-ring-protocol@0.5.4
+  - @ledgerhq/live-network@2.0.5
+
+## 3.69.0-next.0
+
+### Minor Changes
+
+- [#9370](https://github.com/LedgerHQ/ledger-live/pull/9370) [`26e1359`](https://github.com/LedgerHQ/ledger-live/commit/26e1359150d8dff5ab8ea0314274acfc0695425f) Thanks [@themooneer](https://github.com/themooneer)! - retro compatibility on spam filter FF rollback
+
+- [#9264](https://github.com/LedgerHQ/ledger-live/pull/9264) [`d71f331`](https://github.com/LedgerHQ/ledger-live/commit/d71f33164714757ebda60e98932c3aa3b58a57ea) Thanks [@Justkant](https://github.com/Justkant)! - feat: SPL 2022 support
+
+- [#9383](https://github.com/LedgerHQ/ledger-live/pull/9383) [`b5608be`](https://github.com/LedgerHQ/ledger-live/commit/b5608be55cee7cb28a8d3a0f37b1963f8d76ab18) Thanks [@themooneer](https://github.com/themooneer)! - can inject explicitly an AddAccounts context when the root path is add-account.
+
+- [#9427](https://github.com/LedgerHQ/ledger-live/pull/9427) [`e7cd2f9`](https://github.com/LedgerHQ/ledger-live/commit/e7cd2f930fc69412cee5487dc1daf9bcffb90973) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Fix misaligned Web3AppWebview network error component
+
+- [#9289](https://github.com/LedgerHQ/ledger-live/pull/9289) [`9fe0d02`](https://github.com/LedgerHQ/ledger-live/commit/9fe0d02610563a108cf1faa255dd059fd9df2520) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add proper dev app for ios
+
+- [#9281](https://github.com/LedgerHQ/ledger-live/pull/9281) [`98f37f4`](https://github.com/LedgerHQ/ledger-live/commit/98f37f496ae3e69ac225bc93abbfcaa6e259191f) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix an issue on ios that could lead to a crash when there is an input with a KeyboardAvoidingView component.
+
+- [#9413](https://github.com/LedgerHQ/ledger-live/pull/9413) [`b92c044`](https://github.com/LedgerHQ/ledger-live/commit/b92c0449543634c9c92edfd0303b82ac53bfdccb) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Minify bundle with terser to remove .log
+
+- [#9367](https://github.com/LedgerHQ/ledger-live/pull/9367) [`e33bc89`](https://github.com/LedgerHQ/ledger-live/commit/e33bc895f33d03cede6ba363b54df78351e47d3a) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Remove gesture handler for swipe back in LLM swap
+
+- [#9379](https://github.com/LedgerHQ/ledger-live/pull/9379) [`4e93349`](https://github.com/LedgerHQ/ledger-live/commit/4e9334968b497b8cbc4c5702ca1c4b9403bdf3c3) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Enhance reborn analytics
+
+- [#9292](https://github.com/LedgerHQ/ledger-live/pull/9292) [`0a59343`](https://github.com/LedgerHQ/ledger-live/commit/0a59343b591dab4e886c21cb47f7339231997331) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feature (lld,llm): integrate Sonic
+
+- [#9345](https://github.com/LedgerHQ/ledger-live/pull/9345) [`ede6db0`](https://github.com/LedgerHQ/ledger-live/commit/ede6db0b94193cc9072aeb87e90f4098f0434af0) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Add thai language support
+
+- [#8757](https://github.com/LedgerHQ/ledger-live/pull/8757) [`1461449`](https://github.com/LedgerHQ/ledger-live/commit/146144941c13e60182da8d79592f706d12a6f00e) Thanks [@Wozacosta](https://github.com/Wozacosta)! - chore: Rebranding from 'Elrond' to 'MultiversX'
+
+- [#9398](https://github.com/LedgerHQ/ledger-live/pull/9398) [`619ae4c`](https://github.com/LedgerHQ/ledger-live/commit/619ae4c03c433d859ba5a1fc33de6ec2c1ec5790) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Start and Complete Exchange drawer onclose should only be called once
+
+- [#9355](https://github.com/LedgerHQ/ledger-live/pull/9355) [`495be72`](https://github.com/LedgerHQ/ledger-live/commit/495be729c036b4c03ccb4f7c415af81c5c80d695) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix NFTs spam filtering in Transaction History
+
+- [#9388](https://github.com/LedgerHQ/ledger-live/pull/9388) [`79a6b9c`](https://github.com/LedgerHQ/ledger-live/commit/79a6b9ce13e0c0a23db92870d14ecd471ce970fb) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - SWAP LLM fix to open Fees Drawer
+
+- [#9336](https://github.com/LedgerHQ/ledger-live/pull/9336) [`4c35e12`](https://github.com/LedgerHQ/ledger-live/commit/4c35e12fa89ac83d567ddf8bdc28b5a189c7669c) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Promise Concurrency during app start to reduce the llm startup time
+
+- [#9411](https://github.com/LedgerHQ/ledger-live/pull/9411) [`d4fabf9`](https://github.com/LedgerHQ/ledger-live/commit/d4fabf9b8d93348022a24fb1e2bf9872b24a0928) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - fix: swap llm display correct error message
+
+- [#9422](https://github.com/LedgerHQ/ledger-live/pull/9422) [`3b2e5e0`](https://github.com/LedgerHQ/ledger-live/commit/3b2e5e0f65d66f30183a74edc24b178914078fd6) Thanks [@VicAlbr](https://github.com/VicAlbr)! - fix ada delegation - LLM & LLD
+
+- [#9396](https://github.com/LedgerHQ/ledger-live/pull/9396) [`b5b8ad2`](https://github.com/LedgerHQ/ledger-live/commit/b5b8ad22d7a0e20592952d68dfbecbf2b25268d6) Thanks [@themooneer](https://github.com/themooneer)! - Navigate to CustomNoAssociatedAccounts if exists and if no scanned accounts on add account v2
+
+- [#9402](https://github.com/LedgerHQ/ledger-live/pull/9402) [`bdfa413`](https://github.com/LedgerHQ/ledger-live/commit/bdfa4139fcbceabfd05a57e69b05e9ccf10efbe1) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update Staging NFT Metadata service url + Rename env variable
+
+- [#9376](https://github.com/LedgerHQ/ledger-live/pull/9376) [`09df0ad`](https://github.com/LedgerHQ/ledger-live/commit/09df0adb4c461bd4b694dda37e1a28da4905e546) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - SWAP LLM fix the custom method to get fees
+
+### Patch Changes
+
+- Updated dependencies [[`d71f331`](https://github.com/LedgerHQ/ledger-live/commit/d71f33164714757ebda60e98932c3aa3b58a57ea), [`8675df1`](https://github.com/LedgerHQ/ledger-live/commit/8675df12c24067877358f27e1e7c66f739ff0c78), [`0a59343`](https://github.com/LedgerHQ/ledger-live/commit/0a59343b591dab4e886c21cb47f7339231997331), [`ede6db0`](https://github.com/LedgerHQ/ledger-live/commit/ede6db0b94193cc9072aeb87e90f4098f0434af0), [`1461449`](https://github.com/LedgerHQ/ledger-live/commit/146144941c13e60182da8d79592f706d12a6f00e), [`3940ec0`](https://github.com/LedgerHQ/ledger-live/commit/3940ec0a39195e858f23383dd4126fb40cb353ac), [`2662b57`](https://github.com/LedgerHQ/ledger-live/commit/2662b579343398d38ff5e2d0b25a35cccbc143ce), [`358a988`](https://github.com/LedgerHQ/ledger-live/commit/358a9880d9b1c4800340686410a421d0dfc8efb1), [`495be72`](https://github.com/LedgerHQ/ledger-live/commit/495be729c036b4c03ccb4f7c415af81c5c80d695), [`e5066a0`](https://github.com/LedgerHQ/ledger-live/commit/e5066a04fa0252d049d976d452888b790e6e5b2a), [`bdfa413`](https://github.com/LedgerHQ/ledger-live/commit/bdfa4139fcbceabfd05a57e69b05e9ccf10efbe1)]:
+  - @ledgerhq/live-common@34.25.0-next.0
+  - @ledgerhq/types-live@6.62.0-next.0
+  - @ledgerhq/coin-framework@2.2.0-next.0
+  - @ledgerhq/types-cryptoassets@7.20.0-next.0
+  - @ledgerhq/coin-evm@2.13.0-next.0
+  - @ledgerhq/coin-multiversx@0.2.0-next.0
+  - @ledgerhq/live-env@2.6.0-next.0
+  - @ledgerhq/live-nft-react@0.7.0-next.0
+  - @ledgerhq/live-nft@0.6.0-next.0
+  - @ledgerhq/coin-cosmos@0.8.3-next.0
+  - @ledgerhq/coin-filecoin@1.6.1-next.0
+  - @ledgerhq/coin-stacks@0.6.2-next.0
+  - @ledgerhq/domain-service@1.2.21-next.0
+  - @ledgerhq/live-countervalues@0.4.3-next.0
+  - @ledgerhq/live-countervalues-react@0.2.25-next.0
+  - @ledgerhq/live-wallet@0.9.7-next.0
+  - @ledgerhq/native-ui@0.29.1-next.0
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.3.2-next.0
+  - @ledgerhq/ledger-key-ring-protocol@0.5.4-next.0
+  - @ledgerhq/live-network@2.0.5-next.0
+
 ## 3.68.0
 
 ### Minor Changes

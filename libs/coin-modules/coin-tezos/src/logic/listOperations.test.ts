@@ -96,10 +96,10 @@ describe("listOperations", () => {
   });
 
   it.each([
-    { ...undelegate, storageFee: 1, bakerFee: 2, allocationFee: 3 },
-    { ...delegate, storageFee: 1, bakerFee: 2, allocationFee: 3 },
-    { ...transfer, storageFee: 1, bakerFee: 2, allocationFee: 3 },
-  ])("should compute the fees properly", async operation => {
+    ["undelegate", { ...undelegate, storageFee: 1, bakerFee: 2, allocationFee: 3 }],
+    ["delegate", { ...delegate, storageFee: 1, bakerFee: 2, allocationFee: 3 }],
+    ["transfer", { ...transfer, storageFee: 1, bakerFee: 2, allocationFee: 3 }],
+  ])("should compute the fees properly for %s operation", async (_label, operation) => {
     // Given
     mockNetworkGetTransactions.mockResolvedValue([operation]);
     // When

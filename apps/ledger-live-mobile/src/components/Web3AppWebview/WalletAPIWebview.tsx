@@ -1,4 +1,4 @@
-import React, { forwardRef } from "react";
+import React, { forwardRef, useState } from "react";
 import { ActivityIndicator, StyleSheet, View } from "react-native";
 import { WebView as RNWebView } from "react-native-webview";
 import Config from "react-native-config";
@@ -41,8 +41,10 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       ref,
       onStateChange,
     );
+    const [error, setError] = useState(false);
 
     const reloadWebView = () => {
+      setError(false);
       webviewRef.current?.reload();
     };
 
@@ -68,14 +70,17 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         originWhitelist={manifest.domains}
         allowsInlineMediaPlayback
         onMessage={onMessage}
-        onError={onLoadError}
+        onError={() => {
+          onLoadError();
+          setError(true);
+        }}
         onOpenWindow={onOpenWindow}
         overScrollMode="content"
         bounces={false}
         mediaPlaybackRequiresUserAction={false}
         automaticallyAdjustContentInsets={false}
         scrollEnabled={true}
-        style={styles.webview}
+        style={[styles.webview, { display: error ? "none" : "flex" }]}
         renderError={() => <NetworkError handleTryAgain={reloadWebView} />}
         testID="wallet-api-webview"
         webviewDebuggingEnabled={__DEV__}
