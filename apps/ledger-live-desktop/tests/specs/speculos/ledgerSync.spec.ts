@@ -3,7 +3,7 @@ import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "../../utils/customJsonReporter";
 import { CLI } from "tests/utils/cliUtils";
-import { expect } from "@playwright/test";
+import { expect, TestInfo } from "@playwright/test";
 import { LedgerSyncCliHelper } from "../../utils/ledgerSyncCliUtils";
 import { accountNames, accounts } from "tests/testdata/ledgerSyncTestData";
 
@@ -13,7 +13,7 @@ const accountName = accountNames[accountId];
 
 test.describe(`[${app.name}] Sync Accounts`, () => {
   test.use({
-    userdata: "ledgerSync",
+    userdata: "skip-onboarding",
     speculosApp: app,
     cliCommands: [
       async () => {
@@ -29,6 +29,10 @@ test.describe(`[${app.name}] Sync Accounts`, () => {
         });
       },
     ],
+  });
+
+  test.afterAll(async ({}, testInfo: TestInfo) => {
+    await LedgerSyncCliHelper.deleteLedgerSyncData(testInfo);
   });
 
   test(
