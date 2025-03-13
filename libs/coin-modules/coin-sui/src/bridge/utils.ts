@@ -10,7 +10,11 @@ export enum AccountType {
   TokenAccount = "TokenAccount",
 }
 
-export function getAccountUnit(account: AccountLike) {
+export function getAccountUnit(account: AccountLike): {
+  name: string;
+  code: string;
+  magnitude: number;
+} {
   if (account.type === AccountType.TokenAccount) {
     return account.token.units[0];
   }

@@ -131,6 +131,8 @@
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
+    "@ledgerhq/coin-tester": "workspace:^",
+    "@ledgerhq/hw-app-sui": "workspace:^",
     "@mysten/bcs": "1.4.0",
     "@mysten/sui": "1.21.1",
     "bignumber.js": "^9.1.2",

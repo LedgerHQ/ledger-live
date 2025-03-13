@@ -7,7 +7,9 @@
     "lib": ["es2020", "dom"],
     "exactOptionalPropertyTypes": true,
     "module": "ESNext",
-    "moduleResolution": "bundler"
+    "moduleResolution": "bundler",
+    "rootDir": "./src",
+    "outDir": "lib",
   },
   "include": ["src/**/*"]
 }
