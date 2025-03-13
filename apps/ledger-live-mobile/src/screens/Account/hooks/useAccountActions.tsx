@@ -57,6 +57,7 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
 
   const canStakeUsingLedgerLive = getCanStakeUsingLedgerLive(currency.id);
   const canStakeUsingPlatformApp = getCanStakeUsingPlatformApp(currency.id);
+  const canOnlyStakeUsingLedgerLive = canStakeUsingLedgerLive && !canStakeUsingPlatformApp;
 
   const balance = getAccountSpendableBalance(account);
   const isZeroBalance = !balance.gt(0);
@@ -194,22 +195,21 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
     Icon: IconsLegacy.ArrowBottomMedium,
     ...extraReceiveActionParams,
   };
-  const StakeAction =
-    canStakeUsingPlatformApp && account.balance.gt(0)
-      ? {
-          id: "stake",
-
-          navigationParams: [
-            NavigatorName.Base,
-            getRouteToStake(account, walletState, parentAccount),
-          ],
-          label: t("account.stake"),
-          Icon: IconsLegacy.CoinsMedium,
-          eventProperties: {
-            currency: currency.ticker,
-          },
-        }
-      : [];
+  const StakeAction = canStakeUsingPlatformApp
+    ? {
+        id: "stake",
+        disabled: isZeroBalance,
+        navigationParams: [
+          NavigatorName.Base,
+          getRouteToStake(account, walletState, parentAccount),
+        ],
+        label: t("account.stake"),
+        Icon: IconsLegacy.BedMedium,
+        eventProperties: {
+          currency: currency.ticker,
+        },
+      }
+    : [];
 
   // TODO: Shall we get this in the useStake hook and do the token specific OR family specific main actions choice there?
   const familySpecificMainActions: Array<ActionButtonEvent> =

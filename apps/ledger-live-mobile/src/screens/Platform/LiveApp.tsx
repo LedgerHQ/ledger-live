@@ -35,7 +35,7 @@ export function LiveApp({ route }: Props) {
       ...(manifest?.name ? { name: manifest.name } : {}),
     });
   }, [manifest, setParams]);
-
+  // TODO: if there is a dappUrl in the manifest we override it with the customDappUrl
   const dappUrl = customDappURL || customDappUrl;
 
   if (dappUrl && manifest && manifest.params && "dappUrl" in manifest.params) {
@@ -47,6 +47,7 @@ export function LiveApp({ route }: Props) {
       },
     };
   }
+  // FIXME: This also means that we end up in the dapp provider if there is a customDappUrl... Is this correct?
   if (dappUrl && manifest && manifest.dapp) {
     manifest = {
       ...manifest,

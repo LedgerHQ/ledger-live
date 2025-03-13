@@ -33,7 +33,6 @@ const StakeFlow = ({ route }: Props) => {
     entryPoint: route.params.entryPoint,
   });
 
-  // FIXME: The returned account includes non-serialisable Date fields, which maybe causes the navigation to fail? (maybe we should flatten the account object)
   const requestAccount = useCallback(() => {
     if (cryptoCurrencies.length === 1) {
       // Navigate to the second screen when there is only one currency

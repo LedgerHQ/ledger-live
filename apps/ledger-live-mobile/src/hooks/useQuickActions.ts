@@ -148,6 +148,7 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
       };
     }
 
+    // TODO: Check previous implementation - can we always stake if no currency? Or never?
     if (canStakeUsingLedgerLive || !currency) {
       list.STAKE = {
         disabled: readOnlyModeEnabled,

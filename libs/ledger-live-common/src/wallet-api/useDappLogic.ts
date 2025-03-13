@@ -94,7 +94,6 @@ function useDappAccountLogic({
   manifest: AppManifest;
   accounts: AccountLike[];
   currentAccountHistDb?: CurrentAccountHistDB;
-  initialAccountId?: string;
 }) {
   const [initialAccountSelected, setInitialAccountSelected] = useState(false);
   const { currencyIds } = usePermission(manifest);
@@ -233,33 +232,21 @@ export function useDappLogic({
       initialAccountId,
     });
 
+  /** Current network is needed for recognising the current chain id.
+   * If a token account is selected, this depends on the parent currency. */
   const currentNetwork = useMemo(() => {
     if (!currentAccount) {
-      console.log(`>> No current account in useDappLogic. **`);
       return undefined;
     }
     return manifest.dapp?.networks.find(network => {
-      console.log(
-        `*** >> Manifest network.currency: ${network.currency} - does it match account currency?`,
-        {
-          currentAccountCurrency:
-            currentAccount.type === "TokenAccount"
-              ? currentAccount.token.id
-              : currentAccount.currency.id,
-          currentAccountType: currentAccount.type,
-          parentAccountCurrency: currentParentAccount?.currency?.id,
-          network,
-        },
-      );
-      return (
-        network.currency ===
-        (currentAccount.type === "TokenAccount"
-          ? currentAccount.token.id
-          : currentAccount.currency.id)
-      );
+      const accountNetworkCurrency =
+        currentAccount.type === "TokenAccount"
+          ? currentAccount.token.parentCurrency.id
+          : currentAccount.currency.id;
+
+      return network.currency === accountNetworkCurrency;
     });
   }, [currentAccount, manifest.dapp?.networks]);
-  }, [currentAccount, currentParentAccount?.currency?.id, manifest.dapp?.networks]);
 
   const currentAddress = useMemo(() => {
     return currentAccount?.type === "Account"
@@ -665,6 +652,7 @@ export function useDappLogic({
       currentParentAccount,
       dependencies,
       manifest,
+      mevProtected,
       nanoApp,
       postMessage,
       setCurrentAccount,
