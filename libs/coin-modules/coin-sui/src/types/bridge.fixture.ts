@@ -12,9 +12,9 @@ export const createFixtureAccount = (overrides = {}) =>
     freshAddress: "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0",
     freshAddressPath: "44'/784'/0'/0'/0'",
     blockHeight: 10,
-    creationDate: "2025-03-12T14:48:48.155Z",
-    balance: "17997970360",
-    spendableBalance: "17997970360",
+    creationDate: new Date(),
+    balance: BigNumber(17997970360),
+    spendableBalance: BigNumber(17997970360),
     operations: [],
     operationsCount: 2,
     pendingOperations: [],
@@ -40,20 +40,20 @@ export const createFixtureAccount = (overrides = {}) =>
         },
       ],
     },
-    lastSyncDate: "2025-03-13T11:13:06.936Z",
+    lastSyncDate: new Date(),
     swapHistory: [],
     balanceHistoryCache: {
       HOUR: {
         balances: [0],
-        latestDate: 1741863600000,
+        latestDate: new Date().getMilliseconds(),
       },
-      DAY: { balances: [0], latestDate: 1741813200000 },
-      WEEK: { balances: [0], latestDate: 1741467600000 },
+      DAY: { balances: [0], latestDate: new Date().getMilliseconds() },
+      WEEK: { balances: [0], latestDate: new Date().getMilliseconds() },
     },
     subAccounts: [],
     suiResources: { nonce: 0 },
     ...overrides,
-  }) as unknown as SuiAccount;
+  }) as SuiAccount;
 
 export const createFixtureTransaction = (overrides = {}) => ({
   family: "sui" as const,
