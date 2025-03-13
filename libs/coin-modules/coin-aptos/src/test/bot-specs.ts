@@ -6,7 +6,7 @@ import type { Transaction } from "../types";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { genericTestDestination, pickSiblings, botTest } from "@ledgerhq/coin-framework/bot/specs";
 import type { AppSpec } from "@ledgerhq/coin-framework/bot/types";
-import { acceptTransaction } from "./speculos-deviceActions";
+import { acceptTokenTransaction, acceptTransaction } from "./speculos-deviceActions";
 
 const MIN_SAFE = new BigNumber(0.0001);
 const maxAccount = 6;
@@ -84,6 +84,40 @@ const aptosSpecs: AppSpec<Transaction> = {
         );
       },
     },
+    // {
+    //   name: "Send ~50% of stdAPT token",
+    //   feature: "tokens",
+    //   maxRun: 1,
+    //   deviceAction: acceptTokenTransaction,
+    //   testDestination: genericTestDestination,
+    //   transaction: ({ account, siblings, bridge, maxSpendable }) => {
+    //     invariant(maxSpendable.gt(MIN_SAFE), "balance is too low");
+    //     const sibling = pickSiblings(siblings, maxAccount);
+    //     const recipient = sibling.freshAddress;
+    //     const amount = maxSpendable.div(2).integerValue();
+
+    //     const transaction = bridge.createTransaction(account);
+    //     const updates: Array<Partial<Transaction>> = [
+    //       {
+    //         recipient,
+    //       },
+    //       { amount },
+    //     ];
+
+    //     return {
+    //       transaction,
+    //       updates,
+    //     };
+    //   },
+
+    //   test: ({ accountBeforeTransaction, operation, account }) => {
+    //     botTest("account spendable balance decreased with operation", () =>
+    //       expect(account.spendableBalance).toEqual(
+    //         accountBeforeTransaction.spendableBalance.minus(operation.value),
+    //       ),
+    //     );
+    //   },
+    // },
   ],
 };
 
