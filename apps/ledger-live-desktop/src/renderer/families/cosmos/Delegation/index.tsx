@@ -29,6 +29,7 @@ import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import cosmosBase from "@ledgerhq/coin-cosmos/chain/cosmosBase";
+import { useHistory } from "react-router";
 
 const Wrapper = styled(Box).attrs(() => ({
   p: 3,
@@ -38,6 +39,7 @@ const Wrapper = styled(Box).attrs(() => ({
   align-items: center;
 `;
 const Delegation = ({ account }: { account: CosmosAccount }) => {
+  const history = useHistory();
   const dispatch = useDispatch();
   const { cosmosResources } = account;
   const {
@@ -55,6 +57,18 @@ const Delegation = ({ account }: { account: CosmosAccount }) => {
   const { validators } = useCosmosFamilyPreloadData(currencyId);
   const unit = useAccountUnit(account);
   const mappedUnbondings = mapUnbondings(unbondings, validators, unit);
+  const isCroAccount = account.type === "Account" && account.currency.id === "crypto_org";
+  const goToStakekit = useCallback(() => {
+    history.push({
+      pathname: "/platform/stakekit",
+      state: {
+        yieldId: "polkadot-dot-validator-staking",
+        accountId: account.id,
+        returnTo: `/account/${account.id}`,
+      },
+    });
+  }, [account?.id, history]);
+
   const onEarnRewards = useCallback(() => {
     dispatch(
       openModal("MODAL_COSMOS_REWARDS_INFO", {
@@ -126,7 +140,7 @@ const Delegation = ({ account }: { account: CosmosAccount }) => {
                     disabled={!delegationEnabled}
                     color="palette.primary.main"
                     small
-                    onClick={onDelegate}
+                    onClick={isCroAccount ? goToStakekit : onDelegate}
                   >
                     <Box horizontal flow={1} alignItems="center">
                       <DelegateIcon size={12} />
@@ -145,7 +159,7 @@ const Delegation = ({ account }: { account: CosmosAccount }) => {
                   disabled={!hasRewards}
                   color="palette.primary.main"
                   small
-                  onClick={onClaimRewards}
+                  onClick={isCroAccount ? goToStakekit : onClaimRewards}
                 >
                   <Box horizontal flow={1} alignItems="center">
                     <ClaimRewards size={12} />
