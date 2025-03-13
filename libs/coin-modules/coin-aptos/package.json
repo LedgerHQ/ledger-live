@@ -81,7 +81,6 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/coin-framework": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
