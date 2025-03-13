@@ -19,19 +19,19 @@ function DeltaVariation({ value, percent, ...props }: Props) {
 
   if (roundedDelta === 0) {
     return (
-      <Text variant={"large"} color="neutral.c60" fontWeight={"semiBold"}>
-        -
+      // eslint-disable-next-line i18next/no-literal-string
+      <Text variant="large" color="neutral.c60" fontWeight="semiBold">
+        &minus;
       </Text>
     );
   }
 
   const [color, ArrowIcon, sign] =
-    delta !== 0
-      ? delta > 0
-        ? ["success.c50", IconsLegacy.ArrowEvolutionUpMedium, "+"]
-        : ["error.c50", IconsLegacy.ArrowEvolutionDownMedium, "-"]
-      : ["neutral.c100", null, "-"];
-
+    roundedDelta > 0.0
+      ? ["success.c50", IconsLegacy.ArrowEvolutionUpMedium, "+"]
+      : roundedDelta < 0.0
+        ? ["error.c50", IconsLegacy.ArrowEvolutionDownMedium, "-"]
+        : ["neutral.c70", null, "-"];
   return (
     <Flex flexDirection="row" alignItems="center">
       {percent && ArrowIcon ? <ArrowIcon size={20} color={color} /> : null}
