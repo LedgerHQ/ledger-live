@@ -62,7 +62,7 @@ const Delegation = ({ account }: { account: CosmosAccount }) => {
     history.push({
       pathname: "/platform/stakekit",
       state: {
-        yieldId: "polkadot-dot-validator-staking",
+        yieldId: "cronos-cro-native-staking",
         accountId: account.id,
         returnTo: `/account/${account.id}`,
       },
@@ -77,19 +77,24 @@ const Delegation = ({ account }: { account: CosmosAccount }) => {
     );
   }, [account, dispatch]);
   const onDelegate = useCallback(() => {
-    dispatch(
-      openModal("MODAL_COSMOS_DELEGATE", {
-        account,
-      }),
-    );
-  }, [account, dispatch]);
+    isCroAccount
+      ? goToStakekit()
+      : dispatch(
+          openModal("MODAL_COSMOS_DELEGATE", {
+            account,
+          }),
+        );
+  }, [account, dispatch, isCroAccount, goToStakekit]);
   const onClaimRewards = useCallback(() => {
-    dispatch(
-      openModal("MODAL_COSMOS_CLAIM_REWARDS", {
-        account,
-      }),
-    );
-  }, [account, dispatch]);
+    isCroAccount
+      ? goToStakekit()
+      : dispatch(
+          openModal("MODAL_COSMOS_CLAIM_REWARDS", {
+            account,
+          }),
+        );
+  }, [account, dispatch, isCroAccount, goToStakekit]);
+
   const onRedirect = useCallback(
     (validatorAddress: string, modalName: DelegationActionsModalName) => {
       dispatch(
@@ -140,7 +145,7 @@ const Delegation = ({ account }: { account: CosmosAccount }) => {
                     disabled={!delegationEnabled}
                     color="palette.primary.main"
                     small
-                    onClick={isCroAccount ? goToStakekit : onDelegate}
+                    onClick={onDelegate}
                   >
                     <Box horizontal flow={1} alignItems="center">
                       <DelegateIcon size={12} />
@@ -159,7 +164,7 @@ const Delegation = ({ account }: { account: CosmosAccount }) => {
                   disabled={!hasRewards}
                   color="palette.primary.main"
                   small
-                  onClick={isCroAccount ? goToStakekit : onClaimRewards}
+                  onClick={onClaimRewards}
                 >
                   <Box horizontal flow={1} alignItems="center">
                     <ClaimRewards size={12} />
