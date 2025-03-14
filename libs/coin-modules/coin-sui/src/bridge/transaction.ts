@@ -4,6 +4,8 @@ import { formatTransactionStatus } from "@ledgerhq/coin-framework/formatters";
 import {
   fromTransactionCommonRaw,
   toTransactionCommonRaw,
+  fromTransactionStatusRawCommon as fromTransactionStatusRaw,
+  toTransactionStatusRawCommon as toTransactionStatusRaw,
 } from "@ledgerhq/coin-framework/serialization";
 import { BigNumber } from "bignumber.js";
 import { getAccountUnit } from "./utils";
@@ -26,6 +28,9 @@ ${mode.toUpperCase()} ${
 };
 
 export const fromTransactionRaw = (transaction: TransactionRaw): Transaction => {
+  if (!transaction.amount) {
+    transaction.amount = "0";
+  }
   const common = fromTransactionCommonRaw(transaction);
   return {
     ...common,
@@ -46,4 +51,11 @@ export const toTransactionRaw = (transaction: Transaction): TransactionRaw => {
   };
 };
 
-export default { formatTransaction, fromTransactionRaw, toTransactionRaw, formatTransactionStatus };
+export default {
+  formatTransaction,
+  fromTransactionRaw,
+  toTransactionRaw,
+  formatTransactionStatus,
+  fromTransactionStatusRaw,
+  toTransactionStatusRaw,
+};

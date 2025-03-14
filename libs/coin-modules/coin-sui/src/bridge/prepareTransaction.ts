@@ -2,6 +2,7 @@ import { AccountBridge } from "@ledgerhq/types-live";
 import { updateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import type { SuiAccount, Transaction } from "../types";
 import getEstimatedFees from "./getFeesForTransaction";
+import BigNumber from "bignumber.js";
 
 /**
  * Calculate fees for the current transaction
@@ -15,10 +16,15 @@ export const prepareTransaction: AccountBridge<
   Transaction,
   SuiAccount
 >["prepareTransaction"] = async (account, transaction) => {
-  const fees = await getEstimatedFees({
-    account,
-    transaction,
-  });
+  let fees: BigNumber;
+  try {
+    fees = await getEstimatedFees({
+      account,
+      transaction,
+    });
+  } catch (e) {
+    fees = BigNumber(0);
+  }
 
   const patch: Partial<Transaction> = {
     fees,

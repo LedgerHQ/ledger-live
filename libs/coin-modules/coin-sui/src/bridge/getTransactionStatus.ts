@@ -30,6 +30,10 @@ export const getTransactionStatus: AccountBridge<
   const estimatedFees = new BigNumber(transaction?.fees || 0);
   const totalSpent = amount.plus(estimatedFees);
 
+  if (amount.lte(0)) {
+    errors.amount = new AmountRequired();
+  }
+
   if (transaction) {
     if (!transaction.recipient) {
       errors.recipient = new RecipientRequired();
@@ -37,15 +41,12 @@ export const getTransactionStatus: AccountBridge<
       errors.recipient = new InvalidAddress(undefined, {
         currencyName: account.currency.name,
       });
-    } else if (
-      ensureAddressFormat(account.freshAddress) === ensureAddressFormat(transaction.recipient)
-    ) {
+    }
+
+    if (ensureAddressFormat(account.freshAddress) === ensureAddressFormat(transaction.recipient)) {
       errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
     }
 
-    if (amount.lte(0) && !transaction.useAllAmount) {
-      errors.amount = new AmountRequired();
-    }
     if (totalSpent.eq(0) && transaction.useAllAmount) {
       errors.amount = new NotEnoughBalance();
     }
