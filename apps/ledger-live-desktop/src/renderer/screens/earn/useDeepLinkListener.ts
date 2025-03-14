@@ -32,8 +32,6 @@ export const useDeepLinkListener = () => {
         startStakeFlow({ shouldRedirect: false, source: "Earn Dashboard" });
         break;
 
-      // TODO: Do we need to handle stake + currencies list? E.g. defi?
-
       case "stake-account": {
         const accountId = queryParams.get("accountId");
         if (accountId) {

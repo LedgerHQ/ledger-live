@@ -164,6 +164,6 @@ export function useStake() {
     getCanStakeCurrency,
     getCanStakeUsingPlatformApp,
     getCanStakeUsingLedgerLive,
-    getRouteToStake: getRouteParamsForPlatformApp,
+    getRouteParamsForPlatformApp,
   };
 }

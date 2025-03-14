@@ -19,11 +19,8 @@ import { sharedSwapTracking } from "~/screens/Swap/utils";
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { PtxToast } from "../../Toast/PtxToast";
 import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
-<<<<<<< HEAD
 import { useStake } from "~/newArch/hooks/useStake/useStake";
-=======
 import { flattenAccountsSelector } from "~/reducers/accounts";
->>>>>>> fbd99fa5a3859c6239eddd83daffa58ea79b2183
 
 type useAssetActionsProps = {
   currency?: CryptoCurrency | TokenCurrency;

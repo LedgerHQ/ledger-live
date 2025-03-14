@@ -23,7 +23,7 @@ export function useStakingDrawer({
 }) {
   const walletState = useSelector(walletSelector);
 
-  const { getRouteToStake } = useStake(); // (account, parentAccount) => void
+  const { getRouteParamsForPlatformApp } = useStake();
 
   return useCallback(
     (account: Account | TokenAccount | AccountLike, parentAccount?: Account) => {
@@ -45,7 +45,7 @@ export function useStakingDrawer({
         return;
       }
 
-      const redirectionParams = getRouteToStake(account, walletState, parentAccount);
+      const redirectionParams = getRouteParamsForPlatformApp(account, walletState, parentAccount);
 
       if (redirectionParams) {
         // called onSuccess in the SelectAccount flow
@@ -107,6 +107,13 @@ export function useStakingDrawer({
         },
       });
     },
-    [alwaysShowNoFunds, getRouteToStake, walletState, parentRoute, navigation, entryPoint],
+    [
+      alwaysShowNoFunds,
+      getRouteParamsForPlatformApp,
+      walletState,
+      parentRoute,
+      navigation,
+      entryPoint,
+    ],
   );
 }

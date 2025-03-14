@@ -53,16 +53,19 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
   const canBeBought = !currency || isCurrencyAvailable(currency.id, "onRamp");
   const canBeSold = !currency || currency.id === "bitcoin";
 
-  const { getCanStakeUsingLedgerLive, getCanStakeUsingPlatformApp, getRouteToStake } = useStake();
+  const { getCanStakeUsingLedgerLive, getCanStakeUsingPlatformApp, getRouteParamsForPlatformApp } =
+    useStake();
 
-  const canStakeUsingLedgerLive = !currency ? false : getCanStakeUsingLedgerLive(currency?.id);
+  const canStakeCurrencyUsingLedgerLive = !currency
+    ? false
+    : getCanStakeUsingLedgerLive(currency?.id);
   const stakeAccount = accounts?.[0];
   const stakeAccountCurrency = !stakeAccount ? null : getAccountCurrency(stakeAccount);
   const walletState = useSelector(walletSelector);
   const partnerStakeRoute =
     !stakeAccount || !stakeAccountCurrency || !getCanStakeUsingPlatformApp(stakeAccountCurrency?.id)
       ? null
-      : getRouteToStake(stakeAccount, walletState);
+      : getRouteParamsForPlatformApp(stakeAccount, walletState);
 
   const canBeRecovered = recoverEntryPoint?.enabled;
 
@@ -148,8 +151,7 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
       };
     }
 
-    // TODO: Check previous implementation - can we always stake if no currency? Or never?
-    if (canStakeUsingLedgerLive || !currency) {
+    if (canStakeCurrencyUsingLedgerLive || !currency) {
       list.STAKE = {
         disabled: readOnlyModeEnabled,
         route: [
@@ -203,9 +205,8 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
     canBeBought,
     canBeSold,
     partnerStakeRoute,
-    canStakeUsingLedgerLive,
+    canStakeCurrencyUsingLedgerLive,
     canBeRecovered,
-    accounts,
     route,
   ]);
 

@@ -70,7 +70,6 @@ function getNavigatorParams({
 
   const walletApiAccount = accountToWalletAPIAccount(walletState, account, parentAccount);
 
-  // TODO: use wallet api account in useStake hook...
   const params = {
     screen: parentRoute.name,
     drawer: {

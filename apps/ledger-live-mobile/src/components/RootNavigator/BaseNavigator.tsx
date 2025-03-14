@@ -537,19 +537,7 @@ export default function BaseNavigator() {
           name={NavigatorName.Earn}
           component={EarnLiveAppNavigator}
           options={{ headerShown: false }}
-          listeners={({ route }) => ({
-            beforeRemove: () => {
-              console.warn("[[[ EarnLiveAppNavigator: beforeRemove ]]]");
-              const onClose =
-                route.params?.onClose || (route.params as unknown as typeof route)?.params?.onClose;
-              if (onClose && typeof onClose === "function") {
-                console.log(`>> calling onClose in EarnLiveAppNavigator (see basenavigator)`);
-                onClose();
-              }
-            },
-          })}
         />
-        {/** TODO: Use no funds flow in useStake hook... */}
         <Stack.Screen
           name={NavigatorName.NoFundsFlow}
           component={NoFundsFlowNavigator}
@@ -558,16 +546,6 @@ export default function BaseNavigator() {
             headerRight: () => <NavigationHeaderCloseButtonAdvanced preferDismiss={false} />,
             headerLeft: () => null,
           }}
-          listeners={({ route }) => ({
-            beforeRemove: () => {
-              console.warn("[[[ NoFundsFlowNavigator: beforeRemove ]]]");
-              // const onClose =
-              //   route.params?.onClose || (route.params as unknown as typeof route)?.params?.onClose;
-              // if (onClose && typeof onClose === "function") {
-              //   onClose();
-              // }
-            },
-          })}
         />
         <Stack.Screen
           name={NavigatorName.StakeFlow}
@@ -577,18 +555,6 @@ export default function BaseNavigator() {
             headerRight: () => <NavigationHeaderCloseButtonAdvanced preferDismiss={false} />,
             headerLeft: () => null,
           }}
-          listeners={({ route }) => ({
-            beforeRemove: () => {
-              console.warn("[[[ StakeFlowNavigator: beforeRemove ]]]", {
-                routeParams: route.params,
-              });
-              // const onClose =
-              //   route.params?.onClose || (route.params as unknown as typeof route)?.params?.onClose;
-              // if (onClose && typeof onClose === "function") {
-              //   onClose();
-              // }
-            },
-          })}
         />
         <Stack.Screen
           name={NavigatorName.EvmEditTransaction}

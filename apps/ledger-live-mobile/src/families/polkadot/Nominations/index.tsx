@@ -45,6 +45,9 @@ import EarnLight from "~/images/illustration/Light/_003.webp";
 import EarnDark from "~/images/illustration/Dark/_003.webp";
 import FirstLetterIcon from "~/components/FirstLetterIcon";
 import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useStake } from "~/newArch/hooks/useStake/useStake";
+import { useSelector } from "react-redux";
+import { walletSelector } from "~/reducers/wallet";
 
 type Props = {
   account: AccountLike;
@@ -142,10 +145,10 @@ export default function Nominations(props: Props) {
     [navigation, account.id],
   );
 
-  // TODO: replace quickfix with action from useStake
+  const { getRouteParamsForPlatformApp } = useStake();
+  const walletState = useSelector(walletSelector);
   const onEarnRewards = useCallback(() => {
-    onNavigate({
-      route: NavigatorName.Base,
+    const { screen, params } = getRouteParamsForPlatformApp(account, walletState) ?? {
       screen: ScreenName.PlatformApp,
       params: {
         platform: "stakekit",
@@ -153,8 +156,14 @@ export default function Nominations(props: Props) {
         accountId: account.id,
         yieldId: "polkadot-dot-validator-staking",
       },
+    };
+
+    onNavigate({
+      route: NavigatorName.Base,
+      screen,
+      params,
     });
-  }, [account, onNavigate]);
+  }, [account, getRouteParamsForPlatformApp, onNavigate, walletState]);
 
   const onNominate = useCallback(() => {
     onNavigate({

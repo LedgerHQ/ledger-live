@@ -18,7 +18,6 @@ import { AssetSelectionNavigatorParamsList } from "./types";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import CloseWithConfirmation from "LLM/components/CloseWithConfirmation";
 import useAnalytics from "../../hooks/useAnalytics";
-import { ConsoleLogger } from "~/logger";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<AssetSelectionNavigatorParamsList, NavigatorName.AssetSelection>
@@ -31,16 +30,11 @@ export default function Navigator() {
 
   const { token, currency, context, sourceScreenName } = route.params || {};
 
-  console.warn(">>> AssetSelection > route.params", route.params);
-
   const navigation = useNavigation();
   const { analyticsMetadata } = useAnalytics(context, sourceScreenName);
 
   const handleOnCloseAssetSelectionNavigator = useCallback(
     (screenName: string) => () => {
-      console.log(
-        `>> onCloseAssetSelectionNavigator: ${screenName} - add onClose event if needed...`,
-      );
       const closeMetadata = analyticsMetadata[screenName]?.onClose;
       if (closeMetadata)
         track(closeMetadata.eventName, {

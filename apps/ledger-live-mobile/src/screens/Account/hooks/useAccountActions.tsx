@@ -51,9 +51,8 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
 
   const currency = getAccountCurrency(account);
 
-  //  const { isOpen, onModalHide, onClose } = useRootDrawerContext(); TODO: Do we need to check for open drawers? We are not in a modal here.
-
-  const { getCanStakeUsingLedgerLive, getCanStakeUsingPlatformApp, getRouteToStake } = useStake();
+  const { getCanStakeUsingLedgerLive, getCanStakeUsingPlatformApp, getRouteParamsForPlatformApp } =
+    useStake();
 
   const canStakeUsingLedgerLive = getCanStakeUsingLedgerLive(currency.id);
   const canStakeUsingPlatformApp = getCanStakeUsingPlatformApp(currency.id);
@@ -201,7 +200,7 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
         disabled: isZeroBalance,
         navigationParams: [
           NavigatorName.Base,
-          getRouteToStake(account, walletState, parentAccount),
+          getRouteParamsForPlatformApp(account, walletState, parentAccount),
         ],
         label: t("account.stake"),
         Icon: IconsLegacy.BedMedium,
@@ -209,9 +208,8 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
           currency: currency.ticker,
         },
       }
-    : [];
+    : null;
 
-  // TODO: Shall we get this in the useStake hook and do the token specific OR family specific main actions choice there?
   const familySpecificMainActions: Array<ActionButtonEvent> =
     (decorators &&
       decorators.getMainActions &&
@@ -224,21 +222,19 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
       })) ||
     [];
 
-
   const mainActions = [
     ...(availableOnSwap ? [actionButtonSwap] : []),
     ...(!readOnlyModeEnabled && canBeBought ? [actionButtonBuy] : []),
     ...(!readOnlyModeEnabled && canBeSold ? [actionButtonSell] : []),
-    ...(!readOnlyModeEnabled && canStakeUsingPlatformApp ? [StakeAction] : []),
+    ...(!readOnlyModeEnabled && canStakeUsingPlatformApp && StakeAction ? [StakeAction] : []),
     ...(!readOnlyModeEnabled
       ? familySpecificMainActions.filter(
-          action => action.id !== "stake" || (canStakeUsingLedgerLive && !canStakeUsingPlatformApp),
+          action => action.id !== "stake" || canOnlyStakeUsingLedgerLive,
         ) // filter out family stake action if we cannot stake using ledger live or if account can be staked with a third-party platform app
       : []),
     ...(!readOnlyModeEnabled ? [SendAction] : []),
     ReceiveAction,
   ];
-
 
   const familySpecificSecondaryActions =
     (decorators &&
