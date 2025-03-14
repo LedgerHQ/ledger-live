@@ -67,7 +67,7 @@ const Delegation = ({ account }: { account: CosmosAccount }) => {
         returnTo: `/account/${account.id}`,
       },
     });
-  }, [account?.id, history]);
+  }, [account.id, history]);
 
   const onEarnRewards = useCallback(() => {
     isCroAccount
