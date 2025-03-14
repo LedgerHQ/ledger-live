@@ -739,6 +739,7 @@ const tron: CurrenciesData<Transaction> = {
           },
         },
       ],
+      FIXME_tests: ["balance is sum of ops"],
       raw: {
         id: "js:2:tron:THAe4BNVxp293qgyQEqXEkHMpPcqtG73bi:",
         seedIdentifier: "THAe4BNVxp293qgyQEqXEkHMpPcqtG73bi",

@@ -3,7 +3,7 @@
 exports[`cosmos currency bridge scanAccounts cosmos seed 1 1`] = `
 [
   {
-    "balance": "10401458",
+    "balance": "8397469",
     "currencyId": "cosmos",
     "derivationMode": "",
     "freshAddress": "cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl",
@@ -12,14 +12,14 @@ exports[`cosmos currency bridge scanAccounts cosmos seed 1 1`] = `
     "index": 0,
     "pendingOperations": [],
     "seedIdentifier": "0388459b2653519948b12492f1a0b464720110c147a8155d23d423a5cc3c21d89a",
-    "spendableBalance": "8104476",
+    "spendableBalance": "6100487",
     "swapHistory": [],
     "syncHash": undefined,
     "used": true,
     "xpub": "cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl",
   },
   {
-    "balance": "108924",
+    "balance": "1099823",
     "currencyId": "cosmos",
     "derivationMode": "",
     "freshAddress": "cosmos108uy5q9jt59gwugq5yrdhkzcd9jryslmpcstk5",
@@ -28,7 +28,7 @@ exports[`cosmos currency bridge scanAccounts cosmos seed 1 1`] = `
     "index": 1,
     "pendingOperations": [],
     "seedIdentifier": "0388459b2653519948b12492f1a0b464720110c147a8155d23d423a5cc3c21d89a",
-    "spendableBalance": "1424",
+    "spendableBalance": "892323",
     "swapHistory": [],
     "syncHash": undefined,
     "used": true,
@@ -238,6 +238,25 @@ exports[`cosmos currency bridge scanAccounts cosmos seed 1 2`] = `
       "transactionSequenceNumber": 133,
       "type": "OUT",
       "value": "3028",
+    },
+    {
+      "accountId": "js:2:cosmos:cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl:",
+      "blockHash": null,
+      "blockHeight": 24559921,
+      "extra": {},
+      "fee": "1200",
+      "hasFailed": false,
+      "hash": "10968396E64DD09CFDB6F74E0FA6CEC908EEFCA27765344BA415B4FA132B486B",
+      "id": "js:2:cosmos:cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl:-10968396E64DD09CFDB6F74E0FA6CEC908EEFCA27765344BA415B4FA132B486B-OUT",
+      "recipients": [
+        "osmo10a3k4hvk37cc4hnxctw4p95fhscd2z6h2rmx0aukc6rm8u9qqx9smfsh7u",
+      ],
+      "senders": [
+        "cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl",
+      ],
+      "transactionSequenceNumber": 161,
+      "type": "OUT",
+      "value": "1001200",
     },
     {
       "accountId": "js:2:cosmos:cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl:",
@@ -2797,6 +2816,29 @@ exports[`cosmos currency bridge scanAccounts cosmos seed 1 2`] = `
     {
       "accountId": "js:2:cosmos:cosmos108uy5q9jt59gwugq5yrdhkzcd9jryslmpcstk5:",
       "blockHash": null,
+      "blockHeight": 24823450,
+      "extra": {
+        "memo": "Ledger Live",
+        "validators": [
+          {
+            "address": "cosmosvaloper1clpqr4nrk4khgkxj78fcwwh6dl3uw4epsluffn",
+            "amount": "100000",
+          },
+        ],
+      },
+      "fee": "9101",
+      "hasFailed": false,
+      "hash": "631D257BED52BE5C83F9C11E0DA438EF3C6B1EB4A77CDBEC823D044A2A881653",
+      "id": "js:2:cosmos:cosmos108uy5q9jt59gwugq5yrdhkzcd9jryslmpcstk5:-631D257BED52BE5C83F9C11E0DA438EF3C6B1EB4A77CDBEC823D044A2A881653-DELEGATE",
+      "recipients": [],
+      "senders": [],
+      "transactionSequenceNumber": 15,
+      "type": "DELEGATE",
+      "value": "9101",
+    },
+    {
+      "accountId": "js:2:cosmos:cosmos108uy5q9jt59gwugq5yrdhkzcd9jryslmpcstk5:",
+      "blockHash": null,
       "blockHeight": 12871128,
       "extra": {
         "memo": "Ledger Live",
@@ -2874,6 +2916,27 @@ exports[`cosmos currency bridge scanAccounts cosmos seed 1 2`] = `
       "transactionSequenceNumber": 10,
       "type": "OUT",
       "value": "4340",
+    },
+    {
+      "accountId": "js:2:cosmos:cosmos108uy5q9jt59gwugq5yrdhkzcd9jryslmpcstk5:",
+      "blockHash": null,
+      "blockHeight": 24823399,
+      "extra": {
+        "memo": "test ",
+      },
+      "fee": "2789",
+      "hasFailed": false,
+      "hash": "7CF65D3BC4D4AE98CBD0515E50177CA79EE1E2F971364582F0595F8FFAF236D3",
+      "id": "js:2:cosmos:cosmos108uy5q9jt59gwugq5yrdhkzcd9jryslmpcstk5:-7CF65D3BC4D4AE98CBD0515E50177CA79EE1E2F971364582F0595F8FFAF236D3-IN",
+      "recipients": [
+        "cosmos108uy5q9jt59gwugq5yrdhkzcd9jryslmpcstk5",
+      ],
+      "senders": [
+        "cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl",
+      ],
+      "transactionSequenceNumber": 162,
+      "type": "IN",
+      "value": "1000000",
     },
     {
       "accountId": "js:2:cosmos:cosmos108uy5q9jt59gwugq5yrdhkzcd9jryslmpcstk5:",

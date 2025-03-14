@@ -28,6 +28,7 @@ import {
   getEventFAAddress,
 } from "../../bridge/logic";
 import type { AptosTransaction, TransactionOptions } from "../../types";
+import { createFixtureAccount, createFixtureTransaction } from "../../bridge/bridge.fixture";
 
 describe("Aptos logic ", () => {
   describe("isTestnet", () => {
@@ -43,41 +44,48 @@ describe("Aptos logic ", () => {
   describe("getMaxSendBalance", () => {
     it("should return the correct max send balance when amount is greater than total gas", () => {
       const amount = new BigNumber(1000000);
+      const account = createFixtureAccount({ balance: amount, spendableBalance: amount });
+      const transaction = createFixtureTransaction();
       const gas = new BigNumber(200);
       const gasPrice = new BigNumber(100);
-      const result = getMaxSendBalance(amount, gas, gasPrice);
+      const result = getMaxSendBalance(gas, gasPrice, account, transaction);
       expect(result.isEqualTo(amount.minus(gas.multipliedBy(gasPrice)))).toBe(true);
     });
 
     it("should return zero when amount is less than total gas", () => {
-      const amount = new BigNumber(1000);
+      const account = createFixtureAccount();
+      const transaction = createFixtureTransaction();
       const gas = new BigNumber(200);
       const gasPrice = new BigNumber(100);
-      const result = getMaxSendBalance(amount, gas, gasPrice);
+      const result = getMaxSendBalance(gas, gasPrice, account, transaction);
       expect(result.isEqualTo(new BigNumber(0))).toBe(true);
     });
 
     it("should return zero when amount is equal to total gas", () => {
-      const amount = new BigNumber(20000);
+      const account = createFixtureAccount();
+      const transaction = createFixtureTransaction();
       const gas = new BigNumber(200);
       const gasPrice = new BigNumber(100);
-      const result = getMaxSendBalance(amount, gas, gasPrice);
+      const result = getMaxSendBalance(gas, gasPrice, account, transaction);
       expect(result.isEqualTo(new BigNumber(0))).toBe(true);
     });
 
     it("should handle zero amount", () => {
-      const amount = new BigNumber(0);
+      const account = createFixtureAccount();
+      const transaction = createFixtureTransaction();
       const gas = new BigNumber(200);
       const gasPrice = new BigNumber(100);
-      const result = getMaxSendBalance(amount, gas, gasPrice);
+      const result = getMaxSendBalance(gas, gasPrice, account, transaction);
       expect(result.isEqualTo(new BigNumber(0))).toBe(true);
     });
 
     it("should handle zero gas and gas price", () => {
       const amount = new BigNumber(1000000);
+      const account = createFixtureAccount({ balance: amount, spendableBalance: amount });
+      const transaction = createFixtureTransaction();
       const gas = new BigNumber(0);
       const gasPrice = new BigNumber(0);
-      const result = getMaxSendBalance(amount, gas, gasPrice);
+      const result = getMaxSendBalance(gas, gasPrice, account, transaction);
       expect(result.isEqualTo(amount)).toBe(true);
     });
   });

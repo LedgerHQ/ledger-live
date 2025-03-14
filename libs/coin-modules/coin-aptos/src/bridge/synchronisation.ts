@@ -98,8 +98,8 @@ export const getSubAccountShape = async (
 ): Promise<TokenAccount> => {
   const aptosClient = new AptosAPI(currency.id);
   const tokenAccountId = encodeTokenAccountId(parentId, token);
-
   const balance = await aptosClient.getBalance(address, token);
+  const firstOperation = operations.sort((a, b) => a.date.getTime() - b.date.getTime()).at(0);
 
   return {
     type: "TokenAccount",
@@ -108,7 +108,7 @@ export const getSubAccountShape = async (
     token,
     balance,
     spendableBalance: balance,
-    creationDate: new Date(),
+    creationDate: firstOperation?.date || new Date(0),
     operations,
     operationsCount: operations.length,
     pendingOperations: [],

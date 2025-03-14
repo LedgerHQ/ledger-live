@@ -7,7 +7,8 @@ import {
   WriteSetChangeWriteResource,
 } from "@aptos-labs/ts-sdk";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import type { Operation, OperationType } from "@ledgerhq/types-live";
+import type { Account, Operation, OperationType, TokenAccount } from "@ledgerhq/types-live";
+import { findSubAccountById, isTokenAccount } from "@ledgerhq/coin-framework/account/index";
 import BigNumber from "bignumber.js";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import {
@@ -22,6 +23,7 @@ import type {
   AptosFungibleStoreResourceData,
   AptosMoveResource,
   AptosTransaction,
+  Transaction,
   TransactionOptions,
 } from "../types";
 import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
@@ -38,13 +40,21 @@ export function isTestnet(currencyId: string): boolean {
 }
 
 export const getMaxSendBalance = (
-  amount: BigNumber,
   gas: BigNumber,
   gasPrice: BigNumber,
+  account: Account,
+  transaction?: Transaction,
 ): BigNumber => {
+  const tokenAccount = findSubAccountById(account, transaction?.subAccountId ?? "");
+  const fromTokenAccount = tokenAccount && isTokenAccount(tokenAccount);
+
   const totalGas = gas.multipliedBy(gasPrice);
 
-  return amount.gt(totalGas) ? amount.minus(totalGas) : new BigNumber(0);
+  return fromTokenAccount
+    ? tokenAccount.spendableBalance
+    : account.spendableBalance.gt(totalGas)
+      ? account.spendableBalance.minus(totalGas)
+      : new BigNumber(0);
 };
 
 export function normalizeTransactionOptions(options: TransactionOptions): TransactionOptions {
@@ -229,16 +239,6 @@ export function getEventCoinAddress(
   return address;
 }
 
-/**
- * Extracts the address from a string like "0x1::coin::CoinStore<address::module::type>"
- * @param {string} str - The input string containing the address.
- * @returns {string | null} - The extracted address or null if not found.
- */
-function extractAddress(str: string): string | null {
-  const match = str.match(/<([^>]+)>/);
-  return match ? match[1] : null;
-}
-
 export function getEventFAAddress(
   change: WriteSetChangeWriteResource,
   event: Event,
@@ -306,6 +306,11 @@ export function getCoinAndAmounts(
           }
         }
         break;
+      case "0x1::transaction_fee::FeeStatement":
+        if (!tx.success) {
+          coin_id = APTOS_ASSET_ID;
+        }
+        break;
       case "0x1::coin::DepositEvent":
         if (compareAddress(event.guid.account_address, address)) {
           coin_id = getResourceAddress(tx, event, "deposit_events", getEventCoinAddress);
@@ -348,4 +353,23 @@ export function calculateAmount(
   // to show positive amount on the send transaction (ex: in "cancel" tx, when amount will be returned to our account)
   // we need to make it negative
   return is_sender ? amount_out.minus(amount_in) : amount_in.minus(amount_out);
+}
+
+/**
+ * Extracts the address from a string like "0x1::coin::CoinStore<address::module::type>"
+ * @param {string} str - The input string containing the address.
+ * @returns {string | null} - The extracted address or null if not found.
+ */
+function extractAddress(str: string): string | null {
+  const match = str.match(/<([^>]+)>/);
+  return match ? match[1] : null;
+}
+
+export function getTokenAccount(
+  account: Account,
+  transaction: Transaction,
+): TokenAccount | undefined {
+  const tokenAccount = findSubAccountById(account, transaction.subAccountId ?? "");
+  const fromTokenAccount = tokenAccount && isTokenAccount(tokenAccount);
+  return fromTokenAccount ? tokenAccount : undefined;
 }
