@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.104.0-next.2
+
+### Minor Changes
+
+- [#9526](https://github.com/LedgerHQ/ledger-live/pull/9526) [`075e282`](https://github.com/LedgerHQ/ledger-live/commit/075e28245ad6ed1f0238a3c664d39b5ef55fad40) Thanks [@Justkant](https://github.com/Justkant)! - fix(wallet-api): signMessage modal continue button not visible with light theme
+
 ## 2.104.0-next.1
 
 ### Minor Changes
