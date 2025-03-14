@@ -1,5 +1,5 @@
 import { Observable, from, of, throwError } from "rxjs";
-import { catchError, concatMap, delay, mergeMap, timeout } from "rxjs/operators";
+import { catchError, concatMap, delay, mergeMap } from "rxjs/operators";
 import {
   DeviceOnDashboardExpected,
   ManagerNotEnoughSpaceError,
@@ -213,7 +213,6 @@ export default function loadImage({ deviceId, request }: Input): Observable<Load
         };
       }),
   ).pipe(
-    timeout(5000),
     catchError(err => {
       if (err.name === "TimeoutError") {
         return throwError(() => new DisconnectedDevice());
