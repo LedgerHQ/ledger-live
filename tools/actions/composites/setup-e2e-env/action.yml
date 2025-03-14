@@ -23,22 +23,14 @@ runs:
           echo "DISABLE_TRANSACTION_BROADCAST=1" >> $GITHUB_ENV
         fi
 
-    - name: Set SWAP_API_BASE
-      id: set-swap-api
+    - name: Set SWAP_API_BASE and LEDGER_SYNC_ENVIRONMENT
+      id: set-envs
       shell: bash
       run: |
         if [[ "${{ inputs.build_type }}" == "js" ]]; then
           echo "SWAP_API_BASE=https://swap.ledger.com/v5" >> $GITHUB_ENV
-        else
-          echo "SWAP_API_BASE=https://swap-stg.ledger-test.com/v5" >> $GITHUB_ENV
-        fi
-
-    - name: Set LEDGER_SYNC_ENVIRONMENT
-      id: set-ledger-sync-env
-      shell: bash
-      run: |
-        if [[ "${{ inputs.build_type }}" == "js" ]]; then
           echo "LEDGER_SYNC_ENVIRONMENT=PROD" >> $GITHUB_ENV
         else
+          echo "SWAP_API_BASE=https://swap-stg.ledger-test.com/v5" >> $GITHUB_ENV
           echo "LEDGER_SYNC_ENVIRONMENT=STAGING" >> $GITHUB_ENV
         fi
