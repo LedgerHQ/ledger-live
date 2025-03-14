@@ -6,25 +6,28 @@ import {
 } from "@aptos-labs/ts-sdk";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { APTOS_ASSET_ID, APTOS_COIN_CHANGE, DIRECTION } from "../../constants";
+import {
+  APTOS_ASSET_ID,
+  APTOS_COIN_CHANGE,
+  APTOS_FUNGIBLE_STORE,
+  DIRECTION,
+} from "../../constants";
 import {
   calculateAmount,
   compareAddress,
-  getAptosAmounts,
+  getCoinAndAmounts,
   getFunctionAddress,
-  isChangeOfAptos,
+  getResourceAddress,
   isTestnet,
   processRecipients,
   getMaxSendBalance,
   normalizeTransactionOptions,
   getBlankOperation,
   txsToOps,
+  getEventCoinAddress,
+  getEventFAAddress,
 } from "../../bridge/logic";
 import type { AptosTransaction, TransactionOptions } from "../../types";
-
-jest.mock("@ledgerhq/cryptoassets", () => ({
-  getCryptoCurrencyById: jest.fn(),
-}));
 
 describe("Aptos logic ", () => {
   describe("isTestnet", () => {
@@ -294,8 +297,8 @@ describe("Aptos sync logic ", () => {
     });
   });
 
-  describe("isChangeOfAptos", () => {
-    it("should return true for a valid change of Aptos", () => {
+  describe("getResourceAddress", () => {
+    it("should return coin name from the change", () => {
       const change = {
         type: "write_resource",
         data: {
@@ -313,6 +316,15 @@ describe("Aptos sync logic ", () => {
         },
       } as unknown as WriteSetChange;
 
+      const tx: AptosTransaction = {
+        hash: "0x123",
+        block: { hash: "0xabc", height: 1 },
+        timestamp: "1000000",
+        sequence_number: "1",
+        version: "1",
+        changes: [change],
+      } as unknown as AptosTransaction;
+
       const event = {
         guid: {
           account_address: "0x11",
@@ -321,11 +333,11 @@ describe("Aptos sync logic ", () => {
         type: "0x1::coin::WithdrawEvent",
       } as Event;
 
-      const result = isChangeOfAptos(change, event, "withdraw_events");
-      expect(result).toBe(true);
+      const result = getResourceAddress(tx, event, "withdraw_events", getEventCoinAddress);
+      expect(result).toEqual(APTOS_ASSET_ID);
     });
 
-    it("should return false for an invalid change of Aptos", () => {
+    it("should return null for not finding the valid coin in change", () => {
       const change = {
         type: "write_resource",
         data: {
@@ -343,6 +355,15 @@ describe("Aptos sync logic ", () => {
         },
       } as unknown as WriteSetChange;
 
+      const tx: AptosTransaction = {
+        hash: "0x123",
+        block: { hash: "0xabc", height: 1 },
+        timestamp: "1000000",
+        sequence_number: "1",
+        version: "1",
+        changes: [change],
+      } as unknown as AptosTransaction;
+
       const event = {
         guid: {
           account_address: "0x11",
@@ -351,107 +372,169 @@ describe("Aptos sync logic ", () => {
         type: "0x1::coin::WithdrawEvent",
       } as Event;
 
-      const result = isChangeOfAptos(change, event, "withdraw_events");
-      expect(result).toBe(false);
+      const result = getResourceAddress(tx, event, "withdraw_events", getEventCoinAddress);
+      expect(result).toBe(null);
     });
 
-    it("should return false for a change with a different WriteSet type", () => {
+    it("should return null for not finding the event name in change", () => {
       const change = {
-        type: "write_module",
-        data: {},
+        type: "write_resource",
+        data: {
+          type: APTOS_COIN_CHANGE,
+          data: {
+            other_events: {
+              guid: {
+                id: {
+                  addr: "0x12",
+                  creation_num: "2",
+                },
+              },
+            },
+          },
+        },
       } as unknown as WriteSetChange;
+
+      const tx: AptosTransaction = {
+        hash: "0x123",
+        block: { hash: "0xabc", height: 1 },
+        timestamp: "1000000",
+        sequence_number: "1",
+        version: "1",
+        changes: [change],
+      } as unknown as AptosTransaction;
 
       const event = {
         guid: {
-          account_address: "0x1",
+          account_address: "0x11",
           creation_number: "1",
         },
         type: "0x1::coin::WithdrawEvent",
       } as Event;
 
-      const result = isChangeOfAptos(change, event, "withdraw_events");
-      expect(result).toBe(false);
+      const result = getResourceAddress(tx, event, "withdraw_events", getEventCoinAddress);
+      expect(result).toBe(null);
     });
 
-    it("should return false if no data in WriteSet Change", () => {
+    it("should return fungible asset address", () => {
       const change = {
         type: "write_resource",
-      } as unknown as WriteSetChange;
-
-      const event = {
-        guid: {
-          account_address: "0x11",
-          creation_number: "2",
-        },
-        type: "0x1::coin::WithdrawEvent",
-      } as Event;
-
-      const result = isChangeOfAptos(change, event, "withdraw_events");
-      expect(result).toBe(false);
-    });
-
-    it("should return false if no type in change data", () => {
-      const change = {
-        type: "write_resource",
+        address: "0xsomeaddress",
         data: {
+          type: APTOS_FUNGIBLE_STORE,
           data: {
-            withdraw_events: {
-              guid: {
-                id: {
-                  addr: "0x11",
-                  creation_num: "2",
-                },
-              },
+            metadata: {
+              inner: "0xassetaddress",
             },
           },
         },
       } as unknown as WriteSetChange;
 
+      const tx: AptosTransaction = {
+        hash: "0x123",
+        block: { hash: "0xabc", height: 1 },
+        timestamp: "1000000",
+        sequence_number: "1",
+        version: "1",
+        changes: [change],
+      } as unknown as AptosTransaction;
+
       const event = {
         guid: {
-          account_address: "0x11",
-          creation_number: "2",
+          account_address: "0x0",
+          creation_number: "0",
         },
-        type: "0x1::coin::WithdrawEvent",
+        type: "0x1::fungible_asset::Deposit",
+        data: {
+          amount: "100",
+          store: "0xsomeaddress",
+        },
       } as Event;
 
-      const result = isChangeOfAptos(change, event, "withdraw_events");
-      expect(result).toBe(false);
+      const result = getResourceAddress(tx, event, "withdraw_events", getEventFAAddress);
+      expect(result).toEqual("0xassetaddress");
     });
 
-    it("should return false for a change with a different WriteSet Change type", () => {
+    it("should return null address instead of fungible asset when wrong type", () => {
       const change = {
         type: "write_resource",
+        address: "0xsomeaddress",
         data: {
-          type: "0x1::coin::CoinStore<0x1::aptos_coin::ANY_OTHER_COIN>",
+          type: APTOS_COIN_CHANGE,
           data: {
-            withdraw_events: {
-              guid: {
-                id: {
-                  addr: "0x11",
-                  creation_num: "2",
-                },
-              },
+            metadata: {
+              inner: "0xassetaddress",
             },
           },
         },
       } as unknown as WriteSetChange;
 
+      const tx: AptosTransaction = {
+        hash: "0x123",
+        block: { hash: "0xabc", height: 1 },
+        timestamp: "1000000",
+        sequence_number: "1",
+        version: "1",
+        changes: [change],
+      } as unknown as AptosTransaction;
+
       const event = {
         guid: {
-          account_address: "0x11",
-          creation_number: "2",
+          account_address: "0x0",
+          creation_number: "0",
         },
-        type: "0x1::coin::WithdrawEvent",
+        type: "0x1::fungible_asset::Deposit",
+        data: {
+          amount: "100",
+          store: "0xsomeaddress",
+        },
       } as Event;
 
-      const result = isChangeOfAptos(change, event, "withdraw_events");
-      expect(result).toBe(false);
+      const result = getResourceAddress(tx, event, "withdraw_events", getEventFAAddress);
+      expect(result).toEqual(null);
+    });
+
+    it("should return null address instead of fungible asset when wrong event address", () => {
+      const change = {
+        type: "write_resource",
+        address: "0xsomeaddress",
+        data: {
+          type: APTOS_FUNGIBLE_STORE,
+          data: {
+            metadata: {
+              inner: "0xassetaddress",
+            },
+          },
+        },
+      } as unknown as WriteSetChange;
+
+      const tx: AptosTransaction = {
+        hash: "0x123",
+        block: { hash: "0xabc", height: 1 },
+        timestamp: "1000000",
+        sequence_number: "1",
+        version: "1",
+        changes: [change],
+      } as unknown as AptosTransaction;
+
+      const event = {
+        guid: {
+          account_address: "0x0",
+          creation_number: "0",
+        },
+        type: "0x1::fungible_asset::Deposit",
+        data: {
+          amount: "100",
+          store: "0xwrongaddress",
+        },
+      } as Event;
+
+      const result = getResourceAddress(tx, event, "withdraw_events", getEventFAAddress);
+      expect(result).toEqual(null);
     });
   });
 
-  describe("getAptosAmounts", () => {
-    it("should calculate the correct amounts for withdraw and deposit events", () => {
+  describe("getCoinAndAmounts", () => {
+    it("should calculate the correct legacy coins amounts for withdraw and deposit events", () => {
       const tx = {
         events: [
           {
@@ -504,10 +587,11 @@ describe("Aptos sync logic ", () => {
       } as unknown as AptosTransaction;
 
       const address = "0x11";
-      const result = getAptosAmounts(tx, address);
+      const result = getCoinAndAmounts(tx, address);
 
       expect(result.amount_in).toEqual(new BigNumber(50));
       expect(result.amount_out).toEqual(new BigNumber(100));
+      expect(result.coin_id).toEqual(APTOS_ASSET_ID);
     });
 
     it("should return zero amounts if no matching events are found", () => {
@@ -563,10 +647,11 @@ describe("Aptos sync logic ", () => {
       } as unknown as AptosTransaction;
 
       const address = "0x11";
-      const result = getAptosAmounts(tx, address);
+      const result = getCoinAndAmounts(tx, address);
 
       expect(result.amount_in).toEqual(new BigNumber(0));
       expect(result.amount_out).toEqual(new BigNumber(0));
+      expect(result.coin_id).toEqual(null);
     });
 
     it("should handle transactions with other events", () => {
@@ -586,10 +671,11 @@ describe("Aptos sync logic ", () => {
       } as unknown as AptosTransaction;
 
       const address = "0x1";
-      const result = getAptosAmounts(tx, address);
+      const result = getCoinAndAmounts(tx, address);
 
       expect(result.amount_in).toEqual(new BigNumber(0));
       expect(result.amount_out).toEqual(new BigNumber(0));
+      expect(result.coin_id).toEqual(null);
     });
   });
 
@@ -647,7 +733,7 @@ describe("Aptos sync logic ", () => {
   });
 
   describe("txsToOps", () => {
-    it("should convert transactions to operations correctly", () => {
+    it("should convert Aptos transactions to operations correctly", () => {
       const address = "0x11";
       const id = "test-id";
       const txs: AptosTransaction[] = [
@@ -717,7 +803,7 @@ describe("Aptos sync logic ", () => {
         } as unknown as AptosTransaction,
       ];
 
-      const result = txsToOps({ address }, id, txs);
+      const [result, _] = txsToOps({ address }, id, txs);
 
       expect(result).toHaveLength(1);
       expect(result[0]).toEqual({
@@ -763,7 +849,7 @@ describe("Aptos sync logic ", () => {
         } as unknown as AptosTransaction,
       ];
 
-      const result = txsToOps({ address }, id, txs);
+      const [result, _] = txsToOps({ address }, id, txs);
 
       expect(result).toHaveLength(0);
     });
@@ -792,7 +878,7 @@ describe("Aptos sync logic ", () => {
         } as unknown as AptosTransaction,
       ];
 
-      const result = txsToOps({ address }, id, txs);
+      const [result, _] = txsToOps({ address }, id, txs);
 
       expect(result).toHaveLength(0);
     });
@@ -867,7 +953,7 @@ describe("Aptos sync logic ", () => {
         } as unknown as AptosTransaction,
       ];
 
-      const result = txsToOps({ address }, id, txs);
+      const [result, _token_result] = txsToOps({ address }, id, txs);
 
       expect(result).toHaveLength(1);
       expect(result[0].hasFailed).toBe(true);
