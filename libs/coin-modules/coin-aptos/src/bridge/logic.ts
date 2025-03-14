@@ -18,6 +18,7 @@ import {
   DIRECTION,
   COIN_TRANSFER_TYPES,
   FA_TRANSFER_TYPES,
+  APTOS_OBJECT_CORE,
 } from "../constants";
 import type {
   AptosFungibleoObjectCoreResourceData,
@@ -304,7 +305,7 @@ export function checkFAOwner(tx: AptosTransaction, event: Event, user_address: s
       const storeData = change.data as MoveResource<AptosFungibleoObjectCoreResourceData>;
       if (
         change.address == event.data.store &&
-        storeData.type == "0x1::object::ObjectCore" &&
+        storeData.type == APTOS_OBJECT_CORE &&
         storeData.data.owner == user_address
       ) {
         return true;
@@ -342,17 +343,17 @@ export function getCoinAndAmounts(
           // TODO: check if we can have coin events during transferring FA
         }
         break;
-      case "0x1::fungible_asset::Deposit":
-        if (checkFAOwner(tx, event, address)) {
-          coin_id = getResourceAddress(tx, event, "deposit_events", getEventFAAddress);
-          if (coin_id !== null) {
-            amount_in = amount_in.plus(event.data.amount);
-          }
-        }
-        break;
       case "0x1::fungible_asset::Withdraw":
         if (checkFAOwner(tx, event, address)) {
           coin_id = getResourceAddress(tx, event, "withdraw_events", getEventFAAddress);
+          if (coin_id !== null) {
+            amount_out = amount_out.plus(event.data.amount);
+          }
+        }
+        break;
+      case "0x1::fungible_asset::Deposit":
+        if (checkFAOwner(tx, event, address)) {
+          coin_id = getResourceAddress(tx, event, "deposit_events", getEventFAAddress);
           if (coin_id !== null) {
             amount_in = amount_in.plus(event.data.amount);
           }
