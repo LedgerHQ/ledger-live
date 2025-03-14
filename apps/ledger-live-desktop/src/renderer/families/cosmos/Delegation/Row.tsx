@@ -97,6 +97,7 @@ type Props = {
   delegation: CosmosMappedDelegation;
   onManageAction: (address: string, action: DelegationActionsModalName) => void;
   onExternalLink: (address: string) => void;
+  isCroAccount?: boolean;
 };
 export function Row({
   account,
@@ -111,6 +112,7 @@ export function Row({
   delegation,
   onManageAction,
   onExternalLink,
+  isCroAccount,
 }: Props) {
   const onSelect = useCallback(
     (action: (typeof dropDownItems)[number]) => {
@@ -118,55 +120,58 @@ export function Row({
     },
     [onManageAction, validatorAddress],
   );
-  const _canUndelegate = canUndelegate(account);
-  const _canRedelegate = canRedelegate(account, delegation);
+  const _canUndelegate = !isCroAccount && canUndelegate(account);
+  const _canRedelegate = !isCroAccount && canRedelegate(account, delegation);
   const redelegationDate = !_canRedelegate
     ? getRedelegationCompletionDate(account, delegation)
     : undefined;
   const formattedRedelegationDate = useDateFromNow(redelegationDate);
   const dropDownItems = useMemo(
-    () => [
-      {
-        key: "MODAL_COSMOS_REDELEGATE",
-        label: <Trans i18nKey="cosmos.delegation.redelegate" />,
-        disabled: !_canRedelegate,
-        tooltip: !_canRedelegate ? (
-          formattedRedelegationDate ? (
-            <Trans
-              i18nKey="cosmos.delegation.redelegateDisabledTooltip"
-              values={{
-                days: formattedRedelegationDate,
-              }}
-            >
+    () =>
+      [
+        {
+          key: "MODAL_COSMOS_REDELEGATE",
+          label: <Trans i18nKey="cosmos.delegation.redelegate" />,
+          disabled: !_canRedelegate,
+          skip: isCroAccount,
+          tooltip: !_canRedelegate ? (
+            formattedRedelegationDate ? (
+              <Trans
+                i18nKey="cosmos.delegation.redelegateDisabledTooltip"
+                values={{
+                  days: formattedRedelegationDate,
+                }}
+              >
+                <b></b>
+              </Trans>
+            ) : (
+              <Trans i18nKey="cosmos.delegation.redelegateMaxDisabledTooltip">
+                <b></b>
+              </Trans>
+            )
+          ) : null,
+        },
+        {
+          key: "MODAL_COSMOS_UNDELEGATE",
+          label: <Trans i18nKey="cosmos.delegation.undelegate" />,
+          disabled: !_canUndelegate,
+          skip: isCroAccount,
+          tooltip: !_canUndelegate ? (
+            <Trans i18nKey="cosmos.delegation.undelegateDisabledTooltip">
               <b></b>
             </Trans>
-          ) : (
-            <Trans i18nKey="cosmos.delegation.redelegateMaxDisabledTooltip">
-              <b></b>
-            </Trans>
-          )
-        ) : null,
-      },
-      {
-        key: "MODAL_COSMOS_UNDELEGATE",
-        label: <Trans i18nKey="cosmos.delegation.undelegate" />,
-        disabled: !_canUndelegate,
-        tooltip: !_canUndelegate ? (
-          <Trans i18nKey="cosmos.delegation.undelegateDisabledTooltip">
-            <b></b>
-          </Trans>
-        ) : null,
-      },
-      ...(pendingRewards.gt(0)
-        ? [
-            {
-              key: "MODAL_COSMOS_CLAIM_REWARDS",
-              label: <Trans i18nKey="cosmos.delegation.reward" />,
-            },
-          ]
-        : []),
-    ],
-    [pendingRewards, _canRedelegate, _canUndelegate, formattedRedelegationDate],
+          ) : null,
+        },
+        ...(pendingRewards.gt(0)
+          ? [
+              {
+                key: "MODAL_COSMOS_CLAIM_REWARDS",
+                label: <Trans i18nKey="cosmos.delegation.reward" />,
+              },
+            ]
+          : []),
+      ].filter(Item => !Item.skip),
+    [pendingRewards, _canRedelegate, _canUndelegate, formattedRedelegationDate, isCroAccount],
   );
   const name = validator?.name ?? validatorAddress;
   const onExternalLinkClick = useCallback(
@@ -213,7 +218,7 @@ export function Row({
         <DropDown
           items={dropDownItems}
           renderItem={({ item, isActive }) => {
-            if (item.key === "MODAL_COSMOS_CLAIM_REWARDS")
+            if (item.key === "MODAL_COSMOS_CLAIM_REWARDS" && !isCroAccount)
               return (
                 <>
                   <Divider />

@@ -398,6 +398,7 @@ function Delegations({ account }: Props) {
                 <RedelegateIcon color={!redelegateEnabled ? colors.grey : undefined} />
               </Circle>
             ),
+            skip: isCroAccount,
             disabled: !redelegateEnabled,
             onPress: onRedelegate,
             event: "DelegationActionRedelegate",
@@ -423,14 +424,16 @@ function Delegations({ account }: Props) {
                 <UndelegateIcon color={!undelegationEnabled ? colors.grey : undefined} />
               </Circle>
             ),
+            skip: isCroAccount,
             disabled: !undelegationEnabled,
             onPress: onUndelegate,
             event: "DelegationActionUndelegate",
           },
-        ]
+        ].filter(item => !item.skip)
       : [];
   }, [
     delegation,
+    isCroAccount,
     account,
     t,
     onRedelegate,

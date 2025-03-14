@@ -70,12 +70,15 @@ const Delegation = ({ account }: { account: CosmosAccount }) => {
   }, [account?.id, history]);
 
   const onEarnRewards = useCallback(() => {
-    dispatch(
-      openModal("MODAL_COSMOS_REWARDS_INFO", {
-        account,
-      }),
-    );
-  }, [account, dispatch]);
+    isCroAccount
+      ? goToStakekit()
+      : dispatch(
+          openModal("MODAL_COSMOS_REWARDS_INFO", {
+            account,
+          }),
+        );
+  }, [account, dispatch, isCroAccount, goToStakekit]);
+
   const onDelegate = useCallback(() => {
     isCroAccount
       ? goToStakekit()
@@ -97,14 +100,16 @@ const Delegation = ({ account }: { account: CosmosAccount }) => {
 
   const onRedirect = useCallback(
     (validatorAddress: string, modalName: DelegationActionsModalName) => {
-      dispatch(
-        openModal(modalName, {
-          account,
-          validatorAddress,
-        }),
-      );
+      isCroAccount
+        ? goToStakekit()
+        : dispatch(
+            openModal(modalName, {
+              account,
+              validatorAddress,
+            }),
+          );
     },
-    [account, dispatch],
+    [account, dispatch, isCroAccount, goToStakekit],
   );
   const explorerView = getDefaultExplorerView(account.currency);
   const onExternalLink = useCallback(
@@ -187,6 +192,7 @@ const Delegation = ({ account }: { account: CosmosAccount }) => {
                 delegation={delegation}
                 onManageAction={onRedirect}
                 onExternalLink={onExternalLink}
+                isCroAccount={isCroAccount}
               />
             ))}
           </>
