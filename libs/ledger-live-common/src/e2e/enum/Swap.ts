@@ -12,6 +12,7 @@ export class Provider {
   static readonly MOONPAY = new Provider("moonpay", "MoonPay", true, false);
   static readonly THORCHAIN = new Provider("thorswap", "THORChain", false, true);
   static readonly UNISWAP = new Provider("uniswap", "Uniswap", false, false);
+  static readonly CIC = new Provider("cic", "CIC", false, true);
 }
 
 export enum Rate {
