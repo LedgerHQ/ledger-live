@@ -20,7 +20,7 @@ import { AppAndVersion } from "@ledgerhq/live-common/hw/connectApp";
 import { Flex, Icons, Text } from "@ledgerhq/native-ui";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { AccountLike, AnyMessage, DeviceInfo } from "@ledgerhq/types-live";
-import { T, useNavigation, useTheme } from "@react-navigation/native";
+import { useNavigation, useTheme } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
@@ -66,6 +66,7 @@ import {
 } from "./rendering";
 import { WalletState } from "@ledgerhq/live-wallet/lib/store";
 import { SettingsState } from "~/reducers/types";
+import { Theme } from "~/colors";
 
 type Status = PartialNullable<{
   appAndVersion: AppAndVersion;
@@ -443,7 +444,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
       transaction: Transaction;
       exchangeRate: ExchangeRate;
       exchange: ExchangeSwap;
-      colors: T["colors"];
+      colors: Theme["colors"];
       theme: "dark" | "light";
       amountExpectedTo?: string;
       estimatedFees?: string;
