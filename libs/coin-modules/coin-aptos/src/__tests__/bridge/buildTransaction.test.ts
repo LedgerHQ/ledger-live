@@ -95,7 +95,7 @@ describe("buildTransaction Test", () => {
     expect(generateTransactionArgs[1]).toEqual({
       function: "0x1::primary_fungible_store::transfer",
       typeArguments: ["0x1::fungible_asset::Metadata"],
-      functionArguments: [["contract_address"], "recipient", "0"],
+      functionArguments: ["contract_address", "recipient", "0"],
     });
     expect(generateTransactionArgs[2]).toEqual({ maxGasAmount: "100", gasUnitPrice: "200" });
   });
