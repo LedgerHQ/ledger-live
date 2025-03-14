@@ -107,6 +107,12 @@ import type {
   TransactionStatusRaw as stellarTransactionStatusRaw,
 } from "@ledgerhq/coin-stellar/types/index";
 import type {
+  Transaction as suiTransaction,
+  TransactionRaw as suiTransactionRaw,
+  TransactionStatus as suiTransactionStatus,
+  TransactionStatusRaw as suiTransactionStatusRaw,
+} from "@ledgerhq/coin-sui/types/index";
+import type {
   Transaction as tezosTransaction,
   TransactionRaw as tezosTransactionRaw,
   TransactionStatus as tezosTransactionStatus,
@@ -156,6 +162,7 @@ export type Transaction =
   | solanaTransaction
   | stacksTransaction
   | stellarTransaction
+  | suiTransaction
   | tezosTransaction
   | tonTransaction
   | tronTransaction
@@ -181,6 +188,7 @@ export type TransactionRaw =
   | solanaTransactionRaw
   | stacksTransactionRaw
   | stellarTransactionRaw
+  | suiTransactionRaw
   | tezosTransactionRaw
   | tonTransactionRaw
   | tronTransactionRaw
@@ -206,6 +214,7 @@ export type TransactionStatus =
   | solanaTransactionStatus
   | stacksTransactionStatus
   | stellarTransactionStatus
+  | suiTransactionStatus
   | tezosTransactionStatus
   | tonTransactionStatus
   | tronTransactionStatus
@@ -231,6 +240,7 @@ export type TransactionStatusRaw =
   | solanaTransactionStatusRaw
   | stacksTransactionStatusRaw
   | stellarTransactionStatusRaw
+  | suiTransactionStatusRaw
   | tezosTransactionStatusRaw
   | tonTransactionStatusRaw
   | tronTransactionStatusRaw
