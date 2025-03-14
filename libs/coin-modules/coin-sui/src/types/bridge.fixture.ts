@@ -79,7 +79,6 @@ export const createFixtureOperation = (overrides = {}) => ({
   senders: ["0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0"],
   recipients: ["0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24"],
   accountId: "js:2:sui:0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0:sui",
-  transactionSequenceNumber: 7,
   date: new Date(),
   ...overrides,
 });

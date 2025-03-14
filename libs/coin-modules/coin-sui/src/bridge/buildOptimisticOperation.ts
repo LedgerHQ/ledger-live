@@ -95,7 +95,7 @@ function optimisticOpForTransfer(
     senders: [account.freshAddress],
     recipients: [transaction.recipient].filter(Boolean),
     accountId: account.id,
-    date: new Date(), // TODO: use transaction date
+    date: new Date(),
     extra,
   };
 }

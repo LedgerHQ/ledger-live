@@ -107,8 +107,11 @@ const getOperationAmount = (
   let amount = new BigNumber(0);
   if (!transaction?.balanceChanges) return amount;
   for (const balanceChange of transaction.balanceChanges) {
-    // @ts-expect-error TODO:fix
-    if (balanceChange.owner.AddressOwner === address) {
+    if (
+      typeof balanceChange.owner !== "string" &&
+      "AddressOwner" in balanceChange.owner &&
+      balanceChange.owner.AddressOwner === address
+    ) {
       if (balanceChange.amount[0] === "-") {
         amount = amount.minus(balanceChange.amount);
       } else {
