@@ -272,6 +272,40 @@ test.describe("Swap - Rejected on device", () => {
   );
 });
 
+test.describe.only("Swap - Landing page", () => {
+  const rejectedSwap = new Swap(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "0.03", Fee.MEDIUM);
+  setupEnv(true);
+
+  test.beforeEach(async () => {
+    const accountPair: string[] = [rejectedSwap.accountToDebit, rejectedSwap.accountToCredit].map(
+      acc => acc.currency.speculosApp.name.replace(/ /g, "_"),
+    );
+    setExchangeDependencies(accountPair.map(name => ({ name })));
+  });
+
+  test.use({
+    userdata: "speculos-tests-app",
+    speculosApp: app,
+  });
+
+  test(
+    `Swap landing page`,
+    {
+      annotation: { type: "TMS", description: "B2CQA-2212" },
+    },
+    async ({ app, electronApp }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
+      await performSwapUntilQuoteSelectionStep(app, electronApp, rejectedSwap);
+      //Check quotes appear
+      //Check Best Value tag
+      //Check One quote card: Provider name, type of rate (floating of fixed), Value in ETH / BTC and USD, network fees (in coin value and USD), Number of quotes above + quotes update in [timer]
+      //quand click on quote alors => type of rate and the rate + max slippage
+      //check button qui display (swap with providerName)
+    },
+  );
+});
+
 const swapWithDifferentSeed = [
   {
     swap: new Swap(Account.ETH_1, Account.SOL_1, "0.02", Fee.MEDIUM),
