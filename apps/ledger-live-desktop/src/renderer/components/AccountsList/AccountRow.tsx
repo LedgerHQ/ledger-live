@@ -2,7 +2,6 @@ import React from "react";
 import styled from "styled-components";
 import { Account } from "@ledgerhq/types-live";
 import { getEnv } from "@ledgerhq/live-env";
-import { darken } from "~/renderer/styles/helpers";
 import Box, { Tabbable } from "~/renderer/components/Box";
 import CheckBox from "~/renderer/components/CheckBox";
 import CryptoCurrencyIconWithCount from "~/renderer/components/CryptoCurrencyIconWithCount";
@@ -96,6 +95,7 @@ function AccountRow(props: Props) {
         horizontal
         alignItems="center"
         fontSize={4}
+        ml={3}
       >
         {onEditName ? (
           <InputWrapper>
@@ -158,7 +158,6 @@ export default React.memo(AccountRow);
 const AccountRowContainer = styled(Tabbable).attrs(() => ({
   horizontal: true,
   alignItems: "center",
-  bg: "palette.background.default",
   px: 3,
   flow: 1,
 }))<{
@@ -170,11 +169,16 @@ const AccountRowContainer = styled(Tabbable).attrs(() => ({
   opacity: ${p => (p.isDisabled ? 0.5 : 1)};
   pointer-events: ${p => (p.isDisabled ? "none" : "auto")};
 
+  --color: ${p => p.theme.colors.neutral.c30};
+  background-color: var(--color);
+
   &:hover {
-    background-color: ${p => darken(p.theme.colors.palette.background.default, 0.015)};
+    --color: ${p => p.theme.colors.neutral.c40};
+    background-color: var(--color);
   }
 
   &:active {
-    background-color: ${p => darken(p.theme.colors.palette.background.default, 0.03)};
+    --color: ${p => p.theme.colors.neutral.c60};
+    background-color: var(--color);
   }
 `;
