@@ -75,6 +75,10 @@ export type AptosFungibleStoreResourceData = {
   metadata: { inner: string };
 };
 
+export type AptosFungibleoObjectCoreResourceData = {
+  owner: string;
+};
+
 export type AptosMoveResourceData = {
   guid: { id: { addr: string; creation_num: string } };
 };
