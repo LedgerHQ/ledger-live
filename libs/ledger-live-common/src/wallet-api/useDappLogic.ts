@@ -233,17 +233,19 @@ export function useDappLogic({
       initialAccountId,
     });
 
+  /** Current network is needed for recognising the current chain id.
+   * If a token account is selected, this depends on the parent currency. */
   const currentNetwork = useMemo(() => {
     if (!currentAccount) {
       return undefined;
     }
     return manifest.dapp?.networks.find(network => {
-      return (
-        network.currency ===
-        (currentAccount.type === "TokenAccount"
-          ? currentAccount.token.id
-          : currentAccount.currency.id)
-      );
+      const accountNetworkCurrency =
+        currentAccount.type === "TokenAccount"
+          ? currentAccount.token.parentCurrency.id
+          : currentAccount.currency.id;
+
+      return network.currency === accountNetworkCurrency;
     });
   }, [currentAccount, manifest.dapp?.networks]);
 
@@ -651,6 +653,7 @@ export function useDappLogic({
       currentParentAccount,
       dependencies,
       manifest,
+      mevProtected,
       nanoApp,
       postMessage,
       setCurrentAccount,
