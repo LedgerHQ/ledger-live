@@ -51,6 +51,16 @@ const defaultConfig = {
   ],
   testPathIgnorePatterns,
   testRegex,
+  transform: {
+    [`node_modules/.pnpm/(${transformIncludePatterns.join("|")}).+\\.(js|jsx)?$`]: [
+      "@swc/jest",
+      {
+        jsc: {
+          target: "esnext",
+        },
+      },
+    ],
+  },
   transformIgnorePatterns: [
     "/node_modules/(?!|@babel/runtime/helpers/esm/)",
     `node_modules/.pnpm/(?!(${transformIncludePatterns.join("|")}))`,
