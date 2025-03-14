@@ -170,7 +170,7 @@ export function Row({
               },
             ]
           : []),
-      ].filter(Item => !Item.skip),
+      ].filter(item => !item.skip),
     [pendingRewards, _canRedelegate, _canUndelegate, formattedRedelegationDate, isCroAccount],
   );
   const name = validator?.name ?? validatorAddress;
