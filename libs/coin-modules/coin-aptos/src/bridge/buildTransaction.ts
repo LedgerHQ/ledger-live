@@ -36,7 +36,7 @@ const getPayload = (
         function: `0x1::primary_fungible_store::transfer`,
         typeArguments: ["0x1::fungible_asset::Metadata"],
         functionArguments: [
-          [tokenAccount.token.contractAddress],
+          tokenAccount.token.contractAddress,
           transaction.recipient,
           transaction.amount.toString(),
         ],
