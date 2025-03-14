@@ -6,6 +6,7 @@ import {
   InvalidAddressBecauseDestinationIsAlsoSource,
   AmountRequired,
   FeeNotLoaded,
+  FeeTooHigh,
 } from "@ledgerhq/errors";
 import { AccountBridge } from "@ledgerhq/types-live";
 import type { SuiAccount, Transaction, TransactionStatus } from "../types";
@@ -32,6 +33,8 @@ export const getTransactionStatus: AccountBridge<
 
   if (amount.lte(0)) {
     errors.amount = new AmountRequired();
+  } else if (estimatedFees.times(10).gt(amount)) {
+    warnings.feeTooHigh = new FeeTooHigh();
   }
 
   if (transaction) {
