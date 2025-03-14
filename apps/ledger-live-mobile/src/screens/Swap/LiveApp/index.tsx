@@ -25,11 +25,11 @@ import { ScreenName } from "~/const";
 const DEFAULT_MANIFEST_ID =
   process.env.DEFAULT_SWAP_MANIFEST_ID || DEFAULT_FEATURES.ptxSwapLiveApp.params?.manifest_id;
 
-function isDefaultAccountSwapParamsList(
+const isDefaultAccountSwapParamsList = (
   params: DefaultAccountSwapParamList | unknown,
-): params is DefaultAccountSwapParamList {
-  return (params as DefaultAccountSwapParamList).defaultAccount !== undefined;
-}
+): params is DefaultAccountSwapParamList =>
+  (params as DefaultAccountSwapParamList).defaultAccount !== undefined ||
+  (params as DefaultAccountSwapParamList).defaultCurrency !== undefined;
 
 export function SwapLiveApp({
   route,
