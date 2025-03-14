@@ -79,9 +79,7 @@ export function TranslatedError({
     if (ldmkTransportFlag?.enabled && error && "_tag" in error) {
       if (field === "description") {
         const errorMessage =
-          "originalError" in error
-            ? (error.originalError as Error).message
-            : (error._tag as string);
+          ("originalError" in error && (error.originalError as Error)?.message) ?? error._tag;
 
         return <Text>{errorMessage}</Text>;
       }
