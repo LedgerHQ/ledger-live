@@ -58,7 +58,7 @@ export type Network = {
   appName: string;
 };
 
-export const getCachedNetwork = makeLRUCache(
+export const getCachedNetworks = makeLRUCache(
   async (id, opt) => getNetworks(id, opt),
   id => id ?? "",
   hours(1),

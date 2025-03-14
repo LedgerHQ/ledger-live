@@ -6,6 +6,7 @@
 
 import { getCertificate } from "./certificate";
 import { findCurrencyData } from "./currencies";
+import { getCachedNetworks } from "./networks";
 import { getProvidersCDNData, getProvidersData } from "./partners";
 
 export type { Device } from "./certificate";
@@ -18,6 +19,7 @@ export { SWAP_DATA_CDN } from "./partners/default";
 export default {
   findCurrencyData,
   getCertificate,
+  getNetworks: getCachedNetworks,
   getProvidersCDNData,
   getProvidersData,
 };
