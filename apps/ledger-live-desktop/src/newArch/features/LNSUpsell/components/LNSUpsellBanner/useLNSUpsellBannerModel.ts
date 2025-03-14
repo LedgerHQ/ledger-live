@@ -1,13 +1,8 @@
 import { useLNSUpsellBannerState } from "LLD/features/LNSUpsell/hooks/useLNSUpsellBannerState";
-import {
-  AnalyticsButton,
-  AnalyticsPage,
-  type LNSBannerLocation,
-  type LNSBannerModel,
-  type LNSBannerState,
-} from "LLD/features/LNSUpsell/types";
+import type { LNSBannerLocation, LNSBannerState } from "LLD/features/LNSUpsell/types";
 import { track } from "~/renderer/analytics/segment";
 import { openURL } from "~/renderer/linking";
+import type { LNSBannerModel } from "./types";
 
 export function useLNSUpsellBannerModel(location: LNSBannerLocation): LNSBannerModel {
   const state = useLNSUpsellBannerState(location);
@@ -17,7 +12,7 @@ export function useLNSUpsellBannerModel(location: LNSBannerLocation): LNSBannerM
 
   const handleCTAClick = () => {
     track("button_clicked", {
-      button: AnalyticsButton.CTA,
+      button: ANALYTICS_BUTTON_CLICK,
       link: ctaLink,
       page: analitycsPage,
     });
@@ -30,12 +25,14 @@ export function useLNSUpsellBannerModel(location: LNSBannerLocation): LNSBannerM
   return { variant, discount, tracking, handleCTAClick };
 }
 
-const AnalyticsPageMap: Record<LNSBannerLocation, AnalyticsPage> = {
-  manager: AnalyticsPage.Manager,
-  accounts: AnalyticsPage.Accounts,
-  portfolio: AnalyticsPage.Portfolio,
-  notification_center: AnalyticsPage.NotificationPanel,
-};
+const ANALYTICS_BUTTON_CLICK = "Level up wallet";
+
+const AnalyticsPageMap = {
+  manager: "Manager",
+  accounts: "Accounts",
+  portfolio: "Portfolio",
+  notification_center: "NotificationPanel",
+} as const satisfies Record<LNSBannerLocation, unknown>;
 
 function getVariant(location: LNSBannerLocation, state: LNSBannerState): LNSBannerModel["variant"] {
   if (!state.isShown) return { type: "none" };
