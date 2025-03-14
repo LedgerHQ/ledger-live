@@ -23,18 +23,34 @@ type Props = {
   walletState: WalletState;
 };
 
+type AccountTypeGetterProps = {
+  isEthAccount: boolean;
+  isPOLAccount: boolean;
+  isBscAccount: boolean;
+  isAvaxAccount: boolean;
+  isStakekit: boolean;
+};
+
+const getAccountType = (account: AccountLike): AccountTypeGetterProps => {
+  const isEthAccount = account.type === "Account" && account.currency.id === "ethereum";
+  const isBscAccount = account.type === "Account" && account.currency.id === "bsc";
+  const isAvaxAccount = account.type === "Account" && account.currency.id === "avalanche_c_chain";
+  const isPOLAccount =
+    account.type === "TokenAccount" &&
+    account.token.id === "ethereum/erc20/polygon_ecosystem_token";
+
+  const isStakekit = isBscAccount || isPOLAccount || isAvaxAccount;
+
+  return { isEthAccount, isPOLAccount, isBscAccount, isAvaxAccount, isStakekit };
+};
+
 function getNavigatorParams({
   parentRoute,
   account,
   parentAccount,
   walletState,
 }: Props): NavigationParamsType {
-  const isBscAccount = account.type === "Account" && account.currency.id === "bsc";
-  const isAvaxAccount = account.type === "Account" && account.currency.id === "avalanche_c_chain";
-  const isPOLAccount =
-    account.type === "TokenAccount" &&
-    account.token.id === "ethereum/erc20/polygon_ecosystem_token";
-  const isStakekit = isBscAccount || isPOLAccount || isAvaxAccount;
+  const { isPOLAccount, isBscAccount, isAvaxAccount, isStakekit } = getAccountType(account);
 
   if (isAccountEmpty(account)) {
     return [
@@ -112,12 +128,8 @@ const getMainActions = ({
   parentRoute,
   walletState,
 }: Props): ActionButtonEvent[] => {
-  const isBscAccount = account.type === "Account" && account.currency.id === "bsc";
-  const isAvaxAccount = account.type === "Account" && account.currency.id === "avalanche_c_chain";
-  const isPOLAccount =
-    account.type === "TokenAccount" &&
-    account.token.id === "ethereum/erc20/polygon_ecosystem_token";
-  const isStakekit = isBscAccount || isPOLAccount || isAvaxAccount;
+  const { isPOLAccount, isBscAccount, isAvaxAccount, isStakekit, isEthAccount } =
+    getAccountType(account);
 
   if (isStakekit) {
     const label = getStakeLabelLocaleBased();
@@ -129,7 +141,7 @@ const getMainActions = ({
       walletState,
     });
     const getCurrentCurrency = () => {
-      if (account.type === "Account" && account.currency.id === "ethereum") {
+      if (isEthAccount) {
         return "ETH";
       }
       if (isBscAccount) {
