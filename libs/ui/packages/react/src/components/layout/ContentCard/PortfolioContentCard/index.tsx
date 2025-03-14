@@ -1,5 +1,6 @@
 import React, { type ReactEventHandler } from "react";
 
+import { Button } from "../../../cta";
 import BannerCard from "../../Banner/BannerCard";
 
 export type PortfolioContentCardProps = {
@@ -25,7 +26,13 @@ export default function PortfolioContentCard({
   return (
     <BannerCard
       title={title}
-      cta={cta}
+      cta={
+        cta && (
+          <Button variant="main" outline={false}>
+            {cta}
+          </Button>
+        )
+      }
       description={description}
       tag={tag}
       image={image}

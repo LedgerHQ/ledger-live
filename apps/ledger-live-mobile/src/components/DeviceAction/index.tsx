@@ -58,6 +58,13 @@ import { walletSelector } from "~/reducers/wallet";
 import { settingsStoreSelector } from "~/reducers/settings";
 import { RootStackParamList } from "../RootNavigator/types/RootNavigator";
 import { LedgerError } from "~/types/error";
+import { useTrackMyLedgerSectionEvents } from "~/analytics/hooks/useTrackMyLedgerEvents";
+import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
+import { useTrackReceiveFlow } from "~/analytics/hooks/useTrackReceiveFlow";
+import { useTrackSendFlow } from "~/analytics/hooks/useTrackSendFlow";
+import { useTrackAddAccountFlow } from "~/analytics/hooks/useTrackAddAccountFlow";
+import { useTrackLedgerSyncFlow } from "~/analytics/hooks/useTrackLedgerSyncFlow";
+import { useTrackSwapFlow } from "~/analytics/hooks/useTrackSwapFlow";
 
 type Status = PartialNullable<{
   appAndVersion: AppAndVersion;
@@ -120,6 +127,7 @@ type Props<H extends Status, P> = {
   payload?: P | null;
   onSelectDeviceLink?: () => void;
   analyticsPropertyFlow?: string;
+  location?: HOOKS_TRACKING_LOCATIONS;
   /*
    * Defines in what type of component this action will be rendered in.
    *
@@ -131,6 +139,7 @@ export default function DeviceAction<R, H extends Status, P>({
   action,
   request,
   device: selectedDevice,
+  location,
   ...props
 }: Omit<Props<H, P>, "status"> & {
   action: Action<R, H, P>;
@@ -145,6 +154,7 @@ export default function DeviceAction<R, H extends Status, P>({
       status={status}
       request={request}
       payload={payload}
+      location={location}
       {...props}
     />
   );
@@ -160,6 +170,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
   status,
   request,
   payload,
+  location,
 }: Props<H, P> & {
   request?: R;
 }): JSX.Element | null {
@@ -210,6 +221,53 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
     progress,
     listingApps,
   } = status;
+
+  useTrackMyLedgerSectionEvents({
+    location: location === HOOKS_TRACKING_LOCATIONS.myLedgerDashboard ? location : undefined,
+    device: selectedDevice,
+    allowManagerRequested,
+    allowRenamingRequested,
+    imageRemoveRequested,
+    error,
+  });
+
+  useTrackReceiveFlow({
+    location: location === HOOKS_TRACKING_LOCATIONS.receiveFlow ? location : undefined,
+    device: selectedDevice,
+    requestOpenApp,
+    inWrongDeviceForAccount,
+    error,
+  });
+
+  useTrackSendFlow({
+    location: location === HOOKS_TRACKING_LOCATIONS.sendFlow ? location : undefined,
+    device: selectedDevice,
+    requestOpenApp,
+    error,
+  });
+
+  useTrackAddAccountFlow({
+    location: location === HOOKS_TRACKING_LOCATIONS.addAccount ? location : undefined,
+    device: selectedDevice,
+    requestOpenApp,
+    allowOpeningGranted,
+    error,
+  });
+
+  useTrackLedgerSyncFlow({
+    location: location === HOOKS_TRACKING_LOCATIONS.ledgerSyncFlow ? location : undefined,
+    device: selectedDevice,
+    allowManagerRequested,
+    requestOpenApp,
+    error,
+  });
+
+  useTrackSwapFlow({
+    location: location === HOOKS_TRACKING_LOCATIONS.swapFlow ? location : undefined,
+    device: selectedDevice,
+    requestOpenApp,
+    error,
+  });
 
   useEffect(() => {
     if (deviceInfo && device) {

@@ -84,11 +84,18 @@ export type APIDelegation = {
   stake: string;
   rewardsAvailable: string;
   rewardsWithdrawn: string;
-  poolInfo: {
-    poolId: string;
-    name: string;
-    ticker: string;
-  };
+  poolInfo:
+    | {
+        poolId: string;
+        name: string | undefined;
+        ticker: string | undefined;
+      }
+    | undefined;
+  dRepInfo:
+    | {
+        hex: string;
+      }
+    | undefined;
 };
 
 export type StakePool = {

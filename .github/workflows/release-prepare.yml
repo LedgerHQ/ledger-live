@@ -47,15 +47,23 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: pnpm changeset version
 
-      - name: commit
+      - name: git add
         run: |
           git add .
-          git commit -m "chore(release): :rocket: prepare release [skip ci]"
 
-      - name: push changes
+      - name: commit
+        uses: planetscale/ghcommit-action@v0.1.6
+        with:
+          commit_message: "chore(release): :rocket: prepare release [skip ci]"
+          repo: ${{ github.repository }}
+          branch: ${{ inputs.ref }}
+        env:
+          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+
+      - name: pull commit
         run: |
-          git push origin ${{ inputs.ref }}
-          git fetch origin
+          git stash
+          git pull origin ${{ inputs.ref }}
 
       - name: fetch develop and main
         run: |

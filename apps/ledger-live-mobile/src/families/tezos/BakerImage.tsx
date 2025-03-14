@@ -20,7 +20,7 @@ const BakerImage = ({ baker, size = 64 }: Props) => (
           ? {
               uri: baker.logoURL,
             }
-          : require("./custom.png")
+          : require("./custom.webp")
       }
     />
   </Circle>
