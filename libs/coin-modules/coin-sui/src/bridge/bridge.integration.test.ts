@@ -9,21 +9,22 @@ import {
 import BigNumber from "bignumber.js";
 import { fromTransactionRaw } from "./transaction";
 
-const ADDR1 = "0xba7080172a6d957b9ed2e3eb643529860be963cf4af896fb84f1cde00f46b561";
+const OWNER = "0xba7080172a6d957b9ed2e3eb643529860be963cf4af896fb84f1cde00f46b561";
+const RECIPIENT = "0x117527fdcf2f5f6e82fa499c0398def2643550d63f7e8311245d75f4635f0435";
 const DEFAULT_AMOUNT = "10";
 
 const suiAccount1: AccountRaw = {
-  id: `js:1:sui:${ADDR1}:`,
-  seedIdentifier: ADDR1,
-  name: `Sui ${ADDR1}`,
+  id: `js:2:sui:${OWNER}:`,
+  seedIdentifier: OWNER,
+  name: `Sui ${OWNER}`,
   derivationMode: "",
   index: 0,
-  freshAddress: ADDR1,
-  freshAddressPath: "44'/784'/1'/0'/0'",
+  freshAddress: OWNER,
+  freshAddressPath: "44'/784'/0'/0'/0'",
   pendingOperations: [],
   operations: [],
   currencyId: "sui",
-  balance: "",
+  balance: "0",
   blockHeight: 0,
   lastSyncDate: "",
   xpub: "",
@@ -61,7 +62,7 @@ const sui: CurrenciesData<Transaction> = {
           name: "recipient and sender must not be the same",
           transaction: fromTransactionRaw({
             family: "sui",
-            recipient: ADDR1,
+            recipient: OWNER,
             amount: DEFAULT_AMOUNT,
             mode: "send",
           }),
@@ -75,7 +76,7 @@ const sui: CurrenciesData<Transaction> = {
           name: "send tx",
           transaction: fromTransactionRaw({
             amount: "2000000",
-            recipient: "0x117527fdcf2f5f6e82fa499c0398def2643550d63f7e8311245d75f4635f0435",
+            recipient: RECIPIENT,
             useAllAmount: false,
             family: "sui",
             mode: "send",
@@ -93,7 +94,7 @@ const sui: CurrenciesData<Transaction> = {
           name: "not enough balance",
           transaction: fromTransactionRaw({
             family: "sui",
-            recipient: "0x117527fdcf2f5f6e82fa499c0398def2643550d63f7e8311245d75f4635f0435",
+            recipient: RECIPIENT,
             amount: "10000000000000000000",
             mode: "send",
           }),
@@ -123,8 +124,8 @@ const sui: CurrenciesData<Transaction> = {
           name: "amount is required",
           transaction: fromTransactionRaw({
             family: "sui",
-            recipient: "0x117527fdcf2f5f6e82fa499c0398def2643550d63f7e8311245d75f4635f0435",
-            amount: "",
+            recipient: RECIPIENT,
+            amount: "0",
             mode: "send",
           }),
           expectedStatus: {
