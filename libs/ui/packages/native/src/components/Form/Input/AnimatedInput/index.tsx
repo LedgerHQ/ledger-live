@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { BaseInput } from "..";
 import { type InputProps as BaseInputType } from "../BaseInput/index";
 import styled, { useTheme } from "styled-components/native";
@@ -23,6 +23,9 @@ const InputContainer = styled(View)<InputContainerProps>`
   box-sizing: border-box;
 `;
 
+const [height, setHeight] = useState<number>(56);
+const lineHeight = 18;
+
 const AnimatedInput = (
   { style = { width: "100%" }, ...textInputProps }: AnimatedInputProps,
   ref?: React.ForwardedRef<TextInput> | null,
@@ -43,15 +46,24 @@ const AnimatedInput = (
     onBlurCallback,
   });
 
-  const [height, setHeight] = useState<number>(48);
+  const [previousLineCount, setPreviousLineCount] = useState<number>(1);
 
   const inputStatus = getInputStatus({ focused, hasError: !!error, hasValue: !!value });
   const displayClearCross = inputStatus === "error" || inputStatus === "focused";
 
-  const handleContentSizeChange = (event: any) => {
-    const newHeight = event.nativeEvent.contentSize.height;
-    setHeight(newHeight + 40);
-  };
+  const handleContentSizeChange = useCallback(
+    (event: { nativeEvent: { contentSize: { height: number } } }) => {
+      const contentHeight = event.nativeEvent.contentSize.height;
+      const currentLineCount = Math.round(contentHeight / lineHeight);
+
+      if (currentLineCount !== previousLineCount) {
+        const newHeight = 56 + (currentLineCount - 1) * lineHeight;
+        setHeight(newHeight);
+        setPreviousLineCount(currentLineCount);
+      }
+    },
+    [previousLineCount],
+  );
 
   return (
     <InputContainer status={inputStatus} style={style}>
@@ -70,12 +82,13 @@ const AnimatedInput = (
           backgroundColor: "none",
           borderColor: theme ? inputStatusColors[inputStatus]({ theme }) : "neutral.c100",
           borderRadius: 8,
-          height: inputStatus !== "error" ? (height < 48 ? 48 : height) : height,
+          height: inputStatus !== "error" ? height : 48,
           paddingTop: largeMode ? 14 : 0,
-          paddingRight: largeMode ? 30 : 0,
+          paddingBottom: largeMode ? 14 : 0,
+          marginBottom: 40,
         }}
         baseInputContainerStyle={{
-          paddingRight: displayClearCross ? 8 : 14,
+          paddingRight: displayClearCross ? (largeMode ? 20 : 8) : 14,
         }}
         inputErrorContainerStyles={{
           marginTop: 8,
