@@ -72,7 +72,9 @@ const {
   DEVICE_PROXY_URL,
 } = process.env;
 
-if (DEVICE_PROXY_URL) {
+if (DEVICE_PROXY_URL) registerSpeculosProxy(DEVICE_PROXY_URL);
+
+export function registerSpeculosProxy(DEVICE_PROXY_URL: string) {
   const Tr = createTransportHttp(DEVICE_PROXY_URL.split("|"));
   registerTransportModule({
     id: "http",
