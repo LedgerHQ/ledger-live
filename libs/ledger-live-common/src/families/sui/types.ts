@@ -1,2 +1,2 @@
 // Encapsulate for LLD et LLM
-export * from "@ledgerhq/coin-sui/types/index";
+export * from "@ledgerhq/coin-sui/types";
