@@ -162,6 +162,11 @@ const envDefinitions = {
     def: 100,
     desc: "Limit of operation that Horizon will fetch per page",
   },
+  API_STELLAR_HORIZON_INITIAL_FETCH_MAX_OPERATIONS: {
+    parser: intParser,
+    def: 1000,
+    desc: "Limit of operation that Horizon will fetch on initial sync",
+  },
   API_STELLAR_HORIZON_STATIC_FEE: {
     def: false,
     parser: boolParser,
