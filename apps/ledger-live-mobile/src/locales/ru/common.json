@@ -479,7 +479,7 @@
     },
     "MultiversXDecimalsLimitReached" : {
       "title" : "Достигнут лимит десятичных знаков",
-      "description" : "Убедитесь, что у указанной суммы 18 десятичных знаков."
+      "description" : "Убедитесь, что в указанной сумме до 18 десятичных знаков."
     },
     "MultiversXMinDelegatedAmountError" : {
       "title" : "Делегированная сумма должна быть не менее {{formattedAmount}}"
@@ -829,6 +829,13 @@
     },
     "SolanaTxConfirmationTimeout" : {
       "title" : "Вероятно, транзакция не удалась. Прежде чем повторить попытку, подождите немного, а затем проверьте историю транзакций."
+    },
+    "SolanaRecipientMemoIsRequired" : {
+      "title" : "Требуется примечание/memo для адреса получателя"
+    },
+    "SolanaTokenNonTransferable" : {
+      "title" : "Токен непередаваемый",
+      "description" : "Такие криптоактивы называются Soulbound-токенами и не могут быть перемещены"
     },
     "CardanoMinAmountError" : {
       "title" : "Минимальная сумма для отправки — {{amount}} ADA"
@@ -3526,7 +3533,13 @@
         "apt_title" : "Ledger Nano S™ не поддерживает обмен Aptos",
         "apt_description" : "Для обмена Aptos используйте любое другое устройство Ledger. Это может быть Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ или Ledger Stax™.",
         "cosmos_title" : "Ledger Nano S™ не поддерживает обмен Cosmos",
-        "cosmos_description" : "Для обмена Cosmos используйте любое другое устройство Ledger. Это может быть Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ или Ledger Stax™."
+        "cosmos_description" : "Для обмена Cosmos используйте любое другое устройство Ledger. Это может быть Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ или Ledger Stax™.",
+        "osmo_title" : "Ledger Nano S™ does not support swapping Osmosis",
+        "osmo_description" : "To swap Osmosis, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+        "dydx_title" : "Ledger Nano S™ does not support swapping dYdX",
+        "dydx_description" : "To swap dYdX, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+        "sui_title" : "Ledger Nano S™ does not support swapping Sui",
+        "sui_description" : "To swap Sui, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
       }
     },
     "lending" : {
@@ -4665,7 +4678,8 @@
       "tr" : "Türkçe",
       "ja" : "日本",
       "ko" : "한국어",
-      "pt" : "Português (Br)"
+      "pt" : "Português (Br)",
+      "th" : "ภาษาไทย"
     }
   },
   "deviceLocalization" : {
@@ -4689,7 +4703,8 @@
       "german" : "Deutsch",
       "brazilian" : "Português (Br)",
       "russian" : "Русский",
-      "turkish" : "Türkçe"
+      "turkish" : "Türkçe",
+      "thai" : "ภาษาไทย"
     }
   },
   "FirmwareUpdateCheckId" : {
@@ -6020,7 +6035,67 @@
     },
     "token" : {
       "frozenStateWarning" : "Активы на счету заморожены",
-      "transferWarning" : "<0>Используйте это руководство</0>, чтобы подтвердить адрес получения токенов Solana с помощью Ledger Nano S™."
+      "transferWarning" : "<0>Используйте это руководство</0>, чтобы подтвердить адрес получения токенов Solana с помощью Ledger Nano S™.",
+      "transferFees" : {
+        "title" : "Комиссии за перевод",
+        "feesPercentHint" : "Комиссия за перевод этого токена составляет {{feePercent}}% ({{feeBps}} bps). Она не превысит {{maxFee}}.",
+        "notice" : "Комиссия за перевод — {{fee}}%",
+        "tooltipHint" : "Процент от суммы перевода, который получает создатель токена"
+      },
+      "nonTransferable" : {
+        "notice" : "Токен непередаваемый"
+      },
+      "interestRate" : {
+        "notice" : "Процентная ставка — {{rate}}%",
+        "tooltipHint" : "Новые монеты не создаются с учётом ставки, то есть происходящее носит исключительно косметический характер"
+      },
+      "permanentDelegate" : {
+        "notice" : "Постоянные полномочия делегата активированы",
+        "initializationNotice" : "Постоянные полномочия делегата запущены, но не активированы",
+        "initializedNoticeTooltipHint" : "Делегат может перемещать этот токен с вашего счёта или сжигать его",
+        "tooltipHint" : "{{delegateAddress}}<0></0> может перемещать этот токен с вашего счёта или сжигать его"
+      },
+      "requiredMemoOnTransfer" : {
+        "notice" : "Обязательное memo для переводов активировано",
+        "tooltipHint" : "Все входящие переводы на этот счёт должны содержать memo"
+      },
+      "transferHook" : {
+        "notice" : "Transfer Hook активирована",
+        "initializationNotice" : "Transfer Hook запущена, но не активирована",
+        "tooltipHint" : "У токена есть дополнительная функциональность, которая управляется {{programAddress}}<0></0>"
+      },
+      "extensionsInfo" : {
+        "title" : "Расширения токенов Solana",
+        "commonInfo" : "Расширения токенов — новое поколение стандарта токенов в сети Solana. Они наделяют привычную функциональность токена дополнительными возможностями. Например, это могут быть конфиденциальные переводы, постоянные делегаты, нестандартная логика перемещения, расширенные метаданные и многое другое.",
+        "permanentDelegate" : {
+          "title" : "Постоянный делегат",
+          "permanentDelegateAddress" : "Сейчас полномочия делегата принадлежат {{address}}",
+          "permanentDelegateNotSetup" : "Актуальные полномочия делегата не указаны.",
+          "description" : "Постоянный делегат — это сторона с неограниченными полномочиями на любой счёт в пределах конкретного минтинга. Делегат может сжигать или перемещать любое количество токенов в любое время на своё усмотрение."
+        },
+        "nonTransferable" : {
+          "title" : "Неперемещаемые токены",
+          "description" : "Такие криптоактивы называются Soulbound-токенами, и их нельзя перемещать или сжигать. Сделать это может только их эмитент."
+        },
+        "transferHook" : {
+          "title" : "Transfer Hook",
+          "transferHookAddress" : "Актуальная программа для Transfer Hook — {{address}}",
+          "transferHookNotSetup" : "Актуальная программа для Transfer Hook не указана.",
+          "description" : "Transfer Hook позволяет эмитенту токена определять условия взаимодействия пользователей с токенами. Вместо обычного перевода эмитент может добавить произвольную логику в программу, которая будет использоваться с расширением Transfer Hook."
+        },
+        "transferFee" : {
+          "title" : "Комиссия за перевод",
+          "currentTransferFee" : "Актуальная комиссия за перевод составляет {{feePercent}}% ({{feeBps}} bps). Она не превысит {{maxFee}}.",
+          "description" : "Комиссии взимаются за каждый перевод токена и удерживаются на счету получателя. Причём последний не может их использовать."
+        },
+        "interestBearing" : {
+          "title" : "Процентные токены",
+          "currentInterestRate" : "Актуальная процентная ставка составляет {{rate}}%.",
+          "accruedDelta" : "Начислено {{delta}}.",
+          "interestRateNotSetup" : "Актуальная процентная ставка составляет 0%.",
+          "description" : "Токены, чья стоимость растёт или снижается в соответствии с процентной ставкой. Новые монеты здесь не создаются, то есть эта функция носит исключительно косметический характер."
+        }
+      }
     }
   },
   "near" : {
@@ -6720,6 +6795,7 @@
         "hide" : "Скрыть коллекции ({{count}})",
         "hiddenCollections" : "Скрытые коллекции",
         "hide_plural" : "Скрыть коллекции: {{count}}",
+        "empty" : "Нет скрытых коллекций",
         "alertHide" : "1 коллекция скрыта. Отобразить её вновь можно в фильтрах галереи.",
         "alertHide_plural" : "Скрытых коллекций: {{count}}. Отобразить их вновь можно в фильтрах галереи."
       },

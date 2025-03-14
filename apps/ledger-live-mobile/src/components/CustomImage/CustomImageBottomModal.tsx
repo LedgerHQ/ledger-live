@@ -15,6 +15,7 @@ import { TrackScreen } from "~/analytics";
 import DeviceAction from "../DeviceAction";
 import { useStaxRemoveImageDeviceAction } from "~/hooks/deviceActions";
 import { type CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
+import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 
 const analyticsDrawerName = "Choose an image to set as your device lockscreen";
 
@@ -35,12 +36,21 @@ type Props = {
   deviceHasImage?: boolean;
   device: Device | null;
   deviceModelId: CLSSupportedDeviceModelId | null;
+  referral?: string;
 };
 
 const CustomImageBottomModal: React.FC<Props> = props => {
   const [isLoading, setIsLoading] = useState(false);
   const [isRemovingCustomImage, setIsRemovingCustomImage] = useState(false);
-  const { isOpened, onClose, device, deviceHasImage, setDeviceHasImage, deviceModelId } = props;
+  const {
+    isOpened,
+    onClose,
+    device,
+    deviceHasImage,
+    setDeviceHasImage,
+    deviceModelId,
+    referral = undefined,
+  } = props;
   const { t } = useTranslation();
   const { pushToast } = useToasts();
 
@@ -58,6 +68,7 @@ const CustomImageBottomModal: React.FC<Props> = props => {
             isPictureFromGallery: true,
             device,
             deviceModelId,
+            referral: referral,
           },
         });
       }
@@ -70,7 +81,7 @@ const CustomImageBottomModal: React.FC<Props> = props => {
     }
     setIsLoading(false);
     onClose && onClose();
-  }, [navigation, onClose, device, deviceModelId]);
+  }, [navigation, onClose, device, deviceModelId, referral]);
 
   const handleSelectFromNFTGallery = useCallback(() => {
     navigation.navigate(NavigatorName.CustomImage, {
@@ -136,6 +147,11 @@ const CustomImageBottomModal: React.FC<Props> = props => {
               action={action}
               onResult={onSuccess}
               onError={onError}
+              location={
+                referral === HOOKS_TRACKING_LOCATIONS.myLedgerDashboard
+                  ? HOOKS_TRACKING_LOCATIONS.myLedgerDashboard
+                  : undefined
+              }
             />
           </Flex>
         </Flex>

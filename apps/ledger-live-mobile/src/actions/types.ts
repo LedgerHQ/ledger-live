@@ -86,7 +86,6 @@ export enum AppStateActionTypes {
   SET_BLOCK_PASSWORD_LOCK = "SET_BLOCK_PASSWORD_LOCK",
 }
 
-export type AppStateIsConnectedPayload = AppState["isConnected"];
 export type AppStateSetHasConnectedDevicePayload = AppState["hasConnectedDevice"];
 export type AppStateSetModalLockPayload = AppState["modalLock"];
 export type AppStateAddBackgroundEventPayload = {
@@ -96,7 +95,6 @@ export type AppStateBlockPasswordLockPayload = boolean;
 
 export type AppStateUpdateMainNavigatorVisibilityPayload = AppState["isMainNavigatorVisible"];
 export type AppStatePayload =
-  | AppStateIsConnectedPayload
   | AppStateSetHasConnectedDevicePayload
   | AppStateSetModalLockPayload
   | AppStateAddBackgroundEventPayload

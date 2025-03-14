@@ -3,7 +3,32 @@ import { Language as DeviceLanguages, languageIds } from "@ledgerhq/types-live";
 /**
  * This is the only place new language should be added.
  */
-export const LanguageIds = ["en", "fr", "de", "ru", "es", "ja", "tr", "ko", "zh", "pt"] as const;
+export const LanguageIds = [
+  "en",
+  "fr",
+  "de",
+  "ru",
+  "es",
+  "ja",
+  "tr",
+  "ko",
+  "zh",
+  "pt",
+  "th",
+] as const;
+
+export const LanguageIdsNotFeatureFlagged = [
+  "en",
+  "fr",
+  "de",
+  "ru",
+  "es",
+  "ja",
+  "tr",
+  "ko",
+  "zh",
+  "pt",
+] as const;
 
 export const OFAC_LOCALES = [
   "fa-AF",
@@ -37,6 +62,7 @@ export const LanguageLocaleIds = {
   ru: ["ru-RU"],
   tr: ["tr-TR"],
   zh: ["zh-CN"],
+  th: ["th-TH"],
 } as const satisfies LanguageMap<readonly LanguagePrefixed[]>;
 
 /**
@@ -152,6 +178,13 @@ export const Languages = {
     locales: buildLocales(LanguageLocaleIds.zh),
 
     deviceSupport: undefined,
+  },
+  th: {
+    id: "th",
+    label: "ภาษาไทย",
+    locales: buildLocales(LanguageLocaleIds.th),
+
+    deviceSupport: { label: "thai", id: languageIds.thai },
   },
 } as const satisfies LanguageMap<LanguageDefinition>;
 

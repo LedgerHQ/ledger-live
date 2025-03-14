@@ -52,6 +52,7 @@ import { TezosDelegationFlowParamList } from "~/families/tezos/DelegationFlow/ty
 import { TronVoteFlowParamList } from "~/families/tron/VoteFlow/types";
 import { useTransactionDeviceAction } from "~/hooks/deviceActions";
 import { SignedOperation } from "@ledgerhq/types-live";
+import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 
 type Props =
   | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendConnectDevice>
@@ -180,6 +181,9 @@ export default function ConnectDevice({ route, navigation }: Props) {
             onSelectDeviceLink={() => navigateToSelectDevice(navigation, route)}
             {...extraProps}
             analyticsPropertyFlow={analyticsPropertyFlow}
+            location={
+              analyticsPropertyFlow === "send" ? HOOKS_TRACKING_LOCATIONS.sendFlow : undefined
+            }
           />
         </SafeAreaView>
       ) : null, // prevent rerendering caused by optimistic update (i.e. exclude account related deps)

@@ -265,7 +265,7 @@ const SetDelegation = (props: SetDelegationPropsType) => {
 
           <Image
             style={styles.delegationImage}
-            source={require("../../../../../assets/delegation.png")}
+            source={require("../../../../../assets/delegation.webp")}
           />
 
           <Touchable event="DelegationFlowSummaryChangeCircleBtn" onPress={onChangeValidator}>

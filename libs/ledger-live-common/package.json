@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/live-common",
   "description": "Common ground for the Ledger Live apps",
-  "version": "34.24.0",
+  "version": "34.25.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live.git"
@@ -156,7 +156,7 @@
     "@ledgerhq/crypto-icons-ui": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/device-core": "workspace:^",
-    "@ledgerhq/device-management-kit": "0.6.1",
+    "@ledgerhq/device-management-kit": "0.6.3",
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-app-algorand": "workspace:^",
@@ -199,7 +199,7 @@
     "@ledgerhq/wallet-api-core": "^1.15.0",
     "@ledgerhq/wallet-api-exchange-module": "workspace:^",
     "@ledgerhq/wallet-api-server": "^1.7.2",
-    "@stricahq/typhonjs": "^2.0.0",
+    "@stricahq/typhonjs": "^3.0.0",
     "@taquito/ledger-signer": "^20.0.0",
     "@ton-community/ton-ledger": "^7.0.1",
     "@ton/core": "^0.56.3",
@@ -211,7 +211,7 @@
     "@xstate/react": "^1.6.3",
     "@zondax/ledger-casper": "^2.6.1",
     "@zondax/ledger-cosmos-js": "3.0.3",
-    "@zondax/ledger-filecoin": "^0.11.2",
+    "@zondax/ledger-filecoin": "^2.0.2",
     "@zondax/ledger-icp": "^0.7.0",
     "@zondax/ledger-stacks": "^1.0.2",
     "async": "^3.2.3",

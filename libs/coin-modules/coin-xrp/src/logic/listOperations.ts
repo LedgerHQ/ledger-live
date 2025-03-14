@@ -1,9 +1,8 @@
 import { getServerInfos, getTransactions, GetTransactionsOptions } from "../network";
 import type { XrplOperation } from "../network/types";
-import { XrpMemo, XrpOperation } from "../types";
+import { ListOperationsOptions, XrpMemo, XrpOperation } from "../types";
 import { RIPPLE_EPOCH } from "./utils";
 
-type Order = "asc" | "desc";
 /**
  * Returns list of "Payment" Operations associated to an account.
  * @param address Account address
@@ -19,19 +18,7 @@ type Order = "asc" | "desc";
  */
 export async function listOperations(
   address: string,
-  {
-    limit,
-    minHeight,
-    token,
-    order,
-  }: {
-    // pagination:
-    limit?: number;
-    token?: string;
-    order?: Order;
-    // filters:
-    minHeight?: number;
-  },
+  { limit, minHeight, token, order }: ListOperationsOptions,
 ): Promise<[XrpOperation[], string]> {
   const serverInfo = await getServerInfos();
   const ledgers = serverInfo.info.complete_ledgers.split("-");
@@ -75,13 +62,14 @@ export async function listOperations(
   ): Promise<[boolean, GetTransactionsOptions, XrplOperation[]]> {
     const response = await getTransactions(address, options);
     const txs = response.transactions;
-    const marker = response.marker;
+    const responseMarker = response.marker;
     // Filter out the transactions that are not "Payment" type because the filter on "tx_type" of the node RPC is not working as expected.
     const paymentTxs = txs.filter(tx => tx.tx_json.TransactionType === "Payment");
     const shortage = (options.limit && txs.length < options.limit) || false;
-    const nextOptions = { ...options };
-    if (marker) {
-      nextOptions.marker = marker;
+    const { marker, ...nextOptions } = options;
+
+    if (responseMarker) {
+      (nextOptions as GetTransactionsOptions).marker = responseMarker;
       if (nextOptions.limit) nextOptions.limit -= paymentTxs.length;
     }
     return [shortage, nextOptions, paymentTxs];

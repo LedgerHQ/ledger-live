@@ -13,9 +13,9 @@ import { WrappedButtonProps } from "~/components/wrappedUi/Button";
 import { Props as ThemeProps } from "~/components/theme/ForceTheme";
 import { useRebornFlow } from "../../hooks/useRebornFlow";
 
-import buyFlexSource from "~/images/illustration/Shared/_FlexTop.png";
-import buyDoubleFlexSource from "~/images/illustration/Shared/_FlexTwoSides.png";
-import setupYourLedger from "~/images/illustration/Shared/_LedgerSetup.png";
+import buyFlexSource from "~/images/illustration/Shared/_FlexTop.webp";
+import buyDoubleFlexSource from "~/images/illustration/Shared/_FlexTwoSides.webp";
+import setupYourLedger from "~/images/illustration/Shared/_LedgerSetup.webp";
 
 type Variant = "buy" | "setup";
 
