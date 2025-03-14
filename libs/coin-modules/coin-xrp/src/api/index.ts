@@ -1,8 +1,8 @@
 import type {
   Api,
   Operation,
-  Transaction as ApiTransaction,
   Pagination,
+  TransactionIntent,
 } from "@ledgerhq/coin-framework/api/index";
 import { log } from "@ledgerhq/logs";
 import coinConfig, { type XrpConfig } from "../config";
@@ -18,7 +18,7 @@ import {
 } from "../logic";
 import { ListOperationsOptions, XrpOperation } from "../types";
 
-export function createApi(config: XrpConfig): Api {
+export function createApi(config: XrpConfig): Api<void> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
@@ -32,9 +32,13 @@ export function createApi(config: XrpConfig): Api {
   };
 }
 
-async function craft(address: string, transaction: ApiTransaction): Promise<string> {
-  const nextSequenceNumber = await getNextValidSequence(address);
-  const tx = await craftTransaction({ address, nextSequenceNumber }, transaction);
+async function craft(transactionIntent: TransactionIntent<void>): Promise<string> {
+  const nextSequenceNumber = await getNextValidSequence(transactionIntent.sender);
+  const fees = await estimateFees();
+  const tx = await craftTransaction(
+    { address: transactionIntent.sender, nextSequenceNumber },
+    { recipient: transactionIntent.recipient, amount: transactionIntent.amount, fee: fees.fee },
+  );
   return tx.serializedTransaction;
 }
 

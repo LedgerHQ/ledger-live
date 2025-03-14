@@ -1,11 +1,12 @@
 import type { Api } from "@ledgerhq/coin-framework/api/index";
 import { createApi } from ".";
+import { StellarToken } from "../types";
 
 /**
  * Testnet scan: https://testnet.lumenscan.io/
  */
 describe("Stellar Api", () => {
-  let module: Api;
+  let module: Api<StellarToken>;
   const address = "GBAUZBDXMVV7HII4JWBGFMLVKVJ6OLQAKOCGXM5E2FM4TAZB6C7JO2L7";
 
   beforeAll(() => {
@@ -80,11 +81,11 @@ describe("Stellar Api", () => {
   describe("craftTransaction", () => {
     it("returns a raw transaction", async () => {
       // When
-      const result = await module.craftTransaction(address, {
+      const result = await module.craftTransaction({
         type: "send",
+        sender: address,
         recipient: "GD6QELUZPSKPRWVXOQ3F6GBF4OBRMCHO5PHREXH4ZRTPJAG7V5MD7JGX",
         amount: BigInt(1_000_000),
-        fee: BigInt(100),
       });
 
       // Then
