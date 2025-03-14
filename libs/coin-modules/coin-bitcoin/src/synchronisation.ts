@@ -54,11 +54,16 @@ const fromWalletUtxo = (utxo: WalletOutput, changeAddresses: Set<string>): Bitco
 
 const markReplacements = (operations: BtcOperation[]): BtcOperation[] => {
   const txByInput = new Map<string, BtcOperation>();
+  console.log({markReplacementsOperations: operations})
 
   for (const op of operations) {
     if (op.extra && "inputs" in op.extra && Array.isArray(op.extra.inputs)) {
-      debugger;
+      // debugger;
       for (const input of op.extra.inputs) {
+        if (input.startsWith("0000000000000000000000000000000000000000000000000000000000000000")){
+          // NOTE: coinbase tx, ignoring replacement
+          continue;
+        }
         const existingOp = txByInput.get(input);
         if (existingOp) {
           // Ensure both transactions have an `extra` field initialized
@@ -79,7 +84,7 @@ const markReplacements = (operations: BtcOperation[]): BtcOperation[] => {
       }
     }
   }
-  debugger;
+  // debugger;
   return operations;
 };
 
@@ -158,6 +163,7 @@ export function makeGetAccountShape(signerContext: SignerContext): GetAccountSha
     await wallet.syncAccount(walletAccount, blockHeight);
 
     const balance = await wallet.getAccountBalance(walletAccount);
+    // NOTE: why are those txs considered new?
     const { txs: transactions } = await wallet.getAccountTransactions(walletAccount);
 
     const accountAddresses: Set<string> = new Set<string>();
@@ -184,8 +190,8 @@ export function makeGetAccountShape(signerContext: SignerContext): GetAccountSha
     const oldOperationsPending = oldOperations.filter(op => (op.blockHeight === null || op.blockHeight === undefined));
     const checkIfReplacedOperations = markReplacements([...newUniqueOperations, ...oldOperationsPending]);
 
-    const nonPendingOldOperations = oldOperations.filter(op => !!op.blockHeight || op.blockHeight === 0);
-    const operations = mergeOps(nonPendingOldOperations, checkIfReplacedOperations);
+    // const nonPendingOldOperations = oldOperations.filter(op => !!op.blockHeight || op.blockHeight === 0);
+    const operations = mergeOps(oldOperations, checkIfReplacedOperations);
     console.log({oldOperations, newUniqueOperations, operations})
     if (operations && operations.length > 0){ 
       // debugger;
@@ -210,6 +216,7 @@ export function makeGetAccountShape(signerContext: SignerContext): GetAccountSha
       bitcoinResources: {
         utxos,
         walletAccount,
+        storages: wallet.storages
       },
     };
   };

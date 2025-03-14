@@ -45,6 +45,7 @@ export default function AccountBalanceSummary({
       account,
       range,
     });
+  console.log({history})
   const discreetMode = useSelector(discreetModeSelector);
   const dayFormatter = useDateFormatter(dayFormat);
   const hourFormatter = useDateFormatter(hourFormat);

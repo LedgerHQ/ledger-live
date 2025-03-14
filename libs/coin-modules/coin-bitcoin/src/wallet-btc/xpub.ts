@@ -117,7 +117,6 @@ class Xpub {
     this.freshAddressIndex = 0;
     const highestBlockFromStorage = this.storage.getHighestBlockHeightAndHash();
     let needReorg = !!highestBlockFromStorage;
-    debugger;
     if (highestBlockFromStorage) {
       const highestBlockFromExplorer = await this.explorer.getBlockByHeight(
         highestBlockFromStorage.height,
@@ -154,6 +153,8 @@ class Xpub {
 
   async getAddressBalance(address: Address): Promise<BigNumber> {
     const unspentUtxos = this.storage.getAddressUnspentUtxos(address);
+    // NOTE: should filter over spendable utxos (block)
+    console.log({unspentUtxos})
     return unspentUtxos.reduce((total, { value }) => total.plus(value), new BigNumber(0));
   }
 

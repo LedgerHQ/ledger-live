@@ -116,6 +116,7 @@ class BitcoinLikeWallet {
         addresses.map(address => account.xpub.storage.getAddressUnspentUtxos(address)),
       ),
     );
+    console.log({utxos})
 
     let balance = new BigNumber(0);
     log("btcwallet", "estimateAccountMaxSpendable utxos", utxos);
@@ -128,7 +129,7 @@ class BitcoinLikeWallet {
         )
       ) {
         // we can use either pending utxo (if utxo.rbf is true) or change utxo
-        if (changeAddresses.includes(utxo.address) || utxo.block_height !== null || utxo.rbf) {
+        if (changeAddresses.includes(utxo.address) || utxo.block_height !== null) {
           usableUtxoCount++;
           balance = balance.plus(utxo.value);
         }

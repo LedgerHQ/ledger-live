@@ -10,6 +10,8 @@ import { Text, Link } from "@ledgerhq/react-ui";
 import { isAddressPoisoningOperation } from "@ledgerhq/live-common/operation";
 import { getCurrencyColor } from "~/renderer/getCurrencyColor";
 import { accountSelector } from "~/renderer/reducers/accounts";
+// import the react-json-view component
+import ReactJson from 'react-json-view'
 import {
   findSubAccountById,
   getMainAccount,
@@ -94,6 +96,10 @@ type Props = {
   setCountervalueFirst: (a: boolean) => void;
 };
 
+const StorageDebug =({storages}) => {
+  return <ReactJson src={storages} collapsed={true} />
+}
+
 const AccountPage = ({
   account,
   parentAccount,
@@ -154,6 +160,7 @@ const AccountPage = ({
     currencyConfig?.status.type === "feature_unavailable" &&
       openURL(currencyConfig?.status.link || localizedContactSupportURL);
   };
+  console.log({account})
 
   return (
     <Box key={account.id}>
@@ -187,6 +194,7 @@ const AccountPage = ({
       >
         <AccountHeaderActions account={account} parentAccount={parentAccount} />
       </Box>
+      <StorageDebug storages={account.bitcoinResources?.storages}/>
       {currencyConfig?.status.type === "feature_unavailable" && (
         <TopBanner
           status="warning"

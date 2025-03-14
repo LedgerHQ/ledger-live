@@ -43,6 +43,7 @@ export function groupAccountsOperationsByDay(
         op2.transactionSequenceNumber !== undefined &&
         op1.transactionSequenceNumber > op2.transactionSequenceNumber)
     );
+      // NOTE: this should be rechecked
   }
 
   // Returns the next most recent operation from the account with current indexes

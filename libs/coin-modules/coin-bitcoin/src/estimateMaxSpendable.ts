@@ -4,6 +4,7 @@ import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
 import { getAccountNetworkInfo } from "./getAccountNetworkInfo";
 import wallet, { getWalletAccount } from "./wallet-btc";
 import type { Transaction } from "./types";
+import { max } from "lodash";
 
 /**
  * Returns the maximum possible amount for transaction
@@ -30,6 +31,7 @@ export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpenda
     transaction ? [transaction.recipient] : [],
     transaction?.opReturnData,
   );
+  console.log({maxSpendable: maxSpendable.toString()})
 
   return maxSpendable.lt(0) ? new BigNumber(0) : maxSpendable;
 };

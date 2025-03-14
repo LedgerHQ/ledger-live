@@ -104,7 +104,7 @@ class BitcoinLikeStorage implements IStorage {
       // we reject already seen tx
       if (this.txs[this.primaryIndex[index]]) {
         console.log(`rejecting`)
-        debugger;
+        // debugger;
         return;
       }
       const idx = this.txs.push(tx) - 1;
@@ -115,7 +115,7 @@ class BitcoinLikeStorage implements IStorage {
       this.unspentUtxos[indexAddress] = this.unspentUtxos[indexAddress] || [];
       this.spentUtxos[indexAddress] = this.spentUtxos[indexAddress] || [];
 
-      debugger;
+      // debugger;
       // NOTE: doc here
 
       tx.outputs.forEach(output => {
@@ -175,7 +175,6 @@ class BitcoinLikeStorage implements IStorage {
       const indexAddress = tx.address;
       const index = `${indexAddress}-${tx.id}`;
       console.log(`indexAddress: ${indexAddress}, index: ${index}, tx: ${tx.id}`)
-      debugger;
 
       if (tx.account !== txsFilter.account || tx.index !== txsFilter.index) {
         this.primaryIndex[index] = newTxs.push(tx) - 1;
@@ -239,7 +238,7 @@ class BitcoinLikeStorage implements IStorage {
 
   loadSync(data: { txs: TX[]; addressCache: Record<string, string> }) {
     console.log("STORAGE LOADSYNC")
-    debugger;
+    // debugger;
     console.log({data})
     console.log({STORAGETHIS: this})
     this.txs = [];

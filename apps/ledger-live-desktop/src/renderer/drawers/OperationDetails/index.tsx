@@ -151,6 +151,7 @@ const OperationD = (props: Props) => {
   const dateFormatted = useDateFormatted(date, dayAndHourFormat);
   const uniqueSenders = uniq(senders);
   const recipients = _recipients.filter(Boolean);
+  console.log({recipients, _recipients})
   const name = useAccountName(mainAccount);
   const isNftOperation = ["NFT_IN", "NFT_OUT"].includes(operation.type);
   const currency = getAccountCurrency(account);

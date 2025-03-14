@@ -151,6 +151,7 @@ describe("shouldRetainPendingOperation", () => {
     expect(shouldRetainPending).toBe(true);
   });
 
+  // NOTE: check here also
   it("should retain the operation if transactionSequenceNumber is undefined in last operation", () => {
     // Given
     const account = createAccount("12");
