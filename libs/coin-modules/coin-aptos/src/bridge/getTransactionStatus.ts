@@ -43,15 +43,13 @@ const getTransactionStatus = async (a: Account, t: Transaction): Promise<Transac
 
   const amount = t.useAllAmount
     ? tokenAccount
-      ? BigNumber(tokenAccount.spendableBalance)
-      : BigNumber(
-          a.spendableBalance.minus(estimatedFees).isLessThan(0)
-            ? 0
-            : a.spendableBalance.minus(estimatedFees),
-        )
-    : BigNumber(t.amount);
+      ? tokenAccount.spendableBalance
+      : a.spendableBalance.minus(estimatedFees).isLessThan(0)
+        ? BigNumber(0)
+        : a.spendableBalance.minus(estimatedFees)
+    : t.amount;
 
-  const totalSpent = BigNumber(amount.plus(estimatedFees));
+  const totalSpent = amount.plus(estimatedFees);
 
   if (
     tokenAccount
