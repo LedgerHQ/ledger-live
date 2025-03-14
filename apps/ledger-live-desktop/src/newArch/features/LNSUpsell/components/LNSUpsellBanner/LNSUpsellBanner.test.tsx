@@ -8,7 +8,7 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import { render, screen, fireEvent } from "tests/testUtils";
 import { openURL } from "~/renderer/linking";
 import { track } from "~/renderer/analytics/segment";
-import { LNSUpsellBanner } from "../components/LNSUpsellBanner";
+import { LNSUpsellBanner } from ".";
 
 jest.mock("~/renderer/linking", () => ({
   openURL: jest.fn(),
@@ -27,6 +27,7 @@ describe("LNSUpsellBanner ", () => {
     { location: "accounts", page: "Accounts" },
     { location: "manager", page: "Manager" },
     { location: "portfolio", page: "Portfolio" },
+    { location: "notification_center", page: "Notification" },
   ] as const)("on the $page page", ({ location, page }) => {
     it("should not render if the feature flag is disabled", () => {
       renderBanner({ ffEnabled: false });
