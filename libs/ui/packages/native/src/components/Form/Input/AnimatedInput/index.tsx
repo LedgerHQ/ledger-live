@@ -43,14 +43,13 @@ const AnimatedInput = (
     onBlurCallback,
   });
 
-  const [height, setHeight] = useState<number>(48);
+  const [height, setHeight] = useState<number>(56);
 
   const inputStatus = getInputStatus({ focused, hasError: !!error, hasValue: !!value });
   const displayClearCross = inputStatus === "error" || inputStatus === "focused";
 
-  const handleContentSizeChange = (event: any) => {
-    const newHeight = event.nativeEvent.contentSize.height;
-    setHeight(newHeight + 40);
+  const handleContentSizeChange = (event: { nativeEvent: { contentSize: { height: number } } }) => {
+    setHeight(event.nativeEvent.contentSize.height + 40);
   };
 
   return (
@@ -70,9 +69,10 @@ const AnimatedInput = (
           backgroundColor: "none",
           borderColor: theme ? inputStatusColors[inputStatus]({ theme }) : "neutral.c100",
           borderRadius: 8,
-          height: inputStatus !== "error" ? (height < 48 ? 48 : height) : height,
+          height: inputStatus !== "error" ? height : 56,
           paddingTop: largeMode ? 14 : 0,
-          paddingRight: largeMode ? 30 : 0,
+          paddingBottom: largeMode ? 14 : 0,
+          marginBottom: 40,
         }}
         baseInputContainerStyle={{
           paddingRight: displayClearCross ? 8 : 14,
