@@ -247,8 +247,14 @@ const completeExchange = (
 
 function convertSignature(signature: string, exchangeType: ExchangeTypes): Buffer {
   return exchangeType === ExchangeTypes.SwapNg
-    ? Buffer.from(signature, "base64url")
+    ? base64UrlDecode(signature)
     : <Buffer>secp256k1.signatureExport(Buffer.from(signature, "hex"));
+}
+
+function base64UrlDecode(base64Url: string): Buffer {
+  // React Native Hermes engine does not support Buffer.from(signature, "base64url")
+  const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+  return Buffer.from(base64, "base64");
 }
 
 export default completeExchange;
