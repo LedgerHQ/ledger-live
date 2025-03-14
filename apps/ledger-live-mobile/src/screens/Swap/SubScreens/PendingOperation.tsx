@@ -36,7 +36,8 @@ export function PendingOperation({ route, navigation }: PendingOperationParamLis
 
   useEffect(() => {
     syncAccounts();
-  }, [syncAccounts]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const onComplete = useCallback(() => {
     navigation.navigate(ScreenName.SwapHistory);
