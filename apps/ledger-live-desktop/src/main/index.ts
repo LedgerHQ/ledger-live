@@ -1,5 +1,15 @@
 import "./setup"; // Needs to be imported first
-import { app, Menu, ipcMain, session, webContents, shell, BrowserWindow, dialog } from "electron";
+import {
+  app,
+  Menu,
+  ipcMain,
+  session,
+  webContents,
+  shell,
+  BrowserWindow,
+  dialog,
+  protocol,
+} from "electron";
 import Store from "electron-store";
 import menu from "./menu";
 import {
@@ -14,7 +24,6 @@ import debounce from "lodash/debounce";
 import sentry from "~/sentry/main";
 import { SettingsState } from "~/renderer/reducers/settings";
 import { User } from "~/renderer/storage";
-import electronAppUniversalProtocolClient from "electron-app-universal-protocol-client";
 
 Store.initRenderer();
 
@@ -171,15 +180,22 @@ app.on("ready", async () => {
   );
 
   if (__DEV__) {
-    electronAppUniversalProtocolClient.on("request", requestUrl => {
-      // Handle the request
-      const win = getMainWindow();
-      if (win) win.webContents.send("deep-linking", requestUrl);
-    });
+    // Catch ledgerlive:// deep-link requests in dev mode from the app or live-apps
+    // We cannot get deep-links from outside the app, from the browser for example
+    protocol.handle("ledgerlive", request => {
+      const url = request.url;
+      getMainWindowAsync()
+        .then(w => {
+          if (w) {
+            show(w);
+            if ("send" in w.webContents) {
+              w.webContents.send("deep-linking", url);
+            }
+          }
+        })
+        .catch((err: unknown) => console.log(err));
 
-    await electronAppUniversalProtocolClient.initialize({
-      protocol: "ledgerlive",
-      mode: "development",
+      return new Response();
     });
   }
 
