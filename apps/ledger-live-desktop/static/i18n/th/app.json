@@ -171,12 +171,12 @@
       "REVEAL" : "เปิดเผยแล้ว",
       "DELEGATE" : "Delegate เรียบร้อยแล้ว",
       "REDELEGATE" : "Redelegate เรียบร้อยแล้ว",
-      "UNDELEGATE" : "Undelegate เรียบร้อยแล้ว",
+      "UNDELEGATE" : "Undelegate แล้ว",
       "APPROVE" : "อนุมัติแล้ว",
       "VOTE" : "โหวตแล้ว",
       "FREEZE" : "ถูกระงับ",
       "UNFREEZE" : "ไม่ได้ถูกระงับ",
-      "UNDELEGATE_RESOURCE" : "Undelegate เรียบร้อยแล้ว",
+      "UNDELEGATE_RESOURCE" : "Undelegate แล้ว",
       "WITHDRAW_EXPIRE_UNFREEZE" : "การถอน",
       "LEGACYUNFREEZE" : "ไม่ได้ถูกระงับ",
       "REWARD" : "Reward ที่ขอรับแล้ว",
@@ -286,7 +286,7 @@
   "sidebar" : {
     "card" : "การ์ด",
     "menu" : "เมนู",
-    "stars" : "Starred Accounts",
+    "stars" : "บัญชีที่ติดดาว",
     "accounts" : "บัญชี",
     "manager" : "My Ledger",
     "earn" : "Earn",
@@ -776,6 +776,10 @@
         "description3Link" : "การดำเนินการนี้เป็นความร่วมมือระหว่าง <1><0>{{team}}</0></1>และ Ledger"
       }
     },
+    "migrationBanner" : {
+      "title" : "{{from}} กำลัง Migrate ไปที่ {{to}} ติดตาม<0>ลิงก์</0>นี้เพื่อเรียนรู้เพิ่มเติมหรือติดต่อฝ่ายสนับสนุนหากคุณต้องการขอความช่วยเหลือ",
+      "contactSupport" : "ติดต่อฝ่ายสนับสนุน"
+    },
     "featureUnavailable" : {
       "title" : "ฟีเจอร์ต่อไปนี้ไม่พร้อมใช้งานในขณะนี้: {{feature}} หากต้องการทราบข้อมูลเพิ่มเติม โปรดดูที่ {{support}}",
       "feature" : {
@@ -827,7 +831,7 @@
     "energy" : "Energy",
     "stake" : "Stake",
     "delegatedAssets" : "สินทรัพย์ที่มอบหมาย",
-    "undelegating" : "กำลังยกเลิกการมอบหมาย",
+    "undelegating" : "กำลังทำการ Undelegate",
     "availableBalanceTooltip" : "จำนวนที่สามารถใช้จ่ายได้",
     "frozenAssetsTooltip" : "สินทรัพย์ที่ถูก Freeze จะใช้ในกระบวนการโหวต Tron ซึ่งแสดงถึงจำนวนการโหวตทั้งหมดของคุณ",
     "bandwidthTooltip" : "Freeze สินทรัพย์เพื่อรับ Bandwidth",
@@ -1833,7 +1837,7 @@
     "to" : "ไปยัง",
     "identifier" : "ID ธุรกรรม",
     "viewOperation" : "ดูใน Explorer",
-    "showMore" : "แสดง {{recipients}} เพิ่ม",
+    "showMore" : "แสดงเพิ่มอีก {{recipients}} ",
     "showLess" : "แสดงน้อยลง",
     "tokenOperations" : "การดำเนินการโทเคน",
     "subAccountOperations" : "การดำเนินงานบัญชีย่อย",
@@ -1859,7 +1863,7 @@
       "redelegatedFrom" : "Redelegate จาก",
       "redelegatedTo" : "Redelegate ไปยัง",
       "redelegatedAmount" : "จำนวนที่ Redelegate",
-      "undelegated" : "Undelegate เรียบร้อยแล้ว",
+      "undelegated" : "Undelegate แล้ว",
       "undelegatedFrom" : "Undelegate จาก",
       "undelegatedAmount" : "จำนวนที่ Undelegate",
       "withdrawnFrom" : "ถอนจาก",
@@ -3763,62 +3767,62 @@
       "frozenStateWarning" : "สินทรัพย์บัญชีถูก Freeze!",
       "transferWarning" : "ในการตรวจสอบ Address ผู้รับสำหรับโทเคน Solana โดยใช้ Ledger Nano S™ ให้<0>ทำตามคำแนะนำต่อไปนี้</0>",
       "transferFees" : {
-        "feesPercentHint" : "Token has {{feePercent}}% ({{feeBps}}bps) transfer fee. {{maxFee}} max",
-        "notice" : "Transfer fee {{fee}}%",
-        "tooltipHint" : "Percentage of transfer withheld for token creator",
-        "transferFeesLabel" : "Transfer fees"
+        "feesPercentHint" : "โทเคนมีค่าธรรมเนียม {{feePercent}}% ({{feeBps}}bps) แต่ไม่เกิน {{maxFee}}",
+        "notice" : "ค่าธรรมเนียมการโอน {{fee}}%",
+        "tooltipHint" : "เปอร์เซ็นต์การโอนที่ถูกระงับไว้สำหรับผู้สร้างโทเคน",
+        "transferFeesLabel" : "ค่าธรรมเนียมการโอน"
       },
       "nonTransferable" : {
-        "notice" : "Token is non-transferable"
+        "notice" : "โทเคนนี้ไม่สามารถโอนได้"
       },
       "interestRate" : {
-        "notice" : "Interest rate: {{rate}}%",
-        "tooltipHint" : "For cosmetic purposes only, no new tokens are created as a result of the interest"
+        "notice" : "อัตราดอกเบี้ย: {{rate}}%",
+        "tooltipHint" : "เพื่อเป็นการแสดงผลของดอกเบี้ยเท่านั้น ไม่ได้มีการสร้างโทเคนเพิ่ม"
       },
       "permanentDelegate" : {
-        "notice" : "Permanent delegate authority is enabled",
-        "initializationNotice" : "Permanent delegate authority is initialized but not enabled",
-        "tooltipHint" : "The delegate has the ability transfer or burn this token from your account"
+        "notice" : "เปิดสิทธิ์การ Permanent Delegate แล้ว",
+        "initializationNotice" : "เริ่มตั้งค่าการ Permanent Delegate แล้ว แต่ยังไม่ได้เปิดใช้",
+        "tooltipHint" : "ผู้ที่ได้รับการ Delegate มีความสามารถในการโอนหรือเบิร์นโทเคนนี้จากบัญชีของคุณได้"
       },
       "requiredMemoOnTransfer" : {
-        "notice" : "Required memo on transfer is enabled",
-        "tooltipHint" : "All incoming transfers to this account must have a memo"
+        "notice" : "เปิดใช้งาน Memo ที่จำเป็นต่อการโอนแล้ว",
+        "tooltipHint" : "การโอนทรัพย์สินเข้าบัญชีนี้ทุกครั้งต้องมี Memo"
       },
       "transferHook" : {
-        "notice" : "Transfer hook is enabled",
-        "initializationNotice" : "Transfer hook is initialized but not enabled",
-        "tooltipHint" : "Token has extra functionality handled by {{programAddress}} program"
+        "notice" : "เปิดการใช้ Transfer Hook แล้ว",
+        "initializationNotice" : "ได้มีการเริ่มตั้งค่า Transfer Hook แล้ว แต่ยังไม่ได้เปิดใช้",
+        "tooltipHint" : "โทเคนนี้มีฟังก์ชันพิเศษที่จัดการโดยโปรแกรม {{programAddress}}"
       },
       "extensionsInfo" : {
-        "title" : "Solana token extensions",
-        "commonInfo" : "Token extensions are the next generation of the Solana Token standard. They introduce a new set of ways to extend the normal token functionality with additional features such as confidential transfers, permanent delegate, custom transfer logic, extended metadata, and much more.",
+        "title" : "Solana Token Extensions",
+        "commonInfo" : "Token extensions เป็นมาตรฐานใหม่ของโทเคน Solana พวกเขาเพิ่มฟังก์ชันการทำงานของโทเคนทั่ว ๆ ไปด้วยฟีเจอร์เพิ่มเติม เช่น การโอนเหรียญโดยไม่ให้เห็นจำนวน, การ Permanent Delegate, ตรรกะการโอนแบบกำหนดเอง, Metadata ที่เพิ่มขึ้น และอื่น ๆ อีกหลายอย่าง",
         "permanentDelegate" : {
-          "title" : "Permanent delegate",
-          "permanentDelegateAddress" : "Current delegate authority is {{address}}",
-          "permanentDelegateNotSetup" : "Current delegate authority is not set up.",
-          "description" : "Permanent delegate is an authority which has unlimited delegate privileges over any account for that mint. The delegate could burn or transfer any amount of tokens, at any time, on their own authority."
+          "title" : "Permanent Delegate",
+          "permanentDelegateAddress" : "ตอนนี้ Authority ที่มีอำนาจในการ Delegate คือ {{address}}",
+          "permanentDelegateNotSetup" : "ตอนนี้ยังไม่ได้ตั้งค่า Authority ที่มีอำนาจในการ Delegate",
+          "description" : "สิทธิ์ Permanent Delegate ทำให้สามารถ Delegate ได้อย่างไม่จำกัดในบัญชีนั้น ผู้ที่ได้รับการ Delegate สามารถเผาหรือโอนโทเคนจำนวนเท่าใดก็ได้เมื่อใดก็ได้ตามอำนาจของสิทธิ์นั้น"
         },
         "nonTransferable" : {
-          "title" : "Non-Transferrable Tokens",
-          "description" : "Such tokens are \"soul-bound\" and cannot be moved or burned, except by the token issuer."
+          "title" : "โทเคนที่ไม่สามารถโอนย้ายได้",
+          "description" : "โทเคนเหล่านี้เป็นแบบ Soul-bound คือไม่สามารถโอนย้ายหรือเผาได้ ยกเว้นโดยผู้ที่ออกโทเคนเท่านั้น"
         },
         "transferHook" : {
-          "title" : "Transfer hook",
-          "transferHookAddress" : "Current transfer hook program is {{address}}",
-          "transferHookNotSetup" : "Current transfer hook program is not set up.",
-          "description" : "Transfer hook gives a token issuers an ability to dictate how users and tokens interact. Instead of a normal transfer, issuer can insert custom logic into a program to be used with the transfer hook extension."
+          "title" : "Transfer Hook",
+          "transferHookAddress" : "ปัจจุบันโปรแกรม Transfer Hook คือ {{address}}",
+          "transferHookNotSetup" : "ตอนนี้ยังไม่ได้ตั้งค่าของโปรแกรม Transfer Hook",
+          "description" : "Transfer Hook ช่วยให้ผู้ออกโทเคนสามารถกำหนดวิธีการโต้ตอบระหว่างโทเคนและผู้ใช้โทเคนได้ แทนที่จะโอนแบบปกติ ผู้ออกโทเคนสามารถกำหนดตรรกะลงในโปรแกรมที่จะใช้ทำการ Transfer Hook ได้"
         },
         "transferFee" : {
-          "title" : "Transfer Fee",
-          "currentTransferFee" : "Current transfer fee is {{feePercent}}% ({{feeBps}}bps). Max {{maxFee}}.",
-          "description" : "Fees are charged on every transfer of a token and withheld on the recipient account, untouchable by the recipient."
+          "title" : "ค่าธรรมเนียมการโอน",
+          "currentTransferFee" : "ค่าธรรมเนียมโอนปัจจุบันอยู่ที่ {{feePercent}}% ({{feeBps}}bps) ไม่เกิน {{maxFee}}.",
+          "description" : "จะมีการเรียกเก็บค่าธรรมเนียมในการโอนโทเคนทุกครั้งและจะถูกหักออกจากบัญชีผู้รับซึ่งผู้รับไม่สามารถแตะต้องได้"
         },
         "interestBearing" : {
-          "title" : "Interest-Bearing Tokens",
-          "currentInterestRate" : "Current interest rate is {{rate}}%.",
-          "accruedDelta" : "Accrued {{delta}}.",
-          "interestRateNotSetup" : "Current interest rate is set up to 0%.",
-          "description" : "Tokens that constantly grow or decrease in value according on its interest rate. No new tokens are ever created, the feature is entirely cosmetic."
+          "title" : "โทเคนที่มีดอกเบี้ยติดตัว",
+          "currentInterestRate" : "อัตราดอกเบี้ยปัจจุบันอยู่ที่ {{rate}}%",
+          "accruedDelta" : "รวม {{delta}}",
+          "interestRateNotSetup" : "อัตราดอกเบี้ยปัจจุบันตั้งไว้ที่ 0%",
+          "description" : "โทเคนที่มีมูลค่าเพิ่มขึ้นหรือลดลงอย่างต่อเนื่องตามอัตราดอกเบี้ย ไม่ได้มีการสร้างโทเค็นใหม่แต่อย่างใด ฟีเจอร์นี้เป็นเพียงแค่การแสดงผลเท่านั้น"
         }
       }
     }
@@ -4157,7 +4161,7 @@
   },
   "settings" : {
     "title" : "การตั้งค่า",
-    "discreet" : "Toggle Discreet Mode",
+    "discreet" : "โหมดซ่อนมูลค่าสินทรัพย์",
     "helpButton" : "ช่วยเหลือ",
     "tabs" : {
       "display" : "ทั่วไป",
@@ -4201,8 +4205,8 @@
       "walletSync" : "Ledger Sync",
       "walletSyncDesc" : "ซิงค์บัญชีคริปโต Ledger Live ของคุณระหว่างโทรศัพท์และคอมพิวเตอร์เครื่องอื่น ๆ",
       "mevProtection" : "MEV Protection",
-      "mevProtectionDesc" : "Enable MEV Protection for more reliable transactions on Ethereum.",
-      "mevProtectionLearnMore" : "Privacy notice",
+      "mevProtectionDesc" : "เปิดใช้ Mev Protection เพื่อธุรกรรมที่เชื่อถือได้มากยิ่งขึ้นบน Ethereum",
+      "mevProtectionLearnMore" : "ประกาศความเป็นส่วนตัว",
       "marketPerformanceWidget" : "วิดเจ็ตประสิทธิภาพของตลาด",
       "marketPerformanceWidgetDesc" : "เปิดใช้งานคุณสมบัตินี้เพื่อดู Top Gainers และ Losers ในกรอบเวลาที่เลือกในหน้าพอร์ตโฟลิโอ"
     },
@@ -4223,9 +4227,9 @@
       "debugReactQuery" : "อนุญาตให้ทำการ Debug ReactQuery",
       "debugReactQueryDesc" : "แสดงและอนุญาตการเปิดคอนโซลสำหรับการ Debug ReactQuery",
       "nfts" : {
-        "title" : "NFTs HiddenCollections",
-        "description" : "Reset the hidden collections list",
-        "reset" : "Reset"
+        "title" : "คอลเล็กชั่น NFT ที่ซ่อนอยู่",
+        "description" : "รีเซ็ตรายการคอลเลกชันที่ซ่อนอยู่",
+        "reset" : "รีเซ็ต"
       },
       "exchangeDeveloperMode" : {
         "title" : "โหมด Dev Exchange",
@@ -4535,7 +4539,7 @@
     },
     "hardResetModal" : {
       "title" : "รีเซ็ต Ledger Live",
-      "desc" : "รีเซ็ต Ledger Live เพื่อลบการตั้งค่าและบัญชีทั้งหมดบนคอมพิวเตอร์ของคุณ จากนั้นคุณสามารถเลือกรหัสผ่านและเพิ่มบัญชีกลับด้วยอุปกรณ์ Ledger ของคุณได้ Private Key ที่ให้สิทธิ์เข้าถึงสินทรัพย์คริปโตของคุณจะยังคงปลอดภัยบนอุปกรณ์ Ledger ของคุณและได้รับการสำรองข้อมูลด้วย Recovery Phrase",
+      "desc" : "รีเซ็ต Ledger Live เพื่อลบการตั้งค่าและบัญชีทั้งหมดบนคอมพิวเตอร์ของคุณ จากนั้นคุณสามารถเลือกรหัสผ่านและเพิ่มบัญชีอีกครั้งด้วยอุปกรณ์ Ledger ของคุณได้ Private Key ที่ให้สิทธิ์เข้าถึงสินทรัพย์คริปโตของคุณจะยังคงปลอดภัยบนอุปกรณ์ Ledger ของคุณและได้รับการสำรองข้อมูลด้วย Recovery Phrase",
       "warning" : "การรีเซ็ต Ledger Live จะลบประวัติธุรกรรมการ Swap สำหรับบัญชีทั้งหมดของคุณ"
     },
     "softResetModal" : {
@@ -4563,7 +4567,7 @@
     },
     "repairDevice" : {
       "title" : "ซ่อมแซมอุปกรณ์ Ledger ของคุณ",
-      "descSettings" : "ใช้สิ่งนี้เพื่อกู้คืนอุปกรณ์ Ledger ของคุณหากเกิดการหยุดทำงานระหว่างการอัปเดตเฟิร์มแวร์",
+      "descSettings" : "ใช้เครื่องมือนี้เพื่อกู้คืนอุปกรณ์ Ledger ของคุณหากเกิดการหยุดทำงานระหว่างการอัปเดตเฟิร์มแวร์",
       "desc" : "สำหรับผู้ใช้ Ledger Nano S โปรดเลือกสถานะที่แสดงบนอุปกรณ์ของคุณ สำหรับผู้ใช้ Nano X และ Blue โปรดดูศูนย์ช่วยเหลือ",
       "button" : "ซ่อมแซม"
     },
@@ -4675,7 +4679,7 @@
     "noAccounts" : "ไม่มีบัญชีที่จะส่งออก",
     "selectedAccounts" : "บัญชีที่จะรวม",
     "selectedAccounts_plural" : "({{count}}) บัญชีที่จะรวมกัน",
-    "disclaimer" : "มูลค่าเทียบเท่าในข้อมูลส่งออกมีไว้เพื่อให้บริการข้อมูลเท่านั้น อย่าใช้ข้อมูลดังเพื่อวัตถุประสงค์ด้านการบัญชี ภาษี กฎระเบียบ หรือวัตถุประสงค์ทางกฎหมาย เนื่องจากข้อมูลดังกล่าวเป็นเพียงการประมาณราคาสินทรัพย์ในเวลาทำธุรกรรมและส่งออกภายใต้วิธีการประเมินมูลค่าที่ผู้ให้บริการของเรา Kaiko จัดเตรียมไว้"
+    "disclaimer" : "มูลค่าเทียบเท่าในข้อมูลส่งออกมีไว้เพื่อให้บริการข้อมูลเท่านั้น อย่าใช้ข้อมูลนี้เพื่อวัตถุประสงค์ด้านการบัญชี ภาษี กฎระเบียบ หรือวัตถุประสงค์ทางกฎหมาย เนื่องจากข้อมูลดังกล่าวเป็นเพียงการประมาณราคาสินทรัพย์ในเวลาทำธุรกรรมและส่งออกภายใต้วิธีการประเมินมูลค่าที่ผู้ให้บริการของเรา Kaiko จัดเตรียมไว้"
   },
   "language" : {
     "system" : "ใช้ภาษาของระบบ",
@@ -5510,7 +5514,7 @@
     "solana" : {
       "memo" : "Tag / Memo",
       "memoPlaceholder" : "ไม่บังคับ",
-      "requiredMemoPlaceholder" : "Required"
+      "requiredMemoPlaceholder" : "จำเป็น"
     }
   },
   "errors" : {
@@ -5795,17 +5799,17 @@
       "description" : "มีบางอย่างผิดปกติในการคำนวณ Address ลองอีกครั้งหรือติดต่อ Ledger Support"
     },
     "MultiversXDecimalsLimitReached" : {
-      "title" : "Maximum decimals limit reached",
-      "description" : "Please make sure that the amount provided has 18 decimals."
+      "title" : "ถึงจำนวนทศนิยมสูงสุดแล้ว",
+      "description" : "โปรดตรวจสอบให้แน่ใจว่าจำนวนที่ระบุมีทศนิยม 18 ตำแหน่ง"
     },
     "MultiversXMinDelegatedAmountError" : {
-      "title" : "Delegated amount must be at least {{formattedAmount}}"
+      "title" : "จำนวนที่ Delegate ต้องมีอย่างน้อย {{formattedAmount}}"
     },
     "MultiversXMinUndelegatedAmountError" : {
-      "title" : "Undelegated amount must be at least {{formattedAmount}}"
+      "title" : "จำนวนที่ Undelegate ต้องมีอย่างน้อย {{formattedAmount}}"
     },
     "MultiversXDelegationBelowMinimumError" : {
-      "title" : "Remaining delegation can't be less than {{formattedAmount}}"
+      "title" : "การจะ Delegate ได้ต้องเหลือไม่น้อยกว่า {{formattedAmount}}"
     },
     "NotEnoughEGLDForFees" : {
       "title" : "EGLD ไม่เพียงพอที่จะชำระค่าธรรมเนียมธุรกรรม",
@@ -5995,11 +5999,11 @@
     },
     "WrongDeviceForAccountPayout" : {
       "title" : "มีบางอย่างผิดปกติ",
-      "description" : "This receiving account does not belong to the device you have connected. Please change and retry"
+      "description" : "บัญชีผู้รับนี้ไม่ได้อยู่ในอุปกรณ์ที่คุณเชื่อมต่อ โปรดเปลี่ยนบัญชีผู้รับและลองใหม่"
     },
     "WrongDeviceForAccountRefund" : {
       "title" : "มีบางอย่างผิดปกติ",
-      "description" : "This sending account does not belong to the device you have connected. Please change and retry"
+      "description" : "บัญชีผู้รับนี้ไม่ได้อยู่ในอุปกรณ์ที่คุณเชื่อมต่อ โปรดเปลี่ยนบัญชีผู้รับและลองใหม่"
     },
     "DeviceAppVerifyNotSupported" : {
       "title" : "ต้องอัปเดตแอป",
@@ -6323,11 +6327,11 @@
       "title" : "ธุรกรรมของคุณอาจล้มเหลว โปรดรอสักครู่ แล้วตรวจสอบประวัติธุรกรรมก่อนที่จะลองอีกครั้ง"
     },
     "SolanaRecipientMemoIsRequired" : {
-      "title" : "Memo is required for recipient address"
+      "title" : "จำเป็นต้องมี Memo สำหรับ Address ของผู้รับ"
     },
     "SolanaTokenNonTransferable" : {
-      "title" : "Token is non-transferable",
-      "description" : "Such tokens are \"soul-bound\" and cannot be transferred"
+      "title" : "โทเคนนี้ไม่สามารถโอนได้",
+      "description" : "โทเคนเหล่านี้เป็นแบบ Soul-bound คือไม่สามารถโอนย้ายได้"
     },
     "NotEnoughNftOwned" : {
       "title" : "คุณใช้มีโทเคนเกินจำนวนที่มีอยู่แล้ว"
@@ -6606,7 +6610,7 @@
         "allowPreview" : "แตะที่ “โหลดภาพ” เพื่อ\nปรับแต่งภาพ ภาพล็อกสกรีนของคุณ",
         "allowConfirmPreview" : "แตะที่ “โหลดภาพ“ เพื่อ\nกู้คืน ภาพล็อกสกรีนของคุณ",
         "loadingPicture" : "กำลังติดตั้ง...",
-        "voila" : "แค่นี้เอง!",
+        "voila" : "ครบถ้วนแล้ว!",
         "imageLoaded" : "โหลดภาพบน {{productName}}",
         "confirmPicture" : "ชอบสิ่งที่เห็น?\nเก็บไว้เลยสิ!",
         "confirmRestorePicture" : "แตะที่ “เก็บไว้” เพื่อ\nยืนยันภาพล็อกสกรีนของคุณ",
@@ -6747,20 +6751,20 @@
     },
     "entryPoints" : {
       "accounts" : {
-        "title" : "Activate Ledger Sync"
+        "title" : "เปิด Ledger Sync"
       },
       "manager" : {
         "title" : "Ledger Sync",
-        "description" : "Sync your accounts automatically, even when switching to a new phone.",
-        "cta" : "Turn on Ledger Sync"
+        "description" : "ซิงค์บัญชีของคุณโดยอัตโนมัติแม้ว่าคุณจะเปลี่ยนโทรศัพท์ใหม่ก็ตาม",
+        "cta" : "เปิด Ledger Sync"
       },
       "settings" : {
         "title" : "Ledger Sync",
-        "description" : "Sync your accounts automatically, even when switching to a new phone.",
-        "cta" : "Turn on Ledger Sync"
+        "description" : "ซิงค์บัญชีของคุณโดยอัตโนมัติแม้ว่าคุณจะเปลี่ยนโทรศัพท์ใหม่ก็ตาม",
+        "cta" : "เปิด Ledger Sync"
       },
       "onboarding" : {
-        "title" : "Sync with another Ledger Live app"
+        "title" : "ซิงค์กับแอป Ledger Live อีกแอปหนึ่ง"
       }
     },
     "manage" : {
@@ -6991,55 +6995,14 @@
     }
   },
   "lnsUpsell" : {
-    "banner" : {
-      "manager" : {
-        "optIn" : {
-          "title" : "It's time to upgrade",
-          "description" : "Upgrade to our latest devices with <0>{{discount}}% discount</0> for an enhanced security and a seamless experience.",
-          "cta" : "Level up my wallet",
-          "linkText" : "Learn more"
-        },
-        "optOut" : {
-          "title" : "It's time to upgrade",
-          "description" : "Upgrade to our latest devices with <0>{{discount}}% discount</0> for an enhanced security and a seamless experience.",
-          "cta" : "Level up my wallet",
-          "linkText" : "Learn more"
-        }
-      },
-      "accounts" : {
-        "optIn" : {
-          "title" : "It's time to upgrade",
-          "description" : "Ledger Nano S updates are ending soon. Upgrade to our latest devices with <0>{{discount}}% discount</0>.",
-          "cta" : "Level up my wallet",
-          "linkText" : "Learn more"
-        },
-        "optOut" : {
-          "title" : "It's time to upgrade",
-          "description" : "Ledger Nano S updates are ending soon. Upgrade to our latest devices with <0>{{discount}}% discount</0>.",
-          "cta" : "Level up my wallet",
-          "linkText" : "Learn more"
-        }
-      },
-      "portfolio" : {
-        "optOut" : {
-          "title" : "It's time to upgrade",
-          "description" : "Upgrade to our latest devices with <0>{{discount}}% discount</0> for an enhanced security and a seamless experience.",
-          "cta" : "Level up my wallet",
-          "linkText" : "Learn more"
-        }
-      },
-      "notifications" : {
-        "optIn" : {
-          "description" : "Updates are ending soon. Upgrade now with {{discount}}% off for a seamless experience.",
-          "cta" : "Level up my wallet",
-          "linkText" : "Learn more"
-        },
-        "optOut" : {
-          "description" : "Updates are ending soon. Upgrade now with {{discount}}% off for a seamless experience.",
-          "cta" : "Level up my wallet",
-          "linkText" : "Learn more"
-        }
-      }
+    "opted_in" : {
+      "title" : "อย่าให้หน่วยความจำที่จำกัด จำกัดประสบการณ์ของคุณไปด้วย",
+      "description" : "Upgrade your Ledger Nano S to a newer Ledger — like the Ledger Flex — for more memory, the latest security enhancements, fresh features, and <0>an exclusive {{discount}}% off</>.",
+      "cta" : "อัปเกรด My Ledger"
+    },
+    "opted_out" : {
+      "description" : "หน่วยความจำที่จำกัดของ Ledger Nano S ของคุณจะยับยั้งการเข้าถึงฟีเจอร์ล่าสุด การเปลี่ยนแปลงบล็อกเชน และการเพิ่มความปลอดภัยให้กับคุณ เพื่อการใช้งานระยะยาว ควรอัปเกรดเป็นอุปกรณ์ Ledger รุ่นใหม่กว่า",
+      "cta" : "เรียนรู้เพิ่มเติม"
     }
   }
 }
