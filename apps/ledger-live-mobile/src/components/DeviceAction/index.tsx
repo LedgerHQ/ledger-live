@@ -64,6 +64,8 @@ import {
   renderWarningOutdated,
   RequiredFirmwareUpdate,
 } from "./rendering";
+import { WalletState } from "@ledgerhq/live-wallet/lib/store";
+import { SettingsState } from "~/reducers/types";
 
 type Status = PartialNullable<{
   appAndVersion: AppAndVersion;
@@ -442,11 +444,11 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
       exchangeRate: ExchangeRate;
       exchange: ExchangeSwap;
       colors: T["colors"];
-      theme: typeof theme;
+      theme: "dark" | "light";
       amountExpectedTo?: string;
       estimatedFees?: string;
-      walletState: ReturnType<typeof walletSelector>;
-      settingsState: ReturnType<typeof settingsStoreSelector>;
+      walletState: WalletState;
+      settingsState: SettingsState;
     };
 
     return renderExchange({
