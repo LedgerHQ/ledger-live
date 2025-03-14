@@ -9,6 +9,8 @@ const testPathIgnorePatterns = [
   "test-helpers/",
 ];
 
+const transformIncludePatterns = ["ky"];
+
 let testRegex: string | string[] = "(/__tests__/.*|(\\.|/)(test|spec))\\.[jt]sx?$";
 if (process.env.IGNORE_INTEGRATION_TESTS) {
   testPathIgnorePatterns.push(".*\\.integration\\.test\\.[tj]s");
@@ -51,7 +53,7 @@ const defaultConfig = {
   testRegex,
   transformIgnorePatterns: [
     "/node_modules/(?!|@babel/runtime/helpers/esm/)",
-    "/node_modules/(?!|@babel/runtime/helpers/esm/)",
+    `node_modules/.pnpm/(?!(${transformIncludePatterns.join("|")}))`,
   ],
   moduleDirectories: ["node_modules", "cli/node_modules"],
   /**
