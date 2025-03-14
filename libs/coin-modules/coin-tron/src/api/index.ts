@@ -1,9 +1,4 @@
-import {
-  // IncorrectTypeError,
-  // Pagination,
-  type Api,
-  // type Transaction as ApiTransaction,
-} from "@ledgerhq/coin-framework/api/index";
+import { type Api } from "@ledgerhq/coin-framework/api/index";
 import coinConfig, { type TronConfig } from "../config";
 import {
   broadcast,
@@ -14,8 +9,9 @@ import {
   listOperations,
   lastBlock,
 } from "../logic";
+import { type TronToken } from "../types";
 
-export function createApi(config: TronConfig): Api {
+export function createApi(config: TronConfig): Api<TronToken> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
