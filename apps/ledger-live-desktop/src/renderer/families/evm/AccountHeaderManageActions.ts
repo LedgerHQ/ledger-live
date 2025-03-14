@@ -80,7 +80,7 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
     isPOLAccount,
   ]);
 
-  if (isEthereumAccount || isBscAccount || isPOLAccount) {
+  if (isEthereumAccount || isBscAccount || isPOLAccount || isAvaxAccount) {
     return [
       {
         key: "Stake",
