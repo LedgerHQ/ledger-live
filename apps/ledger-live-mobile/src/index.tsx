@@ -94,6 +94,10 @@ if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();
 }
 
+if (__DEV__) {
+  require("./ReactotronConfig");
+}
+
 checkLibs({
   NotEnoughBalance,
   React,
