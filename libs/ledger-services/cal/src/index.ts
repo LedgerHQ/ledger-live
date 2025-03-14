@@ -8,6 +8,7 @@ import { getCertificate } from "./certificate";
 import { findCurrencyData } from "./currencies";
 import { getCachedNetworks } from "./networks";
 import { getProvidersCDNData, getProvidersData } from "./partners";
+import { findCachedToken } from "./tokens";
 
 export type { Device } from "./certificate";
 export type { CurrencyData } from "./currencies";
@@ -18,6 +19,7 @@ export { SWAP_DATA_CDN } from "./partners/default";
 
 export default {
   findCurrencyData,
+  findToken: findCachedToken,
   getCertificate,
   getNetworks: getCachedNetworks,
   getProvidersCDNData,
