@@ -328,6 +328,39 @@ test.describe("Swap - Rejected on device", () => {
   );
 });
 
+test.describe("Swap - Landing page", () => {
+  const rejectedSwap = new Swap(Account.ETH_1, Account.ETH_USDC_1, "0.03", Fee.MEDIUM);
+  setupEnv(true);
+
+  test.beforeEach(async () => {
+    const accountPair: string[] = [rejectedSwap.accountToDebit, rejectedSwap.accountToCredit].map(
+      acc => acc.currency.speculosApp.name.replace(/ /g, "_"),
+    );
+    setExchangeDependencies(accountPair.map(name => ({ name })));
+  });
+
+  test.use({
+    userdata: "speculos-tests-app",
+    speculosApp: app,
+  });
+
+  test(
+    `Swap landing page`,
+    {
+      annotation: { type: "TMS", description: "B2CQA-2918" },
+    },
+    async ({ app, electronApp }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
+      await performSwapUntilQuoteSelectionStep(app, electronApp, rejectedSwap);
+      const providerList = await app.swap.getProviderList(electronApp);
+      console.log(providerList);
+      await app.swap.checkQuotesContainerInfos(electronApp, providerList);
+      await app.swap.checkBestOffer(electronApp);
+    },
+  );
+});
+
 const swapWithDifferentSeed = [
   {
     swap: new Swap(Account.ETH_1, Account.SOL_1, "0.02", Fee.MEDIUM),
@@ -344,7 +377,7 @@ const swapWithDifferentSeed = [
       "This receiving account does not belong to the device you have connected. Please change and retry",
   },
   {
-    swap: new Swap(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "0.07", Fee.MEDIUM),
+    swap: new Swap(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "0.03", Fee.MEDIUM),
     xrayTicket: "B2CQA-3091",
     userData: "speculos-x-other-account",
     errorMessage:
