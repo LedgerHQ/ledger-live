@@ -131,7 +131,7 @@ const getMainActions = ({
   const { isPOLAccount, isBscAccount, isAvaxAccount, isStakekit, isEthAccount } =
     getAccountType(account);
 
-  if (isStakekit) {
+  if (isEthAccount || isStakekit) {
     const label = getStakeLabelLocaleBased();
 
     const navigationParams = getNavigatorParams({
@@ -140,6 +140,7 @@ const getMainActions = ({
       parentRoute,
       walletState,
     });
+
     const getCurrentCurrency = () => {
       if (isEthAccount) {
         return "ETH";
@@ -155,7 +156,6 @@ const getMainActions = ({
         return "AVAX";
       }
     };
-
     return [
       {
         id: "stake",
