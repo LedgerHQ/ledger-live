@@ -14,7 +14,7 @@ import { captureArtifacts } from "tests/utils/allureUtils";
 import { randomUUID } from "crypto";
 import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { lastValueFrom, Observable } from "rxjs";
-import { registerSpeculosTransport } from "@ledgerhq/live-cli/src/live-common-setup";
+import { CLI } from "../utils/cliUtils";
 
 type TestFixtures = {
   lang: string;
@@ -120,7 +120,7 @@ export const test = base.extend<TestFixtures>({
         setEnv("MOCK", "");
 
         if (cliCommands?.length) {
-          registerSpeculosTransport(device?.ports.apiPort);
+          CLI.registerSpeculosTransport(device?.ports.apiPort);
           for (const cmd of cliCommands) {
             const promise = await cmd(`${userdataDestinationPath}/app.json`);
             const result =
