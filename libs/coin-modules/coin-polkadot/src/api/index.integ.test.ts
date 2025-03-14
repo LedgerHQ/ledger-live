@@ -2,7 +2,7 @@ import type { Api } from "@ledgerhq/coin-framework/api/index";
 import { createApi } from ".";
 
 describe("Polkadot Api", () => {
-  let module: Api;
+  let module: Api<void>;
   const address = "144HGaYrSdK3543bi26vT6Rd8Bg7pLPMipJNr2WLc3NuHgD2";
 
   beforeAll(() => {
@@ -31,7 +31,12 @@ describe("Polkadot Api", () => {
       const amount = BigInt(100);
 
       // When
-      const result = await module.estimateFees(address, amount);
+      const result = await module.estimateFees({
+        type: "send",
+        sender: address,
+        recipient: "address",
+        amount,
+      });
 
       // Then
       expect(result).toBeGreaterThanOrEqual(BigInt(100000000));

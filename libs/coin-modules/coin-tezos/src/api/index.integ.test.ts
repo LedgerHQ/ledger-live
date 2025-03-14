@@ -5,7 +5,7 @@ import { createApi } from ".";
  * https://api.tzkt.io/#section/Get-Started/Free-TzKT-API
  */
 describe("Tezos Api", () => {
-  let module: Api;
+  let module: Api<void>;
   const address = "tz1heMGVHQnx7ALDcDKqez8fan64Eyicw4DJ";
 
   beforeAll(() => {
@@ -36,7 +36,12 @@ describe("Tezos Api", () => {
       const amount = BigInt(100);
 
       // When
-      const result = await module.estimateFees(address, amount);
+      const result = await module.estimateFees({
+        type: "send",
+        sender: address,
+        recipient: "address",
+        amount,
+      });
 
       // Then
       expect(result).toEqual(BigInt(287));

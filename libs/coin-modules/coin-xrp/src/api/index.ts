@@ -3,6 +3,7 @@ import type {
   Operation,
   Transaction as ApiTransaction,
   Pagination,
+  TransactionIntent,
 } from "@ledgerhq/coin-framework/api/index";
 import { log } from "@ledgerhq/logs";
 import coinConfig, { type XrpConfig } from "../config";
@@ -18,7 +19,7 @@ import {
 } from "../logic";
 import { ListOperationsOptions, XrpOperation } from "../types";
 
-export function createApi(config: XrpConfig): Api {
+export function createApi(config: XrpConfig): Api<void> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
@@ -38,7 +39,8 @@ async function craft(address: string, transaction: ApiTransaction): Promise<stri
   return tx.serializedTransaction;
 }
 
-async function estimate(_addr: string, _amount: bigint): Promise<bigint> {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+async function estimate(transactionIntent: TransactionIntent<void>): Promise<bigint> {
   const fees = await estimateFees();
   return fees.fee;
 }

@@ -15,8 +15,9 @@ import {
   lastBlock,
 } from "../logic";
 import { ListOperationsOptions } from "../logic/listOperations";
+import { StellarToken } from "../types";
 
-export function createApi(config: StellarConfig): Api {
+export function createApi(config: StellarConfig): Api<StellarToken> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
