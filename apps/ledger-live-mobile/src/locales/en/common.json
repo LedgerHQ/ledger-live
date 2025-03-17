@@ -2416,12 +2416,12 @@
         "description": "You're just two steps away from being secured."
       },
       "verifyIdentity": {
-        "title": "Reminder: Finish subscribing to Ledger Recover",
-        "description": "You're just one step away from being secured."
+        "title": "Access to your wallet is not backed up yet",
+        "description": "Verify your identity to secure access to your wallet"
       },
       "connectDevice": {
-        "title": "Reminder: Finish subscribing to Ledger Recover",
-        "description": "It's your final step to ensure wallet access recovery."
+        "title": "Access to your wallet is not backed up yet",
+        "description": "Connect your device to secure access to your wallet"
       }
     }
   },
