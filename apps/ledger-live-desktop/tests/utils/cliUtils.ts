@@ -11,14 +11,15 @@ import SpeculosHttpTransport, {
 import { retry } from "@ledgerhq/live-common/promise";
 import {
   registerTransportModule,
-  unregisterTransportModule,
+  unregisterAllTransportModules,
 } from "@ledgerhq/live-common/lib/hw/index";
 
 type LiveDataOpts = {
-  currency: string;
-  index: number | undefined;
-  appjson: string | undefined;
-  add: boolean;
+  currency?: string;
+  index?: number;
+  scheme?: string;
+  appjson?: string;
+  add?: boolean;
 };
 
 type LedgerKeyRingProtocolOpts = {
@@ -30,6 +31,10 @@ type LedgerKeyRingProtocolOpts = {
   pubKey?: string;
   privateKey?: string;
   device?: string;
+  destroyKeyRingTree?: boolean;
+  rootId?: string;
+  walletSyncEncryptionKey?: string;
+  applicationPath?: string;
 };
 
 type LedgerSyncOpts = {
@@ -46,6 +51,7 @@ type LedgerSyncOpts = {
   data?: string;
   version?: number;
   cloudSyncApiBaseUrl?: string;
+  deleteData?: boolean;
 };
 
 export const CLI = {
@@ -59,6 +65,10 @@ export const CLI = {
       pubKey,
       privateKey,
       device,
+      destroyKeyRingTree,
+      rootId,
+      walletSyncEncryptionKey,
+      applicationPath,
     } = opts;
 
     const context = {
@@ -84,6 +94,18 @@ export const CLI = {
         .then(result => result.trustchain);
     }
 
+    if (destroyKeyRingTree) {
+      if (!pubKey || !privateKey) return Promise.reject("pubKey and privateKey are required");
+      if (!rootId) return Promise.reject("rootId is required");
+      if (!walletSyncEncryptionKey) return Promise.reject("walletSyncEncryptionKey is required");
+      if (!applicationPath) return Promise.reject("applicationPath is required");
+
+      return sdk["destroyTrustchain"](
+        { rootId, walletSyncEncryptionKey, applicationPath },
+        { pubkey: pubKey, privatekey: privateKey },
+      );
+    }
+
     return Promise.reject("No function specified");
   },
   ledgerSync: function (opts: LedgerSyncOpts) {
@@ -101,6 +123,7 @@ export const CLI = {
       data,
       version,
       cloudSyncApiBaseUrl,
+      deleteData,
     } = opts;
     const context = {
       applicationId,
@@ -148,37 +171,49 @@ export const CLI = {
           JSON.stringify({ result, updateEvent: latestUpdateEvent }, null, 2),
         );
     }
+
+    //@todo: Split into it's own function
+    if (deleteData) {
+      return cloudSyncSDK.destroy(
+        { rootId, walletSyncEncryptionKey, applicationPath },
+        { pubkey: pubKey, privatekey: privateKey },
+      );
+    }
   },
   liveData: function (opts: LiveDataOpts) {
     const cliOpts = ["liveData"];
 
     if (opts.currency) {
-      cliOpts.push(`--currency ${opts.currency}`);
+      cliOpts.push(`--currency+${opts.currency}`);
     }
 
     if (opts.index !== undefined) {
-      cliOpts.push(`--index ${opts.index}`);
+      cliOpts.push(`--index+${opts.index}`);
     }
 
     if (opts.appjson) {
-      cliOpts.push(`--appjson ${opts.appjson}`);
+      cliOpts.push(`--appjson+${opts.appjson}`);
+    }
+
+    if (opts.scheme) {
+      cliOpts.push(`--scheme+${opts.scheme}`);
     }
 
     if (opts.add) {
       cliOpts.push("--add");
     }
 
-    return runCliCommand(cliOpts.join(" "));
+    return runCliCommand(cliOpts.join("+"));
   },
-  registerSpeculosTransport: function (apiPort: number) {
-    unregisterTransportModule("hid");
-    const req: Record<string, number> = {
+  registerSpeculosTransport: function (apiPort: string) {
+    unregisterAllTransportModules();
+    const req: SpeculosHttpTransportOpts = {
       apiPort: apiPort,
     };
 
     registerTransportModule({
       id: "speculos-http",
-      open: () => retry(() => SpeculosHttpTransport.open(req as SpeculosHttpTransportOpts)),
+      open: () => retry(() => SpeculosHttpTransport.open(req)),
       disconnect: () => Promise.resolve(),
     });
   },

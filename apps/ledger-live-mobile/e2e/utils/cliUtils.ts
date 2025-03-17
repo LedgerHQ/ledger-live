@@ -5,23 +5,31 @@ import { DistantState as LiveData, liveSlug } from "@ledgerhq/live-wallet/lib/wa
 import walletsync from "@ledgerhq/live-wallet/lib/walletsync/root";
 import { getEnv } from "@ledgerhq/live-env";
 import { runCliCommand } from "./runCli";
+import createTransportHttp from "@ledgerhq/hw-transport-http";
+import { registerTransportModule } from "@ledgerhq/live-common/hw/index";
+import { retry } from "@ledgerhq/live-common/promise";
 
 type LiveDataOpts = {
-  currency: string;
-  index: number | undefined;
-  appjson: string | undefined;
-  add: boolean;
+  currency?: string;
+  index?: number;
+  scheme?: string;
+  appjson?: string;
+  add?: boolean;
 };
 
 type LedgerKeyRingProtocolOpts = {
   initMemberCredentials?: boolean;
-  apiBaseUrl: string;
+  apiBaseUrl?: string;
   applicationId?: number;
   name?: string;
   getKeyRingTree?: boolean;
   pubKey?: string;
   privateKey?: string;
   device?: string;
+  destroyKeyRingTree?: boolean;
+  rootId?: string;
+  walletSyncEncryptionKey?: string;
+  applicationPath?: string;
 };
 
 type LedgerSyncOpts = {
@@ -38,6 +46,7 @@ type LedgerSyncOpts = {
   data?: string;
   version?: number;
   cloudSyncApiBaseUrl?: string;
+  deleteData?: boolean;
 };
 
 export const CLI = {
@@ -51,6 +60,10 @@ export const CLI = {
       pubKey,
       privateKey,
       device,
+      destroyKeyRingTree,
+      rootId,
+      walletSyncEncryptionKey,
+      applicationPath,
     } = opts;
 
     const context = {
@@ -76,6 +89,18 @@ export const CLI = {
         .then(result => result.trustchain);
     }
 
+    if (destroyKeyRingTree) {
+      if (!pubKey || !privateKey) return Promise.reject("pubKey and privateKey are required");
+      if (!rootId) return Promise.reject("rootId is required");
+      if (!walletSyncEncryptionKey) return Promise.reject("walletSyncEncryptionKey is required");
+      if (!applicationPath) return Promise.reject("applicationPath is required");
+
+      return sdk["destroyTrustchain"](
+        { rootId, walletSyncEncryptionKey, applicationPath },
+        { pubkey: pubKey, privatekey: privateKey },
+      );
+    }
+
     return Promise.reject("No function specified");
   },
   ledgerSync: function (opts: LedgerSyncOpts) {
@@ -93,6 +118,7 @@ export const CLI = {
       data,
       version,
       cloudSyncApiBaseUrl,
+      deleteData,
     } = opts;
     const context = {
       applicationId,
@@ -140,26 +166,48 @@ export const CLI = {
           JSON.stringify({ result, updateEvent: latestUpdateEvent }, null, 2),
         );
     }
+
+    if (deleteData) {
+      return cloudSyncSDK.destroy(
+        { rootId, walletSyncEncryptionKey, applicationPath },
+        { pubkey: pubKey, privatekey: privateKey },
+      );
+    }
   },
   liveData: function (opts: LiveDataOpts) {
     const cliOpts = ["liveData"];
 
     if (opts.currency) {
-      cliOpts.push(`--currency ${opts.currency}`);
+      cliOpts.push(`--currency+${opts.currency}`);
     }
 
     if (opts.index !== undefined) {
-      cliOpts.push(`--index ${opts.index}`);
+      cliOpts.push(`--index+${opts.index}`);
     }
 
     if (opts.appjson) {
-      cliOpts.push(`--appjson ${opts.appjson}`);
+      cliOpts.push(`--appjson+${opts.appjson}`);
+    }
+
+    if (opts.scheme) {
+      cliOpts.push(`--scheme+${opts.scheme}`);
     }
 
     if (opts.add) {
       cliOpts.push("--add");
     }
 
-    return runCliCommand(cliOpts.join(" "));
+    return runCliCommand(cliOpts.join("+"));
+  },
+  registerProxyTransport: function (proxyUrl: string) {
+    const Tr = createTransportHttp(proxyUrl);
+    registerTransportModule({
+      id: "http",
+      open: () =>
+        retry(() => Tr.create(3000, 5000), {
+          context: "open-http-proxy",
+        }),
+      disconnect: () => Promise.resolve(),
+    });
   },
 };

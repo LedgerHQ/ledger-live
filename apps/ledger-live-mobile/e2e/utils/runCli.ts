@@ -9,7 +9,7 @@ const scriptPath = __dirname + "/../../../cli/bin/index.js";
  */
 export function runCliCommand(command: string): Promise<string> {
   return new Promise((resolve, reject) => {
-    const args = command.split(" ");
+    const args = command.split("+");
     const child = spawn("node", [scriptPath, ...args], { stdio: "pipe", env: process.env });
 
     let output = "";
