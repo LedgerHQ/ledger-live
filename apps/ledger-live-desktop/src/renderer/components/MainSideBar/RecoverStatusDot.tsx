@@ -84,7 +84,7 @@ const RecoverStatusDot = ({ collapsed }: RecoverStatusNotificationProps) => {
         style={{
           color: colors.palette.warning.c70,
           right: "-3px",
-          top: "-5px",
+          top: "-8px",
           position: "absolute",
         }}
       />
