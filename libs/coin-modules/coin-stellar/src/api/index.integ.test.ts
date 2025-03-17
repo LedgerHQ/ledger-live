@@ -1,11 +1,12 @@
 import type { Api } from "@ledgerhq/coin-framework/api/index";
 import { createApi } from ".";
+import { StellarToken } from "../types";
 
 /**
  * Testnet scan: https://testnet.lumenscan.io/
  */
 describe("Stellar Api", () => {
-  let module: Api;
+  let module: Api<StellarToken>;
   const address = "GBAUZBDXMVV7HII4JWBGFMLVKVJ6OLQAKOCGXM5E2FM4TAZB6C7JO2L7";
 
   beforeAll(() => {
@@ -37,7 +38,6 @@ describe("Stellar Api", () => {
       // Then
       expect(tx.length).toBeGreaterThanOrEqual(100);
       tx.forEach(operation => {
-        expect(operation.address).toEqual(address);
         const isSenderOrReceipt =
           operation.senders.includes(address) || operation.recipients.includes(address);
         expect(isSenderOrReceipt).toBeTruthy();
@@ -50,7 +50,7 @@ describe("Stellar Api", () => {
 
       // Then
       expect(tx.length).toBeGreaterThanOrEqual(100);
-      const checkSet = new Set(tx.map(elt => elt.hash));
+      const checkSet = new Set(tx.map(elt => elt.tx.hash));
       expect(checkSet.size).toEqual(tx.length);
     });
   });

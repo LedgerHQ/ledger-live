@@ -40,21 +40,22 @@ describe("get operations", () => {
     expect(token).toEqual("");
   });
 
-  const op: Operation = {
-    hash: "opHash",
-    address: "tz1...",
+  const op: Operation<void> = {
+    operationIndex: 0,
+    tx: {
+      hash: "opHash",
+      fees: BigInt(100),
+      block: {
+        hash: "blockHash",
+        height: 123456,
+        time: new Date(),
+      },
+      date: new Date(),
+    },
     type: "transaction",
     value: BigInt(1000),
-    fee: BigInt(100),
-    block: {
-      hash: "blockHash",
-      height: 123456,
-      time: new Date(),
-    },
     senders: ["tz1Sender"],
     recipients: ["tz1Recipient"],
-    date: new Date(),
-    transactionSequenceNumber: 1,
   };
 
   it("stops iterating after 10 iterations", async () => {

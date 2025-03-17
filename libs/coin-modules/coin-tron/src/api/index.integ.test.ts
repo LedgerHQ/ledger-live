@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import TronWeb from "tronweb";
 import { createApi } from ".";
 import { createTronWeb } from "../logic/utils";
+import { TronToken } from "../types";
 
 const TRONGRID_URL = "https://api.shasta.trongrid.io";
 dotenv.config();
@@ -24,7 +25,7 @@ const wallet = {
  * Testnet faucet: https://shasta.tronex.io/
  */
 describe("API", () => {
-  let module: Api;
+  let module: Api<TronToken>;
   let tronWeb: TronWeb;
 
   beforeAll(() => {
@@ -59,7 +60,7 @@ describe("API", () => {
 });
 
 /**
- * Use this funciton to create a new account and seed `.env.integ.test.ts` file with its value.
+ * Use this function to create a new account and seed `.env.integ.test.ts` file with its value.
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function generateNewAccount(trongridUrl: string) {

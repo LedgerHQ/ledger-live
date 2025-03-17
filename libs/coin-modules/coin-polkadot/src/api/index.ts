@@ -16,7 +16,7 @@ import {
   listOperations,
 } from "../logic";
 
-export function createApi(config: PolkadotConfig): Api {
+export function createApi(config: PolkadotConfig): Api<void> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
@@ -51,7 +51,7 @@ async function estimate(addr: string, amount: bigint): Promise<bigint> {
 async function operations(
   address: string,
   { minHeight }: Pagination,
-): Promise<[Operation[], string]> {
+): Promise<[Operation<void>[], string]> {
   const [ops, nextHeight] = await listOperations(address, { limit: 0, startAt: minHeight });
   return [ops, JSON.stringify(nextHeight)];
 }

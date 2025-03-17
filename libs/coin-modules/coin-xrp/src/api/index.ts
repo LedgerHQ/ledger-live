@@ -16,9 +16,9 @@ import {
   lastBlock,
   listOperations,
 } from "../logic";
-import { ListOperationsOptions, XrpOperation } from "../types";
+import { ListOperationsOptions } from "../types";
 
-export function createApi(config: XrpConfig): Api {
+export function createApi(config: XrpConfig): Api<void> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
@@ -50,13 +50,13 @@ type PaginationState = {
   readonly minHeight: number;
   continueIterations: boolean;
   apiNextCursor?: string;
-  accumulator: XrpOperation[];
+  accumulator: Operation<void>[];
 };
 
 async function operationsFromHeight(
   address: string,
   minHeight: number,
-): Promise<[XrpOperation[], string]> {
+): Promise<[Operation<void>[], string]> {
   async function fetchNextPage(state: PaginationState): Promise<PaginationState> {
     const options: ListOperationsOptions = {
       limit: state.pageSize,
@@ -104,21 +104,7 @@ async function operationsFromHeight(
 async function operations(
   address: string,
   { minHeight }: Pagination,
-): Promise<[Operation[], string]> {
-  const [ops, token] = await operationsFromHeight(address, minHeight);
+): Promise<[Operation<void>[], string]> {
   // TODO token must be implemented properly (waiting ack from the design document)
-  return [
-    ops.map(op => {
-      const { simpleType, blockHash, blockTime, blockHeight, ...rest } = op;
-      return {
-        ...rest,
-        block: {
-          height: blockHeight,
-          hash: blockHash,
-          time: blockTime,
-        },
-      };
-    }),
-    token,
-  ];
+  return await operationsFromHeight(address, minHeight);
 }

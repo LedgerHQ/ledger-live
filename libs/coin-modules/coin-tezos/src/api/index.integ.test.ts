@@ -5,7 +5,7 @@ import { createApi } from ".";
  * https://api.tzkt.io/#section/Get-Started/Free-TzKT-API
  */
 describe("Tezos Api", () => {
-  let module: Api;
+  let module: Api<void>;
   const address = "tz1heMGVHQnx7ALDcDKqez8fan64Eyicw4DJ";
 
   beforeAll(() => {
@@ -51,11 +51,10 @@ describe("Tezos Api", () => {
       // Then
       expect(tx.length).toBeGreaterThanOrEqual(1);
       tx.forEach(operation => {
-        expect(operation.address).toEqual(address);
         const isSenderOrReceipt =
           operation.senders.includes(address) || operation.recipients.includes(address);
         expect(isSenderOrReceipt).toBeTruthy();
-        expect(operation.block).toBeDefined();
+        expect(operation.tx.block).toBeDefined();
       });
     });
 
@@ -65,7 +64,7 @@ describe("Tezos Api", () => {
 
       // Then
       // Find a way to create a unique id. In Tezos, the same hash may represent different operations in case of delegation.
-      const checkSet = new Set(tx.map(elt => `${elt.hash}${elt.type}${elt.senders[0]}`));
+      const checkSet = new Set(tx.map(elt => `${elt.tx.hash}${elt.type}${elt.senders[0]}`));
       expect(checkSet.size).toEqual(tx.length);
     });
   });

@@ -1,22 +1,32 @@
 export type BlockInfo = {
   height: number;
   hash?: string;
+  // can be different from tx date
+  // transaction could be created at a particular moment, but depending on network conditions
+  // mining time, and block intervals, it might not get included in the blockchain until later
   time?: Date;
 };
 
-export type Operation = {
-  hash: string;
-  address: string;
+export type Operation<AssetInfo> = {
   type: string;
-  value: bigint;
-  fee: bigint;
-  block: BlockInfo;
+  // This operation corresponds to the index-th event triggered bu the original transaction
+  operationIndex: number;
   senders: string[];
   recipients: string[];
-  date: Date;
-  transactionSequenceNumber: number;
+  value: bigint;
+  // Asset is not defined when dealing with native currency
+  asset?: AssetInfo;
   // Field containing dedicated value for each blockchain
   details?: Record<string, unknown>;
+  tx: {
+    // One tx can trigger multiple operations, hence multiple operations with the same hash
+    hash: string;
+    // In which block this operation's related tx was included
+    block: BlockInfo;
+    fees: bigint;
+    // see BlockInfo.time comment
+    date: Date;
+  };
 };
 
 export type Transaction = {
@@ -38,12 +48,15 @@ export type Asset = {
 //       limit is unused for now
 //       see design document at https://ledgerhq.atlassian.net/wiki/spaces/BE/pages/5446205788/coin-modules+lama-adapter+APIs+refinements
 export type Pagination = { minHeight: number };
-export type Api = {
+export type Api<TokenIdentifier> = {
   broadcast: (tx: string) => Promise<string>;
   combine: (tx: string, signature: string, pubkey?: string) => string;
   craftTransaction: (address: string, transaction: Transaction, pubkey?: string) => Promise<string>;
   estimateFees: (addr: string, amount: bigint) => Promise<bigint>;
   getBalance: (address: string) => Promise<Asset | bigint>;
   lastBlock: () => Promise<BlockInfo>;
-  listOperations: (address: string, pagination: Pagination) => Promise<[Operation[], string]>;
+  listOperations: (
+    address: string,
+    pagination: Pagination,
+  ) => Promise<[Operation<TokenIdentifier>[], string]>;
 };
