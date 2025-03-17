@@ -9,7 +9,6 @@ import { getFlags } from "../../../bridge/server";
 const app = new Application();
 const tmsLinks = ["B2CQA-2292", "B2CQA-2293", "B2CQA-2296"];
 
-let cloudSyncApiBaseUrl = "";
 const ledgerKeyRingProtocolArgs = {
   apiBaseUrl: "",
   pubKey: "",
@@ -20,14 +19,15 @@ const ledgerSyncPushDataArgs = {
   walletSyncEncryptionKey: "",
   applicationPath: "",
   push: true,
-  data: '{"accounts":[{"id":"mock:1:dogecoin:0.790010769447963:","currencyId":"dogecoin","index":1,"seedIdentifier":"mock","derivationMode":"","freshAddress":"1uVnrWAzycYqKUXSuNXt3XSjJ8"},{"id":"mock:1:bitcoin_gold:0.8027791663782486:","currencyId":"bitcoin_gold","index":1,"seedIdentifier":"mock","derivationMode":"","freshAddress":"1Y5T8JQqBKUS7cXbxUYCR4wg3YSbV9R"}],"accountNames":{"mock:1:dogecoin:0.790010769447963:":"Renamed Dogecoin 2","mock:1:bitcoin_gold:0.8027791663782486:":"Bitcoin Gold 2"}}',
+  data: '{"accounts":[{"id":"mock:1:dogecoin:0.790010769447963:","currencyId":"dogecoin","index":1,"seedIdentifier":"mock","derivationMode":"","freshAddress":"1uVnrWAzycYqKUXSuNXt3XSjJ8"},{"id":"mock:1:bitcoin_gold:0.8027791663782486:","currencyId":"bitcoin_gold","index":1,"seedIdentifier":"mock","derivationMode":"","freshAddress":"1Y5T8JQqBKUS7cXbxUYCR4wg3YSbV9R"}],"accountNames":{"mock:1:dogecoin:0.790010769447963:":"Dogecoin 2","mock:1:bitcoin_gold:0.8027791663782486:":"Bitcoin Gold 2"}}',
+  cloudSyncApiBaseUrl: "",
 };
 
 async function initializeLedgerKeyRingProtocol() {
   const environment = JSON.parse(await getFlags()).llmWalletSync.params?.environment;
   ledgerKeyRingProtocolArgs.apiBaseUrl =
     environment == "PROD" ? getEnv("TRUSTCHAIN_API_PROD") : getEnv("TRUSTCHAIN_API_STAGING");
-  cloudSyncApiBaseUrl =
+  ledgerSyncPushDataArgs.cloudSyncApiBaseUrl =
     environment == "PROD" ? getEnv("CLOUD_SYNC_API_PROD") : getEnv("CLOUD_SYNC_API_STAGING");
 
   return CLI.ledgerKeyRingProtocol({
@@ -73,7 +73,6 @@ describe(`Ledger Sync Accounts`, () => {
           return CLI.ledgerSync({
             ...ledgerKeyRingProtocolArgs,
             ...ledgerSyncPushDataArgs,
-            cloudSyncApiBaseUrl: cloudSyncApiBaseUrl,
           });
         },
       ],
@@ -109,5 +108,24 @@ describe(`Ledger Sync Accounts`, () => {
     await app.ledgerSync.expectLedgerSyncSuccessPage();
     await app.ledgerSync.closeDeletionSuccessPage();
     await device.enableSynchronization();
+  });
+
+  afterAll(async () => {
+    try {
+      await CLI.ledgerSync({
+        deleteData: true,
+        ...ledgerKeyRingProtocolArgs,
+        ...ledgerSyncPushDataArgs,
+      });
+
+      await CLI.ledgerKeyRingProtocol({
+        destroyKeyRingTree: true,
+        ...ledgerKeyRingProtocolArgs,
+        ...ledgerSyncPushDataArgs,
+      });
+    } catch (error) {
+      if ((error as Error).message?.includes("Not a member of trustchain") && !IS_FAILED) return; // Not logging error as trustchain was deleted within the test
+      console.error("AfterAll Hook: Error deleting trustchain\n", error);
+    }
   });
 });
