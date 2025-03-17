@@ -16,7 +16,7 @@ export type TokensListProps = {
     mediaType: string;
   }[];
   isDrawerOpen: boolean;
-  nftIdToOpen: string;
+  nftIdToOpen: string | null;
   setIsDrawerOpen: (isDrawerOpen: boolean) => void;
   onItemClick: (id: string) => void;
 };
