@@ -105,7 +105,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
     [animatedHeight],
   );
 
-  const isLNSUpsellBannerShown = useLNSUpsellBannerState("notification_center").isShown;
+  const isLNSUpsellBannerShown = useLNSUpsellBannerState("wallet").isShown;
 
   const data = useMemo(
     () => [
