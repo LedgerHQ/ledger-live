@@ -21,7 +21,7 @@ import {
   HASH_SIZE,
   OP_EQUALVERIFY,
   OP_CHECKSIG,
-  ZCASH_NU6_ACTIVATION_HEIGHT,
+  ZCASH_ACTIVATION_HEIGHTS,
 } from "./constants";
 import { shouldUseTrustedInputForSegwit } from "./shouldUseTrustedInputForSegwit";
 export type { AddressFormat };
@@ -38,7 +38,15 @@ const defaultsSignTransaction = {
 
 const getZcashTransactionVersion = (blockHeight: number | null | undefined): Buffer => {
   const version = Buffer.alloc(4);
-  if (blockHeight && blockHeight < ZCASH_NU6_ACTIVATION_HEIGHT) {
+  if (blockHeight && blockHeight < ZCASH_ACTIVATION_HEIGHTS.SAPLING) {
+    version.writeUInt32LE(0x80000001, 0);
+  } else if (blockHeight && blockHeight < ZCASH_ACTIVATION_HEIGHTS.BLOSSOM) {
+    version.writeUInt32LE(0x80000002, 0);
+  } else if (blockHeight && blockHeight < ZCASH_ACTIVATION_HEIGHTS.HEARTWOOD) {
+    version.writeUInt32LE(0x80000003, 0);
+  } else if (blockHeight && blockHeight < ZCASH_ACTIVATION_HEIGHTS.CANOPY) {
+    version.writeUInt32LE(0x80000004, 0);
+  } else if (blockHeight && blockHeight < ZCASH_ACTIVATION_HEIGHTS.NU5) {
     version.writeUInt32LE(0x80000005, 0);
   } else {
     // NOTE: null and undefined should default to latest version
