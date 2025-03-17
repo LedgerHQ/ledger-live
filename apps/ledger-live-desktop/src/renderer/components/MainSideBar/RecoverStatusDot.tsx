@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { getStoreValue } from "~/renderer/store";
 import { LedgerRecoverSubscriptionStateInProgressEnum } from "~/types/recoverSubscriptionState";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { Icons } from "@ledgerhq/react-ui";
+import { Box, Icons } from "@ledgerhq/react-ui";
 import useTheme from "~/renderer/hooks/useTheme";
 import styled, { keyframes, css } from "styled-components";
 
@@ -37,7 +37,7 @@ const openAnim = keyframes`
     transform: translateY(-50%);
   }
 `;
-const StyledIcon = styled(Icons.WarningRoundedFill)<{
+const StyledBox = styled(Box)<{
   opacity?: number;
   collapsed?: boolean | null;
 }>`
@@ -78,15 +78,17 @@ const RecoverStatusDot = ({ collapsed }: RecoverStatusNotificationProps) => {
   }, [getRecoverSubscriptionState]);
 
   return displayRecoverDot ? (
-    <StyledIcon
-      collapsed={collapsed}
-      size="XS"
-      style={{
-        color: colors.palette.warning.c70,
-        right: "5px",
-        position: "absolute",
-      }}
-    />
+    <StyledBox collapsed={collapsed}>
+      <Icons.WarningRoundedFill
+        size="XS"
+        style={{
+          color: colors.palette.warning.c70,
+          right: "-3px",
+          top: "-5px",
+          position: "absolute",
+        }}
+      />
+    </StyledBox>
   ) : null;
 };
 
