@@ -143,7 +143,9 @@ export const getFee =
     const customFeeConfig = transaction && getCustomFeesPerFamily(finalTx);
 
     // Check if chain supports fee drawer
-    const hasDrawer = CHAINS_WITH_FEE_DRAWER.includes(transaction.family);
+    const hasDrawer =
+      CHAINS_WITH_FEE_DRAWER.includes(transaction.family) &&
+      !["optimism", "arbitrum", "base"].includes(mainAccount.currency.id);
 
     // Handle fee drawer navigation if requested
     if (params.openDrawer) {
