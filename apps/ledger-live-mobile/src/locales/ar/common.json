@@ -831,11 +831,11 @@
       "title" : "ربما تكون معاملتك قد فشلت. يُرجى الانتظار لحظة ثم تحقق من سجل المعاملات قبل المحاولة مرة أخرى."
     },
     "SolanaRecipientMemoIsRequired" : {
-      "title" : "Memo is required for recipient address"
+      "title" : "الملاحظة (تسمية الوجهة) مطلوبة من أجل عنوان المستلم"
     },
     "SolanaTokenNonTransferable" : {
-      "title" : "Token is non-transferable",
-      "description" : "Such tokens are \"soul-bound\" and cannot be transferred"
+      "title" : "رمز التوكن غير قابل للتحويل",
+      "description" : "رموز التوكن تلك هي ”soul-bound (رموز مرتبطة بالروح)“ ولا يمكن تحويلها"
     },
     "CardanoMinAmountError" : {
       "title" : "الحد الأدنى للمبلغ القابل للإرسال هو {{amount}} ADA"
@@ -2626,6 +2626,10 @@
         "description3Link" : "هذا الدمج تم تنفيذه من قِبل <1><0>{{team}}</1></0> بالتعاون مع Ledger"
       }
     },
+    "migrationBanner" : {
+      "title" : "{{from}} تُرحَّل إلى {{to}}. اتبع هذا <0>الرابط</0> لمعرفة المزيد أو تواصل مع الدعم إذا كنت بحاجة إلى مساعدة.",
+      "contactSupport" : "تواصل مع الدعم"
+    },
     "willBedeprecatedBanner" : {
       "title" : "لتحسين الكفاءة، {{currencyName}} لن تكون مدعومةً على Ledger Live بدءاً من {{deprecatedDate}}. مع ذلك، ستظل مدعومةً على محافظ أجهزة Ledger. يُرجى التواصل مع دعم عملاء Ledger إذا كنت ترغب في الحصول على مساعدة حول ذلك.",
       "contactSupport" : "تواصل مع الدعم"
@@ -3461,6 +3465,7 @@
         "CTAButton" : "إضافة حساب"
       },
       "history" : {
+        "button" : "الانتقال إلى السجل",
         "tab" : "السجل",
         "disclaimer" : "عمليات المبادلة لتطبيق الجوال الخاص بك غير متزامنة مع تطبيق Ledger Live لسطح المكتب",
         "exportButton" : "تصدير العمليات",
@@ -3534,12 +3539,12 @@
         "apt_description" : "لمبادلة Aptos، استخدم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
         "cosmos_title" : "™Ledger Nano S لا تدعم مبادلة Cosmos",
         "cosmos_description" : "لمبادلة Cosmos، استخدم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
-        "osmo_title" : "Ledger Nano S™ does not support swapping Osmosis",
-        "osmo_description" : "To swap Osmosis, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
-        "dydx_title" : "Ledger Nano S™ does not support swapping dYdX",
-        "dydx_description" : "To swap dYdX, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
-        "sui_title" : "Ledger Nano S™ does not support swapping Sui",
-        "sui_description" : "To swap Sui, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
+        "osmo_title" : "™Ledger Nano S لا تدعم مبادلة Osmosis",
+        "osmo_description" : "لمبادلة Osmosis، استخدم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
+        "dydx_title" : "™Ledger Nano S لا تدعم مبادلة dYdX",
+        "dydx_description" : "لمبادلة dYdX، استخدم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
+        "sui_title" : "™Ledger Nano S لا تدعم مبادلة Sui",
+        "sui_description" : "لمبادلة Sui، استخدِم أي جهاز Ledger آخر متوافق مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax."
       }
     },
     "lending" : {
@@ -6037,63 +6042,63 @@
       "frozenStateWarning" : "تمّ تجميد أصول الحساب!",
       "transferWarning" : "للتحقق من عنوان المستلم لرموز سولانا (Solana) باستخدام ™Ledger Nano S، <0>يرجى اتباع هذه التعليمات.</0>",
       "transferFees" : {
-        "title" : "Transfer fees",
-        "feesPercentHint" : "Token has {{feePercent}}% ({{feeBps}}bps) transfer fee ({{maxFee}} max)",
-        "notice" : "Transfer fee {{fee}}%",
-        "tooltipHint" : "Percentage of transfer withheld for token creator"
+        "title" : "رسوم التحويل",
+        "feesPercentHint" : "رمز التوكن عليه رسوم تحويل %{{feePercent}} ({{feeBps}} نقطة أساس) ({{maxFee}} بحد أقصى)",
+        "notice" : "رسوم التحويل %{{fee}}",
+        "tooltipHint" : "النسبة المئوية من التحويل المحتجزة من أجل منشئ رمز التوكن"
       },
       "nonTransferable" : {
-        "notice" : "Token is non-transferable"
+        "notice" : "رمز التوكن غير قابل للتحويل"
       },
       "interestRate" : {
-        "notice" : "Interest rate {{rate}}%",
-        "tooltipHint" : "For cosmetic purposes only, no new tokens are created as a result of the interest"
+        "notice" : "مُعدل الفائدة %{{rate}}",
+        "tooltipHint" : "من أجل الأغراض التجميلية فقط، لم يتم إنشاء أي رموز توكن جديدة نتيجةً للفائدة"
       },
       "permanentDelegate" : {
-        "notice" : "Permanent delegate authority is enabled",
-        "initializationNotice" : "Permanent delegate authority is initialized but not enabled",
-        "initializedNoticeTooltipHint" : "The delegate has the ability transfer or burn this token from your account",
-        "tooltipHint" : "{{delegateAddress}}<0></0> has the ability transfer or burn this token from your account"
+        "notice" : "سُلطة المُفوِّض الدائم (Permanent delegate) مُمكّنة",
+        "initializationNotice" : "سُلطة المُفوِّض الدائم (Permanent delegate) بدأت لكنها غير مُمكّنة",
+        "initializedNoticeTooltipHint" : "المُفوِّض لديه القدرة على تحويل أو حرق رمز التوكن هذا من حسابك",
+        "tooltipHint" : "{{delegateAddress}}<0></0> لديه القدرة على تحويل أو حرق رمز التوكن هذا من حسابك"
       },
       "requiredMemoOnTransfer" : {
-        "notice" : "Required memo on transfer is enabled",
-        "tooltipHint" : "All incoming transfers to this account must have a memo"
+        "notice" : "الملاحظة (تسمية الوجهة) الإلزامية على التحويل مُمكّنة",
+        "tooltipHint" : "كل التحويلات الواردة إلى هذا الحساب يجب أن تكون مصحوبةً بملاحظة (تسمية الوجهة)"
       },
       "transferHook" : {
-        "notice" : "Transfer hook is enabled",
-        "initializationNotice" : "Transfer hook is initialized but not enabled",
-        "tooltipHint" : "Token has extra functionality handled by {{programAddress}}<0></0>"
+        "notice" : "خُطّاف التحويل (Transfer hook) مُمكّن",
+        "initializationNotice" : "خُطّاف التحويل (Transfer hook) بدأ لكنه غير مُمكّن",
+        "tooltipHint" : "رمز التوكن له وظيفة إضافية يتم التعامل معها بواسطة {{programAddress}}<0></0>"
       },
       "extensionsInfo" : {
-        "title" : "Solana token extensions",
-        "commonInfo" : "Token extensions are the next generation of the Solana Token standard. They introduce a new set of ways to extend the normal token functionality with additional features such as confidential transfers, permanent delegate, custom transfer logic, extended metadata, and much more.",
+        "title" : "ملحقات رموز سولانا (Solana)",
+        "commonInfo" : "ملحقات الرموز هي الجيل القادم من معيار رمز سولانا (Solana). إنها تقدّم مجموعة جديدة من الطرق لتمديد وظيفة رمز التوكن العادية بميزات إضافية؛ مثل التحويلات السرية، والمُفوِّض الدائم (Permanent Delegate)، ومنطق التحويل المخصص، والبيانات الوصفية الممتدة، والكثير غير ذلك.",
         "permanentDelegate" : {
-          "title" : "Permanent delegate",
-          "permanentDelegateAddress" : "Current delegate authority is {{address}}",
-          "permanentDelegateNotSetup" : "Current delegate authority is not set up.",
-          "description" : "Permanent delegate is an authority which has unlimited delegate privileges over any account for that mint. The delegate could burn or transfer any amount of tokens, at any time, on their own authority."
+          "title" : "المُفوِّض الدائم (Permanent Delegate)",
+          "permanentDelegateAddress" : "سلطة المُفوِّض الحالية هي {{address}}",
+          "permanentDelegateNotSetup" : "سلطة المُفوِّض الحالية لم يتم إعدادها.",
+          "description" : "المُفوِّض الدائم (Permanent Delegate) هو سلطة لديها امتيازات تفويض غير محدودة على أي حساب من أجل ذلك السكّ. المُفوِّض يمكن أن يقوم بحرق أو تحويل أي مبلغ من رموز التوكن، في أي وقت، ضمن سلطته."
         },
         "nonTransferable" : {
-          "title" : "Non-Transferrable Tokens",
-          "description" : "Such tokens are \"soul-bound\" and cannot be moved or burned, except by the token issuer."
+          "title" : "الرموز غير القابلة للتحويل",
+          "description" : "رموز التوكن تلك هي ”soul-bound (رموز مرتبطة بالروح)“ ولا يمكن نقلها أو حرقها إلا بواسطة مُصدر رمز التوكن."
         },
         "transferHook" : {
-          "title" : "Transfer hook",
-          "transferHookAddress" : "Current transfer hook program is {{address}}",
-          "transferHookNotSetup" : "Current transfer hook program is not set up.",
-          "description" : "Transfer hook gives a token issuers an ability to dictate how users and tokens interact. Instead of a normal transfer, issuer can insert custom logic into a program to be used with the transfer hook extension."
+          "title" : "خُطّاف التحويل (Transfer hook)",
+          "transferHookAddress" : "برنامج خُطّاف التحويل (Transfer hook) الحالي هو {{address}}",
+          "transferHookNotSetup" : "برنامج خُطّاف التحويل (Transfer hook) الحالي لم يتم إعداده.",
+          "description" : "خُطّاف التحويل (Transfer hook) يمنح مُصدري رموز التوكن قدرة على إملاء كيفية تفاعل المستخدمين ورموز التوكن. بدلاً من التحويل العادي، يمكن للمُصدر أن يُدخِل منطقاً مخصصاً في برنامج سيتم استخدامه مع ملحق خُطّاف التحويل (Transfer hook)."
         },
         "transferFee" : {
-          "title" : "Transfer Fee",
-          "currentTransferFee" : "Current transfer fee is {{feePercent}}% ({{feeBps}}bps). Max {{maxFee}}.",
-          "description" : "Fees are charged on every transfer of a token and withheld on the recipient account, untouchable by the recipient."
+          "title" : "رسوم التحويل",
+          "currentTransferFee" : "رسوم التحويل الحالية هي %{{feePercent}} ({{feeBps}} نقطة أساس (bps) ). أقصى حد {{maxFee}}.",
+          "description" : "يتم فرض الرسوم على كل تحويل لرمز توكن وتُحجز على حساب المستلم، ولا يمكن للمستلم المساس بها."
         },
         "interestBearing" : {
-          "title" : "Interest-Bearing Tokens",
-          "currentInterestRate" : "Current interest rate is {{rate}}%.",
-          "accruedDelta" : "Accrued {{delta}}.",
-          "interestRateNotSetup" : "Current interest rate is set up to 0%.",
-          "description" : "Tokens that constantly grow or decrease in value according on its interest rate. No new tokens are ever created, the feature is entirely cosmetic."
+          "title" : "رموز التوكن المُدرة للفائدة",
+          "currentInterestRate" : "مُعدل الفائدة الحالي هو %{{rate}}.",
+          "accruedDelta" : "المتراكمة {{delta}}.",
+          "interestRateNotSetup" : "مُعدل الفائدة الحالي تم تعيينه ليكون %0.",
+          "description" : "رموز التوكن التي تنمو أو تنخفض قيمتها باستمرار وفقاً لمعدل فائدتها. لا يتم إنشاء أي رموز توكن جديدة على الإطلاق، الميزة تجميلية بشكل كامل."
         }
       }
     }
@@ -6795,7 +6800,7 @@
         "hide" : "إخفاء {{count}} مجموعة",
         "hiddenCollections" : "المجموعات المخفية",
         "hide_plural" : "إخفاء {{count}} مجموعة",
-        "empty" : "No Hidden collections to show",
+        "empty" : "ليس هناك مجموعات مخفية لعرضها",
         "alertHide" : "تم إخفاء 1 مجموعة. يمكنك إلغاء إخفائها في أي وقت من تصفية المعرض.",
         "alertHide_plural" : "تم إخفاء {{count}} مجموعة. يمكنك إلغاء إخفائها في أي وقت من تصفية المعرض."
       },
