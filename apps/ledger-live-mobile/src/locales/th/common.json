@@ -3465,6 +3465,7 @@
         "CTAButton" : "เพิ่มบัญชี"
       },
       "history" : {
+        "button" : "Go to history",
         "tab" : "ประวัติ",
         "disclaimer" : "ธุรกรรม Swap บนมือถือไม่ได้รับการซิงค์โครไนซ์กับ Ledger Live Desktop",
         "exportButton" : "ส่งออกการดำเนินการ",
