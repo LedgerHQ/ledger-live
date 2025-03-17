@@ -216,6 +216,7 @@ export type Features = CurrencyFeatures & {
   lldNanoSUpsellBanners: Feature_LldNanoSUpsellBanners;
   llmThai: DefaultFeature;
   lldThai: DefaultFeature;
+  lldSolanaNfts: DefaultFeature;
 };
 
 /**
