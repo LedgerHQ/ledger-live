@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { ParamListBase, RouteProp } from "@react-navigation/native";
-import { Account } from "@ledgerhq/types-live";
+import { Account, AccountLike } from "@ledgerhq/types-live";
 import { NavigatorName, ScreenName } from "~/const";
 import perFamilyAccountActions from "../../generated/accountActions";
 import { useSelector } from "react-redux";
@@ -22,7 +22,7 @@ export function useStakingDrawer({
   const walletState = useSelector(walletSelector);
 
   return useCallback(
-    (account: Account, parentAccount?: Account) => {
+    (account: AccountLike, parentAccount?: Account) => {
       if (alwaysShowNoFunds) {
         // get funds to stake with
         navigation.navigate(NavigatorName.Base, {
@@ -40,9 +40,15 @@ export function useStakingDrawer({
         return;
       }
 
+      const family =
+        account.type === "TokenAccount"
+          ? account?.token?.parentCurrency?.family
+          : account?.currency?.family;
       // @ts-expect-error issue in typing
-      const decorators = perFamilyAccountActions[account?.currency?.family];
+      const decorators = perFamilyAccountActions[family];
+
       // get the stake flow for the specific currency
+
       const familySpecificMainActions =
         (decorators &&
           decorators.getMainActions &&
