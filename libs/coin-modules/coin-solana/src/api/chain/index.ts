@@ -141,7 +141,7 @@ export function getChainAPI(
     if (!_connection) {
       _connection = new Connection(config.endpoint, {
         ...(fetchMiddleware ? { fetchMiddleware } : {}),
-        fetch: ky,
+        fetch: ky as typeof fetch, // Type cast for jest test having an issue with the type
         commitment: "finalized",
         confirmTransactionInitialTimeout: getEnv("SOLANA_TX_CONFIRMATION_TIMEOUT") || 0,
       });
