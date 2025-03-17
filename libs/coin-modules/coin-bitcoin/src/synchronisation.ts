@@ -11,7 +11,7 @@ import {
   isNativeSegwitDerivationMode,
   isTaprootDerivationMode,
 } from "@ledgerhq/coin-framework/derivation";
-import { BitcoinAccount, BitcoinOutput } from "./types";
+import { BitcoinAccount, BitcoinOutput, BtcOperation } from "./types";
 import { perCoinLogic } from "./logic";
 import wallet from "./wallet-btc";
 import { mapTxToOperations } from "./logic";
@@ -52,11 +52,47 @@ const fromWalletUtxo = (utxo: WalletOutput, changeAddresses: Set<string>): Bitco
   };
 };
 
+const markReplacements = (operations: BtcOperation[]): BtcOperation[] => {
+  const txByInput = new Map<string, BtcOperation>();
+
+  for (const op of operations) {
+    if (op.extra && "inputs" in op.extra && Array.isArray(op.extra.inputs)) {
+      // debugger;
+      for (const input of op.extra.inputs) {
+        if (input.startsWith("0000000000000000000000000000000000000000000000000000000000000000")){
+          // NOTE: coinbase tx, ignoring replacement
+          continue;
+        }
+        const existingOp = txByInput.get(input);
+        if (existingOp) {
+          // Ensure both transactions have an `extra` field initialized
+          if (!existingOp.extra) existingOp.extra = {};
+          if (!op.extra) op.extra = {};
+
+          // Determine which transaction is newer (replacement)
+          if (new Date(op.date) > new Date(existingOp.date)) {
+            op.extra.replaces = existingOp.hash; // New tx replaces old one
+            existingOp.extra.replacedBy = op.hash; // Old tx was replaced
+          } else if (existingOp.hash !== op.hash) {
+            existingOp.extra.replaces = op.hash; // Old tx replaces new one (unexpected case)
+            op.extra.replacedBy = existingOp.hash; // New tx was replaced (unexpected case)
+          }
+        }
+        // Store the most recent transaction for the given input
+        txByInput.set(input, op);
+      }
+    }
+  }
+  // debugger;
+  return operations;
+};
+
 // wallet-btc limitation: returns all transactions twice (for each side of the tx)
 // so we need to deduplicate them...
-const deduplicateOperations = (operations: (Operation | undefined)[]): Operation[] => {
+// NOTE: maybe improve here?
+const deduplicateOperations = (operations: (BtcOperation | undefined)[]): BtcOperation[] => {
   const seen = new Set();
-  const out: Operation[] = [];
+  const out: BtcOperation[] = [];
   let j = 0;
 
   for (const operation of operations) {
@@ -114,13 +150,14 @@ export function makeGetAccountShape(signerContext: SignerContext): GetAccountSha
         currency,
       ));
 
-    const oldOperations = initialAccount?.operations || [];
+    const oldOperations = (initialAccount?.operations || []) as BtcOperation[];
     const currentBlock = await walletAccount.xpub.explorer.getCurrentBlock();
 
     const blockHeight = currentBlock?.height || 0;
     await wallet.syncAccount(walletAccount, blockHeight);
 
     const balance = await wallet.getAccountBalance(walletAccount);
+    // NOTE: why are those txs considered new?
     const { txs: transactions } = await wallet.getAccountTransactions(walletAccount);
 
     const accountAddresses: Set<string> = new Set<string>();
@@ -138,7 +175,9 @@ export function makeGetAccountShape(signerContext: SignerContext): GetAccountSha
       .flat();
 
     const newUniqueOperations = deduplicateOperations(newOperations);
-    const operations = mergeOps(oldOperations, newUniqueOperations);
+    const oldOperationsPending = oldOperations.filter(op => (op.blockHeight === null || op.blockHeight === undefined));
+    const checkIfReplacedOperations = markReplacements([...newUniqueOperations, ...oldOperationsPending]);
+    const operations = mergeOps(oldOperations, checkIfReplacedOperations);
 
     const rawUtxos = await wallet.getAccountUnspentUtxos(walletAccount);
     const utxos = rawUtxos.map(utxo => fromWalletUtxo(utxo, changeAddresses));
@@ -156,6 +195,7 @@ export function makeGetAccountShape(signerContext: SignerContext): GetAccountSha
       bitcoinResources: {
         utxos,
         walletAccount,
+        storages: wallet.storages
       },
     };
   };
@@ -203,6 +243,7 @@ export const postSync = (initial: BitcoinAccount, synced: BitcoinAccount) => {
   if (perCoin) {
     const { postBuildBitcoinResources, syncReplaceAddress } = perCoin;
 
+    // NOTE: unused, can remove?
     if (postBuildBitcoinResources) {
       syncedBtc.bitcoinResources = postBuildBitcoinResources(syncedBtc, syncedBtc.bitcoinResources);
     }
