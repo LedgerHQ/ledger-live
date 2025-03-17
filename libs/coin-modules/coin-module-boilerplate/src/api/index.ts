@@ -11,8 +11,9 @@ import {
   listOperations,
 } from "../common-logic";
 import BigNumber from "bignumber.js";
+import { BoilerplateToken } from "../types";
 
-export function createApi(config: BoilerplateConfig): Api {
+export function createApi(config: BoilerplateConfig): Api<BoilerplateToken> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {

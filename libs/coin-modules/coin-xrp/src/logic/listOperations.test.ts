@@ -2,6 +2,7 @@ import { assert } from "console";
 import { listOperations } from "./listOperations";
 import { RIPPLE_EPOCH } from "./utils";
 import { Marker } from "../network/types";
+import { Operation } from "@ledgerhq/coin-framework/api/types";
 
 const maxHeight = 2;
 const minHeight = 1;
@@ -215,20 +216,24 @@ describe("listOperations", () => {
         expectedType === "IN" ? BigInt(deliveredAmount) : BigInt(deliveredAmount + fee);
       expect(results).toEqual([
         {
-          hash: "HASH_VALUE",
-          address,
-          type: "Payment",
-          simpleType: expectedType,
+          operationIndex: 0,
+          tx: {
+            fees: BigInt(10),
+            hash: "HASH_VALUE",
+            block: {
+              hash: "HASH_VALUE_BLOCK",
+              height: 1,
+              time: new Date("2000-01-01T00:00:01Z"),
+            },
+            date: new Date(1000000 + RIPPLE_EPOCH * 1000),
+          },
+          type: expectedType,
           value: expectedValue,
-          fee: BigInt(10),
-          blockHeight: 1,
-          blockHash: "HASH_VALUE_BLOCK",
-          blockTime: new Date("2000-01-01T00:00:01Z"),
           senders: [opSender],
           recipients: [opDestination],
-          date: new Date(1000000 + RIPPLE_EPOCH * 1000),
-          transactionSequenceNumber: 1,
           details: {
+            sequence: 1,
+            xrpTxType: "Payment",
             memos: [
               {
                 type: "687474703a2f2f6578616d706c652e636f6d2f6d656d6f2f67656e65726963",
@@ -238,39 +243,49 @@ describe("listOperations", () => {
           },
         },
         {
-          hash: "HASH_VALUE",
-          address,
-          type: "Payment",
-          simpleType: expectedType,
+          operationIndex: 0,
+          tx: {
+            hash: "HASH_VALUE",
+            fees: BigInt(10),
+            date: new Date(1000000 + RIPPLE_EPOCH * 1000),
+            block: {
+              hash: "HASH_VALUE_BLOCK",
+              height: 1,
+              time: new Date("2000-01-01T00:00:01Z"),
+            },
+          },
+          type: expectedType,
           value: expectedValue,
-          fee: BigInt(10),
-          blockHeight: 1,
-          blockHash: "HASH_VALUE_BLOCK",
-          blockTime: new Date("2000-01-01T00:00:01Z"),
           senders: [opSender],
           recipients: [opDestination],
-          date: new Date(1000000 + RIPPLE_EPOCH * 1000),
-          transactionSequenceNumber: 1,
           details: {
+            sequence: 1,
             destinationTag: 509555,
+            xrpTxType: "Payment",
           },
         },
         {
-          hash: "HASH_VALUE",
-          address,
-          type: "Payment",
-          simpleType: expectedType,
+          tx: {
+            hash: "HASH_VALUE",
+            fees: BigInt(10),
+            block: {
+              hash: "HASH_VALUE_BLOCK",
+              height: 1,
+              time: new Date("2000-01-01T00:00:01Z"),
+            },
+            date: new Date(1000000 + RIPPLE_EPOCH * 1000),
+          },
+          details: {
+            sequence: 1,
+            xrpTxType: "Payment",
+          },
+          type: expectedType,
           value: expectedValue,
-          fee: BigInt(10),
-          blockHeight: 1,
-          blockHash: "HASH_VALUE_BLOCK",
-          blockTime: new Date("2000-01-01T00:00:01Z"),
           senders: [opSender],
           recipients: [opDestination],
-          date: new Date(1000000 + RIPPLE_EPOCH * 1000),
-          transactionSequenceNumber: 1,
+          operationIndex: 0,
         },
-      ]);
+      ] satisfies Operation<void>[]);
     },
   );
 });

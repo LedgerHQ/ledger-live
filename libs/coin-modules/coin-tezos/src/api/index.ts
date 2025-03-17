@@ -19,7 +19,7 @@ import {
 import api from "../network/tzkt";
 import { log } from "@ledgerhq/logs";
 
-export function createApi(config: TezosConfig): Api {
+export function createApi(config: TezosConfig): Api<void> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
@@ -74,7 +74,7 @@ type PaginationState = {
   readonly minHeight: number;
   continueIterations: boolean;
   nextCursor?: string;
-  accumulator: Operation[];
+  accumulator: Operation<void>[];
 };
 
 async function fetchNextPage(address: string, state: PaginationState): Promise<PaginationState> {
@@ -103,7 +103,7 @@ async function fetchNextPage(address: string, state: PaginationState): Promise<P
 async function operationsFromHeight(
   address: string,
   start: number,
-): Promise<[Operation[], string]> {
+): Promise<[Operation<void>[], string]> {
   const firstState: PaginationState = {
     pageSize: 200,
     maxIterations: 10,
@@ -123,6 +123,6 @@ async function operationsFromHeight(
 async function operations(
   address: string,
   { minHeight }: Pagination,
-): Promise<[Operation[], string]> {
+): Promise<[Operation<void>[], string]> {
   return operationsFromHeight(address, minHeight);
 }
