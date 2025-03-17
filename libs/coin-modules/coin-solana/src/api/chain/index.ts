@@ -111,13 +111,17 @@ export type ChainAPI = Readonly<{
 }>;
 
 // Naive mode, allow us to filter in sentry all this error coming from Sol RPC node
-const remapErrors = (e: Error) => {
-  throw new NetworkError(e?.message);
+const remapErrors = (e: unknown) => {
+  throw new NetworkError(e instanceof Error ? e.message : "Unknown Solana error");
 };
 
 const remapErrorsWithRetry = <P extends Promise<T>, T>(callback: () => P, times = 3) => {
-  return (e: Error): T | Promise<T> => {
-    if (times > 0 && e.message.includes("Failed to query long-term storage; please try again")) {
+  return (e: unknown): T | Promise<T> => {
+    if (
+      times > 0 &&
+      e instanceof Error &&
+      e.message.includes("Failed to query long-term storage; please try again")
+    ) {
       return callback().catch(remapErrorsWithRetry(callback, times - 1));
     }
     return remapErrors(e);
