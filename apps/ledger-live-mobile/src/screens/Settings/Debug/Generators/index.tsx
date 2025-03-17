@@ -8,7 +8,6 @@ import GenerateMockAccounts from "./GenerateMockAccounts";
 import GenerateMockAccountsNft from "./GenerateMockAccountsNFTs";
 import ImportBridgeStreamData from "./ImportBridgeStreamData";
 import GenerateMockAccount from "./GenerateMockAccountsSelect";
-import GenerateAnnouncement from "./GenerateAnnouncementMockData";
 import SettingsNavigationScrollView from "../../SettingsNavigationScrollView";
 import ToggleServiceStatusIncident from "./ToggleServiceStatus";
 import SettingsRow from "~/components/SettingsRow";
@@ -95,7 +94,6 @@ export default function Generators() {
         desc="Replace existing accounts with 10 mock accounts with NFTs."
         count={10}
       />
-      <GenerateAnnouncement title="Mock a new announcement" />
       {getEnv("MOCK") ? <ToggleServiceStatusIncident /> : null}
       <ImportBridgeStreamData
         title="Import .env BRIDGESTREAM_DATA"
