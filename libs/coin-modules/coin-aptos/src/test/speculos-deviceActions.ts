@@ -10,7 +10,7 @@ export const acceptTransaction: DeviceAction<Transaction, State<Transaction>> = 
       button: SpeculosButton.RIGHT,
     },
     {
-      title: "Transaction",
+      title: "Transaction Type",
       button: SpeculosButton.RIGHT,
     },
     {
@@ -18,19 +18,15 @@ export const acceptTransaction: DeviceAction<Transaction, State<Transaction>> = 
       button: SpeculosButton.RIGHT,
     },
     {
-      title: "Coin Type",
-      button: SpeculosButton.RIGHT,
-    },
-    {
-      title: "Receiver (1/2)",
-      button: SpeculosButton.RIGHT,
-    },
-    {
-      title: "Receiver (2/2)",
-      button: SpeculosButton.RIGHT,
-    },
-    {
       title: "Amount",
+      button: SpeculosButton.RIGHT,
+    },
+    {
+      title: "To (1/2)",
+      button: SpeculosButton.RIGHT,
+    },
+    {
+      title: "To (2/2)",
       button: SpeculosButton.RIGHT,
     },
     {
@@ -62,23 +58,15 @@ export const acceptTokenTransaction: DeviceAction<
       button: SpeculosButton.RIGHT,
     },
     {
-      title: "Coin Type (1/2)",
-      button: SpeculosButton.RIGHT,
-    },
-    {
-      title: "Coin Type (2/2)",
-      button: SpeculosButton.RIGHT,
-    },
-    {
-      title: "Receiver (1/2)",
-      button: SpeculosButton.RIGHT,
-    },
-    {
-      title: "Receiver (2/2)",
-      button: SpeculosButton.RIGHT,
-    },
-    {
       title: "Amount",
+      button: SpeculosButton.RIGHT,
+    },
+    {
+      title: "To (1/2)",
+      button: SpeculosButton.RIGHT,
+    },
+    {
+      title: "To (2/2)",
       button: SpeculosButton.RIGHT,
     },
     {

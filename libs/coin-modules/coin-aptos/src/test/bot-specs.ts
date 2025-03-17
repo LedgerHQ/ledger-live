@@ -18,6 +18,8 @@ const aptosSpecs: AppSpec<Transaction> = {
   appQuery: {
     model: DeviceModelId.nanoSP,
     appName: "Aptos",
+    appVersion: "0.8.11",
+    firmware: "1.3.2",
   },
   genericDeviceAction: acceptTransaction,
   testTimeout: 6 * 60 * 1000,
@@ -96,12 +98,11 @@ const aptosSpecs: AppSpec<Transaction> = {
         const senderTokenAcc = findTokenSubAccountWithBalance(account);
         invariant(senderTokenAcc, "Sender token account with available balance not found");
 
-        const token = senderTokenAcc.token;
-        const siblingWithoutToken = siblings.find(acc => !findTokenSubAccount(acc, token.id));
-        invariant(siblingWithoutToken, `Recipient without ${token.ticker} ATA not found`);
+        const receiverTokenAcc = siblings.find(acc => findTokenSubAccountWithBalance(acc));
+        invariant(receiverTokenAcc, "Recipient not found");
 
-        const amount = senderTokenAcc.balance.div(1.9 + 0.2 * Math.random()).integerValue();
-        const recipient = siblingWithoutToken.freshAddress;
+        const amount = senderTokenAcc.spendableBalance.div(2).integerValue();
+        const recipient = receiverTokenAcc.freshAddress;
         const transaction = bridge.createTransaction(account);
         const subAccountId = senderTokenAcc.id;
 
@@ -121,12 +122,6 @@ function findTokenSubAccountWithBalance(account: Account) {
   return account.subAccounts?.find(acc => acc.type === "TokenAccount" && acc.balance.gt(0)) as
     | TokenAccount
     | undefined;
-}
-
-function findTokenSubAccount(account: Account, tokenId: string) {
-  return account.subAccounts?.find(
-    acc => acc.type === "TokenAccount" && acc.token.id === tokenId,
-  ) as TokenAccount | undefined;
 }
 
 function expectTokenAccountCorrectBalanceChange({
