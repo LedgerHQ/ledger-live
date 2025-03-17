@@ -1,6 +1,8 @@
 import Reactotron from "reactotron-react-native";
 import { reactotronRedux } from "reactotron-redux";
 
+Reactotron.clear();
+
 const reactotron = Reactotron.configure({ name: "LLM Debug" })
   .useReactNative({
     asyncStorage: { ignore: ["secret"] },
