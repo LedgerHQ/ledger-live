@@ -39,6 +39,10 @@ export const supportedLocales: LocaleKeys[] = Config.LEDGER_DEBUG_ALL_LANGS
   ? localeIds
   : ["en", "fr", "es", "ru", "zh", "de", "tr", "ja", "ko", "pt", "th"];
 
+export type LanguageId = (typeof supportedLocales)[number];
+
+export type LanguageMap<T = string> = { [key in LanguageId]: T };
+
 export type Locale = keyof typeof languages;
 
 /**

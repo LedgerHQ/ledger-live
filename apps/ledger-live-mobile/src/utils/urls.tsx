@@ -174,7 +174,7 @@ export const urls = {
   resources: {
     gettingStarted:
       "https://www.ledger.com/start?utm_source=ledger_live&utm_medium=self_referral&utm_content=help_mobile",
-    helpCenter: "https://support.ledger.com/?redirect=false",
+    helpCenter: "https://support.ledger.com",
     ledgerAcademy:
       "https://www.ledger.com/academy/?utm_source=ledger_live&utm_medium=self_referral&utm_content=help_mobile",
     facebook: "https://facebook.com/Ledger",
