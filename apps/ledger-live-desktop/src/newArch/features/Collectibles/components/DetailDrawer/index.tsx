@@ -120,7 +120,7 @@ const DetailDrawerComponent: React.FC<DetailDrawerProps> & {
     <SideDrawer
       withPaddingTop
       isOpen={isOpened}
-      direction={"left"}
+      direction="left"
       onRequestClose={handleRequestClose}
       forceDisableFocusTrap
     >
