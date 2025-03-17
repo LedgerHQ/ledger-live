@@ -440,7 +440,7 @@
     },
     "wrongDevice" : {
       "title" : "Ledger Nano S™ 与 {{provider}} 不兼容",
-      "description" : "Ledger Nano S 与 {{provider}} 不兼容。您可以使用 Ledger Nano S Plus、Ledger Nano X、Ledger Stax 或 Ledger Flex 通过 Ledger Live 体验 {{provider}} 的跨链互换",
+      "description" : "Ledger Nano S™ is not compatible with {{provider}}. You can use Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™, or Ledger Flex™ to experience cross-chain swaps on {{provider}} via Ledger Live",
       "cta" : "浏览兼容设备",
       "changeProvider" : "使用其他提供商进行互换"
     },
@@ -449,8 +449,8 @@
       "ton_description" : "要互换 TON，请使用任何其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
       "spl_tokens_title" : "Ledger Nano S™ 不支持互换 Solana 代币",
       "spl_tokens_description" : "要互换 Solana 代币，请使用任何其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
-      "sui_tokens_title" : "Ledger Nano S™ does not support swapping Sui tokens",
-      "sui_tokens_description" : "To swap Sui tokens, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+      "sui_tokens_title" : "Ledger Nano S™ 不支持互换 Sui 代币",
+      "sui_tokens_description" : "要互换 Sui 代币，请使用任何其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
       "near_title" : "Ledger Nano S™ 不支持互换 Near",
       "near_description" : "要互换 Near，请使用其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
       "ada_title" : "Ledger Nano S™ 不支持互换 Cardano",
@@ -459,12 +459,12 @@
       "apt_description" : "要互换 Aptos，请使用其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
       "cosmos_title" : "Ledger Nano S™ 不支持互换 Cosmos",
       "cosmos_description" : "要互换 Cosmos，请使用其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
-      "osmo_title" : "Ledger Nano S™ does not support swapping Osmosis",
-      "osmo_description" : "To swap Osmosis, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
-      "dydx_title" : "Ledger Nano S™ does not support swapping dYdX",
-      "dydx_description" : "To swap dYdX, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
-      "sui_title" : "Ledger Nano S™ does not support swapping Sui",
-      "sui_description" : "To swap Sui, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
+      "osmo_title" : "Ledger Nano S™ 不支持互换 Osmosis",
+      "osmo_description" : "要互换 Osmosis，请使用其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
+      "dydx_title" : "Ledger Nano S™ 不支持互换 dYdX",
+      "dydx_description" : "要互换 dYdX，请使用其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
+      "sui_title" : "Ledger Nano S™ 不支持互换 Sui",
+      "sui_description" : "要互换 Sui，请使用任何其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。"
     },
     "providers" : {
       "title" : "选择一个供应方来互换加密货币",
@@ -775,6 +775,10 @@
         "description3" : "此集成由 {{team}} 与 Ledger 协作实施。",
         "description3Link" : "此集成由 <1><0>{{team}}</0></1> 与 Ledger 协作实施"
       }
+    },
+    "migrationBanner" : {
+      "title" : "{{from}} 正在迁移至 {{to}}。请点击此<0>链接</0>了解详情，如需帮助，请联系客服。",
+      "contactSupport" : "联系客服"
     },
     "featureUnavailable" : {
       "title" : "以下功能暂不可用：{{feature}}。如需了解更多信息，请联系 {{support}}",
@@ -1740,7 +1744,7 @@
     "seeTokens" : "显示代币 ({{tokenCount}})",
     "hideTokens" : "隐藏代币 ({{tokenCount}})",
     "countTooltip" : "1 枚代币",
-    "countTooltip_plural" : "{{count}} 枚代币",
+    "countTooltip_other" : "{{nbCount}} 枚代币",
     "algorand" : {
       "title" : "ASA (资产)",
       "cta" : "添加 ASA",
@@ -1763,7 +1767,7 @@
     "seeSubAccounts" : "显示子账户 ({{tokenCount}})",
     "hideSubAccounts" : "隐藏子账户 ({{tokenCount}})",
     "countTooltip" : "1 个子账户",
-    "countTooltip_plural" : "{{count}} 个子账户"
+    "countTooltip_other" : "{{nbCount}} 个子账户"
   },
   "addAccounts" : {
     "title" : "添加账户",
@@ -6991,55 +6995,14 @@
     }
   },
   "lnsUpsell" : {
-    "banner" : {
-      "manager" : {
-        "optIn" : {
-          "title" : "现在就是升级的好时机",
-          "description" : "升级到我们的最新设备，立享 <0>{{discount}}% 折扣优惠</0>，加强安全保护，享受顺畅体验。",
-          "cta" : "升级我的钱包",
-          "linkText" : "了解更多"
-        },
-        "optOut" : {
-          "title" : "现在就是升级的好时机",
-          "description" : "升级到我们的最新设备，立享 <0>{{discount}}% 折扣优惠</0>，加强安全保护，享受顺畅体验。",
-          "cta" : "升级我的钱包",
-          "linkText" : "了解更多"
-        }
-      },
-      "accounts" : {
-        "optIn" : {
-          "title" : "现在就是升级的好时机",
-          "description" : "Ledger Nano S 更新活动即将结束。升级到我们的最新设备，立享 <0>{{discount}}% 折扣优惠</0>。",
-          "cta" : "升级我的钱包",
-          "linkText" : "了解更多"
-        },
-        "optOut" : {
-          "title" : "现在就是升级的好时机",
-          "description" : "Ledger Nano S 更新活动即将结束。升级到我们的最新设备，立享 <0>{{discount}}% 折扣优惠</0>。",
-          "cta" : "升级我的钱包",
-          "linkText" : "了解更多"
-        }
-      },
-      "portfolio" : {
-        "optOut" : {
-          "title" : "现在就是升级的好时机",
-          "description" : "升级到我们的最新设备，立享 <0>{{discount}}% 折扣优惠</0>，加强安全保护，享受顺畅体验。",
-          "cta" : "升级我的钱包",
-          "linkText" : "了解更多"
-        }
-      },
-      "notifications" : {
-        "optIn" : {
-          "description" : "更新活动即将结束。立即升级，享受顺畅体验，更有 {{discount}}% 折扣优惠。",
-          "cta" : "升级我的钱包",
-          "linkText" : "了解更多"
-        },
-        "optOut" : {
-          "description" : "更新活动即将结束。立即升级，享受顺畅体验，更有 {{discount}}% 折扣优惠。",
-          "cta" : "升级我的钱包",
-          "linkText" : "了解更多"
-        }
-      }
+    "opted_in" : {
+      "title" : "内存有限，体验受限",
+      "description" : "将您的 Ledger Nano S 升级到 Ledger Flex 等新款 Ledger 设备，即可享受<0>省 {{discount}}% 专属折扣</>，解锁更多内存、全新功能和最新增强安全保护。",
+      "cta" : "升级 Ledger 设备"
+    },
+    "opted_out" : {
+      "description" : "Ledger Nano S 内存有限，影响您访问最新功能、区块链变更和增强安全保护。为保证长期使用体验，请升级到新款 Ledger 设备。",
+      "cta" : "了解更多"
     }
   }
 }
