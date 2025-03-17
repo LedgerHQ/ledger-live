@@ -2,7 +2,15 @@ import React, { useCallback, useState } from "react";
 import { BaseInput } from "..";
 import { type InputProps as BaseInputType } from "../BaseInput/index";
 import styled, { useTheme } from "styled-components/native";
-import { StyleProp, View, ViewProps, ViewStyle, TextInput } from "react-native";
+import {
+  StyleProp,
+  View,
+  ViewProps,
+  ViewStyle,
+  TextInput,
+  NativeSyntheticEvent,
+  TextInputContentSizeChangeEventData,
+} from "react-native";
 
 import { inputTextColor, inputStatusColors, getInputStatus } from "./inputTextColor";
 import { useAnimatedInputFocus } from "./useAnimatedInputFocus";
@@ -23,8 +31,8 @@ const InputContainer = styled(View)<InputContainerProps>`
   box-sizing: border-box;
 `;
 
-const [height, setHeight] = useState<number>(56);
-const lineHeight = 18;
+const LARGE_MODE_LINE_HEIGHT = 18;
+const HEIGHT = 56;
 
 const AnimatedInput = (
   { style = { width: "100%" }, ...textInputProps }: AnimatedInputProps,
@@ -40,6 +48,8 @@ const AnimatedInput = (
     ...rest
   } = textInputProps;
 
+  const [height, setHeight] = useState<number>(HEIGHT);
+
   const theme = useTheme();
   const { onFocus, onBlur, focused } = useAnimatedInputFocus({
     onFocusCallback,
@@ -52,12 +62,12 @@ const AnimatedInput = (
   const displayClearCross = inputStatus === "error" || inputStatus === "focused";
 
   const handleContentSizeChange = useCallback(
-    (event: { nativeEvent: { contentSize: { height: number } } }) => {
+    (event: NativeSyntheticEvent<TextInputContentSizeChangeEventData>) => {
       const contentHeight = event.nativeEvent.contentSize.height;
-      const currentLineCount = Math.round(contentHeight / lineHeight);
+      const currentLineCount = Math.round(contentHeight / LARGE_MODE_LINE_HEIGHT);
 
       if (currentLineCount !== previousLineCount) {
-        const newHeight = 56 + (currentLineCount - 1) * lineHeight;
+        const newHeight = HEIGHT + (currentLineCount - 1) * LARGE_MODE_LINE_HEIGHT;
         setHeight(newHeight);
         setPreviousLineCount(currentLineCount);
       }
@@ -85,7 +95,7 @@ const AnimatedInput = (
           height: inputStatus !== "error" ? height : 48,
           paddingTop: largeMode ? 14 : 0,
           paddingBottom: largeMode ? 14 : 0,
-          marginBottom: 40,
+          marginBottom: largeMode ? 40 : 0,
         }}
         baseInputContainerStyle={{
           paddingRight: displayClearCross ? (largeMode ? 20 : 8) : 14,
