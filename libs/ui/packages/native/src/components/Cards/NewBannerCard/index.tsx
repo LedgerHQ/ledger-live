@@ -37,7 +37,7 @@ export default function NewBannerCard({
       <Flex
         flexDirection="row"
         alignItems="center"
-        bg={theme === "dark" ? "opacityDefault.c05" : "neutral.c00"}
+        bg={theme === "dark" ? "opacityDefault.c05" : "background.default"}
         p={p}
         borderRadius={borderRadius}
         {...styledProps}

@@ -1,10 +1,11 @@
 import React from "react";
+import { useTheme } from "styled-components/native";
 import AccounstListView from "LLM/features/Accounts/components/AccountsListView";
 import { LNSUpsellBanner } from "LLM/features/LNSUpsell";
 import { ScreenName } from "~/const";
 import { ReactNavigationPerformanceView } from "@shopify/react-native-performance-navigation";
 import SafeAreaView from "~/components/SafeAreaView";
-import { Flex, Text } from "@ledgerhq/native-ui";
+import { Box, Flex, Text } from "@ledgerhq/native-ui";
 import AddAccountButton from "LLM/features/Accounts/components/AddAccountButton";
 import { useTranslation } from "react-i18next";
 import { TrackScreen } from "~/analytics";
@@ -38,6 +39,7 @@ function View({
   onClick,
 }: ViewProps) {
   const { t } = useTranslation();
+  const { colors } = useTheme();
 
   return (
     <>
@@ -78,7 +80,19 @@ function View({
               specificAccounts={specificAccounts}
             />
           )}
-          <LNSUpsellBanner location="accounts" mb={3} />
+          <Box
+            backgroundColor={colors.neutral.c00}
+            style={[
+              {
+                shadowOffset: { width: 0, height: -16 },
+                shadowColor: colors.neutral.c00,
+                shadowOpacity: 1,
+                shadowRadius: 5,
+              },
+            ]}
+          >
+            <LNSUpsellBanner location="accounts" mt={2} mb={3} />
+          </Box>
         </SafeAreaView>
       </ReactNavigationPerformanceView>
     </>

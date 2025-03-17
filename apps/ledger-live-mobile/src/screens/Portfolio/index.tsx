@@ -114,7 +114,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
           <FirmwareUpdateBanner onBackFromUpdate={onBackFromUpdate} />
         </Flex>
         <PortfolioGraphCard showAssets={showAssets} key="PortfolioGraphCard" />
-        {isLNSUpsellBannerShown && <LNSUpsellBanner location="wallet" mt={7} />}
+        {isLNSUpsellBannerShown && <LNSUpsellBanner location="wallet" mx={6} mt={7} />}
         {!isLNSUpsellBannerShown && showAssets ? (
           <ContentCardsLocation
             key="contentCardsLocationPortfolio"
