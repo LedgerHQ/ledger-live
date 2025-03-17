@@ -1,6 +1,6 @@
 import React, { useMemo, useState, memo, useCallback } from "react";
 import styled from "styled-components";
-import { useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import { SearchInput } from "@ledgerhq/react-ui";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { CryptoOrTokenCurrency, Currency } from "@ledgerhq/types-cryptoassets";
@@ -13,6 +13,9 @@ import { CurrencyList } from "./CurrencyList";
 import SelectAccountDrawer from "./SelectAccountDrawer";
 import { Observable } from "rxjs";
 import { getEnv } from "@ledgerhq/live-env";
+import { useSelector } from "react-redux";
+import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
+import ToggleButton from "~/renderer/components/ToggleButton";
 
 const options = {
   includeScore: false,
@@ -48,32 +51,64 @@ const HeaderContainer = styled.div`
   align-items: center;
   justify-content: center;
 `;
-export type SelectAccountAndCurrencyDrawerProps = {
-  onClose?: () => void;
-  currencies: CryptoOrTokenCurrency[];
-  onAccountSelected: (account: AccountLike, parentAccount?: Account) => void;
-  accounts$?: Observable<WalletAPIAccount[]>;
-};
+
+const ToggleContainer = styled.div`
+  padding: 0px 40px 16px 40px;
+  flex: 0 1 auto;
+`;
+
 const SearchInputContainer = styled.div`
   padding: 0px 40px 16px 40px;
   flex: 0 1 auto;
 `;
 
+const optionsToggle = [
+  {
+    value: "allCurrency",
+    label: <Trans i18nKey="drawers.selectCurrency.allCurrency" />,
+  },
+  {
+    value: "account",
+    label: <Trans i18nKey="drawers.selectCurrency.account" />,
+  },
+];
+
+export type SelectAccountAndCurrencyDrawerProps = {
+  onClose?: () => void;
+  currencies: CryptoOrTokenCurrency[];
+  onAccountSelected: (account: AccountLike, parentAccount?: Account) => void;
+  accounts$?: Observable<WalletAPIAccount[]>;
+  filteringAccount?: boolean;
+};
+
 function SelectAccountAndCurrencyDrawer(props: SelectAccountAndCurrencyDrawerProps) {
-  const { currencies, onAccountSelected, onClose, accounts$ } = props;
+  const { currencies, onAccountSelected, onClose, accounts$, filteringAccount } = props;
   const { t } = useTranslation();
   const [searchValue, setSearchValue] = useState<string>("");
+  const [filterWithAccounts, setFilterWithAccounts] = useState<string>("allCurrency");
+  const accounts = useSelector(flattenAccountsSelector);
 
   // sorting them by marketcap
   const sortedCurrencies = useCurrenciesByMarketcap(currencies);
 
-  // performing fuzzy search if there is a valid searchValue
+  // applying the toggle filter and fuzzy search if there is a valid searchValue
   const filteredCurrencies = useMemo(() => {
-    if (searchValue.length < 2) {
-      return sortedCurrencies;
+    let currenciesList = sortedCurrencies;
+    if (filterWithAccounts === "account") {
+      currenciesList = currenciesList.filter(currency =>
+        accounts.some(account => {
+          if ("currency" in account && account.currency.id === currency.id) return true;
+          if ("token" in account && account.token.id === currency.id) return true;
+          return false;
+        }),
+      );
     }
-    return fuzzySearch(sortedCurrencies, searchValue);
-  }, [searchValue, sortedCurrencies]);
+    if (searchValue.length >= 2) {
+      return fuzzySearch(currenciesList, searchValue);
+    }
+    return currenciesList;
+  }, [searchValue, sortedCurrencies, filterWithAccounts, accounts]);
+
   const handleCurrencySelected = useCallback(
     (currency: CryptoOrTokenCurrency) => {
       setDrawer(
@@ -118,6 +153,15 @@ function SelectAccountAndCurrencyDrawer(props: SelectAccountAndCurrencyDrawerPro
           {t("drawers.selectCurrency.title")}
         </Text>
       </HeaderContainer>
+      {filteringAccount ? (
+        <ToggleContainer>
+          <ToggleButton
+            onChange={value => setFilterWithAccounts(value)}
+            options={optionsToggle}
+            value={filterWithAccounts}
+          />
+        </ToggleContainer>
+      ) : null}
       <SelectorContent>
         <SearchInputContainer>
           <SearchInput
