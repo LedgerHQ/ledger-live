@@ -1,5 +1,6 @@
 import React from "react";
 import AccounstListView from "LLM/features/Accounts/components/AccountsListView";
+import { LNSUpsellBanner } from "LLM/features/LNSUpsell";
 import { ScreenName } from "~/const";
 import { ReactNavigationPerformanceView } from "@shopify/react-native-performance-navigation";
 import SafeAreaView from "~/components/SafeAreaView";
@@ -77,6 +78,7 @@ function View({
               specificAccounts={specificAccounts}
             />
           )}
+          <LNSUpsellBanner location="accounts" mb={3} />
         </SafeAreaView>
       </ReactNavigationPerformanceView>
     </>
