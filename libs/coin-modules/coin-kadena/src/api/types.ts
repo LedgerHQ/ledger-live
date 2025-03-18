@@ -29,10 +29,29 @@ export interface Block {
   hash: string;
 }
 
+export interface PageInfo {
+  endCursor: string;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+  startCursor: string;
+}
+
+export interface Connection<T> {
+  edges: { node: T }[];
+  pageInfo: PageInfo;
+  totalCount: number;
+}
+
+export interface Event {
+  name: string;
+  parameters: string;
+}
+
 export interface Transaction {
   result: {
     badResult: string;
     goodResult: string;
+    events: Connection<Event>;
   };
 }
 
@@ -52,25 +71,8 @@ export interface Transfer {
   transaction: Transaction;
 }
 
-export interface TransfersConnectionEdge {
-  node: Transfer;
-}
-
-export interface PageInfo {
-  endCursor: string;
-  hasNextPage: boolean;
-  hasPreviousPage: boolean;
-  startCursor: string;
-}
-
-export interface TransferConnection {
-  edges: TransfersConnectionEdge[];
-  pageInfo: PageInfo;
-  totalCount: number;
-}
-
 export interface GetTransfers {
-  transfers: TransferConnection;
+  transfers: Connection<Transfer>;
 }
 
 export interface ErrorResponse {

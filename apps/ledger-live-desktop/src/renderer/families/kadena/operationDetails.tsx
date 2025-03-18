@@ -30,7 +30,8 @@ const OperationDetailsExtra = ({
         <OpDetailsData>{operation.extra.receiverChainId}</OpDetailsData>
       </OpDetailsSection>
       {operation.extra.receiverChainId !== operation.extra.senderChainId &&
-      operation.type === "OUT" ? (
+      operation.type === "OUT" &&
+      !operation.extra.isCrossChainTransferFinished ? (
         <OpDetailsSection>
           <OpDetailsData
             style={{ display: "flex", flexDirection: "column", alignItems: "flex-end" }}

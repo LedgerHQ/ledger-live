@@ -9,9 +9,18 @@ import { Transfer } from "./api/types";
 import { KadenaOperation } from "./types";
 import { baseUnitToKda } from "./utils";
 
+/**
+ * Converts a public key to a Kadena address by prefixing it with 'k:'
+ */
 const getAddressFromPublicKey = (pubkey: string): string => {
   return `k:${pubkey}`;
 };
+
+interface CrossChainTransferParameters {
+  senderAccount: string;
+  receiverAccount: string;
+  receiverChainId: number;
+}
 
 export const getAccountShape: GetAccountShape = async info => {
   const { initialAccount, currency, rest = {}, derivationMode } = info;
@@ -117,13 +126,24 @@ const rawTxsToOps = (rawTxs: Transfer[], accountId: string, address: string): Ka
       const fee = new BigNumber(fee_op?.amount ?? 0);
       const sender =
         senderAccount && senderAccount !== "" ? senderAccount : crossChainTransfer?.senderAccount;
-      const recipient =
+      let recipient =
         receiverAccount && receiverAccount !== ""
           ? receiverAccount
           : crossChainTransfer?.receiverAccount;
-
+      let receiverChainId = crossChainTransfer?.chainId ?? chainId;
+      const isCrossChain =
+        crossChainTransfer !== null || (crossChainTransfer === null && !recipient);
+      const isFinished = Boolean(crossChainTransfer);
       const isSending = senderAccount === address;
       const type = isSending ? "OUT" : "IN";
+
+      if (isCrossChain && !isFinished) {
+        const crossChainTransferParameters = getCrossChainTransferStart(transaction_op);
+        if (crossChainTransferParameters) {
+          recipient = crossChainTransferParameters.receiverAccount;
+          receiverChainId = crossChainTransferParameters.receiverChainId;
+        }
+      }
 
       k_op.id = encodeOperationId(accountId, requestKey, type);
       k_op.hash = requestKey;
@@ -139,7 +159,8 @@ const rawTxsToOps = (rawTxs: Transfer[], accountId: string, address: string): Ka
       k_op.date = date;
       k_op.extra = {
         senderChainId: chainId,
-        receiverChainId: crossChainTransfer?.chainId ?? chainId,
+        receiverChainId: receiverChainId,
+        isCrossChainTransferFinished: isFinished,
       };
 
       ops.push(k_op);
@@ -147,4 +168,70 @@ const rawTxsToOps = (rawTxs: Transfer[], accountId: string, address: string): Ka
   }
 
   return ops;
+};
+
+/**
+ * Parses a Pact number value which can be a number, string or object with decimal/int properties
+ */
+const parsePactNumber = (value: number | string | object): number => {
+  if (typeof value === "number") return value;
+  if (
+    typeof value === "object" &&
+    "decimal" in value &&
+    typeof (value as any).decimal === "string"
+  ) {
+    return parseFloat((value as any).decimal);
+  }
+  if (typeof value === "object" && "int" in value && typeof (value as any).int === "string") {
+    return parseInt((value as any).int, 10);
+  }
+  throw Error(`Failed to parse Pact number: "${value}"`);
+};
+
+/**
+ * Checks if a transfer's sender matches the provided argument
+ */
+const matchSender = (transfer: Transfer, arg: number | string | object) => {
+  return transfer.senderAccount !== "" ? arg === transfer.senderAccount : true;
+};
+
+/**
+ * Checks if a transfer's receiver matches the provided argument
+ */
+const matchReceiver = (transfer: Transfer, arg: number | string | object) => {
+  return transfer.receiverAccount !== "" ? arg === transfer.receiverAccount : true;
+};
+
+/**
+ * Checks if a transfer's amount is less than or equal to the provided argument
+ */
+const matchAmount = (transfer: Transfer, arg: number | string | object) => {
+  return transfer.amount <= parsePactNumber(arg);
+};
+
+/**
+ * Extracts cross-chain transfer parameters from a transfer event if it exists
+ * Returns null if no cross-chain transfer is found
+ */
+const getCrossChainTransferStart = (transfer: Transfer): CrossChainTransferParameters | null => {
+  const match = transfer.transaction.result.events.edges.find(event => {
+    const parsedEvent = JSON.parse(event.node.parameters);
+    return (
+      event.node.name === `TRANSFER_XCHAIN` &&
+      matchSender(transfer, parsedEvent[0]) &&
+      matchReceiver(transfer, parsedEvent[1]) &&
+      matchAmount(transfer, parsedEvent[2])
+    );
+  });
+  if (!match) return null;
+  const parsedMatch = JSON.parse(match.node.parameters);
+  return {
+    receiverAccount: (transfer.receiverAccount ||
+      transfer.crossChainTransfer?.receiverAccount ||
+      parsedMatch[1]) as string,
+    senderAccount: (transfer.senderAccount ||
+      transfer.crossChainTransfer?.senderAccount ||
+      parsedMatch[0]) as string,
+    receiverChainId: parseInt(parsedMatch[3]),
+  };
 };

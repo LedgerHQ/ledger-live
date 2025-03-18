@@ -118,7 +118,15 @@ export const fetchTransactions = async (address: string): Promise<Transfer[]> =>
                 result {
                   ...on TransactionResult {
                     badResult,
-                    goodResult
+                    goodResult,
+                    events {
+                      edges {
+                        node {
+                          name
+                          parameters
+                        }
+                      }
+                    }
                   }
                 }
               }
