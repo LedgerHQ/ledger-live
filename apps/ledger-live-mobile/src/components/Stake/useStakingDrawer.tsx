@@ -53,9 +53,15 @@ export function useStakingDrawer({
         return;
       }
 
+      const family =
+        account.type === "TokenAccount"
+          ? account?.token?.parentCurrency?.family
+          : account?.currency?.family;
       // @ts-expect-error issue in typing
-      const decorators = perFamilyAccountActions[account?.currency?.family];
+      const decorators = perFamilyAccountActions[family];
+
       // get the stake flow for the specific currency
+
       const familySpecificMainActions =
         (decorators &&
           decorators.getMainActions &&

@@ -3465,6 +3465,7 @@
         "CTAButton": "Add account"
       },
       "history": {
+        "button": "Go to history",
         "tab": "History",
         "disclaimer": "Your swap mobile transactions are not synchronized with Ledger Live Desktop",
         "exportButton": "Export operations",
@@ -6753,7 +6754,7 @@
   "postOnboarding": {
     "hub": {
       "title": "Next up, use your {{productName}} to...",
-      "allDoneTitle": "You're all set! Keep going and explore your portfolio",
+      "areAllPostOnboardingActionsCompletedTitle": "You're all set! Keep going and explore your portfolio",
       "skip": "I’ll do this later",
       "viewWallet": "Explore my portfolio"
     },

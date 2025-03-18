@@ -6,6 +6,7 @@ import type {
   DeviceInfo,
   FirmwareUpdateContext,
   Operation,
+  SwapOperation,
 } from "@ledgerhq/types-live";
 import type { NavigatorScreenParams, ParamListBase } from "@react-navigation/native";
 // eslint-disable-next-line no-restricted-imports
@@ -336,6 +337,7 @@ export type BaseNavigatorStackParamList = {
   >;
   [NavigatorName.Assets]?: Partial<NavigatorScreenParams<AssetsNavigatorParamsList>>;
   [ScreenName.SwapHistory]: undefined;
+  [ScreenName.SwapPendingOperation]: { swapOperation: SwapOperation };
 };
 
 declare global {

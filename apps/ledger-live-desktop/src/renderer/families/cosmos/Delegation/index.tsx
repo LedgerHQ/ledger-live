@@ -29,6 +29,7 @@ import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import cosmosBase from "@ledgerhq/coin-cosmos/chain/cosmosBase";
+import { useHistory } from "react-router";
 
 const Wrapper = styled(Box).attrs(() => ({
   p: 3,
@@ -38,6 +39,7 @@ const Wrapper = styled(Box).attrs(() => ({
   align-items: center;
 `;
 const Delegation = ({ account }: { account: CosmosAccount }) => {
+  const history = useHistory();
   const dispatch = useDispatch();
   const { cosmosResources } = account;
   const {
@@ -55,37 +57,59 @@ const Delegation = ({ account }: { account: CosmosAccount }) => {
   const { validators } = useCosmosFamilyPreloadData(currencyId);
   const unit = useAccountUnit(account);
   const mappedUnbondings = mapUnbondings(unbondings, validators, unit);
+  const isCroAccount = account.type === "Account" && account.currency.id === "crypto_org";
+  const goToStakekit = useCallback(() => {
+    history.push({
+      pathname: "/platform/stakekit",
+      state: {
+        yieldId: "cronos-cro-native-staking",
+        accountId: account.id,
+        returnTo: `/account/${account.id}`,
+      },
+    });
+  }, [account.id, history]);
+
   const onEarnRewards = useCallback(() => {
-    dispatch(
-      openModal("MODAL_COSMOS_REWARDS_INFO", {
-        account,
-      }),
-    );
-  }, [account, dispatch]);
+    isCroAccount
+      ? goToStakekit()
+      : dispatch(
+          openModal("MODAL_COSMOS_REWARDS_INFO", {
+            account,
+          }),
+        );
+  }, [account, dispatch, isCroAccount, goToStakekit]);
+
   const onDelegate = useCallback(() => {
-    dispatch(
-      openModal("MODAL_COSMOS_DELEGATE", {
-        account,
-      }),
-    );
-  }, [account, dispatch]);
+    isCroAccount
+      ? goToStakekit()
+      : dispatch(
+          openModal("MODAL_COSMOS_DELEGATE", {
+            account,
+          }),
+        );
+  }, [account, dispatch, isCroAccount, goToStakekit]);
   const onClaimRewards = useCallback(() => {
-    dispatch(
-      openModal("MODAL_COSMOS_CLAIM_REWARDS", {
-        account,
-      }),
-    );
-  }, [account, dispatch]);
+    isCroAccount
+      ? goToStakekit()
+      : dispatch(
+          openModal("MODAL_COSMOS_CLAIM_REWARDS", {
+            account,
+          }),
+        );
+  }, [account, dispatch, isCroAccount, goToStakekit]);
+
   const onRedirect = useCallback(
     (validatorAddress: string, modalName: DelegationActionsModalName) => {
-      dispatch(
-        openModal(modalName, {
-          account,
-          validatorAddress,
-        }),
-      );
+      isCroAccount
+        ? goToStakekit()
+        : dispatch(
+            openModal(modalName, {
+              account,
+              validatorAddress,
+            }),
+          );
     },
-    [account, dispatch],
+    [account, dispatch, isCroAccount, goToStakekit],
   );
   const explorerView = getDefaultExplorerView(account.currency);
   const onExternalLink = useCallback(
@@ -168,6 +192,7 @@ const Delegation = ({ account }: { account: CosmosAccount }) => {
                 delegation={delegation}
                 onManageAction={onRedirect}
                 onExternalLink={onExternalLink}
+                isCroAccount={isCroAccount}
               />
             ))}
           </>

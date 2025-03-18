@@ -28,6 +28,8 @@ const moduleNameMapper = {
   "@polkadot/x-ws": "<rootDir>/__mocks__/x-ws.js",
 };
 
+const transformIncludePatterns = ["ky"];
+
 const commonConfig = {
   testEnvironment: "jsdom",
   globals: {
@@ -62,6 +64,7 @@ const commonConfig = {
   testEnvironmentOptions: {
     customExportConditions: [""],
   },
+  transformIgnorePatterns: [`node_modules/.pnpm/(?!(${transformIncludePatterns.join("|")}))`],
 };
 
 module.exports = {

@@ -2,7 +2,7 @@ import type { Api } from "@ledgerhq/coin-framework/api/index";
 import { createApi } from ".";
 
 describe("Polkadot Api", () => {
-  let module: Api;
+  let module: Api<void>;
   const address = "144HGaYrSdK3543bi26vT6Rd8Bg7pLPMipJNr2WLc3NuHgD2";
 
   beforeAll(() => {
@@ -47,7 +47,6 @@ describe("Polkadot Api", () => {
       // Then
       expect(tx.length).toBeGreaterThanOrEqual(1);
       tx.forEach(operation => {
-        expect(operation.address).toEqual(address);
         const isSenderOrReceipt =
           operation.senders.includes(address) || operation.recipients.includes(address);
         expect(isSenderOrReceipt).toBeTruthy();
@@ -59,7 +58,7 @@ describe("Polkadot Api", () => {
       const [tx, _] = await module.listOperations(address, { minHeight: 0 });
 
       // Then
-      const checkSet = new Set(tx.map(elt => elt.hash));
+      const checkSet = new Set(tx.map(elt => elt.tx.hash));
       expect(checkSet.size).toEqual(tx.length);
     });
   });

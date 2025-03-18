@@ -4,7 +4,7 @@ import { decode, encodeForSigning } from "ripple-binary-codec";
 import { sign } from "ripple-keypairs";
 
 describe("Xrp Api", () => {
-  let module: Api;
+  let module: Api<void>;
   const address = "rh1HPuRVsYYvThxG2Bs1MfjmrVC73S16Fb";
   const bigAddress = "rUxSkt6hQpWxXQwTNRUCYYRQ7BC2yRA3F8"; // An account with more that 4000 txs
   const emptyAddress = "rKtXXTVno77jhu6tto1MAXjepyuaKaLcqB"; // Account with no transaction (at the time of this writing)
@@ -36,7 +36,6 @@ describe("Xrp Api", () => {
       // Then
       expect(tx.length).toBe(200);
       tx.forEach(operation => {
-        expect(operation.address).toEqual(address);
         const isSenderOrReceipt =
           operation.senders.includes(address) || operation.recipients.includes(address);
         expect(isSenderOrReceipt).toBeTruthy();
@@ -45,18 +44,18 @@ describe("Xrp Api", () => {
 
     it("returns all operations", async () => {
       // When
-      const [tx, _] = await module.listOperations(bigAddress, { minHeight: 0 });
+      const [ops, _] = await module.listOperations(bigAddress, { minHeight: 0 });
       // Then
-      const checkSet = new Set(tx.map(elt => elt.hash));
-      expect(checkSet.size).toEqual(tx.length);
+      const checkSet = new Set(ops.map(elt => elt.tx.hash));
+      expect(checkSet.size).toEqual(ops.length);
       // the first transaction is returned
-      expect(tx[0].block.height).toEqual(73126713);
-      expect(tx[0].hash.toUpperCase).toEqual(
+      expect(ops[0].tx.block.height).toEqual(73126713);
+      expect(ops[0].tx.hash.toUpperCase).toEqual(
         "0FC3792449E5B1E431D45E3606017D10EC1FECC8EDF988A98E36B8FE0C33ACAE",
       );
       // 200 is the default XRP explorer hard limit,
       // so here we are checking that this limit is bypassed
-      expect(tx.length).toBeGreaterThan(200);
+      expect(ops.length).toBeGreaterThan(200);
     });
   });
 
