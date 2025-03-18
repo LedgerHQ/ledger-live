@@ -148,7 +148,7 @@ export default function Nominations(props: Props) {
   const { getRouteParamsForPlatformApp } = useStake();
   const walletState = useSelector(walletSelector);
   const onEarnRewards = useCallback(() => {
-    const { screen, params } = getRouteParamsForPlatformApp(account, walletState) ?? {
+    const { screen, params } = getRouteParamsForPlatformApp(account, walletState, mainAccount) ?? {
       screen: ScreenName.PlatformApp,
       params: {
         platform: "stakekit",
@@ -163,7 +163,7 @@ export default function Nominations(props: Props) {
       screen,
       params,
     });
-  }, [account, getRouteParamsForPlatformApp, onNavigate, walletState]);
+  }, [account, getRouteParamsForPlatformApp, mainAccount, onNavigate, walletState]);
 
   const onNominate = useCallback(() => {
     onNavigate({

@@ -14,7 +14,7 @@ import type { NoFundsNavigatorParamList } from "../RootNavigator/types/NoFundsNa
 import { StackNavigatorProps } from "../RootNavigator/types/helpers";
 import { Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
-import { getAccountCurrency, getMainAccount } from "@ledgerhq/coin-framework/lib/account/helpers";
+import { getAccountCurrency } from "@ledgerhq/coin-framework/lib/account/helpers";
 
 const useText = (
   entryPoint: "noFunds" | "getFunds",
@@ -58,7 +58,6 @@ export default function NoFunds({ route }: Props) {
   const { account, parentAccount, entryPoint } = route?.params; // TODO: All we need is the accountId, parentId, and currency. We should refactor this to pass only those serializable values.
   const navigation = useNavigation();
   const currency = getAccountCurrency(account);
-
 
   const { isCurrencyAvailable } = useRampCatalog();
 

@@ -9,16 +9,13 @@ import { liveAppContext as localLiveAppProviderContext } from "@ledgerhq/live-co
 import { LiveAppManifest, Loadable } from "@ledgerhq/live-common/platform/types";
 import { appendQueryParamsToDappURL } from "@ledgerhq/live-common/platform/utils/appendQueryParamsToDappURL";
 import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
-import { getAccountCurrency, isAccountEmpty } from "@ledgerhq/coin-framework/lib/account/helpers";
+import {
+  getAccountCurrency,
+  isAccountEmpty,
+  isTokenAccount,
+} from "@ledgerhq/coin-framework/lib/account/helpers";
 import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
 import { NavigatorName, ScreenName } from "~/const";
-import { EntryOf } from "~/types/helpers";
-import { NavigationParamsType } from "~/components/FabActions";
-
-import { useAnalytics } from "~/analytics";
-
-import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
-import type { StackNavigationProp } from "@react-navigation/stack";
 
 import { WalletState } from "@ledgerhq/live-wallet/store";
 
@@ -57,10 +54,6 @@ export function useStake() {
     (platformId: string) => {
       const localManifest = getLocalLiveAppManifestById(platformId);
       const remoteManifest = getRemoteLiveAppManifestById(platformId, remoteLiveAppRegistry);
-      console.log(`>> useStake() getManifest`, {
-        localManifest: !!localManifest,
-        remoteManifest: !!remoteManifest,
-      });
       const manifest: LiveAppManifest | undefined = remoteManifest || localManifest;
       return manifest;
     },
@@ -117,8 +110,7 @@ export function useStake() {
           },
         };
       }
-      const accountCurrencyId = getAccountCurrency(account)?.id;
-      const depositCurrencyId = accountCurrencyId; // || currencyId;
+      const depositCurrencyId = getAccountCurrency(account)?.id;
 
       if (!depositCurrencyId) {
         console.warn(">> No currencyId found for account. Cannot stake.");
@@ -135,22 +127,27 @@ export function useStake() {
         return null;
       }
 
-      // If we pass a customDappURL, it will be used instead of the one from the manifest, and may revert to dapp browser inside the Live App --> dapp browser logic. TODO: Check if we actually need it, or should just send params below.
-      // const customDappURL = appendQueryParamsToDappURL(
-      //   manifest,
-      //   getPartnerForCurrency(depositCurrencyId)?.queryParams,
-      // )?.toString();
+      const customPartnerParams = getPartnerForCurrency(depositCurrencyId)?.queryParams || {};
+      const isDappBrowser_deprecated =
+        manifest?.params && ("dappUrl" in manifest.params || "dappURL" in manifest.params);
+      const isDapp = "dapp" in manifest;
+      const isLiveApp = !isDapp && !isDappBrowser_deprecated;
+
+      const earningsAccountId = isTokenAccount(account) ? account.parentId : account.id;
+
+      const customDappURL = appendQueryParamsToDappURL(manifest, {
+        ...customPartnerParams,
+        ...(isLiveApp ? { accountId: walletApiAccount.id } : {}),
+      })?.toString();
 
       return {
         screen: ScreenName.PlatformApp,
         params: {
           platform: manifest.id,
           name: manifest.name,
-          accountId: walletApiAccount.id || account.id,
-          // TODO: check if we need it in params and dappURL? Does it depend on the manifest api version?
-          yieldId: getPartnerForCurrency(depositCurrencyId)?.queryParams?.yieldId,
-          chainId: getPartnerForCurrency(depositCurrencyId)?.queryParams?.chainId,
-          // customDappURL: customDappURL || undefined,
+          accountId: isDapp ? earningsAccountId : walletApiAccount.id,
+          ledgerAccountId: account.id,
+          customDappURL: customDappURL || undefined,
           ...getPartnerForCurrency(depositCurrencyId)?.queryParams,
         },
       };

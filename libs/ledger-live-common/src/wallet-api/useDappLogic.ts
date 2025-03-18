@@ -2,7 +2,7 @@ import { useMemo, useEffect, useRef, useCallback, useState } from "react";
 import { Account, AccountLike, Operation, SignedOperation } from "@ledgerhq/types-live";
 import { atom, useAtom } from "jotai";
 import { AppManifest, WalletAPITransaction } from "./types";
-import { getMainAccount, getParentAccount } from "../account";
+import { getMainAccount, getParentAccount, isTokenAccount } from "../account";
 import { TrackingAPI } from "./tracking";
 import { getAccountBridge } from "../bridge";
 import { getEnv } from "@ledgerhq/live-env";
@@ -239,13 +239,18 @@ export function useDappLogic({
     if (!currentAccount) {
       return undefined;
     }
+    // If the current account is a token account, and the chain id is not specified for that specific token, we can also use the network of the parent currency to determine the correct chain id.
     return manifest.dapp?.networks.find(network => {
+      const accountCurrencyId =
+        currentAccount.type === "TokenAccount"
+          ? currentAccount.token.id
+          : currentAccount.currency.id;
       const accountNetworkCurrency =
         currentAccount.type === "TokenAccount"
           ? currentAccount.token.parentCurrency.id
           : currentAccount.currency.id;
 
-      return network.currency === accountNetworkCurrency;
+      return network.currency === accountCurrencyId || network.currency === accountNetworkCurrency;
     });
   }, [currentAccount, manifest.dapp?.networks]);
 

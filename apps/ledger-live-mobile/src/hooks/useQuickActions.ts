@@ -60,12 +60,16 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
     ? false
     : getCanStakeUsingLedgerLive(currency?.id);
   const stakeAccount = accounts?.[0];
+
+  const shallowAccounts = useSelector(shallowAccountsSelector);
+  const parentAccount = stakeAccount ? getParentAccount(stakeAccount, shallowAccounts) : undefined;
+
   const stakeAccountCurrency = !stakeAccount ? null : getAccountCurrency(stakeAccount);
   const walletState = useSelector(walletSelector);
   const partnerStakeRoute =
     !stakeAccount || !stakeAccountCurrency || !getCanStakeUsingPlatformApp(stakeAccountCurrency?.id)
       ? null
-      : getRouteParamsForPlatformApp(stakeAccount, walletState);
+      : getRouteParamsForPlatformApp(stakeAccount, walletState, parentAccount);
 
   const canBeRecovered = recoverEntryPoint?.enabled;
 

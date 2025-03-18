@@ -11,6 +11,7 @@ import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
 import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
 import { WalletState } from "@ledgerhq/live-wallet/store";
+import { StakingDrawerNavigationProps } from "~/components/Stake/types";
 
 const ethMagnitude = getCryptoCurrencyById("ethereum").units[0].magnitude ?? 18;
 
@@ -70,19 +71,24 @@ function getNavigatorParams({
 
   const walletApiAccount = accountToWalletAPIAccount(walletState, account, parentAccount);
 
-  const params = {
+  const params: {
+    screen: ScreenName;
+    drawer: StakingDrawerNavigationProps;
+    params: ParamListBase;
+  } = {
     screen: parentRoute.name,
     drawer: {
       id: "EvmStakingDrawer",
       props: {
         singleProviderRedirectMode: true,
-        accountId: walletApiAccount.id,
+        accountId: account.id,
+        walletApiAccountId: walletApiAccount.id,
         has32Eth: account.spendableBalance.gt(ETH_LIMIT),
       },
     },
     params: {
       ...(parentRoute.params ?? {}),
-      account: walletApiAccount,
+      account,
       parentAccount,
     },
   };
