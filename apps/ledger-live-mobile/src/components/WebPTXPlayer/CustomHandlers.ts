@@ -63,12 +63,13 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
                       result.startExchangeResult.device || device,
                     );
                   }
+
+                  navigation.pop();
                 },
               },
             });
           },
           "custom.exchange.complete": ({ exchangeParams, onSuccess, onCancel }) => {
-            navigation.pop();
             navigation.navigate(NavigatorName.PlatformExchange, {
               screen: ScreenName.PlatformCompleteExchange,
               params: {
@@ -98,6 +99,7 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
                     onSuccess(result.operation.id);
                   }
                   setDevice(undefined);
+                  !result.error && navigation.pop();
                 },
               },
             });
