@@ -1,0 +1,83 @@
+name: "CI Flake Notifier & Debugger"
+description: "Alert CI team to flake and optionally preserve machine state"
+inputs:
+  HALT_RUNNER:
+    description: true if you want the runner to be paused, preserving state for investigation
+    type: boolean
+    required: false
+    default: false
+  LIVE_BOT_TOKEN:
+    type: string
+    required: true
+  CUSTOM_MESSAGE:
+    type: string
+    required: false
+
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/github-script@v7
+      name: prepare status
+      id: status
+      with:
+        script: |
+          const fs = require("fs");
+          const path = require("path");
+
+          let header = "*Ledger Live CI: Test flake*";
+          let description = "Flake detected but interactive debugging was not enabled Workflow: ${{ github.workflow }}";
+          
+          if ("${{ inputs.CUSTOM_MESSAGE }}"){
+            description = "${{ inputs.CUSTOM_MESSAGE }} Workflow: ${{ github.workflow }}"
+          }else if ("${{ inputs.HALT_RUNNER }}" == "true"){
+            header = ":fire: *Ledger Live CI: Test flake in progress* :fire:";
+            description = "Known flake detected. Runner held for interactive debugging session. Workflow: ${{ github.workflow }}";
+          }
+
+          const notification = [
+            {
+              "type": "section",
+              "text": {
+                "type": "mrkdwn",
+                "text": header
+              }
+            },
+            {
+              "type": "section",
+              "text": {
+                "type": "mrkdwn",
+                "text": description
+              },
+              "accessory": {
+                "type": "button",
+                "text": {
+                  "type": "plain_text",
+                  "text": "Go to Run",
+                  "emoji": true
+                },
+                "value": "click_me",
+                "url": "https://github.com/LedgerHQ/ledger-live/actions/runs/${{ github.run_id }}",
+                "action_id": "go-to-run"
+              }
+            }];
+
+          const output = {
+              text: "[Alert] Test flake in progress",
+              blocks: notification
+          };
+          
+          fs.writeFileSync("slack_notification.json", JSON.stringify(output), "utf-8");
+
+
+    - name: post to a Slack channel
+      id: slack
+      uses: slackapi/slack-github-action@v1.23.0
+      with:
+        channel-id: "C08JQKWS9KK"
+        payload-file-path: ${{ github.workspace }}/slack_notification.json
+      env:
+        SLACK_BOT_TOKEN: ${{ inputs.LIVE_BOT_TOKEN }}
+    - name: "Sleep"
+      if: ${{ inputs.HALT_RUNNER == 'true' }}
+      run: sleep 3h
+      shell: bash
