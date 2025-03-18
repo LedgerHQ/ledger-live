@@ -14,7 +14,7 @@ type NetworkDeviceDescriptorDataResponse = {
     test: string;
   };
 };
-type NetworksDataResponse = {
+type NetworkDataResponse = {
   type: "network";
   id: string;
   name: string;
@@ -42,7 +42,8 @@ type NetworksDataResponse = {
 
 export class NoNetworksFound extends Error {
   constructor() {
-    super("NoNetworkFound");
+    super();
+    this.name = "NoNetworkFound";
   }
 }
 
@@ -68,7 +69,7 @@ export async function getNetworks(
   id: string | null = null,
   { env = "prod", ref = undefined }: Omit<ServiceOption, "signatureKind">,
 ) {
-  const { data } = await network<NetworksDataResponse[]>({
+  const { data } = await network<NetworkDataResponse[]>({
     url: `${getCALDomain(env)}/v1/networks`,
     params: {
       output: OUTPUT_FILTER,

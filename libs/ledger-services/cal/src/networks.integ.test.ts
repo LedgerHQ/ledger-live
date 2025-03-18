@@ -1,7 +1,5 @@
-import type { ServiceOption } from "./common";
+import { STAGING_ENV } from "./common";
 import { getNetworks, NoNetworksFound } from "./networks";
-
-const STAGING_ENV = { env: "test" } satisfies ServiceOption;
 
 describe("getNetworks", () => {
   it("returns all networks information", async () => {
