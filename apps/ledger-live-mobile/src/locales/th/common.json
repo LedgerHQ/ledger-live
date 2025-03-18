@@ -3465,6 +3465,7 @@
         "CTAButton" : "เพิ่มบัญชี"
       },
       "history" : {
+        "button" : "Go to history",
         "tab" : "ประวัติ",
         "disclaimer" : "ธุรกรรม Swap บนมือถือไม่ได้รับการซิงค์โครไนซ์กับ Ledger Live Desktop",
         "exportButton" : "ส่งออกการดำเนินการ",
@@ -6747,7 +6748,7 @@
   "postOnboarding" : {
     "hub" : {
       "title" : "ขั้นต่อไป ใช้ {{productName}} ของคุณเพื่อ...",
-      "allDoneTitle" : "เรียบร้อยแล้ว! ทำต่อไปและสำรวจพอร์ตโฟลิโอของคุณ",
+      "areAllPostOnboardingActionsCompletedTitle" : "เรียบร้อยแล้ว! ทำต่อไปและสำรวจพอร์ตโฟลิโอของคุณ",
       "skip" : "ฉันจะดำเนินการในภายหลัง",
       "viewWallet" : "สำรวจพอร์ตโฟลิโอของฉัน"
     },
