@@ -18,6 +18,7 @@ function DeltaVariation({ value, percent, ...props }: Props) {
 
   if (roundedDelta === 0) {
     return (
+      // eslint-disable-next-line i18next/no-literal-string
       <Text variant="large" color="neutral.c60" fontWeight="semiBold">
         &minus;
       </Text>
