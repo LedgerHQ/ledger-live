@@ -49,7 +49,7 @@ const getTransactionStatus = async (a: Account, t: Transaction): Promise<Transac
         : a.spendableBalance.minus(estimatedFees)
     : t.amount;
 
-  const totalSpent = amount.plus(estimatedFees);
+  const totalSpent = tokenAccount ? amount : amount.plus(estimatedFees);
 
   if (
     tokenAccount
