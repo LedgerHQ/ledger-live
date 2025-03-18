@@ -44,7 +44,7 @@ const FadeIn = styled.div.attrs<{ state: string }>(p => ({
   transition: opacity 1s ease-out;
 `;
 
-const ranges = Object.keys(rangeDataTable);
+const ranges = Object.keys(rangeDataTable).reverse();
 
 type TooltipProps = {
   data: { date: Date; value: number };
