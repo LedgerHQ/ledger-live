@@ -19,7 +19,7 @@ function DeltaVariation({ value, percent, ...props }: Props) {
   if (roundedDelta === 0) {
     return (
       <Text variant="large" color="neutral.c60" fontWeight="semiBold">
-        -
+        &minus;
       </Text>
     );
   }

@@ -35,7 +35,7 @@ function Delta({
 
   const percentPlaceholder = fallbackToPercentPlaceholder ? (
     <Text variant="large" color="neutral.c60" fontWeight="semiBold" {...textProperties}>
-      -
+      &minus;
     </Text>
   ) : null;
 
