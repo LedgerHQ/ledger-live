@@ -44,7 +44,9 @@ const FadeIn = styled.div.attrs<{ state: string }>(p => ({
   transition: opacity 1s ease-out;
 `;
 
-const ranges = Object.keys(rangeDataTable).reverse();
+const ranges = Object.keys(rangeDataTable)
+  .filter(k => k !== "1h")
+  .reverse();
 
 type TooltipProps = {
   data: { date: Date; value: number };
@@ -181,13 +183,11 @@ function MarkeCoinChartComponent({
             onTabChange={setRange}
             initialActiveIndex={activeRangeIndex}
           >
-            {ranges
-              .filter(k => k !== "1h")
-              .map(key => (
-                <Text color="inherit" variant="small" key={key}>
-                  {t(`market.range.${key}`)}
-                </Text>
-              ))}
+            {ranges.map(key => (
+              <Text color="inherit" variant="small" key={key}>
+                {t(`market.range.${rangeDataTable[key].label}`)}
+              </Text>
+            ))}
           </Bar>
         </Flex>
       </Flex>
