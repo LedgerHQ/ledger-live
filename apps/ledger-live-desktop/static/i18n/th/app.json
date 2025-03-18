@@ -299,7 +299,7 @@
     "recover" : "[L] Recover"
   },
   "stars" : {
-    "placeholder" : "ติดดาวที่บัญชีเพื่อแสดงให้เห็นตรงนี้",
+    "placeholder" : "ติดดาวที่บัญชีเพื่อแสดงตรงนี้",
     "tooltip" : "ติดดาวบัญชี"
   },
   "bridge" : {
@@ -440,7 +440,7 @@
     },
     "wrongDevice" : {
       "title" : "Ledger Nano S™ ไม่สามารถใช้ได้กับ {{provider}}",
-      "description" : "Ledger Nano S ไม่สามารถใช้ได้กับ {{provider}} คุณสามารถใช้ Ledger Nano S Plus, Ledger Nano X, Ledger Stax, หรือ Ledger Flex เพื่อสัมผัสประสบการณ์ Swap แบบ Cross-Chain บน {{provider}} ผ่าน Ledger Live",
+      "description" : "Ledger Nano S™ is not compatible with {{provider}}. You can use Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™, or Ledger Flex™ to experience cross-chain swaps on {{provider}} via Ledger Live",
       "cta" : "สำรวจอุปกรณ์ที่เข้ากันได้",
       "changeProvider" : "Swap กับผู้ให้บริการรายอื่น"
     },
@@ -1704,7 +1704,7 @@
         "tokenAddress" : "Address โทเคน",
         "tokenId" : "ID โทเคน",
         "quantity" : "ปริมาณ",
-        "floorPrice" : "ราคาพื้น"
+        "floorPrice" : "ราคาฟลอร์"
       }
     },
     "collections" : {
@@ -2053,7 +2053,7 @@
       "dontHaveSeed" : "ไม่มี Recovery Phrase? ",
       "followTheGuide" : "ทำตามคำแนะนำการอัปเดตทีละขั้นตอนของเรา",
       "removeApps" : "ถอนการติดตั้งทุกแอปก่อนการอัปเดต",
-      "update" : "การอัปเดต {{productName} OS",
+      "update" : "การอัปเดต {{productName}} OS",
       "updateBtn" : "อัปเดตระบบปฏิบัติการ",
       "installUpdate" : "ติดตั้งการอัปเดต",
       "banner" : {
