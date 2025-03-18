@@ -7,19 +7,19 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-permissions:
-  id-token: write
-  contents: read
-  pull-requests: write
+  # permissions:
+  #   id-token: write
+  #   contents: read
+  #   pull-requests: write
 
-jobs:
-  determine-affected:
-    name: "Turbo Affected"
-    if: ${{!github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/turbo-affected-reusable.yml@develop
-    with:
-      head_branch: ${{ github.event.pull_request.head.ref || github.event.merge_group.head_ref }}
-      base_branch: ${{ github.event.pull_request.base.ref || github.event.merge_group.base_ref }}
+  # jobs:
+  #   determine-affected:
+  #     name: "Turbo Affected"
+  #     if: ${{!github.event.pull_request.head.repo.fork}}
+  #     uses: LedgerHQ/ledger-live/.github/workflows/turbo-affected-reusable.yml@develop
+  #     with:
+  #       head_branch: ${{ github.event.pull_request.head.ref || github.event.merge_group.head_ref }}
+  #       base_branch: ${{ github.event.pull_request.base.ref || github.event.merge_group.base_ref }}
 
   sonarqube:
     name: "SonarQube"
@@ -36,22 +36,22 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup git user
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
+      #       - name: Setup git user
+      #         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
 
-      - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
-        id: caches
-        with:
-          skip-turbo-cache: "false"
-          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
-          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
-          region: ${{ secrets.AWS_CACHE_REGION }}
-          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+      #       - name: Setup the caches
+      #         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+      #         id: caches
+      #         with:
+      #           skip-turbo-cache: "false"
+      #           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+      #           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+      #           region: ${{ secrets.AWS_CACHE_REGION }}
+      #           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
 
-      - name: fetch develop
-        run: |
-          git fetch origin develop
+      #       - name: fetch develop
+      #         run: |
+      #           git fetch origin develop
 
       - name: Install and Build desktop dependencies
         if: ${{ env.DESKTOP_AFFECTED == 'true' }}
