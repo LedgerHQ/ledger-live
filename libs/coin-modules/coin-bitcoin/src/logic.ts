@@ -7,6 +7,7 @@ import type {
   Transaction,
   NetworkInfo,
   UtxoStrategy,
+  BtcOperation,
 } from "./types";
 import { $Shape } from "utility-types";
 import type { TX, Input as WalletInput, Output as WalletOutput } from "./wallet-btc";
@@ -69,8 +70,10 @@ type UTXOStatus =
   | { excluded: false; reason?: undefined };
 
 export const getUTXOStatus = (utxo: BitcoinOutput, utxoStrategy: UtxoStrategy): UTXOStatus => {
+  console.log({excludeUTXO: utxoStrategy.excludeUTXOs, utxo})
   if (!utxo.blockHeight && !utxo.isChange) {
     // exclude pending and not change utxo
+    console.log({utxo})
     return {
       excluded: true,
       reason: "pickPendingUtxo",
@@ -169,8 +172,8 @@ export const mapTxToOperations = (
   accountId: string,
   accountAddresses: Set<string>,
   changeAddresses: Set<string>,
-): $Shape<Operation[]> => {
-  const operations: Operation[] = [];
+): $Shape<BtcOperation[]> => {
+  const operations: BtcOperation[] = [];
   const txId = tx.id;
   const fee = new BigNumber(tx.fees ?? 0);
   const blockHeight = tx.block?.height;
@@ -180,12 +183,16 @@ export const mapTxToOperations = (
   const recipients: string[] = [];
   let type: OperationType = "OUT";
   let value = new BigNumber(0);
+  // NOTE: assuming no transaction failed
   const hasFailed = false;
   const accountInputs: WalletInput[] = [];
   const accountOutputs: WalletOutput[] = [];
   const syncReplaceAddress = perCoinLogic[currencyId]?.syncReplaceAddress;
+  const inputs = new Set<string>(); // txid - outputIndex
 
+  // NOTE: if sender = sender, transaction is probably rbf'd
   for (const input of tx.inputs) {
+    inputs.add(`${input.output_hash}-${input.output_index}`);
     if (input.address) {
       senders.add(syncReplaceAddress ? syncReplaceAddress(input.address) : input.address);
 
@@ -221,6 +228,8 @@ export const mapTxToOperations = (
           (tx.outputs.length === 1 || // The transaction has only 1 output
             output.output_index < changeOutputIndex) // The output isn't the change output
         ) {
+          // NOTE: what is syncReplaceAddress
+          // NOTE: only for bitcoinCash
           recipients.push(syncReplaceAddress ? syncReplaceAddress(output.address) : output.address);
         }
       } else {
@@ -303,7 +312,10 @@ export const mapTxToOperations = (
         accountId,
         date,
         hasFailed,
-        extra: {},
+        // NOTE: should add in "OUT" operations also (?)
+        extra: {
+            inputs: Array.from(inputs),
+        },
       });
     }
   }

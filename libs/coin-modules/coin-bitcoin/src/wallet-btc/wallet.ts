@@ -125,8 +125,8 @@ class BitcoinLikeWallet {
             excludeUtxo.hash === utxo.output_hash && excludeUtxo.outputIndex === utxo.output_index,
         )
       ) {
-        // we can use either pending utxo (if utxo.rbf is true) or change utxo
-        if (changeAddresses.includes(utxo.address) || utxo.block_height !== null || utxo.rbf) {
+        // we can use non-pending transactions or change utxo
+        if (changeAddresses.includes(utxo.address) || utxo.block_height !== null) {
           usableUtxoCount++;
           balance = balance.plus(utxo.value);
         }

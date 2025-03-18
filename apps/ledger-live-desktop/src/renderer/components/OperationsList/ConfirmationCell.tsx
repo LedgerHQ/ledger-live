@@ -46,7 +46,7 @@ class ConfirmationCell extends PureComponent<Props> {
         type={operation.type}
         isConfirmed={isConfirmed}
         marketColor={marketColor}
-        hasFailed={operation.hasFailed}
+        hasFailed={operation.hasFailed || (operation.extra && operation.extra.replacedBy)}
         t={t}
       />
     ) : (
@@ -55,7 +55,7 @@ class ConfirmationCell extends PureComponent<Props> {
           type={operation.type}
           isConfirmed={isConfirmed}
           marketColor={marketColor}
-          hasFailed={operation.hasFailed}
+          hasFailed={operation.hasFailed || (operation.extra && operation.extra.replacedBy)}
           t={t}
         />
       </Cell>
