@@ -10,7 +10,7 @@ test.use({
 });
 
 test.describe.parallel("Recover @smoke", () => {
-  test.only("Warning status icon not show", async ({ page }) => {
+  test("Warning status icon not show", async ({ page }) => {
     const layout = new Layout(page);
     await layout.expectRecoverStatusIconToBeVisible(false);
   });
