@@ -440,7 +440,7 @@
     },
     "wrongDevice" : {
       "title" : "Ledger Nano S™는 {{provider}}와(과) 호환되지 않습니다",
-      "description" : "Ledger Nano S는 {{provider}}와(과) 호환되지 않습니다 Ledger Nano S Plus, Ledger Nano X, Ledger Stax, 또는 Ledger Flex로 Ledger Live를 통해 {{provider}}에서 크로스체인 스왑을 경험할 수 있습니다",
+      "description" : "Ledger Nano S™ is not compatible with {{provider}}. You can use Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™, or Ledger Flex™ to experience cross-chain swaps on {{provider}} via Ledger Live",
       "cta" : "호환 가능한 장치 탐색",
       "changeProvider" : "다른 공급자를 통해 스왑"
     },
@@ -775,6 +775,10 @@
         "description3" : "이 통합은 Ledger와 협력을 통해 {{team}} 에서 수행했습니다.",
         "description3Link" : "이 통합은 Ledger와 협력을 통해 <1><0>{{team}}</0></1>에서 수행했습니다."
       }
+    },
+    "migrationBanner" : {
+      "title" : "{{from}}가 {{to}}으로 마이그레이션되고 있습니다. <0>이 링크</0>에서 자세한 내용을 알아보고, 도움이 필요한 경우 지원팀에 문의하세요.",
+      "contactSupport" : "지원 부서 연락"
     },
     "featureUnavailable" : {
       "title" : "다음의 {{feature}} 기능은 현재 이용하실 수 없습니다. 자세한 내용은 {{support}}에 문의하세요",
@@ -2049,7 +2053,7 @@
       "dontHaveSeed" : "복구 문구가 없나요? ",
       "followTheGuide" : "단계별 업데이트 가이드를 따르세요",
       "removeApps" : "모든 앱을 삭제하고 업데이트하세요",
-      "update" : "{{productName} OS 업데이트",
+      "update" : "{{productName}} OS update",
       "updateBtn" : "펌웨어를 업데이트하세요",
       "installUpdate" : "업데이트 설치",
       "banner" : {
@@ -6991,55 +6995,14 @@
     }
   },
   "lnsUpsell" : {
-    "banner" : {
-      "manager" : {
-        "optIn" : {
-          "title" : "장치 업그레이드 기회",
-          "description" : "최신 장치로 업그레이드하고 <0>{{discount}}% 할인 혜택</0>은 물론, 더 향상된 보안력과 원활한 사용자 경험을 누려보세요.",
-          "cta" : "내 지갑 업그레이드하기",
-          "linkText" : "자세히 알아보기"
-        },
-        "optOut" : {
-          "title" : "장치 업그레이드 기회",
-          "description" : "최신 장치로 업그레이드하고 <0>{{discount}}% 할인 혜택</0>은 물론, 더 향상된 보안력과 원활한 사용자 경험을 누려보세요.",
-          "cta" : "내 지갑 업그레이드하기",
-          "linkText" : "자세히 알아보기"
-        }
-      },
-      "accounts" : {
-        "optIn" : {
-          "title" : "장치 업그레이드 기회",
-          "description" : "Ledger Nano S 업데이트가 곧 종료됩니다. 최신 장치로 업그레이드하고 <0>{{discount}}% 할인 혜택</0>까지 누리세요.",
-          "cta" : "내 지갑 업그레이드하기",
-          "linkText" : "자세히 알아보기"
-        },
-        "optOut" : {
-          "title" : "장치 업그레이드 기회",
-          "description" : "Ledger Nano S 업데이트가 곧 종료됩니다. 최신 장치로 업그레이드하고 <0>{{discount}}% 할인 혜택</0>까지 누리세요.",
-          "cta" : "내 지갑 업그레이드하기",
-          "linkText" : "자세히 알아보기"
-        }
-      },
-      "portfolio" : {
-        "optOut" : {
-          "title" : "장치 업그레이드 기회",
-          "description" : "최신 장치로 업그레이드하고 <0>{{discount}}% 할인 혜택</0>은 물론, 더 향상된 보안력과 원활한 사용자 경험을 누려보세요.",
-          "cta" : "내 지갑 업그레이드하기",
-          "linkText" : "자세히 알아보기"
-        }
-      },
-      "notifications" : {
-        "optIn" : {
-          "description" : "업데이트가 곧 종료됩니다. 지급 업그레이드하고 {{discount}}% 할인 혜택은 물론, 더 원활한 사용자 경험을 즐겨보세요.",
-          "cta" : "내 지갑 업그레이드하기",
-          "linkText" : "자세히 알아보기"
-        },
-        "optOut" : {
-          "description" : "업데이트가 곧 종료됩니다. 지급 업그레이드하고 {{discount}}% 할인 혜택은 물론, 더 원활한 사용자 경험을 즐겨보세요.",
-          "cta" : "내 지갑 업그레이드하기",
-          "linkText" : "자세히 알아보기"
-        }
-      }
+    "opted_in" : {
+      "title" : "메모리가 제한되면 경험도 제한되니까요",
+      "description" : "Upgrade your Ledger Nano S to a newer Ledger — like the Ledger Flex — for more memory, the latest security enhancements, fresh features, and <0>an exclusive {{discount}}% off</>.",
+      "cta" : "내 Ledger 업그레이드"
+    },
+    "opted_out" : {
+      "description" : "Ledger Nano S의 제한된 메모리로 인해 최신 기능, 블록체인 변경 사항 및 보안 업데이트에 대한 액세스가 제한됩니다. 장기적으로 사용하려면 최신 Ledger 장치로 업그레이드하세요.",
+      "cta" : "Learn more"
     }
   }
 }
