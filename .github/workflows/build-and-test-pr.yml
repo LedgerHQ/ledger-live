@@ -24,8 +24,8 @@ jobs:
       - id: skip_check
         uses: fkirc/skip-duplicate-actions@v5
         with:
-          concurrent_skipping: 'never'
-          skip_after_successful_duplicate: 'true'
+          concurrent_skipping: "never"
+          skip_after_successful_duplicate: "true"
           do_not_skip: '["pull_request", "workflow_dispatch", "schedule"]'
 
   determine-affected:
@@ -37,18 +37,23 @@ jobs:
       head_branch: ${{ github.event.pull_request.head.ref || github.event.merge_group.head_ref }}
       base_branch: ${{ github.event.pull_request.base.ref || github.event.merge_group.base_ref }}
 
+  log-affected:
+    run: |
+      echo "OUTPUTS : ${{needs.determine-affected.outputs}}"
+      echo "JSON : ${{ toJson(github) }}"
+
   # LLD
   build-desktop:
     name: "Build Desktop"
     needs: determine-affected
-    if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') && !github.event.pull_request.head.repo.fork }}
+    if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop')}}
     uses: LedgerHQ/ledger-live/.github/workflows/build-desktop-reusable.yml@develop
     secrets: inherit
 
   test-desktop:
     name: "Test Desktop"
     needs: determine-affected
-    if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') && !github.event.pull_request.head.repo.fork}}
+    if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop')}}
     uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-reusable.yml@develop
     secrets: inherit
 
@@ -56,21 +61,21 @@ jobs:
   build-mobile:
     name: "Build Mobile"
     needs: determine-affected
-    if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile') && !github.event.pull_request.head.repo.fork}}
+    if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile')}}
     uses: LedgerHQ/ledger-live/.github/workflows/build-mobile-reusable.yml@develop
     secrets: inherit
 
   test-mobile:
     name: "Test Mobile"
     needs: determine-affected
-    if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile') && !github.event.pull_request.head.repo.fork}}
+    if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile')}}
     uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-reusable.yml@develop
     secrets: inherit
 
   test-mobile-e2e:
     name: "Test Mobile E2E"
     needs: determine-affected
-    if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile') && !github.event.pull_request.head.repo.fork}}
+    if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile')}}
     uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-e2e-reusable.yml@develop
     secrets: inherit
 
@@ -78,29 +83,59 @@ jobs:
   test-libraries:
     name: "Test Libraries"
     needs: determine-affected
-    if: ${{contains(needs.determine-affected.outputs.paths, 'libs') && !github.event.pull_request.head.repo.fork}}
+    if: ${{contains(needs.determine-affected.outputs.paths, 'libs')}}
     uses: LedgerHQ/ledger-live/.github/workflows/test-libs-reusable.yml@develop
     secrets: inherit
 
   test-design-system:
     name: "Test Design System"
     needs: determine-affected
-    if: ${{contains(needs.determine-affected.outputs.paths, 'libs/ui') && !github.event.pull_request.head.repo.fork}}
+    if: ${{contains(needs.determine-affected.outputs.paths, 'libs/ui')}}
     uses: LedgerHQ/ledger-live/.github/workflows/test-design-system-reusable.yml@develop
     secrets: inherit
 
   build-web-tools:
     name: "Build Web Tools"
     needs: determine-affected
-    if: ${{contains(needs.determine-affected.outputs.paths, 'apps/web-tools') && !github.event.pull_request.head.repo.fork}}
+    if: ${{contains(needs.determine-affected.outputs.paths, 'apps/web-tools')}}
     uses: LedgerHQ/ledger-live/.github/workflows/build-web-tools-reusable.yml@develop
     secrets: inherit
 
   test-cli:
     name: "Test CLI"
     needs: determine-affected
-    if: ${{contains(needs.determine-affected.outputs.paths, 'apps/cli') && !github.event.pull_request.head.repo.fork}}
+    if: ${{contains(needs.determine-affected.outputs.paths, 'apps/cli')}}
     uses: LedgerHQ/ledger-live/.github/workflows/test-cli-reusable.yml@develop
+    secrets: inherit
+
+  prepare-pr-analysis:
+    name: "Prepare Pull Request Analysis"
+    needs:
+      - build-mobile
+      - test-mobile
+      - build-desktop
+      - test-desktop
+      - test-libraries
+    run: |
+      if [[ "$DESKTOP_AFFECTED" == 'true' ]]; then 
+        cat apps/ledger-live-desktop/coverage/lcov.info >> ./lcov.info 
+        cat apps/ledger-live-desktop/coverage/sonar-executionTests-report.xml >> ./sonar-executionTests-report.xml 
+      fi
+      if [[ "$MOBILE_AFFECTED" == 'true' ]]; then 
+        cat apps/ledger-live-mobile/coverage/lcov.info >> ./lcov.info 
+        cat apps/ledger-live-mobile/coverage/sonar-executionTests-report.xml >> ./sonar-executionTests-report.xml 
+      fi
+
+  perform-pr-analysis:
+    name: "SonarQube Pull Request Analysis"
+    needs: prepare-pr-analysis
+    uses: SonarSource/sonarqube-scan-action@v4
+    env:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+    with:
+      args: >
+        -Dsonar.sources=${{ env.DESKTOP_AFFECTED == 'true' && 'apps/ledger-live-desktop,' || '' }}${{ env.MOBILE_AFFECTED == 'true' && 'apps/ledger-live-mobile,' || '' }}libs
+        -Dsonar.testExecutionReportPaths=sonar-executionTests-report.xml
     secrets: inherit
 
   # Final Check required
