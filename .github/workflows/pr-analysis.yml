@@ -27,8 +27,8 @@ jobs:
     if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') || contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile') || contains(needs.determine-affected.outputs.paths, 'coin-modules') || contains(needs.determine-affected.outputs.paths, 'coin-framework') || contains(needs.determine-affected.outputs.paths, 'packages/hw-app')}}
     runs-on: [ledger-live-4xlarge]
     env:
-      MOBILE_AFFECTED: ${{contains(needs.determine-affected.outputs.paths, 'ledger-li-xxx-ve-mobile')}}
-      DESKTOP_AFFECTED: ${{contains(needs.determine-affected.outputs.paths, 'ledger-li-xxx-ve-desktop')}}
+      MOBILE_AFFECTED: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile')}}
+      DESKTOP_AFFECTED: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop')}}
       COIN_MODULES_AFFECTED: ${{contains(needs.determine-affected.outputs.paths, 'coin-modules') || contains(needs.determine-affected.outputs.paths, 'coin-framework')}}
       HW_APP_AFFECTED: ${{contains(needs.determine-affected.outputs.paths, 'packages/hw-app')}}
     steps:
