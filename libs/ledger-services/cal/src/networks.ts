@@ -81,7 +81,6 @@ export async function getNetworks(
     throw new NoNetworksFound();
   }
 
-  // return data;
   return data.map(network => ({
     id: network.id,
     name: network.name,

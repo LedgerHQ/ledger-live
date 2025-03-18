@@ -3,11 +3,14 @@ import { getNetworks, NoNetworksFound } from "./networks";
 
 describe("getNetworks", () => {
   it("returns all networks information", async () => {
+    // Given
+    const CAL_STAGING_NETWORKS_MANAGED_NUM = 275;
+
     // When
     const result = await getNetworks(null, STAGING_ENV);
 
     // Then
-    expect(result).toHaveLength(275);
+    expect(result).toHaveLength(CAL_STAGING_NETWORKS_MANAGED_NUM);
   });
 
   it("returns networks information for ethereum blockchain", async () => {
