@@ -1,5 +1,18 @@
 # @ledgerhq/coin-xrp
 
+## 2.1.0
+
+### Minor Changes
+
+- [#9470](https://github.com/LedgerHQ/ledger-live/pull/9470) [`5086b4c`](https://github.com/LedgerHQ/ledger-live/commit/5086b4c53e37009cbeec4567be9e095fabca99d4) Thanks [@jprudent](https://github.com/jprudent)! - Fix: iteration on api/listOperations
+  Fix: end iteration when no cursor provided on logic/listOperations
+
+### Patch Changes
+
+- Updated dependencies [[`5abde51`](https://github.com/LedgerHQ/ledger-live/commit/5abde5192d32f493ece2f99aec0e2de0c411f9e5), [`cc00249`](https://github.com/LedgerHQ/ledger-live/commit/cc002495f3e107aba283a3aa4abca90954de6d76)]:
+  - @ledgerhq/types-live@6.63.0
+  - @ledgerhq/coin-framework@2.3.0
+
 ## 2.1.0-next.0
 
 ### Minor Changes

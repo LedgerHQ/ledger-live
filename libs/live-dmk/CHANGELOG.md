@@ -1,5 +1,11 @@
 # @ledgerhq/live-dmk
 
+## 0.6.0
+
+### Minor Changes
+
+- [#9494](https://github.com/LedgerHQ/ledger-live/pull/9494) [`9d23040`](https://github.com/LedgerHQ/ledger-live/commit/9d230407b782d57fcada9075422b127f8a925168) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Update DMK dependencies
+
 ## 0.6.0-next.0
 
 ### Minor Changes

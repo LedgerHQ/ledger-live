@@ -1,5 +1,59 @@
 ## 34.25.0
 
+## 34.26.0
+
+### Minor Changes
+
+- [#9410](https://github.com/LedgerHQ/ledger-live/pull/9410) [`4afbc96`](https://github.com/LedgerHQ/ledger-live/commit/4afbc96dae8eb2e53e14ce5edabbfce6594a3527) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - SWAP LLM redicret to swap history and show previous transactions
+
+- [#9494](https://github.com/LedgerHQ/ledger-live/pull/9494) [`9d23040`](https://github.com/LedgerHQ/ledger-live/commit/9d230407b782d57fcada9075422b127f8a925168) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Update DMK dependencies
+
+- [#9472](https://github.com/LedgerHQ/ledger-live/pull/9472) [`9c4c82e`](https://github.com/LedgerHQ/ledger-live/commit/9c4c82e8e81aaadfc1132f0a25812be094e54453) Thanks [@KVNLS](https://github.com/KVNLS)! - Fix elliptic library version used
+
+- [#9495](https://github.com/LedgerHQ/ledger-live/pull/9495) [`450afb3`](https://github.com/LedgerHQ/ledger-live/commit/450afb3dce381f4c42fb50311b4a9429876572ff) Thanks [@CremaFR](https://github.com/CremaFR)! - feat: lifi ERC20
+
+- [#9444](https://github.com/LedgerHQ/ledger-live/pull/9444) [`300b914`](https://github.com/LedgerHQ/ledger-live/commit/300b91439c30058c62c628836e5659f74ff592f2) Thanks [@CremaFR](https://github.com/CremaFR)! - feat: more coins for nano s incomp banner
+
+- [#9310](https://github.com/LedgerHQ/ledger-live/pull/9310) [`6683086`](https://github.com/LedgerHQ/ledger-live/commit/6683086fb474007dd88a1d47865df0802cd93493) Thanks [@emmanuelm41](https://github.com/emmanuelm41)! - fix: bump ledger filecoin lib on llc
+
+- [#9412](https://github.com/LedgerHQ/ledger-live/pull/9412) [`ab40d22`](https://github.com/LedgerHQ/ledger-live/commit/ab40d222399232d0748751bc9b9c97b91185131f) Thanks [@qperrot](https://github.com/qperrot)! - Add abstain vote delegation to accounts which isn't already delegating
+
+### Patch Changes
+
+- Updated dependencies [[`cb74786`](https://github.com/LedgerHQ/ledger-live/commit/cb74786fe27bfe894317965ddb2a11744a86eaef), [`dcea0f8`](https://github.com/LedgerHQ/ledger-live/commit/dcea0f880728c808fffe5b09410eec614083f04b), [`9d23040`](https://github.com/LedgerHQ/ledger-live/commit/9d230407b782d57fcada9075422b127f8a925168), [`9c4c82e`](https://github.com/LedgerHQ/ledger-live/commit/9c4c82e8e81aaadfc1132f0a25812be094e54453), [`3ed81b0`](https://github.com/LedgerHQ/ledger-live/commit/3ed81b059f9d8755b58a966bd6647dd34a840378), [`cc00249`](https://github.com/LedgerHQ/ledger-live/commit/cc002495f3e107aba283a3aa4abca90954de6d76), [`ce00b67`](https://github.com/LedgerHQ/ledger-live/commit/ce00b67011b7ff554af7e0ee82696dc4ea0b632f), [`ab40d22`](https://github.com/LedgerHQ/ledger-live/commit/ab40d222399232d0748751bc9b9c97b91185131f), [`5086b4c`](https://github.com/LedgerHQ/ledger-live/commit/5086b4c53e37009cbeec4567be9e095fabca99d4)]:
+  - @ledgerhq/coin-casper@1.5.0
+  - @ledgerhq/coin-evm@2.14.0
+  - @ledgerhq/live-signer-evm@0.2.0
+  - @ledgerhq/coin-bitcoin@0.12.0
+  - @ledgerhq/coin-cardano@0.6.0
+  - @ledgerhq/coin-cosmos@0.9.0
+  - @ledgerhq/coin-filecoin@1.7.0
+  - @ledgerhq/coin-hedera@1.4.0
+  - @ledgerhq/coin-icon@0.8.0
+  - @ledgerhq/coin-tezos@1.4.0
+  - @ledgerhq/coin-ton@0.6.0
+  - @ledgerhq/coin-tron@0.5.0
+  - @ledgerhq/coin-vechain@2.5.0
+  - @ledgerhq/hw-app-eth@6.43.0
+  - @ledgerhq/hw-app-vet@0.3.0
+  - @ledgerhq/live-wallet@0.10.0
+  - @ledgerhq/crypto-icons-ui@1.10.0
+  - @ledgerhq/coin-framework@2.3.0
+  - @ledgerhq/coin-xrp@2.1.0
+  - @ledgerhq/coin-algorand@0.7.8
+  - @ledgerhq/coin-aptos@1.7.1
+  - @ledgerhq/coin-internet_computer@1.5.8
+  - @ledgerhq/coin-multiversx@0.2.1
+  - @ledgerhq/coin-near@0.9.1
+  - @ledgerhq/coin-polkadot@2.0.5
+  - @ledgerhq/coin-solana@0.15.1
+  - @ledgerhq/coin-stacks@0.6.3
+  - @ledgerhq/coin-stellar@1.1.2
+  - @ledgerhq/device-core@0.4.17
+  - @ledgerhq/live-countervalues@0.4.4
+  - @ledgerhq/live-countervalues-react@0.2.26
+  - @ledgerhq/live-nft@0.6.1
+
 ## 34.26.0-next.0
 
 ### Minor Changes
