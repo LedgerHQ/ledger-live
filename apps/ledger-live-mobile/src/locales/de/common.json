@@ -127,7 +127,7 @@
     },
     "BluetoothRequired" : {
       "title" : "Entschuldigung, Bluetooth ist deaktiviert",
-      "description" : "Bitte aktivieren Sie Bluetooth in den Einstellungen Ihres Telefons. ({{state}} Status)"
+      "description" : "Bitte aktiviere Bluetooth in den Einstellungen deines Telefons. ({{state}} Status)"
     },
     "BitcoinInfrastructureError" : {
       "title" : "Bei unserer Bitcoin-Infrastruktur ist ein Problem aufgetreten. Versuche es bitte später noch einmal."
@@ -1069,9 +1069,9 @@
     "required" : "Entschuldigung, es sieht so aus, als ob Bluetooth deaktiviert ist",
     "locationRequiredTitle" : "Standort ist für Bluetooth LE erforderlich",
     "locationRequiredMessage" : "Unter Android ist eine Standortfreigabe erforderlich, um Bluetooth LE-Geräte aufzulisten.",
-    "checkEnabled" : "Bitte aktivieren Sie Bluetooth in den Einstellungen Ihres Telefons.",
+    "checkEnabled" : "Bitte aktivier Bluetooth in den Einstellungen deines Telefons.",
     "tryEnablingAgain" : "Versuchen Sie, Bluetooth erneut zu aktivieren",
-    "openSettings" : "Öffnen Sie die Bluetooth-Einstellungen"
+    "openSettings" : "Öffne die Bluetooth-Einstellungen"
   },
   "webview" : {
     "noConnectionError" : {
@@ -1430,7 +1430,7 @@
     },
     "ongoing" : {
       "resolving" : "Auflösen von Abhängigkeiten",
-      "progress" : "Bleiben Sie auf Ledger Live, während die Apps installiert werden.",
+      "progress" : "Bleibe auf Ledger Live, während die Apps installiert werden.",
       "skippedInfo" : "Einige Apps sind nicht verfügbar. Sie müssen noch entwickelt werden für {{ productName }}.",
       "skipped" : "Noch nicht verfügbar für {{ productName }}"
     }
@@ -1610,7 +1610,7 @@
             "label" : "Nehmen Sie einen Stift zum Schreiben."
           },
           "2" : {
-            "label" : "Bleiben Sie allein, und wählen Sie eine sichere und ruhige Umgebung."
+            "label" : "Sei allein und wähle eine sichere und ruhige Umgebung."
           }
         },
         "cta" : "Weiter",
@@ -2369,9 +2369,9 @@
         "title" : "Erste Schritte",
         "description" : "Sie können entweder Kryptowährungen von unseren Partnern kaufen oder Ihre eigene Wallet einrichten"
       },
-      "title" : "Legen Sie zunächst Ihre bevorzugten Vermögenswerte in Ihrer Wallet ab",
+      "title" : "Füge zu Beginn deine Assets zu deiner Wallet hinzu",
       "subtitle" : "Ledger unterstützt mehr als 6.000 Coins und Token",
-      "addAccount" : "oder fügen Sie ein Konto hinzu"
+      "addAccount" : "oder füge ein Konto hinzu"
     },
     "noOpState" : {
       "title" : "Noch keine Aktionen?",
@@ -2625,6 +2625,10 @@
         "description3" : "Diese Integration wurde von {{team}} in Zusammenarbeit mit Ledger durchgeführt",
         "description3Link" : "Diese Integration wurde von <1><0>{{team}}</0></1> in Zusammenarbeit mit Ledger durchgeführt"
       }
+    },
+    "migrationBanner" : {
+      "title" : "{{from}} migriert zu {{to}}. Folge diesem <0>Link</0>, um mehr zu erfahren, oder wende dich an den Kundenservice, falls du Hilfe benötigst.",
+      "contactSupport" : "Support kontaktieren"
     },
     "willBedeprecatedBanner" : {
       "title" : "Um die Effizienz zu steigern, wird {{currencyName}} ab dem {{deprecatedDate}} nicht mehr in Ledger Live unterstützt. Auf den Hardware-Wallets von Ledger bleibt die Unterstützung jedoch bestehen. Wenn du Hilfe benötigst, wende dich bitte an den Ledger-Kundenservice.",
@@ -3174,7 +3178,7 @@
   "notifications" : {
     "prompt" : {
       "title" : "Benachrichtigungen aktivieren",
-      "desc" : "Erhalten Sie die neuesten Updates zu Ledger Live, Ledger-Produkten, dem Markt und personalisierte Empfehlungen. Sie können sich jederzeit in den Einstellungen wieder abmelden",
+      "desc" : "Erhalte die neuesten Updates zu Ledger Live, Ledger-Produkten, dem Markt und personalisierte Empfehlungen. Du kannst dich jederzeit in den Einstellungen wieder abmelden",
       "allow" : "Benachrichtigungen zulassen",
       "later" : "Vielleicht später"
     },
@@ -3461,6 +3465,7 @@
         "CTAButton" : "Konto hinzufügen"
       },
       "history" : {
+        "button" : "Zum Verlauf wechseln",
         "tab" : "Historisches",
         "disclaimer" : "Ihre mobilen Swap-Transaktionen werden nicht mit Ledger Live Desktop synchronisiert",
         "exportButton" : "Exportvorgänge",
@@ -3534,12 +3539,12 @@
         "apt_description" : "Zum Swappen von Aptos müsstest du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
         "cosmos_title" : "Ledger Nano S™ unterstützt das Swappen von Cosmos nicht",
         "cosmos_description" : "Zum Swappen von Cosmos müsstest du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
-        "osmo_title" : "Ledger Nano S™ does not support swapping Osmosis",
-        "osmo_description" : "To swap Osmosis, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
-        "dydx_title" : "Ledger Nano S™ does not support swapping dYdX",
-        "dydx_description" : "To swap dYdX, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
-        "sui_title" : "Ledger Nano S™ does not support swapping Sui",
-        "sui_description" : "To swap Sui, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
+        "osmo_title" : "Ledger Nano S™ unterstützt das Swappen von Osmosis nicht",
+        "osmo_description" : "Zum Swappen von Osmosis musst du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
+        "dydx_title" : "Ledger Nano S™ unterstützt das Swappen von dYdX nicht",
+        "dydx_description" : "Zum Swappen von dYdX musst du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
+        "sui_title" : "Die Ledger Nano S™ unterstützt das Swappen von Sui nicht",
+        "sui_description" : "Zum Swappen von Sui kannst du jedes sonstige kompatible Ledger-Gerät nutzen, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™."
       }
     },
     "lending" : {
@@ -4144,8 +4149,8 @@
     "chooseAccountToFund" : "Wähle ein Konto aus, um Guthaben hinzuzufügen"
   },
   "DeviceAction" : {
-    "stayInTheAppPlz" : "Bleiben Sie in der Ledger Live-App und halten Sie Ihr Ledger-Gerät bereit.",
-    "allowAppPermission" : "Öffnen Sie die {{wording}} App auf Ihrem Gerät",
+    "stayInTheAppPlz" : "Bleib in der Ledger Live-App und halte dein Ledger-Gerät bereit.",
+    "allowAppPermission" : "Öffne die {{wording}} App auf deinem Gerät",
     "allowAppPermissionSubtitleToken" : "zum Verwalten Ihrer {{token}}-Tokens",
     "allowManagerPermission" : "Lassen Sie eine sichere Verbindung mit Ledger zu",
     "allowRenaming" : "Umbenennen auf deinem {{productName}}-Gerät zulassen",
@@ -4242,7 +4247,7 @@
         "title" : "Zurück zum Dashboard auf Ihrem {{productName}}"
       },
       "currencyApp" : {
-        "title" : "Öffnen Sie die App {{managerAppName}} auf Ihrem {{productName}}",
+        "title" : "Öffne die App {{managerAppName}} auf deinem {{productName}}",
         "description" : "",
         "footer" : {
           "appInstalled" : "Sie haben die App nicht installiert",
@@ -4250,7 +4255,7 @@
         }
       },
       "accountApp" : {
-        "title" : "Öffnen Sie die App {{managerAppName}} auf Ihrem {{productName}}",
+        "title" : "Öffne die App {{managerAppName}} auf deinem {{productName}}",
         "description" : ""
       },
       "receiveVerify" : {
@@ -4345,7 +4350,7 @@
     "installedApps" : "Installierte Apps",
     "noAppNeededForToken" : "Installieren Sie die App {{appName}} für {{tokenName}}",
     "tokenAppDisclaimer" : "{{tokenName}} ist ein {{tokenType}} -Token mit der {{appName}} -App. Um {{tokenName}} zu verwalten, <1>installieren Sie die {{appName}} -App</1> und senden Sie die Token <3>zu Ihrem {{appName}}-Konto</3>.",
-    "tokenAppDisclaimerInstalled" : "{{tokenName}} ist ein {{tokenType}}-Token mit der {{appName}}-App. Um {{tokenName}} zu verwalten, <1>öffnen Sie die {{appName}}-App</1> und senden Sie die Token <3>zu Ihrem {{appName}}-Konto</3>.",
+    "tokenAppDisclaimerInstalled" : "{{tokenName}} ist ein {{tokenType}}-Token mit der {{appName}}-App. Um {{tokenName}} zu verwalten, <1>öffne die {{appName}}-App</1> und sende die Token <3>zu deinem {{appName}}-Konto</3>.",
     "goToAccounts" : "Zu den Konten gehen",
     "intallParentApp" : "{{appName}} App installieren",
     "readOnly" : {
@@ -6743,14 +6748,14 @@
   "postOnboarding" : {
     "hub" : {
       "title" : "Danach hast du bei deinem {{productName}}-Gerät folgende Möglichkeiten:",
-      "allDoneTitle" : "Alles eingerichtet! Lerne jetzt dein Portfolio kennen",
+      "areAllPostOnboardingActionsCompletedTitle" : "Alles eingerichtet! Lerne jetzt dein Portfolio kennen",
       "skip" : "Ich mache das später",
       "viewWallet" : "Portfolio entdecken"
     },
     "entryPointCard" : {
-      "title" : "Was gibt es noch für Ihr {{productName}}?",
+      "title" : "Was gibt es noch für deine {{productName}}?",
       "description" : "Übertrage deine Vermögenswerte von jeder Börse oder Wallet, kaufe Kryptowährungen, gestalte deinen Sperrbildschirm individuell oder abonniere Ledger Recover.",
-      "buttonLabel" : "Schauen Sie, was als nächstes kommt"
+      "buttonLabel" : "Schaue, was als nächstes kommt"
     },
     "actions" : {
       "assetsTransfer" : {
@@ -7328,6 +7333,16 @@
       "subTitle" : "Anscheinend hast du noch kein Konto hinzugefügt. Leg jetzt los.",
       "cta" : "Konto hinzufügen",
       "link" : "Brauchst du Hilfe? Finde heraus, wie du ein Konto zu Ledger Live hinzufügst."
+    }
+  },
+  "lnsUpsell" : {
+    "opted_in" : {
+      "description" : "Upgrade your Ledger Nano S to a newer Ledger — like the Ledger Flex — for more memory, the latest security enhancements, fresh features, and an exclusive 20% off. ",
+      "cta" : "Upgrade my Ledger"
+    },
+    "opted_out" : {
+      "description" : "The limited memory of your Ledger Nano S restricts your access to the latest features, blockchain changes and security enhancements. For long-term use, upgrade to a newer Ledger device.",
+      "cta" : "Learn more"
     }
   }
 }
