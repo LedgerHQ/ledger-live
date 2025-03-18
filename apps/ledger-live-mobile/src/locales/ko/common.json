@@ -2626,6 +2626,10 @@
         "description3Link" : "이 통합은 Ledger와 협력을 통해 <1><0>{{team}}</0></1>에서 수행했습니다."
       }
     },
+    "migrationBanner" : {
+      "title" : "{{from}}가 {{to}}으로 마이그레이션되고 있습니다. <0>이 링크</0>에서 자세한 내용을 알아보고, 도움이 필요한 경우 지원팀에 문의하세요.",
+      "contactSupport" : "지원 부서 연락"
+    },
     "willBedeprecatedBanner" : {
       "title" : "효율성을 최적화하기 위해 {{currencyName}}은 {{deprecatedDate}}부터 Ledger Live에서 지원되지 않습니다. 그러나 Ledger 하드웨어 지갑에서는 계속 지원됩니다. 이와 관련하여 도움이 필요하다면 Ledger 고객 지원팀에 문의하세요.",
       "contactSupport" : "지원 부서 연락"
@@ -3461,6 +3465,7 @@
         "CTAButton" : "계정 추가"
       },
       "history" : {
+        "button" : "히스토리로 이동",
         "tab" : "내역",
         "disclaimer" : "귀하의 스왑 모바일 트랜잭션이 Ledger Live 데스크탑과 동기화되지 않았습니다",
         "exportButton" : "거래 내보내기",
@@ -3534,12 +3539,12 @@
         "apt_description" : "Aptos 스왑 거래를 실행하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 Ledger 장치를 사용하세요.",
         "cosmos_title" : "Ledger Nano S™는 Cosmos 스왑을 지원하지 않습니다.",
         "cosmos_description" : "Cosmos 스왑 거래를 실행하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 Ledger 장치를 사용하세요.",
-        "osmo_title" : "Ledger Nano S™ does not support swapping Osmosis",
-        "osmo_description" : "To swap Osmosis, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
-        "dydx_title" : "Ledger Nano S™ does not support swapping dYdX",
-        "dydx_description" : "To swap dYdX, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
-        "sui_title" : "Ledger Nano S™ does not support swapping Sui",
-        "sui_description" : "To swap Sui, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
+        "osmo_title" : "Ledger Nano S™는 Osmosis 스왑을 지원하지 않습니다.",
+        "osmo_description" : "Osmosis 스왑 거래를 실행하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 Ledger 장치를 사용하세요.",
+        "dydx_title" : "Ledger Nano S™는 dYdX 스왑을 지원하지 않습니다.",
+        "dydx_description" : "dYdX 스왑 거래를 실행하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 Ledger 장치를 사용하세요.",
+        "sui_title" : "Ledger Nano S™는 Sui 스왑을 지원하지 않습니다",
+        "sui_description" : "Sui 스왑 거래를 수행하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요."
       }
     },
     "lending" : {
@@ -6743,7 +6748,7 @@
   "postOnboarding" : {
     "hub" : {
       "title" : "다음으로 {{productName}}를 사용해...",
-      "allDoneTitle" : "설정이 모두 완료되었습니다. 계속해서 내 포트폴리오를 살펴보세요.",
+      "areAllPostOnboardingActionsCompletedTitle" : "설정이 모두 완료되었습니다. 계속해서 내 포트폴리오를 살펴보세요.",
       "skip" : "나중에 할께요",
       "viewWallet" : "내 포트폴리오 살펴보기"
     },
@@ -7328,6 +7333,16 @@
       "subTitle" : "계정을 추가하지 않은 것으로 보입니다. 지금 시작해보세요.",
       "cta" : "계정 추가",
       "link" : "도움이 필요하신가요? Ledger Live에 계정을 추가하는 방법을 알아보세요."
+    }
+  },
+  "lnsUpsell" : {
+    "opted_in" : {
+      "description" : "Upgrade your Ledger Nano S to a newer Ledger — like the Ledger Flex — for more memory, the latest security enhancements, fresh features, and an exclusive 20% off. ",
+      "cta" : "내 Ledger 업그레이드"
+    },
+    "opted_out" : {
+      "description" : "Ledger Nano S의 제한된 메모리로 인해 최신 기능, 블록체인 변경 사항 및 보안 업데이트에 대한 액세스가 제한됩니다. 장기적으로 사용하려면 최신 Ledger 장치로 업그레이드하세요.",
+      "cta" : "Learn more"
     }
   }
 }
