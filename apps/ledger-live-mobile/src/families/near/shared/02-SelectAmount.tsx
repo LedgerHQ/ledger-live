@@ -18,7 +18,6 @@ import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "styled-components/native";
 import { accountScreenSelector } from "~/reducers/accounts";
 import Button from "~/components/Button";
-import CurrencyInput from "~/components/CurrencyInput";
 import LText from "~/components/LText";
 import Check from "~/icons/Check";
 import KeyboardView from "~/components/KeyboardView";
@@ -33,6 +32,7 @@ import { useSettings } from "~/hooks";
 import { useAccountUnit } from "~/hooks/useAccountUnit";
 import NotEnoughFundFeesAlert from "../../shared/StakingErrors/NotEnoughFundFeesAlert";
 import { NotEnoughBalance } from "@ledgerhq/errors";
+import AmountInput from "~/screens/SendFunds/AmountInput";
 
 type Props =
   | StackNavigatorProps<NearStakingFlowParamList, ScreenName.NearStakingAmount>
@@ -108,14 +108,14 @@ function StakingAmount({ navigation, route }: Props) {
       <KeyboardView behavior={behaviorParam}>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View style={styles.container}>
-            <View style={styles.main}>
-              <CurrencyInput
-                unit={unit}
-                value={value}
+            <View style={styles.amountWrapper}>
+              <AmountInput
+                editable={true}
+                account={account}
                 onChange={onChange}
-                inputStyle={styles.inputStyle}
-                hasError={!!error}
-                hasWarning={!!warning}
+                value={value}
+                error={error}
+                warning={warning}
                 testID="near-delegation-amount-input"
               />
               <LText
@@ -273,6 +273,9 @@ const styles = StyleSheet.create({
   fieldStatus: {
     fontSize: 14,
     textAlign: "center",
+  },
+  amountWrapper: {
+    flex: 1,
   },
 });
 
