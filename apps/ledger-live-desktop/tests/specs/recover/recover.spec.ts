@@ -2,6 +2,7 @@ import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
 import { RecoverRestorePage } from "../../page/recover.restore.page";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import { Layout } from "../../component/layout.component";
 
 test.use({
   userdata: "skip-onboarding",
@@ -9,6 +10,17 @@ test.use({
 });
 
 test.describe.parallel("Recover @smoke", () => {
+  test.only("Warning status icon not show", async ({ page }) => {
+    const layout = new Layout(page);
+    await layout.expectRecoverStatusIconToBeVisible(false);
+  });
+
+  // TODO: ElectronStore needs to be manipulated to add applicable states
+  test.fixme("Warning status icon shows", async ({ page }) => {
+    const layout = new Layout(page);
+    await layout.expectRecoverStatusIconToBeVisible();
+  });
+
   test("Restore page with no device", async ({ page }) => {
     const recoverPage = new RecoverRestorePage(page);
     await recoverPage.useDeepLink();
