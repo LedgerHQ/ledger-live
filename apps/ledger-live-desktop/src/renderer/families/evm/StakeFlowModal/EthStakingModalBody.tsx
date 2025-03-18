@@ -1,16 +1,16 @@
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { appendQueryParamsToDappURL } from "@ledgerhq/live-common/platform/utils/appendQueryParamsToDappURL";
 import { Flex } from "@ledgerhq/react-ui";
-import { EthStakingProvider } from "@ledgerhq/types-live";
+import { AccountLike, EthStakingProvider } from "@ledgerhq/types-live";
 import React, { useCallback } from "react";
 import { useHistory } from "react-router-dom";
 import { track } from "~/renderer/analytics/segment";
 import { ProviderItem } from "./component/ProviderItem";
 import { getTrackProperties } from "./utils/getTrackProperties";
-import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
+import { getWalletApiIdFromAccountId } from "@ledgerhq/live-common/wallet-api/converters";
 
 type Props = {
-  account: WalletAPIAccount;
+  account: AccountLike;
   onClose?: () => void;
   source?: string;
   providers: EthStakingProvider[];
@@ -39,7 +39,10 @@ export function EthStakingModalBody({ source, onClose, account, providers }: Pro
         pathname: value,
         ...(customDappUrl ? { customDappUrl } : {}),
         state: {
-          accountId: account.id,
+          accountId:
+            manifest?.params && "dappUrl" in manifest.params
+              ? getWalletApiIdFromAccountId(account.id)
+              : account.id,
         },
       });
       onClose?.();

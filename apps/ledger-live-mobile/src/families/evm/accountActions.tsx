@@ -9,7 +9,6 @@ import { NavigatorName, ScreenName } from "~/const";
 import BigNumber from "bignumber.js";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
-import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
 import { WalletState } from "@ledgerhq/live-wallet/store";
 
 const ethMagnitude = getCryptoCurrencyById("ethereum").units[0].magnitude ?? 18;
@@ -44,12 +43,7 @@ const getAccountType = (account: AccountLike): AccountTypeGetterProps => {
   return { isEthAccount, isPOLAccount, isBscAccount, isAvaxAccount, isStakekit };
 };
 
-function getNavigatorParams({
-  parentRoute,
-  account,
-  parentAccount,
-  walletState,
-}: Props): NavigationParamsType {
+function getNavigatorParams({ parentRoute, account, parentAccount }: Props): NavigationParamsType {
   const { isPOLAccount, isBscAccount, isAvaxAccount, isStakekit } = getAccountType(account);
 
   if (isAccountEmpty(account)) {
@@ -91,21 +85,19 @@ function getNavigatorParams({
     ];
   }
 
-  const walletApiAccount = accountToWalletAPIAccount(walletState, account, parentAccount);
-
   const params = {
     screen: parentRoute.name,
     drawer: {
       id: "EvmStakingDrawer",
       props: {
         singleProviderRedirectMode: true,
-        accountId: walletApiAccount.id,
+        accountId: account.id,
         has32Eth: account.spendableBalance.gt(ETH_LIMIT),
       },
     },
     params: {
       ...(parentRoute.params ?? {}),
-      account: walletApiAccount,
+      account,
       parentAccount,
     },
   };
