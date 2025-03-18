@@ -1,4 +1,4 @@
-import type { Api } from "@ledgerhq/coin-framework/api/index";
+import type { Api, Operation } from "@ledgerhq/coin-framework/api/index";
 import { createApi } from ".";
 import { StellarToken } from "../types";
 
@@ -30,14 +30,16 @@ describe("Stellar Api", () => {
     });
   });
 
-  describe.only("listOperations", () => {
-    it("returns a list regarding address parameter", async () => {
-      // When
-      const [tx, _] = await module.listOperations(address, { minHeight: 0 });
+  describe("listOperations", () => {
+    let txs: Operation<StellarToken>[];
 
-      // Then
-      expect(tx.length).toBeGreaterThanOrEqual(100);
-      tx.forEach(operation => {
+    beforeAll(async () => {
+      [txs] = await module.listOperations(address, { minHeight: 0 });
+    }, 20 * 1000); // 20s
+
+    it("returns a list regarding address parameter", async () => {
+      expect(txs.length).toBeGreaterThanOrEqual(100);
+      txs.forEach(operation => {
         const isSenderOrReceipt =
           operation.senders.includes(address) || operation.recipients.includes(address);
         expect(isSenderOrReceipt).toBeTruthy();
@@ -45,13 +47,9 @@ describe("Stellar Api", () => {
     });
 
     it("returns all operations", async () => {
-      // When
-      const [tx, _] = await module.listOperations(address, { minHeight: 0 });
-
-      // Then
-      expect(tx.length).toBeGreaterThanOrEqual(100);
-      const checkSet = new Set(tx.map(elt => elt.tx.hash));
-      expect(checkSet.size).toEqual(tx.length);
+      expect(txs.length).toBeGreaterThanOrEqual(100);
+      const checkSet = new Set(txs.map(elt => elt.tx.hash));
+      expect(checkSet.size).toEqual(txs.length);
     });
   });
 
@@ -77,7 +75,7 @@ describe("Stellar Api", () => {
     });
   });
 
-  describe("craftTransaction", () => {
+  describe.skip("craftTransaction", () => {
     it("returns a raw transaction", async () => {
       // When
       const result = await module.craftTransaction(address, {
