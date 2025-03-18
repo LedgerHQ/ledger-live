@@ -77,12 +77,10 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPMJS_TOKEN }}
       - name: check if desktop versions are different
-        if: ${{ inputs.caller == 'release-prepare' || inputs.caller == 'release-prepare-hotfix' }}
         id: desktop-changed
         run: |
           echo "status=$(git diff HEAD HEAD~1 ./apps/ledger-live-desktop/package.json | grep '"version": "' | wc -l)" >> $GITHUB_OUTPUT
       - name: check if mobile versions are different
-        if: ${{ inputs.caller == 'release-prepare' || inputs.caller == 'release-prepare-hotfix' }}
         id: mobile-changed
         run: |
           echo "status=$(git diff HEAD HEAD~1 ./apps/ledger-live-mobile/package.json | grep '"version": "' | wc -l)" >> $GITHUB_OUTPUT
