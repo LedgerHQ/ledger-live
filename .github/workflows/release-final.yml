@@ -7,10 +7,6 @@ on:
         description: "the ref (branch) to release from"
         required: false
         default: main
-      caller:
-        type: string
-        description: "the workflow that called this one"
-        required: true
   workflow_dispatch:
     inputs:
       app:

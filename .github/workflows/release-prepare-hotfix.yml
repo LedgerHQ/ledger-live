@@ -139,5 +139,4 @@ jobs:
       # For more info about why we do this, see this doc:
       # https://ledgerhq.atlassian.net/wiki/spaces/WALLETCO/pages/4710989838/LL+Incident+Recovery+-+Hotfix+in+all+cases
       ref: ${{ github.event.inputs.tag_version == 'latest' && 'main' || 'hotfix' }}
-      caller: release-prepare-hotfix
     secrets: inherit
