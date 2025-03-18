@@ -53,7 +53,7 @@ const getTransactionStatus = async (a: Account, t: Transaction): Promise<Transac
 
   if (
     tokenAccount
-      ? tokenAccount.spendableBalance.isLessThan(totalSpent) &&
+      ? tokenAccount.spendableBalance.isLessThan(totalSpent) ||
         a.spendableBalance.isLessThan(estimatedFees)
       : a.spendableBalance.isLessThan(totalSpent) && !errors.amount
   ) {
