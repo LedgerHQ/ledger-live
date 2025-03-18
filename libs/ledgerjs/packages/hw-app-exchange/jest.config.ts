@@ -17,7 +17,7 @@ export default {
     [
       "jest-sonar",
       {
-        outputName: "hw-app-exchange-sonar-executionTests-report.xml",
+        outputName: "sonar-executionTests-report.xml",
         reportedFilePath: "absolute",
       },
     ],
