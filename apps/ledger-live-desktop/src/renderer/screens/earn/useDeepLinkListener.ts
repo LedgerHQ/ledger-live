@@ -6,7 +6,6 @@ import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
 import logger from "~/renderer/logger";
-import { getParentAccount } from "@ledgerhq/coin-framework/lib-es/account/helpers";
 
 /**
  * Valid URLs that this hook will listen for and handle:
@@ -41,7 +40,7 @@ export const useDeepLinkListener = () => {
             dispatch(
               openModal("MODAL_START_STAKE", {
                 account,
-                parentAccount: getParentAccount(account, accounts),
+                parentAccount: undefined,
                 source: "Earn Dashboard",
               }),
             );

@@ -47,7 +47,6 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
   const hasCurrency = currency ? !!accounts?.some(({ balance }) => balance.gt(0)) : hasFunds;
 
   const recoverEntryPoint = useFeature("protectServicesMobile");
-  const stakePrograms = useFeature("stakePrograms");
 
   const ptxServiceCtaExchangeDrawer = useFeature("ptxServiceCtaExchangeDrawer");
   const isPtxServiceCtaExchangeDrawerDisabled = !(ptxServiceCtaExchangeDrawer?.enabled ?? true);
@@ -57,7 +56,6 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
 
   const { getCanStakeUsingLedgerLive, getCanStakeUsingPlatformApp, getRouteParamsForPlatformApp } =
     useStake();
-
   const canStakeCurrencyUsingLedgerLive = !currency
     ? false
     : getCanStakeUsingLedgerLive(currency?.id);
