@@ -2626,6 +2626,10 @@
         "description3Link" : "Esta integración la ha realizado <1><0>{{team}}</0></1> en colaboración con Ledger"
       }
     },
+    "migrationBanner" : {
+      "title" : "{{from}} está migrando a {{to}}. Visita este <0>enlace</0> para obtener más información o contacta con el equipo de soporte si necesitas ayuda.",
+      "contactSupport" : "Ponte en contacto con Soporte"
+    },
     "willBedeprecatedBanner" : {
       "title" : "Por razones de optimización de eficiencia, {{currencyName}} dejará de ser compatible con Ledger Live el {{deprecatedDate}}. No obstante, seguirá siendo compatible con las billeteras de hardware de Ledger. Ponte en contacto con el servicio de soporte al cliente de Ledger si necesitas ayuda con esto.",
       "contactSupport" : "Ponte en contacto con Soporte"
@@ -3461,6 +3465,7 @@
         "CTAButton" : "Agregar cuenta"
       },
       "history" : {
+        "button" : "Ir al historial",
         "tab" : "Historial",
         "disclaimer" : "Tus transacciones de permuta en Mobile no están sincronizadas con Ledger Live Desktop",
         "exportButton" : "Exportar operaciones",
@@ -3534,12 +3539,12 @@
         "apt_description" : "Para permutar Aptos, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
         "cosmos_title" : "No es posible usar el Ledger Nano S™ para permutar Cosmos",
         "cosmos_description" : "Para permutar Cosmos, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
-        "osmo_title" : "Ledger Nano S™ does not support swapping Osmosis",
-        "osmo_description" : "To swap Osmosis, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
-        "dydx_title" : "Ledger Nano S™ does not support swapping dYdX",
-        "dydx_description" : "To swap dYdX, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
-        "sui_title" : "Ledger Nano S™ does not support swapping Sui",
-        "sui_description" : "To swap Sui, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
+        "osmo_title" : "No es posible usar el Ledger Nano S™ para permutar Osmosis",
+        "osmo_description" : "Para permutar Osmosis, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
+        "dydx_title" : "No es posible usar el Ledger Nano S™ para permutar dYdX",
+        "dydx_description" : "Para permutar dYdX, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
+        "sui_title" : "No es posible utilizar el Ledger Nano S™ para permutar Sui",
+        "sui_description" : "Para permutar Sui, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™."
       }
     },
     "lending" : {
@@ -6743,7 +6748,7 @@
   "postOnboarding" : {
     "hub" : {
       "title" : "A continuación, usa tu {{productName}} para...",
-      "allDoneTitle" : "¡Todo listo! Ya puedes explorar tu portfolio.",
+      "areAllPostOnboardingActionsCompletedTitle" : "¡Todo listo! Ya puedes explorar tu portfolio.",
       "skip" : "Lo haré más tarde",
       "viewWallet" : "Explorar mi portfolio"
     },
@@ -7328,6 +7333,16 @@
       "subTitle" : "Parece que todavía no has agregado ninguna cuenta. Es el momento de comenzar.",
       "cta" : "Agregar una cuenta",
       "link" : "¿Necesitas ayuda? Obtén más información sobre cómo agregar una cuenta a Ledger Live."
+    }
+  },
+  "lnsUpsell" : {
+    "opted_in" : {
+      "description" : "Upgrade your Ledger Nano S to a newer Ledger — like the Ledger Flex — for more memory, the latest security enhancements, fresh features, and an exclusive 20% off. ",
+      "cta" : "Renovar mi Ledger"
+    },
+    "opted_out" : {
+      "description" : "La memoria limitada de tu Ledger Nano S restringe tu acceso a las opciones más recientes, a cambios en la blockchain y a mejoras de seguridad. Cambia a un dispositivo Ledger más moderno para garantizar un uso prolongado.",
+      "cta" : "Más información"
     }
   }
 }
