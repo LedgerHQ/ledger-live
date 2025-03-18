@@ -72,7 +72,7 @@ env:
 jobs:
   detox-tests-ios:
     name: "LLM - iOS Detox Tests"
-    runs-on: [m4, ARM64]
+    runs-on: [pa4-r102-srv-macrunner03]
     if: ${{ !inputs.speculos_tests && github.event_name != 'schedule' }}
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
