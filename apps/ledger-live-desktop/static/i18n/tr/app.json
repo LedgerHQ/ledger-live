@@ -440,7 +440,7 @@
     },
     "wrongDevice" : {
       "title" : "Ledger Nano S™, {{provider}} ile uyumlu değildir",
-      "description" : "Ledger Nano S, {{provider}} ile uyumlu değildir. Ledger Live üzerinden {{provider}} aracılığıyla zincirler arası takas işlemleri yapmak için Ledger Nano S Plus, Ledger Nano X, Ledger Stax veya Ledger Flex cihazlarını kullanabilirsiniz",
+      "description" : "Ledger Nano S™, {{provider}} ile uyumlu değildir. Ledger Live üzerinden {{provider}} aracılığıyla zincirler arası takas işlemleri yapmak için Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™ veya Ledger Flex™ cihazlarını kullanabilirsiniz",
       "cta" : "Uyumlu cihazları keşfedin",
       "changeProvider" : "Başka bir sağlayıcıyla takas edin"
     },
@@ -449,6 +449,8 @@
       "ton_description" : "Ton takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın.",
       "spl_tokens_title" : "Ledger Nano S™, Solana token takasını desteklemez",
       "spl_tokens_description" : "Solana token'larını takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın.",
+      "sui_tokens_title" : "Ledger Nano S™, Sui token takasını desteklemez",
+      "sui_tokens_description" : "Sui token'larını takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın.",
       "near_title" : "Ledger Nano S™, Near takasını desteklemez",
       "near_description" : "Near takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazı kullanın.",
       "ada_title" : "Ledger Nano S™, Cardano takasını desteklemez",
@@ -456,7 +458,13 @@
       "apt_title" : "Ledger Nano S™, Aptos takasını desteklemez",
       "apt_description" : "Aptos takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazı kullanın.",
       "cosmos_title" : "Ledger Nano S™, Cosmos takasını desteklemez",
-      "cosmos_description" : "Cosmos takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazı kullanın."
+      "cosmos_description" : "Cosmos takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazı kullanın.",
+      "osmo_title" : "Ledger Nano S™, Osmosis takasını desteklemez",
+      "osmo_description" : "Osmosis takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazını kullanın.",
+      "dydx_title" : "Ledger Nano S™, dYdX takasını desteklemez",
+      "dydx_description" : "dYdX takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazını kullanın.",
+      "sui_title" : "Ledger Nano S™, Sui takasını desteklemez",
+      "sui_description" : "Sui takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın."
     },
     "providers" : {
       "title" : "Kripto takası işlemleri için bir sağlayıcı seçin",
@@ -767,6 +775,10 @@
         "description3" : "Bu entegrasyon, {{team}} tarafından Ledger ile işbirliği içinde gerçekleştirilmiştir.",
         "description3Link" : "Bu entegrasyon, <1><0>{{team}}</0></1> tarafından Ledger ile iş birliği yapılarak gerçekleştirilmiştir"
       }
+    },
+    "migrationBanner" : {
+      "title" : "{{from}}, şuraya taşınıyor: {{to}}. Daha fazla bilgi edinmek için bu <0>bağlantıyı</0> takip edin veya yardıma ihtiyacınız varsa destek ekibiyle iletişime geçin.",
+      "contactSupport" : "Destek al"
     },
     "featureUnavailable" : {
       "title" : "Şu özellik an itibarıyla kullanılamıyor: {{feature}}. Daha fazla bilgi için lütfen {{support}} bakın.",
@@ -2041,7 +2053,7 @@
       "dontHaveSeed" : "Kurtarma ifadeniz yok mu? ",
       "followTheGuide" : "Adım adım güncelleme kılavuzumuzu uygulayın",
       "removeApps" : "Güncellemeden önce tüm uygulamaları kaldırın",
-      "update" : "{{productName} işletim sistemi güncellemesi",
+      "update" : "{{productName}} İşletim Sistemi Güncellemesi",
       "updateBtn" : "Donanım yazılımını güncelle",
       "installUpdate" : "Güncellemeyi yükle",
       "banner" : {
@@ -3753,7 +3765,66 @@
     },
     "token" : {
       "frozenStateWarning" : "Hesap varlıkları donduruldu!",
-      "transferWarning" : "Ledger Nano S™ kullanarak Solana token'ları için alıcı adresini doğrulamak üzere <0>bu yönergeleri uygulayın.</0>"
+      "transferWarning" : "Ledger Nano S™ kullanarak Solana token'ları için alıcı adresini doğrulamak üzere <0>bu yönergeleri uygulayın.</0>",
+      "transferFees" : {
+        "feesPercentHint" : "Bu token için %{{feePercent}} ({{feeBps}} bps) transfer ücreti alınır. Maks. {{maxFee}}",
+        "notice" : "Transfer ücreti: %{{fee}}",
+        "tooltipHint" : "Token oluşturucu için alıkoyulan transfer yüzdesi",
+        "transferFeesLabel" : "Transfer ücretleri"
+      },
+      "nonTransferable" : {
+        "notice" : "Bu token transfer edilemez"
+      },
+      "interestRate" : {
+        "notice" : "Faiz oranı: %{{rate}}",
+        "tooltipHint" : "Sadece gösterim amaçlıdır, faiz sonucunda hiçbir yeni token oluşturulmamaktadır"
+      },
+      "permanentDelegate" : {
+        "notice" : "Kalıcı Yetkili otoritesi etkinleştirilmiş",
+        "initializationNotice" : "Kalıcı Yetkili otoritesi başlatılmış, ama etkinleştirilmemiş",
+        "tooltipHint" : "Yetkili kişi, bu token'ı hesabınızdan transfer edebilir veya yakabilir"
+      },
+      "requiredMemoOnTransfer" : {
+        "notice" : "Transferlerde zorunlu memo etkinleştirilmiş",
+        "tooltipHint" : "Bu hesaba gelen tüm transferlerde memo olması gerekir"
+      },
+      "transferHook" : {
+        "notice" : "Transfer Kancası etkinleştirilmiş",
+        "initializationNotice" : "Transfer Kancası başlatılmış, ama etkinleştirilmemiş",
+        "tooltipHint" : "Token, {{programAddress}} programı tarafından gerçekleştirilen ekstra işlevlere sahip"
+      },
+      "extensionsInfo" : {
+        "title" : "Solana token uzantıları",
+        "commonInfo" : "Token uzantıları, Solana Token standardının yeni neslidir. Normal token işlevlerini gizli transferler, kalıcı yetkili, özel transfer mantığı, genişletilmiş meta veriler vb. gibi ek özelliklerle genişletmeyi sağlayan birtakım yöntemler sunarlar.",
+        "permanentDelegate" : {
+          "title" : "Kalıcı Yetkili (Permanent Delegate)",
+          "permanentDelegateAddress" : "Mevcut yetkili: {{address}}",
+          "permanentDelegateNotSetup" : "Mevcut yetkili belirlenmemiş.",
+          "description" : "Kalıcı Yetkili (Permanent Delegate), mevzubahis mint'leme için herhangi bir hesap üzerinde sınırsız yetki ayrıcalıklarına sahip olan bir yetkilidir. Yetkili, istediği miktarda token'ı, istediği zaman kendi takdirine bağlı olarak yakabilir veya transfer edebilir."
+        },
+        "nonTransferable" : {
+          "title" : "Transfer Edilemez Token'lar",
+          "description" : "Bu token'lar \"soul-bound\" olup sadece token'ı çıkartan kişi tarafından taşınabilir veya yakılabilir."
+        },
+        "transferHook" : {
+          "title" : "Transfer Kancası (Transfer Hook)",
+          "transferHookAddress" : "Mevcut Transfer Kancası programı: {{address}}",
+          "transferHookNotSetup" : "Mevcut Transfer Kancası programı belirlenmemiş.",
+          "description" : "Transfer Kancası (Transfer Hook), token çıkartanlara kullanıcılarla token'ların nasıl etkileşim kuracağını belirleme olanağını sunar. Token çıkartanlar normal bir transfer yerine, Transfer Kancası uzantısıyla kullanılacak özel bir mantığı bir programa ekleyebilir."
+        },
+        "transferFee" : {
+          "title" : "Transfer Ücreti",
+          "currentTransferFee" : "Güncel transfer ücreti: %{{feePercent}} ({{feeBps}} bps). Maks. {{maxFee}}.",
+          "description" : "Ücret her token transferinde alınır ve alıcının kullanamayacağı bir şekilde hesapta bloke edilir."
+        },
+        "interestBearing" : {
+          "title" : "Faiz İçeren Token'lar",
+          "currentInterestRate" : "Güncel faiz oranı: %{{rate}}.",
+          "accruedDelta" : "Tahakkuk eden: {{delta}}.",
+          "interestRateNotSetup" : "Güncel faiz oranı %0 olarak belirlenmiştir.",
+          "description" : "Faiz oranına bağlı olarak değeri sürekli artan veya azalan token'lar. Hiçbir zaman yeni token'lar oluşturulmaz, özellik tamamen gösterim amaçlıdır."
+        }
+      }
     }
   },
   "ethereum" : {
@@ -5442,7 +5513,8 @@
     },
     "solana" : {
       "memo" : "Etiket / Memo",
-      "memoPlaceholder" : "Opsiyonel"
+      "memoPlaceholder" : "Opsiyonel",
+      "requiredMemoPlaceholder" : "Gerekli"
     }
   },
   "errors" : {
@@ -5727,7 +5799,7 @@
       "description" : "Adres hesaplamasında bir hata oluştu; tekrar deneyin veya Ledger Destek ile iletişime geçin"
     },
     "MultiversXDecimalsLimitReached" : {
-      "title" : "Maksimum ondalık basamağı sınırına ulaşıldı",
+      "title" : "Maksimum ondalık basamak sınırına ulaşıldı",
       "description" : "Lütfen belirtilen tutarın 18 ondalık basamağının olduğundan emin olun."
     },
     "MultiversXMinDelegatedAmountError" : {
@@ -6254,6 +6326,13 @@
     "SolanaTxConfirmationTimeout" : {
       "title" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
     },
+    "SolanaRecipientMemoIsRequired" : {
+      "title" : "Alıcı adresi için memo gereklidir"
+    },
+    "SolanaTokenNonTransferable" : {
+      "title" : "Bu token transfer edilemez",
+      "description" : "Bu token'lar \"soul-bound\" olup transfer edilemez"
+    },
     "NotEnoughNftOwned" : {
       "title" : "Mevcut token sayısını aştınız"
     },
@@ -6670,6 +6749,24 @@
       "alreadySync" : "Zaten açtım",
       "learnMore" : "Ledger Sync nasıl çalışır?"
     },
+    "entryPoints" : {
+      "accounts" : {
+        "title" : "Ledger Sync'i etkinleştirin"
+      },
+      "manager" : {
+        "title" : "Ledger Sync",
+        "description" : "Yeni bir telefona geçerken bile hesaplarınızı otomatik olarak senkronize edin.",
+        "cta" : "Ledger Sync'i Aç"
+      },
+      "settings" : {
+        "title" : "Ledger Sync",
+        "description" : "Yeni bir telefona geçerken bile hesaplarınızı otomatik olarak senkronize edin.",
+        "cta" : "Ledger Sync'i Aç"
+      },
+      "onboarding" : {
+        "title" : "Başka bir Ledger Live uygulamasıyla senkronize et"
+      }
+    },
     "manage" : {
       "cta" : "Yönet",
       "synchronize" : {
@@ -6898,55 +6995,14 @@
     }
   },
   "lnsUpsell" : {
-    "banner" : {
-      "manager" : {
-        "optIn" : {
-          "title" : "Model yükseltme zamanı",
-          "description" : "Yüksek güvenlik ve sorunsuz bir deneyim için en yeni cihazlarımıza <0>%{{discount}} indirimle</0> model yükseltin.",
-          "cta" : "Cüzdanımın modelini yükselt",
-          "linkText" : "Daha fazla bilgi"
-        },
-        "optOut" : {
-          "title" : "Model yükseltme zamanı",
-          "description" : "Yüksek güvenlik ve sorunsuz bir deneyim için en yeni cihazlarımıza <0>%{{discount}} indirimle</0> model yükseltin.",
-          "cta" : "Cüzdanımın modelini yükselt",
-          "linkText" : "Daha fazla bilgi"
-        }
-      },
-      "accounts" : {
-        "optIn" : {
-          "title" : "Model yükseltme zamanı",
-          "description" : "Ledger Nano S model yükseltme teklifleri yakında sona eriyor. En yeni cihazlarımıza <0>%{{discount}} indirimle</0> model yükseltin.",
-          "cta" : "Cüzdanımın modelini yükselt",
-          "linkText" : "Daha fazla bilgi"
-        },
-        "optOut" : {
-          "title" : "Model yükseltme zamanı",
-          "description" : "Ledger Nano S model yükseltme teklifleri yakında sona eriyor. En yeni cihazlarımıza <0>%{{discount}} indirimle</0> model yükseltin.",
-          "cta" : "Cüzdanımın modelini yükselt",
-          "linkText" : "Daha fazla bilgi"
-        }
-      },
-      "portfolio" : {
-        "optOut" : {
-          "title" : "Model yükseltme zamanı",
-          "description" : "Yüksek güvenlik ve sorunsuz bir deneyim için en yeni cihazlarımıza <0>%{{discount}} indirimle</0> model yükseltin.",
-          "cta" : "Cüzdan modelini yükselt",
-          "linkText" : "Daha fazla bilgi"
-        }
-      },
-      "notifications" : {
-        "optIn" : {
-          "description" : "Cihaz güncellemeleri yakında sona eriyor. Sorunsuz bir deneyim için %{{discount}} indirimle hemen model yükseltin.",
-          "cta" : "Cüzdanımın modelini yükselt",
-          "linkText" : "Daha fazla bilgi"
-        },
-        "optOut" : {
-          "description" : "Cihaz güncellemeleri yakında sona eriyor. Sorunsuz bir deneyim için %{{discount}} indirimle hemen model yükseltin.",
-          "cta" : "Cüzdanımın modelini yükselt",
-          "linkText" : "Daha fazla bilgi"
-        }
-      }
+    "opted_in" : {
+      "title" : "Sınırlı bellek, sınırlı deneyim",
+      "description" : "Daha fazla bellek, en son güvenlik güncellemeleri, yeni özellikler ve <0>%{{discount}} oranında özel bir indirim</> için Ledger Nano S cihazınızın modelini Ledger Flex gibi daha yeni bir Ledger modeline yükseltin.",
+      "cta" : "Ledger modelimi yükselt"
+    },
+    "opted_out" : {
+      "description" : "Ledger Nano S cihazınızdaki sınırlı bellek en yeni özelliklere, blok zinciri değişikliklerine ve güvenlik güncellemelerine erişiminizi kısıtlar. Uzun vadeli kullanım için daha yeni bir Ledger cihazına model yükseltin.",
+      "cta" : "Daha fazla bilgi"
     }
   }
 }

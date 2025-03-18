@@ -2626,6 +2626,10 @@
         "description3Link" : "Cette intégration a été réalisée par <1><0>{{team}}</0></1> en collaboration avec Ledger."
       }
     },
+    "migrationBanner" : {
+      "title" : "{{from}} migre vers {{to}}. Cliquez <0>ici</0> pour en savoir plus ou contactez l’Assistance si vous avez besoin d’aide.",
+      "contactSupport" : "Contacter l’Assistance"
+    },
     "willBedeprecatedBanner" : {
       "title" : "Pour une meilleure performance, Ledger Live ne prendra plus en charge {{currencyName}} à partir du {{deprecatedDate}}. Cette monnaie restera prise en charge par les wallets physiques Ledger. Veuillez contacter l’Assistance Ledger pour toute question.",
       "contactSupport" : "Contacter l’Assistance"
@@ -3533,7 +3537,13 @@
         "apt_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange d’Aptos",
         "apt_description" : "Pour échanger des Aptos, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
         "cosmos_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de Cosmos",
-        "cosmos_description" : "Pour échanger des Cosmos, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™."
+        "cosmos_description" : "Pour échanger des Cosmos, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+        "osmo_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange d’Osmosis",
+        "osmo_description" : "Pour échanger des Osmosis, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+        "dydx_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de dYdX",
+        "dydx_description" : "Pour échanger des dYdX, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+        "sui_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de Sui",
+        "sui_description" : "Pour échanger des Sui, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™."
       }
     },
     "lending" : {

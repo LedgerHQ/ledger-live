@@ -462,7 +462,7 @@ export const toggleShouldDisplayMemoTagInfo = (payload: boolean) => {
 };
 
 export const updateAnonymousUserNotifications = (payload: {
-  notifications: Record<string, string | number>;
+  notifications: SettingsState["anonymousUserNotifications"];
   purgeState?: boolean;
 }) => {
   return {

@@ -45,14 +45,24 @@ export class AccountsPage extends AppPage {
   }
 
   @step("Verify $0 children token accounts are not visible")
-  async verifyChildrenTokensAreNotVisible(parentName: string) {
+  async verifyChildrenTokensAreNotVisible(parentName: string, childCurrency: Currency) {
     await this.accountComponent(parentName).scrollIntoViewIfNeeded();
-    await expect(this.showTokensButton(parentName)).not.toBeVisible();
+    if (await this.showTokensButton(parentName).isVisible()) {
+      await this.showParentAccountTokens(parentName);
+      await this.verifyTokenNotVisible(parentName, childCurrency);
+    } else {
+      await this.verifyTokenNotVisible(parentName, childCurrency);
+    }
   }
 
   @step("Verify token visibility having parent $0")
   async verifyTokenVisibility(parentName: string, childCurrency: Currency) {
     await expect(this.tokenRow(parentName, childCurrency)).toBeVisible();
+  }
+
+  @step("Verify token is not visible in parent account $0")
+  async verifyTokenNotVisible(parentName: string, childCurrency: Currency) {
+    await expect(this.tokenRow(parentName, childCurrency)).not.toBeVisible();
   }
 
   @step("Expect token balance to be null")

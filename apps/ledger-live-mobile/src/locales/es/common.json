@@ -2626,6 +2626,10 @@
         "description3Link" : "Esta integración la ha realizado <1><0>{{team}}</0></1> en colaboración con Ledger"
       }
     },
+    "migrationBanner" : {
+      "title" : "{{from}} está migrando a {{to}}. Visita este <0>enlace</0> para obtener más información o contacta con el equipo de soporte si necesitas ayuda.",
+      "contactSupport" : "Ponte en contacto con Soporte"
+    },
     "willBedeprecatedBanner" : {
       "title" : "Por razones de optimización de eficiencia, {{currencyName}} dejará de ser compatible con Ledger Live el {{deprecatedDate}}. No obstante, seguirá siendo compatible con las billeteras de hardware de Ledger. Ponte en contacto con el servicio de soporte al cliente de Ledger si necesitas ayuda con esto.",
       "contactSupport" : "Ponte en contacto con Soporte"
@@ -3533,7 +3537,13 @@
         "apt_title" : "No es posible usar el Ledger Nano S™ para permutar Aptos",
         "apt_description" : "Para permutar Aptos, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
         "cosmos_title" : "No es posible usar el Ledger Nano S™ para permutar Cosmos",
-        "cosmos_description" : "Para permutar Cosmos, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™."
+        "cosmos_description" : "Para permutar Cosmos, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
+        "osmo_title" : "No es posible usar el Ledger Nano S™ para permutar Osmosis",
+        "osmo_description" : "Para permutar Osmosis, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
+        "dydx_title" : "No es posible usar el Ledger Nano S™ para permutar dYdX",
+        "dydx_description" : "Para permutar dYdX, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
+        "sui_title" : "No es posible utilizar el Ledger Nano S™ para permutar Sui",
+        "sui_description" : "Para permutar Sui, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™."
       }
     },
     "lending" : {

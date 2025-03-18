@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux";
-import { LanguageMap, Languages } from "~/config/languages";
+import { DEFAULT_LANGUAGE, LanguageMap } from "~/config/languages";
 import { languageSelector } from "~/renderer/reducers/settings";
 
 export const LEDGER_LANG: LanguageMap = {
@@ -13,6 +13,7 @@ export const LEDGER_LANG: LanguageMap = {
   pt: "pt-br",
   ja: "ja",
   ko: "ko",
+  th: "",
 };
 
 export const SHOP_LANG: LanguageMap = {
@@ -26,6 +27,7 @@ export const SHOP_LANG: LanguageMap = {
   pt: "pt-br",
   ja: "ja",
   ko: "ko",
+  th: "",
 };
 
 export const SALESFORCE_LANG: LanguageMap = {
@@ -39,6 +41,7 @@ export const SALESFORCE_LANG: LanguageMap = {
   pt: "pt-br",
   ja: "ja",
   ko: "ko",
+  th: "",
 };
 
 export const BASE_LEDGER_SUPPORT = "https://support.ledger.com";
@@ -54,7 +57,7 @@ export const useLocalizedUrl = (url: string) => {
     [LEDGER]: `${LEDGER}/${LEDGER_LANG[language]}`,
     [SHOP]: `${SHOP}/${SHOP_LANG[language]}`,
     [SALESFORCE_SUPPORT]:
-      language === Languages.en.id
+      language === DEFAULT_LANGUAGE.id
         ? `${BASE_LEDGER_SUPPORT}/article`
         : `${BASE_LEDGER_SUPPORT}/${SALESFORCE_LANG[language]}/article`,
   };

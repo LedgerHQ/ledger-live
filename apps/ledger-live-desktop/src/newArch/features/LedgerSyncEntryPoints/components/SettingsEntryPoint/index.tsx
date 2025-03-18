@@ -12,37 +12,44 @@ export default function SettingsEntryPoint({ onPress }: { onPress: () => void })
 
   return (
     <SettingsSectionRowContainer tabIndex={-1}>
-      <Flex alignItems="center" justifyContent="center">
-        <Flex position="relative">
-          <Illustration lightSource={LogoLight} darkSource={LogoDark} size={24} />
-          <Flex
-            bg="error.c60"
-            width={4}
-            height={4}
-            position="absolute"
-            right={0}
-            bottom={0}
-            borderRadius="50%"
-          />
-        </Flex>
-        <Flex flexDirection="column" ml={4}>
-          <Box ff="Inter|SemiBold" color="palette.text.shade100" fontSize={14}>
-            {t("walletSync.entryPoints.settings.title")}
-          </Box>
-          <Box
-            ff="Inter"
-            fontSize={3}
-            color="palette.text.shade60"
-            mt={1}
-            mr={1}
-            style={{
-              maxWidth: 520,
-            }}
-          >
-            {t("walletSync.entryPoints.settings.description")}
-          </Box>
-        </Flex>
+      <Flex position="relative">
+        <Illustration lightSource={LogoLight} darkSource={LogoDark} size={24} />
+        <Flex
+          bg="error.c60"
+          width={4}
+          height={4}
+          position="absolute"
+          right={0}
+          bottom={0}
+          borderRadius="50%"
+        />
       </Flex>
+
+      <Box
+        grow
+        shrink
+        ml={4}
+        style={{
+          marginRight: "10%",
+        }}
+      >
+        <Box ff="Inter|SemiBold" color="palette.text.shade100" fontSize={14}>
+          {t("walletSync.entryPoints.settings.title")}
+        </Box>
+        <Box
+          ff="Inter"
+          fontSize={3}
+          color="palette.text.shade60"
+          mt={1}
+          mr={1}
+          style={{
+            maxWidth: 520,
+          }}
+        >
+          {t("walletSync.entryPoints.settings.description")}
+        </Box>
+      </Box>
+
       <Button variant="main" onClick={onPress}>
         <Text color="neutral.c00">{t("walletSync.entryPoints.settings.cta")}</Text>
       </Button>

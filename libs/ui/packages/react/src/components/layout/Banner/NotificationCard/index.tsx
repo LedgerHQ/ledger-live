@@ -1,32 +1,22 @@
 import React, { type ReactEventHandler, type ReactNode } from "react";
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 
-import { Icons } from "../../../../assets";
-import { Text } from "../../../asorted";
-import { Link } from "../../../cta";
+import * as Icons from "@ledgerhq/icons-ui/react";
+import { NotificationIcon } from "../../../asorted";
+import Text from "../../../asorted/Text";
 import type { Props as GridBoxProps } from "../../Grid";
 import { Grid, Flex } from "../..";
 
 type IconKey = keyof typeof Icons;
 
-export type NotificationCardProps = GridBoxProps & {
+type Props = GridBoxProps & {
   title?: string;
-  cta?: string;
+  cta?: ReactNode;
   description?: ReactNode;
   icon: IconKey;
   isHighlighted?: boolean;
 
   onClick: ReactEventHandler;
-};
-
-const colorsByIcon: Partial<
-  Record<IconKey, Partial<{ icon: string; iconBg: string; cta: string }>>
-> = {
-  Warning: {
-    icon: "warning.c80",
-    iconBg: "warning.c30",
-    cta: "warning.c80",
-  },
 };
 
 export default function NotificationCard({
@@ -37,24 +27,15 @@ export default function NotificationCard({
   isHighlighted,
   onClick,
   ...boxProps
-}: NotificationCardProps) {
+}: Props) {
   const handleCTAClick: ReactEventHandler = event => {
     event.stopPropagation();
     onClick(event);
   };
 
-  const safeIcon: IconKey = icon in Icons ? icon : "Information";
-  const Icon = Icons[safeIcon];
-  const colors = colorsByIcon[safeIcon];
-  const ctaColor = isHighlighted ? colors?.cta ?? "primary.c80" : "neutral.c100";
-  const iconColor = colors?.icon ?? "primary.c80";
-  const iconBgColor = colors?.iconBg ?? "opacityPurple.c10";
-
   return (
     <Wrapper {...boxProps} isHighlighted={isHighlighted} onClick={handleCTAClick}>
-      <IconWrapper backgroundColor={iconBgColor} isHighlighted={isHighlighted}>
-        <Icon color={iconColor} />
-      </IconWrapper>
+      <NotificationIcon icon={icon} variant={isHighlighted ? "square" : "round"} />
       <Flex flexDirection="column" rowGap={isHighlighted ? "4px" : "8px"}>
         {title && (
           <Text variant="h4Inter" fontSize={16}>
@@ -64,11 +45,7 @@ export default function NotificationCard({
         {description && (
           <Desc color={isHighlighted ? "neutral.c100" : "neutral.c80"}>{description}</Desc>
         )}
-        {cta && (
-          <Cta color={ctaColor} onClick={handleCTAClick}>
-            {cta}
-          </Cta>
-        )}
+        {cta}
       </Flex>
     </Wrapper>
   );
@@ -81,39 +58,11 @@ const Desc = styled(Text).attrs({ variant: "small" })`
   font-weight: 500;
 `;
 
-const Cta = styled(Link).attrs({ alignSelf: "start" })`
-  font-size: 13px;
-`;
-
-const IconWrapper = styled(Flex)<Pick<NotificationCardProps, "isHighlighted">>`
-  border-radius: ${p => (p.isHighlighted ? "13.5px" : "50%")};
-  padding: 8px;
-  ${p =>
-    p.isHighlighted &&
-    css`
-      background-clip: padding-box;
-      border-width: 7px;
-      border-style: solid;
-      border-color: transparent;
-      position: relative;
-      &::before {
-        content: "";
-        position: absolute;
-        inset: -7px;
-        border-radius: 13.5px;
-        background: linear-gradient(
-          180deg,
-          ${p.theme.colors.opacityDefault.c05} 0%,
-          rgba(29, 28, 31, 0) 100%
-        );
-      }
-    `}
-          
-  }
-`;
-
-const Wrapper = styled(Grid)<Pick<NotificationCardProps, "isHighlighted">>`
-  background-color: ${p => (p.isHighlighted ? p.theme.colors.opacityDefault.c05 : "transparent")};
+const Wrapper = styled(Grid)<Pick<Props, "isHighlighted">>`
+  background-color: ${({ isHighlighted, theme: { colors } }) => {
+    if (!isHighlighted) return "transparent";
+    return colors.type === "dark" ? colors.opacityDefault.c05 : colors.neutral.c00;
+  }};
 
   cursor: pointer;
   padding: 12px;

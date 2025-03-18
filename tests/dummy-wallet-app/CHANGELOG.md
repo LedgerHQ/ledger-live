@@ -1,5 +1,21 @@
 # dummy-wallet-app
 
+## 0.4.4
+
+### Patch Changes
+
+- Updated dependencies [[`4afbc96`](https://github.com/LedgerHQ/ledger-live/commit/4afbc96dae8eb2e53e14ce5edabbfce6594a3527), [`9d23040`](https://github.com/LedgerHQ/ledger-live/commit/9d230407b782d57fcada9075422b127f8a925168), [`9c4c82e`](https://github.com/LedgerHQ/ledger-live/commit/9c4c82e8e81aaadfc1132f0a25812be094e54453), [`450afb3`](https://github.com/LedgerHQ/ledger-live/commit/450afb3dce381f4c42fb50311b4a9429876572ff), [`300b914`](https://github.com/LedgerHQ/ledger-live/commit/300b91439c30058c62c628836e5659f74ff592f2), [`6683086`](https://github.com/LedgerHQ/ledger-live/commit/6683086fb474007dd88a1d47865df0802cd93493), [`ab40d22`](https://github.com/LedgerHQ/ledger-live/commit/ab40d222399232d0748751bc9b9c97b91185131f)]:
+  - @ledgerhq/live-common@34.26.0
+  - @ledgerhq/hw-app-eth@6.43.0
+
+## 0.4.4-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`4afbc96`](https://github.com/LedgerHQ/ledger-live/commit/4afbc96dae8eb2e53e14ce5edabbfce6594a3527), [`9d23040`](https://github.com/LedgerHQ/ledger-live/commit/9d230407b782d57fcada9075422b127f8a925168), [`9c4c82e`](https://github.com/LedgerHQ/ledger-live/commit/9c4c82e8e81aaadfc1132f0a25812be094e54453), [`450afb3`](https://github.com/LedgerHQ/ledger-live/commit/450afb3dce381f4c42fb50311b4a9429876572ff), [`300b914`](https://github.com/LedgerHQ/ledger-live/commit/300b91439c30058c62c628836e5659f74ff592f2), [`6683086`](https://github.com/LedgerHQ/ledger-live/commit/6683086fb474007dd88a1d47865df0802cd93493), [`ab40d22`](https://github.com/LedgerHQ/ledger-live/commit/ab40d222399232d0748751bc9b9c97b91185131f)]:
+  - @ledgerhq/live-common@34.26.0-next.0
+  - @ledgerhq/hw-app-eth@6.43.0-next.0
+
 ## 0.4.3
 
 ### Patch Changes

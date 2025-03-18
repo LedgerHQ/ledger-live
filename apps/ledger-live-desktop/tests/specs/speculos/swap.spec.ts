@@ -13,12 +13,10 @@ function setupEnv(disableBroadcast?: boolean) {
   const originalBroadcastValue = process.env.DISABLE_TRANSACTION_BROADCAST;
   test.beforeAll(async () => {
     process.env.SWAP_DISABLE_APPS_INSTALL = "true";
-    process.env.SWAP_API_BASE = "https://swap-stg.ledger-test.com/v5";
     if (disableBroadcast) process.env.DISABLE_TRANSACTION_BROADCAST = "1";
   });
   test.afterAll(async () => {
     delete process.env.SWAP_DISABLE_APPS_INSTALL;
-    delete process.env.SWAP_API_BASE;
     if (originalBroadcastValue !== undefined) {
       process.env.DISABLE_TRANSACTION_BROADCAST = originalBroadcastValue;
     } else {

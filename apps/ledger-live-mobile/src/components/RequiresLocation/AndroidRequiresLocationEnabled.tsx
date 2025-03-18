@@ -5,6 +5,7 @@ import LocationDisabled from "./LocationDisabled";
 type Props = {
   children?: React.ReactNode;
   forceOpenSettingsOnErrorButton?: boolean;
+  required: boolean;
 };
 
 /**
@@ -20,8 +21,13 @@ type Props = {
 const AndroidRequiresLocationEnabled: React.FC<Props> = ({
   children,
   forceOpenSettingsOnErrorButton = false,
+  required = true,
 }) => {
-  const { locationServicesState, checkAndRequestAgain } = useAndroidEnableLocation();
+  const { locationServicesState, checkAndRequestAgain } = useAndroidEnableLocation({
+    isHookEnabled: required,
+  });
+
+  if (!required || locationServicesState === "enabled") return <>{children}</>;
 
   if (locationServicesState === "disabled") {
     return (
@@ -36,8 +42,6 @@ const AndroidRequiresLocationEnabled: React.FC<Props> = ({
   if (locationServicesState === "unknown") {
     return null;
   }
-
-  return <>{children}</>;
 };
 
 export default AndroidRequiresLocationEnabled;

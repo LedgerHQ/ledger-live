@@ -2626,6 +2626,10 @@
         "description3Link" : "この統合は、<1><0>{{team}}</0></1>がLedgerと共同で実施しました"
       }
     },
+    "migrationBanner" : {
+      "title" : "{{from}}は{{to}}に移行しています。詳細については、こちらの<0>リンク</0>をご参照いただくか、サポートがご必要な場合はサポートにご連絡ください。",
+      "contactSupport" : "サポートへお問い合わせ"
+    },
     "willBedeprecatedBanner" : {
       "title" : "効率を最適化するため、{{deprecatedDate}}以降、{{currencyName}}はLedger Liveではサポートされなくなります。ただし、Ledgerハードウェアウォレットでは引き続きサポートされます。この件に関してご不明な点などがございましたら、Ledgerカスタマーサポートまでご連絡ください。",
       "contactSupport" : "サポートへお問い合わせ"
@@ -3533,7 +3537,13 @@
         "apt_title" : "Ledger Nano S™はAptosのスワップに対応していません",
         "apt_description" : "Aptosをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。",
         "cosmos_title" : "Ledger Nano S™はCosmosのスワップに対応していません",
-        "cosmos_description" : "Cosmosをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。"
+        "cosmos_description" : "Cosmosをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。",
+        "osmo_title" : "Ledger Nano S™は、Osmosisのスワップに対応していません",
+        "osmo_description" : "Osmosisをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。",
+        "dydx_title" : "Ledger Nano S™は、dYdXのスワップに対応していません",
+        "dydx_description" : "dYdXをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。",
+        "sui_title" : "Ledger Nano S™は、Suiのスワップに対応していません",
+        "sui_description" : "Suiをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。"
       }
     },
     "lending" : {
@@ -4338,8 +4348,8 @@
     "appsCatalog" : "アプリカタログ",
     "installedApps" : "インストール済みアプリ",
     "noAppNeededForToken" : "{{tokenName}}用の{{appName}}アプリをインストール",
-    "tokenAppDisclaimer" : "{{tokenName}}は、{{tokenType}}アプリを使用する{{appName}}}トークンです。{{tokenName}}を管理するには、<1>{{appName}}アプリをインストール</1>してトークンを<3>{{appName}}アカウントに送付します</3>。",
-    "tokenAppDisclaimerInstalled" : "{{tokenName}} は、{{tokenType}} アプリを使用する{{appName}}} トークンです。{{tokenName}} を管理するには、<1>{{appName}} アプリを開いて</1>トークンを<3>{{appName}} アカウントに送付してください</3>。",
+    "tokenAppDisclaimer" : "{{tokenName}}は、{{tokenType}}アプリを使用する{{appName}}トークンです。{{tokenName}}を管理するには、<1>{{appName}}アプリをインストール</1>してトークンを<3>{{appName}}アカウントに送付します</3>。",
+    "tokenAppDisclaimerInstalled" : "{{tokenName}} は、{{tokenType}} アプリを使用する{{appName}} トークンです。{{tokenName}} を管理するには、<1>{{appName}} アプリを開いて</1>トークンを<3>{{appName}} アカウントに送付してください</3>。",
     "goToAccounts" : "アカウントに移動",
     "intallParentApp" : "{{appName}}アプリをインストールしてください",
     "readOnly" : {

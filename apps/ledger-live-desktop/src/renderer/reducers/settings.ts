@@ -20,6 +20,7 @@ import { CryptoCurrency, Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { getEnv } from "@ledgerhq/live-env";
 import {
   LanguageIds,
+  LanguageIdsNotFeatureFlagged,
   Languages,
   Language,
   Locale,
@@ -136,14 +137,14 @@ export type SettingsState = {
   onboardingUseCase: OnboardingUseCase | null;
   lastOnboardedDevice: Device | null;
   alwaysShowMemoTagInfo: boolean;
-  anonymousUserNotifications: Record<string, number>;
+  anonymousUserNotifications: { LNSUpsell?: number } & Record<string, number>;
 };
 
 export const getInitialLanguageAndLocale = (): { language: Language; locale: Locale } => {
   const systemLocal = getAppLocale();
 
   // Find language from system locale (i.e., en, fr, es ...)
-  const languageId = LanguageIds.find(lang => systemLocal.startsWith(lang));
+  const languageId = LanguageIdsNotFeatureFlagged.find(lang => systemLocal.startsWith(lang));
 
   // If language found, try to find corresponding locale
   if (languageId) {
@@ -571,13 +572,14 @@ const handlers: SettingsHandlers = {
     ...state,
     alwaysShowMemoTagInfo: payload,
   }),
-  [UPDATE_ANONYMOUS_USER_NOTIFICATIONS]: (state: SettingsState, { payload }) => ({
-    ...state,
-    anonymousUserNotifications: {
-      ...(!payload.purgeState && state.anonymousUserNotifications),
+  [UPDATE_ANONYMOUS_USER_NOTIFICATIONS]: (state: SettingsState, { payload }) => {
+    const { anonymousUserNotifications: prev } = state;
+    const next = {
+      ...(payload.purgeState ? { LNSUpsell: prev.LNSUpsell } : prev),
       ...payload.notifications,
-    },
-  }),
+    } as SettingsState["anonymousUserNotifications"];
+    return { ...state, anonymousUserNotifications: next };
+  },
 };
 
 export default handleActions<SettingsState, HandlersPayloads[keyof HandlersPayloads]>(

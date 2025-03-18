@@ -440,7 +440,7 @@
     },
     "wrongDevice" : {
       "title" : "Ledger Nano S™は、{{provider}}に対応していません",
-      "description" : "Ledger Nano Sは、{{provider}}に対応していませんLedger Nano S Plus、Ledger Nano X、Ledger Stax、またはLedger Flexを使用して、Ledger Liveから{{provider}}でのクロスチェーンスワップが可能です",
+      "description" : "Ledger Nano S™は、{{provider}}に対応していません。Ledger Nano S Plus™、Ledger Nano X™、Ledger Stax™、またはLedger Flex™を使用して、Ledger Liveから{{provider}}でのクロスチェーンスワップが可能です",
       "cta" : "対応デバイスを探す",
       "changeProvider" : "別のプロバイダーでスワップ"
     },
@@ -449,6 +449,8 @@
       "ton_description" : "Tonをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。",
       "spl_tokens_title" : "Ledger Nano S™はSolanaトークンのスワップに対応していません",
       "spl_tokens_description" : "Solanaトークンをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。",
+      "sui_tokens_title" : "Ledger Nano S™は、Suiトークンのスワップに対応していません",
+      "sui_tokens_description" : "Suiトークンをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。",
       "near_title" : "Ledger Nano S™はNearのスワップに対応していません",
       "near_description" : "Nearをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。",
       "ada_title" : "Ledger Nano S™はCardanoのスワップに対応していません",
@@ -456,7 +458,13 @@
       "apt_title" : "Ledger Nano S™はAptosのスワップに対応していません",
       "apt_description" : "Aptosをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。",
       "cosmos_title" : "Ledger Nano S™はCosmosのスワップに対応していません",
-      "cosmos_description" : "Cosmosをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。"
+      "cosmos_description" : "Cosmosをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。",
+      "osmo_title" : "Ledger Nano S™は、Osmosisのスワップに対応していません",
+      "osmo_description" : "Osmosisをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。",
+      "dydx_title" : "Ledger Nano S™は、dYdXのスワップに対応していません",
+      "dydx_description" : "dYdXをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。",
+      "sui_title" : "Ledger Nano S™は、Suiのスワップに対応していません",
+      "sui_description" : "Suiをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。"
     },
     "providers" : {
       "title" : "暗号資産のスワップに利用するプロバイダーを選択",
@@ -767,6 +775,10 @@
         "description3" : "この統合は、 {{team}}がLedgerと共同で実施しました",
         "description3Link" : "この統合は、<1><0>{{team}}</0></1>がLedgerと共同で実施しました"
       }
+    },
+    "migrationBanner" : {
+      "title" : "{{from}}は{{to}}に移行しています。詳細については、こちらの<0>リンク</0>をご参照いただくか、必要に応じてサポートにお問い合わせください。",
+      "contactSupport" : "サポートへお問い合わせ"
     },
     "featureUnavailable" : {
       "title" : "次の機能は一時的にご利用いただけません：{{feature}}。詳しくは{{support}}をご覧ください",
@@ -2041,7 +2053,7 @@
       "dontHaveSeed" : "リカバリーフレーズをお持ちでないですか？ ",
       "followTheGuide" : "アップデートの手順はこちらをご覧ください。",
       "removeApps" : "アップデート前に全アプリをアンインストールする",
-      "update" : "{{productName}} OSアップデート",
+      "update" : "{{productName}}OSアップデート",
       "updateBtn" : "ファームウェアをアップデート",
       "installUpdate" : "アップデートをインストール",
       "banner" : {
@@ -3753,7 +3765,66 @@
     },
     "token" : {
       "frozenStateWarning" : "アカウント資産が凍結されています！",
-      "transferWarning" : "Ledger Nano S™を使用してSolanaトークンの受取人アドレスを認証するには、<0>こちらの手順に従ってください。</0>"
+      "transferWarning" : "Ledger Nano S™を使用してSolanaトークンの受取人アドレスを認証するには、<0>こちらの手順に従ってください。</0>",
+      "transferFees" : {
+        "feesPercentHint" : "トークンには{{feePercent}}%（{{feeBps}}bps）の転送手数料がかかります。最大{{maxFee}}",
+        "notice" : "転送手数料{{fee}}%",
+        "tooltipHint" : "トークン作成者のために保留された転送の割合",
+        "transferFeesLabel" : "転送手数料"
+      },
+      "nonTransferable" : {
+        "notice" : "トークンの譲渡はできません"
+      },
+      "interestRate" : {
+        "notice" : "金利：{{rate}}%",
+        "tooltipHint" : "この金利は見かけ上の金利でしかなく、この金利の結果として新しいトークンが作成されるわけではありません"
+      },
+      "permanentDelegate" : {
+        "notice" : "恒久的なデリゲート権限が有効です",
+        "initializationNotice" : "恒久的なデリゲート権限が初期化されていますが、有効にはなっていません",
+        "tooltipHint" : "当該デリゲートは、お客様のアカウントからこのトークンを転送またはバーンすることができます"
+      },
+      "requiredMemoOnTransfer" : {
+        "notice" : "転送時に必要なメモが有効になっています",
+        "tooltipHint" : "このアカウントへの転送にはすべて、メモが必要です"
+      },
+      "transferHook" : {
+        "notice" : "転送フックが有効になっています",
+        "initializationNotice" : "転送フックが初期化されていますが、有効にはなっていません",
+        "tooltipHint" : "トークンには、{{programAddress}}プログラムによって処理される追加機能があります"
+      },
+      "extensionsInfo" : {
+        "title" : "Solanaトークン拡張機能",
+        "commonInfo" : "トークン拡張機能は、次世代のSolanaトークン規格です。これらの拡張機能には、極秘転送、恒久的なデリゲート、カスタム転送ロジック、拡張メタデータなど、通常のトークン機能を拡張する新しい方法が導入されています。",
+        "permanentDelegate" : {
+          "title" : "恒久的なデリゲート",
+          "permanentDelegateAddress" : "現在のデリゲート権限は{{address}}です。",
+          "permanentDelegateNotSetup" : "現在のデリゲート権限が設定されていません",
+          "description" : "恒久的なデリゲートは、そのミントのアカウントに対して無制限のデリゲート権限を持つ権限保有者です。当該デリゲートは、自分の権限で、いつでも、いくらでもトークンをバーンしたり転送したりすることができます。"
+        },
+        "nonTransferable" : {
+          "title" : "譲渡不可トークン",
+          "description" : "このようなトークンは「ソウルバウンド（譲渡・売買・移動不可）」であり、当該トークンの発行者以外には動かしたりバーンしたりすることはできません。"
+        },
+        "transferHook" : {
+          "title" : "転送フック",
+          "transferHookAddress" : "現在の転送フックプログラムは{{address}}です",
+          "transferHookNotSetup" : "現在の転送フックプログラムは設定されていません。",
+          "description" : "転送フックにより、トークン発行者は、ユーザーとトークンのやり取り方法を指定できるようになります。通常の転送の代わりに、発行者はカスタムロジックを、転送フック拡張機能で使用するプログラムに挿入できます。"
+        },
+        "transferFee" : {
+          "title" : "転送手数料",
+          "currentTransferFee" : "現在の転送手数料は{{feePercent}}%（{{feeBps}}bps）です。最大{{maxFee}}です。",
+          "description" : "手数料はトークンの転送ごとに請求され、受取人のアカウントで保留され、受取人はそれに触れることはできません。"
+        },
+        "interestBearing" : {
+          "title" : "利子付きトークン",
+          "currentInterestRate" : "現在の金利は{{rate}}%です。",
+          "accruedDelta" : "未収{{delta}}。",
+          "interestRateNotSetup" : "現在の金利は0％に設定されています。",
+          "description" : "金利に応じて、価値が継続的に増加または減少するトークンです。当該金利によって新しいトークンが作成されるわけではなく、この機能は完全に見かけ上のものです。"
+        }
+      }
     }
   },
   "ethereum" : {
@@ -5442,7 +5513,8 @@
     },
     "solana" : {
       "memo" : "タグ/メモ",
-      "memoPlaceholder" : "任意"
+      "memoPlaceholder" : "任意",
+      "requiredMemoPlaceholder" : "必須"
     }
   },
   "errors" : {
@@ -6254,6 +6326,13 @@
     "SolanaTxConfirmationTimeout" : {
       "title" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
     },
+    "SolanaRecipientMemoIsRequired" : {
+      "title" : "受取人アドレスにはメモが必要です"
+    },
+    "SolanaTokenNonTransferable" : {
+      "title" : "トークンの譲渡はできません",
+      "description" : "そのようなトークンは「ソウルバウンド」で、譲渡することはできません"
+    },
     "NotEnoughNftOwned" : {
       "title" : "利用可能なトークン数を超えています"
     },
@@ -6670,6 +6749,24 @@
       "alreadySync" : "すでにオンにしました",
       "learnMore" : "Ledger Syncの仕組みは？"
     },
+    "entryPoints" : {
+      "accounts" : {
+        "title" : "Ledger Syncを有効化する"
+      },
+      "manager" : {
+        "title" : "Ledger Sync",
+        "description" : "新しいスマートフォンでも、アカウントが自動的に同期されます。",
+        "cta" : "Ledger Syncをオンにする"
+      },
+      "settings" : {
+        "title" : "Ledger Sync",
+        "description" : "新しいスマートフォンでも、アカウントが自動的に同期されます。",
+        "cta" : "Ledger Syncをオンにする"
+      },
+      "onboarding" : {
+        "title" : "別のLedger Liveアプリと同期する"
+      }
+    },
     "manage" : {
       "cta" : "管理",
       "synchronize" : {
@@ -6898,55 +6995,14 @@
     }
   },
   "lnsUpsell" : {
-    "banner" : {
-      "manager" : {
-        "optIn" : {
-          "title" : "アップグレードに絶好のチャンス！",
-          "description" : "<0>{{discount}}%割引</0>で、当社の最新のデバイスにアップグレードしましょう！より使いやすく、強化されたセキュリティをお楽しみいただけます。",
-          "cta" : "ウォレットをレベルアップ",
-          "linkText" : "詳細はこちら"
-        },
-        "optOut" : {
-          "title" : "アップグレードに絶好のチャンス！",
-          "description" : "<0>{{discount}}%割引</0>で、当社の最新のデバイスにアップグレードしましょう！より使いやすく、強化されたセキュリティをお楽しみいただけます。",
-          "cta" : "ウォレットをレベルアップ",
-          "linkText" : "詳細はこちら"
-        }
-      },
-      "accounts" : {
-        "optIn" : {
-          "title" : "絶好のアップグレードチャンス！",
-          "description" : "Ledger Nano Sのアップデートが間もなく終了します。<0>{{discount}}%OFF</0>で、最新デバイスにアップグレードしましょう。",
-          "cta" : "ウォレットをレベルアップ",
-          "linkText" : "詳細はこちら"
-        },
-        "optOut" : {
-          "title" : "絶好のアップグレードチャンス！",
-          "description" : "Ledger Nano Sのキャンペーンは間もなく終了です。<0>{{discount}}%OFF</0>で、当社の最新デバイスにアップグレードできます。",
-          "cta" : "ウォレットをレベルアップ",
-          "linkText" : "詳細はこちら"
-        }
-      },
-      "portfolio" : {
-        "optOut" : {
-          "title" : "アップグレードに絶好のチャンス！",
-          "description" : "<0>{{discount}}%割引</0>で、最新のデバイスにアップグレードしましょう！より使いやすく、強化されたセキュリティをお楽しみいただけます。",
-          "cta" : "ウォレットをレベルアップ",
-          "linkText" : "詳細はこちら"
-        }
-      },
-      "notifications" : {
-        "optIn" : {
-          "description" : "キャンペーンがまもなく終了します。今ならデバイスのアップグレードが{{discount}}%OFF！より快適な体験をお楽しみいただけます。",
-          "cta" : "ウォレットをレベルアップ",
-          "linkText" : "詳細はこちら"
-        },
-        "optOut" : {
-          "description" : "キャンペーンは間もなく終了します。今ならデバイスのアップグレードが{{discount}}%OFF！より快適な体験をお楽しみいただけます。",
-          "cta" : "ウォレットをレベルアップ",
-          "linkText" : "詳細はこちら"
-        }
-      }
+    "opted_in" : {
+      "title" : "メモリ不足による制限",
+      "description" : "お持ちのLedger Nano Sを最新のLedger（Ledger Flexなど）にアップグレードしましょう！より多くのメモリ、最新のセキュリティ強化、複数の新機能をお楽しみいただけます。今なら、<0>{{discount}}%OFF</0>。",
+      "cta" : "Ledgerをアップグレード"
+    },
+    "opted_out" : {
+      "description" : "Ledger Nano Sの限られたメモリでは、複数の最新機能、ブロックチェーンの変更、セキュリティ強化も制限されます。ぜひ、新しいLedgerデバイスへのアップグレードをご検討ください。",
+      "cta" : "詳細はこちら"
     }
   }
 }

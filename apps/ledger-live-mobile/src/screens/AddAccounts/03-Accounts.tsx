@@ -2,7 +2,7 @@ import React, { useEffect, useCallback, useState, useRef, memo, useMemo } from "
 import { StyleSheet, View, Linking, SafeAreaView } from "react-native";
 import { concat, from, Subscription } from "rxjs";
 import { ignoreElements } from "rxjs/operators";
-import { connect, useDispatch } from "react-redux";
+import { connect, useDispatch, useSelector } from "react-redux";
 import { compose } from "redux";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import type { AddAccountSupportLink } from "@ledgerhq/live-wallet/addAccounts";
@@ -35,7 +35,7 @@ import CancelButton from "~/components/CancelButton";
 import GenericErrorBottomModal from "~/components/GenericErrorBottomModal";
 import NavigationScrollView from "~/components/NavigationScrollView";
 import { prepareCurrency } from "~/bridge/cache";
-import { blacklistedTokenIdsSelector } from "~/reducers/settings";
+import { blacklistedTokenIdsSelector, lastConnectedDeviceSelector } from "~/reducers/settings";
 import QueuedDrawer from "~/components/QueuedDrawer";
 import { urls } from "~/utils/urls";
 import noAssociatedAccountsByFamily from "../../generated/NoAssociatedAccounts";
@@ -51,6 +51,8 @@ import Config from "react-native-config";
 import { groupAddAccounts } from "@ledgerhq/live-wallet/addAccounts";
 import { useMaybeAccountName } from "~/reducers/wallet";
 import { setAccountName } from "@ledgerhq/live-wallet/store";
+import { useTrackAddAccountFlow } from "~/analytics/hooks/useTrackAddAccountFlow";
+import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 
 const SectionAccounts = ({
   defaultSelected,
@@ -111,6 +113,13 @@ function AddAccountsAccounts({
     inline,
     returnToSwap,
   } = route.params || {};
+
+  useTrackAddAccountFlow({
+    location: HOOKS_TRACKING_LOCATIONS.addAccount,
+    device: useSelector(lastConnectedDeviceSelector),
+    isScanningForNewAccounts: scanning,
+    error,
+  });
 
   const newAccountSchemes = useMemo(() => {
     // Find accounts that are (scanned && !existing && !used)

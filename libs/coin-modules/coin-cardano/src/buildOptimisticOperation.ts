@@ -51,12 +51,16 @@ export const buildOptimisticOperation = (
     );
 
   const txCertificates = unsignedTransaction.getCertificates();
-  const stakeRegistrationCertificates = txCertificates.filter(
-    c => c.certType === TyphonTypes.CertificateType.STAKE_REGISTRATION,
-  );
-  const stakeDeRegistrationCertificates = txCertificates.filter(
-    c => c.certType === TyphonTypes.CertificateType.STAKE_DE_REGISTRATION,
-  );
+  const stakeRegistrationCertificates: Array<TyphonTypes.StakeRegistrationCertificate> = [];
+  const stakeDeRegistrationCertificates: Array<TyphonTypes.StakeDeRegistrationCertificate> = [];
+  txCertificates.forEach(c => {
+    if (c.type === TyphonTypes.CertificateType.STAKE_REGISTRATION) {
+      stakeRegistrationCertificates.push(c);
+    } else if (c.type === TyphonTypes.CertificateType.STAKE_DE_REGISTRATION) {
+      stakeDeRegistrationCertificates.push(c);
+    }
+  });
+
   const txWithdrawals = unsignedTransaction.getWithdrawals();
 
   const transactionHash = unsignedTransaction.getTransactionHash().toString("hex");
@@ -77,8 +81,8 @@ export const buildOptimisticOperation = (
   if (stakeRegistrationCertificates.length) {
     const walletRegistration = stakeRegistrationCertificates.find(
       c =>
-        c.stakeCredential.type === HashType.ADDRESS &&
-        c.stakeCredential.hash.toString("hex") === stakeCredential.key,
+        c.cert.stakeCredential.type === HashType.ADDRESS &&
+        c.cert.stakeCredential.hash.toString("hex") === stakeCredential.key,
     );
     if (walletRegistration) {
       extra.deposit = formatCurrencyUnit(
@@ -95,8 +99,8 @@ export const buildOptimisticOperation = (
   if (stakeDeRegistrationCertificates.length) {
     const walletDeRegistration = stakeDeRegistrationCertificates.find(
       c =>
-        c.stakeCredential.type === HashType.ADDRESS &&
-        c.stakeCredential.hash.toString("hex") === stakeCredential.key,
+        c.cert.stakeCredential.type === HashType.ADDRESS &&
+        c.cert.stakeCredential.hash.toString("hex") === stakeCredential.key,
     );
     if (walletDeRegistration) {
       operationValue = operationValue.minus(protocolParams.stakeKeyDeposit);
@@ -131,10 +135,10 @@ export const buildOptimisticOperation = (
   }
 
   const opType: OperationType = txCertificates.find(
-    c => c.certType === TyphonTypes.CertificateType.STAKE_DELEGATION,
+    c => c.type === TyphonTypes.CertificateType.STAKE_DELEGATION,
   )
     ? "DELEGATE"
-    : txCertificates.find(c => c.certType === TyphonTypes.CertificateType.STAKE_DE_REGISTRATION)
+    : txCertificates.find(c => c.type === TyphonTypes.CertificateType.STAKE_DE_REGISTRATION)
       ? "UNDELEGATE"
       : getOperationType({
           valueChange: operationValue,

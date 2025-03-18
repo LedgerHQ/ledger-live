@@ -440,7 +440,7 @@
     },
     "wrongDevice" : {
       "title" : "Ledger Nano S™ не поддерживает {{provider}}.",
-      "description" : "Ledger Nano S™ не поддерживает {{provider}}. Для проведения кроссчейн-обмена через {{provider}} внутри Ledger Live используйте Ledger Nano S Plus, Ledger Nano X, Ledger Stax или Ledger Flex.",
+      "description" : "Ledger Nano S™ не поддерживает {{provider}}. Для проведения кроссчейн-обмена через {{provider}} внутри Ledger Live используйте Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™ или Ledger Flex™.",
       "cta" : "Совместимые устройства",
       "changeProvider" : "Поменять оператора"
     },
@@ -449,6 +449,8 @@
       "ton_description" : "Используйте другие совместимые устройства Ledger для обмена TON. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
       "spl_tokens_title" : "Ledger Nano S™ не поддерживает обмен токенов сети Solana",
       "spl_tokens_description" : "Используйте другие совместимые устройства Ledger для обмена токенов сети Solana. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
+      "sui_tokens_title" : "Ledger Nano S™ не поддерживает обмен токенов сети Sui",
+      "sui_tokens_description" : "Используйте другие совместимые устройства Ledger для обмена токенов сети Sui. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
       "near_title" : "Ledger Nano S™ не поддерживает обмен Near",
       "near_description" : "Для обмена Near используйте любое другое устройство Ledger. Это может быть Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ или Ledger Stax™.",
       "ada_title" : "Ledger Nano S™ не поддерживает обмен Cardano",
@@ -456,7 +458,13 @@
       "apt_title" : "Ledger Nano S™ не поддерживает обмен Aptos",
       "apt_description" : "Для обмена Aptos используйте любое другое устройство Ledger. Это может быть Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ или Ledger Stax™.",
       "cosmos_title" : "Ledger Nano S™ не поддерживает обмен Cosmos",
-      "cosmos_description" : "Для обмена Cosmos используйте любое другое устройство Ledger. Это может быть Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ или Ledger Stax™."
+      "cosmos_description" : "Для обмена Cosmos используйте любое другое устройство Ledger. Это может быть Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ или Ledger Stax™.",
+      "osmo_title" : "Ledger Nano S™ не поддерживает обмен Osmosis",
+      "osmo_description" : "Для обмена Osmosis используйте любое другое устройство Ledger. Это может быть Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ или Ledger Stax™.",
+      "dydx_title" : "Ledger Nano S™ не поддерживает обмен dYdX",
+      "dydx_description" : "Используйте другие совместимые устройства Ledger для обмена dYdX. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
+      "sui_title" : "Ledger Nano S™ не поддерживает обмен Sui",
+      "sui_description" : "Используйте другие совместимые устройства Ledger для обмена Sui. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™."
     },
     "providers" : {
       "title" : "Выберите поставщика услуг по обмену криптовалюты",
@@ -767,6 +775,10 @@
         "description3" : "Эта интеграция проведена {{team}} в сотрудничестве с Ledger.",
         "description3Link" : "Эта интеграция проведена <1><0>{{team}}</0></1> в сотрудничестве с Ledger."
       }
+    },
+    "migrationBanner" : {
+      "title" : "{{from}} становится {{to}}. Перейдите по <0>ссылке</0>, чтобы узнать больше или связаться с Поддержкой при необходимости.",
+      "contactSupport" : "Написать в Поддержку"
     },
     "featureUnavailable" : {
       "title" : "В данный момент недоступна эта функция: {{feature}}. Обратитесь в {{support}} за подробностями.",
@@ -3753,7 +3765,66 @@
     },
     "token" : {
       "frozenStateWarning" : "Активы на счету заморожены",
-      "transferWarning" : "<0>Используйте это руководство</0>, чтобы подтвердить адрес получения токенов Solana с помощью Ledger Nano S™."
+      "transferWarning" : "<0>Используйте это руководство</0>, чтобы подтвердить адрес получения токенов Solana с помощью Ledger Nano S™.",
+      "transferFees" : {
+        "feesPercentHint" : "Комиссия за перевод этого токена составляет {{feePercent}}% ({{feeBps}} bps). Она не превысит {{maxFee}}.",
+        "notice" : "Комиссия за перевод — {{fee}}%",
+        "tooltipHint" : "Процент от суммы перевода, который получает создатель токена",
+        "transferFeesLabel" : "Комиссии за перевод"
+      },
+      "nonTransferable" : {
+        "notice" : "Токен непередаваемый"
+      },
+      "interestRate" : {
+        "notice" : "Процентная ставка — {{rate}}%",
+        "tooltipHint" : "Новые монеты не создаются с учётом ставки, то есть происходящее носит исключительно косметический характер"
+      },
+      "permanentDelegate" : {
+        "notice" : "Постоянные полномочия делегата активированы",
+        "initializationNotice" : "Постоянные полномочия делегата запущены, но не активированы",
+        "tooltipHint" : "Делегат может перемещать этот токен с вашего счёта или сжигать его"
+      },
+      "requiredMemoOnTransfer" : {
+        "notice" : "Обязательное memo для переводов активировано",
+        "tooltipHint" : "Все входящие переводы на этот счёт должны содержать memo"
+      },
+      "transferHook" : {
+        "notice" : "Transfer Hook активирована",
+        "initializationNotice" : "Transfer Hook запущена, но не активирована",
+        "tooltipHint" : "У токена есть дополнительная функциональность, которая управляется программой {{programAddress}}"
+      },
+      "extensionsInfo" : {
+        "title" : "Расширения токенов Solana",
+        "commonInfo" : "Расширения токенов — новое поколение стандарта токенов в сети Solana. Они наделяют привычную функциональность токена дополнительными возможностями. Например, это могут быть конфиденциальные переводы, постоянные делегаты, нестандартная логика перемещения, расширенные метаданные и многое другое.",
+        "permanentDelegate" : {
+          "title" : "Постоянный делегат",
+          "permanentDelegateAddress" : "Сейчас полномочия делегата принадлежат {{address}}",
+          "permanentDelegateNotSetup" : "Актуальные полномочия делегата не указаны.",
+          "description" : "Постоянный делегат — это сторона с неограниченными полномочиями на любой счёт в пределах конкретного минтинга. Делегат может сжигать или перемещать любое количество токенов в любое время на своё усмотрение."
+        },
+        "nonTransferable" : {
+          "title" : "Неперемещаемые токены",
+          "description" : "Такие криптоактивы называются Soulbound-токенами, и их нельзя перемещать или сжигать. Сделать это может только их эмитент."
+        },
+        "transferHook" : {
+          "title" : "Transfer Hook",
+          "transferHookAddress" : "Актуальная программа для Transfer Hook — {{address}}",
+          "transferHookNotSetup" : "Актуальная программа для Transfer Hook не указана.",
+          "description" : "Transfer Hook позволяет эмитенту токена определять условия взаимодействия пользователей с токенами. Вместо обычного перевода эмитент может добавить произвольную логику в программу, которая будет использоваться с расширением Transfer Hook."
+        },
+        "transferFee" : {
+          "title" : "Комиссия за перевод",
+          "currentTransferFee" : "Актуальная комиссия за перевод составляет {{feePercent}}% ({{feeBps}} bps). Она не превысит {{maxFee}}.",
+          "description" : "Комиссии взимаются за каждый перевод токена и удерживаются на счету получателя. Причём последний не может их использовать."
+        },
+        "interestBearing" : {
+          "title" : "Процентные токены",
+          "currentInterestRate" : "Актуальная процентная ставка составляет {{rate}}%.",
+          "accruedDelta" : "Начислено {{delta}}.",
+          "interestRateNotSetup" : "Актуальная процентная ставка составляет 0%.",
+          "description" : "Токены, чья стоимость растёт или снижается в соответствии с процентной ставкой. Новые монеты здесь не создаются, то есть эта функция носит исключительно косметический характер."
+        }
+      }
     }
   },
   "ethereum" : {
@@ -5442,7 +5513,8 @@
     },
     "solana" : {
       "memo" : "Тег примечания/Memo",
-      "memoPlaceholder" : "Опционально"
+      "memoPlaceholder" : "Опционально",
+      "requiredMemoPlaceholder" : "Обязательное поле"
     }
   },
   "errors" : {
@@ -5728,7 +5800,7 @@
     },
     "MultiversXDecimalsLimitReached" : {
       "title" : "Достигнут лимит десятичных знаков",
-      "description" : "Убедитесь, что у указанной суммы 18 десятичных знаков."
+      "description" : "Убедитесь, что в указанной сумме до 18 десятичных знаков."
     },
     "MultiversXMinDelegatedAmountError" : {
       "title" : "Делегированная сумма должна быть не менее {{formattedAmount}}"
@@ -6254,6 +6326,13 @@
     "SolanaTxConfirmationTimeout" : {
       "title" : "Вероятно, транзакция не удалась. Прежде чем повторить попытку, подождите немного, а затем проверьте историю транзакций."
     },
+    "SolanaRecipientMemoIsRequired" : {
+      "title" : "Требуется примечание/memo для адреса получателя"
+    },
+    "SolanaTokenNonTransferable" : {
+      "title" : "Токен непередаваемый",
+      "description" : "Такие криптоактивы называются Soulbound-токенами и не могут быть перемещены"
+    },
     "NotEnoughNftOwned" : {
       "title" : "Это больше доступного баланса"
     },
@@ -6670,6 +6749,24 @@
       "alreadySync" : "Уже включено",
       "learnMore" : "Как работает Ledger Sync?"
     },
+    "entryPoints" : {
+      "accounts" : {
+        "title" : "Активируйте Ledger Sync"
+      },
+      "manager" : {
+        "title" : "Ledger Sync",
+        "description" : "Синхронизируйте ваши счета в автоматическом режиме — даже при переходе на новый смартфон.",
+        "cta" : "Включить Ledger Sync"
+      },
+      "settings" : {
+        "title" : "Ledger Sync",
+        "description" : "Синхронизируйте ваши счета в автоматическом режиме — даже при переходе на новый смартфон.",
+        "cta" : "Включить Ledger Sync"
+      },
+      "onboarding" : {
+        "title" : "Синхронизировать с другим приложением Ledger Live"
+      }
+    },
     "manage" : {
       "cta" : "Настроить",
       "synchronize" : {
@@ -6898,55 +6995,14 @@
     }
   },
   "lnsUpsell" : {
-    "banner" : {
-      "manager" : {
-        "optIn" : {
-          "title" : "Пора обновиться",
-          "description" : "Перейдите на наши новые устройства со <0>скидкой {{discount}}%</0> для продвинутой безопасности и удобства использования.",
-          "cta" : "Прокачать кошелёк",
-          "linkText" : "Подробнее..."
-        },
-        "optOut" : {
-          "title" : "Пора обновиться",
-          "description" : "Перейдите на наши новые устройства со <0>скидкой {{discount}}%</0> для продвинутой безопасности и удобства использования.",
-          "cta" : "Прокачать кошелёк",
-          "linkText" : "Подробнее..."
-        }
-      },
-      "accounts" : {
-        "optIn" : {
-          "title" : "Пора обновиться",
-          "description" : "Ledger Nano S скоро перестанет обновляться. Перейдите на наши новые устройства со <0>скидкой {{discount}}%</0>.",
-          "cta" : "Прокачать кошелёк",
-          "linkText" : "Подробнее..."
-        },
-        "optOut" : {
-          "title" : "Пора обновиться",
-          "description" : "Ledger Nano S скоро перестанет обновляться. Перейдите на наши новые устройства со <0>скидкой {{discount}}%</0>.",
-          "cta" : "Прокачать кошелёк",
-          "linkText" : "Подробнее..."
-        }
-      },
-      "portfolio" : {
-        "optOut" : {
-          "title" : "Пора обновиться",
-          "description" : "Перейдите на наши новые устройства со <0>скидкой {{discount}}%</0> для ещё лучшей безопасности и удобства использования.",
-          "cta" : "Прокачать кошелёк",
-          "linkText" : "Подробнее..."
-        }
-      },
-      "notifications" : {
-        "optIn" : {
-          "description" : "Апдейты скоро прекратятся. Обновитесь сейчас со скидкой {{discount}}%, чтобы и дальше наслаждаться использованием.",
-          "cta" : "Прокачать кошелёк",
-          "linkText" : "Подробнее..."
-        },
-        "optOut" : {
-          "description" : "Апдейты скоро прекратятся. Обновитесь сейчас со скидкой {{discount}}%, чтобы и дальше наслаждаться использованием.",
-          "cta" : "Прокачать кошелёк",
-          "linkText" : "Подробнее..."
-        }
-      }
+    "opted_in" : {
+      "title" : "Ограниченная память — ограниченные впечатления",
+      "description" : "Перейдите с вашего Ledger Nano S на новое устройство – например, Ledger Flex. Вы получите бóльший объём памяти, актуальные улучшения безопасности, самые новые функции и <0>эксклюзивную скидку {{discount}}%</>.",
+      "cta" : "Обновиться"
+    },
+    "opted_out" : {
+      "description" : "У Ledger Nano S ограниченный объём памяти, что не позволяет владельцам аппаратного кошелька использовать актуальные функции и изменения в блокчейне, а также наслаждаться улучшениями безопасности. Перейдите на новое устройство Ledger, и пользуйтесь им ещё долгие годы.",
+      "cta" : "Подробнее..."
     }
   }
 }

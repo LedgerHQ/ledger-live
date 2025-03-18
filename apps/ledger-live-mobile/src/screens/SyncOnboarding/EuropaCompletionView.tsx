@@ -32,7 +32,7 @@ const EuropaCompletionView: React.FC<Props> = ({ onAnimationFinish }) => {
       />
       <Flex flex={1} alignItems="center" justifyContent="center">
         <Image
-          source={require("./assets/europa-success.png")}
+          source={require("./assets/europa-success.webp")}
           style={{ zIndex: 1, width: 275 }}
           resizeMode="contain"
         />

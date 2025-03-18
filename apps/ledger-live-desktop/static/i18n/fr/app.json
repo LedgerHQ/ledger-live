@@ -449,6 +449,8 @@
       "ton_description" : "Pour échanger des TON, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
       "spl_tokens_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de tokens Solana",
       "spl_tokens_description" : "Pour échanger des tokens Solana, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+      "sui_tokens_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de tokens Sui",
+      "sui_tokens_description" : "Pour échanger des tokens Sui, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
       "near_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de NEAR",
       "near_description" : "Pour échanger des NEAR, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
       "ada_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de Cardano",
@@ -456,7 +458,13 @@
       "apt_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange d’Aptos",
       "apt_description" : "Pour échanger des Aptos, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
       "cosmos_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de Cosmos",
-      "cosmos_description" : "Pour échanger des Cosmos, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™."
+      "cosmos_description" : "Pour échanger des Cosmos, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+      "osmo_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange d’Osmosis",
+      "osmo_description" : "Pour échanger des Osmosis, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+      "dydx_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de dYdX",
+      "dydx_description" : "Pour échanger des dYdX, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+      "sui_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de Sui",
+      "sui_description" : "Pour échanger des Sui, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™."
     },
     "providers" : {
       "title" : "Choisir un prestataire pour le swap",
@@ -767,6 +775,10 @@
         "description3" : "Cette intégration a été réalisée par {{team}} en collaboration avec Ledger.",
         "description3Link" : "Cette intégration a été réalisée par <1><0>{{team}}</0></1> en collaboration avec Ledger."
       }
+    },
+    "migrationBanner" : {
+      "title" : "{{from}} migre vers {{to}}. Cliquez <0>ici</0> pour en savoir plus ou contactez l’Assistance si vous avez besoin d’aide.",
+      "contactSupport" : "Contacter l’Assistance"
     },
     "featureUnavailable" : {
       "title" : "La fonctionnalité suivante est temporairement indisponible : {{feature}}. Pour plus d’informations, veuillez contacter l’{{support}}.",
@@ -3753,7 +3765,66 @@
     },
     "token" : {
       "frozenStateWarning" : "Les actifs du compte sont gelés",
-      "transferWarning" : "Pour vérifier l’adresse du bénéficiaire des tokens Solana avec un Ledger Nano S™, <0>suivez ces instructions</0>."
+      "transferWarning" : "Pour vérifier l’adresse du bénéficiaire des tokens Solana avec un Ledger Nano S™, <0>suivez ces instructions</0>.",
+      "transferFees" : {
+        "feesPercentHint" : "Le token a des frais de transfert de {{feePercent}}% ({{feeBps}} bps). Max : {{maxFee}}",
+        "notice" : "Frais de transfert : {{fee}}%",
+        "tooltipHint" : "Pourcentage du transfert prélevé pour le créateur du token.",
+        "transferFeesLabel" : "Frais de transfert"
+      },
+      "nonTransferable" : {
+        "notice" : "Le token n’est pas transférable"
+      },
+      "interestRate" : {
+        "notice" : "Taux d’intérêt : {{rate}}%",
+        "tooltipHint" : "À des fins visuelles uniquement : aucun nouveau token n’est créé avec cet intérêt."
+      },
+      "permanentDelegate" : {
+        "notice" : "L’autorité Délégué permanent est activée",
+        "initializationNotice" : "L’autorité Délégué permanent est initialisée mais n’est pas activée",
+        "tooltipHint" : "Le délégué peut transférer ou brûler ce token dans votre compte."
+      },
+      "requiredMemoOnTransfer" : {
+        "notice" : "Mémo requis est activé",
+        "tooltipHint" : "Tous les transferts entrants vers ce compte doivent avoir un mémo."
+      },
+      "transferHook" : {
+        "notice" : "Transfer Hook est activé",
+        "initializationNotice" : "Transfer Hook est configuré mais n’est pas activé",
+        "tooltipHint" : "Le token a une fonctionnalité supplémentaire gérée par le programme {{programAddress}}."
+      },
+      "extensionsInfo" : {
+        "title" : "Extensions de tokens Solana",
+        "commonInfo" : "Les extensions de tokens constituent la nouvelle génération de la norme pour tokens de Solana. Ils présentent un nouvel ensemble de méthodes permettant d’ajouter des caractéristiques supplémentaires aux tokens, telles que les transferts confidentiels, les délégués permanents, la logique de transfert personnalisée, les métadonnées étendues, et bien plus.",
+        "permanentDelegate" : {
+          "title" : "Délégué permanent",
+          "permanentDelegateAddress" : "L’autorité de délégation actuelle est {{address}}",
+          "permanentDelegateNotSetup" : "L’autorité de délégation actuelle n’est pas configurée.",
+          "description" : "Un délégué permanent est une autorité qui dispose de pouvoirs de délégation illimités sur n’importe quel compte pour ce minage. Ce délégué peut ainsi brûler ou transférer n’importe quelle quantité de tokens, à n’importe quel moment et à son gré."
+        },
+        "nonTransferable" : {
+          "title" : "Tokens non transférables",
+          "description" : "Ces tokens sont des tokens soulbound et ne peuvent être ni transférés ni brûlés, sauf par l’émetteur du token."
+        },
+        "transferHook" : {
+          "title" : "Transfer Hook",
+          "transferHookAddress" : "Le programme actuel de l’extension Transfert Hook est {{address}}",
+          "transferHookNotSetup" : "Le programme actuel de l’extension Transfert Hook n’est pas configuré.",
+          "description" : "L’extension Transfert Hook permet à l’émetteur d’un token de déterminer la manière dont les utilisateurs et les tokens interagissent. À la place d’un transfert normal, l’émetteur peut insérer une logique personnalisée dans un programme à utiliser avec l’extension Transfert Hook."
+        },
+        "transferFee" : {
+          "title" : "Frais de transfert",
+          "currentTransferFee" : "Frais de transfert actuels : {{feePercent}}% ({{feeBps}} bps). Max : {{maxFee}}.",
+          "description" : "Des frais sont facturés sur chaque transfert de token et prélevés sur le compte du destinataire, qui ne peut pas y toucher."
+        },
+        "interestBearing" : {
+          "title" : "Tokens porteurs d’intérêts",
+          "currentInterestRate" : "Taux d’intérêt actuel : {{rate}}%.",
+          "accruedDelta" : "Accumulé {{delta}}.",
+          "interestRateNotSetup" : "Le taux d’intérêt actuel est fixé à 0%.",
+          "description" : "Tokens dont la valeur augmente ou diminue constamment en fonction de leur taux d’intérêt. Fonctionnalité purement visuelle : aucun nouveau token n’est créé."
+        }
+      }
     }
   },
   "ethereum" : {
@@ -5442,7 +5513,8 @@
     },
     "solana" : {
       "memo" : "Tag/mémo",
-      "memoPlaceholder" : "Facultatif"
+      "memoPlaceholder" : "Facultatif",
+      "requiredMemoPlaceholder" : "Requis"
     }
   },
   "errors" : {
@@ -6254,6 +6326,13 @@
     "SolanaTxConfirmationTimeout" : {
       "title" : "Échec probable de votre transaction. Patientez un instant puis vérifiez l’historique des transactions avant de réessayer."
     },
+    "SolanaRecipientMemoIsRequired" : {
+      "title" : "Un mémo est nécessaire pour l’adresse du bénéficiaire"
+    },
+    "SolanaTokenNonTransferable" : {
+      "title" : "Le token n’est pas transférable",
+      "description" : "Ces tokens sont des tokens soulbound et ne peuvent pas être transférés."
+    },
     "NotEnoughNftOwned" : {
       "title" : "Nombre de tokens disponibles insuffisant"
     },
@@ -6670,10 +6749,28 @@
       "alreadySync" : "Je l’ai déjà activé",
       "learnMore" : "Comment fonctionne Ledger Sync ?"
     },
+    "entryPoints" : {
+      "accounts" : {
+        "title" : "Activez Ledger Sync"
+      },
+      "manager" : {
+        "title" : "Ledger Sync",
+        "description" : "Synchronisez automatiquement vos comptes, même si vous changez de téléphone.",
+        "cta" : "Activer Ledger Sync"
+      },
+      "settings" : {
+        "title" : "Ledger Sync",
+        "description" : "Synchronisez automatiquement vos comptes, même si vous changez de téléphone.",
+        "cta" : "Activer Ledger Sync"
+      },
+      "onboarding" : {
+        "title" : "Synchroniser avec une autre application Ledger Live"
+      }
+    },
     "manage" : {
       "cta" : "Gérer",
       "synchronize" : {
-        "label" : "Synchroniser avec une autre application Ledger Live",
+        "label" : "Synchroniser avec une autre application Ledger Live",
         "description" : "Synchronisez vos comptes crypto Ledger Live sur différents téléphones et ordinateurs."
       },
       "backup" : {
@@ -6898,55 +6995,14 @@
     }
   },
   "lnsUpsell" : {
-    "banner" : {
-      "manager" : {
-        "optIn" : {
-          "title" : "Passez au niveau supérieur",
-          "description" : "Bénéficiez de <0>-{{discount}}% de réduction</0> sur nos wallets dernière génération. Passez à une expérience plus fluide et plus sécurisée dès maintenant.",
-          "cta" : "Choisir mon nouveau wallet",
-          "linkText" : "En savoir plus"
-        },
-        "optOut" : {
-          "title" : "Passez au niveau supérieur",
-          "description" : "Bénéficiez de <0>-{{discount}}% de réduction</0> sur nos wallets dernière génération. Passez à une expérience plus fluide et plus sécurisée dès maintenant.",
-          "cta" : "Choisir mon nouveau wallet",
-          "linkText" : "En savoir plus"
-        }
-      },
-      "accounts" : {
-        "optIn" : {
-          "title" : "Passez au niveau supérieur",
-          "description" : "Le Ledger Nano S ne recevra bientôt plus de mises à jour. Bénéficiez de <0>-{{discount}}% de réduction</0> sur nos derniers wallets.",
-          "cta" : "Choisir mon nouveau wallet",
-          "linkText" : "En savoir plus"
-        },
-        "optOut" : {
-          "title" : "Passez au niveau supérieur",
-          "description" : "Le Ledger Nano S ne recevra bientôt plus de mises à jour. Bénéficiez de <0>-{{discount}}% de réduction</0> sur nos derniers wallets.",
-          "cta" : "Choisir mon nouveau wallet",
-          "linkText" : "En savoir plus"
-        }
-      },
-      "portfolio" : {
-        "optOut" : {
-          "title" : "Passez au niveau supérieur",
-          "description" : "Bénéficiez de <0>-{{discount}}% de réduction</0> sur nos wallets dernière génération. Passez à une expérience plus fluide et plus sécurisée dès maintenant.",
-          "cta" : "Choisir mon nouveau wallet",
-          "linkText" : "En savoir plus"
-        }
-      },
-      "notifications" : {
-        "optIn" : {
-          "description" : "Les mises à jour s’arrêtent bientôt. Pour une expérience fluide, passez à un wallet supérieur, avec -{{discount}}% de réduction.",
-          "cta" : "Choisir mon nouveau wallet",
-          "linkText" : "En savoir plus"
-        },
-        "optOut" : {
-          "description" : "Les mises à jour s’arrêtent bientôt. Pour une expérience fluide, passez à un wallet supérieur, avec -{{discount}}% de réduction.",
-          "cta" : "Choisir mon nouveau wallet",
-          "linkText" : "En savoir plus"
-        }
-      }
+    "opted_in" : {
+      "title" : "Mémoire limitée, expérience limitée",
+      "description" : "Passez du Ledger Nano S à un modèle plus récent, tel que le Ledger Flex. À la clé : plus de mémoire, les dernières améliorations de sécurité, de nouvelles fonctionnalités et <0>une réduction exclusive de {{discount}}%</0>.",
+      "cta" : "Choisir mon wallet"
+    },
+    "opted_out" : {
+      "description" : "Avec sa mémoire limitée, votre Ledger Nano S vous prive des dernières fonctionnalités, innovations blockchain et améliorations de sécurité. Pour en bénéficier, choisissez un wallet Ledger plus récent.",
+      "cta" : "En savoir plus"
     }
   }
 }

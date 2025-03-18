@@ -51,13 +51,14 @@ export const customImageAction: PostOnboardingAction = {
   description: "postOnboarding.actions.customImage.description",
   actionCompletedPopupLabel: "postOnboarding.actions.customImage.titleCompleted",
   buttonLabelForAnalyticsEvent: "Set lock screen picture",
-  getNavigationParams: ({ deviceModelId }) => [
+  getNavigationParams: ({ deviceModelId, referral }) => [
     NavigatorName.CustomImage,
     {
       screen: ScreenName.CustomImageStep0Welcome,
       params: {
         device: null,
         deviceModelId,
+        ...(referral ? { referral } : {}),
       },
     },
   ],

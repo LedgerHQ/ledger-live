@@ -440,7 +440,7 @@
     },
     "wrongDevice": {
       "title": "Ledger Nano S™ is not compatible with {{provider}}",
-      "description": "Ledger Nano S is not compatible with {{provider}}. You can use Ledger Nano S Plus, Ledger Nano X, Ledger Stax, or Ledger Flex to experience cross-chain swaps on {{provider}} via Ledger Live",
+      "description": "Ledger Nano S™ is not compatible with {{provider}}. You can use Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™, or Ledger Flex™ to experience cross-chain swaps on {{provider}} via Ledger Live",
       "cta": "Explore compatible devices",
       "changeProvider": "Swap with another provider"
     },
@@ -449,6 +449,8 @@
       "ton_description": "To swap Ton, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
       "spl_tokens_title": "Ledger Nano S™ does not support swapping Solana tokens",
       "spl_tokens_description": "To swap Solana tokens, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+      "sui_tokens_title": "Ledger Nano S™ does not support swapping Sui tokens",
+      "sui_tokens_description": "To swap Sui tokens, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
       "near_title": "Ledger Nano S™ does not support swapping Near",
       "near_description": "To swap Near, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
       "ada_title": "Ledger Nano S™ does not support swapping Cardano",
@@ -456,7 +458,13 @@
       "apt_title": "Ledger Nano S™ does not support swapping Aptos",
       "apt_description": "To swap Aptos, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
       "cosmos_title": "Ledger Nano S™ does not support swapping Cosmos",
-      "cosmos_description": "To swap Cosmos, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
+      "cosmos_description": "To swap Cosmos, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+      "osmo_title": "Ledger Nano S™ does not support swapping Osmosis",
+      "osmo_description": "To swap Osmosis, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+      "dydx_title": "Ledger Nano S™ does not support swapping dYdX",
+      "dydx_description": "To swap dYdX, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+      "sui_title": "Ledger Nano S™ does not support swapping Sui",
+      "sui_description": "To swap Sui, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
     },
     "providers": {
       "title": "Choose a provider to swap crypto",
@@ -767,6 +775,10 @@
         "description3": "This integration has been carried out by {{team}} in collaboration with Ledger",
         "description3Link": "This integration has been carried out by <1><0>{{team}}</0></1> in collaboration with Ledger"
       }
+    },
+    "migrationBanner": {
+      "title": "{{from}} is migrating to {{to}}. Follow this <0>link</0> to know more or contact the support if you need assistance.",
+      "contactSupport": "Contact support"
     },
     "featureUnavailable": {
       "title": "The following feature is momentarily unavailable : {{feature}}. To know more please refer to {{support}}",
@@ -2041,7 +2053,7 @@
       "dontHaveSeed": "Don't have your recovery phrase? ",
       "followTheGuide": "Follow our step by step update guide",
       "removeApps": "Uninstall all apps before updating",
-      "update": "{{productName} OS update",
+      "update": "{{productName}} OS update",
       "updateBtn": "Update firmware",
       "installUpdate": "Install update",
       "banner": {
@@ -7007,55 +7019,14 @@
     }
   },
   "lnsUpsell": {
-    "banner": {
-      "manager": {
-        "optIn": {
-          "title": "It's time to upgrade",
-          "description": "Upgrade to our latest devices with <0>{{discount}}% discount</0> for an enhanced security and a seamless experience.",
-          "cta": "Level up my wallet",
-          "linkText": "Learn more"
-        },
-        "optOut": {
-          "title": "It's time to upgrade",
-          "description": "Upgrade to our latest devices with <0>{{discount}}% discount</0> for an enhanced security and a seamless experience.",
-          "cta": "Level up my wallet",
-          "linkText": "Learn more"
-        }
-      },
-      "accounts": {
-        "optIn": {
-          "title": "It's time to upgrade",
-          "description": "Ledger Nano S updates are ending soon. Upgrade to our latest devices with <0>{{discount}}% discount</0>.",
-          "cta": "Level up my wallet",
-          "linkText": "Learn more"
-        },
-        "optOut": {
-          "title": "It's time to upgrade",
-          "description": "Ledger Nano S updates are ending soon. Upgrade to our latest devices with <0>{{discount}}% discount</0>.",
-          "cta": "Level up my wallet",
-          "linkText": "Learn more"
-        }
-      },
-      "portfolio": {
-        "optOut": {
-          "title": "It's time to upgrade",
-          "description": "Upgrade to our latest devices with <0>{{discount}}% discount</0> for an enhanced security and a seamless experience.",
-          "cta": "Level up my wallet",
-          "linkText": "Learn more"
-        }
-      },
-      "notifications": {
-        "optIn": {
-          "description": "Updates are ending soon. Upgrade now with {{discount}}% off for a seamless experience.",
-          "cta": "Level up my wallet",
-          "linkText": "Learn more"
-        },
-        "optOut": {
-          "description": "Updates are ending soon. Upgrade now with {{discount}}% off for a seamless experience.",
-          "cta": "Level up my wallet",
-          "linkText": "Learn more"
-        }
-      }
+    "opted_in": {
+      "title": "Limited memory, limited experience",
+      "description": "Upgrade your Ledger Nano S to a newer Ledger — like the Ledger Flex — for more memory, the latest security enhancements, fresh features, and <0>an exclusive {{discount}}% off</>.",
+      "cta": "Upgrade my Ledger"
+    },
+    "opted_out": {
+      "description": "The limited memory of your Ledger Nano S restricts your access to the latest features, blockchain changes and security enhancements. For long-term use, upgrade to a newer Ledger device.",
+      "cta": "Learn more"
     }
   }
 }

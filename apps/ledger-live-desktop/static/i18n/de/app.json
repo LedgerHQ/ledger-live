@@ -440,7 +440,7 @@
     },
     "wrongDevice" : {
       "title" : "Ledger Nano S™ ist nicht mit {{provider}} kompatibel",
-      "description" : "Ledger Nano S ist nicht mit {{provider}} kompatibel. Du kannst Ledger Nano S Plus, Ledger Nano X, Ledger Stax oder Ledger Flex verwenden, um blockchainübergreifende Swaps bei {{provider}} über Ledger Live durchzuführen.",
+      "description" : "Ledger Nano S™ ist nicht mit {{provider}} kompatibel. Du kannst Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™ oder Ledger Flex™ verwenden, um blockchainübergreifende Swaps bei {{provider}} über Ledger Live durchzuführen.",
       "cta" : "Kompatible Geräte entdecken",
       "changeProvider" : "Bei anderem Anbieter swappen"
     },
@@ -449,6 +449,8 @@
       "ton_description" : "Zum Swappen von Ton kannst du jedes sonstige kompatible Ledger-Gerät nutzen, z. B. Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ oder Ledger Stax™.",
       "spl_tokens_title" : "Die Ledger Nano S™ unterstützt das Swappen von Solana-Token nicht",
       "spl_tokens_description" : "Zum Swappen von Solana-Token kannst du jedes sonstige kompatible Ledger-Gerät nutzen, z. B. Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ oder Ledger Stax™.",
+      "sui_tokens_title" : "Die Ledger Nano S™ unterstützt das Swappen von Sui-Token nicht",
+      "sui_tokens_description" : "Zum Swappen von Sui-Token kannst du jedes sonstige kompatible Ledger-Gerät nutzen, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
       "near_title" : "Ledger Nano S™ unterstützt das Swappen von Near nicht",
       "near_description" : "Zum Swappen müsstest du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
       "ada_title" : "Die Ledger Nano S™ unterstützt das Swappen von Cardano nicht",
@@ -456,7 +458,13 @@
       "apt_title" : "Ledger Nano S™ unterstützt das Swappen von Aptos nicht",
       "apt_description" : "Zum Swappen von Aptos müsstest du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
       "cosmos_title" : "Ledger Nano S™ unterstützt das Swappen von Cosmos nicht",
-      "cosmos_description" : "Zum Swappen von Cosmos müsstest du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™."
+      "cosmos_description" : "Zum Swappen von Cosmos müsstest du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
+      "osmo_title" : "Ledger Nano S™ unterstützt das Swappen von Osmosis nicht",
+      "osmo_description" : "Zum Swappen von Osmosis musst du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
+      "dydx_title" : "Ledger Nano S™ unterstützt das Swappen von dYdX nicht",
+      "dydx_description" : "Zum Swappen von dYdX musst du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
+      "sui_title" : "Die Ledger Nano S™ unterstützt das Swappen von Sui nicht",
+      "sui_description" : "Zum Swappen von Sui kannst du jedes sonstige kompatible Ledger-Gerät nutzen, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™."
     },
     "providers" : {
       "title" : "Wähle einen Anbieter für das Swappen von Kryptowährungen",
@@ -767,6 +775,10 @@
         "description3" : "Diese Integration wurde von {{team}} in Zusammenarbeit mit Ledger durchgeführt",
         "description3Link" : "Diese Integration wurde von <1><0>{{team}}</0></1> in Zusammenarbeit mit Ledger durchgeführt"
       }
+    },
+    "migrationBanner" : {
+      "title" : "{{from}} migriert zu {{to}}. Folge diesem <0>Link</0>, um mehr zu erfahren, oder wende dich an den Kundenservice, falls du Hilfe benötigst.",
+      "contactSupport" : "Support kontaktieren"
     },
     "featureUnavailable" : {
       "title" : "Die folgende Funktion ist momentan nicht verfügbar: {{feature}}. Weitere Informationen erhältst du vom {{support}}.",
@@ -1778,7 +1790,7 @@
     "successDescription_plural" : "Andere Konten hinzufügen oder zum Portfolio zurückkehren",
     "createNewAccount" : {
       "noOperationOnLastAccount" : "Du kannst erst dann ein neues Konto hinzufügen, wenn du Guthaben auf deinem <1><0>{{accountName}}</0></1>-Konto empfangen hast",
-      "noAccountToCreate" : "Es wurde kein <1><0>{{currencyName}}}}</0></1> Konto gefunden, das erstellt werden kann",
+      "noAccountToCreate" : "Es wurde kein <1><0>{{currencyName}}</0></1> Konto gefunden, das erstellt werden kann",
       "showAllAddressTypes" : "Alle Adresstypen anzeigen",
       "showAllAddressTypesTooltip" : "Ändere den Adresstyp nur dann, wenn du {{family}} in anderen Adressformaten erhalten möchtest."
     },
@@ -3753,7 +3765,66 @@
     },
     "token" : {
       "frozenStateWarning" : "Kontovermögenswerte sind gesperrt!",
-      "transferWarning" : "Zum Verifizieren der Empfängeradresse für Solana-Token mit einer Ledger Nano S™ <0>befolge diese Anweisungen</0>."
+      "transferWarning" : "Zum Verifizieren der Empfängeradresse für Solana-Token mit einer Ledger Nano S™ <0>befolge diese Anweisungen</0>.",
+      "transferFees" : {
+        "feesPercentHint" : "Für das Token fällt eine Überweisungsgebühr in Höhe von {{feePercent}} % ({{feeBps}} bps) an. Max. {{maxFee}}",
+        "notice" : "Überweisungsgebühr {{fee}} %",
+        "tooltipHint" : "Prozentualer Anteil der Überweisung, der für den Tokenersteller einbehalten wird",
+        "transferFeesLabel" : "Überweisungsgebühren"
+      },
+      "nonTransferable" : {
+        "notice" : "Das Token ist nicht übertragbar"
+      },
+      "interestRate" : {
+        "notice" : "Zinssatz: {{rate}} %",
+        "tooltipHint" : "Nur für optische Zwecke; es werden durch die Zinsen keine neuen Token erstellt"
+      },
+      "permanentDelegate" : {
+        "notice" : "Die permanente Delegierungsbefugnis ist aktiviert",
+        "initializationNotice" : "Die permanente Delegierungsbefugnis ist initialisiert, aber nicht aktiviert",
+        "tooltipHint" : "Der Delegierte kann dieses Token von deinem Konto übertragen oder es verbrennen"
+      },
+      "requiredMemoOnTransfer" : {
+        "notice" : "Erforderliches Überweisungsmemo ist aktiviert",
+        "tooltipHint" : "Alle eingehenden Überweisungen auf dieses Konto müssen ein Memo aufweisen"
+      },
+      "transferHook" : {
+        "notice" : "Transfer-Hook ist aktiviert",
+        "initializationNotice" : "Transfer-Hook ist initialisiert, aber nicht aktiviert",
+        "tooltipHint" : "Token verfügt über zusätzliche Funktionen, die vom Programm {{programAddress}} verwaltet werden"
+      },
+      "extensionsInfo" : {
+        "title" : "Erweiterungen für Solana-Token",
+        "commonInfo" : "Token-Erweiterungen sind die nächste Generation des Solana-Tokenstandards. Sie führen eine Anzahl neuer Verfahren ein, um die normale Tokenfunktionalität um zusätzliche Funktionen wie vertrauliche Überweisungen, permanente Delegierung, eine benutzerdefinierte Überweisungslogik, erweiterte Metadaten und vieles mehr zu erweitern.",
+        "permanentDelegate" : {
+          "title" : "Permanente Delegierung",
+          "permanentDelegateAddress" : "Die aktuelle permanente Delegierungsbefugnis ist {{address}}",
+          "permanentDelegateNotSetup" : "Die aktuelle permanente Delegierungsbefugnis ist nicht eingerichtet.",
+          "description" : "Eine permanente Delegierung ist eine Befugnis, die unbeschränkte Delegierungsrechte für jedes Konto dieses Mints hat. Die Delegierung ist befugt, nach eigenem Ermessen jederzeit eine beliebige Anzahl von Token zu verbrennen oder zu überweisen."
+        },
+        "nonTransferable" : {
+          "title" : "Nicht-übertragbare Token",
+          "description" : "Es handelt sich hierbei um so genannte „Soulbound-Token“, die ausschließlich vom Aussteller verschoben oder verbrannt werden können."
+        },
+        "transferHook" : {
+          "title" : "Transfer-Hook",
+          "transferHookAddress" : "Das aktuelle Transfer-Hook-Programm ist {{address}}",
+          "transferHookNotSetup" : "Das aktuelle Transfer-Hook-Programm ist nicht eingerichtet.",
+          "description" : "Mit Transfer-Hooks hat ein Tokenaussteller die Möglichkeit, die Interaktion zwischen Benutzern und Token vorzugeben. Anstelle einer normalen Überweisung kann der Aussteller eine eigene Logik in ein Programm einfügen, das mit der Transfer-Hook-Erweiterung verwendet werden soll."
+        },
+        "transferFee" : {
+          "title" : "Überweisungsgebühr",
+          "currentTransferFee" : "Die aktuelle Überweisungsgebühr beträgt {{feePercent}} % ({{feeBps}} bps). Max. {{maxFee}}.",
+          "description" : "Bei jeder Überweisung eines Tokens werden Gebühren erhoben und auf dem Empfängerkonto einbehalten, d. h., der Empfänger hat keinen Zugriff darauf."
+        },
+        "interestBearing" : {
+          "title" : "Verzinsliche Token",
+          "currentInterestRate" : "Der aktuelle Zinssatz beträgt {{rate}} %.",
+          "accruedDelta" : "{{delta}} aufgelaufen.",
+          "interestRateNotSetup" : "Der aktuelle Zinssatz ist eingerichtet auf 0 %.",
+          "description" : "Token, deren Wert sich je nach Zinssatz stetig erhöht oder verringert. Es werden nie neue Token erstellt, die Funktion ist rein optischer Natur."
+        }
+      }
     }
   },
   "ethereum" : {
@@ -4815,7 +4886,7 @@
             "rules" : {
               "1" : "Planen Sie 30 Minuten ein und nehmen Sie sich Zeit.",
               "2" : "Nehmen Sie einen Stift zum Schreiben.",
-              "3" : "Bleiben Sie allein, und wählen Sie eine sichere und ruhige Umgebung."
+              "3" : "Sei allein und wähle eine sichere und ruhige Umgebung."
             },
             "buttons" : {
               "next" : "OK, ich bin bereit!",
@@ -5442,7 +5513,8 @@
     },
     "solana" : {
       "memo" : "Tag/Memo",
-      "memoPlaceholder" : "Optional"
+      "memoPlaceholder" : "Optional",
+      "requiredMemoPlaceholder" : "Erforderlich"
     }
   },
   "errors" : {
@@ -5728,7 +5800,7 @@
     },
     "MultiversXDecimalsLimitReached" : {
       "title" : "Maximale Dezimalstellengrenze erreicht",
-      "description" : "Bitte stellen Sie sicher, dass der angegebene Betrag 18 Dezimalstellen hat."
+      "description" : "Bitte stelle sicher, dass der angegebene Betrag 18 Dezimalstellen hat."
     },
     "MultiversXMinDelegatedAmountError" : {
       "title" : "Der delegierte Betrag muss mindestens {{formattedAmount}} betragen"
@@ -5875,7 +5947,7 @@
       "description" : "Bitte versuche es noch einmal oder wende dich an den Ledger-Kundenservice."
     },
     "DeviceShouldStayInApp" : {
-      "title" : "Bitte öffnen Sie die {{appName}} App",
+      "title" : "Bitte öffne die {{appName}} App",
       "description" : "Lassen Sie die App {{appName}} geöffnet, während wir Ihre Konten finden"
     },
     "UnexpectedBootloader" : {
@@ -6043,7 +6115,7 @@
     },
     "BtcUnmatchedApp" : {
       "title" : "Das ist die falsche App",
-      "description" : "Öffnen Sie die App „{{managerAppName}}“ auf Ihrem Gerät"
+      "description" : "Öffne die App „{{managerAppName}}“ auf deinem Gerät"
     },
     "DeviceNameInvalid" : {
       "title" : "Bitte wählen Sie einen Gerätenamen ohne '{{invalidCharacters}}'"
@@ -6152,7 +6224,7 @@
       "title" : "Kontostand darf nicht unter {{minimumAmount}} liegen"
     },
     "WrongAppForCurrency" : {
-      "title" : "Bitte öffnen Sie die {{expected}} App"
+      "title" : "Bitte öffne die {{expected}} App"
     },
     "FeeTooHigh" : {
       "title" : "Die Netzwerkgebühren liegen über 10 % des Betrags"
@@ -6253,6 +6325,13 @@
     },
     "SolanaTxConfirmationTimeout" : {
       "title" : "Ihre Transaktion ist möglicherweise fehlgeschlagen. Bitte warten Sie einen Moment und prüfen Sie vor einem erneuten Versuch zunächst den Transaktionsverlauf."
+    },
+    "SolanaRecipientMemoIsRequired" : {
+      "title" : "Für die Empfängeradresse ist ein Memo erforderlich."
+    },
+    "SolanaTokenNonTransferable" : {
+      "title" : "Das Token ist nicht übertragbar",
+      "description" : "Es handelt sich hierbei um so genannte „Soulbound-Token“, die nicht übertragen werden können"
     },
     "NotEnoughNftOwned" : {
       "title" : "Sie haben die Anzahl der verfügbaren Token überschritten"
@@ -6562,7 +6641,7 @@
     },
     "progress" : {
       "loading" : "Lade Daten...",
-      "progress" : "Bleiben Sie auf Ledger Live, während die Apps installiert werden.",
+      "progress" : "Bleibe auf Ledger Live, während die Apps installiert werden.",
       "disclaimer" : "Sie können jederzeit Apps aus Ledger Live hinzufügen oder entfernen.",
       "skippedInfo" : "Einige Apps sind nicht verfügbar. Sie müssen noch entwickelt werden für {{ productName }}.",
       "skipped" : "Noch nicht verfügbar für {{ productName }}",
@@ -6669,6 +6748,24 @@
       "cta" : "Ledger Sync einschalten",
       "alreadySync" : "Ich habe es bereits eingeschaltet",
       "learnMore" : "Wie funktioniert Ledger Sync?"
+    },
+    "entryPoints" : {
+      "accounts" : {
+        "title" : "Ledger Sync aktivieren"
+      },
+      "manager" : {
+        "title" : "Ledger Sync",
+        "description" : "Synchronisiere deine Konten automatisch – auch beim Wechsel auf ein neues Smartphone.",
+        "cta" : "Ledger Sync einschalten"
+      },
+      "settings" : {
+        "title" : "Ledger Sync",
+        "description" : "Synchronisiere deine Konten automatisch – auch beim Wechsel auf ein neues Smartphone.",
+        "cta" : "Ledger Sync einschalten"
+      },
+      "onboarding" : {
+        "title" : "Mit einer anderen Ledger Live-App synchronisieren"
+      }
     },
     "manage" : {
       "cta" : "Verwalten",
@@ -6898,55 +6995,14 @@
     }
   },
   "lnsUpsell" : {
-    "banner" : {
-      "manager" : {
-        "optIn" : {
-          "title" : "Zeit für ein Upgrade",
-          "description" : "Jetzt auf eines unserer aktuellen Geräte aufrüsten: <0>{{discount}} % Rabatt</0> für mehr Sicherheit und ein nahtloses Erlebnis.",
-          "cta" : "Neue Wallet zulegen",
-          "linkText" : "Weitere Informationen"
-        },
-        "optOut" : {
-          "title" : "Zeit für ein Upgrade",
-          "description" : "Jetzt auf eines unserer aktuellen Geräte aufrüsten: <0>{{discount}} % Rabatt</0> für mehr Sicherheit und ein nahtloses Erlebnis.",
-          "cta" : "Neue Wallet zulegen",
-          "linkText" : "Weitere Informationen"
-        }
-      },
-      "accounts" : {
-        "optIn" : {
-          "title" : "Zeit für ein Upgrade",
-          "description" : "Bald gibt es keine Updates mehr für die Ledger Nano S. Jetzt auf eines unserer aktuellen Geräte aufrüsten – mit <0>{{discount}} % Rabatt</0>.",
-          "cta" : "Neue Wallet zulegen",
-          "linkText" : "Weitere Informationen"
-        },
-        "optOut" : {
-          "title" : "Zeit für ein Upgrade",
-          "description" : "Bald gibt es keine Updates mehr für die Ledger Nano S. Jetzt auf eines unserer aktuellen Geräte aufrüsten – mit <0>{{discount}} % Rabatt</0>.",
-          "cta" : "Neue Wallet zulegen",
-          "linkText" : "Weitere Informationen"
-        }
-      },
-      "portfolio" : {
-        "optOut" : {
-          "title" : "Zeit für ein Upgrade",
-          "description" : "Jetzt auf eines unserer aktuellen Geräte aufrüsten: <0>{{discount}} % Rabatt</0> für mehr Sicherheit und ein nahtloses Erlebnis.",
-          "cta" : "Neue Wallet zulegen",
-          "linkText" : "Weitere Informationen"
-        }
-      },
-      "notifications" : {
-        "optIn" : {
-          "description" : "Updates gibt es nicht mehr lange. Jetzt aufrüsten: <0>{{discount}} % Rabatt</0> für ein nahtloses Erlebnis.",
-          "cta" : "Neue Wallet zulegen",
-          "linkText" : "Weitere Informationen"
-        },
-        "optOut" : {
-          "description" : "Updates gibt es nicht mehr lange. Jetzt aufrüsten: <0>{{discount}} % Rabatt</0> für ein nahtloses Erlebnis.",
-          "cta" : "Neue Wallet zulegen",
-          "linkText" : "Weitere Informationen"
-        }
-      }
+    "opted_in" : {
+      "title" : "Eingeschränkter Speicher, eingeschränkte Nutzung",
+      "description" : "Führe ein Upgrade deiner Ledger Nano S auf ein neueres Ledger-Gerät durch – z. B. die Ledger Flex – und profitiere von mehr Speicherplatz, den neuesten Sicherheitsverbesserungen, innovativen Funktionen und <0>einem exklusiven Rabatt in Höhe von {{discount}} %</>.",
+      "cta" : "Ledger-Upgrade durchführen"
+    },
+    "opted_out" : {
+      "description" : "Der begrenzte Speicher deiner Ledger Nano S schränkt deinen Zugang zu aktuellen Funktionen, Blockchain-Änderungen und Sicherheitsverbesserungen ein. Für die längerfristige Nutzung solltest du auf ein neueres Ledger-Gerät aufrüsten.",
+      "cta" : "Weitere Informationen"
     }
   }
 }
