@@ -20,6 +20,12 @@ test.describe(`[${app.name}] Sync Accounts`, () => {
         return LedgerSyncCliHelper.initializeLedgerKeyRingProtocol();
       },
       async () => {
+        return LedgerSyncCliHelper.deleteLedgerSyncData();
+      },
+      async () => {
+        return LedgerSyncCliHelper.initializeLedgerKeyRingProtocol();
+      },
+      async () => {
         return LedgerSyncCliHelper.initializeLedgerSync();
       },
       async () => {
@@ -29,10 +35,6 @@ test.describe(`[${app.name}] Sync Accounts`, () => {
         });
       },
     ],
-  });
-
-  test.afterAll(async ({}, testInfo: TestInfo) => {
-    await LedgerSyncCliHelper.deleteLedgerSyncData(testInfo);
   });
 
   test(

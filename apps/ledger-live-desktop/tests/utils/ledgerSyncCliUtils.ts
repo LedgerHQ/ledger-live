@@ -158,27 +158,17 @@ export class LedgerSyncCliHelper {
   }
 
   static async deleteLedgerSyncData(testInfo: TestInfo) {
-    try {
-      await CLI.ledgerSync({
-        deleteData: true,
-        ...LedgerSyncCliHelper.ledgerKeyRingProtocolArgs,
-        ...LedgerSyncCliHelper.ledgerSyncPushDataArgs,
-      });
+    await CLI.ledgerSync({
+      deleteData: true,
+      ...LedgerSyncCliHelper.ledgerKeyRingProtocolArgs,
+      ...LedgerSyncCliHelper.ledgerSyncPushDataArgs,
+    });
 
-      await CLI.ledgerKeyRingProtocol({
-        destroyKeyRingTree: true,
-        ...LedgerSyncCliHelper.ledgerKeyRingProtocolArgs,
-        ...LedgerSyncCliHelper.ledgerSyncPushDataArgs,
-      });
-    } catch (error) {
-      if (
-        (error as Error).message?.includes("Not a member of trustchain") &&
-        testInfo.status == testInfo.expectedStatus
-      )
-        return; // Not logging error as trustchain was deleted within the test
-
-      console.error("AfterAll Hook: Error deleting trustchain\n", error);
-    }
+    await CLI.ledgerKeyRingProtocol({
+      destroyKeyRingTree: true,
+      ...LedgerSyncCliHelper.ledgerKeyRingProtocolArgs,
+      ...LedgerSyncCliHelper.ledgerSyncPushDataArgs,
+    });
   }
 
   static checkSynchronizationSuccess(page: Page, app: Application) {
