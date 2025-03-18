@@ -132,17 +132,6 @@ function RecoverBanner() {
           <Text variant="body" fontWeight="bold" width="100%" overflow="hidden">
             {recoverBannerSelected.title}
           </Text>
-          <Text
-            variant="paragraph"
-            fontWeight="medium"
-            width="100%"
-            overflow="hidden"
-            color={colors.neutral.c80}
-            numberOfLines={1}
-            pb={1}
-          >
-            {recoverBannerSelected.description}
-          </Text>
         </Flex>
         <Flex
           position="absolute"
