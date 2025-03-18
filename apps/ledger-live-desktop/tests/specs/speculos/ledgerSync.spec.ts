@@ -47,7 +47,30 @@ test.describe(`[${app.name}] Sync Accounts`, () => {
   test.use({
     userdata: "skip-onboarding",
     speculosApp: app,
+<<<<<<< HEAD
     cliCommands: [...initializeThenDeleteTrustchain(), ...initializeTrustchain()],
+=======
+    cliCommands: [
+      async () => {
+        return LedgerSyncCliHelper.initializeLedgerKeyRingProtocol();
+      },
+      async () => {
+        return LedgerSyncCliHelper.deleteLedgerSyncData();
+      },
+      async () => {
+        return LedgerSyncCliHelper.initializeLedgerKeyRingProtocol();
+      },
+      async () => {
+        return LedgerSyncCliHelper.initializeLedgerSync();
+      },
+      async () => {
+        return CLI.ledgerSync({
+          ...LedgerSyncCliHelper.ledgerKeyRingProtocolArgs,
+          ...LedgerSyncCliHelper.ledgerSyncPushDataArgs,
+        });
+      },
+    ],
+>>>>>>> 669d3138e9 (wip:destroy trustchain before sync)
   });
 
   test(
