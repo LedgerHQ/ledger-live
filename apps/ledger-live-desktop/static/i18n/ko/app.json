@@ -440,7 +440,7 @@
     },
     "wrongDevice" : {
       "title" : "Ledger Nano S™는 {{provider}}와(과) 호환되지 않습니다",
-      "description" : "Ledger Nano S는 {{provider}}와(과) 호환되지 않습니다 Ledger Nano S Plus, Ledger Nano X, Ledger Stax, 또는 Ledger Flex로 Ledger Live를 통해 {{provider}}에서 크로스체인 스왑을 경험할 수 있습니다",
+      "description" : "Ledger Nano S™는 {{provider}}와(과) 호환되지 않습니다 Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™, 또는 Ledger Flex™로 Ledger Live를 통해 {{provider}}에서 크로스체인 스왑을 경험할 수 있습니다",
       "cta" : "호환 가능한 장치 탐색",
       "changeProvider" : "다른 공급자를 통해 스왑"
     },
@@ -449,8 +449,8 @@
       "ton_description" : "Ton을 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요.",
       "spl_tokens_title" : "Ledger Nano S™는 솔라나 토큰 스왑을 지원하지 않습니다.",
       "spl_tokens_description" : "솔라노 토큰을 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요.",
-      "sui_tokens_title" : "Ledger Nano S™ does not support swapping Sui tokens",
-      "sui_tokens_description" : "To swap Sui tokens, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+      "sui_tokens_title" : "Ledger Nano S™는 Sui 토큰 스왑을 지원하지 않습니다.",
+      "sui_tokens_description" : "Sui 토큰을 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요.",
       "near_title" : "Ledger Nano S™는 Near 스왑을 지원하지 않습니다.",
       "near_description" : "Near 스왑 거래를 실행하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 Ledger 장치를 사용하세요.",
       "ada_title" : "Ledger Nano S™는 카르다노 스왑을 지원하지 않습니다.",
@@ -459,12 +459,12 @@
       "apt_description" : "Aptos 스왑 거래를 실행하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 Ledger 장치를 사용하세요.",
       "cosmos_title" : "Ledger Nano S™는 Cosmos 스왑을 지원하지 않습니다.",
       "cosmos_description" : "Cosmos 스왑 거래를 실행하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 Ledger 장치를 사용하세요.",
-      "osmo_title" : "Ledger Nano S™ does not support swapping Osmosis",
-      "osmo_description" : "To swap Osmosis, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
-      "dydx_title" : "Ledger Nano S™ does not support swapping dYdX",
-      "dydx_description" : "To swap dYdX, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
-      "sui_title" : "Ledger Nano S™ does not support swapping Sui",
-      "sui_description" : "To swap Sui, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
+      "osmo_title" : "Ledger Nano S™는 Osmosis 스왑을 지원하지 않습니다.",
+      "osmo_description" : "Osmosis 스왑 거래를 실행하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 Ledger 장치를 사용하세요.",
+      "dydx_title" : "Ledger Nano S™는 dYdX 스왑을 지원하지 않습니다.",
+      "dydx_description" : "dYdX 스왑 거래를 실행하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 Ledger 장치를 사용하세요.",
+      "sui_title" : "Ledger Nano S™는 Sui 스왑을 지원하지 않습니다",
+      "sui_description" : "Sui 스왑 거래를 수행하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요."
     },
     "providers" : {
       "title" : "암호화폐를 스왑할 공급자를 선택하세요",
@@ -775,6 +775,10 @@
         "description3" : "이 통합은 Ledger와 협력을 통해 {{team}} 에서 수행했습니다.",
         "description3Link" : "이 통합은 Ledger와 협력을 통해 <1><0>{{team}}</0></1>에서 수행했습니다."
       }
+    },
+    "migrationBanner" : {
+      "title" : "{{from}}가 {{to}}으로 마이그레이션되고 있습니다. <0>이 링크</0>에서 자세한 내용을 알아보고, 도움이 필요한 경우 지원팀에 문의하세요.",
+      "contactSupport" : "지원 부서 연락"
     },
     "featureUnavailable" : {
       "title" : "다음의 {{feature}} 기능은 현재 이용하실 수 없습니다. 자세한 내용은 {{support}}에 문의하세요",
@@ -1740,7 +1744,7 @@
     "seeTokens" : "토큰 보기 ({{tokenCount}})",
     "hideTokens" : "토큰 숨기기 ({{tokenCount}})",
     "countTooltip" : "1개의 토큰",
-    "countTooltip_plural" : "{{count}}개의 토큰",
+    "countTooltip_other" : "{{nbCount}}개의 토큰",
     "algorand" : {
       "title" : "ASA(자산)",
       "cta" : "ASA 추가",
@@ -1763,7 +1767,7 @@
     "seeSubAccounts" : "부계정 보기 ({{tokenCount}})",
     "hideSubAccounts" : "부계정 숨기기 ({{tokenCount}})",
     "countTooltip" : "1개의 부계정",
-    "countTooltip_plural" : "{{count}} 부계정"
+    "countTooltip_other" : "{{nbCount}} 부계정"
   },
   "addAccounts" : {
     "title" : "계정 추가",
@@ -2049,7 +2053,7 @@
       "dontHaveSeed" : "복구 문구가 없나요? ",
       "followTheGuide" : "단계별 업데이트 가이드를 따르세요",
       "removeApps" : "모든 앱을 삭제하고 업데이트하세요",
-      "update" : "{{productName} OS 업데이트",
+      "update" : "{{productName}} OS 업데이트",
       "updateBtn" : "펌웨어를 업데이트하세요",
       "installUpdate" : "업데이트 설치",
       "banner" : {
@@ -6991,55 +6995,14 @@
     }
   },
   "lnsUpsell" : {
-    "banner" : {
-      "manager" : {
-        "optIn" : {
-          "title" : "장치 업그레이드 기회",
-          "description" : "최신 장치로 업그레이드하고 <0>{{discount}}% 할인 혜택</0>은 물론, 더 향상된 보안력과 원활한 사용자 경험을 누려보세요.",
-          "cta" : "내 지갑 업그레이드하기",
-          "linkText" : "자세히 알아보기"
-        },
-        "optOut" : {
-          "title" : "장치 업그레이드 기회",
-          "description" : "최신 장치로 업그레이드하고 <0>{{discount}}% 할인 혜택</0>은 물론, 더 향상된 보안력과 원활한 사용자 경험을 누려보세요.",
-          "cta" : "내 지갑 업그레이드하기",
-          "linkText" : "자세히 알아보기"
-        }
-      },
-      "accounts" : {
-        "optIn" : {
-          "title" : "장치 업그레이드 기회",
-          "description" : "Ledger Nano S 업데이트가 곧 종료됩니다. 최신 장치로 업그레이드하고 <0>{{discount}}% 할인 혜택</0>까지 누리세요.",
-          "cta" : "내 지갑 업그레이드하기",
-          "linkText" : "자세히 알아보기"
-        },
-        "optOut" : {
-          "title" : "장치 업그레이드 기회",
-          "description" : "Ledger Nano S 업데이트가 곧 종료됩니다. 최신 장치로 업그레이드하고 <0>{{discount}}% 할인 혜택</0>까지 누리세요.",
-          "cta" : "내 지갑 업그레이드하기",
-          "linkText" : "자세히 알아보기"
-        }
-      },
-      "portfolio" : {
-        "optOut" : {
-          "title" : "장치 업그레이드 기회",
-          "description" : "최신 장치로 업그레이드하고 <0>{{discount}}% 할인 혜택</0>은 물론, 더 향상된 보안력과 원활한 사용자 경험을 누려보세요.",
-          "cta" : "내 지갑 업그레이드하기",
-          "linkText" : "자세히 알아보기"
-        }
-      },
-      "notifications" : {
-        "optIn" : {
-          "description" : "업데이트가 곧 종료됩니다. 지급 업그레이드하고 {{discount}}% 할인 혜택은 물론, 더 원활한 사용자 경험을 즐겨보세요.",
-          "cta" : "내 지갑 업그레이드하기",
-          "linkText" : "자세히 알아보기"
-        },
-        "optOut" : {
-          "description" : "업데이트가 곧 종료됩니다. 지급 업그레이드하고 {{discount}}% 할인 혜택은 물론, 더 원활한 사용자 경험을 즐겨보세요.",
-          "cta" : "내 지갑 업그레이드하기",
-          "linkText" : "자세히 알아보기"
-        }
-      }
+    "opted_in" : {
+      "title" : "메모리가 제한되면 경험도 제한되니까요",
+      "description" : "Ledger Nano S를 Ledger Flex와 같은 최신 Ledger 장치로 업그레이드하여 더 커진 메모리, 최신 보안 업데이트, 새로운 기능 및 <0>독점 {{discount}}% 할인 혜택</>까지 모두 누려보세요.",
+      "cta" : "내 Ledger 업그레이드"
+    },
+    "opted_out" : {
+      "description" : "Ledger Nano S의 제한된 메모리로 인해 최신 기능, 블록체인 변경 사항 및 보안 업데이트에 대한 액세스가 제한됩니다. 장기적으로 사용하려면 최신 Ledger 장치로 업그레이드하세요.",
+      "cta" : "자세히 알아보기"
     }
   }
 }
