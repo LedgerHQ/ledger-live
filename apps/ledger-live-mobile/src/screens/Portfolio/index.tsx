@@ -38,6 +38,7 @@ import ContentCardsLocation from "~/dynamicContent/ContentCardsLocation";
 import { ContentCardLocation } from "~/dynamicContent/types";
 import usePortfolioAnalyticsOptInPrompt from "~/hooks/analyticsOptInPrompt/usePorfolioAnalyticsOptInPrompt";
 import AddAccountDrawer from "LLM/features/Accounts/screens/AddAccount";
+import { LNSUpsellBanner, useLNSUpsellBannerState } from "LLM/features/LNSUpsell";
 import { useAutoRedirectToPostOnboarding } from "~/hooks/useAutoRedirectToPostOnboarding";
 export { default as PortfolioTabIcon } from "./TabIcon";
 import Animated, { useSharedValue } from "react-native-reanimated";
@@ -104,6 +105,8 @@ function PortfolioScreen({ navigation }: NavigationProps) {
     [animatedHeight],
   );
 
+  const isLNSUpsellBannerShown = useLNSUpsellBannerState("wallet").isShown;
+
   const data = useMemo(
     () => [
       <WalletTabSafeAreaView key="portfolioHeaderElements" edges={["left", "right"]}>
@@ -111,7 +114,8 @@ function PortfolioScreen({ navigation }: NavigationProps) {
           <FirmwareUpdateBanner onBackFromUpdate={onBackFromUpdate} />
         </Flex>
         <PortfolioGraphCard showAssets={showAssets} key="PortfolioGraphCard" />
-        {showAssets ? (
+        {isLNSUpsellBannerShown && <LNSUpsellBanner location="wallet" mx={6} mt={7} />}
+        {!isLNSUpsellBannerShown && showAssets ? (
           <ContentCardsLocation
             key="contentCardsLocationPortfolio"
             locationId={ContentCardLocation.TopWallet}
@@ -183,6 +187,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
       hideEmptyTokenAccount,
       openAddModal,
       isAWalletCardDisplayed,
+      isLNSUpsellBannerShown,
       t,
     ],
   );

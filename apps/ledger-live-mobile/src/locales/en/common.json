@@ -7340,5 +7340,15 @@
       "cta": "Add an account",
       "link": "Need help? Learn how to add an account to Ledger\u00a0Live."
     }
+  },
+  "lnsUpsell": {
+    "opted_in": {
+      "description": "Upgrade your Ledger Nano S to a newer Ledger — like the Ledger Flex — for more memory, the latest security enhancements, fresh features, and an exclusive 20% off. ",
+      "cta": "Upgrade my Ledger"
+    },
+    "opted_out": {
+      "description": "The limited memory of your Ledger Nano S restricts your access to the latest features, blockchain changes and security enhancements. For long-term use, upgrade to a newer Ledger device.",
+      "cta": "Learn more"
+    }
   }
 }
