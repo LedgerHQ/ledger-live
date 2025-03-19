@@ -1,15 +1,15 @@
 name: "CI Flake Notifier & Debugger"
 description: "Alert CI team to flake and optionally preserve machine state"
 inputs:
-  HALT_RUNNER:
+  halt_runner:
     description: true if you want the runner to be paused, preserving state for investigation
     type: boolean
     required: false
     default: false
-  LIVE_BOT_TOKEN:
+  live_bot_token:
     type: string
     required: true
-  CUSTOM_MESSAGE:
+  custom_message:
     type: string
     required: false
 
@@ -27,9 +27,9 @@ runs:
           let header = "*Ledger Live CI: Test flake*";
           let description = "Flake detected but interactive debugging was not enabled Workflow: ${{ github.workflow }}";
           
-          if ("${{ inputs.CUSTOM_MESSAGE }}"){
-            description = "${{ inputs.CUSTOM_MESSAGE }} Workflow: ${{ github.workflow }}"
-          }else if ("${{ inputs.HALT_RUNNER }}" == "true"){
+          if ("${{ inputs.custom_message }}"){
+            description = "${{ inputs.custom_message }} Workflow: ${{ github.workflow }}"
+          }else if ("${{ inputs.halt_runner }}" == "true"){
             header = ":fire: *Ledger Live CI: Test flake in progress* :fire:";
             description = "Known flake detected. Runner held for interactive debugging session. Workflow: ${{ github.workflow }}";
           }
@@ -76,8 +76,8 @@ runs:
         channel-id: "C08JQKWS9KK"
         payload-file-path: ${{ github.workspace }}/slack_notification.json
       env:
-        SLACK_BOT_TOKEN: ${{ inputs.LIVE_BOT_TOKEN }}
+        SLACK_BOT_TOKEN: ${{ inputs.live_bot_token }}
     - name: "Sleep"
-      if: ${{ inputs.HALT_RUNNER == 'true' }}
+      if: ${{ inputs.halt_runner == 'true' }}
       run: sleep 3h
       shell: bash

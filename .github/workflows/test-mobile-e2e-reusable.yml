@@ -116,15 +116,15 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/ci-flake-notifier@develop
         if: failure() && steps.install-dependencies.outputs.error == 'ArgumentError - pathname contains null byte'
         with:
-          LIVE_BOT_TOKEN: ${{ secrets.SLACK_LIVE_CI_BOT_TOKEN }}
-          HALT_RUNNER: true
+          live_bot_token: ${{ secrets.SLACK_LIVE_CI_BOT_TOKEN }}
+          halt_runner: true
 
       - name: Flake alert - Reruns
         uses: LedgerHQ/ledger-live/tools/actions/composites/ci-flake-notifier@develop
         if: success() && steps.install-dependencies.outputs.total_attempts == 2
         with:
-          LIVE_BOT_TOKEN: ${{ secrets.SLACK_LIVE_CI_BOT_TOKEN }}
-          CUSTOM_MESSAGE: "${{ steps.install-dependencies.outputs.total_attempts }} attempted happened on install dependencies and it was eventually successful :face_with_raised_eyebrow:"
+          live_bot_token: ${{ secrets.SLACK_LIVE_CI_BOT_TOKEN }}
+          custom_message: "${{ steps.install-dependencies.outputs.total_attempts }} attempts happened on install dependencies and it was eventually successful :face_with_raised_eyebrow:"
 
       - name: cache detox build
         uses: tespkg/actions-cache@v1
