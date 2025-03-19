@@ -80,23 +80,16 @@ describe("Stellar Api", () => {
     });
   });
 
-  describe.skip("craftTransaction", () => {
+  describe("craftTransaction", () => {
     it("returns a raw transaction", async () => {
-      // When
-      const result = await module.craftTransaction(address, {
+      const result = await module.craftTransaction({
         type: "send",
+        sender: address,
         recipient: "GD6QELUZPSKPRWVXOQ3F6GBF4OBRMCHO5PHREXH4ZRTPJAG7V5MD7JGX",
         amount: BigInt(1_000_000),
-        fee: BigInt(100),
       });
 
-      // Then
-      expect(result.slice(0, 67)).toEqual(
-        "AAAAAgAAAAD9Ai6ZfJT42rd0Nl8YJeODFgju688SXPzMZvSA369YPwAAAGQAAHloAAA",
-      );
-      expect(result.slice(70)).toEqual(
-        "AAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAQAAAAD9Ai6ZfJT42rd0Nl8YJeODFgju688SXPzMZvSA369YPwAAAAAAAAAAAA9CQAAAAAAAAAAA",
-      );
+      expect(result.length).toEqual(188);
     });
   });
 });
