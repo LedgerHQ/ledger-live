@@ -63,21 +63,21 @@ describe("createApi", () => {
 
   it("should pass parameters well", async () => {
     const api: Api<TronToken> = createApi(mockTronConfig);
-
-    // Simulate calling all methods
-    await api.broadcast("transaction");
-    api.combine("tx", "signature", "pubkey");
-    await api.craftTransaction({} as TransactionIntent<TronToken>);
-    await api.estimateFees({
+    const intent: TransactionIntent<TronToken> = {
       type: "send",
-      sender: "address",
-      recipient: "address",
+      sender: "sender",
+      recipient: "recipient",
       amount: BigInt(10),
       asset: {
         standard: "trc10",
         tokenId: "1002000",
       },
-    } satisfies TransactionIntent<TronToken>);
+    };
+    // Simulate calling all methods
+    await api.broadcast("transaction");
+    api.combine("tx", "signature", "pubkey");
+    await api.craftTransaction(intent);
+    await api.estimateFees(intent);
     await api.getBalance("address");
     await api.lastBlock();
     await api.listOperations("address", {} as Pagination);
@@ -85,17 +85,8 @@ describe("createApi", () => {
     // Test that each of the methods was called with correct arguments
     expect(broadcast).toHaveBeenCalledWith("transaction");
     expect(combine).toHaveBeenCalledWith("tx", "signature", "pubkey");
-    expect(estimateFees).toHaveBeenCalledWith({
-      type: "send",
-      sender: "address",
-      recipient: "address",
-      amount: BigInt(10),
-      asset: {
-        standard: "trc10",
-        tokenId: "1002000",
-      },
-    } satisfies TransactionIntent<TronToken>);
-    expect(craftTransaction).toHaveBeenCalledWith({});
+    expect(estimateFees).toHaveBeenCalledWith(intent);
+    expect(craftTransaction).toHaveBeenCalledWith(intent);
     expect(getBalance).toHaveBeenCalledWith("address");
     expect(lastBlock).toHaveBeenCalled();
     expect(listOperations).toHaveBeenCalledWith("address", {});
