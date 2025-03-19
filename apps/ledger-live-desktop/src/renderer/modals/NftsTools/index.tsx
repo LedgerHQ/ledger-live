@@ -3,7 +3,7 @@ import { Trans, useTranslation } from "react-i18next";
 import Modal, { ModalBody } from "~/renderer/components/Modal";
 import { ScrollArea } from "~/renderer/components/Onboarding/ScrollArea";
 import TabBar from "~/renderer/components/TabBar";
-import { Flex, Icons } from "@ledgerhq/react-ui";
+import { Divider, Flex, Icons } from "@ledgerhq/react-ui";
 import ModalHeader from "~/renderer/components/Modal/ModalHeader";
 import { TabKey } from "./types";
 import { SupportedChains } from "~/renderer/screens/settings/sections/Developer/NftsTools/screens/SupportedChains";
@@ -30,6 +30,7 @@ const getItems = (t: (a: string) => string) => {
       value: (
         <Flex flexDirection="column" rowGap={2}>
           <ResetHiddenCollections />
+          <Divider />
           <GenerateMockAccountsWithNfts />
         </Flex>
       ),
