@@ -4,7 +4,6 @@ import "./iosWebsocketFix";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import React, { Component, useCallback, useMemo, useEffect } from "react";
 import { StyleSheet, LogBox, Appearance, AppState } from "react-native";
-import SplashScreen from "react-native-splash-screen";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { I18nextProvider } from "react-i18next";
 import Transport from "@ledgerhq/hw-transport";
@@ -89,6 +88,7 @@ import { exportMarketSelector } from "./reducers/market";
 import { trustchainStoreSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { walletSelector } from "~/reducers/wallet";
 import { exportWalletState, walletStateExportShouldDiffer } from "@ledgerhq/live-wallet/store";
+import { showSplashScreen, dismissSplashScreen } from "LLM/utils/splashScreen";
 
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();
@@ -317,14 +317,18 @@ export default class Root extends Component {
     }
   };
 
-  onRebootStart = () => {
+  onRebootStart = async () => {
     clearTimeout(this.initTimeout);
-    if (SplashScreen.show) SplashScreen.show(); // on iOS it seems to not be exposed
+    await showSplashScreen();
+  };
+
+  onRebootEnd = async () => {
+    await dismissSplashScreen();
   };
 
   render() {
     return (
-      <RebootProvider onRebootStart={this.onRebootStart}>
+      <RebootProvider onRebootStart={this.onRebootStart} onRebootEnd={this.onRebootEnd}>
         <LedgerStoreProvider onInitFinished={this.onInitFinished} store={store}>
           {(ready, initialCountervalues) =>
             ready ? (

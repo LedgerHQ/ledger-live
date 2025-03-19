@@ -1,7 +1,6 @@
 import React, { useMemo, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Linking } from "react-native";
-import SplashScreen from "react-native-splash-screen";
 import {
   getStateFromPath,
   LinkingOptions,
@@ -28,6 +27,8 @@ import { blockPasswordLock } from "../actions/appstate";
 import { useStorylyContext } from "~/components/StorylyStories/StorylyProvider";
 import { navigationIntegration } from "../sentry";
 import { OptionMetadata } from "~/reducers/types";
+import { dismissSplashScreen } from "LLM/utils/splashScreen";
+
 const TRACKING_EVENT = "deeplink_clicked";
 
 const themes: {
@@ -686,9 +687,9 @@ export const DeeplinksProvider = ({
       theme={themes[resolvedTheme]}
       linking={linking}
       ref={navigationRef}
-      onReady={() => {
+      onReady={async () => {
         (isReadyRef as Writeable<typeof isReadyRef>).current = true;
-        setTimeout(() => SplashScreen.hide(), 300);
+        await dismissSplashScreen();
         navigationIntegration.registerNavigationContainer(navigationRef);
       }}
     >

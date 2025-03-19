@@ -1,5 +1,6 @@
 #import "AppDelegate.h"
 #import <React/RCTBundleURLProvider.h>
+#import <ExpoModulesCore-Swift.h>
 #import <React/RCTLinkingManager.h>
 #import <React/RCTRootView.h>
 #import "RNCConfig.h"
@@ -7,7 +8,7 @@
 #import "BrazeReactUtils.h"
 #import "BrazeReactBridge.h"
 #import <Firebase.h>
-
+#import "ledgerlivemobile-Swift.h"
 
 @implementation AppDelegate
 
@@ -72,10 +73,19 @@ static NSString *const iOSPushAutoEnabledKey = @"iOSPushAutoEnabled";
   RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
   RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge moduleName:@"ledgerlivemobile" initialProperties:nil];
 
+  BOOL isRunningDetox = [[[NSProcessInfo processInfo] arguments] containsObject:@"-IS_TEST"];
+
+  if(isRunningDetox) return YES;
+
+  self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
+  self.window.rootViewController = [UIViewController new];
+  self.window.rootViewController.view = rootView;
+  rootView.backgroundColor = [UIColor colorWithRed:12/255.0 green:12/255.0 blue:12/255.0 alpha:1.0];
   [self.window makeKeyAndVisible];
-  UIStoryboard *sb = [UIStoryboard storyboardWithName:@"LaunchScreen" bundle:nil];
-  UIViewController *vc = [sb instantiateInitialViewController];
-  rootView.loadingView = vc.view;
+
+  RNSplashScreenModule *splashScreenModule = [bridge moduleForClass:[RNSplashScreenModule class]];
+  [splashScreenModule showSplashScreen];
+
 
   return YES;
 }
@@ -99,7 +109,7 @@ static NSString *const iOSPushAutoEnabledKey = @"iOSPushAutoEnabled";
 }
 
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center
-  didReceiveNotificationResponse:(UNNotificationResponse *)response
+didReceiveNotificationResponse:(UNNotificationResponse *)response
          withCompletionHandler:(void (^)(void))completionHandler {
   [[BrazeReactUtils sharedInstance] populateInitialUrlForCategories:response.notification.request.content.userInfo];
   BOOL processedByBraze = AppDelegate.braze != nil && [AppDelegate.braze.notifications handleUserNotificationWithResponse:response
@@ -122,7 +132,7 @@ static NSString *const iOSPushAutoEnabledKey = @"iOSPushAutoEnabled";
 }
 
 - (void)application:(UIApplication *)application
-  didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
+didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
   [AppDelegate.braze.notifications registerDeviceToken:deviceToken];
 }
 
@@ -215,7 +225,6 @@ static Braze *_braze;
 continueUserActivity:(NSUserActivity *)userActivity
  restorationHandler:(void (^)(NSArray<id<UIUserActivityRestoring>> *restorableObjects))restorationHandler
 {
-  NSURL *url = userActivity.webpageURL;
   return [RCTLinkingManager application:application
                    continueUserActivity:userActivity
                      restorationHandler:restorationHandler];
