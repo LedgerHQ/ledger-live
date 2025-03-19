@@ -25,6 +25,10 @@
 		BAE7949027D7C46A00C465F5 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BAE7948F27D7C46A00C465F5 /* GoogleService-Info.plist */; };
 		BC25CCBE6BEA4D62BE203C17 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F63C9E4AC284203A95B417E /* libz.tbd */; };
 		BC26C23ED1C649E7849FF99A /* HMAlphaMono-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 1EA470840B7C44A3BF38FA4A /* HMAlphaMono-Medium.otf */; };
+		CA226CA32D8B194600235086 /* logo.gif in Resources */ = {isa = PBXBuildFile; fileRef = CA226CA22D8B194600235086 /* logo.gif */; };
+		CA226CAA2D8B198200235086 /* SplashScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA226CA82D8B198200235086 /* SplashScreen.swift */; };
+		CA226CAB2D8B198200235086 /* SplashScreenModule.m in Sources */ = {isa = PBXBuildFile; fileRef = CA226CA92D8B198200235086 /* SplashScreenModule.m */; };
+		CA226CAE2D8B199800235086 /* SplashScreenController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA226CAC2D8B199800235086 /* SplashScreenController.swift */; };
 		D93C63AD261B4E7183B66B1C /* Inter-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4C2397DC873B4F8E91B750A8 /* Inter-Regular.otf */; };
 		E466275BA70845F3AFE1D695 /* Inter-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = D91EB0620BDE4709B6F44620 /* Inter-Bold.otf */; };
 		E55EFC09114D43B3AB041882 /* FontAwesome5_Pro_Solid.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 991AA9919E4840DBB799E117 /* FontAwesome5_Pro_Solid.ttf */; };
@@ -91,6 +95,11 @@
 		C44A2A704D1E428CB7694186 /* FontAwesome5_Solid.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Solid.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Solid.ttf"; sourceTree = "<group>"; };
 		C630F76F0E1C857DA405027E /* Pods-ledgerlivemobile-ledgerlivemobileTests.staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ledgerlivemobile-ledgerlivemobileTests.staging.xcconfig"; path = "Target Support Files/Pods-ledgerlivemobile-ledgerlivemobileTests/Pods-ledgerlivemobile-ledgerlivemobileTests.staging.xcconfig"; sourceTree = "<group>"; };
 		C7C5BB743ED04E53A2323979 /* OpenSans-SemiBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-SemiBold.ttf"; path = "../assets/fonts/OpenSans-SemiBold.ttf"; sourceTree = "<group>"; };
+		CA226CA22D8B194600235086 /* logo.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = logo.gif; sourceTree = "<group>"; };
+		CA226CA82D8B198200235086 /* SplashScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashScreen.swift; sourceTree = "<group>"; };
+		CA226CA92D8B198200235086 /* SplashScreenModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SplashScreenModule.m; sourceTree = "<group>"; };
+		CA226CAC2D8B199800235086 /* SplashScreenController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashScreenController.swift; sourceTree = "<group>"; };
+		CA226CAD2D8B199800235086 /* SplashScreenModule.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SplashScreenModule.h; sourceTree = "<group>"; };
 		CA4B7558A3274D76ACA6E26C /* MaterialIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
 		CDD38AE8681742F38FB51EFC /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialCommunityIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
 		CE7E1D553FBD49E0A85347D3 /* MuseoSans-Bold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "MuseoSans-Bold.otf"; path = "../assets/fonts/MuseoSans-Bold.otf"; sourceTree = "<group>"; };
@@ -173,6 +182,11 @@
 		13B07FAE1A68108700A75B9A /* ledgerlivemobile */ = {
 			isa = PBXGroup;
 			children = (
+				CA226CAC2D8B199800235086 /* SplashScreenController.swift */,
+				CA226CAD2D8B199800235086 /* SplashScreenModule.h */,
+				CA226CA82D8B198200235086 /* SplashScreen.swift */,
+				CA226CA92D8B198200235086 /* SplashScreenModule.m */,
+				CA226CA22D8B194600235086 /* logo.gif */,
 				17F58473269C64870070C475 /* RCTBluetoothHelperModule.h */,
 				17F58471269C64670070C475 /* RCTBluetoothHelperModule.m */,
 				2402D074219C2E6600276138 /* ledgerlivemobile.entitlements */,
@@ -399,6 +413,7 @@
 				D93C63AD261B4E7183B66B1C /* Inter-Regular.otf in Resources */,
 				B116B48438CB416C980DD0E7 /* Inter-SemiBold.otf in Resources */,
 				AD6EE26071FA4673B5C89936 /* FontAwesome5_Pro_Brands.ttf in Resources */,
+				CA226CA32D8B194600235086 /* logo.gif in Resources */,
 				F99BEAC629E8441C83104922 /* FontAwesome5_Pro_Light.ttf in Resources */,
 				2EA091AF2C3FBD5900B6181E /* GoogleService-Info-Testing.plist in Resources */,
 				E85A22C62B17E835005A8E6D /* LaunchScreen.storyboard in Resources */,
@@ -626,6 +641,9 @@
 				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
 				17F58472269C64670070C475 /* RCTBluetoothHelperModule.m in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
+				CA226CAA2D8B198200235086 /* SplashScreen.swift in Sources */,
+				CA226CAB2D8B198200235086 /* SplashScreenModule.m in Sources */,
+				CA226CAE2D8B199800235086 /* SplashScreenController.swift in Sources */,
 				F45A09B01925C0C58A9D40CE /* ExpoModulesProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
