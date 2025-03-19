@@ -1,5 +1,12 @@
 # @ledgerhq/live-signer-evm
 
+## 0.2.0-nightly.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-evm@2.14.0-nightly.1
+
 ## 0.2.0-nightly.0
 
 ### Minor Changes

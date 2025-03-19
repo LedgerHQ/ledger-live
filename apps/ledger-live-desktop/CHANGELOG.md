@@ -1,5 +1,27 @@
 # ledger-live-desktop
 
+## 2.104.0-nightly.1
+
+### Minor Changes
+
+- [#9579](https://github.com/LedgerHQ/ledger-live/pull/9579) [`d733910`](https://github.com/LedgerHQ/ledger-live/commit/d73391061af8ede15744847944b2db26a97a07f4) Thanks [@thesan](https://github.com/thesan)! - Target LNS opt out users with many swaps with the upsell campaign
+
+### Patch Changes
+
+- Updated dependencies [[`5f27549`](https://github.com/LedgerHQ/ledger-live/commit/5f275498e80060f98238a54e8ae3e2c94bfd7c91)]:
+  - @ledgerhq/coin-framework@2.3.0-nightly.1
+  - @ledgerhq/live-common@34.26.0-nightly.1
+  - @ledgerhq/coin-aptos@1.7.1-nightly.1
+  - @ledgerhq/coin-bitcoin@0.12.0-nightly.1
+  - @ledgerhq/coin-cosmos@0.9.0-nightly.1
+  - @ledgerhq/coin-evm@2.14.0-nightly.1
+  - @ledgerhq/coin-filecoin@1.7.0-nightly.1
+  - @ledgerhq/live-countervalues@0.4.4-nightly.1
+  - @ledgerhq/live-countervalues-react@0.2.26-nightly.1
+  - @ledgerhq/live-nft@0.6.1-nightly.1
+  - @ledgerhq/live-nft-react@0.7.1-nightly.1
+  - @ledgerhq/live-wallet@0.10.0-nightly.1
+
 ## 2.104.0-nightly.0
 
 ### Minor Changes

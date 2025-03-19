@@ -1,5 +1,18 @@
 # @ledgerhq/coin-tezos
 
+## 2.0.0-nightly.1
+
+### Minor Changes
+
+- [#9440](https://github.com/LedgerHQ/ledger-live/pull/9440) [`5f27549`](https://github.com/LedgerHQ/ledger-live/commit/5f275498e80060f98238a54e8ae3e2c94bfd7c91) Thanks [@qperrot](https://github.com/qperrot)! - feat estimateFees for alpacha
+
+### Patch Changes
+
+- [#9562](https://github.com/LedgerHQ/ledger-live/pull/9562) [`daa06d9`](https://github.com/LedgerHQ/ledger-live/commit/daa06d92472f10ab72598715882c177386b38c2b) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Update integration test
+
+- Updated dependencies [[`5f27549`](https://github.com/LedgerHQ/ledger-live/commit/5f275498e80060f98238a54e8ae3e2c94bfd7c91)]:
+  - @ledgerhq/coin-framework@2.3.0-nightly.1
+
 ## 2.0.0-nightly.0
 
 ### Major Changes
