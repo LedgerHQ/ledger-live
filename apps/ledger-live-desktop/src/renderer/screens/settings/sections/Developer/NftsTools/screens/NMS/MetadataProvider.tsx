@@ -2,11 +2,11 @@ import { getEnv } from "@ledgerhq/live-env";
 import { Flex, Icons, Text } from "@ledgerhq/react-ui/index";
 import React, { useState } from "react";
 import styled from "styled-components";
-import { Collapsible } from "../components/Collapsible";
-import { SettingsSectionRow } from "../../../../SettingsSection";
-import EnableStagingNftMetadataServiceToggle from "../../EnableStagingNftMetadataServiceToggle";
+import { Collapsible } from "../../components/Collapsible";
+import { SettingsSectionRow } from "../../../../../SettingsSection";
+import EnableStagingNftMetadataServiceToggle from "../../../EnableStagingNftMetadataServiceToggle";
 import { useTranslation } from "react-i18next";
-import { CodeBlock } from "../components/CodeBlock";
+import { CodeBlock } from "../../components/CodeBlock";
 
 const STAGING_URL = "https://nft.api.live.ledger-test.com";
 const PRODUCTION_URL = "https://nft.api.live.ledger.com";

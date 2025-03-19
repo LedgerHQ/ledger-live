@@ -4380,7 +4380,10 @@
         "generatorAndDestructor": {
           "genAcc": "Generate Accounts",
           "genAccDesc": "Generate an accounts with NFTs",
-          "cta": "Generate ({{count}})"
+          "cta": "Generate",
+          "deleteAcc": "Delete Accounts",
+          "deleteAccDesc": "Delete all accounts from store",
+          "delete": "Delete"
         },
         "back": "Go back"
       },

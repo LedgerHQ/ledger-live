@@ -1,46 +1,25 @@
-import { getEnv, setEnvUnsafe } from "@ledgerhq/live-env";
 import { Box, Flex, Icons, Text } from "@ledgerhq/react-ui";
-import React, { useCallback, useState } from "react";
+import React from "react";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import styled from "styled-components";
-import { Collapsible } from "../components/Collapsible";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { Collapsible } from "../../components/Collapsible";
+import { SupportedChainsViewModelResult } from "./useSupportedChainsViewModel";
 
-const NOT_SUPPORTED = ["solana", "base", "arbitrum", "optimism"];
-
-export function SupportedChains() {
-  const [overhiddenCurrencies, setOverhiddenCurrencies] = useState<string[]>([]);
-  const currencies = getEnv("NFT_CURRENCIES").map(getCryptoCurrencyById);
-  const notSupported = NOT_SUPPORTED.map(getCryptoCurrencyById);
-
-  const visible = currencies.length > 0;
-
-  const handleChange = useCallback(
-    (currency: CryptoCurrency, included: boolean) => {
-      const newTab = included
-        ? overhiddenCurrencies.filter(c => c !== currency.id)
-        : [...overhiddenCurrencies, currency.id];
-      setOverhiddenCurrencies(newTab);
-
-      const setUniques = new Set(getEnv("NFT_CURRENCIES").concat(newTab));
-
-      setEnvUnsafe("NFT_CURRENCIES", [...setUniques].join(","));
-    },
-    [overhiddenCurrencies],
-  );
-
-  const initialCurrencies = currencies.filter(c => !notSupported.includes(c));
-  const total = initialCurrencies.length + overhiddenCurrencies.length;
-
+export function SupportedChains(props: SupportedChainsViewModelResult) {
+  const { currencies, notSupported, visible, total, isIncluded, handleChange } = props;
   return (
     <Collapsible
       title={"settings.developer.debugNfts.configuration.supported"}
       body={
         <Flex flexDirection="row" columnGap={2}>
           <Container flexDirection="column" alignItems="flex-start">
-            {initialCurrencies.map(currency => (
-              <Flex key={currency.name} alignItems="center" justifyContent="center">
+            {currencies.map(currency => (
+              <Flex
+                key={currency.name}
+                alignItems="center"
+                justifyContent="center"
+                data-testid={`supported-currency-${currency.id}`}
+              >
                 <CryptoCurrencyIcon currency={currency} size={12} />
                 <Text ml={2} color={currency.color}>
                   {currency.name}
@@ -51,9 +30,14 @@ export function SupportedChains() {
 
           <Container flexDirection="column" alignItems="flex-start">
             {notSupported.map(currency => {
-              const included = overhiddenCurrencies.includes(currency.id);
+              const included = isIncluded(currency);
               return (
-                <Flex key={currency.name} alignItems="center" justifyContent="center">
+                <Flex
+                  key={currency.name}
+                  alignItems="center"
+                  justifyContent="center"
+                  data-testid={`not-supported-currency-${currency.id}`}
+                >
                   {included ? (
                     <CryptoCurrencyIcon currency={currency} size={12} />
                   ) : (
@@ -68,6 +52,7 @@ export function SupportedChains() {
                     alignItems="center"
                     justifyContent="center"
                     onClick={() => handleChange(currency, included)}
+                    data-testid={`interact-icon-${currency.id}`}
                   >
                     {included ? <Icons.Eye size="XS" /> : <Icons.EyeCross size="XS" />}
                   </InteractIcon>

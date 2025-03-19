@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
+import styled from "styled-components";
 import Modal, { ModalBody } from "~/renderer/components/Modal";
 import { ScrollArea } from "~/renderer/components/Onboarding/ScrollArea";
 import TabBar from "~/renderer/components/TabBar";
@@ -7,19 +8,25 @@ import { Divider, Flex, Icons } from "@ledgerhq/react-ui";
 import ModalHeader from "~/renderer/components/Modal/ModalHeader";
 import { TabKey } from "./types";
 import { SupportedChains } from "~/renderer/screens/settings/sections/Developer/NftsTools/screens/SupportedChains";
-import { MetadataProvider } from "~/renderer/screens/settings/sections/Developer/NftsTools/screens/MetadataProvider";
-import styled from "styled-components";
-import ResetHiddenCollections from "~/renderer/screens/settings/sections/Developer/NftsTools/screens/ResetHiddenCollections";
-import GenerateMockAccountsWithNfts from "~/renderer/screens/settings/sections/Developer/NftsTools/screens/GenerateMockAccountsWithNfts";
+import { MetadataProvider } from "~/renderer/screens/settings/sections/Developer/NftsTools/screens/NMS/MetadataProvider";
+import GenerateMockAccountsWithNfts from "~/renderer/screens/settings/sections/Developer/NftsTools/screens/GeneratorsAndDestructors/GenerateMockAccountsWithNfts";
+import { useSupportedChainsViewModel } from "~/renderer/screens/settings/sections/Developer/NftsTools/screens/SupportedChains/useSupportedChainsViewModel";
+import DeleteAccounts from "~/renderer/screens/settings/sections/Developer/NftsTools/screens/GeneratorsAndDestructors/DeleteAccounts";
+import ResetHiddenCollections from "~/renderer/screens/settings/sections/Developer/NftsTools/screens/GeneratorsAndDestructors/ResetHiddenCollections";
 
-const getItems = (t: (a: string) => string) => {
+const getItems = (
+  t: (a: string) => string,
+  hooks: {
+    supportedChainsViewModel: ReturnType<typeof useSupportedChainsViewModel>;
+  },
+) => {
   const items = [
     {
       key: TabKey.CONFIG,
       label: t("settings.developer.debugNfts.tabs.config"),
       value: (
         <Flex flexDirection="column" rowGap={2}>
-          <SupportedChains />
+          <SupportedChains {...hooks.supportedChainsViewModel} />
           <MetadataProvider />
         </Flex>
       ),
@@ -32,6 +39,8 @@ const getItems = (t: (a: string) => string) => {
           <ResetHiddenCollections />
           <Divider />
           <GenerateMockAccountsWithNfts />
+          <Divider />
+          <DeleteAccounts />
         </Flex>
       ),
     },
@@ -42,10 +51,17 @@ const getItems = (t: (a: string) => string) => {
 
 const NftsToolsDebugger = () => {
   const { t } = useTranslation();
+  const supportedChainsViewModel = useSupportedChainsViewModel();
 
   const [activeTabIndex, setActiveTabIndex] = useState(0);
 
-  const items = useMemo(() => getItems(t), [t]);
+  const items = useMemo(
+    () =>
+      getItems(t, {
+        supportedChainsViewModel,
+      }),
+    [supportedChainsViewModel, t],
+  );
 
   const activeItem = useMemo(() => items[activeTabIndex], [activeTabIndex, items]);
 

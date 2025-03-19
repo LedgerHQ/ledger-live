@@ -7,7 +7,6 @@ import {
   accountUserDataExportSelector,
 } from "@ledgerhq/live-wallet/store";
 import { getKey } from "~/renderer/storage";
-import sample from "lodash/sample";
 import { Account, AccountUserData } from "@ledgerhq/types-live";
 import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/FeatureFlagsContext";
 import { SettingsSectionRow } from "~/renderer/screens/settings/SettingsSection";
@@ -23,7 +22,7 @@ const createAccount = (currency: CryptoCurrency) => {
   return [account, userData] as [Account, AccountUserData];
 };
 
-async function injectMockAccounts(count: number) {
+async function injectMockAccounts() {
   const currencies = getEnv("NFT_CURRENCIES");
   const accountData = await getKey("app", "accounts", []);
 
@@ -31,19 +30,7 @@ async function injectMockAccounts(count: number) {
   const supportedCurrencies =
     listSupportedCurrencies().filter(c => currencies.includes(c.id)) || [];
 
-  const mandatoryAccounts = supportedCurrencies.map(createAccount);
-  const additionalAccounts = Array.from(
-    { length: Math.max(0, count - mandatoryAccounts.length) },
-    () => {
-      const currency = sample(supportedCurrencies);
-      if (!currency) {
-        throw new Error("No supported currency available for creating an account.");
-      }
-      return createAccount(currency);
-    },
-  );
-
-  const fakeAccounts = [...mandatoryAccounts, ...additionalAccounts];
+  const fakeAccounts = supportedCurrencies.map(createAccount);
 
   const newAccountData = accountData?.concat(fakeAccounts);
   const e = initAccounts(newAccountData || []);
@@ -57,8 +44,6 @@ export default function GenerateMockAccountsWithNfts() {
   const disableSimpleHash = () =>
     featureFlagsProvider.overrideFeature("nftsFromSimplehash", { enabled: false });
 
-  const nftAccounts = Math.floor(Math.random() * 2) + 3;
-
   return (
     <SettingsSectionRow
       title={t("settings.developer.debugNfts.generatorAndDestructor.genAcc")}
@@ -68,10 +53,10 @@ export default function GenerateMockAccountsWithNfts() {
         primary
         onClick={() => {
           disableSimpleHash();
-          injectMockAccounts(nftAccounts);
+          injectMockAccounts();
         }}
       >
-        {t("settings.developer.debugNfts.generatorAndDestructor.cta", { count: nftAccounts })}
+        {t("settings.developer.debugNfts.generatorAndDestructor.cta")}
       </Button>
     </SettingsSectionRow>
   );

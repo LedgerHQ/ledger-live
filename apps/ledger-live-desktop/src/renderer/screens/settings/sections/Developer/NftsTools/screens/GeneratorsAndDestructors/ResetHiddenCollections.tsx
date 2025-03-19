@@ -3,11 +3,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { resetHiddenNftCollections } from "~/renderer/actions/settings";
 import Button from "~/renderer/components/Button";
 import { t } from "i18next";
-import { SettingsSectionRow } from "../../../../SettingsSection";
 import { nftCollectionsStatusByNetworkSelector } from "~/renderer/reducers/settings";
 
 import { NftStatus } from "@ledgerhq/live-nft/types";
 import Box from "~/renderer/components/Box";
+import { SettingsSectionRow } from "~/renderer/screens/settings/SettingsSection";
 
 const ResetHiddenCollections = () => {
   const dispatch = useDispatch();

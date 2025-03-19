@@ -46,4 +46,7 @@ const Header = styled(Flex)`
   padding: 10px 20px 10px 0px;
   height: 48px;
   box-sizing: content-box;
+  &:hover {
+    cursor: pointer;
+  }
 `;
