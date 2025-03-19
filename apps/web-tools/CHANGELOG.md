@@ -1,5 +1,17 @@
 # web-tools
 
+## 0.16.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`acf627e`](https://github.com/LedgerHQ/ledger-live/commit/acf627ecb777748190715ae2021cc0862c3f6ca0), [`3bd7023`](https://github.com/LedgerHQ/ledger-live/commit/3bd7023b408cd99e471738b648c672d0e842c1d9), [`5f27549`](https://github.com/LedgerHQ/ledger-live/commit/5f275498e80060f98238a54e8ae3e2c94bfd7c91), [`b9fe785`](https://github.com/LedgerHQ/ledger-live/commit/b9fe785cbca9f82386e9295cd42ae36ea093efb8), [`fa8b10c`](https://github.com/LedgerHQ/ledger-live/commit/fa8b10cac5603eedd7c2309d2bb544a7d2d1a1a8), [`e2630cb`](https://github.com/LedgerHQ/ledger-live/commit/e2630cbec8d94ae037b2bf85cfa200a277ae739f), [`7c0ba93`](https://github.com/LedgerHQ/ledger-live/commit/7c0ba93d18f804b4140b4bc519bfe5f0b6e2eb52), [`34ac1d9`](https://github.com/LedgerHQ/ledger-live/commit/34ac1d91cfd728d26c8be3498ba272fd0b40541c), [`c15d7ea`](https://github.com/LedgerHQ/ledger-live/commit/c15d7ea48e41168726a90a17809175aee5bfa940), [`b8fca38`](https://github.com/LedgerHQ/ledger-live/commit/b8fca386fa07cf393109a1928e92dfc790f9c286)]:
+  - @ledgerhq/live-common@34.27.0-next.0
+  - @ledgerhq/coin-framework@2.4.0-next.0
+  - @ledgerhq/types-live@6.64.0-next.0
+  - @ledgerhq/live-wallet@0.10.1-next.0
+  - @ledgerhq/domain-service@1.2.23-next.0
+  - @ledgerhq/hw-app-eth@6.43.1-next.0
+
 ## 0.16.0
 
 ### Minor Changes

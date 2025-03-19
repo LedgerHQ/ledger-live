@@ -1,5 +1,13 @@
 # @ledgerhq/native-ui
 
+## 0.31.0-next.0
+
+### Minor Changes
+
+- [#9505](https://github.com/LedgerHQ/ledger-live/pull/9505) [`be1b3ad`](https://github.com/LedgerHQ/ledger-live/commit/be1b3ad53fa400d24165873e9b0103a8c3063e39) Thanks [@thesan](https://github.com/thesan)! - Add the banner component to use for the LNS upsell campaign
+
+- [#9506](https://github.com/LedgerHQ/ledger-live/pull/9506) [`4599711`](https://github.com/LedgerHQ/ledger-live/commit/459971108e07785b4eabecca4d2185d50ddecc58) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Bigger line height to display thai properly
+
 ## 0.30.0
 
 ### Minor Changes
