@@ -440,7 +440,7 @@
     },
     "wrongDevice" : {
       "title" : "El Ledger Nano S™ no es compatible con {{provider}}",
-      "description" : "El Ledger Nano S no es compatible con {{provider}}. Puedes usar el Ledger Nano S Plus, el Ledger Nano X, el Ledger Stax o el Ledger Flex para permutas intercadena en {{provider}} desde Ledger Live.",
+      "description" : "Ledger Nano S™ is not compatible with {{provider}}. You can use Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™, or Ledger Flex™ to experience cross-chain swaps on {{provider}} via Ledger Live",
       "cta" : "Explorar dispositivos compatibles",
       "changeProvider" : "Permutar con otro proveedor"
     },
@@ -449,8 +449,8 @@
       "ton_description" : "Para permutar Ton, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
       "spl_tokens_title" : "No es posible utilizar el Ledger Nano S™ para permutar tokens de Solana",
       "spl_tokens_description" : "Para permutar tokens de Solana, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
-      "sui_tokens_title" : "Ledger Nano S™ does not support swapping Sui tokens",
-      "sui_tokens_description" : "To swap Sui tokens, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+      "sui_tokens_title" : "No es posible utilizar el Ledger Nano S™ para permutar tokens de Sui",
+      "sui_tokens_description" : "Para permutar tokens de Sui, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
       "near_title" : "No es posible usar el Ledger Nano S™ para permutar Near",
       "near_description" : "Para permutar Near, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
       "ada_title" : "No es posible utilizar el Ledger Nano S™ para permutar Cardano",
@@ -459,12 +459,12 @@
       "apt_description" : "Para permutar Aptos, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
       "cosmos_title" : "No es posible usar el Ledger Nano S™ para permutar Cosmos",
       "cosmos_description" : "Para permutar Cosmos, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
-      "osmo_title" : "Ledger Nano S™ does not support swapping Osmosis",
-      "osmo_description" : "To swap Osmosis, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
-      "dydx_title" : "Ledger Nano S™ does not support swapping dYdX",
-      "dydx_description" : "To swap dYdX, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
-      "sui_title" : "Ledger Nano S™ does not support swapping Sui",
-      "sui_description" : "To swap Sui, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
+      "osmo_title" : "No es posible usar el Ledger Nano S™ para permutar Osmosis",
+      "osmo_description" : "Para permutar Osmosis, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
+      "dydx_title" : "No es posible usar el Ledger Nano S™ para permutar dYdX",
+      "dydx_description" : "Para permutar dYdX, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
+      "sui_title" : "No es posible utilizar el Ledger Nano S™ para permutar Sui",
+      "sui_description" : "Para permutar Sui, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™."
     },
     "providers" : {
       "title" : "Elige un proveedor para permutar cripto",
@@ -775,6 +775,10 @@
         "description3" : "Esta integración ha sido llevada adelante por {{team}} en colaboración con Ledger",
         "description3Link" : "Esta integración la ha realizado <1><0>{{team}}</0></1> en colaboración con Ledger"
       }
+    },
+    "migrationBanner" : {
+      "title" : "{{from}} está migrando a {{to}}. Visita este <0>enlace</0> para obtener más información o contacta con el equipo de soporte si necesitas ayuda.",
+      "contactSupport" : "Ponte en contacto con Soporte"
     },
     "featureUnavailable" : {
       "title" : "La siguiente opción está temporalmente deshabilitada: {{feature}}. Si quieres obtener más información, contacta con {{support}}.",
@@ -1740,7 +1744,7 @@
     "seeTokens" : "Mostrar tokens ({{tokenCount}})",
     "hideTokens" : "Ocultar tokens ({{tokenCount}})",
     "countTooltip" : "1 token",
-    "countTooltip_plural" : "{{count}} tokens",
+    "countTooltip_other" : "{{nbCount}} tokens",
     "algorand" : {
       "title" : "ASA (activos)",
       "cta" : "Agregar ASA",
@@ -1763,7 +1767,7 @@
     "seeSubAccounts" : "Mostrar subcuentas ({{tokenCount}})",
     "hideSubAccounts" : "Ocultar subcuentas ({{tokenCount}})",
     "countTooltip" : "1 subcuenta",
-    "countTooltip_plural" : "{{count}} subcuentas"
+    "countTooltip_other" : "{{nbCount}} subcuentas"
   },
   "addAccounts" : {
     "title" : "Agregar cuentas",
@@ -2049,7 +2053,7 @@
       "dontHaveSeed" : "¿No tienes tu Frase de Recuperación? ",
       "followTheGuide" : "Sigue nuestra Guía de actualización paso a paso",
       "removeApps" : "Desinstalar todas las aplicaciones antes de actualizar",
-      "update" : "Actualización del SO del {{productName}",
+      "update" : "Actualización de SO de {{productName}}",
       "updateBtn" : "Actualizar firmware",
       "installUpdate" : "Instalar actualización",
       "banner" : {
@@ -6991,55 +6995,14 @@
     }
   },
   "lnsUpsell" : {
-    "banner" : {
-      "manager" : {
-        "optIn" : {
-          "title" : "Es hora de actualizar",
-          "description" : "Pásate a uno de nuestros nuevos dispositivos con un <0>{{discount}}% de descuento</0> y disfruta de más seguridad sin complicaciones.",
-          "cta" : "Renovar mi billetera",
-          "linkText" : "Más información"
-        },
-        "optOut" : {
-          "title" : "Es hora de actualizar",
-          "description" : "Pásate a uno de nuestros nuevos dispositivos con un <0>{{discount}}% de descuento</0> y disfruta de más seguridad sin complicaciones.",
-          "cta" : "Renovar mi billetera",
-          "linkText" : "Más información"
-        }
-      },
-      "accounts" : {
-        "optIn" : {
-          "title" : "Es hora de actualizar",
-          "description" : "Pronto dejará de haber actualizaciones para el Ledger Nano S. Pásate a uno de nuestros nuevos dispositivos con un <0>{{discount}}% de descuento</0>.",
-          "cta" : "Renovar mi billetera",
-          "linkText" : "Más información"
-        },
-        "optOut" : {
-          "title" : "Es hora de actualizar",
-          "description" : "Pronto dejará de haber actualizaciones para el Ledger Nano S. Pásate a uno de nuestros nuevos dispositivos con un <0>{{discount}}% de descuento</0>.",
-          "cta" : "Renovar mi billetera",
-          "linkText" : "Más información"
-        }
-      },
-      "portfolio" : {
-        "optOut" : {
-          "title" : "Es hora de actualizar",
-          "description" : "Pásate a uno de nuestros nuevos dispositivos con un <0>{{discount}}% de descuento</0> y disfruta de más seguridad sin complicaciones.",
-          "cta" : "Renovar mi billetera",
-          "linkText" : "Más información"
-        }
-      },
-      "notifications" : {
-        "optIn" : {
-          "description" : "Pronto dejará de haber actualizaciones. Renueva ahora con un {{discount}}% de descuento y disfruta de una experiencia más fluida.",
-          "cta" : "Renovar mi billetera",
-          "linkText" : "Más información"
-        },
-        "optOut" : {
-          "description" : "Pronto dejará de haber actualizaciones. Renueva ahora con un {{discount}}% de descuento y disfruta de una experiencia más fluida.",
-          "cta" : "Renovar mi billetera",
-          "linkText" : "Más información"
-        }
-      }
+    "opted_in" : {
+      "title" : "Si la memoria es limitada, la experiencia también lo será",
+      "description" : "Actualiza tu Ledger Nano S a un dispositivo Ledger más moderno, como el Ledger Flex, para disponer de más memoria, mejoras de seguridad más recientes y nuevas funciones. También tenemos reservado, sólo para ti, un <0>{{discount}}% de descuento</>.",
+      "cta" : "Renovar mi Ledger"
+    },
+    "opted_out" : {
+      "description" : "La memoria limitada de tu Ledger Nano S restringe tu acceso a las opciones más recientes, a cambios en la blockchain y a mejoras de seguridad. Cambia a un dispositivo Ledger más moderno para garantizar un uso prolongado.",
+      "cta" : "Más información"
     }
   }
 }
