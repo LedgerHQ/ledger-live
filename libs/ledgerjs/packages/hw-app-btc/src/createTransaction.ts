@@ -36,21 +36,19 @@ const defaultsSignTransaction = {
   onDeviceSignatureRequested: () => {},
 };
 
-const getZcashTransactionVersion = (blockHeight: number | null | undefined): Buffer => {
+const getZcashTransactionVersion = (blockHeight: number | null | undefined, sapling: boolean): Buffer => {
   const version = Buffer.alloc(4);
-  if (blockHeight && blockHeight < ZCASH_ACTIVATION_HEIGHTS.SAPLING) {
-    version.writeUInt32LE(0x80000001, 0);
-  } else if (blockHeight && blockHeight < ZCASH_ACTIVATION_HEIGHTS.BLOSSOM) {
-    version.writeUInt32LE(0x80000002, 0);
-  } else if (blockHeight && blockHeight < ZCASH_ACTIVATION_HEIGHTS.HEARTWOOD) {
-    version.writeUInt32LE(0x80000003, 0);
-  } else if (blockHeight && blockHeight < ZCASH_ACTIVATION_HEIGHTS.CANOPY) {
-    version.writeUInt32LE(0x80000004, 0);
-  } else if (blockHeight && blockHeight < ZCASH_ACTIVATION_HEIGHTS.NU5) {
-    version.writeUInt32LE(0x80000005, 0);
-  } else {
+  if (!blockHeight || blockHeight >= ZCASH_ACTIVATION_HEIGHTS.NU6) {
     // NOTE: null and undefined should default to latest version
     version.writeUInt32LE(0x80000006, 0);
+  } 
+  else if (blockHeight >= ZCASH_ACTIVATION_HEIGHTS.NU5) {
+    version.writeUInt32LE(0x80000005, 0);
+  } else if (sapling) {
+    // NOTE: could use blockheight
+    version.writeUInt32LE(0x80000004, 0);
+  } else {
+    version.writeUInt32LE(0x80000003, 0);
   }
   return version;
 };
@@ -71,15 +69,17 @@ export const getDefaultVersions = ({
   let defaultVersion = Buffer.alloc(4);
   const defaultVersionNu5Only = Buffer.alloc(4);
 
-  if (!!expiryHeight && !isDecred) {
-    if (isZcash) {
-      defaultVersion = getZcashTransactionVersion(blockHeight);
+  if (!!expiryHeight && !isDecred && isZcash) {
+    // if (isZcash && blockHeight) {
+      defaultVersion = getZcashTransactionVersion(blockHeight, sapling);
       defaultVersionNu5Only.writeUInt32LE(0x80000005, 0);
-    } else {
-      const version = sapling ? 0x80000004 : 0x80000003;
-      defaultVersion.writeUInt32LE(version, 0);
-      defaultVersionNu5Only.writeUInt32LE(version, 0);
-    }
+    // } else {
+    //   const version = sapling ? 0x80000004 : 0x80000003;
+    //   defaultVersion.writeUInt32LE(version, 0);
+    //   defaultVersionNu5Only.writeUInt32LE(version, 0);
+    // }
+    // } else {
+    // }
   } else {
     defaultVersion.writeUInt32LE(1, 0);
     defaultVersionNu5Only.writeUInt32LE(1, 0);
@@ -212,7 +212,7 @@ export async function createTransaction(
   for (const input of inputs) {
     if (!resuming) {
       if (isZcash) {
-        input[0].version = getZcashTransactionVersion(input[4]);
+        input[0].version = getZcashTransactionVersion(input[4], sapling);
       }
       const trustedInput = await getTrustedInputCall(transport, input[1], input[0], additionals);
       log("hw", "got trustedInput=" + trustedInput);
@@ -236,6 +236,7 @@ export async function createTransaction(
     }
 
     if (expiryHeight && !isDecred) {
+      // NOTE: this logic is of ?
       targetTransaction.nVersionGroupId = Buffer.from(
         // nVersionGroupId is 0x26A7270A for zcash NU5 upgrade
         // refer to https://github.com/zcash/zcash/blob/master/src/primitives/transaction.h
