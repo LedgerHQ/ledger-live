@@ -4250,7 +4250,7 @@
       "nfts": {
         "title": "NFTs HiddenCollections",
         "description": "Reset the hidden collections list",
-        "reset": "Reset"
+        "reset": "Reset ({{count}})"
       },
       "exchangeDeveloperMode": {
         "title": "Exchange Dev Mode",
@@ -4358,6 +4358,29 @@
             "nft": "An individual NFT",
             "contract": "A contract"
           }
+        },
+        "back": "Go back"
+      },
+      "debugNfts": {
+        "title": "NFTs Tools",
+        "description": "Provides some useful tools to handle NFTs in Ledger Live",
+        "cta": "Open",
+        "tabs": {
+          "config": "Configuration",
+          "generatorAndDestructor": "Generators & Destructors"
+        },
+        "configuration": {
+          "supported": "Supported NFT Chain",
+          "supported_other": "Supported NFT Chains",
+          "nms": {
+            "title": "NFT Metadata Service (NMS)",
+            "env": "Environment : {{env}}"
+          }
+        },
+        "generatorAndDestructor": {
+          "genAcc": "Generate Accounts",
+          "genAccDesc": "Generate an accounts with NFTs",
+          "cta": "Generate ({{count}})"
         },
         "back": "Go back"
       },
