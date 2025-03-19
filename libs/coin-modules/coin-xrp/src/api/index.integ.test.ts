@@ -21,7 +21,12 @@ describe("Xrp Api", () => {
       const amount = BigInt(100);
 
       // When
-      const result = await module.estimateFees(address, amount);
+      const result = await module.estimateFees({
+        type: "send",
+        sender: address,
+        amount,
+        recipient: "rKtXXTVno77jhu6tto1MAXjepyuaKaLcqB",
+      });
 
       // Then
       expect(result).toEqual(BigInt(10));

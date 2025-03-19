@@ -24,7 +24,7 @@ export function createApi(config: StellarConfig): Api<StellarToken> {
     broadcast,
     combine: compose,
     craftTransaction: craft,
-    estimateFees,
+    estimateFees: () => estimateFees(),
     getBalance,
     lastBlock,
     listOperations: operations,

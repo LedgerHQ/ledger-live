@@ -25,7 +25,7 @@ export function createApi(config: XrpConfig): Api<void> {
     broadcast,
     combine,
     craftTransaction: craft,
-    estimateFees: estimate,
+    estimateFees: () => estimateFees().then(fees => fees.fee),
     getBalance,
     lastBlock,
     listOperations: operations,
@@ -36,11 +36,6 @@ async function craft(address: string, transaction: ApiTransaction): Promise<stri
   const nextSequenceNumber = await getNextValidSequence(address);
   const tx = await craftTransaction({ address, nextSequenceNumber }, transaction);
   return tx.serializedTransaction;
-}
-
-async function estimate(_addr: string, _amount: bigint): Promise<bigint> {
-  const fees = await estimateFees();
-  return fees.fee;
 }
 
 type PaginationState = {

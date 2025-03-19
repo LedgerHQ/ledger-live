@@ -31,7 +31,12 @@ describe("Polkadot Api", () => {
       const amount = BigInt(100);
 
       // When
-      const result = await module.estimateFees(address, amount);
+      const result = await module.estimateFees({
+        type: "send",
+        sender: address,
+        recipient: "address",
+        amount,
+      });
 
       // Then
       expect(result).toBeGreaterThanOrEqual(BigInt(100000000));

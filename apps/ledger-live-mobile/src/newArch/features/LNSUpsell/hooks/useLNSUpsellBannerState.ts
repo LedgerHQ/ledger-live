@@ -26,9 +26,10 @@ export function useLNSUpsellBannerState(location: LNSBannerLocation): LNSUpsellB
 
   const accounts = useSelector(accountsSelector);
   const swapCount = accounts.reduce((count, account) => count + account.swapHistory.length, 0);
+  const isExcluded = isOptIn && swapCount >= 2;
 
-  const isEnabled = ff?.enabled && params?.[location];
-  const isShown = Boolean(isEnabled && hasOnlySeenLNS && swapCount < 2);
+  const isEnabled = Boolean(ff?.enabled && params?.[location]);
+  const isShown = isEnabled && hasOnlySeenLNS && !isExcluded;
 
   return { isShown, params, tracking };
 }

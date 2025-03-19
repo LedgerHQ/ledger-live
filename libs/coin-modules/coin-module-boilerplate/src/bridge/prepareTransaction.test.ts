@@ -20,8 +20,9 @@ describe("prepareTransaction", () => {
   });
 
   it("should update fee field if it's different", async () => {
+    getNextSequenceSpy.mockResolvedValue(42);
     const oldTx = { fee: new BigNumber(0) };
-    estimateFeesSpy.mockResolvedValue(new BigNumber(1));
+    estimateFeesSpy.mockResolvedValue(BigInt(1));
     const newTx = await prepareTransaction({} as Account, oldTx as Transaction);
     expect(newTx.fee).toEqual(new BigNumber(1));
   });
