@@ -29,7 +29,8 @@ const isDefaultAccountSwapParamsList = (
   params: DefaultAccountSwapParamList | unknown,
 ): params is DefaultAccountSwapParamList =>
   (params as DefaultAccountSwapParamList).defaultAccount !== undefined ||
-  (params as DefaultAccountSwapParamList).defaultCurrency !== undefined;
+  (params as DefaultAccountSwapParamList).defaultCurrency !== undefined ||
+  (params as DefaultAccountSwapParamList).currency !== undefined;
 
 export function SwapLiveApp({
   route,
@@ -56,6 +57,7 @@ export function SwapLiveApp({
   const isWebviewError = webviewState?.url.includes("/unknown-error");
 
   const manifest: LiveAppManifest | undefined = !localManifest ? remoteManifest : localManifest;
+  console.log("SwapLiveApp#params", params);
   const defaultParams = isDefaultAccountSwapParamsList(params) ? params : null;
 
   if (!manifest || isWebviewError) {
