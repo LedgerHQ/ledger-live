@@ -148,10 +148,9 @@ export const txsToOps = (
           return;
         } else if (coin_id === APTOS_ASSET_ID) {
           op.id = encodeOperationId(id, tx.hash, op.type);
-          ops.push(op); // if not aptos then should be tokens
+          ops.push(op);
         } else {
           const token = findTokenByAddressInCurrency(coin_id.toLowerCase(), "aptos");
-          // skip tokens that are not in the CAL
           if (token !== undefined) {
             op.accountId = encodeTokenAccountId(id, token);
             op.id = encodeOperationId(op.accountId, tx.hash, op.type);

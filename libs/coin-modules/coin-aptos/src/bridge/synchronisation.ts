@@ -184,8 +184,6 @@ export const getAccountShape: GetAccountShape = async info => {
     accountId,
     transactions,
   );
-  const operations = mergeOps(oldOperations, newOperations);
-
   const newSubAccounts = await getSubAccounts(info, address, accountId, tokenOperations);
 
   // TODO: validate correctness of cache and mergeSubAccounts
@@ -194,6 +192,18 @@ export const getAccountShape: GetAccountShape = async info => {
   const subAccounts = shouldSyncFromScratch
     ? newSubAccounts
     : mergeSubAccounts(initialAccount, newSubAccounts); // Merging potential new subAccouns while preserving the references
+
+  let subAccountsOperations = [] as Operation[];
+  subAccountsOperations = subAccounts
+    .map(sa => sa.operations.filter(op => op.type === "OUT"))
+    .flat()
+    .map(op => ({
+      ...op,
+      id: accountId,
+      type: "FEES",
+    }));
+
+  const operations = mergeOps(mergeOps(oldOperations, newOperations), subAccountsOperations);
 
   const shape: Partial<AptosAccount> = {
     type: "Account",
