@@ -9,6 +9,8 @@ import { RANGES } from "LLM/features/Market/utils";
 import { MarketCoinDataChart } from "@ledgerhq/live-common/market/utils/types";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+// eslint-disable-next-line no-restricted-imports
+import { rangeDataTable } from "@ledgerhq/live-common/lib/market/utils/rangeDataTable";
 
 const { width } = getWindowDimensions();
 
@@ -30,7 +32,10 @@ function MarketGraph({
   const { t } = useTranslation();
   const { colors } = useTheme();
 
-  const ranges = RANGES.map(r => ({ label: t(`market.range.${r}`), value: r })).reverse();
+  const ranges = RANGES.map(r => ({
+    label: t(`market.range.${rangeDataTable[r].label}`),
+    value: r,
+  })).reverse();
 
   const rangesLabels = ranges.map(({ label }) => label);
 
