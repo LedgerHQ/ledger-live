@@ -3465,6 +3465,7 @@
         "CTAButton" : "إضافة حساب"
       },
       "history" : {
+        "button" : "الانتقال إلى السجل",
         "tab" : "السجل",
         "disclaimer" : "عمليات المبادلة لتطبيق الجوال الخاص بك غير متزامنة مع تطبيق Ledger Live لسطح المكتب",
         "exportButton" : "تصدير العمليات",
@@ -6747,7 +6748,7 @@
   "postOnboarding" : {
     "hub" : {
       "title" : "قريباً، استخدم {{productName}} الخاص بك من أجل...",
-      "allDoneTitle" : "أنت مُستعد الآن! تابع واستكشف محفظتك الاستثمارية",
+      "areAllPostOnboardingActionsCompletedTitle" : "أنت مُستعد الآن! تابع واستكشف محفظتك الاستثمارية",
       "skip" : "سأفعل هذا لاحقاً",
       "viewWallet" : "استكشاف محفظتي الاستثمارية"
     },
@@ -7332,6 +7333,16 @@
       "subTitle" : "يبدو أنك لم تقم بإضافة حساب بعد. ابدأ الآن.",
       "cta" : "إضافة حساب",
       "link" : "بحاجة إلى مساعدة؟ تعرَّف على كيفية إضافة حساب إلى Ledger Live."
+    }
+  },
+  "lnsUpsell" : {
+    "opted_in" : {
+      "description" : "Upgrade your Ledger Nano S to a newer Ledger — like the Ledger Flex — for more memory, the latest security enhancements, fresh features, and an exclusive 20% off. ",
+      "cta" : "ترقية جهاز Ledger الخاص بي"
+    },
+    "opted_out" : {
+      "description" : "الذاكرة المحدودة في ledger Nano S الخاصة بك تُقيد وصولك إلى أحدث الميزات، ومتغيّرات سلاسل الكتل، وتحسينات الأمان. من أجل الاستخدام على المدى الطويل، قم بالترقية إلى جهاز Ledger أحدث.",
+      "cta" : "تعرّف على المزيد"
     }
   }
 }

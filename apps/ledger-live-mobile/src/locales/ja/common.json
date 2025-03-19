@@ -3465,6 +3465,7 @@
         "CTAButton" : "アカウントを追加"
       },
       "history" : {
+        "button" : "履歴に移動",
         "tab" : "履歴",
         "disclaimer" : "モバイルアプリのスワップ取引が、Ledger Live Desktopと同期されていません。",
         "exportButton" : "エクスポート処理",
@@ -6747,7 +6748,7 @@
   "postOnboarding" : {
     "hub" : {
       "title" : "次に、{{productName}}を使用して...",
-      "allDoneTitle" : "これで準備完了です！引き続きポートフォリオの探索をお楽しみください",
+      "areAllPostOnboardingActionsCompletedTitle" : "これで準備完了です！引き続きポートフォリオの探索をお楽しみください",
       "skip" : "これは後でやります",
       "viewWallet" : "ポートフォリオを探索"
     },
@@ -7332,6 +7333,16 @@
       "subTitle" : "まだアカウントを追加していないようです。今すぐ開始できます。",
       "cta" : "アカウントを追加",
       "link" : "お困りですか？Ledger Liveにアカウントを追加する方法をご覧ください。"
+    }
+  },
+  "lnsUpsell" : {
+    "opted_in" : {
+      "description" : "Upgrade your Ledger Nano S to a newer Ledger — like the Ledger Flex — for more memory, the latest security enhancements, fresh features, and an exclusive 20% off. ",
+      "cta" : "Ledgerをアップグレード"
+    },
+    "opted_out" : {
+      "description" : "Ledger Nano Sの限られたメモリでは、複数の最新機能、ブロックチェーンの変更、セキュリティ強化も制限されます。ぜひ、新しいLedgerデバイスへのアップグレードをご検討ください。",
+      "cta" : "Learn more"
     }
   }
 }

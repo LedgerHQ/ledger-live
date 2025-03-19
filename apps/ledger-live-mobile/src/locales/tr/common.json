@@ -1396,7 +1396,7 @@
         "desc" : "Ledger'la tamamen entegre olan Web 3.0'ı keşfedin"
       },
       "earn" : {
-        "title" : "Kazanın",
+        "title" : "Kazan",
         "desc" : "Kriptolarınızı stake ederek ve borç vererek artırın."
       },
       "mint" : {
@@ -2786,7 +2786,7 @@
         "description" : "Bu hesapla {{actionName}} işlemi yapmak için elinizde {{currencyTicker}} olmalı."
       }
     },
-    "earn" : "Kazanın",
+    "earn" : "Kazan",
     "quickActions" : "Hızlı işlemler",
     "referralProgram" : "Bizi arkadaşınıza önerin ve $20 değerinde Bitcoin kazanın",
     "banner" : {
@@ -3465,6 +3465,7 @@
         "CTAButton" : "Hesap ekle"
       },
       "history" : {
+        "button" : "Geçmişe git",
         "tab" : "Geçmiş",
         "disclaimer" : "Mobil üzerinden yaptığınız takas işlemleri Ledger Live Masaüstü ile senkronize değildir",
         "exportButton" : "Dışa aktarma işlemleri",
@@ -6747,7 +6748,7 @@
   "postOnboarding" : {
     "hub" : {
       "title" : "Sırada, {{productName}} ürününüz ile...",
-      "allDoneTitle" : "Her şey hazır! Şimdi portföyünüzü keşfetmeye başlayabilirsiniz.",
+      "areAllPostOnboardingActionsCompletedTitle" : "Her şey hazır! Şimdi portföyünüzü keşfetmeye başlayabilirsiniz.",
       "skip" : "Daha sonra yapacağım",
       "viewWallet" : "Portföyümü keşfet"
     },
@@ -7332,6 +7333,16 @@
       "subTitle" : "Henüz bir hesap eklememişsiniz gibi görünüyor. Hemen başlayın.",
       "cta" : "Hesap ekleyin",
       "link" : "Yardım mı gerekli? Ledger Live'a nasıl hesap ekleyeceğinizi öğrenin."
+    }
+  },
+  "lnsUpsell" : {
+    "opted_in" : {
+      "description" : "Upgrade your Ledger Nano S to a newer Ledger — like the Ledger Flex — for more memory, the latest security enhancements, fresh features, and an exclusive 20% off. ",
+      "cta" : "Ledger modelimi yükselt"
+    },
+    "opted_out" : {
+      "description" : "Ledger Nano S cihazınızdaki sınırlı bellek en yeni özelliklere, blok zinciri değişikliklerine ve güvenlik güncellemelerine erişiminizi kısıtlar. Uzun vadeli kullanım için daha yeni bir Ledger cihazına model yükseltin.",
+      "cta" : "Daha fazla bilgi"
     }
   }
 }

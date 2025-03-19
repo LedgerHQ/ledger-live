@@ -440,7 +440,7 @@
     },
     "wrongDevice" : {
       "title" : "A Ledger Nano S™ não é compatível com {{provider}}",
-      "description" : "Ledger Nano S™ is not compatible with {{provider}}. You can use Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™, or Ledger Flex™ to experience cross-chain swaps on {{provider}} via Ledger Live",
+      "description" : "A Ledger Nano S™ não é compatível com {{provider}}. Você pode usar a Ledger Nano S Plus™, a Ledger Nano X™, Ledger Stax™ ou a Ledger Flex™ para realizar trocas cross-chain via {{provider}} através do Ledger Live",
       "cta" : "Conheça os dispositivos compatíveis",
       "changeProvider" : "Trocar com outro provedor"
     },
@@ -1744,7 +1744,7 @@
     "seeTokens" : "Mostrar tokens ({{tokenCount}})",
     "hideTokens" : "Ocultar tokens ({{tokenCount}})",
     "countTooltip" : "1 token",
-    "countTooltip_plural" : "{{count}} tokens",
+    "countTooltip_other" : "{{nbCount}} tokens",
     "algorand" : {
       "title" : "ASA (Ativos)",
       "cta" : "Adicionar ASA",
@@ -1767,7 +1767,7 @@
     "seeSubAccounts" : "Mostrar Subcontas ({{tokenCount}})",
     "hideSubAccounts" : "Ocultar Subcontas ({{tokenCount}})",
     "countTooltip" : "1 subconta",
-    "countTooltip_plural" : "{{count}} subcontas"
+    "countTooltip_other" : "{{nbCount}} subcontas"
   },
   "addAccounts" : {
     "title" : "Adicionar Contas",

@@ -1744,7 +1744,7 @@
     "seeTokens" : "Показать токены ({{tokenCount}})",
     "hideTokens" : "Скрыть токены ({{tokenCount}})",
     "countTooltip" : "1 токен",
-    "countTooltip_plural" : "{{count}} токена(ов)",
+    "countTooltip_other" : "Токенов: {{nbCount}}",
     "algorand" : {
       "title" : "ASA (Активы)",
       "cta" : "Добавить ASA",
@@ -1767,7 +1767,7 @@
     "seeSubAccounts" : "Показать субсчета ({{tokenCount}})",
     "hideSubAccounts" : "Скрыть субсчета ({{tokenCount}})",
     "countTooltip" : "1 субсчёт",
-    "countTooltip_plural" : "Субсчетов: {{count}}"
+    "countTooltip_other" : "Субсчетов: {{nbCount}}"
   },
   "addAccounts" : {
     "title" : "Добавить счёт",
