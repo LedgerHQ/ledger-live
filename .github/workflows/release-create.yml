@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-24.04
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
-      RELEASE_BRANCH: "release"
+      RELEASE_BRANCH: "release-test-angusbayley"
     steps:
       - name: generate token
         id: generate-token
@@ -79,6 +79,6 @@ jobs:
           echo "date=$(date +%F)" >> $GITHUB_OUTPUT
       - name: create PR
         run: |
-          gh pr create --title ":rocket: Release ${{ steps.date.outputs.date }}" -F .github/templates/release.md --base main --head $RELEASE_BRANCH
+          gh pr create --title "[TEST - NOT A REAL RELEASE] :rocket: Release ${{ steps.date.outputs.date }}" -F .github/templates/release.md --base main --head $RELEASE_BRANCH
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
