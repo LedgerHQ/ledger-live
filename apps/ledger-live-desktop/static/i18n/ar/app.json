@@ -440,7 +440,7 @@
     },
     "wrongDevice" : {
       "title" : "™Ledger Nano S ليست متوافقة مع {{provider}}",
-      "description" : "Ledger Nano S™ is not compatible with {{provider}}. You can use Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™, or Ledger Flex™ to experience cross-chain swaps on {{provider}} via Ledger Live",
+      "description" : "™Ledger Nano S ليست متوافقة مع {{provider}}. يمكنك استخدام ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Stax أو ™Ledger Flex لتجربة المبادلات عبر سلاسل الكتل المختلفة على {{provider}} عبر Ledger Live",
       "cta" : "استكشف الأجهزة المتوافقة",
       "changeProvider" : "قم بالمبادلة مع مزود آخر"
     },
@@ -1744,7 +1744,7 @@
     "seeTokens" : "عرض رموز التوكن ({{tokenCount}})",
     "hideTokens" : "إخفاء رموز التوكن ({{tokenCount}})",
     "countTooltip" : "1 رمز توكن",
-    "countTooltip_plural" : "{{count}} رمز توكن",
+    "countTooltip_other" : "{{nbCount}} رمز توكن",
     "algorand" : {
       "title" : "ASA (أصول)",
       "cta" : "إضافة ASA",
@@ -1767,7 +1767,7 @@
     "seeSubAccounts" : "عرض الحسابات الفرعية ({{tokenCount}})",
     "hideSubAccounts" : "إخفاء الحسابات الفرعية ({{tokenCount}})",
     "countTooltip" : "1 حساب فرعي",
-    "countTooltip_plural" : "{{count}} حساب فرعي"
+    "countTooltip_other" : "{{nbCount}} حساب فرعي"
   },
   "addAccounts" : {
     "title" : "إضافة حسابات",
