@@ -89,19 +89,31 @@ module.exports = {
     "ios.sim.debug": {
       device: "simulator",
       app: "ios.debug",
+      launchArgs: {
+        RUNNING_TESTS: "1",
+      },
       // artifacts: { https://github.com/wix/Detox/blob/master/docs/APIRef.Configuration.md#artifacts-configuration },
     },
     "ios.sim.staging": {
       device: "simulator",
       app: "ios.staging",
+      launchArgs: {
+        RUNNING_TESTS: "1",
+      },
     },
     "ios.sim.release": {
       device: "simulator",
       app: "ios.release",
+      launchArgs: {
+        RUNNING_TESTS: "1",
+      },
     },
     "ios.sim.prerelease": {
       device: "simulator",
       app: "ios.prerelease",
+      launchArgs: {
+        RUNNING_TESTS: "1",
+      },
     },
     "android.emu.debug": {
       device: "emulator",
