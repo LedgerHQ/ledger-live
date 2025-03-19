@@ -112,10 +112,6 @@ jobs:
           command: pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --no-frozen-lockfile --unsafe-perm
           new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --no-frozen-lockfile --unsafe-perm
 
-      - run: echo "${{ steps.install-dependencies.outputs.error }}"
-        shell: bash
-        if: failure()
-
       - name: Flake alert - ArgumentError
         uses: LedgerHQ/ledger-live/tools/actions/composites/ci-flake-notifier@develop
         if: failure() && steps.install-dependencies.outputs.error == 'ArgumentError - pathname contains null byte'
