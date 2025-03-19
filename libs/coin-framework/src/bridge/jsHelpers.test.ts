@@ -161,20 +161,19 @@ describe.only("makeScanAccounts", () => {
       }),
     );
 
-    const today = new Date();
     expect(result).toEqual({
       account: {
         id: "1234",
         balance: new BigNumber("0"),
         balanceHistoryCache: createEmptyHistoryCache(),
         blockHeight: 0,
-        creationDate: today,
+        creationDate: expect.any(Date),
         currency,
         derivationMode: "",
         freshAddress: addressResolver.address,
         freshAddressPath: addressResolver.path,
         index: 0,
-        lastSyncDate: today,
+        lastSyncDate: expect.any(Date),
         operations: [],
         operationsCount: 0,
         pendingOperations: [],
