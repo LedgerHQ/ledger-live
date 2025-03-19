@@ -796,7 +796,7 @@ describe("Aptos sync logic ", () => {
       const amount_in = new BigNumber(50);
       const amount_out = new BigNumber(100);
 
-      const result = calculateAmount(sender, address, fee, amount_in, amount_out);
+      const result = calculateAmount(sender, address, [APTOS_ASSET_ID], fee, amount_in, amount_out);
 
       // LL negates the amount for SEND transactions during output
       expect(result).toEqual(new BigNumber(60)); // -(50 - 100 - 10)
@@ -809,7 +809,7 @@ describe("Aptos sync logic ", () => {
       const amount_in = new BigNumber(100);
       const amount_out = new BigNumber(50);
 
-      const result = calculateAmount(sender, address, fee, amount_in, amount_out);
+      const result = calculateAmount(sender, address, [APTOS_ASSET_ID], fee, amount_in, amount_out);
 
       expect(result).toEqual(new BigNumber(50)); // 100 - 50
     });
@@ -821,7 +821,7 @@ describe("Aptos sync logic ", () => {
       const amount_in = new BigNumber(0);
       const amount_out = new BigNumber(0);
 
-      const result = calculateAmount(sender, address, fee, amount_in, amount_out);
+      const result = calculateAmount(sender, address, [APTOS_ASSET_ID], fee, amount_in, amount_out);
 
       // LL negates the amount for SEND transactions during output
       expect(result).toEqual(new BigNumber(10)); // -(0 - 0 - 10)
@@ -834,7 +834,7 @@ describe("Aptos sync logic ", () => {
       const amount_in = new BigNumber(100);
       const amount_out = new BigNumber(0);
 
-      const result = calculateAmount(sender, address, fee, amount_in, amount_out);
+      const result = calculateAmount(sender, address, [APTOS_ASSET_ID], fee, amount_in, amount_out);
 
       // LL negates the amount for SEND transactions during output
       expect(result).toEqual(new BigNumber(90).negated()); // 100 - 10

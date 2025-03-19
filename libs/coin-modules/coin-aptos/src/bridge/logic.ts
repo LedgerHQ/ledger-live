@@ -114,6 +114,10 @@ export const txsToOps = (
   const ops: Operation[] = [];
   const opsTokens: Operation[] = [];
 
+  if (address === "0xa0d8abc262e3321f87d745bd5d687e8f3fb14c87d48f840b6b56867df0026ec8") {
+    console.log("yaa");
+  }
+
   txs.forEach(tx => {
     if (tx !== null) {
       const op: Operation = getBlankOperation(tx, id);
@@ -130,7 +134,14 @@ export const txsToOps = (
       }
 
       const { coin_id, amount_in, amount_out } = getCoinAndAmounts(tx, address);
-      op.value = calculateAmount(tx.sender, address, op.fee, amount_in, amount_out);
+      op.value = calculateAmount(
+        tx.sender,
+        address,
+        (tx.payload as EntryFunctionPayloadResponse).type_arguments,
+        op.fee,
+        amount_in,
+        amount_out,
+      );
       op.type = compareAddress(tx.sender, address) ? DIRECTION.OUT : DIRECTION.IN;
       op.senders.push(tx.sender);
 
@@ -154,6 +165,9 @@ export const txsToOps = (
           if (token !== undefined) {
             op.accountId = encodeTokenAccountId(id, token);
             op.id = encodeOperationId(op.accountId, tx.hash, op.type);
+            if (op.type === DIRECTION.OUT) {
+              ops.push({ ...op, value: op.fee, type: "FEES" });
+            }
             opsTokens.push(op);
           }
         }
@@ -319,9 +333,12 @@ export function getCoinAndAmounts(
   address: string,
 ): { coin_id: string | null; amount_in: BigNumber; amount_out: BigNumber } {
   let coin_id: string | null = null;
-  let amount_in = new BigNumber(0);
-  let amount_out = new BigNumber(0);
+  let amount_in = BigNumber(0);
+  let amount_out = BigNumber(0);
 
+  if (tx.hash === "0x25e614e56c41d860ec95aa720419302a41e216b11fbce5dc354b9fa9852d26ae") {
+    console.log("ya");
+  }
   // collect all events related to the address and calculate the overall amounts
   tx.events.forEach(event => {
     switch (event.type) {
@@ -331,11 +348,6 @@ export function getCoinAndAmounts(
           if (coin_id !== null) {
             amount_out = amount_out.plus(event.data.amount);
           }
-        }
-        break;
-      case "0x1::transaction_fee::FeeStatement":
-        if (!tx.success) {
-          coin_id = APTOS_ASSET_ID;
         }
         break;
       case "0x1::coin::DepositEvent":
@@ -363,6 +375,9 @@ export function getCoinAndAmounts(
           }
         }
         break;
+      // case "0x1::transaction_fee::FeeStatement":
+      //   coin_id = APTOS_ASSET_ID;
+      //   break;
     }
   });
   return { coin_id, amount_in, amount_out }; // TODO: manage situation when there are several coinID from the events parsing
@@ -371,13 +386,14 @@ export function getCoinAndAmounts(
 export function calculateAmount(
   sender: string,
   address: string,
+  type_arguments: string[],
   fee: BigNumber,
   amount_in: BigNumber,
   amount_out: BigNumber,
 ): BigNumber {
   const is_sender: boolean = compareAddress(sender, address);
   // Include fees if our address is the sender
-  if (is_sender) {
+  if (is_sender && type_arguments.includes(APTOS_ASSET_ID)) {
     amount_out = amount_out.plus(fee);
   }
   // LL negates the amount for SEND transactions
