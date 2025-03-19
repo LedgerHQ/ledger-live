@@ -36,9 +36,9 @@ export function EvmStakingDrawerBody({ providers, accountId, onClose }: Props) {
             platform: manifest.id,
             name: manifest.name,
             accountId:
-              manifest?.params && "dappUrl" in manifest.params
-                ? getWalletApiIdFromAccountId(accountId)
-                : accountId,
+              manifest?.dapp
+                ? accountId
+                : getWalletApiIdFromAccountId(accountId),
             ...(customDappURL ? { customDappURL } : {}),
           });
         });
