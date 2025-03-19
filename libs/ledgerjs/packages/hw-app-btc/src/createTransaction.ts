@@ -36,19 +36,27 @@ const defaultsSignTransaction = {
   onDeviceSignatureRequested: () => {},
 };
 
-const getZcashTransactionVersion = (blockHeight: number | null | undefined, sapling: boolean): Buffer => {
+const getZcashTransactionVersion = (
+  blockHeight: number | null | undefined,
+  sapling: boolean,
+): Buffer => {
   const version = Buffer.alloc(4);
   if (!blockHeight || blockHeight >= ZCASH_ACTIVATION_HEIGHTS.NU6) {
     // NOTE: null and undefined should default to latest version
-    version.writeUInt32LE(0x80000006, 0);
-  } 
-  else if (blockHeight >= ZCASH_ACTIVATION_HEIGHTS.NU5) {
-    version.writeUInt32LE(0x80000005, 0);
-  } else if (sapling) {
-    // NOTE: could use blockheight
-    version.writeUInt32LE(0x80000004, 0);
+    // version.writeUInt32LE(0x80000006, 0);
+    version.writeUInt32LE(0xc8e71055, 0);
+  } else if (blockHeight >= ZCASH_ACTIVATION_HEIGHTS.NU5) {
+    version.writeUInt32LE(0xf919a198, 0);
+  } else if (blockHeight >= ZCASH_ACTIVATION_HEIGHTS.CANOPY) {
+    version.writeUInt32LE(0xe9ff75a6, 0);
+  } else if (blockHeight >= ZCASH_ACTIVATION_HEIGHTS.HEARTWOOD) {
+    version.writeUInt32LE(0xf5b9230b, 0);
+  } else if (blockHeight >= ZCASH_ACTIVATION_HEIGHTS.BLOSSOM) {
+    version.writeUInt32LE(0x2bb40e60, 0);
+  } else if (blockHeight >= ZCASH_ACTIVATION_HEIGHTS.SAPLING) {
+    version.writeUInt32LE(0x76b809bb, 0);
   } else {
-    version.writeUInt32LE(0x80000003, 0);
+    version.writeUInt32LE(0x5ba81b19, 0);
   }
   return version;
 };
@@ -71,8 +79,8 @@ export const getDefaultVersions = ({
 
   if (!!expiryHeight && !isDecred && isZcash) {
     // if (isZcash && blockHeight) {
-      defaultVersion = getZcashTransactionVersion(blockHeight, sapling);
-      defaultVersionNu5Only.writeUInt32LE(0x80000005, 0);
+    defaultVersion = getZcashTransactionVersion(blockHeight, sapling);
+    defaultVersionNu5Only.writeUInt32LE(0x80000005, 0);
     // } else {
     //   const version = sapling ? 0x80000004 : 0x80000003;
     //   defaultVersion.writeUInt32LE(version, 0);
