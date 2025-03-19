@@ -135,7 +135,6 @@ setSupportedCurrencies([
   "mantra",
   "xion",
   "sui",
-  "sui_testnet",
   "zenrock",
   "sonic",
   "sonic_blaze",
