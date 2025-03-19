@@ -1744,7 +1744,7 @@
     "seeTokens" : "แสดงโทเคน ({{tokenCount}})",
     "hideTokens" : "ซ่อนโทเคน ({{tokenCount}})",
     "countTooltip" : "1 โทเคน",
-    "countTooltip_plural" : "{{count}} โทเคน",
+    "countTooltip_other" : "โทเคน {{nbCount}}",
     "algorand" : {
       "title" : "ASA (สินทรัพย์)",
       "cta" : "เพิ่ม ASA",
@@ -1767,7 +1767,7 @@
     "seeSubAccounts" : "แสดงบัญชีย่อย ({{tokenCount}})",
     "hideSubAccounts" : "ซ่อนบัญชีย่อย ({{tokenCount}})",
     "countTooltip" : "1 บัญชีย่อย",
-    "countTooltip_plural" : "{{count}} บัญชีย่อย"
+    "countTooltip_other" : "{{nbCount}} บัญชีย่อย"
   },
   "addAccounts" : {
     "title" : "เพิ่มบัญชี",

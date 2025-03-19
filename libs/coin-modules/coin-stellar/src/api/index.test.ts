@@ -23,20 +23,20 @@ describe("operations", () => {
   });
 
   const mockOperation = {
-    hash: "e035a56c32003e3b0e4c9c5499b0750d71d98233ae6ae94323ff0a458b05a30b",
-    address: "addr",
+    tx: {
+      hash: "e035a56c32003e3b0e4c9c5499b0750d71d98233ae6ae94323ff0a458b05a30b",
+      fees: 0.0291,
+      block: {
+        hash: "hash",
+        time: new Date("2024-03-20T10:00:00Z"),
+        height: 10,
+      },
+      date: new Date("2024-03-20T10:00:00Z"),
+    },
     type: "Operation",
     value: 200,
-    fee: 0.0291,
-    block: {
-      hash: "hash",
-      time: new Date("2024-03-20T10:00:00Z"),
-      height: 10,
-    },
     senders: ["addr"],
     recipients: ["recipient"],
-    date: new Date("2024-03-20T10:00:00Z"),
-    transactionSequenceNumber: 2,
   };
 
   it("should return 0 operations for a valid account", async () => {

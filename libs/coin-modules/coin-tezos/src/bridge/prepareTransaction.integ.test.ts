@@ -21,16 +21,15 @@ describe.only("prepareTransaction", () => {
   });
 
   it("returns error when amount is 0", async () => {
-    // Given
     const tx = createFixtureTransaction({
       amount: BigNumber(0),
       recipient: "tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb",
     });
 
-    // When
     const newTx = await prepareTransaction(createFixtureAccount({ balance: BigNumber(10) }), tx);
 
-    // Then
-    expect(newTx.taquitoError).toEqual("proto.020-PsParisC.contract.empty_transaction");
+    // initial expectation was proto.020-PsParisC.contract.empty_transaction
+    // and evolved to proto.021-PsQuebec.contract.empty_transaction
+    expect(newTx.taquitoError?.includes(".contract.empty_transaction")).toBeTruthy();
   });
 });

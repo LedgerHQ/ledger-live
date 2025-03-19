@@ -1744,7 +1744,7 @@
     "seeTokens" : "トークンを表示 ({{tokenCount}})",
     "hideTokens" : "トークンを非表示 ({{tokenCount}})",
     "countTooltip" : "1トークン",
-    "countTooltip_plural" : "{{count}}トークン",
+    "countTooltip_other" : "{{nbCount}}トークン",
     "algorand" : {
       "title" : "ASA（資産）",
       "cta" : "ASAを追加",
@@ -1767,7 +1767,7 @@
     "seeSubAccounts" : "サブアカウントを表示 ({{tokenCount}})",
     "hideSubAccounts" : "サブアカウントを非表示 ({{tokenCount}})",
     "countTooltip" : "1 サブアカウント",
-    "countTooltip_plural" : "{{count}} サブアカウント"
+    "countTooltip_other" : "{{nbCount}} サブアカウント"
   },
   "addAccounts" : {
     "title" : "アカウントを追加",

@@ -121,7 +121,7 @@ const Item = ({
       </Svg>
       <Text
         variant="h4"
-        style={{ fontSize: 40, lineHeight: 45 }}
+        style={{ fontSize: 40, lineHeight: 54 }}
         mx={7}
         mt={3}
         mb={10}

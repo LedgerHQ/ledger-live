@@ -55,13 +55,6 @@ export async function getWCSession(): Promise<unknown> {
 export async function saveWCSession(obj: unknown): Promise<void> {
   await store.save("wcsession", obj);
 }
-export async function getNotifications(): Promise<Notifications> {
-  const notifications = (await store.get("notifications")) as Notifications;
-  return notifications;
-}
-export async function saveNotifications(obj: Notifications): Promise<void> {
-  await store.save("notifications", obj);
-}
 export const getCountervalues: typeof unsafeGetCountervalues = atomicQueue(unsafeGetCountervalues);
 export const saveCountervalues: typeof unsafeSaveCountervalues =
   atomicQueue(unsafeSaveCountervalues);

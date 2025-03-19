@@ -1,13 +1,16 @@
 import { CLI } from "tests/utils/cliUtils";
 import { activateLedgerSync } from "@ledgerhq/live-common/e2e/speculos";
 import { accountNames, accounts } from "tests/testdata/ledgerSyncTestData";
-import { Page } from "@playwright/test";
+import { Page, TestInfo } from "@playwright/test";
 import { Application } from "tests/page";
 import { DistantState as LiveData } from "@ledgerhq/live-wallet/walletsync/index";
+import { getEnv } from "@ledgerhq/live-env";
+import invariant from "invariant";
 
 interface LedgerKeyRingProtocolArgs {
   pubKey: string;
   privateKey: string;
+  apiBaseUrl: string;
 }
 
 interface LedgerSyncPushDataArgs {
@@ -16,6 +19,7 @@ interface LedgerSyncPushDataArgs {
   applicationPath: string;
   push: boolean;
   data: string;
+  cloudSyncApiBaseUrl: string;
 }
 
 interface LedgerSyncPullDataArgs {
@@ -27,6 +31,7 @@ interface LedgerSyncPullDataArgs {
   push: boolean;
   pull: boolean;
   data: string;
+  cloudSyncApiBaseUrl: string;
 }
 
 interface LedgerOutput {
@@ -38,9 +43,22 @@ interface LedgerOutput {
 }
 
 export class LedgerSyncCliHelper {
+  private static environment = process.env.LEDGER_SYNC_ENVIRONMENT;
+
+  private static cloudSyncApiBaseUrl =
+    LedgerSyncCliHelper.environment == "PROD"
+      ? getEnv("CLOUD_SYNC_API_PROD")
+      : getEnv("CLOUD_SYNC_API_STAGING");
+
+  private static apiBaseUrl =
+    LedgerSyncCliHelper.environment == "PROD"
+      ? getEnv("TRUSTCHAIN_API_PROD")
+      : getEnv("TRUSTCHAIN_API_STAGING");
+
   static ledgerKeyRingProtocolArgs: LedgerKeyRingProtocolArgs = {
     pubKey: "",
     privateKey: "",
+    apiBaseUrl: LedgerSyncCliHelper.apiBaseUrl,
   };
 
   static ledgerSyncPushDataArgs: LedgerSyncPushDataArgs = {
@@ -52,6 +70,7 @@ export class LedgerSyncCliHelper {
       accounts,
       accountNames,
     }),
+    cloudSyncApiBaseUrl: LedgerSyncCliHelper.cloudSyncApiBaseUrl,
   };
 
   static ledgerSyncPullDataArgs: LedgerSyncPullDataArgs = {
@@ -63,6 +82,7 @@ export class LedgerSyncCliHelper {
     push: false,
     pull: true,
     data: "",
+    cloudSyncApiBaseUrl: LedgerSyncCliHelper.cloudSyncApiBaseUrl,
   };
 
   private static updateKeysAndArgs(output: LedgerOutput) {
@@ -96,7 +116,8 @@ export class LedgerSyncCliHelper {
     }
   }
 
-  static parseData(pulledData: string) {
+  static parseData(pulledData: string | void) {
+    invariant(pulledData, "Ledger Sync: pulledData is undefined");
     try {
       return JSON.parse(pulledData);
     } catch (error) {
@@ -108,9 +129,7 @@ export class LedgerSyncCliHelper {
     return new Promise(resolve => {
       page.on("response", response => {
         if (
-          response
-            .url()
-            .startsWith("https://cloud-sync-backend.api.aws.stg.ldg-tech.com/atomic/v1/live") &&
+          response.url().startsWith(LedgerSyncCliHelper.cloudSyncApiBaseUrl + "/atomic/v1/live") &&
           response.status() === 200
         ) {
           resolve(response);
@@ -136,6 +155,30 @@ export class LedgerSyncCliHelper {
     });
     await activateLedgerSync();
     return output;
+  }
+
+  static async deleteLedgerSyncData(testInfo: TestInfo) {
+    try {
+      await CLI.ledgerSync({
+        deleteData: true,
+        ...LedgerSyncCliHelper.ledgerKeyRingProtocolArgs,
+        ...LedgerSyncCliHelper.ledgerSyncPushDataArgs,
+      });
+
+      await CLI.ledgerKeyRingProtocol({
+        destroyKeyRingTree: true,
+        ...LedgerSyncCliHelper.ledgerKeyRingProtocolArgs,
+        ...LedgerSyncCliHelper.ledgerSyncPushDataArgs,
+      });
+    } catch (error) {
+      if (
+        (error as Error).message?.includes("Not a member of trustchain") &&
+        testInfo.status == testInfo.expectedStatus
+      )
+        return; // Not logging error as trustchain was deleted within the test
+
+      console.error("AfterAll Hook: Error deleting trustchain\n", error);
+    }
   }
 
   static checkSynchronizationSuccess(page: Page, app: Application) {

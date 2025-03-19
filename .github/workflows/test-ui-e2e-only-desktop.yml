@@ -118,14 +118,10 @@ jobs:
         run: docker pull ${{ env.SPECULOS_IMAGE_TAG }}
         shell: bash
 
-      - name: Set DISABLE_TRANSACTION_BROADCAST
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-broadcast@develop
+      - name: Set test environment variables
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-env@develop
         with:
           enable_broadcast: ${{ inputs.enable_broadcast }}
-
-      - name: Set SWAP_API_BASE
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-swap@develop
-        with:
           build_type: ${{ inputs.build_type }}
 
       - name: Run playwright tests [Linux => xvfb-run]

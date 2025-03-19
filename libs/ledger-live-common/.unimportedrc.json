@@ -159,6 +159,7 @@
     "src/hooks/useDebounce.ts",
     "src/hooks/useTimer.ts",
     "src/hooks/useInternalAppIds.ts",
+    "src/hooks/useLocalizedUrl.ts",
     "src/hw/actions/app.ts",
     "src/hw/actions/completeExchange.ts",
     "src/hw/actions/initSwap.ts",

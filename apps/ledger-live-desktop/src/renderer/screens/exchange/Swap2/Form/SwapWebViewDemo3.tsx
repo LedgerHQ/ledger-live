@@ -209,8 +209,9 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
           return newTransaction;
         };
 
-        // filters out the custom fee config for chains without drawer
-        const hasDrawer = ["evm", "bitcoin"].includes(transaction.family);
+        const hasDrawer =
+          ["evm", "bitcoin"].includes(transaction.family) &&
+          !["optimism", "arbitrum", "base"].includes(mainAccount.currency.id);
         if (!params.openDrawer) {
           return {
             feesStrategy: finalTx.feesStrategy,

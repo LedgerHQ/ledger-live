@@ -50,9 +50,7 @@ import StyledStatusBar from "~/components/StyledStatusBar";
 import AnalyticsConsole from "~/components/AnalyticsConsole";
 import DebugTheme from "~/components/DebugTheme";
 import useDBSaveEffect from "~/components/DBSave";
-import useAppStateListener from "~/components/useAppStateListener";
 import SyncNewAccounts from "~/bridge/SyncNewAccounts";
-
 import SegmentSetup from "~/analytics/SegmentSetup";
 import HookSentry from "~/components/HookSentry";
 import HookNotifications from "~/notifications/HookNotifications";
@@ -94,6 +92,10 @@ import { exportWalletState, walletStateExportShouldDiffer } from "@ledgerhq/live
 
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();
+}
+
+if (__DEV__) {
+  require("./ReactotronConfig");
 }
 
 checkLibs({
@@ -138,7 +140,6 @@ function App() {
   ]);
 
   useAccountsWithFundsListener(accounts, updateIdentify);
-  useAppStateListener();
   useFetchCurrencyAll();
   useFetchCurrencyFrom();
   useListenToHidDevices();

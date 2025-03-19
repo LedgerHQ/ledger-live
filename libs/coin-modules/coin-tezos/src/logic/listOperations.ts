@@ -7,23 +7,7 @@ import {
   isAPIDelegationType,
   isAPITransactionType,
 } from "../network/types";
-
-export type Operation = {
-  hash: string;
-  address: string;
-  type: string;
-  value: bigint;
-  fee: bigint;
-  block: {
-    hash?: string;
-    height: number;
-    time?: Date;
-  };
-  senders: string[];
-  recipients: string[];
-  date: Date;
-  transactionSequenceNumber: number;
-};
+import { Operation } from "@ledgerhq/coin-framework/api/types";
 
 /**
  * Returns list of "Transfer", "Delegate" and "Undelegate" Operations associated to an account.
@@ -45,7 +29,7 @@ export async function listOperations(
     sort,
     minHeight,
   }: { limit?: number; token?: string; sort: "Ascending" | "Descending"; minHeight: number },
-): Promise<[Operation[], string]> {
+): Promise<[Operation<void>[], string]> {
   let options: AccountsGetOperationsOptions = { limit, sort, "level.ge": minHeight };
   if (token) {
     options = { ...options, lastId: JSON.parse(token) };
@@ -57,7 +41,7 @@ export async function listOperations(
   const nextToken = lastOperation ? JSON.stringify(lastOperation?.id) : "";
   const filteredOperations = operations
     .filter(op => isAPITransactionType(op) || isAPIDelegationType(op))
-    .reduce((acc, op) => acc.concat(convertOperation(address, op)), [] as Operation[]);
+    .reduce((acc, op) => acc.concat(convertOperation(address, op)), [] as Operation<void>[]);
   if (sort === "Ascending") {
     //results are always sorted in descending order
     filteredOperations.reverse();
@@ -69,8 +53,8 @@ export async function listOperations(
 function convertOperation(
   address: string,
   operation: APITransactionType | APIDelegationType,
-): Operation {
-  const { amount, hash, sender, timestamp, type, counter } = operation;
+): Operation<void> {
+  const { amount, hash, sender, type } = operation;
 
   let targetAddress = undefined;
   if (isAPITransactionType(operation)) {
@@ -95,21 +79,22 @@ function convertOperation(
     BigInt(operation.allocationFee ?? 0);
 
   return {
-    // hash id defined nullable in the tzkt API, but I wonder when it would be null ?
-    hash: hash ?? "",
-    address,
+    operationIndex: 0,
+    tx: {
+      // hash id defined nullable in the tzkt API, but I wonder when it would be null ?
+      hash: hash ?? "",
+      // storageFee for transaction is always present
+      fees: BigInt(fee ?? 0),
+      block: {
+        hash: operation.block,
+        height: operation.level,
+        time: new Date(operation.timestamp),
+      },
+      date: new Date(operation.timestamp),
+    },
     type: type,
     value: BigInt(amount),
-    // storageFee for transaction is always present
-    fee: fee,
-    block: {
-      hash: operation.block,
-      height: operation.level,
-      time: new Date(operation.timestamp),
-    },
     senders: senders,
     recipients: recipients,
-    date: new Date(timestamp),
-    transactionSequenceNumber: counter,
   };
 }

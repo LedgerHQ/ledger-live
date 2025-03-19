@@ -1,3 +1,4 @@
+import ky from "ky";
 import {
   TOKEN_2022_PROGRAM_ID,
   TOKEN_PROGRAM_ID,
@@ -109,9 +110,22 @@ export type ChainAPI = Readonly<{
   connection: Connection;
 }>;
 
-// Naive mode, allow us to filter in sentry all this error comming from Sol RPC node
-const remapErrors = (e: Error) => {
-  throw new NetworkError(e?.message);
+// Naive mode, allow us to filter in sentry all this error coming from Sol RPC node
+const remapErrors = (e: unknown) => {
+  throw new NetworkError(e instanceof Error ? e.message : "Unknown Solana error");
+};
+
+const remapErrorsWithRetry = <P extends Promise<T>, T>(callback: () => P, times = 3) => {
+  return (e: unknown): T | Promise<T> => {
+    if (
+      times > 0 &&
+      e instanceof Error &&
+      e.message.includes("Failed to query long-term storage; please try again")
+    ) {
+      return callback().catch(remapErrorsWithRetry(callback, times - 1));
+    }
+    return remapErrors(e);
+  };
 };
 
 export function getChainAPI(
@@ -131,6 +145,7 @@ export function getChainAPI(
     if (!_connection) {
       _connection = new Connection(config.endpoint, {
         ...(fetchMiddleware ? { fetchMiddleware } : {}),
+        fetch: ky as typeof fetch, // Type cast for jest test having an issue with the type
         commitment: "finalized",
         confirmTransactionInitialTimeout: getEnv("SOLANA_TX_CONFIRMATION_TIMEOUT") || 0,
       });
@@ -214,8 +229,12 @@ export function getChainAPI(
 
     getVoteAccounts: () => connection().getVoteAccounts().catch(remapErrors),
 
-    getSignaturesForAddress: (address: string, opts?: SignaturesForAddressOptions) =>
-      connection().getSignaturesForAddress(new PublicKey(address), opts).catch(remapErrors),
+    getSignaturesForAddress: (address: string, opts?: SignaturesForAddressOptions) => {
+      const callback = () => {
+        return connection().getSignaturesForAddress(new PublicKey(address), opts);
+      };
+      return callback().catch(remapErrorsWithRetry(callback));
+    },
 
     getParsedTransactions: (signatures: string[]) =>
       connection()

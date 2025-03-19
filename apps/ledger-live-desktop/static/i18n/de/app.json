@@ -1744,7 +1744,7 @@
     "seeTokens" : "Token anzeigen ({{tokenCount}})",
     "hideTokens" : "Token ausblenden ({{tokenCount}})",
     "countTooltip" : "1 Token",
-    "countTooltip_plural" : "{{count}} Token",
+    "countTooltip_other" : "{{nbCount}} Token",
     "algorand" : {
       "title" : "ASA (Vermögenswerte)",
       "cta" : "ASA hinzufügen",
@@ -1767,7 +1767,7 @@
     "seeSubAccounts" : "Unterkonten anzeigen ({{tokenCount}})",
     "hideSubAccounts" : "Unterkonten ausblenden ({{tokenCount}})",
     "countTooltip" : "1 Unterkonto",
-    "countTooltip_plural" : "{{count}} Unterkonten"
+    "countTooltip_other" : "{{nbCount}} Unterkonten"
   },
   "addAccounts" : {
     "title" : "Konten hinzufügen",

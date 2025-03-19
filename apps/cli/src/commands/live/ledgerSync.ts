@@ -12,6 +12,7 @@ export type LedgerSyncJobOpts = Partial<{
   pull: boolean;
   pubKey: string;
   privateKey: string;
+  deleteData: boolean;
   rootId: string;
   walletSyncEncryptionKey: string;
   applicationPath: string;
@@ -35,6 +36,11 @@ export default {
       name: "pull",
       type: Boolean,
       desc: "Get or create a Ledger Key Ring Protocol Tree",
+    },
+    {
+      name: "deleteData",
+      type: Boolean,
+      desc: "Delete a Ledger Key Ring Protocol Tree",
     },
     {
       name: "pubKey",
@@ -101,6 +107,7 @@ export default {
     pull,
     pubKey,
     privateKey,
+    deleteData,
     rootId,
     walletSyncEncryptionKey,
     applicationPath,
@@ -158,6 +165,13 @@ export default {
           { pubkey: pubKey, privatekey: privateKey },
         )
         .then(result => JSON.stringify({ result, updateEvent: latestUpdateEvent }, null, 2));
+    }
+
+    if (deleteData) {
+      return cloudSyncSDK.destroy(
+        { rootId, walletSyncEncryptionKey, applicationPath },
+        { pubkey: pubKey, privatekey: privateKey },
+      );
     }
 
     return "command does not exist";

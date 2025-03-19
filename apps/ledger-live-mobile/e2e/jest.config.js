@@ -22,6 +22,8 @@ const jestAllure2ReporterOptions = {
   },
 };
 
+const transformIncludePatterns = ["ky"];
+
 module.exports = async () => ({
   rootDir: "..",
   maxWorkers: process.env.CI ? 2 : 1,
@@ -50,5 +52,6 @@ module.exports = async () => ({
       "detox-allure2-adapter",
     ],
   },
+  transformIgnorePatterns: [`node_modules/.pnpm/(?!(${transformIncludePatterns.join("|")}))`],
   verbose: true,
 });

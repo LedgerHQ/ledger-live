@@ -1744,7 +1744,7 @@
     "seeTokens" : "显示代币 ({{tokenCount}})",
     "hideTokens" : "隐藏代币 ({{tokenCount}})",
     "countTooltip" : "1 枚代币",
-    "countTooltip_plural" : "{{count}} 枚代币",
+    "countTooltip_other" : "{{nbCount}} 枚代币",
     "algorand" : {
       "title" : "ASA (资产)",
       "cta" : "添加 ASA",
@@ -1767,7 +1767,7 @@
     "seeSubAccounts" : "显示子账户 ({{tokenCount}})",
     "hideSubAccounts" : "隐藏子账户 ({{tokenCount}})",
     "countTooltip" : "1 个子账户",
-    "countTooltip_plural" : "{{count}} 个子账户"
+    "countTooltip_other" : "{{nbCount}} 个子账户"
   },
   "addAccounts" : {
     "title" : "添加账户",

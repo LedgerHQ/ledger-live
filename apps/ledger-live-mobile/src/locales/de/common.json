@@ -3465,6 +3465,7 @@
         "CTAButton" : "Konto hinzufügen"
       },
       "history" : {
+        "button" : "Zum Verlauf wechseln",
         "tab" : "Historisches",
         "disclaimer" : "Ihre mobilen Swap-Transaktionen werden nicht mit Ledger Live Desktop synchronisiert",
         "exportButton" : "Exportvorgänge",
@@ -6747,7 +6748,7 @@
   "postOnboarding" : {
     "hub" : {
       "title" : "Danach hast du bei deinem {{productName}}-Gerät folgende Möglichkeiten:",
-      "allDoneTitle" : "Alles eingerichtet! Lerne jetzt dein Portfolio kennen",
+      "areAllPostOnboardingActionsCompletedTitle" : "Alles eingerichtet! Lerne jetzt dein Portfolio kennen",
       "skip" : "Ich mache das später",
       "viewWallet" : "Portfolio entdecken"
     },
@@ -7332,6 +7333,16 @@
       "subTitle" : "Anscheinend hast du noch kein Konto hinzugefügt. Leg jetzt los.",
       "cta" : "Konto hinzufügen",
       "link" : "Brauchst du Hilfe? Finde heraus, wie du ein Konto zu Ledger Live hinzufügst."
+    }
+  },
+  "lnsUpsell" : {
+    "opted_in" : {
+      "description" : "Upgrade your Ledger Nano S to a newer Ledger — like the Ledger Flex — for more memory, the latest security enhancements, fresh features, and an exclusive 20% off. ",
+      "cta" : "Upgrade my Ledger"
+    },
+    "opted_out" : {
+      "description" : "The limited memory of your Ledger Nano S restricts your access to the latest features, blockchain changes and security enhancements. For long-term use, upgrade to a newer Ledger device.",
+      "cta" : "Learn more"
     }
   }
 }

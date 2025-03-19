@@ -3465,6 +3465,7 @@
         "CTAButton" : "添加账户"
       },
       "history" : {
+        "button" : "前往“历史记录”",
         "tab" : "历史记录",
         "disclaimer" : "您的互换手机交易没有与 Ledger Live 桌面应用程序同步",
         "exportButton" : "导出操作",
@@ -6747,7 +6748,7 @@
   "postOnboarding" : {
     "hub" : {
       "title" : "接下来，使用您的 {{productName}}...",
-      "allDoneTitle" : "一切准备就绪！继续探索您的资产组合",
+      "areAllPostOnboardingActionsCompletedTitle" : "一切准备就绪！继续探索您的资产组合",
       "skip" : "以后再说",
       "viewWallet" : "探索我的资产组合"
     },
@@ -7332,6 +7333,16 @@
       "subTitle" : "您似乎还没有添加账户。立即开始。",
       "cta" : "添加账户",
       "link" : "需要帮助？了解如何向 Ledger Live 添加账户。"
+    }
+  },
+  "lnsUpsell" : {
+    "opted_in" : {
+      "description" : "Upgrade your Ledger Nano S to a newer Ledger — like the Ledger Flex — for more memory, the latest security enhancements, fresh features, and an exclusive 20% off. ",
+      "cta" : "升级 Ledger 设备"
+    },
+    "opted_out" : {
+      "description" : "Ledger Nano S 内存有限，影响您访问最新功能、区块链变更和增强安全保护。为保证长期使用体验，请升级到新款 Ledger 设备。",
+      "cta" : "了解更多"
     }
   }
 }

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Animated,
   FlatList,
@@ -16,7 +16,7 @@ import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { Swipeable } from "react-native-gesture-handler";
 import { TrashMedium } from "@ledgerhq/native-ui/assets/icons";
-
+import { LNSUpsellBanner, useLNSUpsellBannerState } from "LLM/features/LNSUpsell";
 import useDynamicContent from "~/dynamicContent/useDynamicContent";
 import SettingsNavigationScrollView from "../Settings/SettingsNavigationScrollView";
 import { NotificationContentCard } from "~/dynamicContent/types";
@@ -24,6 +24,7 @@ import { getTime } from "./helper";
 import { setDynamicContentNotificationCards } from "~/actions/dynamicContent";
 import { useDynamicContentLogic } from "~/dynamicContent/useDynamicContentLogic";
 import getWindowDimensions from "~/logic/getWindowDimensions";
+import type { NotificationItem } from "./types";
 
 const { height } = getWindowDimensions();
 
@@ -147,34 +148,48 @@ export default function NotificationCenter() {
     );
   };
 
-  const ListItem = (item: NotificationContentCard) => {
-    const time = getTime(item.createdAt);
-    const hasLink = !!item.link && !!item.cta;
+  const isLNSUpsellBannerShown = useLNSUpsellBannerState("notification_center").isShown;
+  const fullNotificationList = useMemo(
+    (): NotificationItem[] => [
+      ...(isLNSUpsellBannerShown ? [{ kind: "lnsUpsell" } as const] : []),
+      ...notificationCards.map<NotificationItem>(card => ({ kind: "dynamic", card })),
+    ],
+    [notificationCards, isLNSUpsellBannerShown],
+  );
+
+  const ListItem = (item: NotificationItem) => {
+    if (item.kind === "lnsUpsell") {
+      return <LNSUpsellBanner location="notification_center" mx={6} my={5} />;
+    }
+
+    const { card } = item;
+    const time = getTime(card.createdAt);
+    const hasLink = !!card.link && !!card.cta;
 
     return (
       <Swipeable
-        key={item.id}
-        renderRightActions={(_progress, dragX) => renderRightActions(_progress, dragX, item)}
+        key={card.id}
+        renderRightActions={(_progress, dragX) => renderRightActions(_progress, dragX, card)}
         ref={ref => {
-          if (ref && !rowRefs.get(item.id)) {
-            rowRefs.set(item.id, ref);
+          if (ref && !rowRefs.get(card.id)) {
+            rowRefs.set(card.id, ref);
           }
         }}
         onBegan={() => {
           // Close row when starting swipe another
           [...rowRefs.entries()].forEach(([id, ref]) => {
-            if (id !== item.id && ref) ref.close();
+            if (id !== card.id && ref) ref.close();
           });
         }}
       >
         <Box py={7} px={6} zIndex={4} bg="background.main">
           <NotificationCard
-            onClickCard={() => onClickCard(item)}
+            onClickCard={() => onClickCard(card)}
             time={t(`notificationCenter.news.time.${time[1]}`, {
               count: time[0],
             })}
             showLinkCta={hasLink}
-            {...item}
+            {...card}
           />
         </Box>
       </Swipeable>
@@ -184,8 +199,10 @@ export default function NotificationCenter() {
 
   const visibleCardsRef = useRef<string[]>([]);
   const handleViewableItemsChanged = useCallback(
-    ({ viewableItems }: { viewableItems: ViewToken<NotificationContentCard>[] }) => {
-      const visibleCards = viewableItems.map(({ item }) => item.id);
+    ({ viewableItems }: { viewableItems: ViewToken<NotificationItem>[] }) => {
+      const visibleCards = viewableItems.flatMap(({ item }) =>
+        item.kind === "dynamic" ? item.card.id : [],
+      );
       const newlyVisibleCards = visibleCards.filter(id => !visibleCardsRef.current.includes(id));
       visibleCardsRef.current = visibleCards;
       newlyVisibleCards.forEach(logImpressionCard);
@@ -204,9 +221,9 @@ export default function NotificationCenter() {
         />
       }
     >
-      <FlatList<NotificationContentCard>
-        data={notificationCards}
-        keyExtractor={(card: NotificationContentCard) => card.id}
+      <FlatList<NotificationItem>
+        data={fullNotificationList}
+        keyExtractor={item => (item.kind === "dynamic" ? item.card.id : item.kind)}
         renderItem={elem => ListItem(elem.item)}
         ItemSeparatorComponent={() => <Box height={1} width="100%" backgroundColor="neutral.c30" />}
         viewabilityConfig={{ itemVisiblePercentThreshold: 50 }}

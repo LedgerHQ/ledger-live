@@ -48,7 +48,7 @@ describe("LNSUpsellBanner ", () => {
       expect(screen.queryByText(t(`lnsUpsell.opted_in.cta`))).toBeNull();
     });
 
-    it("should not render if the user swapped currencies at least twice", () => {
+    it("should not render if the (opted in) user swapped currencies at least twice", () => {
       renderBanner({ swapHistory: [{}, {}] });
       expect(screen.queryByText(t(`lnsUpsell.opted_in.cta`))).toBeNull();
     });
@@ -73,7 +73,26 @@ describe("LNSUpsellBanner ", () => {
 
       expect(openURL).toHaveBeenCalledTimes(1);
       expect(openURL).toHaveBeenCalledWith("https://example.com/optOutCta");
-      // NOTE track will be called but this function has it's own logic not to track opt out users
+      expect(track).toHaveBeenCalledTimes(1);
+      expect(track).toHaveBeenCalledWith("button_clicked", {
+        button: "Level up wallet",
+        link: "https://example.com/optOutCta",
+        page,
+      });
+    });
+
+    it("should render for opted out with 2 or more swaps", () => {
+      renderBanner({ isOptIn: false, swapHistory: [{}, {}] });
+      fireEvent.click(screen.getByText(t(`lnsUpsell.opted_out.cta`)));
+
+      expect(openURL).toHaveBeenCalledTimes(1);
+      expect(openURL).toHaveBeenCalledWith("https://example.com/optOutCta");
+      expect(track).toHaveBeenCalledTimes(1);
+      expect(track).toHaveBeenCalledWith("button_clicked", {
+        button: "Level up wallet",
+        link: "https://example.com/optOutCta",
+        page,
+      });
     });
 
     function renderBanner({
