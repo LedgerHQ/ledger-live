@@ -68,10 +68,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           registry-url: "https://registry.npmjs.org"
-      - name: publish release
-        run: pnpm changeset publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPMJS_TOKEN }}
+      # - name: publish release
+      #   run: pnpm changeset publish
+      #   env:
+      #     NODE_AUTH_TOKEN: ${{ secrets.NPMJS_TOKEN }}
       - name: check if desktop versions are different
         id: desktop-changed
         run: |
@@ -114,48 +114,48 @@ jobs:
         if: ${{ steps.mobile-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLM", "ALL"]'), inputs.app) }}
         run: |
           git tag live-mobile@${{ steps.mobile-version.outputs.version }}
-      - name: push changes
-        run: |
-          git push origin ${{ inputs.ref }} --tags
-      - name: create desktop github release
-        if: ${{ steps.desktop-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLD", "ALL"]'), inputs.app) }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh release create @ledgerhq/live-desktop@${{ steps.desktop-version.outputs.version }} -F ${{ steps.desktop-changelog.outputs.path }}
-      - name: create mobile github release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        if: ${{ steps.mobile-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLM", "ALL"]'), inputs.app) }}
-        run: |
-          gh release create live-mobile@${{ steps.mobile-version.outputs.version }} -F ${{ steps.mobile-changelog.outputs.path }}
-      - uses: actions/github-script@v7
-        name: trigger release build for desktop
-        if: ${{ steps.desktop-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLD", "ALL"]'), inputs.app) }}
-        with:
-          github-token: ${{ steps.generate-token.outputs.token }}
-          script: |
-            github.rest.actions.createWorkflowDispatch({
-              owner: "ledgerhq",
-              repo: "ledger-live-build",
-              ref: "main",
-              workflow_id: "release-desktop.yml",
-              inputs: {
-                branch: "${{ inputs.ref }}"
-              }
-            });
-      - uses: actions/github-script@v7
-        name: trigger release build for mobile
-        if: ${{ steps.mobile-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLM", "ALL"]'), inputs.app) }}
-        with:
-          github-token: ${{ steps.generate-token.outputs.token }}
-          script: |
-            github.rest.actions.createWorkflowDispatch({
-              owner: "ledgerhq",
-              repo: "ledger-live-build",
-              ref: "main",
-              workflow_id: "release-mobile.yml",
-              inputs: {
-                ref: "${{ inputs.ref }}"
-              }
-            });
+      # - name: push changes
+      #   run: |
+      #     git push origin ${{ inputs.ref }} --tags
+      # - name: create desktop github release
+      #   if: ${{ steps.desktop-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLD", "ALL"]'), inputs.app) }}
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   run: |
+      #     gh release create @ledgerhq/live-desktop@${{ steps.desktop-version.outputs.version }} -F ${{ steps.desktop-changelog.outputs.path }}
+      # - name: create mobile github release
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   if: ${{ steps.mobile-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLM", "ALL"]'), inputs.app) }}
+      #   run: |
+      #     gh release create live-mobile@${{ steps.mobile-version.outputs.version }} -F ${{ steps.mobile-changelog.outputs.path }}
+      # - uses: actions/github-script@v7
+      #   name: trigger release build for desktop
+      #   if: ${{ steps.desktop-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLD", "ALL"]'), inputs.app) }}
+      #   with:
+      #     github-token: ${{ steps.generate-token.outputs.token }}
+      #     script: |
+      #       github.rest.actions.createWorkflowDispatch({
+      #         owner: "ledgerhq",
+      #         repo: "ledger-live-build",
+      #         ref: "main",
+      #         workflow_id: "release-desktop.yml",
+      #         inputs: {
+      #           branch: "${{ inputs.ref }}"
+      #         }
+      #       });
+      # - uses: actions/github-script@v7
+      #   name: trigger release build for mobile
+      #   if: ${{ steps.mobile-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLM", "ALL"]'), inputs.app) }}
+      #   with:
+      #     github-token: ${{ steps.generate-token.outputs.token }}
+      #     script: |
+      #       github.rest.actions.createWorkflowDispatch({
+      #         owner: "ledgerhq",
+      #         repo: "ledger-live-build",
+      #         ref: "main",
+      #         workflow_id: "release-mobile.yml",
+      #         inputs: {
+      #           ref: "${{ inputs.ref }}"
+      #         }
+      #       });
