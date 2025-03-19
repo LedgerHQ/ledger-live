@@ -1,5 +1,5 @@
 ---
-"ledger-live-desktop": patch
+"ledger-live-desktop": minor
 ---
 
 Fix TranslatedError to not throw if "message" from originalError is undefined

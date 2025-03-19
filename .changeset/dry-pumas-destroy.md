@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-stellar": patch
+"@ledgerhq/coin-stellar": minor
 ---
 
 Update integration tests
