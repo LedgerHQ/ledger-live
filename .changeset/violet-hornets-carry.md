@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-cosmos": patch
+"@ledgerhq/coin-cosmos": minor
 ---
 
 Fix cannot read lcd
