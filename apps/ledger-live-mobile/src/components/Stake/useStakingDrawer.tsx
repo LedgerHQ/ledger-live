@@ -7,7 +7,7 @@ import perFamilyAccountActions from "../../generated/accountActions";
 import { useSelector } from "react-redux";
 import { walletSelector } from "~/reducers/wallet";
 import { useStake } from "~/newArch/hooks/useStake/useStake";
-import { isAccountEmpty } from "@ledgerhq/coin-framework/lib/account/helpers";
+import { getAccountSpendableBalance } from "@ledgerhq/coin-framework/lib/account/helpers";
 
 /** Open the family main actions stake flow for a given account from any navigator. Returns to parent route on completion. */
 export function useStakingDrawer({
@@ -27,7 +27,7 @@ export function useStakingDrawer({
 
   return useCallback(
     (account: Account | TokenAccount | AccountLike, parentAccount?: Account) => {
-      if (alwaysShowNoFunds || isAccountEmpty(account)) {
+      if (alwaysShowNoFunds || getAccountSpendableBalance(account).isZero()) {
         // get funds to stake with
         navigation.navigate(NavigatorName.Base, {
           screen: NavigatorName.NoFundsFlow,

@@ -8,7 +8,7 @@ import { appendQueryParamsToDappURL } from "@ledgerhq/live-common/platform/utils
 import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import {
   getAccountCurrency,
-  isAccountEmpty,
+  getAccountSpendableBalance,
   isTokenAccount,
 } from "@ledgerhq/coin-framework/lib/account/helpers";
 import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
@@ -85,7 +85,7 @@ export function useStake() {
     ) => {
       const walletApiAccount = accountToWalletAPIAccount(walletState, account, parentAccount);
 
-      if (isAccountEmpty(account)) {
+      if (getAccountSpendableBalance(account).isZero()) {
         return {
           navigator: NavigatorName.NoFundsFlow,
           screen: ScreenName.NoFunds,
