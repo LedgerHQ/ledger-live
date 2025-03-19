@@ -1,16 +1,16 @@
-import "./test-helpers/staticTime";
+import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets/index";
+import { Operation } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import flatMap from "lodash/flatMap";
-import { setSupportedCurrencies } from "./currencies";
 import {
+  accountWithMandatoryTokens,
   groupAccountOperationsByDay,
   groupAccountsOperationsByDay,
   shortAddressPreview,
-  accountWithMandatoryTokens,
-} from "./account";
-import { genAccount } from "./mocks/account";
-import { Operation } from "@ledgerhq/types-live";
-import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets/index";
+} from ".";
+import { setSupportedCurrencies } from "../currencies";
+import { genAccount } from "../mocks/account";
+import "../test-helpers/staticTime";
 
 setSupportedCurrencies(["ethereum", "ethereum_classic", "tron"]);
 
