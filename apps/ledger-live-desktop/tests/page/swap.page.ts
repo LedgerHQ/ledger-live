@@ -44,6 +44,24 @@ export class SwapPage extends AppPage {
   private seeDetailsButton = this.page.locator('button:has-text("See details")');
   readonly detailsSwapId = this.page.getByTestId("details-swap-id").first();
 
+  // History Components
+  readonly historyButton = this.page.getByTestId("History-tab-button");
+  private operationRows = this.page.locator("[data-testid^='operation-row-']");
+  private selectSpecificOperation = (swapId: string) =>
+    this.page.getByTestId(`operation-row-${swapId}`);
+  private selectSpecificOperationProvider = (swapId: string) =>
+    this.page.getByTestId(`swap-history-provider-${swapId}`);
+  private selectSpecificOperationDate = (swapId: string) =>
+    this.page.getByTestId(`swap-history-date-${swapId}`);
+  private selectSpecificOperationAccountFrom = (swapId: string) =>
+    this.page.getByTestId(`swap-history-from-account-${swapId}`);
+  private selectSpecificOperationAccountTo = (swapId: string) =>
+    this.page.getByTestId(`swap-history-to-account-${swapId}`);
+  private selectSpecificOperationAmountFrom = (swapId: string) =>
+    this.page.getByTestId(`swap-history-from-amount-${swapId}`);
+  private selectSpecificOperationAmountTo = (swapId: string) =>
+    this.page.getByTestId(`swap-history-to-amount-${swapId}`);
+
   private chooseAssetDrawer = new ChooseAssetDrawer(this.page);
 
   async waitForSwapFormToLoad() {
@@ -463,5 +481,31 @@ export class SwapPage extends AppPage {
       default:
         throw new Error(`Unknown provider: ${selectedProvider}`);
     }
+  }
+
+  @step("Go to swap history")
+  async goToSwapHistory() {
+    await this.historyButton.click();
+  }
+
+  @step("Check swap operation row details")
+  async checkSwapOperation(swapId: string, provider: Provider, swap: Swap) {
+    await expect(this.operationRows).toBeVisible();
+    await expect(this.selectSpecificOperation(swapId)).toBeVisible();
+    await expect(this.selectSpecificOperationProvider(swapId)).toContainText(provider.uiName);
+    await expect(this.selectSpecificOperationDate(swapId)).toBeVisible();
+    await expect(this.selectSpecificOperationAccountFrom(swapId)).toContainText(
+      swap.accountToDebit.accountName,
+    );
+    await expect(this.selectSpecificOperationAccountTo(swapId)).toContainText(
+      swap.accountToCredit.accountName,
+    );
+    await expect(this.selectSpecificOperationAmountFrom(swapId)).toContainText(swap.amount);
+    await expect(this.selectSpecificOperationAmountTo(swapId)).toBeVisible();
+  }
+
+  @step("Open selected operation by swapId: $0")
+  async openSelectedOperation(swapId: string) {
+    await this.selectSpecificOperation(swapId).click();
   }
 }

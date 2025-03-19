@@ -423,6 +423,49 @@ for (const { swap, xrayTicket, userData, errorMessage } of swapWithDifferentSeed
   });
 }
 
+test.describe.only("Swap history", () => {
+  const swapHistory = {
+    swap: new Swap(Account.ETH_1, Account.XLM_1, "0.008", Fee.MEDIUM),
+    provider: Provider.CHANGELLY,
+    swapId: "fmwnt4mc0tiz75kz",
+  };
+
+  setupEnv(true);
+
+  test.beforeEach(async () => {
+    const accountPair: string[] = [
+      swapHistory.swap.accountToDebit,
+      swapHistory.swap.accountToCredit,
+    ].map(acc => acc.currency.speculosApp.name.replace(/ /g, "_"));
+    setExchangeDependencies(accountPair.map(name => ({ name })));
+  });
+
+  test.use({
+    userdata: "speculos-tests-app",
+    speculosApp: app,
+  });
+
+  test(
+    `User should be able to see their swap history from the swap history page`,
+    {
+      annotation: { type: "TMS", description: "B2CQA-602" },
+    },
+    async ({ app }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
+      await app.layout.goToSwap();
+      await app.swap.goToSwapHistory();
+      await app.swap.checkSwapOperation(swapHistory.swapId, swapHistory.provider, swapHistory.swap);
+      await app.swap.openSelectedOperation(swapHistory.swapId);
+      await app.operationDrawer.expectSwapDrawerInfos(
+        swapHistory.swapId,
+        swapHistory.swap,
+        swapHistory.provider,
+      );
+    },
+  );
+});
+
 const tooLowAmountForQuoteSwaps = [
   {
     swap: new Swap(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "0.001", Fee.MEDIUM),

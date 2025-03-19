@@ -116,6 +116,7 @@ const OperationRow = ({
       key={swapId}
       alignItems={"center"}
       onClick={() => openSwapOperationDetailsModal(mappedSwapOperation)}
+      data-testid={`operation-row-${swapId}`}
     >
       <Tooltip content={<span>{t(`swap2.history.status.${status}`)}</span>}>
         <Status status={status}>
@@ -128,10 +129,20 @@ const OperationRow = ({
         </Status>
       </Tooltip>
       <Box ml={24}>
-        <Text ff={"Inter|SemiBold"} color={"palette.text.shade100"} fontSize={3}>
+        <Text
+          data-testid={`swap-history-provider-${swapId}`}
+          ff={"Inter|SemiBold"}
+          color={"palette.text.shade100"}
+          fontSize={3}
+        >
           {getProviderName(provider)}
         </Text>
-        <Text ff={"Inter|Regular"} color={"palette.text.shade50"} fontSize={3}>
+        <Text
+          data-testid={`swap-history-date-${swapId}`}
+          ff={"Inter|Regular"}
+          color={"palette.text.shade50"}
+          fontSize={3}
+        >
           {dateFormatted}
         </Text>
       </Box>
@@ -140,7 +151,13 @@ const OperationRow = ({
           <CryptoCurrencyIcon size={16} currency={fromCurrency} />
         </Box>
         <Tooltip delay={1200} content={fromAccountName}>
-          <Ellipsis ff="Inter|SemiBold" ml={1} color="palette.text.shade100" fontSize={3}>
+          <Ellipsis
+            data-testid={`swap-history-from-account-${swapId}`}
+            ff="Inter|SemiBold"
+            ml={1}
+            color="palette.text.shade100"
+            fontSize={3}
+          >
             {fromAccountName}
           </Ellipsis>
         </Tooltip>
@@ -153,16 +170,22 @@ const OperationRow = ({
           <CryptoCurrencyIcon size={16} currency={toCurrency} />
         </Box>
         <Tooltip delay={1200} content={toAccountName}>
-          <Ellipsis ff="Inter|SemiBold" ml={1} color="palette.text.shade100" fontSize={3}>
+          <Ellipsis
+            data-testid={`swap-history-to-account-${swapId}`}
+            ff="Inter|SemiBold"
+            ml={1}
+            color="palette.text.shade100"
+            fontSize={3}
+          >
             {toAccountName}
           </Ellipsis>
         </Tooltip>
       </Box>
       <Box alignItems={"flex-end"} ml={20}>
-        <Text ff={"Inter|SemiBold"} fontSize={4}>
+        <Text data-testid={`swap-history-to-amount-${swapId}`} ff={"Inter|SemiBold"} fontSize={4}>
           <FormattedVal alwaysShowSign val={toAmount} unit={unitTo} showCode />
         </Text>
-        <Text ff={"Inter|SemiBold"} fontSize={3}>
+        <Text data-testid={`swap-history-from-amount-${swapId}`} ff={"Inter|SemiBold"} fontSize={3}>
           <FormattedVal
             color="palette.text.shade60"
             alwaysShowSign
