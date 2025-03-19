@@ -354,7 +354,6 @@ test.describe("Swap - Landing page", () => {
 
       await performSwapUntilQuoteSelectionStep(app, electronApp, rejectedSwap);
       const providerList = await app.swap.getProviderList(electronApp);
-      console.log(providerList);
       await app.swap.checkQuotesContainerInfos(electronApp, providerList);
       await app.swap.checkBestOffer(electronApp);
     },
