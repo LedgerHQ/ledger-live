@@ -256,6 +256,7 @@
     "src/platform/tracking.ts",
     "src/platform/types.ts",
     "src/platform/utils/appendQueryParamsToDappURL.ts",
+    "src/platform/utils/deriveAccountIdForManifest.ts",
     "src/postOnboarding/actions.ts",
     "src/postOnboarding/hooks/index.ts",
     "src/postOnboarding/hooks/usePostOnboardingEntryPointVisibleOnWallet.ts",
