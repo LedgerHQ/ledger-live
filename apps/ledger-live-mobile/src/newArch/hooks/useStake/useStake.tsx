@@ -13,8 +13,8 @@ import {
 } from "@ledgerhq/coin-framework/lib/account/helpers";
 import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
 import { NavigatorName, ScreenName } from "~/const";
-
 import { WalletState } from "@ledgerhq/live-wallet/store";
+import { deriveAccountIdForManifest } from "@ledgerhq/live-common/platform/utils/deriveAccountIdForManifest";
 
 const getRemoteLiveAppManifestById = (
   appId: string,
@@ -111,17 +111,19 @@ export function useStake() {
         return null;
       }
 
-      const customPartnerParams = getPartnerForCurrency(depositCurrencyId)?.queryParams || {};
-      const isDappBrowser_deprecated =
-        manifest?.params && ("dappUrl" in manifest.params || "dappURL" in manifest.params);
-      const isDapp = "dapp" in manifest;
-      const isLiveApp = !isDapp && !isDappBrowser_deprecated;
+      const customPartnerParams = getPartnerForCurrency(depositCurrencyId)?.queryParams ?? {};
 
       const earningsAccountId = isTokenAccount(account) ? account.parentId : account.id;
 
+      const accountIdForManifestVersion = deriveAccountIdForManifest(
+        earningsAccountId,
+        walletApiAccount.id,
+        manifest,
+      );
+
       const customDappURL = appendQueryParamsToDappURL(manifest, {
         ...customPartnerParams,
-        ...(isLiveApp ? { accountId: walletApiAccount.id } : {}),
+        accountId: accountIdForManifestVersion,
       })?.toString();
 
       return {
@@ -129,10 +131,10 @@ export function useStake() {
         params: {
           platform: manifest.id,
           name: manifest.name,
-          accountId: isDapp ? earningsAccountId : walletApiAccount.id,
+          accountId: accountIdForManifestVersion,
           ledgerAccountId: account.id,
-          customDappURL: customDappURL || undefined,
-          ...getPartnerForCurrency(depositCurrencyId)?.queryParams,
+          walletAccountId: walletApiAccount.id,
+          customDappURL: customDappURL ?? undefined,
         },
       };
     },

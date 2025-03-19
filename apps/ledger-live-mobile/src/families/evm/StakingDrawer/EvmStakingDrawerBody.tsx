@@ -1,5 +1,6 @@
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { appendQueryParamsToDappURL } from "@ledgerhq/live-common/platform/utils/appendQueryParamsToDappURL";
+import { deriveAccountIdForManifest } from "@ledgerhq/live-common/platform/utils/deriveAccountIdForManifest";
 import { Flex } from "@ledgerhq/native-ui";
 import { ParamListBase, useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -8,7 +9,6 @@ import { useAnalytics } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
 import { EvmStakingDrawerProvider } from "./EvmStakingDrawerProvider";
 import { ListProvider } from "./types";
-import { getWalletApiIdFromAccountId } from "@ledgerhq/live-common/wallet-api/converters";
 
 interface Props {
   providers: ListProvider[];
@@ -17,7 +17,12 @@ interface Props {
   onClose(callback: () => void): void;
 }
 
-export function EvmStakingDrawerBody({ providers, accountId, walletApiAccountId, onClose }: Props) {
+export function EvmStakingDrawerBody({
+  providers,
+  accountId,
+  walletApiAccountId,
+  onClose,
+}: Readonly<Props>) {
   const navigation = useNavigation<StackNavigationProp<ParamListBase, string, NavigatorName>>();
 
   const { track, page } = useAnalytics();
@@ -25,15 +30,16 @@ export function EvmStakingDrawerBody({ providers, accountId, walletApiAccountId,
   const onProviderPress = useCallback(
     ({ manifest, provider }: { manifest: LiveAppManifest; provider: ListProvider }) => {
       if (manifest) {
-        const isDappBrowser_deprecated =
-          manifest?.params && ("dappUrl" in manifest.params || "dappURL" in manifest.params);
-        const isDapp = "dapp" in manifest;
-        const isLiveApp = !isDapp && !isDappBrowser_deprecated;
+        const accountIdForManifestVersion = deriveAccountIdForManifest(
+          accountId,
+          walletApiAccountId,
+          manifest,
+        );
 
         /** If the manifest is for a live app, send the wallet api account id instead of LL account id. */
         const customDappURL = appendQueryParamsToDappURL(manifest, {
           ...(provider?.queryParams ?? {}),
-          ...(isLiveApp ? { accountId: walletApiAccountId } : {}),
+          accountId: accountIdForManifestVersion,
         })?.toString();
 
         track("button_clicked", {
@@ -44,7 +50,7 @@ export function EvmStakingDrawerBody({ providers, accountId, walletApiAccountId,
           navigation.navigate(ScreenName.PlatformApp, {
             platform: manifest.id,
             name: manifest.name,
-            accountId: isDapp ? accountId : getWalletApiIdFromAccountId(accountId),
+            accountId: accountIdForManifestVersion,
             walletAccountId: walletApiAccountId,
             ledgerAccountId: accountId,
             ...(customDappURL ? { customDappURL } : {}),

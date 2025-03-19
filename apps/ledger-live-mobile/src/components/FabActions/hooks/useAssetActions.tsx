@@ -167,7 +167,7 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
                     eventProperties: {
                       button: "stake",
                       currency:
-                        currency?.ticker || accountCurrency?.ticker || assetId.toUpperCase(),
+                        currency?.ticker ?? accountCurrency?.ticker ?? assetId.toUpperCase(),
                       flow: "stake",
                     },
                     navigationParams: [

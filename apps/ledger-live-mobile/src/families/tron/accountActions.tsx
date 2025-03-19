@@ -3,15 +3,10 @@ import { Trans } from "react-i18next";
 import type { TronAccount } from "@ledgerhq/live-common/families/tron/types";
 import { NavigatorName, ScreenName } from "~/const";
 import { ActionButtonEvent, NavigationParamsType } from "~/components/FabActions";
-import {
-  getMainAccount,
-  isAccountEmpty,
-  isTokenAccount,
-} from "@ledgerhq/live-common/account/index";
+import { getMainAccount, isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import { TokenAccount } from "@ledgerhq/types-live";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
-
 const getMainActions = ({
   account,
   parentAccount,
@@ -55,6 +50,7 @@ const getMainActions = ({
         button: "stake",
         currency: "TRX",
         page: "Account Page",
+        isRedirectConfig: false,
       },
     },
   ];

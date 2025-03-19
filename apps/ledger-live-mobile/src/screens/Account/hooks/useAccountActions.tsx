@@ -194,6 +194,7 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
     Icon: IconsLegacy.ArrowBottomMedium,
     ...extraReceiveActionParams,
   };
+
   const StakeAction = canStakeUsingPlatformApp
     ? {
         id: "stake",
@@ -203,30 +204,33 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
           getRouteParamsForPlatformApp(account, walletState, parentAccount),
         ],
         label: t("account.stake"),
-        Icon: IconsLegacy.BedMedium,
+        Icon: IconsLegacy.CoinsMedium,
+        event: "button_clicked",
         eventProperties: {
+          button: "stake",
           currency: currency.ticker,
+          page: "Account Page",
+          isRedirectConfig: true,
+          partner: getRouteParamsForPlatformApp(account, walletState, parentAccount)?.params
+            ?.platform,
         },
       }
     : null;
 
   const familySpecificMainActions: Array<ActionButtonEvent> =
-    (decorators &&
-      decorators.getMainActions &&
-      decorators.getMainActions({
-        walletState,
-        account,
-        parentAccount,
-        colors,
-        parentRoute: route,
-      })) ||
-    [];
+    decorators?.getMainActions?.({
+      walletState,
+      account,
+      parentAccount,
+      colors,
+      parentRoute: route,
+    }) ?? [];
 
   const mainActions = [
     ...(availableOnSwap ? [actionButtonSwap] : []),
     ...(!readOnlyModeEnabled && canBeBought ? [actionButtonBuy] : []),
     ...(!readOnlyModeEnabled && canBeSold ? [actionButtonSell] : []),
-    ...(!readOnlyModeEnabled && canStakeUsingPlatformApp && StakeAction ? [StakeAction] : []),
+    ...(!readOnlyModeEnabled && canStakeUsingPlatformApp && !!StakeAction ? [StakeAction] : []),
     ...(!readOnlyModeEnabled
       ? familySpecificMainActions.filter(
           action => action.id !== "stake" || canOnlyStakeUsingLedgerLive,

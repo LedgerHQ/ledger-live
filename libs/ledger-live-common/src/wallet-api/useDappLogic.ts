@@ -2,7 +2,7 @@ import { useMemo, useEffect, useRef, useCallback, useState } from "react";
 import { Account, AccountLike, Operation, SignedOperation } from "@ledgerhq/types-live";
 import { atom, useAtom } from "jotai";
 import { AppManifest, WalletAPITransaction } from "./types";
-import { getMainAccount, getParentAccount, isTokenAccount } from "../account";
+import { getMainAccount, getParentAccount } from "../account";
 import { TrackingAPI } from "./tracking";
 import { getAccountBridge } from "../bridge";
 import { getEnv } from "@ledgerhq/live-env";
@@ -108,12 +108,14 @@ function useDappAccountLogic({
 
   const firstAccountAvailable = useMemo(() => {
     // Return an account for manifests with wildcard currencyIds
-    if (currencyIds.includes("**") && accounts.length)
+    if (currencyIds.includes("*") && accounts.length)
       return getParentAccount(accounts[0], accounts);
-
     const account = accounts.find(account => {
       if (account.type === "Account" && currencyIds.includes(account.currency.id)) {
         return account;
+      }
+      if (account.type === "TokenAccount" && currencyIds.includes(account.token.id)) {
+        return getParentAccount(account, accounts);
       }
     });
     // might not even need to set parent here
@@ -166,10 +168,8 @@ function useDappAccountLogic({
     }
 
     if (!currentAccount || !(currentAccount && storedCurrentAccountIsPermitted())) {
-      // if there is no current account
-      // OR if there is a current account but it is not permitted
-      // set it to the first permitted account
-      setCurrentAccount(firstAccountAvailable ? firstAccountAvailable : null);
+      /** if there is no current account OR if there is a current account but it is not in the manifest currencies then fall back to the first permitted account */
+      setCurrentAccount(firstAccountAvailable ?? null);
     }
   }, [
     currentAccount,

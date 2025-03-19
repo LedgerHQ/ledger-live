@@ -52,10 +52,10 @@ type ButtonItem = {
 };
 
 /** Entry point is either "stake" button but user has insufficient funds in account, or "Get <ticker>" button on Earn dashboard, so text differs accordingly.  */
-export default function NoFunds({ route }: Props) {
+export default function NoFunds({ route }: Readonly<Props>) {
   const { t } = useTranslation();
   const { data: currenciesAll } = useFetchCurrencyAll();
-  const { account, parentAccount, entryPoint } = route?.params; // TODO: All we need is the accountId, parentId, and currency. We should refactor this to pass only those serializable values.
+  const { account, parentAccount, entryPoint } = route.params ?? {}; // Do we need the full, non-serializable account object(s) here?
   const navigation = useNavigation();
   const currency = getAccountCurrency(account);
 
