@@ -85,7 +85,10 @@ export const fetchBlockHeight = async (): Promise<number | undefined> => {
   return height;
 };
 
-export const fetchTransactions = async (address: string): Promise<Transfer[]> => {
+export const fetchTransactions = async (
+  address: string,
+  minBlockHeight?: number,
+): Promise<Transfer[]> => {
   const result: Transfer[] = [];
   let isFirstFetch: boolean = true;
   let hasNext: boolean = false;
@@ -101,8 +104,8 @@ export const fetchTransactions = async (address: string): Promise<Transfer[]> =>
                 creationTime
                 height
                 hash
+                chainId
               }
-              chainId
               creationTime
               receiverAccount
               senderAccount
@@ -110,15 +113,18 @@ export const fetchTransactions = async (address: string): Promise<Transfer[]> =>
               moduleName
               crossChainTransfer {
                 amount
-                chainId
                 receiverAccount
                 senderAccount
+                block {
+                  chainId
+                }
               }
               transaction {
                 result {
                   ...on TransactionResult {
                     badResult,
                     goodResult,
+                    gas,
                     events {
                       edges {
                         node {
@@ -126,6 +132,14 @@ export const fetchTransactions = async (address: string): Promise<Transfer[]> =>
                           parameters
                         }
                       }
+                    }
+                  }
+                }
+                cmd {
+                  signers {
+                    clist {
+                      args
+                      name
                     }
                   }
                 }
@@ -146,6 +160,13 @@ export const fetchTransactions = async (address: string): Promise<Transfer[]> =>
     const transfers = res.transfers.edges.map(({ node }) => node);
     if (transfers.length !== 0) {
       result.push(...transfers);
+      if (minBlockHeight) {
+        // Check if any transaction has block height less than minBlockHeight
+        const hasOldTransaction = transfers.some(tx => tx.block.height < minBlockHeight);
+        if (hasOldTransaction) {
+          break;
+        }
+      }
     }
 
     isFirstFetch = false;
@@ -160,15 +181,21 @@ export const broadcastTransaction = async (cmd: PactCommandObject, op: KadenaOpe
   const id = op.extra.senderChainId;
 
   const client = createClient(getKadenaPactURL(id.toString()));
-
   try {
     const res = await client.local(cmd);
     if (res.result.status === "failure") {
-      throw new Error((res.result.error as Error).message ?? "dry run for the transaction failed");
+      throw new Error(
+        "message" in res.result.error
+          ? (res.result.error.message as string)
+          : "dry run for the transaction failed",
+      );
     }
   } catch (err: unknown) {
     if (err instanceof Error) {
       throw err?.message;
+    }
+    if (typeof err === "string") {
+      throw err;
     }
     throw err;
   }

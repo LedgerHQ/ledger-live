@@ -7,7 +7,6 @@ import { KadenaOperation } from "./types";
 export const broadcast: BroadcastFnSignature = async ({
   signedOperation: { operation, rawData },
 }) => {
-  // log("debug", "[broadcast] start fn");
   invariant(rawData, "rawData is required");
 
   const pactCmd = rawData["pact_command"] as PactCommandObject;

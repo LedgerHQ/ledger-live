@@ -40,7 +40,7 @@ export const buildSignOperation =
         const fees = gasPrice.multipliedBy(gasLimit);
         const { id: accountId, freshAddress: address } = account;
 
-        const coinDetails = await fetchChainBalances(address);
+        const coinDetails = await fetchChainBalances(recipient);
 
         o.next({
           type: "device-signature-requested",
@@ -63,6 +63,7 @@ export const buildSignOperation =
 
         if (senderChainId === receiverChainId) {
           const chainDetails = findChainById(coinDetails, receiverChainId);
+
           if (chainDetails) {
             buildTxnRes = (await signerContext(deviceId, signer =>
               signer.signTransferTx(getPath(account.freshAddressPath), transferCommons),

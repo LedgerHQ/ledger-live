@@ -24,6 +24,7 @@ export interface GetAccountBalanceResponse {
 }
 
 export interface Block {
+  chainId: number;
   creationTime: string;
   height: number;
   hash: string;
@@ -52,6 +53,15 @@ export interface Transaction {
     badResult: string;
     goodResult: string;
     events: Connection<Event>;
+    gas: number;
+  };
+  cmd: {
+    signers: {
+      clist: {
+        args: string;
+        name: string;
+      }[];
+    }[];
   };
 }
 
@@ -60,7 +70,6 @@ export interface Transfer {
   amount: number;
   block: Block;
   blockHash: string;
-  chainId: number;
   creationTime: Date;
   crossChainTransfer: Transfer | null;
   height: number;

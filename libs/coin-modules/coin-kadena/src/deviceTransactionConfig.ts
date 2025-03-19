@@ -1,7 +1,6 @@
 import { CommonDeviceTransactionField as DeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
 import type { Transaction } from "./types";
 
-// TODO: delete the parameter if we don't need it
 function getDeviceTransactionConfig(input: {
   transaction: Transaction;
 }): Array<DeviceTransactionField> {

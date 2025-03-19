@@ -24,7 +24,7 @@ export type KadenaOperation = Operation<KadenaOperationExtra>;
 
 interface KadenaOperationExtra {
   senderChainId: number;
-  receiverChainId: number;
+  receiverChainId?: number;
   isCrossChainTransferFinished?: boolean;
 }
 

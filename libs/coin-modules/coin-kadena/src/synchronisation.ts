@@ -1,11 +1,12 @@
 import { decodeAccountId, encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { encodeOperationId } from "@ledgerhq/coin-framework/lib-es/operation";
 import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import { fetchAccountBalance, fetchBlockHeight, fetchTransactions } from "./api/network";
 import { Transfer } from "./api/types";
+import { KDA_FEES_BASE } from "./constants";
 import { KadenaOperation } from "./types";
 import { baseUnitToKda } from "./utils";
 
@@ -20,6 +21,12 @@ interface CrossChainTransferParameters {
   senderAccount: string;
   receiverAccount: string;
   receiverChainId: number;
+}
+
+interface SignerParameters {
+  receiverAccount: string;
+  receiverChainId: number;
+  amount?: BigNumber;
 }
 
 export const getAccountShape: GetAccountShape = async info => {
@@ -37,9 +44,11 @@ export const getAccountShape: GetAccountShape = async info => {
     derivationMode,
   });
 
+  const lastBlockHeight = initialAccount?.blockHeight;
+
   const address = getAddressFromPublicKey(pubKey);
 
-  const rawTxs = await fetchTransactions(address);
+  const rawTxs = await fetchTransactions(address, lastBlockHeight);
 
   const blockHeight = await fetchBlockHeight();
 
@@ -71,103 +80,125 @@ function reconciliatePublicKey(
 }
 
 const rawTxsToOps = (rawTxs: Transfer[], accountId: string, address: string): KadenaOperation[] => {
-  const ops: KadenaOperation[] = [];
-  const txs = new Map();
+  const processedRequestKeys = new Set();
+  const operations: KadenaOperation[] = [];
+  let tempFeeTransaction: Transfer | null = null;
 
-  // Gather ops from the same transaction
   for (const rawTx of rawTxs) {
-    let tmp = [];
-
-    if (rawTx.moduleName !== "coin") continue;
-
-    if (txs.has(rawTx.requestKey)) {
-      tmp = txs.get(rawTx.requestKey);
-    }
-    tmp.push(rawTx);
-
-    txs.set(rawTx.requestKey, tmp);
-  }
-
-  // Build ops by taking index 0 as fee and index 1 as the actual transaction
-  for (const tx of txs.values()) {
-    const k_op: KadenaOperation = {} as KadenaOperation;
-    k_op.fee = new BigNumber(0);
-    k_op.value = new BigNumber(0);
-
-    let transaction_op: Transfer | null = null;
-    let fee_op: Transfer | null = null;
-
-    // Find minimal amount value and
-    for (const op of tx) {
-      if (
-        !transaction_op ||
-        (transaction_op && new BigNumber(transaction_op.amount) < new BigNumber(op.amount))
-      ) {
-        transaction_op = op;
-        fee_op = fee_op ? fee_op : transaction_op;
-      } else {
-        fee_op = op;
-      }
+    // Skip if not from coin module or already processed
+    if (rawTx.moduleName !== "coin" || processedRequestKeys.has(rawTx.requestKey)) {
+      continue;
     }
 
-    if (transaction_op) {
+    // Clear temp fee transaction since we found its main transaction
+    if (tempFeeTransaction?.requestKey === rawTx.requestKey) {
+      tempFeeTransaction = null;
+    }
+
+    // If we have a remaining fee transaction, it means it was standalone
+    if (tempFeeTransaction) {
       const {
         requestKey,
-        block: { creationTime, height: blockHeight, hash: blockHash },
-        amount,
+        block: { creationTime, height: blockHeight, hash: blockHash, chainId },
         senderAccount,
-        receiverAccount,
-        chainId,
-        crossChainTransfer,
         transaction: { result },
-      } = transaction_op;
+      } = tempFeeTransaction;
+
+      const feeTx = tempFeeTransaction.transaction.result.gas * Number(KDA_FEES_BASE);
       const date = new Date(creationTime);
-      const value = new BigNumber(amount);
-      const fee = new BigNumber(fee_op?.amount ?? 0);
-      const sender =
-        senderAccount && senderAccount !== "" ? senderAccount : crossChainTransfer?.senderAccount;
-      let recipient =
-        receiverAccount && receiverAccount !== ""
-          ? receiverAccount
-          : crossChainTransfer?.receiverAccount;
-      let receiverChainId = crossChainTransfer?.chainId ?? chainId;
-      const isCrossChain =
-        crossChainTransfer !== null || (crossChainTransfer === null && !recipient);
-      const isFinished = Boolean(crossChainTransfer);
-      const isSending = senderAccount === address;
-      const type = isSending ? "OUT" : "IN";
+      const type = senderAccount === address ? "OUT" : "IN";
+      const signer = getSigner(tempFeeTransaction);
 
-      if (isCrossChain && !isFinished) {
-        const crossChainTransferParameters = getCrossChainTransferStart(transaction_op);
-        if (crossChainTransferParameters) {
-          recipient = crossChainTransferParameters.receiverAccount;
-          receiverChainId = crossChainTransferParameters.receiverChainId;
-        }
+      const k_op: KadenaOperation = {
+        id: encodeOperationId(accountId, requestKey, type),
+        hash: requestKey,
+        type,
+        value: signer?.amount ?? BigNumber(0),
+        fee: baseUnitToKda(feeTx),
+        blockHeight,
+        blockHash,
+        accountId,
+        senders: [senderAccount ?? ""],
+        recipients: [signer?.receiverAccount ?? ""], // No recipient for fee-only transaction
+        hasFailed: Boolean(result?.badResult && result.badResult !== null),
+        date,
+        extra: {
+          senderChainId: chainId,
+          receiverChainId: signer?.receiverChainId,
+        },
+      };
+
+      tempFeeTransaction = null;
+      operations.push(k_op);
+    }
+
+    const feeTx = rawTx.transaction.result.gas * Number(KDA_FEES_BASE);
+    const mainTx = rawTx.amount;
+
+    if (feeTx === mainTx) {
+      // This is a fee transaction, store it temporarily
+      tempFeeTransaction = rawTx;
+      continue;
+    }
+
+    processedRequestKeys.add(rawTx.requestKey);
+
+    const {
+      requestKey,
+      block: { creationTime, height: blockHeight, hash: blockHash, chainId },
+      amount,
+      senderAccount,
+      receiverAccount,
+      crossChainTransfer,
+      transaction: { result },
+    } = rawTx;
+    const date = new Date(creationTime);
+    const value = new BigNumber(amount);
+    const fee = new BigNumber(feeTx);
+    const sender =
+      senderAccount && senderAccount !== "" ? senderAccount : crossChainTransfer?.senderAccount;
+    let recipient =
+      receiverAccount && receiverAccount !== ""
+        ? receiverAccount
+        : crossChainTransfer?.receiverAccount;
+    let receiverChainId = crossChainTransfer?.block?.chainId ?? chainId;
+    const isCrossChain = crossChainTransfer !== null || (crossChainTransfer === null && !recipient);
+    const isFinished = Boolean(crossChainTransfer);
+    const isSending = senderAccount === address;
+    const type = isSending ? "OUT" : "IN";
+
+    if (isCrossChain && !isFinished) {
+      const crossChainTransferParameters = getCrossChainTransferStart(rawTx);
+      if (crossChainTransferParameters) {
+        recipient = crossChainTransferParameters.receiverAccount;
+        receiverChainId = crossChainTransferParameters.receiverChainId;
       }
+    }
 
-      k_op.id = encodeOperationId(accountId, requestKey, type);
-      k_op.hash = requestKey;
-      k_op.type = type;
-      k_op.value = baseUnitToKda(value);
-      k_op.fee = baseUnitToKda(fee);
-      k_op.blockHeight = blockHeight;
-      k_op.blockHash = blockHash;
-      k_op.accountId = accountId;
-      k_op.senders = [sender ?? ""];
-      k_op.recipients = [recipient ?? ""];
-      k_op.hasFailed = Boolean(result?.badResult && result.badResult !== null);
-      k_op.date = date;
-      k_op.extra = {
+    const k_op: KadenaOperation = {
+      id: encodeOperationId(accountId, requestKey, type),
+      hash: requestKey,
+      type,
+      value: baseUnitToKda(value),
+      fee: baseUnitToKda(fee),
+      blockHeight,
+      blockHash,
+      accountId,
+      senders: [sender ?? ""],
+      recipients: [recipient ?? ""],
+      hasFailed: Boolean(result?.badResult && result.badResult !== null),
+      date,
+      extra: {
         senderChainId: chainId,
         receiverChainId: receiverChainId,
         isCrossChainTransferFinished: isFinished,
-      };
+      },
+    };
 
-      ops.push(k_op);
-    }
+    operations.push(k_op);
   }
 
-  return ops;
+  return operations;
 };
 
 /**
@@ -233,5 +264,20 @@ const getCrossChainTransferStart = (transfer: Transfer): CrossChainTransferParam
       transfer.crossChainTransfer?.senderAccount ||
       parsedMatch[0]) as string,
     receiverChainId: parseInt(parsedMatch[3]),
+  };
+};
+
+const getSigner = (transfer: Transfer): SignerParameters | null => {
+  const match = transfer.transaction.cmd.signers[0].clist.find(signer => {
+    const parsedEvent = JSON.parse(signer.args);
+    return signer.name === `coin.TRANSFER` && matchSender(transfer, parsedEvent[0]);
+  });
+  if (!match) return null;
+  const parsedMatch = JSON.parse(match.args);
+  const amount = parsedMatch[2] ? parsePactNumber(parsedMatch[2]) : undefined;
+  return {
+    receiverAccount: parsedMatch[1] as string,
+    amount: amount ? BigNumber(amount) : undefined,
+    receiverChainId: parsedMatch[3] ? parseInt(parsedMatch[3]) : transfer.block.chainId,
   };
 };
