@@ -1,5 +1,20 @@
 # @ledgerhq/native-ui
 
+## 0.30.0
+
+### Minor Changes
+
+- [#9505](https://github.com/LedgerHQ/ledger-live/pull/9505) [`be1b3ad`](https://github.com/LedgerHQ/ledger-live/commit/be1b3ad53fa400d24165873e9b0103a8c3063e39) Thanks [@thesan](https://github.com/thesan)! - Add the banner component to use for the LNS upsell campaign
+
+- [#9506](https://github.com/LedgerHQ/ledger-live/pull/9506) [`4599711`](https://github.com/LedgerHQ/ledger-live/commit/459971108e07785b4eabecca4d2185d50ddecc58) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Bigger line height to display thai properly
+
+- [#9477](https://github.com/LedgerHQ/ledger-live/pull/9477) [`a9bc76f`](https://github.com/LedgerHQ/ledger-live/commit/a9bc76f64ce80ed60b943f1daaa088fd410f856c) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Fix Thai high prio UI issues
+
+### Patch Changes
+
+- Updated dependencies [[`3ed81b0`](https://github.com/LedgerHQ/ledger-live/commit/3ed81b059f9d8755b58a966bd6647dd34a840378)]:
+  - @ledgerhq/crypto-icons-ui@1.10.0
+
 ## 0.29.1
 
 ### Patch Changes

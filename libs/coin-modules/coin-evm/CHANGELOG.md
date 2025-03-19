@@ -1,5 +1,20 @@
 # @ledgerhq/coin-evm
 
+## 2.14.0
+
+### Minor Changes
+
+- [#9446](https://github.com/LedgerHQ/ledger-live/pull/9446) [`dcea0f8`](https://github.com/LedgerHQ/ledger-live/commit/dcea0f880728c808fffe5b09410eec614083f04b) Thanks [@Justkant](https://github.com/Justkant)! - fix: potential wrong type for the hydrate value
+
+- [#9472](https://github.com/LedgerHQ/ledger-live/pull/9472) [`9c4c82e`](https://github.com/LedgerHQ/ledger-live/commit/9c4c82e8e81aaadfc1132f0a25812be094e54453) Thanks [@KVNLS](https://github.com/KVNLS)! - Fix elliptic library version used
+
+### Patch Changes
+
+- Updated dependencies [[`5f27549`](https://github.com/LedgerHQ/ledger-live/commit/5f275498e80060f98238a54e8ae3e2c94bfd7c91), [`9c4c82e`](https://github.com/LedgerHQ/ledger-live/commit/9c4c82e8e81aaadfc1132f0a25812be094e54453), [`cc00249`](https://github.com/LedgerHQ/ledger-live/commit/cc002495f3e107aba283a3aa4abca90954de6d76), [`b8fca38`](https://github.com/LedgerHQ/ledger-live/commit/b8fca386fa07cf393109a1928e92dfc790f9c286)]:
+  - @ledgerhq/coin-framework@2.3.0
+  - @ledgerhq/evm-tools@1.6.0
+  - @ledgerhq/domain-service@1.2.22
+
 ## 2.13.0
 
 ### Minor Changes
