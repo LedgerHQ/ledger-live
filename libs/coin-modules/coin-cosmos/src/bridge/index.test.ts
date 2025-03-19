@@ -1,49 +1,80 @@
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { CosmosCurrencyConfig, CosmosValidatorItem } from "../types";
+import { asSafeCosmosPreloadData, setCosmosPreloadData } from "../preloadedData";
+import { CosmosValidatorsManager } from "../CosmosValidatorsManager";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { CurrencyBridge } from "@ledgerhq/types-live";
-import cryptoFactory from "../chain/chain";
-import cosmosBase from "../chain/cosmosBase";
+import { hydrate } from "./preload";
 
-jest.mock("../CosmosValidatorsManager");
-const mockedCryptoFactory = jest.mocked(cryptoFactory);
+jest.mock("@ledgerhq/cryptoassets", () => ({
+  getCryptoCurrencyById: jest.fn(),
+}));
 
-describe.skip("currencyBridge", () => {
-  let currencyBridge: CurrencyBridge;
-  describe("hydrate", () => {
-    beforeEach(() => {});
-    afterEach(() => {
-      jest.resetAllMocks();
+jest.mock("../preloadedData", () => ({
+  setCosmosPreloadData: jest.fn(),
+  asSafeCosmosPreloadData: jest.fn(),
+}));
+
+jest.mock("../CosmosValidatorsManager", () => ({
+  CosmosValidatorsManager: jest.fn().mockImplementation(() => ({
+    hydrateValidators: jest.fn(),
+  })),
+}));
+
+describe("hydrate", () => {
+  const mockCurrency = { id: "cosmos" } as CryptoCurrency;
+  const mockConfig = { lcd: "http://lcd-endpoint", minGasPrice: 0.025 } as CosmosCurrencyConfig;
+  const mockValidators = [{ validatorAddress: "validator1" }] as CosmosValidatorItem[];
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("should return undefined if data is corrupted", () => {
+    const corruptedData = [
+      undefined,
+      null,
+      {},
+      { config: null },
+      { config: undefined },
+      { validators: null },
+    ];
+    corruptedData.forEach(data => {
+      expect(hydrate(data as any, mockCurrency)).toBeUndefined();
     });
+  });
 
-    const currencyMock = {} as CryptoCurrency;
-    it("shouldn't update configuration if data is undefined", () => {
-      currencyBridge.hydrate(undefined, currencyMock);
-      expect(mockedCryptoFactory).not.toHaveBeenCalled();
+  it("should set validators and config correctly", () => {
+    const data = { config: mockConfig, validators: mockValidators };
+    hydrate(data, mockCurrency);
+
+    expect(getCryptoCurrencyById).toHaveBeenCalledWith(mockCurrency.id);
+    expect(CosmosValidatorsManager).toHaveBeenCalledWith(getCryptoCurrencyById(mockCurrency.id));
+    expect(setCosmosPreloadData).toHaveBeenCalledWith(
+      mockCurrency.id,
+      asSafeCosmosPreloadData(data),
+    );
+  });
+
+  it("should return undefined if config is invalid", () => {
+    const invalidConfigs = [
+      { config: {}, validators: mockValidators },
+      { config: { lcd: null }, validators: mockValidators },
+      { config: { lcd: undefined }, validators: mockValidators },
+      { config: { lcd: "http://lcd-endpoint" }, validators: mockValidators },
+    ];
+    invalidConfigs.forEach(data => {
+      expect(hydrate(data as any, mockCurrency)).toBeUndefined();
     });
+  });
 
-    it("shouldn't update configuration if data is not an object", () => {
-      currencyBridge.hydrate("definitely not an object", currencyMock);
-      expect(mockedCryptoFactory).not.toHaveBeenCalled();
-    });
-
-    it("should update configuration if data is an object", () => {
-      const config = {
-        lcd: "oldLcd",
-        minGasPrice: 42,
-        ledgerValidator: "oldAddress",
-      };
-      const newConfig = {
-        lcd: "lcdUrl",
-        minGasPrice: 1,
-        ledgerValidator: "ledgerValidatorAddress",
-      };
-      mockedCryptoFactory.mockReturnValue(config as cosmosBase);
-      currencyBridge.hydrate(
-        {
-          config: newConfig,
-        },
-        currencyMock,
-      );
-      expect(config).toMatchObject(newConfig);
+  it("should return undefined if validators are invalid", () => {
+    const invalidValidators = [
+      { config: mockConfig, validators: null },
+      { config: mockConfig, validators: undefined },
+      { config: mockConfig, validators: {} },
+    ];
+    invalidValidators.forEach(data => {
+      expect(hydrate(data as any, mockCurrency)).toBeUndefined();
     });
   });
 });

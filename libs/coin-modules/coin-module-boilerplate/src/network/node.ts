@@ -14,7 +14,10 @@ export const simulate = async (serializedTx: string): Promise<number> => {
   const url = `${getEnv("NODE_BOILERPLATE")}/simulate`;
   const { data } = await network({
     url,
-    method: "GET",
+    method: "POST",
+    data: {
+      txPayload: serializedTx,
+    },
   });
   if (data.error) {
     throw new SimulationError();

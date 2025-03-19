@@ -106,7 +106,7 @@ describe("listOperations", () => {
     const [results, _] = await listOperations("any address", options);
     // Then
     expect(results.length).toEqual(1);
-    expect(results[0].fee).toEqual(BigInt(6));
+    expect(results[0].tx.fees).toEqual(BigInt(6));
   });
 
   it("should return empty sender list when no sender can be found", async () => {
@@ -126,6 +126,6 @@ describe("listOperations", () => {
     const op2 = { ...undelegate, level: "2" };
     mockNetworkGetTransactions.mockResolvedValue([op1, op2]);
     const [results, _] = await listOperations("any address", options);
-    expect(results.map(op => op.block.height)).toEqual(["2", "1"]);
+    expect(results.map(op => op.tx.block.height)).toEqual(["2", "1"]);
   });
 });

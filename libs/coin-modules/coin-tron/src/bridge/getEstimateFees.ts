@@ -1,6 +1,11 @@
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { ACTIVATION_FEES, ACTIVATION_FEES_TRC_20, STANDARD_FEES_TRC_20 } from "../logic/constants";
+import {
+  ACTIVATION_FEES,
+  ACTIVATION_FEES_TRC_20,
+  STANDARD_FEES_NATIVE,
+  STANDARD_FEES_TRC_20,
+} from "../logic/constants";
 import { fetchTronAccount } from "../network";
 import type { AccountTronAPI } from "../network/types";
 import { Transaction } from "../types";
@@ -18,7 +23,7 @@ const getFeesFromBandwidth = (account: Account, transaction: Transaction): BigNu
   const estimatedBandwidthCost = getEstimatedBlockSize(account, transaction);
 
   if (available.lt(estimatedBandwidthCost)) {
-    return new BigNumber(2000); // cost is around 0.002 TRX
+    return STANDARD_FEES_NATIVE; // cost is around 0.002 TRX
   }
 
   return new BigNumber(0); // no fee

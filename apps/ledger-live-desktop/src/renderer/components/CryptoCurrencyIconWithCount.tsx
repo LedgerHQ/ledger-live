@@ -1,60 +1,24 @@
 import React from "react";
-import styled, { useTheme } from "styled-components";
+import styled from "styled-components";
 import { Trans } from "react-i18next";
 import { listTokenTypesForCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
 import { Currency } from "@ledgerhq/types-cryptoassets";
-import { getCurrencyColor } from "~/renderer/getCurrencyColor";
 import Tooltip from "~/renderer/components/Tooltip";
-import CryptoCurrencyIcon, { TokenIconWrapper, TokenIcon } from "./CryptoCurrencyIcon";
+import CryptoCurrencyIcon from "./CryptoCurrencyIcon";
+import { Flex } from "@ledgerhq/react-ui/index";
 
 type Props = {
   currency: Currency;
   count: number;
   withTooltip?: boolean;
-  bigger?: boolean;
   inactive?: boolean;
 };
 
-const Wrapper = styled.div<{
-  doubleIcon?: boolean;
-  bigger?: boolean;
-}>`
-  ${p =>
-    p.doubleIcon
-      ? `
-  margin-right: -12px;`
-      : `
-  display: flex;
-  align-items: center;`}
-
-  line-height: ${p => (p.bigger ? "18px" : "18px")};
-  font-size: ${p => (p.bigger ? "12px" : "12px")};
-
-  > :nth-child(2) {
-    margin-top: ${p => (p.bigger ? "-14px" : "-12px")};
-    margin-left: ${p => (p.bigger ? "10px" : "8px")};
-
-    border: 2px solid transparent;
-  }
-`;
-
-const CryptoCurrencyIconWithCount = ({ currency, bigger, withTooltip, inactive, count }: Props) => {
-  const theme = useTheme();
-  const color = inactive
-    ? theme.colors.palette.text.shade60
-    : getCurrencyColor(currency, theme.colors.palette.background.paper);
-  const size = bigger ? 20 : 16;
-  const fontSize = size / 2 + (count < 10 ? 2 : count >= 100 ? -2 : 0);
+const CryptoCurrencyIconWithCount = ({ currency, withTooltip, inactive, count }: Props) => {
   const content = (
-    <Wrapper doubleIcon={count > 0} bigger={bigger}>
-      <CryptoCurrencyIcon inactive={inactive} currency={currency} size={size} />
-      {count > 0 && (
-        <TokenIconWrapper>
-          <TokenIcon color={color} size={size} fontSize={fontSize}>
-            {`+${count}`}
-          </TokenIcon>
-        </TokenIconWrapper>
-      )}
+    <Wrapper>
+      <CryptoCurrencyIcon circle currency={currency} size={32} inactive={inactive} />
+      {count > 0 && <Chip>{`+${count}`}</Chip>}
     </Wrapper>
   );
   const isToken =
@@ -67,7 +31,7 @@ const CryptoCurrencyIconWithCount = ({ currency, bigger, withTooltip, inactive, 
             i18nKey={isToken ? "tokensList.countTooltip" : "subAccounts.countTooltip"}
             count={count}
             values={{
-              count,
+              nbCount: count,
             }}
           />
         }
@@ -80,3 +44,28 @@ const CryptoCurrencyIconWithCount = ({ currency, bigger, withTooltip, inactive, 
 };
 
 export default React.memo(CryptoCurrencyIconWithCount);
+
+const Chip = styled(Flex)`
+  color: ${p => p.theme.colors.neutral.c100};
+  background-color: ${p => p.theme.colors.neutral.c50};
+  align-items: center;
+  justify-content: center;
+
+  font-size: 8px;
+  font-weight: 700;
+
+  border-radius: 80px;
+  padding-right: 4px;
+  padding-left: 4px;
+  gap: 8px;
+
+  position: absolute;
+  left: 20px;
+  top: 19px;
+
+  border: 2px solid var(--color);
+`;
+
+const Wrapper = styled.div`
+  position: relative;
+`;

@@ -16,16 +16,16 @@ import {
   lastBlock,
   listOperations,
 } from "../logic";
-import { ListOperationsOptions, XrpOperation } from "../types";
+import { ListOperationsOptions } from "../types";
 
-export function createApi(config: XrpConfig): Api {
+export function createApi(config: XrpConfig): Api<void> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
     broadcast,
     combine,
     craftTransaction: craft,
-    estimateFees: estimate,
+    estimateFees: () => estimateFees().then(fees => fees.fee),
     getBalance,
     lastBlock,
     listOperations: operations,
@@ -38,11 +38,6 @@ async function craft(address: string, transaction: ApiTransaction): Promise<stri
   return tx.serializedTransaction;
 }
 
-async function estimate(_addr: string, _amount: bigint): Promise<bigint> {
-  const fees = await estimateFees();
-  return fees.fee;
-}
-
 type PaginationState = {
   readonly pageSize: number; // must be large enough to avoid unnecessary calls to the underlying explorer
   readonly maxIterations: number; // a security to avoid infinite loop
@@ -50,13 +45,13 @@ type PaginationState = {
   readonly minHeight: number;
   continueIterations: boolean;
   apiNextCursor?: string;
-  accumulator: XrpOperation[];
+  accumulator: Operation<void>[];
 };
 
 async function operationsFromHeight(
   address: string,
   minHeight: number,
-): Promise<[XrpOperation[], string]> {
+): Promise<[Operation<void>[], string]> {
   async function fetchNextPage(state: PaginationState): Promise<PaginationState> {
     const options: ListOperationsOptions = {
       limit: state.pageSize,
@@ -104,21 +99,7 @@ async function operationsFromHeight(
 async function operations(
   address: string,
   { minHeight }: Pagination,
-): Promise<[Operation[], string]> {
-  const [ops, token] = await operationsFromHeight(address, minHeight);
+): Promise<[Operation<void>[], string]> {
   // TODO token must be implemented properly (waiting ack from the design document)
-  return [
-    ops.map(op => {
-      const { simpleType, blockHash, blockTime, blockHeight, ...rest } = op;
-      return {
-        ...rest,
-        block: {
-          height: blockHeight,
-          hash: blockHash,
-          time: blockTime,
-        },
-      };
-    }),
-    token,
-  ];
+  return await operationsFromHeight(address, minHeight);
 }

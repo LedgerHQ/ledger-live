@@ -1,6 +1,7 @@
 import type {
   Api,
   Transaction as ApiTransaction,
+  TransactionIntent,
   Operation,
   Pagination,
 } from "@ledgerhq/coin-framework/api/index";
@@ -16,7 +17,7 @@ import {
   listOperations,
 } from "../logic";
 
-export function createApi(config: PolkadotConfig): Api {
+export function createApi(config: PolkadotConfig): Api<void> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
@@ -43,15 +44,16 @@ async function craft(address: string, transaction: ApiTransaction): Promise<stri
   return extrinsic.toHex();
 }
 
-async function estimate(addr: string, amount: bigint): Promise<bigint> {
-  const tx = await craftEstimationTransaction(addr, amount);
-  return estimateFees(tx);
+async function estimate(transactionIntent: TransactionIntent<void>): Promise<bigint> {
+  const tx = await craftEstimationTransaction(transactionIntent.sender, transactionIntent.amount);
+  const estimatedFees = await estimateFees(tx);
+  return estimatedFees;
 }
 
 async function operations(
   address: string,
   { minHeight }: Pagination,
-): Promise<[Operation[], string]> {
+): Promise<[Operation<void>[], string]> {
   const [ops, nextHeight] = await listOperations(address, { limit: 0, startAt: minHeight });
   return [ops, JSON.stringify(nextHeight)];
 }

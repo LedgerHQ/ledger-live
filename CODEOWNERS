@@ -38,12 +38,12 @@ libs/domain-service/                                     @ledgerhq/coin-integrat
 libs/evm-tools/                                          @ledgerhq/coin-integration
 libs/ledger-live-common/src/bot/                         @ledgerhq/coin-integration
 libs/ledger-live-common/src/families/                    @ledgerhq/coin-integration
+libs/ledger-services/                                    @ledgerhq/coin-integration
 libs/ledgerjs/packages/cryptoassets/                     @ledgerhq/coin-integration
 libs/ledgerjs/packages/hw-app-*/                         @ledgerhq/coin-integration
 libs/ledgerjs/packages/types-cryptoassets/               @ledgerhq/coin-integration
 libs/live-config/                                        @ledgerhq/coin-integration
 libs/live-network/                                       @ledgerhq/coin-integration
-libs/live-services/                                      @ledgerhq/coin-integration
 
 # Shared with partners
 ## Blockchain support
