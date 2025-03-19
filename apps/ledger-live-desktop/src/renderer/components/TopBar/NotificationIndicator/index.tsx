@@ -7,18 +7,17 @@ import { InformationDrawer } from "./InformationDrawer";
 import { useDispatch, useSelector } from "react-redux";
 import { informationCenterStateSelector } from "~/renderer/reducers/UI";
 import { openInformationCenter, closeInformationCenter } from "~/renderer/actions/UI";
-import { notificationsContentCardSelector } from "~/renderer/reducers/dynamicContent";
 import { track } from "~/renderer/analytics/segment";
+import { useUnseenNotificationsCount } from "~/renderer/hooks/useUnseenNotificationsCount";
 import { useHistory } from "react-router";
 import { getEnv } from "@ledgerhq/live-env";
 
 export function NotificationIndicator() {
   const { t } = useTranslation();
-  const notificationsCards = useSelector(notificationsContentCardSelector);
 
-  const totalNotifCount = getEnv("PLAYWRIGHT_RUN")
-    ? 0
-    : notificationsCards?.filter(n => !n.viewed).length || 0;
+  const unseenCount = useUnseenNotificationsCount();
+  const totalNotifCount = getEnv("PLAYWRIGHT_RUN") ? 0 : unseenCount;
+
   const { isOpen } = useSelector(informationCenterStateSelector);
   const dispatch = useDispatch();
   const history = useHistory();

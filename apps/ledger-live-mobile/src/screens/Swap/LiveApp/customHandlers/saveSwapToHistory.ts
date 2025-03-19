@@ -1,10 +1,12 @@
 import { getParentAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
 import { AccountLike, SubAccount, SwapOperation } from "@ledgerhq/types-live";
-import { convertToAtomicUnit } from "../utils";
 import BigNumber from "bignumber.js";
-import { updateAccountWithUpdater } from "~/actions/accounts";
 import { Dispatch } from "redux";
+import { updateAccountWithUpdater } from "~/actions/accounts";
+import { ScreenName } from "~/const";
+import { NavigationType } from ".";
+import { convertToAtomicUnit } from "../utils";
 
 export type SwapProps = {
   provider: string;
@@ -28,9 +30,14 @@ export type SwapProps = {
   swapId?: string;
 };
 
-export function saveSwapToHistory(accounts: AccountLike[], dispatch: Dispatch) {
+export function saveSwapToHistory(
+  accounts: AccountLike[],
+  dispatch: Dispatch,
+  navigation: NavigationType,
+) {
   return async ({ params }: { params: { swap: SwapProps; transaction_id: string } }) => {
     const { swap, transaction_id } = params;
+
     if (
       !swap ||
       !transaction_id ||
@@ -76,6 +83,7 @@ export function saveSwapToHistory(accounts: AccountLike[], dispatch: Dispatch) {
           if (fromId === account.id) {
             return { ...account, swapHistory: [...account.swapHistory, swapOperation] };
           }
+
           return {
             ...account,
             subAccounts: account.subAccounts?.map<SubAccount>((a: SubAccount) => {
@@ -90,6 +98,8 @@ export function saveSwapToHistory(accounts: AccountLike[], dispatch: Dispatch) {
       }),
     );
 
-    return Promise.resolve();
+    return navigation.navigate(ScreenName.SwapPendingOperation, {
+      swapOperation: swapOperation,
+    });
   };
 }

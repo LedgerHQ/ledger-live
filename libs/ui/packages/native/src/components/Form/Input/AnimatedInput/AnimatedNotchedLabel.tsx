@@ -41,7 +41,7 @@ const AnimatedText = Animated.createAnimatedComponent(Text);
 
 const LabelText = styled(AnimatedText)<LabelTextProps>`
   height: 15px;
-  line-height: 15px;
+  line-height: 18px;
   vertical-align: top;
   color: ${(p) =>
     p.status === "default" ? inputTextColor[p.status] : inputStatusColors[p.status]};

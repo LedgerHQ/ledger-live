@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import { LayoutChangeEvent, View } from "react-native";
+import { LayoutChangeEvent } from "react-native";
 import { isAccountEmpty, getMainAccount } from "@ledgerhq/live-common/account/index";
 import {
   AccountLike,
@@ -17,7 +17,6 @@ import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
 import { MultiversXAccount } from "@ledgerhq/live-common/families/multiversx/types";
 import { NearAccount } from "@ledgerhq/live-common/families/near/types";
 import { isEditableOperation, isStuckOperation } from "@ledgerhq/live-common/operation";
-import Header from "./Header";
 import AccountGraphCard from "~/components/AccountGraphCard";
 import SubAccountsList from "./SubAccountsList";
 import NftCollectionsList from "./NftCollectionsList";
@@ -33,9 +32,9 @@ import {
 } from "~/components/FabActions/actionsList/account";
 import { ActionButtonEvent } from "~/components/FabActions";
 import { EditOperationCard } from "~/components/EditOperationCard";
-import Alert from "~/components/Alert";
 import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
-import { urls } from "~/utils/urls";
+import WarningBannerStatus from "~/components/WarningBannerStatus";
+import ErrorWarning from "./ErrorWarning";
 
 type Props = {
   account?: AccountLike;
@@ -147,22 +146,12 @@ export function getListHeaderComponents({
           parentAccount={parentAccount}
         />
       </Box>,
-      currencyConfig?.status.type === "will_be_deprecated" && (
-        <View style={{ marginTop: 16 }}>
-          <Alert
-            key="deprecated_banner"
-            type="warning"
-            learnMoreKey="account.willBedeprecatedBanner.contactSupport"
-            learnMoreUrl={urls.contactSupportWebview.en}
-          >
-            {t("account.willBedeprecatedBanner.title", {
-              currencyName: currency.name,
-              deprecatedDate: currencyConfig.status.deprecated_date,
-            })}
-          </Alert>
-        </View>
-      ),
-      <Header key="Header" />,
+      <WarningBannerStatus
+        currencyConfig={currencyConfig}
+        currency={currency}
+        key="WarningBannerStatus"
+      />,
+      <ErrorWarning key="Header" />,
       !!AccountSubHeader && (
         <Box bg={colors.background.main} key="AccountSubHeader">
           <AccountSubHeader account={account} parentAccount={parentAccount} />

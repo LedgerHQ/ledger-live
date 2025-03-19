@@ -23,6 +23,7 @@ import { useManagerDeviceAction } from "~/hooks/deviceActions";
 import ContentCardsLocation from "~/dynamicContent/ContentCardsLocation";
 import { ContentCardLocation } from "~/dynamicContent/types";
 import { useAutoRedirectToPostOnboarding } from "~/hooks/useAutoRedirectToPostOnboarding";
+import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<MyLedgerNavigatorStackParamList, ScreenName.MyLedgerChooseDevice>
@@ -156,6 +157,7 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
         action={action}
         request={null}
         onError={onError}
+        location={HOOKS_TRACKING_LOCATIONS.myLedgerDashboard}
       />
     </TabBarSafeAreaView>
   );

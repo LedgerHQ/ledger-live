@@ -53,13 +53,13 @@ export function getTextTypeStyle({ bracket }: { bracket?: boolean }): Record<
     },
     h2: {
       fontFamily: "Alpha",
-      lineHeight: "28px",
+      lineHeight: "34px",
       paddingTop: bracket ? 3 : 0,
       textTransform: "uppercase",
     },
     h3: {
       fontFamily: "Alpha",
-      lineHeight: "20px",
+      lineHeight: "26px",
       paddingTop: bracket ? 5 : 0,
       textTransform: "uppercase",
     },

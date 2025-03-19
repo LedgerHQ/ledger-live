@@ -1,69 +1,69 @@
-import React, { useEffect, useState } from "react";
-import { Image, Linking, Platform, ScrollView } from "react-native";
-import { useSelector } from "react-redux";
-import styled from "styled-components/native";
+import { getDeviceModel } from "@ledgerhq/devices";
 import {
   BluetoothRequired,
   LockedDeviceError,
   PeerRemovedPairing,
   WrongDeviceForAccount,
 } from "@ledgerhq/errors";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { Transaction } from "@ledgerhq/live-common/generated/types";
-import { getDeviceModel } from "@ledgerhq/devices";
-import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { AppRequest } from "@ledgerhq/live-common/hw/actions/app";
-import firmwareUpdateRepair from "@ledgerhq/live-common/hw/firmwareUpdate-repair";
-import { getProviderName, getNoticeType } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import {
-  InfiniteLoader,
-  Text,
-  Flex,
-  Tag,
-  IconsLegacy,
-  BoxedIcon,
-  Log,
-  Icons,
-} from "@ledgerhq/native-ui";
-import { DownloadMedium } from "@ledgerhq/native-ui/assets/icons";
-import BigNumber from "bignumber.js";
-import { ExchangeRate, ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
-import {
-  getMainAccount,
   getAccountCurrency,
   getFeesCurrency,
   getFeesUnit,
+  getMainAccount,
 } from "@ledgerhq/live-common/account/index";
-import { TFunction } from "react-i18next";
-import type { DeviceModelInfo } from "@ledgerhq/types-live";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { ParamListBase } from "@react-navigation/native";
-import isFirmwareUpdateVersionSupported from "@ledgerhq/live-common/hw/isFirmwareUpdateVersionSupported";
-import ProviderIcon from "../ProviderIcon";
-import { currencySettingsForAccountSelector, lastSeenDeviceSelector } from "~/reducers/settings";
-import { urls } from "~/utils/urls";
-import Alert from "../Alert";
-import { lighten, Theme } from "../../colors";
-import Button from "../Button";
-import DeviceActionProgress from "../DeviceActionProgress";
-import { NavigatorName, ScreenName } from "~/const";
-import Animation from "../Animation";
-import { getDeviceAnimation, getDeviceAnimationStyles } from "~/helpers/getDeviceAnimation";
-import GenericErrorView from "../GenericErrorView";
-import Circle from "../Circle";
-import { MANAGER_TABS } from "~/const/manager";
-import ExternalLink from "../ExternalLink";
-import { TrackScreen, track } from "~/analytics";
-import CurrencyUnitValue from "../CurrencyUnitValue";
-import TermsFooter, { TermsProviders } from "../TermsFooter";
-import CurrencyIcon from "../CurrencyIcon";
-import ModalLock from "../ModalLock";
-import Config from "react-native-config";
-import { WalletState, accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
-import { SettingsState } from "~/reducers/types";
-import { RootStackParamList } from "../RootNavigator/types/RootNavigator";
 import { isSyncOnboardingSupported } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
+import { ExchangeRate, ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
+import { getNoticeType } from "@ledgerhq/live-common/exchange/swap/utils/index";
+import { Transaction } from "@ledgerhq/live-common/generated/types";
+import { AppRequest } from "@ledgerhq/live-common/hw/actions/app";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import firmwareUpdateRepair from "@ledgerhq/live-common/hw/firmwareUpdate-repair";
+import isFirmwareUpdateVersionSupported from "@ledgerhq/live-common/hw/isFirmwareUpdateVersionSupported";
+import { WalletState, accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
+import {
+  BoxedIcon,
+  Flex,
+  Icons,
+  IconsLegacy,
+  InfiniteLoader,
+  Log,
+  Tag,
+  Text,
+} from "@ledgerhq/native-ui";
+import { DownloadMedium } from "@ledgerhq/native-ui/assets/icons";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import type { DeviceModelInfo } from "@ledgerhq/types-live";
+import { ParamListBase, T } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import BigNumber from "bignumber.js";
+import React, { useEffect, useState } from "react";
+import { TFunction } from "react-i18next";
+import { Image, Linking, Platform, ScrollView } from "react-native";
+import Config from "react-native-config";
+import { useSelector } from "react-redux";
+import styled from "styled-components/native";
+import { TrackScreen, track } from "~/analytics";
+import { NavigatorName, ScreenName } from "~/const";
+import { MANAGER_TABS } from "~/const/manager";
+import { getDeviceAnimation, getDeviceAnimationStyles } from "~/helpers/getDeviceAnimation";
+import { currencySettingsForAccountSelector, lastSeenDeviceSelector } from "~/reducers/settings";
+import { SettingsState } from "~/reducers/types";
+import { urls } from "~/utils/urls";
+import { Theme, lighten } from "../../colors";
+import Alert from "../Alert";
+import Animation from "../Animation";
+import Button from "../Button";
+import Circle from "../Circle";
+import CurrencyIcon from "../CurrencyIcon";
+import CurrencyUnitValue from "../CurrencyUnitValue";
+import DeviceActionProgress from "../DeviceActionProgress";
+import ExternalLink from "../ExternalLink";
+import GenericErrorView from "../GenericErrorView";
+import ModalLock from "../ModalLock";
+import ProviderIcon from "../ProviderIcon";
+import { RootStackParamList } from "../RootNavigator/types/RootNavigator";
+import TermsFooter, { TermsProviders } from "../TermsFooter";
 
 export const Wrapper = styled(Flex).attrs({
   flex: 1,
@@ -236,8 +236,8 @@ export function renderConfirmSwap({
   t,
   device,
   theme,
+  provider,
   transaction,
-  exchangeRate,
   exchange,
   amountExpectedTo,
   estimatedFees,
@@ -246,6 +246,7 @@ export function renderConfirmSwap({
 }: RawProps & {
   device: Device;
   transaction: Transaction;
+  provider: string;
   exchangeRate: ExchangeRate;
   exchange: ExchangeSwap;
   amountExpectedTo?: string | null;
@@ -253,8 +254,8 @@ export function renderConfirmSwap({
   walletState: WalletState;
   settingsState: SettingsState;
 }) {
-  const providerName = getProviderName(exchangeRate.provider);
-  const noticeType = getNoticeType(exchangeRate.provider);
+  const providerName = provider;
+  const noticeType = getNoticeType(provider);
   const alertProperties = noticeType.learnMore ? { learnMoreUrl: urls.swap.learnMore } : {};
   const fromAccountName = accountNameWithDefaultSelector(walletState, exchange.fromAccount);
   const toAccountName = accountNameWithDefaultSelector(walletState, exchange.toAccount);
@@ -298,7 +299,7 @@ export function renderConfirmSwap({
             <Text>
               <CurrencyUnitValue
                 unit={unitTo}
-                value={amountExpectedTo ? new BigNumber(amountExpectedTo) : exchangeRate.toAmount}
+                value={amountExpectedTo ? new BigNumber(amountExpectedTo) : null}
                 disableRounding
                 showCode
               />
@@ -308,7 +309,7 @@ export function renderConfirmSwap({
           <FieldItem title={t("DeviceAction.swap2.provider")}>
             <Flex flexDirection="row" alignItems="center">
               <Flex paddingRight={2}>
-                <ProviderIcon size="XXS" name={exchangeRate.provider} />
+                <ProviderIcon size="XXS" name={provider} />
               </Flex>
 
               <Text>{providerName}</Text>
@@ -343,7 +344,7 @@ export function renderConfirmSwap({
           </FieldItem>
         </Flex>
 
-        <TermsFooter provider={exchangeRate.provider as TermsProviders} />
+        <TermsFooter provider={provider as TermsProviders} />
       </Wrapper>
     </ScrollView>
   );
@@ -894,17 +895,44 @@ export function renderLoading({
 }
 
 export function renderExchange({
+  swapRequest,
   exchangeType,
   t,
   device,
   theme,
 }: RawProps & {
+  swapRequest: {
+    provider: string;
+    selectedDevice: Device;
+    transaction: Transaction;
+    exchangeRate: ExchangeRate;
+    exchange: ExchangeSwap;
+    colors: T["colors"];
+    theme: typeof theme;
+    amountExpectedTo?: string;
+    estimatedFees?: string;
+    walletState: WalletState;
+    settingsState: SettingsState;
+  };
   exchangeType: number;
   device: Device;
 }) {
   switch (exchangeType) {
     case 0x00: // swap
-      return <Text>{t("DeviceAction.confirmSwapOnDevice")}</Text>;
+      return renderConfirmSwap({
+        t,
+        provider: swapRequest.provider,
+        device: swapRequest.selectedDevice,
+        colors: swapRequest.colors,
+        theme: swapRequest.theme,
+        transaction: swapRequest?.transaction,
+        exchangeRate: swapRequest?.exchangeRate,
+        exchange: swapRequest?.exchange,
+        amountExpectedTo: swapRequest.amountExpectedTo,
+        estimatedFees: swapRequest.estimatedFees,
+        walletState: swapRequest.walletState,
+        settingsState: swapRequest.settingsState,
+      });
     case 0x01: // sell
     case 0x02: // fund
       return renderSecureTransferDeviceConfirmation({
@@ -1085,7 +1113,7 @@ export const AutoRepair = ({
 };
 
 const HARDWARE_UPDATE_ASSETS: Partial<Record<DeviceModelId, number>> = {
-  nanoS: require("../../../assets/images/swap/nanoSBackdropFilter.png"),
+  nanoS: require("../../../assets/images/swap/nanoSBackdropFilter.webp"),
 };
 
 export const HardwareUpdate = ({

@@ -38,12 +38,12 @@ libs/domain-service/                                     @ledgerhq/coin-integrat
 libs/evm-tools/                                          @ledgerhq/coin-integration
 libs/ledger-live-common/src/bot/                         @ledgerhq/coin-integration
 libs/ledger-live-common/src/families/                    @ledgerhq/coin-integration
+libs/ledger-services/                                    @ledgerhq/coin-integration
 libs/ledgerjs/packages/cryptoassets/                     @ledgerhq/coin-integration
 libs/ledgerjs/packages/hw-app-*/                         @ledgerhq/coin-integration
 libs/ledgerjs/packages/types-cryptoassets/               @ledgerhq/coin-integration
 libs/live-config/                                        @ledgerhq/coin-integration
 libs/live-network/                                       @ledgerhq/coin-integration
-libs/live-services/                                      @ledgerhq/coin-integration
 
 # Shared with partners
 ## Blockchain support
@@ -128,6 +128,9 @@ apps/cli/src/commands/devices                                      @ledgerhq/liv
 **/OnboardingAppInstall/**																				 @ledgerhq/live-devices
 **/UpdateFirmwareModal/**																					 @ledgerhq/live-devices
 apps/**/components/DeviceAction/                                   @ledgerhq/live-devices
+apps/ledger-live-mobile/android/**/LocationHelperModule.kt         @ledgerhq/live-devices
+apps/ledger-live-mobile/components/RequiresBLE/                    @ledgerhq/live-devices
+apps/ledger-live-mobile/components/RequiresLocation/               @ledgerhq/live-devices
 apps/ledger-live-mobile/src/screens/MyLedger*/             	       @ledgerhq/live-devices
 apps/ledger-live-mobile/src/newArch/features/FirmwareUpdate/       @ledgerhq/live-devices
 apps/web-tools/repl/                                               @ledgerhq/live-devices

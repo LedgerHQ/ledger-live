@@ -18,13 +18,16 @@ import {
   lastSeenDeviceSelector,
 } from "~/reducers/settings";
 import { useSwapLiveAppCustomHandlers } from "./hooks/useSwapLiveAppCustomHandlers";
+import { DefaultAccountSwapParamList } from "../types";
+import { useTranslateToSwapAccount } from "./hooks/useTranslateToSwapAccount";
 
 type Props = {
   manifest: LiveAppManifest;
+  params: DefaultAccountSwapParamList | null;
   setWebviewState: React.Dispatch<React.SetStateAction<WebviewState>>;
 };
 
-export function WebView({ manifest, setWebviewState }: Props) {
+export function WebView({ manifest, params, setWebviewState }: Props) {
   const customHandlers = useSwapLiveAppCustomHandlers(manifest);
   const { theme } = useTheme();
   const { language } = useSettings();
@@ -36,6 +39,7 @@ export function WebView({ manifest, setWebviewState }: Props) {
   const exportSettings = useSelector(exportSettingsSelector);
   const devMode = exportSettings.developerModeEnabled.toString();
   const lastSeenDevice = useSelector(lastSeenDeviceSelector);
+  const fromAccount = useTranslateToSwapAccount(params);
 
   // ScopeProvider required to prevent conflicts between Swap's Webview instance and deeplink instances
   return (
@@ -57,7 +61,8 @@ export function WebView({ manifest, setWebviewState }: Props) {
             lastSeenDevice: lastSeenDevice?.modelId,
             discreetMode: discreet ? "true" : "false",
             OS: Platform.OS,
-            platform: "LLM", // need consitent format with LLD, Platform doesn't work
+            platform: "LLM", // need consistent format with LLD, Platform doesn't work
+            ...fromAccount,
           }}
         />
       </Flex>

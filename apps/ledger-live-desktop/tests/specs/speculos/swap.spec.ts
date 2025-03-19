@@ -8,17 +8,16 @@ import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { Application } from "tests/page";
 import { ElectronApplication } from "@playwright/test";
+import { Provider } from "@ledgerhq/live-common/e2e/enum/Swap";
 
 function setupEnv(disableBroadcast?: boolean) {
   const originalBroadcastValue = process.env.DISABLE_TRANSACTION_BROADCAST;
   test.beforeAll(async () => {
     process.env.SWAP_DISABLE_APPS_INSTALL = "true";
-    process.env.SWAP_API_BASE = "https://swap-stg.ledger-test.com/v5";
     if (disableBroadcast) process.env.DISABLE_TRANSACTION_BROADCAST = "1";
   });
   test.afterAll(async () => {
     delete process.env.SWAP_DISABLE_APPS_INSTALL;
-    delete process.env.SWAP_API_BASE;
     if (originalBroadcastValue !== undefined) {
       process.env.DISABLE_TRANSACTION_BROADCAST = originalBroadcastValue;
     } else {
@@ -99,7 +98,7 @@ const swaps = [
     xrayTicket: "B2CQA-3075",
   },
   {
-    swap: new Swap(Account.ETH_1, Account.XRP_1, "0.02", Fee.MEDIUM),
+    swap: new Swap(Account.ETH_1, Account.XRP_1, "0.03", Fee.MEDIUM),
     xrayTicket: "B2CQA-3076",
   },
   {
@@ -150,6 +149,61 @@ for (const { swap, xrayTicket } of swaps) {
         await performSwapUntilDeviceVerificationStep(app, electronApp, swap, selectedProvider);
         await app.speculos.verifyAmountsAndAcceptSwap(swap);
         await app.swapDrawer.verifyExchangeCompletedTextContent(swap.accountToCredit.currency.name);
+      },
+    );
+  });
+}
+
+const checkProviders = [
+  {
+    swap: new Swap(Account.ETH_1, Account.ETH_USDT_1, "0.03", Fee.MEDIUM),
+    xrayTicket: "B2CQA-3120",
+    provider: Provider.ONE_INCH,
+  },
+  {
+    swap: new Swap(Account.ETH_1, Account.ETH_USDT_1, "0.03", Fee.MEDIUM),
+    xrayTicket: "B2CQA-3119",
+    provider: Provider.PARASWAP,
+  },
+];
+
+for (const { swap, xrayTicket, provider } of checkProviders) {
+  test.describe("Swap - Provider redirection", () => {
+    setupEnv(true);
+
+    const accPair: string[] = [swap.accountToDebit, swap.accountToCredit].map(acc =>
+      acc.currency.speculosApp.name.replace(/ /g, "_"),
+    );
+
+    test.beforeEach(async () => {
+      setExchangeDependencies(
+        accPair.map(appName => ({
+          name: appName,
+        })),
+      );
+    });
+
+    test.use({
+      userdata: "speculos-tests-app",
+      speculosApp: app,
+    });
+
+    test(
+      `Swap test provider redirection (${provider.uiName})`,
+      {
+        annotation: {
+          type: "TMS",
+          description: xrayTicket,
+        },
+      },
+      async ({ app, electronApp }) => {
+        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
+        await performSwapUntilQuoteSelectionStep(app, electronApp, swap);
+        await app.swap.selectSpecificprovider(provider.uiName, electronApp);
+        await app.swap.goToProviderLiveApp(electronApp, provider.uiName);
+        await app.swap.verifyProviderURL(electronApp, provider.uiName, swap);
+        await app.liveApp.verifyLiveAppTitle(provider.uiName.toLowerCase());
       },
     );
   });

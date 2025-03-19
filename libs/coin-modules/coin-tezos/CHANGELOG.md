@@ -1,5 +1,41 @@
 # @ledgerhq/coin-tezos
 
+## 1.3.1
+
+### Patch Changes
+
+- Updated dependencies [[`8675df1`](https://github.com/LedgerHQ/ledger-live/commit/8675df12c24067877358f27e1e7c66f739ff0c78), [`0a59343`](https://github.com/LedgerHQ/ledger-live/commit/0a59343b591dab4e886c21cb47f7339231997331), [`ede6db0`](https://github.com/LedgerHQ/ledger-live/commit/ede6db0b94193cc9072aeb87e90f4098f0434af0), [`1461449`](https://github.com/LedgerHQ/ledger-live/commit/146144941c13e60182da8d79592f706d12a6f00e)]:
+  - @ledgerhq/types-live@6.62.0
+  - @ledgerhq/coin-framework@2.2.0
+  - @ledgerhq/types-cryptoassets@7.20.0
+  - @ledgerhq/cryptoassets@13.13.0
+  - @ledgerhq/live-network@2.0.5
+
+## 1.3.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`8675df1`](https://github.com/LedgerHQ/ledger-live/commit/8675df12c24067877358f27e1e7c66f739ff0c78), [`0a59343`](https://github.com/LedgerHQ/ledger-live/commit/0a59343b591dab4e886c21cb47f7339231997331), [`ede6db0`](https://github.com/LedgerHQ/ledger-live/commit/ede6db0b94193cc9072aeb87e90f4098f0434af0), [`1461449`](https://github.com/LedgerHQ/ledger-live/commit/146144941c13e60182da8d79592f706d12a6f00e)]:
+  - @ledgerhq/types-live@6.62.0-next.0
+  - @ledgerhq/coin-framework@2.2.0-next.0
+  - @ledgerhq/types-cryptoassets@7.20.0-next.0
+  - @ledgerhq/cryptoassets@13.13.0-next.0
+  - @ledgerhq/live-network@2.0.5-next.0
+
+## 1.3.0
+
+### Minor Changes
+
+- [#9167](https://github.com/LedgerHQ/ledger-live/pull/9167) [`e50b750`](https://github.com/LedgerHQ/ledger-live/commit/e50b750a362e978046cfa2fde321ac3c3212630e) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - coinconfig edit
+
+- [#9131](https://github.com/LedgerHQ/ledger-live/pull/9131) [`896b14d`](https://github.com/LedgerHQ/ledger-live/commit/896b14d89206a6d745ce5d446189e61bb8741542) Thanks [@jprudent](https://github.com/jprudent)! - api iterates over all operations
+
+### Patch Changes
+
+- Updated dependencies [[`e4d9a5c`](https://github.com/LedgerHQ/ledger-live/commit/e4d9a5ce6c3e8f2b3829f8f5772e7ba712a4a50c)]:
+  - @ledgerhq/types-live@6.61.0
+  - @ledgerhq/coin-framework@2.1.1
+
 ## 1.3.0-next.0
 
 ### Minor Changes

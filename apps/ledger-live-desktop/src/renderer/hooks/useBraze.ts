@@ -117,7 +117,7 @@ export async function useBraze() {
       const expiredAnonymousUserNotifications = getOldCampaignIds(anonymousUserNotifications);
       if (expiredAnonymousUserNotifications.length) {
         const validAnonymousUserNotificationsOnly = Object.keys(anonymousUserNotifications).reduce(
-          (validNotifications: Record<string, string | number>, key: string) => {
+          (validNotifications: Record<string, number>, key: string) => {
             if (!expiredAnonymousUserNotifications.includes(key)) {
               validNotifications[key] = anonymousUserNotifications[key];
             }

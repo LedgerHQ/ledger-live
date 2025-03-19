@@ -1,5 +1,51 @@
 # @ledgerhq/coin-tron
 
+## 0.4.0
+
+### Minor Changes
+
+- [#9400](https://github.com/LedgerHQ/ledger-live/pull/9400) [`c2d4d1a`](https://github.com/LedgerHQ/ledger-live/commit/c2d4d1a915e10f9bda5b041715d3e925528c178a) Thanks [@qperrot](https://github.com/qperrot)! - lastBlock for alpaca tron
+
+- [#9381](https://github.com/LedgerHQ/ledger-live/pull/9381) [`663f03d`](https://github.com/LedgerHQ/ledger-live/commit/663f03d7e00dec395bc1338b62e9015d79450d65) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Support combine for Tron
+
+### Patch Changes
+
+- Updated dependencies [[`8675df1`](https://github.com/LedgerHQ/ledger-live/commit/8675df12c24067877358f27e1e7c66f739ff0c78), [`0a59343`](https://github.com/LedgerHQ/ledger-live/commit/0a59343b591dab4e886c21cb47f7339231997331), [`ede6db0`](https://github.com/LedgerHQ/ledger-live/commit/ede6db0b94193cc9072aeb87e90f4098f0434af0), [`1461449`](https://github.com/LedgerHQ/ledger-live/commit/146144941c13e60182da8d79592f706d12a6f00e)]:
+  - @ledgerhq/types-live@6.62.0
+  - @ledgerhq/coin-framework@2.2.0
+  - @ledgerhq/types-cryptoassets@7.20.0
+  - @ledgerhq/cryptoassets@13.13.0
+  - @ledgerhq/live-network@2.0.5
+
+## 0.4.0-next.0
+
+### Minor Changes
+
+- [#9400](https://github.com/LedgerHQ/ledger-live/pull/9400) [`c2d4d1a`](https://github.com/LedgerHQ/ledger-live/commit/c2d4d1a915e10f9bda5b041715d3e925528c178a) Thanks [@qperrot](https://github.com/qperrot)! - lastBlock for alpaca tron
+
+- [#9381](https://github.com/LedgerHQ/ledger-live/pull/9381) [`663f03d`](https://github.com/LedgerHQ/ledger-live/commit/663f03d7e00dec395bc1338b62e9015d79450d65) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Support combine for Tron
+
+### Patch Changes
+
+- Updated dependencies [[`8675df1`](https://github.com/LedgerHQ/ledger-live/commit/8675df12c24067877358f27e1e7c66f739ff0c78), [`0a59343`](https://github.com/LedgerHQ/ledger-live/commit/0a59343b591dab4e886c21cb47f7339231997331), [`ede6db0`](https://github.com/LedgerHQ/ledger-live/commit/ede6db0b94193cc9072aeb87e90f4098f0434af0), [`1461449`](https://github.com/LedgerHQ/ledger-live/commit/146144941c13e60182da8d79592f706d12a6f00e)]:
+  - @ledgerhq/types-live@6.62.0-next.0
+  - @ledgerhq/coin-framework@2.2.0-next.0
+  - @ledgerhq/types-cryptoassets@7.20.0-next.0
+  - @ledgerhq/cryptoassets@13.13.0-next.0
+  - @ledgerhq/live-network@2.0.5-next.0
+
+## 0.3.0
+
+### Minor Changes
+
+- [#9167](https://github.com/LedgerHQ/ledger-live/pull/9167) [`e50b750`](https://github.com/LedgerHQ/ledger-live/commit/e50b750a362e978046cfa2fde321ac3c3212630e) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Setup for alpaca api
+
+### Patch Changes
+
+- Updated dependencies [[`e4d9a5c`](https://github.com/LedgerHQ/ledger-live/commit/e4d9a5ce6c3e8f2b3829f8f5772e7ba712a4a50c)]:
+  - @ledgerhq/types-live@6.61.0
+  - @ledgerhq/coin-framework@2.1.1
+
 ## 0.3.0-next.0
 
 ### Minor Changes

@@ -29,9 +29,11 @@ const RequiresBLE: React.FC<Props> = ({ children, forceOpenSettingsOnErrorButton
       >
         <RequiresBluetoothEnabled forceOpenSettingsOnErrorButton={forceOpenSettingsOnErrorButton}>
           <AndroidRequiresLocationPermission
+            required={Platform.Version <= 30}
             forceOpenSettingsOnErrorButton={forceOpenSettingsOnErrorButton}
           >
             <AndroidRequiresLocationEnabled
+              required={Platform.Version <= 30}
               forceOpenSettingsOnErrorButton={forceOpenSettingsOnErrorButton}
             >
               {children}

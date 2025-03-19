@@ -56,11 +56,11 @@ describe("estimateFees", () => {
 
     // Then
     expect(result).toEqual({
-      estimatedFees: BigInt("867"),
-      fees: BigInt("493"),
-      gasLimit: BigInt("669"),
+      estimatedFees: BigInt("664"),
+      fees: BigInt("290"),
+      gasLimit: BigInt("169"),
       storageLimit: BigInt("277"),
-      amount: BigInt("1929883"),
+      amount: BigInt("1934789"),
     });
   });
 });

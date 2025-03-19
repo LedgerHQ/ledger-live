@@ -1,5 +1,7 @@
 import { RIPPLE_EPOCH } from "../logic";
 import { createApi } from "./index";
+import { GetTransactionsOptions } from "../network";
+import { Operation } from "@ledgerhq/coin-framework/api/types";
 
 const mockGetServerInfos = jest.fn().mockResolvedValue({
   info: {
@@ -9,7 +11,8 @@ const mockGetServerInfos = jest.fn().mockResolvedValue({
 const mockGetTransactions = jest.fn();
 jest.mock("../network", () => ({
   getServerInfos: () => mockGetServerInfos(),
-  getTransactions: () => mockGetTransactions(),
+  getTransactions: (address: string, options: GetTransactionsOptions) =>
+    mockGetTransactions(address, options),
 }));
 
 describe("listOperations", () => {
@@ -112,6 +115,34 @@ describe("listOperations", () => {
     expect(results.length).toBe(txs.length * 10);
   });
 
+  it("should pass the token returned by previous calls", async () => {
+    const txs = givenTxs(BigInt(10), BigInt(10), "src", "dest");
+    mockGetTransactions
+      .mockReturnValueOnce(mockNetworkTxs(txs, defaultMarker))
+      .mockReturnValueOnce(mockNetworkTxs(txs, undefined));
+
+    const [results, _] = await api.listOperations("src", { minHeight: 0 });
+
+    // called 2 times because the second time there is no marker
+    expect(mockGetServerInfos).toHaveBeenCalledTimes(2);
+    expect(mockGetTransactions).toHaveBeenCalledTimes(2);
+
+    // check tokens are passed
+    const baseOptions = {
+      ledger_index_min: 1,
+      limit: 200,
+      forward: true,
+    };
+    expect(mockGetTransactions).toHaveBeenNthCalledWith(1, "src", baseOptions);
+    const optionsWithToken = {
+      ...baseOptions,
+      marker: defaultMarker,
+    };
+    expect(mockGetTransactions).toHaveBeenNthCalledWith(2, "src", optionsWithToken);
+
+    expect(results.length).toBe(txs.length * 2);
+  });
+
   it.each([
     {
       address: "WHATEVER_ADDRESS",
@@ -151,21 +182,24 @@ describe("listOperations", () => {
       // the order is reversed so that the result is always sorted by newest tx first element of the list
       expect(results).toEqual([
         {
-          hash: "HASH_VALUE",
-          address,
-          type: "Payment",
-          value: expectedValue,
-          fee: fee,
-          block: {
-            hash: "HASH_VALUE_BLOCK",
-            height: 1,
-            time: new Date("2000-01-01T00:00:01Z"),
+          operationIndex: 0,
+          tx: {
+            hash: "HASH_VALUE",
+            fees: fee,
+            date: new Date(1000000 + RIPPLE_EPOCH * 1000),
+            block: {
+              hash: "HASH_VALUE_BLOCK",
+              height: 1,
+              time: new Date("2000-01-01T00:00:01Z"),
+            },
           },
+          type: expectedType,
+          value: expectedValue,
           senders: [opSender],
           recipients: [opDestination],
-          date: new Date(1000000 + RIPPLE_EPOCH * 1000),
-          transactionSequenceNumber: 1,
           details: {
+            sequence: 1,
+            xrpTxType: "Payment",
             memos: [
               {
                 type: "687474703a2f2f6578616d706c652e636f6d2f6d656d6f2f67656e65726963",
@@ -175,41 +209,49 @@ describe("listOperations", () => {
           },
         },
         {
-          hash: "HASH_VALUE",
-          address,
-          type: "Payment",
-          value: expectedValue,
-          fee: fee,
-          block: {
-            hash: "HASH_VALUE_BLOCK",
-            height: 1,
-            time: new Date("2000-01-01T00:00:01Z"),
+          operationIndex: 0,
+          tx: {
+            hash: "HASH_VALUE",
+            fees: fee,
+            date: new Date(1000000 + RIPPLE_EPOCH * 1000),
+            block: {
+              hash: "HASH_VALUE_BLOCK",
+              height: 1,
+              time: new Date("2000-01-01T00:00:01Z"),
+            },
           },
+          type: expectedType,
+          value: expectedValue,
           senders: [opSender],
           recipients: [opDestination],
-          date: new Date(1000000 + RIPPLE_EPOCH * 1000),
-          transactionSequenceNumber: 1,
           details: {
+            sequence: 1,
+            xrpTxType: "Payment",
             destinationTag: 509555,
           },
         },
         {
-          hash: "HASH_VALUE",
-          address,
-          type: "Payment",
-          value: expectedValue,
-          fee: fee,
-          block: {
-            hash: "HASH_VALUE_BLOCK",
-            height: 1,
-            time: new Date("2000-01-01T00:00:01Z"),
+          operationIndex: 0,
+          tx: {
+            hash: "HASH_VALUE",
+            fees: fee,
+            date: new Date(1000000 + RIPPLE_EPOCH * 1000),
+            block: {
+              hash: "HASH_VALUE_BLOCK",
+              height: 1,
+              time: new Date("2000-01-01T00:00:01Z"),
+            },
           },
+          type: expectedType,
+          value: expectedValue,
           senders: [opSender],
           recipients: [opDestination],
-          date: new Date(1000000 + RIPPLE_EPOCH * 1000),
-          transactionSequenceNumber: 1,
+          details: {
+            xrpTxType: "Payment",
+            sequence: 1,
+          },
         },
-      ]);
+      ] satisfies Operation<void>[]);
     },
   );
 });

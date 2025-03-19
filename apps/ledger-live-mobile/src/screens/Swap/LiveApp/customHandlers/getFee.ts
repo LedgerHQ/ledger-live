@@ -5,13 +5,13 @@ import { getAbandonSeedAddress } from "@ledgerhq/live-common/currencies/index";
 import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
 import { AccountLike } from "@ledgerhq/types-live";
-import { NavigationProp, NavigationState } from "@react-navigation/native";
 import BigNumber from "bignumber.js";
 import { NavigatorName, ScreenName } from "~/const";
+import { NavigationType } from ".";
 import { convertToAtomicUnit, convertToNonAtomicUnit, getCustomFeesPerFamily } from "../utils";
 
 // Constants
-const CHAINS_WITH_FEE_DRAWER = ["evm", "bitcoin"];
+const CHAINS_WITH_FEE_DRAWER = ["evm"];
 const getSegWitAbandonSeedAddress = (): string => "bc1qed3mqr92zvq2s782aqkyx785u23723w02qfrgs";
 
 // Types
@@ -39,10 +39,6 @@ export interface FeeData {
   hasDrawer: boolean;
   gasLimit: BigNumber | null;
 }
-
-type NavigationType = Omit<NavigationProp<ReactNavigation.RootParamList>, "getState"> & {
-  getState(): NavigationState | undefined;
-};
 
 // Helper functions
 export function transformToBigNumbers(obj: TransformableObject): TransformableObject {
@@ -147,7 +143,9 @@ export const getFee =
     const customFeeConfig = transaction && getCustomFeesPerFamily(finalTx);
 
     // Check if chain supports fee drawer
-    const hasDrawer = CHAINS_WITH_FEE_DRAWER.includes(transaction.family);
+    const hasDrawer =
+      CHAINS_WITH_FEE_DRAWER.includes(transaction.family) &&
+      !["optimism", "arbitrum", "base"].includes(mainAccount.currency.id);
 
     // Handle fee drawer navigation if requested
     if (params.openDrawer) {

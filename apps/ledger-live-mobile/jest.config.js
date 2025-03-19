@@ -20,6 +20,7 @@ const transformIncludePatterns = [
   "react-native-vector-icons",
   "react-native-qrcode-svg",
   "react-native-video",
+  "ky",
 ];
 
 /** @type {import('ts-jest').JestConfigWithTsJest} */

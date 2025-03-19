@@ -1,83 +1,85 @@
-import type {
-  Operation,
-  AccountLike,
-  Account,
-  DeviceInfo,
-  FirmwareUpdateContext,
-} from "@ledgerhq/types-live";
-import type { NavigatorScreenParams, ParamListBase } from "@react-navigation/native";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import type {
+  Account,
+  AccountLike,
+  DeviceInfo,
+  FirmwareUpdateContext,
+  Operation,
+  SwapOperation,
+} from "@ledgerhq/types-live";
+import type { NavigatorScreenParams, ParamListBase } from "@react-navigation/native";
+// eslint-disable-next-line no-restricted-imports
+import { MappedSwapOperation } from "@ledgerhq/live-common/exchange/swap/types";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
+import { AppResult } from "@ledgerhq/live-common/hw/actions/app";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { AssetSelectionNavigatorParamsList } from "LLM/features/AssetSelection/types";
+import { AssetsNavigatorParamsList } from "LLM/features/Assets/types";
+import { DeviceSelectionNavigatorParamsList } from "LLM/features/DeviceSelection/types";
+import type { Web3HubStackParamList } from "LLM/features/Web3Hub/types";
 // eslint-disable-next-line no-restricted-imports
 import type { PropertyPath } from "lodash";
-import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import { MappedSwapOperation } from "@ledgerhq/live-common/exchange/swap/types";
-import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { AppResult } from "@ledgerhq/live-common/hw/actions/app";
-import type { Web3HubStackParamList } from "LLM/features/Web3Hub/types";
 import { NavigatorName, ScreenName } from "~/const";
 import type { FirmwareUpdateProps } from "~/screens/FirmwareUpdate";
+import type { AlgorandOptInFlowParamList } from "../../../families/algorand/OptInFlow/types";
+import type { AlgorandClaimRewardsFlowParamList } from "../../../families/algorand/Rewards/ClaimRewardsFlow/type";
+import type { CeloActivateFlowParamList } from "../../../families/celo/ActivateFlow/types";
+import type { CeloLockFlowParamList } from "../../../families/celo/LockFlow/types";
+import type { CeloRegistrationFlowParamList } from "../../../families/celo/RegistrationFlow/types";
+import type { CeloRevokeFlowFlowParamList } from "../../../families/celo/RevokeFlow/types";
+import type { CeloUnlockFlowParamList } from "../../../families/celo/UnlockFlow/types";
+import type { CeloVoteFlowParamList } from "../../../families/celo/VoteFlow/types";
+import type { CeloWithdrawFlowParamList } from "../../../families/celo/WithdrawFlow/types";
+import type { CosmosClaimRewardsFlowParamList } from "../../../families/cosmos/ClaimRewardsFlow/types";
+import type { CosmosDelegationFlowParamList } from "../../../families/cosmos/DelegationFlow/types";
+import type { CosmosRedelegationFlowParamList } from "../../../families/cosmos/RedelegationFlow/types";
+import type { CosmosUndelegationFlowParamList } from "../../../families/cosmos/UndelegationFlow/types";
+import type { EditTransactionParamList } from "../../../families/evm/EditTransactionFlow/EditTransactionParamList";
+import type { PolkadotBondFlowParamList } from "../../../families/polkadot/BondFlow/types";
+import type { PolkadotNominateFlowParamList } from "../../../families/polkadot/NominateFlow/types";
+import type { PolkadotRebondFlowParamList } from "../../../families/polkadot/RebondFlow/type";
+import type { PolkadotSimpleOperationFlowParamList } from "../../../families/polkadot/SimpleOperationFlow/types";
+import type { PolkadotUnbondFlowParamList } from "../../../families/polkadot/UnbondFlow/type";
+import type { SolanaDelegationFlowParamList } from "../../../families/solana/DelegationFlow/types";
+import type { StellarAddAssetFlowParamList } from "../../../families/stellar/AddAssetFlow/types";
+import type { TezosDelegationFlowParamList } from "../../../families/tezos/DelegationFlow/types";
+import type { TronVoteFlowParamList } from "../../../families/tron/VoteFlow/types";
 import type { AccountSettingsNavigatorParamList } from "./AccountSettingsNavigator";
 import type { AccountsNavigatorParamList } from "./AccountsNavigator";
+import type { AddAccountsNavigatorParamList } from "./AddAccountsNavigator";
+import { AnalyticsOptInPromptNavigatorParamList } from "./AnalyticsOptInPromptNavigator";
+import type { BuyDeviceNavigatorParamList } from "./BuyDeviceNavigator";
+import type { ClaimRewardsNavigatorParamList } from "./ClaimRewardsNavigator";
+import { CustomErrorNavigatorParamList } from "./CustomErrorNavigator";
+import type { CustomImageNavigatorParamList } from "./CustomImageNavigator";
+import type { EarnLiveAppNavigatorParamList } from "./EarnLiveAppNavigator";
+import type { ExchangeStackNavigatorParamList } from "./ExchangeStackNavigator";
+import type { ExploreTabNavigatorStackParamList } from "./ExploreTabNavigator";
+import { FeesNavigatorParamsList } from "./FeesNavigator";
+import type { FreezeNavigatorParamList } from "./FreezeNavigator";
 import type { ImportAccountsNavigatorParamList } from "./ImportAccountsNavigator";
+import { LandingPagesNavigatorParamList } from "./LandingPagesNavigator";
+import type { MainNavigatorParamList } from "./MainNavigator";
 import type { NftNavigatorParamList } from "./NftNavigator";
+import type { NoFundsNavigatorParamList } from "./NoFundsNavigator";
 import type { NotificationCenterNavigatorParamList } from "./NotificationCenterNavigator";
 import type { PasswordAddFlowParamList } from "./PasswordAddFlowNavigator";
 import type { PasswordModifyFlowParamList } from "./PasswordModifyFlowNavigator";
+import type { PlatformExchangeNavigatorParamList } from "./PlatformExchangeNavigator";
+import type { PostOnboardingNavigatorParamList } from "./PostOnboardingNavigator";
+import type { PtxNavigatorParamList } from "./PtxNavigator";
 import type { ReceiveFundsStackParamList } from "./ReceiveFundsNavigator";
+import type { RequestAccountNavigatorParamList } from "./RequestAccountNavigator";
 import type { SendFundsNavigatorStackParamList } from "./SendFundsNavigator";
 import type { SettingsNavigatorStackParamList } from "./SettingsNavigator";
 import type { SignMessageNavigatorStackParamList } from "./SignMessageNavigator";
 import type { SignTransactionNavigatorParamList } from "./SignTransactionNavigator";
-import type { SwapNavigatorParamList } from "./SwapNavigator";
-import type { EarnLiveAppNavigatorParamList } from "./EarnLiveAppNavigator";
-import type { PlatformExchangeNavigatorParamList } from "./PlatformExchangeNavigator";
-import type { ExchangeStackNavigatorParamList } from "./ExchangeStackNavigator";
-import type { PtxNavigatorParamList } from "./PtxNavigator";
-import type { RequestAccountNavigatorParamList } from "./RequestAccountNavigator";
-import type { AddAccountsNavigatorParamList } from "./AddAccountsNavigator";
-import type { ClaimRewardsNavigatorParamList } from "./ClaimRewardsNavigator";
-import type { UnfreezeNavigatorParamList } from "./UnfreezeNavigator";
-import type { FreezeNavigatorParamList } from "./FreezeNavigator";
-import type { BuyDeviceNavigatorParamList } from "./BuyDeviceNavigator";
-import type { MainNavigatorParamList } from "./MainNavigator";
-import type { WalletConnectLiveAppNavigatorParamList } from "./WalletConnectLiveAppNavigator";
-import type { PostOnboardingNavigatorParamList } from "./PostOnboardingNavigator";
-import type { CustomImageNavigatorParamList } from "./CustomImageNavigator";
-import type { PolkadotSimpleOperationFlowParamList } from "../../../families/polkadot/SimpleOperationFlow/types";
-import type { PolkadotNominateFlowParamList } from "../../../families/polkadot/NominateFlow/types";
-import type { PolkadotUnbondFlowParamList } from "../../../families/polkadot/UnbondFlow/type";
-import type { PolkadotRebondFlowParamList } from "../../../families/polkadot/RebondFlow/type";
-import type { PolkadotBondFlowParamList } from "../../../families/polkadot/BondFlow/types";
-import type { AlgorandClaimRewardsFlowParamList } from "../../../families/algorand/Rewards/ClaimRewardsFlow/type";
-import type { AlgorandOptInFlowParamList } from "../../../families/algorand/OptInFlow/types";
-import type { CeloWithdrawFlowParamList } from "../../../families/celo/WithdrawFlow/types";
-import type { CeloRevokeFlowFlowParamList } from "../../../families/celo/RevokeFlow/types";
-import type { CeloActivateFlowParamList } from "../../../families/celo/ActivateFlow/types";
-import type { CeloVoteFlowParamList } from "../../../families/celo/VoteFlow/types";
-import type { CeloUnlockFlowParamList } from "../../../families/celo/UnlockFlow/types";
-import type { CeloLockFlowParamList } from "../../../families/celo/LockFlow/types";
-import type { CeloRegistrationFlowParamList } from "../../../families/celo/RegistrationFlow/types";
-import type { CosmosDelegationFlowParamList } from "../../../families/cosmos/DelegationFlow/types";
-import type { CosmosRedelegationFlowParamList } from "../../../families/cosmos/RedelegationFlow/types";
-import type { CosmosUndelegationFlowParamList } from "../../../families/cosmos/UndelegationFlow/types";
-import type { CosmosClaimRewardsFlowParamList } from "../../../families/cosmos/ClaimRewardsFlow/types";
-import type { SolanaDelegationFlowParamList } from "../../../families/solana/DelegationFlow/types";
-import type { StellarAddAssetFlowParamList } from "../../../families/stellar/AddAssetFlow/types";
-import type { TezosDelegationFlowParamList } from "../../../families/tezos/DelegationFlow/types";
-import type { EditTransactionParamList } from "../../../families/evm/EditTransactionFlow/EditTransactionParamList";
-import type { TronVoteFlowParamList } from "../../../families/tron/VoteFlow/types";
-import type { NoFundsNavigatorParamList } from "./NoFundsNavigator";
 import type { StakeNavigatorParamList } from "./StakeNavigator";
-import type { ExploreTabNavigatorStackParamList } from "./ExploreTabNavigator";
-import { AnalyticsOptInPromptNavigatorParamList } from "./AnalyticsOptInPromptNavigator";
-import { LandingPagesNavigatorParamList } from "./LandingPagesNavigator";
-import { CustomErrorNavigatorParamList } from "./CustomErrorNavigator";
+import type { SwapNavigatorParamList } from "./SwapNavigator";
+import type { UnfreezeNavigatorParamList } from "./UnfreezeNavigator";
+import type { WalletConnectLiveAppNavigatorParamList } from "./WalletConnectLiveAppNavigator";
 import type { WalletSyncNavigatorStackParamList } from "./WalletSyncNavigator";
-import { DeviceSelectionNavigatorParamsList } from "LLM/features/DeviceSelection/types";
-import { AssetSelectionNavigatorParamsList } from "LLM/features/AssetSelection/types";
-import { AssetsNavigatorParamsList } from "LLM/features/Assets/types";
-import { FeesNavigatorParamsList } from "./FeesNavigator";
 
 export type NavigateInput<
   ParamList extends ParamListBase = ParamListBase,
@@ -332,6 +334,8 @@ export type BaseNavigatorStackParamList = {
     } // in some cases we need to pass directly the context to the navigator and let it handle the logic
   >;
   [NavigatorName.Assets]?: Partial<NavigatorScreenParams<AssetsNavigatorParamsList>>;
+  [ScreenName.SwapHistory]: undefined;
+  [ScreenName.SwapPendingOperation]: { swapOperation: SwapOperation };
 };
 
 declare global {

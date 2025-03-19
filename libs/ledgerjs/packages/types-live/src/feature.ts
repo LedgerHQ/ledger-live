@@ -1,6 +1,6 @@
 import { ABTestingVariants } from "./ABTesting";
 import { ChainwatchNetwork } from "./chainwatch";
-import { LldNanoSUpsellBannersConfig } from "./lnsUpsell";
+import { LldNanoSUpsellBannersConfig, LlmNanoSUpsellBannersConfig } from "./lnsUpsell";
 import { StorylyInstanceID, StorylyInstanceType } from "./storyly";
 import { WalletSyncEnvironment, WalletSyncWatchConfig } from "./walletSync";
 
@@ -213,7 +213,10 @@ export type Features = CurrencyFeatures & {
   llmLedgerSyncEntryPoints: Feature_LlmLedgerSyncEntryPoints;
   lldLedgerSyncEntryPoints: Feature_LldLedgerSyncEntryPoints;
   lldNanoSUpsellBanners: Feature_LldNanoSUpsellBanners;
+  llmNanoSUpsellBanners: Feature_LlmNanoSUpsellBanners;
   llmThai: DefaultFeature;
+  lldThai: DefaultFeature;
+  lldSolanaNfts: DefaultFeature;
 };
 
 /**
@@ -592,6 +595,11 @@ export type Feature_LlmRebornLP = Feature<{
 export type Feature_LldNanoSUpsellBanners = Feature<{
   opted_in: LldNanoSUpsellBannersConfig;
   opted_out: LldNanoSUpsellBannersConfig & { portfolio: boolean };
+}>;
+
+export type Feature_LlmNanoSUpsellBanners = Feature<{
+  opted_in: LlmNanoSUpsellBannersConfig;
+  opted_out: LlmNanoSUpsellBannersConfig;
 }>;
 
 /**

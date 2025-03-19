@@ -47,6 +47,9 @@ describe("listOperations", () => {
       address: someDestinationAddress,
     },
     newDelegate: null,
+    storageFee: 1,
+    bakerFee: 2,
+    allocationFee: 3,
   };
 
   const undelegate: APIDelegationType = {
@@ -92,6 +95,20 @@ describe("listOperations", () => {
     expect(token).toEqual(JSON.stringify(operation.id));
   });
 
+  it.each([
+    ["undelegate", { ...undelegate, storageFee: 1, bakerFee: 2, allocationFee: 3 }],
+    ["delegate", { ...delegate, storageFee: 1, bakerFee: 2, allocationFee: 3 }],
+    ["transfer", { ...transfer, storageFee: 1, bakerFee: 2, allocationFee: 3 }],
+  ])("should compute the fees properly for %s operation", async (_label, operation) => {
+    // Given
+    mockNetworkGetTransactions.mockResolvedValue([operation]);
+    // When
+    const [results, _] = await listOperations("any address", options);
+    // Then
+    expect(results.length).toEqual(1);
+    expect(results[0].tx.fees).toEqual(BigInt(6));
+  });
+
   it("should return empty sender list when no sender can be found", async () => {
     // Given
     const operation = { ...undelegate, sender: null };
@@ -109,6 +126,6 @@ describe("listOperations", () => {
     const op2 = { ...undelegate, level: "2" };
     mockNetworkGetTransactions.mockResolvedValue([op1, op2]);
     const [results, _] = await listOperations("any address", options);
-    expect(results.map(op => op.block.height)).toEqual(["2", "1"]);
+    expect(results.map(op => op.tx.block.height)).toEqual(["2", "1"]);
   });
 });

@@ -14,6 +14,7 @@ import {
   TxOutputFormat,
   TxOutputDestinationType,
   Withdrawal,
+  DRepParamsType,
 } from "@cardano-foundation/ledgerjs-hw-app-cardano";
 import { str_to_path } from "@cardano-foundation/ledgerjs-hw-app-cardano/dist/utils/address";
 import {
@@ -138,6 +139,16 @@ function prepareCertificate(cert: SignerTxCertificate): Certificate {
         type: CertificateType.STAKE_DEREGISTRATION,
         params: {
           stakeCredential,
+        },
+      };
+    case "VOTE_DELEGATION_ABSTAIN":
+      return {
+        type: CertificateType.VOTE_DELEGATION,
+        params: {
+          stakeCredential,
+          dRep: {
+            type: DRepParamsType.ABSTAIN,
+          },
         },
       };
     default:

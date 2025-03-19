@@ -2626,6 +2626,10 @@
         "description3Link": "This integration has been carried out by <1><0>{{team}}</0></1> in collaboration with Ledger"
       }
     },
+    "migrationBanner": {
+      "title": "{{from}} is migrating to {{to}}. Follow this <0>link</0> to know more or contact the support if you need assistance.",
+      "contactSupport": "Contact support"
+    },
     "willBedeprecatedBanner": {
       "title": "To optimize efficiencies, {{currencyName}} will not be supported on Ledger Live as of {{deprecatedDate}}. However, it will still be supported on Ledger hardware wallets. Please contact Ledger Customer Support if you would like assistance on this.",
       "contactSupport": "Contact support"
@@ -3461,6 +3465,7 @@
         "CTAButton": "Add account"
       },
       "history": {
+        "button": "Go to history",
         "tab": "History",
         "disclaimer": "Your swap mobile transactions are not synchronized with Ledger Live Desktop",
         "exportButton": "Export operations",
@@ -3533,7 +3538,13 @@
         "apt_title": "Ledger Nano S™ does not support swapping Aptos",
         "apt_description": "To swap Aptos, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
         "cosmos_title": "Ledger Nano S™ does not support swapping Cosmos",
-        "cosmos_description": "To swap Cosmos, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
+        "cosmos_description": "To swap Cosmos, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+        "osmo_title": "Ledger Nano S™ does not support swapping Osmosis",
+        "osmo_description": "To swap Osmosis, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+        "dydx_title": "Ledger Nano S™ does not support swapping dYdX",
+        "dydx_description": "To swap dYdX, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+        "sui_title": "Ledger Nano S™ does not support swapping Sui",
+        "sui_description": "To swap Sui, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
       }
     },
     "lending": {
@@ -6743,7 +6754,7 @@
   "postOnboarding": {
     "hub": {
       "title": "Next up, use your {{productName}} to...",
-      "allDoneTitle": "You're all set! Keep going and explore your portfolio",
+      "areAllPostOnboardingActionsCompletedTitle": "You're all set! Keep going and explore your portfolio",
       "skip": "I’ll do this later",
       "viewWallet": "Explore my portfolio"
     },
@@ -7328,6 +7339,16 @@
       "subTitle": "Looks like you haven’t added an account yet. Get started now.",
       "cta": "Add an account",
       "link": "Need help? Learn how to add an account to Ledger\u00a0Live."
+    }
+  },
+  "lnsUpsell": {
+    "opted_in": {
+      "description": "Upgrade your Ledger Nano S to a newer Ledger — like the Ledger Flex — for more memory, the latest security enhancements, fresh features, and an exclusive 20% off. ",
+      "cta": "Upgrade my Ledger"
+    },
+    "opted_out": {
+      "description": "The limited memory of your Ledger Nano S restricts your access to the latest features, blockchain changes and security enhancements. For long-term use, upgrade to a newer Ledger device.",
+      "cta": "Learn more"
     }
   }
 }

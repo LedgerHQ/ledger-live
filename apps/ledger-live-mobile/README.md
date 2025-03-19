@@ -196,6 +196,28 @@ List of Flipper's plugins that will help you to debug efficiently the applicatio
 - React DevTools
 - Redux Debugger
 
+#### Reactotron ⚛️
+
+Reactotron is a development tool that helps you debug React and React Native applications.
+In this repo, we integrate the following plugins/features such as: 
+- Logging (errors, logs), 
+- Redux, 
+- Network monitoring, 
+- Storybook.
+
+To use Reactotron in your project, follow these steps:
+
+1. Download the desktop app from [here](https://github.com/infinitered/reactotron/releases?q=reactotron-app&expanded=true)
+
+2. Open it
+
+3. Run the LLM dev mode `pnpm dev:llm`
+
+
+### End to end testing
+
+Refer to the e2e specific [wiki](https://github.com/LedgerHQ/ledger-live/wiki/LLM:End-to-end-testing).
+
 ### Native code
 
 #### XCode / Android studio
