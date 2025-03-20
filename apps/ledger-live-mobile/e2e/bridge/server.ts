@@ -1,19 +1,8 @@
-import { Server, WebSocket } from "ws";
+import { Server } from "ws";
 import path from "path";
 import fs from "fs";
 import net from "net";
 import merge from "lodash/merge";
-//const { toAccountRaw } = require("@ledgerhq/live-common/account/index");
-/*let toAccountRaw: (account: Account, userData?: AccountUserData) => AccountRaw;
-import jest from "jest";
-
-jest.isolateModules(() => {
-  toAccountRaw = require("@ledgerhq/live-common/account/index").toAccountRaw;
-});*/
-/*const webSocket: { wss: Server | undefined; ws: WebSocket | undefined } = {
-  wss: undefined,
-  ws: undefined,
-};*/
 
 import { NavigatorName } from "../../src/const";
 import { Subject } from "rxjs";
@@ -23,6 +12,7 @@ import { DeviceUSB, nanoSP_USB, nanoS_USB, nanoX_USB } from "../models/devices";
 import { MessageData, MockDeviceEvent, ServerData } from "./types";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { SettingsSetOverriddenFeatureFlagsPlayload } from "~/actions/types";
+import { log as detoxLog } from "detox";
 
 export const e2eBridgeServer = new Subject<ServerData>();
 let lastMessages: { [id: string]: MessageData } = {}; // Store the last messages not sent
@@ -138,15 +128,15 @@ export async function loadAccountsRaw(
     version: number;
   }[],
 ) {
-  /*await postMessage({
+  await postMessage({
     type: "importAccounts",
     id: uniqueId(),
     payload,
-  });*/
+  });
 }
 
 export async function loadAccounts(accounts: Account[]) {
-  /*delete require.cache[require.resolve("@ledgerhq/live-common/account/index")]; // Clear cache
+  delete require.cache[require.resolve("@ledgerhq/live-common/account/index")]; // Clear cache
   const toAccountRaw = require("@ledgerhq/live-common/account/index").toAccountRaw;
   await postMessage({
     type: "importAccounts",
@@ -155,7 +145,7 @@ export async function loadAccounts(accounts: Account[]) {
       version: 1,
       data: toAccountRaw(account),
     })),
-  });*/
+  });
 }
 
 async function navigate(name: string) {
@@ -278,8 +268,7 @@ function onMessage(messageStr: string) {
 }
 
 function log(message: string) {
-  // eslint-disable-next-line no-console
-  console.log(`[E2E Bridge Server]: ${message}`);
+  detoxLog.info(`[E2E Bridge Server]: ${message}`);
 }
 
 async function acceptTerms() {

@@ -1,14 +1,15 @@
 import { expect } from "detox";
-import { isMock, openDeeplink } from "../../helpers";
+import { openDeeplink } from "../../helpers";
 import CommonPage from "../common.page";
 import { CurrencyType } from "@ledgerhq/live-common/e2e/enum/Currency";
+import { getEnv } from "@ledgerhq/live-env";
 
 const baseLink = "add-account";
 
 export default class AddAccountDrawer extends CommonPage {
   deselectAllButtonId = "add-accounts-deselect-all";
   accountId = (currency: string, index: number) =>
-    isMock() ? `mock:1:${currency}:MOCK_${currency}_${index}:` : `js:2:${currency}:.*`;
+    getEnv("MOCK") ? `mock:1:${currency}:MOCK_${currency}_${index}:` : `js:2:${currency}:.*`;
   accountTitleId = (accountName: string, index: number) =>
     getElementById(`test-id-account-${accountName}`, index);
   modalButtonId = "add-accounts-modal-add-button";

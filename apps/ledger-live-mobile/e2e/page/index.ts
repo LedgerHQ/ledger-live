@@ -39,12 +39,24 @@ import { lastValueFrom, Observable } from "rxjs";
 import path from "path";
 import fs from "fs";
 import { SettingsSetOverriddenFeatureFlagsPlayload } from "~/actions/types";
-import { setupEnvironment } from "../globalHelpers";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { log } from "detox";
-import { isMock } from "../helpers";
 
-setupEnvironment();
+setEnv("DISABLE_APP_VERSION_REQUIREMENTS", true);
+
+if (process.env.MOCK == "0") {
+  setEnv("MOCK", "");
+  process.env.MOCK = "";
+} else {
+  setEnv("MOCK", "1");
+  process.env.MOCK = "1";
+}
+
+if (process.env.DISABLE_TRANSACTION_BROADCAST == "0") {
+  setEnv("DISABLE_TRANSACTION_BROADCAST", false);
+} else if (getEnv("MOCK") != "1") {
+  setEnv("DISABLE_TRANSACTION_BROADCAST", true);
+}
 
 type CliCommand = (userdataPath?: string) => Observable<unknown> | Promise<unknown> | string;
 
@@ -85,7 +97,7 @@ export class Application {
   private accountsPageInstance = lazyInit(AccountsPage);
   private addAccountDrawerInstance = lazyInit(AddAccountDrawer);
   private buyDevicePageInstance = lazyInit(BuyDevicePage);
-  private commonPageInstance = new CommonPage();
+  private commonPageInstance = lazyInit(CommonPage);
   private cryptoDrawerInstance = lazyInit(CryptoDrawer);
   private customLockscreenPageInstance = lazyInit(CustomLockscreenPage);
   private deviceValidationPageInstance = lazyInit(DeviceValidationPage);
@@ -126,7 +138,8 @@ export class Application {
     const userdataPath = getUserdataPath(userdataSpeculos);
     console.warn("userdataPath", userdataPath);
 
-    if (!isMock()) fs.copyFileSync(getUserdataPath(userdata || "skip-onboarding"), userdataPath);
+    if (!getEnv("MOCK"))
+      fs.copyFileSync(getUserdataPath(userdata || "skip-onboarding"), userdataPath);
 
     for (const { nanoApp, cmd } of cliCommandsOnApp || []) {
       const proxyPort = await app.common.addSpeculos(nanoApp.name);
@@ -139,7 +152,7 @@ export class Application {
       await executeCliCommand(cmd, userdataPath);
     }
 
-    if (!isMock()) {
+    if (!getEnv("MOCK")) {
       await loadConfig(userdataSpeculos, true);
       fs.existsSync(userdataPath) && fs.unlinkSync(userdataPath);
     } else userdata && (await loadConfig(userdata, true));
@@ -165,7 +178,7 @@ export class Application {
     return this.buyDevicePageInstance();
   }
   public get common() {
-    return this.commonPageInstance;
+    return this.commonPageInstance();
   }
   public get cryptoDrawer() {
     return this.cryptoDrawerInstance();

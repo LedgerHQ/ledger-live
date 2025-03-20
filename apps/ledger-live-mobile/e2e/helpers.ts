@@ -48,10 +48,6 @@ export function isAndroid() {
   return device.getPlatform() === "android";
 }
 
-export function isMock() {
-  return process.env.MOCK === "1";
-}
-
 export async function launchSpeculos(appName: string) {
   // Ensure the portCounter stays within the valid port range
   if (portCounter > MAX_PORT) {

@@ -1,8 +1,8 @@
 import { randomUUID } from "crypto";
+import { e2eBridgeServer } from "../bridge/server";
 import { first, filter, map } from "rxjs/operators";
 import { startDummyServer, stopDummyServer as stopDummyServer } from "@ledgerhq/test-utils";
 import { firstValueFrom } from "rxjs";
-import { e2eBridgeServer } from "../bridge/server";
 
 export async function startLiveApp(liveAppDirectory: string, liveAppPort = 3000) {
   try {

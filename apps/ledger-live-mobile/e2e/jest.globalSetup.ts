@@ -1,11 +1,8 @@
 /* eslint-disable no-var */
 import { globalSetup } from "detox/runners/jest";
 import { Subscription } from "rxjs";
-import { Subject } from "rxjs";
-import { ServerData } from "./bridge/types";
 import { Server, WebSocket } from "ws";
 import { Step } from "jest-allure2-reporter/api";
-//import { device, element, by, waitFor, web, expect as detoxExpect, log } from "detox";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 import { Delegate } from "@ledgerhq/live-common/e2e/models/Delegate";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
@@ -15,14 +12,13 @@ import { ElementHelper } from "./elementHelper";
 import { CLI } from "./utils/cliUtils";
 import expect from "expect";
 
-//if (!globalThis.Step) {
 Object.defineProperty(globalThis, "Step", {
   value: Step,
   writable: true,
   configurable: true,
   enumerable: true,
 });
-//}
+
 import { Application } from "./page";
 
 type StepType = typeof Step;
@@ -33,18 +29,19 @@ type DelegateType = typeof Delegate;
 type AccountType = typeof Account;
 type TransactionType = typeof Transaction;
 
-//import { setupEnvironment } from "./globalHelpers";
-//import detox from "detox";
-
 declare global {
   var IS_FAILED: boolean;
   var speculosDevices: Map<number, string>;
   var proxySubscriptions: Map<number, { port: number; subscription: Subscription }>;
-  //var e2eBridgeServer: Subject<ServerData>;
   var webSocket: { wss: Server | undefined; ws: WebSocket | undefined };
   var app: Application;
   var Step: StepType;
   var CLI: CLIType;
+  var jestExpect: expectType;
+  var Currency: CurrencyType;
+  var Delegate: DelegateType;
+  var Account: AccountType;
+  var Transaction: TransactionType;
 
   var waitForElementById: typeof ElementHelper.waitForElementById;
   var waitForElementByText: typeof ElementHelper.waitForElementByText;
@@ -70,18 +67,6 @@ declare global {
   var scrollToId: typeof ElementHelper.scrollToId;
   var getTextOfElement: typeof ElementHelper.getTextOfElement;
   var getIdOfElement: typeof ElementHelper.getIdOfElement;
-  /*var detoxExpect: Detox.DetoxExportWrapper["expect"];
-  var log: Detox.DetoxExportWrapper["log"];
-  var detoxDevice: Detox.DetoxExportWrapper["device"];
-  var detoxWaitFor: Detox.DetoxExportWrapper["waitFor"];
-  var detoxBy: Detox.DetoxExportWrapper["by"];
-  var detoxWeb: Detox.DetoxExportWrapper["web"];
-  var detoxElement: Detox.DetoxExportWrapper["element"];*/
-  var jestExpect: expectType;
-  var Currency: CurrencyType;
-  var Delegate: DelegateType;
-  var Account: AccountType;
-  var Transaction: TransactionType;
 }
 
 export default async () => {
@@ -89,8 +74,7 @@ export default async () => {
   global.IS_FAILED = false;
   global.speculosDevices = new Map<number, string>();
   global.proxySubscriptions = new Map<number, { port: number; subscription: Subscription }>();
-  //global.e2eBridgeServer = new Subject<ServerData>();
-  //setupEnvironment();
+
   global.app = new Application();
   global.webSocket = { wss: undefined, ws: undefined };
   global.CLI = CLI;
@@ -99,13 +83,6 @@ export default async () => {
   global.Delegate = Delegate;
   global.Account = Account;
   global.Transaction = Transaction;
-  /* global.detoxDevice = device;
-  global.detoxBy = by;
-  global.detoxWeb = web;
-  global.detoxElement = element;
-  global.detoxExpect = detoxExpect;
-  global.log = log;
-  global.detoxWaitFor = waitFor;*/
 
   global.waitForElementById = ElementHelper.waitForElementById;
   global.waitForElementByText = ElementHelper.waitForElementByText;
@@ -131,11 +108,4 @@ export default async () => {
   global.scrollToId = ElementHelper.scrollToId;
   global.getTextOfElement = ElementHelper.getTextOfElement;
   global.getIdOfElement = ElementHelper.getIdOfElement;
-  /*global.detoxExpect = detox.expect;
-  global.log = detox.log;
-  global.detoxDevice = detox.device;
-  global.detoxWaitFor = detox.waitFor;
-  global.detoxBy = detox.by;
-  global.detoxWeb = detox.web;
-  global.detoxElement = detox.element;*/
 };

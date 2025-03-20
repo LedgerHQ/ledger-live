@@ -54,6 +54,4 @@ module.exports = async () => ({
   },
   transformIgnorePatterns: [`node_modules/.pnpm/(?!(${transformIncludePatterns.join("|")}))`],
   verbose: true,
-  clearMocks: true,
-  resetModules: true,
 });

@@ -5,25 +5,21 @@ import { getFlags } from "../../../bridge/server";
 
 const tmsLinks = ["B2CQA-2292", "B2CQA-2293", "B2CQA-2296"];
 
-type LedgerKeyRingProtocolArgs = {
-  apiBaseUrl: string;
-  pubKey: string;
-  privateKey: string;
+const ledgerKeyRingProtocolArgs = {
+  apiBaseUrl: "",
+  pubKey: "",
+  privateKey: "",
+};
+const ledgerSyncPushDataArgs = {
+  rootId: "",
+  walletSyncEncryptionKey: "",
+  applicationPath: "",
+  push: true,
+  data: '{"accounts":[{"id":"mock:1:dogecoin:0.790010769447963:","currencyId":"dogecoin","index":1,"seedIdentifier":"mock","derivationMode":"","freshAddress":"1uVnrWAzycYqKUXSuNXt3XSjJ8"},{"id":"mock:1:bitcoin_gold:0.8027791663782486:","currencyId":"bitcoin_gold","index":1,"seedIdentifier":"mock","derivationMode":"","freshAddress":"1Y5T8JQqBKUS7cXbxUYCR4wg3YSbV9R"}],"accountNames":{"mock:1:dogecoin:0.790010769447963:":"Dogecoin 2","mock:1:bitcoin_gold:0.8027791663782486:":"Bitcoin Gold 2"}}',
+  cloudSyncApiBaseUrl: "",
 };
 
-type LedgerSyncPushDataArgs = {
-  rootId?: string;
-  walletSyncEncryptionKey?: string;
-  applicationPath?: string;
-  push?: boolean;
-  data?: string;
-  cloudSyncApiBaseUrl: string;
-};
-
-async function initializeLedgerKeyRingProtocol(
-  ledgerKeyRingProtocolArgs: LedgerKeyRingProtocolArgs,
-  ledgerSyncPushDataArgs: LedgerSyncPushDataArgs,
-) {
+async function initializeLedgerKeyRingProtocol() {
   const environment = JSON.parse(await getFlags()).llmWalletSync.params?.environment;
   ledgerKeyRingProtocolArgs.apiBaseUrl =
     environment == "PROD" ? getEnv("TRUSTCHAIN_API_PROD") : getEnv("TRUSTCHAIN_API_STAGING");
@@ -42,10 +38,7 @@ async function initializeLedgerKeyRingProtocol(
   });
 }
 
-async function initializeLedgerSync(
-  ledgerKeyRingProtocolArgs: LedgerKeyRingProtocolArgs,
-  ledgerSyncPushDataArgs: LedgerSyncPushDataArgs,
-) {
+async function initializeLedgerSync() {
   const output = CLI.ledgerKeyRingProtocol({
     getKeyRingTree: true,
     ...ledgerKeyRingProtocolArgs,
@@ -62,29 +55,15 @@ async function initializeLedgerSync(
 }
 
 describe(`Ledger Sync Accounts`, () => {
-  const ledgerKeyRingProtocolArgs = {
-    apiBaseUrl: "",
-    pubKey: "",
-    privateKey: "",
-  };
-  const ledgerSyncPushDataArgs = {
-    rootId: "",
-    walletSyncEncryptionKey: "",
-    applicationPath: "",
-    push: true,
-    data: '{"accounts":[{"id":"mock:1:dogecoin:0.790010769447963:","currencyId":"dogecoin","index":1,"seedIdentifier":"mock","derivationMode":"","freshAddress":"1uVnrWAzycYqKUXSuNXt3XSjJ8"},{"id":"mock:1:bitcoin_gold:0.8027791663782486:","currencyId":"bitcoin_gold","index":1,"seedIdentifier":"mock","derivationMode":"","freshAddress":"1Y5T8JQqBKUS7cXbxUYCR4wg3YSbV9R"}],"accountNames":{"mock:1:dogecoin:0.790010769447963:":"Dogecoin 2","mock:1:bitcoin_gold:0.8027791663782486:":"Bitcoin Gold 2"}}',
-    cloudSyncApiBaseUrl: "",
-  };
-
   beforeAll(async () => {
     await app.init({
       speculosApp: AppInfos.LS,
       cliCommands: [
         async () => {
-          return initializeLedgerKeyRingProtocol(ledgerKeyRingProtocolArgs, ledgerSyncPushDataArgs);
+          return initializeLedgerKeyRingProtocol();
         },
         async () => {
-          return initializeLedgerSync(ledgerKeyRingProtocolArgs, ledgerSyncPushDataArgs);
+          return initializeLedgerSync();
         },
         async () => {
           return CLI.ledgerSync({

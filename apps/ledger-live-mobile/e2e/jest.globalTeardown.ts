@@ -2,7 +2,7 @@ import { globalTeardown } from "detox/runners/jest";
 import { promises as fs } from "fs";
 import { getEnvs, getFlags, loadConfig } from "./bridge/server";
 import { formatFlagsData, formatEnvData } from "@ledgerhq/live-common/e2e/index";
-import { launchApp, setupEnvironment } from "./globalHelpers";
+import { launchApp } from "./globalHelpers";
 import detox from "detox/internals";
 import { close as closeBridge } from "./bridge/server";
 
@@ -11,7 +11,6 @@ const shouldManageDetox = detox.getStatus() === "inactive";
 
 export default async () => {
   if (process.env.CI) {
-    setupEnvironment();
     try {
       await initDetox();
       await launchApp();
