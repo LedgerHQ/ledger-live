@@ -111,9 +111,9 @@ describe("getTransactionStatus Test", () => {
     expect(result).toEqual(expected);
   });
 
-  it("should return error for NotEnoughBalance for token account", async () => {
+  it("should return error for NotEnoughBalance for token account when not enough tokens", async () => {
     const account = createFixtureAccountWithSubAccount("coin");
-    account.spendableBalance = BigNumber(1);
+    account.spendableBalance = BigNumber(300);
 
     const transaction = createFixtureTransactionWithSubAccount();
     transaction.recipient = "0x" + "0".repeat(64);
@@ -129,7 +129,7 @@ describe("getTransactionStatus Test", () => {
       warnings: {},
       estimatedFees: BigNumber(200),
       amount: BigNumber(2000),
-      totalSpent: BigNumber(2200),
+      totalSpent: BigNumber(2000),
     };
 
     expect(result).toEqual(expected);
@@ -160,7 +160,7 @@ describe("getTransactionStatus Test", () => {
     expect(result).toEqual(expected);
   });
 
-  it("should return error for NotEnoughBalance for token account with use all amount option", async () => {
+  it("should return error for NotEnoughBalance for token account with use all amount option when not enough fees", async () => {
     const account = createFixtureAccountWithSubAccount("coin");
     account.spendableBalance = BigNumber(10);
 
@@ -179,7 +179,7 @@ describe("getTransactionStatus Test", () => {
       warnings: {},
       estimatedFees: BigNumber(200),
       amount: BigNumber(1000),
-      totalSpent: BigNumber(1200),
+      totalSpent: BigNumber(1000),
     };
 
     expect(result).toEqual(expected);
