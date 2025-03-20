@@ -54,7 +54,6 @@ export function useStake() {
       const localManifest = getLocalLiveAppManifestById(platformId);
       const remoteManifest = getRemoteLiveAppManifestById(platformId, remoteLiveAppRegistry);
       const manifest: LiveAppManifest | undefined = remoteManifest || localManifest;
-      console.log({ localManifest, remoteManifest });
 
       return manifest;
     },
