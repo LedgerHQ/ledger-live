@@ -37,30 +37,6 @@ jobs:
       head_branch: ${{ github.event.pull_request.head.ref || github.event.merge_group.head_ref }}
       base_branch: ${{ github.event.pull_request.base.ref || github.event.merge_group.base_ref }}
 
-  log-affected:
-    name: "Log Affected"
-    needs: determine-affected
-    runs-on: ubuntu-latest
-    steps:
-      - name: Process paths
-        id: process_paths
-        run: |
-          paths="${{ needs.determine-affected.outputs.paths }}"
-          modified_paths="${paths:1:-1}"
-          echo "modified_paths=$modified_paths" >> $GITHUB_ENV
-
-      - name: Log affected paths
-        run: |
-          echo "AFFECTED : ${{needs.determine-affected.outputs.affected}}"
-          echo "PATHS : ${{needs.determine-affected.outputs.paths}}"
-          echo "PACKAGES : ${{needs.determine-affected.outputs.packages}}"
-
-          IFS=',' read -r -a paths_array <<< "${{env.modified_paths}}"
-          for path in "${paths_array[@]}"
-          do
-            echo "$path"
-          done
-
   # LLD
   build-desktop:
     name: "Build Desktop"
@@ -155,14 +131,12 @@ jobs:
     needs: prepare-pr-analysis
     steps:
       - name: Process paths
-        id: process_paths
         run: |
           paths="${{ needs.determine-affected.outputs.paths }}"
           modified_paths="${paths:1:-1}"
           echo "modified_paths=$modified_paths" >> $GITHUB_ENV
 
-      - id: run_scan
-        name: Run Scan
+      - name: Run Scan
         uses: SonarSource/sonarqube-scan-action@v4
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
