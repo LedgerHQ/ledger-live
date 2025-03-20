@@ -20,6 +20,13 @@ export const tokenAccount = {
   spendableBalance: new BigNumber("5000000"),
   token: {
     contractAddress: "contractAddress",
+    units: [
+      {
+        code: "NOT",
+        magnitude: 9,
+        name: "Notcoin",
+      },
+    ],
   },
   jettonWallet: "0:A2CC9B938389950125001F6B8AF280CACA23BE045714AD69387DD546588D667E",
 } as TonSubAccount;
