@@ -63,6 +63,6 @@ describe("scanAccounts", () => {
     );
 
     // Then
-    expect(account.used).toBeTruthy();
+    expect(account.used).toBe(true);
   });
 });

@@ -11,39 +11,67 @@ import {
 } from "./derivation";
 
 describe("getPreferredNewAccountScheme", () => {
-  it("should return a list of schemes for a given currency", () => {
-    const testData: [string, string[] | null][] = [
-      ["bitcoin", ["native_segwit", "taproot", "segwit", ""]],
-      ["ethereum", null],
-      ["cosmos", null],
-      ["litecoin", ["native_segwit", "segwit", ""]],
-      ["qtum", ["segwit", ""]],
-    ];
-    testData.forEach(([currencyId, derivationModes]) => {
-      if (!currencyId) return;
+  it.each([
+    {
+      currencyId: "bitcoin",
+      derivationModes: ["native_segwit", "taproot", "segwit", ""],
+    },
+    {
+      currencyId: "ethereum",
+      derivationModes: null,
+    },
+    {
+      currencyId: "cosmos",
+      derivationModes: null,
+    },
+    {
+      currencyId: "litecoin",
+      derivationModes: ["native_segwit", "segwit", ""],
+    },
+    {
+      currencyId: "qtum",
+      derivationModes: ["segwit", ""],
+    },
+  ])(
+    "should return a list` of schemes for currency $currencyId",
+    ({ currencyId, derivationModes }) => {
       const currency = getCryptoCurrencyById(currencyId);
       const p = getPreferredNewAccountScheme(currency);
       expect(p).toEqual(derivationModes);
-    });
-  });
+    },
+  );
 });
 
 describe("getDefaultPreferredNewAccountScheme", () => {
-  it("should return a default scheme for a given currency", () => {
-    const testData = [
-      ["bitcoin", "native_segwit"],
-      ["ethereum", null],
-      ["cosmos", null],
-      ["litecoin", "native_segwit"],
-      ["qtum", "segwit"],
-    ];
-    testData.forEach(([currencyId, derivationMode]) => {
-      if (!currencyId) return;
+  it.each([
+    {
+      currencyId: "bitcoin",
+      derivationMode: "native_segwit",
+    },
+    {
+      currencyId: "ethereum",
+      derivationMode: null,
+    },
+    {
+      currencyId: "cosmos",
+      derivationMode: null,
+    },
+    {
+      currencyId: "litecoin",
+      derivationMode: "native_segwit",
+    },
+    {
+      currencyId: "qtum",
+      derivationMode: "segwit",
+    },
+  ])(
+    "should return a default scheme for currency $currencyId",
+    ({ currencyId, derivationMode }) => {
       const currency = getCryptoCurrencyById(currencyId);
       const defaultP = getDefaultPreferredNewAccountScheme(currency);
       expect(defaultP).toEqual(derivationMode);
-    });
-  });
+    },
+  );
 });
 
 describe("getDerivationModesForCurrency", () => {

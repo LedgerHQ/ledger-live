@@ -223,10 +223,10 @@ const legacyDerivations: Partial<Record<CryptoCurrency["id"], DerivationMode[]>>
 };
 
 export function isDerivationMode(mode: string): mode is DerivationMode {
-  return mode in modes ? true : false;
+  return mode in modes;
 }
 export const asDerivationMode = (derivationMode: string): DerivationMode => {
-  if (!(derivationMode in modes)) {
+  if (!isDerivationMode(derivationMode)) {
     throw new Error(`${derivationMode} is not a derivationMode`);
   }
   return derivationMode as DerivationMode;
