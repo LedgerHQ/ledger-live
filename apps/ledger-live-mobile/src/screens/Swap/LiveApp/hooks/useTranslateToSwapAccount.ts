@@ -5,7 +5,7 @@ import * as walletApi from "@ledgerhq/live-common/wallet-api/converters";
 import { walletSelector } from "~/reducers/wallet";
 import { flattenAccountsSelector } from "~/reducers/accounts";
 
-import { DefaultAccountSwapParamList, DetailsSwapParamList } from "../../types";
+import { DefaultAccountSwapParamList } from "../../types";
 import type { AccountLike, TokenAccount } from "@ledgerhq/types-live";
 
 type SwapLiveUrlParams = {
