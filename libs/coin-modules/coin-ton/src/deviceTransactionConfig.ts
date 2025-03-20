@@ -50,24 +50,22 @@ function getDeviceTransactionConfig(input: {
         : TOKEN_TRANSFER_MAX_FEE,
     });
   } else {
-    if (!tokenTransfer) {
-      if (input.transaction.useAllAmount) {
-        fields.push({
-          type: "text",
-          label: "Amount",
-          value: "ALL YOUR TONs",
-        });
-      } else {
-        fields.push({
-          type: "amount",
-          label: "Amount",
-        });
-      }
+    if (input.transaction.useAllAmount) {
       fields.push({
-        type: "fees",
-        label: "Fee",
+        type: "text",
+        label: "Amount",
+        value: "ALL YOUR TONs",
+      });
+    } else {
+      fields.push({
+        type: "amount",
+        label: "Amount",
       });
     }
+    fields.push({
+      type: "fees",
+      label: "Fee",
+    });
   }
 
   if (!input.transaction.comment.isEncrypted && input.transaction.comment.text) {
