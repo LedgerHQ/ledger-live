@@ -55,7 +55,7 @@ type ButtonItem = {
 export default function NoFunds({ route }: Readonly<Props>) {
   const { t } = useTranslation();
   const { data: currenciesAll } = useFetchCurrencyAll();
-  const { account, parentAccount, entryPoint } = route.params ?? {}; // Do we need the full, non-serializable account object(s) here?
+  const { account, parentAccount, entryPoint } = route.params ?? {};
   const navigation = useNavigation();
   const currency = getAccountCurrency(account);
 

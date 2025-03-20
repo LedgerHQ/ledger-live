@@ -26,7 +26,7 @@ export function useStakingDrawer({
   const { getRouteParamsForPlatformApp } = useStake();
 
   return useCallback(
-    (account: Account | TokenAccount | AccountLike, parentAccount?: Account) => {
+    (account: AccountLike, parentAccount?: Account) => {
       if (alwaysShowNoFunds || getAccountSpendableBalance(account).isZero()) {
         // get funds to stake with
         navigation.navigate(NavigatorName.Base, {

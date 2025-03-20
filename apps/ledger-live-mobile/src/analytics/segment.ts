@@ -99,14 +99,12 @@ const getFeatureFlagProperties = () => {
         : {};
     const partnerStakingCurrenciesEnabled =
       stakePrograms?.enabled && stakePrograms?.params?.redirects
-        ? Object.fromEntries(
-            stakePrograms.params.redirects?.map(r => [
-              `feature_earn_${r.assetId}_enabled`,
-              true,
-              `feature_earn_${r.assetId}_partner`,
-              r.platform,
-            ]),
-          )
+        ? Object.keys(stakePrograms.params.redirects).map(assetId => [
+            `feature_earn_${assetId}_enabled`,
+            true,
+            `feature_earn_${assetId}_partner`,
+            stakePrograms?.params?.redirects?.[assetId]?.platform,
+          ])
         : {};
 
     updateIdentify({
