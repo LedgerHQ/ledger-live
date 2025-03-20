@@ -8,7 +8,7 @@ import * as walletApi from "@ledgerhq/live-common/wallet-api/converters";
 
 type SwapLiveUrlParams = {
   fromAccountId?: string;
-  fromTokenId?: string;
+  fromToken?: string;
   amountFrom?: string;
 };
 
@@ -17,7 +17,6 @@ export const useTranslateToSwapAccount = (
 ): SwapLiveUrlParams => {
   const walletState = useSelector(walletSelector);
   const currentAccounts = useSelector(accountsSelector);
-  console.log("useTranslateToSwapAccount#params", params);
 
   return useMemo(() => {
     const newParams: SwapLiveUrlParams = {};
@@ -33,25 +32,31 @@ export const useTranslateToSwapAccount = (
         params.defaultAccount || params.account,
         params?.defaultParentAccount || params.account,
       ).id;
+
       return newParams;
     }
 
     // No account was given, but a currency was
-    // We use the first account found of the given currency
     if (params.defaultCurrency || params.currency) {
       const currency = walletApi.currencyToWalletAPICurrency(
         params.defaultCurrency || params.currency,
       );
+
+      // Lets find an account that matches the given currency
       const firstAccount = currentAccounts.find(account => account.currency.id === currency.id);
+
+      // Lets match a token that matches the given currency
       const firstToken = currentAccounts
         .flatMap(account => (account.subAccounts?.length ? account.subAccounts : []))
         .find(subAccount => subAccount.token.id === currency.id);
 
+      // We found an account that matches the token (more specific use case)
       if (firstToken) {
-        newParams.fromTokenId = firstToken.token.id;
+        newParams.fromToken = firstToken.token.id;
         return newParams;
       }
 
+      // We didn't find a token, but we found an account that matches the currency
       if (firstAccount) {
         newParams.fromAccountId = walletApi.accountToWalletAPIAccount(
           walletState,

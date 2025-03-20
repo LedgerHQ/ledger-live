@@ -40,7 +40,6 @@ export function WebView({ manifest, params, setWebviewState }: Props) {
   const devMode = exportSettings.developerModeEnabled.toString();
   const lastSeenDevice = useSelector(lastSeenDeviceSelector);
   const swapParams = useTranslateToSwapAccount(params);
-  console.log("Look here", swapParams);
 
   // ScopeProvider required to prevent conflicts between Swap's Webview instance and deeplink instances
   return (

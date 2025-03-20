@@ -48,7 +48,6 @@ const Swap = () => {
     }
   };
 
-  console.log("params", params);
   return (
     // TODO: Remove @ts-ignore after Card component be compatible with TS
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
