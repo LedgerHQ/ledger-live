@@ -136,6 +136,7 @@ jobs:
 
   perform-pr-analysis:
     name: "SonarQube Pull Request Analysis"
+    runs-on: ubuntu-latest
     needs: prepare-pr-analysis
     steps:
       - id: run_scan
