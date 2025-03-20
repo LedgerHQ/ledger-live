@@ -39,10 +39,7 @@ export function EthStakingModalBody({ source, onClose, account, providers }: Pro
         pathname: value,
         ...(customDappUrl ? { customDappUrl } : {}),
         state: {
-          accountId:
-            manifest?.dapp
-              ? account.id
-              : getWalletApiIdFromAccountId(account.id),
+          accountId: manifest?.dapp ? account.id : getWalletApiIdFromAccountId(account.id),
         },
       });
       onClose?.();
