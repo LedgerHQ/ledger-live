@@ -1,17 +1,21 @@
-import BigNumber from "bignumber.js";
-import { firstValueFrom, reduce } from "rxjs";
+import { makeScanAccounts } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import { Account, AccountBridge, SyncConfig, TransactionCommon } from "@ledgerhq/types-live";
-import { TronCoinConfig } from "../config";
-import { Transaction, TronAccount } from "../types";
-import { createBridges } from "./index";
-import accountFixture from "./fixtures/synchronization.account.fixture.json";
+import BigNumber from "bignumber.js";
+import { firstValueFrom, reduce } from "rxjs";
+import coinConfig, { TronCoinConfig } from "../config";
+import * as tronNetwork from "../network";
 import { mockServer, TRONGRID_BASE_URL_MOCKED } from "../network/index.mock";
+import { Transaction, TronAccount } from "../types";
+import accountFixture from "./fixtures/synchronization.account.fixture.json";
+import { createBridges } from "./index";
+import { getAccountShape } from "./synchronization";
+import { setupServer } from "msw/node";
+import { AccountTronAPI } from "../network/types";
 
-const tron = getCryptoCurrencyById("tron");
+const currency = getCryptoCurrencyById("tron");
 const defaultSyncConfig = {
   paginationConfig: {},
-  blacklistedTokenIds: [],
 };
 function syncAccount<T extends TransactionCommon, A extends Account = Account>(
   bridge: AccountBridge<T, A>,
@@ -29,7 +33,7 @@ const dummyAccount: TronAccount = {
   derivationMode: "",
   seedIdentifier: "",
   used: false,
-  currency: tron,
+  currency,
   index: 0,
   freshAddress: "",
   freshAddressPath: "",
@@ -107,7 +111,7 @@ const reviver = (key: string, value: unknown) => {
   return value;
 };
 
-describe("Sync Accounts", () => {
+describe("sync", () => {
   let bridge: ReturnType<typeof createBridges>;
 
   beforeAll(() => {
@@ -137,11 +141,6 @@ describe("Sync Accounts", () => {
         reviver,
       ),
     },
-    // "TAVrrARNdnjHgCGMQYeQV7hv4PSu7mVsMj",
-    // "THAe4BNVxp293qgyQEqXEkHMpPcqtG73bi",
-    // "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
-    // "TUxd6v64YTWkfpFpNDdtgc5Ps4SfGxwizT",
-    // "TY2ksFgpvb82TgGPwUSa7iseqPW5weYQyh",
   ])("should always be sync without error for address %s", async ({ id, expectedAccount }) => {
     const account = await syncAccount<Transaction, TronAccount>(bridge.accountBridge, {
       ...dummyAccount,
@@ -152,5 +151,96 @@ describe("Sync Accounts", () => {
     expect(account.id).toEqual(`js:2:tron:${id}:`);
 
     expect(account).toMatchObject(expectedAccount);
+  });
+});
+
+describe("scanAccounts", () => {
+  let spyGetTronAccountNetwork: jest.SpyInstance;
+  const localMockServer = setupServer();
+
+  const address = "TT2T17KZhoDu47i2E4FWxfG79zdkEWkU9N";
+
+  beforeAll(() => {
+    spyGetTronAccountNetwork = jest.spyOn(tronNetwork, "getTronAccountNetwork");
+
+    coinConfig.setCoinConfig(() => ({
+      status: {
+        type: "active",
+      },
+      explorer: {
+        url: TRONGRID_BASE_URL_MOCKED,
+      },
+    }));
+
+    localMockServer.listen({ onUnhandledRequest: "error" });
+  });
+
+  beforeEach(() => {
+    jest
+      .spyOn(tronNetwork, "getLastBlock")
+      .mockResolvedValueOnce({ height: 0, hash: "", time: new Date() });
+    jest.spyOn(tronNetwork, "fetchTronAccount").mockResolvedValueOnce([
+      {
+        address,
+      } as AccountTronAPI,
+    ]);
+    jest.spyOn(tronNetwork, "fetchTronAccountTxs").mockResolvedValueOnce([]);
+    jest.spyOn(tronNetwork, "getUnwithdrawnReward").mockResolvedValueOnce(BigNumber(0));
+
+    spyGetTronAccountNetwork.mockClear();
+  });
+
+  afterAll(() => {
+    jest.spyOn(tronNetwork, "getLastBlock").mockRestore();
+    jest.spyOn(tronNetwork, "fetchTronAccountTxs").mockRestore();
+    jest.spyOn(tronNetwork, "fetchTronAccountTxs").mockRestore();
+    jest.spyOn(tronNetwork, "getUnwithdrawnReward").mockRestore();
+    spyGetTronAccountNetwork.mockRestore();
+
+    localMockServer.close();
+  });
+
+  it.each([
+    {
+      freeNetLimit: new BigNumber(0),
+      expectedUsed: false,
+    },
+    {
+      freeNetLimit: new BigNumber(100),
+      expectedUsed: true,
+    },
+  ])("returns an account flagged as used", async ({ freeNetLimit, expectedUsed }) => {
+    // Given
+    spyGetTronAccountNetwork.mockResolvedValueOnce({
+      family: "tron",
+      freeNetUsed: BigNumber(0),
+      freeNetLimit: BigNumber(freeNetLimit),
+      netUsed: BigNumber(0),
+      netLimit: BigNumber(0),
+      energyUsed: BigNumber(0),
+      energyLimit: BigNumber(0),
+    })
+    const addressResolver = {
+      address: "TT2T17KZhoDu47i2E4FWxfG79zdkEWkU9N",
+      path: "path",
+      publicKey: "publicKey",
+    };
+
+    // When
+    const scanAccounts = makeScanAccounts({
+      getAccountShape,
+      getAddressFn: (_deviceId, _addressOpt) => Promise.resolve(addressResolver),
+    });
+    const { account } = await firstValueFrom(
+      scanAccounts({
+        currency,
+        deviceId: "",
+        syncConfig: defaultSyncConfig,
+      }),
+    );
+
+    // Then
+    expect(spyGetTronAccountNetwork).toHaveBeenCalledTimes(1);
+    expect(account.used).toEqual(expectedUsed);
   });
 });
