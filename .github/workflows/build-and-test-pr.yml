@@ -126,7 +126,7 @@ jobs:
     steps:
       - name: Prepare PR Analysis
         run: |
-          input="[apps/ledger-live-desktop,apps/ledger-live-mobile]"
+          input="${{needs.determine-affected.outputs.packages}}"
           input="${input#[}"; input="${input%]}"
           IFS=',' read -r -a array <<< "$input"
           for element in "${array[@]}"
