@@ -238,24 +238,6 @@ export const solAccount: Account = {
     },
     WEEK: { balances: [402282880], latestDate: 1675555200000 },
   },
-  solanaResources: {
-    stakes: [
-      {
-        stakeAccAddr: "HxMXhn5EWivZ2R4EWCKMXuhhm1Fi82FijFvHXuhVLRhX",
-        stakeAccBalance: 402282880,
-        rentExemptReserve: 2282880,
-        hasStakeAuth: true,
-        hasWithdrawAuth: true,
-        delegation: {
-          stake: 400000000,
-          voteAccAddr: "26pV97Ce83ZQ6Kz9XT4td8tdoUFPTng8Fb8gPyc53dJx",
-        },
-        activation: { active: 0, inactive: 400000000, state: "activating" },
-        withdrawable: 0,
-      },
-    ],
-    unstakeReserve: BigNumber(0),
-  },
   nfts: [
     {
       id: "js:2:solana:8Qs1nzggCjEYhFcj4yHwiS5s3QzNeCPWpQnntFdwUYhN:+solanaSub+0+solana",
