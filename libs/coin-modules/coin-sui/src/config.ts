@@ -2,9 +2,8 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import buildConConfig, { type CurrencyConfig } from "@ledgerhq/coin-framework/config";
 
 export type SuiConfig = {
-  node: {
-    url: string;
-    credentials?: string;
+  status: {
+    type: "active";
   };
 };
 

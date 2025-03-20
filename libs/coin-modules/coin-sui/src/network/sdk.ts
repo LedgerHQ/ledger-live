@@ -1,5 +1,4 @@
 import {
-  getFullnodeUrl,
   PaginatedTransactionResponse,
   QueryTransactionBlocksParams,
   SuiClient,
@@ -14,6 +13,7 @@ import type { Operation, OperationType } from "@ledgerhq/types-live";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 
 import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
+import { getEnv } from "@ledgerhq/live-env";
 
 import type { Transaction as TransactionType } from "../types";
 import type { CreateExtrinsicArg } from "../logic/craftTransaction";
@@ -21,7 +21,7 @@ import { ensureAddressFormat } from "../utils";
 
 type AsyncApiFunction<T> = (api: SuiClient) => Promise<T>;
 
-const rpcUrl = getFullnodeUrl("devnet");
+const rpcUrl = getEnv("API_SUI_NODE_PROXY");
 
 let api: SuiClient | null = null;
 

@@ -7,9 +7,6 @@ export const suiConfig: Record<string, ConfigInfo> = {
       status: {
         type: "active",
       },
-      node: {
-        url: "https://fullnode.devnet.sui.io:443",
-      },
     },
   },
 };
