@@ -116,15 +116,17 @@ jobs:
       - build-desktop
       - test-desktop
       - test-libraries
-    run: |
-      if [[ "$DESKTOP_AFFECTED" == 'true' ]]; then 
-        cat apps/ledger-live-desktop/coverage/lcov.info >> ./lcov.info 
-        cat apps/ledger-live-desktop/coverage/sonar-executionTests-report.xml >> ./sonar-executionTests-report.xml 
-      fi
-      if [[ "$MOBILE_AFFECTED" == 'true' ]]; then 
-        cat apps/ledger-live-mobile/coverage/lcov.info >> ./lcov.info 
-        cat apps/ledger-live-mobile/coverage/sonar-executionTests-report.xml >> ./sonar-executionTests-report.xml 
-      fi
+    steps:
+      - name: Prepare PR Analysis
+        run: |
+          if [[ "$DESKTOP_AFFECTED" == 'true' ]]; then 
+            cat apps/ledger-live-desktop/coverage/lcov.info >> ./lcov.info 
+            cat apps/ledger-live-desktop/coverage/sonar-executionTests-report.xml >> ./sonar-executionTests-report.xml 
+          fi
+          if [[ "$MOBILE_AFFECTED" == 'true' ]]; then 
+            cat apps/ledger-live-mobile/coverage/lcov.info >> ./lcov.info 
+            cat apps/ledger-live-mobile/coverage/sonar-executionTests-report.xml >> ./sonar-executionTests-report.xml 
+          fi
 
   perform-pr-analysis:
     name: "SonarQube Pull Request Analysis"
