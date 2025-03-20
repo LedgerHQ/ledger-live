@@ -1,21 +1,8 @@
-import {
-  getElementById,
-  tapById,
-  waitForElementById,
-  currencyParam,
-  openDeeplink,
-  typeTextById,
-  tapByElement,
-  IsIdVisible,
-  getTextOfElement,
-  getElementByText,
-} from "../../helpers";
 import { expect } from "detox";
-import jestExpect from "expect";
-
-const baseLink = "send";
+import { currencyParam, openDeeplink } from "../../helpers/commonHelpers";
 
 export default class SendPage {
+  baseLink = "send";
   summaryAmountId = "send-summary-amount";
   summaryRecipient = () => getElementById("send-summary-recipient");
   summaryRecipientEns = () => getElementById("send-summary-recipient-ens");
@@ -42,11 +29,11 @@ export default class SendPage {
   feeStrategy = (fee: string) => getElementByText(fee);
 
   async openViaDeeplink() {
-    await openDeeplink(baseLink);
+    await openDeeplink(this.baseLink);
   }
 
   async sendViaDeeplink(currencyLong?: string) {
-    const link = currencyLong ? baseLink + currencyParam + currencyLong : baseLink;
+    const link = currencyLong ? this.baseLink + currencyParam + currencyLong : this.baseLink;
     await openDeeplink(link);
   }
 

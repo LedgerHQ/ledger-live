@@ -1,11 +1,7 @@
-import { tapByElement } from "../helpers";
-import { Application } from "../page";
-
-const app = new Application();
-const accountCurrency = "ethereum";
-
 // To-Do Fix NFT not available in account
 describe.skip("NFT Gallery screen", () => {
+  const accountCurrency = "ethereum";
+
   beforeAll(async () => {
     await app.init({ userdata: "1Account1NFTNotSpam" });
 

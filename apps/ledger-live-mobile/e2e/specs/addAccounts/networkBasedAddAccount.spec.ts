@@ -1,15 +1,12 @@
 import { knownDevices } from "../../models/devices";
 import DeviceAction from "../../models/DeviceAction";
-import { Application } from "../../page";
-
-const app = new Application();
-let deviceAction: DeviceAction;
-
-const testedCurrency = "Bitcoin";
-const expectedBalance = "1.19576\u00a0BTC";
-const knownDevice = knownDevices.nanoX;
 
 describe("Add account from modal", () => {
+  let deviceAction: DeviceAction;
+  const testedCurrency = "Bitcoin";
+  const expectedBalance = "1.19576\u00a0BTC";
+  const knownDevice = knownDevices.nanoX;
+
   beforeAll(async () => {
     await app.init({
       userdata: "skip-onboarding",

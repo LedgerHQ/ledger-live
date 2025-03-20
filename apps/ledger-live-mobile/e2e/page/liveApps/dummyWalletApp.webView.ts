@@ -1,6 +1,5 @@
 import { send, startLiveApp, stopServer } from "../../models/liveApps";
 import DiscoverPage from "../discover/discover.page";
-import { getWebElementById } from "../../helpers";
 
 const port = 52619;
 
@@ -8,7 +7,7 @@ export default class DummyWalletApp {
   async startApp() {
     const continueTest = await startLiveApp("dummy-wallet-app", port);
     // Check that dummy app in tests/dummy-app-build has been started successfully
-    expect(continueTest).toBeTruthy();
+    jestExpect(continueTest).toBeTruthy();
   }
 
   async openApp() {
@@ -17,10 +16,10 @@ export default class DummyWalletApp {
 
   async expectApp() {
     const title = await getWebElementById("image-container").getTitle();
-    expect(title).toBe("Dummy Wallet API App");
+    jestExpect(title).toBe("Dummy Wallet API App");
 
     const url = await getWebElementById("param-container").getCurrentUrl();
-    expect(url).toBe(
+    jestExpect(url).toBe(
       `http://localhost:${port}/?theme=light&lang=en&name=Dummy+Wallet+API+Live+App`,
     );
   }
@@ -44,7 +43,7 @@ export default class DummyWalletApp {
   }
 
   async expectResponse(id: string, response: Promise<Record<string, unknown>>) {
-    await expect(response).resolves.toMatchObject({
+    await jestExpect(response).resolves.toMatchObject({
       jsonrpc: "2.0",
       id,
       result: {

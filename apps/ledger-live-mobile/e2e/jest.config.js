@@ -54,4 +54,5 @@ module.exports = async () => ({
   },
   transformIgnorePatterns: [`node_modules/.pnpm/(?!(${transformIncludePatterns.join("|")}))`],
   verbose: true,
+  resetModules: true,
 });

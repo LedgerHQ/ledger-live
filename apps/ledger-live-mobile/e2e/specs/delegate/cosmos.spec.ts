@@ -6,19 +6,17 @@ import {
   getAccountUnit,
   initTestAccounts,
 } from "../../models/currencies";
-import { Application } from "../../page";
+
 import DeviceAction from "../../models/DeviceAction";
 import BigNumber from "bignumber.js";
 
-const app = new Application();
-let deviceAction: DeviceAction;
-
-const testedCurrency = "cosmos";
-const defaultProvider = "Ledger";
-const testAccount = initTestAccounts([testedCurrency])[0];
-const knownDevice = knownDevices.nanoX;
-
 describe("Cosmos delegate flow", () => {
+  let deviceAction: DeviceAction;
+  const testedCurrency = "cosmos";
+  const defaultProvider = "Ledger";
+  const testAccount = initTestAccounts([testedCurrency])[0];
+  const knownDevice = knownDevices.nanoX;
+
   beforeAll(async () => {
     await app.init({
       userdata: "skip-onboarding",

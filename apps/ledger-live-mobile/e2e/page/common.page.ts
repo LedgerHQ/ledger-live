@@ -1,17 +1,6 @@
 import { DeviceUSB, ModelId, getUSBDevice, knownDevices } from "../models/devices";
-import {
-  getElementById,
-  getTextOfElement,
-  launchProxy,
-  scrollToId,
-  tapByElement,
-  tapById,
-  typeTextByElement,
-  waitForElementById,
-  getIdOfElement,
-} from "../helpers";
 import { expect } from "detox";
-import jestExpect from "expect";
+import { launchProxy } from "../utils/speculosUtils";
 import DeviceAction from "../models/DeviceAction";
 import {
   open,
@@ -21,11 +10,9 @@ import {
   removeKnownSpeculos,
   findFreePort,
 } from "../bridge/server";
-
 import { unregisterAllTransportModules } from "@ledgerhq/live-common/hw/index";
-import { CLI } from "../utils/cliUtils";
+import { launchSpeculos, deleteSpeculos } from "../utils/speculosUtils";
 
-import { launchSpeculos, deleteSpeculos } from "../helpers";
 const proxyAddress = "localhost";
 
 export default class CommonPage {
@@ -143,7 +130,7 @@ export default class CommonPage {
     await launchProxy(proxyPort, speculosAddress, speculosPort);
     await addKnownSpeculos(`${proxyAddress}:${proxyPort}`);
     process.env.DEVICE_PROXY_URL = `ws://localhost:${proxyPort}`;
-    CLI.registerProxyTransport(process.env.DEVICE_PROXY_URL);
+    CLI.registerSpeculosTransport(speculosPort.toString(), `http://${speculosAddress}`);
     return speculosPort;
   }
 

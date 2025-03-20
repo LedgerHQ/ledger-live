@@ -1,13 +1,4 @@
-import {
-  getTextOfElement,
-  IsIdVisible,
-  tapById,
-  typeTextById,
-  waitForElementById,
-  getElementById,
-} from "../../helpers";
-import { expect as detoxExpect } from "detox";
-import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
+import { expect } from "detox";
 import invariant from "invariant";
 
 export default class StakePage {
@@ -68,7 +59,7 @@ export default class StakePage {
 
   @Step("Expect provider in summary")
   async expectProvider(currencyId: string, provider: string) {
-    expect(await this.delegationSummaryValidator(currencyId)).toEqual(provider);
+    jestExpect(await this.delegationSummaryValidator(currencyId)).toEqual(provider);
   }
 
   @Step("Select new provider")
@@ -82,7 +73,7 @@ export default class StakePage {
 
   @Step("Verify fees visible in summary")
   async verifyFeesVisible(currencyId: string) {
-    await detoxExpect(getElementById(this.delegationFees(currencyId))).toBeVisible();
+    await expect(getElementById(this.delegationFees(currencyId))).toBeVisible();
   }
 
   @Step("Get fees displayed in summary")
@@ -103,7 +94,7 @@ export default class StakePage {
     await waitForElementById(id);
     const assestsRemaining = max ? this.zeroAssetText : (await getTextOfElement(id)).split(": ")[1];
 
-    expect(assestsRemaining).toEqual(remainingAmountFormated);
+    jestExpect(assestsRemaining).toEqual(remainingAmountFormated);
   }
 
   @Step("Validate the amount entered")
@@ -117,7 +108,7 @@ export default class StakePage {
   @Step("Expect delegated amount in summary")
   async expectDelegatedAmount(currencyId: string, delegatedAmountFormated: string) {
     const assetsDelagated = await this.delegationAmountValue(currencyId);
-    expect(assetsDelagated).toEqual(delegatedAmountFormated);
+    jestExpect(assetsDelagated).toEqual(delegatedAmountFormated);
   }
 
   @Step("Click on continue button in summary")

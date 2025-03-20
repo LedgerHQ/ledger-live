@@ -1,12 +1,9 @@
 import { device } from "detox";
-import { isAndroid, launchApp } from "../helpers";
-import { Application } from "../page";
-
-const app = new Application();
-
-let isFirstTest = true;
+import { isAndroid, launchApp } from "../helpers/commonHelpers";
 
 describe("Onboarding", () => {
+  let isFirstTest = true;
+
   beforeEach(async () => {
     if (!isFirstTest) {
       await device.uninstallApp();

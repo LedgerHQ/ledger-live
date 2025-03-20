@@ -1,13 +1,7 @@
-import {
-  getElementById,
-  openDeeplink,
-  waitForElementById,
-  tapByElement,
-  getIdOfElement,
-} from "../../helpers";
-const baseLink = "accounts";
+import { openDeeplink } from "../../helpers/commonHelpers";
 
 export default class AccountsPage {
+  baseLink = "accounts";
   accountTitleId = (coin: string) => `accounts-title-${coin}`;
   addAccountButton = () => getElementById("add-account-button");
   listTitle = "accounts-list-title";
@@ -15,7 +9,7 @@ export default class AccountsPage {
 
   @Step("Open accounts list via deeplink")
   async openViaDeeplink() {
-    await openDeeplink(baseLink);
+    await openDeeplink(this.baseLink);
   }
   async waitForAccountsPageToLoad() {
     await waitForElementById(this.listTitle);
@@ -30,6 +24,6 @@ export default class AccountsPage {
 
   @Step("Expect accounts number")
   async expectAccountsNumber(number: number) {
-    expect((await getIdOfElement(this.accountList)).endsWith(number.toString())).toBeTruthy();
+    jestExpect((await getIdOfElement(this.accountList)).endsWith(number.toString())).toBeTruthy();
   }
 }
