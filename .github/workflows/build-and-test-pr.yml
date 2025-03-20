@@ -114,6 +114,7 @@ jobs:
 
   prepare-pr-analysis:
     name: "Prepare Pull Request Analysis"
+    runs-on: ubuntu-latest
     needs:
       - build-mobile
       - test-mobile
