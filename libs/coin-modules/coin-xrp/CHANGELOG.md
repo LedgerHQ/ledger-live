@@ -1,5 +1,16 @@
 # @ledgerhq/coin-xrp
 
+## 2.2.0-nightly.0
+
+### Minor Changes
+
+- [#9466](https://github.com/LedgerHQ/ledger-live/pull/9466) [`e2630cb`](https://github.com/LedgerHQ/ledger-live/commit/e2630cbec8d94ae037b2bf85cfa200a277ae739f) Thanks [@qperrot](https://github.com/qperrot)! - Tron craftTransaction alpaca implementation
+
+### Patch Changes
+
+- Updated dependencies [[`e2630cb`](https://github.com/LedgerHQ/ledger-live/commit/e2630cbec8d94ae037b2bf85cfa200a277ae739f)]:
+  - @ledgerhq/coin-framework@2.4.0-nightly.0
+
 ## 2.1.0
 
 ### Minor Changes

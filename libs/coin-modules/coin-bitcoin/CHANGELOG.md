@@ -1,5 +1,14 @@
 # @ledgerhq/coin-bitcoin
 
+## 0.12.1-nightly.0
+
+### Patch Changes
+
+- [#9559](https://github.com/LedgerHQ/ledger-live/pull/9559) [`6c25bb5`](https://github.com/LedgerHQ/ledger-live/commit/6c25bb582df9d146ca7b76006f7dd7744bd6cfa1) Thanks [@Wozacosta](https://github.com/Wozacosta)! - fix: btc shouldnt use all rbf utxos when estimating max spendable
+
+- Updated dependencies [[`e2630cb`](https://github.com/LedgerHQ/ledger-live/commit/e2630cbec8d94ae037b2bf85cfa200a277ae739f)]:
+  - @ledgerhq/coin-framework@2.4.0-nightly.0
+
 ## 0.12.0
 
 ### Minor Changes

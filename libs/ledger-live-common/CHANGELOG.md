@@ -1,5 +1,45 @@
 ## 34.25.0
 
+## 34.27.0-nightly.0
+
+### Minor Changes
+
+- [#9436](https://github.com/LedgerHQ/ledger-live/pull/9436) [`3bd7023`](https://github.com/LedgerHQ/ledger-live/commit/3bd7023b408cd99e471738b648c672d0e842c1d9) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Remove timeout after CLS load
+
+- [#9589](https://github.com/LedgerHQ/ledger-live/pull/9589) [`b9fe785`](https://github.com/LedgerHQ/ledger-live/commit/b9fe785cbca9f82386e9295cd42ae36ea093efb8) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix coingecko interval param usage
+
+### Patch Changes
+
+- Updated dependencies [[`6c25bb5`](https://github.com/LedgerHQ/ledger-live/commit/6c25bb582df9d146ca7b76006f7dd7744bd6cfa1), [`e2630cb`](https://github.com/LedgerHQ/ledger-live/commit/e2630cbec8d94ae037b2bf85cfa200a277ae739f)]:
+  - @ledgerhq/coin-bitcoin@0.12.1-nightly.0
+  - @ledgerhq/coin-polkadot@2.1.0-nightly.0
+  - @ledgerhq/coin-stellar@1.2.0-nightly.0
+  - @ledgerhq/coin-tezos@1.5.0-nightly.0
+  - @ledgerhq/coin-tron@0.6.0-nightly.0
+  - @ledgerhq/coin-xrp@2.2.0-nightly.0
+  - @ledgerhq/coin-framework@2.4.0-nightly.0
+  - @ledgerhq/coin-algorand@0.7.9-nightly.0
+  - @ledgerhq/coin-aptos@1.7.2-nightly.0
+  - @ledgerhq/coin-cardano@0.6.1-nightly.0
+  - @ledgerhq/coin-casper@1.5.1-nightly.0
+  - @ledgerhq/coin-cosmos@0.9.1-nightly.0
+  - @ledgerhq/coin-evm@2.14.1-nightly.0
+  - @ledgerhq/coin-filecoin@1.7.1-nightly.0
+  - @ledgerhq/coin-hedera@1.4.1-nightly.0
+  - @ledgerhq/coin-icon@0.8.1-nightly.0
+  - @ledgerhq/coin-internet_computer@1.5.9-nightly.0
+  - @ledgerhq/coin-multiversx@0.2.2-nightly.0
+  - @ledgerhq/coin-near@0.9.2-nightly.0
+  - @ledgerhq/coin-solana@0.15.2-nightly.0
+  - @ledgerhq/coin-stacks@0.6.4-nightly.0
+  - @ledgerhq/coin-ton@0.6.1-nightly.0
+  - @ledgerhq/coin-vechain@2.5.1-nightly.0
+  - @ledgerhq/live-countervalues@0.4.5-nightly.0
+  - @ledgerhq/live-countervalues-react@0.2.27-nightly.0
+  - @ledgerhq/live-nft@0.6.2-nightly.0
+  - @ledgerhq/live-wallet@0.10.1-nightly.0
+  - @ledgerhq/live-signer-evm@0.2.1-nightly.0
+
 ## 34.26.0
 
 ### Minor Changes
