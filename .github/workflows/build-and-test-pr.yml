@@ -38,6 +38,8 @@ jobs:
       base_branch: ${{ github.event.pull_request.base.ref || github.event.merge_group.base_ref }}
 
   log-affected:
+    name: "Log Affected"
+    needs: determine-affected
     run: |
       echo "OUTPUTS : ${{needs.determine-affected.outputs}}"
       echo "JSON : ${{ toJson(github) }}"
