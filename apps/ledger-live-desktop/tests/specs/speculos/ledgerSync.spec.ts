@@ -13,12 +13,20 @@ const accountId = accounts[0].id;
 const accountName = accountNames[accountId];
 
 function setupSeed() {
+<<<<<<< HEAD
   const prevSeed = getEnv("SEED");
   test.beforeAll(async () => {
     process.env.SEED = "Temporary_SEED";
   });
   test.afterAll(async () => {
     setEnv("SEED", prevSeed);
+=======
+  test.beforeAll(async () => {
+    process.env.SEED = "X";
+  });
+  test.afterAll(async () => {
+    process.env.SEED = "X";
+>>>>>>> c02908a715 (Initialize and destroy the trustchain before starting synchronization)
   });
 }
 
@@ -48,6 +56,7 @@ test.describe(`[${app.name}] Sync Accounts`, () => {
     userdata: "skip-onboarding",
     speculosApp: app,
 <<<<<<< HEAD
+<<<<<<< HEAD
     cliCommands: [...initializeThenDeleteTrustchain(), ...initializeTrustchain()],
 =======
     cliCommands: [
@@ -71,6 +80,9 @@ test.describe(`[${app.name}] Sync Accounts`, () => {
       },
     ],
 >>>>>>> 669d3138e9 (wip:destroy trustchain before sync)
+=======
+    cliCommands: [...initializeThenDeleteTrustchain(), ...initializeTrustchain()],
+>>>>>>> c02908a715 (Initialize and destroy the trustchain before starting synchronization)
   });
 
   test(
