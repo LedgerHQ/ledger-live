@@ -3,7 +3,7 @@ import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "../../utils/customJsonReporter";
 import { CLI } from "tests/utils/cliUtils";
-import { expect, TestInfo } from "@playwright/test";
+import { expect } from "@playwright/test";
 import { LedgerSyncCliHelper } from "../../utils/ledgerSyncCliUtils";
 import { accountNames, accounts } from "tests/testdata/ledgerSyncTestData";
 
