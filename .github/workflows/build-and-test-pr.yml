@@ -40,6 +40,7 @@ jobs:
   log-affected:
     name: "Log Affected"
     needs: determine-affected
+    runs-on: ubuntu-latest
     steps:
       - name: Log affected paths
         run: |
