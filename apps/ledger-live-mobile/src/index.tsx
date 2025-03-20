@@ -1,96 +1,96 @@
-import "./polyfill";
-import "./live-common-setup";
-import "./iosWebsocketFix";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
-import React, { Component, useCallback, useMemo, useEffect } from "react";
-import { StyleSheet, LogBox, Appearance, AppState } from "react-native";
-import SplashScreen from "react-native-splash-screen";
-import { SafeAreaProvider } from "react-native-safe-area-context";
-import { I18nextProvider } from "react-i18next";
-import Transport from "@ledgerhq/hw-transport";
 import { NotEnoughBalance } from "@ledgerhq/errors";
-import { log } from "@ledgerhq/logs";
-import { checkLibs } from "@ledgerhq/live-common/sanityChecks";
-import { useCountervaluesExport } from "@ledgerhq/live-countervalues-react";
-import { pairId } from "@ledgerhq/live-countervalues/helpers";
-import "./config/configInit";
-import isEqual from "lodash/isEqual";
-import { postOnboardingSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
-import Config from "react-native-config";
-import { LogLevel, PerformanceProfiler, RenderPassReport } from "@shopify/react-native-performance";
-import useEnv from "@ledgerhq/live-common/hooks/useEnv";
-import { useDispatch, useSelector } from "react-redux";
-import { init } from "../e2e/bridge/client";
-import logger from "./logger";
-import {
-  saveAccounts,
-  saveBle,
-  saveSettings,
-  saveCountervalues,
-  savePostOnboardingState,
-  saveMarketState,
-  saveTrustchainState,
-  saveWalletExportState,
-} from "./db";
-import {
-  exportSelector as settingsExportSelector,
-  osThemeSelector,
-  hasSeenAnalyticsOptInPromptSelector,
-  hasCompletedOnboardingSelector,
-} from "~/reducers/settings";
-import { accountsSelector, exportSelector as accountsExportSelector } from "~/reducers/accounts";
-import { exportSelector as bleSelector } from "~/reducers/ble";
-import LocaleProvider, { i18n } from "~/context/Locale";
-import RebootProvider from "~/context/Reboot";
-import AuthPass from "~/context/AuthPass";
-import LedgerStoreProvider from "~/context/LedgerStore";
-import { store } from "~/context/store";
-import LoadingApp from "~/components/LoadingApp";
-import StyledStatusBar from "~/components/StyledStatusBar";
-import AnalyticsConsole from "~/components/AnalyticsConsole";
-import DebugTheme from "~/components/DebugTheme";
-import useDBSaveEffect from "~/components/DBSave";
-import SyncNewAccounts from "~/bridge/SyncNewAccounts";
-import SegmentSetup from "~/analytics/SegmentSetup";
-import HookSentry from "~/components/HookSentry";
-import HookNotifications from "~/notifications/HookNotifications";
-import RootNavigator from "~/components/RootNavigator";
-import SetEnvsFromSettings from "~/components/SetEnvsFromSettings";
-import type { State } from "~/reducers/types";
-import { useTrackingPairs } from "~/actions/general";
-import ExperimentalHeader from "~/screens/Settings/Experimental/ExperimentalHeader";
-import Modals from "~/screens/Modals";
-import NavBarColorHandler from "~/components/NavBarColorHandler";
-import { FirebaseRemoteConfigProvider } from "~/components/FirebaseRemoteConfig";
-import { FirebaseFeatureFlagsProvider } from "~/components/FirebaseFeatureFlags";
-import { TermsAndConditionMigrateLegacyData } from "~/logic/terms";
-import HookDynamicContentCards from "~/dynamicContent/useContentCards";
-import PlatformAppProviderWrapper from "./PlatformAppProviderWrapper";
-import PerformanceConsole from "~/components/PerformanceConsole";
-import { useListenToHidDevices } from "~/hooks/useListenToHidDevices";
-import { DeeplinksProvider } from "~/navigation/DeeplinksProvider";
-import StyleProvider from "./StyleProvider";
-import { performanceReportSubject } from "~/components/PerformanceConsole/usePerformanceReportsLog";
-import { setAnalytics, setOsTheme, setPersonalizedRecommendations } from "~/actions/settings";
-import TransactionsAlerts from "~/components/TransactionsAlerts";
+import Transport from "@ledgerhq/hw-transport";
+import { trustchainStoreSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import {
   useFetchCurrencyAll,
   useFetchCurrencyFrom,
 } from "@ledgerhq/live-common/exchange/swap/hooks/index";
-import useAccountsWithFundsListener from "@ledgerhq/live-common/hooks/useAccountsWithFundsListener";
-import { updateIdentify } from "./analytics";
 import { getFeature, useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { StorylyProvider } from "./components/StorylyStories/StorylyProvider";
-import { useSettings } from "~/hooks";
-import AppProviders from "./AppProviders";
+import useAccountsWithFundsListener from "@ledgerhq/live-common/hooks/useAccountsWithFundsListener";
+import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { useAutoDismissPostOnboardingEntryPoint } from "@ledgerhq/live-common/postOnboarding/hooks/index";
-import QueuedDrawersContextProvider from "LLM/components/QueuedDrawer/QueuedDrawersContextProvider";
-import { exportMarketSelector } from "./reducers/market";
-import { trustchainStoreSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
-import { walletSelector } from "~/reducers/wallet";
+import { postOnboardingSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
+import { checkLibs } from "@ledgerhq/live-common/sanityChecks";
+import { useCountervaluesExport } from "@ledgerhq/live-countervalues-react";
+import { pairId } from "@ledgerhq/live-countervalues/helpers";
 import { exportWalletState, walletStateExportShouldDiffer } from "@ledgerhq/live-wallet/store";
+import { log } from "@ledgerhq/logs";
+import { LogLevel, PerformanceProfiler, RenderPassReport } from "@shopify/react-native-performance";
+import QueuedDrawersContextProvider from "LLM/components/QueuedDrawer/QueuedDrawersContextProvider";
+import isEqual from "lodash/isEqual";
+import React, { Component, useCallback, useEffect, useMemo } from "react";
+import { I18nextProvider } from "react-i18next";
+import { Appearance, AppState, LogBox, StyleSheet } from "react-native";
+import Config from "react-native-config";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import SplashScreen from "react-native-splash-screen";
+import { useDispatch, useSelector } from "react-redux";
+import { useTrackingPairs } from "~/actions/general";
+import { setAnalytics, setOsTheme, setPersonalizedRecommendations } from "~/actions/settings";
+import SegmentSetup from "~/analytics/SegmentSetup";
+import SyncNewAccounts from "~/bridge/SyncNewAccounts";
+import AnalyticsConsole from "~/components/AnalyticsConsole";
+import useDBSaveEffect from "~/components/DBSave";
+import DebugTheme from "~/components/DebugTheme";
+import { FirebaseFeatureFlagsProvider } from "~/components/FirebaseFeatureFlags";
+import { FirebaseRemoteConfigProvider } from "~/components/FirebaseRemoteConfig";
+import HookSentry from "~/components/HookSentry";
+import LoadingApp from "~/components/LoadingApp";
+import NavBarColorHandler from "~/components/NavBarColorHandler";
+import PerformanceConsole from "~/components/PerformanceConsole";
+import { performanceReportSubject } from "~/components/PerformanceConsole/usePerformanceReportsLog";
+import RootNavigator from "~/components/RootNavigator";
+import SetEnvsFromSettings from "~/components/SetEnvsFromSettings";
+import StyledStatusBar from "~/components/StyledStatusBar";
+import TransactionsAlerts from "~/components/TransactionsAlerts";
+import AuthPass from "~/context/AuthPass";
+import LedgerStoreProvider from "~/context/LedgerStore";
+import LocaleProvider, { i18n } from "~/context/Locale";
+import RebootProvider from "~/context/Reboot";
+import { store } from "~/context/store";
+import HookDynamicContentCards from "~/dynamicContent/useContentCards";
+import { useSettings } from "~/hooks";
+import { useListenToHidDevices } from "~/hooks/useListenToHidDevices";
+import { TermsAndConditionMigrateLegacyData } from "~/logic/terms";
+import { DeeplinksProvider } from "~/navigation/DeeplinksProvider";
+import HookNotifications from "~/notifications/HookNotifications";
+import { exportSelector as accountsExportSelector, accountsSelector } from "~/reducers/accounts";
+import { exportSelector as bleSelector } from "~/reducers/ble";
+import {
+  hasCompletedOnboardingSelector,
+  hasSeenAnalyticsOptInPromptSelector,
+  osThemeSelector,
+  exportSelector as settingsExportSelector,
+} from "~/reducers/settings";
+import type { State } from "~/reducers/types";
+import { walletSelector } from "~/reducers/wallet";
+import Modals from "~/screens/Modals";
+import ExperimentalHeader from "~/screens/Settings/Experimental/ExperimentalHeader";
+import LDMKTransportHeader from "~/screens/Settings/Experimental/LDMKTransportHeader";
+import { init } from "../e2e/bridge/client";
+import { updateIdentify } from "./analytics";
+import AppProviders from "./AppProviders";
+import { StorylyProvider } from "./components/StorylyStories/StorylyProvider";
+import "./config/configInit";
+import {
+  saveAccounts,
+  saveBle,
+  saveCountervalues,
+  saveMarketState,
+  savePostOnboardingState,
+  saveSettings,
+  saveTrustchainState,
+  saveWalletExportState,
+} from "./db";
+import "./iosWebsocketFix";
+import "./live-common-setup";
+import logger from "./logger";
+import PlatformAppProviderWrapper from "./PlatformAppProviderWrapper";
+import "./polyfill";
+import { exportMarketSelector } from "./reducers/market";
 import { registerTransports } from "./services/registerTransports";
-import LDMKTransportHeader from "./screens/Settings/Experimental/LDMKTransportHeader";
+import StyleProvider from "./StyleProvider";
 
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();

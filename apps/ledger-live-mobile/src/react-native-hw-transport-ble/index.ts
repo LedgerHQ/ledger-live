@@ -91,7 +91,11 @@ const getBLETransport = ({
   } else {
     // when not in MOCK mode, return DeviceManagementKitTransport if enabled,
     // otherwise BleTransport
-    return isLDMKEnabled ? DeviceManagementKitTransport : BleTransport;
+    return (
+      isLDMKEnabled ? DeviceManagementKitTransport : BleTransport
+    ) as CommonTransportConstructor;
+    // NOTE: Some method signatures are not compatible between BleTransport and DeviceManagementKitTransport
+    // so we need to cast to CommonTransportConstructor
   }
 };
 

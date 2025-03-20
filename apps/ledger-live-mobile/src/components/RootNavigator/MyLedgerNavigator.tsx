@@ -52,7 +52,7 @@ export default function MyLedgerNavigator() {
         options={{
           ...headerOptions,
           gestureEnabled: false,
-          unmountOnBlur: true,
+          // unmountOnBlur: true,
         }}
       />
       <Stack.Screen

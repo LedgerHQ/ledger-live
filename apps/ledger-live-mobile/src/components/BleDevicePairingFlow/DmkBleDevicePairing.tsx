@@ -24,19 +24,12 @@ export const DmkBleDevicePairing = ({
   const productName = getDeviceModel(device.modelId).productName || device.modelId;
   let content = null;
 
-  // useEffect(() => {
-  //   if (pairingError instanceof LockedDeviceError) {
-  //     setDeviceLocked(deviceToPair);
-  //     return;
-  //   }
-  //
-  //   setDeviceLocked(null);
-  // }, [deviceToPair, pairingError]);
-
   if (isPaired) {
     content = <BleDevicePaired device={device} productName={productName} />;
   } else if (pairingError instanceof PeerRemovedPairing) {
     content = (
+      // TODO: fix this
+      // @ts-expect-error DmkError is missing name and some other properties
       <BleDevicePeerRemoved onRetry={onRetry} onOpenHelp={onOpenHelp} pairingError={pairingError} />
     );
   } else if (pairingError && !((pairingError as unknown) instanceof LockedDeviceError)) {
