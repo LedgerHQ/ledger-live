@@ -99,4 +99,5 @@ export enum CoinType {
   ZCOIN = 136,
   ZEN = 121,
   ZILLIQA = 313,
+  SUI = 784,
 }
