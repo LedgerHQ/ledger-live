@@ -35,11 +35,13 @@ export function useStake() {
     () => featureFlag?.params?.list || [],
     [featureFlag?.params?.list],
   );
+
   const redirects = useMemo(
-    () => featureFlag?.params?.redirects ?? [],
+    () => new Map(Object.entries(featureFlag?.params?.redirects || {})),
     [featureFlag?.params?.redirects],
   );
-  const partnerSupportedTokens = redirects.map(r => r?.assetId);
+
+  const partnerSupportedAssets = useMemo(() => Array.from(redirects.keys()), [redirects]);
 
   const remoteLiveAppRegistry: Loadable<LiveAppRegistry> = useContext(remoteLiveAppContext).state;
 
@@ -52,24 +54,28 @@ export function useStake() {
       const localManifest = getLocalLiveAppManifestById(platformId);
       const remoteManifest = getRemoteLiveAppManifestById(platformId, remoteLiveAppRegistry);
       const manifest: LiveAppManifest | undefined = remoteManifest || localManifest;
+      console.log({ localManifest, remoteManifest });
+
       return manifest;
     },
     [getLocalLiveAppManifestById, remoteLiveAppRegistry],
   );
 
   const getPartnerForCurrency = useCallback(
-    (currencyId: string) => redirects.find(r => r.assetId === currencyId) ?? null,
+    (currencyId: string) => redirects.get(currencyId) ?? null,
     [redirects],
   );
 
   const getCanStakeUsingPlatformApp = useCallback(
-    (currencyId: string) => (!currencyId ? false : partnerSupportedTokens.includes(currencyId)),
-    [partnerSupportedTokens],
+    (currencyId: string) => (!currencyId ? false : redirects.has(currencyId)),
+    [redirects],
   );
+
   const getCanStakeUsingLedgerLive = useCallback(
     (currencyId: string) => (!currencyId ? false : enabledCurrencies.includes(currencyId)),
     [enabledCurrencies],
   );
+
   const getCanStakeCurrency = useCallback(
     (currencyId: string) =>
       getCanStakeUsingPlatformApp(currencyId) || getCanStakeUsingLedgerLive(currencyId),
@@ -143,7 +149,7 @@ export function useStake() {
 
   return {
     enabledCurrencies,
-    partnerSupportedTokens,
+    partnerSupportedAssets,
     getCanStakeCurrency,
     getCanStakeUsingPlatformApp,
     getCanStakeUsingLedgerLive,

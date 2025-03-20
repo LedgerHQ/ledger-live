@@ -3,7 +3,7 @@ import { useCallback } from "react";
 import { useDispatch } from "react-redux";
 import IconCoins from "~/renderer/icons/Coins";
 import { openModal } from "~/renderer/actions/modals";
-import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
+import { getAccountSpendableBalance } from "@ledgerhq/live-common/account/index";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
 import { useHistory } from "react-router";
 
@@ -41,7 +41,7 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
   );
 
   const onClickStakeModal = useCallback(() => {
-    if (isAccountEmpty(account)) {
+    if (getAccountSpendableBalance(account).isZero()) {
       dispatch(
         openModal("MODAL_NO_FUNDS_STAKE", {
           account,

@@ -56,7 +56,7 @@ import { getAccountBannerProps as getCosmosBannerProps } from "../utils";
 import ValidatorImage from "../shared/ValidatorImage";
 import { useAccountName } from "~/reducers/wallet";
 import { useAccountUnit } from "~/hooks/useAccountUnit";
-import { useStake } from "~/newArch/hooks/useStake/useStake";
+import { useStake } from "LLM/hooks/useStake/useStake";
 
 type Props = {
   account: CosmosAccount;

@@ -12,7 +12,7 @@ import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/Ba
 import { EntryOf } from "~/types/helpers";
 import { accountsCountSelector, areAccountsEmptySelector } from "../reducers/accounts";
 import { readOnlyModeEnabledSelector } from "../reducers/settings";
-import { useStake } from "~/newArch/hooks/useStake/useStake";
+import { useStake } from "LLM/hooks/useStake/useStake";
 import { walletSelector } from "~/reducers/wallet";
 import { getAccountCurrency, getParentAccount } from "@ledgerhq/coin-framework/lib/account/helpers";
 import { shallowAccountsSelector } from "~/reducers/accounts";

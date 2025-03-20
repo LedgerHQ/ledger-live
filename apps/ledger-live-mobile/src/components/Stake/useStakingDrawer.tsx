@@ -6,7 +6,7 @@ import { NavigatorName, ScreenName } from "~/const";
 import perFamilyAccountActions from "../../generated/accountActions";
 import { useSelector } from "react-redux";
 import { walletSelector } from "~/reducers/wallet";
-import { useStake } from "~/newArch/hooks/useStake/useStake";
+import { useStake } from "LLM/hooks/useStake/useStake";
 import { getAccountSpendableBalance } from "@ledgerhq/coin-framework/lib/account/helpers";
 
 /** Open the family main actions stake flow for a given account from any navigator. Returns to parent route on completion. */

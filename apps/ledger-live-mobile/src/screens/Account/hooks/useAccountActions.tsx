@@ -21,7 +21,7 @@ import { ActionButtonEvent } from "~/components/FabActions";
 import { PtxToast } from "~/components/Toast/PtxToast";
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { walletSelector } from "~/reducers/wallet";
-import { useStake } from "~/newArch/hooks/useStake/useStake";
+import { useStake } from "LLM/hooks/useStake/useStake";
 
 type Props = {
   account: AccountLike;

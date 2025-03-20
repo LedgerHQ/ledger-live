@@ -8,13 +8,13 @@ import type { StackNavigatorProps, BaseComposite } from "../RootNavigator/types/
 import type { StakeNavigatorParamList } from "../RootNavigator/types/StakeNavigator";
 
 import { useStakingDrawer } from "./useStakingDrawer";
-import { useStake } from "~/newArch/hooks/useStake/useStake";
+import { useStake } from "LLM/hooks/useStake/useStake";
 
 type Props = BaseComposite<StackNavigatorProps<StakeNavigatorParamList, ScreenName.Stake>>;
 
 const StakeFlow = ({ route }: Props) => {
-  const { enabledCurrencies, partnerSupportedTokens } = useStake();
-  const currencies = route?.params?.currencies || enabledCurrencies.concat(partnerSupportedTokens);
+  const { enabledCurrencies, partnerSupportedAssets } = useStake();
+  const currencies = route?.params?.currencies || enabledCurrencies.concat(partnerSupportedAssets);
   const navigation = useNavigation<StackNavigationProp<{ [key: string]: object | undefined }>>();
   const parentRoute = route?.params?.parentRoute;
   const account = route?.params?.account;

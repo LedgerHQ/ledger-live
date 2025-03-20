@@ -45,7 +45,7 @@ import EarnLight from "~/images/illustration/Light/_003.webp";
 import EarnDark from "~/images/illustration/Dark/_003.webp";
 import FirstLetterIcon from "~/components/FirstLetterIcon";
 import { useAccountUnit } from "~/hooks/useAccountUnit";
-import { useStake } from "~/newArch/hooks/useStake/useStake";
+import { useStake } from "LLM/hooks/useStake/useStake";
 import { useSelector } from "react-redux";
 import { walletSelector } from "~/reducers/wallet";
 

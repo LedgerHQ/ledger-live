@@ -117,7 +117,7 @@ function getNavigatorParams({
   };
 
   switch (parentRoute.name) {
-    // since we have to go to different navigators b
+    // since we have to go to different navigators
     case ScreenName.Account:
     case ScreenName.Asset:
       return [NavigatorName.Accounts, params];
@@ -170,7 +170,7 @@ const getMainActions = ({
         Icon: IconsLegacy.CoinsMedium,
         eventProperties: {
           currency:
-            getCurrentCurrency() ||
+            getCurrentCurrency() ??
             (isTokenAccount(account) ? account.token.ticker : account.currency.ticker),
         },
       },
