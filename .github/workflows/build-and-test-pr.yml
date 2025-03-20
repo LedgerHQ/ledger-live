@@ -48,12 +48,12 @@ jobs:
           echo "PATHS : ${{needs.determine-affected.outputs.paths}}"
           echo "PACKAGES : ${{needs.determine-affected.outputs.packages}}"
 
-          input="${{needs.determine-affected.outputs.packages}}"
-          input="${input#[}"; input="${input%]}"
-          IFS=',' read -r -a array <<< "$input"
-          for element in "${array[@]}"
+          paths="${{needs.determine-affected.outputs.paths}}"
+          paths="${paths#[}"; paths="${paths%]}"
+          IFS=',' read -r -a paths_array <<< "$paths"
+          for path in "${paths_array[@]}"
           do
-            echo "$element"
+            echo "$path"
           done
 
   # LLD
