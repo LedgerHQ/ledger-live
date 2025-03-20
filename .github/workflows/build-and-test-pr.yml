@@ -129,14 +129,16 @@ jobs:
   perform-pr-analysis:
     name: "SonarQube Pull Request Analysis"
     needs: prepare-pr-analysis
-    uses: SonarSource/sonarqube-scan-action@v4
-    env:
-      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-    with:
-      args: >
-        -Dsonar.sources=${{ env.DESKTOP_AFFECTED == 'true' && 'apps/ledger-live-desktop,' || '' }}${{ env.MOBILE_AFFECTED == 'true' && 'apps/ledger-live-mobile,' || '' }}libs
-        -Dsonar.testExecutionReportPaths=sonar-executionTests-report.xml
-    secrets: inherit
+    steps:
+      - id: run_scan
+        name: Run Scan
+        uses: SonarSource/sonarqube-scan-action@v4
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.sources=${{ env.DESKTOP_AFFECTED == 'true' && 'apps/ledger-live-desktop,' || '' }}${{ env.MOBILE_AFFECTED == 'true' && 'apps/ledger-live-mobile,' || '' }}libs
+            -Dsonar.testExecutionReportPaths=sonar-executionTests-report.xml
 
   # Final Check required
   ok:
