@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import { APTOS_NON_HARDENED_DERIVATION_PATH_REGEX } from "./families/aptos/consts";
 
 /**
  * Interface for the end user.
@@ -39,8 +40,20 @@ export function createDataModel<R, M>(schema: DataSchema<R, M>): DataModel<R, M>
 
   function decodeModel(raw) {
     let { data } = raw;
+    const { currencyId, freshAddressPath } = data;
 
-    if (data.currencyId == "crypto_org" && !data.cosmosResources) {
+    // Set 'change' and 'address_index' levels to be hardened for Aptos derivation path
+    if (
+      currencyId === "aptos" &&
+      freshAddressPath.match(APTOS_NON_HARDENED_DERIVATION_PATH_REGEX)
+    ) {
+      data.freshAddressPath = freshAddressPath
+        .split("/")
+        .map(value => (value.endsWith("'") ? value : value + "'"))
+        .join("/");
+    }
+
+    if (currencyId == "crypto_org" && !data.cosmosResources) {
       data.cosmosResources = {
         delegations: [],
         redelegations: [],
@@ -52,6 +65,7 @@ export function createDataModel<R, M>(schema: DataSchema<R, M>): DataModel<R, M>
         sequence: 0,
       };
     }
+
     for (let i = raw.version; i < version; i++) {
       data = migrations[i](data);
     }
