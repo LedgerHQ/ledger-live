@@ -5,7 +5,7 @@ import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
 import type { LoadConfig, ResolutionConfig } from "@ledgerhq/hw-app-eth/lib/services/types";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
-import { EvmSignature, EvmSigner } from "./types/signer";
+import type { EvmSignature, EvmSigner } from "./types/signer";
 import { prepareForSignOperation } from "./prepareTransaction";
 import { getSerializedTransaction } from "./transaction";
 import { Transaction } from "./types";
@@ -37,25 +37,44 @@ export const buildSignOperation =
           nftExplorerBaseURL: getEnv("NFT_METADATA_SERVICE") + "/v1/ethereum",
         };
 
-        o.next({
-          type: "device-signature-requested",
+        const sig = await signerContext(deviceId, async signer => {
+          signer.setLoadConfig(loadConfig);
+
+          return new Promise<EvmSignature>((resolve, reject) => {
+            const subscription = signer
+              .clearSignTransaction(
+                account.freshAddressPath,
+                serializedTxHexString,
+                resolutionConfig,
+                true,
+              )
+              .subscribe({
+                next: event => {
+                  if (event.type === "signer.evm.signing") {
+                    o.next({ type: "device-signature-requested" });
+                  }
+                  if (event.type === "signer.evm.signed") {
+                    resolve(event.value);
+                    subscription.unsubscribe();
+                  }
+                },
+                error: error => {
+                  reject(error);
+                  subscription.unsubscribe();
+                },
+                complete: () => {
+                  o.complete();
+                  // Ensure the promise is resolved when the observable completes
+                  // This is a safeguard in case the observable completes without emitting "signer.evm.signed"
+                  reject(new Error("Observable completed without emitting signer.evm.signed"));
+                },
+              });
+          });
         });
 
-        const sig = (await signerContext(deviceId, signer => {
-          signer.setLoadConfig(loadConfig);
-          // Request signature on the nano
-          return signer.clearSignTransaction(
-            account.freshAddressPath,
-            serializedTxHexString,
-            resolutionConfig,
-            true,
-          );
-        })) as EvmSignature;
+        o.next({ type: "device-signature-granted" });
 
-        o.next({ type: "device-signature-granted" }); // Signature is done
-
-        // Create a new serialized tx with the signature now
-        const signature = await getSerializedTransaction(preparedTransaction, {
+        const signature = getSerializedTransaction(preparedTransaction, {
           r: "0x" + sig.r,
           s: "0x" + sig.s,
           v: typeof sig.v === "number" ? sig.v : parseInt(sig.v, 16),
