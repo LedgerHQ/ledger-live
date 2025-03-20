@@ -15,9 +15,10 @@ import Button from "~/renderer/components/Button";
 import { useTranslation } from "react-i18next";
 import { getEnv } from "@ledgerhq/live-env";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { v4 as uuidv4 } from "uuid";
 
 const createAccount = (currency: CryptoCurrency) => {
-  const account = genAccount(String(Math.random()), { currency, withNft: true });
+  const account = genAccount(uuidv4(), { currency, withNft: true });
   const userData = accountUserDataExportSelector(liveWalletInitialState, { account });
   return [account, userData] as [Account, AccountUserData];
 };
