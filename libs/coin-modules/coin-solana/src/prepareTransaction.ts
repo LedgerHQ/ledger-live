@@ -56,6 +56,7 @@ import type {
   SolanaStake,
   SolanaTokenAccount,
   SolanaTokenProgram,
+  StakeCreateAccountCommand,
   StakeCreateAccountTransaction,
   StakeDelegateTransaction,
   StakeSplitTransaction,
@@ -438,6 +439,9 @@ async function deriveStakeCreateAccountCommandDescriptor(
 ): Promise<CommandDescriptor> {
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
+
+  const commandDescriptor = tx.model.commandDescriptor;
+  if (isValidCommandDescriptor(commandDescriptor)) return commandDescriptor!;
 
   const { fee, spendable } = await estimateFeeAndSpendable(api, mainAccount, tx);
   const txAmount = tx.useAllAmount ? spendable : tx.amount;
@@ -835,6 +839,25 @@ function validateRecipientRequiredMemo(
     // LLM expects <transaction> as error key to disable continue button
     errors.transaction = errors.memo;
   }
+}
+
+function isValidCommandDescriptor(commandDescriptor: CommandDescriptor | undefined) {
+  const txCommand = commandDescriptor?.command as StakeCreateAccountCommand | undefined;
+
+  if (
+    commandDescriptor &&
+    txCommand?.amount &&
+    txCommand.stakeAccRentExemptAmount &&
+    txCommand.fromAccAddress &&
+    txCommand.stakeAccAddress &&
+    txCommand.delegate &&
+    txCommand.seed &&
+    commandDescriptor.fee
+  ) {
+    return true;
+  }
+
+  return false;
 }
 
 export { prepareTransaction };
