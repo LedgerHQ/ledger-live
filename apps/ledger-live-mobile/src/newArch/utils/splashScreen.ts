@@ -1,16 +1,21 @@
 import SplashScreen from "react-native-splash-screen";
 import { NativeModules, Platform } from "react-native";
 
-export function showSplashScreen() {
+export async function showSplashScreen(): Promise<void> {
   if (Platform.OS === "ios") {
     const { RNSplashScreenModule } = NativeModules;
-    RNSplashScreenModule.showSplashScreen();
-  } else SplashScreen.show();
+    await RNSplashScreenModule.showSplashScreen();
+  } else {
+    await SplashScreen.show();
+  }
 }
 
-export function dismissSplashScreen() {
+export async function dismissSplashScreen(): Promise<void> {
   if (Platform.OS === "ios") {
     const { RNSplashScreenModule } = NativeModules;
-    RNSplashScreenModule.hideSplashScreen();
-  } else setTimeout(() => SplashScreen.hide(), 300);
+    await RNSplashScreenModule.hideSplashScreen();
+  } else {
+    await new Promise(resolve => setTimeout(resolve, 300));
+    await SplashScreen.hide();
+  }
 }

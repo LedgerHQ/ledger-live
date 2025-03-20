@@ -73,12 +73,6 @@ static NSString *const iOSPushAutoEnabledKey = @"iOSPushAutoEnabled";
   RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
   RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge moduleName:@"ledgerlivemobile" initialProperties:nil];
 
-  self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
-  self.window.rootViewController = [UIViewController new];
-  self.window.rootViewController.view = rootView;
-  rootView.backgroundColor = [UIColor colorWithRed:12/255.0 green:12/255.0 blue:12/255.0 alpha:1.0];
-  [self.window makeKeyAndVisible];
-
   RNSplashScreenModule *splashScreenModule = [bridge moduleForClass:[RNSplashScreenModule class]];
   [splashScreenModule showSplashScreen];
 

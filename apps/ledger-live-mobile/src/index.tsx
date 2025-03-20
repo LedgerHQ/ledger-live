@@ -317,9 +317,9 @@ export default class Root extends Component {
     }
   };
 
-  onRebootStart = () => {
+  onRebootStart = async () => {
     clearTimeout(this.initTimeout);
-    showSplashScreen();
+    await showSplashScreen();
   };
 
   render() {

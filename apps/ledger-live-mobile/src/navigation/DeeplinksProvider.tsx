@@ -687,9 +687,9 @@ export const DeeplinksProvider = ({
       theme={themes[resolvedTheme]}
       linking={linking}
       ref={navigationRef}
-      onReady={() => {
+      onReady={async () => {
         (isReadyRef as Writeable<typeof isReadyRef>).current = true;
-        dismissSplashScreen();
+        await dismissSplashScreen();
         navigationIntegration.registerNavigationContainer(navigationRef);
       }}
     >
