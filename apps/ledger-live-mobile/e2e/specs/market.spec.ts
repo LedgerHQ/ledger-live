@@ -1,6 +1,3 @@
-import { Application } from "../page";
-
-const app = new Application();
 const asset = "Ethereum (ETH)";
 
 describe("Market page for user with no device", () => {

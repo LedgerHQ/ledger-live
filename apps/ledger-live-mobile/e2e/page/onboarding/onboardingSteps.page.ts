@@ -1,10 +1,3 @@
-import {
-  tapByElement,
-  getElementById,
-  waitForElementById,
-  tapById,
-  scrollToId,
-} from "../../helpers";
 import { ModelId } from "../../models/devices";
 import { expect } from "detox";
 

@@ -1,8 +1,6 @@
 import DeviceAction from "../../models/DeviceAction";
 import { knownDevices } from "../../models/devices";
-import { Application } from "../../page";
 
-const app = new Application();
 let deviceAction: DeviceAction;
 const btcReceiveAddress = "173ej2furpaB8mTtN5m9829MPGMD7kCgSPx";
 let first = true;

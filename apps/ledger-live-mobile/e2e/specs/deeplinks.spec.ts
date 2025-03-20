@@ -1,7 +1,4 @@
-import { Application } from "../page";
 import { knownDevices } from "../models/devices";
-
-const app = new Application();
 
 const ethereumLong = "ethereum";
 const bitcoinLong = "bitcoin";

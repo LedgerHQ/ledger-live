@@ -1,10 +1,4 @@
-import {
-  getElementById,
-  openDeeplink,
-  waitForElementById,
-  tapByElement,
-  getIdOfElement,
-} from "../../helpers";
+import { openDeeplink } from "../../helpers";
 const baseLink = "accounts";
 
 export default class AccountsPage {
@@ -30,6 +24,6 @@ export default class AccountsPage {
 
   @Step("Expect accounts number")
   async expectAccountsNumber(number: number) {
-    expect((await getIdOfElement(this.accountList)).endsWith(number.toString())).toBeTruthy();
+    jestExpect((await getIdOfElement(this.accountList)).endsWith(number.toString())).toBeTruthy();
   }
 }

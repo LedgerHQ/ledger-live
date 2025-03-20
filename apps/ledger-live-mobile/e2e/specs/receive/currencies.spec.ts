@@ -1,9 +1,7 @@
 import DeviceAction from "../../models/DeviceAction";
 import { knownDevices } from "../../models/devices";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
-import { Application } from "../../page";
 
-const app = new Application();
 let deviceAction: DeviceAction;
 let first = true;
 const knownDevice = knownDevices.nanoX;

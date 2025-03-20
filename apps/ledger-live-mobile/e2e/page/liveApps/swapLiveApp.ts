@@ -1,10 +1,3 @@
-import {
-  getWebElementsText,
-  getWebElementsWithText,
-  tapWebElementByTestId,
-  typeTextByWebTestId,
-  waitWebElementByTestId,
-} from "../../helpers";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Swap";
 import invariant from "invariant";
 

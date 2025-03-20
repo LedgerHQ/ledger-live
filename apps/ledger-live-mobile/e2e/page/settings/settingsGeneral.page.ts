@@ -1,11 +1,3 @@
-import {
-  getElementById,
-  getElementByText,
-  tapByElement,
-  tapByText,
-  scrollToText,
-  typeTextByElement,
-} from "../../helpers";
 import { expect } from "detox";
 
 export default class SettingsGeneralPage {

@@ -1,10 +1,7 @@
-import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
-import { Application } from "../page";
-import { Delegate } from "@ledgerhq/live-common/e2e/models/Delegate";
+import { DelegateType } from "@ledgerhq/live-common/e2e/models/Delegate";
 
 export async function verifyAppValidationStakeInfo(
-  app: Application,
-  delegation: Delegate,
+  delegation: DelegateType,
   amount: string,
   fees?: string,
 ) {
@@ -41,8 +38,7 @@ export async function verifyAppValidationStakeInfo(
 }
 
 export async function verifyStakeOperationDetailsInfo(
-  app: Application,
-  delegation: Delegate,
+  delegation: DelegateType,
   amount: string,
   fees?: string,
 ) {

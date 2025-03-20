@@ -1,7 +1,4 @@
 import { device } from "detox";
-import { Application } from "../page";
-
-const app = new Application();
 
 describe("Onboarding - Read Only", () => {
   $TmsLink("B2CQA-1752");

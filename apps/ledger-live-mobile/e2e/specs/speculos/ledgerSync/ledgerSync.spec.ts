@@ -1,29 +1,29 @@
-import { CLI } from "../../../utils/cliUtils";
-import { Application } from "../../../page";
 import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
-import { activateLedgerSync } from "@ledgerhq/live-common/e2e/speculos";
 import { device } from "detox";
 import { getEnv } from "@ledgerhq/live-env";
 import { getFlags } from "../../../bridge/server";
 
-const app = new Application();
 const tmsLinks = ["B2CQA-2292", "B2CQA-2293", "B2CQA-2296"];
 
-const ledgerKeyRingProtocolArgs = {
-  apiBaseUrl: "",
-  pubKey: "",
-  privateKey: "",
-};
-const ledgerSyncPushDataArgs = {
-  rootId: "",
-  walletSyncEncryptionKey: "",
-  applicationPath: "",
-  push: true,
-  data: '{"accounts":[{"id":"mock:1:dogecoin:0.790010769447963:","currencyId":"dogecoin","index":1,"seedIdentifier":"mock","derivationMode":"","freshAddress":"1uVnrWAzycYqKUXSuNXt3XSjJ8"},{"id":"mock:1:bitcoin_gold:0.8027791663782486:","currencyId":"bitcoin_gold","index":1,"seedIdentifier":"mock","derivationMode":"","freshAddress":"1Y5T8JQqBKUS7cXbxUYCR4wg3YSbV9R"}],"accountNames":{"mock:1:dogecoin:0.790010769447963:":"Dogecoin 2","mock:1:bitcoin_gold:0.8027791663782486:":"Bitcoin Gold 2"}}',
-  cloudSyncApiBaseUrl: "",
+type LedgerKeyRingProtocolArgs = {
+  apiBaseUrl: string;
+  pubKey: string;
+  privateKey: string;
 };
 
-async function initializeLedgerKeyRingProtocol() {
+type LedgerSyncPushDataArgs = {
+  rootId?: string;
+  walletSyncEncryptionKey?: string;
+  applicationPath?: string;
+  push?: boolean;
+  data?: string;
+  cloudSyncApiBaseUrl: string;
+};
+
+async function initializeLedgerKeyRingProtocol(
+  ledgerKeyRingProtocolArgs: LedgerKeyRingProtocolArgs,
+  ledgerSyncPushDataArgs: LedgerSyncPushDataArgs,
+) {
   const environment = JSON.parse(await getFlags()).llmWalletSync.params?.environment;
   ledgerKeyRingProtocolArgs.apiBaseUrl =
     environment == "PROD" ? getEnv("TRUSTCHAIN_API_PROD") : getEnv("TRUSTCHAIN_API_STAGING");
@@ -42,7 +42,10 @@ async function initializeLedgerKeyRingProtocol() {
   });
 }
 
-async function initializeLedgerSync() {
+async function initializeLedgerSync(
+  ledgerKeyRingProtocolArgs: LedgerKeyRingProtocolArgs,
+  ledgerSyncPushDataArgs: LedgerSyncPushDataArgs,
+) {
   const output = CLI.ledgerKeyRingProtocol({
     getKeyRingTree: true,
     ...ledgerKeyRingProtocolArgs,
@@ -54,20 +57,34 @@ async function initializeLedgerSync() {
     }
     return out;
   });
-  await activateLedgerSync();
+  await app.ledgerSync.activateLedgerSyncOnSpeculos();
   return output;
 }
 
 describe(`Ledger Sync Accounts`, () => {
+  const ledgerKeyRingProtocolArgs = {
+    apiBaseUrl: "",
+    pubKey: "",
+    privateKey: "",
+  };
+  const ledgerSyncPushDataArgs = {
+    rootId: "",
+    walletSyncEncryptionKey: "",
+    applicationPath: "",
+    push: true,
+    data: '{"accounts":[{"id":"mock:1:dogecoin:0.790010769447963:","currencyId":"dogecoin","index":1,"seedIdentifier":"mock","derivationMode":"","freshAddress":"1uVnrWAzycYqKUXSuNXt3XSjJ8"},{"id":"mock:1:bitcoin_gold:0.8027791663782486:","currencyId":"bitcoin_gold","index":1,"seedIdentifier":"mock","derivationMode":"","freshAddress":"1Y5T8JQqBKUS7cXbxUYCR4wg3YSbV9R"}],"accountNames":{"mock:1:dogecoin:0.790010769447963:":"Dogecoin 2","mock:1:bitcoin_gold:0.8027791663782486:":"Bitcoin Gold 2"}}',
+    cloudSyncApiBaseUrl: "",
+  };
+
   beforeAll(async () => {
     await app.init({
       speculosApp: AppInfos.LS,
       cliCommands: [
         async () => {
-          return initializeLedgerKeyRingProtocol();
+          return initializeLedgerKeyRingProtocol(ledgerKeyRingProtocolArgs, ledgerSyncPushDataArgs);
         },
         async () => {
-          return initializeLedgerSync();
+          return initializeLedgerSync(ledgerKeyRingProtocolArgs, ledgerSyncPushDataArgs);
         },
         async () => {
           return CLI.ledgerSync({
@@ -95,7 +112,7 @@ describe(`Ledger Sync Accounts`, () => {
     await app.ledgerSync.expectLedgerSyncPageIsDisplayed();
     await app.ledgerSync.tapTurnOnSync();
     await app.common.selectKnownDevice();
-    await activateLedgerSync();
+    await app.ledgerSync.activateLedgerSyncOnSpeculos();
     await app.ledgerSync.expectLedgerSyncSuccessPage();
     await app.ledgerSync.closeActivationSuccessPage();
     await app.accounts.openViaDeeplink();

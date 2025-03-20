@@ -1,4 +1,4 @@
-import { getElementById, getWebElementById, isAndroid, tapByElement } from "../../helpers";
+import { isAndroid } from "../../helpers";
 
 const expectedUrl = "https://shop.ledger.com/";
 

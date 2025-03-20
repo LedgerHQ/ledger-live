@@ -572,7 +572,7 @@ export async function signSendTransaction(tx: Transaction) {
       await sendAptos();
       break;
     default:
-      throw new Error(`Unsupported currency: ${currencyName}`);
+      throw new Error(`Unsupported currency: ${currencyName.ticker}`);
   }
 }
 
@@ -583,7 +583,7 @@ export async function signSendNFTTransaction(tx: NFTTransaction) {
       await sendEvmNFT(tx);
       break;
     default:
-      throw new Error(`Unsupported currency: ${currencyName}`);
+      throw new Error(`Unsupported currency: ${currencyName.ticker}`);
   }
 }
 

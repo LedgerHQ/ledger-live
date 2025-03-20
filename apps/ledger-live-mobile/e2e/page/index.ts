@@ -38,16 +38,21 @@ import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { lastValueFrom, Observable } from "rxjs";
 import path from "path";
 import fs from "fs";
-import { getEnv } from "@ledgerhq/live-env";
 import { SettingsSetOverriddenFeatureFlagsPlayload } from "~/actions/types";
+import { setupEnvironment } from "../globalHelpers";
+import { getEnv } from "@ledgerhq/live-env";
+import { log } from "detox";
+import { isMock } from "../helpers";
 
-type CliCommand = () => Observable<unknown> | Promise<unknown> | string;
+setupEnvironment();
+
+type CliCommand = (userdataPath?: string) => Observable<unknown> | Promise<unknown> | string;
 
 type ApplicationOptions = {
   speculosApp?: AppInfos;
   cliCommands?: CliCommand[];
   cliCommandsOnApp?: {
-    app: AppInfos;
+    nanoApp: AppInfos;
     cmd: CliCommand;
   }[];
   userdata?: string;
@@ -68,21 +73,19 @@ const lazyInit = <T>(PageClass: new () => T) => {
   };
 };
 
-async function executeCliCommand(cmd: CliCommand) {
-  const promise = await cmd();
+async function executeCliCommand(cmd: CliCommand, userdataPath?: string) {
+  const promise = await cmd(userdataPath);
   const result = promise instanceof Observable ? await lastValueFrom(promise) : await promise;
-  // eslint-disable-next-line no-console
-  console.log("CLI result: ", result);
+  log.info("CLI result: ", result);
 }
 
 export class Application {
-  public userdataPath: string | undefined = undefined;
   private assetAccountsPageInstance = lazyInit(AssetAccountsPage);
   private accountPageInstance = lazyInit(AccountPage);
   private accountsPageInstance = lazyInit(AccountsPage);
   private addAccountDrawerInstance = lazyInit(AddAccountDrawer);
   private buyDevicePageInstance = lazyInit(BuyDevicePage);
-  private commonPageInstance = lazyInit(CommonPage);
+  private commonPageInstance = new CommonPage();
   private cryptoDrawerInstance = lazyInit(CryptoDrawer);
   private customLockscreenPageInstance = lazyInit(CustomLockscreenPage);
   private deviceValidationPageInstance = lazyInit(DeviceValidationPage);
@@ -110,7 +113,7 @@ export class Application {
   private walletTabNavigatorPageInstance = lazyInit(WalletTabNavigatorPage);
   private celoManageAssetsPageInstance = lazyInit(CeloManageAssetsPage);
 
-  async init({
+  public async init({
     speculosApp,
     cliCommands,
     cliCommandsOnApp,
@@ -120,25 +123,25 @@ export class Application {
     featureFlags,
   }: ApplicationOptions) {
     const userdataSpeculos = `temp-userdata-${Date.now()}`;
-    this.userdataPath = getUserdataPath(userdataSpeculos);
+    const userdataPath = getUserdataPath(userdataSpeculos);
+    console.warn("userdataPath", userdataPath);
 
-    if (!getEnv("MOCK"))
-      fs.copyFileSync(getUserdataPath(userdata || "skip-onboarding"), this.userdataPath);
+    if (!isMock()) fs.copyFileSync(getUserdataPath(userdata || "skip-onboarding"), userdataPath);
 
-    for (const { app, cmd } of cliCommandsOnApp || []) {
-      const proxyPort = await this.common.addSpeculos(app.name);
-      await executeCliCommand(cmd);
-      this.common.removeSpeculos(proxyPort);
+    for (const { nanoApp, cmd } of cliCommandsOnApp || []) {
+      const proxyPort = await app.common.addSpeculos(nanoApp.name);
+      await executeCliCommand(cmd, userdataPath);
+      app.common.removeSpeculos(proxyPort);
     }
 
-    if (speculosApp) await this.common.addSpeculos(speculosApp.name);
+    if (speculosApp) await app.common.addSpeculos(speculosApp.name);
     for (const cmd of cliCommands || []) {
-      await executeCliCommand(cmd);
+      await executeCliCommand(cmd, userdataPath);
     }
 
-    if (!getEnv("MOCK")) {
+    if (!isMock()) {
       await loadConfig(userdataSpeculos, true);
-      fs.existsSync(this.userdataPath) && fs.unlinkSync(this.userdataPath);
+      fs.existsSync(userdataPath) && fs.unlinkSync(userdataPath);
     } else userdata && (await loadConfig(userdata, true));
 
     featureFlags && (await setFeatureFlags(featureFlags));
@@ -162,7 +165,7 @@ export class Application {
     return this.buyDevicePageInstance();
   }
   public get common() {
-    return this.commonPageInstance();
+    return this.commonPageInstance;
   }
   public get cryptoDrawer() {
     return this.cryptoDrawerInstance();

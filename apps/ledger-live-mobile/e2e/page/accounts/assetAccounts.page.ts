@@ -1,5 +1,5 @@
 import { expect } from "detox";
-import { currencyParam, openDeeplink, waitForElementById, getElementById } from "../../helpers";
+import { currencyParam, openDeeplink } from "../../helpers";
 const baseLink = "account";
 
 export default class AssetAccountsPage {

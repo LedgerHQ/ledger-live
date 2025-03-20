@@ -1,9 +1,6 @@
 import { toAccountRaw } from "@ledgerhq/live-common/account/index";
 import { loadAccountsRaw } from "../bridge/server";
-import { Application } from "../page";
 import { initTestAccounts } from "../models/currencies";
-
-const app = new Application();
 
 const [badAccount1, badAccount2] = initTestAccounts(["bitcoin", "bitcoin"]).map(account =>
   toAccountRaw(account),

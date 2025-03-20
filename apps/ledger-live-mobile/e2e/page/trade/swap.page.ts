@@ -1,13 +1,5 @@
-import {
-  clearTextByElement,
-  getElementById,
-  openDeeplink,
-  tapByElement,
-  tapByText,
-  typeTextByElement,
-  waitForElementById,
-} from "../../helpers";
 import { expect } from "detox";
+import { openDeeplink } from "../../helpers";
 
 const baseLink = "swap";
 

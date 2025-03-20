@@ -1,4 +1,3 @@
-import { getElementById, getElementByText, tapByElement, typeTextByElement } from "../helpers";
 import { expect } from "detox";
 
 export default class PasswordEntryPage {

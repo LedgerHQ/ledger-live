@@ -1,9 +1,6 @@
 import { device } from "detox";
-import { isAndroid, launchApp } from "../helpers";
-import { Application } from "../page";
-
-const app = new Application();
-
+import { isAndroid } from "../helpers";
+import { launchApp } from "../globalHelpers";
 let isFirstTest = true;
 
 describe("Onboarding", () => {

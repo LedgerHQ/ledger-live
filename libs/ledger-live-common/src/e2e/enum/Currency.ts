@@ -1,5 +1,7 @@
 import { AppInfos } from "./AppInfos";
 
+export type CurrencyType = Currency;
+
 export class Currency {
   constructor(
     public readonly name: string,

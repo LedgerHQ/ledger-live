@@ -1,13 +1,5 @@
 import { expect } from "detox";
-import {
-  getElementById,
-  getTextOfElement,
-  openDeeplink,
-  scrollToId,
-  tapByElement,
-  tapById,
-  waitForElementById,
-} from "../../helpers";
+import { openDeeplink } from "../../helpers";
 import jestExpect from "expect";
 
 const baseLink = "portfolio";

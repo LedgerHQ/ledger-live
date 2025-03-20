@@ -1,17 +1,6 @@
-import {
-  getElementById,
-  tapById,
-  waitForElementById,
-  currencyParam,
-  openDeeplink,
-  typeTextById,
-  tapByElement,
-  IsIdVisible,
-  getTextOfElement,
-  getElementByText,
-} from "../../helpers";
 import { expect } from "detox";
 import jestExpect from "expect";
+import { currencyParam, openDeeplink } from "../../helpers";
 
 const baseLink = "send";
 

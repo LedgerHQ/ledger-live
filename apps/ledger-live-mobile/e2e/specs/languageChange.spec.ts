@@ -1,7 +1,3 @@
-import { Application } from "../page";
-
-const app = new Application();
-
 const langButtonText = [
   { lang: "Français", localization: "Général" },
   { lang: "Español", localization: "General" },

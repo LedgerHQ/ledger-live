@@ -1,15 +1,13 @@
-import { Application } from "../../../page";
 import { setExchangeDependencies } from "@ledgerhq/live-common/e2e/speculos";
 import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
 import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { swapSetup } from "../../../bridge/server";
-import { CLI } from "../../../utils/cliUtils";
 import { setEnv } from "@ledgerhq/live-env";
 
 const app_exchange: AppInfos = AppInfos.EXCHANGE;
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
-const beforeAllFunction = async (app: Application, swap: Swap) => {
+const beforeAllFunction = async (swap: Swap) => {
   setExchangeDependencies(
     [swap.accountToDebit, swap.accountToCredit].map(acc => ({
       name: acc.currency.speculosApp.name.replace(/ /g, "_"),
@@ -27,24 +25,24 @@ const beforeAllFunction = async (app: Application, swap: Swap) => {
     },
     cliCommandsOnApp: [
       {
-        app: swap.accountToDebit.currency.speculosApp,
-        cmd: () => {
+        nanoApp: swap.accountToDebit.currency.speculosApp,
+        cmd: (userdataPath?: string) => {
           return CLI.liveData({
             currency: swap.accountToDebit.currency.speculosApp.name,
             index: swap.accountToDebit.index,
             add: true,
-            appjson: app.userdataPath,
+            appjson: userdataPath,
           });
         },
       },
       {
-        app: swap.accountToCredit.currency.speculosApp,
-        cmd: () => {
+        nanoApp: swap.accountToCredit.currency.speculosApp,
+        cmd: (userdataPath?: string) => {
           return CLI.liveData({
             currency: swap.accountToCredit.currency.speculosApp.name,
             index: swap.accountToCredit.index,
             add: true,
-            appjson: app.userdataPath,
+            appjson: userdataPath,
           });
         },
       },
@@ -54,7 +52,7 @@ const beforeAllFunction = async (app: Application, swap: Swap) => {
   await app.portfolio.waitForPortfolioPageToLoad();
 };
 
-async function performSwapUntilQuoteSelectionStep(app: Application, swap: Swap) {
+async function performSwapUntilQuoteSelectionStep(swap: Swap) {
   await app.swapLiveApp.waitForSwapLiveApp();
 
   await app.swapLiveApp.tapFromCurrency();
@@ -71,17 +69,15 @@ async function performSwapUntilQuoteSelectionStep(app: Application, swap: Swap) 
 }
 
 export async function runSwapTest(swap: Swap, tmsLinks: string[]) {
-  const app = new Application();
-
   describe("Swap - Accepted (without tx broadcast)", () => {
     beforeAll(async () => {
-      await beforeAllFunction(app, swap);
+      await beforeAllFunction(swap);
     });
 
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     it(`Swap ${swap.accountToDebit.currency.name} to ${swap.accountToCredit.currency.name}`, async () => {
       await app.swap.openViaDeeplink();
-      await performSwapUntilQuoteSelectionStep(app, swap);
+      await performSwapUntilQuoteSelectionStep(swap);
       await app.swapLiveApp.selectExchange();
       await app.swapLiveApp.tapExecuteSwap();
       await app.common.selectKnownDevice();

@@ -1,12 +1,6 @@
-import {
-  getElementById,
-  getWebElementById,
-  getWebElementByTag,
-  openDeeplink,
-  waitForElementByText,
-} from "../../helpers";
 import { expect, log } from "detox";
 import jestExpect from "expect";
+import { openDeeplink } from "../../helpers";
 
 const baseLink = "discover/";
 const discoverApps = [

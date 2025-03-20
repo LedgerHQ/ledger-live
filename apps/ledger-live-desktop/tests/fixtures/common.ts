@@ -14,7 +14,6 @@ import { captureArtifacts } from "tests/utils/allureUtils";
 import { randomUUID } from "crypto";
 import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { lastValueFrom, Observable } from "rxjs";
-import { CLI } from "../utils/cliUtils";
 
 type TestFixtures = {
   lang: string;

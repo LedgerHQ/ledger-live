@@ -1,8 +1,6 @@
 import { knownDevices } from "../../models/devices";
 import DeviceAction from "../../models/DeviceAction";
-import { Application } from "../../page";
 
-const app = new Application();
 let deviceAction: DeviceAction;
 
 const testedCurrency = "Bitcoin";

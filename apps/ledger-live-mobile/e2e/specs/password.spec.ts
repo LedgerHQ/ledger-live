@@ -1,7 +1,4 @@
 import { device } from "detox";
-import { Application } from "../page";
-
-const app = new Application();
 
 const CORRECT_PASSWORD = "passWORD$123!";
 

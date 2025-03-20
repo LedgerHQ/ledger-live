@@ -6,11 +6,10 @@ import {
   getAccountUnit,
   initTestAccounts,
 } from "../../models/currencies";
-import { Application } from "../../page";
+
 import DeviceAction from "../../models/DeviceAction";
 import BigNumber from "bignumber.js";
 
-const app = new Application();
 let deviceAction: DeviceAction;
 
 const testedCurrency = "cosmos";

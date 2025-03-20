@@ -1,11 +1,5 @@
-import {
-  getElementById,
-  getIdOfElement,
-  openDeeplink,
-  tapByElement,
-  waitForElementById,
-} from "../../helpers";
 import { expect } from "detox";
+import { openDeeplink } from "../../helpers";
 
 const baseLink = "nftgallery";
 

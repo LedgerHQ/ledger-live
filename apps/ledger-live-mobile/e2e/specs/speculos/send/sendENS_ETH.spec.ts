@@ -1,5 +1,3 @@
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
 import { runSendENSTest } from "../send/send";
 import { Fee } from "@ledgerhq/live-common/e2e/enum/Fee";
 

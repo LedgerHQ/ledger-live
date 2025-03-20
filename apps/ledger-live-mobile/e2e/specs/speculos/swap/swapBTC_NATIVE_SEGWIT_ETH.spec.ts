@@ -1,4 +1,3 @@
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { runSwapTest } from "./swap";
 import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
 import { Fee } from "@ledgerhq/live-common/e2e/enum/Fee";

@@ -1,7 +1,3 @@
-import { tapByElement } from "../helpers";
-import { Application } from "../page";
-
-const app = new Application();
 const accountCurrency = "ethereum";
 
 // To-Do Fix NFT not available in account

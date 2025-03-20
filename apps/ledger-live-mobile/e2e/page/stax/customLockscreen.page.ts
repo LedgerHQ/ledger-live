@@ -1,5 +1,5 @@
-import { getElementById, openDeeplink } from "../../helpers";
 import { expect } from "detox";
+import { openDeeplink } from "../../helpers";
 
 const baseLink = "custom-image";
 

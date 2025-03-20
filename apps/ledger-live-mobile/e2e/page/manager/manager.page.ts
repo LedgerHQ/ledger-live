@@ -1,11 +1,5 @@
-import {
-  getElementById,
-  openDeeplink,
-  scrollToId,
-  tapByElement,
-  waitForElementById,
-} from "../../helpers";
 import { expect, element, by } from "detox";
+import { openDeeplink } from "../../helpers";
 
 const baseLink = "myledger";
 

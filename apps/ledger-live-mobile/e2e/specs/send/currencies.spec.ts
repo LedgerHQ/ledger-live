@@ -8,9 +8,7 @@ import {
   getAccountUnit,
   initTestAccounts,
 } from "../../models/currencies";
-import { Application } from "../../page";
 
-const app = new Application();
 let deviceAction: DeviceAction;
 
 let first = true;
