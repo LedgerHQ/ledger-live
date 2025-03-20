@@ -48,8 +48,7 @@ jobs:
           echo "PATHS : ${{needs.determine-affected.outputs.paths}}"
           echo "PACKAGES : ${{needs.determine-affected.outputs.packages}}"
 
-          paths="${{needs.determine-affected.outputs.paths}}"
-          paths="${paths#[}"; paths="${paths%]}"
+          paths="${{needs.determine-affected.outputs.paths:1:-1}}"
           IFS=',' read -r -a paths_array <<< "$paths"
           for path in "${paths_array[@]}"
           do
@@ -134,14 +133,15 @@ jobs:
     steps:
       - name: Prepare PR Analysis
         run: |
-          if [[ "$DESKTOP_AFFECTED" == 'true' ]]; then 
-            cat apps/ledger-live-desktop/coverage/lcov.info >> ./lcov.info 
-            cat apps/ledger-live-desktop/coverage/sonar-executionTests-report.xml >> ./sonar-executionTests-report.xml 
-          fi
-          if [[ "$MOBILE_AFFECTED" == 'true' ]]; then 
-            cat apps/ledger-live-mobile/coverage/lcov.info >> ./lcov.info 
-            cat apps/ledger-live-mobile/coverage/sonar-executionTests-report.xml >> ./sonar-executionTests-report.xml 
-          fi
+          paths="${{needs.determine-affected.outputs.paths}}"
+          paths="${paths#[}"; paths="${paths%]}"
+          IFS=',' read -r -a paths_array <<< "$paths"
+          for path in "${paths_array[@]}"
+          do
+            echo "$path"
+            cat $path/coverage/lcov.info >> ./lcov.info
+            cat $path/coverage/sonar-executionTests-report.xml >> ./sonar-executionTests-report.xml
+          done
 
   perform-pr-analysis:
     name: "SonarQube Pull Request Analysis"
@@ -155,7 +155,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           args: >
-            -Dsonar.sources=${{ env.DESKTOP_AFFECTED == 'true' && 'apps/ledger-live-desktop,' || '' }}${{ env.MOBILE_AFFECTED == 'true' && 'apps/ledger-live-mobile,' || '' }}libs
+            -Dsonar.sources=${{needs.determine-affected.outputs.paths:1:-1}}
             -Dsonar.testExecutionReportPaths=sonar-executionTests-report.xml
 
   # Final Check required
