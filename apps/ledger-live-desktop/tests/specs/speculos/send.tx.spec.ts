@@ -210,7 +210,7 @@ test.describe("Send flows", () => {
         cliCommands: [
           (appjsonPath: string) => {
             return CLI.liveData({
-              currency: transaction.transaction.accountToCredit.currency.currencyId,
+              currency: transaction.transaction.accountToCredit.currency.id,
               index: transaction.transaction.accountToCredit.index,
               add: true,
               appjson: appjsonPath,
@@ -218,7 +218,7 @@ test.describe("Send flows", () => {
           },
           (appjsonPath: string) => {
             return CLI.liveData({
-              currency: transaction.transaction.accountToDebit.currency.currencyId,
+              currency: transaction.transaction.accountToDebit.currency.id,
               index: transaction.transaction.accountToDebit.index,
               add: true,
               appjson: appjsonPath,
@@ -277,7 +277,7 @@ test.describe("Send flows", () => {
         cliCommands: [
           (appjsonPath: string) => {
             return CLI.liveData({
-              currency: transaction.transaction.accountToDebit.currency.currencyId,
+              currency: transaction.transaction.accountToDebit.currency.id,
               index: transaction.transaction.accountToDebit.index,
               add: true,
               appjson: appjsonPath,
@@ -322,7 +322,7 @@ test.describe("Send flows", () => {
       cliCommands: [
         (appjsonPath: string) => {
           return CLI.liveData({
-            currency: transactionInputValid.accountToDebit.currency.currencyId,
+            currency: transactionInputValid.accountToDebit.currency.id,
             index: transactionInputValid.accountToDebit.index,
             add: true,
             appjson: appjsonPath,
@@ -365,7 +365,7 @@ test.describe("Send flows", () => {
         cliCommands: [
           (appjsonPath: string) => {
             return CLI.liveData({
-              currency: transaction.transaction.accountToDebit.currency.currencyId,
+              currency: transaction.transaction.accountToDebit.currency.id,
               index: transaction.transaction.accountToDebit.index,
               scheme: transaction.transaction.accountToDebit.derivationMode,
               add: true,
@@ -408,7 +408,7 @@ test.describe("Send flows", () => {
         cliCommands: [
           (appjsonPath: string) => {
             return CLI.liveData({
-              currency: transaction.transaction.accountToDebit.currency.currencyId,
+              currency: transaction.transaction.accountToDebit.currency.id,
               index: transaction.transaction.accountToDebit.index,
               add: true,
               appjson: appjsonPath,
@@ -462,7 +462,7 @@ test.describe("Send flows", () => {
       cliCommands: [
         (appjsonPath: string) => {
           return CLI.liveData({
-            currency: transactionEnsAddress.accountToCredit.currency.currencyId,
+            currency: transactionEnsAddress.accountToCredit.currency.id,
             index: transactionEnsAddress.accountToCredit.index,
             add: true,
             appjson: appjsonPath,
@@ -470,7 +470,7 @@ test.describe("Send flows", () => {
         },
         (appjsonPath: string) => {
           return CLI.liveData({
-            currency: transactionEnsAddress.accountToDebit.currency.currencyId,
+            currency: transactionEnsAddress.accountToDebit.currency.id,
             index: transactionEnsAddress.accountToDebit.index,
             add: true,
             appjson: appjsonPath,

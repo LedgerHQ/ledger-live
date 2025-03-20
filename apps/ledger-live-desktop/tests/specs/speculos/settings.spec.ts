@@ -47,7 +47,7 @@ test.describe("Password", () => {
     cliCommands: [
       (appjsonPath: string) => {
         return CLI.liveData({
-          currency: account.currency.currencyId,
+          currency: account.currency.id,
           index: account.index,
           add: true,
           appjson: appjsonPath,
@@ -93,7 +93,7 @@ test.describe("counter value selection", () => {
     cliCommands: [
       (appjsonPath: string) => {
         return CLI.liveData({
-          currency: account.currency.currencyId,
+          currency: account.currency.id,
           index: account.index,
           add: true,
           appjson: appjsonPath,

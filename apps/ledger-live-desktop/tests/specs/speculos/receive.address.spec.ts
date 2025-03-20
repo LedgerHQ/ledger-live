@@ -26,7 +26,7 @@ for (const account of accounts) {
       cliCommands: [
         (appjsonPath: string) => {
           return CLI.liveData({
-            currency: account.account.currency.currencyId,
+            currency: account.account.currency.id,
             index: account.account.index,
             add: true,
             appjson: appjsonPath,
@@ -83,7 +83,7 @@ test.describe("Receive", () => {
     cliCommands: [
       (appjsonPath: string) => {
         return CLI.liveData({
-          currency: account.currency.currencyId,
+          currency: account.currency.id,
           index: account.index,
           add: true,
           appjson: appjsonPath,

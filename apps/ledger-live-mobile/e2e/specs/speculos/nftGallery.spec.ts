@@ -5,7 +5,7 @@ import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 
 const app = new Application();
 const nanoApp = AppInfos.ETHEREUM;
-const accountCurrency = Currency.ETH.currencyId;
+const accountCurrency = Currency.ETH.id;
 
 describe("NFT Gallery screen", () => {
   beforeAll(async () => {

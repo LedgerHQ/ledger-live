@@ -171,7 +171,7 @@ for (const transaction of transactionsAddressInvalid) {
       cliCommands: [
         (appjsonPath: string) => {
           return CLI.liveData({
-            currency: transaction.transaction.accountToDebit.currency.currencyId,
+            currency: transaction.transaction.accountToDebit.currency.id,
             index: transaction.transaction.accountToDebit.index,
             add: true,
             appjson: appjsonPath,
@@ -219,7 +219,7 @@ for (const transaction of transactionsAddressValid) {
       cliCommands: [
         (appjsonPath: string) => {
           return CLI.liveData({
-            currency: transaction.transaction.accountToDebit.currency.currencyId,
+            currency: transaction.transaction.accountToDebit.currency.id,
             index: transaction.transaction.accountToDebit.index,
             add: true,
             appjson: appjsonPath,
@@ -281,7 +281,7 @@ for (const transaction of tokenTransactionInvalid) {
       cliCommands: [
         (appjsonPath: string) => {
           return CLI.liveData({
-            currency: transaction.transaction.accountToDebit.currency.currencyId,
+            currency: transaction.transaction.accountToDebit.currency.id,
             index: transaction.transaction.accountToDebit.index,
             add: true,
             appjson: appjsonPath,
@@ -333,7 +333,7 @@ test.describe("Send token (subAccount) - valid address & amount input", () => {
     cliCommands: [
       (appjsonPath: string) => {
         return CLI.liveData({
-          currency: tokenTransactionValid.accountToDebit.currency.currencyId,
+          currency: tokenTransactionValid.accountToDebit.currency.id,
           index: tokenTransactionValid.accountToDebit.index,
           add: true,
           appjson: appjsonPath,

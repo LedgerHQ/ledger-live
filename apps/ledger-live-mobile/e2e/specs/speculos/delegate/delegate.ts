@@ -21,7 +21,7 @@ export async function runDelegateTest(delegation: Delegate, tmsLinks: string[]) 
         cliCommands: [
           () => {
             return CLI.liveData({
-              currency: delegation.account.currency.currencyId,
+              currency: delegation.account.currency.id,
               index: delegation.account.index,
               add: true,
               appjson: app.userdataPath,
@@ -37,8 +37,7 @@ export async function runDelegateTest(delegation: Delegate, tmsLinks: string[]) 
       let fees;
       const amountWithCode = delegation.amount + " " + delegation.account.currency.ticker;
       const currencyId =
-        getCurrencyManagerApp(delegation.account.currency.currencyId) ??
-        delegation.account.currency.currencyId;
+        getCurrencyManagerApp(delegation.account.currency.id) ?? delegation.account.currency.id;
 
       if (delegation.account.currency.name == Currency.INJ.name) {
         await app.speculos.activateExpertMode();
@@ -81,7 +80,7 @@ export async function runDelegateCelo(delegation: Delegate, tmsLinks: string[]) 
         cliCommands: [
           () => {
             return CLI.liveData({
-              currency: delegation.account.currency.currencyId,
+              currency: delegation.account.currency.id,
               index: delegation.account.index,
               add: true,
               appjson: app.userdataPath,
@@ -95,7 +94,7 @@ export async function runDelegateCelo(delegation: Delegate, tmsLinks: string[]) 
 
     it(`Delegate on CELO`, async () => {
       const amountWithCode = delegation.amount + " " + delegation.account.currency.ticker;
-      const currencyId = delegation.account.currency.currencyId;
+      const currencyId = delegation.account.currency.id;
 
       await app.speculos.activateContractData();
 
@@ -130,7 +129,7 @@ export async function runDelegateTezos(delegation: Delegate, tmsLinks: string[])
         cliCommands: [
           () => {
             return CLI.liveData({
-              currency: delegation.account.currency.currencyId,
+              currency: delegation.account.currency.id,
               index: delegation.account.index,
               add: true,
               appjson: app.userdataPath,
@@ -144,7 +143,7 @@ export async function runDelegateTezos(delegation: Delegate, tmsLinks: string[])
 
     it(`Delegate on TEZOS`, async () => {
       const amountWithCode = delegation.amount + " " + delegation.account.currency.ticker;
-      const currencyId = delegation.account.currency.currencyId;
+      const currencyId = delegation.account.currency.id;
 
       await app.speculos.activateContractData();
 
