@@ -1,3 +1,5 @@
+export type AppInfosType = AppInfos;
+
 export class AppInfos {
   constructor(public readonly name: string) {}
 

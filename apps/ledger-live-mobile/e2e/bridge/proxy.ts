@@ -1,4 +1,3 @@
-/* eslint-disable global-require */
 import { log, listen } from "@ledgerhq/logs";
 import { open, registerTransportModule, TransportModule } from "@ledgerhq/live-common/hw/index";
 import http from "http";
@@ -7,7 +6,7 @@ import cors from "cors";
 import WebSocket from "ws";
 import bodyParser from "body-parser";
 import os from "os";
-import { Observable, Subscription } from "rxjs";
+import { Observable } from "rxjs";
 import SpeculosHttpTransport, {
   SpeculosHttpTransportOpts,
 } from "@ledgerhq/hw-transport-node-speculos-http";
@@ -15,8 +14,6 @@ import { retry } from "@ledgerhq/live-common/promise";
 import { Buffer } from "buffer";
 import { getEnv } from "@ledgerhq/live-env";
 import invariant from "invariant";
-
-const proxySubscriptions = new Map<number, { port: number; subscription: Subscription }>();
 
 let transport: TransportModule;
 

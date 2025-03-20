@@ -1,7 +1,4 @@
-import { getElementById, getTextOfElement, scrollToId, tapByElement, tapById } from "../../helpers";
 import { expect } from "detox";
-import jestExpect from "expect";
-
 export default class AccountPage {
   accountGraph = (accountId: string) => getElementById(`account-graph-${accountId}`);
   accountBalance = (accountId: string) => getElementById(`account-balance-${accountId}`);

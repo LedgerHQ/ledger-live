@@ -1,16 +1,8 @@
-import {
-  clearTextByElement,
-  getElementById,
-  openDeeplink,
-  tapByElement,
-  tapByText,
-  typeTextByElement,
-} from "../../helpers";
 import { expect } from "detox";
-
-const baseLink = "swap";
+import { openDeeplink } from "../../helpers/commonHelpers";
 
 export default class SwapPage {
+  baseLink = "swap";
   swapFormTab = () => getElementById("swap-form-tab");
   swapHistoryTab = () => getElementById("swap-history-tab");
   swapSourceSelector = () => getElementById("swap-source-selector");
@@ -24,7 +16,7 @@ export default class SwapPage {
   termsCloseButton = () => getElementById("terms-close-button");
 
   async openViaDeeplink() {
-    await openDeeplink(baseLink);
+    await openDeeplink(this.baseLink);
   }
 
   async expectSwapPage() {
