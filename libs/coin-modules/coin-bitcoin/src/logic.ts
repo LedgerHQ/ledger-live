@@ -185,7 +185,7 @@ export const mapTxToOperations = (
   const accountInputs: WalletInput[] = [];
   const accountOutputs: WalletOutput[] = [];
   const syncReplaceAddress = perCoinLogic[currencyId]?.syncReplaceAddress;
-  const inputs: Set<`${string}-${number}`> = new Set();  // txid-outputIndex
+  const inputs: Set<`${string}-${number}`> = new Set(); // txid-outputIndex
 
   for (const input of tx.inputs) {
     inputs.add(`${input.output_hash}-${input.output_index}`);

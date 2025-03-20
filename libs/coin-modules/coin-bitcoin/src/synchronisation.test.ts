@@ -12,7 +12,6 @@ describe("removeReplaced", () => {
     recipients: ["recipient1"],
     blockHash: null,
     hasFailed: false,
-    // extra: {},
   };
 
   it("should remove older transactions based on block height", () => {
