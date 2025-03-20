@@ -57,7 +57,7 @@ export const removeReplaced = (operations: BtcOperation[]): BtcOperation[] => {
   const uniqueOperations = new Map<string, BtcOperation>(); // Keep track of unique transactions
 
   for (const op of operations) {
-    if (op.extra && "inputs" in op.extra && Array.isArray(op.extra.inputs)) {
+    if (op.extra?.inputs?.length) {
       for (const input of op.extra.inputs) {
         if (input.startsWith("0000000000000000000000000000000000000000000000000000000000000000")) {
           // Ignore coinbase transactions as they have no predecessors
@@ -66,25 +66,36 @@ export const removeReplaced = (operations: BtcOperation[]): BtcOperation[] => {
 
         const existingOp = txByInput.get(input);
         if (existingOp) {
-          // Determine which transaction is newer
-          if (new Date(op.date) > new Date(existingOp.date)) {
-            // Remove the replaced transaction
-            uniqueOperations.delete(existingOp.hash);
-            // Store the newer transaction
-            txByInput.set(input, op);
+          const isExistingConfirmed = existingOp.blockHeight !== null && existingOp.blockHeight !== undefined;
+          const isNewOpConfirmed = op.blockHeight !== null && op.blockHeight !== undefined;
+
+          if (isExistingConfirmed && !isNewOpConfirmed) {
+            continue; // Keep the confirmed transaction
+          }
+
+          if (!isExistingConfirmed && isNewOpConfirmed) {
+            uniqueOperations.delete(existingOp.hash); // Remove unconfirmed transaction
+            txByInput.set(input, op); // Store the confirmed transaction
           } else {
-            // If the existing transaction is newer, discard the current one
-            continue;
+            // Compare by block height first, then date as fallback
+            const isNewer =
+              (op.blockHeight ?? -1) > (existingOp.blockHeight ?? -1) ||
+              ((op.blockHeight ?? -1) === (existingOp.blockHeight ?? -1) &&
+                new Date(op.date) > new Date(existingOp.date));
+
+            if (isNewer) {
+              uniqueOperations.delete(existingOp.hash);
+              txByInput.set(input, op);
+            }
           }
         } else {
           txByInput.set(input, op);
         }
 
-        // Store the transaction in unique operations
         uniqueOperations.set(op.hash, op);
       }
     } else {
-      // Store transactions without inputs (should not happen in Bitcoin but just in case)
+      // Store transactions without inputs (they shouldn't be removed)
       uniqueOperations.set(op.hash, op);
     }
   }
