@@ -14,7 +14,7 @@ import GenericErrorView from "~/components/GenericErrorView";
 import { initialWebviewState } from "~/components/Web3AppWebview/helpers";
 import { WebviewState } from "~/components/Web3AppWebview/types";
 import { WebView } from "./WebView";
-import { DefaultAccountSwapParamList } from "../types";
+import { DefaultAccountSwapParamList, DetailsSwapParamList } from "../types";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
 import { ScreenName } from "~/const";
@@ -30,7 +30,7 @@ const isDefaultAccountSwapParamsList = (
 ): params is DefaultAccountSwapParamList =>
   (params as DefaultAccountSwapParamList).defaultAccount !== undefined ||
   (params as DefaultAccountSwapParamList).defaultCurrency !== undefined ||
-  (params as DefaultAccountSwapParamList).currency !== undefined;
+  (params as DetailsSwapParamList).currency !== undefined;
 
 export function SwapLiveApp({
   route,

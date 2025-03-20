@@ -5,7 +5,7 @@ import * as walletApi from "@ledgerhq/live-common/wallet-api/converters";
 import { walletSelector } from "~/reducers/wallet";
 import { flattenAccountsSelector } from "~/reducers/accounts";
 
-import { DefaultAccountSwapParamList } from "../../types";
+import { DefaultAccountSwapParamList, DetailsSwapParamList } from "../../types";
 import type { AccountLike, TokenAccount } from "@ledgerhq/types-live";
 
 type SwapLiveUrlParams = {
@@ -21,12 +21,10 @@ const getHighestBalanceAccount = (accounts: Array<AccountLike | TokenAccount>) =
 };
 
 export const useTranslateToSwapAccount = (
-  params: DefaultAccountSwapParamList | null,
+  params: DefaultAccountSwapParamList,
 ): SwapLiveUrlParams => {
   const walletState = useSelector(walletSelector);
   const currentAccounts = useSelector(flattenAccountsSelector);
-  const defaultAccount = params.defaultAccount || params.account;
-  const defaultCurrency = params.defaultCurrency || params.currency;
 
   return useMemo(() => {
     const newParams: SwapLiveUrlParams = {};
@@ -34,6 +32,9 @@ export const useTranslateToSwapAccount = (
     if (!params) {
       return {};
     }
+
+    const defaultAccount = params.defaultAccount || params.accountId;
+    const defaultCurrency = params.defaultCurrency || params.currency;
 
     // A specific account was given
     if (defaultAccount) {
@@ -49,7 +50,6 @@ export const useTranslateToSwapAccount = (
     // No account was given, but a currency was
     if (defaultCurrency) {
       const currency = walletApi.currencyToWalletAPICurrency(defaultCurrency);
-
       const accounts = currentAccounts.filter(
         account => account.currency?.id === currency.id || account.token?.id === currency.id,
       );
@@ -68,5 +68,5 @@ export const useTranslateToSwapAccount = (
     }
 
     return {};
-  }, [params, walletState, currentAccounts, defaultAccount, defaultCurrency]);
+  }, [params, walletState, currentAccounts]);
 };
