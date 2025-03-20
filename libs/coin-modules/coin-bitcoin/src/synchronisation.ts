@@ -52,15 +52,15 @@ const fromWalletUtxo = (utxo: WalletOutput, changeAddresses: Set<string>): Bitco
   };
 };
 
-const markReplacements = (operations: BtcOperation[]): BtcOperation[] => {
+const markAsReplaced = (operations: BtcOperation[]): BtcOperation[] => {
   const txByInput = new Map<string, BtcOperation>();
-  console.log({markReplacementsOperations: operations})
+  console.log({ markReplacementsOperations: operations });
 
   for (const op of operations) {
     if (op.extra && "inputs" in op.extra && Array.isArray(op.extra.inputs)) {
       // debugger;
       for (const input of op.extra.inputs) {
-        if (input.startsWith("0000000000000000000000000000000000000000000000000000000000000000")){
+        if (input.startsWith("0000000000000000000000000000000000000000000000000000000000000000")) {
           // NOTE: coinbase tx, ignoring replacement
           continue;
         }
@@ -88,6 +88,47 @@ const markReplacements = (operations: BtcOperation[]): BtcOperation[] => {
   return operations;
 };
 
+const removeReplaced = (operations: BtcOperation[]): BtcOperation[] => {
+  const txByInput = new Map<string, BtcOperation>();
+  const uniqueOperations = new Map<string, BtcOperation>(); // Keep track of unique transactions
+
+  for (const op of operations) {
+    if (op.extra && "inputs" in op.extra && Array.isArray(op.extra.inputs)) {
+      for (const input of op.extra.inputs) {
+        if (input.startsWith("0000000000000000000000000000000000000000000000000000000000000000")) {
+          // Ignore coinbase transactions as they have no predecessors
+          continue;
+        }
+
+        const existingOp = txByInput.get(input);
+        if (existingOp) {
+          // Determine which transaction is newer
+          if (new Date(op.date) > new Date(existingOp.date)) {
+            // Remove the replaced transaction
+            console.log("removing replaced transaction", existingOp.hash);
+            uniqueOperations.delete(existingOp.hash);
+            // Store the newer transaction
+            txByInput.set(input, op);
+          } else {
+            // If the existing transaction is newer, discard the current one
+            continue;
+          }
+        } else {
+          txByInput.set(input, op);
+        }
+
+        // Store the transaction in unique operations
+        uniqueOperations.set(op.hash, op);
+      }
+    } else {
+      // Store transactions without inputs (should not happen in Bitcoin but just in case)
+      uniqueOperations.set(op.hash, op);
+    }
+  }
+
+  return Array.from(uniqueOperations.values());
+};
+
 // wallet-btc limitation: returns all transactions twice (for each side of the tx)
 // so we need to deduplicate them...
 // NOTE: maybe improve here?
@@ -113,7 +154,7 @@ const deduplicateOperations = (operations: (BtcOperation | undefined)[]): BtcOpe
 export function makeGetAccountShape(signerContext: SignerContext): GetAccountShape<BitcoinAccount> {
   return async info => {
     console.log(`----SYNCHRONISATION----`);
-    console.log({info});
+    console.log({ info });
     const { currency, index, derivationPath, derivationMode, initialAccount, deviceId } = info;
     // In case we get a full derivation path, extract the seed identification part
     // 44'/0'/0'/0/0 --> 44'/0'
@@ -180,27 +221,46 @@ export function makeGetAccountShape(signerContext: SignerContext): GetAccountSha
       ?.map(tx => mapTxToOperations(tx, currency.id, accountId, accountAddresses, changeAddresses))
       .flat();
 
-    if (xpub === "tpubDCbwjyAbvD1sVuouyxFfnxsh5droysVSgv8rwXbKoU7SajBCGTpWdnkFMGQNkxS4yKGi1Ha1C7N6qeNeevgwSHqMpH2q6QAXpcKzHjS7EuZ") {
-      // debugger;
-    }
-    
-
     const newUniqueOperations = deduplicateOperations(newOperations);
-    
-    const oldOperationsPending = oldOperations.filter(op => (op.blockHeight === null || op.blockHeight === undefined));
-    const checkIfReplacedOperations = markReplacements([...newUniqueOperations, ...oldOperationsPending]);
 
-    // const nonPendingOldOperations = oldOperations.filter(op => !!op.blockHeight || op.blockHeight === 0);
-    const operations = mergeOps(oldOperations, checkIfReplacedOperations);
-    console.log({oldOperations, newUniqueOperations, operations})
-    if (operations && operations.length > 0){ 
+    const oldOperationsPending = oldOperations.filter(
+      op => op.blockHeight === null || op.blockHeight === undefined,
+    );
+    const nonPendingOldOperations = oldOperations.filter(
+      op => !!op.blockHeight || op.blockHeight === 0,
+    );
+    // const checkIfReplacedOperations = markReplacements([...newUniqueOperations, ...oldOperationsPending]);
+    // const newOrPendingOperations = markAsReplaced([
+    //   ...newUniqueOperations,
+    //   ...oldOperationsPending,
+    // ]);
+    // const operations = mergeOps(oldOperations, newOrPendingOperations);
+    // const _operations = mergeOps(oldOperations, newOrPendingOperations);
+    const _operations = mergeOps(oldOperations, newUniqueOperations);
+    // NOTE: we merge twice, here and in jsHelpers.ts
+    const operations = removeReplaced(_operations as BtcOperation[]);
+    // console.log({filteredOutReplacedOperations})
+    // const operations = mergeOps(oldOperations, filteredOutReplacedOperations);
+    // const operations = mergeOps(nonPendingOldOperations, newOrPendingOperations);
+    console.log({
+      newUniqueOperations,
+      // filteredOutReplacedOperations,
+      oldOperations,
+      oldOperationsPending,
+      nonPendingOldOperations,
+      // newOrPendingOperations,
+      // _operations,
+      operations,
+    });
+    console.log({ oldOperations, newUniqueOperations, operations });
+    if (operations && operations.length > 0) {
       // debugger;
     }
     // debugger;
 
     const rawUtxos = await wallet.getAccountUnspentUtxos(walletAccount);
     const utxos = rawUtxos.map(utxo => fromWalletUtxo(utxo, changeAddresses));
-    console.log({rawUtxos, utxos})
+    console.log({ rawUtxos, utxos, operations, operationsCount: operations.length });
     // NOTE: seem correct
 
     return {
@@ -216,7 +276,7 @@ export function makeGetAccountShape(signerContext: SignerContext): GetAccountSha
       bitcoinResources: {
         utxos,
         walletAccount,
-        storages: wallet.storages
+        storages: wallet.storages,
       },
     };
   };

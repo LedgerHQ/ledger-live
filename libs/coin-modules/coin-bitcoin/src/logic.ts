@@ -209,7 +209,7 @@ export const mapTxToOperations = (
     }
   }
   console.log({inputs})
-  debugger;
+  /* debugger */;
 
   // All inputs of a same transaction have the same sequence
   const transactionSequenceNumber =
