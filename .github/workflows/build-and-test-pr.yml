@@ -43,11 +43,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Log affected paths
-        env:
-          JSON: ${{toJson(needs.determine-affected.outputs)}}
         run: |
-          echo "OUTPUTS : ${{needs.determine-affected.outputs}}"
-          echo 'JSON : ${{JSON}}'
+          echo "AFFECTED : ${{needs.determine-affected.outputs.affected}}"
+          echo "PATHS : ${{needs.determine-affected.outputs.paths}}"
+          echo "PACKAGES : ${{needs.determine-affected.outputs.packages}}"
 
   # LLD
   build-desktop:
