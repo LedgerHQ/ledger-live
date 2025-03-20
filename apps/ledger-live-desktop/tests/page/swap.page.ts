@@ -114,10 +114,40 @@ export class SwapPage extends AppPage {
   async getProviderList(electronApp: ElectronApplication) {
     const [, webview] = electronApp.windows();
     await expect(webview.getByTestId("number-of-quotes")).toBeVisible();
+    await expect(webview.getByTestId("quotes-countdown")).toBeVisible();
     const providersList = await webview
       .locator("//span[@data-testid='quote-card-provider-name']")
       .allTextContents();
     return providersList;
+  }
+
+  @step("Check quotes container infos")
+  async checkQuotesContainerInfos(electronApp: ElectronApplication, providerList: string[]) {
+    const [, webview] = electronApp.windows();
+
+    const provider = Provider.getNameByUiName(providerList[0]);
+    const baseProviderLocator = `quote-container-${provider}-`;
+
+    await webview.getByTestId(baseProviderLocator + "amount-label").click();
+    await expect(webview.getByTestId(baseProviderLocator + "amount-label")).toBeVisible();
+    await expect(webview.getByTestId(baseProviderLocator + "fiatAmount-label")).toBeVisible();
+    await expect(webview.getByTestId(baseProviderLocator + "networkFees-heading")).toBeVisible();
+    await expect(webview.getByTestId(baseProviderLocator + "networkFees-infoIcon")).toBeVisible();
+    await expect(webview.getByTestId(baseProviderLocator + "networkFees-value")).toBeVisible();
+    await expect(webview.getByTestId(baseProviderLocator + "networkFees-fiat-value")).toBeVisible();
+    await expect(webview.getByTestId(baseProviderLocator + "rate-heading")).toBeVisible();
+    await expect(webview.getByTestId(baseProviderLocator + "rate-value")).toBeVisible();
+    await expect(webview.getByTestId(baseProviderLocator + "rate-fiat-value")).toBeVisible();
+    if (
+      provider === Provider.ONE_INCH.name ||
+      provider === Provider.PARASWAP.name ||
+      provider === Provider.UNISWAP.name ||
+      provider === Provider.LIFI.name
+    ) {
+      await expect(webview.getByTestId(baseProviderLocator + "slippage-heading")).toBeVisible();
+      await expect(webview.getByTestId(baseProviderLocator + "slippage-value")).toBeVisible();
+    }
+    await this.checkExchangeButton(electronApp, providerList[0]);
   }
 
   @step("Select specific provider $0")
@@ -215,6 +245,24 @@ export class SwapPage extends AppPage {
   @step("Wait for exchange to be available")
   async waitForExchangeToBeAvailable() {
     return waitFor(() => this.exchangeButton.isEnabled(), 250, 10000);
+  }
+
+  @step("Check exchange button is visible and enabled")
+  async checkExchangeButton(electronApp: ElectronApplication, provider: string) {
+    const [, webview] = electronApp.windows();
+
+    const buttonText = [
+      Provider.ONE_INCH.name,
+      Provider.PARASWAP.name,
+      Provider.MOONPAY.name,
+      Provider.LIFI.name,
+    ].includes(provider)
+      ? `Continue with ${provider}`
+      : `Swap with ${provider}`;
+
+    const buttonLocator = webview.getByRole("button", { name: buttonText });
+    await expect(buttonLocator).toBeVisible();
+    await expect(buttonLocator).toBeEnabled();
   }
 
   @step("Click Exchange button")
