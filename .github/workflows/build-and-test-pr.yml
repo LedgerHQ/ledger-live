@@ -45,7 +45,7 @@ jobs:
       - name: Log affected paths
         run: |
           echo "OUTPUTS : ${{needs.determine-affected.outputs}}"
-          echo "JSON : ${{ toJson(github) }}"
+          echo "JSON : ${{toJson(needs.determine-affected.outputs)}}"
 
   # LLD
   build-desktop:
