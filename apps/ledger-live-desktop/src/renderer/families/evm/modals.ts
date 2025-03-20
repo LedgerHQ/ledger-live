@@ -1,11 +1,11 @@
 import { MakeModalsType } from "~/renderer/modals/types";
 import { EditTransactionModal, EditTransactionModalProps } from "./EditTransaction/Modal";
 import MODAL_EVM_STAKE from "./StakeModalVersionWrapper";
-import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
+import { AccountLike } from "@ledgerhq/types-live";
 
 export type ModalsData = {
   MODAL_EVM_STAKE: {
-    account: WalletAPIAccount;
+    account: AccountLike;
     hasCheckbox?: boolean;
     singleProviderRedirectMode?: boolean;
     source?: string;
