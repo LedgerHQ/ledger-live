@@ -148,6 +148,13 @@ jobs:
     runs-on: ubuntu-latest
     needs: prepare-pr-analysis
     steps:
+      - name: Process paths
+        id: process_paths
+        run: |
+          paths="${{ needs.determine-affected.outputs.paths }}"
+          modified_paths="${paths:1:-1}"
+          echo "modified_paths=$modified_paths" >> $GITHUB_ENV
+
       - id: run_scan
         name: Run Scan
         uses: SonarSource/sonarqube-scan-action@v4
@@ -155,7 +162,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           args: >
-            -Dsonar.sources=${{needs.determine-affected.outputs.paths:1:-1}}
+            -Dsonar.sources=${{env.modified_paths}}
             -Dsonar.testExecutionReportPaths=sonar-executionTests-report.xml
 
   # Final Check required
