@@ -6,6 +6,7 @@ import { walletSelector } from "~/reducers/wallet";
 import { flattenAccountsSelector } from "~/reducers/accounts";
 
 import { DefaultAccountSwapParamList, DetailsSwapParamList } from "../../types";
+import type { AccountLike, TokenAccount } from "@ledgerhq/types-live";
 
 type SwapLiveUrlParams = {
   fromAccountId?: string;
@@ -13,11 +14,19 @@ type SwapLiveUrlParams = {
   amountFrom?: string;
 };
 
+const getHighestBalanceAccount = (accounts: Array<AccountLike | TokenAccount>) => {
+  const sorted = [...accounts];
+  sorted.sort((a, b) => (a.spendableBalance.lt(b.spendableBalance) ? 1 : -1));
+  return sorted[0];
+};
+
 export const useTranslateToSwapAccount = (
-  params: DefaultAccountSwapParamList | DetailsSwapParamList | null,
+  params: DefaultAccountSwapParamList | null,
 ): SwapLiveUrlParams => {
   const walletState = useSelector(walletSelector);
   const currentAccounts = useSelector(flattenAccountsSelector);
+  const defaultAccount = params.defaultAccount || params.account;
+  const defaultCurrency = params.defaultCurrency || params.currency;
 
   return useMemo(() => {
     const newParams: SwapLiveUrlParams = {};
@@ -27,10 +36,10 @@ export const useTranslateToSwapAccount = (
     }
 
     // A specific account was given
-    if (params.defaultAccount || params.account) {
+    if (defaultAccount) {
       newParams.fromAccountId = walletApi.accountToWalletAPIAccount(
         walletState,
-        params.defaultAccount || params.account,
+        defaultAccount,
         params?.defaultParentAccount || params.account,
       ).id;
 
@@ -38,14 +47,13 @@ export const useTranslateToSwapAccount = (
     }
 
     // No account was given, but a currency was
-    if (params.defaultCurrency || params.currency) {
-      const currency = walletApi.currencyToWalletAPICurrency(
-        params.defaultCurrency || params.currency,
-      );
+    if (defaultCurrency) {
+      const currency = walletApi.currencyToWalletAPICurrency(defaultCurrency);
 
-      const account = currentAccounts.find(
+      const accounts = currentAccounts.filter(
         account => account.currency?.id === currency.id || account.token?.id === currency.id,
       );
+      const account = getHighestBalanceAccount(accounts);
 
       if (account) {
         newParams.fromAccountId = walletApi.accountToWalletAPIAccount(
@@ -60,5 +68,5 @@ export const useTranslateToSwapAccount = (
     }
 
     return {};
-  }, [params, walletState, currentAccounts]);
+  }, [params, walletState, currentAccounts, defaultAccount, defaultCurrency]);
 };
