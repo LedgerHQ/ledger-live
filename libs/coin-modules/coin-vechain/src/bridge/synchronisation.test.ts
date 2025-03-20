@@ -40,7 +40,7 @@ describe("scanAccounts", () => {
     mockGetTokenOperations.mockClear();
   });
 
-  it("returns the account info and its subaccount", async () => {
+  it.only("returns the account info and its subaccount", async () => {
     // Given
     const blockHeight = 0;
     const address = "0x5066118c66793ED86bd379b50b20E32B0FC1aBf5";

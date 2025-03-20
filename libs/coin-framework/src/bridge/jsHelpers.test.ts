@@ -300,8 +300,72 @@ describe.only("makeScanAccounts", () => {
       }),
     );
 
-    expect(result.account.used).toBeTruthy();
+    expect(result.account.used).toBe(true);
   });
+
+  it.each([
+    {
+      account: {
+        balance: new BigNumber(0),
+      },
+      expectedUsed: false,
+    },
+    {
+      account: {
+        balance: new BigNumber(0),
+        used: true,
+      },
+      expectedUsed: true,
+    },
+    {
+      account: {
+        balance: new BigNumber(1_000_000),
+        used: false,
+      },
+      expectedUsed: false,
+    },
+    {
+      account: {
+        balance: new BigNumber(1_000_000),
+      },
+      expectedUsed: true,
+    },
+  ])(
+    "overrides the used flag only if not returned by the getAccountShape",
+    async ({ account, expectedUsed }) => {
+      // Given
+      const addressResolver = {
+        address: "address",
+        path: "path",
+        publicKey: "publicKey",
+      };
+      const currency = getCryptoCurrencyById("algorand");
+
+      // When
+      const scanAccounts = makeScanAccounts({
+        getAccountShape: () =>
+          Promise.resolve({
+            ...account,
+            id: "1234",
+            balanceHistoryCache: createEmptyHistoryCache(),
+          }),
+        getAddressFn: (_deviceId, _addressOpt) => Promise.resolve(addressResolver),
+      });
+
+      // Then
+      const result = await firstValueFrom(
+        scanAccounts({
+          currency,
+          deviceId: "deviceId",
+          syncConfig: {
+            paginationConfig: {},
+          },
+        }),
+      );
+
+      expect(result.account.used).toEqual(expectedUsed);
+    },
+  );
 
   it("returns all accounts found until the first not used yet", done => {
     // Given

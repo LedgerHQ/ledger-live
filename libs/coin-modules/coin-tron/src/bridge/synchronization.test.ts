@@ -219,7 +219,7 @@ describe("scanAccounts", () => {
       netLimit: BigNumber(0),
       energyUsed: BigNumber(0),
       energyLimit: BigNumber(0),
-    })
+    });
     const addressResolver = {
       address: "TT2T17KZhoDu47i2E4FWxfG79zdkEWkU9N",
       path: "path",
