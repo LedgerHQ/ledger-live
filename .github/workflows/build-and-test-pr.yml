@@ -42,14 +42,20 @@ jobs:
     needs: determine-affected
     runs-on: ubuntu-latest
     steps:
+      - name: Process paths
+        id: process_paths
+        run: |
+          paths="${{ needs.determine-affected.outputs.paths }}"
+          modified_paths="${paths:1:-1}"
+          echo "modified_paths=$modified_paths" >> $GITHUB_ENV
+
       - name: Log affected paths
         run: |
           echo "AFFECTED : ${{needs.determine-affected.outputs.affected}}"
           echo "PATHS : ${{needs.determine-affected.outputs.paths}}"
           echo "PACKAGES : ${{needs.determine-affected.outputs.packages}}"
 
-          paths="${{needs.determine-affected.outputs.paths:1:-1}}"
-          IFS=',' read -r -a paths_array <<< "$paths"
+          IFS=',' read -r -a paths_array <<< "${{env.modified_paths}}"
           for path in "${paths_array[@]}"
           do
             echo "$path"
