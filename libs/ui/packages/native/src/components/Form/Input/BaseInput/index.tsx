@@ -180,6 +180,28 @@ export const InputRenderBottomRightContainer = styled(FlexBox)`
   right: 8px;
 `;
 
+const RenderRight = ({ renderRight, props, inputRef }) => {
+  if (!renderRight) return null;
+
+  return (
+    <InputRenderRightContainer>
+      {typeof renderRight === "function" ? renderRight(props, inputRef) : renderRight}
+    </InputRenderRightContainer>
+  );
+};
+
+const RenderBottomRight = ({ renderBottomRight, props, inputRef }) => {
+  if (!renderBottomRight) return null;
+
+  return (
+    <InputRenderBottomRightContainer>
+      {typeof renderBottomRight === "function"
+        ? renderBottomRight(props, inputRef)
+        : renderBottomRight}
+    </InputRenderBottomRightContainer>
+  );
+};
+
 // Yes, this is dirty. If you can figure out a better way please change the code :).
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const IDENTITY = (_: any): any => _;
@@ -261,17 +283,9 @@ function Input<T = string>(props: InputProps<T>, ref?: any): JSX.Element {
           }}
           style={{ ...(color ? { color: color } : {}), ...baseInputContainerStyle }}
         />
-        {largeMode
-          ? renderBottomRight && (
-              <InputRenderBottomRightContainer>
-                {typeof renderBottomRight === "function"
-                  ? renderBottomRight(props, inputRef)
-                  : renderBottomRight}
-              </InputRenderBottomRightContainer>
-            )
-          : typeof renderRight === "function"
-            ? renderRight(props, inputRef)
-            : renderRight}
+        {largeMode ? ( <RenderBottomRight renderBottomRight={renderBottomRight} props={props} inputRef={inputRef} />)
+      : ( <RenderRight renderRight={renderRight} props={props} inputRef={inputRef} />)  
+      }
       </InputContainer>
       {!!error && !disabled && (
         <FlexBox
