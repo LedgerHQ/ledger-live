@@ -11,30 +11,41 @@ const app: AppInfos = AppInfos.LS;
 const accountId = accounts[0].id;
 const accountName = accountNames[accountId];
 
+function setupSeed() {
+  test.beforeAll(async () => {
+    process.env.SEED = "X";
+  });
+  test.afterAll(async () => {
+    process.env.SEED = "X";
+  });
+}
+
+function initializeThenDeleteTrustchain() {
+  return [
+    LedgerSyncCliHelper.initializeLedgerKeyRingProtocol,
+    LedgerSyncCliHelper.initializeLedgerSync,
+    async () => LedgerSyncCliHelper.deleteLedgerSyncData(),
+  ];
+}
+
+function initializeTrustchain() {
+  return [
+    LedgerSyncCliHelper.initializeLedgerKeyRingProtocol,
+    LedgerSyncCliHelper.initializeLedgerSync,
+    async () =>
+      CLI.ledgerSync({
+        ...LedgerSyncCliHelper.ledgerKeyRingProtocolArgs,
+        ...LedgerSyncCliHelper.ledgerSyncPushDataArgs,
+      }),
+  ];
+}
+
 test.describe(`[${app.name}] Sync Accounts`, () => {
+  setupSeed();
   test.use({
     userdata: "skip-onboarding",
     speculosApp: app,
-    cliCommands: [
-      async () => {
-        return LedgerSyncCliHelper.initializeLedgerKeyRingProtocol();
-      },
-      async () => {
-        return LedgerSyncCliHelper.deleteLedgerSyncData();
-      },
-      async () => {
-        return LedgerSyncCliHelper.initializeLedgerKeyRingProtocol();
-      },
-      async () => {
-        return LedgerSyncCliHelper.initializeLedgerSync();
-      },
-      async () => {
-        return CLI.ledgerSync({
-          ...LedgerSyncCliHelper.ledgerKeyRingProtocolArgs,
-          ...LedgerSyncCliHelper.ledgerSyncPushDataArgs,
-        });
-      },
-    ],
+    cliCommands: [...initializeThenDeleteTrustchain(), ...initializeTrustchain()],
   });
 
   test(

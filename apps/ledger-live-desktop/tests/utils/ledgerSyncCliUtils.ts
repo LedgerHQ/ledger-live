@@ -157,7 +157,7 @@ export class LedgerSyncCliHelper {
     return output;
   }
 
-  static async deleteLedgerSyncData(testInfo: TestInfo) {
+  static async deleteLedgerSyncData() {
     await CLI.ledgerSync({
       deleteData: true,
       ...LedgerSyncCliHelper.ledgerKeyRingProtocolArgs,
