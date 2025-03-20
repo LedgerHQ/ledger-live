@@ -126,6 +126,14 @@ jobs:
     steps:
       - name: Prepare PR Analysis
         run: |
+          input="[apps/ledger-live-desktop,apps/ledger-live-mobile]"
+          input="${input#[}"; input="${input%]}"
+          IFS=',' read -r -a array <<< "$input"
+          for element in "${array[@]}"
+          do
+            echo "$element"
+          done
+
           if [[ "$DESKTOP_AFFECTED" == 'true' ]]; then 
             cat apps/ledger-live-desktop/coverage/lcov.info >> ./lcov.info 
             cat apps/ledger-live-desktop/coverage/sonar-executionTests-report.xml >> ./sonar-executionTests-report.xml 
