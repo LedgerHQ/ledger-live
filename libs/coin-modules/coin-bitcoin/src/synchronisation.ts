@@ -59,14 +59,10 @@ export const removeReplaced = (operations: BtcOperation[]): BtcOperation[] => {
   for (const op of operations) {
     if (op.extra?.inputs?.length) {
       for (const input of op.extra.inputs) {
-        if (input.startsWith("0000000000000000000000000000000000000000000000000000000000000000")) {
-          // Ignore coinbase transactions as they have no predecessors
-          continue;
-        }
-
         const existingOp = txByInput.get(input);
         if (existingOp) {
-          const isExistingConfirmed = existingOp.blockHeight !== null && existingOp.blockHeight !== undefined;
+          const isExistingConfirmed =
+            existingOp.blockHeight !== null && existingOp.blockHeight !== undefined;
           const isNewOpConfirmed = op.blockHeight !== null && op.blockHeight !== undefined;
 
           if (isExistingConfirmed && !isNewOpConfirmed) {
@@ -77,15 +73,17 @@ export const removeReplaced = (operations: BtcOperation[]): BtcOperation[] => {
             uniqueOperations.delete(existingOp.hash); // Remove unconfirmed transaction
             txByInput.set(input, op); // Store the confirmed transaction
           } else {
-            // Compare by block height first, then date as fallback
-            const isNewer =
-              (op.blockHeight ?? -1) > (existingOp.blockHeight ?? -1) ||
-              ((op.blockHeight ?? -1) === (existingOp.blockHeight ?? -1) &&
-                new Date(op.date) > new Date(existingOp.date));
-
-            if (isNewer) {
+            // Compare block height first
+            if ((op.blockHeight ?? -1) > (existingOp.blockHeight ?? -1)) {
               uniqueOperations.delete(existingOp.hash);
               txByInput.set(input, op);
+            } else if ((op.blockHeight ?? -1) === (existingOp.blockHeight ?? -1)) {
+              if (new Date(op.date) > new Date(existingOp.date)) {
+                uniqueOperations.delete(existingOp.hash);
+                txByInput.set(input, op);
+              } else {
+                continue; // If date is older, disregard
+              }
             }
           }
         } else {
