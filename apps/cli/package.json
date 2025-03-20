@@ -20,7 +20,7 @@
     "prebuild": "zx ./scripts/gen.mjs",
     "build": "zx ./scripts/build.mjs",
     "prepublishOnly": "rm -rf lib && tsc --project src/tsconfig.json",
-    "watch": "tsc --watch --project src/tsconfig.json",
+    "watch": "tsup src/cli.ts --watch=src",
     "typecheck": "tsc --project src/tsconfig.json --noEmit",
     "lint": "eslint src --cache",
     "lint:fix": "pnpm lint --fix",
