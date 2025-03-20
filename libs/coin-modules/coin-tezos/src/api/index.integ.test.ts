@@ -1,4 +1,4 @@
-import { IncorrectTypeError, type Api } from "@ledgerhq/coin-framework/api/index";
+import { type Api } from "@ledgerhq/coin-framework/api/index";
 import { createApi } from ".";
 /**
  * https://teztnets.com/ghostnet-about
@@ -114,27 +114,15 @@ describe("Tezos Api", () => {
       },
     ])("returns a raw transaction with $type", async ({ type, rawTx }) => {
       // When
-      const result = await module.craftTransaction(address, {
+      const result = await module.craftTransaction({
         type,
+        sender: address,
         recipient: "tz1aWXP237BLwNHJcCD4b3DutCevhqq2T1Z9",
         amount: BigInt(10),
-        fee: BigInt(1),
       });
 
       // Then
       expect(result.slice(64)).toEqual(rawTx);
-    });
-
-    it("throws an error if type in 'send' or 'delegate' or 'undelegate'", async () => {
-      // When
-      await expect(
-        module.craftTransaction(address, {
-          type: "WHATEVERTYPE",
-          recipient: "tz1aWXP237BLwNHJcCD4b3DutCevhqq2T1Z9",
-          amount: BigInt(10),
-          fee: BigInt(1),
-        }),
-      ).rejects.toThrow(IncorrectTypeError);
     });
   });
 });

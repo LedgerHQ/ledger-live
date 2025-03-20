@@ -4,7 +4,6 @@ import {
   Operation,
   Pagination,
   type Api,
-  type Transaction as ApiTransaction,
 } from "@ledgerhq/coin-framework/api/index";
 import coinConfig, { type TezosConfig } from "../config";
 import {
@@ -37,17 +36,20 @@ export function createApi(config: TezosConfig): Api<void> {
 function isTezosTransactionType(type: string): type is "send" | "delegate" | "undelegate" {
   return ["send", "delegate", "undelegate"].includes(type);
 }
-async function craft(
-  address: string,
-  { type, recipient, amount, fee }: ApiTransaction,
-): Promise<string> {
-  if (!isTezosTransactionType(type)) {
-    throw new IncorrectTypeError(type);
-  }
 
+async function craft(transactionIntent: TransactionIntent<void>): Promise<string> {
+  if (!isTezosTransactionType(transactionIntent.type)) {
+    throw new IncorrectTypeError(transactionIntent.type);
+  }
+  const fee = await estimate(transactionIntent);
   const { contents } = await craftTransaction(
-    { address },
-    { recipient, amount, type, fee: { fees: fee.toString() } },
+    { address: transactionIntent.sender },
+    {
+      type: transactionIntent.type,
+      recipient: transactionIntent.recipient,
+      amount: transactionIntent.amount,
+      fee: { fees: fee.toString() },
+    },
   );
   return rawEncode(contents);
 }

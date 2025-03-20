@@ -93,11 +93,11 @@ describe("Polkadot Api", () => {
   describe("craftTransaction", () => {
     it("returns a raw transaction", async () => {
       // When
-      const result = await module.craftTransaction(address, {
+      const result = await module.craftTransaction({
         type: "send",
+        sender: address,
         recipient: "16YreVmGhM8mNMqnsvK7rn7b1e4SKYsTfFUn4UfCZ65BgDjh",
         amount: BigInt(10),
-        fee: BigInt(1),
       });
 
       // Then

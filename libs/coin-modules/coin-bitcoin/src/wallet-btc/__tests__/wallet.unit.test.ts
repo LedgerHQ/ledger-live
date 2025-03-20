@@ -105,43 +105,6 @@ describe("BitcoinLikeWallet", () => {
     expect(unspentUtxos).toEqual(utxos);
   });
 
-  test("estimateAccountMaxSpendable", async () => {
-    const addresses = [{ address: "address1", account: 0, index: 0 }] as Address[];
-    const utxos = [
-      {
-        value: "500",
-        address: "address1",
-        output_hash: "hash1",
-        output_index: 0,
-        block_height: 1000,
-      },
-      {
-        value: "200",
-        address: "address2",
-        output_hash: "hash2",
-        output_index: 1,
-        block_height: null,
-      },
-    ] as Output[];
-    mockAccount.xpub.getXpubAddresses = jest.fn().mockResolvedValue(addresses);
-    mockAccount.xpub.getAccountAddresses = jest
-      .fn()
-      .mockResolvedValue([{ address: "address2", account: 1, index: 1 }] as Address[]);
-    mockAccount.xpub.storage.getAddressUnspentUtxos = jest.fn().mockResolvedValue(utxos);
-    mockAccount.xpub.crypto.toOutputScript = jest
-      .fn()
-      .mockReturnValue(Buffer.from("output-script"));
-    mockAccount.xpub.crypto.toOpReturnOutputScript = jest
-      .fn()
-      .mockReturnValue(Buffer.from("op-return-script"));
-
-    const maxSpendable = await wallet.estimateAccountMaxSpendable(mockAccount, 1, []);
-
-    expect(mockAccount.xpub.getXpubAddresses).toHaveBeenCalled();
-    expect(mockAccount.xpub.getAccountAddresses).toHaveBeenCalledWith(1);
-    expect(maxSpendable.toNumber()).toBeGreaterThan(0);
-  });
-
   test("getAccountBalance", async () => {
     const balance = new BigNumber(100);
     mockAccount.xpub.getXpubBalance = jest.fn().mockResolvedValue(balance);
@@ -222,5 +185,96 @@ describe("BitcoinLikeWallet", () => {
     });
 
     expect(signature).toBe("createPaymentTransactionReturn");
+  });
+
+  describe("estimateAccountMaxSpendable", () => {
+    const addresses = [{ address: "address1", account: 0, index: 0 }] as Address[];
+
+    const UTXO_VALUES = {
+      utxo1: 500,
+      utxo2: 200,
+      utxo3: 100,
+    };
+    const utxos: Output[] = [
+      {
+        value: `${UTXO_VALUES.utxo1}`,
+        address: "address1",
+        output_hash: "hash1",
+        output_index: 0,
+        block_height: 1000,
+      },
+    ] as Output[];
+
+    beforeEach(() => {
+      // Set up mocks for addresses and UTXOs
+      mockAccount.xpub.getXpubAddresses = jest.fn().mockResolvedValue(addresses);
+      mockAccount.xpub.getAccountAddresses = jest
+        .fn()
+        .mockResolvedValue([{ address: "address2", account: 1, index: 1 }] as Address[]);
+      mockAccount.xpub.storage.getAddressUnspentUtxos = jest.fn().mockResolvedValue(utxos);
+      mockAccount.xpub.crypto.toOutputScript = jest
+        .fn()
+        .mockReturnValue(Buffer.from("output-script"));
+      mockAccount.xpub.crypto.toOpReturnOutputScript = jest
+        .fn()
+        .mockReturnValue(Buffer.from("op-return-script"));
+    });
+
+    it("estimate fees for one utxo", async () => {
+      // NOTE: setting the feePerByte to 0 to avoid the fee calculation
+      const maxSpendable = await wallet.estimateAccountMaxSpendable(mockAccount, 0, []);
+
+      expect(mockAccount.xpub.getXpubAddresses).toHaveBeenCalled();
+      expect(mockAccount.xpub.getAccountAddresses).toHaveBeenCalledWith(1);
+      expect(maxSpendable.toNumber()).toEqual(UTXO_VALUES.utxo1);
+    });
+
+    it("estimate fees when one of the utxos is a change address", async () => {
+      // NOTE: unconfirmed utxos with an address in the account's change addresses set are usable
+      const utxosWithChangeAddress = [
+        ...utxos,
+        {
+          value: `${UTXO_VALUES.utxo2}`,
+          address: "address2", // change address, the utxo will be usable
+          output_hash: "hash2",
+          output_index: 1,
+          block_height: null,
+        },
+      ] as Output[];
+
+      mockAccount.xpub.storage.getAddressUnspentUtxos = jest
+        .fn()
+        .mockResolvedValue(utxosWithChangeAddress);
+      const maxSpendableWithChangeAddressUtxo = await wallet.estimateAccountMaxSpendable(
+        mockAccount,
+        0,
+        [],
+      );
+      expect(maxSpendableWithChangeAddressUtxo.toNumber()).toEqual(
+        UTXO_VALUES.utxo1 + UTXO_VALUES.utxo2,
+      );
+    });
+
+    it("estimate fees when one of the utxos is unconfirmed", async () => {
+      const utxosWithUnconfirmedTx = [
+        ...utxos,
+        {
+          value: `${UTXO_VALUES.utxo3}`,
+          address: "address3notchange", // not a change address
+          output_hash: "hash3",
+          output_index: 3,
+          block_height: null,
+        },
+      ] as Output[];
+      mockAccount.xpub.storage.getAddressUnspentUtxos = jest
+        .fn()
+        .mockResolvedValue(utxosWithUnconfirmedTx);
+      const maxSpendableWithUnconfirmedTx = await wallet.estimateAccountMaxSpendable(
+        mockAccount,
+        0,
+        [],
+      );
+      expect(maxSpendableWithUnconfirmedTx.toNumber()).toEqual(UTXO_VALUES.utxo1);
+    });
   });
 });

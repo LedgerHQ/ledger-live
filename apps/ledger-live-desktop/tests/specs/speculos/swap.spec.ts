@@ -31,7 +31,7 @@ const app: AppInfos = AppInfos.EXCHANGE;
 const swaps = [
   {
     swap: new Swap(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "0.02", Fee.MEDIUM),
-    xrayTicket: "B2CQA-2750",
+    xrayTicket: "B2CQA-2750, B2CQA-3135",
   },
   {
     swap: new Swap(Account.BTC_NATIVE_SEGWIT_1, Account.ETH_1, "0.00067", Fee.MEDIUM),
@@ -390,7 +390,7 @@ for (const { swap, xrayTicket, userData, errorMessage } of swapWithDifferentSeed
 const tooLowAmountForQuoteSwaps = [
   {
     swap: new Swap(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "0.001", Fee.MEDIUM),
-    xrayTicket: "B2CQA-2755",
+    xrayTicket: "B2CQA-2755, B2CQA-3136",
   },
   {
     swap: new Swap(Account.BTC_NATIVE_SEGWIT_1, Account.ETH_1, "0.00001", Fee.MEDIUM),

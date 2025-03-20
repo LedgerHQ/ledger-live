@@ -59,8 +59,8 @@ export type Pagination = { minHeight: number };
 export type Api<TokenIdentifier> = {
   broadcast: (tx: string) => Promise<string>;
   combine: (tx: string, signature: string, pubkey?: string) => string;
-  craftTransaction: (address: string, transaction: Transaction, pubkey?: string) => Promise<string>;
   estimateFees: (transactionIntent: TransactionIntent<TokenIdentifier>) => Promise<bigint>;
+  craftTransaction: (transactionIntent: TransactionIntent<TokenIdentifier>) => Promise<string>;
   getBalance: (address: string) => Promise<Asset | bigint>;
   lastBlock: () => Promise<BlockInfo>;
   listOperations: (

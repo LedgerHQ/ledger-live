@@ -361,6 +361,7 @@ export class SwapPage extends AppPage {
       await expect(webview.locator(this.errorSpan(message))).toBeVisible();
     }
     await expect(webview.getByTestId(`execute-button`)).not.toBeEnabled();
+    await expect(webview.getByTestId(`insufficient-funds-warning`)).toBeVisible();
   }
 
   @step("Go and wait for Swap app to be ready")

@@ -2,4 +2,4 @@
 "@ledgerhq/live-common": minor
 ---
 
-feat: lifi ERC20
+Remove timeout after CLS load
