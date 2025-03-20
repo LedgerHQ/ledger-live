@@ -8,7 +8,11 @@ import {
 } from "@aptos-labs/ts-sdk";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import type { Account, Operation, OperationType, TokenAccount } from "@ledgerhq/types-live";
-import { findSubAccountById, isTokenAccount } from "@ledgerhq/coin-framework/account/index";
+import {
+  encodeAccountId,
+  findSubAccountById,
+  isTokenAccount,
+} from "@ledgerhq/coin-framework/account/index";
 import BigNumber from "bignumber.js";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import {
@@ -114,10 +118,6 @@ export const txsToOps = (
   const ops: Operation[] = [];
   const opsTokens: Operation[] = [];
 
-  if (address === "0xa0d8abc262e3321f87d745bd5d687e8f3fb14c87d48f840b6b56867df0026ec8") {
-    console.log("yaa");
-  }
-
   txs.forEach(tx => {
     if (tx !== null) {
       const op: Operation = getBlankOperation(tx, id);
@@ -162,13 +162,27 @@ export const txsToOps = (
           ops.push(op);
         } else {
           const token = findTokenByAddressInCurrency(coin_id.toLowerCase(), "aptos");
+
           if (token !== undefined) {
             op.accountId = encodeTokenAccountId(id, token);
             op.id = encodeOperationId(op.accountId, tx.hash, op.type);
-            if (op.type === DIRECTION.OUT) {
-              ops.push({ ...op, value: op.fee, type: "FEES" });
-            }
             opsTokens.push(op);
+
+            if (op.type === DIRECTION.OUT) {
+              const accountId = encodeAccountId({
+                type: "js",
+                currencyId: "aptos",
+                derivationMode: "aptos",
+                version: "2",
+                xpubOrAddress: address,
+              });
+              ops.push({
+                ...op,
+                accountId,
+                value: op.fee,
+                type: "FEES",
+              });
+            }
           }
         }
       }
@@ -336,9 +350,6 @@ export function getCoinAndAmounts(
   let amount_in = BigNumber(0);
   let amount_out = BigNumber(0);
 
-  if (tx.hash === "0x25e614e56c41d860ec95aa720419302a41e216b11fbce5dc354b9fa9852d26ae") {
-    console.log("ya");
-  }
   // collect all events related to the address and calculate the overall amounts
   tx.events.forEach(event => {
     switch (event.type) {
@@ -375,9 +386,9 @@ export function getCoinAndAmounts(
           }
         }
         break;
-      // case "0x1::transaction_fee::FeeStatement":
-      //   coin_id = APTOS_ASSET_ID;
-      //   break;
+      case "0x1::transaction_fee::FeeStatement":
+        coin_id = APTOS_ASSET_ID;
+        break;
     }
   });
   return { coin_id, amount_in, amount_out }; // TODO: manage situation when there are several coinID from the events parsing
