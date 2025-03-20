@@ -144,6 +144,7 @@ export const txsToOps = (
       );
       op.type = compareAddress(tx.sender, address) ? DIRECTION.OUT : DIRECTION.IN;
       op.senders.push(tx.sender);
+      op.hasFailed = !tx.success;
 
       processRecipients(payload, address, op, function_address);
 
@@ -152,17 +153,13 @@ export const txsToOps = (
         op.type = DIRECTION.UNKNOWN;
       }
 
-      op.hasFailed = !tx.success;
-
       if (op.type !== DIRECTION.UNKNOWN) {
         if (coin_id === null) {
           return;
         } else if (coin_id === APTOS_ASSET_ID) {
-          op.id = encodeOperationId(id, tx.hash, op.type);
-          ops.push(op);
+          ops.push({ ...op, type: "FEES" });
         } else {
           const token = findTokenByAddressInCurrency(coin_id.toLowerCase(), "aptos");
-
           if (token !== undefined) {
             op.accountId = encodeTokenAccountId(id, token);
             op.id = encodeOperationId(op.accountId, tx.hash, op.type);
@@ -387,7 +384,13 @@ export function getCoinAndAmounts(
         }
         break;
       case "0x1::transaction_fee::FeeStatement":
-        coin_id = APTOS_ASSET_ID;
+        if (checkFAOwner(tx, event, address)) {
+          if (coin_id === null) {
+            coin_id = APTOS_ASSET_ID;
+            const fees = BigNumber(tx.gas_unit_price).times(BigNumber(tx.gas_used));
+            amount_out = amount_out.plus(fees);
+          }
+        }
         break;
     }
   });
