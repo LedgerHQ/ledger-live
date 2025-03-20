@@ -15,12 +15,6 @@ test.describe.parallel("Recover @smoke", () => {
     await layout.expectRecoverStatusIconToBeVisible(false);
   });
 
-  // TODO: ElectronStore needs to be manipulated to add applicable states
-  test.fixme("Warning status icon shows", async ({ page }) => {
-    const layout = new Layout(page);
-    await layout.expectRecoverStatusIconToBeVisible();
-  });
-
   test("Restore page with no device", async ({ page }) => {
     const recoverPage = new RecoverRestorePage(page);
     await recoverPage.useDeepLink();
