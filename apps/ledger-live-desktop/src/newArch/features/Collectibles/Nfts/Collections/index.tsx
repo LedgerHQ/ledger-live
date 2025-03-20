@@ -18,6 +18,7 @@ import {
   TableHeaderProps,
   TableHeaderTitleKey as TitleKey,
 } from "LLD/features/Collectibles/types/Collection";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 type ViewProps = ReturnType<typeof useNftCollectionsModel>;
 
@@ -79,6 +80,7 @@ function View({
   onShowMore,
 }: ViewProps) {
   const { t } = useTranslation();
+  const lldSolanaNfts = useFeature("lldSolanaNfts");
   const hasNfts = nftsInTheCollection.length > 0;
 
   const actions = useMemo(() => {
@@ -91,6 +93,7 @@ function View({
               </HeaderActions>
             ),
             action: onReceive,
+            hidden: account.currency.id === "solana" && lldSolanaNfts?.enabled,
           },
           {
             element: <HeaderActions textKey="NFT.collections.galleryCTA" />,
@@ -98,15 +101,17 @@ function View({
           },
         ]
       : [];
-  }, [hasNfts, onReceive, onOpenGallery]);
+  }, [hasNfts, onReceive, onOpenGallery, lldSolanaNfts, account.currency.id]);
 
   const tableHeaderProps: TableHeaderProps = {
     titleKey: TitleKey.NFTCollections,
     actions,
   };
 
+  if (account.currency.id === "solana" && !lldSolanaNfts?.enabled) return null;
+
   return (
-    <Box>
+    <Box data-testid="nft-collections">
       <TableContainer id="tokens-list" mb={50}>
         <TableHeader {...tableHeaderProps} />
         {hasNfts ? (
@@ -125,6 +130,7 @@ function View({
           <EmptyCollection
             currencyName={account.currency.name}
             collectionType={CollectibleTypeEnum.NFT}
+            hideLearnMore={lldSolanaNfts?.enabled}
           >
             <Button small primary onClick={onReceive} icon>
               <Flex alignItems={"center"}>
