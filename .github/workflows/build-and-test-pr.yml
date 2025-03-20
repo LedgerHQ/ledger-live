@@ -43,9 +43,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Log affected paths
+        env:
+          JSON: ${{toJson(needs.determine-affected.outputs)}}
         run: |
           echo "OUTPUTS : ${{needs.determine-affected.outputs}}"
-          echo "JSON : ${{toJson(needs.determine-affected.outputs)}}"
+          echo 'JSON : ${{JSON}}'
 
   # LLD
   build-desktop:
