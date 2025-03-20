@@ -10,7 +10,7 @@ import {
 import { Observable, from, of, throwError, timer } from "rxjs";
 import { catchError, concatMap, retry, switchMap, timeout } from "rxjs/operators";
 import { Transport, TransportRef } from "../transports/core";
-import { DmkError, GeneralDmkError } from "@ledgerhq/device-management-kit";
+import { DmkError } from "@ledgerhq/device-management-kit";
 
 export type SharedTaskEvent = { type: "error"; error: Error; retrying: boolean };
 

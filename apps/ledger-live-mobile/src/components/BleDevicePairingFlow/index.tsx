@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 
 import RequiresBLE from "../RequiresBLE";
-import BleDevicesScanning from "./BleDevicesScanning";
+// import BleDevicesScanning from "./BleDevicesScanning";
 import BleDevicePairing from "./BleDevicePairing";
 import { addKnownDevice } from "~/actions/ble";
 import type { BleDevicesScanningProps } from "./BleDevicesScanning";

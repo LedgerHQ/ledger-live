@@ -904,6 +904,9 @@ importers:
       '@ledgerhq/coin-stacks':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-stacks
+      '@ledgerhq/device-management-kit':
+        specifier: 0.0.0-rnble-transport-20250318153131
+        version: 0.0.0-rnble-transport-20250318153131(rxjs@7.8.1)
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../../libs/ledgerjs/packages/devices
@@ -7157,6 +7160,9 @@ importers:
       '@ledgerhq/device-transport-kit-react-native-ble':
         specifier: 0.0.0-rnble-transport-20250318153131
         version: 0.0.0-rnble-transport-20250318153131(@ledgerhq/device-management-kit@0.0.0-rnble-transport-20250318153131(rxjs@7.8.1))(react-native-ble-plx@3.2.1(react-native@0.76.3(react@18.3.1))(react@18.3.1))(react-native@0.76.3(react@18.3.1))(rxjs@7.8.1)
+      '@ledgerhq/errors':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/errors
       '@ledgerhq/hw-transport':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-transport

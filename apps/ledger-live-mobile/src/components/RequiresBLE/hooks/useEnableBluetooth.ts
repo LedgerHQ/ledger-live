@@ -2,8 +2,8 @@ import { useCallback, useEffect, useState } from "react";
 import { Observable, Subscription } from "rxjs";
 import { NativeModules, Platform } from "react-native";
 import Config from "react-native-config";
-import getBLETransport from "../../../react-native-hw-transport-ble";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import getBLETransport from "~/react-native-hw-transport-ble";
 
 const { BluetoothHelperModule } = NativeModules;
 
@@ -93,7 +93,7 @@ export function useEnableBluetooth(
 ) {
   const [observedTransportState, setObservedTransportState] = useState<string>("Unknown");
 
-  const isLDMKEnabled = Boolean(useFeature("ldmkTransport")?.enabled);
+  const isLDMKEnabled = !!useFeature("ldmkTransport")?.enabled;
 
   const promptBluetoothCallback = usePromptEnableBluetoothCallback();
 
