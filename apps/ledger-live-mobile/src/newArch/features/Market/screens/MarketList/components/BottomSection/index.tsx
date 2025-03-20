@@ -11,8 +11,7 @@ import TrackScreen from "~/analytics/TrackScreen";
 import useBottomSectionViewModel from "./useBottomSectionViewModel";
 import { RANGES } from "LLM/features/Market/utils";
 import { LIMIT } from "~/reducers/market";
-// eslint-disable-next-line no-restricted-imports
-import { rangeDataTable } from "@ledgerhq/live-common/lib/market/utils/rangeDataTable";
+import { rangeDataTable } from "@ledgerhq/live-common/market/utils/rangeDataTable";
 
 const SORT_OPTIONS = {
   top100G: {
