@@ -153,10 +153,16 @@ describe("scanAccounts", () => {
     );
 
     // Then
-    expect(account.balance).toEqual(balance);
-    expect(account.spendableBalance).toEqual(balance);
-    expect(account.subAccounts![0].balance).toEqual(energy);
-    expect(account.subAccounts![0].spendableBalance).toEqual(energy);
+    expect(account).toMatchObject({
+      balance,
+      spendableBalance: balance,
+      subAccounts: [
+        {
+          balance: energy,
+          spendableBalance: energy,
+        },
+      ],
+    });
   });
 
   it.each([
@@ -205,6 +211,6 @@ describe("scanAccounts", () => {
     );
 
     // Then
-    expect(account.used).toBeTruthy();
+    expect(account.used).toBe(true);
   });
 });
