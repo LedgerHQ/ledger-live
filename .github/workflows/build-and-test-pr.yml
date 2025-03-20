@@ -40,9 +40,11 @@ jobs:
   log-affected:
     name: "Log Affected"
     needs: determine-affected
-    run: |
-      echo "OUTPUTS : ${{needs.determine-affected.outputs}}"
-      echo "JSON : ${{ toJson(github) }}"
+    steps:
+      - name: Log affected paths
+        run: |
+          echo "OUTPUTS : ${{needs.determine-affected.outputs}}"
+          echo "JSON : ${{ toJson(github) }}"
 
   # LLD
   build-desktop:
