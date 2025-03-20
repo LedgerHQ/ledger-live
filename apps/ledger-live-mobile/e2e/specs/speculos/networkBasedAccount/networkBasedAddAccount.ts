@@ -1,9 +1,6 @@
-import { Application } from "../../../page";
-import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
+import { CurrencyType } from "@ledgerhq/live-common/e2e/enum/Currency";
 
-export async function runNetworkBasedAddAccountTest(currency: Currency, tmsLink: string) {
-  const app = new Application();
-
+export async function runNetworkBasedAddAccountTest(currency: CurrencyType, tmsLink: string) {
   describe("Add accounts - Network Based", () => {
     beforeAll(async () => {
       await app.init({

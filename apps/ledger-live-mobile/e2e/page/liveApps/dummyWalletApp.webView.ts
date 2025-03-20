@@ -1,6 +1,5 @@
 import { send, startLiveApp, stopServer } from "../../models/liveApps";
 import DiscoverPage from "../discover/discover.page";
-import { getWebElementById } from "../../helpers";
 
 const port = 52619;
 

@@ -1,15 +1,8 @@
-import {
-  getElementById,
-  getIdOfElement,
-  openDeeplink,
-  tapByElement,
-  waitForElementById,
-} from "../../helpers";
 import { expect } from "detox";
-
-const baseLink = "nftgallery";
+import { openDeeplink } from "../../helpers/commonHelpers";
 
 export default class NftGalleryPage {
+  baseLink = "nftgallery";
   root = () => getElementById("wallet-nft-gallery-screen");
   emptyScreen = () => getElementById("wallet-nft-gallery-empty");
   emptyScreenResetButton = () => getElementById("wallet-nft-gallery-empty-reset-button");
@@ -29,7 +22,7 @@ export default class NftGalleryPage {
 
   @Step("Open NFT Gallery via deeplink")
   async openViaDeeplink() {
-    await openDeeplink(baseLink);
+    await openDeeplink(this.baseLink);
   }
 
   @Step("Select NFT")

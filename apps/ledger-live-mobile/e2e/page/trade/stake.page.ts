@@ -1,13 +1,5 @@
-import {
-  getTextOfElement,
-  IsIdVisible,
-  tapById,
-  typeTextById,
-  waitForElementById,
-  getElementById,
-} from "../../helpers";
 import { expect as detoxExpect } from "detox";
-import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
+import expect from "expect";
 import invariant from "invariant";
 
 export default class StakePage {

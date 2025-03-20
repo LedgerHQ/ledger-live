@@ -471,7 +471,7 @@ for (const { swap, xrayTicket } of tooLowAmountForQuoteSwaps) {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
         await performSwapUntilQuoteSelectionStep(app, electronApp, swap);
-        const errorMessage = swap.accountToDebit.accountType
+        const errorMessage = swap.accountToDebit.tokenType
           ? "Not enough balance."
           : new RegExp(
               `Minimum \\d+(\\.\\d{1,10})? ${swap.accountToDebit.currency.ticker} needed for quotes\\.\\s*$`,
@@ -481,8 +481,8 @@ for (const { swap, xrayTicket } of tooLowAmountForQuoteSwaps) {
           swap.accountToDebit,
           errorMessage,
         );
-        //following error doesn't appear if accountToDebit has accountType erc20
-        if (!swap.accountToDebit.accountType) {
+        //following error doesn't appear if accountToDebit has tokenType erc20
+        if (!swap.accountToDebit.tokenType) {
           await app.swap.fillInOriginCurrencyAmount(electronApp, "");
           await app.swap.fillInOriginCurrencyAmount(
             electronApp,

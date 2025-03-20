@@ -1,10 +1,3 @@
-import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
-import { Application } from "../../page";
-import { CLI } from "../../utils/cliUtils";
-
-const app = new Application();
-const nanoApp = AppInfos.ETHEREUM;
-
 const langButtonText = [
   { lang: "Français", localization: "Général" },
   { lang: "Español", localization: "General" },
@@ -28,15 +21,17 @@ const verifyLanguageCanBeChanged = (l10n: { lang: string; localization: string }
 
 $TmsLink("B2CQA-2344");
 describe("Change Language", () => {
+  const nanoApp = AppInfos.ETHEREUM;
+
   beforeAll(async () => {
     await app.init({
       speculosApp: nanoApp,
       cliCommands: [
-        async () => {
+        async (userdataPath?: string) => {
           return CLI.liveData({
             currency: nanoApp.name,
             index: 0,
-            appjson: app.userdataPath,
+            appjson: userdataPath,
             add: true,
           });
         },

@@ -299,7 +299,7 @@ export class SwapPage extends AppPage {
 
   getAccountName(account: Account) {
     //erc20 accounts names are stored in account currency property
-    return account.accountType ? account.currency.name : account.accountName;
+    return account.tokenType ? account.currency.name : account.accountName;
   }
 
   @step("Fill in amount: $0")
@@ -395,7 +395,7 @@ export class SwapPage extends AppPage {
     message: string | RegExp,
   ) {
     const [, webview] = electronApp.windows();
-    if (!accountToDebit.accountType) {
+    if (!accountToDebit.tokenType) {
       //error message is flickering and changing, so we need to wait for it to be stable
       await this.page.waitForTimeout(1000);
       const errorSpan = await webview.getByTestId("from-account-error").textContent();
