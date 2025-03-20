@@ -1,10 +1,11 @@
 import { useSelector } from "react-redux";
-import { DefaultAccountSwapParamList } from "../../types";
-import { walletSelector } from "~/reducers/wallet";
-import { accountsSelector } from "~/reducers/accounts";
 import { useMemo } from "react";
 
 import * as walletApi from "@ledgerhq/live-common/wallet-api/converters";
+import { walletSelector } from "~/reducers/wallet";
+import { flattenAccountsSelector } from "~/reducers/accounts";
+
+import { DefaultAccountSwapParamList, DetailsSwapParamList } from "../../types";
 
 type SwapLiveUrlParams = {
   fromAccountId?: string;
@@ -13,10 +14,10 @@ type SwapLiveUrlParams = {
 };
 
 export const useTranslateToSwapAccount = (
-  params: DefaultAccountSwapParamList | null,
+  params: DefaultAccountSwapParamList | DetailsSwapParamList | null,
 ): SwapLiveUrlParams => {
   const walletState = useSelector(walletSelector);
-  const currentAccounts = useSelector(accountsSelector);
+  const currentAccounts = useSelector(flattenAccountsSelector);
 
   return useMemo(() => {
     const newParams: SwapLiveUrlParams = {};
@@ -42,29 +43,19 @@ export const useTranslateToSwapAccount = (
         params.defaultCurrency || params.currency,
       );
 
-      // Lets find an account that matches the given currency
-      const firstAccount = currentAccounts.find(account => account.currency.id === currency.id);
+      const account = currentAccounts.find(
+        account => account.currency?.id === currency.id || account.token?.id === currency.id,
+      );
 
-      // Lets match a token that matches the given currency
-      const firstToken = currentAccounts
-        .flatMap(account => (account.subAccounts?.length ? account.subAccounts : []))
-        .find(subAccount => subAccount.token.id === currency.id);
-
-      // We found an account that matches the token (more specific use case)
-      if (firstToken) {
-        newParams.fromToken = firstToken.token.id;
-        return newParams;
-      }
-
-      // We didn't find a token, but we found an account that matches the currency
-      if (firstAccount) {
+      if (account) {
         newParams.fromAccountId = walletApi.accountToWalletAPIAccount(
           walletState,
-          firstAccount,
-          params.defaultParentAccount,
+          account,
+          currentAccounts.find(currentAccount => currentAccount.id === account.parentId),
         ).id;
       }
 
+      newParams.fromToken = currency.id;
       return newParams;
     }
 
