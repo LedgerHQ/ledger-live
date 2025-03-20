@@ -180,7 +180,13 @@ export const InputRenderBottomRightContainer = styled(FlexBox)`
   right: 8px;
 `;
 
-const RenderRight = ({ renderRight, props, inputRef }) => {
+type Props<T = string> = {
+  renderRight?: React.ReactNode | InputProps<T>["renderRight"];
+  renderBottomRight?: React.ReactNode | InputProps<T>["renderBottomRight"];
+  props: InputProps<T>;
+  inputRef: React.RefObject<{ clear: () => void }>;
+};
+const RenderRight = <T,>({ renderRight, props, inputRef }: Props<T>) => {
   if (!renderRight) return null;
 
   return (
@@ -190,7 +196,7 @@ const RenderRight = ({ renderRight, props, inputRef }) => {
   );
 };
 
-const RenderBottomRight = ({ renderBottomRight, props, inputRef }) => {
+const RenderBottomRight = <T,>({ renderBottomRight, props, inputRef }: Props<T>) => {
   if (!renderBottomRight) return null;
 
   return (
@@ -283,9 +289,15 @@ function Input<T = string>(props: InputProps<T>, ref?: any): JSX.Element {
           }}
           style={{ ...(color ? { color: color } : {}), ...baseInputContainerStyle }}
         />
-        {largeMode ? ( <RenderBottomRight renderBottomRight={renderBottomRight} props={props} inputRef={inputRef} />)
-      : ( <RenderRight renderRight={renderRight} props={props} inputRef={inputRef} />)  
-      }
+        {largeMode ? (
+          <RenderBottomRight
+            renderBottomRight={renderBottomRight}
+            props={props}
+            inputRef={inputRef}
+          />
+        ) : (
+          <RenderRight renderRight={renderRight} props={props} inputRef={inputRef} />
+        )}
       </InputContainer>
       {!!error && !disabled && (
         <FlexBox
