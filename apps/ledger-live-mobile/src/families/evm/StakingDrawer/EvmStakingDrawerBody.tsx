@@ -8,6 +8,7 @@ import { useAnalytics } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
 import { EvmStakingDrawerProvider } from "./EvmStakingDrawerProvider";
 import { ListProvider } from "./types";
+import { getWalletApiIdFromAccountId } from "@ledgerhq/live-common/wallet-api/converters";
 
 interface Props {
   providers: ListProvider[];
@@ -34,7 +35,7 @@ export function EvmStakingDrawerBody({ providers, accountId, onClose }: Props) {
           navigation.navigate(ScreenName.PlatformApp, {
             platform: manifest.id,
             name: manifest.name,
-            accountId,
+            accountId: manifest?.dapp ? accountId : getWalletApiIdFromAccountId(accountId),
             ...(customDappURL ? { customDappURL } : {}),
           });
         });

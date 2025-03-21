@@ -39,6 +39,7 @@ export type RowProps = {
 export type TableHeaderActionsProps = {
   element: React.ReactNode;
   action: () => void;
+  hidden?: boolean;
 };
 
 export enum TableHeaderTitleKey {
