@@ -18,4 +18,5 @@ module.exports = {
     ],
   },
   transformIgnorePatterns: [`node_modules/.pnpm/(?!(${transformIncludePatterns.join("|")}))`],
+  modulePathIgnorePatterns: ["__tests__/fixtures"],
 };

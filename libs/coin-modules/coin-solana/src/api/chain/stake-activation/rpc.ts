@@ -1,7 +1,11 @@
-import { Connection, PublicKey, SYSVAR_STAKE_HISTORY_PUBKEY } from "@solana/web3.js";
+import { SYSVAR_STAKE_HISTORY_PUBKEY } from "@solana/web3.js";
 import { BigNumber } from "bignumber.js";
 import { getStakeActivatingAndDeactivating, StakeActivatingAndDeactivating } from "./delegation";
-import { parseStakeHistoryEntry, tryParseAsStakeAccount } from "../account";
+import { tryParseAsStakeAccount } from "../account";
+import { ChainAPI } from "..";
+import { ParsedOnChainStakeAccountWithInfo, toStakeAccountWithInfo } from "../web3";
+import { isHistoryEntry } from "../../../utils";
+import compact from "lodash/compact";
 
 function getStakeActivationState({
   activating,
@@ -27,48 +31,32 @@ export interface StakeActivationData {
   inactive: number;
 }
 
-// Replacement for outdated connection.getStakeActivation rpc endpoint.
-// Based on example from Solana team https://github.com/solana-developers/solana-rpc-get-stake-activation
-// TODO: Install solana-rpc-get-stake-activation via npm package when it's published.
-export async function getStakeActivation(
-  connection: Connection,
-  stakeAddress: PublicKey,
-): Promise<StakeActivationData> {
-  const [epochInfo, { stakeAccountOrErr, stakeAccountLamports }, stakeHistory] = await Promise.all([
-    connection.getEpochInfo(),
+interface StakeAccount {
+  account: ParsedOnChainStakeAccountWithInfo;
+  activation: StakeActivationData;
+  reward: null;
+}
 
-    (async () => {
-      const stakeAccount = await connection.getParsedAccountInfo(stakeAddress);
-      if (stakeAccount === null || stakeAccount.value === null) {
-        throw new Error("Account not found");
-      }
-      const stakeAccountOrErr =
-        "parsed" in stakeAccount.value.data
-          ? tryParseAsStakeAccount(stakeAccount.value.data)
-          : undefined;
+function toStakeAccount(
+  rawStakeAccount: ParsedOnChainStakeAccountWithInfo,
+  epoch: BigNumber,
+  stakeHistory: Array<{
+    epoch: BigNumber;
+    effective: BigNumber;
+    activating: BigNumber;
+    deactivating: BigNumber;
+  }>,
+): StakeAccount | undefined {
+  const data = rawStakeAccount.onChainAcc.account.data;
+  if (!("parsed" in data)) return undefined;
 
-      return { stakeAccountOrErr, stakeAccountLamports: stakeAccount.value.lamports };
-    })(),
+  const parsedStakeAccount = tryParseAsStakeAccount(data);
+  if (parsedStakeAccount instanceof Error) return undefined;
 
-    (async () => {
-      const stakeHistoryAccount = await connection.getParsedAccountInfo(
-        SYSVAR_STAKE_HISTORY_PUBKEY,
-      );
-      if (stakeHistoryAccount.value === null || !("parsed" in stakeHistoryAccount.value.data)) {
-        throw new Error("StakeHistory not found");
-      }
-      return stakeHistoryAccount.value.data.parsed.info.map((entry: any) => {
-        return parseStakeHistoryEntry({ epoch: entry.epoch, ...entry.stakeHistory });
-      });
-    })(),
-  ]);
-
-  if (stakeAccountOrErr instanceof Error) throw stakeAccountOrErr;
-
-  const { effective, activating, deactivating } = stakeAccountOrErr?.stake
+  const { effective, activating, deactivating } = parsedStakeAccount?.stake
     ? getStakeActivatingAndDeactivating(
-        stakeAccountOrErr.stake.delegation,
-        BigNumber(epochInfo.epoch),
+        parsedStakeAccount.stake.delegation,
+        BigNumber(epoch),
         stakeHistory,
       )
     : {
@@ -77,14 +65,57 @@ export async function getStakeActivation(
         deactivating: BigNumber(0),
       };
 
-  const state = getStakeActivationState({ effective, activating, deactivating });
-  const inactive = BigNumber(stakeAccountLamports)
+  const inactive = BigNumber(rawStakeAccount.onChainAcc.account.lamports)
     .minus(effective)
-    .minus(stakeAccountOrErr?.meta.rentExemptReserve || 0);
+    .minus(parsedStakeAccount?.meta.rentExemptReserve || 0);
 
   return {
-    state,
-    active: effective.toNumber(),
-    inactive: inactive.toNumber(),
+    account: rawStakeAccount,
+    activation: {
+      state: getStakeActivationState({ effective, activating, deactivating }),
+      active: effective.toNumber(),
+      inactive: inactive.toNumber(),
+    } as StakeActivationData,
+    reward: null,
   };
+}
+
+export async function getStakeAccounts(
+  api: ChainAPI,
+  mainAccountAddress: string,
+): Promise<Array<StakeAccount>> {
+  const rawStakeAccounts = await api.getStakeAccountsByWithdrawAuth(mainAccountAddress);
+
+  if (!rawStakeAccounts.length) return [];
+
+  const sysvarStakeHistoryAccount = await api.getAccountInfo(
+    SYSVAR_STAKE_HISTORY_PUBKEY.toBase58(),
+  );
+  if (
+    !sysvarStakeHistoryAccount ||
+    !("parsed" in sysvarStakeHistoryAccount.data) ||
+    !("info" in sysvarStakeHistoryAccount.data.parsed)
+  )
+    throw new Error("StakeHistory not found");
+
+  const sysvarStakeHistoryAccountInfo = sysvarStakeHistoryAccount.data.parsed.info;
+  const stakeHistory = Array.isArray(sysvarStakeHistoryAccountInfo)
+    ? sysvarStakeHistoryAccountInfo.filter(isHistoryEntry).map(e => ({
+        epoch: BigNumber(e.epoch),
+        effective: BigNumber(e.stakeHistory.effective),
+        activating: BigNumber(e.stakeHistory.activating),
+        deactivating: BigNumber(e.stakeHistory.deactivating),
+      }))
+    : [];
+
+  const { epoch } = await api.getEpochInfo();
+  const stakes = rawStakeAccounts.map(rawStakeAccount => {
+    const stakeAccountWithInfo = toStakeAccountWithInfo(rawStakeAccount);
+
+    return (
+      stakeAccountWithInfo && toStakeAccount(stakeAccountWithInfo, BigNumber(epoch), stakeHistory)
+    );
+  });
+
+  return compact(stakes);
 }
