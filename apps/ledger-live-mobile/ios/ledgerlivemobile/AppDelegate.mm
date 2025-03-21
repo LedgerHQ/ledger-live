@@ -1,5 +1,6 @@
 #import "AppDelegate.h"
 #import <React/RCTBundleURLProvider.h>
+#import <ExpoModulesCore-Swift.h>
 #import <React/RCTLinkingManager.h>
 #import <React/RCTRootView.h>
 #import "RNCConfig.h"
@@ -7,7 +8,7 @@
 #import "BrazeReactUtils.h"
 #import "BrazeReactBridge.h"
 #import <Firebase.h>
-
+#import "ledgerlivemobile-Swift.h"
 
 @implementation AppDelegate
 
@@ -19,26 +20,26 @@ static NSString *const iOSPushAutoEnabledKey = @"iOSPushAutoEnabled";
   // You can add your custom initial props in the dictionary below.
   // They will be passed down to the ViewController used by React Native.
   self.initialProps = @{};
-
+  
   // Retrieve the correct GoogleService-Info.plist file name for a given environment
   NSString *googleServiceInfoEnvName = [RNCConfig envFor:@"GOOGLE_SERVICE_INFO_NAME"];
   NSString *googleServiceInfoName = googleServiceInfoEnvName;
   if ([googleServiceInfoName length] == 0) {
     googleServiceInfoName = @"GoogleService-Info";
   }
-
+  
   // Initialize Firebase with the correct GoogleService-Info.plist file
   NSString *filePath = [[NSBundle mainBundle] pathForResource:googleServiceInfoName ofType:@"plist"];
   FIROptions *options = [[FIROptions alloc] initWithContentsOfFile:filePath];
   [FIRApp configureWithOptions:options];
-
+  
   // Setup Braze
   NSString *brazeApiKeyFromEnv = [RNCConfig envFor:@"BRAZE_IOS_API_KEY"];
   NSString *brazeCustomEndpointFromEnv = [RNCConfig envFor:@"BRAZE_CUSTOM_ENDPOINT"];
   BRZConfiguration *configuration = [[BRZConfiguration alloc] initWithApiKey:brazeApiKeyFromEnv endpoint:brazeCustomEndpointFromEnv];
   configuration.triggerMinimumTimeInterval = 1;
   configuration.logger.level = BRZLoggerLevelInfo;
-
+  
   // Default to automically set up push notifications
   BOOL pushAutoEnabled = YES;
   if ([[NSUserDefaults standardUserDefaults] objectForKey:iOSPushAutoEnabledKey]) {
@@ -49,18 +50,18 @@ static NSString *const iOSPushAutoEnabledKey = @"iOSPushAutoEnabled";
     configuration.push.automation = [[BRZConfigurationPushAutomation alloc] initEnablingAllAutomations:YES];
     configuration.push.automation.requestAuthorizationAtLaunch = NO;
   }
-
+  
   Braze *braze = [BrazeReactBridge initBraze:configuration];
   AppDelegate.braze = braze;
-
+  
   if (!pushAutoEnabled) {
     // If the user explicitly disables Push Auto, register for push manually
     NSLog(@"iOS Push Auto disabled - Registering for push manually.");
     [self registerForPushNotifications];
   }
-
+  
   [[BrazeReactUtils sharedInstance] populateInitialUrlFromLaunchOptions:launchOptions];
-
+  
   BOOL appLaunched = [super application:application didFinishLaunchingWithOptions:launchOptions];
   // This condition is needed to prevent a crash since upgrading to React Native 0.75.4
   // It may be fixed in a later version of React Native
@@ -68,15 +69,23 @@ static NSString *const iOSPushAutoEnabledKey = @"iOSPushAutoEnabled";
   if (!appLaunched) {
     return NO;
   }
-
+  
   RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
   RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge moduleName:@"ledgerlivemobile" initialProperties:nil];
-
+  
+  BOOL isDetox = [[[NSProcessInfo processInfo] arguments] containsObject:@"-IS_TEST"];
+  
+  if(isDetox) return YES;
+  
+  self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
+  self.window.rootViewController = [UIViewController new];
+  self.window.rootViewController.view = rootView;
+  rootView.backgroundColor = [UIColor colorWithRed:12/255.0 green:12/255.0 blue:12/255.0 alpha:1.0];
   [self.window makeKeyAndVisible];
-  UIStoryboard *sb = [UIStoryboard storyboardWithName:@"LaunchScreen" bundle:nil];
-  UIViewController *vc = [sb instantiateInitialViewController];
-  rootView.loadingView = vc.view;
-
+  
+  RNSplashScreenModule *splashScreenModule = [bridge moduleForClass:[RNSplashScreenModule class]];
+  [splashScreenModule showSplashScreen];
+  
   return YES;
 }
 
@@ -94,12 +103,12 @@ static NSString *const iOSPushAutoEnabledKey = @"iOSPushAutoEnabled";
   if (processedByBraze) {
     return;
   }
-
+  
   completionHandler(UIBackgroundFetchResultNoData);
 }
 
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center
-  didReceiveNotificationResponse:(UNNotificationResponse *)response
+didReceiveNotificationResponse:(UNNotificationResponse *)response
          withCompletionHandler:(void (^)(void))completionHandler {
   [[BrazeReactUtils sharedInstance] populateInitialUrlForCategories:response.notification.request.content.userInfo];
   BOOL processedByBraze = AppDelegate.braze != nil && [AppDelegate.braze.notifications handleUserNotificationWithResponse:response
@@ -107,7 +116,7 @@ static NSString *const iOSPushAutoEnabledKey = @"iOSPushAutoEnabled";
   if (processedByBraze) {
     return;
   }
-
+  
   completionHandler();
 }
 
@@ -122,7 +131,7 @@ static NSString *const iOSPushAutoEnabledKey = @"iOSPushAutoEnabled";
 }
 
 - (void)application:(UIApplication *)application
-  didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
+didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
   [AppDelegate.braze.notifications registerDeviceToken:deviceToken];
 }
 
@@ -144,23 +153,23 @@ static Braze *_braze;
   blurEffectView.frame = [self.window bounds];
   blurEffectView.tag = 12345;
   logoView.tag = 12346;
-
+  
   blurEffectView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
   [self.window addSubview:blurEffectView];
   [self.window addSubview:logoView];
   [self.window bringSubviewToFront:logoView];
-
+  
   [logoView setContentHuggingPriority:251 forAxis:UILayoutConstraintAxisHorizontal];
   [logoView setContentHuggingPriority:251 forAxis:UILayoutConstraintAxisVertical];
   logoView.frame = CGRectMake(0, 0, 128, 128);
-
+  
   logoView.center = CGPointMake(self.window.frame.size.width  / 2,self.window.frame.size.height / 2);
 }
 
 - (void) hideOverlay{
   UIView *blurEffectView = [self.window viewWithTag:12345];
   UIView *logoView = [self.window viewWithTag:12346];
-
+  
   [UIView animateWithDuration:0.5 animations:^{
     blurEffectView.alpha = 0;
     logoView.alpha = 0;
@@ -215,7 +224,6 @@ static Braze *_braze;
 continueUserActivity:(NSUserActivity *)userActivity
  restorationHandler:(void (^)(NSArray<id<UIUserActivityRestoring>> *restorableObjects))restorationHandler
 {
-  NSURL *url = userActivity.webpageURL;
   return [RCTLinkingManager application:application
                    continueUserActivity:userActivity
                      restorationHandler:restorationHandler];
