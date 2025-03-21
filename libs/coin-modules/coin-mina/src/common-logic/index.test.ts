@@ -1,4 +1,37 @@
-import { getAccountNumFromPath, isValidAddress } from ".";
+import {
+  getAccountNumFromPath,
+  isValidAddress,
+  getMaxAmount,
+  getTotalSpent,
+  reEncodeRawSignature,
+  isValidMemo,
+} from ".";
+import { BigNumber } from "bignumber.js";
+import type { MinaAccount, Transaction } from "../types/common";
+import { MAX_MEMO_LENGTH } from "../consts";
+import { Operation } from "@ledgerhq/types-live";
+
+// Create a minimal mock implementation for the tests
+type MockMinaAccount = Pick<MinaAccount, "spendableBalance" | "pendingOperations">;
+type MockTransaction = Partial<Transaction>;
+
+// Mock functions to create test objects
+function createMockAccount(overrides: Partial<MockMinaAccount> = {}): MockMinaAccount {
+  return {
+    spendableBalance: new BigNumber(1000),
+    pendingOperations: [],
+    ...overrides,
+  };
+}
+
+function createMockTransaction(overrides: Partial<MockTransaction> = {}): MockTransaction {
+  return {
+    family: "mina",
+    amount: new BigNumber(0),
+    recipient: "B62qiVhtBtqakq8sNTHdCTXn6tETSK6gtsmNHRn1WdLqjGLpsHbw1xc",
+    ...overrides,
+  };
+}
 
 describe("getAccountNumFromPath", () => {
   it("should return undefined for invalid account number", () => {
@@ -74,5 +107,119 @@ describe("testingAddress", () => {
     for (const address of invalidAddresses) {
       expect(isValidAddress(address as string)).toBe(false);
     }
+  });
+});
+
+describe("isValidMemo", () => {
+  it("should return true for valid memo", () => {
+    expect(isValidMemo("")).toBe(true);
+    expect(isValidMemo("Valid memo")).toBe(true);
+    expect(isValidMemo("A".repeat(MAX_MEMO_LENGTH))).toBe(true);
+  });
+
+  it("should return false for memo exceeding max length", () => {
+    expect(isValidMemo("A".repeat(MAX_MEMO_LENGTH + 1))).toBe(false);
+  });
+});
+
+describe("getMaxAmount", () => {
+  it("should calculate correct max amount with no fees", () => {
+    const account = createMockAccount({
+      spendableBalance: new BigNumber(1000),
+      pendingOperations: [],
+    });
+    const transaction = createMockTransaction();
+
+    expect(getMaxAmount(account as MinaAccount, transaction as Transaction).toNumber()).toBe(1000);
+  });
+
+  it("should calculate correct max amount with fees", () => {
+    const account = createMockAccount({
+      spendableBalance: new BigNumber(1000),
+      pendingOperations: [],
+    });
+    const transaction = createMockTransaction();
+    const fees = new BigNumber(10);
+
+    expect(getMaxAmount(account as MinaAccount, transaction as Transaction, fees).toNumber()).toBe(
+      990,
+    );
+  });
+
+  it("should subtract pending operations from max amount", () => {
+    const account = createMockAccount({
+      spendableBalance: new BigNumber(1000),
+      pendingOperations: [
+        { value: new BigNumber(100) } as Operation,
+        { value: new BigNumber(200) } as Operation,
+      ],
+    });
+    const transaction = createMockTransaction();
+
+    expect(getMaxAmount(account as MinaAccount, transaction as Transaction).toNumber()).toBe(700);
+  });
+
+  it("should return 0 when max amount would be negative", () => {
+    const account = createMockAccount({
+      spendableBalance: new BigNumber(100),
+      pendingOperations: [{ value: new BigNumber(200) } as Operation],
+    });
+    const transaction = createMockTransaction();
+
+    expect(getMaxAmount(account as MinaAccount, transaction as Transaction).toNumber()).toBe(0);
+  });
+});
+
+describe("getTotalSpent", () => {
+  it("should return spendable balance when useAllAmount is true", () => {
+    const account = createMockAccount({
+      spendableBalance: new BigNumber(1000),
+    });
+    const transaction = createMockTransaction({
+      useAllAmount: true,
+      amount: new BigNumber(500),
+    });
+    const fees = new BigNumber(10);
+
+    expect(getTotalSpent(account as MinaAccount, transaction as Transaction, fees).toNumber()).toBe(
+      1000,
+    );
+  });
+
+  it("should return amount plus fees when useAllAmount is false", () => {
+    const account = createMockAccount({
+      spendableBalance: new BigNumber(1000),
+    });
+    const transaction = createMockTransaction({
+      useAllAmount: false,
+      amount: new BigNumber(500),
+    });
+    const fees = new BigNumber(10);
+
+    expect(getTotalSpent(account as MinaAccount, transaction as Transaction, fees).toNumber()).toBe(
+      510,
+    );
+  });
+});
+
+describe("reEncodeRawSignature", () => {
+  it("should correctly re-encode a valid signature", () => {
+    const rawSignature = "a".repeat(64) + "b".repeat(64);
+    const result = reEncodeRawSignature(rawSignature);
+
+    // Check that the result has the correct format (reverse bytes)
+    expect(result.length).toBe(128);
+
+    // Check field part
+    const fieldPart = result.substring(0, 64);
+    expect(fieldPart).toBe("a".repeat(64).match(/.{2}/g)?.reverse().join(""));
+
+    // Check scalar part
+    const scalarPart = result.substring(64);
+    expect(scalarPart).toBe("b".repeat(64).match(/.{2}/g)?.reverse().join(""));
+  });
+
+  it("should throw an error for invalid signature length", () => {
+    expect(() => reEncodeRawSignature("too_short")).toThrow("Invalid raw signature input");
   });
 });

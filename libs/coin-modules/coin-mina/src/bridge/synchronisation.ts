@@ -32,7 +32,7 @@ export const mapRosettaTxnToOperation = async (
     let redelegateTransaction = false;
 
     for (const op of txn.transaction.operations) {
-      failed = op.status === "Failed";
+      failed = failed || op.status === "Failed";
       const opValue = failed ? new BigNumber(0) : new BigNumber(op.amount?.value ?? 0);
       switch (op.type) {
         case "fee_payment": {
@@ -62,8 +62,7 @@ export const mapRosettaTxnToOperation = async (
         }
         case "delegate_change": {
           fromAccount = op.account.address;
-          invariant(op.metadata?.delegate_change_target, "mina: missing delegate change target");
-          toAccount = op.metadata?.delegate_change_target;
+          toAccount = op.metadata?.delegate_change_target || toAccount || "unknown";
           redelegateTransaction = true;
           continue;
         }
@@ -110,6 +109,8 @@ export const mapRosettaTxnToOperation = async (
       const type = "REDELEGATE";
       ops.push({
         ...op,
+        value: new BigNumber(0),
+        fee: new BigNumber(0),
         type,
         id: encodeOperationId(accountId, hash, type),
       });
