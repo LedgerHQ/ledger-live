@@ -1,9 +1,14 @@
 import { createApi } from "./index";
 
 const mockGetOperations = jest.fn();
+const mockCraftTransaction = jest.fn();
 
 jest.mock("../logic/listOperations", () => ({
   listOperations: () => mockGetOperations(),
+}));
+
+jest.mock("../logic/craftTransaction", () => ({
+  craftTransaction: () => mockCraftTransaction(),
 }));
 
 const api = createApi({
@@ -82,5 +87,28 @@ describe("operations", () => {
     // Then
     expect(operations).toEqual([[mockOperation, mockOperation], ""]);
     expect(mockGetOperations).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe("craft", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("should craft a transaction with a memo", async () => {
+    mockCraftTransaction.mockResolvedValue({ xdr: "tx" });
+
+    const tx = {
+      type: "send",
+      amount: BigInt(1),
+      recipient: "recipient",
+      fee: BigInt(2),
+      memoType: "MEMO_EXT",
+      memoValue: "foo",
+    };
+
+    const craftedTx = await api.craftTransaction("addr", tx);
+
+    expect(craftedTx).toEqual("tx");
   });
 });
