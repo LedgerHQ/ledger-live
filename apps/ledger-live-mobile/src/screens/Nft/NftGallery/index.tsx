@@ -33,7 +33,6 @@ type NavigationProps = BaseComposite<
 
 const NftGallery = () => {
   const nftsFromSimplehashFeature = useFeature("nftsFromSimplehash");
-  const llmSolanaNftsEnabled = useFeature("llmSolanaNfts")?.enabled || false;
   const threshold = nftsFromSimplehashFeature?.params?.threshold;
   const nftsFromSimplehashEnabled = nftsFromSimplehashFeature?.enabled;
   const navigation = useNavigation<NavigationProps["navigation"]>();
@@ -109,7 +108,7 @@ const NftGallery = () => {
   );
 
   const isNFTDisabled = useFeature("disableNftSend")?.enabled && Platform.OS === "ios";
-  const displaySendBtn = account.currency.id !== "solana" || llmSolanaNftsEnabled;
+  const displaySendBtn = account.currency.id !== "solana";
 
   return (
     <SafeAreaView isFlex edges={["bottom"]}>
