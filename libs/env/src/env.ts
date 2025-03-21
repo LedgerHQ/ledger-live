@@ -197,6 +197,11 @@ const envDefinitions = {
     def: "https://solana.coin.ledger.com",
     desc: "proxy url for solana API",
   },
+  API_SUI_NODE_PROXY: {
+    parser: stringParser,
+    def: "https://sui.coin.ledger.com",
+    desc: "reverse proxy url for sui node",
+  },
   SOLANA_VALIDATORS_APP_BASE_URL: {
     parser: stringParser,
     def: "https://earn.api.live.ledger.com/v0/network/solana/validator-details",

@@ -1,0 +1,14 @@
+{
+  "extends": "../../../tsconfig.base",
+  "compilerOptions": {
+    "declaration": true,
+    "declarationMap": true,
+    "downlevelIteration": true,
+    "lib": ["es2020", "dom"],
+    "rootDir": "./src",
+    "exactOptionalPropertyTypes": true,
+    "module": "ESNext",
+    "moduleResolution": "bundler"
+  },
+  "include": ["src/**/*"]
+}
