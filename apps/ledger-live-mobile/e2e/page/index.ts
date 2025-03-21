@@ -39,6 +39,11 @@ import path from "path";
 import fs from "fs";
 import { getEnv } from "@ledgerhq/live-env";
 import { SettingsSetOverriddenFeatureFlagsPlayload } from "~/actions/types";
+import { store } from "~/context/store";
+import { overriddenFeatureFlagsSelector } from "~/reducers/settings";
+import { getFeature } from "@tests/featureFlags";
+import { Store } from "redux";
+import { registerTransports } from "~/services/registerTransports";
 
 type ApplicationOptions = {
   speculosApp?: AppInfos;
@@ -51,6 +56,12 @@ type ApplicationOptions = {
 
 export const getUserdataPath = (userdata: string) => {
   return path.resolve("e2e", "userdata", `${userdata}.json`);
+};
+
+export const getLDMKFeatureFlag = (store: Store) => {
+  const state = store.getState();
+  const localOverrides = overriddenFeatureFlagsSelector(state);
+  return !!getFeature({ key: "ldmkTransport", localOverrides })?.enabled;
 };
 
 export class Application {
@@ -108,10 +119,13 @@ export class Application {
     featureFlags,
   }: ApplicationOptions) {
     let proxyPort = 0;
+    const isLDMKEnabled = getLDMKFeatureFlag(store);
+
     if (speculosApp) {
       proxyPort = await this.common.addSpeculos(speculosApp.name);
       process.env.DEVICE_PROXY_URL = `ws://localhost:${proxyPort}`;
       require("@ledgerhq/live-cli/src/live-common-setup");
+      registerTransports(isLDMKEnabled);
     }
 
     if (cliCommands?.length) {

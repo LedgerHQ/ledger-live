@@ -1,14 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { ScrollView, Linking } from "react-native";
+import { Linking, FlatList } from "react-native";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import { useBleDevicesScanning } from "@ledgerhq/live-common/ble/hooks/useBleDevicesScanning";
-import { HwTransportErrorType } from "@ledgerhq/errors";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { Device, DeviceModelId } from "@ledgerhq/types-devices";
 import { IconsLegacy } from "@ledgerhq/native-ui";
-import TransportBLE from "../../react-native-hw-transport-ble";
 import { bleDevicesSelector } from "~/reducers/ble";
 import Animation from "../Animation";
 import BleDeviceItem from "./BleDeviceItem";
@@ -16,14 +13,12 @@ import Link from "~/components/wrappedUi/Link";
 import lottie from "./assets/bluetooth.json";
 import { urls } from "~/utils/urls";
 import { TrackScreen, track } from "~/analytics";
-import { useResetOnNavigationFocusState } from "~/helpers/useResetOnNavigationFocusState";
-import LocationPermissionDenied from "../RequiresLocation/LocationPermissionDenied";
-import LocationDisabled from "../RequiresLocation/LocationDisabled";
 
 export type FilterByDeviceModelId = null | DeviceModelId;
 const CANT_SEE_DEVICE_TIMEOUT = 5000;
 
 export type BleDevicesScanningProps = {
+  devices: Device[];
   onDeviceSelect: (item: Device) => void;
   filterByDeviceModelId?: FilterByDeviceModelId | FilterByDeviceModelId[];
   areKnownDevicesDisplayed?: boolean;
@@ -42,24 +37,18 @@ export type BleDevicesScanningProps = {
  * @param areKnownDevicesDisplayed Choose to display seen devices that are already known by LLM
  * @param areKnownDevicesPairable Display already known devices in the same way as unknown devices, allowing to connect to them.
  */
-export default function BleDevicesScanning({
+export const BleDevicesScanning: React.FC<BleDevicesScanningProps> = ({
+  devices,
   onDeviceSelect,
   filterByDeviceModelId = null,
-  areKnownDevicesDisplayed,
   areKnownDevicesPairable,
-}: BleDevicesScanningProps) {
+}: BleDevicesScanningProps) => {
   const { t } = useTranslation();
 
   const productName =
     filterByDeviceModelId && !Array.isArray(filterByDeviceModelId)
       ? getDeviceModel(filterByDeviceModelId).productName || filterByDeviceModelId
       : null;
-
-  const [locationDisabledError, setLocationDisabledError] = useState<boolean>(false);
-  const [locationUnauthorizedError, setLocationUnauthorizedError] = useState<boolean>(false);
-
-  // Nb Will reset when we regain focus to start scanning again.
-  const [stopBleScanning, setStopBleScanning] = useResetOnNavigationFocusState(false);
 
   const [isCantSeeDeviceShown, setIsCantSeeDeviceShown] = useState<boolean>(false);
   useEffect(() => {
@@ -70,14 +59,6 @@ export default function BleDevicesScanning({
 
     return () => clearTimeout(cantSeeDeviceTimeout);
   }, []);
-
-  const onWrappedDeviceSelect = useCallback(
-    (device: Device) => {
-      setStopBleScanning(true);
-      onDeviceSelect(device);
-    },
-    [onDeviceSelect, setStopBleScanning],
-  );
 
   const onCantSeeDevicePress = useCallback(() => {
     track("button_clicked", {
@@ -91,63 +72,19 @@ export default function BleDevicesScanning({
   // .map creates a new array at each render and it was being used as a dependency on a useEffect
   // inside useBleDevicesScanning, so we need to memo it.
   const knownDeviceIds = useMemo(() => knownDevices.map(device => device.id), [knownDevices]);
-
-  // if we directly use an empty array in the call of the hook, we get an infinite loop render
-  // since at each render the array will have a new reference ([] !== [])
-  const filterOutDevicesByDeviceIds = useMemo(
-    () => (areKnownDevicesDisplayed ? [] : knownDeviceIds),
-    [areKnownDevicesDisplayed, knownDeviceIds],
+  const displayedDevices = useMemo(
+    () =>
+      devices
+        .map(item => ({
+          ...item,
+          isAlreadyKnown:
+            !areKnownDevicesPairable &&
+            Boolean(knownDeviceIds.some(deviceId => deviceId === item.deviceId)),
+        }))
+        // unknown devices go first, already known devices go last
+        .sort((a, b) => (a.isAlreadyKnown === b.isAlreadyKnown ? 0 : a.isAlreadyKnown ? 1 : -1)),
+    [areKnownDevicesPairable, devices, knownDeviceIds],
   );
-
-  const filterByDeviceModelIds = useMemo(() => {
-    if (Array.isArray(filterByDeviceModelId)) {
-      return filterByDeviceModelId.filter(
-        // This array should not contain `null` value, this is to make the type check pass
-        (v: FilterByDeviceModelId): v is DeviceModelId => v !== null,
-      );
-    }
-    return filterByDeviceModelId ? [filterByDeviceModelId] : undefined;
-  }, [filterByDeviceModelId]);
-
-  const { scannedDevices, scanningBleError } = useBleDevicesScanning({
-    bleTransportListen: TransportBLE.listen,
-    stopBleScanning,
-    filterByDeviceModelIds,
-    filterOutDevicesByDeviceIds,
-  });
-
-  // Handles some scanning errors.
-  // Only location disabled and BLE unauthorized errors are handled here.
-  // This components should be wrapped in a RequiresBLE component.
-  // If this is the case, such errors should not happen.
-  useEffect(() => {
-    if (scanningBleError) {
-      // Location disabled
-      if (scanningBleError.type === HwTransportErrorType.LocationServicesDisabled) {
-        setStopBleScanning(true);
-        setLocationDisabledError(true);
-      }
-
-      // Location unauthorized
-      if (scanningBleError.type === HwTransportErrorType.LocationServicesUnauthorized) {
-        setStopBleScanning(true);
-        setLocationUnauthorizedError(true);
-      }
-    } else {
-      setLocationDisabledError(false);
-      setLocationUnauthorizedError(false);
-    }
-  }, [scanningBleError, setStopBleScanning]);
-
-  // This error should never happen if this component is wrapped in a RequiresBLE component.
-  if (locationDisabledError) {
-    return <LocationDisabled />;
-  }
-
-  // This error should never happen if this component is wrapped in a RequiresBLE component.
-  if (locationUnauthorizedError) {
-    return <LocationPermissionDenied />;
-  }
 
   return (
     <Flex flex={1}>
@@ -170,32 +107,25 @@ export default function BleDevicesScanning({
         </Flex>
 
         <Flex flex={1} py={16}>
-          <ScrollView>
-            <Flex pb={10}>
-              {scannedDevices
-                .map(item => ({
+          <FlatList
+            data={displayedDevices}
+            contentContainerStyle={{ paddingBottom: 10 }}
+            extraData={{ knownDeviceIds }}
+            keyExtractor={item => item.deviceId}
+            renderItem={({ item }) => (
+              <BleDeviceItem
+                onSelect={() => onDeviceSelect(item)}
+                deviceMeta={{
                   deviceId: item.deviceId,
-                  deviceName: `${item.deviceName}`,
+                  deviceName: item.deviceName,
                   wired: false,
-                  modelId: item.deviceModel.id,
-                  isAlreadyKnown:
-                    !areKnownDevicesPairable &&
-                    Boolean(knownDeviceIds.some(deviceId => deviceId === item.deviceId)),
-                }))
-                // unknown devices go first, already known devices go last
-                .sort((a, b) =>
-                  a.isAlreadyKnown === b.isAlreadyKnown ? 0 : a.isAlreadyKnown ? 1 : -1,
-                )
-                .map(deviceMeta => (
-                  <BleDeviceItem
-                    onSelect={() => onWrappedDeviceSelect(deviceMeta)}
-                    key={deviceMeta.deviceId}
-                    deviceMeta={deviceMeta}
-                    areKnownDevicesPairable={areKnownDevicesPairable}
-                  />
-                ))}
-            </Flex>
-          </ScrollView>
+                  modelId: item.modelId as DeviceModelId,
+                  isAlreadyKnown: item.isAlreadyKnown,
+                }}
+                areKnownDevicesPairable={false}
+              />
+            )}
+          />
         </Flex>
       </Flex>
       {productName !== null && isCantSeeDeviceShown && (
@@ -213,4 +143,6 @@ export default function BleDevicesScanning({
       )}
     </Flex>
   );
-}
+};
+
+export default BleDevicesScanning;

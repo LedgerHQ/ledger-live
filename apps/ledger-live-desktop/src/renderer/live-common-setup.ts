@@ -15,7 +15,7 @@ import logger from "./logger";
 import { setDeviceMode } from "@ledgerhq/live-common/hw/actions/app";
 import { getFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { overriddenFeatureFlagsSelector } from "~/renderer/reducers/settings";
-import { DeviceManagementKitTransport } from "@ledgerhq/live-dmk";
+import { DeviceManagementKitTransport } from "@ledgerhq/live-dmk-desktop";
 
 const isDeviceManagementKitEnabled = (store: Store) => {
   const state = store.getState();

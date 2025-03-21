@@ -100,7 +100,8 @@
       "times": "x{{ value }}"
     },
     "quote": "Quote",
-    "tryAgain": "Try again"
+    "tryAgain": "Try again",
+    "ldmkEnabled": "LDMK transport enabled"
   },
   "errors": {
     "ReplacementTransactionUnderpriced": {
