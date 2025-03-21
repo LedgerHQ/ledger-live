@@ -171,7 +171,7 @@ const modes: Readonly<Record<DerivationMode, ModeSpec>> = Object.freeze({
   internet_computer: {
     overridesDerivation: "44'/223'/0'/0/<account>",
   },
-  minabip44h: {
+  minabip44: {
     overridesDerivation: "44'/12586'/<account>'/0/0",
   },
   stacks_wallet: {
@@ -197,7 +197,7 @@ const legacyDerivations: Partial<Record<CryptoCurrency["id"], DerivationMode[]>>
   hedera: ["hederaBip44"],
   filecoin: ["glifLegacy", "filecoinBIP44", "glif"],
   internet_computer: ["internet_computer"],
-  mina: ["minabip44h"],
+  mina: ["minabip44"],
   casper: ["casper_wallet"],
   cardano: ["cardano"],
   cardano_testnet: ["cardano"],
@@ -340,7 +340,6 @@ const disableBIP44: Record<string, boolean> = {
   icon_berlin_testnet: true,
   vechain: true,
   internet_computer: true,
-  mina: true,
   casper: true,
   filecoin: true,
   ton: true,

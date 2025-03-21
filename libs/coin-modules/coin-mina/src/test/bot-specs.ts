@@ -3,10 +3,10 @@ import { DeviceModelId } from "@ledgerhq/devices";
 import BigNumber from "bignumber.js";
 import expect from "expect";
 
-import type { Transaction } from "../types/common";
+import type { MinaOperation, Transaction } from "../types/common";
 import { genericTestDestination, botTest, pickSiblings } from "@ledgerhq/coin-framework/bot/specs";
-import type { AppSpec } from "@ledgerhq/coin-framework/bot/types";
-import { acceptTransaction } from "./speculos-deviceActions";
+import type { AppSpec, TransactionTestInput } from "@ledgerhq/coin-framework/bot/types";
+import { acceptTransaction } from "./bot-deviceActions";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import { getRandomTransferID } from "./testUtils";
 
@@ -59,12 +59,17 @@ const minaSpecs: AppSpec<Transaction> = {
         };
       },
 
-      test: ({ accountBeforeTransaction, operation, account, transaction }) => {
+      test: ({
+        accountBeforeTransaction,
+        operation,
+        account,
+        transaction,
+      }: TransactionTestInput<Transaction>) => {
         botTest("account spendable balance decreased with operation", () =>
           expect(account.spendableBalance).toEqual(
             accountBeforeTransaction.spendableBalance
               .minus(operation.value)
-              .minus((operation.extra as any).accountCreationFee),
+              .minus((operation.extra as MinaOperation["extra"]).accountCreationFee),
           ),
         );
 
@@ -79,6 +84,7 @@ const minaSpecs: AppSpec<Transaction> = {
     },
     {
       name: "Transfer Max",
+      feature: "sendMax",
       maxRun: 1,
       transaction: ({ account, siblings, bridge }) => {
         const updates: Array<Partial<Transaction>> = [

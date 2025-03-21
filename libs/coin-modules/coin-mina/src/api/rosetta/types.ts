@@ -87,7 +87,6 @@ export type RosettaTransaction = {
         delegate_change_target?: string;
       };
     }>;
-    related_transactions: Array<any>;
     metadata?: {
       memo?: string;
       nonce?: number;

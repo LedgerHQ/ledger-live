@@ -1,9 +1,9 @@
-import type { DeviceAction } from "@ledgerhq/coin-framework/bot/types";
+import type { DeviceAction, State } from "@ledgerhq/coin-framework/bot/types";
 import type { Transaction } from "../types/common";
 import { deviceActionFlow, SpeculosButton } from "@ledgerhq/coin-framework/bot/specs";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/lib/currencies/formatCurrencyUnit";
 
-export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
+export const acceptTransaction: DeviceAction<Transaction, State<Transaction>> = deviceActionFlow({
   steps: [
     {
       title: "Sign",

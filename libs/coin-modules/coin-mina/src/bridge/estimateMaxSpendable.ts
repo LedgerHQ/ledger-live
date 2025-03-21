@@ -4,7 +4,7 @@ import type { Transaction, MinaAccount } from "../types/common";
 import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
 import { getMaxAmount } from "../common-logic";
 import { createTransaction } from "./createTransaction";
-import getEstimatedFees from "./getFeesForTransaction";
+import getEstimatedFees from "./getEstimatedFees";
 
 const estimateMaxSpendable: AccountBridge<
   Transaction,

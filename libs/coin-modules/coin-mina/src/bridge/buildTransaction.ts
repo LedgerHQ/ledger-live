@@ -10,7 +10,6 @@ export const buildTransaction = async (
   t: Transaction,
 ): Promise<MinaUnsignedTransaction> => {
   try {
-    // log("debug", "mina: build transaction", { account: a, transaction: t });
     const accountNum = getAccountNumFromPath(a.freshAddressPath);
     invariant(accountNum !== undefined, "mina: accountNum is required to build transaction");
     return {

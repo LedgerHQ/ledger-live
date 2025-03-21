@@ -23,6 +23,8 @@ const mina: CurrenciesData<Transaction> = {
       <= 423632716a574c733157334a3266464769786558343977316f3756765347754d424e6f746e46687a7333505a3750627464466268646544009000
       => e00201000400000001
       <= 423632716e4438387474693632364d694d6e7568504d624c69504c766664644657486a47667377795646754c5845614b644b366f344263009000
+      => e00201000400000002
+      <= 423632716a7048577878544457506e474372714b546b56414b596f4e5250374c6e454b356564766d717151394658736e61313166674741009000
       `,
     },
   ],
@@ -34,7 +36,7 @@ const mina: CurrenciesData<Transaction> = {
         id: `js:2:mina:${ACCOUNT_ADDRESS}:`,
         seedIdentifier: `${ACCOUNT_ADDRESS}`,
         name: "MINA 1",
-        derivationMode: "minabip44h",
+        derivationMode: "minabip44",
         index: 0,
         freshAddress: `${ACCOUNT_ADDRESS}`,
         freshAddressPath: "44'/12586'/0'/0'/0'",
@@ -176,9 +178,3 @@ export const dataset: DatasetTest<Transaction> = {
     mina,
   },
 };
-
-describe("Mina bridge", () => {
-  test.todo(
-    "This is an empty test to make jest command pass. Remove it once there is a real test.",
-  );
-});

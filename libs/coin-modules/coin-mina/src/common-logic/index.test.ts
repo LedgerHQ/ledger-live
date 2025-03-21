@@ -1,4 +1,4 @@
-import { getAccountNumFromPath, isValidAddress } from "../common-logic";
+import { getAccountNumFromPath, isValidAddress } from ".";
 
 describe("getAccountNumFromPath", () => {
   it("should return undefined for invalid account number", () => {

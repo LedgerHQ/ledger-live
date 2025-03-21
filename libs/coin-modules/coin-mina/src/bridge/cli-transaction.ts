@@ -21,7 +21,7 @@ function inferTransactions(
     account: AccountLike;
     transaction: Transaction;
   }>,
-  opts: Record<string, any>,
+  opts: Record<string, string>,
 ): Transaction[] {
   return flatMap(transactions, ({ transaction }) => {
     invariant(transaction.family === "mina", "mina family");

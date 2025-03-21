@@ -5,7 +5,7 @@ import {
   MAINNET_NETWORK_IDENTIFIER,
 } from "../../consts";
 
-export const addNetworkIdentifier = (data: any) => {
+export const addNetworkIdentifier = (data: object) => {
   return {
     ...MAINNET_NETWORK_IDENTIFIER,
     ...data,

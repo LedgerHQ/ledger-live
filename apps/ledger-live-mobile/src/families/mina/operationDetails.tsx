@@ -17,7 +17,7 @@ function OperationDetailsExtra({ operation }: Props) {
       {operation.extra.memo && (
         <Section title={t("operationDetails.extra.memo")} value={operation.extra.memo} />
       )}
-      {operation.extra.accountCreationFee && (
+      {operation.extra.accountCreationFee !== "0" && (
         <Section
           title={t("operationDetails.extra.accountCreationFee")}
           value={formatCurrencyUnit(
