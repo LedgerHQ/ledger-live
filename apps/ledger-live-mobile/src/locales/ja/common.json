@@ -1060,6 +1060,15 @@
     },
     "AppManifestNotFoundError" : {
       "title" : "スワップLiveアプリの読み込みに失敗しました"
+    },
+    "InvalidMemoMina" : {
+      "title" : "メモに入力できる文字数は32文字以内です"
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "このトランザクションには、{{fee}}のアカウント作成手数料が発生します"
+    },
+    "AmountTooSmall" : {
+      "title" : "このトランザクションに最低限必要な金額は、{{amount}}です"
     }
   },
   "crash" : {
@@ -2593,7 +2602,8 @@
       "gasLimit" : "ガスリミット",
       "id" : "ID",
       "autoClaimedRewards" : "自動獲得報酬",
-      "stakedAmount" : "ステーキング済み量"
+      "stakedAmount" : "ステーキング済み量",
+      "accountCreationFee" : "アカウント作成手数料"
     },
     "multipleAddresses" : "なぜ複数のアドレスがあるのですか？",
     "tokenName" : "トークン名",
@@ -2625,6 +2635,10 @@
         "description3" : "この統合は、 {{team}}がLedgerと共同で実施しました",
         "description3Link" : "この統合は、<1><0>{{team}}</0></1>がLedgerと共同で実施しました"
       }
+    },
+    "migrationBanner" : {
+      "title" : "{{from}}は{{to}}に移行しています。詳細については、こちらの<0>リンク</0>をご参照いただくか、サポートがご必要な場合はサポートにご連絡ください。",
+      "contactSupport" : "サポートへお問い合わせ"
     },
     "willBedeprecatedBanner" : {
       "title" : "効率を最適化するため、{{deprecatedDate}}以降、{{currencyName}}はLedger Liveではサポートされなくなります。ただし、Ledgerハードウェアウォレットでは引き続きサポートされます。この件に関してご不明な点などがございましたら、Ledgerカスタマーサポートまでご連絡ください。",
@@ -3534,12 +3548,12 @@
         "apt_description" : "Aptosをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。",
         "cosmos_title" : "Ledger Nano S™はCosmosのスワップに対応していません",
         "cosmos_description" : "Cosmosをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。",
-        "osmo_title" : "Ledger Nano S™ does not support swapping Osmosis",
-        "osmo_description" : "To swap Osmosis, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
-        "dydx_title" : "Ledger Nano S™ does not support swapping dYdX",
-        "dydx_description" : "To swap dYdX, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
-        "sui_title" : "Ledger Nano S™ does not support swapping Sui",
-        "sui_description" : "To swap Sui, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
+        "osmo_title" : "Ledger Nano S™は、Osmosisのスワップに対応していません",
+        "osmo_description" : "Osmosisをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。",
+        "dydx_title" : "Ledger Nano S™は、dYdXのスワップに対応していません",
+        "dydx_description" : "dYdXをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。",
+        "sui_title" : "Ledger Nano S™は、Suiのスワップに対応していません",
+        "sui_description" : "Suiをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。"
       }
     },
     "lending" : {
