@@ -157,7 +157,9 @@ export const txsToOps = (
         if (coin_id === null) {
           return;
         } else if (coin_id === APTOS_ASSET_ID) {
-          ops.push({ ...op, type: "FEES" });
+          // if (!tx.success) ops.push({ ...op, type: "FEES" });
+          // else
+          ops.push(op);
         } else {
           const token = findTokenByAddressInCurrency(coin_id.toLowerCase(), "aptos");
           if (token !== undefined) {
@@ -347,6 +349,10 @@ export function getCoinAndAmounts(
   let amount_in = BigNumber(0);
   let amount_out = BigNumber(0);
 
+  if (tx.hash === "0x75d05b1a9bf29c414101923dfeaba19f53a146ff9e56b08412106a73a21842b1") {
+    console.log("ya");
+  }
+
   // collect all events related to the address and calculate the overall amounts
   tx.events.forEach(event => {
     switch (event.type) {
@@ -384,12 +390,10 @@ export function getCoinAndAmounts(
         }
         break;
       case "0x1::transaction_fee::FeeStatement":
-        if (checkFAOwner(tx, event, address)) {
-          if (coin_id === null) {
-            coin_id = APTOS_ASSET_ID;
-            const fees = BigNumber(tx.gas_unit_price).times(BigNumber(tx.gas_used));
-            amount_out = amount_out.plus(fees);
-          }
+        if (tx.sender === address) {
+          if (coin_id === null) coin_id = APTOS_ASSET_ID;
+          const fees = BigNumber(tx.gas_unit_price).times(BigNumber(tx.gas_used));
+          amount_out = amount_out.plus(fees);
         }
         break;
     }
