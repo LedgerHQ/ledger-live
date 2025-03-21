@@ -34,3 +34,10 @@ export enum JettonOpCode {
   Burn = 0x595f07bc,
   BurnNotification = 0x7bdd97de,
 }
+
+export enum Workchain {
+  MasterChain = -1,
+  BaseChain = 0,
+}
+
+export const WORKCHAIN = Workchain.BaseChain;
