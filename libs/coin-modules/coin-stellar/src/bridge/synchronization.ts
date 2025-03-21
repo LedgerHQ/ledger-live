@@ -6,6 +6,7 @@ import { fetchAccount, fetchAllOperations } from "../network";
 import { buildSubAccounts } from "./tokens";
 import { StellarBurnAddressError, StellarOperation } from "../types";
 import { STELLAR_BURN_ADDRESS } from "./logic";
+import { getEnv } from "@ledgerhq/live-env";
 
 export const getAccountShape: GetAccountShape<Account> = async (info, syncConfig) => {
   const { address, currency, initialAccount, derivationMode } = info;
@@ -24,14 +25,24 @@ export const getAccountShape: GetAccountShape<Account> = async (info, syncConfig
   const { blockHeight, balance, spendableBalance, assets } = await fetchAccount(address);
 
   const oldOperations = (initialAccount?.operations || []) as StellarOperation[];
+  const lastPagingToken = oldOperations[0]?.extra.pagingToken || "";
+  const isInitSync = lastPagingToken === "";
 
   const newOperations =
-    (await fetchAllOperations({
+    (await fetchAllOperations(
       accountId,
-      addr: address,
-      order: "asc",
-      cursor: oldOperations[0]?.extra.pagingToken,
-    })) || [];
+      address,
+      isInitSync ? "desc" : "asc",
+      lastPagingToken,
+      /**
+       * For an account with a particularly high number of historical transactions,
+       * retrieving all the data would take a considerable amount of time and is likely to
+       * fail due to poor network connection quality or other reasons. Therefore, we set a
+       * limit on the number of retrieval operations here.
+       * If users want to access historical records from earlier, I would suggest they use a professional blockchain explorer.
+       */
+      isInitSync ? getEnv("API_STELLAR_HORIZON_INITIAL_FETCH_MAX_OPERATIONS") : undefined,
+    )) || [];
 
   const allOperations = mergeOps(oldOperations, newOperations) as StellarOperation[];
   const assetOperations: StellarOperation[] = [];
