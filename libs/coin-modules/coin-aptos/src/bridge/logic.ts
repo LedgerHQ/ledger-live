@@ -134,17 +134,11 @@ export const txsToOps = (
       }
 
       const { coin_id, amount_in, amount_out } = getCoinAndAmounts(tx, address);
-      op.value = calculateAmount(
-        tx.sender,
-        address,
-        (tx.payload as EntryFunctionPayloadResponse).type_arguments,
-        op.fee,
-        amount_in,
-        amount_out,
-      );
+      op.value = calculateAmount(tx.sender, address, amount_in, amount_out);
       op.type = compareAddress(tx.sender, address) ? DIRECTION.OUT : DIRECTION.IN;
       op.senders.push(tx.sender);
       op.hasFailed = !tx.success;
+      op.id = encodeOperationId(op.accountId, tx.hash, op.type);
 
       processRecipients(payload, address, op, function_address);
 
@@ -157,14 +151,11 @@ export const txsToOps = (
         if (coin_id === null) {
           return;
         } else if (coin_id === APTOS_ASSET_ID) {
-          // if (!tx.success) ops.push({ ...op, type: "FEES" });
-          // else
           ops.push(op);
         } else {
           const token = findTokenByAddressInCurrency(coin_id.toLowerCase(), "aptos");
           if (token !== undefined) {
             op.accountId = encodeTokenAccountId(id, token);
-            op.id = encodeOperationId(op.accountId, tx.hash, op.type);
             opsTokens.push(op);
 
             if (op.type === DIRECTION.OUT) {
@@ -349,10 +340,6 @@ export function getCoinAndAmounts(
   let amount_in = BigNumber(0);
   let amount_out = BigNumber(0);
 
-  if (tx.hash === "0x75d05b1a9bf29c414101923dfeaba19f53a146ff9e56b08412106a73a21842b1") {
-    console.log("ya");
-  }
-
   // collect all events related to the address and calculate the overall amounts
   tx.events.forEach(event => {
     switch (event.type) {
@@ -404,16 +391,10 @@ export function getCoinAndAmounts(
 export function calculateAmount(
   sender: string,
   address: string,
-  type_arguments: string[],
-  fee: BigNumber,
   amount_in: BigNumber,
   amount_out: BigNumber,
 ): BigNumber {
   const is_sender: boolean = compareAddress(sender, address);
-  // Include fees if our address is the sender
-  if (is_sender && type_arguments.includes(APTOS_ASSET_ID)) {
-    amount_out = amount_out.plus(fee);
-  }
   // LL negates the amount for SEND transactions
   // to show positive amount on the send transaction (ex: in "cancel" tx, when amount will be returned to our account)
   // we need to make it negative
