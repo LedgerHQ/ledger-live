@@ -18,7 +18,7 @@ const beforeAllFunction = async (app: Application, transaction: Transaction) => 
     cliCommands: [
       () => {
         return CLI.liveData({
-          currency: transaction.accountToDebit.currency.currencyId,
+          currency: transaction.accountToDebit.currency.id,
           index: transaction.accountToDebit.index,
           add: true,
           appjson: app.userdataPath,
