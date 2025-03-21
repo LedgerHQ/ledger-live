@@ -86,13 +86,16 @@ export const removeReplaced = (operations: BtcOperation[]): BtcOperation[] => {
 
   for (const op of operations) {
     if (op.extra?.inputs?.length) {
-      
       for (const input of op.extra.inputs) {
-      // 🚀 **Ensure coinbase transactions are always stored**
-      if (op.extra.inputs.some((input: string) => input.startsWith("0000000000000000000000000000000000000000000000000000000000000000"))) {
-        uniqueOperations.set(op.hash, op);
-        continue; // ✅ Skip processing further, but KEEP it
-      }
+        // 🚀 **Ensure coinbase transactions are always stored**
+        if (
+          op.extra.inputs.some((input: string) =>
+            input.startsWith("0000000000000000000000000000000000000000000000000000000000000000"),
+          )
+        ) {
+          uniqueOperations.set(op.hash, op);
+          continue; // ✅ Skip processing further, but KEEP it
+        }
         const existingOp = txByInput.get(input);
         if (existingOp) {
           const isExistingConfirmed =
