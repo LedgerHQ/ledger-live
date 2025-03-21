@@ -311,3 +311,158 @@ describe("removeReplaced", () => {
 
 
 });
+
+
+describe("removeReplaced - Order Preservation", () => {
+    const baseTx: Omit<BtcOperation, "hash" | "id" | "blockHeight" | "date" | "extra"> = {
+      accountId: "test-account",
+      type: "IN",
+      fee: new BigNumber(1000),
+      value: new BigNumber(50000),
+      senders: ["sender1"],
+      recipients: ["recipient1"],
+      blockHash: null,
+      hasFailed: false,
+    };
+  
+    // ✅ **1. Order should be preserved when no transactions are removed**
+    it("should preserve order when no transactions are removed", () => {
+      const tx1: BtcOperation = {
+        ...baseTx,
+        id: "tx1",
+        hash: "tx1",
+        blockHeight: 100,
+        date: new Date("2024-01-01"),
+        extra: { inputs: ["input1"] },
+      };
+  
+      const tx2: BtcOperation = {
+        ...baseTx,
+        id: "tx2",
+        hash: "tx2",
+        blockHeight: 101,
+        date: new Date("2024-01-02"),
+        extra: { inputs: ["input2"] },
+      };
+  
+      const tx3: BtcOperation = {
+        ...baseTx,
+        id: "tx3",
+        hash: "tx3",
+        blockHeight: 102,
+        date: new Date("2024-01-03"),
+        extra: { inputs: ["input3"] },
+      };
+  
+      const result = removeReplaced([tx1, tx2, tx3]);
+      expect(result).toEqual([tx1, tx2, tx3]); // ✅ Order remains the same
+    });
+  
+    // ✅ **2. Order should be preserved even when some transactions are removed**
+    it("should preserve order when replaced transactions are removed", () => {
+      const confirmedTx: BtcOperation = {
+        ...baseTx,
+        id: "confirmedTx",
+        hash: "tx1",
+        blockHeight: 100, // Confirmed
+        date: new Date("2024-01-01"),
+        extra: { inputs: ["input1"] },
+      };
+  
+      const replacedTx: BtcOperation = {
+        ...baseTx,
+        id: "replacedTx",
+        hash: "tx2",
+        blockHeight: null, // Unconfirmed
+        date: new Date("2024-01-02"),
+        extra: { inputs: ["input1"] }, // Same input as confirmedTx
+      };
+  
+      const otherTx: BtcOperation = {
+        ...baseTx,
+        id: "otherTx",
+        hash: "tx3",
+        blockHeight: 105, // Confirmed
+        date: new Date("2024-01-03"),
+        extra: { inputs: ["input2"] }, // Different input
+      };
+  
+      const result = removeReplaced([replacedTx, confirmedTx, otherTx]);
+      expect(result).toEqual([confirmedTx, otherTx]); // ✅ Order is kept, replacedTx is removed
+    });
+  
+    // ✅ **3. Order should be preserved even when transactions have different inputs**
+    it("should maintain order even with different inputs", () => {
+      const tx1: BtcOperation = {
+        ...baseTx,
+        id: "tx1",
+        hash: "tx1",
+        blockHeight: 100,
+        date: new Date("2024-01-01"),
+        extra: { inputs: ["inputA"] },
+      };
+  
+      const tx2: BtcOperation = {
+        ...baseTx,
+        id: "tx2",
+        hash: "tx2",
+        blockHeight: 101,
+        date: new Date("2024-01-02"),
+        extra: { inputs: ["inputB"] }, // Different input
+      };
+  
+      const tx3: BtcOperation = {
+        ...baseTx,
+        id: "tx3",
+        hash: "tx3",
+        blockHeight: 102,
+        date: new Date("2024-01-03"),
+        extra: { inputs: ["inputC"] }, // Different input
+      };
+  
+      const result = removeReplaced([tx1, tx2, tx3]);
+      expect(result).toEqual([tx1, tx2, tx3]); // ✅ Order is unchanged
+    });
+  
+    // ✅ **4. Transactions should be removed but order must still be kept**
+    it("should remove only necessary transactions while keeping order intact", () => {
+      const tx1: BtcOperation = {
+        ...baseTx,
+        id: "tx1",
+        hash: "tx1",
+        blockHeight: null, // Unconfirmed
+        date: new Date("2024-01-01"),
+        extra: { inputs: ["inputX"] },
+      };
+  
+      const tx2: BtcOperation = {
+        ...baseTx,
+        id: "tx2",
+        hash: "tx2",
+        blockHeight: 110, // Confirmed, should replace tx1
+        date: new Date("2024-01-02"),
+        extra: { inputs: ["inputX"] }, // Same input as tx1
+      };
+  
+      const tx3: BtcOperation = {
+        ...baseTx,
+        id: "tx3",
+        hash: "tx3",
+        blockHeight: 105, // Confirmed, separate input
+        date: new Date("2024-01-03"),
+        extra: { inputs: ["inputY"] }, // Different input
+      };
+  
+      const tx4: BtcOperation = {
+        ...baseTx,
+        id: "tx4",
+        hash: "tx4",
+        blockHeight: 120, // Confirmed, separate input
+        date: new Date("2024-01-04"),
+        extra: { inputs: ["inputZ"] }, // Different input
+      };
+  
+      const result = removeReplaced([tx1, tx2, tx3, tx4]);
+      expect(result).toEqual([tx2, tx3, tx4]); // ✅ tx1 is removed, but order remains
+    });
+  });

@@ -52,8 +52,36 @@ const fromWalletUtxo = (utxo: WalletOutput, changeAddresses: Set<string>): Bitco
   };
 };
 
+/**
+ * Removes replaced Bitcoin transactions based on inputs and RBF logic.
+ *
+ * This function is used primarily to handle Replace-By-Fee (RBF) transactions.
+ * In some situations, we might fetch both the original (unconfirmed) transaction
+ * and the one that replaces it (usually with a higher fee). Without deduplication, both can
+ * remain displayed, confusing the user—especially when the replaced one never confirms.
+ *
+ * Key Rules:
+ * - A UTXO (input) can only be spent once.
+ * - If multiple transactions share an input, we keep the one that is:
+ *   1. Confirmed (has a `blockHeight`) over an unconfirmed one.
+ *   2. Of higher `blockHeight` if both are confirmed or both are unconfirmed.
+ *   3. Of later `date` if both share the same `blockHeight` (or lack thereof).
+ * - Coinbase transactions (with input starting with all 0s) are always kept.
+ * - Transactions without extra.inputs (usually `OUT` transactions) are always kept.
+ *
+ * Outcome:
+ * The result is a filtered list of operations, cleaned of unconfirmed or superseded
+ * transactions that were replaced using RBF logic or similar.
+ *
+ * @param operations An array of BtcOperation items (e.g. from sync).
+ * @returns A filtered array of operations with replaced transactions removed.
+ *  The original order of operations is preserved.
+ */
 export const removeReplaced = (operations: BtcOperation[]): BtcOperation[] => {
+  // used to track the most recent operation for each input.
   const txByInput = new Map<string, BtcOperation>();
+
+  // ensures we maintain a list of unique transactions by hash.
   const uniqueOperations = new Map<string, BtcOperation>(); // Keep track of unique transactions
 
   for (const op of operations) {
@@ -105,7 +133,7 @@ export const removeReplaced = (operations: BtcOperation[]): BtcOperation[] => {
     }
   }
 
-  return Array.from(uniqueOperations.values());
+  return operations.filter(op => uniqueOperations.has(op.hash));
 };
 
 // wallet-btc limitation: returns all transactions twice (for each side of the tx)
