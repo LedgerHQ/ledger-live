@@ -1,7 +1,6 @@
 // Goal of this file is to inject all necessary device/signer dependency to coin-modules
 
-import { createBridges } from "@ledgerhq/coin-mina/bridge";
-import makeCliTools from "@ledgerhq/coin-mina/bridge/cli-transaction";
+import { createBridges, makeCliTools } from "@ledgerhq/coin-mina/bridge";
 import minaResolver from "@ledgerhq/coin-mina/signer";
 import { Transaction } from "@ledgerhq/coin-mina/types";
 import { MinaApp } from "@zondax/ledger-mina-js";

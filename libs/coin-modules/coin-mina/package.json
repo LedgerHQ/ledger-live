@@ -6,7 +6,6 @@
     "Ledger",
     "LedgerWallet",
     "mina",
-    "Near",
     "Hardware Wallet"
   ],
   "repository": {
@@ -28,8 +27,31 @@
       "lib-es/*": [
         "lib-es/*"
       ],
+      "api": [
+        "lib/api/index"
+      ],
+      "deviceTransactionConfig": [
+        "lib/bridge/deviceTransactionConfig"
+      ],
+      "logic": [
+        "lib/logic/index"
+      ],
+      "specs": [
+        "lib/test/bot-specs"
+      ],
+      "transaction": [
+        "lib/bridge/transaction"
+      ],
+      "types": [
+        "lib/types/index"
+      ],
       "*": [
-        "lib/*"
+        "lib/*",
+        "lib/bridge/*",
+        "lib/logic/*",
+        "lib/signer/*",
+        "lib/test/*",
+        "lib/types/*"
       ]
     }
   },
@@ -55,10 +77,6 @@
     "./specs": {
       "require": "./lib/test/bot-specs.js",
       "default": "./lib-es/test/bot-specs.js"
-    },
-    "./common-logic": {
-      "require": "./lib/common-logic/index.js",
-      "default": "./lib-es/common-logic/index.js"
     },
     "./bridge": {
       "require": "./lib/bridge/index.js",
@@ -97,7 +115,6 @@
     "expect": "^27.4.6",
     "invariant": "^2.2.2",
     "lodash": "^4.17.21",
-    "mina-ledger-js": "^1.0.7",
     "rxjs": "^7.8.1"
   },
   "devDependencies": {

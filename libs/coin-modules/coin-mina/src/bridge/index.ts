@@ -18,6 +18,9 @@ import estimateMaxSpendable from "./estimateMaxSpendable";
 import getTransactionStatus from "./getTransactionStatus";
 import { prepareTransaction } from "./prepareTransaction";
 import buildSignOperation from "./signOperation";
+import makeCliTools from "./cli-transaction";
+
+export { makeCliTools };
 
 export function buildCurrencyBridge(signerContext: SignerContext<MinaSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
