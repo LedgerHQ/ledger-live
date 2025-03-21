@@ -1879,7 +1879,8 @@
       "palletMethod" : "Метод",
       "transferAmount" : "Сумма",
       "validatorsCount" : "Валидаторов: {{number}}",
-      "version" : "Версия приложения"
+      "version" : "Версия приложения",
+      "accountCreationFee" : "Комиссия за создание счёта"
     }
   },
   "operationList" : {
@@ -4229,7 +4230,7 @@
       "nfts" : {
         "title" : "Скрытые коллекции NFT",
         "description" : "Сбросить список скрытых коллекций",
-        "reset" : "Сбросить"
+        "reset" : "Reset ({{count}})"
       },
       "exchangeDeveloperMode" : {
         "title" : "Режим разработчика для приложения Exchange",
@@ -4337,6 +4338,32 @@
             "nft" : "Отдельный NFT",
             "contract" : "Контракт"
           }
+        },
+        "back" : "Назад"
+      },
+      "debugNfts" : {
+        "title" : "NFTs Tools",
+        "description" : "Provides some useful tools to handle NFTs in Ledger Live",
+        "cta" : "Открыть",
+        "tabs" : {
+          "config" : "Configuration",
+          "generatorAndDestructor" : "Generators & Destructors"
+        },
+        "configuration" : {
+          "supported" : "Supported NFT Chain",
+          "supported_other" : "Supported NFT Chains",
+          "nms" : {
+            "title" : "NFT Metadata Service (NMS)",
+            "env" : "Environment : {{env}}"
+          }
+        },
+        "generatorAndDestructor" : {
+          "genAcc" : "Generate Accounts",
+          "genAccDesc" : "Generate an accounts with NFTs",
+          "cta" : "Generate",
+          "deleteAcc" : "Delete Accounts",
+          "deleteAccDesc" : "Delete all accounts from store",
+          "delete" : "Удалить"
         },
         "back" : "Назад"
       },
@@ -5515,6 +5542,11 @@
       "memo" : "Тег примечания/Memo",
       "memoPlaceholder" : "Опционально",
       "requiredMemoPlaceholder" : "Обязательное поле"
+    },
+    "mina" : {
+      "memoPlaceholder" : "Опционально",
+      "memo" : "Memo",
+      "memoWarningText" : "Значение Memo может быть строкой, длина которой не превышает или равна 32 символам"
     }
   },
   "errors" : {
@@ -6545,6 +6577,15 @@
         "swap" : "Обменяйте",
         "deposit" : "Пополните"
       }
+    },
+    "InvalidMemoMina" : {
+      "title" : "Содержимое Memo не может быть длиннее 32 символов"
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "Эта транзакция предполагает списание комиссии за создание счёта в {{fee}}"
+    },
+    "AmountTooSmall" : {
+      "title" : "Минимальная необходимая сумма для этой транзакции — {{amount}}"
     }
   },
   "cryptoOrg" : {

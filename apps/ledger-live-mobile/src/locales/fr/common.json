@@ -1060,6 +1060,15 @@
     },
     "AppManifestNotFoundError" : {
       "title" : "Échec du chargement de l’app Live Swap"
+    },
+    "InvalidMemoMina" : {
+      "title" : "Le mémo ne peut pas dépasser 32 caractères"
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "Les frais de création de compte pour cette transaction s’élèveront à {{fee}}"
+    },
+    "AmountTooSmall" : {
+      "title" : "Le montant minimal requis pour cette transaction est {{amount}}"
     }
   },
   "crash" : {
@@ -2593,7 +2602,8 @@
       "gasLimit" : "Limite de gaz",
       "id" : "Identifiant (ID)",
       "autoClaimedRewards" : "Récompenses automatiques",
-      "stakedAmount" : "Montant en staking"
+      "stakedAmount" : "Montant en staking",
+      "accountCreationFee" : "Frais de création de compte"
     },
     "multipleAddresses" : "Pourquoi plusieurs adresses ?",
     "tokenName" : "Nom du token",
@@ -6611,7 +6621,12 @@
       "24h" : "24H",
       "7d" : "7J",
       "30d" : "30J",
-      "1y" : "1A"
+      "1y" : "1A",
+      "1H_label" : "1H",
+      "1D_label" : "1J",
+      "1W_label" : "1S",
+      "1M_label" : "1M",
+      "1Y_label" : "1A"
     },
     "warnings" : {
       "connectionError" : "Erreur de connexion",
@@ -7337,11 +7352,11 @@
   },
   "lnsUpsell" : {
     "opted_in" : {
-      "description" : "Upgrade your Ledger Nano S to a newer Ledger — like the Ledger Flex — for more memory, the latest security enhancements, fresh features, and an exclusive 20% off. ",
+      "description" : "Passez du Ledger Nano S à un modèle plus récent, tel que le Ledger Flex. À la clé : plus de mémoire, les dernières améliorations de sécurité, de nouvelles fonctionnalités et -20% en exclusivité. ",
       "cta" : "Choisir mon wallet"
     },
     "opted_out" : {
-      "description" : "Avec sa mémoire limitée, votre Ledger Nano S vous prive des dernières fonctionnalités, innovations blockchain et améliorations de sécurité. Pour en bénéficier, choisissez un wallet Ledger plus récent.",
+      "description" : "Avec sa mémoire limitée, votre Ledger Nano S vous prive des dernières fonctionnalités, innovations blockchain et améliorations de sécurité. Pour en bénéficier, choisissez un wallet Ledger plus récent.",
       "cta" : "En savoir plus"
     }
   }

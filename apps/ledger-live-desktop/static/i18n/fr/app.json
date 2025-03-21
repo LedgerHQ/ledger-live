@@ -1879,7 +1879,8 @@
       "palletMethod" : "Méthode",
       "transferAmount" : "Montant transféré",
       "validatorsCount" : "Validateurs ({{number}})",
-      "version" : "Version"
+      "version" : "Version",
+      "accountCreationFee" : "Frais de création de compte"
     }
   },
   "operationList" : {
@@ -4229,7 +4230,7 @@
       "nfts" : {
         "title" : "Collections de NFT masquées",
         "description" : "Réinitialiser la liste des collections masquées",
-        "reset" : "Réinitialiser"
+        "reset" : "Reset ({{count}})"
       },
       "exchangeDeveloperMode" : {
         "title" : "Mode développeur Exchange",
@@ -4337,6 +4338,32 @@
             "nft" : "Un NFT",
             "contract" : "Un contrat"
           }
+        },
+        "back" : "Retour"
+      },
+      "debugNfts" : {
+        "title" : "NFTs Tools",
+        "description" : "Provides some useful tools to handle NFTs in Ledger Live",
+        "cta" : "Ouvrir",
+        "tabs" : {
+          "config" : "Configuration",
+          "generatorAndDestructor" : "Generators & Destructors"
+        },
+        "configuration" : {
+          "supported" : "Supported NFT Chain",
+          "supported_other" : "Supported NFT Chains",
+          "nms" : {
+            "title" : "NFT Metadata Service (NMS)",
+            "env" : "Environment : {{env}}"
+          }
+        },
+        "generatorAndDestructor" : {
+          "genAcc" : "Generate Accounts",
+          "genAccDesc" : "Generate an accounts with NFTs",
+          "cta" : "Generate",
+          "deleteAcc" : "Delete Accounts",
+          "deleteAccDesc" : "Delete all accounts from store",
+          "delete" : "Supprimer"
         },
         "back" : "Retour"
       },
@@ -5515,6 +5542,11 @@
       "memo" : "Tag/mémo",
       "memoPlaceholder" : "Facultatif",
       "requiredMemoPlaceholder" : "Requis"
+    },
+    "mina" : {
+      "memoPlaceholder" : "Facultatif",
+      "memo" : "Mémo",
+      "memoWarningText" : "Le mémo peut être une séquence de caractères inférieure ou égale à 32 caractères"
     }
   },
   "errors" : {
@@ -6545,6 +6577,15 @@
         "swap" : "Échangez",
         "deposit" : "Déposez"
       }
+    },
+    "InvalidMemoMina" : {
+      "title" : "Le mémo ne peut pas dépasser 32 caractères"
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "Les frais de création de compte pour cette transaction s’élèveront à {{fee}}"
+    },
+    "AmountTooSmall" : {
+      "title" : "Le montant minimal requis pour cette transaction est {{amount}}"
     }
   },
   "cryptoOrg" : {
@@ -6997,11 +7038,11 @@
   "lnsUpsell" : {
     "opted_in" : {
       "title" : "Mémoire limitée, expérience limitée",
-      "description" : "Passez du Ledger Nano S à un modèle plus récent, tel que le Ledger Flex. À la clé : plus de mémoire, les dernières améliorations de sécurité, de nouvelles fonctionnalités et <0>une réduction exclusive de {{discount}}%</0>.",
+      "description" : "Passez du Ledger Nano S à un modèle plus récent, tel que le Ledger Flex. À la clé : plus de mémoire, les dernières améliorations de sécurité, de nouvelles fonctionnalités et <0>-{{discount}}% en exclusivité</0>.",
       "cta" : "Choisir mon wallet"
     },
     "opted_out" : {
-      "description" : "Avec sa mémoire limitée, votre Ledger Nano S vous prive des dernières fonctionnalités, innovations blockchain et améliorations de sécurité. Pour en bénéficier, choisissez un wallet Ledger plus récent.",
+      "description" : "Avec sa mémoire limitée, votre Ledger Nano S vous prive des dernières fonctionnalités, innovations blockchain et améliorations de sécurité. Pour en bénéficier, choisissez un wallet Ledger plus récent.",
       "cta" : "En savoir plus"
     }
   }
