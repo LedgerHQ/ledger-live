@@ -4336,8 +4336,8 @@ importers:
         specifier: workspace:^
         version: link:../exchange-module
       '@ledgerhq/wallet-api-server':
-        specifier: ^1.7.2
-        version: 1.7.2(react@18.3.1)(rxjs@7.8.1)
+        specifier: ^1.8.0
+        version: 1.8.0(react@18.3.1)(rxjs@7.8.1)
       '@stricahq/typhonjs':
         specifier: ^3.0.0
         version: 3.0.0
@@ -12290,8 +12290,20 @@ packages:
   '@ledgerhq/wallet-api-core@1.15.0':
     resolution: {integrity: sha512-GyNIOn8jTXJ+wT4d8C/sTje2/2QNca6/B+AJK+u7o3L3maNmL+5aDtiEhyHLqibGvFS33sasb79hdR9N+mQDKw==}
 
+  '@ledgerhq/wallet-api-core@1.16.0':
+    resolution: {integrity: sha512-98BOiu+zJJcvmnxIiDWmk0vuDWnlvjWjH1GSNXPQGd+rc4umF39o0OEoID8IQ89odxnO9oZY4IMu8QAYWS7NtA==}
+
   '@ledgerhq/wallet-api-server@1.7.2':
     resolution: {integrity: sha512-U7VQ4ugsglx/z9wcYLB7OEPYlB600uRi3R8AgtqcBstCj4OyrAy0PDWYBiivKcSOv1D38OYH8fU8l4WRtQxRBw==}
+    peerDependencies:
+      react: ^17.x || ^18.x
+      rxjs: ^7.x
+    peerDependenciesMeta:
+      react:
+        optional: true
+
+  '@ledgerhq/wallet-api-server@1.8.0':
+    resolution: {integrity: sha512-U+oD9Y+nw8Cdl8SyInT+J0z47yMjeeGfrGs1XdLs5vmuifBV0fECDTsJajUmqS2KaSFgmUy9UxQWC+HXnp3p9A==}
     peerDependencies:
       react: ^17.x || ^18.x
       rxjs: ^7.x
@@ -39201,9 +39213,25 @@ snapshots:
       uuid: 9.0.1
       zod: 3.23.8
 
+  '@ledgerhq/wallet-api-core@1.16.0':
+    dependencies:
+      '@ledgerhq/errors': 6.19.1
+      bignumber.js: 9.1.2
+      uuid: 9.0.1
+      zod: 3.23.8
+
   '@ledgerhq/wallet-api-server@1.7.2(react@18.3.1)(rxjs@7.8.1)':
     dependencies:
       '@ledgerhq/wallet-api-core': 1.15.0
+      bignumber.js: 9.1.2
+      picomatch: 4.0.2
+      rxjs: 7.8.1
+    optionalDependencies:
+      react: 18.3.1
+
+  '@ledgerhq/wallet-api-server@1.8.0(react@18.3.1)(rxjs@7.8.1)':
+    dependencies:
+      '@ledgerhq/wallet-api-core': 1.16.0
       bignumber.js: 9.1.2
       picomatch: 4.0.2
       rxjs: 7.8.1

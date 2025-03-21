@@ -78,11 +78,11 @@ export type SelectAccountAndCurrencyDrawerProps = {
   currencies: CryptoOrTokenCurrency[];
   onAccountSelected: (account: AccountLike, parentAccount?: Account) => void;
   accounts$?: Observable<WalletAPIAccount[]>;
-  accountFilterMode?: boolean;
+  showAccountFilter?: boolean;
 };
 
 function SelectAccountAndCurrencyDrawer(props: SelectAccountAndCurrencyDrawerProps) {
-  const { currencies, onAccountSelected, onClose, accounts$, accountFilterMode } = props;
+  const { currencies, onAccountSelected, onClose, accounts$, showAccountFilter } = props;
   const { t } = useTranslation();
   const [searchValue, setSearchValue] = useState<string>("");
   const [filterWithAccounts, setFilterWithAccounts] = useState<string>("allCurrency");
@@ -153,7 +153,7 @@ function SelectAccountAndCurrencyDrawer(props: SelectAccountAndCurrencyDrawerPro
           {t("drawers.selectCurrency.title")}
         </Text>
       </HeaderContainer>
-      {accountFilterMode ? (
+      {showAccountFilter ? (
         <ToggleContainer>
           <ToggleButton
             onChange={value => setFilterWithAccounts(value)}

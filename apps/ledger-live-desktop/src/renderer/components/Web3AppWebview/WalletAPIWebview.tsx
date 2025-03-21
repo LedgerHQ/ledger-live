@@ -54,13 +54,13 @@ function useUiHook(manifest: AppManifest, tracking: Record<string, TrackFunction
 
   return useMemo(
     () => ({
-      "account.request": ({ accounts$, currencies, accountFilterMode, onSuccess, onCancel }) => {
+      "account.request": ({ accounts$, currencies, showAccountFilter, onSuccess, onCancel }) => {
         ipcRenderer.send("show-app", {});
         setDrawer(
           SelectAccountAndCurrencyDrawer,
           {
             currencies,
-            accountFilterMode,
+            showAccountFilter,
             onAccountSelected: (account, parentAccount) => {
               setDrawer();
               onSuccess(account, parentAccount);
