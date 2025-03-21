@@ -1879,7 +1879,8 @@
       "palletMethod" : "Método",
       "transferAmount" : "Transferir importe",
       "validatorsCount" : "Validadores ({{number}})",
-      "version" : "Versión"
+      "version" : "Versión",
+      "accountCreationFee" : "Tarifa de creación de cuenta"
     }
   },
   "operationList" : {
@@ -4229,7 +4230,7 @@
       "nfts" : {
         "title" : "Colecciones ocultas de NFTs",
         "description" : "Restablecer la lista de colecciones ocultas",
-        "reset" : "Restablecer"
+        "reset" : "Reset ({{count}})"
       },
       "exchangeDeveloperMode" : {
         "title" : "Modo de desarrollador del exchange",
@@ -4337,6 +4338,32 @@
             "nft" : "Un NFT concreto",
             "contract" : "Un contrato"
           }
+        },
+        "back" : "Volver"
+      },
+      "debugNfts" : {
+        "title" : "NFTs Tools",
+        "description" : "Provides some useful tools to handle NFTs in Ledger Live",
+        "cta" : "Abrir",
+        "tabs" : {
+          "config" : "Configuration",
+          "generatorAndDestructor" : "Generators & Destructors"
+        },
+        "configuration" : {
+          "supported" : "Supported NFT Chain",
+          "supported_other" : "Supported NFT Chains",
+          "nms" : {
+            "title" : "NFT Metadata Service (NMS)",
+            "env" : "Environment : {{env}}"
+          }
+        },
+        "generatorAndDestructor" : {
+          "genAcc" : "Generate Accounts",
+          "genAccDesc" : "Generate an accounts with NFTs",
+          "cta" : "Generate",
+          "deleteAcc" : "Delete Accounts",
+          "deleteAccDesc" : "Delete all accounts from store",
+          "delete" : "Borrar"
         },
         "back" : "Volver"
       },
@@ -5515,6 +5542,11 @@
       "memo" : "Etiqueta/memo",
       "memoPlaceholder" : "Opcional",
       "requiredMemoPlaceholder" : "Obligatoria"
+    },
+    "mina" : {
+      "memoPlaceholder" : "Opcional",
+      "memo" : "Memo",
+      "memoWarningText" : "El valor de un memo debe ser una cadena de 32 caracteres como máximo"
     }
   },
   "errors" : {
@@ -6545,6 +6577,15 @@
         "swap" : "Permutar",
         "deposit" : "Depositar"
       }
+    },
+    "InvalidMemoMina" : {
+      "title" : "El texto de un memo no debe superar los 32 caracteres"
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "Esta transacción conlleva asociada una tarifa de creación de cuenta de {{fee}}"
+    },
+    "AmountTooSmall" : {
+      "title" : "La cantidad mínima necesaria para esta transacción es de {{amount}}"
     }
   },
   "cryptoOrg" : {

@@ -1879,7 +1879,8 @@
       "palletMethod" : "Método",
       "transferAmount" : "Transferir Quantia",
       "validatorsCount" : "Validadores ({{number}})",
-      "version" : "Versão"
+      "version" : "Versão",
+      "accountCreationFee" : "Taxa de Criação de Conta"
     }
   },
   "operationList" : {
@@ -4229,7 +4230,7 @@
       "nfts" : {
         "title" : "Coleções de NFTs ocultas",
         "description" : "Redefinir a lista de coleções ocultas",
-        "reset" : "Redefinir"
+        "reset" : "Reset ({{count}})"
       },
       "exchangeDeveloperMode" : {
         "title" : "Exchange em Modo Desenvolvedor",
@@ -4339,6 +4340,32 @@
           }
         },
         "back" : "Voltar"
+      },
+      "debugNfts" : {
+        "title" : "NFTs Tools",
+        "description" : "Provides some useful tools to handle NFTs in Ledger Live",
+        "cta" : "Open",
+        "tabs" : {
+          "config" : "Configuration",
+          "generatorAndDestructor" : "Generators & Destructors"
+        },
+        "configuration" : {
+          "supported" : "Supported NFT Chain",
+          "supported_other" : "Supported NFT Chains",
+          "nms" : {
+            "title" : "NFT Metadata Service (NMS)",
+            "env" : "Environment : {{env}}"
+          }
+        },
+        "generatorAndDestructor" : {
+          "genAcc" : "Generate Accounts",
+          "genAccDesc" : "Generate an accounts with NFTs",
+          "cta" : "Generate",
+          "deleteAcc" : "Delete Accounts",
+          "deleteAccDesc" : "Delete all accounts from store",
+          "delete" : "Delete"
+        },
+        "back" : "Go back"
       },
       "debugWalletSync" : {
         "title" : "Debug do Ledger Sync",
@@ -5515,6 +5542,11 @@
       "memo" : "Tag / Memo",
       "memoPlaceholder" : "Opcional",
       "requiredMemoPlaceholder" : "Obrigatório"
+    },
+    "mina" : {
+      "memoPlaceholder" : "Opcional",
+      "memo" : "Memo",
+      "memoWarningText" : "O valor do memo pode ser uma string menor ou igual a 32 caracteres"
     }
   },
   "errors" : {
@@ -6545,6 +6577,15 @@
         "swap" : "Trocar",
         "deposit" : "Depositar"
       }
+    },
+    "InvalidMemoMina" : {
+      "title" : "O texto do memo não pode ter mais de 32 caracteres"
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "Esta transação incorrerá em uma taxa de criação de conta de {{fee}}"
+    },
+    "AmountTooSmall" : {
+      "title" : "A quantia mínima exigida para esta transação é {{amount}}"
     }
   },
   "cryptoOrg" : {
