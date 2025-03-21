@@ -109,6 +109,10 @@ const swaps = [
     swap: new Swap(Account.BTC_NATIVE_SEGWIT_1, Account.LTC_1, "0.0006", Fee.MEDIUM),
     xrayTicket: "B2CQA-3078",
   },
+  {
+    swap: new Swap(Account.APTOS_1, Account.SOL_1, "6", Fee.MEDIUM),
+    xrayTicket: "B2CQA-3081",
+  },
 ];
 
 for (const { swap, xrayTicket } of swaps) {
