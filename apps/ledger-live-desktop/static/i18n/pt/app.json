@@ -440,7 +440,7 @@
     },
     "wrongDevice" : {
       "title" : "A Ledger Nano S™ não é compatível com {{provider}}",
-      "description" : "A Ledger Nano S não é compatível com {{provider}}. Você pode usar a Ledger Nano S Plus, a Ledger Nano X, Ledger Stax ou a Ledger Flex para realizar trocas cross-chain via {{provider}} através do Ledger Live",
+      "description" : "A Ledger Nano S™ não é compatível com {{provider}}. Você pode usar a Ledger Nano S Plus™, a Ledger Nano X™, Ledger Stax™ ou a Ledger Flex™ para realizar trocas cross-chain via {{provider}} através do Ledger Live",
       "cta" : "Conheça os dispositivos compatíveis",
       "changeProvider" : "Trocar com outro provedor"
     },
@@ -449,8 +449,8 @@
       "ton_description" : "Para trocar Ton, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
       "spl_tokens_title" : "A Ledger Nano S™ não é compatível com a troca de tokens Solana",
       "spl_tokens_description" : "Para trocar tokens Solana, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
-      "sui_tokens_title" : "Ledger Nano S™ does not support swapping Sui tokens",
-      "sui_tokens_description" : "To swap Sui tokens, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+      "sui_tokens_title" : "A Ledger Nano S™ não é compatível com a troca de tokens Sui",
+      "sui_tokens_description" : "Para trocar tokens Sui, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
       "near_title" : "A Ledger Nano S™ não é compatível com trocas de Near",
       "near_description" : "Para trocar o ativo Near, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
       "ada_title" : "A Ledger Nano S™ não é compatível com a troca de Cardano",
@@ -459,12 +459,12 @@
       "apt_description" : "Para trocar o ativo APTOS, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
       "cosmos_title" : "A Ledger Nano S™ não é compatível com a troca de Cosmos",
       "cosmos_description" : "Para trocar Cosmos, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
-      "osmo_title" : "Ledger Nano S™ does not support swapping Osmosis",
-      "osmo_description" : "To swap Osmosis, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
-      "dydx_title" : "Ledger Nano S™ does not support swapping dYdX",
-      "dydx_description" : "To swap dYdX, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
-      "sui_title" : "Ledger Nano S™ does not support swapping Sui",
-      "sui_description" : "To swap Sui, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
+      "osmo_title" : "A Ledger Nano S™ não é compatível com a troca de Osmosis",
+      "osmo_description" : "Para trocar Osmosis, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+      "dydx_title" : "A Ledger Nano S™ não é compatível com trocas de dYdX",
+      "dydx_description" : "Para trocar o ativo dYdX, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+      "sui_title" : "A Ledger Nano S™ não é compatível com a troca de Sui",
+      "sui_description" : "Para trocar Sui, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™."
     },
     "providers" : {
       "title" : "Escolha um provedor para trocar cripto",
@@ -775,6 +775,10 @@
         "description3" : "Esta integração foi realizada por {{team}} em colaboração com a Ledger",
         "description3Link" : "Esta integração foi realizada por <1><0>{{team}}</0></1> em colaboração com a Ledger"
       }
+    },
+    "migrationBanner" : {
+      "title" : "{{from}} está migrando para {{to}}. Siga este <0>link</0> para saber mais ou entre em contato com o suporte se precisar de ajuda.",
+      "contactSupport" : "Falar com o suporte"
     },
     "featureUnavailable" : {
       "title" : "O seguinte recurso está momentaneamente indisponível: {{feature}}. Para saber mais, consulte o {{support}}",
@@ -2049,7 +2053,7 @@
       "dontHaveSeed" : "Não está com sua frase de recuperação? ",
       "followTheGuide" : "Siga nosso guia passo a passo de atualização",
       "removeApps" : "Desinstale todos os aplicativos antes de atualizar",
-      "update" : "Atualização do sistema operacional da {{productName}}",
+      "update" : "Atualização de OS da {{productName}}",
       "updateBtn" : "Atualizar Firmware",
       "installUpdate" : "Instalar atualização",
       "banner" : {
@@ -6991,55 +6995,14 @@
     }
   },
   "lnsUpsell" : {
-    "banner" : {
-      "manager" : {
-        "optIn" : {
-          "title" : "É hora de subir de nível",
-          "description" : "Mude para os nossos dispositivos mais recentes com <0>{{discount}}% de desconto</0> e tenha uma segurança aprimorada e uma experiência perfeita.",
-          "cta" : "Avançar de carteira",
-          "linkText" : "Saiba mais"
-        },
-        "optOut" : {
-          "title" : "É hora de subir de nível",
-          "description" : "Avance para um dos nossos dispositivos mais recentes com <0>{{discount}}% de desconto</0> e tenha uma segurança aprimorada e uma experiência perfeita.",
-          "cta" : "Avançar para uma carteira melhor",
-          "linkText" : "Saiba mais"
-        }
-      },
-      "accounts" : {
-        "optIn" : {
-          "title" : "É hora de subir de nível",
-          "description" : "As atualizações da Ledger Nano S serão encerradas em breve. Mude para os nossos dispositivos mais recentes com <0>{{discount}}% de desconto</0>.",
-          "cta" : "Avançar de carteira",
-          "linkText" : "Saiba mais"
-        },
-        "optOut" : {
-          "title" : "É hora de subir de nível",
-          "description" : "As atualizações da Ledger Nano S serão encerradas em breve. Mude para nossos dispositivos mais recentes com <0>{{discount}}% de desconto</0>.",
-          "cta" : "Avançar de carteira",
-          "linkText" : "Saiba mais"
-        }
-      },
-      "portfolio" : {
-        "optOut" : {
-          "title" : "É hora de subir de nível",
-          "description" : "Mude para os nossos dispositivos mais recentes com <0>{{discount}}% de desconto</0> e tenha uma segurança aprimorada e uma experiência perfeita.",
-          "cta" : "Avançar de carteira",
-          "linkText" : "Saiba mais"
-        }
-      },
-      "notifications" : {
-        "optIn" : {
-          "description" : "As atualizações serão encerradas em breve. Suba de nível com {{discount}}% de desconto para ter uma experiência perfeita.",
-          "cta" : "Avançar de carteira",
-          "linkText" : "Saiba mais"
-        },
-        "optOut" : {
-          "description" : "As atualizações serão encerradas em breve. Suba de nível agora com {{discount}}% de desconto para ter uma experiência perfeita.",
-          "cta" : "Avançar de carteira",
-          "linkText" : "Saiba mais"
-        }
-      }
+    "opted_in" : {
+      "title" : "Memória limitada, experiência limitada",
+      "description" : "Atualize sua Ledger Nano S para uma Ledger mais nova — como a Ledger Flex — para ter mais memória, melhorias recentes de segurança, novos recursos e <0>um desconto exclusivo de {{discount}}%</>.",
+      "cta" : "Atualizar minha Ledger"
+    },
+    "opted_out" : {
+      "description" : "A memória limitada da Ledger Nano S restringe seu acesso aos últimos recursos, mudanças em blockchains e aprimoramentos de segurança. Para uso prolongado, atualize para um dispositivo Ledger mais recente.",
+      "cta" : "Saiba mais"
     }
   }
 }
