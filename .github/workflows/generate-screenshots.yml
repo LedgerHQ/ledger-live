@@ -45,6 +45,7 @@ jobs:
         with:
           app_id: ${{ secrets.GH_BOT_APP_ID }}
           private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+
       - uses: actions/checkout@v4
         if: ${{ inputs.ref != null }}
         with:
@@ -61,8 +62,7 @@ jobs:
         run: gh pr checkout ${{ inputs.number }}
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
-      - run: echo "test_spec" > ./apps/ledger-live-desktop/tests/specs/test_spec
-        shell: bash
+
       - name: Setup git user
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
       - name: Setup the toolchain
@@ -79,7 +79,7 @@ jobs:
           skip_ruby: true
           install_playwright: true
           turborepo-server-port: ${{ steps.caches.outputs.port }}
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/update-snapshots-desktop@support/upgrade-gh-commit
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/update-snapshots-desktop@develop
         id: update-snapshots
         with:
           os: ubuntu-22.04
