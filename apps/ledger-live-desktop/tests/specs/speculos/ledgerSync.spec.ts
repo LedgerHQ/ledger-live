@@ -6,17 +6,19 @@ import { CLI } from "tests/utils/cliUtils";
 import { expect } from "@playwright/test";
 import { LedgerSyncCliHelper } from "../../utils/ledgerSyncCliUtils";
 import { accountNames, accounts } from "tests/testdata/ledgerSyncTestData";
+import { getEnv, setEnv } from "@ledgerhq/live-env";
 
 const app: AppInfos = AppInfos.LS;
 const accountId = accounts[0].id;
 const accountName = accountNames[accountId];
 
 function setupSeed() {
+  const prevSeed = getEnv("SEED");
   test.beforeAll(async () => {
-    process.env.SEED = "X";
+    process.env.SEED = "Temporary_SEED";
   });
   test.afterAll(async () => {
-    process.env.SEED = "X";
+    setEnv("SEED", prevSeed);
   });
 }
 
