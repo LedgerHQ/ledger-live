@@ -174,10 +174,9 @@ export const getAccountShape: GetAccountShape = async info => {
   const xpub = initialAccount?.xpub || publicKey || "";
 
   const oldOperations = initialAccount?.operations || [];
-  const startAt = (oldOperations[0]?.extra as any)?.version;
 
   const aptosClient = new AptosAPI(currency.id);
-  const { balance, transactions, blockHeight } = await aptosClient.getAccountInfo(address, startAt);
+  const { balance, transactions, blockHeight } = await aptosClient.getAccountInfo(address);
 
   const [newOperations, tokenOperations]: [Operation[], Operation[]] = txsToOps(
     info,
@@ -187,13 +186,10 @@ export const getAccountShape: GetAccountShape = async info => {
   const operations = mergeOps(oldOperations, newOperations);
 
   const newSubAccounts = await getSubAccounts(info, address, accountId, tokenOperations);
-
-  // TODO: validate correctness of cache and mergeSubAccounts
   const shouldSyncFromScratch = initialAccount === undefined;
-
   const subAccounts = shouldSyncFromScratch
     ? newSubAccounts
-    : mergeSubAccounts(initialAccount, newSubAccounts); // Merging potential new subAccouns while preserving the references
+    : mergeSubAccounts(initialAccount, newSubAccounts);
 
   const shape: Partial<AptosAccount> = {
     type: "Account",
