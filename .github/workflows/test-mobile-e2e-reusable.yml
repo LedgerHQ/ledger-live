@@ -85,6 +85,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ inputs.ref || github.sha }}
+
       - name: setup caches
         id: caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
@@ -101,13 +102,30 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
           aws-region: ${{ secrets.AWS_CACHE_REGION }}
+
       - uses: nick-fields/retry@v3
         name: install dependencies
+        id: install-dependencies
         with:
           max_attempts: 2
           timeout_minutes: 15
           command: pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --no-frozen-lockfile --unsafe-perm
           new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --no-frozen-lockfile --unsafe-perm
+
+      - name: Flake alert - ArgumentError
+        uses: LedgerHQ/ledger-live/tools/actions/composites/ci-flake-notifier@develop
+        if: failure() && steps.install-dependencies.outputs.error == 'ArgumentError - pathname contains null byte'
+        with:
+          live_bot_token: ${{ secrets.SLACK_LIVE_CI_BOT_TOKEN }}
+          halt_runner: true
+
+      - name: Flake alert - Reruns
+        uses: LedgerHQ/ledger-live/tools/actions/composites/ci-flake-notifier@develop
+        if: success() && steps.install-dependencies.outputs.total_attempts == 2
+        with:
+          live_bot_token: ${{ secrets.SLACK_LIVE_CI_BOT_TOKEN }}
+          custom_message: "${{ steps.install-dependencies.outputs.total_attempts }} attempts happened on install dependencies and it was eventually successful :face_with_raised_eyebrow:"
+
       - name: cache detox build
         uses: tespkg/actions-cache@v1
         if: steps.aws.conclusion == 'success'
@@ -315,7 +333,7 @@ jobs:
           bot_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
       - name: Set DISABLE_TRANSACTION_BROADCAST
         if: ${{ env.SPECULOS_RUN == 'true' }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-broadcast@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-env@develop
         with:
           enable_broadcast: ${{ inputs.enable_broadcast }}
       - name: Run Android Tests

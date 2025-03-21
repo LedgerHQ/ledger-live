@@ -10,8 +10,8 @@ const collapseAnim = keyframes`
   }
   100% {
     opacity: 1;
-    top: -5px;
-    right: -5px;
+    top: 5px;
+    right: 5px;
     transform: translateY(0);
   }
 `;

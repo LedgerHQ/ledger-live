@@ -5,6 +5,7 @@ import { ElectronApplication, expect } from "@playwright/test";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { ChooseAssetDrawer } from "tests/page/drawer/choose.asset.drawer";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Swap";
+import { Swap } from "@ledgerhq/live-common/lib-es/e2e/models/Swap";
 
 export class SwapPage extends AppPage {
   private currencyByName = (accountName: string) => this.page.getByText(accountName); // TODO: this is rubbish. Changed this
@@ -110,13 +111,68 @@ export class SwapPage extends AppPage {
     await this.customFeeTextbox.fill(amount);
   }
 
-  @step("Select available provider")
-  async selectExchange(electronApp: ElectronApplication) {
+  async getProviderList(electronApp: ElectronApplication) {
     const [, webview] = electronApp.windows();
     await expect(webview.getByTestId("number-of-quotes")).toBeVisible();
+    await expect(webview.getByTestId("quotes-countdown")).toBeVisible();
     const providersList = await webview
       .locator("//span[@data-testid='quote-card-provider-name']")
       .allTextContents();
+    return providersList;
+  }
+
+  @step("Check quotes container infos")
+  async checkQuotesContainerInfos(electronApp: ElectronApplication, providerList: string[]) {
+    const [, webview] = electronApp.windows();
+
+    const provider = Provider.getNameByUiName(providerList[0]);
+    const baseProviderLocator = `quote-container-${provider}-`;
+
+    await webview.getByTestId(baseProviderLocator + "amount-label").click();
+    await expect(webview.getByTestId(baseProviderLocator + "amount-label")).toBeVisible();
+    await expect(webview.getByTestId(baseProviderLocator + "fiatAmount-label")).toBeVisible();
+    await expect(webview.getByTestId(baseProviderLocator + "networkFees-heading")).toBeVisible();
+    await expect(webview.getByTestId(baseProviderLocator + "networkFees-infoIcon")).toBeVisible();
+    await expect(webview.getByTestId(baseProviderLocator + "networkFees-value")).toBeVisible();
+    await expect(webview.getByTestId(baseProviderLocator + "networkFees-fiat-value")).toBeVisible();
+    await expect(webview.getByTestId(baseProviderLocator + "rate-heading")).toBeVisible();
+    await expect(webview.getByTestId(baseProviderLocator + "rate-value")).toBeVisible();
+    await expect(webview.getByTestId(baseProviderLocator + "rate-fiat-value")).toBeVisible();
+    if (
+      provider === Provider.ONE_INCH.name ||
+      provider === Provider.PARASWAP.name ||
+      provider === Provider.UNISWAP.name ||
+      provider === Provider.LIFI.name
+    ) {
+      await expect(webview.getByTestId(baseProviderLocator + "slippage-heading")).toBeVisible();
+      await expect(webview.getByTestId(baseProviderLocator + "slippage-value")).toBeVisible();
+    }
+    await this.checkExchangeButton(electronApp, providerList[0]);
+  }
+
+  @step("Select specific provider $0")
+  async selectSpecificprovider(provider: string, electronApp: ElectronApplication) {
+    const [, webview] = electronApp.windows();
+
+    const providersList = await this.getProviderList(electronApp);
+
+    if (providersList.includes(provider)) {
+      const providerLocator = webview
+        .locator(`//span[@data-testid='quote-card-provider-name' and text()='${provider}']`)
+        .first();
+
+      await providerLocator.isVisible();
+      await providerLocator.click();
+    } else {
+      throw new Error("No valid providers found");
+    }
+  }
+
+  @step("Select available provider")
+  async selectExchange(electronApp: ElectronApplication) {
+    const [, webview] = electronApp.windows();
+
+    const providersList = await this.getProviderList(electronApp);
 
     const providersWithoutKYC = providersList.filter(providerName => {
       const provider = Object.values(Provider).find(p => p.uiName === providerName);
@@ -191,10 +247,36 @@ export class SwapPage extends AppPage {
     return waitFor(() => this.exchangeButton.isEnabled(), 250, 10000);
   }
 
+  @step("Check exchange button is visible and enabled")
+  async checkExchangeButton(electronApp: ElectronApplication, provider: string) {
+    const [, webview] = electronApp.windows();
+
+    const buttonText = [
+      Provider.ONE_INCH.name,
+      Provider.PARASWAP.name,
+      Provider.MOONPAY.name,
+      Provider.LIFI.name,
+    ].includes(provider)
+      ? `Continue with ${provider}`
+      : `Swap with ${provider}`;
+
+    const buttonLocator = webview.getByRole("button", { name: buttonText });
+    await expect(buttonLocator).toBeVisible();
+    await expect(buttonLocator).toBeEnabled();
+  }
+
   @step("Click Exchange button")
   async clickExchangeButton(electronApp: ElectronApplication, provider: string) {
     const [, webview] = electronApp.windows();
     await webview.getByRole("button", { name: `Swap with ${provider}` }).click();
+  }
+
+  @step("Go to provider live app")
+  async goToProviderLiveApp(electronApp: ElectronApplication, provider: string) {
+    const [, webview] = electronApp.windows();
+    const continueButton = webview.getByRole("button", { name: `Continue with ${provider}` });
+    await expect(continueButton).toBeVisible();
+    await continueButton.click();
   }
 
   async confirmExchange() {
@@ -327,6 +409,7 @@ export class SwapPage extends AppPage {
       await expect(webview.locator(this.errorSpan(message))).toBeVisible();
     }
     await expect(webview.getByTestId(`execute-button`)).not.toBeEnabled();
+    await expect(webview.getByTestId(`insufficient-funds-warning`)).toBeVisible();
   }
 
   @step("Go and wait for Swap app to be ready")
@@ -346,5 +429,37 @@ export class SwapPage extends AppPage {
 
     await swapFunction();
     expect(await successfulQuery).toBeDefined();
+  }
+
+  @step("Verify provider URL")
+  async verifyProviderURL(electronApp: ElectronApplication, selectedProvider: string, swap: Swap) {
+    const newWindow = await electronApp.waitForEvent("window");
+
+    await newWindow.waitForLoadState();
+
+    const url = newWindow.url();
+
+    switch (selectedProvider) {
+      case Provider.ONE_INCH.uiName: {
+        expect(url).toContain(swap.accountToDebit.currency.ticker.toLowerCase());
+        expect(url).toContain(swap.accountToCredit.currency.ticker.toLowerCase());
+        expect(url).toContain(
+          `swap%2F${swap.accountToDebit.currency.ticker.toLowerCase()}%2F${swap.accountToCredit.currency.ticker.toLowerCase()}`,
+        );
+        expect(url).toContain(swap.amount);
+        break;
+      }
+      case Provider.PARASWAP.uiName: {
+        expect(url).toContain(swap.amount);
+        expect(url).toContain(swap.accountToDebit.currency.contractAddress);
+        expect(url).toContain(swap.accountToCredit.currency.contractAddress);
+        expect(url).toContain(
+          `${swap.accountToDebit.currency.contractAddress}-${swap.accountToCredit.currency.contractAddress}`,
+        );
+        break;
+      }
+      default:
+        throw new Error(`Unknown provider: ${selectedProvider}`);
+    }
   }
 }

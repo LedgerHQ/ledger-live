@@ -18,8 +18,8 @@ import {
   lastSeenDeviceSelector,
 } from "~/reducers/settings";
 import { useSwapLiveAppCustomHandlers } from "./hooks/useSwapLiveAppCustomHandlers";
-import { useSwapLiveAppTranslateUrlParams } from "./hooks/useSwapLiveAppTranslateUrlParams";
 import { DefaultAccountSwapParamList } from "../types";
+import { useTranslateToSwapAccount } from "./hooks/useTranslateToSwapAccount";
 
 type Props = {
   manifest: LiveAppManifest;
@@ -29,7 +29,6 @@ type Props = {
 
 export function WebView({ manifest, params, setWebviewState }: Props) {
   const customHandlers = useSwapLiveAppCustomHandlers(manifest);
-  const urlParams = useSwapLiveAppTranslateUrlParams(params || {});
   const { theme } = useTheme();
   const { language } = useSettings();
   const { ticker: currencyTicker } = useSelector(counterValueCurrencySelector);
@@ -40,6 +39,7 @@ export function WebView({ manifest, params, setWebviewState }: Props) {
   const exportSettings = useSelector(exportSettingsSelector);
   const devMode = exportSettings.developerModeEnabled.toString();
   const lastSeenDevice = useSelector(lastSeenDeviceSelector);
+  const swapParams = useTranslateToSwapAccount(params);
 
   // ScopeProvider required to prevent conflicts between Swap's Webview instance and deeplink instances
   return (
@@ -62,7 +62,7 @@ export function WebView({ manifest, params, setWebviewState }: Props) {
             discreetMode: discreet ? "true" : "false",
             OS: Platform.OS,
             platform: "LLM", // need consistent format with LLD, Platform doesn't work
-            ...urlParams,
+            ...swapParams,
           }}
         />
       </Flex>

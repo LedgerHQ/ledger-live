@@ -299,7 +299,7 @@
     "recover" : "[L] Recover"
   },
   "stars" : {
-    "placeholder" : "ติดดาวที่บัญชีเพื่อแสดงให้เห็นตรงนี้",
+    "placeholder" : "ติดดาวที่บัญชีเพื่อแสดงตรงนี้",
     "tooltip" : "ติดดาวบัญชี"
   },
   "bridge" : {
@@ -440,7 +440,7 @@
     },
     "wrongDevice" : {
       "title" : "Ledger Nano S™ ไม่สามารถใช้ได้กับ {{provider}}",
-      "description" : "Ledger Nano S ไม่สามารถใช้ได้กับ {{provider}} คุณสามารถใช้ Ledger Nano S Plus, Ledger Nano X, Ledger Stax, หรือ Ledger Flex เพื่อสัมผัสประสบการณ์ Swap แบบ Cross-Chain บน {{provider}} ผ่าน Ledger Live",
+      "description" : "Ledger Nano S™ is not compatible with {{provider}}. You can use Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™, or Ledger Flex™ to experience cross-chain swaps on {{provider}} via Ledger Live",
       "cta" : "สำรวจอุปกรณ์ที่เข้ากันได้",
       "changeProvider" : "Swap กับผู้ให้บริการรายอื่น"
     },
@@ -1310,7 +1310,7 @@
           "contactSupportCTA" : "ติดต่อ Ledger Support",
           "notFoundEntityError" : {
             "title" : "เริ่ม Genuine Check อีกครั้ง",
-            "description" : "คุณต้องปิดใช้งานการตั้งค่า \"ผู้ให้บริการ My Ledger ({{providerNumber}}})\" ก่อน หากต้องการปิดใช้งาน ให้เปิด “การตั้งค่า” บน Ledger Live แล้วเลือก “Experimental Features” แล้ว Toggle เพื่อปิด “ผู้ให้บริการ My Ledger”"
+            "description" : "คุณต้องปิดใช้งานการตั้งค่า \"ผู้ให้บริการ My Ledger ({{providerNumber}})\" ก่อน หากต้องการปิดใช้งาน ให้เปิด “การตั้งค่า” บน Ledger Live แล้วเลือก “Experimental Features” แล้ว Toggle เพื่อปิด “ผู้ให้บริการ My Ledger”"
           },
           "deviceNotGenuineError" : {
             "title" : "{{productName}} นี้ไม่ใช่ของแท้",
@@ -1704,7 +1704,7 @@
         "tokenAddress" : "Address โทเคน",
         "tokenId" : "ID โทเคน",
         "quantity" : "ปริมาณ",
-        "floorPrice" : "ราคาพื้น"
+        "floorPrice" : "ราคาฟลอร์"
       }
     },
     "collections" : {
@@ -1744,7 +1744,7 @@
     "seeTokens" : "แสดงโทเคน ({{tokenCount}})",
     "hideTokens" : "ซ่อนโทเคน ({{tokenCount}})",
     "countTooltip" : "1 โทเคน",
-    "countTooltip_plural" : "{{count}} โทเคน",
+    "countTooltip_other" : "โทเคน {{nbCount}}",
     "algorand" : {
       "title" : "ASA (สินทรัพย์)",
       "cta" : "เพิ่ม ASA",
@@ -1767,7 +1767,7 @@
     "seeSubAccounts" : "แสดงบัญชีย่อย ({{tokenCount}})",
     "hideSubAccounts" : "ซ่อนบัญชีย่อย ({{tokenCount}})",
     "countTooltip" : "1 บัญชีย่อย",
-    "countTooltip_plural" : "{{count}} บัญชีย่อย"
+    "countTooltip_other" : "{{nbCount}} บัญชีย่อย"
   },
   "addAccounts" : {
     "title" : "เพิ่มบัญชี",
@@ -2053,7 +2053,7 @@
       "dontHaveSeed" : "ไม่มี Recovery Phrase? ",
       "followTheGuide" : "ทำตามคำแนะนำการอัปเดตทีละขั้นตอนของเรา",
       "removeApps" : "ถอนการติดตั้งทุกแอปก่อนการอัปเดต",
-      "update" : "การอัปเดต {{productName} OS",
+      "update" : "การอัปเดต {{productName}} OS",
       "updateBtn" : "อัปเดตระบบปฏิบัติการ",
       "installUpdate" : "ติดตั้งการอัปเดต",
       "banner" : {
@@ -2460,7 +2460,7 @@
     "chooseName" : "เลือกชื่อ",
     "placeholder" : "Tony's Stax",
     "remainingCharacters" : "เหลืออีก {{ remainingCharacters }} ตัวอักษร",
-    "renamed" : "{{ productName }} เปลี่ยนชื่อเป็น \n“{{ name }}}” แล้ว "
+    "renamed" : "{{ productName }} เปลี่ยนชื่อเป็น \n“{{ name }}” แล้ว "
   },
   "removeCustomLockscreen" : {
     "title" : "นำภาพ Lock Screen Picture ออก",
@@ -5330,7 +5330,7 @@
         "anotherComputer" : {
           "title" : "ลองใช้คอมพิวเตอร์เครื่องอื่น",
           "bullets" : {
-            "0" : "ไปที่ <0>{{link}}}</0> บนคอมพิวเตอร์เครื่องอื่นเพื่อดาวน์โหลดและติดตั้ง Ledger Live",
+            "0" : "ไปที่ <0>{{link}}</0> บนคอมพิวเตอร์เครื่องอื่นเพื่อดาวน์โหลดและติดตั้ง Ledger Live",
             "1" : "เชื่อมต่อและปลดล็อกอุปกรณ์ของคุณเพื่อดูว่าตรวจพบหรือไม่"
           }
         }
@@ -6118,7 +6118,7 @@
       "description" : "เปิดแอป '{{managerAppName}}' บนอุปกรณ์ของคุณ"
     },
     "DeviceNameInvalid" : {
-      "title" : "โปรดเลือกชื่ออุปกรณ์ที่ไม่มี '{{invalidCharacters}}}'"
+      "title" : "โปรดเลือกชื่ออุปกรณ์ที่ไม่มี '{{invalidCharacters}}'"
     },
     "LedgerAPIErrorWithMessage" : {
       "title" : "{{message}}",

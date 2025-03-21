@@ -9,8 +9,9 @@ import {
 } from "../logic";
 import coinConfig from "../config";
 import { TronConfig } from "../config";
-import { Api, Pagination, Transaction } from "@ledgerhq/coin-framework/api/types";
+import { Api, Pagination, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import { createApi } from ".";
+import { TronToken } from "../types";
 
 jest.mock("../config", () => ({
   setCoinConfig: jest.fn(),
@@ -61,13 +62,22 @@ describe("createApi", () => {
   });
 
   it("should pass parameters well", async () => {
-    const api: Api = createApi(mockTronConfig);
-
+    const api: Api<TronToken> = createApi(mockTronConfig);
+    const intent: TransactionIntent<TronToken> = {
+      type: "send",
+      sender: "sender",
+      recipient: "recipient",
+      amount: BigInt(10),
+      asset: {
+        standard: "trc10",
+        tokenId: "1002000",
+      },
+    };
     // Simulate calling all methods
     await api.broadcast("transaction");
     api.combine("tx", "signature", "pubkey");
-    await api.craftTransaction("address", {} as Transaction, "pubkey");
-    await api.estimateFees("address", BigInt(0));
+    await api.craftTransaction(intent);
+    await api.estimateFees(intent);
     await api.getBalance("address");
     await api.lastBlock();
     await api.listOperations("address", {} as Pagination);
@@ -75,8 +85,8 @@ describe("createApi", () => {
     // Test that each of the methods was called with correct arguments
     expect(broadcast).toHaveBeenCalledWith("transaction");
     expect(combine).toHaveBeenCalledWith("tx", "signature", "pubkey");
-    expect(craftTransaction).toHaveBeenCalledWith("address", {}, "pubkey");
-    expect(estimateFees).toHaveBeenCalledWith("address", BigInt(0));
+    expect(estimateFees).toHaveBeenCalledWith(intent);
+    expect(craftTransaction).toHaveBeenCalledWith(intent);
     expect(getBalance).toHaveBeenCalledWith("address");
     expect(lastBlock).toHaveBeenCalled();
     expect(listOperations).toHaveBeenCalledWith("address", {});

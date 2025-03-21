@@ -1,5 +1,29 @@
 # @ledgerhq/coin-cosmos
 
+## 0.9.0
+
+### Minor Changes
+
+- [#9472](https://github.com/LedgerHQ/ledger-live/pull/9472) [`9c4c82e`](https://github.com/LedgerHQ/ledger-live/commit/9c4c82e8e81aaadfc1132f0a25812be094e54453) Thanks [@KVNLS](https://github.com/KVNLS)! - Fix elliptic library version used
+
+### Patch Changes
+
+- Updated dependencies [[`5abde51`](https://github.com/LedgerHQ/ledger-live/commit/5abde5192d32f493ece2f99aec0e2de0c411f9e5), [`cc00249`](https://github.com/LedgerHQ/ledger-live/commit/cc002495f3e107aba283a3aa4abca90954de6d76)]:
+  - @ledgerhq/types-live@6.63.0
+  - @ledgerhq/coin-framework@2.3.0
+
+## 0.9.0-next.0
+
+### Minor Changes
+
+- [#9472](https://github.com/LedgerHQ/ledger-live/pull/9472) [`9c4c82e`](https://github.com/LedgerHQ/ledger-live/commit/9c4c82e8e81aaadfc1132f0a25812be094e54453) Thanks [@KVNLS](https://github.com/KVNLS)! - Fix elliptic library version used
+
+### Patch Changes
+
+- Updated dependencies [[`5abde51`](https://github.com/LedgerHQ/ledger-live/commit/5abde5192d32f493ece2f99aec0e2de0c411f9e5), [`cc00249`](https://github.com/LedgerHQ/ledger-live/commit/cc002495f3e107aba283a3aa4abca90954de6d76)]:
+  - @ledgerhq/types-live@6.63.0-next.0
+  - @ledgerhq/coin-framework@2.3.0-next.0
+
 ## 0.8.3
 
 ### Patch Changes

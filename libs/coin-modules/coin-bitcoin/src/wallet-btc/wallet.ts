@@ -125,8 +125,9 @@ class BitcoinLikeWallet {
             excludeUtxo.hash === utxo.output_hash && excludeUtxo.outputIndex === utxo.output_index,
         )
       ) {
-        // we can use either pending utxo (if utxo.rbf is true) or change utxo
-        if (changeAddresses.includes(utxo.address) || utxo.block_height !== null || utxo.rbf) {
+        // we can use non-pending utxos or change utxo (whether pending or not)
+        // NOTE: check ledger-live-common/src/families/bitcoin/docs/RBF.md for more details
+        if (changeAddresses.includes(utxo.address) || utxo.block_height !== null) {
           usableUtxoCount++;
           balance = balance.plus(utxo.value);
         }

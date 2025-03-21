@@ -5,6 +5,7 @@ import { Trans, useTranslation } from "react-i18next";
 import styled from "styled-components";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
+import ButtonV3 from "~/renderer/components/ButtonV3";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import Text from "~/renderer/components/Text";
 import { getLLDCoinFamily } from "~/renderer/families";
@@ -222,15 +223,14 @@ export default function StepSummary({ account, message: messageData }: StepProps
 export function StepSummaryFooter({ transitionTo }: StepProps) {
   return (
     <Box horizontal justifyContent="flex-end">
-      <Button
+      <ButtonV3
         onClick={() => {
           transitionTo("sign");
         }}
-        style={{ borderRadius: 20, backgroundColor: "white" }}
-        color="neutral.c00"
+        variant="main"
       >
         <Trans i18nKey="common.continue" />
-      </Button>
+      </ButtonV3>
     </Box>
   );
 }

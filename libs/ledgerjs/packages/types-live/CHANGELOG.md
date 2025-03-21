@@ -1,5 +1,17 @@
 # @ledgerhq/types-live
 
+## 6.63.0
+
+### Minor Changes
+
+- [#9317](https://github.com/LedgerHQ/ledger-live/pull/9317) [`5abde51`](https://github.com/LedgerHQ/ledger-live/commit/5abde5192d32f493ece2f99aec0e2de0c411f9e5) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Add additional data tracking in LLM
+
+## 6.63.0-next.0
+
+### Minor Changes
+
+- [#9317](https://github.com/LedgerHQ/ledger-live/pull/9317) [`5abde51`](https://github.com/LedgerHQ/ledger-live/commit/5abde5192d32f493ece2f99aec0e2de0c411f9e5) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Add additional data tracking in LLM
+
 ## 6.62.0
 
 ### Minor Changes

@@ -8,6 +8,7 @@ import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { Application } from "tests/page";
 import { ElectronApplication } from "@playwright/test";
+import { Provider } from "@ledgerhq/live-common/e2e/enum/Swap";
 
 function setupEnv(disableBroadcast?: boolean) {
   const originalBroadcastValue = process.env.DISABLE_TRANSACTION_BROADCAST;
@@ -30,7 +31,7 @@ const app: AppInfos = AppInfos.EXCHANGE;
 const swaps = [
   {
     swap: new Swap(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "0.02", Fee.MEDIUM),
-    xrayTicket: "B2CQA-2750",
+    xrayTicket: "B2CQA-2750, B2CQA-3135",
   },
   {
     swap: new Swap(Account.BTC_NATIVE_SEGWIT_1, Account.ETH_1, "0.00067", Fee.MEDIUM),
@@ -97,7 +98,7 @@ const swaps = [
     xrayTicket: "B2CQA-3075",
   },
   {
-    swap: new Swap(Account.ETH_1, Account.XRP_1, "0.02", Fee.MEDIUM),
+    swap: new Swap(Account.ETH_1, Account.XRP_1, "0.03", Fee.MEDIUM),
     xrayTicket: "B2CQA-3076",
   },
   {
@@ -148,6 +149,61 @@ for (const { swap, xrayTicket } of swaps) {
         await performSwapUntilDeviceVerificationStep(app, electronApp, swap, selectedProvider);
         await app.speculos.verifyAmountsAndAcceptSwap(swap);
         await app.swapDrawer.verifyExchangeCompletedTextContent(swap.accountToCredit.currency.name);
+      },
+    );
+  });
+}
+
+const checkProviders = [
+  {
+    swap: new Swap(Account.ETH_1, Account.ETH_USDT_1, "0.03", Fee.MEDIUM),
+    xrayTicket: "B2CQA-3120",
+    provider: Provider.ONE_INCH,
+  },
+  {
+    swap: new Swap(Account.ETH_1, Account.ETH_USDT_1, "0.03", Fee.MEDIUM),
+    xrayTicket: "B2CQA-3119",
+    provider: Provider.PARASWAP,
+  },
+];
+
+for (const { swap, xrayTicket, provider } of checkProviders) {
+  test.describe("Swap - Provider redirection", () => {
+    setupEnv(true);
+
+    const accPair: string[] = [swap.accountToDebit, swap.accountToCredit].map(acc =>
+      acc.currency.speculosApp.name.replace(/ /g, "_"),
+    );
+
+    test.beforeEach(async () => {
+      setExchangeDependencies(
+        accPair.map(appName => ({
+          name: appName,
+        })),
+      );
+    });
+
+    test.use({
+      userdata: "speculos-tests-app",
+      speculosApp: app,
+    });
+
+    test(
+      `Swap test provider redirection (${provider.uiName})`,
+      {
+        annotation: {
+          type: "TMS",
+          description: xrayTicket,
+        },
+      },
+      async ({ app, electronApp }) => {
+        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
+        await performSwapUntilQuoteSelectionStep(app, electronApp, swap);
+        await app.swap.selectSpecificprovider(provider.uiName, electronApp);
+        await app.swap.goToProviderLiveApp(electronApp, provider.uiName);
+        await app.swap.verifyProviderURL(electronApp, provider.uiName, swap);
+        await app.liveApp.verifyLiveAppTitle(provider.uiName.toLowerCase());
       },
     );
   });
@@ -272,6 +328,38 @@ test.describe("Swap - Rejected on device", () => {
   );
 });
 
+test.describe("Swap - Landing page", () => {
+  const rejectedSwap = new Swap(Account.ETH_1, Account.ETH_USDC_1, "0.03", Fee.MEDIUM);
+  setupEnv(true);
+
+  test.beforeEach(async () => {
+    const accountPair: string[] = [rejectedSwap.accountToDebit, rejectedSwap.accountToCredit].map(
+      acc => acc.currency.speculosApp.name.replace(/ /g, "_"),
+    );
+    setExchangeDependencies(accountPair.map(name => ({ name })));
+  });
+
+  test.use({
+    userdata: "speculos-tests-app",
+    speculosApp: app,
+  });
+
+  test(
+    `Swap landing page`,
+    {
+      annotation: { type: "TMS", description: "B2CQA-2918" },
+    },
+    async ({ app, electronApp }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
+      await performSwapUntilQuoteSelectionStep(app, electronApp, rejectedSwap);
+      const providerList = await app.swap.getProviderList(electronApp);
+      await app.swap.checkQuotesContainerInfos(electronApp, providerList);
+      await app.swap.checkBestOffer(electronApp);
+    },
+  );
+});
+
 const swapWithDifferentSeed = [
   {
     swap: new Swap(Account.ETH_1, Account.SOL_1, "0.02", Fee.MEDIUM),
@@ -288,7 +376,7 @@ const swapWithDifferentSeed = [
       "This receiving account does not belong to the device you have connected. Please change and retry",
   },
   {
-    swap: new Swap(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "0.07", Fee.MEDIUM),
+    swap: new Swap(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "0.03", Fee.MEDIUM),
     xrayTicket: "B2CQA-3091",
     userData: "speculos-x-other-account",
     errorMessage:
@@ -334,7 +422,7 @@ for (const { swap, xrayTicket, userData, errorMessage } of swapWithDifferentSeed
 const tooLowAmountForQuoteSwaps = [
   {
     swap: new Swap(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "0.001", Fee.MEDIUM),
-    xrayTicket: "B2CQA-2755",
+    xrayTicket: "B2CQA-2755, B2CQA-3136",
   },
   {
     swap: new Swap(Account.BTC_NATIVE_SEGWIT_1, Account.ETH_1, "0.00001", Fee.MEDIUM),

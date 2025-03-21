@@ -2,7 +2,7 @@ import type {
   Api,
   Operation,
   Pagination,
-  Transaction as ApiTransaction,
+  TransactionIntent,
 } from "@ledgerhq/coin-framework/api/index";
 import coinConfig, { type StellarConfig } from "../config";
 import {
@@ -15,47 +15,39 @@ import {
   lastBlock,
 } from "../logic";
 import { ListOperationsOptions } from "../logic/listOperations";
+import { StellarToken } from "../types";
 
-export function createApi(config: StellarConfig): Api {
+export function createApi(config: StellarConfig): Api<StellarToken> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
     broadcast,
     combine: compose,
     craftTransaction: craft,
-    estimateFees,
+    estimateFees: () => estimateFees(),
     getBalance,
     lastBlock,
     listOperations: operations,
   };
 }
 
-type Supplement = {
-  assetCode?: string | undefined;
-  assetIssuer?: string | undefined;
-  memoType?: string | null | undefined;
-  memoValue?: string | null | undefined;
-};
-function isSupplement(supplement: unknown): supplement is Supplement {
-  return typeof supplement === "object";
-}
-async function craft(address: string, transaction: ApiTransaction): Promise<string> {
-  const supplement = isSupplement(transaction.supplement)
+async function craft(transactionIntent: TransactionIntent<StellarToken>): Promise<string> {
+  const fees = await estimateFees();
+  const supplement = transactionIntent.asset
     ? {
-        assetCode: transaction.supplement?.assetCode,
-        assetIssuer: transaction.supplement?.assetIssuer,
-        memoType: transaction.supplement?.memoType,
-        memoValue: transaction.supplement?.memoValue,
+        assetCode: transactionIntent.asset.assetCode,
+        assetIssuer: transactionIntent.asset.assetIssuer,
       }
     : {};
   const tx = await craftTransaction(
-    { address },
+    { address: transactionIntent.sender },
     {
-      ...transaction,
+      type: transactionIntent.type,
+      recipient: transactionIntent.recipient,
+      amount: transactionIntent.amount,
+      fee: fees,
       assetCode: supplement?.assetCode,
       assetIssuer: supplement?.assetIssuer,
-      memoType: supplement?.memoType,
-      memoValue: supplement?.memoValue,
     },
   );
   return tx.xdr;
@@ -71,7 +63,7 @@ function compose(tx: string, signature: string, pubkey?: string): string {
 async function operations(
   address: string,
   { minHeight }: Pagination,
-): Promise<[Operation[], string]> {
+): Promise<[Operation<StellarToken>[], string]> {
   return operationsFromHeight(address, minHeight);
 }
 
@@ -80,13 +72,13 @@ type PaginationState = {
   readonly heightLimit: number;
   continueIterations: boolean;
   apiNextCursor?: string;
-  accumulator: Operation[];
+  accumulator: Operation<StellarToken>[];
 };
 
 async function operationsFromHeight(
   address: string,
   minHeight: number,
-): Promise<[Operation[], string]> {
+): Promise<[Operation<StellarToken>[], string]> {
   const state: PaginationState = {
     pageSize: 200,
     heightLimit: minHeight,
@@ -103,7 +95,7 @@ async function operationsFromHeight(
       options.cursor = state.apiNextCursor;
     }
     const [operations, nextCursor] = await listOperations(address, options);
-    const filteredOperations = operations.filter(op => op.block.height >= state.heightLimit);
+    const filteredOperations = operations.filter(op => op.tx.block.height >= state.heightLimit);
     state.accumulator.push(...filteredOperations);
     state.apiNextCursor = nextCursor;
     state.continueIterations = operations.length === filteredOperations.length && nextCursor !== "";

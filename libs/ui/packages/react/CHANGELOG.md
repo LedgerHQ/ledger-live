@@ -1,5 +1,27 @@
 # @ledgerhq/react-ui
 
+## 0.20.0
+
+### Minor Changes
+
+- [#9492](https://github.com/LedgerHQ/ledger-live/pull/9492) [`7e9a5ba`](https://github.com/LedgerHQ/ledger-live/commit/7e9a5ba759c20b493261a826f2ce1a337cb06b39) Thanks [@thesan](https://github.com/thesan)! - Address LNS upsell design changes
+
+### Patch Changes
+
+- Updated dependencies [[`3ed81b0`](https://github.com/LedgerHQ/ledger-live/commit/3ed81b059f9d8755b58a966bd6647dd34a840378)]:
+  - @ledgerhq/crypto-icons-ui@1.10.0
+
+## 0.20.0-next.0
+
+### Minor Changes
+
+- [#9492](https://github.com/LedgerHQ/ledger-live/pull/9492) [`7e9a5ba`](https://github.com/LedgerHQ/ledger-live/commit/7e9a5ba759c20b493261a826f2ce1a337cb06b39) Thanks [@thesan](https://github.com/thesan)! - Address LNS upsell design changes
+
+### Patch Changes
+
+- Updated dependencies [[`3ed81b0`](https://github.com/LedgerHQ/ledger-live/commit/3ed81b059f9d8755b58a966bd6647dd34a840378)]:
+  - @ledgerhq/crypto-icons-ui@1.10.0-next.0
+
 ## 0.19.1
 
 ### Patch Changes

@@ -14,7 +14,7 @@ import GenericErrorView from "~/components/GenericErrorView";
 import { initialWebviewState } from "~/components/Web3AppWebview/helpers";
 import { WebviewState } from "~/components/Web3AppWebview/types";
 import { WebView } from "./WebView";
-import { DefaultAccountSwapParamList } from "../types";
+import { DefaultAccountSwapParamList, DetailsSwapParamList } from "../types";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
 import { ScreenName } from "~/const";
@@ -25,11 +25,12 @@ import { ScreenName } from "~/const";
 const DEFAULT_MANIFEST_ID =
   process.env.DEFAULT_SWAP_MANIFEST_ID || DEFAULT_FEATURES.ptxSwapLiveApp.params?.manifest_id;
 
-function isDefaultAccountSwapParamsList(
+const isDefaultAccountSwapParamsList = (
   params: DefaultAccountSwapParamList | unknown,
-): params is DefaultAccountSwapParamList {
-  return (params as DefaultAccountSwapParamList).defaultAccount !== undefined;
-}
+): params is DefaultAccountSwapParamList =>
+  (params as DefaultAccountSwapParamList).defaultAccount !== undefined ||
+  (params as DefaultAccountSwapParamList).defaultCurrency !== undefined ||
+  (params as DetailsSwapParamList).currency !== undefined;
 
 export function SwapLiveApp({
   route,

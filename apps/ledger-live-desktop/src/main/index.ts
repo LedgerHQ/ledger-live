@@ -179,7 +179,7 @@ app.on("ready", async () => {
     }, 300),
   );
 
-  if (__DEV__) {
+  if (__DEV__ || process.env.PLAYWRIGHT_RUN) {
     // Catch ledgerlive:// deep-link requests in dev mode from the app or live-apps
     // We cannot get deep-links from outside the app, from the browser for example
     protocol.handle("ledgerlive", request => {

@@ -557,8 +557,29 @@ export const DEFAULT_FEATURES: Features = {
       },
     },
   },
+  llmNanoSUpsellBanners: {
+    ...DEFAULT_FEATURE,
+    params: {
+      opted_in: {
+        manager: true,
+        accounts: true,
+        notification_center: true,
+        link: "https://shop.ledger.com/pages/ledger-nano-s-upgrade-program",
+        "%": 20,
+      },
+      opted_out: {
+        manager: true,
+        accounts: true,
+        notification_center: true,
+        wallet: true,
+        link: "https://support.ledger.com/article/Ledger-Nano-S-Limitations?redirect=false",
+      },
+    },
+  },
   llmThai: DEFAULT_FEATURE,
   lldThai: DEFAULT_FEATURE,
+  lldSolanaNfts: DEFAULT_FEATURE,
+  llmSolanaNfts: DEFAULT_FEATURE,
 };
 
 // Firebase SDK treat JSON values as strings

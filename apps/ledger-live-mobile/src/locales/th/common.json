@@ -3465,6 +3465,7 @@
         "CTAButton" : "เพิ่มบัญชี"
       },
       "history" : {
+        "button" : "Go to history",
         "tab" : "ประวัติ",
         "disclaimer" : "ธุรกรรม Swap บนมือถือไม่ได้รับการซิงค์โครไนซ์กับ Ledger Live Desktop",
         "exportButton" : "ส่งออกการดำเนินการ",
@@ -6747,7 +6748,7 @@
   "postOnboarding" : {
     "hub" : {
       "title" : "ขั้นต่อไป ใช้ {{productName}} ของคุณเพื่อ...",
-      "allDoneTitle" : "เรียบร้อยแล้ว! ทำต่อไปและสำรวจพอร์ตโฟลิโอของคุณ",
+      "areAllPostOnboardingActionsCompletedTitle" : "เรียบร้อยแล้ว! ทำต่อไปและสำรวจพอร์ตโฟลิโอของคุณ",
       "skip" : "ฉันจะดำเนินการในภายหลัง",
       "viewWallet" : "สำรวจพอร์ตโฟลิโอของฉัน"
     },
@@ -7332,6 +7333,16 @@
       "subTitle" : "ดูเหมือนว่าคุณยังไม่ได้ทำการเพิ่มบัญชี เริ่มกันเลย",
       "cta" : "เพิ่มบัญชี",
       "link" : "ต้องการความช่วยเหลือ เรียนรู้วิธีการเพิ่มบัญชีลงใน Ledger Live"
+    }
+  },
+  "lnsUpsell" : {
+    "opted_in" : {
+      "description" : "Upgrade your Ledger Nano S to a newer Ledger — like the Ledger Flex — for more memory, the latest security enhancements, fresh features, and an exclusive 20% off. ",
+      "cta" : "อัปเกรด My Ledger"
+    },
+    "opted_out" : {
+      "description" : "หน่วยความจำที่จำกัดของ Ledger Nano S ของคุณจะยับยั้งการเข้าถึงฟีเจอร์ล่าสุด การเปลี่ยนแปลงบล็อกเชน และการเพิ่มความปลอดภัยให้กับคุณ เพื่อการใช้งานระยะยาว ควรอัปเกรดเป็นอุปกรณ์ Ledger รุ่นใหม่กว่า",
+      "cta" : "เรียนรู้เพิ่มเติม"
     }
   }
 }

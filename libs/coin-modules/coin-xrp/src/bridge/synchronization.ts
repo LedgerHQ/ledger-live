@@ -1,7 +1,8 @@
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { GetAccountShape, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { Operation } from "@ledgerhq/types-live";
+import { Operation, OperationType } from "@ledgerhq/types-live";
+import { Operation as CoreOperation } from "@ledgerhq/coin-framework/api/types";
 import BigNumber from "bignumber.js";
 import { listOperations, parseAPIValue } from "../logic";
 import { getAccountInfo, getServerInfos } from "../network";
@@ -65,24 +66,25 @@ async function filterOperations(
 ): Promise<Operation[]> {
   const [operations, _] = await listOperations(address, { minHeight: blockHeight });
 
-  return operations.map(
-    op =>
-      ({
-        id: encodeOperationId(accountId, op.hash, op.simpleType),
-        hash: op.hash,
-        accountId,
-        type: op.simpleType,
-        value: new BigNumber(op.value.toString()),
-        fee: new BigNumber(op.fee.toString()),
-        blockHash: op.blockHash,
-        blockHeight: op.blockHeight,
-        senders: op.senders,
-        recipients: op.recipients,
-        date: op.date,
-        transactionSequenceNumber: op.transactionSequenceNumber,
-        extra: {},
-      }) satisfies Operation,
-  );
+  return operations.map(op => adaptCoreOperationToLiveOperation(accountId, op) satisfies Operation);
+}
+
+function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOperation<void>): Operation {
+  return {
+    id: encodeOperationId(accountId, op.tx.hash, op.type),
+    hash: op.tx.hash,
+    accountId,
+    type: op.type as OperationType,
+    value: new BigNumber(op.value.toString()),
+    fee: new BigNumber(op.tx.fees.toString()),
+    blockHash: op.tx.block.hash,
+    blockHeight: op.tx.block.height,
+    senders: op.senders,
+    recipients: op.recipients,
+    date: op.tx.date,
+    transactionSequenceNumber: op.details?.sequence as number,
+    extra: {},
+  };
 }
 
 async function calculateSpendableBalance(

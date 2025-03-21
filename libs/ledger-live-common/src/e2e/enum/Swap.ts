@@ -12,6 +12,12 @@ export class Provider {
   static readonly MOONPAY = new Provider("moonpay", "MoonPay", true, false);
   static readonly THORCHAIN = new Provider("thorswap", "THORChain", false, true);
   static readonly UNISWAP = new Provider("uniswap", "Uniswap", false, false);
+  static readonly LIFI = new Provider("lifi", "LI.FI", false, true);
+
+  static getNameByUiName(uiName: string): string {
+    const provider = Object.values(Provider).find(p => p.uiName === uiName);
+    return provider ? provider.name : "";
+  }
 }
 
 export enum Rate {

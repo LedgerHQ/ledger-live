@@ -3465,6 +3465,7 @@
         "CTAButton": "Add account"
       },
       "history": {
+        "button": "Go to history",
         "tab": "History",
         "disclaimer": "Your swap mobile transactions are not synchronized with Ledger Live Desktop",
         "exportButton": "Export operations",
@@ -6616,7 +6617,12 @@
       "24h": "24H",
       "7d": "7D",
       "30d": "30D",
-      "1y": "1Y"
+      "1y": "1Y",
+      "1H_label" : "1H",
+      "1D_label" : "1D",
+      "1W_label" : "1W",
+      "1M_label" : "1M",
+      "1Y_label" : "1Y"
     },
     "warnings": {
       "connectionError": "Connection Error",
@@ -6753,7 +6759,7 @@
   "postOnboarding": {
     "hub": {
       "title": "Next up, use your {{productName}} to...",
-      "allDoneTitle": "You're all set! Keep going and explore your portfolio",
+      "areAllPostOnboardingActionsCompletedTitle": "You're all set! Keep going and explore your portfolio",
       "skip": "I’ll do this later",
       "viewWallet": "Explore my portfolio"
     },
@@ -7338,6 +7344,16 @@
       "subTitle": "Looks like you haven’t added an account yet. Get started now.",
       "cta": "Add an account",
       "link": "Need help? Learn how to add an account to Ledger\u00a0Live."
+    }
+  },
+  "lnsUpsell": {
+    "opted_in": {
+      "description": "Upgrade your Ledger Nano S to a newer Ledger — like the Ledger Flex — for more memory, the latest security enhancements, fresh features, and an exclusive 20% off. ",
+      "cta": "Upgrade my Ledger"
+    },
+    "opted_out": {
+      "description": "The limited memory of your Ledger Nano S restricts your access to the latest features, blockchain changes and security enhancements. For long-term use, upgrade to a newer Ledger device.",
+      "cta": "Learn more"
     }
   }
 }

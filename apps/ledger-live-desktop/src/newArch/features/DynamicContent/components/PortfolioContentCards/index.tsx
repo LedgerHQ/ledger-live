@@ -13,7 +13,12 @@ function PortfolioContentCards() {
   const handleNextButton = () => trackSlide("next");
 
   return (
-    <Carousel autoPlay={6000} onPrev={handlePrevButton} onNext={handleNextButton}>
+    <Carousel
+      initialDelay={2500}
+      autoPlay={6000}
+      onPrev={handlePrevButton}
+      onNext={handleNextButton}
+    >
       {portfolioCards.map((card, index) => (
         <Slide
           key={card.id}

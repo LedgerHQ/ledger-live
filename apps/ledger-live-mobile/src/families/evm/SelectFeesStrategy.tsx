@@ -182,12 +182,17 @@ export default function SelectFeesStrategy({
             ) : (
               <TachometerFast size={16} color={colors.opacityDefault.c60} />
             )}
-            <LText semiBold style={styles.feeLabel}>
-              {t(`fees.speed.${strategy}`)}
-            </LText>
+            <View style={styles.feeInfos}>
+              <LText semiBold style={styles.feeLabel} testID={"fee-label-" + strategy}>
+                {t(`fees.speed.${strategy}`)}
+              </LText>
+              <Text style={styles.feeTime} testID={"fee-time-" + strategy}>
+                {t(`fees.estimatedTime.${strategy}`)}
+              </Text>
+            </View>
           </View>
           <View style={styles.feesAmountContainer}>
-            <LText semiBold style={styles.feesAmount}>
+            <LText semiBold style={styles.feesAmount} testID={"fees-amount-" + strategy}>
               <CurrencyUnitValue showCode={!forceUnitLabel} unit={unit} value={estimatedFees} />
               {forceUnitLabel ? " " : null}
               {forceUnitLabel || null}
@@ -293,10 +298,16 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
+  feeInfos: {
+    marginLeft: 10,
+    flexDirection: "column",
+  },
   feeLabel: {
     fontSize: 16,
     textTransform: "capitalize",
-    marginLeft: 10,
+  },
+  feeTime: {
+    fontWeight: "semibold",
   },
   feesAmount: {
     fontSize: 15,

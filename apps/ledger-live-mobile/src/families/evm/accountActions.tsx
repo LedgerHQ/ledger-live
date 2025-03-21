@@ -1,5 +1,5 @@
 import React from "react";
-import type { Account } from "@ledgerhq/types-live";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import { Trans } from "react-i18next";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
@@ -9,7 +9,6 @@ import { NavigatorName, ScreenName } from "~/const";
 import BigNumber from "bignumber.js";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
-import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
 import { WalletState } from "@ledgerhq/live-wallet/store";
 
 const ethMagnitude = getCryptoCurrencyById("ethereum").units[0].magnitude ?? 18;
@@ -17,18 +16,36 @@ const ethMagnitude = getCryptoCurrencyById("ethereum").units[0].magnitude ?? 18;
 const ETH_LIMIT = BigNumber(32).times(BigNumber(10).pow(ethMagnitude));
 
 type Props = {
-  account: Account;
+  account: AccountLike;
   parentAccount: Account;
   parentRoute: RouteProp<ParamListBase, ScreenName>;
   walletState: WalletState;
 };
 
-function getNavigatorParams({
-  parentRoute,
-  account,
-  parentAccount,
-  walletState,
-}: Props): NavigationParamsType {
+type AccountTypeGetterProps = {
+  isEthAccount: boolean;
+  isPOLAccount: boolean;
+  isBscAccount: boolean;
+  isAvaxAccount: boolean;
+  isStakekit: boolean;
+};
+
+const getAccountType = (account: AccountLike): AccountTypeGetterProps => {
+  const isEthAccount = account.type === "Account" && account.currency.id === "ethereum";
+  const isBscAccount = account.type === "Account" && account.currency.id === "bsc";
+  const isAvaxAccount = account.type === "Account" && account.currency.id === "avalanche_c_chain";
+  const isPOLAccount =
+    account.type === "TokenAccount" &&
+    account.token.id === "ethereum/erc20/polygon_ecosystem_token";
+
+  const isStakekit = isBscAccount || isPOLAccount || isAvaxAccount;
+
+  return { isEthAccount, isPOLAccount, isBscAccount, isAvaxAccount, isStakekit };
+};
+
+function getNavigatorParams({ parentRoute, account, parentAccount }: Props): NavigationParamsType {
+  const { isPOLAccount, isBscAccount, isAvaxAccount, isStakekit } = getAccountType(account);
+
   if (isAccountEmpty(account)) {
     return [
       NavigatorName.NoFundsFlow,
@@ -42,16 +59,16 @@ function getNavigatorParams({
     ];
   }
 
-  if (
-    account.type === "Account" &&
-    (account.currency.id === "bsc" || account.currency.id === "polygon")
-  ) {
+  if (isStakekit) {
     const getYieldId = () => {
-      if (account.currency.id === "bsc") {
+      if (isBscAccount) {
         return "bsc-bnb-native-staking";
       }
-      if (account.currency.id === "polygon") {
+      if (isPOLAccount) {
         return "ethereum-matic-native-staking";
+      }
+      if (isAvaxAccount) {
+        return "avalanche-avax-liquid-staking";
       }
     };
 
@@ -68,21 +85,19 @@ function getNavigatorParams({
     ];
   }
 
-  const walletApiAccount = accountToWalletAPIAccount(walletState, account, parentAccount);
-
   const params = {
     screen: parentRoute.name,
     drawer: {
       id: "EvmStakingDrawer",
       props: {
         singleProviderRedirectMode: true,
-        accountId: walletApiAccount.id,
+        accountId: account.id,
         has32Eth: account.spendableBalance.gt(ETH_LIMIT),
       },
     },
     params: {
       ...(parentRoute.params ?? {}),
-      account: walletApiAccount,
+      account,
       parentAccount,
     },
   };
@@ -105,12 +120,10 @@ const getMainActions = ({
   parentRoute,
   walletState,
 }: Props): ActionButtonEvent[] => {
-  if (
-    account.type === "Account" &&
-    (account.currency.id === "ethereum" ||
-      account.currency.id === "bsc" ||
-      account.currency.id === "polygon")
-  ) {
+  const { isPOLAccount, isBscAccount, isAvaxAccount, isStakekit, isEthAccount } =
+    getAccountType(account);
+
+  if (isEthAccount || isStakekit) {
     const label = getStakeLabelLocaleBased();
 
     const navigationParams = getNavigatorParams({
@@ -119,19 +132,22 @@ const getMainActions = ({
       parentRoute,
       walletState,
     });
+
     const getCurrentCurrency = () => {
-      if (account.currency.id === "ethereum") {
+      if (isEthAccount) {
         return "ETH";
       }
-      if (account.currency.id === "bsc") {
+      if (isBscAccount) {
         return "BNB";
       }
 
-      if (account.currency.id === "polygon") {
+      if (isPOLAccount) {
         return "POL";
       }
+      if (isAvaxAccount) {
+        return "AVAX";
+      }
     };
-
     return [
       {
         id: "stake",
