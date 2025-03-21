@@ -6611,7 +6611,12 @@
       "24h" : "24H",
       "7d" : "7D",
       "30d" : "30D",
-      "1y" : "1A"
+      "1y" : "1A",
+      "1H_label" : "1H",
+      "1D_label" : "1D",
+      "1W_label" : "1S",
+      "1M_label" : "1M",
+      "1Y_label" : "1A"
     },
     "warnings" : {
       "connectionError" : "Erro de conexão",
