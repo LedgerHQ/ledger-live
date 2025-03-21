@@ -9,16 +9,13 @@ import IconAngleDown from "~/renderer/icons/AngleDown";
 import ValidatorRow from "./ValidatorRow";
 import { Account } from "@ledgerhq/types-live";
 import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import {
-  LEDGER_POOL_IDS,
-  StakePool,
-  fetchPoolDetails,
-} from "@ledgerhq/live-common/families/cardano/staking";
+import { StakePool, fetchPoolDetails } from "@ledgerhq/live-common/families/cardano/staking";
 import { useCardanoFamilyPools } from "@ledgerhq/live-common/families/cardano/react";
 import ValidatorSearchInput from "~/renderer/components/Delegation/ValidatorSearchInput";
 import { CardanoDelegation } from "@ledgerhq/live-common/families/cardano/types";
 import BigSpinner from "~/renderer/components/BigSpinner";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 type Props = {
   t: TFunction;
@@ -29,49 +26,76 @@ type Props = {
   selectedPoolId: string;
 };
 
+const DEFAULT_SELECTED_POOL_ID: string = "4a9c9902c9538da900b10b716d5d1b214487455fdb06028b32ffa180"; // Ledger by Figment 2
+
+// the IDs of ledger stake pools to shows in lld and llm
+const LEDGER_POOL_IDS: Array<string> = [
+  "a314a18528d00c5fbd067ecb4a212cf2f307c83d2c08f44a11ebebf6", // Ledger by Figment 1
+  DEFAULT_SELECTED_POOL_ID, // Ledger by Figment 2
+  "c726c9da5615d5f9f6858c25bb13f81c4741eccd08ce32f3414f323f", // Ledger by Figment 3
+];
+
+export function concatUserAndLedgerPoolIds(
+  userLastUsedPool: string | undefined,
+  ledgerPoolIds: string[],
+): string[] {
+  return userLastUsedPool ? [userLastUsedPool, ...ledgerPoolIds] : [...ledgerPoolIds];
+}
+
+export function putUserPoolAtFirstPositionInPools(
+  pools: StakePool[],
+  firstPoolId: string,
+): StakePool[] {
+  const sortedPools = [...pools];
+  if (pools.every(pool => pool.poolId !== firstPoolId)) {
+    return sortedPools;
+  }
+
+  const index = pools.findIndex(pool => pool.poolId === firstPoolId);
+  const pool = { ...pools[index] };
+  sortedPools.splice(index, 1);
+  sortedPools.unshift(pool);
+  return sortedPools;
+}
+
+export async function fetchAndSortPools(
+  currency: CryptoCurrency,
+  poolIds: string[],
+  userLastUsedPoolId: string,
+) {
+  const response = await fetchPoolDetails(currency, poolIds);
+  const sortedPools = putUserPoolAtFirstPositionInPools(response.pools, userLastUsedPoolId);
+  return sortedPools;
+}
+
 const ValidatorField = ({ account, delegation, onChangeValidator, selectedPoolId }: Props) => {
-  const [currentPool, setCurrentPool] = useState<Array<StakePool>>([]);
-  const [defaultPool, setDefaultPool] = useState<Array<StakePool>>([]);
   const unit = useAccountUnit(account);
   const [showAll, setShowAll] = useState(false);
-  const [ledgerPoolsLoading, setLedgerPoolsLoading] = useState(false);
+  const [userAndLedgerPools, setUserAndLedgerPools] = useState<Array<StakePool>>([]);
+  const [userAndLedgerPoolsLoading, setUserAndLedgerPoolsLoading] = useState(false);
   const { pools, searchQuery, setSearchQuery, onScrollEndReached, isSearching, isPaginating } =
     useCardanoFamilyPools(account.currency);
 
-  const poolIdsToFilterFromAllPools = [...LEDGER_POOL_IDS];
-  if (delegation?.poolId) {
-    poolIdsToFilterFromAllPools.push(delegation?.poolId);
-  }
+  const userAndLedgerPoolIds = concatUserAndLedgerPoolIds(delegation?.poolId, LEDGER_POOL_IDS);
 
   useEffect(() => {
-    if (LEDGER_POOL_IDS.length) {
-      setLedgerPoolsLoading(true);
-      const delegationPoolId = delegation?.poolId
-        ? [delegation.poolId, ...LEDGER_POOL_IDS]
-        : LEDGER_POOL_IDS;
-      fetchPoolDetails(account.currency, delegationPoolId)
-        .then((apiRes: { pools: Array<StakePool> }) => {
-          setCurrentPool([apiRes.pools[0]]);
-          const filteredPools = apiRes.pools.filter(pool => LEDGER_POOL_IDS.includes(pool.poolId));
-          setDefaultPool(filteredPools);
-          if (filteredPools.length) {
-            onChangeValidator(filteredPools[0]);
-          }
-        })
-        .finally(() => {
-          setLedgerPoolsLoading(false);
-        });
-    }
+    setUserAndLedgerPoolsLoading(true);
+    fetchAndSortPools(account.currency, userAndLedgerPoolIds, DEFAULT_SELECTED_POOL_ID).then(
+      (sortedPools: StakePool[]) => {
+        setUserAndLedgerPools(sortedPools);
+        onChangeValidator(sortedPools[0]);
+        setUserAndLedgerPoolsLoading(false);
+      },
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     const selectedPool =
       pools.find(p => p.poolId === selectedPoolId) ||
-      defaultPool.find(pool => pool.poolId === selectedPoolId);
+      userAndLedgerPools.find(pool => pool.poolId === selectedPoolId);
 
     if (selectedPool) {
-      setCurrentPool([selectedPool]);
       if (pools.some(p => p.poolId === selectedPoolId)) {
         onChangeValidator(selectedPool);
       }
@@ -106,7 +130,7 @@ const ValidatorField = ({ account, delegation, onChangeValidator, selectedPoolId
       <ValidatorsFieldContainer>
         <Box p={1} data-testid="validator-list">
           {(showAll && isSearching) ||
-          (!showAll && ledgerPoolsLoading) ||
+          (!showAll && userAndLedgerPoolsLoading) ||
           (!showAll && !pools.length) ? (
             <Box flex={1} py={3} alignItems="center" justifyContent="center">
               <BigSpinner size={35} />
@@ -116,10 +140,10 @@ const ValidatorField = ({ account, delegation, onChangeValidator, selectedPoolId
               data={
                 showAll
                   ? [
-                      ...defaultPool,
-                      ...pools.filter(p => p && !poolIdsToFilterFromAllPools.includes(p.poolId)),
+                      ...userAndLedgerPools,
+                      ...pools.filter(p => p && !userAndLedgerPoolIds.includes(p.poolId)),
                     ]
-                  : currentPool
+                  : [userAndLedgerPools[0]]
               }
               style={{
                 flex: showAll ? "1 0 256px" : "1 0 64px",
@@ -134,7 +158,7 @@ const ValidatorField = ({ account, delegation, onChangeValidator, selectedPoolId
             />
           )}
         </Box>
-        {LEDGER_POOL_IDS.length ? (
+        {userAndLedgerPoolIds.length > 1 ? (
           <SeeAllButton expanded={showAll} onClick={() => setShowAll(shown => !shown)}>
             <Text color="wallet" ff="Inter|SemiBold" fontSize={4}>
               <Trans i18nKey={showAll ? "distribution.showLess" : "distribution.showAll"} />
