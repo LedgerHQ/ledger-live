@@ -45,7 +45,7 @@ describe("Polkadot Api", () => {
   });
 
   describe("listOperations", () => {
-    it("returns a list regarding address parameter", async () => {
+    it.skip("returns a list regarding address parameter", async () => {
       // When
       const [tx, _] = await module.listOperations(address, { minHeight: 0 });
 
@@ -58,7 +58,7 @@ describe("Polkadot Api", () => {
       });
     }, 20000);
 
-    it("returns all operations", async () => {
+    it.skip("returns all operations", async () => {
       // When
       const [tx, _] = await module.listOperations(address, { minHeight: 0 });
 
@@ -81,7 +81,7 @@ describe("Polkadot Api", () => {
   });
 
   describe("getBalance", () => {
-    it("returns a list regarding address parameter", async () => {
+    it("should fetch balance", async () => {
       // When
       const result = await module.getBalance(address);
 

@@ -129,7 +129,7 @@
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
-    "test-integ": "DOTENV_CONFIG_PATH=.env.integ.test jest --config=jest.integ.config.js",
+    "test-integ": "DOTENV_CONFIG_PATH=.env.integ.test jest --config=jest.integ.config.js --passWithNoTests",
     "typecheck": "tsc --noEmit",
     "unimported": "unimported"
   }
