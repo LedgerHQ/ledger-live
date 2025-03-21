@@ -440,7 +440,7 @@
     },
     "wrongDevice" : {
       "title" : "Ledger Nano S™ не поддерживает {{provider}}.",
-      "description" : "Ledger Nano S™ не поддерживает {{provider}}. Для проведения кроссчейн-обмена через {{provider}} внутри Ledger Live используйте Ledger Nano S Plus, Ledger Nano X, Ledger Stax или Ledger Flex.",
+      "description" : "Ledger Nano S™ не поддерживает {{provider}}. Для проведения кроссчейн-обмена через {{provider}} внутри Ledger Live используйте Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™ или Ledger Flex™.",
       "cta" : "Совместимые устройства",
       "changeProvider" : "Поменять оператора"
     },
@@ -449,8 +449,8 @@
       "ton_description" : "Используйте другие совместимые устройства Ledger для обмена TON. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
       "spl_tokens_title" : "Ledger Nano S™ не поддерживает обмен токенов сети Solana",
       "spl_tokens_description" : "Используйте другие совместимые устройства Ledger для обмена токенов сети Solana. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
-      "sui_tokens_title" : "Ledger Nano S™ does not support swapping Sui tokens",
-      "sui_tokens_description" : "To swap Sui tokens, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+      "sui_tokens_title" : "Ledger Nano S™ не поддерживает обмен токенов сети Sui",
+      "sui_tokens_description" : "Используйте другие совместимые устройства Ledger для обмена токенов сети Sui. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
       "near_title" : "Ledger Nano S™ не поддерживает обмен Near",
       "near_description" : "Для обмена Near используйте любое другое устройство Ledger. Это может быть Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ или Ledger Stax™.",
       "ada_title" : "Ledger Nano S™ не поддерживает обмен Cardano",
@@ -459,12 +459,12 @@
       "apt_description" : "Для обмена Aptos используйте любое другое устройство Ledger. Это может быть Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ или Ledger Stax™.",
       "cosmos_title" : "Ledger Nano S™ не поддерживает обмен Cosmos",
       "cosmos_description" : "Для обмена Cosmos используйте любое другое устройство Ledger. Это может быть Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ или Ledger Stax™.",
-      "osmo_title" : "Ledger Nano S™ does not support swapping Osmosis",
-      "osmo_description" : "To swap Osmosis, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
-      "dydx_title" : "Ledger Nano S™ does not support swapping dYdX",
-      "dydx_description" : "To swap dYdX, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
-      "sui_title" : "Ledger Nano S™ does not support swapping Sui",
-      "sui_description" : "To swap Sui, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
+      "osmo_title" : "Ledger Nano S™ не поддерживает обмен Osmosis",
+      "osmo_description" : "Для обмена Osmosis используйте любое другое устройство Ledger. Это может быть Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ или Ledger Stax™.",
+      "dydx_title" : "Ledger Nano S™ не поддерживает обмен dYdX",
+      "dydx_description" : "Используйте другие совместимые устройства Ledger для обмена dYdX. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
+      "sui_title" : "Ledger Nano S™ не поддерживает обмен Sui",
+      "sui_description" : "Используйте другие совместимые устройства Ledger для обмена Sui. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™."
     },
     "providers" : {
       "title" : "Выберите поставщика услуг по обмену криптовалюты",
@@ -775,6 +775,10 @@
         "description3" : "Эта интеграция проведена {{team}} в сотрудничестве с Ledger.",
         "description3Link" : "Эта интеграция проведена <1><0>{{team}}</0></1> в сотрудничестве с Ledger."
       }
+    },
+    "migrationBanner" : {
+      "title" : "{{from}} становится {{to}}. Перейдите по <0>ссылке</0>, чтобы узнать больше или связаться с Поддержкой при необходимости.",
+      "contactSupport" : "Написать в Поддержку"
     },
     "featureUnavailable" : {
       "title" : "В данный момент недоступна эта функция: {{feature}}. Обратитесь в {{support}} за подробностями.",
@@ -1875,7 +1879,8 @@
       "palletMethod" : "Метод",
       "transferAmount" : "Сумма",
       "validatorsCount" : "Валидаторов: {{number}}",
-      "version" : "Версия приложения"
+      "version" : "Версия приложения",
+      "accountCreationFee" : "Комиссия за создание счёта"
     }
   },
   "operationList" : {
@@ -5511,6 +5516,11 @@
       "memo" : "Тег примечания/Memo",
       "memoPlaceholder" : "Опционально",
       "requiredMemoPlaceholder" : "Обязательное поле"
+    },
+    "mina" : {
+      "memoPlaceholder" : "Опционально",
+      "memo" : "Memo",
+      "memoWarningText" : "Значение Memo может быть строкой, длина которой не превышает или равна 32 символам"
     }
   },
   "errors" : {
@@ -6541,6 +6551,15 @@
         "swap" : "Обменяйте",
         "deposit" : "Пополните"
       }
+    },
+    "InvalidMemoMina" : {
+      "title" : "Содержимое Memo не может быть длиннее 32 символов"
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "Эта транзакция предполагает списание комиссии за создание счёта в {{fee}}"
+    },
+    "AmountTooSmall" : {
+      "title" : "Минимальная необходимая сумма для этой транзакции — {{amount}}"
     }
   },
   "cryptoOrg" : {
@@ -6991,55 +7010,14 @@
     }
   },
   "lnsUpsell" : {
-    "banner" : {
-      "manager" : {
-        "optIn" : {
-          "title" : "Пора обновиться",
-          "description" : "Перейдите на наши новые устройства со <0>скидкой {{discount}}%</0> для продвинутой безопасности и удобства использования.",
-          "cta" : "Прокачать кошелёк",
-          "linkText" : "Подробнее..."
-        },
-        "optOut" : {
-          "title" : "Пора обновиться",
-          "description" : "Перейдите на наши новые устройства со <0>скидкой {{discount}}%</0> для продвинутой безопасности и удобства использования.",
-          "cta" : "Прокачать кошелёк",
-          "linkText" : "Подробнее..."
-        }
-      },
-      "accounts" : {
-        "optIn" : {
-          "title" : "Пора обновиться",
-          "description" : "Ledger Nano S скоро перестанет обновляться. Перейдите на наши новые устройства со <0>скидкой {{discount}}%</0>.",
-          "cta" : "Прокачать кошелёк",
-          "linkText" : "Подробнее..."
-        },
-        "optOut" : {
-          "title" : "Пора обновиться",
-          "description" : "Ledger Nano S скоро перестанет обновляться. Перейдите на наши новые устройства со <0>скидкой {{discount}}%</0>.",
-          "cta" : "Прокачать кошелёк",
-          "linkText" : "Подробнее..."
-        }
-      },
-      "portfolio" : {
-        "optOut" : {
-          "title" : "Пора обновиться",
-          "description" : "Перейдите на наши новые устройства со <0>скидкой {{discount}}%</0> для ещё лучшей безопасности и удобства использования.",
-          "cta" : "Прокачать кошелёк",
-          "linkText" : "Подробнее..."
-        }
-      },
-      "notifications" : {
-        "optIn" : {
-          "description" : "Апдейты скоро прекратятся. Обновитесь сейчас со скидкой {{discount}}%, чтобы и дальше наслаждаться использованием.",
-          "cta" : "Прокачать кошелёк",
-          "linkText" : "Подробнее..."
-        },
-        "optOut" : {
-          "description" : "Апдейты скоро прекратятся. Обновитесь сейчас со скидкой {{discount}}%, чтобы и дальше наслаждаться использованием.",
-          "cta" : "Прокачать кошелёк",
-          "linkText" : "Подробнее..."
-        }
-      }
+    "opted_in" : {
+      "title" : "Ограниченная память — ограниченные впечатления",
+      "description" : "Перейдите с вашего Ledger Nano S на новое устройство – например, Ledger Flex. Вы получите бóльший объём памяти, актуальные улучшения безопасности, самые новые функции и <0>эксклюзивную скидку {{discount}}%</>.",
+      "cta" : "Обновиться"
+    },
+    "opted_out" : {
+      "description" : "У Ledger Nano S ограниченный объём памяти, что не позволяет владельцам аппаратного кошелька использовать актуальные функции и изменения в блокчейне, а также наслаждаться улучшениями безопасности. Перейдите на новое устройство Ledger, и пользуйтесь им ещё долгие годы.",
+      "cta" : "Подробнее..."
     }
   }
 }
