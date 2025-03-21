@@ -87,7 +87,7 @@ export const getOperationRecipients = (transaction?: TransactionBlockData): stri
   if (transaction?.transaction.kind === "ProgrammableTransaction") {
     if (!transaction?.transaction?.inputs) return [];
     const recipients: string[] = [];
-    transaction.transaction.inputs.map((input: SuiCallArg) => {
+    transaction.transaction.inputs.forEach((input: SuiCallArg) => {
       if ("valueType" in input && input.valueType === "address") {
         recipients.push(String(input.value));
       }
