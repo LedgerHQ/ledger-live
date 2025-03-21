@@ -440,7 +440,7 @@
     },
     "wrongDevice" : {
       "title" : "Ledger Nano S™, {{provider}} ile uyumlu değildir",
-      "description" : "Ledger Nano S, {{provider}} ile uyumlu değildir. Ledger Live üzerinden {{provider}} aracılığıyla zincirler arası takas işlemleri yapmak için Ledger Nano S Plus, Ledger Nano X, Ledger Stax veya Ledger Flex cihazlarını kullanabilirsiniz",
+      "description" : "Ledger Nano S™, {{provider}} ile uyumlu değildir. Ledger Live üzerinden {{provider}} aracılığıyla zincirler arası takas işlemleri yapmak için Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™ veya Ledger Flex™ cihazlarını kullanabilirsiniz",
       "cta" : "Uyumlu cihazları keşfedin",
       "changeProvider" : "Başka bir sağlayıcıyla takas edin"
     },
@@ -449,8 +449,8 @@
       "ton_description" : "Ton takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın.",
       "spl_tokens_title" : "Ledger Nano S™, Solana token takasını desteklemez",
       "spl_tokens_description" : "Solana token'larını takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın.",
-      "sui_tokens_title" : "Ledger Nano S™ does not support swapping Sui tokens",
-      "sui_tokens_description" : "To swap Sui tokens, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+      "sui_tokens_title" : "Ledger Nano S™, Sui token takasını desteklemez",
+      "sui_tokens_description" : "Sui token'larını takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın.",
       "near_title" : "Ledger Nano S™, Near takasını desteklemez",
       "near_description" : "Near takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazı kullanın.",
       "ada_title" : "Ledger Nano S™, Cardano takasını desteklemez",
@@ -459,12 +459,12 @@
       "apt_description" : "Aptos takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazı kullanın.",
       "cosmos_title" : "Ledger Nano S™, Cosmos takasını desteklemez",
       "cosmos_description" : "Cosmos takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazı kullanın.",
-      "osmo_title" : "Ledger Nano S™ does not support swapping Osmosis",
-      "osmo_description" : "To swap Osmosis, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
-      "dydx_title" : "Ledger Nano S™ does not support swapping dYdX",
-      "dydx_description" : "To swap dYdX, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
-      "sui_title" : "Ledger Nano S™ does not support swapping Sui",
-      "sui_description" : "To swap Sui, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
+      "osmo_title" : "Ledger Nano S™, Osmosis takasını desteklemez",
+      "osmo_description" : "Osmosis takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazını kullanın.",
+      "dydx_title" : "Ledger Nano S™, dYdX takasını desteklemez",
+      "dydx_description" : "dYdX takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazını kullanın.",
+      "sui_title" : "Ledger Nano S™, Sui takasını desteklemez",
+      "sui_description" : "Sui takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın."
     },
     "providers" : {
       "title" : "Kripto takası işlemleri için bir sağlayıcı seçin",
@@ -775,6 +775,10 @@
         "description3" : "Bu entegrasyon, {{team}} tarafından Ledger ile işbirliği içinde gerçekleştirilmiştir.",
         "description3Link" : "Bu entegrasyon, <1><0>{{team}}</0></1> tarafından Ledger ile iş birliği yapılarak gerçekleştirilmiştir"
       }
+    },
+    "migrationBanner" : {
+      "title" : "{{from}}, şuraya taşınıyor: {{to}}. Daha fazla bilgi edinmek için bu <0>bağlantıyı</0> takip edin veya yardıma ihtiyacınız varsa destek ekibiyle iletişime geçin.",
+      "contactSupport" : "Destek al"
     },
     "featureUnavailable" : {
       "title" : "Şu özellik an itibarıyla kullanılamıyor: {{feature}}. Daha fazla bilgi için lütfen {{support}} bakın.",
@@ -1875,7 +1879,8 @@
       "palletMethod" : "Yöntem",
       "transferAmount" : "Transfer Tutarı",
       "validatorsCount" : "Doğrulayıcılar ({{number}})",
-      "version" : "Sürüm"
+      "version" : "Sürüm",
+      "accountCreationFee" : "Hesap Oluşturma Ücreti"
     }
   },
   "operationList" : {
@@ -2049,7 +2054,7 @@
       "dontHaveSeed" : "Kurtarma ifadeniz yok mu? ",
       "followTheGuide" : "Adım adım güncelleme kılavuzumuzu uygulayın",
       "removeApps" : "Güncellemeden önce tüm uygulamaları kaldırın",
-      "update" : "{{productName} işletim sistemi güncellemesi",
+      "update" : "{{productName}} İşletim Sistemi Güncellemesi",
       "updateBtn" : "Donanım yazılımını güncelle",
       "installUpdate" : "Güncellemeyi yükle",
       "banner" : {
@@ -5511,6 +5516,11 @@
       "memo" : "Etiket / Memo",
       "memoPlaceholder" : "Opsiyonel",
       "requiredMemoPlaceholder" : "Gerekli"
+    },
+    "mina" : {
+      "memoPlaceholder" : "Tercihe bağlı",
+      "memo" : "Memo",
+      "memoWarningText" : "Memo değeri, en fazla 32 karakterlik bir dize olabilir"
     }
   },
   "errors" : {
@@ -6541,6 +6551,15 @@
         "swap" : "takas edin",
         "deposit" : "yatırın"
       }
+    },
+    "InvalidMemoMina" : {
+      "title" : "Memo metni 32 karakterden uzun olamaz"
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "Bu işlem için {{fee}} tutarında bir hesap oluşturma ücreti alınacaktır"
+    },
+    "AmountTooSmall" : {
+      "title" : "Bu işlem için gerekli minimum tutar: {{amount}}"
     }
   },
   "cryptoOrg" : {
@@ -6991,55 +7010,14 @@
     }
   },
   "lnsUpsell" : {
-    "banner" : {
-      "manager" : {
-        "optIn" : {
-          "title" : "Model yükseltme zamanı",
-          "description" : "Yüksek güvenlik ve sorunsuz bir deneyim için en yeni cihazlarımıza <0>%{{discount}} indirimle</0> model yükseltin.",
-          "cta" : "Cüzdanımın modelini yükselt",
-          "linkText" : "Daha fazla bilgi"
-        },
-        "optOut" : {
-          "title" : "Model yükseltme zamanı",
-          "description" : "Yüksek güvenlik ve sorunsuz bir deneyim için en yeni cihazlarımıza <0>%{{discount}} indirimle</0> model yükseltin.",
-          "cta" : "Cüzdanımın modelini yükselt",
-          "linkText" : "Daha fazla bilgi"
-        }
-      },
-      "accounts" : {
-        "optIn" : {
-          "title" : "Model yükseltme zamanı",
-          "description" : "Ledger Nano S model yükseltme teklifleri yakında sona eriyor. En yeni cihazlarımıza <0>%{{discount}} indirimle</0> model yükseltin.",
-          "cta" : "Cüzdanımın modelini yükselt",
-          "linkText" : "Daha fazla bilgi"
-        },
-        "optOut" : {
-          "title" : "Model yükseltme zamanı",
-          "description" : "Ledger Nano S model yükseltme teklifleri yakında sona eriyor. En yeni cihazlarımıza <0>%{{discount}} indirimle</0> model yükseltin.",
-          "cta" : "Cüzdanımın modelini yükselt",
-          "linkText" : "Daha fazla bilgi"
-        }
-      },
-      "portfolio" : {
-        "optOut" : {
-          "title" : "Model yükseltme zamanı",
-          "description" : "Yüksek güvenlik ve sorunsuz bir deneyim için en yeni cihazlarımıza <0>%{{discount}} indirimle</0> model yükseltin.",
-          "cta" : "Cüzdan modelini yükselt",
-          "linkText" : "Daha fazla bilgi"
-        }
-      },
-      "notifications" : {
-        "optIn" : {
-          "description" : "Cihaz güncellemeleri yakında sona eriyor. Sorunsuz bir deneyim için %{{discount}} indirimle hemen model yükseltin.",
-          "cta" : "Cüzdanımın modelini yükselt",
-          "linkText" : "Daha fazla bilgi"
-        },
-        "optOut" : {
-          "description" : "Cihaz güncellemeleri yakında sona eriyor. Sorunsuz bir deneyim için %{{discount}} indirimle hemen model yükseltin.",
-          "cta" : "Cüzdanımın modelini yükselt",
-          "linkText" : "Daha fazla bilgi"
-        }
-      }
+    "opted_in" : {
+      "title" : "Sınırlı bellek, sınırlı deneyim",
+      "description" : "Daha fazla bellek, en son güvenlik güncellemeleri, yeni özellikler ve <0>%{{discount}} oranında özel bir indirim</> için Ledger Nano S cihazınızın modelini Ledger Flex gibi daha yeni bir Ledger modeline yükseltin.",
+      "cta" : "Ledger modelimi yükselt"
+    },
+    "opted_out" : {
+      "description" : "Ledger Nano S cihazınızdaki sınırlı bellek en yeni özelliklere, blok zinciri değişikliklerine ve güvenlik güncellemelerine erişiminizi kısıtlar. Uzun vadeli kullanım için daha yeni bir Ledger cihazına model yükseltin.",
+      "cta" : "Daha fazla bilgi"
     }
   }
 }
