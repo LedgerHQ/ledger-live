@@ -47,6 +47,7 @@ export function LiveApp({ route }: Props) {
       },
     };
   }
+
   if (dappUrl && manifest && manifest.dapp) {
     manifest = {
       ...manifest,
