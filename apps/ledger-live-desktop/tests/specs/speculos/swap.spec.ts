@@ -423,7 +423,7 @@ for (const { swap, xrayTicket, userData, errorMessage } of swapWithDifferentSeed
   });
 }
 
-test.describe.only("Swap history", () => {
+test.describe("Swap history", () => {
   const swapHistory = {
     swap: new Swap(Account.ETH_1, Account.XLM_1, "0.008", Fee.MEDIUM),
     provider: Provider.CHANGELLY,
@@ -444,6 +444,20 @@ test.describe.only("Swap history", () => {
     userdata: "speculos-tests-app",
     speculosApp: app,
   });
+
+  test(
+    `User can export all history operations`,
+    {
+      annotation: { type: "TMS", description: "B2CQA-604" },
+    },
+    async ({ app }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
+      await app.layout.goToSwap();
+      await app.swap.goToSwapHistory();
+      await app.swap.clickExportOperations();
+    },
+  );
 
   test(
     `User should be able to see their swap history from the swap history page`,

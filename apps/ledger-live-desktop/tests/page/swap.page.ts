@@ -47,6 +47,7 @@ export class SwapPage extends AppPage {
   // History Components
   readonly historyButton = this.page.getByTestId("History-tab-button");
   private operationRows = this.page.locator("[data-testid^='operation-row-']");
+  private exportOperationsButton = this.page.getByTestId("export-swap-operations-link");
   private selectSpecificOperation = (swapId: string) =>
     this.page.getByTestId(`operation-row-${swapId}`);
   private selectSpecificOperationProvider = (swapId: string) =>
@@ -507,5 +508,11 @@ export class SwapPage extends AppPage {
   @step("Open selected operation by swapId: $0")
   async openSelectedOperation(swapId: string) {
     await this.selectSpecificOperation(swapId).click();
+  }
+
+  @step("Click on export operations")
+  async clickExportOperations() {
+    expect(await this.exportOperationsButton).toBeEnabled();
+    await this.exportOperationsButton.click();
   }
 }

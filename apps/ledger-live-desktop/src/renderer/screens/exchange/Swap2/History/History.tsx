@@ -160,7 +160,10 @@ const History = () => {
           <ExportOperationsWrapper horizontal>
             <IconDownloadCloud size={16} />
             <Text ml={1} ff="Inter|Regular" fontSize={3}>
-              <FakeLink onClick={exporting ? undefined : onExportOperations}>
+              <FakeLink
+                data-testid="export-swap-operations-link"
+                onClick={exporting ? undefined : onExportOperations}
+              >
                 {exporting ? t("swap2.history.exporting") : t("swap2.history.export")}
               </FakeLink>
             </Text>
