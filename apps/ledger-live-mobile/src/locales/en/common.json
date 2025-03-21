@@ -2411,13 +2411,13 @@
     },
     "recoverBanner": {
       "subscribeDone": {
-        "title": "Reminder: Finish subscribing to Ledger Recover",
+        "title": "Reminder: Finish subscribing to Ledger Recover"
       },
       "verifyIdentity": {
-        "title": "Access to your wallet is not backed up yet",
+        "title": "Access to your wallet is not backed up yet"
       },
       "connectDevice": {
-        "title": "Access to your wallet is not backed up yet",
+        "title": "Access to your wallet is not backed up yet"
       }
     }
   },
