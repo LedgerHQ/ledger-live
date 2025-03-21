@@ -1,5 +1,35 @@
 # live-mobile
 
+## 3.71.0-nightly.1
+
+### Minor Changes
+
+- [#9567](https://github.com/LedgerHQ/ledger-live/pull/9567) [`2009ba5`](https://github.com/LedgerHQ/ledger-live/commit/2009ba5e8fa44f8a1111dd0f073c5729738c50b7) Thanks [@adammino-ledger](https://github.com/adammino-ledger)! - Pass LL account to dapps and WAPI account to dapp browser v2
+
+- [#9601](https://github.com/LedgerHQ/ledger-live/pull/9601) [`904287d`](https://github.com/LedgerHQ/ledger-live/commit/904287dcac164c4992a086df20c6e411a1098f30) Thanks [@Couto](https://github.com/Couto)! - Use account with highest balance in Swap deeplink
+
+- [#9596](https://github.com/LedgerHQ/ledger-live/pull/9596) [`35f797e`](https://github.com/LedgerHQ/ledger-live/commit/35f797ee6e78eb851065dd2eaa7cb4861b3f4050) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - bugfix: Standardize Timeframe Display on Portfolio & Market Page Charts
+
+### Patch Changes
+
+- Updated dependencies [[`eea82e7`](https://github.com/LedgerHQ/ledger-live/commit/eea82e7993c27eacdbaba2f5418df64c75db3f2d), [`35f797e`](https://github.com/LedgerHQ/ledger-live/commit/35f797ee6e78eb851065dd2eaa7cb4861b3f4050), [`2407a6e`](https://github.com/LedgerHQ/ledger-live/commit/2407a6e1f3153c30c52d4bac4c9334fa95c351da)]:
+  - @ledgerhq/icons-ui@0.9.0-nightly.0
+  - @ledgerhq/live-common@34.27.0-nightly.1
+  - @ledgerhq/types-live@6.64.0-nightly.0
+  - @ledgerhq/native-ui@0.30.1-nightly.0
+  - @ledgerhq/coin-framework@2.4.0-nightly.1
+  - @ledgerhq/coin-cosmos@0.9.1-nightly.1
+  - @ledgerhq/coin-evm@2.14.1-nightly.1
+  - @ledgerhq/coin-filecoin@1.7.1-nightly.1
+  - @ledgerhq/coin-multiversx@0.2.2-nightly.1
+  - @ledgerhq/coin-stacks@0.6.4-nightly.1
+  - @ledgerhq/domain-service@1.2.23-nightly.0
+  - @ledgerhq/live-countervalues@0.4.5-nightly.1
+  - @ledgerhq/live-countervalues-react@0.2.27-nightly.1
+  - @ledgerhq/live-nft@0.6.2-nightly.1
+  - @ledgerhq/live-nft-react@0.7.2-nightly.1
+  - @ledgerhq/live-wallet@0.10.1-nightly.1
+
 ## 3.70.1-nightly.0
 
 ### Patch Changes

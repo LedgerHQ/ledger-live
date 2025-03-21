@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.64.0-nightly.0
+
+### Minor Changes
+
+- [#9606](https://github.com/LedgerHQ/ledger-live/pull/9606) [`2407a6e`](https://github.com/LedgerHQ/ledger-live/commit/2407a6e1f3153c30c52d4bac4c9334fa95c351da) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Solana NFTs FF for LLM
+
 ## 6.63.0
 
 ### Minor Changes

@@ -1,5 +1,47 @@
 ## 34.25.0
 
+## 34.27.0-nightly.1
+
+### Minor Changes
+
+- [#9596](https://github.com/LedgerHQ/ledger-live/pull/9596) [`35f797e`](https://github.com/LedgerHQ/ledger-live/commit/35f797ee6e78eb851065dd2eaa7cb4861b3f4050) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - bugfix: Standardize Timeframe Display on Portfolio & Market Page Charts
+
+- [#9606](https://github.com/LedgerHQ/ledger-live/pull/9606) [`2407a6e`](https://github.com/LedgerHQ/ledger-live/commit/2407a6e1f3153c30c52d4bac4c9334fa95c351da) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Solana NFTs FF for LLM
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@2.4.0-nightly.1
+  - @ledgerhq/coin-algorand@0.7.9-nightly.1
+  - @ledgerhq/coin-aptos@1.7.2-nightly.1
+  - @ledgerhq/coin-bitcoin@0.12.1-nightly.1
+  - @ledgerhq/coin-cardano@0.6.1-nightly.1
+  - @ledgerhq/coin-casper@1.5.1-nightly.1
+  - @ledgerhq/coin-cosmos@0.9.1-nightly.1
+  - @ledgerhq/coin-evm@2.14.1-nightly.1
+  - @ledgerhq/coin-filecoin@1.7.1-nightly.1
+  - @ledgerhq/coin-hedera@1.4.1-nightly.1
+  - @ledgerhq/coin-icon@0.8.1-nightly.1
+  - @ledgerhq/coin-internet_computer@1.5.9-nightly.1
+  - @ledgerhq/coin-multiversx@0.2.2-nightly.1
+  - @ledgerhq/coin-near@0.9.2-nightly.1
+  - @ledgerhq/coin-polkadot@2.1.0-nightly.1
+  - @ledgerhq/coin-solana@0.15.2-nightly.1
+  - @ledgerhq/coin-stacks@0.6.4-nightly.1
+  - @ledgerhq/coin-stellar@1.2.0-nightly.1
+  - @ledgerhq/coin-tezos@1.5.0-nightly.1
+  - @ledgerhq/coin-ton@0.6.1-nightly.1
+  - @ledgerhq/coin-tron@0.6.0-nightly.1
+  - @ledgerhq/coin-vechain@2.5.1-nightly.1
+  - @ledgerhq/coin-xrp@2.2.0-nightly.1
+  - @ledgerhq/device-core@0.4.18-nightly.0
+  - @ledgerhq/hw-app-eth@6.43.1-nightly.0
+  - @ledgerhq/live-countervalues@0.4.5-nightly.1
+  - @ledgerhq/live-countervalues-react@0.2.27-nightly.1
+  - @ledgerhq/live-nft@0.6.2-nightly.1
+  - @ledgerhq/live-signer-evm@0.2.1-nightly.1
+  - @ledgerhq/live-wallet@0.10.1-nightly.1
+
 ## 34.27.0-nightly.0
 
 ### Minor Changes

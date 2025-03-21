@@ -1,5 +1,34 @@
 # ledger-live-desktop
 
+## 2.105.0-nightly.1
+
+### Minor Changes
+
+- [#9567](https://github.com/LedgerHQ/ledger-live/pull/9567) [`2009ba5`](https://github.com/LedgerHQ/ledger-live/commit/2009ba5e8fa44f8a1111dd0f073c5729738c50b7) Thanks [@adammino-ledger](https://github.com/adammino-ledger)! - Pass LL account to dapps and WAPI account to dapp browser v2
+
+- [#9607](https://github.com/LedgerHQ/ledger-live/pull/9607) [`1849140`](https://github.com/LedgerHQ/ledger-live/commit/18491406f2407a2813fa89b6c4b5c9d2fb2b9a65) Thanks [@themooneer](https://github.com/themooneer)! - Hide receive nfts on solana collection
+
+- [#9541](https://github.com/LedgerHQ/ledger-live/pull/9541) [`eea82e7`](https://github.com/LedgerHQ/ledger-live/commit/eea82e7993c27eacdbaba2f5418df64c75db3f2d) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - Add Warning Rounded Fill icon and use it for notification tag in sidebar for recover. Move notification and recover status icon close to sidebar icon.
+
+### Patch Changes
+
+- Updated dependencies [[`35f797e`](https://github.com/LedgerHQ/ledger-live/commit/35f797ee6e78eb851065dd2eaa7cb4861b3f4050), [`2407a6e`](https://github.com/LedgerHQ/ledger-live/commit/2407a6e1f3153c30c52d4bac4c9334fa95c351da)]:
+  - @ledgerhq/live-common@34.27.0-nightly.1
+  - @ledgerhq/types-live@6.64.0-nightly.0
+  - @ledgerhq/react-ui@0.20.1-nightly.0
+  - @ledgerhq/coin-framework@2.4.0-nightly.1
+  - @ledgerhq/coin-aptos@1.7.2-nightly.1
+  - @ledgerhq/coin-bitcoin@0.12.1-nightly.1
+  - @ledgerhq/coin-cosmos@0.9.1-nightly.1
+  - @ledgerhq/coin-evm@2.14.1-nightly.1
+  - @ledgerhq/coin-filecoin@1.7.1-nightly.1
+  - @ledgerhq/domain-service@1.2.23-nightly.0
+  - @ledgerhq/live-countervalues@0.4.5-nightly.1
+  - @ledgerhq/live-countervalues-react@0.2.27-nightly.1
+  - @ledgerhq/live-nft@0.6.2-nightly.1
+  - @ledgerhq/live-nft-react@0.7.2-nightly.1
+  - @ledgerhq/live-wallet@0.10.1-nightly.1
+
 ## 2.104.1-nightly.0
 
 ### Patch Changes
