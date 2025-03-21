@@ -14,6 +14,7 @@ const accountName = accountNames[accountId];
 
 function setupSeed() {
 <<<<<<< HEAD
+<<<<<<< HEAD
   const prevSeed = getEnv("SEED");
   test.beforeAll(async () => {
     process.env.SEED = "Temporary_SEED";
@@ -21,12 +22,19 @@ function setupSeed() {
   test.afterAll(async () => {
     setEnv("SEED", prevSeed);
 =======
+=======
+  const prevSeed = getEnv("SEED");
+>>>>>>> 6e4ebb0e53 (Use a specific Seed for LedgerSync)
   test.beforeAll(async () => {
-    process.env.SEED = "X";
+    process.env.SEED = "Temporary_SEED";
   });
   test.afterAll(async () => {
+<<<<<<< HEAD
     process.env.SEED = "X";
 >>>>>>> c02908a715 (Initialize and destroy the trustchain before starting synchronization)
+=======
+    setEnv("SEED", prevSeed);
+>>>>>>> 6e4ebb0e53 (Use a specific Seed for LedgerSync)
   });
 }
 
