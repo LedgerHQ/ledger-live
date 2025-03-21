@@ -17,10 +17,10 @@ import { getEnv } from "@ledgerhq/live-env";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { v4 as uuidv4 } from "uuid";
 
-const createAccount = (currency: CryptoCurrency) => {
+const createAccount = (currency: CryptoCurrency): [Account, AccountUserData] => {
   const account = genAccount(uuidv4(), { currency, withNft: true });
   const userData = accountUserDataExportSelector(liveWalletInitialState, { account });
-  return [account, userData] as [Account, AccountUserData];
+  return [account, userData];
 };
 
 async function injectMockAccounts() {

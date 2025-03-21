@@ -93,7 +93,6 @@ const NftsToolsDebugger = () => {
               <ScrollAreaContainer isInsideDrawer>{activeItem.value}</ScrollAreaContainer>
             </>
           )}
-          renderFooter={() => <></>}
         />
       )}
     />

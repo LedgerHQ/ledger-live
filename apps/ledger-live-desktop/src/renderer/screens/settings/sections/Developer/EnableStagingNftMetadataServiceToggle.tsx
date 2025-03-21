@@ -6,11 +6,11 @@ import { useNftAPI } from "@ledgerhq/live-nft-react";
 const PRODUCTION_URL = "https://nft.api.live.ledger.com";
 const STAGING_URL = "https://nft.api.live.ledger-test.com";
 
-type Pros = {
+type Props = {
   onChange?: (url: string) => void;
 };
 
-const EnableStagingNftMetadataServiceToggle = ({ onChange }: Pros) => {
+const EnableStagingNftMetadataServiceToggle = ({ onChange }: Props) => {
   const currentUrlValue = getEnv("NFT_METADATA_SERVICE");
 
   const { clearCache } = useNftAPI();
