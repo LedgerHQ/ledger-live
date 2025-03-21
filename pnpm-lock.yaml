@@ -574,7 +574,7 @@ importers:
         version: 7.8.1
       secp256k1:
         specifier: 4.0.3
-        version: 4.0.3
+        version: 4.0.4
       semver:
         specifier: 7.5.4
         version: 7.5.4
@@ -2038,7 +2038,7 @@ importers:
         version: 7.8.1
       secp256k1:
         specifier: ^4.0.3
-        version: 4.0.3
+        version: 4.0.4
       sha.js:
         specifier: ^2.4.11
         version: 2.4.11
@@ -4020,7 +4020,7 @@ importers:
         version: 1.1.7
       secp256k1:
         specifier: ^5.0.0
-        version: 5.0.0
+        version: 4.0.4
       tiny-secp256k1:
         specifier: 1.1.7
         version: 1.1.7
@@ -4463,7 +4463,7 @@ importers:
         version: 7.8.1
       secp256k1:
         specifier: ^4.0.3
-        version: 4.0.3
+        version: 4.0.4
       semver:
         specifier: ^7.3.5
         version: 7.5.4
@@ -5257,7 +5257,7 @@ importers:
         version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.4.3))
       secp256k1:
         specifier: 5.0.0
-        version: 5.0.0
+        version: 4.0.4
       ts-jest:
         specifier: ^29.1.1
         version: 29.1.5(jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.4.3)))(typescript@5.4.3)
@@ -11548,6 +11548,7 @@ packages:
   '@faker-js/faker@9.4.0':
     resolution: {integrity: sha512-85+k0AxaZSTowL0gXp8zYWDIrWclTbRPg/pm/V0dSFZ6W6D4lhcG3uuZl4zLsEKfEvs69xDbLN2cHQudwp95JA==}
     engines: {node: '>=18.0.0', npm: '>=9.0.0'}
+    deprecated: Please update to a newer version
 
   '@fal-works/esbuild-plugin-global-externals@2.1.2':
     resolution: {integrity: sha512-cEee/Z+I12mZcFJshKcCqC8tuX5hG3s+d+9nZ3LabqKF1vKdF41B92pJVCBggjAGORAeOzyyDDKrZwIkLffeOQ==}
@@ -15536,7 +15537,7 @@ packages:
       metro-react-native-babel-preset: '*'
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
-      webpack: '*'
+      webpack: '5'
     peerDependenciesMeta:
       react:
         optional: true
@@ -17794,7 +17795,7 @@ packages:
     resolution: {integrity: sha512-/FQM1EDkTsf63Ub2C6O7GuYFDsSXUwsaZDurV0np41ocwq0jthUAYCmhBX9f+KwlaCgIuWyr/4WlUQUBfKfZog==}
     engines: {node: '>=6'}
     peerDependencies:
-      rxjs: '*'
+      rxjs: ^5.5.10
       zenObservable: '*'
     peerDependenciesMeta:
       rxjs:
@@ -18460,6 +18461,9 @@ packages:
 
   bn.js@4.12.0:
     resolution: {integrity: sha512-c98Bf3tPniI+scsdk237ku1Dc3ujXQTSgyiPUDEOe7tRkhrqridvh8klBv0HCEso1OLOYcHuCv/cS6DNxKH+ZA==}
+
+  bn.js@4.12.1:
+    resolution: {integrity: sha512-k8TVBiPkPJT9uHLdOKfFpqcfprwBFOAAXXozRubr7R7PfIuKvQlzcI4M0pALeqXN09vdaMbUdUj+pass+uULAg==}
 
   bn.js@5.2.1:
     resolution: {integrity: sha512-eXRvHzWyYPBuB4NBy0cmYQjGitUrtqwbvlzP3G6VFnNRbsZQIxQ10PbKKHt8gZ/HW/D/747aDl+QkDqg3KQLMQ==}
@@ -20904,7 +20908,7 @@ packages:
     peerDependencies:
       '@typescript-eslint/eslint-plugin': ^4.0.0 || ^5.0.0
       eslint: ^6.0.0 || ^7.0.0 || ^8.0.0
-      jest: '*'
+      jest: ^27.0.0
     peerDependenciesMeta:
       '@typescript-eslint/eslint-plugin':
         optional: true
@@ -21528,8 +21532,8 @@ packages:
     peerDependencies:
       expo-modules-autolinking: '*'
       expo-modules-core: '*'
-      react: '*'
-      react-native: '*'
+      react: 18.2.0
+      react-native: 0.74.5
     peerDependenciesMeta:
       expo-modules-autolinking:
         optional: true
@@ -25823,6 +25827,10 @@ packages:
     resolution: {integrity: sha512-u6fs2AEUljNho3EYTJNBfImO5QTo/J/1Etd+NVdCj7qWKUSN/bSLkZwhDv7I+w/MSC6qJ4cknepkAYykDdK8og==}
     hasBin: true
 
+  node-gyp-build@4.8.4:
+    resolution: {integrity: sha512-LA4ZjwlnUblHVgq0oBF3Jl/6h/Nvs5fzBLwdEF4nuxnFdsfajde4WfxtJr3CaiH+F6ewcIB/q4jQ4UzPyid+CQ==}
+    hasBin: true
+
   node-hid@2.1.2:
     resolution: {integrity: sha512-qhCyQqrPpP93F/6Wc/xUR7L8mAJW0Z6R7HMQV8jCHHksAxNDe/4z4Un/H9CpLOT+5K39OPyt9tIQlavxWES3lg==}
     engines: {node: '>=10'}
@@ -27499,7 +27507,7 @@ packages:
     resolution: {integrity: sha512-kBGxI+MIZGBf4wZhNCWwHkMcVP+kbpmrLWH/SkO0qCKc7D7eSPcxQbfpsmsCo8v2KCBYjuGSou+xTqK44D/jMg==}
     engines: {npm: ^3.0.0}
     peerDependencies:
-      prop-types: '*'
+      prop-types: ^15.6.1
       react: '>=15.0.0'
     peerDependenciesMeta:
       prop-types:
@@ -27523,8 +27531,8 @@ packages:
   react-native-animatable@1.3.3:
     resolution: {integrity: sha512-2ckIxZQAsvWn25Ho+DK3d1mXIgj7tITkrS4pYDvx96WyOttSvzzFeQnM2od0+FUMzILbdHDsDEqZvnz1DYNQ1w==}
     peerDependencies:
-      react: '*'
-      react-native: '*'
+      react: 16.9.0
+      react-native: 0.61.2
     peerDependenciesMeta:
       react:
         optional: true
@@ -27534,8 +27542,8 @@ packages:
   react-native-animatable@1.4.0:
     resolution: {integrity: sha512-DZwaDVWm2NBvBxf7I0wXKXLKb/TxDnkV53sWhCvei1pRyTX3MVFpkvdYBknNBqPrxYuAIlPxEp7gJOidIauUkw==}
     peerDependencies:
-      react: '*'
-      react-native: '*'
+      react: 18.2.0
+      react-native: 0.72.6
     peerDependenciesMeta:
       react:
         optional: true
@@ -28652,9 +28660,9 @@ packages:
   scryptsy@2.1.0:
     resolution: {integrity: sha512-1CdSqHQowJBnMAFyPEBRfqag/YP9OF394FV+4YREIJX4ljD7OxvQRDayyoyyCk+senRjSkP6VnUNQmVQqB6g7w==}
 
-  secp256k1@4.0.3:
-    resolution: {integrity: sha512-NLZVf+ROMxwtEj3Xa562qgv2BK5e2WNmXPiOdVIPLgs6lyTzMvBq0aWTYMI5XCP9jZMVKOcqZLw/Wc4vDkuxhA==}
-    engines: {node: '>=10.0.0'}
+  secp256k1@4.0.4:
+    resolution: {integrity: sha512-6JfvwvjUOn8F/jUoBY2Q1v5WY5XS+rj8qSe0v8Y4ezH4InLgTEeOOPQsRll9OV429Pvo6BCHGavIyJfr3TAhsw==}
+    engines: {node: '>=18.0.0'}
 
   secp256k1@5.0.0:
     resolution: {integrity: sha512-TKWX8xvoGHrxVdqbYeZM9w+izTF4b9z3NhSaDkdn81btvuh+ivbIMGT/zQvDtTFWhRlThpoz6LEYTr7n8A5GcA==}
@@ -35557,7 +35565,7 @@ snapshots:
       '@cosmjs/math': 0.24.1
       '@cosmjs/utils': 0.24.1
       bip39: 3.1.0
-      bn.js: 4.12.0
+      bn.js: 4.12.1
       elliptic: 6.6.1
       js-sha3: 0.8.0
       libsodium-wrappers: 0.7.13
@@ -35620,7 +35628,7 @@ snapshots:
 
   '@cosmjs/math@0.24.1':
     dependencies:
-      bn.js: 4.12.0
+      bn.js: 4.12.1
 
   '@cosmjs/math@0.26.8':
     dependencies:
@@ -38145,7 +38153,7 @@ snapshots:
     dependencies:
       '@iov/encoding': 2.1.0
       bip39: 3.1.0
-      bn.js: 4.12.0
+      bn.js: 4.12.1
       elliptic: 6.6.1
       js-sha3: 0.8.0
       libsodium-wrappers: 0.7.13
@@ -38159,7 +38167,7 @@ snapshots:
     dependencies:
       base64-js: 1.5.1
       bech32: 1.1.4
-      bn.js: 4.12.0
+      bn.js: 4.12.1
       readonly-date: 1.0.0
 
   '@iov/utils@2.0.2': {}
@@ -48499,7 +48507,7 @@ snapshots:
 
   asn1.js@4.10.1:
     dependencies:
-      bn.js: 4.12.0
+      bn.js: 4.12.1
       inherits: 2.0.4
       minimalistic-assert: 1.0.1
 
@@ -49348,6 +49356,8 @@ snapshots:
   bn.js@4.11.6: {}
 
   bn.js@4.12.0: {}
+
+  bn.js@4.12.1: {}
 
   bn.js@5.2.1: {}
 
@@ -50550,7 +50560,7 @@ snapshots:
 
   create-ecdh@4.0.4:
     dependencies:
-      bn.js: 4.12.0
+      bn.js: 4.12.1
       elliptic: 6.6.1
 
   create-hash@1.2.0:
@@ -51494,7 +51504,7 @@ snapshots:
 
   diffie-hellman@5.0.3:
     dependencies:
-      bn.js: 4.12.0
+      bn.js: 4.12.1
       miller-rabin: 4.0.1
       randombytes: 2.1.0
 
@@ -51856,7 +51866,7 @@ snapshots:
 
   elliptic@6.6.1:
     dependencies:
-      bn.js: 4.12.0
+      bn.js: 4.12.1
       brorand: 1.1.0
       hash.js: 1.1.7
       hmac-drbg: 1.0.1
@@ -52856,7 +52866,7 @@ snapshots:
 
   eth-lib@0.1.29:
     dependencies:
-      bn.js: 4.12.0
+      bn.js: 4.12.1
       elliptic: 6.6.1
       nano-json-stream-parser: 0.1.2
       servify: 0.1.12
@@ -52869,7 +52879,7 @@ snapshots:
 
   eth-lib@0.2.8:
     dependencies:
-      bn.js: 4.12.0
+      bn.js: 4.12.1
       elliptic: 6.6.1
       xhr-request-promise: 0.1.3
 
@@ -52892,7 +52902,7 @@ snapshots:
       randombytes: 2.1.0
       safe-buffer: 5.2.1
       scrypt-js: 3.0.1
-      secp256k1: 4.0.3
+      secp256k1: 4.0.4
       setimmediate: 1.0.5
 
   ethereum-cryptography@1.2.0:
@@ -57989,13 +57999,13 @@ snapshots:
   keccak@3.0.2:
     dependencies:
       node-addon-api: 2.0.2
-      node-gyp-build: 4.8.0
+      node-gyp-build: 4.8.4
       readable-stream: 3.6.2
 
   keccak@3.0.4:
     dependencies:
       node-addon-api: 2.0.2
-      node-gyp-build: 4.8.0
+      node-gyp-build: 4.8.4
       readable-stream: 3.6.2
 
   key-encoder@2.0.3:
@@ -59852,7 +59862,7 @@ snapshots:
 
   miller-rabin@4.0.1:
     dependencies:
-      bn.js: 4.12.0
+      bn.js: 4.12.1
       brorand: 1.1.0
 
   mime-db@1.33.0: {}
@@ -60370,6 +60380,8 @@ snapshots:
   node-forge@1.3.1: {}
 
   node-gyp-build@4.8.0: {}
+
+  node-gyp-build@4.8.4: {}
 
   node-hid@2.1.2:
     dependencies:
@@ -62176,7 +62188,7 @@ snapshots:
 
   public-encrypt@4.0.3:
     dependencies:
-      bn.js: 4.12.0
+      bn.js: 4.12.1
       browserify-rsa: 4.1.0
       create-hash: 1.2.0
       parse-asn1: 5.1.7
@@ -64174,17 +64186,17 @@ snapshots:
 
   scryptsy@2.1.0: {}
 
-  secp256k1@4.0.3:
+  secp256k1@4.0.4:
     dependencies:
       elliptic: 6.6.1
-      node-addon-api: 2.0.2
-      node-gyp-build: 4.8.0
+      node-addon-api: 5.1.0
+      node-gyp-build: 4.8.4
 
   secp256k1@5.0.0:
     dependencies:
       elliptic: 6.6.1
       node-addon-api: 5.1.0
-      node-gyp-build: 4.8.0
+      node-gyp-build: 4.8.4
 
   secretjs@0.17.8:
     dependencies:
@@ -64530,7 +64542,7 @@ snapshots:
 
   sodium-native@4.1.1:
     dependencies:
-      node-gyp-build: 4.8.0
+      node-gyp-build: 4.8.4
     optional: true
 
   sonic-boom@4.0.1:
@@ -66986,7 +66998,7 @@ snapshots:
 
   utf-8-validate@5.0.10:
     dependencies:
-      node-gyp-build: 4.8.0
+      node-gyp-build: 4.8.4
 
   utf-8-validate@6.0.3:
     dependencies:
