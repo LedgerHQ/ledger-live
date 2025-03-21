@@ -168,6 +168,7 @@ function SelectAccountAndCurrencyDrawer(props: SelectAccountAndCurrencyDrawerPro
             data-testid="select-asset-drawer-search-input"
             value={searchValue}
             onChange={setSearchValue}
+            autoFocus
           />
         </SearchInputContainer>
         {/* @ts-expect-error compatibility issue betwenn CryptoOrTokenCurrency and Currency (which includes Fiat) and the SelectAccountDrawer components  */}
