@@ -76,6 +76,7 @@ export const getAccountShape: GetAccountShape<CosmosAccount> = async (info: any)
       withdrawAddress,
       sequence: accountInfo.sequence,
     },
+    used: !(accountInfo.sequence === 0 && balance.isZero()),
   };
 
   if (shape.spendableBalance && shape.spendableBalance.lt(0)) {

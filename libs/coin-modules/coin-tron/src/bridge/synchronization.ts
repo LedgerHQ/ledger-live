@@ -185,6 +185,7 @@ export const getAccountShape: GetAccountShape<TronAccount> = async (
     subAccounts: mergedSubAccounts,
     tronResources,
     blockHeight,
+    used: !tronResources.bandwidth.freeLimit.eq(0),
   };
 };
 

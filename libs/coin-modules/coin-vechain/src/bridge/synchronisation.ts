@@ -80,6 +80,7 @@ export const getAccountShape: GetAccountShape<Account> = async info => {
         swapHistory: [],
       },
     ],
+    used: !(operations.length === 0 && BigNumber(balance).isZero() && BigNumber(energy).isZero()),
   };
 
   return shape;
