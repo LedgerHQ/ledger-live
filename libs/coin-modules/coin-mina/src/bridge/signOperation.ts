@@ -16,7 +16,7 @@ import { buildTransaction } from "./buildTransaction";
 import { reEncodeRawSignature } from "../common-logic";
 import invariant from "invariant";
 
-const buildOptimisticOperation = (
+export const buildOptimisticOperation = (
   account: Account,
   transaction: Transaction,
   fee: BigNumber,

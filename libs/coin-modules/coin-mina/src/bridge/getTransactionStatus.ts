@@ -22,7 +22,7 @@ const getTransactionStatus: AccountBridge<
   const warnings: StatusErrorMap = {};
   const useAllAmount = !!t.useAllAmount;
 
-  if (!t.fees) {
+  if (t.fees.fee.lte(0)) {
     errors.fees = new FeeNotLoaded();
   }
 
