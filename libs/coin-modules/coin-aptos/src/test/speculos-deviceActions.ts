@@ -43,3 +43,51 @@ export const acceptTransaction: DeviceAction<Transaction, State<Transaction>> = 
     },
   ],
 });
+
+export const acceptTokenTransaction: DeviceAction<
+  Transaction,
+  State<Transaction>
+> = deviceActionFlow({
+  steps: [
+    {
+      title: "Review",
+      button: SpeculosButton.RIGHT,
+    },
+    {
+      title: "Transaction Type",
+      button: SpeculosButton.RIGHT,
+    },
+    {
+      title: "Function",
+      button: SpeculosButton.RIGHT,
+    },
+    {
+      title: "Coin Type (1/2)",
+      button: SpeculosButton.RIGHT,
+    },
+    {
+      title: "Coin Type (2/2)",
+      button: SpeculosButton.RIGHT,
+    },
+    {
+      title: "Receiver (1/2)",
+      button: SpeculosButton.RIGHT,
+    },
+    {
+      title: "Receiver (2/2)",
+      button: SpeculosButton.RIGHT,
+    },
+    {
+      title: "Amount",
+      button: SpeculosButton.RIGHT,
+    },
+    {
+      title: "Gas Fee",
+      button: SpeculosButton.RIGHT,
+    },
+    {
+      title: "Approve",
+      button: SpeculosButton.BOTH,
+    },
+  ],
+});

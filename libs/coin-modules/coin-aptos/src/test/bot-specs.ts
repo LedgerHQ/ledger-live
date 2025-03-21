@@ -84,6 +84,40 @@ const aptosSpecs: AppSpec<Transaction> = {
         );
       },
     },
+    // {
+    //   name: "Send ~50% of stdAPT token",
+    //   feature: "tokens",
+    //   maxRun: 1,
+    //   deviceAction: acceptTokenTransaction,
+    //   testDestination: genericTestDestination,
+    //   transaction: ({ account, siblings, bridge, maxSpendable }) => {
+    //     invariant(maxSpendable.gt(MIN_SAFE), "balance is too low");
+    //     const sibling = pickSiblings(siblings, maxAccount);
+    //     const recipient = sibling.freshAddress;
+    //     const amount = maxSpendable.div(2).integerValue();
+
+    //     const transaction = bridge.createTransaction(account);
+    //     const updates: Array<Partial<Transaction>> = [
+    //       {
+    //         recipient,
+    //       },
+    //       { amount },
+    //     ];
+
+    //     return {
+    //       transaction,
+    //       updates,
+    //     };
+    //   },
+
+    //   test: ({ accountBeforeTransaction, operation, account }) => {
+    //     botTest("account spendable balance decreased with operation", () =>
+    //       expect(account.spendableBalance).toEqual(
+    //         accountBeforeTransaction.spendableBalance.minus(operation.value),
+    //       ),
+    //     );
+    //   },
+    // },
   ],
 };
 

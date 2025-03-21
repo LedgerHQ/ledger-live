@@ -1,6 +1,5 @@
 import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-
 import { AptosAPI } from "../api";
 import { getEstimatedGas } from "./getFeesForTransaction";
 import type { Transaction } from "../types";
@@ -28,9 +27,10 @@ const prepareTransaction = async (
   if (transaction.useAllAmount) {
     // we will use this amount in simulation, to estimate gas
     transaction.amount = getMaxSendBalance(
-      account.spendableBalance,
       new BigNumber(DEFAULT_GAS),
       new BigNumber(DEFAULT_GAS_PRICE),
+      account,
+      transaction,
     );
   }
 
@@ -39,9 +39,10 @@ const prepareTransaction = async (
   if (transaction.useAllAmount) {
     // correct the transaction amount according to estimated fees
     transaction.amount = getMaxSendBalance(
-      account.spendableBalance,
       BigNumber(estimate.maxGasAmount),
       BigNumber(estimate.gasUnitPrice),
+      account,
+      transaction,
     );
   }
 
