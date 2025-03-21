@@ -39,6 +39,7 @@ import path from "path";
 import fs from "fs";
 import { getEnv } from "@ledgerhq/live-env";
 import { SettingsSetOverriddenFeatureFlagsPlayload } from "~/actions/types";
+import { CLI } from "../utils/cliUtils";
 
 type ApplicationOptions = {
   speculosApp?: AppInfos;
@@ -111,7 +112,7 @@ export class Application {
     if (speculosApp) {
       proxyPort = await this.common.addSpeculos(speculosApp.name);
       process.env.DEVICE_PROXY_URL = `ws://localhost:${proxyPort}`;
-      require("@ledgerhq/live-cli/src/live-common-setup");
+      CLI.registerProxyTransport(process.env.DEVICE_PROXY_URL);
     }
 
     if (cliCommands?.length) {
