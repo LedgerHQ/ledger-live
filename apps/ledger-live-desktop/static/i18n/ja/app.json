@@ -1879,7 +1879,8 @@
       "palletMethod" : "方法",
       "transferAmount" : "送付額",
       "validatorsCount" : "バリデータ（{{number}}）",
-      "version" : "バージョン"
+      "version" : "バージョン",
+      "accountCreationFee" : "アカウント作成手数料"
     }
   },
   "operationList" : {
@@ -4229,7 +4230,7 @@
       "nfts" : {
         "title" : "NFT非表示コレクション",
         "description" : "非表示コレクションリストをリセット",
-        "reset" : "リセット"
+        "reset" : "Reset ({{count}})"
       },
       "exchangeDeveloperMode" : {
         "title" : "Exchange開発者モード",
@@ -4339,6 +4340,32 @@
           }
         },
         "back" : "戻る"
+      },
+      "debugNfts" : {
+        "title" : "NFTs Tools",
+        "description" : "Provides some useful tools to handle NFTs in Ledger Live",
+        "cta" : "Open",
+        "tabs" : {
+          "config" : "Configuration",
+          "generatorAndDestructor" : "Generators & Destructors"
+        },
+        "configuration" : {
+          "supported" : "Supported NFT Chain",
+          "supported_other" : "Supported NFT Chains",
+          "nms" : {
+            "title" : "NFT Metadata Service (NMS)",
+            "env" : "Environment : {{env}}"
+          }
+        },
+        "generatorAndDestructor" : {
+          "genAcc" : "Generate Accounts",
+          "genAccDesc" : "Generate an accounts with NFTs",
+          "cta" : "Generate",
+          "deleteAcc" : "Delete Accounts",
+          "deleteAccDesc" : "Delete all accounts from store",
+          "delete" : "Delete"
+        },
+        "back" : "Go back"
       },
       "debugWalletSync" : {
         "title" : "Ledger同期デバッガー",
@@ -5515,6 +5542,11 @@
       "memo" : "タグ/メモ",
       "memoPlaceholder" : "任意",
       "requiredMemoPlaceholder" : "必須"
+    },
+    "mina" : {
+      "memoPlaceholder" : "任意",
+      "memo" : "メモ",
+      "memoWarningText" : "メモの値は32文字以内の文字列で入力可能です"
     }
   },
   "errors" : {
@@ -6545,6 +6577,15 @@
         "swap" : "スワップ",
         "deposit" : "入金"
       }
+    },
+    "InvalidMemoMina" : {
+      "title" : "メモに入力できる文字数は32文字以内です"
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "このトランザクションには、{{fee}}のアカウント作成手数料が発生します"
+    },
+    "AmountTooSmall" : {
+      "title" : "このトランザクションに最低限必要な金額は、{{amount}}です"
     }
   },
   "cryptoOrg" : {
