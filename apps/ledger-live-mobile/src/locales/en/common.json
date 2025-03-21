@@ -1060,6 +1060,15 @@
     },
     "AppManifestNotFoundError": {
       "title": "Failed to load Swap Live App"
+    },
+    "InvalidMemoMina": {
+      "title": "Memo text cannot be longer than 32 characters"
+    },
+    "AccountCreationFeeWarning": {
+      "title": "This transaction will incur an account creation fee of {{fee}}"
+    },
+    "AmountTooSmall": {
+      "title": "Minimum required amount for this transaction is {{amount}}"
     }
   },
   "crash": {
@@ -2593,7 +2602,8 @@
       "gasLimit": "Gas Limit",
       "id": "Id",
       "autoClaimedRewards": "Auto Claimed Rewards",
-      "stakedAmount": "Staked amount"
+      "stakedAmount": "Staked amount",
+      "accountCreationFee": "Account Creation Fee"
     },
     "multipleAddresses": "Why multiple addresses?",
     "tokenName": "Token Name",

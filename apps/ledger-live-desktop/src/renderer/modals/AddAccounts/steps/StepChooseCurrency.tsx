@@ -91,6 +91,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
   const zenrock = useFeature("currencyZenrock");
   const sonic = useFeature("currencySonic");
   const sonicBlaze = useFeature("currencySonicBlaze");
+  const mina = useFeature("currencyMina");
 
   const featureFlaggedCurrencies = useMemo(
     (): Partial<Record<CryptoCurrencyId, Feature<unknown> | null>> => ({
@@ -150,6 +151,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       zenrock,
       sonic,
       sonic_blaze: sonicBlaze,
+      mina: mina,
     }),
     [
       aptos,
@@ -208,6 +210,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       zenrock,
       sonic,
       sonicBlaze,
+      mina,
     ],
   );
 

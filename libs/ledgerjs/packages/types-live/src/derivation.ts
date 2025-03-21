@@ -32,4 +32,5 @@ export type DerivationMode =
   | "stacks_wallet"
   | "icon"
   | "ton"
-  | "aptos";
+  | "aptos"
+  | "minabip44";

@@ -89,6 +89,7 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyZenrock: DEFAULT_FEATURE,
   currencySonicBlaze: DEFAULT_FEATURE,
   currencySonic: DEFAULT_FEATURE,
+  currencyMina: DEFAULT_FEATURE,
 };
 
 /**
