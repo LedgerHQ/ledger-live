@@ -3,7 +3,6 @@ import AccountBodyHeader from "./AccountBodyHeader";
 import AccountFooter from "./AccountFooter";
 import accountHeaderManageActions from "./AccountHeaderManageActions";
 import sendAmountFields from "./SendAmountFields";
-import StakeBanner from "./StakeBanner";
 import StepSummaryNetworkFeesRow from "./StepSummaryNetworkFeesRow";
 import transactionConfirmFields from "./TransactionConfirmFields";
 import { getNftTransactionProperties, injectNftIntoTransaction } from "./nft";
@@ -18,7 +17,6 @@ const family: EvmFamily = {
   transactionConfirmFields,
   sendAmountFields,
   StepSummaryNetworkFeesRow,
-  StakeBanner,
   nft: {
     getNftTransactionProperties,
     injectNftIntoTransaction,
