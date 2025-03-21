@@ -74,7 +74,7 @@ export const CoinControlRow = ({
   const unconfirmed = utxoStatus === "pickPendingUtxo";
   const last = !s.excluded && totalExcludedUTXOS + 1 === account.bitcoinResources?.utxos.length; // make sure that at least one utxo is selected
   const disabled = unconfirmed || last;
-  const confirmations = utxo.blockHeight ? (account.blockHeight - utxo.blockHeight) : 0;
+  const confirmations = utxo.blockHeight ? account.blockHeight - utxo.blockHeight : 0;
   const onClick = () => {
     if (disabled) return;
     const patch = {
