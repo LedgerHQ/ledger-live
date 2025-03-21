@@ -8,32 +8,28 @@ import {
   getAccountUnit,
   initTestAccounts,
 } from "../../models/currencies";
-import { Application } from "../../page";
-
-const app = new Application();
-let deviceAction: DeviceAction;
-
-let first = true;
-
-const testedCurrencies: CryptoCurrencyId[] = [
-  "bitcoin",
-  "ethereum",
-  "bsc",
-  //"ripple", // TOFIX Error during flow
-  //"solana", // TOFIX Error during flow
-  //"cardano", // TOFIX Error during flow
-  "dogecoin",
-  //"tron", // TOFIX Error during flow
-  //"avalanche_c_chain", // TOFIX Error during flow
-  "polygon",
-  "polkadot",
-  "cosmos",
-];
-const testAccounts = initTestAccounts(testedCurrencies);
-const knownDevice = knownDevices.nanoX;
 
 $TmsLink("B2CQA-1823");
 describe("Send flow", () => {
+  let deviceAction: DeviceAction;
+  let first = true;
+  const testedCurrencies: CryptoCurrencyId[] = [
+    "bitcoin",
+    "ethereum",
+    "bsc",
+    //"ripple", // TOFIX Error during flow
+    //"solana", // TOFIX Error during flow
+    //"cardano", // TOFIX Error during flow
+    "dogecoin",
+    //"tron", // TOFIX Error during flow
+    //"avalanche_c_chain", // TOFIX Error during flow
+    "polygon",
+    "polkadot",
+    "cosmos",
+  ];
+  const testAccounts = initTestAccounts(testedCurrencies);
+  const knownDevice = knownDevices.nanoX;
+
   beforeAll(async () => {
     await app.init({
       userdata: "skip-onboarding",

@@ -1,20 +1,9 @@
-import {
-  currencyParam,
-  getElementById,
-  getElementByText,
-  getTextOfElement,
-  IsIdVisible,
-  openDeeplink,
-  scrollToId,
-  tapById,
-  waitForElementById,
-} from "../../helpers";
 import { by, element, expect } from "detox";
 import jestExpect from "expect";
-
-const baseLink = "receive";
+import { currencyParam, openDeeplink } from "../../helpers/commonHelpers";
 
 export default class ReceivePage {
+  baseLink = "receive";
   noVerifyAddressButton = "button-DontVerify-my-address";
   noVerifyValidateButton = "button-confirm-dont-verify";
   accountAddress = "receive-fresh-address";
@@ -47,11 +36,11 @@ export default class ReceivePage {
     "You first need to send at least 0.1 TRX to this address to activate it.";
 
   async openViaDeeplink() {
-    await openDeeplink(baseLink);
+    await openDeeplink(this.baseLink);
   }
 
   async receiveViaDeeplink(currencyLong?: string) {
-    const link = currencyLong ? baseLink + currencyParam + currencyLong : baseLink;
+    const link = currencyLong ? this.baseLink + currencyParam + currencyLong : this.baseLink;
     await openDeeplink(link);
   }
 

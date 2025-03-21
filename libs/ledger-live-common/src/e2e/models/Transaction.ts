@@ -2,6 +2,8 @@ import { Fee } from "../enum/Fee";
 import { Account } from "../enum/Account";
 import { Nft } from "../enum/Nft";
 
+export type TransactionType = Transaction;
+
 export class Transaction {
   constructor(
     public accountToDebit: Account,

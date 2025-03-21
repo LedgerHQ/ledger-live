@@ -1,14 +1,7 @@
-import {
-  getElementById,
-  getWebElementById,
-  getWebElementByTag,
-  openDeeplink,
-  waitForElementByText,
-} from "../../helpers";
 import { expect, log } from "detox";
 import jestExpect from "expect";
+import { openDeeplink } from "../../helpers/commonHelpers";
 
-const baseLink = "discover/";
 const discoverApps = [
   // for some reason there is a space before the URL so this is required
   { name: "MoonPay", url: " https://www.moonpay.com/" },
@@ -29,6 +22,7 @@ const discoverApps = [
 ];
 
 export default class DiscoverPage {
+  baseLink = "discover/";
   waitForSelectCrypto = () => waitForElementByText("Select crypto");
   discoverPageHeader = () => getElementById("discover-banner");
   liveAppTitle = () => getElementById("live-app-title");
@@ -45,7 +39,7 @@ export default class DiscoverPage {
   }
 
   async openViaDeeplink(discoverApps = "") {
-    await openDeeplink(baseLink + discoverApps);
+    await openDeeplink(this.baseLink + discoverApps);
   }
 
   async expectApp(app: string) {

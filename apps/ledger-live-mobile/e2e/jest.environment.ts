@@ -1,5 +1,6 @@
 const detoxEnvironment = require("detox/runners/jest/testEnvironment");
-import { takeSpeculosScreenshot } from "./helpers";
+import { logMemoryUsage } from "./helpers/commonHelpers";
+import { takeSpeculosScreenshot } from "./utils/speculosUtils";
 
 class TestEnvironment extends detoxEnvironment {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -11,6 +12,9 @@ class TestEnvironment extends detoxEnvironment {
     }
     if (this.global.IS_FAILED && ["test_fn_start", "test_fn_failure"].includes(event.name)) {
       await takeSpeculosScreenshot();
+    }
+    if (event.name === "run_start") {
+      await logMemoryUsage();
     }
   }
 }

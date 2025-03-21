@@ -1,23 +1,14 @@
 import { expect } from "detox";
-import {
-  getElementById,
-  getIdOfElement,
-  openDeeplink,
-  scrollToId,
-  tapById,
-  waitForElementById,
-} from "../../helpers";
-import { getEnv } from "@ledgerhq/live-env";
-import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
+import { openDeeplink } from "../../helpers/commonHelpers";
 import CommonPage from "../common.page";
-
-const baseLink = "add-account";
-const isMock = getEnv("MOCK");
+import { CurrencyType } from "@ledgerhq/live-common/e2e/enum/Currency";
+import { getEnv } from "@ledgerhq/live-env";
 
 export default class AddAccountDrawer extends CommonPage {
+  baseLink = "add-account";
   deselectAllButtonId = "add-accounts-deselect-all";
   accountId = (currency: string, index: number) =>
-    isMock ? `mock:1:${currency}:MOCK_${currency}_${index}:` : `js:2:${currency}:.*`;
+    getEnv("MOCK") ? `mock:1:${currency}:MOCK_${currency}_${index}:` : `js:2:${currency}:.*`;
   accountTitleId = (accountName: string, index: number) =>
     getElementById(`test-id-account-${accountName}`, index);
   modalButtonId = "add-accounts-modal-add-button";
@@ -33,7 +24,7 @@ export default class AddAccountDrawer extends CommonPage {
 
   @Step("Open add account via deeplink")
   async openViaDeeplink() {
-    await openDeeplink(baseLink);
+    await openDeeplink(this.baseLink);
   }
 
   @Step("Click on 'Import with your Ledger' button")
@@ -74,7 +65,7 @@ export default class AddAccountDrawer extends CommonPage {
   }
 
   @Step("Add only first discovered account")
-  async addFirstAccount(currency: Currency) {
+  async addFirstAccount(currency: CurrencyType) {
     await this.waitAccountsDiscovery();
     await this.expectAccountDiscovery(currency.name, currency.id);
     await tapById(this.deselectAllButtonId);
@@ -104,7 +95,7 @@ export default class AddAccountDrawer extends CommonPage {
   }
 
   @Step("Add only first discovered account")
-  async addNetworkBasedFirstAccount(currency: Currency) {
+  async addNetworkBasedFirstAccount(currency: CurrencyType) {
     await this.waitAccountsDiscovery();
     const accountId = await this.expectNetworkBasedAccountDiscovery(currency.name, currency.id);
     await tapById(this.deselectAllButtonId);

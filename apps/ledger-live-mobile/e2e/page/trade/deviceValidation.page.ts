@@ -1,4 +1,3 @@
-import { getElementById, waitForElementById } from "../../helpers";
 import { expect } from "detox";
 
 export default class DeviceValidationPage {

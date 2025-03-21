@@ -1,23 +1,18 @@
 import { device } from "detox";
-import { Application } from "../../page";
-import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
-import { CLI } from "../../utils/cliUtils";
-
-const app = new Application();
-const nanoApp = AppInfos.ETHEREUM;
-
-const CORRECT_PASSWORD = "passWORD$123!";
 
 describe("Password Lock Screen", () => {
+  const nanoApp = AppInfos.ETHEREUM;
+  const CORRECT_PASSWORD = "passWORD$123!";
+
   beforeAll(async () => {
     await app.init({
       speculosApp: nanoApp,
       cliCommands: [
-        async () => {
+        async (userdataPath?: string) => {
           return CLI.liveData({
             currency: nanoApp.name,
             index: 0,
-            appjson: app.userdataPath,
+            appjson: userdataPath,
             add: true,
           });
         },

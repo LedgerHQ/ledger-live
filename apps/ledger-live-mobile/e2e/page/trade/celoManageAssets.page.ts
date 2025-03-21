@@ -1,4 +1,3 @@
-import { getElementById, waitForElementById, tapById } from "../../helpers";
 import { expect } from "detox";
 
 export default class CeloManageAssetsPage {
