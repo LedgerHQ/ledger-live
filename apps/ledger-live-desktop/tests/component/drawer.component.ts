@@ -6,7 +6,7 @@ export class Drawer extends Component {
   readonly content = this.page.getByTestId("drawer-content");
   private drawerOverlay = this.page.locator("[data-testid='drawer-overlay'][style='opacity: 1;']");
   private continueButton = this.page.getByTestId("drawer-continue-button");
-  private closeButton = this.page.getByTestId("drawer-close-button");
+  private closeButton = this.page.getByTestId("drawer-close-button").first();
   private currencyButton = (currency: string) =>
     this.page.getByTestId(`currency-row-${currency.toLowerCase()}`).first();
   readonly selectAssetTitle = this.page.getByTestId("select-asset-drawer-title").first();
