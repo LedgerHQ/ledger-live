@@ -1,5 +1,6 @@
 /** @type {import('ts-jest/dist/types').JestConfigWithTsJest} */
 module.exports = {
+  passWithNoTests: true,
   collectCoverageFrom: [
     "src/**/*.ts",
     "!src/**/*.test.ts",
@@ -7,11 +8,10 @@ module.exports = {
     "!src/test/**/*.ts",
     "!src/__tests__/**/*.ts",
   ],
-  coverageReporters: ["json", ["lcov", { projectRoot: "../" }], "text"],
-  coverageDirectory: "coverage",
+  coverageReporters: ["json", ["lcov", { file: "evm-lcov.info", projectRoot: "../" }], "text"],
   preset: "ts-jest",
   testEnvironment: "node",
-  testPathIgnorePatterns: ["lib/", "lib-es/"],
+  testPathIgnorePatterns: ["lib/", "lib-es/", ".integration.test.ts"],
   modulePathIgnorePatterns: [
     "__tests__/fixtures",
     "__tests__/coin-tester",

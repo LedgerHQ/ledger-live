@@ -1,16 +1,16 @@
 /** @type {import('ts-jest/dist/types').JestConfigWithTsJest} */
 module.exports = {
   preset: "ts-jest",
-  coverageDirectory: "coverage",
+  passWithNoTests: true,
   collectCoverageFrom: [
     "src/**/*.ts",
     "!src/**/*.test.ts",
     "!src/**/*.spec.ts",
     "!src/test/**/*.ts",
   ],
-  coverageReporters: ["json", ["lcov", { projectRoot: "../" }], "text"],
+  coverageReporters: ["json", ["lcov", { file: "stellar-lcov.info", projectRoot: "../" }], "text"],
   testEnvironment: "node",
-  testPathIgnorePatterns: ["lib/", "lib-es/", ".*\\.integ\\.test\\.[tj]s"],
+  testPathIgnorePatterns: ["lib/", "lib-es/", ".integration.test.ts"],
   reporters: [
     [
       "jest-sonar",

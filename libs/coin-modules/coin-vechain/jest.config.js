@@ -1,5 +1,6 @@
 /** @type {import('ts-jest/dist/types').JestConfigWithTsJest} */
 module.exports = {
+  passWithNoTests: true,
   collectCoverageFrom: [
     "src/**/*.ts",
     "!src/**/*.test.ts",
@@ -8,11 +9,10 @@ module.exports = {
     "!src/datasets/**/*.ts",
     "!src/__snapshots__/**/*.ts",
   ],
-  coverageReporters: ["json", ["lcov", { projectRoot: "../" }], "text"],
-  coverageDirectory: "coverage",
+  coverageReporters: ["json", ["lcov", { file: "vechain-lcov.info", projectRoot: "../" }], "text"],
   preset: "ts-jest",
   testEnvironment: "node",
-  testPathIgnorePatterns: ["lib/", "lib-es/"],
+  testPathIgnorePatterns: ["lib/", "lib-es/", ".integration.test.ts"],
   reporters: [
     [
       "jest-sonar",

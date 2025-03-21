@@ -1,7 +1,7 @@
 /** @type {import('ts-jest/dist/types').JestConfigWithTsJest} */
 module.exports = {
   preset: "ts-jest",
-  coverageDirectory: "coverage",
+  passWithNoTests: true,
   collectCoverageFrom: [
     "src/**/*.ts",
     "!src/**/*.test.ts",
@@ -10,13 +10,17 @@ module.exports = {
     "!src/__tests__/**/*.ts",
     "!src/__snapshots__/",
   ],
-  coverageReporters: ["json", ["lcov", { projectRoot: "../" }], "text"],
+  coverageReporters: [
+    "json",
+    ["lcov", { file: "multiversx-lcov.info", projectRoot: "../" }],
+    "text",
+  ],
   testEnvironment: "node",
   testPathIgnorePatterns: ["lib/", "lib-es/", ".integration.test.ts"],
   reporters: [
     [
       "jest-sonar",
-      { outputName: "elrond-sonar-executionTests-report.xml", reportedFilePath: "absolute" },
+      { outputName: "multiversx-sonar-executionTests-report.xml", reportedFilePath: "absolute" },
     ],
   ],
 };

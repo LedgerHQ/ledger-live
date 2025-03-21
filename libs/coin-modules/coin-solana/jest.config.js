@@ -3,16 +3,16 @@ const transformIncludePatterns = ["ky"];
 /** @type {import('ts-jest/dist/types').JestConfigWithTsJest} */
 module.exports = {
   preset: "ts-jest",
+  passWithNoTests: true,
   collectCoverageFrom: [
     "src/**/*.ts",
     "!src/**/*.test.ts",
     "!src/**/*.spec.ts",
     "!src/test/**/*.ts",
   ],
-  coverageReporters: ["json", ["lcov", { projectRoot: "../" }], "text"],
-  coverageDirectory: "coverage",
+  coverageReporters: ["json", ["lcov", { file: "solana-lcov.info", projectRoot: "../" }], "text"],
   testEnvironment: "node",
-  testPathIgnorePatterns: ["lib/", "lib-es/"],
+  testPathIgnorePatterns: ["lib/", "lib-es/", ".integration.test.ts"],
   transform: {
     [`node_modules/.pnpm/(${transformIncludePatterns.join("|")}).+\\.(js|jsx)?$`]: [
       "@swc/jest",

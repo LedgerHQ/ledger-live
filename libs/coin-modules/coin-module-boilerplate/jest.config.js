@@ -3,19 +3,27 @@
 module.exports = {
   preset: "ts-jest",
   testEnvironment: "node",
+  passWithNoTests: true,
   collectCoverageFrom: [
     "src/**/*.ts",
     "!src/**/*.test.ts",
     "!src/**/*.spec.ts",
     "!src/test/**/*.ts",
   ],
-  coverageReporters: ["json", ["lcov", { projectRoot: "../" }], "text"],
-  testPathIgnorePatterns: ["lib/", "lib-es/", ".*\\.integ\\.test\\.[tj]s"],
+  coverageReporters: [
+    "json",
+    ["lcov", { file: "boilerplate-lcov.info", projectRoot: "../" }],
+    "text",
+  ],
+  testPathIgnorePatterns: ["lib/", "lib-es/", ".integration.test.ts"],
   workerThreads: true,
   reporters: [
     [
       "jest-sonar",
-      { outputName: "boilerplate-sonar-executionTests-report.xml", reportedFilePath: "absolute" },
+      {
+        outputName: "boilerplate-sonar-executionTests-report.xml",
+        reportedFilePath: "absolute",
+      },
     ],
   ],
 };

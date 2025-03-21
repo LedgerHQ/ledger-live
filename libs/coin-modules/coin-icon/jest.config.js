@@ -2,7 +2,8 @@
 module.exports = {
   preset: "ts-jest",
   testEnvironment: "node",
-  testPathIgnorePatterns: ["lib/", "lib-es/"],
+  passWithNoTests: true,
+  testPathIgnorePatterns: ["lib/", "lib-es/", ".integration.test.ts"],
   modulePathIgnorePatterns: [
     "/bridge.integration.test.ts", // this file is tested at the live-common level
   ],
@@ -12,7 +13,7 @@ module.exports = {
     "!src/**/*.spec.ts",
     "!src/test/**/*.ts",
   ],
-  coverageReporters: ["json", ["lcov", { projectRoot: "../" }], "text"],
+  coverageReporters: ["json", ["lcov", { file: "icon-lcov.info", projectRoot: "../" }], "text"],
   reporters: [
     [
       "jest-sonar",

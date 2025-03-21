@@ -72,7 +72,7 @@
     "ts-jest": "^29.1.1"
   },
   "scripts": {
-    "coverage": "jest --coverage --testPathIgnorePatterns='/bridge.integration.test.ts|node_modules|lib-es|lib/' --passWithNoTests && mv coverage/coverage-final.json coverage/coverage-icon.json && mv coverage/lcov.info coverage/icon-lcov.info",
+    "coverage": "jest --coverage",
     "clean": "rimraf lib lib-es",
     "build": "tsc && tsc -m esnext --moduleResolution bundler --outDir lib-es",
     "prewatch": "pnpm build",

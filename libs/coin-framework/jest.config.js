@@ -4,6 +4,7 @@ module.exports = {
   testEnvironment: "node",
   testPathIgnorePatterns: ["lib/", "lib-es/"],
   globalSetup: "<rootDir>/jest-global-setup.js",
+  passWithNoTests: true,
   collectCoverageFrom: [
     "src/**/*.{ts,js,tsx}",
     "!src/**/*.test.{ts,tsx}",
@@ -12,5 +13,15 @@ module.exports = {
     "!src/**/__integrations__/**",
     "!src/**/__tests__/**",
   ],
-  coverageReporters: ["json", ["lcov", { projectRoot: "../" }], "json-summary"],
+  coverageReporters: [
+    "json",
+    ["lcov", { file: "framework-lcov.info", projectRoot: "../" }],
+    "text",
+  ],
+  reporters: [
+    [
+      "jest-sonar",
+      { outputName: "framework-sonar-executionTests-report.xml", reportedFilePath: "absolute" },
+    ],
+  ],
 };

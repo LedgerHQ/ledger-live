@@ -83,7 +83,7 @@
   "scripts": {
     "clean": "rimraf lib lib-es",
     "build": "tsc --outDir lib --module commonjs --moduleResolution node10 && tsc -m ES6 --outDir lib-es",
-    "coverage": "jest --coverage --testPathIgnorePatterns='/bridge.integration.test.ts|node_modules|lib-es|lib/' --passWithNoTests && mv coverage/coverage-final.json coverage/coverage-solana.json && mv coverage/lcov.info coverage/solana-lcov.info",
+    "coverage": "jest --coverage",
     "prewatch": "pnpm build",
     "watch": "tsc --watch",
     "watch:es": "tsc --watch -m ES6 --outDir lib-es",
