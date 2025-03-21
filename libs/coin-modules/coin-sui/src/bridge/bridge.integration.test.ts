@@ -43,14 +43,6 @@ const sui: CurrenciesData<Transaction> = {
                 <= 027cfea3aa1e07cc4b500c237a8bf8dcb31d5cb855f29dfdeb92f9e4df9493a6cd9000
                 => 0002000036010000000000000000000000000000000000000000000000000000000000000000052c00008010030080000000800000008000000080
                 <= 0120e95d14c7b906d66090556e0fce65ed3b71167b37e0c19136857d35b44f082ba720117527fdcf2f5f6e82fa499c0398def2643550d63f7e8311245d75f4635f04359000
-                => 000200002100c9bf8a5402439450fbf5c9a819b69c7e8c164aef2dc7a337929ecfbb7b8f00ff
-                <= 02c9bf8a5402439450fbf5c9a819b69c7e8c164aef2dc7a337929ecfbb7b8f00ff9000
-                => 0002000036010000000000000000000000000000000000000000000000000000000000000000052c00008010030080010000800000008000000080
-                <= 0120e0eee36ff838a4df06ebcfdc31fab96a134c71b29ee763e2c72aebe427338c9a20ba7080172a6d957b9ed2e3eb643529860be963cf4af896fb84f1cde00f46b5619000
-                => 0002000021003cfba193a7079a9847264c398be81d6b1ba6e259f0013684468de3420beb0bd3
-                <= 023cfba193a7079a9847264c398be81d6b1ba6e259f0013684468de3420beb0bd39000
-                => 0002000036010000000000000000000000000000000000000000000000000000000000000000052c00008010030080020000800000008000000080
-                <= 01202e4240c9b239b788dbdbaf447eb312853601df759e46356b59bb54978345cf6d20504b1ac1e9b699859c82009891e2b78a772e18d90bbedf8e4ef7e9257b907f679000
         `,
     },
   ],
@@ -80,14 +72,14 @@ const sui: CurrenciesData<Transaction> = {
             useAllAmount: false,
             family: "sui",
             mode: "send",
-            fees: "3976000",
+            fees: "0",
           }),
           expectedStatus: {
             errors: {},
             warnings: {},
-            estimatedFees: BigNumber("3976000"),
+            estimatedFees: BigNumber("0"),
             amount: BigNumber("2000000"),
-            totalSpent: BigNumber("5976000"),
+            totalSpent: BigNumber("2000000"),
           },
         },
         {
