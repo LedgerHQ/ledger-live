@@ -191,18 +191,6 @@ export const getAccountShape: GetAccountShape = async info => {
     ? newSubAccounts
     : mergeSubAccounts(initialAccount, newSubAccounts);
 
-  // let subAccountsOperations = [] as Operation[];
-  // subAccountsOperations = subAccounts
-  //   .map(sa => sa.operations.filter(op => op.type === "OUT"))
-  //   .flat()
-  //   .map(op => ({
-  //     ...op,
-  //     id: accountId,
-  //     type: "FEES",
-  //   }));
-
-  // const operations = mergeOps(mergeOps(oldOperations, newOperations), subAccountsOperations);
-
   const shape: Partial<AptosAccount> = {
     type: "Account",
     id: accountId,
