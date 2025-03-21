@@ -1,3 +1,4 @@
 {
-  "entry": ["src/Trx.ts"]
+  "entry": ["src/Trx.ts"],
+  "ignoreUnused": ["jest-sonar"]
 }
