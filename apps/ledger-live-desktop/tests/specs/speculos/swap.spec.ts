@@ -442,6 +442,26 @@ test.describe.only("Swap history", () => {
   });
 
   test(
+    `User can export all history operations`,
+    {
+      annotation: { type: "TMS", description: "B2CQA-602" },
+    },
+    async ({ app }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
+      await app.layout.goToSwap();
+      await app.swap.goToSwapHistory();
+      await app.swap.checkSwapOperation(swapHistory.swapId, swapHistory.provider, swapHistory.swap);
+      await app.swap.openSelectedOperation(swapHistory.swapId);
+      await app.operationDrawer.expectSwapDrawerInfos(
+        swapHistory.swapId,
+        swapHistory.swap,
+        swapHistory.provider,
+      );
+    },
+  );
+
+  test(
     `User should be able to see their swap history from the swap history page`,
     {
       annotation: { type: "TMS", description: "B2CQA-602" },
