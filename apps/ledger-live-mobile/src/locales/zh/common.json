@@ -1060,6 +1060,15 @@
     },
     "AppManifestNotFoundError" : {
       "title" : "无法加载 Swap Live 应用程序"
+    },
+    "InvalidMemoMina" : {
+      "title" : "备忘标签文本不可超过 32 个字符"
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "此交易将产生 {{fee}} 的账户创建费"
+    },
+    "AmountTooSmall" : {
+      "title" : "此交易的最低数额要求为 {{amount}}"
     }
   },
   "crash" : {
@@ -2593,7 +2602,8 @@
       "gasLimit" : "矿工费限值",
       "id" : "Id",
       "autoClaimedRewards" : "自动领取的奖励",
-      "stakedAmount" : "权益质押数额"
+      "stakedAmount" : "权益质押数额",
+      "accountCreationFee" : "账户创建费"
     },
     "multipleAddresses" : "为什么有多个地址？",
     "tokenName" : "代币名称",
@@ -2625,6 +2635,10 @@
         "description3" : "此集成由 {{team}} 与 Ledger 协作实施。",
         "description3Link" : "此集成由 <1><0>{{team}}</0></1> 与 Ledger 协作实施"
       }
+    },
+    "migrationBanner" : {
+      "title" : "{{from}} 正在迁移至 {{to}}。请点击此<0>链接</0>了解详情，如需帮助，请联系客服。",
+      "contactSupport" : "联系客服"
     },
     "willBedeprecatedBanner" : {
       "title" : "为了优化效率，自 {{deprecatedDate}} 起，Ledger Live 将不再支持 {{currencyName}}。但 Ledger 硬件钱包将继续支持该币种。如需这方面的帮助，请联系 Ledger 客服。",
@@ -3534,12 +3548,12 @@
         "apt_description" : "要互换 Aptos，请使用其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
         "cosmos_title" : "Ledger Nano S™ 不支持互换 Cosmos",
         "cosmos_description" : "要互换 Cosmos，请使用其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
-        "osmo_title" : "Ledger Nano S™ does not support swapping Osmosis",
-        "osmo_description" : "To swap Osmosis, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
-        "dydx_title" : "Ledger Nano S™ does not support swapping dYdX",
-        "dydx_description" : "To swap dYdX, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
-        "sui_title" : "Ledger Nano S™ does not support swapping Sui",
-        "sui_description" : "To swap Sui, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
+        "osmo_title" : "Ledger Nano S™ 不支持互换 Osmosis",
+        "osmo_description" : "要互换 Osmosis，请使用其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
+        "dydx_title" : "Ledger Nano S™ 不支持互换 dYdX",
+        "dydx_description" : "要互换 dYdX，请使用其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
+        "sui_title" : "Ledger Nano S™ 不支持互换 Sui",
+        "sui_description" : "要互换 Sui，请使用任何其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。"
       }
     },
     "lending" : {
