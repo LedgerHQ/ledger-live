@@ -30,7 +30,7 @@ export const useSupportedChainsViewModel = (): SupportedChainsViewModelResult =>
     { supportedCurrencies: [], unsupportedCurrencies: [] },
   );
 
-  const [overhiddenCurrencies, setOverhiddenCurrencies] = useState<string[]>(unsupportedCurrencies);
+  const [overriddenCurrencies, setOverriddenCurrencies] = useState<string[]>(unsupportedCurrencies);
   const currencies = supportedCurrencies.map(getCryptoCurrencyById);
   const notSupported = NOT_SUPPORTED.map(getCryptoCurrencyById);
 
@@ -39,17 +39,17 @@ export const useSupportedChainsViewModel = (): SupportedChainsViewModelResult =>
   const handleChange = useCallback(
     (currency: CryptoCurrency, included: boolean) => {
       const newTab = included
-        ? overhiddenCurrencies.filter(c => c !== currency.id)
-        : [...overhiddenCurrencies, currency.id];
-      setOverhiddenCurrencies(newTab);
+        ? overriddenCurrencies.filter(c => c !== currency.id)
+        : [...overriddenCurrencies, currency.id];
+      setOverriddenCurrencies(newTab);
       const setUniques = new Set(supportedCurrencies.concat(newTab));
       setEnvUnsafe("NFT_CURRENCIES", [...setUniques].join(","));
     },
-    [overhiddenCurrencies, supportedCurrencies],
+    [overriddenCurrencies, supportedCurrencies],
   );
 
-  const total = supportedCurrencies.length + overhiddenCurrencies.length;
-  const isIncluded = (currency: CryptoCurrency) => overhiddenCurrencies.includes(currency.id);
+  const total = supportedCurrencies.length + overriddenCurrencies.length;
+  const isIncluded = (currency: CryptoCurrency) => overriddenCurrencies.includes(currency.id);
 
   return {
     currencies,
