@@ -3339,24 +3339,15 @@ importers:
       '@ledgerhq/coin-framework':
         specifier: workspace:^
         version: link:../../coin-framework
-      '@ledgerhq/coin-tester':
-        specifier: workspace:^
-        version: link:../../coin-tester
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/cryptoassets
-      '@ledgerhq/devices':
-        specifier: workspace:*
-        version: link:../../ledgerjs/packages/devices
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
       '@ledgerhq/hw-app-sui':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/hw-app-sui
-      '@ledgerhq/hw-transport-node-hid':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/hw-transport-node-hid
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../env
@@ -3378,15 +3369,6 @@ importers:
       bignumber.js:
         specifier: ^9.1.2
         version: 9.1.2
-      expect:
-        specifier: ^27.4.6
-        version: 27.5.1
-      invariant:
-        specifier: ^2.2.2
-        version: 2.2.4
-      lodash:
-        specifier: ^4.17.21
-        version: 4.17.21
       rxjs:
         specifier: ^7.8.1
         version: 7.8.1
