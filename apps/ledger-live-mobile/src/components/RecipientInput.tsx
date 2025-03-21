@@ -16,9 +16,10 @@ const RecipientInput = ({ onPaste, placeholderTranslationKey, ...props }: Props)
     <AnimatedInput
       testID="recipient-input"
       placeholder={t(placeholderTranslationKey)}
-      renderRight={
+      renderBottomRight={
         <Button onPress={onPaste} Icon={<Paste size="S" />} isNewIcon style={{ width: "auto" }} />
       }
+      largeMode={true}
       {...props}
     />
   );
