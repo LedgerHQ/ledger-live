@@ -1,5 +1,38 @@
 # live-mobile
 
+## 3.71.0-nightly.2
+
+### Minor Changes
+
+- [#9608](https://github.com/LedgerHQ/ledger-live/pull/9608) [`a473bf9`](https://github.com/LedgerHQ/ledger-live/commit/a473bf99aaca7067672bd0be762ed9cfe60085f8) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Display Collections for Solana in Account Page under FF
+
+- [#9622](https://github.com/LedgerHQ/ledger-live/pull/9622) [`ec0c809`](https://github.com/LedgerHQ/ledger-live/commit/ec0c8092a608f8a791a7192f7fa564bf838b920d) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Hide send button in NFT gallery Account for Solana
+
+- [#9624](https://github.com/LedgerHQ/ledger-live/pull/9624) [`0c54ada`](https://github.com/LedgerHQ/ledger-live/commit/0c54adad30034ce5e8742f03e6e7d73126cc8e56) Thanks [@themooneer](https://github.com/themooneer)! - fix analytic currency name for add account v2
+
+- [#9546](https://github.com/LedgerHQ/ledger-live/pull/9546) [`395074c`](https://github.com/LedgerHQ/ledger-live/commit/395074cd6d20df0534d906b578d37a7cf0c521ff) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: largeMode animatedInput for recipient address
+
+### Patch Changes
+
+- Updated dependencies [[`156c747`](https://github.com/LedgerHQ/ledger-live/commit/156c74780e237d31ec7b8766d1ef28e6d890dad1), [`395074c`](https://github.com/LedgerHQ/ledger-live/commit/395074cd6d20df0534d906b578d37a7cf0c521ff), [`32f2a0c`](https://github.com/LedgerHQ/ledger-live/commit/32f2a0cf073e5c1a5d65cbe44e69660f8f510dd7), [`40e98c3`](https://github.com/LedgerHQ/ledger-live/commit/40e98c392bd9192570e46c2d62cf0779bdfe01ec)]:
+  - @ledgerhq/live-common@34.27.0-nightly.2
+  - @ledgerhq/native-ui@0.31.0-nightly.1
+  - @ledgerhq/live-env@2.7.0-nightly.0
+  - @ledgerhq/coin-framework@2.4.0-nightly.2
+  - @ledgerhq/live-nft-react@0.8.0-nightly.2
+  - @ledgerhq/coin-cosmos@0.9.1-nightly.2
+  - @ledgerhq/coin-evm@2.14.1-nightly.2
+  - @ledgerhq/coin-filecoin@1.7.1-nightly.2
+  - @ledgerhq/coin-multiversx@0.2.2-nightly.2
+  - @ledgerhq/coin-stacks@0.6.4-nightly.2
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.3.3-nightly.0
+  - @ledgerhq/ledger-key-ring-protocol@0.5.5-nightly.0
+  - @ledgerhq/live-countervalues@0.4.5-nightly.2
+  - @ledgerhq/live-network@2.0.6-nightly.0
+  - @ledgerhq/live-nft@0.6.2-nightly.2
+  - @ledgerhq/live-wallet@0.10.1-nightly.2
+  - @ledgerhq/live-countervalues-react@0.2.27-nightly.2
+
 ## 3.71.0-nightly.1
 
 ### Minor Changes

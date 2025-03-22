@@ -1,5 +1,18 @@
 # @ledgerhq/live-nft-react
 
+## 0.8.0-nightly.2
+
+### Minor Changes
+
+- [#9604](https://github.com/LedgerHQ/ledger-live/pull/9604) [`40e98c3`](https://github.com/LedgerHQ/ledger-live/commit/40e98c392bd9192570e46c2d62cf0779bdfe01ec) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Introduce new NFTs tools in Developer Settings
+
+### Patch Changes
+
+- Updated dependencies [[`40e98c3`](https://github.com/LedgerHQ/ledger-live/commit/40e98c392bd9192570e46c2d62cf0779bdfe01ec)]:
+  - @ledgerhq/coin-framework@2.4.0-nightly.2
+  - @ledgerhq/cryptoassets@13.13.1-nightly.0
+  - @ledgerhq/live-nft@0.6.2-nightly.2
+
 ## 0.7.2-nightly.1
 
 ### Patch Changes

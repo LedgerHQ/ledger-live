@@ -1,5 +1,19 @@
 # @ledgerhq/coin-stellar
 
+## 1.2.0-nightly.2
+
+### Minor Changes
+
+- [#9584](https://github.com/LedgerHQ/ledger-live/pull/9584) [`32f2a0c`](https://github.com/LedgerHQ/ledger-live/commit/32f2a0cf073e5c1a5d65cbe44e69660f8f510dd7) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - perf: set a limit on the number of operations retrieved during the initial synchronization of the Stellar account to improve sync performance.
+
+### Patch Changes
+
+- Updated dependencies [[`32f2a0c`](https://github.com/LedgerHQ/ledger-live/commit/32f2a0cf073e5c1a5d65cbe44e69660f8f510dd7), [`40e98c3`](https://github.com/LedgerHQ/ledger-live/commit/40e98c392bd9192570e46c2d62cf0779bdfe01ec)]:
+  - @ledgerhq/live-env@2.7.0-nightly.0
+  - @ledgerhq/coin-framework@2.4.0-nightly.2
+  - @ledgerhq/cryptoassets@13.13.1-nightly.0
+  - @ledgerhq/live-network@2.0.6-nightly.0
+
 ## 1.2.0-nightly.1
 
 ### Patch Changes

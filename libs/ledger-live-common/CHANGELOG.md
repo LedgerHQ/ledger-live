@@ -1,5 +1,54 @@
 ## 34.25.0
 
+## 34.27.0-nightly.2
+
+### Minor Changes
+
+- [#9583](https://github.com/LedgerHQ/ledger-live/pull/9583) [`156c747`](https://github.com/LedgerHQ/ledger-live/commit/156c74780e237d31ec7b8766d1ef28e6d890dad1) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - bugfix: Standardize Timeframe Display on Portfolio & Market Page Charts
+
+- [#9604](https://github.com/LedgerHQ/ledger-live/pull/9604) [`40e98c3`](https://github.com/LedgerHQ/ledger-live/commit/40e98c392bd9192570e46c2d62cf0779bdfe01ec) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Introduce new NFTs tools in Developer Settings
+
+### Patch Changes
+
+- Updated dependencies [[`32f2a0c`](https://github.com/LedgerHQ/ledger-live/commit/32f2a0cf073e5c1a5d65cbe44e69660f8f510dd7), [`40e98c3`](https://github.com/LedgerHQ/ledger-live/commit/40e98c392bd9192570e46c2d62cf0779bdfe01ec)]:
+  - @ledgerhq/coin-stellar@1.2.0-nightly.2
+  - @ledgerhq/live-env@2.7.0-nightly.0
+  - @ledgerhq/coin-framework@2.4.0-nightly.2
+  - @ledgerhq/coin-algorand@0.7.9-nightly.2
+  - @ledgerhq/coin-aptos@1.7.2-nightly.2
+  - @ledgerhq/coin-bitcoin@0.12.1-nightly.2
+  - @ledgerhq/coin-cardano@0.6.1-nightly.2
+  - @ledgerhq/coin-casper@1.5.1-nightly.2
+  - @ledgerhq/coin-cosmos@0.9.1-nightly.2
+  - @ledgerhq/coin-evm@2.14.1-nightly.2
+  - @ledgerhq/coin-filecoin@1.7.1-nightly.2
+  - @ledgerhq/coin-hedera@1.4.1-nightly.2
+  - @ledgerhq/coin-icon@0.8.1-nightly.2
+  - @ledgerhq/coin-internet_computer@1.5.9-nightly.2
+  - @ledgerhq/coin-multiversx@0.2.2-nightly.2
+  - @ledgerhq/coin-polkadot@2.1.0-nightly.2
+  - @ledgerhq/coin-solana@0.15.2-nightly.2
+  - @ledgerhq/coin-stacks@0.6.4-nightly.2
+  - @ledgerhq/coin-ton@0.6.1-nightly.2
+  - @ledgerhq/coin-vechain@2.5.1-nightly.2
+  - @ledgerhq/ledger-cal-service@0.4.0-nightly.1
+  - @ledgerhq/ledger-trust-service@0.3.1-nightly.0
+  - @ledgerhq/cryptoassets@13.13.1-nightly.0
+  - @ledgerhq/live-countervalues@0.4.5-nightly.2
+  - @ledgerhq/live-network@2.0.6-nightly.0
+  - @ledgerhq/live-nft@0.6.2-nightly.2
+  - @ledgerhq/live-wallet@0.10.1-nightly.2
+  - @ledgerhq/speculos-transport@0.1.11-nightly.0
+  - @ledgerhq/coin-near@0.9.2-nightly.2
+  - @ledgerhq/coin-tezos@1.5.0-nightly.2
+  - @ledgerhq/coin-tron@0.6.0-nightly.2
+  - @ledgerhq/coin-xrp@2.2.0-nightly.2
+  - @ledgerhq/live-countervalues-react@0.2.27-nightly.2
+  - @ledgerhq/live-signer-evm@0.2.1-nightly.2
+  - @ledgerhq/hw-app-eth@6.43.1-nightly.1
+  - @ledgerhq/hw-app-vet@0.3.1-nightly.0
+  - @ledgerhq/device-core@0.4.18-nightly.1
+
 ## 34.27.0-nightly.1
 
 ### Minor Changes

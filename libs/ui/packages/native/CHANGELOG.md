@@ -1,5 +1,11 @@
 # @ledgerhq/native-ui
 
+## 0.31.0-nightly.1
+
+### Minor Changes
+
+- [#9546](https://github.com/LedgerHQ/ledger-live/pull/9546) [`395074c`](https://github.com/LedgerHQ/ledger-live/commit/395074cd6d20df0534d906b578d37a7cf0c521ff) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: largeMode animatedInput for recipient address
+
 ## 0.30.1-nightly.0
 
 ### Patch Changes

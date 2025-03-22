@@ -1,5 +1,40 @@
 # ledger-live-desktop
 
+## 2.105.0-nightly.2
+
+### Minor Changes
+
+- [#9583](https://github.com/LedgerHQ/ledger-live/pull/9583) [`156c747`](https://github.com/LedgerHQ/ledger-live/commit/156c74780e237d31ec7b8766d1ef28e6d890dad1) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - bugfix: Standardize Timeframe Display on Portfolio & Market Page Charts
+
+- [#9616](https://github.com/LedgerHQ/ledger-live/pull/9616) [`6021671`](https://github.com/LedgerHQ/ledger-live/commit/6021671661c3abb20b5c1fe5227f27ad4bdbfe5b) Thanks [@LucasWerey](https://github.com/LucasWerey)! - rework nfts gallery : close side drawer when starting the send flow
+
+- [#9621](https://github.com/LedgerHQ/ledger-live/pull/9621) [`7135de5`](https://github.com/LedgerHQ/ledger-live/commit/7135de550b519b221ee749bf332d7bc37c98cfee) Thanks [@adammino-ledger](https://github.com/adammino-ledger)! - Stake banner removed from Cosmos and Evm families
+
+- [#9604](https://github.com/LedgerHQ/ledger-live/pull/9604) [`40e98c3`](https://github.com/LedgerHQ/ledger-live/commit/40e98c392bd9192570e46c2d62cf0779bdfe01ec) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Introduce new NFTs tools in Developer Settings
+
+- [#9614](https://github.com/LedgerHQ/ledger-live/pull/9614) [`aae12a8`](https://github.com/LedgerHQ/ledger-live/commit/aae12a8ff699c0fe96fdcb72fc06df34b282b43e) Thanks [@Canestin](https://github.com/Canestin)! - Remove ticker from ADA validator names
+
+### Patch Changes
+
+- Updated dependencies [[`156c747`](https://github.com/LedgerHQ/ledger-live/commit/156c74780e237d31ec7b8766d1ef28e6d890dad1), [`32f2a0c`](https://github.com/LedgerHQ/ledger-live/commit/32f2a0cf073e5c1a5d65cbe44e69660f8f510dd7), [`40e98c3`](https://github.com/LedgerHQ/ledger-live/commit/40e98c392bd9192570e46c2d62cf0779bdfe01ec)]:
+  - @ledgerhq/live-common@34.27.0-nightly.2
+  - @ledgerhq/live-env@2.7.0-nightly.0
+  - @ledgerhq/coin-framework@2.4.0-nightly.2
+  - @ledgerhq/live-nft-react@0.8.0-nightly.2
+  - @ledgerhq/coin-aptos@1.7.2-nightly.2
+  - @ledgerhq/coin-bitcoin@0.12.1-nightly.2
+  - @ledgerhq/coin-cosmos@0.9.1-nightly.2
+  - @ledgerhq/coin-evm@2.14.1-nightly.2
+  - @ledgerhq/coin-filecoin@1.7.1-nightly.2
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.3.3-nightly.0
+  - @ledgerhq/ledger-key-ring-protocol@0.5.5-nightly.0
+  - @ledgerhq/cryptoassets@13.13.1-nightly.0
+  - @ledgerhq/live-countervalues@0.4.5-nightly.2
+  - @ledgerhq/live-network@2.0.6-nightly.0
+  - @ledgerhq/live-nft@0.6.2-nightly.2
+  - @ledgerhq/live-wallet@0.10.1-nightly.2
+  - @ledgerhq/live-countervalues-react@0.2.27-nightly.2
+
 ## 2.105.0-nightly.1
 
 ### Minor Changes
