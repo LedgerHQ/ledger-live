@@ -4,7 +4,7 @@
 import React from "react";
 import { render, screen } from "tests/testUtils";
 import { NftCollectionTest } from "./shared";
-import { account as ethAccount, solAccount } from "./mockedAccount";
+import { account as ethAccount, solAccount } from "./mocks/mockedAccount";
 import { mockNftCollectionStatusByNetwork } from "~/renderer/hooks/nfts/__tests__/shared";
 
 jest.mock(

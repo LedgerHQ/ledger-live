@@ -131,7 +131,7 @@ const DetailDrawerComponent: React.FC<DetailDrawerProps> & {
         <ViewerDrawerContent>
           <StickyWrapper top={0} pb={3} pt="24px">
             <CollectionName text={collectionName} isLoading={areFieldsLoading} />
-            <Title text={collectibleName} isLoading={areFieldsLoading} />
+            <Title id="nft-name-sendDrawer" text={collectibleName} isLoading={areFieldsLoading} />
           </StickyWrapper>
           {subtitle}
           <MediaContainer
@@ -147,7 +147,7 @@ const DetailDrawerComponent: React.FC<DetailDrawerProps> & {
             sectionTitle={tagTitle()}
             status={areFieldsLoading ? FieldStatus.Loading : FieldStatus.Loaded}
           />
-          {details.map(({ key, value, title, isCopyable, isHash }, index) => (
+          {details.map(({ key, value, title, isCopyable, isHash, id }, index) => (
             <DetailField
               key={key + value}
               label={title}
@@ -156,6 +156,7 @@ const DetailDrawerComponent: React.FC<DetailDrawerProps> & {
               hasSeparatorBottom={index !== details.length - 1}
               isCopyable={isCopyable}
               isHash={isHash}
+              id={id}
             />
           ))}
         </ViewerDrawerContent>

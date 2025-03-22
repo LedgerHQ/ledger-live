@@ -31,7 +31,14 @@ const Actions: React.FC<ActionsProps> = ({ protoNft, account, metadata, onNFTSen
 
   return (
     <NFTActions>
-      <Button style={buttonStyle} mr={4} primary onClick={onNFTSend} center>
+      <Button
+        data-testid="nft-send-button-sendDrawer"
+        style={buttonStyle}
+        mr={4}
+        primary
+        onClick={onNFTSend}
+        center
+      >
         <IconSend size={12} />
         <Text ml={1} fontSize={3} lineHeight="18px">
           {t("NFT.viewer.actions.send")}

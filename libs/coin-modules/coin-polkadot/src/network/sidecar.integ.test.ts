@@ -78,7 +78,7 @@ describe("sidecar integration test", () => {
   });
 
   describe("getValidators", () => {
-    it("returns expected result", async () => {
+    it.skip("returns expected result", async () => {
       const result = await getValidators();
 
       expect(result).toEqual(

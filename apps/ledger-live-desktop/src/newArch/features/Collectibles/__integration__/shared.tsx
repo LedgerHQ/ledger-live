@@ -5,11 +5,11 @@ import NftBreadCrumb from "LLD/components/BreadCrumb";
 import NFTGallery from "../Nfts/screens/Gallery";
 import NftCollection from "../Nfts/screens/Collection";
 import NftCollections from "../Nfts/Collections";
-import { account as ethAccount } from "./mockedAccount";
+import { account as ethAccount } from "./mocks/mockedAccount";
 import OrdinalsAccount from "LLD/features/Collectibles/Ordinals/screens/Account";
-import { MockedbtcAccount } from "./mockedBTCAccount";
-import { MockedTransaction } from "./mockedTx";
-import { getMockedTxStatus } from "./mockedTxStatus";
+import { MockedbtcAccount } from "./mocks/mockedBTCAccount";
+import { MockedTransaction } from "./mocks/mockedTx";
+import { getMockedTxStatus } from "./mocks/mockedTxStatus";
 import { Account } from "@ledgerhq/types-live";
 
 const NftCollectionNavigation = ({ account }: { account?: Account }) => (

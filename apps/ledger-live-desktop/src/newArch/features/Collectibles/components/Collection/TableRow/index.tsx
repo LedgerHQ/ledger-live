@@ -52,6 +52,7 @@ const TableRow: React.FC<Props> = props => {
       py={3}
       display={"flex"}
       onClick={props.onClick}
+      data-testid={props.dataTestId}
     >
       {mediaBox()}
       <Box ml={3} flex={1}>

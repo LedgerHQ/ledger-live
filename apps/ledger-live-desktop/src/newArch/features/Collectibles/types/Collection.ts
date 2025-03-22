@@ -34,6 +34,7 @@ export type RareSatsRowProps = {
 
 export type RowProps = {
   isLoading: boolean;
+  dataTestId?: string;
 } & (NftRowProps | OrdinalsRowProps | RareSatsRowProps);
 
 export type TableHeaderActionsProps = {

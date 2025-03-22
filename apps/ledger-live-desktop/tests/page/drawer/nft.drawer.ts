@@ -9,8 +9,8 @@ import invariant from "invariant";
 export class NFTDrawer extends Drawer {
   private nftName = this.page.getByTestId("nft-name-sendDrawer");
   private sendButton = this.page.getByTestId("nft-send-button-sendDrawer");
-  private nftFloorPrice = this.page.getByTestId("nft-floor-price");
-  private nftOptionsButton = this.page.locator("#accounts-options-button");
+  private nftFloorPrice = this.page.getByTestId("nft-floorPrice");
+  private nftOptionsButton = this.page.getByTestId("external-viewer-button");
 
   @step("Verify nft name is visible")
   async expectNftNameIsVisible(nft: string) {

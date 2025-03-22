@@ -90,7 +90,7 @@ async function formatOperation(
     : null;
 
   const operation: StellarOperation = {
-    id: encodeOperationId(accountId, rawOperation.transaction_hash, type),
+    id: encodeOperationId(accountId, rawOperation.id, type), // rawOperation.id is unique, but not the hash
     accountId,
     fee: new BigNumber(transaction.fee_charged),
     value: rawOperation?.asset_code ? new BigNumber(transaction.fee_charged) : value,

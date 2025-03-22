@@ -30,6 +30,7 @@ export type PanAndZoomBodyProps = PanAndZoomProps;
 export type HeaderTextProps = {
   isLoading: boolean;
   text: string | null;
+  id?: string;
 };
 
 type BaseDetailFieldProps = {
@@ -37,6 +38,7 @@ type BaseDetailFieldProps = {
   hasSeparatorTop?: boolean;
   hasSeparatorBottom?: boolean;
   isHorizontal?: boolean;
+  id?: string;
 };
 
 type DetailFieldValueProps = {
@@ -73,6 +75,7 @@ type Detail = {
   value: string;
   isCopyable?: boolean;
   isHash?: boolean;
+  id?: string;
 };
 export type DetailsArray = Detail[];
 
