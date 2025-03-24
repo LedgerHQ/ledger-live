@@ -47,7 +47,6 @@ describe("broadcast", () => {
     });
 
     // THEN
-    expect(result).not.toEqual(operation);
     expect(result.hash).not.toEqual(operation.hash);
   });
 });
