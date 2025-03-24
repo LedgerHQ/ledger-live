@@ -652,7 +652,7 @@ export class Account {
     Currency.SOL_GIGA,
     "Solana 3",
     "H96UPk6G9ktsVFn1bY9DXZjWFjEoayUddfuXu68S8BES",
-    AccountType.SPL,
+    TokenType.SPL,
     2,
     undefined,
     undefined,

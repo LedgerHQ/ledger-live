@@ -1,5 +1,4 @@
 import { randomUUID } from "crypto";
-import { e2eBridgeServer } from "../bridge/server";
 import { first, filter, map } from "rxjs/operators";
 import { startDummyServer, stopDummyServer as stopDummyServer } from "@ledgerhq/test-utils";
 import { firstValueFrom } from "rxjs";
@@ -44,7 +43,7 @@ export async function send(params: Record<string, unknown>) {
     }`);
 
   const response = firstValueFrom(
-    e2eBridgeServer.pipe(
+    webSocket.e2eBridgeServer.pipe(
       filter(
         (msg): msg is { type: "walletAPIResponse"; id: string; payload: Record<string, unknown> } =>
           msg.type === "walletAPIResponse",

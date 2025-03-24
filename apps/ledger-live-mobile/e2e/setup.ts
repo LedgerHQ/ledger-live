@@ -1,10 +1,11 @@
 import { device } from "detox";
 import { closeProxy } from "./bridge/proxy";
 import { getLogs, close as closeBridge } from "./bridge/server";
-import { launchApp } from "./helpers/commonHelpers";
+import { launchApp, setupEnvironment } from "./helpers/commonHelpers";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 
 const broadcastOriginalValue = getEnv("DISABLE_TRANSACTION_BROADCAST");
+setupEnvironment();
 
 beforeAll(
   async () => {

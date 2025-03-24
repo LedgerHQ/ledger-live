@@ -37,25 +37,13 @@ import { lastValueFrom, Observable } from "rxjs";
 import path from "path";
 import fs from "fs";
 import { SettingsSetOverriddenFeatureFlagsPlayload } from "~/actions/types";
-import { getEnv, setEnv } from "@ledgerhq/live-env";
+import { getEnv } from "@ledgerhq/live-env";
 import { log } from "detox";
 import { AppInfosType } from "@ledgerhq/live-common/e2e/enum/AppInfos";
+import { initTestAccounts } from "../models/currencies";
+import { setupEnvironment } from "../helpers/commonHelpers";
 
-setEnv("DISABLE_APP_VERSION_REQUIREMENTS", true);
-
-if (process.env.MOCK == "0") {
-  setEnv("MOCK", "");
-  process.env.MOCK = "";
-} else {
-  setEnv("MOCK", "1");
-  process.env.MOCK = "1";
-}
-
-if (process.env.DISABLE_TRANSACTION_BROADCAST == "0") {
-  setEnv("DISABLE_TRANSACTION_BROADCAST", false);
-} else if (getEnv("MOCK") != "1") {
-  setEnv("DISABLE_TRANSACTION_BROADCAST", true);
-}
+setupEnvironment();
 
 type CliCommand = (userdataPath?: string) => Observable<unknown> | Promise<unknown> | string;
 
@@ -64,7 +52,7 @@ type ApplicationOptions = {
   cliCommands?: CliCommand[];
   userdata?: string;
   knownDevices?: DeviceLike[];
-  testAccounts?: Account[];
+  testedCurrencies?: string[];
   featureFlags?: SettingsSetOverriddenFeatureFlagsPlayload;
 };
 
@@ -87,6 +75,7 @@ async function executeCliCommand(cmd: CliCommand, userdataPath?: string) {
 }
 
 export class Application {
+  public testAccounts: Account[] = [];
   private assetAccountsPageInstance = lazyInit(AssetAccountsPage);
   private accountPageInstance = lazyInit(AccountPage);
   private accountsPageInstance = lazyInit(AccountsPage);
@@ -124,12 +113,11 @@ export class Application {
     cliCommands,
     userdata,
     knownDevices,
-    testAccounts,
+    testedCurrencies,
     featureFlags,
   }: ApplicationOptions) {
     const userdataSpeculos = `temp-userdata-${Date.now()}`;
     const userdataPath = getUserdataPath(userdataSpeculos);
-    console.warn("userdataPath", userdataPath);
 
     if (!getEnv("MOCK"))
       fs.copyFileSync(getUserdataPath(userdata || "skip-onboarding"), userdataPath);
@@ -146,7 +134,10 @@ export class Application {
 
     featureFlags && (await setFeatureFlags(featureFlags));
     knownDevices && (await loadBleState({ knownDevices }));
-    testAccounts && (await loadAccounts(testAccounts));
+    if (testedCurrencies) {
+      this.testAccounts = initTestAccounts(testedCurrencies);
+      await loadAccounts(this.testAccounts);
+    }
   }
 
   public get assetAccountsPage() {

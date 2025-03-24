@@ -1,13 +1,7 @@
 import DeviceAction from "../../models/DeviceAction";
 import { knownDevices } from "../../models/devices";
-import { Account } from "@ledgerhq/types-live";
 import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
-import {
-  formattedAmount,
-  getAccountName,
-  getAccountUnit,
-  initTestAccounts,
-} from "../../models/currencies";
+import { formattedAmount, getAccountName, getAccountUnit } from "../../models/currencies";
 
 $TmsLink("B2CQA-1823");
 describe("Send flow", () => {
@@ -27,23 +21,25 @@ describe("Send flow", () => {
     "polkadot",
     "cosmos",
   ];
-  const testAccounts = initTestAccounts(testedCurrencies);
   const knownDevice = knownDevices.nanoX;
 
   beforeAll(async () => {
     await app.init({
       userdata: "skip-onboarding",
       knownDevices: [knownDevice],
-      testAccounts: testAccounts,
+      testedCurrencies,
     });
     deviceAction = new DeviceAction(knownDevice);
 
     await app.portfolio.waitForPortfolioPageToLoad();
   });
 
-  it.each(testAccounts.map(account => [account.currency.name, account]))(
+  it.each(testedCurrencies)(
     "%s: open send flow, sends half balance and displays the new operation",
-    async (_currency, account: Account) => {
+    async currencyId => {
+      const account = app.testAccounts.find(a => a.currency.id === currencyId);
+      if (!account) throw new Error(`Account not found for currency: ${currencyId}`);
+
       const halfBalance = account.balance.div(2);
       const accountName = getAccountName(account);
       const unit = getAccountUnit(account);
