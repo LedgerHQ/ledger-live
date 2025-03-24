@@ -1,5 +1,5 @@
 import { findFreePort, close as closeBridge, init as initBridge } from "../bridge/server";
-import { getEnv } from "@ledgerhq/live-env";
+import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { exec } from "child_process";
 import { device, log } from "detox";
 import { allure } from "jest-allure2-reporter/api";
@@ -60,24 +60,34 @@ export async function launchApp() {
   return port;
 }
 
+export function setupEnvironment() {
+  setEnv("DISABLE_APP_VERSION_REQUIREMENTS", true);
+
+  if (process.env.MOCK == "0") {
+    setEnv("MOCK", "");
+    process.env.MOCK = "";
+  } else if (process.env.MOCK == "1") {
+    setEnv("MOCK", "1");
+  }
+
+  if (process.env.DISABLE_TRANSACTION_BROADCAST == "0") {
+    setEnv("DISABLE_TRANSACTION_BROADCAST", false);
+  } else if (getEnv("MOCK") != "1") {
+    setEnv("DISABLE_TRANSACTION_BROADCAST", true);
+  }
+}
+
 export const logMemoryUsage = async () => {
   const pid = process.pid;
+  const isLinux = process.platform !== "darwin";
   exec(
-    `top -pid ${pid} -l 1 | grep -E '^[ ]*${pid}' | awk '{for(i=1;i<=NF;i++) if ($i ~ /[MG]/) {print $i; exit}}'`,
+    `top ${isLinux ? "-b -n 1 -p" : "-l 1 -pid"} ${pid} | grep "${pid}" | awk '{print ${isLinux ? "$6" : "$8"}}'`,
     async (error, stdout, stderr) => {
       if (error || stderr) {
-        console.error(`Error getting memory usage:\n ${error}\n ${stderr}`);
+        console.error(`Error getting memory usage:\n Error: ${error}\n Stderr: ${stderr}`);
         return;
       }
-      const memoryUsed = stdout.trim();
-      let memoryUsedGB = 0;
-
-      if (memoryUsed.includes("M")) {
-        memoryUsedGB = parseFloat(memoryUsed.replace("M", "")) / 1024;
-      } else if (memoryUsed.includes("G")) {
-        memoryUsedGB = parseFloat(memoryUsed.replace("G", ""));
-      }
-      const logMessage = `📦 Detox Memory Usage: ${memoryUsedGB.toFixed(2)} GB`;
+      const logMessage = `📦 Detox Memory Usage: ${stdout.trim()}`;
       await allure.attachment("Memory Usage Details", logMessage, "text/plain");
       log.warn(logMessage);
     },

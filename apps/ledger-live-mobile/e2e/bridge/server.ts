@@ -5,7 +5,6 @@ import net from "net";
 import merge from "lodash/merge";
 
 import { NavigatorName } from "../../src/const";
-import { Subject } from "rxjs";
 import { BleState, DeviceLike } from "../../src/reducers/types";
 import { Account, AccountRaw } from "@ledgerhq/types-live";
 import { DeviceUSB, nanoSP_USB, nanoS_USB, nanoX_USB } from "../models/devices";
@@ -14,8 +13,6 @@ import { getDeviceModel } from "@ledgerhq/devices";
 import { SettingsSetOverriddenFeatureFlagsPlayload } from "~/actions/types";
 import { log as detoxLog } from "detox";
 
-export const e2eBridgeServer = new Subject<ServerData>();
-let lastMessages: { [id: string]: MessageData } = {}; // Store the last messages not sent
 let clientResponse: (data: string) => void;
 const RESPONSE_TIMEOUT = 10000;
 
@@ -52,6 +49,7 @@ function uniqueId(): string {
 
 export function init(port = 8099, onConnection?: () => void) {
   webSocket.wss = new Server({ port });
+  webSocket.messages = {};
   log(`Start listening on localhost:${port}`);
 
   webSocket.wss.on("connection", ws => {
@@ -64,9 +62,9 @@ export function init(port = 8099, onConnection?: () => void) {
       log("Client disconnected");
       webSocket.ws = undefined;
     });
-    if (Object.keys(lastMessages).length !== 0) {
+    if (Object.keys(webSocket.messages).length !== 0) {
       log(`Sending unsent messages`);
-      Object.values(lastMessages).forEach(message => {
+      Object.values(webSocket.messages).forEach(message => {
         postMessage(message);
       });
     }
@@ -90,7 +88,7 @@ export function close() {
       webSocket.wss = undefined;
     });
   }
-  lastMessages = {};
+  webSocket.messages = {};
 }
 
 export async function loadConfig(fileName: string, agreed: true = true): Promise<void> {
@@ -242,10 +240,10 @@ function onMessage(messageStr: string) {
   switch (msg.type) {
     case "ACK":
       log(`${msg.id}`);
-      delete lastMessages[msg.id];
+      delete webSocket.messages[msg.id];
       break;
     case "walletAPIResponse":
-      e2eBridgeServer.next(msg);
+      webSocket.e2eBridgeServer.next(msg);
       break;
     case "appLogs": {
       clientResponse(msg.payload);
@@ -273,7 +271,7 @@ async function acceptTerms() {
 async function postMessage(message: MessageData) {
   log(`Message sending ${message.type}: ${message.id}`);
   try {
-    lastMessages[message.id] = message;
+    webSocket.messages[message.id] = message;
     if (webSocket.ws) {
       webSocket.ws.send(JSON.stringify(message));
     } else {

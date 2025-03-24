@@ -10,17 +10,6 @@ import { setEnv } from "@ledgerhq/live-env";
 import { startProxy, closeProxy } from "../bridge/proxy";
 import { device } from "detox";
 
-const BASE_DEEPLINK = "ledgerlive://";
-
-export const itifAndroid = (...args: Parameters<typeof test>) =>
-  isAndroid() ? test(...args) : test.skip("[Android only] " + args[0], args[1], args[2]);
-export const describeifAndroid = (...args: Parameters<typeof describe>) =>
-  isAndroid() ? describe(...args) : describe.skip("[Android only] " + args[0], args[1]);
-export const currencyParam = "?currency=";
-export const recipientParam = "&recipient=";
-export const amountParam = "&amount=";
-export const accountIdParam = "?accountId=";
-
 const BASE_PORT = 30000;
 const MAX_PORT = 65535;
 let portCounter = BASE_PORT; // Counter for generating unique ports
@@ -36,15 +25,6 @@ export async function delay(ms: number) {
       resolve("delay complete");
     }, ms);
   });
-}
-
-/** @param path the part after "ledgerlive://", e.g. "portfolio", or "discover?param=123"  */
-export async function openDeeplink(path?: string) {
-  await device.openURL({ url: BASE_DEEPLINK + path });
-}
-
-export function isAndroid() {
-  return device.getPlatform() === "android";
 }
 
 export async function launchSpeculos(appName: string) {
@@ -91,8 +71,7 @@ export async function deleteSpeculos(apiPort?: number) {
     console.warn(`Speculos successfully stopped on port ${apiPort}`);
   } else console.warn(`Speculos not found on port ${apiPort}`);
   setEnv("SPECULOS_API_PORT", 0);
-  const proxyPrort = closeProxy(apiPort);
-  return proxyPrort;
+  return closeProxy(apiPort);
 }
 
 export async function takeSpeculosScreenshot() {
