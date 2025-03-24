@@ -11,11 +11,12 @@ import { TransportBleDevice } from "@ledgerhq/live-common/ble/types";
 import logger from "../../logger";
 import { BLE_SCANNING_NOTHING_TIMEOUT } from "~/utils/constants";
 import { bleDevicesSelector } from "~/reducers/ble";
-import TransportBLE from "../../react-native-hw-transport-ble";
+import getBLETransport from "../../react-native-hw-transport-ble";
 import { TrackScreen } from "~/analytics";
 import DeviceItem from "~/components/SelectDevice/DeviceItem";
 import ScanningHeader from "./ScanningHeader";
 import Config from "react-native-config";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 type Props = {
   onSelect: (device: TransportBleDevice, deviceMeta?: DeviceMeta) => Promise<void>;
@@ -29,6 +30,8 @@ export default function Scanning({ onTimeout, onError, onSelect, deviceModelIds 
   const { t } = useTranslation();
   const knownDevices = useSelector(bleDevicesSelector);
   const [devices, setDevices] = useState<TransportBleDevice[]>([]);
+
+  const isLDMKEnabled = Boolean(useFeature("ldmkTransport")?.enabled);
 
   const filteredDevices = useMemo(() => {
     if (!deviceModelIds) return devices;
@@ -70,7 +73,7 @@ export default function Scanning({ onTimeout, onError, onSelect, deviceModelIds 
       onTimeout();
     }, BLE_SCANNING_NOTHING_TIMEOUT);
 
-    const sub = Observable.create(TransportBLE.listen).subscribe({
+    const sub = Observable.create(getBLETransport({ isLDMKEnabled }).listen).subscribe({
       next: (e: DescriptorEvent<TransportBleDevice>) => {
         if (e.type === "add") {
           clearTimeout(timeout);
@@ -91,7 +94,7 @@ export default function Scanning({ onTimeout, onError, onSelect, deviceModelIds 
       sub.unsubscribe();
       clearTimeout(timeout);
     };
-  }, [onTimeout, onError]);
+  }, [onTimeout, onError, isLDMKEnabled]);
 
   return (
     <>

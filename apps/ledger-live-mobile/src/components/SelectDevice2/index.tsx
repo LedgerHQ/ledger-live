@@ -1,33 +1,35 @@
-import React, { useMemo, useCallback, useEffect, useState } from "react";
-import { Platform } from "react-native";
-import { Trans, useTranslation } from "react-i18next";
-import { useDispatch, useSelector } from "react-redux";
-import { discoverDevices } from "@ledgerhq/live-common/hw/index";
-import { CompositeScreenProps, useNavigation, useIsFocused } from "@react-navigation/native";
-import { Text, Flex, IconsLegacy, Box, ScrollContainer } from "@ledgerhq/native-ui";
+import { useBleDevicesScanning as useLegacyBleDevicesScanning } from "@ledgerhq/live-common/ble/hooks/useBleDevicesScanning";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { useBleDevicesScanning } from "@ledgerhq/live-common/ble/hooks/useBleDevicesScanning";
+import { discoverDevices } from "@ledgerhq/live-common/hw/index";
 import { usePostOnboardingEntryPointVisibleOnWallet } from "@ledgerhq/live-common/postOnboarding/hooks/usePostOnboardingEntryPointVisibleOnWallet";
+import { useBleDevicesScanning, useDeviceManagementKit } from "@ledgerhq/live-dmk-mobile";
+import { Box, Flex, IconsLegacy, ScrollContainer, Text } from "@ledgerhq/native-ui";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import SafeAreaView from "../SafeAreaView";
-import TransportBLE from "../../react-native-hw-transport-ble";
-import { TrackScreen, track } from "~/analytics";
-import { NavigatorName, ScreenName } from "~/const";
-import { bleDevicesSelector } from "~/reducers/ble";
-import Touchable from "../Touchable";
-import { saveBleDeviceName } from "~/actions/ble";
+import { CompositeScreenProps, useIsFocused, useNavigation } from "@react-navigation/native";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { Trans, useTranslation } from "react-i18next";
+import { Platform } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
 import { setHasConnectedDevice, updateMainNavigatorVisibility } from "~/actions/appstate";
+import { saveBleDeviceName } from "~/actions/ble";
 import { setLastConnectedDevice, setReadOnlyMode } from "~/actions/settings";
-import { BaseComposite, StackNavigatorProps } from "../RootNavigator/types/helpers";
-import { MyLedgerNavigatorStackParamList } from "../RootNavigator/types/MyLedgerNavigator";
-import { MainNavigatorParamList } from "../RootNavigator/types/MainNavigator";
-import PostOnboardingEntryPointCard from "../PostOnboarding/PostOnboardingEntryPointCard";
-import BleDevicePairingFlow, { SetHeaderOptionsRequest } from "../BleDevicePairingFlow";
-import BuyDeviceCTA from "../BuyDeviceCTA";
+import { TrackScreen, track } from "~/analytics";
+import BleDevicePairingFlow, { SetHeaderOptionsRequest } from "~/components/BleDevicePairingFlow";
+import BuyDeviceCTA from "~/components/BuyDeviceCTA";
+import PostOnboardingEntryPointCard from "~/components/PostOnboarding/PostOnboardingEntryPointCard";
+import QueuedDrawer from "~/components/QueuedDrawer";
+import { useDebouncedRequireBluetooth } from "~/components/RequiresBLE/hooks/useRequireBluetooth";
+import RequiresBluetoothDrawer from "~/components/RequiresBLE/RequiresBluetoothDrawer";
+import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { MainNavigatorParamList } from "~/components/RootNavigator/types/MainNavigator";
+import { MyLedgerNavigatorStackParamList } from "~/components/RootNavigator/types/MyLedgerNavigator";
+import SafeAreaView from "~/components/SafeAreaView";
+import Touchable from "~/components/Touchable";
+import { NavigatorName, ScreenName } from "~/const";
 import { useResetOnNavigationFocusState } from "~/helpers/useResetOnNavigationFocusState";
-import { useDebouncedRequireBluetooth } from "../RequiresBLE/hooks/useRequireBluetooth";
-import RequiresBluetoothDrawer from "../RequiresBLE/RequiresBluetoothDrawer";
-import QueuedDrawer from "../QueuedDrawer";
+import getBLETransport from "~/react-native-hw-transport-ble";
+import { bleDevicesSelector } from "~/reducers/ble";
 import { DeviceList } from "./DeviceList";
 
 export type { SetHeaderOptionsRequest };
@@ -62,13 +64,13 @@ type Props = {
 
 export default function SelectDevice({
   onSelect,
-  stopBleScanning,
   requestToSetHeaderOptions,
   isChoiceDrawerDisplayedOnAddDevice = true,
   hasPostOnboardingEntryPointCard,
   withMyLedgerTracking,
   filterByDeviceModelId,
   children,
+  stopBleScanning,
 }: Props) {
   const [USBDevice, setUSBDevice] = useState<Device | undefined>();
   const [ProxyDevice, setProxyDevice] = useState<Device | undefined>();
@@ -85,10 +87,17 @@ export default function SelectDevice({
 
   const knownDevices = useSelector(bleDevicesSelector);
   const navigation = useNavigation<Navigation["navigation"]>();
-  const { scannedDevices } = useBleDevicesScanning({
-    bleTransportListen: TransportBLE.listen,
+
+  const isLDMKEnabled = !!useFeature("ldmkTransport")?.enabled;
+  const dmk = useDeviceManagementKit();
+
+  const { scannedDevices: DMKscannedDevices } = useBleDevicesScanning();
+  const { scannedDevices: legacyScannedDevices } = useLegacyBleDevicesScanning({
+    bleTransportListen: getBLETransport({ isLDMKEnabled }).listen,
     stopBleScanning,
+    enabled: !isLDMKEnabled,
   });
+  const scannedDevices = isLDMKEnabled ? DMKscannedDevices : legacyScannedDevices;
 
   // Each time the user navigates back to the screen the BLE requirements are not enforced
   const [isBleRequired, setIsBleRequired] = useResetOnNavigationFocusState(false);
@@ -267,11 +276,14 @@ export default function SelectDevice({
   }, [dispatch, isFocused]);
 
   const closeBlePairingFlow = useCallback(() => {
+    if (isLDMKEnabled && dmk) {
+      dmk.stopDiscovering();
+    }
     // When coming back from the pairing, the visibility of the bottom tab bar is reset
     dispatch(updateMainNavigatorVisibility(true));
     setIsPairingDevices(false);
     setIsAddNewDrawerOpen(false);
-  }, [dispatch]);
+  }, [dispatch, isLDMKEnabled, dmk]);
 
   const onSetUpNewDevice = useCallback(() => {
     setIsAddNewDrawerOpen(false);

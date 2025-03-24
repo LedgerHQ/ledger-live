@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { Subscription, Observable } from "rxjs";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { useDeviceManagementKit, DeviceManagementKitTransport } from "@ledgerhq/live-dmk";
+import { useDeviceManagementKit, DeviceManagementKitTransport } from "@ledgerhq/live-dmk-desktop";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { IPCTransport } from "~/renderer/IPCTransport";
 import { addDevice, removeDevice, resetDevices } from "~/renderer/actions/devices";
