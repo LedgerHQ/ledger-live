@@ -1,5 +1,13 @@
 # @ledgerhq/types-live
 
+## 6.64.0
+
+### Minor Changes
+
+- [#9549](https://github.com/LedgerHQ/ledger-live/pull/9549) [`fa8b10c`](https://github.com/LedgerHQ/ledger-live/commit/fa8b10cac5603eedd7c2309d2bb544a7d2d1a1a8) Thanks [@themooneer](https://github.com/themooneer)! - add feature flag for nft solana LLD
+
+- [#9533](https://github.com/LedgerHQ/ledger-live/pull/9533) [`c15d7ea`](https://github.com/LedgerHQ/ledger-live/commit/c15d7ea48e41168726a90a17809175aee5bfa940) Thanks [@thesan](https://github.com/thesan)! - Add the LNSUpsellBanner on LLM
+
 ## 6.64.0-next.0
 
 ### Minor Changes

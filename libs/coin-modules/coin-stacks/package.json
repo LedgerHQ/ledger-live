@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-stacks",
-  "version": "0.6.4-next.0",
+  "version": "0.6.4",
   "description": "Ledger Stacks Coin integration",
   "keywords": [
     "Ledger",
