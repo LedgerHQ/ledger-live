@@ -180,7 +180,6 @@ export type Features = CurrencyFeatures & {
   flexibleContentCards: Feature_FlexibleContentCards;
   llmAnalyticsOptInPrompt: Feature_LlmAnalyticsOptInPrompt;
   ptxSwapMoonpayProvider: Feature_PtxSwapMoonpayProvider;
-  ptxSwapExodusProvider: Feature_PtxSwapExodusProvider;
   lldAnalyticsOptInPrompt: Feature_LldAnalyticsOptInPrompt;
   lldChatbotSupport: Feature_LldChatbotSupport;
   llmChatbotSupport: Feature_LlmChatbotSupport;
@@ -587,7 +586,6 @@ export type Feature_lldnewArchOrdinals = DefaultFeature;
 export type Feature_SpamFilteringTx = DefaultFeature;
 export type Feature_MemoTag = DefaultFeature;
 export type Feature_PtxSwapMoonpayProvider = DefaultFeature;
-export type Feature_PtxSwapExodusProvider = DefaultFeature;
 
 export type Feature_LlmRebornLP = Feature<{
   variant: ABTestingVariants;
