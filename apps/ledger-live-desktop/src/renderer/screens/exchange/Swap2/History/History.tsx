@@ -26,6 +26,7 @@ import HistoryPlaceholder from "./HistoryPlaceholder";
 import { useHistory } from "react-router-dom";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { useTechnicalDateFn } from "~/renderer/hooks/useDateFormatter";
+import { getEnv } from "@ledgerhq/live-env";
 
 const Head = styled(Box)`
   border-bottom: 1px solid ${p => p.theme.colors.palette.divider};
@@ -63,16 +64,24 @@ const History = () => {
   const getDateTxt = useTechnicalDateFn();
   const onExportOperations = useCallback(() => {
     async function asyncExport() {
-      const path = await ipcRenderer.invoke("show-save-dialog", {
-        title: "Exported swap history",
-        defaultPath: `ledgerlive-swap-history-${getDateTxt()}.csv`,
-        filters: [
-          {
-            name: "All Files",
-            extensions: ["csv"],
-          },
-        ],
-      });
+      let path;
+      if (!getEnv("PLAYWRIGHT_RUN")) {
+        path = await ipcRenderer.invoke("show-save-dialog", {
+          title: "Exported swap history",
+          defaultPath: `ledgerlive-swap-history-${getDateTxt()}.csv`,
+          filters: [
+            {
+              name: "All Files",
+              extensions: ["csv"],
+            },
+          ],
+        });
+      } else {
+        path = {
+          canceled: false,
+          filePath: "./ledgerlive-swap-history.csv",
+        };
+      }
       if (path && mappedSwapOperations) {
         exportOperations(path, mappedSwapOperationsToCSV(mappedSwapOperations), () =>
           setExporting(false),

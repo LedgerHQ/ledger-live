@@ -6,6 +6,8 @@ import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { ChooseAssetDrawer } from "tests/page/drawer/choose.asset.drawer";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Swap";
 import { Swap } from "@ledgerhq/live-common/lib-es/e2e/models/Swap";
+import fs from "fs/promises";
+import * as path from "path";
 
 export class SwapPage extends AppPage {
   private currencyByName = (accountName: string) => this.page.getByText(accountName); // TODO: this is rubbish. Changed this
@@ -15,9 +17,9 @@ export class SwapPage extends AppPage {
   private fromAccountCoinSelector = "from-account-coin-selector";
   private fromAccountAmoutInput = "from-account-amount-input";
   private toAccountCoinSelector = "to-account-coin-selector";
+  private quoteCardProviderName = "quote-card-provider-name";
   private errorSpan = (text: RegExp | string) => `span[color*="error"]:has-text("${text}")`;
   private numberOfQuotes = "number-of-quotes";
-  private originCurrencyAmount = this.page.getByTestId("origin-currency-amount-value");
   private destinationCurrencyDropdown = this.page.getByTestId("destination-currency-dropdown");
   private destinationCurrencyAmount = this.page.getByTestId("destination-currency-amount");
   private feesValue = this.page.getByTestId("fees-value");
@@ -130,13 +132,12 @@ export class SwapPage extends AppPage {
     await this.customFeeTextbox.fill(amount);
   }
 
+  @step("Get provider list")
   async getProviderList(electronApp: ElectronApplication) {
     const [, webview] = electronApp.windows();
     await expect(webview.getByTestId("number-of-quotes")).toBeVisible();
     await expect(webview.getByTestId("quotes-countdown")).toBeVisible();
-    const providersList = await webview
-      .locator("//span[@data-testid='quote-card-provider-name']")
-      .allTextContents();
+    const providersList = await webview.getByTestId(this.quoteCardProviderName).allTextContents();
     return providersList;
   }
 
@@ -166,7 +167,7 @@ export class SwapPage extends AppPage {
       await expect(webview.getByTestId(baseProviderLocator + "slippage-heading")).toBeVisible();
       await expect(webview.getByTestId(baseProviderLocator + "slippage-value")).toBeVisible();
     }
-    await this.checkExchangeButton(electronApp, providerList[0]);
+    await this.checkExchangeButton(electronApp, provider);
   }
 
   @step("Select specific provider $0")
@@ -177,7 +178,8 @@ export class SwapPage extends AppPage {
 
     if (providersList.includes(provider)) {
       const providerLocator = webview
-        .locator(`//span[@data-testid='quote-card-provider-name' and text()='${provider}']`)
+        .getByTestId(this.quoteCardProviderName)
+        .getByText(provider)
         .first();
 
       await providerLocator.isVisible();
@@ -202,7 +204,8 @@ export class SwapPage extends AppPage {
       const provider = Object.values(Provider).find(p => p.uiName === providerName);
       if (provider && provider.isNative) {
         const providerLocator = webview
-          .locator(`//span[@data-testid='quote-card-provider-name' and text()='${providerName}']`)
+          .getByTestId(this.quoteCardProviderName)
+          .getByText(providerName)
           .first();
 
         await providerLocator.isVisible();
@@ -274,7 +277,6 @@ export class SwapPage extends AppPage {
       Provider.ONE_INCH.name,
       Provider.PARASWAP.name,
       Provider.MOONPAY.name,
-      Provider.LIFI.name,
     ].includes(provider)
       ? `Continue with ${provider}`
       : `Swap with ${provider}`;
@@ -321,11 +323,6 @@ export class SwapPage extends AppPage {
   getAccountName(account: Account) {
     //erc20 accounts names are stored in account currency property
     return account.tokenType ? account.currency.name : account.accountName;
-  }
-
-  @step("Fill in amount: $0")
-  async fillInOriginAmount(originAmount: string) {
-    await this.originCurrencyAmount.fill(originAmount);
   }
 
   @step("Select currency to swap to: $0")
@@ -512,7 +509,29 @@ export class SwapPage extends AppPage {
 
   @step("Click on export operations")
   async clickExportOperations() {
-    expect(await this.exportOperationsButton).toBeEnabled();
     await this.exportOperationsButton.click();
+
+    const originalFilePath = path.resolve("./ledgerlive-swap-history.csv");
+    const targetFilePath = path.resolve(__dirname, "../artifacts/ledgerlive-swap-history.csv");
+
+    const fileExists = await this.waitForFileToExist(originalFilePath, 5000);
+    expect(fileExists).toBeTruthy();
+    const targetDir = path.dirname(targetFilePath);
+    await fs.mkdir(targetDir, { recursive: true });
+    await fs.rename(originalFilePath, targetFilePath);
+  }
+
+  async waitForFileToExist(filePath: string, timeout: number): Promise<boolean> {
+    const startTime = Date.now();
+    while (Date.now() - startTime < timeout) {
+      try {
+        await fs.access(filePath);
+        return true;
+      } catch {
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+    }
+
+    return false;
   }
 }

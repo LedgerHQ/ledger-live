@@ -52,6 +52,7 @@ export class OperationDrawer extends Drawer {
     await expect(this.swapIdLabel).toBeVisible();
     expect(await this.swapIdValue.textContent()).toMatch(swapId);
     await expect(this.swapStatus).toBeVisible();
+    expect(await this.swapStatus.textContent()).toMatch(/pending|finished/);
     expect(await this.dateValue.textContent()).toMatch(
       /^(0?[1-9]|1[0-2])\/(0?[1-9]|[12][0-9]|3[01])\/\d{4}$/,
     );
