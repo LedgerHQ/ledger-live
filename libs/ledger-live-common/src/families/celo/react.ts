@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
-import { getCurrentCeloPreloadData, getCeloPreloadDataUpdates } from "./preload";
-import type { CeloPreloadData, CeloValidatorGroup } from "./types";
+import { getCurrentCeloPreloadData, getCeloPreloadDataUpdates } from "@ledgerhq/coin-celo/preload";
+import type { CeloPreloadData, CeloValidatorGroup } from "@ledgerhq/coin-celo/types";
 
 export function useCeloPreloadData(): CeloPreloadData {
   const [state, setState] = useState(getCurrentCeloPreloadData);

@@ -1,5 +1,5 @@
 import { DeviceModelId } from "@ledgerhq/devices";
-import { getCryptoCurrencyById } from "../../currencies";
+import { getCryptoCurrencyById } from "../../../ledger-live-common/src/currencies";
 import {
   minimalAmount,
   createLockMutation,
@@ -12,7 +12,7 @@ import {
   createRevokeVoteMutation,
   createWithdrawMutation,
 } from "./specs/index";
-import type { AppSpec } from "../../bot/types";
+import type { AppSpec } from "../../../ledger-live-common/src/bot/types";
 import type { Transaction } from "./types";
 import { acceptTransaction } from "./speculos-deviceActions";
 

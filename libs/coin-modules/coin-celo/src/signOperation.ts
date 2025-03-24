@@ -6,7 +6,7 @@ import { encodeTransaction, recoverTransaction } from "@celo/wallet-base";
 
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
 import type { Transaction, CeloAccount } from "./types";
-import { withDevice } from "../../hw/deviceAccess";
+import { withDevice } from "../../../ledger-live-common/src/hw/deviceAccess";
 import buildTransaction from "./buildTransaction";
 import Celo from "./hw-app-celo";
 

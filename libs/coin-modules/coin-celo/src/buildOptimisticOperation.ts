@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import { OperationType } from "@ledgerhq/types-live";
 import { CeloAccount, CeloOperation, CeloOperationMode, Transaction } from "./types";
-import { encodeOperationId } from "../../operation";
+import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 
 const MODE_TO_TYPE: { [key in CeloOperationMode | "default"]: OperationType } = {
   send: "OUT",

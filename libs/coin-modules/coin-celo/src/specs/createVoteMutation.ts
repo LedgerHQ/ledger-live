@@ -1,8 +1,9 @@
 import invariant from "invariant";
 import BigNumber from "bignumber.js";
 import sampleSize from "lodash/sampleSize";
-import { MutationSpec } from "../../../bot/types";
-import { getCryptoCurrencyById, parseCurrencyUnit } from "../../../currencies";
+import { MutationSpec } from "@ledgerhq/coin-framework/bot/types";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
+import { parseCurrencyUnit } from "@ledgerhq/coin-framework/lib/currencies/parseCurrencyUnit";
 import { getCurrentCeloPreloadData } from "../preload";
 import { getValidatorGroupsWithoutVotes } from "../logic";
 import type { CeloAccount, CeloResources, Transaction } from "../types";

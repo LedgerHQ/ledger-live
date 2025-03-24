@@ -1,6 +1,7 @@
 import invariant from "invariant";
-import { MutationSpec } from "../../../bot/types";
-import { getCryptoCurrencyById, parseCurrencyUnit } from "../../../currencies";
+import { MutationSpec } from "@ledgerhq/coin-framework/bot/types";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
+import { parseCurrencyUnit } from "@ledgerhq/coin-framework/lib/currencies/parseCurrencyUnit";
 import { availablePendingWithdrawals } from "../logic";
 import type { CeloAccount, Transaction } from "../types";
 

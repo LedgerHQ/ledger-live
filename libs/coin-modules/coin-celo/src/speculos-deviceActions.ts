@@ -1,6 +1,6 @@
-import type { DeviceAction } from "../../bot/types";
+import type { DeviceAction } from "../../../ledger-live-common/src/bot/types";
 import type { Transaction } from "./types";
-import { deviceActionFlow, formatDeviceAmount, SpeculosButton } from "../../bot/specs";
+import { deviceActionFlow, formatDeviceAmount, SpeculosButton } from "../../../ledger-live-common/src/bot/specs";
 
 const typeWording = {
   send: "Send",
