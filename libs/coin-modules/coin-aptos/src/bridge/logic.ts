@@ -159,16 +159,8 @@ export const txsToOps = (
             opsTokens.push(op);
 
             if (op.type === DIRECTION.OUT) {
-              const accountId = encodeAccountId({
-                type: "js",
-                currencyId: "aptos",
-                derivationMode: "aptos",
-                version: "2",
-                xpubOrAddress: address,
-              });
               ops.push({
                 ...op,
-                accountId,
                 value: op.fee,
                 type: "FEES",
               });
@@ -378,9 +370,11 @@ export function getCoinAndAmounts(
         break;
       case "0x1::transaction_fee::FeeStatement":
         if (tx.sender === address) {
-          if (coin_id === null) coin_id = APTOS_ASSET_ID;
-          const fees = BigNumber(tx.gas_unit_price).times(BigNumber(tx.gas_used));
-          amount_out = amount_out.plus(fees);
+          if (coin_id === null) {
+            coin_id = APTOS_ASSET_ID;
+            const fees = BigNumber(tx.gas_unit_price).times(BigNumber(tx.gas_used));
+            amount_out = amount_out.plus(fees);
+          }
         }
         break;
     }

@@ -131,8 +131,7 @@ export const getSubAccounts = async (
   // Creating a Map of Operations by TokenCurrencies in order to know which TokenAccounts should be synced as well
   const operationsByToken = lastTokenOperations.reduce<Map<TokenCurrency, Operation[]>>(
     (acc, operation) => {
-      const { accountId } = decodeOperationId(operation.id);
-      const { token } = decodeTokenAccountId(accountId);
+      const { token } = decodeTokenAccountId(operation.accountId);
       if (!token) return acc; // TODO: do we need to check blacklistedTokenIds
 
       if (!acc.has(token)) {
