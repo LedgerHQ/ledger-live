@@ -48,27 +48,5 @@ export const AnimatedInputWithCtaStory = (args: typeof AnimatedInputStoryArgs): 
     />
   );
 };
-
-export const AnimatedInputWithCtaStoryLargeMode = (
-  args: typeof AnimatedInputStoryArgs,
-): JSX.Element => {
-  const [value, setValue] = React.useState("");
-
-  const onChange = (value: string) => setValue(value);
-
-  return (
-    <AnimatedInput
-      error={args.error}
-      disabled={args.disabled}
-      value={value}
-      onChange={onChange}
-      placeholder={"placeholder"}
-      renderBottomRight={<Button Icon={<Paste size="S" />} isNewIcon style={{ width: "auto" }} />}
-      largeMode={true}
-    />
-  );
-};
-
 AnimatedInputWithCtaStory.storyName = "AnimatedInputWithCtaStory";
 AnimatedInputWithCtaStory.args = AnimatedInputStoryArgs;
-AnimatedInputWithCtaStoryLargeMode.storyName = "AnimatedInputWithCtaStoryLargeMode";
