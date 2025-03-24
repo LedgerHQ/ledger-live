@@ -69,9 +69,9 @@ async function filterOperations(
   return operations.map(op => adaptCoreOperationToLiveOperation(accountId, op) satisfies Operation);
 }
 
-function adaptCoreOperationToLiveOperation(
+export function adaptCoreOperationToLiveOperation(
   accountId: string,
-  op: CoreOperation<XrpAsset>,
+  op: CoreOperation<void>,
 ): Operation {
   return {
     id: encodeOperationId(accountId, op.tx.hash, op.type),

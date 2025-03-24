@@ -6,8 +6,19 @@ import jsBridges from "../generated/bridge/js";
 import mockBridges from "../generated/bridge/mock";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, AccountBridge, AccountLike, CurrencyBridge } from "@ledgerhq/types-live";
+import { getAlpacaCurrencyBridge } from "./generic-alpaca/currencyBridge";
+import { getAlpacaAccountBridge } from "./generic-alpaca/accountBridge";
+
+const alpacaized = {
+  xrp: true,
+  ripple: true,
+};
 
 export const getCurrencyBridge = (currency: CryptoCurrency): CurrencyBridge => {
+  if (alpacaized[currency.family]) {
+    return getAlpacaCurrencyBridge(currency.family, "local");
+  }
+
   if (getEnv("MOCK")) {
     const mockBridge = mockBridges[currency.family];
     if (mockBridge) return mockBridge.currencyBridge;
@@ -48,6 +59,10 @@ export const getAccountBridge = (
 };
 
 export function getAccountBridgeByFamily(family: string, accountId?: string): AccountBridge<any> {
+  if (alpacaized[family]) {
+    return getAlpacaAccountBridge(family, "local");
+  }
+
   if (accountId) {
     const { type } = decodeAccountId(accountId);
 
