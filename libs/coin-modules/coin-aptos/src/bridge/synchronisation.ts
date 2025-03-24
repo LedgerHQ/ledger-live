@@ -1,3 +1,4 @@
+import { inferSubOperations } from "@ledgerhq/coin-framework/serialization/index";
 import { decodeAccountId, encodeAccountId } from "@ledgerhq/coin-framework/account";
 import type { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
@@ -98,7 +99,9 @@ export const getSubAccountShape = async (
   const aptosClient = new AptosAPI(currency.id);
   const tokenAccountId = encodeTokenAccountId(parentId, token);
   const balance = await aptosClient.getBalance(address, token);
-  const firstOperation = operations.sort((a, b) => a.date.getTime() - b.date.getTime()).at(0);
+  const firstOperation = operations
+    .sort((a, b) => b.date.getTime() - a.date.getTime())
+    .at(operations.length - 1);
 
   return {
     type: "TokenAccount",
@@ -188,6 +191,11 @@ export const getAccountShape: GetAccountShape = async info => {
   const subAccounts = shouldSyncFromScratch
     ? newSubAccounts
     : mergeSubAccounts(initialAccount, newSubAccounts);
+
+  operations.forEach(op => {
+    const subOperations = inferSubOperations(op.hash, subAccounts);
+    op.subOperations = subOperations;
+  });
 
   const shape: Partial<AptosAccount> = {
     type: "Account",
