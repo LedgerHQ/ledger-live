@@ -9,7 +9,7 @@ import {
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import type { Account, Operation, OperationType, TokenAccount } from "@ledgerhq/types-live";
 import {
-  encodeAccountId,
+  decodeTokenAccountId,
   findSubAccountById,
   isTokenAccount,
 } from "@ledgerhq/coin-framework/account/index";
@@ -161,6 +161,7 @@ export const txsToOps = (
             if (op.type === DIRECTION.OUT) {
               ops.push({
                 ...op,
+                accountId: decodeTokenAccountId(op.accountId).accountId,
                 value: op.fee,
                 type: "FEES",
               });
@@ -370,11 +371,9 @@ export function getCoinAndAmounts(
         break;
       case "0x1::transaction_fee::FeeStatement":
         if (tx.sender === address) {
-          if (coin_id === null) {
-            coin_id = APTOS_ASSET_ID;
-            const fees = BigNumber(tx.gas_unit_price).times(BigNumber(tx.gas_used));
-            amount_out = amount_out.plus(fees);
-          }
+          if (coin_id === null) coin_id = APTOS_ASSET_ID;
+          const fees = BigNumber(tx.gas_unit_price).times(BigNumber(tx.gas_used));
+          amount_out = amount_out.plus(fees);
         }
         break;
     }

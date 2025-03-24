@@ -6,7 +6,6 @@ import { txsToOps } from "./logic";
 import type { AptosAccount } from "../types";
 import { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { decodeOperationId } from "@ledgerhq/coin-framework/operation";
 import {
   decodeTokenAccountId,
   emptyHistoryCache,
