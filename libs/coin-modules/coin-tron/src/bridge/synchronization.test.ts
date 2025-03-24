@@ -191,11 +191,7 @@ describe("scanAccounts", () => {
   });
 
   afterAll(() => {
-    jest.spyOn(tronNetwork, "getLastBlock").mockRestore();
-    jest.spyOn(tronNetwork, "fetchTronAccountTxs").mockRestore();
-    jest.spyOn(tronNetwork, "fetchTronAccountTxs").mockRestore();
-    jest.spyOn(tronNetwork, "getUnwithdrawnReward").mockRestore();
-    spyGetTronAccountNetwork.mockRestore();
+    jest.restoreAllMocks();
 
     localMockServer.close();
   });

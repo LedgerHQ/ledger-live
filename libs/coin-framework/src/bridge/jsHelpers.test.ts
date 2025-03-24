@@ -107,7 +107,7 @@ describe("makeSync", () => {
   });
 });
 
-describe.only("makeScanAccounts", () => {
+describe("makeScanAccounts", () => {
   it("returns the first account found when there is no one used previously", async () => {
     // Given
     const addressResolver = {

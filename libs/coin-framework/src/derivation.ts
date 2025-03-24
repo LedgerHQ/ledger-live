@@ -44,7 +44,7 @@ export type GetAddressOptions = {
   segwit?: boolean;
 };
 
-const modes: Record<DerivationMode, ModeSpec> = {
+const modes: Readonly<Record<DerivationMode, ModeSpec>> = Object.freeze({
   // this is "default" by convention
   "": {},
   // MEW legacy derivation
@@ -184,16 +184,17 @@ const modes: Record<DerivationMode, ModeSpec> = {
   sui: {
     overridesDerivation: "44'/784'/<account>'/0'/0'",
   },
-};
+});
 
+// WIP
 /**
  * Add support for new blockchain derivation path mode.
- * *To use in future dev* to remove the hardcoded list `modes` and
+ * To use in future dev* to remove the hardcoded list `modes` and
  * separate the dependency with all coin logic.
  */
-export function addDerivationMode({ mode, spec }: { mode: DerivationMode; spec: ModeSpec }) {
-  modes[mode] = spec;
-}
+// export function addDerivationMode({ mode, spec }: { mode: DerivationMode; spec: ModeSpec }) {
+//   modes[mode] = spec;
+// }
 
 const legacyDerivations: Partial<Record<CryptoCurrency["id"], DerivationMode[]>> = {
   aeternity: ["aeternity"],
