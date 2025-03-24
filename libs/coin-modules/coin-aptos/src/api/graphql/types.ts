@@ -24,7 +24,7 @@ export type GetAccountTransactionsDataQuery = {
   __typename?: "query_root";
   account_transactions: Array<{
     __typename?: "account_transactions";
-    transaction_version: number; // or `number` if you parse it
+    transaction_version: number;
   }>;
 };
 
