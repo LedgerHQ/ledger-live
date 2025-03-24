@@ -1,5 +1,5 @@
 import { AccountBridge } from "@ledgerhq/types-live";
-import { patchOperationWithHash } from "../../operation";
+import { patchOperationWithHash } from "@ledgerhq/coin-framework/operation";
 import { Transaction } from "./types";
 import { celoKit } from "./api/sdk";
 

@@ -1,4 +1,4 @@
-import celo from "../../families/celo/bridge/js";
+import celo from "../../../../coin-modules/coin-celo/src/bridge/js";
 import { bridge as algorand } from "../../families/algorand/setup";
 import { bridge as aptos } from "../../families/aptos/setup";
 import { bridge as bitcoin } from "../../families/bitcoin/setup";

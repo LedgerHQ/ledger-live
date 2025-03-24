@@ -2,13 +2,13 @@ import network from "@ledgerhq/live-network/network";
 import { OperationType } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { getEnv } from "@ledgerhq/live-env";
-import { encodeOperationId } from "../../../operation";
+import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { isDefaultValidatorGroup } from "../logic";
 import { CeloOperation, CeloValidatorGroup, FigmentIndexerTransaction } from "../types";
 import { celoKit } from "./sdk";
 
 const DEFAULT_TRANSACTIONS_LIMIT = 200;
-const getUrl = (route): string => `${getEnv("API_CELO_INDEXER")}${route || ""}`;
+const getUrl = (route: string): string => `${getEnv("API_CELO_INDEXER")}${route || ""}`;
 
 // Indexer returns both account data and transactions in one call.
 // Transactions are just limited, there's no block height offset

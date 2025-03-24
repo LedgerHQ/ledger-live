@@ -1,4 +1,4 @@
-import celo from "../families/celo/hw-getAddress";
+import celo from "../../../coin-modules/coin-celo/src/hw-getAddress";
 import { resolver as algorand } from "../families/algorand/setup";
 import { resolver as aptos } from "../families/aptos/setup";
 import { resolver as bitcoin } from "../families/bitcoin/setup";
