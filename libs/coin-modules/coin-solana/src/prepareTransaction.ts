@@ -441,7 +441,7 @@ async function deriveStakeCreateAccountCommandDescriptor(
   const warnings: Record<string, Error> = {};
 
   const commandDescriptor = tx.model.commandDescriptor;
-  if (isValidStakeCreateAccountCommandDescriptor(commandDescriptor)) return commandDescriptor!;
+  if (isValidStakeCreateAccountCommandDescriptor(commandDescriptor)) return commandDescriptor;
 
   const { fee, spendable } = await estimateFeeAndSpendable(api, mainAccount, tx);
   const txAmount = tx.useAllAmount ? spendable : tx.amount;
@@ -843,7 +843,7 @@ function validateRecipientRequiredMemo(
 
 function isValidStakeCreateAccountCommandDescriptor(
   commandDescriptor: CommandDescriptor | undefined,
-) {
+): commandDescriptor is CommandDescriptor {
   const txCommand = commandDescriptor?.command as StakeCreateAccountCommand | undefined;
 
   // Ensures commandDescriptor has all required data, avoiding regeneration
