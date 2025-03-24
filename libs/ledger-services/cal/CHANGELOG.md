@@ -1,5 +1,17 @@
 # @ledgerhq/ledger-cal-service
 
+## 0.4.0
+
+### Minor Changes
+
+- [#9531](https://github.com/LedgerHQ/ledger-live/pull/9531) [`0fc1ca2`](https://github.com/LedgerHQ/ledger-live/commit/0fc1ca28e548c639d1044a359cb425ad7635fa08) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Add CAL /networks call
+
+## 0.4.0-next.0
+
+### Minor Changes
+
+- [#9531](https://github.com/LedgerHQ/ledger-live/pull/9531) [`0fc1ca2`](https://github.com/LedgerHQ/ledger-live/commit/0fc1ca28e548c639d1044a359cb425ad7635fa08) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Add CAL /networks call
+
 ## 0.3.1
 
 ### Patch Changes

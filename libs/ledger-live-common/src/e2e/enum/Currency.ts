@@ -24,7 +24,13 @@ export class Currency {
     AppInfos.BITCOIN_TESTNET,
   );
   static readonly DOGE = new Currency("Dogecoin", "DOGE", "dogecoin", AppInfos.DOGECOIN);
-  static readonly ETH = new Currency("Ethereum", "ETH", "ethereum", AppInfos.ETHEREUM);
+  static readonly ETH = new Currency(
+    "Ethereum",
+    "ETH",
+    "ethereum",
+    AppInfos.ETHEREUM,
+    "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+  );
   static readonly tETH = new Currency(
     "Ethereum Holesky",
     "𝚝ETH",
@@ -62,7 +68,13 @@ export class Currency {
     AppInfos.BINANCE_SMART_CHAIN,
   );
   static readonly TON = new Currency("TON", "TON", "ton", AppInfos.TON);
-  static readonly ETH_USDT = new Currency("Tether USD", "USDT", "ethereum", AppInfos.ETHEREUM);
+  static readonly ETH_USDT = new Currency(
+    "Tether USD",
+    "USDT",
+    "ethereum",
+    AppInfos.ETHEREUM,
+    "0xdac17f958d2ee523a2206206994597c13d831ec7",
+  );
   static readonly ETH_USDC = new Currency("USD Coin", "USDC", "ethereum", AppInfos.ETHEREUM);
   static readonly ETH_LIDO = new Currency(
     "LIDO Staked ETH",

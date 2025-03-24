@@ -3465,6 +3465,7 @@
         "CTAButton" : "Adicionar Conta"
       },
       "history" : {
+        "button" : "Ir para o histórico",
         "tab" : "Histórico",
         "disclaimer" : "Suas transações de troca no dispositivo móvel não são sincronizadas com o Ledger Live desktop",
         "exportButton" : "Exportar Operações",
@@ -6747,7 +6748,7 @@
   "postOnboarding" : {
     "hub" : {
       "title" : "Em seguida, use sua {{productName}} para...",
-      "allDoneTitle" : "Tudo pronto! Continue a explorar seu portfólio",
+      "areAllPostOnboardingActionsCompletedTitle" : "Tudo pronto! Continue a explorar seu portfólio",
       "skip" : "Farei isso mais tarde",
       "viewWallet" : "Explorar meu portfólio"
     },
@@ -7332,6 +7333,16 @@
       "subTitle" : "Parece que você ainda não adicionou uma conta. Começar agora.",
       "cta" : "Adicionar uma conta",
       "link" : "Precisa de ajuda? Aprenda a criar uma conta no Ledger Live."
+    }
+  },
+  "lnsUpsell" : {
+    "opted_in" : {
+      "description" : "Atualize sua Ledger Nano S para uma Ledger mais nova — como a Ledger Flex — para ter mais memória, melhorias mais avançadas de segurança, novos recursos e um desconto exclusivo de 20%. ",
+      "cta" : "Atualizar minha Ledger"
+    },
+    "opted_out" : {
+      "description" : "A memória limitada da Ledger Nano S restringe seu acesso aos últimos recursos, mudanças em blockchains e aprimoramentos de segurança. Para uso prolongado, atualize para um dispositivo Ledger mais recente.",
+      "cta" : "Saiba mais"
     }
   }
 }

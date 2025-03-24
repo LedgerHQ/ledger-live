@@ -3465,6 +3465,7 @@
         "CTAButton" : "Ajouter un compte"
       },
       "history" : {
+        "button" : "Accéder à l’historique",
         "tab" : "Historique",
         "disclaimer" : "Vos transactions Swap sur Ledger Live pour le mobile ne sont pas synchronisées avec Ledger Live pour l’ordinateur.",
         "exportButton" : "Exporter les opérations",
@@ -6747,7 +6748,7 @@
   "postOnboarding" : {
     "hub" : {
       "title" : "Utilisez ensuite votre {{productName}} pour...",
-      "allDoneTitle" : "Parfait ! Vous pouvez maintenant explorer votre portefeuille.",
+      "areAllPostOnboardingActionsCompletedTitle" : "Parfait ! Vous pouvez maintenant explorer votre portefeuille.",
       "skip" : "Plus tard",
       "viewWallet" : "Explorer mon portefeuille"
     },
@@ -7332,6 +7333,16 @@
       "subTitle" : "Vous n’avez pas encore ajouté de compte. Commencez dès maintenant.",
       "cta" : "Ajouter un compte",
       "link" : "Besoin d’aide ? Découvrez comment ajouter un compte sur Ledger Live."
+    }
+  },
+  "lnsUpsell" : {
+    "opted_in" : {
+      "description" : "Passez du Ledger Nano S à un modèle plus récent, tel que le Ledger Flex. À la clé : plus de mémoire, les dernières améliorations de sécurité, de nouvelles fonctionnalités et -20% en exclusivité. ",
+      "cta" : "Choisir mon wallet"
+    },
+    "opted_out" : {
+      "description" : "Avec sa mémoire limitée, votre Ledger Nano S vous prive des dernières fonctionnalités, innovations blockchain et améliorations de sécurité. Pour en bénéficier, choisissez un wallet Ledger plus récent.",
+      "cta" : "En savoir plus"
     }
   }
 }

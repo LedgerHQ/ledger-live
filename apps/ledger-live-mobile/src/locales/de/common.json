@@ -3465,6 +3465,7 @@
         "CTAButton" : "Konto hinzufügen"
       },
       "history" : {
+        "button" : "Zum Verlauf wechseln",
         "tab" : "Historisches",
         "disclaimer" : "Ihre mobilen Swap-Transaktionen werden nicht mit Ledger Live Desktop synchronisiert",
         "exportButton" : "Exportvorgänge",
@@ -6747,7 +6748,7 @@
   "postOnboarding" : {
     "hub" : {
       "title" : "Danach hast du bei deinem {{productName}}-Gerät folgende Möglichkeiten:",
-      "allDoneTitle" : "Alles eingerichtet! Lerne jetzt dein Portfolio kennen",
+      "areAllPostOnboardingActionsCompletedTitle" : "Alles eingerichtet! Lerne jetzt dein Portfolio kennen",
       "skip" : "Ich mache das später",
       "viewWallet" : "Portfolio entdecken"
     },
@@ -7332,6 +7333,16 @@
       "subTitle" : "Anscheinend hast du noch kein Konto hinzugefügt. Leg jetzt los.",
       "cta" : "Konto hinzufügen",
       "link" : "Brauchst du Hilfe? Finde heraus, wie du ein Konto zu Ledger Live hinzufügst."
+    }
+  },
+  "lnsUpsell" : {
+    "opted_in" : {
+      "description" : "Führe ein Upgrade deiner Ledger Nano S auf ein neueres Ledger-Gerät durch – z. B. die Ledger Flex – und profitiere von mehr Speicherplatz, den neuesten Sicherheitsverbesserungen, innovativen Funktionen und einem exklusiven Rabatt in Höhe von 20 %. ",
+      "cta" : "Ledger-Upgrade durchführen"
+    },
+    "opted_out" : {
+      "description" : "Der begrenzte Speicher deiner Ledger Nano S schränkt deinen Zugang zu aktuellen Funktionen, Blockchain-Änderungen und Sicherheitsverbesserungen ein. Für die längerfristige Nutzung solltest du auf ein neueres Ledger-Gerät aufrüsten.",
+      "cta" : "Weitere Informationen"
     }
   }
 }

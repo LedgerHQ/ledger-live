@@ -1,6 +1,7 @@
 import { RIPPLE_EPOCH } from "../logic";
 import { createApi } from "./index";
 import { GetTransactionsOptions } from "../network";
+import { Operation } from "@ledgerhq/coin-framework/api/types";
 
 const mockGetServerInfos = jest.fn().mockResolvedValue({
   info: {
@@ -181,21 +182,24 @@ describe("listOperations", () => {
       // the order is reversed so that the result is always sorted by newest tx first element of the list
       expect(results).toEqual([
         {
-          hash: "HASH_VALUE",
-          address,
-          type: "Payment",
-          value: expectedValue,
-          fee: fee,
-          block: {
-            hash: "HASH_VALUE_BLOCK",
-            height: 1,
-            time: new Date("2000-01-01T00:00:01Z"),
+          operationIndex: 0,
+          tx: {
+            hash: "HASH_VALUE",
+            fees: fee,
+            date: new Date(1000000 + RIPPLE_EPOCH * 1000),
+            block: {
+              hash: "HASH_VALUE_BLOCK",
+              height: 1,
+              time: new Date("2000-01-01T00:00:01Z"),
+            },
           },
+          type: expectedType,
+          value: expectedValue,
           senders: [opSender],
           recipients: [opDestination],
-          date: new Date(1000000 + RIPPLE_EPOCH * 1000),
-          transactionSequenceNumber: 1,
           details: {
+            sequence: 1,
+            xrpTxType: "Payment",
             memos: [
               {
                 type: "687474703a2f2f6578616d706c652e636f6d2f6d656d6f2f67656e65726963",
@@ -205,41 +209,49 @@ describe("listOperations", () => {
           },
         },
         {
-          hash: "HASH_VALUE",
-          address,
-          type: "Payment",
-          value: expectedValue,
-          fee: fee,
-          block: {
-            hash: "HASH_VALUE_BLOCK",
-            height: 1,
-            time: new Date("2000-01-01T00:00:01Z"),
+          operationIndex: 0,
+          tx: {
+            hash: "HASH_VALUE",
+            fees: fee,
+            date: new Date(1000000 + RIPPLE_EPOCH * 1000),
+            block: {
+              hash: "HASH_VALUE_BLOCK",
+              height: 1,
+              time: new Date("2000-01-01T00:00:01Z"),
+            },
           },
+          type: expectedType,
+          value: expectedValue,
           senders: [opSender],
           recipients: [opDestination],
-          date: new Date(1000000 + RIPPLE_EPOCH * 1000),
-          transactionSequenceNumber: 1,
           details: {
+            sequence: 1,
+            xrpTxType: "Payment",
             destinationTag: 509555,
           },
         },
         {
-          hash: "HASH_VALUE",
-          address,
-          type: "Payment",
-          value: expectedValue,
-          fee: fee,
-          block: {
-            hash: "HASH_VALUE_BLOCK",
-            height: 1,
-            time: new Date("2000-01-01T00:00:01Z"),
+          operationIndex: 0,
+          tx: {
+            hash: "HASH_VALUE",
+            fees: fee,
+            date: new Date(1000000 + RIPPLE_EPOCH * 1000),
+            block: {
+              hash: "HASH_VALUE_BLOCK",
+              height: 1,
+              time: new Date("2000-01-01T00:00:01Z"),
+            },
           },
+          type: expectedType,
+          value: expectedValue,
           senders: [opSender],
           recipients: [opDestination],
-          date: new Date(1000000 + RIPPLE_EPOCH * 1000),
-          transactionSequenceNumber: 1,
+          details: {
+            xrpTxType: "Payment",
+            sequence: 1,
+          },
         },
-      ]);
+      ] satisfies Operation<void>[]);
     },
   );
 });

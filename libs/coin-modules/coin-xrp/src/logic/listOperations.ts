@@ -1,6 +1,7 @@
+import { Operation } from "@ledgerhq/coin-framework/api/types";
 import { getServerInfos, getTransactions, GetTransactionsOptions } from "../network";
 import type { XrplOperation } from "../network/types";
-import { ListOperationsOptions, XrpMemo, XrpOperation } from "../types";
+import { ListOperationsOptions, XrpMemo } from "../types";
 import { RIPPLE_EPOCH } from "./utils";
 
 /**
@@ -19,7 +20,7 @@ import { RIPPLE_EPOCH } from "./utils";
 export async function listOperations(
   address: string,
   { limit, minHeight, token, order }: ListOperationsOptions,
-): Promise<[XrpOperation[], string]> {
+): Promise<[Operation<void>[], string]> {
   const serverInfo = await getServerInfos();
   const ledgers = serverInfo.info.complete_ledgers.split("-");
   const minLedgerVersion = Number(ledgers[0]);
@@ -98,7 +99,7 @@ export async function listOperations(
 
 const convertToCoreOperation =
   (address: string) =>
-  (operation: XrplOperation): XrpOperation => {
+  (operation: XrplOperation): Operation<void> => {
     const {
       ledger_hash,
       hash,
@@ -111,9 +112,9 @@ const convertToCoreOperation =
         Account,
         Destination,
         DestinationTag,
-        Sequence,
         Memos,
         ledger_index,
+        Sequence,
       },
     } = operation;
 
@@ -156,20 +157,28 @@ const convertToCoreOperation =
       };
     }
 
-    let op: XrpOperation = {
-      blockTime: new Date(close_time_iso),
-      blockHash: ledger_hash,
-      hash,
-      address,
-      type: TransactionType,
-      simpleType: type,
+    details = {
+      ...details,
+      xrpTxType: TransactionType,
+      sequence: Sequence,
+    };
+
+    let op: Operation<void> = {
+      operationIndex: 0,
+      tx: {
+        hash: hash,
+        fees: fee,
+        date: new Date(toEpochDate),
+        block: {
+          time: new Date(close_time_iso),
+          hash: ledger_hash,
+          height: ledger_index,
+        },
+      },
+      type: type,
       value,
-      fee,
-      blockHeight: ledger_index,
       senders: [Account],
       recipients: [Destination],
-      date: new Date(toEpochDate),
-      transactionSequenceNumber: Sequence,
     };
 
     if (Object.keys(details).length != 0) {

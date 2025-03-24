@@ -1,9 +1,9 @@
 import {
   IncorrectTypeError,
+  TransactionIntent,
   Operation,
   Pagination,
   type Api,
-  type Transaction as ApiTransaction,
 } from "@ledgerhq/coin-framework/api/index";
 import coinConfig, { type TezosConfig } from "../config";
 import {
@@ -16,10 +16,10 @@ import {
   lastBlock,
   rawEncode,
 } from "../logic";
-import api from "../network/tzkt";
 import { log } from "@ledgerhq/logs";
+import api from "../network/tzkt";
 
-export function createApi(config: TezosConfig): Api {
+export function createApi(config: TezosConfig): Api<void> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
@@ -36,33 +36,40 @@ export function createApi(config: TezosConfig): Api {
 function isTezosTransactionType(type: string): type is "send" | "delegate" | "undelegate" {
   return ["send", "delegate", "undelegate"].includes(type);
 }
-async function craft(
-  address: string,
-  { type, recipient, amount, fee }: ApiTransaction,
-): Promise<string> {
-  if (!isTezosTransactionType(type)) {
-    throw new IncorrectTypeError(type);
-  }
 
+async function craft(transactionIntent: TransactionIntent<void>): Promise<string> {
+  if (!isTezosTransactionType(transactionIntent.type)) {
+    throw new IncorrectTypeError(transactionIntent.type);
+  }
+  const fee = await estimate(transactionIntent);
   const { contents } = await craftTransaction(
-    { address },
-    { recipient, amount, type, fee: { fees: fee.toString() } },
+    { address: transactionIntent.sender },
+    {
+      type: transactionIntent.type,
+      recipient: transactionIntent.recipient,
+      amount: transactionIntent.amount,
+      fee: { fees: fee.toString() },
+    },
   );
   return rawEncode(contents);
 }
 
-async function estimate(addr: string, amount: bigint): Promise<bigint> {
-  const accountInfo = await api.getAccountByAddress(addr);
+async function estimate(transactionIntent: TransactionIntent<void>): Promise<bigint> {
+  const accountInfo = await api.getAccountByAddress(transactionIntent.recipient);
   if (accountInfo.type !== "user") throw new Error("unexpected account type");
 
   const estimatedFees = await estimateFees({
     account: {
-      address: addr,
+      address: transactionIntent.sender,
       revealed: accountInfo.revealed,
       balance: BigInt(accountInfo.balance),
       xpub: accountInfo.publicKey,
     },
-    transaction: { mode: "send", recipient: addr, amount: amount },
+    transaction: {
+      mode: "send",
+      recipient: transactionIntent.recipient,
+      amount: transactionIntent.amount,
+    },
   });
   return estimatedFees.estimatedFees;
 }
@@ -74,7 +81,7 @@ type PaginationState = {
   readonly minHeight: number;
   continueIterations: boolean;
   nextCursor?: string;
-  accumulator: Operation[];
+  accumulator: Operation<void>[];
 };
 
 async function fetchNextPage(address: string, state: PaginationState): Promise<PaginationState> {
@@ -103,7 +110,7 @@ async function fetchNextPage(address: string, state: PaginationState): Promise<P
 async function operationsFromHeight(
   address: string,
   start: number,
-): Promise<[Operation[], string]> {
+): Promise<[Operation<void>[], string]> {
   const firstState: PaginationState = {
     pageSize: 200,
     maxIterations: 10,
@@ -123,6 +130,6 @@ async function operationsFromHeight(
 async function operations(
   address: string,
   { minHeight }: Pagination,
-): Promise<[Operation[], string]> {
+): Promise<[Operation<void>[], string]> {
   return operationsFromHeight(address, minHeight);
 }

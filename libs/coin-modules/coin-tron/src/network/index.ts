@@ -48,7 +48,7 @@ import { stringify } from "querystring";
 
 const getBaseApiUrl = () => coinConfig.getCoinConfig().explorer.url;
 
-async function post<T, U extends object = any>(endPoint: string, body: T): Promise<U> {
+export async function post<T, U extends object = any>(endPoint: string, body: T): Promise<U> {
   const { data } = await network<U, T>({
     method: "POST",
     url: `${getBaseApiUrl()}${endPoint}`,
@@ -197,47 +197,82 @@ export async function getDelegatedResource(
   return new BigNumber(amount);
 }
 
+export async function craftTrc20Transaction(
+  tokenAddress: string,
+  recipientAddress: string,
+  senderAddress: string,
+  amount: BigNumber,
+): Promise<SendTransactionDataSuccess> {
+  const txData: SmartContractTransactionData = {
+    function_selector: "transfer(address,uint256)",
+    fee_limit: 50000000,
+    call_value: 0,
+    contract_address: decode58Check(tokenAddress),
+    parameter: abiEncodeTrc20Transfer(recipientAddress, new BigNumber(amount.toString())),
+    owner_address: senderAddress,
+  };
+  const url = `/wallet/triggersmartcontract`;
+  const { transaction: preparedTransaction } = await post(url, txData);
+  return await extendTronTxExpirationTimeBy10mn(preparedTransaction);
+}
+
+export async function craftStandardTransaction(
+  tokenAddress: string | undefined,
+  recipientAddress: string,
+  senderAddress: string,
+  amount: BigNumber,
+  isTransferAsset: boolean,
+): Promise<SendTransactionDataSuccess> {
+  const url = isTransferAsset ? `/wallet/transferasset` : `/wallet/createtransaction`;
+  const txData: SendTransactionData = {
+    to_address: recipientAddress,
+    owner_address: senderAddress,
+    amount: Number(amount),
+    asset_name: tokenAddress && Buffer.from(tokenAddress).toString("hex"),
+  };
+  const preparedTransaction = await post(url, txData);
+  return await extendTronTxExpirationTimeBy10mn(preparedTransaction);
+}
+
+const getTokenInfo = (subAccount: SubAccount | null | undefined): string[] | undefined[] => {
+  const tokenInfo =
+    subAccount && subAccount.type === "TokenAccount"
+      ? drop(subAccount.token.id.split("/"), 1)
+      : [undefined, undefined];
+  return tokenInfo;
+};
+
 // Send trx or trc10/trc20 tokens
 export const createTronTransaction = async (
   account: Account,
   transaction: Transaction,
   subAccount: SubAccount | null | undefined,
 ): Promise<SendTransactionDataSuccess> => {
-  const [tokenType, tokenId] =
-    subAccount && subAccount.type === "TokenAccount"
-      ? drop(subAccount.token.id.split("/"), 1)
-      : [undefined, undefined];
+  const [tokenType, tokenId] = getTokenInfo(subAccount);
 
+  const decodeRecipient = decode58Check(transaction.recipient);
+  const decodeSender = decode58Check(account.freshAddress);
   // trc20
   if (tokenType === "trc20" && tokenId) {
     const tokenContractAddress = (subAccount as TokenAccount).token.contractAddress;
-    const txData: SmartContractTransactionData = {
-      function_selector: "transfer(address,uint256)",
-      fee_limit: 50000000,
-      call_value: 0,
-      contract_address: decode58Check(tokenContractAddress),
-      parameter: abiEncodeTrc20Transfer(decode58Check(transaction.recipient), transaction.amount),
-      owner_address: decode58Check(account.freshAddress),
-    };
-    const url = `/wallet/triggersmartcontract`;
-    const { transaction: preparedTransaction } = await post(url, txData);
-    return extendTronTxExpirationTimeBy10mn(preparedTransaction);
+    return craftTrc20Transaction(
+      tokenContractAddress,
+      decodeRecipient,
+      decodeSender,
+      transaction.amount,
+    );
   } else {
-    // trx/trc10
-    const txData: SendTransactionData = {
-      to_address: decode58Check(transaction.recipient),
-      owner_address: decode58Check(account.freshAddress),
-      amount: transaction.amount.toNumber(),
-      asset_name: tokenId && Buffer.from(tokenId).toString("hex"),
-    };
-    const url = subAccount ? `/wallet/transferasset` : `/wallet/createtransaction`;
-    const preparedTransaction = await post(url, txData);
-    // for the ledger Vault we need to increase the expiration
-    return extendTronTxExpirationTimeBy10mn(preparedTransaction);
+    const isTransferAsset = subAccount ? true : false;
+    return craftStandardTransaction(
+      tokenId,
+      decodeRecipient,
+      decodeSender,
+      transaction.amount,
+      isTransferAsset,
+    );
   }
 };
-
-function extendTronTxExpirationTimeBy10mn(
+async function extendTronTxExpirationTimeBy10mn(
   preparedTransaction: any,
 ): Promise<SendTransactionDataSuccess> {
   const VAULT_EXPIRATION_TIME = 600;

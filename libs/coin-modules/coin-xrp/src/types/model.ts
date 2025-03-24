@@ -10,25 +10,6 @@ export type XrpMemo = {
   format?: string;
   type?: string;
 };
-export type XrpOperation = {
-  blockTime: Date;
-  blockHash: string;
-  hash: string;
-  address: string;
-  type: string;
-  simpleType: "IN" | "OUT";
-  value: bigint;
-  fee: bigint;
-  blockHeight: number;
-  senders: string[];
-  recipients: string[];
-  date: Date;
-  transactionSequenceNumber: number;
-  details?: {
-    destinationTag?: number;
-    memos?: XrpMemo[];
-  };
-};
 
 type Order = "asc" | "desc";
 export type ListOperationsOptions = {

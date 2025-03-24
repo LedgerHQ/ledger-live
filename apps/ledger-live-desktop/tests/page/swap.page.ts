@@ -5,6 +5,7 @@ import { ElectronApplication, expect } from "@playwright/test";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { ChooseAssetDrawer } from "tests/page/drawer/choose.asset.drawer";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Swap";
+import { Swap } from "@ledgerhq/live-common/lib-es/e2e/models/Swap";
 
 export class SwapPage extends AppPage {
   private currencyByName = (accountName: string) => this.page.getByText(accountName); // TODO: this is rubbish. Changed this
@@ -110,13 +111,38 @@ export class SwapPage extends AppPage {
     await this.customFeeTextbox.fill(amount);
   }
 
-  @step("Select available provider")
-  async selectExchange(electronApp: ElectronApplication) {
+  async getProviderList(electronApp: ElectronApplication) {
     const [, webview] = electronApp.windows();
     await expect(webview.getByTestId("number-of-quotes")).toBeVisible();
     const providersList = await webview
       .locator("//span[@data-testid='quote-card-provider-name']")
       .allTextContents();
+    return providersList;
+  }
+
+  @step("Select specific provider $0")
+  async selectSpecificprovider(provider: string, electronApp: ElectronApplication) {
+    const [, webview] = electronApp.windows();
+
+    const providersList = await this.getProviderList(electronApp);
+
+    if (providersList.includes(provider)) {
+      const providerLocator = webview
+        .locator(`//span[@data-testid='quote-card-provider-name' and text()='${provider}']`)
+        .first();
+
+      await providerLocator.isVisible();
+      await providerLocator.click();
+    } else {
+      throw new Error("No valid providers found");
+    }
+  }
+
+  @step("Select available provider")
+  async selectExchange(electronApp: ElectronApplication) {
+    const [, webview] = electronApp.windows();
+
+    const providersList = await this.getProviderList(electronApp);
 
     const providersWithoutKYC = providersList.filter(providerName => {
       const provider = Object.values(Provider).find(p => p.uiName === providerName);
@@ -195,6 +221,14 @@ export class SwapPage extends AppPage {
   async clickExchangeButton(electronApp: ElectronApplication, provider: string) {
     const [, webview] = electronApp.windows();
     await webview.getByRole("button", { name: `Swap with ${provider}` }).click();
+  }
+
+  @step("Go to provider live app")
+  async goToProviderLiveApp(electronApp: ElectronApplication, provider: string) {
+    const [, webview] = electronApp.windows();
+    const continueButton = webview.getByRole("button", { name: `Continue with ${provider}` });
+    await expect(continueButton).toBeVisible();
+    await continueButton.click();
   }
 
   async confirmExchange() {
@@ -327,6 +361,7 @@ export class SwapPage extends AppPage {
       await expect(webview.locator(this.errorSpan(message))).toBeVisible();
     }
     await expect(webview.getByTestId(`execute-button`)).not.toBeEnabled();
+    await expect(webview.getByTestId(`insufficient-funds-warning`)).toBeVisible();
   }
 
   @step("Go and wait for Swap app to be ready")
@@ -346,5 +381,37 @@ export class SwapPage extends AppPage {
 
     await swapFunction();
     expect(await successfulQuery).toBeDefined();
+  }
+
+  @step("Verify provider URL")
+  async verifyProviderURL(electronApp: ElectronApplication, selectedProvider: string, swap: Swap) {
+    const newWindow = await electronApp.waitForEvent("window");
+
+    await newWindow.waitForLoadState();
+
+    const url = newWindow.url();
+
+    switch (selectedProvider) {
+      case Provider.ONE_INCH.uiName: {
+        expect(url).toContain(swap.accountToDebit.currency.ticker.toLowerCase());
+        expect(url).toContain(swap.accountToCredit.currency.ticker.toLowerCase());
+        expect(url).toContain(
+          `swap%2F${swap.accountToDebit.currency.ticker.toLowerCase()}%2F${swap.accountToCredit.currency.ticker.toLowerCase()}`,
+        );
+        expect(url).toContain(swap.amount);
+        break;
+      }
+      case Provider.PARASWAP.uiName: {
+        expect(url).toContain(swap.amount);
+        expect(url).toContain(swap.accountToDebit.currency.contractAddress);
+        expect(url).toContain(swap.accountToCredit.currency.contractAddress);
+        expect(url).toContain(
+          `${swap.accountToDebit.currency.contractAddress}-${swap.accountToCredit.currency.contractAddress}`,
+        );
+        break;
+      }
+      default:
+        throw new Error(`Unknown provider: ${selectedProvider}`);
+    }
   }
 }

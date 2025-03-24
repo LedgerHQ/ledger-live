@@ -158,7 +158,7 @@ const DEFAULT_SWAP_PROVIDERS: Record<string, ProviderConfig & Partial<Additional
       ),
     },
     signature: Buffer.from(
-      "3045022100b7d3413de4f6daebf98ad8aa7fd5323f13240fd7193f4c9b86ea2d75b73c123e022040dd20af62fb537c6c2361912c010f1c99f748ed8f6a0031becd7c8d9db35839",
+      "3044022041344dba7353fe94a4d24a20285b5afaa8fa9a022a62e1042d059b0f1d37cbc302200a3ed5d661df0c44d78c439939c4c49868936c7357da3807a19104bcfb323d24",
       "hex",
     ),
   },

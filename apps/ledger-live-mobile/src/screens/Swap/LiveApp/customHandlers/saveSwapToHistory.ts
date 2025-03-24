@@ -4,6 +4,8 @@ import { AccountLike, SubAccount, SwapOperation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { Dispatch } from "redux";
 import { updateAccountWithUpdater } from "~/actions/accounts";
+import { ScreenName } from "~/const";
+import { NavigationType } from ".";
 import { convertToAtomicUnit } from "../utils";
 
 export type SwapProps = {
@@ -28,7 +30,11 @@ export type SwapProps = {
   swapId?: string;
 };
 
-export function saveSwapToHistory(accounts: AccountLike[], dispatch: Dispatch) {
+export function saveSwapToHistory(
+  accounts: AccountLike[],
+  dispatch: Dispatch,
+  navigation: NavigationType,
+) {
   return async ({ params }: { params: { swap: SwapProps; transaction_id: string } }) => {
     const { swap, transaction_id } = params;
 
@@ -92,6 +98,8 @@ export function saveSwapToHistory(accounts: AccountLike[], dispatch: Dispatch) {
       }),
     );
 
-    return Promise.resolve();
+    return navigation.navigate(ScreenName.SwapPendingOperation, {
+      swapOperation: swapOperation,
+    });
   };
 }

@@ -56,6 +56,7 @@ import KeyboardView from "~/components/KeyboardView";
 import { getEnv } from "@ledgerhq/live-env";
 import LedgerSyncEntryPoint from "LLM/features/LedgerSyncEntryPoint";
 import { EntryPoint } from "LLM/features/LedgerSyncEntryPoint/types";
+import { LNSUpsellBanner } from "LLM/features/LNSUpsell";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<MyLedgerNavigatorStackParamList, ScreenName.MyLedgerDevice>
@@ -325,6 +326,7 @@ const AppsScreen = ({
           {!showAppUpdate && !showFwUpdateBanner ? (
             <Flex m={6} mb={0}>
               <LedgerSyncEntryPoint entryPoint={EntryPoint.manager} page="Manager" />
+              <LNSUpsellBanner location="manager" />
             </Flex>
           ) : null}
         </DeviceCard>

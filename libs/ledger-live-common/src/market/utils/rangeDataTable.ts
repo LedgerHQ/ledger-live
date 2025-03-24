@@ -33,7 +33,7 @@ export const rangeDataTable: { [key: string]: RangeData } = {
   },
   "1h": {
     days: 0.04,
-    interval: "minutely",
+    interval: "5m",
     simple: "1h",
     scale: "minute",
   },
