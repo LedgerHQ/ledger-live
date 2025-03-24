@@ -1,9 +1,9 @@
-import celo from "../../families/celo/bridge/js";
 import { bridge as algorand } from "../../families/algorand/setup";
 import { bridge as aptos } from "../../families/aptos/setup";
 import { bridge as bitcoin } from "../../families/bitcoin/setup";
 import { bridge as cardano } from "../../families/cardano/setup";
 import { bridge as casper } from "../../families/casper/setup";
+import { bridge as celo } from "../../families/celo/setup";
 import { bridge as cosmos } from "../../families/cosmos/setup";
 import { bridge as evm } from "../../families/evm/setup";
 import { bridge as hedera } from "../../families/hedera/setup";
@@ -24,12 +24,12 @@ import { bridge as xrp } from "../../families/xrp/setup";
 import { bridge as sui } from "../../families/sui/setup";
 
 export default {
-  celo,
   algorand,
   aptos,
   bitcoin,
   cardano,
   casper,
+  celo,
   cosmos,
   evm,
   hedera,
