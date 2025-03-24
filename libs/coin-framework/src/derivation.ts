@@ -171,6 +171,9 @@ const modes: Readonly<Record<DerivationMode, ModeSpec>> = Object.freeze({
   internet_computer: {
     overridesDerivation: "44'/223'/0'/0/<account>",
   },
+  minabip44: {
+    overridesDerivation: "44'/12586'/<account>'/0/0",
+  },
   stacks_wallet: {
     overridesDerivation: "44'/5757'/0'/0/<account>",
     startsAt: 1,
@@ -197,6 +200,7 @@ const legacyDerivations: Partial<Record<CryptoCurrency["id"], DerivationMode[]>>
   hedera: ["hederaBip44"],
   filecoin: ["glifLegacy", "filecoinBIP44", "glif"],
   internet_computer: ["internet_computer"],
+  mina: ["minabip44"],
   casper: ["casper_wallet"],
   cardano: ["cardano"],
   cardano_testnet: ["cardano"],
@@ -360,6 +364,7 @@ const seedIdentifierPath: Record<string, SeedPathFn> = {
   cardano: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
   cardano_testnet: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
   internet_computer: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
+  mina: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
   near: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0'/0'`,
   vechain: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
   ton: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0'/0'/0'`,
