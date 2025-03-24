@@ -3205,12 +3205,12 @@ importers:
       jest:
         specifier: ^29.7.0
         version: 29.7.0
-      msw:
-        specifier: 2.7.3
-        version: 2.7.3(typescript@5.4.3)
       jest-sonar:
         specifier: 0.2.16
         version: 0.2.16
+      msw:
+        specifier: 2.7.3
+        version: 2.7.3(typescript@5.4.3)
       ts-jest:
         specifier: ^29.1.1
         version: 29.1.5(jest@29.7.0)(typescript@5.4.3)
@@ -3375,15 +3375,12 @@ importers:
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@22.10.10)
-<<<<<<< HEAD
-      msw:
-        specifier: ^2.7.3
-        version: 2.7.3(@types/node@22.10.10)(typescript@5.4.3)
-=======
       jest-sonar:
         specifier: 0.2.16
         version: 0.2.16
->>>>>>> d3af400f2b (feat: add sonar execution tests report)
+      msw:
+        specifier: ^2.7.3
+        version: 2.7.3(@types/node@22.10.10)(typescript@5.4.3)
       ts-jest:
         specifier: ^29.1.1
         version: 29.1.5(jest@29.7.0(@types/node@22.10.10))(typescript@5.4.3)
@@ -16338,7 +16335,6 @@ packages:
     deprecated: |-
       DEPRECATED: This package is no longer maintained.
       Please use the built-in Jest matchers available in @testing-library/react-native v12.4+.
-
       See migration guide: https://callstack.github.io/react-native-testing-library/docs/migration/jest-matchers
     peerDependencies:
       react: '>=16.0.0'
@@ -27390,7 +27386,6 @@ packages:
     engines: {node: '>=0.6.0', teleport: '>=0.2.0'}
     deprecated: |-
       You or someone you depend on is using Q, the JavaScript Promise library that gave JavaScript developers strong feelings about promises. They can almost certainly migrate to the native JavaScript promise now. Thank you literally everyone for joining me in this bet against the odds. Be excellent to each other.
-
       (For a CapTP with native promises, see @endo/eventual-send and @endo/captp)
 
   qrcode-terminal@0.11.0:
