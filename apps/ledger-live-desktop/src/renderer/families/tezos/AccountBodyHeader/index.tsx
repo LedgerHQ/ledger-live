@@ -1,10 +1,10 @@
 import React from "react";
 import Delegation from "../Delegation";
-import { SubAccount } from "@ledgerhq/types-live";
+import { TokenAccount } from "@ledgerhq/types-live";
 import { TezosAccount } from "@ledgerhq/live-common/families/tezos/types";
 
 type Props = {
-  account: TezosAccount | SubAccount;
+  account: TezosAccount | TokenAccount;
   parentAccount: TezosAccount | undefined | null;
 };
 

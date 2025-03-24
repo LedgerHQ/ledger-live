@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { useDelegation } from "@ledgerhq/live-common/families/tezos/react";
-import { SubAccount } from "@ledgerhq/types-live";
+import { TokenAccount } from "@ledgerhq/types-live";
 import { openURL } from "~/renderer/linking";
 import { openModal } from "~/renderer/actions/modals";
 import Text from "~/renderer/components/Text";
@@ -19,7 +19,7 @@ import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { urls } from "~/config/urls";
 
 type Props = {
-  account: TezosAccount | SubAccount;
+  account: TezosAccount | TokenAccount;
   parentAccount: TezosAccount | undefined | null;
 };
 const Wrapper = styled(Box).attrs(() => ({

@@ -7,7 +7,7 @@ import {
   SolanaTokenAccount,
   TransferFeeCalculated,
 } from "@ledgerhq/live-common/families/solana/types";
-import { SubAccount } from "@ledgerhq/types-live";
+import { TokenAccount } from "@ledgerhq/types-live";
 import { findSubAccountById, getMainAccount } from "@ledgerhq/live-common/account/index";
 import Text from "~/renderer/components/Text";
 import Box from "~/renderer/components/Box";
@@ -15,7 +15,7 @@ import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import CounterValue from "~/renderer/components/CounterValue";
 
-type Account = SolanaAccount | SolanaTokenAccount | SubAccount;
+type Account = SolanaAccount | SolanaTokenAccount | TokenAccount;
 
 type Props = {
   account: Account;

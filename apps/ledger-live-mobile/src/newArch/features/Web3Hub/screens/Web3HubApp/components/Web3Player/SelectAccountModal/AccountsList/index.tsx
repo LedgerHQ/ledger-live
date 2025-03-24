@@ -2,7 +2,7 @@ import React from "react";
 import { StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { AccountLike, SubAccount } from "@ledgerhq/types-live";
+import { AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { isAccount } from "@ledgerhq/live-common/account/index";
 import { FlashList } from "@shopify/flash-list";
 import { accountsByCryptoCurrencyScreenSelector } from "~/reducers/accounts";
@@ -11,7 +11,7 @@ import AddAccountItem from "./AddAccountItem";
 
 type AccountTuple = {
   account: AccountLike;
-  subAccount: SubAccount | null;
+  subAccount: TokenAccount | null;
   name: string;
 };
 
