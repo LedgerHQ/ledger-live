@@ -69,7 +69,7 @@ async function filterOperations(
   return operations.map(op => adaptCoreOperationToLiveOperation(accountId, op) satisfies Operation);
 }
 
-function adaptCoreOperationToLiveOperation(
+export function adaptCoreOperationToLiveOperation(
   accountId: string,
   op: CoreOperation<XrpAsset>,
 ): Operation {

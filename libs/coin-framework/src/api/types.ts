@@ -52,6 +52,7 @@ export type TransactionIntent<
 > = {
   type: string;
   sender: Sender;
+  senderPublicKey?: string;
   recipient: string;
   amount: bigint;
   asset: AssetInfo;
@@ -76,7 +77,8 @@ export type Api<
   FeeParameters extends Record<string, bigint> = never,
 > = {
   broadcast: (tx: string) => Promise<string>;
-  combine: (tx: string, signature: string, pubkey?: string) => string;
+  // TODO: why add Promise<string> below?
+  combine: (tx: string, signature: string, pubkey?: string) => string | Promise<string>;
   estimateFees: (
     transactionIntent: TransactionIntent<AssetInfo, TxExtra, Sender>,
   ) => Promise<FeeEstimation<FeeParameters>>;
@@ -84,6 +86,7 @@ export type Api<
     transactionIntent: TransactionIntent<AssetInfo, TxExtra, Sender>,
     customFees?: bigint,
   ) => Promise<string>;
+  // TODO: add validateIntent
   getBalance: (address: string) => Promise<Balance<AssetInfo>[]>;
   lastBlock: () => Promise<BlockInfo>;
   listOperations: (
