@@ -49,6 +49,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { isUTXOCompliant } from "@ledgerhq/live-common/currencies/helpers";
 import { NeedMemoTagModal } from "./NeedMemoTagModal";
+import { useLocale } from "~/context/Locale";
 
 type ScreenProps = BaseComposite<
   StackNavigatorProps<ReceiveFundsStackParamList, ScreenName.ReceiveConfirmation>
@@ -80,6 +81,7 @@ export default function ReceiveConfirmation({ navigation }: Props) {
 function ReceiveConfirmationInner({ navigation, route, account, parentAccount }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
+  const { locale } = useLocale();
   const { pushToast } = useToasts();
   const verified = route.params?.verified ?? false;
   const [isModalOpened, setIsModalOpened] = useState(true);
@@ -130,7 +132,9 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
       type: "card",
       page: "Receive Account Qr Code",
     });
-    Linking.openURL(urls.withdrawCrypto);
+    Linking.openURL(
+      urls.withdrawCrypto[locale as keyof typeof urls.withdrawCrypto] ?? urls.withdrawCrypto.en,
+    );
   };
 
   useEffect(() => {
