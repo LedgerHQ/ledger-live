@@ -31,8 +31,11 @@ export function createApi(config: StellarConfig): Api<StellarToken> {
   };
 }
 
-async function craft(transactionIntent: TransactionIntent<StellarToken>): Promise<string> {
-  const fees = await estimateFees();
+async function craft(
+  transactionIntent: TransactionIntent<StellarToken>,
+  feesLimit?: bigint,
+): Promise<string> {
+  const estimatedFees = feesLimit ? feesLimit : await estimateFees();
   const supplement = transactionIntent.asset
     ? {
         assetCode: transactionIntent.asset.assetCode,
@@ -45,7 +48,7 @@ async function craft(transactionIntent: TransactionIntent<StellarToken>): Promis
       type: transactionIntent.type,
       recipient: transactionIntent.recipient,
       amount: transactionIntent.amount,
-      fee: fees,
+      fee: estimatedFees,
       assetCode: supplement?.assetCode,
       assetIssuer: supplement?.assetIssuer,
     },

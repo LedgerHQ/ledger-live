@@ -1,15 +1,14 @@
 import type { Api } from "@ledgerhq/coin-framework/api/index";
+import { decode } from "ripple-binary-codec";
 import { createApi } from ".";
-import { decode, encodeForSigning } from "ripple-binary-codec";
-import { sign } from "ripple-keypairs";
+//import { decode, encodeForSigning } from "ripple-binary-codec";
+//import { sign } from "ripple-keypairs";
 
 describe("Xrp Api", () => {
   let module: Api<void>;
   const address = "rh1HPuRVsYYvThxG2Bs1MfjmrVC73S16Fb";
   const bigAddress = "rUxSkt6hQpWxXQwTNRUCYYRQ7BC2yRA3F8"; // An account with more that 4000 txs
   const emptyAddress = "rKtXXTVno77jhu6tto1MAXjepyuaKaLcqB"; // Account with no transaction (at the time of this writing)
-  const xrpPubKey = process.env["PUB_KEY"]!;
-  const xrpSecretKey = process.env["SECRET_KEY"]!;
 
   beforeAll(() => {
     module = createApi({ node: "https://s.altnet.rippletest.net:51234" });
@@ -109,11 +108,44 @@ describe("Xrp Api", () => {
       // Then
       expect(result.length).toEqual(162);
     });
-  });
 
-  // To enable this test, you need to fill an `.env` file at the root of this package. Example can be found in `.env.integ.test.example`.
-  // The value hardcoded here depends on the value filled in the `.env` file.
-  describe.skip("combine", () => {
+    it("should use default fees limit when user does not provide it for crafting a transaction", async () => {
+      const result = await module.craftTransaction({
+        type: "send",
+        sender: address,
+        recipient: "rKRtUG15iBsCQRgrkeUEg5oX4Ae2zWZ89z",
+        amount: BigInt(10),
+      });
+
+      expect(result.length).toEqual(162);
+
+      const decodedTransaction = decode(result) as { Fee: string };
+      expect(decodedTransaction.Fee).toEqual("10");
+    });
+
+    it("should use user fees limit when user provide it for crafting a transaction", async () => {
+      const feesLimit = 99n;
+      const result = await module.craftTransaction(
+        {
+          type: "send",
+          sender: address,
+          recipient: "rKRtUG15iBsCQRgrkeUEg5oX4Ae2zWZ89z",
+          amount: BigInt(10),
+        },
+        feesLimit,
+      );
+
+      const decodedTransaction = decode(result) as { Fee: string };
+      expect(decodedTransaction.Fee).toEqual(feesLimit.toString());
+    });
+  });
+});
+
+// To enable this test, you need to fill an `.env` file at the root of this package. Example can be found in `.env.integ.test.example`.
+// The value hardcoded here depends on the value filled in the `.env` file.
+/*describe.skip("combine", () => {
+  //const xrpPubKey = process.env["PUB_KEY"]!;
+  //const xrpSecretKey = process.env["SECRET_KEY"]!;
     it("returns a signed raw transaction", async () => {
       // Given
       const rawTx =
@@ -136,3 +168,4 @@ describe("Xrp Api", () => {
     });
   });
 });
+  */

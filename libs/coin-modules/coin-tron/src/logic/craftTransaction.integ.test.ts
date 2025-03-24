@@ -1,4 +1,5 @@
 import coinConfig from "../config";
+import { DEFAULT_TRC20_FEES_LIMIT } from "../network";
 import { decode58Check } from "../network/format";
 import { craftTransaction } from "./craftTransaction";
 import { decodeTransaction } from "./utils";
@@ -91,6 +92,62 @@ describe("craftTransaction Integration Tests", () => {
               }),
             }),
           ],
+        }),
+      }),
+    );
+  });
+
+  it("should use default fees limit when user does not provide it for a TRC20 transaction", async () => {
+    const amount = BigInt(20);
+    const sender = "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9";
+    const recipient = "TPswDDCAWhJAZGdHPidFg5nEf8TkNToDX1";
+
+    const result = await craftTransaction({
+      type: "send",
+      asset: {
+        standard: "trc20",
+        contractAddress: "TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
+      },
+      sender,
+      recipient,
+      amount,
+    });
+
+    const decodeResult = await decodeTransaction(result);
+    expect(decodeResult).toEqual(
+      expect.objectContaining({
+        raw_data: expect.objectContaining({
+          fee_limit: DEFAULT_TRC20_FEES_LIMIT,
+        }),
+      }),
+    );
+  });
+
+  it("should use user fees limit when user provide it for a TRC20 transaction", async () => {
+    const amount = BigInt(20);
+    const sender = "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9";
+    const recipient = "TPswDDCAWhJAZGdHPidFg5nEf8TkNToDX1";
+
+    const feesLimit = 99n;
+    const result = await craftTransaction(
+      {
+        type: "send",
+        asset: {
+          standard: "trc20",
+          contractAddress: "TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
+        },
+        sender,
+        recipient,
+        amount,
+      },
+      feesLimit,
+    );
+
+    const decodeResult = await decodeTransaction(result);
+    expect(decodeResult).toEqual(
+      expect.objectContaining({
+        raw_data: expect.objectContaining({
+          fee_limit: Number(feesLimit),
         }),
       }),
     );

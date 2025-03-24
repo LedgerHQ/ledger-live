@@ -1,22 +1,31 @@
 import { TransactionIntent } from "@ledgerhq/coin-framework/api/index";
-import { decode58Check } from "../network/format";
 import BigNumber from "bignumber.js";
 import { craftStandardTransaction, craftTrc20Transaction } from "../network";
+import { decode58Check } from "../network/format";
 import { TronToken } from "../types";
+import { feesToNumber } from "./utils";
 
 export async function craftTransaction(
   transactionIntent: TransactionIntent<TronToken>,
+  feesLimit?: bigint,
 ): Promise<string> {
   const { asset, recipient, sender, amount } = transactionIntent;
   const recipientAddress = decode58Check(recipient);
   const senderAddress = decode58Check(sender);
 
   if (asset?.standard === "trc20" && asset.contractAddress) {
+    if (feesLimit && (feesLimit < Number.MIN_SAFE_INTEGER || feesLimit > Number.MAX_SAFE_INTEGER)) {
+      throw new Error(
+        `Fees limit must be between ${Number.MIN_SAFE_INTEGER} and ${Number.MAX_SAFE_INTEGER} (Typescript Number type value limit)`,
+      );
+    }
+
     const { raw_data_hex: rawDataHex } = await craftTrc20Transaction(
       asset.contractAddress,
       recipientAddress,
       senderAddress,
       new BigNumber(amount.toString()),
+      feesToNumber(feesLimit),
     );
     return rawDataHex as string;
   } else {

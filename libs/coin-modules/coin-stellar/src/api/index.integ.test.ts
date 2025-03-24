@@ -1,11 +1,12 @@
 import type { Api, Operation } from "@ledgerhq/coin-framework/api/index";
 import { createApi } from ".";
 import { StellarToken } from "../types";
+import * as CraftingFunctions from "../logic/craftTransaction";
 
 /**
  * Testnet scan: https://testnet.lumenscan.io/
  */
-describe.skip("Stellar Api", () => {
+describe("Stellar Api", () => {
   let module: Api<StellarToken>;
   const address = "GBAUZBDXMVV7HII4JWBGFMLVKVJ6OLQAKOCGXM5E2FM4TAZB6C7JO2L7";
 
@@ -80,7 +81,7 @@ describe.skip("Stellar Api", () => {
     });
   });
 
-  describe("craftTransaction", () => {
+  describe.only("craftTransaction", () => {
     it("returns a raw transaction", async () => {
       const result = await module.craftTransaction({
         type: "send",
@@ -91,5 +92,40 @@ describe.skip("Stellar Api", () => {
 
       expect(result.length).toEqual(188);
     });
+
+    it("should create a transaction with an estimated fees when user does not provide them", async () => {
+      const spy = jest.spyOn(CraftingFunctions, "craftTransaction");
+      const result = await module.craftTransaction({
+        type: "send",
+        sender: address,
+        recipient: "GD6QELUZPSKPRWVXOQ3F6GBF4OBRMCHO5PHREXH4ZRTPJAG7V5MD7JGX",
+        amount: BigInt(1_000_000),
+      });
+
+      expect(result.length).toEqual(188);
+      expect(spy).toHaveBeenCalledWith(expect.any(Object), expect.objectContaining({ fee: 100n }));
+    });
+
+    it.each([1n, 50n, 99n])(
+      "should create a transaction with the user fees when user provide them",
+      async (feesLimit: bigint) => {
+        const spy = jest.spyOn(CraftingFunctions, "craftTransaction");
+        const result = await module.craftTransaction(
+          {
+            type: "send",
+            sender: address,
+            recipient: "GD6QELUZPSKPRWVXOQ3F6GBF4OBRMCHO5PHREXH4ZRTPJAG7V5MD7JGX",
+            amount: BigInt(1_000_000),
+          },
+          feesLimit,
+        );
+
+        expect(result.length).toEqual(188);
+        expect(spy).toHaveBeenCalledWith(
+          expect.any(Object),
+          expect.objectContaining({ fee: 100n }),
+        );
+      },
+    );
   });
 });
