@@ -126,7 +126,7 @@ describe("getAccountShape", () => {
     );
 
     // THEN
-    expect(shape.operationsCount).toEqual(2);
+    expect(shape.operationsCount).toEqual(initialAccount.operations.length + apiOperations.length);
     expect(shape.operations).toEqual(expect.arrayContaining(apiOperations));
   });
 });
