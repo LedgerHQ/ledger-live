@@ -55,6 +55,7 @@ export enum CoinType {
   LBRY = 140,
   LITECOIN = 2,
   LISK = 134,
+  MINA = 12586,
   MIX = 76,
   MONERO = 128,
   MUSICOIN = 184,
