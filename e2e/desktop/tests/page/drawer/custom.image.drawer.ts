@@ -1,5 +1,5 @@
 import { waitFor } from "../../utils/waitFor";
-import { Component } from "../../page/abstractClasses";
+import { Component } from "../abstractClasses";
 
 export class CustomImageDrawer extends Component {
   private importImageInputSelector = "data-testid=custom-image-import-image-input";

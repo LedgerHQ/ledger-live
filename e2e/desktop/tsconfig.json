@@ -1,0 +1,21 @@
+{
+    "extends": "../../tsconfig.base",
+    "compilerOptions": {
+        "baseUrl": ".",
+        "target": "ESNext",
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "esModuleInterop": true,
+        "strict": true,
+        "skipLibCheck": true,
+        "typeRoots": [
+            "../../apps/ledger-live-desktop/index-types.d.ts",
+            "./node_modules/@types"
+        ],
+        "paths": {
+            "@ledgerhq/live-common/*": ["../../libs/ledger-live-common/src/*"],
+            "@ledgerhq/live-wallet/*": ["../../libs/live-wallet/src/*"],
+        }
+    },
+    "include": ["tests"]
+}
