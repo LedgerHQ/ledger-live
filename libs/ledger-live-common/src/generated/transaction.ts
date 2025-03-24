@@ -1,4 +1,4 @@
-import celo from "../families/celo/transaction";
+import celo from "../../../coin-modules/coin-celo/src/transaction";
 import algorand from "@ledgerhq/coin-algorand/transaction";
 import aptos from "@ledgerhq/coin-aptos/transaction";
 import bitcoin from "@ledgerhq/coin-bitcoin/transaction";
