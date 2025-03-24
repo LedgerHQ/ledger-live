@@ -7158,8 +7158,8 @@ importers:
         specifier: 0.0.0-rnble-transport-20250318153131
         version: 0.0.0-rnble-transport-20250318153131(rxjs@7.8.1)
       '@ledgerhq/device-transport-kit-react-native-ble':
-        specifier: 0.0.0-rnble-transport-20250318153131
-        version: 0.0.0-rnble-transport-20250318153131(@ledgerhq/device-management-kit@0.0.0-rnble-transport-20250318153131(rxjs@7.8.1))(react-native-ble-plx@3.2.1(react-native@0.76.3(react@18.3.1))(react@18.3.1))(react-native@0.76.3(react@18.3.1))(rxjs@7.8.1)
+        specifier: 0.0.0-rnble-transport-20250324094321
+        version: 0.0.0-rnble-transport-20250324094321(@ledgerhq/device-management-kit@0.0.0-rnble-transport-20250318153131(rxjs@7.8.1))(react-native-ble-plx@3.2.1(react-native@0.76.3(react@18.3.1))(react@18.3.1))(react-native@0.76.3(react@18.3.1))(rxjs@7.8.1)
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../ledgerjs/packages/errors
@@ -12770,10 +12770,10 @@ packages:
       '@ledgerhq/context-module': ^1.3.0
       '@ledgerhq/device-management-kit': 0.6.4
 
-  '@ledgerhq/device-transport-kit-react-native-ble@0.0.0-rnble-transport-20250318153131':
-    resolution: {integrity: sha512-XZu6QKauIMU9yFp/PPZeN/jXHZhYL92aTb2bZaw7Aapi11SdhOj6qC8A6Y1tDXbvMkmLQKZ9+mmv4EWcdZc9RQ==}
+  '@ledgerhq/device-transport-kit-react-native-ble@0.0.0-rnble-transport-20250324094321':
+    resolution: {integrity: sha512-eqJ3l6smdWVT0ePVhJ/yRGTFil+DQ0mvxu/tPif/oF9U+rnf17egqrEH+/yszNWFl6+LGfXbcTMhDLlAgrq+tw==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': 0.0.0-rnble-transport-20250318153131
+      '@ledgerhq/device-management-kit': 0.0.0-rnble-transport-20250324094321
       react-native: '>0.70'
       react-native-ble-plx: ^3.2.1
       rxjs: ^7.8.1
@@ -33861,7 +33861,7 @@ snapshots:
 
   '@babel/generator@7.2.0':
     dependencies:
-      '@babel/types': 7.26.7
+      '@babel/types': 7.27.0
       jsesc: 2.5.2
       lodash: 4.17.21
       source-map: 0.5.7
@@ -34113,7 +34113,7 @@ snapshots:
   '@babel/helper-module-imports@7.25.9':
     dependencies:
       '@babel/traverse': 7.26.7
-      '@babel/types': 7.26.7
+      '@babel/types': 7.27.0
     transitivePeerDependencies:
       - supports-color
 
@@ -34255,7 +34255,7 @@ snapshots:
   '@babel/helper-simple-access@7.25.9':
     dependencies:
       '@babel/traverse': 7.26.7
-      '@babel/types': 7.26.7
+      '@babel/types': 7.27.0
     transitivePeerDependencies:
       - supports-color
 
@@ -34289,14 +34289,14 @@ snapshots:
   '@babel/helper-wrap-function@7.22.20':
     dependencies:
       '@babel/helper-function-name': 7.23.0
-      '@babel/template': 7.25.9
-      '@babel/types': 7.26.7
+      '@babel/template': 7.27.0
+      '@babel/types': 7.27.0
 
   '@babel/helper-wrap-function@7.25.9':
     dependencies:
-      '@babel/template': 7.25.9
+      '@babel/template': 7.27.0
       '@babel/traverse': 7.27.0
-      '@babel/types': 7.26.7
+      '@babel/types': 7.27.0
     transitivePeerDependencies:
       - supports-color
 
@@ -34965,19 +34965,19 @@ snapshots:
   '@babel/plugin-transform-computed-properties@7.25.9':
     dependencies:
       '@babel/helper-plugin-utils': 7.25.9
-      '@babel/template': 7.25.9
+      '@babel/template': 7.27.0
 
   '@babel/plugin-transform-computed-properties@7.25.9(@babel/core@7.24.3)':
     dependencies:
       '@babel/core': 7.24.3
       '@babel/helper-plugin-utils': 7.25.9
-      '@babel/template': 7.25.9
+      '@babel/template': 7.27.0
 
   '@babel/plugin-transform-computed-properties@7.25.9(@babel/core@7.26.7)':
     dependencies:
       '@babel/core': 7.26.7
       '@babel/helper-plugin-utils': 7.25.9
-      '@babel/template': 7.25.9
+      '@babel/template': 7.27.0
 
   '@babel/plugin-transform-destructuring@7.24.1(@babel/core@7.24.3)':
     dependencies:
@@ -35517,7 +35517,7 @@ snapshots:
       '@babel/helper-module-imports': 7.25.9
       '@babel/helper-plugin-utils': 7.25.9
       '@babel/plugin-syntax-jsx': 7.25.9
-      '@babel/types': 7.26.7
+      '@babel/types': 7.27.0
     transitivePeerDependencies:
       - supports-color
 
@@ -35528,7 +35528,7 @@ snapshots:
       '@babel/helper-module-imports': 7.25.9
       '@babel/helper-plugin-utils': 7.25.9
       '@babel/plugin-syntax-jsx': 7.25.9(@babel/core@7.24.3)
-      '@babel/types': 7.26.7
+      '@babel/types': 7.27.0
     transitivePeerDependencies:
       - supports-color
 
@@ -35539,7 +35539,7 @@ snapshots:
       '@babel/helper-module-imports': 7.25.9
       '@babel/helper-plugin-utils': 7.25.9
       '@babel/plugin-syntax-jsx': 7.25.9(@babel/core@7.26.7)
-      '@babel/types': 7.26.7
+      '@babel/types': 7.27.0
     transitivePeerDependencies:
       - supports-color
 
@@ -40358,7 +40358,7 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/device-transport-kit-react-native-ble@0.0.0-rnble-transport-20250318153131(@ledgerhq/device-management-kit@0.0.0-rnble-transport-20250318153131(rxjs@7.8.1))(react-native-ble-plx@3.2.1(react-native@0.76.3(react@18.3.1))(react@18.3.1))(react-native@0.76.3(react@18.3.1))(rxjs@7.8.1)':
+  '@ledgerhq/device-transport-kit-react-native-ble@0.0.0-rnble-transport-20250324094321(@ledgerhq/device-management-kit@0.0.0-rnble-transport-20250318153131(rxjs@7.8.1))(react-native-ble-plx@3.2.1(react-native@0.76.3(react@18.3.1))(react@18.3.1))(react-native@0.76.3(react@18.3.1))(rxjs@7.8.1)':
     dependencies:
       '@ledgerhq/device-management-kit': 0.0.0-rnble-transport-20250318153131(rxjs@7.8.1)
       '@sentry/minimal': 6.19.7
@@ -43078,7 +43078,7 @@ snapshots:
       '@babel/plugin-transform-sticky-regex': 7.25.9(@babel/core@7.26.7)
       '@babel/plugin-transform-typescript': 7.25.9(@babel/core@7.26.7)
       '@babel/plugin-transform-unicode-regex': 7.25.9(@babel/core@7.26.7)
-      '@babel/template': 7.25.9
+      '@babel/template': 7.27.0
       '@react-native/babel-plugin-codegen': 0.76.3
       babel-plugin-syntax-hermes-parser: 0.25.1
       babel-plugin-transform-flow-enums: 0.0.2(@babel/core@7.26.7)
@@ -50233,15 +50233,15 @@ snapshots:
 
   babel-plugin-jest-hoist@27.5.1:
     dependencies:
-      '@babel/template': 7.25.9
-      '@babel/types': 7.26.7
+      '@babel/template': 7.27.0
+      '@babel/types': 7.27.0
       '@types/babel__core': 7.20.5
       '@types/babel__traverse': 7.20.5
 
   babel-plugin-jest-hoist@28.1.3:
     dependencies:
-      '@babel/template': 7.25.9
-      '@babel/types': 7.26.7
+      '@babel/template': 7.27.0
+      '@babel/types': 7.27.0
       '@types/babel__core': 7.20.5
       '@types/babel__traverse': 7.20.5
 
@@ -58833,10 +58833,10 @@ snapshots:
   jest-snapshot@27.5.1:
     dependencies:
       '@babel/core': 7.24.3
-      '@babel/generator': 7.26.5
+      '@babel/generator': 7.27.0
       '@babel/plugin-syntax-typescript': 7.24.1(@babel/core@7.24.3)
       '@babel/traverse': 7.26.7
-      '@babel/types': 7.26.7
+      '@babel/types': 7.27.0
       '@jest/transform': 27.5.1
       '@jest/types': 27.5.1
       '@types/babel__traverse': 7.20.5
@@ -61045,7 +61045,7 @@ snapshots:
   metro-source-map@0.81.0:
     dependencies:
       '@babel/traverse': 7.26.7
-      '@babel/traverse--for-generate-function-map': '@babel/traverse@7.26.7'
+      '@babel/traverse--for-generate-function-map': '@babel/traverse@7.27.0'
       '@babel/types': 7.26.7
       flow-enums-runtime: 0.0.6
       invariant: 2.2.4

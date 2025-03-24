@@ -32,7 +32,7 @@
   },
   "dependencies": {
     "@ledgerhq/device-management-kit": "0.0.0-rnble-transport-20250318153131",
-    "@ledgerhq/device-transport-kit-react-native-ble": "0.0.0-rnble-transport-20250318153131",
+    "@ledgerhq/device-transport-kit-react-native-ble": "0.0.0-rnble-transport-20250324094321",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/live-dmk-shared": "workspace:^",
