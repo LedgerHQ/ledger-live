@@ -1879,7 +1879,8 @@
       "palletMethod" : "방법",
       "transferAmount" : "이전 금액",
       "validatorsCount" : "검증인 ({{number}})",
-      "version" : "버전"
+      "version" : "버전",
+      "accountCreationFee" : "계정 생성 수수료"
     }
   },
   "operationList" : {
@@ -4229,7 +4230,7 @@
       "nfts" : {
         "title" : "숨겨진 NFT 컬렉션",
         "description" : "숨겨진 컬렉션 목록을 재설정하세요",
-        "reset" : "재설정"
+        "reset" : "Reset ({{count}})"
       },
       "exchangeDeveloperMode" : {
         "title" : "거래소 개발 모드",
@@ -4337,6 +4338,32 @@
             "nft" : "개별 NFT",
             "contract" : "계약"
           }
+        },
+        "back" : "돌아가기"
+      },
+      "debugNfts" : {
+        "title" : "NFTs Tools",
+        "description" : "Provides some useful tools to handle NFTs in Ledger Live",
+        "cta" : "열기",
+        "tabs" : {
+          "config" : "Configuration",
+          "generatorAndDestructor" : "Generators & Destructors"
+        },
+        "configuration" : {
+          "supported" : "Supported NFT Chain",
+          "supported_other" : "Supported NFT Chains",
+          "nms" : {
+            "title" : "NFT Metadata Service (NMS)",
+            "env" : "Environment : {{env}}"
+          }
+        },
+        "generatorAndDestructor" : {
+          "genAcc" : "Generate Accounts",
+          "genAccDesc" : "Generate an accounts with NFTs",
+          "cta" : "Generate",
+          "deleteAcc" : "Delete Accounts",
+          "deleteAccDesc" : "Delete all accounts from store",
+          "delete" : "삭제"
         },
         "back" : "돌아가기"
       },
@@ -5515,6 +5542,11 @@
       "memo" : "태그 / 메모",
       "memoPlaceholder" : "선택 사항",
       "requiredMemoPlaceholder" : "필수 항목"
+    },
+    "mina" : {
+      "memoPlaceholder" : "선택 사항",
+      "memo" : "메모",
+      "memoWarningText" : "메모 값은 32자 이하의 문자열일 수 있습니다."
     }
   },
   "errors" : {
@@ -6545,6 +6577,15 @@
         "swap" : "스왑",
         "deposit" : "입금"
       }
+    },
+    "InvalidMemoMina" : {
+      "title" : "메모 텍스트는 32자를 초과할 수 없습니다."
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "이 트랜잭션에는 {{fee}}의 계정 생성 수수료가 부과됩니다."
+    },
+    "AmountTooSmall" : {
+      "title" : "이 트랜잭션에 필요한 최소 금액은 {{amount}}입니다"
     }
   },
   "cryptoOrg" : {
