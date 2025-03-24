@@ -5,7 +5,7 @@ import { isSwapOperationPending } from "@ledgerhq/live-common/exchange/swap/inde
 import { MappedSwapOperation } from "@ledgerhq/live-common/exchange/swap/types";
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { getDefaultExplorerView, getTransactionExplorer } from "@ledgerhq/live-common/explorers";
-import { Account, SubAccount } from "@ledgerhq/types-live";
+import { Account, TokenAccount } from "@ledgerhq/types-live";
 import uniq from "lodash/uniq";
 import React, { useCallback, useEffect, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
@@ -143,7 +143,7 @@ const SwapOperationDetails = ({
   }, [provider]);
 
   const openAccount = useCallback(
-    (account: Account | SubAccount) => {
+    (account: Account | TokenAccount) => {
       const parentAccount =
         account.type !== "Account" ? accounts.find(a => a.id === account.parentId) : null;
       const mainAccount = getMainAccount(account, parentAccount);

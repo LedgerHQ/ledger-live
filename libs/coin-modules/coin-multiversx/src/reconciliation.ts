@@ -1,5 +1,5 @@
 import { log } from "@ledgerhq/logs";
-import { Account, SubAccount, TokenAccount } from "@ledgerhq/types-live";
+import { Account, TokenAccount } from "@ledgerhq/types-live";
 
 export function reconciliateSubAccounts(
   tokenAccounts: TokenAccount[],
@@ -8,7 +8,7 @@ export function reconciliateSubAccounts(
   let subAccounts;
 
   if (initialAccount) {
-    const initialSubAccounts: SubAccount[] | undefined = initialAccount.subAccounts;
+    const initialSubAccounts: TokenAccount[] | undefined = initialAccount.subAccounts;
     let anySubAccountHaveChanged = false;
     const stats: string[] = [];
 

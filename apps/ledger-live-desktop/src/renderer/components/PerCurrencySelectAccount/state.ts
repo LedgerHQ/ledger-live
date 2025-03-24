@@ -1,10 +1,10 @@
 import { useState, useCallback, useMemo, useEffect } from "react";
-import { Account, SubAccount } from "@ledgerhq/types-live";
+import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { makeEmptyTokenAccount } from "@ledgerhq/live-common/account/index";
 import { CryptoCurrency, CryptoOrTokenCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 export type AccountTuple = {
   account: Account;
-  subAccount: SubAccount | undefined | null;
+  subAccount: TokenAccount | undefined | null;
 };
 export function getAccountTuplesForCurrency(
   currency: CryptoCurrency | TokenCurrency,
@@ -26,7 +26,7 @@ export function getAccountTuplesForCurrency(
         subAccount:
           (account.subAccounts &&
             account.subAccounts.find(
-              (subAcc: SubAccount) =>
+              (subAcc: TokenAccount) =>
                 subAcc.type === "TokenAccount" && subAcc.token.id === currency.id,
             )) ||
           makeEmptyTokenAccount(account, currency),
@@ -54,8 +54,8 @@ export type UseCurrencyAccountSelectReturnType<
   availableAccounts: Array<AccountTuple>;
   currency: C | undefined | null;
   account: Account | undefined | null;
-  subAccount: SubAccount | undefined | null;
-  setAccount: (account?: Account | null, subAccount?: SubAccount | null) => void;
+  subAccount: TokenAccount | undefined | null;
+  setAccount: (account?: Account | null, subAccount?: TokenAccount | null) => void;
   setCurrency: (currency?: C | null) => void;
 };
 export function useCurrencyAccountSelect({

@@ -11,7 +11,7 @@ import Text from "~/renderer/components/Text";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import ToolTip from "~/renderer/components/Tooltip";
 import { localeSelector } from "~/renderer/reducers/settings";
-import { SubAccount } from "@ledgerhq/types-live";
+import { TokenAccount } from "@ledgerhq/types-live";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 const Wrapper = styled(Box).attrs(() => ({
@@ -51,7 +51,7 @@ const AmountValue = styled(Text).attrs(() => ({
 }))``;
 
 type Props = {
-  account: IconAccount | SubAccount;
+  account: IconAccount | TokenAccount;
 };
 
 const AccountBalanceSummaryFooter = ({ account }: Props) => {

@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from "react";
 import { View, StyleSheet, FlatList, SafeAreaView, ListRenderItem } from "react-native";
 import { Trans } from "react-i18next";
-import type { Account, AccountLike, SubAccount } from "@ledgerhq/types-live";
+import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { useSelector } from "react-redux";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
 import { CryptoCurrency, CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -77,7 +77,7 @@ const List = ({
   renderItem,
   renderFooter,
 }: {
-  items: { account: AccountLike; subAccount?: SubAccount | null }[];
+  items: { account: AccountLike; subAccount?: TokenAccount | null }[];
   renderItem: ListRenderItem<SearchResult>;
   renderFooter: React.ComponentType | React.ReactElement | null | undefined;
 }) => {
@@ -187,7 +187,7 @@ function SelectAccount({ navigation, route }: Props) {
   );
 
   const renderList = useCallback(
-    (items: { account: AccountLike; subAccount?: SubAccount | null }[]) => (
+    (items: { account: AccountLike; subAccount?: TokenAccount | null }[]) => (
       <List items={items} renderItem={renderItem} renderFooter={renderFooter} />
     ),
     [renderFooter, renderItem],

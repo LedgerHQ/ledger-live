@@ -1,6 +1,6 @@
 import { isSwapOperationPending } from "./";
 import { getMultipleStatus } from "./getStatus";
-import type { SubAccount, Account, SwapOperation, Operation } from "@ledgerhq/types-live";
+import type { TokenAccount, Account, SwapOperation, Operation } from "@ledgerhq/types-live";
 import type { SwapStatus, SwapStatusRequest, UpdateAccountSwapStatus } from "./types";
 import { log } from "@ledgerhq/logs";
 
@@ -102,11 +102,11 @@ const updateAccountSwapStatus: UpdateAccountSwapStatus = async (account: Account
     account.operations,
   );
   let subAccountSwapHistoryUpdated = false;
-  let subAccounts: SubAccount[] = [];
+  let subAccounts: TokenAccount[] = [];
 
   if (account.type === "Account" && account.subAccounts?.length) {
     subAccounts = await Promise.all(
-      account.subAccounts.map(async (subAccount: SubAccount): Promise<SubAccount> => {
+      account.subAccounts.map(async (subAccount: TokenAccount): Promise<TokenAccount> => {
         const updatedSwapHistory = await maybeGetUpdatedSwapHistory(
           subAccount.swapHistory,
           subAccount.operations,

@@ -21,7 +21,7 @@ import ToolTip from "~/renderer/components/Tooltip";
 import DelegateIcon from "~/renderer/icons/Delegate";
 import TableContainer, { TableHeader } from "~/renderer/components/TableContainer";
 import { NearAccount } from "@ledgerhq/live-common/families/near/types";
-import { SubAccount } from "@ledgerhq/types-live";
+import { TokenAccount } from "@ledgerhq/types-live";
 import { DelegateModalName } from "../modals";
 
 const Wrapper = styled(Box).attrs(() => ({
@@ -154,7 +154,7 @@ const Staking = ({ account }: { account: NearAccount }) => {
     </>
   );
 };
-const StakingPositions = ({ account }: { account: NearAccount | SubAccount }) => {
+const StakingPositions = ({ account }: { account: NearAccount | TokenAccount }) => {
   if (account.type !== "Account") return null;
   return <Staking account={account} />;
 };
