@@ -131,6 +131,7 @@ export type CurrencyFeatures = {
   currencyZenrock: DefaultFeature;
   currencySonic: DefaultFeature;
   currencySonicBlaze: DefaultFeature;
+  currencySui: DefaultFeature;
 };
 
 /**
