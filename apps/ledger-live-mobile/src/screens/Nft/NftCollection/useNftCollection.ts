@@ -43,20 +43,24 @@ export function useNftCollection({ route, navigation }: NavigationProps) {
 
   // operations' list related -----
   const [opCount, setOpCount] = useState(100);
-  const { sections, completed } = groupAccountOperationsByDay(account!, {
-    count: opCount,
-    filterOperation: op => !!op?.nftOperations?.find(op => op?.contract === nft?.contract),
-  });
+
+  const { sections, completed } = account
+    ? groupAccountOperationsByDay(account, {
+        count: opCount,
+        filterOperation: op => !!op?.nftOperations?.find(op => op?.contract === nft?.contract),
+      })
+    : { sections: [], completed: true };
 
   const onOperationsEndReached = useCallback(() => {
     setOpCount(opCount + 50);
   }, [setOpCount, opCount]);
-  const [isOpen, setOpen] = useState<boolean>(false);
+
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   const onOpenModal = useCallback(() => {
-    setOpen(true);
+    setIsOpen(true);
   }, []);
   const onCloseModal = useCallback(() => {
-    setOpen(false);
+    setIsOpen(false);
   }, []);
 
   const isNFTDisabled = useFeature("disableNftSend")?.enabled && Platform.OS === "ios";

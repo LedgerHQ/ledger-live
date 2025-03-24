@@ -2,7 +2,7 @@ import { useSelector } from "react-redux";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { useNftCollection } from "../useNftCollection";
 import { NavigatorName, ScreenName } from "~/const";
-import { groupAccountOperationsByDay } from "@ledgerhq/coin-framework/lib/account/groupOperations";
+import { groupAccountOperationsByDay } from "@ledgerhq/coin-framework/account/groupOperations";
 import { act, renderHook } from "@testing-library/react-native";
 import { RouteProp } from "@react-navigation/native";
 import { AccountsNavigatorParamList } from "~/components/RootNavigator/types/AccountsNavigator";
