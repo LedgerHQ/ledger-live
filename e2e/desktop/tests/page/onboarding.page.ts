@@ -1,8 +1,6 @@
-import { DeviceAction } from "../models/DeviceAction";
 import { AppPage } from "./abstractClasses";
 
 export class OnboardingPage extends AppPage {
-  deviceAction = new DeviceAction(this.page);
   private getStartedButton = this.page.locator('button:has-text("Get Started")');
   private acceptAnalyticsButton = this.page.getByTestId("accept-analytics-button");
   private selectDeviceButton = (deviceId: string) => this.page.getByTestId(`v3-device-${deviceId}`);
@@ -123,10 +121,6 @@ export class OnboardingPage extends AppPage {
 
   async checkDevice() {
     await this.checkMyNanoButton.click();
-  }
-
-  async genuineCheck() {
-    await this.deviceAction.genuineCheck();
   }
 
   async continue() {

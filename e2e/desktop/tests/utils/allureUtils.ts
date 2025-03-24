@@ -1,8 +1,8 @@
-import { allure } from "allure-playwright";
 import { Page, TestInfo } from "@playwright/test";
 import { promisify } from "util";
 import fs from "fs";
 import { takeScreenshot } from "@ledgerhq/live-common/e2e/speculos";
+import * as allure from "allure-js-commons";
 
 const readFileAsync = promisify(fs.readFile);
 const IS_NOT_MOCK = process.env.MOCK == "0";

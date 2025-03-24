@@ -4,13 +4,22 @@
         "test:playwright:speculos": "playwright test --config=desktop/playwright.config.ts"
     },
     "dependencies": {
-        "@types/node": "^22.13.10",
+        "@ledgerhq/live-cli": "workspace:^",
+        "@ledgerhq/live-common": "workspace:^",
+        "@ledgerhq/live-env": "workspace:^",
+        "@ledgerhq/types-live": "workspace:^",
+        "@ledgerhq/live-wallet": "workspace:^",
         "@playwright/test": "^1.51.0",
+        "@types/node": "^22.13.10",
         "allure-playwright": "^3.2.0",
+        "axios": "^1.8.3",
         "dotenv": "^16.4.7",
-        "lodash": "^4.17.21",
         "invariant": "^2.2.4",
-        "rxjs": "^7.8.2",
-        "axios": "^1.8.3"
+        "lodash": "^4.17.21",
+        "rxjs": "^7.8.2"
+    },
+    "devDependencies": {
+        "@types/invariant": "2.2.37",
+        "@types/lodash": "4.17.16"
     }
 }

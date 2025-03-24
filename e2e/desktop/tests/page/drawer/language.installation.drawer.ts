@@ -1,4 +1,4 @@
-import { Component } from "../../page/abstractClasses";
+import { Component } from "../abstractClasses";
 
 export class LanguageInstallation extends Component {
   readonly installLanguageButton = this.page.getByTestId("install-language-button");
