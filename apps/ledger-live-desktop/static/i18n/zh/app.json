@@ -1879,7 +1879,8 @@
       "palletMethod" : "方法",
       "transferAmount" : "转移数额",
       "validatorsCount" : "验证者 ({{number}})",
-      "version" : "版本"
+      "version" : "版本",
+      "accountCreationFee" : "账户创建费"
     }
   },
   "operationList" : {
@@ -4229,7 +4230,7 @@
       "nfts" : {
         "title" : "NFTs HiddenCollections",
         "description" : "重置隐藏藏品列表",
-        "reset" : "重置"
+        "reset" : "Reset ({{count}})"
       },
       "exchangeDeveloperMode" : {
         "title" : "兑换开发模式",
@@ -4337,6 +4338,32 @@
             "nft" : "单个 NFT",
             "contract" : "合约"
           }
+        },
+        "back" : "返回"
+      },
+      "debugNfts" : {
+        "title" : "NFTs Tools",
+        "description" : "Provides some useful tools to handle NFTs in Ledger Live",
+        "cta" : "打开",
+        "tabs" : {
+          "config" : "Configuration",
+          "generatorAndDestructor" : "Generators & Destructors"
+        },
+        "configuration" : {
+          "supported" : "Supported NFT Chain",
+          "supported_other" : "Supported NFT Chains",
+          "nms" : {
+            "title" : "NFT Metadata Service (NMS)",
+            "env" : "Environment : {{env}}"
+          }
+        },
+        "generatorAndDestructor" : {
+          "genAcc" : "Generate Accounts",
+          "genAccDesc" : "Generate an accounts with NFTs",
+          "cta" : "Generate",
+          "deleteAcc" : "Delete Accounts",
+          "deleteAccDesc" : "Delete all accounts from store",
+          "delete" : "删除"
         },
         "back" : "返回"
       },
@@ -5515,6 +5542,11 @@
       "memo" : "标签/备忘标签",
       "memoPlaceholder" : "可选",
       "requiredMemoPlaceholder" : "必填"
+    },
+    "mina" : {
+      "memoPlaceholder" : "可选",
+      "memo" : "备忘标签",
+      "memoWarningText" : "备忘标签的值可以是小于或等于 32 个字符的字符串"
     }
   },
   "errors" : {
@@ -6545,6 +6577,15 @@
         "swap" : "互换",
         "deposit" : "存款"
       }
+    },
+    "InvalidMemoMina" : {
+      "title" : "备忘标签文本不可超过 32 个字符"
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "此交易将产生 {{fee}} 的账户创建费"
+    },
+    "AmountTooSmall" : {
+      "title" : "此交易的最低数额要求为 {{amount}}"
     }
   },
   "cryptoOrg" : {
