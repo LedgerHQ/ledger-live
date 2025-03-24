@@ -213,7 +213,7 @@ export class AptosAPI {
     });
 
     return Promise.all(
-      queryResponse.data.address_version_from_move_resources.map(({ transaction_version }) => {
+      queryResponse.data.account_transactions.map(({ transaction_version }) => {
         return this.richItemByVersion(transaction_version);
       }),
     );
