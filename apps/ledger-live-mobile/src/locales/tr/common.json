@@ -1060,6 +1060,15 @@
     },
     "AppManifestNotFoundError" : {
       "title" : "Takas Live Uygulaması yüklenemedi"
+    },
+    "InvalidMemoMina" : {
+      "title" : "Memo metni 32 karakterden uzun olamaz"
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "Bu işlem için {{fee}} tutarında bir hesap oluşturma ücreti alınacaktır"
+    },
+    "AmountTooSmall" : {
+      "title" : "Bu işlem için gerekli minimum tutar: {{amount}}"
     }
   },
   "crash" : {
@@ -2593,7 +2602,8 @@
       "gasLimit" : "Gas limiti",
       "id" : "Kimlik (ID)",
       "autoClaimedRewards" : "Otomatik Alınan Ödüller",
-      "stakedAmount" : "Stake edilen miktar"
+      "stakedAmount" : "Stake edilen miktar",
+      "accountCreationFee" : "Hesap Oluşturma Ücreti"
     },
     "multipleAddresses" : "Neden birden fazla adres var?",
     "tokenName" : "Token Adı",
@@ -6611,7 +6621,12 @@
       "24h" : "24SA",
       "7d" : "7G",
       "30d" : "30G",
-      "1y" : "1Y"
+      "1y" : "1Y",
+      "1H_label" : "1SA",
+      "1D_label" : "1G",
+      "1W_label" : "1H",
+      "1M_label" : "1A",
+      "1Y_label" : "1Y"
     },
     "warnings" : {
       "connectionError" : "Bağlantı Hatası",
@@ -7337,7 +7352,7 @@
   },
   "lnsUpsell" : {
     "opted_in" : {
-      "description" : "Upgrade your Ledger Nano S to a newer Ledger — like the Ledger Flex — for more memory, the latest security enhancements, fresh features, and an exclusive 20% off. ",
+      "description" : "Daha fazla bellek, en son güvenlik güncellemeleri, yeni özellikler ve %20 oranında özel bir indirim için Ledger Nano S cihazınızın modelini Ledger Flex gibi daha yeni bir Ledger modeline yükseltin. ",
       "cta" : "Ledger modelimi yükselt"
     },
     "opted_out" : {
