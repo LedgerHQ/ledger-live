@@ -1,15 +1,13 @@
 import { BigNumber } from "bignumber.js";
 import type { Transaction } from "../types";
-import { AccountBridge, AccountLike, Account } from "@ledgerhq/types-live";
+import { AccountBridge } from "@ledgerhq/types-live";
 
 /**
  * Create an empty transaction
  *
  * @returns {Transaction}
  */
-export const createTransaction: AccountBridge<Transaction>["createTransaction"] = (
-  _account: AccountLike<Account>,
-) => {
+export const createTransaction: AccountBridge<Transaction>["createTransaction"] = () => {
   const transaction: Transaction = {
     family: "sui" as const,
     mode: "send",

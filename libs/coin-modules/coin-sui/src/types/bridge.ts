@@ -69,6 +69,15 @@ export type SuiOperationExtra = {
 };
 export type SuiOperationExtraRaw = Record<string, string>;
 
+export type SuiSignedOperation = {
+  operation: SuiOperation;
+  signature: string;
+  rawData: {
+    unsigned: string;
+    serializedSignature: string;
+  };
+};
+
 export type TransferCommand = {
   kind: "transfer";
   sender: string;

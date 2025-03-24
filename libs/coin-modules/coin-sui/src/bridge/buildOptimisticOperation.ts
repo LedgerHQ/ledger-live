@@ -3,7 +3,6 @@ import type { Account, OperationType } from "@ledgerhq/types-live";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import {
   CommandDescriptor,
-  TransferCommand,
   SuiAccount,
   SuiOperation,
   SuiOperationExtra,
@@ -17,11 +16,7 @@ const MODE_TO_TYPE: Record<SuiOperationMode | "default", OperationType> = {
   default: "OUT",
 };
 
-const getExtra = (
-  type: string,
-  _account: SuiAccount,
-  transaction: Transaction,
-): SuiOperationExtra => {
+const getExtra = (type: string, transaction: Transaction): SuiOperationExtra => {
   const extra: SuiOperationExtra = {};
 
   switch (type) {
@@ -66,7 +61,7 @@ function buildOptimisticOperationForCommand(
   const { command } = commandDescriptor;
   switch (command.kind) {
     case "transfer":
-      return optimisticOpForTransfer(account, transaction, command, commandDescriptor);
+      return optimisticOpForTransfer(account, transaction, commandDescriptor);
     default:
       // @ts-expect-error Seem like a bug in TS, remove once more commands are added
       return assertUnreachable(command);
@@ -76,7 +71,6 @@ function buildOptimisticOperationForCommand(
 function optimisticOpForTransfer(
   account: Account,
   transaction: Transaction,
-  _command: TransferCommand,
   commandDescriptor: CommandDescriptor,
 ): SuiOperation {
   const type = MODE_TO_TYPE.default;
@@ -84,7 +78,7 @@ function optimisticOpForTransfer(
     type === "OUT"
       ? new BigNumber(transaction.amount).plus(commandDescriptor.fee)
       : new BigNumber(commandDescriptor.fee);
-  const extra = getExtra(type, account, transaction);
+  const extra = getExtra(type, transaction);
 
   const commons = optimisticOpcommons(commandDescriptor);
   return {

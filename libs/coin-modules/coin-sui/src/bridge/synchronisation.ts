@@ -1,4 +1,5 @@
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
+import { log } from "@ledgerhq/logs";
 import {
   makeSync,
   mergeOps,
@@ -40,6 +41,11 @@ export const getAccountShape: GetAccountShape<SuiAccount> = async info => {
     const newOperations = await getOperations(accountId, address, startAtIn, startAtOut);
     operations = mergeOps(oldOperations, newOperations);
   } catch (e) {
+    log(
+      "sui/getAccountShape",
+      "failed to sync with incremental strategy, falling back to full resync",
+      { error: e },
+    );
     // if we could NOT sync with existing transaction - we start from the beggining, rewritting transaction history
     operations = await getOperations(accountId, address);
   }

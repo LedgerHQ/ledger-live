@@ -15,7 +15,7 @@ describe("buildOptimisticOperation", () => {
 
     // THEN
     expect(result).toEqual({
-      id: expect.any(String),
+      id: "js:2:sui:0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0:sui--OUT",
       hash: "",
       type: "OUT",
       value: transaction.amount.plus(fee), // amount + fee

@@ -9,7 +9,7 @@ import { verifyTransactionSignature } from "@mysten/sui/verify";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
 import { buildTransaction } from "./buildTransaction";
 import { calculateAmount } from "./utils";
-import type { SuiAccount, SuiSigner, Transaction } from "../types";
+import type { SuiSignedOperation, SuiAccount, SuiSigner, Transaction } from "../types";
 import { ensureAddressFormat } from "../utils";
 
 /**
@@ -77,16 +77,18 @@ export const buildSignOperation =
           transactionToSign.fees ?? new BigNumber(0),
         );
 
+        const signedOperation: SuiSignedOperation = {
+          operation,
+          signature: Buffer.from(signature).toString("base64"),
+          rawData: {
+            serializedSignature,
+            unsigned: Buffer.from(unsigned).toString("base64"),
+          },
+        };
+
         subscriber.next({
           type: "signed",
-          signedOperation: {
-            operation,
-            signature: Buffer.from(signature).toString("base64"),
-            rawData: {
-              serializedSignature,
-              unsigned: Buffer.from(unsigned).toString("base64"),
-            },
-          },
+          signedOperation,
         });
       }
 
