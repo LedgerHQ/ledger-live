@@ -110,10 +110,12 @@ function useDappAccountLogic({
     // Return an account for manifests with wildcard currencyIds
     if (currencyIds.includes("**") && accounts.length)
       return getParentAccount(accounts[0], accounts);
-
     const account = accounts.find(account => {
       if (account.type === "Account" && currencyIds.includes(account.currency.id)) {
         return account;
+      }
+      if (account.type === "TokenAccount" && currencyIds.includes(account.token.id)) {
+        return getParentAccount(account, accounts);
       }
     });
     // might not even need to set parent here
@@ -166,10 +168,8 @@ function useDappAccountLogic({
     }
 
     if (!currentAccount || !(currentAccount && storedCurrentAccountIsPermitted())) {
-      // if there is no current account
-      // OR if there is a current account but it is not permitted
-      // set it to the first permitted account
-      setCurrentAccount(firstAccountAvailable ? firstAccountAvailable : null);
+      /** if there is no current account OR if there is a current account but it is not in the manifest currencies then fall back to the first permitted account */
+      setCurrentAccount(firstAccountAvailable ?? null);
     }
   }, [
     currentAccount,
@@ -233,17 +233,24 @@ export function useDappLogic({
       initialAccountId,
     });
 
+  /** Current network is needed for recognising the current chain id.
+   * If a token account is selected, this depends on the parent currency. */
   const currentNetwork = useMemo(() => {
     if (!currentAccount) {
       return undefined;
     }
+    // If the current account is a token account, and the chain id is not specified for that specific token, we can also use the network of the parent currency to determine the correct chain id.
     return manifest.dapp?.networks.find(network => {
-      return (
-        network.currency ===
-        (currentAccount.type === "TokenAccount"
+      const accountCurrencyId =
+        currentAccount.type === "TokenAccount"
           ? currentAccount.token.id
-          : currentAccount.currency.id)
-      );
+          : currentAccount.currency.id;
+      const accountNetworkCurrency =
+        currentAccount.type === "TokenAccount"
+          ? currentAccount.token.parentCurrency.id
+          : currentAccount.currency.id;
+
+      return network.currency === accountCurrencyId || network.currency === accountNetworkCurrency;
     });
   }, [currentAccount, manifest.dapp?.networks]);
 
@@ -651,6 +658,7 @@ export function useDappLogic({
       currentParentAccount,
       dependencies,
       manifest,
+      mevProtected,
       nanoApp,
       postMessage,
       setCurrentAccount,

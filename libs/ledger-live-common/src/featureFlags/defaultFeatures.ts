@@ -112,7 +112,7 @@ export const DEFAULT_FEATURES: Features = {
   ethStakingProviders: initFeature(),
   newsfeedPage: initFeature(),
   swapWalletApiPartnerList: initFeature(),
-  stakePrograms: initFeature(),
+  stakePrograms: initFeature({ enabled: false, params: { list: [], redirects: {} } }),
   receiveStakingFlowConfigDesktop: initFeature(),
   brazePushNotifications: initFeature(),
   stakeAccountBanner: initFeature(),
