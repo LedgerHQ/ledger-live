@@ -32,12 +32,19 @@ export function createApi(config: XrpConfig): Api<void> {
   };
 }
 
-async function craft(transactionIntent: TransactionIntent<void>): Promise<string> {
+async function craft(
+  transactionIntent: TransactionIntent<void>,
+  feesLimit?: bigint,
+): Promise<string> {
   const nextSequenceNumber = await getNextValidSequence(transactionIntent.sender);
-  const fees = await estimateFees();
+  const estimatedFees = feesLimit ? feesLimit : (await estimateFees()).fee;
   const tx = await craftTransaction(
     { address: transactionIntent.sender, nextSequenceNumber },
-    { recipient: transactionIntent.recipient, amount: transactionIntent.amount, fee: fees.fee },
+    {
+      recipient: transactionIntent.recipient,
+      amount: transactionIntent.amount,
+      fee: estimatedFees,
+    },
   );
   return tx.serializedTransaction;
 }

@@ -111,6 +111,8 @@
     "test": "jest",
     "test-watch": "jest --watch",
     "test-integ": "jest --config=jest.integ.config.js",
+    "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand",
+    "test-integ:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand --config=jest.integ.config.js",
     "unimported": "unimported"
   },
   "overrides": {

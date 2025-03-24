@@ -380,3 +380,11 @@ export function getTronResources(
     lastWithdrawnRewardDate,
   };
 }
+
+export function feesToNumber(feesLimit?: bigint): number | undefined {
+  if (feesLimit && feesLimit >= Number.MIN_SAFE_INTEGER && feesLimit <= Number.MAX_SAFE_INTEGER) {
+    return Number(feesLimit);
+  }
+
+  return undefined;
+}

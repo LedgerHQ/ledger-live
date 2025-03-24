@@ -1,7 +1,8 @@
-import { RIPPLE_EPOCH } from "../logic";
-import { createApi } from "./index";
+import { Operation, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import * as LogicFunctions from "../logic";
 import { GetTransactionsOptions } from "../network";
-import { Operation } from "@ledgerhq/coin-framework/api/types";
+import { NetworkInfo } from "../types";
+import { createApi } from "./index";
 
 const mockGetServerInfos = jest.fn().mockResolvedValue({
   info: {
@@ -186,7 +187,7 @@ describe("listOperations", () => {
           tx: {
             hash: "HASH_VALUE",
             fees: fee,
-            date: new Date(1000000 + RIPPLE_EPOCH * 1000),
+            date: new Date(1000000 + LogicFunctions.RIPPLE_EPOCH * 1000),
             block: {
               hash: "HASH_VALUE_BLOCK",
               height: 1,
@@ -213,7 +214,7 @@ describe("listOperations", () => {
           tx: {
             hash: "HASH_VALUE",
             fees: fee,
-            date: new Date(1000000 + RIPPLE_EPOCH * 1000),
+            date: new Date(1000000 + LogicFunctions.RIPPLE_EPOCH * 1000),
             block: {
               hash: "HASH_VALUE_BLOCK",
               height: 1,
@@ -235,7 +236,7 @@ describe("listOperations", () => {
           tx: {
             hash: "HASH_VALUE",
             fees: fee,
-            date: new Date(1000000 + RIPPLE_EPOCH * 1000),
+            date: new Date(1000000 + LogicFunctions.RIPPLE_EPOCH * 1000),
             block: {
               hash: "HASH_VALUE_BLOCK",
               height: 1,
@@ -254,4 +255,50 @@ describe("listOperations", () => {
       ] satisfies Operation<void>[]);
     },
   );
+});
+
+describe("Testing craft function", () => {
+  const DEFAULT_FEES = 100n;
+  const api = createApi({ node: "https://localhost" });
+  const logicCraftTransactionSpy = jest
+    .spyOn(LogicFunctions, "craftTransaction")
+    .mockImplementation((_address, _transaction, _publicKey) => {
+      return Promise.resolve({ xrplTransaction: {} as never, serializedTransaction: "" });
+    });
+
+  beforeAll(() => {
+    jest
+      .spyOn(LogicFunctions, "getNextValidSequence")
+      .mockImplementation(_address => Promise.resolve(0));
+
+    jest.spyOn(LogicFunctions, "estimateFees").mockImplementation(_networkInfo => {
+      return Promise.resolve({
+        networkInfo: {} as NetworkInfo,
+        fee: DEFAULT_FEES,
+      });
+    });
+  });
+
+  it("should use fees limit when user provide them for crafting a transaction", async () => {
+    const feesLimit = 99n;
+    await api.craftTransaction({} as TransactionIntent<void>, feesLimit);
+
+    expect(logicCraftTransactionSpy).toHaveBeenCalledWith(
+      expect.any(Object),
+      expect.objectContaining({
+        fee: feesLimit,
+      }),
+    );
+  });
+
+  it("should use default fees limit when user does not provide them for crafting a transaction", async () => {
+    await api.craftTransaction({} as TransactionIntent<void>);
+
+    expect(logicCraftTransactionSpy).toHaveBeenCalledWith(
+      expect.any(Object),
+      expect.objectContaining({
+        fee: DEFAULT_FEES,
+      }),
+    );
+  });
 });
