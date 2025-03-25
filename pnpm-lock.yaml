@@ -4058,11 +4058,11 @@ importers:
   libs/exchange-module:
     dependencies:
       '@ledgerhq/wallet-api-client':
-        specifier: ^1.6.2
-        version: 1.6.2
+        specifier: ^1.7.1
+        version: 1.7.1
       '@ledgerhq/wallet-api-core':
-        specifier: ^1.15.0
-        version: 1.15.0
+        specifier: ^1.17.0
+        version: 1.17.0
     devDependencies:
       '@types/node':
         specifier: ^22.10.10
@@ -4406,17 +4406,17 @@ importers:
         specifier: workspace:^
         version: link:../wallet-api-acre-module
       '@ledgerhq/wallet-api-client':
-        specifier: ^1.6.2
-        version: 1.6.2
+        specifier: ^1.7.1
+        version: 1.7.1
       '@ledgerhq/wallet-api-core':
-        specifier: ^1.15.0
-        version: 1.15.0
+        specifier: ^1.17.0
+        version: 1.17.0
       '@ledgerhq/wallet-api-exchange-module':
         specifier: workspace:^
         version: link:../exchange-module
       '@ledgerhq/wallet-api-server':
-        specifier: ^1.7.2
-        version: 1.7.2(react@18.3.1)(rxjs@7.8.1)
+        specifier: ^1.8.1
+        version: 1.8.1(react@18.3.1)(rxjs@7.8.1)
       '@stricahq/typhonjs':
         specifier: ^3.0.0
         version: 3.0.0
@@ -8035,11 +8035,11 @@ importers:
   libs/wallet-api-acre-module:
     dependencies:
       '@ledgerhq/wallet-api-client':
-        specifier: ^1.6.2
-        version: 1.6.2
+        specifier: ^1.7.1
+        version: 1.7.1
       '@ledgerhq/wallet-api-core':
-        specifier: ^1.15.0
-        version: 1.15.0
+        specifier: ^1.17.0
+        version: 1.17.0
     devDependencies:
       '@types/node':
         specifier: ^22.10.10
@@ -12455,11 +12455,26 @@ packages:
   '@ledgerhq/wallet-api-client@1.6.2':
     resolution: {integrity: sha512-+w1hzmQs0Hz5B+StW0ygFvi2TVWb4jgAKZNn6b6IasVHcuQM4GQsyal6YtwkZJbNIUZis7Bdv9V/K0PM+ZhxPw==}
 
+  '@ledgerhq/wallet-api-client@1.7.1':
+    resolution: {integrity: sha512-NEMRzlImkvAUB74Pdb5/jvD2zWoOUT9UgZPBHkPtzGYMXF5AanNREznDQaQzVF7QeLkPmhKs+iYbDUAiv6Zukw==}
+
   '@ledgerhq/wallet-api-core@1.15.0':
     resolution: {integrity: sha512-GyNIOn8jTXJ+wT4d8C/sTje2/2QNca6/B+AJK+u7o3L3maNmL+5aDtiEhyHLqibGvFS33sasb79hdR9N+mQDKw==}
 
+  '@ledgerhq/wallet-api-core@1.17.0':
+    resolution: {integrity: sha512-T0HSkCLDZW9EoizjDCV6FARl777ZE/eux3X3slRgw0SPOUTPXlxq+K0uNb6ohsRmIXDADC06E4G4VxcTOkbwKQ==}
+
   '@ledgerhq/wallet-api-server@1.7.2':
     resolution: {integrity: sha512-U7VQ4ugsglx/z9wcYLB7OEPYlB600uRi3R8AgtqcBstCj4OyrAy0PDWYBiivKcSOv1D38OYH8fU8l4WRtQxRBw==}
+    peerDependencies:
+      react: ^17.x || ^18.x
+      rxjs: ^7.x
+    peerDependenciesMeta:
+      react:
+        optional: true
+
+  '@ledgerhq/wallet-api-server@1.8.1':
+    resolution: {integrity: sha512-aFDtJu11rO4ScebUKkbn23AK+3v/r+gB+HF/iofpIqtOIQol2X3BWz1PbAMJgW5fltyTeRo+IGlt+5KH+qSCRQ==}
     peerDependencies:
       react: ^17.x || ^18.x
       rxjs: ^7.x
@@ -16354,7 +16369,6 @@ packages:
     deprecated: |-
       DEPRECATED: This package is no longer maintained.
       Please use the built-in Jest matchers available in @testing-library/react-native v12.4+.
-
       See migration guide: https://callstack.github.io/react-native-testing-library/docs/migration/jest-matchers
     peerDependencies:
       react: '>=16.0.0'
@@ -27424,7 +27438,6 @@ packages:
     engines: {node: '>=0.6.0', teleport: '>=0.2.0'}
     deprecated: |-
       You or someone you depend on is using Q, the JavaScript Promise library that gave JavaScript developers strong feelings about promises. They can almost certainly migrate to the native JavaScript promise now. Thank you literally everyone for joining me in this bet against the odds. Be excellent to each other.
-
       (For a CapTP with native promises, see @endo/eventual-send and @endo/captp)
 
   qrcode-terminal@0.11.0:
@@ -39537,7 +39550,20 @@ snapshots:
       '@ledgerhq/wallet-api-core': 1.15.0
       bignumber.js: 9.1.2
 
+  '@ledgerhq/wallet-api-client@1.7.1':
+    dependencies:
+      '@ledgerhq/hw-transport': 6.31.4
+      '@ledgerhq/wallet-api-core': 1.17.0
+      bignumber.js: 9.1.2
+
   '@ledgerhq/wallet-api-core@1.15.0':
+    dependencies:
+      '@ledgerhq/errors': 6.19.1
+      bignumber.js: 9.1.2
+      uuid: 9.0.1
+      zod: 3.23.8
+
+  '@ledgerhq/wallet-api-core@1.17.0':
     dependencies:
       '@ledgerhq/errors': 6.19.1
       bignumber.js: 9.1.2
@@ -39547,6 +39573,15 @@ snapshots:
   '@ledgerhq/wallet-api-server@1.7.2(react@18.3.1)(rxjs@7.8.1)':
     dependencies:
       '@ledgerhq/wallet-api-core': 1.15.0
+      bignumber.js: 9.1.2
+      picomatch: 4.0.2
+      rxjs: 7.8.1
+    optionalDependencies:
+      react: 18.3.1
+
+  '@ledgerhq/wallet-api-server@1.8.1(react@18.3.1)(rxjs@7.8.1)':
+    dependencies:
+      '@ledgerhq/wallet-api-core': 1.17.0
       bignumber.js: 9.1.2
       picomatch: 4.0.2
       rxjs: 7.8.1
