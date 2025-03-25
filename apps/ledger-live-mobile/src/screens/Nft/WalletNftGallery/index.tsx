@@ -8,10 +8,10 @@ import CollapsibleHeaderScrollView from "~/components/WalletTab/CollapsibleHeade
 import { accountsSelector, filteredNftsSelector, hasNftsSelector } from "~/reducers/accounts";
 
 import isEqual from "lodash/isEqual";
-import { galleryChainFiltersSelector } from "~/reducers/nft";
 import { getThreshold, useNftGalleryFilter } from "@ledgerhq/live-nft-react";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { State } from "~/reducers/types";
+import { useChains } from "../hooks/useChains";
 
 const WalletNftGallery = () => {
   const { space } = useTheme();
@@ -21,7 +21,8 @@ const WalletNftGallery = () => {
   const enabled = nftsFromSimplehashFeature?.enabled || false;
   const threshold = nftsFromSimplehashFeature?.params?.threshold;
 
-  const chainFilters = useSelector(galleryChainFiltersSelector);
+  const { chains } = useChains();
+
   const nftsOwned = useSelector(
     (state: State) => filteredNftsSelector(state, Boolean(nftsFromSimplehashFeature?.enabled)),
     isEqual,
@@ -35,14 +36,6 @@ const WalletNftGallery = () => {
         ),
       ].join(","),
     [accounts],
-  );
-
-  const chains = useMemo(
-    () =>
-      Object.entries(chainFilters)
-        .filter(([_, value]) => value)
-        .map(([key, _]) => key),
-    [chainFilters],
   );
 
   const { isLoading, hasNextPage, error, fetchNextPage, refetch, nfts } = useNftGalleryFilter({
