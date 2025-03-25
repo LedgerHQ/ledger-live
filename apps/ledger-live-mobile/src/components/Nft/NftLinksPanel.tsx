@@ -20,6 +20,7 @@ import { knownDeviceModelIdsSelector } from "~/reducers/settings";
 import { useSelector } from "react-redux";
 
 type Props = {
+  currencyId: string;
   links?: NFTMetadata["links"] | null;
   isOpen: boolean;
   onClose: () => void;
@@ -69,7 +70,15 @@ const NftLink = ({
   </LinkTouchable>
 );
 
-const NftLinksPanel = ({ nftContract, nftId, links, isOpen, onClose, nftMetadata }: Props) => {
+const NftLinksPanel = ({
+  nftContract,
+  nftId,
+  links,
+  isOpen,
+  onClose,
+  nftMetadata,
+  currencyId,
+}: Props) => {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const navigation = useNavigation();
@@ -87,6 +96,7 @@ const NftLinksPanel = ({ nftContract, nftId, links, isOpen, onClose, nftMetadata
   const customImageDeviceModelId =
     customImageDeviceModelIds.length === 1 ? customImageDeviceModelIds[0] : null;
   const showCustomImageButton = Boolean(customImageUri) && customImageDeviceModelIds.length > 0;
+  const displayBtn = currencyId !== "solana";
 
   const handleOpenOpenSea = useCallback(() => {
     track("button_clicked", {
@@ -172,24 +182,27 @@ const NftLinksPanel = ({ nftContract, nftId, links, isOpen, onClose, nftMetadata
     ];
 
     const bottomSection = [
-      [
-        <NftLink
-          key="nftLinkHide"
-          primary
-          leftIcon={
-            <View
-              style={[
-                styles.roundIconContainer,
-                { backgroundColor: rgba(colors.primary.c90, 0.1) },
-              ]}
-            >
-              <IconsLegacy.EyeNoneMedium size={16} color={colors.primary.c90} />
-            </View>
-          }
-          title={t("nft.viewerModal.hide")}
-          onPress={hide}
-        />,
-      ],
+      ...(displayBtn
+        ? [
+            <NftLink
+              key="nftLinkHide"
+              primary
+              leftIcon={
+                <View
+                  style={[
+                    styles.roundIconContainer,
+                    { backgroundColor: rgba(colors.primary.c90, 0.1) },
+                  ]}
+                >
+                  <IconsLegacy.EyeNoneMedium size={16} color={colors.primary.c90} />
+                </View>
+              }
+              title={t("nft.viewerModal.hide")}
+              onPress={hide}
+            />,
+          ]
+        : []),
+
       ...(links?.explorer
         ? [
             <NftLink
@@ -210,7 +223,7 @@ const NftLinksPanel = ({ nftContract, nftId, links, isOpen, onClose, nftMetadata
             />,
           ]
         : []),
-      ...(showCustomImageButton
+      ...(showCustomImageButton && displayBtn
         ? [
             <NftLink
               key="nftLinkCLS"
@@ -259,6 +272,7 @@ const NftLinksPanel = ({ nftContract, nftId, links, isOpen, onClose, nftMetadata
     colors.primary.c90,
     handleOpenOpenSea,
     handleOpenRarible,
+    displayBtn,
     hide,
     handleOpenExplorer,
     showCustomImageButton,
