@@ -1,3 +1,5 @@
+import { LedgerEthTransactionResolution } from "@ledgerhq/hw-app-eth/lib/services/types";
+
 export type CeloAddress = {
   publicKey: string;
   address: string;
@@ -7,5 +9,5 @@ export type CeloSignature = {
 };
 export interface CeloSigner {
   getAddress(path: string, boolDisplay?: boolean): Promise<CeloAddress>;
-  sign(path: string, message: string): Promise<CeloSignature>;
+  signTransaction(path: string, rawTxHex: string): Promise<CeloSignature>;
 }
