@@ -18,8 +18,6 @@ const aptosSpecs: AppSpec<Transaction> = {
   appQuery: {
     model: DeviceModelId.nanoSP,
     appName: "Aptos",
-    appVersion: "0.8.11",
-    firmware: "1.3.2",
   },
   genericDeviceAction: acceptTransaction,
   testTimeout: 2 * 60 * 1000,
