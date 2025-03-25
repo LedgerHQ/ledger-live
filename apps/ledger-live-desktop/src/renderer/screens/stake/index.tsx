@@ -2,15 +2,17 @@ import { useCallback } from "react";
 import { listCurrencies, filterCurrencies } from "@ledgerhq/live-common/currencies/helpers";
 import SelectAccountAndCurrencyDrawer from "~/renderer/drawers/DataSelector/SelectAccountAndCurrencyDrawer";
 import { setDrawer } from "~/renderer/drawers/Provider";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useHistory } from "react-router-dom";
 import { stakeDefaultTrack } from "./constants";
 import { track, trackPage } from "~/renderer/analytics/segment";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { openModal } from "~/renderer/actions/modals";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
+import { useStake } from "~/newArch/hooks/useStake";
+import { walletSelector } from "~/renderer/reducers/wallet";
+import { Account, AccountLike } from "@ledgerhq/types-live";
 
-type Props = {
+type StakeFlowProps = {
   currencies?: string[];
   shouldRedirect?: boolean;
   alwaysShowNoFunds?: boolean;
@@ -21,8 +23,75 @@ type Props = {
 
 const useStakeFlow = () => {
   const history = useHistory();
-  const { params: { list } = { list: undefined } } = useFeature("stakePrograms") || {};
   const dispatch = useDispatch();
+  const walletState = useSelector(walletSelector);
+  const {
+    enabledCurrencies,
+    partnerSupportedAssets,
+    getRouteToPlatformApp: getRouteToPlatformApp,
+  } = useStake();
+  const list = enabledCurrencies.concat(partnerSupportedAssets);
+
+  const handleAccountSelected = useCallback(
+    (
+      account: AccountLike,
+      parentAccount: Account | undefined,
+      alwaysShowNoFunds: StakeFlowProps["alwaysShowNoFunds"],
+      entryPoint: StakeFlowProps["entryPoint"],
+      source: StakeFlowProps["source"],
+      shouldRedirect: StakeFlowProps["shouldRedirect"],
+    ) => {
+      track("button_clicked2", {
+        ...stakeDefaultTrack,
+        button: "asset",
+        page: history.location.pathname,
+        currency: account.type === "Account" ? account?.currency?.family : account?.token?.ticker,
+        account: account ? getDefaultAccountName(account) : undefined,
+        parentAccount: parentAccount ? getDefaultAccountName(parentAccount) : undefined,
+        drawer: "Select Account And Currency Drawer",
+      });
+      setDrawer();
+
+      const platformAppRoute = getRouteToPlatformApp(account, walletState, parentAccount);
+
+      if (alwaysShowNoFunds) {
+        dispatch(
+          openModal("MODAL_NO_FUNDS_STAKE", {
+            account,
+            parentAccount,
+            entryPoint,
+          }),
+        );
+      } else if (platformAppRoute) {
+        history.push({
+          pathname: platformAppRoute.pathname.toString(),
+          state: {
+            returnTo: `/account/${account.type === "Account" ? account.id : parentAccount?.id || ""}`,
+            ...platformAppRoute.state,
+          },
+        });
+      } else {
+        dispatch(openModal("MODAL_START_STAKE", { account, parentAccount, source }));
+      }
+
+      if (shouldRedirect) {
+        console.log(`>>> shouldRedirect. Can we just default this?`);
+        history.push({
+          pathname: `/account/${account.id}`,
+        });
+      }
+    },
+    [dispatch, history, getRouteToPlatformApp, walletState],
+  );
+
+  const handleRequestClose = useCallback(() => {
+    setDrawer();
+    track("button_clicked2", {
+      ...stakeDefaultTrack,
+      button: "close",
+      page: history.location.pathname,
+    });
+  }, [history.location.pathname]);
 
   return useCallback(
     ({
@@ -31,7 +100,7 @@ const useStakeFlow = () => {
       alwaysShowNoFunds = false,
       source,
       entryPoint,
-    }: Props = {}) => {
+    }: StakeFlowProps = {}) => {
       const cryptoCurrencies = filterCurrencies(listCurrencies(true), {
         currencies: currencies || list,
       });
@@ -45,50 +114,22 @@ const useStakeFlow = () => {
         SelectAccountAndCurrencyDrawer,
         {
           currencies: cryptoCurrencies,
-          onAccountSelected: (account, parentAccount) => {
-            track("button_clicked2", {
-              ...stakeDefaultTrack,
-              button: "asset",
-              page: history.location.pathname,
-              currency: account.type === "Account" && account?.currency?.family,
-              account: account ? getDefaultAccountName(account) : undefined,
-              parentAccount: parentAccount ? getDefaultAccountName(parentAccount) : undefined,
-              drawer: "Select Account And Currency Drawer",
-            });
-            setDrawer();
-
-            if (alwaysShowNoFunds) {
-              dispatch(
-                openModal("MODAL_NO_FUNDS_STAKE", {
-                  account,
-                  parentAccount,
-                  entryPoint,
-                }),
-              );
-            } else {
-              dispatch(openModal("MODAL_START_STAKE", { account, parentAccount, source }));
-            }
-
-            if (shouldRedirect) {
-              history.push({
-                pathname: `/account/${account.id}`,
-              });
-            }
-          },
+          onAccountSelected: (account, parentAccount) =>
+            handleAccountSelected(
+              account,
+              parentAccount,
+              alwaysShowNoFunds,
+              entryPoint,
+              source,
+              shouldRedirect,
+            ),
         },
         {
-          onRequestClose: () => {
-            setDrawer();
-            track("button_clicked2", {
-              ...stakeDefaultTrack,
-              button: "close",
-              page: history.location.pathname,
-            });
-          },
+          onRequestClose: handleRequestClose,
         },
       );
     },
-    [dispatch, history, list],
+    [handleAccountSelected, handleRequestClose, history.location.pathname, list],
   );
 };
 
