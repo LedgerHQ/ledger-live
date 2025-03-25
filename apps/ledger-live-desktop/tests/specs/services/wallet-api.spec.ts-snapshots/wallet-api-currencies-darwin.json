@@ -856,6 +856,15 @@
   },
   {
     "type": "CryptoCurrency",
+    "id": "sui",
+    "ticker": "SUI",
+    "name": "Sui",
+    "family": "sui",
+    "color": "#000",
+    "decimals": 9
+  },
+  {
+    "type": "CryptoCurrency",
     "id": "zenrock",
     "ticker": "ROCK",
     "name": "Zenrock",
