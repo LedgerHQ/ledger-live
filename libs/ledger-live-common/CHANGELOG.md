@@ -1,5 +1,54 @@
 ## 34.25.0
 
+## 34.27.0-nightly.3
+
+### Minor Changes
+
+- [#9482](https://github.com/LedgerHQ/ledger-live/pull/9482) [`1ec6a03`](https://github.com/LedgerHQ/ledger-live/commit/1ec6a03580ea1136dab22747721942056506d589) Thanks [@Couto](https://github.com/Couto)! - Remove unused feature flags
+
+- [#9611](https://github.com/LedgerHQ/ledger-live/pull/9611) [`a656e47`](https://github.com/LedgerHQ/ledger-live/commit/a656e47c1dc3ac8b578debf9cf80eab370c7086f) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Add SUI coin send and receive abilities
+
+### Patch Changes
+
+- [#9570](https://github.com/LedgerHQ/ledger-live/pull/9570) [`2effe04`](https://github.com/LedgerHQ/ledger-live/commit/2effe04d9d4b3e407ed25da3b9f11324a82126d3) Thanks [@beths-ledger](https://github.com/beths-ledger)! - Allow staking / yielding flows using third party dapps to be enabled remotely on firebase by adding new curency or token ids and associated manifest ids to the new "redirects" parameter in the stake programs flag. No code changes then required for adding coins handled by partners.
+
+- Updated dependencies [[`e81aed6`](https://github.com/LedgerHQ/ledger-live/commit/e81aed656271ee2ba40c5f0985e83388031ed8f2), [`eb1c438`](https://github.com/LedgerHQ/ledger-live/commit/eb1c4384e2a4f1530ac199e9cdfc65b5ca66e958), [`a656e47`](https://github.com/LedgerHQ/ledger-live/commit/a656e47c1dc3ac8b578debf9cf80eab370c7086f)]:
+  - @ledgerhq/coin-solana@0.16.0-nightly.3
+  - @ledgerhq/cryptoassets@13.14.0-nightly.1
+  - @ledgerhq/hw-app-sui@1.1.0-nightly.0
+  - @ledgerhq/crypto-icons-ui@1.11.0-nightly.0
+  - @ledgerhq/coin-sui@0.2.0-nightly.0
+  - @ledgerhq/coin-framework@2.4.0-nightly.3
+  - @ledgerhq/coin-algorand@0.7.9-nightly.3
+  - @ledgerhq/coin-aptos@1.7.2-nightly.3
+  - @ledgerhq/coin-bitcoin@0.12.1-nightly.3
+  - @ledgerhq/coin-cardano@0.6.1-nightly.3
+  - @ledgerhq/coin-casper@1.5.1-nightly.3
+  - @ledgerhq/coin-cosmos@0.9.1-nightly.3
+  - @ledgerhq/coin-evm@2.14.1-nightly.3
+  - @ledgerhq/coin-filecoin@1.7.1-nightly.3
+  - @ledgerhq/coin-hedera@1.4.1-nightly.3
+  - @ledgerhq/coin-icon@0.8.1-nightly.3
+  - @ledgerhq/coin-internet_computer@1.5.9-nightly.3
+  - @ledgerhq/coin-multiversx@0.2.2-nightly.3
+  - @ledgerhq/coin-near@0.9.2-nightly.3
+  - @ledgerhq/coin-polkadot@2.1.0-nightly.3
+  - @ledgerhq/coin-stacks@0.6.4-nightly.3
+  - @ledgerhq/coin-stellar@1.2.0-nightly.3
+  - @ledgerhq/coin-tezos@1.5.0-nightly.3
+  - @ledgerhq/coin-ton@0.6.1-nightly.3
+  - @ledgerhq/coin-tron@0.6.0-nightly.3
+  - @ledgerhq/coin-vechain@2.5.1-nightly.3
+  - @ledgerhq/coin-xrp@2.2.0-nightly.3
+  - @ledgerhq/device-core@0.4.18-nightly.2
+  - @ledgerhq/hw-app-eth@6.43.1-nightly.2
+  - @ledgerhq/live-countervalues@0.4.5-nightly.3
+  - @ledgerhq/live-countervalues-react@0.2.27-nightly.3
+  - @ledgerhq/live-nft@0.6.2-nightly.3
+  - @ledgerhq/live-signer-evm@0.2.1-nightly.3
+  - @ledgerhq/live-wallet@0.10.1-nightly.3
+  - @ledgerhq/hw-app-vet@0.3.1-nightly.1
+
 ## 34.27.0-nightly.2
 
 ### Minor Changes

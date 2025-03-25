@@ -1,5 +1,21 @@
 # @ledgerhq/coin-solana
 
+## 0.16.0-nightly.3
+
+### Minor Changes
+
+- [#9602](https://github.com/LedgerHQ/ledger-live/pull/9602) [`e81aed6`](https://github.com/LedgerHQ/ledger-live/commit/e81aed656271ee2ba40c5f0985e83388031ed8f2) Thanks [@Canestin](https://github.com/Canestin)! - fix: sol staking delegate from-address
+
+### Patch Changes
+
+- [#9512](https://github.com/LedgerHQ/ledger-live/pull/9512) [`eb1c438`](https://github.com/LedgerHQ/ledger-live/commit/eb1c4384e2a4f1530ac199e9cdfc65b5ca66e958) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix(llm,lld): improve Solana scan accounts performances
+
+- Updated dependencies [[`1ec6a03`](https://github.com/LedgerHQ/ledger-live/commit/1ec6a03580ea1136dab22747721942056506d589), [`2effe04`](https://github.com/LedgerHQ/ledger-live/commit/2effe04d9d4b3e407ed25da3b9f11324a82126d3), [`a656e47`](https://github.com/LedgerHQ/ledger-live/commit/a656e47c1dc3ac8b578debf9cf80eab370c7086f)]:
+  - @ledgerhq/types-live@6.64.0-nightly.1
+  - @ledgerhq/types-cryptoassets@7.21.0-nightly.0
+  - @ledgerhq/cryptoassets@13.14.0-nightly.1
+  - @ledgerhq/coin-framework@2.4.0-nightly.3
+
 ## 0.15.2-nightly.2
 
 ### Patch Changes

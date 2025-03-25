@@ -1,5 +1,17 @@
 # @ledgerhq/types-live
 
+## 6.64.0-nightly.1
+
+### Minor Changes
+
+- [#9482](https://github.com/LedgerHQ/ledger-live/pull/9482) [`1ec6a03`](https://github.com/LedgerHQ/ledger-live/commit/1ec6a03580ea1136dab22747721942056506d589) Thanks [@Couto](https://github.com/Couto)! - Remove unused feature flags
+
+- [#9611](https://github.com/LedgerHQ/ledger-live/pull/9611) [`a656e47`](https://github.com/LedgerHQ/ledger-live/commit/a656e47c1dc3ac8b578debf9cf80eab370c7086f) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Add SUI coin send and receive abilities
+
+### Patch Changes
+
+- [#9570](https://github.com/LedgerHQ/ledger-live/pull/9570) [`2effe04`](https://github.com/LedgerHQ/ledger-live/commit/2effe04d9d4b3e407ed25da3b9f11324a82126d3) Thanks [@beths-ledger](https://github.com/beths-ledger)! - Allow staking / yielding flows using third party dapps to be enabled remotely on firebase by adding new curency or token ids and associated manifest ids to the new "redirects" parameter in the stake programs flag. No code changes then required for adding coins handled by partners.
+
 ## 6.64.0-nightly.0
 
 ### Minor Changes
