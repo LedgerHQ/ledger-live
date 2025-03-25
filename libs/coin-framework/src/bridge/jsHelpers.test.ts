@@ -131,22 +131,7 @@ describe("makeScanAccounts", () => {
         expect(accountShape.deviceId).toBe(deviceId);
         return Promise.resolve({
           id: "1234",
-          // balance: new BigNumber(0),
-          // spendableBalance: new BigNumber(0),
-          // derivationMode: asDerivationMode(""),
-          // operationsCount: 0,
-          // operations: [],
-          // index: accountShape.index,
-          // freshAddress: "",
-          // freshAddressPath: "",
-          // seedIdentifier: "",
-          // pendingOperations: [],
-          // currency: accountShape.currency,
           balanceHistoryCache: createEmptyHistoryCache(),
-          // swapHistory: [],
-          // creationDate: today,
-          // lastSyncDate: today,
-          // blockHeight: 0,
         });
       },
       getAddressFn: (_deviceId, _addressOpt) => Promise.resolve(addressResolver),
