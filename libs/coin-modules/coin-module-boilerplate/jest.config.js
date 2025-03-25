@@ -15,7 +15,7 @@ module.exports = {
     ["lcov", { file: "boilerplate-lcov.info", projectRoot: "../" }],
     "text",
   ],
-  testPathIgnorePatterns: ["lib/", "lib-es/", ".integration.test.ts"],
+  testPathIgnorePatterns: ["lib/", "lib-es/", ".*\\.integ\\.test\\.[tj]s"],
   workerThreads: true,
   reporters: [
     [

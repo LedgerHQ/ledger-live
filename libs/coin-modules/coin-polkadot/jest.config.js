@@ -10,7 +10,7 @@ module.exports = {
   ],
   coverageReporters: ["json", ["lcov", { file: "polkadot-lcov.info", projectRoot: "../" }], "text"],
   testEnvironment: "node",
-  testPathIgnorePatterns: ["lib/", "lib-es/", ".integration.test.ts"],
+  testPathIgnorePatterns: ["lib/", "lib-es/", ".*\\.(integ|integration)\\.test\\.[tj]s"],
   modulePathIgnorePatterns: ["src/test/coin-tester"],
   setupFilesAfterEnv: ["jest-expect-message", "dotenv/config"],
   reporters: [

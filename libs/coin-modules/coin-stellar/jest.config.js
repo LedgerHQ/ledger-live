@@ -10,7 +10,7 @@ module.exports = {
   ],
   coverageReporters: ["json", ["lcov", { file: "stellar-lcov.info", projectRoot: "../" }], "text"],
   testEnvironment: "node",
-  testPathIgnorePatterns: ["lib/", "lib-es/", ".integration.test.ts"],
+  testPathIgnorePatterns: ["lib/", "lib-es/", ".*\\.integ\\.test\\.[tj]s"],
   reporters: [
     [
       "jest-sonar",
