@@ -3,6 +3,7 @@ import {
   getSerializedAddressParameters,
   updateTransaction,
   makeAccountBridgeReceive,
+  makeScanAccounts,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { getPreloadStrategy, preload, hydrate } from "../preload";
 import { getTransactionStatus } from "../getTransactionStatus";
@@ -12,7 +13,6 @@ import { createTransaction } from "../createTransaction";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import resolver from "../hw-getAddress";
 import { sync, scanAccounts } from "../synchronisation";
-import { signOperation } from "../signOperation";
 import type { CeloAccount, Transaction, TransactionStatus } from "../types";
 import { broadcast } from "../broadcast";
 import {
@@ -21,17 +21,18 @@ import {
   fromOperationExtraRaw,
   toOperationExtraRaw,
 } from "../serialization";
+import { CeloSigner } from "../signer";
+import { EvmSigner } from "@ledgerhq/coin-evm/lib/types/signer";
+import getAddressWrapper from "@ledgerhq/coin-framework/lib/bridge/getAddressWrapper";
+import { getAccountShape } from "../synchronisation";
+import { buildSignOperation } from "../signOperation";
 
-// Example
-
-export function buildCurrencyBridge(
-  signerContext: SignerContext<CeloSigner, CeloAddress | CeloSignature>,
-): CurrencyBridge {
+export function buildCurrencyBridge(signerContext: SignerContext<EvmSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
 
   const scanAccounts = makeScanAccounts({
     getAccountShape,
-    getAddressFn: getAddress,
+    getAddressFn: getAddressWrapper(getAddress),
   });
 
   return {
@@ -43,7 +44,7 @@ export function buildCurrencyBridge(
 }
 
 export function buildAccountBridge(
-  signerContext: SignerContext<CeloSigner, CeloAddress | CeloSignature>,
+  signerContext: SignerContext<EvmSigner>,
 ): AccountBridge<Transaction> {
   const getAddress = resolver(signerContext);
 
@@ -63,9 +64,7 @@ export function buildAccountBridge(
   };
 }
 
-export function createBridges(
-  signerContext: SignerContext<CeloSigner, CeloAddress | CeloSignature>,
-) {
+export function createBridges(signerContext: SignerContext<CeloSigner>,) {
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),
@@ -94,6 +93,7 @@ const accountBridge: AccountBridge<Transaction, CeloAccount, TransactionStatus> 
   toOperationExtraRaw,
   getSerializedAddressParameters,
 };
+
 export default {
   currencyBridge,
   accountBridge,

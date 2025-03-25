@@ -1,4 +1,5 @@
 import type { DeviceTransactionField } from "../../../ledger-live-common/src/transaction";
+import type { }
 
 function getDeviceTransactionConfig(): Array<DeviceTransactionField> {
   const fields: Array<DeviceTransactionField> = [];
