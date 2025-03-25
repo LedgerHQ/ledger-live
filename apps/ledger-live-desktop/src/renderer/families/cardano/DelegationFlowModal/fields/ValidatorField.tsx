@@ -1,21 +1,21 @@
-import React, { useState, useCallback, useEffect } from "react";
-import styled from "styled-components";
-import Box from "~/renderer/components/Box";
-import Text from "~/renderer/components/Text";
-import ScrollLoadingList from "../ScrollLoadingList";
-import { Trans } from "react-i18next";
-import { TFunction } from "i18next";
-import IconAngleDown from "~/renderer/icons/AngleDown";
-import ValidatorRow from "./ValidatorRow";
-import { Account } from "@ledgerhq/types-live";
-import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import { StakePool, fetchPoolDetails } from "@ledgerhq/live-common/families/cardano/staking";
 import { useCardanoFamilyPools } from "@ledgerhq/live-common/families/cardano/react";
-import ValidatorSearchInput from "~/renderer/components/Delegation/ValidatorSearchInput";
+import { StakePool, fetchPoolDetails } from "@ledgerhq/live-common/families/cardano/staking";
 import { CardanoDelegation } from "@ledgerhq/live-common/families/cardano/types";
-import BigSpinner from "~/renderer/components/BigSpinner";
-import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { Account } from "@ledgerhq/types-live";
+import { TFunction } from "i18next";
+import React, { useCallback, useEffect, useState } from "react";
+import { Trans } from "react-i18next";
+import styled from "styled-components";
+import BigSpinner from "~/renderer/components/BigSpinner";
+import Box from "~/renderer/components/Box";
+import ValidatorSearchInput from "~/renderer/components/Delegation/ValidatorSearchInput";
+import Text from "~/renderer/components/Text";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import IconAngleDown from "~/renderer/icons/AngleDown";
+import ScrollLoadingList from "../ScrollLoadingList";
+import ValidatorRow from "./ValidatorRow";
 
 type Props = {
   t: TFunction;
@@ -46,16 +46,14 @@ export function putUserPoolAtFirstPositionInPools(
   pools: StakePool[],
   firstPoolId: string,
 ): StakePool[] {
-  const sortedPools = [...pools];
-  if (pools.every(pool => pool.poolId !== firstPoolId)) {
-    return sortedPools;
+  const copiedPools = [...pools];
+  const index = pools.findIndex(pool => pool.poolId === firstPoolId);
+  if (index === -1) {
+    return copiedPools;
   }
 
-  const index = pools.findIndex(pool => pool.poolId === firstPoolId);
   const pool = { ...pools[index] };
-  sortedPools.splice(index, 1);
-  sortedPools.unshift(pool);
-  return sortedPools;
+  return [pool, ...copiedPools.filter((_, i) => i !== index)];
 }
 
 export async function fetchAndSortPools(
