@@ -5,6 +5,10 @@ export async function runDeleteAccountTest(account: AccountType, tmsLinks: strin
     beforeAll(async () => {
       await app.init({
         speculosApp: account.currency.speculosApp,
+        featureFlags: {
+          llmAccountListUI: { enabled: true },
+          llmNetworkBasedAddAccountFlow: { enabled: true },
+        },
         cliCommands: [
           async (userdataPath?: string) => {
             return CLI.liveData({
@@ -21,14 +25,14 @@ export async function runDeleteAccountTest(account: AccountType, tmsLinks: strin
 
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     it(`Perform a delete account - ${account.accountName}`, async () => {
-      await app.accounts.openViaDeeplink();
-      await app.common.expectAccountName(account.accountName);
-      await app.common.goToAccountByName(account.accountName);
+      await app.account.openViaDeeplink();
+      await app.account.expectAccountName(account.accountName);
+      await app.account.goToAccountByName(account.accountName);
       await app.account.openAccountSettings();
       await app.account.selectAccountDelete();
       await app.account.confirmAccountDelete();
       await app.accounts.openViaDeeplink();
-      await app.accounts.expectAccountsNumber(0);
+      await app.accounts.expectNoAccount();
     });
   });
 }

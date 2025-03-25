@@ -35,7 +35,7 @@ describe("DeepLinks Tests", () => {
 
   it("should open Add Account drawer", async () => {
     await app.addAccount.openViaDeeplink();
-    await app.addAccount.selectCurrency(ethereumLong);
+    await app.receive.selectCurrency(ethereumLong);
   });
 
   it("should open ETH Account Asset page when given currency param", async () => {

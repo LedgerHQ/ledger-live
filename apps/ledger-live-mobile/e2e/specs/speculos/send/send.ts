@@ -6,14 +6,18 @@ import invariant from "invariant";
 import { TransactionType } from "@ledgerhq/live-common/e2e/models/Transaction";
 
 async function navigateToSendScreen(accountName: string) {
-  await app.accounts.openViaDeeplink();
-  await app.common.goToAccountByName(accountName);
+  await app.account.openViaDeeplink();
+  await app.account.goToAccountByName(accountName);
   await app.account.tapSend();
 }
 
 const beforeAllFunction = async (transaction: TransactionType) => {
   await app.init({
     speculosApp: transaction.accountToDebit.currency.speculosApp,
+    featureFlags: {
+      llmAccountListUI: { enabled: true },
+      llmNetworkBasedAddAccountFlow: { enabled: true },
+    },
     cliCommands: [
       (userdataPath?: string) => {
         return CLI.liveData({

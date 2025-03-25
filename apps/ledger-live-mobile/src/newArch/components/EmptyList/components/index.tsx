@@ -6,6 +6,7 @@ import { Linking } from "react-native";
 type Props = {
   titleKey: string;
   subTitleKey?: string;
+  testID?: string;
 } & (
   | {
       buttonTextKey: string;
@@ -34,13 +35,14 @@ const EmptyList: React.FC<Props> = ({
   linkTextKey,
   urlLink,
   onButtonPress,
+  testID,
 }) => {
   const { t } = useTranslation();
 
   const onLinkPress = (url: string) => Linking.openURL(url);
 
   return (
-    <Flex flex={1} alignItems="center" justifyContent="center" px={6}>
+    <Flex flex={1} alignItems="center" justifyContent="center" px={6} testID={testID}>
       {!!titleKey && (
         <Text
           textAlign="center"
