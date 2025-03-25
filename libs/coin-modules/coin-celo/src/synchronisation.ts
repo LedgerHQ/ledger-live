@@ -9,7 +9,7 @@ import { celoKit } from "./api/sdk";
 
 const kit = celoKit();
 
-const getAccountShape: GetAccountShape<CeloAccount> = async info => {
+export const getAccountShape: GetAccountShape<CeloAccount> = async info => {
   const { address, currency, initialAccount, derivationMode } = info;
   const oldOperations = initialAccount?.operations || [];
   const election = await kit.contracts.getElection();
