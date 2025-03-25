@@ -1,7 +1,7 @@
 import { CLI } from "tests/utils/cliUtils";
 import { activateLedgerSync } from "@ledgerhq/live-common/e2e/speculos";
 import { accountNames, accounts } from "tests/testdata/ledgerSyncTestData";
-import { Page, TestInfo } from "@playwright/test";
+import { Page } from "@playwright/test";
 import { Application } from "tests/page";
 import { DistantState as LiveData } from "@ledgerhq/live-wallet/walletsync/index";
 import { getEnv } from "@ledgerhq/live-env";
