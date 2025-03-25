@@ -35,12 +35,14 @@ function View({
             {t("NFT.gallery.title")}
           </Text>
         </Box>
-        <Button small primary icon onClick={onSend}>
-          <Box horizontal flow={1} alignItems="center">
-            <Icons.ArrowUp size={"S"} />
-            <Box>{t("NFT.gallery.collection.header.sendCTA")}</Box>
-          </Box>
-        </Button>
+        {account?.currency.id !== "solana" && (
+          <Button small primary icon onClick={onSend}>
+            <Box horizontal flow={1} alignItems="center">
+              <Icons.ArrowUp size={"S"} />
+              <Box>{t("NFT.gallery.collection.header.sendCTA")}</Box>
+            </Box>
+          </Button>
+        )}
       </Box>
       <TableLayout />
       <LazyCollection
