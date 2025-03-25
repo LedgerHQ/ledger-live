@@ -4,7 +4,6 @@ import {
   COSMOS_MIN_SAFE,
   formattedAmount,
   getAccountUnit,
-  initTestAccounts,
 } from "../../models/currencies";
 
 import DeviceAction from "../../models/DeviceAction";
@@ -14,14 +13,13 @@ describe("Cosmos delegate flow", () => {
   let deviceAction: DeviceAction;
   const testedCurrency = "cosmos";
   const defaultProvider = "Ledger";
-  const testAccount = initTestAccounts([testedCurrency])[0];
   const knownDevice = knownDevices.nanoX;
 
   beforeAll(async () => {
     await app.init({
       userdata: "skip-onboarding",
       knownDevices: [knownDevice],
-      testAccounts: [testAccount],
+      testedCurrencies: [testedCurrency],
     });
     deviceAction = new DeviceAction(knownDevice);
 
@@ -36,6 +34,7 @@ describe("Cosmos delegate flow", () => {
 
   $TmsLink("B2CQA-387");
   it("goes through the delegate flow", async () => {
+    const testAccount = app.testAccounts[0];
     const delegatedPercent = 50;
     const unit = getAccountUnit(testAccount);
 

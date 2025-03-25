@@ -8,6 +8,7 @@ const broadcastOriginalValue = getEnv("DISABLE_TRANSACTION_BROADCAST");
 
 beforeAll(
   async () => {
+    if (process.env.MOCK == "1") setEnv("MOCK", "1");
     const port = await launchApp();
     await device.reverseTcpPort(8081);
     await device.reverseTcpPort(port);

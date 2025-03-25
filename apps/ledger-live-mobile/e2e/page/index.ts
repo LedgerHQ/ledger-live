@@ -40,6 +40,7 @@ import { SettingsSetOverriddenFeatureFlagsPlayload } from "~/actions/types";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { log } from "detox";
 import { AppInfosType } from "@ledgerhq/live-common/e2e/enum/AppInfos";
+import { initTestAccounts } from "../models/currencies";
 
 setEnv("DISABLE_APP_VERSION_REQUIREMENTS", true);
 
@@ -64,7 +65,7 @@ type ApplicationOptions = {
   cliCommands?: CliCommand[];
   userdata?: string;
   knownDevices?: DeviceLike[];
-  testAccounts?: Account[];
+  testedCurrencies?: string[];
   featureFlags?: SettingsSetOverriddenFeatureFlagsPlayload;
 };
 
@@ -87,6 +88,7 @@ async function executeCliCommand(cmd: CliCommand, userdataPath?: string) {
 }
 
 export class Application {
+  public testAccounts: Account[] = [];
   private assetAccountsPageInstance = lazyInit(AssetAccountsPage);
   private accountPageInstance = lazyInit(AccountPage);
   private accountsPageInstance = lazyInit(AccountsPage);
@@ -124,7 +126,7 @@ export class Application {
     cliCommands,
     userdata,
     knownDevices,
-    testAccounts,
+    testedCurrencies,
     featureFlags,
   }: ApplicationOptions) {
     const userdataSpeculos = `temp-userdata-${Date.now()}`;
@@ -146,7 +148,10 @@ export class Application {
 
     featureFlags && (await setFeatureFlags(featureFlags));
     knownDevices && (await loadBleState({ knownDevices }));
-    testAccounts && (await loadAccounts(testAccounts));
+    if (testedCurrencies) {
+      this.testAccounts = initTestAccounts(testedCurrencies);
+      await loadAccounts(this.testAccounts);
+    }
   }
 
   public get assetAccountsPage() {

@@ -136,7 +136,7 @@ export default class CommonPage {
 
   async removeSpeculos(apiPort?: number) {
     const proxyPort = await deleteSpeculos(apiPort);
-    await removeKnownSpeculos(`${proxyAddress}:${proxyPort}`);
+    proxyPort && (await removeKnownSpeculos(`${proxyAddress}:${proxyPort}`));
   }
 
   @Step("Select a known device")
