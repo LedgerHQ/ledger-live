@@ -62,35 +62,16 @@ export async function launchApp() {
 
 export const logMemoryUsage = async () => {
   const pid = process.pid;
-  console.warn(`📦 Detox Memory Usage: Getting memory usage for PID: ${pid}`);
-
   exec(
-    `top ${isAndroid() ? "-b -n 1 -p" : "-l 1 -pid"} ${pid} | grep -E '^[ ]*${pid}' | awk '{for(i=1;i<=NF;i++) if ($i ~ /[MG]/) {print $i; exit}}'`,
+    `top ${isAndroid() ? "-b -n 1 -p" : "-l 1 -pid"} ${pid} | grep "${pid}" | awk '{print ${isAndroid() ? "$10" : "$8"}}'`,
     async (error, stdout, stderr) => {
       if (error || stderr) {
         console.error(`Error getting memory usage:\n Error: ${error}\n Stderr: ${stderr}`);
         return;
       }
-      const memoryUsed = stdout.trim();
-      let memoryUsedGB = 0;
-
-      if (memoryUsed.includes("M")) {
-        memoryUsedGB = parseFloat(memoryUsed.replace("M", "")) / 1024;
-      } else if (memoryUsed.includes("G")) {
-        memoryUsedGB = parseFloat(memoryUsed.replace("G", ""));
-      }
-      const logMessage = `📦 Detox Memory Usage: ${memoryUsedGB.toFixed(2)} GB`;
+      const logMessage = `📦 Detox Memory Usage: ${stdout.trim()}`;
       await allure.attachment("Memory Usage Details", logMessage, "text/plain");
       log.warn(logMessage);
     },
   );
-  let memoryUsed = "";
-  exec(`top ${isAndroid() ? "-b -n 1 -p" : "-l 1 -pid"} ${pid}`, async (error, stdout, stderr) => {
-    if (error || stderr) {
-      console.error(`Error getting memory:\n ${error}\n ${stderr}`);
-      return;
-    }
-    memoryUsed = stdout.trim();
-    log.warn(memoryUsed);
-  });
 };
