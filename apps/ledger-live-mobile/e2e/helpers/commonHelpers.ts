@@ -92,6 +92,5 @@ export const logMemoryUsage = async () => {
     }
     memoryUsed = stdout.trim();
     log.warn(memoryUsed);
-    jestExpect(memoryUsed).not.toBeDefined();
   });
 };
