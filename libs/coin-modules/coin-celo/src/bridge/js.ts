@@ -21,7 +21,6 @@ import {
   fromOperationExtraRaw,
   toOperationExtraRaw,
 } from "../serialization";
-import { CeloSigner } from "../signer";
 import { EvmSigner } from "@ledgerhq/coin-evm/lib/types/signer";
 import getAddressWrapper from "@ledgerhq/coin-framework/lib/bridge/getAddressWrapper";
 import { getAccountShape } from "../synchronisation";
@@ -64,7 +63,7 @@ export function buildAccountBridge(
   };
 }
 
-export function createBridges(signerContext: SignerContext<CeloSigner>,) {
+export function createBridges(signerContext: SignerContext<EvmSigner>) {
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),
@@ -77,6 +76,7 @@ const currencyBridge: CurrencyBridge = {
   hydrate,
   scanAccounts,
 };
+
 const accountBridge: AccountBridge<Transaction, CeloAccount, TransactionStatus> = {
   estimateMaxSpendable,
   createTransaction,
