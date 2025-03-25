@@ -63,7 +63,7 @@
     "@vitest/coverage-istanbul": "3.0.7",
     "@vitest/coverage-v8": "2.1.8",
     "jsdom": "25.0.1",
-    "vite": "6.0.9",
+    "vite": "6.0.12",
     "vitest": "2.1.9",
     "ws": "8.18.0"
   }
