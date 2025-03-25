@@ -42,7 +42,9 @@ describe("Receive different currency", () => {
     if (network) await app.receive.selectNetwork(network);
     first && (await deviceAction.selectMockDevice(), (first = false));
     await deviceAction.openApp();
-    await app.receive.selectAccount(`${currencyName} 2`);
+    await app.addAccount.addAccountAtIndex(currency.name, currency.id, 1);
+    await app.addAccount.tapAddFunds();
+    await app.addAccount.tapReceiveinActionDrawer();
     await app.receive.doNotVerifyAddress();
     await app.receive.expectReceivePageIsDisplayed(currency.ticker, `${currencyName} 2`);
   });

@@ -35,6 +35,13 @@ type TransactionType = typeof Transaction;
 type FeeType = typeof Fee;
 type AppInfosType = typeof AppInfos;
 
+process.on("SIGINT", async () => {
+  if (global.app?.common?.removeSpeculos) {
+    await global.app.common.removeSpeculos();
+  }
+  process.exit(0);
+});
+
 declare global {
   var IS_FAILED: boolean;
   var speculosDevices: Map<number, string>;
@@ -60,6 +67,7 @@ declare global {
   var waitForElementById: typeof ElementHelpers.waitForElementById;
   var waitForElementByText: typeof ElementHelpers.waitForElementByText;
   var getElementById: typeof ElementHelpers.getElementById;
+  var getElementsById: typeof ElementHelpers.getElementsById;
   var getElementByText: typeof ElementHelpers.getElementByText;
   var getWebElementById: typeof ElementHelpers.getWebElementById;
   var getWebElementByTag: typeof ElementHelpers.getWebElementByTag;
@@ -74,6 +82,7 @@ declare global {
   var scrollToText: typeof ElementHelpers.scrollToText;
   var scrollToId: typeof ElementHelpers.scrollToId;
   var getTextOfElement: typeof ElementHelpers.getTextOfElement;
+  var getIdByRegexp: typeof ElementHelpers.getIdByRegexp;
   var getIdOfElement: typeof ElementHelpers.getIdOfElement;
 }
 
@@ -102,6 +111,7 @@ export default async () => {
   global.waitForElementById = ElementHelpers.waitForElementById;
   global.waitForElementByText = ElementHelpers.waitForElementByText;
   global.getElementById = ElementHelpers.getElementById;
+  global.getElementsById = ElementHelpers.getElementsById;
   global.getElementByText = ElementHelpers.getElementByText;
   global.getWebElementById = ElementHelpers.getWebElementById;
   global.getWebElementByTag = ElementHelpers.getWebElementByTag;
@@ -116,5 +126,6 @@ export default async () => {
   global.scrollToText = ElementHelpers.scrollToText;
   global.scrollToId = ElementHelpers.scrollToId;
   global.getTextOfElement = ElementHelpers.getTextOfElement;
+  global.getIdByRegexp = ElementHelpers.getIdByRegexp;
   global.getIdOfElement = ElementHelpers.getIdOfElement;
 };

@@ -26,7 +26,7 @@ function View({
       <Button
         size="large"
         type="shade"
-        testID="button-create-account"
+        testID="button-add-funds"
         onPress={openFundOrAccountListDrawer}
       >
         {t("addAccounts.addAccountsSuccess.ctaAddFunds")}

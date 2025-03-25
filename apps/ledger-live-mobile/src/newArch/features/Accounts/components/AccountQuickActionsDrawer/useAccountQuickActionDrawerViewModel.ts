@@ -56,7 +56,7 @@ export default function useAccountQuickActionDrawerViewModel({
         }),
       Icon: RECEIVE.icon,
       disabled: RECEIVE.disabled,
-      testID: "transfer-receive-button",
+      testID: "action-drawer-receive-button",
     },
     BUY && {
       eventProperties: {
@@ -75,7 +75,7 @@ export default function useAccountQuickActionDrawerViewModel({
           },
         }),
       disabled: BUY.disabled,
-      testID: "transfer-buy-button",
+      testID: "action-drawer--buy-button",
     },
   ].filter(<T extends ActionItem>(v: T | undefined): v is T => !!v);
 

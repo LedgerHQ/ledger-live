@@ -85,7 +85,7 @@ describe(`Ledger Sync Accounts`, () => {
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   it(`Synchronize one instance then delete the backup`, async () => {
     await app.accounts.openViaDeeplink();
-    await app.accounts.expectAccountsNumber(0);
+    await app.accounts.expectNoAccount();
     await goToLedgerSync();
     await app.ledgerSync.expectLedgerSyncPageIsDisplayed();
     await app.ledgerSync.tapTurnOnSync();

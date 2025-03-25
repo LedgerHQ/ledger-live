@@ -15,6 +15,7 @@ type Props = {
   navigation?: NavigationProp<{ [key: string]: object | undefined }>;
   seeMoreText?: React.ReactElement;
   containerProps?: FlexBoxProps;
+  testID?: string;
 };
 
 const StyledTouchableOpacity = proxyStyled.TouchableOpacity.attrs({
@@ -35,6 +36,7 @@ const SectionTitle = ({
   navigation,
   seeMoreText,
   containerProps,
+  testID,
 }: Props) => {
   const { t } = useTranslation();
   const llmAccountListUI = useFeature("llmAccountListUI");
@@ -53,6 +55,7 @@ const SectionTitle = ({
       justifyContent={"space-between"}
       alignItems={"center"}
       {...containerProps}
+      testID={testID}
     >
       <Text variant="small" fontWeight="semiBold" color="neutral.c70" uppercase flexShrink={1}>
         {title}
