@@ -1,4 +1,11 @@
-import { Cluster, clusterApiUrl } from "@solana/web3.js";
+import {
+  AccountInfo,
+  Cluster,
+  ConfirmedSignatureInfo,
+  ParsedAccountData,
+  PublicKey,
+  clusterApiUrl,
+} from "@solana/web3.js";
 import { partition } from "lodash/fp";
 import { getEnv } from "@ledgerhq/live-env";
 import { ValidatorsAppValidator } from "./validator-app";
@@ -219,4 +226,63 @@ export function median(values: number[]): number {
         .div(2)
         .toNumber()
     : sorted[middle];
+}
+
+export function isParsedAccount(entry: {
+  pubkey: PublicKey;
+  account: AccountInfo<Buffer | ParsedAccountData>;
+}): entry is {
+  pubkey: PublicKey;
+  account: AccountInfo<ParsedAccountData>;
+} {
+  return "parsed" in entry.account.data;
+}
+
+interface HistoryEntry {
+  epoch: number;
+  stakeHistory: {
+    effective: number;
+    activating: number;
+    deactivating: number;
+  };
+}
+
+type UnknownObject = Record<PropertyKey, unknown>;
+
+function isUnknownObject(value: unknown): value is UnknownObject {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+export function isHistoryEntry(value: unknown): value is HistoryEntry {
+  return (
+    isUnknownObject(value) &&
+    typeof value.epoch === "number" &&
+    isUnknownObject(value.stakeHistory) &&
+    typeof value.stakeHistory.effective === "number" &&
+    typeof value.stakeHistory.activating === "number" &&
+    typeof value.stakeHistory.deactivating === "number"
+  );
+}
+
+function isConfirmedSignatureInfo(value: unknown): value is ConfirmedSignatureInfo {
+  return (
+    isUnknownObject(value) &&
+    typeof value.signature === "string" &&
+    typeof value.slot === "number" &&
+    typeof value.err === "object" &&
+    (value.memo === null || typeof value.memo === "string") &&
+    (value.blockTime === null || typeof value.blockTime === "number") &&
+    (value.confirmationStatus === null || typeof value.confirmationStatus === "string")
+  );
+}
+
+export function isSignaturesForAddressResponse(
+  value: unknown,
+): value is { result: Array<ConfirmedSignatureInfo>; id: string } {
+  return (
+    isUnknownObject(value) &&
+    typeof value.id === "string" &&
+    Array.isArray(value.result) &&
+    value.result.every(isConfirmedSignatureInfo)
+  );
 }

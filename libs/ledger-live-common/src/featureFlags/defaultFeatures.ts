@@ -89,6 +89,7 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyZenrock: DEFAULT_FEATURE,
   currencySonicBlaze: DEFAULT_FEATURE,
   currencySonic: DEFAULT_FEATURE,
+  currencySui: DEFAULT_FEATURE,
 };
 
 /**
@@ -112,7 +113,7 @@ export const DEFAULT_FEATURES: Features = {
   ethStakingProviders: initFeature(),
   newsfeedPage: initFeature(),
   swapWalletApiPartnerList: initFeature(),
-  stakePrograms: initFeature(),
+  stakePrograms: initFeature({ enabled: false, params: { list: [], redirects: {} } }),
   receiveStakingFlowConfigDesktop: initFeature(),
   brazePushNotifications: initFeature(),
   stakeAccountBanner: initFeature(),
@@ -436,7 +437,6 @@ export const DEFAULT_FEATURES: Features = {
   },
 
   ptxSwapMoonpayProvider: DEFAULT_FEATURE,
-  ptxSwapExodusProvider: DEFAULT_FEATURE,
 
   myLedgerDisplayAppDeveloperName: DEFAULT_FEATURE,
   nftsFromSimplehash: {

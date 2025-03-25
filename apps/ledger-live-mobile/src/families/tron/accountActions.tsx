@@ -7,7 +7,6 @@ import { getMainAccount, isAccountEmpty } from "@ledgerhq/live-common/account/in
 import { TokenAccount } from "@ledgerhq/types-live";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
-
 const getMainActions = ({
   account,
   parentAccount,
@@ -51,6 +50,7 @@ const getMainActions = ({
         button: "stake",
         currency: "TRX",
         page: "Account Page",
+        isRedirectConfig: false,
       },
     },
   ];

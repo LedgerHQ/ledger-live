@@ -65,6 +65,7 @@ const NftItem: React.FC<NftItemProps> = ({
           uri: metadata?.medias.preview.uri,
           mediaType: metadata?.medias.preview.mediaType,
         }}
+        dataTestId={`nft-row-${metadata?.tokenName || metadata?.nftName}`}
       />
     </CollectionContextMenu>
   );
