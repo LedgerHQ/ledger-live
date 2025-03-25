@@ -1,0 +1,29 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`sui currency bridge scanAccounts sui seed 1 1`] = `
+[
+  {
+    "balance": "0",
+    "currencyId": "sui",
+    "derivationMode": "sui",
+    "freshAddress": "0x117527fdcf2f5f6e82fa499c0398def2643550d63f7e8311245d75f4635f0435",
+    "freshAddressPath": "44'/784'/0'/0'/0'",
+    "id": "js:2:sui:0x117527fdcf2f5f6e82fa499c0398def2643550d63f7e8311245d75f4635f0435:sui",
+    "index": 0,
+    "operationsCount": 0,
+    "pendingOperations": [],
+    "seedIdentifier": "e5fb8c817b97e9e9aec677b9e822e8a60c7471624f36b701c94560b88195a8e7",
+    "spendableBalance": "0",
+    "suiResources": {},
+    "swapHistory": [],
+    "syncHash": undefined,
+    "used": false,
+  },
+]
+`;
+
+exports[`sui currency bridge scanAccounts sui seed 1 2`] = `
+[
+  [],
+]
+`;

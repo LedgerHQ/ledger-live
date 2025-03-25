@@ -107,6 +107,7 @@ setSupportedCurrencies([
   "aptos",
   "aptos_testnet",
   "xion",
+  "sui",
   "zenrock",
   "sonic",
   "sonic_blaze",

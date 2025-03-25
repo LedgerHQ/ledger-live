@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   Animated,
   FlatList,
@@ -24,7 +24,6 @@ import { getTime } from "./helper";
 import { setDynamicContentNotificationCards } from "~/actions/dynamicContent";
 import { useDynamicContentLogic } from "~/dynamicContent/useDynamicContentLogic";
 import getWindowDimensions from "~/logic/getWindowDimensions";
-import type { NotificationItem } from "./types";
 
 const { height } = getWindowDimensions();
 
@@ -149,20 +148,8 @@ export default function NotificationCenter() {
   };
 
   const isLNSUpsellBannerShown = useLNSUpsellBannerState("notification_center").isShown;
-  const fullNotificationList = useMemo(
-    (): NotificationItem[] => [
-      ...(isLNSUpsellBannerShown ? [{ kind: "lnsUpsell" } as const] : []),
-      ...notificationCards.map<NotificationItem>(card => ({ kind: "dynamic", card })),
-    ],
-    [notificationCards, isLNSUpsellBannerShown],
-  );
 
-  const ListItem = (item: NotificationItem) => {
-    if (item.kind === "lnsUpsell") {
-      return <LNSUpsellBanner location="notification_center" mx={6} my={5} />;
-    }
-
-    const { card } = item;
+  const ListItem = (card: NotificationContentCard) => {
     const time = getTime(card.createdAt);
     const hasLink = !!card.link && !!card.cta;
 
@@ -199,10 +186,8 @@ export default function NotificationCenter() {
 
   const visibleCardsRef = useRef<string[]>([]);
   const handleViewableItemsChanged = useCallback(
-    ({ viewableItems }: { viewableItems: ViewToken<NotificationItem>[] }) => {
-      const visibleCards = viewableItems.flatMap(({ item }) =>
-        item.kind === "dynamic" ? item.card.id : [],
-      );
+    ({ viewableItems }: { viewableItems: ViewToken<NotificationContentCard>[] }) => {
+      const visibleCards = viewableItems.map(({ item }) => item.id);
       const newlyVisibleCards = visibleCards.filter(id => !visibleCardsRef.current.includes(id));
       visibleCardsRef.current = visibleCards;
       newlyVisibleCards.forEach(logImpressionCard);
@@ -221,30 +206,30 @@ export default function NotificationCenter() {
         />
       }
     >
-      <FlatList<NotificationItem>
-        data={fullNotificationList}
-        keyExtractor={item => (item.kind === "dynamic" ? item.card.id : item.kind)}
+      <FlatList
+        data={notificationCards}
+        keyExtractor={({ id }) => id}
         renderItem={elem => ListItem(elem.item)}
+        ListHeaderComponent={<LNSUpsellBanner location="notification_center" mx={6} my={5} />}
         ItemSeparatorComponent={() => <Box height={1} width="100%" backgroundColor="neutral.c30" />}
         viewabilityConfig={{ itemVisiblePercentThreshold: 50 }}
         onViewableItemsChanged={handleViewableItemsChanged}
-        ListEmptyComponent={
-          <Flex alignItems="center" justifyContent="center" height={height * 0.7} px={6}>
-            <Text
-              variant="large"
-              fontWeight="semiBold"
-              color="neutral.c100"
-              mb={3}
-              textAlign="center"
-            >
-              {t("notificationCenter.news.emptyState.title")}
-            </Text>
-            <Text variant="paragraph" fontWeight="medium" color="neutral.c70" textAlign="center">
-              {t("notificationCenter.news.emptyState.desc")}
-            </Text>
-          </Flex>
-        }
+        ListEmptyComponent={isLNSUpsellBannerShown ? null : <EmptyComponent />}
       />
     </Container>
+  );
+}
+
+function EmptyComponent() {
+  const { t } = useTranslation();
+  return (
+    <Flex alignItems="center" justifyContent="center" height={height * 0.7} px={6}>
+      <Text variant="large" fontWeight="semiBold" color="neutral.c100" mb={3} textAlign="center">
+        {t("notificationCenter.news.emptyState.title")}
+      </Text>
+      <Text variant="paragraph" fontWeight="medium" color="neutral.c70" textAlign="center">
+        {t("notificationCenter.news.emptyState.desc")}
+      </Text>
+    </Flex>
   );
 }

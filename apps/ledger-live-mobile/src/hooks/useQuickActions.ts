@@ -12,6 +12,10 @@ import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/Ba
 import { EntryOf } from "~/types/helpers";
 import { accountsCountSelector, areAccountsEmptySelector } from "../reducers/accounts";
 import { readOnlyModeEnabledSelector } from "../reducers/settings";
+import { useStake } from "LLM/hooks/useStake/useStake";
+import { walletSelector } from "~/reducers/wallet";
+import { getAccountCurrency, getParentAccount } from "@ledgerhq/coin-framework/lib/account/helpers";
+import { shallowAccountsSelector } from "~/reducers/accounts";
 
 export type QuickAction = {
   disabled: boolean;
@@ -43,15 +47,30 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
   const hasCurrency = currency ? !!accounts?.some(({ balance }) => balance.gt(0)) : hasFunds;
 
   const recoverEntryPoint = useFeature("protectServicesMobile");
-  const stakePrograms = useFeature("stakePrograms");
 
   const ptxServiceCtaExchangeDrawer = useFeature("ptxServiceCtaExchangeDrawer");
   const isPtxServiceCtaExchangeDrawerDisabled = !(ptxServiceCtaExchangeDrawer?.enabled ?? true);
 
   const canBeBought = !currency || isCurrencyAvailable(currency.id, "onRamp");
   const canBeSold = !currency || currency.id === "bitcoin";
-  const canBeStaked =
-    stakePrograms?.enabled && (!currency || stakePrograms?.params?.list.includes(currency?.id));
+
+  const { getCanStakeUsingLedgerLive, getCanStakeUsingPlatformApp, getRouteParamsForPlatformApp } =
+    useStake();
+  const canStakeCurrencyUsingLedgerLive = !currency
+    ? false
+    : getCanStakeUsingLedgerLive(currency?.id);
+  const stakeAccount = accounts?.[0];
+
+  const shallowAccounts = useSelector(shallowAccountsSelector);
+  const parentAccount = stakeAccount ? getParentAccount(stakeAccount, shallowAccounts) : undefined;
+
+  const stakeAccountCurrency = !stakeAccount ? null : getAccountCurrency(stakeAccount);
+  const walletState = useSelector(walletSelector);
+  const partnerStakeRoute =
+    !stakeAccount || !stakeAccountCurrency || !getCanStakeUsingPlatformApp(stakeAccountCurrency?.id)
+      ? null
+      : getRouteParamsForPlatformApp(stakeAccount, walletState, parentAccount);
+
   const canBeRecovered = recoverEntryPoint?.enabled;
 
   const quickActionsList = useMemo(() => {
@@ -125,7 +144,18 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
       };
     }
 
-    if (canBeStaked) {
+    // Partner stake route is only available if an eligible account is present. If not, the user will be redirected to the stake flow to select an account.
+    if (partnerStakeRoute) {
+      const { screen, params } = partnerStakeRoute;
+      list.STAKE = {
+        disabled: readOnlyModeEnabled,
+        // @ts-expect-error - cannot infer screen & params type correctly. But this will go away if we do not return the NoFundsFlow when account is empty, or narrow the conditions of the return type.
+        route: [screen, params],
+        icon: IconsLegacy.CoinsMedium,
+      };
+    }
+
+    if (canStakeCurrencyUsingLedgerLive || !currency) {
       list.STAKE = {
         disabled: readOnlyModeEnabled,
         route: [
@@ -179,7 +209,8 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
     route,
     canBeBought,
     canBeSold,
-    canBeStaked,
+    partnerStakeRoute,
+    canStakeCurrencyUsingLedgerLive,
     canBeRecovered,
   ]);
 

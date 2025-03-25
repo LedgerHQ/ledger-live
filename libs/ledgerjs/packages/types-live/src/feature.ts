@@ -131,6 +131,7 @@ export type CurrencyFeatures = {
   currencyZenrock: DefaultFeature;
   currencySonic: DefaultFeature;
   currencySonicBlaze: DefaultFeature;
+  currencySui: DefaultFeature;
 };
 
 /**
@@ -180,7 +181,6 @@ export type Features = CurrencyFeatures & {
   flexibleContentCards: Feature_FlexibleContentCards;
   llmAnalyticsOptInPrompt: Feature_LlmAnalyticsOptInPrompt;
   ptxSwapMoonpayProvider: Feature_PtxSwapMoonpayProvider;
-  ptxSwapExodusProvider: Feature_PtxSwapExodusProvider;
   lldAnalyticsOptInPrompt: Feature_LldAnalyticsOptInPrompt;
   lldChatbotSupport: Feature_LldChatbotSupport;
   llmChatbotSupport: Feature_LlmChatbotSupport;
@@ -274,8 +274,27 @@ export type Feature_SwapWalletApiPartnerList = Feature<{
   list: string[];
 }>;
 
-export type Feature_StakePrograms = Feature<{
+export type RedirectQueryParam<ManifestId> = "stakekit" extends ManifestId
+  ? {
+      yieldId: string;
+    }
+  : "kiln-widget" extends ManifestId
+    ? {
+        chaidId: number;
+      }
+    : unknown;
+
+export type Redirect<ManifestId> = {
+  platform: ManifestId;
+  /** @developer asssetId resolves to string but is either CryptoCurrency["id"] | TokenCurrency["id"]; */
+  assetId: string;
+  name: string;
+  queryParams?: Record<string, string> & RedirectQueryParam<ManifestId>;
+};
+
+export type Feature_StakePrograms<ManifestId = "stakekit" | "kiln-widget"> = Feature<{
   list: string[];
+  redirects: Record<string, Redirect<ManifestId>>;
 }>;
 
 export type Feature_StakeAccountBanner = Feature<{ [blockchainName: string]: any }>;
@@ -587,7 +606,6 @@ export type Feature_lldnewArchOrdinals = DefaultFeature;
 export type Feature_SpamFilteringTx = DefaultFeature;
 export type Feature_MemoTag = DefaultFeature;
 export type Feature_PtxSwapMoonpayProvider = DefaultFeature;
-export type Feature_PtxSwapExodusProvider = DefaultFeature;
 
 export type Feature_LlmRebornLP = Feature<{
   variant: ABTestingVariants;
