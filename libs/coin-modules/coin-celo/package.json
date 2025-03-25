@@ -100,6 +100,7 @@
   "dependencies": {
     "@ledgerhq/coin-framework": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",
+    "@ledgerhq/coin-evm":"workspace:^",
     "@ledgerhq/devices": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
@@ -109,7 +110,6 @@
     "@ledgerhq/live-config": "workspace:^",
     "bignumber.js": "^9.1.2",
     "rlp": "^3.0.0",
-    "semver": "^7.3.5",
     "invariant": "^2.2.4",
     "lodash": "^4.17.21",
     "rxjs": "^7.8.1",

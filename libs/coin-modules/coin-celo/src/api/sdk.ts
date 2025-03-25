@@ -2,6 +2,7 @@ import { ContractKit, newKit } from "@celo/contractkit";
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import { getEnv } from "@ledgerhq/live-env";
 import { CeloVote } from "../types";
+import { CeloTx } from "@celo/connect";
 
 let kit: ContractKit;
 export const celoKit = () => {
@@ -15,6 +16,14 @@ export const celoKit = () => {
 export const getAccountRegistrationStatus = async (address: string): Promise<boolean> => {
   const accounts = await celoKit().contracts.getAccounts();
   return await accounts.isAccount(address);
+};
+
+export const determineFees = async (txParams: CeloTx): Promise<void> => {
+  const {
+    connection: { setFeeMarketGas },
+  } = celoKit();
+
+  await setFeeMarketGas(txParams);
 };
 
 /**
