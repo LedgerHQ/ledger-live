@@ -19,10 +19,9 @@ type Props = {
   account: Account;
 } & Navigation;
 export default function MinaSendRowsCustom(props: Props) {
-  const { transaction, ...rest } = props;
   return (
     <>
-      <SendRowMemo {...rest} transaction={transaction} />
+      <SendRowMemo {...props} />
     </>
   );
 }

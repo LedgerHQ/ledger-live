@@ -306,14 +306,14 @@ export type SendFundsNavigatorStackParamList = {
     account: Account;
     parentId?: string;
     transaction: ICPTransaction;
-    currentNavigation: ScreenName.SignTransactionSummary | ScreenName.SignTransactionSummary;
+    currentNavigation: ScreenName.SignTransactionSummary;
   };
   [ScreenName.MinaEditMemo]: {
     accountId: string;
     account: Account;
     parentId?: string;
     transaction: MinaTransaction;
-    currentNavigation: ScreenName.SignTransactionSummary | ScreenName.SignTransactionSummary;
+    currentNavigation: ScreenName.SignTransactionSummary;
   };
   [ScreenName.StacksEditMemo]: {
     accountId: string;

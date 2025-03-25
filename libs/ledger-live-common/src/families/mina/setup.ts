@@ -14,7 +14,7 @@ import type { Resolver } from "../../hw/getAddress/types";
 import { getCurrencyConfiguration } from "../../config";
 
 const createSigner: CreateSigner<MinaSigner> = (transport: Transport) => {
-  return new MinaApp(transport as any);
+  return new MinaApp(transport);
 };
 
 const getCoinConfig: MinaCoinConfig = () =>

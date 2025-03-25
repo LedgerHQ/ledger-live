@@ -270,11 +270,9 @@ export type SignTransactionNavigatorParamList = {
     transaction: ICPTransaction;
     currentNavigation:
       | ScreenName.SignTransactionSummary
-      | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
-      | ScreenName.SignTransactionSelectDevice
       | ScreenName.SignTransactionSelectDevice
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
@@ -286,11 +284,9 @@ export type SignTransactionNavigatorParamList = {
     transaction: MinaTransaction;
     currentNavigation:
       | ScreenName.SignTransactionSummary
-      | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
-      | ScreenName.SignTransactionSelectDevice
       | ScreenName.SignTransactionSelectDevice
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
