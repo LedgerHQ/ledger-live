@@ -32,10 +32,12 @@ const WalletNftGallery = () => {
     () =>
       [
         ...new Set(
-          accounts.map(account => account.freshAddress).filter(addr => addr.startsWith("0x")),
+          accounts
+            .filter(account => chains.includes(account.currency.id))
+            .map(account => account.freshAddress),
         ),
       ].join(","),
-    [accounts],
+    [accounts, chains],
   );
 
   const { isLoading, hasNextPage, error, fetchNextPage, refetch, nfts } = useNftGalleryFilter({
