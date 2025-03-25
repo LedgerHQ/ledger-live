@@ -5,6 +5,7 @@ import SendRowMemo from "./SendRowMemo";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
 import { SignTransactionNavigatorParamList } from "~/components/RootNavigator/types/SignTransactionNavigator";
+import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
 import { ScreenName } from "~/const";
 
@@ -15,13 +16,13 @@ type Navigation = BaseComposite<
 >;
 
 type Props = {
-  transaction: MinaTransaction;
+  transaction: Transaction;
   account: Account;
 } & Navigation;
 export default function MinaSendRowsCustom(props: Props) {
   return (
     <>
-      <SendRowMemo {...props} />
+      <SendRowMemo {...props} transaction={props.transaction as MinaTransaction} />
     </>
   );
 }
