@@ -131,7 +131,6 @@ export class Application {
   }: ApplicationOptions) {
     const userdataSpeculos = `temp-userdata-${Date.now()}`;
     const userdataPath = getUserdataPath(userdataSpeculos);
-    console.warn("userdataPath", userdataPath);
 
     if (!getEnv("MOCK"))
       fs.copyFileSync(getUserdataPath(userdata || "skip-onboarding"), userdataPath);
