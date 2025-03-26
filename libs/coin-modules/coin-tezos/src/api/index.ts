@@ -1,10 +1,11 @@
 import {
   IncorrectTypeError,
-  TransactionIntent,
   Operation,
   Pagination,
+  TransactionIntent,
   type Api,
 } from "@ledgerhq/coin-framework/api/index";
+import { log } from "@ledgerhq/logs";
 import coinConfig, { type TezosConfig } from "../config";
 import {
   broadcast,
@@ -12,12 +13,12 @@ import {
   craftTransaction,
   estimateFees,
   getBalance,
-  listOperations,
   lastBlock,
+  listOperations,
   rawEncode,
 } from "../logic";
-import { log } from "@ledgerhq/logs";
 import api from "../network/tzkt";
+import { TezosOperationMode } from "../types";
 
 export function createApi(config: TezosConfig): Api<void> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
@@ -39,12 +40,12 @@ function isTezosTransactionType(type: string): type is "send" | "delegate" | "un
 
 async function craft(
   transactionIntent: TransactionIntent<void>,
-  feesLimit?: bigint,
+  customFees?: bigint,
 ): Promise<string> {
   if (!isTezosTransactionType(transactionIntent.type)) {
     throw new IncorrectTypeError(transactionIntent.type);
   }
-  const fee = feesLimit ? feesLimit : await estimate(transactionIntent);
+  const fee = customFees !== undefined ? customFees : await estimate(transactionIntent);
   const { contents } = await craftTransaction(
     { address: transactionIntent.sender },
     {
@@ -69,7 +70,7 @@ async function estimate(transactionIntent: TransactionIntent<void>): Promise<big
       xpub: senderAccountInfo.publicKey,
     },
     transaction: {
-      mode: "send",
+      mode: transactionIntent.type as TezosOperationMode,
       recipient: transactionIntent.recipient,
       amount: transactionIntent.amount,
     },

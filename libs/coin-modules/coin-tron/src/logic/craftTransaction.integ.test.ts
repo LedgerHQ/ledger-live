@@ -4,7 +4,7 @@ import { decode58Check } from "../network/format";
 import { craftTransaction } from "./craftTransaction";
 import { decodeTransaction } from "./utils";
 
-describe("craftTransaction Integration Tests", () => {
+describe("Testing craftTransaction function", () => {
   beforeAll(() => {
     coinConfig.setCoinConfig(() => ({
       status: {
@@ -97,7 +97,7 @@ describe("craftTransaction Integration Tests", () => {
     );
   });
 
-  it("should use default fees limit when user does not provide it for a TRC20 transaction", async () => {
+  it("should use default fees when user does not provide it for crafting a TRC20 transaction", async () => {
     const amount = BigInt(20);
     const sender = "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9";
     const recipient = "TPswDDCAWhJAZGdHPidFg5nEf8TkNToDX1";
@@ -123,12 +123,12 @@ describe("craftTransaction Integration Tests", () => {
     );
   });
 
-  it("should use user fees limit when user provide it for a TRC20 transaction", async () => {
+  it("should use custom user fees when user provides it for a TRC20 transaction", async () => {
     const amount = BigInt(20);
     const sender = "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9";
     const recipient = "TPswDDCAWhJAZGdHPidFg5nEf8TkNToDX1";
 
-    const feesLimit = 99n;
+    const customFees = 99n;
     const result = await craftTransaction(
       {
         type: "send",
@@ -140,14 +140,14 @@ describe("craftTransaction Integration Tests", () => {
         recipient,
         amount,
       },
-      feesLimit,
+      customFees,
     );
 
     const decodeResult = await decodeTransaction(result);
     expect(decodeResult).toEqual(
       expect.objectContaining({
         raw_data: expect.objectContaining({
-          fee_limit: Number(feesLimit),
+          fee_limit: Number(customFees),
         }),
       }),
     );

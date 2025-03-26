@@ -1,8 +1,8 @@
+import BigNumber from "bignumber.js";
 import { createHash } from "crypto";
+import get from "lodash/get";
 import TronWeb from "tronweb";
 import coinConfig from "../config";
-import get from "lodash/get";
-import BigNumber from "bignumber.js";
 import { TronResources, UnFrozenInfo } from "../types";
 
 export function createTronWeb(trongridUrl?: string): TronWeb {
@@ -381,9 +381,13 @@ export function getTronResources(
   };
 }
 
-export function feesToNumber(feesLimit?: bigint): number | undefined {
-  if (feesLimit && feesLimit >= Number.MIN_SAFE_INTEGER && feesLimit <= Number.MAX_SAFE_INTEGER) {
-    return Number(feesLimit);
+export function feesToNumber(customFees?: bigint): number | undefined {
+  if (
+    customFees !== undefined &&
+    customFees >= Number.MIN_SAFE_INTEGER &&
+    customFees <= Number.MAX_SAFE_INTEGER
+  ) {
+    return Number(customFees);
   }
 
   return undefined;

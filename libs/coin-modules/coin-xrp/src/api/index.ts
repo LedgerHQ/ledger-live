@@ -34,10 +34,10 @@ export function createApi(config: XrpConfig): Api<void> {
 
 async function craft(
   transactionIntent: TransactionIntent<void>,
-  feesLimit?: bigint,
+  customFees?: bigint,
 ): Promise<string> {
   const nextSequenceNumber = await getNextValidSequence(transactionIntent.sender);
-  const estimatedFees = feesLimit ? feesLimit : (await estimateFees()).fee;
+  const estimatedFees = customFees !== undefined ? customFees : (await estimateFees()).fee;
   const tx = await craftTransaction(
     { address: transactionIntent.sender, nextSequenceNumber },
     {

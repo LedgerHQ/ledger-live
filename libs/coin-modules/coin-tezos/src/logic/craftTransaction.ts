@@ -1,8 +1,8 @@
 import { OpKind, type OperationContents } from "@taquito/rpc";
 import { DEFAULT_FEE } from "@taquito/taquito";
+import coinConfig from "../config";
 import { UnsupportedTransactionMode } from "../types/errors";
 import { getTezosToolkit } from "./tezosToolkit";
-import coinConfig from "../config";
 
 type TransactionFee = {
   fees?: string;
