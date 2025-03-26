@@ -1060,6 +1060,15 @@
     },
     "AppManifestNotFoundError" : {
       "title" : "Fehler beim Laden der Swap Live-App"
+    },
+    "InvalidMemoMina" : {
+      "title" : "Der Memotext darf nicht länger als 32 Zeichen sein."
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "Für diese Transaktion fällt eine Kontoerstellungsgebühr in Höhe von {{fee}} an"
+    },
+    "AmountTooSmall" : {
+      "title" : "Der Mindestbetrag für diese Transaktion beläuft sich auf {{amount}}"
     }
   },
   "crash" : {
@@ -2593,7 +2602,8 @@
       "gasLimit" : "Gaslimit",
       "id" : "ID",
       "autoClaimedRewards" : "Automatisch beanspruchte Prämien",
-      "stakedAmount" : "Betrag gestaked"
+      "stakedAmount" : "Betrag gestaked",
+      "accountCreationFee" : "Kontoerstellungsgebühr"
     },
     "multipleAddresses" : "Warum mehrere Adressen?",
     "tokenName" : "Token-Name",
@@ -6103,6 +6113,9 @@
       }
     }
   },
+  "mina" : {
+    "memoPlaceholder" : "Optionales Memo"
+  },
   "near" : {
     "info" : {
       "available" : {
@@ -6611,7 +6624,12 @@
       "24h" : "24h",
       "7d" : "7T",
       "30d" : "30T",
-      "1y" : "1J"
+      "1y" : "1J",
+      "1H_label" : "1Std",
+      "1D_label" : "1T",
+      "1W_label" : "1W",
+      "1M_label" : "1M",
+      "1Y_label" : "1J"
     },
     "warnings" : {
       "connectionError" : "Verbindungsfehler",
@@ -7337,12 +7355,12 @@
   },
   "lnsUpsell" : {
     "opted_in" : {
-      "description" : "Upgrade your Ledger Nano S to a newer Ledger — like the Ledger Flex — for more memory, the latest security enhancements, fresh features, and an exclusive 20% off. ",
-      "cta" : "Upgrade my Ledger"
+      "description" : "Führe ein Upgrade deiner Ledger Nano S auf ein neueres Ledger-Gerät durch – z. B. die Ledger Flex – und profitiere von mehr Speicherplatz, den neuesten Sicherheitsverbesserungen, innovativen Funktionen und einem exklusiven Rabatt in Höhe von 20 %. ",
+      "cta" : "Ledger-Upgrade durchführen"
     },
     "opted_out" : {
-      "description" : "The limited memory of your Ledger Nano S restricts your access to the latest features, blockchain changes and security enhancements. For long-term use, upgrade to a newer Ledger device.",
-      "cta" : "Learn more"
+      "description" : "Der begrenzte Speicher deiner Ledger Nano S schränkt deinen Zugang zu aktuellen Funktionen, Blockchain-Änderungen und Sicherheitsverbesserungen ein. Für die längerfristige Nutzung solltest du auf ein neueres Ledger-Gerät aufrüsten.",
+      "cta" : "Weitere Informationen"
     }
   }
 }
