@@ -2,7 +2,6 @@ import Eth from "@ledgerhq/hw-app-eth";
 import { tokenInfoByAddressAndChainId } from "@celo/wallet-ledger/lib/tokens";
 import { rlpEncodedTx, LegacyEncodedTx } from "@celo/wallet-base";
 import type { CeloTx, RLPEncodedTx } from "@celo/connect";
-
 import { LedgerEthTransactionResolution } from "@ledgerhq/hw-app-eth/lib/services/types";
 
 /**
