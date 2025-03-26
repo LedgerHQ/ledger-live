@@ -1,3 +1,4 @@
+import type { FlashListProps } from "@shopify/flash-list";
 import { useCallback } from "react";
 import { useSelector } from "react-redux";
 import { useFocusEffect, useNavigation } from "@react-navigation/core";
@@ -25,6 +26,7 @@ export interface Props {
   sourceScreenName?: ScreenName;
   isSyncEnabled?: boolean;
   limitNumberOfAccounts?: number;
+  ListFooterComponent?: FlashListProps<unknown>["ListFooterComponent"];
   specificAccounts?: Account[] | TokenAccount[];
   onContentChange?: (width: number, height: number) => void;
 }
@@ -38,6 +40,7 @@ const useAccountsListViewModel = ({
   sourceScreenName,
   isSyncEnabled = false,
   limitNumberOfAccounts,
+  ListFooterComponent,
   specificAccounts,
   onContentChange,
 }: Props) => {
@@ -96,6 +99,7 @@ const useAccountsListViewModel = ({
   return {
     accountsToDisplay,
     limitNumberOfAccounts,
+    ListFooterComponent,
     onAccountPress,
     isSyncEnabled,
     onContentChange,

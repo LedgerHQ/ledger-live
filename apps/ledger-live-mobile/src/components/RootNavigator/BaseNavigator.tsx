@@ -178,7 +178,6 @@ export default function BaseNavigator() {
           })}
           {...noNanoBuyNanoWallScreenOptions}
         />
-
         <Stack.Screen
           name={ScreenName.EditCurrencyUnits}
           component={EditCurrencyUnits}
@@ -273,13 +272,11 @@ export default function BaseNavigator() {
           component={ClaimRewardsNavigator}
           options={{ headerShown: false }}
         />
-
         <Stack.Screen
           name={NavigatorName.Fees}
           component={FeesNavigator}
           options={{ headerShown: false }}
         />
-
         <Stack.Screen
           name={NavigatorName.RequestAccount}
           component={RequestAccountNavigator}
@@ -432,13 +429,11 @@ export default function BaseNavigator() {
             cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
           }}
         />
-
         <Stack.Screen
           name={NavigatorName.WalletSync}
           component={WalletSyncNavigator}
           options={{ headerShown: false }}
         />
-
         {MarketNavigator({ Stack })}
         <Stack.Screen
           name={ScreenName.PortfolioOperationHistory}
@@ -469,7 +464,6 @@ export default function BaseNavigator() {
             headerLeft: () => null,
           }}
         />
-
         <Stack.Screen
           name={NavigatorName.WalletConnect}
           component={WalletConnectLiveAppNavigator}
@@ -478,7 +472,6 @@ export default function BaseNavigator() {
           }}
           {...noNanoBuyNanoWallScreenOptions}
         />
-
         <Stack.Screen
           name={NavigatorName.NotificationCenter}
           component={NotificationCenterNavigator}
@@ -595,7 +588,6 @@ export default function BaseNavigator() {
           }
           options={{ headerShown: false }}
         />
-
         {llmNetworkBasedAddAccountFlow?.enabled && (
           <Stack.Screen
             name={NavigatorName.DeviceSelection}
@@ -603,7 +595,6 @@ export default function BaseNavigator() {
             options={{ headerShown: false }}
           />
         )}
-
         {llmNetworkBasedAddAccountFlow?.enabled && (
           <Stack.Screen
             name={NavigatorName.AssetSelection}

@@ -108,6 +108,7 @@ const NftGallery = () => {
   );
 
   const isNFTDisabled = useFeature("disableNftSend")?.enabled && Platform.OS === "ios";
+  const displaySendBtn = account.currency.id !== "solana";
 
   return (
     <SafeAreaView isFlex edges={["bottom"]}>
@@ -125,15 +126,17 @@ const NftGallery = () => {
         initialNumToRender={1}
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={
-          <View style={styles.sendButtonContainer}>
-            <Button
-              type="primary"
-              IconLeft={SendIcon}
-              containerStyle={styles.sendButton}
-              title={t("account.send")}
-              onPress={isNFTDisabled ? onOpenModal : goToCollectionSelection}
-            />
-          </View>
+          displaySendBtn ? (
+            <View style={styles.sendButtonContainer}>
+              <Button
+                type="primary"
+                IconLeft={SendIcon}
+                containerStyle={styles.sendButton}
+                title={t("account.send")}
+                onPress={isNFTDisabled ? onOpenModal : goToCollectionSelection}
+              />
+            </View>
+          ) : null
         }
         ListFooterComponent={() =>
           collections.length > collectionsCount ? <LoadingFooter /> : null

@@ -4501,6 +4501,34 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
+  sui: {
+    type: "CryptoCurrency",
+    id: "sui",
+    coinType: CoinType.SUI,
+    name: "Sui",
+    managerAppName: "Sui",
+    ticker: "SUI",
+    scheme: "sui",
+    color: "#000",
+    family: "sui",
+    units: [
+      {
+        name: "Sui",
+        code: "SUI",
+        magnitude: 9,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://suiscan.xyz/mainnet/tx/$hash",
+        address: "https://suiscan.xyz/mainnet/account/$address",
+      },
+      {
+        tx: "https://suivision.xyz/txblock/$hash",
+        address: "https://suivision.xyz/account/$address",
+      },
+    ],
+  },
 };
 
 const cryptocurrenciesByScheme: Record<string, CryptoCurrency> = {};

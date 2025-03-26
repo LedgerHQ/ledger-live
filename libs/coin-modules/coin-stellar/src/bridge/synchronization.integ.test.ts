@@ -38,17 +38,13 @@ describe("Sync Accounts", () => {
   test.each([
     "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
     "GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS",
-  ])(
-    "should always be sync without error for address %s",
-    async (accountId: string) => {
-      const account = await syncAccount<Transaction, StellarAccount>(bridge.accountBridge, {
-        ...dummyAccount,
-        id: `js:2:stellar:${accountId}:`,
-        freshAddress: accountId,
-      });
+  ])("should always be sync without error for address %s", async (accountId: string) => {
+    const account = await syncAccount<Transaction, StellarAccount>(bridge.accountBridge, {
+      ...dummyAccount,
+      id: `js:2:stellar:${accountId}:`,
+      freshAddress: accountId,
+    });
 
-      expect(account.id).toEqual(`js:2:stellar:${accountId}:`);
-    },
-    10 * 1_000,
-  );
+    expect(account.id).toEqual(`js:2:stellar:${accountId}:`);
+  });
 });

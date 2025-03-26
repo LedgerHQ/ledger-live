@@ -30,7 +30,7 @@ describe("listOperations", () => {
 
     beforeAll(async () => {
       [operations] = await listOperations(testingAccount);
-    }, 40000);
+    });
 
     describe("List", () => {
       it("should fetch operations successfully", async () => {

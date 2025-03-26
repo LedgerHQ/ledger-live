@@ -14,7 +14,11 @@ import isEmpty from "lodash/isEmpty";
 import { FieldStatus } from "LLD/features/Collectibles/types/enum/DetailDrawer";
 import { useNftFloorPrice } from "@ledgerhq/live-nft-react";
 
-const useNftDetailDrawer = (account: Account, nftId: string) => {
+const useNftDetailDrawer = (
+  account: Account,
+  nftId: string,
+  setIsOpened: (isOpened: boolean) => void,
+) => {
   const dispatch = useDispatch();
   const state = useSelector((state: State) => state);
 
@@ -71,6 +75,7 @@ const useNftDetailDrawer = (account: Account, nftId: string) => {
   );
 
   const onNFTSend = useCallback(() => {
+    setIsOpened(false);
     setDrawer();
     dispatch(
       openModal("MODAL_SEND", {
@@ -79,7 +84,7 @@ const useNftDetailDrawer = (account: Account, nftId: string) => {
         nftId,
       }),
     );
-  }, [dispatch, nftId, account]);
+  }, [setIsOpened, dispatch, account, nftId]);
 
   const [useFallback, setUseFallback] = useState(false);
   const { uri: previewUri, mediaType } =

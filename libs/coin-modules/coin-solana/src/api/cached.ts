@@ -9,6 +9,7 @@ const cacheKeyAssocTokenAccAddress = (owner: string, mint: string) => `${owner}:
 const cacheKeyMinimumBalanceForRentExemption = (dataLengt: number) => dataLengt.toString();
 
 const cacheKeyTransactions = (signatures: string[]) => hash([...signatures].sort());
+const cacheKeyAddresses = (addresses: string[]) => hash([...addresses].sort());
 const cacheKeyInstructions = (ixs: TransactionInstruction[], payer: PublicKey) => {
   return hash(
     new TransactionMessage({
@@ -21,7 +22,7 @@ const cacheKeyInstructions = (ixs: TransactionInstruction[], payer: PublicKey) =
   );
 };
 
-const cacheKeyByArgs = (...args: any[]) => hash(args);
+const cacheKeyByArgs = (...args: unknown[]) => hash(args);
 
 export function cached(api: ChainAPI): ChainAPI {
   return {
@@ -32,6 +33,8 @@ export function cached(api: ChainAPI): ChainAPI {
     ),
 
     getAccountInfo: makeLRUCache(api.getAccountInfo, cacheKeyAddress, seconds(30)),
+
+    getMultipleAccounts: makeLRUCache(api.getMultipleAccounts, cacheKeyAddresses, seconds(30)),
 
     getAssocTokenAccMinNativeBalance: makeLRUCache(
       api.getAssocTokenAccMinNativeBalance,
@@ -64,8 +67,6 @@ export function cached(api: ChainAPI): ChainAPI {
     // cached by default in api
     getStakeAccountsByStakeAuth: api.getStakeAccountsByStakeAuth,
     getStakeAccountsByWithdrawAuth: api.getStakeAccountsByWithdrawAuth,
-
-    getStakeActivation: makeLRUCache(api.getStakeActivation, cacheKeyAddress, minutes(1)),
 
     getInflationReward: makeLRUCache(api.getInflationReward, cacheKeyByArgs, minutes(5)),
 

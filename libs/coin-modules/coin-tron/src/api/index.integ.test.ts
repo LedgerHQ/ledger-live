@@ -38,7 +38,7 @@ describe("API", () => {
     tronWeb = createTronWeb();
   });
 
-  it("combine and broadcast a send transaction successfully", async () => {
+  it.skip("combine and broadcast a send transaction successfully", async () => {
     // GIVEN
     const amount = 100;
     const recipient = "TPswDDCAWhJAZGdHPidFg5nEf8TkNToDX1";

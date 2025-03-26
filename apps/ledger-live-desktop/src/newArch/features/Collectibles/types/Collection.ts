@@ -34,11 +34,13 @@ export type RareSatsRowProps = {
 
 export type RowProps = {
   isLoading: boolean;
+  dataTestId?: string;
 } & (NftRowProps | OrdinalsRowProps | RareSatsRowProps);
 
 export type TableHeaderActionsProps = {
   element: React.ReactNode;
   action: () => void;
+  hidden?: boolean;
 };
 
 export enum TableHeaderTitleKey {

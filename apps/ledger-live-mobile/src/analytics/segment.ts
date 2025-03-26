@@ -97,6 +97,15 @@ const getFeatureFlagProperties = () => {
             ]),
           )
         : {};
+    const partnerStakingCurrenciesEnabled =
+      stakePrograms?.enabled && stakePrograms?.params?.redirects
+        ? Object.keys(stakePrograms.params.redirects).map(assetId => [
+            `feature_earn_${assetId}_enabled`,
+            true,
+            `feature_earn_${assetId}_partner`,
+            stakePrograms?.params?.redirects?.[assetId]?.platform,
+          ])
+        : {};
 
     updateIdentify({
       isBatch1Enabled,
@@ -104,6 +113,7 @@ const getFeatureFlagProperties = () => {
       isBatch3Enabled,
       stakingProvidersEnabled,
       ...stakingCurrenciesEnabled,
+      ...partnerStakingCurrenciesEnabled,
     });
   })();
 };

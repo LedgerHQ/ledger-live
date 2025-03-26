@@ -162,6 +162,11 @@ const envDefinitions = {
     def: 100,
     desc: "Limit of operation that Horizon will fetch per page",
   },
+  API_STELLAR_HORIZON_INITIAL_FETCH_MAX_OPERATIONS: {
+    parser: intParser,
+    def: 1000,
+    desc: "Limit of operation that Horizon will fetch on initial sync",
+  },
   API_STELLAR_HORIZON_STATIC_FEE: {
     def: false,
     parser: boolParser,
@@ -196,6 +201,11 @@ const envDefinitions = {
     parser: stringParser,
     def: "https://solana.coin.ledger.com",
     desc: "proxy url for solana API",
+  },
+  API_SUI_NODE_PROXY: {
+    parser: stringParser,
+    def: "https://sui.coin.ledger.com",
+    desc: "reverse proxy url for sui node",
   },
   SOLANA_VALIDATORS_APP_BASE_URL: {
     parser: stringParser,
