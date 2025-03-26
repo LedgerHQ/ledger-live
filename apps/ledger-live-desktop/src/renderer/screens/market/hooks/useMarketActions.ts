@@ -12,8 +12,8 @@ import { accountsSelector } from "~/renderer/reducers/accounts";
 import { flattenAccounts } from "@ledgerhq/live-common/account/index";
 import { getAvailableAccountsById } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { isAvailableOnBuy, isAvailableOnSwap } from "../utils";
+import { useStake } from "~/newArch/hooks/useStake";
 
 export enum Page {
   Market = "Page Market",
@@ -131,7 +131,7 @@ export const useMarketActions = ({ currency, page, currenciesAll }: MarketAction
 
       track("button_clicked2", {
         button: "stake",
-        currency: currency?.ticker,
+        currency: internalCurrency ? internalCurrency.ticker : currency?.ticker,
         page,
         ...stakeDefaultTrack,
       });
@@ -147,11 +147,9 @@ export const useMarketActions = ({ currency, page, currenciesAll }: MarketAction
   const availableOnBuy = isAvailableOnBuy(currency, isCurrencyAvailable);
   const availableOnSwap = isAvailableOnSwap(currency, currenciesForSwapAllSet);
 
-  const stakeProgramsFeatureFlag = useFeature("stakePrograms");
-  const listFlag = stakeProgramsFeatureFlag?.params?.list ?? [];
-  const stakeProgramsEnabled = stakeProgramsFeatureFlag?.enabled ?? false;
-  const availableOnStake =
-    stakeProgramsEnabled && listFlag.includes(currency?.internalCurrency?.id || "");
+  const { getCanStakeCurrency } = useStake();
+
+  const availableOnStake = !!internalCurrency?.id && getCanStakeCurrency(internalCurrency?.id);
 
   return {
     openAddAccounts,
