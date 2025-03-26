@@ -1,5 +1,3 @@
-import { LedgerEthTransactionResolution } from "@ledgerhq/hw-app-eth/lib/services/types";
-
 export type CeloAddress = {
   publicKey: string;
   address: string;

@@ -1,7 +1,7 @@
 import { getAccountRegistrationStatus, getPendingWithdrawals, getVotes } from "./api/sdk";
-import { makeSync, makeScanAccounts, mergeOps } from "../../../ledger-live-common/src/bridge/jsHelpers";
-import type { GetAccountShape } from "../../../ledger-live-common/src/bridge/jsHelpers";
-import { encodeAccountId } from "../../../ledger-live-common/src/account";
+import { makeSync, makeScanAccounts, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import type { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { encodeAccountId } from "@ledgerhq/coin-framework/account";
 import { getAccountDetails } from "./api";
 import { CeloAccount } from "./types";
 import { celoKit } from "./api/sdk";
@@ -58,5 +58,4 @@ export const getAccountShape: GetAccountShape<CeloAccount> = async info => {
   return { ...shape, operations };
 };
 
-export const scanAccounts = makeScanAccounts({ getAccountShape });
 export const sync = makeSync({ getAccountShape });

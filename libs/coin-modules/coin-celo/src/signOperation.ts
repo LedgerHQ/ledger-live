@@ -2,14 +2,11 @@ import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import type { Account, AccountBridge, DeviceId, SignOperationEvent } from "@ledgerhq/types-live";
-// import { encodeTransaction, recoverTransaction } from "@celo/wallet-base";
 import { rlpEncodedTx } from "@celo/wallet-base";
 
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
 import type { Transaction, CeloAccount } from "./types";
-// import { withDevice } from "../../../ledger-live-common/src/hw/deviceAccess";
 import buildTransaction from "./buildTransaction";
-// import { CeloSigner, CeloSignature } from "./signer";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { EvmSigner, EvmSignature } from "@ledgerhq/coin-evm/lib/types/signer";
 

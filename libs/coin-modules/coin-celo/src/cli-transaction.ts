@@ -58,11 +58,9 @@ const celoValidatorGroups = {
   job: () => from(getValidatorGroups()).pipe(map(validatorGroup => JSON.stringify(validatorGroup))),
 };
 
-export default {
-  options,
-  inferAccounts,
-  inferTransactions,
-  commands: {
-    celoValidatorGroups,
-  },
-};
+export default function makeCliTools() {
+  return {
+    options,
+    inferTransactions,
+  };
+}
