@@ -6570,7 +6570,9 @@
   },
   "drawers" : {
     "selectCurrency" : {
-      "title" : "資産を選択"
+      "title" : "資産を選択",
+      "allCurrency" : "すべての資産",
+      "account" : "お客様のアカウント"
     },
     "selectAccount" : {
       "title" : "アカウントを選択"
