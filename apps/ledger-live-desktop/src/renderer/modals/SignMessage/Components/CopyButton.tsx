@@ -1,10 +1,10 @@
 import React, { useState, useCallback } from "react";
 import styled from "styled-components";
-import { Icons, Button } from "@ledgerhq/react-ui";
+import { Icons, Button, Flex } from "@ledgerhq/react-ui";
 import { t } from "i18next";
 
 type Props = {
-  text: string;
+  readonly text: string;
 };
 
 export default function CopyButton({ text }: Props) {
@@ -19,11 +19,11 @@ export default function CopyButton({ text }: Props) {
 
   return (
     <ButtonContainer variant="shade" onClick={handleCopy}>
-      <ContentWrapper>
+      <ContentWrapper data-testid="copy-wrapper">
         {copied ? (
           <>
             <Icons.Check size={"S"} color="success.c50" />
-            <StyledText copied={true}>{t("common.copied")}!</StyledText>
+            <StyledText copied={true}>{t("common.copied")}</StyledText>
           </>
         ) : (
           <>
@@ -36,8 +36,7 @@ export default function CopyButton({ text }: Props) {
   );
 }
 
-const ContentWrapper = styled.div`
-  display: flex;
+const ContentWrapper = styled(Flex)`
   align-items: center;
   justify-content: center;
 `;
