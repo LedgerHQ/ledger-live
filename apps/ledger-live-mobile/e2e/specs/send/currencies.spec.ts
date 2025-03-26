@@ -1,6 +1,5 @@
 import DeviceAction from "../../models/DeviceAction";
 import { knownDevices } from "../../models/devices";
-import { Account } from "@ledgerhq/types-live";
 import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { formattedAmount, getAccountName, getAccountUnit } from "../../models/currencies";
 
@@ -35,9 +34,12 @@ describe("Send flow", () => {
     await app.portfolio.waitForPortfolioPageToLoad();
   });
 
-  it.each(app.testAccounts.map(account => [account.currency.name, account]))(
+  it.each(testedCurrencies)(
     "%s: open send flow, sends half balance and displays the new operation",
-    async (_currency, account: Account) => {
+    async currencyId => {
+      const account = app.testAccounts.find(a => a.currency.id === currencyId);
+      if (!account) throw new Error(`Account not found for currency: ${currencyId}`);
+
       const halfBalance = account.balance.div(2);
       const accountName = getAccountName(account);
       const unit = getAccountUnit(account);

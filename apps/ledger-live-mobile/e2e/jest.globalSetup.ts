@@ -3,6 +3,8 @@ import { globalSetup } from "detox/runners/jest";
 import { Subscription } from "rxjs";
 import { Server, WebSocket } from "ws";
 import { Step } from "jest-allure2-reporter/api";
+import { MessageData, ServerData } from "./bridge/types";
+import { Subject } from "rxjs";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 import { Delegate } from "@ledgerhq/live-common/e2e/models/Delegate";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
@@ -37,7 +39,13 @@ declare global {
   var IS_FAILED: boolean;
   var speculosDevices: Map<number, string>;
   var proxySubscriptions: Map<number, { port: number; subscription: Subscription }>;
-  var webSocket: { wss: Server | undefined; ws: WebSocket | undefined };
+  var webSocket: {
+    wss: Server | undefined;
+    ws: WebSocket | undefined;
+    messages: { [id: string]: MessageData };
+    e2eBridgeServer: Subject<ServerData>;
+  };
+
   var app: Application;
   var Step: StepType;
   var CLI: CLIType;
@@ -76,7 +84,12 @@ export default async () => {
   global.proxySubscriptions = new Map<number, { port: number; subscription: Subscription }>();
 
   global.app = new Application();
-  global.webSocket = { wss: undefined, ws: undefined };
+  global.webSocket = {
+    wss: undefined,
+    ws: undefined,
+    messages: {},
+    e2eBridgeServer: new Subject<ServerData>(),
+  };
   global.CLI = CLI;
   global.jestExpect = expect;
   global.Currency = Currency;

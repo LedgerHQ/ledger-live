@@ -63,7 +63,7 @@ export async function launchApp() {
 export const logMemoryUsage = async () => {
   const pid = process.pid;
   exec(
-    `top ${isAndroid() ? "-b -n 1 -p" : "-l 1 -pid"} ${pid} | grep "${pid}" | awk '{print ${isAndroid() ? "$10" : "$8"}}'`,
+    `top ${isAndroid() ? "-b -n 1 -p" : "-l 1 -pid"} ${pid} | grep "${pid}" | awk '{print ${isAndroid() ? "$6" : "$8"}}'`,
     async (error, stdout, stderr) => {
       if (error || stderr) {
         console.error(`Error getting memory usage:\n Error: ${error}\n Stderr: ${stderr}`);
