@@ -12,15 +12,12 @@ import {
   UseQueryResult,
 } from "@tanstack/react-query";
 
-import { BlockchainsType } from "@ledgerhq/live-nft/supported";
-
 // SpamFilter
 export type HookProps = {
   addresses: string;
   nftsOwned: ProtoNFT[];
   chains: string[];
   threshold: number;
-  action?: (collection: string, blockchain: BlockchainsType) => void;
   enabled: boolean;
   staleTime?: number;
 };

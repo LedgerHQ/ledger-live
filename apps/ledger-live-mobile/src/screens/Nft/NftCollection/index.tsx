@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo, memo } from "react";
+import React, { useCallback, memo } from "react";
 import {
   View,
   StyleSheet,
@@ -8,18 +8,14 @@ import {
   SectionListData,
   SectionListRenderItemInfo,
 } from "react-native";
-import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { useNavigation, useTheme } from "@react-navigation/native";
-import { groupAccountOperationsByDay } from "@ledgerhq/live-common/account/index";
-import { Account, DailyOperationsSection, Operation, ProtoNFT } from "@ledgerhq/types-live";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useTheme } from "@react-navigation/native";
+import { DailyOperationsSection, Operation, ProtoNFT } from "@ledgerhq/types-live";
 import NoMoreOperationFooter from "~/components/NoMoreOperationFooter";
-import { accountScreenSelector } from "~/reducers/accounts";
 import LoadingFooter from "~/components/LoadingFooter";
 import SectionHeader from "~/components/SectionHeader";
 import OperationRow from "~/components/OperationRow";
-import { NavigatorName, ScreenName } from "~/const";
+import { ScreenName } from "~/const";
 import NftCard from "~/components/Nft/NftCard";
 import Button from "~/components/Button";
 import SendIcon from "~/icons/Send";
@@ -29,9 +25,7 @@ import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/t
 import { AccountsNavigatorParamList } from "~/components/RootNavigator/types/AccountsNavigator";
 import InfoModal from "~/modals/Info";
 import { notAvailableModalInfo } from "../NftInfoNotAvailable";
-
-const MAX_NFT_FIRST_RENDER = 12;
-const NFTS_TO_ADD_ON_LIST_END_REACHED = 6;
+import { useNftCollection } from "./useNftCollection";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<AccountsNavigatorParamList, ScreenName.NftCollection>
@@ -43,29 +37,27 @@ const renderOperationSectionHeader = ({
   section: SectionListData<Operation, DailyOperationsSection>;
 }) => <SectionHeader day={section.day} />;
 
-const NftCollection = ({ route }: NavigationProps) => {
-  const navigation = useNavigation();
+const NftCollection = ({ route, navigation }: NavigationProps) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const {
-    params: { collection },
-  } = route;
-  const nft = collection[0];
-  const { account, parentAccount } = useSelector(accountScreenSelector(route));
+    onOperationsEndReached,
+    sendToken,
+    onNftsEndReached,
+    onOpenModal,
+    onCloseModal,
 
-  // nfts' list related -----
-  const [nftCount, setNftCount] = useState(MAX_NFT_FIRST_RENDER);
-  const nfts = useMemo(() => collection?.slice(0, nftCount), [nftCount, collection]);
-  const sendToken = () => {
-    account &&
-      navigation.navigate(NavigatorName.SendFunds, {
-        screen: ScreenName.SendNft,
-        params: {
-          account: account as Account,
-          collection,
-        },
-      });
-  };
+    collection,
+    nfts,
+    nftCount,
+    sections,
+    completed,
+    isOpen,
+    isNFTDisabled,
+    displaySendBtn,
+    account,
+    parentAccount,
+  } = useNftCollection({ route, navigation });
 
   const renderNftItem = useCallback(
     ({ item, index }: { item: ProtoNFT; index: number }) => (
@@ -87,17 +79,6 @@ const NftCollection = ({ route }: NavigationProps) => {
     [collection?.length, nftCount],
   );
 
-  const onNftsEndReached = useCallback(() => {
-    setNftCount(nftCount + NFTS_TO_ADD_ON_LIST_END_REACHED);
-  }, [nftCount]);
-
-  // operations' list related -----
-  const [opCount, setOpCount] = useState(100);
-  const { sections, completed } = groupAccountOperationsByDay(account!, {
-    count: opCount,
-    filterOperation: op => !!op?.nftOperations?.find(op => op?.contract === nft?.contract),
-  });
-
   const renderOperationItem = useCallback(
     ({ item, index, section }: SectionListRenderItemInfo<Operation>) => {
       if (!account) return null;
@@ -114,28 +95,20 @@ const NftCollection = ({ route }: NavigationProps) => {
     [account, parentAccount],
   );
 
-  const onOperationsEndReached = useCallback(() => {
-    setOpCount(opCount + 50);
-  }, [setOpCount, opCount]);
-  const [isOpen, setOpen] = useState<boolean>(false);
-  const onOpenModal = useCallback(() => {
-    setOpen(true);
-  }, []);
-  const onCloseModal = useCallback(() => {
-    setOpen(false);
-  }, []);
-  const isNFTDisabled = useFeature("disableNftSend")?.enabled && Platform.OS === "ios";
-
   const data = [
-    <View style={styles.buttonContainer} key="SendButton">
-      <Button
-        type="primary"
-        IconLeft={SendIcon}
-        containerStyle={styles.button}
-        title={t("account.send")}
-        onPress={isNFTDisabled ? onOpenModal : sendToken}
-      />
-    </View>,
+    ...(displaySendBtn
+      ? [
+          <View style={styles.buttonContainer} key="SendButton">
+            <Button
+              type="primary"
+              IconLeft={SendIcon}
+              containerStyle={styles.button}
+              title={t("account.send")}
+              onPress={isNFTDisabled ? onOpenModal : sendToken}
+            />
+          </View>,
+        ]
+      : []),
     <View style={styles.nftList} key="NFTItems">
       <FlatList
         data={nfts}

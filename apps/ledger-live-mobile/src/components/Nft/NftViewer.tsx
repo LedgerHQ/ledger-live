@@ -75,21 +75,6 @@ type Props = CompositeScreenProps<
 
 type TimeoutReturn = ReturnType<typeof setTimeout>;
 
-const SectionTitle = styled(Text).attrs(props => ({
-  variant: "small",
-  color: "neutral.c60",
-  uppercase: true,
-  fontWeight: "semiBold",
-  mb: 4,
-  ...props,
-}))``;
-
-const SectionContainer = styled(Box).attrs(props => ({
-  mb: 8,
-  px: 6,
-  ...props,
-}))``;
-
 const Section = ({
   title,
   value,
@@ -324,6 +309,8 @@ const NftViewer = ({ route }: Props) => {
   }, []);
   const isNFTDisabled = useFeature("disableNftSend")?.enabled && Platform.OS === "ios";
 
+  const displaySendBtn = account.currency.id !== "solana";
+
   const headerHeight = useHeaderHeight();
   const scrollY = useRef(new Animated.Value(0)).current;
   const isFocused = useIsFocused();
@@ -422,16 +409,18 @@ const NftViewer = ({ route }: Props) => {
           </Box>
 
           <Box mb={8} flexWrap={"nowrap"} flexDirection={"row"} justifyContent={"center"}>
-            <Box flexGrow={1} flexShrink={1} mr={6} style={styles.sendButtonContainer}>
-              <Button
-                type="main"
-                Icon={IconsLegacy.ArrowFromBottomMedium}
-                iconPosition="left"
-                onPress={isNFTDisabled ? onOpenModal : goToRecipientSelection}
-              >
-                <Trans i18nKey="account.send" />
-              </Button>
-            </Box>
+            {displaySendBtn && (
+              <Box flexGrow={1} flexShrink={1} mr={6} style={styles.sendButtonContainer}>
+                <Button
+                  type="main"
+                  Icon={IconsLegacy.ArrowFromBottomMedium}
+                  iconPosition="left"
+                  onPress={isNFTDisabled ? onOpenModal : goToRecipientSelection}
+                >
+                  <Trans i18nKey="account.send" />
+                </Button>
+              </Box>
+            )}
             {nftMetadata?.links && (
               <Box style={styles.ellipsisButtonContainer} flexShrink={0} width={"48px"}>
                 <Button
@@ -497,6 +486,7 @@ const NftViewer = ({ route }: Props) => {
         onClose={closeModal}
         nftContract={nft.contract}
         nftId={nft.id}
+        currencyId={nft.currencyId}
       />
       <NftViewerScreenHeader title={nftMetadata?.nftName || undefined} scrollY={scrollY} />
     </>
@@ -566,3 +556,18 @@ const styles = StyleSheet.create({
 });
 
 export default withDiscreetMode(NftViewer);
+
+const SectionTitle = styled(Text).attrs(props => ({
+  variant: "small",
+  color: "neutral.c60",
+  uppercase: true,
+  fontWeight: "semiBold",
+  mb: 4,
+  ...props,
+}))``;
+
+const SectionContainer = styled(Box).attrs(props => ({
+  mb: 8,
+  px: 6,
+  ...props,
+}))``;

@@ -7,7 +7,7 @@ import { useTranslation } from "react-i18next";
 import { updateNftStatus } from "~/actions/settings";
 import QueuedDrawer from "../QueuedDrawer";
 import { NftStatus } from "@ledgerhq/live-nft/types";
-import { BlockchainEVM } from "@ledgerhq/live-nft/supported";
+import { SupportedBlockchain } from "@ledgerhq/live-nft/supported";
 
 type Props = {
   isOpen: boolean;
@@ -27,7 +27,7 @@ const NftCollectionOptionsMenu = ({ isOpen, onClose, collection, account }: Prop
       updateNftStatus({
         collection: collectionId,
         status: NftStatus.blacklisted,
-        blockchain: account.currency.id as BlockchainEVM,
+        blockchain: account.currency.id as SupportedBlockchain,
       }),
     );
     onClose();

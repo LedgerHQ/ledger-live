@@ -7,7 +7,7 @@ import { shallowAccountsSelector } from "~/renderer/reducers/accounts";
 
 import { flattenAccounts, getMainAccount } from "@ledgerhq/live-common/account/index";
 import keyBy from "lodash/keyBy";
-import { BlockchainEVM, BlockchainsType } from "@ledgerhq/live-nft/supported";
+import { SupportedBlockchain } from "@ledgerhq/live-nft/supported";
 import { useHideSpamCollection } from "~/renderer/hooks/nfts/useHideSpamCollection";
 import logger from "~/renderer/logger";
 import { usePagination } from "LLD/hooks/usePagination";
@@ -105,7 +105,7 @@ export function useOperationsList({
   );
 
   const markNftAsSpam = useCallback(
-    (collectionId: string, blockchain: BlockchainsType, spamScore: number) => {
+    (collectionId: string, blockchain: SupportedBlockchain, spamScore: number) => {
       if (spamFilteringTxEnabled && spamScore > thresold) {
         hideSpamCollection(collectionId, blockchain);
       }
@@ -119,7 +119,7 @@ export function useOperationsList({
 
   useEffect(() => {
     spamOps.forEach(op => {
-      markNftAsSpam(op.collectionId, op.currencyId as BlockchainEVM, op.spamScore);
+      markNftAsSpam(op.collectionId, op.currencyId as SupportedBlockchain, op.spamScore);
     });
   }, [spamOps, markNftAsSpam, nftCollectionsStatusByNetwork]);
 

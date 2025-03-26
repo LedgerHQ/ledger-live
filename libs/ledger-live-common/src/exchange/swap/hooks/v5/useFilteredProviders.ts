@@ -8,6 +8,7 @@ export const useFilteredProviders = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<unknown>(null);
   const ptxSwapMoonpayProviderFlag = useFeature("ptxSwapMoonpayProvider");
+  const ptxSwapExodusProviderFlag = useFeature("ptxSwapExodusProvider");
   const fetchProviders = useCallback(async () => {
     try {
       const ledgerSignatureEnv = getEnv("MOCK_EXCHANGE_TEST_CONFIG") ? "test" : "prod";
@@ -18,6 +19,9 @@ export const useFilteredProviders = () => {
       if (!ptxSwapMoonpayProviderFlag?.enabled) {
         filteredProviders = filteredProviders.filter(provider => provider !== "moonpay");
       }
+      if (!ptxSwapExodusProviderFlag?.enabled) {
+        filteredProviders = filteredProviders.filter(provider => provider !== "exodus");
+      }
 
       setProviders(filteredProviders);
     } catch (error) {
@@ -25,7 +29,7 @@ export const useFilteredProviders = () => {
     } finally {
       setLoading(false);
     }
-  }, [ptxSwapMoonpayProviderFlag]);
+  }, [ptxSwapMoonpayProviderFlag, ptxSwapExodusProviderFlag]);
 
   useEffect(() => {
     fetchProviders();

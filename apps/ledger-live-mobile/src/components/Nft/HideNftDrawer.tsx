@@ -11,7 +11,7 @@ import { accountSelector } from "~/reducers/accounts";
 import { State } from "~/reducers/types";
 import QueuedDrawer from "../QueuedDrawer";
 import { updateNftStatus } from "~/actions/settings";
-import { BlockchainEVM } from "@ledgerhq/live-nft/supported";
+import { SupportedBlockchain } from "@ledgerhq/live-nft/supported";
 import { NftStatus } from "@ledgerhq/live-nft/types";
 
 type Props = {
@@ -43,7 +43,7 @@ const HideNftDrawer = ({ nftId, nftContract, collection, isOpened, onClose }: Pr
       updateNftStatus({
         collection: collectionId,
         status: NftStatus.blacklisted,
-        blockchain: account?.currency.id as BlockchainEVM,
+        blockchain: account?.currency.id as SupportedBlockchain,
       }),
     );
     onClose();

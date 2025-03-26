@@ -12,7 +12,7 @@ import {
   mapChains,
   orderByLastReceived,
 } from "..";
-import { BlockchainEVM } from "../supported";
+import { SupportedBlockchain } from "../supported";
 
 const NFT_1 = {
   id: encodeNftId("js:2:0ddkdlsPmds", "contract", "nft.tokenId", "ethereum"),
@@ -77,11 +77,11 @@ describe("Helpers functions", () => {
   });
 
   it("should map a single chain", () => {
-    expect(mapChain(BlockchainEVM.Avalanche)).toEqual("avalanche");
+    expect(mapChain(SupportedBlockchain.Avalanche)).toEqual("avalanche");
   });
 
   it("should map all chains", () => {
-    expect(mapChains([BlockchainEVM.Avalanche, BlockchainEVM.Ethereum])).toEqual([
+    expect(mapChains([SupportedBlockchain.Avalanche, SupportedBlockchain.Ethereum])).toEqual([
       "avalanche",
       "ethereum",
     ]);

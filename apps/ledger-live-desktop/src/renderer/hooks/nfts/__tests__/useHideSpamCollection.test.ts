@@ -3,7 +3,7 @@ import { useHideSpamCollection } from "../useHideSpamCollection";
 import { renderHook } from "tests/testUtils";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
 import { useDispatch } from "react-redux";
-import { BlockchainEVM } from "@ledgerhq/live-nft/supported";
+import { SupportedBlockchain } from "@ledgerhq/live-nft/supported";
 import { NftStatus } from "@ledgerhq/live-nft/types";
 
 jest.mock("react-redux", () => ({
@@ -28,10 +28,10 @@ describe("useHideSpamCollection", () => {
         },
       },
     });
-    result.current.hideSpamCollection("collectionC", BlockchainEVM.Ethereum);
+    result.current.hideSpamCollection("collectionC", SupportedBlockchain.Ethereum);
 
     expect(mockDispatch).toHaveBeenCalledWith(
-      updateNftStatus(BlockchainEVM.Ethereum, "collectionC", NftStatus.spam),
+      updateNftStatus(SupportedBlockchain.Ethereum, "collectionC", NftStatus.spam),
     );
   });
 
@@ -40,10 +40,10 @@ describe("useHideSpamCollection", () => {
       initialState: {
         settings: {
           nftCollectionsStatusByNetwork: {
-            [BlockchainEVM.Ethereum]: {
+            [SupportedBlockchain.Ethereum]: {
               collectionA: NftStatus.spam,
             },
-            [BlockchainEVM.Avalanche]: {
+            [SupportedBlockchain.Avalanche]: {
               collectionB: NftStatus.spam,
             },
           },
@@ -51,8 +51,8 @@ describe("useHideSpamCollection", () => {
       },
     });
 
-    result.current.hideSpamCollection("collectionA", BlockchainEVM.Ethereum);
-    result.current.hideSpamCollection("collectionB", BlockchainEVM.Avalanche);
+    result.current.hideSpamCollection("collectionA", SupportedBlockchain.Ethereum);
+    result.current.hideSpamCollection("collectionB", SupportedBlockchain.Avalanche);
 
     expect(mockDispatch).not.toHaveBeenCalled();
   });
