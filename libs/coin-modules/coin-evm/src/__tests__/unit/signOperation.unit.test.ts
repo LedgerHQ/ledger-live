@@ -4,7 +4,7 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { Transaction as EvmTransaction } from "../../types";
-import { makeAccount } from "../fixtures/common.fixtures";
+import { makeAccount } from "../../fixtures/common.fixtures";
 import { buildSignOperation } from "../../signOperation";
 import { DEFAULT_NONCE } from "../../createTransaction";
 import * as nodeApi from "../../api/node/rpc.common";

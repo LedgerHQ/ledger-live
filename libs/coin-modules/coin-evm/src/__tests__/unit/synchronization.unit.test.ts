@@ -5,7 +5,7 @@ import { TokenAccount } from "@ledgerhq/types-live";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { decodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
 import { AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { makeTokenAccount } from "../fixtures/common.fixtures";
+import { makeTokenAccount } from "../../fixtures/common.fixtures";
 import * as etherscanAPI from "../../api/explorer/etherscan";
 import { UnknownExplorer, UnknownNode } from "../../errors";
 import * as synchronization from "../../synchronization";

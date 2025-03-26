@@ -3,7 +3,7 @@ import BigNumber from "bignumber.js";
 import { encodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
 import { Account, ProtoNFT } from "@ledgerhq/types-live";
 import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
-import { makeAccount, makeTokenAccount } from "../fixtures/common.fixtures";
+import { makeAccount, makeTokenAccount } from "../../fixtures/common.fixtures";
 import getDeviceTransactionConfig from "../../deviceTransactionConfig";
 import getTransactionStatus from "../../getTransactionStatus";
 import { Transaction as EvmTransaction } from "../../types";

@@ -3,7 +3,7 @@ import BigNumber from "bignumber.js";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { addTokens, convertERC20, getTokenById } from "@ledgerhq/cryptoassets/tokens";
 import { prepareForSignOperation, prepareTransaction } from "../../prepareTransaction";
-import { makeAccount, makeTokenAccount } from "../fixtures/common.fixtures";
+import { makeAccount, makeTokenAccount } from "../../fixtures/common.fixtures";
 import { DEFAULT_NONCE, createTransaction } from "../../createTransaction";
 import * as nodeApi from "../../api/node/rpc.common";
 import {

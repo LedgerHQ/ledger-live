@@ -6,7 +6,7 @@ import {
   getMinEip1559Fees,
   getMinLegacyFees,
 } from "../../../editTransaction/getMinEditTransactionFees";
-import { makeAccount } from "../../fixtures/common.fixtures";
+import { makeAccount } from "../../../fixtures/common.fixtures";
 import {
   eip1559Tx,
   erc1155Transaction,

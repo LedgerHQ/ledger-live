@@ -3821,6 +3821,73 @@ importers:
         specifier: ^5.1.3
         version: 5.6.3
 
+  libs/coin-tester-evm:
+    dependencies:
+      '@ledgerhq/coin-evm':
+        specifier: workspace:^
+        version: link:../coin-modules/coin-evm
+      '@ledgerhq/coin-framework':
+        specifier: workspace:^
+        version: link:../coin-framework
+      '@ledgerhq/coin-tester':
+        specifier: workspace:^
+        version: link:../coin-tester
+      '@ledgerhq/cryptoassets':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/cryptoassets
+      '@ledgerhq/evm-tools':
+        specifier: workspace:^
+        version: link:../evm-tools
+      '@ledgerhq/hw-app-eth':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/hw-app-eth
+      '@ledgerhq/live-common':
+        specifier: workspace:^
+        version: link:../ledger-live-common
+      '@ledgerhq/live-network':
+        specifier: workspace:^
+        version: link:../live-network
+      '@ledgerhq/types-cryptoassets':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/types-cryptoassets
+      '@ledgerhq/types-live':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/types-live
+      bignumber.js:
+        specifier: ^9.1.2
+        version: 9.1.2
+      bluebird:
+        specifier: ^3.7.2
+        version: 3.7.2
+      docker-compose:
+        specifier: ^1.1.0
+        version: 1.1.0
+      dotenv:
+        specifier: ^16.4.5
+        version: 16.4.5
+      ethers:
+        specifier: 5.7.2
+        version: 5.7.2
+      msw:
+        specifier: ^2.2.1
+        version: 2.7.3(typescript@5.6.3)
+    devDependencies:
+      '@types/bluebird':
+        specifier: ^3.5.42
+        version: 3.5.42
+      '@types/jest':
+        specifier: ^29.5.10
+        version: 29.5.14
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0
+      rimraf:
+        specifier: ^5.0.5
+        version: 5.0.10
+      typescript:
+        specifier: ^5.3.3
+        version: 5.6.3
+
   libs/device-core:
     dependencies:
       '@ledgerhq/devices':
@@ -28601,6 +28668,10 @@ packages:
   rimraf@4.4.1:
     resolution: {integrity: sha512-Gk8NlF062+T9CqNGn6h4tls3k6T1+/nXdOcSZVikNVtlRdYpA7wRJJMoXmuvOnLW844rPjdQ7JgXCYM6PPC/og==}
     engines: {node: '>=14'}
+    hasBin: true
+
+  rimraf@5.0.10:
+    resolution: {integrity: sha512-l0OE8wL34P4nJH/H2ffoaniAokM2qSmrtXHmlpvYr5AVVX8msAyW0l8NVJFDxlSK4u3Uh/f41cQheDVdnYijwQ==}
     hasBin: true
 
   ripemd160-min@0.0.6:
@@ -60555,6 +60626,31 @@ snapshots:
     transitivePeerDependencies:
       - '@types/node'
 
+  msw@2.7.3(typescript@5.6.3):
+    dependencies:
+      '@bundled-es-modules/cookie': 2.0.1
+      '@bundled-es-modules/statuses': 1.0.1
+      '@bundled-es-modules/tough-cookie': 0.1.6
+      '@inquirer/confirm': 5.1.7
+      '@mswjs/interceptors': 0.37.6
+      '@open-draft/deferred-promise': 2.2.0
+      '@open-draft/until': 2.1.0
+      '@types/cookie': 0.6.0
+      '@types/statuses': 2.0.5
+      graphql: 16.10.0
+      headers-polyfill: 4.0.3
+      is-node-process: 1.2.0
+      outvariant: 1.4.3
+      path-to-regexp: 6.3.0
+      picocolors: 1.1.1
+      strict-event-emitter: 0.5.1
+      type-fest: 4.37.0
+      yargs: 17.7.2
+    optionalDependencies:
+      typescript: 5.6.3
+    transitivePeerDependencies:
+      - '@types/node'
+
   multi-sort-stream@1.0.4: {}
 
   multibase@0.6.1:
@@ -64353,6 +64449,10 @@ snapshots:
   rimraf@4.4.1:
     dependencies:
       glob: 9.3.5
+
+  rimraf@5.0.10:
+    dependencies:
+      glob: 10.4.5
 
   ripemd160-min@0.0.6: {}
 

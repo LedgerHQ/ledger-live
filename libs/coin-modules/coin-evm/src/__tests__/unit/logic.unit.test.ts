@@ -22,12 +22,12 @@ import {
   setCALHash,
 } from "../../logic";
 import {
-  deepFreeze,
   makeAccount,
+  makeTokenAccount,
+  deepFreeze,
   makeNftOperation,
   makeOperation,
-  makeTokenAccount,
-} from "../fixtures/common.fixtures";
+} from "../../fixtures/common.fixtures";
 import {
   EvmTransactionEIP1559,
   EvmTransactionLegacy,

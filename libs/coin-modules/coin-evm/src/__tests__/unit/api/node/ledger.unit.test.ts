@@ -7,7 +7,7 @@ import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { GasEstimationError, LedgerNodeUsedIncorrectly } from "../../../../errors";
 import * as LEDGER_GAS_TRACKER from "../../../../api/gasTracker/ledger";
 import { Transaction as EvmTransaction } from "../../../../types";
-import { makeAccount } from "../../../fixtures/common.fixtures";
+import { makeAccount } from "../../../../fixtures/common.fixtures";
 import * as LEDGER_API from "../../../../api/node/ledger";
 import { getCoinConfig } from "../../../../config";
 

@@ -3,7 +3,7 @@ import { hashes as localTokensHashesByChainId } from "@ledgerhq/cryptoassets/dat
 import { ERC20Token } from "@ledgerhq/cryptoassets/types";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { makeOperation } from "./common.fixtures";
+import { makeOperation } from "../../fixtures/common.fixtures";
 
 export const currency = getCryptoCurrencyById("scroll_sepolia");
 export const fakeToken: ERC20Token = [

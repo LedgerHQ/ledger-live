@@ -27,7 +27,7 @@ import {
   Transaction,
   TransactionStatus,
 } from "../../types";
-import { makeAccount, makeTokenAccount } from "../fixtures/common.fixtures";
+import { makeAccount, makeTokenAccount } from "../../fixtures/common.fixtures";
 import {
   getMinEip1559Fees,
   getMinLegacyFees,

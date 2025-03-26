@@ -10,7 +10,7 @@ import ERC1155ABI from "../../abis/erc1155.abi.json";
 import ERC721ABI from "../../abis/erc721.abi.json";
 import ERC20ABI from "../../abis/erc20.abi.json";
 
-import { makeAccount, makeTokenAccount } from "./common.fixtures";
+import { makeAccount, makeTokenAccount } from "../../fixtures/common.fixtures";
 
 const currency: CryptoCurrency = {
   ...getCryptoCurrencyById("ethereum"),

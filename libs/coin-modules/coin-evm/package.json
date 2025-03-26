@@ -36,6 +36,10 @@
   "exports": {
     "./lib/*": "./lib/*.js",
     "./lib-es/*": "./lib-es/*.js",
+    "./fixtures/*": {
+      "require": "./lib/fixtures/*.js",
+      "default": "./lib-es/fixtures/*.js"
+    },
     "./*": {
       "require": "./lib/*.js",
       "default": "./lib-es/*.js"

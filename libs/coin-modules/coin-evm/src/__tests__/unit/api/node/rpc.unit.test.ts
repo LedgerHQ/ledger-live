@@ -9,7 +9,7 @@ import {
   EvmTransactionEIP1559,
 } from "../../../../types";
 import { GasEstimationError, InsufficientFunds } from "../../../../errors";
-import { makeAccount } from "../../../fixtures/common.fixtures";
+import { makeAccount } from "../../../../fixtures/common.fixtures";
 import * as RPC_API from "../../../../api/node/rpc.common";
 import { getCoinConfig } from "../../../../config";
 

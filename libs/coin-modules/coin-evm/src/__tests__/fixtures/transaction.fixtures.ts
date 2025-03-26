@@ -12,7 +12,7 @@ import {
   EvmNftTransactionRaw,
   EvmNftTransaction,
 } from "../../types";
-import { makeAccount, makeTokenAccount } from "./common.fixtures";
+import { makeAccount, makeTokenAccount } from "../../fixtures/common.fixtures";
 
 export const testData = Object.freeze(Buffer.from("testBufferString").toString("hex"));
 

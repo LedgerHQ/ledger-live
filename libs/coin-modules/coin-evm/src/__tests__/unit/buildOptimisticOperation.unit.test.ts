@@ -9,7 +9,7 @@ import BigNumber from "bignumber.js";
 import buildOptimisticOperation from "../../buildOptimisticOperation";
 import { getEstimatedFees } from "../../logic";
 import { Transaction as EvmTransaction } from "../../types";
-import { makeAccount, makeTokenAccount } from "../fixtures/common.fixtures";
+import { makeAccount, makeTokenAccount } from "../../fixtures/common.fixtures";
 import {
   erc1155TokenTransactionRaw,
   erc20TokenTransactionRaw,

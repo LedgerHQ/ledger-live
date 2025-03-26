@@ -3,28 +3,27 @@ import { BigNumber } from "bignumber.js";
 import { ethers, providers } from "ethers";
 import { Account } from "@ledgerhq/types-live";
 import { getTokenById } from "@ledgerhq/cryptoassets/tokens";
-import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
+import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { killSpeculos, spawnSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
-import { resetIndexer, indexBlocks, initMswHandlers, setBlock } from "../indexer";
-import { Transaction as EvmTransaction } from "../../../types";
-import { buildAccountBridge, buildCurrencyBridge } from "../../../bridge/js";
-import { getCoinConfig, setCoinConfig } from "../../../config";
-import { makeAccount } from "../../fixtures/common.fixtures";
-import { VITALIK, callMyDealer, sonic } from "../helpers";
+import { resetIndexer, initMswHandlers, setBlock, indexBlocks } from "../indexer";
+import { buildAccountBridge, buildCurrencyBridge } from "@ledgerhq/coin-evm/bridge/js";
+import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/transaction";
+import { getCoinConfig, setCoinConfig } from "@ledgerhq/coin-evm/config";
+import { makeAccount } from "@ledgerhq/coin-evm/fixtures/common.fixtures";
+import { callMyDealer, blast, VITALIK } from "../helpers";
 import { defaultNanoApp } from "../scenarii.test";
 import { killAnvil, spawnAnvil } from "../anvil";
-import resolver from "../../../hw-getAddress";
+import resolver from "@ledgerhq/coin-evm/hw-getAddress";
 
-type SonicScenarioTransaction = ScenarioTransaction<EvmTransaction, Account>;
+type BlastScenarioTransaction = ScenarioTransaction<EvmTransaction, Account>;
 
-const USDC_ON_SONIC = getTokenById(
-  "sonic/erc20/bridged_usdc_sonic_labs_0x29219dd400f2bf60e5a23d13be72b486d4038894",
-);
+// getTokenById will only work after the currency has been preloaded
+const TOKEN_ID = "blast/erc20/magic_internet_money";
 
-const makeScenarioTransactions = ({ address }: { address: string }): SonicScenarioTransaction[] => {
-  const scenarioSendSTransaction: SonicScenarioTransaction = {
-    name: "Send 1 S",
+const makeScenarioTransactions = ({ address }: { address: string }): BlastScenarioTransaction[] => {
+  const scenarioSendEthTransaction: BlastScenarioTransaction = {
+    name: "Send 1 ETH",
     amount: new BigNumber(1e18),
     recipient: VITALIK,
     expect: (previousAccount, currentAccount) => {
@@ -38,13 +37,14 @@ const makeScenarioTransactions = ({ address }: { address: string }): SonicScenar
     },
   };
 
-  const scenarioSendUSDCTransaction: SonicScenarioTransaction = {
-    name: "Send USDC",
+  const MIM_ON_BLAST = getTokenById(TOKEN_ID);
+  const scenarioSendMIMTransaction: BlastScenarioTransaction = {
+    name: "Send 80 MIM",
     amount: new BigNumber(
-      ethers.utils.parseUnits("80", USDC_ON_SONIC.units[0].magnitude).toString(),
+      ethers.utils.parseUnits("80", MIM_ON_BLAST.units[0].magnitude).toString(),
     ),
     recipient: VITALIK,
-    subAccountId: encodeTokenAccountId(`js:2:sonic:${address}:`, USDC_ON_SONIC),
+    subAccountId: encodeTokenAccountId(`js:2:blast:${address}:`, MIM_ON_BLAST),
     expect: (previousAccount, currentAccount) => {
       const [latestOperation] = currentAccount.operations;
       expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
@@ -52,26 +52,31 @@ const makeScenarioTransactions = ({ address }: { address: string }): SonicScenar
       expect(latestOperation.value.toFixed()).toBe(latestOperation.fee.toFixed());
       expect(latestOperation.subOperations?.[0].type).toBe("OUT");
       expect(latestOperation.subOperations?.[0].value.toFixed()).toBe(
-        ethers.utils.parseUnits("80", USDC_ON_SONIC.units[0].magnitude).toString(),
+        ethers.utils.parseUnits("80", MIM_ON_BLAST.units[0].magnitude).toString(),
       );
       expect(currentAccount.subAccounts?.[0].balance.toFixed()).toBe(
-        ethers.utils.parseUnits("20", USDC_ON_SONIC.units[0].magnitude).toString(),
+        ethers.utils.parseUnits("20", MIM_ON_BLAST.units[0].magnitude).toString(),
       );
     },
   };
 
-  return [scenarioSendSTransaction, scenarioSendUSDCTransaction];
+  return [scenarioSendEthTransaction, scenarioSendMIMTransaction];
 };
 
-export const scenarioSonic: Scenario<EvmTransaction, Account> = {
-  name: "Ledger Live Basic S Transactions",
+export const scenarioBlast: Scenario<EvmTransaction, Account> = {
+  name: "Ledger Live Basic Blast Transactions",
   setup: async () => {
     const [{ transport, getOnSpeculosConfirmation }] = await Promise.all([
       spawnSpeculos(`/${defaultNanoApp.firmware}/Ethereum/app_${defaultNanoApp.version}.elf`),
-      spawnAnvil("https://rpc.ankr.com/sonic_mainnet"),
+      spawnAnvil("https://rpc.blast.io"),
     ]);
 
-    const signerContext: Parameters<typeof resolver>[0] = (_, fn) => fn(new Eth(transport));
+    const provider = new providers.StaticJsonRpcProvider("http://127.0.0.1:8545");
+    const signerContext: Parameters<typeof resolver>[0] = (deviceId, fn) => fn(new Eth(transport));
+
+    const lastBlockNumber = await provider.getBlockNumber();
+    // start indexing at next block
+    await setBlock(lastBlockNumber + 1);
 
     setCoinConfig(() => ({
       info: {
@@ -84,37 +89,31 @@ export const scenarioSonic: Scenario<EvmTransaction, Account> = {
         },
         explorer: {
           type: "etherscan",
-          uri: "https://proxyetherscan.api.live.ledger.com/v2/api/146",
+          uri: "https://api.blastscan.io/api",
         },
       },
     }));
-
-    initMswHandlers(getCoinConfig(sonic).info);
+    initMswHandlers(getCoinConfig(blast).info);
 
     const onSignerConfirmation = getOnSpeculosConfirmation();
     const currencyBridge = buildCurrencyBridge(signerContext);
+    await currencyBridge.preload(blast);
     const accountBridge = buildAccountBridge(signerContext);
     const getAddress = resolver(signerContext);
     const { address } = await getAddress("", {
       path: "44'/60'/0'/0/0",
-      currency: sonic,
+      currency: blast,
       derivationMode: "",
     });
 
-    const scenarioAccount = makeAccount(address, sonic);
+    const scenarioAccount = makeAccount(address, blast);
 
-    const provider = new providers.StaticJsonRpcProvider("http://127.0.0.1:8545");
-
-    const lastBlockNumber = await provider.getBlockNumber();
-    // start indexing at next block
-    setBlock(lastBlockNumber + 1);
-
-    // Get USDC
+    const MIM_ON_BLAST = getTokenById(TOKEN_ID);
     await callMyDealer({
       provider,
-      drug: USDC_ON_SONIC,
+      drug: MIM_ON_BLAST,
       junkie: address,
-      dose: ethers.utils.parseUnits("100", USDC_ON_SONIC.units[0].magnitude),
+      dose: ethers.utils.parseUnits("100", MIM_ON_BLAST.units[0].magnitude),
     });
 
     return {
@@ -122,28 +121,31 @@ export const scenarioSonic: Scenario<EvmTransaction, Account> = {
       accountBridge,
       account: scenarioAccount,
       onSignerConfirmation,
+      retryLimit: 0,
     };
-  },
-  beforeAll: account => {
-    expect(account.balance.toFixed()).toBe(ethers.utils.parseEther("10000").toString());
-    expect(account.subAccounts?.[0].type).toBe("TokenAccount");
-    expect(account.subAccounts?.[0].balance.toFixed()).toBe(
-      ethers.utils.parseUnits("100", USDC_ON_SONIC.units[0].magnitude).toString(),
-    );
   },
   getTransactions: address => makeScenarioTransactions({ address }),
   beforeSync: async () => {
     await indexBlocks();
   },
+  beforeAll: account => {
+    const MIM_ON_BLAST = getTokenById(TOKEN_ID);
+    expect(account.balance.toFixed()).toBe(ethers.utils.parseEther("10000").toString());
+    expect(account.subAccounts?.[0]?.type).toBe("TokenAccount");
+    expect(account.subAccounts?.[0]?.balance?.toFixed()).toBe(
+      ethers.utils.parseUnits("100", MIM_ON_BLAST.units[0].magnitude).toString(),
+    );
+  },
   afterAll: account => {
+    const MIM_ON_BLAST = getTokenById(TOKEN_ID);
     expect(account.subAccounts?.length).toBe(1);
     expect(account.subAccounts?.[0].balance.toFixed()).toBe(
-      ethers.utils.parseUnits("20", USDC_ON_SONIC.units[0].magnitude).toString(),
+      ethers.utils.parseUnits("20", MIM_ON_BLAST.units[0].magnitude).toString(),
     );
-    // expect(account.operations.length).toBe(3);
+    expect(account.operations.length).toBe(3);
   },
   teardown: async () => {
-    resetIndexer();
     await Promise.all([killSpeculos(), killAnvil()]);
+    resetIndexer();
   },
 };

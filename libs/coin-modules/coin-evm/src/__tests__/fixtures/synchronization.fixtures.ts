@@ -13,7 +13,7 @@ import {
   makeNftOperation,
   makeOperation,
   makeTokenAccount,
-} from "./common.fixtures";
+} from "../../fixtures/common.fixtures";
 
 jest.useFakeTimers().setSystemTime(new Date("2014-04-21"));
 

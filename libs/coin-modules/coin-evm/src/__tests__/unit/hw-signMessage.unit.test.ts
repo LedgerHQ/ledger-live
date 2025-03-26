@@ -1,7 +1,7 @@
 import { fail, AssertionError } from "assert";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { prepareMessageToSign, signMessage } from "../../hw-signMessage";
-import { makeAccount } from "../fixtures/common.fixtures";
+import { makeAccount } from "../../fixtures/common.fixtures";
 
 const signPersonalMessage = jest.fn(async () => ({
   r: "01",

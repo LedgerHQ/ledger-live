@@ -2,7 +2,7 @@ import BigNumber from "bignumber.js";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { createTransaction } from "../../createTransaction";
-import { makeAccount } from "../fixtures/common.fixtures";
+import { makeAccount } from "../../fixtures/common.fixtures";
 
 const currencyWithChainId = getCryptoCurrencyById("ethereum");
 const currencyWithoutChainId = {
