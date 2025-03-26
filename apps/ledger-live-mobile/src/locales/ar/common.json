@@ -1060,6 +1060,15 @@
     },
     "AppManifestNotFoundError" : {
       "title" : "فشل تحميل تطبيق Swap Live"
+    },
+    "InvalidMemoMina" : {
+      "title" : "نص علامة الملاحظة (تسمية الوجهة) لا يمكن أن يكون أطول من 32 حرفاً"
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "هذه المعاملة ستُكلّف رسوم إنشاء حساب بقيمة {{fee}}"
+    },
+    "AmountTooSmall" : {
+      "title" : "الحد الأدنى للمبلغ المطلوب لهذه المعاملة هو {{amount}}"
     }
   },
   "crash" : {
@@ -2593,7 +2602,8 @@
       "gasLimit" : "حد الغاز",
       "id" : "المُعرّف",
       "autoClaimedRewards" : "المكافآت المطالب بها تلقائياً",
-      "stakedAmount" : "المبلغ المُكدَّس"
+      "stakedAmount" : "المبلغ المُكدَّس",
+      "accountCreationFee" : "رسوم إنشاء الحساب"
     },
     "multipleAddresses" : "لماذا عناوين متعددة؟",
     "tokenName" : "اسم رمز التوكن",
@@ -6103,6 +6113,9 @@
       }
     }
   },
+  "mina" : {
+    "memoPlaceholder" : "ملاحظة اختيارية"
+  },
   "near" : {
     "info" : {
       "available" : {
@@ -6611,7 +6624,12 @@
       "24h" : "24 ساعة",
       "7d" : "7 أيام",
       "30d" : "30 يوم",
-      "1y" : "1 سنة"
+      "1y" : "1 سنة",
+      "1H_label" : "1 ساعة",
+      "1D_label" : "1 يوم",
+      "1W_label" : "1 أسبوع",
+      "1M_label" : "1 شهر",
+      "1Y_label" : "1 سنة"
     },
     "warnings" : {
       "connectionError" : "خطأ في الاتصال",
@@ -7337,7 +7355,7 @@
   },
   "lnsUpsell" : {
     "opted_in" : {
-      "description" : "Upgrade your Ledger Nano S to a newer Ledger — like the Ledger Flex — for more memory, the latest security enhancements, fresh features, and an exclusive 20% off. ",
+      "description" : "قم بترقية Ledger Nano S الخاصة بك إلى جهاز Ledger جديد — مثل Ledger Flex — من أجل المزيد من الذاكرة، وأحدث تحسينات الأمان، وميزات جديدة، وخصم حصري %20. ",
       "cta" : "ترقية جهاز Ledger الخاص بي"
     },
     "opted_out" : {
