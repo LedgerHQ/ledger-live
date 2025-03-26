@@ -6620,7 +6620,9 @@
   },
   "drawers": {
     "selectCurrency": {
-      "title": "choose asset"
+      "title": "choose asset",
+      "allCurrency": "All currencies",
+      "account": "Your accounts"
     },
     "selectAccount": {
       "title": "choose account"
