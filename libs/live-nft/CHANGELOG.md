@@ -1,5 +1,11 @@
 # @ledgerhq/live-nft
 
+## 0.7.0-nightly.4
+
+### Minor Changes
+
+- [#9642](https://github.com/LedgerHQ/ledger-live/pull/9642) [`14cc1b3`](https://github.com/LedgerHQ/ledger-live/commit/14cc1b3d006b805ef3c34634a5cc577ca3c5532f) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add Solana to Gallery Filters + rework SupportedBlochain type
+
 ## 0.6.2-nightly.3
 
 ### Patch Changes

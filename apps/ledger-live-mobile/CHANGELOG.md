@@ -1,5 +1,24 @@
 # live-mobile
 
+## 3.71.0-nightly.4
+
+### Minor Changes
+
+- [#9647](https://github.com/LedgerHQ/ledger-live/pull/9647) [`58d6e3e`](https://github.com/LedgerHQ/ledger-live/commit/58d6e3e9626cae35c3c78f2fe7ac9fbd6051aee5) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Display Collection for Solana Account
+
+- [#9642](https://github.com/LedgerHQ/ledger-live/pull/9642) [`14cc1b3`](https://github.com/LedgerHQ/ledger-live/commit/14cc1b3d006b805ef3c34634a5cc577ca3c5532f) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add Solana to Gallery Filters + rework SupportedBlochain type
+
+- [#9656](https://github.com/LedgerHQ/ledger-live/pull/9656) [`cef871f`](https://github.com/LedgerHQ/ledger-live/commit/cef871f308479d553c616b91f8ae290d3ac03129) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Wallet NFT Gallery Display for Solana NFTs
+
+- [#9655](https://github.com/LedgerHQ/ledger-live/pull/9655) [`9c33601`](https://github.com/LedgerHQ/ledger-live/commit/9c336013ba55e300f3c28d4e8ea5074a1fe6203a) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - NFT Details for Solana NFT
+
+### Patch Changes
+
+- Updated dependencies [[`14cc1b3`](https://github.com/LedgerHQ/ledger-live/commit/14cc1b3d006b805ef3c34634a5cc577ca3c5532f)]:
+  - @ledgerhq/live-nft-react@0.8.0-nightly.4
+  - @ledgerhq/live-nft@0.7.0-nightly.4
+  - @ledgerhq/live-common@34.27.0-nightly.4
+
 ## 3.71.0-nightly.3
 
 ### Minor Changes

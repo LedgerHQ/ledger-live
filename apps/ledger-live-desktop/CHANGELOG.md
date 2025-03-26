@@ -1,5 +1,20 @@
 # ledger-live-desktop
 
+## 2.105.0-nightly.4
+
+### Minor Changes
+
+- [#9642](https://github.com/LedgerHQ/ledger-live/pull/9642) [`14cc1b3`](https://github.com/LedgerHQ/ledger-live/commit/14cc1b3d006b805ef3c34634a5cc577ca3c5532f) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add Solana to Gallery Filters + rework SupportedBlochain type
+
+- [#9654](https://github.com/LedgerHQ/ledger-live/pull/9654) [`9b33088`](https://github.com/LedgerHQ/ledger-live/commit/9b33088e7f71f26b9bb11385226eaf65eff2514d) Thanks [@themooneer](https://github.com/themooneer)! - hide send nft for solana currency
+
+### Patch Changes
+
+- Updated dependencies [[`14cc1b3`](https://github.com/LedgerHQ/ledger-live/commit/14cc1b3d006b805ef3c34634a5cc577ca3c5532f)]:
+  - @ledgerhq/live-nft-react@0.8.0-nightly.4
+  - @ledgerhq/live-nft@0.7.0-nightly.4
+  - @ledgerhq/live-common@34.27.0-nightly.4
+
 ## 2.105.0-nightly.3
 
 ### Minor Changes
