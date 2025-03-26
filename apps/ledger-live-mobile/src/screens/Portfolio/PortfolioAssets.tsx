@@ -18,7 +18,7 @@ import PortfolioQuickActionsBar from "./PortfolioQuickActionsBar";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import useListsAnimation from "./useListsAnimation";
 import TabSection, { TAB_OPTIONS } from "./TabSection";
-import { accountsSelector } from "~/reducers/accounts";
+import { flattenAccountsSelector } from "~/reducers/accounts";
 
 type Props = {
   hideEmptyTokenAccount: boolean;
@@ -32,7 +32,7 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
   const accountListFF = useFeature("llmAccountListUI");
   const isAccountListUIEnabled = accountListFF?.enabled;
   const navigation = useNavigation();
-  const allAccounts = useSelector(accountsSelector, shallowEqual);
+  const allAccounts = useSelector(flattenAccountsSelector, shallowEqual);
   const initialSelectedTab = useSelector(selectedTabPortfolioAssetsSelector, shallowEqual);
 
   const startNavigationTTITimer = useStartProfiler();
