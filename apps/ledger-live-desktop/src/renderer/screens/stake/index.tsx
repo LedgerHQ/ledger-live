@@ -36,6 +36,7 @@ const useStakeFlow = () => {
       entryPoint: StakeFlowProps["entryPoint"],
       source: StakeFlowProps["source"],
       shouldRedirect: StakeFlowProps["shouldRedirect"],
+      returnTo?: string,
     ) => {
       track("button_clicked2", {
         ...stakeDefaultTrack,
@@ -50,7 +51,7 @@ const useStakeFlow = () => {
 
       const platformAppRoute = getRouteToPlatformApp(account, walletState, parentAccount);
 
-      if (alwaysShowNoFunds) {
+      if (alwaysShowNoFunds || account.spendableBalance.isZero()) {
         dispatch(
           openModal("MODAL_NO_FUNDS_STAKE", {
             account,
@@ -70,16 +71,18 @@ const useStakeFlow = () => {
           pathname: platformAppRoute.pathname.toString(),
           state: {
             ...platformAppRoute.state,
+            returnTo,
           },
         });
       } else {
         dispatch(openModal("MODAL_START_STAKE", { account, parentAccount, source }));
       }
 
-      if (shouldRedirect) {
-        console.log(`>>> shouldRedirect. Can we just default this?`);
+      const isNoFundsFlow = account.spendableBalance.isZero();
+
+      if (shouldRedirect && !platformAppRoute && !isNoFundsFlow) {
         history.push({
-          pathname: `/account/${account.id}`,
+          pathname: returnTo ?? `/account/${account.id}`,
         });
       }
     },

@@ -74,6 +74,7 @@ export function useStake() {
       account: Account | TokenAccount | AccountLike,
       walletState: WalletState,
       parentAccount?: Account | null,
+      returnTo?: string,
     ) => {
       const depositCurrency = getAccountCurrency(account);
       const depositCurrencyId = depositCurrency?.id;
@@ -113,6 +114,11 @@ export function useStake() {
         walletApiAccount.id,
         manifest,
       );
+
+      const returnToAccount = isTokenAccount(account)
+        ? `/account/${earningsAccountId}/${account.id}`
+        : `/account/${earningsAccountId}`;
+
       const customPartnerParams = appDetails?.queryParams ?? {};
 
       const customDappUrl = appendQueryParamsToDappURL(manifest, {
@@ -129,7 +135,7 @@ export function useStake() {
           accountId: accountIdForManifestVersion,
           walletAccountId: walletApiAccount.id,
           customDappUrl: customDappUrl ?? undefined,
-          returnTo: `/account/${earningsAccountId}`, // TODO: check if we always want this. It fixes it in most cases but there are issues with earn live app navigation.
+          returnTo: returnTo ?? returnToAccount,
         },
       };
     },

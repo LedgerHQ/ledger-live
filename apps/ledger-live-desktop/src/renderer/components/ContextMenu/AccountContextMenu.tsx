@@ -146,7 +146,6 @@ export default function AccountContextMenu({
             pathname: routeToStake.pathname,
             state: {
               ...routeToStake.state,
-              returnTo: `/account/${account.id}`,
             },
           });
         },
@@ -201,7 +200,6 @@ export default function AccountContextMenu({
     stakeLabel,
     isStarred,
     refreshAccountsOrdering,
-    isStarred,
   ]);
   const currency = getAccountCurrency(account);
   return (
