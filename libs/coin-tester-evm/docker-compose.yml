@@ -5,4 +5,8 @@ services:
     platform: linux/amd64
     ports:
       - "8545:8545"
+      # todo: check storage flag
+      # https://book.getfoundry.sh/reference/anvil/
+      # note: idea, have our own node
+      # anvil_loadState
     command: -c "anvil --host 0.0.0.0 --fork-url ${RPC} --no-storage-caching --steps-tracing --mnemonic='${SEED}'"

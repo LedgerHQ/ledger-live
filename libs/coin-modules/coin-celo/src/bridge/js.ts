@@ -20,6 +20,7 @@ import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper
 import { getAccountShape } from "../synchronisation";
 import { buildSignOperation } from "../signOperation";
 import { sync } from "../synchronisation";
+import { CeloSigner } from "../signer";
 
 export function buildCurrencyBridge(signerContext: SignerContext<EvmSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
@@ -38,7 +39,7 @@ export function buildCurrencyBridge(signerContext: SignerContext<EvmSigner>): Cu
 }
 
 export function buildAccountBridge(
-  signerContext: SignerContext<EvmSigner>,
+  signerContext: SignerContext<CeloSigner>,
 ): AccountBridge<Transaction, CeloAccount, TransactionStatus> {
   const getAddress = resolver(signerContext);
 
@@ -59,7 +60,7 @@ export function buildAccountBridge(
   };
 }
 
-export function createBridges(signerContext: SignerContext<EvmSigner>) {
+export function createBridges(signerContext: SignerContext<CeloSigner>) {
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),
