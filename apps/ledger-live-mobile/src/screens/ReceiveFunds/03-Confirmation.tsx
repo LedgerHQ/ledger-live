@@ -49,7 +49,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { isUTXOCompliant } from "@ledgerhq/live-common/currencies/helpers";
 import { NeedMemoTagModal } from "./NeedMemoTagModal";
-import { useLocalizedUrl } from "~/newArch/hooks/useLocalizedUrls";
+import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 
 type ScreenProps = BaseComposite<
   StackNavigatorProps<ReceiveFundsStackParamList, ScreenName.ReceiveConfirmation>
