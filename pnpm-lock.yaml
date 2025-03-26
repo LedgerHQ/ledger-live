@@ -4567,6 +4567,9 @@ importers:
       '@ledgerhq/hw-app-btc':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-app-btc
+      '@ledgerhq/hw-app-celo':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/hw-app-celo
       '@ledgerhq/hw-app-cosmos':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-app-cosmos

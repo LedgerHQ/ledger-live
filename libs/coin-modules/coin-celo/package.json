@@ -62,29 +62,9 @@
       "require": "./lib/api/index.js",
       "default": "./lib-es/api/index.js"
     },
-    "./deviceTransactionConfig": {
-      "require": "./lib/bridge/deviceTransactionConfig.js",
-      "default": "./lib-es/bridge/deviceTransactionConfig.js"
-    },
-    "./logic": {
-      "require": "./lib/logic/index.js",
-      "default": "./lib-es/logic/index.js"
-    },
-    "./signer": {
-      "require": "./lib/signer/index.js",
-      "default": "./lib-es/signer/index.js"
-    },
     "./specs": {
-      "require": "./lib/test/bot-specs.js",
-      "default": "./lib-es/test/bot-specs.js"
-    },
-    "./transaction": {
-      "require": "./lib/bridge/transaction.js",
-      "default": "./lib-es/bridge/transaction.js"
-    },
-    "./types": {
-      "require": "./lib/types/index.js",
-      "default": "./lib-es/types/index.js"
+      "require": "./lib/specs/index.js",
+      "default": "./lib-es/specs/index.js"
     },
     "./*": {
       "require": "./lib/*.js",
