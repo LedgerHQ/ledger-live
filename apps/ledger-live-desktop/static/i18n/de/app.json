@@ -6570,7 +6570,9 @@
   },
   "drawers" : {
     "selectCurrency" : {
-      "title" : "Vermögenswert auswählen"
+      "title" : "Vermögenswert auswählen",
+      "allCurrency" : "Alle Währungen",
+      "account" : "Deine Konten"
     },
     "selectAccount" : {
       "title" : "Konto auswählen"
