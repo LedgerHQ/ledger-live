@@ -1541,14 +1541,14 @@
         "secondaryCta" : "다음에 결정하기"
       },
       "verifyIdentity" : {
-        "title" : "알림: Ledger Recover 구독을 완료하세요",
-        "description" : "이제 한 단계만 거치면 완료됩니다.",
+        "title" : "지갑에 대한 액세스가 아직 백업되지 않았습니다",
+        "description" : "지갑에 대한 액세스를 보호하려면 신원 인증을 완료하세요",
         "primaryCta" : "신원 인증",
         "secondaryCta" : "다음에 결정하기"
       },
       "connectDevice" : {
-        "title" : "알림: Ledger Recover 구독을 완료하세요",
-        "description" : "지갑 액세스 복구를 보장하는 마지막 단계입니다.",
+        "title" : "지갑에 대한 액세스가 아직 백업되지 않았습니다",
+        "description" : "지갑에 대한 보안 액세스를 위해 장치를 연결하세요",
         "primaryCta" : "장치 연결",
         "secondaryCta" : "다음에 결정하기"
       }
@@ -4229,7 +4229,7 @@
       "nfts" : {
         "title" : "숨겨진 NFT 컬렉션",
         "description" : "숨겨진 컬렉션 목록을 재설정하세요",
-        "reset" : "재설정"
+        "reset" : "Reset ({{count}})"
       },
       "exchangeDeveloperMode" : {
         "title" : "거래소 개발 모드",
@@ -4337,6 +4337,32 @@
             "nft" : "개별 NFT",
             "contract" : "계약"
           }
+        },
+        "back" : "돌아가기"
+      },
+      "debugNfts" : {
+        "title" : "NFTs Tools",
+        "description" : "Provides some useful tools to handle NFTs in Ledger Live",
+        "cta" : "열기",
+        "tabs" : {
+          "config" : "Configuration",
+          "generatorAndDestructor" : "Generators & Destructors"
+        },
+        "configuration" : {
+          "supported" : "Supported NFT Chain",
+          "supported_other" : "Supported NFT Chains",
+          "nms" : {
+            "title" : "NFT Metadata Service (NMS)",
+            "env" : "Environment : {{env}}"
+          }
+        },
+        "generatorAndDestructor" : {
+          "genAcc" : "Generate Accounts",
+          "genAccDesc" : "Generate an accounts with NFTs",
+          "cta" : "Generate",
+          "deleteAcc" : "Delete Accounts",
+          "deleteAccDesc" : "Delete all accounts from store",
+          "delete" : "삭제"
         },
         "back" : "돌아가기"
       },
