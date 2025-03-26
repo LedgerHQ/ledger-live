@@ -7337,12 +7337,12 @@
   },
   "lnsUpsell" : {
     "opted_in" : {
-      "description" : "Upgrade your Ledger Nano S to a newer Ledger — like the Ledger Flex — for more memory, the latest security enhancements, fresh features, and an exclusive 20% off. ",
+      "description" : "Ledger Flex와 같은 최신 장치로 Ledger Nano S를 업그레이드하여 더 커진 메모리, 최신 보안 업데이트, 새로운 기능, 20% 독점 할인 혜택까지 모두 누려보세요. ",
       "cta" : "내 Ledger 업그레이드"
     },
     "opted_out" : {
       "description" : "Ledger Nano S의 제한된 메모리로 인해 최신 기능, 블록체인 변경 사항 및 보안 업데이트에 대한 액세스가 제한됩니다. 장기적으로 사용하려면 최신 Ledger 장치로 업그레이드하세요.",
-      "cta" : "Learn more"
+      "cta" : "자세히 알아보기"
     }
   }
 }
