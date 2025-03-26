@@ -49,7 +49,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { isUTXOCompliant } from "@ledgerhq/live-common/currencies/helpers";
 import { NeedMemoTagModal } from "./NeedMemoTagModal";
-import { useLocale } from "~/context/Locale";
+import { useLocalizedUrl } from "~/newArch/hooks/useLocalizedUrls";
 
 type ScreenProps = BaseComposite<
   StackNavigatorProps<ReceiveFundsStackParamList, ScreenName.ReceiveConfirmation>
@@ -81,7 +81,6 @@ export default function ReceiveConfirmation({ navigation }: Props) {
 function ReceiveConfirmationInner({ navigation, route, account, parentAccount }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const { locale } = useLocale();
   const { pushToast } = useToasts();
   const verified = route.params?.verified ?? false;
   const [isModalOpened, setIsModalOpened] = useState(true);
@@ -89,6 +88,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
   const [hasCopied, setCopied] = useState(false);
   const dispatch = useDispatch();
   const insets = useSafeAreaInsets();
+  const withdrawCryptoUrl = useLocalizedUrl(urls.withdrawCrypto);
 
   const hasClosedWithdrawBanner = useSelector(hasClosedWithdrawBannerSelector);
   const [displayBanner, setDisplayBanner] = useState(!hasClosedWithdrawBanner);
@@ -132,9 +132,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
       type: "card",
       page: "Receive Account Qr Code",
     });
-    Linking.openURL(
-      urls.withdrawCrypto[locale as keyof typeof urls.withdrawCrypto] ?? urls.withdrawCrypto.en,
-    );
+    Linking.openURL(withdrawCryptoUrl);
   };
 
   useEffect(() => {
