@@ -6570,7 +6570,9 @@
   },
   "drawers" : {
     "selectCurrency" : {
-      "title" : "자산 선택"
+      "title" : "자산 선택",
+      "allCurrency" : "모든 통화",
+      "account" : "내 계정"
     },
     "selectAccount" : {
       "title" : "계정 선택"
