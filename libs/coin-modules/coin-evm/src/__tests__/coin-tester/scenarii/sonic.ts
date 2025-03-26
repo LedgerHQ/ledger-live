@@ -71,6 +71,7 @@ export const scenarioSonic: Scenario<EvmTransaction, Account> = {
       spawnAnvil("https://rpc.ankr.com/sonic_mainnet"),
     ]);
 
+    // @ts-expect-error - TODO: fix this
     const signerContext: Parameters<typeof resolver>[0] = (_, fn) => fn(new Eth(transport));
 
     setCoinConfig(() => ({
