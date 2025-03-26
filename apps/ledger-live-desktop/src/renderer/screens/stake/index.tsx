@@ -25,11 +25,7 @@ const useStakeFlow = () => {
   const history = useHistory();
   const dispatch = useDispatch();
   const walletState = useSelector(walletSelector);
-  const {
-    enabledCurrencies,
-    partnerSupportedAssets,
-    getRouteToPlatformApp: getRouteToPlatformApp,
-  } = useStake();
+  const { enabledCurrencies, partnerSupportedAssets, getRouteToPlatformApp } = useStake();
   const list = enabledCurrencies.concat(partnerSupportedAssets);
 
   const handleAccountSelected = useCallback(
@@ -63,10 +59,16 @@ const useStakeFlow = () => {
           }),
         );
       } else if (platformAppRoute) {
+        track("button_clicked2", {
+          ...stakeDefaultTrack,
+          button: "delegate",
+          page: history.location.pathname,
+          provider: platformAppRoute.state.appId,
+          currency: account.type === "Account" ? account.currency.ticker : account.token.ticker,
+        });
         history.push({
           pathname: platformAppRoute.pathname.toString(),
           state: {
-            returnTo: `/account/${account.type === "Account" ? account.id : parentAccount?.id || ""}`,
             ...platformAppRoute.state,
           },
         });
