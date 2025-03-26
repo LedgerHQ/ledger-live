@@ -19,15 +19,18 @@ import {
 } from "react-native";
 import { decodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
 import { getNftCapabilities } from "@ledgerhq/coin-framework/nft/support";
-import { useNftMetadata, useNftCollectionMetadata } from "@ledgerhq/live-nft-react";
-import { getFloorPrice } from "@ledgerhq/live-nft/api/metadataservice";
+import {
+  useNftMetadata,
+  useNftCollectionMetadata,
+  useNftFloorPrice,
+} from "@ledgerhq/live-nft-react";
 import { BigNumber } from "bignumber.js";
 import { useDispatch, useSelector } from "react-redux";
 import { Box, Button, IconsLegacy, Text, Flex } from "@ledgerhq/native-ui";
 import { useTranslation, Trans } from "react-i18next";
 import Clipboard from "@react-native-clipboard/clipboard";
-import { FloorPrice, Account } from "@ledgerhq/types-live";
-import { FeatureToggle, useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { Account } from "@ledgerhq/types-live";
+import { useFeature, FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import {
   CompositeNavigationProp,
@@ -167,21 +170,10 @@ const NftViewer = ({ route }: Props) => {
 
   const nftCapabilities = useMemo(() => getNftCapabilities(nft), [nft]);
 
-  const [floorPriceLoading, setFloorPriceLoading] = useState(false);
-  const [ticker, setTicker] = useState("");
-  const [floorPrice, setFloorPrice] = useState<number | null>(null);
+  const { isLoading: isFloorPriceLoading, data } = useNftFloorPrice(nft, currency);
 
-  useEffect(() => {
-    setFloorPriceLoading(true);
-    getFloorPrice(nft, currency)
-      .then((result: FloorPrice | null) => {
-        if (result) {
-          setTicker(result.ticker);
-          setFloorPrice(result.value);
-        }
-      })
-      .finally(() => setFloorPriceLoading(false));
-  }, [nft, currency]);
+  const ticker = data?.ticker || "";
+  const floorPrice = data?.value.toString() || null;
 
   const closeModal = () => {
     track("button_clicked", {
@@ -439,7 +431,7 @@ const NftViewer = ({ route }: Props) => {
         </Box>
 
         <FeatureToggle featureId="counterValue">
-          {!floorPriceLoading && floorPrice ? (
+          {!isFloorPriceLoading && floorPrice ? (
             <Section
               title={t("nft.viewer.attributes.floorPrice")}
               value={`${shouldApplyDiscreetMode && discreet ? "***" : floorPrice} ${ticker}`}
