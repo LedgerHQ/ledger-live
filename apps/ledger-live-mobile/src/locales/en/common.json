@@ -3268,7 +3268,7 @@
       },
       "verifyAddress": {
         "title": "Verify address",
-        "subtitle": "Verify that the address displayed on your device matches this one below. Once you’re sure you can click approve on your device.",
+        "subtitle": "Verify that the address displayed on your device matches this one below. Once you’re sure you can confirm on your device.",
         "cancel": {
           "title": "You just denied this address",
           "subtitle": "If this was done by mistake, you can retry by clicking the button below.",
