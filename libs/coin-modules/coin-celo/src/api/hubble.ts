@@ -102,7 +102,7 @@ const transactionToOperation = (
       celoOperationValue: new BigNumber(transaction.amount),
       ...(["ACTIVATE", "VOTE", "REVOKE"].includes(type)
         ? {
-            celoSourceValidator: recipient,
+            celoSourceValidator: recipient ? recipient : "",
           }
         : {}),
     },
@@ -131,7 +131,7 @@ export const getAccountDetails = async (
 
   const allTransactions = accountDetails.internal_transfers
     .filter(
-      transfer =>
+      (transfer: { data: { to: string; from: string } }) =>
         transfer.data?.to != lockedGold.address && transfer.data?.from != lockedGold.address,
     )
     .concat(accountDetails.transactions);
@@ -153,17 +153,24 @@ export const getAccountDetails = async (
 export const getValidatorGroups = async (): Promise<CeloValidatorGroup[]> => {
   const validatorGroups = await fetchValidatorGroups();
 
-  const result = validatorGroups.map(validatorGroup => ({
-    address: validatorGroup.address,
-    name: validatorGroup.name || validatorGroup.address,
-    votes: new BigNumber(validatorGroup.active_votes).plus(
-      new BigNumber(validatorGroup.pending_votes),
-    ),
-  }));
+  const result = validatorGroups.map(
+    (validatorGroup: {
+      address: string;
+      name: string;
+      active_votes: BigNumber.Value;
+      pending_votes: BigNumber.Value;
+    }) => ({
+      address: validatorGroup.address,
+      name: validatorGroup.name || validatorGroup.address,
+      votes: new BigNumber(validatorGroup.active_votes).plus(
+        new BigNumber(validatorGroup.pending_votes),
+      ),
+    }),
+  );
   return customValidatorGroupsOrder(result);
 };
 
-const customValidatorGroupsOrder = (validatorGroups): CeloValidatorGroup[] => {
+const customValidatorGroupsOrder = (validatorGroups: any[]): CeloValidatorGroup[] => {
   const defaultValidatorGroup = validatorGroups.find(isDefaultValidatorGroup);
 
   const sortedValidatorGroups = [...validatorGroups]

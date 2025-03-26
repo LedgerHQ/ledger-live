@@ -4,7 +4,7 @@ import { isValidAddress } from "@celo/utils/lib/address";
 import getFeesForTransaction from "./getFeesForTransaction";
 import { CeloAccount, Transaction } from "./types";
 
-const sameFees = (a, b) => (!a || !b ? a === b : a.eq(b));
+const sameFees = (a: BigNumber | null | undefined, b: BigNumber) => (!a || !b ? a === b : a.eq(b));
 
 export const prepareTransaction: AccountBridge<
   Transaction,
