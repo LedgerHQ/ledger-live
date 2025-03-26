@@ -31,6 +31,8 @@ const NFTGallerySelector = ({ navigation, route }: NavigationProps) => {
   const { device, deviceModelId } = params;
   const SUPPORTED_NFT_CURRENCIES = getEnv("NFT_CURRENCIES");
 
+  const llmSolanaNftsFeature = useFeature("llmSolanaNfts");
+
   const nftsOrdered = useSelector(
     (state: State) =>
       orderedVisibleNftsSelector(state, Boolean(nftsFromSimplehashFeature?.enabled)),
@@ -38,18 +40,28 @@ const NFTGallerySelector = ({ navigation, route }: NavigationProps) => {
   );
 
   const nftsFromSimplehashFeature = useFeature("nftsFromSimplehash");
+
   const threshold = nftsFromSimplehashFeature?.params?.threshold;
   const nftsFromSimplehashEnabled = nftsFromSimplehashFeature?.enabled;
   const accounts = useSelector(accountsSelector);
+
+  const filterAccounts = useCallback(
+    (currency: string) =>
+      SUPPORTED_NFT_CURRENCIES.includes(currency) &&
+      (currency !== "solana" || !!llmSolanaNftsFeature?.enabled),
+    [SUPPORTED_NFT_CURRENCIES, llmSolanaNftsFeature?.enabled],
+  );
 
   const addresses = useMemo(
     () =>
       [
         ...new Set(
-          accounts.map(account => account.freshAddress).filter(addr => addr.startsWith("0x")),
+          accounts
+            .filter(account => filterAccounts(account.currency.id))
+            .map(account => account.freshAddress),
         ),
       ].join(","),
-    [accounts],
+    [accounts, filterAccounts],
   );
 
   const { nfts: filteredNfts, isLoading } = useNftGalleryFilter({
