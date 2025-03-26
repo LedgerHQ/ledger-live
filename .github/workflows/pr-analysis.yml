@@ -24,11 +24,13 @@ jobs:
   sonarqube:
     name: "SonarQube"
     needs: determine-affected
-    if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') || contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile')}}
+    if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') || contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile') || contains(needs.determine-affected.outputs.paths, 'coin-modules') || contains(needs.determine-affected.outputs.paths, 'coin-framework') || contains(needs.determine-affected.outputs.paths, 'packages/hw-app')}}
     runs-on: [ledger-live-4xlarge]
     env:
       MOBILE_AFFECTED: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile')}}
       DESKTOP_AFFECTED: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop')}}
+      COIN_MODULES_AFFECTED: ${{contains(needs.determine-affected.outputs.paths, 'coin-modules') || contains(needs.determine-affected.outputs.paths, 'coin-framework')}}
+      HW_APP_AFFECTED: ${{contains(needs.determine-affected.outputs.paths, 'packages/hw-app')}}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -52,62 +54,61 @@ jobs:
           git fetch origin develop
 
       - name: Install and Build desktop dependencies
-        if: ${{env.DESKTOP_AFFECTED == 'true'}}
+        if: ${{ env.DESKTOP_AFFECTED == 'true' }}
         run: |
           pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
           pnpm build:lld:deps --api="http://127.0.0.1:${{ steps.caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
 
       - name: Install and Build mobile dependencies
-        if: ${{env.MOBILE_AFFECTED == 'true'}}
+        if: ${{ env.MOBILE_AFFECTED == 'true' }}
         run: |
           pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
           pnpm build:llm:deps --api="http://127.0.0.1:${{ steps.caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
 
-      - name: Generate Unit test coverage for LLD only
-        if: ${{env.DESKTOP_AFFECTED == 'true' && env.MOBILE_AFFECTED == 'false'}}
+      - name: Install and Build coin modules dependencies
+        if: ${{ env.COIN_MODULES_AFFECTED == 'true' }}
         run: |
-          pnpm desktop test:jest:coverage
-          cat apps/ledger-live-desktop/coverage/lcov.info > ./lcov.info
-          cat apps/ledger-live-desktop/coverage/lld-sonar-executionTests-report.xml > ./lld-sonar-executionTests-report.xml
+          pnpm i --filter="ledger-live-desktop..." --filter="@ledgerhq/coin-*..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
+          pnpm build:coin:deps
 
-      - name: Generate Unit test coverage for LLM only
-        if: ${{env.MOBILE_AFFECTED == 'true' && env.DESKTOP_AFFECTED == 'false'}}
+      - name: Install and Build hw-app dependencies
+        if: ${{ env.COIN_MODULES_AFFECTED == 'true' }}
         run: |
-          pnpm mobile test:jest:coverage
-          cat apps/ledger-live-mobile/coverage/lcov.info > ./lcov.info
-          cat apps/ledger-live-mobile/coverage/llm-sonar-executionTests-report.xml > ./llm-sonar-executionTests-report.xml
+          pnpm i --filter="@ledgerhq/hw-app-*..." --no-frozen-lockfile --unsafe-perm
+          pnpm build:hw-app
 
-      - name: Generate Unit test coverage for LLD & LLM
-        if: ${{env.DESKTOP_AFFECTED == 'true' && env.MOBILE_AFFECTED == 'true'}}
+      - name: Generate Unit test coverage for affected components
         run: |
-          pnpm desktop test:jest:coverage
-          pnpm mobile test:jest:coverage
-          cat apps/ledger-live-desktop/coverage/lcov.info apps/ledger-live-mobile/coverage/lcov.info > ./lcov.info
-          cat apps/ledger-live-desktop/coverage/lld-sonar-executionTests-report.xml > ./lld-sonar-executionTests-report.xml
-          cat apps/ledger-live-mobile/coverage/llm-sonar-executionTests-report.xml > ./llm-sonar-executionTests-report.xml
+          if [[ "$DESKTOP_AFFECTED" == 'true' ]]; then 
+            pnpm desktop test:jest:coverage 
+            cat apps/ledger-live-desktop/coverage/lcov.info >> ./lcov.info 
+            cat apps/ledger-live-desktop/coverage/lld-sonar-executionTests-report.xml >> ./lld-sonar-executionTests-report.xml 
+          fi
 
-      - name: SonarQubeScan desktop only
-        if: ${{env.DESKTOP_AFFECTED == 'true' && env.MOBILE_AFFECTED == 'false'}}
+          if [[ "$MOBILE_AFFECTED" == 'true' ]]; then 
+            pnpm mobile test:jest:coverage 
+            cat apps/ledger-live-mobile/coverage/lcov.info >> ./lcov.info 
+            cat apps/ledger-live-mobile/coverage/llm-sonar-executionTests-report.xml >> ./llm-sonar-executionTests-report.xml 
+          fi
+
+          if [[ "$COIN_MODULES_AFFECTED" == 'true' ]]; then 
+            pnpm coin:coverage 
+            cat coverage/coin-lcov.info >> ./lcov.info 
+            cat coverage/coin-sonar-executionTests-report.xml >> ./coin-sonar-executionTests-report.xml
+          fi
+
+          if [[ "$HW_APP_AFFECTED" == 'true' ]]; then 
+            pnpm ljs:hw-app:coverage
+            cat coverage/hw-app-lcov.info >> ./lcov.info 
+            cat coverage/hw-app-sonar-executionTests-report.xml >> ./hw-app-sonar-executionTests-report.xml
+          fi
+
+      - name: SonarQubeScan
+        if: ${{ env.DESKTOP_AFFECTED == 'true' || env.MOBILE_AFFECTED == 'true' || env.COIN_MODULES_AFFECTED == 'true' || env.HW_APP_AFFECTED == 'true' }}
         uses: SonarSource/sonarqube-scan-action@v4
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           args: >
-            -Dsonar.sources=apps/ledger-live-desktop,libs
-            -Dsonar.testExecutionReportPaths=lld-sonar-executionTests-report.xml
-
-      - name: SonarQubeScan mobile only
-        if: ${{env.MOBILE_AFFECTED == 'true' && env.DESKTOP_AFFECTED == 'false'}}
-        uses: SonarSource/sonarqube-scan-action@v4
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        with:
-          args: >
-            -Dsonar.sources=apps/ledger-live-mobile,libs
-            -Dsonar.testExecutionReportPaths=llm-sonar-executionTests-report.xml
-
-      - name: SonarQubeScan desktop and mobile
-        if: ${{env.DESKTOP_AFFECTED == 'true' && env.MOBILE_AFFECTED == 'true'}}
-        uses: SonarSource/sonarqube-scan-action@v4
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+            -Dsonar.sources=${{ env.DESKTOP_AFFECTED == 'true' && 'apps/ledger-live-desktop,' || '' }}${{ env.MOBILE_AFFECTED == 'true' && 'apps/ledger-live-mobile,' || '' }}libs
+            -Dsonar.testExecutionReportPaths=${{ env.DESKTOP_AFFECTED == 'true' && 'lld-sonar-executionTests-report.xml,' || '' }}${{ env.MOBILE_AFFECTED == 'true' && 'llm-sonar-executionTests-report.xml,' || '' }}${{ env.COIN_MODULES_AFFECTED == 'true' && 'coin-sonar-executionTests-report.xml,' || '' }}${{ env.HW_APP_AFFECTED == 'true' && 'hw-app-sonar-executionTests-report.xml' || '' }}

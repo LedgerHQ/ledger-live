@@ -75,14 +75,15 @@
     "@types/lodash": "^4.14.191",
     "@types/object-hash": "^2.1.0",
     "jest": "^29.7.0",
-    "msw": "2.7.3",
     "ts-jest": "^29.1.1",
+    "jest-sonar": "0.2.16",
+    "msw": "2.7.3",
     "uuid": "11.1.0"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
     "build": "tsc --outDir lib --module commonjs --moduleResolution node10 && tsc -m ES6 --outDir lib-es",
-    "coverage": "jest --coverage --testPathIgnorePatterns='/bridge.integration.test.ts|node_modules|lib-es|lib/' --passWithNoTests && mv coverage/coverage-final.json coverage/coverage-solana.json",
+    "coverage": "jest --coverage",
     "prewatch": "pnpm build",
     "watch": "tsc --watch",
     "watch:es": "tsc --watch -m ES6 --outDir lib-es",

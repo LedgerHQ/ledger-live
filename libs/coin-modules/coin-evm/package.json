@@ -46,7 +46,7 @@
   "scripts": {
     "clean": "rimraf lib lib-es",
     "build": "tsc && tsc -m esnext --moduleResolution bundler --outDir lib-es",
-    "coverage": "jest --coverage --testPathIgnorePatterns='/bridge.integration.test.ts|node_modules|lib-es|lib/' --passWithNoTests && mv coverage/coverage-final.json coverage/coverage-evm.json",
+    "coverage": "jest --coverage",
     "prewatch": "pnpm build",
     "watch": "tsc --watch",
     "watch:es": "tsc --watch -m esnext --moduleResolution bundler --outDir lib-es",
@@ -101,6 +101,7 @@
     "jest-expect-message": "^1.1.3",
     "msw": "^2.2.12",
     "prando": "^6.0.1",
-    "ts-jest": "^29.1.1"
+    "ts-jest": "^29.1.1",
+    "jest-sonar": "0.2.16"
   }
 }
