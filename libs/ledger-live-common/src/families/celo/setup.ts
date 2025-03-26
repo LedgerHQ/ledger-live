@@ -12,9 +12,10 @@ import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/se
 // import { getCurrencyConfiguration } from "../../config";
 import type { Resolver } from "../../hw/getAddress/types";
 import { Transaction, CeloAccount } from "@ledgerhq/coin-celo/lib/types";
+import { CeloSigner } from "@ledgerhq/coin-celo/lib/signer";
 // import { celoConfig } from "./config";
 
-const createSigner: CreateSigner<EvmSigner> = (transport: Transport) => new Celo(transport);
+const createSigner: CreateSigner<CeloSigner> = (transport: Transport) => new Celo(transport);
 
 // const getCoinConfig: celoConfig = () =>
 // getCurrencyConfiguration<ReturnType<celoConfig>>(getCryptoCurrencyById("ton"));

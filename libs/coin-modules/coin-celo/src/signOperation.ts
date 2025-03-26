@@ -9,12 +9,14 @@ import type { Transaction, CeloAccount } from "./types";
 import buildTransaction from "./buildTransaction";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { EvmSigner, EvmSignature } from "@ledgerhq/coin-evm/types/signer";
+import { determineFees } from "./api/sdk";
+import { CeloSigner } from "./signer";
 
 /**
  * Sign Transaction with Ledger hardware
  */
 export const buildSignOperation =
-  (signerContext: SignerContext<EvmSigner>): AccountBridge<Transaction>["signOperation"] =>
+  (signerContext: SignerContext<CeloSigner>): AccountBridge<Transaction>["signOperation"] =>
   ({
     account,
     transaction,
@@ -27,18 +29,34 @@ export const buildSignOperation =
     new Observable(o => {
       async function main() {
         const { fees } = transaction;
+        debugger;
         if (!fees) throw new FeeNotLoaded();
+        debugger;
         const unsignedTransaction = await buildTransaction(account as CeloAccount, transaction);
-        const rlpEncodedTransaction = await rlpEncodedTx(unsignedTransaction);
+        const { chainId, to } = unsignedTransaction;
+
+
 
         o.next({ type: "device-signature-requested" });
 
-        const signature = (await signerContext(deviceId, signer =>
-          signer.signTransaction(
+        const resVerifyToken = (await signerContext(deviceId, signer => {
+          return signer.verifyTokenInfo(to!, chainId!);
+        }));
+        console.log("verified token info", resVerifyToken)
+        const tx = determineFees(unsignedTransaction)
+        console.log({tx})
+
+        const rlpEncodedTransaction = await rlpEncodedTx(unsignedTransaction);
+        // const sig = (await signerContext(deviceId, signer => {
+        //   return signer.rlpEncodedTxForLedger(to!, chainId!);
+        // })) as EvmSignature;
+
+        const signature = (await signerContext(deviceId, signer => {
+          return signer.signTransaction(
             account.freshAddressPath,
             trimLeading0x(rlpEncodedTransaction.rlpEncode),
-          ),
-        )) as EvmSignature;
+          );
+        })) as EvmSignature;
 
         o.next({ type: "device-signature-granted" });
 
