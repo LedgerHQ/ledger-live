@@ -2411,16 +2411,13 @@
     },
     "recoverBanner" : {
       "subscribeDone" : {
-        "title" : "Не забудьте завершить оформление подписки на Ledger Recover",
-        "description" : "До безопасности осталось всего два шага!"
+        "title" : "Не забудьте завершить оформление подписки на Ledger Recover"
       },
       "verifyIdentity" : {
-        "title" : "Не забудьте завершить оформление подписки на Ledger Recover",
-        "description" : "До безопасности остался всего один шаг!"
+        "title" : "Вы ещё не настроили запасной доступ к кошельку"
       },
       "connectDevice" : {
-        "title" : "Не забудьте завершить оформление подписки на Ledger Recover",
-        "description" : "Это последний этап для возможности восстановить кошелёк в дальнейшем."
+        "title" : "Вы ещё не настроили запасной доступ к кошельку"
       }
     }
   },
@@ -4041,7 +4038,7 @@
   "addAccounts" : {
     "addNew" : "Добавить новый",
     "seeAllAccounts" : "Показать все",
-    "addNewOrExisting" : "Добавить новый или существующий счёт",
+    "addNewOrExisting" : "Добавить ещё один счёт",
     "supportLinks" : {
       "segwit_or_native_segwit" : "SegWit или Native SegWit?"
     },
@@ -6611,7 +6608,12 @@
       "24h" : "24Ч",
       "7d" : "7Д",
       "30d" : "30Д",
-      "1y" : "1Г"
+      "1y" : "1Г",
+      "1H_label" : "1Ч",
+      "1D_label" : "1Д",
+      "1W_label" : "1Н",
+      "1M_label" : "1М",
+      "1Y_label" : "1Г"
     },
     "warnings" : {
       "connectionError" : "Ошибка соединения",
@@ -7337,7 +7339,7 @@
   },
   "lnsUpsell" : {
     "opted_in" : {
-      "description" : "Upgrade your Ledger Nano S to a newer Ledger — like the Ledger Flex — for more memory, the latest security enhancements, fresh features, and an exclusive 20% off. ",
+      "description" : "Перейдите с вашего Ledger Nano S на новое устройство по примеру Ledger Flex. Тогда вы получите больший объём памяти, актуальные улучшения безопасности, последние функции и эксклюзивную скидку в 20%. ",
       "cta" : "Обновиться"
     },
     "opted_out" : {
