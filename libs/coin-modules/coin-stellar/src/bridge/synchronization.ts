@@ -7,6 +7,11 @@ import { buildSubAccounts } from "./tokens";
 import { StellarBurnAddressError, StellarOperation } from "../types";
 import { STELLAR_BURN_ADDRESS } from "./logic";
 import { getEnv } from "@ledgerhq/live-env";
+import { Transaction, Networks } from "@stellar/stellar-sdk";
+
+const tx =
+  "AAAAAgAAAAA1LwgBE7jglv98JK9aG8yvu2C91OobwKtICPUqJaXqVAAAAGQBqCX8AAAAVQAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAQAAAADw9kGYtpM1vsCgDoHjZOVO/sjTKLsmA51f8vdM9oaecgAAAAFVU0RDAAAAADuZETgO/piLoKiQDrHP5E82b32+lGvtB3JA9/Yk3xXFAAAAAAAAAGQAAAAAAAAAASWl6lQAAABAsEN9tkgxIcYVg1D2XW52cH1W0eZrqjApzS1lFRdFa4jBTNrTJbXtjY6AJt1OniJbOLajR6spYZgDs0pEl7fEDA==";
+console.log(new Transaction(tx, Networks.PUBLIC));
 
 export const getAccountShape: GetAccountShape<Account> = async (info, syncConfig) => {
   const { address, currency, initialAccount, derivationMode } = info;
