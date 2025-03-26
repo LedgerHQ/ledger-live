@@ -2340,6 +2340,9 @@ importers:
       '@ledgerhq/live-network':
         specifier: workspace:^
         version: link:../../live-network
+      '@ledgerhq/logs':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/logs
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
@@ -2361,9 +2364,6 @@ importers:
       rxjs:
         specifier: ^7.8.1
         version: 7.8.1
-      semver:
-        specifier: ^7.3.5
-        version: 7.5.4
     devDependencies:
       '@ledgerhq/types-cryptoassets':
         specifier: workspace:^
@@ -5466,6 +5466,9 @@ importers:
       bip32-path:
         specifier: ^0.4.2
         version: 0.4.2
+      rlp:
+        specifier: ^3.0.0
+        version: 3.0.0
       semver:
         specifier: ^7.3.5
         version: 7.5.4

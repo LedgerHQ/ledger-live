@@ -7,8 +7,8 @@ import {
   toTransactionCommonRaw,
   toTransactionStatusRawCommon as toTransactionStatusRaw,
 } from "@ledgerhq/coin-framework/serialization";
-import { getAccountCurrency } from "../../../ledger-live-common/src/account";
-import { formatCurrencyUnit } from "../../../ledger-live-common/src/currencies";
+import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import { Account } from "@ledgerhq/types-live";
 export const formatTransaction = (t: Transaction, account: Account): string => `
 SEND ${
