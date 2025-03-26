@@ -1060,6 +1060,15 @@
     },
     "AppManifestNotFoundError" : {
       "title" : "スワップLiveアプリの読み込みに失敗しました"
+    },
+    "InvalidMemoMina" : {
+      "title" : "メモに入力できる文字数は32文字以内です"
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "このトランザクションには、{{fee}}のアカウント作成手数料が発生します"
+    },
+    "AmountTooSmall" : {
+      "title" : "このトランザクションに最低限必要な金額は、{{amount}}です"
     }
   },
   "crash" : {
@@ -2593,7 +2602,8 @@
       "gasLimit" : "ガスリミット",
       "id" : "ID",
       "autoClaimedRewards" : "自動獲得報酬",
-      "stakedAmount" : "ステーキング済み量"
+      "stakedAmount" : "ステーキング済み量",
+      "accountCreationFee" : "アカウント作成手数料"
     },
     "multipleAddresses" : "なぜ複数のアドレスがあるのですか？",
     "tokenName" : "トークン名",
@@ -6103,6 +6113,9 @@
       }
     }
   },
+  "mina" : {
+    "memoPlaceholder" : "任意のメモ"
+  },
   "near" : {
     "info" : {
       "available" : {
@@ -6611,7 +6624,12 @@
       "24h" : "24時間",
       "7d" : "7日間",
       "30d" : "30日間",
-      "1y" : "1年"
+      "1y" : "1年",
+      "1H_label" : "1時間",
+      "1D_label" : "1日",
+      "1W_label" : "1週",
+      "1M_label" : "1月",
+      "1Y_label" : "1年"
     },
     "warnings" : {
       "connectionError" : "接続エラー",
@@ -7337,12 +7355,12 @@
   },
   "lnsUpsell" : {
     "opted_in" : {
-      "description" : "Upgrade your Ledger Nano S to a newer Ledger — like the Ledger Flex — for more memory, the latest security enhancements, fresh features, and an exclusive 20% off. ",
+      "description" : "お持ちのLedger Nano Sを最新のLedger（Ledger Flexなど）にアップグレードしていただくと、より多くのメモリ、最新のセキュリティ強化、複数の新機能をお楽しみいただけます。また、今なら、20%オフの限定特典をご利用いただけます。 ",
       "cta" : "Ledgerをアップグレード"
     },
     "opted_out" : {
       "description" : "Ledger Nano Sの限られたメモリでは、複数の最新機能、ブロックチェーンの変更、セキュリティ強化も制限されます。ぜひ、新しいLedgerデバイスへのアップグレードをご検討ください。",
-      "cta" : "Learn more"
+      "cta" : "詳細はこちら"
     }
   }
 }
