@@ -8,7 +8,7 @@ import { buildOptimisticOperation } from "./buildOptimisticOperation";
 import type { Transaction, CeloAccount } from "./types";
 import buildTransaction from "./buildTransaction";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import { EvmSigner, EvmSignature } from "@ledgerhq/coin-evm/lib/types/signer";
+import { EvmSigner, EvmSignature } from "@ledgerhq/coin-evm/types/signer";
 
 /**
  * Sign Transaction with Ledger hardware
