@@ -73,27 +73,28 @@ export function useStake() {
     (
       account: Account | TokenAccount | AccountLike,
       walletState: WalletState,
-      parentAccount?: Account,
+      parentAccount?: Account | null,
     ) => {
-      if (getAccountSpendableBalance(account).isZero()) {
-        // start stake flow with alwaysShowNoFunds, or return null.
-        console.log(`>>> No funds flow (TODO) for account ${account.id}.`);
-      }
-      const walletApiAccount = accountToWalletAPIAccount(walletState, account, parentAccount);
       const depositCurrency = getAccountCurrency(account);
       const depositCurrencyId = depositCurrency?.id;
       if (!depositCurrencyId) {
         return null;
       }
-      const platformId = getPartnerForCurrency(depositCurrencyId)?.platform;
+      const appDetails = getPartnerForCurrency(depositCurrencyId);
+      const platformId = appDetails?.platform;
       const manifest = !platformId ? null : getManifest(platformId);
 
       if (!platformId || !manifest) {
+        return null;
+      }
+
+      if (getAccountSpendableBalance(account).isZero()) {
         console.warn(
-          `useStake(): No platformId (${platformId}) or manifest ${manifest?.id} found for currency ${depositCurrencyId}. Use useStakeDrawer or StakeFlow.`,
+          `Account ${account.id} ${account.type} ${account?.name} has zero spendable balance. Cannot stake. Returning null.`,
         );
         return null;
       }
+      const walletApiAccount = accountToWalletAPIAccount(walletState, account, parentAccount);
 
       /** For tokens, we also need to pass the address of the specific asset being deposited: asset_id={chain_id}_{contract_address} */
       const tokenContractAddress = isTokenAccount(account) ? account.token.contractAddress : null;
@@ -112,7 +113,7 @@ export function useStake() {
         walletApiAccount.id,
         manifest,
       );
-      const customPartnerParams = getPartnerForCurrency(depositCurrencyId)?.queryParams ?? {};
+      const customPartnerParams = appDetails?.queryParams ?? {};
 
       const customDappUrl = appendQueryParamsToDappURL(manifest, {
         ...customPartnerParams,
@@ -128,6 +129,7 @@ export function useStake() {
           accountId: accountIdForManifestVersion,
           walletAccountId: walletApiAccount.id,
           customDappUrl: customDappUrl ?? undefined,
+          returnTo: `/account/${earningsAccountId}`, // TODO: check if we always want this. It fixes it in most cases but there are issues with earn live app navigation.
         },
       };
     },
