@@ -1,6 +1,6 @@
 import invariant from "invariant";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
-import { parseCurrencyUnit } from "@ledgerhq/coin-framework/lib/currencies/parseCurrencyUnit";
+import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies/parseCurrencyUnit";
 import { pickSiblings } from "@ledgerhq/coin-framework/lib-es/bot/specs";
 import { MutationSpec } from "@ledgerhq/coin-framework/bot/types";
 import type { Transaction } from "../types";
