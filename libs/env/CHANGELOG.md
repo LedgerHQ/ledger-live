@@ -1,5 +1,11 @@
 # @ledgerhq/live-env
 
+## 2.7.0-next.0
+
+### Minor Changes
+
+- [#9584](https://github.com/LedgerHQ/ledger-live/pull/9584) [`32f2a0c`](https://github.com/LedgerHQ/ledger-live/commit/32f2a0cf073e5c1a5d65cbe44e69660f8f510dd7) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - perf: set a limit on the number of operations retrieved during the initial synchronization of the Stellar account to improve sync performance.
+
 ## 2.6.0
 
 ### Minor Changes

@@ -1,5 +1,27 @@
 # @ledgerhq/live-cli
 
+## 24.15.0-next.0
+
+### Minor Changes
+
+- [#9611](https://github.com/LedgerHQ/ledger-live/pull/9611) [`a656e47`](https://github.com/LedgerHQ/ledger-live/commit/a656e47c1dc3ac8b578debf9cf80eab370c7086f) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Add SUI coin send and receive abilities
+
+### Patch Changes
+
+- Updated dependencies [[`2785d49`](https://github.com/LedgerHQ/ledger-live/commit/2785d49ac320498f98ed39b4eccc48310ad35fe1), [`156c747`](https://github.com/LedgerHQ/ledger-live/commit/156c74780e237d31ec7b8766d1ef28e6d890dad1), [`2effe04`](https://github.com/LedgerHQ/ledger-live/commit/2effe04d9d4b3e407ed25da3b9f11324a82126d3), [`ad6d873`](https://github.com/LedgerHQ/ledger-live/commit/ad6d87394cf53f7912a1aa7a5392635570b8374f), [`35f797e`](https://github.com/LedgerHQ/ledger-live/commit/35f797ee6e78eb851065dd2eaa7cb4861b3f4050), [`32f2a0c`](https://github.com/LedgerHQ/ledger-live/commit/32f2a0cf073e5c1a5d65cbe44e69660f8f510dd7), [`2407a6e`](https://github.com/LedgerHQ/ledger-live/commit/2407a6e1f3153c30c52d4bac4c9334fa95c351da), [`40e98c3`](https://github.com/LedgerHQ/ledger-live/commit/40e98c392bd9192570e46c2d62cf0779bdfe01ec), [`a656e47`](https://github.com/LedgerHQ/ledger-live/commit/a656e47c1dc3ac8b578debf9cf80eab370c7086f)]:
+  - @ledgerhq/hw-app-btc@10.7.0-next.0
+  - @ledgerhq/coin-bitcoin@0.14.0-next.0
+  - @ledgerhq/coin-framework@2.5.0-next.0
+  - @ledgerhq/live-common@34.28.0-next.0
+  - @ledgerhq/live-env@2.7.0-next.0
+  - @ledgerhq/cryptoassets@13.14.0-next.0
+  - @ledgerhq/live-countervalues@0.4.6-next.0
+  - @ledgerhq/live-wallet@0.10.2-next.0
+  - @ledgerhq/device-core@0.4.19-next.0
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.3.3-next.0
+  - @ledgerhq/ledger-key-ring-protocol@0.5.5-next.0
+  - @ledgerhq/live-network@2.0.6-next.0
+
 ## 24.14.1
 
 ### Patch Changes

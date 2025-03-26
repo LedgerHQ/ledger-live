@@ -1,5 +1,11 @@
 # @ledgerhq/wallet-api-acre-module
 
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#9660](https://github.com/LedgerHQ/ledger-live/pull/9660) [`ad6d873`](https://github.com/LedgerHQ/ledger-live/commit/ad6d87394cf53f7912a1aa7a5392635570b8374f) Thanks [@jonezque](https://github.com/jonezque)! - chore: bumped wallet-api with sui integration
+
 ## 0.2.0
 
 ### Minor Changes
