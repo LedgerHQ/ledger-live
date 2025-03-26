@@ -3,36 +3,51 @@ import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "../../utils/customJsonReporter";
 import { CLI } from "tests/utils/cliUtils";
-import { expect, TestInfo } from "@playwright/test";
+import { expect } from "@playwright/test";
 import { LedgerSyncCliHelper } from "../../utils/ledgerSyncCliUtils";
 import { accountNames, accounts } from "tests/testdata/ledgerSyncTestData";
+import { getEnv, setEnv } from "@ledgerhq/live-env";
 
 const app: AppInfos = AppInfos.LS;
 const accountId = accounts[0].id;
 const accountName = accountNames[accountId];
 
+function setupSeed() {
+  const prevSeed = getEnv("SEED");
+  test.beforeAll(async () => {
+    process.env.SEED = "Temporary_SEED";
+  });
+  test.afterAll(async () => {
+    setEnv("SEED", prevSeed);
+  });
+}
+
+function initializeThenDeleteTrustchain() {
+  return [
+    LedgerSyncCliHelper.initializeLedgerKeyRingProtocol,
+    LedgerSyncCliHelper.initializeLedgerSync,
+    async () => LedgerSyncCliHelper.deleteLedgerSyncData(),
+  ];
+}
+
+function initializeTrustchain() {
+  return [
+    LedgerSyncCliHelper.initializeLedgerKeyRingProtocol,
+    LedgerSyncCliHelper.initializeLedgerSync,
+    async () =>
+      CLI.ledgerSync({
+        ...LedgerSyncCliHelper.ledgerKeyRingProtocolArgs,
+        ...LedgerSyncCliHelper.ledgerSyncPushDataArgs,
+      }),
+  ];
+}
+
 test.describe(`[${app.name}] Sync Accounts`, () => {
+  setupSeed();
   test.use({
     userdata: "skip-onboarding",
     speculosApp: app,
-    cliCommands: [
-      async () => {
-        return LedgerSyncCliHelper.initializeLedgerKeyRingProtocol();
-      },
-      async () => {
-        return LedgerSyncCliHelper.initializeLedgerSync();
-      },
-      async () => {
-        return CLI.ledgerSync({
-          ...LedgerSyncCliHelper.ledgerKeyRingProtocolArgs,
-          ...LedgerSyncCliHelper.ledgerSyncPushDataArgs,
-        });
-      },
-    ],
-  });
-
-  test.afterAll(async ({}, testInfo: TestInfo) => {
-    await LedgerSyncCliHelper.deleteLedgerSyncData(testInfo);
+    cliCommands: [...initializeThenDeleteTrustchain(), ...initializeTrustchain()],
   });
 
   test(
