@@ -2411,16 +2411,13 @@
     },
     "recoverBanner" : {
       "subscribeDone" : {
-        "title" : "Rappel : finalisez votre abonnement à Ledger Recover",
-        "description" : "Plus que deux étapes avant d’être en sécurité."
+        "title" : "Rappel : finalisez votre abonnement à Ledger Recover"
       },
       "verifyIdentity" : {
-        "title" : "Rappel : finalisez votre abonnement à Ledger Recover",
-        "description" : "Plus qu’une étape avant d’être en sécurité."
+        "title" : "Vous n’avez pas encore sauvegardé l’accès à votre wallet"
       },
       "connectDevice" : {
-        "title" : "Rappel : finalisez votre abonnement à Ledger Recover",
-        "description" : "Dernière étape pour sécuriser l’accès à votre wallet."
+        "title" : "Vous n’avez pas encore sauvegardé l’accès à votre wallet"
       }
     }
   },
@@ -6611,7 +6608,12 @@
       "24h" : "24H",
       "7d" : "7J",
       "30d" : "30J",
-      "1y" : "1A"
+      "1y" : "1A",
+      "1H_label" : "1H",
+      "1D_label" : "1J",
+      "1W_label" : "1S",
+      "1M_label" : "1M",
+      "1Y_label" : "1A"
     },
     "warnings" : {
       "connectionError" : "Erreur de connexion",
@@ -7337,11 +7339,11 @@
   },
   "lnsUpsell" : {
     "opted_in" : {
-      "description" : "Upgrade your Ledger Nano S to a newer Ledger — like the Ledger Flex — for more memory, the latest security enhancements, fresh features, and an exclusive 20% off. ",
+      "description" : "Passez du Ledger Nano S à un modèle plus récent, tel que le Ledger Flex. À la clé : plus de mémoire, les dernières améliorations de sécurité, de nouvelles fonctionnalités et -20% en exclusivité. ",
       "cta" : "Choisir mon wallet"
     },
     "opted_out" : {
-      "description" : "Avec sa mémoire limitée, votre Ledger Nano S vous prive des dernières fonctionnalités, innovations blockchain et améliorations de sécurité. Pour en bénéficier, choisissez un wallet Ledger plus récent.",
+      "description" : "Avec sa mémoire limitée, votre Ledger Nano S vous prive des dernières fonctionnalités, innovations blockchain et améliorations de sécurité. Pour en bénéficier, choisissez un wallet Ledger plus récent.",
       "cta" : "En savoir plus"
     }
   }
