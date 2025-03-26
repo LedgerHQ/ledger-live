@@ -6570,7 +6570,9 @@
   },
   "drawers" : {
     "selectCurrency" : {
-      "title" : "varlık seçin"
+      "title" : "varlık seçin",
+      "allCurrency" : "Tüm para birimleri",
+      "account" : "Hesaplarınız"
     },
     "selectAccount" : {
       "title" : "hesap seçin"

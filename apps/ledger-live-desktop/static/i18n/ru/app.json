@@ -4207,7 +4207,7 @@
       "mevProtection" : "Защита от MEV",
       "mevProtectionDesc" : "Активируйте защиту от MEV для комфортных транзакций в Эфириуме.",
       "mevProtectionLearnMore" : "Уведомление о конфиденциальности",
-      "marketPerformanceWidget" : "Виджет поведения рынка",
+      "marketPerformanceWidget" : "Виджет динамики рынка",
       "marketPerformanceWidgetDesc" : "Данная функция показывает самые прибыльные и убыточные криптоактивы за разные промежутки времени на странице портфеля."
     },
     "developer" : {
@@ -6570,7 +6570,9 @@
   },
   "drawers" : {
     "selectCurrency" : {
-      "title" : "выберите актив"
+      "title" : "выберите актив",
+      "allCurrency" : "Все криптовалюты",
+      "account" : "Ваши счета"
     },
     "selectAccount" : {
       "title" : "выберите счёт"

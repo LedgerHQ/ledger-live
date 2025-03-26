@@ -6570,7 +6570,9 @@
   },
   "drawers" : {
     "selectCurrency" : {
-      "title" : "escolher ativo"
+      "title" : "escolher ativo",
+      "allCurrency" : "Todas as moedas",
+      "account" : "Suas contas"
     },
     "selectAccount" : {
       "title" : "escolher conta"

@@ -6570,7 +6570,9 @@
   },
   "drawers" : {
     "selectCurrency" : {
-      "title" : "选择资产"
+      "title" : "选择资产",
+      "allCurrency" : "所有币种",
+      "account" : "您的账户"
     },
     "selectAccount" : {
       "title" : "选择账户"

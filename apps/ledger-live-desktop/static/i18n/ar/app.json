@@ -6570,7 +6570,9 @@
   },
   "drawers" : {
     "selectCurrency" : {
-      "title" : "اختر أصل"
+      "title" : "اختر أصل",
+      "allCurrency" : "كل العملات",
+      "account" : "حساباتك"
     },
     "selectAccount" : {
       "title" : "اختر حساب"
