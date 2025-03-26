@@ -42,14 +42,13 @@ export function putUserPoolAtFirstPositionInPools(
   pools: StakePool[],
   firstPoolId: string,
 ): StakePool[] {
-  const copiedPools = [...pools];
   const index = pools.findIndex(pool => pool.poolId === firstPoolId);
   if (index === -1) {
-    return copiedPools;
+    return pools;
   }
 
   const pool = { ...pools[index] };
-  return [pool, ...copiedPools.filter((_, i) => i !== index)];
+  return [pool, ...pools.filter((_, i) => i !== index)];
 }
 
 export async function fetchAndSortPools(
