@@ -1,5 +1,4 @@
-import type { DeviceTransactionField } from "../../../ledger-live-common/src/transaction";
-import type { }
+import type { CommonDeviceTransactionField as DeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
 
 function getDeviceTransactionConfig(): Array<DeviceTransactionField> {
   const fields: Array<DeviceTransactionField> = [];
