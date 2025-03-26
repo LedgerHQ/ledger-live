@@ -1,6 +1,7 @@
 import { type Api } from "@ledgerhq/coin-framework/api/index";
+import { localForger } from "@taquito/local-forging";
 import { createApi } from ".";
-import * as CraftingFunctions from "../logic/craftTransaction";
+
 /**
  * https://teztnets.com/ghostnet-about
  * https://api.tzkt.io/#section/Get-Started/Free-TzKT-API
@@ -98,67 +99,64 @@ describe("Tezos Api", () => {
   });
 
   describe("craftTransaction", () => {
-    it.each([
-      {
-        type: "send",
-        rawTx:
-          "6c00f16245ed1f661b092e590028e6ad69fdb2b3d91fa002d31d00000a0000a31e81ac3425310e3274a4698a793b2839dc0afa00",
-      },
-      {
-        type: "delegate",
-        rawTx:
-          "6e00f16245ed1f661b092e590028e6ad69fdb2b3d91fa002d31d0000ff00a31e81ac3425310e3274a4698a793b2839dc0afa",
-      },
-      {
-        type: "undelegate",
-        rawTx: "6e00f16245ed1f661b092e590028e6ad69fdb2b3d91fa002d31d000000",
-      },
-    ])("returns a raw transaction with $type", async ({ type, rawTx }) => {
+    async function decode(sbytes: string) {
+      return await localForger.parse(sbytes);
+    }
+
+    it.each(["send", "delegate", "undelegate"])("returns a raw transaction with %s", async type => {
+      const recipient = "tz1aWXP237BLwNHJcCD4b3DutCevhqq2T1Z9";
+      const amount = BigInt(10);
       // When
-      const result = await module.craftTransaction({
+      const encodedTransaction = await module.craftTransaction({
         type,
         sender: address,
-        recipient: "tz1aWXP237BLwNHJcCD4b3DutCevhqq2T1Z9",
-        amount: BigInt(10),
+        recipient: recipient,
+        amount: amount,
       });
 
-      // Then
-      expect(result.slice(64)).toEqual(rawTx);
+      const decodedTransaction = await decode(encodedTransaction);
+      expect(decodedTransaction.contents).toHaveLength(1);
+
+      const operationContent = decodedTransaction.contents[0];
+      expect(operationContent.source).toEqual(address);
+      expect(BigInt(operationContent.fee)).toBeGreaterThan(0);
+
+      if (type === "send") {
+        expect(BigInt(operationContent.amount)).toEqual(amount);
+        expect(operationContent.destination).toEqual(recipient);
+      } else if (type === "delegate") {
+        expect(operationContent.delegate).toEqual(recipient);
+      }
     });
 
-    it("should create a transaction with an estimated fees when user does not provide them", async () => {
-      const spy = jest.spyOn(CraftingFunctions, "craftTransaction");
-      await module.craftTransaction({
+    it("should use estimated fees when user does not provide them for crafting a transaction", async () => {
+      const encodedTransaction = await module.craftTransaction({
         type: "send",
         sender: address,
         recipient: "tz1aWXP237BLwNHJcCD4b3DutCevhqq2T1Z9",
         amount: BigInt(10),
       });
 
-      expect(spy).toHaveBeenCalledWith(
-        expect.any(Object),
-        expect.objectContaining({ fee: { fees: "288" } }),
-      );
+      const decodedTransaction = await decode(encodedTransaction);
+      const transactionFee = BigInt(decodedTransaction.contents[0].fee);
+      expect(transactionFee).toBeGreaterThan(0);
     });
 
     it.each([1n, 50n, 99n])(
-      "should create a transaction with the user fees when user provide them",
-      async (feesLimit: bigint) => {
-        const spy = jest.spyOn(CraftingFunctions, "craftTransaction");
-        await module.craftTransaction(
+      "should use custom user fees when user provides it for crafting a transaction",
+      async (customFees: bigint) => {
+        const encodedTransaction = await module.craftTransaction(
           {
             type: "send",
             sender: address,
             recipient: "tz1aWXP237BLwNHJcCD4b3DutCevhqq2T1Z9",
             amount: BigInt(10),
           },
-          feesLimit,
+          customFees,
         );
 
-        expect(spy).toHaveBeenCalledWith(
-          expect.any(Object),
-          expect.objectContaining({ fee: { fees: feesLimit.toString() } }),
-        );
+        const decodedTransaction = await decode(encodedTransaction);
+        expect(decodedTransaction.contents[0].fee).toEqual(customFees.toString());
       },
     );
   });

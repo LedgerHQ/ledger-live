@@ -257,8 +257,8 @@ describe("listOperations", () => {
   );
 });
 
-describe("Testing craft function", () => {
-  const DEFAULT_FEES = 100n;
+describe("Testing craftTransaction function", () => {
+  const DEFAULT_ESTIMATED_FEES = 100n;
   const api = createApi({ node: "https://localhost" });
   const logicCraftTransactionSpy = jest
     .spyOn(LogicFunctions, "craftTransaction")
@@ -274,30 +274,30 @@ describe("Testing craft function", () => {
     jest.spyOn(LogicFunctions, "estimateFees").mockImplementation(_networkInfo => {
       return Promise.resolve({
         networkInfo: {} as NetworkInfo,
-        fee: DEFAULT_FEES,
+        fee: DEFAULT_ESTIMATED_FEES,
       });
     });
   });
 
-  it("should use fees limit when user provide them for crafting a transaction", async () => {
-    const feesLimit = 99n;
-    await api.craftTransaction({} as TransactionIntent<void>, feesLimit);
+  it("should use custom user fees when user provides it for crafting a transaction", async () => {
+    const customFees = 99n;
+    await api.craftTransaction({} as TransactionIntent<void>, customFees);
 
     expect(logicCraftTransactionSpy).toHaveBeenCalledWith(
       expect.any(Object),
       expect.objectContaining({
-        fee: feesLimit,
+        fee: customFees,
       }),
     );
   });
 
-  it("should use default fees limit when user does not provide them for crafting a transaction", async () => {
+  it("should use default fees when user does not provide them for crafting a transaction", async () => {
     await api.craftTransaction({} as TransactionIntent<void>);
 
     expect(logicCraftTransactionSpy).toHaveBeenCalledWith(
       expect.any(Object),
       expect.objectContaining({
-        fee: DEFAULT_FEES,
+        fee: DEFAULT_ESTIMATED_FEES,
       }),
     );
   });

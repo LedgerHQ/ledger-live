@@ -1,6 +1,6 @@
 import { TransactionIntent } from "@ledgerhq/coin-framework/lib/api/types";
-import { createApi } from "./index";
 import { StellarToken } from "../types";
+import { createApi } from "./index";
 
 const mockGetOperations = jest.fn();
 
@@ -8,17 +8,18 @@ jest.mock("../logic/listOperations", () => ({
   listOperations: () => mockGetOperations(),
 }));
 
-const estimateFeesMock = jest.fn(() => 300n);
+const CUSTOM_FEES = 300n;
+const estimateFeesMock = jest.fn(() => CUSTOM_FEES);
 jest.mock("../logic/estimateFees", () => ({
   estimateFees: () => estimateFeesMock(),
 }));
 
-const logicCraftTransactinMock = jest.fn((_account: unknown, _transaction: { fee: bigint }) => {
-  return { xdr: 0 };
+const logicCraftTransactionMock = jest.fn((_account: unknown, _transaction: { fee: bigint }) => {
+  return { xdr: undefined };
 });
 jest.mock("../logic/craftTransaction", () => ({
   craftTransaction: (account: unknown, transaction: { fee: bigint }) =>
-    logicCraftTransactinMock(account, transaction),
+    logicCraftTransactionMock(account, transaction),
 }));
 
 const api = createApi({
@@ -103,24 +104,24 @@ describe("operations", () => {
 describe("Testing craftTransaction function", () => {
   beforeEach(() => {
     estimateFeesMock.mockClear();
-    logicCraftTransactinMock.mockClear();
+    logicCraftTransactionMock.mockClear();
   });
 
-  it("should use estimated fees for a transaction when a user does not provide them", async () => {
+  it("should use estimated fees when user does not provide them for crafting a transaction", async () => {
     await api.craftTransaction({} as TransactionIntent<StellarToken>);
     expect(estimateFeesMock).toHaveBeenCalledTimes(1);
-    expect(logicCraftTransactinMock).toHaveBeenCalledWith(
+    expect(logicCraftTransactionMock).toHaveBeenCalledWith(
       expect.any(Object),
-      expect.objectContaining({ fee: 300n }),
+      expect.objectContaining({ fee: CUSTOM_FEES }),
     );
   });
 
   it.each([[1n], [50n], [99n]])(
-    "should use user fees for a transaction when a user provide them",
+    "should use custom user fees when user provide them for crafting a transaction",
     async (fees: bigint) => {
       await api.craftTransaction({} as TransactionIntent<StellarToken>, fees);
       expect(estimateFeesMock).toHaveBeenCalledTimes(0);
-      expect(logicCraftTransactinMock).toHaveBeenCalledWith(
+      expect(logicCraftTransactionMock).toHaveBeenCalledWith(
         expect.any(Object),
         expect.objectContaining({ fee: fees }),
       );

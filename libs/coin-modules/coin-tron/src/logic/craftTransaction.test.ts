@@ -79,8 +79,8 @@ describe("craftTransaction", () => {
     expect(result).toBe("extendedRawDataHex");
   });
 
-  it("should use fees limit when user provided it for a TRC20 transaction", async () => {
-    const feesLimit: bigint = 99n;
+  it("should use custom user fees when user provides it for crafting a TRC20 transaction", async () => {
+    const customFees: bigint = 99n;
     const amount: number = 1000;
     const transactionIntent = {
       asset: {
@@ -95,17 +95,17 @@ describe("craftTransaction", () => {
       raw_data_hex: "extendedRawDataHex",
     });
 
-    await craftTransaction(transactionIntent, feesLimit);
+    await craftTransaction(transactionIntent, customFees);
     expect(craftTrc20Transaction).toHaveBeenCalledWith(
       "contractAddress",
       undefined,
       undefined,
       BigNumber(amount),
-      Number(feesLimit),
+      Number(customFees),
     );
   });
 
-  it("should not provide a fees limit when a user does not provide it for a TRC20 transaction ", async () => {
+  it("should not use any fees when user does not provide it for crafting a TRC20 transaction ", async () => {
     const amount = 1000;
     const transactionIntent = {
       asset: {
@@ -130,9 +130,9 @@ describe("craftTransaction", () => {
     );
   });
 
-  it.each([BigInt(2 * Number.MIN_SAFE_INTEGER), BigInt(2 * Number.MAX_SAFE_INTEGER)])(
-    "should throw an error when user provide fees which exceeds Typescript Number type value limit for a TRC20 transaction",
-    async (feesLimit: bigint) => {
+  it.each([-1n, BigInt(2 * Number.MAX_SAFE_INTEGER)])(
+    "should throw an error when user provides fees which exceeds Typescript Number type value limit for crafting a TRC20 transaction",
+    async (customFees: bigint) => {
       try {
         await craftTransaction(
           {
@@ -141,11 +141,11 @@ describe("craftTransaction", () => {
               contractAddress: "contractAddress",
             },
           } as TransactionIntent<TronToken>,
-          feesLimit,
+          customFees,
         );
       } catch (error) {
         expect((error as Error).message).toEqual(
-          `Fees limit must be between ${Number.MIN_SAFE_INTEGER} and ${Number.MAX_SAFE_INTEGER} (Typescript Number type value limit)`,
+          `fees must be between 0 and ${Number.MAX_SAFE_INTEGER} (Typescript Number type value limit)`,
         );
       }
     },

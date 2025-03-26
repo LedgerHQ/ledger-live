@@ -62,7 +62,7 @@ export type Api<TokenIdentifier> = {
   estimateFees: (transactionIntent: TransactionIntent<TokenIdentifier>) => Promise<bigint>;
   craftTransaction: (
     transactionIntent: TransactionIntent<TokenIdentifier>,
-    feesLimit?: bigint,
+    customFees?: bigint,
   ) => Promise<string>;
   getBalance: (address: string) => Promise<Asset | bigint>;
   lastBlock: () => Promise<BlockInfo>;

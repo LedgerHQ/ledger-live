@@ -11,8 +11,8 @@ import {
   craftTransaction,
   estimateFees,
   getBalance,
-  listOperations,
   lastBlock,
+  listOperations,
 } from "../logic";
 import { ListOperationsOptions } from "../logic/listOperations";
 import { StellarToken } from "../types";
@@ -33,9 +33,9 @@ export function createApi(config: StellarConfig): Api<StellarToken> {
 
 async function craft(
   transactionIntent: TransactionIntent<StellarToken>,
-  feesLimit?: bigint,
+  customFees?: bigint,
 ): Promise<string> {
-  const estimatedFees = feesLimit ? feesLimit : await estimateFees();
+  const fees = customFees !== undefined ? customFees : await estimateFees();
   const supplement = transactionIntent.asset
     ? {
         assetCode: transactionIntent.asset.assetCode,
@@ -48,7 +48,7 @@ async function craft(
       type: transactionIntent.type,
       recipient: transactionIntent.recipient,
       amount: transactionIntent.amount,
-      fee: estimatedFees,
+      fee: fees,
       assetCode: supplement?.assetCode,
       assetIssuer: supplement?.assetIssuer,
     },

@@ -1,18 +1,11 @@
-import type { Api } from "@ledgerhq/coin-framework/api/index";
 import { decode } from "ripple-binary-codec";
 import { createApi } from ".";
 //import { decode, encodeForSigning } from "ripple-binary-codec";
 //import { sign } from "ripple-keypairs";
 
 describe("Xrp Api", () => {
-  let module: Api<void>;
-  const address = "rh1HPuRVsYYvThxG2Bs1MfjmrVC73S16Fb";
-  const bigAddress = "rUxSkt6hQpWxXQwTNRUCYYRQ7BC2yRA3F8"; // An account with more that 4000 txs
-  const emptyAddress = "rKtXXTVno77jhu6tto1MAXjepyuaKaLcqB"; // Account with no transaction (at the time of this writing)
-
-  beforeAll(() => {
-    module = createApi({ node: "https://s.altnet.rippletest.net:51234" });
-  });
+  const SENDER = "rh1HPuRVsYYvThxG2Bs1MfjmrVC73S16Fb";
+  const api = createApi({ node: "https://s.altnet.rippletest.net:51234" });
 
   describe("estimateFees", () => {
     it("returns a default value", async () => {
@@ -20,9 +13,9 @@ describe("Xrp Api", () => {
       const amount = BigInt(100);
 
       // When
-      const result = await module.estimateFees({
+      const result = await api.estimateFees({
         type: "send",
-        sender: address,
+        sender: SENDER,
         amount,
         recipient: "rKtXXTVno77jhu6tto1MAXjepyuaKaLcqB",
       });
@@ -35,22 +28,25 @@ describe("Xrp Api", () => {
   describe("listOperations", () => {
     it.skip("returns a list regarding address parameter", async () => {
       // When
-      const [tx, _] = await module.listOperations(address, { minHeight: 200 });
+      const [tx, _] = await api.listOperations(SENDER, { minHeight: 200 });
 
       // https://blockexplorer.one/xrp/testnet/address/rh1HPuRVsYYvThxG2Bs1MfjmrVC73S16Fb
       // as of 2025-03-18, the address has 287 transactions
       expect(tx.length).toBeGreaterThanOrEqual(287);
       tx.forEach(operation => {
         const isSenderOrReceipt =
-          operation.senders.includes(address) || operation.recipients.includes(address);
+          operation.senders.includes(SENDER) || operation.recipients.includes(SENDER);
         expect(isSenderOrReceipt).toBeTruthy();
       });
     });
 
     // TO FIX, ops length is 0 for some reason
     it.skip("returns all operations", async () => {
+      // An account with more that 4000 txs
+      const SENDER_WITH_TRANSACTIONS = "rUxSkt6hQpWxXQwTNRUCYYRQ7BC2yRA3F8";
+
       // When
-      const [ops, _] = await module.listOperations(bigAddress, { minHeight: 0 });
+      const [ops, _] = await api.listOperations(SENDER_WITH_TRANSACTIONS, { minHeight: 0 });
       // Then
       const checkSet = new Set(ops.map(elt => elt.tx.hash));
       expect(checkSet.size).toEqual(ops.length);
@@ -68,7 +64,7 @@ describe("Xrp Api", () => {
   describe("lastBlock", () => {
     it("returns last block info", async () => {
       // When
-      const result = await module.lastBlock();
+      const result = await api.lastBlock();
 
       // Then
       expect(result.hash).toBeDefined();
@@ -78,9 +74,12 @@ describe("Xrp Api", () => {
   });
 
   describe("getBalance", () => {
+    // Account with no transaction (at the time of this writing)
+    const SENDER_WITH_NO_TRANSACTION = "rKtXXTVno77jhu6tto1MAXjepyuaKaLcqB";
+
     it("returns an amount above 0 when address has transactions", async () => {
       // When
-      const result = await module.getBalance(address);
+      const result = await api.getBalance(SENDER);
 
       // Then
       expect(result).toBeGreaterThan(BigInt(0));
@@ -88,7 +87,7 @@ describe("Xrp Api", () => {
 
     it("returns 0 when address has no transaction", async () => {
       // When
-      const result = await module.getBalance(emptyAddress);
+      const result = await api.getBalance(SENDER_WITH_NO_TRANSACTION);
 
       // Then
       expect(result).toBe(BigInt(0));
@@ -96,12 +95,14 @@ describe("Xrp Api", () => {
   });
 
   describe("craftTransaction", () => {
+    const RECIPIENT = "rKRtUG15iBsCQRgrkeUEg5oX4Ae2zWZ89z";
+
     it("returns a raw transaction", async () => {
       // When
-      const result = await module.craftTransaction({
+      const result = await api.craftTransaction({
         type: "send",
-        sender: address,
-        recipient: "rKRtUG15iBsCQRgrkeUEg5oX4Ae2zWZ89z",
+        sender: SENDER,
+        recipient: RECIPIENT,
         amount: BigInt(10),
       });
 
@@ -109,34 +110,32 @@ describe("Xrp Api", () => {
       expect(result.length).toEqual(162);
     });
 
-    it("should use default fees limit when user does not provide it for crafting a transaction", async () => {
-      const result = await module.craftTransaction({
+    it("should use default fees when user does not provide them for crafting a transaction", async () => {
+      const result = await api.craftTransaction({
         type: "send",
-        sender: address,
-        recipient: "rKRtUG15iBsCQRgrkeUEg5oX4Ae2zWZ89z",
+        sender: SENDER,
+        recipient: RECIPIENT,
         amount: BigInt(10),
       });
-
-      expect(result.length).toEqual(162);
 
       const decodedTransaction = decode(result) as { Fee: string };
       expect(decodedTransaction.Fee).toEqual("10");
     });
 
-    it("should use user fees limit when user provide it for crafting a transaction", async () => {
-      const feesLimit = 99n;
-      const result = await module.craftTransaction(
+    it("should use custom user fees when user provides it for crafting a transaction", async () => {
+      const customFees = 99n;
+      const result = await api.craftTransaction(
         {
           type: "send",
-          sender: address,
-          recipient: "rKRtUG15iBsCQRgrkeUEg5oX4Ae2zWZ89z",
+          sender: SENDER,
+          recipient: RECIPIENT,
           amount: BigInt(10),
         },
-        feesLimit,
+        customFees,
       );
 
       const decodedTransaction = decode(result) as { Fee: string };
-      expect(decodedTransaction.Fee).toEqual(feesLimit.toString());
+      expect(decodedTransaction.Fee).toEqual(customFees.toString());
     });
   });
 });

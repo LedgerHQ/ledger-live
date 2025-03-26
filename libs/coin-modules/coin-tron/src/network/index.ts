@@ -204,11 +204,11 @@ export async function craftTrc20Transaction(
   recipientAddress: string,
   senderAddress: string,
   amount: BigNumber,
-  feesLimit?: number,
+  customFees?: number,
 ): Promise<SendTransactionDataSuccess> {
   const txData: SmartContractTransactionData = {
     function_selector: "transfer(address,uint256)",
-    fee_limit: feesLimit ? feesLimit : DEFAULT_TRC20_FEES_LIMIT,
+    fee_limit: customFees ? customFees : DEFAULT_TRC20_FEES_LIMIT,
     call_value: 0,
     contract_address: decode58Check(tokenAddress),
     parameter: abiEncodeTrc20Transfer(recipientAddress, new BigNumber(amount.toString())),
