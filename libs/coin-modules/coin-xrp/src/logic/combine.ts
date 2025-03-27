@@ -8,12 +8,18 @@ type XRPTransaction = JsonObject & {
 
 export function combine(transaction: string, signature: string, publicKey?: string): string {
   const xrplTransaction: JsonObject = decode(transaction);
-  let transactionWithSignature: XRPTransaction = { ...xrplTransaction, TxnSignature: signature };
+
+  let transactionWithSignature: XRPTransaction = { ...xrplTransaction } as any;
 
   if (publicKey) {
-    transactionWithSignature = { ...transactionWithSignature, SigningPubKey: publicKey };
+    transactionWithSignature = {
+      ...transactionWithSignature,
+      SigningPubKey: publicKey,
+    };
   }
 
-  const encoded = encode(transactionWithSignature);
+  transactionWithSignature = { ...transactionWithSignature, TxnSignature: signature };
+
+  const encoded = encode(transactionWithSignature).toUpperCase();
   return encoded;
 }
