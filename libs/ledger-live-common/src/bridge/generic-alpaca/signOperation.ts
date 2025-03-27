@@ -54,7 +54,7 @@ export const genericSignOperation =
           type: "signed",
           signedOperation: {
             operation,
-            signature: Buffer.from(signed).toString("base64"),
+            signature: signed,
           },
         });
       }
