@@ -49,8 +49,8 @@ describe("LNSUpsellBanner ", () => {
       expect(screen.queryByText(t(`lnsUpsell.opted_in.cta`))).toBeNull();
     });
 
-    it("should not render if the (opted in) user swapped currencies at least twice", () => {
-      renderBanner({ swapHistory: [{}, {}] });
+    it("should not render if the user (opted in) is targeted by a higher tier upsell campaign", () => {
+      renderBanner({ targetedByHighTierUpsell: true });
       expect(screen.queryByText(t(`lnsUpsell.opted_in.cta`))).toBeNull();
     });
 
@@ -82,8 +82,8 @@ describe("LNSUpsellBanner ", () => {
       });
     });
 
-    it("should render for opted out with 2 or more swaps", () => {
-      renderBanner({ isOptIn: false, swapHistory: [{}, {}] });
+    it("should render for opted out users regardless of content cards state", () => {
+      renderBanner({ isOptIn: false, targetedByHighTierUpsell: true });
       fireEvent.click(screen.getByText(t(`lnsUpsell.opted_out.cta`)));
 
       expect(openURL).toHaveBeenCalledTimes(1);
@@ -101,7 +101,7 @@ describe("LNSUpsellBanner ", () => {
       ffLocationEnabled = true,
       isOptIn = true,
       devicesModelList = [DeviceModelId.nanoS],
-      swapHistory = [] as unknown[],
+      targetedByHighTierUpsell = false,
     }) {
       const defaultParams = { [location]: ffLocationEnabled, "%": 10, img: "" };
       const ffParams = {
@@ -120,7 +120,11 @@ describe("LNSUpsellBanner ", () => {
               lldNanoSUpsellBanners: { enabled: ffEnabled, params: ffParams },
             },
           },
-          accounts: [{ swapHistory }],
+          dynamicContent: {
+            desktopCards: [
+              { extras: { campaign: targetedByHighTierUpsell && "LNS_UPSELL_HIGH_TIER" } },
+            ],
+          },
         },
       });
     }
