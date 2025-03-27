@@ -15,7 +15,7 @@ const alpacaized = {
 
 export const getCurrencyBridge = (currency: CryptoCurrency): CurrencyBridge => {
   if (alpacaized[currency.family]) {
-    return getAlpacaCurrencyBridge(currency.family, "remote");
+    return getAlpacaCurrencyBridge(currency.family, "local");
   }
 
   if (getEnv("MOCK")) {
@@ -59,7 +59,7 @@ export const getAccountBridge = (
 
 export function getAccountBridgeByFamily(family: string, accountId?: string): AccountBridge<any> {
   if (alpacaized[family]) {
-    return getAlpacaAccountBridge(family, "remote");
+    return getAlpacaAccountBridge(family, "local");
   }
 
   if (accountId) {
