@@ -792,24 +792,22 @@ describe("Aptos sync logic ", () => {
     it("should calculate the correct amount when the address is the sender", () => {
       const address = "0x11";
       const sender = "0x11";
-      const fee = new BigNumber(10); // account pays fees
       const amount_in = new BigNumber(50);
       const amount_out = new BigNumber(100);
 
-      const result = calculateAmount(sender, address, fee, amount_in, amount_out);
+      const result = calculateAmount(sender, address, amount_in, amount_out);
 
       // LL negates the amount for SEND transactions during output
-      expect(result).toEqual(new BigNumber(60)); // -(50 - 100 - 10)
+      expect(result).toEqual(new BigNumber(50)); // -(50 - 100 - 10)
     });
 
     it("should calculate the correct amount when the address is not the sender", () => {
       const address = "0x11";
       const sender = "0x12";
-      const fee = new BigNumber(10); // sender pays fees
       const amount_in = new BigNumber(100);
       const amount_out = new BigNumber(50);
 
-      const result = calculateAmount(sender, address, fee, amount_in, amount_out);
+      const result = calculateAmount(sender, address, amount_in, amount_out);
 
       expect(result).toEqual(new BigNumber(50)); // 100 - 50
     });
@@ -817,27 +815,25 @@ describe("Aptos sync logic ", () => {
     it("should handle transactions with zero amounts", () => {
       const address = "0x11";
       const sender = "0x11";
-      const fee = new BigNumber(10);
       const amount_in = new BigNumber(0);
       const amount_out = new BigNumber(0);
 
-      const result = calculateAmount(sender, address, fee, amount_in, amount_out);
+      const result = calculateAmount(sender, address, amount_in, amount_out);
 
       // LL negates the amount for SEND transactions during output
-      expect(result).toEqual(new BigNumber(10)); // -(0 - 0 - 10)
+      expect(result).toEqual(new BigNumber(0)); // -(0 - 0 - 10)
     });
 
     it("should get negative numbers (for send tx with deposit to account)", () => {
       const address = "0x11";
       const sender = "0x11";
-      const fee = new BigNumber(10);
       const amount_in = new BigNumber(100);
       const amount_out = new BigNumber(0);
 
-      const result = calculateAmount(sender, address, fee, amount_in, amount_out);
+      const result = calculateAmount(sender, address, amount_in, amount_out);
 
       // LL negates the amount for SEND transactions during output
-      expect(result).toEqual(new BigNumber(90).negated()); // 100 - 10
+      expect(result).toEqual(new BigNumber(100).negated()); // 100 - 10
     });
   });
 
@@ -919,7 +915,7 @@ describe("Aptos sync logic ", () => {
         id: expect.any(String),
         hash: "0x123",
         type: DIRECTION.OUT,
-        value: new BigNumber(20100),
+        value: new BigNumber(100),
         fee: new BigNumber(20000),
         blockHash: "0xabc",
         blockHeight: 1,

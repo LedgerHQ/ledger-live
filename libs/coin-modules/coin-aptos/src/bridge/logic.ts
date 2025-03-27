@@ -8,7 +8,11 @@ import {
 } from "@aptos-labs/ts-sdk";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import type { Account, Operation, OperationType, TokenAccount } from "@ledgerhq/types-live";
-import { findSubAccountById, isTokenAccount } from "@ledgerhq/coin-framework/account/index";
+import {
+  decodeTokenAccountId,
+  findSubAccountById,
+  isTokenAccount,
+} from "@ledgerhq/coin-framework/account/index";
 import BigNumber from "bignumber.js";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import {
@@ -130,9 +134,11 @@ export const txsToOps = (
       }
 
       const { coin_id, amount_in, amount_out } = getCoinAndAmounts(tx, address);
-      op.value = calculateAmount(tx.sender, address, op.fee, amount_in, amount_out);
+      op.value = calculateAmount(tx.sender, address, amount_in, amount_out);
       op.type = compareAddress(tx.sender, address) ? DIRECTION.OUT : DIRECTION.IN;
       op.senders.push(tx.sender);
+      op.hasFailed = !tx.success;
+      op.id = encodeOperationId(op.accountId, tx.hash, op.type);
 
       processRecipients(payload, address, op, function_address);
 
@@ -141,21 +147,25 @@ export const txsToOps = (
         op.type = DIRECTION.UNKNOWN;
       }
 
-      op.hasFailed = !tx.success;
-
       if (op.type !== DIRECTION.UNKNOWN) {
         if (coin_id === null) {
           return;
         } else if (coin_id === APTOS_ASSET_ID) {
-          op.id = encodeOperationId(id, tx.hash, op.type);
-          ops.push(op); // if not aptos then should be tokens
+          ops.push(op);
         } else {
           const token = findTokenByAddressInCurrency(coin_id.toLowerCase(), "aptos");
-          // skip tokens that are not in the CAL
           if (token !== undefined) {
             op.accountId = encodeTokenAccountId(id, token);
-            op.id = encodeOperationId(op.accountId, tx.hash, op.type);
             opsTokens.push(op);
+
+            if (op.type === DIRECTION.OUT) {
+              ops.push({
+                ...op,
+                accountId: decodeTokenAccountId(op.accountId).accountId,
+                value: op.fee,
+                type: "FEES",
+              });
+            }
           }
         }
       }
@@ -320,8 +330,8 @@ export function getCoinAndAmounts(
   address: string,
 ): { coin_id: string | null; amount_in: BigNumber; amount_out: BigNumber } {
   let coin_id: string | null = null;
-  let amount_in = new BigNumber(0);
-  let amount_out = new BigNumber(0);
+  let amount_in = BigNumber(0);
+  let amount_out = BigNumber(0);
 
   // collect all events related to the address and calculate the overall amounts
   tx.events.forEach(event => {
@@ -332,11 +342,6 @@ export function getCoinAndAmounts(
           if (coin_id !== null) {
             amount_out = amount_out.plus(event.data.amount);
           }
-        }
-        break;
-      case "0x1::transaction_fee::FeeStatement":
-        if (!tx.success) {
-          coin_id = APTOS_ASSET_ID;
         }
         break;
       case "0x1::coin::DepositEvent":
@@ -364,6 +369,15 @@ export function getCoinAndAmounts(
           }
         }
         break;
+      case "0x1::transaction_fee::FeeStatement":
+        if (tx.sender === address) {
+          if (coin_id === null) coin_id = APTOS_ASSET_ID;
+          if (coin_id === APTOS_ASSET_ID) {
+            const fees = BigNumber(tx.gas_unit_price).times(BigNumber(tx.gas_used));
+            amount_out = amount_out.plus(fees);
+          }
+        }
+        break;
     }
   });
   return { coin_id, amount_in, amount_out }; // TODO: manage situation when there are several coinID from the events parsing
@@ -372,15 +386,10 @@ export function getCoinAndAmounts(
 export function calculateAmount(
   sender: string,
   address: string,
-  fee: BigNumber,
   amount_in: BigNumber,
   amount_out: BigNumber,
 ): BigNumber {
   const is_sender: boolean = compareAddress(sender, address);
-  // Include fees if our address is the sender
-  if (is_sender) {
-    amount_out = amount_out.plus(fee);
-  }
   // LL negates the amount for SEND transactions
   // to show positive amount on the send transaction (ex: in "cancel" tx, when amount will be returned to our account)
   // we need to make it negative

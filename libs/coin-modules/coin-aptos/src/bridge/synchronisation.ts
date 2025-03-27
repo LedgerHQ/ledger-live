@@ -1,3 +1,4 @@
+import { inferSubOperations } from "@ledgerhq/coin-framework/serialization/index";
 import { decodeAccountId, encodeAccountId } from "@ledgerhq/coin-framework/account";
 import type { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
@@ -6,7 +7,6 @@ import { txsToOps } from "./logic";
 import type { AptosAccount } from "../types";
 import { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { decodeOperationId } from "@ledgerhq/coin-framework/operation";
 import {
   decodeTokenAccountId,
   emptyHistoryCache,
@@ -99,7 +99,9 @@ export const getSubAccountShape = async (
   const aptosClient = new AptosAPI(currency.id);
   const tokenAccountId = encodeTokenAccountId(parentId, token);
   const balance = await aptosClient.getBalance(address, token);
-  const firstOperation = operations.sort((a, b) => a.date.getTime() - b.date.getTime()).at(0);
+  const firstOperation = operations
+    .sort((a, b) => b.date.getTime() - a.date.getTime())
+    .at(operations.length - 1);
 
   return {
     type: "TokenAccount",
@@ -131,8 +133,7 @@ export const getSubAccounts = async (
   // Creating a Map of Operations by TokenCurrencies in order to know which TokenAccounts should be synced as well
   const operationsByToken = lastTokenOperations.reduce<Map<TokenCurrency, Operation[]>>(
     (acc, operation) => {
-      const { accountId } = decodeOperationId(operation.id);
-      const { token } = decodeTokenAccountId(accountId);
+      const { token } = decodeTokenAccountId(operation.accountId);
       if (!token) return acc; // TODO: do we need to check blacklistedTokenIds
 
       if (!acc.has(token)) {
@@ -174,10 +175,9 @@ export const getAccountShape: GetAccountShape = async info => {
   const xpub = initialAccount?.xpub || publicKey || "";
 
   const oldOperations = initialAccount?.operations || [];
-  const startAt = (oldOperations[0]?.extra as any)?.version;
 
   const aptosClient = new AptosAPI(currency.id);
-  const { balance, transactions, blockHeight } = await aptosClient.getAccountInfo(address, startAt);
+  const { balance, transactions, blockHeight } = await aptosClient.getAccountInfo(address);
 
   const [newOperations, tokenOperations]: [Operation[], Operation[]] = txsToOps(
     info,
@@ -187,13 +187,15 @@ export const getAccountShape: GetAccountShape = async info => {
   const operations = mergeOps(oldOperations, newOperations);
 
   const newSubAccounts = await getSubAccounts(info, address, accountId, tokenOperations);
-
-  // TODO: validate correctness of cache and mergeSubAccounts
   const shouldSyncFromScratch = initialAccount === undefined;
-
   const subAccounts = shouldSyncFromScratch
     ? newSubAccounts
-    : mergeSubAccounts(initialAccount, newSubAccounts); // Merging potential new subAccouns while preserving the references
+    : mergeSubAccounts(initialAccount, newSubAccounts);
+
+  operations.forEach(op => {
+    const subOperations = inferSubOperations(op.hash, subAccounts);
+    op.subOperations = subOperations;
+  });
 
   const shape: Partial<AptosAccount> = {
     type: "Account",
