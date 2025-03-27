@@ -24,6 +24,7 @@ function AccountBalanceSummaryFooter({ account }: Props) {
   const [infoName, setInfoName] = useState<InfoName | typeof undefined>();
   const info = useInfo();
   const celoAccount = account as CeloAccount;
+  if (!celoAccount.celoResources) return null;
   const { spendableBalance, celoResources } = celoAccount;
   const { lockedBalance, nonvotingLockedBalance } = celoResources;
   const withdrawableBalanceAmount = withdrawableBalance(celoAccount);

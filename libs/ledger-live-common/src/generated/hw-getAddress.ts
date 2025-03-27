@@ -1,9 +1,9 @@
-import celo from "../families/celo/hw-getAddress";
 import { resolver as algorand } from "../families/algorand/setup";
 import { resolver as aptos } from "../families/aptos/setup";
 import { resolver as bitcoin } from "../families/bitcoin/setup";
 import { resolver as cardano } from "../families/cardano/setup";
 import { resolver as casper } from "../families/casper/setup";
+import { resolver as celo } from "../families/celo/setup";
 import { resolver as cosmos } from "../families/cosmos/setup";
 import { resolver as evm } from "../families/evm/setup";
 import { resolver as hedera } from "../families/hedera/setup";
@@ -24,12 +24,12 @@ import { resolver as xrp } from "../families/xrp/setup";
 import { resolver as sui } from "../families/sui/setup";
 
 export default {
-  celo,
   algorand,
   aptos,
   bitcoin,
   cardano,
   casper,
+  celo,
   cosmos,
   evm,
   hedera,
