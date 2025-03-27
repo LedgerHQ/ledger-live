@@ -89,7 +89,7 @@ describe("getAccountShape", () => {
     expect(account.xpub).toEqual("address");
     expect(mockedEncodeAccountId).toHaveBeenCalledTimes(1);
     expect(mockedAptosAPI).toHaveBeenCalledTimes(1);
-    expect(mockGetAccountSpy).toHaveBeenCalledWith("address");
+    expect(mockGetAccountSpy).toHaveBeenCalledWith("address", undefined);
   });
 
   it("account without xpub", async () => {
@@ -140,7 +140,7 @@ describe("getAccountShape", () => {
     expect(account.xpub).toEqual("1");
     expect(mockedEncodeAccountId).toHaveBeenCalledTimes(1);
     expect(mockedAptosAPI).toHaveBeenCalledTimes(1);
-    expect(mockGetAccountSpy).toHaveBeenCalledWith("address");
+    expect(mockGetAccountSpy).toHaveBeenCalledWith("address", undefined);
   });
 
   it("without initialAccount", async () => {
@@ -171,7 +171,7 @@ describe("getAccountShape", () => {
     expect(account.xpub).toEqual("");
     expect(mockedEncodeAccountId).toHaveBeenCalledTimes(1);
     expect(mockedAptosAPI).toHaveBeenCalledTimes(1);
-    expect(mockGetAccountSpy).toHaveBeenCalledWith("address");
+    expect(mockGetAccountSpy).toHaveBeenCalledWith("address", undefined);
   });
 
   it("initialAccount with operations", async () => {
@@ -236,7 +236,7 @@ describe("getAccountShape", () => {
     expect(account.xpub).toEqual("1");
     expect(mockedEncodeAccountId).toHaveBeenCalledTimes(1);
     expect(mockedAptosAPI).toHaveBeenCalledTimes(1);
-    expect(mockGetAccountSpy).toHaveBeenCalledWith("address");
+    expect(mockGetAccountSpy).toHaveBeenCalledWith("address", undefined);
   });
 
   it("initialAccount with operations with extra", async () => {
@@ -302,7 +302,7 @@ describe("getAccountShape", () => {
     expect(account.xpub).toEqual("1");
     expect(mockedEncodeAccountId).toHaveBeenCalledTimes(1);
     expect(mockedAptosAPI).toHaveBeenCalledTimes(1);
-    expect(mockGetAccountSpy).toHaveBeenCalledWith("address");
+    expect(mockGetAccountSpy).toHaveBeenCalledWith("address", 1);
   });
 
   it("get publicKey from rest", async () => {
@@ -369,6 +369,6 @@ describe("getAccountShape", () => {
     expect(account.xpub).toEqual("restPublicKey");
     expect(mockedEncodeAccountId).toHaveBeenCalledTimes(1);
     expect(mockedAptosAPI).toHaveBeenCalledTimes(1);
-    expect(mockGetAccountSpy).toHaveBeenCalledWith("address");
+    expect(mockGetAccountSpy).toHaveBeenCalledWith("address", 1);
   });
 });
