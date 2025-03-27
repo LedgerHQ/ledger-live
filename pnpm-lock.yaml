@@ -4,7 +4,61 @@ settings:
   autoInstallPeers: false
   excludeLinksFromLockfile: false
 
+overrides:
+  stellar-base>sodium-native: ^3.2.1
+  remove-flow-types-loader>flow-remove-types: ^2
+  remove-flow-types-loader>loader-utils: '*'
+  '@ledgerhq/devices': workspace:*
+  tslib: 2.6.2
+  '@hashgraph/sdk>@hashgraph/cryptography': 1.1.2
+  '@hashgraph/sdk>@grpc/grpc-js': 1.6.7
+  '@ethersproject/providers>ws': 7.5.10
+  elliptic: 6.6.1
+
+packageExtensionsChecksum: 505470d279d34dbf557b1005424e3d1d
+
 pnpmfileChecksum: zrf5g6kngafbubzc7t2wu4uz4u
+
+patchedDependencies:
+  '@changesets/get-github-info@0.6.0':
+    hash: 7jzpsqogb5i6art53pk3h33ix4
+    path: patches/@changesets__get-github-info@0.6.0.patch
+  '@hashgraph/sdk@2.14.2':
+    hash: hno7opkpqo3efbuenv6ysglr4m
+    path: patches/@hashgraph__sdk@2.14.2.patch
+  asyncstorage-down@4.2.0:
+    hash: 2npkndps6fxdasqj3xzcrnnfbe
+    path: patches/asyncstorage-down@4.2.0.patch
+  buffer@6.0.3:
+    hash: 2xnca52oxhztvr7iaoovwclcze
+    path: patches/buffer@6.0.3.patch
+  detox:
+    hash: bvmee6puznwczhjmzfxagey6x4
+    path: patches/detox.patch
+  react-native-bundle-visualizer@3.1.3:
+    hash: fgdd2c4kpymhnfnsaf5bc33xwi
+    path: patches/react-native-bundle-visualizer@3.1.3.patch
+  react-native-fast-crypto@2.2.0:
+    hash: bmot5xcuajv3pdpobflt4ufvae
+    path: patches/react-native-fast-crypto@2.2.0.patch
+  react-native-fast-pbkdf2@0.3.1:
+    hash: hsxraxacbj7ixutjkwcickkwma
+    path: patches/react-native-fast-pbkdf2@0.3.1.patch
+  react-native-image-crop-tools@1.6.4:
+    hash: p6wzwon3gzjcspjalwhmuroog4
+    path: patches/react-native-image-crop-tools@1.6.4.patch
+  react-native-video@5.2.1:
+    hash: vl2q6vd2d45opudk6juqeyavs4
+    path: patches/react-native-video@5.2.1.patch
+  react-native-webview@13.10.3:
+    hash: 42avlvajmp3nsjxv67iugfa7uq
+    path: patches/react-native-webview@13.10.3.patch
+  rn-fetch-blob@0.12.0:
+    hash: n5yzdsrxz654upecs5xliebtmm
+    path: patches/rn-fetch-blob@0.12.0.patch
+  usb@2.9.0:
+    hash: d5pno5rjlboai2klvccu6wv334
+    path: patches/usb@2.9.0.patch
 
 importers:
 
@@ -1701,58 +1755,6 @@ importers:
       '@types/semver':
         specifier: ^7.3.9
         version: 7.5.8
-
-  e2e/desktop:
-    dependencies:
-      '@ledgerhq/live-cli':
-        specifier: workspace:^
-        version: link:../../apps/cli
-      '@ledgerhq/live-common':
-        specifier: workspace:^
-        version: link:../../libs/ledger-live-common
-      '@ledgerhq/live-env':
-        specifier: workspace:^
-        version: link:../../libs/env
-      '@ledgerhq/live-wallet':
-        specifier: workspace:^
-        version: link:../../libs/live-wallet
-      '@ledgerhq/types-live':
-        specifier: workspace:^
-        version: link:../../libs/ledgerjs/packages/types-live
-      '@playwright/test':
-        specifier: ^1.51.0
-        version: 1.51.1
-      '@types/node':
-        specifier: ^22.13.10
-        version: 22.13.13
-      allure-playwright:
-        specifier: ^3.2.0
-        version: 3.2.1(@playwright/test@1.51.1)
-      axios:
-        specifier: ^1.8.3
-        version: 1.8.3
-      dotenv:
-        specifier: ^16.4.7
-        version: 16.4.7
-      invariant:
-        specifier: ^2.2.4
-        version: 2.2.4
-      lodash:
-        specifier: ^4.17.21
-        version: 4.17.21
-      rxjs:
-        specifier: ^7.8.1
-        version: 7.8.1
-    devDependencies:
-      '@types/invariant':
-        specifier: 2.2.37
-        version: 2.2.37
-      '@types/lodash':
-        specifier: 4.17.16
-        version: 4.17.16
-      electron:
-        specifier: 32.0.2
-        version: 32.0.2
 
   libs/coin-framework:
     dependencies:
@@ -13624,11 +13626,6 @@ packages:
     engines: {node: '>=18'}
     hasBin: true
 
-  '@playwright/test@1.51.1':
-    resolution: {integrity: sha512-nM+kEaTSAoVlXmMPH10017vn3FSiFqr/bh4fKg9vmAdMfd9SDqRZNvPSiAHADc/itWak+qPvMPZQOPwCBW7k7Q==}
-    engines: {node: '>=18'}
-    hasBin: true
-
   '@pmmmwh/react-refresh-webpack-plugin@0.5.11':
     resolution: {integrity: sha512-7j/6vdTym0+qZ6u4XbSAxrWBGYSdCfTzySkj7WAFgDLmSyWlOrWvpyzxlFh5jtw9dn0oL/jtW+06XfFiisN3JQ==}
     engines: {node: '>= 10.13'}
@@ -17352,9 +17349,6 @@ packages:
   '@types/lodash@4.17.14':
     resolution: {integrity: sha512-jsxagdikDiDBeIRaPYtArcT8my4tN1og7MtMRquFT3XNA6axxyHDRUemqDz/taRDdOUn0GnGHRCuff4q48sW9A==}
 
-  '@types/lodash@4.17.16':
-    resolution: {integrity: sha512-HX7Em5NYQAXKW+1T+FiuG27NGwzJfCX3s1GjOa7ujxZa52kjJLOr4FUxT+giF6Tgxv1e+/czV/iTtBw27WTU9g==}
-
   '@types/lodash@4.17.7':
     resolution: {integrity: sha512-8wTvZawATi/lsmNu10/j2hk1KEP0IvjubqPE3cu1Xz7xfXXt5oCq3SNUz4fMIP4XGF9Ky+Ue2tBA3hcS7LSBlA==}
 
@@ -18438,21 +18432,8 @@ packages:
   allure-js-commons@2.15.1:
     resolution: {integrity: sha512-5V/VINplbu0APnfSZOkYpKOzucO36Q2EtTD1kqjWjl7n6tj7Hh+IHCZsH3Vpk/LXRDfj9RuXugBBvwYKV5YMJw==}
 
-  allure-js-commons@3.2.1:
-    resolution: {integrity: sha512-VGLv6u3I9NIm649dYmGpG3X5sOnI0tt7K1WYTVZPiEpnsxBbFEfDr6yAI7q509WWw/5g0VBCEtGEspd6AoYOqA==}
-    peerDependencies:
-      allure-playwright: 3.2.1
-    peerDependenciesMeta:
-      allure-playwright:
-        optional: true
-
   allure-playwright@2.15.1:
     resolution: {integrity: sha512-P1Uu1j/ptDHdYp3V5ZAeBZyt33+L+OQu0otUIEl/zkOcv0KRycHqlHwC0GEJmpgnLKvVP7s+K37LcLoSUUj3Cg==}
-
-  allure-playwright@3.2.1:
-    resolution: {integrity: sha512-IO0lDDz007hlaHH8hZzrvyaw0NR6ZOGBEPI/ANUGbBizFOXcDf9J/nHDCdsNrt/Qa13H4AGGU7sDjtng1evYgA==}
-    peerDependencies:
-      '@playwright/test': '>=1.36.0'
 
   anser@1.4.10:
     resolution: {integrity: sha512-hCv9AqTQ8ycjpSd3upOJd7vFwW1JaoYQ7tpham03GJ1ca8/65rqn0RpaWpItOAd6ylW9wAw6luXYPJIyPFVOww==}
@@ -21180,10 +21161,6 @@ packages:
 
   dotenv@16.4.5:
     resolution: {integrity: sha512-ZmdL2rui+eB2YwhsWzjInR8LldtZHGDoQ1ugH85ppHKwpUHL7j7rN0Ti9NCnGiQbhaZ11FpR+7ao1dNsmduNUg==}
-    engines: {node: '>=12'}
-
-  dotenv@16.4.7:
-    resolution: {integrity: sha512-47qPchRCykZC03FhkYAhrvwU4xDBFIj1QPqaarj6mdM/hgUzfPHcpkHJOn3mJAufFeeAxAzeGsr5X0M4k6fLZQ==}
     engines: {node: '>=12'}
 
   dotenv@8.6.0:
@@ -27327,11 +27304,6 @@ packages:
     engines: {node: '>=18'}
     hasBin: true
 
-  playwright-core@1.51.1:
-    resolution: {integrity: sha512-/crRMj8+j/Nq5s8QcvegseuyeZPxpQCZb6HNk3Sos3BlZyAknRjoyJPFWkpNn8v0+P3WiwqFF8P+zQo4eqiNuw==}
-    engines: {node: '>=18'}
-    hasBin: true
-
   playwright@1.40.1:
     resolution: {integrity: sha512-2eHI7IioIpQ0bS1Ovg/HszsN/XKNwEG1kbzSDDmADpclKc7CyqkHw7Mg2JCz/bbCxg25QUPcjksoMW7JcIFQmw==}
     engines: {node: '>=16'}
@@ -27339,11 +27311,6 @@ packages:
 
   playwright@1.45.0:
     resolution: {integrity: sha512-4z3ac3plDfYzGB6r0Q3LF8POPR20Z8D0aXcxbJvmfMgSSq1hkcgvFRXJk9rUq5H/MJ0Ktal869hhOdI/zUTeLA==}
-    engines: {node: '>=18'}
-    hasBin: true
-
-  playwright@1.51.1:
-    resolution: {integrity: sha512-kkx+MB2KQRkyxjYPc3a0wLZZoDczmppyGJIvQ43l+aZihkaVvmu/21kiyaHeHjiFxjxNNFnUncKmcGIyOojsaw==}
     engines: {node: '>=18'}
     hasBin: true
 
@@ -41091,10 +41058,6 @@ snapshots:
     dependencies:
       playwright: 1.45.0
 
-  '@playwright/test@1.51.1':
-    dependencies:
-      playwright: 1.51.1
-
   '@pmmmwh/react-refresh-webpack-plugin@0.5.11(react-refresh@0.10.0)(webpack-dev-server@4.15.2)(webpack@5.94.0)':
     dependencies:
       ansi-html-community: 0.0.8
@@ -47609,8 +47572,6 @@ snapshots:
 
   '@types/lodash@4.17.14': {}
 
-  '@types/lodash@4.17.16': {}
-
   '@types/lodash@4.17.7': {}
 
   '@types/long@4.0.2': {}
@@ -49314,21 +49275,10 @@ snapshots:
       properties: 1.2.1
       strip-ansi: 5.2.0
 
-  allure-js-commons@3.2.1(allure-playwright@3.2.1(@playwright/test@1.51.1)):
-    dependencies:
-      md5: 2.3.0
-    optionalDependencies:
-      allure-playwright: 3.2.1(@playwright/test@1.51.1)
-
   allure-playwright@2.15.1:
     dependencies:
       '@playwright/test': 1.45.0
       allure-js-commons: 2.15.1
-
-  allure-playwright@3.2.1(@playwright/test@1.51.1):
-    dependencies:
-      '@playwright/test': 1.51.1
-      allure-js-commons: 3.2.1(allure-playwright@3.2.1(@playwright/test@1.51.1))
 
   anser@1.4.10: {}
 
@@ -52877,8 +52827,6 @@ snapshots:
   dotenv@16.0.3: {}
 
   dotenv@16.4.5: {}
-
-  dotenv@16.4.7: {}
 
   dotenv@8.6.0: {}
 
@@ -62495,8 +62443,6 @@ snapshots:
 
   playwright-core@1.45.0: {}
 
-  playwright-core@1.51.1: {}
-
   playwright@1.40.1:
     dependencies:
       playwright-core: 1.40.1
@@ -62506,12 +62452,6 @@ snapshots:
   playwright@1.45.0:
     dependencies:
       playwright-core: 1.45.0
-    optionalDependencies:
-      fsevents: 2.3.2
-
-  playwright@1.51.1:
-    dependencies:
-      playwright-core: 1.51.1
     optionalDependencies:
       fsevents: 2.3.2
 
