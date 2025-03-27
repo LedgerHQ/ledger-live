@@ -13,7 +13,7 @@ import { decodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
 import { getNftCapabilities } from "@ledgerhq/coin-framework/nft/support";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import { Account, AccountLike, NFT, NFTStandard, Operation } from "@ledgerhq/types-live";
+import { Account, AccountLike, NFT, Operation } from "@ledgerhq/types-live";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import logger from "~/renderer/logger";
 import Stepper from "~/renderer/components/Stepper";
@@ -241,7 +241,6 @@ const Body = ({
       if (!specific.nft || !transaction) return;
 
       const bridge = getAccountBridge(mainAccount);
-      const standard = nextNft.standard.toLowerCase() as NFTStandard;
       const newTransaction = specific.nft.injectNftIntoTransaction(
         transaction,
         {
@@ -249,7 +248,7 @@ const Body = ({
           tokenId: nextNft.tokenId,
           quantity: new BigNumber(1),
         },
-        standard,
+        nextNft.standard,
       );
 
       setTransaction(bridge?.updateTransaction(transaction, newTransaction));

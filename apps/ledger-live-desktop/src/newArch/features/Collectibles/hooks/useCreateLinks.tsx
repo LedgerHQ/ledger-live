@@ -15,65 +15,78 @@ import { createOrdinalExplorerUrl } from "../utils/createOrdinalExplorerUrl";
 
 const createLinks = (
   t: TFunction,
-  links: Record<string, string> | SimpleHashNft["collection"]["marketplace_pages"] | undefined,
+  links:
+    | Record<string, string | null>
+    | SimpleHashNft["collection"]["marketplace_pages"]
+    | undefined,
   isSimpleHash: boolean,
-  explorerLink?: string,
+  explorerLink?: string | null,
 ): ContextMenuItemType[] => {
   if (isSimpleHash) {
     const marketplacePages = Array.isArray(links) ? links : [];
-    return safeList(
-      [
-        ...marketplacePages
-          .filter(link => link.marketplace_id === ExternalIdEnum.MAGICEDEN)
-          .map(link => ({
-            id: link.marketplace_id,
-            label: t("NFT.viewer.actions.open", { viewer: ViewerEnum.MAGICEDEN }),
-            Icon: IconMagicEden,
-            type: ItemType.EXTERNAL,
-            callback: () => openURL(link.nft_url),
-          })),
-        ...(marketplacePages.length > 0 ? [{ id: "sep2", type: "separator", label: "" }] : []),
-        ...(explorerLink
-          ? [
-              {
-                id: ExternalIdEnum.EXPLORER,
-                label: t("NFT.viewer.actions.open", { viewer: ViewerEnum.EXPLORER }),
-                Icon: IconsLegacy.GlobeMedium,
-                type: ItemType.EXTERNAL,
-                callback: () => openURL(explorerLink),
-              },
-            ]
-          : []),
-      ].filter(Boolean),
-    );
+    return safeList([
+      ...marketplacePages
+        .filter(link => link.marketplace_id === ExternalIdEnum.MAGICEDEN)
+        .map(link => ({
+          id: link.marketplace_id,
+          label: t("NFT.viewer.actions.open", { viewer: ViewerEnum.MAGICEDEN }),
+          Icon: IconMagicEden,
+          type: ItemType.EXTERNAL,
+          callback: () => openURL(link.nft_url),
+        })),
+      ...(marketplacePages.length > 0 ? [{ id: "sep2", type: "separator", label: "" }] : []),
+      ...(explorerLink
+        ? [
+            {
+              id: ExternalIdEnum.EXPLORER,
+              label: t("NFT.viewer.actions.open", { viewer: ViewerEnum.EXPLORER }),
+              Icon: IconsLegacy.GlobeMedium,
+              type: ItemType.EXTERNAL,
+              callback: () => openURL(explorerLink),
+            },
+          ]
+        : []),
+    ]);
   } else {
-    const linksRecord = links as Record<string, string>;
-    return safeList(
-      [
-        linksRecord.opensea && {
-          id: ExternalIdEnum.OPENSEA,
-          label: t("NFT.viewer.actions.open", { viewer: ViewerEnum.OPENSEA }),
-          Icon: IconOpensea,
-          type: ItemType.EXTERNAL,
-          callback: () => openURL(linksRecord.opensea),
-        },
-        linksRecord.rarible && {
-          id: ExternalIdEnum.RARIBLE,
-          label: t("NFT.viewer.actions.open", { viewer: ViewerEnum.RARIBLE }),
-          Icon: IconRarible,
-          type: ItemType.EXTERNAL,
-          callback: () => openURL(linksRecord.rarible),
-        },
-        { id: "sep2", type: "separator", label: "" },
-        linksRecord.explorer && {
-          id: ExternalIdEnum.EXPLORER,
-          label: t("NFT.viewer.actions.open", { viewer: ViewerEnum.EXPLORER }),
-          Icon: IconsLegacy.GlobeMedium,
-          type: ItemType.EXTERNAL,
-          callback: () => openURL(linksRecord.explorer),
-        },
-      ].filter(Boolean),
-    );
+    const linksRecord = Array.isArray(links) ? undefined : links;
+    const list: ContextMenuItemType[] = [];
+
+    if (linksRecord?.opensea) {
+      const link = linksRecord.opensea;
+      list.push({
+        id: ExternalIdEnum.OPENSEA,
+        label: t("NFT.viewer.actions.open", { viewer: ViewerEnum.OPENSEA }),
+        Icon: IconOpensea,
+        type: ItemType.EXTERNAL,
+        callback: () => openURL(link),
+      });
+    }
+
+    if (linksRecord?.rarible) {
+      const link = linksRecord.rarible;
+      list.push({
+        id: ExternalIdEnum.RARIBLE,
+        label: t("NFT.viewer.actions.open", { viewer: ViewerEnum.RARIBLE }),
+        Icon: IconRarible,
+        type: ItemType.EXTERNAL,
+        callback: () => openURL(link),
+      });
+    }
+
+    list.push({ id: "sep2", type: "separator", label: "" });
+
+    if (linksRecord?.explorer) {
+      const link = linksRecord.explorer;
+      list.push({
+        id: ExternalIdEnum.EXPLORER,
+        label: t("NFT.viewer.actions.open", { viewer: ViewerEnum.EXPLORER }),
+        Icon: IconsLegacy.GlobeMedium,
+        type: ItemType.EXTERNAL,
+        callback: () => openURL(link),
+      });
+    }
+
+    return list;
   }
 };
 
