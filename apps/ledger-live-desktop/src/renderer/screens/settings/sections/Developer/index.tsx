@@ -28,6 +28,7 @@ import EnableAnalyticsConsole from "./EnableAnalyticsConsole";
 import BrazeTools from "./BrazeTools";
 import { RecoverUpsellRow } from "./RecoverUpsellRow";
 import NftsTools from "./NftsTools";
+import EnablePlatformDeviceSwitchToggle from "./EnablePlatformDeviceSwitchToggle";
 
 const Default = () => {
   const { t } = useTranslation();
@@ -70,6 +71,12 @@ const Default = () => {
         desc={t("settings.developer.enablePlatformDevToolsDesc")}
       >
         <EnablePlatformDevToolsToggle />
+      </Row>
+      <Row
+        title={t("settings.developer.enablePlatformDeviceSwitch")}
+        desc={t("settings.developer.enablePlatformDeviceSwitchDesc")}
+      >
+        <EnablePlatformDeviceSwitchToggle />
       </Row>
       <Row
         title={t("settings.developer.analyticsConsole.title")}
