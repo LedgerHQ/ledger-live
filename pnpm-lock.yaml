@@ -4210,8 +4210,8 @@ importers:
         specifier: workspace:^
         version: link:../device-core
       '@ledgerhq/device-management-kit':
-        specifier: 0.6.3
-        version: 0.6.3(rxjs@7.8.1)
+        specifier: 0.0.0-develop-20250327001140
+        version: 0.0.0-develop-20250327001140(rxjs@7.8.1)
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../ledgerjs/packages/devices
@@ -6812,11 +6812,11 @@ importers:
   libs/live-dmk:
     dependencies:
       '@ledgerhq/device-management-kit':
-        specifier: 0.6.3
-        version: 0.6.3(rxjs@7.8.1)
+        specifier: 0.0.0-develop-20250327001140
+        version: 0.0.0-develop-20250327001140(rxjs@7.8.1)
       '@ledgerhq/device-transport-kit-web-hid':
-        specifier: 1.1.0
-        version: 1.1.0(@ledgerhq/device-management-kit@0.6.3(rxjs@7.8.1))(rxjs@7.8.1)
+        specifier: 0.0.0-develop-20250327001140
+        version: 0.0.0-develop-20250327001140(@ledgerhq/device-management-kit@0.0.0-develop-20250327001140(rxjs@7.8.1))(rxjs@7.8.1)
       '@ledgerhq/hw-transport':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-transport
@@ -7017,14 +7017,14 @@ importers:
         specifier: workspace:^
         version: link:../coin-modules/coin-evm
       '@ledgerhq/context-module':
-        specifier: 1.3.0
-        version: 1.3.0(@ledgerhq/device-management-kit@0.6.3(rxjs@7.8.1))
+        specifier: 0.0.0-develop-20250327001140
+        version: 0.0.0-develop-20250327001140(@ledgerhq/device-management-kit@0.0.0-develop-20250327001140(rxjs@7.8.1))
       '@ledgerhq/device-management-kit':
-        specifier: 0.6.3
-        version: 0.6.3(rxjs@7.8.1)
+        specifier: 0.0.0-develop-20250327001140
+        version: 0.0.0-develop-20250327001140(rxjs@7.8.1)
       '@ledgerhq/device-signer-kit-ethereum':
-        specifier: 1.3.0
-        version: 1.3.0(@ledgerhq/context-module@1.3.0(@ledgerhq/device-management-kit@0.6.3(rxjs@7.8.1)))(@ledgerhq/device-management-kit@0.6.3(rxjs@7.8.1))
+        specifier: 0.0.0-develop-20250327001140
+        version: 0.0.0-develop-20250327001140(@ledgerhq/context-module@0.0.0-develop-20250327001140(@ledgerhq/device-management-kit@0.0.0-develop-20250327001140(rxjs@7.8.1)))(@ledgerhq/device-management-kit@0.0.0-develop-20250327001140(rxjs@7.8.1))
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../ledgerjs/packages/errors
@@ -12167,10 +12167,10 @@ packages:
     version: 1.3.1
     hasBin: true
 
-  '@ledgerhq/context-module@1.3.0':
-    resolution: {integrity: sha512-VgidnK8CQT8E4DXZPnMawJhPwgTG94aa0b+mPiR2JLxzyXNqjwNEHrhhptTfELir4ctrz5W9aj9a948fpAHu9g==}
+  '@ledgerhq/context-module@0.0.0-develop-20250327001140':
+    resolution: {integrity: sha512-6tSCJvYKPmEV9Uus5sO9QJWtrabzcnr+aeSjXDWXSFYfqHAnmoQfl68PAaOwp1olLDE+HpnVXGbePJyqtuPghg==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': 0.6.2
+      '@ledgerhq/device-management-kit': 0.0.0-develop-20250327001140
 
   '@ledgerhq/crypto-icons-ui@file:libs/ui/packages/crypto-icons':
     resolution: {directory: libs/ui/packages/crypto-icons, type: directory}
@@ -12190,21 +12190,21 @@ packages:
   '@ledgerhq/cryptoassets@6.37.0':
     resolution: {integrity: sha512-xwrDKTS9koQBNNzc7CqgV6zfGHvNFWJjlIL0Kc4O4DVWYR2vUdztUHcvwHD1KPjxNYhVnsgIopmtq47fHt3nMg==}
 
-  '@ledgerhq/device-management-kit@0.6.3':
-    resolution: {integrity: sha512-IYR9ToN+2XwzlIJPbmtsvJp3mHGAs+secIG9o20yBQdj3NEPi5MyBE08IC9D3h5NClQGwdKniypncZBRwvXa9Q==}
+  '@ledgerhq/device-management-kit@0.0.0-develop-20250327001140':
+    resolution: {integrity: sha512-b+EIrkFvvLkIWk0EaZU+3FNTWf91zxuFq6wbYUYoEJg/ioZ5dM0B2sS9Z7CMvjokmZUQMwmR3cxXunIo4rTq1Q==}
     peerDependencies:
       rxjs: ^7.8.2
 
-  '@ledgerhq/device-signer-kit-ethereum@1.3.0':
-    resolution: {integrity: sha512-UM+UnckhNrs1WezamgSZ7nnBWPP9g9Qmg4ASmkGLZthnOlWbqBhBgjsCdL/QOxgFW5MtfWMzHlpxuuuH9Y9cdg==}
+  '@ledgerhq/device-signer-kit-ethereum@0.0.0-develop-20250327001140':
+    resolution: {integrity: sha512-ihnS9sPfceEjjh+i0LBD3P1k1xKM13p2VGoEMe22dM8MJA9aUtPTFY1jw/hCwP/T6I5H/AJ+9k/lORNTYpoZlA==}
     peerDependencies:
-      '@ledgerhq/context-module': 1.3.0
-      '@ledgerhq/device-management-kit': 0.6.2
+      '@ledgerhq/context-module': 0.0.0-develop-20250327001140
+      '@ledgerhq/device-management-kit': 0.0.0-develop-20250327001140
 
-  '@ledgerhq/device-transport-kit-web-hid@1.1.0':
-    resolution: {integrity: sha512-fDXsaeccDZQlAzzXjMtnl/jh3CUANoZj+qbzQjRSOp0aojOjIU+uh4WajLLQ0Ov46wxkS6Yd8xXw8F3p822ohg==}
+  '@ledgerhq/device-transport-kit-web-hid@0.0.0-develop-20250327001140':
+    resolution: {integrity: sha512-RJd9pyEWJq/FuNshfObl2NShS/TAKu4Yw+WzwY0eFJXR84JN0nytsQTuXVDFk+zKj1xFuABc0fSPHeLyarne6A==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': '>=0.6.2'
+      '@ledgerhq/device-management-kit': 0.0.0-develop-20250327001140
       rxjs: ^7.8.2
 
   '@ledgerhq/domain-service@1.2.12':
@@ -12271,10 +12271,10 @@ packages:
   '@ledgerhq/logs@6.12.0':
     resolution: {integrity: sha512-ExDoj1QV5eC6TEbMdLUMMk9cfvNKhhv5gXol4SmULRVCx/3iyCPhJ74nsb3S0Vb+/f+XujBEj3vQn5+cwS0fNA==}
 
-  '@ledgerhq/signer-utils@1.0.4':
-    resolution: {integrity: sha512-74b0x/DW4DIE3dbAc/SYyL/wGtUQl74/7Ap0kNg2oTuAW3H2iLqfgOzatcUiyvn9qPmDFa72eAkgGLU7LLbJ5A==}
+  '@ledgerhq/signer-utils@0.0.0-develop-20250327001140':
+    resolution: {integrity: sha512-8VStfrwO2UIMDgTwM5WlhLsg7kVGPVeM1ZN6jVtS/N0uHEhVdJKLVnYWRBDW2iJQVNjK3FWi2bI7qA3SOuuhrQ==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': 0.6.2
+      '@ledgerhq/device-management-kit': 0.0.0-develop-20250327001140
 
   '@ledgerhq/types-live@6.53.1':
     resolution: {integrity: sha512-ukaDDyxg7quBQ0vdoQQjj3ICqiG13gO/rGIO0Jm2nRh/icbLWgxfsI2wX0u0ugJQJ+q/muiX+wJrMJn9EKhEaQ==}
@@ -18043,6 +18043,9 @@ packages:
 
   axios@1.7.9:
     resolution: {integrity: sha512-LhLcE7Hbiryz8oMDdDptSrWowmB4Bl6RCt6sIJKpRB4XtVf0iEgewX3au/pJqm+Py1kCASkb/FFKjxQaLtxJvw==}
+
+  axios@1.8.4:
+    resolution: {integrity: sha512-eBSYY4Y68NNlHbHBMdeDmKNtDgXWhQsJcGqzO3iLUM0GraQFSS9cVgPX5I9b3lbdFKyYoAEGAZF1DwhTaljNAw==}
 
   axobject-query@3.2.1:
     resolution: {integrity: sha512-jsyHu61e6N4Vbz/v18DHwWYKK0bSWLqn47eeDSKPB7m8tqMHF9YJ+mhIk2lVteyZrY8tnSj/jHOv4YiTCuCJgg==}
@@ -38989,10 +38992,10 @@ snapshots:
     dependencies:
       commander: 2.20.3
 
-  '@ledgerhq/context-module@1.3.0(@ledgerhq/device-management-kit@0.6.3(rxjs@7.8.1))':
+  '@ledgerhq/context-module@0.0.0-develop-20250327001140(@ledgerhq/device-management-kit@0.0.0-develop-20250327001140(rxjs@7.8.1))':
     dependencies:
-      '@ledgerhq/device-management-kit': 0.6.3(rxjs@7.8.1)
-      axios: 1.7.9
+      '@ledgerhq/device-management-kit': 0.0.0-develop-20250327001140(rxjs@7.8.1)
+      axios: 1.8.4
       crypto-js: 4.2.0
       ethers: 6.13.4
       inversify: 6.2.2(reflect-metadata@0.2.2)
@@ -39019,10 +39022,10 @@ snapshots:
     dependencies:
       invariant: 2.2.4
 
-  '@ledgerhq/device-management-kit@0.6.3(rxjs@7.8.1)':
+  '@ledgerhq/device-management-kit@0.0.0-develop-20250327001140(rxjs@7.8.1)':
     dependencies:
       '@sentry/minimal': 6.19.7
-      axios: 1.7.9
+      axios: 1.8.4
       inversify: 6.2.2(reflect-metadata@0.2.2)
       inversify-logger-middleware: 3.1.0
       isomorphic-ws: 5.0.0(ws@8.18.0)
@@ -39038,11 +39041,11 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/device-signer-kit-ethereum@1.3.0(@ledgerhq/context-module@1.3.0(@ledgerhq/device-management-kit@0.6.3(rxjs@7.8.1)))(@ledgerhq/device-management-kit@0.6.3(rxjs@7.8.1))':
+  '@ledgerhq/device-signer-kit-ethereum@0.0.0-develop-20250327001140(@ledgerhq/context-module@0.0.0-develop-20250327001140(@ledgerhq/device-management-kit@0.0.0-develop-20250327001140(rxjs@7.8.1)))(@ledgerhq/device-management-kit@0.0.0-develop-20250327001140(rxjs@7.8.1))':
     dependencies:
-      '@ledgerhq/context-module': 1.3.0(@ledgerhq/device-management-kit@0.6.3(rxjs@7.8.1))
-      '@ledgerhq/device-management-kit': 0.6.3(rxjs@7.8.1)
-      '@ledgerhq/signer-utils': 1.0.4(@ledgerhq/device-management-kit@0.6.3(rxjs@7.8.1))
+      '@ledgerhq/context-module': 0.0.0-develop-20250327001140(@ledgerhq/device-management-kit@0.0.0-develop-20250327001140(rxjs@7.8.1))
+      '@ledgerhq/device-management-kit': 0.0.0-develop-20250327001140(rxjs@7.8.1)
+      '@ledgerhq/signer-utils': 0.0.0-develop-20250327001140(@ledgerhq/device-management-kit@0.0.0-develop-20250327001140(rxjs@7.8.1))
       ethers: 6.13.4
       inversify: 6.2.2(reflect-metadata@0.2.2)
       inversify-logger-middleware: 3.1.0
@@ -39054,9 +39057,9 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/device-transport-kit-web-hid@1.1.0(@ledgerhq/device-management-kit@0.6.3(rxjs@7.8.1))(rxjs@7.8.1)':
+  '@ledgerhq/device-transport-kit-web-hid@0.0.0-develop-20250327001140(@ledgerhq/device-management-kit@0.0.0-develop-20250327001140(rxjs@7.8.1))(rxjs@7.8.1)':
     dependencies:
-      '@ledgerhq/device-management-kit': 0.6.3(rxjs@7.8.1)
+      '@ledgerhq/device-management-kit': 0.0.0-develop-20250327001140(rxjs@7.8.1)
       '@sentry/minimal': 6.19.7
       purify-ts: 2.1.0
       rxjs: 7.8.1
@@ -39171,9 +39174,9 @@ snapshots:
 
   '@ledgerhq/logs@6.12.0': {}
 
-  '@ledgerhq/signer-utils@1.0.4(@ledgerhq/device-management-kit@0.6.3(rxjs@7.8.1))':
+  '@ledgerhq/signer-utils@0.0.0-develop-20250327001140(@ledgerhq/device-management-kit@0.0.0-develop-20250327001140(rxjs@7.8.1))':
     dependencies:
-      '@ledgerhq/device-management-kit': 0.6.3(rxjs@7.8.1)
+      '@ledgerhq/device-management-kit': 0.0.0-develop-20250327001140(rxjs@7.8.1)
 
   '@ledgerhq/types-live@6.53.1':
     dependencies:
@@ -44482,7 +44485,7 @@ snapshots:
       swc-loader: 0.2.6(@swc/core@1.4.11)(webpack@5.94.0(esbuild@0.19.12))
       terser-webpack-plugin: 5.3.10(@swc/core@1.4.11)(esbuild@0.19.12)(webpack@5.94.0(esbuild@0.19.12))
       ts-dedent: 2.2.0
-      url: 0.11.3
+      url: 0.11.4
       util: 0.12.5
       util-deprecate: 1.0.2
       webpack: 5.94.0(@swc/core@1.4.11)(esbuild@0.19.12)
@@ -44534,7 +44537,7 @@ snapshots:
       swc-loader: 0.2.6(@swc/core@1.4.11)(webpack@5.94.0(metro@0.80.12))
       terser-webpack-plugin: 5.3.10(@swc/core@1.4.11)(metro@0.80.12)(webpack@5.94.0(metro@0.80.12))
       ts-dedent: 2.2.0
-      url: 0.11.3
+      url: 0.11.4
       util: 0.12.5
       util-deprecate: 1.0.2
       webpack: 5.94.0(@swc/core@1.4.11)(metro@0.80.12)
@@ -48519,6 +48522,12 @@ snapshots:
       proxy-from-env: 1.1.0
 
   axios@1.7.9:
+    dependencies:
+      follow-redirects: 1.15.6
+      form-data: 4.0.0
+      proxy-from-env: 1.1.0
+
+  axios@1.8.4:
     dependencies:
       follow-redirects: 1.15.6
       form-data: 4.0.0
