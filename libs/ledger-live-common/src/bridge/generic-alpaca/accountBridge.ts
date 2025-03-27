@@ -21,10 +21,10 @@ export function getAlpacaAccountBridge(network: string, kind: string): AccountBr
     receive: makeAccountBridgeReceive(getAddressWrapper(signer.getAddress)),
     createTransaction: createTransaction,
     updateTransaction: updateTransaction<any>,
-    prepareTransaction: genericPrepareTransaction(network, kind) as any,
-    getTransactionStatus: genericGetTransactionStatus(network, kind) as any,
-    estimateMaxSpendable: genericEstimateMaxSpendable(network, kind) as any,
+    prepareTransaction: genericPrepareTransaction(network, kind),
+    getTransactionStatus: genericGetTransactionStatus(network, kind),
+    estimateMaxSpendable: genericEstimateMaxSpendable(network, kind),
     broadcast: genericBroadcast(network, kind),
-    signOperation: genericSignOperation(network, kind)(signer.context) as any,
+    signOperation: genericSignOperation(network, kind)(signer.context),
   } satisfies Partial<AccountBridge<any>> as AccountBridge<any>;
 }
