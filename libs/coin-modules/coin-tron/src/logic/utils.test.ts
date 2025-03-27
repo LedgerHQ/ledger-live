@@ -115,7 +115,7 @@ describe("decodeTransaction", () => {
 
 const TRX_MAGNITUDE = 1_000_000; // Magnitude 6
 
-describe.only("getTronResources", () => {
+describe("getTronResources", () => {
   const parameters = [
     {
       name: "empty",

@@ -8,6 +8,7 @@ import type {
   BandwidthInfo,
   NetworkInfo,
   Transaction,
+  TronAccount,
   TrongridTxInfo,
   TronOperation,
   TronOperationMode,
@@ -258,4 +259,8 @@ export async function getTronResources(
     lastVotedDate,
     cacheTransactionInfoById,
   };
+}
+
+export function isAccountEmpty({ tronResources }: Pick<TronAccount, "tronResources">) {
+  return tronResources.bandwidth.freeLimit.eq(0);
 }

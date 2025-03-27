@@ -12,6 +12,7 @@ import { findTokenById, getTokenById } from "@ledgerhq/cryptoassets/tokens";
 import { VTHO_ADDRESS } from "../contracts/constants";
 import { GetAccountShape, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { Account } from "@ledgerhq/types-live";
+import { isAccountEmpty } from "./helpers";
 
 export const getAccountShape: GetAccountShape<Account> = async info => {
   const { initialAccount, currency, derivationMode } = info;
@@ -80,8 +81,10 @@ export const getAccountShape: GetAccountShape<Account> = async info => {
         swapHistory: [],
       },
     ],
-    used: !(operations.length === 0 && BigNumber(balance).isZero() && BigNumber(energy).isZero()),
   };
 
-  return shape;
+  return {
+    ...shape,
+    used: !isAccountEmpty(shape),
+  };
 };
