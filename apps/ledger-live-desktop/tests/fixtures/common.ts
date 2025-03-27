@@ -14,7 +14,7 @@ import { captureArtifacts } from "tests/utils/allureUtils";
 import { randomUUID } from "crypto";
 import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { lastValueFrom, Observable } from "rxjs";
-import { registerSpeculosTransport } from "@ledgerhq/live-cli/src/live-common-setup";
+import { CLI } from "../utils/cliUtils";
 
 type TestFixtures = {
   lang: string;
@@ -113,14 +113,16 @@ export const test = base.extend<TestFixtures>({
           specs[speculosApp.name.replace(/ /g, "_")],
         );
         invariant(device, "[E2E Setup] Speculos not started");
-        const speculosApiPort = device.ports.apiPort;
-        invariant(speculosApiPort, "[E2E Setup] speculosApiPort not defined");
+        invariant(device.ports.apiPort, "[E2E Setup] speculosApiPort not defined");
+        const speculosApiPort = device.ports.apiPort.toString();
 
-        setEnv("SPECULOS_API_PORT", speculosApiPort.toString());
+        setEnv("SPECULOS_API_PORT", speculosApiPort);
         setEnv("MOCK", "");
+        process.env.SPECULOS_API_PORT = speculosApiPort;
+        process.env.MOCK = "";
 
         if (cliCommands?.length) {
-          registerSpeculosTransport(device?.ports.apiPort);
+          CLI.registerSpeculosTransport(speculosApiPort);
           for (const cmd of cliCommands) {
             const promise = await cmd(`${userdataDestinationPath}/app.json`);
             const result =
