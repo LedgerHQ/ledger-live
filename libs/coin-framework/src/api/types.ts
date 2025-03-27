@@ -51,7 +51,8 @@ export type TransactionIntent<
   Sender extends Record<string, string> | string = string,
 > = {
   type: string;
-  sender: Sender;
+  sender: string;
+  senderPublicKey?: string;
   recipient: string;
   amount: bigint;
   asset: AssetInfo;
