@@ -1,5 +1,16 @@
 # @ledgerhq/live-countervalues
 
+## 0.5.0-nightly.0
+
+### Minor Changes
+
+- [#9669](https://github.com/LedgerHQ/ledger-live/pull/9669) [`b9defcd`](https://github.com/LedgerHQ/ledger-live/commit/b9defcdcb44c6be2c141801a4e0dd27e72f83024) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add the display of token accounts with the new accounts list UI
+
+### Patch Changes
+
+- Updated dependencies [[`2785d49`](https://github.com/LedgerHQ/ledger-live/commit/2785d49ac320498f98ed39b4eccc48310ad35fe1)]:
+  - @ledgerhq/coin-framework@2.5.0-nightly.0
+
 ## 0.4.5
 
 ### Patch Changes

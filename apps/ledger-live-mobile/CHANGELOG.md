@@ -1,5 +1,37 @@
 # live-mobile
 
+## 3.72.0-nightly.0
+
+### Minor Changes
+
+- [#9581](https://github.com/LedgerHQ/ledger-live/pull/9581) [`de7d4db`](https://github.com/LedgerHQ/ledger-live/commit/de7d4db671d7eb57bc18e1fa56b8475cdf92edd2) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - '-' in neutral color displayed for 0% variation in market and asset list on LLM
+
+- [#9665](https://github.com/LedgerHQ/ledger-live/pull/9665) [`776931c`](https://github.com/LedgerHQ/ledger-live/commit/776931c6629fb6076e8f6a8b8bb261226fe5fd78) Thanks [@Canestin](https://github.com/Canestin)! - change validate adress wording
+
+- [#9668](https://github.com/LedgerHQ/ledger-live/pull/9668) [`fb12125`](https://github.com/LedgerHQ/ledger-live/commit/fb12125c9194d59462c31102d20f182b976f0f98) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Custom LockScreen Solana
+
+- [#9658](https://github.com/LedgerHQ/ledger-live/pull/9658) [`15949d6`](https://github.com/LedgerHQ/ledger-live/commit/15949d61553953e3d4ecf8b571c13ae861865aa7) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Rework getFloorPrice usage in LL and add support for Solana
+
+- [#9651](https://github.com/LedgerHQ/ledger-live/pull/9651) [`f8223f1`](https://github.com/LedgerHQ/ledger-live/commit/f8223f165b6594ae641d9f50d77fcb906cdd14fb) Thanks [@Canestin](https://github.com/Canestin)! - Redirect to the help page with the correct locale
+
+- [#9669](https://github.com/LedgerHQ/ledger-live/pull/9669) [`b9defcd`](https://github.com/LedgerHQ/ledger-live/commit/b9defcdcb44c6be2c141801a4e0dd27e72f83024) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add the display of token accounts with the new accounts list UI
+
+### Patch Changes
+
+- Updated dependencies [[`2785d49`](https://github.com/LedgerHQ/ledger-live/commit/2785d49ac320498f98ed39b4eccc48310ad35fe1), [`6c7fd10`](https://github.com/LedgerHQ/ledger-live/commit/6c7fd10264bd50de88c75827d28a7a4692e1e880), [`ad6d873`](https://github.com/LedgerHQ/ledger-live/commit/ad6d87394cf53f7912a1aa7a5392635570b8374f), [`6116909`](https://github.com/LedgerHQ/ledger-live/commit/61169099ce63dfa73e52065327ca3c889c315cb8), [`15949d6`](https://github.com/LedgerHQ/ledger-live/commit/15949d61553953e3d4ecf8b571c13ae861865aa7), [`b9defcd`](https://github.com/LedgerHQ/ledger-live/commit/b9defcdcb44c6be2c141801a4e0dd27e72f83024)]:
+  - @ledgerhq/coin-multiversx@0.3.0-nightly.0
+  - @ledgerhq/coin-filecoin@1.8.0-nightly.0
+  - @ledgerhq/coin-cosmos@0.11.0-nightly.0
+  - @ledgerhq/coin-stacks@0.7.0-nightly.0
+  - @ledgerhq/coin-evm@2.15.0-nightly.0
+  - @ledgerhq/coin-framework@2.5.0-nightly.0
+  - @ledgerhq/live-common@34.28.0-nightly.0
+  - @ledgerhq/live-nft@0.7.0-nightly.0
+  - @ledgerhq/live-countervalues@0.5.0-nightly.0
+  - @ledgerhq/live-countervalues-react@0.2.28-nightly.0
+  - @ledgerhq/live-nft-react@0.7.3-nightly.0
+  - @ledgerhq/live-wallet@0.10.2-nightly.0
+
 ## 3.71.0
 
 ### Minor Changes

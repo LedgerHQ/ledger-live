@@ -1,5 +1,18 @@
 # @ledgerhq/coin-cosmos
 
+## 0.11.0-nightly.0
+
+### Minor Changes
+
+- [#9298](https://github.com/LedgerHQ/ledger-live/pull/9298) [`2785d49`](https://github.com/LedgerHQ/ledger-live/commit/2785d49ac320498f98ed39b4eccc48310ad35fe1) Thanks [@Canestin](https://github.com/Canestin)! - config coin-integration env for sonarqube
+
+- [#9677](https://github.com/LedgerHQ/ledger-live/pull/9677) [`6c7fd10`](https://github.com/LedgerHQ/ledger-live/commit/6c7fd10264bd50de88c75827d28a7a4692e1e880) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix(coin-cosmos): update ldc endpoint
+
+### Patch Changes
+
+- Updated dependencies [[`2785d49`](https://github.com/LedgerHQ/ledger-live/commit/2785d49ac320498f98ed39b4eccc48310ad35fe1)]:
+  - @ledgerhq/coin-framework@2.5.0-nightly.0
+
 ## 0.10.0
 
 ### Minor Changes

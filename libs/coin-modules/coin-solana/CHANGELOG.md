@@ -1,5 +1,18 @@
 # @ledgerhq/coin-solana
 
+## 0.17.0-nightly.0
+
+### Minor Changes
+
+- [#9673](https://github.com/LedgerHQ/ledger-live/pull/9673) [`569250f`](https://github.com/LedgerHQ/ledger-live/commit/569250f97580256b69b3901b8056ea4dce407bff) Thanks [@Justkant](https://github.com/Justkant)! - fix: disable ky default timeout with solana coin
+
+- [#9298](https://github.com/LedgerHQ/ledger-live/pull/9298) [`2785d49`](https://github.com/LedgerHQ/ledger-live/commit/2785d49ac320498f98ed39b4eccc48310ad35fe1) Thanks [@Canestin](https://github.com/Canestin)! - config coin-integration env for sonarqube
+
+### Patch Changes
+
+- Updated dependencies [[`2785d49`](https://github.com/LedgerHQ/ledger-live/commit/2785d49ac320498f98ed39b4eccc48310ad35fe1)]:
+  - @ledgerhq/coin-framework@2.5.0-nightly.0
+
 ## 0.16.0
 
 ### Minor Changes

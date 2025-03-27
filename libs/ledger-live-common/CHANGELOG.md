@@ -1,5 +1,63 @@
 ## 34.25.0
 
+## 34.28.0-nightly.0
+
+### Minor Changes
+
+- [#9660](https://github.com/LedgerHQ/ledger-live/pull/9660) [`ad6d873`](https://github.com/LedgerHQ/ledger-live/commit/ad6d87394cf53f7912a1aa7a5392635570b8374f) Thanks [@jonezque](https://github.com/jonezque)! - chore: bumped wallet-api with sui integration
+
+### Patch Changes
+
+- Updated dependencies [[`569250f`](https://github.com/LedgerHQ/ledger-live/commit/569250f97580256b69b3901b8056ea4dce407bff), [`2785d49`](https://github.com/LedgerHQ/ledger-live/commit/2785d49ac320498f98ed39b4eccc48310ad35fe1), [`6c7fd10`](https://github.com/LedgerHQ/ledger-live/commit/6c7fd10264bd50de88c75827d28a7a4692e1e880), [`ad6d873`](https://github.com/LedgerHQ/ledger-live/commit/ad6d87394cf53f7912a1aa7a5392635570b8374f), [`6116909`](https://github.com/LedgerHQ/ledger-live/commit/61169099ce63dfa73e52065327ca3c889c315cb8), [`15949d6`](https://github.com/LedgerHQ/ledger-live/commit/15949d61553953e3d4ecf8b571c13ae861865aa7), [`b9defcd`](https://github.com/LedgerHQ/ledger-live/commit/b9defcdcb44c6be2c141801a4e0dd27e72f83024)]:
+  - @ledgerhq/coin-solana@0.17.0-nightly.0
+  - @ledgerhq/coin-internet_computer@1.6.0-nightly.0
+  - @ledgerhq/hw-app-multiversx@6.23.0-nightly.0
+  - @ledgerhq/hw-app-algorand@6.30.0-nightly.0
+  - @ledgerhq/hw-app-exchange@0.9.0-nightly.0
+  - @ledgerhq/hw-app-polkadot@6.33.0-nightly.0
+  - @ledgerhq/hw-app-cosmos@6.31.0-nightly.0
+  - @ledgerhq/hw-app-hedera@1.1.0-nightly.0
+  - @ledgerhq/hw-app-solana@7.3.0-nightly.0
+  - @ledgerhq/hw-app-aptos@6.33.0-nightly.0
+  - @ledgerhq/hw-app-tezos@6.30.0-nightly.0
+  - @ledgerhq/hw-app-icon@1.2.0-nightly.0
+  - @ledgerhq/hw-app-near@6.30.0-nightly.0
+  - @ledgerhq/coin-multiversx@0.3.0-nightly.0
+  - @ledgerhq/hw-app-btc@10.7.0-nightly.0
+  - @ledgerhq/hw-app-eth@6.44.0-nightly.0
+  - @ledgerhq/hw-app-str@7.1.0-nightly.0
+  - @ledgerhq/hw-app-trx@6.30.0-nightly.0
+  - @ledgerhq/hw-app-vet@0.4.0-nightly.2
+  - @ledgerhq/hw-app-xrp@6.30.0-nightly.0
+  - @ledgerhq/coin-algorand@0.8.0-nightly.0
+  - @ledgerhq/coin-filecoin@1.8.0-nightly.0
+  - @ledgerhq/coin-polkadot@3.1.0-nightly.0
+  - @ledgerhq/coin-bitcoin@0.14.0-nightly.0
+  - @ledgerhq/coin-cardano@0.7.0-nightly.0
+  - @ledgerhq/coin-stellar@2.1.0-nightly.0
+  - @ledgerhq/coin-vechain@2.6.0-nightly.0
+  - @ledgerhq/coin-cosmos@0.11.0-nightly.0
+  - @ledgerhq/coin-hedera@1.5.0-nightly.0
+  - @ledgerhq/coin-stacks@0.7.0-nightly.0
+  - @ledgerhq/coin-aptos@1.8.0-nightly.0
+  - @ledgerhq/coin-tezos@2.1.0-nightly.0
+  - @ledgerhq/coin-icon@0.9.0-nightly.0
+  - @ledgerhq/coin-near@0.10.0-nightly.0
+  - @ledgerhq/coin-tron@0.7.0-nightly.0
+  - @ledgerhq/coin-evm@2.15.0-nightly.0
+  - @ledgerhq/coin-ton@0.7.0-nightly.0
+  - @ledgerhq/coin-xrp@3.1.0-nightly.0
+  - @ledgerhq/coin-framework@2.5.0-nightly.0
+  - @ledgerhq/wallet-api-acre-module@0.3.0-nightly.0
+  - @ledgerhq/wallet-api-exchange-module@0.11.0-nightly.0
+  - @ledgerhq/live-nft@0.7.0-nightly.0
+  - @ledgerhq/live-countervalues@0.5.0-nightly.0
+  - @ledgerhq/live-signer-evm@0.2.2-nightly.0
+  - @ledgerhq/coin-casper@1.5.2-nightly.0
+  - @ledgerhq/coin-sui@0.2.0-nightly.1
+  - @ledgerhq/live-countervalues-react@0.2.28-nightly.0
+  - @ledgerhq/live-wallet@0.10.2-nightly.0
+
 ## 34.27.0
 
 ### Minor Changes

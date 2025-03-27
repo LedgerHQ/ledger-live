@@ -1,5 +1,33 @@
 # ledger-live-desktop
 
+## 2.106.0-nightly.0
+
+### Minor Changes
+
+- [#9678](https://github.com/LedgerHQ/ledger-live/pull/9678) [`efcf12b`](https://github.com/LedgerHQ/ledger-live/commit/efcf12b8e827796c1fd2caf29aa2a6715a12cd74) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Remove unused assets
+
+- [#9634](https://github.com/LedgerHQ/ledger-live/pull/9634) [`152cc75`](https://github.com/LedgerHQ/ledger-live/commit/152cc7586104ddc8a03c94f80464d7eddcd610a6) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - Force load Ledger validators to be displayed at first in list
+
+- [#9658](https://github.com/LedgerHQ/ledger-live/pull/9658) [`15949d6`](https://github.com/LedgerHQ/ledger-live/commit/15949d61553953e3d4ecf8b571c13ae861865aa7) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Rework getFloorPrice usage in LL and add support for Solana
+
+- [#9536](https://github.com/LedgerHQ/ledger-live/pull/9536) [`05d2bd6`](https://github.com/LedgerHQ/ledger-live/commit/05d2bd67b797ec24ec77051a4021651e29d0599e) Thanks [@thesan](https://github.com/thesan)! - Improve LNSBanner tests and code quality
+
+### Patch Changes
+
+- Updated dependencies [[`2785d49`](https://github.com/LedgerHQ/ledger-live/commit/2785d49ac320498f98ed39b4eccc48310ad35fe1), [`6c7fd10`](https://github.com/LedgerHQ/ledger-live/commit/6c7fd10264bd50de88c75827d28a7a4692e1e880), [`ad6d873`](https://github.com/LedgerHQ/ledger-live/commit/ad6d87394cf53f7912a1aa7a5392635570b8374f), [`6116909`](https://github.com/LedgerHQ/ledger-live/commit/61169099ce63dfa73e52065327ca3c889c315cb8), [`15949d6`](https://github.com/LedgerHQ/ledger-live/commit/15949d61553953e3d4ecf8b571c13ae861865aa7), [`b9defcd`](https://github.com/LedgerHQ/ledger-live/commit/b9defcdcb44c6be2c141801a4e0dd27e72f83024)]:
+  - @ledgerhq/coin-filecoin@1.8.0-nightly.0
+  - @ledgerhq/coin-bitcoin@0.14.0-nightly.0
+  - @ledgerhq/coin-cosmos@0.11.0-nightly.0
+  - @ledgerhq/coin-aptos@1.8.0-nightly.0
+  - @ledgerhq/coin-evm@2.15.0-nightly.0
+  - @ledgerhq/coin-framework@2.5.0-nightly.0
+  - @ledgerhq/live-common@34.28.0-nightly.0
+  - @ledgerhq/live-nft@0.7.0-nightly.0
+  - @ledgerhq/live-countervalues@0.5.0-nightly.0
+  - @ledgerhq/live-countervalues-react@0.2.28-nightly.0
+  - @ledgerhq/live-nft-react@0.7.3-nightly.0
+  - @ledgerhq/live-wallet@0.10.2-nightly.0
+
 ## 2.105.0
 
 ### Minor Changes

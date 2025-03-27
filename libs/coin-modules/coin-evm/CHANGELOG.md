@@ -1,5 +1,18 @@
 # @ledgerhq/coin-evm
 
+## 2.15.0-nightly.0
+
+### Minor Changes
+
+- [#9298](https://github.com/LedgerHQ/ledger-live/pull/9298) [`2785d49`](https://github.com/LedgerHQ/ledger-live/commit/2785d49ac320498f98ed39b4eccc48310ad35fe1) Thanks [@Canestin](https://github.com/Canestin)! - config coin-integration env for sonarqube
+
+- [#9686](https://github.com/LedgerHQ/ledger-live/pull/9686) [`6116909`](https://github.com/LedgerHQ/ledger-live/commit/61169099ce63dfa73e52065327ca3c889c315cb8) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix(coin-evm): update Ethereum url in coin tester
+
+### Patch Changes
+
+- Updated dependencies [[`2785d49`](https://github.com/LedgerHQ/ledger-live/commit/2785d49ac320498f98ed39b4eccc48310ad35fe1)]:
+  - @ledgerhq/coin-framework@2.5.0-nightly.0
+
 ## 2.14.1
 
 ### Patch Changes

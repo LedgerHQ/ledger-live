@@ -1,5 +1,16 @@
 # @ledgerhq/coin-tron
 
+## 0.7.0-nightly.0
+
+### Minor Changes
+
+- [#9298](https://github.com/LedgerHQ/ledger-live/pull/9298) [`2785d49`](https://github.com/LedgerHQ/ledger-live/commit/2785d49ac320498f98ed39b4eccc48310ad35fe1) Thanks [@Canestin](https://github.com/Canestin)! - config coin-integration env for sonarqube
+
+### Patch Changes
+
+- Updated dependencies [[`2785d49`](https://github.com/LedgerHQ/ledger-live/commit/2785d49ac320498f98ed39b4eccc48310ad35fe1)]:
+  - @ledgerhq/coin-framework@2.5.0-nightly.0
+
 ## 0.6.0
 
 ### Minor Changes

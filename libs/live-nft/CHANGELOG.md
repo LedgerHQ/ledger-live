@@ -1,5 +1,16 @@
 # @ledgerhq/live-nft
 
+## 0.7.0-nightly.0
+
+### Minor Changes
+
+- [#9658](https://github.com/LedgerHQ/ledger-live/pull/9658) [`15949d6`](https://github.com/LedgerHQ/ledger-live/commit/15949d61553953e3d4ecf8b571c13ae861865aa7) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Rework getFloorPrice usage in LL and add support for Solana
+
+### Patch Changes
+
+- Updated dependencies [[`2785d49`](https://github.com/LedgerHQ/ledger-live/commit/2785d49ac320498f98ed39b4eccc48310ad35fe1)]:
+  - @ledgerhq/coin-framework@2.5.0-nightly.0
+
 ## 0.6.2
 
 ### Patch Changes
