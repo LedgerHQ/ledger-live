@@ -1,8 +1,8 @@
 import { step } from "tests/misc/reporters/step";
 import { Drawer } from "tests/component/drawer.component";
 import { expect } from "@playwright/test";
-import { Swap } from "@ledgerhq/live-common/lib-es/e2e/models/Swap";
-import { Provider } from "@ledgerhq/live-common/lib-es/e2e/enum/Swap";
+import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
+import { Provider } from "@ledgerhq/live-common/e2e/enum/Swap";
 
 export class OperationDrawer extends Drawer {
   readonly transactionIdLabel = this.page.getByText("Transaction ID");
