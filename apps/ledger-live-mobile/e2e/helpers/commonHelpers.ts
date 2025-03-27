@@ -48,6 +48,7 @@ export async function launchApp() {
         '\\(".*sdk.*.braze.*",".*.googleapis.com/.*",".*clients3.google.com.*",".*tron.coin.ledger.com/wallet/getBrokerage.*"\\)',
       mock: getEnv("MOCK") ? getEnv("MOCK") : "0",
       disable_broadcast: getEnv("DISABLE_TRANSACTION_BROADCAST") ? 1 : 0,
+      IS_TEST: true,
     },
     languageAndLocale: {
       language: "en-US",
