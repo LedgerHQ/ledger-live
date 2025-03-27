@@ -1,7 +1,7 @@
 import React, { PureComponent } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
-import { ItemType } from "~/newArch/features/Collectibles/types/enum/Links";
+import { ItemType } from "LLD/features/Collectibles/types/enum/Links";
 import Box from "~/renderer/components/Box";
 import IconExternal from "~/renderer/icons/ExternalLink";
 

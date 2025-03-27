@@ -15,7 +15,7 @@ import CustomImage from "~/renderer/screens/customImage";
 import NFTViewerDrawer from "~/renderer/drawers/NFTViewerDrawer";
 import { ContextMenuItemType } from "../../components/ContextMenu/ContextMenuWrapper";
 import { devicesModelListSelector } from "~/renderer/reducers/settings";
-import { ItemType } from "~/newArch/features/Collectibles/types/enum/Links";
+import { ItemType } from "LLD/features/Collectibles/types/enum/Links";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 const addOpensea = (list: ContextMenuItemType[], t: TFunction, links: NFTMetadata["links"]) => {
