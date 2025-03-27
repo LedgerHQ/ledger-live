@@ -319,7 +319,7 @@ export class DeviceManagementKitTransport extends Transport {
 
   async exchange(
     apdu: Buffer,
-    { abortTimeoutMs: _abortTimeoutMs }: { abortTimeoutMs?: number } = {},
+    { abortTimeoutMs }: { abortTimeoutMs?: number } = {},
   ): Promise<Buffer> {
     const activeSessionId = activeDeviceSessionSubject.value?.sessionId;
     if (!activeSessionId) {
@@ -332,6 +332,7 @@ export class DeviceManagementKitTransport extends Transport {
       .sendApdu({
         sessionId: activeSessionId,
         apdu: new Uint8Array(apdu),
+        abortTimeout: abortTimeoutMs,
       })
       .then((apduResponse: { data: Uint8Array; statusCode: Uint8Array }): Buffer => {
         const response = Buffer.from([...apduResponse.data, ...apduResponse.statusCode]);
