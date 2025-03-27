@@ -7,11 +7,11 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 export type NftMetdataParams = { chainId: number };
 
 /**
- * Batched request of nft metadata on the "ethereum" protocol
+ * Batched request of nft metadata on the "solana" protocol
  *
- * ⚠️ ethereum protocol doesn't mean ethereum chain, you can see this
- * as the evm protocol instead, and you can specify a chainId
- * to request the metadata on any evm chain supported
+ * ⚠️ solana protocol doesn't mean solana chain, you can see this
+ * as the svm protocol instead, and you can specify a chainId
+ * to request the metadata on any svm chain supported
  */
 export const getNftMetadata = async (
   input: NftMetadataInput[],
@@ -19,7 +19,7 @@ export const getNftMetadata = async (
 ): Promise<NFTMetadataResponse[]> => {
   const { data }: { data: NFTMetadataResponse[] } = await network({
     method: "POST",
-    url: `${getEnv("NFT_METADATA_SERVICE")}/v2/ethereum/${params.chainId}/contracts/tokens/infos`,
+    url: `${getEnv("NFT_METADATA_SERVICE")}/v2/solana/${params.chainId}/contracts/tokens/infos`,
     data: input,
   });
 
@@ -27,11 +27,11 @@ export const getNftMetadata = async (
 };
 
 /**
- * Batched request of nft collection metadata on the "ethereum" protocol
+ * Batched request of nft collection metadata on the "solana" protocol
  *
- * ⚠️ ethereum protocol doesn't mean ethereum chain, you can see this
- * as the evm protocol instead, and you can specify a chainId
- * to request the metadata on any evm chain supported
+ * ⚠️ solana protocol doesn't mean solana chain, you can see this
+ * as the svm protocol instead, and you can specify a chainId
+ * to request the metadata on any svm chain supported
  */
 export const getNftCollectionMetadata = async (
   input: CollectionMetadataInput[],
@@ -39,7 +39,7 @@ export const getNftCollectionMetadata = async (
 ): Promise<NFTCollectionMetadataResponse[]> => {
   const { data }: { data: NFTCollectionMetadataResponse[] } = await network({
     method: "POST",
-    url: `${getEnv("NFT_METADATA_SERVICE")}/v2/ethereum/${params.chainId}/contracts/infos`,
+    url: `${getEnv("NFT_METADATA_SERVICE")}/v2/solana/${params.chainId}/contracts/infos`,
     data: input,
   });
 
@@ -50,13 +50,16 @@ export const getNftCollectionMetadata = async (
  * Get the correct chain from a given currency
  */
 export const getParams = (currency: CryptoCurrency): NftMetdataParams => {
-  const chainId = currency?.ethereumLikeInfo?.chainId;
-
-  if (!chainId) {
-    throw new Error("Ethereum: No chainId for this Currency");
+  switch (currency.id) {
+    case "solana":
+      return { chainId: 101 };
+    case "solana_testnet":
+      return { chainId: 102 };
+    case "solana_devnet":
+      return { chainId: 103 };
+    default:
+      throw new Error(`Solana: No chainId for this Currency (${currency.id}})`);
   }
-
-  return { chainId };
 };
 
 export default {

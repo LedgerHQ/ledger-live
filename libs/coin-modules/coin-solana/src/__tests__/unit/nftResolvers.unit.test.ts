@@ -6,12 +6,18 @@ import { collectionMetadata, nftMetadata } from "../../nftResolvers";
 jest.mock("axios");
 const mockedAxios = jest.mocked(axios);
 
+const currencyId = "solana";
+const wrongCurrencyId = "bitcoin";
+
+const randomNftContract = "13vQFDKvvmebfFQdN4XVS7jDuzXoThm2DMn5SxPJhWmA";
+const randomTokenId = "0";
+
 const metadata: NFTMetadata = {
   description: "desc",
   links: {
     explorer: "explorer",
-    opensea: "opensea",
-    rarible: "rarible",
+    opensea: null,
+    rarible: null,
     etherscan: null,
   },
   medias: {
@@ -33,7 +39,7 @@ const metadata: NFTMetadata = {
   tokenName: "collectionName",
 };
 
-describe("EVM Family", () => {
+describe("Solana Family", () => {
   beforeAll(() => {
     mockedAxios.mockResolvedValue({ data: [{}] });
   });
@@ -51,9 +57,9 @@ describe("EVM Family", () => {
       it("should reject a currency when NFT is not activated on it", async () => {
         try {
           await nftMetadata({
-            contract: "0xWhatever",
-            currencyId: "bitcoin",
-            tokenId: "1",
+            contract: randomNftContract,
+            currencyId: wrongCurrencyId,
+            tokenId: randomTokenId,
           });
           fail("Promise should have been rejected");
         } catch (e) {
@@ -61,7 +67,9 @@ describe("EVM Family", () => {
             throw e;
           }
           expect(e).toBeInstanceOf(Error);
-          expect((e as Error).message).toBe("Ethereum Bridge NFT Resolver: Unsupported currency");
+          expect((e as Error).message).toBe(
+            `Solana Bridge NFT Resolver: Unsupported currency ${wrongCurrencyId}`,
+          );
           expect(axios).not.toHaveBeenCalled();
         }
       });
@@ -72,8 +80,8 @@ describe("EVM Family", () => {
             {
               status: 200,
               result: {
-                contract: "0xWhatever",
-                tokenId: "1",
+                contract: randomNftContract,
+                tokenId: randomTokenId,
                 ...metadata,
               },
             },
@@ -81,16 +89,16 @@ describe("EVM Family", () => {
         });
 
         const result = await nftMetadata({
-          contract: "0xWhatever",
-          currencyId: "ethereum",
-          tokenId: "1",
+          contract: randomNftContract,
+          currencyId,
+          tokenId: randomTokenId,
         });
 
         expect(result).toEqual({
           status: 200,
           result: {
-            contract: "0xWhatever",
-            tokenId: "1",
+            contract: randomNftContract,
+            tokenId: randomTokenId,
             ...metadata,
           },
         });
@@ -101,8 +109,8 @@ describe("EVM Family", () => {
       it("should reject a currency when NFT is not activated on it", async () => {
         try {
           await collectionMetadata({
-            contract: "0xWhatever",
-            currencyId: "bitcoin",
+            contract: randomNftContract,
+            currencyId: wrongCurrencyId,
           });
           fail("Promise should have been rejected");
         } catch (e) {
@@ -110,7 +118,9 @@ describe("EVM Family", () => {
             throw e;
           }
           expect(e).toBeInstanceOf(Error);
-          expect((e as Error).message).toBe("Ethereum Bridge NFT Resolver: Unsupported currency");
+          expect((e as Error).message).toBe(
+            `Solana Bridge NFT Resolver: Unsupported currency ${wrongCurrencyId}`,
+          );
           expect(axios).not.toHaveBeenCalled();
         }
       });
@@ -121,7 +131,7 @@ describe("EVM Family", () => {
             {
               status: 200,
               result: {
-                contract: "0xWhatever",
+                contract: randomNftContract,
                 tokenName: "CollectionName",
               },
             },
@@ -129,14 +139,14 @@ describe("EVM Family", () => {
         });
 
         const result = await collectionMetadata({
-          contract: "0xWhatever",
-          currencyId: "ethereum",
+          contract: randomNftContract,
+          currencyId,
         });
 
         expect(result).toEqual({
           status: 200,
           result: {
-            contract: "0xWhatever",
+            contract: randomNftContract,
             tokenName: "CollectionName",
           },
         });
