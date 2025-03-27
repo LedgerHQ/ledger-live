@@ -28,7 +28,7 @@ export type HookResult = {
 export const useGeneralLandingPage = (props: NavigationProps) => {
   const useCase = props.route.params?.useCase;
   const isLoading = useSelector(isDynamicContentLoadingSelector);
-  const { categoriesCards, getStickyCtaCardByLandingPage, trackContentCardEvent } =
+  const { categoriesCards, getStickyCtaCardByLandingPage, trackContentCardEvent, logClickCard } =
     useDynamicContent();
 
   const landingStickyCTA = getStickyCtaCardByLandingPage(useCase);
@@ -40,6 +40,7 @@ export const useGeneralLandingPage = (props: NavigationProps) => {
       contentcard: card.cta,
       landingPage: useCase,
     });
+    logClickCard(card.id);
     Linking.openURL(card.link);
   };
 
