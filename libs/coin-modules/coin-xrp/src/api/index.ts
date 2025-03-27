@@ -38,6 +38,7 @@ async function craft(transactionIntent: TransactionIntent<void>): Promise<string
   const tx = await craftTransaction(
     { address: transactionIntent.sender, nextSequenceNumber },
     { recipient: transactionIntent.recipient, amount: transactionIntent.amount, fee: fees.fee },
+    transactionIntent.senderPublicKey,
   );
   return tx.serializedTransaction;
 }

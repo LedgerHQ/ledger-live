@@ -44,6 +44,7 @@ export type Asset = {
 export type TransactionIntent<AssetInfo> = {
   type: string;
   sender: string;
+  senderPublicKey?: string;
   recipient: string;
   amount: bigint;
   asset?: AssetInfo;
