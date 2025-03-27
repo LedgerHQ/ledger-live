@@ -7,6 +7,7 @@ import { currenciesSelector } from "~/reducers/accounts";
 import CurrencyDownStatusAlert from "~/components/CurrencyDownStatusAlert";
 import GraphCard from "~/components/GraphCard";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
+import { track } from "~/analytics";
 
 const GraphCardContainer = ({
   portfolio,
@@ -25,6 +26,13 @@ const GraphCardContainer = ({
 }) => {
   const currencies: Array<CryptoCurrency | TokenCurrency> = useSelector(currenciesSelector);
 
+  const handleTouchEndGraph = () => {
+    track("chart_clicked", {
+      graph: "Portfolio",
+      page: "Wallet",
+    });
+  };
+
   return (
     <>
       <CurrencyDownStatusAlert currencies={currencies} />
@@ -36,6 +44,7 @@ const GraphCardContainer = ({
           portfolio={portfolio}
           currentPositionY={currentPositionY}
           graphCardEndPosition={graphCardEndPosition}
+          onTouchEndGraph={handleTouchEndGraph}
         />
       )}
     </>
