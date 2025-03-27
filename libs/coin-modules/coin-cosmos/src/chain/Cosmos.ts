@@ -1,3 +1,4 @@
+import { cosmosConfig } from "../config";
 import CosmosBase from "./cosmosBase";
 
 class Cosmos extends CosmosBase {
@@ -14,6 +15,7 @@ class Cosmos extends CosmosBase {
     this.stakingDocUrl = "https://support.ledger.com/article/360014339340-zd";
     this.prefix = "cosmos";
     this.validatorPrefix = this.prefix + "valoper";
+    this.lcd = (cosmosConfig["config_currency_cosmos"].default as { lcd: string }).lcd;
   }
 }
 
