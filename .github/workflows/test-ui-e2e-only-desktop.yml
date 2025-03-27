@@ -131,7 +131,7 @@ jobs:
           export COINAPPS=$PWD/coin-apps
           export MOCK=0
           if [ "${{ inputs.invert_filter }}" = true ]; then invert_filter="-invert"; fi
-          xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright:speculos --max-failures 50 ${INPUTS_TEST_FILTER:+--grep$invert_filter} "${{ inputs.test_filter }}" --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+          xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm e2e/desktop test:playwright --max-failures 50 ${INPUTS_TEST_FILTER:+--grep$invert_filter} "${{ inputs.test_filter }}" --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
         env:
           INPUTS_TEST_FILTER: ${{ inputs.test_filter }}
           SEED: ${{ secrets.SEED_QAA_B2C }}
@@ -144,14 +144,14 @@ jobs:
         uses: actions/upload-artifact@v4.3.0
         with:
           name: allure-results-${{ matrix.shardIndex }}
-          path: "apps/ledger-live-desktop/allure-results"
+          path: "e2e/desktop/allure-results"
 
       - name: Upload Xray Results
         if: ${{ !cancelled() && inputs.export_to_xray }}
         uses: actions/upload-artifact@v4.3.0
         with:
           name: xray-reports-${{ matrix.shardIndex }}
-          path: apps/ledger-live-desktop/tests/artifacts/xray/xray-report.json
+          path: e2e/desktop/tests/artifacts/xray/xray-report.json
 
   report-to-allure:
     name: "Create Allure Report and upload it"
@@ -208,7 +208,7 @@ jobs:
       - name: Download Xray Results
         uses: actions/download-artifact@v4.1.3
         with:
-          path: "apps/ledger-live-desktop/artifacts/xray"
+          path: "e2e/desktop/artifacts/xray"
           pattern: xray-reports-*
           merge-multiple: false
 
@@ -219,7 +219,7 @@ jobs:
         uses: actions/upload-artifact@v4.3.0
         with:
           name: aggregated-xray-reports
-          path: "apps/ledger-live-desktop/artifacts/xray/aggregated-xray-reports.json"
+          path: "e2e/desktop/artifacts/xray/aggregated-xray-reports.json"
 
       - name: Authenticate to Xray
         id: authenticate
@@ -233,7 +233,7 @@ jobs:
           response=$(curl -H "Content-Type: application/json" \
                     -H "Authorization: Bearer ${{ steps.authenticate.outputs.xray_token }}" \
                     -X POST \
-                    --data @apps/ledger-live-desktop/artifacts/xray/aggregated-xray-reports.json \
+                    --data @e2e/desktop/artifacts/xray/aggregated-xray-reports.json \
                     ${{ env.XRAY_API_URL }}/import/execution)
             key=$(echo $response | jq -r '.key')
             echo "xray_key=$key" >> $GITHUB_OUTPUT
