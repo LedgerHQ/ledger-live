@@ -419,27 +419,142 @@ for (const { swap, xrayTicket, userData, errorMessage } of swapWithDifferentSeed
   });
 }
 
+// const tooLowAmountForQuoteSwaps = [
+//   {
+//     swap: new Swap(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "0.001", Fee.MEDIUM),
+//     xrayTicket: "B2CQA-2755, B2CQA-3136",
+//   },
+//   {
+//     swap: new Swap(Account.BTC_NATIVE_SEGWIT_1, Account.ETH_1, "0.00001", Fee.MEDIUM),
+//     xrayTicket: "B2CQA-2758",
+//   },
+//   {
+//     swap: new Swap(Account.ETH_USDT_1, Account.ETH_1, "150", Fee.MEDIUM),
+//     xrayTicket: "B2CQA-2759",
+//   },
+//   {
+//     swap: new Swap(Account.TRX_1, Account.ETH_1, "70", Fee.MEDIUM),
+//     xrayTicket: "B2CQA-2739",
+//   },
+// ];
+
+// for (const { swap, xrayTicket } of tooLowAmountForQuoteSwaps) {
+//   test.describe("Swap - with too low amount (throwing UI errors)", () => {
+//     setupEnv(true);
+
+//     const accPair: string[] = [swap.accountToDebit, swap.accountToCredit].map(acc =>
+//       acc.currency.speculosApp.name.replace(/ /g, "_"),
+//     );
+
+//     test.beforeEach(async () => {
+//       setExchangeDependencies(
+//         accPair.map(appName => ({
+//           name: appName,
+//         })),
+//       );
+//     });
+
+//     test.use({
+//       userdata: "speculos-tests-app",
+//       speculosApp: app,
+//     });
+
+//     test(
+//       `Swap too low quote amounts from ${swap.accountToDebit.currency.name} to ${swap.accountToCredit.currency.name}`,
+//       {
+//         annotation: {
+//           type: "TMS",
+//           description: xrayTicket,
+//         },
+//       },
+//       async ({ app, electronApp }) => {
+//         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
+//         await performSwapUntilQuoteSelectionStep(app, electronApp, swap);
+//         const errorMessage = swap.accountToDebit.accountType
+//           ? "Not enough balance."
+//           : new RegExp(
+//               `Minimum \\d+(\\.\\d{1,10})? ${swap.accountToDebit.currency.ticker} needed for quotes\\.\\s*$`,
+//             );
+//         await app.swap.verifySwapAmountErrorMessageIsDisplayed(
+//           electronApp,
+//           swap.accountToDebit,
+//           errorMessage,
+//         );
+//         //following error doesn't appear if accountToDebit has accountType erc20
+//         if (!swap.accountToDebit.accountType) {
+//           await app.swap.fillInOriginCurrencyAmount(electronApp, "");
+//           await app.swap.fillInOriginCurrencyAmount(
+//             electronApp,
+//             (parseFloat(swap.amount) * 1000).toString(),
+//           );
+//           await app.swap.verifySwapAmountErrorMessageIsDisplayed(
+//             electronApp,
+//             swap.accountToDebit,
+//             "Not enough balance, including network fee.",
+//           );
+//           await app.swap.fillInOriginCurrencyAmount(electronApp, "");
+//           await app.swap.fillInOriginCurrencyAmount(
+//             electronApp,
+//             (parseFloat(swap.amount) * 100_000_000).toString(),
+//           );
+//           await app.swap.verifySwapAmountErrorMessageIsDisplayed(
+//             electronApp,
+//             swap.accountToDebit,
+//             "Not enough balance, including network fee.",
+//           );
+//         }
+//       },
+//     );
+//   });
+// }
+
 const tooLowAmountForQuoteSwaps = [
   {
-    swap: new Swap(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "0.001", Fee.MEDIUM),
-    xrayTicket: "B2CQA-2755, B2CQA-3136",
+    swap: new Swap(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "1", Fee.MEDIUM),
+    xrayTicket: "todo",
+    errorMessage: "Not enough balance, including network fee",
+    ctaBanner: true,
+    quotesVisible: true,
   },
   {
-    swap: new Swap(Account.BTC_NATIVE_SEGWIT_1, Account.ETH_1, "0.00001", Fee.MEDIUM),
-    xrayTicket: "B2CQA-2758",
+    swap: new Swap(Account.ETH_USDT_1, Account.BTC_NATIVE_SEGWIT_1, "200", Fee.MEDIUM),
+    xrayTicket: "todo",
+    errorMessage: "Not enough balance",
+    ctaBanner: true,
+    quotesVisible: true,
   },
   {
-    swap: new Swap(Account.ETH_USDT_1, Account.ETH_1, "150", Fee.MEDIUM),
-    xrayTicket: "B2CQA-2759",
+    swap: new Swap(Account.ETH_USDT_2, Account.BTC_NATIVE_SEGWIT_1, "5", Fee.MEDIUM),
+    xrayTicket: "todo",
+    errorMessage: new RegExp(`\\d+(\\.\\d{1,10})? ETH needed for network fees\\.\\s*$`),
+    ctaBanner: true,
+    quotesVisible: true,
   },
   {
-    swap: new Swap(Account.TRX_1, Account.ETH_1, "70", Fee.MEDIUM),
-    xrayTicket: "B2CQA-2739",
+    swap: new Swap(Account.ETH_USDT_1, Account.BTC_NATIVE_SEGWIT_1, "0.000001", Fee.MEDIUM),
+    xrayTicket: "todo",
+    errorMessage: new RegExp(`Minimum \\d+(\\.\\d{1,10})? USDT needed for quotes\\.\\s*$`),
+    ctaBanner: false,
+    quotesVisible: false,
+  },
+  {
+    swap: new Swap(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "10000", Fee.MEDIUM),
+    xrayTicket: "todo",
+    errorMessage: "Not enough balance, including network fees. ",
+    ctaBanner: true,
+    quotesVisible: false,
   },
 ];
 
-for (const { swap, xrayTicket } of tooLowAmountForQuoteSwaps) {
-  test.describe("Swap - with too low amount (throwing UI errors)", () => {
+for (const {
+  swap,
+  xrayTicket,
+  errorMessage,
+  ctaBanner,
+  quotesVisible,
+} of tooLowAmountForQuoteSwaps) {
+  test.describe.only("Swap - with too low amount (throwing UI errors)", () => {
     setupEnv(true);
 
     const accPair: string[] = [swap.accountToDebit, swap.accountToCredit].map(acc =>
@@ -460,7 +575,7 @@ for (const { swap, xrayTicket } of tooLowAmountForQuoteSwaps) {
     });
 
     test(
-      `Swap too low quote amounts from ${swap.accountToDebit.currency.name} to ${swap.accountToCredit.currency.name}`,
+      `Swap too low quote amounts from ${swap.accountToDebit.currency.name} to ${swap.accountToCredit.currency.name} - ${errorMessage}`,
       {
         annotation: {
           type: "TMS",
@@ -469,40 +584,14 @@ for (const { swap, xrayTicket } of tooLowAmountForQuoteSwaps) {
       },
       async ({ app, electronApp }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
         await performSwapUntilQuoteSelectionStep(app, electronApp, swap);
-        const errorMessage = swap.accountToDebit.accountType
-          ? "Not enough balance."
-          : new RegExp(
-              `Minimum \\d+(\\.\\d{1,10})? ${swap.accountToDebit.currency.ticker} needed for quotes\\.\\s*$`,
-            );
-        await app.swap.verifySwapAmountErrorMessageIsDisplayed(
-          electronApp,
-          swap.accountToDebit,
-          errorMessage,
-        );
-        //following error doesn't appear if accountToDebit has accountType erc20
-        if (!swap.accountToDebit.accountType) {
-          await app.swap.fillInOriginCurrencyAmount(electronApp, "");
-          await app.swap.fillInOriginCurrencyAmount(
-            electronApp,
-            (parseFloat(swap.amount) * 1000).toString(),
-          );
-          await app.swap.verifySwapAmountErrorMessageIsDisplayed(
-            electronApp,
-            swap.accountToDebit,
-            "Not enough balance, including network fee.",
-          );
-          await app.swap.fillInOriginCurrencyAmount(electronApp, "");
-          await app.swap.fillInOriginCurrencyAmount(
-            electronApp,
-            (parseFloat(swap.amount) * 100_000_000).toString(),
-          );
-          await app.swap.verifySwapAmountErrorMessageIsDisplayed(
-            electronApp,
-            swap.accountToDebit,
-            "Not enough balance, including network fee.",
-          );
+        if (quotesVisible) {
+          await app.swap.checkQuotes(electronApp);
+          await app.swap.selectExchange(electronApp);
+        }
+        await app.swap.verifySwapAmountErrorMessageIsCorrect(electronApp, errorMessage);
+        if (ctaBanner) {
+          await app.swap.checkCtaBanner(electronApp);
         }
       },
     );
