@@ -36,17 +36,22 @@ export const genericSignOperation =
           signer.getAddress(account.freshAddressPath),
         )) as Result;
 
-        const unsigned = await getAlpacaApi(network, kind).craftTransaction(
-          transactionToIntent(account, transaction),
-        );
+        const unsigned = await getAlpacaApi(network, kind).craftTransaction({
+          ...transactionToIntent(account, transaction),
+          senderPublicKey: publicKey,
+        });
 
-        const response = await signerContext(deviceId, signer =>
-          signer.signTransaction(account.freshAddressPath, unsigned, publicKey),
+        const transactionSignature: string = await signerContext(deviceId, signer =>
+          signer.signTransaction(account.freshAddressPath, unsigned),
         );
 
         o.next({ type: "device-signature-granted" });
 
-        const signed = getAlpacaApi(network, kind).combine(unsigned, response as string, publicKey);
+        const signed = getAlpacaApi(network, kind).combine(
+          unsigned,
+          transactionSignature,
+          publicKey,
+        );
 
         const operation = buildOptimisticOperation(account, transaction);
 
