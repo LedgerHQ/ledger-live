@@ -18,7 +18,7 @@ export async function launchApp({
 }): Promise<ElectronApplication> {
   return await electron.launch({
     args: [
-      `${path.join(__dirname, "../../.webpack/main.bundle.js")}`,
+      `${path.join(__dirname, "../../../../apps/ledger-live-desktop/.webpack/main.bundle.js")}`,
       `--user-data-dir=${userdataDestinationPath}`,
       "--force-device-scale-factor=1",
       "--disable-dev-shm-usage",
