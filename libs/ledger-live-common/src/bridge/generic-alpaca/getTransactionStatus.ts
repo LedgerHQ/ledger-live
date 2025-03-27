@@ -1,6 +1,11 @@
 import { FeeNotLoaded, InvalidAddressBecauseDestinationIsAlsoSource } from "@ledgerhq/errors";
+import { AccountBridge } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 
-export async function genericGetTransactionStatus(network, kind) {
+export function genericGetTransactionStatus(
+  _network,
+  _kind,
+): AccountBridge<any>["getTransactionStatus"] {
   return async (account, transaction) => {
     const errors: Record<string, Error> = {};
     const warnings: Record<string, Error> = {};
@@ -13,6 +18,14 @@ export async function genericGetTransactionStatus(network, kind) {
       errors.fees = new FeeNotLoaded();
     }
 
-    return Promise.resolve({ errors, warnings });
+    const estimatedFees = transaction.fees || new BigNumber(0);
+
+    return Promise.resolve({
+      errors,
+      warnings,
+      estimatedFees,
+      amount: transaction.amount,
+      totalSpent: transaction.amount.plus(transaction.fees),
+    });
   };
 }

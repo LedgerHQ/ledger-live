@@ -25,6 +25,6 @@ export function getAlpacaAccountBridge(network: string, kind: string): AccountBr
     getTransactionStatus: genericGetTransactionStatus(network, kind) as any,
     estimateMaxSpendable: genericEstimateMaxSpendable(network, kind) as any,
     broadcast: genericBroadcast(network, kind),
-    signOperation: genericSignOperation(network, kind) as any,
+    signOperation: genericSignOperation(network, kind)(signer.context) as any,
   } satisfies Partial<AccountBridge<any>> as AccountBridge<any>;
 }
