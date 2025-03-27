@@ -17,12 +17,14 @@ import {
   setOnboardingHasDevice,
 } from "~/actions/settings";
 import { hasCompletedOnboardingSelector } from "~/reducers/settings";
+import { useIsFocused, useNavigation } from "@react-navigation/core";
 
 type Props = BaseComposite<
   StackScreenProps<SyncOnboardingStackParamList, ScreenName.SyncOnboardingCompletion>
 >;
 
-const CompletionScreen = ({ navigation, route }: Props) => {
+const CompletionScreen = ({ route }: Props) => {
+  const navigation = useNavigation<RootNavigation>();
   const { device } = route.params;
   const dispatch = useDispatch();
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
@@ -36,12 +38,11 @@ const CompletionScreen = ({ navigation, route }: Props) => {
     dispatch(setHasBeenRedirectedToPostOnboarding(false));
   }, [dispatch, hasCompletedOnboarding]);
 
-  const hasRedirected = React.useRef(false);
+  const isFocused = useIsFocused();
 
   const redirectToMainScreen = useCallback(() => {
-    if (hasRedirected.current) return;
-    hasRedirected.current = true;
-    (navigation as unknown as RootNavigation).reset({
+    if (!isFocused) return;
+    navigation.reset({
       index: 0,
       routes: [
         {
@@ -56,7 +57,7 @@ const CompletionScreen = ({ navigation, route }: Props) => {
         },
       ],
     });
-  }, [navigation]);
+  }, [isFocused, navigation]);
 
   return (
     <TouchableWithoutFeedback onPress={redirectToMainScreen}>
