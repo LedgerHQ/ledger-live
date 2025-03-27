@@ -57,7 +57,6 @@ export class DmkSignerEth implements EvmSigner {
   }
 
   private _mapResult<T, E extends DAError>(actionState: DeviceActionState<T, E, unknown>): T {
-    console.log("LAU: actionState: ", actionState);
     switch (actionState.status) {
       case DeviceActionStatus.Completed: {
         return actionState.output;
@@ -102,6 +101,8 @@ export class DmkSignerEth implements EvmSigner {
             });
           }
         },
+        error: error => observer.error(error),
+        complete: () => observer.complete(),
       });
     });
   }
