@@ -5,12 +5,12 @@ import { Delegate } from "@ledgerhq/live-common/e2e/models/Delegate";
 import { expect } from "@playwright/test";
 
 export class DelegateDrawer extends Drawer {
-  private provider = (provider: string) =>
+  private readonly provider = (provider: string) =>
     this.page.getByTestId("drawer-content").locator(`text=${provider}`);
-  private amountValue = this.page.getByTestId("amountReceived-drawer");
-  private transactionType = this.page.getByTestId("transaction-type");
-  private operationType = this.page.getByTestId("operation-type");
-  private addressValue = (address: string) =>
+  private readonly amountValue = this.page.getByTestId("amountReceived-drawer");
+  private readonly transactionType = this.page.getByTestId("transaction-type");
+  private readonly operationType = this.page.getByTestId("operation-type");
+  private readonly addressValue = (address: string) =>
     this.page.locator('[data-testid="drawer-content"]').locator(`text=${address}`);
 
   @step("Verify address $0 is visible")

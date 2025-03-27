@@ -4,35 +4,25 @@ import { step } from "../../misc/reporters/step";
 import { NFTTransaction, Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
 
 export class SendModal extends Modal {
-  private accountDebitPlaceholder = this.page.locator("#account-debit-placeholder input");
-  private drowdownAccount = this.page.locator('[data-testid="modal-content"] svg').nth(1);
+  private readonly accountDebitPlaceholder = this.page.locator("#account-debit-placeholder input");
   readonly recipientInput = this.page.getByTestId("send-recipient-input");
   readonly tagInput = this.page.getByTestId("memo-tag-input");
-  private checkDeviceLabel = this.page.locator(
+  private readonly checkDeviceLabel = this.page.locator(
     "text=Double-check the transaction details on your Ledger device before signing.",
   );
-  private checkTransactionbroadcastLabel = this.page.locator("text=Transaction sent");
-  private recipientAddressDisplayedValue = this.page.getByTestId("recipient-address");
-  private recipientEnsDisplayed = this.page.getByTestId("transaction-recipient-ens");
-  private amountDisplayedValue = this.page.getByTestId("transaction-amount");
-  private nftNameDisplayed = this.page.getByTestId("transaction-nft-name");
-  private feeStrategy = (fee: string) => this.page.getByText(fee);
-  private noTagButton = this.page.getByRole("button", { name: "Don’t add Tag" });
-  private ENSAddressLabel = this.page.getByTestId("ens-address-sendModal");
+  private readonly checkTransactionbroadcastLabel = this.page.locator("text=Transaction sent");
+  private readonly recipientAddressDisplayedValue = this.page.getByTestId("recipient-address");
+  private readonly recipientEnsDisplayed = this.page.getByTestId("transaction-recipient-ens");
+  private readonly amountDisplayedValue = this.page.getByTestId("transaction-amount");
+  private readonly nftNameDisplayed = this.page.getByTestId("transaction-nft-name");
+  private readonly feeStrategy = (fee: string) => this.page.getByText(fee);
+  private readonly noTagButton = this.page.getByRole("button", { name: "Don’t add Tag" });
+  private readonly ENSAddressLabel = this.page.getByTestId("ens-address-sendModal");
 
   readonly inputError = this.page.locator("id=input-error"); // no data-testid because css style is applied
   readonly insufficientFundsWarning = this.page.getByTestId("insufficient-funds-warning");
   readonly inputWarning = this.page.locator("id=input-warning");
   readonly cryptoAmountField = this.page.getByTestId("modal-amount-field");
-
-  async selectAccount(name: string) {
-    await this.drowdownAccount.click();
-    await this.page.getByText(name).click();
-  }
-
-  async clickOnCameraButton() {
-    await this.page.getByTestId("open-camera-qrcode-scanner").first().click();
-  }
 
   @step("Click `Continue` button")
   async clickContinueToDevice() {
@@ -71,7 +61,7 @@ export class SendModal extends Modal {
 
   @step("Craft NFT tx")
   async craftNFTTx(tx: NFTTransaction) {
-    await this.fillRecipient(tx.accountToCredit.ensName || tx.accountToCredit.address);
+    await this.fillRecipient(tx.accountToCredit.ensName ?? tx.accountToCredit.address);
     const displayedAddress = await this.ENSAddressLabel.innerText();
     expect(displayedAddress).toEqual(tx.accountToCredit.address);
     await this.continue();

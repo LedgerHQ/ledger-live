@@ -9,7 +9,6 @@
         "strict": true,
         "skipLibCheck": true,
         "typeRoots": [
-            "../../apps/ledger-live-desktop/index-types.d.ts",
             "./node_modules/@types"
         ],
         "paths": {
@@ -17,5 +16,5 @@
             "@ledgerhq/live-wallet/*": ["../../libs/live-wallet/src/*"],
         }
     },
-    "include": ["tests"]
+    "include": ["tests", "../../apps/ledger-live-desktop/index-types.d.ts"]
 }
