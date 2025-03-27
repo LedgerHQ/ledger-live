@@ -32,12 +32,12 @@ export class CosmosAPI {
     return this._cosmosSDKVersion;
   }
 
-   constructor(currencyId: string) {
-     const crypto = cryptoFactory(currencyId);
-     this.chainInstance = crypto;
-     this.defaultEndpoint = crypto.lcd;
-     this.version = crypto.version;
-   }
+  constructor(currencyId: string) {
+    const crypto = cryptoFactory(currencyId);
+    this.chainInstance = crypto;
+    this.defaultEndpoint = crypto.lcd;
+    this.version = crypto.version;
+  }
 
   getAccountInfo = async (
     address: string,
