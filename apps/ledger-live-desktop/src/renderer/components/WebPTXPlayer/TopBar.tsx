@@ -146,10 +146,6 @@ export const TopBar = ({
 
   const enablePlatformDeviceSwitch = useSelector(enablePlatformDeviceSwitchSelector);
 
-  const onToggleDevice = useCallback(() => {
-    console.log("onToggleDevice");
-  }, []);
-
   const onBackToMatchingURL = useCallback(async () => {
     const manifestId = localStorage.getItem("manifest-id") || "";
 
