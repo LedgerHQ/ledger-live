@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { useSelector } from "react-redux";
 import { Currency, TokenCurrency, CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import Animated from "react-native-reanimated";
@@ -26,12 +26,12 @@ const GraphCardContainer = ({
 }) => {
   const currencies: Array<CryptoCurrency | TokenCurrency> = useSelector(currenciesSelector);
 
-  const handleTouchEndGraph = () => {
+  const handleTouchEndGraph = useCallback(() => {
     track("chart_clicked", {
       graph: "Portfolio",
       page: "Wallet",
     });
-  };
+  }, []);
 
   return (
     <>
