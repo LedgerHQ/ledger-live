@@ -14,7 +14,7 @@ https://ledgerhq.atlassian.net/wiki/spaces/PTX/pages/4295000160/Switch+devices+w
 
 import { access, constants } from "fs";
 import path from "path";
-import * as serverBridge from "./server";
+import { init, loadConfig } from "./server";
 
 const filePath = process.argv[2];
 
@@ -25,9 +25,9 @@ access(fullFilePath, constants.F_OK, err => {
     throw new Error(`${fullFilePath} does not exist`);
   } else {
     // starts the server
-    serverBridge.init(undefined, () => {
+    init(undefined, () => {
       // this is run when the server receives a connection - in this case when the app finishes loading and calls the bridge client `init` function
-      serverBridge.loadConfig(filePath, true);
+      loadConfig(filePath, true);
     });
   }
 });

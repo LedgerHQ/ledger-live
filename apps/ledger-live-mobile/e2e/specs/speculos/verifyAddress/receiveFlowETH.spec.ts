@@ -1,13 +1,10 @@
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { Application } from "../../../page";
-
-const app = new Application("EthAccountXrpAccountReadOnlyFalse");
-const account = Account.ETH_1;
-
 describe("Receive Flow", () => {
+  const account = Account.ETH_1;
+
   beforeAll(async () => {
     await app.init({
       speculosApp: account.currency.speculosApp,
+      userdata: "EthAccountXrpAccountReadOnlyFalse",
     });
 
     await app.portfolio.waitForPortfolioPageToLoad();

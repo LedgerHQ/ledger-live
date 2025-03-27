@@ -1,13 +1,15 @@
 import { Currency } from "./Currency";
-import { AccountType } from "./AccountType";
+import { TokenType } from "./TokenType";
 import { Nft } from "./Nft";
+
+export type AccountType = Account;
 
 export class Account {
   constructor(
     public readonly currency: Currency,
     public readonly accountName: string,
     public readonly address: string,
-    public readonly accountType?: AccountType,
+    public readonly tokenType?: TokenType,
     public readonly index?: number,
     public readonly ensName?: string,
     public readonly derivationMode?: string,
@@ -457,7 +459,7 @@ export class Account {
     Currency.ETH_USDT,
     "Ethereum 1",
     "0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6",
-    AccountType.ERC20,
+    TokenType.ERC20,
     0,
   );
 
@@ -465,7 +467,7 @@ export class Account {
     Currency.ETH_USDT,
     "Ethereum 2",
     "0x43047a5023D55a8658Fcb1c1Cea468311AdAA3Ad",
-    AccountType.ERC20,
+    TokenType.ERC20,
     1,
   );
 
@@ -473,14 +475,14 @@ export class Account {
     Currency.ETH_USDC,
     "Ethereum 1",
     "0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6",
-    AccountType.ERC20,
+    TokenType.ERC20,
   );
 
   static readonly ETH_LIDO = new Account(
     Currency.ETH_LIDO,
     "Ethereum 1",
     "0xB9051f83AC6e147924377BBEebd1Aa7aB43a67F6",
-    AccountType.ERC20,
+    TokenType.ERC20,
     0,
   );
 
@@ -528,7 +530,7 @@ export class Account {
     Currency.TRX_BTT,
     "Tron 1",
     "TDUKFB9wj3P5f2iNvkRuaDDeWVkTdUVhs1",
-    AccountType.TRC20,
+    TokenType.TRC20,
     0,
   );
 
@@ -626,7 +628,7 @@ export class Account {
     Currency.SOL_GIGA,
     "Solana 1",
     "HxoKQ5eu5MkqaAw7DaGVermrJqeNH8XkVnEKEpFuS9id",
-    AccountType.SPL,
+    TokenType.SPL,
     0,
     undefined,
     undefined,
@@ -638,7 +640,7 @@ export class Account {
     Currency.SOL_GIGA,
     "Solana 2",
     "6vSQTFcBoPfUKAdo8BQNJqqxU6UcBmd87HQoNSbgTMzH",
-    AccountType.SPL,
+    TokenType.SPL,
     1,
     undefined,
     undefined,
@@ -650,7 +652,7 @@ export class Account {
     Currency.SOL_GIGA,
     "Solana 3",
     "H96UPk6G9ktsVFn1bY9DXZjWFjEoayUddfuXu68S8BES",
-    AccountType.SPL,
+    TokenType.SPL,
     2,
     undefined,
     undefined,
@@ -662,7 +664,7 @@ export class Account {
     Currency.SOL_WIF,
     "Solana 2",
     "HxoKQ5eu5MkqaAw7DaGVermrJqeNH8XkVnEKEpFuS9id",
-    AccountType.SPL,
+    TokenType.SPL,
     0,
     undefined,
     undefined,
@@ -674,7 +676,7 @@ export class Account {
     Currency.SOL_WIF,
     "Solana 2",
     "6vSQTFcBoPfUKAdo8BQNJqqxU6UcBmd87HQoNSbgTMzH",
-    AccountType.SPL,
+    TokenType.SPL,
     1,
     undefined,
     undefined,

@@ -1,24 +1,14 @@
 import { expect } from "detox";
-import {
-  getElementById,
-  getIdOfElement,
-  openDeeplink,
-  scrollToId,
-  tapById,
-  waitForElementById,
-} from "../../helpers";
+import { openDeeplink } from "../../helpers/commonHelpers";
+import CommonPage from "../common.page";
+import { CurrencyType } from "@ledgerhq/live-common/e2e/enum/Currency";
 import { getEnv } from "@ledgerhq/live-env";
-import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 
-const baseLink = "add-account";
-const isMock = getEnv("MOCK");
-
-export default class AddAccountDrawer {
+export default class AddAccountDrawer extends CommonPage {
+  baseLink = "add-account";
   deselectAllButtonId = "add-accounts-deselect-all";
-  accountCardRegExp = (id = ".*") => new RegExp(`account-card-${id}`);
-  accountCard = (id: string) => getElementById(this.accountCardRegExp(id));
   accountId = (currency: string, index: number) =>
-    isMock ? `mock:1:${currency}:MOCK_${currency}_${index}:` : `js:2:${currency}:.*`;
+    getEnv("MOCK") ? `mock:1:${currency}:MOCK_${currency}_${index}:` : `js:2:${currency}:.*`;
   accountTitleId = (accountName: string, index: number) =>
     getElementById(`test-id-account-${accountName}`, index);
   modalButtonId = "add-accounts-modal-add-button";
@@ -34,7 +24,7 @@ export default class AddAccountDrawer {
 
   @Step("Open add account via deeplink")
   async openViaDeeplink() {
-    await openDeeplink(baseLink);
+    await openDeeplink(this.baseLink);
   }
 
   @Step("Click on 'Import with your Ledger' button")
@@ -46,6 +36,7 @@ export default class AddAccountDrawer {
   @Step("Select currency")
   async selectCurrency(currencyId: string) {
     const id = this.currencyRow(currencyId);
+    await waitForElementById(id);
     await scrollToId(id);
     await tapById(id);
   }
@@ -74,15 +65,12 @@ export default class AddAccountDrawer {
   }
 
   @Step("Add only first discovered account")
-  async addFirstAccount(currency: Currency) {
+  async addFirstAccount(currency: CurrencyType) {
     await this.waitAccountsDiscovery();
-    await this.expectAccountDiscovery(currency.name, currency.currencyId);
+    await this.expectAccountDiscovery(currency.name, currency.id);
     await tapById(this.deselectAllButtonId);
-    await tapById(this.accountCardRegExp(), 0);
-    const accountId = (await getIdOfElement(this.accountCardRegExp(), 0)).replace(
-      /^account-card-/,
-      "",
-    );
+    await this.selectFirstAccount();
+    const accountId = await this.getAccountId(0);
     await this.finishAccountsDiscovery();
     await this.tapSuccessCta();
     return accountId;
@@ -107,12 +95,9 @@ export default class AddAccountDrawer {
   }
 
   @Step("Add only first discovered account")
-  async addNetworkBasedFirstAccount(currency: Currency) {
+  async addNetworkBasedFirstAccount(currency: CurrencyType) {
     await this.waitAccountsDiscovery();
-    const accountId = await this.expectNetworkBasedAccountDiscovery(
-      currency.name,
-      currency.currencyId,
-    );
+    const accountId = await this.expectNetworkBasedAccountDiscovery(currency.name, currency.id);
     await tapById(this.deselectAllButtonId);
     await tapById(this.accountItemRegExp(accountId));
     await this.finishAccountsDiscovery();

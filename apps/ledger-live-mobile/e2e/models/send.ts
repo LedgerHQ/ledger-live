@@ -1,12 +1,6 @@
-import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
-import { Application } from "../page";
-import { Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
+import { TransactionType } from "@ledgerhq/live-common/e2e/models/Transaction";
 
-export async function verifyAppValidationSendInfo(
-  app: Application,
-  transaction: Transaction,
-  amount: string,
-) {
+export async function verifyAppValidationSendInfo(transaction: TransactionType, amount: string) {
   const currenciesForValidationAmount = [
     Currency.sepETH,
     Currency.DOT,

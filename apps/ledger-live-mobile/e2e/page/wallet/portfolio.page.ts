@@ -1,17 +1,8 @@
 import { expect } from "detox";
-import {
-  getElementById,
-  getTextOfElement,
-  openDeeplink,
-  scrollToId,
-  tapByElement,
-  tapById,
-  waitForElementById,
-} from "../../helpers";
-import jestExpect from "expect";
+import { openDeeplink } from "../../helpers/commonHelpers";
 
-const baseLink = "portfolio";
 export default class PortfolioPage {
+  baseLink = "portfolio";
   zeroBalance = "$0.00";
   graphCardBalanceId = "graphCard-balance";
   assetBalanceId = "asset-balance";
@@ -59,7 +50,7 @@ export default class PortfolioPage {
 
   @Step("Open Portfolio via deeplink")
   async openViaDeeplink() {
-    await openDeeplink(baseLink);
+    await openDeeplink(this.baseLink);
   }
 
   async openMyLedger() {

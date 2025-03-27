@@ -1,20 +1,15 @@
-import { CLI } from "../../../utils/cliUtils";
-import { Application } from "../../../page";
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+describe("Verify Address warnings", () => {
+  const account = Account.TRX_3;
 
-const app = new Application();
-const account = Account.TRX_3;
-
-describe(`Verify Address warnings - ${account.currency.name}`, () => {
   beforeAll(async () => {
     await app.init({
       speculosApp: account.currency.speculosApp,
       cliCommands: [
-        () => {
+        (userdataPath?: string) => {
           return CLI.liveData({
-            currency: account.currency.currencyId,
+            currency: account.currency.id,
             index: account.index,
-            appjson: app.userdataPath,
+            appjson: userdataPath,
             add: true,
           });
         },
