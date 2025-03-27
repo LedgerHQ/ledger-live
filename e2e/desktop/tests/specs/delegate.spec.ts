@@ -271,10 +271,7 @@ test.describe("e2e delegation - Tezos", () => {
       await app.accounts.navigateToAccountByName(account.account.accountName);
       await app.account.startStakingFlowFromMainStakeButton();
       await app.delegate.clickDelegateToEarnRewardsButton();
-      await app.delegate.verifyTezosDelegateInfos(
-        account.account.currency.currencyId,
-        account.provider,
-      );
+      await app.delegate.verifyTezosDelegateInfos(account.provider);
       await app.delegate.continue();
       await app.speculos.signDelegationTransaction(account);
       await app.delegate.verifySuccessMessage();

@@ -6,8 +6,8 @@ const config: PlaywrightTestConfig = {
   timeout: process.env.CI ? 400000 : 1200000,
   outputDir: "./artifacts/test-results",
   globalTimeout: 0,
-  globalSetup: require.resolve("./utils/global.setup"),
-  globalTeardown: require.resolve("./utils/global.teardown"),
+  globalSetup: require.resolve("./tests/utils/global.setup"),
+  globalTeardown: require.resolve("./tests/utils/global.teardown"),
   use: {
     ignoreHTTPSErrors: true,
     screenshot: process.env.CI ? "only-on-failure" : "off",

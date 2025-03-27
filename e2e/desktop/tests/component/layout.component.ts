@@ -19,9 +19,6 @@ export class Layout extends Component {
   readonly drawerSwapButton = this.page.getByTestId("drawer-swap-button");
   readonly drawerExperimentalButton = this.page.getByTestId("drawer-experimental-button");
   readonly drawerManagerButton = this.page.getByTestId("drawer-manager-button");
-  readonly bookmarkedAccounts = this.page
-    .getByTestId("drawer-bookmarked-accounts")
-    .locator(".bookmarked-account-item");
 
   // topbar
   readonly topbarDiscreetButton = this.page.getByTestId("topbar-discreet-button");
@@ -33,9 +30,6 @@ export class Layout extends Component {
 
   // general
   readonly marketPerformanceWidget = this.page.getByTestId("market-performance-widget");
-
-  // updater
-  readonly appUpdateBanner = this.page.getByTestId("layout-app-update-banner");
 
   @step("Close side bar")
   async closeSideBar() {

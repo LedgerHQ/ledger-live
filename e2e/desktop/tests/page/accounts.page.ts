@@ -4,29 +4,27 @@ import { AppPage } from "./abstractClasses";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 
 export class AccountsPage extends AppPage {
-  private addAccountButton = this.page.getByTestId("accounts-add-account-button");
-  private accountComponent = (accountName: string) =>
+  private readonly accountComponent = (accountName: string) =>
     this.page.getByTestId(`account-component-${accountName}`);
-  private tokenRow = (parentName: string, childCurrency: Currency) =>
+  private readonly tokenRow = (parentName: string, childCurrency: Currency) =>
     this.accountComponent(parentName)
       .locator(`xpath=following::div`)
       .getByTestId(`token-row-${childCurrency.ticker}`);
-  private tokenRowBalance = (parentName: string, childCurrency: Currency) =>
+  private readonly tokenRowBalance = (parentName: string, childCurrency: Currency) =>
     this.tokenRow(parentName, childCurrency).getByText(`${childCurrency.ticker}`);
-  private showTokensButton = (parentName: string) =>
+  private readonly showTokensButton = (parentName: string) =>
     this.accountComponent(parentName).locator("xpath=following-sibling::button").first();
-  private firstAccount = this.page.locator(".accounts-account-row-item").locator("div").first();
+  private readonly firstAccount = this.page
+    .locator(".accounts-account-row-item")
+    .locator("div")
+    .first();
   // Accounts context menu
-  private contextMenuEdit = this.page.getByTestId("accounts-context-menu-edit");
-  private settingsDeleteButton = this.page.getByTestId("account-settings-delete-button");
-  private settingsConfirmButton = this.page.getByTestId("modal-confirm-button");
-  private accountListNumber = this.page.locator(`[data-testid^="account-component-"]`);
-  private syncAccountButton = (accountName: string) =>
+  private readonly contextMenuEdit = this.page.getByTestId("accounts-context-menu-edit");
+  private readonly settingsDeleteButton = this.page.getByTestId("account-settings-delete-button");
+  private readonly settingsConfirmButton = this.page.getByTestId("modal-confirm-button");
+  private readonly accountListNumber = this.page.locator(`[data-testid^="account-component-"]`);
+  private readonly syncAccountButton = (accountName: string) =>
     this.accountComponent(accountName).getByTestId("sync-button").locator("div").first();
-
-  async openAddAccountModal() {
-    await this.addAccountButton.click();
-  }
 
   @step("Open Account $0")
   async navigateToAccountByName(accountName: string) {

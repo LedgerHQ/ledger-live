@@ -7,10 +7,10 @@ import { getEnv } from "@ledgerhq/live-env";
 import invariant from "invariant";
 
 export class NFTDrawer extends Drawer {
-  private nftName = this.page.getByTestId("nft-name-sendDrawer");
-  private sendButton = this.page.getByTestId("nft-send-button-sendDrawer");
-  private nftFloorPrice = this.page.getByTestId("nft-floor-price");
-  private nftOptionsButton = this.page.locator("#accounts-options-button");
+  private readonly nftName = this.page.getByTestId("nft-name-sendDrawer");
+  private readonly sendButton = this.page.getByTestId("nft-send-button-sendDrawer");
+  private readonly nftFloorPrice = this.page.getByTestId("nft-floor-price");
+  private readonly nftOptionsButton = this.page.locator("#accounts-options-button");
 
   @step("Verify nft name is visible")
   async expectNftNameIsVisible(nft: string) {
@@ -47,11 +47,9 @@ export class NFTDrawer extends Drawer {
   @step("Check Floor price value to be $1")
   async verifyFloorPriceValue(account: Account, floorPrice: string) {
     invariant(account.nft, "No valid NFTs found for this account");
-    const nft = account.nft[0].nftContract;
-
     const { data } = await axios({
       method: "GET",
-      url: `${getEnv("NFT_METADATA_SERVICE")}/v2/marketdata/${account.currency.currencyId}/1/contract/${nft}/floor-price`,
+      url: `${getEnv("NFT_METADATA_SERVICE")}/v2/marketdata/${account.currency.currencyId}/1/contract/${account.nft[0].nftContract}/floor-price`,
     });
 
     expect(data.value).toEqual(parseFloat(floorPrice));

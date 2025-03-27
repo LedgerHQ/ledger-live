@@ -5,8 +5,9 @@ import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import invariant from "invariant";
 
 export class NftGallery extends AppPage {
-  private locateNftInGalleryByName = (nftName: string) => this.page.locator(`text=${nftName}`);
-  private nftListGallery = (nftContract: string) =>
+  private readonly locateNftInGalleryByName = (nftName: string) =>
+    this.page.locator(`text=${nftName}`);
+  private readonly nftListGallery = (nftContract: string) =>
     this.page.getByTestId(`nft-row-gallery-${nftContract}`);
 
   @step("Select NFT $0")

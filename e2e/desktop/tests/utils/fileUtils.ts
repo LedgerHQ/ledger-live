@@ -1,7 +1,6 @@
-import { appendFile } from "fs/promises";
+import fs, { appendFile } from "fs/promises";
 import { expect } from "@playwright/test";
 import { step } from "../misc/reporters/step";
-import fs from "fs/promises";
 
 export async function safeAppendFile(filePath: string, data: string) {
   try {

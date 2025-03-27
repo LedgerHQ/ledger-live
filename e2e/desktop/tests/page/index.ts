@@ -14,7 +14,7 @@ import { SettingsPage } from "./settings.page";
 import { LedgerSyncDrawer } from "./drawer/ledger.sync.drawer";
 import { SwapPage } from "./swap.page";
 import { SwapConfirmationDrawer } from "./drawer/swap.confirmation.drawer";
-import { delegateModal } from "./modal/delegate.modal";
+import { DelegateModal } from "./modal/delegate.modal";
 import { DelegateDrawer } from "./drawer/delegate.drawer";
 import { SendDrawer } from "./drawer/send.drawer";
 import { AssetDrawer } from "./drawer/asset.drawer";
@@ -24,9 +24,9 @@ import { NFTDrawer } from "./drawer/nft.drawer";
 import { NftGallery } from "./nftGallery.page";
 import { AssetPage } from "./asset.page";
 import { SettingsModal } from "./modal/settings.modal";
-import { OnboardingPage } from "./onboarding.page";
 import { OperationDrawer } from "./drawer/operation.drawer";
 import { LiveApp } from "./liveApp.page";
+import { OnboardingPage } from "./onboarding.page";
 
 export class Application extends PageHolder {
   public account = new AccountPage(this.page);
@@ -40,7 +40,7 @@ export class Application extends PageHolder {
   public receive = new ReceiveModal(this.page);
   public speculos = new SpeculosPage(this.page);
   public send = new SendModal(this.page);
-  public delegate = new delegateModal(this.page);
+  public delegate = new DelegateModal(this.page);
   public settings = new SettingsPage(this.page);
   public ledgerSync = new LedgerSyncDrawer(this.page);
   public swap = new SwapPage(this.page);

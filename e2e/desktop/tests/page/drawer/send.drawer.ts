@@ -5,11 +5,11 @@ import { NFTTransaction, Transaction } from "@ledgerhq/live-common/e2e/models/Tr
 import { TransactionStatus } from "@ledgerhq/live-common/e2e/enum/TransactionStatus";
 
 export class SendDrawer extends Drawer {
-  private addressValue = (address: string) =>
+  private readonly addressValue = (address: string) =>
     this.page.locator('[data-testid="drawer-content"]').locator(`text=${address}`);
-  private amountValue = this.page.getByTestId("amountReceived-drawer");
-  private transactionType = this.page.getByTestId("transaction-type");
-  private nftName = this.page.getByTestId("nft-name-operationDrawer");
+  private readonly amountValue = this.page.getByTestId("amountReceived-drawer");
+  private readonly transactionType = this.page.getByTestId("transaction-type");
+  private readonly nftName = this.page.getByTestId("nft-name-operationDrawer");
 
   @step("Verify address is visible")
   async addressValueIsVisible(address: string) {
