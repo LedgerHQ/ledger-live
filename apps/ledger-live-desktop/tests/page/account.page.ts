@@ -38,6 +38,7 @@ export class AccountPage extends AppPage {
   private seeGalleryButton = this.page.getByRole("button", { name: "See Gallery" });
   private nftOperation = this.page.getByText("NFT Sent");
   private nftList = (collectionName: string) => this.page.getByTestId(`nft-row-${collectionName}`);
+  private accountChart = this.page.getByTestId("chart-container");
 
   @step("Navigate to token")
   async navigateToToken(SubAccount: Account) {
@@ -193,5 +194,10 @@ export class AccountPage extends AppPage {
       }
       await expect(nftLocator).toBeVisible();
     }
+  }
+
+  @step("Check account chart is visible")
+  async checkAccountChart() {
+    await this.accountChart.waitFor({ state: "visible" });
   }
 }

@@ -205,6 +205,7 @@ export async function createSpeculosDevice(
     ...(sdk ? ["--sdk", sdk] : []),
     "--display",
     "headless",
+    "-p", // to use the production PKI
     ...(process.env.CI ? ["--vnc-password", "live", "--vnc-port", "41000"] : []),
     ...(isSpeculosWebsocket
       ? [

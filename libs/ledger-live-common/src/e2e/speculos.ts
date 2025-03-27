@@ -551,6 +551,7 @@ export async function signSendTransaction(tx: Transaction) {
       await sendAlgorand(tx);
       break;
     case Currency.SOL:
+    case Currency.SOL_GIGA:
       await sendSolana(tx);
       break;
     case Currency.TRX:
