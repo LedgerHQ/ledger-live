@@ -1,14 +1,19 @@
+import { AccountBridge } from "@ledgerhq/types-live";
 import { getMainAccount } from "../../account";
 import { getAlpacaApi } from "./alpaca";
 import { createTransaction } from "./createTransaction";
 import { transactionToIntent } from "./utils";
+import BigNumber from "bignumber.js";
 
-export async function genericEstimateMaxSpendable(network, kind) {
+export function genericEstimateMaxSpendable(
+  network,
+  kind,
+): AccountBridge<any>["estimateMaxSpendable"] {
   return async ({ account, parentAccount, transaction }) => {
     const mainAccount = getMainAccount(account, parentAccount);
 
     const draftTransaction = {
-      ...createTransaction(account),
+      ...createTransaction(account as any),
       ...transaction,
       amount: mainAccount.spendableBalance,
     };
@@ -16,6 +21,8 @@ export async function genericEstimateMaxSpendable(network, kind) {
       transactionToIntent(mainAccount, draftTransaction),
     );
 
-    return account.spendableBalance.minus(fees);
+    const bnFee = BigNumber(fees.toString());
+
+    return account.spendableBalance.minus(bnFee);
   };
 }

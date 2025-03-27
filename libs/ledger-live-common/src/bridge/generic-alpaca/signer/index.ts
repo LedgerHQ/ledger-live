@@ -5,6 +5,7 @@ import Xrp from "@ledgerhq/hw-app-xrp";
 
 import Transport from "@ledgerhq/hw-transport";
 import { signTransaction } from "./signTransaction";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
 
 export type SignTransactionOptions = {
   rawTxHex: string;
@@ -15,6 +16,7 @@ export type AlpacaSigner = {
   getAddress: GetAddressFn;
   signTransaction?: (deviceId: string, opts: SignTransactionOptions) => Promise<string>;
   signMessage?: (message: string) => Promise<string>;
+  context: SignerContext<any>;
 };
 
 export function getSigner(network): AlpacaSigner {
@@ -27,6 +29,7 @@ export function getSigner(network): AlpacaSigner {
       return {
         getAddress: xrpGetAddress(executeWithSigner(createSigner)),
         signTransaction: signTransaction(executeWithSigner(createSigner)),
+        context: executeWithSigner(createSigner),
       };
     }
   }

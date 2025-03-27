@@ -7,9 +7,9 @@ import { XrpCoinConfig } from "@ledgerhq/coin-xrp/config";
 
 export function getAlpacaApi(network: string, kind: "local" | "remote"): Api<any> {
   if (kind === "local") {
+    // dynamic import ?
     switch (network) {
       case "xrp":
-      case "ripple":
         return createXrpApi(
           getCurrencyConfiguration<XrpCoinConfig>(getCryptoCurrencyById("ripple")),
         );

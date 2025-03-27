@@ -10,6 +10,7 @@ import type {
 import { getAlpacaApi } from "./alpaca";
 import { buildOptimisticOperation, transactionToIntent } from "./utils";
 import { FeeNotLoaded } from "@ledgerhq/errors";
+import { Result } from "@ledgerhq/coin-framework/derivation";
 
 /**
  * Sign Transaction with Ledger hardware
@@ -28,24 +29,24 @@ export const genericSignOperation =
   }): Observable<SignOperationEvent> =>
     new Observable(o => {
       async function main() {
-        if (!transaction["fee"]) throw new FeeNotLoaded();
+        if (!transaction["fees"]) throw new FeeNotLoaded();
         o.next({ type: "device-signature-requested" });
 
-        /*const { publicKey } = await signerContext(deviceId, signer =>
+        const { publicKey } = (await signerContext(deviceId, signer =>
           signer.getAddress(account.freshAddressPath),
-        );*/
+        )) as Result;
 
         const unsigned = await getAlpacaApi(network, kind).craftTransaction(
           transactionToIntent(account, transaction),
         );
 
         const response = await signerContext(deviceId, signer =>
-          signer.signTransaction(unsigned, account.freshAddressPath),
+          signer.signTransaction(account.freshAddressPath, unsigned, publicKey),
         );
 
         o.next({ type: "device-signature-granted" });
 
-        const signed = getAlpacaApi(network, kind).combine(unsigned, response as string);
+        const signed = getAlpacaApi(network, kind).combine(unsigned, response as string, publicKey);
 
         const operation = buildOptimisticOperation(account, transaction);
 
