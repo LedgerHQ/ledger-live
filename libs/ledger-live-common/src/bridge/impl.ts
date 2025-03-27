@@ -11,12 +11,11 @@ import { getAlpacaAccountBridge } from "./generic-alpaca/accountBridge";
 
 const alpacaized = {
   xrp: true,
-  ripple: true,
 };
 
 export const getCurrencyBridge = (currency: CryptoCurrency): CurrencyBridge => {
   if (alpacaized[currency.family]) {
-    return getAlpacaCurrencyBridge(currency.family, "local");
+    return getAlpacaCurrencyBridge(currency.family, "remote");
   }
 
   if (getEnv("MOCK")) {
@@ -60,7 +59,7 @@ export const getAccountBridge = (
 
 export function getAccountBridgeByFamily(family: string, accountId?: string): AccountBridge<any> {
   if (alpacaized[family]) {
-    return getAlpacaAccountBridge(family, "local");
+    return getAlpacaAccountBridge(family, "remote");
   }
 
   if (accountId) {
