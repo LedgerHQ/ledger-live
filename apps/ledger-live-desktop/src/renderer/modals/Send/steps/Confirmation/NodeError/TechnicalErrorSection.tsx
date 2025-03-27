@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Flex, Text, Icons } from "@ledgerhq/react-ui";
+import { Box, Flex, Text, Icons } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { useCopyToClipboard } from "~/newArch/hooks/useCopyToClipboard";
@@ -41,6 +41,7 @@ const StyledText = styled(Text)`
   overflow: hidden;
   text-overflow: ellipsis;
   padding-right: 6px;
+  word-break: break-word;
 `;
 
 const TechnicalErrorSection = ({ error, onSaveLogs }: Props) => {
@@ -68,14 +69,14 @@ const TechnicalErrorSection = ({ error, onSaveLogs }: Props) => {
       flex={1}
       width="100%"
     >
-      <Flex flexShrink={1}>
+      <Box flexShrink={1}>
         <StyledText variant="bodyLineHeight" fontSize={13} flex={1} color="neutral.c70">
           <Text color="neutral.c100">
             {t("errors.TransactionBroadcastError.technicalErrorTitle")}
           </Text>
           <Text color="neutral.c70">{error.message}</Text>
         </StyledText>
-      </Flex>
+      </Box>
       <Flex columnGap={2} alignSelf="start">
         <InteractFlex onClick={onSaveLogs} flexShrink={1}>
           <Icons.Download color="neutral.c100" size="S" />
