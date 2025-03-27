@@ -139,9 +139,10 @@ export const useMarketActions = ({ currency, page, currenciesAll }: MarketAction
       startStakeFlow({
         currencies: internalCurrency ? [internalCurrency.id] : undefined,
         source: page,
+        returnTo: history.location.pathname,
       });
     },
-    [internalCurrency, currency?.ticker, page, startStakeFlow],
+    [internalCurrency, currency?.ticker, page, startStakeFlow, history.location.pathname],
   );
 
   const availableOnBuy = isAvailableOnBuy(currency, isCurrencyAvailable);
