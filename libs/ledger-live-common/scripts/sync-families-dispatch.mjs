@@ -15,8 +15,7 @@ const targets = [
   "account.ts",
   "formatters.ts",
   "platformAdapter.ts",
-  "walletApiAdapter.ts",
-  "operation.ts",
+  "walletApiAdapter.ts"
 ];
 
 // Coins using coin-framework
