@@ -19,6 +19,7 @@ type StakeFlowProps = {
   source?: string;
   /** "get-funds" shows different text on no funds modal if entry point is "get coins" button. Default is undefined. */
   entryPoint?: "get-funds" | undefined;
+  returnTo?: string;
 };
 
 const useStakeFlow = () => {
@@ -105,6 +106,7 @@ const useStakeFlow = () => {
       alwaysShowNoFunds = false,
       source,
       entryPoint,
+      returnTo,
     }: StakeFlowProps = {}) => {
       const cryptoCurrencies = filterCurrencies(listCurrencies(true), {
         currencies: currencies || list,
@@ -127,6 +129,7 @@ const useStakeFlow = () => {
               entryPoint,
               source,
               shouldRedirect,
+              returnTo,
             ),
         },
         {

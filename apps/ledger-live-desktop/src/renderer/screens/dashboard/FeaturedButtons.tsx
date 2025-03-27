@@ -42,7 +42,7 @@ const FeaturedButtons = () => {
   const handleClickStake = useCallback(() => {
     track("button_clicked2", { button: "stake", flow: "stake", page: "portfolio" });
 
-    startStakeFlow({ source: "Portfolio" });
+    startStakeFlow({ source: "Portfolio", returnTo: `/` });
   }, [startStakeFlow]);
 
   if (!bannerEnabled) return null;
