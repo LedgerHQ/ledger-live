@@ -90,9 +90,7 @@ export function useStake() {
       }
 
       if (getAccountSpendableBalance(account).isZero()) {
-        console.warn(
-          `Account ${account.id} ${account.type} ${account?.name} has zero spendable balance. Cannot stake. Returning null.`,
-        );
+        /** Should be handled by No Stakes Flow. */
         return null;
       }
       const walletApiAccount = accountToWalletAPIAccount(walletState, account, parentAccount);
