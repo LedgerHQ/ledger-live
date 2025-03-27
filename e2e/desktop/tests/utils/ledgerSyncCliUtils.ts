@@ -4,6 +4,7 @@ import { accountNames, accounts } from "../testdata/ledgerSyncTestData";
 import { Page } from "@playwright/test";
 import { Application } from "../page";
 import { DistantState as LiveData } from "@ledgerhq/live-wallet/walletsync/index";
+import invariant from "invariant";
 
 interface LedgerKeyRingProtocolArgs {
   pubKey: string;
@@ -96,7 +97,8 @@ export class LedgerSyncCliHelper {
     }
   }
 
-  static parseData(pulledData: string) {
+  static parseData(pulledData: string | void) {
+    invariant(pulledData, "Ledger Sync: pulledData is undefined");
     try {
       return JSON.parse(pulledData);
     } catch (error) {
