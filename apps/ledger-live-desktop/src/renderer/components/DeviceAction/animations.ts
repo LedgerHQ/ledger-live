@@ -235,10 +235,6 @@ const nanoX: DeviceAnimations = {
     light: NANOX_LIGHT_CONTINUE,
     dark: NANOX_DARK_CONTINUE,
   },
-  // confirmLockscreen: {
-  //   light: NANOX_LIGHT_CONTINUE,
-  //   dark: NANOX_DARK_CONTINUE,
-  // },
   recoverWithProtect: {
     light: NANOX_LIGHT_PAIRED,
     dark: NANOX_DARK_PAIRED,
@@ -286,10 +282,6 @@ const nanoSP: DeviceAnimations = {
     light: NANOSP_LIGHT_CONTINUE,
     dark: NANOSP_DARK_CONTINUE,
   },
-  // confirmLockscreen: {
-  //   light: NANOSP_LIGHT_CONTINUE,
-  //   dark: NANOSP_DARK_CONTINUE,
-  // },
   recoverWithProtect: {
     light: NANOSP_LIGHT_CONTINUE,
     dark: NANOSP_DARK_CONTINUE,

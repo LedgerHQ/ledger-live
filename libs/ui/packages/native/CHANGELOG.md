@@ -1,24 +1,20 @@
 # @ledgerhq/native-ui
 
-## 0.31.0-nightly.2
-
-### Patch Changes
-
-- Updated dependencies [[`a656e47`](https://github.com/LedgerHQ/ledger-live/commit/a656e47c1dc3ac8b578debf9cf80eab370c7086f)]:
-  - @ledgerhq/crypto-icons-ui@1.11.0-nightly.0
-
-## 0.31.0-nightly.1
+## 0.31.0
 
 ### Minor Changes
 
-- [#9546](https://github.com/LedgerHQ/ledger-live/pull/9546) [`395074c`](https://github.com/LedgerHQ/ledger-live/commit/395074cd6d20df0534d906b578d37a7cf0c521ff) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: largeMode animatedInput for recipient address
+- [#9505](https://github.com/LedgerHQ/ledger-live/pull/9505) [`be1b3ad`](https://github.com/LedgerHQ/ledger-live/commit/be1b3ad53fa400d24165873e9b0103a8c3063e39) Thanks [@thesan](https://github.com/thesan)! - Add the banner component to use for the LNS upsell campaign
 
-## 0.30.1-nightly.0
+- [#9506](https://github.com/LedgerHQ/ledger-live/pull/9506) [`4599711`](https://github.com/LedgerHQ/ledger-live/commit/459971108e07785b4eabecca4d2185d50ddecc58) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Bigger line height to display thai properly
 
-### Patch Changes
+## 0.31.0-next.0
 
-- Updated dependencies [[`eea82e7`](https://github.com/LedgerHQ/ledger-live/commit/eea82e7993c27eacdbaba2f5418df64c75db3f2d)]:
-  - @ledgerhq/icons-ui@0.9.0-nightly.0
+### Minor Changes
+
+- [#9505](https://github.com/LedgerHQ/ledger-live/pull/9505) [`be1b3ad`](https://github.com/LedgerHQ/ledger-live/commit/be1b3ad53fa400d24165873e9b0103a8c3063e39) Thanks [@thesan](https://github.com/thesan)! - Add the banner component to use for the LNS upsell campaign
+
+- [#9506](https://github.com/LedgerHQ/ledger-live/pull/9506) [`4599711`](https://github.com/LedgerHQ/ledger-live/commit/459971108e07785b4eabecca4d2185d50ddecc58) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Bigger line height to display thai properly
 
 ## 0.30.0
 

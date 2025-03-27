@@ -8,7 +8,6 @@ import {
 import { getEnv } from "@ledgerhq/live-env";
 import type {
   Account,
-  TokenAccount,
   AccountLike,
   BalanceHistory,
   PortfolioRange,
@@ -473,7 +472,7 @@ const assetsDistributionNotAvailable: AssetsDistribution = {
 };
 
 export const orderAccountsByFiatValue = (
-  accounts: Account[] | TokenAccount[],
+  accounts: AccountLike[],
   counterValueState: CounterValuesState,
   to: Currency,
   fullBalance: boolean = true,

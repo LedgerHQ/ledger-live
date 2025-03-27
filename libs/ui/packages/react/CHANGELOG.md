@@ -1,18 +1,16 @@
 # @ledgerhq/react-ui
 
-## 0.20.1-nightly.1
+## 0.21.0
 
-### Patch Changes
+### Minor Changes
 
-- Updated dependencies [[`a656e47`](https://github.com/LedgerHQ/ledger-live/commit/a656e47c1dc3ac8b578debf9cf80eab370c7086f)]:
-  - @ledgerhq/crypto-icons-ui@1.11.0-nightly.0
+- [#9552](https://github.com/LedgerHQ/ledger-live/pull/9552) [`43d927a`](https://github.com/LedgerHQ/ledger-live/commit/43d927afe3e1da328624c23f3fa0e2473a30435f) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix initialDelay when Carousel Swipes immediately
 
-## 0.20.1-nightly.0
+## 0.21.0-next.0
 
-### Patch Changes
+### Minor Changes
 
-- Updated dependencies [[`eea82e7`](https://github.com/LedgerHQ/ledger-live/commit/eea82e7993c27eacdbaba2f5418df64c75db3f2d)]:
-  - @ledgerhq/icons-ui@0.9.0-nightly.0
+- [#9552](https://github.com/LedgerHQ/ledger-live/pull/9552) [`43d927a`](https://github.com/LedgerHQ/ledger-live/commit/43d927afe3e1da328624c23f3fa0e2473a30435f) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix initialDelay when Carousel Swipes immediately
 
 ## 0.20.0
 

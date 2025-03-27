@@ -1,30 +1,21 @@
 # @ledgerhq/hw-app-eth
 
-## 6.43.1-nightly.2
+## 6.43.1
 
 ### Patch Changes
 
-- Updated dependencies [[`1ec6a03`](https://github.com/LedgerHQ/ledger-live/commit/1ec6a03580ea1136dab22747721942056506d589), [`2effe04`](https://github.com/LedgerHQ/ledger-live/commit/2effe04d9d4b3e407ed25da3b9f11324a82126d3), [`a656e47`](https://github.com/LedgerHQ/ledger-live/commit/a656e47c1dc3ac8b578debf9cf80eab370c7086f)]:
-  - @ledgerhq/types-live@6.64.0-nightly.1
-  - @ledgerhq/domain-service@1.2.23-nightly.1
-  - @ledgerhq/evm-tools@1.6.1-nightly.0
-  - @ledgerhq/cryptoassets-evm-signatures@13.5.5-nightly.0
+- Updated dependencies [[`fa8b10c`](https://github.com/LedgerHQ/ledger-live/commit/fa8b10cac5603eedd7c2309d2bb544a7d2d1a1a8), [`c15d7ea`](https://github.com/LedgerHQ/ledger-live/commit/c15d7ea48e41168726a90a17809175aee5bfa940)]:
+  - @ledgerhq/types-live@6.64.0
+  - @ledgerhq/domain-service@1.2.23
+  - @ledgerhq/evm-tools@1.6.0
 
-## 6.43.1-nightly.1
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/evm-tools@1.6.1-nightly.0
-  - @ledgerhq/cryptoassets-evm-signatures@13.5.5-nightly.0
-
-## 6.43.1-nightly.0
+## 6.43.1-next.0
 
 ### Patch Changes
 
-- Updated dependencies [[`2407a6e`](https://github.com/LedgerHQ/ledger-live/commit/2407a6e1f3153c30c52d4bac4c9334fa95c351da)]:
-  - @ledgerhq/types-live@6.64.0-nightly.0
-  - @ledgerhq/domain-service@1.2.23-nightly.0
+- Updated dependencies [[`fa8b10c`](https://github.com/LedgerHQ/ledger-live/commit/fa8b10cac5603eedd7c2309d2bb544a7d2d1a1a8), [`c15d7ea`](https://github.com/LedgerHQ/ledger-live/commit/c15d7ea48e41168726a90a17809175aee5bfa940)]:
+  - @ledgerhq/types-live@6.64.0-next.0
+  - @ledgerhq/domain-service@1.2.23-next.0
   - @ledgerhq/evm-tools@1.6.0
 
 ## 6.43.0

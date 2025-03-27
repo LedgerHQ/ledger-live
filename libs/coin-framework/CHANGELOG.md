@@ -1,43 +1,34 @@
 # @ledgerhq/coin-framework
 
-## 2.4.0-nightly.3
+## 2.4.0
 
 ### Minor Changes
 
-- [#9611](https://github.com/LedgerHQ/ledger-live/pull/9611) [`a656e47`](https://github.com/LedgerHQ/ledger-live/commit/a656e47c1dc3ac8b578debf9cf80eab370c7086f) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Add SUI coin send and receive abilities
-
-### Patch Changes
-
-- Updated dependencies [[`1ec6a03`](https://github.com/LedgerHQ/ledger-live/commit/1ec6a03580ea1136dab22747721942056506d589), [`2effe04`](https://github.com/LedgerHQ/ledger-live/commit/2effe04d9d4b3e407ed25da3b9f11324a82126d3), [`a656e47`](https://github.com/LedgerHQ/ledger-live/commit/a656e47c1dc3ac8b578debf9cf80eab370c7086f)]:
-  - @ledgerhq/types-live@6.64.0-nightly.1
-  - @ledgerhq/types-cryptoassets@7.21.0-nightly.0
-  - @ledgerhq/cryptoassets@13.14.0-nightly.1
-
-## 2.4.0-nightly.2
-
-### Minor Changes
-
-- [#9604](https://github.com/LedgerHQ/ledger-live/pull/9604) [`40e98c3`](https://github.com/LedgerHQ/ledger-live/commit/40e98c392bd9192570e46c2d62cf0779bdfe01ec) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Introduce new NFTs tools in Developer Settings
-
-### Patch Changes
-
-- Updated dependencies [[`32f2a0c`](https://github.com/LedgerHQ/ledger-live/commit/32f2a0cf073e5c1a5d65cbe44e69660f8f510dd7)]:
-  - @ledgerhq/live-env@2.7.0-nightly.0
-  - @ledgerhq/cryptoassets@13.13.1-nightly.0
-  - @ledgerhq/live-network@2.0.6-nightly.0
-
-## 2.4.0-nightly.1
-
-### Patch Changes
-
-- Updated dependencies [[`2407a6e`](https://github.com/LedgerHQ/ledger-live/commit/2407a6e1f3153c30c52d4bac4c9334fa95c351da)]:
-  - @ledgerhq/types-live@6.64.0-nightly.0
-
-## 2.4.0-nightly.0
-
-### Minor Changes
+- [#9440](https://github.com/LedgerHQ/ledger-live/pull/9440) [`5f27549`](https://github.com/LedgerHQ/ledger-live/commit/5f275498e80060f98238a54e8ae3e2c94bfd7c91) Thanks [@qperrot](https://github.com/qperrot)! - feat estimateFees for alpacha
 
 - [#9466](https://github.com/LedgerHQ/ledger-live/pull/9466) [`e2630cb`](https://github.com/LedgerHQ/ledger-live/commit/e2630cbec8d94ae037b2bf85cfa200a277ae739f) Thanks [@qperrot](https://github.com/qperrot)! - Tron craftTransaction alpaca implementation
+
+- [#9275](https://github.com/LedgerHQ/ledger-live/pull/9275) [`b8fca38`](https://github.com/LedgerHQ/ledger-live/commit/b8fca386fa07cf393109a1928e92dfc790f9c286) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Update Alpaca api to include generic token type and update list operations
+
+### Patch Changes
+
+- Updated dependencies [[`fa8b10c`](https://github.com/LedgerHQ/ledger-live/commit/fa8b10cac5603eedd7c2309d2bb544a7d2d1a1a8), [`c15d7ea`](https://github.com/LedgerHQ/ledger-live/commit/c15d7ea48e41168726a90a17809175aee5bfa940)]:
+  - @ledgerhq/types-live@6.64.0
+
+## 2.4.0-next.0
+
+### Minor Changes
+
+- [#9440](https://github.com/LedgerHQ/ledger-live/pull/9440) [`5f27549`](https://github.com/LedgerHQ/ledger-live/commit/5f275498e80060f98238a54e8ae3e2c94bfd7c91) Thanks [@qperrot](https://github.com/qperrot)! - feat estimateFees for alpacha
+
+- [#9466](https://github.com/LedgerHQ/ledger-live/pull/9466) [`e2630cb`](https://github.com/LedgerHQ/ledger-live/commit/e2630cbec8d94ae037b2bf85cfa200a277ae739f) Thanks [@qperrot](https://github.com/qperrot)! - Tron craftTransaction alpaca implementation
+
+- [#9275](https://github.com/LedgerHQ/ledger-live/pull/9275) [`b8fca38`](https://github.com/LedgerHQ/ledger-live/commit/b8fca386fa07cf393109a1928e92dfc790f9c286) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Update Alpaca api to include generic token type and update list operations
+
+### Patch Changes
+
+- Updated dependencies [[`fa8b10c`](https://github.com/LedgerHQ/ledger-live/commit/fa8b10cac5603eedd7c2309d2bb544a7d2d1a1a8), [`c15d7ea`](https://github.com/LedgerHQ/ledger-live/commit/c15d7ea48e41168726a90a17809175aee5bfa940)]:
+  - @ledgerhq/types-live@6.64.0-next.0
 
 ## 2.3.0
 

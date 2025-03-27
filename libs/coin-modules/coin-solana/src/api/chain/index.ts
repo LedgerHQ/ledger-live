@@ -129,6 +129,8 @@ const remapErrorsWithRetry = <P extends Promise<T>, T>(callback: () => P, times 
   };
 };
 
+const kyNoTimeout = ky.create({ timeout: false });
+
 export function getChainAPI(
   config: Config,
   logger?: (url: string, options: any) => void,
@@ -146,7 +148,7 @@ export function getChainAPI(
     if (!_connection) {
       _connection = new Connection(config.endpoint, {
         ...(fetchMiddleware ? { fetchMiddleware } : {}),
-        fetch: ky as typeof fetch, // Type cast for jest test having an issue with the type
+        fetch: kyNoTimeout as typeof fetch, // Type cast for jest test having an issue with the type
         commitment: "confirmed",
         confirmTransactionInitialTimeout: getEnv("SOLANA_TX_CONFIRMATION_TIMEOUT") || 0,
       });

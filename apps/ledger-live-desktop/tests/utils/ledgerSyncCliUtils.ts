@@ -1,7 +1,7 @@
 import { CLI } from "tests/utils/cliUtils";
 import { activateLedgerSync } from "@ledgerhq/live-common/e2e/speculos";
 import { accountNames, accounts } from "tests/testdata/ledgerSyncTestData";
-import { Page, TestInfo } from "@playwright/test";
+import { Page } from "@playwright/test";
 import { Application } from "tests/page";
 import { DistantState as LiveData } from "@ledgerhq/live-wallet/walletsync/index";
 import { getEnv } from "@ledgerhq/live-env";
@@ -157,28 +157,18 @@ export class LedgerSyncCliHelper {
     return output;
   }
 
-  static async deleteLedgerSyncData(testInfo: TestInfo) {
-    try {
-      await CLI.ledgerSync({
-        deleteData: true,
-        ...LedgerSyncCliHelper.ledgerKeyRingProtocolArgs,
-        ...LedgerSyncCliHelper.ledgerSyncPushDataArgs,
-      });
+  static async deleteLedgerSyncData() {
+    await CLI.ledgerSync({
+      deleteData: true,
+      ...LedgerSyncCliHelper.ledgerKeyRingProtocolArgs,
+      ...LedgerSyncCliHelper.ledgerSyncPushDataArgs,
+    });
 
-      await CLI.ledgerKeyRingProtocol({
-        destroyKeyRingTree: true,
-        ...LedgerSyncCliHelper.ledgerKeyRingProtocolArgs,
-        ...LedgerSyncCliHelper.ledgerSyncPushDataArgs,
-      });
-    } catch (error) {
-      if (
-        (error as Error).message?.includes("Not a member of trustchain") &&
-        testInfo.status == testInfo.expectedStatus
-      )
-        return; // Not logging error as trustchain was deleted within the test
-
-      console.error("AfterAll Hook: Error deleting trustchain\n", error);
-    }
+    await CLI.ledgerKeyRingProtocol({
+      destroyKeyRingTree: true,
+      ...LedgerSyncCliHelper.ledgerKeyRingProtocolArgs,
+      ...LedgerSyncCliHelper.ledgerSyncPushDataArgs,
+    });
   }
 
   static checkSynchronizationSuccess(page: Page, app: Application) {

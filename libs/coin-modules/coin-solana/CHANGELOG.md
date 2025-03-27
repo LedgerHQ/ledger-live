@@ -1,45 +1,32 @@
 # @ledgerhq/coin-solana
 
-## 0.16.0-nightly.3
+## 0.16.0
 
 ### Minor Changes
 
-- [#9602](https://github.com/LedgerHQ/ledger-live/pull/9602) [`e81aed6`](https://github.com/LedgerHQ/ledger-live/commit/e81aed656271ee2ba40c5f0985e83388031ed8f2) Thanks [@Canestin](https://github.com/Canestin)! - fix: sol staking delegate from-address
+- [#9558](https://github.com/LedgerHQ/ledger-live/pull/9558) [`55d7e30`](https://github.com/LedgerHQ/ledger-live/commit/55d7e30eae1488581b1e7f912b0a6932d5c0b798) Thanks [@Justkant](https://github.com/Justkant)! - fix: handle a possibly undefined error from promise catch
+
+- [#9480](https://github.com/LedgerHQ/ledger-live/pull/9480) [`579a6f1`](https://github.com/LedgerHQ/ledger-live/commit/579a6f11a119b63d517511b41ab52c957000063b) Thanks [@Justkant](https://github.com/Justkant)! - fix: handle 5XX errors and other retriable errors with ky
 
 ### Patch Changes
 
-- [#9512](https://github.com/LedgerHQ/ledger-live/pull/9512) [`eb1c438`](https://github.com/LedgerHQ/ledger-live/commit/eb1c4384e2a4f1530ac199e9cdfc65b5ca66e958) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix(llm,lld): improve Solana scan accounts performances
+- Updated dependencies [[`5f27549`](https://github.com/LedgerHQ/ledger-live/commit/5f275498e80060f98238a54e8ae3e2c94bfd7c91), [`fa8b10c`](https://github.com/LedgerHQ/ledger-live/commit/fa8b10cac5603eedd7c2309d2bb544a7d2d1a1a8), [`e2630cb`](https://github.com/LedgerHQ/ledger-live/commit/e2630cbec8d94ae037b2bf85cfa200a277ae739f), [`c15d7ea`](https://github.com/LedgerHQ/ledger-live/commit/c15d7ea48e41168726a90a17809175aee5bfa940), [`b8fca38`](https://github.com/LedgerHQ/ledger-live/commit/b8fca386fa07cf393109a1928e92dfc790f9c286)]:
+  - @ledgerhq/coin-framework@2.4.0
+  - @ledgerhq/types-live@6.64.0
 
-- Updated dependencies [[`1ec6a03`](https://github.com/LedgerHQ/ledger-live/commit/1ec6a03580ea1136dab22747721942056506d589), [`2effe04`](https://github.com/LedgerHQ/ledger-live/commit/2effe04d9d4b3e407ed25da3b9f11324a82126d3), [`a656e47`](https://github.com/LedgerHQ/ledger-live/commit/a656e47c1dc3ac8b578debf9cf80eab370c7086f)]:
-  - @ledgerhq/types-live@6.64.0-nightly.1
-  - @ledgerhq/types-cryptoassets@7.21.0-nightly.0
-  - @ledgerhq/cryptoassets@13.14.0-nightly.1
-  - @ledgerhq/coin-framework@2.4.0-nightly.3
+## 0.16.0-next.0
 
-## 0.15.2-nightly.2
+### Minor Changes
 
-### Patch Changes
+- [#9558](https://github.com/LedgerHQ/ledger-live/pull/9558) [`55d7e30`](https://github.com/LedgerHQ/ledger-live/commit/55d7e30eae1488581b1e7f912b0a6932d5c0b798) Thanks [@Justkant](https://github.com/Justkant)! - fix: handle a possibly undefined error from promise catch
 
-- Updated dependencies [[`32f2a0c`](https://github.com/LedgerHQ/ledger-live/commit/32f2a0cf073e5c1a5d65cbe44e69660f8f510dd7), [`40e98c3`](https://github.com/LedgerHQ/ledger-live/commit/40e98c392bd9192570e46c2d62cf0779bdfe01ec)]:
-  - @ledgerhq/live-env@2.7.0-nightly.0
-  - @ledgerhq/coin-framework@2.4.0-nightly.2
-  - @ledgerhq/cryptoassets@13.13.1-nightly.0
-  - @ledgerhq/live-network@2.0.6-nightly.0
-
-## 0.15.2-nightly.1
+- [#9480](https://github.com/LedgerHQ/ledger-live/pull/9480) [`579a6f1`](https://github.com/LedgerHQ/ledger-live/commit/579a6f11a119b63d517511b41ab52c957000063b) Thanks [@Justkant](https://github.com/Justkant)! - fix: handle 5XX errors and other retriable errors with ky
 
 ### Patch Changes
 
-- Updated dependencies [[`2407a6e`](https://github.com/LedgerHQ/ledger-live/commit/2407a6e1f3153c30c52d4bac4c9334fa95c351da)]:
-  - @ledgerhq/types-live@6.64.0-nightly.0
-  - @ledgerhq/coin-framework@2.4.0-nightly.1
-
-## 0.15.2-nightly.0
-
-### Patch Changes
-
-- Updated dependencies [[`e2630cb`](https://github.com/LedgerHQ/ledger-live/commit/e2630cbec8d94ae037b2bf85cfa200a277ae739f)]:
-  - @ledgerhq/coin-framework@2.4.0-nightly.0
+- Updated dependencies [[`5f27549`](https://github.com/LedgerHQ/ledger-live/commit/5f275498e80060f98238a54e8ae3e2c94bfd7c91), [`fa8b10c`](https://github.com/LedgerHQ/ledger-live/commit/fa8b10cac5603eedd7c2309d2bb544a7d2d1a1a8), [`e2630cb`](https://github.com/LedgerHQ/ledger-live/commit/e2630cbec8d94ae037b2bf85cfa200a277ae739f), [`c15d7ea`](https://github.com/LedgerHQ/ledger-live/commit/c15d7ea48e41168726a90a17809175aee5bfa940), [`b8fca38`](https://github.com/LedgerHQ/ledger-live/commit/b8fca386fa07cf393109a1928e92dfc790f9c286)]:
+  - @ledgerhq/coin-framework@2.4.0-next.0
+  - @ledgerhq/types-live@6.64.0-next.0
 
 ## 0.15.1
 

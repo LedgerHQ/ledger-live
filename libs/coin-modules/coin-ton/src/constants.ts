@@ -26,6 +26,10 @@ export const TOKEN_TRANSFER_QUERY_ID = 0;
  */
 export const MAX_COMMENT_BYTES = 120;
 
+/**
+ * Operation codes for Jetton (TON token standard) transactions.
+ * These codes are used to identify different types of token operations.
+ */
 export enum JettonOpCode {
   Transfer = 0xf8a7ea5,
   TransferNotification = 0x7362d09c,
@@ -34,3 +38,19 @@ export enum JettonOpCode {
   Burn = 0x595f07bc,
   BurnNotification = 0x7bdd97de,
 }
+
+/**
+ * TON blockchain workchain identifiers.
+ * MasterChain (-1) is used for validator operations and governance.
+ * BaseChain (0) is the main workchain used for regular accounts and smart contracts.
+ */
+export enum Workchain {
+  MasterChain = -1,
+  BaseChain = 0,
+}
+
+/**
+ * Default workchain used for TON addresses.
+ * BaseChain (0) is the standard workchain for user accounts and transactions.
+ */
+export const WORKCHAIN = Workchain.BaseChain;

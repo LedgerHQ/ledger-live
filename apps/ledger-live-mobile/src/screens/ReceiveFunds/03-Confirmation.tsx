@@ -49,6 +49,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { isUTXOCompliant } from "@ledgerhq/live-common/currencies/helpers";
 import { NeedMemoTagModal } from "./NeedMemoTagModal";
+import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 
 type ScreenProps = BaseComposite<
   StackNavigatorProps<ReceiveFundsStackParamList, ScreenName.ReceiveConfirmation>
@@ -87,6 +88,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
   const [hasCopied, setCopied] = useState(false);
   const dispatch = useDispatch();
   const insets = useSafeAreaInsets();
+  const withdrawCryptoUrl = useLocalizedUrl(urls.withdrawCrypto);
 
   const hasClosedWithdrawBanner = useSelector(hasClosedWithdrawBannerSelector);
   const [displayBanner, setDisplayBanner] = useState(!hasClosedWithdrawBanner);
@@ -130,7 +132,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
       type: "card",
       page: "Receive Account Qr Code",
     });
-    Linking.openURL(urls.withdrawCrypto);
+    Linking.openURL(withdrawCryptoUrl);
   };
 
   useEffect(() => {
