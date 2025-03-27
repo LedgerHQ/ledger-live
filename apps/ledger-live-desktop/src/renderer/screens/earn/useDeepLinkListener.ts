@@ -29,7 +29,7 @@ export const useDeepLinkListener = () => {
 
     switch (action) {
       case "stake":
-        startStakeFlow({ shouldRedirect: false, source: "Earn Dashboard" });
+        startStakeFlow({ shouldRedirect: false, source: "Earn Dashboard", returnTo: `/earn` });
         break;
       case "stake-account": {
         const accountId = queryParams.get("accountId");
