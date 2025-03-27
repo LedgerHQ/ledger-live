@@ -407,28 +407,50 @@ export class SwapPage extends AppPage {
     }
   }
 
-  @step("Verify swap amount error message is displayed: $2")
-  async verifySwapAmountErrorMessageIsDisplayed(
+  // @step("Verify swap amount error message is displayed: $2")
+  // async verifySwapAmountErrorMessageIsDisplayed(
+  //   electronApp: ElectronApplication,
+  //   accountToDebit: Account,
+  //   message: string | RegExp,
+  // ) {
+  //   const [, webview] = electronApp.windows();
+  //   if (!accountToDebit.accountType) {
+  //     //error message is flickering and changing, so we need to wait for it to be stable
+  //     await this.page.waitForTimeout(1000);
+  //     const errorSpan = await webview.getByTestId("from-account-error").textContent();
+  //     expect(errorSpan).toMatch(message);
+  //     //that specific amount error doesn't trigger quotes
+  //     if (message instanceof RegExp) {
+  //       await expect(webview.getByTestId(this.numberOfQuotes)).not.toBeVisible();
+  //     }
+  //   } else {
+  //     await expect(webview.getByTestId(this.numberOfQuotes)).toBeVisible();
+  //     await expect(webview.locator(this.errorSpan(message))).toBeVisible();
+  //   }
+  //   await expect(webview.getByTestId(`execute-button`)).not.toBeEnabled();
+  //   await expect(webview.getByTestId(`insufficient-funds-warning`)).toBeVisible();
+  // }
+
+  @step("Verify swap amount error message match: $1")
+  async verifySwapAmountErrorMessageIsCorrect(
     electronApp: ElectronApplication,
-    accountToDebit: Account,
     message: string | RegExp,
   ) {
     const [, webview] = electronApp.windows();
-    if (!accountToDebit.tokenType) {
-      //error message is flickering and changing, so we need to wait for it to be stable
-      await this.page.waitForTimeout(1000);
-      const errorSpan = await webview.getByTestId("from-account-error").textContent();
-      expect(errorSpan).toMatch(message);
-      //that specific amount error doesn't trigger quotes
-      if (message instanceof RegExp) {
-        await expect(webview.getByTestId(this.numberOfQuotes)).not.toBeVisible();
-      }
-    } else {
-      await expect(webview.getByTestId(this.numberOfQuotes)).toBeVisible();
-      await expect(webview.locator(this.errorSpan(message))).toBeVisible();
-    }
-    await expect(webview.getByTestId(`execute-button`)).not.toBeEnabled();
+    const errorSpan = await webview.getByTestId("from-account-error").textContent();
+    expect(errorSpan).toMatch(message);
+  }
+
+  @step("Verify swap CTA banner displayed")
+  async checkCtaBanner(electronApp: ElectronApplication) {
+    const [, webview] = electronApp.windows();
     await expect(webview.getByTestId(`insufficient-funds-warning`)).toBeVisible();
+  }
+
+  @step("verify quotes are displayed")
+  async checkQuotes(electronApp: ElectronApplication) {
+    const [, webview] = electronApp.windows();
+    await expect(webview.getByTestId(this.numberOfQuotes)).toBeVisible();
   }
 
   @step("Go and wait for Swap app to be ready")
