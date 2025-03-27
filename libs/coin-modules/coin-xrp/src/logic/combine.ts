@@ -14,5 +14,6 @@ export function combine(transaction: string, signature: string, publicKey?: stri
     transactionWithSignature = { ...transactionWithSignature, SigningPubKey: publicKey };
   }
 
-  return encode(transactionWithSignature);
+  const encoded = encode(transactionWithSignature);
+  return encoded;
 }
