@@ -2,7 +2,6 @@ import { useMemo } from "react";
 import { TFunction } from "i18next";
 import { ContextMenuItemType } from "~/renderer/components/ContextMenu/ContextMenuWrapper";
 import { openURL } from "~/renderer/linking";
-import { safeList } from "LLD/features/Collectibles/utils/useSafeList";
 import { ExternalIdEnum, ItemType, ViewerEnum } from "LLD/features/Collectibles/types/enum/Links";
 import IconOpensea from "~/renderer/icons/Opensea";
 import IconRarible from "~/renderer/icons/Rarible";
@@ -13,40 +12,46 @@ import { NFTMetadata, ProtoNFT } from "@ledgerhq/types-live";
 import { isNFTMetadata } from "../utils/typeGuardsChecker";
 import { createOrdinalExplorerUrl } from "../utils/createOrdinalExplorerUrl";
 
+const createSimpleHashLinks = (
+  t: TFunction,
+  links: NFTMetadata["links"] | SimpleHashNft["collection"]["marketplace_pages"],
+  explorerLink?: string | null,
+): ContextMenuItemType[] => {
+  const marketplacePages = Array.isArray(links) ? links : [];
+  const list: ContextMenuItemType[] = marketplacePages
+    .filter(link => link.marketplace_id === ExternalIdEnum.MAGICEDEN)
+    .map(link => ({
+      id: link.marketplace_id,
+      label: t("NFT.viewer.actions.open", { viewer: ViewerEnum.MAGICEDEN }),
+      Icon: IconMagicEden,
+      type: ItemType.EXTERNAL,
+      callback: () => openURL(link.nft_url),
+    }));
+
+  if (list.length > 0) {
+    list.push({ id: "sep2", type: ItemType.SEPARATOR, label: "" });
+  }
+
+  if (explorerLink) {
+    list.push({
+      id: ExternalIdEnum.EXPLORER,
+      label: t("NFT.viewer.actions.open", { viewer: ViewerEnum.EXPLORER }),
+      Icon: IconsLegacy.GlobeMedium,
+      type: ItemType.EXTERNAL,
+      callback: () => openURL(explorerLink),
+    });
+  }
+  return list;
+};
+
 const createLinks = (
   t: TFunction,
-  links:
-    | Record<string, string | null>
-    | SimpleHashNft["collection"]["marketplace_pages"]
-    | undefined,
+  links: NFTMetadata["links"] | SimpleHashNft["collection"]["marketplace_pages"],
   isSimpleHash: boolean,
   explorerLink?: string | null,
 ): ContextMenuItemType[] => {
   if (isSimpleHash) {
-    const marketplacePages = Array.isArray(links) ? links : [];
-    return safeList([
-      ...marketplacePages
-        .filter(link => link.marketplace_id === ExternalIdEnum.MAGICEDEN)
-        .map(link => ({
-          id: link.marketplace_id,
-          label: t("NFT.viewer.actions.open", { viewer: ViewerEnum.MAGICEDEN }),
-          Icon: IconMagicEden,
-          type: ItemType.EXTERNAL,
-          callback: () => openURL(link.nft_url),
-        })),
-      ...(marketplacePages.length > 0 ? [{ id: "sep2", type: "separator", label: "" }] : []),
-      ...(explorerLink
-        ? [
-            {
-              id: ExternalIdEnum.EXPLORER,
-              label: t("NFT.viewer.actions.open", { viewer: ViewerEnum.EXPLORER }),
-              Icon: IconsLegacy.GlobeMedium,
-              type: ItemType.EXTERNAL,
-              callback: () => openURL(explorerLink),
-            },
-          ]
-        : []),
-    ]);
+    return createSimpleHashLinks(t, links, explorerLink);
   } else {
     const linksRecord = Array.isArray(links) ? undefined : links;
     const list: ContextMenuItemType[] = [];
@@ -73,7 +78,7 @@ const createLinks = (
       });
     }
 
-    list.push({ id: "sep2", type: "separator", label: "" });
+    list.push({ id: "sep2", type: ItemType.SEPARATOR, label: "" });
 
     if (linksRecord?.explorer) {
       const link = linksRecord.explorer;

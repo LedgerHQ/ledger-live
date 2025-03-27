@@ -15,6 +15,8 @@ import CustomImage from "~/renderer/screens/customImage";
 import NFTViewerDrawer from "~/renderer/drawers/NFTViewerDrawer";
 import { ContextMenuItemType } from "../../components/ContextMenu/ContextMenuWrapper";
 import { devicesModelListSelector } from "~/renderer/reducers/settings";
+import { ItemType } from "~/newArch/features/Collectibles/types/enum/Links";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 const addOpensea = (list: ContextMenuItemType[], t: TFunction, links: NFTMetadata["links"]) => {
   if (links?.opensea) {
@@ -25,7 +27,7 @@ const addOpensea = (list: ContextMenuItemType[], t: TFunction, links: NFTMetadat
         viewer: "Opensea.io",
       }),
       Icon: IconOpensea,
-      type: "external",
+      type: ItemType.EXTERNAL,
       callback: () => openURL(link),
     });
   }
@@ -40,16 +42,16 @@ const addRarible = (list: ContextMenuItemType[], t: TFunction, links: NFTMetadat
         viewer: "Rarible",
       }),
       Icon: IconRarible,
-      type: "external",
+      type: ItemType.EXTERNAL,
       callback: () => openURL(link),
     });
   }
 };
 
-const addSeperator = (list: ContextMenuItemType[]) => {
+const addSeparator = (list: ContextMenuItemType[]) => {
   list.push({
     id: "sep2",
-    type: "separator",
+    type: ItemType.SEPARATOR,
     label: "",
   });
 };
@@ -63,36 +65,26 @@ const addExplorer = (list: ContextMenuItemType[], t: TFunction, links: NFTMetada
         viewer: "Explorer",
       }),
       Icon: IconsLegacy.GlobeMedium,
-      type: "external",
+      type: ItemType.EXTERNAL,
       callback: () => openURL(link),
     });
   }
 };
 
-const linksPerCurrency: Record<
-  string,
-  (t: TFunction, links: NFTMetadata["links"]) => ContextMenuItemType[]
-> = {
-  ethereum: (t, links) => {
-    const list: ContextMenuItemType[] = [];
+const defaultLinksPerCurrency = (t: TFunction, links: NFTMetadata["links"]) => {
+  const list: ContextMenuItemType[] = [];
 
-    addOpensea(list, t, links);
-    addRarible(list, t, links);
-    addSeperator(list);
-    addExplorer(list, t, links);
+  addOpensea(list, t, links);
+  addRarible(list, t, links);
+  addSeparator(list);
+  addExplorer(list, t, links);
 
-    return list;
-  },
-  polygon: (t: TFunction, links: NFTMetadata["links"]) => {
-    const list: ContextMenuItemType[] = [];
+  return list;
+};
 
-    addOpensea(list, t, links);
-    addRarible(list, t, links);
-    addSeperator(list);
-    addExplorer(list, t, links);
-
-    return list;
-  },
+const linksPerCurrency: Partial<Record<CryptoCurrency["id"], typeof defaultLinksPerCurrency>> = {
+  ethereum: defaultLinksPerCurrency,
+  polygon: defaultLinksPerCurrency,
 };
 
 export default (
