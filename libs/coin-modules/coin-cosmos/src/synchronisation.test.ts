@@ -6,7 +6,7 @@ import { getAccountShape } from "./synchronisation";
 import { SyncConfig } from "@ledgerhq/types-live";
 
 const mockGetAccountInfo = jest.fn();
-jest.mock("./api/Cosmos", () => {
+jest.mock("./network/Cosmos", () => {
   return {
     CosmosAPI: jest.fn().mockImplementation(() => {
       return {

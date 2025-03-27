@@ -230,7 +230,7 @@ export const asDerivationMode = (derivationMode: string): DerivationMode => {
   if (!isDerivationMode(derivationMode)) {
     throw new Error(`${derivationMode} is not a derivationMode`);
   }
-  return derivationMode as DerivationMode;
+  return derivationMode;
 };
 export const getAllDerivationModes = (): DerivationMode[] => Object.keys(modes) as DerivationMode[];
 export const getMandatoryEmptyAccountSkip = (derivationMode: DerivationMode): number =>
