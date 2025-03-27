@@ -1,10 +1,14 @@
 import { AssertionError, fail } from "assert";
 import axios from "axios";
 import { NFTMetadata } from "@ledgerhq/types-live";
+import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { collectionMetadata, nftMetadata } from "../../nftResolvers";
 
 jest.mock("axios");
 const mockedAxios = jest.mocked(axios);
+
+// Add solana manually to the env until officially supported
+setEnv("NFT_CURRENCIES", [...getEnv("NFT_CURRENCIES"), "solana"]);
 
 const currencyId = "solana";
 const wrongCurrencyId = "bitcoin";
@@ -68,7 +72,7 @@ describe("Solana Family", () => {
           }
           expect(e).toBeInstanceOf(Error);
           expect((e as Error).message).toBe(
-            `Solana Bridge NFT Resolver: Unsupported currency ${wrongCurrencyId}`,
+            `Solana Bridge NFT Resolver: Unsupported currency (${wrongCurrencyId})`,
           );
           expect(axios).not.toHaveBeenCalled();
         }
@@ -119,7 +123,7 @@ describe("Solana Family", () => {
           }
           expect(e).toBeInstanceOf(Error);
           expect((e as Error).message).toBe(
-            `Solana Bridge NFT Resolver: Unsupported currency ${wrongCurrencyId}`,
+            `Solana Bridge NFT Resolver: Unsupported currency (${wrongCurrencyId})`,
           );
           expect(axios).not.toHaveBeenCalled();
         }
