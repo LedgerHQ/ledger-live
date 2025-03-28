@@ -11,7 +11,6 @@ const mockInitialState: LiveAppManifest[] = [
     apiVersion: "^2.0.0",
     manifestVersion: "2",
     currencies: ["ethereum", "ethereum/**", "ethereum/erc20/usd__coin"],
-    // TODO: ensure currencies list is correct in the actual manifests...
     permissions: ["account.request"],
     domains: ["https://"],
   } as LiveAppManifest,
