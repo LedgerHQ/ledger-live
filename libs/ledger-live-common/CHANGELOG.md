@@ -1,5 +1,12 @@
 ## 34.25.0
 
+## 34.28.0-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`ba8015d`](https://github.com/LedgerHQ/ledger-live/commit/ba8015dbc77b62fb340004b25f70962474ed11b5)]:
+  - @ledgerhq/coin-stellar@2.1.0-next.1
+
 ## 34.28.0-next.0
 
 ### Minor Changes

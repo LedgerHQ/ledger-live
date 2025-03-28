@@ -1,5 +1,11 @@
 # @ledgerhq/coin-stellar
 
+## 2.1.0-next.1
+
+### Patch Changes
+
+- [#9708](https://github.com/LedgerHQ/ledger-live/pull/9708) [`ba8015d`](https://github.com/LedgerHQ/ledger-live/commit/ba8015dbc77b62fb340004b25f70962474ed11b5) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix (coin-stellar): operation identifiers are wrong
+
 ## 2.1.0-next.0
 
 ### Minor Changes

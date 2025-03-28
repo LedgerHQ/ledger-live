@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-stellar": patch
+"@ledgerhq/coin-stellar": minor
 ---
 
 fix (coin-stellar): operation identifiers are wrong
