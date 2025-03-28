@@ -7,6 +7,10 @@ let cache = true;
 let shard = "";
 let target = "release";
 
+if (os.platform() === "win32") {
+  usePowerShell();
+}
+
 const usage = (exitCode = 1) => {
   console.log(
     `Usage: ${basename(

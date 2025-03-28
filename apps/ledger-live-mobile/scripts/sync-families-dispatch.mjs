@@ -2,6 +2,10 @@
 import "zx/globals";
 import rimraf from "rimraf";
 
+if (os.platform() === "win32") {
+  usePowerShell();
+}
+
 const basePath = path.join(__dirname, "..", "src");
 const generatedPath = path.join(basePath, "generated");
 

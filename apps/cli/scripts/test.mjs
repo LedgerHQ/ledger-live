@@ -1,5 +1,9 @@
 #!/usr/bin/env zx
 
+if (os.platform() === "win32") {
+  usePowerShell();
+}
+
 const p = await $`node ./bin/index.js version`;
 
 const acceptedWarnings = [
