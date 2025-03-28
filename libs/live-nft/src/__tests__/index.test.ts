@@ -1,17 +1,7 @@
 import BigNumber from "bignumber.js";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
-import { Account, NFTStandard, ProtoNFT } from "@ledgerhq/types-live";
+import { NFTStandard } from "@ledgerhq/types-live";
 import { encodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
-import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
-import {
-  getNFT,
-  getNftCollectionKey,
-  getNftKey,
-  groupByCurrency,
-  mapChain,
-  mapChains,
-  orderByLastReceived,
-} from "..";
+import { getNFT, getNftCollectionKey, getNftKey, groupByCurrency, mapChain, mapChains } from "..";
 import { SupportedBlockchain } from "../supported";
 
 const NFT_1 = {
@@ -48,13 +38,6 @@ const NFT_4 = {
 };
 const NFTs = [NFT_1, NFT_2, NFT_3, NFT_4];
 
-const ETH = getCryptoCurrencyById("ethereum");
-
-const accounts: Account[] = [
-  genAccount("mocked-account-1", { currency: ETH, withNft: true }),
-  genAccount("mocked-account-2", { currency: ETH, withNft: true }),
-];
-
 describe("Helpers functions", () => {
   it("should return Nft key", () => {
     expect(getNftKey("contract", "tokenId", "currencyId")).toEqual("currencyId-contract-tokenId");
@@ -68,12 +51,6 @@ describe("Helpers functions", () => {
 
   it("should group by Currency", () => {
     expect(groupByCurrency(NFTs)).toEqual([NFT_1, NFT_4, NFT_2, NFT_3]);
-  });
-
-  it("should order By last received", () => {
-    expect(orderByLastReceived(accounts, NFTs)).toHaveLength(0);
-    const NFTs_TEST = accounts.map(a => a.nfts).flat() as ProtoNFT[];
-    expect(orderByLastReceived(accounts, NFTs.concat(NFTs_TEST)).length).toBeGreaterThanOrEqual(1);
   });
 
   it("should map a single chain", () => {
