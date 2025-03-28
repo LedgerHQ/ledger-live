@@ -42,7 +42,7 @@ export default class NftGalleryPage {
   async hideAllNft() {
     // Get total number of NFTs given by the list identifier
     const nftNumber = Number.parseInt(
-      (await getIdOfElement(this.nftListRegexp)).replace(this.nftListPrefix, ""),
+      (await getIdByRegexp(this.nftListRegexp)).replace(this.nftListPrefix, ""),
     );
 
     // Select all NFTs and confirm hidding

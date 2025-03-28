@@ -125,4 +125,5 @@ export class Currency {
     AppInfos.SOLANA,
     "EKpQGSJtjMFqKZ9KQanSqYXRcF8fBopzLHYxdM65zcjm",
   );
+  static readonly OP = new Currency("OP Mainnet", "OP", "optimism", AppInfos.ETHEREUM);
 }

@@ -26,9 +26,12 @@ export default class CommonPage {
   accountCardRegExp = (id = ".*") => new RegExp(this.accountCardPrefix + id);
   accountCardId = (id: string) => this.accountCardPrefix + id;
   accountCard = (id: string) => getElementById(this.accountCardRegExp(id));
-  accountRowId = (accountId: string) => `account-row-${accountId}`;
-  baseAccountName = "account-row-name-";
-  accountNameRegExp = new RegExp(`${this.baseAccountName}.*`);
+
+  accountItemId = "account-item-";
+  accountItemRegExp = (id = ".*(?<!-name)$") => new RegExp(`${this.accountItemId}${id}`);
+  accountItemNameRegExp = new RegExp(`${this.accountItemId}.*-name`);
+  accountItem = (id: string) => getElementById(this.accountItemRegExp(id));
+  accountItemName = (accountId: string) => getElementById(`${this.accountItemId + accountId}-name`);
 
   addDeviceButton = () => getElementById("connect-with-bluetooth");
   scannedDeviceRow = (id: string) => `device-scanned-${id}`;
@@ -73,7 +76,7 @@ export default class CommonPage {
   }
 
   async getAccountId(index: number) {
-    return (await getIdOfElement(this.accountCardRegExp(), index)).replace(
+    return (await getIdByRegexp(this.accountCardRegExp(), index)).replace(
       this.accountCardPrefix,
       "",
     );
@@ -81,13 +84,13 @@ export default class CommonPage {
 
   @Step("Go to the account")
   async goToAccount(accountId: string) {
-    await scrollToId(this.accountNameRegExp);
-    await tapById(this.accountRowId(accountId));
+    await scrollToId(this.accountItemNameRegExp);
+    await tapByElement(this.accountItem(accountId));
   }
 
   @Step("Get the account name at index")
   async getAccountName(index = 0) {
-    return await getTextOfElement(this.accountNameRegExp, index);
+    return await getTextOfElement(this.accountItemNameRegExp, index);
   }
 
   @Step("Expect the account name at index")
@@ -97,7 +100,10 @@ export default class CommonPage {
 
   @Step("Go to the account with the name")
   async goToAccountByName(name: string) {
-    await tapById(this.baseAccountName + name);
+    const accountTitle = getElementByText(name);
+    const id = await getIdOfElement(accountTitle);
+    jestExpect(id).toContain(this.accountItemId);
+    await tapByElement(accountTitle);
   }
 
   async selectAddDevice() {

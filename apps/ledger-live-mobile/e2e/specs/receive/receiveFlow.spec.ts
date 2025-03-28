@@ -31,7 +31,9 @@ describe("Receive Flow", () => {
     await app.receive.selectAsset("BTC");
     first && (await deviceAction.selectMockDevice(), (first = false));
     await deviceAction.openApp();
-    await app.receive.selectAccount("Bitcoin 1");
+    await app.addAccount.addAccountAtIndex(Currency.BTC.name, Currency.BTC.id, 0);
+    await app.addAccount.tapAddFunds();
+    await app.addAccount.tapReceiveinActionDrawer();
     await app.receive.selectVerifyAddress();
     await deviceAction.openApp();
     await app.receive.expectAddressIsVerified(btcReceiveAddress);
@@ -51,16 +53,14 @@ describe("Receive Flow", () => {
   $TmsLink("B2CQA-1856");
   $TmsLink("B2CQA-1862");
   it("Should create an account on a network", async () => {
+    const currency = Currency.OP;
     await openReceive();
     await app.receive.selectAsset("ETH");
-    await app.receive.selectNetwork("optimism");
+    await app.receive.selectNetwork(currency.id);
     await app.receive.createAccount();
     first && (await deviceAction.selectMockDevice(), (first = false));
     await deviceAction.openApp();
-    await app.receive.selectAccount("OP Mainnet 1");
-    await app.receive.selectAccount("OP Mainnet 2");
-    await app.receive.selectAccount("OP Mainnet 3");
-    await app.receive.continueCreateAccount();
+    await app.addAccount.addAccountAtIndex(Currency.OP.name, Currency.OP.id, 2);
     await app.receive.expectAccountIsCreated("OP Mainnet 3");
   });
 
@@ -72,7 +72,9 @@ describe("Receive Flow", () => {
     await app.receive.selectNetwork("bsc");
     first && (await deviceAction.selectMockDevice(), (first = false));
     await deviceAction.openApp();
-    await app.receive.selectAccount("Binance Smart Chain 1");
+    await app.addAccount.addAccountAtIndex(Currency.BSC.name, Currency.BSC.id, 0);
+    await app.addAccount.tapAddFunds();
+    await app.addAccount.tapReceiveinActionDrawer();
     await app.receive.doNotVerifyAddress();
     await app.receive.expectReceivePageIsDisplayed("BNB", "Binance Smart Chain 1");
   });

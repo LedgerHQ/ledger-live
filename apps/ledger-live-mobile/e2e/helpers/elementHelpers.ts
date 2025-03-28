@@ -1,4 +1,4 @@
-import { Direction } from "detox/detox";
+import { Direction, NativeElement } from "detox/detox";
 import { delay, isAndroid } from "./commonHelpers";
 import { by, element, waitFor, web } from "detox";
 
@@ -21,6 +21,11 @@ export const ElementHelpers = {
     return waitFor(element(by.text(text)))
       .toBeVisible()
       .withTimeout(timeout);
+  },
+
+  getElementsById(id: string | RegExp) {
+    if (!isAndroid()) sync_delay(200); // Issue with RN75 : QAA-370
+    return element(by.id(id));
   },
 
   getElementById(id: string | RegExp, index = 0) {
@@ -131,12 +136,17 @@ export const ElementHelpers = {
     return (!("elements" in attributes) ? attributes.text : attributes.elements[index].text) || "";
   },
 
-  async getIdOfElement(id: RegExp, index = 0) {
-    const attributes = await ElementHelpers.getElementById(id, index).getAttributes();
+  async getIdOfElement(element: NativeElement, index = 0) {
+    const attributes = await element.getAttributes();
     return (
       (!("elements" in attributes)
         ? attributes.identifier
         : attributes.elements[index].identifier) || ""
     );
+  },
+
+  async getIdByRegexp(id: RegExp, index = 0) {
+    const element = ElementHelpers.getElementById(id, index);
+    return await ElementHelpers.getIdOfElement(element, index);
   },
 };
