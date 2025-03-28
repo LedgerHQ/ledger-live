@@ -115,6 +115,12 @@ export const setEnablePlatformDevTools = (enablePlatformDevTools: boolean) =>
   saveSettings({
     enablePlatformDevTools,
   });
+
+export const setEnablePlatformDeviceSwitch = (enablePlatformDeviceSwitch: boolean) =>
+  saveSettings({
+    enablePlatformDeviceSwitch,
+  });
+
 export const setCatalogProvider = (catalogProvider: string) =>
   saveSettings({
     catalogProvider,
