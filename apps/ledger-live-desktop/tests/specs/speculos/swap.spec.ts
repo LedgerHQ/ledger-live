@@ -456,6 +456,11 @@ test.describe("Swap history", () => {
       await app.layout.goToSwap();
       await app.swap.goToSwapHistory();
       await app.swap.clickExportOperations();
+      await app.swap.checkExportedFileContents(
+        swapHistory.swap,
+        swapHistory.provider,
+        swapHistory.swapId,
+      );
     },
   );
 

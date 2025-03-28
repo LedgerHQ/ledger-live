@@ -8,6 +8,7 @@ import { Provider } from "@ledgerhq/live-common/e2e/enum/Swap";
 import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
 import fs from "fs/promises";
 import * as path from "path";
+import { FileUtils } from "tests/utils/fileUtils";
 
 export class SwapPage extends AppPage {
   private currencyByName = (accountName: string) => this.page.getByText(accountName); // TODO: this is rubbish. Changed this
@@ -514,24 +515,26 @@ export class SwapPage extends AppPage {
     const originalFilePath = path.resolve("./ledgerlive-swap-history.csv");
     const targetFilePath = path.resolve(__dirname, "../artifacts/ledgerlive-swap-history.csv");
 
-    const fileExists = await this.waitForFileToExist(originalFilePath, 5000);
+    const fileExists = await FileUtils.waitForFileToExist(originalFilePath, 5000);
     expect(fileExists).toBeTruthy();
     const targetDir = path.dirname(targetFilePath);
     await fs.mkdir(targetDir, { recursive: true });
     await fs.rename(originalFilePath, targetFilePath);
   }
 
-  async waitForFileToExist(filePath: string, timeout: number): Promise<boolean> {
-    const startTime = Date.now();
-    while (Date.now() - startTime < timeout) {
-      try {
-        await fs.access(filePath);
-        return true;
-      } catch {
-        await new Promise(resolve => setTimeout(resolve, 100));
-      }
-    }
+  @step("Check contents of exported operations file")
+  async checkExportedFileContents(swap: Swap, provider: Provider, id: string) {
+    const targetFilePath = path.resolve(__dirname, "../artifacts/ledgerlive-swap-history.csv");
+    const fileContents = await fs.readFile(targetFilePath, "utf-8");
 
-    return false;
+    expect(fileContents).toContain(provider.name);
+    expect(fileContents).toContain(id);
+    expect(fileContents).toContain(swap.accountToDebit.currency.ticker);
+    expect(fileContents).toContain(swap.accountToCredit.currency.ticker);
+    expect(fileContents).toContain(swap.amount);
+    expect(fileContents).toContain(swap.accountToDebit.accountName);
+    expect(fileContents).toContain(swap.accountToDebit.address);
+    expect(fileContents).toContain(swap.accountToCredit.accountName);
+    expect(fileContents).toContain(swap.accountToCredit.address);
   }
 }
