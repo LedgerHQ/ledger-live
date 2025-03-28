@@ -15,6 +15,7 @@ import { setDrawerVisibility as setLedgerSyncDrawerVisibility } from "~/renderer
 import { CARD_APP_ID, WC_ID } from "@ledgerhq/live-common/wallet-api/constants";
 import { getAccountsOrSubAccountsByCurrency, trackDeeplinkingEvent } from "./utils";
 import { Currency } from "@ledgerhq/types-cryptoassets";
+import { useRedirectToPostOnboardingCallback } from "../useAutoRedirectToPostOnboarding";
 
 export function useDeepLinkHandler() {
   const dispatch = useDispatch();
@@ -22,12 +23,13 @@ export function useDeepLinkHandler() {
   const location = useLocation();
   const history = useHistory();
   const { setUrl } = useStorylyContext();
-  const navigateToHome = () => history.push("/");
+  const navigateToHome = useCallback(() => history.push("/"), [history]);
   const navigateToPostOnboardingHub = useNavigateToPostOnboardingHubCallback();
   const postOnboardingDeeplinkHandler = usePostOnboardingDeeplinkHandler(
     navigateToHome,
     navigateToPostOnboardingHub,
   );
+  const tryRedirectToPostOnboardingOrRecover = useRedirectToPostOnboardingCallback();
 
   const navigate = useCallback(
     (
@@ -364,11 +366,21 @@ export function useDeepLinkHandler() {
         }
         case "portfolio":
         default:
-          navigate("/");
+          if (!tryRedirectToPostOnboardingOrRecover()) {
+            navigate("/");
+          }
           break;
       }
     },
-    [accounts, dispatch, location.pathname, navigate, postOnboardingDeeplinkHandler, setUrl],
+    [
+      accounts,
+      dispatch,
+      location.pathname,
+      navigate,
+      postOnboardingDeeplinkHandler,
+      setUrl,
+      tryRedirectToPostOnboardingOrRecover,
+    ],
   );
 
   return {

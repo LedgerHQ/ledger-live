@@ -29,10 +29,14 @@ export function useRedirectToPostOnboardingCallback() {
       if (shouldRedirectToRecoverUpsell) {
         openRecoverUpsell({ fallbackRedirection });
         onDone();
-      } else if (shouldRedirectToPostOnboarding && lastOnboardedDevice) {
+        return true;
+      }
+      if (shouldRedirectToPostOnboarding && lastOnboardedDevice) {
         openPostOnboarding({ deviceModelId: lastOnboardedDevice.modelId, fallbackRedirection });
         onDone();
+        return true;
       }
+      return false;
     },
     [
       fallbackRedirection,
