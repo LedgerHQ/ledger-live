@@ -4,8 +4,15 @@ import { SyncConfig } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { getAccountShape } from "./synchronisation";
 import { CosmosAccount } from "./types";
+// import coinConfig, { CosmosCoinConfig } from "./config";
+// import { cosmosConfig } from "./config";
 
 describe("Testing synchronisation", () => {
+  // beforeAll(() => {
+  //   coinConfig.setCoinConfig(
+  //     (): CosmosCoinConfig => cosmosConfig["config_currency_cosmos"] as unknown as CosmosCoinConfig,
+  //   );
+  // });
   const currencies: { id: string; unit: string }[] = [
     { id: "cosmos", unit: "uatom" },
     { id: "injective", unit: "inj" },
