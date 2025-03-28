@@ -13,11 +13,11 @@ const EnablePlatformDeviceSwitchToggle = () => {
   );
   return (
     <>
-      <Track onUpdate event="AllowExperimentalApps" />
+      <Track onUpdate event="EnablePlatformDeviceSwitchToggle" />
       <Switch
         isChecked={EnablePlatformDeviceSwitchToggle}
         onChange={onSetEnablePlatformDeviceSwitch}
-        data-testid="settings-enable-platform-dev-tools-apps"
+        data-testid="settings-enable-platform-device-switch-toggle"
       />
     </>
   );
