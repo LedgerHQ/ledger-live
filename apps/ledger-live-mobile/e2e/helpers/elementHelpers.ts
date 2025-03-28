@@ -52,7 +52,7 @@ export const ElementHelpers = {
     return web.element(by.web.cssSelector(`[data-testid="${id}"]`));
   },
 
-  getWebElementsWithText(id: string, text: string) {
+  getWebElementsByIdAndText(id: string, text: string) {
     return web.element(by.web.xpath(`//span[@data-testid="${id}" and text()="${text}"]`));
   },
 

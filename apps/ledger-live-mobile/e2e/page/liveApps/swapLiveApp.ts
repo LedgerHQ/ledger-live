@@ -49,7 +49,7 @@ export default class SwapLiveAppPage {
     for (const providerName of providersWithoutKYC) {
       const provider = Object.values(Provider).find(p => p.uiName === providerName);
       if (provider && provider.isNative) {
-        await getWebElementsWithText(this.quoteProviderName, providerName).atIndex(0).tap();
+        await getWebElementsByIdAndText(this.quoteProviderName, providerName).atIndex(0).tap();
         await allure.attachment("Selected provider: ", providerName, "text/plain");
         return providerName;
       }
