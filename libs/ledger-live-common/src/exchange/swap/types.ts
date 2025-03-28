@@ -3,7 +3,16 @@ import { CryptoCurrency, CryptoOrTokenCurrency, TokenCurrency } from "@ledgerhq/
 import { Account, AccountLike, AccountRaw, AccountRawLike, Operation } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { Result as UseBridgeTransactionResult } from "../../bridge/useBridgeTransaction";
-import { Transaction, TransactionRaw } from "../../generated/types";
+import {
+  CosmosTransaction,
+  ElrondTransaction,
+  RippleTransaction,
+  SolanaTransaction,
+  StellarTransaction,
+  TonTransaction,
+  Transaction,
+  TransactionCommon,
+} from "@ledgerhq/wallet-api-core";
 export type { SwapLiveError } from "@ledgerhq/wallet-api-exchange-module";
 
 export type ExchangeSwap = {
@@ -276,13 +285,6 @@ export type InitSwapInput = {
   deviceId: string;
 };
 
-export type InitSwapInputRaw = {
-  exchange: ExchangeSwapRaw;
-  exchangeRate: ExchangeRateRaw;
-  transaction: TransactionRaw;
-  deviceId: string;
-};
-
 export interface CustomMinOrMaxError extends Error {
   amount: BigNumber;
 }
@@ -336,3 +338,268 @@ export type SwapTransactionType = UseBridgeTransactionResult & {
   fromAmountError?: Error;
   fromAmountWarning?: Error;
 };
+
+export type SwapPayloadRequestData = {
+  provider: string;
+  deviceTransactionId: string;
+  fromAccountAddress: string;
+  toAccountAddress: string;
+  amount: string;
+  amountInAtomicUnit: number;
+  quoteId?: string;
+  toNewTokenId?: string;
+};
+export type SwapPayloadResponse = {
+  binaryPayload: string;
+  signature: string;
+  payinAddress: string;
+  swapId: string;
+  payinExtraId?: string;
+  extraTransactionParameters?: string;
+};
+
+export type ConfirmSwapRequest = {
+  provider: string;
+  swapId: string;
+  transactionId: string;
+  sourceCurrencyId?: string;
+  targetCurrencyId?: string;
+  hardwareWalletType?: string;
+};
+
+export type CancelSwapRequest = {
+  provider: string;
+  swapId: string;
+  statusCode?: string;
+  errorMessage?: string;
+  sourceCurrencyId?: string;
+  targetCurrencyId?: string;
+  hardwareWalletType?: string;
+  swapType?: string;
+  swapStep?: string;
+};
+
+export type SwapBackendResponse = {
+  provider: string;
+  swapId: string;
+  apiExtraFee: number;
+  apiFee: number;
+  refundAddress: string;
+  amountExpectedFrom: number;
+  amountExpectedTo: number;
+  status: string;
+  from: string;
+  to: string;
+  payinAddress: string;
+  payoutAddress: string;
+  createdAt: string; // ISO-8601
+  binaryPayload: string;
+  signature: string;
+  payinExtraId?: string;
+  extraTransactionParameters?: string;
+};
+
+export type TransactionWithCustomFee = TransactionCommon & {
+  customFeeConfig: {
+    [key: string]: BigNumber;
+  };
+  payinExtraId?: string;
+  customErrorType?: "swap";
+  extraTransactionParameters?: string;
+};
+
+// Define a specific type for the strategy functions, assuming they might need parameters
+export type TransactionStrategyFunction = (params: TransactionWithCustomFee) => Transaction;
+
+export const transactionStrategy: {
+  [K in Transaction["family"]]: TransactionStrategyFunction;
+} = {
+  algorand: defaultTransaction,
+  aptos: defaultTransaction,
+  bitcoin: bitcoinTransaction,
+  cardano: modeSendTransaction,
+  celo: defaultTransaction,
+  cosmos: cosmosTransaction,
+  crypto_org: defaultTransaction,
+  elrond: elrondTransaction,
+  ethereum: withoutGasLimitTransaction,
+  filecoin: defaultTransaction,
+  hedera: defaultTransaction,
+  near: modeSendTransaction,
+  neo: defaultTransaction,
+  polkadot: defaultTransaction,
+  ripple: rippleTransaction,
+  solana: solanaTransaction,
+  stacks: defaultTransaction,
+  stellar: stellarTransaction,
+  tezos: modeSendTransaction,
+  ton: tonTransaction,
+  tron: modeSendTransaction,
+  vechain: defaultTransaction,
+  casper: defaultTransaction,
+  internet_computer: defaultTransaction,
+};
+
+export function defaultTransaction({
+  family,
+  amount,
+  recipient,
+  customFeeConfig,
+}: TransactionWithCustomFee): Transaction {
+  return {
+    family,
+    amount,
+    recipient,
+    ...customFeeConfig,
+  } as Transaction;
+}
+
+export function modeSendTransaction({
+  family,
+  amount,
+  recipient,
+  customFeeConfig,
+}: TransactionWithCustomFee): Transaction {
+  return {
+    ...defaultTransaction({ family, amount, recipient, customFeeConfig }),
+    mode: "send",
+  };
+}
+
+export function stellarTransaction({
+  family,
+  amount,
+  recipient,
+  customFeeConfig,
+  payinExtraId,
+  customErrorType,
+}: TransactionWithCustomFee): StellarTransaction {
+  if (!payinExtraId)
+    throw {
+      error: new Error("Missing payinExtraId"),
+      step: "PayinExtraIdStepError",
+      customErrorType,
+    };
+
+  return {
+    ...defaultTransaction({ family, amount, recipient, customFeeConfig }),
+    memoValue: payinExtraId,
+    memoType: "MEMO_TEXT",
+  } as StellarTransaction;
+}
+
+export function rippleTransaction({
+  family,
+  amount,
+  recipient,
+  customFeeConfig,
+  payinExtraId,
+  customErrorType,
+}: TransactionWithCustomFee): RippleTransaction {
+  if (!payinExtraId)
+    throw {
+      error: new Error("Missing payinExtraId"),
+      step: "PayinExtraIdStepError",
+      customErrorType,
+    };
+
+  return {
+    ...defaultTransaction({ family, amount, recipient, customFeeConfig }),
+    tag: new BigNumber(payinExtraId).toNumber(),
+  } as RippleTransaction;
+}
+
+// Function to remove gasLimit from customFeeConfig for Ethereum or Bitcoin
+export function withoutGasLimitTransaction({
+  family,
+  amount,
+  recipient,
+  customFeeConfig,
+  extraTransactionParameters,
+}: TransactionWithCustomFee): Transaction {
+  delete customFeeConfig.gasLimit;
+  if (extraTransactionParameters) {
+    return {
+      family,
+      amount,
+      recipient,
+      ...customFeeConfig,
+      data: Buffer.from(extraTransactionParameters, "hex"),
+    } as Transaction;
+  }
+  return defaultTransaction({ family, amount, recipient, customFeeConfig });
+}
+
+export function bitcoinTransaction({
+  family,
+  amount,
+  recipient,
+  customFeeConfig,
+  extraTransactionParameters,
+}: TransactionWithCustomFee): Transaction {
+  if (extraTransactionParameters) {
+    return {
+      family,
+      amount,
+      recipient,
+      ...customFeeConfig,
+      opReturnData: Buffer.from(extraTransactionParameters, "utf-8"),
+    } as Transaction;
+  }
+  return {
+    family,
+    amount,
+    recipient,
+    ...customFeeConfig,
+  } as Transaction;
+}
+
+export function solanaTransaction({
+  family,
+  amount,
+  recipient,
+  customFeeConfig,
+}: TransactionWithCustomFee): SolanaTransaction {
+  return {
+    ...defaultTransaction({ family, amount, recipient, customFeeConfig }),
+    model: { kind: "transfer", uiState: {} },
+  } as SolanaTransaction;
+}
+
+export function elrondTransaction({
+  family,
+  amount,
+  recipient,
+  customFeeConfig,
+}: TransactionWithCustomFee): ElrondTransaction {
+  return {
+    ...modeSendTransaction({ family, amount, recipient, customFeeConfig }),
+    gasLimit: 0, // FIXME: Placeholder, adjust as needed
+  } as ElrondTransaction;
+}
+
+function tonTransaction({
+  family,
+  amount,
+  recipient,
+  customFeeConfig,
+}: TransactionWithCustomFee): TonTransaction {
+  return {
+    ...defaultTransaction({ family, amount, recipient, customFeeConfig }),
+    comment: { isEncrypted: false, text: "" },
+    fees: new BigNumber(0), // Set default value as completeExchange call prepareTransaction, which set again fees.
+  } as TonTransaction;
+}
+
+export function cosmosTransaction({
+  family,
+  amount,
+  recipient,
+  customFeeConfig,
+  payinExtraId,
+}: TransactionWithCustomFee): CosmosTransaction {
+  return {
+    ...defaultTransaction({ family, amount, recipient, customFeeConfig }),
+    memo: payinExtraId ?? undefined,
+  } as CosmosTransaction;
+}

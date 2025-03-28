@@ -83,6 +83,21 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
             setDrawer(WebviewErrorDrawer, error);
             return Promise.resolve();
           },
+          "custom.exchange.swap": ({ exchangeParams, onSuccess, onCancel }) => {
+            dispatch(
+              openExchangeDrawer({
+                type: "EXCHANGE_START",
+                ...exchangeParams,
+                exchangeType: ExchangeType[exchangeParams.exchangeType],
+                onResult: result => {
+                  onSuccess(result.nonce, result.device);
+                },
+                onCancel: cancelResult => {
+                  onCancel(cancelResult.error, cancelResult.device);
+                },
+              }),
+            );
+          },
         },
       }),
     };
