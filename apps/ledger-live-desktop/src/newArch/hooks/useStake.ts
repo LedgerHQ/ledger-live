@@ -4,7 +4,8 @@ import { liveAppContext as remoteLiveAppContext } from "@ledgerhq/live-common/pl
 import { LiveAppRegistry } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/types";
 import { liveAppContext as localLiveAppProviderContext } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import { LiveAppManifest, Loadable } from "@ledgerhq/live-common/platform/types";
-import { appendQueryParamsToManifestURL } from "@ledgerhq/live-common/platform/utils/appendQueryParamsToManifestURL";
+import { appendQueryParamsToManifestURL } from "@ledgerhq/live-common/wallet-api/utils/appendQueryParamsToManifestURL";
+import { deriveAccountIdForManifest } from "@ledgerhq/live-common/wallet-api/utils/deriveAccountIdForManifest";
 import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import {
   getAccountCurrency,
@@ -13,7 +14,6 @@ import {
 } from "@ledgerhq/coin-framework/account/index";
 import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
 import { WalletState } from "@ledgerhq/live-wallet/store";
-import { deriveAccountIdForManifest } from "@ledgerhq/live-common/platform/utils/deriveAccountIdForManifest";
 
 const getRemoteLiveAppManifestById = (
   appId: string,
@@ -93,7 +93,7 @@ export function useStake() {
       }
 
       if (getAccountSpendableBalance(account).isZero()) {
-        /** Should be handled by No Stakes Flow. */
+        /** Should be handled by No Funds Flow. */
         return null;
       }
       const walletApiAccount = accountToWalletAPIAccount(walletState, account, parentAccount);

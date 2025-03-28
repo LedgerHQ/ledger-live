@@ -1,4 +1,4 @@
-import { LiveAppManifest } from "../types";
+import { LiveAppManifest } from "../../platform/types";
 import { extractURLFromManifest } from "./extractURLFromManifest";
 
 /** Appends query params to dapp URL or live app URL that might contain existing search params. */

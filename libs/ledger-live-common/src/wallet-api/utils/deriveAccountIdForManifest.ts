@@ -1,7 +1,7 @@
 import { Account as WalletAPIAccount } from "@ledgerhq/wallet-api-core";
 import { WALLET_API_VERSION } from "../../wallet-api/constants";
 import { TokenAccount, Account, AccountLike } from "@ledgerhq/types-live";
-import { LiveAppManifest } from "../types";
+import { LiveAppManifest } from "../../platform/types";
 import semver from "semver";
 
 /** The dapp connector "v3" uses the ledger live account ID to find the correct account. Live app and dapp browser manifests require wallet API ID.   */

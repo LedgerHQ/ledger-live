@@ -1,4 +1,4 @@
-import { LiveAppManifest } from "../types";
+import { LiveAppManifest } from "../../platform/types";
 import { appendQueryParamsToManifestURL } from "./appendQueryParamsToManifestURL";
 
 describe("appendQueryParamsToManifestURL", () => {
