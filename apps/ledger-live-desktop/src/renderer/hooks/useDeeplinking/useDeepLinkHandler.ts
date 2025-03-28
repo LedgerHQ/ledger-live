@@ -364,7 +364,6 @@ export function useDeepLinkHandler() {
           dispatch(setLedgerSyncDrawerVisibility(true));
           break;
         }
-        case "portfolio":
         default:
           if (!tryRedirectToPostOnboardingOrRecover()) {
             navigate("/");
