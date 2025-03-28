@@ -108,10 +108,26 @@ function BackToInternalDomain({
   );
 }
 
-function HeaderRight({ onClose }: { onClose?: () => void }) {
+function HeaderRight({ softExit }: { softExit: boolean }) {
+  const navigation =
+    useNavigation<RootNavigationComposite<StackNavigatorNavigation<BaseNavigatorStackParamList>>>();
   const { colors } = useTheme();
 
-  return <NavigationHeaderCloseButtonAdvanced onClose={onClose} color={colors.neutral.c100} />;
+  const onClose = useCallback(() => {
+    softExit
+      ? navigation.goBack()
+      : navigation.navigate(NavigatorName.Base, {
+          screen: NavigatorName.Main,
+        });
+  }, [navigation, softExit]);
+
+  return (
+    <NavigationHeaderCloseButtonAdvanced
+      onClose={onClose}
+      color={colors.neutral.c100}
+      skipNavigation={softExit}
+    />
+  );
 }
 
 type Props = {
@@ -129,6 +145,7 @@ type Props = {
         navigator: NavigatorName.Card;
         btnText: string;
       };
+  softExit?: boolean;
 };
 
 export const WebPTXPlayer = ({
@@ -140,6 +157,7 @@ export const WebPTXPlayer = ({
     btnText: manifest.name,
     navigator: NavigatorName.Exchange,
   },
+  softExit = false,
 }: Props) => {
   const lastMatchingURL = useRef<string | null>(null);
   const webviewAPIRef = useRef<WebviewAPI>(null);
@@ -225,12 +243,6 @@ export const WebPTXPlayer = ({
     }
   }, [handleHardwareBackPress]);
 
-  const onClose = useCallback(() => {
-    navigation.navigate(NavigatorName.Base, {
-      screen: NavigatorName.Main,
-    });
-  }, [navigation]);
-
   useEffect(() => {
     const handler = (e: { preventDefault: () => void }) => {
       const webviewAPI = safeGetRefValue(webviewAPIRef);
@@ -249,7 +261,7 @@ export const WebPTXPlayer = ({
   useEffect(() => {
     if (!disableHeader) {
       navigation.setOptions({
-        headerRight: () => <HeaderRight onClose={onClose} />,
+        headerRight: () => <HeaderRight softExit={softExit} />,
         headerLeft: () =>
           isInternalApp ? null : (
             <BackToInternalDomain
@@ -262,7 +274,7 @@ export const WebPTXPlayer = ({
         headerTitle: () => null,
       });
     }
-  }, [config, disableHeader, isInternalApp, manifest, navigation, onClose, webviewState?.url]);
+  }, [config, disableHeader, isInternalApp, manifest, navigation, webviewState?.url, softExit]);
 
   const accounts = useSelector(flattenAccountsSelector);
   const customHandlers = usePTXCustomHandlers(manifest, accounts);

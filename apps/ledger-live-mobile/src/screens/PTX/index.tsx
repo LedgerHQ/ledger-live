@@ -106,6 +106,7 @@ export function PtxScreen({ route, config }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
   );
+  const { softExit, ...searchInput } = Object.fromEntries(searchParams.entries());
 
   return manifest ? (
     <>
@@ -126,9 +127,10 @@ export function PtxScreen({ route, config }: Props) {
             providerTestId: localManifest?.providerTestId,
           }),
           ...customParams,
-          ...Object.fromEntries(searchParams.entries()),
+          ...searchInput,
         }}
         config={config}
+        softExit={softExit === "true"}
       />
     </>
   ) : (
