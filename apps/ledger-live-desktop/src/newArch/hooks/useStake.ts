@@ -30,23 +30,26 @@ const getRemoteLiveAppManifestById = (
 
 export function useStake() {
   const { params } = useFeature("stakePrograms") || {};
+  /** Natively enabled staking currencies, excluding assets & tokens supported by third parties */
   const enabledCurrencies = useMemo(() => params?.list ?? [], [params?.list]);
+
   const redirectsMap = useMemo(
     () => new Map(Object.entries(params?.redirects ?? [])),
     [params?.redirects],
   );
+  /** Currencies and tokens available to stake via third-party dapps. */
   const partnerSupportedAssets = useMemo(() => Array.from(redirectsMap.keys()), [redirectsMap]);
+
   const getLocalLiveAppManifestById = useContext(
     localLiveAppProviderContext,
   ).getLocalLiveAppManifestById;
   const remoteLiveAppRegistry: Loadable<LiveAppRegistry> = useContext(remoteLiveAppContext).state;
 
-  const getManifest = useCallback(
+  const getManifest: (platformId: string) => LiveAppManifest | undefined = useCallback(
     (platformId: string) => {
       const localManifest = getLocalLiveAppManifestById(platformId);
       const remoteManifest = getRemoteLiveAppManifestById(platformId, remoteLiveAppRegistry);
-      const manifest: LiveAppManifest | undefined = localManifest || remoteManifest;
-      return manifest;
+      return localManifest || remoteManifest;
     },
     [getLocalLiveAppManifestById, remoteLiveAppRegistry],
   );
@@ -68,7 +71,7 @@ export function useStake() {
     [getCanStakeUsingLedgerLive, getCanStakeUsingPlatformApp],
   );
 
-  /** @returns path and custom params for third party platform app. Returns null if earning strategies are not available for provided account currency. */
+  /** @returns path and custom params for third-party platform app. or null if no app available for the given account currency. */
   const getRouteToPlatformApp = useCallback(
     (
       account: Account | TokenAccount | AccountLike,
