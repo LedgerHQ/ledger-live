@@ -18,6 +18,7 @@ import { ScreenName } from "~/const";
 import WalletIcon from "~/icons/Wallet";
 import { accountScreenSelector } from "~/reducers/accounts";
 import { useAccountName } from "~/reducers/wallet";
+import CopyButton from "./CopyButton";
 
 const MessageProperty = memo(({ label, value }: MessageProperties[0]) => {
   const { colors } = useTheme();
@@ -153,25 +154,21 @@ function SignSummary({
           ]}
         />
         <ScrollView style={styles.scrollContainer}>
-          {!isACREWithdraw ? (
-            messageData.standard === "EIP712" ? (
-              <MessagePropertiesComp properties={messageFields} />
-            ) : (
-              <View style={styles.messageContainer}>
-                <MessageProperty label={"message"} value={messageData.message || ""} />
-              </View>
-            )
-          ) : null}
-
-          {messageData.standard === "EIP712" ? (
+          {true ? (
             <>
-              {messageFields ? (
-                <View>
-                  <Button type="color" onPress={() => setShowAdvanced(!showAdvanced)}>
-                    {showAdvanced
-                      ? `- ${t("signMessage.eip712.hideFullMessage")}`
-                      : `+ ${t("signMessage.eip712.showFullMessage")}`}
-                  </Button>
+              {!messageFields ? (
+                <View style={{ paddingTop: 20 }}>
+                  {showAdvanced ? (
+                    <Button
+                      type="color"
+                      onPress={() => setShowAdvanced(!showAdvanced)}
+                      style={{ paddingTop: 100 }}
+                    >
+                      {showAdvanced
+                        ? `- ${t("signMessage.eip712.hideFullMessage")}`
+                        : `+ ${t("signMessage.eip712.showFullMessage")}`}
+                    </Button>
+                  ) : null}
                   {showAdvanced ? (
                     <LText
                       style={[
@@ -185,6 +182,25 @@ function SignSummary({
                         ? `"${messageData.message}"`
                         : JSON.stringify(messageData.message, null, 2)}
                     </LText>
+                  ) : (
+                    <>
+                      {!isACREWithdraw ? (
+                        messageData.standard === "EIP712" ? (
+                          <MessagePropertiesComp properties={messageFields} />
+                        ) : (
+                          <View style={styles.messageContainer}>
+                            <MessageProperty label={"message"} value={messageData.message || ""} />
+                          </View>
+                        )
+                      ) : null}
+                    </>
+                  )}
+                  {!showAdvanced ? (
+                    <Button type="color" onPress={() => setShowAdvanced(!showAdvanced)}>
+                      {showAdvanced
+                        ? `- ${t("signMessage.eip712.hideFullMessage")}`
+                        : `+ ${t("signMessage.eip712.showFullMessage")}`}
+                    </Button>
                   ) : null}
                 </View>
               ) : null}
@@ -192,6 +208,11 @@ function SignSummary({
           ) : null}
         </ScrollView>
       </View>
+      {showAdvanced ? (
+        <View>
+          <CopyButton text={messageData.message.toString()} />
+        </View>
+      ) : null}
       <View style={styles.footer}>
         <Button
           event="SummaryContinue"
@@ -267,6 +288,7 @@ const styles = StyleSheet.create({
     fontSize: 9,
     fontFamily: "Courier New",
     padding: 20,
+    paddingBottom: 80,
   },
   message: {
     opacity: 0.5,
