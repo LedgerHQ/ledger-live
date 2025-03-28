@@ -1,16 +1,18 @@
-import invariant from "invariant";
-import { BigNumber } from "bignumber.js";
-import { toAccountRaw } from "./serialization";
 import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
-import { getOperationAmountNumberWithInternals } from "../operation";
-import { formatCurrencyUnit } from "../currencies";
-import { getOperationAmountNumber } from "../operation";
 import { getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
-import byFamily from "../generated/formatters";
+import {
+  getOperationAmountNumber,
+  getOperationAmountNumberWithInternals,
+} from "@ledgerhq/coin-framework/operation";
 import { nftsByCollections } from "@ledgerhq/live-nft";
+import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
 import type { Account, Operation, ProtoNFT } from "@ledgerhq/types-live";
-import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
+import { BigNumber } from "bignumber.js";
+import invariant from "invariant";
+import { formatCurrencyUnit } from "../currencies";
+import { toAccountRaw } from "./serialization";
+import { getAccountBridge } from "../bridge";
 
 const styling = {
   bold: (str: string) => `\x1b[1m${str}\x1b[22m`,
@@ -93,11 +95,9 @@ const cliFormat = (account, level?: string) => {
     account.balance,
     getAccountCurrency(account).units[0],
   );
-  const family = byFamily[account.currency.family];
 
-  if (family && family.formatAccountSpecifics) {
-    str += family.formatAccountSpecifics(account);
-    str += "\n";
+  if (getAccountBridge(account).formatAccountSpecifics) {
+    str += getAccountBridge(account).formatAccountSpecifics?.(account) + "\n";
   }
 
   const subAccounts = account.subAccounts || [];
@@ -160,11 +160,7 @@ const cliFormat = (account, level?: string) => {
           console.error("unexpected missing token account " + id);
         },
         (operation, unit) => {
-          if (family && family.formatOperationSpecifics) {
-            return family.formatOperationSpecifics(operation, unit);
-          }
-
-          return "";
+          return getAccountBridge(account).formatOperationSpecifics?.(operation, unit) ?? "";
         },
       ),
     )
@@ -253,13 +249,8 @@ export function formatOperation(account: Account | null | undefined): (arg0: Ope
 
   const familyExtra = (operation, unit) => {
     if (!account) return "";
-    const family = byFamily[account.currency.family];
 
-    if (family && family.formatOperationSpecifics) {
-      return family.formatOperationSpecifics(operation, unit);
-    }
-
-    return "";
+    return getAccountBridge(account).formatOperationSpecifics?.(operation, unit) ?? "";
   };
 
   return formatOp(unitByAccountId, familyExtra);
