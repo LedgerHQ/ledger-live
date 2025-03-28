@@ -42,7 +42,7 @@ import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/i
 import { isWalletConnectSupported } from "@ledgerhq/live-common/walletConnect/index";
 import { WC_ID } from "@ledgerhq/live-common/wallet-api/constants";
 import { walletSelector } from "~/renderer/reducers/wallet";
-import { useStake } from "~/newArch/hooks/useStake";
+import { useStake } from "LLD/hooks/useStake";
 
 type RenderActionParams = {
   label: React.ReactNode;

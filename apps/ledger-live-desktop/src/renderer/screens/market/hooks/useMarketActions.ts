@@ -13,7 +13,7 @@ import { flattenAccounts } from "@ledgerhq/live-common/account/index";
 import { getAvailableAccountsById } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 import { isAvailableOnBuy, isAvailableOnSwap } from "../utils";
-import { useStake } from "~/newArch/hooks/useStake";
+import { useStake } from "LLD/hooks/useStake";
 
 export enum Page {
   Market = "Page Market",

@@ -20,7 +20,7 @@ import { ContextMenuItemType } from "./ContextMenuWrapper";
 import { IconsLegacy } from "@ledgerhq/react-ui";
 import { accountStarredSelector, walletSelector } from "~/renderer/reducers/wallet";
 import { State } from "~/renderer/reducers";
-import { useStake } from "~/newArch/hooks/useStake";
+import { useStake } from "LLD/hooks/useStake";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
 import IconCoins from "~/renderer/icons/Coins";
 
