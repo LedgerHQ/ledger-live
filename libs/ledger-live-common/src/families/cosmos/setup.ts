@@ -4,12 +4,10 @@ import { createBridges } from "@ledgerhq/coin-cosmos/bridge/index";
 import makeCliTools from "@ledgerhq/coin-cosmos/cli";
 import { CosmosCoinConfig } from "@ledgerhq/coin-cosmos/config";
 import cosmosResolver from "@ledgerhq/coin-cosmos/hw-getAddress";
-import { CosmosAccount, Transaction, TransactionStatus } from "@ledgerhq/coin-cosmos/types/index";
 import { CosmosSigner } from "@ledgerhq/coin-cosmos/types/signer";
 import Cosmos from "@ledgerhq/hw-app-cosmos";
 import Transport from "@ledgerhq/hw-transport";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import type { Bridge } from "@ledgerhq/types-live";
 import { CosmosApp } from "@zondax/ledger-cosmos-js";
 import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/setup";
 import { getCurrencyConfiguration } from "../../config";
@@ -31,10 +29,7 @@ const getCurrencyConfig = (currency?: CryptoCurrency) => {
   }
   return getCurrencyConfiguration<CosmosCoinConfig>(currency);
 };
-const bridge: Bridge<Transaction, CosmosAccount, TransactionStatus> = createBridges(
-  executeWithSigner(createSigner),
-  getCurrencyConfig,
-);
+const bridge = createBridges(executeWithSigner(createSigner), getCurrencyConfig);
 
 const resolver: Resolver = createResolver(createSigner, cosmosResolver);
 
