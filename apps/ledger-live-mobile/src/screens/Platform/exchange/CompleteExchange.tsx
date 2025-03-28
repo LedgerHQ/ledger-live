@@ -13,6 +13,7 @@ import { mevProtectionSelector } from "~/reducers/settings";
 import { SignedOperation } from "@ledgerhq/types-live";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
+import LoadingIndicator from "LLM/features/Web3Hub/components/ManifestsList/LoadingIndicator";
 
 type Props = StackNavigatorProps<
   PlatformExchangeNavigatorParamList,
@@ -99,6 +100,7 @@ const PlatformCompleteExchange: React.FC<Props> = ({
 
   return (
     <SafeAreaView style={styles.root}>
+      <LoadingIndicator />
       {!signRequest ? (
         <DeviceActionModal
           key="completeExchange"
