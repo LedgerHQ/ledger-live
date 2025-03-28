@@ -874,6 +874,9 @@ importers:
       '@braze/react-native-sdk':
         specifier: 10.0.0
         version: 10.0.0
+      '@exodus/patch-broken-hermes-typed-arrays':
+        specifier: 1.0.0-alpha.1
+        version: 1.0.0-alpha.1
       '@formatjs/intl-locale':
         specifier: 3.4.5
         version: 3.4.5
@@ -11664,6 +11667,9 @@ packages:
 
   '@ethersproject/wordlists@5.7.0':
     resolution: {integrity: sha512-S2TFNJNfHWVHNE6cNDjbVlZ6MgE17MIxMbMg2zv3wn+3XSJGosL1m9ZVv3GXCf/2ymSsQ+hRI5IzoMJTG6aoVA==}
+
+  '@exodus/patch-broken-hermes-typed-arrays@1.0.0-alpha.1':
+    resolution: {integrity: sha512-oYv+2IJxaNVTnF7lJqS+wrW0JisE9kcKlgQnkrdhtlsfRmFlcYPdPSO8eaIXKHKkzKndy3I+ZzTELg+BVi3vSg==}
 
   '@expo/bunyan@4.0.0':
     resolution: {integrity: sha512-Ydf4LidRB/EBI+YrB+cVLqIseiRfjUI/AeHBgjGMtq3GroraDu81OV7zqophRgupngoL3iS3JUMDMnxO7g39qA==}
@@ -37171,6 +37177,8 @@ snapshots:
       '@ethersproject/logger': 5.7.0
       '@ethersproject/properties': 5.7.0
       '@ethersproject/strings': 5.7.0
+
+  '@exodus/patch-broken-hermes-typed-arrays@1.0.0-alpha.1': {}
 
   '@expo/bunyan@4.0.0':
     dependencies:
