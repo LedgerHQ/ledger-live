@@ -90,5 +90,4 @@ jobs:
     uses: LedgerHQ/ledger-live/.github/workflows/release-final.yml@develop
     with:
       ref: main
-      caller: release-prepare
     secrets: inherit
