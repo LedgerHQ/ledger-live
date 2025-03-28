@@ -19,6 +19,7 @@ module.exports = {
     "text",
   ],
   reporters: [
+    "default",
     [
       "jest-sonar",
       { outputName: "framework-sonar-executionTests-report.xml", reportedFilePath: "absolute" },

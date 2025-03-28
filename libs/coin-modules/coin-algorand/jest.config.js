@@ -13,6 +13,7 @@ module.exports = {
   testEnvironment: "node",
   testPathIgnorePatterns: ["lib/", "lib-es/", ".integration.test.ts"],
   reporters: [
+    "default",
     [
       "jest-sonar",
       { outputName: "algorand-sonar-executionTests-report.xml", reportedFilePath: "absolute" },
