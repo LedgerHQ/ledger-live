@@ -28,7 +28,7 @@ interface WebViewWrapperProps {
 
 export const WebViewWrapper = styled.div<WebViewWrapperProps>`
   flex: 1;
-  ${({ mobileView }) => (mobileView ? "width: 375px;" : "width: 100%;")}
+  ${({ mobileView }) => (mobileView ? "width: 355px;" : "width: 100%;")}
 `;
 
 export default function WebPTXPlayer({ manifest, inputs }: WebviewProps) {
