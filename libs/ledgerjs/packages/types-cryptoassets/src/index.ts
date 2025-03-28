@@ -174,7 +174,8 @@ export type CryptoCurrencyId =
   | "sui"
   | "zenrock"
   | "sonic"
-  | "sonic_blaze";
+  | "sonic_blaze"
+  | "mina";
 
 export type LedgerExplorerId =
   | "btc"

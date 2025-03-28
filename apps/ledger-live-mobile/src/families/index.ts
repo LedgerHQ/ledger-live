@@ -7,6 +7,7 @@ export * from "./multiversx";
 export * from "./evm";
 export * from "./hedera";
 export * from "./internet_computer";
+export * from "./mina";
 export * from "./near";
 export * from "./polkadot";
 export * from "./xrp";

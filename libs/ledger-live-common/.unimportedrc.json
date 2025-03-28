@@ -110,6 +110,7 @@
     "src/families/filecoin/types.ts",
     "src/families/hedera/types.ts",
     "src/families/internet_computer/types.ts",
+    "src/families/mina/types.ts",
     "src/families/near/banner.ts",
     "src/families/near/constants.ts",
     "src/families/near/logic.ts",
