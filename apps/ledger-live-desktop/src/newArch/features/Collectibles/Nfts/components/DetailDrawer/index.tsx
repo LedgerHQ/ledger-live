@@ -23,7 +23,7 @@ const NftDetailDrawer = ({ account, tokenId, isOpened, setIsOpened }: NftsDetail
     mediaType,
     setUseFallback,
     onNFTSend,
-  } = useNftDetailDrawer(account, tokenId);
+  } = useNftDetailDrawer(account, tokenId, setIsOpened);
 
   const { isPanAndZoomOpen, openCollectiblesPanAndZoom, closeCollectiblesPanAndZoom } =
     useCollectibles();

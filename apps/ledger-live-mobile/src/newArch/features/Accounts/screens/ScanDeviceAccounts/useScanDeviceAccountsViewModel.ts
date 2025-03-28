@@ -187,7 +187,7 @@ export default function useScanDeviceAccountsViewModel({
     if (successMetadata)
       track(successMetadata.eventName, {
         ...successMetadata.payload,
-        currency,
+        currency: currency.name,
         amount: accountsToAdd.length,
       });
   }, [

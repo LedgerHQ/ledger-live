@@ -89,7 +89,7 @@ import {
   SettingsSetWalletTabNavigatorLastVisitedTabPayload,
 } from "../actions/types";
 import { ScreenName } from "~/const";
-import { BlockchainsType } from "@ledgerhq/live-nft/supported";
+import { SupportedBlockchain } from "@ledgerhq/live-nft/supported";
 import { NftStatus } from "@ledgerhq/live-nft/types";
 
 export const timeRangeDaysByKey = {
@@ -124,7 +124,7 @@ export const INITIAL_STATE: SettingsState = {
   blacklistedTokenIds: [],
   hiddenNftCollections: [],
   whitelistedNftCollections: [],
-  nftCollectionsStatusByNetwork: {} as Record<BlockchainsType, Record<string, NftStatus>>,
+  nftCollectionsStatusByNetwork: {} as Record<SupportedBlockchain, Record<string, NftStatus>>,
   dismissedBanners: [],
   hasAvailableUpdate: false,
   theme: "system",
@@ -382,7 +382,7 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
   [SettingsActionTypes.RESET_NFT_COLLECTION_STATUS]: state => {
     return {
       ...state,
-      nftCollectionsStatusByNetwork: {} as Record<BlockchainsType, Record<string, NftStatus>>,
+      nftCollectionsStatusByNetwork: {} as Record<SupportedBlockchain, Record<string, NftStatus>>,
     };
   },
 

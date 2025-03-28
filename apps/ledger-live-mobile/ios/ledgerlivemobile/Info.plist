@@ -29,6 +29,7 @@
 		<string>tr</string>
 		<string>pt-BR</string>
 		<string>ru</string>
+		<string>th</string>
 	</array>
 	<key>CFBundleName</key>
 	<string>$(PRODUCT_NAME)</string>

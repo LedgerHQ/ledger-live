@@ -101,6 +101,7 @@ setSupportedCurrencies([
   "zksync_sepolia",
   "mantra",
   "xion",
+  "sui",
   "zenrock",
   "sonic",
   "sonic_blaze",

@@ -82,7 +82,7 @@ jobs:
         run: |
           git add .
       - name: commit changes
-        uses: planetscale/ghcommit-action@v0.1.6
+        uses: planetscale/ghcommit-action@v0.2.9
         with:
           commit_message: "chore(hotfix) :rocket: entering hotfix mode"
           repo: ${{ github.repository }}

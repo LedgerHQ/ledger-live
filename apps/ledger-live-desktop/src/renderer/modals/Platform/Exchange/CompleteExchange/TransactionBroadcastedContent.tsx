@@ -32,7 +32,7 @@ export function TransactionBroadcastedContent(props: TransactionBroadcastedConte
       maxWidth={"100%"}
     >
       <TrackPage
-        category="Swap"
+        category={mode}
         name={`ModalStep-finished`}
         sourceCurrency={sourceCurrency?.name}
         targetCurrency={targetCurrency?.name}

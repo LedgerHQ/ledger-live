@@ -4,10 +4,10 @@ import Modal, { ModalBody } from "~/renderer/components/Modal";
 import { Flex } from "@ledgerhq/react-ui";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { EthStakingModalBody } from "./EthStakingModalBody";
-import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
+import { AccountLike } from "@ledgerhq/types-live";
 
 type Props = {
-  account: WalletAPIAccount;
+  account: AccountLike;
   singleProviderRedirectMode?: boolean;
   /** Analytics source */
   source?: string;

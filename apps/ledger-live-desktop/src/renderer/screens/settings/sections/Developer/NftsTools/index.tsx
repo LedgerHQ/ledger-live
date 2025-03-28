@@ -1,26 +1,27 @@
 import React, { useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { resetHiddenNftCollections } from "~/renderer/actions/settings";
+import { useTranslation } from "react-i18next";
+import { useDispatch } from "react-redux";
+import { SettingsSectionRow } from "~/renderer/screens/settings/SettingsSection";
 import Button from "~/renderer/components/Button";
-import { t } from "i18next";
-import { SettingsSectionRow } from "../../../SettingsSection";
-import { nftCollectionsStatusByNetworkSelector } from "~/renderer/reducers/settings";
+import { openModal } from "~/renderer/actions/modals";
+import { Icons } from "@ledgerhq/react-ui/index";
 
-const ResetHiddenCollections = () => {
+const NftsTools = () => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
-  const nfts = useSelector(nftCollectionsStatusByNetworkSelector);
-  const reset = useCallback(() => dispatch(resetHiddenNftCollections()), [dispatch]);
-
-  if (Object.keys(nfts).length === 0) return null;
+  const onOpenModal = useCallback(
+    () => dispatch(openModal("MODAL_NFTS_TOOLS", undefined)),
+    [dispatch],
+  );
   return (
     <SettingsSectionRow
-      title={t("settings.developer.nfts.title")}
-      desc={t("settings.developer.nfts.description")}
+      title={t("settings.developer.debugNfts.title")}
+      desc={t("settings.developer.debugNfts.description")}
     >
-      <Button onClick={reset} danger>
-        {t("settings.developer.nfts.reset")}
+      <Button onClick={onOpenModal} primary>
+        <Icons.Nft />
       </Button>
     </SettingsSectionRow>
   );
 };
-export default ResetHiddenCollections;
+export default NftsTools;

@@ -10,7 +10,6 @@ import {
 } from "@ledgerhq/types-live";
 import { CryptoCurrency, Currency } from "@ledgerhq/types-cryptoassets";
 import { Box, ColorPalette } from "@ledgerhq/native-ui";
-import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
 import { TFunction } from "react-i18next";
 import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
 import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
@@ -35,6 +34,8 @@ import { EditOperationCard } from "~/components/EditOperationCard";
 import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
 import WarningBannerStatus from "~/components/WarningBannerStatus";
 import ErrorWarning from "./ErrorWarning";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { isNFTCollectionsDisplayable } from "./nftHelper";
 
 type Props = {
   account?: AccountLike;
@@ -65,7 +66,7 @@ type MaybeComponent =
     >
   | undefined;
 
-export function getListHeaderComponents({
+export function useListHeaderComponents({
   account,
   parentAccount,
   currency,
@@ -87,6 +88,7 @@ export function getListHeaderComponents({
   listHeaderComponents: ReactNode[];
   stickyHeaderIndices?: number[];
 } {
+  const llmSolanaNfts = useFeature("llmSolanaNfts");
   if (!account) return { listHeaderComponents: [], stickyHeaderIndices: undefined };
 
   const mainAccount = getMainAccount(account, parentAccount);
@@ -130,6 +132,10 @@ export function getListHeaderComponents({
   const isOperationStuck =
     oldestEditableOperation &&
     isStuckOperation({ family: mainAccount.currency.family, operation: oldestEditableOperation });
+
+  const displayNftCollections = isNFTCollectionsDisplayable(account, empty, {
+    llmSolanaNftsEnabled: llmSolanaNfts?.enabled,
+  });
 
   return {
     listHeaderComponents: [
@@ -204,7 +210,7 @@ export function getListHeaderComponents({
             </SectionContainer>,
           ]
         : []),
-      ...(!empty && account.type === "Account" && isNFTActive(account.currency)
+      ...(displayNftCollections && account.type === "Account"
         ? [
             <SectionContainer px={6} key="NftCollectionsList">
               <NftCollectionsList account={account} />

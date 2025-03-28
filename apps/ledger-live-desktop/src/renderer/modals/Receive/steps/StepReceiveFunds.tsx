@@ -31,19 +31,18 @@ import { getEnv } from "@ledgerhq/live-env";
 import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";
 import { FeatureToggle, useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { LOCAL_STORAGE_KEY_PREFIX } from "./StepReceiveStakingFlow";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { openModal } from "~/renderer/actions/modals";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { getLLDCoinFamily } from "~/renderer/families";
 import { firstValueFrom } from "rxjs";
 import { useCompleteActionCallback } from "~/renderer/components/PostOnboardingHub/logic/useCompleteAction";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
-import { useMaybeAccountName, walletSelector } from "~/renderer/reducers/wallet";
+import { useMaybeAccountName } from "~/renderer/reducers/wallet";
 import { UTXOAddressAlert } from "~/renderer/components/UTXOAddressAlert";
 import { isUTXOCompliant } from "@ledgerhq/live-common/currencies/helpers";
 import MemoTagInfo from "~/newArch/features/MemoTag/components/MemoTagInfo";
 import { MEMO_TAG_COINS } from "~/newArch/features/MemoTag/constants";
-import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
 
 const Separator = styled.div`
   border-top: 1px solid #99999933;
@@ -183,7 +182,6 @@ const StepReceiveFunds = (props: StepProps) => {
   } = props;
   const dispatch = useDispatch();
   const completeAction = useCompleteActionCallback();
-  const walletState = useSelector(walletSelector);
 
   const receiveStakingFlowConfig = useFeature("receiveStakingFlowConfigDesktop");
   const receivedCurrencyId: string | undefined =
@@ -266,11 +264,9 @@ const StepReceiveFunds = (props: StepProps) => {
       });
       // Only open EVM staking modal if the user received ETH or an EVM currency supported by the providers
       if (isDirectStakingEnabledForAccount) {
-        const walletApiAccount = accountToWalletAPIAccount(walletState, mainAccount);
-
         dispatch(
           openModal("MODAL_EVM_STAKE", {
-            account: walletApiAccount,
+            account: mainAccount,
             hasCheckbox: true,
             singleProviderRedirectMode: false,
             source: "receive",
@@ -297,7 +293,6 @@ const StepReceiveFunds = (props: StepProps) => {
     onClose,
     transitionTo,
     completeAction,
-    walletState,
     isSPLToken,
   ]);
 

@@ -17,7 +17,7 @@ function View({
   return (
     <>
       <TokensList account={account} collectibles={formattedNfts} onItemClick={onItemClick} />
-      {nftIdToOpen && (
+      {nftIdToOpen && formattedNfts.length > 0 && (
         <NftDetailDrawer
           isOpened={isDrawerOpen}
           setIsOpened={setIsDrawerOpen}

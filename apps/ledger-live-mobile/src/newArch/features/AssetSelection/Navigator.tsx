@@ -29,6 +29,7 @@ export default function Navigator() {
   const hasClosedNetworkBanner = useSelector(hasClosedNetworkBannerSelector);
 
   const { token, currency, context, sourceScreenName } = route.params || {};
+
   const navigation = useNavigation();
   const { analyticsMetadata } = useAnalytics(context, sourceScreenName);
 

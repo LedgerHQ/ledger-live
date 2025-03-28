@@ -76,7 +76,7 @@ jobs:
           git add .
 
       - name: commit
-        uses: planetscale/ghcommit-action@v0.1.6
+        uses: planetscale/ghcommit-action@v0.2.9
         with:
           commit_message: "chore(hotfix): :fire: hotfix release [skip ci]"
           repo: ${{ github.repository }}

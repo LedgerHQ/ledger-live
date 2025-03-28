@@ -3,9 +3,10 @@ import { Trans } from "react-i18next";
 import React, { type ReactElement } from "react";
 import { BannerCard, Button, Icons, Link, NotificationCard, Text } from "@ledgerhq/react-ui";
 import type { FlexBoxProps } from "@ledgerhq/react-ui/components/layout/Flex/index";
-import type { LNSBannerLocation, LNSBannerModel } from "../../types";
+import type { LNSBannerLocation } from "LLD/features/LNSUpsell/types";
 import { useLNSUpsellBannerModel } from "./useLNSUpsellBannerModel";
 import { useViewNotification } from "./useViewNotification";
+import type { LNSBannerModel } from "./types";
 
 type Props = FlexBoxProps & { location: LNSBannerLocation };
 

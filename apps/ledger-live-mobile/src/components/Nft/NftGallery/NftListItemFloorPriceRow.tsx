@@ -7,12 +7,12 @@ import {
 } from "@ledgerhq/live-common/currencies/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { BigNumber } from "bignumber.js";
-import { getFloorPrice } from "@ledgerhq/live-nft/api/metadataservice";
-import { FloorPrice, NFTMetadata, ProtoNFT } from "@ledgerhq/types-live";
+import { NFTMetadata, ProtoNFT } from "@ledgerhq/types-live";
 import CurrencyIcon from "../../CurrencyIcon";
 import Skeleton from "../../Skeleton";
 import CurrencyUnitValue from "../../CurrencyUnitValue";
 import CounterValue from "../../CounterValue";
+import { useNftFloorPrice } from "@ledgerhq/live-nft-react";
 
 type Props = {
   nft: ProtoNFT;
@@ -23,7 +23,6 @@ type Props = {
 };
 
 const NftListItemFloorPriceRow = ({ nft }: Props) => {
-  const [floorPriceLoading, setFloorPriceLoading] = useState(true);
   const [floorPriceCurrency, setFloorPriceCurrency] = useState<CryptoCurrency | null | undefined>(
     null,
   );
@@ -31,30 +30,24 @@ const NftListItemFloorPriceRow = ({ nft }: Props) => {
 
   const currency = useMemo(() => getCryptoCurrencyById(nft.currencyId), [nft.currencyId]);
 
+  const { isLoading: floorPriceLoading, data } = useNftFloorPrice(nft, currency);
+
+  const ticker = data?.ticker || "";
+  const dataFloorPrice = data?.value || null;
+
   useEffect(() => {
-    let cancelled = false;
-    setFloorPriceLoading(true);
-    getFloorPrice(nft, currency)
-      .then((result: FloorPrice | null) => {
-        if (cancelled) return;
-        if (result) {
-          const foundFloorPriceCurrency = findCryptoCurrencyByTicker(result.ticker);
-          setFloorPriceCurrency(foundFloorPriceCurrency);
-          if (foundFloorPriceCurrency) {
-            setFloorPrice(
-              valueFromUnit(new BigNumber(result.value), foundFloorPriceCurrency.units[0]),
-            );
-          }
-        }
-      })
-      .finally(() => {
-        if (cancelled) return;
-        setFloorPriceLoading(false);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [nft, currency]);
+    if (ticker && dataFloorPrice) {
+      const foundFloorPriceCurrency = findCryptoCurrencyByTicker(ticker);
+      setFloorPriceCurrency(foundFloorPriceCurrency);
+      if (foundFloorPriceCurrency) {
+        setFloorPrice(
+          valueFromUnit(new BigNumber(dataFloorPrice), foundFloorPriceCurrency.units[0]),
+        );
+      } else {
+        setFloorPrice(new BigNumber(dataFloorPrice));
+      }
+    }
+  }, [nft, currency, ticker, dataFloorPrice]);
 
   return (
     <Flex flexDirection="row" alignItems="center">
@@ -75,15 +68,17 @@ const NftListItemFloorPriceRow = ({ nft }: Props) => {
             numberOfLines={1}
             flexGrow={1}
           >
-            {(floorPrice || floorPrice === 0) && floorPriceCurrency ? (
-              <>
+            {floorPrice || floorPrice === 0 ? (
+              floorPriceCurrency ? (
                 <CurrencyUnitValue
                   showCode={false}
                   unit={floorPriceCurrency.units[0]}
                   value={floorPrice}
                   dynamicSignificantDigits={4}
                 />
-              </>
+              ) : (
+                floorPrice.toFixed(2).toString()
+              )
             ) : (
               "--"
             )}

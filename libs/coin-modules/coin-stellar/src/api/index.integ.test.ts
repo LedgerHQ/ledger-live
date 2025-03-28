@@ -5,7 +5,7 @@ import { StellarToken } from "../types";
 /**
  * Testnet scan: https://testnet.lumenscan.io/
  */
-describe("Stellar Api", () => {
+describe.skip("Stellar Api", () => {
   let module: Api<StellarToken>;
   const address = "GBAUZBDXMVV7HII4JWBGFMLVKVJ6OLQAKOCGXM5E2FM4TAZB6C7JO2L7";
 
@@ -40,7 +40,7 @@ describe("Stellar Api", () => {
 
     beforeAll(async () => {
       [txs] = await module.listOperations(address, { minHeight: 0 });
-    }, 20 * 1000); // 20s
+    });
 
     it("returns a list regarding address parameter", async () => {
       expect(txs.length).toBeGreaterThanOrEqual(100);

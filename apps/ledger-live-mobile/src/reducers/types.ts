@@ -31,9 +31,10 @@ import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-case
 import { WalletState } from "@ledgerhq/live-wallet/store";
 import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { Steps } from "LLM/features/WalletSync/types/Activation";
-import { SupportedBlockchainsType, BlockchainsType } from "@ledgerhq/live-nft/supported";
+import { SupportedBlockchain } from "@ledgerhq/live-nft/supported";
 import { NftStatus } from "@ledgerhq/live-nft/types";
 import { type TabListType as TabPortfolioAssetsType } from "~/screens/Portfolio/useListsAnimation";
+
 // === ACCOUNT STATE ===
 
 export type AccountsState = {
@@ -220,7 +221,7 @@ export type SettingsState = {
   blacklistedTokenIds: string[];
   hiddenNftCollections: string[];
   whitelistedNftCollections: string[];
-  nftCollectionsStatusByNetwork: Record<SupportedBlockchainsType, Record<string, NftStatus>>;
+  nftCollectionsStatusByNetwork: Record<SupportedBlockchain, Record<string, NftStatus>>;
   dismissedBanners: string[];
   hasAvailableUpdate: boolean;
   theme: Theme;
@@ -351,10 +352,7 @@ export type NftState = {
   galleryChainFilters: NftGalleryChainFiltersState;
 };
 
-export type NftGalleryChainFiltersState = Pick<
-  Record<BlockchainsType, boolean>,
-  SupportedBlockchainsType
->;
+export type NftGalleryChainFiltersState = Record<SupportedBlockchain, boolean>;
 
 // === MARKET STATE ===
 

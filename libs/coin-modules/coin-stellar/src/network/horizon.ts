@@ -183,37 +183,36 @@ export async function fetchAccount(addr: string): Promise<{
 }
 
 /**
- * Fetch all operations for a single account from indexer
+ * Fetch operations for a single account from indexer
  *
  * @param {string} accountId
  * @param {string} addr
  * @param {string} order - "desc" or "asc" order of returned records
  * @param {string} cursor - point to start fetching records
+ * @param {number} maxOperations - maximum number of operations to return, stops fetching after reaching this threshold
  *
  * @return {Operation[]}
  */
-export async function fetchAllOperations({
-  accountId,
-  addr,
-  order,
-  cursor = "0",
-}: {
-  accountId: string;
-  addr: string;
-  order: "asc" | "desc";
-  cursor: string | undefined;
-}): Promise<StellarOperation[]> {
+export async function fetchAllOperations(
+  accountId: string,
+  addr: string,
+  order: "asc" | "desc",
+  cursor: string = "",
+  maxOperations?: number,
+): Promise<StellarOperation[]> {
   if (!addr) {
     return [];
   }
 
+  const limit = coinConfig.getCoinConfig().explorer.fetchLimit ?? FETCH_LIMIT;
   let operations: StellarOperation[] = [];
+  let fetchedOpsCount = limit;
 
   try {
     let rawOperations = await getServer()
       .operations()
       .forAccount(addr)
-      .limit(coinConfig.getCoinConfig().explorer.fetchLimit ?? FETCH_LIMIT)
+      .limit(limit)
       .order(order)
       .cursor(cursor)
       .includeFailed(true)
@@ -229,6 +228,11 @@ export async function fetchAllOperations({
     );
 
     while (rawOperations.records.length > 0) {
+      if (maxOperations && fetchedOpsCount >= maxOperations) {
+        break;
+      }
+      fetchedOpsCount += limit;
+
       rawOperations = await rawOperations.next();
       operations = operations.concat(
         await rawOperationsToOperations(rawOperations.records as RawOperation[], addr, accountId),
