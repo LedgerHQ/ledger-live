@@ -264,7 +264,7 @@ importers:
         version: 3.13.0
       ws:
         specifier: 8.17.1
-        version: 8.17.1
+        version: 8.18.0
     devDependencies:
       '@ledgerhq/types-cryptoassets':
         specifier: workspace:^
@@ -1582,7 +1582,7 @@ importers:
         version: 2.6.2
       ws:
         specifier: 7.5.10
-        version: 7.5.10
+        version: 8.18.0
 
   apps/web-tools:
     dependencies:
@@ -4242,13 +4242,13 @@ importers:
         version: 1.5.1
       isomorphic-ws:
         specifier: '5'
-        version: 5.0.0(ws@8.17.1)
+        version: 5.0.0(ws@8.18.0)
       rxjs:
         specifier: ^7.8.1
         version: 7.8.1
       ws:
         specifier: '8'
-        version: 8.17.1
+        version: 8.18.0
     devDependencies:
       '@types/jest':
         specifier: ^29.5.10
@@ -4597,7 +4597,7 @@ importers:
         version: 2.2.4
       isomorphic-ws:
         specifier: ^4.0.1
-        version: 4.0.1(ws@7.5.10)
+        version: 4.0.1(ws@8.18.0)
       jotai:
         specifier: ^2.10.1
         version: 2.10.1(@types/react@18.2.73)(react@18.3.1)
@@ -4814,7 +4814,7 @@ importers:
         version: 8.3.2
       ws:
         specifier: '7'
-        version: 7.5.10
+        version: 8.18.0
 
   libs/ledger-services/cal:
     dependencies:
@@ -6129,7 +6129,7 @@ importers:
         version: 1.7.7
       ws:
         specifier: ^7.5.2
-        version: 7.5.10
+        version: 8.18.0
     devDependencies:
       '@types/jest':
         specifier: ^29.5.10
@@ -7370,7 +7370,7 @@ importers:
         version: 9.1.2
       isomorphic-ws:
         specifier: ^5.0.0
-        version: 5.0.0(ws@8.17.1)
+        version: 5.0.0(ws@8.18.0)
       lodash:
         specifier: '4'
         version: 4.17.21
@@ -7413,7 +7413,7 @@ importers:
         version: 29.1.5(jest@29.7.0)(typescript@5.4.3)
       ws:
         specifier: ^8.16.0
-        version: 8.17.1
+        version: 8.18.0
 
   libs/promise:
     dependencies:
@@ -11815,6 +11815,7 @@ packages:
   '@faker-js/faker@9.4.0':
     resolution: {integrity: sha512-85+k0AxaZSTowL0gXp8zYWDIrWclTbRPg/pm/V0dSFZ6W6D4lhcG3uuZl4zLsEKfEvs69xDbLN2cHQudwp95JA==}
     engines: {node: '>=18.0.0', npm: '>=9.0.0'}
+    deprecated: Please update to a newer version
 
   '@faker-js/faker@9.6.0':
     resolution: {integrity: sha512-3vm4by+B5lvsFPSyep3ELWmZfE3kicDtmemVpuwl1yH7tqtnHdsA6hG8fbXedMVdkzgtvzWoRgjSB4Q+FHnZiw==}
@@ -15879,7 +15880,7 @@ packages:
       metro-react-native-babel-preset: '*'
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
-      webpack: '*'
+      webpack: '5'
     peerDependenciesMeta:
       react:
         optional: true
@@ -16559,6 +16560,7 @@ packages:
     deprecated: |-
       DEPRECATED: This package is no longer maintained.
       Please use the built-in Jest matchers available in @testing-library/react-native v12.4+.
+
       See migration guide: https://callstack.github.io/react-native-testing-library/docs/migration/jest-matchers
     peerDependencies:
       react: '>=16.0.0'
@@ -18127,7 +18129,7 @@ packages:
     resolution: {integrity: sha512-/FQM1EDkTsf63Ub2C6O7GuYFDsSXUwsaZDurV0np41ocwq0jthUAYCmhBX9f+KwlaCgIuWyr/4WlUQUBfKfZog==}
     engines: {node: '>=6'}
     peerDependencies:
-      rxjs: '*'
+      rxjs: ^5.5.10
       zenObservable: '*'
     peerDependenciesMeta:
       rxjs:
@@ -21243,7 +21245,7 @@ packages:
     peerDependencies:
       '@typescript-eslint/eslint-plugin': ^4.0.0 || ^5.0.0
       eslint: ^6.0.0 || ^7.0.0 || ^8.0.0
-      jest: '*'
+      jest: ^27.0.0
     peerDependenciesMeta:
       '@typescript-eslint/eslint-plugin':
         optional: true
@@ -21864,8 +21866,8 @@ packages:
     peerDependencies:
       expo-modules-autolinking: '*'
       expo-modules-core: '*'
-      react: '*'
-      react-native: '*'
+      react: 18.2.0
+      react-native: 0.74.5
     peerDependenciesMeta:
       expo-modules-autolinking:
         optional: true
@@ -27591,6 +27593,7 @@ packages:
     engines: {node: '>=0.6.0', teleport: '>=0.2.0'}
     deprecated: |-
       You or someone you depend on is using Q, the JavaScript Promise library that gave JavaScript developers strong feelings about promises. They can almost certainly migrate to the native JavaScript promise now. Thank you literally everyone for joining me in this bet against the odds. Be excellent to each other.
+
       (For a CapTP with native promises, see @endo/eventual-send and @endo/captp)
 
   qrcode-terminal@0.11.0:
@@ -27824,7 +27827,7 @@ packages:
     resolution: {integrity: sha512-kBGxI+MIZGBf4wZhNCWwHkMcVP+kbpmrLWH/SkO0qCKc7D7eSPcxQbfpsmsCo8v2KCBYjuGSou+xTqK44D/jMg==}
     engines: {npm: ^3.0.0}
     peerDependencies:
-      prop-types: '*'
+      prop-types: ^15.6.1
       react: '>=15.0.0'
     peerDependenciesMeta:
       prop-types:
@@ -27848,8 +27851,8 @@ packages:
   react-native-animatable@1.3.3:
     resolution: {integrity: sha512-2ckIxZQAsvWn25Ho+DK3d1mXIgj7tITkrS4pYDvx96WyOttSvzzFeQnM2od0+FUMzILbdHDsDEqZvnz1DYNQ1w==}
     peerDependencies:
-      react: '*'
-      react-native: '*'
+      react: 16.9.0
+      react-native: 0.61.2
     peerDependenciesMeta:
       react:
         optional: true
@@ -27859,8 +27862,8 @@ packages:
   react-native-animatable@1.4.0:
     resolution: {integrity: sha512-DZwaDVWm2NBvBxf7I0wXKXLKb/TxDnkV53sWhCvei1pRyTX3MVFpkvdYBknNBqPrxYuAIlPxEp7gJOidIauUkw==}
     peerDependencies:
-      react: '*'
-      react-native: '*'
+      react: 18.2.0
+      react-native: 0.72.6
     peerDependenciesMeta:
       react:
         optional: true
@@ -31937,6 +31940,18 @@ packages:
 
   ws@8.18.0:
     resolution: {integrity: sha512-8VbfWfHLbbwu3+N6OKsOMpBdT4kXPDDB9cJk2bJ6mh9ucxdlnNvH1e+roYkKmN9Nxw2yjz7VzeO9oOz2zJ04Pw==}
+    engines: {node: '>=10.0.0'}
+    peerDependencies:
+      bufferutil: ^4.0.1
+      utf-8-validate: '>=5.0.2'
+    peerDependenciesMeta:
+      bufferutil:
+        optional: true
+      utf-8-validate:
+        optional: true
+
+  ws@8.18.1:
+    resolution: {integrity: sha512-RKW2aJZMXeMxVpnZ6bck+RswznaxmzdULiBr6KY7XkTnW8uvt0iT9H5DkHUChXrc+uurzwa0rVI16n/Xzjdz1w==}
     engines: {node: '>=10.0.0'}
     peerDependencies:
       bufferutil: ^4.0.1
@@ -39729,7 +39744,7 @@ snapshots:
       '@ledgerhq/wallet-api-core': 1.17.0
       '@ledgerhq/wallet-api-server': 1.8.1(react@18.3.1)(rxjs@7.8.1)
       rxjs: 7.8.1
-      ws: 8.18.0
+      ws: 8.18.1
     transitivePeerDependencies:
       - bufferutil
       - react
@@ -41012,7 +41027,7 @@ snapshots:
     dependencies:
       '@polkadot/x-global': 12.6.2
       tslib: 2.6.2
-      ws: 8.18.0
+      ws: 8.18.1
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
@@ -45508,7 +45523,7 @@ snapshots:
       util: 0.12.5
       util-deprecate: 1.0.2
       watchpack: 2.4.2
-      ws: 8.18.0
+      ws: 8.18.1
     transitivePeerDependencies:
       - bufferutil
       - encoding
@@ -48344,7 +48359,7 @@ snapshots:
     dependencies:
       '@noble/hashes': 1.7.0
       eventemitter3: 5.0.1
-      ws: 8.18.0
+      ws: 8.18.1
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
@@ -55470,7 +55485,7 @@ snapshots:
       utf-8-validate: 6.0.3
       utf8: 3.0.0
       uuid: 9.0.1
-      ws: 8.17.1(bufferutil@4.0.8)(utf-8-validate@6.0.3)
+      ws: 8.18.1(bufferutil@4.0.8)(utf-8-validate@6.0.3)
 
   iconv-corefoundation@1.1.7:
     dependencies:
@@ -56002,13 +56017,13 @@ snapshots:
     dependencies:
       ws: 7.5.10
 
+  isomorphic-ws@4.0.1(ws@8.18.0):
+    dependencies:
+      ws: 8.18.0
+
   isomorphic-ws@5.0.0(ws@7.5.10):
     dependencies:
       ws: 7.5.10
-
-  isomorphic-ws@5.0.0(ws@8.17.1):
-    dependencies:
-      ws: 8.17.1
 
   isomorphic-ws@5.0.0(ws@8.18.0):
     dependencies:
@@ -58376,7 +58391,7 @@ snapshots:
       whatwg-encoding: 1.0.5
       whatwg-mimetype: 2.3.0
       whatwg-url: 9.1.0
-      ws: 8.18.0
+      ws: 8.18.1
       xml-name-validator: 3.0.0
     transitivePeerDependencies:
       - bufferutil
@@ -58409,7 +58424,7 @@ snapshots:
       whatwg-encoding: 2.0.0
       whatwg-mimetype: 3.0.0
       whatwg-url: 11.0.0
-      ws: 8.18.0
+      ws: 8.18.1
       xml-name-validator: 4.0.0
     transitivePeerDependencies:
       - bufferutil
@@ -64676,7 +64691,7 @@ snapshots:
       buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
       eventemitter3: 5.0.1
       uuid: 8.3.2
-      ws: 8.18.0(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+      ws: 8.18.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)
     optionalDependencies:
       bufferutil: 4.0.8
       utf-8-validate: 5.0.10
@@ -65133,7 +65148,7 @@ snapshots:
 
   smoldot@2.0.22:
     dependencies:
-      ws: 8.18.0
+      ws: 8.18.1
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
@@ -68407,7 +68422,7 @@ snapshots:
       sockjs: 0.3.24
       spdy: 4.0.2
       webpack-dev-middleware: 5.3.4(webpack@5.94.0)
-      ws: 8.18.0
+      ws: 8.18.1
     optionalDependencies:
       webpack: 5.94.0(webpack-cli@4.10.0)
       webpack-cli: 4.10.0(webpack-dev-server@4.15.2)(webpack@5.94.0)
@@ -68447,7 +68462,7 @@ snapshots:
       sockjs: 0.3.24
       spdy: 4.0.2
       webpack-dev-middleware: 5.3.4(webpack@5.94.0(@swc/core@1.4.11))
-      ws: 8.18.0
+      ws: 8.18.1
     optionalDependencies:
       webpack: 5.94.0(@swc/core@1.4.11)
     transitivePeerDependencies:
@@ -68486,7 +68501,7 @@ snapshots:
       sockjs: 0.3.24
       spdy: 4.0.2
       webpack-dev-middleware: 5.3.4(webpack@5.94.0(metro@0.80.12))
-      ws: 8.18.0
+      ws: 8.18.1
     optionalDependencies:
       webpack: 5.94.0(metro@0.80.12)
     transitivePeerDependencies:
@@ -68525,7 +68540,7 @@ snapshots:
       sockjs: 0.3.24
       spdy: 4.0.2
       webpack-dev-middleware: 5.3.4(webpack@5.94.0)
-      ws: 8.18.0
+      ws: 8.18.1
     optionalDependencies:
       webpack: 5.94.0
     transitivePeerDependencies:
@@ -69164,17 +69179,19 @@ snapshots:
 
   ws@8.17.1: {}
 
-  ws@8.17.1(bufferutil@4.0.8)(utf-8-validate@6.0.3):
-    optionalDependencies:
-      bufferutil: 4.0.8
-      utf-8-validate: 6.0.3
-
   ws@8.18.0: {}
 
-  ws@8.18.0(bufferutil@4.0.8)(utf-8-validate@5.0.10):
+  ws@8.18.1: {}
+
+  ws@8.18.1(bufferutil@4.0.8)(utf-8-validate@5.0.10):
     optionalDependencies:
       bufferutil: 4.0.8
       utf-8-validate: 5.0.10
+
+  ws@8.18.1(bufferutil@4.0.8)(utf-8-validate@6.0.3):
+    optionalDependencies:
+      bufferutil: 4.0.8
+      utf-8-validate: 6.0.3
 
   ws@8.5.0: {}
 
