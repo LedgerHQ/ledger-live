@@ -6,7 +6,7 @@ export type CryptoCurrencyIds = string;
 /**
  *
  */
-export type NFTStandard = "ERC721" | "ERC1155";
+export type NFTStandard = "ERC721" | "ERC1155" | "SPL";
 
 /**
  *
@@ -33,7 +33,7 @@ export type NFTMetadata = {
   medias: NFTMedias;
   description: string | null;
   properties: Array<Record<"key" | "value", string>>;
-  links: Record<NFTMetadataLinksProviders, string>;
+  links: Record<NFTMetadataLinksProviders, string | null>;
   staxImage?: string;
 };
 
@@ -76,7 +76,7 @@ export type NFT = Omit<ProtoNFT, "metadata"> & {
 /**
  *
  */
-export type NFTMetadataLinksProviders = "opensea" | "rarible" | "explorer";
+export type NFTMetadataLinksProviders = "opensea" | "rarible" | "etherscan" | "explorer";
 
 /**
  *

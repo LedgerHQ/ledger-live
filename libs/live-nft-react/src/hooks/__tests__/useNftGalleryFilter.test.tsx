@@ -5,7 +5,6 @@ import { SimpleHashResponse } from "@ledgerhq/live-nft/api/types";
 import { notifyManager } from "@tanstack/react-query";
 
 import { generateNftsOwned, wrapper } from "../../tools/helperTests";
-import { isThresholdValid } from "../helpers";
 
 jest.setTimeout(30000);
 
@@ -94,14 +93,5 @@ describe("useNftGalleryFilter", () => {
     //   expect(result.current.nfts).toBe(expected.slice(0, pagedBy * n));
     // }
     // expect(result.current.nfts).toEqual(expected);
-  });
-
-  test("Threshold validity", async () => {
-    expect(isThresholdValid(101)).toBe(false);
-    expect(isThresholdValid(-1)).toBe(false);
-    expect(isThresholdValid("-1")).toBe(false);
-    expect(isThresholdValid("40")).toBe(true);
-    expect(isThresholdValid("101")).toBe(false);
-    expect(isThresholdValid("Not a number")).toBe(false);
   });
 });

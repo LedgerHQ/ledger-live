@@ -1,13 +1,19 @@
-import { isAccountDelegating } from "../families/tezos/staking";
 import { BitcoinAccount, initialBitcoinResourcesValue } from "@ledgerhq/coin-bitcoin/types";
-import type { Account, AccountLike } from "@ledgerhq/types-live";
-import { TronAccount } from "@ledgerhq/coin-tron/types/index";
-import { CosmosAccount } from "../families/cosmos/types";
 import {
-  getMainAccount,
-  isAccountEmpty as commonIsAccountEmpty,
   clearAccount as commonClearAccount,
-} from "@ledgerhq/coin-framework/account/index";
+  isAccountEmpty as commonIsAccountEmpty,
+  getMainAccount,
+} from "@ledgerhq/coin-framework/account";
+import { isAccountEmpty as isCosmosAccountEmpty } from "@ledgerhq/coin-cosmos/helpers";
+import { isCosmosAccount, type CosmosAccount } from "@ledgerhq/coin-cosmos/types/index";
+import {
+  isTronAccount,
+  isAccountEmpty as isTronAccountEmpty,
+  type TronAccount,
+} from "@ledgerhq/coin-tron/index";
+import { isAccountEmpty as isVechainAccountEmpty } from "@ledgerhq/coin-vechain/index";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
+import { isAccountDelegating } from "../families/tezos/staking";
 
 // TODO: remove this export and prefer import from root file.
 export {
@@ -28,6 +34,18 @@ export {
 } from "@ledgerhq/coin-framework/account/index";
 
 export const isAccountEmpty = (a: AccountLike): boolean => {
+  if (a.type === "Account") {
+    if (isCosmosAccount(a)) {
+      return isCosmosAccountEmpty(a);
+    }
+    if (isTronAccount(a)) {
+      return isTronAccountEmpty(a);
+    }
+    if (a.currency.family == "vechain") {
+      return isVechainAccountEmpty(a);
+    }
+  }
+
   return commonIsAccountEmpty(a);
 };
 
@@ -37,10 +55,9 @@ export const isAccountEmpty = (a: AccountLike): boolean => {
 export function clearAccount<T extends AccountLike>(account: T): T {
   // FIXME add in the coins bridge a way for a coin to define extra clean up functions to modularize this.
   return commonClearAccount(account, (account: Account) => {
-    if (account.currency.family === "tron") {
-      const tronAcc = account as TronAccount;
-      tronAcc.tronResources = {
-        ...tronAcc.tronResources,
+    if (isTronAccount(account)) {
+      account.tronResources = {
+        ...account.tronResources,
         cacheTransactionInfoById: {},
       };
     }

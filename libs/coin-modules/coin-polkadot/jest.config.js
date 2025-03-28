@@ -14,6 +14,7 @@ module.exports = {
   modulePathIgnorePatterns: ["src/test/coin-tester"],
   setupFilesAfterEnv: ["jest-expect-message", "dotenv/config"],
   reporters: [
+    "default",
     [
       "jest-sonar",
       { outputName: "polkadot-sonar-executionTests-report.xml", reportedFilePath: "absolute" },

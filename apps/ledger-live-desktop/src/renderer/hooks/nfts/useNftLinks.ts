@@ -15,85 +15,76 @@ import CustomImage from "~/renderer/screens/customImage";
 import NFTViewerDrawer from "~/renderer/drawers/NFTViewerDrawer";
 import { ContextMenuItemType } from "../../components/ContextMenu/ContextMenuWrapper";
 import { devicesModelListSelector } from "~/renderer/reducers/settings";
+import { ItemType } from "LLD/features/Collectibles/types/enum/Links";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
-function safeList(items: (ContextMenuItemType | "" | undefined)[]): ContextMenuItemType[] {
-  return items.filter(Boolean) as ContextMenuItemType[];
-}
+const addOpensea = (list: ContextMenuItemType[], t: TFunction, links: NFTMetadata["links"]) => {
+  if (links?.opensea) {
+    const link = links.opensea;
+    list.push({
+      id: "opensea",
+      label: t("NFT.viewer.actions.open", {
+        viewer: "Opensea.io",
+      }),
+      Icon: IconOpensea,
+      type: ItemType.EXTERNAL,
+      callback: () => openURL(link),
+    });
+  }
+};
 
-const linksPerCurrency: Record<
-  string,
-  (t: TFunction, links: NFTMetadata["links"]) => ContextMenuItemType[]
-> = {
-  ethereum: (t, links) =>
-    safeList([
-      links?.opensea && {
-        id: "opensea",
-        label: t("NFT.viewer.actions.open", {
-          viewer: "Opensea.io",
-        }),
-        Icon: IconOpensea,
-        type: "external",
-        callback: () => openURL(links.opensea),
-      },
-      links?.rarible && {
-        id: "rarible",
-        label: t("NFT.viewer.actions.open", {
-          viewer: "Rarible",
-        }),
-        Icon: IconRarible,
-        type: "external",
-        callback: () => openURL(links.rarible),
-      },
-      {
-        id: "sep2",
-        type: "separator",
-        label: "",
-      },
-      links?.explorer && {
-        id: "explorer",
-        label: t("NFT.viewer.actions.open", {
-          viewer: "Explorer",
-        }),
-        Icon: IconsLegacy.GlobeMedium,
-        type: "external",
-        callback: () => openURL(links.explorer),
-      },
-    ]),
-  polygon: (t: TFunction, links: NFTMetadata["links"]) =>
-    safeList([
-      links?.opensea && {
-        id: "opensea",
-        label: t("NFT.viewer.actions.open", {
-          viewer: "Opensea.io",
-        }),
-        Icon: IconOpensea,
-        type: "external",
-        callback: () => openURL(links.opensea),
-      },
-      links?.rarible && {
-        id: "rarible",
-        label: t("NFT.viewer.actions.open", {
-          viewer: "Rarible",
-        }),
-        Icon: IconRarible,
-        type: "external",
-        callback: () => openURL(links.rarible),
-      },
-      {
-        id: "sep2",
-        type: "separator",
-        label: "",
-      },
-      links?.explorer && {
-        id: "explorer",
-        label: t("NFT.viewer.actions.open", {
-          viewer: "Explorer",
-        }),
-        Icon: IconsLegacy.GlobeMedium,
-        type: "external",
-        callback: () => openURL(links.explorer),
-      },
-    ]),
+const addRarible = (list: ContextMenuItemType[], t: TFunction, links: NFTMetadata["links"]) => {
+  if (links?.rarible) {
+    const link = links.rarible;
+    list.push({
+      id: "rarible",
+      label: t("NFT.viewer.actions.open", {
+        viewer: "Rarible",
+      }),
+      Icon: IconRarible,
+      type: ItemType.EXTERNAL,
+      callback: () => openURL(link),
+    });
+  }
+};
+
+const addSeparator = (list: ContextMenuItemType[]) => {
+  list.push({
+    id: "sep2",
+    type: ItemType.SEPARATOR,
+    label: "",
+  });
+};
+
+const addExplorer = (list: ContextMenuItemType[], t: TFunction, links: NFTMetadata["links"]) => {
+  if (links?.explorer) {
+    const link = links.explorer;
+    list.push({
+      id: "explorer",
+      label: t("NFT.viewer.actions.open", {
+        viewer: "Explorer",
+      }),
+      Icon: IconsLegacy.GlobeMedium,
+      type: ItemType.EXTERNAL,
+      callback: () => openURL(link),
+    });
+  }
+};
+
+const defaultLinksPerCurrency = (t: TFunction, links: NFTMetadata["links"]) => {
+  const list: ContextMenuItemType[] = [];
+
+  addOpensea(list, t, links);
+  addRarible(list, t, links);
+  addSeparator(list);
+  addExplorer(list, t, links);
+
+  return list;
+};
+
+const linksPerCurrency: Partial<Record<CryptoCurrency["id"], typeof defaultLinksPerCurrency>> = {
+  ethereum: defaultLinksPerCurrency,
+  polygon: defaultLinksPerCurrency,
 };
 
 export default (

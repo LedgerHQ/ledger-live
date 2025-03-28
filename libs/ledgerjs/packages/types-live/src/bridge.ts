@@ -17,13 +17,7 @@ import type {
 import type { Operation, OperationExtra, OperationExtraRaw } from "./operation";
 import type { DerivationMode } from "./derivation";
 import type { SyncConfig } from "./pagination";
-import {
-  CryptoCurrencyIds,
-  NFTCollectionMetadata,
-  NFTCollectionMetadataResponse,
-  NFTMetadata,
-  NFTMetadataResponse,
-} from "./nft";
+import { CryptoCurrencyIds, NFTCollectionMetadataResponse, NFTMetadataResponse } from "./nft";
 
 export type ScanAccountEvent = {
   type: "discovered";
@@ -121,12 +115,10 @@ export interface CurrencyBridge {
       contract: string;
       tokenId: string;
       currencyId: string;
-      metadata?: NFTMetadata;
     }) => Promise<NFTMetadataResponse>;
     collectionMetadata: (arg: {
       contract: string;
       currencyId: string;
-      metadata?: NFTCollectionMetadata;
     }) => Promise<NFTCollectionMetadataResponse>;
   };
 }

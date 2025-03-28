@@ -301,6 +301,9 @@ export type TronTransactionInfo = {
   unfreeze_amount?: number;
 };
 export type TronTransactionInfoRaw = [number, number, number?, number?];
+export function isTronAccount(account: Account): account is TronAccount {
+  return "tronResources" in account;
+}
 export type TronAccount = Account & { tronResources: TronResources };
 export type TronAccountRaw = AccountRaw & { tronResources: TronResourcesRaw };
 export type TransactionStatus = TransactionStatusCommon;

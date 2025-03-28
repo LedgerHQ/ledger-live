@@ -14,6 +14,7 @@ module.exports = {
   testPathIgnorePatterns: ["lib/", "lib-es/", ".integration.test.ts"],
   modulePathIgnorePatterns: ["__tests__/fixtures"],
   reporters: [
+    "default",
     [
       "jest-sonar",
       { outputName: "cosmos-sonar-executionTests-report.xml", reportedFilePath: "absolute" },

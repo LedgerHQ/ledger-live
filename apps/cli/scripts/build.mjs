@@ -4,12 +4,6 @@ import fs from "node:fs";
 import { createExportableManifest } from "@pnpm/exportable-manifest";
 import { readProjectManifestOnly } from "@pnpm/read-project-manifest";
 
-echo(chalk.green("Creating publish directory"));
-
-if (!fs.existsSync('publish')) {
-  fs.mkdirSync('publish');
-}
-
 echo(chalk.green("Building bundled javascript"));
 
 await $`tsup src/cli.ts`;

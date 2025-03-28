@@ -8,7 +8,7 @@ import {
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import type { OperationType } from "@ledgerhq/types-live";
 import { CosmosAPI } from "./network/Cosmos";
-import { getMainMessage } from "./helpers";
+import { getMainMessage, isAccountEmpty } from "./helpers";
 import { parseAmountStringToNumber } from "./logic";
 import { CosmosAccount, CosmosOperation, CosmosTx } from "./types";
 
@@ -59,6 +59,17 @@ export const getAccountShape: GetAccountShape<CosmosAccount> = async (info: any)
     spendableBalance = new BigNumber(0);
   }
 
+  const cosmosResources = {
+    delegations,
+    redelegations,
+    unbondings,
+    delegatedBalance,
+    pendingRewardsBalance,
+    unbondingBalance,
+    withdrawAddress,
+    sequence: accountInfo.sequence,
+  };
+
   const shape = {
     id: accountId,
     xpub: address,
@@ -66,16 +77,8 @@ export const getAccountShape: GetAccountShape<CosmosAccount> = async (info: any)
     spendableBalance,
     operationsCount: operations.length,
     blockHeight,
-    cosmosResources: {
-      delegations,
-      redelegations,
-      unbondings,
-      delegatedBalance,
-      pendingRewardsBalance,
-      unbondingBalance,
-      withdrawAddress,
-      sequence: accountInfo.sequence,
-    },
+    cosmosResources,
+    used: !isAccountEmpty({ balance, cosmosResources }),
   };
 
   if (shape.spendableBalance && shape.spendableBalance.lt(0)) {

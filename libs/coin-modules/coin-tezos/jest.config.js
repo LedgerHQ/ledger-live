@@ -12,6 +12,7 @@ module.exports = {
   ],
   coverageReporters: ["json", ["lcov", { file: "tezos-lcov.info", projectRoot: "../" }], "text"],
   reporters: [
+    "default",
     [
       "jest-sonar",
       { outputName: "tezos-sonar-executionTests-report.xml", reportedFilePath: "absolute" },

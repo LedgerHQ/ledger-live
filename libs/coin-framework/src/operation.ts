@@ -9,6 +9,9 @@ import { encodeNftId } from "./nft/nftId";
 const nftOperationIdEncoderPerStandard: Record<NFTStandard, (...args: any[]) => string> = {
   ERC721: encodeERC721OperationId,
   ERC1155: encodeERC1155OperationId,
+  // Fallback for SPL on NFTStandard type using ERC721O encode
+  // as we don't support sending currently
+  SPL: encodeERC721OperationId,
 };
 
 export function findOperationInAccount(

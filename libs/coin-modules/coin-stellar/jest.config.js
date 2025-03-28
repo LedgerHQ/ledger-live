@@ -12,6 +12,7 @@ module.exports = {
   testEnvironment: "node",
   testPathIgnorePatterns: ["lib/", "lib-es/", ".*\\.integ\\.test\\.[tj]s"],
   reporters: [
+    "default",
     [
       "jest-sonar",
       { outputName: "stellar-sonar-executionTests-report.xml", reportedFilePath: "absolute" },

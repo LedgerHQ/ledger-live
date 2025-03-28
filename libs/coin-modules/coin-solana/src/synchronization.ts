@@ -12,6 +12,7 @@ import {
 } from "./api/chain/web3";
 import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { encodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
 import {
   encodeAccountIdWithTokenAccountAddress,
   isStakeLockUpInForce,
@@ -39,7 +40,7 @@ import {
   SolanaTokenAccountExtensions,
   SolanaTokenProgram,
 } from "./types";
-import { Operation, OperationType, TokenAccount } from "@ledgerhq/types-live";
+import { Operation, OperationType, ProtoNFT, TokenAccount } from "@ledgerhq/types-live";
 import { DelegateInfo, WithdrawInfo } from "./api/chain/instruction/stake/types";
 import { PARSED_PROGRAMS } from "./api/chain/program/constants";
 import { getTokenAccountProgramId, tokenIsListedOnLedger } from "./helpers/token";
@@ -169,6 +170,16 @@ function toAssociatedTokenAccount(
   if (!associatedTokenAccount) return associatedTokenAccount;
   return { associatedTokenAccount, knownTokenAccount: knownTokenAccounts.get(mint), tokenProgram };
 }
+
+const tokenAccountIsNFT = (tokenAccount: ParsedOnChainTokenAccountWithInfo) => {
+  return (
+    tokenAccount &&
+    // amount could be above 1 if it was minted again
+    // should we also support/allow them ?
+    tokenAccount.info.tokenAmount.uiAmount === 1 &&
+    tokenAccount.info.tokenAmount.decimals === 0
+  );
+};
 
 export const getAccountShapeWithAPI = async (
   info: AccountShapeInfo,
@@ -361,7 +372,31 @@ export const getAccountShapeWithAPI = async (
     unstakeReserve = stakes.length * withdrawFee + activeStakes.length * undelegateFee;
   }
 
+  const nextNfts = onChainTokenAccounts.reduce((nfts, tokenAccount) => {
+    if (
+      !tokenIsListedOnLedger(currency.id, tokenAccount.info.mint.toBase58()) &&
+      tokenAccountIsNFT(tokenAccount)
+    ) {
+      const mint = tokenAccount.info.mint.toBase58();
+      // A fake tokenId is used as the mint address for the contract field with NMS
+      // because we don't have the collection with the node data
+      // We would need to fetch the metaplex metdata associated to this account
+      const tokenId = "0";
+      const id = encodeNftId(mainAccountId, tokenId, mint, currency.id);
+      nfts.push({
+        id,
+        contract: mint,
+        tokenId: tokenId,
+        amount: new BigNumber(0),
+        standard: "SPL",
+        currencyId: currency.id,
+      });
+    }
+    return nfts;
+  }, [] as ProtoNFT[]);
+
   const shape: Partial<SolanaAccount> = {
+    nfts: nextNfts,
     subAccounts: nextSubAccs,
     id: mainAccountId,
     blockHeight,

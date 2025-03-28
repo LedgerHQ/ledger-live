@@ -18,6 +18,7 @@ module.exports = {
   testPathIgnorePatterns: ["lib/", "lib-es/", ".*\\.integ\\.test\\.[tj]s"],
   workerThreads: true,
   reporters: [
+    "default",
     [
       "jest-sonar",
       {
