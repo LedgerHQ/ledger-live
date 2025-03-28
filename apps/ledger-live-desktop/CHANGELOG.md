@@ -1,5 +1,30 @@
 # ledger-live-desktop
 
+## 2.106.0-nightly.2
+
+### Patch Changes
+
+- Updated dependencies [[`1e7d454`](https://github.com/LedgerHQ/ledger-live/commit/1e7d454d99f1f39880f39a120c59020725d26475), [`d694069`](https://github.com/LedgerHQ/ledger-live/commit/d6940698a49b7a0ed48f84d6e8184d80760cca4f), [`0d7a18a`](https://github.com/LedgerHQ/ledger-live/commit/0d7a18a915da4bc5343c40a955d02cfd50a61aea)]:
+  - @ledgerhq/coin-cosmos@0.11.0-nightly.2
+  - @ledgerhq/coin-aptos@1.8.0-nightly.2
+  - @ledgerhq/live-common@34.28.0-nightly.2
+  - @ledgerhq/coin-framework@2.5.0-nightly.2
+  - @ledgerhq/types-live@6.65.0-nightly.0
+  - @ledgerhq/coin-evm@2.15.0-nightly.2
+  - @ledgerhq/live-env@2.7.0-nightly.1
+  - @ledgerhq/live-nft-react@0.8.0-nightly.2
+  - @ledgerhq/coin-bitcoin@0.14.0-nightly.2
+  - @ledgerhq/coin-filecoin@1.8.0-nightly.2
+  - @ledgerhq/live-countervalues@0.5.0-nightly.2
+  - @ledgerhq/live-countervalues-react@0.2.28-nightly.2
+  - @ledgerhq/live-nft@0.7.0-nightly.2
+  - @ledgerhq/live-wallet@0.10.2-nightly.2
+  - @ledgerhq/domain-service@1.2.24-nightly.0
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.3.3-nightly.1
+  - @ledgerhq/ledger-key-ring-protocol@0.5.5-nightly.1
+  - @ledgerhq/cryptoassets@13.14.0-nightly.2
+  - @ledgerhq/live-network@2.0.6-nightly.1
+
 ## 2.106.0-nightly.1
 
 ### Minor Changes

@@ -1,5 +1,53 @@
 ## 34.25.0
 
+## 34.28.0-nightly.2
+
+### Minor Changes
+
+- [#9597](https://github.com/LedgerHQ/ledger-live/pull/9597) [`1e7d454`](https://github.com/LedgerHQ/ledger-live/commit/1e7d454d99f1f39880f39a120c59020725d26475) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - isAccountEmpty is now defined in each coin needed a dedicated logic.
+
+### Patch Changes
+
+- Updated dependencies [[`1e7d454`](https://github.com/LedgerHQ/ledger-live/commit/1e7d454d99f1f39880f39a120c59020725d26475), [`d694069`](https://github.com/LedgerHQ/ledger-live/commit/d6940698a49b7a0ed48f84d6e8184d80760cca4f)]:
+  - @ledgerhq/coin-vechain@2.6.0-nightly.2
+  - @ledgerhq/coin-cosmos@0.11.0-nightly.2
+  - @ledgerhq/coin-aptos@1.8.0-nightly.2
+  - @ledgerhq/coin-tron@0.7.0-nightly.2
+  - @ledgerhq/coin-framework@2.5.0-nightly.2
+  - @ledgerhq/coin-solana@0.17.0-nightly.2
+  - @ledgerhq/coin-evm@2.15.0-nightly.2
+  - @ledgerhq/live-env@2.7.0-nightly.1
+  - @ledgerhq/coin-algorand@0.8.0-nightly.2
+  - @ledgerhq/coin-bitcoin@0.14.0-nightly.2
+  - @ledgerhq/coin-cardano@0.7.0-nightly.2
+  - @ledgerhq/coin-casper@1.5.2-nightly.2
+  - @ledgerhq/coin-filecoin@1.8.0-nightly.2
+  - @ledgerhq/coin-hedera@1.5.0-nightly.2
+  - @ledgerhq/coin-icon@0.9.0-nightly.2
+  - @ledgerhq/coin-internet_computer@1.6.0-nightly.2
+  - @ledgerhq/coin-multiversx@0.3.0-nightly.2
+  - @ledgerhq/coin-near@0.10.0-nightly.2
+  - @ledgerhq/coin-polkadot@3.1.0-nightly.2
+  - @ledgerhq/coin-stacks@0.7.0-nightly.2
+  - @ledgerhq/coin-stellar@2.1.0-nightly.2
+  - @ledgerhq/coin-sui@0.2.0-nightly.3
+  - @ledgerhq/coin-tezos@2.1.0-nightly.2
+  - @ledgerhq/coin-ton@0.7.0-nightly.2
+  - @ledgerhq/coin-xrp@3.1.0-nightly.2
+  - @ledgerhq/live-countervalues@0.5.0-nightly.2
+  - @ledgerhq/live-countervalues-react@0.2.28-nightly.2
+  - @ledgerhq/live-nft@0.7.0-nightly.2
+  - @ledgerhq/live-wallet@0.10.2-nightly.2
+  - @ledgerhq/device-core@0.4.19-nightly.0
+  - @ledgerhq/hw-app-eth@6.44.0-nightly.1
+  - @ledgerhq/live-signer-evm@0.2.2-nightly.2
+  - @ledgerhq/ledger-cal-service@0.4.1-nightly.0
+  - @ledgerhq/ledger-trust-service@0.3.1-nightly.1
+  - @ledgerhq/cryptoassets@13.14.0-nightly.2
+  - @ledgerhq/live-network@2.0.6-nightly.1
+  - @ledgerhq/speculos-transport@0.1.11-nightly.1
+  - @ledgerhq/hw-app-vet@0.4.0-nightly.3
+
 ## 34.28.0-nightly.1
 
 ### Minor Changes

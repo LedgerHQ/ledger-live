@@ -1,5 +1,16 @@
 # @ledgerhq/coin-filecoin
 
+## 1.8.0-nightly.2
+
+### Patch Changes
+
+- Updated dependencies [[`1e7d454`](https://github.com/LedgerHQ/ledger-live/commit/1e7d454d99f1f39880f39a120c59020725d26475), [`d694069`](https://github.com/LedgerHQ/ledger-live/commit/d6940698a49b7a0ed48f84d6e8184d80760cca4f)]:
+  - @ledgerhq/coin-framework@2.5.0-nightly.2
+  - @ledgerhq/types-live@6.65.0-nightly.0
+  - @ledgerhq/live-env@2.7.0-nightly.1
+  - @ledgerhq/cryptoassets@13.14.0-nightly.2
+  - @ledgerhq/live-network@2.0.6-nightly.1
+
 ## 1.8.0-nightly.1
 
 ### Patch Changes

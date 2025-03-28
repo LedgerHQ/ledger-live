@@ -1,5 +1,11 @@
 # @ledgerhq/live-env
 
+## 2.7.0-nightly.1
+
+### Minor Changes
+
+- [#9690](https://github.com/LedgerHQ/ledger-live/pull/9690) [`d694069`](https://github.com/LedgerHQ/ledger-live/commit/d6940698a49b7a0ed48f84d6e8184d80760cca4f) Thanks [@Justkant](https://github.com/Justkant)! - feat: support Solana NFTs
+
 ## 2.7.0-nightly.0
 
 ### Minor Changes
