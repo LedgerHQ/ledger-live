@@ -4,6 +4,7 @@ import get from "lodash/get";
 import TronWeb from "tronweb";
 import coinConfig from "../config";
 import { TronResources, UnFrozenInfo } from "../types";
+import { combine } from "./combine";
 
 export function createTronWeb(trongridUrl?: string): TronWeb {
   if (!trongridUrl) {
@@ -36,6 +37,29 @@ export async function decodeTransaction(rawTx: string): Promise<{
     raw_data: convertTxFromRaw(transaction),
     raw_data_hex: rawTx,
   };
+}
+
+function convertTxToRaw(rawData: Record<string, unknown>) {
+  const { Transaction } = (globalThis as unknown as any).TronWebProto;
+  const rawTransaction = new Transaction.raw();
+  // console.log("rawTransaction in convertTxToRaw():", rawTransaction);
+
+  Object.assign(rawTransaction, rawData);
+
+  return rawTransaction;
+}
+
+export async function encodeTransaction(
+  rawData: Record<string, unknown>,
+  signature: string,
+): Promise<string> {
+  const { Transaction } = (globalThis as unknown as any).TronWebProto;
+  const transaction = new Transaction();
+  transaction.raw = convertTxToRaw(rawData);
+
+  const serializedHex = Buffer.from(transaction.raw.serializeBinary()).toString("hex");
+
+  return combine(serializedHex, signature);
 }
 
 /**

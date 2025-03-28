@@ -5,3 +5,4 @@ export * from "./estimateFees";
 export * from "./getBalance";
 export * from "./listOperations";
 export * from "./lastBlock";
+export * from "./getAccount";
