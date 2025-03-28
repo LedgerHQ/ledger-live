@@ -1,12 +1,31 @@
-import { Operation } from "@ledgerhq/coin-framework/lib/api/types";
+import { Operation, TransactionIntent } from "@ledgerhq/coin-framework/lib/api/types";
+import { APIAccount } from "../network/types";
+import networkApi from "../network/tzkt";
 import { createApi } from "./index";
 
+const DEFAULT_ESTIMATED_FEES = 300n;
+
 const logicGetTransactions = jest.fn();
+const logicEstimateFeesMock = jest.fn(() =>
+  Promise.resolve({ estimatedFees: DEFAULT_ESTIMATED_FEES }),
+);
+const logicCraftTransactionMock = jest.fn((_account: unknown, _transaction: { fee: bigint }) => {
+  return { type: undefined, contents: undefined };
+});
+
 jest.mock("../logic", () => ({
-  listOperations: async () => {
-    return logicGetTransactions();
-  },
+  listOperations: async () => logicGetTransactions(),
+  estimateFees: async () => logicEstimateFeesMock(),
+  craftTransaction: (account: unknown, transaction: { fee: bigint }) =>
+    logicCraftTransactionMock(account, transaction),
+  rawEncode: () => Promise.resolve("tz1heMGVHQnx7ALDcDKqez8fan64Eyicw4DJ"),
 }));
+
+jest
+  .spyOn(networkApi, "getAccountByAddress")
+  .mockImplementation((_adress: string) =>
+    Promise.resolve({ type: "user", balance: 1000 } as APIAccount),
+  );
 
 const api = createApi({
   baker: {
@@ -65,4 +84,29 @@ describe("get operations", () => {
     expect(operations.length).toBe(10);
     expect(token).toEqual("888");
   });
+});
+
+describe("Testing craftTransaction function", () => {
+  beforeEach(() => jest.clearAllMocks());
+
+  it("should use estimated fees when user does not provide them for crafting a transaction ", async () => {
+    await api.craftTransaction({ type: "send" } as TransactionIntent<void>);
+    expect(logicEstimateFeesMock).toHaveBeenCalledTimes(1);
+    expect(logicCraftTransactionMock).toHaveBeenCalledWith(
+      expect.any(Object),
+      expect.objectContaining({ fee: { fees: DEFAULT_ESTIMATED_FEES.toString() } }),
+    );
+  });
+
+  it.each([[1n], [50n], [99n]])(
+    "should use custom user fees when user provides it for crafting a transaction",
+    async (customFees: bigint) => {
+      await api.craftTransaction({ type: "send" } as TransactionIntent<void>, customFees);
+      expect(logicEstimateFeesMock).toHaveBeenCalledTimes(0);
+      expect(logicCraftTransactionMock).toHaveBeenCalledWith(
+        expect.any(Object),
+        expect.objectContaining({ fee: { fees: customFees.toString() } }),
+      );
+    },
+  );
 });
