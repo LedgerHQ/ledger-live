@@ -1,8 +1,7 @@
 {
     "name": "ledger-live-desktop-e2e-tests",
     "scripts": {
-        "test:playwright": "playwright test --config=playwright.config.ts",
-        "test:playwright:setup": "playwright install chromium"
+        "test:playwright": "playwright test --config=playwright.config.ts"
     },
     "dependencies": {
         "@ledgerhq/live-cli": "workspace:^",
@@ -12,6 +11,7 @@
         "@ledgerhq/types-live": "workspace:^",
         "@playwright/test": "^1.51.0",
         "@types/node": "^22.13.10",
+        "allure-js-commons": "3.2.1",
         "allure-playwright": "^3.2.0",
         "axios": "^1.8.3",
         "dotenv": "^16.4.7",
@@ -22,6 +22,7 @@
     "devDependencies": {
         "@types/invariant": "2.2.37",
         "@types/lodash": "4.17.16",
-        "electron": "32.0.2"
+        "electron": "32.0.2",
+        "playwright": "1.51.1"
     }
 }
