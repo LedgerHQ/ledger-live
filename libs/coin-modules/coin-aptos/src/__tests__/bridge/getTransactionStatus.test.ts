@@ -12,6 +12,7 @@ import {
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
+  NotEnoughBalanceFees,
   RecipientRequired,
 } from "@ledgerhq/errors";
 
@@ -180,6 +181,31 @@ describe("getTransactionStatus Test", () => {
       estimatedFees: BigNumber(200),
       amount: BigNumber(1000),
       totalSpent: BigNumber(1000),
+    };
+
+    expect(result).toEqual(expected);
+  });
+
+  it("should return error for NotEnoughBalanceFees", async () => {
+    const account = createFixtureAccountWithSubAccount("coin");
+    account.spendableBalance = BigNumber(1);
+
+    const transaction = createFixtureTransactionWithSubAccount();
+    transaction.recipient = "0x" + "0".repeat(64);
+    transaction.amount = BigNumber(2);
+    transaction.fees = BigNumber(0);
+    transaction.errors = { maxGasAmount: "GasInsuficeinetBalance" };
+
+    const result = await getTransactionStatus(account, transaction);
+
+    const expected = {
+      errors: {
+        amount: new NotEnoughBalanceFees(),
+      },
+      warnings: {},
+      estimatedFees: BigNumber(0),
+      amount: BigNumber(2),
+      totalSpent: BigNumber(2),
     };
 
     expect(result).toEqual(expected);

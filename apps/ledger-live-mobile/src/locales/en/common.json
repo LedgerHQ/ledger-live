@@ -510,6 +510,10 @@
       "title": "Sorry, insufficient funds",
       "description": "Please make sure the account has enough funds."
     },
+    "NotEnoughBalanceFees": {
+      "title": "Sorry, insufficient funds to cover fees",
+      "description": "Please make sure the account has enough funds."
+    },
     "NotEnoughBalanceForUnstaking": {
       "message": "Your available (non-staked) balance is currently {{currentBalance}} which is insufficient to pay for the network fees to unstake your {{assetName}}. ",
       "oneCta": "<cta1>{{cta1Label}}</cta1> {{assetName}} into your account.",

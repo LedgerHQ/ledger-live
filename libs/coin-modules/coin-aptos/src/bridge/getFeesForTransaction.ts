@@ -56,10 +56,17 @@ export const getFee = async (
           expectedGas.isLessThan(account.spendableBalance)
         : transaction.amount.plus(expectedGas).isLessThanOrEqualTo(account.spendableBalance);
 
-      if (isUnderMaxSpendable && !completedTx.success) {
-        // we want to skip INSUFFICIENT_BALANCE error because it will be processed by getTransactionStatus
-        if (!completedTx.vm_status.includes("INSUFFICIENT_BALANCE")) {
-          throw Error(`Simulation failed with following error: ${completedTx.vm_status}`);
+      if (!completedTx.success) {
+        switch (true) {
+          case completedTx.vm_status.includes("MAX_GAS_UNITS_BELOW_MIN_TRANSACTION_GAS_UNITS"):
+            res.errors.maxGasAmount = "GasInsuficeinetBalance";
+            break;
+          case !completedTx.vm_status.includes("INSUFFICIENT_BALANCE"):
+            // INSUFFICIENT_BALANCE will be processed by getTransactionStatus
+            if (isUnderMaxSpendable) {
+              throw Error(`Simulation failed with following error: ${completedTx.vm_status}`);
+            }
+            break;
         }
       }
 
