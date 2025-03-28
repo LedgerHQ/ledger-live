@@ -21,19 +21,6 @@ on:
         description: The base branch to merge the head into when checking out the code
         type: string
         required: false
-      export_to_xray:
-        description: Send tests results to Xray
-        required: false
-        type: boolean
-        default: false
-      test_execution_android:
-        description: "[Android] Test Execution ticket ID. Ex: 'B2CQA-2461'"
-        required: false
-        type: string
-      test_execution_ios:
-        description: "[iOS] Test Execution ticket ID. Ex: 'B2CQA-2461'"
-        required: false
-        type: string
       speculos_tests:
         description: Run Speculos tests
         required: false
@@ -49,6 +36,22 @@ on:
         required: false
         type: boolean
         default: false
+      test_filter:
+        description: Filter to execute only test suite spec files according to pattern(s) (e.g. to execute nftGallery.spec.ts and deeplinks.spec.ts files "nftGallery deeplinks")
+        required: false
+      export_to_xray:
+        description: Send tests results to Xray
+        required: false
+        type: boolean
+        default: false
+      test_execution_android:
+        description: "[Android] Test Execution ticket ID. Ex: 'B2CQA-2461'"
+        required: false
+        type: string
+      test_execution_ios:
+        description: "[iOS] Test Execution ticket ID. Ex: 'B2CQA-2461'"
+        required: false
+        type: string
 
 # Uncomment to have log-level: trace on detox run and build
 # (cf: apps/ledger-live-mobile/detox.config.js)
@@ -162,10 +165,11 @@ jobs:
       - name: Test iOS app
         id: detox
         timeout-minutes: 75
-        run: pnpm test:llm:ios:e2e --api="http://127.0.0.1:${{ steps.caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo" -- -p ios -t $([[ "$INPUT_SPECULOS" == "true" ]] && printf %s '--speculos')
+        run: pnpm test:llm:ios:e2e --api="http://127.0.0.1:${{ steps.caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo" -- -p ios -t $([[ "$INPUT_SPECULOS" == "true" ]] && printf %s '--speculos') ${INPUTS_TEST_FILTER:+--filter} "${{ inputs.test_filter }}"
         env:
           SEED: ${{ secrets.SEED_QAA_B2C }}
           INPUT_SPECULOS: ${{ env.SPECULOS_RUN }}
+          INPUTS_TEST_FILTER: ${{ inputs.test_filter }}
       - name: Delete iOS simulator
         if: ${{ always() }}
         run: |
@@ -338,13 +342,14 @@ jobs:
           enable_broadcast: ${{ inputs.enable_broadcast }}
       - name: Run Android Tests
         id: detox
-        run: pnpm mobile e2e:ci -p android -t $([[ "$INPUT_SPECULOS" == "true" ]] && printf %s '--speculos') $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') --shard ${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+        run: pnpm mobile e2e:ci -p android -t $([[ "$INPUT_SPECULOS" == "true" ]] && printf %s '--speculos') $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') --shard ${{ matrix.shardIndex }}/${{ matrix.shardTotal }} ${INPUTS_TEST_FILTER:+--filter} "${{ inputs.test_filter }}"
         timeout-minutes: ${{ env.SPECULOS_RUN == 'true' && 120 || 45 }}
         env:
           DETOX_INSTALL_TIMEOUT: 120000
           SEED: ${{ secrets.SEED_QAA_B2C }}
           INPUT_SPECULOS: ${{ env.SPECULOS_RUN }}
           PRODUCTION: ${{ inputs.production_firebase }}
+          INPUTS_TEST_FILTER: ${{ inputs.test_filter }}
       - name: Upload test artifacts
         uses: actions/upload-artifact@v4
         if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
