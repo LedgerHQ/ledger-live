@@ -129,7 +129,24 @@ const remapErrorsWithRetry = <P extends Promise<T>, T>(callback: () => P, times 
   };
 };
 
-const kyNoTimeout = ky.create({ timeout: false });
+/*
+NOTE: https://github.com/sindresorhus/ky?tab=readme-ov-file#retry
+defaults values are set here https://github.com/sindresorhus/ky/blob/b49cd03d8673ea522a29bae4ef6b4672cf23201b/source/utils/normalize.ts#L14
+retrying on 404 is debatable, but due to current solana node behavior, it's necessary
+*/
+const kyNoTimeout = ky.create({
+  timeout: false,
+  retry: {
+    limit: 3,
+    statusCodes: [404, 408, 413, 429, 500, 502, 503, 504],
+    methods: ["get", "post"],
+  },
+});
+
+const kyNoRetry = ky.create({
+  timeout: false,
+  retry: { limit: 0 },
+});
 
 export function getChainAPI(
   config: Config,
@@ -143,18 +160,20 @@ export function getChainAPI(
           fetch(url, options);
         };
 
+  const createConnection = (fetchImpl: typeof fetch): Connection =>
+    new Connection(config.endpoint, {
+      ...(fetchMiddleware ? { fetchMiddleware } : {}),
+      fetch: fetchImpl,
+      commitment: "confirmed",
+      confirmTransactionInitialTimeout: getEnv("SOLANA_TX_CONFIRMATION_TIMEOUT") || 0,
+    });
+
   let _connection: Connection;
-  const connection = () => {
-    if (!_connection) {
-      _connection = new Connection(config.endpoint, {
-        ...(fetchMiddleware ? { fetchMiddleware } : {}),
-        fetch: kyNoTimeout as typeof fetch, // Type cast for jest test having an issue with the type
-        commitment: "confirmed",
-        confirmTransactionInitialTimeout: getEnv("SOLANA_TX_CONFIRMATION_TIMEOUT") || 0,
-      });
-    }
-    return _connection;
-  };
+  let _connectionNoRetry: Connection;
+
+  const connection = () => (_connection ??= createConnection(kyNoTimeout as typeof fetch));
+  const connectionNoRetry = () =>
+    (_connectionNoRetry ??= createConnection(kyNoRetry as typeof fetch));
 
   return {
     getBalance: (address: string) =>
@@ -257,14 +276,15 @@ export function getChainAPI(
 
     sendRawTransaction: (buffer: Buffer, recentBlockhash?: BlockhashWithExpiryBlockHeight) => {
       return (async () => {
-        const conn = connection();
+        const connNoRetry = connectionNoRetry(); // Prevent retries on sendTransaction
 
         const commitment = "confirmed";
 
-        const signature = await conn.sendRawTransaction(buffer, {
+        const signature = await connNoRetry.sendRawTransaction(buffer, {
           preflightCommitment: commitment,
         });
 
+        const conn = connection();
         if (!recentBlockhash) {
           recentBlockhash = await conn.getLatestBlockhash(commitment);
         }
