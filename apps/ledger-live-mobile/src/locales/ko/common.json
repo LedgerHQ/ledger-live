@@ -1060,6 +1060,15 @@
     },
     "AppManifestNotFoundError" : {
       "title" : "Swap Live 앱을 로드하지 못했습니다"
+    },
+    "InvalidMemoMina" : {
+      "title" : "메모 텍스트는 32자를 초과할 수 없습니다."
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "이 트랜잭션에는 {{fee}}의 계정 생성 수수료가 부과됩니다."
+    },
+    "AmountTooSmall" : {
+      "title" : "이 트랜잭션에 필요한 최소 금액은 {{amount}}입니다"
     }
   },
   "crash" : {
@@ -2593,7 +2602,8 @@
       "gasLimit" : "가스 한도",
       "id" : "Id",
       "autoClaimedRewards" : "자동으로 청구된 보상",
-      "stakedAmount" : "스테이킹 금액"
+      "stakedAmount" : "스테이킹 금액",
+      "accountCreationFee" : "계정 생성 수수료"
     },
     "multipleAddresses" : "왜 주소가 여러 개인가요?",
     "tokenName" : "토큰명",
@@ -3268,7 +3278,7 @@
       },
       "verifyAddress" : {
         "title" : "주소 인증",
-        "subtitle" : "장치에 표시되는 주소가 아래 표시되는 주소와 일치하는지 확인해 주세요. 확실히 일치할 경우 장치에서 승인을 클릭하실 수 있습니다.",
+        "subtitle" : "Verify that the address displayed on your device matches this one below. Once you’re sure you can confirm on your device.",
         "cancel" : {
           "title" : "이 주소를 거부했습니다.",
           "subtitle" : "실수로 주소를 거부했다면 아래 버튼을 클릭하여 재시도하세요.",
@@ -6103,6 +6113,9 @@
       }
     }
   },
+  "mina" : {
+    "memoPlaceholder" : "메모(선택)"
+  },
   "near" : {
     "info" : {
       "available" : {
@@ -6611,7 +6624,12 @@
       "24h" : "24시간",
       "7d" : "7일",
       "30d" : "30일",
-      "1y" : "1년"
+      "1y" : "1년",
+      "1H_label" : "1시간",
+      "1D_label" : "1일",
+      "1W_label" : "1주",
+      "1M_label" : "1달",
+      "1Y_label" : "1년"
     },
     "warnings" : {
       "connectionError" : "연결 오류",
