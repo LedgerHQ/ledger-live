@@ -126,7 +126,7 @@ describe("buildSignOperation", () => {
     jest.useFakeTimers().setSystemTime(date);
 
     const account = createFixtureAccount();
-    const transaction = createFixtureTransaction();
+    const transaction = createFixtureTransaction({ amount: BigNumber(5) });
 
     account.balance = new BigNumber(40);
     transaction.fees = new BigNumber(30);
@@ -153,7 +153,7 @@ describe("buildSignOperation", () => {
             id: "js:2:aptos:0x000:--OUT",
             hash: "",
             type: "OUT",
-            value: new BigNumber(10),
+            value: new BigNumber(35),
             fee: transaction.fees,
             extra: {},
             blockHash: null,

@@ -49,20 +49,12 @@ const buildSignOperation =
         const subAccount =
           !!transaction.subAccountId && findSubAccountById(account, transaction.subAccountId);
 
-        const value = transaction.useAllAmount
-          ? subAccount
-            ? subAccount.balance
-            : account.balance.minus(fee)
-          : subAccount
-            ? transaction.amount
-            : transaction.amount.plus(fee);
-
         // build optimistic operation
         const operation: Operation = {
           id: encodeOperationId(accountId, hash, type),
           hash,
           type,
-          value,
+          value: subAccount ? fee : transaction.amount.plus(fee),
           fee,
           extra,
           blockHash: null,
@@ -80,7 +72,7 @@ const buildSignOperation =
                   accountId: transaction.subAccountId,
                   senders: [account.freshAddress],
                   recipients: [transaction.recipient],
-                  value,
+                  value: transaction.amount,
                   fee,
                   date: new Date(),
                 } as Operation,
