@@ -3,26 +3,53 @@ import { liveAppContext } from "@ledgerhq/live-common/wallet-api/LocalLiveAppPro
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { LiveAppContextType } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/types";
 
+const baseManifestParams: LiveAppManifest = {
+  id: "id",
+  name: "name",
+  url: "url",
+  homepageUrl: "home",
+  apiVersion: "^2.0.0",
+  manifestVersion: "2",
+  branch: "stable",
+  platforms: ["ios", "android", "desktop"],
+  domains: ["https://"],
+  visibility: "searchable",
+  categories: ["stake/earn/manage", "buy", "sell"],
+  content: {
+    description: {
+      en: "Main description.",
+    },
+    shortDescription: {
+      en: "Short description.",
+    },
+  },
+  currencies: ["ethereum"],
+  permissions: ["currency.list", "account.list", "account.request", "transaction.signAndBroadcast"],
+};
+
 const mockInitialState: LiveAppManifest[] = [
   {
+    ...baseManifestParams,
     id: "mock-live-app",
     name: "Mock Live App",
-    url: "https://mock-live-app.com",
+    url: "https://mock-live-app.com?manifestParam=mockInitialParam",
     apiVersion: "^2.0.0",
     manifestVersion: "2",
     currencies: ["ethereum", "ethereum/**", "ethereum/erc20/usd__coin"],
     permissions: ["account.request"],
     domains: ["https://"],
-  } as LiveAppManifest,
+  },
   {
+    ...baseManifestParams,
     id: "mock-dapp-v1",
     name: "Mock dapp browser v1 app",
     apiVersion: "^1.0.0 || ~0.0.1",
     manifestVersion: "2",
+    url: "https://mockcompanyurl.com/v1",
+    homepageUrl: "https://mockcompanyurl.com/home",
     params: {
-      dappUrl: "https://mockapp.com",
-      nanoApp: "",
-      dappName: "",
+      dappUrl: "https://mockapp.com?something=isHere",
+      nanoApp: "Ethereum",
       networks: [
         {
           currency: "ethereum",
@@ -31,8 +58,9 @@ const mockInitialState: LiveAppManifest[] = [
         },
       ],
     },
-  } as LiveAppManifest,
+  },
   {
+    ...baseManifestParams,
     id: "mock-dapp-v3",
     name: "Mock Dapp v3",
     url: "https://mockdapp.com?embed=true",
@@ -40,6 +68,7 @@ const mockInitialState: LiveAppManifest[] = [
     manifestVersion: "2",
     dapp: {
       provider: "evm",
+      nanoApp: "Ethereum",
       networks: [
         {
           currency: "ethereum",
@@ -48,7 +77,7 @@ const mockInitialState: LiveAppManifest[] = [
         },
       ],
     },
-  } as LiveAppManifest,
+  },
 ];
 
 const mockLiveAppContext: LiveAppContextType = {

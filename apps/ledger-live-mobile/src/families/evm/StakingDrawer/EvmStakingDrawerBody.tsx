@@ -1,6 +1,6 @@
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import { appendQueryParamsToDappURL } from "@ledgerhq/live-common/platform/utils/appendQueryParamsToDappURL";
-import { deriveAccountIdForManifest } from "@ledgerhq/live-common/platform/utils/deriveAccountIdForManifest";
+import { appendQueryParamsToDappURL } from "@ledgerhq/live-common/wallet-api/utils/appendQueryParamsToDappURL";
+import { deriveAccountIdForManifest } from "@ledgerhq/live-common/wallet-api/utils/deriveAccountIdForManifest";
 import { Flex } from "@ledgerhq/native-ui";
 import { ParamListBase, useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";

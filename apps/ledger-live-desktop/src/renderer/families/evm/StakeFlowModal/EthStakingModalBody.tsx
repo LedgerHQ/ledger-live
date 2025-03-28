@@ -1,5 +1,5 @@
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import { appendQueryParamsToDappURL } from "@ledgerhq/live-common/platform/utils/appendQueryParamsToDappURL";
+import { appendQueryParamsToManifestURL } from "@ledgerhq/live-common/wallet-api/utils/appendQueryParamsToManifestURL";
 import { Flex } from "@ledgerhq/react-ui";
 import { AccountLike, EthStakingProvider } from "@ledgerhq/types-live";
 import React, { useCallback } from "react";
@@ -29,7 +29,7 @@ export function EthStakingModalBody({ source, onClose, account, providers }: Pro
       manifest,
     }: StakeOnClickProps) => {
       const value = `/platform/${liveAppId}`;
-      const customDappUrl = queryParams && appendQueryParamsToDappURL(manifest, queryParams);
+      const customDappUrl = queryParams && appendQueryParamsToManifestURL(manifest, queryParams);
       track("button_clicked2", {
         button: providerConfigID,
         ...getTrackProperties({ value, modal: source }),
