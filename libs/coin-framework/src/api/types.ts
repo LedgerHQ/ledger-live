@@ -44,6 +44,7 @@ export type Asset = {
 export type TransactionIntent<AssetInfo, Extra = Record<string, unknown>> = {
   type: string;
   sender: string;
+  senderPublicKey?: string;
   recipient: string;
   amount: bigint;
   asset?: AssetInfo;

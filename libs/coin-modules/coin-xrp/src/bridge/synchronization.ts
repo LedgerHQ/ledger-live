@@ -69,7 +69,10 @@ async function filterOperations(
   return operations.map(op => adaptCoreOperationToLiveOperation(accountId, op) satisfies Operation);
 }
 
-function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOperation<void>): Operation {
+export function adaptCoreOperationToLiveOperation(
+  accountId: string,
+  op: CoreOperation<void>,
+): Operation {
   return {
     id: encodeOperationId(accountId, op.tx.hash, op.type),
     hash: op.tx.hash,
