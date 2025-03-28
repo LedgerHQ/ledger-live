@@ -12,7 +12,7 @@ import type {
   PostSwapCancelled,
   SwapRequestEvent,
 } from "./types";
-import type { Transaction } from "../../generated/types";
+import { Transaction } from "@ledgerhq/wallet-api-core";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 export const mockGetExchangeRates = async (

@@ -341,6 +341,9 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
         params: { swap: SwapProps; transaction_id: string };
       }) => {
         const { swap, transaction_id } = params;
+
+        console.log("[LLD] Saving swap to history", params);
+
         if (
           !swap ||
           !transaction_id ||

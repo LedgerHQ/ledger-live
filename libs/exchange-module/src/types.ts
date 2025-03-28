@@ -29,6 +29,17 @@ export type ExchangeStartSwapParams = {
   tokenCurrency?: string;
 };
 
+export type ExchangeSwapParams = ExchangeStartSwapParams & {
+  fromAmount: string;
+  fromAmountAtomic: number;
+  quoteId?: string;
+  toNewTokenId?: string;
+  feeStrategy: "slow" | "medium" | "fast" | "custom";
+  // customFeeConfig: {
+  //   [key: string]: number;
+  // };
+};
+
 export type ExchangeStartResult = {
   transactionId: string;
   device?: { deviceId?: string; modelId?: string };
@@ -65,6 +76,11 @@ export type ExchangeCompleteParams =
 
 export type ExchangeCompleteResult = {
   transactionHash: string;
+};
+
+export type SwapCompleteResult = {
+  operationHash: string;
+  swapId: string;
 };
 
 export type SwapLiveError = {
