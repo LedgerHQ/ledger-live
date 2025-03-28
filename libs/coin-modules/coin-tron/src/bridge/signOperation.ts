@@ -87,6 +87,7 @@ export const buildSignOperation =
       );
     });
 
+// Should we keep this here or move it?
 const prepareTransactionForSignature = (
   account: TronAccount,
   subAccount: TokenAccount | undefined,

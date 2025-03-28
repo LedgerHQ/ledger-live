@@ -10,11 +10,12 @@ import { Account, SubAccount, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import compact from "lodash/compact";
 import get from "lodash/get";
-import { computeBalanceBridge } from "../logic";
+import { computeBalanceBridge, lastBlock } from "../logic";
 import { getOperationsPageSize } from "../logic/pagination";
-import { getLastBlock, fetchTronAccount, fetchTronAccountTxs } from "../network";
+import { fetchTronAccountTxs } from "../network";
 import { TronAccount, TrongridExtraTxInfo, TronOperation } from "../types";
 import { defaultTronResources, getTronResources, isParentTx, txInfoToOperation } from "./utils";
+import { getAccount } from "../logic/getAccount";
 
 type TronToken = {
   key: string;
@@ -30,8 +31,8 @@ export const getAccountShape: GetAccountShape<TronAccount> = async (
   { initialAccount, currency, address, derivationMode },
   syncConfig,
 ) => {
-  const { height: blockHeight } = await getLastBlock();
-  const tronAcc = await fetchTronAccount(address);
+  const { height: blockHeight } = await lastBlock();
+  const tronAcc = await getAccount(address);
 
   const accountId = encodeAccountId({
     type: "js",
