@@ -10,7 +10,7 @@ import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { useOnScreen } from "~/renderer/screens/nft/useOnScreen";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { getThreshold, useNftGalleryFilter, useNftGallerySelector } from "@ledgerhq/live-nft-react";
+import { getThreshold, useNftGalleryFilter, useNftQueriesSources } from "@ledgerhq/live-nft-react";
 import { getEnv } from "@ledgerhq/live-env";
 import { State } from "~/renderer/reducers";
 import NftGalleryLoadingState from "./NftGalleryLoadingState";
@@ -44,7 +44,7 @@ const NFTGallerySelector = ({ handlePickNft, selectedNftId }: Props) => {
     isEqual,
   );
 
-  const { addresses, chains } = useNftGallerySelector({
+  const { addresses, chains } = useNftQueriesSources({
     accounts,
     supportedCurrencies: SUPPORTED_NFT_CURRENCIES,
     config: { featureFlagEnabled: lldSolanaNftsFeature?.enabled },

@@ -1,5 +1,5 @@
 import { Account } from "@ledgerhq/types-live";
-import { useCallback, useMemo } from "react";
+import { useMemo } from "react";
 
 type HookProps = {
   accounts: Account[];
@@ -9,12 +9,13 @@ type HookProps = {
   };
 };
 
-export function useNftGallerySelector({ accounts, supportedCurrencies, config }: HookProps) {
-  const isCurrencySupported = useCallback(
-    (currencyId: string, supportedCurrencies: string[], featureFlagEnabled?: boolean) =>
-      supportedCurrencies.includes(currencyId) && (currencyId !== "solana" || !!featureFlagEnabled),
-    [],
-  );
+const isCurrencySupported = (
+  currencyId: string,
+  supportedCurrencies: string[],
+  featureFlagEnabled?: boolean,
+) => supportedCurrencies.includes(currencyId) && (currencyId !== "solana" || !!featureFlagEnabled);
+
+export function useNftQueriesSources({ accounts, supportedCurrencies, config }: HookProps) {
   const { addresses, chains } = useMemo(() => {
     const addressSet = new Set<string>();
     const chainSet = new Set<string>();
@@ -32,7 +33,7 @@ export function useNftGallerySelector({ accounts, supportedCurrencies, config }:
       addresses: Array.from(addressSet).join(","),
       chains: Array.from(chainSet),
     };
-  }, [accounts, config.featureFlagEnabled, isCurrencySupported, supportedCurrencies]);
+  }, [accounts, config.featureFlagEnabled, supportedCurrencies]);
 
   return {
     addresses,
