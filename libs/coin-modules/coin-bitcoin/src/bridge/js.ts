@@ -40,6 +40,7 @@ function buildAccountBridge(signerContext: SignerContext) {
   const sync = makeSync<Transaction, BitcoinAccount, TransactionStatus>({
     getAccountShape: makeGetAccountShape(signerContext),
     postSync,
+    shouldMergeOps: false,
   });
 
   const getAddress = resolver(signerContext);
