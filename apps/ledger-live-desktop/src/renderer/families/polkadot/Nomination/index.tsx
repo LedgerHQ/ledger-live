@@ -42,12 +42,12 @@ import {
   PolkadotUnlocking,
   PolkadotValidator,
 } from "@ledgerhq/live-common/families/polkadot/types";
-import { SubAccount } from "@ledgerhq/types-live";
+import { TokenAccount } from "@ledgerhq/types-live";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { useHistory } from "react-router";
 
 type Props = {
-  account: PolkadotAccount | SubAccount;
+  account: PolkadotAccount | TokenAccount;
 };
 const Wrapper = styled(Box).attrs(() => ({
   p: 3,

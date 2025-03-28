@@ -2,7 +2,7 @@ import { hours, makeLRUCache } from "@ledgerhq/live-network/cache";
 import network from "@ledgerhq/live-network";
 import { promiseAllBatched } from "@ledgerhq/live-promise";
 import { log } from "@ledgerhq/logs";
-import { Account, SubAccount, TokenAccount } from "@ledgerhq/types-live";
+import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import compact from "lodash/compact";
 import drop from "lodash/drop";
@@ -234,7 +234,7 @@ export async function craftStandardTransaction(
   return await extendTronTxExpirationTimeBy10mn(preparedTransaction);
 }
 
-const getTokenInfo = (subAccount: SubAccount | null | undefined): string[] | undefined[] => {
+const getTokenInfo = (subAccount: TokenAccount | null | undefined): string[] | undefined[] => {
   const tokenInfo =
     subAccount && subAccount.type === "TokenAccount"
       ? drop(subAccount.token.id.split("/"), 1)
@@ -246,7 +246,7 @@ const getTokenInfo = (subAccount: SubAccount | null | undefined): string[] | und
 export const createTronTransaction = async (
   account: Account,
   transaction: Transaction,
-  subAccount: SubAccount | null | undefined,
+  subAccount: TokenAccount | null | undefined,
 ): Promise<SendTransactionDataSuccess> => {
   const [tokenType, tokenId] = getTokenInfo(subAccount);
 

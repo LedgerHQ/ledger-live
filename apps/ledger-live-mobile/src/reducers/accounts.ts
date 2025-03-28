@@ -7,7 +7,7 @@ import {
   AccountLike,
   AccountLikeArray,
   AccountRaw,
-  SubAccount,
+  TokenAccount,
 } from "@ledgerhq/types-live";
 import type {
   CryptoCurrency,
@@ -206,7 +206,7 @@ export const accountsTuplesByCurrencySelector = createSelector(
     accounts,
     currency,
     accountIds,
-  ): { account: AccountLike; subAccount: SubAccount | null; name: string }[] => {
+  ): { account: AccountLike; subAccount: TokenAccount | null; name: string }[] => {
     if (currency.type === "TokenCurrency") {
       return accounts
         .filter(account => {
@@ -222,7 +222,7 @@ export const accountsTuplesByCurrencySelector = createSelector(
           subAccount:
             (account.subAccounts &&
               account.subAccounts.find(
-                (subAcc: SubAccount) =>
+                (subAcc: TokenAccount) =>
                   subAcc.type === "TokenAccount" && subAcc.token.id === currency.id,
               )) ||
             makeEmptyTokenAccount(account, currency),

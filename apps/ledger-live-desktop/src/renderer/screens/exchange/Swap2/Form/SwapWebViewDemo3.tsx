@@ -17,7 +17,7 @@ import {
   accountToWalletAPIAccount,
   getAccountIdFromWalletAccountId,
 } from "@ledgerhq/live-common/wallet-api/converters";
-import { Account, AccountLike, SubAccount, SwapOperation } from "@ledgerhq/types-live";
+import { Account, AccountLike, TokenAccount, SwapOperation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -383,7 +383,7 @@ const SwapWebView = ({ manifest, liveAppUnavailable }: SwapWebProps) => {
             }
             return {
               ...account,
-              subAccounts: account.subAccounts?.map<SubAccount>((a: SubAccount) => {
+              subAccounts: account.subAccounts?.map<TokenAccount>((a: TokenAccount) => {
                 const subAccount = {
                   ...a,
                   swapHistory: [...a.swapHistory, swapOperation],

@@ -4,7 +4,7 @@ import FeatureToggle from "@ledgerhq/live-common/featureFlags/FeatureToggle";
 import { Flex, ScrollContainerHeader, Text } from "@ledgerhq/native-ui";
 import { FlatList, Image, RefreshControl } from "react-native";
 import { useTranslation } from "react-i18next";
-import { AccountLike, SubAccount } from "@ledgerhq/types-live";
+import { AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import SafeAreaView from "~/components/SafeAreaView";
 import { useLocale } from "~/context/Locale";
 import CircleCurrencyIcon from "~/components/CircleCurrencyIcon";
@@ -189,7 +189,7 @@ function View({
                   navigationParams={[
                     ScreenName.Account,
                     {
-                      parentId: (item as SubAccount)?.parentId,
+                      parentId: (item as TokenAccount)?.parentId,
                       accountId: item.id,
                     },
                   ]}

@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { Operation, DailyOperationsSection, SubAccount } from "@ledgerhq/types-live";
+import { Operation, DailyOperationsSection, TokenAccount } from "@ledgerhq/types-live";
 import { Button } from "@ledgerhq/native-ui";
 import { SectionListRenderItemInfo, SectionList } from "react-native";
 
@@ -28,7 +28,7 @@ export function OperationsHistoryList({
 
   const renderItem = useCallback(
     ({ item, index, section }: SectionListRenderItemInfo<Operation, DailyOperationsSection>) => {
-      const account = accounts.find(a => a.id === item.accountId) as SubAccount;
+      const account = accounts.find(a => a.id === item.accountId) as TokenAccount;
       // eslint-disable-next-line react-hooks/rules-of-hooks
       const parentAccount = useSelector((state: State) =>
         parentAccountSelector(state, { account }),

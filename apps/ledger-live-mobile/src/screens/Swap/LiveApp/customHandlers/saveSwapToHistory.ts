@@ -1,6 +1,6 @@
 import { getParentAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
-import { AccountLike, SubAccount, SwapOperation } from "@ledgerhq/types-live";
+import { AccountLike, TokenAccount, SwapOperation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { Dispatch } from "redux";
 import { updateAccountWithUpdater } from "~/actions/accounts";
@@ -86,7 +86,7 @@ export function saveSwapToHistory(
 
           return {
             ...account,
-            subAccounts: account.subAccounts?.map<SubAccount>((a: SubAccount) => {
+            subAccounts: account.subAccounts?.map<TokenAccount>((a: TokenAccount) => {
               const subAccount = {
                 ...a,
                 swapHistory: [...a.swapHistory, swapOperation],

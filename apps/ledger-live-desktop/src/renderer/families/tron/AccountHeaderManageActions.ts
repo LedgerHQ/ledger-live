@@ -1,6 +1,6 @@
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { TronAccount } from "@ledgerhq/live-common/families/tron/types";
-import { SubAccount } from "@ledgerhq/types-live";
+import { TokenAccount } from "@ledgerhq/types-live";
 import IconCoins from "~/renderer/icons/Coins";
 import { ManageAction } from "../types";
 import { useHistory } from "react-router";
@@ -9,7 +9,7 @@ import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
 
 type Props = {
-  account: TronAccount | SubAccount;
+  account: TronAccount | TokenAccount;
   parentAccount: TronAccount | undefined | null;
 };
 

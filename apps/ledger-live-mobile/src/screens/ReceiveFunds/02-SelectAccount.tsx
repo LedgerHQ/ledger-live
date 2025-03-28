@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 
 import { Button, Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
-import { Account, SubAccount, TokenAccount } from "@ledgerhq/types-live";
+import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { makeEmptyTokenAccount } from "@ledgerhq/live-common/account/index";
 import { flattenAccountsByCryptoCurrencyScreenSelector } from "~/reducers/accounts";
 import { NavigatorName, ScreenName } from "~/const";
@@ -23,7 +23,7 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { AddAccountContexts } from "LLM/features/Accounts/screens/AddAccount/enums";
 
-type SubAccountEnhanced = SubAccount & {
+type SubAccountEnhanced = TokenAccount & {
   parentAccount: Account;
   triggerCreateAccount: boolean;
 };

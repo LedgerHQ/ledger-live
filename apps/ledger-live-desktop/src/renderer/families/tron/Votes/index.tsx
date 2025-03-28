@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
-import { SubAccount } from "@ledgerhq/types-live";
+import { TokenAccount } from "@ledgerhq/types-live";
 import {
   useTronSuperRepresentatives,
   getLastVotedDate,
@@ -257,7 +257,7 @@ const Delegation = ({ account }: { account: TronAccount }) => {
     </TableContainer>
   );
 };
-const Votes = ({ account }: { account: TronAccount | SubAccount }) => {
+const Votes = ({ account }: { account: TronAccount | TokenAccount }) => {
   if (account.type !== "Account") return null;
   return <Delegation account={account} />;
 };

@@ -5,14 +5,14 @@ import {
   getTokenExtensions,
   isTokenAccountFrozen,
 } from "@ledgerhq/live-common/families/solana/token";
-import { SubAccount } from "@ledgerhq/types-live";
+import { TokenAccount } from "@ledgerhq/types-live";
 
 import Box from "~/renderer/components/Box";
 import Alert from "~/renderer/components/Alert";
 import AccountSubHeader from "../../components/AccountSubHeader/index";
 import TokenExtensionsInfoBox from "./Token2022/TokenExtensionsInfoBox";
 
-type Account = SolanaAccount | SolanaTokenAccount | SubAccount;
+type Account = SolanaAccount | SolanaTokenAccount | TokenAccount;
 
 type Props = {
   account: Account;

@@ -1,6 +1,6 @@
 import React from "react";
 import { Trans } from "react-i18next";
-import { SubAccount } from "@ledgerhq/types-live";
+import { TokenAccount } from "@ledgerhq/types-live";
 import { Box, Alert, Text } from "@ledgerhq/native-ui";
 import {
   getTokenExtensions,
@@ -10,7 +10,7 @@ import { SolanaAccount, SolanaTokenAccount } from "@ledgerhq/live-common/familie
 import AccountSubHeader from "~/components/AccountSubHeader";
 import TokenExtensionsInfoBox from "./Token2022/TokenExtensionsInfoBox";
 
-type Account = SolanaAccount | SolanaTokenAccount | SubAccount;
+type Account = SolanaAccount | SolanaTokenAccount | TokenAccount;
 
 type Props = {
   account: Account;

@@ -1,7 +1,7 @@
 import {
   Account,
   Operation,
-  SubAccount,
+  TokenAccount,
   TransactionCommon,
   TransactionCommonRaw,
   TransactionStatusCommon,
@@ -176,7 +176,7 @@ export type KnownJetton = {
   masterAddress: Address;
 };
 
-export type TonSubAccount = SubAccount & {
+export type TonSubAccount = TokenAccount & {
   jettonWallet: string;
 };
 export type TonAccount = Omit<Account, "subAccounts"> & {

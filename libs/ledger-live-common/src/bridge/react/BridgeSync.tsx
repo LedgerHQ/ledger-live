@@ -10,7 +10,7 @@ import { getAccountCurrency } from "../../account";
 import { getEnv } from "@ledgerhq/live-env";
 import type { SyncAction, SyncState, BridgeSyncState } from "./types";
 import { BridgeSyncContext, BridgeSyncStateContext } from "./context";
-import type { Account, SubAccount } from "@ledgerhq/types-live";
+import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 export type Props = {
@@ -152,7 +152,7 @@ function useSyncQueue({
           if (trackedRecently) return;
           const account = accounts.find(a => a.id === accountId);
           if (!account) return;
-          const subAccounts: SubAccount[] = account.subAccounts || [];
+          const subAccounts: TokenAccount[] = account.subAccounts || [];
 
           // Nb Only emit SyncSuccess/SyncSuccessToken event once per launch
           if (lastTimeSuccessSyncPerAccountId[accountId]) {
