@@ -1,5 +1,30 @@
 # live-mobile
 
+## 3.72.0-nightly.1
+
+### Minor Changes
+
+- [#9697](https://github.com/LedgerHQ/ledger-live/pull/9697) [`51b0c15`](https://github.com/LedgerHQ/ledger-live/commit/51b0c15ea6c2006c2cc58b5a40ce3a021b2a31e5) Thanks [@LucasWerey](https://github.com/LucasWerey)! - LP Sticky CTA send click to braze
+
+- [#9680](https://github.com/LedgerHQ/ledger-live/pull/9680) [`6fdcb06`](https://github.com/LedgerHQ/ledger-live/commit/6fdcb0621d601336ddeeffa4bd2f14077f9cfa4f) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Re integrate ios static splashscreen
+
+- [#9696](https://github.com/LedgerHQ/ledger-live/pull/9696) [`5b4f62b`](https://github.com/LedgerHQ/ledger-live/commit/5b4f62bb6ac0d9da179a398b41b90d899175d167) Thanks [@ysitbon](https://github.com/ysitbon)! - add click analytics on portfolio graph
+
+### Patch Changes
+
+- Updated dependencies [[`71bb6a9`](https://github.com/LedgerHQ/ledger-live/commit/71bb6a9adb4ac83172be5def5b25d2836380df1d), [`f96109e`](https://github.com/LedgerHQ/ledger-live/commit/f96109e820cbd817839a5449577211e3732d1ccf)]:
+  - @ledgerhq/coin-framework@2.5.0-nightly.1
+  - @ledgerhq/coin-cosmos@0.11.0-nightly.1
+  - @ledgerhq/coin-evm@2.15.0-nightly.1
+  - @ledgerhq/coin-filecoin@1.8.0-nightly.1
+  - @ledgerhq/coin-multiversx@0.3.0-nightly.1
+  - @ledgerhq/coin-stacks@0.7.0-nightly.1
+  - @ledgerhq/live-countervalues@0.5.0-nightly.1
+  - @ledgerhq/live-countervalues-react@0.2.28-nightly.1
+  - @ledgerhq/live-nft@0.7.0-nightly.1
+  - @ledgerhq/live-nft-react@0.7.3-nightly.1
+  - @ledgerhq/live-wallet@0.10.2-nightly.1
+
 ## 3.72.0-nightly.0
 
 ### Minor Changes

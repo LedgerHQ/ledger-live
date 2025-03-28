@@ -1,5 +1,11 @@
 # @ledgerhq/coin-framework
 
+## 2.5.0-nightly.1
+
+### Minor Changes
+
+- [#9681](https://github.com/LedgerHQ/ledger-live/pull/9681) [`71bb6a9`](https://github.com/LedgerHQ/ledger-live/commit/71bb6a9adb4ac83172be5def5b25d2836380df1d) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - add & Record<string, unknown> to TransactionIntent on coin-framework to support coin specific logic like memo, tag etc.
+
 ## 2.5.0-nightly.0
 
 ### Minor Changes

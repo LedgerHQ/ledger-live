@@ -1,5 +1,35 @@
 # ledger-live-desktop
 
+## 2.106.0-nightly.1
+
+### Minor Changes
+
+- [#9671](https://github.com/LedgerHQ/ledger-live/pull/9671) [`f6cdcd3`](https://github.com/LedgerHQ/ledger-live/commit/f6cdcd38f62e56146ab048a2ef7b28c8aa173f52) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: LLD - Add Copy/Paste input to EIP712 Signature
+
+- [#9693](https://github.com/LedgerHQ/ledger-live/pull/9693) [`181e28a`](https://github.com/LedgerHQ/ledger-live/commit/181e28aec2d279717b3d393519fafa2776f7d764) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix overflow issue with LS Entry point banner inside manager
+
+- [#9689](https://github.com/LedgerHQ/ledger-live/pull/9689) [`d6490ca`](https://github.com/LedgerHQ/ledger-live/commit/d6490caa1d7cdcb528e45390b5887915d1d208ae) Thanks [@thesan](https://github.com/thesan)! - Prevent long technical errors from breaking the node error layout
+
+- [#9679](https://github.com/LedgerHQ/ledger-live/pull/9679) [`e217eb3`](https://github.com/LedgerHQ/ledger-live/commit/e217eb34c98df0baa91aea99f953a95cd2592d29) Thanks [@ysitbon](https://github.com/ysitbon)! - Fix layout issue on error dialog when buttons oveflow modal width
+
+- [#9293](https://github.com/LedgerHQ/ledger-live/pull/9293) [`42b153f`](https://github.com/LedgerHQ/ledger-live/commit/42b153f8bf6eb6756dc0dedd7c20ff8ebfe39db9) Thanks [@semeano](https://github.com/semeano)! - E2E swap test for Aptos
+
+### Patch Changes
+
+- Updated dependencies [[`71bb6a9`](https://github.com/LedgerHQ/ledger-live/commit/71bb6a9adb4ac83172be5def5b25d2836380df1d), [`4437621`](https://github.com/LedgerHQ/ledger-live/commit/4437621cc36eb41c4e31eb68fcc5b474e1c2c24f), [`f96109e`](https://github.com/LedgerHQ/ledger-live/commit/f96109e820cbd817839a5449577211e3732d1ccf)]:
+  - @ledgerhq/coin-framework@2.5.0-nightly.1
+  - @ledgerhq/live-common@34.28.0-nightly.1
+  - @ledgerhq/coin-cosmos@0.11.0-nightly.1
+  - @ledgerhq/coin-aptos@1.8.0-nightly.1
+  - @ledgerhq/coin-bitcoin@0.14.0-nightly.1
+  - @ledgerhq/coin-evm@2.15.0-nightly.1
+  - @ledgerhq/coin-filecoin@1.8.0-nightly.1
+  - @ledgerhq/live-countervalues@0.5.0-nightly.1
+  - @ledgerhq/live-countervalues-react@0.2.28-nightly.1
+  - @ledgerhq/live-nft@0.7.0-nightly.1
+  - @ledgerhq/live-nft-react@0.7.3-nightly.1
+  - @ledgerhq/live-wallet@0.10.2-nightly.1
+
 ## 2.106.0-nightly.0
 
 ### Minor Changes

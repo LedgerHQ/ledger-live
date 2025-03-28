@@ -1,5 +1,16 @@
 # @ledgerhq/coin-cosmos
 
+## 0.11.0-nightly.1
+
+### Minor Changes
+
+- [#9694](https://github.com/LedgerHQ/ledger-live/pull/9694) [`f96109e`](https://github.com/LedgerHQ/ledger-live/commit/f96109e820cbd817839a5449577211e3732d1ccf) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - refactor (coin-cosmos): move HTTP calls to `network` folder
+
+### Patch Changes
+
+- Updated dependencies [[`71bb6a9`](https://github.com/LedgerHQ/ledger-live/commit/71bb6a9adb4ac83172be5def5b25d2836380df1d)]:
+  - @ledgerhq/coin-framework@2.5.0-nightly.1
+
 ## 0.11.0-nightly.0
 
 ### Minor Changes
