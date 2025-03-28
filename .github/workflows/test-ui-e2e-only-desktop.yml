@@ -91,12 +91,10 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
 
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-test-desktop@refactoring/qaa-380
         id: setup-test-desktop
         with:
           build_type: ${{ inputs.build_type || 'testing' }}
-          skip_ruby: true
-          install_playwright: true
           turborepo-server-port: ${{ steps.caches.outputs.port }}
 
       - name: Generate token

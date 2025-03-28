@@ -1,7 +1,8 @@
 {
     "name": "ledger-live-desktop-e2e-tests",
     "scripts": {
-        "test:playwright": "playwright test --config=playwright.config.ts"
+        "test:playwright": "playwright test --config=playwright.config.ts",
+        "test:playwright:setup": "playwright install chromium"
     },
     "dependencies": {
         "@ledgerhq/live-cli": "workspace:^",
