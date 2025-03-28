@@ -128,8 +128,8 @@ importers:
         specifier: 1.30.0
         version: 1.30.0(eslint@8.57.0)
       zx:
-        specifier: 8.4.1
-        version: 8.4.1
+        specifier: 7.2.3
+        version: 7.2.3
 
   apps/cli:
     dependencies:
@@ -874,9 +874,6 @@ importers:
       '@braze/react-native-sdk':
         specifier: 10.0.0
         version: 10.0.0
-      '@exodus/patch-broken-hermes-typed-arrays':
-        specifier: 1.0.0-alpha.1
-        version: 1.0.0-alpha.1
       '@formatjs/intl-locale':
         specifier: 3.4.5
         version: 3.4.5
@@ -1749,6 +1746,64 @@ importers:
       '@types/semver':
         specifier: ^7.3.9
         version: 7.5.8
+
+  e2e/desktop:
+    dependencies:
+      '@ledgerhq/live-cli':
+        specifier: workspace:^
+        version: link:../../apps/cli/dist
+      '@ledgerhq/live-common':
+        specifier: workspace:^
+        version: link:../../libs/ledger-live-common
+      '@ledgerhq/live-env':
+        specifier: workspace:^
+        version: link:../../libs/env
+      '@ledgerhq/live-wallet':
+        specifier: workspace:^
+        version: link:../../libs/live-wallet
+      '@ledgerhq/types-live':
+        specifier: workspace:^
+        version: link:../../libs/ledgerjs/packages/types-live
+      '@playwright/test':
+        specifier: ^1.51.0
+        version: 1.51.1
+      '@types/node':
+        specifier: ^22.13.10
+        version: 22.13.13
+      allure-js-commons:
+        specifier: 3.2.1
+        version: 3.2.1(allure-playwright@3.2.1(@playwright/test@1.51.1))
+      allure-playwright:
+        specifier: ^3.2.0
+        version: 3.2.1(@playwright/test@1.51.1)
+      axios:
+        specifier: ^1.8.3
+        version: 1.8.3
+      dotenv:
+        specifier: ^16.4.7
+        version: 16.4.7
+      invariant:
+        specifier: ^2.2.4
+        version: 2.2.4
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
+      rxjs:
+        specifier: ^7.8.1
+        version: 7.8.1
+    devDependencies:
+      '@types/invariant':
+        specifier: 2.2.37
+        version: 2.2.37
+      '@types/lodash':
+        specifier: 4.17.16
+        version: 4.17.16
+      electron:
+        specifier: 32.0.2
+        version: 32.0.2
+      playwright:
+        specifier: 1.51.1
+        version: 1.51.1
 
   libs/coin-framework:
     dependencies:
@@ -3230,9 +3285,6 @@ importers:
       '@types/object-hash':
         specifier: ^2.1.0
         version: 2.2.1
-      axios:
-        specifier: 1.7.7
-        version: 1.7.7
       jest:
         specifier: ^29.7.0
         version: 29.7.0
@@ -46910,7 +46962,7 @@ snapshots:
 
   '@types/glob@7.2.0':
     dependencies:
-      '@types/minimatch': 5.1.2
+      'loader@types/minimatch': 5.1.2
       '@types/node': 22.10.10
 
   '@types/graceful-fs@4.1.9':
@@ -53547,6 +53599,16 @@ snapshots:
 
   event-pubsub@4.3.0: {}
 
+  event-stream@3.3.4:
+    dependencies:
+      duplexer: 0.1.2
+      from: 0.1.7
+      map-stream: 0.1.0
+      pause-stream: 0.0.11
+      split: 0.3.3
+      stream-combiner: 0.0.4
+      through: 2.3.8
+
   event-target-shim@5.0.1: {}
 
   eventemitter3@3.1.2: {}
@@ -54586,6 +54648,8 @@ snapshots:
 
   fresh@0.5.2: {}
 
+  from@0.1.7: {}
+
   fromentries@1.3.2: {}
 
   fs-constants@1.0.0: {}
@@ -54689,6 +54753,8 @@ snapshots:
   fwd-stream@1.0.4:
     dependencies:
       readable-stream: 1.0.34
+
+  fx@34.0.0: {}
 
   gensync@1.0.0-beta.2: {}
 
@@ -54917,6 +54983,14 @@ snapshots:
   globby@12.2.0:
     dependencies:
       array-union: 3.0.1
+      dir-glob: 3.0.1
+      fast-glob: 3.3.2
+      ignore: 5.3.1
+      merge2: 1.4.1
+      slash: 4.0.0
+
+  globby@13.2.2:
+    dependencies:
       dir-glob: 3.0.1
       fast-glob: 3.3.2
       ignore: 5.3.1
@@ -59431,6 +59505,8 @@ snapshots:
 
   map-or-similar@1.5.0: {}
 
+  map-stream@0.1.0: {}
+
   markdown-escapes@1.0.4: {}
 
   markdown-it-anchor@8.6.7(@types/markdown-it@14.1.1)(markdown-it@14.1.0):
@@ -61025,6 +61101,12 @@ snapshots:
     dependencies:
       whatwg-url: 5.0.0
 
+  node-fetch@3.3.1:
+    dependencies:
+      data-uri-to-buffer: 4.0.1
+      fetch-blob: 3.2.0
+      formdata-polyfill: 4.0.10
+
   node-fetch@3.3.2:
     dependencies:
       data-uri-to-buffer: 4.0.1
@@ -61663,6 +61745,10 @@ snapshots:
   pathval@1.1.1: {}
 
   pathval@2.0.0: {}
+
+  pause-stream@0.0.11:
+    dependencies:
+      through: 2.3.8
 
   pbkdf2@3.0.8:
     dependencies:
@@ -62832,6 +62918,10 @@ snapshots:
   prr@0.0.0: {}
 
   prr@1.0.1: {}
+
+  ps-tree@1.2.0:
+    dependencies:
+      event-stream: 3.3.4
 
   pseudomap@1.0.2: {}
 
@@ -65337,6 +65427,10 @@ snapshots:
 
   split2@4.2.0: {}
 
+  split@0.3.3:
+    dependencies:
+      through: 2.3.8
+
   split@1.0.1:
     dependencies:
       through: 2.3.8
@@ -65470,6 +65564,10 @@ snapshots:
   stream-buffers@2.2.0: {}
 
   stream-chain@2.2.5: {}
+
+  stream-combiner@0.0.4:
+    dependencies:
+      duplexer: 0.1.2
 
   stream-http@2.8.3:
     dependencies:
@@ -68847,6 +68945,8 @@ snapshots:
       - metro
       - uglify-js
 
+  webpod@0.0.2: {}
+
   websocket-driver@0.7.4:
     dependencies:
       http-parser-js: 0.5.8
@@ -68976,6 +69076,10 @@ snapshots:
       isexe: 2.0.0
 
   which@2.0.2:
+    dependencies:
+      isexe: 2.0.0
+
+  which@3.0.1:
     dependencies:
       isexe: 2.0.0
 
@@ -69427,4 +69531,20 @@ snapshots:
 
   zwitch@2.0.4: {}
 
-  zx@8.4.1: {}
+  zx@7.2.3:
+    dependencies:
+      '@types/fs-extra': 11.0.4
+      '@types/minimist': 1.2.5
+      '@types/node': 18.19.26
+      '@types/ps-tree': 1.1.6
+      '@types/which': 3.0.3
+      chalk: 5.3.0
+      fs-extra: 11.2.0
+      fx: 34.0.0
+      globby: 13.2.2
+      minimist: 1.2.8
+      node-fetch: 3.3.1
+      ps-tree: 1.2.0
+      webpod: 0.0.2
+      which: 3.0.1
+      yaml: 2.4.1

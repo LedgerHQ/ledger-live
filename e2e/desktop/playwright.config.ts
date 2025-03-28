@@ -4,7 +4,7 @@ const config: PlaywrightTestConfig = {
   testDir: "./tests/specs",
   retries: process.env.CI ? 2 : 0,
   timeout: process.env.CI ? 400000 : 1200000,
-  outputDir: "./artifacts/test-results",
+  outputDir: "./tests/artifacts/test-results",
   globalTimeout: 0,
   globalSetup: require.resolve("./tests/utils/global.setup"),
   globalTeardown: require.resolve("./tests/utils/global.teardown"),
@@ -24,7 +24,7 @@ const config: PlaywrightTestConfig = {
         ["github"],
         ["line"],
         ["allure-playwright"],
-        ["./utils/customJsonReporter.ts"],
+        ["./tests/utils/customJsonReporter.ts"],
       ]
     : [["allure-playwright"]],
 };

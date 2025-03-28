@@ -27,13 +27,13 @@ runs:
       run: |
         pnpm add -g node-gyp@3.8.0
       shell: bash
-    - name: Install dependencies
+    - name: Install App dependencies
       env:
         LANG: en_US.UTF-8
       run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --unsafe-perm
       shell: bash
-    - name: Install playwright dependencies
-      run: pnpm e2e/desktop test:playwright:setup
+    - name: Install Playwright Dependencies
+      run: pnpm install --prefix e2e/desktop
       shell: bash
     - name: Build dependencies
       if: inputs.turborepo-server-port != ''
