@@ -14,7 +14,7 @@ import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/t
 import { CustomImageNavigatorParamList } from "~/components/RootNavigator/types/CustomImageNavigator";
 import { TrackScreen } from "~/analytics";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-import { getThreshold, useNftGalleryFilter, useNftGallerySelector } from "@ledgerhq/live-nft-react";
+import { getThreshold, useNftGalleryFilter, useNftQueriesSources } from "@ledgerhq/live-nft-react";
 import { getEnv } from "@ledgerhq/live-env";
 import { State } from "~/reducers/types";
 
@@ -45,7 +45,7 @@ const NFTGallerySelector = ({ navigation, route }: NavigationProps) => {
   const nftsFromSimplehashEnabled = nftsFromSimplehashFeature?.enabled;
   const accounts = useSelector(accountsSelector);
 
-  const { addresses, chains } = useNftGallerySelector({
+  const { addresses, chains } = useNftQueriesSources({
     accounts,
     supportedCurrencies: SUPPORTED_NFT_CURRENCIES,
     config: { featureFlagEnabled: llmSolanaNftsFeature?.enabled },

@@ -1,8 +1,8 @@
 import { renderHook } from "@testing-library/react";
-import { useNftGallerySelector } from "../useNftGallerySelector";
 import { Account } from "@ledgerhq/types-live";
+import { useNftQueriesSources } from "../useNftQueriesSources";
 
-describe("useNftGallerySelector", () => {
+describe("useNftQueriesSources", () => {
   const mockAccounts = [
     { freshAddress: "address1", currency: { id: "ethereum" } } as Account,
     { freshAddress: "address2", currency: { id: "polygon" } } as Account,
@@ -16,7 +16,7 @@ describe("useNftGallerySelector", () => {
     const config = { featureFlagEnabled: true };
 
     const { result } = renderHook(() =>
-      useNftGallerySelector({
+      useNftQueriesSources({
         accounts: mockAccounts,
         supportedCurrencies,
         config,
@@ -31,7 +31,7 @@ describe("useNftGallerySelector", () => {
     const config = { featureFlagEnabled: false };
 
     const { result } = renderHook(() =>
-      useNftGallerySelector({
+      useNftQueriesSources({
         accounts: mockAccounts,
         supportedCurrencies,
         config,
@@ -46,7 +46,7 @@ describe("useNftGallerySelector", () => {
     const config = { featureFlagEnabled: true };
 
     const { result } = renderHook(() =>
-      useNftGallerySelector({
+      useNftQueriesSources({
         accounts: mockAccounts,
         supportedCurrencies: ["ethereum", "polygon"],
         config,
@@ -61,7 +61,7 @@ describe("useNftGallerySelector", () => {
     const config = { featureFlagEnabled: true };
 
     const { result } = renderHook(() =>
-      useNftGallerySelector({
+      useNftQueriesSources({
         accounts: [],
         supportedCurrencies,
         config,
@@ -76,7 +76,7 @@ describe("useNftGallerySelector", () => {
     const config = { featureFlagEnabled: true };
 
     const { result } = renderHook(() =>
-      useNftGallerySelector({
+      useNftQueriesSources({
         accounts: mockAccounts,
         supportedCurrencies: ["solana", "ethereum"],
         config,
@@ -91,7 +91,7 @@ describe("useNftGallerySelector", () => {
     const config = { featureFlagEnabled: false };
 
     const { result } = renderHook(() =>
-      useNftGallerySelector({
+      useNftQueriesSources({
         accounts: mockAccounts,
         supportedCurrencies: ["ethereum"],
         config,
