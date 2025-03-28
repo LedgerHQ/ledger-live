@@ -4,25 +4,17 @@ import { SyncConfig } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { getAccountShape } from "./synchronisation";
 import { CosmosAccount } from "./types";
-// import coinConfig, { CosmosCoinConfig } from "./config";
-// import { cosmosConfig } from "./config";
 
 describe("Testing synchronisation", () => {
-  // beforeAll(() => {
-  //   coinConfig.setCoinConfig(
-  //     (): CosmosCoinConfig => cosmosConfig["config_currency_cosmos"] as unknown as CosmosCoinConfig,
-  //   );
-  // });
-  const currencies: { id: string; unit: string }[] = [
-    { id: "cosmos", unit: "uatom" },
-    { id: "injective", unit: "inj" },
+  const testAccounts = [
+    { id: "cosmos", unit: "uatom", address: "cosmos1w2q5xd8nhylu4vj28vpzfgag7msfxf0vx88wfq" },
+    { id: "injective", unit: "inj", address: "cosmos1w2q5xd8nhylu4vj28vpzfgag7msfxf0vx88wfq" },
   ];
 
-  it.each(currencies)("should synchronize %s", async ({ id, unit }) => {
-    const addressId = "cosmos1w2q5xd8nhylu4vj28vpzfgag7msfxf0vx88wfq";
-    const result = await getAccountShape(
+  async function fetchAccountShape(id: string, unit: string, address: string) {
+    return getAccountShape(
       {
-        address: addressId,
+        address,
         currency: {
           id,
           units: [{}, { code: unit }],
@@ -32,95 +24,95 @@ describe("Testing synchronisation", () => {
       } as AccountShapeInfo<CosmosAccount>,
       {} as SyncConfig,
     );
+  }
 
-    expect(result).not.toBeUndefined();
+  it.each(testAccounts)("should synchronize %s", async ({ id, unit, address }) => {
+    const result = await fetchAccountShape(id, unit, address);
+
+    expect(result).toBeDefined();
     expect(result.balance?.isGreaterThanOrEqualTo(0)).toBeTruthy();
     expect(result.blockHeight).toBeGreaterThanOrEqual(0);
-    expect(result.id).toEqual(`js:2:${id}:${addressId}:`);
+    expect(result.id).toEqual(`js:2:${id}:${address}:`);
   });
 
-  it("should validate delegated balance", async () => {
-    const addressId = "cosmos1w2q5xd8nhylu4vj28vpzfgag7msfxf0vx88wfq";
-    const result = await getAccountShape(
-      {
-        address: addressId,
-        currency: {
-          id: "cosmos",
-          units: [{}, { code: "uatom" }],
-        } as CryptoCurrency,
-        index: 0,
-        derivationMode: "",
-      } as AccountShapeInfo<CosmosAccount>,
-      {} as SyncConfig,
-    );
+  it.each(testAccounts)(
+    "should validate delegated balance for %s",
+    async ({ id, unit, address }) => {
+      const result = await fetchAccountShape(id, unit, address);
 
-    expect(result).not.toBeUndefined();
-    expect(result.balance?.isGreaterThanOrEqualTo(0)).toBeTruthy();
-    expect(result.blockHeight).toBeGreaterThanOrEqual(0);
-    expect(result.id).toEqual("js:2:cosmos:" + addressId + ":");
+      expect(result).toBeDefined();
+      expect(result.balance?.isGreaterThanOrEqualTo(0)).toBeTruthy();
+      expect(result.blockHeight).toBeGreaterThanOrEqual(0);
+      expect(result.id).toEqual(`js:2:${id}:${address}:`);
 
-    if (result.cosmosResources) {
-      expect(result.cosmosResources.delegatedBalance).toEqual(
-        result.cosmosResources.delegations
-          .map(delegation => delegation.amount)
-          .reduce((accumulator, currentValue) => accumulator.plus(currentValue), BigNumber(0)),
+      if (result.cosmosResources) {
+        const { cosmosResources } = result;
+        expect(cosmosResources.delegatedBalance).toEqual(
+          cosmosResources.delegations
+            .map(d => d.amount)
+            .reduce((acc, curr) => acc.plus(curr), BigNumber(0)),
+        );
+
+        expect(cosmosResources.pendingRewardsBalance.isGreaterThanOrEqualTo(0)).toBeTruthy();
+        expect(cosmosResources.sequence).toBeGreaterThanOrEqual(0);
+
+        expect(cosmosResources.unbondingBalance).toEqual(
+          cosmosResources.unbondings
+            .map(u => u.amount)
+            .reduce((acc, curr) => acc.plus(curr), BigNumber(0)),
+        );
+
+        expect(cosmosResources.withdrawAddress).toBeDefined();
+      }
+
+      if (result.operations) {
+        expect(result.operationsCount).toEqual(result.operations.length);
+        validateOperations(result.operations, address, id);
+      }
+
+      expect(result.spendableBalance?.isGreaterThanOrEqualTo(0)).toBeTruthy();
+      expect(result.xpub).toEqual(address);
+    },
+  );
+
+  function validateOperations(operations: any[], address: string, id: string) {
+    operations.forEach(operation => {
+      expect(operation.accountId).toBeDefined();
+      expect(operation.blockHeight).toBeGreaterThanOrEqual(0);
+      expect(operation.date).toBeDefined();
+      expect(operation.fee.isGreaterThanOrEqualTo(0)).toBeTruthy();
+      expect(operation.hasFailed).toBeDefined();
+      expect(operation.hash).toBeDefined();
+      expect(operation.id).toContain(`js:2:${id}:${address}:`);
+      expect(operation.type).toMatch(
+        /IN|REWARD|DELEGATE|UNDELEGATE|CLAIMREWARD|SEND|MULTISEND|FAILURE/,
       );
+      expect(operation.value.isGreaterThanOrEqualTo(0)).toBeTruthy();
+      expect(operation.transactionSequenceNumber).toBeDefined();
 
-      expect(result.cosmosResources.pendingRewardsBalance.isGreaterThanOrEqualTo(0)).toBeTruthy();
-      expect(result.cosmosResources.sequence).toBeGreaterThanOrEqual(0); // Check definition
+      if (operation.type === "IN") {
+        expect(operation.recipients.length).toBeGreaterThan(0);
+        expect(operation.recipients.every((r: any) => r)).toBeTruthy();
+        expect(operation.senders.length).toBeGreaterThan(0);
+        expect(operation.senders.every((s: any) => s)).toBeTruthy();
+      }
 
-      expect(result.cosmosResources.unbondingBalance).toEqual(
-        result.cosmosResources.unbondings
-          .map(unbounding => unbounding.amount)
-          .reduce((accumulator, currentValue) => accumulator.plus(currentValue), BigNumber(0)),
-      );
+      if (["REWARD", "DELEGATE", "UNDELEGATE", "CLAIMREWARD"].includes(operation.type)) {
+        expect(operation.recipients).toHaveLength(0);
+        expect(operation.senders).toHaveLength(0);
 
-      expect(result.cosmosResources.withdrawAddress).not.toBeUndefined();
-    }
+        const extra = operation.extra as { validators: { address: string; amount: BigNumber }[] };
+        extra.validators.forEach(validator => {
+          expect(validator.address).toBeDefined();
+          expect(validator.amount.isGreaterThanOrEqualTo(0)).toBeTruthy();
+        });
+      }
 
-    if (result.operations) {
-      expect(result.operationsCount).toEqual(result.operations.length);
-      result.operations.forEach(operation => {
-        expect(operation.accountId).not.toBeUndefined();
-        expect(operation.blockHeight).toBeGreaterThanOrEqual(0);
-        expect(operation.date).not.toBeUndefined();
-        expect(operation.fee.isGreaterThanOrEqualTo(0)).toBeTruthy();
-        expect(operation.hasFailed).not.toBeUndefined();
-        expect(operation.hash).not.toBeUndefined();
-        // need to be tested ?
-        // expect(operation.blockHash).not.toBeUndefined();
-        // expect((operation.extra as { memo: string }).memo).not.toBeUndefined();
-
-        expect(operation.id).toContain("js:2:cosmos:" + addressId + ":");
-        expect(operation.type).toMatch(/IN|REWARD|DELEGATE/);
-        expect(operation.value.isGreaterThanOrEqualTo(0)).toBeTruthy();
-        expect(operation.transactionSequenceNumber).not.toBeUndefined();
-
-        //TODO do we need to check transactionRaw
-        //expect(operation.transactionRaw).not.toBeUndefined();
-
-        if (operation.type === "IN") {
-          expect(operation.recipients.length).toBeGreaterThan(0);
-          expect(operation.recipients.every(recipient => recipient !== undefined)).toBeTruthy();
-
-          expect(operation.senders.length).toBeGreaterThan(0);
-          expect(operation.senders.every(sender => sender !== undefined)).toBeTruthy();
-        }
-
-        if (operation.type === "REWARD" || operation.type === "DELEGATE") {
-          expect(operation.recipients).toHaveLength(0);
-          expect(operation.senders).toHaveLength(0);
-
-          const extra = operation.extra as { validators: { address: string; amount: BigNumber }[] };
-          extra.validators.forEach(validator => {
-            expect(validator.address).not.toBeUndefined();
-            expect(validator.amount.isGreaterThanOrEqualTo(0)).toBeTruthy(); // Check if >= 0
-          });
-        }
-      });
-    }
-
-    expect(result.spendableBalance?.isGreaterThanOrEqualTo(0)).toBeTruthy();
-    expect(result.xpub).toEqual(addressId);
-  });
+      if (operation.type === "FAILURE") {
+        expect(operation.recipients).toBeDefined();
+        expect(operation.senders).toBeDefined();
+        expect(operation.value.isEqualTo(0)).toBeTruthy();
+      }
+    });
+  }
 });
