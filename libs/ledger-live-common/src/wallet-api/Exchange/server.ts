@@ -3,6 +3,7 @@ import { RPCHandler, customWrapper } from "@ledgerhq/wallet-api-server";
 import {
   createAccountNotFound,
   createCurrencyNotFound,
+  createUnknownError,
   deserializeTransaction,
   ServerError,
 } from "@ledgerhq/wallet-api-core";
@@ -12,13 +13,15 @@ import {
   makeEmptyTokenAccount,
 } from "@ledgerhq/coin-framework/account/index";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { AccountLike, getCurrencyForAccount, TokenAccount } from "@ledgerhq/types-live";
+import { Account, AccountLike, getCurrencyForAccount, TokenAccount } from "@ledgerhq/types-live";
 import { findTokenById, listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets";
 import {
   ExchangeCompleteParams,
   ExchangeCompleteResult,
+  SwapResult,
   ExchangeStartParams,
   ExchangeStartSwapParams,
+  ExchangeSwapParams,
   ExchangeStartResult,
   ExchangeType,
   ExchangeStartSellParams,
@@ -33,7 +36,6 @@ import {
 } from "../converters";
 import { getAccountBridge } from "../../bridge";
 import { Exchange } from "../../exchange/types";
-import { Transaction } from "../../generated/types";
 import {
   ExchangeError,
   createAccounIdNotFound,
@@ -43,6 +45,10 @@ import {
 
 export { ExchangeType };
 import { BigNumber } from "bignumber.js";
+import { ExchangeSwap } from "../../exchange/swap/types";
+import { retrieveSwapPayload } from "../../exchange/swap/api/v5/actions";
+import { Transaction } from "../../generated/types";
+import { transactionStrategy } from "../../exchange/swap/transactionStrategies";
 
 type Handlers = {
   "custom.exchange.start": RPCHandler<
@@ -52,6 +58,7 @@ type Handlers = {
   "custom.exchange.complete": RPCHandler<ExchangeCompleteResult, ExchangeCompleteParams>;
   "custom.exchange.error": RPCHandler<void, SwapLiveError>;
   "custom.isReady": RPCHandler<void, void>;
+  "custom.exchange.swap": RPCHandler<SwapResult, ExchangeSwapParams>;
 };
 
 export type CompleteExchangeUiRequest = {
@@ -66,21 +73,33 @@ export type CompleteExchangeUiRequest = {
   amountExpectedTo?: number;
   magnitudeAwareRate?: BigNumber;
 };
+type FundStartParamsUiRequest = {
+  exchangeType: "FUND";
+};
+
+type SellStartParamsUiRequest = {
+  exchangeType: "SELL";
+  provider: string;
+  exchange: Partial<Exchange> | undefined;
+};
+
+type SwapStartParamsUiRequest = {
+  exchangeType: "SWAP";
+  provider: string;
+  exchange: Partial<ExchangeSwap>;
+};
 
 type ExchangeStartParamsUiRequest =
-  | {
-      exchangeType: "FUND";
-    }
-  | {
-      exchangeType: "SELL";
-      provider: string;
-      exchange: Partial<Exchange> | undefined;
-    }
-  | {
-      exchangeType: "SWAP";
-      provider: string;
-      exchange: Partial<Exchange>;
-    };
+  | FundStartParamsUiRequest
+  | SellStartParamsUiRequest
+  | SwapStartParamsUiRequest;
+
+export type SwapUiRequest = CompleteExchangeUiRequest & {
+  provider?: string;
+  fromAccountId?: string;
+  toAccountId?: string;
+  tokenCurrency?: string;
+};
 
 type ExchangeUiHooks = {
   "custom.exchange.start": (params: {
@@ -99,6 +118,11 @@ type ExchangeUiHooks = {
     onCancel: () => void;
   }) => void;
   "custom.isReady": (params: { onSuccess: () => void; onCancel: () => void }) => void;
+  "custom.exchange.swap": (params: {
+    exchangeParams: SwapUiRequest;
+    onSuccess: ({ operationHash, swapId }: { operationHash: string; swapId: string }) => void;
+    onCancel: (error: Error) => void;
+  }) => void;
 };
 
 export const handlers = ({
@@ -110,6 +134,7 @@ export const handlers = ({
     "custom.exchange.complete": uiExchangeComplete,
     "custom.exchange.error": uiError,
     "custom.isReady": uiIsReady,
+    "custom.exchange.swap": uiSwap,
   },
 }: {
   accounts: AccountLike[];
@@ -335,6 +360,191 @@ export const handlers = ({
         }),
       );
     }),
+    "custom.exchange.swap": customWrapper<ExchangeSwapParams, SwapResult>(async params => {
+      if (!params) {
+        tracking.startExchangeNoParams(manifest);
+        throw new ServerError(createUnknownError({ message: "params is undefined" }));
+      }
+
+      const { provider, fromAmount, fromAmountAtomic, quoteId, toNewTokenId, customFeeConfig } =
+        params;
+
+      console.log("custom.exchange.swap", params);
+
+      const trackingParams = {
+        provider: params.provider,
+        exchangeType: params.exchangeType,
+      };
+
+      tracking.startExchangeRequested(trackingParams);
+
+      const exchangeStartParams: ExchangeStartParamsUiRequest = extractSwapStartParam(
+        params,
+        accounts,
+      ) as SwapStartParamsUiRequest;
+
+      const {
+        fromCurrency,
+        fromAccount,
+        fromParentAccount,
+        toCurrency,
+        toAccount,
+        toParentAccount,
+      } = exchangeStartParams.exchange;
+
+      if (!fromAccount || !fromCurrency) {
+        throw new ServerError(createAccountNotFound(params.fromAccountId));
+      }
+
+      const fromAccountAddress = fromParentAccount
+        ? fromParentAccount.freshAddress
+        : (fromAccount as Account).freshAddress;
+
+      const toAccountAddress = toParentAccount
+        ? toParentAccount.freshAddress
+        : (toAccount as Account).freshAddress;
+
+      // Step 1: Open the drawer and open exchange app
+      const startSwapResponse: ExchangeStartResult = await new Promise((resolve, reject) =>
+        uiExchangeStart({
+          exchangeParams: exchangeStartParams,
+          onSuccess: (nonce: string, device) => {
+            tracking.startExchangeSuccess(trackingParams);
+            resolve({ transactionId: nonce, device });
+          },
+          onCancel: error => {
+            tracking.startExchangeFail(trackingParams);
+            reject(error);
+          },
+        }),
+      );
+
+      const {
+        binaryPayload,
+        signature,
+        payinAddress,
+        swapId,
+        payinExtraId,
+        extraTransactionParameters,
+      } = await retrieveSwapPayload({
+        provider,
+        deviceTransactionId: startSwapResponse.transactionId,
+        fromAccountAddress,
+        toAccountAddress,
+        fromAccountCurrency: fromCurrency!.id,
+        toAccountCurrency: toCurrency!.id,
+        amount: fromAmount,
+        amountInAtomicUnit: fromAmountAtomic,
+        quoteId,
+        toNewTokenId,
+      }).catch((error: Error) => {
+        throw error;
+      });
+
+      // Complete Swap
+      const trackingCompleteParams = {
+        provider: params.provider,
+        exchangeType: params.exchangeType,
+      };
+      tracking.completeExchangeRequested(trackingCompleteParams);
+
+      const strategyData = {
+        recipient: payinAddress,
+        amount: fromAmountAtomic,
+        currency: fromCurrency as CryptoOrTokenCurrency,
+        customFeeConfig: customFeeConfig ?? {},
+        payinExtraId,
+        extraTransactionParameters,
+      };
+
+      console.log("strategyData", strategyData);
+
+      const transaction = await getStrategy(strategyData, "swap").catch(async error => {
+        throw error;
+      });
+
+      const mainFromAccount = getMainAccount(fromAccount, fromParentAccount);
+      const mainFromAccountFamily = mainFromAccount.currency.family;
+
+      if (transaction.family !== mainFromAccountFamily) {
+        return Promise.reject(
+          new Error(
+            `Account and transaction must be from the same family. Account family: ${mainFromAccountFamily}, Transaction family: ${transaction.family}`,
+          ),
+        );
+      }
+
+      const accountBridge = getAccountBridge(fromAccount, fromParentAccount);
+
+      /**
+       * 'subAccountId' is used for ETH and it's ERC-20 tokens.
+       * This field is ignored for BTC
+       */
+      const subAccountId =
+        fromParentAccount && fromParentAccount.id !== fromAccount.id ? fromAccount.id : undefined;
+
+      const bridgeTx = accountBridge.createTransaction(fromAccount);
+      /**
+       * We append the `recipient` to the tx created from `createTransaction`
+       * to avoid having userGasLimit reset to null for ETH txs
+       * cf. libs/ledger-live-common/src/families/ethereum/updateTransaction.ts
+       */
+      const tx = accountBridge.updateTransaction(
+        {
+          ...bridgeTx,
+          recipient: transaction.recipient,
+        },
+        {
+          ...transaction,
+          feesStrategy: params.feeStrategy.toLowerCase(),
+          subAccountId,
+        },
+      );
+
+      // Get amountExpectedTo and magnitudeAwareRate from binary payload
+      const decodePayload = await decodeSwapPayload(binaryPayload);
+      const amountExpectedTo = new BigNumber(decodePayload.amountToWallet.toString());
+      const magnitudeAwareRate = tx.amount && amountExpectedTo.dividedBy(tx.amount);
+
+      // tx.amount should be BigNumber
+      tx.amount = new BigNumber(tx.amount);
+
+      return new Promise((resolve, reject) =>
+        uiSwap({
+          exchangeParams: {
+            exchangeType: ExchangeType.SWAP,
+            provider: params.provider,
+            transaction: tx,
+            signature: signature,
+            binaryPayload: binaryPayload,
+            exchange: {
+              fromAccount,
+              fromParentAccount,
+              toAccount,
+              toParentAccount,
+              fromCurrency: fromCurrency!,
+              toCurrency: toCurrency!,
+            },
+            feesStrategy: params.feeStrategy,
+            swapId: swapId,
+            amountExpectedTo: amountExpectedTo.toNumber(),
+            magnitudeAwareRate,
+          },
+          onSuccess: ({ operationHash, swapId }: { operationHash: string; swapId: string }) => {
+            tracking.completeExchangeSuccess({
+              ...trackingParams,
+              currency: transaction.family,
+            });
+            resolve({ operationHash, swapId });
+          },
+          onCancel: error => {
+            tracking.completeExchangeFail(trackingParams);
+            reject(error);
+          },
+        }),
+      );
+    }),
+
     "custom.isReady": customWrapper<void, void>(async () => {
       return new Promise((resolve, reject) =>
         uiIsReady({
@@ -394,8 +604,10 @@ function extractSwapStartParam(
     exchange: {
       fromAccount,
       fromParentAccount,
+      fromCurrency: getCurrencyForAccount(fromAccount),
       toAccount: newTokenAccount ? newTokenAccount : toAccount,
       toParentAccount: newTokenAccount ? toAccount : toParentAccount,
+      toCurrency: getCurrencyForAccount(toAccount),
     },
   };
 }
@@ -459,4 +671,64 @@ async function getToCurrency(
   }
 
   return newTokenAccount?.token ?? getCurrencyForAccount(toAccount);
+}
+
+interface StrategyParams {
+  recipient: string;
+  amount: BigNumber | number | string;
+  currency: CryptoOrTokenCurrency;
+  customFeeConfig?: Record<string, unknown>;
+  payinExtraId?: string;
+  extraTransactionParameters?: string;
+}
+
+async function getStrategy(
+  {
+    recipient,
+    amount,
+    currency,
+    customFeeConfig,
+    payinExtraId,
+    extraTransactionParameters,
+  }: StrategyParams,
+  customErrorType?: any,
+): Promise<Transaction> {
+  const family =
+    currency.type === "TokenCurrency"
+      ? (currency.parentCurrency?.family as Transaction["family"])
+      : (currency.family as Transaction["family"]);
+  console.log("getStrategy familyKey customFeeConfig", family, customFeeConfig);
+
+  if (!family) {
+    throw new Error(`TokenCurrency missing parentCurrency family: ${currency.id}`);
+  }
+
+  // Remove unsupported utxoStrategy for now
+  if (customFeeConfig?.utxoStrategy) {
+    delete customFeeConfig.utxoStrategy;
+  }
+
+  // Normalize family key for strategy lookup
+  const familyKey = family === "evm" ? "ethereum" : family;
+  const strategy = transactionStrategy?.[familyKey];
+
+  if (!strategy) {
+    throw new Error(`No transaction strategy found for family: ${familyKey}`);
+  }
+
+  try {
+    return await strategy({
+      family,
+      amount,
+      recipient,
+      customFeeConfig: customFeeConfig || {},
+      payinExtraId,
+      extraTransactionParameters,
+      customErrorType,
+    });
+  } catch (error) {
+    throw new Error(
+      `Failed to execute transaction strategy for family: ${familyKey}. Reason: ${(error as Error).message}`,
+    );
+  }
 }

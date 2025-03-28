@@ -1,13 +1,14 @@
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import {
-  handlers as exchangeHandlers,
+  CompleteExchangeUiRequest,
   ExchangeType,
+  handlers as exchangeHandlers,
 } from "@ledgerhq/live-common/wallet-api/Exchange/server";
 import trackingWrapper from "@ledgerhq/live-common/wallet-api/Exchange/tracking";
 import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { NavigationProp, NavigationState, useNavigation } from "@react-navigation/native";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { track } from "~/analytics";
 import { currentRouteNameRef } from "~/analytics/screenRefs";
 import { NavigatorName, ScreenName } from "~/const";
@@ -21,6 +22,7 @@ import { getFee } from "./getFee";
 import { getTransactionByHash } from "./getTransactionByHash";
 import { saveSwapToHistory } from "./saveSwapToHistory";
 import { Dispatch } from "redux";
+import { useSyncAccountById } from "~/screens/Swap/LiveApp/hooks/useSyncAccountById";
 
 export type NavigationType = Omit<NavigationProp<ReactNavigation.RootParamList>, "getState"> & {
   getState(): NavigationState | undefined;
@@ -33,6 +35,7 @@ export function useSwapCustomHandlers(
 ) {
   const navigation = useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
   const [device, setDevice] = useState<Device>();
+  const syncAccountById = useSyncAccountById();
 
   const tracking = useMemo(
     () =>
@@ -46,6 +49,24 @@ export function useSwapCustomHandlers(
         }),
       ),
     [],
+  );
+
+  const navigateToSwapPendingOperation = useCallback(
+    (exchangeParams: CompleteExchangeUiRequest, operationHash: string) => {
+      navigation.pop();
+      navigation.navigate(ScreenName.SwapPendingOperation, {
+        swapOperation: {
+          provider: exchangeParams.provider,
+          swapId: exchangeParams.swapId!,
+          status: "pending",
+          receiverAccountId: exchangeParams.transaction.recipient,
+          operationId: operationHash,
+          fromAmount: exchangeParams.transaction.amount,
+          toAmount: BigNumber(exchangeParams.amountExpectedTo!),
+        },
+      });
+    },
+    [navigation],
   );
 
   const walletAPISwapHandlers = useMemo<WalletAPICustomHandlers>(() => {
@@ -143,10 +164,58 @@ export function useSwapCustomHandlers(
               },
             });
           },
+          "custom.exchange.swap": ({ exchangeParams, onSuccess, onCancel }) => {
+            navigation.navigate(NavigatorName.PlatformExchange, {
+              screen: ScreenName.PlatformCompleteExchange,
+              params: {
+                request: {
+                  exchangeType: exchangeParams.exchangeType,
+                  provider: exchangeParams.provider,
+                  exchange: exchangeParams.exchange,
+                  transaction: exchangeParams.transaction,
+                  binaryPayload: exchangeParams.binaryPayload,
+                  signature: exchangeParams.signature,
+                  feesStrategy: exchangeParams.feesStrategy,
+                  amountExpectedTo: exchangeParams.amountExpectedTo,
+                },
+                device,
+                onResult: result => {
+                  if (result.error) {
+                    onCancel(result.error);
+                    navigation.pop();
+                    navigation.navigate(NavigatorName.CustomError, {
+                      screen: ScreenName.CustomErrorScreen,
+                      params: {
+                        error: result.error,
+                      },
+                    });
+                  }
+                  if (result.operation && exchangeParams.swapId) {
+                    syncAccountById(exchangeParams.exchange.fromAccount.id);
+                    const operationHash = result.operation.hash;
+
+                    navigateToSwapPendingOperation(exchangeParams, operationHash);
+
+                    // return success to swap live app
+                    onSuccess({ operationHash, swapId: exchangeParams.swapId });
+                  }
+                  setDevice(undefined);
+                },
+              },
+            });
+          },
         },
       }),
     };
-  }, [accounts, device, manifest, navigation, tracking]);
+  }, [
+    accounts,
+    device,
+    manifest,
+    navigateToSwapPendingOperation,
+    navigation,
+    syncAccountById,
+    tracking,
+  ]);
 
   const swapCustomHandlers = {
     "custom.getFee": getFee(accounts, navigation),

@@ -119,6 +119,7 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
               sendEarnLiveAppReady();
             }
           },
+          "custom.exchange.swap": () => {},
         },
       }),
     };

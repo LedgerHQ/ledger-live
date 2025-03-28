@@ -29,6 +29,7 @@ import logger from "../../../logger";
 import { useSyncAllAccounts } from "../LiveApp/hooks/useSyncAllAccounts";
 import EmptyState from "./EmptyState";
 import OperationRow from "./OperationRow";
+import { flattenAccounts } from "@ledgerhq/coin-framework/lib/account/index";
 
 // const SList : SectionList<MappedSwapOperation, SwapHistorySection> = SectionList;
 const AnimatedSectionList: typeof SectionList = Animated.createAnimatedComponent(
@@ -46,7 +47,10 @@ const History = () => {
   const syncAccounts = useSyncAllAccounts();
 
   useEffect(() => {
-    setSections(getCompleteSwapHistory(accounts));
+    const flatAccounts = flattenAccounts(accounts);
+    const sections = getCompleteSwapHistory(flatAccounts);
+
+    setSections(sections);
   }, [accounts, setSections]);
 
   const refreshSwapHistory = useCallback(() => {
