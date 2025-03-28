@@ -39,6 +39,8 @@ test.use({
             liveAppId: "kiln",
             supportLink: "https://www.kiln.fi",
             icon: "Kiln:provider",
+            rewardsStrategy: "auto-compounded",
+            min: "32",
             queryParams: {
               focus: "pooled",
             },
@@ -48,6 +50,7 @@ test.use({
             liveAppId: "kiln",
             supportLink: "https://www.kiln.fi",
             icon: "Kiln:provider",
+            rewardsStrategy: "validator",
             queryParams: {
               focus: "dedicated",
             },
