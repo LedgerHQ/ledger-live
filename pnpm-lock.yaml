@@ -3227,15 +3227,18 @@ importers:
       '@types/object-hash':
         specifier: ^2.1.0
         version: 2.2.1
+      axios:
+        specifier: 1.7.7
+        version: 1.7.7
       jest:
         specifier: ^29.7.0
         version: 29.7.0
-      msw:
-        specifier: 2.7.3
-        version: 2.7.3(typescript@5.4.3)
       jest-sonar:
         specifier: 0.2.16
         version: 0.2.16
+      msw:
+        specifier: 2.7.3
+        version: 2.7.3(typescript@5.4.3)
       ts-jest:
         specifier: ^29.1.1
         version: 29.1.5(jest@29.7.0)(typescript@5.4.3)
@@ -3400,12 +3403,12 @@ importers:
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@22.10.10)
-      msw:
-        specifier: ^2.7.3
-        version: 2.7.3(@types/node@22.10.10)(typescript@5.4.3)
       jest-sonar:
         specifier: 0.2.16
         version: 0.2.16
+      msw:
+        specifier: ^2.7.3
+        version: 2.7.3(@types/node@22.10.10)(typescript@5.4.3)
       ts-jest:
         specifier: ^29.1.1
         version: 29.1.5(jest@29.7.0(@types/node@22.10.10))(typescript@5.4.3)

@@ -12,7 +12,7 @@ export const nftMetadata: NftResolvers["nftMetadata"] = async ({
 }) => {
   const currency = getCryptoCurrencyById(currencyId);
   if (!isNFTActive(currency)) {
-    throw new Error("Ethereum Bridge NFT Resolver: Unsupported currency");
+    throw new Error(`Solana Bridge NFT Resolver: Unsupported currency (${currency.id})`);
   }
 
   const response = await metadataCallBatcher(currency, NftApi).loadNft({
@@ -29,7 +29,7 @@ export const collectionMetadata: NftResolvers["collectionMetadata"] = async ({
 }) => {
   const currency = getCryptoCurrencyById(currencyId);
   if (!isNFTActive(currency)) {
-    throw new Error("Ethereum Bridge NFT Resolver: Unsupported currency");
+    throw new Error(`Solana Bridge NFT Resolver: Unsupported currency (${currency.id})`);
   }
 
   const response = await metadataCallBatcher(currency, NftApi).loadCollection({
