@@ -65,6 +65,7 @@ export class SwapConfirmationDrawer extends Drawer {
     );
   }
 
+  @step("Check error message: $0")
   async checkErrorMessage(errorMessage: string) {
     const error = await this.deviceActionError.textContent();
     expect(error).toContain(errorMessage);

@@ -104,6 +104,7 @@ export const test = base.extend<TestFixtures>({
           portCounter = BASE_PORT;
         }
         const speculosPort = portCounter++;
+        setEnv("PLAYWRIGHT_RUN", true);
         setEnv(
           "SPECULOS_PID_OFFSET",
           (speculosPort - BASE_PORT) * 1000 + parseInt(process.env.TEST_WORKER_INDEX || "0") * 100,
