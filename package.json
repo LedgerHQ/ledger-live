@@ -205,7 +205,7 @@
     "turbo": "2.1.2",
     "typescript": "5.4.3",
     "unimported": "1.30.0",
-    "zx": "7.2.3"
+    "zx": "8.4.1"
   },
   "pnpm": {
     "neverBuiltDependencies": [

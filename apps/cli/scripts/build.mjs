@@ -4,6 +4,10 @@ import fs from "node:fs";
 import { createExportableManifest } from "@pnpm/exportable-manifest";
 import { readProjectManifestOnly } from "@pnpm/read-project-manifest";
 
+if (os.platform() === "win32") {
+  usePowerShell();
+}
+
 echo(chalk.green("Building bundled javascript"));
 
 await $`tsup src/cli.ts`;

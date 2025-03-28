@@ -2,6 +2,10 @@
 import rimraf from "rimraf";
 import "zx/globals";
 
+if (os.platform() === "win32") {
+  usePowerShell();
+}
+
 const targets = [
   "hw-getAddress.ts",
   "hw-signMessage.ts",

@@ -4,6 +4,10 @@
 import * as fs from "fs/promises";
 import * as path from "path";
 
+if (os.platform() === "win32") {
+  usePowerShell();
+}
+
 const metakeys = {
   ios: "main.ios.jsbundle",
   android: "main.android.jsbundle",
