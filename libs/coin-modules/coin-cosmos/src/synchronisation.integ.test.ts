@@ -6,7 +6,33 @@ import { getAccountShape } from "./synchronisation";
 import { CosmosAccount } from "./types";
 
 describe("Testing synchronisation", () => {
-  it("should test", async () => {
+  const currencies: { id: string; unit: string }[] = [
+    { id: "cosmos", unit: "uatom" },
+    { id: "injective", unit: "inj" },
+  ];
+
+  it.each(currencies)("should synchronize %s", async ({ id, unit }) => {
+    const addressId = "cosmos1w2q5xd8nhylu4vj28vpzfgag7msfxf0vx88wfq";
+    const result = await getAccountShape(
+      {
+        address: addressId,
+        currency: {
+          id,
+          units: [{}, { code: unit }],
+        } as CryptoCurrency,
+        index: 0,
+        derivationMode: "",
+      } as AccountShapeInfo<CosmosAccount>,
+      {} as SyncConfig,
+    );
+
+    expect(result).not.toBeUndefined();
+    expect(result.balance?.isGreaterThanOrEqualTo(0)).toBeTruthy();
+    expect(result.blockHeight).toBeGreaterThanOrEqual(0);
+    expect(result.id).toEqual(`js:2:${id}:${addressId}:`);
+  });
+
+  it("should validate delegated balance", async () => {
     const addressId = "cosmos1w2q5xd8nhylu4vj28vpzfgag7msfxf0vx88wfq";
     const result = await getAccountShape(
       {
