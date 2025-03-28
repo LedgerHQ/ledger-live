@@ -14,6 +14,7 @@ import { CosmosAccount, CosmosOperation, CosmosTx } from "./types";
 
 export const getAccountShape: GetAccountShape<CosmosAccount> = async (info: any) => {
   const { address, currency, derivationMode, initialAccount } = info;
+
   const accountId = encodeAccountId({
     type: "js",
     version: "2",

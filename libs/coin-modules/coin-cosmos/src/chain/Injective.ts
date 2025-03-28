@@ -1,5 +1,5 @@
 import CosmosBase from "./cosmosBase";
-
+import { cosmosConfig } from "../config";
 class Injective extends CosmosBase {
   stakingDocUrl: string;
   unbondingPeriod: number;
@@ -16,6 +16,7 @@ class Injective extends CosmosBase {
     this.prefix = "inj";
     this.validatorPrefix = `${this.prefix}valoper`;
     this.defaultPubKeyType = "/injective.crypto.v1beta1.ethsecp256k1.PubKey";
+    this.lcd = (cosmosConfig["config_currency_cosmos"].default as { lcd: string }).lcd;
   }
 }
 
