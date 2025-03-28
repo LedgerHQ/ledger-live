@@ -10,6 +10,20 @@ export function extractDappURLFromManifest(manifest: LiveAppManifest): URL | und
       return undefined;
     }
   }
+  if (
+    manifest &&
+    manifest.params &&
+    "dappURL" in manifest.params &&
+    typeof manifest.params.dappURL === "string"
+  ) {
+    try {
+      const url = new URL(manifest.params.dappURL);
+      return url;
+    } catch (error) {
+      // Invalid URL
+      return undefined;
+    }
+  }
   if (manifest && manifest.dapp) {
     try {
       if (manifest.url instanceof URL) {

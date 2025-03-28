@@ -7,7 +7,7 @@ import { BitcoinAccount } from "@ledgerhq/coin-bitcoin/lib/types";
 import { TokenAccount } from "@ledgerhq/types-live";
 import IconCoins from "~/renderer/icons/Coins";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
-import { useStake } from "~/newArch/hooks/useStake";
+import { useStake } from "LLD/hooks/useStake";
 import { useSelector } from "react-redux";
 import { walletSelector } from "~/renderer/reducers/wallet";
 

@@ -8,7 +8,7 @@ import { track, trackPage } from "~/renderer/analytics/segment";
 import { useDispatch, useSelector } from "react-redux";
 import { openModal } from "~/renderer/actions/modals";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
-import { useStake } from "~/newArch/hooks/useStake";
+import { useStake } from "LLD/hooks/useStake";
 import { walletSelector } from "~/renderer/reducers/wallet";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 

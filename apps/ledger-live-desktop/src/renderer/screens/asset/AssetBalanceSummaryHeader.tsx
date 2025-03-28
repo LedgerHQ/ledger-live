@@ -24,7 +24,7 @@ import { AccountLike, BalanceHistoryWithCountervalue, ValueChange } from "@ledge
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
-import { useStake } from "~/newArch/hooks/useStake";
+import { useStake } from "LLD/hooks/useStake";
 type Props = {
   isAvailable: boolean;
   cryptoChange: ValueChange;
@@ -91,7 +91,7 @@ export default function AssetBalanceSummaryHeader({
   const startStakeFlow = useStakeFlow();
   const { getCanStakeCurrency } = useStake();
   const balance = getAccountSpendableBalance(account);
-  const isZeroBalance = !balance.gt(0);
+  const isZeroBalance = balance.isZero();
 
   const availableOnStake = getCanStakeCurrency(currency?.id);
   const earnStakeLabelCoin = useGetStakeLabelLocaleBased();
