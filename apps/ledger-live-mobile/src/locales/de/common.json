@@ -1060,6 +1060,15 @@
     },
     "AppManifestNotFoundError" : {
       "title" : "Fehler beim Laden der Swap Live-App"
+    },
+    "InvalidMemoMina" : {
+      "title" : "Der Memotext darf nicht länger als 32 Zeichen sein."
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "Für diese Transaktion fällt eine Kontoerstellungsgebühr in Höhe von {{fee}} an"
+    },
+    "AmountTooSmall" : {
+      "title" : "Der Mindestbetrag für diese Transaktion beläuft sich auf {{amount}}"
     }
   },
   "crash" : {
@@ -2593,7 +2602,8 @@
       "gasLimit" : "Gaslimit",
       "id" : "ID",
       "autoClaimedRewards" : "Automatisch beanspruchte Prämien",
-      "stakedAmount" : "Betrag gestaked"
+      "stakedAmount" : "Betrag gestaked",
+      "accountCreationFee" : "Kontoerstellungsgebühr"
     },
     "multipleAddresses" : "Warum mehrere Adressen?",
     "tokenName" : "Token-Name",
@@ -3268,7 +3278,7 @@
       },
       "verifyAddress" : {
         "title" : "Adresse verifizieren",
-        "subtitle" : "Verifizieren Sie, dass die auf Ihrem Gerät angezeigte Adresse mit der unten stehenden Adresse übereinstimmt. Wenn Sie sich sicher sind, können Sie auf Ihrem Gerät auf \"Genehmigen\" klicken.",
+        "subtitle" : "Vergewissere dich, dass die auf deinem Gerät angezeigte Adresse mit der untenstehenden übereinstimmt. Wenn du dir sicher bist, kannst du das auf deinem Gerät bestätigen.",
         "cancel" : {
           "title" : "Sie haben gerade diese Adresse abgelehnt",
           "subtitle" : "Sollte dies versehentlich geschehen sein, kannst du es noch einmal versuchen. Klicke dazu auf die nachstehende Schaltfläche.",
@@ -6103,6 +6113,9 @@
       }
     }
   },
+  "mina" : {
+    "memoPlaceholder" : "Optionales Memo"
+  },
   "near" : {
     "info" : {
       "available" : {
@@ -6611,7 +6624,12 @@
       "24h" : "24h",
       "7d" : "7T",
       "30d" : "30T",
-      "1y" : "1J"
+      "1y" : "1J",
+      "1H_label" : "1Std",
+      "1D_label" : "1T",
+      "1W_label" : "1W",
+      "1M_label" : "1M",
+      "1Y_label" : "1J"
     },
     "warnings" : {
       "connectionError" : "Verbindungsfehler",
