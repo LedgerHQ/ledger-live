@@ -189,4 +189,14 @@ export class LedgerSyncCliHelper {
       account => account.id === accountId,
     );
   }
+
+  static isAccountRenamedCorrectly(
+    parsedData: any,
+    accountId: string,
+    expectedName: string,
+  ): boolean {
+    return !!(parsedData.updateEvent.data as LiveData).accounts?.find(
+      account => account.id === accountId && accountNames[accountId] === expectedName,
+    );
+  }
 }
