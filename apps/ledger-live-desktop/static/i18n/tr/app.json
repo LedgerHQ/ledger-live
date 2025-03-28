@@ -1879,7 +1879,8 @@
       "palletMethod" : "Yöntem",
       "transferAmount" : "Transfer Tutarı",
       "validatorsCount" : "Doğrulayıcılar ({{number}})",
-      "version" : "Sürüm"
+      "version" : "Sürüm",
+      "accountCreationFee" : "Hesap Oluşturma Ücreti"
     }
   },
   "operationList" : {
@@ -4229,7 +4230,7 @@
       "nfts" : {
         "title" : "Gizli NFT Koleksiyonları",
         "description" : "Gizli koleksiyonlar listesini sıfırlayın",
-        "reset" : "Sıfırla"
+        "reset" : "Sıfırla ({{count}})"
       },
       "exchangeDeveloperMode" : {
         "title" : "Exchange Geliştirici Modu",
@@ -4337,6 +4338,32 @@
             "nft" : "Tek bir NFT",
             "contract" : "Bir sözleşme"
           }
+        },
+        "back" : "Geri dön"
+      },
+      "debugNfts" : {
+        "title" : "NFT Araçları",
+        "description" : "Ledger Live’daki NFT’leri yönetmek için bazı faydalı araçlar sağlar",
+        "cta" : "Aç",
+        "tabs" : {
+          "config" : "Yapılandırma",
+          "generatorAndDestructor" : "Oluşturucular ve Yok Ediciler"
+        },
+        "configuration" : {
+          "supported" : "Desteklenen NFT Zinciri",
+          "supported_other" : "Desteklenen NFT Zincirleri",
+          "nms" : {
+            "title" : "NFT Meta Veri Hizmeti (NMS)",
+            "env" : "Ortam: {{env}}"
+          }
+        },
+        "generatorAndDestructor" : {
+          "genAcc" : "Hesaplar Oluşturun",
+          "genAccDesc" : "NFT'ler ile hesaplar oluşturun",
+          "cta" : "Oluştur",
+          "deleteAcc" : "Hesapları Silin",
+          "deleteAccDesc" : "Mağazadaki tüm hesapları silin",
+          "delete" : "Sil"
         },
         "back" : "Geri dön"
       },
@@ -5515,6 +5542,9 @@
       "memo" : "Etiket / Memo",
       "memoPlaceholder" : "Opsiyonel",
       "requiredMemoPlaceholder" : "Gerekli"
+    },
+    "mina" : {
+      "memoPlaceholder" : "İsteğe Bağlı Memo"
     }
   },
   "errors" : {
@@ -6545,6 +6575,15 @@
         "swap" : "takas edin",
         "deposit" : "yatırın"
       }
+    },
+    "InvalidMemoMina" : {
+      "title" : "Memo metni 32 karakterden uzun olamaz"
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "Bu işlem için {{fee}} tutarında bir hesap oluşturma ücreti alınacaktır"
+    },
+    "AmountTooSmall" : {
+      "title" : "Bu işlem için gerekli minimum tutar: {{amount}}"
     }
   },
   "cryptoOrg" : {
