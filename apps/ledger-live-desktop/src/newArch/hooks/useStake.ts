@@ -4,7 +4,7 @@ import { liveAppContext as remoteLiveAppContext } from "@ledgerhq/live-common/pl
 import { LiveAppRegistry } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/types";
 import { liveAppContext as localLiveAppProviderContext } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import { LiveAppManifest, Loadable } from "@ledgerhq/live-common/platform/types";
-import { appendQueryParamsToDappURL } from "@ledgerhq/live-common/platform/utils/appendQueryParamsToDappURL";
+import { appendQueryParamsToManifestURL } from "@ledgerhq/live-common/platform/utils/appendQueryParamsToManifestURL";
 import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import {
   getAccountCurrency,
@@ -119,7 +119,7 @@ export function useStake() {
 
       const customPartnerParams = appDetails?.queryParams ?? {};
 
-      const customDappUrl = appendQueryParamsToDappURL(manifest, {
+      const customDappUrl = appendQueryParamsToManifestURL(manifest, {
         ...customPartnerParams,
         ...(assetId ? { asset_id: assetId } : {}),
         accountId: accountIdForManifestVersion,
