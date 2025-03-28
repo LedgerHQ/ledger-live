@@ -1,5 +1,5 @@
+import { LiveAppManifest } from "../../platform/types";
 import { extractDappURLFromManifest } from "./extractDappURLFromManifest";
-import { LiveAppManifest } from "../types";
 
 /** Returns dapp dappURL or live app URL from manifest. */
 export function extractURLFromManifest(manifest: LiveAppManifest): URL | undefined {
