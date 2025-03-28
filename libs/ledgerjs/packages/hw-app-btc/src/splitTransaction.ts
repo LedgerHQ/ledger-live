@@ -8,6 +8,9 @@ export function splitTransaction(
   hasExtraData = false,
   additionals: Array<string> = [],
 ): Transaction {
+  // NOTE: we could use the BIP 174 lib to do this but it's a bit overkill?
+  // NOTE: or use bitcoinjs-lib but it's a bit heavy
+  // NOTE: or use a node rpc
   const inputs: TransactionInput[] = [];
   const outputs: TransactionOutput[] = [];
   let witness = false;
@@ -42,6 +45,7 @@ export function splitTransaction(
     nVersionGroupId = transaction.slice(offset, 4 + offset);
     offset += 4;
   }
+  console.log({overwinter, isZcashv5, version})
   if (isZcashv5) {
     locktime = transaction.slice(offset + 4, offset + 8);
     nExpiryHeight = transaction.slice(offset + 8, offset + 12);
@@ -115,7 +119,10 @@ export function splitTransaction(
   }
 
   if (hasExtraData) {
+    // ignore extradata if nversiongroupid is set (<5)
+    // FIXME: can't just ignore
     extraData = transaction.slice(offset);
+    console.log(`hasExtraData`, {offset, isZcashv5, hasExtraData, extraData});
   }
 
   //Get witnesses for Decred
@@ -154,6 +161,7 @@ export function splitTransaction(
     nExpiryHeight,
     extraData,
   };
+  console.log({transactionHex, t})
   log("btc", `splitTransaction ${transactionHex}:\n${formatTransactionDebug(t)}`);
   return t;
 }
