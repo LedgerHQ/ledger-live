@@ -1060,6 +1060,15 @@
     },
     "AppManifestNotFoundError" : {
       "title" : "Error al cargar Aplicación Permuta de Live"
+    },
+    "InvalidMemoMina" : {
+      "title" : "El texto de un memo no debe superar los 32 caracteres"
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "Esta transacción conlleva asociada una tarifa de creación de cuenta de {{fee}}"
+    },
+    "AmountTooSmall" : {
+      "title" : "La cantidad mínima necesaria para esta transacción es de {{amount}}"
     }
   },
   "crash" : {
@@ -2593,7 +2602,8 @@
       "gasLimit" : "Límite de gas",
       "id" : "Id",
       "autoClaimedRewards" : "Recompensas Autoreclamadas",
-      "stakedAmount" : "Cantidad en participación"
+      "stakedAmount" : "Cantidad en participación",
+      "accountCreationFee" : "Tarifa de creación de cuenta"
     },
     "multipleAddresses" : "¿Por qué hay múltiples direcciones?",
     "tokenName" : "Nombre del token",
@@ -3268,7 +3278,7 @@
       },
       "verifyAddress" : {
         "title" : "Verifica la dirección",
-        "subtitle" : "Verifica que la dirección que se muestra en tu dispositivo es la misma que figura a continuación. Una vez que lo hayas comprobado, haz clic en Approve (Aprobar) en tu dispositivo.",
+        "subtitle" : "Verifica que la dirección que se muestra en tu dispositivo es la misma que figura a continuación. Tras comprobarlo, puedes confirmar en tu dispositivo.",
         "cancel" : {
           "title" : "Acabas de rechazar esta dirección",
           "subtitle" : "Si lo has hecho por error, puedes hacer clic en el siguiente botón para volver a intentarlo.",
@@ -6103,6 +6113,9 @@
       }
     }
   },
+  "mina" : {
+    "memoPlaceholder" : "Memo opcional"
+  },
   "near" : {
     "info" : {
       "available" : {
@@ -6611,7 +6624,12 @@
       "24h" : "24H",
       "7d" : "7D",
       "30d" : "30D",
-      "1y" : "1 A"
+      "1y" : "1 A",
+      "1H_label" : "1H",
+      "1D_label" : "1D",
+      "1W_label" : "1S",
+      "1M_label" : "1M",
+      "1Y_label" : "1A"
     },
     "warnings" : {
       "connectionError" : "Error de conexión",

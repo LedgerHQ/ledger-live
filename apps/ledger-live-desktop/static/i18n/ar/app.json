@@ -1879,7 +1879,8 @@
       "palletMethod" : "الطريقة",
       "transferAmount" : "مبلغ التحويل",
       "validatorsCount" : "({{number}}) مدقق",
-      "version" : "الإصدار"
+      "version" : "الإصدار",
+      "accountCreationFee" : "رسوم إنشاء الحساب"
     }
   },
   "operationList" : {
@@ -4229,7 +4230,7 @@
       "nfts" : {
         "title" : "المجموعات المخفية للرموز غير القابلة للاستبدال",
         "description" : "إعادة تعيين قائمة المجموعات المخفية",
-        "reset" : "إعادة تعيين"
+        "reset" : "إعادة التعيين ({{count}})"
       },
       "exchangeDeveloperMode" : {
         "title" : "وضع المطور لمنصة التداول",
@@ -4337,6 +4338,32 @@
             "nft" : "رمز غير قابل للاستبدال مفرد",
             "contract" : "عقد"
           }
+        },
+        "back" : "رجوع"
+      },
+      "debugNfts" : {
+        "title" : "أدوات الرموز غير القابلة للاستبدال",
+        "description" : "تقدم بعض الأدوات المفيدة للتعامل مع الرموز غير القابلة للاستبدال في Ledger Live",
+        "cta" : "فتح",
+        "tabs" : {
+          "config" : "التكوين",
+          "generatorAndDestructor" : "المولدات والمُفككات"
+        },
+        "configuration" : {
+          "supported" : "سلسلة الرموز غير القابلة للاستبدال المدعومة",
+          "supported_other" : "سلاسل الرموز غير القابلة للاستبدال المدعومة",
+          "nms" : {
+            "title" : "خدمة البيانات الوصفية للرموز غير القابلة للاستبدال (NMS)",
+            "env" : "البيئة : {{env}}"
+          }
+        },
+        "generatorAndDestructor" : {
+          "genAcc" : "إنشاء حسابات",
+          "genAccDesc" : "إنشاء حسابات برموز غير قابلة للاستبدال",
+          "cta" : "إنشاء",
+          "deleteAcc" : "حذف الحسابات",
+          "deleteAccDesc" : "حذف كل الحسابات من المتجر",
+          "delete" : "حذف"
         },
         "back" : "رجوع"
       },
@@ -5515,6 +5542,9 @@
       "memo" : "علامة/ملاحظة (تسمية الوجهة)",
       "memoPlaceholder" : "اختياري",
       "requiredMemoPlaceholder" : "مطلوب"
+    },
+    "mina" : {
+      "memoPlaceholder" : "ملاحظة اختيارية"
     }
   },
   "errors" : {
@@ -6545,6 +6575,15 @@
         "swap" : "مبادلة",
         "deposit" : "إيداع"
       }
+    },
+    "InvalidMemoMina" : {
+      "title" : "نص علامة الملاحظة (تسمية الوجهة) لا يمكن أن يكون أطول من 32 حرفاً"
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "هذه المعاملة ستُكلّف رسوم إنشاء حساب بقيمة {{fee}}"
+    },
+    "AmountTooSmall" : {
+      "title" : "الحد الأدنى للمبلغ المطلوب لهذه المعاملة هو {{amount}}"
     }
   },
   "cryptoOrg" : {

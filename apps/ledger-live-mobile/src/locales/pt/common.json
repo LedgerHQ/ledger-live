@@ -1060,6 +1060,15 @@
     },
     "AppManifestNotFoundError" : {
       "title" : "Falha ao carregar o aplicativo Swap Live"
+    },
+    "InvalidMemoMina" : {
+      "title" : "O texto do memo não pode ter mais de 32 caracteres"
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "Esta transação incorrerá em uma taxa de criação de conta de {{fee}}"
+    },
+    "AmountTooSmall" : {
+      "title" : "A quantia mínima exigida para esta transação é {{amount}}"
     }
   },
   "crash" : {
@@ -2593,7 +2602,8 @@
       "gasLimit" : "Limite de gas",
       "id" : "Id",
       "autoClaimedRewards" : "Recompensas automaticamente resgatadas",
-      "stakedAmount" : "Quantia aplicada"
+      "stakedAmount" : "Quantia aplicada",
+      "accountCreationFee" : "Taxa de Criação de Conta"
     },
     "multipleAddresses" : "Por que múltiplos endereços?",
     "tokenName" : "Nome do token",
@@ -3268,7 +3278,7 @@
       },
       "verifyAddress" : {
         "title" : "Verificar Endereço",
-        "subtitle" : "Verifique se o endereço exibido em seu dispositivo corresponde a este abaixo. Quanto tiver certeza, pode clicar em aprovar no seu dispositivo.",
+        "subtitle" : "Verifique se o endereço exibido em seu dispositivo corresponde ao abaixo. Quando tiver certeza, pode confirmar em seu dispositivo.",
         "cancel" : {
           "title" : "Você acabou de negar este endereço",
           "subtitle" : "Se isto foi feito por engano, você pode tentar novamente clicando no botão abaixo.",
@@ -6103,6 +6113,9 @@
       }
     }
   },
+  "mina" : {
+    "memoPlaceholder" : "Memo opcional"
+  },
   "near" : {
     "info" : {
       "available" : {
@@ -6611,7 +6624,12 @@
       "24h" : "24H",
       "7d" : "7D",
       "30d" : "30D",
-      "1y" : "1A"
+      "1y" : "1A",
+      "1H_label" : "1H",
+      "1D_label" : "1D",
+      "1W_label" : "1S",
+      "1M_label" : "1M",
+      "1Y_label" : "1A"
     },
     "warnings" : {
       "connectionError" : "Erro de conexão",

@@ -1879,7 +1879,8 @@
       "palletMethod" : "方法",
       "transferAmount" : "送付額",
       "validatorsCount" : "バリデータ（{{number}}）",
-      "version" : "バージョン"
+      "version" : "バージョン",
+      "accountCreationFee" : "アカウント作成手数料"
     }
   },
   "operationList" : {
@@ -4229,7 +4230,7 @@
       "nfts" : {
         "title" : "NFT非表示コレクション",
         "description" : "非表示コレクションリストをリセット",
-        "reset" : "リセット"
+        "reset" : "リセット（{{count}}件）"
       },
       "exchangeDeveloperMode" : {
         "title" : "Exchange開発者モード",
@@ -4337,6 +4338,32 @@
             "nft" : "個別のNFT",
             "contract" : "コントラクト"
           }
+        },
+        "back" : "戻る"
+      },
+      "debugNfts" : {
+        "title" : "NFTツール",
+        "description" : "Ledger LiveでNFTを処理するための便利なツールを提供",
+        "cta" : "開く",
+        "tabs" : {
+          "config" : "構成",
+          "generatorAndDestructor" : "ジェネレーター＆デストラクター"
+        },
+        "configuration" : {
+          "supported" : "対応するNFTチェーン",
+          "supported_other" : "対応するNFTチェーン",
+          "nms" : {
+            "title" : "NFTメタデータサービス（NMS）",
+            "env" : "環境：{{env}}"
+          }
+        },
+        "generatorAndDestructor" : {
+          "genAcc" : "アカウントの生成",
+          "genAccDesc" : "NFTでアカウントを生成",
+          "cta" : "生成",
+          "deleteAcc" : "アカウントの削除",
+          "deleteAccDesc" : "ストアからすべてのアカウントを削除",
+          "delete" : "削除"
         },
         "back" : "戻る"
       },
@@ -5515,6 +5542,9 @@
       "memo" : "タグ/メモ",
       "memoPlaceholder" : "任意",
       "requiredMemoPlaceholder" : "必須"
+    },
+    "mina" : {
+      "memoPlaceholder" : "任意のメモ"
     }
   },
   "errors" : {
@@ -6545,6 +6575,15 @@
         "swap" : "スワップ",
         "deposit" : "入金"
       }
+    },
+    "InvalidMemoMina" : {
+      "title" : "メモに入力できる文字数は32文字以内です"
+    },
+    "AccountCreationFeeWarning" : {
+      "title" : "このトランザクションには、{{fee}}のアカウント作成手数料が発生します"
+    },
+    "AmountTooSmall" : {
+      "title" : "このトランザクションに最低限必要な金額は、{{amount}}です"
     }
   },
   "cryptoOrg" : {
