@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback } from "react";
 import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
@@ -14,7 +14,7 @@ import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/t
 import { CustomImageNavigatorParamList } from "~/components/RootNavigator/types/CustomImageNavigator";
 import { TrackScreen } from "~/analytics";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-import { getThreshold, useNftGalleryFilter } from "@ledgerhq/live-nft-react";
+import { getThreshold, useNftGalleryFilter, useNftGallerySelector } from "@ledgerhq/live-nft-react";
 import { getEnv } from "@ledgerhq/live-env";
 import { State } from "~/reducers/types";
 
@@ -45,29 +45,16 @@ const NFTGallerySelector = ({ navigation, route }: NavigationProps) => {
   const nftsFromSimplehashEnabled = nftsFromSimplehashFeature?.enabled;
   const accounts = useSelector(accountsSelector);
 
-  const filterAccounts = useCallback(
-    (currency: string) =>
-      SUPPORTED_NFT_CURRENCIES.includes(currency) &&
-      (currency !== "solana" || !!llmSolanaNftsFeature?.enabled),
-    [SUPPORTED_NFT_CURRENCIES, llmSolanaNftsFeature?.enabled],
-  );
-
-  const addresses = useMemo(
-    () =>
-      [
-        ...new Set(
-          accounts
-            .filter(account => filterAccounts(account.currency.id))
-            .map(account => account.freshAddress),
-        ),
-      ].join(","),
-    [accounts, filterAccounts],
-  );
+  const { addresses, chains } = useNftGallerySelector({
+    accounts,
+    supportedCurrencies: SUPPORTED_NFT_CURRENCIES,
+    config: { featureFlagEnabled: llmSolanaNftsFeature?.enabled },
+  });
 
   const { nfts: filteredNfts, isLoading } = useNftGalleryFilter({
     nftsOwned: nftsOrdered || [],
-    addresses: addresses,
-    chains: SUPPORTED_NFT_CURRENCIES,
+    addresses,
+    chains,
     threshold: getThreshold(threshold),
     enabled: nftsFromSimplehashEnabled || false,
     staleTime: nftsFromSimplehashFeature?.params?.staleTime,
