@@ -205,6 +205,9 @@ importers:
       asciichart:
         specifier: 1.5.25
         version: 1.5.25
+      bigint-buffer:
+        specifier: '*'
+        version: 1.1.5
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -214,6 +217,9 @@ importers:
       body-parser:
         specifier: 1.20.3
         version: 1.20.3
+      buffer-to-arraybuffer:
+        specifier: '*'
+        version: 0.0.5
       command-line-args:
         specifier: 5.2.1
         version: 5.2.1
@@ -229,6 +235,9 @@ importers:
       lodash:
         specifier: 4.17.21
         version: 4.17.21
+      node-hid:
+        specifier: 2.1.2
+        version: 2.1.2
       pako:
         specifier: 2.1.0
         version: 2.1.0
@@ -247,6 +256,9 @@ importers:
       rxjs:
         specifier: 7.8.1
         version: 7.8.1
+      usb:
+        specifier: '*'
+        version: 2.9.0(patch_hash=d5pno5rjlboai2klvccu6wv334)
       winston:
         specifier: 3.13.0
         version: 3.13.0
@@ -260,6 +272,12 @@ importers:
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/types-live
+      '@pnpm/exportable-manifest':
+        specifier: 1000.0.7
+        version: 1000.0.7
+      '@pnpm/read-project-manifest':
+        specifier: 1000.0.6
+        version: 1000.0.6
       '@types/asciichart':
         specifier: 1.5.8
         version: 1.5.8
@@ -296,6 +314,10 @@ importers:
       ts-node:
         specifier: 10.9.2
         version: 10.9.2(@types/node@22.10.10)(typescript@5.4.3)
+      tsup:
+        specifier: 7.3.0
+        version: 7.3.0(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.4.3))(typescript@5.4.3)
+    publishDirectory: dist
 
   apps/ledger-live-desktop:
     dependencies:
@@ -632,7 +654,7 @@ importers:
         version: link:../../libs/ledgerjs/packages/hw-transport-mocker
       '@ledgerhq/live-cli':
         specifier: workspace:^
-        version: link:../cli
+        version: link:../cli/dist
       '@ledgerhq/native-modules-tools':
         specifier: workspace:*
         version: link:../../tools/native-modules-tools
@@ -906,9 +928,6 @@ importers:
       '@ledgerhq/ledger-key-ring-protocol':
         specifier: workspace:^
         version: link:../../libs/ledger-key-ring-protocol
-      '@ledgerhq/live-common':
-        specifier: workspace:^
-        version: link:../../libs/ledger-live-common
       '@ledgerhq/live-config':
         specifier: workspace:^
         version: link:../../libs/live-config
@@ -1339,9 +1358,9 @@ importers:
       '@ledgerhq/hw-transport-node-speculos-http':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/hw-transport-node-speculos-http
-      '@ledgerhq/live-cli':
+      '@ledgerhq/live-common':
         specifier: workspace:^
-        version: link:../cli
+        version: link:../../libs/ledger-live-common
       '@ledgerhq/speculos-transport':
         specifier: workspace:^
         version: link:../../libs/speculos-transport
@@ -12066,6 +12085,10 @@ packages:
     engines: {node: '>=6'}
     hasBin: true
 
+  '@gwhitney/detect-indent@7.0.1':
+    resolution: {integrity: sha512-7bQW+gkKa2kKZPeJf6+c6gFK9ARxQfn+FKy9ScTBppyKRWH2KzsmweXUoklqeEiHiNVWaeP5csIdsNq6w7QhzA==}
+    engines: {node: '>=12.20'}
+
   '@hapi/bourne@2.1.0':
     resolution: {integrity: sha512-i1BpaNDVLJdRBEKeJWkVO6tYX6DMFBuwMhSuWqLsY4ufeTKGVuV5rBsUhxPayXqnnWHgXUAmWK16H/ykO5Wj4Q==}
 
@@ -13294,6 +13317,49 @@ packages:
         optional: true
       webpack-plugin-serve:
         optional: true
+
+  '@pnpm/catalogs.protocol-parser@1000.0.0':
+    resolution: {integrity: sha512-8eC25RAiu8BTaEseQmbo5xemlSwl06pMsUVORiYGX7JZEDb0UQVXOnbqFFJMPe/dyO8uwGXnDb350nauMzaraA==}
+    engines: {node: '>=18.12'}
+
+  '@pnpm/catalogs.resolver@1000.0.2':
+    resolution: {integrity: sha512-5xp3InFRgl6YzovSYoKs0NTalcVKRj4KkD/d0zIBsKp2cae0G/t2ZZVq3J5rS1Ytf4qkv4oe5SZWpd1oV7Hkew==}
+    engines: {node: '>=18.12'}
+
+  '@pnpm/constants@1001.1.0':
+    resolution: {integrity: sha512-xb9dfSGi1qfUKY3r4Zy9JdC9+ZeaDxwfE7HrrGIEsBVY1hvIn6ntbR7A97z3nk44yX7vwbINNf9sizTp0WEtEw==}
+    engines: {node: '>=18.12'}
+
+  '@pnpm/error@1000.0.2':
+    resolution: {integrity: sha512-2SfE4FFL73rE1WVIoESbqlj4sLy5nWW4M/RVdHvCRJPjlQHa9MH7m7CVJM204lz6I+eHoB+E7rL3zmpJR5wYnQ==}
+    engines: {node: '>=18.12'}
+
+  '@pnpm/exportable-manifest@1000.0.7':
+    resolution: {integrity: sha512-tJ6QOTC60TM+eh1UM00Hx3XLr1u0Pm5GRPp1WwDbel2ja76eTjKVoiL0mXQBwE4H6rzdUOYrso/uUqUOcOfv3A==}
+    engines: {node: '>=18.12'}
+
+  '@pnpm/graceful-fs@1000.0.0':
+    resolution: {integrity: sha512-RvMEliAmcfd/4UoaYQ93DLQcFeqit78jhYmeJJVPxqFGmj0jEcb9Tu0eAOXr7tGP3eJHpgvPbTU4o6pZ1bJhxg==}
+    engines: {node: '>=18.12'}
+
+  '@pnpm/ramda@0.28.1':
+    resolution: {integrity: sha512-zcAG+lvU0fMziNeGXpPyCyCJYp5ZVrPElEE4t14jAmViaihohocZ+dDkcRIyAomox8pQsuZnv1EyHR+pOhmUWw==}
+
+  '@pnpm/read-project-manifest@1000.0.6':
+    resolution: {integrity: sha512-MnGXzzgCX1tkNskdJb/4WJr7OldPg8nhLe5RXN8W+nqt2a2vKLbbeDZmMkBUOvACLEKPRe58dMzs8h8g8gntuQ==}
+    engines: {node: '>=18.12'}
+
+  '@pnpm/text.comments-parser@1000.0.0':
+    resolution: {integrity: sha512-ivv/esrETOq9uMiKOC0ddVZ1BktEGsfsMQ9RWmrDpwPiqFSqWsIspnquxTBmm5GflC5N06fbqjGOpulZVYo3vQ==}
+    engines: {node: '>=18.12'}
+
+  '@pnpm/types@1000.2.0':
+    resolution: {integrity: sha512-ZNDgxznoPHS3aMKgBox1z559qnX9TkQTS7cC8KS+Af8AjPZ+08q8sUKA4ywjT/EvizwkeUTVHzdfnx98oLhhWA==}
+    engines: {node: '>=18.12'}
+
+  '@pnpm/write-project-manifest@1000.0.3':
+    resolution: {integrity: sha512-QIjosiI1FYnHxxLSc+zsAToUr/NrJGzDvdI5LU2RlJ5dKnwVVhIndz/upPNGNKDaQWZsmFiu95q1pEzvSSHikA==}
+    engines: {node: '>=18.12'}
 
   '@polka/url@1.0.0-next.25':
     resolution: {integrity: sha512-j7P6Rgr3mmtdkeDGTe0E/aYyWEWVtc5yFXtHCRHs28/jptDEWfaVOc5T7cblqy1XKPPfCxJc/8DwQ5YgLOZOVQ==}
@@ -26469,6 +26535,10 @@ packages:
     resolution: {integrity: sha512-wPrq66Llhl7/4AGC6I+cqxT07LhXvWL08LNXz1fENOw0Ap4sRZZ/gZpTTJ5jpurzzzfS2W/Ge9BY3LgLjCShcw==}
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
 
+  p-map-values@1.0.0:
+    resolution: {integrity: sha512-/n8QJM4Os3HLRMSuQWwAocsMExENSQwWTgRi8m3JVEOWQ/4gud14igBcnYvSGQTbiyZbuizxEmwf0w3ITn67gg==}
+    engines: {node: '>=14'}
+
   p-map@2.1.0:
     resolution: {integrity: sha512-y3b8Kpd8OAN444hxfBbFfj1FY/RjtTd8tzYwhUqNYXx0fXx2iX4maP4Qr6qhIKbQXI02wTLAda4fYUbDagTUFw==}
     engines: {node: '>=6'}
@@ -28324,6 +28394,10 @@ packages:
     resolution: {integrity: sha512-VIMnQi/Z4HT2Fxuwg5KrY174U1VdUIASQVWXXyqtNRtxSr9IYkn1rsI6Tb6HsrHCmB7gVpNwX6JxPTHcH6IoTA==}
     engines: {node: '>=6'}
 
+  read-yaml-file@2.1.0:
+    resolution: {integrity: sha512-UkRNRIwnhG+y7hpqnycCL/xbTk7+ia9VuVTC0S+zVbwd65DI9eUpRMfsWIGrCWxTU/mi+JW8cHQCrv+zfCbEPQ==}
+    engines: {node: '>=10.13'}
+
   readable-stream@1.0.34:
     resolution: {integrity: sha512-ok1qVCJuRkNmvebYikljxJA/UEsKwLl2nI1OmaqAu4/UE+h0wKCHok4XkL/gvi39OacXvw59RJUOFUkDib2rHg==}
 
@@ -29621,6 +29695,9 @@ packages:
   strip-bom@4.0.0:
     resolution: {integrity: sha512-3xurFv5tEgii33Zi8Jtp55wEIILR9eh34FAW00PZf+JnSsTmV/ioewSgQl97JHvgjoRGwPShsWm+IdrxB35d0w==}
     engines: {node: '>=8'}
+
+  strip-comments-strings@1.2.0:
+    resolution: {integrity: sha512-zwF4bmnyEjZwRhaak9jUWNxc0DoeKBJ7lwSN/LEc8dQXZcUFG6auaaTQJokQWXopLdM3iTx01nQT8E4aL29DAQ==}
 
   strip-comments@2.0.1:
     resolution: {integrity: sha512-ZprKx+bBLXv067WTCALv8SSz5l2+XhpYCsVtSqlMnkAXMWDq+/ekVbl1ghqP9rUHTzv6sm/DwCOiYutU/yp1fw==}
@@ -31850,6 +31927,10 @@ packages:
   write-file-atomic@5.0.1:
     resolution: {integrity: sha512-+QU2zd6OTD8XWIJCbffaiQeH9U73qIqafo1x6V1snCWYGJf6cVE0cDR4D8xRzcEnfI21IFrUPzPGtcPf8AC+Rw==}
     engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
+
+  write-yaml-file@5.0.0:
+    resolution: {integrity: sha512-FdNA4RyH1L43TlvGG8qOMIfcEczwA5ij+zLXUy3Z83CjxhLvcV7/Q/8pk22wnCgYw7PJhtK+7lhO+qqyT4NdvQ==}
+    engines: {node: '>=16.14'}
 
   ws@3.3.3:
     resolution: {integrity: sha512-nnWLa/NwZSt4KQJu51MYlCcSQ5g7INpOrOMt4XV8j4dqTXdmlUmSHQ8/oLC069ckre0fRsgfvsKwbTdtKLCDkA==}
@@ -38310,6 +38391,8 @@ snapshots:
       protobufjs: 7.3.2
       yargs: 17.7.2
 
+  '@gwhitney/detect-indent@7.0.1': {}
+
   '@hapi/bourne@2.1.0': {}
 
   '@hapi/hoek@9.3.0': {}
@@ -40603,6 +40686,63 @@ snapshots:
       schema-utils: 3.3.0
       source-map: 0.7.4
       webpack: 5.94.0(esbuild@0.19.12)
+
+  '@pnpm/catalogs.protocol-parser@1000.0.0': {}
+
+  '@pnpm/catalogs.resolver@1000.0.2':
+    dependencies:
+      '@pnpm/catalogs.protocol-parser': 1000.0.0
+      '@pnpm/error': 1000.0.2
+
+  '@pnpm/constants@1001.1.0': {}
+
+  '@pnpm/error@1000.0.2':
+    dependencies:
+      '@pnpm/constants': 1001.1.0
+
+  '@pnpm/exportable-manifest@1000.0.7':
+    dependencies:
+      '@pnpm/catalogs.resolver': 1000.0.2
+      '@pnpm/error': 1000.0.2
+      '@pnpm/read-project-manifest': 1000.0.6
+      '@pnpm/types': 1000.2.0
+      p-map-values: 1.0.0
+      ramda: '@pnpm/ramda@0.28.1'
+
+  '@pnpm/graceful-fs@1000.0.0':
+    dependencies:
+      graceful-fs: 4.2.11
+
+  '@pnpm/ramda@0.28.1': {}
+
+  '@pnpm/read-project-manifest@1000.0.6':
+    dependencies:
+      '@gwhitney/detect-indent': 7.0.1
+      '@pnpm/error': 1000.0.2
+      '@pnpm/graceful-fs': 1000.0.0
+      '@pnpm/text.comments-parser': 1000.0.0
+      '@pnpm/types': 1000.2.0
+      '@pnpm/write-project-manifest': 1000.0.3
+      fast-deep-equal: 3.1.3
+      is-windows: 1.0.2
+      json5: 2.2.3
+      parse-json: 5.2.0
+      read-yaml-file: 2.1.0
+      strip-bom: 4.0.0
+
+  '@pnpm/text.comments-parser@1000.0.0':
+    dependencies:
+      strip-comments-strings: 1.2.0
+
+  '@pnpm/types@1000.2.0': {}
+
+  '@pnpm/write-project-manifest@1000.0.3':
+    dependencies:
+      '@pnpm/text.comments-parser': 1000.0.0
+      '@pnpm/types': 1000.2.0
+      json5: 2.2.3
+      write-file-atomic: 5.0.1
+      write-yaml-file: 5.0.0
 
   '@polka/url@1.0.0-next.25': {}
 
@@ -61372,6 +61512,8 @@ snapshots:
     dependencies:
       p-limit: 4.0.0
 
+  p-map-values@1.0.0: {}
+
   p-map@2.1.0: {}
 
   p-map@3.0.0:
@@ -61990,6 +62132,13 @@ snapshots:
       yaml: 2.4.1
     optionalDependencies:
       postcss: 8.5.1
+
+  postcss-load-config@4.0.2(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.4.3)):
+    dependencies:
+      lilconfig: 3.1.1
+      yaml: 2.4.1
+    optionalDependencies:
+      ts-node: 10.9.2(@types/node@22.10.10)(typescript@5.4.3)
 
   postcss-loader@6.2.1(browserslist@4.24.2)(postcss@8.4.38)(webpack@5.94.0):
     dependencies:
@@ -64005,6 +64154,11 @@ snapshots:
       pify: 4.0.1
       strip-bom: 3.0.0
 
+  read-yaml-file@2.1.0:
+    dependencies:
+      js-yaml: 4.1.0
+      strip-bom: 4.0.0
+
   readable-stream@1.0.34:
     dependencies:
       core-util-is: 1.0.3
@@ -65551,6 +65705,8 @@ snapshots:
 
   strip-bom@4.0.0: {}
 
+  strip-comments-strings@1.2.0: {}
+
   strip-comments@2.0.1: {}
 
   strip-eof@1.0.0: {}
@@ -67020,6 +67176,28 @@ snapshots:
   tslib@2.6.2: {}
 
   tsscmp@1.0.6: {}
+
+  tsup@7.3.0(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.4.3))(typescript@5.4.3):
+    dependencies:
+      bundle-require: 4.0.2(esbuild@0.19.12)
+      cac: 6.7.14
+      chokidar: 3.6.0
+      debug: 4.3.4
+      esbuild: 0.19.12
+      execa: 5.1.1
+      globby: 11.1.0
+      joycon: 3.1.1
+      postcss-load-config: 4.0.2(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.4.3))
+      resolve-from: 5.0.0
+      rollup: 4.24.0
+      source-map: 0.8.0-beta.0
+      sucrase: 3.35.0
+      tree-kill: 1.2.2
+    optionalDependencies:
+      typescript: 5.4.3
+    transitivePeerDependencies:
+      - supports-color
+      - ts-node
 
   tsup@7.3.0(typescript@5.4.3):
     dependencies:
@@ -69072,6 +69250,11 @@ snapshots:
     dependencies:
       imurmurhash: 0.1.4
       signal-exit: 4.1.0
+
+  write-yaml-file@5.0.0:
+    dependencies:
+      js-yaml: 4.1.0
+      write-file-atomic: 5.0.1
 
   ws@3.3.3:
     dependencies:

@@ -1,16 +1,13 @@
 import DeviceAction from "../models/DeviceAction";
 import { knownDevices } from "../models/devices";
 import { deviceInfo155 as deviceInfo } from "@ledgerhq/live-common/apps/mock";
-import { Application } from "../page";
-
-const app = new Application();
-let deviceAction: DeviceAction;
-
-const appDesc = ["Bitcoin", "Tron", "Litecoin", "Ethereum", "XRP", "Stellar"];
-const installedDesc = ["Bitcoin", "Litecoin", "Ethereum (outdated)"];
-const knownDevice = knownDevices.nanoX;
 
 describe("Test My Ledger", () => {
+  let deviceAction: DeviceAction;
+  const appDesc = ["Bitcoin", "Tron", "Litecoin", "Ethereum", "XRP", "Stellar"];
+  const installedDesc = ["Bitcoin", "Litecoin", "Ethereum (outdated)"];
+  const knownDevice = knownDevices.nanoX;
+
   beforeAll(async () => {
     await app.init({ userdata: "skip-onboarding" });
     deviceAction = new DeviceAction(knownDevice);

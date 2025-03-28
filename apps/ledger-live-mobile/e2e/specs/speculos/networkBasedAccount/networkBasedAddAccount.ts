@@ -1,9 +1,6 @@
-import { Application } from "../../../page";
-import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
+import { CurrencyType } from "@ledgerhq/live-common/e2e/enum/Currency";
 
-export async function runNetworkBasedAddAccountTest(currency: Currency, tmsLink: string) {
-  const app = new Application();
-
+export async function runNetworkBasedAddAccountTest(currency: CurrencyType, tmsLink: string) {
   describe("Add accounts - Network Based", () => {
     beforeAll(async () => {
       await app.init({
@@ -24,8 +21,8 @@ export async function runNetworkBasedAddAccountTest(currency: Currency, tmsLink:
       await app.portfolio.addAccount();
       await app.addAccount.importWithYourLedger();
       await app.common.performSearch(currency.name);
-      await app.receive.selectCurrency(currency.currencyId);
-      await app.receive.selectNetworkIfAsked(currency.currencyId);
+      await app.receive.selectCurrency(currency.id);
+      await app.receive.selectNetworkIfAsked(currency.id);
 
       const accountId = await app.addAccount.addNetworkBasedFirstAccount(currency);
       await app.portfolio.goToAccounts(currency.name);

@@ -7,7 +7,7 @@ import {
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import type { OperationType } from "@ledgerhq/types-live";
-import { CosmosAPI } from "./api/Cosmos";
+import { CosmosAPI } from "./network/Cosmos";
 import { getMainMessage } from "./helpers";
 import { parseAmountStringToNumber } from "./logic";
 import { CosmosAccount, CosmosOperation, CosmosTx } from "./types";

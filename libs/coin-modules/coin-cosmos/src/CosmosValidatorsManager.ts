@@ -1,12 +1,11 @@
 import { EnvName, EnvValue } from "@ledgerhq/live-env";
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
-import network from "@ledgerhq/live-network/network";
 import { log } from "@ledgerhq/logs";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { GetValidatorItem } from "./api/types";
 import cryptoFactory from "./chain/chain";
 import cosmosBase from "./chain/cosmosBase";
 import type { CosmosValidatorItem } from "./types";
+import { CosmosAPI } from "./network/Cosmos";
 
 export class CosmosValidatorsManager {
   protected _version: string;
@@ -42,22 +41,11 @@ export class CosmosValidatorsManager {
 
   private cacheValidators = makeLRUCache(
     async (): Promise<CosmosValidatorItem[]> => {
-      const url = `${this._endPoint}/cosmos/staking/${this._version}/validators?status=BOND_STATUS_BONDED&pagination.limit=200`;
-      const { data } = await network({
-        url,
-        method: "GET",
+      const cosmosAPI = new CosmosAPI(this._currency.id, {
+        endpoint: this._endPoint,
+        version: this._version,
       });
-      const validators = data.validators.map((validator: GetValidatorItem) => {
-        const commission = parseFloat(validator.commission.commission_rates.rate);
-        return {
-          validatorAddress: validator.operator_address,
-          name: validator.description.moniker,
-          tokens: parseFloat(validator.tokens),
-          votingPower: 0,
-          commission,
-          estimatedYearlyRewardsRate: 0,
-        };
-      });
+      const validators = await cosmosAPI.getValidators();
       return validators;
     },
     () => this._currency.id,

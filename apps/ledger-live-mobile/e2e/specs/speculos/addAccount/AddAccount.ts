@@ -1,9 +1,6 @@
-import { Application } from "../../../page";
-import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
+import { CurrencyType } from "@ledgerhq/live-common/e2e/enum/Currency";
 
-export async function runAddAccountTest(currency: Currency, tmsLinks: string[]) {
-  const app = new Application();
-
+export async function runAddAccountTest(currency: CurrencyType, tmsLinks: string[]) {
   describe("Add accounts", () => {
     beforeAll(async () => {
       await app.init({
@@ -23,7 +20,7 @@ export async function runAddAccountTest(currency: Currency, tmsLinks: string[]) 
     it(`Perform an add account - ${currency.name}`, async () => {
       await app.addAccount.openViaDeeplink();
       await app.common.performSearch(currency.name);
-      await app.addAccount.selectCurrency(currency.currencyId);
+      await app.addAccount.selectCurrency(currency.id);
 
       const accountId = await app.addAccount.addFirstAccount(currency);
       await app.assetAccountsPage.waitForAccountPageToLoad(currency.name);

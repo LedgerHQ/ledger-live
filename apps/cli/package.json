@@ -18,9 +18,9 @@
   ],
   "scripts": {
     "prebuild": "zx ./scripts/gen.mjs",
-    "build": "tsc --project src/tsconfig.json",
+    "build": "zx ./scripts/build.mjs",
     "prepublishOnly": "rm -rf lib && tsc --project src/tsconfig.json",
-    "watch": "tsc --watch --project src/tsconfig.json",
+    "watch": "tsup src/cli.ts --watch=src",
     "typecheck": "tsc --project src/tsconfig.json --noEmit",
     "lint": "eslint src --cache",
     "lint:fix": "pnpm lint --fix",
@@ -66,11 +66,17 @@
     "react-dom": "18.3.1",
     "rxjs": "7.8.1",
     "winston": "3.13.0",
-    "ws": "8.17.1"
+    "ws": "8.17.1",
+    "bigint-buffer":  "*",
+    "buffer-to-arraybuffer":  "*",
+    "usb" : "*",
+    "node-hid": "2.1.2"
   },
   "devDependencies": {
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
+    "@pnpm/exportable-manifest": "1000.0.7",
+    "@pnpm/read-project-manifest": "1000.0.6",
     "@types/asciichart": "1.5.8",
     "@types/body-parser": "1.19.5",
     "@types/command-line-args": "5.2.3",
@@ -82,6 +88,10 @@
     "@types/pako": "2.0.3",
     "@types/qrcode-terminal": "0.12.2",
     "@types/ws": "8.5.10",
-    "ts-node": "10.9.2"
+    "ts-node": "10.9.2",
+    "tsup": "7.3.0"
+  },
+  "publishConfig": {
+    "directory": "dist"
   }
 }

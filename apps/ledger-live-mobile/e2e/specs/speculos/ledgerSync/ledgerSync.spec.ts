@@ -1,12 +1,7 @@
-import { CLI } from "../../../utils/cliUtils";
-import { Application } from "../../../page";
-import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
-import { activateLedgerSync } from "@ledgerhq/live-common/e2e/speculos";
 import { device } from "detox";
 import { getEnv } from "@ledgerhq/live-env";
 import { getFlags } from "../../../bridge/server";
 
-const app = new Application();
 const tmsLinks = ["B2CQA-2292", "B2CQA-2293", "B2CQA-2296"];
 
 const ledgerKeyRingProtocolArgs = {
@@ -54,7 +49,7 @@ async function initializeLedgerSync() {
     }
     return out;
   });
-  await activateLedgerSync();
+  await app.ledgerSync.activateLedgerSyncOnSpeculos();
   return output;
 }
 
@@ -95,7 +90,7 @@ describe(`Ledger Sync Accounts`, () => {
     await app.ledgerSync.expectLedgerSyncPageIsDisplayed();
     await app.ledgerSync.tapTurnOnSync();
     await app.common.selectKnownDevice();
-    await activateLedgerSync();
+    await app.ledgerSync.activateLedgerSyncOnSpeculos();
     await app.ledgerSync.expectLedgerSyncSuccessPage();
     await app.ledgerSync.closeActivationSuccessPage();
     await app.accounts.openViaDeeplink();

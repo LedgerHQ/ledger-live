@@ -27,7 +27,7 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { closeAllModal } from "~/renderer/actions/modals";
 import Animation from "~/renderer/animations";
-import Button from "~/renderer/components/Button";
+import Button, { Base as ButtonBase } from "~/renderer/components/Button";
 import TranslatedError from "~/renderer/components/TranslatedError";
 import Box from "~/renderer/components/Box";
 import Alert from "~/renderer/components/Alert";
@@ -198,10 +198,29 @@ const ErrorDescription = styled(Text).attrs({
   user-select: text;
 `;
 
-const ButtonContainer = styled(Box).attrs(() => ({
+const ButtonContainer = styled(Box).attrs(({ theme }) => ({
   mt: 25,
+  horizontal: false,
+  alignItems: "center",
+  justifyContent: "center",
+  gap: `${theme.space[4]}px`,
+}))`
+  align-self: stretch;
+`;
+
+const ButtonGroup = styled(Box).attrs(({ theme }) => ({
   horizontal: true,
-}))``;
+  alignItems: "stretch",
+  justifyContent: "center",
+  gap: `${theme.space[4]}px`,
+}))`
+  align-self: stretch;
+
+  ${ButtonBase} {
+    flex: 1 0 0;
+    justify-content: center;
+  }
+`;
 
 const TroubleshootingWrapper = styled.div`
   margin-top: auto;
@@ -851,31 +870,32 @@ export const renderError = ({
           />
         ) : (
           <>
+            <ButtonGroup>
+              {withExportLogs ? (
+                <ExportLogsButton
+                  title={t("settings.exportLogs.title")}
+                  small={false}
+                  primary={false}
+                  outlineGrey
+                />
+              ) : null}
+              {withOpenManager ? (
+                <OpenManagerButton mt={0} />
+              ) : onRetry && inlineRetry ? (
+                <Button primary onClick={onRetry}>
+                  {t("common.retry")}
+                </Button>
+              ) : null}
+              {withOnboardingCTA ? <OpenOnboardingBtn /> : null}
+              {buyLedger ? (
+                <LinkWithExternalIcon
+                  label={t("common.buyLedger")}
+                  onClick={() => openURL(buyLedger)}
+                />
+              ) : null}
+            </ButtonGroup>
             {supportLinkUrl ? (
               <ExternalLinkButton label={t("common.getSupport")} url={supportLinkUrl} />
-            ) : null}
-            {withExportLogs ? (
-              <ExportLogsButton
-                title={t("settings.exportLogs.title")}
-                small={false}
-                primary={false}
-                outlineGrey
-                mx={1}
-              />
-            ) : null}
-            {withOpenManager ? (
-              <OpenManagerButton mt={0} ml={withExportLogs ? 4 : 0} />
-            ) : onRetry && inlineRetry ? (
-              <Button primary ml={withExportLogs ? 4 : 0} onClick={onRetry}>
-                {t("common.retry")}
-              </Button>
-            ) : null}
-            {withOnboardingCTA ? <OpenOnboardingBtn /> : null}
-            {buyLedger ? (
-              <LinkWithExternalIcon
-                label={t("common.buyLedger")}
-                onClick={() => openURL(buyLedger)}
-              />
             ) : null}
           </>
         )}

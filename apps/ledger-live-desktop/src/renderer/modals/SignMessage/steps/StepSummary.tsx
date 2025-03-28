@@ -18,6 +18,7 @@ import FormattedVal from "~/renderer/components/FormattedVal";
 import { getTokenUnit } from "~/renderer/utils";
 import { Account } from "@ledgerhq/types-live";
 import { Unit } from "@ledgerhq/types-cryptoassets";
+import CopyButton from "../Components/CopyButton";
 
 const Circle = styled.div`
   height: 32px;
@@ -64,6 +65,9 @@ const AdvancedMessageArea = styled.pre`
   word-wrap: break-word;
   white-space: pre-wrap;
   padding: 10px;
+  position: relative;
+  min-height: 60px;
+  word-break: break-word;
 `;
 
 const MessageProperty = memo(
@@ -211,6 +215,7 @@ export default function StepSummary({ account, message: messageData }: StepProps
                 {typeof messageData.message === "string"
                   ? `"${messageData.message}"`
                   : JSON.stringify(messageData.message, null, 2)}
+                <CopyButton text={messageData.message.toString()} />
               </AdvancedMessageArea>
             ) : null}
           </Box>
