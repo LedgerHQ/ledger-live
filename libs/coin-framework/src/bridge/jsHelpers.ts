@@ -384,7 +384,7 @@ export const makeScanAccounts =
           account.balanceHistoryCache = generateHistoryFromOperations(account);
         }
 
-        if (!account.used) {
+        if (accountShape.used === undefined) {
           account.used = !isAccountEmpty(account);
         }
 

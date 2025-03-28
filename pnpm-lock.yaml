@@ -3768,6 +3768,9 @@ importers:
         specifier: ^2.0.6
         version: 2.0.9
     devDependencies:
+      '@faker-js/faker':
+        specifier: ^9.6.0
+        version: 9.6.0
       '@ledgerhq/coin-tester':
         specifier: workspace:^
         version: link:../../coin-tester
@@ -3795,6 +3798,9 @@ importers:
       jest-sonar:
         specifier: 0.2.16
         version: 0.2.16
+      msw:
+        specifier: ^2.2.13
+        version: 2.3.4(typescript@5.4.3)
       ts-jest:
         specifier: ^29.1.1
         version: 29.1.5(jest@29.7.0)(typescript@5.4.3)
@@ -11808,6 +11814,10 @@ packages:
 
   '@faker-js/faker@9.4.0':
     resolution: {integrity: sha512-85+k0AxaZSTowL0gXp8zYWDIrWclTbRPg/pm/V0dSFZ6W6D4lhcG3uuZl4zLsEKfEvs69xDbLN2cHQudwp95JA==}
+    engines: {node: '>=18.0.0', npm: '>=9.0.0'}
+
+  '@faker-js/faker@9.6.0':
+    resolution: {integrity: sha512-3vm4by+B5lvsFPSyep3ELWmZfE3kicDtmemVpuwl1yH7tqtnHdsA6hG8fbXedMVdkzgtvzWoRgjSB4Q+FHnZiw==}
     engines: {node: '>=18.0.0', npm: '>=9.0.0'}
 
   '@fal-works/esbuild-plugin-global-externals@2.1.2':
@@ -37960,6 +37970,8 @@ snapshots:
   '@faker-js/faker@8.4.1': {}
 
   '@faker-js/faker@9.4.0': {}
+
+  '@faker-js/faker@9.6.0': {}
 
   '@fal-works/esbuild-plugin-global-externals@2.1.2': {}
 

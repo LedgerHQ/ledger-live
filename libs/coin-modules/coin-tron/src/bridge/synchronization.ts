@@ -14,7 +14,13 @@ import { computeBalanceBridge } from "../logic";
 import { getOperationsPageSize } from "../logic/pagination";
 import { getLastBlock, fetchTronAccount, fetchTronAccountTxs } from "../network";
 import { TronAccount, TrongridExtraTxInfo, TronOperation } from "../types";
-import { defaultTronResources, getTronResources, isParentTx, txInfoToOperation } from "./utils";
+import {
+  defaultTronResources,
+  getTronResources,
+  isAccountEmpty,
+  isParentTx,
+  txInfoToOperation,
+} from "./utils";
 
 type TronToken = {
   key: string;
@@ -185,6 +191,7 @@ export const getAccountShape: GetAccountShape<TronAccount> = async (
     subAccounts: mergedSubAccounts,
     tronResources,
     blockHeight,
+    used: !isAccountEmpty({ tronResources }),
   };
 };
 
