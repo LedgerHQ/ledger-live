@@ -4,9 +4,9 @@ import { Dispatch } from "redux";
 import { NavigationProp, NavigationState } from "@react-navigation/core";
 import { getFee } from "./getFee";
 import { getTransactionByHash } from "./getTransactionByHash";
-import { saveSwapToHistory } from "./saveSwapToHistory";
 import Config from "react-native-config";
 import { sendSwapLiveAppReady } from "../../../../../e2e/bridge/client";
+import { saveSwapToHistory } from "./saveSwapToHistory";
 
 export type NavigationType = Omit<NavigationProp<ReactNavigation.RootParamList>, "getState"> & {
   getState(): NavigationState | undefined;

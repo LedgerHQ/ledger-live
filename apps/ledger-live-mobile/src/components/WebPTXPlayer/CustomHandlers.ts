@@ -1,5 +1,6 @@
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import {
+  CompleteExchangeUiRequest,
   handlers as exchangeHandlers,
   ExchangeType,
 } from "@ledgerhq/live-common/wallet-api/Exchange/server";
@@ -7,7 +8,7 @@ import trackingWrapper from "@ledgerhq/live-common/wallet-api/Exchange/tracking"
 import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { useNavigation } from "@react-navigation/native";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { track } from "~/analytics";
 import { currentRouteNameRef } from "~/analytics/screenRefs";
 import { NavigatorName, ScreenName } from "~/const";
@@ -18,9 +19,12 @@ import Config from "react-native-config";
 import { sendEarnLiveAppReady } from "../../../e2e/bridge/client";
 import BigNumber from "bignumber.js";
 
+import { useSyncAccountById } from "~/screens/Swap/LiveApp/hooks/useSyncAccountById";
+
 export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], accounts: AccountLike[]) {
   const navigation = useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
   const [device, setDevice] = useState<Device>();
+  const syncAccountById = useSyncAccountById();
 
   const tracking = useMemo(
     () =>
@@ -34,6 +38,24 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
         }),
       ),
     [],
+  );
+
+  const navigateToSwapPendingOperation = useCallback(
+    (exchangeParams: CompleteExchangeUiRequest, operationHash: string) => {
+      navigation.pop();
+      navigation.navigate(ScreenName.SwapPendingOperation, {
+        swapOperation: {
+          provider: exchangeParams.provider,
+          swapId: exchangeParams.swapId!,
+          status: "pending",
+          receiverAccountId: exchangeParams.transaction.recipient,
+          operationId: operationHash,
+          fromAmount: exchangeParams.transaction.amount,
+          toAmount: BigNumber(exchangeParams.amountExpectedTo!),
+        },
+      });
+    },
+    [navigation],
   );
 
   return useMemo<WalletAPICustomHandlers>(() => {
@@ -99,19 +121,48 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
                     });
                   }
                   if (result.operation) {
+                    navigateToSwapPendingOperation(exchangeParams, result.operation.hash);
+                    onSuccess(result.operation.hash);
+                  }
+                  setDevice(undefined);
+                },
+              },
+            });
+          },
+          "custom.exchange.swap": ({ exchangeParams, onSuccess, onCancel }) => {
+            navigation.navigate(NavigatorName.PlatformExchange, {
+              screen: ScreenName.PlatformCompleteExchange,
+              params: {
+                request: {
+                  exchangeType: exchangeParams.exchangeType,
+                  provider: exchangeParams.provider,
+                  exchange: exchangeParams.exchange,
+                  transaction: exchangeParams.transaction,
+                  binaryPayload: exchangeParams.binaryPayload,
+                  signature: exchangeParams.signature,
+                  feesStrategy: exchangeParams.feesStrategy,
+                  amountExpectedTo: exchangeParams.amountExpectedTo,
+                },
+                device,
+                onResult: result => {
+                  if (result.error) {
+                    onCancel(result.error);
                     navigation.pop();
-                    navigation.navigate(ScreenName.SwapPendingOperation, {
-                      swapOperation: {
-                        provider: exchangeParams.provider,
-                        swapId: exchangeParams.swapId!,
-                        status: "pending",
-                        receiverAccountId: exchangeParams.transaction.recipient,
-                        operationId: result.operation.hash,
-                        fromAmount: exchangeParams.transaction.amount,
-                        toAmount: BigNumber(exchangeParams.amountExpectedTo!),
+                    navigation.navigate(NavigatorName.CustomError, {
+                      screen: ScreenName.CustomErrorScreen,
+                      params: {
+                        error: result.error,
                       },
                     });
-                    onSuccess(result.operation.hash);
+                  }
+                  if (result.operation && exchangeParams.swapId) {
+                    syncAccountById(exchangeParams.exchange.fromAccount.id);
+                    const operationHash = result.operation.hash;
+
+                    navigateToSwapPendingOperation(exchangeParams, operationHash);
+
+                    // return success to swap live app
+                    onSuccess({ operationHash, swapId: exchangeParams.swapId });
                   }
                   setDevice(undefined);
                 },
@@ -134,5 +185,13 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
         },
       }),
     };
-  }, [accounts, device, manifest, navigation, tracking]);
+  }, [
+    accounts,
+    device,
+    manifest,
+    navigateToSwapPendingOperation,
+    navigation,
+    syncAccountById,
+    tracking,
+  ]);
 }
