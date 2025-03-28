@@ -10,6 +10,7 @@ import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import { broadcast } from "../broadcast";
 import { createTransaction } from "../createTransaction";
 import { estimateMaxSpendable } from "../estimateMaxSpendable";
+import formatters from "../formatters";
 import { getTransactionStatus } from "../getTransactionStatus";
 import resolver from "../hw-getAddress";
 import { getPreloadStrategy, hydrate, preload } from "../preload";
@@ -23,7 +24,12 @@ import {
 import { MultiversXSigner } from "../signer";
 import { buildSignOperation } from "../signOperation";
 import { getAccountShape, sync } from "../synchronisation";
-import type { MultiversXAccount, Transaction, TransactionStatus } from "../types";
+import type {
+  MultiversXAccount,
+  MultiversXOperation,
+  Transaction,
+  TransactionStatus,
+} from "../types";
 
 export function buildCurrencyBridge(
   signerContext: SignerContext<MultiversXSigner>,
@@ -45,7 +51,7 @@ export function buildCurrencyBridge(
 
 export function buildAccountBridge(
   signerContext: SignerContext<MultiversXSigner>,
-): AccountBridge<Transaction, MultiversXAccount, TransactionStatus> {
+): AccountBridge<Transaction, MultiversXAccount, TransactionStatus, MultiversXOperation> {
   const getAddress = resolver(signerContext);
 
   const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));
@@ -65,6 +71,8 @@ export function buildAccountBridge(
     assignToAccountRaw,
     fromOperationExtraRaw,
     toOperationExtraRaw,
+    formatAccountSpecifics: formatters.formatAccountSpecifics,
+    formatOperationSpecifics: formatters.formatOperationSpecifics,
     getSerializedAddressParameters,
   };
 }
