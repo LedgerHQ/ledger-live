@@ -1,23 +1,22 @@
-import React, { useMemo } from "react";
-import { useDispatch } from "react-redux";
-import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
 import {
   handlers as exchangeHandlers,
   ExchangeType,
 } from "@ledgerhq/live-common/wallet-api/Exchange/server";
 import trackingWrapper from "@ledgerhq/live-common/wallet-api/Exchange/tracking";
+import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
 import { AccountLike, Operation } from "@ledgerhq/types-live";
-import { track } from "~/renderer/analytics/segment";
-import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
+import React, { useMemo } from "react";
+import { useDispatch } from "react-redux";
 import { closePlatformAppDrawer, openExchangeDrawer } from "~/renderer/actions/UI";
-import { WebviewProps } from "../Web3AppWebview/types";
+import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
+import { track } from "~/renderer/analytics/segment";
 import { context } from "~/renderer/drawers/Provider";
 import WebviewErrorDrawer from "~/renderer/screens/exchange/Swap2/Form/WebviewErrorDrawer";
+import { WebviewProps } from "../Web3AppWebview/types";
 
 export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], accounts: AccountLike[]) {
   const dispatch = useDispatch();
   const { setDrawer } = React.useContext(context);
-
   const tracking = useMemo(
     () =>
       trackingWrapper(
@@ -85,6 +84,27 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
           },
           "custom.isReady": async () => {
             console.info("Earn Live App Loaded");
+          },
+          "custom.exchange.swap": ({ exchangeParams, onSuccess, onCancel }) => {
+            dispatch(
+              openExchangeDrawer({
+                type: "EXCHANGE_COMPLETE",
+                ...exchangeParams,
+                onResult: operation => {
+                  if (operation && exchangeParams.swapId) {
+                    // return success to swap live app
+                    onSuccess({
+                      operationHash: operation.hash,
+                      swapId: exchangeParams.swapId,
+                    });
+                  }
+                },
+                onCancel: (error: Error) => {
+                  console.error(error);
+                  onCancel(error);
+                },
+              }),
+            );
           },
         },
       }),
