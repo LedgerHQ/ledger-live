@@ -771,7 +771,7 @@ importers:
         version: 4.0.3
       '@vitejs/plugin-react':
         specifier: 3.1.0
-        version: 3.1.0(vite@4.5.6)
+        version: 3.1.0(vite@4.5.10)
       allure-playwright:
         specifier: 2.15.1
         version: 2.15.1
@@ -857,8 +857,8 @@ importers:
         specifier: 5.4.3
         version: 5.4.3
       vite:
-        specifier: 4.5.6
-        version: 4.5.6
+        specifier: 4.5.10
+        version: 4.5.10
       vite-plugin-electron:
         specifier: 0.4.9
         version: 0.4.9
@@ -7117,7 +7117,7 @@ importers:
         version: 22.10.10
       '@vitejs/plugin-react':
         specifier: 4.3.4
-        version: 4.3.4(vite@6.0.9(@types/node@22.10.10))
+        version: 4.3.4(vite@6.0.12(@types/node@22.10.10))
       '@vitest/coverage-istanbul':
         specifier: 3.0.7
         version: 3.0.7(vitest@2.1.9(@types/node@22.10.10)(jsdom@25.0.1))
@@ -7128,8 +7128,8 @@ importers:
         specifier: 25.0.1
         version: 25.0.1
       vite:
-        specifier: 6.0.9
-        version: 6.0.9(@types/node@22.10.10)
+        specifier: 6.0.12
+        version: 6.0.12(@types/node@22.10.10)
       vitest:
         specifier: 2.1.9
         version: 2.1.9(@types/node@22.10.10)(jsdom@25.0.1)
@@ -11815,6 +11815,7 @@ packages:
   '@faker-js/faker@9.4.0':
     resolution: {integrity: sha512-85+k0AxaZSTowL0gXp8zYWDIrWclTbRPg/pm/V0dSFZ6W6D4lhcG3uuZl4zLsEKfEvs69xDbLN2cHQudwp95JA==}
     engines: {node: '>=18.0.0', npm: '>=9.0.0'}
+    deprecated: Please update to a newer version
 
   '@faker-js/faker@9.6.0':
     resolution: {integrity: sha512-3vm4by+B5lvsFPSyep3ELWmZfE3kicDtmemVpuwl1yH7tqtnHdsA6hG8fbXedMVdkzgtvzWoRgjSB4Q+FHnZiw==}
@@ -15879,7 +15880,7 @@ packages:
       metro-react-native-babel-preset: '*'
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
-      webpack: '*'
+      webpack: '5'
     peerDependenciesMeta:
       react:
         optional: true
@@ -16559,6 +16560,7 @@ packages:
     deprecated: |-
       DEPRECATED: This package is no longer maintained.
       Please use the built-in Jest matchers available in @testing-library/react-native v12.4+.
+
       See migration guide: https://callstack.github.io/react-native-testing-library/docs/migration/jest-matchers
     peerDependencies:
       react: '>=16.0.0'
@@ -18127,7 +18129,7 @@ packages:
     resolution: {integrity: sha512-/FQM1EDkTsf63Ub2C6O7GuYFDsSXUwsaZDurV0np41ocwq0jthUAYCmhBX9f+KwlaCgIuWyr/4WlUQUBfKfZog==}
     engines: {node: '>=6'}
     peerDependencies:
-      rxjs: '*'
+      rxjs: ^5.5.10
       zenObservable: '*'
     peerDependenciesMeta:
       rxjs:
@@ -21243,7 +21245,7 @@ packages:
     peerDependencies:
       '@typescript-eslint/eslint-plugin': ^4.0.0 || ^5.0.0
       eslint: ^6.0.0 || ^7.0.0 || ^8.0.0
-      jest: '*'
+      jest: ^27.0.0
     peerDependenciesMeta:
       '@typescript-eslint/eslint-plugin':
         optional: true
@@ -21864,8 +21866,8 @@ packages:
     peerDependencies:
       expo-modules-autolinking: '*'
       expo-modules-core: '*'
-      react: '*'
-      react-native: '*'
+      react: 18.2.0
+      react-native: 0.74.5
     peerDependenciesMeta:
       expo-modules-autolinking:
         optional: true
@@ -27591,6 +27593,7 @@ packages:
     engines: {node: '>=0.6.0', teleport: '>=0.2.0'}
     deprecated: |-
       You or someone you depend on is using Q, the JavaScript Promise library that gave JavaScript developers strong feelings about promises. They can almost certainly migrate to the native JavaScript promise now. Thank you literally everyone for joining me in this bet against the odds. Be excellent to each other.
+
       (For a CapTP with native promises, see @endo/eventual-send and @endo/captp)
 
   qrcode-terminal@0.11.0:
@@ -27824,7 +27827,7 @@ packages:
     resolution: {integrity: sha512-kBGxI+MIZGBf4wZhNCWwHkMcVP+kbpmrLWH/SkO0qCKc7D7eSPcxQbfpsmsCo8v2KCBYjuGSou+xTqK44D/jMg==}
     engines: {npm: ^3.0.0}
     peerDependencies:
-      prop-types: '*'
+      prop-types: ^15.6.1
       react: '>=15.0.0'
     peerDependenciesMeta:
       prop-types:
@@ -27848,8 +27851,8 @@ packages:
   react-native-animatable@1.3.3:
     resolution: {integrity: sha512-2ckIxZQAsvWn25Ho+DK3d1mXIgj7tITkrS4pYDvx96WyOttSvzzFeQnM2od0+FUMzILbdHDsDEqZvnz1DYNQ1w==}
     peerDependencies:
-      react: '*'
-      react-native: '*'
+      react: 16.9.0
+      react-native: 0.61.2
     peerDependenciesMeta:
       react:
         optional: true
@@ -27859,8 +27862,8 @@ packages:
   react-native-animatable@1.4.0:
     resolution: {integrity: sha512-DZwaDVWm2NBvBxf7I0wXKXLKb/TxDnkV53sWhCvei1pRyTX3MVFpkvdYBknNBqPrxYuAIlPxEp7gJOidIauUkw==}
     peerDependencies:
-      react: '*'
-      react-native: '*'
+      react: 18.2.0
+      react-native: 0.72.6
     peerDependenciesMeta:
       react:
         optional: true
@@ -31189,8 +31192,8 @@ packages:
   vite-plugin-optimizer@1.4.3:
     resolution: {integrity: sha512-m1AFakemDxSNIwxsTYykBFuQxkKJLI8207RNAg33N5km2aE29cP+Jt41xbfdrALOU2VKYWGFlBz64GMbIser4A==}
 
-  vite@4.5.5:
-    resolution: {integrity: sha512-ifW3Lb2sMdX+WU91s3R0FyQlAyLxOzCSCP37ujw0+r5POeHPwe6udWVIElKQq8gk3t7b8rkmvqC6IHBpCff4GQ==}
+  vite@4.5.10:
+    resolution: {integrity: sha512-f2ueoukYTMI/5kMMT7wW+ol3zL6z6PjN28zYrGKAjnbzXhRXWXPThD3uN6muCp+TbfXaDgGvRuPsg6mwVLaWwQ==}
     engines: {node: ^14.18.0 || >=16.0.0}
     hasBin: true
     peerDependencies:
@@ -31217,8 +31220,8 @@ packages:
       terser:
         optional: true
 
-  vite@4.5.6:
-    resolution: {integrity: sha512-ElBNuVvJKslxcfY2gMmae5IjaKGqCYGicCNZ+8R56sAznobeE3pI9ctzI17cBS/6OJh5YuQNMSN4BP4dRjugBg==}
+  vite@4.5.5:
+    resolution: {integrity: sha512-ifW3Lb2sMdX+WU91s3R0FyQlAyLxOzCSCP37ujw0+r5POeHPwe6udWVIElKQq8gk3t7b8rkmvqC6IHBpCff4GQ==}
     engines: {node: ^14.18.0 || >=16.0.0}
     hasBin: true
     peerDependencies:
@@ -31276,8 +31279,8 @@ packages:
       terser:
         optional: true
 
-  vite@6.0.9:
-    resolution: {integrity: sha512-MSgUxHcaXLtnBPktkbUSoQUANApKYuxZ6DrbVENlIorbhL2dZydTLaZ01tjUoE3szeFzlFk9ANOKk0xurh4MKA==}
+  vite@6.0.12:
+    resolution: {integrity: sha512-gzLogvGSgX2xyAt0J5qhJ7SmdO5aLdShABkU8Ev7dIl8AcrlFSLcj9GHReSq9pGJF/q5C4CZKdtDlkC6DyvQ3w==}
     engines: {node: ^18.0.0 || ^20.0.0 || >=22.0.0}
     hasBin: true
     peerDependencies:
@@ -47821,14 +47824,14 @@ snapshots:
       uuid: 2.0.1
       xmlhttprequest: 1.8.0
 
-  '@vitejs/plugin-react@3.1.0(vite@4.5.6)':
+  '@vitejs/plugin-react@3.1.0(vite@4.5.10)':
     dependencies:
       '@babel/core': 7.24.3
       '@babel/plugin-transform-react-jsx-self': 7.24.1(@babel/core@7.24.3)
       '@babel/plugin-transform-react-jsx-source': 7.24.1(@babel/core@7.24.3)
       magic-string: 0.27.0
       react-refresh: 0.14.0
-      vite: 4.5.6
+      vite: 4.5.10
     transitivePeerDependencies:
       - supports-color
 
@@ -47843,14 +47846,14 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@vitejs/plugin-react@4.3.4(vite@6.0.9(@types/node@22.10.10))':
+  '@vitejs/plugin-react@4.3.4(vite@6.0.12(@types/node@22.10.10))':
     dependencies:
       '@babel/core': 7.26.7
       '@babel/plugin-transform-react-jsx-self': 7.25.9(@babel/core@7.26.7)
       '@babel/plugin-transform-react-jsx-source': 7.25.9(@babel/core@7.26.7)
       '@types/babel__core': 7.20.5
       react-refresh: 0.14.2
-      vite: 6.0.9(@types/node@22.10.10)
+      vite: 6.0.12(@types/node@22.10.10)
     transitivePeerDependencies:
       - supports-color
 
@@ -67840,6 +67843,14 @@ snapshots:
 
   vite-plugin-optimizer@1.4.3: {}
 
+  vite@4.5.10:
+    dependencies:
+      esbuild: 0.18.20
+      postcss: 8.5.1
+      rollup: 3.29.4
+    optionalDependencies:
+      fsevents: 2.3.3
+
   vite@4.5.5(@types/node@22.10.10):
     dependencies:
       esbuild: 0.18.20
@@ -67847,14 +67858,6 @@ snapshots:
       rollup: 3.29.4
     optionalDependencies:
       '@types/node': 22.10.10
-      fsevents: 2.3.3
-
-  vite@4.5.6:
-    dependencies:
-      esbuild: 0.18.20
-      postcss: 8.5.1
-      rollup: 3.29.4
-    optionalDependencies:
       fsevents: 2.3.3
 
   vite@5.4.14(@types/node@22.10.10):
@@ -67866,7 +67869,7 @@ snapshots:
       '@types/node': 22.10.10
       fsevents: 2.3.3
 
-  vite@6.0.9(@types/node@22.10.10):
+  vite@6.0.12(@types/node@22.10.10):
     dependencies:
       esbuild: 0.24.2
       postcss: 8.5.1
