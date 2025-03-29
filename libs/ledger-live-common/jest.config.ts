@@ -9,7 +9,7 @@ const testPathIgnorePatterns = [
   "test-helpers/",
 ];
 
-const transformIncludePatterns = ["ky"];
+const esmDeps = ["ky"];
 
 let testRegex: string | string[] = "(/__tests__/.*|(\\.|/)(test|spec))\\.[jt]sx?$";
 if (process.env.IGNORE_INTEGRATION_TESTS) {
@@ -48,11 +48,13 @@ const defaultConfig = {
     "__tests__/migration",
     "<rootDir>/benchmark/.*",
     "<rootDir>/cli/.yalc/.*",
+    "<rootDir>/lib-es",
+    "<rootDir>/lib",
   ],
   testPathIgnorePatterns,
   testRegex,
   transform: {
-    [`node_modules/.pnpm/(${transformIncludePatterns.join("|")}).+\\.(js|jsx)?$`]: [
+    [`node_modules[\\\\|/].pnpm[\\\\|/](${esmDeps.join("|")}).+\\.jsx?$`]: [
       "@swc/jest",
       {
         jsc: {
@@ -61,10 +63,7 @@ const defaultConfig = {
       },
     ],
   },
-  transformIgnorePatterns: [
-    "/node_modules/(?!|@babel/runtime/helpers/esm/)",
-    `node_modules/.pnpm/(?!(${transformIncludePatterns.join("|")}))`,
-  ],
+  transformIgnorePatterns: ["/node_modules/(?!|@babel/runtime/helpers/esm/)"],
   moduleDirectories: ["node_modules", "cli/node_modules"],
   /**
    * Added because of this error happening when using toMatchInlineSnapshot:

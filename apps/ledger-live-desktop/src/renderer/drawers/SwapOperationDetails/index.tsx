@@ -198,7 +198,14 @@ const SwapOperationDetails = ({
           </WrapperClock>
         ) : null}
       </Status>
-      <Text ff="Inter|SemiBold" textAlign="center" fontSize={4} color="palette.text.shade60" my={1}>
+      <Text
+        data-testid="swap-drawer-operation-type"
+        ff="Inter|SemiBold"
+        textAlign="center"
+        fontSize={4}
+        color="palette.text.shade60"
+        my={1}
+      >
         <Trans i18nKey="swap.operationDetailsModal.title" />
       </Text>
       <Box my={2} alignItems="center">
@@ -234,6 +241,7 @@ const SwapOperationDetails = ({
       {url ? (
         <Box m={0} ff="Inter|SemiBold" horizontal justifyContent="center" fontSize={4} mb={1}>
           <LinkWithExternalIcon
+            id="swap-drawer-operation-details-link"
             fontSize={4}
             onClick={() =>
               openURL(url, "viewSwapOperationInExplorer", {
@@ -249,7 +257,11 @@ const SwapOperationDetails = ({
           <Trans i18nKey="swap.operationDetailsModal.provider" />
         </OpDetailsTitle>
         <OpDetailsData>
-          <LinkWithExternalIcon fontSize={12} onClick={handleProviderClick}>
+          <LinkWithExternalIcon
+            id="swap-drawer-provider-link"
+            fontSize={12}
+            onClick={handleProviderClick}
+          >
             {getProviderName(provider)}
           </LinkWithExternalIcon>
         </OpDetailsData>
@@ -259,9 +271,9 @@ const SwapOperationDetails = ({
           <Trans i18nKey="swap.operationDetailsModal.txid" />
         </OpDetailsTitle>
         <OpDetailsData>
-          <Box width="100%">
+          <Box width="100%" data-testid="swap-drawer-swapId">
             <SelectableTextWrapper selectable>
-              <DataList data-testid="details-swap-id" lines={[swapId]} t={t} />
+              <DataList lines={[swapId]} t={t} />
               <GradientHover>
                 <CopyWithFeedback text={swapId} />
               </GradientHover>
@@ -274,7 +286,7 @@ const SwapOperationDetails = ({
           <Trans i18nKey="swap.operationDetailsModal.status" />
         </OpDetailsTitle>
         <OpDetailsData>
-          <Box horizontal alignItems="center">
+          <Box data-testid="swap-drawer-status" horizontal alignItems="center">
             <Value
               mr={1}
               status={status}
@@ -305,7 +317,7 @@ const SwapOperationDetails = ({
           <Trans i18nKey="swap.operationDetailsModal.date" />
         </OpDetailsTitle>
         <OpDetailsData>
-          <Box>{dateFormatted}</Box>
+          <Box data-testId="operation-date">{dateFormatted}</Box>
         </OpDetailsData>
       </OpDetailsSection>
       <B />
@@ -318,7 +330,7 @@ const SwapOperationDetails = ({
             <Box mr={1} alignItems={"center"}>
               <CryptoCurrencyIcon size={16} currency={fromCurrency} />
             </Box>
-            <Box flex={1} color={"palette.text.shade100"} data-testid="swap-account-from">
+            <Box flex={1} color={"palette.text.shade100"} data-testid="swap-drawer-account-from">
               <Ellipsis>
                 <Link onClick={() => openAccount(fromAccount)}>{fromAccountName}</Link>
               </Ellipsis>
@@ -331,7 +343,7 @@ const SwapOperationDetails = ({
           <Trans i18nKey="swap.operationDetailsModal.initialAmount" />
         </OpDetailsTitle>
         <OpDetailsData>
-          <Box>
+          <Box data-testid="swap-drawer-amount-from">
             <FormattedVal
               unit={fromUnit}
               showCode
@@ -360,7 +372,7 @@ const SwapOperationDetails = ({
             <Box mr={1} alignItems={"center"}>
               <CryptoCurrencyIcon size={16} currency={toCurrency} />
             </Box>
-            <Box flex={1} color={"palette.text.shade100"} data-testid="swap-account-to">
+            <Box flex={1} color={"palette.text.shade100"} data-testid="swap-drawer-account-to">
               <Ellipsis>
                 <Link onClick={() => openAccount(toAccount)}>{toAccountName}</Link>
               </Ellipsis>
@@ -373,7 +385,7 @@ const SwapOperationDetails = ({
           <Trans i18nKey="swap.operationDetailsModal.creditedAmount" />
         </OpDetailsTitle>
         <OpDetailsData>
-          <Box>
+          <Box data-testid="swap-drawer-amount-to">
             <FormattedVal
               unit={toUnit}
               showCode

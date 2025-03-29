@@ -36,7 +36,6 @@ import { useDisplayOnPortfolioAnalytics } from "LLD/features/AnalyticsOptInPromp
 import PortfolioContentCards from "LLD/features/DynamicContent/components/PortfolioContentCards";
 import { LNSUpsellBanner, useLNSUpsellBannerState } from "LLD/features/LNSUpsell";
 import useActionCards from "~/renderer/hooks/useActionCards";
-import { useAutoRedirectToPostOnboarding } from "~/renderer/hooks/useAutoRedirectToPostOnboarding";
 import { useNftCollectionsStatus } from "~/renderer/hooks/nfts/useNftCollectionsStatus";
 
 // This forces only one visible top banner at a time
@@ -64,9 +63,6 @@ export default function DashboardPage() {
     [accounts],
   );
   const isPostOnboardingBannerVisible = usePostOnboardingEntryPointVisibleOnWallet();
-
-  useAutoRedirectToPostOnboarding();
-
   const [shouldFilterTokenOpsZeroAmount] = useFilterTokenOperationsZeroAmount();
   const { hiddenNftCollections } = useNftCollectionsStatus(true);
   const filterOperations = useCallback(

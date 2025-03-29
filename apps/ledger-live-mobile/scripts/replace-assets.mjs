@@ -3,6 +3,10 @@ import "zx/globals";
 import fs from "fs";
 import path from "path";
 
+if (os.platform() === "win32") {
+  usePowerShell();
+}
+
 const rootPath = path.join(__dirname, "..", "..", "..");
 const basePath = path.join(__dirname, "..");
 const replaceAssetsPath = path.join(rootPath, "ledger-live-internal-assets", "apps", "ledger-live-mobile");

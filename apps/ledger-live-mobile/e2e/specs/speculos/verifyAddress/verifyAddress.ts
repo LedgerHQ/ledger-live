@@ -21,8 +21,8 @@ export async function runVerifyAddressTest(account: AccountType, tmsLinks: strin
 
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     it(`Verify address on ${account.currency.name}`, async () => {
-      await app.accounts.openViaDeeplink();
-      await app.common.goToAccountByName(account.accountName);
+      await app.account.openViaDeeplink();
+      await app.account.goToAccountByName(account.accountName);
       await app.account.tapReceive();
       await app.receive.selectVerifyAddress();
       const displayedAddress = await app.receive.getFreshAddressDisplayed();

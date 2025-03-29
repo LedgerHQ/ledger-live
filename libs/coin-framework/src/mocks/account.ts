@@ -248,6 +248,7 @@ export type GenAccountOptions = {
   swapHistorySize?: number;
   withNft?: boolean;
   tokenIds?: string[];
+  bandwidth?: boolean;
 };
 
 export function genTokenAccount(

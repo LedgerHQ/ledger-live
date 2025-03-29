@@ -22,4 +22,19 @@ export class FileUtils {
   static async compareAppJsonSize(appJson1: number, appJson2: number) {
     expect(appJson1).not.toEqual(appJson2);
   }
+
+  @step("Wait for file to exist after clicking download")
+  static async waitForFileToExist(filePath: string, timeout: number): Promise<boolean> {
+    const startTime = Date.now();
+    while (Date.now() - startTime < timeout) {
+      try {
+        await fs.access(filePath);
+        return true;
+      } catch {
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+    }
+
+    return false;
+  }
 }

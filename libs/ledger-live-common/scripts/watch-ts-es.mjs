@@ -1,6 +1,10 @@
 #!/usr/bin/env zx
 import "zx/globals";
 
+if (os.platform() === "win32") {
+  usePowerShell();
+}
+
 try {
   cd(path.join(__dirname, ".."));
 

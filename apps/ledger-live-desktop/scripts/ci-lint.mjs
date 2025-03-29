@@ -2,6 +2,10 @@
 import { basename } from "path";
 import stylish from "../../../node_modules/eslint/lib/cli-engine/formatters/stylish.js";
 
+if (os.platform() === "win32") {
+  usePowerShell();
+}
+
 const usage = () => {
   console.log(`Usage: ${basename(__filename)} [-h] [-p <port>] [-t <server-token>]`);
   process.exit(1);

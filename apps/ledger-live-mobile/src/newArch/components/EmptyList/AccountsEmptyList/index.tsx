@@ -26,6 +26,7 @@ const AccountsEmptyList = ({ sourceScreenName }: Props) => {
         onButtonPress={openAddModal}
         linkTextKey="emptyList.accounts.link"
         urlLink={urls.addAccount}
+        testID="empty-accounts-component"
       />
       <AddAccountDrawer isOpened={isAddModalOpened} onClose={closeAddModal} />
     </>

@@ -116,7 +116,7 @@ export function genAccount(id: number | string, opts: GenAccountOptions = {}): A
             energy: BigNumber(0),
             bandwidth: {
               freeUsed: BigNumber(0),
-              freeLimit: BigNumber(1),
+              freeLimit: BigNumber(opts.bandwidth ? 1 : 0),
               gainedUsed: BigNumber(0),
               gainedLimit: BigNumber(0),
             },

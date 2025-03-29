@@ -83,6 +83,10 @@ function runHashChecks(writeCache = false) {
   return compareHashes(cache, result);
 }
 
+if (os.platform() === "win32") {
+  usePowerShell();
+}
+
 cd(path.join(__dirname, ".."));
 
 const syncFamilies = async () => await $`zx ./scripts/sync-families-dispatch.mjs`;
