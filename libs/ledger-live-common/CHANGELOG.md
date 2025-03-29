@@ -1,5 +1,11 @@
 ## 34.25.0
 
+## 34.28.0-nightly.3
+
+### Minor Changes
+
+- [#9704](https://github.com/LedgerHQ/ledger-live/pull/9704) [`df3d9f2`](https://github.com/LedgerHQ/ledger-live/commit/df3d9f2b219de69cd258be4eb5e297ab66bae204) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Feature flag: default value of deviceInitialApps aligned with prod
+
 ## 34.28.0-nightly.2
 
 ### Minor Changes

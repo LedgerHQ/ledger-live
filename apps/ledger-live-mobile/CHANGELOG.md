@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.72.0-nightly.3
+
+### Patch Changes
+
+- [#9704](https://github.com/LedgerHQ/ledger-live/pull/9704) [`df3d9f2`](https://github.com/LedgerHQ/ledger-live/commit/df3d9f2b219de69cd258be4eb5e297ab66bae204) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix redirection at the end of the sync onboarding
+
 ## 3.72.0-nightly.2
 
 ### Patch Changes

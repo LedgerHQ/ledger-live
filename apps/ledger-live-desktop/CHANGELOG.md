@@ -1,5 +1,16 @@
 # ledger-live-desktop
 
+## 2.106.0-nightly.3
+
+### Minor Changes
+
+- [#9722](https://github.com/LedgerHQ/ledger-live/pull/9722) [`5d10594`](https://github.com/LedgerHQ/ledger-live/commit/5d10594b4c2754102722f6b4bb6ecb9aac1c1914) Thanks [@ysitbon](https://github.com/ysitbon)! - Fix unwanted rendering when clicking the 'close' button from the recover screen just after onboarding
+
+### Patch Changes
+
+- Updated dependencies [[`df3d9f2`](https://github.com/LedgerHQ/ledger-live/commit/df3d9f2b219de69cd258be4eb5e297ab66bae204)]:
+  - @ledgerhq/live-common@34.28.0-nightly.3
+
 ## 2.106.0-nightly.2
 
 ### Patch Changes
