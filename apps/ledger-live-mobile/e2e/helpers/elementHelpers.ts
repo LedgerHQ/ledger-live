@@ -48,6 +48,63 @@ export const ElementHelpers = {
     return web.element(by.web.tag(tag)).atIndex(index);
   },
 
+  getWebElementByTestId(id: string) {
+    return web.element(by.web.cssSelector(`[data-testid="${id}"]`));
+  },
+
+  getWebElementsByIdAndText(id: string, text: string) {
+    return web.element(by.web.xpath(`//span[@data-testid="${id}" and text()="${text}"]`));
+  },
+
+  async getWebElementsText(id: string) {
+    const texts: string[] = [];
+    let i = 0;
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+      try {
+        texts.push(await getWebElementByTestId(id).atIndex(i).getText());
+        i++;
+      } catch {
+        break;
+      }
+    }
+    return texts;
+  },
+
+  async waitWebElementByTestId(id: string, timeout = DEFAULT_TIMEOUT) {
+    const startTime = Date.now();
+    const element = web.element(by.web.cssSelector(`[data-testid="${id}"]`));
+
+    while (Date.now() - startTime < timeout) {
+      try {
+        await element.getText();
+        return element;
+      } catch {
+        await delay(200);
+      }
+    }
+    throw new Error(`Element with data-testid "${id}" not found in ${timeout} ms`);
+  },
+
+  async tapWebElementByTestId(id: string, index = 0) {
+    await getWebElementByTestId(id).atIndex(index).tap();
+  },
+
+  async typeTextByWebTestId(id: string, text: string) {
+    await getWebElementByTestId(id).runScript(
+      (el, text) => {
+        const setValue = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")?.set;
+        if (setValue) {
+          setValue.call(el, text);
+        } else {
+          el.value = text;
+        }
+        el.dispatchEvent(new Event("input", { bubbles: true }));
+      },
+      [text],
+    );
+  },
+
   async IsIdVisible(id: string | RegExp) {
     try {
       await waitFor(element(by.id(id)))

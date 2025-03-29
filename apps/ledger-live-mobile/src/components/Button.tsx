@@ -96,7 +96,7 @@ export function BaseButton({
     switch (type) {
       case "primary":
       case "main":
-        return "Proceed";
+        return "proceed-button";
       default:
         return event;
     }

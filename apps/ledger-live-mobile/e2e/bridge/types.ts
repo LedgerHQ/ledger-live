@@ -64,6 +64,7 @@ export type MessageData =
   | { type: "importBle"; id: string; payload: BleState }
   | { type: "overrideFeatureFlags"; id: string; payload: SettingsSetOverriddenFeatureFlagsPlayload }
   | { type: "setGlobals"; id: string; payload: { [key: string]: unknown } }
+  | { type: "swapSetup"; id: string }
   | { type: "ACK"; id: string };
 
 export type MockDeviceEvent =
