@@ -4,16 +4,11 @@ import CommonPage from "../common.page";
 
 export default class AccountsPage extends CommonPage {
   baseLink = "accounts";
-  listTitle = "accounts-list-title";
   emptyAccountDisplay = () => getElementById("empty-accounts-component");
 
   @Step("Open accounts list via deeplink")
   async openViaDeeplink() {
     await openDeeplink(this.baseLink);
-    await this.waitForAccountsPageToLoad(); // Issue with RN75 : QAA-370
-  }
-  async waitForAccountsPageToLoad() {
-    await waitForElementById(this.listTitle);
   }
 
   @Step("Expect accounts number")
