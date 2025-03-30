@@ -73,7 +73,7 @@ env:
 jobs:
   speculos-ios:
     name: "LLM - iOS Speculos Runner Setup"
-    runs-on: [speculos, linux]
+    runs-on: [self-hosted, Linux, arm64]
     if: ${{ inputs.speculos_tests || github.event_name == 'schedule' }}
     outputs:
       coinapps_remote: ${{ env.COINAPPS }}
@@ -88,7 +88,7 @@ jobs:
           bot_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
   detox-tests-ios:
     name: "LLM - iOS Detox Tests"
-    runs-on: ${{(inputs.speculos_tests || github.event_name == 'schedule') && fromJson('["macOS", "speculos"]') || fromJson('["macOS", "m1"]')}}
+    runs-on: ${{(inputs.speculos_tests || github.event_name == 'schedule') && fromJson('["macOS", "pa4-r102-srv-macrunner02"]') || fromJson('["macOS", "m1"]')}}
     needs: [speculos-ios]
     if: ${{ !cancelled() }}
     env:
