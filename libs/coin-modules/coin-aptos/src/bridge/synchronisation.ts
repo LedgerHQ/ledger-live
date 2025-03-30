@@ -193,7 +193,9 @@ export const getAccountShape: GetAccountShape = async info => {
     : mergeSubAccounts(initialAccount, newSubAccounts);
 
   operations.forEach(op => {
-    op.subOperations = inferSubOperations(op.hash, subAccounts);
+    const subOperations = inferSubOperations(op.hash, subAccounts);
+    op.subOperations =
+      subOperations.length === 1 ? subOperations : subOperations.filter(op => !!op.blockHash);
   });
 
   const shape: Partial<AptosAccount> = {
