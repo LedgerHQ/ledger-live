@@ -16,29 +16,35 @@ export async function launchApp({
   simulateCamera?: string;
   windowSize: { width: number; height: number };
 }): Promise<ElectronApplication> {
-  return await electron.launch({
-    args: [
-      `${path.join(__dirname, "../../../../apps/ledger-live-desktop/.webpack/main.bundle.js")}`,
-      `--user-data-dir=${userdataDestinationPath}`,
-      "--force-device-scale-factor=1",
-      "--disable-dev-shm-usage",
-      "--no-sandbox",
-      "--enable-logging",
-      ...(simulateCamera
-        ? [
-            "--use-fake-device-for-media-stream",
-            `--use-file-for-fake-video-capture=${simulateCamera}`,
-          ]
-        : []),
-    ],
-    recordVideo: {
-      dir: `${path.join(__dirname, "../artifacts/videos/")}`,
-      size: windowSize,
-    },
-    env,
-    colorScheme: theme,
-    locale: lang,
-    executablePath: require("electron/index.js"),
-    timeout: 120000,
-  });
+  try {
+    const app = await electron.launch({
+      args: [
+        `${path.join(__dirname, "../../../../apps/ledger-live-desktop/.webpack/main.bundle.js")}`,
+        `--user-data-dir=${userdataDestinationPath}`,
+        "--force-device-scale-factor=1",
+        "--disable-dev-shm-usage",
+        "--no-sandbox",
+        "--enable-logging",
+        ...(simulateCamera
+          ? [
+              "--use-fake-device-for-media-stream",
+              `--use-file-for-fake-video-capture=${simulateCamera}`,
+            ]
+          : []),
+      ],
+      recordVideo: {
+        dir: `${path.join(__dirname, "../artifacts/videos/")}`,
+        size: windowSize,
+      },
+      env,
+      colorScheme: theme,
+      locale: lang,
+      executablePath: require("electron/index.js"),
+      timeout: 120000,
+    });
+    return app;
+  } catch (error) {
+    console.error("Error launching Electron app:", error);
+    throw error;
+  }
 }

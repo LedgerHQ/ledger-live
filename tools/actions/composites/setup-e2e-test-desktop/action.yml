@@ -30,10 +30,7 @@ runs:
     - name: Install App dependencies
       env:
         LANG: en_US.UTF-8
-      run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --unsafe-perm
-      shell: bash
-    - name: Install Playwright Dependencies
-      run: pnpm install --prefix e2e/desktop
+      run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --filter="ledger-live-desktop-e2e-tests" --unsafe-perm
       shell: bash
     - name: Build dependencies
       if: inputs.turborepo-server-port != ''

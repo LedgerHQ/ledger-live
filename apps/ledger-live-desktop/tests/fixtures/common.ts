@@ -164,6 +164,8 @@ export const test = base.extend<TestFixtures>({
         windowSize,
       });
 
+      console.log("Electron app launched");
+
       await use(electronApp);
 
       // close app
