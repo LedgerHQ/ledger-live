@@ -25,6 +25,7 @@ test.use({
       enabled: true,
       params: {
         list: ["ethereum", "solana", "tezos", "polkadot", "tron", "cosmos", "osmo", "celo", "near"],
+        redirects: {},
       },
     },
     portfolioExchangeBanner: {
@@ -132,6 +133,7 @@ test("Ethereum staking flows via portfolio, asset page and market page @smoke", 
         flow: "stake",
         value: "/platform/kiln",
       },
+      timeout: 10000,
     });
     await delegate.chooseStakeProvider("kiln");
     await analyticsPromise;

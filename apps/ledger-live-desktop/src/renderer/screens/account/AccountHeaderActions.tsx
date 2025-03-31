@@ -231,7 +231,7 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
     [currency],
   );
 
-  const onStake = useCallback(() => {
+  const onStakeViaPlatformApp = useCallback(() => {
     setTrackingSource("account header actions");
     track("button_clicked2", {
       button: "stake",
@@ -325,8 +325,12 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
   const buyHeader = <BuyActionDefault onClick={() => onBuySell("buy")} />;
   const sellHeader = <SellActionDefault onClick={() => onBuySell("sell")} />;
   const swapHeader = <SwapActionDefault onClick={onSwap} />;
-  const stakeHeader = (
-    <StakeActionDefault onClick={onStake} disabled={account.spendableBalance.isZero()} />
+
+  const stakeViaPlatformHeader = (
+    <StakeActionDefault
+      onClick={onStakeViaPlatformApp}
+      disabled={account.spendableBalance.isZero()}
+    />
   );
   const manageActionsHeader = manageActions.map(item => (
     <ActionItem {...item} key={item.accountActionsTestId} />
@@ -335,7 +339,7 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
   const NonEmptyAccountHeader = (
     <FadeInButtonsContainer data-testid="account-buttons-group" show={showButtons}>
       {manageActions.length > 0 ? manageActionsHeader : null}
-      {canStakeUsingPlatformApp ? stakeHeader : null}
+      {canStakeUsingPlatformApp ? stakeViaPlatformHeader : null}
       {availableOnSwap ? swapHeader : null}
       {availableOnBuy ? buyHeader : null}
       {availableOnSell && sellHeader}
