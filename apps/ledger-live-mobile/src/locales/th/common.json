@@ -3268,7 +3268,7 @@
       },
       "verifyAddress" : {
         "title" : "ตรวจสอบ Address",
-        "subtitle" : "ตรวจสอบ Address ที่แสดงบนอุปกรณ์ของคุณว่าตรงกับที่เห็นด้านล่างนี้ เมื่อคุณแน่ใจแล้ว คุณสามารถคลิกอนุมัติบนอุปกรณ์ของคุณได้",
+        "subtitle" : "ตรวจสอบ Address ที่แสดงบนอุปกรณ์ของคุณว่าตรงกับที่เห็นด้านล่างนี้ เมื่อคุณแน่ใจแล้ว คุณสามารถยืนยันได้บนอุปกรณ์ของคุณ",
         "cancel" : {
           "title" : "คุณเพิ่งปฏิเสธ Address นี้",
           "subtitle" : "หากดำเนินการนี้ผิดพลาด คุณสามารถลองอีกครั้งได้โดยคลิกปุ่มด้านล่าง",
@@ -4050,7 +4050,9 @@
       "desc" : "คุณแน่ใจหรือไม่ว่าต้องการยกเลิกการเพิ่มบัญชี?",
       "v2" : {
         "title" : "ยกเลิกการเพิ่มบัญชีหรือไม่?",
-        "desc" : "จะไม่มีการเพิ่มบัญชีลงใน Ledger Live"
+        "desc" : "จะไม่มีการเพิ่มบัญชีลงใน Ledger Live",
+        "continue" : "Continue adding",
+        "cancel" : "Cancel"
       }
     },
     "imported" : "เพิ่มสินทรัพย์เรียบร้อยแล้ว",
@@ -4088,7 +4090,7 @@
       "title" : "เพิ่มโทเคน",
       "createParentCurrencyAccount" : "เพิ่มบัญชี {{parrentCurrencyName}}",
       "generic" : {
-        "disclaimer" : "{{token}} ({{ticker}}) เป็นโทเคน {{tokenType}}\nคุณสามารถรับโทเคนในบัญชี {{currency}} ได้โดยตรง",
+        "disclaimer" : "{{token}} ({{ticker}}) is an {{tokenType}} token.\nYou can receive tokens directly on a/an {{currency}} account.",
         "learnMore" : "เรียนรู้เพิ่มเติมเกี่ยวกับ {{tokenType}}"
       }
     },
@@ -6611,7 +6613,12 @@
       "24h" : "24H",
       "7d" : "7D",
       "30d" : "30D",
-      "1y" : "1Y"
+      "1y" : "1Y",
+      "1H_label" : "1H",
+      "1D_label" : "1D",
+      "1W_label" : "1W",
+      "1M_label" : "1M",
+      "1Y_label" : "1Y"
     },
     "warnings" : {
       "connectionError" : "ข้อผิดพลาดในการเชื่อมต่อ",
@@ -7337,7 +7344,7 @@
   },
   "lnsUpsell" : {
     "opted_in" : {
-      "description" : "Upgrade your Ledger Nano S to a newer Ledger — like the Ledger Flex — for more memory, the latest security enhancements, fresh features, and an exclusive 20% off. ",
+      "description" : "อัปเกรด Ledger Nano S ของคุณเป็น Ledger รุ่นใหม่กว่า —เช่น Ledger Flex — เพื่อรับหน่วยความจำเพิ่ม การปรับปรุงด้านความปลอดภัยล่าสุด ฟีเจอร์ใหม่ และส่วนลดพิเศษ 20% ",
       "cta" : "อัปเกรด My Ledger"
     },
     "opted_out" : {
