@@ -84,7 +84,7 @@
     "@ledgerhq/coin-framework": "workspace:^",
     "@ledgerhq/coin-multiversx": "workspace:^",
     "@ledgerhq/coin-stacks": "workspace:^",
-    "@ledgerhq/device-management-kit": "0.0.0-rnble-transport-20250327112620",
+    "@ledgerhq/device-management-kit": "0.0.0-rnble-transport-20250331135728",
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/domain-service": "workspace:^",
     "@ledgerhq/errors": "workspace:^",

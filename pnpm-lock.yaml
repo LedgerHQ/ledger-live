@@ -905,8 +905,8 @@ importers:
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-stacks
       '@ledgerhq/device-management-kit':
-        specifier: 0.0.0-rnble-transport-20250327112620
-        version: 0.0.0-rnble-transport-20250327112620(rxjs@7.8.1)
+        specifier: 0.0.0-rnble-transport-20250331135728
+        version: 0.0.0-rnble-transport-20250331135728(rxjs@7.8.1)
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../../libs/ledgerjs/packages/devices
@@ -4398,8 +4398,8 @@ importers:
         specifier: workspace:^
         version: link:../device-core
       '@ledgerhq/device-management-kit':
-        specifier: 0.0.0-rnble-transport-20250327112620
-        version: 0.0.0-rnble-transport-20250327112620(rxjs@7.8.1)
+        specifier: 0.0.0-rnble-transport-20250331135728
+        version: 0.0.0-rnble-transport-20250331135728(rxjs@7.8.1)
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../ledgerjs/packages/devices
@@ -7091,11 +7091,11 @@ importers:
   libs/live-dmk-desktop:
     dependencies:
       '@ledgerhq/device-management-kit':
-        specifier: 0.0.0-rnble-transport-20250327112620
-        version: 0.0.0-rnble-transport-20250327112620(rxjs@7.8.1)
+        specifier: 0.0.0-rnble-transport-20250331135728
+        version: 0.0.0-rnble-transport-20250331135728(rxjs@7.8.1)
       '@ledgerhq/device-transport-kit-web-hid':
-        specifier: 0.0.0-rnble-transport-20250327112620
-        version: 0.0.0-rnble-transport-20250327112620(@ledgerhq/device-management-kit@0.0.0-rnble-transport-20250327112620(rxjs@7.8.1))(rxjs@7.8.1)
+        specifier: 0.0.0-rnble-transport-20250331135728
+        version: 0.0.0-rnble-transport-20250331135728(@ledgerhq/device-management-kit@0.0.0-rnble-transport-20250331135728(rxjs@7.8.1))(rxjs@7.8.1)
       '@ledgerhq/hw-transport':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-transport
@@ -7155,11 +7155,11 @@ importers:
   libs/live-dmk-mobile:
     dependencies:
       '@ledgerhq/device-management-kit':
-        specifier: 0.0.0-rnble-transport-20250327112620
-        version: 0.0.0-rnble-transport-20250327112620(rxjs@7.8.1)
+        specifier: 0.0.0-rnble-transport-20250331135728
+        version: 0.0.0-rnble-transport-20250331135728(rxjs@7.8.1)
       '@ledgerhq/device-transport-kit-react-native-ble':
-        specifier: 0.0.0-rnble-transport-20250327112620
-        version: 0.0.0-rnble-transport-20250327112620(@ledgerhq/device-management-kit@0.0.0-rnble-transport-20250327112620(rxjs@7.8.1))(react-native-ble-plx@3.2.1(react-native@0.76.3(react@18.3.1))(react@18.3.1))(react-native@0.76.3(react@18.3.1))(rxjs@7.8.1)
+        specifier: 0.0.0-rnble-transport-20250331135728
+        version: 0.0.0-rnble-transport-20250331135728(@ledgerhq/device-management-kit@0.0.0-rnble-transport-20250331135728(rxjs@7.8.1))(react-native-ble-plx@3.2.1(react-native@0.76.3(react@18.3.1))(react@18.3.1))(react-native@0.76.3(react@18.3.1))(rxjs@7.8.1)
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../ledgerjs/packages/errors
@@ -7235,8 +7235,8 @@ importers:
         version: link:../ledgerjs/packages/types-devices
     devDependencies:
       '@ledgerhq/device-management-kit':
-        specifier: 0.0.0-rnble-transport-20250327112620
-        version: 0.0.0-rnble-transport-20250327112620(rxjs@7.8.1)
+        specifier: 0.0.0-rnble-transport-20250331135728
+        version: 0.0.0-rnble-transport-20250331135728(rxjs@7.8.1)
       '@testing-library/dom':
         specifier: ^9.3.4
         version: 9.3.4
@@ -12754,8 +12754,8 @@ packages:
   '@ledgerhq/cryptoassets@6.37.0':
     resolution: {integrity: sha512-xwrDKTS9koQBNNzc7CqgV6zfGHvNFWJjlIL0Kc4O4DVWYR2vUdztUHcvwHD1KPjxNYhVnsgIopmtq47fHt3nMg==}
 
-  '@ledgerhq/device-management-kit@0.0.0-rnble-transport-20250327112620':
-    resolution: {integrity: sha512-Y4DTkcKk/qTJXJJhQw2v6DdbnZdRBodChFv58ILNM/Y2hvx0cbHDmTcGClWLjH359w6bkTl1Arz4I4wmjiTEiQ==}
+  '@ledgerhq/device-management-kit@0.0.0-rnble-transport-20250331135728':
+    resolution: {integrity: sha512-DNgeZ54Z5ygiJNQGFloeOe03vNKUmhm54OTQ0Ive+9nZsNaGhCs9xbeu4Dp+K8552b7PGIgsCI0QDpk4GbV5fg==}
     peerDependencies:
       rxjs: ^7.8.2
 
@@ -12770,18 +12770,18 @@ packages:
       '@ledgerhq/context-module': ^1.3.0
       '@ledgerhq/device-management-kit': 0.6.4
 
-  '@ledgerhq/device-transport-kit-react-native-ble@0.0.0-rnble-transport-20250327112620':
-    resolution: {integrity: sha512-4ER3kluGs6yDOkXjVLdWgtcmKgfZmFilNTUTeAUMjCAgTL+SICiysGvKPZ6VNsHezLOvKPQ2tvMKoAEtP0oLDg==}
+  '@ledgerhq/device-transport-kit-react-native-ble@0.0.0-rnble-transport-20250331135728':
+    resolution: {integrity: sha512-lYqPYC8ev5YJyk8iBG5wu8n6W1oRBc+3a2pyJL/zzsofSRrDzBv3mjU6lzoiy3pIVrVjFnFHE1wfQdu2szl8ng==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': 0.0.0-rnble-transport-20250327112620
+      '@ledgerhq/device-management-kit': 0.0.0-rnble-transport-20250331135728
       react-native: '>0.70'
       react-native-ble-plx: ^3.2.1
       rxjs: ^7.8.1
 
-  '@ledgerhq/device-transport-kit-web-hid@0.0.0-rnble-transport-20250327112620':
-    resolution: {integrity: sha512-OEnc7MNouPNWptR4PdB+R5aj7v2YIwZwxdEJXYK6f3zdwnlfA6fQijpPGkeICIH49iitYHXhvtj4aFN6PwfMWA==}
+  '@ledgerhq/device-transport-kit-web-hid@0.0.0-rnble-transport-20250331135728':
+    resolution: {integrity: sha512-0JU1AoQE3xsqP4SrkcP09JDGuPogHwp/w9CBkxmjh590Ou8qDlx2f+OEFC6q/hMrCa5jMIWxNV+3XQmd9KJWBw==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': 0.0.0-rnble-transport-20250327112620
+      '@ledgerhq/device-management-kit': 0.0.0-rnble-transport-20250331135728
       rxjs: ^7.8.2
 
   '@ledgerhq/domain-service@1.2.12':
@@ -40304,7 +40304,7 @@ snapshots:
     dependencies:
       invariant: 2.2.4
 
-  '@ledgerhq/device-management-kit@0.0.0-rnble-transport-20250327112620(rxjs@7.8.1)':
+  '@ledgerhq/device-management-kit@0.0.0-rnble-transport-20250331135728(rxjs@7.8.1)':
     dependencies:
       '@sentry/minimal': 6.19.7
       axios: 1.8.3
@@ -40358,9 +40358,9 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/device-transport-kit-react-native-ble@0.0.0-rnble-transport-20250327112620(@ledgerhq/device-management-kit@0.0.0-rnble-transport-20250327112620(rxjs@7.8.1))(react-native-ble-plx@3.2.1(react-native@0.76.3(react@18.3.1))(react@18.3.1))(react-native@0.76.3(react@18.3.1))(rxjs@7.8.1)':
+  '@ledgerhq/device-transport-kit-react-native-ble@0.0.0-rnble-transport-20250331135728(@ledgerhq/device-management-kit@0.0.0-rnble-transport-20250331135728(rxjs@7.8.1))(react-native-ble-plx@3.2.1(react-native@0.76.3(react@18.3.1))(react@18.3.1))(react-native@0.76.3(react@18.3.1))(rxjs@7.8.1)':
     dependencies:
-      '@ledgerhq/device-management-kit': 0.0.0-rnble-transport-20250327112620(rxjs@7.8.1)
+      '@ledgerhq/device-management-kit': 0.0.0-rnble-transport-20250331135728(rxjs@7.8.1)
       '@sentry/minimal': 6.19.7
       js-base64: 3.7.7
       purify-ts: 2.1.0
@@ -40369,9 +40369,9 @@ snapshots:
       rxjs: 7.8.1
       uuid: 10.0.0
 
-  '@ledgerhq/device-transport-kit-web-hid@0.0.0-rnble-transport-20250327112620(@ledgerhq/device-management-kit@0.0.0-rnble-transport-20250327112620(rxjs@7.8.1))(rxjs@7.8.1)':
+  '@ledgerhq/device-transport-kit-web-hid@0.0.0-rnble-transport-20250331135728(@ledgerhq/device-management-kit@0.0.0-rnble-transport-20250331135728(rxjs@7.8.1))(rxjs@7.8.1)':
     dependencies:
-      '@ledgerhq/device-management-kit': 0.0.0-rnble-transport-20250327112620(rxjs@7.8.1)
+      '@ledgerhq/device-management-kit': 0.0.0-rnble-transport-20250331135728(rxjs@7.8.1)
       '@sentry/minimal': 6.19.7
       purify-ts: 2.1.0
       rxjs: 7.8.1
