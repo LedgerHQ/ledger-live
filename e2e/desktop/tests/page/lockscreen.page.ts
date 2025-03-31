@@ -3,8 +3,8 @@ import { step } from "../misc/reporters/step";
 
 export class LockscreenPage extends AppPage {
   readonly container = this.page.getByTestId("lockscreen-container");
-  private readonly passwordInput = this.page.getByTestId("lockscreen-password-input");
-  private readonly loginButton = this.page.getByTestId("lockscreen-login-button");
+  private passwordInput = this.page.getByTestId("lockscreen-password-input");
+  private loginButton = this.page.getByTestId("lockscreen-login-button");
   readonly inputError = this.page.locator("id=input-error"); // no data-testid because css style is applied
   readonly logo = this.page.getByTestId("logo");
 

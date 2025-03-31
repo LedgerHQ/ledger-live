@@ -4,23 +4,23 @@ import { step } from "../../misc/reporters/step";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 
 export class ReceiveModal extends Modal {
-  private readonly verifyAddressOnDeviceLabel = this.page.locator(
+  private verifyAddressOnDeviceLabel = this.page.locator(
     "text=Verify that the shared address exactly matches the one on your device",
   );
-  private readonly approveLabel = this.page.locator("text=Address shared securely");
-  private readonly receiveAddressValue = (address: string) =>
+  private approveLabel = this.page.locator("text=Address shared securely");
+  private receiveAddressValue = (address: string) =>
     this.page.getByTestId("modal-content").locator(`text=${address}`);
-  private readonly addressDisplayedValue = this.page.locator("#address-field");
-  private readonly selectAccount = this.page.getByText("Choose a crypto asset");
-  private readonly warningMessage = this.page.locator('div[type="warning"]');
+  private addressDisplayedValue = this.page.locator("#address-field");
+  private selectAccount = this.page.getByText("Choose a crypto asset");
+  private warningMessage = this.page.locator('div[type="warning"]');
   readonly selectAccountInput = this.page.locator('[placeholder="Search"]');
 
-  private readonly sendAssetWarningMessage = (
+  private sendAssetWarningMessage = (
     account: Account,
     specificTokens: string,
   ) => `Please only send ${account.currency.ticker} or ${specificTokens} tokens to ${account.currency.name} accounts. 
           Sending other crypto assets may result in the permanent loss of funds.`;
-  private readonly sendTronAddressActivationWarningMessage =
+  private sendTronAddressActivationWarningMessage =
     "You first need to send at least 0.1 TRX to this address to activate it. Learn more";
 
   @step("Select token")

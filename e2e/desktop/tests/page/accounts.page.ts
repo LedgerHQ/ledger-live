@@ -4,26 +4,20 @@ import { AppPage } from "./abstractClasses";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 
 export class AccountsPage extends AppPage {
-  private readonly accountComponent = (accountName: string) =>
+  private accountComponent = (accountName: string) =>
     this.page.getByTestId(`account-component-${accountName}`);
-  private readonly tokenRow = (parentName: string, childCurrency: Currency) =>
+  private tokenRow = (parentName: string, childCurrency: Currency) =>
     this.accountComponent(parentName)
       .locator(`xpath=following::div`)
       .getByTestId(`token-row-${childCurrency.ticker}`);
-  private readonly tokenRowBalance = (parentName: string, childCurrency: Currency) =>
+  private tokenRowBalance = (parentName: string, childCurrency: Currency) =>
     this.tokenRow(parentName, childCurrency).getByText(`${childCurrency.ticker}`);
-  private readonly showTokensButton = (parentName: string) =>
+  private showTokensButton = (parentName: string) =>
     this.accountComponent(parentName).locator("xpath=following-sibling::button").first();
-  private readonly firstAccount = this.page
-    .locator(".accounts-account-row-item")
-    .locator("div")
-    .first();
+  private firstAccount = this.page.locator(".accounts-account-row-item").locator("div").first();
   // Accounts context menu
-  private readonly contextMenuEdit = this.page.getByTestId("accounts-context-menu-edit");
-  private readonly settingsDeleteButton = this.page.getByTestId("account-settings-delete-button");
-  private readonly settingsConfirmButton = this.page.getByTestId("modal-confirm-button");
-  private readonly accountListNumber = this.page.locator(`[data-testid^="account-component-"]`);
-  private readonly syncAccountButton = (accountName: string) =>
+  private accountListNumber = this.page.locator(`[data-testid^="account-component-"]`);
+  private syncAccountButton = (accountName: string) =>
     this.accountComponent(accountName).getByTestId("sync-button").locator("div").first();
 
   @step("Open Account $0")
@@ -74,16 +68,6 @@ export class AccountsPage extends AppPage {
   async expectAccountAbsence(accountName: string) {
     expect(this.firstAccount).not.toBe(accountName);
     expect(await this.getAccountsName()).not.toContain(accountName);
-  }
-
-  /**
-   * Delete first account from accounts list
-   */
-  async deleteFirstAccount() {
-    await this.firstAccount.click({ button: "right" });
-    await this.contextMenuEdit.click();
-    await this.settingsDeleteButton.click();
-    await this.settingsConfirmButton.click();
   }
 
   async countAccounts(): Promise<number> {

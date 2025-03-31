@@ -3,33 +3,30 @@ import { AppPage } from "./abstractClasses";
 import { expect } from "@playwright/test";
 
 export class PortfolioPage extends AppPage {
-  private readonly addAccountButton = this.page.getByTestId(
-    "portfolio-empty-state-add-account-button",
-  );
-  private readonly buySellEntryButton = this.page.getByTestId("buy-sell-entry-button");
-  private readonly swapEntryButton = this.page.getByTestId("swap-entry-button");
-  private readonly stakeEntryButton = this.page.getByTestId("stake-entry-button");
-  private readonly chart = this.page.getByTestId("chart-container");
-  private readonly operationList = this.page.locator("#operation-list");
-  private readonly marketPerformanceWidget = this.page.getByTestId("market-performance-widget");
-  private readonly swapButton = this.marketPerformanceWidget.getByRole("button", { name: "Swap" });
-  private readonly buyButton = this.marketPerformanceWidget.getByRole("button", { name: "Buy" });
-  private readonly assetAllocationTitle = this.page.getByText("Asset allocation");
-  private readonly trendTitle = this.marketPerformanceWidget.getByText("1W trend");
-  private readonly assetRowElements = this.page.locator("[data-testid^='asset-row-']");
-  private readonly showAllButton = this.page.getByText("Show all");
-  private readonly showMoreButton = this.page.getByText("Show more");
-  private readonly assetRow = (asset: string) =>
-    this.page.getByTestId(`asset-row-${asset.toLowerCase()}`);
-  private readonly assetRowValue = (asset: string) =>
+  private addAccountButton = this.page.getByTestId("portfolio-empty-state-add-account-button");
+  private buySellEntryButton = this.page.getByTestId("buy-sell-entry-button");
+  private swapEntryButton = this.page.getByTestId("swap-entry-button");
+  private stakeEntryButton = this.page.getByTestId("stake-entry-button");
+  private chart = this.page.getByTestId("chart-container");
+  private operationList = this.page.locator("#operation-list");
+  private marketPerformanceWidget = this.page.getByTestId("market-performance-widget");
+  private swapButton = this.marketPerformanceWidget.getByRole("button", { name: "Swap" });
+  private buyButton = this.marketPerformanceWidget.getByRole("button", { name: "Buy" });
+  private assetAllocationTitle = this.page.getByText("Asset allocation");
+  private trendTitle = this.marketPerformanceWidget.getByText("1W trend");
+  private assetRowElements = this.page.locator("[data-testid^='asset-row-']");
+  private showAllButton = this.page.getByText("Show all");
+  private showMoreButton = this.page.getByText("Show more");
+  private assetRow = (asset: string) => this.page.getByTestId(`asset-row-${asset.toLowerCase()}`);
+  private assetRowValue = (asset: string) =>
     this.page.getByTestId(`asset-row-${asset.toLowerCase()}`).locator("//div[position()=5]");
-  private readonly operationRows = this.page.locator("[data-testid^='operation-row-']");
-  private readonly totalBalance = this.page.getByTestId("total-balance");
-  private readonly balanceDiff = this.page.getByTestId("balance-diff");
-  private readonly bestPerformersButton = this.page.getByTestId("market-best-performers");
-  private readonly worstPerformersButton = this.page.getByTestId("market-worst-performers");
-  private readonly rowOnePerformer = this.page.getByTestId("market-performance-widget-row-1");
-  private readonly performerArrowDirection = (direction: string) =>
+  private operationRows = this.page.locator("[data-testid^='operation-row-']");
+  private totalBalance = this.page.getByTestId("total-balance");
+  private balanceDiff = this.page.getByTestId("balance-diff");
+  private bestPerformersButton = this.page.getByTestId("market-best-performers");
+  private worstPerformersButton = this.page.getByTestId("market-worst-performers");
+  private rowOnePerformer = this.page.getByTestId("market-performance-widget-row-1");
+  private performerArrowDirection = (direction: string) =>
     this.rowOnePerformer.getByTestId(`arrow-${direction}`);
 
   @step("Open `Add account` modal")
@@ -117,7 +114,7 @@ export class PortfolioPage extends AppPage {
   @step("check operation history")
   async checkOperationHistory() {
     await this.operationList.scrollIntoViewIfNeeded();
-    expect(this.operationList).toBeVisible();
+    await expect(this.operationList).toBeVisible();
 
     const numberOfOperationsBefore = await this.operationRows.count();
 
@@ -130,24 +127,24 @@ export class PortfolioPage extends AppPage {
 
   @step("Expect total balance to be visible")
   async expectTotalBalanceToBeVisible() {
-    expect(this.totalBalance).toBeVisible();
+    await expect(this.totalBalance).toBeVisible();
   }
 
   @step("Expect total balance to have the correct counter value $0")
   async expectTotalBalanceCounterValue(counterValue: string) {
     await this.expectTotalBalanceToBeVisible();
-    expect(this.totalBalance).toContainText(counterValue);
+    await expect(this.totalBalance).toContainText(counterValue);
   }
 
   @step("Expect balance diff to be visible")
   async expectBalanceDiffToBeVisible() {
-    expect(this.balanceDiff).toBeVisible();
+    await expect(this.balanceDiff).toBeVisible();
   }
 
   @step("Expect balance diff to have the correct counter value $0")
   async expectBalanceDiffCounterValue(counterValue: string) {
     await this.expectBalanceDiffToBeVisible();
-    expect(this.balanceDiff).toContainText(counterValue);
+    await expect(this.balanceDiff).toContainText(counterValue);
   }
 
   @step("Expect asset row $0 to be visible")
@@ -158,7 +155,7 @@ export class PortfolioPage extends AppPage {
   @step("Expect asset row $0 to have the correct counter value $1")
   async expectAssetRowCounterValue(asset: string, counterValue: string) {
     await this.expectAssetRowToBeVisible(asset);
-    expect(this.assetRowValue(asset)).toContainText(counterValue);
+    await expect(this.assetRowValue(asset)).toContainText(counterValue);
   }
 
   @step("Expect operation row to be visible")
