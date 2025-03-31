@@ -66,6 +66,7 @@ const ValidatorField = ({ account, delegation, onChangeValidator, selectedPoolId
   const [showAll, setShowAll] = useState(false);
   const [userAndLedgerPools, setUserAndLedgerPools] = useState<Array<StakePool>>([]);
   const [userAndLedgerPoolsLoading, setUserAndLedgerPoolsLoading] = useState(false);
+  const [currentSelectedPool, setCurrentSelectedPool] = useState<StakePool | undefined>(undefined);
   const { pools, searchQuery, setSearchQuery, onScrollEndReached, isSearching, isPaginating } =
     useCardanoFamilyPools(account.currency);
 
@@ -89,6 +90,7 @@ const ValidatorField = ({ account, delegation, onChangeValidator, selectedPoolId
       userAndLedgerPools.find(pool => pool.poolId === selectedPoolId);
 
     if (selectedPool) {
+      setCurrentSelectedPool(selectedPool);
       if (pools.some(p => p.poolId === selectedPoolId)) {
         onChangeValidator(selectedPool);
       }
@@ -136,7 +138,7 @@ const ValidatorField = ({ account, delegation, onChangeValidator, selectedPoolId
                       ...userAndLedgerPools,
                       ...pools.filter(p => p && !userAndLedgerPoolIds.includes(p.poolId)),
                     ]
-                  : [userAndLedgerPools[0]]
+                  : [currentSelectedPool ?? userAndLedgerPools[0]]
               }
               style={{
                 flex: showAll ? "1 0 256px" : "1 0 64px",
