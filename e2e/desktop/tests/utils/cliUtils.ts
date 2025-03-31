@@ -1,6 +1,6 @@
 import { getSdk } from "@ledgerhq/ledger-key-ring-protocol";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
-import { CloudSyncSDK, UpdateEvent } from "@ledgerhq/live-wallet/lib/cloudsync/index";
+import { CloudSyncSDK, UpdateEvent } from "@ledgerhq/live-wallet/cloudsync";
 import { DistantState as LiveData, liveSlug } from "@ledgerhq/live-wallet/lib/walletsync/index";
 import walletsync from "@ledgerhq/live-wallet/lib/walletsync/root";
 import { getEnv } from "@ledgerhq/live-env";
@@ -9,10 +9,7 @@ import SpeculosHttpTransport, {
   SpeculosHttpTransportOpts,
 } from "@ledgerhq/hw-transport-node-speculos-http";
 import { retry } from "@ledgerhq/live-common/promise";
-import {
-  registerTransportModule,
-  unregisterAllTransportModules,
-} from "@ledgerhq/live-common/lib/hw/index";
+import { registerTransportModule, unregisterAllTransportModules } from "@ledgerhq/live-common/hw";
 
 type LiveDataOpts = {
   currency?: string;
