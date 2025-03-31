@@ -2,21 +2,18 @@ import { AppPage } from "./abstractClasses";
 import { step } from "../misc/reporters/step";
 
 export class MarketPage extends AppPage {
-  private readonly searchInput = this.page.getByTestId("market-search-input");
-  private readonly counterValueSelect = this.page.getByTestId("market-countervalue-select");
-  private readonly marketRangeSelect = this.page.getByTestId("market-range-select");
-  private readonly starFilterButton = this.page.getByTestId("market-star-button");
-  private readonly loadingPlaceholder = this.page.getByTestId("loading-placeholder");
-  private readonly coinRow = (ticker: string) => this.page.getByTestId(`market-${ticker}-row`);
-  private readonly coinPageContainer = this.page.getByTestId("market-coin-page-container");
-  private readonly starButton = (ticker: string) =>
-    this.page.getByTestId(`market-${ticker}-star-button`);
-  private readonly buyButton = (ticker: string) =>
-    this.page.getByTestId(`market-${ticker}-buy-button`);
+  private searchInput = this.page.getByTestId("market-search-input");
+  private counterValueSelect = this.page.getByTestId("market-countervalue-select");
+  private marketRangeSelect = this.page.getByTestId("market-range-select");
+  private starFilterButton = this.page.getByTestId("market-star-button");
+  private loadingPlaceholder = this.page.getByTestId("loading-placeholder");
+  private coinRow = (ticker: string) => this.page.getByTestId(`market-${ticker}-row`);
+  private coinPageContainer = this.page.getByTestId("market-coin-page-container");
+  private starButton = (ticker: string) => this.page.getByTestId(`market-${ticker}-star-button`);
+  private buyButton = (ticker: string) => this.page.getByTestId(`market-${ticker}-buy-button`);
   readonly swapButton = (ticker: string) => this.page.getByTestId(`market-${ticker}-swap-button`);
-  private readonly stakeButton = (ticker: string) =>
-    this.page.getByTestId(`market-${ticker}-stake-button`);
-  private readonly swapButtonOnAsset = this.page.getByTestId("market-coin-swap-button");
+  private stakeButton = (ticker: string) => this.page.getByTestId(`market-${ticker}-stake-button`);
+  private swapButtonOnAsset = this.page.getByTestId("market-coin-swap-button");
 
   @step("Search for $0")
   async search(query: string) {

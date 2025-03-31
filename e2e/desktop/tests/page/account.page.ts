@@ -6,37 +6,36 @@ import invariant from "invariant";
 
 export class AccountPage extends AppPage {
   readonly settingsButton = this.page.getByTestId("account-settings-button");
-  private readonly settingsDeleteButton = this.page.getByTestId("account-settings-delete-button");
-  private readonly settingsConfirmButton = this.page.getByTestId("modal-confirm-button");
-  private readonly swapButton = this.page.getByTestId("swap-account-action-button");
-  private readonly stakeButton = this.page.getByTestId("stake-button");
-  private readonly stakeBannerButton = this.page.getByTestId("account-stake-banner-button");
-  private readonly receiveButton = this.page.getByRole("button", { name: "Receive", exact: true });
-  private readonly sendButton = this.page.getByRole("button", { name: "Send" });
-  private readonly accountName = (name: string) => this.page.locator(`text=${name}`);
-  private readonly lastOperation = this.page.locator("text=Latest operations");
-  private readonly tokenValue = (tokenName: string, accountName: string) =>
+  private settingsDeleteButton = this.page.getByTestId("account-settings-delete-button");
+  private settingsConfirmButton = this.page.getByTestId("modal-confirm-button");
+  private swapButton = this.page.getByTestId("swap-account-action-button");
+  private stakeButton = this.page.getByTestId("stake-button");
+  private stakeBannerButton = this.page.getByTestId("account-stake-banner-button");
+  private receiveButton = this.page.getByRole("button", { name: "Receive", exact: true });
+  private sendButton = this.page.getByRole("button", { name: "Send" });
+  private accountName = (name: string) => this.page.locator(`text=${name}`);
+  private lastOperation = this.page.locator("text=Latest operations");
+  private tokenValue = (tokenName: string, accountName: string) =>
     this.page.getByTestId(`account-row-${tokenName.toLowerCase()}`).getByText(`${accountName}`);
-  private readonly accountBalance = this.page.getByTestId("total-balance");
-  private readonly operationList = this.page.locator("id=operation-list");
-  private readonly showMoreButton = this.page.getByText("Show more");
-  private readonly seeMoreCollectionsButton = this.page.getByText("See more collections");
-  private readonly advancedButton = this.page.getByText("Advanced");
-  private readonly accountAdvancedLogs = this.page.getByTestId("Advanced_Logs");
-  private readonly operationRows = this.page.locator("[data-testid^='operation-row-']");
-  private readonly selectSpecificOperation = (operationType: string) =>
+  private accountBalance = this.page.getByTestId("total-balance");
+  private operationList = this.page.locator("id=operation-list");
+  private showMoreButton = this.page.getByText("Show more");
+  private seeMoreCollectionsButton = this.page.getByText("See more collections");
+  private advancedButton = this.page.getByText("Advanced");
+  private accountAdvancedLogs = this.page.getByTestId("Advanced_Logs");
+  private operationRows = this.page.locator("[data-testid^='operation-row-']");
+  private selectSpecificOperation = (operationType: string) =>
     this.page.locator("[data-testid^='operation-row-']").filter({ hasText: operationType });
-  private readonly closeModal = this.page.getByTestId("modal-close-button");
-  private readonly accountbutton = (accountName: string) =>
+  private closeModal = this.page.getByTestId("modal-close-button");
+  private accountbutton = (accountName: string) =>
     this.page.getByRole("button", { name: `${accountName}` });
-  private readonly tokenRow = (tokenTicker: string) =>
-    this.page.getByTestId(`token-row-${tokenTicker}`);
-  private readonly addTokenButton = this.page.getByRole("button", { name: "Add token" });
-  private readonly viewDetailsButton = this.page.getByText("View details");
-  private readonly seeGalleryButton = this.page.getByRole("button", { name: "See Gallery" });
-  private readonly nftOperation = this.page.getByText("NFT Sent");
-  private readonly nftList = (collectionName: string) =>
-    this.page.getByTestId(`nft-row-${collectionName}`);
+  private tokenRow = (tokenTicker: string) => this.page.getByTestId(`token-row-${tokenTicker}`);
+  private addTokenButton = this.page.getByRole("button", { name: "Add token" });
+  private viewDetailsButton = this.page.getByText("View details");
+  private seeGalleryButton = this.page.getByRole("button", { name: "See Gallery" });
+  private nftOperation = this.page.getByText("NFT Sent");
+  private nftList = (collectionName: string) => this.page.getByTestId(`nft-row-${collectionName}`);
+  private accountChart = this.page.getByTestId("chart-container");
 
   @step("Navigate to token")
   async navigateToToken(SubAccount: Account) {
@@ -184,5 +183,10 @@ export class AccountPage extends AppPage {
       }
       await expect(nftLocator).toBeVisible();
     }
+  }
+
+  @step("Check account chart is visible")
+  async checkAccountChart() {
+    await this.accountChart.waitFor({ state: "visible" });
   }
 }

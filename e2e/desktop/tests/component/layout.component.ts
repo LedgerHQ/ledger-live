@@ -19,6 +19,11 @@ export class Layout extends Component {
   readonly drawerSwapButton = this.page.getByTestId("drawer-swap-button");
   readonly drawerExperimentalButton = this.page.getByTestId("drawer-experimental-button");
   readonly drawerManagerButton = this.page.getByTestId("drawer-manager-button");
+  readonly drawerRecoverButton = this.page.getByTestId("drawer-recover-button");
+  readonly recoverStatusIcon = this.page
+    .getByTestId("drawer-recover-button")
+    .locator("path")
+    .nth(1);
 
   // topbar
   readonly topbarDiscreetButton = this.page.getByTestId("topbar-discreet-button");
@@ -135,5 +140,15 @@ export class Layout extends Component {
   @step("wait for loading spinner to have disappeared")
   async waitForLoadingSpinnerToHaveDisappeared() {
     await this.loadingSpinner.waitFor({ state: "detached" });
+  }
+
+  @step("Expect recover status icon to be visible")
+  async expectRecoverStatusIconToBeVisible(visible: boolean = true) {
+    await expect(this.drawerRecoverButton).toBeVisible();
+    if (visible) {
+      await expect(this.recoverStatusIcon).toBeVisible();
+    } else {
+      await expect(this.recoverStatusIcon).not.toBeVisible();
+    }
   }
 }

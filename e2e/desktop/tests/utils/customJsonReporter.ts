@@ -8,7 +8,7 @@ export function getDescription(annotations: any, type: "TMS" | "BUG") {
 }
 
 class JsonReporter implements Reporter {
-  private readonly results: {
+  private results: {
     info?: { summary: string; description: string };
     testExecutionKey?: string;
     tests: { testKey: string; status: string }[];

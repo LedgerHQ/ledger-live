@@ -2,9 +2,9 @@ import { step } from "../misc/reporters/step";
 import { AppPage } from "./abstractClasses";
 
 export class AssetPage extends AppPage {
-  private readonly stakeButton = this.page.getByTestId("asset-page-stake-button");
-  private readonly buyButton = this.page.getByTestId("asset-page-buy-button");
-  private readonly swapButton = this.page.getByTestId("asset-page-swap-button");
+  private stakeButton = this.page.getByTestId("asset-page-stake-button");
+  private buyButton = this.page.getByTestId("asset-page-buy-button");
+  private swapButton = this.page.getByTestId("asset-page-swap-button");
 
   @step("Start stake flow")
   async startStakeFlow() {

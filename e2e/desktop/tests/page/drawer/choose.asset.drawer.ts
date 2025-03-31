@@ -2,8 +2,8 @@ import { step } from "../../misc/reporters/step";
 import { Drawer } from "../../component/drawer.component";
 
 export class ChooseAssetDrawer extends Drawer {
-  private readonly searchInput = this.page.getByTestId("select-asset-drawer-search-input");
-  private readonly currencyRow = (currencyName: string) =>
+  private searchInput = this.page.getByTestId("select-asset-drawer-search-input");
+  private currencyRow = (currencyName: string) =>
     this.page.getByTestId(`currency-row-${currencyName.toLowerCase()}`);
 
   @step("Choose asset to swap from: $0")

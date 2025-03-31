@@ -46,7 +46,7 @@ const e2eDelegationAccounts = [
 
 const e2eDelegationAccountsWithoutBroadcast = [
   {
-    delegate: new Delegate(Account.ADA_1, "0.01", "LBF3 - Ledger by Figment 3"),
+    delegate: new Delegate(Account.ADA_1, "0.01", "Ledger by Figment 3"),
     xrayTicket: "B2CQA-3023",
   },
   {
@@ -69,7 +69,7 @@ const validators = [
     xrayTicket: "B2CQA-2732, B2CQA-2765",
   },
   {
-    delegate: new Delegate(Account.ADA_2, "0.01", "LBF2 - Ledger by Figment 2"),
+    delegate: new Delegate(Account.ADA_2, "0.01", "Ledger by Figment 2"),
     xrayTicket: "B2CQA-2766",
   },
   {

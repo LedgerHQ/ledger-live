@@ -3,16 +3,16 @@ import { step } from "../../misc/reporters/step";
 import { Drawer } from "../../component/drawer.component";
 
 export class SwapConfirmationDrawer extends Drawer {
-  private readonly amountSent = this.page.getByTestId("amountSent");
-  private readonly amountReceived = this.page.getByTestId("amountReceived");
-  private readonly swapProvider = this.page.getByTestId("provider");
-  private readonly fees = this.page.getByTestId("fees");
-  private readonly sourceAccount = this.page.getByTestId("sourceAccount");
-  private readonly targetAccount = this.page.getByTestId("targetAccount");
-  private readonly exchangeError = this.page.locator("#error-CompleteExchangeError span").first();
-  private readonly swapCompletedMessage = this.page.getByTestId("swap-completed-message");
-  private readonly swapCompletedDescription = this.page.getByTestId("swap-completed-description");
-  private readonly deviceActionError = this.page.getByTestId("error-description-deviceAction");
+  private amountSent = this.page.getByTestId("amountSent");
+  private amountReceived = this.page.getByTestId("amountReceived");
+  private swapProvider = this.page.getByTestId("provider");
+  private fees = this.page.getByTestId("fees");
+  private sourceAccount = this.page.getByTestId("sourceAccount");
+  private targetAccount = this.page.getByTestId("targetAccount");
+  private exchangeError = this.page.locator("#error-CompleteExchangeError span").first();
+  private swapCompletedMessage = this.page.getByTestId("swap-completed-message");
+  private swapCompletedDescription = this.page.getByTestId("swap-completed-description");
+  private deviceActionError = this.page.getByTestId("error-description-deviceAction");
 
   @step("Verify amount to send: $0")
   async verifyAmountSent(amount: string, currency: string) {
@@ -41,12 +41,12 @@ export class SwapConfirmationDrawer extends Drawer {
 
   @step("Get fees")
   async getFees() {
-    return (await this.fees.textContent()) ?? "";
+    return (await this.fees.textContent()) || "";
   }
 
   @step("Get amount to receive")
   async getAmountToReceive() {
-    return (await this.amountReceived.textContent()) ?? "";
+    return (await this.amountReceived.textContent()) || "";
   }
 
   @step("Verify exchange error text content: $0")
@@ -65,6 +65,7 @@ export class SwapConfirmationDrawer extends Drawer {
     );
   }
 
+  @step("Check error message: $0")
   async checkErrorMessage(errorMessage: string) {
     const error = await this.deviceActionError.textContent();
     expect(error).toContain(errorMessage);

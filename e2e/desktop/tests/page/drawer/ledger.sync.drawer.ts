@@ -4,19 +4,15 @@ import { Drawer } from "../../component/drawer.component";
 import { extractNumberFromText } from "../../utils/textParserUtils";
 
 export class LedgerSyncDrawer extends Drawer {
-  private readonly syncAccountsButton = this.page.getByRole("button", {
-    name: "Turn on Ledger Sync",
-  });
-  private readonly closeLedgerSyncButton = this.page.getByRole("button", { name: "Close" });
-  private readonly deleteSyncButton = this.page.getByText("Delete sync");
-  private readonly confirmBackupDeletionButton = this.page.getByRole("button", {
-    name: "Yes, delete",
-  });
-  private readonly successTextElement = this.page
+  private syncAccountsButton = this.page.getByRole("button", { name: "Turn on Ledger Sync" });
+  private closeLedgerSyncButton = this.page.getByRole("button", { name: "Close" });
+  private deleteSyncButton = this.page.getByText("Delete sync");
+  private confirmBackupDeletionButton = this.page.getByRole("button", { name: "Yes, delete" });
+  private successTextElement = this.page
     .locator("span", { hasText: "Ledger Sync turned on for" })
     .or(this.page.locator("span", { hasText: "Sync successful!" }))
     .first();
-  private readonly backupDeletionSuccessText = this.page.getByText(
+  private backupDeletionSuccessText = this.page.getByText(
     "Your Ledger Live apps are no longer synched",
   );
 

@@ -3,33 +3,33 @@ import { Modal } from "../../component/modal.component";
 import { step } from "../../misc/reporters/step";
 
 export class DelegateModal extends Modal {
-  private readonly titleProvider = this.page.getByTestId("modal-provider-title");
-  private readonly rowProvider = this.page.getByTestId("modal-provider-row");
-  private readonly searchOpenButton = this.page.getByText("Show all");
-  private readonly searchCloseButton = this.page.getByText("Show less");
-  private readonly validatorList = this.page.getByTestId("validator-list");
-  private readonly inputSearchField = this.page.getByPlaceholder("Search by name or address...");
-  private readonly stakeProviderContainer = (stakeProviderID: string) =>
+  private titleProvider = this.page.getByTestId("modal-provider-title");
+  private rowProvider = this.page.getByTestId("modal-provider-row");
+  private searchOpenButton = this.page.getByText("Show all");
+  private searchCloseButton = this.page.getByText("Show less");
+  private validatorList = this.page.getByTestId("validator-list");
+  private inputSearchField = this.page.getByPlaceholder("Search by name or address...");
+  private stakeProviderContainer = (stakeProviderID: string) =>
     this.page.getByTestId(`stake-provider-container-${stakeProviderID}`);
-  private readonly detailsButton = this.page.getByRole("button", { name: "View details" });
-  private readonly validatorTC = this.page.getByTestId("ledger-validator-tc");
-  private readonly validatorName = this.page.getByTestId("validator-name-label");
-  private readonly feesSummaryStep = this.page.getByTestId("fees-amount-step-summary");
-  private readonly successMessageLabel = this.page.getByTestId("success-message-label");
+  private detailsButton = this.page.getByRole("button", { name: "View details" });
+  private validatorTC = this.page.getByTestId("ledger-validator-tc");
+  private validatorName = this.page.getByTestId("validator-name-label");
+  private feesSummaryStep = this.page.getByTestId("fees-amount-step-summary");
+  private successMessageLabel = this.page.getByTestId("success-message-label");
   readonly delegateToEarnRewardsButton = this.page.getByRole("button", {
     name: "Delegate to earn rewards",
   });
-  private readonly delegateStarterInfos = this.page.getByTestId("delegation-starter-infos");
-  private readonly delegateTezosProvider = this.page.getByTestId("validator-name-tezos");
-  private readonly warningBox = this.page.getByTestId("warning-box");
-  private readonly celoLockButton = this.page.getByTestId("celo-lock-button");
-  private readonly celoVoteButton = this.page.getByTestId("celo-vote-button");
-  private readonly celoActivateVoteButton = this.page.getByTestId("celo-activate-vote-button");
-  private readonly celoRevokeVoteButton = this.page.getByTestId("celo-revoke-vote-button");
-  private readonly celoUnlockButton = this.page.getByTestId("celo-unlock-button");
-  private readonly celoWithdrawButton = this.page.getByTestId("celo-withdraw-button");
-  private readonly lockInfoCeloWarning = this.page.getByTestId("lock-info-celo");
-  private readonly checkIcon = this.page
+  private delegateStarterInfos = this.page.getByTestId("delegation-starter-infos");
+  private delegateTezosProvider = this.page.getByTestId("validator-name-tezos");
+  private warningBox = this.page.getByTestId("warning-box");
+  private celoLockButton = this.page.getByTestId("celo-lock-button");
+  private celoVoteButton = this.page.getByTestId("celo-vote-button");
+  private celoActivateVoteButton = this.page.getByTestId("celo-activate-vote-button");
+  private celoRevokeVoteButton = this.page.getByTestId("celo-revoke-vote-button");
+  private celoUnlockButton = this.page.getByTestId("celo-unlock-button");
+  private celoWithdrawButton = this.page.getByTestId("celo-withdraw-button");
+  private lockInfoCeloWarning = this.page.getByTestId("lock-info-celo");
+  private checkIcon = this.page
     .getByTestId("check-icon")
     .locator('path[fill]:not([fill="transparent"])');
   readonly spendableBanner = this.page.getByTestId("modal-spendable-banner");
