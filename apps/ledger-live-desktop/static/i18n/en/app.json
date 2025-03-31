@@ -5892,6 +5892,10 @@
       "title": "Sorry, insufficient funds",
       "description": "Please make sure the account has enough funds."
     },
+    "NotEnoughBalanceFees": {
+      "title": "Sorry, insufficient funds to cover fees",
+      "description": "Please make sure the account has enough funds."
+    },
     "NotEnoughBalanceSwap": {
       "title": "Sorry, insufficient balance including network fees. Adjust amount or verify balance.",
       "description": "Please make sure the account has enough funds."

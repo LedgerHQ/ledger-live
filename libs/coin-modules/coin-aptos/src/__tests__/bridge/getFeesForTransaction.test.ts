@@ -138,6 +138,44 @@ describe("getFeesForTransaction Test", () => {
         }).rejects.toThrow("Simulation failed with following error: DUMMY_STATE");
       });
     });
+
+    describe("with vm_status as MAX_GAS_UNITS_BELOW_MIN_TRANSACTION_GAS_UNITS", () => {
+      it("should return a fee estimation object with GasInsuficeinetBalance error", async () => {
+        simulateTransaction = jest.fn(() => [
+          {
+            success: false,
+            vm_status: ["MAX_GAS_UNITS_BELOW_MIN_TRANSACTION_GAS_UNITS"],
+            expiration_timestamp_secs: 5,
+            gas_used: "0",
+            gas_unit_price: "100",
+          },
+        ]);
+        mockedGetTokenAccount.mockReturnValue(undefined);
+
+        const account = createFixtureAccountWithSubAccount("coin");
+        const transaction = createFixtureTransactionWithSubAccount();
+        const aptosClient = new AptosAPI(account.currency.id);
+
+        transaction.amount = new BigNumber(1);
+        account.xpub = "xpub";
+        account.spendableBalance = new BigNumber(100000000);
+
+        const result = await getFeesForTransaction.getFee(account, transaction, aptosClient);
+
+        const expected = {
+          fees: new BigNumber(0),
+          estimate: {
+            maxGasAmount: "0",
+            gasUnitPrice: "100",
+          },
+          errors: {
+            maxGasAmount: "GasInsufficientBalance",
+          },
+        };
+
+        expect(result).toEqual(expected);
+      });
+    });
   });
 
   describe("when using getEstimatedGas", () => {
