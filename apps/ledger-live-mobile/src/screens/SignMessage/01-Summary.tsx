@@ -1,6 +1,6 @@
 import { getMessageProperties } from "@ledgerhq/coin-evm/logic";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import type { MessageProperties } from "@ledgerhq/types-live";
+import type { AnyMessage, MessageProperties } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
 import invariant from "invariant";
 import React, { memo, useCallback, useEffect, useState } from "react";
@@ -18,7 +18,8 @@ import { ScreenName } from "~/const";
 import WalletIcon from "~/icons/Wallet";
 import { accountScreenSelector } from "~/reducers/accounts";
 import { useAccountName } from "~/reducers/wallet";
-import CopyButton from "./CopyButton";
+import CopyButton from "./Components/CopyButton";
+import theme from "@ledgerhq/native-ui/styles/theme";
 
 const MessageProperty = memo(({ label, value }: MessageProperties[0]) => {
   const { colors } = useTheme();
@@ -61,6 +62,60 @@ const MessageProperty = memo(({ label, value }: MessageProperties[0]) => {
 });
 MessageProperty.displayName = "MessageProperty";
 
+const ToggleAdvancedButton = memo(
+  ({ showAdvanced, onPress }: { showAdvanced: boolean; onPress: () => void }) => {
+    const { t } = useTranslation();
+    return (
+      <Button type="color" onPress={onPress}>
+        {showAdvanced
+          ? `- ${t("signMessage.eip712.hideFullMessage")}`
+          : `+ ${t("signMessage.eip712.showFullMessage")}`}
+      </Button>
+    );
+  },
+);
+
+const MessageDisplay = memo(
+  ({
+    messageData,
+    showAdvanced,
+    isACREWithdraw,
+    messageFields,
+  }: {
+    messageData: AnyMessage;
+    showAdvanced: boolean;
+    isACREWithdraw: boolean;
+    messageFields: MessageProperties | null;
+  }) => {
+    if (showAdvanced) {
+      return (
+        <LText
+          style={[styles.advancedMessageArea, { backgroundColor: theme.colors.opacityPurple.c10 }]}
+        >
+          {typeof messageData.message === "string"
+            ? `"${messageData.message}"`
+            : JSON.stringify(messageData.message, null, 2)}
+        </LText>
+      );
+    }
+
+    if (isACREWithdraw) return null;
+
+    return messageData.standard === "EIP712" ? (
+      <MessagePropertiesComp properties={messageFields} />
+    ) : (
+      <View style={styles.messageContainer}>
+        <MessageProperty label={"message"} value={messageData.message || ""} />
+      </View>
+    );
+  },
+);
+
+const Separator = memo(() => {
+  const { colors } = useTheme();
+  return <View style={[styles.separator, { backgroundColor: colors.separator }]} />;
+});
+
 const MessagePropertiesComp = memo((props: { properties: MessageProperties | null }) => {
   const { properties } = props;
   return properties ? (
@@ -77,7 +132,6 @@ function SignSummary({
   navigation,
   route,
 }: StackNavigatorProps<SignMessageNavigatorStackParamList, ScreenName.SignSummary>) {
-  const { t } = useTranslation();
   const { colors } = useTheme();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
 
@@ -145,74 +199,54 @@ function SignSummary({
             </View>
           </View>
         </View>
-        <View
-          style={[
-            styles.separator,
-            {
-              backgroundColor: colors.separator,
-            },
-          ]}
-        />
-        <ScrollView style={styles.scrollContainer}>
-          {true ? (
-            <>
-              {!messageFields ? (
-                <View style={{ paddingTop: 20 }}>
-                  {showAdvanced ? (
-                    <Button
-                      type="color"
-                      onPress={() => setShowAdvanced(!showAdvanced)}
-                      style={{ paddingTop: 100 }}
-                    >
-                      {showAdvanced
-                        ? `- ${t("signMessage.eip712.hideFullMessage")}`
-                        : `+ ${t("signMessage.eip712.showFullMessage")}`}
-                    </Button>
-                  ) : null}
-                  {showAdvanced ? (
-                    <LText
-                      style={[
-                        styles.advancedMessageArea,
-                        {
-                          backgroundColor: colors.pillActiveBackground,
-                        },
-                      ]}
-                    >
-                      {typeof messageData.message === "string"
-                        ? `"${messageData.message}"`
-                        : JSON.stringify(messageData.message, null, 2)}
-                    </LText>
-                  ) : (
-                    <>
-                      {!isACREWithdraw ? (
-                        messageData.standard === "EIP712" ? (
-                          <MessagePropertiesComp properties={messageFields} />
-                        ) : (
-                          <View style={styles.messageContainer}>
-                            <MessageProperty label={"message"} value={messageData.message || ""} />
-                          </View>
-                        )
-                      ) : null}
-                    </>
-                  )}
-                  {!showAdvanced ? (
-                    <Button type="color" onPress={() => setShowAdvanced(!showAdvanced)}>
-                      {showAdvanced
-                        ? `- ${t("signMessage.eip712.hideFullMessage")}`
-                        : `+ ${t("signMessage.eip712.showFullMessage")}`}
-                    </Button>
-                  ) : null}
+        <>
+          <Separator />
+          <ScrollView style={styles.scrollContainer}>
+            {!isACREWithdraw ? (
+              messageData.standard === "EIP712" ? (
+                <MessagePropertiesComp properties={messageFields} />
+              ) : (
+                <View style={styles.messageContainer}>
+                  <MessageProperty label={"message"} value={messageData.message.toString() || ""} />
                 </View>
-              ) : null}
-            </>
-          ) : null}
-        </ScrollView>
+              )
+            ) : null}
+            {messageData.standard === "EIP712" ? (
+              <>
+                {!messageFields && (
+                  <View style={{ paddingTop: 20 }}>
+                    {showAdvanced ? (
+                      <ToggleAdvancedButton
+                        showAdvanced={showAdvanced}
+                        onPress={() => setShowAdvanced(!showAdvanced)}
+                      />
+                    ) : null}
+
+                    <MessageDisplay
+                      messageData={messageData}
+                      showAdvanced={showAdvanced}
+                      isACREWithdraw={isACREWithdraw}
+                      messageFields={messageFields}
+                    />
+
+                    {!showAdvanced && (
+                      <ToggleAdvancedButton
+                        showAdvanced={showAdvanced}
+                        onPress={() => setShowAdvanced(!showAdvanced)}
+                      />
+                    )}
+                  </View>
+                )}
+              </>
+            ) : null}
+          </ScrollView>
+          {showAdvanced && (
+            <View>
+              <CopyButton text={messageData.message.toString()} />
+            </View>
+          )}
+        </>
       </View>
-      {showAdvanced ? (
-        <View>
-          <CopyButton text={messageData.message.toString()} />
-        </View>
-      ) : null}
       <View style={styles.footer}>
         <Button
           event="SummaryContinue"
