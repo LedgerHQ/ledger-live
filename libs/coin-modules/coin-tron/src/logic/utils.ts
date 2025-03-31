@@ -42,9 +42,26 @@ export async function decodeTransaction(rawTx: string): Promise<{
 function convertTxToRaw(rawData: Record<string, unknown>) {
   const { Transaction } = (globalThis as unknown as any).TronWebProto;
   const rawTransaction = new Transaction.raw();
-  // console.log("rawTransaction in convertTxToRaw():", rawTransaction);
 
-  Object.assign(rawTransaction, rawData);
+  if (rawData.ref_block_bytes) rawTransaction.setRefBlockBytes(rawData.ref_block_bytes);
+  if (rawData.ref_block_num) rawTransaction.setRefBlockNum(rawData.ref_block_num);
+  if (rawData.ref_block_hash) rawTransaction.setRefBlockHash(rawData.ref_block_hash);
+  if (rawData.expiration) rawTransaction.setExpiration(rawData.expiration);
+  if (rawData.timestamp) rawTransaction.setTimestamp(rawData.timestamp);
+
+  if (Array.isArray(rawData.contract)) {
+    rawData.contract.forEach((contractData: any) => {
+      const contract = new Transaction.Contract();
+
+      if (contractData.type) contract.setType(contractData.type);
+
+      if (contractData.parameter) {
+        contract.setParameter(contractData.parameter);
+      }
+
+      rawTransaction.addContract(contract);
+    });
+  }
 
   return rawTransaction;
 }
@@ -58,8 +75,13 @@ export async function encodeTransaction(
   transaction.raw = convertTxToRaw(rawData);
 
   const serializedHex = Buffer.from(transaction.raw.serializeBinary()).toString("hex");
+  const sigTxStr = combine(serializedHex, signature);
 
-  return combine(serializedHex, signature);
+  console.log("rawTx:", serializedHex);
+  console.log("signature:", signature);
+  console.log("SignedTxString:", sigTxStr);
+
+  return sigTxStr;
 }
 
 /**

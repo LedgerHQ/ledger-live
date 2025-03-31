@@ -13,6 +13,8 @@ export async function broadcast(transaction: string): Promise<string> {
     signature: [signature],
   };
 
+  console.log("signedTxPayload:", signedTxPayload);
+
   return broadcastTron(signedTxPayload);
 }
 
