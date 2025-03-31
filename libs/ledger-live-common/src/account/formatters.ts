@@ -96,8 +96,10 @@ const cliFormat = (account, level?: string) => {
     getAccountCurrency(account).units[0],
   );
 
-  if (getAccountBridge(account).formatAccountSpecifics) {
-    str += getAccountBridge(account).formatAccountSpecifics?.(account) + "\n";
+  const formatAccountSpecifics = getAccountBridge(account).formatAccountSpecifics;
+  if (formatAccountSpecifics) {
+    str += formatAccountSpecifics(account);
+    str += "\n";
   }
 
   const subAccounts = account.subAccounts || [];
