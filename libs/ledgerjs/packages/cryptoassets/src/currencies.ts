@@ -31,6 +31,7 @@ import {
 
 /**
  * Make an ExplorerView for a Blockscout based explorer
+ * @private
  * @param baseURL The explorer base URL. It MUST be properly formatted with no trailing slash. No checks are performed.
  */
 function blockscoutExplorerView(baseURL: string) {
