@@ -2411,16 +2411,13 @@
     },
     "recoverBanner" : {
       "subscribeDone" : {
-        "title" : "Hatırlatma: Ledger Recover'a abone olma işlemini tamamlayın",
-        "description" : "Güvende olmanıza sadece iki adım kaldı."
+        "title" : "Hatırlatma: Ledger Recover'a abone olma işlemini tamamlayın"
       },
       "verifyIdentity" : {
-        "title" : "Hatırlatma: Ledger Recover'a abone olma işlemini tamamlayın",
-        "description" : "Güvende olmanıza sadece bir adım kaldı."
+        "title" : "Cüzdan erişiminiz henüz yedeklenmedi"
       },
       "connectDevice" : {
-        "title" : "Hatırlatma: Ledger Recover'a abone olma işlemini tamamlayın",
-        "description" : "Bu, gerektiğinde cüzdana yeniden erişebilmek için tamamlamanız gereken son adımdır."
+        "title" : "Cüzdan erişiminiz henüz yedeklenmedi"
       }
     }
   },
@@ -4041,7 +4038,7 @@
   "addAccounts" : {
     "addNew" : "Yeni ekle",
     "seeAllAccounts" : "Tüm hesapları gör",
-    "addNewOrExisting" : "Yeni veya mevcut bir hesabı ekleyin",
+    "addNewOrExisting" : "Yeni veya mevcut bir hesabı ekle",
     "supportLinks" : {
       "segwit_or_native_segwit" : "Segwit mi yoksa Native Segwit mi?"
     },
@@ -6611,7 +6608,12 @@
       "24h" : "24SA",
       "7d" : "7G",
       "30d" : "30G",
-      "1y" : "1Y"
+      "1y" : "1Y",
+      "1H_label" : "1SA",
+      "1D_label" : "1G",
+      "1W_label" : "1H",
+      "1M_label" : "1A",
+      "1Y_label" : "1Y"
     },
     "warnings" : {
       "connectionError" : "Bağlantı Hatası",
@@ -7010,7 +7012,7 @@
           "moreOptions" : "Tercihlerinizi yönetin",
           "ctas" : {
             "refuse" : "Tümünü reddet",
-            "accept" : "Tümünü kabul et"
+            "accept" : "Tümünü kabul et"
           },
           "infoText" : {
             "info" : "Onayınızı, dilediğiniz zaman uygulama ayarlarından iptal edebilirsiniz.",
@@ -7337,7 +7339,7 @@
   },
   "lnsUpsell" : {
     "opted_in" : {
-      "description" : "Upgrade your Ledger Nano S to a newer Ledger — like the Ledger Flex — for more memory, the latest security enhancements, fresh features, and an exclusive 20% off. ",
+      "description" : "Daha fazla bellek, en son güvenlik güncellemeleri, yeni özellikler ve %20 oranında özel bir indirim için Ledger Nano S cihazınızın modelini Ledger Flex gibi daha yeni bir Ledger modeline yükseltin. ",
       "cta" : "Ledger modelimi yükselt"
     },
     "opted_out" : {
