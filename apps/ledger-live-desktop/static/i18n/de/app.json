@@ -4229,7 +4229,7 @@
       "nfts" : {
         "title" : "Ausgeblendete NFT-Sammlungen",
         "description" : "Liste der ausgeblendeten NFT-Sammlungen zurücksetzen",
-        "reset" : "Zurücksetzen"
+        "reset" : "Zurücksetzen ({{count}})"
       },
       "exchangeDeveloperMode" : {
         "title" : "Entwicklermodus für Börsen",
@@ -4337,6 +4337,32 @@
             "nft" : "Einzelnes NFT",
             "contract" : "Vertrag"
           }
+        },
+        "back" : "Zurückgehen"
+      },
+      "debugNfts" : {
+        "title" : "NFT-Tools",
+        "description" : "Bietet einige nützliche Tools für den Umgang mit NFTs in Ledger Live",
+        "cta" : "Öffnen",
+        "tabs" : {
+          "config" : "Konfiguration",
+          "generatorAndDestructor" : "Generatoren und Destruktoren"
+        },
+        "configuration" : {
+          "supported" : "Unterstützte NFT-Chain",
+          "supported_other" : "Unterstützte NFT-Chains",
+          "nms" : {
+            "title" : "NFT Metadata Service (NMS)",
+            "env" : "Umgebung: {{env}}"
+          }
+        },
+        "generatorAndDestructor" : {
+          "genAcc" : "Konten generieren",
+          "genAccDesc" : "Generiert Konten mit NFTs",
+          "cta" : "Generieren",
+          "deleteAcc" : "Konten löschen",
+          "deleteAccDesc" : "Löscht alle Konten aus dem Store",
+          "delete" : "Löschen"
         },
         "back" : "Zurückgehen"
       },
