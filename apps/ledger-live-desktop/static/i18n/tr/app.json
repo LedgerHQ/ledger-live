@@ -1541,14 +1541,14 @@
         "secondaryCta" : "Belki sonra"
       },
       "verifyIdentity" : {
-        "title" : "Hatırlatma: Ledger Recover'a abone olma işlemini tamamlayın",
-        "description" : "Güvende olmanıza sadece bir adım kaldı.",
+        "title" : "Cüzdan erişiminiz henüz yedeklenmedi",
+        "description" : "Cüzdan erişiminizi güvenceye almak için kimliğinizi doğrulayın",
         "primaryCta" : "Kimliğinizi doğrulayın",
         "secondaryCta" : "Belki sonra"
       },
       "connectDevice" : {
-        "title" : "Hatırlatma: Ledger Recover'a abone olma işlemini tamamlayın",
-        "description" : "Bu, gerektiğinde cüzdana yeniden erişebilmek için tamamlamanız gereken son adımdır.",
+        "title" : "Cüzdan erişiminiz henüz yedeklenmedi",
+        "description" : "Cüzdan erişiminizi güvenceye almak için cihazınızı bağlayın",
         "primaryCta" : "Cihazı bağlayın",
         "secondaryCta" : "Belki sonra"
       }

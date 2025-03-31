@@ -2411,16 +2411,13 @@
     },
     "recoverBanner" : {
       "subscribeDone" : {
-        "title" : "Erinnerung: Schließe die Anmeldung für Ledger Recover ab",
-        "description" : "Du musst noch zwei Schritte bis zum optimalen Schutz zurücklegen."
+        "title" : "Erinnerung: Schließe die Anmeldung für Ledger Recover ab"
       },
       "verifyIdentity" : {
-        "title" : "Erinnerung: Schließe die Anmeldung für Ledger Recover ab",
-        "description" : "Du musst noch einen Schritt bis zum optimalen Schutz zurücklegen."
+        "title" : "Der Zugang zu deiner Wallet ist noch nicht per Backup abgesichert."
       },
       "connectDevice" : {
-        "title" : "Erinnerung: Schließe die Anmeldung für Ledger Recover ab",
-        "description" : "Das ist der letzte Schritt, um die Wiederherstellung des Zugriffs auf deine Wallet zu gewährleisten."
+        "title" : "Der Zugang zu deiner Wallet ist noch nicht per Backup abgesichert."
       }
     }
   },
