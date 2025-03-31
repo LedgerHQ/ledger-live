@@ -143,11 +143,6 @@ const kyNoTimeout = ky.create({
   },
 });
 
-const kyNoRetry = ky.create({
-  timeout: false,
-  retry: { limit: 0 },
-});
-
 export function getChainAPI(
   config: Config,
   logger?: (url: string, options: any) => void,
@@ -160,20 +155,18 @@ export function getChainAPI(
           fetch(url, options);
         };
 
-  const createConnection = (fetchImpl: typeof fetch): Connection =>
-    new Connection(config.endpoint, {
-      ...(fetchMiddleware ? { fetchMiddleware } : {}),
-      fetch: fetchImpl,
-      commitment: "confirmed",
-      confirmTransactionInitialTimeout: getEnv("SOLANA_TX_CONFIRMATION_TIMEOUT") || 0,
-    });
-
   let _connection: Connection;
-  let _connectionNoRetry: Connection;
-
-  const connection = () => (_connection ??= createConnection(kyNoTimeout as typeof fetch));
-  const connectionNoRetry = () =>
-    (_connectionNoRetry ??= createConnection(kyNoRetry as typeof fetch));
+  const connection = () => {
+    if (!_connection) {
+      _connection = new Connection(config.endpoint, {
+        ...(fetchMiddleware ? { fetchMiddleware } : {}),
+        fetch: kyNoTimeout as typeof fetch, // Type cast for jest test having an issue with the type
+        commitment: "confirmed",
+        confirmTransactionInitialTimeout: getEnv("SOLANA_TX_CONFIRMATION_TIMEOUT") || 0,
+      });
+    }
+    return _connection;
+  };
 
   return {
     getBalance: (address: string) =>
@@ -276,15 +269,13 @@ export function getChainAPI(
 
     sendRawTransaction: (buffer: Buffer, recentBlockhash?: BlockhashWithExpiryBlockHeight) => {
       return (async () => {
-        const connNoRetry = connectionNoRetry(); // Prevent retries on sendTransaction
-
+        const conn = connection();
         const commitment = "confirmed";
 
-        const signature = await connNoRetry.sendRawTransaction(buffer, {
+        const signature = await conn.sendRawTransaction(buffer, {
           preflightCommitment: commitment,
         });
 
-        const conn = connection();
         if (!recentBlockhash) {
           recentBlockhash = await conn.getLatestBlockhash(commitment);
         }
