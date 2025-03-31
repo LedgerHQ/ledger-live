@@ -23,7 +23,21 @@ const config: PlaywrightTestConfig = {
         ["html", { open: "never", outputFolder: "artifacts/html-report" }],
         ["github"],
         ["line"],
-        ["allure-playwright"],
+        [
+          "allure-playwright",
+          {
+            links: {
+              issue: {
+                nameTemplate: "%s",
+                urlTemplate: "https://ledgerhq.atlassian.net/browse/%s",
+              },
+              tms: {
+                nameTemplate: "%s",
+                urlTemplate: "https://ledgerhq.atlassian.net/browse/%s",
+              },
+            },
+          },
+        ],
         ["./tests/utils/customJsonReporter.ts"],
       ]
     : [["allure-playwright"]],

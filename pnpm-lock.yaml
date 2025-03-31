@@ -1789,7 +1789,7 @@ importers:
         specifier: ^3.2.1
         version: 3.2.1(allure-playwright@3.2.1(@playwright/test@1.51.1))
       allure-playwright:
-        specifier: ^3.2.0
+        specifier: ^3.2.1
         version: 3.2.1(@playwright/test@1.51.1)
       axios:
         specifier: ^1.8.3

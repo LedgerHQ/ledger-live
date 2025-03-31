@@ -9,13 +9,13 @@ const IS_NOT_MOCK = process.env.MOCK == "0";
 
 export async function addTmsLink(ids: string[]) {
   for (const id of ids) {
-    await allure.tms(id, `https://ledgerhq.atlassian.net/browse/${id}`);
+    await allure.tms(id);
   }
 }
 
 export async function addBugLink(ids: string[]) {
   for (const id of ids) {
-    await allure.issue(id, `https://ledgerhq.atlassian.net/browse/${id}`);
+    await allure.issue(id);
   }
 }
 

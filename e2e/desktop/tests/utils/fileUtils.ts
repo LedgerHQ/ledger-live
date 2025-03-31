@@ -2,7 +2,6 @@ import fs, { appendFile } from "fs/promises";
 import { expect } from "@playwright/test";
 import { step } from "../misc/reporters/step";
 
-
 export async function safeAppendFile(filePath: string, data: string) {
   try {
     await appendFile(filePath, data);

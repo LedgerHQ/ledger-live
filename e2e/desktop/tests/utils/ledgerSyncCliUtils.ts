@@ -6,7 +6,6 @@ import { Application } from "tests/page";
 import { DistantState as LiveData } from "@ledgerhq/live-wallet/walletsync/index";
 import { getEnv } from "@ledgerhq/live-env";
 import invariant from "invariant";
-
 interface LedgerKeyRingProtocolArgs {
   pubKey: string;
   privateKey: string;
@@ -179,6 +178,16 @@ export class LedgerSyncCliHelper {
   static checkAccountDeletion(parsedData: any, accountId: string): any {
     return (parsedData.updateEvent.data as LiveData).accounts?.find(
       account => account.id === accountId,
+    );
+  }
+
+  static isAccountRenamedCorrectly(
+    parsedData: any,
+    accountId: string,
+    expectedName: string,
+  ): boolean {
+    return !!(parsedData.updateEvent.data as LiveData).accounts?.find(
+      account => account.id === accountId && accountNames[accountId] === expectedName,
     );
   }
 }

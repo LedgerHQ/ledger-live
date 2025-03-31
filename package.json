@@ -67,6 +67,7 @@
     "knip-check": "pnpm turbo knip-check",
     "unimported": "pnpm turbo unimported",
     "desktop": "pnpm --filter ledger-live-desktop",
+    "e2e:desktop": "pnpm --filter ledger-live-desktop-e2e-tests",
     "cli": "pnpm --filter live-cli",
     "coin": "pnpm --filter coin-framework",
     "coin:coverage": "pnpm turbo coverage --filter=\"@ledgerhq/coin-*\" --concurrency=2 && mkdir -p coverage/coin-lcov-summary coverage/coin-xml-sonar && mv libs/coin-modules/**/coverage/*-lcov.info coverage/coin-lcov-summary && mv libs/coin-framework/coverage/framework-lcov.info coverage/coin-lcov-summary && mv libs/coin-modules/**/coverage/*-executionTests-report.xml coverage/coin-xml-sonar && mv libs/coin-framework/coverage/*-executionTests-report.xml coverage/coin-xml-sonar && find coverage/coin-lcov-summary -type f -exec cat {} + > coverage/coin-lcov.info && find coverage/coin-xml-sonar -type f -exec cat {} + > coverage/coin-sonar-executionTests-report.xml",

@@ -17,7 +17,6 @@ export class SwapPage extends AppPage {
   private fromAccountAmoutInput = "from-account-amount-input";
   private toAccountCoinSelector = "to-account-coin-selector";
   private quoteCardProviderName = "quote-card-provider-name";
-  private errorSpan = (text: RegExp | string) => `span[color*="error"]:has-text("${text}")`;
   private numberOfQuotes = "number-of-quotes";
   private destinationCurrencyDropdown = this.page.getByTestId("destination-currency-dropdown");
   private destinationCurrencyAmount = this.page.getByTestId("destination-currency-amount");
@@ -88,7 +87,7 @@ export class SwapPage extends AppPage {
       await expect(webview.getByTestId(baseProviderLocator + "slippage-heading")).toBeVisible();
       await expect(webview.getByTestId(baseProviderLocator + "slippage-value")).toBeVisible();
     }
-    await this.checkExchangeButton(electronApp, provider);
+    await this.checkExchangeButton(electronApp, providerList[0]);
   }
 
   @step("Select specific provider $0")
@@ -195,9 +194,9 @@ export class SwapPage extends AppPage {
     const [, webview] = electronApp.windows();
 
     const buttonText = [
-      Provider.ONE_INCH.name,
-      Provider.PARASWAP.name,
-      Provider.MOONPAY.name,
+      Provider.ONE_INCH.uiName,
+      Provider.PARASWAP.uiName,
+      Provider.MOONPAY.uiName,
     ].includes(provider)
       ? `Continue with ${provider}`
       : `Swap with ${provider}`;
@@ -210,8 +209,10 @@ export class SwapPage extends AppPage {
   @step("Click Exchange button")
   async clickExchangeButton(electronApp: ElectronApplication, provider: string) {
     const [, webview] = electronApp.windows();
-    await expect(webview.getByRole("button", { name: `Swap with ${provider}` })).toBeEnabled();
-    await webview.getByRole("button", { name: `Swap with ${provider}` }).click();
+    const swapButton = webview.getByRole("button", { name: `Swap with ${provider}` });
+    await expect(swapButton).toBeVisible();
+    await expect(swapButton).toBeEnabled();
+    await swapButton.click();
   }
 
   @step("Go to provider live app")
@@ -296,28 +297,26 @@ export class SwapPage extends AppPage {
     }
   }
 
-  @step("Verify swap amount error message is displayed: $2")
-  async verifySwapAmountErrorMessageIsDisplayed(
+  @step("Verify swap amount error message match: $1")
+  async verifySwapAmountErrorMessageIsCorrect(
     electronApp: ElectronApplication,
-    accountToDebit: Account,
     message: string | RegExp,
   ) {
     const [, webview] = electronApp.windows();
-    if (!accountToDebit.tokenType) {
-      //error message is flickering and changing, so we need to wait for it to be stable
-      await this.page.waitForTimeout(1000);
-      const errorSpan = await webview.getByTestId("from-account-error").textContent();
-      expect(errorSpan).toMatch(message);
-      //that specific amount error doesn't trigger quotes
-      if (message instanceof RegExp) {
-        await expect(webview.getByTestId(this.numberOfQuotes)).not.toBeVisible();
-      }
-    } else {
-      await expect(webview.getByTestId(this.numberOfQuotes)).toBeVisible();
-      await expect(webview.locator(this.errorSpan(message))).toBeVisible();
-    }
-    await expect(webview.getByTestId(`execute-button`)).not.toBeEnabled();
+    const errorSpan = await webview.getByTestId("from-account-error").textContent();
+    expect(errorSpan).toMatch(message);
+  }
+
+  @step("Verify swap CTA banner displayed")
+  async checkCtaBanner(electronApp: ElectronApplication) {
+    const [, webview] = electronApp.windows();
     await expect(webview.getByTestId(`insufficient-funds-warning`)).toBeVisible();
+  }
+
+  @step("verify quotes are displayed")
+  async checkQuotes(electronApp: ElectronApplication) {
+    const [, webview] = electronApp.windows();
+    await expect(webview.getByTestId(this.numberOfQuotes)).toBeVisible();
   }
 
   @step("Go and wait for Swap app to be ready")

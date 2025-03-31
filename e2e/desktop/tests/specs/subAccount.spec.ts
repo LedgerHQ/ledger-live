@@ -141,7 +141,7 @@ for (const transaction of transactionE2E) {
       cliCommands: [
         (appjsonPath: string) => {
           return CLI.liveData({
-            currency: transaction.tx.accountToCredit.currency.id,
+            currency: transaction.tx.accountToCredit.currency.speculosApp.name,
             index: transaction.tx.accountToCredit.index,
             add: true,
             appjson: appjsonPath,
@@ -149,7 +149,7 @@ for (const transaction of transactionE2E) {
         },
         (appjsonPath: string) => {
           return CLI.liveData({
-            currency: transaction.tx.accountToDebit.currency.id,
+            currency: transaction.tx.accountToDebit.currency.speculosApp.name,
             index: transaction.tx.accountToDebit.index,
             add: true,
             appjson: appjsonPath,
@@ -245,7 +245,7 @@ for (const transaction of transactionsAddressInvalid) {
       cliCommands: [
         (appjsonPath: string) => {
           return CLI.liveData({
-            currency: transaction.transaction.accountToDebit.currency.id,
+            currency: transaction.transaction.accountToDebit.currency.speculosApp.name,
             index: transaction.transaction.accountToDebit.index,
             add: true,
             appjson: appjsonPath,
@@ -360,7 +360,7 @@ for (const transaction of tokenTransactionInvalid) {
       cliCommands: [
         (appjsonPath: string) => {
           return CLI.liveData({
-            currency: transaction.tx.accountToDebit.currency.id,
+            currency: transaction.tx.accountToDebit.currency.speculosApp.name,
             index: transaction.tx.accountToDebit.index,
             add: true,
             appjson: appjsonPath,
@@ -408,7 +408,7 @@ test.describe("Send token (subAccount) - valid address & amount input", () => {
     cliCommands: [
       (appjsonPath: string) => {
         return CLI.liveData({
-          currency: tokenTransactionValid.accountToDebit.currency.id,
+          currency: tokenTransactionValid.accountToDebit.currency.speculosApp.name,
           index: tokenTransactionValid.accountToDebit.index,
           add: true,
           appjson: appjsonPath,
