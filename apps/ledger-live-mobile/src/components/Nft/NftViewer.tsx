@@ -478,7 +478,6 @@ const NftViewer = ({ route }: Props) => {
         onClose={closeModal}
         nftContract={nft.contract}
         nftId={nft.id}
-        currencyId={nft.currencyId}
       />
       <NftViewerScreenHeader title={nftMetadata?.nftName || undefined} scrollY={scrollY} />
     </>
