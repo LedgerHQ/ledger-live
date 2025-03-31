@@ -2411,16 +2411,13 @@
     },
     "recoverBanner" : {
       "subscribeDone" : {
-        "title" : "알림: Ledger Recover 구독을 완료하세요",
-        "description" : "이제 두 단계만 거치면 완료됩니다."
+        "title" : "알림: Ledger Recover 구독을 완료하세요"
       },
       "verifyIdentity" : {
-        "title" : "알림: Ledger Recover 구독을 완료하세요",
-        "description" : "이제 한 단계만 거치면 완료됩니다."
+        "title" : "지갑에 대한 액세스가 아직 백업되지 않았습니다"
       },
       "connectDevice" : {
-        "title" : "알림: Ledger Recover 구독을 완료하세요",
-        "description" : "지갑 액세스 복구를 보장하는 마지막 단계입니다."
+        "title" : "지갑에 대한 액세스가 아직 백업되지 않았습니다"
       }
     }
   },
@@ -6611,7 +6608,12 @@
       "24h" : "24시간",
       "7d" : "7일",
       "30d" : "30일",
-      "1y" : "1년"
+      "1y" : "1년",
+      "1H_label" : "1시간",
+      "1D_label" : "1일",
+      "1W_label" : "1주",
+      "1M_label" : "1달",
+      "1Y_label" : "1년"
     },
     "warnings" : {
       "connectionError" : "연결 오류",
@@ -7337,12 +7339,12 @@
   },
   "lnsUpsell" : {
     "opted_in" : {
-      "description" : "Upgrade your Ledger Nano S to a newer Ledger — like the Ledger Flex — for more memory, the latest security enhancements, fresh features, and an exclusive 20% off. ",
+      "description" : "Ledger Flex와 같은 최신 장치로 Ledger Nano S를 업그레이드하여 더 커진 메모리, 최신 보안 업데이트, 새로운 기능, 20% 독점 할인 혜택까지 모두 누려보세요. ",
       "cta" : "내 Ledger 업그레이드"
     },
     "opted_out" : {
       "description" : "Ledger Nano S의 제한된 메모리로 인해 최신 기능, 블록체인 변경 사항 및 보안 업데이트에 대한 액세스가 제한됩니다. 장기적으로 사용하려면 최신 Ledger 장치로 업그레이드하세요.",
-      "cta" : "Learn more"
+      "cta" : "자세히 알아보기"
     }
   }
 }
