@@ -4048,7 +4048,9 @@
       "desc": "Are you sure you want to cancel adding accounts?",
       "v2": {
         "title": "Cancel adding account?",
-        "desc": "No account will be added to Ledger Live."
+        "desc": "No account will be added to Ledger Live.",
+        "continue": "Continue adding",
+        "cancel": "Cancel"
       }
     },
     "imported": "Asset added successfully",
