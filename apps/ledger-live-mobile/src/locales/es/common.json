@@ -3268,7 +3268,7 @@
       },
       "verifyAddress" : {
         "title" : "Verifica la dirección",
-        "subtitle" : "Verifica que la dirección que se muestra en tu dispositivo es la misma que figura a continuación. Una vez que lo hayas comprobado, haz clic en Approve (Aprobar) en tu dispositivo.",
+        "subtitle" : "Verifica que la dirección que se muestra en tu dispositivo es la misma que figura a continuación. Tras comprobarlo, puedes confirmar en tu dispositivo.",
         "cancel" : {
           "title" : "Acabas de rechazar esta dirección",
           "subtitle" : "Si lo has hecho por error, puedes hacer clic en el siguiente botón para volver a intentarlo.",
@@ -6611,7 +6611,12 @@
       "24h" : "24H",
       "7d" : "7D",
       "30d" : "30D",
-      "1y" : "1 A"
+      "1y" : "1 A",
+      "1H_label" : "1H",
+      "1D_label" : "1D",
+      "1W_label" : "1S",
+      "1M_label" : "1M",
+      "1Y_label" : "1A"
     },
     "warnings" : {
       "connectionError" : "Error de conexión",
@@ -7337,7 +7342,7 @@
   },
   "lnsUpsell" : {
     "opted_in" : {
-      "description" : "Upgrade your Ledger Nano S to a newer Ledger — like the Ledger Flex — for more memory, the latest security enhancements, fresh features, and an exclusive 20% off. ",
+      "description" : "Actualiza tu Ledger Nano S a un dispositivo Ledger más moderno, como el Ledger Flex, para disponer de más memoria, mejoras de seguridad más recientes y nuevas funciones. Además, un exclusivo 20% de descuento. ",
       "cta" : "Renovar mi Ledger"
     },
     "opted_out" : {
