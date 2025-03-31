@@ -3268,7 +3268,7 @@
       },
       "verifyAddress" : {
         "title" : "주소 인증",
-        "subtitle" : "장치에 표시되는 주소가 아래 표시되는 주소와 일치하는지 확인해 주세요. 확실히 일치할 경우 장치에서 승인을 클릭하실 수 있습니다.",
+        "subtitle" : "장치에 표시되는 주소가 아래 표시되는 주소와 일치하는지 확인해 주세요. 확실히 일치할 경우 장치에서 승인을 클릭하세요.",
         "cancel" : {
           "title" : "이 주소를 거부했습니다.",
           "subtitle" : "실수로 주소를 거부했다면 아래 버튼을 클릭하여 재시도하세요.",
@@ -4050,7 +4050,9 @@
       "desc" : "계정 추가를 취소할까요?",
       "v2" : {
         "title" : "계정 추가를 취소하시겠습니까?",
-        "desc" : "어떤 계정도 Ledger Live에 추가되지 않습니다."
+        "desc" : "어떤 계정도 Ledger Live에 추가되지 않습니다.",
+        "continue" : "Continue adding",
+        "cancel" : "Cancel"
       }
     },
     "imported" : "자산이 성공적으로 추가되었습니다",
@@ -4088,7 +4090,7 @@
       "title" : "토큰 추가",
       "createParentCurrencyAccount" : "{{parrentCurrencyName}} 계정 추가",
       "generic" : {
-        "disclaimer" : "{{token}} ({{ticker}})는 {{tokenType}} 토큰입니다. {{currency}} 계정으로 직접 토큰을 받을 수 있습니다.",
+        "disclaimer" : "{{token}} ({{ticker}}) is an {{tokenType}} token.\nYou can receive tokens directly on a/an {{currency}} account.",
         "learnMore" : "{{tokenType}}에 대해 자세히 알아보기"
       }
     },
@@ -6611,7 +6613,12 @@
       "24h" : "24시간",
       "7d" : "7일",
       "30d" : "30일",
-      "1y" : "1년"
+      "1y" : "1년",
+      "1H_label" : "1시간",
+      "1D_label" : "1일",
+      "1W_label" : "1주",
+      "1M_label" : "1달",
+      "1Y_label" : "1년"
     },
     "warnings" : {
       "connectionError" : "연결 오류",
