@@ -1541,14 +1541,14 @@
         "secondaryCta" : "以后再说"
       },
       "verifyIdentity" : {
-        "title" : "提醒：完成订阅 Ledger Recover 服务",
-        "description" : "完成最后一步，让您的设备及资金得到安全保障。",
+        "title" : "您尚未备份钱包访问权限",
+        "description" : "验证您的身份，保护钱包访问权限",
         "primaryCta" : "验证身份",
         "secondaryCta" : "以后再说"
       },
       "connectDevice" : {
-        "title" : "提醒：完成订阅 Ledger Recover 服务",
-        "description" : "这是您确保能恢复钱包访问权限的最后一步。",
+        "title" : "您尚未备份钱包访问权限",
+        "description" : "连接您的设备，保护钱包访问权限",
         "primaryCta" : "连接设备",
         "secondaryCta" : "以后再说"
       }
@@ -4229,7 +4229,7 @@
       "nfts" : {
         "title" : "NFTs HiddenCollections",
         "description" : "重置隐藏藏品列表",
-        "reset" : "重置"
+        "reset" : "重置 ({{count}})"
       },
       "exchangeDeveloperMode" : {
         "title" : "兑换开发模式",
@@ -4337,6 +4337,32 @@
             "nft" : "单个 NFT",
             "contract" : "合约"
           }
+        },
+        "back" : "返回"
+      },
+      "debugNfts" : {
+        "title" : "NFT 工具",
+        "description" : "提供一些在 Ledger Live 中处理 NFT 的实用工具",
+        "cta" : "打开",
+        "tabs" : {
+          "config" : "配置",
+          "generatorAndDestructor" : "生成器与销毁器"
+        },
+        "configuration" : {
+          "supported" : "支持的 NFT 链",
+          "supported_other" : "支持的 NFT 链",
+          "nms" : {
+            "title" : "NFT 元数据服务 (NMS)",
+            "env" : "环境：{{env}}"
+          }
+        },
+        "generatorAndDestructor" : {
+          "genAcc" : "生成账户",
+          "genAccDesc" : "使用 NFT 生成账户",
+          "cta" : "生成",
+          "deleteAcc" : "删除账户",
+          "deleteAccDesc" : "从商店中删除所有账户",
+          "delete" : "删除"
         },
         "back" : "返回"
       },
