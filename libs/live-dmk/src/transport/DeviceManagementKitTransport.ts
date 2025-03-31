@@ -72,7 +72,12 @@ export class DeviceManagementKitTransport extends Transport {
     const [discoveredDevice] = await firstValueFrom(
       deviceManagementKit.listenToAvailableDevices({}),
     );
-    const connectedSessionId = await deviceManagementKit.connect({ device: discoveredDevice });
+    const connectedSessionId = await deviceManagementKit.connect({
+      device: discoveredDevice,
+      sessionRefresherOptions: {
+        isRefresherDisabled: true,
+      },
+    });
 
     tracer.trace("[open] Connected");
     const transport = new DeviceManagementKitTransport(deviceManagementKit, connectedSessionId);
@@ -146,7 +151,12 @@ export class DeviceManagementKitTransport extends Transport {
       const [discoveredDevice] = await firstValueFrom(
         deviceManagementKit.listenToAvailableDevices({}),
       );
-      const connectedSessionId = await deviceManagementKit.connect({ device: discoveredDevice });
+      const connectedSessionId = await deviceManagementKit.connect({
+        device: discoveredDevice,
+        sessionRefresherOptions: {
+          isRefresherDisabled: true,
+        },
+      });
       this.sessionId = connectedSessionId;
     }
 
