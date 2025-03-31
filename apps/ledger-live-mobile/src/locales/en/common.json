@@ -4086,7 +4086,7 @@
       "title": "Add token",
       "createParentCurrencyAccount": "Add {{parrentCurrencyName}} account",
       "generic": {
-        "disclaimer": "{{token}} ({{ticker}}) is an {{tokenType}} token.\nYou can receive tokens directly on an {{currency}} account.",
+        "disclaimer": "{{token}} ({{ticker}}) is an {{tokenType}} token.\nYou can receive tokens directly on a/an {{currency}} account.",
         "learnMore": "Learn more about {{tokenType}}"
       }
     },
