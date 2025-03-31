@@ -3537,6 +3537,9 @@ importers:
       '@faker-js/faker':
         specifier: ^8.4.1
         version: 8.4.1
+      '@taquito/local-forging':
+        specifier: 21.0.3
+        version: 21.0.3
       '@types/blake2b':
         specifier: ^2.1.3
         version: 2.1.3
@@ -16499,6 +16502,10 @@ packages:
     resolution: {integrity: sha512-/NvTkS8Enz5zxm481h7Ld5+MTa3/q84PMqtQ+HN3Mniv4EshnX5uIGfbdXdCQoaAeVdJOCeNIZDgeP6ZnkomRA==}
     engines: {node: '>=18'}
 
+  '@taquito/core@21.0.3':
+    resolution: {integrity: sha512-cH1Go/5l+EmbQxDwPNtJUKJMx5BLENQR3fZPLc3NUr1y8XTs8cZDsWIqe41vQYbTekLHC1hE9IvXLB3XDMZgmg==}
+    engines: {node: '>=18'}
+
   '@taquito/http-utils@20.0.1':
     resolution: {integrity: sha512-belYNmWoT49IF8o51gEB5je5Wz54+C7Q5hmvh7modl7fG0qE8VD1ulSH+WjuZsFTPJdNEAfCe0O50Vb5tNzw2w==}
     engines: {node: '>=18'}
@@ -16509,6 +16516,10 @@ packages:
 
   '@taquito/local-forging@20.0.1':
     resolution: {integrity: sha512-+XYHnoAYXpOYA4WbUvUO86F6uoUh1anaNQGD544ySaonJW1ZgwhylrGvvTVjQfFSqqP3TRWn69EqINco+hX7gA==}
+    engines: {node: '>=18'}
+
+  '@taquito/local-forging@21.0.3':
+    resolution: {integrity: sha512-VxDVVwocICyyrDb/5mRJC4k7/mkStW7YEiKbnpQSngwbzhnlCDrVVnWNPyavM4ZeH4m2egJBlUhSQBkA7jJbHg==}
     engines: {node: '>=18'}
 
   '@taquito/michel-codec@20.0.1':
@@ -16529,6 +16540,10 @@ packages:
 
   '@taquito/utils@20.0.1':
     resolution: {integrity: sha512-aJaKukIW9thzU/WZ7p9ARRIDoXLQZ8TsB0brtbf48GqBFoGXDNAsDo72lkeTpehEcgYItSjdBuWEKH/lyTMr+w==}
+    engines: {node: '>=18'}
+
+  '@taquito/utils@21.0.3':
+    resolution: {integrity: sha512-E32vE3CA8Cw0XXWgIXVi9D4siXfdYCuQdLRRPczyGIXLF8UOmLLP21GfAZdBnMV1nnVLkSIVTEtMwRt1yZwudg==}
     engines: {node: '>=18'}
 
   '@testing-library/dom@9.3.4':
@@ -46421,6 +46436,10 @@ snapshots:
     dependencies:
       json-stringify-safe: 5.0.1
 
+  '@taquito/core@21.0.3':
+    dependencies:
+      json-stringify-safe: 5.0.1
+
   '@taquito/http-utils@20.0.1':
     dependencies:
       '@taquito/core': 20.0.1
@@ -46443,6 +46462,12 @@ snapshots:
     dependencies:
       '@taquito/core': 20.0.1
       '@taquito/utils': 20.0.1
+      bignumber.js: 9.1.2
+
+  '@taquito/local-forging@21.0.3':
+    dependencies:
+      '@taquito/core': 21.0.3
+      '@taquito/utils': 21.0.3
       bignumber.js: 9.1.2
 
   '@taquito/michel-codec@20.0.1':
@@ -46487,6 +46512,19 @@ snapshots:
       '@stablelib/blake2b': 1.0.1
       '@stablelib/ed25519': 1.0.3
       '@taquito/core': 20.0.1
+      '@types/bs58check': 2.1.2
+      bignumber.js: 9.1.2
+      blakejs: 1.2.1
+      bs58check: 3.0.1
+      buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
+      elliptic: 6.6.1
+      typedarray-to-buffer: 4.0.0
+
+  '@taquito/utils@21.0.3':
+    dependencies:
+      '@stablelib/blake2b': 1.0.1
+      '@stablelib/ed25519': 1.0.3
+      '@taquito/core': 21.0.3
       '@types/bs58check': 2.1.2
       bignumber.js: 9.1.2
       blakejs: 1.2.1

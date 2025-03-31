@@ -60,7 +60,10 @@ export type Api<TokenIdentifier> = {
   broadcast: (tx: string) => Promise<string>;
   combine: (tx: string, signature: string, pubkey?: string) => string;
   estimateFees: (transactionIntent: TransactionIntent<TokenIdentifier>) => Promise<bigint>;
-  craftTransaction: (transactionIntent: TransactionIntent<TokenIdentifier>) => Promise<string>;
+  craftTransaction: (
+    transactionIntent: TransactionIntent<TokenIdentifier>,
+    customFees?: bigint,
+  ) => Promise<string>;
   getBalance: (address: string) => Promise<Asset | bigint>;
   lastBlock: () => Promise<BlockInfo>;
   listOperations: (
