@@ -52,7 +52,7 @@ const getTransactionStatus = async (a: Account, t: Transaction): Promise<Transac
 
   const totalSpent = tokenAccount ? amount : amount.plus(estimatedFees);
 
-  if (tokenAccount && t.errors?.maxGasAmount == "GasInsuficeinetBalance" && !errors.amount) {
+  if (tokenAccount && t.errors?.maxGasAmount == "GasInsufficientBalance" && !errors.amount) {
     errors.amount = new NotEnoughBalanceFees();
   }
   if (
