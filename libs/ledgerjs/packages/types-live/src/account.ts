@@ -123,7 +123,7 @@ export type Account = {
   // A sub account can be either a token account or a child account in some blockchain.
   // They are attached to the parent account in the related blockchain.
   // CONVENTION:
-  // a SubAccount (or TokenAccount) is living inside an Account but is not an entity on its own,
+  // a TokenAccount (or SubAccount, formerly) is living inside an Account but is not an entity on its own,
   // therefore, there is no .parentAccount in it, which will means you will need to always have a tuple of (parentAccount, account)
   // we will use the naming (parentAccount, account) everywhere because a sub account is not enough and you need the full context with this tuple.
   // These are two valid examples:
