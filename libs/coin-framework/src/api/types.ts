@@ -29,42 +29,80 @@ export type Operation<AssetInfo> = {
   };
 };
 
-export type Transaction = {
-  type: string;
-  recipient: string;
-  amount: bigint;
-  fee: bigint;
-} & Record<string, unknown>; // Field containing dedicated value for each blockchain
-
-// TODO add a `token: string` field to the pagination if we really need to support pagination (which is not the case for now)
-export type Asset = {
-  native: bigint;
+export type Balance<AssetInfo> = {
+  asset: AssetInfo;
+  value: bigint;
 };
 
-export type TransactionIntent<AssetInfo, Extra = Record<string, unknown>> = {
+export type Fees<FeeSettings = Record<string, unknown>> = {
+  settings: FeeSettings;
+  value: bigint;
+};
+
+export type TransactionIntent<AssetInfo, IntentDetails = Record<string, unknown>> = {
   type: string;
   sender: string;
   recipient: string;
   amount: bigint;
   asset?: AssetInfo;
-} & Extra;
+} & IntentDetails;
 
-// TODO rename start to minHeight
-//       and add a `token: string` field to the pagination if we really need to support pagination
-//       (which is not the case for now)
-//       for now start is used as a minHeight from which we want to fetch ALL operations
-//       limit is unused for now
-//       see design document at https://ledgerhq.atlassian.net/wiki/spaces/BE/pages/5446205788/coin-modules+lama-adapter+APIs+refinements
 export type Pagination = { minHeight: number };
-export type Api<TokenIdentifier> = {
+export type Api<
+  AssetInfo,
+  IntentDetails = Record<string, unknown>,
+  FeeSettings = Record<string, unknown>,
+> = {
   broadcast: (tx: string) => Promise<string>;
   combine: (tx: string, signature: string, pubkey?: string) => string;
-  estimateFees: (transactionIntent: TransactionIntent<TokenIdentifier>) => Promise<bigint>;
-  craftTransaction: (transactionIntent: TransactionIntent<TokenIdentifier>) => Promise<string>;
-  getBalance: (address: string) => Promise<Asset | bigint>;
+  estimateFees: (
+    transactionIntent: TransactionIntent<AssetInfo, IntentDetails>,
+    settings?: FeeSettings,
+  ) => Promise<Fees<FeeSettings>>;
+  craftTransaction: (
+    transactionIntent: TransactionIntent<AssetInfo, IntentDetails>,
+    customFees?: Fees<FeeSettings>,
+  ) => Promise<string>;
+  getBalance: (address: string) => Promise<AssetInfo[]>;
   lastBlock: () => Promise<BlockInfo>;
   listOperations: (
     address: string,
     pagination: Pagination,
-  ) => Promise<[Operation<TokenIdentifier>[], string]>;
+  ) => Promise<[Operation<AssetInfo>[], string]>;
 };
+
+// Expected types:
+//
+// * stellar:
+//   * AssetInfo:
+//      * { type: "native" }
+//   * IntentDetails:
+//      * { memoType, memoValue }
+//   * FeeSettings:
+//      * {}
+//
+// * ripple:
+//   * AssetInfo:
+//      * { type: "native" }
+//   * IntentDetails:
+//      * { memos?: { type, data, format}[], destinationTag? }
+//   * FeeSettings:
+//      * {}
+//
+// * tezos:
+//   * AssetInfo:
+//      * { type: "native" }
+//   * IntentDetails:
+//      * {}
+//   * FeeSettings:
+//      * { gasLimit, storageLimit }
+//
+// * tron:
+//   * AssetInfo:
+//      * { type: "native" }
+//      * { type: "token", standard: "trc10", tokenId  }
+//      * { type: "token", standard: "trc20", contractAddress  }
+//   * IntentDetails:
+//      * { memo, expiration, feeLimit }
+//   * FeeSettings:
+//      * {}
