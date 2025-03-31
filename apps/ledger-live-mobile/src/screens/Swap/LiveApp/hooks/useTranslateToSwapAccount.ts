@@ -3,7 +3,6 @@ import { useMemo } from "react";
 
 import * as walletApi from "@ledgerhq/live-common/wallet-api/converters";
 import { walletSelector } from "~/reducers/wallet";
-import { flattenAccountsSelector } from "~/reducers/accounts";
 
 import { DefaultAccountSwapParamList } from "../../types";
 import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
@@ -28,9 +27,9 @@ const getHighestBalanceAccount = (accounts: AccountLike[]): AccountLike => {
 
 export const useTranslateToSwapAccount = (
   params: DefaultAccountSwapParamList | null,
+  currentAccounts: AccountLike[],
 ): SwapLiveUrlParams => {
   const walletState = useSelector(walletSelector);
-  const currentAccounts: AccountLike[] = useSelector(flattenAccountsSelector);
 
   return useMemo(() => {
     const newParams: SwapLiveUrlParams = {};
