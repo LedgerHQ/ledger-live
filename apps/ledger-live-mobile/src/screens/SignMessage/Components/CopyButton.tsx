@@ -6,7 +6,7 @@ import { useTheme } from "styled-components/native";
 import { useTranslation } from "react-i18next";
 
 type Props = {
-  text: string;
+  readonly text: string;
 };
 
 function CopyButton({ text }: Props) {
@@ -21,13 +21,17 @@ function CopyButton({ text }: Props) {
     setTimeout(() => setCopied(false), 1200);
   }, [text]);
 
+  const buttonBackgroundColor =
+    theme.colors.type === "dark" ? theme.colors.primary.c20 : theme.colors.primary.c30;
+
   return (
     <Button
       type="shade"
       onPress={handleCopy}
-      style={[styles.buttonContainer, { backgroundColor: theme.colors.primary.c20 }]}
+      style={[styles.buttonContainer, { backgroundColor: buttonBackgroundColor }]}
+      testID="copy-button"
     >
-      <View style={styles.contentWrapper}>
+      <View style={styles.contentWrapper} testID="copy-wrapper">
         {copied ? (
           <>
             <Icons.Check size={"S"} color="success.c50" />
