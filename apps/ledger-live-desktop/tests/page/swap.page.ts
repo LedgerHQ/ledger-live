@@ -168,7 +168,7 @@ export class SwapPage extends AppPage {
       await expect(webview.getByTestId(baseProviderLocator + "slippage-heading")).toBeVisible();
       await expect(webview.getByTestId(baseProviderLocator + "slippage-value")).toBeVisible();
     }
-    await this.checkExchangeButton(electronApp, provider);
+    await this.checkExchangeButton(electronApp, providerList[0]);
   }
 
   @step("Select specific provider $0")
@@ -275,9 +275,9 @@ export class SwapPage extends AppPage {
     const [, webview] = electronApp.windows();
 
     const buttonText = [
-      Provider.ONE_INCH.name,
-      Provider.PARASWAP.name,
-      Provider.MOONPAY.name,
+      Provider.ONE_INCH.uiName,
+      Provider.PARASWAP.uiName,
+      Provider.MOONPAY.uiName,
     ].includes(provider)
       ? `Continue with ${provider}`
       : `Swap with ${provider}`;
@@ -406,30 +406,6 @@ export class SwapPage extends AppPage {
       expect(assetTo).toContain(currency);
     }
   }
-
-  // @step("Verify swap amount error message is displayed: $2")
-  // async verifySwapAmountErrorMessageIsDisplayed(
-  //   electronApp: ElectronApplication,
-  //   accountToDebit: Account,
-  //   message: string | RegExp,
-  // ) {
-  //   const [, webview] = electronApp.windows();
-  //   if (!accountToDebit.accountType) {
-  //     //error message is flickering and changing, so we need to wait for it to be stable
-  //     await this.page.waitForTimeout(1000);
-  //     const errorSpan = await webview.getByTestId("from-account-error").textContent();
-  //     expect(errorSpan).toMatch(message);
-  //     //that specific amount error doesn't trigger quotes
-  //     if (message instanceof RegExp) {
-  //       await expect(webview.getByTestId(this.numberOfQuotes)).not.toBeVisible();
-  //     }
-  //   } else {
-  //     await expect(webview.getByTestId(this.numberOfQuotes)).toBeVisible();
-  //     await expect(webview.locator(this.errorSpan(message))).toBeVisible();
-  //   }
-  //   await expect(webview.getByTestId(`execute-button`)).not.toBeEnabled();
-  //   await expect(webview.getByTestId(`insufficient-funds-warning`)).toBeVisible();
-  // }
 
   @step("Verify swap amount error message match: $1")
   async verifySwapAmountErrorMessageIsCorrect(
