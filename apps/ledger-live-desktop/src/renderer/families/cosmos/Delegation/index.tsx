@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { useDispatch } from "react-redux";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
-import { SubAccount } from "@ledgerhq/types-live";
+import { TokenAccount } from "@ledgerhq/types-live";
 import {
   useCosmosFamilyPreloadData,
   useCosmosFamilyMappedDelegations,
@@ -261,7 +261,7 @@ const Delegation = ({ account }: { account: CosmosAccount }) => {
     </>
   );
 };
-const Delegations = ({ account }: { account: CosmosAccount | SubAccount }) => {
+const Delegations = ({ account }: { account: CosmosAccount | TokenAccount }) => {
   if (account.type !== "Account") return null;
 
   return <Delegation account={account} />;

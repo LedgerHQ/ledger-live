@@ -1,7 +1,7 @@
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import React, { memo } from "react";
 import { RectButton, LongPressGestureHandler, State } from "react-native-gesture-handler";
-import { SubAccount, TokenAccount, Account } from "@ledgerhq/types-live";
+import { TokenAccount, Account } from "@ledgerhq/types-live";
 import { createStructuredSelector } from "reselect";
 import { connect, useSelector } from "react-redux";
 import { Box, Flex, Text } from "@ledgerhq/native-ui";
@@ -17,9 +17,9 @@ import { useAccountName } from "~/reducers/wallet";
 import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 type Props = {
-  account: SubAccount;
+  account: TokenAccount;
   parentAccount?: Account;
-  onSubAccountPress: (subAccount: SubAccount) => void;
+  onSubAccountPress: (subAccount: TokenAccount) => void;
   onSubAccountLongPress: (tokenAccount: TokenAccount, account?: Account) => void;
   useCounterValue?: boolean;
 };

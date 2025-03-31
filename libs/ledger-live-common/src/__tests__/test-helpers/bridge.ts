@@ -22,10 +22,10 @@ import type {
   AccountBridge,
   AccountLike,
   AccountRawLike,
-  SubAccount,
   SyncConfig,
   DatasetTest,
   CurrenciesData,
+  TokenAccount,
   TransactionCommon,
   TransactionStatusCommon,
 } from "@ledgerhq/types-live";
@@ -686,7 +686,7 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
 
                   const inferSubAccount = () => {
                     invariant(subAccounts, "sub accounts available");
-                    const a = (subAccounts as SubAccount[]).find(a => a.id === subAccountId);
+                    const a = (subAccounts as TokenAccount[]).find(a => a.id === subAccountId);
                     invariant(a, "sub account not found");
                     return a;
                   };

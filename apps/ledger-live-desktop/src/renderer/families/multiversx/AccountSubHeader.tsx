@@ -1,7 +1,7 @@
 import React, { Fragment, useState } from "react";
 import { MultiversXAccount } from "@ledgerhq/live-common/families/multiversx/types";
 import { Trans, useTranslation } from "react-i18next";
-import { SubAccount } from "@ledgerhq/types-live";
+import { TokenAccount } from "@ledgerhq/types-live";
 import styled from "styled-components";
 
 import Box, { Card } from "~/renderer/components/Box";
@@ -13,7 +13,7 @@ import AccountSubHeaderDrawer from "~/renderer/components/AccountSubHeader/Accou
 import Alert from "~/renderer/components/Alert";
 
 export interface AccountSubHeaderPropsType {
-  account: MultiversXAccount | SubAccount;
+  account: MultiversXAccount | TokenAccount;
 }
 
 const CardContent = styled(Box)`
