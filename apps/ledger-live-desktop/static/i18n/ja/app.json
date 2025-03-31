@@ -1541,14 +1541,14 @@
         "secondaryCta" : "後で"
       },
       "verifyIdentity" : {
-        "title" : "ウォレットへのアクセスはまだバックアップされていません",
-        "description" : "本人認証をしてウォレットへのアクセスを確保してください",
+        "title" : "Ledger Recoverのサブスクリプション契約が完了していません",
+        "description" : "安全の確保まで残り1ステップです。",
         "primaryCta" : "本人認証を行う",
         "secondaryCta" : "後で"
       },
       "connectDevice" : {
-        "title" : "ウォレットへのアクセスはまだバックアップされていません",
-        "description" : "デバイスを接続してウォレットへのアクセスを確保してください",
+        "title" : "Ledger Recoverのサブスクリプション契約が完了していません",
+        "description" : "これが、ウォレットへのアクセス復元を確実にするための最後のステップです。",
         "primaryCta" : "デバイスを接続",
         "secondaryCta" : "後で"
       }
@@ -4229,7 +4229,7 @@
       "nfts" : {
         "title" : "NFT非表示コレクション",
         "description" : "非表示コレクションリストをリセット",
-        "reset" : "リセット（{{count}}件）"
+        "reset" : "リセット"
       },
       "exchangeDeveloperMode" : {
         "title" : "Exchange開発者モード",
@@ -4337,32 +4337,6 @@
             "nft" : "個別のNFT",
             "contract" : "コントラクト"
           }
-        },
-        "back" : "戻る"
-      },
-      "debugNfts" : {
-        "title" : "NFTツール",
-        "description" : "Ledger LiveでNFTを処理するための便利なツールを提供",
-        "cta" : "開く",
-        "tabs" : {
-          "config" : "構成",
-          "generatorAndDestructor" : "ジェネレーター＆デストラクター"
-        },
-        "configuration" : {
-          "supported" : "対応するNFTチェーン",
-          "supported_other" : "対応するNFTチェーン",
-          "nms" : {
-            "title" : "NFTメタデータサービス（NMS）",
-            "env" : "環境：{{env}}"
-          }
-        },
-        "generatorAndDestructor" : {
-          "genAcc" : "アカウントの生成",
-          "genAccDesc" : "NFTでアカウントを生成",
-          "cta" : "生成",
-          "deleteAcc" : "アカウントの削除",
-          "deleteAccDesc" : "ストアからすべてのアカウントを削除",
-          "delete" : "削除"
         },
         "back" : "戻る"
       },

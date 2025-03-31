@@ -2411,13 +2411,16 @@
     },
     "recoverBanner" : {
       "subscribeDone" : {
-        "title" : "تذكير: أكمِل تسجيل الاشتراك في Ledger Recover"
+        "title" : "تذكير: أكمِل تسجيل الاشتراك في Ledger Recover",
+        "description" : "أنت على بعد خطوتين فقط من أن تصبح مُؤمَّناً."
       },
       "verifyIdentity" : {
-        "title" : "الوصول إلى محفظتك لم يتم نسخه احتياطياً بعد"
+        "title" : "تذكير: أكمِل تسجيل الاشتراك في Ledger Recover",
+        "description" : "أنت على بعد خطوة واحدة فقط من أن تصبح مُؤمَّناً."
       },
       "connectDevice" : {
-        "title" : "الوصول إلى محفظتك لم يتم نسخه احتياطياً بعد"
+        "title" : "تذكير: أكمِل تسجيل الاشتراك في Ledger Recover",
+        "description" : "هذه هي الخطوة الأخيرة لضمان استرداد الوصول إلى المحفظة."
       }
     }
   },
@@ -6608,12 +6611,7 @@
       "24h" : "24 ساعة",
       "7d" : "7 أيام",
       "30d" : "30 يوم",
-      "1y" : "1 سنة",
-      "1H_label" : "1 ساعة",
-      "1D_label" : "1 يوم",
-      "1W_label" : "1 أسبوع",
-      "1M_label" : "1 شهر",
-      "1Y_label" : "1 سنة"
+      "1y" : "1 سنة"
     },
     "warnings" : {
       "connectionError" : "خطأ في الاتصال",
@@ -7339,7 +7337,7 @@
   },
   "lnsUpsell" : {
     "opted_in" : {
-      "description" : "قم بترقية Ledger Nano S الخاصة بك إلى جهاز Ledger جديد — مثل Ledger Flex — من أجل المزيد من الذاكرة، وأحدث تحسينات الأمان، وميزات جديدة، وخصم حصري %20. ",
+      "description" : "Upgrade your Ledger Nano S to a newer Ledger — like the Ledger Flex — for more memory, the latest security enhancements, fresh features, and an exclusive 20% off. ",
       "cta" : "ترقية جهاز Ledger الخاص بي"
     },
     "opted_out" : {
