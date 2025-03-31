@@ -1542,7 +1542,7 @@
       },
       "newDevice" : {
         "label" : "nouvel appareil",
-        "title" : "Configurer comme un nouvel appareil",
+        "title" : "Configurer comme un nouveau wallet",
         "subTitle" : "Choisissez cette option si vous configurez votre Ledger pour la première fois."
       },
       "desktopSync" : {
@@ -2286,7 +2286,7 @@
       "restoreSeed" : "Pour une sécurité optimale de vos actifs, utilisez une phrase de récupération secrète générée par un appareil Ledger.\n\nVous n’en avez pas déjà une ? Générez une nouvelle phrase avec votre {{productName}}.",
       "selection" : "Choisissez votre option de configuration :",
       "selectionNewLedger" : {
-        "title" : "Configurer comme un nouvel appareil Ledger",
+        "title" : "Configurer comme un nouveau wallet",
         "desc" : "Vous créez un nouveau wallet. Cela va générer une nouvelle phrase de récupération secrète."
       },
       "selectionRestore" : {
@@ -4050,7 +4050,9 @@
       "desc" : "Voulez-vous vraiment annuler l’ajout de comptes ?",
       "v2" : {
         "title" : "Annuler l’ajout de compte ?",
-        "desc" : "Aucun compte ne sera ajouté dans Ledger Live."
+        "desc" : "Aucun compte ne sera ajouté dans Ledger Live.",
+        "continue" : "Continue adding",
+        "cancel" : "Annuler"
       }
     },
     "imported" : "Actif bien ajouté",
@@ -4088,7 +4090,7 @@
       "title" : "Ajouter un token",
       "createParentCurrencyAccount" : "Ajouter un compte {{parrentCurrencyName}}",
       "generic" : {
-        "disclaimer" : "{{token}} ({{ticker}}) est un token {{tokenType}}.\nVous pouvez recevoir ces tokens directement sur un compte {{currency}}.",
+        "disclaimer" : "{{token}} ({{ticker}}) is an {{tokenType}} token.\nYou can receive tokens directly on a/an {{currency}} account.",
         "learnMore" : "En savoir plus sur {{tokenType}}"
       }
     },
@@ -6611,7 +6613,12 @@
       "24h" : "24H",
       "7d" : "7J",
       "30d" : "30J",
-      "1y" : "1A"
+      "1y" : "1A",
+      "1H_label" : "1H",
+      "1D_label" : "1J",
+      "1W_label" : "1S",
+      "1M_label" : "1M",
+      "1Y_label" : "1A"
     },
     "warnings" : {
       "connectionError" : "Erreur de connexion",
