@@ -73,10 +73,6 @@ const ValidatorField = ({ account, delegation, onChangeValidator, selectedPoolId
   const userAndLedgerPoolIds = concatUserAndLedgerPoolIds(delegation?.poolId, LEDGER_POOL_IDS);
 
   useEffect(() => {
-    console.log("debug pools");
-  }, [pools]);
-
-  useEffect(() => {
     setUserAndLedgerPoolsLoading(true);
     fetchAndSortPools(account.currency, userAndLedgerPoolIds, DEFAULT_SELECTED_POOL_ID).then(
       (sortedPools: StakePool[]) => {
