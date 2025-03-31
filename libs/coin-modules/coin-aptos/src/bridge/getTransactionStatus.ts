@@ -5,6 +5,7 @@ import {
   FeeNotLoaded,
   InvalidAddressBecauseDestinationIsAlsoSource,
   AmountRequired,
+  NotEnoughBalanceFees,
 } from "@ledgerhq/errors";
 import type { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
@@ -51,6 +52,9 @@ const getTransactionStatus = async (a: Account, t: Transaction): Promise<Transac
 
   const totalSpent = tokenAccount ? amount : amount.plus(estimatedFees);
 
+  if (tokenAccount && t.errors?.maxGasAmount == "GasInsufficientBalance" && !errors.amount) {
+    errors.amount = new NotEnoughBalanceFees();
+  }
   if (
     tokenAccount
       ? tokenAccount.spendableBalance.isLessThan(totalSpent) ||
