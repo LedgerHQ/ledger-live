@@ -169,7 +169,7 @@ describe("getFeesForTransaction Test", () => {
             gasUnitPrice: "100",
           },
           errors: {
-            maxGasAmount: "GasInsuficeinetBalance",
+            maxGasAmount: "GasInsufficientBalance",
           },
         };
 

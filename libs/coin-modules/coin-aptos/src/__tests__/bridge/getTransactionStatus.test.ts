@@ -194,7 +194,7 @@ describe("getTransactionStatus Test", () => {
     transaction.recipient = "0x" + "0".repeat(64);
     transaction.amount = BigNumber(2);
     transaction.fees = BigNumber(0);
-    transaction.errors = { maxGasAmount: "GasInsuficeinetBalance" };
+    transaction.errors = { maxGasAmount: "GasInsufficientBalance" };
 
     const result = await getTransactionStatus(account, transaction);
 
