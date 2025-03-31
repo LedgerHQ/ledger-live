@@ -44,41 +44,39 @@ const getZcashTransactionVersion = (
 ): Buffer => {
   const version = Buffer.alloc(4);
   console.log(`will set version for blockHeight=${blockHeight}`);
-  console.log({txVersion, versionGroupId})
+  console.log({ txVersion, versionGroupId });
   if (!txVersion) {
     version.writeUInt32BE(0xc8e71055, 0);
     return version;
   }
   if (!blockHeight) {
-    console.error("SHOULDNT HAPPEN")
+    console.error("SHOULDNT HAPPEN");
     debugger;
     return version;
   }
   if (txVersion.equals(Buffer.from([0x05, 0x00, 0x00, 0x80]))) {
     if (blockHeight >= ZCASH_ACTIVATION_HEIGHTS.NU6) {
-    version.writeUInt32BE(0xc8e71055, 0);
+      version.writeUInt32BE(0xc8e71055, 0);
     } else {
-    version.writeUInt32BE(0xf919a198, 0);
+      version.writeUInt32BE(0xf919a198, 0);
     }
   } else if (txVersion.equals(Buffer.from([0x04, 0x00, 0x00, 0x80]))) {
-if (blockHeight >= ZCASH_ACTIVATION_HEIGHTS.CANOPY) {
-    console.log("NU4-canopy");
-    version.writeUInt32BE(0xe9ff75a6, 0);
-} else if (blockHeight >= ZCASH_ACTIVATION_HEIGHTS.HEARTWOOD) {
-    console.log("NU3-heartwood");
-    version.writeUInt32BE(0xf5b9230b, 0);
-  } else if (blockHeight >= ZCASH_ACTIVATION_HEIGHTS.BLOSSOM) {
-    console.log("NU2-blossom");
-    version.writeUInt32BE(0x2bb40e60, 0);
-  } else if (blockHeight >= ZCASH_ACTIVATION_HEIGHTS.SAPLING) {
-    console.log("NU1-sapling");
-    version.writeUInt32BE(0x76b809bb, 0);
-
-  } else {
-    console.error("SHOULDNT HAPPEN ELSE tx3")
-    debugger;
-  }
-
+    if (blockHeight >= ZCASH_ACTIVATION_HEIGHTS.CANOPY) {
+      console.log("NU4-canopy");
+      version.writeUInt32BE(0xe9ff75a6, 0);
+    } else if (blockHeight >= ZCASH_ACTIVATION_HEIGHTS.HEARTWOOD) {
+      console.log("NU3-heartwood");
+      version.writeUInt32BE(0xf5b9230b, 0);
+    } else if (blockHeight >= ZCASH_ACTIVATION_HEIGHTS.BLOSSOM) {
+      console.log("NU2-blossom");
+      version.writeUInt32BE(0x2bb40e60, 0);
+    } else if (blockHeight >= ZCASH_ACTIVATION_HEIGHTS.SAPLING) {
+      console.log("NU1-sapling");
+      version.writeUInt32BE(0x76b809bb, 0);
+    } else {
+      console.error("SHOULDNT HAPPEN ELSE tx3");
+      debugger;
+    }
   } else if (txVersion.equals(Buffer.from([0x03, 0x00, 0x00, 0x80]))) {
     console.log("NU0-default");
     version.writeUInt32BE(0x5ba81b19, 0);
@@ -116,7 +114,7 @@ if (blockHeight >= ZCASH_ACTIVATION_HEIGHTS.CANOPY) {
   */
   console.log(`version=${version.toString("hex")}`);
   debugger;
-  return version
+  return version;
 };
 
 export const getDefaultVersions = ({
@@ -139,9 +137,11 @@ export const getDefaultVersions = ({
     // if (isZcash && blockHeight) {
     debugger;
     defaultVersion = getZcashTransactionVersion(blockHeight);
-    // defaultVersionNu5Only.writeUInt32LE(0x80000005, 0);
+    defaultVersionNu5Only.writeUInt32LE(0x80000005, 0);
     // NOTE: should've put nu6 here?
-    defaultVersionNu5Only.writeUInt32BE(0xc8e71055, 0);
+    //
+    // defaultVersionNu5Only.writeUInt32BE(0xc8e71055, 0);
+    //
     // } else {
     //   const version = sapling ? 0x80000004 : 0x80000003;
     //   defaultVersion.writeUInt32LE(version, 0);
@@ -204,7 +204,7 @@ export async function createTransaction(
     onDeviceSignatureRequested,
   } = signTx;
   console.log(`createtransaction expiryHeight=${expiryHeight}`);
-  console.log({inputs, expiryHeight})
+  console.log({ inputs, expiryHeight });
   debugger;
   let useTrustedInputForSegwit = signTx.useTrustedInputForSegwit;
 
@@ -250,7 +250,7 @@ export async function createTransaction(
         additionals.includes("gold") ||
         additionals.includes("bip143"))) ||
     (!!expiryHeight && !isDecred);
-  console.log({isZcash, sapling, bech32, useBip143})
+  console.log({ isZcash, sapling, bech32, useBip143 });
   // Inputs are provided as arrays of [transaction, output_index, optional redeem script, optional sequence]
   // associatedKeysets are provided as arrays of [path]
   const lockTimeBuffer = Buffer.alloc(4);
@@ -258,7 +258,7 @@ export async function createTransaction(
   const nullScript = Buffer.alloc(0);
   const nullPrevout = Buffer.alloc(0);
 
-  console.log(`before getting default version`)
+  console.log(`before getting default version`);
   const { defaultVersion, defaultVersionNu5Only } = getDefaultVersions({
     isZcash,
     sapling,
@@ -266,8 +266,8 @@ export async function createTransaction(
     expiryHeight,
     blockHeight,
   });
-  console.log({defaultVersion, defaultVersionNu5Only})
-  console.log("-----")
+  console.log({ defaultVersion, defaultVersionNu5Only });
+  console.log("-----");
   // Default version to 2 for XST not to have timestamp
   const trustedInputs: Array<any> = [];
   const regularOutputs: Array<TransactionOutput> = [];
@@ -278,27 +278,39 @@ export async function createTransaction(
   const targetTransaction: Transaction = {
     inputs: [],
     version: defaultVersion,
+    // version: defaultVersionNu5Only,
     timestamp: Buffer.alloc(0),
   };
   const getTrustedInputCall =
     useBip143 && !useTrustedInputForSegwit ? getTrustedInputBIP143 : getTrustedInput;
-  console.log({bool: useBip143 && !useTrustedInputForSegwit, getTrustedInputCall})
+  console.log({ bool: useBip143 && !useTrustedInputForSegwit, getTrustedInputCall });
   const outputScript = Buffer.from(outputScriptHex, "hex");
   notify(0, 0);
   // first pass on inputs to get trusted inputs
   for (const input of inputs) {
-    console.log(`working on input ${input}`)
-    console.log({input})
+    console.log(`working on input ${input}`);
+    console.log({ input });
     if (!resuming) {
+      const savedVersion = input[0].version;
+      console.log({savedVersion})
       if (isZcash) {
         debugger;
-        input[0].version = getZcashTransactionVersion(input[4], input[0].version, input[0].nVersionGroupId);
+        const newVersion = getZcashTransactionVersion(
+          input[4],
+          input[0].version,
+          input[0].nVersionGroupId,
+        );
+        input[0].version = newVersion
+        console.log({blockheight: input[4], newVersion, inputzeroversion: input[0].version, savedVersion})
       }
-      console.log("before trustedInput call")
-      console.log({indexLookup: input[1], transaction: input[0], additionals})
+      console.log({savedVersion, inputzero: input[0]})
+      console.log("before trustedInput call, version for input[1]");
+      console.log(`before trustedInput call, version for input[1] (${input[1]}) is ${input[0].version}`);
+      console.log({ indexLookup: input[1], transaction: input[0], additionals, input });
       const trustedInput = await getTrustedInputCall(transport, input[1], input[0], additionals);
-      console.log(`got trustedInput ${trustedInput}`)
+      console.log(`got trustedInput ${trustedInput}`);
       log("hw", "got trustedInput=" + trustedInput);
+      input[0].version = savedVersion;
       const sequence = Buffer.alloc(4);
       sequence.writeUInt32LE(
         input.length >= 4 && typeof input[3] === "number" ? input[3] : DEFAULT_SEQUENCE,
@@ -336,13 +348,13 @@ export async function createTransaction(
       // targetTransaction.extraData = Buffer.from(
       //   sapling ? [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00] : [0x00],
       // );
-      console.log({sapling, targetTransactionInStartCreate: targetTransaction})
+      console.log({ sapling, targetTransactionInStartCreate: targetTransaction });
     } else if (isDecred) {
       targetTransaction.nExpiryHeight = expiryHeight;
     }
-    console.log(`finished working on input ${input}`)
+    console.log(`finished working on input ${input}`);
   }
-  console.log("got all trusted inputs")
+  console.log("got all trusted inputs");
 
   targetTransaction.inputs = inputs.map((input, idx) => {
     const sequence = Buffer.alloc(4);
@@ -380,7 +392,10 @@ export async function createTransaction(
 
   onDeviceSignatureRequested();
 
+  debugger;
+  console.log({ targetTransaction, trustedInputs });
   if (useBip143) {
+    debugger;
     // Do the first run with all inputs
     await startUntrustedHashTransactionInput(
       transport,
@@ -403,7 +418,7 @@ export async function createTransaction(
   if (!!expiryHeight && !isDecred) {
     await signTransaction(transport, "", lockTime, SIGHASH_ALL, expiryHeight);
   }
-  console.log("before second run")
+  console.log("before second run");
 
   // Do the second run with the individual transaction
   for (let i = 0; i < inputs.length; i++) {
@@ -467,7 +482,7 @@ export async function createTransaction(
       firstRun = false;
     }
   }
-  console.log("before populating final input scripts")
+  console.log("before populating final input scripts");
 
   targetTransaction.version = defaultVersionNu5Only;
   // Populate the final input scripts
@@ -498,11 +513,12 @@ export async function createTransaction(
     targetTransaction.inputs[i].prevout = trustedInputs[i].value.slice(offset, offset + 0x24);
   }
   targetTransaction.locktime = lockTimeBuffer;
+  debugger;
   let result = Buffer.concat([
     serializeTransaction(targetTransaction, false, targetTransaction.timestamp, additionals),
     outputScript,
   ]);
-  console.log({targetTransaction, result: result.toString("hex")});
+  console.log({ targetTransaction, result: result.toString("hex") });
   if (segwit && !isDecred) {
     let witness = Buffer.alloc(0);
 
@@ -548,9 +564,9 @@ export async function createTransaction(
   }
   if (isZcash) {
     console.log("createTransaction isZcash");
-    console.log({resultBefore: result.toString("hex")});
+    console.log({ resultBefore: result.toString("hex") });
     result = Buffer.concat([result, Buffer.from([0x00, 0x00, 0x00])]);
-    console.log({resultBefore: result.toString("hex")});
+    console.log({ resultBefore: result.toString("hex") });
   }
   return result.toString("hex");
 }
