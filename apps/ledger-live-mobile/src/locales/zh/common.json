@@ -2411,16 +2411,13 @@
     },
     "recoverBanner" : {
       "subscribeDone" : {
-        "title" : "提醒：完成订阅 Ledger Recover 服务",
-        "description" : "完成最后两步，让您的设备及资金得到安全保障。"
+        "title" : "提醒：完成订阅 Ledger Recover 服务"
       },
       "verifyIdentity" : {
-        "title" : "提醒：完成订阅 Ledger Recover 服务",
-        "description" : "完成最后一步，让您的设备及资金得到安全保障。"
+        "title" : "您尚未备份钱包访问权限"
       },
       "connectDevice" : {
-        "title" : "提醒：完成订阅 Ledger Recover 服务",
-        "description" : "这是您确保能恢复钱包访问权限的最后一步。"
+        "title" : "您尚未备份钱包访问权限"
       }
     }
   },
@@ -6611,7 +6608,12 @@
       "24h" : "24 小时",
       "7d" : "7 天",
       "30d" : "30 天",
-      "1y" : "1 年"
+      "1y" : "1 年",
+      "1H_label" : "1 小时",
+      "1D_label" : "1 天",
+      "1W_label" : "1 周",
+      "1M_label" : "1 月",
+      "1Y_label" : "1 年"
     },
     "warnings" : {
       "connectionError" : "连接错误",
@@ -7337,7 +7339,7 @@
   },
   "lnsUpsell" : {
     "opted_in" : {
-      "description" : "Upgrade your Ledger Nano S to a newer Ledger — like the Ledger Flex — for more memory, the latest security enhancements, fresh features, and an exclusive 20% off. ",
+      "description" : "将您的 Ledger Nano S 升级到 Ledger Flex 等新款 Ledger 设备，即可享受 20% 专属折扣，解锁更多内存、全新功能和最新增强安全保护。 ",
       "cta" : "升级 Ledger 设备"
     },
     "opted_out" : {
