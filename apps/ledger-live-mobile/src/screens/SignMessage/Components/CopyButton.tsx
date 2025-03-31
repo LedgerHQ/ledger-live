@@ -1,12 +1,12 @@
 import React, { useState, useCallback } from "react";
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet, View } from "react-native";
 import Clipboard from "@react-native-clipboard/clipboard";
-import { Button, Icons } from "@ledgerhq/native-ui";
+import { Button, Icons, Text } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import { useTranslation } from "react-i18next";
 
 type Props = {
-  text: string;
+  readonly text: string;
 };
 
 function CopyButton({ text }: Props) {
@@ -15,30 +15,34 @@ function CopyButton({ text }: Props) {
   const theme = useTheme();
 
   const handleCopy = useCallback(() => {
-    const textToCopy = typeof text === "string" ? text : JSON.stringify(text);
+    const textToCopy = text;
     Clipboard.setString(textToCopy);
     setCopied(true);
     setTimeout(() => setCopied(false), 1200);
   }, [text]);
 
+  const buttonBackgroundColor =
+    theme.colors.type === "dark" ? theme.colors.primary.c20 : theme.colors.primary.c30;
+
   return (
     <Button
       type="shade"
       onPress={handleCopy}
-      style={[styles.buttonContainer, { backgroundColor: theme.colors.primary.c20 }]}
+      style={[styles.buttonContainer, { backgroundColor: buttonBackgroundColor }]}
+      testID="copy-button"
     >
-      <View style={styles.contentWrapper}>
+      <View style={styles.contentWrapper} testID="copy-wrapper">
         {copied ? (
           <>
-            <Icons.Check size={"S"} color="success.c50" />
-            <Text style={[styles.text, { color: theme.colors.neutral.c90 }]}>
+            <Icons.Check size="S" color="success.c50" />
+            <Text style={styles.text} color="neutral.c90">
               {t("common.copied")}
             </Text>
           </>
         ) : (
           <>
-            <Icons.Copy size={"S"} color="neutral.c90" />
-            <Text style={[styles.text, { color: theme.colors.neutral.c90 }]}>
+            <Icons.Copy size="S" color="neutral.c90" />
+            <Text style={styles.text} color="neutral.c90">
               {t("common.copy")}
             </Text>
           </>
