@@ -1541,14 +1541,14 @@
         "secondaryCta" : "Quizás más tarde"
       },
       "verifyIdentity" : {
-        "title" : "Recordatorio: termina de suscribirte a Ledger Recover",
-        "description" : "Estás a sólo un paso de tener la protección que te mereces.",
+        "title" : "Todavía no se ha hecho una copia de respaldo del acceso a tu billetera",
+        "description" : "Verifica tu identidad para proteger el acceso a tu billetera",
         "primaryCta" : "Verificar identidad",
         "secondaryCta" : "Quizás más tarde"
       },
       "connectDevice" : {
-        "title" : "Recordatorio: termina de suscribirte a Ledger Recover",
-        "description" : "Es el último paso que debes realizar para garantizar la recuperación del acceso a tu billetera.",
+        "title" : "Todavía no se ha hecho una copia de respaldo del acceso a tu billetera",
+        "description" : "Conecta tu dispositivo para garantizar el acceso a tu billetera",
         "primaryCta" : "Conectar dispositivo",
         "secondaryCta" : "Quizás más tarde"
       }
