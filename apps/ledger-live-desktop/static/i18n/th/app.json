@@ -179,7 +179,7 @@
       "UNDELEGATE_RESOURCE" : "Undelegate แล้ว",
       "WITHDRAW_EXPIRE_UNFREEZE" : "การถอน",
       "LEGACYUNFREEZE" : "ไม่ได้ถูกระงับ",
-      "REWARD" : "Reward ที่ขอรับแล้ว",
+      "REWARD" : "Reward ที่เคลมแล้ว",
       "FEES" : "ค่าธรรมเนียม",
       "OPT_IN" : "เลือกเข้าร่วม",
       "OPT_OUT" : "เลือกไม่เข้าร่วม",
@@ -288,7 +288,7 @@
     "menu" : "เมนู",
     "stars" : "บัญชีที่ติดดาว",
     "accounts" : "บัญชี",
-    "manager" : "My Ledger",
+    "manager" : "Ledger ของฉัน",
     "earn" : "Earn",
     "exchange" : "ซื้อ / ขาย",
     "swap" : "Swap",
@@ -299,7 +299,7 @@
     "recover" : "[L] Recover"
   },
   "stars" : {
-    "placeholder" : "ติดดาวที่บัญชีเพื่อแสดงตรงนี้",
+    "placeholder" : "ติดดาวบัญชีเพื่อให้แสดงที่นี่",
     "tooltip" : "ติดดาวบัญชี"
   },
   "bridge" : {
@@ -440,7 +440,7 @@
     },
     "wrongDevice" : {
       "title" : "Ledger Nano S™ ไม่สามารถใช้ได้กับ {{provider}}",
-      "description" : "Ledger Nano S™ is not compatible with {{provider}}. You can use Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™, or Ledger Flex™ to experience cross-chain swaps on {{provider}} via Ledger Live",
+      "description" : "Ledger Nano S™ ไม่สามารถใช้ได้กับ {{provider}} คุณสามารถใช้ Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™ หรือ Ledger Flex™ เพื่อสัมผัสประสบการณ์ Swap แบบ Cross-Chain บน {{provider}} ผ่าน Ledger Live",
       "cta" : "สำรวจอุปกรณ์ที่เข้ากันได้",
       "changeProvider" : "Swap กับผู้ให้บริการรายอื่น"
     },
@@ -792,7 +792,7 @@
         "sending_tokens" : "กำลังส่งโทเคน",
         "receiving_tokens" : "กำลังรับโทเคน",
         "staking" : "กำลัง Stake",
-        "claiming_staking_rewards" : "กำลังรับ Reward จากการ Stake"
+        "claiming_staking_rewards" : "กำลังเคลม Reward จากการ Stake"
       },
       "support" : "การสนับสนุน"
     },
@@ -1541,14 +1541,14 @@
         "secondaryCta" : "อาจดำเนินการในภายหลัง"
       },
       "verifyIdentity" : {
-        "title" : "การแจ้งเตือน: สมัครใช้งาน Ledger Recover ให้แล้วเสร็จ",
-        "description" : "สินทรัพย์จะปลอดภัยในอีกแค่ขั้นตอนเดียว",
+        "title" : "การเข้าถึงวอลเล็ตของคุณยังไม่มีการสำรองข้อมูล",
+        "description" : "ยืนยันตัวตนเพื่อให้การเข้าถึงวอลเล็ตของคุณปลอดภัย",
         "primaryCta" : "ยืนยันตัวตน",
         "secondaryCta" : "อาจดำเนินการในภายหลัง"
       },
       "connectDevice" : {
-        "title" : "การแจ้งเตือน: สมัครใช้งาน Ledger Recover ให้แล้วเสร็จ",
-        "description" : "เป็นขั้นตอนสุดท้ายเพื่อให้แน่ใจว่าการกู้คืนการเข้าถึงวอลเล็ตสำเร็จ",
+        "title" : "การเข้าถึงวอลเล็ตของคุณยังไม่มีการสำรองข้อมูล",
+        "description" : "เชื่อมต่ออุปกรณ์เพื่อให้การเข้าถึงวอลเล็ตของคุณปลอดภัย",
         "primaryCta" : "เชื่อมต่ออุปกรณ์",
         "secondaryCta" : "อาจดำเนินการในภายหลัง"
       }
@@ -1606,7 +1606,7 @@
       "desc" : "เพิ่มบัญชีเพื่อจัดการสินทรัพย์คริปโตของคุณ คุณต้องติดตั้งแอปบนอุปกรณ์ของคุณเพื่อจัดการสินทรัพย์คริปโตของคุณ",
       "buttons" : {
         "addAccount" : "เพิ่มบัญชี",
-        "installApp" : "ไปที่ My Ledger เพื่อติดตั้งแอป",
+        "installApp" : "ไปที่ Ledger ของฉันเพื่อติดตั้งแอป",
         "help" : "ช่วยเหลือ"
       }
     }
@@ -1667,10 +1667,10 @@
       "1M_label" : "1M",
       "1Y_label" : "1Y",
       "1h" : "1h",
-      "24h" : "24h",
-      "7d" : "7d",
+      "24h" : "24H",
+      "7d" : "7D",
       "30d" : "30D",
-      "1y" : "1y",
+      "1y" : "1Y",
       "1H_selectorLabel" : "1 ชั่วโมงที่ผ่านมา",
       "1D_selectorLabel" : "24 ชั่วโมงที่ผ่านมา",
       "1W_selectorLabel" : "สัปดาห์ที่ผ่านมา",
@@ -1872,7 +1872,7 @@
       "memo" : "Memo",
       "assetId" : "ID สินทรัพย์",
       "rewards" : "Reward ที่ได้รับ",
-      "autoClaimedRewards" : "Reward ที่ได้รับอัตโนมัติ",
+      "autoClaimedRewards" : "Reward ที่เคลมโดยอัตโนมัติ",
       "bondedAmount" : "จำนวนที่ผูกมัด",
       "unbondedAmount" : "จำนวนที่ไม่ได้ผูกมัด",
       "withdrawUnbondedAmount" : "จำนวนที่ถอน",
@@ -1903,7 +1903,7 @@
     "openManager" : "เปิด My Ledger",
     "openOnboarding" : "ตั้งค่าอุปกรณ์",
     "outdated" : "เวอร์ชันแอปล้าสมัย",
-    "outdatedDesc" : "มีการอัปเดตที่สำคัญสำหรับแอปพลิเคชัน {{appName}} บนอุปกรณ์ของคุณ โปรดไปที่ My Ledger เพื่ออัปเดต",
+    "outdatedDesc" : "มีการอัปเดตที่สำคัญสำหรับแอปพลิเคชัน {{appName}} บนอุปกรณ์ของคุณ โปรดไปที่ Ledger ของฉันเพื่ออัปเดต",
     "installApp" : "การติดตั้งแอป {{appName}}",
     "installAppDescription" : "โปรดรอสักครู่จนกว่าการติดตั้งจะเสร็จสิ้น",
     "listApps" : "กำลังตรวจสอบการขึ้นต่อกันของแอป",
@@ -1951,7 +1951,7 @@
     "disconnected" : {
       "title" : "ดูเหมือนว่าแอปจะเปิดอยู่บนอุปกรณ์ของคุณ",
       "subtitle" : "การเปิด My Ledger อีกครั้งจะเป็นการปิดแอปบนอุปกรณ์ของคุณ",
-      "ctaReopen" : "เปิด My Ledger อีกครั้ง",
+      "ctaReopen" : "เปิด Ledger ของฉันอีกครั้ง",
       "ctaPortfolio" : "กลับไปยังพอร์ตโฟลิโอ"
     },
     "deviceStorage" : {
@@ -2011,7 +2011,7 @@
         "uninstall" : "ถอนการติดตั้ง",
         "notEnoughSpace" : "พื้นที่เก็บข้อมูลไม่เพียงพอ",
         "supported" : "รองรับ Ledger Live",
-        "not_supported" : "ต้องมี Wallet ของบุคคลที่สาม",
+        "not_supported" : "ต้องมีวอลเล็ตของบุคคลที่สาม",
         "addAccount" : "เพิ่มบัญชี",
         "addAccountTooltip" : "เพิ่มบัญชี {{appName}}",
         "addAccountWarn" : "โปรดรอให้การประมวลผลเสร็จสิ้น",
@@ -2130,14 +2130,14 @@
         "boot" : "กดค้างที่ปุ่มด้านข้างจนกว่า {{option}} จะปรากฏ",
         "recoveryMode" : "แตะโหมด {{mode}} รอจนกว่าแดชบอร์ดจะปรากฏ",
         "third" : "3. ถอนการติดตั้งแอปทั้งหมด",
-        "openLive" : "เปิด My Ledger ใน Ledger Live",
+        "openLive" : "เปิด Ledger ของฉันใน Ledger Live",
         "uninstall" : "คลิกที่ไอคอนถังขยะสีเทาสำหรับแอปทั้งหมดที่ติดตั้งอยู่ในปัจจุบันใน {{deviceName}} ทำให้มีพื้นที่สำหรับตัวติดตั้งเฟิร์มแวร์",
         "disclaimer" : "หมายเหตุ: เงินทุนของคุณจะไม่ได้รับผลกระทบจากการดำเนินการนี้ โดย Private Key ที่ใช้เข้าถึงสินทรัพย์คริปโตของคุณในบล็อกเชนจะยังคงปลอดภัยบน Recovery Sheet"
       }
     }
   },
   "claimReward" : {
-    "title" : "ขอรับ Reward",
+    "title" : "เคลม Reward",
     "steps" : {
       "rewards" : {
         "title" : "Reward",
@@ -2150,7 +2150,7 @@
       "confirmation" : {
         "title" : "การยืนยัน",
         "success" : {
-          "title" : "รับ Reward แล้ว",
+          "title" : "เคลม Reward แล้ว",
           "text" : "Reward ของคุณได้รับการเพิ่มเข้าไปในยอดคงเหลือในบัญชีที่คุณใช้ได้แล้ว",
           "cta" : "ดูรายละเอียด",
           "done" : "เสร็จสิ้น"
@@ -2548,7 +2548,7 @@
         "delegation" : "รับ Reward"
       },
       "commission" : "คอมมิชชัน",
-      "claimRewards" : "ขอรับ Reward",
+      "claimRewards" : "เคลม Reward",
       "header" : "Delegation",
       "noRewards" : "ไม่สามารถใช้ Reward ได้",
       "delegate" : "Delegate",
@@ -2556,7 +2556,7 @@
       "redelegateDisabledTooltip" : "คุณสามารถมอบหมายใหม่ได้ในอีก <0>{{days}}</0> วัน",
       "redelegateMaxDisabledTooltip" : "คุณไม่สามารถ Redelegate ได้มากกว่า <0>7</0> ผู้ตรวจสอบต่อครั้ง",
       "undelegateDisabledTooltip" : "คุณไม่สามารถ Redelegate ได้มากกว่า <0>7</0> ผู้ตรวจสอบต่อครั้ง",
-      "reward" : "ขอรับ Reward",
+      "reward" : "เคลม Reward",
       "currentDelegation" : "Delegate แล้ว: <0>{{amount}}</0>",
       "apr" : "อัตราร้อยละต่อปี",
       "totalStake" : "จำนวน Stake ทั้งหมด",
@@ -2604,13 +2604,13 @@
     },
     "claimRewards" : {
       "flow" : {
-        "title" : "ขอรับ Reward",
+        "title" : "เคลม Reward",
         "steps" : {
           "claimRewards" : {
             "title" : "Reward",
             "compound" : "Compound Reward",
-            "claim" : "ขอรับ Reward",
-            "compoundOrClaim" : "ทำการทบต้น Reward หรือรับ Reward เลย",
+            "claim" : "เคลม Reward",
+            "compoundOrClaim" : "จะทบต้น Reward หรือเคลม Reward เลย",
             "compoundDescription" : "Reward จะถูกเพิ่มเข้าไปในจำนวนที่ Delegate",
             "claimDescription" : "Reward จะถูกเพิ่มเข้าไปในยอดคงเหลือที่ใช้ได้",
             "compoundInfo" : "คุณได้รับ <0>{{amount}}</0> แล้ว การคลิกดำเนินการต่อจะถือว่ากำลังมีการขอรับทันที และจะมีการ Delegate โดยอัตโนมัติให้กับผู้ให้บริการ Staking เดียวกัน",
@@ -2624,7 +2624,7 @@
             "title" : "การยืนยัน",
             "label" : "การยืนยัน",
             "success" : {
-              "title" : "ขอรับ Reward เรียบร้อยแล้ว",
+              "title" : "เคลม Reward เรียบร้อยแล้ว",
               "titleCompound" : "ทำการทบต้น Reward เรียบร้อยแล้ว",
               "text" : "มีการเพิ่ม Reward เข้าไปในยอดคงเหลือที่คุณใช้ได้แล้ว",
               "textCompound" : "ธุรกรรม Reward ที่ทบต้นจำนวน <0>{{amount}}</0> EGLD ไปยัง <0>{{validator}}</0> ได้รับการดำเนินการเรียบร้อยแล้ว",
@@ -2651,7 +2651,7 @@
           "amount" : {
             "title" : "จำนวน",
             "subtitle" : "กระบวนการ Undelegate ใช้เวลา <0>10 วัน</0> จึงจะแล้วเสร็จ",
-            "warning" : "จะมีการขอรับ Reward โดยอัตโนมัติ การ Undelegate เป็นกระบวนการ 2 ขั้นตอน: การร้องขอการ Undelegate ตามด้วย<0>ช่วงเวลาการยกเลิกการผูกมัด 10 วัน</0> ซึ่งหลังจากนั้น คุณสามารถดำเนินการถอนให้เสร็จสิ้น และจำนวนที่ Undelegate จะได้รับการโอนไปยังยอดคงเหลือที่ใช้ได้",
+            "warning" : "จะมีการเคลม Reward โดยอัตโนมัติ การ Undelegate เป็นกระบวนการ 2 ขั้นตอน: การร้องขอการ Undelegate ตามด้วย<0>ช่วงเวลาการยกเลิกการผูกมัด 10 วัน</0> ซึ่งหลังจากนั้น คุณสามารถดำเนินการถอนให้เสร็จสิ้น และจำนวนที่ Undelegate จะได้รับการโอนไปยังยอดคงเหลือที่ใช้ได้",
             "fields" : {
               "validator" : "ผู้ให้บริการ Staking",
               "amount" : "จำนวนที่จะ Undelegate"
@@ -2786,9 +2786,9 @@
       "warnEarnRewards" : "คุณต้องการอย่างน้อย {{amount}} เพื่อเริ่มรับ Reward",
       "warnDisableStaking" : "ไม่สามารถใช้ได้",
       "warnDisableStakingMessage" : "ฟีเจอร์ Staking สำหรับ Tron ไม่สามารถใช้งานได้ในตอนนี้",
-      "claimRewards" : "ขอรับ Reward",
+      "claimRewards" : "เคลม Reward",
       "nextRewardsDate" : "สามารถขอรับ Reward ได้ในวันที่ {{date}}",
-      "claimAvailableRewards" : "ขอรับ {{amount}}",
+      "claimAvailableRewards" : "เคลม {{amount}}",
       "header" : "การโหวต",
       "percentageTP" : "% การลงคะแนนไปแล้วของการโหวต",
       "noRewards" : "ไม่มี Reward",
@@ -3152,7 +3152,7 @@
       },
       "commission" : "คอมมิชชัน",
       "totalStake" : "จำนวน Stake ทั้งหมด",
-      "claimRewards" : "ขอรับ Reward",
+      "claimRewards" : "เคลม Reward",
       "header" : "การ Delegation",
       "noRewards" : "ไม่มี Reward",
       "delegate" : "เพิ่ม",
@@ -3161,7 +3161,7 @@
       "redelegateDisabledTooltip" : "คุณสามารถ Redelegate ได้ในอีก <0>{{days}}</0> วัน",
       "redelegateMaxDisabledTooltip" : "คุณไม่สามารถ Redelegate ได้มากกว่า <0>7</0> ผู้ตรวจสอบต่อครั้ง",
       "undelegateDisabledTooltip" : "คุณไม่สามารถ Redelegate ได้มากกว่า <0>7</0> ผู้ตรวจสอบต่อครั้ง",
-      "reward" : "ขอรับ Reward",
+      "reward" : "เคลม Reward",
       "currentDelegation" : "Delegate แล้ว: <0>{{amount}}</0>",
       "estYield" : "ผลตอบแทนโดยประมาณ",
       "activeTooltip" : "จำนวนที่ Delegate จะส่งผลต่อจำนวน Reward ที่ได้",
@@ -3200,7 +3200,7 @@
     },
     "claimRewards" : {
       "flow" : {
-        "title" : "ขอรับ Reward",
+        "title" : "เคลม Reward",
         "steps" : {
           "claimRewards" : {
             "title" : "Reward",
@@ -3331,10 +3331,10 @@
     "claimRewards" : {
       "header" : "Reward",
       "tooltip" : "Reward ของ Algorand จะได้รับการกระจายเป็นประจำ และสามารถรับได้โดยอัตโนมัติเมื่อคุณทำธุรกรรม",
-      "cta" : "ขอรับ Reward",
+      "cta" : "เคลม Reward",
       "rewardsDisabledTooltip" : "คุณไม่มี Reward ใด ๆ สามารถขอรับ Reward ของ Algorand ได้โดยอัตโนมัติเมื่อคุณทำธุรกรรม รับ ALGO เพื่อเริ่มรับ Reward",
       "flow" : {
-        "title" : "ขอรับ Reward",
+        "title" : "เคลม Reward",
         "steps" : {
           "starter" : {
             "description" : "รับ Reward ของ Algorand ได้เพียงแค่ถือ Algorand เพื่อการควบคุมสินทรัพย์ของคุณ",
@@ -3359,7 +3359,7 @@
           "confirmation" : {
             "title" : "การยืนยัน",
             "success" : {
-              "title" : "ขอรับ Reward เรียบร้อยแล้ว!",
+              "title" : "เคลม Reward เรียบร้อยแล้ว!",
               "text" : "Reward ของคุณได้รับการเพิ่มเข้าไปในยอดคงเหลือที่คุณใช้ได้แล้ว",
               "cta" : "ดูรายละเอียด"
             },
@@ -4229,7 +4229,7 @@
       "nfts" : {
         "title" : "คอลเล็กชั่น NFT ที่ซ่อนอยู่",
         "description" : "รีเซ็ตรายการคอลเลกชันที่ซ่อนอยู่",
-        "reset" : "รีเซ็ต"
+        "reset" : "รีเซ็ต ({{count}})"
       },
       "exchangeDeveloperMode" : {
         "title" : "โหมด Dev Exchange",
@@ -4337,6 +4337,32 @@
             "nft" : "NFT แต่ละรายการ",
             "contract" : "สัญญา"
           }
+        },
+        "back" : "ย้อนกลับ"
+      },
+      "debugNfts" : {
+        "title" : "เครื่องมือ NFT",
+        "description" : "ให้บริการเครื่องมือที่มีประโยชน์เพื่อจัดการ NFT ใน Ledger Live",
+        "cta" : "เปิด",
+        "tabs" : {
+          "config" : "การกำหนดค่า",
+          "generatorAndDestructor" : "ระบบสร้างข้อมูลและระบบลบข้อมูล"
+        },
+        "configuration" : {
+          "supported" : "เชนของ NFT ที่รองรับ",
+          "supported_other" : "เชนของ NFT ที่รองรับ",
+          "nms" : {
+            "title" : "บริการด้าน Metadata สำหรับ NFT (NMS)",
+            "env" : "สภาพแวดล้อม: {{env}}"
+          }
+        },
+        "generatorAndDestructor" : {
+          "genAcc" : "สร้างบัญชี",
+          "genAccDesc" : "สร้างบัญชีด้วย NFT",
+          "cta" : "สร้าง",
+          "deleteAcc" : "ลบบัญชี",
+          "deleteAccDesc" : "ลบบัญชีทั้งหมดจากร้านค้า",
+          "delete" : "ลบ"
         },
         "back" : "ย้อนกลับ"
       },
@@ -4494,7 +4520,7 @@
           "description" : "ลิมิตช่องว่างที่กำหนดเองสำหรับทุกบัญชี การเพิ่มค่านี้ให้สูงกว่าค่าเริ่มต้น (20) จะสแกน Address สาธารณะที่ไม่ได้ใช้งานเพิ่มเติมเพื่อค้นหาเหรียญ สำหรับผู้ใช้ที่เชี่ยวชาญเท่านั้น สิ่งนี้อาจทำให้มีปัญหาเข้ากันไม่ได้ในการกู้คืนบัญชีของคุณ"
         },
         "forceProvider" : {
-          "title" : "ผู้ให้บริการ My Ledger",
+          "title" : "ผู้ให้บริการ Ledger ของฉัน",
           "description" : "การเปลี่ยนผู้ให้บริการแอปใน My Ledger อาจทำให้ไม่สามารถติดตั้งหรือถอนการติดตั้งแอปบนอุปกรณ์ Ledger ของคุณได้"
         },
         "testAnimations" : {
@@ -5780,7 +5806,7 @@
         "description" : "การออกจาก My Ledger จะยุติการอัปเดตแอปที่กำลังดำเนินการ",
         "stay" : "อัปเดตให้เสร็จสิ้น"
       },
-      "quit" : "ปิด My Ledger"
+      "quit" : "ปิด Ledger ของฉัน"
     },
     "ManagerUninstallBTCDep" : {
       "title" : "ขออภัย ต้องมีแอปนี้",
@@ -6997,7 +7023,7 @@
   "lnsUpsell" : {
     "opted_in" : {
       "title" : "อย่าให้หน่วยความจำที่จำกัด จำกัดประสบการณ์ของคุณไปด้วย",
-      "description" : "Upgrade your Ledger Nano S to a newer Ledger — like the Ledger Flex — for more memory, the latest security enhancements, fresh features, and <0>an exclusive {{discount}}% off</>.",
+      "description" : "อัปเกรด Ledger Nano S ของคุณเป็น Ledger รุ่นใหม่กว่า — เช่น Ledger Flex — เพื่อเพิ่มหน่วยความจำ, มาตรฐานความปลอดภัยที่อัปเดตล่าสุด, ฟีเจอร์ใหม่ พร้อม <0>ส่วนลดพิเศษ {{discount}}%</>",
       "cta" : "อัปเกรด My Ledger"
     },
     "opted_out" : {
