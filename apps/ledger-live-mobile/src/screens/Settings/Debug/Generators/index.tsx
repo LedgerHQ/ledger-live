@@ -5,7 +5,6 @@ import { Alert as Confirmation } from "react-native";
 import { Alert, Flex, Icons, IconsLegacy } from "@ledgerhq/native-ui";
 import { useDispatch } from "react-redux";
 import GenerateMockAccounts from "./GenerateMockAccounts";
-import GenerateMockAccountsNft from "./GenerateMockAccountsNFTs";
 import ImportBridgeStreamData from "./ImportBridgeStreamData";
 import GenerateMockAccount from "./GenerateMockAccountsSelect";
 import SettingsNavigationScrollView from "../../SettingsNavigationScrollView";
@@ -83,16 +82,21 @@ export default function Generators() {
 
   return (
     <SettingsNavigationScrollView>
-      <GenerateMockAccount />
+      <GenerateMockAccount
+        title="Accounts by currency"
+        desc="Select for which currencies you want to generate accounts"
+        iconLeft={<IconsLegacy.ClipboardListCheckMedium size={24} color="black" />}
+      />
       <GenerateMockAccounts
         title="Accounts"
         desc="Replace existing accounts with 10 mock accounts from random currencies."
         count={10}
       />
-      <GenerateMockAccountsNft
-        title="Accounts + NFTs"
-        desc="Replace existing accounts with 10 mock accounts with NFTs."
-        count={10}
+      <GenerateMockAccount
+        title="Accounts with NFTs"
+        desc="Select for which currencies you want to generate accounts and NFTs"
+        iconLeft={<Icons.Nft size="M" color="black" />}
+        withNft
       />
       {getEnv("MOCK") ? <ToggleServiceStatusIncident /> : null}
       <ImportBridgeStreamData
