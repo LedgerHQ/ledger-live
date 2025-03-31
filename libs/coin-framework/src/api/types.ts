@@ -34,12 +34,12 @@ export type Balance<AssetInfo> = {
   value: bigint;
 };
 
-export type Fees<FeeSettings = Record<string, unknown>> = {
+export type Fees<FeeSettings> = {
   settings: FeeSettings;
   value: bigint;
 };
 
-export type TransactionIntent<AssetInfo, IntentDetails = Record<string, unknown>> = {
+export type TransactionIntent<AssetInfo, IntentDetails> = {
   type: string;
   sender: string;
   recipient: string;
@@ -48,11 +48,7 @@ export type TransactionIntent<AssetInfo, IntentDetails = Record<string, unknown>
 } & IntentDetails;
 
 export type Pagination = { minHeight: number };
-export type Api<
-  AssetInfo,
-  IntentDetails = Record<string, unknown>,
-  FeeSettings = Record<string, unknown>,
-> = {
+export type Api<AssetInfo, IntentDetails, FeeSettings> = {
   broadcast: (tx: string) => Promise<string>;
   combine: (tx: string, signature: string, pubkey?: string) => string;
   estimateFees: (
