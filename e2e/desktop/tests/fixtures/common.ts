@@ -7,14 +7,14 @@ import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { startSpeculos, stopSpeculos, specs } from "@ledgerhq/live-common/e2e/speculos";
 import invariant from "invariant";
 
-import { Application } from "../page";
-import { safeAppendFile } from "../utils/fileUtils";
-import { launchApp } from "../utils/electronUtils";
-import { captureArtifacts } from "../utils/allureUtils";
+import { Application } from "tests/page";
+import { safeAppendFile } from "tests/utils/fileUtils";
+import { launchApp } from "tests/utils/electronUtils";
+import { captureArtifacts } from "tests/utils/allureUtils";
 import { randomUUID } from "crypto";
 import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { lastValueFrom, Observable } from "rxjs";
-import { registerSpeculosTransport } from "@ledgerhq/live-cli/src/live-common-setup";
+import { CLI } from "../utils/cliUtils";
 
 type TestFixtures = {
   lang: string;
@@ -104,6 +104,7 @@ export const test = base.extend<TestFixtures>({
           portCounter = BASE_PORT;
         }
         const speculosPort = portCounter++;
+        setEnv("PLAYWRIGHT_RUN", true);
         setEnv(
           "SPECULOS_PID_OFFSET",
           (speculosPort - BASE_PORT) * 1000 + parseInt(process.env.TEST_WORKER_INDEX || "0") * 100,
@@ -113,14 +114,16 @@ export const test = base.extend<TestFixtures>({
           specs[speculosApp.name.replace(/ /g, "_")],
         );
         invariant(device, "[E2E Setup] Speculos not started");
-        const speculosApiPort = device.ports.apiPort;
-        invariant(speculosApiPort, "[E2E Setup] speculosApiPort not defined");
+        invariant(device.ports.apiPort, "[E2E Setup] speculosApiPort not defined");
+        const speculosApiPort = device.ports.apiPort.toString();
 
-        setEnv("SPECULOS_API_PORT", speculosApiPort.toString());
+        setEnv("SPECULOS_API_PORT", speculosApiPort);
         setEnv("MOCK", "");
+        process.env.SPECULOS_API_PORT = speculosApiPort;
+        process.env.MOCK = "";
 
         if (cliCommands?.length) {
-          registerSpeculosTransport(device?.ports.apiPort);
+          CLI.registerSpeculosTransport(speculosApiPort);
           for (const cmd of cliCommands) {
             const promise = await cmd(`${userdataDestinationPath}/app.json`);
             const result =

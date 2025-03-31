@@ -128,8 +128,8 @@ importers:
         specifier: 1.30.0
         version: 1.30.0(eslint@8.57.0)
       zx:
-        specifier: 7.2.3
-        version: 7.2.3
+        specifier: 8.4.1
+        version: 8.4.1
 
   apps/cli:
     dependencies:
@@ -874,6 +874,9 @@ importers:
       '@braze/react-native-sdk':
         specifier: 10.0.0
         version: 10.0.0
+      '@exodus/patch-broken-hermes-typed-arrays':
+        specifier: 1.0.0-alpha.1
+        version: 1.0.0-alpha.1
       '@formatjs/intl-locale':
         specifier: 3.4.5
         version: 3.4.5
@@ -1755,6 +1758,12 @@ importers:
 
   e2e/desktop:
     dependencies:
+      '@ledgerhq/hw-transport-node-speculos-http':
+        specifier: workspace:^
+        version: link:../../libs/ledgerjs/packages/hw-transport-node-speculos-http
+      '@ledgerhq/ledger-key-ring-protocol':
+        specifier: workspace:^
+        version: link:../../libs/ledger-key-ring-protocol
       '@ledgerhq/live-cli':
         specifier: workspace:^
         version: link:../../apps/cli/dist
@@ -1774,10 +1783,10 @@ importers:
         specifier: ^1.51.0
         version: 1.51.1
       '@types/node':
-        specifier: ^22.13.10
-        version: 22.13.13
+        specifier: 22.10.10
+        version: 22.10.10
       allure-js-commons:
-        specifier: 3.2.1
+        specifier: ^3.2.1
         version: 3.2.1(allure-playwright@3.2.1(@playwright/test@1.51.1))
       allure-playwright:
         specifier: ^3.2.0
@@ -3291,6 +3300,9 @@ importers:
       '@types/object-hash':
         specifier: ^2.1.0
         version: 2.2.1
+      axios:
+        specifier: 1.7.7
+        version: 1.7.7
       jest:
         specifier: ^29.7.0
         version: 29.7.0
@@ -13678,6 +13690,11 @@ packages:
     engines: {node: '>=18'}
     hasBin: true
 
+  '@playwright/test@1.51.1':
+    resolution: {integrity: sha512-nM+kEaTSAoVlXmMPH10017vn3FSiFqr/bh4fKg9vmAdMfd9SDqRZNvPSiAHADc/itWak+qPvMPZQOPwCBW7k7Q==}
+    engines: {node: '>=18'}
+    hasBin: true
+
   '@pmmmwh/react-refresh-webpack-plugin@0.5.11':
     resolution: {integrity: sha512-7j/6vdTym0+qZ6u4XbSAxrWBGYSdCfTzySkj7WAFgDLmSyWlOrWvpyzxlFh5jtw9dn0oL/jtW+06XfFiisN3JQ==}
     engines: {node: '>= 10.13'}
@@ -17401,6 +17418,9 @@ packages:
   '@types/lodash@4.17.14':
     resolution: {integrity: sha512-jsxagdikDiDBeIRaPYtArcT8my4tN1og7MtMRquFT3XNA6axxyHDRUemqDz/taRDdOUn0GnGHRCuff4q48sW9A==}
 
+  '@types/lodash@4.17.16':
+    resolution: {integrity: sha512-HX7Em5NYQAXKW+1T+FiuG27NGwzJfCX3s1GjOa7ujxZa52kjJLOr4FUxT+giF6Tgxv1e+/czV/iTtBw27WTU9g==}
+
   '@types/lodash@4.17.7':
     resolution: {integrity: sha512-8wTvZawATi/lsmNu10/j2hk1KEP0IvjubqPE3cu1Xz7xfXXt5oCq3SNUz4fMIP4XGF9Ky+Ue2tBA3hcS7LSBlA==}
 
@@ -17484,9 +17504,6 @@ packages:
 
   '@types/node@22.10.10':
     resolution: {integrity: sha512-X47y/mPNzxviAGY5TcYPtYL8JsY3kAq2n8fMmKoRCxq/c4v4pyGNCzM2R6+M5/umG4ZfHuT+sgqDYqWc9rJ6ww==}
-
-  '@types/node@22.13.13':
-    resolution: {integrity: sha512-ClsL5nMwKaBRwPcCvH8E7+nU4GxHVx1axNvMZTFHMEfNI7oahimt26P5zjVCRrjiIWj6YFXfE1v3dEp94wLcGQ==}
 
   '@types/node@22.7.5':
     resolution: {integrity: sha512-jML7s2NAzMWc//QSJ1a3prpk78cOPchGvXJsC3C6R6PSMoooztvRVQEz89gmBTBY1SPMaqo5teB4uNHPdetShQ==}
@@ -18484,8 +18501,21 @@ packages:
   allure-js-commons@2.15.1:
     resolution: {integrity: sha512-5V/VINplbu0APnfSZOkYpKOzucO36Q2EtTD1kqjWjl7n6tj7Hh+IHCZsH3Vpk/LXRDfj9RuXugBBvwYKV5YMJw==}
 
+  allure-js-commons@3.2.1:
+    resolution: {integrity: sha512-VGLv6u3I9NIm649dYmGpG3X5sOnI0tt7K1WYTVZPiEpnsxBbFEfDr6yAI7q509WWw/5g0VBCEtGEspd6AoYOqA==}
+    peerDependencies:
+      allure-playwright: 3.2.1
+    peerDependenciesMeta:
+      allure-playwright:
+        optional: true
+
   allure-playwright@2.15.1:
     resolution: {integrity: sha512-P1Uu1j/ptDHdYp3V5ZAeBZyt33+L+OQu0otUIEl/zkOcv0KRycHqlHwC0GEJmpgnLKvVP7s+K37LcLoSUUj3Cg==}
+
+  allure-playwright@3.2.1:
+    resolution: {integrity: sha512-IO0lDDz007hlaHH8hZzrvyaw0NR6ZOGBEPI/ANUGbBizFOXcDf9J/nHDCdsNrt/Qa13H4AGGU7sDjtng1evYgA==}
+    peerDependencies:
+      '@playwright/test': '>=1.36.0'
 
   anser@1.4.10:
     resolution: {integrity: sha512-hCv9AqTQ8ycjpSd3upOJd7vFwW1JaoYQ7tpham03GJ1ca8/65rqn0RpaWpItOAd6ylW9wAw6luXYPJIyPFVOww==}
@@ -21213,6 +21243,10 @@ packages:
 
   dotenv@16.4.5:
     resolution: {integrity: sha512-ZmdL2rui+eB2YwhsWzjInR8LldtZHGDoQ1ugH85ppHKwpUHL7j7rN0Ti9NCnGiQbhaZ11FpR+7ao1dNsmduNUg==}
+    engines: {node: '>=12'}
+
+  dotenv@16.4.7:
+    resolution: {integrity: sha512-47qPchRCykZC03FhkYAhrvwU4xDBFIj1QPqaarj6mdM/hgUzfPHcpkHJOn3mJAufFeeAxAzeGsr5X0M4k6fLZQ==}
     engines: {node: '>=12'}
 
   dotenv@8.6.0:
@@ -27356,6 +27390,11 @@ packages:
     engines: {node: '>=18'}
     hasBin: true
 
+  playwright-core@1.51.1:
+    resolution: {integrity: sha512-/crRMj8+j/Nq5s8QcvegseuyeZPxpQCZb6HNk3Sos3BlZyAknRjoyJPFWkpNn8v0+P3WiwqFF8P+zQo4eqiNuw==}
+    engines: {node: '>=18'}
+    hasBin: true
+
   playwright@1.40.1:
     resolution: {integrity: sha512-2eHI7IioIpQ0bS1Ovg/HszsN/XKNwEG1kbzSDDmADpclKc7CyqkHw7Mg2JCz/bbCxg25QUPcjksoMW7JcIFQmw==}
     engines: {node: '>=16'}
@@ -27363,6 +27402,11 @@ packages:
 
   playwright@1.45.0:
     resolution: {integrity: sha512-4z3ac3plDfYzGB6r0Q3LF8POPR20Z8D0aXcxbJvmfMgSSq1hkcgvFRXJk9rUq5H/MJ0Ktal869hhOdI/zUTeLA==}
+    engines: {node: '>=18'}
+    hasBin: true
+
+  playwright@1.51.1:
+    resolution: {integrity: sha512-kkx+MB2KQRkyxjYPc3a0wLZZoDczmppyGJIvQ43l+aZihkaVvmu/21kiyaHeHjiFxjxNNFnUncKmcGIyOojsaw==}
     engines: {node: '>=18'}
     hasBin: true
 
@@ -38130,7 +38174,7 @@ snapshots:
     dependencies:
       chalk: 4.1.2
       debug: 4.3.4
-      dotenv: 16.4.5
+      dotenv: 16.4.7
       dotenv-expand: 11.0.6
       getenv: 1.0.0
     transitivePeerDependencies:
@@ -39988,7 +40032,7 @@ snapshots:
   '@ledgerhq/context-module@1.3.0(@ledgerhq/device-management-kit@0.6.4(rxjs@7.8.1))':
     dependencies:
       '@ledgerhq/device-management-kit': 0.6.4(rxjs@7.8.1)
-      axios: 1.7.9
+      axios: 1.8.3
       crypto-js: 4.2.0
       ethers: 6.13.4
       inversify: 6.2.2(reflect-metadata@0.2.2)
@@ -41109,6 +41153,10 @@ snapshots:
   '@playwright/test@1.45.0':
     dependencies:
       playwright: 1.45.0
+
+  '@playwright/test@1.51.1':
+    dependencies:
+      playwright: 1.51.1
 
   '@pmmmwh/react-refresh-webpack-plugin@0.5.11(react-refresh@0.10.0)(webpack-dev-server@4.15.2)(webpack@5.94.0)':
     dependencies:
@@ -45281,7 +45329,7 @@ snapshots:
   '@stellar/stellar-sdk@11.3.0':
     dependencies:
       '@stellar/stellar-base': 11.0.1
-      axios: 1.7.9
+      axios: 1.8.3
       bignumber.js: 9.1.2
       eventsource: 2.0.2
       randombytes: 2.1.0
@@ -45599,7 +45647,7 @@ snapshots:
       '@storybook/preview-api': 7.6.20
       '@storybook/theming': 7.6.20(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@storybook/types': 7.6.20
-      '@types/lodash': 4.17.14
+      '@types/lodash': 4.17.16
       color-convert: 2.0.1
       dequal: 2.0.3
       lodash: 4.17.21
@@ -45632,7 +45680,7 @@ snapshots:
       '@storybook/preview-api': 7.6.20
       '@storybook/theming': 7.6.20(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@storybook/types': 7.6.20
-      '@types/lodash': 4.17.14
+      '@types/lodash': 4.17.16
       color-convert: 2.0.1
       dequal: 2.0.3
       lodash: 4.17.21
@@ -47268,7 +47316,7 @@ snapshots:
     dependencies:
       '@ton/core': 0.60.1(@ton/crypto@3.3.0)
       '@ton/crypto': 3.3.0
-      axios: 1.7.9
+      axios: 1.8.3
       dataloader: 2.2.2
       symbol.inspect: 1.0.1
       teslabot: 1.5.0
@@ -47308,7 +47356,7 @@ snapshots:
 
   '@types/axios@0.14.0':
     dependencies:
-      axios: 1.7.9
+      axios: 1.8.3
 
   '@types/babel__core@7.20.5':
     dependencies:
@@ -47365,7 +47413,7 @@ snapshots:
     dependencies:
       '@types/http-cache-semantics': 4.0.4
       '@types/keyv': 3.1.4
-      '@types/node': 22.13.13
+      '@types/node': 22.10.10
       '@types/responselike': 1.0.3
 
   '@types/cashaddrjs@0.3.3': {}
@@ -47499,7 +47547,7 @@ snapshots:
 
   '@types/glob@7.2.0':
     dependencies:
-      'loader@types/minimatch': 5.1.2
+      '@types/minimatch': 5.1.2
       '@types/node': 22.10.10
 
   '@types/graceful-fs@4.1.9':
@@ -47591,7 +47639,7 @@ snapshots:
 
   '@types/keyv@3.1.4':
     dependencies:
-      '@types/node': 22.13.13
+      '@types/node': 22.10.10
 
   '@types/koa-compose@3.2.8':
     dependencies:
@@ -47623,6 +47671,8 @@ snapshots:
   '@types/lodash@4.17.0': {}
 
   '@types/lodash@4.17.14': {}
+
+  '@types/lodash@4.17.16': {}
 
   '@types/lodash@4.17.7': {}
 
@@ -47701,10 +47751,6 @@ snapshots:
       undici-types: 6.20.0
 
   '@types/node@22.10.10':
-    dependencies:
-      undici-types: 6.20.0
-
-  '@types/node@22.13.13':
     dependencies:
       undici-types: 6.20.0
 
@@ -47912,7 +47958,7 @@ snapshots:
 
   '@types/responselike@1.0.3':
     dependencies:
-      '@types/node': 22.13.13
+      '@types/node': 22.10.10
 
   '@types/retry@0.12.0': {}
 
@@ -48069,7 +48115,7 @@ snapshots:
 
   '@types/yauzl@2.10.3':
     dependencies:
-      '@types/node': 22.13.13
+      '@types/node': 22.10.10
     optional: true
 
   '@typescript-eslint/eslint-plugin@5.62.0(@typescript-eslint/parser@5.62.0(eslint@8.57.0)(typescript@5.4.3))(eslint@8.57.0)(typescript@5.4.3)':
@@ -49151,7 +49197,7 @@ snapshots:
     dependencies:
       '@ledgerhq/hw-transport': 6.30.6
       '@zondax/ledger-js': 0.8.2
-      axios: 1.7.9
+      axios: 1.8.3
 
   JSONStream@1.3.5:
     dependencies:
@@ -49327,10 +49373,21 @@ snapshots:
       properties: 1.2.1
       strip-ansi: 5.2.0
 
+  allure-js-commons@3.2.1(allure-playwright@3.2.1(@playwright/test@1.51.1)):
+    dependencies:
+      md5: 2.3.0
+    optionalDependencies:
+      allure-playwright: 3.2.1(@playwright/test@1.51.1)
+
   allure-playwright@2.15.1:
     dependencies:
       '@playwright/test': 1.45.0
       allure-js-commons: 2.15.1
+
+  allure-playwright@3.2.1(@playwright/test@1.51.1):
+    dependencies:
+      '@playwright/test': 1.51.1
+      allure-js-commons: 3.2.1(allure-playwright@3.2.1(@playwright/test@1.51.1))
 
   anser@1.4.10: {}
 
@@ -52870,7 +52927,7 @@ snapshots:
 
   dotenv-expand@11.0.6:
     dependencies:
-      dotenv: 16.4.5
+      dotenv: 16.4.7
 
   dotenv-expand@5.1.0: {}
 
@@ -52879,6 +52936,8 @@ snapshots:
   dotenv@16.0.3: {}
 
   dotenv@16.4.5: {}
+
+  dotenv@16.4.7: {}
 
   dotenv@8.6.0: {}
 
@@ -54180,16 +54239,6 @@ snapshots:
 
   event-pubsub@4.3.0: {}
 
-  event-stream@3.3.4:
-    dependencies:
-      duplexer: 0.1.2
-      from: 0.1.7
-      map-stream: 0.1.0
-      pause-stream: 0.0.11
-      split: 0.3.3
-      stream-combiner: 0.0.4
-      through: 2.3.8
-
   event-target-shim@5.0.1: {}
 
   eventemitter3@3.1.2: {}
@@ -55174,8 +55223,6 @@ snapshots:
 
   fresh@0.5.2: {}
 
-  from@0.1.7: {}
-
   fromentries@1.3.2: {}
 
   fs-constants@1.0.0: {}
@@ -55279,8 +55326,6 @@ snapshots:
   fwd-stream@1.0.4:
     dependencies:
       readable-stream: 1.0.34
-
-  fx@34.0.0: {}
 
   gensync@1.0.0-beta.2: {}
 
@@ -55527,14 +55572,6 @@ snapshots:
   globby@12.2.0:
     dependencies:
       array-union: 3.0.1
-      dir-glob: 3.0.1
-      fast-glob: 3.3.2
-      ignore: 5.3.1
-      merge2: 1.4.1
-      slash: 4.0.0
-
-  globby@13.2.2:
-    dependencies:
       dir-glob: 3.0.1
       fast-glob: 3.3.2
       ignore: 5.3.1
@@ -59482,7 +59519,7 @@ snapshots:
   lazy-universal-dotenv@4.0.0:
     dependencies:
       app-root-dir: 1.0.2
-      dotenv: 16.4.5
+      dotenv: 16.4.7
       dotenv-expand: 10.0.0
 
   lazy-val@1.0.5: {}
@@ -60086,8 +60123,6 @@ snapshots:
   map-obj@4.3.0: {}
 
   map-or-similar@1.5.0: {}
-
-  map-stream@0.1.0: {}
 
   markdown-escapes@1.0.4: {}
 
@@ -61736,12 +61771,6 @@ snapshots:
     dependencies:
       whatwg-url: 5.0.0
 
-  node-fetch@3.3.1:
-    dependencies:
-      data-uri-to-buffer: 4.0.1
-      fetch-blob: 3.2.0
-      formdata-polyfill: 4.0.10
-
   node-fetch@3.3.2:
     dependencies:
       data-uri-to-buffer: 4.0.1
@@ -62385,10 +62414,6 @@ snapshots:
 
   pathval@2.0.0: {}
 
-  pause-stream@0.0.11:
-    dependencies:
-      through: 2.3.8
-
   pbkdf2@3.0.8:
     dependencies:
       create-hmac: 1.1.7
@@ -62529,6 +62554,8 @@ snapshots:
 
   playwright-core@1.45.0: {}
 
+  playwright-core@1.51.1: {}
+
   playwright@1.40.1:
     dependencies:
       playwright-core: 1.40.1
@@ -62538,6 +62565,12 @@ snapshots:
   playwright@1.45.0:
     dependencies:
       playwright-core: 1.45.0
+    optionalDependencies:
+      fsevents: 2.3.2
+
+  playwright@1.51.1:
+    dependencies:
+      playwright-core: 1.51.1
     optionalDependencies:
       fsevents: 2.3.2
 
@@ -63364,7 +63397,7 @@ snapshots:
       bottleneck: 2.19.5
       commander: 12.1.0
       deepmerge: 4.3.1
-      dotenv: 16.4.5
+      dotenv: 16.4.7
       eventsource: 2.0.2
       express: 4.19.2
       ioredis: 5.3.2
@@ -63375,7 +63408,7 @@ snapshots:
       pino-http: 10.1.0
       pkg-conf: 3.1.0
       resolve: 1.22.8
-      update-dotenv: 1.1.1(dotenv@16.4.5)
+      update-dotenv: 1.1.1(dotenv@16.4.7)
     transitivePeerDependencies:
       - supports-color
 
@@ -63557,10 +63590,6 @@ snapshots:
   prr@0.0.0: {}
 
   prr@1.0.1: {}
-
-  ps-tree@1.2.0:
-    dependencies:
-      event-stream: 3.3.4
 
   pseudomap@1.0.2: {}
 
@@ -66098,10 +66127,6 @@ snapshots:
 
   split2@4.2.0: {}
 
-  split@0.3.3:
-    dependencies:
-      through: 2.3.8
-
   split@1.0.1:
     dependencies:
       through: 2.3.8
@@ -66235,10 +66260,6 @@ snapshots:
   stream-buffers@2.2.0: {}
 
   stream-chain@2.2.5: {}
-
-  stream-combiner@0.0.4:
-    dependencies:
-      duplexer: 0.1.2
 
   stream-http@2.8.3:
     dependencies:
@@ -67375,7 +67396,7 @@ snapshots:
       '@noble/secp256k1': 1.7.1
       '@tronweb3/google-protobuf': 3.21.2
       aes-js: 3.1.2
-      axios: 1.7.9
+      axios: 1.8.3
       bignumber.js: 9.1.2
       ethereum-cryptography: 2.1.3
       ethers: 6.12.1
@@ -68399,9 +68420,9 @@ snapshots:
       registry-auth-token: 3.3.2
       registry-url: 3.1.0
 
-  update-dotenv@1.1.1(dotenv@16.4.5):
+  update-dotenv@1.1.1(dotenv@16.4.7):
     dependencies:
-      dotenv: 16.4.5
+      dotenv: 16.4.7
 
   uri-js@4.4.1:
     dependencies:
@@ -69641,8 +69662,6 @@ snapshots:
       - metro
       - uglify-js
 
-  webpod@0.0.2: {}
-
   websocket-driver@0.7.4:
     dependencies:
       http-parser-js: 0.5.8
@@ -69772,10 +69791,6 @@ snapshots:
       isexe: 2.0.0
 
   which@2.0.2:
-    dependencies:
-      isexe: 2.0.0
-
-  which@3.0.1:
     dependencies:
       isexe: 2.0.0
 
@@ -70227,20 +70242,4 @@ snapshots:
 
   zwitch@2.0.4: {}
 
-  zx@7.2.3:
-    dependencies:
-      '@types/fs-extra': 11.0.4
-      '@types/minimist': 1.2.5
-      '@types/node': 18.19.26
-      '@types/ps-tree': 1.1.6
-      '@types/which': 3.0.3
-      chalk: 5.3.0
-      fs-extra: 11.2.0
-      fx: 34.0.0
-      globby: 13.2.2
-      minimist: 1.2.8
-      node-fetch: 3.3.1
-      ps-tree: 1.2.0
-      webpod: 0.0.2
-      which: 3.0.1
-      yaml: 2.4.1
+  zx@8.4.1: {}
