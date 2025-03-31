@@ -2,13 +2,13 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { PolkadotAccount } from "../types";
 import { decodeAccountId } from "@ledgerhq/coin-framework/account";
 import { getDerivationScheme, runDerivationScheme } from "@ledgerhq/coin-framework/derivation";
-import { SubAccount } from "@ledgerhq/types-live";
+import { TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 
 export const makeAccount = (
   address: string,
   currency: CryptoCurrency,
-  subAccounts: SubAccount[] = [],
+  subAccounts: TokenAccount[] = [],
 ): PolkadotAccount => {
   const id = `js:2:${currency.id}:${address}:polkadotbip44`;
   const { derivationMode, xpubOrAddress } = decodeAccountId(id);
