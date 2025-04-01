@@ -4,7 +4,6 @@ import get from "lodash/get";
 import TronWeb from "tronweb";
 import coinConfig from "../config";
 import { TronResources, UnFrozenInfo } from "../types";
-import { combine } from "./combine";
 
 export function createTronWeb(trongridUrl?: string): TronWeb {
   if (!trongridUrl) {
@@ -37,51 +36,6 @@ export async function decodeTransaction(rawTx: string): Promise<{
     raw_data: convertTxFromRaw(transaction),
     raw_data_hex: rawTx,
   };
-}
-
-function convertTxToRaw(rawData: Record<string, unknown>) {
-  const { Transaction } = (globalThis as unknown as any).TronWebProto;
-  const rawTransaction = new Transaction.raw();
-
-  if (rawData.ref_block_bytes) rawTransaction.setRefBlockBytes(rawData.ref_block_bytes);
-  if (rawData.ref_block_num) rawTransaction.setRefBlockNum(rawData.ref_block_num);
-  if (rawData.ref_block_hash) rawTransaction.setRefBlockHash(rawData.ref_block_hash);
-  if (rawData.expiration) rawTransaction.setExpiration(rawData.expiration);
-  if (rawData.timestamp) rawTransaction.setTimestamp(rawData.timestamp);
-
-  if (Array.isArray(rawData.contract)) {
-    rawData.contract.forEach((contractData: any) => {
-      const contract = new Transaction.Contract();
-
-      if (contractData.type) contract.setType(contractData.type);
-
-      if (contractData.parameter) {
-        contract.setParameter(contractData.parameter);
-      }
-
-      rawTransaction.addContract(contract);
-    });
-  }
-
-  return rawTransaction;
-}
-
-export async function encodeTransaction(
-  rawData: Record<string, unknown>,
-  signature: string,
-): Promise<string> {
-  const { Transaction } = (globalThis as unknown as any).TronWebProto;
-  const transaction = new Transaction();
-  transaction.raw = convertTxToRaw(rawData);
-
-  const serializedHex = Buffer.from(transaction.raw.serializeBinary()).toString("hex");
-  const sigTxStr = combine(serializedHex, signature);
-
-  console.log("rawTx:", serializedHex);
-  console.log("signature:", signature);
-  console.log("SignedTxString:", sigTxStr);
-
-  return sigTxStr;
 }
 
 /**
