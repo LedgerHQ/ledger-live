@@ -1779,7 +1779,7 @@
     },
     "fullNodeReadyInfo" : "Счета будут добавлены посредством вашей полной надо Биткойна.",
     "fullNodeConfigure" : "Настроить ноду",
-    "tokensTip" : "{{token}} ({{ticker}}) – это токен {{tokenType}}. Вы можете получать их непосредственно на счёт {{currency}}.",
+    "tokensTip" : "{{token}} ({{ticker}}) is an {{tokenType}} token. You can receive tokens directly on a/an {{currency}} account.",
     "accountToImportSubtitle_plural" : "Добавить существующие счета",
     "selectAll" : "Выбрать все ({{count}})",
     "unselectAll" : "Отменить выбор всех ({{count}})",
