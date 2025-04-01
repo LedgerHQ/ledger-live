@@ -1779,7 +1779,7 @@
     },
     "fullNodeReadyInfo" : "จะมีการเพิ่มบัญชีโดยใช้ Bitcoin แบบ Full Node",
     "fullNodeConfigure" : "กำหนดค่าโหนด",
-    "tokensTip" : "{{token}} ({{ticker}}) เป็นโทเคน {{tokenType}} คุณสามารถรับโทเคนในบัญชี {{currency}} ได้โดยตรง",
+    "tokensTip" : "{{token}} ({{ticker}}) is an {{tokenType}} token. You can receive tokens directly on a/an {{currency}} account.",
     "accountToImportSubtitle_plural" : "เพิ่มบัญชีที่มีอยู่",
     "selectAll" : "เลือกทั้งหมด ({{count}})",
     "unselectAll" : "ยกเลิกการเลือกทั้งหมด ({{count}})",
