@@ -4050,7 +4050,9 @@
       "desc" : "Hesap eklemeyi iptal etmek istediğinizden emin misiniz?",
       "v2" : {
         "title" : "Hesap ekleme işlemi iptal edilsin mi?",
-        "desc" : "Ledger Live'a hiçbir hesap eklenmeyecek."
+        "desc" : "Ledger Live'a hiçbir hesap eklenmeyecek.",
+        "continue" : "Continue adding",
+        "cancel" : "Cancel"
       }
     },
     "imported" : "Varlık başarıyla eklendi",
@@ -4088,7 +4090,7 @@
       "title" : "Token ekle",
       "createParentCurrencyAccount" : "{{parrentCurrencyName}} hesabı ekle",
       "generic" : {
-        "disclaimer" : "{{token}} ({{ticker}}) bir {{tokenType}} token'ıdır.\n Token'ları doğrudan bir {{currency}} hesabına alabilirsiniz.",
+        "disclaimer" : "{{token}} ({{ticker}}) is an {{tokenType}} token.\nYou can receive tokens directly on a/an {{currency}} account.",
         "learnMore" : "{{tokenType}} hakkında daha fazla bilgi edinin"
       }
     },
