@@ -8,7 +8,9 @@ export const broadcast: AccountBridge<Transaction>["broadcast"] = async ({
 }) => {
   debugger;
   const kit = celoKit();
+  console.log(signature);
   const { transactionHash } = await kit.web3.eth.sendSignedTransaction(signature);
+  console.log(transactionHash);
   return patchOperationWithHash(operation, transactionHash);
 };
 
