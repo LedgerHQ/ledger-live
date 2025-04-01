@@ -33,6 +33,7 @@ export const LAST_VALID_BLOCK_HEIGHT_MOCK = 280064048;
 
 export type Config = {
   readonly endpoint: string;
+  readonly wsEndpoint?: string;
 };
 
 export type ChainAPI = Readonly<{
@@ -162,6 +163,7 @@ export function getChainAPI(
         fetch: kyNoTimeout as typeof fetch, // Type cast for jest test having an issue with the type
         commitment: "confirmed",
         confirmTransactionInitialTimeout: getEnv("SOLANA_TX_CONFIRMATION_TIMEOUT") || 0,
+        ...(config.wsEndpoint ? { wsEndpoint: config.wsEndpoint } : {}),
       });
     }
     return _connection;

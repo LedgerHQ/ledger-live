@@ -197,6 +197,12 @@ const envDefinitions = {
     def: "https://tron.coin.ledger.com",
     desc: "proxy url for trongrid API",
   },
+  // NOTE: temporarily, unless we have another proxy hitting the API directly to hide the key, for now not authenticating on purpose
+  SOLANA_WS_ENDPOINT: {
+    parser: stringParser,
+    def: "wss://solana.coin.ledger.com",
+    desc: "websocket endpoint for solana",
+  },
   API_SOLANA_PROXY: {
     parser: stringParser,
     def: "https://solana.coin.ledger.com",

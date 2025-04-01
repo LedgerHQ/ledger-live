@@ -18,7 +18,7 @@ import { getTransactionStatus } from "../getTransactionStatus";
 import { getAccountShapeWithAPI } from "../synchronization";
 import { createTransaction } from "../createTransaction";
 import { buildSignOperation } from "../signOperation";
-import { endpointByCurrencyId } from "../utils";
+import { endpointsByCurrencyId } from "../utils";
 import { broadcastWithAPI } from "../broadcast";
 import { ChainAPI, Config } from "../api";
 import { SolanaSigner } from "../signer";
@@ -38,9 +38,7 @@ function makePrepare(getChainAPI: (config: Config) => Promise<ChainAPI>) {
     Transaction,
     SolanaAccount
   >["prepareTransaction"] = async (mainAccount, transaction) => {
-    const config: Config = {
-      endpoint: endpointByCurrencyId(mainAccount.currency.id),
-    };
+    const config: Config = endpointsByCurrencyId(mainAccount.currency.id);;
 
     const chainAPI = await getChainAPI(config);
     return prepareTransactionWithAPI(mainAccount, transaction, chainAPI);
@@ -54,9 +52,7 @@ function makeSyncAndScan(
   getAddress: GetAddressFn,
 ) {
   const getAccountShape: GetAccountShape<SolanaAccount> = async info => {
-    const config: Config = {
-      endpoint: endpointByCurrencyId(info.currency.id),
-    };
+    const config: Config = endpointsByCurrencyId(info.currency.id);;
 
     const chainAPI = await getChainAPI(config);
     return getAccountShapeWithAPI(info, chainAPI);
@@ -81,9 +77,7 @@ function makeEstimateMaxSpendable(getChainAPI: (config: Config) => Promise<Chain
       throw new Error("currency not found");
     }
 
-    const config: Config = {
-      endpoint: endpointByCurrencyId(currencyId),
-    };
+    const config: Config = endpointsByCurrencyId(currencyId);;
 
     const api = await getChainAPI(config);
 
@@ -109,9 +103,7 @@ function makeBroadcast(
   getChainAPI: (config: Config) => Promise<ChainAPI>,
 ): AccountBridge<Transaction, SolanaAccount>["broadcast"] {
   return async info => {
-    const config: Config = {
-      endpoint: endpointByCurrencyId(info.account.currency.id),
-    };
+    const config: Config = endpointsByCurrencyId(info.account.currency.id);;
     const api = await getChainAPI(config);
     return broadcastWithAPI(info, api);
   };
@@ -122,9 +114,7 @@ function makeSign(
   signerContext: SignerContext<SolanaSigner>,
 ): AccountBridge<Transaction, SolanaAccount>["signOperation"] {
   return info => {
-    const config: Config = {
-      endpoint: endpointByCurrencyId(info.account.currency.id),
-    };
+    const config: Config = endpointsByCurrencyId(info.account.currency.id);;
     const api = () => getChainAPI(config);
     return buildSignOperation(signerContext, api)(info);
   };
@@ -134,9 +124,7 @@ function makePreload(
   getChainAPI: (config: Config) => Promise<ChainAPI>,
 ): CurrencyBridge["preload"] {
   const preload: CurrencyBridge["preload"] = (currency): Promise<SolanaPreloadDataV1> => {
-    const config: Config = {
-      endpoint: endpointByCurrencyId(currency.id),
-    };
+    const config: Config = endpointsByCurrencyId(currency.id);;
     const api = () => getChainAPI(config);
     return preloadWithAPI(currency, api);
   };

@@ -70,21 +70,34 @@ export async function drainSeq<T>(jobs: (() => Promise<T>)[]) {
   return items;
 }
 
-export function endpointByCurrencyId(currencyId: string): string {
+type endpointsByCurrencyId = {
+  endpoint: string;
+  wsEndpoint?: string;
+}
+
+export function endpointsByCurrencyId(currencyId: string): endpointsByCurrencyId {
   const endpoints: Record<string, string> = {
     solana: getEnv("API_SOLANA_PROXY"),
     solana_devnet: clusterApiUrl("devnet"),
     solana_testnet: clusterApiUrl("testnet"),
   };
 
-  if (currencyId in endpoints) {
-    return endpoints[currencyId];
-  }
+  const wsEndpoints: Record<string, string> = {
+    solana: getEnv("SOLANA_WS_ENDPOINT"),
+  };
 
+  if (!(currencyId in endpoints)) {
   throw Error(
     `unexpected currency id format <${currencyId}>, should be like solana[_(testnet | devnet)]`,
   );
+  }
+
+  return {
+    endpoint: endpoints[currencyId],
+    wsEndpoint: wsEndpoints[currencyId]
+  }
 }
+
 
 export function clusterByCurrencyId(currencyId: string): Cluster {
   const clusters: Record<string, Cluster> = {
