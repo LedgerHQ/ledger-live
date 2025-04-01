@@ -1,4 +1,4 @@
-import { renderHook, act } from "tests/testUtils";
+import { renderHook, act } from "tests/testSetup";
 import {
   useTrackManagerSectionEvents,
   UseTrackManagerSectionEvents,
