@@ -1,3 +1,3 @@
 export * from "./types";
 
-export { createBridges } from "./bridge/index";
+export { createBridges, type PolkadotBridge } from "./bridge/index";

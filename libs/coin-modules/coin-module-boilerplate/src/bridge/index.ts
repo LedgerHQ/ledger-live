@@ -7,7 +7,7 @@ import {
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { CoinConfig } from "@ledgerhq/coin-framework/config";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import type { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import type { Account, AccountBridge, Bridge, CurrencyBridge } from "@ledgerhq/types-live";
 import boilerplateCoinConfig, { type BoilerplateCoinConfig } from "../config";
 import resolver from "../signer";
 import { BoilerplateSigner } from "../types";
@@ -21,6 +21,8 @@ import { buildSignOperation } from "./signOperation";
 import { getAccountShape } from "./sync";
 import { serialiation } from "./transaction";
 import { updateTransaction } from "./updateTransaction";
+
+export type BoilerplateBridge = Bridge<Transaction, Account, TransactionStatus, TransactionRaw>;
 
 export function createBridges(
   signerContext: SignerContext<BoilerplateSigner>,

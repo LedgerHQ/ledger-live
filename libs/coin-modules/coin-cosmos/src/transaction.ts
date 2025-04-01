@@ -51,7 +51,7 @@ with fees=${fees ? formatCurrencyUnit(getAccountCurrency(account).units[0], fees
   !memo ? "" : `\n  memo=${memo}`
 }`;
 
-const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
+export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   const common = fromTransactionCommonRaw(tr);
   const { networkInfo } = tr;
   return {

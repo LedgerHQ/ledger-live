@@ -6,7 +6,7 @@ import {
   makeSync,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import type { AccountBridge, Bridge, CurrencyBridge } from "@ledgerhq/types-live";
 
 import { CoinConfig } from "@ledgerhq/coin-framework/lib/config";
 import cosmosCoinConfig, { CosmosCoinConfig } from "../config";
@@ -87,10 +87,12 @@ function buildAccountBridge(
   };
 }
 
+export type CosmosBridge = Bridge<Transaction, CosmosAccount, TransactionStatus, TransactionRaw>;
+
 export function createBridges(
   signerContext: SignerContext<CosmosSigner>,
   coinConfig: CoinConfig<CosmosCoinConfig>,
-) {
+): CosmosBridge {
   cosmosCoinConfig.setCoinConfig(coinConfig);
   return {
     currencyBridge: buildCurrencyBridge(signerContext),

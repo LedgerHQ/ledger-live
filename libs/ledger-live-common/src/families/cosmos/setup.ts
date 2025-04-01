@@ -1,20 +1,13 @@
 // Goal of this file is to inject all necessary device/signer dependency to coin-modules
 
-import { createBridges } from "@ledgerhq/coin-cosmos/bridge/index";
+import { createBridges, type CosmosBridge } from "@ledgerhq/coin-cosmos/bridge/index";
 import makeCliTools from "@ledgerhq/coin-cosmos/cli";
 import { CosmosCoinConfig } from "@ledgerhq/coin-cosmos/config";
 import cosmosResolver from "@ledgerhq/coin-cosmos/hw-getAddress";
-import {
-  CosmosAccount,
-  CosmosOperation,
-  Transaction,
-  TransactionStatus,
-} from "@ledgerhq/coin-cosmos/types/index";
 import { CosmosSigner } from "@ledgerhq/coin-cosmos/types/signer";
 import Cosmos from "@ledgerhq/hw-app-cosmos";
 import Transport from "@ledgerhq/hw-transport";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { Bridge } from "@ledgerhq/types-live";
 import { CosmosApp } from "@zondax/ledger-cosmos-js";
 import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/setup";
 import { getCurrencyConfiguration } from "../../config";
@@ -36,9 +29,7 @@ const getCurrencyConfig = (currency?: CryptoCurrency) => {
   }
   return getCurrencyConfiguration<CosmosCoinConfig>(currency);
 };
-
-const bridge: Bridge<Transaction, CosmosAccount, TransactionStatus, CosmosOperation> =
-  createBridges(executeWithSigner(createSigner), getCurrencyConfig);
+const bridge: CosmosBridge = createBridges(executeWithSigner(createSigner), getCurrencyConfig);
 
 const resolver: Resolver = createResolver(createSigner, cosmosResolver);
 

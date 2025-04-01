@@ -8,7 +8,7 @@ import {
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { CoinConfig } from "@ledgerhq/coin-framework/config";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import type { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import type { Account, AccountBridge, Bridge, CurrencyBridge } from "@ledgerhq/types-live";
 import xrpCoinConfig, { type XrpCoinConfig } from "../config";
 import resolver from "../signer";
 import type { Transaction, TransactionRaw, TransactionStatus } from "../types";
@@ -22,10 +22,12 @@ import { buildSignOperation } from "./signOperation";
 import { getAccountShape } from "./synchronization";
 import { serialization } from "./transaction";
 
+export type XrpBridge = Bridge<Transaction, Account, TransactionStatus, TransactionRaw>;
+
 export function createBridges(
   signerContext: SignerContext<XrpSigner>,
   coinConfig: CoinConfig<XrpCoinConfig>,
-) {
+): XrpBridge {
   xrpCoinConfig.setCoinConfig(coinConfig);
 
   const getAddress = resolver(signerContext);

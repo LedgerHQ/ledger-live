@@ -7,7 +7,7 @@ import {
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { CoinConfig } from "@ledgerhq/coin-framework/config";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import type { AccountBridge, Bridge, CurrencyBridge } from "@ledgerhq/types-live";
 import tezosCoinConfig, { TezosCoinConfig } from "../config";
 import signerGetAddress from "../signer";
 import type {
@@ -69,10 +69,12 @@ function buildAccountBridge(
   };
 }
 
+export type TezosBridge = Bridge<Transaction, TezosAccount, TransactionStatus, TransactionRaw>;
+
 export function createBridges(
   signerContext: SignerContext<TezosSigner>,
   coinConfig: CoinConfig<TezosCoinConfig>,
-) {
+): TezosBridge {
   tezosCoinConfig.setCoinConfig(coinConfig);
 
   return {

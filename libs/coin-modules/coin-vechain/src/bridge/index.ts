@@ -7,7 +7,7 @@ import {
   updateTransaction,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import { Account, AccountBridge, Bridge, CurrencyBridge } from "@ledgerhq/types-live";
 import resolver from "../signer";
 import type { Transaction, TransactionRaw, TransactionStatus, VechainSigner } from "../types";
 import { broadcast } from "./broadcast";
@@ -19,7 +19,7 @@ import { buildSignOperation } from "./signOperation";
 import { getAccountShape } from "./synchronisation";
 import { serialization } from "./transaction";
 
-export function buildCurrencyBridge(signerContext: SignerContext<VechainSigner>): CurrencyBridge {
+function buildCurrencyBridge(signerContext: SignerContext<VechainSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
 
   const scanAccounts = makeScanAccounts({
@@ -36,7 +36,7 @@ export function buildCurrencyBridge(signerContext: SignerContext<VechainSigner>)
 
 const sync = makeSync({ getAccountShape });
 
-export function buildAccountBridge(
+function buildAccountBridge(
   signerContext: SignerContext<VechainSigner>,
 ): AccountBridge<Transaction, Account, TransactionStatus, TransactionRaw> {
   const getAddress = resolver(signerContext);
@@ -59,7 +59,9 @@ export function buildAccountBridge(
   };
 }
 
-export function createBridges(signerContext: SignerContext<VechainSigner>) {
+export type VechainBridge = Bridge<Transaction, Account, TransactionStatus, TransactionRaw>;
+
+export function createBridges(signerContext: SignerContext<VechainSigner>): VechainBridge {
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),

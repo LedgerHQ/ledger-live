@@ -6,7 +6,7 @@ import {
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { CoinConfig } from "@ledgerhq/coin-framework/config";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import type { AccountBridge, Bridge, CurrencyBridge } from "@ledgerhq/types-live";
 import polkadotCoinConfig, { type PolkadotCoinConfig } from "../config";
 import signerGetAddress from "../signer";
 import type {
@@ -79,10 +79,17 @@ function buildAccountBridge(
   };
 }
 
+export type PolkadotBridge = Bridge<
+  Transaction,
+  PolkadotAccount,
+  TransactionStatus,
+  TransactionRaw
+>;
+
 export function createBridges(
   signerContext: SignerContext<PolkadotSigner>,
   coinConfig: CoinConfig<PolkadotCoinConfig>,
-) {
+): PolkadotBridge {
   polkadotCoinConfig.setCoinConfig(coinConfig);
 
   return {
