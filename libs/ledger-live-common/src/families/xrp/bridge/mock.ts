@@ -134,7 +134,7 @@ const prepareTransaction = async (a, t) => {
   return t;
 };
 
-const accountBridge: AccountBridge<Transaction> = {
+const accountBridge = {
   createTransaction,
   updateTransaction,
   getTransactionStatus,

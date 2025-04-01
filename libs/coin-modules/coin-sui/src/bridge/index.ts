@@ -7,7 +7,7 @@ import {
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { CoinConfig } from "@ledgerhq/coin-framework/config";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import type { AccountBridge, Bridge, CurrencyBridge } from "@ledgerhq/types-live";
 import suiConfig, { type SuiCoinConfig } from "../config";
 import signerGetAddress from "../signer";
 import {
@@ -72,10 +72,12 @@ function buildAccountBridge(
   };
 }
 
+export type SuiBridge = Bridge<Transaction, SuiAccount, TransactionStatus, TransactionRaw>;
+
 export function createBridges(
   signerContext: SignerContext<SuiSigner>,
   coinConfig: CoinConfig<SuiCoinConfig>,
-) {
+): SuiBridge {
   suiConfig.setCoinConfig(coinConfig);
 
   return {

@@ -6,7 +6,7 @@ import {
   updateTransaction,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { SignerContext } from "@ledgerhq/coin-framework/lib/signer";
-import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import type { AccountBridge, Bridge, CurrencyBridge } from "@ledgerhq/types-live";
 import { broadcast } from "../broadcast";
 import { createTransaction } from "../createTransaction";
 import { estimateMaxSpendable } from "../estimateMaxSpendable";
@@ -34,9 +34,7 @@ import type {
   TransactionStatusRaw,
 } from "../types";
 
-export function buildCurrencyBridge(
-  signerContext: SignerContext<MultiversXSigner>,
-): CurrencyBridge {
+function buildCurrencyBridge(signerContext: SignerContext<MultiversXSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
 
   const scanAccounts = makeScanAccounts({
@@ -52,7 +50,7 @@ export function buildCurrencyBridge(
   };
 }
 
-export function buildAccountBridge(
+function buildAccountBridge(
   signerContext: SignerContext<MultiversXSigner>,
 ): AccountBridge<
   Transaction,
@@ -87,7 +85,14 @@ export function buildAccountBridge(
   };
 }
 
-export function createBridges(signerContext: SignerContext<MultiversXSigner>) {
+export type MutltiversXBridge = Bridge<
+  Transaction,
+  MultiversXAccount,
+  TransactionStatus,
+  TransactionRaw
+>;
+
+export function createBridges(signerContext: SignerContext<MultiversXSigner>): MutltiversXBridge {
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),

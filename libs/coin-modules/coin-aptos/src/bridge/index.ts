@@ -7,7 +7,7 @@ import {
   updateTransaction,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import type { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import type { Account, AccountBridge, Bridge, CurrencyBridge } from "@ledgerhq/types-live";
 import resolver from "../signer";
 import type { AptosSigner, Transaction, TransactionRaw, TransactionStatus } from "../types";
 import broadcast from "./broadcast";
@@ -58,6 +58,8 @@ function buildAccountBridge(
     ...serialization,
   };
 }
+
+export type AptosBridge = Bridge<Transaction, Account, TransactionStatus, TransactionRaw>;
 
 export function createBridges(signerContext: SignerContext<AptosSigner>) {
   return {
