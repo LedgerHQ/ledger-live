@@ -188,7 +188,7 @@ function renderHookWithLiveAppProvider<Result, Props>(
     store,
     ...rtlRenderHook(hook, {
       wrapper: ({ children }) => (
-        <Providers store={store} withLiveApp>
+        <Providers store={store} minimal withLiveApp>
           {children}
         </Providers>
       ),
