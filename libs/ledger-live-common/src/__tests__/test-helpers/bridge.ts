@@ -13,7 +13,7 @@ import {
   isAccountBalanceUnconfirmed,
 } from "../../account";
 import { getCryptoCurrencyById } from "../../currencies";
-import { getOperationAmountNumber } from "../../operation";
+import { getOperationAmountNumber, OPERATION_TYPE_OUT_FAMILY } from "../../operation";
 import { fromTransactionRaw, toTransactionRaw, toTransactionStatusRaw } from "../../transaction";
 import { getAccountBridge, getCurrencyBridge } from "../../bridge";
 import { mockDeviceWithAPDUs, releaseMockDevice } from "./mockDevice";
@@ -43,7 +43,15 @@ const blacklistOpsSumEq = {
 function expectBalanceIsOpsSum(a, fromSubAccount) {
   expect(a.balance).toEqual(
     a.operations
-      .reduce((sum, op) => sum.plus(getOperationAmountNumber(op, fromSubAccount)), new BigNumber(0))
+      .reduce(
+        (sum, op) =>
+          sum.plus(
+            OPERATION_TYPE_OUT_FAMILY.includes(op.type) && fromSubAccount
+              ? op.value.minus(op.fee).negated()
+              : getOperationAmountNumber(op),
+          ),
+        new BigNumber(0),
+      )
       .plus(getFeesFromSubAccountOps(a.subAccounts)),
   );
 }
@@ -57,7 +65,9 @@ function getFeesFromSubAccountOps(subAccounts) {
     sa =>
       (total = total.plus(
         sa.operations.reduce((sum, op) => {
-          return sum.plus(getOperationAmountNumber(op, false, true));
+          return sum.plus(
+            OPERATION_TYPE_OUT_FAMILY.includes(op.type) ? op.value.negated() : BigNumber(0),
+          );
         }, new BigNumber(0)),
       )),
   );
