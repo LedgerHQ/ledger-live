@@ -16,7 +16,8 @@ import {
 } from "../logic";
 import { ListOperationsOptions } from "../logic/listOperations";
 import { StellarToken } from "../types";
-
+import { LedgerAPI4xx } from "@ledgerhq/errors";
+import { log } from "@ledgerhq/logs";
 export function createApi(config: StellarConfig): Api<StellarToken> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
@@ -97,11 +98,21 @@ async function operationsFromHeight(
     if (state.apiNextCursor) {
       options.cursor = state.apiNextCursor;
     }
-    const [operations, nextCursor] = await listOperations(address, options);
-    const filteredOperations = operations.filter(op => op.tx.block.height >= state.heightLimit);
-    state.accumulator.push(...filteredOperations);
-    state.apiNextCursor = nextCursor;
-    state.continueIterations = operations.length === filteredOperations.length && nextCursor !== "";
+    try {
+      const [operations, nextCursor] = await listOperations(address, options);
+      const filteredOperations = operations.filter(op => op.tx.block.height >= state.heightLimit);
+      state.accumulator.push(...filteredOperations);
+      state.apiNextCursor = nextCursor;
+      state.continueIterations =
+        operations.length === filteredOperations.length && nextCursor !== "";
+    } catch (e: unknown) {
+      if (e instanceof LedgerAPI4xx && (e as unknown as { status: number }).status === 429) {
+        log("coin:stellar", "(api/operations): TooManyRequests, retrying in 4s");
+        await new Promise(resolve => setTimeout(resolve, 4000));
+      } else {
+        throw e;
+      }
+    }
   }
 
   return [state.accumulator, state.apiNextCursor ? state.apiNextCursor : ""];

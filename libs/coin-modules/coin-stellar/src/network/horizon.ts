@@ -312,16 +312,19 @@ export async function fetchOperations({
   } catch (e: unknown) {
     // FIXME: terrible hacks, because Stellar SDK fails to cast network failures to typed errors in react-native...
     // (https://github.com/stellar/js-stellar-sdk/issues/638)
+    // update 2025-04-01: in case of NetworkError, the error.response fields are undefined. Hence we cannot rely on status code
+    // the only way to check is the errror message, which may break at some point
     const errorMsg = e ? String(e) : "";
 
     if (e instanceof NotFoundError || errorMsg.match(/status code 404/)) {
       return noResult;
     }
-
+    if (errorMsg.match(/too many requests/i)) {
+      throw new LedgerAPI4xx("status code 4xx", { status: 429, url: undefined, method: "GET" });
+    }
     if (errorMsg.match(/status code 4[0-9]{2}/)) {
       throw new LedgerAPI4xx();
     }
-
     if (errorMsg.match(/status code 5[0-9]{2}/)) {
       throw new LedgerAPI5xx();
     }
