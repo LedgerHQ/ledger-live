@@ -1,12 +1,19 @@
 import { makeScanAccounts } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
-import { Account, AccountBridge, SyncConfig, TransactionCommon } from "@ledgerhq/types-live";
+import {
+  Account,
+  AccountBridge,
+  SyncConfig,
+  TransactionCommon,
+  TransactionCommonRaw,
+  TransactionStatusCommon,
+} from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { firstValueFrom, reduce } from "rxjs";
 import coinConfig, { TronCoinConfig } from "../config";
 import * as tronNetwork from "../network";
 import { mockServer, TRONGRID_BASE_URL_MOCKED } from "../network/index.mock";
-import { Transaction, TronAccount } from "../types";
+import { Transaction, TransactionRaw, TransactionStatus, TronAccount } from "../types";
 import accountFixture from "./fixtures/synchronization.account.fixture.json";
 import { createBridges } from "./index";
 import { getAccountShape } from "./synchronization";
@@ -17,8 +24,13 @@ const currency = getCryptoCurrencyById("tron");
 const defaultSyncConfig = {
   paginationConfig: {},
 };
-function syncAccount<T extends TransactionCommon, A extends Account = Account>(
-  bridge: AccountBridge<T, A>,
+function syncAccount<
+  T extends TransactionCommon,
+  A extends Account = Account,
+  U extends TransactionStatusCommon = TransactionStatusCommon,
+  TR extends TransactionCommonRaw = TransactionCommonRaw,
+>(
+  bridge: AccountBridge<T, A, U, TR>,
   account: A,
   syncConfig: SyncConfig = defaultSyncConfig,
 ): Promise<A> {
@@ -142,11 +154,14 @@ describe("sync", () => {
       ),
     },
   ])("should always be sync without error for address %s", async ({ id, expectedAccount }) => {
-    const account = await syncAccount<Transaction, TronAccount>(bridge.accountBridge, {
-      ...dummyAccount,
-      id: `js:2:tron:${id}:`,
-      freshAddress: id,
-    });
+    const account = await syncAccount<Transaction, TronAccount, TransactionStatus, TransactionRaw>(
+      bridge.accountBridge,
+      {
+        ...dummyAccount,
+        id: `js:2:tron:${id}:`,
+        freshAddress: id,
+      },
+    );
 
     expect(account.id).toEqual(`js:2:tron:${id}:`);
 

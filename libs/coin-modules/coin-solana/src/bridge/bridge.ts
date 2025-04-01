@@ -10,7 +10,13 @@ import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { minutes, makeLRUCache } from "@ledgerhq/live-network/cache";
 import { GetAddressFn } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import type { AccountBridge, AccountLike, CurrencyBridge } from "@ledgerhq/types-live";
-import type { SolanaAccount, SolanaPreloadDataV1, Transaction, TransactionStatus } from "../types";
+import type {
+  SolanaAccount,
+  SolanaPreloadDataV1,
+  Transaction,
+  TransactionRaw,
+  TransactionStatus,
+} from "../types";
 import { prepareTransaction as prepareTransactionWithAPI } from "../prepareTransaction";
 import { estimateMaxSpendableWithAPI } from "../estimateMaxSpendable";
 import { PRELOAD_MAX_AGE, hydrate, preloadWithAPI } from "../preload";
@@ -31,6 +37,7 @@ import {
   assignFromTokenAccountRaw,
   assignToTokenAccountRaw,
 } from "../serialization";
+import { serialization } from "../transaction";
 import nftResolvers from "../nftResolvers";
 
 function makePrepare(getChainAPI: (config: Config) => Promise<ChainAPI>) {
@@ -161,12 +168,17 @@ export function makeBridges({
   signerContext: SignerContext<SolanaSigner>;
 }): {
   currencyBridge: CurrencyBridge;
-  accountBridge: AccountBridge<Transaction, SolanaAccount, TransactionStatus>;
+  accountBridge: AccountBridge<Transaction, SolanaAccount, TransactionStatus, TransactionRaw>;
 } {
   const getAddress = resolver(signerContext);
   const { sync, scan } = makeSyncAndScan(getQueuedAPI, getAddress);
 
-  const accountBridge: AccountBridge<Transaction, SolanaAccount, TransactionStatus> = {
+  const accountBridge: AccountBridge<
+    Transaction,
+    SolanaAccount,
+    TransactionStatus,
+    TransactionRaw
+  > = {
     createTransaction,
     updateTransaction,
     estimateMaxSpendable: makeEstimateMaxSpendable(getQueuedAndCachedAPI),
@@ -183,6 +195,7 @@ export function makeBridges({
     getSerializedAddressParameters,
     assignFromTokenAccountRaw,
     assignToTokenAccountRaw,
+    ...serialization,
   };
 
   const currencyBridge: CurrencyBridge = {

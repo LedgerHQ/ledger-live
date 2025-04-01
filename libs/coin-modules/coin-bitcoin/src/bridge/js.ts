@@ -1,27 +1,28 @@
-import { AccountBridge } from "@ledgerhq/types-live";
+import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import {
   makeAccountBridgeReceive,
   makeScanAccounts,
   makeSync,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
-import { makeGetAccountShape, postSync } from "../synchronisation";
-import { assignFromAccountRaw, assignToAccountRaw } from "../serialization";
-import { BitcoinAccount, Transaction, TransactionStatus } from "../types";
-import formatters from "../formatters";
-import { getTransactionStatus } from "../getTransactionStatus";
+import { AccountBridge } from "@ledgerhq/types-live";
+import { broadcast } from "../broadcast";
+import { calculateFees } from "../cache";
+import { CoinConfig, setCoinConfig } from "../config";
+import { createTransaction } from "../createTransaction";
 import { estimateMaxSpendable } from "../estimateMaxSpendable";
 import { getSerializedAddressParameters } from "../exchange";
-import { prepareTransaction } from "../prepareTransaction";
-import { updateTransaction } from "../updateTransaction";
-import { createTransaction } from "../createTransaction";
-import { buildSignOperation } from "../signOperation";
-import { CoinConfig, setCoinConfig } from "../config";
-import { calculateFees } from "./../cache";
-import { SignerContext } from "../signer";
-import { broadcast } from "../broadcast";
-import { perCoinLogic } from "../logic";
+import formatters from "../formatters";
+import { getTransactionStatus } from "../getTransactionStatus";
 import resolver from "../hw-getAddress";
+import { perCoinLogic } from "../logic";
+import { prepareTransaction } from "../prepareTransaction";
+import { assignFromAccountRaw, assignToAccountRaw } from "../serialization";
+import { SignerContext } from "../signer";
+import { buildSignOperation } from "../signOperation";
+import { makeGetAccountShape, postSync } from "../synchronisation";
+import { serialization } from "../transaction";
+import { BitcoinAccount, Transaction, TransactionStatus } from "../types";
+import { updateTransaction } from "../updateTransaction";
 
 function buildCurrencyBridge(signerContext: SignerContext) {
   const getAddress = resolver(signerContext);
@@ -81,6 +82,7 @@ function buildAccountBridge(signerContext: SignerContext) {
     assignToAccountRaw,
     formatAccountSpecifics: formatters.formatAccountSpecifics,
     getSerializedAddressParameters,
+    ...serialization,
   };
 }
 

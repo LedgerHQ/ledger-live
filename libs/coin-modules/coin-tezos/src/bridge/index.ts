@@ -1,25 +1,32 @@
+import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import {
   getSerializedAddressParameters,
-  updateTransaction,
   makeAccountBridgeReceive,
   makeScanAccounts,
+  updateTransaction,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { CoinConfig } from "@ledgerhq/coin-framework/config";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import type { CurrencyBridge, AccountBridge } from "@ledgerhq/types-live";
-import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
-import type { TezosAccount, TezosSigner, Transaction, TransactionStatus } from "../types";
-import { assignFromAccountRaw, assignToAccountRaw } from "./serialization";
-import { getPreloadStrategy, hydrate, preload } from "./preload";
+import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import tezosCoinConfig, { TezosCoinConfig } from "../config";
+import signerGetAddress from "../signer";
+import type {
+  TezosAccount,
+  TezosSigner,
+  Transaction,
+  TransactionRaw,
+  TransactionStatus,
+} from "../types";
+import { broadcast } from "./broadcast";
+import { createTransaction } from "./createTransaction";
 import { estimateMaxSpendable } from "./estimateMaxSpendable";
 import { getTransactionStatus } from "./getTransactionStatus";
+import { getPreloadStrategy, hydrate, preload } from "./preload";
 import { prepareTransaction } from "./prepareTransaction";
-import { getAccountShape, sync } from "./synchronization";
-import { createTransaction } from "./createTransaction";
+import { assignFromAccountRaw, assignToAccountRaw } from "./serialization";
 import { buildSignOperation } from "./signOperation";
-import signerGetAddress from "../signer";
-import { broadcast } from "./broadcast";
-import tezosCoinConfig, { TezosCoinConfig } from "../config";
+import { getAccountShape, sync } from "./synchronization";
+import { serialization } from "./transaction";
 
 function buildCurrencyBridge(signerContext: SignerContext<TezosSigner>): CurrencyBridge {
   const getAddress = signerGetAddress(signerContext);
@@ -39,7 +46,7 @@ function buildCurrencyBridge(signerContext: SignerContext<TezosSigner>): Currenc
 
 function buildAccountBridge(
   signerContext: SignerContext<TezosSigner>,
-): AccountBridge<Transaction, TezosAccount, TransactionStatus> {
+): AccountBridge<Transaction, TezosAccount, TransactionStatus, TransactionRaw> {
   const getAddress = signerGetAddress(signerContext);
 
   const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));
@@ -58,6 +65,7 @@ function buildAccountBridge(
     assignFromAccountRaw,
     assignToAccountRaw,
     getSerializedAddressParameters,
+    ...serialization,
   };
 }
 

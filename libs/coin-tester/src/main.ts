@@ -5,6 +5,9 @@ import {
   SignOperationEvent,
   CurrencyBridge,
   Operation,
+  TransactionStatusCommon,
+  TransactionCommonRaw,
+  TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
 import chalk from "chalk";
 import { first, firstValueFrom, map, reduce } from "rxjs";
@@ -27,10 +30,16 @@ export type ScenarioTransaction<T extends TransactionCommon, A extends Account> 
   xexpect?: (previousAccount: A, currentAccount: A) => void;
 };
 
-export type Scenario<T extends TransactionCommon, A extends Account> = {
+export type Scenario<
+  T extends TransactionCommon,
+  A extends Account,
+  U extends TransactionStatusCommon = TransactionStatusCommon,
+  TR extends TransactionCommonRaw = TransactionCommonRaw,
+  UR extends TransactionStatusCommonRaw = TransactionStatusCommonRaw,
+> = {
   name: string;
   setup: () => Promise<{
-    accountBridge: AccountBridge<T, A>;
+    accountBridge: AccountBridge<T, A, U, TR, UR>;
     currencyBridge: CurrencyBridge;
     account: A;
     retryInterval?: number;
@@ -47,9 +56,13 @@ export type Scenario<T extends TransactionCommon, A extends Account> = {
   teardown?: () => Promise<void> | void;
 };
 
-export async function executeScenario<T extends TransactionCommon, A extends Account>(
-  scenario: Scenario<T, A>,
-) {
+export async function executeScenario<
+  T extends TransactionCommon,
+  A extends Account,
+  U extends TransactionStatusCommon = TransactionStatusCommon,
+  TR extends TransactionCommonRaw = TransactionCommonRaw,
+  UR extends TransactionStatusCommonRaw = TransactionStatusCommonRaw,
+>(scenario: Scenario<T, A, U, TR, UR>) {
   try {
     const {
       accountBridge,

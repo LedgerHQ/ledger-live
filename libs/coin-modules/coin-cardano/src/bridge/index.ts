@@ -1,27 +1,28 @@
+import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import {
   getSerializedAddressParameters,
-  updateTransaction,
   makeAccountBridgeReceive,
   makeScanAccounts,
   makeSync,
+  updateTransaction,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { CoinConfig } from "@ledgerhq/coin-framework/lib/config";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
-import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
-import type { CardanoAccount, Transaction, TransactionStatus } from "../types";
-import { assignToAccountRaw, assignFromAccountRaw } from "../serialization";
+import { broadcast } from "../broadcast";
+import cardanoCoinConfig, { CardanoCoinConfig } from "../config";
+import { createTransaction } from "../createTransaction";
 import { estimateMaxSpendable } from "../estimateMaxSpendable";
 import { getTransactionStatus } from "../getTransactionStatus";
-import { prepareTransaction } from "../prepareTransaction";
-import { createTransaction } from "../createTransaction";
-import { makeGetAccountShape } from "../synchronisation";
-import { buildSignOperation } from "../signOperation";
-import { postSyncPatch } from "../postSyncPatch";
-import { CardanoSigner } from "../signer";
-import { broadcast } from "../broadcast";
 import resolver from "../hw-getAddress";
-import { CoinConfig } from "@ledgerhq/coin-framework/lib/config";
-import cardanoCoinConfig, { CardanoCoinConfig } from "../config";
+import { postSyncPatch } from "../postSyncPatch";
+import { prepareTransaction } from "../prepareTransaction";
+import { assignFromAccountRaw, assignToAccountRaw } from "../serialization";
+import { CardanoSigner } from "../signer";
+import { buildSignOperation } from "../signOperation";
+import { makeGetAccountShape } from "../synchronisation";
+import { serialization } from "../transaction";
+import type { CardanoAccount, Transaction, TransactionRaw, TransactionStatus } from "../types";
 
 export function buildCurrencyBridge(signerContext: SignerContext<CardanoSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
@@ -39,7 +40,7 @@ export function buildCurrencyBridge(signerContext: SignerContext<CardanoSigner>)
 
 export function buildAccountBridge(
   signerContext: SignerContext<CardanoSigner>,
-): AccountBridge<Transaction, CardanoAccount, TransactionStatus> {
+): AccountBridge<Transaction, CardanoAccount, TransactionStatus, TransactionRaw> {
   const sync = makeSync({
     getAccountShape: makeGetAccountShape(signerContext),
     postSync: postSyncPatch,
@@ -62,6 +63,7 @@ export function buildAccountBridge(
     assignToAccountRaw,
     assignFromAccountRaw,
     getSerializedAddressParameters,
+    ...serialization,
   };
 }
 

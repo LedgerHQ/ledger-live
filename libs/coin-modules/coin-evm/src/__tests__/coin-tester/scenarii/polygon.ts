@@ -8,7 +8,12 @@ import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { killSpeculos, spawnSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
 import { resetIndexer, initMswHandlers, setBlock, indexBlocks } from "../indexer";
 import { buildAccountBridge, buildCurrencyBridge } from "../../../bridge/js";
-import { Transaction as EvmTransaction } from "../../../types";
+import {
+  Transaction as EvmTransaction,
+  TransactionRaw as EvmTransactionRaw,
+  TransactionStatus,
+  TransactionStatusRaw,
+} from "../../../types";
 import { getCoinConfig, setCoinConfig } from "../../../config";
 import { makeAccount } from "../../fixtures/common.fixtures";
 import { callMyDealer, polygon, VITALIK } from "../helpers";
@@ -119,7 +124,13 @@ const makeScenarioTransactions = ({ address }: { address: string }) => {
   ];
 };
 
-export const scenarioPolygon: Scenario<EvmTransaction, Account> = {
+export const scenarioPolygon: Scenario<
+  EvmTransaction,
+  Account,
+  TransactionStatus,
+  EvmTransactionRaw,
+  TransactionStatusRaw
+> = {
   name: "Ledger Live Basic Polygon Transactions",
   setup: async () => {
     const [{ transport, getOnSpeculosConfirmation }] = await Promise.all([

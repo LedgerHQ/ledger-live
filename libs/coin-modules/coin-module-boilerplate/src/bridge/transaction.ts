@@ -1,5 +1,5 @@
-import { BigNumber } from "bignumber.js";
-import type { Transaction, TransactionRaw } from "../types";
+import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import { formatTransactionStatus } from "@ledgerhq/coin-framework/formatters";
 import {
   fromTransactionCommonRaw,
@@ -7,11 +7,16 @@ import {
   toTransactionCommonRaw,
   toTransactionStatusRawCommon as toTransactionStatusRaw,
 } from "@ledgerhq/coin-framework/serialization/transaction";
-import type { Account } from "@ledgerhq/types-live";
-import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+import type { Account, SerializationTransactionBridge } from "@ledgerhq/types-live";
+import { BigNumber } from "bignumber.js";
+import type { Transaction, TransactionRaw } from "../types";
 
-export const formatTransaction = (
+type BoilerplateSerializationTransactionBridge = SerializationTransactionBridge<
+  Transaction,
+  TransactionRaw
+>;
+
+const formatTransaction = (
   { amount, recipient, fee, useAllAmount }: Transaction,
   account: Account,
 ): string => `
@@ -33,7 +38,7 @@ with fee=${
       })
 }`;
 
-export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
+const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   const common = fromTransactionCommonRaw(tr);
   return {
     ...common,
@@ -42,7 +47,7 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   };
 };
 
-export const toTransactionRaw = (t: Transaction): TransactionRaw => {
+const toTransactionRaw = (t: Transaction): TransactionRaw => {
   const common = toTransactionCommonRaw(t);
   return {
     ...common,
@@ -51,11 +56,11 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
   };
 };
 
-export default {
+export const serialiation = {
   formatTransaction,
   fromTransactionRaw,
   toTransactionRaw,
   fromTransactionStatusRaw,
   toTransactionStatusRaw,
   formatTransactionStatus,
-};
+} satisfies BoilerplateSerializationTransactionBridge;

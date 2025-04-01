@@ -1,4 +1,3 @@
-import { BigNumber } from "bignumber.js";
 import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import { formatTransactionStatus } from "@ledgerhq/coin-framework/formatters";
@@ -8,10 +7,16 @@ import {
   toTransactionCommonRaw,
   toTransactionStatusRawCommon as toTransactionStatusRaw,
 } from "@ledgerhq/coin-framework/serialization";
-import { Account } from "@ledgerhq/types-live";
+import { Account, SerializationTransactionBridge } from "@ledgerhq/types-live";
+import { BigNumber } from "bignumber.js";
 import type { Transaction, TransactionRaw } from "./types";
 
-export const formatTransaction = (
+type CosmosSerializationTransactionBridge = SerializationTransactionBridge<
+  Transaction,
+  TransactionRaw
+>;
+
+const formatTransaction = (
   { mode, amount, fees, recipient, validators, memo, sourceValidator, useAllAmount }: Transaction,
   account: Account,
 ): string => `
@@ -46,7 +51,7 @@ with fees=${fees ? formatCurrencyUnit(getAccountCurrency(account).units[0], fees
   !memo ? "" : `\n  memo=${memo}`
 }`;
 
-export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
+const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   const common = fromTransactionCommonRaw(tr);
   const { networkInfo } = tr;
   return {
@@ -67,7 +72,7 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   };
 };
 
-export const toTransactionRaw = (t: Transaction): TransactionRaw => {
+const toTransactionRaw = (t: Transaction): TransactionRaw => {
   const common = toTransactionCommonRaw(t);
   const { networkInfo } = t;
   return {
@@ -86,11 +91,11 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
   };
 };
 
-export default {
+export const serialization = {
   formatTransaction,
   fromTransactionRaw,
   toTransactionRaw,
   fromTransactionStatusRaw,
   toTransactionStatusRaw,
   formatTransactionStatus,
-};
+} satisfies CosmosSerializationTransactionBridge;

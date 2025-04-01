@@ -12,7 +12,9 @@ import type {
   SignOperationEvent,
   SignedOperation,
   TransactionCommon,
+  TransactionCommonRaw,
   TransactionStatusCommon,
+  TransactionStatusCommonRaw,
 } from "./transaction";
 import type { Operation, OperationExtra, OperationExtraRaw } from "./operation";
 import type { DerivationMode } from "./derivation";
@@ -81,11 +83,13 @@ export type Bridge<
   T extends TransactionCommon,
   A extends Account = Account,
   U extends TransactionStatusCommon = TransactionStatusCommon,
+  TR extends TransactionCommonRaw = TransactionCommonRaw,
+  UR extends TransactionStatusCommonRaw = TransactionStatusCommonRaw,
   O extends Operation = Operation,
   R extends AccountRaw = AccountRaw,
 > = {
   currencyBridge: CurrencyBridge;
-  accountBridge: AccountBridge<T, A, U, O, R>;
+  accountBridge: AccountBridge<T, A, U, TR, UR, O, R>;
 };
 
 export type ScanInfo = {
@@ -241,6 +245,19 @@ interface SerializationAccountBridge<
   formatAccountSpecifics: (account: A) => string;
   formatOperationSpecifics: (operation: O, unit: Unit | null | undefined) => string;
 }
+export interface SerializationTransactionBridge<
+  T extends TransactionCommon,
+  TR extends TransactionCommonRaw = TransactionCommonRaw,
+  U extends TransactionStatusCommon = TransactionStatusCommon,
+  UR extends TransactionStatusCommonRaw = TransactionStatusCommonRaw,
+> {
+  formatTransaction: (tx: T, mainAccount: Account) => string;
+  fromTransactionRaw: (txRaw: TR) => T;
+  toTransactionRaw: (tx: T) => TR;
+  fromTransactionStatusRaw: (txStatusRaw: UR) => U;
+  toTransactionStatusRaw: (txStatus: U) => UR;
+  formatTransactionStatus: (tx: T, txStatus: U, mainAccount: Account) => string;
+}
 
 type AccountBridgeWithExchange<A extends Account = Account> = {
   getSerializedAddressParameters: (account: A, addressFormat?: string) => Buffer;
@@ -250,11 +267,14 @@ export type AccountBridge<
   T extends TransactionCommon,
   A extends Account = Account,
   U extends TransactionStatusCommon = TransactionStatusCommon,
+  TR extends TransactionCommonRaw = TransactionCommonRaw,
   O extends Operation = Operation,
+  UR extends TransactionStatusCommonRaw = TransactionStatusCommonRaw,
   R extends AccountRaw = AccountRaw,
 > = SendReceiveAccountBridge<T, A, U> &
   AccountBridgeWithExchange<A> &
-  Partial<SerializationAccountBridge<A, O, R>>;
+  Partial<SerializationAccountBridge<A, O, R>> &
+  SerializationTransactionBridge<T, TR, U, UR>;
 
 type ExpectFn = (...args: Array<any>) => any;
 
