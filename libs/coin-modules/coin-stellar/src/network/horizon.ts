@@ -38,12 +38,8 @@ const TRESHOLD_LOW = 0.5;
 const TRESHOLD_MEDIUM = 0.75;
 const FETCH_LIMIT = 100;
 const currency = getCryptoCurrencyById("stellar");
-let server: Horizon.Server | undefined;
 const getServer = () => {
-  if (!server) {
-    server = new Horizon.Server(coinConfig.getCoinConfig().explorer.url);
-  }
-  return server;
+  return new Horizon.Server(coinConfig.getCoinConfig().explorer.url);
 };
 
 // Constants
