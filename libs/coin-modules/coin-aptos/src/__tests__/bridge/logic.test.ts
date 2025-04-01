@@ -30,6 +30,11 @@ import {
 } from "../../bridge/logic";
 import type { AptosTransaction, TransactionOptions } from "../../types";
 import { createFixtureAccount, createFixtureTransaction } from "../../bridge/bridge.fixture";
+import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets";
+import { decodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
+
+jest.mock("@ledgerhq/cryptoassets");
+jest.mock("@ledgerhq/coin-framework/account/index");
 
 describe("Aptos logic ", () => {
   describe("isTestnet", () => {
@@ -1062,6 +1067,303 @@ describe("Aptos sync logic ", () => {
 
       expect(result).toHaveLength(1);
       expect(result[0].hasFailed).toBe(true);
+    });
+
+    it.only("should convert Aptos token transactions to operations correctly", () => {
+      (findTokenByAddressInCurrency as jest.Mock).mockReturnValue({
+        type: "TokenCurrency",
+        id: "aptos/coin/dstapt::staked_coin::stakedaptos",
+        contractAddress: "0xd111::staked_coin::StakedAptos",
+        parentCurrency: {
+          type: "CryptoCurrency",
+          id: "aptos",
+          coinType: 637,
+          name: "Aptos",
+          managerAppName: "Aptos",
+          ticker: "APT",
+          scheme: "aptos",
+          color: "#231F20",
+          family: "aptos",
+          units: [
+            {
+              name: "APT",
+              code: "APT",
+              magnitude: 8,
+            },
+          ],
+          explorerViews: [
+            {
+              address: "https://explorer.aptoslabs.com/account/$address?network=mainnet",
+              tx: "https://explorer.aptoslabs.com/txn/$hash?network=mainnet",
+            },
+          ],
+        },
+        name: "dstAPT",
+        tokenType: "coin",
+        ticker: "dstAPT",
+        disableCountervalue: false,
+        delisted: false,
+        units: [
+          {
+            name: "dstAPT",
+            code: "dstAPT",
+            magnitude: 8,
+          },
+        ],
+      });
+
+      jest.mock("../../bridge/logic", () => ({
+        ...jest.requireActual("../../bridge/logic"),
+        getResourceAddress: jest.fn().mockReturnValue("0xd111::staked_coin::StakedAptos"),
+      }));
+
+      (decodeTokenAccountId as jest.Mock).mockReturnValue({
+        accountId: "token_account_id",
+      });
+
+      const address = "0xa0d";
+      const id = "test-id";
+      const txs: AptosTransaction[] = [
+        {
+          hash: "0x123",
+          sender: address,
+          gas_used: "200",
+          gas_unit_price: "100",
+          success: true,
+          payload: {
+            function: "0x1::aptos_account::transfer_coins",
+            type_arguments: ["0xd111::staked_coin::StakedAptos"],
+            arguments: ["0x4e5", "1500000"],
+            type: "entry_function_payload",
+          } as EntryFunctionPayloadResponse,
+          events: [
+            {
+              guid: {
+                creation_number: "11",
+                account_address: "0xa0d",
+              },
+              sequence_number: "12",
+              type: "0x1::coin::WithdrawEvent",
+              data: {
+                amount: "1500000",
+              },
+            },
+            {
+              guid: {
+                creation_number: "4",
+                account_address: "0x4e5",
+              },
+              sequence_number: "8",
+              type: "0x1::coin::DepositEvent",
+              data: {
+                amount: "1500000",
+              },
+            },
+            {
+              guid: {
+                creation_number: "0",
+                account_address: "0x0",
+              },
+              sequence_number: "0",
+              type: "0x1::transaction_fee::FeeStatement",
+              data: {
+                execution_gas_units: "6",
+                io_gas_units: "6",
+                storage_fee_octas: "0",
+                storage_fee_refund_octas: "0",
+                total_charge_gas_units: "12",
+              },
+            },
+          ],
+          changes: [
+            {
+              address: "0x4e5",
+              state_key_hash: "0x3c0",
+              data: {
+                type: "0x1::coin::CoinStore<0xd111::staked_coin::StakedAptos>",
+                data: {
+                  coin: {
+                    value: "4000000",
+                  },
+                  deposit_events: {
+                    counter: "9",
+                    guid: {
+                      id: {
+                        addr: "0x4e5",
+                        creation_num: "4",
+                      },
+                    },
+                  },
+                  frozen: false,
+                  withdraw_events: {
+                    counter: "6",
+                    guid: {
+                      id: {
+                        addr: "0x4e5",
+                        creation_num: "5",
+                      },
+                    },
+                  },
+                },
+              },
+              type: "write_resource",
+            },
+            {
+              address: "0xa0d",
+              state_key_hash: "0x1709",
+              data: {
+                type: "0x1::coin::CoinStore<0x1::aptos_coin::AptosCoin>",
+                data: {
+                  coin: {
+                    value: "68254118",
+                  },
+                  deposit_events: {
+                    counter: "46",
+                    guid: {
+                      id: {
+                        addr: "0xa0d",
+                        creation_num: "2",
+                      },
+                    },
+                  },
+                  frozen: false,
+                  withdraw_events: {
+                    counter: "89",
+                    guid: {
+                      id: {
+                        addr: "0xa0d",
+                        creation_num: "3",
+                      },
+                    },
+                  },
+                },
+              },
+              type: "write_resource",
+            },
+            {
+              address: "0xa0d",
+              state_key_hash: "0x5520",
+              data: {
+                type: "0x1::coin::CoinStore<0xd111::staked_coin::StakedAptos>",
+                data: {
+                  coin: {
+                    value: "1000000",
+                  },
+                  deposit_events: {
+                    counter: "7",
+                    guid: {
+                      id: {
+                        addr: "0xa0d",
+                        creation_num: "10",
+                      },
+                    },
+                  },
+                  frozen: false,
+                  withdraw_events: {
+                    counter: "13",
+                    guid: {
+                      id: {
+                        addr: "0xa0d",
+                        creation_num: "11",
+                      },
+                    },
+                  },
+                },
+              },
+              type: "write_resource",
+            },
+            {
+              address: "0xa0d",
+              state_key_hash: "0x6f1e",
+              data: {
+                type: "0x1::account::Account",
+                data: {
+                  authentication_key: "0xa0d",
+                  coin_register_events: {
+                    counter: "5",
+                    guid: {
+                      id: {
+                        addr: "0xa0d",
+                        creation_num: "0",
+                      },
+                    },
+                  },
+                  guid_creation_num: "12",
+                  key_rotation_events: {
+                    counter: "0",
+                    guid: {
+                      id: {
+                        addr: "0xa0d",
+                        creation_num: "1",
+                      },
+                    },
+                  },
+                  rotation_capability_offer: {
+                    for: {
+                      vec: [],
+                    },
+                  },
+                  sequence_number: "122",
+                  signer_capability_offer: {
+                    for: {
+                      vec: [],
+                    },
+                  },
+                },
+              },
+              type: "write_resource",
+            },
+            {
+              state_key_hash: "0x6e4b",
+              handle: "0x1b85",
+              key: "0x0619",
+              value: "0x1ddaf8da3b1497010000000000000000",
+              data: null,
+              type: "write_table_item",
+            },
+          ],
+          block: { hash: "0xabc", height: 1 },
+          timestamp: "1000000",
+          sequence_number: "1",
+        } as unknown as AptosTransaction,
+      ];
+
+      const [ops, tokenOps] = txsToOps({ address }, id, txs);
+
+      expect(ops).toHaveLength(1);
+      expect(ops[0]).toEqual({
+        id: expect.any(String),
+        hash: "0x123",
+        type: "FEES",
+        value: new BigNumber(20000),
+        fee: new BigNumber(20000),
+        blockHash: "0xabc",
+        blockHeight: 1,
+        senders: ["0xa0d"],
+        recipients: ["0x4e5"],
+        accountId: "token_account_id",
+        date: new Date(1000),
+        extra: { version: undefined },
+        transactionSequenceNumber: 1,
+        hasFailed: false,
+      });
+
+      expect(tokenOps).toHaveLength(1);
+      expect(tokenOps[0]).toEqual({
+        id: expect.any(String),
+        hash: "0x123",
+        type: DIRECTION.OUT,
+        value: new BigNumber(1500000),
+        fee: new BigNumber(20000),
+        blockHash: "0xabc",
+        blockHeight: 1,
+        senders: ["0xa0d"],
+        recipients: ["0x4e5"],
+        date: new Date(1000),
+        extra: { version: undefined },
+        transactionSequenceNumber: 1,
+        hasFailed: false,
+      });
     });
   });
 });
