@@ -132,14 +132,13 @@ const remapErrorsWithRetry = <P extends Promise<T>, T>(callback: () => P, times 
 /*
 NOTE: https://github.com/sindresorhus/ky?tab=readme-ov-file#retry
 defaults values are set here https://github.com/sindresorhus/ky/blob/b49cd03d8673ea522a29bae4ef6b4672cf23201b/source/utils/normalize.ts#L14
-retrying on 404 is debatable, but due to current solana node behavior, it's necessary
 */
 const kyNoTimeout = ky.create({
   timeout: false,
   retry: {
     limit: 3,
-    statusCodes: [404, 408, 413, 429, 500, 502, 503, 504],
-    methods: ["get", "post"],
+    statusCodes: [408, 413, 429, 500, 502, 503, 504],
+    methods: ["get", "post", "put", "head", "delete", "options", "trace"],
   },
 });
 
