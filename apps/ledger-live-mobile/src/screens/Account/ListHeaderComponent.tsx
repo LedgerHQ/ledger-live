@@ -101,6 +101,7 @@ export function useListHeaderComponents({
   const AccountHeaderRendered = AccountHeader && AccountHeader({ account, parentAccount });
 
   const AccountBodyHeader = (perFamilyAccountBodyHeader as Record<string, MaybeComponent>)[family];
+  debugger;
   // Pre-render component, cause we need to know if it return null so we don't render an empty border container (Tezos was doing it)
   const AccountBodyHeaderRendered =
     AccountBodyHeader && AccountBodyHeader({ account, parentAccount });

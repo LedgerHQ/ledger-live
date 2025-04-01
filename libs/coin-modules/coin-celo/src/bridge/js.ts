@@ -24,7 +24,7 @@ import { CeloSigner } from "../signer";
 
 export function buildCurrencyBridge(signerContext: SignerContext<EvmSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
-
+  debugger;
   const scanAccounts = makeScanAccounts({
     getAccountShape,
     getAddressFn: getAddressWrapper(getAddress),
@@ -41,6 +41,7 @@ export function buildCurrencyBridge(signerContext: SignerContext<EvmSigner>): Cu
 export function buildAccountBridge(
   signerContext: SignerContext<CeloSigner>,
 ): AccountBridge<Transaction, CeloAccount, TransactionStatus> {
+  debugger;
   const getAddress = resolver(signerContext);
 
   const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));

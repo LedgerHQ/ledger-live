@@ -3,7 +3,6 @@
 import { createBridges } from "@ledgerhq/coin-celo/bridge/js";
 import makeCliTools from "@ledgerhq/coin-celo/cli-transaction";
 import CeloResolver from "@ledgerhq/coin-celo/hw-getAddress";
-import { EvmSigner } from "@ledgerhq/coin-evm/lib/types/signer";
 // import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import Transport from "@ledgerhq/hw-transport";
 import type { Bridge } from "@ledgerhq/types-live";
