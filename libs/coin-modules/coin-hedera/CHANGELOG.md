@@ -1,5 +1,18 @@
 # @ledgerhq/coin-hedera
 
+## 1.5.0-nightly.3
+
+### Minor Changes
+
+- [#9648](https://github.com/LedgerHQ/ledger-live/pull/9648) [`f1732a7`](https://github.com/LedgerHQ/ledger-live/commit/f1732a795e54f666b67e7686d59926037412caca) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Remove SubAccount as it is an alias to TokenAccount
+
+### Patch Changes
+
+- Updated dependencies [[`44ae74c`](https://github.com/LedgerHQ/ledger-live/commit/44ae74c272ba803bed7c9f4fc3351e3ce8a15531), [`8ce7b0a`](https://github.com/LedgerHQ/ledger-live/commit/8ce7b0ab2d1d73ef071102f795e7c868c676b1f4), [`f1732a7`](https://github.com/LedgerHQ/ledger-live/commit/f1732a795e54f666b67e7686d59926037412caca), [`a7b1969`](https://github.com/LedgerHQ/ledger-live/commit/a7b19697ff6d4db1e5da365a02db91498a17332c)]:
+  - @ledgerhq/coin-framework@2.5.0-nightly.3
+  - @ledgerhq/types-live@6.65.0-nightly.1
+  - @ledgerhq/live-countervalues@0.5.0-nightly.3
+
 ## 1.5.0-nightly.2
 
 ### Patch Changes

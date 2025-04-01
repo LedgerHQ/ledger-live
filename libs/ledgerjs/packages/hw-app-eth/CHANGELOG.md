@@ -1,5 +1,18 @@
 # @ledgerhq/hw-app-eth
 
+## 6.44.0-nightly.2
+
+### Minor Changes
+
+- [#9648](https://github.com/LedgerHQ/ledger-live/pull/9648) [`f1732a7`](https://github.com/LedgerHQ/ledger-live/commit/f1732a795e54f666b67e7686d59926037412caca) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Remove SubAccount as it is an alias to TokenAccount
+
+### Patch Changes
+
+- Updated dependencies [[`f1732a7`](https://github.com/LedgerHQ/ledger-live/commit/f1732a795e54f666b67e7686d59926037412caca)]:
+  - @ledgerhq/types-live@6.65.0-nightly.1
+  - @ledgerhq/domain-service@1.2.24-nightly.1
+  - @ledgerhq/evm-tools@1.6.1-nightly.1
+
 ## 6.44.0-nightly.1
 
 ### Patch Changes

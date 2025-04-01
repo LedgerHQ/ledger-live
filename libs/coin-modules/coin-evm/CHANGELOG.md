@@ -1,5 +1,18 @@
 # @ledgerhq/coin-evm
 
+## 2.15.0-nightly.3
+
+### Minor Changes
+
+- [#9648](https://github.com/LedgerHQ/ledger-live/pull/9648) [`f1732a7`](https://github.com/LedgerHQ/ledger-live/commit/f1732a795e54f666b67e7686d59926037412caca) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Remove SubAccount as it is an alias to TokenAccount
+
+### Patch Changes
+
+- Updated dependencies [[`44ae74c`](https://github.com/LedgerHQ/ledger-live/commit/44ae74c272ba803bed7c9f4fc3351e3ce8a15531), [`8ce7b0a`](https://github.com/LedgerHQ/ledger-live/commit/8ce7b0ab2d1d73ef071102f795e7c868c676b1f4), [`f1732a7`](https://github.com/LedgerHQ/ledger-live/commit/f1732a795e54f666b67e7686d59926037412caca)]:
+  - @ledgerhq/coin-framework@2.5.0-nightly.3
+  - @ledgerhq/domain-service@1.2.24-nightly.1
+  - @ledgerhq/evm-tools@1.6.1-nightly.1
+
 ## 2.15.0-nightly.2
 
 ### Minor Changes

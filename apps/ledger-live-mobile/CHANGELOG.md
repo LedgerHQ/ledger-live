@@ -1,5 +1,45 @@
 # live-mobile
 
+## 3.72.0-nightly.4
+
+### Minor Changes
+
+- [#9687](https://github.com/LedgerHQ/ledger-live/pull/9687) [`5fab864`](https://github.com/LedgerHQ/ledger-live/commit/5fab864699f9f903dfeac8ca09f98e8af7e75534) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix (llm): patch hermes typed arrays
+
+- [#9721](https://github.com/LedgerHQ/ledger-live/pull/9721) [`8880165`](https://github.com/LedgerHQ/ledger-live/commit/8880165779966b23fdfb117c2ffe912ec15d0dc2) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Rework usage of Selectors in NFT Gallery and create a dedicated hook
+
+- [#9727](https://github.com/LedgerHQ/ledger-live/pull/9727) [`4e8410a`](https://github.com/LedgerHQ/ledger-live/commit/4e8410acca8c6f55686dfa90b22a6f8098f854ca) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Receive token banner typo update
+
+- [#9719](https://github.com/LedgerHQ/ledger-live/pull/9719) [`24f473e`](https://github.com/LedgerHQ/ledger-live/commit/24f473ef95e0f300be4c8183848e28abb40f983d) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix transaction history when there is subaccount + change weird navigation effect
+
+- [#9738](https://github.com/LedgerHQ/ledger-live/pull/9738) [`cb99367`](https://github.com/LedgerHQ/ledger-live/commit/cb993678d8ebe4754ec2db72866d6175ef25ec9d) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix layout Issue when no send button
+
+- [#9661](https://github.com/LedgerHQ/ledger-live/pull/9661) [`3945ac1`](https://github.com/LedgerHQ/ledger-live/commit/3945ac18de9315f78c1d636fe939a1d389486322) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Rework Account NFTs Generator to select currencies and reuse existing components
+
+- [#9648](https://github.com/LedgerHQ/ledger-live/pull/9648) [`f1732a7`](https://github.com/LedgerHQ/ledger-live/commit/f1732a795e54f666b67e7686d59926037412caca) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Remove SubAccount as it is an alias to TokenAccount
+
+- [#9737](https://github.com/LedgerHQ/ledger-live/pull/9737) [`f133d79`](https://github.com/LedgerHQ/ledger-live/commit/f133d799d3d4106a0bebd7e541362682be265273) Thanks [@themooneer](https://github.com/themooneer)! - Close confirmation dialog edition for add account v2
+
+- [#9692](https://github.com/LedgerHQ/ledger-live/pull/9692) [`6776328`](https://github.com/LedgerHQ/ledger-live/commit/677632821e67bd2bf264913b814856c08bd7c08a) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Swap WebView should generate swap params based on accounts available on initial load
+
+### Patch Changes
+
+- Updated dependencies [[`44ae74c`](https://github.com/LedgerHQ/ledger-live/commit/44ae74c272ba803bed7c9f4fc3351e3ce8a15531), [`8880165`](https://github.com/LedgerHQ/ledger-live/commit/8880165779966b23fdfb117c2ffe912ec15d0dc2), [`8ce7b0a`](https://github.com/LedgerHQ/ledger-live/commit/8ce7b0ab2d1d73ef071102f795e7c868c676b1f4), [`f1732a7`](https://github.com/LedgerHQ/ledger-live/commit/f1732a795e54f666b67e7686d59926037412caca), [`a7b1969`](https://github.com/LedgerHQ/ledger-live/commit/a7b19697ff6d4db1e5da365a02db91498a17332c)]:
+  - @ledgerhq/coin-framework@2.5.0-nightly.3
+  - @ledgerhq/live-nft-react@0.8.0-nightly.3
+  - @ledgerhq/live-nft@0.7.0-nightly.3
+  - @ledgerhq/coin-multiversx@0.3.0-nightly.3
+  - @ledgerhq/types-live@6.65.0-nightly.1
+  - @ledgerhq/coin-filecoin@1.8.0-nightly.3
+  - @ledgerhq/coin-cosmos@0.11.0-nightly.3
+  - @ledgerhq/coin-stacks@0.7.0-nightly.3
+  - @ledgerhq/coin-evm@2.15.0-nightly.3
+  - @ledgerhq/live-countervalues@0.5.0-nightly.3
+  - @ledgerhq/live-countervalues-react@0.2.28-nightly.3
+  - @ledgerhq/live-wallet@0.10.2-nightly.3
+  - @ledgerhq/domain-service@1.2.24-nightly.1
+  - @ledgerhq/ledger-key-ring-protocol@0.5.5-nightly.2
+
 ## 3.72.0-nightly.3
 
 ### Patch Changes
