@@ -14,7 +14,13 @@ import { computeBalanceBridge, lastBlock } from "../logic";
 import { getOperationsPageSize } from "../logic/pagination";
 import { fetchTronAccountTxs } from "../network";
 import { TronAccount, TrongridExtraTxInfo, TronOperation } from "../types";
-import { defaultTronResources, getTronResources, isParentTx, txInfoToOperation } from "./utils";
+import {
+  defaultTronResources,
+  getTronResources,
+  isParentTx,
+  txInfoToOperation,
+  isAccountEmpty,
+} from "./utils";
 import { getAccount } from "../logic/getAccount";
 
 type TronToken = {
