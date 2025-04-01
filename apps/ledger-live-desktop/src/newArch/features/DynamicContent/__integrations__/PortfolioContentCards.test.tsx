@@ -1,6 +1,6 @@
 import React from "react";
 
-import { act, render, screen } from "tests/testUtils";
+import { act, render, screen } from "tests/testSetup";
 import PortfolioContentCards from "../components/PortfolioContentCards";
 
 // Mocked functions

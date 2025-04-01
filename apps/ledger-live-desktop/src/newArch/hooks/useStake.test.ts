@@ -1,6 +1,6 @@
 import { useStake } from "LLD/hooks/useStake";
 import BigNumber from "bignumber.js";
-import { renderHookWithLiveAppProvider } from "tests/testUtils";
+import { renderHookWithLiveAppProvider } from "tests/testSetup";
 
 import { accountRawToAccountUserData, WalletState } from "@ledgerhq/live-wallet/store";
 

@@ -1,4 +1,4 @@
-import { renderHook } from "tests/testUtils";
+import { renderHook } from "tests/testSetup";
 import { useTrackExchangeFlow, UseTrackExchangeFlow } from "./useTrackExchangeFlow";
 import { track } from "../segment";
 import { UserRefusedAllowManager, UserRefusedOnDevice } from "@ledgerhq/errors";
