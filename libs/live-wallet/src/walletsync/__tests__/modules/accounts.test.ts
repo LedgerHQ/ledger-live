@@ -99,6 +99,24 @@ const dummyContext: WalletSyncDataManagerResolutionContext = {
     getSerializedAddressParameters: () => {
       throw new Error("not implemented");
     },
+    formatTransaction: () => {
+      throw new Error("not implemented");
+    },
+    fromTransactionRaw: () => {
+      throw new Error("not implemented");
+    },
+    toTransactionRaw: () => {
+      throw new Error("not implemented");
+    },
+    fromTransactionStatusRaw: () => {
+      throw new Error("not implemented");
+    },
+    toTransactionStatusRaw: () => {
+      throw new Error("not implemented");
+    },
+    formatTransactionStatus: () => {
+      throw new Error("not implemented");
+    },
   }),
   bridgeCache: {
     hydrateCurrency: () => Promise.resolve(null),

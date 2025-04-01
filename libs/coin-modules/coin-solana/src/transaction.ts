@@ -1,3 +1,14 @@
+import { findSubAccountById, getAccountCurrency } from "@ledgerhq/coin-framework/account";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
+import { formatTransactionStatus } from "@ledgerhq/coin-framework/formatters";
+import {
+  fromTransactionCommonRaw,
+  fromTransactionStatusRawCommon as fromTransactionStatusRaw,
+  toTransactionCommonRaw,
+  toTransactionStatusRawCommon as toTransactionStatusRaw,
+} from "@ledgerhq/coin-framework/serialization";
+import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets/index";
+import type { Account, SerializationTransactionBridge } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import type {
   Command,
@@ -14,20 +25,14 @@ import type {
   TransactionRaw,
   TransferCommand,
 } from "./types";
-import { formatTransactionStatus } from "@ledgerhq/coin-framework/formatters";
-import {
-  fromTransactionCommonRaw,
-  fromTransactionStatusRawCommon as fromTransactionStatusRaw,
-  toTransactionCommonRaw,
-  toTransactionStatusRawCommon as toTransactionStatusRaw,
-} from "@ledgerhq/coin-framework/serialization";
-import type { Account } from "@ledgerhq/types-live";
-import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets/index";
-import { findSubAccountById, getAccountCurrency } from "@ledgerhq/coin-framework/account";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
 import { assertUnreachable } from "./utils";
 
-export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
+type SolanaSerializationTransactionBridge = SerializationTransactionBridge<
+  Transaction,
+  TransactionRaw
+>;
+
+const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   const common = fromTransactionCommonRaw(tr);
   const { family, model } = tr;
   return {
@@ -37,7 +42,7 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   };
 };
 
-export const toTransactionRaw = (t: Transaction): TransactionRaw => {
+const toTransactionRaw = (t: Transaction): TransactionRaw => {
   const common = toTransactionCommonRaw(t);
   const { family, model } = t;
   return {
@@ -54,7 +59,7 @@ const lamportsToSOL = (account: Account, amount: number) => {
   });
 };
 
-export const formatTransaction = (tx: Transaction, mainAccount: Account): string => {
+const formatTransaction = (tx: Transaction, mainAccount: Account): string => {
   if (tx.model.commandDescriptor === undefined) {
     throw new Error("can not format unprepared transaction");
   }
@@ -247,11 +252,11 @@ function formatStakeSplit(mainAccount: Account, tx: Transaction, command: StakeS
   return "\n" + str;
 }
 
-export default {
+export const serialization = {
   formatTransaction,
   fromTransactionRaw,
   toTransactionRaw,
   fromTransactionStatusRaw,
   toTransactionStatusRaw,
   formatTransactionStatus,
-};
+} satisfies SolanaSerializationTransactionBridge;

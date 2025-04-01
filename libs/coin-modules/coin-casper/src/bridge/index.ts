@@ -1,3 +1,4 @@
+import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import {
   getSerializedAddressParameters,
   makeAccountBridgeReceive,
@@ -5,18 +6,18 @@ import {
   makeSync,
   updateTransaction,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import resolver from "../signer";
-import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import type { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
-import type { Transaction, TransactionStatus, CasperSigner } from "../types";
-import { getTransactionStatus } from "./getTransactionStatus";
-import { estimateMaxSpendable } from "./estimateMaxSpendable";
-import { prepareTransaction } from "./prepareTransaction";
-import { createTransaction } from "./createTransaction";
+import resolver from "../signer";
+import type { CasperSigner, Transaction, TransactionRaw, TransactionStatus } from "../types";
 import { getAccountShape } from "./bridgeHelpers/accountShape";
-import { buildSignOperation } from "./signOperation";
 import { broadcast } from "./broadcast";
+import { createTransaction } from "./createTransaction";
+import { estimateMaxSpendable } from "./estimateMaxSpendable";
+import { getTransactionStatus } from "./getTransactionStatus";
+import { prepareTransaction } from "./prepareTransaction";
+import { buildSignOperation } from "./signOperation";
+import { serialization } from "./transaction";
 
 function buildCurrencyBridge(signerContext: SignerContext<CasperSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
@@ -37,7 +38,7 @@ const sync = makeSync({ getAccountShape });
 
 function buildAccountBridge(
   signerContext: SignerContext<CasperSigner>,
-): AccountBridge<Transaction, Account, TransactionStatus> {
+): AccountBridge<Transaction, Account, TransactionStatus, TransactionRaw> {
   const getAddress = resolver(signerContext);
 
   const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));
@@ -54,6 +55,7 @@ function buildAccountBridge(
     signOperation,
     broadcast,
     getSerializedAddressParameters,
+    ...serialization,
   };
 }
 

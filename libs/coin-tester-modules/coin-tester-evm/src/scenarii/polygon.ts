@@ -119,7 +119,13 @@ const makeScenarioTransactions = ({ address }: { address: string }) => {
   ];
 };
 
-export const scenarioPolygon: Scenario<EvmTransaction, Account> = {
+export const scenarioPolygon: Scenario<
+  EvmTransaction,
+  Account,
+  TransactionStatus,
+  EvmTransactionRaw,
+  TransactionStatusRaw
+> = {
   name: "Ledger Live Basic Polygon Transactions",
   setup: async () => {
     const [{ transport, getOnSpeculosConfirmation }] = await Promise.all([

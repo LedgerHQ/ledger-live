@@ -7,11 +7,16 @@ import {
   toTransactionCommonRaw,
   toTransactionStatusRawCommon as toTransactionStatusRaw,
 } from "@ledgerhq/coin-framework/serialization";
-import type { Account } from "@ledgerhq/types-live";
+import type { Account, SerializationTransactionBridge } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 
-export const formatTransaction = (
+type NearSerializationTransactionBridge = SerializationTransactionBridge<
+  Transaction,
+  TransactionRaw
+>;
+
+const formatTransaction = (
   { mode, amount, recipient, useAllAmount }: Transaction,
   account: Account,
 ): string => `
@@ -37,7 +42,7 @@ export const fromTransactionRaw = (transactionRaw: TransactionRaw): Transaction 
   };
 };
 
-export const toTransactionRaw = (transaction: Transaction): TransactionRaw => {
+const toTransactionRaw = (transaction: Transaction): TransactionRaw => {
   const common = toTransactionCommonRaw(transaction);
   const transactionRaw: TransactionRaw = {
     ...common,
@@ -51,11 +56,11 @@ export const toTransactionRaw = (transaction: Transaction): TransactionRaw => {
   return transactionRaw;
 };
 
-export default {
+export const serialization = {
   formatTransaction,
   fromTransactionRaw,
   toTransactionRaw,
   fromTransactionStatusRaw,
   toTransactionStatusRaw,
   formatTransactionStatus,
-};
+} satisfies NearSerializationTransactionBridge;
