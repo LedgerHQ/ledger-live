@@ -31,17 +31,17 @@ export function createApi(config: StellarConfig): Api<StellarToken> {
   };
 }
 
+type TransactionIntentExtra = {
+  memoType?: string | null | undefined;
+  memoValue?: string | null | undefined;
+};
+
 async function craft(
   transactionIntent: TransactionIntent<StellarToken>,
   customFees?: bigint,
 ): Promise<string> {
   const fees = customFees !== undefined ? customFees : await estimateFees();
-  const supplement = transactionIntent.asset
-    ? {
-        assetCode: transactionIntent.asset.assetCode,
-        assetIssuer: transactionIntent.asset.assetIssuer,
-      }
-    : {};
+  const extra = transactionIntent as TransactionIntentExtra;
   const tx = await craftTransaction(
     { address: transactionIntent.sender },
     {
@@ -49,8 +49,10 @@ async function craft(
       recipient: transactionIntent.recipient,
       amount: transactionIntent.amount,
       fee: fees,
-      assetCode: supplement?.assetCode,
-      assetIssuer: supplement?.assetIssuer,
+      assetCode: transactionIntent.asset?.assetCode,
+      assetIssuer: transactionIntent.asset?.assetIssuer,
+      memoType: extra.memoType,
+      memoValue: extra.memoValue,
     },
   );
   return tx.xdr;
