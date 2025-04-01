@@ -12,6 +12,7 @@ import { getPreloadStrategy, hydrate, preload } from "./preload";
 import polkadotCoinConfig, { type PolkadotCoinConfig } from "../config";
 import { estimateMaxSpendable } from "./estimateMaxSpendable";
 import { getSerializedAddressParameters } from "./exchange";
+import formatters from "./formatters";
 import { getTransactionStatus } from "./getTransactionStatus";
 import { prepareTransaction } from "./prepareTransaction";
 import { getAccountShape, sync } from "./synchronization";
@@ -64,6 +65,8 @@ function buildAccountBridge(
     assignToAccountRaw,
     fromOperationExtraRaw,
     toOperationExtraRaw,
+    formatAccountSpecifics: formatters.formatAccountSpecifics,
+    formatOperationSpecifics: formatters.formatOperationSpecifics,
     getSerializedAddressParameters,
   };
 }

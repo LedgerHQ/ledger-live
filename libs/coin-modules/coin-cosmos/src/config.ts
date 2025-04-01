@@ -28,7 +28,7 @@ export const cosmosConfig: CosmosConfig = {
   config_currency_desmos: {
     type: "object",
     default: {
-      lcd: "https://api.mainnet.desmos.network/",
+      lcd: "https://api.mainnet.desmos.network",
       minGasPrice: 0.0025,
     },
   },
