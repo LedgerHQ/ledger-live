@@ -1,4 +1,4 @@
-import { renderHook } from "tests/testUtils";
+import { renderHook } from "tests/testSetup";
 import { useSupportedLanguages } from "./useSupportedLanguages";
 import { pushedLanguages } from "~/config/languages";
 
