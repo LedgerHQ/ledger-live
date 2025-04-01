@@ -1779,7 +1779,7 @@
     },
     "fullNodeReadyInfo" : "Les comptes seront ajoutés en utilisant votre nœud Bitcoin.",
     "fullNodeConfigure" : "Configurer le nœud",
-    "tokensTip" : "{{token}} ({{ticker}}) est un token {{tokenType}}. Vous pouvez recevoir ces tokens directement sur un compte {{currency}}.",
+    "tokensTip" : "{{token}} ({{ticker}}) is an {{tokenType}} token. You can receive tokens directly on a/an {{currency}} account.",
     "accountToImportSubtitle_plural" : "Ajouter des comptes existants",
     "selectAll" : "Sélectionner tout ({{count}})",
     "unselectAll" : "Désélectionner tout ({{count}})",
