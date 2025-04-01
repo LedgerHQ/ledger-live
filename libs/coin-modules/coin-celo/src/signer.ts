@@ -8,7 +8,7 @@ import { LedgerEthTransactionResolution } from "@ledgerhq/hw-app-eth/lib/service
 //   address: string;
 // };
 
-export interface CeloSigner extends EvmSigner{
+export interface CeloSigner extends EvmSigner {
   // getAddress(path: string, boolDisplay?: boolean): Promise<CeloAddress>;
   // signTransaction(path: string, rawTxHex: string): Promise<CeloSignature>;
   signTransaction(
