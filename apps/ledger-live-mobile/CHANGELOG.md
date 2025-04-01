@@ -1,5 +1,70 @@
 # live-mobile
 
+## 3.72.0
+
+### Minor Changes
+
+- [#9608](https://github.com/LedgerHQ/ledger-live/pull/9608) [`a473bf9`](https://github.com/LedgerHQ/ledger-live/commit/a473bf99aaca7067672bd0be762ed9cfe60085f8) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Display Collections for Solana in Account Page under FF
+
+- [#9647](https://github.com/LedgerHQ/ledger-live/pull/9647) [`58d6e3e`](https://github.com/LedgerHQ/ledger-live/commit/58d6e3e9626cae35c3c78f2fe7ac9fbd6051aee5) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Display Collection for Solana Account
+
+- [#9622](https://github.com/LedgerHQ/ledger-live/pull/9622) [`ec0c809`](https://github.com/LedgerHQ/ledger-live/commit/ec0c8092a608f8a791a7192f7fa564bf838b920d) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Hide send button in NFT gallery Account for Solana
+
+- [#9642](https://github.com/LedgerHQ/ledger-live/pull/9642) [`14cc1b3`](https://github.com/LedgerHQ/ledger-live/commit/14cc1b3d006b805ef3c34634a5cc577ca3c5532f) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add Solana to Gallery Filters + rework SupportedBlochain type
+
+- [#9581](https://github.com/LedgerHQ/ledger-live/pull/9581) [`de7d4db`](https://github.com/LedgerHQ/ledger-live/commit/de7d4db671d7eb57bc18e1fa56b8475cdf92edd2) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - '-' in neutral color displayed for 0% variation in market and asset list on LLM
+
+- [#9633](https://github.com/LedgerHQ/ledger-live/pull/9633) [`8a05c26`](https://github.com/LedgerHQ/ledger-live/commit/8a05c26b8d2de66356db455a70be6148412e51bc) Thanks [@thesan](https://github.com/thesan)! - Use braze to exclude users from the hardcoded LNS upsell rather than their swap history
+
+- [#9567](https://github.com/LedgerHQ/ledger-live/pull/9567) [`2009ba5`](https://github.com/LedgerHQ/ledger-live/commit/2009ba5e8fa44f8a1111dd0f073c5729738c50b7) Thanks [@adammino-ledger](https://github.com/adammino-ledger)! - Pass LL account to dapps and WAPI account to dapp browser v2
+
+- [#9644](https://github.com/LedgerHQ/ledger-live/pull/9644) [`043d55a`](https://github.com/LedgerHQ/ledger-live/commit/043d55a98782ae6394779bbc303b98930a009e06) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add Thai support in AppStore
+
+- [#9601](https://github.com/LedgerHQ/ledger-live/pull/9601) [`904287d`](https://github.com/LedgerHQ/ledger-live/commit/904287dcac164c4992a086df20c6e411a1098f30) Thanks [@Couto](https://github.com/Couto)! - Use account with highest balance in Swap deeplink
+
+- [#9665](https://github.com/LedgerHQ/ledger-live/pull/9665) [`776931c`](https://github.com/LedgerHQ/ledger-live/commit/776931c6629fb6076e8f6a8b8bb261226fe5fd78) Thanks [@Canestin](https://github.com/Canestin)! - change validate adress wording
+
+- [#9624](https://github.com/LedgerHQ/ledger-live/pull/9624) [`0c54ada`](https://github.com/LedgerHQ/ledger-live/commit/0c54adad30034ce5e8742f03e6e7d73126cc8e56) Thanks [@themooneer](https://github.com/themooneer)! - fix analytic currency name for add account v2
+
+- [#9656](https://github.com/LedgerHQ/ledger-live/pull/9656) [`cef871f`](https://github.com/LedgerHQ/ledger-live/commit/cef871f308479d553c616b91f8ae290d3ac03129) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Wallet NFT Gallery Display for Solana NFTs
+
+- [#9570](https://github.com/LedgerHQ/ledger-live/pull/9570) [`2effe04`](https://github.com/LedgerHQ/ledger-live/commit/2effe04d9d4b3e407ed25da3b9f11324a82126d3) Thanks [@beths-ledger](https://github.com/beths-ledger)! - Allow staking / yielding flows using third party dapps to be enabled remotely on firebase by adding new curency or token ids and associated manifest ids to the new "redirects" parameter in the stake programs flag. No code changes then required for adding coins handled by partners.
+
+- [#9655](https://github.com/LedgerHQ/ledger-live/pull/9655) [`9c33601`](https://github.com/LedgerHQ/ledger-live/commit/9c336013ba55e300f3c28d4e8ea5074a1fe6203a) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - NFT Details for Solana NFT
+
+- [#9596](https://github.com/LedgerHQ/ledger-live/pull/9596) [`35f797e`](https://github.com/LedgerHQ/ledger-live/commit/35f797ee6e78eb851065dd2eaa7cb4861b3f4050) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - bugfix: Standardize Timeframe Display on Portfolio & Market Page Charts
+
+- [#9633](https://github.com/LedgerHQ/ledger-live/pull/9633) [`db54df1`](https://github.com/LedgerHQ/ledger-live/commit/db54df18f61254cbf44f3b90ebbfc44956002e93) Thanks [@thesan](https://github.com/thesan)! - Do not take the accounts list screen real estate with the LNS upsell banner
+
+- [#9658](https://github.com/LedgerHQ/ledger-live/pull/9658) [`15949d6`](https://github.com/LedgerHQ/ledger-live/commit/15949d61553953e3d4ecf8b571c13ae861865aa7) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Rework getFloorPrice usage in LL and add support for Solana
+
+- [#9611](https://github.com/LedgerHQ/ledger-live/pull/9611) [`a656e47`](https://github.com/LedgerHQ/ledger-live/commit/a656e47c1dc3ac8b578debf9cf80eab370c7086f) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Add SUI coin send and receive abilities
+
+### Patch Changes
+
+- Updated dependencies [[`2785d49`](https://github.com/LedgerHQ/ledger-live/commit/2785d49ac320498f98ed39b4eccc48310ad35fe1), [`14cc1b3`](https://github.com/LedgerHQ/ledger-live/commit/14cc1b3d006b805ef3c34634a5cc577ca3c5532f), [`156c747`](https://github.com/LedgerHQ/ledger-live/commit/156c74780e237d31ec7b8766d1ef28e6d890dad1), [`2effe04`](https://github.com/LedgerHQ/ledger-live/commit/2effe04d9d4b3e407ed25da3b9f11324a82126d3), [`ad6d873`](https://github.com/LedgerHQ/ledger-live/commit/ad6d87394cf53f7912a1aa7a5392635570b8374f), [`eea82e7`](https://github.com/LedgerHQ/ledger-live/commit/eea82e7993c27eacdbaba2f5418df64c75db3f2d), [`35f797e`](https://github.com/LedgerHQ/ledger-live/commit/35f797ee6e78eb851065dd2eaa7cb4861b3f4050), [`32f2a0c`](https://github.com/LedgerHQ/ledger-live/commit/32f2a0cf073e5c1a5d65cbe44e69660f8f510dd7), [`15949d6`](https://github.com/LedgerHQ/ledger-live/commit/15949d61553953e3d4ecf8b571c13ae861865aa7), [`2407a6e`](https://github.com/LedgerHQ/ledger-live/commit/2407a6e1f3153c30c52d4bac4c9334fa95c351da), [`40e98c3`](https://github.com/LedgerHQ/ledger-live/commit/40e98c392bd9192570e46c2d62cf0779bdfe01ec), [`a656e47`](https://github.com/LedgerHQ/ledger-live/commit/a656e47c1dc3ac8b578debf9cf80eab370c7086f)]:
+  - @ledgerhq/coin-multiversx@0.3.0
+  - @ledgerhq/coin-filecoin@1.8.0
+  - @ledgerhq/coin-cosmos@0.11.0
+  - @ledgerhq/coin-stacks@0.7.0
+  - @ledgerhq/coin-evm@2.15.0
+  - @ledgerhq/coin-framework@2.5.0
+  - @ledgerhq/live-nft-react@0.8.0
+  - @ledgerhq/live-nft@0.7.0
+  - @ledgerhq/live-common@34.28.0
+  - @ledgerhq/types-live@6.65.0
+  - @ledgerhq/icons-ui@0.9.0
+  - @ledgerhq/live-env@2.7.0
+  - @ledgerhq/types-cryptoassets@7.21.0
+  - @ledgerhq/live-countervalues@0.4.6
+  - @ledgerhq/live-countervalues-react@0.2.28
+  - @ledgerhq/live-wallet@0.10.2
+  - @ledgerhq/domain-service@1.2.24
+  - @ledgerhq/native-ui@0.31.1
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.3.3
+  - @ledgerhq/ledger-key-ring-protocol@0.5.5
+  - @ledgerhq/live-network@2.0.6
+
 ## 3.72.0-next.1
 
 ### Patch Changes
