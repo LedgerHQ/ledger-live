@@ -5,16 +5,15 @@ import { LiveAppRegistry } from "@ledgerhq/live-common/platform/providers/Remote
 import { liveAppContext as localLiveAppProviderContext } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import { LiveAppManifest, Loadable } from "@ledgerhq/live-common/platform/types";
 import { appendQueryParamsToManifestURL } from "@ledgerhq/live-common/wallet-api/utils/appendQueryParamsToManifestURL";
+import { deriveAccountIdForManifest } from "@ledgerhq/live-common/wallet-api/utils/deriveAccountIdForManifest";
 import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import {
   getAccountCurrency,
   getAccountSpendableBalance,
   isTokenAccount,
-} from "@ledgerhq/coin-framework/account/helpers";
+} from "@ledgerhq/coin-framework/account/index";
 import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
-import { NavigatorName, ScreenName } from "~/const";
 import { WalletState } from "@ledgerhq/live-wallet/store";
-import { deriveAccountIdForManifest } from "@ledgerhq/live-common/wallet-api/utils/deriveAccountIdForManifest";
 
 const getRemoteLiveAppManifestById = (
   appId: string,
@@ -30,127 +29,114 @@ const getRemoteLiveAppManifestById = (
 };
 
 export function useStake() {
-  const featureFlag = useFeature("stakePrograms");
-  const enabledCurrencies = useMemo(
-    () => featureFlag?.params?.list || [],
-    [featureFlag?.params?.list],
+  const { params } = useFeature("stakePrograms") || {};
+  /** Natively enabled staking currencies, excluding assets & tokens supported by third parties */
+  const enabledCurrencies = useMemo(() => params?.list ?? [], [params?.list]);
+
+  const redirectsMap = useMemo(
+    () => new Map(Object.entries(params?.redirects ?? [])),
+    [params?.redirects],
   );
-
-  const redirects = useMemo(
-    () => new Map(Object.entries(featureFlag?.params?.redirects || {})),
-    [featureFlag?.params?.redirects],
-  );
-
-  const partnerSupportedAssets = useMemo(() => Array.from(redirects.keys()), [redirects]);
-
-  const remoteLiveAppRegistry: Loadable<LiveAppRegistry> = useContext(remoteLiveAppContext).state;
+  /** Currencies and tokens available to stake via third-party dapps. */
+  const partnerSupportedAssets = useMemo(() => Array.from(redirectsMap.keys()), [redirectsMap]);
 
   const getLocalLiveAppManifestById = useContext(
     localLiveAppProviderContext,
   ).getLocalLiveAppManifestById;
+  const remoteLiveAppRegistry: Loadable<LiveAppRegistry> = useContext(remoteLiveAppContext).state;
 
-  const getManifest = useCallback(
+  const getManifest: (platformId: string) => LiveAppManifest | undefined = useCallback(
     (platformId: string) => {
       const localManifest = getLocalLiveAppManifestById(platformId);
       const remoteManifest = getRemoteLiveAppManifestById(platformId, remoteLiveAppRegistry);
-      const manifest: LiveAppManifest | undefined = localManifest || remoteManifest;
-      return manifest;
+      return localManifest || remoteManifest;
     },
     [getLocalLiveAppManifestById, remoteLiveAppRegistry],
   );
-
   const getPartnerForCurrency = useCallback(
-    (currencyId: string) => redirects.get(currencyId) ?? null,
-    [redirects],
+    (currencyId: string) => redirectsMap.get(currencyId) ?? null,
+    [redirectsMap],
   );
-
   const getCanStakeUsingPlatformApp = useCallback(
-    (currencyId: string) => (!currencyId ? false : redirects.has(currencyId)),
-    [redirects],
+    (currencyId: string) => (!currencyId ? false : redirectsMap.has(currencyId)),
+    [redirectsMap],
   );
-
   const getCanStakeUsingLedgerLive = useCallback(
     (currencyId: string) => (!currencyId ? false : enabledCurrencies.includes(currencyId)),
     [enabledCurrencies],
   );
-
   const getCanStakeCurrency = useCallback(
     (currencyId: string) =>
       getCanStakeUsingPlatformApp(currencyId) || getCanStakeUsingLedgerLive(currencyId),
     [getCanStakeUsingLedgerLive, getCanStakeUsingPlatformApp],
   );
 
-  /** @returns Base navigator route params to third party platform app. Returns null if not available for provided account or currency.*/
-  const getRouteParamsForPlatformApp = useCallback(
+  /** @returns path and custom params for third-party platform app. or null if no app available for the given account currency. */
+  const getRouteToPlatformApp = useCallback(
     (
       account: Account | TokenAccount | AccountLike,
       walletState: WalletState,
-      parentAccount?: Account,
+      parentAccount?: Account | null,
+      returnTo?: string,
     ) => {
-      const walletApiAccount = accountToWalletAPIAccount(walletState, account, parentAccount);
-
-      if (getAccountSpendableBalance(account).isZero()) {
-        return {
-          navigator: NavigatorName.NoFundsFlow,
-          screen: ScreenName.NoFunds,
-          params: {
-            account,
-            parentAccount,
-          },
-        };
-      }
-      const depositCurrencyId = getAccountCurrency(account)?.id;
-
+      const depositCurrency = getAccountCurrency(account);
+      const depositCurrencyId = depositCurrency?.id;
       if (!depositCurrencyId) {
         return null;
       }
-
-      const platformId = getPartnerForCurrency(depositCurrencyId)?.platform;
+      const appDetails = getPartnerForCurrency(depositCurrencyId);
+      const platformId = appDetails?.platform;
       const manifest = !platformId ? null : getManifest(platformId);
 
       if (!platformId || !manifest) {
-        console.warn(
-          `useStake(): No platformId (${platformId}) or manifest ${manifest?.id} found for currency ${depositCurrencyId}. Use useStakeDrawer or StakeFlow.`,
-        );
         return null;
       }
 
-      const customPartnerParams = getPartnerForCurrency(depositCurrencyId)?.queryParams ?? {};
+      if (getAccountSpendableBalance(account).isZero()) {
+        /** Should be handled by No Funds Flow. */
+        return null;
+      }
+      const walletApiAccount = accountToWalletAPIAccount(walletState, account, parentAccount);
 
-      const earningsAccountId = isTokenAccount(account) ? account.parentId : account.id;
-
-      /** For some providers, we also need to pass the address of the specific asset being deposited: asset_id={chain_id}_{contract_address} */
+      /** For tokens, we also need to pass the address of the specific asset being deposited: asset_id={chain_id}_{contract_address} */
       const tokenContractAddress = isTokenAccount(account) ? account.token.contractAddress : null;
       const earningsAccountChainId = manifest.dapp?.networks?.find(
         manifestNetwork =>
           manifestNetwork.currency ===
           (isTokenAccount(account) ? account.token.parentCurrency.id : account.currency.id),
       )?.chainID;
-      const asset_id = tokenContractAddress
+      const assetId = tokenContractAddress
         ? `${earningsAccountChainId}_${tokenContractAddress}`
         : null;
 
+      const earningsAccountId = isTokenAccount(account) ? account.parentId : account.id;
       const accountIdForManifestVersion = deriveAccountIdForManifest(
         earningsAccountId,
         walletApiAccount.id,
         manifest,
       );
 
-      const customDappURL = appendQueryParamsToManifestURL(manifest, {
+      const returnToAccount = isTokenAccount(account)
+        ? `/account/${earningsAccountId}/${account.id}`
+        : `/account/${earningsAccountId}`;
+
+      const customPartnerParams = appDetails?.queryParams ?? {};
+
+      const customDappUrl = appendQueryParamsToManifestURL(manifest, {
         ...customPartnerParams,
-        ...(asset_id ? { asset_id } : {}),
+        ...(assetId ? { asset_id: assetId } : {}),
         accountId: accountIdForManifestVersion,
       })?.toString();
 
       return {
-        screen: ScreenName.PlatformApp,
-        params: {
-          platform: manifest.id,
+        pathname: `/platform/${manifest.id}`,
+        state: {
+          appId: manifest.id,
           name: manifest.name,
           accountId: accountIdForManifestVersion,
-          ledgerAccountId: account.id,
           walletAccountId: walletApiAccount.id,
-          customDappURL: customDappURL ?? undefined,
+          customDappUrl: customDappUrl ?? undefined,
+          returnTo: returnTo ?? returnToAccount,
         },
       };
     },
@@ -163,6 +149,6 @@ export function useStake() {
     getCanStakeCurrency,
     getCanStakeUsingPlatformApp,
     getCanStakeUsingLedgerLive,
-    getRouteParamsForPlatformApp,
+    getRouteToPlatformApp,
   };
 }

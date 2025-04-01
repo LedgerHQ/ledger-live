@@ -68,7 +68,7 @@ export type GlobalModalData = {
   MODAL_SIGN_MESSAGE: SignMessageData;
   MODAL_TROUBLESHOOT_NETWORK: undefined;
   MODAL_NO_FUNDS_STAKE: {
-    account: AccountLike | undefined | null;
+    account: AccountLike;
     parentAccount?: Account | undefined | null;
     entryPoint?: "get-funds" | undefined;
   };

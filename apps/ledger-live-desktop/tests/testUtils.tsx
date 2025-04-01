@@ -17,6 +17,7 @@ import DrawerProvider from "~/renderer/drawers/Provider";
 import { FirebaseFeatureFlagsProvider } from "~/renderer/components/FirebaseFeatureFlags";
 import { getFeature } from "./featureFlags";
 import ContextMenuWrapper from "~/renderer/components/ContextMenu/ContextMenuWrapper";
+import CustomLiveAppProvider from "./CustomLiveAppProvider";
 
 config.disabled = true;
 
@@ -120,6 +121,41 @@ function renderHook<Result, Props = undefined>(
   };
 }
 
+function renderHookWithLiveAppProvider<Result, Props = undefined>(
+  hook: (props: Props) => Result,
+  {
+    initialProps,
+    initialState = {},
+    //initialRoute = "/",
+    store = createStore({ state: { ...(initialState || {}) } as State, dbMiddleware }),
+  }: {
+    initialProps?: Props;
+    initialState?: DeepPartial<State>;
+    store?: ReturnType<typeof createStore>;
+  } = {},
+) {
+  const queryClient = new QueryClient();
+  function Wrapper({ children }: ChildrenProps): JSX.Element {
+    return (
+      <QueryClientProvider client={queryClient}>
+        <Provider store={store}>
+          <FirebaseFeatureFlagsProvider getFeature={getFeature}>
+            <CustomLiveAppProvider>
+              <MemoryRouter>{children}</MemoryRouter>
+            </CustomLiveAppProvider>
+          </FirebaseFeatureFlagsProvider>
+        </Provider>
+      </QueryClientProvider>
+    );
+  }
+
+  return {
+    store,
+
+    ...rtlRenderHook(hook, { wrapper: Wrapper as React.ComponentType, initialProps }),
+  };
+}
+
 export * from "@testing-library/react";
 
-export { render, userEvent, renderHook };
+export { render, userEvent, renderHook, renderHookWithLiveAppProvider };
