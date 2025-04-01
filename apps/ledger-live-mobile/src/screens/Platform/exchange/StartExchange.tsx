@@ -45,7 +45,7 @@ export default function PlatformStartExchange({ navigation, route }: Props) {
   const request = useMemo(() => route.params.request, [route.params.request]);
   return (
     <SafeAreaView style={styles.root} edges={["bottom"]}>
-      <Flex px={16} py={8} flex={1}>
+      <Flex px={16} py={8} flex={1} mt={8}>
         <SelectDevice2
           onSelect={setDevice}
           stopBleScanning={!!device || !isFocused}

@@ -1,10 +1,12 @@
 import { AppInfos } from "./AppInfos";
 
+export type CurrencyType = Currency;
+
 export class Currency {
   constructor(
     public readonly name: string,
     public readonly ticker: string,
-    public readonly currencyId: string,
+    public readonly id: string,
     public readonly speculosApp: AppInfos,
     public readonly contractAddress?: string,
   ) {}
@@ -123,4 +125,5 @@ export class Currency {
     AppInfos.SOLANA,
     "EKpQGSJtjMFqKZ9KQanSqYXRcF8fBopzLHYxdM65zcjm",
   );
+  static readonly OP = new Currency("OP Mainnet", "OP", "optimism", AppInfos.ETHEREUM);
 }

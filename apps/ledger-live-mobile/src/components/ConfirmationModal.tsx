@@ -6,6 +6,7 @@ import QueuedDrawer from "./QueuedDrawer";
 import LText from "./LText";
 import Button, { BaseButtonProps } from "./Button";
 import type { Props as BottomModalProps } from "./QueuedDrawer";
+import { CtaConfig } from "./NavigationHeaderCloseButton";
 
 type Props = {
   isOpened: boolean;
@@ -27,6 +28,8 @@ type Props = {
   testID?: string;
   customTitleStyle?: StyleProp<ViewStyle>;
   customDescriptionStyle?: StyleProp<ViewStyle>;
+  cancelCTAConfig?: Partial<CtaConfig>;
+  confirmCTAConfig?: Partial<CtaConfig>;
 };
 
 class ConfirmationModal extends PureComponent<Props> {
@@ -52,6 +55,8 @@ class ConfirmationModal extends PureComponent<Props> {
       iconMarginBottom,
       customTitleStyle,
       customDescriptionStyle,
+      confirmCTAConfig,
+      cancelCTAConfig,
       ...rest
     } = this.props;
     const iColor = iconColor || colors.live;
@@ -95,20 +100,22 @@ class ConfirmationModal extends PureComponent<Props> {
             <Button
               event="ConfirmationModalCancel"
               containerStyle={styles.confirmationButton}
-              type="secondary"
+              type={cancelCTAConfig?.type ?? "secondary"}
               title={rejectButtonText || <Trans i18nKey="common.cancel" />}
               testID="confirmation-modal-cancel-button"
               onPress={onClose}
+              outline={cancelCTAConfig?.outline}
             />
           )}
 
           <Button
             event="ConfirmationModalConfirm"
             containerStyle={[styles.confirmationButton, styles.confirmationLastButton]}
-            type={alert ? "alert" : "primary"}
+            type={alert ? "alert" : confirmCTAConfig?.type ?? "primary"}
             title={confirmButtonText || <Trans i18nKey="common.confirm" />}
             testID="confirmation-modal-confirm-button"
             onPress={onConfirm}
+            outline={confirmCTAConfig?.outline}
           />
         </View>
       </QueuedDrawer>

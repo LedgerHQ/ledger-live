@@ -1,21 +1,16 @@
-import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
-import { Application } from "../../page";
-import { CLI } from "../../utils/cliUtils";
-
-const app = new Application();
-const nanoApp = AppInfos.ETHEREUM;
-const asset = "Ethereum (ETH)";
-
 describe("Market page for user with no device", () => {
+  const nanoApp = AppInfos.ETHEREUM;
+  const asset = "Ethereum (ETH)";
+
   beforeAll(async () => {
     await app.init({
       speculosApp: nanoApp,
       cliCommands: [
-        async () => {
+        async (userdataPath?: string) => {
           return CLI.liveData({
             currency: nanoApp.name,
             index: 0,
-            appjson: app.userdataPath,
+            appjson: userdataPath,
             add: true,
           });
         },

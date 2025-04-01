@@ -1,5 +1,6 @@
+import { makeScanAccounts } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { getAccountRegistrationStatus, getPendingWithdrawals, getVotes } from "./api/sdk";
-import { makeSync, makeScanAccounts, mergeOps } from "../../bridge/jsHelpers";
+import { getAddr, makeSync, mergeOps } from "../../bridge/jsHelpers";
 import type { GetAccountShape } from "../../bridge/jsHelpers";
 import { encodeAccountId } from "../../account";
 import { getAccountDetails } from "./api";
@@ -58,5 +59,5 @@ const getAccountShape: GetAccountShape<CeloAccount> = async info => {
   return { ...shape, operations };
 };
 
-export const scanAccounts = makeScanAccounts({ getAccountShape });
+export const scanAccounts = makeScanAccounts({ getAccountShape, getAddressFn: getAddr });
 export const sync = makeSync({ getAccountShape });

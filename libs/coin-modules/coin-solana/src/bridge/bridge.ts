@@ -31,6 +31,7 @@ import {
   assignFromTokenAccountRaw,
   assignToTokenAccountRaw,
 } from "../serialization";
+import nftResolvers from "../nftResolvers";
 
 function makePrepare(getChainAPI: (config: Config) => Promise<ChainAPI>) {
   const prepareTransaction: AccountBridge<
@@ -189,6 +190,7 @@ export function makeBridges({
     hydrate,
     scanAccounts: scan,
     getPreloadStrategy,
+    nftResolvers,
   };
 
   return {

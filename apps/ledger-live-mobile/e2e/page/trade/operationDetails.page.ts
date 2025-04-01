@@ -1,4 +1,3 @@
-import { getElementById, scrollToId, waitForElementById } from "../../helpers";
 import { expect } from "detox";
 
 export default class OperationDetailsPage {

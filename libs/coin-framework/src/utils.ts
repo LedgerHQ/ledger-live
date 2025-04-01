@@ -5,7 +5,7 @@ export function fromBigNumberToBigInt<T>(
   defaultValue?: T,
 ): bigint | T {
   if (bigNumber != null) {
-    return BigInt(bigNumber.toString());
+    return BigInt(bigNumber.toFixed());
   }
   return defaultValue as T;
 }

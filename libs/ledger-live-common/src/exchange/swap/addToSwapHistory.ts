@@ -1,7 +1,7 @@
 import type { Transaction } from "../../generated/types";
 import type { ExchangeSwap, ExchangeRate } from "./types";
 import { getAccountCurrency, getMainAccount } from "../../account";
-import type { Account, Operation, SubAccount, SwapOperation } from "@ledgerhq/types-live";
+import type { Account, Operation, TokenAccount, SwapOperation } from "@ledgerhq/types-live";
 
 export default ({
   account,
@@ -48,7 +48,7 @@ export default ({
   return isFromToken && subAccounts
     ? {
         ...account,
-        subAccounts: subAccounts.map<SubAccount>((a: SubAccount) => {
+        subAccounts: subAccounts.map<TokenAccount>((a: TokenAccount) => {
           const subAccount = {
             ...a,
             swapHistory: [...a.swapHistory, swapOperation],

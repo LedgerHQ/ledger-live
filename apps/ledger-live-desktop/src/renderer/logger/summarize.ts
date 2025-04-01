@@ -1,7 +1,7 @@
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
-import { Account, SubAccount } from "@ledgerhq/types-live";
+import { Account, TokenAccount } from "@ledgerhq/types-live";
 
-function summarizeAccount(argument: Account | SubAccount) {
+function summarizeAccount(argument: Account | TokenAccount) {
   const { type, balance, id, operations, pendingOperations } = argument;
 
   let index, freshAddress, freshAddressPath, subAccounts;

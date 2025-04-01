@@ -6,7 +6,7 @@ import {
 import { GetAccountShape, makeSync } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { findTokenByAddressInCurrency, findTokenById } from "@ledgerhq/cryptoassets/index";
-import { Account, SubAccount, TokenAccount } from "@ledgerhq/types-live";
+import { Account, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import compact from "lodash/compact";
 import get from "lodash/get";
@@ -14,7 +14,13 @@ import { computeBalanceBridge } from "../logic";
 import { getOperationsPageSize } from "../logic/pagination";
 import { getLastBlock, fetchTronAccount, fetchTronAccountTxs } from "../network";
 import { TronAccount, TrongridExtraTxInfo, TronOperation } from "../types";
-import { defaultTronResources, getTronResources, isParentTx, txInfoToOperation } from "./utils";
+import {
+  defaultTronResources,
+  getTronResources,
+  isAccountEmpty,
+  isParentTx,
+  txInfoToOperation,
+} from "./utils";
 
 type TronToken = {
   key: string;
@@ -113,7 +119,7 @@ export const getAccountShape: GetAccountShape<TronAccount> = async (
 
   const { blacklistedTokenIds = [] } = syncConfig;
 
-  const subAccounts: SubAccount[] = compact(
+  const subAccounts: TokenAccount[] = compact(
     trc10Tokens.concat(trc20Tokens).map(({ key, tokenId, balance }: TronToken) => {
       const { blacklistedTokenIds = [] } = syncConfig;
       const token = findTokenById(tokenId);
@@ -185,6 +191,7 @@ export const getAccountShape: GetAccountShape<TronAccount> = async (
     subAccounts: mergedSubAccounts,
     tronResources,
     blockHeight,
+    used: !isAccountEmpty({ tronResources }),
   };
 };
 

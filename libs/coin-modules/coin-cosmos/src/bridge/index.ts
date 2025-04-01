@@ -9,7 +9,7 @@ import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 
 import { CoinConfig } from "@ledgerhq/coin-framework/lib/config";
-import { CosmosAPI } from "../api/Cosmos";
+import { CosmosAPI } from "../network/Cosmos";
 import cosmosCoinConfig, { CosmosCoinConfig } from "../config";
 import { createTransaction } from "../createTransaction";
 import { estimateMaxSpendable } from "../estimateMaxSpendable";

@@ -8,7 +8,7 @@ import {
   getAccountCurrency,
   findSubAccountById,
 } from "@ledgerhq/live-common/account/index";
-import { Account, AccountLike, SubAccount } from "@ledgerhq/types-live";
+import { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import IconCheck from "~/renderer/icons/Check";
 import IconAngleDown from "~/renderer/icons/AngleDown";
@@ -25,7 +25,7 @@ import { accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
 type ItemShape = {
   key: string;
   label: string;
-  account: Account | SubAccount;
+  account: Account | TokenAccount;
 };
 
 const AccountCrumb = () => {
@@ -124,7 +124,7 @@ const AccountCrumb = () => {
   );
 
   const processItemsForDropdown = useCallback(
-    (items: (Account | SubAccount)[]) =>
+    (items: (Account | TokenAccount)[]) =>
       items.map(item => ({
         key: item.id,
         label: accountNameWithDefaultSelector(walletState, item),

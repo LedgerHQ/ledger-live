@@ -1,10 +1,10 @@
+import { NetworkDown } from "@ledgerhq/errors";
 import {
   Memo,
   Operation as StellarSdkOperation,
   Transaction as StellarSdkTransaction,
   xdr,
 } from "@stellar/stellar-sdk";
-import { NetworkDown } from "@ledgerhq/errors";
 import { getRecipientAccount, loadAccount } from "../network";
 import { StellarAssetRequired, StellarMuxedAccountNotExist } from "../types";
 import {
@@ -30,7 +30,6 @@ export async function craftTransaction(
   },
 ): Promise<{ transaction: StellarSdkTransaction; xdr: string }> {
   const { amount, recipient, fee, memoType, memoValue, type, assetCode, assetIssuer } = transaction;
-
   const source = await loadAccount(account.address);
 
   if (!source) {

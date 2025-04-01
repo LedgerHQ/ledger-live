@@ -3,7 +3,7 @@ import { bindActionCreators } from "redux";
 import { useDispatch, useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
 import invariant from "invariant";
-import { Account, AccountLike, Operation, SubAccount } from "@ledgerhq/types-live";
+import { Account, AccountLike, Operation, TokenAccount } from "@ledgerhq/types-live";
 import { useBakers } from "@ledgerhq/live-common/families/tezos/react";
 import { whitelist } from "@ledgerhq/live-common/families/tezos/staking";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
@@ -32,7 +32,7 @@ import {
 } from "@ledgerhq/live-common/families/tezos/types";
 
 export type Data = {
-  account?: TezosAccount | SubAccount;
+  account?: TezosAccount | TokenAccount;
   parentAccount?: TezosAccount | null;
   mode?: TezosOperationMode | undefined;
   eventType?: string;

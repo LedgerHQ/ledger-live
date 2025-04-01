@@ -67,7 +67,7 @@ export const cosmosConfig: CosmosConfig = {
   config_currency_osmo: {
     type: "object",
     default: {
-      lcd: "https://osmosis-api.polkachu.com",
+      lcd: "https://lcd.osmosis.zone",
       minGasPrice: 0.025,
       ledgerValidator: "osmovaloper17cp6fxccqxrpj4zc00w2c7u6y0umc2jajsyc5t",
       status: {

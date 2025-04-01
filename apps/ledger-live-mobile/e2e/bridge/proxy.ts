@@ -1,4 +1,3 @@
-/* eslint-disable global-require */
 import { log, listen } from "@ledgerhq/logs";
 import { open, registerTransportModule, TransportModule } from "@ledgerhq/live-common/hw/index";
 import http from "http";
@@ -7,7 +6,7 @@ import cors from "cors";
 import WebSocket from "ws";
 import bodyParser from "body-parser";
 import os from "os";
-import { Observable, Subscription } from "rxjs";
+import { Observable } from "rxjs";
 import SpeculosHttpTransport, {
   SpeculosHttpTransportOpts,
 } from "@ledgerhq/hw-transport-node-speculos-http";
@@ -15,8 +14,6 @@ import { retry } from "@ledgerhq/live-common/promise";
 import { Buffer } from "buffer";
 import { getEnv } from "@ledgerhq/live-env";
 import invariant from "invariant";
-
-const proxySubscriptions = new Map<number, Subscription>();
 
 let transport: TransportModule;
 
@@ -51,9 +48,9 @@ export async function startProxy(
 
     const observable = job(options);
 
-    proxySubscriptions.set(
-      speculosApiPort,
-      observable.subscribe({
+    proxySubscriptions.set(speculosApiPort, {
+      port: proxyPort,
+      subscription: observable.subscribe({
         next: message => {
           if (Array.isArray(message)) {
             const address = `${message[0]}:${proxyPort}`;
@@ -69,21 +66,22 @@ export async function startProxy(
         },
         complete: () => console.warn("Proxy stopped."),
       }),
-    );
+    });
   });
 }
 
-export function closeProxy(proxyPort?: number) {
-  if (!proxyPort) {
-    proxySubscriptions.forEach(sub => sub.unsubscribe());
+export function closeProxy(apiPort?: number): number | undefined {
+  if (!apiPort) {
+    proxySubscriptions.forEach(sub => sub.subscription.unsubscribe());
     proxySubscriptions.clear();
     return;
   }
 
-  const subscription = proxySubscriptions.get(proxyPort);
-  if (subscription) {
-    subscription.unsubscribe();
-    proxySubscriptions.delete(proxyPort);
+  const proxy = proxySubscriptions.get(apiPort);
+  if (proxy) {
+    proxy.subscription.unsubscribe();
+    proxySubscriptions.delete(apiPort);
+    return proxy.port;
   }
 }
 

@@ -1,35 +1,30 @@
-import {
-  getElementById,
-  openDeeplink,
-  waitForElementById,
-  tapByElement,
-  getIdOfElement,
-} from "../../helpers";
-const baseLink = "accounts";
+import { openDeeplink } from "../../helpers/commonHelpers";
+import { expect } from "detox";
+import CommonPage from "../common.page";
 
-export default class AccountsPage {
-  accountTitleId = (coin: string) => `accounts-title-${coin}`;
-  addAccountButton = () => getElementById("add-account-button");
+export default class AccountsPage extends CommonPage {
+  baseLink = "accounts";
   listTitle = "accounts-list-title";
-  accountList = /accounts-list-.*/;
+  emptyAccountDisplay = () => getElementById("empty-accounts-component");
 
   @Step("Open accounts list via deeplink")
   async openViaDeeplink() {
-    await openDeeplink(baseLink);
+    await openDeeplink(this.baseLink);
   }
   async waitForAccountsPageToLoad() {
     await waitForElementById(this.listTitle);
   }
-  async waitForAccountsCoinPageToLoad(coin: string) {
-    await waitForElementById(this.accountTitleId(coin));
-  }
-
-  async addAccount() {
-    await tapByElement(this.addAccountButton());
-  }
 
   @Step("Expect accounts number")
   async expectAccountsNumber(number: number) {
-    expect((await getIdOfElement(this.accountList)).endsWith(number.toString())).toBeTruthy();
+    const matchedElements = await getElementsById(this.accountItemRegExp()).getAttributes();
+    console.warn("matchedElements", matchedElements);
+    if ("elements" in matchedElements) jestExpect(matchedElements.elements.length).toBe(number);
+    else jestExpect(1).toBe(number);
+  }
+
+  @Step("Expect no accounts screen")
+  async expectNoAccount() {
+    await expect(this.emptyAccountDisplay()).toBeVisible();
   }
 }

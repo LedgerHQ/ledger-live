@@ -14,6 +14,7 @@ module.exports = {
   coverageReporters: ["json", ["lcov", { file: "xrp-lcov.info", projectRoot: "../" }], "text"],
   workerThreads: true,
   reporters: [
+    "default",
     [
       "jest-sonar",
       { outputName: "xrp-sonar-executionTests-report.xml", reportedFilePath: "absolute" },

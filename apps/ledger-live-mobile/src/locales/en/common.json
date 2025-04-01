@@ -4048,7 +4048,9 @@
       "desc": "Are you sure you want to cancel adding accounts?",
       "v2": {
         "title": "Cancel adding account?",
-        "desc": "No account will be added to Ledger Live."
+        "desc": "No account will be added to Ledger Live.",
+        "continue": "Continue adding",
+        "cancel": "Cancel"
       }
     },
     "imported": "Asset added successfully",
@@ -4086,7 +4088,7 @@
       "title": "Add token",
       "createParentCurrencyAccount": "Add {{parrentCurrencyName}} account",
       "generic": {
-        "disclaimer": "{{token}} ({{ticker}}) is an {{tokenType}} token.\nYou can receive tokens directly on an {{currency}} account.",
+        "disclaimer": "{{token}} ({{ticker}}) is an {{tokenType}} token.\nYou can receive tokens directly on a/an {{currency}} account.",
         "learnMore": "Learn more about {{tokenType}}"
       }
     },
