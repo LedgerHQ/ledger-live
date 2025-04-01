@@ -1,8 +1,4 @@
 {
-  "entry": [
-    "src/index.ts"
-  ],
-  "ignoreUnused": [
-    "protobufjs-cli"
-  ]
+  "entry": ["src/index.ts"],
+  "ignoreUnused": ["jest-sonar", "protobufjs-cli"]
 }

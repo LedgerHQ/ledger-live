@@ -4,8 +4,9 @@ import { Trans } from "react-i18next";
 import Box from "~/renderer/components/Box";
 import { useDispatch } from "react-redux";
 import { updateNftStatus } from "~/renderer/actions/settings";
-import { BlockchainsType } from "@ledgerhq/live-nft/supported";
+import { SupportedBlockchain } from "@ledgerhq/live-nft/supported";
 import { NftStatus } from "@ledgerhq/live-nft/types";
+
 const Footer = ({
   onClose,
   collectionId,
@@ -13,12 +14,12 @@ const Footer = ({
 }: {
   onClose: () => void;
   collectionId: string;
-  blockchain: BlockchainsType;
+  blockchain: SupportedBlockchain;
 }) => {
   const dispatch = useDispatch();
 
   const confirmHideNftCollection = useCallback(
-    (collectionId: string, blockchain: BlockchainsType) => {
+    (collectionId: string, blockchain: SupportedBlockchain) => {
       dispatch(updateNftStatus(blockchain, collectionId, NftStatus.blacklisted));
     },
     [dispatch],

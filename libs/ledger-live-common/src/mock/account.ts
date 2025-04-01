@@ -17,6 +17,7 @@ import { TezosAccount } from "@ledgerhq/coin-tezos/types/index";
 import { TronAccount } from "@ledgerhq/coin-tron/types/index";
 import { CardanoAccount, PaymentChain } from "@ledgerhq/coin-cardano/types";
 import { types } from "@stricahq/typhonjs";
+import { SolanaAccount } from "@ledgerhq/coin-solana/types";
 
 /**
  * @memberof mock/account
@@ -47,6 +48,12 @@ export function genAccount(id: number | string, opts: GenAccountOptions = {}): A
     opts,
     (account: Account, currency: CryptoCurrency, address: string) => {
       switch (currency.family) {
+        case "solana":
+          (account as SolanaAccount).solanaResources = {
+            stakes: [],
+            unstakeReserve: new BigNumber(0),
+          };
+          break;
         case "cosmos":
           (account as CosmosAccount).cosmosResources = {
             // TODO variation in these

@@ -42,7 +42,7 @@ import {
   UPDATE_ANONYMOUS_USER_NOTIFICATIONS,
   RESET_HIDDEN_NFT_COLLECTIONS,
 } from "../actions/constants";
-import { BlockchainsType, SupportedBlockchainsType } from "@ledgerhq/live-nft/supported";
+import { SupportedBlockchain } from "@ledgerhq/live-nft/supported";
 import { NftStatus } from "@ledgerhq/live-nft/types";
 
 /* Initial state */
@@ -97,7 +97,7 @@ export type SettingsState = {
   discreetMode: boolean;
   starredAccountIds?: string[];
   blacklistedTokenIds: string[];
-  nftCollectionsStatusByNetwork: Record<BlockchainsType, Record<string, NftStatus>>;
+  nftCollectionsStatusByNetwork: Record<SupportedBlockchain, Record<string, NftStatus>>;
   hiddenOrdinalsAsset: string[];
   deepLinkUrl: string | undefined | null;
   lastSeenCustomImage: {
@@ -205,7 +205,7 @@ export const INITIAL_STATE: SettingsState = {
   },
   latestFirmware: null,
   blacklistedTokenIds: [],
-  nftCollectionsStatusByNetwork: {} as Record<SupportedBlockchainsType, Record<string, NftStatus>>,
+  nftCollectionsStatusByNetwork: {} as Record<SupportedBlockchain, Record<string, NftStatus>>,
   hiddenOrdinalsAsset: [],
   deepLinkUrl: null,
   firstTimeLend: false,
@@ -258,7 +258,7 @@ type HandlersPayloads = {
   SHOW_TOKEN: string;
   BLACKLIST_TOKEN: string;
   [UPDATE_NFT_COLLECTION_STATUS]: {
-    blockchain: SupportedBlockchainsType;
+    blockchain: SupportedBlockchain;
     collectionId: string;
     status: NftStatus;
   };
@@ -386,10 +386,7 @@ const handlers: SettingsHandlers = {
 
   [RESET_HIDDEN_NFT_COLLECTIONS]: state => ({
     ...state,
-    nftCollectionsStatusByNetwork: {} as Record<
-      SupportedBlockchainsType,
-      Record<string, NftStatus>
-    >,
+    nftCollectionsStatusByNetwork: {} as Record<SupportedBlockchain, Record<string, NftStatus>>,
   }),
 
   UNHIDE_ORDINALS_ASSET: (state, { payload: inscriptionId }) => {

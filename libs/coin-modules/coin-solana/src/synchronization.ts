@@ -4,39 +4,32 @@ import BigNumber from "bignumber.js";
 import { emptyHistoryCache, encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import {
   getAccountMinimumBalanceForRentExemption,
-  getMaybeTokenMint,
   getTokenAccruedInterestDelta,
   getTransactions,
   ParsedOnChainStakeAccountWithInfo,
-  toStakeAccountWithInfo,
+  toTokenAccountWithInfo,
   TransactionDescriptor,
 } from "./api/chain/web3";
 import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import {
-  Awaited,
   encodeAccountIdWithTokenAccountAddress,
   isStakeLockUpInForce,
   withdrawableFromStake,
 } from "./logic";
-import {
-  compact,
-  filter,
-  groupBy,
-  keyBy,
-  toPairs,
-  pipe,
-  map,
-  uniqBy,
-  flow,
-  sortBy,
-  sum,
-} from "lodash/fp";
+import { keyBy, toPairs, pipe, flow, sortBy, sum } from "lodash/fp";
+import groupBy from "lodash/groupBy";
+import head from "lodash/head";
+import compact from "lodash/compact";
 import { parseQuiet } from "./api/chain/program";
-import { InflationReward, ParsedTransaction, StakeActivationData } from "@solana/web3.js";
+import {
+  InflationReward,
+  ParsedTransaction,
+  PublicKey,
+  StakeActivationData,
+} from "@solana/web3.js";
 import { ChainAPI } from "./api";
-import { ParsedOnChainTokenAccountWithInfo, toTokenAccountWithInfo } from "./api/chain/web3";
-import { drainSeq } from "./utils";
+import { ParsedOnChainTokenAccountWithInfo } from "./api/chain/web3";
 import { estimateTxFee } from "./tx-fees";
 import {
   SolanaAccount,
@@ -49,11 +42,133 @@ import {
 import { Operation, OperationType, TokenAccount } from "@ledgerhq/types-live";
 import { DelegateInfo, WithdrawInfo } from "./api/chain/instruction/stake/types";
 import { PARSED_PROGRAMS } from "./api/chain/program/constants";
-import { tokenIsListedOnLedger } from "./helpers/token";
+import { getTokenAccountProgramId, tokenIsListedOnLedger } from "./helpers/token";
 import { MintExtensions } from "./api/chain/account/tokenExtensions";
 import coinConfig from "./config";
+import { getAssociatedTokenAddressSync } from "@solana/spl-token";
+import { getStakeAccounts } from "./api/chain/stake-activation/rpc";
+import { tryParseAsMintAccount } from "./api/chain/account";
+import ky from "ky";
+import { isSignaturesForAddressResponse } from "./utils";
 
-type OnChainTokenAccount = Awaited<ReturnType<typeof getAccount>>["tokenAccounts"][number];
+export async function getAccount(
+  address: string,
+  api: ChainAPI,
+): Promise<{
+  balance: BigNumber;
+  blockHeight: number;
+  tokenAccounts: ParsedOnChainTokenAccountWithInfo[];
+  stakes: {
+    account: ParsedOnChainStakeAccountWithInfo;
+    activation: StakeActivationData;
+    reward: InflationReward | null;
+  }[];
+}> {
+  const [
+    {
+      value: balanceValue,
+      context: { slot: blockHeight },
+    },
+    tokenAccountsRaw,
+    token2022AccountsRaw,
+    stakes,
+  ] = await Promise.all([
+    api.getBalanceAndContext(address),
+    api.getParsedTokenAccountsByOwner(address).then(r => r.value),
+    coinConfig.getCoinConfig().token2022Enabled
+      ? api.getParsedToken2022AccountsByOwner(address).then(r => r.value)
+      : Promise.resolve([]),
+    getStakeAccounts(api, address),
+  ]);
+
+  return {
+    balance: new BigNumber(balanceValue),
+    blockHeight,
+    tokenAccounts: [...tokenAccountsRaw, ...token2022AccountsRaw].map(toTokenAccountWithInfo),
+    stakes,
+  };
+}
+
+export async function getTokenAccountsTransactions(
+  accounts: Array<{
+    associatedTokenAccount: ParsedOnChainTokenAccountWithInfo;
+    knownTokenAccount: TokenAccount | undefined;
+  }>,
+  api: ChainAPI,
+): Promise<
+  Array<{
+    mint: string;
+    associatedTokenAccountAddress: string;
+    descriptors: Array<TransactionDescriptor>;
+  }>
+> {
+  const signatures = await ky
+    .post(api.config.endpoint, {
+      json: accounts.map(({ associatedTokenAccount, knownTokenAccount }) => ({
+        jsonrpc: "2.0",
+        method: "getSignaturesForAddress",
+        params: [
+          associatedTokenAccount.onChainAcc.pubkey.toBase58(),
+          {
+            commitment: "confirmed",
+            limit: 100,
+            until: head(knownTokenAccount?.operations)?.hash,
+          },
+        ],
+        id: `${associatedTokenAccount.info.mint.toBase58()}_${associatedTokenAccount.onChainAcc.pubkey.toBase58()}_${Date.now()}`,
+      })),
+    })
+    .json();
+  const signaturesJSON = Array.isArray(signatures)
+    ? signatures.filter(isSignaturesForAddressResponse)
+    : [];
+  const signaturesJSONWithInfo = signaturesJSON.map(({ result, id }) => {
+    const [mint, associatedTokenAccountAddress] = id.split("_");
+    return { result, mint, associatedTokenAccountAddress };
+  });
+  const transactions = await Promise.all(
+    signaturesJSONWithInfo.map(async json => {
+      const txs = json.result.length
+        ? await api.getParsedTransactions(json.result.map(({ signature }) => signature))
+        : [];
+      const descriptors = txs.reduce((acc, tx, index) => {
+        if (tx && !tx.meta?.err && tx.blockTime) {
+          acc.push({
+            info: json.result[index],
+            parsed: tx,
+          });
+        }
+        return acc;
+      }, [] as TransactionDescriptor[]);
+      return {
+        mint: json.mint,
+        associatedTokenAccountAddress: json.associatedTokenAccountAddress,
+        descriptors,
+      };
+    }),
+  );
+  return transactions;
+}
+
+function toAssociatedTokenAccount(
+  mint: string,
+  owner: string,
+  accounts: ParsedOnChainTokenAccountWithInfo[],
+  knownTokenAccounts: Map<string, TokenAccount>,
+) {
+  const tokenProgram = accounts[0].onChainAcc.account.data.program as SolanaTokenProgram;
+  const associatedTokenAccountAddress = getAssociatedTokenAddressSync(
+    new PublicKey(mint),
+    new PublicKey(owner),
+    undefined,
+    getTokenAccountProgramId(tokenProgram),
+  );
+  const associatedTokenAccount = accounts.find(({ onChainAcc: { pubkey } }) =>
+    associatedTokenAccountAddress.equals(pubkey),
+  );
+  if (!associatedTokenAccount) return associatedTokenAccount;
+  return { associatedTokenAccount, knownTokenAccount: knownTokenAccounts.get(mint), tokenProgram };
+}
 
 export const getAccountShapeWithAPI = async (
   info: AccountShapeInfo,
@@ -69,7 +184,7 @@ export const getAccountShapeWithAPI = async (
   const {
     blockHeight,
     balance: mainAccBalance,
-    tokenAccounts: onChaintokenAccounts,
+    tokenAccounts: onChainTokenAccounts,
     stakes: onChainStakes,
   } = await getAccount(mainAccAddress, api);
 
@@ -81,79 +196,73 @@ export const getAccountShapeWithAPI = async (
     derivationMode,
   });
 
-  const onChainTokenAccsByMint = pipe(
-    () => onChaintokenAccounts,
-    groupBy(({ info: { mint } }) => mint.toBase58()),
-    v => new Map(toPairs(v)),
-  )();
-
+  // known token accounts
   const subAccByMint = pipe(
     () => mainInitialAcc?.subAccounts ?? [],
-    filter((subAcc): subAcc is TokenAccount => subAcc.type === "TokenAccount"),
     keyBy(subAcc => subAcc.token.contractAddress),
     v => new Map(toPairs(v)),
   )();
 
-  const nextSubAccs: TokenAccount[] = [];
+  // all token accounts
+  const supportedOnChainTokenAccounts = onChainTokenAccounts.filter(({ info: { mint } }) =>
+    tokenIsListedOnLedger(currency.id, mint.toBase58()),
+  );
+  const supportedOnChainTokenAccountsByMint = groupBy(
+    supportedOnChainTokenAccounts,
+    account => account.info.mint,
+  );
+  const onChainAssociatedTokenAccounts = compact(
+    Object.entries<ParsedOnChainTokenAccountWithInfo[]>(supportedOnChainTokenAccountsByMint).map(
+      ([mint, accounts]) => toAssociatedTokenAccount(mint, mainAccAddress, accounts, subAccByMint),
+    ),
+  );
+  const onChainAssociatedTokenAccountsByAddress = Object.fromEntries(
+    onChainAssociatedTokenAccounts.map(account => [
+      account.associatedTokenAccount.onChainAcc.pubkey.toBase58(),
+      account,
+    ]),
+  );
 
-  for (const [mint, accs] of onChainTokenAccsByMint.entries()) {
-    if (!tokenIsListedOnLedger(currency.id, mint)) {
-      continue;
-    }
+  const mints = Object.keys(supportedOnChainTokenAccountsByMint);
+  const mintInfos = (await api.getMultipleAccounts(mints)).map(account => {
+    if (!account || !("parsed" in account.data)) return undefined;
+    const mintInfo = tryParseAsMintAccount(account.data);
+    return mintInfo instanceof Error ? undefined : mintInfo?.extensions;
+  });
+  const mintInfosByMint = Object.fromEntries(mints.map((mint, i) => [mint, mintInfos[i]]));
 
-    const tokenProgram = accs[0].onChainAcc.account.data.program as SolanaTokenProgram;
-    const assocTokenAccAddress = await api.findAssocTokenAccAddress(
-      mainAccAddress,
-      mint,
-      tokenProgram,
-    );
+  const accountsWithTransactions = onChainAssociatedTokenAccounts.length
+    ? await getTokenAccountsTransactions(onChainAssociatedTokenAccounts, api)
+    : [];
+  const nextSubAccs: TokenAccount[] = await Promise.all(
+    accountsWithTransactions.map(account => {
+      const {
+        associatedTokenAccount: assocTokenAcc,
+        knownTokenAccount: subAcc,
+        tokenProgram,
+      } = onChainAssociatedTokenAccountsByAddress[account.associatedTokenAccountAddress];
 
-    const assocTokenAcc = accs.find(
-      ({ onChainAcc: { pubkey } }) => pubkey.toBase58() === assocTokenAccAddress,
-    );
+      const mintExtensions =
+        tokenProgram === PARSED_PROGRAMS.SPL_TOKEN_2022 ? mintInfosByMint[account.mint] : undefined;
 
-    if (assocTokenAcc === undefined) {
-      continue;
-    }
-
-    const subAcc = subAccByMint.get(mint);
-
-    const lastSyncedTxSignature = subAcc?.operations?.[0]?.hash;
-
-    const txs = await getTransactions(
-      assocTokenAcc.onChainAcc.pubkey.toBase58(),
-      lastSyncedTxSignature,
-      api,
-    );
-
-    const mintInfo =
-      tokenProgram === PARSED_PROGRAMS.SPL_TOKEN_2022
-        ? await getMaybeTokenMint(mint, api)
-        : undefined;
-
-    const mintExtensions =
-      mintInfo && !(mintInfo instanceof Error) ? mintInfo.info.extensions : undefined;
-
-    const nextSubAcc =
-      subAcc === undefined
-        ? await newSubAcc({
+      return subAcc === undefined
+        ? newSubAcc({
             api,
             currencyId: currency.id,
             mainAccountId,
             assocTokenAcc,
-            txs,
+            txs: account.descriptors,
             mintExtensions,
           })
-        : await patchedSubAcc({
+        : patchedSubAcc({
             api,
             subAcc,
             assocTokenAcc,
-            txs,
+            txs: account.descriptors,
             mintExtensions,
           });
-
-    nextSubAccs.push(nextSubAcc);
-  }
+    }),
+  );
 
   const { epoch } = await api.getEpochInfo();
 
@@ -236,9 +345,12 @@ export const getAccountShapeWithAPI = async (
   const mainAccountRentExempt = await getAccountMinimumBalanceForRentExemption(api, mainAccAddress);
 
   let unstakeReserve = 0;
+
   if (stakes.length > 0) {
-    const undelegateFee = await estimateTxFee(api, mainAccAddress, "stake.undelegate");
-    const withdrawFee = await estimateTxFee(api, mainAccAddress, "stake.withdraw");
+    const [undelegateFee, withdrawFee] = await Promise.all([
+      estimateTxFee(api, mainAccAddress, "stake.undelegate"),
+      estimateTxFee(api, mainAccAddress, "stake.withdraw"),
+    ]);
 
     const activeStakes = stakes.filter(
       s => s.activation.state == "active" || s.activation.state == "activating",
@@ -283,13 +395,12 @@ async function newSubAcc({
   api: ChainAPI;
   currencyId: string;
   mainAccountId: string;
-  assocTokenAcc: OnChainTokenAccount;
+  assocTokenAcc: ParsedOnChainTokenAccountWithInfo;
   txs: TransactionDescriptor[];
   mintExtensions: MintExtensions | undefined;
 }): Promise<SolanaTokenAccount> {
-  const firstTx = txs[txs.length - 1];
-
-  const creationDate = new Date((firstTx?.info.blockTime ?? Date.now() / 1000) * 1000);
+  const lastTx = txs[txs.length - 1];
+  const creationDate = new Date((lastTx?.info.blockTime ?? Date.now() / 1000) * 1000);
 
   const mint = assocTokenAcc.info.mint.toBase58();
   const tokenCurrency = findTokenByAddressInCurrency(mint, currencyId);
@@ -341,7 +452,7 @@ async function patchedSubAcc({
 }: {
   api: ChainAPI;
   subAcc: TokenAccount;
-  assocTokenAcc: OnChainTokenAccount;
+  assocTokenAcc: ParsedOnChainTokenAccountWithInfo;
   txs: TransactionDescriptor[];
   mintExtensions: MintExtensions | undefined;
 }): Promise<SolanaTokenAccount> {
@@ -367,7 +478,7 @@ async function patchedSubAcc({
 
 async function toSolanaTokenAccExtensions(
   api: ChainAPI,
-  assocTokenAcc: OnChainTokenAccount,
+  assocTokenAcc: ParsedOnChainTokenAccountWithInfo,
   mintExtensions?: MintExtensions,
 ) {
   const extensions = [...(mintExtensions || []), ...(assocTokenAcc.info.extensions || [])];
@@ -542,7 +653,7 @@ function getOpExtra(
 
 function txToTokenAccOperation(
   tx: TransactionDescriptor,
-  assocTokenAcc: OnChainTokenAccount,
+  assocTokenAcc: ParsedOnChainTokenAccountWithInfo,
   accountId: string,
 ): Operation | undefined {
   if (!tx.info.blockTime || !tx.parsed.meta) {
@@ -821,73 +932,4 @@ function dropMemoLengthPrefixIfAny(memo: string) {
     }
   }
   return memo;
-}
-
-async function getAccount(
-  address: string,
-  api: ChainAPI,
-): Promise<{
-  balance: BigNumber;
-  blockHeight: number;
-  tokenAccounts: ParsedOnChainTokenAccountWithInfo[];
-  stakes: {
-    account: ParsedOnChainStakeAccountWithInfo;
-    activation: StakeActivationData;
-    reward: InflationReward | null;
-  }[];
-}> {
-  const TOKEN_2022_ENABLED = coinConfig.getCoinConfig().token2022Enabled;
-  const balanceLamportsWithContext = await api.getBalanceAndContext(address);
-
-  const tokenAccounts = await api
-    .getParsedTokenAccountsByOwner(address)
-    .then(res => res.value)
-    .then(map(toTokenAccountWithInfo));
-
-  const token2022Accounts = TOKEN_2022_ENABLED
-    ? await api
-        .getParsedToken2022AccountsByOwner(address)
-        .then(res => res.value)
-        .then(map(toTokenAccountWithInfo))
-    : [];
-
-  const stakeAccountsRaw = [
-    // ...(await api.getStakeAccountsByStakeAuth(address)),
-    ...(await api.getStakeAccountsByWithdrawAuth(address)),
-  ];
-
-  const stakeAccounts = flow(
-    () => stakeAccountsRaw,
-    uniqBy(acc => acc.pubkey.toBase58()),
-    map(toStakeAccountWithInfo),
-    compact,
-  )();
-
-  /*
-  Ledger team still decides if we should show rewards
-  const stakeRewards = await api.getInflationReward(
-    stakeAccounts.map(({ onChainAcc }) => onChainAcc.pubkey.toBase58())
-  );
-  */
-
-  const stakes = await drainSeq(
-    stakeAccounts.map(account => async () => {
-      return {
-        account,
-        activation: await api.getStakeActivation(account.onChainAcc.pubkey.toBase58()),
-        //reward: stakeRewards[idx],
-        reward: null,
-      };
-    }),
-  );
-
-  const balance = new BigNumber(balanceLamportsWithContext.value);
-  const blockHeight = balanceLamportsWithContext.context.slot;
-
-  return {
-    balance,
-    blockHeight,
-    tokenAccounts: [...tokenAccounts, ...token2022Accounts],
-    stakes,
-  };
 }

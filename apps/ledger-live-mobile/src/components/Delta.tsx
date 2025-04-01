@@ -34,20 +34,27 @@ function Delta({
   const { t } = useTranslation();
 
   const percentPlaceholder = fallbackToPercentPlaceholder ? (
-    <Text variant={"large"} color="neutral.c60" fontWeight={"semiBold"} {...textProperties}>
-      -
+    // eslint-disable-next-line i18next/no-literal-string
+    <Text variant="large" color="neutral.c60" fontWeight="semiBold" {...textProperties}>
+      &minus;
     </Text>
   ) : null;
 
   const delta =
     percent && valueChange.percentage ? valueChange.percentage * 100 : valueChange.value;
 
+  const roundedDelta = parseFloat(delta.toFixed(0));
+
+  if (roundedDelta === 0) {
+    return percentPlaceholder;
+  }
+
   const [color, ArrowIcon, sign] =
-    delta !== 0
-      ? delta > 0
-        ? ["success.c50", ArrowEvolutionUpMedium, "+"]
-        : ["error.c50", ArrowEvolutionDownMedium, "-"]
-      : ["neutral.c70", () => null, ""];
+    roundedDelta > 0
+      ? ["success.c50", ArrowEvolutionUpMedium, "+"]
+      : roundedDelta < 0
+        ? ["error.c50", ArrowEvolutionDownMedium, "-"]
+        : ["neutral.c70", () => null, "-"];
 
   if (
     percent &&

@@ -17,7 +17,7 @@ import { ListProvider, ListProviders } from "./types";
 import { getTrackProperties } from "./utils/getTrackProperties";
 
 import ProviderItem from "./component/ProviderItem";
-import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
+import { AccountLike } from "@ledgerhq/types-live";
 
 const ethMagnitude = getCryptoCurrencyById("ethereum").units[0].magnitude;
 
@@ -33,7 +33,7 @@ export type StakeOnClickProps = {
 };
 
 interface Props {
-  account: WalletAPIAccount;
+  account: AccountLike;
   singleProviderRedirectMode?: boolean;
   onClose?: () => void;
   hasCheckbox?: boolean;
@@ -87,13 +87,13 @@ export function EthStakingModalBody({
 
   const checkBoxOnChange = useCallback(() => {
     const value = !doNotShowAgain;
-    global.localStorage.setItem(`${LOCAL_STORAGE_KEY_PREFIX}${account?.currency}`, `${value}`);
+    global.localStorage.setItem(`${LOCAL_STORAGE_KEY_PREFIX}${account?.id}`, `${value}`);
     setDoNotShowAgain(value);
     track("button_clicked2", {
       button: "not_show",
       ...getTrackProperties({ value, modal: source }),
     });
-  }, [doNotShowAgain, account?.currency, source]);
+  }, [doNotShowAgain, account?.id, source]);
 
   const hasMinValidatorEth = account.spendableBalance.isGreaterThan(ETH_LIMIT);
 

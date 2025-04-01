@@ -6,7 +6,11 @@ import { useNftAPI } from "@ledgerhq/live-nft-react";
 const PRODUCTION_URL = "https://nft.api.live.ledger.com";
 const STAGING_URL = "https://nft.api.live.ledger-test.com";
 
-const EnableStagingNftMetadataServiceToggle = () => {
+type Props = {
+  onChange?: (url: string) => void;
+};
+
+const EnableStagingNftMetadataServiceToggle = ({ onChange }: Props) => {
   const currentUrlValue = getEnv("NFT_METADATA_SERVICE");
 
   const { clearCache } = useNftAPI();
@@ -19,9 +23,10 @@ const EnableStagingNftMetadataServiceToggle = () => {
     (enabled: boolean) => {
       setStagingNftMetadataService(enabled);
       setEnvUnsafe("NFT_METADATA_SERVICE", enabled ? STAGING_URL : PRODUCTION_URL);
+      onChange?.(enabled ? STAGING_URL : PRODUCTION_URL);
       clearCache();
     },
-    [clearCache],
+    [clearCache, onChange],
   );
 
   return (

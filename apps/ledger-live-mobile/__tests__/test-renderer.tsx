@@ -37,6 +37,7 @@ import { INITIAL_STATE as WALLETSYNC_INITIAL_STATE } from "~/reducers/walletSync
 import { initialState as WALLET_INITIAL_STATE } from "@ledgerhq/live-wallet/store";
 import QueuedDrawersContextProvider from "LLM/components/QueuedDrawer/QueuedDrawersContextProvider";
 import { INITIAL_STATE as TRUSTCHAIN_INITIAL_STATE } from "@ledgerhq/ledger-key-ring-protocol/store";
+import CustomLiveAppProvider from "./CustomLiveAppProvider";
 
 const initialState = {
   accounts: ACCOUNTS_INITIAL_STATE,
@@ -179,10 +180,48 @@ const renderWithReactQuery = (
   };
 };
 
+const customRenderHookWithLiveAppProvider = <Result,>(
+  hook: () => Result,
+  {
+    overrideInitialState: overrideInitialState = state => state,
+    ...renderOptions
+  }: ExtraOptions = {},
+) => {
+  const store = configureStore({
+    reducer: reducers,
+    middleware: getDefaultMiddleware =>
+      getDefaultMiddleware({ serializableCheck: false, immutableCheck: false }),
+    preloadedState: overrideInitialState(initialState),
+    devTools: false,
+  });
+
+  const ProvidersWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+    const queryClient = new QueryClient();
+    return (
+      <QueryClientProvider client={queryClient}>
+        <Provider store={store}>
+          <FirebaseFeatureFlagsProvider getFeature={getFeature}>
+            <CustomLiveAppProvider>
+              <NavigationContainer>{children}</NavigationContainer>
+            </CustomLiveAppProvider>
+          </FirebaseFeatureFlagsProvider>
+        </Provider>
+      </QueryClientProvider>
+    );
+  };
+
+  return { store, ...rntlRenderHook(hook, { wrapper: ProvidersWrapper, ...renderOptions }) };
+};
+
 export const LONG_TIMEOUT = 30000;
 
 // re-export everything
 export * from "@testing-library/react-native";
 
 // override render method
-export { customRender as render, customRenderHook as renderHook, renderWithReactQuery };
+export {
+  customRender as render,
+  customRenderHook as renderHook,
+  renderWithReactQuery,
+  customRenderHookWithLiveAppProvider,
+};

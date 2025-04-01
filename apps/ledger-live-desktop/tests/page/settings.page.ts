@@ -126,7 +126,7 @@ export class SettingsPage extends AppPage {
     } catch (error) {
       throw new Error(`Failed to fetch URL ${url}`);
     }
-    expect(url).toBe("https://support.ledger.com/?redirect=false");
+    expect(url).toBe("https://support.ledger.com");
   }
 
   @step("Reset App")

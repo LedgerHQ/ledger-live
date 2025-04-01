@@ -39,7 +39,7 @@ export function WebView({ manifest, params, setWebviewState }: Props) {
   const exportSettings = useSelector(exportSettingsSelector);
   const devMode = exportSettings.developerModeEnabled.toString();
   const lastSeenDevice = useSelector(lastSeenDeviceSelector);
-  const fromAccount = useTranslateToSwapAccount(params);
+  const swapParams = useTranslateToSwapAccount(params);
 
   // ScopeProvider required to prevent conflicts between Swap's Webview instance and deeplink instances
   return (
@@ -62,7 +62,7 @@ export function WebView({ manifest, params, setWebviewState }: Props) {
             discreetMode: discreet ? "true" : "false",
             OS: Platform.OS,
             platform: "LLM", // need consistent format with LLD, Platform doesn't work
-            ...fromAccount,
+            ...swapParams,
           }}
         />
       </Flex>

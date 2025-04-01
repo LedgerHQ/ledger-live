@@ -18,6 +18,7 @@ const View: React.FC<ViewProps> = ({
   accountsToDisplay,
   isSyncEnabled,
   limitNumberOfAccounts,
+  ListFooterComponent,
   onAccountPress,
   onContentChange,
 }) => {
@@ -55,6 +56,7 @@ const View: React.FC<ViewProps> = ({
       estimatedListSize={estimatedListSize}
       renderItem={renderItem}
       data={accountsToDisplay}
+      ListFooterComponent={ListFooterComponent}
       showsVerticalScrollIndicator={false}
       showsHorizontalScrollIndicator={false}
       onContentSizeChange={onContentChange}

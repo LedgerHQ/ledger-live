@@ -3,7 +3,8 @@
     "src/Eth.ts"
   ],
   "ignoreUnused": [
-    "@ledgerhq/hw-transport-mocker"
+    "@ledgerhq/hw-transport-mocker",
+    "jest-sonar"
   ],
   "ignoreUnresolved": [],
   "ignoreUnimported": []

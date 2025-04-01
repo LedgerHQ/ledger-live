@@ -2,15 +2,16 @@ import React from "react";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import { Trans } from "react-i18next";
-import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
+import { isAccountEmpty, isTokenAccount } from "@ledgerhq/live-common/account/index";
 import { ParamListBase, RouteProp } from "@react-navigation/native";
 import { ActionButtonEvent, NavigationParamsType } from "~/components/FabActions";
 import { NavigatorName, ScreenName } from "~/const";
 import BigNumber from "bignumber.js";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
-import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
 import { WalletState } from "@ledgerhq/live-wallet/store";
+import { StakingDrawerNavigationProps } from "~/components/Stake/types";
+import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
 
 const ethMagnitude = getCryptoCurrencyById("ethereum").units[0].magnitude ?? 18;
 
@@ -93,25 +94,30 @@ function getNavigatorParams({
 
   const walletApiAccount = accountToWalletAPIAccount(walletState, account, parentAccount);
 
-  const params = {
+  const params: {
+    screen: ScreenName;
+    drawer: StakingDrawerNavigationProps;
+    params: ParamListBase;
+  } = {
     screen: parentRoute.name,
     drawer: {
       id: "EvmStakingDrawer",
       props: {
         singleProviderRedirectMode: true,
-        accountId: walletApiAccount.id,
+        accountId: account.id,
+        walletApiAccountId: walletApiAccount.id,
         has32Eth: account.spendableBalance.gt(ETH_LIMIT),
       },
     },
     params: {
       ...(parentRoute.params ?? {}),
-      account: walletApiAccount,
+      account,
       parentAccount,
     },
   };
 
   switch (parentRoute.name) {
-    // since we have to go to different navigators b
+    // since we have to go to different navigators
     case ScreenName.Account:
     case ScreenName.Asset:
       return [NavigatorName.Accounts, params];
@@ -163,7 +169,9 @@ const getMainActions = ({
         label: <Trans i18nKey={label} />,
         Icon: IconsLegacy.CoinsMedium,
         eventProperties: {
-          currency: getCurrentCurrency(),
+          currency:
+            getCurrentCurrency() ??
+            (isTokenAccount(account) ? account.token.ticker : account.currency.ticker),
         },
       },
     ];

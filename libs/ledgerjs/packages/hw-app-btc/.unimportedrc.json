@@ -1,4 +1,5 @@
 {
   "entry": ["src/index.ts"],
+  "ignoreUnused": ["jest-sonar"],
   "ignoreUnimported": []
 }

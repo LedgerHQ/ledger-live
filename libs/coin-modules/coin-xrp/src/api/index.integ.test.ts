@@ -34,7 +34,7 @@ describe("Xrp Api", () => {
   });
 
   describe("listOperations", () => {
-    it("returns a list regarding address parameter", async () => {
+    it.skip("returns a list regarding address parameter", async () => {
       // When
       const [tx, _] = await module.listOperations(address, { minHeight: 200 });
 

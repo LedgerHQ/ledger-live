@@ -33,7 +33,7 @@ import {
   UPDATE_ANONYMOUS_USER_NOTIFICATIONS,
   UPDATE_NFT_COLLECTION_STATUS,
 } from "./constants";
-import { BlockchainsType } from "@ledgerhq/live-nft/supported";
+import { SupportedBlockchain } from "@ledgerhq/live-nft/supported";
 import { NftStatus } from "@ledgerhq/live-nft/types";
 export type SaveSettings = (a: Partial<Settings>) => {
   type: string;
@@ -257,7 +257,7 @@ export const showToken = (tokenId: string) => ({
 });
 
 export const updateNftStatus = (
-  blockchain: BlockchainsType,
+  blockchain: SupportedBlockchain,
   collectionId: string,
   status: NftStatus,
 ) => ({

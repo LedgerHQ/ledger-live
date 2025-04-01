@@ -11,6 +11,7 @@ import TrackScreen from "~/analytics/TrackScreen";
 import useBottomSectionViewModel from "./useBottomSectionViewModel";
 import { RANGES } from "LLM/features/Market/utils";
 import { LIMIT } from "~/reducers/market";
+import { rangeDataTable } from "@ledgerhq/live-common/market/utils/rangeDataTable";
 
 const SORT_OPTIONS = {
   top100G: {
@@ -93,8 +94,8 @@ function View({
 
   const timeRanges = TIME_RANGES.map(timeRange => ({
     ...timeRange,
-    label: t(`market.range.${timeRange.value}`),
-  }));
+    label: t(`market.range.${rangeDataTable[timeRange.value].label}`),
+  })).reverse();
   const timeRangeValue = timeRanges.find(({ value }) => value === range);
 
   const overflowX = ScrollContainerHeader.Header.PADDING_HORIZONTAL;

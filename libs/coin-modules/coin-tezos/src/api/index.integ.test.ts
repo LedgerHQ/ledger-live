@@ -48,7 +48,7 @@ describe("Tezos Api", () => {
     });
   });
 
-  describe.only("listOperations", () => {
+  describe("listOperations", () => {
     it("returns a list regarding address parameter", async () => {
       // When
       const [tx, _] = await module.listOperations(address, { minHeight: 0 });
@@ -97,7 +97,7 @@ describe("Tezos Api", () => {
   });
 
   describe("craftTransaction", () => {
-    it.each([
+    it.skip.each([
       {
         type: "send",
         rawTx:

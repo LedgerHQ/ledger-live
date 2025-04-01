@@ -21,6 +21,7 @@ import ton from "@ledgerhq/coin-ton/transaction";
 import tron from "@ledgerhq/coin-tron/transaction";
 import vechain from "@ledgerhq/coin-vechain/transaction";
 import xrp from "@ledgerhq/coin-xrp/transaction";
+import sui from "@ledgerhq/coin-sui/transaction";
 
 export default {
   celo,
@@ -46,4 +47,5 @@ export default {
   tron,
   vechain,
   xrp,
+  sui,
 };

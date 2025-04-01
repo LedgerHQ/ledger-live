@@ -119,6 +119,7 @@ const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
   zksync_sepolia: EVM_DEAD_ADDRESS,
   mantra: "mantra12jypwtxm7npfszx5x9780fhz0j3ken696fdp33",
   xion: "xion19rl4cm2hmr8afy4kldpxz3fka4jguq0a5xyz123",
+  sui: "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164",
   zenrock: "zen1704dk997ccmk5x8smn8secphckfvbgxxfd99xxr",
   sonic: EVM_DEAD_ADDRESS,
   sonic_blaze: EVM_DEAD_ADDRESS,

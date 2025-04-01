@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-hedera",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Ledger Hardware Wallet Hedera Application API",
   "keywords": [
     "Ledger",
@@ -38,11 +38,13 @@
     "rimraf": "^4.4.1",
     "source-map-support": "^0.5.21",
     "ts-jest": "^29.1.1",
-    "ts-node": "^10.4.0"
+    "ts-node": "^10.4.0",
+    "jest-sonar": "0.2.16"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
     "build": "tsc && tsc -m esnext --moduleResolution bundler --outDir lib-es",
+    "coverage": "jest --coverage --passWithNoTests && mv coverage/coverage-final.json coverage/coverage-hw-app-hedera.json && mv coverage/lcov.info coverage/hw-app-hedera-lcov.info",
     "prewatch": "pnpm build",
     "watch": "tsc --watch",
     "watch:es": "tsc --watch -m esnext --moduleResolution bundler --outDir lib-es",

@@ -3,10 +3,10 @@ import { useSelector } from "react-redux";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { nftCollectionsStatusByNetworkSelector } from "~/renderer/reducers/settings";
 import { NftStatus } from "@ledgerhq/live-nft/types";
-import { BlockchainEVM } from "@ledgerhq/live-nft/supported";
+import { SupportedBlockchain } from "@ledgerhq/live-nft/supported";
 
 export const nftCollectionParser = (
-  nftCollection: Record<BlockchainEVM, Record<string, NftStatus>>,
+  nftCollection: Record<SupportedBlockchain, Record<string, NftStatus>>,
   applyFilterFn: (arg0: [string, NftStatus]) => boolean,
 ) =>
   Object.values(nftCollection).flatMap(contracts =>

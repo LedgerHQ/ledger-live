@@ -25,7 +25,6 @@ import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
 import { getEnv } from "@ledgerhq/live-env";
 import { NetworkError } from "@ledgerhq/errors";
 import { Awaited } from "../../logic";
-import { getStakeActivation } from "./stake-activation";
 import { getTokenAccountProgramId } from "../../helpers/token";
 import { SolanaTokenProgram } from "../../types";
 
@@ -63,8 +62,6 @@ export type ChainAPI = Readonly<{
     authAddr: string,
   ) => ReturnType<Connection["getParsedProgramAccounts"]>;
 
-  getStakeActivation: (stakeAccAddr: string) => ReturnType<typeof getStakeActivation>;
-
   getInflationReward: (addresses: string[]) => ReturnType<Connection["getInflationReward"]>;
 
   getVoteAccounts: () => ReturnType<Connection["getVoteAccounts"]>;
@@ -79,6 +76,10 @@ export type ChainAPI = Readonly<{
   getAccountInfo: (
     address: string,
   ) => Promise<Awaited<ReturnType<Connection["getParsedAccountInfo"]>>["value"]>;
+
+  getMultipleAccounts: (
+    addresses: string[],
+  ) => Promise<Awaited<ReturnType<Connection["getMultipleParsedAccounts"]>>["value"]>;
 
   sendRawTransaction: (
     buffer: Buffer,
@@ -128,6 +129,8 @@ const remapErrorsWithRetry = <P extends Promise<T>, T>(callback: () => P, times 
   };
 };
 
+const kyNoTimeout = ky.create({ timeout: false });
+
 export function getChainAPI(
   config: Config,
   logger?: (url: string, options: any) => void,
@@ -145,8 +148,8 @@ export function getChainAPI(
     if (!_connection) {
       _connection = new Connection(config.endpoint, {
         ...(fetchMiddleware ? { fetchMiddleware } : {}),
-        fetch: ky as typeof fetch, // Type cast for jest test having an issue with the type
-        commitment: "finalized",
+        fetch: kyNoTimeout as typeof fetch, // Type cast for jest test having an issue with the type
+        commitment: "confirmed",
         confirmTransactionInitialTimeout: getEnv("SOLANA_TX_CONFIRMATION_TIMEOUT") || 0,
       });
     }
@@ -219,9 +222,6 @@ export function getChainAPI(
       minutes(3),
     ),
 
-    getStakeActivation: (stakeAccAddr: string) =>
-      getStakeActivation(connection(), new PublicKey(stakeAccAddr)).catch(remapErrors),
-
     getInflationReward: (addresses: string[]) =>
       connection()
         .getInflationReward(addresses.map(addr => new PublicKey(addr)))
@@ -246,6 +246,12 @@ export function getChainAPI(
     getAccountInfo: (address: string) =>
       connection()
         .getParsedAccountInfo(new PublicKey(address))
+        .then(r => r.value)
+        .catch(remapErrors),
+
+    getMultipleAccounts: (addresses: string[]) =>
+      connection()
+        .getMultipleParsedAccounts(addresses.map(address => new PublicKey(address)))
         .then(r => r.value)
         .catch(remapErrors),
 
