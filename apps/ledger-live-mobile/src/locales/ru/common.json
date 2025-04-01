@@ -4050,7 +4050,9 @@
       "desc" : "Уверены, что не хотите добавлять счета?",
       "v2" : {
         "title" : "Отменить добавление счёта?",
-        "desc" : "Новые счета не будут добавлены в Ledger Live."
+        "desc" : "Новые счета не будут добавлены в Ledger Live.",
+        "continue" : "Continue adding",
+        "cancel" : "Отменить"
       }
     },
     "imported" : "Актив успешно добавлен",
@@ -4088,7 +4090,7 @@
       "title" : "Добавить токен",
       "createParentCurrencyAccount" : "Добавить счёт {{parrentCurrencyName}}",
       "generic" : {
-        "disclaimer" : "{{token}} ({{ticker}}) – это токен {{tokenType}}.\nВы можете получать их непосредственно на счёт {{currency}}.",
+        "disclaimer" : "{{token}} ({{ticker}}) is an {{tokenType}} token.\nYou can receive tokens directly on a/an {{currency}} account.",
         "learnMore" : "Подробнее о {{tokenType}}"
       }
     },
