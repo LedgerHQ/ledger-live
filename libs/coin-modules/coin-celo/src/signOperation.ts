@@ -29,27 +29,20 @@ export const buildSignOperation =
     new Observable(o => {
       async function main() {
         const { fees } = transaction;
-        debugger;
         if (!fees) throw new FeeNotLoaded();
-        debugger;
         const unsignedTransaction = await buildTransaction(account as CeloAccount, transaction);
         const { chainId, to } = unsignedTransaction;
 
-
-
-        o.next({ type: "device-signature-requested" });
-
-        const resVerifyToken = (await signerContext(deviceId, signer => {
+        await signerContext(deviceId, signer => {
           return signer.verifyTokenInfo(to!, chainId!);
-        }));
-        console.log("verified token info", resVerifyToken)
-        const tx = determineFees(unsignedTransaction)
-        console.log({tx})
+        });
+        await determineFees(unsignedTransaction);
 
         const rlpEncodedTransaction = await rlpEncodedTx(unsignedTransaction);
         // const sig = (await signerContext(deviceId, signer => {
         //   return signer.rlpEncodedTxForLedger(to!, chainId!);
         // })) as EvmSignature;
+        o.next({ type: "device-signature-requested" });
 
         const signature = (await signerContext(deviceId, signer => {
           return signer.signTransaction(
@@ -59,7 +52,7 @@ export const buildSignOperation =
         })) as EvmSignature;
 
         o.next({ type: "device-signature-granted" });
-
+        debugger;
         const operation = buildOptimisticOperation(
           account as CeloAccount,
           transaction,
