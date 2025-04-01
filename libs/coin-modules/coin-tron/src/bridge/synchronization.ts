@@ -81,6 +81,7 @@ export const getAccountShape: GetAccountShape<TronAccount> = async (
   const balance = computeBalanceBridge(acc);
 
   const parentTxs = txs.filter(isParentTx);
+  // why can't we use listOperations here ? Cause two types TronOperation and Operation<TronToken> do not have the same structure
   const parentOperations: TronOperation[] = compact(
     parentTxs.map(tx => txInfoToOperation(accountId, address, tx)),
   );
