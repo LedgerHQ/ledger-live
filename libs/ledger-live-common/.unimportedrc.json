@@ -255,8 +255,6 @@
     "src/platform/serializers.ts",
     "src/platform/tracking.ts",
     "src/platform/types.ts",
-    "src/platform/utils/appendQueryParamsToDappURL.ts",
-    "src/platform/utils/deriveAccountIdForManifest.ts",
     "src/postOnboarding/actions.ts",
     "src/postOnboarding/hooks/index.ts",
     "src/postOnboarding/hooks/usePostOnboardingEntryPointVisibleOnWallet.ts",
@@ -287,6 +285,9 @@
     "src/wallet-api/useDappLogic.ts",
     "src/wallet-api/types.ts",
     "src/wallet-api/version.ts",
+    "src/wallet-api/utils/appendQueryParamsToDappURL.ts",
+    "src/wallet-api/utils/appendQueryParamsToManifestURL.ts",
+    "src/wallet-api/utils/deriveAccountIdForManifest.ts",
     "src/errors/transactionBroadcastErrors.ts"
   ],
   "extensions": [".ts", ".js", ".jsx", ".tsx"],
