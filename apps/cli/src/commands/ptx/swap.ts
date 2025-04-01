@@ -21,7 +21,7 @@ import { initSwap, getExchangeRates } from "@ledgerhq/live-common/exchange/swap/
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import invariant from "invariant";
-import { Account, SignedOperation, SubAccount } from "@ledgerhq/types-live";
+import { Account, SignedOperation, TokenAccount } from "@ledgerhq/types-live";
 
 export type SwapJobOpts = ScanCommonOpts & {
   amount: string;
@@ -56,7 +56,7 @@ const exec = async (opts: SwapJobOpts) => {
   console.log("• Open the source currency app");
   await delay(8000);
   let fromParentAccount: Account | null = null;
-  let fromAccount: Account | SubAccount | undefined = await firstValueFrom(
+  let fromAccount: Account | TokenAccount | undefined = await firstValueFrom(
     scan(opts).pipe(take(1)),
   );
   invariant(fromAccount, `✖ No account found, is the right currency app open?`);
@@ -104,7 +104,7 @@ const exec = async (opts: SwapJobOpts) => {
   console.log("• Open the destination currency app");
   await delay(8000);
   let toParentAccount: Account | null = null;
-  let toAccount: Account | SubAccount | undefined = await firstValueFrom(
+  let toAccount: Account | TokenAccount | undefined = await firstValueFrom(
     scan(secondAccountOpts).pipe(take(1)),
   );
 

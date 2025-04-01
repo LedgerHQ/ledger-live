@@ -16,7 +16,7 @@ import {
 } from "~/renderer/families/multiversx/blocks/Summary";
 import { DelegationType } from "./types";
 import { MultiversXAccount } from "@ledgerhq/live-common/families/multiversx/types";
-import { SubAccount } from "@ledgerhq/types-live";
+import { TokenAccount } from "@ledgerhq/types-live";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 interface BalanceType {
@@ -112,7 +112,7 @@ const Summary = (props: { account: MultiversXAccount }) => {
   );
 };
 
-function AccountBalanceSummaryFooter({ account }: { account: MultiversXAccount | SubAccount }) {
+function AccountBalanceSummaryFooter({ account }: { account: MultiversXAccount | TokenAccount }) {
   if (account.type !== "Account") return null;
   return <Summary account={account} />;
 }

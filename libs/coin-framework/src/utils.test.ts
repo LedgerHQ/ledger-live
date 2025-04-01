@@ -14,4 +14,10 @@ describe("bigNumberToBigInt", () => {
     const result = fromBigNumberToBigInt(value, defaultValue);
     expect(result).toEqual(defaultValue);
   });
+  it("should convert to BigInt for very large numbers", () => {
+    const valueStr = "1234567890123456789012345678901234567890";
+    const valBignumber = new BigNumber(valueStr);
+    const valBigint = fromBigNumberToBigInt(valBignumber);
+    expect(valBigint).toEqual(BigInt(valueStr));
+  });
 });

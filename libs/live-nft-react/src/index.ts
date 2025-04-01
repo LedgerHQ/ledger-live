@@ -7,6 +7,7 @@ export * from "./hooks/useCheckSpamScore";
 export * from "./hooks/useFetchOrdinals";
 export * from "./hooks/useFetchOrdinalByTokenId";
 export * from "./hooks/useFilterNftSpams";
+export * from "./hooks/useNftQueriesSources";
 export * from "./hooks/helpers/ordinals";
 export * from "./hooks/helpers/operations";
 export * from "./hooks/helpers/index";

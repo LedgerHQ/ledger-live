@@ -2,7 +2,7 @@ import React from "react";
 import { SectionList, SectionListData, SectionListRenderItem } from "react-native";
 import { Flex } from "@ledgerhq/native-ui";
 import { Account, AccountLike, DailyOperationsSection, Operation } from "@ledgerhq/types-live";
-import { isAccountEmpty } from "@ledgerhq/live-common/account/helpers";
+import { flattenAccounts, isAccountEmpty } from "@ledgerhq/live-common/account/helpers";
 
 import { Trans } from "react-i18next";
 
@@ -46,7 +46,8 @@ export function OperationsList({
     index,
     section,
   }) => {
-    const account = allAccounts.find(a => a.id === item.accountId);
+    const flattenedAccounts = flattenAccounts(accountsFiltered);
+    const account = flattenedAccounts.find(a => a.id === item.accountId);
     const parentAccount =
       account && account.type !== "Account"
         ? (allAccounts.find(a => a.id === account.parentId) as Account)
@@ -59,7 +60,7 @@ export function OperationsList({
         operation={item}
         parentAccount={parentAccount}
         account={account}
-        multipleAccounts={accountsFiltered.length > 1}
+        multipleAccounts={flattenedAccounts.length > 1}
         isLast={section.data.length - 1 === index}
       />
     );

@@ -56,7 +56,7 @@ const NftDetailDrawer = ({ account, tokenId, isOpened, setIsOpened }: NftsDetail
           protoNft={protoNft}
           metadata={metadata as NFTMetadata}
           account={account}
-          onNFTSend={onNFTSend}
+          onNFTSend={account.currency.id !== "solana" ? onNFTSend : undefined}
         />
       </DetailDrawer.Actions>
     </DetailDrawer>

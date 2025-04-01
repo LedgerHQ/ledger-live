@@ -17,7 +17,7 @@ import {
   NFTStandard,
   Operation,
   OperationType,
-  SubAccount,
+  TokenAccount,
   TransactionCommon,
   MessageProperties,
 } from "@ledgerhq/types-live";
@@ -126,7 +126,7 @@ export type LLDCoinFamily<
      * Custom Send button action on account page header
      */
     SendAction?: React.ComponentType<{
-      account: A | SubAccount;
+      account: A | TokenAccount;
       parentAccount: A | null | undefined;
       onClick: () => void;
     }>;
@@ -135,7 +135,7 @@ export type LLDCoinFamily<
      * Custom Receive button action on account page header
      */
     ReceiveAction?: React.ComponentType<{
-      account: A | SubAccount;
+      account: A | TokenAccount;
       parentAccount: A | null | undefined;
       onClick: () => void;
     }>;
@@ -145,7 +145,7 @@ export type LLDCoinFamily<
    * allow to add buttons on account page header before swap and buy button
    */
   accountHeaderManageActions?: (_: {
-    account: A | SubAccount;
+    account: A | TokenAccount;
     parentAccount: A | null | undefined;
     source?: string;
   }) => ManageAction[] | null | undefined;
@@ -157,7 +157,7 @@ export type LLDCoinFamily<
     fieldComponents?: Record<string, React.ComponentType<FieldComponentProps<A, T, TS>>>;
 
     warning?: React.ComponentType<{
-      account: A | SubAccount;
+      account: A | TokenAccount;
       parentAccount: A | null | undefined;
       transaction: T;
       status: TS;
@@ -165,7 +165,7 @@ export type LLDCoinFamily<
     }>;
 
     title?: React.ComponentType<{
-      account: A | SubAccount;
+      account: A | TokenAccount;
       parentAccount: A | null | undefined;
       transaction: T;
       status: TS;
@@ -181,7 +181,7 @@ export type LLDCoinFamily<
    * Allow to add component between graph and delegations / operation details section
    */
   AccountBodyHeader?: React.ComponentType<{
-    account: A | SubAccount;
+    account: A | TokenAccount;
     parentAccount: A | null | undefined;
   }>;
 
@@ -189,12 +189,12 @@ export type LLDCoinFamily<
    * Allow to add component below account body header
    */
   AccountSubHeader?: React.ComponentType<{
-    account: A | SubAccount;
+    account: A | TokenAccount;
     parentAccount: A | null | undefined;
   }>;
 
   AccountFooter?: React.ComponentType<{
-    account: A | SubAccount;
+    account: A | TokenAccount;
     parentAccount?: A | undefined | null;
     status: TS;
   }>;
@@ -225,7 +225,7 @@ export type LLDCoinFamily<
   /**
    * Allow to add component below recipient field
    *
-   * FIXME: account will have to be A | SubAccount
+   * FIXME: account will have to be A | TokenAccount
    */
   sendRecipientFields?: {
     component: React.ComponentType<{
@@ -263,7 +263,7 @@ export type LLDCoinFamily<
    * Component that change footer of graph
    */
   AccountBalanceSummaryFooter?: React.ComponentType<{
-    account: A | SubAccount;
+    account: A | TokenAccount;
     counterValue: Currency;
     discreetMode: boolean;
   }>;
@@ -298,7 +298,7 @@ export type LLDCoinFamily<
    * Allow to add specific component in Send modal at the end of Summary Step
    */
   StepSummaryAdditionalRows?: React.ComponentType<{
-    account: A | SubAccount;
+    account: A | TokenAccount;
     parentAccount: A | null | undefined;
     transaction: T;
     status: TS;
@@ -343,7 +343,7 @@ export type FieldComponentProps<
   T extends TransactionCommon,
   TS extends TransactionStatus,
 > = {
-  account: A | SubAccount;
+  account: A | TokenAccount;
   parentAccount: A | undefined | null;
   transaction: T;
   status: TS;

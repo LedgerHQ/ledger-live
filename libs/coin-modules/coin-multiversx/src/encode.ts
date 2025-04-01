@@ -1,10 +1,10 @@
-import { SubAccount } from "@ledgerhq/types-live";
+import { TokenAccount } from "@ledgerhq/types-live";
 import { decodeTokenAccountId } from "@ledgerhq/coin-framework/account";
 import type { Transaction } from "./types";
 import { extractTokenId } from "./logic";
 
 export class MultiversXEncodeTransaction {
-  static ESDTTransfer(t: Transaction, ta: SubAccount): string {
+  static ESDTTransfer(t: Transaction, ta: TokenAccount): string {
     const { token } = decodeTokenAccountId(ta.id);
     const tokenIdentifierHex = token && extractTokenId(token.id);
     let amountHex = t.useAllAmount ? ta.balance.toString(16) : t.amount.toString(16);

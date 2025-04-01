@@ -1,7 +1,7 @@
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { canDelegate } from "@ledgerhq/live-common/families/cosmos/logic";
 import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
-import { SubAccount } from "@ledgerhq/types-live";
+import { TokenAccount } from "@ledgerhq/types-live";
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
@@ -11,7 +11,7 @@ import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLo
 import IconCoins from "~/renderer/icons/Coins";
 
 type Props = {
-  account: CosmosAccount | SubAccount;
+  account: CosmosAccount | TokenAccount;
   parentAccount: CosmosAccount | undefined | null;
   source?: string;
 };

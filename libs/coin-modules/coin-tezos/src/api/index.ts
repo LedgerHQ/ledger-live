@@ -1,10 +1,11 @@
 import {
   IncorrectTypeError,
-  TransactionIntent,
   Operation,
   Pagination,
+  TransactionIntent,
   type Api,
 } from "@ledgerhq/coin-framework/api/index";
+import { log } from "@ledgerhq/logs";
 import coinConfig, { type TezosConfig } from "../config";
 import {
   broadcast,
@@ -12,12 +13,12 @@ import {
   craftTransaction,
   estimateFees,
   getBalance,
-  listOperations,
   lastBlock,
+  listOperations,
   rawEncode,
 } from "../logic";
-import { log } from "@ledgerhq/logs";
 import api from "../network/tzkt";
+import { TezosOperationMode } from "../types";
 
 export function createApi(config: TezosConfig): Api<void> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
@@ -37,11 +38,14 @@ function isTezosTransactionType(type: string): type is "send" | "delegate" | "un
   return ["send", "delegate", "undelegate"].includes(type);
 }
 
-async function craft(transactionIntent: TransactionIntent<void>): Promise<string> {
+async function craft(
+  transactionIntent: TransactionIntent<void>,
+  customFees?: bigint,
+): Promise<string> {
   if (!isTezosTransactionType(transactionIntent.type)) {
     throw new IncorrectTypeError(transactionIntent.type);
   }
-  const fee = await estimate(transactionIntent);
+  const fee = customFees !== undefined ? customFees : await estimate(transactionIntent);
   const { contents } = await craftTransaction(
     { address: transactionIntent.sender },
     {
@@ -55,18 +59,18 @@ async function craft(transactionIntent: TransactionIntent<void>): Promise<string
 }
 
 async function estimate(transactionIntent: TransactionIntent<void>): Promise<bigint> {
-  const accountInfo = await api.getAccountByAddress(transactionIntent.recipient);
-  if (accountInfo.type !== "user") throw new Error("unexpected account type");
+  const senderAccountInfo = await api.getAccountByAddress(transactionIntent.sender);
+  if (senderAccountInfo.type !== "user") throw new Error("unexpected account type");
 
   const estimatedFees = await estimateFees({
     account: {
       address: transactionIntent.sender,
-      revealed: accountInfo.revealed,
-      balance: BigInt(accountInfo.balance),
-      xpub: accountInfo.publicKey,
+      revealed: senderAccountInfo.revealed,
+      balance: BigInt(senderAccountInfo.balance),
+      xpub: senderAccountInfo.publicKey,
     },
     transaction: {
-      mode: "send",
+      mode: transactionIntent.type as TezosOperationMode,
       recipient: transactionIntent.recipient,
       amount: transactionIntent.amount,
     },

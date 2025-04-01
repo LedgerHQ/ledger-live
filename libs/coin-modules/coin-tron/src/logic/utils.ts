@@ -1,8 +1,8 @@
+import BigNumber from "bignumber.js";
 import { createHash } from "crypto";
+import get from "lodash/get";
 import TronWeb from "tronweb";
 import coinConfig from "../config";
-import get from "lodash/get";
-import BigNumber from "bignumber.js";
 import { TronResources, UnFrozenInfo } from "../types";
 
 export function createTronWeb(trongridUrl?: string): TronWeb {
@@ -87,35 +87,29 @@ function convertTxFromRaw(tx: any) {
  * @param contract
  */
 function convertContractFromRaw(contract: any) {
-  let value;
-  switch (contract.getType()) {
-    case 1:
-      value = convertTransferContractFromRaw(contract);
-      break;
-    case 2:
-      value = convertTransferAssetContractFromRaw(contract);
-      break;
-    case 31:
-      value = convertTriggerSmartContractFromRaw(contract);
-      break;
-    default:
-      throw new Error(
-        `Missing deserializer for this contract: "${contract.getParameter().getTypeUrl()}"`,
-      );
+  const contractType = convertNumberToContractType(contract.getType());
+  const value = contractType.convertFunction?.(contract);
+  if (!value) {
+    throw new Error(
+      `Missing deserializer for this contract: "${contract.getParameter().getTypeUrl()}"`,
+    );
   }
 
   return {
-    type: convertNumberToContractType(contract.getType()),
+    type: contractType.name,
     parameter: {
       value,
       type_url: contract.getParameter().getTypeUrl(),
     },
-    // provider: contract.getProvider(),
-    // Permission_id: contract.getPermissionId(),
   };
 }
 
-function convertTransferContractFromRaw(contract: any) {
+type TransferValue = { owner_address: string };
+type TrxTransferValue = TransferValue & {
+  amount: number;
+  to_address: string;
+};
+function convertTransferContractFromRaw(contract: any): TrxTransferValue {
   const { TransferContract } = (globalThis as unknown as any).TronWebProto;
   const transferContract = TransferContract.deserializeBinary(contract.getParameter().getValue());
 
@@ -128,7 +122,12 @@ function convertTransferContractFromRaw(contract: any) {
   };
 }
 
-function convertTransferAssetContractFromRaw(contract: any) {
+type Trc10TransferValue = TransferValue & {
+  amount: number;
+  asset_name: string;
+  to_address: string;
+};
+function convertTransferAssetContractFromRaw(contract: any): Trc10TransferValue {
   const { TransferAssetContract } = (globalThis as unknown as any).TronWebProto;
   const transferContract = TransferAssetContract.deserializeBinary(
     contract.getParameter().getValue(),
@@ -144,7 +143,11 @@ function convertTransferAssetContractFromRaw(contract: any) {
   };
 }
 
-function convertTriggerSmartContractFromRaw(contract: any) {
+type Trc20TransferValue = TransferValue & {
+  data: string;
+  contract_address: string;
+};
+function convertTriggerSmartContractFromRaw(contract: any): Trc20TransferValue {
   const { TriggerSmartContract } = (globalThis as unknown as any).TronWebProto;
   const transferContract = TriggerSmartContract.deserializeBinary(
     contract.getParameter().getValue(),
@@ -159,53 +162,57 @@ function convertTriggerSmartContractFromRaw(contract: any) {
   };
 }
 
+type ContractInfo = {
+  name: string;
+  convertFunction?: (contract: any) => TrxTransferValue | Trc10TransferValue | Trc20TransferValue;
+};
 /**
  * @see https://github.com/tronprotocol/protocol/blob/master/core/Tron.proto#L338
  */
-const CONTRACT_TYPE: Record<number, string> = {
-  0: "AccountCreateContract",
-  1: "TransferContract",
-  2: "TransferAssetContract",
-  3: "VoteAssetContract",
-  4: "VoteWitnessContract",
-  5: "WitnessCreateContract",
-  6: "AssetIssueContract",
-  8: "WitnessUpdateContract",
-  9: "ParticipateAssetIssueContract",
-  10: "AccountUpdateContract",
-  11: "FreezeBalanceContract",
-  12: "UnfreezeBalanceContract",
-  13: "WithdrawBalanceContract",
-  14: "UnfreezeAssetContract",
-  15: "UpdateAssetContract",
-  16: "ProposalCreateContract",
-  17: "ProposalApproveContract",
-  18: "ProposalDeleteContract",
-  19: "SetAccountIdContract",
-  20: "CustomContract",
-  30: "CreateSmartContract",
-  31: "TriggerSmartContract",
-  32: "GetContract",
-  33: "UpdateSettingContract",
-  41: "ExchangeCreateContract",
-  42: "ExchangeInjectContract",
-  43: "ExchangeWithdrawContract",
-  44: "ExchangeTransactionContract",
-  45: "UpdateEnergyLimitContract",
-  46: "AccountPermissionUpdateContract",
-  48: "ClearABIContract",
-  49: "UpdateBrokerageContract",
-  51: "ShieldedTransferContract",
-  52: "MarketSellAssetContract",
-  53: "MarketCancelOrderContract",
-  54: "FreezeBalanceV2Contract",
-  55: "UnfreezeBalanceV2Contract",
-  56: "WithdrawExpireUnfreezeContract",
-  57: "DelegateResourceContract",
-  58: "UnDelegateResourceContract",
-  59: "CancelAllUnfreezeV2Contract",
+const CONTRACT_TYPE: Record<number, ContractInfo> = {
+  0: { name: "AccountCreateContract" },
+  1: { name: "TransferContract", convertFunction: convertTransferContractFromRaw }, // Transfer TRX
+  2: { name: "TransferAssetContract", convertFunction: convertTransferAssetContractFromRaw }, // Transfer TRC-10
+  3: { name: "VoteAssetContract" },
+  4: { name: "VoteWitnessContract" },
+  5: { name: "WitnessCreateContract" },
+  6: { name: "AssetIssueContract" },
+  8: { name: "WitnessUpdateContract" },
+  9: { name: "ParticipateAssetIssueContract" },
+  10: { name: "AccountUpdateContract" },
+  11: { name: "FreezeBalanceContract" },
+  12: { name: "UnfreezeBalanceContract" },
+  13: { name: "WithdrawBalanceContract" },
+  14: { name: "UnfreezeAssetContract" },
+  15: { name: "UpdateAssetContract" },
+  16: { name: "ProposalCreateContract" },
+  17: { name: "ProposalApproveContract" },
+  18: { name: "ProposalDeleteContract" },
+  19: { name: "SetAccountIdContract" },
+  20: { name: "CustomContract" },
+  30: { name: "CreateSmartContract" },
+  31: { name: "TriggerSmartContract", convertFunction: convertTriggerSmartContractFromRaw }, // Transfer TRC-20
+  32: { name: "GetContract" },
+  33: { name: "UpdateSettingContract" },
+  41: { name: "ExchangeCreateContract" },
+  42: { name: "ExchangeInjectContract" },
+  43: { name: "ExchangeWithdrawContract" },
+  44: { name: "ExchangeTransactionContract" },
+  45: { name: "UpdateEnergyLimitContract" },
+  46: { name: "AccountPermissionUpdateContract" },
+  48: { name: "ClearABIContract" },
+  49: { name: "UpdateBrokerageContract" },
+  51: { name: "ShieldedTransferContract" },
+  52: { name: "MarketSellAssetContract" },
+  53: { name: "MarketCancelOrderContract" },
+  54: { name: "FreezeBalanceV2Contract" },
+  55: { name: "UnfreezeBalanceV2Contract" },
+  56: { name: "WithdrawExpireUnfreezeContract" },
+  57: { name: "DelegateResourceContract" },
+  58: { name: "UnDelegateResourceContract" },
+  59: { name: "CancelAllUnfreezeV2Contract" },
 };
-const convertNumberToContractType = (value: number): string => CONTRACT_TYPE[value];
+const convertNumberToContractType = (value: number): ContractInfo => CONTRACT_TYPE[value];
 
 /**
  * Convert for instance: "41FD49EDA0F23FF7EC1D03B52C3A45991C24CD440E" to "TZ4UXDV5ZhNW7fb2AMSbgfAEZ7hWsnYS2g"
@@ -379,4 +386,16 @@ export function getTronResources(
     tronPower,
     lastWithdrawnRewardDate,
   };
+}
+
+export function feesToNumber(customFees?: bigint): number | undefined {
+  if (
+    customFees !== undefined &&
+    customFees >= Number.MIN_SAFE_INTEGER &&
+    customFees <= Number.MAX_SAFE_INTEGER
+  ) {
+    return Number(customFees);
+  }
+
+  return undefined;
 }

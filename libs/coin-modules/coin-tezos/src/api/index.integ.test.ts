@@ -1,5 +1,7 @@
 import { type Api } from "@ledgerhq/coin-framework/api/index";
+import { localForger } from "@taquito/local-forging";
 import { createApi } from ".";
+
 /**
  * https://teztnets.com/ghostnet-about
  * https://api.tzkt.io/#section/Get-Started/Free-TzKT-API
@@ -97,32 +99,65 @@ describe("Tezos Api", () => {
   });
 
   describe("craftTransaction", () => {
-    it.skip.each([
-      {
-        type: "send",
-        rawTx:
-          "6c0053ddb3b3a89ed5c8d8326066032beac6de225c9e010300000a0000a31e81ac3425310e3274a4698a793b2839dc0afa00",
-      },
-      {
-        type: "delegate",
-        rawTx:
-          "6e0053ddb3b3a89ed5c8d8326066032beac6de225c9e01030000ff00a31e81ac3425310e3274a4698a793b2839dc0afa",
-      },
-      {
-        type: "undelegate",
-        rawTx: "6e0053ddb3b3a89ed5c8d8326066032beac6de225c9e0103000000",
-      },
-    ])("returns a raw transaction with $type", async ({ type, rawTx }) => {
+    async function decode(sbytes: string) {
+      return await localForger.parse(sbytes);
+    }
+
+    it.each(["send", "delegate", "undelegate"])("returns a raw transaction with %s", async type => {
+      const recipient = "tz1aWXP237BLwNHJcCD4b3DutCevhqq2T1Z9";
+      const amount = BigInt(10);
       // When
-      const result = await module.craftTransaction({
+      const encodedTransaction = await module.craftTransaction({
         type,
+        sender: address,
+        recipient: recipient,
+        amount: amount,
+      });
+
+      const decodedTransaction = await decode(encodedTransaction);
+      expect(decodedTransaction.contents).toHaveLength(1);
+
+      const operationContent = decodedTransaction.contents[0];
+      expect(operationContent.source).toEqual(address);
+      expect(BigInt(operationContent.fee)).toBeGreaterThan(0);
+
+      if (type === "send") {
+        expect(BigInt(operationContent.amount)).toEqual(amount);
+        expect(operationContent.destination).toEqual(recipient);
+      } else if (type === "delegate") {
+        expect(operationContent.delegate).toEqual(recipient);
+      }
+    });
+
+    it("should use estimated fees when user does not provide them for crafting a transaction", async () => {
+      const encodedTransaction = await module.craftTransaction({
+        type: "send",
         sender: address,
         recipient: "tz1aWXP237BLwNHJcCD4b3DutCevhqq2T1Z9",
         amount: BigInt(10),
       });
 
-      // Then
-      expect(result.slice(64)).toEqual(rawTx);
+      const decodedTransaction = await decode(encodedTransaction);
+      const transactionFee = BigInt(decodedTransaction.contents[0].fee);
+      expect(transactionFee).toBeGreaterThan(0);
     });
+
+    it.each([1n, 50n, 99n])(
+      "should use custom user fees when user provides it for crafting a transaction",
+      async (customFees: bigint) => {
+        const encodedTransaction = await module.craftTransaction(
+          {
+            type: "send",
+            sender: address,
+            recipient: "tz1aWXP237BLwNHJcCD4b3DutCevhqq2T1Z9",
+            amount: BigInt(10),
+          },
+          customFees,
+        );
+
+        const decodedTransaction = await decode(encodedTransaction);
+        expect(decodedTransaction.contents[0].fee).toEqual(customFees.toString());
+      },
+    );
   });
 });

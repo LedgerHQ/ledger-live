@@ -6,7 +6,7 @@ import { Trans, withTranslation } from "react-i18next";
 import { createStructuredSelector } from "reselect";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import Track from "~/renderer/analytics/Track";
-import { Account, AccountLike, SubAccount } from "@ledgerhq/types-live";
+import { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
@@ -136,7 +136,7 @@ const Body = ({
   const currency = getAccountCurrency(account);
   const currencyName = currency ? currency.name : undefined;
   const handleChangeAccount = useCallback(
-    (account: Account | SubAccount, parentAccount?: Account | null) => {
+    (account: Account | TokenAccount, parentAccount?: Account | null) => {
       setAccount(account);
       setParentAccount(parentAccount);
     },

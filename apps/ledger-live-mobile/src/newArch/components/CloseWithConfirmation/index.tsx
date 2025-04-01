@@ -25,26 +25,26 @@ export default function CloseWithConfirmation({
     <NavigationHeaderCloseButtonAdvanced
       withConfirmation={routesWithConfirmation.includes(route.name)}
       confirmationTitle={<Trans i18nKey="addAccounts.quitConfirmation.v2.title" />}
-      confirmationDesc={<Trans i18nKey="addAccounts.quitConfirmation.v2.desc" />}
       {...(onClose && { onClose })}
       {...(showButton && { showButton })}
       {...(buttonText && { buttonText })}
       customDrawerStyle={{
         title: {
           textAlign: "left",
-          fontSize: 24,
+          fontSize: 18,
           fontWeight: 600,
           lineHeight: 32.4,
           letterSpacing: -0.72,
-        },
-        description: {
-          textAlign: "left",
-          paddingHorizontal: 0,
-          fontSize: 14,
-          fontWeight: 500,
-          lineHeight: 21,
+          marginBottom: 16,
+          marginTop: -45,
         },
       }}
+      cancelCTAConfig={{
+        type: "primary",
+        outline: true,
+      }}
+      confirmButtonText={<Trans i18nKey="addAccounts.quitConfirmation.v2.cancel" />}
+      rejectButtonText={<Trans i18nKey="addAccounts.quitConfirmation.v2.continue" />}
     />
   );
 }

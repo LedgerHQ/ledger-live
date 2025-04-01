@@ -3,7 +3,7 @@ import { useHistory } from "react-router-dom";
 import { BigNumber } from "bignumber.js";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
-import { Account, AccountLike, SubAccount } from "@ledgerhq/types-live";
+import { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useCurrencyColor } from "~/renderer/getCurrencyColor";
 import CounterValue from "~/renderer/components/CounterValue";
@@ -42,7 +42,7 @@ export default function Row({
   const theme = useTheme();
   const history = useHistory();
   const onAccountClick = useCallback(
-    (account: Account | SubAccount) => {
+    (account: Account | TokenAccount) => {
       setTrackingSource("account allocation");
       history.push({
         pathname:
