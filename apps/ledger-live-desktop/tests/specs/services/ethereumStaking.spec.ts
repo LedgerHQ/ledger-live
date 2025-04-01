@@ -123,7 +123,7 @@ test("Ethereum staking flows via portfolio, asset page and market page @smoke", 
     await expect.soft(page).toHaveScreenshot("choose-stake-provider-modal-from-portfolio-page.png");
   });
 
-  await test.step("choose Kiln", async () => {
+  await test.step("choose Kiln - trigger analytics", async () => {
     const analyticsPromise = analytics.waitForTracking({
       event: "button_clicked2",
       properties: {
@@ -133,10 +133,12 @@ test("Ethereum staking flows via portfolio, asset page and market page @smoke", 
         flow: "stake",
         value: "/platform/kiln",
       },
-      timeout: 10000,
     });
     await delegate.chooseStakeProvider("kiln");
     await analyticsPromise;
+  });
+
+  await test.step("wait for Kiln dapp to load", async () => {
     await liveAppWebview.waitForCorrectTextInWebview("Ethereum 1");
     const dappURL = await liveAppWebview.getLiveAppDappURL();
     expect(await liveAppWebview.getLiveAppTitle()).toBe("Kiln");
@@ -201,17 +203,18 @@ test("Ethereum staking flows via portfolio, asset page and market page @smoke", 
       event: "button_clicked2",
       properties: {
         button: "kiln_pooling",
-        path: "account/mock:1:ethereum:true_ethereum_1:",
+        path: "market/ethereum",
         modal: "stake",
         flow: "stake",
         value: "/platform/kiln",
       },
     });
     await delegate.chooseStakeProvider("kiln_pooling");
-    await analyticsPromise;
     const dappURL = await liveAppWebview.getLiveAppDappURL();
     await liveAppWebview.waitForCorrectTextInWebview("Ethereum 2");
     expect(dappURL).toContain("?focus=pooled");
     expect(await liveAppWebview.getLiveAppTitle()).toBe("Kiln");
+
+    await analyticsPromise;
   });
 });
