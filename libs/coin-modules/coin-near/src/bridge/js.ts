@@ -6,7 +6,7 @@ import {
   updateTransaction,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import type { AccountBridge, Bridge, CurrencyBridge } from "@ledgerhq/types-live";
 import { broadcast } from "../broadcast";
 import { NearCoinConfig, setCoinConfig } from "../config";
 import { createTransaction } from "../createTransaction";
@@ -22,7 +22,7 @@ import { getAccountShape, sync } from "../synchronisation";
 import { serialization } from "../transaction";
 import type { NearAccount, Transaction, TransactionRaw, TransactionStatus } from "../types";
 
-export function buildCurrencyBridge(signerContext: SignerContext<NearSigner>): CurrencyBridge {
+function buildCurrencyBridge(signerContext: SignerContext<NearSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
 
   const scanAccounts = makeScanAccounts({
@@ -38,7 +38,7 @@ export function buildCurrencyBridge(signerContext: SignerContext<NearSigner>): C
   };
 }
 
-export function buildAccountBridge(
+function buildAccountBridge(
   signerContext: SignerContext<NearSigner>,
 ): AccountBridge<Transaction, NearAccount, TransactionStatus, TransactionRaw> {
   const getAddress = resolver(signerContext);
@@ -63,10 +63,12 @@ export function buildAccountBridge(
   };
 }
 
+export type NearBridge = Bridge<Transaction, NearAccount, TransactionStatus, TransactionRaw>;
+
 export function createBridges(
   signerContext: SignerContext<NearSigner>,
   coinConfig: NearCoinConfig,
-) {
+): NearBridge {
   setCoinConfig(coinConfig);
 
   return {

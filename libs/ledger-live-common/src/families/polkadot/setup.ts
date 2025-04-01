@@ -1,14 +1,8 @@
 // Goal of this file is to inject all necessary device/signer dependency to coin-modules
 
-import {
-  PolkadotAccount,
-  TransactionStatus,
-  createBridges,
-  type Transaction,
-} from "@ledgerhq/coin-polkadot";
+import { createBridges, type PolkadotBridge } from "@ledgerhq/coin-polkadot";
 import Transport from "@ledgerhq/hw-transport";
 import Polkadot from "@ledgerhq/hw-app-polkadot";
-import type { Bridge } from "@ledgerhq/types-live";
 import { PolkadotCoinConfig } from "@ledgerhq/coin-polkadot/config";
 import polkadotResolver from "@ledgerhq/coin-polkadot/signer/index";
 import makeCliTools, { type CliTools } from "@ledgerhq/coin-polkadot/test/cli";
@@ -26,10 +20,7 @@ const getCurrencyConfig = (): PolkadotCoinConfig => {
   return getCurrencyConfiguration(polkadot);
 };
 
-const bridge: Bridge<Transaction, PolkadotAccount, TransactionStatus> = createBridges(
-  executeWithSigner(createSigner),
-  getCurrencyConfig,
-);
+const bridge: PolkadotBridge = createBridges(executeWithSigner(createSigner), getCurrencyConfig);
 
 const resolver: Resolver = createResolver(createSigner, polkadotResolver);
 

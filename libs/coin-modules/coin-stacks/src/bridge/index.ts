@@ -7,7 +7,7 @@ import {
   updateTransaction,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import type { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import type { Account, AccountBridge, Bridge, CurrencyBridge } from "@ledgerhq/types-live";
 import resolver from "../signer/index";
 import type { StacksSigner, Transaction, TransactionRaw, TransactionStatus } from "../types";
 import { broadcast } from "./broadcast";
@@ -59,7 +59,9 @@ function buildAccountBridge(
   };
 }
 
-export function createBridges(signerContext: SignerContext<StacksSigner>) {
+export type StacksBridge = Bridge<Transaction, Account, TransactionStatus, TransactionRaw>;
+
+export function createBridges(signerContext: SignerContext<StacksSigner>): StacksBridge {
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),

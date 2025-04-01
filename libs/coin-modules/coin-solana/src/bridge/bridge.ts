@@ -9,7 +9,7 @@ import {
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { minutes, makeLRUCache } from "@ledgerhq/live-network/cache";
 import { GetAddressFn } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
-import type { AccountBridge, AccountLike, CurrencyBridge } from "@ledgerhq/types-live";
+import type { AccountBridge, AccountLike, Bridge, CurrencyBridge } from "@ledgerhq/types-live";
 import type {
   SolanaAccount,
   SolanaPreloadDataV1,
@@ -156,6 +156,8 @@ function getPreloadStrategy() {
   };
 }
 
+export type SolanaBridge = Bridge<Transaction, SolanaAccount, TransactionStatus, TransactionRaw>;
+
 export function makeBridges({
   getAPI,
   getQueuedAPI,
@@ -166,10 +168,7 @@ export function makeBridges({
   getQueuedAPI: (config: Config) => Promise<ChainAPI>;
   getQueuedAndCachedAPI: (config: Config) => Promise<ChainAPI>;
   signerContext: SignerContext<SolanaSigner>;
-}): {
-  currencyBridge: CurrencyBridge;
-  accountBridge: AccountBridge<Transaction, SolanaAccount, TransactionStatus, TransactionRaw>;
-} {
+}): SolanaBridge {
   const getAddress = resolver(signerContext);
   const { sync, scan } = makeSyncAndScan(getQueuedAPI, getAddress);
 

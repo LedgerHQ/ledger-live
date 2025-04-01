@@ -9,7 +9,7 @@ import {
 import { CoinConfig } from "@ledgerhq/coin-framework/config";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 
-import type { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import type { Account, AccountBridge, Bridge, CurrencyBridge } from "@ledgerhq/types-live";
 import { broadcast } from "../broadcast";
 import { IconCoinConfig, setCoinConfig } from "../config";
 import { createTransaction } from "../createTransaction";
@@ -25,7 +25,7 @@ import { getAccountShape } from "../synchronization";
 import { serialization } from "../transaction";
 import type { Transaction, TransactionRaw, TransactionStatus } from "../types/index";
 
-export function buildCurrencyBridge(signerContext: SignerContext<IconSigner>): CurrencyBridge {
+function buildCurrencyBridge(signerContext: SignerContext<IconSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
 
   const scanAccounts = makeScanAccounts({
@@ -40,7 +40,7 @@ export function buildCurrencyBridge(signerContext: SignerContext<IconSigner>): C
   };
 }
 
-export function buildAccountBridge(
+function buildAccountBridge(
   signerContext: SignerContext<IconSigner>,
 ): AccountBridge<Transaction, Account, TransactionStatus, TransactionRaw> {
   const getAddress = resolver(signerContext);
@@ -67,10 +67,12 @@ export function buildAccountBridge(
   };
 }
 
+export type IconBridge = Bridge<Transaction, Account, TransactionStatus, TransactionRaw>;
+
 export function createBridges(
   signerContext: SignerContext<IconSigner>,
   coinConfig: CoinConfig<IconCoinConfig>,
-) {
+): IconBridge {
   setCoinConfig(coinConfig);
 
   return {

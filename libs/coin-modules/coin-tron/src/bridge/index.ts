@@ -7,7 +7,7 @@ import {
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { CoinConfig } from "@ledgerhq/coin-framework/config";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import type { AccountBridge, Bridge, CurrencyBridge } from "@ledgerhq/types-live";
 import tronCoinConfig, { type TronCoinConfig } from "../config";
 import signerGetAddress from "../signer";
 import {
@@ -75,10 +75,12 @@ function buildAccountBridge(
   };
 }
 
+export type TronBridge = Bridge<Transaction, TronAccount, TransactionStatus, TransactionRaw>;
+
 export function createBridges(
   signerContext: SignerContext<TronSigner>,
   coinConfig: CoinConfig<TronCoinConfig>,
-) {
+): TronBridge {
   tronCoinConfig.setCoinConfig(coinConfig);
 
   return {

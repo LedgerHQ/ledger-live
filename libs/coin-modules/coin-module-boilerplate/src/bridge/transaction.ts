@@ -38,7 +38,7 @@ with fee=${
       })
 }`;
 
-const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
+export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   const common = fromTransactionCommonRaw(tr);
   return {
     ...common,

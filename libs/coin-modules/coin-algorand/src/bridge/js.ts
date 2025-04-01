@@ -6,7 +6,7 @@ import {
   updateTransaction,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import type { AccountBridge, Bridge, CurrencyBridge } from "@ledgerhq/types-live";
 import { broadcast } from "../broadcast";
 import { createTransaction } from "../createTransaction";
 import { estimateMaxSpendable } from "../estimateMaxSpendable";
@@ -33,7 +33,7 @@ import type {
   TransactionStatus,
 } from "../types";
 
-export function buildCurrencyBridge(signerContext: SignerContext<AlgorandSigner>): CurrencyBridge {
+function buildCurrencyBridge(signerContext: SignerContext<AlgorandSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
 
   const scanAccounts = makeScanAccounts({
@@ -48,7 +48,7 @@ export function buildCurrencyBridge(signerContext: SignerContext<AlgorandSigner>
   };
 }
 
-export function buildAccountBridge(
+function buildAccountBridge(
   signerContext: SignerContext<AlgorandSigner>,
 ): AccountBridge<Transaction, AlgorandAccount, TransactionStatus, AlgorandTransactionRaw, AlgorandOperation> {
   const getAddress = resolver(signerContext);
@@ -77,7 +77,14 @@ export function buildAccountBridge(
   };
 }
 
-export function createBridges(signerContext: SignerContext<AlgorandSigner>) {
+export type AlgorandBridge = Bridge<
+  Transaction,
+  AlgorandAccount,
+  TransactionStatus,
+  AlgorandTransactionRaw
+>;
+
+export function createBridges(signerContext: SignerContext<AlgorandSigner>): AlgorandBridge {
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),

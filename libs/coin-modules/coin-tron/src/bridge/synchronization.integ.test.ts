@@ -101,11 +101,14 @@ describe("Sync Accounts", () => {
     const id = "TL24LCps5FKwp3PoU1MvrYrwhi5LU1tHre";
 
     // WHEN
-    const account = await syncAccount<Transaction, TronAccount, TransactionStatus, TransactionRaw>(bridge.accountBridge, {
-      ...dummyAccount,
-      id: `js:2:tron:${id}:`,
-      freshAddress: id,
-    });
+    const account = await syncAccount<Transaction, TronAccount, TransactionStatus, TransactionRaw>(
+      bridge.accountBridge,
+      {
+        ...dummyAccount,
+        id: `js:2:tron:${id}:`,
+        freshAddress: id,
+      },
+    );
 
     // THEN
     expect(account.id).toEqual(`js:2:tron:${id}:`);
