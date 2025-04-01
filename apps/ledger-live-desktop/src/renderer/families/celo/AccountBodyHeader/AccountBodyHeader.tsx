@@ -27,13 +27,6 @@ type Props = {
   account: CeloAccount;
 };
 const AccountBodyHeaderComponent = ({ account }: Props) => {
-  console.log({account})
-  if (!account.celoResources) {
-    console.warn("no celoResources")
-    return;
-  } else {
-    console.log("resources ! yay")
-  }
   const {
     celoResources: { votes },
   } = account;

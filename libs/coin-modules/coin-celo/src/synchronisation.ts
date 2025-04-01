@@ -1,6 +1,6 @@
 import { makeScanAccounts } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { getAccountRegistrationStatus, getPendingWithdrawals, getVotes } from "./api/sdk";
-import { makeSync, makeScanAccounts, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { makeSync, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import type { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account";
 import { getAccountDetails } from "./api";
@@ -15,7 +15,7 @@ export const getAccountShape: GetAccountShape<CeloAccount> = async info => {
   const election = await kit.contracts.getElection();
   const electionConfig = await election.getConfig();
   const lockedGold = await kit.contracts.getLockedGold();
-
+  debugger;
   const accountId = encodeAccountId({
     type: "js",
     version: "2",
@@ -56,6 +56,7 @@ export const getAccountShape: GetAccountShape<CeloAccount> = async info => {
       maxNumGroupsVotedFor: electionConfig.maxNumGroupsVotedFor,
     },
   };
+  debugger;
   return { ...shape, operations };
 };
 
