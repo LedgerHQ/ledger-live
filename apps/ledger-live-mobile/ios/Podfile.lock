@@ -1427,7 +1427,7 @@ PODS:
     - Yoga
   - react-native-biometrics (3.0.1):
     - React-Core
-  - react-native-ble-plx (3.2.1):
+  - react-native-ble-plx (3.4.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -2528,7 +2528,7 @@ SPEC CHECKSUMS:
   React-Mapbuffer: b982d5bba94a8bc073bda48f0d27c9b28417fae3
   React-microtasksnativemodule: 2b73e68f0462f3175f98782db08896f8501afd20
   react-native-biometrics: 352e5a794bfffc46a0c86725ea7dc62deb085bdc
-  react-native-ble-plx: 0a3f7bd84bd819bf1c32e003d083eaa3f2082ecb
+  react-native-ble-plx: f2aceed91cb75e91a858861810ac033a0be709d4
   react-native-config: 8f7283449bbb048902f4e764affbbf24504454af
   react-native-fast-crypto: 5943c42466b86ad70be60d3a5f64bd22251e5d9e
   react-native-fast-pbkdf2: 44d6ffa0346863e14100294004a1595ec76b2e9f
