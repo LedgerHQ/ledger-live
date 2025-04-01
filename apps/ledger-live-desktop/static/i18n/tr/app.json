@@ -1779,7 +1779,7 @@
     },
     "fullNodeReadyInfo" : "Hesaplar Bitcoin tam düğümünüz ile eklenecektir.",
     "fullNodeConfigure" : "Düğümü yapılandır",
-    "tokensTip" : "{{token}} ({{ticker}}) bir {{tokenType}} token'ıdır. Token'ları doğrudan bir {{currency}} hesabına alabilirsiniz.",
+    "tokensTip" : "{{token}} ({{ticker}}) is an {{tokenType}} token. You can receive tokens directly on a/an {{currency}} account.",
     "accountToImportSubtitle_plural" : "Mevcut hesapları ekle",
     "selectAll" : "Tümünü seç ({{count}})",
     "unselectAll" : "Tüm seçimleri kaldır ({{count}})",
