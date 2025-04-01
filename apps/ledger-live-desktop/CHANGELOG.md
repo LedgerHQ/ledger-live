@@ -1,5 +1,16 @@
 # ledger-live-desktop
 
+## 2.107.0-hotfix.0
+
+### Minor Changes
+
+- [#9664](https://github.com/LedgerHQ/ledger-live/pull/9664) [`dbb38d2`](https://github.com/LedgerHQ/ledger-live/commit/dbb38d250d2a4df34c2caa65e9d1174f0f018c63) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Auto-generate staking entry points and flows from redirects configuration on stakePrograms firebase feature flag. Add utils in common library to append params to any manifest url - use these in mobile to fix missing query params in custom dapp URL.
+
+### Patch Changes
+
+- Updated dependencies [[`dbb38d2`](https://github.com/LedgerHQ/ledger-live/commit/dbb38d250d2a4df34c2caa65e9d1174f0f018c63)]:
+  - @ledgerhq/live-common@34.29.0-hotfix.0
+
 ## 2.106.0
 
 ### Minor Changes
