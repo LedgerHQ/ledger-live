@@ -131,7 +131,13 @@ const makeScenarioTransactions = ({
   ];
 };
 
-export const scenarioEthereum: Scenario<EvmTransaction, Account> = {
+export const scenarioEthereum: Scenario<
+  EvmTransaction,
+  Account,
+  TransactionStatus,
+  EvmTransactionRaw,
+  TransactionStatusRaw
+> = {
   name: "Ledger Live Basic ETH Transactions",
   setup: async () => {
     const [{ transport, getOnSpeculosConfirmation }] = await Promise.all([

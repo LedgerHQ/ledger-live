@@ -1,15 +1,5 @@
-import { BigNumber } from "bignumber.js";
-import type {
-  Transaction,
-  TransactionRaw,
-  FeeItems,
-  FeeItemsRaw,
-  TransactionStatusRaw,
-  TransactionStatus,
-  BitcoinAccount,
-} from "./types";
-import { bitcoinPickingStrategy } from "./types";
-import { getEnv } from "@ledgerhq/live-env";
+import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import { formatTransactionStatus as formatTransactionStatusCommon } from "@ledgerhq/coin-framework/formatters";
 import {
   fromTransactionCommonRaw,
@@ -17,16 +7,33 @@ import {
   toTransactionCommonRaw,
   toTransactionStatusRawCommon,
 } from "@ledgerhq/coin-framework/serialization";
-import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
-import type { Account } from "@ledgerhq/types-live";
+import { getEnv } from "@ledgerhq/live-env";
+import type { Account, SerializationTransactionBridge } from "@ledgerhq/types-live";
+import { BigNumber } from "bignumber.js";
+import { formatInput, formatOutput } from "./formatters";
 import {
   fromBitcoinInputRaw,
   fromBitcoinOutputRaw,
   toBitcoinInputRaw,
   toBitcoinOutputRaw,
 } from "./serialization";
-import { formatInput, formatOutput } from "./formatters";
+import type {
+  BitcoinAccount,
+  FeeItems,
+  FeeItemsRaw,
+  Transaction,
+  TransactionRaw,
+  TransactionStatus,
+  TransactionStatusRaw,
+} from "./types";
+import { bitcoinPickingStrategy } from "./types";
+
+type BitcoinSerializationTransactionBridge = SerializationTransactionBridge<
+  Transaction,
+  TransactionRaw,
+  TransactionStatus,
+  TransactionStatusRaw
+>;
 
 const fromFeeItemsRaw = (fir: FeeItemsRaw): FeeItems => ({
   items: fir.items.map(fi => ({
@@ -63,7 +70,7 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   };
 };
 
-export const toTransactionRaw = (t: Transaction): TransactionRaw => {
+const toTransactionRaw = (t: Transaction): TransactionRaw => {
   const common = toTransactionCommonRaw(t);
   return {
     ...common,
@@ -90,7 +97,7 @@ const fromTransactionStatusRaw = (tr: TransactionStatusRaw): TransactionStatus =
   };
 };
 
-export const toTransactionStatusRaw = (t: TransactionStatus): TransactionStatusRaw => {
+const toTransactionStatusRaw = (t: TransactionStatus): TransactionStatusRaw => {
   const common = toTransactionStatusRawCommon(t);
   return {
     ...common,
@@ -175,11 +182,11 @@ ${[
     .join("")}`;
 };
 
-export default {
+export const serialization = {
   fromTransactionRaw,
   toTransactionRaw,
   formatTransaction,
   formatTransactionStatus,
   fromTransactionStatusRaw,
   toTransactionStatusRaw,
-};
+} satisfies BitcoinSerializationTransactionBridge;

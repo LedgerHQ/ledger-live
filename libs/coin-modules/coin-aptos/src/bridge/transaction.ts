@@ -1,6 +1,4 @@
-import { BigNumber } from "bignumber.js";
-import type { Transaction, TransactionRaw } from "../types";
-
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import { formatTransactionStatus } from "@ledgerhq/coin-framework/formatters";
 import {
   fromTransactionCommonRaw,
@@ -8,8 +6,14 @@ import {
   toTransactionCommonRaw,
   toTransactionStatusRawCommon as toTransactionStatusRaw,
 } from "@ledgerhq/coin-framework/serialization";
-import { Account } from "@ledgerhq/types-live";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+import { type Account, SerializationTransactionBridge } from "@ledgerhq/types-live";
+import { BigNumber } from "bignumber.js";
+import type { Transaction, TransactionRaw } from "../types";
+
+type AptosSerializationTransactionBridge = SerializationTransactionBridge<
+  Transaction,
+  TransactionRaw
+>;
 
 export const formatTransaction = (
   { mode, amount, fees, recipient, useAllAmount }: Transaction,
@@ -58,4 +62,4 @@ export default {
   fromTransactionStatusRaw,
   toTransactionStatusRaw,
   formatTransactionStatus,
-};
+} satisfies AptosSerializationTransactionBridge;

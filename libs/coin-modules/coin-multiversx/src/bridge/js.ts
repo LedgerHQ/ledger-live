@@ -1,9 +1,9 @@
 import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import {
   getSerializedAddressParameters,
-  updateTransaction,
   makeAccountBridgeReceive,
   makeScanAccounts,
+  updateTransaction,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { SignerContext } from "@ledgerhq/coin-framework/lib/signer";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
@@ -24,11 +24,14 @@ import {
 import { MultiversXSigner } from "../signer";
 import { buildSignOperation } from "../signOperation";
 import { getAccountShape, sync } from "../synchronisation";
+import { serialiation } from "../transaction";
 import type {
   MultiversXAccount,
   MultiversXOperation,
   Transaction,
+  TransactionRaw,
   TransactionStatus,
+  TransactionStatusRaw,
 } from "../types";
 
 export function buildCurrencyBridge(
@@ -51,7 +54,14 @@ export function buildCurrencyBridge(
 
 export function buildAccountBridge(
   signerContext: SignerContext<MultiversXSigner>,
-): AccountBridge<Transaction, MultiversXAccount, TransactionStatus, MultiversXOperation> {
+): AccountBridge<
+  Transaction,
+  MultiversXAccount,
+  TransactionStatus,
+  TransactionRaw,
+  TransactionStatusRaw,
+  MultiversXOperation
+> {
   const getAddress = resolver(signerContext);
 
   const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));
@@ -71,9 +81,9 @@ export function buildAccountBridge(
     assignToAccountRaw,
     fromOperationExtraRaw,
     toOperationExtraRaw,
-    formatAccountSpecifics: formatters.formatAccountSpecifics,
-    formatOperationSpecifics: formatters.formatOperationSpecifics,
     getSerializedAddressParameters,
+    ...formatters,
+    ...serialiation,
   };
 }
 

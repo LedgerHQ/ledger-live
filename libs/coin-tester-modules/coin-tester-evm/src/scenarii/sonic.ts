@@ -63,7 +63,13 @@ const makeScenarioTransactions = ({ address }: { address: string }): SonicScenar
   return [scenarioSendSTransaction, scenarioSendUSDCTransaction];
 };
 
-export const scenarioSonic: Scenario<EvmTransaction, Account> = {
+export const scenarioSonic: Scenario<
+  EvmTransaction,
+  Account,
+  TransactionStatus,
+  EvmTransactionRaw,
+  TransactionStatusRaw
+> = {
   name: "Ledger Live Basic S Transactions",
   setup: async () => {
     const [{ transport, getOnSpeculosConfirmation }] = await Promise.all([

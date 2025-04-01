@@ -63,7 +63,13 @@ const makeScenarioTransactions = ({ address }: { address: string }): BlastScenar
   return [scenarioSendEthTransaction, scenarioSendMIMTransaction];
 };
 
-export const scenarioBlast: Scenario<EvmTransaction, Account> = {
+export const scenarioBlast: Scenario<
+  EvmTransaction,
+  Account,
+  TransactionStatus,
+  EvmTransactionRaw,
+  TransactionStatusRaw
+> = {
   name: "Ledger Live Basic Blast Transactions",
   setup: async () => {
     const [{ transport, getOnSpeculosConfirmation }] = await Promise.all([

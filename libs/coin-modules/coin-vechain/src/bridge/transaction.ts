@@ -1,21 +1,26 @@
 import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
-import type {
-  Transaction,
-  TransactionRaw,
-  TransactionStatus,
-  TransactionStatusRaw,
-} from "../types";
-import { formatTransactionStatus } from "@ledgerhq/coin-framework/formatters";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+import { formatTransactionStatus } from "@ledgerhq/coin-framework/formatters";
 import {
   fromTransactionCommonRaw,
   fromTransactionStatusRawCommon,
   toTransactionCommonRaw,
   toTransactionStatusRawCommon,
 } from "@ledgerhq/coin-framework/serialization";
-import type { Account } from "@ledgerhq/types-live";
+import type { Account, SerializationTransactionBridge } from "@ledgerhq/types-live";
+import type {
+  Transaction,
+  TransactionRaw,
+  TransactionStatus,
+  TransactionStatusRaw,
+} from "../types";
 
-export const formatTransaction = (t: Transaction, account: Account): string => {
+type VechainSerializationTransactionBridge = SerializationTransactionBridge<
+  Transaction,
+  TransactionRaw
+>;
+
+const formatTransaction = (t: Transaction, account: Account): string => {
   const { amount, recipient, useAllAmount } = t;
   let displayedAmount: string;
   if (useAllAmount) {
@@ -42,7 +47,7 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   };
 };
 
-export const toTransactionRaw = (t: Transaction): TransactionRaw => {
+const toTransactionRaw = (t: Transaction): TransactionRaw => {
   const common = toTransactionCommonRaw(t);
 
   return {
@@ -51,7 +56,7 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
   };
 };
 
-export const fromTransactionStatusRaw = (ts: TransactionStatusRaw): TransactionStatus => {
+const fromTransactionStatusRaw = (ts: TransactionStatusRaw): TransactionStatus => {
   const common = fromTransactionStatusRawCommon(ts);
 
   return {
@@ -60,7 +65,7 @@ export const fromTransactionStatusRaw = (ts: TransactionStatusRaw): TransactionS
   };
 };
 
-export const toTransactionStatusRaw = (ts: TransactionStatus): TransactionStatusRaw => {
+const toTransactionStatusRaw = (ts: TransactionStatus): TransactionStatusRaw => {
   const common = toTransactionStatusRawCommon(ts);
 
   return {
@@ -69,11 +74,11 @@ export const toTransactionStatusRaw = (ts: TransactionStatus): TransactionStatus
   };
 };
 
-export default {
+export const serialization = {
   formatTransaction,
   formatTransactionStatus,
   fromTransactionRaw,
   toTransactionRaw,
   fromTransactionStatusRaw,
   toTransactionStatusRaw,
-};
+} satisfies VechainSerializationTransactionBridge;

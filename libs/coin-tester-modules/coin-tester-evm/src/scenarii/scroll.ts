@@ -67,7 +67,13 @@ const makeScenarioTransactions = ({
   return [scenarioSendEthTransaction, scenarioSendUSDCTransaction];
 };
 
-export const scenarioScroll: Scenario<EvmTransaction, Account> = {
+export const scenarioScroll: Scenario<
+  EvmTransaction,
+  Account,
+  TransactionStatus,
+  EvmTransactionRaw,
+  TransactionStatusRaw
+> = {
   name: "Ledger Live Basic Scroll Transactions",
   setup: async () => {
     const [{ transport, getOnSpeculosConfirmation }] = await Promise.all([

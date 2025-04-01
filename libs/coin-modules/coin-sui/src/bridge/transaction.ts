@@ -1,4 +1,4 @@
-import type { Account } from "@ledgerhq/types-live";
+import type { Account, SerializationTransactionBridge } from "@ledgerhq/types-live";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
 import { formatTransactionStatus } from "@ledgerhq/coin-framework/formatters";
 import {
@@ -10,6 +10,11 @@ import {
 import { BigNumber } from "bignumber.js";
 import { getAccountUnit } from "./utils";
 import type { Transaction, TransactionRaw } from "../types";
+
+type SuiSerializationTransactionBridge = SerializationTransactionBridge<
+  Transaction,
+  TransactionRaw
+>;
 
 export const formatTransaction = (transaction: Transaction, account: Account): string => {
   const { mode, amount, recipient, useAllAmount } = transaction;
@@ -51,11 +56,11 @@ export const toTransactionRaw = (transaction: Transaction): TransactionRaw => {
   };
 };
 
-export default {
+export const serialization = {
   formatTransaction,
   fromTransactionRaw,
   toTransactionRaw,
   formatTransactionStatus,
   fromTransactionStatusRaw,
   toTransactionStatusRaw,
-};
+} satisfies SuiSerializationTransactionBridge;
