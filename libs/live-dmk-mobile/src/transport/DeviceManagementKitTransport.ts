@@ -181,7 +181,10 @@ export class DeviceManagementKitTransport extends Transport {
 
           tracer.trace(`[DMKTransport] [open] device found ${found.id}`);
 
-          const sessionId = await getDeviceManagementKit().connect({ device: found });
+          const sessionId = await getDeviceManagementKit().connect({
+            device: found,
+            sessionRefresherOptions: { isRefresherDisabled: true },
+          });
           const transport = new DeviceManagementKitTransport(getDeviceManagementKit(), sessionId);
           const reenableRefresher = getDeviceManagementKit().disableDeviceSessionRefresher({
             sessionId,
@@ -221,7 +224,10 @@ export class DeviceManagementKitTransport extends Transport {
         throw error;
       }
     } else {
-      const sessionId = await getDeviceManagementKit().connect({ device: deviceOrId });
+      const sessionId = await getDeviceManagementKit().connect({
+        device: deviceOrId,
+        sessionRefresherOptions: { isRefresherDisabled: true },
+      });
       const transport = new DeviceManagementKitTransport(getDeviceManagementKit(), sessionId);
       const reenableRefresher = getDeviceManagementKit().disableDeviceSessionRefresher({
         sessionId,

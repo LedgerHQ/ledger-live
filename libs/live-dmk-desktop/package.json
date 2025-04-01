@@ -31,8 +31,8 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "@ledgerhq/device-management-kit": "0.0.0-rnble-transport-20250331135728",
-    "@ledgerhq/device-transport-kit-web-hid": "0.0.0-rnble-transport-20250331135728",
+    "@ledgerhq/device-management-kit": "0.0.0-rnble-transport-20250401145214",
+    "@ledgerhq/device-transport-kit-web-hid": "0.0.0-rnble-transport-20250401145214",
     "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/live-dmk-shared": "workspace:^",
     "@ledgerhq/logs": "^6.12.0",

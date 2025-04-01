@@ -73,6 +73,7 @@ export class DeviceManagementKitTransport extends Transport {
     );
     const connectedSessionId = await getDeviceManagementKit().connect({
       device: discoveredDevice,
+      sessionRefresherOptions: { isRefresherDisabled: true },
     });
 
     tracer.trace("[open] Connected");
@@ -159,6 +160,7 @@ export class DeviceManagementKitTransport extends Transport {
       );
       const connectedSessionId = await getDeviceManagementKit().connect({
         device: discoveredDevice,
+        sessionRefresherOptions: { isRefresherDisabled: true },
       });
       this.sessionId = connectedSessionId;
     }
