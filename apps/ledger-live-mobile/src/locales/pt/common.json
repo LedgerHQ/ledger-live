@@ -4047,7 +4047,9 @@
       "desc" : "Você tem certeza de que quer cancelar a adição de contas?",
       "v2" : {
         "title" : "Cancelar adição de conta?",
-        "desc" : "Nenhuma conta será adicionada ao Ledger Live."
+        "desc" : "Nenhuma conta será adicionada ao Ledger Live.",
+        "continue" : "Continue adding",
+        "cancel" : "Cancel"
       }
     },
     "imported" : "Ativos adicionados com sucesso",
@@ -4085,7 +4087,7 @@
       "title" : "Adicionar Token",
       "createParentCurrencyAccount" : "Adicionar conta {{parrentCurrencyName}}",
       "generic" : {
-        "disclaimer" : "{{token}} ({{ticker}}) é um token {{tokenType}}.\nVocê pode receber tokens diretamente em uma conta {{currency}}.",
+        "disclaimer" : "{{token}} ({{ticker}}) is an {{tokenType}} token.\nYou can receive tokens directly on a/an {{currency}} account.",
         "learnMore" : "Saiba mais sobre {{tokenType}}"
       }
     },
