@@ -15,7 +15,6 @@ let deviceManagementKit: DeviceManagementKit;
 describe("DeviceManagementKitTransport", () => {
   beforeAll(async () => {
     deviceManagementKit = getDeviceManagementKit();
-    vi.spyOn(deviceManagementKit, "disableDeviceSessionRefresher").mockImplementation(vi.fn());
     vi.spyOn(deviceManagementKit, "listenToAvailableDevices").mockImplementation(() => {
       return of<DiscoveredDevice[]>([
         {

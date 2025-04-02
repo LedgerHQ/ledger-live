@@ -150,15 +150,6 @@ export class DeviceManagementKitTransport extends Transport {
         tracer.trace(
           "[DMKTransport] [open] reusing existing session and instantiating a new DmkTransport",
         );
-        if (!activeDeviceSessionSubject.value.reenableRefresher) {
-          activeDeviceSessionSubject.next({
-            ...activeDeviceSessionSubject.value,
-            reenableRefresher: getDeviceManagementKit().disableDeviceSessionRefresher({
-              sessionId: activeSessionId,
-              blockerId: "[DMKTransport] DeviceManagementKitTransport LLM",
-            }),
-          });
-        }
 
         return activeDeviceSessionSubject.value.transport;
       }
@@ -186,11 +177,8 @@ export class DeviceManagementKitTransport extends Transport {
             sessionRefresherOptions: { isRefresherDisabled: true },
           });
           const transport = new DeviceManagementKitTransport(getDeviceManagementKit(), sessionId);
-          const reenableRefresher = getDeviceManagementKit().disableDeviceSessionRefresher({
-            sessionId,
-            blockerId: "[DMKTransport] DeviceManagementKitTransport LLM",
-          });
-          activeDeviceSessionSubject.next({ sessionId, transport, reenableRefresher });
+
+          activeDeviceSessionSubject.next({ sessionId, transport });
           getDeviceManagementKit().stopDiscovering();
 
           return transport;
@@ -229,11 +217,7 @@ export class DeviceManagementKitTransport extends Transport {
         sessionRefresherOptions: { isRefresherDisabled: true },
       });
       const transport = new DeviceManagementKitTransport(getDeviceManagementKit(), sessionId);
-      const reenableRefresher = getDeviceManagementKit().disableDeviceSessionRefresher({
-        sessionId,
-        blockerId: "[DMKTransport] DeviceManagementKitTransport LLM",
-      });
-      activeDeviceSessionSubject.next({ sessionId, transport, reenableRefresher });
+      activeDeviceSessionSubject.next({ sessionId, transport });
 
       return transport;
     }
