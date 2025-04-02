@@ -4,9 +4,9 @@ import sampleSize from "lodash/sampleSize";
 import { MutationSpec } from "@ledgerhq/coin-framework/bot/types";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies/parseCurrencyUnit";
-import { getCurrentCeloPreloadData } from "../preload";
-import { getValidatorGroupsWithoutVotes } from "../logic";
-import type { CeloAccount, CeloResources, Transaction } from "../types";
+import { getCurrentCeloPreloadData } from "../../src/preload";
+import { getValidatorGroupsWithoutVotes } from "../../src/logic";
+import type { CeloAccount, CeloResources, Transaction } from "../../src/types";
 
 const currency = getCryptoCurrencyById("celo");
 const minimalAmount = parseCurrencyUnit(currency.units[0], "0.001");
