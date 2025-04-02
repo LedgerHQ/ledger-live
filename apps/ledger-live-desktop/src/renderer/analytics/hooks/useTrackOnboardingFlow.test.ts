@@ -1,4 +1,4 @@
-import { renderHook } from "tests/testUtils";
+import { renderHook } from "tests/testSetup";
 import { useTrackOnboardingFlow, UseTrackOnboardingFlow } from "./useTrackOnboardingFlow";
 import { track } from "../segment";
 import { HOOKS_TRACKING_LOCATIONS } from "./variables";

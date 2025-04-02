@@ -1,18 +1,18 @@
 # @ledgerhq/live-network
 
-## 2.0.6-nightly.1
-
-### Patch Changes
-
-- Updated dependencies [[`d694069`](https://github.com/LedgerHQ/ledger-live/commit/d6940698a49b7a0ed48f84d6e8184d80760cca4f)]:
-  - @ledgerhq/live-env@2.7.0-nightly.1
-
-## 2.0.6-nightly.0
+## 2.0.6
 
 ### Patch Changes
 
 - Updated dependencies [[`32f2a0c`](https://github.com/LedgerHQ/ledger-live/commit/32f2a0cf073e5c1a5d65cbe44e69660f8f510dd7)]:
-  - @ledgerhq/live-env@2.7.0-nightly.0
+  - @ledgerhq/live-env@2.7.0
+
+## 2.0.6-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`32f2a0c`](https://github.com/LedgerHQ/ledger-live/commit/32f2a0cf073e5c1a5d65cbe44e69660f8f510dd7)]:
+  - @ledgerhq/live-env@2.7.0-next.0
 
 ## 2.0.5
 

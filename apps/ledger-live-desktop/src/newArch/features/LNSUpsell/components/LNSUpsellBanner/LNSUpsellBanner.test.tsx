@@ -5,7 +5,7 @@
 import { t } from "i18next";
 import React from "react";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { render, screen, fireEvent } from "tests/testUtils";
+import { render, screen, fireEvent } from "tests/testSetup";
 import { openURL } from "~/renderer/linking";
 import { track } from "~/renderer/analytics/segment";
 import { LNSUpsellBanner } from ".";

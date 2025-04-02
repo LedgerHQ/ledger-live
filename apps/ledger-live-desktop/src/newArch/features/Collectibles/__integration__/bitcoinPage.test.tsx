@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import React from "react";
-import { render, screen, waitFor } from "tests/testUtils";
+import { render, screen, waitFor } from "tests/testSetup";
 import { BitcoinPage } from "./shared";
 import { openURL } from "~/renderer/linking";
 import { DeviceModelId } from "@ledgerhq/devices";

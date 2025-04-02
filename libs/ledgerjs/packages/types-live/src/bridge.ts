@@ -5,7 +5,7 @@
 // that would directly be called from UI needs.
 import { BigNumber } from "bignumber.js";
 import type { Observable } from "rxjs";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 import type { AccountLike, Account, AccountRaw, TokenAccount, TokenAccountRaw } from "./account";
 import type {
@@ -81,10 +81,11 @@ export type Bridge<
   T extends TransactionCommon,
   A extends Account = Account,
   U extends TransactionStatusCommon = TransactionStatusCommon,
+  O extends Operation = Operation,
   R extends AccountRaw = AccountRaw,
 > = {
   currencyBridge: CurrencyBridge;
-  accountBridge: AccountBridge<T, A, U, R>;
+  accountBridge: AccountBridge<T, A, U, O, R>;
 };
 
 export type ScanInfo = {
@@ -130,7 +131,6 @@ interface SendReceiveAccountBridge<
   T extends TransactionCommon,
   A extends Account = Account,
   U extends TransactionStatusCommon = TransactionStatusCommon,
-  R extends AccountRaw = AccountRaw,
 > {
   // synchronizes an account continuously to update with latest blochchains state.
   // The function emits updater functions each time there are data changes (e.g. blockchains updates)
@@ -181,41 +181,6 @@ interface SendReceiveAccountBridge<
     transaction?: T | null | undefined;
   }): Promise<BigNumber>;
   /**
-   * This function mutates the 'accountRaw' object in-place to add any extra fields that the coin may need to set.
-   * It is called during the serialization mechanism, for instance bitcoinResources need to be serialized.
-   *
-   * @param {Account} account - The original account object.
-   * @param {AccountRaw} accountRaw - The account in its serialized form.
-   */
-  assignToAccountRaw?: (account: A, accountRaw: R) => void;
-  /**
-   * This function mutates the 'account' object in-place to add any extra fields that the coin may need to set.
-   * It is called during the deserialization mechanism, for instance bitcoinResources need to be deserialized.
-   *
-   * @param {AccountRaw} accountRaw - The account in its serialized form.
-   * @param {Account} account - The original account object.
-   */
-  assignFromAccountRaw?: (accountRaw: R, account: A) => void;
-  /**
-   * This function mutates the 'tokenAccountRaw' object in-place to add any extra fields that the coin may need to set.
-   * It is called during the serialization mechanism
-   *
-   * @param {TokenAccount} tokenAccount - The original token account object.
-   * @param {TokenAccountRaw} tokenAccountRaw - The token account in its serialized form.
-   */
-  assignToTokenAccountRaw?: (tokenAccount: TokenAccount, tokenAccountRaw: TokenAccountRaw) => void;
-  /**
-   * This function mutates the 'tokenAccount' object in-place to add any extra fields that the coin may need to set.
-   * It is called during the deserialization mechanism
-   *
-   * @param {TokenAccountRaw} tokenAccountRaw - The token account in its serialized form.
-   * @param {TokenAccount} tokenAccount - The original token account object.
-   */
-  assignFromTokenAccountRaw?: (
-    tokenAccountRaw: TokenAccountRaw,
-    tokenAccount: TokenAccount,
-  ) => void;
-  /**
    * This function mutates the 'account' object to extend it with any extra fields of the coin.
    * For instance bitcoinResources needs to be created.
    *
@@ -229,8 +194,52 @@ interface SendReceiveAccountBridge<
   // broadcasting a signed transaction to network
   // returns an optimistic Operation that this transaction is likely to create in the future
   broadcast: BroadcastFnSignature<A>;
-  fromOperationExtraRaw?: (extraRaw: OperationExtraRaw) => OperationExtra;
-  toOperationExtraRaw?: (extra: OperationExtra) => OperationExtraRaw;
+}
+
+interface SerializationAccountBridge<
+  A extends Account,
+  O extends Operation = Operation,
+  R extends AccountRaw = AccountRaw,
+> {
+  /**
+   * This function mutates the 'accountRaw' object in-place to add any extra fields that the coin may need to set.
+   * It is called during the serialization mechanism, for instance bitcoinResources need to be serialized.
+   *
+   * @param {Account} account - The original account object.
+   * @param {AccountRaw} accountRaw - The account in its serialized form.
+   */
+  assignToAccountRaw: (account: A, accountRaw: R) => void;
+  /**
+   * This function mutates the 'account' object in-place to add any extra fields that the coin may need to set.
+   * It is called during the deserialization mechanism, for instance bitcoinResources need to be deserialized.
+   *
+   * @param {AccountRaw} accountRaw - The account in its serialized form.
+   * @param {Account} account - The original account object.
+   */
+  assignFromAccountRaw: (accountRaw: R, account: A) => void;
+  /**
+   * This function mutates the 'tokenAccountRaw' object in-place to add any extra fields that the coin may need to set.
+   * It is called during the serialization mechanism
+   *
+   * @param {TokenAccount} tokenAccount - The original token account object.
+   * @param {TokenAccountRaw} tokenAccountRaw - The token account in its serialized form.
+   */
+  assignToTokenAccountRaw: (tokenAccount: TokenAccount, tokenAccountRaw: TokenAccountRaw) => void;
+  /**
+   * This function mutates the 'tokenAccount' object in-place to add any extra fields that the coin may need to set.
+   * It is called during the deserialization mechanism
+   *
+   * @param {TokenAccountRaw} tokenAccountRaw - The token account in its serialized form.
+   * @param {TokenAccount} tokenAccount - The original token account object.
+   */
+  assignFromTokenAccountRaw?: (
+    tokenAccountRaw: TokenAccountRaw,
+    tokenAccount: TokenAccount,
+  ) => void;
+  fromOperationExtraRaw: (extraRaw: OperationExtraRaw) => OperationExtra;
+  toOperationExtraRaw: (extra: OperationExtra) => OperationExtraRaw;
+  formatAccountSpecifics: (account: A) => string;
+  formatOperationSpecifics: (operation: O, unit: Unit | null | undefined) => string;
 }
 
 type AccountBridgeWithExchange<A extends Account = Account> = {
@@ -241,8 +250,11 @@ export type AccountBridge<
   T extends TransactionCommon,
   A extends Account = Account,
   U extends TransactionStatusCommon = TransactionStatusCommon,
+  O extends Operation = Operation,
   R extends AccountRaw = AccountRaw,
-> = SendReceiveAccountBridge<T, A, U, R> & AccountBridgeWithExchange<A>;
+> = SendReceiveAccountBridge<T, A, U> &
+  AccountBridgeWithExchange<A> &
+  Partial<SerializationAccountBridge<A, O, R>>;
 
 type ExpectFn = (...args: Array<any>) => any;
 

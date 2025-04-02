@@ -1258,7 +1258,7 @@
         "recoverSeed" : "Placeholder : Ledger Recover",
         "restoreSeed" : "Pour une sécurité optimale, utilisez une phrase de récupération secrète générée par un appareil Ledger.\n\nVous n’en n’avez pas ? Générez une nouvelle phrase avec votre {{productName}}.",
         "selection" : "Choisissez votre option de configuration :",
-        "selectionNewLedger" : "<0>Configurer comme un nouvel appareil :</0> vous créez un nouveau wallet. Cela va générer une nouvelle phrase de récupération secrète.",
+        "selectionNewLedger" : "<0>Configurer comme un nouveau wallet :</0> vous créez un nouveau wallet. Cela va générer une nouvelle phrase de récupération secrète.",
         "selectionRestore" : "<0>Restaurer :</0> vous restaurez l’accès à votre wallet, à l’aide de votre phrase de récupération secrète ou via Ledger Recover.",
         "selectionContinueOnDevice" : "Choisissez l’option qui vous convient sur votre {{productName}}",
         "newSeedDescription1" : "Votre {{productName}} va générer une phrase de récupération secrète : une liste unique de 24 mots. Elle constitue le seul moyen de récupérer vos actifs si votre Ledger est volé, perdu ou si vous oubliez votre code PIN.",
@@ -4229,7 +4229,7 @@
       "nfts" : {
         "title" : "Collections de NFT masquées",
         "description" : "Réinitialiser la liste des collections masquées",
-        "reset" : "Réinitialiser"
+        "reset" : "Réinitialiser ({{count}})"
       },
       "exchangeDeveloperMode" : {
         "title" : "Mode développeur Exchange",
@@ -4337,6 +4337,32 @@
             "nft" : "Un NFT",
             "contract" : "Un contrat"
           }
+        },
+        "back" : "Retour"
+      },
+      "debugNfts" : {
+        "title" : "Outils NFT",
+        "description" : "Des outils pratiques pour la prise en charge des NFT dans Ledger Live.",
+        "cta" : "Ouvrir",
+        "tabs" : {
+          "config" : "Configuration",
+          "generatorAndDestructor" : "Générateurs et destructeurs"
+        },
+        "configuration" : {
+          "supported" : "Blockchain NFT prise en charge",
+          "supported_other" : "Blockchains NFT prises en charge",
+          "nms" : {
+            "title" : "NFT Metadata Service (NMS)",
+            "env" : "Environnement : {{env}}"
+          }
+        },
+        "generatorAndDestructor" : {
+          "genAcc" : "Générer des comptes",
+          "genAccDesc" : "Générez des comptes avec des NFT.",
+          "cta" : "Générer",
+          "deleteAcc" : "Supprimer des comptes",
+          "deleteAccDesc" : "Supprimez tous les comptes générés.",
+          "delete" : "Supprimer"
         },
         "back" : "Retour"
       },

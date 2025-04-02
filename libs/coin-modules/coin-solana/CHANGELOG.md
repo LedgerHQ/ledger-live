@@ -1,40 +1,6 @@
 # @ledgerhq/coin-solana
 
-## 0.17.0-nightly.3
-
-### Minor Changes
-
-- [#9648](https://github.com/LedgerHQ/ledger-live/pull/9648) [`f1732a7`](https://github.com/LedgerHQ/ledger-live/commit/f1732a795e54f666b67e7686d59926037412caca) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Remove SubAccount as it is an alias to TokenAccount
-
-### Patch Changes
-
-- Updated dependencies [[`44ae74c`](https://github.com/LedgerHQ/ledger-live/commit/44ae74c272ba803bed7c9f4fc3351e3ce8a15531), [`8ce7b0a`](https://github.com/LedgerHQ/ledger-live/commit/8ce7b0ab2d1d73ef071102f795e7c868c676b1f4), [`f1732a7`](https://github.com/LedgerHQ/ledger-live/commit/f1732a795e54f666b67e7686d59926037412caca)]:
-  - @ledgerhq/coin-framework@2.5.0-nightly.3
-  - @ledgerhq/types-live@6.65.0-nightly.1
-
-## 0.17.0-nightly.2
-
-### Minor Changes
-
-- [#9690](https://github.com/LedgerHQ/ledger-live/pull/9690) [`d694069`](https://github.com/LedgerHQ/ledger-live/commit/d6940698a49b7a0ed48f84d6e8184d80760cca4f) Thanks [@Justkant](https://github.com/Justkant)! - feat: support Solana NFTs
-
-### Patch Changes
-
-- Updated dependencies [[`1e7d454`](https://github.com/LedgerHQ/ledger-live/commit/1e7d454d99f1f39880f39a120c59020725d26475), [`d694069`](https://github.com/LedgerHQ/ledger-live/commit/d6940698a49b7a0ed48f84d6e8184d80760cca4f)]:
-  - @ledgerhq/coin-framework@2.5.0-nightly.2
-  - @ledgerhq/types-live@6.65.0-nightly.0
-  - @ledgerhq/live-env@2.7.0-nightly.1
-  - @ledgerhq/cryptoassets@13.14.0-nightly.2
-  - @ledgerhq/live-network@2.0.6-nightly.1
-
-## 0.17.0-nightly.1
-
-### Patch Changes
-
-- Updated dependencies [[`71bb6a9`](https://github.com/LedgerHQ/ledger-live/commit/71bb6a9adb4ac83172be5def5b25d2836380df1d)]:
-  - @ledgerhq/coin-framework@2.5.0-nightly.1
-
-## 0.17.0-nightly.0
+## 0.17.0
 
 ### Minor Changes
 
@@ -42,10 +8,41 @@
 
 - [#9298](https://github.com/LedgerHQ/ledger-live/pull/9298) [`2785d49`](https://github.com/LedgerHQ/ledger-live/commit/2785d49ac320498f98ed39b4eccc48310ad35fe1) Thanks [@Canestin](https://github.com/Canestin)! - config coin-integration env for sonarqube
 
+- [#9602](https://github.com/LedgerHQ/ledger-live/pull/9602) [`e81aed6`](https://github.com/LedgerHQ/ledger-live/commit/e81aed656271ee2ba40c5f0985e83388031ed8f2) Thanks [@Canestin](https://github.com/Canestin)! - fix: sol staking delegate from-address
+
+- [#9512](https://github.com/LedgerHQ/ledger-live/pull/9512) [`eb1c438`](https://github.com/LedgerHQ/ledger-live/commit/eb1c4384e2a4f1530ac199e9cdfc65b5ca66e958) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix(llm,lld): improve Solana scan accounts performances
+
 ### Patch Changes
 
-- Updated dependencies [[`2785d49`](https://github.com/LedgerHQ/ledger-live/commit/2785d49ac320498f98ed39b4eccc48310ad35fe1)]:
-  - @ledgerhq/coin-framework@2.5.0-nightly.0
+- Updated dependencies [[`2785d49`](https://github.com/LedgerHQ/ledger-live/commit/2785d49ac320498f98ed39b4eccc48310ad35fe1), [`2effe04`](https://github.com/LedgerHQ/ledger-live/commit/2effe04d9d4b3e407ed25da3b9f11324a82126d3), [`32f2a0c`](https://github.com/LedgerHQ/ledger-live/commit/32f2a0cf073e5c1a5d65cbe44e69660f8f510dd7), [`2407a6e`](https://github.com/LedgerHQ/ledger-live/commit/2407a6e1f3153c30c52d4bac4c9334fa95c351da), [`40e98c3`](https://github.com/LedgerHQ/ledger-live/commit/40e98c392bd9192570e46c2d62cf0779bdfe01ec), [`a656e47`](https://github.com/LedgerHQ/ledger-live/commit/a656e47c1dc3ac8b578debf9cf80eab370c7086f)]:
+  - @ledgerhq/coin-framework@2.5.0
+  - @ledgerhq/types-live@6.65.0
+  - @ledgerhq/live-env@2.7.0
+  - @ledgerhq/types-cryptoassets@7.21.0
+  - @ledgerhq/cryptoassets@13.14.0
+  - @ledgerhq/live-network@2.0.6
+
+## 0.17.0-next.0
+
+### Minor Changes
+
+- [#9673](https://github.com/LedgerHQ/ledger-live/pull/9673) [`569250f`](https://github.com/LedgerHQ/ledger-live/commit/569250f97580256b69b3901b8056ea4dce407bff) Thanks [@Justkant](https://github.com/Justkant)! - fix: disable ky default timeout with solana coin
+
+- [#9298](https://github.com/LedgerHQ/ledger-live/pull/9298) [`2785d49`](https://github.com/LedgerHQ/ledger-live/commit/2785d49ac320498f98ed39b4eccc48310ad35fe1) Thanks [@Canestin](https://github.com/Canestin)! - config coin-integration env for sonarqube
+
+- [#9602](https://github.com/LedgerHQ/ledger-live/pull/9602) [`e81aed6`](https://github.com/LedgerHQ/ledger-live/commit/e81aed656271ee2ba40c5f0985e83388031ed8f2) Thanks [@Canestin](https://github.com/Canestin)! - fix: sol staking delegate from-address
+
+- [#9512](https://github.com/LedgerHQ/ledger-live/pull/9512) [`eb1c438`](https://github.com/LedgerHQ/ledger-live/commit/eb1c4384e2a4f1530ac199e9cdfc65b5ca66e958) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix(llm,lld): improve Solana scan accounts performances
+
+### Patch Changes
+
+- Updated dependencies [[`2785d49`](https://github.com/LedgerHQ/ledger-live/commit/2785d49ac320498f98ed39b4eccc48310ad35fe1), [`2effe04`](https://github.com/LedgerHQ/ledger-live/commit/2effe04d9d4b3e407ed25da3b9f11324a82126d3), [`32f2a0c`](https://github.com/LedgerHQ/ledger-live/commit/32f2a0cf073e5c1a5d65cbe44e69660f8f510dd7), [`2407a6e`](https://github.com/LedgerHQ/ledger-live/commit/2407a6e1f3153c30c52d4bac4c9334fa95c351da), [`40e98c3`](https://github.com/LedgerHQ/ledger-live/commit/40e98c392bd9192570e46c2d62cf0779bdfe01ec), [`a656e47`](https://github.com/LedgerHQ/ledger-live/commit/a656e47c1dc3ac8b578debf9cf80eab370c7086f)]:
+  - @ledgerhq/coin-framework@2.5.0-next.0
+  - @ledgerhq/types-live@6.65.0-next.0
+  - @ledgerhq/live-env@2.7.0-next.0
+  - @ledgerhq/types-cryptoassets@7.21.0-next.0
+  - @ledgerhq/cryptoassets@13.14.0-next.0
+  - @ledgerhq/live-network@2.0.6-next.0
 
 ## 0.16.0
 

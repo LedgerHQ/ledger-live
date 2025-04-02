@@ -246,16 +246,17 @@ export type EthStakingProviderRewardsStrategy =
  */
 export interface EthStakingProvider {
   id: string;
+  name: string;
   category: EthStakingProviderCategory;
+  rewardsStrategy: EthStakingProviderRewardsStrategy;
+  min?: number;
   disabled?: boolean;
   icon?: string;
   liveAppId: string;
   /** Requires Liquid Staking Token */
   lst?: boolean;
-  min?: number;
-  name: string;
+  /** Min required aount to stake (in ETH) */
   queryParams?: Record<string, string>;
-  rewardsStrategy: EthStakingProviderRewardsStrategy;
   supportLink?: string;
 }
 

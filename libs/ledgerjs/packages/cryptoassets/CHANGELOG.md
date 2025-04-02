@@ -1,24 +1,26 @@
 # @ledgerhq/cryptoassets
 
-## 13.14.0-nightly.2
-
-### Patch Changes
-
-- Updated dependencies [[`d694069`](https://github.com/LedgerHQ/ledger-live/commit/d6940698a49b7a0ed48f84d6e8184d80760cca4f)]:
-  - @ledgerhq/live-env@2.7.0-nightly.1
-
-## 13.14.0-nightly.1
+## 13.14.0
 
 ### Minor Changes
 
 - [#9611](https://github.com/LedgerHQ/ledger-live/pull/9611) [`a656e47`](https://github.com/LedgerHQ/ledger-live/commit/a656e47c1dc3ac8b578debf9cf80eab370c7086f) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Add SUI coin send and receive abilities
 
-## 13.13.1-nightly.0
+### Patch Changes
+
+- Updated dependencies [[`32f2a0c`](https://github.com/LedgerHQ/ledger-live/commit/32f2a0cf073e5c1a5d65cbe44e69660f8f510dd7)]:
+  - @ledgerhq/live-env@2.7.0
+
+## 13.14.0-next.0
+
+### Minor Changes
+
+- [#9611](https://github.com/LedgerHQ/ledger-live/pull/9611) [`a656e47`](https://github.com/LedgerHQ/ledger-live/commit/a656e47c1dc3ac8b578debf9cf80eab370c7086f) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Add SUI coin send and receive abilities
 
 ### Patch Changes
 
 - Updated dependencies [[`32f2a0c`](https://github.com/LedgerHQ/ledger-live/commit/32f2a0cf073e5c1a5d65cbe44e69660f8f510dd7)]:
-  - @ledgerhq/live-env@2.7.0-nightly.0
+  - @ledgerhq/live-env@2.7.0-next.0
 
 ## 13.13.0
 

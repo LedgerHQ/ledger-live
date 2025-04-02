@@ -8,6 +8,7 @@ import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper
 import { makeGetAccountShape, postSync } from "../synchronisation";
 import { assignFromAccountRaw, assignToAccountRaw } from "../serialization";
 import { BitcoinAccount, Transaction, TransactionStatus } from "../types";
+import formatters from "../formatters";
 import { getTransactionStatus } from "../getTransactionStatus";
 import { estimateMaxSpendable } from "../estimateMaxSpendable";
 import { getSerializedAddressParameters } from "../exchange";
@@ -78,6 +79,7 @@ function buildAccountBridge(signerContext: SignerContext) {
     broadcast: wrappedBroadcast,
     assignFromAccountRaw,
     assignToAccountRaw,
+    formatAccountSpecifics: formatters.formatAccountSpecifics,
     getSerializedAddressParameters,
   };
 }

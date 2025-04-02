@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import React from "react";
-import { fireEvent, render, screen } from "tests/testUtils";
+import { fireEvent, render, screen } from "tests/testSetup";
 import * as LinkingHelpers from "~/renderer/linking";
 import LearnMoreCta from "../components/LearnMoreCta";
 

@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import React from "react";
-import { render, screen } from "tests/testUtils";
+import { render, screen } from "tests/testSetup";
 import { NftCollectionTest } from "./shared";
 import { account as ethAccount, solAccount } from "./mocks/mockedAccount";
 import { mockNftCollectionStatusByNetwork } from "~/renderer/hooks/nfts/__tests__/shared";

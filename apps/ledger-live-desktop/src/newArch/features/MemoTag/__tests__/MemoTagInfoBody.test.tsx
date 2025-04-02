@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import React from "react";
-import { render, screen } from "tests/testUtils";
+import { render, screen } from "tests/testSetup";
 import MemoTagInfoBody from "../components/MemoTagInfoBody";
 
 jest.mock("~/renderer/linking", () => ({

@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { bitcoinPickingStrategy, Transaction } from "@ledgerhq/live-common/families/bitcoin/types";
-import { Account, AccountBridge, AccountRaw, TransactionStatusCommon } from "@ledgerhq/types-live";
+import { AccountBridge } from "@ledgerhq/types-live";
 import useBitcoinPickingStrategy, {
   Option,
 } from "~/renderer/families/bitcoin/useBitcoinPickingStrategy";
@@ -11,7 +11,7 @@ import Select from "~/renderer/components/Select";
 type Props = {
   transaction: Transaction;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  bridge: AccountBridge<any, Account, TransactionStatusCommon, AccountRaw>;
+  bridge: AccountBridge<any>;
   onChange: (updateFn: (t: Transaction, p: Partial<Transaction>) => void) => void;
 };
 

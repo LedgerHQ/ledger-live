@@ -3268,7 +3268,7 @@
       },
       "verifyAddress" : {
         "title" : "Adresi doğrula",
-        "subtitle" : "Cihazınızda gösterilen adresin aşağıda gösterilen adres ile aynı olduğunu doğrulayın. Emin olduktan sonra cihazınızdan \"approve\" (doğrula) düğmesine basabilirsiniz.",
+        "subtitle" : "Cihazınızda gösterilen adresin aşağıda gösterilen adres ile aynı olduğunu doğrulayın. Emin olduğunuzda cihazınızda onaylayabilirsiniz.",
         "cancel" : {
           "title" : "Bu adresi reddettiniz",
           "subtitle" : "Bunu yapmak istemediyseniz aşağıdaki düğmeye tıklayarak tekrar deneyebilirsiniz.",
@@ -4041,7 +4041,7 @@
   "addAccounts" : {
     "addNew" : "Yeni ekle",
     "seeAllAccounts" : "Tüm hesapları gör",
-    "addNewOrExisting" : "Yeni veya mevcut bir hesabı ekleyin",
+    "addNewOrExisting" : "Yeni veya mevcut bir hesabı ekle",
     "supportLinks" : {
       "segwit_or_native_segwit" : "Segwit mi yoksa Native Segwit mi?"
     },
@@ -6611,7 +6611,12 @@
       "24h" : "24SA",
       "7d" : "7G",
       "30d" : "30G",
-      "1y" : "1Y"
+      "1y" : "1Y",
+      "1H_label" : "1SA",
+      "1D_label" : "1G",
+      "1W_label" : "1H",
+      "1M_label" : "1A",
+      "1Y_label" : "1Y"
     },
     "warnings" : {
       "connectionError" : "Bağlantı Hatası",
@@ -7010,7 +7015,7 @@
           "moreOptions" : "Tercihlerinizi yönetin",
           "ctas" : {
             "refuse" : "Tümünü reddet",
-            "accept" : "Tümünü kabul et"
+            "accept" : "Tümünü kabul et"
           },
           "infoText" : {
             "info" : "Onayınızı, dilediğiniz zaman uygulama ayarlarından iptal edebilirsiniz.",

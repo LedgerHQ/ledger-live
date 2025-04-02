@@ -1,4 +1,4 @@
-import { renderHook } from "tests/testUtils";
+import { renderHook } from "tests/testSetup";
 import { useEntryPoint } from "./useEntryPoint";
 import { EntryPoint } from "../types";
 import { DeviceModelId } from "@ledgerhq/types-devices";

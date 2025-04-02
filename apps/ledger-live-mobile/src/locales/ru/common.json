@@ -4041,7 +4041,7 @@
   "addAccounts" : {
     "addNew" : "Добавить новый",
     "seeAllAccounts" : "Показать все",
-    "addNewOrExisting" : "Добавить новый или существующий счёт",
+    "addNewOrExisting" : "Добавить ещё один счёт",
     "supportLinks" : {
       "segwit_or_native_segwit" : "SegWit или Native SegWit?"
     },
@@ -6611,7 +6611,12 @@
       "24h" : "24Ч",
       "7d" : "7Д",
       "30d" : "30Д",
-      "1y" : "1Г"
+      "1y" : "1Г",
+      "1H_label" : "1Ч",
+      "1D_label" : "1Д",
+      "1W_label" : "1Н",
+      "1M_label" : "1М",
+      "1Y_label" : "1Г"
     },
     "warnings" : {
       "connectionError" : "Ошибка соединения",
