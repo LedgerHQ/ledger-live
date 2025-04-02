@@ -7,10 +7,11 @@
     "**/*.test.{ts,tsx}"
   ],
   "ignoreUnused": [
+    "@ledgerhq/live-common",
     "react-dom"
   ],
+  "ignoreUnimported": [],
   "ignoreUnresolved": [
-    "@ledgerhq/device-management-kit"
-  ],
-  "ignoreUnimported": []
+    "@ledgerhq/live-common/featureFlags/index"
+  ]
 }

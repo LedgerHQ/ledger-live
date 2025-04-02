@@ -6,7 +6,7 @@ import {
 } from "@ledgerhq/device-management-kit";
 import { webHidTransportFactory } from "@ledgerhq/device-transport-kit-web-hid";
 import { LedgerLiveLogger } from "@ledgerhq/live-dmk-shared";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 let instance: DeviceManagementKit | null = null;
 

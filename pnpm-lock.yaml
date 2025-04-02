@@ -7099,6 +7099,9 @@ importers:
       '@ledgerhq/hw-transport':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-transport
+      '@ledgerhq/live-common':
+        specifier: workspace:^
+        version: link:../ledger-live-common
       '@ledgerhq/live-dmk-shared':
         specifier: workspace:^
         version: link:../live-dmk-shared
@@ -7109,9 +7112,6 @@ importers:
         specifier: workspace:^
         version: link:../ledgerjs/packages/types-devices
     devDependencies:
-      '@ledgerhq/live-common':
-        specifier: workspace:^
-        version: link:../ledger-live-common
       '@testing-library/dom':
         specifier: ^9.3.4
         version: 9.3.4

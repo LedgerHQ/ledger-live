@@ -9,8 +9,5 @@
   "ignoreUnused": [
     "react-dom"
   ],
-  "ignoreUnresolved": [
-    "@ledgerhq/device-management-kit"
-  ],
   "ignoreUnimported": []
 }
