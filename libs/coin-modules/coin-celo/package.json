@@ -63,8 +63,8 @@
       "default": "./lib-es/api/index.js"
     },
     "./specs": {
-      "require": "./lib/specs/index.js",
-      "default": "./lib-es/specs/index.js"
+      "require": "./lib/test/bot-specs.js",
+      "default": "./lib-es/test/bot-specs.js"
     },
     "./*": {
       "require": "./lib/*.js",
