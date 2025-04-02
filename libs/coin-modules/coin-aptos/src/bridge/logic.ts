@@ -10,6 +10,7 @@ import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import type { Account, Operation, OperationType, TokenAccount } from "@ledgerhq/types-live";
 import {
   decodeTokenAccountId,
+  encodeTokenAccountId,
   findSubAccountById,
   isTokenAccount,
 } from "@ledgerhq/coin-framework/account/index";
@@ -33,7 +34,6 @@ import type {
   Transaction,
   TransactionOptions,
 } from "../types";
-import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets";
 
 export const DEFAULT_GAS = new BigNumber(200);
@@ -147,10 +147,8 @@ export const txsToOps = (
         op.type = DIRECTION.UNKNOWN;
       }
 
-      if (op.type !== DIRECTION.UNKNOWN) {
-        if (coin_id === null) {
-          return;
-        } else if (coin_id === APTOS_ASSET_ID) {
+      if (op.type !== DIRECTION.UNKNOWN && coin_id !== null) {
+        if (coin_id === APTOS_ASSET_ID) {
           ops.push(op);
         } else {
           const token = findTokenByAddressInCurrency(coin_id.toLowerCase(), "aptos");
