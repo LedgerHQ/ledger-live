@@ -104,8 +104,8 @@ if (sentryEnabled) {
     enableStallTracking: true,
     enableUserInteractionTracing: true,
     enableAppHangTracking: true,
-    profilesSampleRate: Config.FORCE_SENTRY ? 1 : 0.0002,
-    tracesSampleRate: Config.FORCE_SENTRY ? 1 : 0.0002,
+    profilesSampleRate: Config.FORCE_SENTRY ? 1 : 0.0004,
+    tracesSampleRate: Config.FORCE_SENTRY ? 1 : 0.0003,
     integrations: [
       navigationIntegration,
       Sentry.reactNativeTracingIntegration({
