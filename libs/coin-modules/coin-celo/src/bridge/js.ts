@@ -10,6 +10,7 @@ import { getTransactionStatus } from "../getTransactionStatus";
 import { estimateMaxSpendable } from "../estimateMaxSpendable";
 import { prepareTransaction } from "../prepareTransaction";
 import { createTransaction } from "../createTransaction";
+import { assignFromAccountRaw, assignToAccountRaw, toOperationExtraRaw, fromOperationExtraRaw } from "../serialization";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import resolver from "../hw-getAddress";
 import type { CeloAccount, Transaction, TransactionStatus } from "../types";
@@ -58,6 +59,10 @@ export function buildAccountBridge(
     signOperation,
     broadcast,
     getSerializedAddressParameters,
+    assignFromAccountRaw,
+    assignToAccountRaw,
+    toOperationExtraRaw,
+    fromOperationExtraRaw,
   };
 }
 
