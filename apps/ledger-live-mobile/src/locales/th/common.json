@@ -4047,7 +4047,9 @@
       "desc" : "คุณแน่ใจหรือไม่ว่าต้องการยกเลิกการเพิ่มบัญชี?",
       "v2" : {
         "title" : "ยกเลิกการเพิ่มบัญชีหรือไม่?",
-        "desc" : "จะไม่มีการเพิ่มบัญชีลงใน Ledger Live"
+        "desc" : "จะไม่มีการเพิ่มบัญชีลงใน Ledger Live",
+        "continue" : "Continue adding",
+        "cancel" : "ยกเลิก"
       }
     },
     "imported" : "เพิ่มสินทรัพย์เรียบร้อยแล้ว",
@@ -4085,7 +4087,7 @@
       "title" : "เพิ่มโทเคน",
       "createParentCurrencyAccount" : "เพิ่มบัญชี {{parrentCurrencyName}}",
       "generic" : {
-        "disclaimer" : "{{token}} ({{ticker}}) เป็นโทเคน {{tokenType}}\nคุณสามารถรับโทเคนในบัญชี {{currency}} ได้โดยตรง",
+        "disclaimer" : "{{token}} ({{ticker}}) is an {{tokenType}} token.\nYou can receive tokens directly on a/an {{currency}} account.",
         "learnMore" : "เรียนรู้เพิ่มเติมเกี่ยวกับ {{tokenType}}"
       }
     },
