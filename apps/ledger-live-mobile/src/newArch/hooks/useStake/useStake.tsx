@@ -4,17 +4,17 @@ import { liveAppContext as remoteLiveAppContext } from "@ledgerhq/live-common/pl
 import { LiveAppRegistry } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/types";
 import { liveAppContext as localLiveAppProviderContext } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import { LiveAppManifest, Loadable } from "@ledgerhq/live-common/platform/types";
-import { appendQueryParamsToDappURL } from "@ledgerhq/live-common/platform/utils/appendQueryParamsToDappURL";
+import { appendQueryParamsToManifestURL } from "@ledgerhq/live-common/wallet-api/utils/appendQueryParamsToManifestURL";
 import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import {
   getAccountCurrency,
   getAccountSpendableBalance,
   isTokenAccount,
-} from "@ledgerhq/coin-framework/lib/account/helpers";
+} from "@ledgerhq/coin-framework/account/helpers";
 import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
 import { NavigatorName, ScreenName } from "~/const";
 import { WalletState } from "@ledgerhq/live-wallet/store";
-import { deriveAccountIdForManifest } from "@ledgerhq/live-common/platform/utils/deriveAccountIdForManifest";
+import { deriveAccountIdForManifest } from "@ledgerhq/live-common/wallet-api/utils/deriveAccountIdForManifest";
 
 const getRemoteLiveAppManifestById = (
   appId: string,
@@ -53,8 +53,7 @@ export function useStake() {
     (platformId: string) => {
       const localManifest = getLocalLiveAppManifestById(platformId);
       const remoteManifest = getRemoteLiveAppManifestById(platformId, remoteLiveAppRegistry);
-      const manifest: LiveAppManifest | undefined = remoteManifest || localManifest;
-
+      const manifest: LiveAppManifest | undefined = localManifest || remoteManifest;
       return manifest;
     },
     [getLocalLiveAppManifestById, remoteLiveAppRegistry],
@@ -120,14 +119,26 @@ export function useStake() {
 
       const earningsAccountId = isTokenAccount(account) ? account.parentId : account.id;
 
+      /** For some providers, we also need to pass the address of the specific asset being deposited: asset_id={chain_id}_{contract_address} */
+      const tokenContractAddress = isTokenAccount(account) ? account.token.contractAddress : null;
+      const earningsAccountChainId = manifest.dapp?.networks?.find(
+        manifestNetwork =>
+          manifestNetwork.currency ===
+          (isTokenAccount(account) ? account.token.parentCurrency.id : account.currency.id),
+      )?.chainID;
+      const asset_id = tokenContractAddress
+        ? `${earningsAccountChainId}_${tokenContractAddress}`
+        : null;
+
       const accountIdForManifestVersion = deriveAccountIdForManifest(
         earningsAccountId,
         walletApiAccount.id,
         manifest,
       );
 
-      const customDappURL = appendQueryParamsToDappURL(manifest, {
+      const customDappURL = appendQueryParamsToManifestURL(manifest, {
         ...customPartnerParams,
+        ...(asset_id ? { asset_id } : {}),
         accountId: accountIdForManifestVersion,
       })?.toString();
 

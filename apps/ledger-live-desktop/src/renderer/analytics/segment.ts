@@ -124,6 +124,13 @@ const getPtxAttributes = () => {
           ]),
         )
       : {};
+  const partnerStakingCurrenciesEnabled =
+    stakePrograms?.enabled && stakePrograms?.params?.redirects
+      ? Object.keys(stakePrograms.params.redirects).map(assetId => [
+          `feature_earn_${JSON.stringify(assetId)}_enabled`,
+          true,
+        ])
+      : {};
 
   return {
     isBatch1Enabled,
@@ -132,6 +139,7 @@ const getPtxAttributes = () => {
     stakingProvidersEnabled,
     ptxCard,
     ...stakingCurrenciesEnabled,
+    ...partnerStakingCurrenciesEnabled,
   };
 };
 

@@ -310,7 +310,8 @@ describe("useStake()", () => {
       screen: "PlatformApp",
       params: {
         accountId: "0eda416c-9669-57a2-84f6-741df8c11267",
-        customDappURL: undefined,
+        customDappURL:
+          "https://mock-live-app.com/?yieldId=native-staking&accountId=0eda416c-9669-57a2-84f6-741df8c11267",
         ledgerAccountId: "js:2:tron:T:",
         name: "Mock Live App",
         platform: "mock-live-app",

@@ -15,6 +15,7 @@ import { shallowAccountsSelector } from "~/reducers/accounts";
 import { EarnInfoDrawer } from "~/screens/PTX/Earn/EarnInfoDrawer";
 import { useStakingDrawer } from "../Stake/useStakingDrawer";
 import { EarnMenuDrawer } from "~/screens/PTX/Earn/EarnMenuDrawer";
+import { getParentAccount, isTokenAccount } from "@ledgerhq/coin-framework/lib/account/helpers";
 
 const Stack = createStackNavigator<EarnLiveAppNavigatorParamList>();
 
@@ -70,7 +71,10 @@ const Earn = (props: NavigationProps) => {
           const accountId = getAccountIdFromWalletAccountId(walletId);
           const account = accounts.find(acc => acc.id === accountId);
           if (account) {
-            openStakingDrawer(account);
+            const parent = isTokenAccount(account)
+              ? getParentAccount(account, accounts)
+              : undefined;
+            openStakingDrawer(account, parent);
           } else {
             // eslint-disable-next-line no-console
             console.log("no matching account found for given id.");
