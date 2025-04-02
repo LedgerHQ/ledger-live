@@ -3656,7 +3656,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
         magnitude: 18,
       },
     ],
-    explorerViews: [blockscoutExplorerView("https://cronos.org/explorer/")],
+    explorerViews: [blockscoutExplorerView("https://cronos.org/explorer")],
   },
   fantom: {
     type: "CryptoCurrency",
