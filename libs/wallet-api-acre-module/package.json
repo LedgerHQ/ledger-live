@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/wallet-api-acre-module",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Wallet-API ACRE Module for Ledger Live",
   "license": "MIT",
   "keywords": [
