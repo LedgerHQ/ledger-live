@@ -3,6 +3,7 @@ import aptos from "@ledgerhq/coin-aptos/specs";
 import bitcoin from "@ledgerhq/coin-bitcoin/specs";
 import cardano from "@ledgerhq/coin-cardano/specs";
 import casper from "@ledgerhq/coin-casper/specs";
+import celo from "@ledgerhq/coin-celo/specs";
 import cosmos from "@ledgerhq/coin-cosmos/specs";
 import evm from "@ledgerhq/coin-evm/specs";
 import hedera from "@ledgerhq/coin-hedera/specs";
@@ -27,6 +28,7 @@ export default {
   bitcoin,
   cardano,
   casper,
+  celo,
   cosmos,
   evm,
   hedera,
