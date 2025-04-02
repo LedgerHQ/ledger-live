@@ -33,7 +33,7 @@ import type {
   TransactionRaw as celoTransactionRaw,
   TransactionStatus as celoTransactionStatus,
   TransactionStatusRaw as celoTransactionStatusRaw,
-} from "@ledgerhq/coin-celo/types";
+} from "@ledgerhq/coin-celo/types/index";
 import type {
   Transaction as cosmosTransaction,
   TransactionRaw as cosmosTransactionRaw,

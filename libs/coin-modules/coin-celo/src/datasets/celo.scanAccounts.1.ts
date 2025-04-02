@@ -6,10 +6,10 @@ import {
   NotEnoughBalance,
 } from "@ledgerhq/errors";
 // import "../../../../ledger-live-common/src/__tests__/test-helpers/setup";
-import TransactionModule from "../transaction";
+import TransactionModule from "../bridge/transaction";
 import { CeloAllFundsWarning } from "../errors";
 import type { AccountRaw, CurrenciesData, TransactionStatusCommon } from "@ledgerhq/types-live";
-import type { Transaction } from "../types";
+import type { Transaction } from "../types/types";
 
 // This account is registered for staking and has available funds, locked voting funds,
 // locked non-voting funds, and withdrawable funds.
