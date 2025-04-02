@@ -237,7 +237,7 @@
     "@babel/plugin-transform-shorthand-properties": "7.24.1",
     "@babel/plugin-transform-template-literals": "7.24.1",
     "@babel/preset-react": "7.24.1",
-    "@babel/runtime": "7.24.1",
+    "@babel/runtime": "7.26.10",
     "@jest/reporters": "29.7.0",
     "@ledgerhq/hw-transport-node-speculos-http": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
