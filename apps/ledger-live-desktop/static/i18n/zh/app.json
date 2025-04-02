@@ -1779,7 +1779,7 @@
     },
     "fullNodeReadyInfo" : "将使用您的比特币完整节点来添加账户。",
     "fullNodeConfigure" : "配置节点",
-    "tokensTip" : "{{token}} ({{ticker}}) 是一个 {{tokenType}} 代币。您可以直接在 {{currency}} 账户上接收代币。",
+    "tokensTip" : "{{token}} ({{ticker}}) is an {{tokenType}} token. You can receive tokens directly on a/an {{currency}} account.",
     "accountToImportSubtitle_plural" : "添加现有账户",
     "selectAll" : "全选 ({{count}})",
     "unselectAll" : "取消全选 ({{count}})",
