@@ -17,7 +17,6 @@ const targets = [
   "deviceTransactionConfig.ts",
   "mock.ts",
   "account.ts",
-  "formatters.ts",
   "platformAdapter.ts",
   "walletApiAdapter.ts"
 ];

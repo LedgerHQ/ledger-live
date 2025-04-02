@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, waitFor } from "tests/testUtils";
+import { render, screen, waitFor } from "tests/testSetup";
 import CopyButton from "./CopyButton";
 
 jest.mock("i18next", () => {

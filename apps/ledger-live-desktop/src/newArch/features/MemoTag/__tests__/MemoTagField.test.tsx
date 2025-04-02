@@ -3,7 +3,7 @@
  */
 
 import React from "react";
-import { render, screen, fireEvent } from "tests/testUtils";
+import { render, screen, fireEvent } from "tests/testSetup";
 import MemoTagField from "../components/MemoTagField";
 
 describe("MemoTagField", () => {

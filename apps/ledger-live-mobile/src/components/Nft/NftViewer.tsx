@@ -401,8 +401,8 @@ const NftViewer = ({ route }: Props) => {
           </Box>
 
           <Box mb={8} flexWrap={"nowrap"} flexDirection={"row"} justifyContent={"center"}>
-            {displaySendBtn && (
-              <Box flexGrow={1} flexShrink={1} mr={6} style={styles.sendButtonContainer}>
+            <Box flexGrow={1} flexShrink={1} mr={6} style={styles.sendButtonContainer}>
+              {displaySendBtn && (
                 <Button
                   type="main"
                   Icon={IconsLegacy.ArrowFromBottomMedium}
@@ -411,8 +411,9 @@ const NftViewer = ({ route }: Props) => {
                 >
                   <Trans i18nKey="account.send" />
                 </Button>
-              </Box>
-            )}
+              )}
+            </Box>
+
             {nftMetadata?.links && (
               <Box style={styles.ellipsisButtonContainer} flexShrink={0} width={"48px"}>
                 <Button
@@ -478,7 +479,6 @@ const NftViewer = ({ route }: Props) => {
         onClose={closeModal}
         nftContract={nft.contract}
         nftId={nft.id}
-        currencyId={nft.currencyId}
       />
       <NftViewerScreenHeader title={nftMetadata?.nftName || undefined} scrollY={scrollY} />
     </>

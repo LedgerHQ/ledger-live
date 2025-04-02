@@ -1,6 +1,6 @@
 import { MakeModalsType } from "~/renderer/modals/types";
 import { EditTransactionModal, EditTransactionModalProps } from "./EditTransaction/Modal";
-import MODAL_EVM_STAKE from "./StakeModalVersionWrapper";
+import MODAL_EVM_STAKE from "./StakeFlowModal";
 import { AccountLike } from "@ledgerhq/types-live";
 
 export type ModalsData = {

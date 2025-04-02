@@ -1,5 +1,5 @@
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import { appendQueryParamsToDappURL } from "@ledgerhq/live-common/platform/utils/appendQueryParamsToDappURL";
+import { appendQueryParamsToManifestURL } from "@ledgerhq/live-common/wallet-api/utils/appendQueryParamsToManifestURL";
 import { Flex } from "@ledgerhq/react-ui";
 import { AccountLike, EthStakingProvider } from "@ledgerhq/types-live";
 import React, { useCallback } from "react";
@@ -8,6 +8,7 @@ import { track } from "~/renderer/analytics/segment";
 import { ProviderItem } from "./component/ProviderItem";
 import { getTrackProperties } from "./utils/getTrackProperties";
 import { getWalletApiIdFromAccountId } from "@ledgerhq/live-common/wallet-api/converters";
+import { deriveAccountIdForManifest } from "@ledgerhq/live-common/wallet-api/utils/deriveAccountIdForManifest";
 
 type Props = {
   account: AccountLike;
@@ -29,17 +30,25 @@ export function EthStakingModalBody({ source, onClose, account, providers }: Pro
       manifest,
     }: StakeOnClickProps) => {
       const value = `/platform/${liveAppId}`;
-      const customDappUrl = queryParams && appendQueryParamsToDappURL(manifest, queryParams);
+      const trackProperties = getTrackProperties({
+        value,
+        modal: source,
+      });
       track("button_clicked2", {
         button: providerConfigID,
-        ...getTrackProperties({ value, modal: source }),
+        ...trackProperties,
       });
+      const customDappUrl = queryParams && appendQueryParamsToManifestURL(manifest, queryParams);
 
       history.push({
         pathname: value,
         ...(customDappUrl ? { customDappUrl } : {}),
         state: {
-          accountId: manifest?.dapp ? account.id : getWalletApiIdFromAccountId(account.id),
+          accountId: deriveAccountIdForManifest(
+            account.id,
+            getWalletApiIdFromAccountId(account.id),
+            manifest,
+          ),
         },
       });
       onClose?.();

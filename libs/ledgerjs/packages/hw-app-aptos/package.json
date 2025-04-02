@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-aptos",
-  "version": "6.32.0",
+  "version": "6.33.0",
   "description": "Ledger Hardware Wallet Aptos Application API",
   "keywords": [
     "Ledger",

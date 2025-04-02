@@ -180,6 +180,7 @@ export const makeSync =
     T extends TransactionCommon = TransactionCommon,
     A extends Account = Account,
     U extends TransactionStatusCommon = TransactionStatusCommon,
+    O extends Operation = Operation,
     R extends AccountRaw = AccountRaw,
   >({
     getAccountShape,
@@ -189,7 +190,7 @@ export const makeSync =
     getAccountShape: GetAccountShape<A>;
     postSync?: (initial: A, synced: A) => A;
     shouldMergeOps?: boolean;
-  }): AccountBridge<T, A, U, R>["sync"] =>
+  }): AccountBridge<T, A, U, O, R>["sync"] =>
   (initial, syncConfig): Observable<AccountUpdater<A>> =>
     new Observable((o: Observer<(acc: A) => A>) => {
       async function main() {

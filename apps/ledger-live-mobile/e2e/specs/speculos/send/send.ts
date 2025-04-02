@@ -21,7 +21,7 @@ const beforeAllFunction = async (transaction: TransactionType) => {
     cliCommands: [
       (userdataPath?: string) => {
         return CLI.liveData({
-          currency: transaction.accountToDebit.currency.id,
+          currency: transaction.accountToDebit.currency.speculosApp.name,
           index: transaction.accountToDebit.index,
           add: true,
           appjson: userdataPath,
