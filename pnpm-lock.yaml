@@ -3950,18 +3950,12 @@ importers:
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../ledgerjs/packages/cryptoassets
-      '@ledgerhq/evm-tools':
-        specifier: workspace:^
-        version: link:../evm-tools
-      '@ledgerhq/hw-app-eth':
-        specifier: workspace:^
-        version: link:../ledgerjs/packages/hw-app-eth
-      '@ledgerhq/live-common':
-        specifier: workspace:^
-        version: link:../ledger-live-common
       '@ledgerhq/live-network':
         specifier: workspace:^
         version: link:../live-network
+      '@ledgerhq/live-signer-evm':
+        specifier: workspace:^
+        version: link:../live-signer-evm
       '@ledgerhq/types-cryptoassets':
         specifier: workspace:^
         version: link:../ledgerjs/packages/types-cryptoassets
