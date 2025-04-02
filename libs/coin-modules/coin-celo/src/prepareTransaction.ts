@@ -22,7 +22,6 @@ export const prepareTransaction: AccountBridge<
     return transaction;
 
   const fees = await getFeesForTransaction({ account, transaction });
-  // debugger;
 
   if (!sameFees(transaction.fees, fees)) {
     return { ...transaction, fees };

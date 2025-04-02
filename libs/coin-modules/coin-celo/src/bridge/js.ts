@@ -10,7 +10,12 @@ import { getTransactionStatus } from "../getTransactionStatus";
 import { estimateMaxSpendable } from "../estimateMaxSpendable";
 import { prepareTransaction } from "../prepareTransaction";
 import { createTransaction } from "../createTransaction";
-import { assignFromAccountRaw, assignToAccountRaw, toOperationExtraRaw, fromOperationExtraRaw } from "../serialization";
+import {
+  assignFromAccountRaw,
+  assignToAccountRaw,
+  toOperationExtraRaw,
+  fromOperationExtraRaw,
+} from "../serialization";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import resolver from "../hw-getAddress";
 import type { CeloAccount, Transaction, TransactionStatus } from "../types";
@@ -25,7 +30,6 @@ import { CeloSigner } from "../signer";
 
 export function buildCurrencyBridge(signerContext: SignerContext<EvmSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
-  debugger;
   const scanAccounts = makeScanAccounts({
     getAccountShape,
     getAddressFn: getAddressWrapper(getAddress),
@@ -42,7 +46,6 @@ export function buildCurrencyBridge(signerContext: SignerContext<EvmSigner>): Cu
 export function buildAccountBridge(
   signerContext: SignerContext<CeloSigner>,
 ): AccountBridge<Transaction, CeloAccount, TransactionStatus> {
-  debugger;
   const getAddress = resolver(signerContext);
 
   const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));

@@ -15,7 +15,6 @@ export const getAccountShape: GetAccountShape<CeloAccount> = async info => {
   const election = await kit.contracts.getElection();
   const electionConfig = await election.getConfig();
   const lockedGold = await kit.contracts.getLockedGold();
-  debugger;
   const accountId = encodeAccountId({
     type: "js",
     version: "2",
@@ -56,7 +55,6 @@ export const getAccountShape: GetAccountShape<CeloAccount> = async info => {
       maxNumGroupsVotedFor: electionConfig.maxNumGroupsVotedFor,
     },
   };
-  debugger;
   return { ...shape, operations };
 };
 
