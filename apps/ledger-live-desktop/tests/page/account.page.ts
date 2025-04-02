@@ -38,6 +38,7 @@ export class AccountPage extends AppPage {
   private seeGalleryButton = this.page.getByRole("button", { name: "See Gallery" });
   private nftOperation = this.page.getByText("NFT Sent");
   private nftList = (collectionName: string) => this.page.getByTestId(`nft-row-${collectionName}`);
+  private accountChart = this.page.getByTestId("chart-container");
   private editName = this.page.locator("#input-edit-name");
   private applyButton = this.page.getByTestId("account-settings-apply-button");
 
