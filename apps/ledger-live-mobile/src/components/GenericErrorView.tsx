@@ -2,13 +2,14 @@ import React, { memo } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components/native";
 import { Flex, IconsLegacy, Link } from "@ledgerhq/native-ui";
-import { BluetoothRequired } from "@ledgerhq/errors";
+import { BluetoothRequired, PeerRemovedPairing } from "@ledgerhq/errors";
 import { NewIconType } from "@ledgerhq/native-ui/components/Icon/type";
 import useExportLogs from "./useExportLogs";
 import TranslatedError from "./TranslatedError";
 import SupportLinkError from "./SupportLinkError";
 import BluetoothDisabled from "./RequiresBLE/BluetoothDisabled";
 import { GenericInformationBody } from "./GenericInformationBody";
+import { isDmkError, isiOSPeerRemovedPairingError } from "@ledgerhq/live-dmk-mobile";
 
 type Props = {
   error: Error;
@@ -49,8 +50,11 @@ const GenericErrorView = ({
 
   const onExport = useExportLogs();
 
-  const titleError = outerError || error;
-  const subtitleError = outerError ? error : null;
+  const dmkiOSPeerRemovedPairingError = isDmkError(error) && isiOSPeerRemovedPairingError(error);
+  const currentError = dmkiOSPeerRemovedPairingError ? new PeerRemovedPairing() : error;
+
+  const titleError = outerError || currentError;
+  const subtitleError = outerError ? currentError : null;
 
   // In case bluetooth was necessary but the `RequiresBle` component could not be used directly
   if (error instanceof BluetoothRequired) {
@@ -69,9 +73,11 @@ const GenericErrorView = ({
         iconColor={iconColor}
         title={<TranslatedError error={titleError} />}
         subtitle={subtitleError ? <TranslatedError error={subtitleError} /> : null}
-        description={withDescription ? <TranslatedError error={error} field="description" /> : null}
+        description={
+          withDescription ? <TranslatedError error={currentError} field="description" /> : null
+        }
       />
-      {withDescription && withHelp ? <SupportLinkError error={error} /> : null}
+      {withDescription && withHelp ? <SupportLinkError error={currentError} /> : null}
       {children}
       {hasExportLogButton ? (
         <StyledLink Icon={exportLogIcon} onPress={onExport} iconPosition={exportLogIconPosition}>
