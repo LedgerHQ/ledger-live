@@ -66,12 +66,14 @@ export const mergeSubAccounts = (
           updates[name] = newSubAccount[name as keyof TokenAccount];
         }
       } else {
-        updates[name] = mergeOps(
-          duplicatedAccount[name as keyof TokenAccount] as Operation[],
-          newSubAccount[name as keyof TokenAccount] as Operation[],
-        );
+        updates[name] =
+          mergeOps(
+            duplicatedAccount[name as keyof TokenAccount] as Operation[],
+            newSubAccount[name as keyof TokenAccount] as Operation[],
+          ) || [];
       }
     }
+
     // Updating the operationsCount in case the mergeOps changed it
     updates.operationsCount =
       updates.operations?.length || duplicatedAccount?.operations?.length || 0;
