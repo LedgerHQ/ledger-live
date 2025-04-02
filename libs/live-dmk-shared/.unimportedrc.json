@@ -6,9 +6,6 @@
     "**/node_modules/**",
     "**/*.test.{ts,tsx}"
   ],
-  "ignoreUnused": [
-    "react-dom"
-  ],
   "ignoreUnresolved": [
     "@ledgerhq/device-management-kit"
   ],
