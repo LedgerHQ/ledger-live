@@ -1,4 +1,4 @@
-import Eth from "@ledgerhq/hw-app-eth";
+import { LegacySignerEth } from "@ledgerhq/live-signer-evm";
 import { BigNumber } from "bignumber.js";
 import { ethers, providers } from "ethers";
 import { Account } from "@ledgerhq/types-live";
@@ -76,7 +76,8 @@ export const scenarioScroll: Scenario<EvmTransaction, Account> = {
     ]);
 
     const provider = new providers.StaticJsonRpcProvider("http://127.0.0.1:8545");
-    const signerContext: Parameters<typeof resolver>[0] = (deviceId, fn) => fn(new Eth(transport));
+    const signerContext: Parameters<typeof resolver>[0] = (deviceId, fn) =>
+      fn(new LegacySignerEth(transport));
 
     const lastBlockNumber = await provider.getBlockNumber();
     // start indexing at next block

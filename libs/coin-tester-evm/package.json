@@ -53,17 +53,15 @@
     "lint:fix": "pnpm lint --fix",
     "typecheck": "tsc --noEmit",
     "test": "DOTENV_CONFIG_PATH=.env pnpm jest --runTestsByPath src/*.test.ts --runInBand",
-    "testX": "pnpm jest --runTestsByPath src/*.test.ts --runInBand"
+    "unimported": "unimported"
   },
   "dependencies": {
     "@ledgerhq/coin-tester": "workspace:^",
     "@ledgerhq/coin-evm": "workspace:^",
     "@ledgerhq/coin-framework": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",
-    "@ledgerhq/evm-tools": "workspace:^",
-    "@ledgerhq/hw-app-eth": "workspace:^",
+    "@ledgerhq/live-signer-evm": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
-    "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
     "bignumber.js": "^9.1.2",

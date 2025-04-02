@@ -1,4 +1,4 @@
-import Eth from "@ledgerhq/hw-app-eth";
+import { LegacySignerEth } from "@ledgerhq/live-signer-evm";
 import { BigNumber } from "bignumber.js";
 import { ethers, providers } from "ethers";
 import { Account } from "@ledgerhq/types-live";
@@ -71,7 +71,8 @@ export const scenarioSonic: Scenario<EvmTransaction, Account> = {
       spawnAnvil("https://rpc.ankr.com/sonic_mainnet"),
     ]);
 
-    const signerContext: Parameters<typeof resolver>[0] = (_, fn) => fn(new Eth(transport));
+    const signerContext: Parameters<typeof resolver>[0] = (_, fn) =>
+      fn(new LegacySignerEth(transport));
 
     setCoinConfig(() => ({
       info: {

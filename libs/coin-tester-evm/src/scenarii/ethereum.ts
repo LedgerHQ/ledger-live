@@ -2,7 +2,7 @@ import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { killSpeculos, spawnSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
 import { getTokenById } from "@ledgerhq/cryptoassets/tokens";
-import Eth from "@ledgerhq/hw-app-eth";
+import { LegacySignerEth } from "@ledgerhq/live-signer-evm";
 import { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { ethers, providers } from "ethers";
@@ -139,7 +139,8 @@ export const scenarioEthereum: Scenario<EvmTransaction, Account> = {
       spawnAnvil("https://ethereum-rpc.publicnode.com"),
     ]);
 
-    const signerContext: Parameters<typeof resolver>[0] = (deviceId, fn) => fn(new Eth(transport));
+    const signerContext: Parameters<typeof resolver>[0] = (deviceId, fn) =>
+      fn(new LegacySignerEth(transport));
 
     setCoinConfig(() => ({
       info: {
