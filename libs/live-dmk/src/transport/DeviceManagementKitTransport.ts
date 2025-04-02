@@ -11,6 +11,7 @@ import { LocalTracer } from "@ledgerhq/logs";
 import { deviceIdMap } from "../config/deviceIdMap";
 import { activeDeviceSessionSubject } from "../config/activeDeviceSession";
 import { deviceManagementKit } from "../hooks/useDeviceManagementKit";
+import { SessionRefresherManager } from "../services/SessionRefresherManager";
 
 const tracer = new LocalTracer("live-dmk-tracer", { function: "DeviceManagementKitTransport" });
 
@@ -26,12 +27,14 @@ export class DeviceManagementKitTransport extends Transport {
   }
 
   listenToDisconnect = () => {
+    const manager = SessionRefresherManager;
     const subscription = this.sdk.getDeviceSessionState({ sessionId: this.sessionId }).subscribe({
       next: (state: { deviceStatus: any }) => {
         if (state.deviceStatus === DeviceStatus.NOT_CONNECTED) {
           tracer.trace("[listenToDisconnect] Device disconnected, closing transport");
           activeDeviceSessionSubject.next(null);
           this.emit("disconnect");
+          manager.forceEnable();
         }
       },
       error: (error: any) => {
@@ -48,8 +51,12 @@ export class DeviceManagementKitTransport extends Transport {
   };
 
   static async open(): Promise<DeviceManagementKitTransport> {
-    const activeSessionId = activeDeviceSessionSubject.value?.sessionId;
+    const manager = SessionRefresherManager;
+    // force-enable any stale state and reset the manager so new disable calls generate a fresh blockerId.
+    manager.forceEnable();
+    manager.reset();
 
+    const activeSessionId = activeDeviceSessionSubject.value?.sessionId;
     if (activeSessionId) {
       tracer.trace(`[open] checking existing session ${activeSessionId}`);
       const deviceSessionState: DeviceSessionState | null = await firstValueFrom(
@@ -58,7 +65,6 @@ export class DeviceManagementKitTransport extends Transport {
         console.error("[SDKTransport][open] error getting device session state", e);
         return null;
       });
-
       if (
         deviceSessionState?.deviceStatus !== DeviceStatus.NOT_CONNECTED &&
         activeDeviceSessionSubject.value?.transport
@@ -73,11 +79,9 @@ export class DeviceManagementKitTransport extends Transport {
       deviceManagementKit.listenToAvailableDevices({}),
     );
     const connectedSessionId = await deviceManagementKit.connect({ device: discoveredDevice });
-
     tracer.trace("[open] Connected");
     const transport = new DeviceManagementKitTransport(deviceManagementKit, connectedSessionId);
     activeDeviceSessionSubject.next({ sessionId: connectedSessionId, transport });
-
     return transport;
   }
 
@@ -97,31 +101,24 @@ export class DeviceManagementKitTransport extends Transport {
         next: ({ added, removed }) => {
           for (const device of added) {
             const id = deviceIdMap[device.deviceModel.model];
-
             tracer.trace(`[listen] device added ${id}`);
             observer.next({
               type: "add",
               descriptor: "",
               device: device,
               // @ts-expect-error types are not matching
-              deviceModel: {
-                id,
-              },
+              deviceModel: { id },
             });
           }
-
           for (const device of removed) {
             const id = deviceIdMap[device.deviceModel.model];
-
             tracer.trace(`[listen] device removed ${id}`);
             observer.next({
               type: "remove",
               descriptor: "",
               device: device,
               // @ts-expect-error types are not matching
-              deviceModel: {
-                id,
-              },
+              deviceModel: { id },
             });
           }
         },
@@ -129,19 +126,15 @@ export class DeviceManagementKitTransport extends Transport {
         complete: observer.complete,
       });
 
-    return {
-      unsubscribe: () => subscription.unsubscribe(),
-    };
+    return { unsubscribe: () => subscription.unsubscribe() };
   };
 
   close: () => Promise<void> = () => Promise.resolve();
 
   async exchange(apdu: Buffer): Promise<Buffer> {
     tracer.trace(`[exchange] => ${apdu.toString("hex")}`);
-
     const devices = await this.sdk.listConnectedDevices();
-
-    // If the device is not connected, connect to new session
+    // if the device is not connected, reconnect.
     if (!devices.some(device => device.sessionId === this.sessionId)) {
       const [discoveredDevice] = await firstValueFrom(
         deviceManagementKit.listenToAvailableDevices({}),
@@ -149,8 +142,11 @@ export class DeviceManagementKitTransport extends Transport {
       const connectedSessionId = await deviceManagementKit.connect({ device: discoveredDevice });
       this.sessionId = connectedSessionId;
     }
-
-    return await this.sdk
+    // use the singleton manager to disable the refresher.
+    const manager = SessionRefresherManager;
+    manager.disableIfNeeded(this.sdk, this.sessionId);
+    // create the promise from sendApdu.
+    const promise = this.sdk
       .sendApdu({
         sessionId: this.sessionId,
         apdu: new Uint8Array(apdu),
@@ -164,5 +160,9 @@ export class DeviceManagementKitTransport extends Transport {
         console.error("[exchange] error", e);
         throw e;
       });
+    // when the exchange completes, call maybeEnable() so the manager can schedule a normal re-enable.
+    return promise.finally(() => {
+      manager.maybeEnable();
+    });
   }
 }
