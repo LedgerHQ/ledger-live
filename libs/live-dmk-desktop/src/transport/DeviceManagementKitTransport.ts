@@ -54,7 +54,7 @@ export class DeviceManagementKitTransport extends Transport {
       const deviceSessionState: DeviceSessionState | null = await firstValueFrom(
         getDeviceManagementKit().getDeviceSessionState({ sessionId: activeSessionId }),
       ).catch(e => {
-        console.error("[SDKTransport][open] error getting device session state", e);
+        tracer.trace("[SDKTransport][open] error getting device session state", e);
         return null;
       });
 
@@ -87,14 +87,12 @@ export class DeviceManagementKitTransport extends Transport {
   }
 
   static listen = (observer: Observer<DescriptorEvent<string>>) => {
-    console.log("listen");
     const subscription = getDeviceManagementKit()
       .listenToAvailableDevices({})
       .pipe(
         startWith<DiscoveredDevice[]>([]),
         pairwise(),
         map(([prev, curr]) => {
-          console.log("map", prev, curr);
           const added = curr.filter(item => !prev.some(prevItem => prevItem.id === item.id));
           const removed = prev.filter(item => !curr.some(currItem => currItem.id === item.id));
           return { added, removed };
@@ -176,7 +174,6 @@ export class DeviceManagementKitTransport extends Transport {
         return response;
       })
       .catch(e => {
-        console.error("[exchange] error", e);
         throw e;
       });
   }

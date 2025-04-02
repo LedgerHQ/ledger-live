@@ -54,7 +54,7 @@ export class DeviceManagementKitTransport extends Transport {
   }
 
   static setLogLevel(_level: string): void {
-    console.warn("setLogLevel not implemented", _level);
+    tracer.trace("setLogLevel not implemented", { level: _level });
   }
 
   static observeState(
@@ -187,7 +187,7 @@ export class DeviceManagementKitTransport extends Transport {
           delay: (error, retryAttempt) => {
             getDeviceManagementKit().stopDiscovering();
 
-            console.log("[DMKTransport] [open2] error", { error });
+            tracer.trace("[DMKTransport] [open2] error", error);
             if (error instanceof OpeningConnectionError) {
               return throwError(() => error);
             }
@@ -208,7 +208,7 @@ export class DeviceManagementKitTransport extends Transport {
         }
         return transport;
       } catch (error) {
-        console.log("[DMKTransport] [open2] error", { error });
+        tracer.trace("[DMKTransport] [open2] error", { error });
         throw error;
       }
     } else {
