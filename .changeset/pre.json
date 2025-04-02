@@ -139,6 +139,8 @@
     "@ledgerhq/pnpm-utils": "1.0.1"
   },
   "changesets": [
-    "shiny-lemons-speak"
+    "little-ladybugs-build",
+    "shiny-lemons-speak",
+    "swift-eels-repair"
   ]
 }

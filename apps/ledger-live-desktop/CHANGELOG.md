@@ -1,5 +1,14 @@
 # ledger-live-desktop
 
+## 2.107.0-hotfix.1
+
+### Patch Changes
+
+- Updated dependencies [[`61c371a`](https://github.com/LedgerHQ/ledger-live/commit/61c371a6e22750cf341d5667c8b6ddefa9d6af57), [`3cf359d`](https://github.com/LedgerHQ/ledger-live/commit/3cf359d6f62d6993975f4ab7e643fabdeed0100e)]:
+  - @ledgerhq/live-dmk@0.7.0-hotfix.0
+  - @ledgerhq/coin-evm@2.16.0-hotfix.0
+  - @ledgerhq/live-common@34.29.0-hotfix.1
+
 ## 2.107.0-hotfix.0
 
 ### Minor Changes

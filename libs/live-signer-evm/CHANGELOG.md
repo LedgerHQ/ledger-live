@@ -1,5 +1,16 @@
 # @ledgerhq/live-signer-evm
 
+## 0.3.0-hotfix.0
+
+### Minor Changes
+
+- [#9664](https://github.com/LedgerHQ/ledger-live/pull/9664) [`3cf359d`](https://github.com/LedgerHQ/ledger-live/commit/3cf359d6f62d6993975f4ab7e643fabdeed0100e) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Use observable instead of promise for signing
+
+### Patch Changes
+
+- Updated dependencies [[`3cf359d`](https://github.com/LedgerHQ/ledger-live/commit/3cf359d6f62d6993975f4ab7e643fabdeed0100e)]:
+  - @ledgerhq/coin-evm@2.16.0-hotfix.0
+
 ## 0.2.2
 
 ### Patch Changes

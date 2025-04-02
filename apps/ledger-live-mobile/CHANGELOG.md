@@ -1,5 +1,13 @@
 # live-mobile
 
+## 3.73.0-hotfix.1
+
+### Patch Changes
+
+- Updated dependencies [[`3cf359d`](https://github.com/LedgerHQ/ledger-live/commit/3cf359d6f62d6993975f4ab7e643fabdeed0100e)]:
+  - @ledgerhq/coin-evm@2.16.0-hotfix.0
+  - @ledgerhq/live-common@34.29.0-hotfix.1
+
 ## 3.73.0-hotfix.0
 
 ### Minor Changes

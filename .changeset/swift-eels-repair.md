@@ -1,6 +1,6 @@
 ---
-"@ledgerhq/coin-evm": minor
-"@ledgerhq/live-signer-evm": minor
+"@ledgerhq/coin-evm": patch
+"@ledgerhq/live-signer-evm": patch
 ---
 
 Use observable instead of promise for signing
