@@ -65,7 +65,6 @@ import ProviderIcon from "../ProviderIcon";
 import { RootStackParamList } from "../RootNavigator/types/RootNavigator";
 import TermsFooter, { TermsProviders } from "../TermsFooter";
 import { isDmkError, isiOSPeerRemovedPairingError } from "@ledgerhq/live-dmk-mobile";
-// import { OpeningConnectionError } from "@ledgerhq/device-management-kit";
 
 export const Wrapper = styled(Flex).attrs({
   flex: 1,

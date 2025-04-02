@@ -135,7 +135,6 @@ function PairDevicesInner({ navigation, route }: NavigationProps) {
           correlationId: uuid(),
           origin: tracer.getContext(),
         });
-        //const transport = await getBLETransport({ isLDMKEnabled }).open(bleDevice.id);
 
         if (unmounted.current) return;
 
@@ -209,6 +208,7 @@ function PairDevicesInner({ navigation, route }: NavigationProps) {
           });
         } finally {
           await transport.close();
+          // @FixMe We use here the transport BLE from ../../react-native-hw-transport-ble to fix Detox E2E
           // eslint-disable-next-line @typescript-eslint/no-empty-function
           await getBLETransport({ isLDMKEnabled })
             .disconnectDevice(device.deviceId)

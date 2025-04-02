@@ -23,7 +23,7 @@ export function quitApp(transport: Transport): Observable<void> {
   return from(getAppAndVersion(transport)).pipe(
     switchMap(async result => {
       if (isDashboardName(result.appAndVersion.name)) {
-        return Promise.resolve();
+        return;
       }
       await transport.send(0xb0, 0xa7, 0x00, 0x00);
     }),
