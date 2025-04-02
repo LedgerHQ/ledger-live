@@ -26,6 +26,9 @@ patchedDependencies:
   '@hashgraph/sdk@2.14.2':
     hash: hno7opkpqo3efbuenv6ysglr4m
     path: patches/@hashgraph__sdk@2.14.2.patch
+  app-builder-lib@26.0.12:
+    hash: cm4bwtajinfo23ccpr3ham2ot4
+    path: patches/app-builder-lib@26.0.12.patch
   asyncstorage-down@4.2.0:
     hash: 2npkndps6fxdasqj3xzcrnnfbe
     path: patches/asyncstorage-down@4.2.0.patch
@@ -48971,7 +48974,7 @@ snapshots:
 
   app-builder-bin@5.0.0-alpha.12: {}
 
-  app-builder-lib@26.0.12(dmg-builder@26.0.12(lodash@4.17.21))(lodash@4.17.21):
+  app-builder-lib@26.0.12(patch_hash=cm4bwtajinfo23ccpr3ham2ot4)(dmg-builder@26.0.12(lodash@4.17.21))(lodash@4.17.21):
     dependencies:
       '@develar/schema-utils': 2.6.5
       '@electron/asar': 3.2.18
@@ -52247,7 +52250,7 @@ snapshots:
 
   dmg-builder@26.0.12(lodash@4.17.21):
     dependencies:
-      app-builder-lib: 26.0.12(dmg-builder@26.0.12(lodash@4.17.21))(lodash@4.17.21)
+      app-builder-lib: 26.0.12(patch_hash=cm4bwtajinfo23ccpr3ham2ot4)(dmg-builder@26.0.12(lodash@4.17.21))(lodash@4.17.21)
       builder-util: 26.0.11
       builder-util-runtime: 9.3.1
       fs-extra: 10.1.0
@@ -52508,7 +52511,7 @@ snapshots:
 
   electron-builder@26.0.12(lodash@4.17.21):
     dependencies:
-      app-builder-lib: 26.0.12(dmg-builder@26.0.12(lodash@4.17.21))(lodash@4.17.21)
+      app-builder-lib: 26.0.12(patch_hash=cm4bwtajinfo23ccpr3ham2ot4)(dmg-builder@26.0.12(lodash@4.17.21))(lodash@4.17.21)
       builder-util: 26.0.11
       builder-util-runtime: 9.3.1
       chalk: 4.1.2
