@@ -23,39 +23,55 @@ const ALPACA_URL = "http://0.0.0.0:3000";
 
 const buildBroadcast = networkFamily =>
   async function broadcast(signedOperation: string): Promise<string> {
-    const { data } = await network<string, string>({
+    const { data } = await network<
+      {
+        transactionIdentifier: string;
+      },
+      {
+        rawTransaction: string;
+      }
+    >({
       method: "POST",
       url: `${ALPACA_URL}/${networkFamily}/transaction/broadcast`,
-      data: signedOperation,
+      data: {
+        rawTransaction: signedOperation,
+      },
     });
-    return data;
+    return data.transactionIdentifier;
   };
 
-const buildCombine = _networkFamily =>
-  function combine(_tx: string, _signature: string, _pubKey?: string): string {
-    return "";
-    /*const { data } = await network<string, unknown>({
+const buildCombine = networkFamily =>
+  async function combine(tx: string, signature: string, pubKey?: string): Promise<string> {
+    const { data } = await network<
+      {
+        signedTransaction: string;
+      },
+      unknown
+    >({
       method: "POST",
       url: `${ALPACA_URL}/${networkFamily}/transaction/combine`,
       data: {
-        rawTransaction: tx,
-        signature,
-        pubKey,
+        raw_transaction: tx,
+        signature: signature,
+        pubkey: pubKey,
       },
     });
-    return data;*/
+    return data.signedTransaction;
   };
 
 const buildEstimateFees = networkFamily =>
   async function estimateFees(intent: TransactionIntent<any>): Promise<bigint> {
-    const { data } = await network<bigint, unknown>({
+    const { data } = await network<{ fee: string }, unknown>({
       method: "POST",
-      url: `${ALPACA_URL}/${networkFamily}/transaction/combine`,
+      url: `${ALPACA_URL}/${networkFamily}/transaction/estimate`,
       data: {
-        intent,
+        intent: {
+          ...intent,
+          amount: intent.amount.toString(10),
+        },
       },
     });
-    return data;
+    return BigInt(data.fee);
   };
 
 const buildGetBalance = networkFamily =>
@@ -101,7 +117,10 @@ const buildCraftTransaction = networkFamily =>
       method: "POST",
       url: `${ALPACA_URL}/${networkFamily}/transaction/encode`,
       data: {
-        intent: intent,
+        intent: {
+          ...intent,
+          amount: intent.amount.toString(10),
+        },
       },
     });
     return data.rawTransaction;

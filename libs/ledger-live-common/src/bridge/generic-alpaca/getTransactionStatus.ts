@@ -1,12 +1,13 @@
 import { FeeNotLoaded, InvalidAddressBecauseDestinationIsAlsoSource } from "@ledgerhq/errors";
-import { AccountBridge } from "@ledgerhq/types-live";
+import { AccountBridge, TransactionCommon } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 
+// => alpaca validateIntent
 export function genericGetTransactionStatus(
   _network,
   _kind,
 ): AccountBridge<any>["getTransactionStatus"] {
-  return async (account, transaction) => {
+  return async (account, transaction: TransactionCommon & { fees: BigNumber }) => {
     const errors: Record<string, Error> = {};
     const warnings: Record<string, Error> = {};
 

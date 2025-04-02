@@ -51,7 +51,7 @@ describe("API", () => {
     const signedTrx = await tronWeb.trx.sign(unsignedTx, wallet.privateKey);
 
     // WHEN
-    const result = module.combine(signedTrx.raw_data_hex, signedTrx.signature![0]);
+    const result = await module.combine(signedTrx.raw_data_hex, signedTrx.signature![0]);
     const txId = await module.broadcast(result);
 
     // THEN
