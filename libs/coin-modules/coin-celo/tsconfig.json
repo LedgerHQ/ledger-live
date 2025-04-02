@@ -8,5 +8,5 @@
     "outDir": "lib",
     "exactOptionalPropertyTypes": true
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*", "test/speculos-deviceActions.ts", "test/bot-specs, "test/specs".ts"]
 }

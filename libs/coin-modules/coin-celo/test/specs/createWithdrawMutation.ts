@@ -2,8 +2,8 @@ import invariant from "invariant";
 import { MutationSpec } from "@ledgerhq/coin-framework/bot/types";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies/parseCurrencyUnit";
-import { availablePendingWithdrawals } from "../logic";
-import type { CeloAccount, Transaction } from "../types";
+import { availablePendingWithdrawals } from "../../src/logic";
+import type { CeloAccount, Transaction } from "../../src/types";
 
 const currency = getCryptoCurrencyById("celo");
 const minimalAmount = parseCurrencyUnit(currency.units[0], "0.001");

@@ -13,7 +13,7 @@ import {
   createWithdrawMutation,
 } from "./specs/index";
 import type { AppSpec } from "@ledgerhq/coin-framework/bot/types";
-import type { Transaction } from "./types";
+import type { Transaction } from "../src/types";
 import { acceptTransaction } from "./speculos-deviceActions";
 
 const currency = getCryptoCurrencyById("celo");
