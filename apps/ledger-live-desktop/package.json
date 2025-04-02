@@ -104,7 +104,7 @@
     "electron-context-menu": "3.6.1",
     "electron-store": "8.2.0",
     "electron-updater": "6.1.8",
-    "firebase": "9.23.0",
+    "firebase": "10.9.0",
     "focus-trap": "6.9.4",
     "framer-motion": "11.3.28",
     "fuse.js": "6.6.2",
