@@ -7,6 +7,7 @@ protocols:
 
 beforePack: scripts/beforePack.js
 afterSign: scripts/notarize.js
+afterPack: scripts/afterPack.js
 
 directories:
   buildResources: "build-nightly"
@@ -23,6 +24,7 @@ mac:
   entitlements: build-nightly/mac/entitlements.plist
   entitlementsInherit: build-nightly/mac/entitlements.plist
   icon: build-nightly/icon.icns
+  mergeASARs: false
   target:
     - target: dmg
       arch:
