@@ -7,14 +7,14 @@ import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { killSpeculos, spawnSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
 import { resetIndexer, setBlock, indexBlocks, initMswHandlers } from "../indexer";
-import { buildAccountBridge, buildCurrencyBridge } from "../../../bridge/js";
-import { getCoinConfig, setCoinConfig } from "../../../config";
-import { Transaction as EvmTransaction } from "../../../types";
-import { makeAccount } from "../../fixtures/common.fixtures";
+import { buildAccountBridge, buildCurrencyBridge } from "@ledgerhq/coin-evm/bridge/js";
+import { getCoinConfig, setCoinConfig } from "@ledgerhq/coin-evm/config";
+import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/transaction";
+import { makeAccount } from "@ledgerhq/coin-evm/__tests__/fixtures/common.fixtures";
 import { blast, callMyDealer, VITALIK } from "../helpers";
 import { defaultNanoApp } from "../scenarii.test";
 import { killAnvil, spawnAnvil } from "../anvil";
-import resolver from "../../../hw-getAddress";
+import resolver from "@ledgerhq/coin-evm/hw-getAddress";
 
 type BlastScenarioTransaction = ScenarioTransaction<EvmTransaction, Account>;
 

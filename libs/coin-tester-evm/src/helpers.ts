@@ -2,9 +2,9 @@ import { ethers } from "ethers";
 import { NFTStandard } from "@ledgerhq/types-live";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import ERC1155ABI from "../../abis/erc1155.abi.json";
-import ERC721ABI from "../../abis/erc721.abi.json";
-import ERC20ABI from "../../abis/erc20.abi.json";
+import ERC1155ABI from "./abis/erc1155.abi.json";
+import ERC721ABI from "./abis/erc721.abi.json";
+import ERC20ABI from "./abis/erc20.abi.json";
 
 export const ethereum = getCryptoCurrencyById("ethereum");
 export const sonic = getCryptoCurrencyById("sonic");

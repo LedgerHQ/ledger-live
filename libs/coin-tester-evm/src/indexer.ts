@@ -3,11 +3,11 @@ import { SetupServerApi, setupServer } from "msw/node";
 import BlueBirdPromise from "bluebird";
 import { http, HttpResponse, bypass } from "msw";
 import { utils, providers, ethers } from "ethers";
-import ERC1155ABI from "../../abis/erc1155.abi.json";
-import ERC721ABI from "../../abis/erc721.abi.json";
-import ERC20ABI from "../../abis/erc20.abi.json";
-import { safeEncodeEIP55 } from "../../logic";
-import { EvmConfigInfo } from "../../config";
+import ERC1155ABI from "./abis/erc1155.abi.json";
+import ERC721ABI from "./abis/erc721.abi.json";
+import ERC20ABI from "./abis/erc20.abi.json";
+import { safeEncodeEIP55 } from "@ledgerhq/coin-evm/logic";
+import { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
 import type {
   EtherscanERC1155Event,
   EtherscanERC20Event,
@@ -15,7 +15,7 @@ import type {
   EtherscanInternalTransaction,
   EtherscanOperation,
   LedgerExplorerOperation,
-} from "../../types/index";
+} from "@ledgerhq/coin-evm/types/index";
 
 type TraceTransaction = {
   action: {

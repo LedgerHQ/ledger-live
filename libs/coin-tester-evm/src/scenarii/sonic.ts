@@ -7,14 +7,14 @@ import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { killSpeculos, spawnSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
 import { resetIndexer, indexBlocks, initMswHandlers, setBlock } from "../indexer";
-import { Transaction as EvmTransaction } from "../../../types";
-import { buildAccountBridge, buildCurrencyBridge } from "../../../bridge/js";
-import { getCoinConfig, setCoinConfig } from "../../../config";
-import { makeAccount } from "../../fixtures/common.fixtures";
+import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/transaction";
+import { buildAccountBridge, buildCurrencyBridge } from "@ledgerhq/coin-evm/bridge/js";
+import { getCoinConfig, setCoinConfig } from "@ledgerhq/coin-evm/config";
+import { makeAccount } from "@ledgerhq/coin-evm/__tests__/fixtures/common.fixtures";
 import { VITALIK, callMyDealer, sonic } from "../helpers";
 import { defaultNanoApp } from "../scenarii.test";
 import { killAnvil, spawnAnvil } from "../anvil";
-import resolver from "../../../hw-getAddress";
+import resolver from "@ledgerhq/coin-evm/hw-getAddress";
 
 type SonicScenarioTransaction = ScenarioTransaction<EvmTransaction, Account>;
 
