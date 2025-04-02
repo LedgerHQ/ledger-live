@@ -5,7 +5,7 @@ import {
   CeloVote,
   CeloVoteStatus,
   PendingStakingOperationAmounts,
-} from "./types";
+} from "./types/types";
 import { BigNumber } from "bignumber.js";
 import { Operation } from "@ledgerhq/types-live";
 
