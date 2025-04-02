@@ -146,10 +146,8 @@ export async function estimateFees({
       log("taquito-network-error", String((e as unknown as { message: string }).message || ""), {
         transaction: transaction,
       });
-      throw e;
-    } else {
-      throw e;
     }
+    throw e;
   }
   return estimation;
 }
