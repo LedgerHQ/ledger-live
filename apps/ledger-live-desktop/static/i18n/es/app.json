@@ -1779,7 +1779,7 @@
     },
     "fullNodeReadyInfo" : "Se agregarán las cuentas utilizando tu nodo completo de Bitcoin.",
     "fullNodeConfigure" : "Configurar nodo",
-    "tokensTip" : "{{token}} ({{ticker}}) es un token {{tokenType}}. Puedes recibir tokens directamente en una cuenta de {{currency}}.",
+    "tokensTip" : "{{token}} ({{ticker}}) is an {{tokenType}} token. You can receive tokens directly on a/an {{currency}} account.",
     "accountToImportSubtitle_plural" : "Agregar cuentas existentes",
     "selectAll" : "Seleccionar todas ({{count}})",
     "unselectAll" : "Desmarcar todas ({{count}})",
