@@ -1,10 +1,10 @@
-import { Account } from "@ledgerhq/types-live";
+import { Account, TransactionCommon } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 
-export function createTransaction(account: Account): any {
+export function createTransaction(account: Account): TransactionCommon & { family: string } {
   return {
     family: account.currency.family,
-    amount: new BigNumber(0),
+    amount: BigNumber(0),
     recipient: "",
   };
 }

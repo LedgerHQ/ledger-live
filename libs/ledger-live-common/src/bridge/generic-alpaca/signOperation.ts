@@ -47,7 +47,7 @@ export const genericSignOperation =
 
         o.next({ type: "device-signature-granted" });
 
-        const signed = getAlpacaApi(network, kind).combine(
+        const signed = await getAlpacaApi(network, kind).combine(
           unsigned,
           transactionSignature,
           publicKey,

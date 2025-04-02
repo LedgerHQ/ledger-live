@@ -2,6 +2,7 @@ import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { Account, Operation, OperationType, TransactionCommon } from "@ledgerhq/types-live";
 import { Operation as CoreOperation, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import BigNumber from "bignumber.js";
+import { fromBigNumberToBigInt } from "@ledgerhq/coin-framework/utils";
 
 export function adaptCoreOperationToLiveOperation(
   accountId: string,
@@ -32,7 +33,7 @@ export function transactionToIntent(
     type: "send",
     sender: _account.freshAddress,
     recipient: transaction.recipient,
-    amount: BigInt(transaction.amount.toString()),
+    amount: fromBigNumberToBigInt(transaction.amount, BigInt(0)),
   };
 }
 
