@@ -1,0 +1,13 @@
+diff --git a/out/node-module-collector/nodeModulesCollector.js b/out/node-module-collector/nodeModulesCollector.js
+index 1e9256cd6d6809262250452cc1c6a708e4d53124..31bff8a70b7f9f2855fe35bc2a281910683e0de0 100644
+--- a/out/node-module-collector/nodeModulesCollector.js
++++ b/out/node-module-collector/nodeModulesCollector.js
+@@ -29,7 +29,7 @@ class NodeModulesCollector {
+         const dependencies = await (0, builder_util_1.exec)(command, args, {
+             cwd: this.rootDir,
+             shell: true,
+-        });
++        }) || "{}";
+         return this.parseDependenciesTree(dependencies);
+     }
+     extractRelevantData(npmTree) {
