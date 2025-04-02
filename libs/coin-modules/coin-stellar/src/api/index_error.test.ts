@@ -2,11 +2,6 @@ import type { Api } from "@ledgerhq/coin-framework/api/index";
 import { createApi } from ".";
 import { StellarToken } from "../types";
 import nock from "nock";
-/**
- * Testnet scan: https://testnet.lumenscan.io/
- *
- * Tests are skipped for the moment due to TooManyRequest errors
- */
 describe("Stellar Api", () => {
   let module: Api<StellarToken>;
   const ADDRESS = "GBAUZBDXMVV7HII4JWBGFMLVKVJ6OLQAKOCGXM5E2FM4TAZB6C7JO2L7";
