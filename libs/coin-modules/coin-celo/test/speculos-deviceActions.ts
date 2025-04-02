@@ -1,5 +1,5 @@
 import type { DeviceAction } from "@ledgerhq/coin-framework/bot/types";
-import type { Transaction } from "./types";
+import type { Transaction } from "../src/types";
 import {
   deviceActionFlow,
   formatDeviceAmount,
