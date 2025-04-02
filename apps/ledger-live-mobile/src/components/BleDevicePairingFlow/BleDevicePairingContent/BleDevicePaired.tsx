@@ -14,8 +14,7 @@ export const BleDevicePaired = ({
   device: Device;
   productName: string;
 }) => {
-  const { colors } = useTheme();
-  const theme = colors.type as "dark" | "light";
+  const { colors, theme } = useTheme();
   const { t } = useTranslation();
 
   return (

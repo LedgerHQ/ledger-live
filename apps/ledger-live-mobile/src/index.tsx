@@ -67,8 +67,6 @@ import type { State } from "~/reducers/types";
 import { walletSelector } from "~/reducers/wallet";
 import Modals from "~/screens/Modals";
 import ExperimentalHeader from "~/screens/Settings/Experimental/ExperimentalHeader";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import LDMKTransportHeader from "~/screens/Settings/Experimental/LDMKTransportHeader";
 import { init } from "../e2e/bridge/client";
 import { updateIdentify } from "./analytics";
 import AppProviders from "./AppProviders";

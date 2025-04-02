@@ -19,6 +19,7 @@ import { DmkBleDevicePairing } from "./DmkBleDevicePairing";
 import { urls } from "~/utils/urls";
 import { Linking } from "react-native";
 import { LegacyBleDevicesScanning } from "~/components/BleDevicePairingFlow/LegacyBleDevicesScanning";
+import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 
 const TIMEOUT_AFTER_PAIRED_MS = 2000;
 
@@ -164,6 +165,7 @@ const BleDevicePairingFlow: React.FC<BleDevicePairingFlowProps> = ({
     };
   }, [deviceToPair, isPaired, onPairingSuccess]);
 
+  const pairingUrl = useLocalizedUrl(urls.errors.PairingFailed);
   const onRetryPairingFlow = useCallback(() => {
     // If a device has been paired, we let the pairing flow end
     if (!isPaired) {
@@ -175,8 +177,8 @@ const BleDevicePairingFlow: React.FC<BleDevicePairingFlowProps> = ({
   const isDmkTransportEnabled = useFeature("ldmkTransport")?.enabled;
 
   const onOpenHelp = useCallback(() => {
-    Linking.openURL(urls.errors.PairingFailed);
-  }, []);
+    Linking.openURL(pairingUrl);
+  }, [pairingUrl]);
 
   // Requests consumer component to override the header
   useEffect(() => {
