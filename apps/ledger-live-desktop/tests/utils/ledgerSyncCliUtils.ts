@@ -157,15 +157,7 @@ export class LedgerSyncCliHelper {
     return output;
   }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
   static async deleteLedgerSyncData() {
-=======
-  static async deleteLedgerSyncData(testInfo: TestInfo) {
->>>>>>> 669d3138e9 (wip:destroy trustchain before sync)
-=======
-  static async deleteLedgerSyncData() {
->>>>>>> c02908a715 (Initialize and destroy the trustchain before starting synchronization)
     await CLI.ledgerSync({
       deleteData: true,
       ...LedgerSyncCliHelper.ledgerKeyRingProtocolArgs,
