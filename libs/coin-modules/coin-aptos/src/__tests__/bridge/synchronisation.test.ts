@@ -1,10 +1,13 @@
 import { AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
-import { Account, SyncConfig } from "@ledgerhq/types-live";
+import { Account, SyncConfig, TokenAccount } from "@ledgerhq/types-live";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account";
 import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { emptyHistoryCache } from "@ledgerhq/coin-framework/account/index";
 import { AptosAPI } from "../../api";
-import { getAccountShape } from "../../bridge/synchronisation";
+import { getAccountShape, mergeSubAccounts } from "../../bridge/synchronisation";
+import BigNumber from "bignumber.js";
+import { createFixtureAccount } from "../../bridge/bridge.fixture";
 
 jest.mock("@ledgerhq/coin-framework/account", () => {
   const originalModule = jest.requireActual("@ledgerhq/coin-framework/account");
@@ -370,5 +373,76 @@ describe("getAccountShape", () => {
     expect(mockedEncodeAccountId).toHaveBeenCalledTimes(1);
     expect(mockedAptosAPI).toHaveBeenCalledTimes(1);
     expect(mockGetAccountSpy).toHaveBeenCalledWith("address");
+  });
+});
+
+describe("mergeSubAccounts", () => {
+  const subAccounts = [
+    {
+      type: "TokenAccount",
+      id: "subAccountId",
+      parentId: "accountId",
+      token: {
+        type: "TokenCurrency",
+        id: "aptos/coin/dstapt_0xd11107bdf0d6d7040c6c0bfbdecb6545191fdf13e8d8d259952f53e1713f61b5::staked_coin::stakedaptos",
+        contractAddress:
+          "0xd11107bdf0d6d7040c6c0bfbdecb6545191fdf13e8d8d259952f53e1713f61b5::staked_coin::StakedAptos",
+        parentCurrency: {
+          type: "CryptoCurrency",
+          id: "aptos",
+          coinType: 637,
+          name: "Aptos",
+          managerAppName: "Aptos",
+          ticker: "APT",
+          scheme: "aptos",
+          color: "#231F20",
+          family: "aptos",
+          units: [
+            {
+              name: "APT",
+              code: "APT",
+              magnitude: 8,
+            },
+          ],
+          explorerViews: [
+            {
+              address: "https://explorer.aptoslabs.com/account/$address?network=mainnet",
+              tx: "https://explorer.aptoslabs.com/txn/$hash?network=mainnet",
+            },
+          ],
+        },
+        name: "dstAPT",
+        tokenType: "coin",
+        ticker: "dstAPT",
+        disableCountervalue: false,
+        delisted: false,
+        units: [
+          {
+            name: "dstAPT",
+            code: "dstAPT",
+            magnitude: 8,
+          },
+        ],
+      },
+      balance: BigNumber(100),
+      spendableBalance: BigNumber(100),
+      creationDate: new Date(),
+      operationsCount: 0,
+      operations: [],
+      pendingOperations: [],
+      balanceHistoryCache: emptyHistoryCache,
+      swapHistory: [],
+    },
+  ] as TokenAccount[];
+
+  it("return new subAccount if no old subAccounts", () => {
+    expect(mergeSubAccounts(undefined, subAccounts)).toEqual(subAccounts);
+  });
+
+  it("merge subAccounts properly if initialAccount has the same as new subAccounts", () => {
+    const initialAccount = createFixtureAccount({
+      subAccounts,
+    });
+    expect(mergeSubAccounts(initialAccount, subAccounts)).toEqual(subAccounts);
   });
 });
