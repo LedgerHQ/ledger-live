@@ -21,17 +21,6 @@ function setupSeed() {
   });
   test.afterAll(async () => {
     setEnv("SEED", prevSeed);
-
-  const prevSeed = getEnv("SEED");
-
-  test.beforeAll(async () => {
-    process.env.SEED = "Temporary_SEED";
-  });
-  test.afterAll(async () => {
-
-    process.env.SEED = "X";
-     setEnv("SEED", prevSeed);
-
   });
 }
 
