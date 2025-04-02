@@ -73,11 +73,16 @@ export class Currency {
   static readonly ETH_USDT = new Currency(
     "Tether USD",
     "USDT",
-    "ethereum",
+    "ethereum/erc20/usd_tether__erc20_",
     AppInfos.ETHEREUM,
     "0xdac17f958d2ee523a2206206994597c13d831ec7",
   );
-  static readonly ETH_USDC = new Currency("USD Coin", "USDC", "ethereum", AppInfos.ETHEREUM);
+  static readonly ETH_USDC = new Currency(
+    "USD Coin",
+    "USDC",
+    "ethereum/erc20/usd__coin",
+    AppInfos.ETHEREUM,
+  );
   static readonly ETH_LIDO = new Currency(
     "LIDO Staked ETH",
     "STETH",
