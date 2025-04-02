@@ -293,7 +293,6 @@ export function getResourceAddress(
     if (isWriteSetChangeWriteResource(change)) {
       const address = getAddressProcessor(change, event, event_name);
       if (address !== null) {
-        // TODO: potential issue if we have several changes that fits conditions
         return address;
       }
     }

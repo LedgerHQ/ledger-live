@@ -49,17 +49,13 @@ export const getFee = async (
 
       const expectedGas = gasPrice.multipliedBy(gasLimit);
 
-      const tokenAccount = getTokenAccount(account, transaction);
-
-      const isUnderMaxSpendable = tokenAccount
-        ? transaction.amount.isLessThanOrEqualTo(tokenAccount.spendableBalance) &&
-          expectedGas.isLessThan(account.spendableBalance)
-        : transaction.amount.plus(expectedGas).isLessThanOrEqualTo(account.spendableBalance);
-
       if (!completedTx.success) {
         if (completedTx.vm_status.includes("MAX_GAS_UNITS_BELOW_MIN_TRANSACTION_GAS_UNITS")) {
           res.errors.maxGasAmount = "GasInsufficientBalance";
-        } else if (!completedTx.vm_status.includes("INSUFFICIENT_BALANCE") && isUnderMaxSpendable) {
+        } else if (
+          !completedTx.vm_status.includes("INSUFFICIENT_BALANCE") &&
+          !completedTx.vm_status.includes("0x203ed") // 0x203ed -> PROLOGUE_ECANT_PAY_GAS_DEPOSIT equivalent to INSUFFICIENT_BALANCE_FOR_TRANSACTION_FEE
+        ) {
           // INSUFFICIENT_BALANCE will be processed by getTransactionStatus
           throw Error(`Simulation failed with following error: ${completedTx.vm_status}`);
         }
