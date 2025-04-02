@@ -1779,7 +1779,7 @@
     },
     "fullNodeReadyInfo" : "As contas serão adicionadas usando seu node completo de Bitcoin.",
     "fullNodeConfigure" : "Configurar Node",
-    "tokensTip" : "{{token}} ({{ticker}}) é um token {{tokenType}}. Você pode receber tokens diretamente em uma conta {{currency}}.",
+    "tokensTip" : "{{token}} ({{ticker}}) is an {{tokenType}} token. You can receive tokens directly on a/an {{currency}} account.",
     "accountToImportSubtitle_plural" : "Adicionar contas existentes",
     "selectAll" : "Selecionar Tudo ({{count}})",
     "unselectAll" : "Desmarcar Tudo ({{count}})",
