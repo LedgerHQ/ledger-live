@@ -93,6 +93,11 @@ describe.skip("Stellar Api", () => {
       return transactionEnvelope.value().tx().fee();
     }
 
+    function readMemo(transactionXdr: string) {
+      const transactionEnvelope = xdr.TransactionEnvelope.fromXDR(transactionXdr, "base64");
+      return (transactionEnvelope.value().tx() as xdr.TransactionV0).memo();
+    }
+
     it("returns a raw transaction", async () => {
       const result = await module.craftTransaction({
         type: TYPE,
@@ -130,6 +135,28 @@ describe.skip("Stellar Api", () => {
 
       const fees = readFees(transactionXdr);
       expect(fees).toEqual(Number(customFees));
+    });
+
+    it("should have no memo when not provided by user", async () => {
+      const transactionXdr = await module.craftTransaction({
+        type: TYPE,
+        sender: ADDRESS,
+        recipient: RECIPIENT,
+        amount: AMOUNT,
+      });
+      expect(readMemo(transactionXdr)).toEqual(xdr.Memo.memoNone());
+    });
+
+    it("should have a memo when provided by user", async () => {
+      const transactionXdr = await module.craftTransaction({
+        type: TYPE,
+        sender: ADDRESS,
+        recipient: RECIPIENT,
+        amount: AMOUNT,
+        memoType: "MEMO_TEXT",
+        memoValue: "test",
+      });
+      expect(readMemo(transactionXdr)).toEqual(xdr.Memo.memoText(Buffer.from("test", "ascii")));
     });
   });
 });
