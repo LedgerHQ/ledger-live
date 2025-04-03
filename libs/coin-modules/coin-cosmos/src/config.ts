@@ -6,7 +6,7 @@ export const cosmosConfig: CosmosConfig = {
   config_currency_axelar: {
     type: "object",
     default: {
-      lcd: "https://axelar-api.polkachu.com",
+      lcd: "https://lcd-axelar.imperator.co",
       minGasPrice: 0.07,
       ledgerValidator: "axelarvaloper1fgklp9hemczlwtqp9jqzq3xahh38hznx7vd805",
       status: {
@@ -100,7 +100,7 @@ export const cosmosConfig: CosmosConfig = {
   config_currency_secret_network: {
     type: "object",
     default: {
-      lcd: "https://lcd.secret.express",
+      lcd: "https://lcd.mainnet.secretsaturn.net",
       minGasPrice: 0.25,
       status: {
         type: "active",
@@ -150,7 +150,7 @@ export const cosmosConfig: CosmosConfig = {
   config_currency_injective: {
     type: "object",
     default: {
-      lcd: "https://injective-api.polkachu.com",
+      lcd: "https://injective-rest.publicnode.com",
       minGasPrice: 900000000,
       ledgerValidator: "injvaloper1ntn4j2lsu3k60g8xj9pqshqvdj2q5tygyvczpy",
       status: {
