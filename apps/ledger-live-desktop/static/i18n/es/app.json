@@ -4229,7 +4229,7 @@
       "nfts" : {
         "title" : "Colecciones ocultas de NFTs",
         "description" : "Restablecer la lista de colecciones ocultas",
-        "reset" : "Restablecer"
+        "reset" : "Restablecer ({{count}})"
       },
       "exchangeDeveloperMode" : {
         "title" : "Modo de desarrollador del exchange",
@@ -4340,6 +4340,32 @@
         },
         "back" : "Volver"
       },
+      "debugNfts" : {
+        "title" : "Herramientas para NFTs",
+        "description" : "Ofrece herramientas prácticas con las que gestionar los NFTs en Ledger Live",
+        "cta" : "Abrir",
+        "tabs" : {
+          "config" : "Configuración",
+          "generatorAndDestructor" : "Generadores y destructores"
+        },
+        "configuration" : {
+          "supported" : "Cadena de NFT compatible",
+          "supported_other" : "Cadenas de NFT compatibles",
+          "nms" : {
+            "title" : "Servicio de metadatos de NFT (NMS)",
+            "env" : "Entorno: {{env}}"
+          }
+        },
+        "generatorAndDestructor" : {
+          "genAcc" : "Generar cuentas",
+          "genAccDesc" : "Generar una cuenta con NFTs",
+          "cta" : "Generar",
+          "deleteAcc" : "Eliminar cuentas",
+          "deleteAccDesc" : "Eliminar todas las cuentas del almacén",
+          "delete" : "Borrar"
+        },
+        "back" : "Volver"
+      },
       "debugWalletSync" : {
         "title" : "Depurador de Ledger Sync",
         "description" : "Te permite lanzar un flujo específico de Ledger Sync o comprobar el estado actual de Ledger Sync",
@@ -4376,6 +4402,8 @@
       "catalogUrlDesc" : "Introduce la URL del proveedor del catálogo personalizado",
       "enablePlatformDevTools" : "Habilitar herramientas de desarrollador de plataforma",
       "enablePlatformDevToolsDesc" : "Habilitar ventana de herramientas de desarrollador de aplicaciones de plataforma",
+      "enablePlatformDeviceSwitch" : "Activar cambio de plataforma según dispositivo",
+      "enablePlatformDeviceSwitchDesc" : "Activar conmutador para cambiar entre Mobile y Desktop",
       "customLockScreen" : "Activos de la pantalla de bloqueo personalizada",
       "customLockScreenDesc" : "Depurar activos gráficos de la pantalla de bloqueo personalizada",
       "customLockScreenCTA" : "Ejecutar",
