@@ -13,8 +13,8 @@ import { CONNECTION_TYPES, HOOKS_TRACKING_LOCATIONS } from "./variables";
 
 type LedgerError = InstanceType<LedgerErrorConstructor<{ [key: string]: unknown }>>;
 
-export type UseTrackSyncFlow = {
-  location: HOOKS_TRACKING_LOCATIONS.ledgerSync | undefined;
+export type UseTrackGenericDAppTransactionSend = {
+  location: HOOKS_TRACKING_LOCATIONS.genericDAppTransactionSend | undefined;
   device: Device;
   allowManagerRequested: boolean | null | undefined;
   error?:
@@ -24,9 +24,9 @@ export type UseTrackSyncFlow = {
       })
     | undefined
     | null;
-  isLedgerSyncAppOpen: boolean;
   isTrackingEnabled: boolean;
   requestOpenApp: string | null | undefined;
+  openedAppName: string | null | undefined;
   isLocked: boolean | null | undefined;
   inWrongDeviceForAccount:
     | {
@@ -37,40 +37,41 @@ export type UseTrackSyncFlow = {
 };
 
 /**
- * a custom hook to track events in the Sync flow.
- * tracks user interactions with the Sync flow based on state changes and errors.
+ * a custom hook to track events in generic DApp transaction flow (send).
+ * tracks user interactions with generic DApp transaction flow (send) based on state changes and errors.
  *
  * @param location - current location in the app (expected "Ledger Sync" from HOOKS_TRACKING_LOCATIONS enum).
  * @param device - the connected device information.
  * @param error - optional - current error state.
  * @param allowManagerRequested - flag indicating if the user has allowed the Manager app.
  * @param requestOpenApp - the app requested to be opened.
- * @param isLedgerSyncAppOpen - flag indicating if the Ledger Sync app is open.
- * @param isTrackingEnabled - flag indicating if tracking is enabled.
+ * @param openedAppName - the currently opened app name.
  * @param isLocked - flag indicating if the device is locked.
+ * @param isTrackingEnabled - flag indicating if tracking is enabled.
  * @param inWrongDeviceForAccount - error from verifying address.
  */
-export const useTrackSyncFlow = ({
+export const useTrackGenericDAppTransactionSend = ({
   location,
   device,
   error = null,
   allowManagerRequested,
   requestOpenApp,
-  isLedgerSyncAppOpen,
+  openedAppName,
   isTrackingEnabled,
   isLocked,
   inWrongDeviceForAccount,
-}: UseTrackSyncFlow) => {
+}: UseTrackGenericDAppTransactionSend) => {
   const previousAllowManagerRequested = useRef<boolean | null | undefined>(undefined);
-  const previousOpenAppRequested = useRef<string | null | undefined>(undefined);
+  const previousOpenAppRequested = useRef<Set<string>>(new Set());
 
   useEffect(() => {
-    if (location !== HOOKS_TRACKING_LOCATIONS.ledgerSync) return;
+    if (location !== HOOKS_TRACKING_LOCATIONS.genericDAppTransactionSend) return;
+
     const defaultPayload = {
       deviceType: device?.modelId,
       connectionType: device?.wired ? CONNECTION_TYPES.USB : CONNECTION_TYPES.BLE,
       platform: "LLD",
-      page: "Receive",
+      page: "Generic DApp Transaction Send",
     };
 
     if (
@@ -82,43 +83,49 @@ export const useTrackSyncFlow = ({
       track("Secure Channel approved", defaultPayload, isTrackingEnabled);
     }
 
-    if (inWrongDeviceForAccount) {
-      // device used is not associated with the account
-      track("Wrong device association", defaultPayload, isTrackingEnabled);
-    }
-
     if (error instanceof UserRefusedAllowManager) {
       // user refused secure channel
       track("Secure Channel refused", defaultPayload, isTrackingEnabled);
     }
 
+    if (inWrongDeviceForAccount) {
+      // device used is not associated with the account
+      track("Wrong device association", defaultPayload, isTrackingEnabled);
+    }
+
+    if (openedAppName && previousOpenAppRequested.current.has(openedAppName)) {
+      // Check if the opened app name is in the set of requested apps.
+      track("User opened app", defaultPayload, isTrackingEnabled);
+      // Clear the set after tracking the event.
+      previousOpenAppRequested.current.clear();
+    }
+
+    if (previousOpenAppRequested.current.size && error instanceof UserRefusedOnDevice) {
+      // user refused to open add during generic DApp transaction flow (send)
+      track("User refused to open app", defaultPayload, isTrackingEnabled);
+    }
+
     if (error instanceof CantOpenDevice) {
-      // device disconnected during ledger synch
+      // device disconnected during generic DApp transaction flow (send)
       track("Connection failed", defaultPayload, isTrackingEnabled);
     }
 
     if (error instanceof TransportError) {
-      // transport error during ledger synch
+      // transport error during generic DApp transaction flow (send)
       track("Transport error", defaultPayload, isTrackingEnabled);
     }
 
     if (isLocked || error instanceof LockedDeviceError) {
-      // device locked during ledger synch
+      // device locked during generic DApp transaction flow (send)
       track("Device locked", defaultPayload, isTrackingEnabled);
     }
 
-    if (previousOpenAppRequested && error instanceof UserRefusedOnDevice) {
-      // user refused to open Ledger Sync app
-      track("User refused to open Ledger Sync app", defaultPayload, isTrackingEnabled);
-    }
-
-    if (previousOpenAppRequested && isLedgerSyncAppOpen) {
-      // user opened Ledger Sync app
-      track("User opened Ledger Sync app", defaultPayload, isTrackingEnabled);
+    // When requestOpenApp is present, add it to our Set.
+    if (requestOpenApp) {
+      previousOpenAppRequested.current.add(requestOpenApp);
     }
 
     previousAllowManagerRequested.current = allowManagerRequested;
-    previousOpenAppRequested.current = requestOpenApp;
   }, [
     error,
     location,
@@ -126,7 +133,7 @@ export const useTrackSyncFlow = ({
     device,
     allowManagerRequested,
     requestOpenApp,
-    isLedgerSyncAppOpen,
+    openedAppName,
     isLocked,
     inWrongDeviceForAccount,
   ]);
