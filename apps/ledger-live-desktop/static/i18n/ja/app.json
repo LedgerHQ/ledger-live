@@ -1779,7 +1779,7 @@
     },
     "fullNodeReadyInfo" : "アカウントは、Bitcoinフルノードを使用して追加されます。",
     "fullNodeConfigure" : "ノードの構成",
-    "tokensTip" : "{{token}} ({{ticker}})は{{tokenType}}トークンです。 {{currency}} アカウントで直接トークンを受け取ることができます。",
+    "tokensTip" : "{{token}} ({{ticker}}) は、{{tokenType}}トークンです。{{currency}}アカウントで直接トークンを受け取ることができます。",
     "accountToImportSubtitle_plural" : "既存アカウントを追加",
     "selectAll" : "すべてを選択 ({{count}})",
     "unselectAll" : "全ての選択解除 ({{count}})",

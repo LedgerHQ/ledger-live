@@ -1779,7 +1779,7 @@
     },
     "fullNodeReadyInfo" : "ستتم إضافة الحسابات باستخدام عقدتك الكاملة لبيتكوين.",
     "fullNodeConfigure" : "تكوين العقدة",
-    "tokensTip" : "{{token}} ({{ticker}}) هو رمز {{tokenType}}. يمكنك تلقي رموز التوكن مباشرةً على حساب {{currency}}.",
+    "tokensTip" : "{{token}} ({{ticker}}) is an {{tokenType}} token. You can receive tokens directly on a/an {{currency}} account.",
     "accountToImportSubtitle_plural" : "إضافة حسابات موجودة",
     "selectAll" : "اختر الكل ({{count}})",
     "unselectAll" : "إلغاء اختيار الكل ({{count}})",

@@ -100,7 +100,8 @@
       "times" : "x{{ value }}"
     },
     "quote" : "호가",
-    "tryAgain" : "다시 시도하세요"
+    "tryAgain" : "다시 시도하세요",
+    "ldmkEnabled" : "LDMK transport enabled"
   },
   "errors" : {
     "ReplacementTransactionUnderpriced" : {
@@ -4047,7 +4048,9 @@
       "desc" : "계정 추가를 취소할까요?",
       "v2" : {
         "title" : "계정 추가를 취소하시겠습니까?",
-        "desc" : "어떤 계정도 Ledger Live에 추가되지 않습니다."
+        "desc" : "어떤 계정도 Ledger Live에 추가되지 않습니다.",
+        "continue" : "계속 추가하기",
+        "cancel" : "취소"
       }
     },
     "imported" : "자산이 성공적으로 추가되었습니다",
@@ -4085,7 +4088,7 @@
       "title" : "토큰 추가",
       "createParentCurrencyAccount" : "{{parrentCurrencyName}} 계정 추가",
       "generic" : {
-        "disclaimer" : "{{token}} ({{ticker}})는 {{tokenType}} 토큰입니다. {{currency}} 계정으로 직접 토큰을 받을 수 있습니다.",
+        "disclaimer" : "{{token}} ({{ticker}})(은)는 {{tokenType}} 토큰입니다.\n{{currency}} 계정에서 직접 토큰을 수령할 수 있습니다.",
         "learnMore" : "{{tokenType}}에 대해 자세히 알아보기"
       }
     },

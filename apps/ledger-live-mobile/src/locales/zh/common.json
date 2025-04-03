@@ -100,7 +100,8 @@
       "times" : "x{{ value }}"
     },
     "quote" : "报价",
-    "tryAgain" : "请重试"
+    "tryAgain" : "请重试",
+    "ldmkEnabled" : "LDMK transport enabled"
   },
   "errors" : {
     "ReplacementTransactionUnderpriced" : {
@@ -4047,7 +4048,9 @@
       "desc" : "您确定要取消添加账户？",
       "v2" : {
         "title" : "取消添加账户？",
-        "desc" : "账户不会添加至 Ledger Live。"
+        "desc" : "账户不会添加至 Ledger Live。",
+        "continue" : "Continue adding",
+        "cancel" : "取消"
       }
     },
     "imported" : "资产添加成功",
@@ -4085,7 +4088,7 @@
       "title" : "添加代币",
       "createParentCurrencyAccount" : "添加 {{parrentCurrencyName}} 账户",
       "generic" : {
-        "disclaimer" : "{{token}} ({{ticker}}) 是一个 {{tokenType}} 代币。\n您可以直接在 {{currency}} 账户上接收代币。",
+        "disclaimer" : "{{token}} ({{ticker}}) is an {{tokenType}} token.\nYou can receive tokens directly on a/an {{currency}} account.",
         "learnMore" : "了解关于 {{tokenType}} 的更多信息"
       }
     },
