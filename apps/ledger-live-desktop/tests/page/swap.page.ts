@@ -290,10 +290,10 @@ export class SwapPage extends AppPage {
   @step("Click Exchange button")
   async clickExchangeButton(electronApp: ElectronApplication, provider: string) {
     const [, webview] = electronApp.windows();
-    const SwapButton = webview.getByRole("button", { name: `Swap with ${provider}` });
-    await expect(SwapButton).toBeVisible();
-    await expect(SwapButton).toBeEnabled();
-    await SwapButton.click();
+    const swapButton = webview.getByRole("button", { name: `Swap with ${provider}` });
+    await expect(swapButton).toBeVisible();
+    await expect(swapButton).toBeEnabled();
+    await swapButton.click();
   }
 
   @step("Go to provider live app")
