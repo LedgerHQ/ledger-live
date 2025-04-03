@@ -33,12 +33,6 @@ runs:
       run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --filter="ledger-live-desktop-e2e-tests" --unsafe-perm
       shell: bash
     - name: Build dependencies
-      if: inputs.turborepo-server-port != ''
-      run: |
-        pnpm build:lld:deps --api="http://127.0.0.1:${{ inputs.turborepo-server-port }}" --token="${{ inputs.turbo-server-token }}" --team="foo"
-      shell: bash
-    - name: Build dependencies
-      if: inputs.turborepo-server-port == ''
       run: |
         pnpm build:lld:deps
       shell: bash
@@ -48,7 +42,7 @@ runs:
       run: pnpm i --filter="live-cli*..."
       shell: bash
     - name: Build CLI
-      run: pnpm build:cli --api="http://127.0.0.1:${{ steps.caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
+      run: pnpm build:cli
       shell: bash
     - name: Build LLD app for testing
       env:

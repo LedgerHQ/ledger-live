@@ -81,16 +81,6 @@ jobs:
         with:
           ref: ${{ inputs.ref || github.sha }}
 
-      - name: Setup caches
-        id: caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
-        with:
-          skip-turbo-cache: "false"
-          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
-          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
-          region: ${{ secrets.AWS_CACHE_REGION }}
-          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-
       - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-test-desktop@refactoring/qaa-380
         id: setup-test-desktop
         with:
