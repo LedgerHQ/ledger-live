@@ -3,6 +3,8 @@ import {
   buildTransferInstructions,
   buildTokenTransferInstructions,
   buildCreateAssociatedTokenAccountInstruction,
+  buildApproveTransactionInstructions,
+  buildRevokeTransactionInstructions,
   buildStakeCreateAccountInstructions,
   buildStakeDelegateInstructions,
   buildStakeUndelegateInstructions,
@@ -80,6 +82,10 @@ async function buildInstructionsForCommand(
       return buildTokenTransferInstructions(api, command);
     case "token.createATA":
       return buildCreateAssociatedTokenAccountInstruction(api, command);
+    case "token.approve":
+      return buildApproveTransactionInstructions(api, command);
+    case "token.revoke":
+      return buildRevokeTransactionInstructions(api, command);
     case "stake.createAccount":
       return buildStakeCreateAccountInstructions(api, command);
     case "stake.delegate":
