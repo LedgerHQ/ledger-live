@@ -24,12 +24,6 @@ runs:
   steps:
     - id: branch-name
       uses: tj-actions/branch-names@v6
-    - name: Download Allure Report
-      uses: actions/download-artifact@v4
-      with:
-        path: ${{ inputs.path }}
-        pattern: ${{ inputs.path }}*
-        merge-multiple: true
     - name: Publish report on Allure Server
       id: publish-report
       uses: LedgerHQ/send-to-allure-server-action@2.1.2

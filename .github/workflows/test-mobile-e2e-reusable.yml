@@ -21,6 +21,24 @@ on:
         description: The base branch to merge the head into when checking out the code
         type: string
         required: false
+      speculos_tests:
+        description: Run Speculos tests
+        required: false
+        type: boolean
+        default: false
+      enable_broadcast:
+        description: "Enable transaction broadcast"
+        required: false
+        type: boolean
+        default: false
+      production_firebase:
+        description: "Target Firebase Production env"
+        required: false
+        type: boolean
+        default: false
+      test_filter:
+        description: Filter to execute only test suite spec files according to pattern(s) (e.g. to execute nftGallery.spec.ts and deeplinks.spec.ts files "nftGallery deeplinks")
+        required: false
       export_to_xray:
         description: Send tests results to Xray
         required: false
@@ -34,26 +52,6 @@ on:
         description: "[iOS] Test Execution ticket ID. Ex: 'B2CQA-2461'"
         required: false
         type: string
-      speculos_tests:
-        description: Run Speculos tests
-        required: false
-        type: boolean
-        default: false
-      slack_notif:
-        description: "Send notification to Slack?"
-        required: false
-        type: boolean
-        default: false
-      enable_broadcast:
-        description: "Enable transaction broadcast"
-        required: false
-        type: boolean
-        default: false
-      production_firebase:
-        description: "Target Production Firebase environment"
-        required: false
-        type: boolean
-        default: false
 
 # Uncomment to have log-level: trace on detox run and build
 # (cf: apps/ledger-live-mobile/detox.config.js)
@@ -68,6 +66,7 @@ env:
   SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:master
   COINAPPS: ${{ github.workspace }}/coin-apps
   SPECULOS_RUN: ${{ inputs.speculos_tests || github.event_name == 'schedule' }}
+  SHOULD_UPLOAD: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' || (github.event_name == 'push' && contains(fromJson('["develop", "main"]'), github.ref_name)) }}
 
 jobs:
   detox-tests-ios:
@@ -166,10 +165,11 @@ jobs:
       - name: Test iOS app
         id: detox
         timeout-minutes: 75
-        run: pnpm test:llm:ios:e2e --api="http://127.0.0.1:${{ steps.caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo" -- -p ios -t $([[ "$INPUT_SPECULOS" == "true" ]] && printf %s '--speculos')
+        run: pnpm test:llm:ios:e2e --api="http://127.0.0.1:${{ steps.caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo" -- -p ios -t $([[ "$INPUT_SPECULOS" == "true" ]] && printf %s '--speculos') ${INPUTS_TEST_FILTER:+--filter} "${{ inputs.test_filter }}"
         env:
           SEED: ${{ secrets.SEED_QAA_B2C }}
           INPUT_SPECULOS: ${{ env.SPECULOS_RUN }}
+          INPUTS_TEST_FILTER: ${{ inputs.test_filter }}
       - name: Delete iOS simulator
         if: ${{ always() }}
         run: |
@@ -184,17 +184,21 @@ jobs:
   allure-report-ios:
     name: "Allure Reports Export on Server"
     runs-on: [ledger-live-medium]
-    if: ${{ !inputs.speculos_tests && (inputs.slack_notif || github.event_name == 'push') }}
+    if: ${{ always() && !inputs.speculos_tests }}
     needs: [detox-tests-ios]
     outputs:
       report-url: ${{ steps.upload.outputs.report-url }}
       result: ${{ steps.summary.outputs.test_result }}
       status: ${{ needs.detox-tests-ios.outputs.status }}
     steps:
-      - uses: actions/checkout@v4
+      - name: Download Allure Report
+        uses: actions/download-artifact@v4
         with:
-          ref: ${{ ((github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call' || github.event_name == 'pull_request') && (inputs.ref || github.ref_name)) || github.sha }}
+          path: ios-test-artifacts
+          pattern: ios-test-artifacts*
+          merge-multiple: true
       - uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
+        if: ${{ always() && env.SHOULD_UPLOAD == 'true' }}
         id: upload
         with:
           platform: ios-${{ env.SPECULOS_RUN == 'true' && 'speculos' || 'mocked' }}
@@ -341,13 +345,14 @@ jobs:
           enable_broadcast: ${{ inputs.enable_broadcast }}
       - name: Run Android Tests
         id: detox
-        run: pnpm mobile e2e:ci -p android -t $([[ "$INPUT_SPECULOS" == "true" ]] && printf %s '--speculos') $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') --shard ${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+        run: pnpm mobile e2e:ci -p android -t $([[ "$INPUT_SPECULOS" == "true" ]] && printf %s '--speculos') $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') --shard ${{ matrix.shardIndex }}/${{ matrix.shardTotal }} ${INPUTS_TEST_FILTER:+--filter} "${{ inputs.test_filter }}"
         timeout-minutes: ${{ env.SPECULOS_RUN == 'true' && 120 || 45 }}
         env:
           DETOX_INSTALL_TIMEOUT: 120000
           SEED: ${{ secrets.SEED_QAA_B2C }}
           INPUT_SPECULOS: ${{ env.SPECULOS_RUN }}
           PRODUCTION: ${{ inputs.production_firebase }}
+          INPUTS_TEST_FILTER: ${{ inputs.test_filter }}
       - name: Upload test artifacts
         uses: actions/upload-artifact@v4
         if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
@@ -362,19 +367,22 @@ jobs:
   allure-report-android:
     name: "Allure Reports Export on Server"
     runs-on: [ledger-live-medium]
-    if: ${{ always() && (inputs.slack_notif || github.event_name == 'push' || github.event_name == 'schedule') }}
+    if: ${{ always() }}
     outputs:
       report-url: ${{ steps.upload.outputs.report-url }}
       result: ${{ steps.summary.outputs.test_result }}
       finalStatus: ${{ steps.aggregate.outputs.finalStatus }}
     needs: [detox-tests-android]
     steps:
-      - name: checkout
-        uses: actions/checkout@v4
+      - name: Download Allure Report
+        uses: actions/download-artifact@v4
         with:
-          ref: ${{ ((github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call' || github.event_name == 'pull_request') && (inputs.ref || github.ref_name)) || github.sha }}
+          path: android-test-artifacts
+          pattern: android-test-artifacts*
+          merge-multiple: true
       - uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
         id: upload
+        if: ${{ always() && env.SHOULD_UPLOAD == 'true' }}
         with:
           platform: android-${{ env.SPECULOS_RUN == 'true' && 'speculos' || 'mocked' }}
           login: ${{ vars.ALLURE_USERNAME }}
@@ -469,7 +477,7 @@ jobs:
   report-on-slack:
     runs-on: ubuntu-22.04
     needs: [allure-report-android, allure-report-ios]
-    if: ${{ (failure() && github.event_name == 'push') || (always() && (inputs.slack_notif || github.event_name == 'schedule')) }}
+    if: ${{ always() && (needs.allure-report-ios.outputs.report-url || needs.allure-report-android.outputs.report-url) }}
     env:
       IOS_STATUS: ${{ needs.allure-report-ios.outputs.status }}
       IOS_REPORT_URL: ${{ needs.allure-report-ios.outputs.report-url }}
@@ -490,7 +498,7 @@ jobs:
                   "type": "plain_text",
                   "text": process.env.SPECULOS_RUN == 'false'
                     ? "Ledger Live Mobile Mocked Tests on ${{ github.ref_name }}"
-                    : ":ledger-logo: Ledger Live Mobile E2E nightly tests results on ${{ github.ref_name }}",
+                    : ":ledger-logo: Ledger Live Mobile E2E Speculos tests results on ${{ github.ref_name }}",
                   "emoji": true
                 }
               },
@@ -586,7 +594,7 @@ jobs:
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
       - name: post to a Slack channel
-        if: ${{ github.event_name == 'push' && contains(fromJson('["develop", "main"]'), github.ref_name) || github.event_name == 'schedule' }}
+        if: ${{ (failure() && github.event_name == 'push' && contains(fromJson('["develop", "main"]'), github.ref_name)) || contains(fromJson('["release"]'), github.ref_name) }}
         uses: slackapi/slack-github-action@v1.23.0
         with:
           channel-id: "C05FKJ7DFAP"
