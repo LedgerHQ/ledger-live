@@ -1,5 +1,13 @@
 # @ledgerhq/device-core
 
+## 0.4.20-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`46a9620`](https://github.com/LedgerHQ/ledger-live/commit/46a9620b4ea6343efc28792d3b57bf84ee2a23e8), [`f1732a7`](https://github.com/LedgerHQ/ledger-live/commit/f1732a795e54f666b67e7686d59926037412caca), [`d694069`](https://github.com/LedgerHQ/ledger-live/commit/d6940698a49b7a0ed48f84d6e8184d80760cca4f)]:
+  - @ledgerhq/types-live@6.66.0-next.0
+  - @ledgerhq/live-network@2.0.7-next.0
+
 ## 0.4.19
 
 ### Patch Changes

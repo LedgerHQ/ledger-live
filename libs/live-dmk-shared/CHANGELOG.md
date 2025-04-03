@@ -1,5 +1,11 @@
 # @ledgerhq/live-dmk
 
+## 0.2.0-next.0
+
+### Minor Changes
+
+- [#9763](https://github.com/LedgerHQ/ledger-live/pull/9763) [`e6f8297`](https://github.com/LedgerHQ/ledger-live/commit/e6f8297515ed689ee7cad902ef0ec07260692463) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Separate live-dmk into smaller packages
+
 ## 0.6.0
 
 ### Minor Changes
