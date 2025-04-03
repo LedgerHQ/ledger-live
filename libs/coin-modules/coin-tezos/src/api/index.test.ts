@@ -114,6 +114,12 @@ describe("Testing craftTransaction function", () => {
 describe("Testing estimateFees function", () => {
   beforeEach(() => jest.clearAllMocks());
 
+  it("should return estimation from logic module", async () => {
+    logicEstimateFees.mockResolvedValue({ estimatedFees: DEFAULT_ESTIMATED_FEES });
+    const result = await api.estimateFees({ type: "send" } as TransactionIntent<void>);
+    expect(result).toEqual(DEFAULT_ESTIMATED_FEES);
+  });
+
   it("should throw taquito errors", async () => {
     logicEstimateFees.mockResolvedValue({ taquitoError: "test" });
     await expect(api.estimateFees({ type: "send" } as TransactionIntent<void>)).rejects.toThrow(
