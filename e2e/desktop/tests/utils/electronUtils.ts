@@ -1,5 +1,6 @@
 import { ElectronApplication, _electron as electron } from "@playwright/test";
 import * as path from "path";
+const { execSync } = require("child_process");
 
 export async function launchApp({
   env,
@@ -17,9 +18,15 @@ export async function launchApp({
   windowSize: { width: number; height: number };
 }): Promise<ElectronApplication> {
   try {
+    const appPath = path.join(
+      __dirname,
+      "../../../../apps/ledger-live-desktop/.webpack/main.bundle.js",
+    );
+    console.warn(appPath);
+    console.log(execSync(`ls -l ${appPath}`).toString());
     const app = await electron.launch({
       args: [
-        `${path.join(__dirname, "../../../../apps/ledger-live-desktop/.webpack/main.bundle.js")}`,
+        appPath,
         `--user-data-dir=${userdataDestinationPath}`,
         "--force-device-scale-factor=1",
         "--disable-dev-shm-usage",
