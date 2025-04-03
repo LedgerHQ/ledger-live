@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-tezos": patch
+"@ledgerhq/coin-tezos": minor
 ---
 
 fix tezos fee estimation silently catching errors
