@@ -212,10 +212,10 @@ export const test = base.extend<TestFixtures>({
       if (msg.type() == "error") {
         console.error(txt);
       }
-      if (IS_DEBUG_MODE) {
-        // Direct Electron console to Node terminal.
-        console.log(txt);
-      }
+
+      // Direct Electron console to Node terminal.
+      console.log(txt);
+
       safeAppendFile(logFile, `${txt}\n`);
     });
     page.on("pageerror", error => {
@@ -228,6 +228,7 @@ export const test = base.extend<TestFixtures>({
     //await page.waitForLoadState("domcontentloaded");
     await page.waitForLoadState("networkidle");
     //await page.waitForSelector("#loader-container", { state: "hidden" });
+    await page.screenshot({ path: testInfo.outputPath("screenshot.png") });
 
     // use page in the test
     await use(page);
