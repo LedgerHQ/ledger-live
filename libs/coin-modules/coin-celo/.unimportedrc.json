@@ -1,12 +1,10 @@
 {
   "entry": [
-    "src/api/index.ts",
     "src/bridge/index.ts",
     "src/bridge/deviceTransactionConfig.ts",
     "src/datasets/dataset-1.ts",
     "src/signer/index.ts",
-    "src/test/index.ts",
-    "src/index.ts"
+    "src/test/index.ts"
   ],
   "ignorePatterns": [
     "**/node_modules/**",
@@ -20,28 +18,23 @@
     "jest-message-util"
   ],
   "ignoreUnimported": [
-    "src/bridge/js.ts",
-    "src/broadcast.ts",
-    "src/buildOptimisticOperation.ts",
-    "src/buildTransaction.ts",
-    "src/cli-transaction.ts",
+    "src/bridge/transaction.ts",
     "src/config.ts",
-    "src/createTransaction.ts",
     "src/datasets/celo.scanAccounts.1.ts",
-    "src/deviceTransactionConfig.ts",
     "src/errors.ts",
-    "src/estimateMaxSpendable.ts",
-    "src/getFeesForTransaction.ts",
-    "src/getTransactionStatus.ts",
-    "src/hw-getAddress.ts",
-    "src/preload.ts",
-    "src/prepareTransaction.ts",
-    "src/serialization.ts",
-    "src/signOperation.ts",
-    "src/signer.ts",
-    "src/synchronisation.ts",
-    "src/transaction.ts",
-    "src/validators.ts"
+    "src/test/bot-specs.ts",
+    "src/test/bridgeDatasetTest.ts",
+    "src/test/cli-transaction.ts",
+    "src/test/specs/createActivateVoteMutation.ts",
+    "src/test/specs/createLockMutation.ts",
+    "src/test/specs/createRegisterAccountMutation.ts",
+    "src/test/specs/createRevokeVoteMutation.ts",
+    "src/test/specs/createSendMutation.ts",
+    "src/test/specs/createUnlockMutation.ts",
+    "src/test/specs/createVoteMutation.ts",
+    "src/test/specs/createWithdrawMutation.ts",
+    "src/test/specs/index.ts",
+    "src/test/speculos-deviceActions.ts"
   ],
   "ignoreUnused": [
     "@celo/utils",

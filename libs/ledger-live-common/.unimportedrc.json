@@ -290,7 +290,12 @@
     "src/wallet-api/utils/deriveAccountIdForManifest.ts",
     "src/errors/transactionBroadcastErrors.ts"
   ],
-  "extensions": [".ts", ".js", ".jsx", ".tsx"],
+  "extensions": [
+    ".ts",
+    ".js",
+    ".jsx",
+    ".tsx"
+  ],
   "ignorePatterns": [
     "**/node_modules/**",
     "**/__tests__/**",
@@ -304,7 +309,9 @@
   ],
   "ignoreUnimported": [
     "src/account/typeGuards.ts",
+    "src/bot/specs.ts",
     "src/braze/anonymousUsers.ts",
+    "src/bridge/jsHelpers.ts",
     "src/config/sharedConfig.ts",
     "src/consoleWarnExpectToEqual.native.ts",
     "src/consoleWarnExpectToEqual.ts",
@@ -321,14 +328,14 @@
     "src/deviceSDK/commands/getAppAndVersion.ts",
     "src/deviceSDK/tasks/genuineCheck.ts",
     "src/e2e/enum/Account.ts",
-    "src/e2e/enum/TokenType.ts",
     "src/e2e/enum/AppInfos.ts",
     "src/e2e/enum/Currency.ts",
     "src/e2e/enum/DeviceLabels.ts",
     "src/e2e/enum/Fee.ts",
     "src/e2e/enum/Nft.ts",
-    "src/e2e/enum/TransactionStatus.ts",
     "src/e2e/enum/Swap.ts",
+    "src/e2e/enum/TokenType.ts",
+    "src/e2e/enum/TransactionStatus.ts",
     "src/exchange/swap/const/blockchain.ts",
     "src/families/cardano/logic.ts",
     "src/families/cardano/staking.ts",
@@ -358,6 +365,7 @@
   ],
   "ignoreUnused": [
     "@dfinity/agent",
+    "@ledgerhq/hw-app-eth",
     "@ledgerhq/hw-transport-mocker",
     "@tanstack/react-query",
     "@types/bchaddrjs",
@@ -367,6 +375,7 @@
     "bech32",
     "bip32",
     "bip39",
+    "rlp",
     "tsx",
     "yargs"
   ],
