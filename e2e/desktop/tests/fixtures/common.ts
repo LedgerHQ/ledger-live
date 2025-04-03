@@ -17,6 +17,7 @@ import { lastValueFrom, Observable } from "rxjs";
 import { CLI } from "../utils/cliUtils";
 import { Monitor, Window } from "node-screenshots";
 import fs from "fs";
+import { execSync } from "child_process";
 
 type TestFixtures = {
   lang: string;
@@ -56,6 +57,10 @@ async function captureEntireScreen() {
       );
     });
   });
+
+  execSync(
+    `xwd -root -out ${path.join(__dirname, "../../allure-results/") + Date.now()}screenshot.png`,
+  );
 }
 
 export const test = base.extend<TestFixtures>({
