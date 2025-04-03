@@ -4229,7 +4229,7 @@
       "nfts" : {
         "title" : "المجموعات المخفية للرموز غير القابلة للاستبدال",
         "description" : "إعادة تعيين قائمة المجموعات المخفية",
-        "reset" : "إعادة تعيين"
+        "reset" : "إعادة التعيين ({{count}})"
       },
       "exchangeDeveloperMode" : {
         "title" : "وضع المطور لمنصة التداول",
@@ -4340,6 +4340,32 @@
         },
         "back" : "رجوع"
       },
+      "debugNfts" : {
+        "title" : "أدوات الرموز غير القابلة للاستبدال",
+        "description" : "تقدم بعض الأدوات المفيدة للتعامل مع الرموز غير القابلة للاستبدال في Ledger Live",
+        "cta" : "فتح",
+        "tabs" : {
+          "config" : "التكوين",
+          "generatorAndDestructor" : "المولدات والمُفككات"
+        },
+        "configuration" : {
+          "supported" : "سلسلة الرموز غير القابلة للاستبدال المدعومة",
+          "supported_other" : "سلاسل الرموز غير القابلة للاستبدال المدعومة",
+          "nms" : {
+            "title" : "خدمة البيانات الوصفية للرموز غير القابلة للاستبدال (NMS)",
+            "env" : "البيئة : {{env}}"
+          }
+        },
+        "generatorAndDestructor" : {
+          "genAcc" : "إنشاء حسابات",
+          "genAccDesc" : "إنشاء حسابات برموز غير قابلة للاستبدال",
+          "cta" : "إنشاء",
+          "deleteAcc" : "حذف الحسابات",
+          "deleteAccDesc" : "حذف كل الحسابات من المتجر",
+          "delete" : "حذف"
+        },
+        "back" : "رجوع"
+      },
       "debugWalletSync" : {
         "title" : "مُصحِّح أخطاء مزامنة Ledger",
         "description" : "يسمح لك بإطلاق تدفق مزامنة Ledger محدد أو التحقق من الحالة الحالية لمزامنة Ledger",
@@ -4376,6 +4402,8 @@
       "catalogUrlDesc" : "أدخِل رابط URL لمزود الكتالوج المخصص لديك",
       "enablePlatformDevTools" : "تمكين أدوات تطوير المنصة",
       "enablePlatformDevToolsDesc" : "تمكين فتح نافذة أدوات تطوير تطبيقات المنصة",
+      "enablePlatformDeviceSwitch" : "Enable platform device switch",
+      "enablePlatformDeviceSwitchDesc" : "Enable toggle allowing to switch between mobile and desktop view",
       "customLockScreen" : "أصول شاشة القَفل المُخصّصة",
       "customLockScreenDesc" : "تصحيح أخطاء الأصول الرسومية لشاشة القَفل المُخصّصة",
       "customLockScreenCTA" : "تشغيل",
