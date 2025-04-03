@@ -1,8 +1,8 @@
 import { expect } from "detox";
-import { currencyParam, openDeeplink, waitForElementById, getElementById } from "../../helpers";
-const baseLink = "account";
+import { currencyParam, openDeeplink } from "../../helpers/commonHelpers";
 
 export default class AssetAccountsPage {
+  baseLink = "account";
   assetBalance = () => getElementById("asset-graph-balance");
   titleId = (assetName: string) => `accounts-title-${assetName}`;
   accountAssetId = (assetName: string) => `account-assets-${assetName}`;
@@ -27,7 +27,7 @@ export default class AssetAccountsPage {
   }
 
   async openViaDeeplink(currencyLong?: string) {
-    const link = currencyLong ? baseLink + currencyParam + currencyLong : baseLink;
+    const link = currencyLong ? this.baseLink + currencyParam + currencyLong : this.baseLink;
     await openDeeplink(link);
   }
 }

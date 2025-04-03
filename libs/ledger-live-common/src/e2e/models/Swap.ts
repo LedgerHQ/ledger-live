@@ -2,6 +2,8 @@ import { Transaction } from "./Transaction";
 import { Fee } from "../enum/Fee";
 import { Account } from "../enum/Account";
 
+export type SwapType = Swap;
+
 export class Swap extends Transaction {
   constructor(
     accountToDebit: Account,

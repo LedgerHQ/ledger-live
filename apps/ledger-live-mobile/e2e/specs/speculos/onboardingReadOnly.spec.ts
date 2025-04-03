@@ -1,7 +1,3 @@
-import { Application } from "../../page";
-
-const app = new Application();
-
 describe("Onboarding - Read Only", () => {
   $TmsLink("B2CQA-370");
   $TmsLink("B2CQA-1753");

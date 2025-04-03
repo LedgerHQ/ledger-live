@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import BigNumber from "bignumber.js";
 import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/reactNative";
 import { CosmosAccount } from "@ledgerhq/coin-cosmos/types/index";
-import { CosmosAPI } from "@ledgerhq/coin-cosmos/api/Cosmos";
+import { CosmosAPI } from "@ledgerhq/coin-cosmos/network/Cosmos";
 import { Account } from "@ledgerhq/types-live";
 import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";
 import { Unit } from "@ledgerhq/types-cryptoassets";

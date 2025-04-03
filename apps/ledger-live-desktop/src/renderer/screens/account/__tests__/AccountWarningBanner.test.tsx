@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import React from "react";
-import { render, screen } from "tests/testUtils";
+import { render, screen } from "tests/testSetup";
 import AccountWarningBanner from "../AccountWarningBanner";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";

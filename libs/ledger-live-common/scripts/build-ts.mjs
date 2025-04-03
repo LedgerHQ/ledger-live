@@ -2,6 +2,10 @@
 import "zx/globals";
 import rimraf from "rimraf";
 
+if (os.platform() === "win32") {
+  usePowerShell();
+}
+
 cd(path.join(__dirname, ".."));
 
 if (!process.env.CI) {

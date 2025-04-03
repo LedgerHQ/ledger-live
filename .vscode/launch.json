@@ -16,6 +16,12 @@
       "type": "node",
       "request": "attach",
       "skipFiles": ["<node_internals>/**"]
+    },
+    {
+      "name": "Debug Jest Tests",
+      "type": "node",
+      "request": "attach",
+      "port": 9229
     }
   ]
 }

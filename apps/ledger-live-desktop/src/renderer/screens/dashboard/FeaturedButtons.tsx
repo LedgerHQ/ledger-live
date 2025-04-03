@@ -22,11 +22,9 @@ const FeaturedButtons = () => {
   const { t } = useTranslation();
   const stakeLabel = useGetStakeLabelLocaleBased();
   const bannerFeatureFlag = useFeature("portfolioExchangeBanner");
-  const stakeProgramsFeatureFlag = useFeature("stakePrograms");
 
   const { enabled: bannerEnabled } = bannerFeatureFlag || { enabled: false };
 
-  const stakeDisabled = stakeProgramsFeatureFlag?.params?.list?.length === 0;
   const startStakeFlow = useStakeFlow();
 
   const handleClickExchange = useCallback(() => {
@@ -44,7 +42,7 @@ const FeaturedButtons = () => {
   const handleClickStake = useCallback(() => {
     track("button_clicked2", { button: "stake", flow: "stake", page: "portfolio" });
 
-    startStakeFlow({ source: "Portafolio" });
+    startStakeFlow({ source: "Portfolio" });
   }, [startStakeFlow]);
 
   if (!bannerEnabled) return null;
@@ -67,7 +65,6 @@ const FeaturedButtons = () => {
       />
       <EntryButton
         Icon={() => <Icons.Percentage size="S" />}
-        disabled={stakeDisabled}
         title={stakeLabel}
         body={t("dashboard.featuredButtons.earn.description")}
         onClick={handleClickStake}

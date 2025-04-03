@@ -2,6 +2,10 @@
 import rimraf from "rimraf";
 import "zx/globals";
 
+if (os.platform() === "win32") {
+  usePowerShell();
+}
+
 const targets = [
   "hw-getAddress.ts",
   "hw-signMessage.ts",
@@ -13,10 +17,8 @@ const targets = [
   "deviceTransactionConfig.ts",
   "mock.ts",
   "account.ts",
-  "formatters.ts",
   "platformAdapter.ts",
-  "walletApiAdapter.ts",
-  "operation.ts",
+  "walletApiAdapter.ts"
 ];
 
 // Coins using coin-framework

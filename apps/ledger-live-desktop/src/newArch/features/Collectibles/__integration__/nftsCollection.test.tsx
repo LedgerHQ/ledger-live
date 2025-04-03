@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import React from "react";
-import { render, screen, waitFor } from "tests/testUtils";
+import { render, screen, waitFor } from "tests/testSetup";
 import { NftCollectionTest, NoNftCollectionTest } from "./shared";
 import { account } from "./mocks/mockedAccount";
 import { openURL } from "~/renderer/linking";

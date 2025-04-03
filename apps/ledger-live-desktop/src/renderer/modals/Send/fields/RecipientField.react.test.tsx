@@ -3,7 +3,7 @@ import React from "react";
 import axios from "axios";
 import { TFunction } from "i18next";
 import BigNumber from "bignumber.js";
-import { render, screen, waitFor } from "tests/testUtils";
+import { render, screen, waitFor } from "tests/testSetup";
 import {
   getCryptoCurrencyById,
   setSupportedCurrencies,

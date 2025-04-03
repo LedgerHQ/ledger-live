@@ -9,7 +9,7 @@ import type {
   BalanceHistoryRaw,
   Operation,
   OperationRaw,
-  SubAccount,
+  TokenAccount,
   TransactionCommon,
 } from "@ledgerhq/types-live";
 import { decodeAccountId } from "@ledgerhq/coin-framework/account/index";
@@ -46,7 +46,7 @@ export const toOperationRaw = (
 export const fromOperationRaw = (
   operationRaw: OperationRaw,
   accountId: string,
-  subAccounts?: SubAccount[] | null | undefined,
+  subAccounts?: TokenAccount[] | null | undefined,
 ): Operation => {
   let fromOperationRaw: AccountBridge<TransactionCommon>["fromOperationExtraRaw"] | undefined;
 

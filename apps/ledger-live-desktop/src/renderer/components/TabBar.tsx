@@ -138,7 +138,7 @@ const TabBar = ({
           data-testid={withId && ids?.length ? `${ids[j]}-tab` : ""}
           fontSize={fontSize}
         >
-          <Text ff="Inter|SemiBold" fontSize={5}>
+          <Text data-testid={`${tab}-tab-button`} ff="Inter|SemiBold" fontSize={5}>
             {tab}
           </Text>
         </Tab>

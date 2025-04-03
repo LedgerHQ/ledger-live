@@ -19,6 +19,7 @@ module.exports = {
   ],
   setupFilesAfterEnv: ["jest-expect-message", "dotenv/config"],
   reporters: [
+    "default",
     [
       "jest-sonar",
       { outputName: "evm-sonar-executionTests-report.xml", reportedFilePath: "absolute" },

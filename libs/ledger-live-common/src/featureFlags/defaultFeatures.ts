@@ -124,7 +124,7 @@ export const DEFAULT_FEATURES: Features = {
   },
 
   deviceInitialApps: {
-    enabled: false,
+    enabled: true,
     params: { apps: ["Bitcoin", "Ethereum"] },
   },
 

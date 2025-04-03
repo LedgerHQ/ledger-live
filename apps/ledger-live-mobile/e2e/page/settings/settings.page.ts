@@ -1,5 +1,3 @@
-import { tapById, waitForElementById } from "../../helpers";
-
 export default class SettingsPage {
   settingsGeneralButtonId = "general-settings-card";
 

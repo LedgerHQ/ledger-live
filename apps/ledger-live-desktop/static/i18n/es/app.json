@@ -4229,7 +4229,7 @@
       "nfts" : {
         "title" : "Colecciones ocultas de NFTs",
         "description" : "Restablecer la lista de colecciones ocultas",
-        "reset" : "Restablecer"
+        "reset" : "Restablecer ({{count}})"
       },
       "exchangeDeveloperMode" : {
         "title" : "Modo de desarrollador del exchange",
@@ -4337,6 +4337,32 @@
             "nft" : "Un NFT concreto",
             "contract" : "Un contrato"
           }
+        },
+        "back" : "Volver"
+      },
+      "debugNfts" : {
+        "title" : "Herramientas para NFTs",
+        "description" : "Ofrece herramientas prácticas con las que gestionar los NFTs en Ledger Live",
+        "cta" : "Abrir",
+        "tabs" : {
+          "config" : "Configuración",
+          "generatorAndDestructor" : "Generadores y destructores"
+        },
+        "configuration" : {
+          "supported" : "Cadena de NFT compatible",
+          "supported_other" : "Cadenas de NFT compatibles",
+          "nms" : {
+            "title" : "Servicio de metadatos de NFT (NMS)",
+            "env" : "Entorno: {{env}}"
+          }
+        },
+        "generatorAndDestructor" : {
+          "genAcc" : "Generar cuentas",
+          "genAccDesc" : "Generar una cuenta con NFTs",
+          "cta" : "Generar",
+          "deleteAcc" : "Eliminar cuentas",
+          "deleteAccDesc" : "Eliminar todas las cuentas del almacén",
+          "delete" : "Borrar"
         },
         "back" : "Volver"
       },

@@ -6,6 +6,8 @@ import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
 import { Fee } from "@ledgerhq/live-common/e2e/enum/Fee";
 import invariant from "invariant";
+import { getEnv } from "@ledgerhq/live-env";
+import { TransactionStatus } from "@ledgerhq/live-common/e2e/enum/TransactionStatus";
 
 const subAccounts = [
   { account: Account.ETH_USDT_1, xrayTicket1: "B2CQA-2577, B2CQA-1079", xrayTicket2: "B2CQA-2583" },
@@ -124,6 +126,78 @@ for (const token of subAccounts) {
   });
 }
 
+const transactionE2E = [
+  {
+    tx: new Transaction(Account.SOL_GIGA_1, Account.SOL_GIGA_2, "0.5", undefined, "noTag"),
+    xrayTicket: "B2CQA-3055, B2CQA-3057",
+  },
+];
+
+for (const transaction of transactionE2E) {
+  test.describe("Send token - E2E", () => {
+    test.use({
+      userdata: "skip-onboarding",
+      speculosApp: transaction.tx.accountToDebit.currency.speculosApp,
+      cliCommands: [
+        (appjsonPath: string) => {
+          return CLI.liveData({
+            currency: transaction.tx.accountToCredit.currency.speculosApp.name,
+            index: transaction.tx.accountToCredit.index,
+            add: true,
+            appjson: appjsonPath,
+          });
+        },
+        (appjsonPath: string) => {
+          return CLI.liveData({
+            currency: transaction.tx.accountToDebit.currency.speculosApp.name,
+            index: transaction.tx.accountToDebit.index,
+            add: true,
+            appjson: appjsonPath,
+          });
+        },
+      ],
+    });
+
+    test(
+      `Send from ${transaction.tx.accountToDebit.accountName} to ${transaction.tx.accountToCredit.accountName} - ${transaction.tx.accountToDebit.currency.name} - E2E test`,
+      {
+        annotation: {
+          type: "TMS",
+          description: transaction.xrayTicket,
+        },
+      },
+      async ({ app }) => {
+        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
+        await app.layout.goToAccounts();
+        await app.accounts.navigateToAccountByName(transaction.tx.accountToDebit.accountName);
+        await app.account.navigateToTokenInAccount(transaction.tx.accountToDebit);
+        await app.account.clickSend();
+        await app.send.craftTx(transaction.tx);
+        await app.send.continueAmountModal();
+        await app.send.expectTxInfoValidity(transaction.tx);
+        await app.send.clickContinueToDevice();
+
+        await app.speculos.signSendTransaction(transaction.tx);
+        await app.send.expectTxSent();
+        await app.account.navigateToViewDetails();
+        await app.sendDrawer.addressValueIsVisible(transaction.tx.accountToCredit.address);
+        await app.drawer.closeDrawer();
+        if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
+          await app.layout.goToAccounts();
+          await app.accounts.clickSyncBtnForAccount(transaction.tx.accountToCredit.accountName);
+          await app.accounts.navigateToAccountByName(transaction.tx.accountToCredit.accountName);
+          await app.account.navigateToTokenInAccount(transaction.tx.accountToDebit);
+          await app.account.expectAccountBalance();
+          await app.account.checkAccountChart();
+          await app.account.selectAndClickOnLastOperation(TransactionStatus.RECEIVED);
+          await app.sendDrawer.expectReceiverInfos(transaction.tx);
+        }
+      },
+    );
+  });
+}
+
 const transactionsAddressInvalid = [
   {
     transaction: new Transaction(Account.ALGO_USDT_1, Account.ALGO_USDT_2, "0.1", Fee.MEDIUM),
@@ -171,7 +245,7 @@ for (const transaction of transactionsAddressInvalid) {
       cliCommands: [
         (appjsonPath: string) => {
           return CLI.liveData({
-            currency: transaction.transaction.accountToDebit.currency.currencyId,
+            currency: transaction.transaction.accountToDebit.currency.speculosApp.name,
             index: transaction.transaction.accountToDebit.index,
             add: true,
             appjson: appjsonPath,
@@ -219,7 +293,7 @@ for (const transaction of transactionsAddressValid) {
       cliCommands: [
         (appjsonPath: string) => {
           return CLI.liveData({
-            currency: transaction.transaction.accountToDebit.currency.currencyId,
+            currency: transaction.transaction.accountToDebit.currency.id,
             index: transaction.transaction.accountToDebit.index,
             add: true,
             appjson: appjsonPath,
@@ -253,23 +327,28 @@ for (const transaction of transactionsAddressValid) {
 
 const tokenTransactionInvalid = [
   {
-    transaction: new Transaction(Account.BSC_BUSD_1, Account.BSC_BUSD_2, "1", Fee.FAST),
+    tx: new Transaction(Account.BSC_BUSD_1, Account.BSC_BUSD_2, "1", Fee.FAST),
     expectedWarningMessage: new RegExp(
       /You need \d+\.\d+ BNB in your account to pay for transaction fees on the Binance Smart Chain network\. .*/,
     ),
     xrayTicket: "B2CQA-2700",
   },
   {
-    transaction: new Transaction(Account.ETH_USDT_2, Account.ETH_USDT_1, "1", Fee.FAST),
+    tx: new Transaction(Account.ETH_USDT_2, Account.ETH_USDT_1, "1", Fee.FAST),
     expectedWarningMessage: new RegExp(
       /You need \d+\.\d+ ETH in your account to pay for transaction fees on the Ethereum network\. .*/,
     ),
     xrayTicket: "B2CQA-2701",
   },
   {
-    transaction: new Transaction(Account.ETH_USDT_1, Account.ETH_USDT_2, "10000", Fee.MEDIUM),
+    tx: new Transaction(Account.ETH_USDT_1, Account.ETH_USDT_2, "10000", Fee.MEDIUM),
     expectedWarningMessage: "Sorry, insufficient funds",
     xrayTicket: "B2CQA-3043",
+  },
+  {
+    tx: new Transaction(Account.SOL_GIGA_3, Account.SOL_GIGA_1, "0.5", undefined, "noTag"),
+    expectedWarningMessage: new RegExp("Sorry, insufficient funds"),
+    xrayTicket: "B2CQA-3058",
   },
 ];
 
@@ -277,12 +356,12 @@ for (const transaction of tokenTransactionInvalid) {
   test.describe("Send token (subAccount) - invalid amount input", () => {
     test.use({
       userdata: "skip-onboarding",
-      speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
+      speculosApp: transaction.tx.accountToDebit.currency.speculosApp,
       cliCommands: [
         (appjsonPath: string) => {
           return CLI.liveData({
-            currency: transaction.transaction.accountToDebit.currency.currencyId,
-            index: transaction.transaction.accountToDebit.index,
+            currency: transaction.tx.accountToDebit.currency.speculosApp.name,
+            index: transaction.tx.accountToDebit.index,
             add: true,
             appjson: appjsonPath,
           });
@@ -290,7 +369,7 @@ for (const transaction of tokenTransactionInvalid) {
       ],
     });
     test(
-      `Send from ${transaction.transaction.accountToDebit.accountName} to ${transaction.transaction.accountToCredit.accountName} - invalid amount input`,
+      `Send from ${transaction.tx.accountToDebit.accountName} to ${transaction.tx.accountToCredit.accountName} - invalid amount input`,
       {
         annotation: {
           type: "TMS",
@@ -301,14 +380,10 @@ for (const transaction of tokenTransactionInvalid) {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
         await app.layout.goToAccounts();
-        await app.accounts.navigateToAccountByName(
-          transaction.transaction.accountToDebit.accountName,
-        );
-        await app.account.navigateToTokenInAccount(transaction.transaction.accountToDebit);
+        await app.accounts.navigateToAccountByName(transaction.tx.accountToDebit.accountName);
+        await app.account.navigateToTokenInAccount(transaction.tx.accountToDebit);
         await app.account.clickSend();
-        await app.send.fillRecipient(transaction.transaction.accountToCredit.address);
-        await app.send.continue();
-        await app.send.fillAmount(transaction.transaction.amount);
+        await app.send.craftTx(transaction.tx);
         await app.send.checkContinueButtonDisabled();
         if (transaction.expectedWarningMessage instanceof RegExp) {
           await app.send.checkAmountWarningMessage(transaction.expectedWarningMessage);
@@ -333,7 +408,7 @@ test.describe("Send token (subAccount) - valid address & amount input", () => {
     cliCommands: [
       (appjsonPath: string) => {
         return CLI.liveData({
-          currency: tokenTransactionValid.accountToDebit.currency.currencyId,
+          currency: tokenTransactionValid.accountToDebit.currency.speculosApp.name,
           index: tokenTransactionValid.accountToDebit.index,
           add: true,
           appjson: appjsonPath,

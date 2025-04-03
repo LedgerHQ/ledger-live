@@ -1,8 +1,7 @@
-import { getElementById, getTextOfElement, scrollToId, tapByElement, tapById } from "../../helpers";
 import { expect } from "detox";
-import jestExpect from "expect";
-
+import { openDeeplink } from "../../helpers/commonHelpers";
 export default class AccountPage {
+  baseLink = "account";
   accountGraph = (accountId: string) => getElementById(`account-graph-${accountId}`);
   accountBalance = (accountId: string) => getElementById(`account-balance-${accountId}`);
   accountSettingsButton = () => getElementById("account-settings-button");
@@ -17,6 +16,34 @@ export default class AccountPage {
   receiveButton = () => getElementById("account-quick-action-button-receive");
   sendButton = () => getElementById("account-quick-action-button-send");
   earnButtonId = "account-quick-action-button-earn";
+  accountList = /accounts-list-.*/;
+  baseAccountName = "account-row-name-";
+  accountNameRegExp = new RegExp(`${this.baseAccountName}.*`);
+
+  @Step("Open accounts list via deeplink")
+  async openViaDeeplink() {
+    await openDeeplink(this.baseLink);
+  }
+
+  @Step("Expect accounts number")
+  async expectAccountsNumber(number: number) {
+    jestExpect((await getIdByRegexp(this.accountList)).endsWith(number.toString())).toBeTruthy();
+  }
+
+  @Step("Go to the account with the name")
+  async goToAccountByName(name: string) {
+    await tapById(this.baseAccountName + name);
+  }
+
+  @Step("Expect the account name at index")
+  async expectAccountName(accountName: string, index = 0) {
+    jestExpect(await this.getAccountName(index)).toBe(accountName);
+  }
+
+  @Step("Get the account name at index")
+  async getAccountName(index = 0) {
+    return await getTextOfElement(this.accountNameRegExp, index);
+  }
 
   @Step("Open account settings")
   async openAccountSettings() {

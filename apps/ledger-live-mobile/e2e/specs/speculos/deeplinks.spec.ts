@@ -1,26 +1,20 @@
-import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
-import { Application } from "../../page";
-import { CLI } from "../../utils/cliUtils";
-
-const app = new Application();
-const nanoApp = AppInfos.ETHEREUM;
-
-const ethereumLong = "ethereum";
-const bitcoinLong = "bitcoin";
-const zksync = "zksync";
-const scroll = "scroll";
-
 $TmsLink("B2CQA-1837");
 describe("DeepLinks Tests", () => {
+  const nanoApp = AppInfos.ETHEREUM;
+  const ethereumLong = "ethereum";
+  const bitcoinLong = "bitcoin";
+  const zksyncName = "zksync";
+  const scrollName = "scroll";
+
   beforeAll(async () => {
     await app.init({
       speculosApp: nanoApp,
       cliCommands: [
-        async () => {
+        async (userdataPath?: string) => {
           return CLI.liveData({
             currency: nanoApp.name,
             index: 0,
-            appjson: app.userdataPath,
+            appjson: userdataPath,
             add: true,
           });
         },
@@ -41,7 +35,7 @@ describe("DeepLinks Tests", () => {
 
   it("should open Add Account drawer", async () => {
     await app.addAccount.openViaDeeplink();
-    await app.addAccount.selectCurrency(ethereumLong);
+    await app.receive.selectCurrency(ethereumLong);
   });
 
   it("should open ETH Account Asset page when given currency param", async () => {
@@ -97,6 +91,6 @@ describe("DeepLinks Tests", () => {
     await app.portfolio.openViaDeeplink();
     await app.portfolio.waitForPortfolioPageToLoad();
     await app.receive.receiveViaDeeplink(ethereumLong);
-    await app.receive.expectSecondStepNetworks([ethereumLong, zksync, scroll]);
+    await app.receive.expectSecondStepNetworks([ethereumLong, zksyncName, scrollName]);
   });
 });

@@ -38,6 +38,9 @@ export class AccountPage extends AppPage {
   private seeGalleryButton = this.page.getByRole("button", { name: "See Gallery" });
   private nftOperation = this.page.getByText("NFT Sent");
   private nftList = (collectionName: string) => this.page.getByTestId(`nft-row-${collectionName}`);
+  private accountChart = this.page.getByTestId("chart-container");
+  private editName = this.page.locator("#input-edit-name");
+  private applyButton = this.page.getByTestId("account-settings-apply-button");
 
   @step("Navigate to token")
   async navigateToToken(SubAccount: Account) {
@@ -106,14 +109,18 @@ export class AccountPage extends AppPage {
     await operationList.scrollIntoViewIfNeeded();
   }
 
-  /**
-   * Delete account from account itself
-   */
   @step("Delete account")
   async deleteAccount() {
     await this.settingsButton.click();
     await this.settingsDeleteButton.click();
     await this.settingsConfirmButton.click();
+  }
+
+  @step("Rename account")
+  async renameAccount(newAccountName: string) {
+    await this.settingsButton.click();
+    await this.editName.fill(newAccountName);
+    await this.applyButton.click();
   }
 
   @step("Wait for account $0 to be visible")
@@ -193,5 +200,10 @@ export class AccountPage extends AppPage {
       }
       await expect(nftLocator).toBeVisible();
     }
+  }
+
+  @step("Check account chart is visible")
+  async checkAccountChart() {
+    await this.accountChart.waitFor({ state: "visible" });
   }
 }
