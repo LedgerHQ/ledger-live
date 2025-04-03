@@ -4402,6 +4402,8 @@
       "catalogUrlDesc" : "ป้อน URL ของผู้ให้บริการแค็ตตาล็อกที่คุณกำหนด",
       "enablePlatformDevTools" : "เปิดใช้งานเครื่องมือสำหรับพัฒนาแพลตฟอร์ม",
       "enablePlatformDevToolsDesc" : "เปิดใช้งานการเปิดหน้าต่างเครื่องมือสำหรับนักพัฒนาแอปบนแพลตฟอร์ม",
+      "enablePlatformDeviceSwitch" : "เปิดใช้งานการสลับอุปกรณ์บนแพลตฟอร์ม",
+      "enablePlatformDeviceSwitchDesc" : "เปิดใช้งาน Toggle เพื่อสลับระหว่างมุมมองบนมือถือกับเดสก์ท็อป",
       "customLockScreen" : "สินทรัพย์บนหน้าจอล็อคแบบกำหนดเอง",
       "customLockScreenDesc" : "Debug สินทรัพย์กราฟิกบนหน้าจอล็อคที่กำหนดเอง",
       "customLockScreenCTA" : "เริ่มใช้งาน",
