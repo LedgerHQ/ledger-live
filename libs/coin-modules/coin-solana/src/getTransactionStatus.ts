@@ -45,10 +45,12 @@ function getAmount(command: Command) {
   switch (command.kind) {
     case "transfer":
     case "token.transfer":
+    case "token.createApprove":
     case "stake.createAccount":
     case "stake.withdraw":
       return command.amount;
     case "token.createATA":
+    case "token.createRevoke":
     case "stake.delegate":
     case "stake.undelegate":
     case "stake.split":
@@ -61,6 +63,7 @@ function getAmount(command: Command) {
 function getTotalSpent({ command, fee }: CommandDescriptor) {
   switch (command.kind) {
     case "transfer":
+    case "token.createApprove":
     case "stake.createAccount":
       return command.amount < 0 ? 0 : command.amount + fee;
     case "token.transfer": {
@@ -72,6 +75,7 @@ function getTotalSpent({ command, fee }: CommandDescriptor) {
       return Math.max(command.amount, 0);
     }
     case "token.createATA":
+    case "token.createRevoke":
     case "stake.delegate":
     case "stake.undelegate":
     case "stake.withdraw":

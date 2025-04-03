@@ -1,7 +1,9 @@
 import BigNumber from "bignumber.js";
 import {
   createAmountToUiAmountInstruction,
+  createApproveInstruction,
   createAssociatedTokenAccountInstruction,
+  createRevokeInstruction,
   createTransferCheckedInstruction,
   createTransferCheckedWithTransferHookInstruction,
   getAssociatedTokenAddress,
@@ -32,7 +34,9 @@ import {
   StakeSplitCommand,
   StakeUndelegateCommand,
   StakeWithdrawCommand,
+  TokenCreateApproveCommand,
   TokenCreateATACommand,
+  TokenCreateRevokeCommand,
   TokenTransferCommand,
   TransferCommand,
 } from "../../types";
@@ -256,6 +260,48 @@ export const buildTokenTransferInstructions = async (
   }
 
   return appendMaybePriorityFeeInstructions(api, instructions, ownerPubkey);
+};
+
+export const buildApproveTransactionInstructions = async (
+  api: ChainAPI,
+  { account, delegate, owner, amount, tokenProgram }: TokenCreateApproveCommand,
+): Promise<TransactionInstruction[]> => {
+  const instructions: TransactionInstruction[] = [];
+
+  const programId = getTokenAccountProgramId(tokenProgram);
+
+  const accountPubKey = new PublicKey(account);
+  const delegatePubkey = new PublicKey(delegate);
+  const ownerPubKey = new PublicKey(owner);
+
+  instructions.push(
+    createApproveInstruction(
+      accountPubKey,
+      delegatePubkey,
+      ownerPubKey,
+      amount,
+      undefined,
+      programId,
+    ),
+  );
+
+  return appendMaybePriorityFeeInstructions(api, instructions, ownerPubKey);
+};
+
+export const buildRevokeTransactionInstructions = async (
+  api: ChainAPI,
+  { account, owner, tokenProgram }: TokenCreateRevokeCommand,
+): Promise<TransactionInstruction[]> => {
+  const instructions: TransactionInstruction[] = [];
+
+  const programId = getTokenAccountProgramId(tokenProgram);
+
+  const accountPubKey = new PublicKey(account);
+  const ownerPubKey = new PublicKey(owner);
+
+  instructions.push(createRevokeInstruction(accountPubKey, ownerPubKey, undefined, programId));
+
+  return appendMaybePriorityFeeInstructions(api, instructions, ownerPubKey);
 };
 
 export async function findAssociatedTokenAccountPubkey(

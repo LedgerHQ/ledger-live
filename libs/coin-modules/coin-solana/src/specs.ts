@@ -723,6 +723,8 @@ function expectCorrectMemo(input: TransactionTestInput<Transaction>) {
       break;
     }
     case "token.createATA":
+    case "token.createApprove":
+    case "token.createRevoke":
     case "stake.createAccount":
     case "stake.delegate":
     case "stake.undelegate":
