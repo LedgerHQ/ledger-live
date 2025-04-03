@@ -49,6 +49,24 @@ export async function launchApp({
       executablePath: require("electron/index.js"),
       timeout: 120000,
     });
+
+    app.on("window", async page => {
+      page.on("console", msg => {
+        console.log(`[Console] ${msg.type()}: ${msg.text()}`);
+      });
+
+      page.on("pageerror", error => {
+        console.error(`[Page Error] ${error.message}`);
+      });
+
+      page.on("response", response => {
+        console.log(`[Response] ${response.url()} - ${response.status()}`);
+      });
+
+      page.on("requestfailed", request => {
+        console.error(`[Request Failed] ${request.url()} - ${request.failure()?.errorText}`);
+      });
+    });
     return app;
   } catch (error) {
     console.error("Error launching Electron app:", error);
