@@ -226,7 +226,7 @@ export const test = base.extend<TestFixtures>({
 
     // app is loaded
     //await page.waitForLoadState("domcontentloaded");
-    await page.waitForLoadState("networkidle");
+    await page.waitForTimeout(60000);
     //await page.waitForSelector("#loader-container", { state: "hidden" });
     await page.screenshot({ path: testInfo.outputPath("screenshot.png") });
 
