@@ -23,6 +23,9 @@ import Alert from "~/renderer/components/Alert";
 import { StepProps } from "../Body";
 import { supportLinkByTokenType } from "~/config/urls";
 
+const startsWithVowel = (sentence: string) =>
+  sentence.length > 0 && ["a", "e", "i", "o", "u"].includes(sentence[0].toLowerCase());
+
 type OnChangeAccount = (account?: AccountLike | null, tokenAccount?: Account | null) => void;
 const AccountSelection = ({
   onChangeAccount,
@@ -128,7 +131,11 @@ export default function StepAccount({
           <Alert type="warning" learnMoreUrl={url} mt={3}>
             <Trans
               i18nKey={`receive.steps.chooseAccount.${
-                account.type === "TokenAccount" ? "verifyTokenType" : "warningTokenType"
+                account.type === "TokenAccount"
+                  ? startsWithVowel(tokenType)
+                    ? "verifyTokenType"
+                    : "verifyATokenType"
+                  : "warningTokenType"
               }`}
               values={
                 account.type === "TokenAccount"
