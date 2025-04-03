@@ -100,7 +100,8 @@
       "times" : "x{{ value }}"
     },
     "quote" : "โควตราคา",
-    "tryAgain" : "ลองอีกครั้ง"
+    "tryAgain" : "ลองอีกครั้ง",
+    "ldmkEnabled" : "LDMK transport enabled"
   },
   "errors" : {
     "ReplacementTransactionUnderpriced" : {
@@ -4050,7 +4051,9 @@
       "desc" : "คุณแน่ใจหรือไม่ว่าต้องการยกเลิกการเพิ่มบัญชี?",
       "v2" : {
         "title" : "ยกเลิกการเพิ่มบัญชีหรือไม่?",
-        "desc" : "จะไม่มีการเพิ่มบัญชีลงใน Ledger Live"
+        "desc" : "จะไม่มีการเพิ่มบัญชีลงใน Ledger Live",
+        "continue" : "เพิ่มอีก",
+        "cancel" : "ยกเลิก"
       }
     },
     "imported" : "เพิ่มสินทรัพย์เรียบร้อยแล้ว",
