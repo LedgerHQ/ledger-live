@@ -4229,7 +4229,7 @@
       "nfts" : {
         "title" : "NFT非表示コレクション",
         "description" : "非表示コレクションリストをリセット",
-        "reset" : "リセット"
+        "reset" : "リセット（{{count}}件）"
       },
       "exchangeDeveloperMode" : {
         "title" : "Exchange開発者モード",
@@ -4340,6 +4340,32 @@
         },
         "back" : "戻る"
       },
+      "debugNfts" : {
+        "title" : "NFTツール",
+        "description" : "Ledger LiveでNFTを処理するための便利なツールを提供",
+        "cta" : "開く",
+        "tabs" : {
+          "config" : "構成",
+          "generatorAndDestructor" : "ジェネレーター＆デストラクター"
+        },
+        "configuration" : {
+          "supported" : "対応するNFTチェーン",
+          "supported_other" : "対応するNFTチェーン",
+          "nms" : {
+            "title" : "NFTメタデータサービス（NMS）",
+            "env" : "環境：{{env}}"
+          }
+        },
+        "generatorAndDestructor" : {
+          "genAcc" : "アカウントの生成",
+          "genAccDesc" : "NFTでアカウントを生成",
+          "cta" : "生成",
+          "deleteAcc" : "アカウントの削除",
+          "deleteAccDesc" : "ストアからすべてのアカウントを削除",
+          "delete" : "削除"
+        },
+        "back" : "戻る"
+      },
       "debugWalletSync" : {
         "title" : "Ledger同期デバッガー",
         "description" : "特定のLedgerSyncフローを起動したり、LedgerSyncの現在の状態を確認したりできます。",
@@ -4376,6 +4402,8 @@
       "catalogUrlDesc" : "カスタムカタログプロバイダーのURLを入力",
       "enablePlatformDevTools" : "プラットフォーム開発ツールの有効化",
       "enablePlatformDevToolsDesc" : "プラットフォームアプリの開発ツールウィンドウ表示を有効化",
+      "enablePlatformDeviceSwitch" : "プラットフォームデバイススイッチを有効にする",
+      "enablePlatformDeviceSwitchDesc" : "切り替えを有効にすると、モバイル表示とデスクトップ表示を切り替えられます",
       "customLockScreen" : "カスタムロック画面アセット",
       "customLockScreenDesc" : "カスタムロック画面のグラフィックアセットをデバッグする",
       "customLockScreenCTA" : "開始",
