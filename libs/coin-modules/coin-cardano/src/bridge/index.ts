@@ -8,7 +8,7 @@ import {
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { CoinConfig } from "@ledgerhq/coin-framework/lib/config";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import type { AccountBridge, Bridge, CurrencyBridge } from "@ledgerhq/types-live";
+import type { CurrencyBridge } from "@ledgerhq/types-live";
 import { broadcast } from "../broadcast";
 import cardanoCoinConfig, { CardanoCoinConfig } from "../config";
 import { createTransaction } from "../createTransaction";
@@ -22,7 +22,7 @@ import { CardanoSigner } from "../signer";
 import { buildSignOperation } from "../signOperation";
 import { makeGetAccountShape } from "../synchronisation";
 import { serialization } from "../transaction";
-import type { CardanoAccount, Transaction, TransactionRaw, TransactionStatus } from "../types";
+import type { CardanoAccountBridge, CardanoBridge } from "../types";
 
 function buildCurrencyBridge(signerContext: SignerContext<CardanoSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
@@ -38,9 +38,7 @@ function buildCurrencyBridge(signerContext: SignerContext<CardanoSigner>): Curre
   };
 }
 
-function buildAccountBridge(
-  signerContext: SignerContext<CardanoSigner>,
-): AccountBridge<Transaction, CardanoAccount, TransactionStatus, TransactionRaw> {
+function buildAccountBridge(signerContext: SignerContext<CardanoSigner>): CardanoAccountBridge {
   const sync = makeSync({
     getAccountShape: makeGetAccountShape(signerContext),
     postSync: postSyncPatch,
@@ -63,19 +61,17 @@ function buildAccountBridge(
     assignToAccountRaw,
     assignFromAccountRaw,
     getSerializedAddressParameters,
-    ...serialization,
   };
 }
-
-export type CardanoBridge = Bridge<Transaction, CardanoAccount, TransactionStatus, TransactionRaw>;
 
 export function createBridges(
   signerContext: SignerContext<CardanoSigner>,
   coinConfig: CoinConfig<CardanoCoinConfig>,
-) {
+): CardanoBridge {
   cardanoCoinConfig.setCoinConfig(coinConfig);
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),
+    ...serialization,
   };
 }

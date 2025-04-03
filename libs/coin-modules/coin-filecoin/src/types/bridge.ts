@@ -1,4 +1,6 @@
 import {
+  AccountBridge,
+  Bridge,
   TransactionCommon,
   TransactionCommonRaw,
   TransactionStatusCommon,
@@ -40,3 +42,6 @@ export type TransactionRaw = TransactionCommonRaw & {
 export type TransactionStatus = TransactionStatusCommon;
 
 export type TransactionStatusRaw = TransactionStatusCommonRaw;
+
+export type FilecoinAccountBridge = AccountBridge<Transaction>;
+export type FilecoinBridge = Bridge<Transaction, TransactionRaw>;

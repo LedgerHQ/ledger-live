@@ -6,7 +6,7 @@ import {
   updateTransaction,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import type { AccountBridge, Bridge, CurrencyBridge } from "@ledgerhq/types-live";
+import type { CurrencyBridge } from "@ledgerhq/types-live";
 import { broadcast } from "../broadcast";
 import { createTransaction } from "../createTransaction";
 import { estimateMaxSpendable } from "../estimateMaxSpendable";
@@ -25,13 +25,7 @@ import { AlgorandSigner } from "../signer";
 import { buildSignOperation } from "../signOperation";
 import { getAccountShape, sync } from "../synchronization";
 import { serialization } from "../transaction";
-import type {
-  AlgorandAccount,
-  AlgorandOperation,
-  AlgorandTransactionRaw,
-  Transaction,
-  TransactionStatus,
-} from "../types";
+import type { AlgorandAccountBridge, AlgorandBridge } from "../types";
 
 function buildCurrencyBridge(signerContext: SignerContext<AlgorandSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
@@ -48,9 +42,7 @@ function buildCurrencyBridge(signerContext: SignerContext<AlgorandSigner>): Curr
   };
 }
 
-function buildAccountBridge(
-  signerContext: SignerContext<AlgorandSigner>,
-): AccountBridge<Transaction, AlgorandAccount, TransactionStatus, AlgorandTransactionRaw, AlgorandOperation> {
+function buildAccountBridge(signerContext: SignerContext<AlgorandSigner>): AlgorandAccountBridge {
   const getAddress = resolver(signerContext);
 
   const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));
@@ -73,20 +65,13 @@ function buildAccountBridge(
     toOperationExtraRaw,
     getSerializedAddressParameters,
     ...formatters,
-    ...serialization,
   };
 }
-
-export type AlgorandBridge = Bridge<
-  Transaction,
-  AlgorandAccount,
-  TransactionStatus,
-  AlgorandTransactionRaw
->;
 
 export function createBridges(signerContext: SignerContext<AlgorandSigner>): AlgorandBridge {
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),
+    ...serialization,
   };
 }

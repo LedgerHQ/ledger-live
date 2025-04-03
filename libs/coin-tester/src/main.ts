@@ -6,8 +6,6 @@ import {
   CurrencyBridge,
   Operation,
   TransactionStatusCommon,
-  TransactionCommonRaw,
-  TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
 import chalk from "chalk";
 import { first, firstValueFrom, map, reduce } from "rxjs";
@@ -34,12 +32,10 @@ export type Scenario<
   T extends TransactionCommon,
   A extends Account,
   U extends TransactionStatusCommon = TransactionStatusCommon,
-  TR extends TransactionCommonRaw = TransactionCommonRaw,
-  UR extends TransactionStatusCommonRaw = TransactionStatusCommonRaw,
 > = {
   name: string;
   setup: () => Promise<{
-    accountBridge: AccountBridge<T, A, U, TR, UR>;
+    accountBridge: AccountBridge<T, A, U>;
     currencyBridge: CurrencyBridge;
     account: A;
     retryInterval?: number;
@@ -60,9 +56,7 @@ export async function executeScenario<
   T extends TransactionCommon,
   A extends Account,
   U extends TransactionStatusCommon = TransactionStatusCommon,
-  TR extends TransactionCommonRaw = TransactionCommonRaw,
-  UR extends TransactionStatusCommonRaw = TransactionStatusCommonRaw,
->(scenario: Scenario<T, A, U, TR, UR>) {
+>(scenario: Scenario<T, A, U>) {
   try {
     const {
       accountBridge,
