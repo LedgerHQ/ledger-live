@@ -4,6 +4,8 @@
   },
   "common" : {
     "cancel" : "إلغاء",
+    "copy" : "نسخ",
+    "copied" : "تم النسخ",
     "apply" : "تقديم",
     "seeAll" : "رؤية الكل",
     "seeAllWithNumber" : "رؤية الكل ({{number}})",
@@ -3268,7 +3270,7 @@
       },
       "verifyAddress" : {
         "title" : "التحقق من العنوان",
-        "subtitle" : "تحقّق ممّا إذا كان العنوان المعروض على جهازك يتطابق مع العنوان أدناه. بمجرّد أن تتأكد، يمكنك النقر على approve [موافقة] على جهازك.",
+        "subtitle" : "تحقّق ممّا إذا كان العنوان المعروض على جهازك يتطابق مع العنوان أدناه. بمجرّد أن تتأكد، يمكنك التأكيد على جهازك.",
         "cancel" : {
           "title" : "لقد رفضت هذا العنوان للتوّ",
           "subtitle" : "إذا قمت بهذا عن طريق الخطأ، يُمكنك إعادة المحاولة بالنقر على الزرّ أدناه.",
@@ -4050,7 +4052,9 @@
       "desc" : "هل أنت متأكد أنك تريد إلغاء إضافة حسابات؟",
       "v2" : {
         "title" : "إلغاء إضافة حساب؟",
-        "desc" : "لن يتم إضافة أي حساب إلى Ledger Live."
+        "desc" : "لن يتم إضافة أي حساب إلى Ledger Live.",
+        "continue" : "Continue adding",
+        "cancel" : "إلغاء"
       }
     },
     "imported" : "تمت إضافة الأصل بنجاح",
@@ -4088,7 +4092,7 @@
       "title" : "إضافة رمز توكن",
       "createParentCurrencyAccount" : "أضف حساب {{parrentCurrencyName}}",
       "generic" : {
-        "disclaimer" : "{{token}} ({{ticker}}) هو رمز {{tokenType}}.\nيمكنك تلقي رموز التوكن مباشرةً على حساب {{currency}}.",
+        "disclaimer" : "{{token}} ({{ticker}}) is an {{tokenType}} token.\nYou can receive tokens directly on a/an {{currency}} account.",
         "learnMore" : "تعرف على المزيد عن {{tokenType}}"
       }
     },
@@ -6611,7 +6615,12 @@
       "24h" : "24 ساعة",
       "7d" : "7 أيام",
       "30d" : "30 يوم",
-      "1y" : "1 سنة"
+      "1y" : "1 سنة",
+      "1H_label" : "1 ساعة",
+      "1D_label" : "1 يوم",
+      "1W_label" : "1 أسبوع",
+      "1M_label" : "1 شهر",
+      "1Y_label" : "1 سنة"
     },
     "warnings" : {
       "connectionError" : "خطأ في الاتصال",
@@ -7337,7 +7346,7 @@
   },
   "lnsUpsell" : {
     "opted_in" : {
-      "description" : "Upgrade your Ledger Nano S to a newer Ledger — like the Ledger Flex — for more memory, the latest security enhancements, fresh features, and an exclusive 20% off. ",
+      "description" : "قم بترقية Ledger Nano S الخاصة بك إلى جهاز Ledger جديد — مثل Ledger Flex — من أجل المزيد من الذاكرة، وأحدث تحسينات الأمان، وميزات جديدة، وخصم حصري %20. ",
       "cta" : "ترقية جهاز Ledger الخاص بي"
     },
     "opted_out" : {
