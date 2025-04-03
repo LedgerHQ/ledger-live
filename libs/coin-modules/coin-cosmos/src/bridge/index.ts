@@ -6,7 +6,7 @@ import {
   makeSync,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import type { AccountBridge, Bridge, CurrencyBridge } from "@ledgerhq/types-live";
+import type { CurrencyBridge } from "@ledgerhq/types-live";
 
 import { CoinConfig } from "@ledgerhq/coin-framework/lib/config";
 import cosmosCoinConfig, { CosmosCoinConfig } from "../config";
@@ -27,11 +27,8 @@ import { buildSignOperation } from "../signOperation";
 import { getAccountShape } from "../synchronisation";
 import { serialization } from "../transaction";
 import type {
-  CosmosAccount,
-  CosmosOperation,
-  Transaction,
-  TransactionRaw,
-  TransactionStatus,
+  CosmosAccountBridge,
+  CosmosBridge
 } from "../types";
 import { CosmosSigner } from "../types/signer";
 import { updateTransaction } from "../updateTransaction";
@@ -55,9 +52,7 @@ function buildCurrencyBridge(signerContext: SignerContext<CosmosSigner>): Curren
   };
 }
 
-function buildAccountBridge(
-  signerContext: SignerContext<CosmosSigner>,
-): AccountBridge<Transaction, CosmosAccount, TransactionStatus, TransactionRaw, CosmosOperation> {
+function buildAccountBridge(signerContext: SignerContext<CosmosSigner>): CosmosAccountBridge {
   const getAddress = resolver(signerContext);
 
   const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));
@@ -83,11 +78,8 @@ function buildAccountBridge(
     toOperationExtraRaw,
     getSerializedAddressParameters,
     ...formatters,
-    ...serialization,
   };
 }
-
-export type CosmosBridge = Bridge<Transaction, CosmosAccount, TransactionStatus, TransactionRaw>;
 
 export function createBridges(
   signerContext: SignerContext<CosmosSigner>,
@@ -97,5 +89,6 @@ export function createBridges(
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),
+    ...serialization,
   };
 }

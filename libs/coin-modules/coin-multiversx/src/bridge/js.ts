@@ -27,6 +27,7 @@ import { getAccountShape, sync } from "../synchronisation";
 import { serialiation } from "../transaction";
 import type {
   MultiversXAccount,
+  MultiversXAccountRaw,
   MultiversXOperation,
   Transaction,
   TransactionRaw,
@@ -52,14 +53,7 @@ function buildCurrencyBridge(signerContext: SignerContext<MultiversXSigner>): Cu
 
 function buildAccountBridge(
   signerContext: SignerContext<MultiversXSigner>,
-): AccountBridge<
-  Transaction,
-  MultiversXAccount,
-  TransactionStatus,
-  TransactionRaw,
-  TransactionStatusRaw,
-  MultiversXOperation
-> {
+): MutltiversXAccountBridge {
   const getAddress = resolver(signerContext);
 
   const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));
@@ -81,20 +75,28 @@ function buildAccountBridge(
     toOperationExtraRaw,
     getSerializedAddressParameters,
     ...formatters,
-    ...serialiation,
   };
 }
 
+export type MutltiversXAccountBridge = AccountBridge<
+Transaction,
+MultiversXAccount,
+TransactionStatus,
+TransactionRaw,
+TransactionStatusRaw,
+MultiversXOperation
+>;
 export type MutltiversXBridge = Bridge<
   Transaction,
+  TransactionRaw,
   MultiversXAccount,
-  TransactionStatus,
-  TransactionRaw
+  MultiversXAccountRaw,
 >;
 
 export function createBridges(signerContext: SignerContext<MultiversXSigner>): MutltiversXBridge {
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),
+    ...serialiation,
   };
 }

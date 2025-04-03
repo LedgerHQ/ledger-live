@@ -81,15 +81,17 @@ export type BroadcastFnSignature<A extends Account = Account> = (
 
 export type Bridge<
   T extends TransactionCommon,
-  A extends Account = Account,
-  U extends TransactionStatusCommon = TransactionStatusCommon,
   TR extends TransactionCommonRaw = TransactionCommonRaw,
-  UR extends TransactionStatusCommonRaw = TransactionStatusCommonRaw,
-  O extends Operation = Operation,
+  A extends Account = Account,
   R extends AccountRaw = AccountRaw,
+  OE extends OperationExtra = OperationExtra,
+  OER extends OperationExtraRaw = OperationExtraRaw,
+  U extends TransactionStatusCommon = TransactionStatusCommon,
+  UR extends TransactionStatusCommonRaw = TransactionStatusCommonRaw,
 > = {
   currencyBridge: CurrencyBridge;
-  accountBridge: AccountBridge<T, A, U, TR, UR, O, R>;
+  accountBridge: AccountBridge<T, A, U, R, OE, OER>;
+  serializationBridge: SerializationBridge<T, TR, U, UR>;
 };
 
 export type ScanInfo = {
@@ -201,9 +203,10 @@ interface SendReceiveAccountBridge<
 }
 
 interface SerializationAccountBridge<
-  A extends Account,
-  O extends Operation = Operation,
+  A extends Account = Account,
   R extends AccountRaw = AccountRaw,
+  OE extends OperationExtra = OperationExtra,
+  OER extends OperationExtraRaw = OperationExtraRaw,
 > {
   /**
    * This function mutates the 'accountRaw' object in-place to add any extra fields that the coin may need to set.
@@ -240,12 +243,12 @@ interface SerializationAccountBridge<
     tokenAccountRaw: TokenAccountRaw,
     tokenAccount: TokenAccount,
   ) => void;
-  fromOperationExtraRaw: (extraRaw: OperationExtraRaw) => OperationExtra;
-  toOperationExtraRaw: (extra: OperationExtra) => OperationExtraRaw;
+  fromOperationExtraRaw: (extraRaw: OER) => OE;
+  toOperationExtraRaw: (extra: OE) => OER;
   formatAccountSpecifics: (account: A) => string;
-  formatOperationSpecifics: (operation: O, unit: Unit | null | undefined) => string;
+  formatOperationSpecifics: (operation: Operation<OE>, unit: Unit | null | undefined) => string;
 }
-export interface SerializationTransactionBridge<
+export interface SerializationBridge<
   T extends TransactionCommon,
   TR extends TransactionCommonRaw = TransactionCommonRaw,
   U extends TransactionStatusCommon = TransactionStatusCommon,
@@ -267,14 +270,12 @@ export type AccountBridge<
   T extends TransactionCommon,
   A extends Account = Account,
   U extends TransactionStatusCommon = TransactionStatusCommon,
-  TR extends TransactionCommonRaw = TransactionCommonRaw,
-  O extends Operation = Operation,
-  UR extends TransactionStatusCommonRaw = TransactionStatusCommonRaw,
   R extends AccountRaw = AccountRaw,
+  OE extends OperationExtra = OperationExtra,
+  OER extends OperationExtraRaw = OperationExtraRaw,
 > = SendReceiveAccountBridge<T, A, U> &
   AccountBridgeWithExchange<A> &
-  Partial<SerializationAccountBridge<A, O, R>> &
-  SerializationTransactionBridge<T, TR, U, UR>;
+  Partial<SerializationAccountBridge<A, R, OE, OER>>;
 
 type ExpectFn = (...args: Array<any>) => any;
 

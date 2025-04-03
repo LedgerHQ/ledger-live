@@ -1,4 +1,6 @@
 import type {
+  AccountBridge,
+  Bridge,
   TransactionCommon,
   TransactionCommonRaw,
   TransactionStatusCommon,
@@ -34,3 +36,6 @@ export type HederaOperationExtra = {
 export type HederaOperationExtraRaw = {
   consensusTimestamp?: string;
 };
+
+export type HederaAccountBridge = AccountBridge<Transaction>;
+export type HederaBridge = Bridge<Transaction, TransactionRaw>;
