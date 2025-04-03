@@ -1,8 +1,6 @@
 #!/usr/bin/env zx
-import rimraf from "rimraf";
 import "zx/globals";
-
-$.verbose = true;
+import rimraf from "rimraf";
 
 if (os.platform() === "win32") {
   usePowerShell();
