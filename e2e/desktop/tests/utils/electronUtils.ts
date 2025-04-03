@@ -47,6 +47,7 @@ export async function launchApp({
         "--no-sandbox",
         "--enable-logging",
         "--disable-setuid-sandbox",
+        "--disable-gpu",
         ...(simulateCamera
           ? [
               "--use-fake-device-for-media-stream",

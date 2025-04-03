@@ -15,7 +15,7 @@ import { randomUUID } from "crypto";
 import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { lastValueFrom, Observable } from "rxjs";
 import { CLI } from "../utils/cliUtils";
-import { Monitor, Window } from "node-screenshots";
+//import { Monitor, Window } from "node-screenshots";
 import fs from "fs";
 import { execSync } from "child_process";
 
@@ -46,17 +46,16 @@ const MAX_PORT = 65535;
 let portCounter = BASE_PORT; // Counter for generating unique ports
 
 async function captureEntireScreen() {
-  const windows = Monitor.all();
-
-  windows.forEach(item => {
-    item.captureImage().then(async data => {
-      fs.mkdirSync(path.join(__dirname, "../../allure-results/"), { recursive: true });
-      fs.writeFileSync(
-        `${path.join(__dirname, "../../allure-results/") + item.id + Date.now()}.png`,
-        await data.toPng(),
-      );
-    });
-  });
+  // const windows = Monitor.all();
+  // windows.forEach(item => {
+  //   item.captureImage().then(async data => {
+  //     fs.mkdirSync(path.join(__dirname, "../../allure-results/"), { recursive: true });
+  //     fs.writeFileSync(
+  //       `${path.join(__dirname, "../../allure-results/") + item.id + Date.now()}.png`,
+  //       await data.toPng(),
+  //     );
+  //   });
+  // });
 }
 
 export const test = base.extend<TestFixtures>({
@@ -230,7 +229,11 @@ export const test = base.extend<TestFixtures>({
     //await page.waitForSelector("#loader-container", { state: "hidden" });
     captureEntireScreen();
 
-    await page.screenshot({ path: testInfo.outputPath("screenshot.png") });
+    try {
+      await page.screenshot({ path: testInfo.outputPath("screenshot.png") });
+    } catch (e) {
+      console.error("Error taking screenshot: ", e);
+    }
 
     // use page in the test
     await use(page);
