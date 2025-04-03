@@ -22,13 +22,9 @@ await executeScenario(scenarioEthereum);
 ## Development
 
 1. Set up your environment variables in `.env` (see `.env.example`)
-2. Run the tests with `pnpm test`
+2. Run the tests with `pnpm start`
 
 ## Dependencies
 
 - @ledgerhq/coin-tester
 - @ledgerhq/coin-evm
-- @ledgerhq/evm-tools
-- @ledgerhq/env
-- @ledgerhq/live-network
-- @ledgerhq/ledger-live-common

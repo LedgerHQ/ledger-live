@@ -2,18 +2,16 @@ import { ethers } from "ethers";
 import { NFTStandard } from "@ledgerhq/types-live";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import ERC1155ABI from "./abis/erc1155.abi.json";
-import ERC721ABI from "./abis/erc721.abi.json";
-import ERC20ABI from "./abis/erc20.abi.json";
+import { ERC20_ABI, ERC721_ABI, ERC1155_ABI } from "@ledgerhq/coin-evm/abis/index";
 
 export const ethereum = getCryptoCurrencyById("ethereum");
 export const sonic = getCryptoCurrencyById("sonic");
 export const polygon = getCryptoCurrencyById("polygon");
 export const scroll = getCryptoCurrencyById("scroll");
 export const blast = getCryptoCurrencyById("blast");
-export const ERC20Interface = new ethers.utils.Interface(ERC20ABI);
-export const ERC721Interface = new ethers.utils.Interface(ERC721ABI);
-export const ERC1155Interface = new ethers.utils.Interface(ERC1155ABI);
+export const ERC20Interface = new ethers.utils.Interface(ERC20_ABI);
+export const ERC721Interface = new ethers.utils.Interface(ERC721_ABI);
+export const ERC1155Interface = new ethers.utils.Interface(ERC1155_ABI);
 export const VITALIK = "0x6bfD74C0996F269Bcece59191EFf667b3dFD73b9";
 
 export const impersonnateAccount = async ({
