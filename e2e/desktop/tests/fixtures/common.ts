@@ -225,8 +225,9 @@ export const test = base.extend<TestFixtures>({
     captureEntireScreen();
 
     // app is loaded
-    await page.waitForLoadState("domcontentloaded");
-    await page.waitForSelector("#loader-container", { state: "hidden" });
+    //await page.waitForLoadState("domcontentloaded");
+    await page.waitForLoadState("networkidle");
+    //await page.waitForSelector("#loader-container", { state: "hidden" });
 
     // use page in the test
     await use(page);
