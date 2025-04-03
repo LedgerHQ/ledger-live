@@ -60,7 +60,7 @@ export function PendingOperation({ route, navigation }: PendingOperationParamLis
               <IconClock color={colors.grey} size={14} />
             </View>
           </View>
-          <LText secondary style={styles.title}>
+          <LText secondary style={styles.title} testID="swap-success-title">
             <Trans i18nKey={"transfer.swap.pendingOperation.title"} />
           </LText>
           <View style={styles.label}>

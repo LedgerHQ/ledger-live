@@ -427,6 +427,10 @@ const cmd = ({ deviceId, request }: Input): Observable<ConnectAppEvent> => {
             }),
             catchError((e: unknown) => {
               if (
+                (typeof e === "object" &&
+                  e !== null &&
+                  "_tag" in e &&
+                  e._tag === "DeviceDisconnectedWhileSendingError") ||
                 e instanceof DisconnectedDeviceDuringOperation ||
                 e instanceof DisconnectedDevice
               ) {

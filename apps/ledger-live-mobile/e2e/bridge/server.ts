@@ -198,6 +198,10 @@ export async function open() {
   await postMessage({ type: "open", id: uniqueId() });
 }
 
+export async function swapSetup() {
+  await postMessage({ type: "swapSetup", id: uniqueId() });
+}
+
 export async function getLogs() {
   return fetchData({ type: "getLogs", id: uniqueId() });
 }

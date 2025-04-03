@@ -1,6 +1,6 @@
 ---
 "ledger-live-desktop": minor
-"ledger-live-mobile": minor
+"live-mobile": minor
 "@ledgerhq/live-common": minor
 ---
 

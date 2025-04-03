@@ -18,7 +18,6 @@ export default class AccountsPage extends CommonPage {
   @Step("Expect accounts number")
   async expectAccountsNumber(number: number) {
     const matchedElements = await getElementsById(this.accountItemRegExp()).getAttributes();
-    console.warn("matchedElements", matchedElements);
     if ("elements" in matchedElements) jestExpect(matchedElements.elements.length).toBe(number);
     else jestExpect(1).toBe(number);
   }
