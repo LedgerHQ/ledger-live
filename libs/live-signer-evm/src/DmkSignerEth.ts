@@ -148,6 +148,9 @@ export class DmkSignerEth implements EvmSigner {
             if (result.intermediateValue.step === SignTransactionDAStep.BUILD_CONTEXT) {
               observer.next({ type: "signer.evm.loading-context" });
             }
+            if (result.intermediateValue.step === SignTransactionDAStep.WEB3_CHECKS_OPT_IN) {
+              observer.next({ type: "signer.evm.transaction-checks-opt-in-triggered" });
+            }
           } else if (result.status === DeviceActionStatus.Completed) {
             observer.next({
               type: "signer.evm.signed",
