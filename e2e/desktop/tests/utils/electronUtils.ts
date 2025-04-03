@@ -24,6 +24,12 @@ export async function launchApp({
     );
     console.warn(appPath);
     console.log(execSync(`ls -l ${appPath}`).toString());
+    console.warn(
+      execSync(
+        `ls -l ${path.join(__dirname, "../../../../apps/ledger-live-desktop/.webpack/")}`,
+      ).toString(),
+    );
+
     const app = await electron.launch({
       args: [
         appPath,
