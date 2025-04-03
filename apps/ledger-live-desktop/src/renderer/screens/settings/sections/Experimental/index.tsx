@@ -19,32 +19,27 @@ import LottieTester from "./LottieTester";
 import StorylyTester from "./StorylyTester";
 import PostOnboardingHubTester from "./PostOnboardingHubTester";
 import VaultSigner from "./VaultSigner";
+import { useDeviceManagementKit } from "@ledgerhq/live-dmk-desktop";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 const experimentalTypesMap = {
   toggle: ExperimentalSwitch,
   integer: ExperimentalInteger,
   float: ExperimentalFloat,
 };
-const ExperimentalFeatureRow = ({
+
+const BaseExperimentalFeatureRow = ({
   feature,
-  onDirtyChange,
+  onChange,
 }: {
   feature: Feature;
-  onDirtyChange: () => void;
+  onChange: (name: EnvName, value: unknown) => void;
 }) => {
   const { dirty, ...rest } = feature;
   const Children = experimentalTypesMap[feature.type];
   const envValue = useEnv(feature.name);
   const isDefault = isEnvDefault(feature.name);
-  const onChange = useCallback(
-    (name: EnvName, value: unknown) => {
-      if (dirty) {
-        onDirtyChange();
-      }
-      setEnvOnAllThreads(name, value);
-    },
-    [dirty, onDirtyChange],
-  );
+
   return Children ? (
     <Row title={feature.title} desc={feature.description}>
       <Children
@@ -57,6 +52,55 @@ const ExperimentalFeatureRow = ({
     </Row>
   ) : null;
 };
+
+const ExperimentalFeatureRow = ({
+  feature,
+  onDirtyChange,
+}: {
+  feature: Feature;
+  onDirtyChange: () => void;
+}) => {
+  const { dirty } = feature;
+  const onChange = useCallback(
+    (name: EnvName, value: unknown) => {
+      if (dirty) {
+        onDirtyChange();
+      }
+      setEnvOnAllThreads(name, value);
+    },
+    [dirty, onDirtyChange],
+  );
+
+  return <BaseExperimentalFeatureRow feature={feature} onChange={onChange} />;
+};
+
+const ForceProviderFeatureRow = ({
+  feature,
+  onDirtyChange,
+}: {
+  feature: Feature;
+  onDirtyChange: () => void;
+}) => {
+  const { dirty } = feature;
+  const dmk = useDeviceManagementKit();
+  const ldmkFeatureFlag = useFeature("ldmkTransport");
+
+  const onChange = useCallback(
+    (name: EnvName, value: unknown) => {
+      if (dirty) {
+        onDirtyChange();
+      }
+      if (dmk && ldmkFeatureFlag?.enabled) {
+        dmk.setProvider(value);
+      }
+      setEnvOnAllThreads(name, value);
+    },
+    [dirty, onDirtyChange, dmk, ldmkFeatureFlag],
+  );
+
+  return <BaseExperimentalFeatureRow feature={feature} onChange={onChange} />;
+};
+
 const EthereumBridgeRow = () => {
   const dispatch = useDispatch();
   return (
@@ -75,10 +119,33 @@ const EthereumBridgeRow = () => {
     </Row>
   );
 };
+
+const PluckProviderFeatureRow = (feature: Feature, onDirtyChange: () => void) => {
+  switch (feature.name) {
+    case "FORCE_PROVIDER":
+      return (
+        <ForceProviderFeatureRow
+          key={feature.name}
+          feature={feature}
+          onDirtyChange={onDirtyChange}
+        />
+      );
+    default:
+      return (
+        <ExperimentalFeatureRow
+          key={feature.name}
+          feature={feature}
+          onDirtyChange={onDirtyChange}
+        />
+      );
+  }
+};
+
 const SectionExperimental = () => {
   const [needsCleanCache, setNeedsCleanCache] = useState(false);
   const dispatch = useDispatch();
   const onDirtyChange = useCallback(() => setNeedsCleanCache(true), []);
+
   useEffect(() => {
     return () => {
       if (needsCleanCache) {
@@ -86,6 +153,7 @@ const SectionExperimental = () => {
       }
     };
   }, [dispatch, needsCleanCache]);
+
   return (
     <div data-e2e="experimental_section_title">
       <TrackPage category="Settings" name="Experimental" />
@@ -93,15 +161,7 @@ const SectionExperimental = () => {
         <Alert type="security" m={4}>
           <Trans i18nKey="settings.experimental.disclaimer"></Trans>
         </Alert>
-        {experimentalFeatures.map(feature =>
-          !feature.shadow || (feature.shadow && !isEnvDefault(feature.name)) ? (
-            <ExperimentalFeatureRow
-              key={feature.name}
-              feature={feature}
-              onDirtyChange={onDirtyChange}
-            />
-          ) : null,
-        )}
+        {experimentalFeatures.map(feature => PluckProviderFeatureRow(feature, onDirtyChange))}
         {process.env.SHOW_ETHEREUM_BRIDGE ? <EthereumBridgeRow /> : null}
         {process.env.DEBUG_LOTTIE ? <LottieTester /> : null}
         {process.env.DEBUG_STORYLY ? <StorylyTester /> : null}
@@ -112,4 +172,5 @@ const SectionExperimental = () => {
     </div>
   );
 };
+
 export default SectionExperimental;

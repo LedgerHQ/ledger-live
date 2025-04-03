@@ -90,6 +90,7 @@ import { trustchainStoreSelector } from "@ledgerhq/ledger-key-ring-protocol/stor
 import { walletSelector } from "~/reducers/wallet";
 import { exportWalletState, walletStateExportShouldDiffer } from "@ledgerhq/live-wallet/store";
 import { registerTransports } from "~/services/registerTransports";
+import { useDeviceManagementKit } from "@ledgerhq/live-dmk-mobile";
 
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();
@@ -120,9 +121,19 @@ function App() {
   const accounts = useSelector(accountsSelector);
   const analyticsFF = useFeature("llmAnalyticsOptInPrompt");
   const isLDMKEnabled = Boolean(useFeature("ldmkTransport")?.enabled);
+  const providerNumber = useEnv("FORCE_PROVIDER");
   const hasSeenAnalyticsOptInPrompt = useSelector(hasSeenAnalyticsOptInPromptSelector);
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
+  const dmk = useDeviceManagementKit();
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (providerNumber && isLDMKEnabled) {
+      dmk?.setProvider(providerNumber);
+    }
+    // setting provider only at initialisation
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLDMKEnabled, dmk]);
 
   useEffect(() => registerTransports(isLDMKEnabled), [isLDMKEnabled]);
 
