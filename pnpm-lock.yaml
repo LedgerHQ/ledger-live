@@ -1810,9 +1810,6 @@ importers:
       electron:
         specifier: 32.0.2
         version: 32.0.2
-      playwright:
-        specifier: 1.45.1
-        version: 1.45.1
 
   libs/coin-framework:
     dependencies:
@@ -26952,11 +26949,6 @@ packages:
     engines: {node: '>=18'}
     hasBin: true
 
-  playwright-core@1.45.1:
-    resolution: {integrity: sha512-LF4CUUtrUu2TCpDw4mcrAIuYrEjVDfT1cHbJMfwnE2+1b8PZcFzPNgvZCvq2JfQ4aTjRCCHw5EJ2tmr2NSzdPg==}
-    engines: {node: '>=18'}
-    hasBin: true
-
   playwright-core@1.51.1:
     resolution: {integrity: sha512-/crRMj8+j/Nq5s8QcvegseuyeZPxpQCZb6HNk3Sos3BlZyAknRjoyJPFWkpNn8v0+P3WiwqFF8P+zQo4eqiNuw==}
     engines: {node: '>=18'}
@@ -26969,11 +26961,6 @@ packages:
 
   playwright@1.45.0:
     resolution: {integrity: sha512-4z3ac3plDfYzGB6r0Q3LF8POPR20Z8D0aXcxbJvmfMgSSq1hkcgvFRXJk9rUq5H/MJ0Ktal869hhOdI/zUTeLA==}
-    engines: {node: '>=18'}
-    hasBin: true
-
-  playwright@1.45.1:
-    resolution: {integrity: sha512-Hjrgae4kpSQBr98nhCj3IScxVeVUixqj+5oyif8TdIn2opTCPEzqAqNMeK42i3cWDCVu9MI+ZsGWw+gVR4ISBg==}
     engines: {node: '>=18'}
     hasBin: true
 
@@ -61988,8 +61975,6 @@ snapshots:
 
   playwright-core@1.45.0: {}
 
-  playwright-core@1.45.1: {}
-
   playwright-core@1.51.1: {}
 
   playwright@1.40.1:
@@ -62001,12 +61986,6 @@ snapshots:
   playwright@1.45.0:
     dependencies:
       playwright-core: 1.45.0
-    optionalDependencies:
-      fsevents: 2.3.2
-
-  playwright@1.45.1:
-    dependencies:
-      playwright-core: 1.45.1
     optionalDependencies:
       fsevents: 2.3.2
 
