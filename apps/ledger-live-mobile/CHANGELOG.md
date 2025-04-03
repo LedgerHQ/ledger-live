@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.73.0-next.1
+
+### Minor Changes
+
+- [#9796](https://github.com/LedgerHQ/ledger-live/pull/9796) [`c324fd6`](https://github.com/LedgerHQ/ledger-live/commit/c324fd62fe5a0bf32af33e9900f5e5116e4c26e6) Thanks [@Justkant](https://github.com/Justkant)! - fix: missing LedgerLive userAgent on LLM webview
+
 ## 3.73.0-next.0
 
 ### Minor Changes
