@@ -1,25 +1,32 @@
 // Goal of this file is to inject all necessary device/signer dependency to coin-modules
 
-import semver from "semver";
-import Solana from "@ledgerhq/hw-app-solana";
-import Transport from "@ledgerhq/hw-transport";
-import type { Bridge } from "@ledgerhq/types-live";
-import { SolanaSigner } from "@ledgerhq/coin-solana/signer";
 import { createBridges } from "@ledgerhq/coin-solana/bridge/js";
 import makeCliTools from "@ledgerhq/coin-solana/cli-transaction";
 import solanaResolver from "@ledgerhq/coin-solana/hw-getAddress";
+import { SolanaCoinConfig } from "@ledgerhq/coin-solana/lib/config";
+import { signMessage } from "@ledgerhq/coin-solana/lib/hw-signMessage";
+import { SolanaSigner } from "@ledgerhq/coin-solana/signer";
 import { SolanaAccount, Transaction, TransactionStatus } from "@ledgerhq/coin-solana/types";
 import { DeviceModelId } from "@ledgerhq/devices";
+import { TransportStatusError, UpdateYourApp } from "@ledgerhq/errors";
+import Solana from "@ledgerhq/hw-app-solana";
 import { loadPKI } from "@ledgerhq/hw-bolos";
+import Transport from "@ledgerhq/hw-transport";
 import calService from "@ledgerhq/ledger-cal-service";
 import trustService from "@ledgerhq/ledger-trust-service";
-import { TransportStatusError, UpdateYourApp } from "@ledgerhq/errors";
-import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/setup";
+import type { Bridge } from "@ledgerhq/types-live";
+import semver from "semver";
+import {
+  CreateSigner,
+  createMessageSigner,
+  createResolver,
+  executeWithSigner,
+} from "../../bridge/setup";
+import { getCurrencyConfiguration } from "../../config";
+import { getCryptoCurrencyById } from "../../currencies";
 import { LatestFirmwareVersionRequired } from "../../errors";
 import type { Resolver } from "../../hw/getAddress/types";
-import { getCurrencyConfiguration } from "../../config";
-import { SolanaCoinConfig } from "@ledgerhq/coin-solana/lib/config";
-import { getCryptoCurrencyById } from "../../currencies";
+import { prepareMessageToSign } from "../../hw/signMessage";
 
 const TRUSTED_NAME_MIN_VERSION = "1.7.1";
 const MANAGER_APP_NAME = "Solana";
@@ -92,6 +99,9 @@ const createSigner: CreateSigner<SolanaSigner> = (transport: Transport) => {
 
       return app.signTransaction(path, tx);
     },
+    signMessage: (path: string, messageHex: string) => {
+      return app.signOffchainMessage(path, Buffer.from(messageHex, "hex"));
+    },
   };
 };
 
@@ -104,8 +114,13 @@ const bridge: Bridge<Transaction, SolanaAccount, TransactionStatus> = createBrid
   getCurrencyConfig,
 );
 
+const messageSigner = {
+  prepareMessageToSign,
+  signMessage: createMessageSigner(createSigner, signMessage),
+};
+
 const resolver: Resolver = createResolver(createSigner, solanaResolver);
 
 const cliTools = makeCliTools();
 
-export { bridge, cliTools, resolver };
+export { bridge, cliTools, messageSigner, resolver };
