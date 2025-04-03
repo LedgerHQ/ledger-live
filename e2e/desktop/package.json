@@ -19,12 +19,13 @@
         "dotenv": "^16.4.7",
         "invariant": "^2.2.4",
         "lodash": "^4.17.21",
+        "node-screenshots": "0.2.1",
         "rxjs": "^7.8.1"
     },
     "devDependencies": {
         "@types/invariant": "2.2.37",
         "@types/lodash": "4.17.16",
-        "playwright": "1.51.1",
-        "electron": "32.0.2"
+        "electron": "32.0.2",
+        "playwright": "1.51.1"
     }
 }

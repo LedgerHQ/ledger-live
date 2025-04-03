@@ -15,6 +15,8 @@ import { randomUUID } from "crypto";
 import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { lastValueFrom, Observable } from "rxjs";
 import { CLI } from "../utils/cliUtils";
+import { Monitor, Window } from "node-screenshots";
+import fs from "fs";
 
 type TestFixtures = {
   lang: string;
@@ -41,6 +43,20 @@ setEnv("SWAP_API_BASE", process.env.SWAP_API_BASE || "https://swap-stg.ledger-te
 const BASE_PORT = 30000;
 const MAX_PORT = 65535;
 let portCounter = BASE_PORT; // Counter for generating unique ports
+
+async function captureEntireScreen() {
+  const windows = Monitor.all();
+
+  windows.forEach(item => {
+    item.captureImage().then(async data => {
+      fs.mkdirSync(path.join(__dirname, "../../allure-results/"), { recursive: true });
+      fs.writeFileSync(
+        `${path.join(__dirname, "../../allure-results/") + item.id + Date.now()}.png`,
+        await data.toPng(),
+      );
+    });
+  });
+}
 
 export const test = base.extend<TestFixtures>({
   env: undefined,
@@ -201,6 +217,11 @@ export const test = base.extend<TestFixtures>({
       }
       safeAppendFile(logFile, `${txt}\n`);
     });
+    page.on("pageerror", error => {
+      console.error("Uncaught exception: " + error);
+      safeAppendFile(logFile, `Uncaught exception: ${error}\n`);
+    });
+    captureEntireScreen();
 
     // app is loaded
     await page.waitForLoadState("domcontentloaded");
