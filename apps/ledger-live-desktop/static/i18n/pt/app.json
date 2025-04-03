@@ -4229,7 +4229,7 @@
       "nfts" : {
         "title" : "Coleções de NFTs ocultas",
         "description" : "Redefinir a lista de coleções ocultas",
-        "reset" : "Redefinir"
+        "reset" : "Redefinir ({{count}})"
       },
       "exchangeDeveloperMode" : {
         "title" : "Exchange em Modo Desenvolvedor",
@@ -4340,6 +4340,32 @@
         },
         "back" : "Voltar"
       },
+      "debugNfts" : {
+        "title" : "Ferramentas de NFT",
+        "description" : "Fornece algumas ferramentas úteis para gerenciar NFTs no Ledger Live",
+        "cta" : "Abrir",
+        "tabs" : {
+          "config" : "Configuração",
+          "generatorAndDestructor" : "Geradores e Destruidores"
+        },
+        "configuration" : {
+          "supported" : "Cadeia NFT Suportada",
+          "supported_other" : "Cadeias NFT Suportadas",
+          "nms" : {
+            "title" : "Serviço de Metadados de NFT (NMS)",
+            "env" : "Ambiente : {{env}}"
+          }
+        },
+        "generatorAndDestructor" : {
+          "genAcc" : "Gerar Contas",
+          "genAccDesc" : "Gerar uma conta com NFTs",
+          "cta" : "Gerar",
+          "deleteAcc" : "Excluir Contas",
+          "deleteAccDesc" : "Excluir todas as contas da loja",
+          "delete" : "Excluir"
+        },
+        "back" : "Voltar"
+      },
       "debugWalletSync" : {
         "title" : "Debug do Ledger Sync",
         "description" : "Permite que você inicie um fluxo específico do Ledger Sync ou verifique o estado atual do Ledger Sync",
@@ -4376,6 +4402,8 @@
       "catalogUrlDesc" : "Insira a URL do provedor de aplicativos da sua escolha",
       "enablePlatformDevTools" : "Habilitar ferramentas de desenvolvedor da plataforma",
       "enablePlatformDevToolsDesc" : "Habilite a janela de ferramentas para desenvolvedores de aplicativos da plataforma",
+      "enablePlatformDeviceSwitch" : "Habilitar interruptor de dispositivo da plataforma",
+      "enablePlatformDeviceSwitchDesc" : "Habilita o botão para alternar entre a visualização mobile e a de desktop",
       "customLockScreen" : "Ativos personalizados da tela de bloqueio",
       "customLockScreenDesc" : "Faça o debug de gráficos da tela de bloqueio",
       "customLockScreenCTA" : "Iniciar",
