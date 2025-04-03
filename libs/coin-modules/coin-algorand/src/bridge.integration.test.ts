@@ -204,7 +204,6 @@ const algorand: CurrenciesData<Transaction> = {
       ],
     },
     {
-      FIXME_tests: ["balance is sum of ops"],
       raw: {
         id: "js:2:algorand:MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI:",
         seedIdentifier: "c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c4",
