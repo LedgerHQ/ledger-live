@@ -62,6 +62,38 @@
       "require": "./lib/api/index.js",
       "default": "./lib-es/api/index.js"
     },
+    "./transaction": {
+      "require": "./lib/bridge/transaction.js",
+      "default": "./lib-es/bridge/transaction.js"
+    },
+    "./cli-transaction": {
+      "require": "./lib/test/cli-transaction.js",
+      "default": "./lib-es/test/cli-transaction.js"
+    },
+    "./hw-getAddress": {
+      "require": "./lib/signer/hw-getAddress.js",
+      "default": "./lib-es/signer/hw-getAddress.js"
+    },
+    "./preload": {
+      "require": "./lib/bridge/preload.js",
+      "default": "./lib-es/bridge/preload.js"
+    },
+    "./deviceTransactionConfig": {
+      "require": "./lib/bridge/deviceTransactionConfig.js",
+      "default": "./lib-es/bridge/deviceTransactionConfig.js"
+    },
+    "./types": {
+      "require": "./lib/types/index.js",
+      "default": "./lib-es/types/index.js"
+    },
+    "./bridge": {
+      "require": "./lib/bridge/index.js",
+      "default": "./lib-es/bridge/index.js"
+    },
+    "./signer": {
+      "require": "./lib/signer/index.js",
+      "default": "./lib-es/signer/index.js"
+    },
     "./specs": {
       "require": "./lib/test/bot-specs.js",
       "default": "./lib-es/test/bot-specs.js"

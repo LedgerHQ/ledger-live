@@ -9,8 +9,8 @@ export const dataset: DatasetTest<Transaction> = {
   },
 };
 
-describe("Celo bridge", () => {
-  test.todo(
-    "This is an empty test to make jest command pass. Remove it once there is a real test.",
-  );
+describe("Celo bridge test", () => {
+  it("should pass a dummy test", () => {
+    expect(true).toBe(true);
+  });
 });

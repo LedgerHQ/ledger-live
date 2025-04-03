@@ -17,7 +17,7 @@ import {
   fromOperationExtraRaw,
 } from "./serialization";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import resolver from "../signer/getAddress";
+import resolver from "../signer/hw-getAddress";
 import type { CeloAccount, Transaction, TransactionStatus } from "../types";
 import { broadcast } from "./broadcast";
 
