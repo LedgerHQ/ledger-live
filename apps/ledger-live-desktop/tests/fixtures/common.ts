@@ -16,6 +16,8 @@ import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { lastValueFrom, Observable } from "rxjs";
 import { CLI } from "../utils/cliUtils";
 
+type CliCommand = (appjsonPath: string) => Observable<unknown> | Promise<unknown> | string;
+
 type TestFixtures = {
   lang: string;
   theme: "light" | "dark" | "no-preference" | undefined;
@@ -31,7 +33,11 @@ type TestFixtures = {
   featureFlags: OptionalFeatureMap;
   simulateCamera: string;
   app: Application;
-  cliCommands?: ((appjsonPath: string) => Observable<unknown> | Promise<unknown> | string)[];
+  cliCommands?: CliCommand[];
+  cliCommandsOnApp?: {
+    app: AppInfos;
+    cmd: CliCommand;
+  }[];
 };
 
 const IS_NOT_MOCK = process.env.MOCK == "0";
@@ -41,6 +47,12 @@ setEnv("SWAP_API_BASE", process.env.SWAP_API_BASE || "https://swap-stg.ledger-te
 const BASE_PORT = 30000;
 const MAX_PORT = 65535;
 let portCounter = BASE_PORT; // Counter for generating unique ports
+
+async function executeCliCommand(cmd: CliCommand, userdataDestinationPath?: string) {
+  const promise = await cmd(`${userdataDestinationPath}/app.json`);
+  const result = promise instanceof Observable ? await lastValueFrom(promise) : await promise;
+  console.log("CLI result: ", result);
+}
 
 export const test = base.extend<TestFixtures>({
   env: undefined,
@@ -52,6 +64,7 @@ export const test = base.extend<TestFixtures>({
   simulateCamera: undefined,
   speculosApp: undefined,
   cliCommands: [],
+  cliCommandsOnApp: [],
 
   app: async ({ page }, use) => {
     const app = new Application(page);
@@ -81,6 +94,7 @@ export const test = base.extend<TestFixtures>({
       simulateCamera,
       speculosApp,
       cliCommands,
+      cliCommandsOnApp,
     },
     use,
     testInfo,
@@ -99,16 +113,49 @@ export const test = base.extend<TestFixtures>({
 
     try {
       if (IS_NOT_MOCK && speculosApp) {
+        setEnv("PLAYWRIGHT_RUN", true);
+        setEnv("MOCK", "");
+        process.env.MOCK = "";
+
         // Ensure the portCounter stays within the valid port range
         if (portCounter > MAX_PORT) {
           portCounter = BASE_PORT;
         }
-        const speculosPort = portCounter++;
-        setEnv("PLAYWRIGHT_RUN", true);
+        let speculosPort = portCounter++;
+
+        if (cliCommandsOnApp?.length) {
+          for (const { app, cmd } of cliCommandsOnApp || []) {
+            speculosPort = portCounter++;
+
+            setEnv(
+              "SPECULOS_PID_OFFSET",
+              (speculosPort - BASE_PORT) * 1000 +
+                parseInt(process.env.TEST_WORKER_INDEX || "0") * 100,
+            );
+
+            device = await startSpeculos("unknown", specs[app.name.replace(/ /g, "_")]);
+
+            invariant(device, "[E2E Setup] Speculos not started");
+
+            const speculosApiPort = device.ports.apiPort.toString();
+            invariant(device.ports.apiPort, "[E2E Setup] speculosApiPort not defined");
+            setEnv("SPECULOS_API_PORT", speculosApiPort);
+            process.env.SPECULOS_API_PORT = speculosApiPort;
+
+            console.warn(`CLI Speculos ${device.id} started on ${speculosApiPort}`);
+
+            CLI.registerSpeculosTransport(device.speculosApiPort);
+
+            await executeCliCommand(cmd, userdataDestinationPath);
+            await stopSpeculos(device.id);
+          }
+        }
+
         setEnv(
           "SPECULOS_PID_OFFSET",
           (speculosPort - BASE_PORT) * 1000 + parseInt(process.env.TEST_WORKER_INDEX || "0") * 100,
         );
+
         device = await startSpeculos(
           testInfo.title.replace(/ /g, "_"),
           specs[speculosApp.name.replace(/ /g, "_")],
@@ -118,9 +165,9 @@ export const test = base.extend<TestFixtures>({
         const speculosApiPort = device.ports.apiPort.toString();
 
         setEnv("SPECULOS_API_PORT", speculosApiPort);
-        setEnv("MOCK", "");
         process.env.SPECULOS_API_PORT = speculosApiPort;
-        process.env.MOCK = "";
+
+        console.warn(`Speculos ${device.id} started on ${speculosApiPort}`);
 
         if (cliCommands?.length) {
           CLI.registerSpeculosTransport(speculosApiPort);
