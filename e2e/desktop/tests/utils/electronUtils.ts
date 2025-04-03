@@ -17,9 +17,12 @@ export async function launchApp({
   windowSize: { width: number; height: number };
 }): Promise<ElectronApplication> {
   try {
+    console.warn(
+      `${path.join(__dirname, "../../../../apps/ledger-live-desktop/.webpack/main.bundle.js")}`,
+    );
     const app = await electron.launch({
       args: [
-        `${path.join(__dirname, "../../../../apps/ledger-live-desktop/.webpack/main.bundle.js")}`,
+        "../../apps/ledger-live-desktop/.webpack/main.bundle.js",
         `--user-data-dir=${userdataDestinationPath}`,
         "--force-device-scale-factor=1",
         "--disable-dev-shm-usage",
