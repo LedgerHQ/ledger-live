@@ -27,14 +27,8 @@
       "lib-es/*": [
         "lib-es/*"
       ],
-      "api": [
-        "lib/api/index"
-      ],
       "deviceTransactionConfig": [
         "lib/bridge/deviceTransactionConfig"
-      ],
-      "logic": [
-        "lib/logic/index"
       ],
       "specs": [
         "lib/test/bot-specs"
@@ -61,6 +55,38 @@
     "./api": {
       "require": "./lib/api/index.js",
       "default": "./lib-es/api/index.js"
+    },
+    "./transaction": {
+      "require": "./lib/bridge/transaction.js",
+      "default": "./lib-es/bridge/transaction.js"
+    },
+    "./cli-transaction": {
+      "require": "./lib/test/cli-transaction.js",
+      "default": "./lib-es/test/cli-transaction.js"
+    },
+    "./hw-getAddress": {
+      "require": "./lib/signer/hw-getAddress.js",
+      "default": "./lib-es/signer/hw-getAddress.js"
+    },
+    "./preload": {
+      "require": "./lib/bridge/preload.js",
+      "default": "./lib-es/bridge/preload.js"
+    },
+    "./deviceTransactionConfig": {
+      "require": "./lib/bridge/deviceTransactionConfig.js",
+      "default": "./lib-es/bridge/deviceTransactionConfig.js"
+    },
+    "./types": {
+      "require": "./lib/types/index.js",
+      "default": "./lib-es/types/index.js"
+    },
+    "./bridge": {
+      "require": "./lib/bridge/index.js",
+      "default": "./lib-es/bridge/index.js"
+    },
+    "./signer": {
+      "require": "./lib/signer/index.js",
+      "default": "./lib-es/signer/index.js"
     },
     "./specs": {
       "require": "./lib/test/bot-specs.js",
@@ -123,7 +149,8 @@
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
-    "test-integ": "DOTENV_CONFIG_PATH=.env.integ.test jest --config=jest.integ.config.js --passWithNoTests",
+    "test-integ": "jest --config=jest.integ.config.js",
+    "test-integ:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand --config=jest.integ.config.js",
     "typecheck": "tsc --noEmit",
     "unimported": "unimported"
   }

@@ -27,47 +27,11 @@ For a smooth and quick integration:
 
 #### Table of Contents
 
-*   [Polkadot](#polkadot)
-    *   [Parameters](#parameters)
-    *   [Examples](#examples)
-    *   [getAddress](#getaddress)
-        *   [Parameters](#parameters-1)
-    *   [sign](#sign)
-        *   [Parameters](#parameters-2)
+*   [Celo](#celo)
 
-### Polkadot
+### Celo
 
-Polkadot API
+**Extends Eth**
 
-#### Parameters
-
-*   `transport` **Transport**&#x20;
-
-#### Examples
-
-```javascript
-import Polkadot from "@ledgerhq/hw-app-polkadot";
-const polkadot = new Polkadot(transport)
-```
-
-#### getAddress
-
-##### Parameters
-
-*   `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
-*   `ss58prefix` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**  (optional, default `0`)
-*   `showAddrInDevice` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** if true, user must valid if the address is correct on the device (optional, default `false`)
-
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<{pubKey: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), address: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), return\_code: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)}>**&#x20;
-
-#### sign
-
-Sign a payload
-
-##### Parameters
-
-*   `path` **any**&#x20;
-*   `message` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** payload
-*   `metadata` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
-
-Returns **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** signed payload to be broadcasted
+Heavily inspiried by celo-web-wallet
+<https://github.com/celo-tools/celo-web-wallet/blob/master/src/features/ledger/CeloLedgerApp.ts>
