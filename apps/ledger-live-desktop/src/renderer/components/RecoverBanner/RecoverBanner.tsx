@@ -1,4 +1,4 @@
-import { Flex, ProgressLoader, Text } from "@ledgerhq/react-ui";
+import { Flex, ProgressLoader, Text, Icons } from "@ledgerhq/react-ui";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
@@ -10,6 +10,7 @@ import ActionCard from "../ContentCards/ActionCard";
 import { Card } from "../Box";
 import styled from "styled-components";
 import { LedgerRecoverSubscriptionStateEnum } from "~/types/recoverSubscriptionState";
+import useTheme from "~/renderer/hooks/useTheme";
 
 const maxStepNumber = Object.keys(LedgerRecoverSubscriptionStateEnum).length;
 
@@ -22,6 +23,7 @@ const Wrapper = styled(Card)`
  * @prop children: if a child is passed, it will be rendered instead of the default banner. this allows to do a passthroughs to have first the recover banner, then the rest of the content.
  */
 export default function RecoverBanner({ children }: { children?: React.ReactNode }) {
+  const { colors } = useTheme();
   const [storageData, setStorageData] = useState<LedgerRecoverSubscriptionStateEnum>(
     LedgerRecoverSubscriptionStateEnum.NO_SUBSCRIPTION,
   );
@@ -97,6 +99,8 @@ export default function RecoverBanner({ children }: { children?: React.ReactNode
   const passthroughs = children || null;
   if (!recoverBannerIsEnabled || !recoverBannerSelected || !displayBannerData) return passthroughs;
 
+  const isWarning = stepNumber > 2;
+
   return (
     <Wrapper>
       <ActionCard
@@ -107,17 +111,22 @@ export default function RecoverBanner({ children }: { children?: React.ReactNode
               radius={20}
               stroke={4}
               showPercentage={false}
+              frontStrokeColor={isWarning ? colors.palette.warning.c70 : undefined}
             />
-            <Text
-              display="block"
-              flex={1}
-              textAlign="center"
-              fontSize="12px"
-              lineHeight="15px"
-              fontWeight="medium"
-            >
-              {`${stepNumber}/${maxStepNumber - 1}`}
-            </Text>
+            {isWarning ? (
+              <Icons.WarningFill color="palette.warning.c70" size="XS" />
+            ) : (
+              <Text
+                display="block"
+                flex={1}
+                textAlign="center"
+                fontSize="12px"
+                lineHeight="15px"
+                fontWeight="medium"
+              >
+                {`${stepNumber}/${maxStepNumber - 1}`}
+              </Text>
+            )}
           </Flex>
         }
         title={recoverBannerSelected.title}
