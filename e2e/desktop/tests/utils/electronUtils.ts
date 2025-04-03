@@ -23,18 +23,20 @@ export async function launchApp({
       "../../../../apps/ledger-live-desktop/.webpack/main.bundle.js",
     );
     console.warn(appPath);
-    console.log(execSync(`ls -l ${appPath}`).toString());
-    console.warn(
-      execSync(
-        `ls -l ${path.join(__dirname, "../../../../apps/ledger-live-desktop/.webpack/")}`,
-      ).toString(),
-    );
+    //console.log(execSync(`ls -l ${appPath}`).toString());
+    // console.warn(
+    //   execSync(
+    //     `ls -l ${path.join(__dirname, "../../../../apps/ledger-live-desktop/.webpack/")}`,
+    //   ).toString(),
+    // );
 
-    console.warn(
-      execSync(
-        `ls -l ${path.join(__dirname, "../../../../apps/ledger-live-desktop/.webpack/assets/")}`,
-      ).toString(),
-    );
+    // console.warn(
+    //   execSync(
+    //     `ls -l ${path.join(__dirname, "../../../../apps/ledger-live-desktop/.webpack/assets/")}`,
+    //   ).toString(),
+    // );
+    console.warn("Userdata destination path:");
+    console.warn(userdataDestinationPath);
 
     const app = await electron.launch({
       args: [
