@@ -1,6 +1,6 @@
 ---
 "@ledgerhq/coin-bitcoin": minor
-"ledger-live-desktop": patch
+"ledger-live-desktop": minor
 ---
 
 feat: handle replaced txs
