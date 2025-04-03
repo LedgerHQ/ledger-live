@@ -18,6 +18,8 @@ import { ScreenName } from "~/const";
 import WalletIcon from "~/icons/Wallet";
 import { accountScreenSelector } from "~/reducers/accounts";
 import { useAccountName } from "~/reducers/wallet";
+import CopyButton from "./Components/CopyButton";
+import theme from "@ledgerhq/native-ui/styles/theme";
 
 const MessageProperty = memo(({ label, value }: MessageProperties[0]) => {
   const { colors } = useTheme();
@@ -166,7 +168,7 @@ function SignSummary({
           {messageData.standard === "EIP712" ? (
             <>
               {messageFields ? (
-                <View>
+                <View style={{ paddingTop: 20 }}>
                   <Button type="color" onPress={() => setShowAdvanced(!showAdvanced)}>
                     {showAdvanced
                       ? `- ${t("signMessage.eip712.hideFullMessage")}`
@@ -177,7 +179,7 @@ function SignSummary({
                       style={[
                         styles.advancedMessageArea,
                         {
-                          backgroundColor: colors.pillActiveBackground,
+                          backgroundColor: theme.colors.opacityPurple.c10,
                         },
                       ]}
                     >
@@ -191,6 +193,7 @@ function SignSummary({
             </>
           ) : null}
         </ScrollView>
+        {showAdvanced && <CopyButton text={messageData.message.toString()} />}
       </View>
       <View style={styles.footer}>
         <Button
@@ -267,6 +270,7 @@ const styles = StyleSheet.create({
     fontSize: 9,
     fontFamily: "Courier New",
     padding: 20,
+    paddingBottom: 80,
   },
   message: {
     opacity: 0.5,
