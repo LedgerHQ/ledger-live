@@ -7,11 +7,11 @@ import {
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { CoinConfig } from "@ledgerhq/coin-framework/config";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import type { Account, AccountBridge, Bridge, CurrencyBridge } from "@ledgerhq/types-live";
+import type { CurrencyBridge } from "@ledgerhq/types-live";
 import boilerplateCoinConfig, { type BoilerplateCoinConfig } from "../config";
 import resolver from "../signer";
+import type { BoilerplateAccountBridge, BoilerplateBridge } from "../types";
 import { BoilerplateSigner } from "../types";
-import type { Transaction, TransactionRaw, TransactionStatus } from "../types";
 import { broadcast } from "./broadcast";
 import { createTransaction } from "./createTransaction";
 import { estimateMaxSpendable } from "./estimateMaxSpendable";
@@ -22,12 +22,10 @@ import { getAccountShape } from "./sync";
 import { serialiation } from "./transaction";
 import { updateTransaction } from "./updateTransaction";
 
-export type BoilerplateBridge = Bridge<Transaction, Account, TransactionStatus, TransactionRaw>;
-
 export function createBridges(
   signerContext: SignerContext<BoilerplateSigner>,
   coinConfig: CoinConfig<BoilerplateCoinConfig>,
-) {
+): BoilerplateBridge {
   boilerplateCoinConfig.setCoinConfig(coinConfig);
 
   const getAddress = resolver(signerContext);
@@ -43,7 +41,7 @@ export function createBridges(
   const signOperation = buildSignOperation(signerContext);
   const sync = makeSync({ getAccountShape });
   // we want one method per file
-  const accountBridge: AccountBridge<Transaction, Account, TransactionStatus, TransactionRaw> = {
+  const accountBridge: BoilerplateAccountBridge = {
     broadcast,
     createTransaction,
     updateTransaction,
@@ -56,11 +54,11 @@ export function createBridges(
     receive,
     signOperation,
     getSerializedAddressParameters,
-    ...serialiation,
   };
 
   return {
     currencyBridge,
     accountBridge,
+    ...serialiation,
   };
 }

@@ -1,4 +1,6 @@
 import {
+  AccountBridge,
+  Bridge,
   Operation,
   TransactionCommon,
   TransactionCommonRaw,
@@ -29,3 +31,6 @@ export type InternetComputerOperation = Operation<InternetComputerOperationExtra
 export type InternetComputerOperationExtra = {
   memo?: string | undefined;
 };
+
+export type InternetComputerAccountBridge = AccountBridge<Transaction>;
+export type InternetComputerBridge = Bridge<Transaction, TransactionRaw>;

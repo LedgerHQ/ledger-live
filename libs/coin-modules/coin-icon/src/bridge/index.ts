@@ -9,7 +9,7 @@ import {
 import { CoinConfig } from "@ledgerhq/coin-framework/config";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 
-import type { Account, AccountBridge, Bridge, CurrencyBridge } from "@ledgerhq/types-live";
+import type { CurrencyBridge } from "@ledgerhq/types-live";
 import { broadcast } from "../broadcast";
 import { IconCoinConfig, setCoinConfig } from "../config";
 import { createTransaction } from "../createTransaction";
@@ -23,7 +23,7 @@ import { IconSigner } from "../signer";
 import { buildSignOperation } from "../signOperation";
 import { getAccountShape } from "../synchronization";
 import { serialization } from "../transaction";
-import type { Transaction, TransactionRaw, TransactionStatus } from "../types/index";
+import type { IconAccountBridge, IconBridge } from "../types/index";
 
 function buildCurrencyBridge(signerContext: SignerContext<IconSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
@@ -40,9 +40,7 @@ function buildCurrencyBridge(signerContext: SignerContext<IconSigner>): Currency
   };
 }
 
-function buildAccountBridge(
-  signerContext: SignerContext<IconSigner>,
-): AccountBridge<Transaction, Account, TransactionStatus, TransactionRaw> {
+function buildAccountBridge(signerContext: SignerContext<IconSigner>): IconAccountBridge {
   const getAddress = resolver(signerContext);
 
   const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));
@@ -63,11 +61,8 @@ function buildAccountBridge(
     broadcast,
     estimateMaxSpendable,
     getSerializedAddressParameters,
-    ...serialization,
   };
 }
-
-export type IconBridge = Bridge<Transaction, Account, TransactionStatus, TransactionRaw>;
 
 export function createBridges(
   signerContext: SignerContext<IconSigner>,
@@ -78,5 +73,6 @@ export function createBridges(
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),
+    ...serialization,
   };
 }

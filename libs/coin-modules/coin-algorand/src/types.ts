@@ -1,6 +1,8 @@
 import type {
   Account,
+  AccountBridge,
   AccountRaw,
+  Bridge,
   Operation,
   OperationExtra,
   OperationExtraRaw,
@@ -82,3 +84,20 @@ export type AlgorandAccount = Account & {
 export type AlgorandAccountRaw = AccountRaw & {
   algorandResources: AlgorandResourcesRaw;
 };
+
+export type AlgorandAccountBridge = AccountBridge<
+  Transaction,
+  AlgorandAccount,
+  TransactionStatus,
+  AlgorandAccountRaw,
+  AlgorandOperationExtra,
+  AlgorandOperationExtraRaw
+>;
+export type AlgorandBridge = Bridge<
+  Transaction,
+  AlgorandTransactionRaw,
+  AlgorandAccount,
+  AlgorandAccountRaw,
+  AlgorandOperationExtra,
+  AlgorandOperationExtraRaw
+>;

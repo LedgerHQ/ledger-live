@@ -7,10 +7,10 @@ import {
   updateTransaction,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import type { Account, AccountBridge, Bridge, CurrencyBridge } from "@ledgerhq/types-live";
+import type { CurrencyBridge } from "@ledgerhq/types-live";
 import { getAccountShape } from "../common-logic/utils";
 import resolver from "../signer";
-import type { FilecoinSigner, Transaction, TransactionRaw, TransactionStatus } from "../types";
+import type { FilecoinAccountBridge, FilecoinBridge, FilecoinSigner } from "../types";
 import { broadcast } from "./broadcast";
 import { createTransaction } from "./createTransaction";
 import { estimateMaxSpendable } from "./estimateMaxSpendable";
@@ -36,9 +36,7 @@ function buildCurrencyBridge(signerContext: SignerContext<FilecoinSigner>): Curr
 
 const sync = makeSync({ getAccountShape });
 
-function buildAccountBridge(
-  signerContext: SignerContext<FilecoinSigner>,
-): AccountBridge<Transaction, Account, TransactionStatus, TransactionRaw> {
+function buildAccountBridge(signerContext: SignerContext<FilecoinSigner>): FilecoinAccountBridge {
   const getAddress = resolver(signerContext);
 
   const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));
@@ -55,14 +53,13 @@ function buildAccountBridge(
     signOperation,
     broadcast,
     getSerializedAddressParameters,
-    ...serialization,
   };
 }
 
-export type FilecoinBridge = Bridge<Transaction, Account, TransactionStatus, TransactionRaw>;
 export function createBridges(signerContext: SignerContext<FilecoinSigner>): FilecoinBridge {
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),
+    ...serialization,
   };
 }

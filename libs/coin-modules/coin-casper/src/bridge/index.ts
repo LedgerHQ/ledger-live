@@ -7,9 +7,9 @@ import {
   updateTransaction,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import type { Account, AccountBridge, Bridge, CurrencyBridge } from "@ledgerhq/types-live";
+import type { CurrencyBridge } from "@ledgerhq/types-live";
 import resolver from "../signer";
-import type { CasperSigner, Transaction, TransactionRaw, TransactionStatus } from "../types";
+import type { CasperAccountBridge, CasperBridge, CasperSigner } from "../types";
 import { getAccountShape } from "./bridgeHelpers/accountShape";
 import { broadcast } from "./broadcast";
 import { createTransaction } from "./createTransaction";
@@ -36,9 +36,7 @@ function buildCurrencyBridge(signerContext: SignerContext<CasperSigner>): Curren
 
 const sync = makeSync({ getAccountShape });
 
-function buildAccountBridge(
-  signerContext: SignerContext<CasperSigner>,
-): AccountBridge<Transaction, Account, TransactionStatus, TransactionRaw> {
+function buildAccountBridge(signerContext: SignerContext<CasperSigner>): CasperAccountBridge {
   const getAddress = resolver(signerContext);
 
   const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));
@@ -55,15 +53,13 @@ function buildAccountBridge(
     signOperation,
     broadcast,
     getSerializedAddressParameters,
-    ...serialization,
   };
 }
-
-export type CasperBridge = Bridge<Transaction, Account, TransactionStatus, TransactionRaw>;
 
 export function createBridges(signerContext: SignerContext<CasperSigner>): CasperBridge {
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),
+    ...serialization,
   };
 }
