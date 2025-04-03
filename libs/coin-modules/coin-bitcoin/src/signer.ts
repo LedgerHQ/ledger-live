@@ -29,6 +29,7 @@ export interface BitcoinSigner {
     isSegwitSupported: boolean | null | undefined,
     hasExtraData: boolean | null | undefined,
     additionals: Array<string> | null | undefined,
+    blockHeight: number | null | undefined,
   ): SignerTransaction;
   createPaymentTransaction(arg: CreateTransaction): Promise<string>;
 }

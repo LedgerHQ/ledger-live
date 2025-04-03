@@ -246,8 +246,9 @@ export default class Btc {
     isSegwitSupported: boolean | null | undefined = false,
     hasExtraData = false,
     additionals: Array<string> = [],
+    blockHeight: number | null | undefined = null,
   ): Transaction {
-    return splitTransaction(transactionHex, isSegwitSupported, hasExtraData, additionals);
+    return splitTransaction(transactionHex, isSegwitSupported, hasExtraData, additionals, blockHeight);
   }
 
   /**
