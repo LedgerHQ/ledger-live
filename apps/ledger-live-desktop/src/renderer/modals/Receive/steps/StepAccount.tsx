@@ -131,11 +131,7 @@ export default function StepAccount({
           <Alert type="warning" learnMoreUrl={url} mt={3}>
             <Trans
               i18nKey={`receive.steps.chooseAccount.${
-                account.type === "TokenAccount"
-                  ? startsWithVowel(tokenType)
-                    ? "verifyTokenType"
-                    : "verifyATokenType"
-                  : "warningTokenType"
+                account.type === "TokenAccount" ? "verifyTokenType" : "warningTokenType"
               }`}
               values={
                 account.type === "TokenAccount"
