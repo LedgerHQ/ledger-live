@@ -15,6 +15,7 @@ beforeAll(
     await device.reverseTcpPort(52619); // To allow the android emulator to access the dummy app
     const testFileName = expect.getState().testPath?.replace(/^.*\/(.+?)(?:\.spec)?\.[^.]+$/, "$1");
     allure.description("Test file : " + testFileName);
+    allure.description("Test name : " + expect.getState().currentTestName);
   },
   process.env.CI ? 150000 : 300000,
 );
