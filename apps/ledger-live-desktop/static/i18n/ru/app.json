@@ -4402,6 +4402,8 @@
       "catalogUrlDesc" : "Введите собственный URL поставщика каталога.",
       "enablePlatformDevTools" : "Включить инструменты разработчика на платформе",
       "enablePlatformDevToolsDesc" : "Разрешить открывать окно инструментов разработчика на платформе.",
+      "enablePlatformDeviceSwitch" : "Активация тумблера платформы",
+      "enablePlatformDeviceSwitchDesc" : "Отображает тумблер переключения между настольным и мобильным видом.",
       "customLockScreen" : "Собственные картинки для экрана блокировки",
       "customLockScreenDesc" : "Отладка собственных картинок для экрана блокировки.",
       "customLockScreenCTA" : "Запустить",
