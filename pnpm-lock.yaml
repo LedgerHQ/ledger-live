@@ -1774,7 +1774,7 @@ importers:
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/types-live
       '@playwright/test':
-        specifier: ^1.51.0
+        specifier: ^1.45.0
         version: 1.51.1
       '@types/node':
         specifier: 22.10.10
@@ -1797,9 +1797,6 @@ importers:
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
-      node-screenshots:
-        specifier: 0.2.1
-        version: 0.2.1
       rxjs:
         specifier: ^7.8.1
         version: 7.8.1
@@ -1814,8 +1811,8 @@ importers:
         specifier: 32.0.2
         version: 32.0.2
       playwright:
-        specifier: 1.51.1
-        version: 1.51.1
+        specifier: 1.45.1
+        version: 1.45.1
 
   libs/coin-framework:
     dependencies:
@@ -26293,57 +26290,6 @@ packages:
   node-releases@2.0.18:
     resolution: {integrity: sha512-d9VeXT4SJ7ZeOqGX6R5EM022wpL+eWPooLI+5UpWn2jCT1aosUQEhQP214x33Wkwx3JQMvIm+tIoVOdodFS40g==}
 
-  node-screenshots-darwin-arm64@0.2.1:
-    resolution: {integrity: sha512-mcNcdn5zABYNVXIb1vq58mItFlpr03T8VJetD892qy+hqNAQdZd/vvplw+ZIlb4tuH7sR1gia67WRsBRO5nrQA==}
-    engines: {node: '>= 10'}
-    cpu: [arm64]
-    os: [darwin]
-
-  node-screenshots-darwin-universal@0.2.1:
-    resolution: {integrity: sha512-cNqBasCyMU/P87Ej3hK/vedAk86DrVkpoxd2zz5qLA3h850Ew9qb/7g0MTYsRatbZFoLhw7MgFwAZkiNh4Mr9g==}
-    engines: {node: '>= 10'}
-    os: [darwin]
-
-  node-screenshots-darwin-x64@0.2.1:
-    resolution: {integrity: sha512-8TOou5WwytgGV+IuV1vnnYaGzwfYgIw6XkOoZtt4qhSmTEW0K8EGa46Uq42/W5qQPxKt3GLqjlY3wL69eZWIyA==}
-    engines: {node: '>= 10'}
-    cpu: [x64]
-    os: [darwin]
-
-  node-screenshots-linux-x64-gnu@0.2.1:
-    resolution: {integrity: sha512-P2h511my2JytMSAW8+uvO+lGj1BwapERWbC6i56u5WbLIy/zgT1SQwNvcZNbPE8sxb1q8pqF3MerLcftnW0f+w==}
-    engines: {node: '>= 10'}
-    cpu: [x64]
-    os: [linux]
-
-  node-screenshots-linux-x64-musl@0.2.1:
-    resolution: {integrity: sha512-+B37/VYzH86ywWyF9XkYYicyf/BTan4TADsmxPlK+a/UHHZEnp1YjEM66sBIQTIVhVhv1DC6YUv9AppBpoV9AA==}
-    engines: {node: '>= 10'}
-    cpu: [x64]
-    os: [linux]
-
-  node-screenshots-win32-arm64-msvc@0.2.1:
-    resolution: {integrity: sha512-+sj1FAF4qufcWO1KdmCOhPRMELfWu7hRv2qvr8e3jLPLM0/XGU8UTWWej9qAhf3UY83LaAsvxMhzai9JLIis1w==}
-    engines: {node: '>= 10'}
-    cpu: [arm64]
-    os: [win32]
-
-  node-screenshots-win32-ia32-msvc@0.2.1:
-    resolution: {integrity: sha512-8fzmFqbotHAzwIARG9fI8eD+Vw2g98Bl7aKlhu57nCjCXNrdl4Ck+b3uvMjdQD+v7rKC/sT+NZK973y4YgRoMA==}
-    engines: {node: '>= 10'}
-    cpu: [ia32]
-    os: [win32]
-
-  node-screenshots-win32-x64-msvc@0.2.1:
-    resolution: {integrity: sha512-dfxAck3LR9eTYpc/hVtomQYxpP/80p4+vP9k1whDBCClTzRlHvgx1U9b6c5bYpe8JZFtCZsJL75S5p0kQJk7Dg==}
-    engines: {node: '>= 10'}
-    cpu: [x64]
-    os: [win32]
-
-  node-screenshots@0.2.1:
-    resolution: {integrity: sha512-1UY7VY/34uE6Giq/Winl0J7022KKwWt9T9Gu5ZBCxhXkWrv9q5pTVQRgZCcUIsIHq3zu8UFu5s8rqgauK2CnLA==}
-    engines: {node: '>= 10'}
-
   node-stream-zip@1.15.0:
     resolution: {integrity: sha512-LN4fydt9TqhZhThkZIVQnF9cwjU3qmUH9h78Mx/K7d3VvfRqqwthLwJEUOEL0QPZ0XQmNN7be5Ggit5+4dq3Bw==}
     engines: {node: '>=0.12.0'}
@@ -27006,6 +26952,11 @@ packages:
     engines: {node: '>=18'}
     hasBin: true
 
+  playwright-core@1.45.1:
+    resolution: {integrity: sha512-LF4CUUtrUu2TCpDw4mcrAIuYrEjVDfT1cHbJMfwnE2+1b8PZcFzPNgvZCvq2JfQ4aTjRCCHw5EJ2tmr2NSzdPg==}
+    engines: {node: '>=18'}
+    hasBin: true
+
   playwright-core@1.51.1:
     resolution: {integrity: sha512-/crRMj8+j/Nq5s8QcvegseuyeZPxpQCZb6HNk3Sos3BlZyAknRjoyJPFWkpNn8v0+P3WiwqFF8P+zQo4eqiNuw==}
     engines: {node: '>=18'}
@@ -27018,6 +26969,11 @@ packages:
 
   playwright@1.45.0:
     resolution: {integrity: sha512-4z3ac3plDfYzGB6r0Q3LF8POPR20Z8D0aXcxbJvmfMgSSq1hkcgvFRXJk9rUq5H/MJ0Ktal869hhOdI/zUTeLA==}
+    engines: {node: '>=18'}
+    hasBin: true
+
+  playwright@1.45.1:
+    resolution: {integrity: sha512-Hjrgae4kpSQBr98nhCj3IScxVeVUixqj+5oyif8TdIn2opTCPEzqAqNMeK42i3cWDCVu9MI+ZsGWw+gVR4ISBg==}
     engines: {node: '>=18'}
     hasBin: true
 
@@ -61316,41 +61272,6 @@ snapshots:
 
   node-releases@2.0.18: {}
 
-  node-screenshots-darwin-arm64@0.2.1:
-    optional: true
-
-  node-screenshots-darwin-universal@0.2.1:
-    optional: true
-
-  node-screenshots-darwin-x64@0.2.1:
-    optional: true
-
-  node-screenshots-linux-x64-gnu@0.2.1:
-    optional: true
-
-  node-screenshots-linux-x64-musl@0.2.1:
-    optional: true
-
-  node-screenshots-win32-arm64-msvc@0.2.1:
-    optional: true
-
-  node-screenshots-win32-ia32-msvc@0.2.1:
-    optional: true
-
-  node-screenshots-win32-x64-msvc@0.2.1:
-    optional: true
-
-  node-screenshots@0.2.1:
-    optionalDependencies:
-      node-screenshots-darwin-arm64: 0.2.1
-      node-screenshots-darwin-universal: 0.2.1
-      node-screenshots-darwin-x64: 0.2.1
-      node-screenshots-linux-x64-gnu: 0.2.1
-      node-screenshots-linux-x64-musl: 0.2.1
-      node-screenshots-win32-arm64-msvc: 0.2.1
-      node-screenshots-win32-ia32-msvc: 0.2.1
-      node-screenshots-win32-x64-msvc: 0.2.1
-
   node-stream-zip@1.15.0: {}
 
   node-version-matches@2.0.1:
@@ -62067,6 +61988,8 @@ snapshots:
 
   playwright-core@1.45.0: {}
 
+  playwright-core@1.45.1: {}
+
   playwright-core@1.51.1: {}
 
   playwright@1.40.1:
@@ -62078,6 +62001,12 @@ snapshots:
   playwright@1.45.0:
     dependencies:
       playwright-core: 1.45.0
+    optionalDependencies:
+      fsevents: 2.3.2
+
+  playwright@1.45.1:
+    dependencies:
+      playwright-core: 1.45.1
     optionalDependencies:
       fsevents: 2.3.2
 

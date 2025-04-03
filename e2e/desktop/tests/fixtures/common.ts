@@ -228,6 +228,8 @@ export const test = base.extend<TestFixtures>({
     //await page.waitForLoadState("domcontentloaded");
     await page.waitForTimeout(60000);
     //await page.waitForSelector("#loader-container", { state: "hidden" });
+    captureEntireScreen();
+
     await page.screenshot({ path: testInfo.outputPath("screenshot.png") });
 
     // use page in the test
