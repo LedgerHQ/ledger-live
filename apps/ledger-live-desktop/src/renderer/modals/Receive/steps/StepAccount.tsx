@@ -23,9 +23,6 @@ import Alert from "~/renderer/components/Alert";
 import { StepProps } from "../Body";
 import { supportLinkByTokenType } from "~/config/urls";
 
-const startsWithVowel = (sentence: string) =>
-  sentence.length > 0 && ["a", "e", "i", "o", "u"].includes(sentence[0].toLowerCase());
-
 type OnChangeAccount = (account?: AccountLike | null, tokenAccount?: Account | null) => void;
 const AccountSelection = ({
   onChangeAccount,
