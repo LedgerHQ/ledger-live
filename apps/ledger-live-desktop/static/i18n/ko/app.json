@@ -4229,7 +4229,7 @@
       "nfts" : {
         "title" : "숨겨진 NFT 컬렉션",
         "description" : "숨겨진 컬렉션 목록을 재설정하세요",
-        "reset" : "재설정"
+        "reset" : "재설정 ({{count}})"
       },
       "exchangeDeveloperMode" : {
         "title" : "거래소 개발 모드",
@@ -4340,6 +4340,32 @@
         },
         "back" : "돌아가기"
       },
+      "debugNfts" : {
+        "title" : "NFT 도구",
+        "description" : "Ledger Live에서 NFT 처리를 위한 유용한 도구 제공",
+        "cta" : "열기",
+        "tabs" : {
+          "config" : "구성",
+          "generatorAndDestructor" : "생성 & 삭제"
+        },
+        "configuration" : {
+          "supported" : "지원되는 NFT 체인",
+          "supported_other" : "지원되는 NFT 체인",
+          "nms" : {
+            "title" : "NFT 메타데이터 서비스 (NMS)",
+            "env" : "환경: {{env}}"
+          }
+        },
+        "generatorAndDestructor" : {
+          "genAcc" : "계정 생성",
+          "genAccDesc" : "NFT로 계정 생성",
+          "cta" : "생성",
+          "deleteAcc" : "계정 삭제",
+          "deleteAccDesc" : "스토어에서 모든 계정 삭제",
+          "delete" : "삭제"
+        },
+        "back" : "돌아가기"
+      },
       "debugWalletSync" : {
         "title" : "Ledger 동기화 디버거",
         "description" : "특정 LedgerSync 흐름을 시작하거나 LedgerSync의 현재 상태를 확인할 수 있습니다.",
@@ -4376,6 +4402,8 @@
       "catalogUrlDesc" : "사용자 지정 카탈로그 제공자 URL를 입력하세요",
       "enablePlatformDevTools" : "플랫폼 개발자 도구 사용",
       "enablePlatformDevToolsDesc" : "개방형 플랫폼 앱 개발자 도구 창 사용",
+      "enablePlatformDeviceSwitch" : "플랫폼 장치 전환 활성화",
+      "enablePlatformDeviceSwitchDesc" : "모바일과 데스크탑 화면을 자유롭게 전환할 수 있는 토글 버튼을 활성화합니다",
       "customLockScreen" : "맞춤식 잠금 화면 자산",
       "customLockScreenDesc" : "맞춤식 잠금 화면 그래픽 자산 디버그",
       "customLockScreenCTA" : "실행",
