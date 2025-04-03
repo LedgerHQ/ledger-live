@@ -1,5 +1,18 @@
 # @ledgerhq/coin-solana
 
+## 0.17.1-nightly.0
+
+### Patch Changes
+
+- [#9717](https://github.com/LedgerHQ/ledger-live/pull/9717) [`f1f4706`](https://github.com/LedgerHQ/ledger-live/commit/f1f47060490f483a69e32b18ee4edd0c8cb8eabb) Thanks [@Wozacosta](https://github.com/Wozacosta)! - fix: retry on post requests made to solana
+
+- Updated dependencies [[`46a9620`](https://github.com/LedgerHQ/ledger-live/commit/46a9620b4ea6343efc28792d3b57bf84ee2a23e8), [`32d46cc`](https://github.com/LedgerHQ/ledger-live/commit/32d46cc77debe059ae0bcd848a21065dec7ee091)]:
+  - @ledgerhq/types-live@6.66.0-nightly.0
+  - @ledgerhq/coin-framework@2.6.0-nightly.0
+  - @ledgerhq/live-env@2.8.0-nightly.0
+  - @ledgerhq/cryptoassets@13.14.1-nightly.0
+  - @ledgerhq/live-network@2.0.7-nightly.0
+
 ## 0.17.0
 
 ### Minor Changes

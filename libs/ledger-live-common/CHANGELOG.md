@@ -1,5 +1,55 @@
 ## 34.25.0
 
+## 34.29.0-nightly.0
+
+### Minor Changes
+
+- [#9720](https://github.com/LedgerHQ/ledger-live/pull/9720) [`46a9620`](https://github.com/LedgerHQ/ledger-live/commit/46a9620b4ea6343efc28792d3b57bf84ee2a23e8) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Remove generated formatters file
+
+- [#9676](https://github.com/LedgerHQ/ledger-live/pull/9676) [`91aedae`](https://github.com/LedgerHQ/ledger-live/commit/91aedae036802adac794ae1969511fa2ab440d59) Thanks [@beths-ledger](https://github.com/beths-ledger)! - Auto-generate staking entry points and flows from redirects configuration on stakePrograms firebase feature flag. Add utils in common library to append params to any manifest url - use these in mobile to fix missing query params in custom dapp URL.
+
+### Patch Changes
+
+- Updated dependencies [[`f1f4706`](https://github.com/LedgerHQ/ledger-live/commit/f1f47060490f483a69e32b18ee4edd0c8cb8eabb), [`46a9620`](https://github.com/LedgerHQ/ledger-live/commit/46a9620b4ea6343efc28792d3b57bf84ee2a23e8), [`3ef0a3e`](https://github.com/LedgerHQ/ledger-live/commit/3ef0a3e29eb2a1cb0b2c9b01cc5dd97af6d0a894), [`32d46cc`](https://github.com/LedgerHQ/ledger-live/commit/32d46cc77debe059ae0bcd848a21065dec7ee091)]:
+  - @ledgerhq/coin-solana@0.17.1-nightly.0
+  - @ledgerhq/coin-multiversx@0.4.0-nightly.0
+  - @ledgerhq/coin-algorand@0.9.0-nightly.0
+  - @ledgerhq/coin-polkadot@3.2.0-nightly.0
+  - @ledgerhq/coin-bitcoin@0.15.0-nightly.0
+  - @ledgerhq/coin-cosmos@0.12.0-nightly.0
+  - @ledgerhq/coin-framework@2.6.0-nightly.0
+  - @ledgerhq/coin-stellar@2.1.1-nightly.0
+  - @ledgerhq/live-env@2.8.0-nightly.0
+  - @ledgerhq/coin-aptos@1.8.1-nightly.0
+  - @ledgerhq/coin-cardano@0.7.1-nightly.0
+  - @ledgerhq/coin-casper@1.5.3-nightly.0
+  - @ledgerhq/coin-evm@2.15.1-nightly.0
+  - @ledgerhq/coin-filecoin@1.8.1-nightly.0
+  - @ledgerhq/coin-hedera@1.5.1-nightly.0
+  - @ledgerhq/coin-icon@0.9.1-nightly.0
+  - @ledgerhq/coin-internet_computer@1.6.1-nightly.0
+  - @ledgerhq/coin-near@0.10.1-nightly.0
+  - @ledgerhq/coin-stacks@0.7.1-nightly.0
+  - @ledgerhq/coin-sui@0.2.1-nightly.0
+  - @ledgerhq/coin-tezos@2.1.1-nightly.0
+  - @ledgerhq/coin-ton@0.7.1-nightly.0
+  - @ledgerhq/coin-tron@0.7.1-nightly.0
+  - @ledgerhq/coin-vechain@2.6.1-nightly.0
+  - @ledgerhq/coin-xrp@3.1.1-nightly.0
+  - @ledgerhq/device-core@0.4.20-nightly.0
+  - @ledgerhq/hw-app-eth@6.44.1-nightly.0
+  - @ledgerhq/live-countervalues@0.4.7-nightly.0
+  - @ledgerhq/live-countervalues-react@0.2.29-nightly.0
+  - @ledgerhq/live-nft@0.7.1-nightly.0
+  - @ledgerhq/live-signer-evm@0.2.3-nightly.0
+  - @ledgerhq/live-wallet@0.10.3-nightly.0
+  - @ledgerhq/ledger-cal-service@0.4.2-nightly.0
+  - @ledgerhq/ledger-trust-service@0.3.2-nightly.0
+  - @ledgerhq/cryptoassets@13.14.1-nightly.0
+  - @ledgerhq/live-network@2.0.7-nightly.0
+  - @ledgerhq/speculos-transport@0.1.12-nightly.0
+  - @ledgerhq/hw-app-vet@0.4.1-nightly.0
+
 ## 34.28.0
 
 ### Minor Changes

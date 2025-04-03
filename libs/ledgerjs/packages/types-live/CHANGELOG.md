@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.66.0-nightly.0
+
+### Minor Changes
+
+- [#9720](https://github.com/LedgerHQ/ledger-live/pull/9720) [`46a9620`](https://github.com/LedgerHQ/ledger-live/commit/46a9620b4ea6343efc28792d3b57bf84ee2a23e8) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Remove generated formatters file
+
 ## 6.65.0
 
 ### Minor Changes

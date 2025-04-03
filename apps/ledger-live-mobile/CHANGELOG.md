@@ -1,5 +1,37 @@
 # live-mobile
 
+## 3.73.0-nightly.0
+
+### Minor Changes
+
+- [#9740](https://github.com/LedgerHQ/ledger-live/pull/9740) [`fa3b63f`](https://github.com/LedgerHQ/ledger-live/commit/fa3b63f3e5f3237e88febbb16ca54b882f6e6f70) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Enable custom lockscreen + hide Collection for Solana
+
+- [#9676](https://github.com/LedgerHQ/ledger-live/pull/9676) [`91aedae`](https://github.com/LedgerHQ/ledger-live/commit/91aedae036802adac794ae1969511fa2ab440d59) Thanks [@beths-ledger](https://github.com/beths-ledger)! - Auto-generate staking entry points and flows from redirects configuration on stakePrograms firebase feature flag. Add utils in common library to append params to any manifest url - use these in mobile to fix missing query params in custom dapp URL.
+
+- [#9713](https://github.com/LedgerHQ/ledger-live/pull/9713) [`62b3c14`](https://github.com/LedgerHQ/ledger-live/commit/62b3c14b5293baffa888c0271077367994c6581a) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - WebPTXPlayer should accept softExit param so Buy navigates back to Swap
+
+### Patch Changes
+
+- Updated dependencies [[`46a9620`](https://github.com/LedgerHQ/ledger-live/commit/46a9620b4ea6343efc28792d3b57bf84ee2a23e8), [`e6f8297`](https://github.com/LedgerHQ/ledger-live/commit/e6f8297515ed689ee7cad902ef0ec07260692463), [`32d46cc`](https://github.com/LedgerHQ/ledger-live/commit/32d46cc77debe059ae0bcd848a21065dec7ee091), [`e6f8297`](https://github.com/LedgerHQ/ledger-live/commit/e6f8297515ed689ee7cad902ef0ec07260692463)]:
+  - @ledgerhq/coin-multiversx@0.4.0-nightly.0
+  - @ledgerhq/types-live@6.66.0-nightly.0
+  - @ledgerhq/coin-cosmos@0.12.0-nightly.0
+  - @ledgerhq/coin-framework@2.6.0-nightly.0
+  - @ledgerhq/live-dmk-mobile@0.2.0-nightly.0
+  - @ledgerhq/live-env@2.8.0-nightly.0
+  - @ledgerhq/coin-evm@2.15.1-nightly.0
+  - @ledgerhq/coin-filecoin@1.8.1-nightly.0
+  - @ledgerhq/coin-stacks@0.7.1-nightly.0
+  - @ledgerhq/domain-service@1.2.25-nightly.0
+  - @ledgerhq/live-countervalues@0.4.7-nightly.0
+  - @ledgerhq/live-countervalues-react@0.2.29-nightly.0
+  - @ledgerhq/live-nft@0.7.1-nightly.0
+  - @ledgerhq/live-nft-react@0.8.1-nightly.0
+  - @ledgerhq/live-wallet@0.10.3-nightly.0
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.3.4-nightly.0
+  - @ledgerhq/ledger-key-ring-protocol@0.5.6-nightly.0
+  - @ledgerhq/live-network@2.0.7-nightly.0
+
 ## 3.72.0
 
 ### Minor Changes

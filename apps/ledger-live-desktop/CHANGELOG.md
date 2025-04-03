@@ -1,5 +1,37 @@
 # ledger-live-desktop
 
+## 2.107.0-nightly.0
+
+### Minor Changes
+
+- [#9720](https://github.com/LedgerHQ/ledger-live/pull/9720) [`46a9620`](https://github.com/LedgerHQ/ledger-live/commit/46a9620b4ea6343efc28792d3b57bf84ee2a23e8) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Remove generated formatters file
+
+- [#9676](https://github.com/LedgerHQ/ledger-live/pull/9676) [`91aedae`](https://github.com/LedgerHQ/ledger-live/commit/91aedae036802adac794ae1969511fa2ab440d59) Thanks [@beths-ledger](https://github.com/beths-ledger)! - Auto-generate staking entry points and flows from redirects configuration on stakePrograms firebase feature flag. Add utils in common library to append params to any manifest url - use these in mobile to fix missing query params in custom dapp URL.
+
+### Patch Changes
+
+- Updated dependencies [[`46a9620`](https://github.com/LedgerHQ/ledger-live/commit/46a9620b4ea6343efc28792d3b57bf84ee2a23e8), [`91aedae`](https://github.com/LedgerHQ/ledger-live/commit/91aedae036802adac794ae1969511fa2ab440d59), [`32d46cc`](https://github.com/LedgerHQ/ledger-live/commit/32d46cc77debe059ae0bcd848a21065dec7ee091), [`e6f8297`](https://github.com/LedgerHQ/ledger-live/commit/e6f8297515ed689ee7cad902ef0ec07260692463)]:
+  - @ledgerhq/types-live@6.66.0-nightly.0
+  - @ledgerhq/coin-bitcoin@0.15.0-nightly.0
+  - @ledgerhq/coin-cosmos@0.12.0-nightly.0
+  - @ledgerhq/live-common@34.29.0-nightly.0
+  - @ledgerhq/coin-framework@2.6.0-nightly.0
+  - @ledgerhq/live-env@2.8.0-nightly.0
+  - @ledgerhq/live-dmk-desktop@0.2.0-nightly.0
+  - @ledgerhq/coin-aptos@1.8.1-nightly.0
+  - @ledgerhq/coin-evm@2.15.1-nightly.0
+  - @ledgerhq/coin-filecoin@1.8.1-nightly.0
+  - @ledgerhq/domain-service@1.2.25-nightly.0
+  - @ledgerhq/live-countervalues@0.4.7-nightly.0
+  - @ledgerhq/live-countervalues-react@0.2.29-nightly.0
+  - @ledgerhq/live-nft@0.7.1-nightly.0
+  - @ledgerhq/live-nft-react@0.8.1-nightly.0
+  - @ledgerhq/live-wallet@0.10.3-nightly.0
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.3.4-nightly.0
+  - @ledgerhq/ledger-key-ring-protocol@0.5.6-nightly.0
+  - @ledgerhq/cryptoassets@13.14.1-nightly.0
+  - @ledgerhq/live-network@2.0.7-nightly.0
+
 ## 2.106.0
 
 ### Minor Changes
