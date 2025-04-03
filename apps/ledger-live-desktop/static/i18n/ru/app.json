@@ -4207,7 +4207,7 @@
       "mevProtection" : "Защита от MEV",
       "mevProtectionDesc" : "Активируйте защиту от MEV для комфортных транзакций в Эфириуме.",
       "mevProtectionLearnMore" : "Уведомление о конфиденциальности",
-      "marketPerformanceWidget" : "Виджет поведения рынка",
+      "marketPerformanceWidget" : "Виджет динамики рынка",
       "marketPerformanceWidgetDesc" : "Данная функция показывает самые прибыльные и убыточные криптоактивы за разные промежутки времени на странице портфеля."
     },
     "developer" : {
@@ -4229,7 +4229,7 @@
       "nfts" : {
         "title" : "Скрытые коллекции NFT",
         "description" : "Сбросить список скрытых коллекций",
-        "reset" : "Сбросить"
+        "reset" : "Сбросить ({{count}})"
       },
       "exchangeDeveloperMode" : {
         "title" : "Режим разработчика для приложения Exchange",
@@ -4340,6 +4340,32 @@
         },
         "back" : "Назад"
       },
+      "debugNfts" : {
+        "title" : "Инструменты NFT",
+        "description" : "Возможность использовать важные функции для управления NFT в Ledger Live.",
+        "cta" : "Открыть",
+        "tabs" : {
+          "config" : "Настройка",
+          "generatorAndDestructor" : "Генераторы и уничтожители"
+        },
+        "configuration" : {
+          "supported" : "Поддерживаемая сеть с NFT",
+          "supported_other" : "Поддерживаемые сети с NFT",
+          "nms" : {
+            "title" : "Служба метаданных NFT (NMS)",
+            "env" : "Среда: {{env}}"
+          }
+        },
+        "generatorAndDestructor" : {
+          "genAcc" : "Сгенерировать счета",
+          "genAccDesc" : "Сгенерировать счета с NFT",
+          "cta" : "Сгенерировать",
+          "deleteAcc" : "Удалить счета",
+          "deleteAccDesc" : "Удалить все счета",
+          "delete" : "Удалить"
+        },
+        "back" : "Назад"
+      },
       "debugWalletSync" : {
         "title" : "Отладчик Ledger Sync",
         "description" : "Функция позволяет запускать определённые потоки Ledger Sync или проверять актуальное состояние службы",
@@ -4376,6 +4402,8 @@
       "catalogUrlDesc" : "Введите собственный URL поставщика каталога.",
       "enablePlatformDevTools" : "Включить инструменты разработчика на платформе",
       "enablePlatformDevToolsDesc" : "Разрешить открывать окно инструментов разработчика на платформе.",
+      "enablePlatformDeviceSwitch" : "Активация тумблера платформы",
+      "enablePlatformDeviceSwitchDesc" : "Отображает тумблер переключения между настольным и мобильным видом.",
       "customLockScreen" : "Собственные картинки для экрана блокировки",
       "customLockScreenDesc" : "Отладка собственных картинок для экрана блокировки.",
       "customLockScreenCTA" : "Запустить",
