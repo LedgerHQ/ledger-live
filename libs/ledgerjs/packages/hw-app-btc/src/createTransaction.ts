@@ -88,32 +88,21 @@ export const getDefaultVersions = ({
   isDecred: boolean;
   expiryHeight: Buffer | undefined;
   blockHeight: number | undefined;
-}): { defaultVersion: Buffer; defaultVersionNu5Only: Buffer } => {
+}): { defaultVersion: Buffer; } => {
   let defaultVersion = Buffer.alloc(4);
-  const defaultVersionNu5Only = Buffer.alloc(4);
 
-  if (!!expiryHeight && !isDecred && isZcash) {
-    // if (isZcash && blockHeight) {
-    // debugger;
-    // defaultVersion =  getZcashTransactionVersion(blockHeight);
-    defaultVersion.writeUInt32LE(0x80000005, 0);
-    defaultVersionNu5Only.writeUInt32LE(0x80000005, 0);
-    // NOTE: should've put nu6 here?
-    //
-    // defaultVersionNu5Only.writeUInt32BE(0xc8e71055, 0);
-    //
-    // } else {
-    //   const version = sapling ? 0x80000004 : 0x80000003;
-    //   defaultVersion.writeUInt32LE(version, 0);
-    //   defaultVersionNu5Only.writeUInt32LE(version, 0);
-    // }
-    // } else {
-    // }
+  if (!!expiryHeight && !isDecred) {
+    if (isZcash) {
+      defaultVersion.writeUInt32LE(0x80000005, 0);
+    } else if (sapling) {
+      defaultVersion.writeUInt32LE(0x80000004, 0);
+    } else {
+      defaultVersion.writeUInt32LE(0x80000003, 0);
+    }
   } else {
     defaultVersion.writeUInt32LE(1, 0);
-    defaultVersionNu5Only.writeUInt32LE(1, 0);
   }
-  return { defaultVersion, defaultVersionNu5Only };
+  return { defaultVersion };
 };
 
 /**
@@ -218,15 +207,13 @@ export async function createTransaction(
   const nullPrevout = Buffer.alloc(0);
 
   console.log(`before getting default version`);
-  const { defaultVersion, defaultVersionNu5Only } = getDefaultVersions({
+  const { defaultVersion } = getDefaultVersions({
     isZcash,
     sapling,
     isDecred,
     expiryHeight,
     blockHeight,
   });
-  console.log({ defaultVersion, defaultVersionNu5Only });
-  console.log("-----");
   // Default version to 2 for XST not to have timestamp
   const trustedInputs: Array<any> = [];
   const regularOutputs: Array<TransactionOutput> = [];
@@ -236,8 +223,7 @@ export async function createTransaction(
   const resuming = false;
   const targetTransaction: Transaction = {
     inputs: [],
-    // version: defaultVersion,
-    version: defaultVersionNu5Only,
+    version: defaultVersion,
     timestamp: Buffer.alloc(0),
   };
   console.log({ targetTransactionNOW: targetTransaction });
@@ -463,7 +449,7 @@ export async function createTransaction(
   }
   console.log("before populating final input scripts");
 
-  targetTransaction.version = defaultVersionNu5Only;
+  targetTransaction.version = defaultVersion;
   targetTransaction.consensusBranchId = getZcashBranchId({
     blockHeight,
     version: null,
