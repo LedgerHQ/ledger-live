@@ -426,7 +426,7 @@ jobs:
     name: "Allure Reports Export on Server"
     needs: e2e-tests-linux
     runs-on: [ledger-live-medium]
-    if: ${{ !cancelled() }}
+    if: ${{ !cancelled() && github.ref_name == 'develop' }}
     steps:
       - name: Download Allure Report
         uses: actions/download-artifact@v4

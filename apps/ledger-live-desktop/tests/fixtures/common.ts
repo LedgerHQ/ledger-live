@@ -128,7 +128,7 @@ export const test = base.extend<TestFixtures>({
             const promise = await cmd(`${userdataDestinationPath}/app.json`);
             const result =
               promise instanceof Observable ? await lastValueFrom(promise) : await promise;
-            //console.log("CLI result: ", result);
+            console.log("CLI result: ", result);
           }
         }
       }
