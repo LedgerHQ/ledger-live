@@ -4402,6 +4402,8 @@
       "catalogUrlDesc" : "Introduce la URL del proveedor del catálogo personalizado",
       "enablePlatformDevTools" : "Habilitar herramientas de desarrollador de plataforma",
       "enablePlatformDevToolsDesc" : "Habilitar ventana de herramientas de desarrollador de aplicaciones de plataforma",
+      "enablePlatformDeviceSwitch" : "Activar cambio de plataforma según dispositivo",
+      "enablePlatformDeviceSwitchDesc" : "Activar conmutador para cambiar entre Mobile y Desktop",
       "customLockScreen" : "Activos de la pantalla de bloqueo personalizada",
       "customLockScreenDesc" : "Depurar activos gráficos de la pantalla de bloqueo personalizada",
       "customLockScreenCTA" : "Ejecutar",
