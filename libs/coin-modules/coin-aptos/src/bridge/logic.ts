@@ -336,34 +336,25 @@ export function getCoinAndAmounts(
       case "0x1::coin::WithdrawEvent":
         if (compareAddress(event.guid.account_address, address)) {
           coin_id = getResourceAddress(tx, event, "withdraw_events", getEventCoinAddress);
-          if (coin_id !== null) {
-            amount_out = amount_out.plus(event.data.amount);
-          }
+          amount_out = amount_out.plus(event.data.amount);
         }
         break;
       case "0x1::coin::DepositEvent":
         if (compareAddress(event.guid.account_address, address)) {
           coin_id = getResourceAddress(tx, event, "deposit_events", getEventCoinAddress);
-          if (coin_id !== null) {
-            amount_in = amount_in.plus(event.data.amount);
-          }
-          // TODO: check if we can have coin events during transferring FA
+          amount_in = amount_in.plus(event.data.amount);
         }
         break;
       case "0x1::fungible_asset::Withdraw":
         if (checkFAOwner(tx, event, address)) {
           coin_id = getResourceAddress(tx, event, "withdraw_events", getEventFAAddress);
-          if (coin_id !== null) {
-            amount_out = amount_out.plus(event.data.amount);
-          }
+          amount_out = amount_out.plus(event.data.amount);
         }
         break;
       case "0x1::fungible_asset::Deposit":
         if (checkFAOwner(tx, event, address)) {
           coin_id = getResourceAddress(tx, event, "deposit_events", getEventFAAddress);
-          if (coin_id !== null) {
-            amount_in = amount_in.plus(event.data.amount);
-          }
+          amount_in = amount_in.plus(event.data.amount);
         }
         break;
       case "0x1::transaction_fee::FeeStatement":
