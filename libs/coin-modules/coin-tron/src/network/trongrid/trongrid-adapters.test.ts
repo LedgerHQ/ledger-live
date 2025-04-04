@@ -83,7 +83,7 @@ describe("fromTrongridTxInfoToOperation", () => {
     expect(result.tx.block.height).toBe(0); // default value
   });
 
-  it("should return undefined asset (not a token) when type / tokenAddr is undefined", () => {
+  it("should return native asset (not a token) when type / tokenAddr is undefined and type is IN/OUT", () => {
     const txInfo = {
       ...mockTrongridTxInfo,
       tokenType: undefined,
@@ -92,7 +92,7 @@ describe("fromTrongridTxInfoToOperation", () => {
 
     const result = fromTrongridTxInfoToOperation(txInfo, mockUserAddress);
 
-    expect(result.asset).toBeUndefined();
+    expect(result.asset).toBe({ standard: "native" });
   });
 
   it("should return UNKNOWN operation in default case", () => {
@@ -105,6 +105,7 @@ describe("fromTrongridTxInfoToOperation", () => {
     const result = fromTrongridTxInfoToOperation(txInfo, mockUserAddress);
 
     expect(result.type).toBe("UNKNOWN");
+    expect(result.asset).toBeUndefined();
   });
 
   it("should handle missing fee or value gracefully", () => {

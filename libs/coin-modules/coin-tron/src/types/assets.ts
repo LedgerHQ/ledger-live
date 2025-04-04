@@ -1,4 +1,4 @@
-export type TronToken = Trc10Token | Trc20Token;
+export type TronToken = Native | Trc10Token | Trc20Token;
 
 /*
   TRC10 tokens use a standard implementation on the protocol level.
@@ -29,4 +29,8 @@ export type Trc10Token = {
 export type Trc20Token = {
   standard: "trc20";
   contractAddress: string;
+};
+
+export type Native = {
+  standard: "native";
 };

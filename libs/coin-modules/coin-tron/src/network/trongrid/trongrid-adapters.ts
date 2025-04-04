@@ -6,6 +6,7 @@ export function fromTrongridTxInfoToOperation(
   trongridTxInfo: TrongridTxInfo,
   userAddress: string,
 ): Operation<TronToken> {
+  const operationType = inferOperationType(trongridTxInfo, userAddress);
   return {
     operationIndex: 0,
     tx: {
@@ -14,11 +15,11 @@ export function fromTrongridTxInfoToOperation(
       fees: fromBigNumberToBigInt<bigint>(trongridTxInfo.fee, BigInt(0)),
       date: trongridTxInfo.date,
     },
-    type: inferOperationType(trongridTxInfo, userAddress),
+    type: operationType,
     value: fromBigNumberToBigInt<bigint>(trongridTxInfo.value, BigInt(0)),
     senders: [trongridTxInfo.from],
     recipients: trongridTxInfo.to != null ? [trongridTxInfo.to] : [],
-    asset: inferAssetInfo(trongridTxInfo),
+    asset: inferAssetInfo(trongridTxInfo, operationType),
   };
 }
 
@@ -35,7 +36,10 @@ function inferOperationType(trongridTxInfo: TrongridTxInfo, userAddress: string)
   }
 }
 
-function inferAssetInfo(trongridTxInfo: TrongridTxInfo): TronToken | undefined {
+function inferAssetInfo(
+  trongridTxInfo: TrongridTxInfo,
+  operationType: string,
+): TronToken | undefined {
   switch (true) {
     case trongridTxInfo.tokenType === "trc10":
       return {
@@ -48,6 +52,11 @@ function inferAssetInfo(trongridTxInfo: TrongridTxInfo): TronToken | undefined {
         standard: "trc20",
         // if tokenType is trc20, contractAddress is always defined
         contractAddress: trongridTxInfo.tokenAddress as string,
+      };
+    case operationType === "OUT" ||
+      (operationType === "IN" && trongridTxInfo.tokenType === undefined):
+      return {
+        standard: "native",
       };
     default:
       // asset is undefined when dealing with native currency

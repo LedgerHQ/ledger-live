@@ -112,7 +112,7 @@ describe("listOperations", () => {
             value: BigInt(0.1 * magnitudeMultiplier),
             senders: [testingAccount],
             recipients: ["TASbVCzbnwu8swZEGFBAH88Z4AwTTBt1PW"],
-            asset: undefined,
+            asset: { standard: "native" },
             operationIndex: 0,
           });
         });

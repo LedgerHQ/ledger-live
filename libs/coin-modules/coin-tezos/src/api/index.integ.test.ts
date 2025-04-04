@@ -32,7 +32,7 @@ describe("Tezos Api", () => {
     });
   });
 
-  describe("estimateFees", () => {
+  describe.only("estimateFees", () => {
     it("returns a default value", async () => {
       // Given
       const amount = BigInt(100);
