@@ -304,7 +304,7 @@ export function getChainAPI(
       return getAssociatedTokenAddress(
         new PublicKey(mint),
         new PublicKey(owner),
-        undefined,
+        true,
         getTokenAccountProgramId(program),
       )
         .then(r => r.toBase58())
