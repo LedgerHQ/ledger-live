@@ -4402,6 +4402,8 @@
       "catalogUrlDesc" : "输入您的自定义目录提供方网址",
       "enablePlatformDevTools" : "启用平台开发工具",
       "enablePlatformDevToolsDesc" : "启用打开平台应用程序开发工具的窗口",
+      "enablePlatformDeviceSwitch" : "启动平台设备切换",
+      "enablePlatformDeviceSwitchDesc" : "启用切换功能可在移动设备视图和桌面设备视图之间切换",
       "customLockScreen" : "自定义锁屏素材资源",
       "customLockScreenDesc" : "调试自定义锁屏图形素材资源",
       "customLockScreenCTA" : "启动",
