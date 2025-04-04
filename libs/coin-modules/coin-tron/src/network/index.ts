@@ -295,7 +295,7 @@ async function extendExpiration(
   const tronWeb = new TronWeb(fullNode, solidityNode, eventServer);
   return tronWeb.transactionBuilder.extendExpiration(
     preparedTransaction,
-    value,
+    expiration ?? DEFAULT_EXPIRATION,
   ) as unknown as Promise<SendTransactionDataSuccess>;
 }
 
