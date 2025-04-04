@@ -53,8 +53,8 @@ function inferAssetInfo(
         // if tokenType is trc20, contractAddress is always defined
         contractAddress: trongridTxInfo.tokenAddress as string,
       };
-    case operationType === "OUT" ||
-      (operationType === "IN" && trongridTxInfo.tokenType === undefined):
+    case (operationType === "OUT" || operationType === "IN") &&
+      trongridTxInfo.tokenType === undefined:
       return {
         standard: "native",
       };
