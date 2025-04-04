@@ -40,39 +40,10 @@ const blacklistOpsSumEq = {
   impls: ["mock"],
 };
 
-function expectBalanceIsOpsSum(a, fromSubAccount) {
+function expectBalanceIsOpsSum(a) {
   expect(a.balance).toEqual(
-    a.operations
-      .reduce(
-        (sum, op) =>
-          sum.plus(
-            OPERATION_TYPE_OUT_FAMILY.includes(op.type) && fromSubAccount
-              ? op.value.minus(op.fee).negated()
-              : getOperationAmountNumber(op),
-          ),
-        new BigNumber(0),
-      )
-      .plus(getFeesFromSubAccountOps(a.subAccounts)),
+    a.operations.reduce((sum, op) => sum.plus(getOperationAmountNumber(op)), new BigNumber(0)),
   );
-}
-
-function getFeesFromSubAccountOps(subAccounts) {
-  let total = BigNumber(0);
-
-  if (!subAccounts) return total;
-
-  subAccounts.forEach(
-    sa =>
-      (total = total.plus(
-        sa.operations.reduce((sum, op) => {
-          return sum.plus(
-            OPERATION_TYPE_OUT_FAMILY.includes(op.type) ? op.value.negated() : BigNumber(0),
-          );
-        }, new BigNumber(0)),
-      )),
-  );
-
-  return total;
 }
 
 const defaultSyncConfig = {
@@ -431,10 +402,10 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
           ) {
             makeTest("balance is sum of ops", async () => {
               const account = await getSynced();
-              expectBalanceIsOpsSum(account, false);
+              expectBalanceIsOpsSum(account);
 
               if (account.subAccounts) {
-                account.subAccounts.forEach(sa => expectBalanceIsOpsSum(sa, true));
+                account.subAccounts.forEach(expectBalanceIsOpsSum);
               }
             });
             makeTest("balance and spendableBalance boundaries", async () => {
