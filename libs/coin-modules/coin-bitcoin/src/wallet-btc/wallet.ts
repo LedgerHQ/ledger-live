@@ -255,19 +255,15 @@ class BitcoinLikeWallet {
       number | null | undefined,
       number | null | undefined, // NOTE: blockheight
     ][];
-        // NOTE: get i.block_height within splittransaction
-    // we should properly get branchid at this level
     const inputs: Inputs = txInfo.inputs.map(i => {
       log("hw", `splitTransaction`, {
         transactionHex: i.txHex,
         isSegwitSupported: true,
         hasExtraData,
         additionals,
-        blockHeight: i.block_height,
       });
-      console.log({EVILINPUT: i})
       return [
-        btc.splitTransaction(i.txHex, true, hasExtraData, additionals, i.block_height),
+        btc.splitTransaction(i.txHex, true, hasExtraData, additionals),
         i.output_index,
         null,
         i.sequence,

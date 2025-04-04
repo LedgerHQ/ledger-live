@@ -38,7 +38,7 @@ export interface Transaction {
   nExpiryHeight?: Buffer;
   // extraData is used only for Zcash and ZenCash and komodo
   extraData?: Buffer;
-
+  // zCash specific
   consensusBranchId?: Buffer;
 }
 

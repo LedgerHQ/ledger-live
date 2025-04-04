@@ -9,11 +9,7 @@ export function splitTransaction(
   isSegwitSupported: boolean | null | undefined = false,
   hasExtraData = false,
   additionals: Array<string> = [],
-  blockHeight: number | null | undefined = null,
 ): Transaction {
-  // NOTE: we could use the BIP 174 lib to do this but it's a bit overkill?
-  // NOTE: or use bitcoinjs-lib but it's a bit heavy
-  // NOTE: or use a node rpc
   const inputs: TransactionInput[] = [];
   const outputs: TransactionOutput[] = [];
   let witness = false;
@@ -33,7 +29,6 @@ export function splitTransaction(
     version.equals(Buffer.from([0x04, 0x00, 0x00, 0x80])) ||
     version.equals(Buffer.from([0x05, 0x00, 0x00, 0x80]));
   const isZcashv5 = isZcash && version.equals(Buffer.from([0x05, 0x00, 0x00, 0x80]));
-  // NOTE: check if our logic here is correct
   offset += 4;
   if (
     isSegwitSupported &&
@@ -49,15 +44,8 @@ export function splitTransaction(
     nVersionGroupId = transaction.slice(offset, 4 + offset);
     offset += 4;
   }
-  console.log({overwinter, isZcashv5, version})
-  let consensusBranchId;
-  // if (isZcashv5) {
   if (isZcashv5) {
-    // NOTE: never here
     locktime = transaction.slice(offset + 4, offset + 8);
-    // console.log('locktime HERE', locktime)
-    // consensusBranchId = getZcashBranchId(locktime);
-    // console.log({locktime, consensusBranchId, EVILHERE: consensusBranchId})
     nExpiryHeight = transaction.slice(offset + 8, offset + 12);
     offset += 12;
   }
@@ -129,10 +117,7 @@ export function splitTransaction(
   }
 
   if (hasExtraData) {
-    // ignore extradata if nversiongroupid is set (<5)
-    // FIXME: can't just ignore
     extraData = transaction.slice(offset);
-    console.log(`hasExtraData`, {offset, isZcashv5, hasExtraData, extraData});
   }
 
   //Get witnesses for Decred
@@ -160,10 +145,6 @@ export function splitTransaction(
     }
   }
 
-  console.log({EVILBLOCK: blockHeight, consensusBranchId})
-  debugger;
-  consensusBranchId = getZcashBranchId({blockHeight, version, nVersionGroupId});//, version, nVersionGroupId});
-
   const t: Transaction = {
     version,
     inputs,
@@ -172,11 +153,9 @@ export function splitTransaction(
     witness: witnessScript,
     timestamp,
     nVersionGroupId,
-    consensusBranchId,
     nExpiryHeight,
     extraData,
   };
-  console.log({transactionHex, t})
   log("btc", `splitTransaction ${transactionHex}:\n${formatTransactionDebug(t)}`);
   return t;
 }
