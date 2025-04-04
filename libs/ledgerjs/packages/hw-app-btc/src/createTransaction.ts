@@ -47,73 +47,6 @@ export const getZcashBranchId = ({
   nVersionGroupId: Buffer | null | undefined;
 }): Buffer => {
   const branchId = Buffer.alloc(4);
-  /*
-  if (!blockHeight || !version || !nVersionGroupId) {
-    console.log("NU6");
-    branchId.writeUInt32LE(0xc8e71055, 0);
-    return branchId;
-  }
-
-  if (!version || !nVersionGroupId) {
-    throw new Error(
-      `Cannot determine branchId: version=${version} nVersionGroupId=${nVersionGroupId}`,
-    );
-  }
-  // const v = version.readUInt32LE(0);
-  // const vg = nVersionGroupId.readUInt32LE(0);
-  debugger;
-
-  // NOTE: check https://zips.z.cash/protocol/protocol.pdf page 121: Transaction Consensus Rules
-  if (
-    version.equals(Buffer.from([0x03, 0x00, 0x00, 0x80])) &&
-    nVersionGroupId.equals(Buffer.from([0x70, 0x82, 0xc4, 0x03]))
-  ) {
-    branchId.writeUInt32LE(0x5ba81b19, 0); // Overwinter
-    console.log("Nu3");
-  } else if (
-    // 0x892F2085 groupid
-    version.equals(Buffer.from([0x04, 0x00, 0x00, 0x80])) &&
-    nVersionGroupId.equals(Buffer.from([0x85, 0x20, 0x2f, 0x89]))
-  ) {
-    if (blockHeight >= ZCASH_ACTIVATION_HEIGHTS.CANOPY) {
-      console.log("NU4-canopy");
-      branchId.writeUInt32LE(0xe9ff75a6, 0);
-    } else if (blockHeight >= ZCASH_ACTIVATION_HEIGHTS.HEARTWOOD) {
-      console.log("NU3-heartwood");
-      branchId.writeUInt32LE(0xf5b9230b, 0);
-    } else if (blockHeight >= ZCASH_ACTIVATION_HEIGHTS.BLOSSOM) {
-      console.log("NU2-blossom");
-      branchId.writeUInt32LE(0x2bb40e60, 0);
-    } else if (blockHeight >= ZCASH_ACTIVATION_HEIGHTS.SAPLING) {
-      console.log("NU1-sapling");
-      branchId.writeUInt32LE(0x76b809bb, 0);
-    } else {
-      throw new Error(
-        `Unknown tx version/groupId for tx v4 combo: version=${version.toString("hex")} groupId=${nVersionGroupId.toString("hex")}`,
-      );
-    }
-    // branchId.writeUInt32LE(0x76b809bb, 0); // Sapling
-    // console.log("Nu4");
-  } else if (
-    version.equals(Buffer.from([0x05, 0x00, 0x00, 0x80])) &&
-    nVersionGroupId.equals(Buffer.from([0x0a, 0x27, 0xa7, 0x26]))
-  ) {
-    branchId.writeUInt32LE(0xc2d6d0b4, 0); // NU5
-    console.log("Nu5");
-    // TODO: check nu6 here also
-  } else {
-    debugger;
-    throw new Error(
-      `Unknown tx version/groupId combo: version=${version.toString("hex")} groupId=${nVersionGroupId.toString("hex")}`,
-    );
-  }
-
-  console.log(
-    `getZcashBranchId blockHeight=${blockHeight}, version=${version.toString("hex")}, groupId=${nVersionGroupId.toString("hex")} branchId=${branchId.toString("hex")}`,
-  );
-  return branchId;
-  */
-
   if (!blockHeight || blockHeight >= ZCASH_ACTIVATION_HEIGHTS.NU6) {
     // NOTE: null and undefined should default to latest version
     // version.writeUInt32LE(0x80000006, 0);
@@ -121,7 +54,7 @@ export const getZcashBranchId = ({
     branchId.writeUInt32LE(0xc8e71055, 0);
   } else if (blockHeight >= ZCASH_ACTIVATION_HEIGHTS.NU5) {
     console.log("NU5");
-    branchId.writeUInt32LE(0xf919a198, 0);
+    branchId.writeUInt32LE(0xc2d6d0b4, 0);
   } else if (blockHeight >= ZCASH_ACTIVATION_HEIGHTS.CANOPY) {
     console.log("NU4-canopy");
     branchId.writeUInt32LE(0xe9ff75a6, 0);
