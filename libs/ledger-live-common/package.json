@@ -70,6 +70,7 @@
     "lint": "eslint src --cache",
     "lint:fix": "pnpm lint --fix",
     "jest": "cross-env TZ=America/New_York jest",
+    "jest:debug": "cross-env TZ=America/New_York node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand",
     "typecheck": "tsc --noEmit -p src/tsconfig.json",
     "ci-lint": "pnpm lint",
     "test": "pnpm ci-test-unit",

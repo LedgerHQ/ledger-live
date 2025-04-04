@@ -4,11 +4,13 @@ import { Account, AnyMessage } from "@ledgerhq/types-live";
 import { messageSigner } from "./setup";
 
 const SIGNATURE =
-  "4gVuB1KsM58fb3vRpnDucwW4Vi6fVGA51QDQd9ARvx4GH5yYVDPzDnvzUbSJf3YLWWdsX7zCMSN9N1GMnTYwWiJf";
+  "97fb71bae8971e272b17a464dc2f76995de2da9fc5d40e369edc43b0c3f7c601c4e5a60bb7c6ac69671120c381ce5cab7a06f53eb802e3ac555066455f2cbd05";
 
-const signOffchainMessageMock = jest.fn(() => ({
-  signature: SIGNATURE,
-}));
+const signOffchainMessageMock = jest.fn(() =>
+  Promise.resolve({
+    signature: SIGNATURE,
+  }),
+);
 
 jest.mock("@ledgerhq/hw-app-solana", () => {
   return jest.fn().mockImplementation(() => {
@@ -20,7 +22,7 @@ describe("Testing setup on Solana", () => {
   describe("Testing message signer", () => {
     it("should call hardware for off-chain message signature", async () => {
       const freshAddressPath = "44'/60'/0'/0/0";
-      const message = "54 65 73 74 69 6E 67 20 6F 6E 20 53 6F 6C 61 6E 61";
+      const message = "1c004c6f6e67204f66662d436861696e2054657374204d6573736167652e";
       const result = await messageSigner.signMessage(
         {} as Transport,
         { freshAddressPath: freshAddressPath } as Account,
@@ -29,10 +31,13 @@ describe("Testing setup on Solana", () => {
 
       expect(Solana).toHaveBeenCalledTimes(1);
       expect(signOffchainMessageMock).toHaveBeenCalledTimes(1);
-      expect(signOffchainMessageMock).toHaveBeenCalledWith(
-        freshAddressPath,
-        Buffer.from(message, "hex"),
-      );
+
+      const args = signOffchainMessageMock.mock.calls[0] as unknown[];
+      expect(args[0]).toEqual(freshAddressPath);
+
+      // Sign off-chain message must have an header: "\xff solana offchain"
+      // We check here that the message passed as parameter start with this header
+      expect((args[1] as Buffer).toString("hex")).toMatch(/^ff736f6c616e61206f6666636861696e0000/);
 
       expect(result.signature).toEqual(SIGNATURE);
       expect(result.rsv).toBeUndefined();
