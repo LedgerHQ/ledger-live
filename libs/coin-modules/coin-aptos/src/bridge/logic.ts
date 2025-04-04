@@ -390,7 +390,7 @@ export function calculateAmount(
  * @returns {string | null} - The extracted address or null if not found.
  */
 function extractAddress(str: string): string | null {
-  const match = str.match(/<([^>]+)>/);
+  const match = str.match(/<([^<>]+)>{1}$/);
   return match ? match[1] : null;
 }
 
