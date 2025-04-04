@@ -1,6 +1,6 @@
 {
   "entry": [
-    "src/api/index.ts",
+    "src/network/index.ts",
     "src/bridge/js.ts",
     "src/cli-transaction.ts",
     "src/deviceTransactionConfig.ts",
@@ -10,7 +10,14 @@
     "src/specs.ts",
     "src/transaction.ts"
   ],
-  "ignorePatterns": ["**/node_modules/**", "**/*.fixture.ts", "**/*.mock.ts", "**/*.test.{js,jsx,ts,tsx}"],
+  "ignorePatterns": [
+    "**/node_modules/**",
+    "**/*.fixture.ts",
+    "**/*.mock.ts",
+    "**/*.test.{js,jsx,ts,tsx}"
+  ],
   "ignoreUnresolved": [],
-  "ignoreUnimported": ["src/datasets/solana.scanAccounts.1.ts"]
+  "ignoreUnimported": [
+    "src/datasets/solana.scanAccounts.1.ts"
+  ]
 }

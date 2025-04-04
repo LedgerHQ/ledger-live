@@ -8,7 +8,7 @@ import {
   getChainAPI,
   logged,
   queued,
-} from "@ledgerhq/coin-solana/api/index";
+} from "@ledgerhq/coin-solana/network/index";
 import { Functions } from "@ledgerhq/coin-solana/utils";
 import { makeBridges } from "@ledgerhq/coin-solana/bridge/bridge";
 import { SolanaSigner } from "@ledgerhq/coin-solana/signer";

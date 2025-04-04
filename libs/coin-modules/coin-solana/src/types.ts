@@ -10,9 +10,9 @@ import {
   TransactionStatusCommon,
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
-import { ValidatorsAppValidator } from "./validator-app";
-import { TokenAccountState } from "./api/chain/account/token";
-import { PARSED_PROGRAMS } from "./api/chain/program/constants";
+import { ValidatorsAppValidator } from "./network/validator-app";
+import { TokenAccountState } from "./network/chain/account/token";
+import { PARSED_PROGRAMS } from "./network/chain/program/constants";
 
 export type TransferCommand = {
   kind: "transfer";
