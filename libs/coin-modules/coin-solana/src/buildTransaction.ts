@@ -82,9 +82,9 @@ async function buildInstructionsForCommand(
       return buildTokenTransferInstructions(api, command);
     case "token.createATA":
       return buildCreateAssociatedTokenAccountInstruction(api, command);
-    case "token.createApprove":
+    case "token.approve":
       return buildApproveTransactionInstructions(api, command);
-    case "token.createRevoke":
+    case "token.revoke":
       return buildRevokeTransactionInstructions(api, command);
     case "stake.createAccount":
       return buildStakeCreateAccountInstructions(api, command);

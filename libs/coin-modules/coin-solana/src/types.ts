@@ -30,7 +30,7 @@ export type TokenCreateATACommand = {
 };
 
 export type TokenCreateApproveCommand = {
-  kind: "token.createApprove";
+  kind: "token.approve";
   account: string;
   delegate: string;
   owner: string;
@@ -39,7 +39,7 @@ export type TokenCreateApproveCommand = {
 };
 
 export type TokenCreateRevokeCommand = {
-  kind: "token.createRevoke";
+  kind: "token.revoke";
   account: string;
   owner: string;
   tokenProgram: SolanaTokenProgram;
@@ -159,14 +159,14 @@ export type TokenCreateATATransaction = {
 };
 
 export type TokenCreateApproveTransaction = {
-  kind: "token.createApprove";
+  kind: "token.approve";
   uiState: {
     tokenId: string;
   };
 };
 
 export type TokenCreateRevokeTransaction = {
-  kind: "token.createRevoke";
+  kind: "token.revoke";
   uiState: {
     tokenId: string;
   };

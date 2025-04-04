@@ -51,9 +51,9 @@ function fieldsForCommand(
       return fieldsForTokenTransfer(command);
     case "token.createATA":
       return fieldsForCreateATA(command);
-    case "token.createApprove":
+    case "token.approve":
       return fieldsForCreateApprove(command);
-    case "token.createRevoke":
+    case "token.revoke":
       return fieldsForCreateRevoke(command);
     case "stake.createAccount":
       return fieldsForStakeCreateAccount(command, account);
@@ -151,14 +151,14 @@ function fieldsForCreateApprove(command: TokenCreateApproveCommand): DeviceTrans
 
   fields.push({
     type: "address",
-    label: "Create token acct",
-    address: command.associatedTokenAccountAddress,
+    label: "Approve token acct",
+    address: command.account,
   });
 
   fields.push({
     type: "address",
-    label: "From mint",
-    address: command.mint,
+    label: "Delegate by",
+    address: command.delegate,
   });
 
   fields.push({
@@ -166,17 +166,9 @@ function fieldsForCreateApprove(command: TokenCreateApproveCommand): DeviceTrans
     label: "Owned by",
     address: command.owner,
   });
-
   fields.push({
-    type: "address",
-    label: "Funded by",
-    address: command.owner,
-  });
-
-  fields.push({
-    type: "address",
-    label: "Fee payer",
-    address: command.owner,
+    type: "amount",
+    label: "Amount",
   });
 
   return fields;
@@ -187,31 +179,13 @@ function fieldsForCreateRevoke(command: TokenCreateRevokeCommand): DeviceTransac
 
   fields.push({
     type: "address",
-    label: "Create token acct",
-    address: command.associatedTokenAccountAddress,
-  });
-
-  fields.push({
-    type: "address",
-    label: "From mint",
-    address: command.mint,
+    label: "Revoke token acct",
+    address: command.account,
   });
 
   fields.push({
     type: "address",
     label: "Owned by",
-    address: command.owner,
-  });
-
-  fields.push({
-    type: "address",
-    label: "Funded by",
-    address: command.owner,
-  });
-
-  fields.push({
-    type: "address",
-    label: "Fee payer",
     address: command.owner,
   });
 

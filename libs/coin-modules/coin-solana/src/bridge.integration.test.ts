@@ -237,8 +237,8 @@ function memoIsTooLong(): TransactionTestSpec[] {
             },
           };
         case "token.createATA":
-        case "token.createApprove":
-        case "token.createRevoke":
+        case "token.approve":
+        case "token.revoke":
         case "stake.createAccount":
         case "stake.delegate":
         case "stake.undelegate":

@@ -74,9 +74,9 @@ function formatCommand(mainAccount: Account, tx: Transaction, command: Command) 
       return formatTokenTransfer(mainAccount, tx, command);
     case "token.createATA":
       return formatCreateATA(mainAccount, command);
-    case "token.createApprove":
+    case "token.approve":
       return formatCreateApprove(mainAccount, tx, command);
-    case "token.createRevoke":
+    case "token.revoke":
       return formatCreateRevoke(mainAccount, tx, command);
     case "stake.createAccount":
       return formatStakeCreateAccount(mainAccount, tx, command);

@@ -147,9 +147,9 @@ function buildOptimisticOperationForCommand(
       return optimisticOpForTokenTransfer(account, transaction, command, commandDescriptor);
     case "token.createATA":
       return optimisticOpForCATA(account, commandDescriptor);
-    case "token.createApprove":
+    case "token.approve":
       return optimisticOpForApprove(account, command, commandDescriptor);
-    case "token.createRevoke":
+    case "token.revoke":
       return optimisticOpForRevoke(account, command, commandDescriptor);
     case "stake.createAccount":
       return optimisticOpForStakeCreateAccount(account, transaction, command, commandDescriptor);
@@ -293,8 +293,8 @@ function getOpExtras(command: Command): SolanaOperationExtra {
       }
       break;
     case "token.createATA":
-    case "token.createApprove":
-    case "token.createRevoke":
+    case "token.approve":
+    case "token.revoke":
     case "stake.createAccount":
     case "stake.delegate":
     case "stake.undelegate":

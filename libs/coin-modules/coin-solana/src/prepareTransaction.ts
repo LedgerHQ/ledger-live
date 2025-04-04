@@ -93,9 +93,9 @@ async function deriveCommandDescriptor(
       return deriveTokenTransferCommandDescriptor(mainAccount, tx, model, api);
     case "token.createATA":
       return deriveCreateAssociatedTokenAccountCommandDescriptor(mainAccount, tx, model, api);
-    case "token.createApprove":
+    case "token.approve":
       return deriveCreateApproveCommandDescriptor(mainAccount, tx, model, api);
-    case "token.createRevoke":
+    case "token.revoke":
       return deriveCreateRevokeCommandDescriptor(mainAccount, tx, model, api);
     case "stake.createAccount":
       return deriveStakeCreateAccountCommandDescriptor(mainAccount, tx, model, api);
@@ -477,7 +477,7 @@ async function deriveCreateApproveCommandDescriptor(
   return {
     fee,
     command: {
-      kind: "token.createApprove",
+      kind: "token.approve",
       account: associatedTokenAccountAddress,
       delegate: tx.recipient,
       owner: mainAccount.freshAddress,
@@ -516,7 +516,7 @@ async function deriveCreateRevokeCommandDescriptor(
   return {
     fee,
     command: {
-      kind: "token.createRevoke",
+      kind: "token.revoke",
       account: associatedTokenAccountAddress,
       owner: mainAccount.freshAddress,
       tokenProgram: tokenProgram,

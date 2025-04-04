@@ -52,9 +52,9 @@ const createDummyTx = (address: string, kind: TransactionModel["kind"]) => {
       return createDummyStakeWithdrawTx(address);
     case "token.transfer":
       return createDummyTokenTransferTx(address);
-    case "token.createApprove":
+    case "token.approve":
       return createDummyTokenApproveTx(address);
-    case "token.createRevoke":
+    case "token.revoke":
       return createDummyTokenRevokeTx(address);
     case "stake.split":
     case "token.createATA":
@@ -192,14 +192,15 @@ const createDummyTokenTransferTx = (address: string): Transaction => {
 };
 
 const createDummyTokenApproveTx = (address: string): Transaction => {
+  console.log("createDummyTokenApproveTx", address);
   return {
     ...createTransaction({} as any),
     model: {
-      kind: "token.createApprove",
+      kind: "token.approve",
       uiState: {} as any,
       commandDescriptor: {
         command: {
-          kind: "token.createApprove",
+          kind: "token.approve",
           account: randomAddresses[0],
           delegate: randomAddresses[1],
           owner: address,
@@ -216,11 +217,11 @@ const createDummyTokenRevokeTx = (address: string): Transaction => {
   return {
     ...createTransaction({} as any),
     model: {
-      kind: "token.createRevoke",
+      kind: "token.revoke",
       uiState: {} as any,
       commandDescriptor: {
         command: {
-          kind: "token.createRevoke",
+          kind: "token.revoke",
           account: randomAddresses[0],
           owner: address,
           tokenProgram: PARSED_PROGRAMS.SPL_TOKEN,
