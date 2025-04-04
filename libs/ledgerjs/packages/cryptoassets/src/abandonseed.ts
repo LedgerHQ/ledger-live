@@ -123,6 +123,7 @@ const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
   zenrock: "zen1704dk997ccmk5x8smn8secphckfvbgxxfd99xxr",
   sonic: EVM_DEAD_ADDRESS,
   sonic_blaze: EVM_DEAD_ADDRESS,
+  mina: "B62qmphduibdMJQjEvnnDizL9kVV4ripuiE9adR2wsqtegJaxHJzCic",
 };
 
 /**

@@ -22,6 +22,7 @@ import { bridge as tron } from "../../families/tron/setup";
 import { bridge as vechain } from "../../families/vechain/setup";
 import { bridge as xrp } from "../../families/xrp/setup";
 import { bridge as sui } from "../../families/sui/setup";
+import { bridge as mina } from "../../families/mina/setup";
 
 export default {
   celo,
@@ -48,4 +49,5 @@ export default {
   vechain,
   xrp,
   sui,
+  mina,
 };
