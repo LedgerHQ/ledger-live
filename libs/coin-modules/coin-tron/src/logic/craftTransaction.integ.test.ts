@@ -234,7 +234,7 @@ describe("Testing craftTransaction function", () => {
     ).rejects.toThrow("Memo cannot be used with smart contract transactions");
   });
 
-  it("should set an expiration of 10 minutes by default", async () => {
+  it("should set an expiration of 10 minutes by default when setting is not provided", async () => {
     const amount = BigInt(20);
     const sender = "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9";
     const recipient = "TPswDDCAWhJAZGdHPidFg5nEf8TkNToDX1";
