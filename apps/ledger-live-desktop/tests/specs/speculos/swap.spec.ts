@@ -110,7 +110,7 @@ const swaps = [
     xrayTicket: "B2CQA-3078",
   },
   {
-    swap: new Swap(Account.APTOS_1, Account.SOL_1, "6", Fee.MEDIUM),
+    swap: new Swap(Account.APTOS_1, Account.SOL_1, "7", Fee.MEDIUM),
     xrayTicket: "B2CQA-3081",
   },
 ];
