@@ -1,3 +1,5 @@
+import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import { formatTransactionStatus } from "@ledgerhq/coin-framework/formatters";
 import {
   fromTransactionCommonRaw,
@@ -5,13 +7,16 @@ import {
   toTransactionCommonRaw,
   toTransactionStatusRawCommon as toTransactionStatusRaw,
 } from "@ledgerhq/coin-framework/serialization";
-import type { Account } from "@ledgerhq/types-live";
-import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+import type { Account, SerializationTransactionBridge } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import type { Transaction, TransactionRaw } from "../types";
 
-export const formatTransaction = (
+type InternetComputerSerializationTransactionBridge = SerializationTransactionBridge<
+  Transaction,
+  TransactionRaw
+>;
+
+const formatTransaction = (
   { recipient, useAllAmount, amount }: Transaction,
   account: Account,
 ): string => `
@@ -51,11 +56,11 @@ const toTransactionRaw = (t: Transaction): TransactionRaw => {
   };
 };
 
-export default {
+export const serializaiton = {
   formatTransaction,
   fromTransactionRaw,
   toTransactionRaw,
   fromTransactionStatusRaw,
   toTransactionStatusRaw,
   formatTransactionStatus,
-};
+} satisfies InternetComputerSerializationTransactionBridge;

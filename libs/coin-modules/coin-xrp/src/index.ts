@@ -1,4 +1,4 @@
 export * from "./types";
 
-export { createBridges } from "./bridge/index";
+export { createBridges, type XrpBridge } from "./bridge/index";
 export type { XrpCoinConfig } from "./config";

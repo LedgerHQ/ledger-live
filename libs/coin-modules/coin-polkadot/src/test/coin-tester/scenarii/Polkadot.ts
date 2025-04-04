@@ -18,6 +18,8 @@ import {
   PolkadotAccount,
   PolkadotOperationExtra,
   Transaction as PolkadotTransaction,
+  TransactionRaw,
+  TransactionStatus,
 } from "../../../types/bridge";
 
 type PolkadotScenarioTransaction = ScenarioTransaction<PolkadotTransaction, PolkadotAccount>;
@@ -241,7 +243,12 @@ const coinConfig: PolkadotCoinConfig = {
 
 const subscriptions: any[] = [];
 
-export const PolkadotScenario: Scenario<PolkadotTransaction, PolkadotAccount> = {
+export const PolkadotScenario: Scenario<
+  PolkadotTransaction,
+  PolkadotAccount,
+  TransactionStatus,
+  TransactionRaw
+> = {
   name: "Polkadot Ledger Live transactions",
   setup: async () => {
     const [{ transport, getOnSpeculosConfirmation }] = await Promise.all([

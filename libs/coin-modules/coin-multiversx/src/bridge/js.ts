@@ -1,12 +1,12 @@
 import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import {
   getSerializedAddressParameters,
-  updateTransaction,
   makeAccountBridgeReceive,
   makeScanAccounts,
+  updateTransaction,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { SignerContext } from "@ledgerhq/coin-framework/lib/signer";
-import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import type { AccountBridge, Bridge, CurrencyBridge } from "@ledgerhq/types-live";
 import { broadcast } from "../broadcast";
 import { createTransaction } from "../createTransaction";
 import { estimateMaxSpendable } from "../estimateMaxSpendable";
@@ -24,16 +24,18 @@ import {
 import { MultiversXSigner } from "../signer";
 import { buildSignOperation } from "../signOperation";
 import { getAccountShape, sync } from "../synchronisation";
+import { serialiation } from "../transaction";
 import type {
   MultiversXAccount,
+  MultiversXAccountRaw,
   MultiversXOperation,
   Transaction,
+  TransactionRaw,
   TransactionStatus,
+  TransactionStatusRaw,
 } from "../types";
 
-export function buildCurrencyBridge(
-  signerContext: SignerContext<MultiversXSigner>,
-): CurrencyBridge {
+function buildCurrencyBridge(signerContext: SignerContext<MultiversXSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
 
   const scanAccounts = makeScanAccounts({
@@ -49,9 +51,9 @@ export function buildCurrencyBridge(
   };
 }
 
-export function buildAccountBridge(
+function buildAccountBridge(
   signerContext: SignerContext<MultiversXSigner>,
-): AccountBridge<Transaction, MultiversXAccount, TransactionStatus, MultiversXOperation> {
+): MutltiversXAccountBridge {
   const getAddress = resolver(signerContext);
 
   const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));
@@ -71,15 +73,30 @@ export function buildAccountBridge(
     assignToAccountRaw,
     fromOperationExtraRaw,
     toOperationExtraRaw,
-    formatAccountSpecifics: formatters.formatAccountSpecifics,
-    formatOperationSpecifics: formatters.formatOperationSpecifics,
     getSerializedAddressParameters,
+    ...formatters,
   };
 }
 
-export function createBridges(signerContext: SignerContext<MultiversXSigner>) {
+export type MutltiversXAccountBridge = AccountBridge<
+Transaction,
+MultiversXAccount,
+TransactionStatus,
+TransactionRaw,
+TransactionStatusRaw,
+MultiversXOperation
+>;
+export type MutltiversXBridge = Bridge<
+  Transaction,
+  TransactionRaw,
+  MultiversXAccount,
+  MultiversXAccountRaw,
+>;
+
+export function createBridges(signerContext: SignerContext<MultiversXSigner>): MutltiversXBridge {
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),
+    ...serialiation,
   };
 }

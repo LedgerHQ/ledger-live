@@ -9,7 +9,6 @@ if (os.platform() === "win32") {
 const targets = [
   "hw-getAddress.ts",
   "hw-signMessage.ts",
-  "transaction.ts",
   "bridge/js.ts",
   "bridge/mock.ts",
   "cli-transaction.ts",
@@ -18,7 +17,7 @@ const targets = [
   "mock.ts",
   "account.ts",
   "platformAdapter.ts",
-  "walletApiAdapter.ts"
+  "walletApiAdapter.ts",
 ];
 
 // Coins using coin-framework

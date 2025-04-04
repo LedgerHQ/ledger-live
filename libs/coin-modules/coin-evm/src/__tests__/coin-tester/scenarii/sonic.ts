@@ -7,7 +7,12 @@ import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { killSpeculos, spawnSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
 import { resetIndexer, indexBlocks, initMswHandlers, setBlock } from "../indexer";
-import { Transaction as EvmTransaction } from "../../../types";
+import {
+  Transaction as EvmTransaction,
+  TransactionRaw as EvmTransactionRaw,
+  TransactionStatus,
+  TransactionStatusRaw,
+} from "../../../types";
 import { buildAccountBridge, buildCurrencyBridge } from "../../../bridge/js";
 import { getCoinConfig, setCoinConfig } from "../../../config";
 import { makeAccount } from "../../fixtures/common.fixtures";
@@ -63,7 +68,13 @@ const makeScenarioTransactions = ({ address }: { address: string }): SonicScenar
   return [scenarioSendSTransaction, scenarioSendUSDCTransaction];
 };
 
-export const scenarioSonic: Scenario<EvmTransaction, Account> = {
+export const scenarioSonic: Scenario<
+  EvmTransaction,
+  Account,
+  TransactionStatus,
+  EvmTransactionRaw,
+  TransactionStatusRaw
+> = {
   name: "Ledger Live Basic S Transactions",
   setup: async () => {
     const [{ transport, getOnSpeculosConfirmation }] = await Promise.all([

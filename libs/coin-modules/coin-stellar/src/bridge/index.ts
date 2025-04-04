@@ -1,24 +1,25 @@
-import type { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import {
   getSerializedAddressParameters,
-  updateTransaction,
   makeAccountBridgeReceive,
   makeScanAccounts,
   makeSync,
+  updateTransaction,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { CoinConfig } from "@ledgerhq/coin-framework/config";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import type { Account, AccountBridge, Bridge, CurrencyBridge } from "@ledgerhq/types-live";
+import stellarCoinConfig, { type StellarCoinConfig } from "../config";
+import signerGetAddress from "../signer";
+import type { StellarSigner, Transaction, TransactionRaw, TransactionStatus } from "../types";
+import { broadcast } from "./broadcast";
+import { createTransaction } from "./createTransaction";
 import { estimateMaxSpendable } from "./estimateMaxSpendable";
 import { getTransactionStatus } from "./getTransactionStatus";
-import type { StellarSigner, Transaction, TransactionStatus } from "../types";
 import { prepareTransaction } from "./prepareTransaction";
-import { createTransaction } from "./createTransaction";
 import { buildSignOperation } from "./signOperation";
-import { broadcast } from "./broadcast";
-import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
-import signerGetAddress from "../signer";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { getAccountShape } from "./synchronization";
-import { CoinConfig } from "@ledgerhq/coin-framework/config";
-import stellarCoinConfig, { type StellarCoinConfig } from "../config";
+import serialization from "./transaction";
 
 const PRELOAD_MAX_AGE = 30 * 60 * 1000; // 30 minutes
 
@@ -44,13 +45,15 @@ function buildCurrencyBridge(signerContext: SignerContext<StellarSigner>): Curre
   };
 }
 
-function buildAccountBridge(signerContext: SignerContext<StellarSigner>) {
+function buildAccountBridge(
+  signerContext: SignerContext<StellarSigner>,
+): AccountBridge<Transaction, Account, TransactionStatus, TransactionRaw> {
   const getAddress = signerGetAddress(signerContext);
   const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));
   const signOperation = buildSignOperation(signerContext);
   const sync = makeSync({ getAccountShape });
 
-  const accountBridge: AccountBridge<Transaction, Account, TransactionStatus> = {
+  return {
     createTransaction,
     updateTransaction,
     prepareTransaction,
@@ -61,15 +64,16 @@ function buildAccountBridge(signerContext: SignerContext<StellarSigner>) {
     signOperation,
     broadcast,
     getSerializedAddressParameters,
+    ...serialization,
   };
-
-  return accountBridge;
 }
+
+export type StellarBridge = Bridge<Transaction, Account, TransactionStatus, TransactionRaw>;
 
 export function createBridges(
   signerContext: SignerContext<StellarSigner>,
   coinConfig: CoinConfig<StellarCoinConfig>,
-) {
+): StellarBridge {
   stellarCoinConfig.setCoinConfig(coinConfig);
 
   return {

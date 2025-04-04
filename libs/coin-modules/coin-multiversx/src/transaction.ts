@@ -1,5 +1,5 @@
-import type { Transaction, TransactionRaw } from "./types";
-import { BigNumber } from "bignumber.js";
+import { getAccountCurrency } from "@ledgerhq/coin-framework/account";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
 import { formatTransactionStatus } from "@ledgerhq/coin-framework/formatters";
 import {
   fromTransactionCommonRaw,
@@ -7,11 +7,16 @@ import {
   toTransactionCommonRaw,
   toTransactionStatusRawCommon as toTransactionStatusRaw,
 } from "@ledgerhq/coin-framework/serialization";
-import type { Account } from "@ledgerhq/types-live";
-import { getAccountCurrency } from "@ledgerhq/coin-framework/account";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
+import type { Account, SerializationTransactionBridge } from "@ledgerhq/types-live";
+import { BigNumber } from "bignumber.js";
+import type { Transaction, TransactionRaw } from "./types";
 
-export const formatTransaction = (
+type MultiversXSerializationTransactionBridge = SerializationTransactionBridge<
+  Transaction,
+  TransactionRaw
+>;
+
+const formatTransaction = (
   { mode, amount, recipient, useAllAmount, subAccountId }: Transaction,
   mainAccount: Account,
 ): string => {
@@ -49,7 +54,7 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   return tx;
 };
 
-export const toTransactionRaw = (t: Transaction): TransactionRaw => {
+const toTransactionRaw = (t: Transaction): TransactionRaw => {
   const common = toTransactionCommonRaw(t);
   const tx: TransactionRaw = {
     ...common,
@@ -66,11 +71,11 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
   return tx;
 };
 
-export default {
+export const serialiation = {
   formatTransaction,
   fromTransactionRaw,
   toTransactionRaw,
   fromTransactionStatusRaw,
   toTransactionStatusRaw,
   formatTransactionStatus,
-};
+} satisfies MultiversXSerializationTransactionBridge;

@@ -7,6 +7,8 @@ import {
   TransactionStatusCommon,
   TransactionStatusCommonRaw,
   Operation,
+  Bridge,
+  AccountBridge,
 } from "@ledgerhq/types-live";
 
 /**
@@ -59,3 +61,6 @@ export type IconAccountRaw = AccountRaw & {
 export type TransactionStatus = TransactionStatusCommon;
 
 export type TransactionStatusRaw = TransactionStatusCommonRaw;
+
+export type IconAccountBridge = AccountBridge<Transaction, Account, TransactionStatus, AccountRaw>;
+export type IconBridge = Bridge<Transaction, TransactionRaw, Account, AccountRaw>;

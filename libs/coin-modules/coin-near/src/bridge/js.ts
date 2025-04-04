@@ -1,27 +1,28 @@
+import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import {
   getSerializedAddressParameters,
   makeAccountBridgeReceive,
-  updateTransaction,
   makeScanAccounts,
+  updateTransaction,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
-import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
-import type { NearAccount, Transaction, TransactionStatus } from "../types";
-import { assignToAccountRaw, assignFromAccountRaw } from "../serialization";
-import { preload, hydrate, getPreloadStrategy } from "../preload";
-import { getTransactionStatus } from "../getTransactionStatus";
-import { estimateMaxSpendable } from "../estimateMaxSpendable";
-import { sync, getAccountShape } from "../synchronisation";
-import { prepareTransaction } from "../prepareTransaction";
+import type { AccountBridge, Bridge, CurrencyBridge } from "@ledgerhq/types-live";
+import { broadcast } from "../broadcast";
 import { NearCoinConfig, setCoinConfig } from "../config";
 import { createTransaction } from "../createTransaction";
-import { buildSignOperation } from "../signOperation";
-import { broadcast } from "../broadcast";
+import { estimateMaxSpendable } from "../estimateMaxSpendable";
+import { getTransactionStatus } from "../getTransactionStatus";
 import resolver from "../hw-getAddress";
+import { getPreloadStrategy, hydrate, preload } from "../preload";
+import { prepareTransaction } from "../prepareTransaction";
+import { assignFromAccountRaw, assignToAccountRaw } from "../serialization";
 import { NearSigner } from "../signer";
+import { buildSignOperation } from "../signOperation";
+import { getAccountShape, sync } from "../synchronisation";
+import { serialization } from "../transaction";
+import type { NearAccount, Transaction, TransactionRaw, TransactionStatus } from "../types";
 
-export function buildCurrencyBridge(signerContext: SignerContext<NearSigner>): CurrencyBridge {
+function buildCurrencyBridge(signerContext: SignerContext<NearSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
 
   const scanAccounts = makeScanAccounts({
@@ -37,9 +38,9 @@ export function buildCurrencyBridge(signerContext: SignerContext<NearSigner>): C
   };
 }
 
-export function buildAccountBridge(
+function buildAccountBridge(
   signerContext: SignerContext<NearSigner>,
-): AccountBridge<Transaction, NearAccount, TransactionStatus> {
+): AccountBridge<Transaction, NearAccount, TransactionStatus, TransactionRaw> {
   const getAddress = resolver(signerContext);
 
   const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));
@@ -58,13 +59,16 @@ export function buildAccountBridge(
     assignToAccountRaw,
     assignFromAccountRaw,
     getSerializedAddressParameters,
+    ...serialization,
   };
 }
+
+export type NearBridge = Bridge<Transaction, NearAccount, TransactionStatus, TransactionRaw>;
 
 export function createBridges(
   signerContext: SignerContext<NearSigner>,
   coinConfig: NearCoinConfig,
-) {
+): NearBridge {
   setCoinConfig(coinConfig);
 
   return {

@@ -1,11 +1,13 @@
-import type { BigNumber } from "bignumber.js";
-import type { Unit } from "@ledgerhq/types-cryptoassets";
 import type {
+  Account,
+  AccountBridge,
+  Bridge,
   TransactionCommon,
   TransactionCommonRaw,
   TransactionStatusCommon,
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
+import type { BigNumber } from "bignumber.js";
 
 export type NetworkInfo = {
   family: "boilerplate";
@@ -31,3 +33,6 @@ export type TransactionRaw = TransactionCommonRaw & {
 
 export type TransactionStatus = TransactionStatusCommon;
 export type TransactionStatusRaw = TransactionStatusCommonRaw;
+
+export type BoilerplateAccountBridge = AccountBridge<Transaction, Account, TransactionStatus>;
+export type BoilerplateBridge = Bridge<Transaction, TransactionRaw>;
