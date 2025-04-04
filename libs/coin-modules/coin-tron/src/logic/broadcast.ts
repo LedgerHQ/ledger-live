@@ -1,19 +1,29 @@
 import { broadcastTron } from "../network";
 import { decodeTransaction } from "./utils";
 
-export async function broadcast(transaction: string): Promise<string> {
-  const { rawTx, signature } = extractTxAndSignature(transaction);
+type TxObject = {
+  txID: string;
+  raw_data: Record<string, unknown> | undefined;
+  signature: string[];
+};
 
-  const { txID, raw_data } = await decodeTransaction(rawTx);
+export async function broadcast(transaction: string | TxObject): Promise<string> {
+  if (typeof transaction === "string") {
+    const { rawTx, signature } = extractTxAndSignature(transaction);
 
-  const signedTxPayload = {
-    txID,
-    raw_data,
-    raw_data_hex: rawTx,
-    signature: [signature],
-  };
+    const { txID, raw_data } = await decodeTransaction(rawTx);
 
-  return broadcastTron(signedTxPayload);
+    const signedTxPayload = {
+      txID,
+      raw_data,
+      raw_data_hex: rawTx,
+      signature: [signature],
+    };
+
+    return broadcastTron(signedTxPayload);
+  } else {
+    return broadcastTron(transaction);
+  }
 }
 
 function extractTxAndSignature(transaction: string): { rawTx: string; signature: string } {
