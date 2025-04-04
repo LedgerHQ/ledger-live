@@ -36,7 +36,6 @@ const defaultsSignTransaction = {
   onDeviceSignatureRequested: () => {},
 };
 
-// called with: consensusBranchId = getZcashBranchId({blockHeight, version, nVersionGroupId});
 export const getZcashBranchId = ({
   blockHeight,
   version,
@@ -49,30 +48,20 @@ export const getZcashBranchId = ({
   const branchId = Buffer.alloc(4);
   if (!blockHeight || blockHeight >= ZCASH_ACTIVATION_HEIGHTS.NU6) {
     // NOTE: null and undefined should default to latest version
-    // version.writeUInt32LE(0x80000006, 0);
-    console.log("NU6");
     branchId.writeUInt32LE(0xc8e71055, 0);
   } else if (blockHeight >= ZCASH_ACTIVATION_HEIGHTS.NU5) {
-    console.log("NU5");
     branchId.writeUInt32LE(0xc2d6d0b4, 0);
   } else if (blockHeight >= ZCASH_ACTIVATION_HEIGHTS.CANOPY) {
-    console.log("NU4-canopy");
     branchId.writeUInt32LE(0xe9ff75a6, 0);
   } else if (blockHeight >= ZCASH_ACTIVATION_HEIGHTS.HEARTWOOD) {
-    console.log("NU3-heartwood");
     branchId.writeUInt32LE(0xf5b9230b, 0);
   } else if (blockHeight >= ZCASH_ACTIVATION_HEIGHTS.BLOSSOM) {
-    console.log("NU2-blossom");
     branchId.writeUInt32LE(0x2bb40e60, 0);
   } else if (blockHeight >= ZCASH_ACTIVATION_HEIGHTS.SAPLING) {
-    console.log("NU1-sapling");
     branchId.writeUInt32LE(0x76b809bb, 0);
   } else {
-    console.log("NU0-default");
     branchId.writeUInt32LE(0x5ba81b19, 0);
   }
-  console.log(`getZcashBranchId blockHeight=${blockHeight} branchId=${branchId.toString("hex")}`);
-  debugger;
   return branchId
 };
 
@@ -152,8 +141,6 @@ export async function createTransaction(
     onDeviceSignatureGranted,
     onDeviceSignatureRequested,
   } = signTx;
-  console.log(`createtransaction expiryHeight=${expiryHeight}`);
-  console.log({ inputs, expiryHeight });
   let useTrustedInputForSegwit = signTx.useTrustedInputForSegwit;
 
   if (useTrustedInputForSegwit === undefined) {
@@ -198,7 +185,6 @@ export async function createTransaction(
         additionals.includes("gold") ||
         additionals.includes("bip143"))) ||
     (!!expiryHeight && !isDecred);
-  console.log({ isZcash, sapling, bech32, useBip143 });
   // Inputs are provided as arrays of [transaction, output_index, optional redeem script, optional sequence]
   // associatedKeysets are provided as arrays of [path]
   const lockTimeBuffer = Buffer.alloc(4);
@@ -206,7 +192,6 @@ export async function createTransaction(
   const nullScript = Buffer.alloc(0);
   const nullPrevout = Buffer.alloc(0);
 
-  console.log(`before getting default version`);
   const { defaultVersion } = getDefaultVersions({
     isZcash,
     sapling,
@@ -226,52 +211,22 @@ export async function createTransaction(
     version: defaultVersion,
     timestamp: Buffer.alloc(0),
   };
-  console.log({ targetTransactionNOW: targetTransaction });
   const getTrustedInputCall =
     useBip143 && !useTrustedInputForSegwit ? getTrustedInputBIP143 : getTrustedInput;
-  console.log({ bool: useBip143 && !useTrustedInputForSegwit, getTrustedInputCall });
   const outputScript = Buffer.from(outputScriptHex, "hex");
   notify(0, 0);
   // first pass on inputs to get trusted inputs
   for (const input of inputs) {
-    console.log(`working on input ${input}`);
-    console.log({ input });
     if (!resuming) {
-      const savedVersion = input[0].version;
-      console.log({ savedVersion });
       if (isZcash) {
-        // debugger;
-        // const newVersion = getZcashTransactionVersion(
-        //   input[4],
-        //   input[0].version,
-        //   input[0].nVersionGroupId,
-        // );
-        // input[0].version = newVersion
-        console.log({});
-        // NOTE: might not need to redo it
         input[0].consensusBranchId = getZcashBranchId({
           blockHeight: input[4],
           version: input[0].version,
           nVersionGroupId: input[0].nVersionGroupId,
         });
-        // NOTE: had blockHeight here, could remove from splittransaction?
-        console.log({
-          inputNOW: input[0],
-          blockheight: input[4],
-          inputzeroversion: input[0].version,
-          savedVersion,
-        });
       }
-      console.log({ savedVersion, inputzero: input[0] });
-      console.log("before trustedInput call, version for input[1]");
-      console.log(
-        `before trustedInput call, version for input[1] (${input[1]}) is ${input[0].version}`,
-      );
-      console.log({ indexLookup: input[1], transaction: input[0], additionals, input });
       const trustedInput = await getTrustedInputCall(transport, input[1], input[0], additionals);
-      console.log(`got trustedInput ${trustedInput}`);
       log("hw", "got trustedInput=" + trustedInput);
-      // input[0].version = savedVersion;
       const sequence = Buffer.alloc(4);
       sequence.writeUInt32LE(
         input.length >= 4 && typeof input[3] === "number" ? input[3] : DEFAULT_SEQUENCE,
@@ -292,12 +247,9 @@ export async function createTransaction(
     }
 
     if (expiryHeight && !isDecred) {
-      // NOTE: this logic is of ?
-      // NOTE: set proper nversiongroupid here
       targetTransaction.nVersionGroupId = Buffer.from(
         // nVersionGroupId is 0x26A7270A for zcash NU5 upgrade
         // refer to https://github.com/zcash/zcash/blob/master/src/primitives/transaction.h
-        // NOTE: CHECK THIS
         isZcash
           ? [0x0a, 0x27, 0xa7, 0x26]
           : sapling
@@ -310,13 +262,10 @@ export async function createTransaction(
       targetTransaction.extraData = Buffer.from(
         sapling ? [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00] : [0x00],
       );
-      console.log({ sapling, targetTransactionInStartCreate: targetTransaction });
     } else if (isDecred) {
       targetTransaction.nExpiryHeight = expiryHeight;
     }
-    console.log(`finished working on input ${input}`);
   }
-  console.log("got all trusted inputs");
 
   targetTransaction.inputs = inputs.map((input, idx) => {
     const sequence = Buffer.alloc(4);
@@ -354,7 +303,6 @@ export async function createTransaction(
 
   onDeviceSignatureRequested();
 
-  console.log({ targetTransaction, trustedInputs });
   targetTransaction.consensusBranchId = getZcashBranchId({
     blockHeight,
     version: null,
@@ -383,7 +331,6 @@ export async function createTransaction(
   if (!!expiryHeight && !isDecred) {
     await signTransaction(transport, "", lockTime, SIGHASH_ALL, expiryHeight);
   }
-  console.log("before second run");
 
   // Do the second run with the individual transaction
   for (let i = 0; i < inputs.length; i++) {
@@ -447,7 +394,6 @@ export async function createTransaction(
       firstRun = false;
     }
   }
-  console.log("before populating final input scripts");
 
   targetTransaction.version = defaultVersion;
   targetTransaction.consensusBranchId = getZcashBranchId({
@@ -455,10 +401,6 @@ export async function createTransaction(
     version: null,
     nVersionGroupId: null,
   });
-  console.log(
-    `using blockHeight ${blockHeight} and branchId ${targetTransaction.consensusBranchId}`,
-  );
-  debugger;
   // Populate the final input scripts
   for (let i = 0; i < inputs.length; i++) {
     if (segwit) {
@@ -485,18 +427,12 @@ export async function createTransaction(
 
     const offset = useBip143 && !useTrustedInputForSegwit ? 0 : 4;
     targetTransaction.inputs[i].prevout = trustedInputs[i].value.slice(offset, offset + 0x24);
-    console.log({
-      MARDItrustedinput: trustedInputs[i].value,
-      MARDIprevout: targetTransaction.inputs[i].prevout,
-      MARDIinputPrevout: inputs[i],
-    });
   }
   targetTransaction.locktime = lockTimeBuffer;
   let result = Buffer.concat([
     serializeTransaction(targetTransaction, false, targetTransaction.timestamp, additionals),
     outputScript,
   ]);
-  console.log({ targetTransaction, result: result.toString("hex") });
   if (segwit && !isDecred) {
     let witness = Buffer.alloc(0);
 
@@ -518,7 +454,6 @@ export async function createTransaction(
   if (!isZcash) {
     result = Buffer.concat([result, lockTimeBuffer]);
     if (expiryHeight) {
-      console.log("!isZcash expiryHeight=" + expiryHeight.toString("hex"));
       result = Buffer.concat([
         result,
         targetTransaction.nExpiryHeight || Buffer.alloc(0),
@@ -541,10 +476,7 @@ export async function createTransaction(
     result = Buffer.concat([result, decredWitness]);
   }
   if (isZcash) {
-    console.log("createTransaction isZcash");
-    console.log({ resultBefore: result.toString("hex") });
     result = Buffer.concat([result, Buffer.from([0x00, 0x00, 0x00])]);
-    console.log({ resultBefore: result.toString("hex") });
   }
   return result.toString("hex");
 }

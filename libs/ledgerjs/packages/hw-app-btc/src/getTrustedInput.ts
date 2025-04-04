@@ -19,10 +19,8 @@ export async function getTrustedInputRaw(
   } else {
     data = transactionData;
   }
-  console.log({data})
 
   const trustedInput = await transport.send(0xe0, 0x42, firstRound ? 0x00 : 0x80, 0x00, data);
-  console.log({trustedInput})
   const res = trustedInput.slice(0, trustedInput.length - 2).toString("hex");
   return res;
 }
@@ -75,10 +73,6 @@ export async function getTrustedInput(
 
   const processWholeScriptBlock = block => getTrustedInputRaw(transport, block);
 
-  console.log("before getTrustedInput: ", {
-    indexLookup,
-    inputs,
-  })
   await getTrustedInputRaw(
     transport,
     Buffer.concat([
