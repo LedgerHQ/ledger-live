@@ -1,10 +1,10 @@
-import { SimulationError } from "../types/errors";
-import network from "@ledgerhq/live-network/network";
+import network from "@ledgerhq/live-network";
 import { getEnv } from "@ledgerhq/live-env";
+import { SimulationError } from "../types/errors";
 import coinConfig from "../config";
 import { AccountInfoResponse, SubmitReponse } from "./types";
 
-const getNodeUrl = () => coinConfig.getCoinConfig().nodeUrl;
+const getNodeUrl = (): string => coinConfig.getCoinConfig().nodeUrl;
 
 // NOTE: add NODE_BOILERPLATE to libs/env/src/env.ts
 
@@ -12,14 +12,14 @@ const getNodeUrl = () => coinConfig.getCoinConfig().nodeUrl;
 export const simulate = async (serializedTx: string): Promise<number> => {
   // @ts-expect-error: add NODE_BOILERPLATE to libs/env/src/env.ts
   const url = `${getEnv("NODE_BOILERPLATE")}/simulate`;
-  const { data } = await network({
+  const { data } = await network<{ error: string } | { fees: number }>({
     url,
     method: "POST",
     data: {
       txPayload: serializedTx,
     },
   });
-  if (data.error) {
+  if ("error" in data) {
     throw new SimulationError();
   }
   return data.fees;
@@ -30,7 +30,7 @@ export const getNextSequence = async (address: string): Promise<number> => {
   // @ts-expect-error: add NODE_BOILERPLATE to libs/env/src/env.ts
   const url = `${getEnv("NODE_BOILERPLATE")}/${address}/sequence`;
   try {
-    const { data } = await network({
+    const { data } = await network<{ sequence: number }>({
       url,
       method: "GET",
     });
@@ -43,7 +43,7 @@ export const getNextSequence = async (address: string): Promise<number> => {
 export const getBlockHeight = async (): Promise<number> => {
   // @ts-expect-error: add NODE_BOILERPLATE to libs/env/src/env.ts
   const url = `${getEnv("NODE_BOILERPLATE")}/blockheight`;
-  const { data } = await network({
+  const { data } = await network<{ blockHeight: number }>({
     url,
     method: "GET",
   });
@@ -57,14 +57,18 @@ export const getLastBlock = async (): Promise<{
 }> => {
   // @ts-expect-error: add NODE_BOILERPLATE to libs/env/src/env.ts
   const url = `${getEnv("NODE_BOILERPLATE")}/block/current`;
-  const { data } = await network({
+  const { data } = await network<{
+    blockHeight: number;
+    blockHash: string;
+    timestamp: number;
+  }>({
     url,
     method: "GET",
   });
   return data;
 };
 
-export const submit = async (signedTx: string): Promise<SubmitReponse> => {
+export const submit = async (_signedTx: string): Promise<SubmitReponse> => {
   // @ts-expect-error: add NODE_BOILERPLATE to libs/env/src/env.ts
   const url = `${getEnv("NODE_BOILERPLATE")}/submit`;
   const { data } = await network<SubmitReponse>({

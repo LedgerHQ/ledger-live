@@ -1,5 +1,5 @@
-import { createApi } from ".";
 import { BoilerplateConfig } from "../config";
+import { createApi } from ".";
 
 describe("createApi", () => {
   it("should return every api methods", () => {

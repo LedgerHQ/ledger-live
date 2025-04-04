@@ -2,14 +2,14 @@
 
 In a real use case you should use live-network library like this :
 
-import network from "@ledgerhq/live-network/network";
+import network from "@ledgerhq/live-network";
 
 
 instead of this mocked method
 
 */
 
-export const network = (params: { url: string; method: "GET" | "POST" }) => {
+export const network = (params: { url: string; method: "GET" | "POST" }): void => {
   switch (true) {
     case params.url.includes("simulate"):
       break;

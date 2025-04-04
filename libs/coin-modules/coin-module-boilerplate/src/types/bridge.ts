@@ -1,5 +1,4 @@
 import type { BigNumber } from "bignumber.js";
-import type { Unit } from "@ledgerhq/types-cryptoassets";
 import type {
   TransactionCommon,
   TransactionCommonRaw,

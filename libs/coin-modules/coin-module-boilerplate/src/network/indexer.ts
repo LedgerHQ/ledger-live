@@ -1,10 +1,10 @@
-import { AccountTxResponse } from "./types";
 import network from "@ledgerhq/live-network/network";
 import { getEnv } from "@ledgerhq/live-env";
+import { AccountTxResponse } from "./types";
 
 export const getTransactions = async (
   address: string,
-  params: { from: number; size?: number },
+  _params: { from: number; size?: number },
 ): Promise<AccountTxResponse["transactions"]> => {
   const { data } = await network<AccountTxResponse>({
     // NOTE: add INDEXER_BOILERPLATE to libs/env/src/env.ts

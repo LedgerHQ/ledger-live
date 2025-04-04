@@ -1,5 +1,5 @@
-import getDeviceTransactionConfig from "./deviceTransactionConfig";
 import BigNumber from "bignumber.js";
+import getDeviceTransactionConfig from "./deviceTransactionConfig";
 
 describe("getDeviceTransactionConfig", () => {
   it("should return amount field when it's more than 0", () => {

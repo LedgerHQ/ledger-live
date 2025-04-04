@@ -4,13 +4,13 @@ import { AccountBridge, Operation } from "@ledgerhq/types-live";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { combine, craftTransaction, getNextValidSequence } from "../common-logic";
-import { Transaction, BoilerplateSigner, BoilerplateNativeTransaction } from "../types";
+import { Transaction, BoilerplateSigner } from "../types";
 
 export const buildSignOperation =
   (signerContext: SignerContext<BoilerplateSigner>): AccountBridge<Transaction>["signOperation"] =>
   ({ account, deviceId, transaction }) =>
     new Observable(o => {
-      async function main() {
+      async function main(): Promise<void> {
         const { fee } = transaction;
         if (!fee) throw new FeeNotLoaded();
 
@@ -26,7 +26,7 @@ export const buildSignOperation =
             const { freshAddressPath: derivationPath } = account;
             const { publicKey } = await signer.getAddress(derivationPath);
 
-            const { nativeTransaction, serializedTransaction } = await craftTransaction(
+            const { serializedTransaction } = await craftTransaction(
               {
                 address: account.freshAddress,
                 publicKey,
