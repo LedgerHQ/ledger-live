@@ -104,7 +104,7 @@ export function Welcome() {
   }, [hasCompletedOnboarding, history, trustchain]);
 
   const urlBuyNew = useLocalizedUrl(urls.buyNew);
-  const buyNanoX = () => openURL(urlBuyNew);
+  const buyNew = () => openURL(urlBuyNew);
 
   const urlTerms = useLocalizedUrl(urls.terms);
   const openTermsAndConditions = () => openURL(urlTerms);
@@ -214,8 +214,8 @@ export function Welcome() {
             variant="main"
             onClick={_ => {
               isFeatureFlagsAnalyticsPrefDisplayed
-                ? openAnalyticsOptInPrompt("Onboarding", buyNanoX)
-                : buyNanoX();
+                ? openAnalyticsOptInPrompt("Onboarding", buyNew)
+                : buyNew();
             }}
             outline={true}
             flexDirection="column"
