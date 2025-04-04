@@ -2390,7 +2390,7 @@
         "ethereumPriorityFee": "Max Priority Fee ({{unitName}})",
         "nextBlock": "Next block",
         "suggested": "Suggested",
-        "unitPerByte": "{{unit}} per byte",
+        "unitVByte": "{{unit}}/vbyte",
         "nft": "NFT",
         "nftQuantity": "Quantity"
       },
