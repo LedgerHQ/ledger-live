@@ -3,11 +3,9 @@ import { SetupServerApi, setupServer } from "msw/node";
 import BlueBirdPromise from "bluebird";
 import { http, HttpResponse, bypass } from "msw";
 import { utils, providers, ethers } from "ethers";
-import ERC1155ABI from "../../abis/erc1155.abi.json";
-import ERC721ABI from "../../abis/erc721.abi.json";
-import ERC20ABI from "../../abis/erc20.abi.json";
-import { safeEncodeEIP55 } from "../../logic";
-import { EvmConfigInfo } from "../../config";
+import { ERC20_ABI, ERC721_ABI, ERC1155_ABI } from "@ledgerhq/coin-evm/abis/index";
+import { safeEncodeEIP55 } from "@ledgerhq/coin-evm/logic";
+import { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
 import type {
   EtherscanERC1155Event,
   EtherscanERC20Event,
@@ -15,7 +13,7 @@ import type {
   EtherscanInternalTransaction,
   EtherscanOperation,
   LedgerExplorerOperation,
-} from "../../types/index";
+} from "@ledgerhq/coin-evm/types/index";
 
 type TraceTransaction = {
   action: {
@@ -43,9 +41,9 @@ type TraceTransaction = {
 
 const MAX_BLOCK_RANGE = 1024;
 
-const ERC20Interface = new utils.Interface(ERC20ABI);
-const ERC721Interface = new utils.Interface(ERC721ABI);
-const ERC1155Interface = new utils.Interface(ERC1155ABI);
+const ERC20Interface = new utils.Interface(ERC20_ABI);
+const ERC721Interface = new utils.Interface(ERC721_ABI);
+const ERC1155Interface = new utils.Interface(ERC1155_ABI);
 
 const TRANSFER_EVENTS_TOPICS = {
   ERC20: ERC20Interface.getEventTopic("Transfer"),
