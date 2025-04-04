@@ -192,7 +192,6 @@ const createDummyTokenTransferTx = (address: string): Transaction => {
 };
 
 const createDummyTokenApproveTx = (address: string): Transaction => {
-  console.log("createDummyTokenApproveTx", address);
   return {
     ...createTransaction({} as any),
     model: {
