@@ -10,4 +10,4 @@ export {
   sweetch,
   tupleOfUnion,
 } from "@ledgerhq/coin-solana/utils";
-export type { ValidatorsAppValidator } from "@ledgerhq/coin-solana/validator-app/index";
+export type { ValidatorsAppValidator } from "@ledgerhq/coin-solana/network/validator-app/index";

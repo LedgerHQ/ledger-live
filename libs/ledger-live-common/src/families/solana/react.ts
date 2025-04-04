@@ -5,7 +5,7 @@ import {
   getSolanaPreloadData,
 } from "@ledgerhq/coin-solana/preload-data";
 import { SolanaPreloadDataV1, SolanaStake, SolanaStakeWithMeta } from "@ledgerhq/coin-solana/types";
-import { ValidatorsAppValidator } from "@ledgerhq/coin-solana/validator-app/index";
+import type { ValidatorsAppValidator } from "@ledgerhq/coin-solana/network/validator-app/index";
 import { useObservable } from "../../observable";
 
 export function useSolanaPreloadData(

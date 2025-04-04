@@ -8,7 +8,7 @@ import {
   buildStakeUndelegateInstructions,
   buildStakeWithdrawInstructions,
   buildStakeSplitInstructions,
-} from "./api/chain/web3";
+} from "./network/chain/web3";
 import { assertUnreachable } from "./utils";
 import {
   PublicKey,
@@ -17,7 +17,7 @@ import {
   TransactionMessage,
   BlockhashWithExpiryBlockHeight,
 } from "@solana/web3.js";
-import { ChainAPI } from "./api";
+import { ChainAPI } from "./network";
 
 export const buildTransactionWithAPI = async (
   address: string,
