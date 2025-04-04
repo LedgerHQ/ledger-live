@@ -62,7 +62,9 @@ import type {
   StakeSplitTransaction,
   StakeUndelegateTransaction,
   StakeWithdrawTransaction,
+  TokenCreateApproveTransaction,
   TokenCreateATATransaction,
+  TokenCreateRevokeTransaction,
   TokenRecipientDescriptor,
   TokenTransferTransaction,
   Transaction,
@@ -91,6 +93,10 @@ async function deriveCommandDescriptor(
       return deriveTokenTransferCommandDescriptor(mainAccount, tx, model, api);
     case "token.createATA":
       return deriveCreateAssociatedTokenAccountCommandDescriptor(mainAccount, tx, model, api);
+    case "token.approve":
+      return deriveCreateApproveCommandDescriptor(mainAccount, tx, model, api);
+    case "token.revoke":
+      return deriveCreateRevokeCommandDescriptor(mainAccount, tx, model, api);
     case "stake.createAccount":
       return deriveStakeCreateAccountCommandDescriptor(mainAccount, tx, model, api);
     case "stake.delegate":
@@ -427,6 +433,95 @@ async function deriveTransferCommandDescriptor(
     command,
     fee,
     warnings,
+    errors,
+  };
+}
+
+async function deriveCreateApproveCommandDescriptor(
+  mainAccount: Account,
+  tx: Transaction,
+  model: TransactionModel & { kind: TokenCreateApproveTransaction["kind"] },
+  api: ChainAPI,
+): Promise<CommandDescriptor> {
+  const errors: Record<string, Error> = {};
+
+  const token = getTokenById(model.uiState.tokenId);
+  const mint = token.contractAddress;
+  const tokenProgram = await getMaybeTokenMintProgram(mint, api);
+
+  if (!tokenProgram || tokenProgram instanceof Error) {
+    throw new Error("Mint not found");
+  }
+
+  const associatedTokenAccountAddress = await api.findAssocTokenAccAddress(
+    mainAccount.freshAddress,
+    mint,
+    tokenProgram,
+  );
+
+  const { fee, spendable } = await estimateFeeAndSpendable(api, mainAccount, tx);
+  const txAmount = tx.useAllAmount ? spendable : tx.amount;
+
+  if (tx.useAllAmount) {
+    if (txAmount.eq(0)) {
+      errors.amount = new NotEnoughBalance();
+    }
+  } else {
+    if (txAmount.lte(0)) {
+      errors.amount = new AmountRequired();
+    } else if (txAmount.gt(spendable)) {
+      errors.amount = new NotEnoughBalance();
+    }
+  }
+
+  return {
+    fee,
+    command: {
+      kind: "token.approve",
+      account: associatedTokenAccountAddress,
+      delegate: tx.recipient,
+      owner: mainAccount.freshAddress,
+      amount: txAmount.toNumber(),
+      tokenProgram: tokenProgram,
+    },
+    warnings: {},
+    errors,
+  };
+}
+
+async function deriveCreateRevokeCommandDescriptor(
+  mainAccount: Account,
+  tx: Transaction,
+  model: TransactionModel & { kind: TokenCreateRevokeTransaction["kind"] },
+  api: ChainAPI,
+): Promise<CommandDescriptor> {
+  const errors: Record<string, Error> = {};
+
+  const token = getTokenById(model.uiState.tokenId);
+  const mint = token.contractAddress;
+  const tokenProgram = await getMaybeTokenMintProgram(mint, api);
+
+  if (!tokenProgram || tokenProgram instanceof Error) {
+    throw new Error("Mint not found");
+  }
+
+  const associatedTokenAccountAddress = await api.findAssocTokenAccAddress(
+    mainAccount.freshAddress,
+    mint,
+    tokenProgram,
+  );
+
+  const { fee } = await estimateFeeAndSpendable(api, mainAccount, tx);
+
+  return {
+    fee,
+    command: {
+      kind: "token.revoke",
+      account: associatedTokenAccountAddress,
+      owner: mainAccount.freshAddress,
+      tokenProgram: tokenProgram,
+    },
+    warnings: {},
     errors,
   };
 }

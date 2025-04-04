@@ -29,6 +29,22 @@ export type TokenCreateATACommand = {
   associatedTokenAccountAddress: string;
 };
 
+export type TokenCreateApproveCommand = {
+  kind: "token.approve";
+  account: string;
+  delegate: string;
+  owner: string;
+  amount: number;
+  tokenProgram: SolanaTokenProgram;
+};
+
+export type TokenCreateRevokeCommand = {
+  kind: "token.revoke";
+  account: string;
+  owner: string;
+  tokenProgram: SolanaTokenProgram;
+};
+
 export type StakeCreateAccountCommand = {
   kind: "stake.createAccount";
   fromAccAddress: string;
@@ -105,6 +121,8 @@ export type Command =
   | TransferCommand
   | TokenTransferCommand
   | TokenCreateATACommand
+  | TokenCreateApproveCommand
+  | TokenCreateRevokeCommand
   | StakeCreateAccountCommand
   | StakeDelegateCommand
   | StakeUndelegateCommand
@@ -135,6 +153,20 @@ export type TokenTransferTransaction = {
 
 export type TokenCreateATATransaction = {
   kind: "token.createATA";
+  uiState: {
+    tokenId: string;
+  };
+};
+
+export type TokenCreateApproveTransaction = {
+  kind: "token.approve";
+  uiState: {
+    tokenId: string;
+  };
+};
+
+export type TokenCreateRevokeTransaction = {
+  kind: "token.revoke";
   uiState: {
     tokenId: string;
   };
@@ -182,6 +214,8 @@ export type TransactionModel = { commandDescriptor?: CommandDescriptor } & (
   | TransferTransaction
   | TokenTransferTransaction
   | TokenCreateATATransaction
+  | TokenCreateApproveTransaction
+  | TokenCreateRevokeTransaction
   | StakeCreateAccountTransaction
   | StakeDelegateTransaction
   | StakeUndelegateTransaction
