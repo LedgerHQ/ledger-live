@@ -5,7 +5,7 @@ import { addTokens, convertERC20, getTokenById } from "@ledgerhq/cryptoassets/to
 import { prepareForSignOperation, prepareTransaction } from "../../prepareTransaction";
 import { makeAccount, makeTokenAccount } from "../fixtures/common.fixtures";
 import { DEFAULT_NONCE, createTransaction } from "../../createTransaction";
-import * as nodeApi from "../../api/node/rpc.common";
+import * as nodeApi from "../../network/node/rpc.common";
 import {
   account,
   expectedData,
@@ -16,7 +16,7 @@ import {
 } from "../fixtures/prepareTransaction.fixtures";
 import { getEstimatedFees } from "../../logic";
 import { GasOptions, Transaction as EvmTransaction, EvmNftTransaction } from "../../types";
-import * as nftAPI from "../../api/nft";
+import * as nftAPI from "../../network/nft";
 import { getCoinConfig } from "../../config";
 
 jest.mock("../../config");

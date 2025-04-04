@@ -10,7 +10,7 @@ import {
 } from "../../../../types";
 import { GasEstimationError, InsufficientFunds } from "../../../../errors";
 import { makeAccount } from "../../../fixtures/common.fixtures";
-import * as RPC_API from "../../../../api/node/rpc.common";
+import * as RPC_API from "../../../../network/node/rpc.common";
 import { getCoinConfig } from "../../../../config";
 
 jest.useFakeTimers();

@@ -1,4 +1,4 @@
-import { isExternalNodeConfig, isLedgerNodeConfig } from "../../../../api/node/types";
+import { isExternalNodeConfig, isLedgerNodeConfig } from "../../../../network/node/types";
 
 describe("EVM Family", () => {
   describe("api/node/types.ts", () => {

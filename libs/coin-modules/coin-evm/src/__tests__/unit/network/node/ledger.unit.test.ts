@@ -5,10 +5,10 @@ import { delay } from "@ledgerhq/live-promise";
 import { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { GasEstimationError, LedgerNodeUsedIncorrectly } from "../../../../errors";
-import * as LEDGER_GAS_TRACKER from "../../../../api/gasTracker/ledger";
+import * as LEDGER_GAS_TRACKER from "../../../../network/gasTracker/ledger";
 import { Transaction as EvmTransaction } from "../../../../types";
 import { makeAccount } from "../../../fixtures/common.fixtures";
-import * as LEDGER_API from "../../../../api/node/ledger";
+import * as LEDGER_API from "../../../../network/node/ledger";
 import { getCoinConfig } from "../../../../config";
 
 jest.useFakeTimers({ doNotFake: ["setTimeout"] });

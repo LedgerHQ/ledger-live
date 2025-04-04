@@ -55,7 +55,7 @@ export const buildSignOperation =
         o.next({ type: "device-signature-granted" }); // Signature is done
 
         // Create a new serialized tx with the signature now
-        const signature = await getSerializedTransaction(preparedTransaction, {
+        const signature = getSerializedTransaction(preparedTransaction, {
           r: "0x" + sig.r,
           s: "0x" + sig.s,
           v: typeof sig.v === "number" ? sig.v : parseInt(sig.v, 16),

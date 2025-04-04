@@ -1,7 +1,7 @@
 import { AssertionError, fail } from "assert";
-import etherscanLikeApi from "../../../../api/explorer/etherscan";
-import ledgerExplorerApi from "../../../../api/explorer/ledger";
-import { getExplorerApi } from "../../../../api/explorer";
+import etherscanLikeApi from "../../../../network/explorer/etherscan";
+import ledgerExplorerApi from "../../../../network/explorer/ledger";
+import { getExplorerApi } from "../../../../network/explorer";
 import { UnknownExplorer } from "../../../../errors";
 import { getCoinConfig } from "../../../../config";
 

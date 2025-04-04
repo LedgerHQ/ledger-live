@@ -3,7 +3,7 @@ import { getEnv, setEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network/network";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
-import { getGasOptions } from "../../../../api/gasTracker/ledger";
+import { getGasOptions } from "../../../../network/gasTracker/ledger";
 import { LedgerGasTrackerUsedIncorrectly, NoGasTrackerFound } from "../../../../errors";
 import { GasOptions } from "../../../../types";
 import { getCoinConfig } from "../../../../config";

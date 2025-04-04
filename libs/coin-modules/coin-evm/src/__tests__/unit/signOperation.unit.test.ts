@@ -7,7 +7,7 @@ import { Transaction as EvmTransaction } from "../../types";
 import { makeAccount } from "../fixtures/common.fixtures";
 import { buildSignOperation } from "../../signOperation";
 import { DEFAULT_NONCE } from "../../createTransaction";
-import * as nodeApi from "../../api/node/rpc.common";
+import * as nodeApi from "../../network/node/rpc.common";
 import type { EvmSigner } from "../../types/signer";
 import { getEstimatedFees } from "../../logic";
 import { getCoinConfig } from "../../config";
@@ -44,7 +44,7 @@ const transactionEIP1559: EvmTransaction = {
 
 const estimatedFees = getEstimatedFees(transactionEIP1559);
 
-const mockSignerContext: SignerContext<EvmSigner> = <T>(
+const mockSignerContext: SignerContext<EvmSigner> = <T,>(
   _: string,
   fn: (signer: EvmSigner) => Promise<T>,
 ) => {

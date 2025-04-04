@@ -1,7 +1,7 @@
 import {
   isEtherscanLikeExplorerConfig,
   isLedgerExplorerConfig,
-} from "../../../../api/explorer/types";
+} from "../../../../network/explorer/types";
 
 describe("EVM Family", () => {
   describe("api/explorer/types.ts", () => {

@@ -4,8 +4,8 @@
 import BigNumber from "bignumber.js";
 import { renderHook, waitFor } from "@testing-library/react";
 import { Transaction } from "@ledgerhq/coin-evm/types/index";
-import { getGasTracker } from "@ledgerhq/coin-evm/api/gasTracker/index";
-import type { GasTrackerApi } from "@ledgerhq/coin-evm/api/gasTracker/types";
+import { getGasTracker } from "@ledgerhq/coin-evm/network/gasTracker/index";
+import type { GasTrackerApi } from "@ledgerhq/coin-evm/network/gasTracker/types";
 import { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { useGasOptions } from "./react";
 

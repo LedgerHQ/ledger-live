@@ -1,4 +1,4 @@
-import { isLedgerGasTracker } from "../../../../api/gasTracker/types";
+import { isLedgerGasTracker } from "../../../../network/gasTracker/types";
 
 describe("EVM Family", () => {
   describe("api/gasTracker/types.ts", () => {

@@ -3,7 +3,7 @@ import { getEnv, setEnv } from "@ledgerhq/live-env";
 import * as EVM_TOOLS from "@ledgerhq/evm-tools/message/EIP712/index";
 import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
 import { CryptoCurrency, CryptoCurrencyId, Unit } from "@ledgerhq/types-cryptoassets";
-import * as RPC_API from "../../api/node/rpc.common";
+import * as RPC_API from "../../network/node/rpc.common";
 import { getCoinConfig } from "../../config";
 import {
   attachOperations,

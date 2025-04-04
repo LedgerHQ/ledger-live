@@ -1,7 +1,7 @@
 import { AssertionError, fail } from "assert";
-import ledgerNodeApi from "../../../../api/node/ledger";
-import rpcNodeApi from "../../../../api/node/rpc";
-import { getNodeApi } from "../../../../api/node";
+import ledgerNodeApi from "../../../../network/node/ledger";
+import rpcNodeApi from "../../../../network/node/rpc";
+import { getNodeApi } from "../../../../network/node";
 import { UnknownNode } from "../../../../errors";
 import { getCoinConfig } from "../../../../config";
 
@@ -17,7 +17,7 @@ describe("EVM Family", () => {
         });
 
         try {
-          await getNodeApi({
+          getNodeApi({
             id: "not-existing",
           } as any);
           fail("Promise should have been rejected");
@@ -34,7 +34,7 @@ describe("EVM Family", () => {
           return { info: { node: { type: "external", uri: "working" } } };
         });
 
-        const node = await getNodeApi({
+        const node = getNodeApi({
           id: "external",
         } as any);
 
@@ -46,7 +46,7 @@ describe("EVM Family", () => {
           return { info: { node: { type: "ledger", explorerId: "eth" } } };
         });
 
-        const node = await getNodeApi({
+        const node = getNodeApi({
           id: "ledger-supported",
         } as any);
 

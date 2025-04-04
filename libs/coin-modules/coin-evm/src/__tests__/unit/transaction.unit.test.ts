@@ -2,7 +2,7 @@ import { ethers } from "ethers";
 import BigNumber from "bignumber.js";
 import { toErrorRaw } from "@ledgerhq/coin-framework/lib/serialization/transaction";
 import { transactionToEthersTransaction } from "../../adapters";
-import * as nodeApi from "../../api/node/rpc.common";
+import * as nodeApi from "../../network/node/rpc.common";
 import {
   account,
   eip1559Tx,
