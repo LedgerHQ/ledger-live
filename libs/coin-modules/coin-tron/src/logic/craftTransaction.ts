@@ -14,11 +14,10 @@ type TransactionIntentExtra = {
 };
 
 export async function craftTransaction(
-  transactionIntent: TransactionIntent<TronToken>,
+  transactionIntent: TransactionIntent<TronToken, TransactionIntentExtra>,
   customFees?: bigint,
 ): Promise<string> {
-  const { asset, recipient, sender, amount } = transactionIntent;
-  const { memo, expiration } = transactionIntent as TransactionIntentExtra;
+  const { asset, recipient, sender, amount, memo, expiration } = transactionIntent;
   const recipientAddress = decode58Check(recipient);
   const senderAddress = decode58Check(sender);
 
