@@ -1,5 +1,11 @@
 # @ledgerhq/coin-cosmos
 
+## 0.12.0-nightly.1
+
+### Minor Changes
+
+- [#9743](https://github.com/LedgerHQ/ledger-live/pull/9743) [`4a7df12`](https://github.com/LedgerHQ/ledger-live/commit/4a7df1299bc0e9e8310f979818ad07a589cd92ca) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - conf (coin-cosmos): change some Cosmos endpoints
+
 ## 0.12.0-nightly.0
 
 ### Minor Changes

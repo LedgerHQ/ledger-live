@@ -1,5 +1,21 @@
 # live-mobile
 
+## 3.73.0-nightly.1
+
+### Minor Changes
+
+- [#9786](https://github.com/LedgerHQ/ledger-live/pull/9786) [`55ec9b4`](https://github.com/LedgerHQ/ledger-live/commit/55ec9b48920da2ae5c10ae00661aab1b7292f167) Thanks [@beths-ledger](https://github.com/beths-ledger)! - allow token accounts to be selected from the earn live app for staking.
+
+- [#9582](https://github.com/LedgerHQ/ledger-live/pull/9582) [`46f0b58`](https://github.com/LedgerHQ/ledger-live/commit/46f0b583913db7469b789dd0b2b98cc3a12f9c69) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - Change step numbers in local banner to be warning icon and warning color when user paid for recover but finished setup.
+
+- [#9767](https://github.com/LedgerHQ/ledger-live/pull/9767) [`bb63ce7`](https://github.com/LedgerHQ/ledger-live/commit/bb63ce737e237012df185f09f05b323287ca57d9) Thanks [@ysitbon](https://github.com/ysitbon)! - Fix offset on graph pointer
+
+### Patch Changes
+
+- Updated dependencies [[`4a7df12`](https://github.com/LedgerHQ/ledger-live/commit/4a7df1299bc0e9e8310f979818ad07a589cd92ca)]:
+  - @ledgerhq/coin-cosmos@0.12.0-nightly.1
+  - @ledgerhq/live-dmk-mobile@0.2.0-nightly.1
+
 ## 3.73.0-nightly.0
 
 ### Minor Changes

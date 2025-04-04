@@ -1,5 +1,12 @@
 ## 34.25.0
 
+## 34.29.0-nightly.1
+
+### Patch Changes
+
+- Updated dependencies [[`4a7df12`](https://github.com/LedgerHQ/ledger-live/commit/4a7df1299bc0e9e8310f979818ad07a589cd92ca)]:
+  - @ledgerhq/coin-cosmos@0.12.0-nightly.1
+
 ## 34.29.0-nightly.0
 
 ### Minor Changes

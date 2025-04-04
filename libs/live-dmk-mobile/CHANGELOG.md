@@ -1,5 +1,12 @@
 # @ledgerhq/live-dmk-mobile
 
+## 0.2.0-nightly.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@34.29.0-nightly.1
+
 ## 0.2.0-nightly.0
 
 ### Minor Changes
