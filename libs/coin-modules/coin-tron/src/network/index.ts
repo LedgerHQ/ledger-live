@@ -280,7 +280,7 @@ export const createTronTransaction = async (
   }
 };
 
-/** Default expiration, in seconds after crafting time. */
+/** Default expiration of 10 minutes (in seconds) after crafting time. */
 export const DEFAULT_EXPIRATION = 600;
 
 async function extendExpiration(
