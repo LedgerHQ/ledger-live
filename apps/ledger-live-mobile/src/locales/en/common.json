@@ -2412,16 +2412,13 @@
     },
     "recoverBanner": {
       "subscribeDone": {
-        "title": "Reminder: Finish subscribing to Ledger Recover",
-        "description": "You're just two steps away from being secured."
+        "title": "Reminder: Finish subscribing to Ledger Recover"
       },
       "verifyIdentity": {
-        "title": "Reminder: Finish subscribing to Ledger Recover",
-        "description": "You're just one step away from being secured."
+        "title": "Access to your wallet is not backed up yet"
       },
       "connectDevice": {
-        "title": "Reminder: Finish subscribing to Ledger Recover",
-        "description": "It's your final step to ensure wallet access recovery."
+        "title": "Access to your wallet is not backed up yet"
       }
     }
   },

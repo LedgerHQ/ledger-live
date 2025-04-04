@@ -2411,16 +2411,13 @@
     },
     "recoverBanner" : {
       "subscribeDone" : {
-        "title" : "Ledger Recoverのサブスクリプション契約が完了していません",
-        "description" : "安全の確保まで残り2ステップです。"
+        "title" : "Ledger Recoverのサブスクリプション契約が完了していません"
       },
       "verifyIdentity" : {
-        "title" : "Ledger Recoverのサブスクリプション契約が完了していません",
-        "description" : "安全の確保まで残り1ステップです。"
+        "title" : "ウォレットへのアクセスはまだバックアップされていません"
       },
       "connectDevice" : {
-        "title" : "Ledger Recoverのサブスクリプション契約が完了していません",
-        "description" : "これが、ウォレットへのアクセス復元を確実にするための最後のステップです。"
+        "title" : "ウォレットへのアクセスはまだバックアップされていません"
       }
     }
   },

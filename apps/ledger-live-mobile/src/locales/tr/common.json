@@ -2411,16 +2411,13 @@
     },
     "recoverBanner" : {
       "subscribeDone" : {
-        "title" : "Hatırlatma: Ledger Recover'a abone olma işlemini tamamlayın",
-        "description" : "Güvende olmanıza sadece iki adım kaldı."
+        "title" : "Hatırlatma: Ledger Recover'a abone olma işlemini tamamlayın"
       },
       "verifyIdentity" : {
-        "title" : "Hatırlatma: Ledger Recover'a abone olma işlemini tamamlayın",
-        "description" : "Güvende olmanıza sadece bir adım kaldı."
+        "title" : "Cüzdan erişiminiz henüz yedeklenmedi"
       },
       "connectDevice" : {
-        "title" : "Hatırlatma: Ledger Recover'a abone olma işlemini tamamlayın",
-        "description" : "Bu, gerektiğinde cüzdana yeniden erişebilmek için tamamlamanız gereken son adımdır."
+        "title" : "Cüzdan erişiminiz henüz yedeklenmedi"
       }
     }
   },

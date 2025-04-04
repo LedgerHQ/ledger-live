@@ -1541,14 +1541,14 @@
         "secondaryCta" : "後で"
       },
       "verifyIdentity" : {
-        "title" : "Ledger Recoverのサブスクリプション契約が完了していません",
-        "description" : "安全の確保まで残り1ステップです。",
+        "title" : "ウォレットへのアクセスはまだバックアップされていません",
+        "description" : "本人認証をしてウォレットへのアクセスを確保してください",
         "primaryCta" : "本人認証を行う",
         "secondaryCta" : "後で"
       },
       "connectDevice" : {
-        "title" : "Ledger Recoverのサブスクリプション契約が完了していません",
-        "description" : "これが、ウォレットへのアクセス復元を確実にするための最後のステップです。",
+        "title" : "ウォレットへのアクセスはまだバックアップされていません",
+        "description" : "デバイスを接続してウォレットへのアクセスを確保してください",
         "primaryCta" : "デバイスを接続",
         "secondaryCta" : "後で"
       }

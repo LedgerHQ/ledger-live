@@ -1541,14 +1541,14 @@
         "secondaryCta" : "Talvez mais tarde"
       },
       "verifyIdentity" : {
-        "title" : "Lembrete: Termine de assinar o Ledger Recover",
-        "description" : "Você está a apenas dois passos de aumentar sua segurança.",
+        "title" : "O acesso à sua carteira ainda não tem backup",
+        "description" : "Verifique sua identidade para garantir o acesso à sua carteira",
         "primaryCta" : "Verificar identidade",
         "secondaryCta" : "Talvez mais tarde"
       },
       "connectDevice" : {
-        "title" : "Lembrete: Termine de assinar o Ledger Recover",
-        "description" : "Essa é a última etapa para garantir a recuperação do acesso à carteira.",
+        "title" : "O acesso à sua carteira ainda não tem backup",
+        "description" : "Conecte seu dispositivo para proteger o acesso à sua carteira",
         "primaryCta" : "Conectar dispositivo",
         "secondaryCta" : "Talvez mais tarde"
       }

@@ -166,6 +166,12 @@ jobs:
     env:
       ALLURE_RESULTS: "allure-results"
     steps:
+      - name: Download Allure Report
+        uses: actions/download-artifact@v4
+        with:
+          path: ${{ env.ALLURE_RESULTS }}
+          pattern: ${{ env.ALLURE_RESULTS }}*
+          merge-multiple: true
       - name: Publish report on Allure Server
         id: allure-server
         if: ${{ !cancelled() }}

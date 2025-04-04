@@ -234,7 +234,7 @@ export const specs: Specs = {
     currency: getCryptoCurrencyById("polygon"),
     appQuery: {
       model: DeviceModelId.nanoSP,
-      appName: "Polygon",
+      appName: "Ethereum",
     },
     dependency: "",
   },
@@ -242,7 +242,7 @@ export const specs: Specs = {
     currency: getCryptoCurrencyById("bsc"),
     appQuery: {
       model: DeviceModelId.nanoSP,
-      appName: "Binance Smart Chain",
+      appName: "Ethereum",
     },
     dependency: "",
   },

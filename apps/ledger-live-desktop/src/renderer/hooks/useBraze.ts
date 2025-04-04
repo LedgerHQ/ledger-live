@@ -13,6 +13,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import {
   setActionCards,
+  setDesktopCards,
   setNotificationsCards,
   setPortfolioCards,
 } from "../actions/dynamicContent";
@@ -174,6 +175,7 @@ export async function useBraze() {
         .map(card => mapAsNotificationContentCard(card as ClassicCard))
         .sort(compareCards);
 
+      dispatch(setDesktopCards(filteredDesktopCards));
       dispatch(setPortfolioCards(portfolioCards));
       dispatch(setActionCards(actionCards));
       dispatch(setNotificationsCards(notificationsCards));

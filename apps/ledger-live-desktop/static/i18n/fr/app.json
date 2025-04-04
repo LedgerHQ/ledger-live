@@ -1541,14 +1541,14 @@
         "secondaryCta" : "Plus tard"
       },
       "verifyIdentity" : {
-        "title" : "Rappel : finalisez votre abonnement à Ledger Recover",
-        "description" : "Plus qu’une étape avant d’être en sécurité.",
+        "title" : "Vous n’avez pas encore sauvegardé l’accès à votre wallet",
+        "description" : "Vérifiez votre identité pour sécuriser l’accès à votre wallet",
         "primaryCta" : "Vérifier mon identité",
         "secondaryCta" : "Plus tard"
       },
       "connectDevice" : {
-        "title" : "Rappel : finalisez votre abonnement à Ledger Recover",
-        "description" : "Dernière étape pour sécuriser l’accès à votre wallet.",
+        "title" : "Vous n’avez pas encore sauvegardé l’accès à votre wallet",
+        "description" : "Connectez votre appareil pour sécuriser l’accès à votre wallet",
         "primaryCta" : "Connecter mon appareil",
         "secondaryCta" : "Plus tard"
       }

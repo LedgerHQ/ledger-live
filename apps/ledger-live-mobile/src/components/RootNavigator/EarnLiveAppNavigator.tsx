@@ -11,7 +11,7 @@ import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import type { EarnLiveAppNavigatorParamList } from "./types/EarnLiveAppNavigator";
 import type { BaseComposite, StackNavigatorProps } from "./types/helpers";
 import { EarnScreen } from "~/screens/PTX/Earn";
-import { shallowAccountsSelector } from "~/reducers/accounts";
+import { flattenAccountsSelector } from "~/reducers/accounts";
 import { EarnInfoDrawer } from "~/screens/PTX/Earn/EarnInfoDrawer";
 import { useStakingDrawer } from "../Stake/useStakingDrawer";
 import { EarnMenuDrawer } from "~/screens/PTX/Earn/EarnMenuDrawer";
@@ -27,7 +27,7 @@ const Earn = (props: NavigationProps) => {
   const dispatch = useDispatch();
   const paramAction = props.route.params?.action;
   const navigation = props.navigation;
-  const accounts = useSelector(shallowAccountsSelector);
+  const accounts = useSelector(flattenAccountsSelector);
   const route = useRoute();
 
   const openStakingDrawer = useStakingDrawer({
@@ -77,7 +77,7 @@ const Earn = (props: NavigationProps) => {
             openStakingDrawer(account, parent);
           } else {
             // eslint-disable-next-line no-console
-            console.log("no matching account found for given id.");
+            console.warn("no matching account found for given id.");
           }
           break;
         }

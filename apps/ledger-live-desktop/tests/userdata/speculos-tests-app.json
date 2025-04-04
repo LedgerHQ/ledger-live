@@ -11777,8 +11777,8 @@
               "id": "js:2:ethereum:0x43047a5023D55a8658Fcb1c1Cea468311AdAA3Ad:+ethereum%2Ferc20%2Fusd~!underscore!~tether~!underscore!~~!underscore!~erc20~!underscore!~",
               "parentId": "js:2:ethereum:0x43047a5023D55a8658Fcb1c1Cea468311AdAA3Ad:",
               "tokenId": "ethereum/erc20/usd_tether__erc20_",
-              "balance": "11006649",
-              "spendableBalance": "11006649",
+              "balance": "24237000",
+              "spendableBalance": "24237000",
               "balanceHistoryCache": {
                 "HOUR": {
                   "balances": [
