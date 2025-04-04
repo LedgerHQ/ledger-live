@@ -13,7 +13,7 @@ import {
   isAccountBalanceUnconfirmed,
 } from "../../account";
 import { getCryptoCurrencyById } from "../../currencies";
-import { getOperationAmountNumber, OPERATION_TYPE_OUT_FAMILY } from "../../operation";
+import { getOperationAmountNumber } from "../../operation";
 import { fromTransactionRaw, toTransactionRaw, toTransactionStatusRaw } from "../../transaction";
 import { getAccountBridge, getCurrencyBridge } from "../../bridge";
 import { mockDeviceWithAPDUs, releaseMockDevice } from "./mockDevice";
