@@ -5,11 +5,20 @@ import { decode58Check } from "../network/format";
 import { TronToken } from "../types";
 import { feesToNumber } from "./utils";
 
+type TransactionIntentExtra = {
+  /** Memo value. */
+  memo?: string;
+
+  /** Expiration in seconds after crafting time. */
+  expiration?: number;
+};
+
 export async function craftTransaction(
   transactionIntent: TransactionIntent<TronToken>,
   customFees?: bigint,
 ): Promise<string> {
   const { asset, recipient, sender, amount } = transactionIntent;
+  const { memo, expiration } = transactionIntent as TransactionIntentExtra;
   const recipientAddress = decode58Check(recipient);
   const senderAddress = decode58Check(sender);
 
@@ -20,12 +29,17 @@ export async function craftTransaction(
       );
     }
 
+    if (memo !== undefined) {
+      throw new Error("Memo cannot be used with smart contract transactions");
+    }
+
     const { raw_data_hex: rawDataHex } = await craftTrc20Transaction(
       asset.contractAddress,
       recipientAddress,
       senderAddress,
       new BigNumber(amount.toString()),
       feesToNumber(customFees),
+      expiration,
     );
     return rawDataHex as string;
   } else {
@@ -37,6 +51,8 @@ export async function craftTransaction(
       senderAddress,
       new BigNumber(amount.toString()),
       isTransferAsset,
+      memo,
+      expiration,
     );
     return rawDataHex as string;
   }
