@@ -81,6 +81,27 @@ function getResolution(
         },
       };
     }
+    // Not sure we need to handle this case as we don't use the TLV descriptor on the steps of approve
+    case "token.approve": {
+      return {
+        deviceModelId,
+        approve: {
+          address: command.owner,
+          token: command.account,
+          delegate: command.delegate,
+          amount: command.amount,
+        },
+      };
+    }
+    case "token.revoke": {
+      return {
+        deviceModelId,
+        revoke: {
+          address: command.owner,
+          token: command.account,
+        },
+      };
+    }
   }
 }
 

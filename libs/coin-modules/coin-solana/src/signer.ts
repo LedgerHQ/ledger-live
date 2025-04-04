@@ -14,6 +14,16 @@ export type Resolution = {
     address: string;
     mintAddress: string;
   };
+  approve?: {
+    address: string;
+    token: string;
+    delegate: string;
+    amount: number;
+  };
+  revoke?: {
+    address: string;
+    token: string;
+  };
 };
 
 export interface SolanaSigner {
