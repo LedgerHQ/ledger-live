@@ -10,7 +10,10 @@ import LightBulb from "~/renderer/icons/LightBulb";
 import IconReload from "~/renderer/icons/UpdateCircle";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import { useSelector } from "react-redux";
-import { enablePlatformDevToolsSelector } from "~/renderer/reducers/settings";
+import {
+  enablePlatformDevToolsSelector,
+  enablePlatformDeviceSwitchSelector,
+} from "~/renderer/reducers/settings";
 import { WebviewState, WebviewAPI } from "../Web3AppWebview/types";
 import Spinner from "../Spinner";
 import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
@@ -18,6 +21,8 @@ import { track } from "~/renderer/analytics/segment";
 import { INTERNAL_APP_IDS } from "@ledgerhq/live-common/wallet-api/constants";
 import { useInternalAppIds } from "@ledgerhq/live-common/hooks/useInternalAppIds";
 import { safeUrl } from "@ledgerhq/live-common/wallet-api/helpers";
+import Switch from "../Switch";
+import { Icons } from "@ledgerhq/react-ui/index";
 
 const Container = styled(Box).attrs(() => ({
   horizontal: true,
@@ -98,9 +103,17 @@ export type Props = {
   manifest: LiveAppManifest;
   webviewAPIRef: RefObject<WebviewAPI>;
   webviewState: WebviewState;
+  mobileView: boolean;
+  SetMobileView?: (value: boolean) => void;
 };
 
-export const TopBar = ({ manifest, webviewAPIRef, webviewState }: Props) => {
+export const TopBar = ({
+  manifest,
+  webviewAPIRef,
+  webviewState,
+  mobileView,
+  SetMobileView,
+}: Props) => {
   const { t } = useTranslation();
   const lastMatchingURL = useRef<string | null>(null);
   const history = useHistory();
@@ -130,6 +143,8 @@ export const TopBar = ({ manifest, webviewAPIRef, webviewState }: Props) => {
 
     webview.openDevTools();
   }, [webviewAPIRef]);
+
+  const enablePlatformDeviceSwitch = useSelector(enablePlatformDeviceSwitchSelector);
 
   const onBackToMatchingURL = useCallback(async () => {
     const manifestId = localStorage.getItem("manifest-id") || "";
@@ -239,6 +254,18 @@ export const TopBar = ({ manifest, webviewAPIRef, webviewState }: Props) => {
             <ItemContent>
               <Trans i18nKey="common.sync.devTools" />
             </ItemContent>
+          </ItemContainer>
+        </>
+      ) : null}
+      {enablePlatformDeviceSwitch ? (
+        <>
+          <Separator />
+          <ItemContainer isInteractive onClick={() => SetMobileView?.(!mobileView)}>
+            <Icons.Desktop size="S" />
+            <ItemContent>
+              <Switch isChecked={mobileView}></Switch>
+            </ItemContent>
+            <Icons.Mobile size="S" />
           </ItemContainer>
         </>
       ) : null}
