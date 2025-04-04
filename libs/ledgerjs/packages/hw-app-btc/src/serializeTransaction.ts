@@ -64,7 +64,7 @@ export function serializeTransaction(
   }
   // from to https://zips.z.cash/zip-0225, zcash is different with other coins, the lock_time and nExpiryHeight fields are before the inputs and outputs
   if (isZcash) {
-    const serialized = Buffer.concat([
+    return Buffer.concat([
       transaction.version,
       transaction.nVersionGroupId || Buffer.alloc(0),
       transaction.consensusBranchId || Buffer.from([0x00, 0x00, 0x00, 0x00]),
@@ -75,7 +75,6 @@ export function serializeTransaction(
       inputBuffer,
       outputBuffer,
     ]);
-    return serialized
   }
   return Buffer.concat([
     transaction.version,

@@ -2,7 +2,7 @@ import { openTransportReplayer, RecordStore } from "@ledgerhq/hw-transport-mocke
 import Btc from "../src/Btc";
 
 describe("splitTransaction", () => {
-  test.skip("zcash", async () => {
+  test("zcash", async () => {
     const transport = await openTransportReplayer(RecordStore.fromString(""));
     const btc = new Btc({ transport, currency: "zcash" });
     /*
