@@ -1,4 +1,4 @@
-import { ZCASH_NU6_ACTIVATION_HEIGHT } from "../src/constants";
+import { ZCASH_ACTIVATION_HEIGHTS } from "../src/constants";
 import { getDefaultVersions } from "../src/createTransaction";
 import { openTransportReplayer, RecordStore } from "@ledgerhq/hw-transport-mocker";
 import Btc from "../src/Btc";
@@ -174,7 +174,7 @@ output 1: amount 0e532a0000000000 script 76a9144cd6509f71020b6a9e890bef43c4d5e61
 
     it("should return Zcash versions with expiryHeight and blockHeight above activation height", () => {
       const blockHeight = 3_000_000;
-      expect(blockHeight > ZCASH_NU6_ACTIVATION_HEIGHT).toBe(true);
+      expect(blockHeight > ZCASH_ACTIVATION_HEIGHTS.NU6).toBe(true);
       const result = getDefaultVersions({
         isZcash: true,
         sapling: false,

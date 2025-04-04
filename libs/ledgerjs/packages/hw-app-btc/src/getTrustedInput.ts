@@ -79,6 +79,7 @@ export async function getTrustedInput(
       transaction.version,
       transaction.timestamp || Buffer.alloc(0),
       transaction.nVersionGroupId || Buffer.alloc(0),
+      transaction.consensusBranchId || Buffer.alloc(0),
       createVarint(inputs.length),
     ]),
     indexLookup,
