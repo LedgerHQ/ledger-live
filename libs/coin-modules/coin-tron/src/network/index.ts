@@ -287,7 +287,6 @@ async function extendExpiration(
   preparedTransaction: any,
   expiration?: number,
 ): Promise<SendTransactionDataSuccess> {
-  const value = expiration ?? DEFAULT_EXPIRATION;
   const HttpProvider = TronWeb.providers.HttpProvider;
   const fullNode = new HttpProvider(getBaseApiUrl());
   const solidityNode = new HttpProvider(getBaseApiUrl());
