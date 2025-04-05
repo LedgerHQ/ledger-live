@@ -205,6 +205,7 @@ export async function craftTrc20Transaction(
   senderAddress: string,
   amount: BigNumber,
   customFees?: number,
+  expiration?: number,
 ): Promise<SendTransactionDataSuccess> {
   const txData: SmartContractTransactionData = {
     function_selector: "transfer(address,uint256)",
@@ -216,7 +217,7 @@ export async function craftTrc20Transaction(
   };
   const url = `/wallet/triggersmartcontract`;
   const { transaction: preparedTransaction } = await post(url, txData);
-  return await extendTronTxExpirationTimeBy10mn(preparedTransaction);
+  return await extendExpiration(preparedTransaction, expiration);
 }
 
 export async function craftStandardTransaction(
@@ -225,6 +226,8 @@ export async function craftStandardTransaction(
   senderAddress: string,
   amount: BigNumber,
   isTransferAsset: boolean,
+  memo?: string,
+  expiration?: number,
 ): Promise<SendTransactionDataSuccess> {
   const url = isTransferAsset ? `/wallet/transferasset` : `/wallet/createtransaction`;
   const txData: SendTransactionData = {
@@ -232,9 +235,10 @@ export async function craftStandardTransaction(
     owner_address: senderAddress,
     amount: Number(amount),
     asset_name: tokenAddress && Buffer.from(tokenAddress).toString("hex"),
+    extra_data: memo && Buffer.from(memo).toString("hex"),
   };
   const preparedTransaction = await post(url, txData);
-  return await extendTronTxExpirationTimeBy10mn(preparedTransaction);
+  return await extendExpiration(preparedTransaction, expiration);
 }
 
 const getTokenInfo = (subAccount: TokenAccount | null | undefined): string[] | undefined[] => {
@@ -275,19 +279,22 @@ export const createTronTransaction = async (
     );
   }
 };
-async function extendTronTxExpirationTimeBy10mn(
+
+/** Default expiration of 10 minutes (in seconds) after crafting time. */
+export const DEFAULT_EXPIRATION = 600;
+
+async function extendExpiration(
   preparedTransaction: any,
+  expiration?: number,
 ): Promise<SendTransactionDataSuccess> {
-  const VAULT_EXPIRATION_TIME = 600;
   const HttpProvider = TronWeb.providers.HttpProvider;
   const fullNode = new HttpProvider(getBaseApiUrl());
   const solidityNode = new HttpProvider(getBaseApiUrl());
   const eventServer = new HttpProvider(getBaseApiUrl());
   const tronWeb = new TronWeb(fullNode, solidityNode, eventServer);
-  //FIXME: test it and rewrite it
   return tronWeb.transactionBuilder.extendExpiration(
     preparedTransaction,
-    VAULT_EXPIRATION_TIME,
+    expiration ?? DEFAULT_EXPIRATION,
   ) as unknown as Promise<SendTransactionDataSuccess>;
 }
 

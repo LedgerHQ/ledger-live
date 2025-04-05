@@ -75,6 +75,7 @@ describe("listOperations", () => {
       Account: "sender",
       Destination: "dest",
       Sequence: 1,
+      SigningPubKey: "DEADBEEF",
     },
   };
   const otherTx = { ...paymentTx, tx_json: { ...paymentTx.tx_json, TransactionType: "Other" } };
@@ -97,7 +98,7 @@ describe("listOperations", () => {
     expect(JSON.parse(token)).toEqual(someMarker);
   });
 
-  it("should make enough calls so that the limit requested is satified", async () => {
+  it("should make enough calls so that the limit requested is satisfied", async () => {
     const txs = [paymentTx, paymentTx, otherTx, otherTx, otherTx, otherTx, otherTx, otherTx];
     assert(txs.length === 8);
     mockNetworkGetTransactions.mockResolvedValue(mockNetworkTxs(txs));
@@ -161,6 +162,7 @@ describe("listOperations", () => {
               Account: opSender,
               Destination: opDestination,
               Sequence: 1,
+              SigningPubKey: "DEADBEEF",
             },
           },
           {
@@ -177,6 +179,7 @@ describe("listOperations", () => {
               Destination: opDestination,
               DestinationTag: 509555,
               Sequence: 1,
+              SigningPubKey: "DEADBEEF",
             },
           },
           {
@@ -200,6 +203,7 @@ describe("listOperations", () => {
                 },
               ],
               Sequence: 1,
+              SigningPubKey: "DEADBEEF",
             },
           },
         ]),
@@ -240,6 +244,7 @@ describe("listOperations", () => {
                 data: "72656e74",
               },
             ],
+            signingPubKey: "DEADBEEF",
           },
         },
         {
@@ -262,6 +267,7 @@ describe("listOperations", () => {
             sequence: 1,
             destinationTag: 509555,
             xrpTxType: "Payment",
+            signingPubKey: "DEADBEEF",
           },
         },
         {
@@ -278,6 +284,7 @@ describe("listOperations", () => {
           details: {
             sequence: 1,
             xrpTxType: "Payment",
+            signingPubKey: "DEADBEEF",
           },
           type: expectedType,
           value: expectedValue,

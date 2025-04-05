@@ -4,6 +4,8 @@
   },
   "common": {
     "cancel": "Cancel",
+    "copy": "Copy",
+    "copied": "Copied",
     "apply": "Apply",
     "seeAll": "See all",
     "seeAllWithNumber": "See all ({{number}})",

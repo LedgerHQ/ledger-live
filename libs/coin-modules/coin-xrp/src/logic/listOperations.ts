@@ -115,6 +115,7 @@ const convertToCoreOperation =
         Memos,
         ledger_index,
         Sequence,
+        SigningPubKey,
       },
     } = operation;
 
@@ -161,6 +162,7 @@ const convertToCoreOperation =
       ...details,
       xrpTxType: TransactionType,
       sequence: Sequence,
+      signingPubKey: SigningPubKey,
     };
 
     let op: Operation<void> = {

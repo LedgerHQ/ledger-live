@@ -1,4 +1,4 @@
-import Eth from "@ledgerhq/hw-app-eth";
+import { LegacySignerEth } from "@ledgerhq/live-signer-evm";
 import { BigNumber } from "bignumber.js";
 import { ethers, providers } from "ethers";
 import { Account } from "@ledgerhq/types-live";
@@ -7,14 +7,14 @@ import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { killSpeculos, spawnSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
 import { resetIndexer, initMswHandlers, setBlock, indexBlocks } from "../indexer";
-import { buildAccountBridge, buildCurrencyBridge } from "../../../bridge/js";
-import { Transaction as EvmTransaction } from "../../../types";
-import { getCoinConfig, setCoinConfig } from "../../../config";
-import { makeAccount } from "../../fixtures/common.fixtures";
+import { buildAccountBridge, buildCurrencyBridge } from "@ledgerhq/coin-evm/bridge/js";
+import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/transaction";
+import { getCoinConfig, setCoinConfig } from "@ledgerhq/coin-evm/config";
+import { makeAccount } from "@ledgerhq/coin-evm/__tests__/fixtures/common.fixtures";
 import { callMyDealer, polygon, VITALIK } from "../helpers";
 import { defaultNanoApp } from "../scenarii.test";
 import { killAnvil, spawnAnvil } from "../anvil";
-import resolver from "../../../hw-getAddress";
+import resolver from "@ledgerhq/coin-evm/hw-getAddress";
 
 type PolygonScenarioTransaction = ScenarioTransaction<EvmTransaction, Account>;
 
@@ -128,7 +128,8 @@ export const scenarioPolygon: Scenario<EvmTransaction, Account> = {
     ]);
 
     const provider = new providers.StaticJsonRpcProvider("http://127.0.0.1:8545");
-    const signerContext: Parameters<typeof resolver>[0] = (deviceId, fn) => fn(new Eth(transport));
+    const signerContext: Parameters<typeof resolver>[0] = (deviceId, fn) =>
+      fn(new LegacySignerEth(transport));
 
     const lastBlockNumber = await provider.getBlockNumber();
     // start indexing at next block

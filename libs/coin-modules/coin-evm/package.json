@@ -55,8 +55,7 @@
     "lint:fix": "pnpm lint --fix",
     "typecheck": "tsc --noEmit",
     "test": "jest",
-    "unimported": "unimported",
-    "coin-tester": "DOTENV_CONFIG_PATH=src/__tests__/coin-tester/.env pnpm jest --runTestsByPath src/__tests__/coin-tester/*.test.ts --runInBand"
+    "unimported": "unimported"
   },
   "dependencies": {
     "@ethersproject/shims": "^5.7.0",

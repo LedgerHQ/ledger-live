@@ -127,6 +127,7 @@ export type SendTransactionData = {
   owner_address: string;
   amount: number;
   asset_name: string | null | undefined;
+  extra_data: string | null | undefined;
 };
 export type SmartContractFunction = "transfer(address,uint256)";
 export type SmartContractTransactionData = {

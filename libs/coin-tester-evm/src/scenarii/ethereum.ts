@@ -1,20 +1,23 @@
-import Eth from "@ledgerhq/hw-app-eth";
+import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
+import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
+import { killSpeculos, spawnSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
+import { getTokenById } from "@ledgerhq/cryptoassets/tokens";
+import { LegacySignerEth } from "@ledgerhq/live-signer-evm";
+import { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { ethers, providers } from "ethers";
-import { Account } from "@ledgerhq/types-live";
-import { getTokenById } from "@ledgerhq/cryptoassets/tokens";
-import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
-import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
-import { killSpeculos, spawnSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
-import { resetIndexer, indexBlocks, initMswHandlers, setBlock } from "../indexer";
-import { EvmNftTransaction, Transaction as EvmTransaction } from "../../../types";
-import { buildAccountBridge, buildCurrencyBridge } from "../../../bridge/js";
-import { getCoinConfig, setCoinConfig } from "../../../config";
-import { makeAccount } from "../../fixtures/common.fixtures";
-import { ethereum, callMyDealer, VITALIK } from "../helpers";
-import { defaultNanoApp } from "../scenarii.test";
+import { makeAccount } from "@ledgerhq/coin-evm/__tests__/fixtures/common.fixtures";
+import { buildAccountBridge, buildCurrencyBridge } from "@ledgerhq/coin-evm/bridge/js";
+import { getCoinConfig, setCoinConfig } from "@ledgerhq/coin-evm/config";
+import resolver from "@ledgerhq/coin-evm/hw-getAddress";
+import {
+  EvmNftTransaction,
+  Transaction as EvmTransaction,
+} from "@ledgerhq/coin-evm/types/transaction";
 import { killAnvil, spawnAnvil } from "../anvil";
-import resolver from "../../../hw-getAddress";
+import { callMyDealer, ethereum, VITALIK } from "../helpers";
+import { indexBlocks, initMswHandlers, resetIndexer, setBlock } from "../indexer";
+import { defaultNanoApp } from "../scenarii.test";
 
 type EthereumScenarioTransaction = ScenarioTransaction<EvmTransaction, Account>;
 
@@ -136,7 +139,8 @@ export const scenarioEthereum: Scenario<EvmTransaction, Account> = {
       spawnAnvil("https://ethereum-rpc.publicnode.com"),
     ]);
 
-    const signerContext: Parameters<typeof resolver>[0] = (deviceId, fn) => fn(new Eth(transport));
+    const signerContext: Parameters<typeof resolver>[0] = (deviceId, fn) =>
+      fn(new LegacySignerEth(transport));
 
     setCoinConfig(() => ({
       info: {

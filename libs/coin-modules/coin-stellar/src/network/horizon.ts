@@ -38,13 +38,19 @@ const TRESHOLD_LOW = 0.5;
 const TRESHOLD_MEDIUM = 0.75;
 const FETCH_LIMIT = 100;
 const currency = getCryptoCurrencyById("stellar");
-let server: Horizon.Server | undefined;
-const getServer = () => {
-  if (!server) {
-    server = new Horizon.Server(coinConfig.getCoinConfig().explorer.url);
+
+// Horizon client instance is cached to avoid costly rebuild at every request
+// Watch out: cache key is the URL, coin module can be instantiated several times with different URLs
+const servers = new Map<string, Horizon.Server>();
+function getServer(): Horizon.Server {
+  const url = coinConfig.getCoinConfig().explorer.url;
+  let server = servers.get(url);
+  if (server === undefined) {
+    server = new Horizon.Server(url);
+    servers.set(url, server);
   }
   return server;
-};
+}
 
 // Constants
 export const BASE_RESERVE = 0.5;

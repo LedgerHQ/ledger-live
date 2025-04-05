@@ -75,6 +75,11 @@ async function estimate(transactionIntent: TransactionIntent<void>): Promise<big
       amount: transactionIntent.amount,
     },
   });
+
+  if (estimatedFees.taquitoError !== undefined) {
+    throw new Error(`Fees estimation failed: ${estimatedFees.taquitoError}`);
+  }
+
   return estimatedFees.estimatedFees;
 }
 
