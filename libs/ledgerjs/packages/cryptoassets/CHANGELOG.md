@@ -1,5 +1,11 @@
 # @ledgerhq/cryptoassets
 
+## 13.15.0-nightly.1
+
+### Minor Changes
+
+- [#9649](https://github.com/LedgerHQ/ledger-live/pull/9649) [`1e56618`](https://github.com/LedgerHQ/ledger-live/commit/1e56618a3c31e7980074072e0aae9422c145f4b3) Thanks [@palra](https://github.com/palra)! - change explorer URLs to Blockscout for a variety of EVM coins
+
 ## 13.14.1-nightly.0
 
 ### Patch Changes

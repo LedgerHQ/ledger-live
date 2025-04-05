@@ -1,5 +1,17 @@
 # @ledgerhq/coin-xrp
 
+## 3.2.0-nightly.1
+
+### Minor Changes
+
+- [#9802](https://github.com/LedgerHQ/ledger-live/pull/9802) [`344f0b7`](https://github.com/LedgerHQ/ledger-live/commit/344f0b7be87374365394d0dcb59489c966a3a64e) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - expose `SigningPubKey` in XRP operation details
+
+### Patch Changes
+
+- Updated dependencies [[`1e56618`](https://github.com/LedgerHQ/ledger-live/commit/1e56618a3c31e7980074072e0aae9422c145f4b3)]:
+  - @ledgerhq/cryptoassets@13.15.0-nightly.1
+  - @ledgerhq/coin-framework@2.6.0-nightly.1
+
 ## 3.1.1-nightly.0
 
 ### Patch Changes

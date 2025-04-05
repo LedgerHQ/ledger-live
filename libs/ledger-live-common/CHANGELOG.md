@@ -1,5 +1,46 @@
 ## 34.25.0
 
+## 34.29.0-nightly.2
+
+### Minor Changes
+
+- [#9814](https://github.com/LedgerHQ/ledger-live/pull/9814) [`a7eba70`](https://github.com/LedgerHQ/ledger-live/commit/a7eba70fadb79e5bfd98b285cfb1a70284009138) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - test(llc): update bridge integration test snapshot for Solana
+
+### Patch Changes
+
+- Updated dependencies [[`c3c847b`](https://github.com/LedgerHQ/ledger-live/commit/c3c847bab4d01ec7cc1078344b519218806340ed), [`8bad17b`](https://github.com/LedgerHQ/ledger-live/commit/8bad17b3718dfb151e2dfd3287516f38326435af), [`fe89dd5`](https://github.com/LedgerHQ/ledger-live/commit/fe89dd51cd35000c7b661d6364fe78f88bbf6c62), [`1e56618`](https://github.com/LedgerHQ/ledger-live/commit/1e56618a3c31e7980074072e0aae9422c145f4b3), [`7fc6158`](https://github.com/LedgerHQ/ledger-live/commit/7fc61586bf2c66c733e733a706b1711ff7a4fdc9), [`f3cae52`](https://github.com/LedgerHQ/ledger-live/commit/f3cae527ea376bee52a273a9566c69272701b7bb), [`344f0b7`](https://github.com/LedgerHQ/ledger-live/commit/344f0b7be87374365394d0dcb59489c966a3a64e)]:
+  - @ledgerhq/coin-stellar@2.2.0-nightly.1
+  - @ledgerhq/coin-tezos@2.2.0-nightly.1
+  - @ledgerhq/coin-evm@2.16.0-nightly.1
+  - @ledgerhq/cryptoassets@13.15.0-nightly.1
+  - @ledgerhq/coin-tron@0.8.0-nightly.1
+  - @ledgerhq/coin-xrp@3.2.0-nightly.1
+  - @ledgerhq/live-signer-evm@0.2.3-nightly.1
+  - @ledgerhq/coin-polkadot@3.2.0-nightly.1
+  - @ledgerhq/coin-vechain@2.6.1-nightly.1
+  - @ledgerhq/coin-framework@2.6.0-nightly.1
+  - @ledgerhq/coin-algorand@0.9.0-nightly.1
+  - @ledgerhq/coin-aptos@1.8.1-nightly.1
+  - @ledgerhq/coin-bitcoin@0.15.0-nightly.1
+  - @ledgerhq/coin-cardano@0.7.1-nightly.1
+  - @ledgerhq/coin-casper@1.5.3-nightly.1
+  - @ledgerhq/coin-cosmos@0.12.0-nightly.2
+  - @ledgerhq/coin-filecoin@1.8.1-nightly.1
+  - @ledgerhq/coin-hedera@1.5.1-nightly.1
+  - @ledgerhq/coin-icon@0.9.1-nightly.1
+  - @ledgerhq/coin-internet_computer@1.6.1-nightly.1
+  - @ledgerhq/coin-multiversx@0.4.0-nightly.1
+  - @ledgerhq/coin-near@0.10.1-nightly.1
+  - @ledgerhq/coin-solana@0.17.1-nightly.1
+  - @ledgerhq/coin-stacks@0.7.1-nightly.1
+  - @ledgerhq/coin-sui@0.2.1-nightly.1
+  - @ledgerhq/coin-ton@0.7.1-nightly.1
+  - @ledgerhq/hw-app-vet@0.4.1-nightly.1
+  - @ledgerhq/live-countervalues@0.4.7-nightly.1
+  - @ledgerhq/live-countervalues-react@0.2.29-nightly.1
+  - @ledgerhq/live-nft@0.7.1-nightly.1
+  - @ledgerhq/live-wallet@0.10.3-nightly.1
+
 ## 34.29.0-nightly.1
 
 ### Patch Changes

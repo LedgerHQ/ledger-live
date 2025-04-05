@@ -1,5 +1,19 @@
 # @ledgerhq/coin-stellar
 
+## 2.2.0-nightly.1
+
+### Minor Changes
+
+- [#9755](https://github.com/LedgerHQ/ledger-live/pull/9755) [`c3c847b`](https://github.com/LedgerHQ/ledger-live/commit/c3c847bab4d01ec7cc1078344b519218806340ed) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - Fix stellar and tezos using static global variables, preventing multiple instances with different settings
+
+- [#9760](https://github.com/LedgerHQ/ledger-live/pull/9760) [`8bad17b`](https://github.com/LedgerHQ/ledger-live/commit/8bad17b3718dfb151e2dfd3287516f38326435af) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - fix stellar coin-module ignoring `memo` craft parameter
+
+### Patch Changes
+
+- Updated dependencies [[`1e56618`](https://github.com/LedgerHQ/ledger-live/commit/1e56618a3c31e7980074072e0aae9422c145f4b3)]:
+  - @ledgerhq/cryptoassets@13.15.0-nightly.1
+  - @ledgerhq/coin-framework@2.6.0-nightly.1
+
 ## 2.1.1-nightly.0
 
 ### Patch Changes

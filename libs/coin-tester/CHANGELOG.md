@@ -1,5 +1,11 @@
 # @ledgerhq/coin-tester
 
+## 0.5.0-nightly.0
+
+### Minor Changes
+
+- [#9775](https://github.com/LedgerHQ/ledger-live/pull/9775) [`fe89dd5`](https://github.com/LedgerHQ/ledger-live/commit/fe89dd51cd35000c7b661d6364fe78f88bbf6c62) Thanks [@Canestin](https://github.com/Canestin)! - extract coin-tester-evm module
+
 ## 0.4.0
 
 ### Minor Changes

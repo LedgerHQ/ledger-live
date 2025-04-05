@@ -1,5 +1,17 @@
 # @ledgerhq/coin-tron
 
+## 0.8.0-nightly.1
+
+### Minor Changes
+
+- [#9801](https://github.com/LedgerHQ/ledger-live/pull/9801) [`7fc6158`](https://github.com/LedgerHQ/ledger-live/commit/7fc61586bf2c66c733e733a706b1711ff7a4fdc9) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - add support for `memo` and `expiration` craft parameters for tron coin module
+
+### Patch Changes
+
+- Updated dependencies [[`1e56618`](https://github.com/LedgerHQ/ledger-live/commit/1e56618a3c31e7980074072e0aae9422c145f4b3)]:
+  - @ledgerhq/cryptoassets@13.15.0-nightly.1
+  - @ledgerhq/coin-framework@2.6.0-nightly.1
+
 ## 0.7.1-nightly.0
 
 ### Patch Changes
