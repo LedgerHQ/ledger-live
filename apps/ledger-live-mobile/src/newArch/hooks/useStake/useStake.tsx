@@ -145,6 +145,7 @@ export function useStake() {
       return {
         screen: ScreenName.PlatformApp,
         params: {
+          ...customPartnerParams,
           platform: manifest.id,
           name: manifest.name,
           accountId: accountIdForManifestVersion,
