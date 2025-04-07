@@ -1779,7 +1779,7 @@
     },
     "fullNodeReadyInfo" : "비트코인 풀 노드를 이용하여 계정을 추가할 것입니다.",
     "fullNodeConfigure" : "노드 구성",
-    "tokensTip" : "{{token}} ({{ticker}})(은)는 {{tokenType}} 토큰입니다. {{currency}} 계정으로 직접 토큰을 받을 수 있습니다.",
+    "tokensTip" : "{{token}} ({{ticker}})(은)는 {{tokenType}} 토큰입니다.\n {{currency}} 계정에서 직접 토큰을 수령할 수 있습니다.",
     "accountToImportSubtitle_plural" : "기존 계정 추가",
     "selectAll" : "모든 ({{count}}) 선택",
     "unselectAll" : "모든 ({{count}}) 선택 해제",
@@ -4229,7 +4229,7 @@
       "nfts" : {
         "title" : "숨겨진 NFT 컬렉션",
         "description" : "숨겨진 컬렉션 목록을 재설정하세요",
-        "reset" : "재설정"
+        "reset" : "재설정 ({{count}})"
       },
       "exchangeDeveloperMode" : {
         "title" : "거래소 개발 모드",
@@ -4337,6 +4337,32 @@
             "nft" : "개별 NFT",
             "contract" : "계약"
           }
+        },
+        "back" : "돌아가기"
+      },
+      "debugNfts" : {
+        "title" : "NFT 도구",
+        "description" : "Ledger Live에서 NFT 처리를 위한 유용한 도구 제공",
+        "cta" : "열기",
+        "tabs" : {
+          "config" : "구성",
+          "generatorAndDestructor" : "생성 & 삭제"
+        },
+        "configuration" : {
+          "supported" : "지원되는 NFT 체인",
+          "supported_other" : "지원되는 NFT 체인",
+          "nms" : {
+            "title" : "NFT 메타데이터 서비스 (NMS)",
+            "env" : "환경: {{env}}"
+          }
+        },
+        "generatorAndDestructor" : {
+          "genAcc" : "계정 생성",
+          "genAccDesc" : "NFT로 계정 생성",
+          "cta" : "생성",
+          "deleteAcc" : "계정 삭제",
+          "deleteAccDesc" : "스토어에서 모든 계정 삭제",
+          "delete" : "삭제"
         },
         "back" : "돌아가기"
       },
