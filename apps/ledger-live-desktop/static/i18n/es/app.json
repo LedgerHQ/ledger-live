@@ -5864,6 +5864,10 @@
       "title" : "Fondos insuficientes",
       "description" : "Asegúrate de que la cuenta tenga fondos suficientes."
     },
+    "NotEnoughBalanceFees" : {
+      "title" : "Fondos insuficientes para cubrir las tarifas",
+      "description" : "Asegúrate de que la cuenta tenga fondos suficientes."
+    },
     "NotEnoughBalanceSwap" : {
       "title" : "Lo sentimos, el saldo es insuficiente con las tarifas de red incluidas. Modifica el importe o verifica el saldo.",
       "description" : "Asegúrate de que la cuenta tenga fondos suficientes."
