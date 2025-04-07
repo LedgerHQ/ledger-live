@@ -4,6 +4,8 @@
   },
   "common" : {
     "cancel" : "取消",
+    "copy" : "复制",
+    "copied" : "已复制",
     "apply" : "应用",
     "seeAll" : "显示全部",
     "seeAllWithNumber" : "查看全部 ({{number}})",
@@ -100,7 +102,8 @@
       "times" : "x{{ value }}"
     },
     "quote" : "报价",
-    "tryAgain" : "请重试"
+    "tryAgain" : "请重试",
+    "ldmkEnabled" : "LDMK transport enabled"
   },
   "errors" : {
     "ReplacementTransactionUnderpriced" : {
@@ -508,6 +511,10 @@
     },
     "NotEnoughBalance" : {
       "title" : "抱歉，资金不足",
+      "description" : "请确保该账户资金充足。"
+    },
+    "NotEnoughBalanceFees" : {
+      "title" : "抱歉，资金不够支付费用",
       "description" : "请确保该账户资金充足。"
     },
     "NotEnoughBalanceForUnstaking" : {
@@ -4047,7 +4054,9 @@
       "desc" : "您确定要取消添加账户？",
       "v2" : {
         "title" : "取消添加账户？",
-        "desc" : "账户不会添加至 Ledger Live。"
+        "desc" : "账户不会添加至 Ledger Live。",
+        "continue" : "继续添加",
+        "cancel" : "取消"
       }
     },
     "imported" : "资产添加成功",
