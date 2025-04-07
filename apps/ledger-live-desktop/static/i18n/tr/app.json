@@ -4402,6 +4402,8 @@
       "catalogUrlDesc" : "Özel katalog sağlayıcınızın URL'sini girin",
       "enablePlatformDevTools" : "Platform geliştirme araçlarını etkinleştir",
       "enablePlatformDevToolsDesc" : "Platform uygulama geliştirme araçları penceresini açmayı etkinleştirin",
+      "enablePlatformDeviceSwitch" : "Platform cihaz değişimini etkinleştir",
+      "enablePlatformDeviceSwitchDesc" : "Mobil ve masaüstü görünüm arasında geçiş yapmak için tuşu açık konuma getirin",
       "customLockScreen" : "Özel kilitli ekran varlıkları",
       "customLockScreenDesc" : "Özel kilitli ekran grafik varlıklarında hata ayıklayın",
       "customLockScreenCTA" : "Başlat",
