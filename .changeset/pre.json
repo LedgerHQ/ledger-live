@@ -139,6 +139,7 @@
     "@ledgerhq/pnpm-utils": "1.0.1"
   },
   "changesets": [
+    "fiddly-cougars-arrive",
     "little-ladybugs-build",
     "shiny-lemons-speak",
     "swift-eels-repair"

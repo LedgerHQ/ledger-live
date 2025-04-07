@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.107.0-hotfix.2
+
+### Minor Changes
+
+- [#9827](https://github.com/LedgerHQ/ledger-live/pull/9827) [`004eff7`](https://github.com/LedgerHQ/ledger-live/commit/004eff716294d55143c14bc96dd9cd848aaf4620) Thanks [@beths-ledger](https://github.com/beths-ledger)! - Enable token account deep-linking from the earn dashboard
+
 ## 2.107.0-hotfix.1
 
 ### Patch Changes
