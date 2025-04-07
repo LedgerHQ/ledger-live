@@ -4229,7 +4229,7 @@
       "nfts" : {
         "title" : "คอลเล็กชั่น NFT ที่ซ่อนอยู่",
         "description" : "รีเซ็ตรายการคอลเลกชันที่ซ่อนอยู่",
-        "reset" : "รีเซ็ต"
+        "reset" : "รีเซ็ต ({{count}})"
       },
       "exchangeDeveloperMode" : {
         "title" : "โหมด Dev Exchange",
@@ -4337,6 +4337,32 @@
             "nft" : "NFT แต่ละรายการ",
             "contract" : "สัญญา"
           }
+        },
+        "back" : "ย้อนกลับ"
+      },
+      "debugNfts" : {
+        "title" : "เครื่องมือ NFT",
+        "description" : "ให้บริการเครื่องมือที่มีประโยชน์เพื่อจัดการ NFT ใน Ledger Live",
+        "cta" : "เปิด",
+        "tabs" : {
+          "config" : "การกำหนดค่า",
+          "generatorAndDestructor" : "ระบบสร้างข้อมูลและระบบลบข้อมูล"
+        },
+        "configuration" : {
+          "supported" : "เชนของ NFT ที่รองรับ",
+          "supported_other" : "เชนของ NFT ที่รองรับ",
+          "nms" : {
+            "title" : "บริการด้าน Metadata สำหรับ NFT (NMS)",
+            "env" : "สภาพแวดล้อม: {{env}}"
+          }
+        },
+        "generatorAndDestructor" : {
+          "genAcc" : "สร้างบัญชี",
+          "genAccDesc" : "สร้างบัญชีด้วย NFT",
+          "cta" : "สร้าง",
+          "deleteAcc" : "ลบบัญชี",
+          "deleteAccDesc" : "ลบบัญชีทั้งหมดจากร้านค้า",
+          "delete" : "ลบ"
         },
         "back" : "ย้อนกลับ"
       },
