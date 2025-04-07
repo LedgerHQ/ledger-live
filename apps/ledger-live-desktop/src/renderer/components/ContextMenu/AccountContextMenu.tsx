@@ -142,12 +142,7 @@ export default function AccountContextMenu({
         Icon: IconCoins,
         callback: () => {
           setTrackingSource("account context menu");
-          history.push({
-            pathname: routeToStake.pathname,
-            state: {
-              ...routeToStake.state,
-            },
-          });
+          history.push(routeToStake);
         },
       });
     }

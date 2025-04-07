@@ -33,6 +33,7 @@ export const useDeepLinkListener = () => {
         startStakeFlow({
           shouldRedirect: false,
           source: "Earn Dashboard",
+          returnTo: `platform/earn`,
         });
         break;
       case "stake-account": {

@@ -40,12 +40,7 @@ const ModalStartStake: FC<ModalStartStakeProps> = ({ account, parentAccount, sou
     if (platformAppRoute) {
       // Redirect to the platform app preferentially
       dispatch(closeModal("MODAL_START_STAKE"));
-      history.push({
-        pathname: platformAppRoute.pathname,
-        state: {
-          ...platformAppRoute.state,
-        },
-      });
+      history.push(platformAppRoute);
       return;
     }
 
