@@ -96,10 +96,14 @@ const deviceStorage = {
   },
 
   /**
-   * Push a value onto an array stored in AsyncStorage by key or create a new array in AsyncStorage for a key if it's not yet defined.
-   * @param {String} key They key
-   * @param {Any} value The value to push onto the array
-   * @return {Promise}
+   * Push a value onto an array stored in AsyncStorage by key or create
+   * a new array in AsyncStorage for a key if it's not yet defined.
+   *
+   * @param key
+   * They key
+   *
+   * @param value
+   * The value to push onto the array
    */
   push<T = unknown>(key: string, value: T) {
     return deviceStorage.get(key).then(currentValue => {
