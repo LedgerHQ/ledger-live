@@ -219,6 +219,7 @@ export type Features = CurrencyFeatures & {
   lldThai: DefaultFeature;
   lldSolanaNfts: DefaultFeature;
   llmSolanaNfts: DefaultFeature;
+  largemoverLandingpage: DefaultFeature;
 };
 
 /**
@@ -609,7 +610,6 @@ export type Feature_SpamFilteringTx = DefaultFeature;
 export type Feature_MemoTag = DefaultFeature;
 export type Feature_PtxSwapMoonpayProvider = DefaultFeature;
 export type Feature_PtxSwapExodusProvider = DefaultFeature;
-
 export type Feature_LlmRebornLP = Feature<{
   variant: ABTestingVariants;
 }>;

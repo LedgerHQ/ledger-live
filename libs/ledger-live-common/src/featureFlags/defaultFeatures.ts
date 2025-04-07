@@ -581,6 +581,7 @@ export const DEFAULT_FEATURES: Features = {
   lldThai: DEFAULT_FEATURE,
   lldSolanaNfts: DEFAULT_FEATURE,
   llmSolanaNfts: DEFAULT_FEATURE,
+  largemoverLandingpage: DEFAULT_FEATURE,
 };
 
 // Firebase SDK treat JSON values as strings
