@@ -5864,6 +5864,10 @@
       "title" : "Üzgünüz, fon miktarı yetersiz",
       "description" : "Hesabınızdaki fon miktarının yeterli olduğundan lütfen emin olun."
     },
+    "NotEnoughBalanceFees" : {
+      "title" : "Üzgünüz, fon miktarı işlem ücretlerini karşılamıyor",
+      "description" : "Hesabınızdaki fon miktarının yeterli olduğundan lütfen emin olun."
+    },
     "NotEnoughBalanceSwap" : {
       "title" : "Ne yazık ki bakiye, ağ ücretlerini karşılamaya yetmiyor. Tutarı değiştirin veya bakiyeyi doğrulayın.",
       "description" : "Hesabınızdaki fon miktarının yeterli olduğundan lütfen emin olun."
