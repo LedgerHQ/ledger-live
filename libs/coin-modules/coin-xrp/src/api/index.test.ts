@@ -1,7 +1,7 @@
 import { Operation, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import * as LogicFunctions from "../logic";
 import { GetTransactionsOptions } from "../network";
-import { NetworkInfo } from "../types";
+import { NetworkInfo, XrpAsset } from "../types";
 import { createApi } from "./index";
 
 const mockGetServerInfos = jest.fn().mockResolvedValue({
@@ -183,6 +183,7 @@ describe("listOperations", () => {
       // the order is reversed so that the result is always sorted by newest tx first element of the list
       expect(results).toEqual([
         {
+          asset: { type: "native" },
           operationIndex: 0,
           tx: {
             hash: "HASH_VALUE",
@@ -210,6 +211,7 @@ describe("listOperations", () => {
           },
         },
         {
+          asset: { type: "native" },
           operationIndex: 0,
           tx: {
             hash: "HASH_VALUE",
@@ -232,6 +234,7 @@ describe("listOperations", () => {
           },
         },
         {
+          asset: { type: "native" },
           operationIndex: 0,
           tx: {
             hash: "HASH_VALUE",
@@ -252,7 +255,7 @@ describe("listOperations", () => {
             sequence: 1,
           },
         },
-      ] satisfies Operation<void>[]);
+      ] satisfies Operation<XrpAsset>[]);
     },
   );
 });
@@ -281,7 +284,7 @@ describe("Testing craftTransaction function", () => {
 
   it("should use custom user fees when user provides it for crafting a transaction", async () => {
     const customFees = 99n;
-    await api.craftTransaction({} as TransactionIntent<void>, customFees);
+    await api.craftTransaction({} as TransactionIntent<XrpAsset>, customFees);
 
     expect(logicCraftTransactionSpy).toHaveBeenCalledWith(
       expect.any(Object),
@@ -292,7 +295,7 @@ describe("Testing craftTransaction function", () => {
   });
 
   it("should use default fees when user does not provide them for crafting a transaction", async () => {
-    await api.craftTransaction({} as TransactionIntent<void>);
+    await api.craftTransaction({} as TransactionIntent<XrpAsset>);
 
     expect(logicCraftTransactionSpy).toHaveBeenCalledWith(
       expect.any(Object),

@@ -1,7 +1,7 @@
 import { listOperations } from "./listOperations";
 import coinConfig from "../config";
 import { Operation } from "@ledgerhq/coin-framework/api/types";
-import { TronToken } from "../types";
+import { TronAsset } from "../types";
 
 describe("listOperations", () => {
   beforeAll(() => {
@@ -22,7 +22,7 @@ describe("listOperations", () => {
     // 255 as of 17/02/2025
     const historySize = 255;
 
-    let operations: Operation<TronToken>[];
+    let operations: Operation<TronAsset>[];
 
     const testingAccount = "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9";
 
@@ -97,7 +97,7 @@ describe("listOperations", () => {
             value: BigInt(0.012 * magnitudeMultiplier),
             recipients: [testingAccount],
             senders: ["THAe4BNVxp293qgyQEqXEkHMpPcqtG73bi"],
-            asset: undefined,
+            asset: { type: "native" },
             operationIndex: 0,
           });
         });
@@ -112,7 +112,7 @@ describe("listOperations", () => {
             value: BigInt(0.1 * magnitudeMultiplier),
             senders: [testingAccount],
             recipients: ["TASbVCzbnwu8swZEGFBAH88Z4AwTTBt1PW"],
-            asset: undefined,
+            asset: { type: "native" },
             operationIndex: 0,
           });
         });
@@ -130,6 +130,7 @@ describe("listOperations", () => {
             recipients: [testingAccount],
             senders: ["TWBEcQ57vbFSEhrQCvsHLDuSb39wprpsEX"],
             asset: {
+              type: "token",
               standard: "trc10",
               tokenId: "1004031",
             },
@@ -147,6 +148,7 @@ describe("listOperations", () => {
             senders: [testingAccount],
             recipients: ["TVKG4gUar24bpAVrDv4GSzyDRtPkjPkogL"],
             asset: {
+              type: "token",
               standard: "trc10",
               tokenId: "1002000",
             },
@@ -167,6 +169,7 @@ describe("listOperations", () => {
             senders: ["TUgU8FRUFSUfxTAoSPsaUBzJgSwpUuJs9N"],
             recipients: [testingAccount],
             asset: {
+              type: "token",
               standard: "trc20",
               contractAddress: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
             },
@@ -185,6 +188,7 @@ describe("listOperations", () => {
             senders: [testingAccount],
             recipients: ["TLAhq1ds7UR339t48TpzYcJWtfGnXk1KzX"],
             asset: {
+              type: "token",
               standard: "trc20",
               contractAddress: "TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
             },

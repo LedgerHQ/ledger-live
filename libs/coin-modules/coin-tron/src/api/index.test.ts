@@ -11,7 +11,7 @@ import coinConfig from "../config";
 import { TronConfig } from "../config";
 import { Api, Pagination, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import { createApi } from ".";
-import { TronToken } from "../types";
+import { TronAsset } from "../types";
 
 jest.mock("../config", () => ({
   setCoinConfig: jest.fn(),
@@ -62,13 +62,14 @@ describe("createApi", () => {
   });
 
   it("should pass parameters well", async () => {
-    const api: Api<TronToken> = createApi(mockTronConfig);
-    const intent: TransactionIntent<TronToken> = {
+    const api: Api<TronAsset> = createApi(mockTronConfig);
+    const intent: TransactionIntent<TronAsset> = {
       type: "send",
       sender: "sender",
       recipient: "recipient",
       amount: BigInt(10),
       asset: {
+        type: "token",
         standard: "trc10",
         tokenId: "1002000",
       },

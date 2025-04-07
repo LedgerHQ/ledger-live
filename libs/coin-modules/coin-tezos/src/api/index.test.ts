@@ -1,7 +1,8 @@
-import { Operation, TransactionIntent } from "@ledgerhq/coin-framework/lib/api/types";
+import { Operation, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import { APIAccount } from "../network/types";
 import networkApi from "../network/tzkt";
 import { createApi } from "./index";
+import { TezosAsset } from "../types";
 
 const DEFAULT_ESTIMATED_FEES = 300n;
 
@@ -57,7 +58,8 @@ describe("get operations", () => {
     expect(token).toEqual("");
   });
 
-  const op: Operation<void> = {
+  const op: Operation<TezosAsset> = {
+    asset: { type: "native" },
     operationIndex: 0,
     tx: {
       hash: "opHash",
@@ -89,7 +91,7 @@ describe("Testing craftTransaction function", () => {
 
   it("should use estimated fees when user does not provide them for crafting a transaction ", async () => {
     logicEstimateFees.mockResolvedValue({ estimatedFees: DEFAULT_ESTIMATED_FEES });
-    await api.craftTransaction({ type: "send" } as TransactionIntent<void>);
+    await api.craftTransaction({ type: "send" } as TransactionIntent<TezosAsset>);
     expect(logicEstimateFees).toHaveBeenCalledTimes(1);
     expect(logicCraftTransactionMock).toHaveBeenCalledWith(
       expect.any(Object),
@@ -101,7 +103,7 @@ describe("Testing craftTransaction function", () => {
     "should use custom user fees when user provides it for crafting a transaction",
     async (customFees: bigint) => {
       logicEstimateFees.mockResolvedValue({ estimatedFees: DEFAULT_ESTIMATED_FEES });
-      await api.craftTransaction({ type: "send" } as TransactionIntent<void>, customFees);
+      await api.craftTransaction({ type: "send" } as TransactionIntent<TezosAsset>, customFees);
       expect(logicEstimateFees).toHaveBeenCalledTimes(0);
       expect(logicCraftTransactionMock).toHaveBeenCalledWith(
         expect.any(Object),
@@ -116,14 +118,14 @@ describe("Testing estimateFees function", () => {
 
   it("should return estimation from logic module", async () => {
     logicEstimateFees.mockResolvedValue({ estimatedFees: DEFAULT_ESTIMATED_FEES });
-    const result = await api.estimateFees({ type: "send" } as TransactionIntent<void>);
+    const result = await api.estimateFees({ type: "send" } as TransactionIntent<TezosAsset>);
     expect(result).toEqual(DEFAULT_ESTIMATED_FEES);
   });
 
   it("should throw taquito errors", async () => {
     logicEstimateFees.mockResolvedValue({ taquitoError: "test" });
-    await expect(api.estimateFees({ type: "send" } as TransactionIntent<void>)).rejects.toThrow(
-      "Fees estimation failed: test",
-    );
+    await expect(
+      api.estimateFees({ type: "send" } as TransactionIntent<TezosAsset>),
+    ).rejects.toThrow("Fees estimation failed: test");
   });
 });

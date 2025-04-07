@@ -95,8 +95,9 @@
     "@types/jest": "^29.5.12",
     "@types/lodash": "^4.17.4",
     "jest": "^29.7.0",
-    "ts-jest": "^29.1.4",
     "jest-sonar": "0.2.16",
+    "msw": "^2.7.3",
+    "ts-jest": "^29.1.4",
     "typescript": "^5.4.5"
   },
   "scripts": {

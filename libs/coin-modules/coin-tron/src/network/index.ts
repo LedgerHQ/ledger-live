@@ -497,6 +497,7 @@ export async function fetchTronAccountTxs(
     })
     .map(tx => formatTrongridTxResponse(tx));
   // we need to fetch and filter trc20 transactions from another endpoint
+
   const entireTrc20Txs = (
     await getAllTransactions<Trc20API>(
       `${getBaseApiUrl()}/v1/accounts/${addr}/transactions/trc20?get_detail=true`,
