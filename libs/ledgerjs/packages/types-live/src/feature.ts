@@ -220,6 +220,7 @@ export type Features = CurrencyFeatures & {
   lldSolanaNfts: DefaultFeature;
   llmSolanaNfts: DefaultFeature;
   largemoverLandingpage: DefaultFeature;
+  llmMmkvMigration: DefaultFeature;
 };
 
 /**

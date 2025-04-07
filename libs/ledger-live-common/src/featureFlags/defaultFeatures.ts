@@ -582,6 +582,7 @@ export const DEFAULT_FEATURES: Features = {
   lldSolanaNfts: DEFAULT_FEATURE,
   llmSolanaNfts: DEFAULT_FEATURE,
   largemoverLandingpage: DEFAULT_FEATURE,
+  llmMmkvMigration: DEFAULT_FEATURE,
 };
 
 // Firebase SDK treat JSON values as strings
