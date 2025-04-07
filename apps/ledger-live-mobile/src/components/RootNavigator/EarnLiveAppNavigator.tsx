@@ -76,8 +76,7 @@ const Earn = (props: NavigationProps) => {
               : undefined;
             openStakingDrawer(account, parent);
           } else {
-            // eslint-disable-next-line no-console
-            console.log("no matching account found for given id.");
+            console.warn("no matching account found for given id.");
           }
           break;
         }
