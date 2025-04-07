@@ -4402,6 +4402,8 @@
       "catalogUrlDesc" : "Insira a URL do provedor de aplicativos da sua escolha",
       "enablePlatformDevTools" : "Habilitar ferramentas de desenvolvedor da plataforma",
       "enablePlatformDevToolsDesc" : "Habilite a janela de ferramentas para desenvolvedores de aplicativos da plataforma",
+      "enablePlatformDeviceSwitch" : "Habilitar interruptor de dispositivo da plataforma",
+      "enablePlatformDeviceSwitchDesc" : "Habilita o botão para alternar entre a visualização mobile e a de desktop",
       "customLockScreen" : "Ativos personalizados da tela de bloqueio",
       "customLockScreenDesc" : "Faça o debug de gráficos da tela de bloqueio",
       "customLockScreenCTA" : "Iniciar",
