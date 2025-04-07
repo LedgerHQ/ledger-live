@@ -1,8 +1,8 @@
 import BigNumber from "bignumber.js";
-import { fetchTronAccount } from "../network";
 import type { AccountTronAPI } from "../network/types";
 import { getTronResources } from "./utils";
 import { Asset as CoreAsset } from "@ledgerhq/coin-framework/api/index";
+import { getAccount } from "./getAccount";
 
 const bigIntOrZero = (val: number | BigNumber | undefined | null): bigint =>
   BigInt(val?.toString() ?? 0);
@@ -16,7 +16,7 @@ export type AssetTree = CoreAsset & {
 };
 
 export async function getBalance(address: string): Promise<AssetTree> {
-  const accounts = await fetchTronAccount(address);
+  const accounts = await getAccount(address);
   const account = accounts[0];
 
   return {
