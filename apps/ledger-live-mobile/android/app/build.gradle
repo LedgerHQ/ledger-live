@@ -203,11 +203,21 @@ sentry {
     uploadNativeSymbols = shouldSentryAutoUpload()
 }
 
-
-
 dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
+
+    // Flipper
+    debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
+        exclude group: "com.facebook.fbjni"
+    }
+    // Flipper Network Plugin
+    debugImplementation("com.facebook.flipper:flipper-network-plugin:${FLIPPER_VERSION}") {
+        exclude group: "com.facebook.flipper"
+    }
+    // Flipper LeakCanary (Memory leak tool)
+    debugImplementation "com.facebook.flipper:flipper-leakcanary2-plugin:${FLIPPER_VERSION}"
+    debugImplementation "com.squareup.leakcanary:leakcanary-android:2.8.1"
 
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.0.0")
 
