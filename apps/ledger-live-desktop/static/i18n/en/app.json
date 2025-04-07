@@ -2423,8 +2423,8 @@
     },
     "info": {
       "needMemoTag": {
-        "title": "Don’t use Tag/Memo?",
-        "description": "Your funds will get lost if you don’t add a Tag/Memo when sending them to any centralized exchange or custodial wallet.",
+        "title": "Need Tag/Memo?",
+        "description": "Not adding a Tag/Memo when sending funds to a centralized exchange increases the chances of your funds getting lost.",
         "cta.addTag": "Add Tag",
         "cta.not.addTag": "Don’t add Tag",
         "checkbox.label": "Do not show this again."
