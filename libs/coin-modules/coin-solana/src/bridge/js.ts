@@ -1,7 +1,7 @@
 import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
 import { log } from "@ledgerhq/logs";
-import { cached, Config, getChainAPI, queued } from "../api";
-import { traced } from "../api/traced";
+import { cached, Config, getChainAPI, queued } from "../network";
+import { traced } from "../network/traced";
 import { makeBridges } from "./bridge";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { SolanaSigner } from "../signer";

@@ -248,7 +248,7 @@ export const acceptTransferTokensTransaction: DeviceAction<Transaction, any> = d
         if (command?.kind === "token.transfer" && transaction.subAccountId) {
           const tokenCurrency = findTokenAccount(account, transaction.subAccountId).token;
           // transfer fee is added to amount for a tokens with tx fee extension
-          // [solana/api/chain/web3.ts -> buildTokenTransferInstructions]
+          // [solana/network/chain/web3.ts -> buildTokenTransferInstructions]
           const amount =
             command.extensions?.transferFee?.transferAmountIncludingFee || command.amount;
           return formatTokenAmount(tokenCurrency, amount);
@@ -352,7 +352,7 @@ export const acceptTransferTokensWithATACreationTransaction: DeviceAction<Transa
           if (command?.kind === "token.transfer" && transaction.subAccountId) {
             const tokenCurrency = findTokenAccount(account, transaction.subAccountId).token;
             // transfer fee is added to amount for a tokens with tx fee extension
-            // [solana/api/chain/web3.ts -> buildTokenTransferInstructions]
+            // [solana/network/chain/web3.ts -> buildTokenTransferInstructions]
             const amount =
               command.extensions?.transferFee?.transferAmountIncludingFee || command.amount;
             return formatTokenAmount(tokenCurrency, amount);

@@ -1,6 +1,6 @@
 /* eslint-disable */
 import { PublicKey } from "@solana/web3.js";
-import { LATEST_BLOCKHASH_MOCK, ChainAPI } from "@ledgerhq/coin-solana/api/index";
+import { LATEST_BLOCKHASH_MOCK, ChainAPI } from "@ledgerhq/coin-solana/network/index";
 import { Functions } from "@ledgerhq/coin-solana/utils";
 
 export const getMockedMethods = (): {
