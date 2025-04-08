@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { add, isBefore, parseISO } from "date-fns";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import storage from "LLM/storage";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { accountsWithPositiveBalanceCountSelector } from "~/reducers/accounts";
 import {
@@ -55,13 +55,14 @@ export type RatingsDataOfUser = {
 const ratingsDataOfUserAsyncStorageKey = "ratingsDataOfUser";
 
 async function getRatingsDataOfUserFromStorage() {
-  const ratingsDataOfUser = await AsyncStorage.getItem(ratingsDataOfUserAsyncStorageKey);
-  if (!ratingsDataOfUser) return null;
-  return JSON.parse(ratingsDataOfUser);
+  const ratingsDataOfUser = await storage.get<RatingsDataOfUser>(ratingsDataOfUserAsyncStorageKey);
+  if (!ratingsDataOfUser || Array.isArray(ratingsDataOfUser)) return null;
+
+  return ratingsDataOfUser;
 }
 
 async function setRatingsDataOfUserInStorage(ratingsDataOfUser: RatingsDataOfUser) {
-  await AsyncStorage.setItem(ratingsDataOfUserAsyncStorageKey, JSON.stringify(ratingsDataOfUser));
+  await storage.save(ratingsDataOfUserAsyncStorageKey, ratingsDataOfUser);
 }
 
 const useRatings = () => {
@@ -223,7 +224,7 @@ const useRatings = () => {
     getRatingsDataOfUserFromStorage().then(ratingsDataOfUser => {
       updateRatingsDataOfUserInStateAndStore({
         ...ratingsDataOfUser,
-        appFirstStartDate: ratingsDataOfUser?.appFirstStartDate || Date.now(),
+        appFirstStartDate: ratingsDataOfUser?.appFirstStartDate || new Date(Date.now()),
         numberOfAppStarts: (ratingsDataOfUser?.numberOfAppStarts ?? 0) + 1,
         numberOfAppStartsSinceLastCrash:
           (ratingsDataOfUser?.numberOfAppStartsSinceLastCrash ?? 0) + 1,

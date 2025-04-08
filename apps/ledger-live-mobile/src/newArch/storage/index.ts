@@ -36,6 +36,10 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
       }
     },
 
+    getString(key) {
+      return asyncStorageWrapper.getString(key);
+    },
+
     save(key, value) {
       try {
         return state.storageType === STORAGE_TYPE.MMKV
@@ -45,6 +49,10 @@ export function createStorage(init: StorageInitializer = initStorageState): Stor
         console.error("Error saving key to storage", e);
         return Promise.reject(e);
       }
+    },
+
+    saveString(key, value) {
+      return asyncStorageWrapper.saveString(key, value);
     },
 
     update(key, value) {
