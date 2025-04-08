@@ -4,6 +4,12 @@ on:
   schedule:
     - cron: "0 3 * * 1-5"
   workflow_call:
+    inputs:
+      use-performance-pool:
+        description: Use performance-pool of mac runners. Defaults to false, in which case the general-pool will be used
+        required: false
+        type: boolean
+        default: false
   workflow_dispatch:
     inputs:
       ref:
@@ -71,7 +77,7 @@ env:
 jobs:
   detox-tests-ios:
     name: "LLM - iOS Detox Tests"
-    runs-on: [m1, ARM64]
+    runs-on: ["${{ inputs.use-performance-pool && 'performance-pool' || 'general-pool' }}", macOS, ARM64]
     if: ${{ !inputs.speculos_tests && github.event_name != 'schedule' }}
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
