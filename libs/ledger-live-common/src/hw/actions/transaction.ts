@@ -26,6 +26,7 @@ type State = {
   deviceSignatureRequested: boolean;
   deviceStreamingProgress: number | null | undefined;
   transactionSignError: Error | null | undefined;
+  transactionChecksOptInTriggered: boolean;
   manifestId?: string;
   manifestName?: string;
 };
@@ -81,6 +82,7 @@ const initialState = {
   deviceSignatureRequested: false,
   deviceStreamingProgress: null,
   transactionSignError: null,
+  transactionChecksOptInTriggered: false,
 };
 
 const reducer = (state: State, e: Event): State => {
@@ -105,6 +107,9 @@ const reducer = (state: State, e: Event): State => {
 
     case "device-streaming":
       return { ...state, deviceStreamingProgress: e.progress };
+
+    case "transaction-checks-opt-in-triggered":
+      return { ...state, transactionChecksOptInTriggered: true };
 
     default:
       return state;

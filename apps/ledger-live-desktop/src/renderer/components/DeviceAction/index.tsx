@@ -87,6 +87,7 @@ import { useTrackExchangeFlow } from "~/renderer/analytics/hooks/useTrackExchang
 import { useTrackSendFlow } from "~/renderer/analytics/hooks/useTrackSendFlow";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 import { useTrackSyncFlow } from "~/renderer/analytics/hooks/useTrackSyncFlow";
+import { useTrackTransactionChecksFlow } from "~/renderer/analytics/hooks/useTrackTransactionChecksFlow";
 
 export type LedgerError = InstanceType<LedgerErrorConstructor<{ [key: string]: unknown }>>;
 
@@ -152,6 +153,7 @@ type States = PartialNullable<{
   imageCommitRequested: boolean;
   manifestName: string;
   manifestId: string;
+  transactionChecksOptInTriggered: boolean;
 }>;
 
 type InnerProps<P> = {
@@ -225,6 +227,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     onRepairModal,
     deviceSignatureRequested,
     deviceStreamingProgress,
+    transactionChecksOptInTriggered,
     displayUpgradeWarning,
     passWarning,
     initSwapRequested,
@@ -295,6 +298,15 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     device,
     error,
     inWrongDeviceForAccount,
+    isTrackingEnabled: useSelector(trackingEnabledSelector),
+  });
+
+  useTrackTransactionChecksFlow({
+    location,
+    device,
+    deviceInfo,
+    appAndVersion,
+    transactionChecksOptInTriggered,
     isTrackingEnabled: useSelector(trackingEnabledSelector),
   });
 
