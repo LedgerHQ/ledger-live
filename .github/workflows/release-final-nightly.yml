@@ -111,6 +111,8 @@ jobs:
             });
 
   nightly-fail:
+    name: Nightly Release Failure Reporting
+    needs: nightly-release
     if: failure()
     runs-on: ubuntu-latest
     steps:
