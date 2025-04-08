@@ -1,13 +1,7 @@
 import { renderHook } from "@testing-library/react-native";
 import { useTrackSendFlow, UseTrackSendFlow } from "./useTrackSendFlow";
 import { track } from "../segment";
-import {
-  UserRefusedOnDevice,
-  TransportRaceCondition,
-  LockedDeviceError,
-  CantOpenDevice,
-  TransportError,
-} from "@ledgerhq/errors";
+import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { CONNECTION_TYPES, HOOKS_TRACKING_LOCATIONS } from "./variables";
 
 jest.mock("../segment", () => ({
@@ -26,7 +20,6 @@ describe("useTrackSendFlow", () => {
     device: deviceMock,
     requestOpenApp: null,
     error: null,
-    isLocked: true,
   };
 
   afterEach(() => {
@@ -107,109 +100,12 @@ describe("useTrackSendFlow", () => {
   });
 
   it("should not track 'Open app accepted' or 'Open app denied' if requestOpenApp is not changed", () => {
-    const initialArgs = { ...defaultArgs, requestOpenApp: "Ethereum", isLocked: false };
-
     const { rerender } = renderHook((props: UseTrackSendFlow) => useTrackSendFlow(props), {
-      initialProps: initialArgs,
+      initialProps: { ...defaultArgs, requestOpenApp: "Ethereum" },
     });
 
-    rerender({ ...initialArgs, requestOpenApp: "Ethereum" });
+    rerender({ ...defaultArgs, requestOpenApp: "Ethereum" });
 
     expect(track).not.toHaveBeenCalled();
-  });
-
-  it("should track 'Transport race condition' when requestOpenApp transitions to null and error is TransportRaceCondition", () => {
-    const { rerender } = renderHook((props: UseTrackSendFlow) => useTrackSendFlow(props), {
-      initialProps: { ...defaultArgs, requestOpenApp: "Bitcoin" },
-    });
-
-    //@ts-expect-error requestOpenApp is not null
-    rerender({ ...defaultArgs, requestOpenApp: null, error: new TransportRaceCondition() });
-
-    expect(track).toHaveBeenCalledWith(
-      "Transport race condition",
-      expect.objectContaining({
-        deviceType: "nanoX",
-        connectionType: CONNECTION_TYPES.BLE,
-        platform: "LLM",
-        page: "Send",
-      }),
-    );
-  });
-
-  it("should track 'Connection failed' when requestOpenApp transitions to null and error is CantOpenDevice", () => {
-    const { rerender } = renderHook((props: UseTrackSendFlow) => useTrackSendFlow(props), {
-      initialProps: { ...defaultArgs, requestOpenApp: "Bitcoin" },
-    });
-
-    //@ts-expect-error requestOpenApp is not null
-    rerender({ ...defaultArgs, requestOpenApp: null, error: new CantOpenDevice() });
-
-    expect(track).toHaveBeenCalledWith(
-      "Connection failed",
-      expect.objectContaining({
-        deviceType: "nanoX",
-        connectionType: CONNECTION_TYPES.BLE,
-        platform: "LLM",
-        page: "Send",
-      }),
-    );
-  });
-
-  it("should track 'Transport error' when requestOpenApp transitions to null and error is TransportError", () => {
-    const { rerender } = renderHook((props: UseTrackSendFlow) => useTrackSendFlow(props), {
-      initialProps: { ...defaultArgs, requestOpenApp: "Bitcoin" },
-    });
-
-    //@ts-expect-error requestOpenApp is not null
-    rerender({ ...defaultArgs, requestOpenApp: null, error: new TransportError() });
-
-    expect(track).toHaveBeenCalledWith(
-      "Transport error",
-      expect.objectContaining({
-        deviceType: "nanoX",
-        connectionType: CONNECTION_TYPES.BLE,
-        platform: "LLM",
-        page: "Send",
-      }),
-    );
-  });
-
-  it("should track 'Device locked' when requestOpenApp transitions to null and error is LockedDeviceError", () => {
-    const { rerender } = renderHook((props: UseTrackSendFlow) => useTrackSendFlow(props), {
-      initialProps: { ...defaultArgs, requestOpenApp: "Bitcoin" },
-    });
-
-    //@ts-expect-error requestOpenApp is not null
-    rerender({ ...defaultArgs, requestOpenApp: null, error: new LockedDeviceError() });
-
-    expect(track).toHaveBeenCalledWith(
-      "Device locked",
-      expect.objectContaining({
-        deviceType: "nanoX",
-        connectionType: CONNECTION_TYPES.BLE,
-        platform: "LLM",
-        page: "Send",
-      }),
-    );
-  });
-
-  it("should track 'Device locked' when isLocked is true", () => {
-    const { rerender } = renderHook((props: UseTrackSendFlow) => useTrackSendFlow(props), {
-      initialProps: { ...defaultArgs, requestOpenApp: "Bitcoin" },
-    });
-
-    //@ts-expect-error requestOpenApp is not null
-    rerender({ ...defaultArgs, requestOpenApp: null, isLocked: true });
-
-    expect(track).toHaveBeenCalledWith(
-      "Device locked",
-      expect.objectContaining({
-        deviceType: "nanoX",
-        connectionType: CONNECTION_TYPES.BLE,
-        platform: "LLM",
-        page: "Send",
-      }),
-    );
   });
 });

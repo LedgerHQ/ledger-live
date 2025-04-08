@@ -7,7 +7,6 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { createAction } from "@ledgerhq/live-common/hw/actions/app";
 import { TRUSTCHAIN_APP_NAME } from "@ledgerhq/hw-ledger-key-ring-protocol";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
-import { DeviceModelId } from "@ledgerhq/devices";
 
 const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectApp);
 
@@ -23,7 +22,6 @@ export default function OpenOrInstallTrustChainApp({ goNext }: Props) {
       action={action}
       request={request}
       onResult={({ device }) => goNext(device)}
-      overridesPreferredDeviceModel={DeviceModelId.stax}
     />
   );
 }

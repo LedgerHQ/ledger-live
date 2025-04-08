@@ -5,7 +5,7 @@ import { map } from "rxjs/operators";
 import { getValidatorGroups } from "../network";
 import invariant from "invariant";
 import flatMap from "lodash/flatMap";
-import type { Transaction } from "../types/types";
+import type { Transaction } from "../types";
 
 const options = [
   {
