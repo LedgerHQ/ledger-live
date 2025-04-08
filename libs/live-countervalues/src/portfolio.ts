@@ -8,12 +8,10 @@ import {
 import { getEnv } from "@ledgerhq/live-env";
 import type {
   Account,
-  TokenAccount,
   AccountLike,
   BalanceHistory,
   PortfolioRange,
   PortfolioRangeConfig,
-  BalanceHistoryWithCountervalue,
   AccountPortfolio,
   Portfolio,
   CurrencyPortfolio,
@@ -152,12 +150,19 @@ export function getBalanceHistory(
 }
 
 export function getBalanceHistoryWithCountervalue(
+  ...args: Parameters<typeof getBalanceHistoryWithChanges>
+): AccountPortfolio {
+  const { history, countervalueAvailable, changes } = getBalanceHistoryWithChanges(...args);
+  return { history, countervalueAvailable, ...changes() };
+}
+
+function getBalanceHistoryWithChanges(
   account: AccountLike,
   range: PortfolioRange,
   count: number,
   cvState: CounterValuesState,
   cvCurrency: Currency,
-): AccountPortfolio {
+) {
   const balanceHistory = getBalanceHistory(account, range, count);
   const currency = getAccountCurrency(account);
   const counterValues = calculateMany(cvState, balanceHistory, {
@@ -184,9 +189,9 @@ export function getBalanceHistoryWithCountervalue(
     });
   }
 
-  function calcChanges(h: BalanceHistoryWithCountervalue) {
-    const from = h[0];
-    const to = h[h.length - 1];
+  function calcChanges(start = 0) {
+    const from = history.at(start) ?? { value: 0, countervalue: 0 };
+    const to = history.at(-1) ?? { value: 0, countervalue: 0 };
     return {
       countervalueReceiveSum: 0,
       // not available here
@@ -208,7 +213,7 @@ export function getBalanceHistoryWithCountervalue(
   return {
     history,
     countervalueAvailable,
-    ...calcChanges(history),
+    changes: calcChanges,
   };
 }
 
@@ -258,15 +263,9 @@ export function getPortfolio(
   const unavailableAccounts = [];
 
   for (const account of accounts) {
-    const p = getBalanceHistoryWithCountervalue(account, range, count, cvState, cvCurrency);
+    const p = getBalanceHistoryWithChanges(account, range, count, cvState, cvCurrency);
     if (p.countervalueAvailable) {
-      availables.push({
-        account,
-        history: p.history,
-        change: p.countervalueChange,
-        countervalueReceiveSum: p.countervalueReceiveSum,
-        countervalueSendSum: p.countervalueSendSum,
-      });
+      availables.push({ account, history: p.history, changes: p.changes });
     } else {
       unavailableAccounts.push(account);
     }
@@ -277,21 +276,32 @@ export function getPortfolio(
     date,
     value: histories.reduce((sum, h) => sum + (h[i]?.countervalue ?? 0), 0),
   }));
+
+  const firstSignificantHistoryIndex = balanceHistory.findIndex(balance => balance.value !== 0);
+  const firstSignificantHistoryValue = balanceHistory.at(firstSignificantHistoryIndex)?.value ?? 0;
+
   const [countervalueChangeValue, countervalueReceiveSum, countervalueSendSum] = availables.reduce(
-    (prev, a) => [
-      prev[0] + a.change.value, // TODO Portfolio: it'll always be 0, no? 🤔
-      prev[1] + a.countervalueReceiveSum,
-      prev[2] + a.countervalueSendSum,
-    ],
+    (sums, { changes }) => {
+      const { countervalueChange, countervalueReceiveSum, countervalueSendSum } = changes(
+        firstSignificantHistoryIndex,
+      );
+      return [
+        sums[0] + countervalueChange.value,
+        sums[1] + countervalueReceiveSum,
+        sums[2] + countervalueSendSum,
+      ];
+    },
     [0, 0, 0],
   );
+
   // in case there were no receive, we just track the market change
   // weighted by the current balances
   const balanceDivider = getEnv("EXPERIMENTAL_ROI_CALCULATION")
     ? countervalueReceiveSum === 0
-      ? balanceHistory[0].value + countervalueSendSum
+      ? firstSignificantHistoryValue + countervalueSendSum
       : countervalueReceiveSum
-    : balanceHistory[0].value;
+    : firstSignificantHistoryValue;
+
   return {
     balanceHistory,
     balanceAvailable: accounts.length === 0 || availables.length > 0,
@@ -473,7 +483,7 @@ const assetsDistributionNotAvailable: AssetsDistribution = {
 };
 
 export const orderAccountsByFiatValue = (
-  accounts: Account[] | TokenAccount[],
+  accounts: AccountLike[],
   counterValueState: CounterValuesState,
   to: Currency,
   fullBalance: boolean = true,

@@ -1,5 +1,5 @@
 import Animation from "~/components/Animation";
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { Dimensions, Image } from "react-native";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Flex } from "@ledgerhq/native-ui";
@@ -10,14 +10,28 @@ type Props = {
   onAnimationFinish: () => void;
 };
 
+const redirectDelay = 2500;
+
 const EuropaCompletionView: React.FC<Props> = ({ onAnimationFinish }) => {
   const { height: screenHeight, width: screenWidth } = Dimensions.get("screen");
+
+  const delayRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    delayRef.current = setTimeout(onAnimationFinish, redirectDelay);
+
+    return () => {
+      if (delayRef.current) {
+        clearTimeout(delayRef.current);
+        delayRef.current = null;
+      }
+    };
+  }, [onAnimationFinish]);
 
   return (
     <Flex height="100%" width="100%">
       <Animation
         source={OnboardingSuccessAnimation}
-        onAnimationFinish={onAnimationFinish}
         loop={false}
         style={{
           position: "absolute",

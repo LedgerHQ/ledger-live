@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import React from "react";
-import { fireEvent, render, screen } from "tests/testUtils";
+import { fireEvent, render, screen } from "tests/testSetup";
 import { INITIAL_STATE, LedgerSyncEntryPointShared } from "./shared";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { DeviceModelInfo } from "@ledgerhq/types-live";

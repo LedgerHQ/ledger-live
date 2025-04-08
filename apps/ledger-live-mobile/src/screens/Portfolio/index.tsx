@@ -160,7 +160,10 @@ function PortfolioScreen({ navigation }: NavigationProps) {
       ...(showAssets
         ? [
             <SectionContainer px={6} isFirst={!isAWalletCardDisplayed} key="AllocationsSection">
-              <SectionTitle title={t("analytics.allocation.title")} />
+              <SectionTitle
+                title={t("analytics.allocation.title")}
+                testID="portfolio-allocation-section"
+              />
               <Flex minHeight={94}>
                 <AllocationsSection />
               </Flex>

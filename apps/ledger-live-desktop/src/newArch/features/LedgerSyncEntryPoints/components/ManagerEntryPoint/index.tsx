@@ -15,8 +15,9 @@ export default function ManagerEntryPoint({ onPress }: { onPress: () => void }) 
       borderRadius="8px"
       alignItems="center"
       justifyContent="space-between"
+      columnGap="24px"
     >
-      <Flex alignItems="center" justifyContent="center">
+      <Flex alignItems="center" justifyContent="center" flexShrink={1}>
         <Flex position="relative">
           <Illustration lightSource={LogoLight} darkSource={LogoDark} size={52} />
           <Flex
@@ -29,7 +30,7 @@ export default function ManagerEntryPoint({ onPress }: { onPress: () => void }) 
             borderRadius="50%"
           />
         </Flex>
-        <Flex flexDirection="column" ml={4}>
+        <Flex flexDirection="column" ml={4} flexShrink={1}>
           <Text fontSize="10px" uppercase color="neutral.c70" mb="4px">
             {t("walletSync.entryPoints.manager.title")}
           </Text>

@@ -62,7 +62,7 @@ describe("getAccountShape", () => {
         derivationPath: "",
         deviceId: "1",
         initialAccount: {
-          id: "1:1:1:1:1",
+          id: "1:1:1:1:aptos",
           xpub: "address",
           seedIdentifier: "1",
           derivationMode: "",
@@ -114,7 +114,7 @@ describe("getAccountShape", () => {
         derivationPath: "",
         deviceId: "1",
         initialAccount: {
-          id: "1:1:1:1:1",
+          id: "1:1:1:1:aptos",
           seedIdentifier: "1",
           derivationMode: "",
           index: 0,
@@ -196,7 +196,7 @@ describe("getAccountShape", () => {
         derivationPath: "",
         deviceId: "1",
         initialAccount: {
-          id: "1:1:1:1:1",
+          id: "1:1:1:1:aptos",
           seedIdentifier: "1",
           derivationMode: "",
           index: 0,
@@ -261,7 +261,7 @@ describe("getAccountShape", () => {
         derivationPath: "",
         deviceId: "1",
         initialAccount: {
-          id: "1:1:1:1:1",
+          id: "1:1:1:1:aptos",
           seedIdentifier: "1",
           derivationMode: "",
           index: 0,
@@ -327,7 +327,7 @@ describe("getAccountShape", () => {
         derivationPath: "",
         deviceId: "1",
         initialAccount: {
-          id: "1:1:1:1:1",
+          id: "1:1:1:1:aptos",
           seedIdentifier: "1",
           derivationMode: "",
           index: 0,

@@ -1,17 +1,8 @@
 import { expect } from "detox";
-import {
-  getElementById,
-  getTextOfElement,
-  openDeeplink,
-  scrollToId,
-  tapByElement,
-  tapById,
-  waitForElementById,
-} from "../../helpers";
-import jestExpect from "expect";
+import { openDeeplink } from "../../helpers/commonHelpers";
 
-const baseLink = "portfolio";
 export default class PortfolioPage {
+  baseLink = "portfolio";
   zeroBalance = "$0.00";
   graphCardBalanceId = "graphCard-balance";
   assetBalanceId = "asset-balance";
@@ -29,7 +20,8 @@ export default class PortfolioPage {
   earnButton = () => getElementById("tab-bar-earn");
   addAccountCta = "add-account-cta";
   lastTransactionAmount = () => getElementById(this.transactionAmountId, 0);
-  assetRowNameId = (currencyName: string) => `asset-row-name-${currencyName}`;
+  assetItemId = (currencyName: string) => `assetItem-${currencyName}`;
+  allocationSectionTitleId = "portfolio-allocation-section";
 
   @Step("Navigate to Settings")
   async navigateToSettings() {
@@ -59,7 +51,7 @@ export default class PortfolioPage {
 
   @Step("Open Portfolio via deeplink")
   async openViaDeeplink() {
-    await openDeeplink(baseLink);
+    await openDeeplink(this.baseLink);
   }
 
   async openMyLedger() {
@@ -95,6 +87,7 @@ export default class PortfolioPage {
 
   @Step("Go to asset's accounts from portfolio")
   async goToAccounts(currencyName: string) {
-    await tapById(this.assetRowNameId(currencyName));
+    await scrollToId(this.allocationSectionTitleId, this.accountsListView);
+    await tapById(this.assetItemId(currencyName));
   }
 }

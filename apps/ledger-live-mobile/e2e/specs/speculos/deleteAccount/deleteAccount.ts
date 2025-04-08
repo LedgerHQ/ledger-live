@@ -1,20 +1,20 @@
-import { CLI } from "../../../utils/cliUtils";
-import { Application } from "../../../page";
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import { AccountType } from "@ledgerhq/live-common/e2e/enum/Account";
 
-export async function runDeleteAccountTest(account: Account, tmsLinks: string[]) {
-  const app = new Application();
-
+export async function runDeleteAccountTest(account: AccountType, tmsLinks: string[]) {
   describe("Delete account", () => {
     beforeAll(async () => {
       await app.init({
         speculosApp: account.currency.speculosApp,
+        featureFlags: {
+          llmAccountListUI: { enabled: true },
+          llmNetworkBasedAddAccountFlow: { enabled: true },
+        },
         cliCommands: [
-          async () => {
+          async (userdataPath?: string) => {
             return CLI.liveData({
-              currency: account.currency.currencyId,
+              currency: account.currency.id,
               index: account.index,
-              appjson: app.userdataPath,
+              appjson: userdataPath,
               add: true,
             });
           },
@@ -25,14 +25,14 @@ export async function runDeleteAccountTest(account: Account, tmsLinks: string[])
 
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     it(`Perform a delete account - ${account.accountName}`, async () => {
-      await app.accounts.openViaDeeplink();
-      await app.common.expectAccountName(account.accountName);
-      await app.common.goToAccountByName(account.accountName);
+      await app.account.openViaDeeplink();
+      await app.account.expectAccountName(account.accountName);
+      await app.account.goToAccountByName(account.accountName);
       await app.account.openAccountSettings();
       await app.account.selectAccountDelete();
       await app.account.confirmAccountDelete();
       await app.accounts.openViaDeeplink();
-      await app.accounts.expectAccountsNumber(0);
+      await app.accounts.expectNoAccount();
     });
   });
 }

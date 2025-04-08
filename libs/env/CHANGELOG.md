@@ -1,5 +1,13 @@
 # @ledgerhq/live-env
 
+## 2.8.0-next.0
+
+### Minor Changes
+
+- [#9551](https://github.com/LedgerHQ/ledger-live/pull/9551) [`32d46cc`](https://github.com/LedgerHQ/ledger-live/commit/32d46cc77debe059ae0bcd848a21065dec7ee091) Thanks [@themooneer](https://github.com/themooneer)! - support Solana as NFT currency
+
+- [#9690](https://github.com/LedgerHQ/ledger-live/pull/9690) [`d694069`](https://github.com/LedgerHQ/ledger-live/commit/d6940698a49b7a0ed48f84d6e8184d80760cca4f) Thanks [@Justkant](https://github.com/Justkant)! - feat: support Solana NFTs
+
 ## 2.7.0
 
 ### Minor Changes

@@ -1,20 +1,15 @@
-import { CLI } from "../../../utils/cliUtils";
-import { Application } from "../../../page";
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+describe("Verify Address warnings", () => {
+  const account = Account.TRX_3;
 
-const app = new Application();
-const account = Account.TRX_3;
-
-describe(`Verify Address warnings - ${account.currency.name}`, () => {
   beforeAll(async () => {
     await app.init({
       speculosApp: account.currency.speculosApp,
       cliCommands: [
-        () => {
+        (userdataPath?: string) => {
           return CLI.liveData({
-            currency: account.currency.currencyId,
+            currency: account.currency.id,
             index: account.index,
-            appjson: app.userdataPath,
+            appjson: userdataPath,
             add: true,
           });
         },
@@ -25,8 +20,8 @@ describe(`Verify Address warnings - ${account.currency.name}`, () => {
 
   $TmsLink("B2CQA-1551");
   it(`Verify address warning for ${account.currency.name}`, async () => {
-    await app.accounts.openViaDeeplink();
-    await app.common.goToAccountByName(account.accountName);
+    await app.account.openViaDeeplink();
+    await app.account.goToAccountByName(account.accountName);
     await app.account.tapReceive();
     await app.receive.doNotVerifyAddress();
     await app.receive.expectReceivePageIsDisplayed(account.currency.ticker, account.accountName);

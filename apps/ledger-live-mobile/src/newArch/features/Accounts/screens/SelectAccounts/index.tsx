@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 
 import { Button, Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
-import { Account, SubAccount, TokenAccount } from "@ledgerhq/types-live";
+import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { makeEmptyTokenAccount } from "@ledgerhq/live-common/account/index";
 import { flattenAccountsByCryptoCurrencyScreenSelector } from "~/reducers/accounts";
 import { ScreenName } from "~/const";
@@ -18,7 +18,7 @@ import { walletSelector } from "~/reducers/wallet";
 import { accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
 import { NetworkBasedAddAccountNavigator } from "LLM/features/Accounts/screens/AddAccount/types";
 
-type SubAccountEnhanced = SubAccount & {
+type SubAccountEnhanced = TokenAccount & {
   parentAccount: Account;
   triggerCreateAccount: boolean;
 };

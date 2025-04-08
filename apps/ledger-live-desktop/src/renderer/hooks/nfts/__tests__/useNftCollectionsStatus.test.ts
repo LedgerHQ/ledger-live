@@ -1,4 +1,4 @@
-import { renderHook } from "tests/testUtils";
+import { renderHook } from "tests/testSetup";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
 import { useNftCollectionsStatus } from "../useNftCollectionsStatus";
 import { mockNftCollectionStatusByNetwork } from "./shared";

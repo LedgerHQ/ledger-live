@@ -19,6 +19,7 @@ import { getDeviceModel } from "@ledgerhq/devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useDispatch, useSelector } from "react-redux";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { isAllowedOnboardingStatePollingErrorDmk } from "@ledgerhq/live-dmk-mobile";
 
 import { SeedPhraseType, StorylyInstanceID } from "@ledgerhq/types-live";
 import { DeviceModelId } from "@ledgerhq/types-devices";
@@ -120,7 +121,6 @@ enum CompanionStepKey {
   EarlySecurityCheckCompleted = 0,
   Pin,
   Seed,
-  Backup,
   Apps,
   Ready,
   Exit,
@@ -233,6 +233,7 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
     device,
     pollingPeriodMs: POLLING_PERIOD_MS,
     stopPolling: !isPollingOn,
+    allowedErrorChecks: [isAllowedOnboardingStatePollingErrorDmk],
   });
 
   // Unmount cleanup to make sure the polling is stopped.
@@ -385,7 +386,9 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
         deviceOnboardingState.currentOnboardingStep,
       )
     ) {
-      setCompanionStepKey(CompanionStepKey.Apps);
+      setCompanionStepKey(
+        deviceInitialApps?.enabled ? CompanionStepKey.Apps : CompanionStepKey.Ready,
+      );
       seededDeviceHandled.current = true;
       return;
     }
@@ -438,7 +441,12 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
       default:
         break;
     }
-  }, [deviceOnboardingState, notifyEarlySecurityCheckShouldReset, shouldRestoreApps]);
+  }, [
+    deviceInitialApps?.enabled,
+    deviceOnboardingState,
+    notifyEarlySecurityCheckShouldReset,
+    shouldRestoreApps,
+  ]);
 
   // When the user gets close to the seed generation step, sets the lost synchronization delay
   // and timers to a higher value. It avoids having a warning message while the connection is lost
@@ -466,7 +474,7 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
 
   const addedToKnownDevices = useRef(false);
   useEffect(() => {
-    if (companionStepKey >= CompanionStepKey.Backup) {
+    if (companionStepKey >= CompanionStepKey.Apps) {
       // Stops the polling once the device is seeded
       setIsPollingOn(false);
       // At this step, device has been successfully setup so it can be saved in

@@ -3,7 +3,6 @@ import { useDispatch } from "react-redux";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 
 import RequiresBLE from "../RequiresBLE";
-import BleDevicesScanning from "./BleDevicesScanning";
 import BleDevicePairing from "./BleDevicePairing";
 import { addKnownDevice } from "~/actions/ble";
 import type { BleDevicesScanningProps } from "./BleDevicesScanning";
@@ -13,6 +12,13 @@ import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
 import { NavigationHeaderCloseButton } from "../NavigationHeaderCloseButton";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 import { useTrackOnboardingFlow } from "~/analytics/hooks/useTrackOnboardingFlow";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { DmkBleDevicesScanning } from "./DmkBleDevicesScanning";
+import { DmkBleDevicePairing } from "./DmkBleDevicePairing";
+import { urls } from "~/utils/urls";
+import { Linking } from "react-native";
+import { LegacyBleDevicesScanning } from "~/components/BleDevicePairingFlow/LegacyBleDevicesScanning";
+import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 
 const TIMEOUT_AFTER_PAIRED_MS = 2000;
 
@@ -158,6 +164,7 @@ const BleDevicePairingFlow: React.FC<BleDevicePairingFlowProps> = ({
     };
   }, [deviceToPair, isPaired, onPairingSuccess]);
 
+  const pairingUrl = useLocalizedUrl(urls.errors.PairingFailed);
   const onRetryPairingFlow = useCallback(() => {
     // If a device has been paired, we let the pairing flow end
     if (!isPaired) {
@@ -166,6 +173,11 @@ const BleDevicePairingFlow: React.FC<BleDevicePairingFlowProps> = ({
       setPairingFlowStep("scanning");
     }
   }, [isPaired]);
+  const isDmkTransportEnabled = useFeature("ldmkTransport")?.enabled;
+
+  const onOpenHelp = useCallback(() => {
+    Linking.openURL(pairingUrl);
+  }, [pairingUrl]);
 
   // Requests consumer component to override the header
   useEffect(() => {
@@ -216,18 +228,37 @@ const BleDevicePairingFlow: React.FC<BleDevicePairingFlowProps> = ({
   return (
     <RequiresBLE>
       {pairingFlowStep === "pairing" && deviceToPair !== null ? (
-        <BleDevicePairing
-          deviceToPair={deviceToPair}
-          onPaired={onPaired}
-          onRetry={onRetryPairingFlow}
-        />
+        isDmkTransportEnabled ? (
+          <DmkBleDevicePairing
+            device={deviceToPair}
+            onPaired={onPaired}
+            onRetry={onRetryPairingFlow}
+            onOpenHelp={onOpenHelp}
+          />
+        ) : (
+          <BleDevicePairing
+            deviceToPair={deviceToPair}
+            onPaired={onPaired}
+            onRetry={onRetryPairingFlow}
+            onOpenHelp={onOpenHelp}
+          />
+        )
       ) : pairingFlowStep === "scanning" ? (
-        <BleDevicesScanning
-          filterByDeviceModelId={filterByDeviceModelId}
-          areKnownDevicesDisplayed={areKnownDevicesDisplayed}
-          areKnownDevicesPairable={areKnownDevicesPairable}
-          onDeviceSelect={onDeviceSelect}
-        />
+        isDmkTransportEnabled ? (
+          <DmkBleDevicesScanning
+            filterByDeviceModelId={filterByDeviceModelId}
+            areKnownDevicesDisplayed={areKnownDevicesDisplayed}
+            areKnownDevicesPairable={areKnownDevicesPairable}
+            onDeviceSelect={onDeviceSelect}
+          />
+        ) : (
+          <LegacyBleDevicesScanning
+            filterByDeviceModelId={filterByDeviceModelId}
+            areKnownDevicesDisplayed={areKnownDevicesDisplayed}
+            areKnownDevicesPairable={areKnownDevicesPairable}
+            onDeviceSelect={onDeviceSelect}
+          />
+        )
       ) : null}
     </RequiresBLE>
   );

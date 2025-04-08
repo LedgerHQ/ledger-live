@@ -129,7 +129,18 @@ const remapErrorsWithRetry = <P extends Promise<T>, T>(callback: () => P, times 
   };
 };
 
-const kyNoTimeout = ky.create({ timeout: false });
+/*
+NOTE: https://github.com/sindresorhus/ky?tab=readme-ov-file#retry
+defaults values are set here https://github.com/sindresorhus/ky/blob/b49cd03d8673ea522a29bae4ef6b4672cf23201b/source/utils/normalize.ts#L14
+*/
+const kyNoTimeout = ky.create({
+  timeout: false,
+  retry: {
+    limit: 3,
+    statusCodes: [408, 413, 429, 500, 502, 503, 504],
+    methods: ["get", "post", "put", "head", "delete", "options", "trace"],
+  },
+});
 
 export function getChainAPI(
   config: Config,
@@ -258,7 +269,6 @@ export function getChainAPI(
     sendRawTransaction: (buffer: Buffer, recentBlockhash?: BlockhashWithExpiryBlockHeight) => {
       return (async () => {
         const conn = connection();
-
         const commitment = "confirmed";
 
         const signature = await conn.sendRawTransaction(buffer, {

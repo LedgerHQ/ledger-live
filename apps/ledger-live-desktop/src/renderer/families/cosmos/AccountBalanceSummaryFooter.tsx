@@ -12,8 +12,8 @@ import Text from "~/renderer/components/Text";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import ToolTip from "~/renderer/components/Tooltip";
 import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
-import { CosmosAPI } from "@ledgerhq/coin-cosmos/api/Cosmos";
-import { SubAccount } from "@ledgerhq/types-live";
+import { CosmosAPI } from "@ledgerhq/coin-cosmos/network/Cosmos";
+import { TokenAccount } from "@ledgerhq/types-live";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 const Wrapper = styled(Box).attrs(() => ({
@@ -52,7 +52,7 @@ const AmountValue = styled(Text).attrs(() => ({
 }))``;
 
 type Props = {
-  account: CosmosAccount | SubAccount;
+  account: CosmosAccount | TokenAccount;
 };
 
 const usdcUnit: Unit = {

@@ -1,20 +1,18 @@
 import { DeviceUSB, ModelId, getUSBDevice, knownDevices } from "../models/devices";
-import {
-  getElementById,
-  getTextOfElement,
-  launchProxy,
-  scrollToId,
-  tapByElement,
-  tapById,
-  typeTextByElement,
-  waitForElementById,
-} from "../helpers";
 import { expect } from "detox";
-import jestExpect from "expect";
+import { launchProxy } from "../utils/speculosUtils";
 import DeviceAction from "../models/DeviceAction";
-import * as bridge from "../bridge/server";
+import {
+  open,
+  addDevicesBT,
+  addDevicesUSB,
+  addKnownSpeculos,
+  removeKnownSpeculos,
+  findFreePort,
+} from "../bridge/server";
+import { unregisterAllTransportModules } from "@ledgerhq/live-common/hw/index";
+import { launchSpeculos, deleteSpeculos } from "../utils/speculosUtils";
 
-import { launchSpeculos, deleteSpeculos } from "../helpers";
 const proxyAddress = "localhost";
 
 export default class CommonPage {
@@ -23,11 +21,18 @@ export default class CommonPage {
   successCloseButtonId = "success-close-button";
   successViewDetailsButtonId = "success-view-details-button";
   closeButton = () => getElementById("NavigationHeaderCloseButton");
+  proceedButtonId = "proceed-button";
 
-  accoundCardId = (id: string) => "account-card-" + id;
-  accountRowId = (accountId: string) => `account-row-${accountId}`;
-  baseAccountName = "account-row-name-";
-  accountNameRegExp = new RegExp(`${this.baseAccountName}.*`);
+  accountCardPrefix = "account-card-";
+  accountCardRegExp = (id = ".*") => new RegExp(this.accountCardPrefix + id);
+  accountCardId = (id: string) => this.accountCardPrefix + id;
+  accountCard = (id: string) => getElementById(this.accountCardRegExp(id));
+
+  accountItemId = "account-item-";
+  accountItemRegExp = (id = ".*(?<!-name)$") => new RegExp(`${this.accountItemId}${id}`);
+  accountItemNameRegExp = new RegExp(`${this.accountItemId}.*-name`);
+  accountItem = (id: string) => getElementById(this.accountItemRegExp(id));
+  accountItemName = (accountId: string) => getElementById(`${this.accountItemId + accountId}-name`);
 
   addDeviceButton = () => getElementById("connect-with-bluetooth");
   scannedDeviceRow = (id: string) => `device-scanned-${id}`;
@@ -38,7 +43,7 @@ export default class CommonPage {
   @Step("Perform search")
   async performSearch(text: string) {
     await waitForElementById(this.searchBarId);
-    await typeTextByElement(this.searchBar(), text, false);
+    await typeTextByElement(this.searchBar(), text);
   }
 
   async expectSearch(text: string) {
@@ -61,20 +66,32 @@ export default class CommonPage {
   }
 
   async selectAccount(accountId: string) {
-    const id = this.accoundCardId(accountId);
+    const id = this.accountCardId(accountId);
     await waitForElementById(id);
     await tapById(id);
   }
 
+  @Step("Select the first displayed account")
+  async selectFirstAccount() {
+    await tapById(this.accountCardRegExp());
+  }
+
+  async getAccountId(index: number) {
+    return (await getIdByRegexp(this.accountCardRegExp(), index)).replace(
+      this.accountCardPrefix,
+      "",
+    );
+  }
+
   @Step("Go to the account")
   async goToAccount(accountId: string) {
-    await scrollToId(this.accountNameRegExp);
-    await tapById(this.accountRowId(accountId));
+    await scrollToId(this.accountItemNameRegExp);
+    await tapByElement(this.accountItem(accountId));
   }
 
   @Step("Get the account name at index")
   async getAccountName(index = 0) {
-    return await getTextOfElement(this.accountNameRegExp, index);
+    return await getTextOfElement(this.accountItemNameRegExp, index);
   }
 
   @Step("Expect the account name at index")
@@ -84,7 +101,10 @@ export default class CommonPage {
 
   @Step("Go to the account with the name")
   async goToAccountByName(name: string) {
-    await tapById(this.baseAccountName + name);
+    const accountTitle = getElementByText(name);
+    const id = await getIdOfElement(accountTitle);
+    jestExpect(id).toContain(this.accountItemId);
+    await tapByElement(accountTitle);
   }
 
   async selectAddDevice() {
@@ -93,17 +113,17 @@ export default class CommonPage {
 
   async addDeviceViaBluetooth(device = knownDevices.nanoX) {
     const deviceAction = new DeviceAction(device);
-    await bridge.addDevicesBT(device);
+    await addDevicesBT(device);
     await waitForElementById(this.scannedDeviceRow(device.id));
     await tapById(this.scannedDeviceRow(device.id));
     await waitForElementById(this.blePairingLoadingId);
-    await bridge.open();
+    await open();
     await deviceAction.accessManager();
   }
 
   async addDeviceViaUSB(device: ModelId) {
     const nano = getUSBDevice(device);
-    await bridge.addDevicesUSB(nano);
+    await addDevicesUSB(nano);
     await scrollToId(this.pluggedDeviceRow(nano));
     await waitForElementById(this.pluggedDeviceRow(nano));
     await tapById(this.pluggedDeviceRow(nano));
@@ -111,16 +131,19 @@ export default class CommonPage {
   }
 
   async addSpeculos(nanoApp: string, speculosAddress = "localhost") {
-    const proxyPort = await bridge.findFreePort();
+    unregisterAllTransportModules();
+    const proxyPort = await findFreePort();
     const speculosPort = await launchSpeculos(nanoApp);
     await launchProxy(proxyPort, speculosAddress, speculosPort);
-    await bridge.addKnownSpeculos(`${proxyAddress}:${proxyPort}`);
-    return proxyPort;
+    await addKnownSpeculos(`${proxyAddress}:${proxyPort}`);
+    process.env.DEVICE_PROXY_URL = `ws://localhost:${proxyPort}`;
+    CLI.registerSpeculosTransport(speculosPort.toString(), `http://${speculosAddress}`);
+    return speculosPort;
   }
 
-  async removeSpeculos(proxyPort?: number) {
-    await deleteSpeculos(proxyPort);
-    proxyPort && (await bridge.removeKnownSpeculos(`${proxyAddress}:${proxyPort}`));
+  async removeSpeculos(apiPort?: number) {
+    const proxyPort = await deleteSpeculos(apiPort);
+    proxyPort && (await removeKnownSpeculos(`${proxyAddress}:${proxyPort}`));
   }
 
   @Step("Select a known device")

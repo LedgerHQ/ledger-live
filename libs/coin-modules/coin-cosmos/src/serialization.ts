@@ -10,7 +10,7 @@ import {
   type CosmosResourcesRaw,
 } from "./types";
 
-export function toCosmosResourcesRaw(r: CosmosResources): CosmosResourcesRaw {
+function toCosmosResourcesRaw(r: CosmosResources): CosmosResourcesRaw {
   const {
     delegatedBalance,
     delegations,
@@ -49,7 +49,7 @@ export function toCosmosResourcesRaw(r: CosmosResources): CosmosResourcesRaw {
     sequence,
   };
 }
-export function fromCosmosResourcesRaw(r: CosmosResourcesRaw): CosmosResources {
+function fromCosmosResourcesRaw(r: CosmosResourcesRaw): CosmosResources {
   const {
     delegatedBalance,
     delegations,

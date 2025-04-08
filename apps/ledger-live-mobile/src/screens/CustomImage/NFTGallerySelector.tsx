@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback } from "react";
 import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
@@ -14,7 +14,7 @@ import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/t
 import { CustomImageNavigatorParamList } from "~/components/RootNavigator/types/CustomImageNavigator";
 import { TrackScreen } from "~/analytics";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-import { getThreshold, useNftGalleryFilter } from "@ledgerhq/live-nft-react";
+import { getThreshold, useNftGalleryFilter, useNftQueriesSources } from "@ledgerhq/live-nft-react";
 import { getEnv } from "@ledgerhq/live-env";
 import { State } from "~/reducers/types";
 
@@ -31,6 +31,8 @@ const NFTGallerySelector = ({ navigation, route }: NavigationProps) => {
   const { device, deviceModelId } = params;
   const SUPPORTED_NFT_CURRENCIES = getEnv("NFT_CURRENCIES");
 
+  const llmSolanaNftsFeature = useFeature("llmSolanaNfts");
+
   const nftsOrdered = useSelector(
     (state: State) =>
       orderedVisibleNftsSelector(state, Boolean(nftsFromSimplehashFeature?.enabled)),
@@ -38,24 +40,21 @@ const NFTGallerySelector = ({ navigation, route }: NavigationProps) => {
   );
 
   const nftsFromSimplehashFeature = useFeature("nftsFromSimplehash");
+
   const threshold = nftsFromSimplehashFeature?.params?.threshold;
   const nftsFromSimplehashEnabled = nftsFromSimplehashFeature?.enabled;
   const accounts = useSelector(accountsSelector);
 
-  const addresses = useMemo(
-    () =>
-      [
-        ...new Set(
-          accounts.map(account => account.freshAddress).filter(addr => addr.startsWith("0x")),
-        ),
-      ].join(","),
-    [accounts],
-  );
+  const { addresses, chains } = useNftQueriesSources({
+    accounts,
+    supportedCurrencies: SUPPORTED_NFT_CURRENCIES,
+    config: { featureFlagEnabled: llmSolanaNftsFeature?.enabled },
+  });
 
   const { nfts: filteredNfts, isLoading } = useNftGalleryFilter({
     nftsOwned: nftsOrdered || [],
-    addresses: addresses,
-    chains: SUPPORTED_NFT_CURRENCIES,
+    addresses,
+    chains,
     threshold: getThreshold(threshold),
     enabled: nftsFromSimplehashEnabled || false,
     staleTime: nftsFromSimplehashFeature?.params?.staleTime,

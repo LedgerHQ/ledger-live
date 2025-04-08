@@ -4,12 +4,12 @@ import { hasMinimumDelegableBalance } from "@ledgerhq/live-common/families/multi
 import { useMultiversXRandomizedValidators } from "@ledgerhq/live-common/families/multiversx/react";
 import { openModal } from "~/renderer/actions/modals";
 import IconCoins from "~/renderer/icons/Coins";
-import { SubAccount } from "@ledgerhq/types-live";
+import { TokenAccount } from "@ledgerhq/types-live";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
 import { MultiversXAccount } from "@ledgerhq/live-common/families/multiversx/types";
 
 const AccountHeaderManageActions = (props: {
-  account: MultiversXAccount | SubAccount;
+  account: MultiversXAccount | TokenAccount;
   parentAccount?: MultiversXAccount | null;
   source?: string;
 }) => {

@@ -9,6 +9,9 @@ import { useHistory } from "react-router";
 /**
  * Navigates to the post onboarding or to the Ledger Recover upsell if needed
  * */
+// TODO: Rename and refactor this function and use algebraic data types like Result
+// to avoid the need of a fallback redirection and to make the function more readable
+// and maintainable. (see neverthrow library for example)
 export function useRedirectToPostOnboardingCallback() {
   const history = useHistory();
   const lastOnboardedDevice = useSelector(lastOnboardedDeviceSelector);
@@ -29,10 +32,14 @@ export function useRedirectToPostOnboardingCallback() {
       if (shouldRedirectToRecoverUpsell) {
         openRecoverUpsell({ fallbackRedirection });
         onDone();
-      } else if (shouldRedirectToPostOnboarding && lastOnboardedDevice) {
+        return true;
+      }
+      if (shouldRedirectToPostOnboarding && lastOnboardedDevice) {
         openPostOnboarding({ deviceModelId: lastOnboardedDevice.modelId, fallbackRedirection });
         onDone();
+        return true;
       }
+      return false;
     },
     [
       fallbackRedirection,
