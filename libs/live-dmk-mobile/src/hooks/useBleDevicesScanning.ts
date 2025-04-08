@@ -5,7 +5,7 @@ import { dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
 import { Device, DeviceModelId } from "@ledgerhq/types-devices";
 import { useDeviceManagementKit } from "./useDeviceManagementKit";
 
-const defaultMapper = (device: DiscoveredDevice): Device => ({
+export const defaultMapper = (device: DiscoveredDevice): Device => ({
   deviceId: device.id,
   deviceName: `${device.name}`,
   wired: false,
