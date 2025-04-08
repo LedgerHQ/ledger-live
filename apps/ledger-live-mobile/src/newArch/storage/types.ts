@@ -66,3 +66,11 @@ export interface Storage {
   /** Rollback the migration to AsyncStorage. */
   rollbackMigration(): Promise<void>;
 }
+
+/** Internal state of the {@link Storage}. */
+export interface StorageState {
+  storageType: StorageType;
+}
+
+/** Represents all the available storage types. */
+export type StorageType = "MMKV" | "AsyncStorage";
