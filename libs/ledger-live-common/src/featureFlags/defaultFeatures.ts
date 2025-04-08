@@ -583,6 +583,16 @@ export const DEFAULT_FEATURES: Features = {
   llmSolanaNfts: DEFAULT_FEATURE,
   largemoverLandingpage: DEFAULT_FEATURE,
   llmMmkvMigration: DEFAULT_FEATURE,
+  lldModularDrawer: {
+    ...DEFAULT_FEATURE,
+    params: {
+      add_account: true,
+      earn_flow: true,
+      live_app: true,
+      receive_flow: true,
+      send_flow: true,
+    },
+  },
 };
 
 // Firebase SDK treat JSON values as strings
