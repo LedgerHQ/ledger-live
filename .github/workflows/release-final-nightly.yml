@@ -123,7 +123,7 @@ jobs:
           token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
           method: chat.postMessage
           payload: |
-            channel: "C040D9JMVQ8"
+            channel: "C08JFUEC283"
             text: "[Alert] Nightly Release failed"
             blocks: 
               - type: "section"

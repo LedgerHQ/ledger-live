@@ -11,6 +11,9 @@ jobs:
       NODE_OPTIONS: "--max-old-space-size=7168"
       RELEASE_BRANCH: "release"
     steps:
+      - name: Force fail
+        run: exit 1
+        shell: bash
       - name: generate token
         id: generate-token
         uses: tibdex/github-app-token@v1
@@ -82,3 +85,28 @@ jobs:
           gh pr create --title ":rocket: Release ${{ steps.date.outputs.date }}" -F .github/templates/release.md --base main --head $RELEASE_BRANCH
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+
+  create-release-fail:
+    name: Create Release Failure Reporting
+    needs: create-release
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
+      - name: post to a Slack channel
+        id: slack
+        uses: slackapi/slack-github-action@v2.0.0
+        with:
+          token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
+          method: chat.postMessage
+          payload: |
+            channel: "C08JFUEC283"
+            text: "[Alert] Create Release failed"
+            blocks: 
+              - type: "section"
+                text:
+                  type: "mrkdwn"
+                  text: "*Create Release failed*"
+              - type: "section"
+                text:
+                  type: "mrkdwn"
+                  text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow run>"

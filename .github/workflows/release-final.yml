@@ -35,6 +35,9 @@ jobs:
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
+      - name: Force fail
+        run: exit 1
+        shell: bash
       - name: generate token
         id: generate-token
         uses: tibdex/github-app-token@v1
@@ -165,3 +168,28 @@ jobs:
                 ref: "${{ inputs.ref }}"
               }
             });
+
+  release-fail:
+    name: Release Failure Reporting
+    needs: release
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
+      - name: post to a Slack channel
+        id: slack
+        uses: slackapi/slack-github-action@v2.0.0
+        with:
+          token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
+          method: chat.postMessage
+          payload: |
+            channel: "C08JFUEC283"
+            text: "[Alert] Release failed"
+            blocks: 
+              - type: "section"
+                text:
+                  type: "mrkdwn"
+                  text: "*Release (final) failed*"
+              - type: "section"
+                text:
+                  type: "mrkdwn"
+                  text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow run>"
