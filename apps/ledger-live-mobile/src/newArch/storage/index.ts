@@ -7,12 +7,12 @@ import { STORAGE_TYPE } from "./constants";
 export default createStorage();
 
 /** Creates the global application storage object that implements the {@link Storage} interface. */
-export function createStorage(): Storage {
+export function createStorage(initializer: Initializer = initStorageState): Storage {
   const state: StorageState = {
     storageType: "AsyncStorage",
   };
 
-  initStorageState(state);
+  initializer(state);
   return {
     keys() {
       try {
@@ -95,7 +95,7 @@ export function createStorage(): Storage {
 }
 
 /**
- * Initializes the storage state reference.
+ * Initializes the sorage state reference.
  *
  * @param state
  * The storage state to initialize.
@@ -103,3 +103,6 @@ export function createStorage(): Storage {
 export function initStorageState(state: StorageState): void {
   state.storageType = STORAGE_TYPE.ASYNC_STORAGE;
 }
+
+/** Initializer callback function for {@link createStorage} state. */
+type Initializer = (state: StorageState) => void;
