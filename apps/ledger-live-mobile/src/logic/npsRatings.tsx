@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { add, isBefore, parseISO } from "date-fns";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import storage from "LLM/storage";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { accountsWithPositiveBalanceCountSelector } from "~/reducers/accounts";
 import {
@@ -56,13 +56,13 @@ export type RatingsDataOfUser = {
 const ratingsDataOfUserAsyncStorageKey = "ratingsDataOfUser";
 
 async function getRatingsDataOfUserFromStorage() {
-  const ratingsDataOfUser = await AsyncStorage.getItem(ratingsDataOfUserAsyncStorageKey);
+  const ratingsDataOfUser = (await storage.get(ratingsDataOfUserAsyncStorageKey)) as string | null;
   if (!ratingsDataOfUser) return null;
   return JSON.parse(ratingsDataOfUser);
 }
 
 async function setRatingsDataOfUserInStorage(ratingsDataOfUser: RatingsDataOfUser) {
-  await AsyncStorage.setItem(ratingsDataOfUserAsyncStorageKey, JSON.stringify(ratingsDataOfUser));
+  await storage.save(ratingsDataOfUserAsyncStorageKey, JSON.stringify(ratingsDataOfUser));
 }
 
 const useNpsRatings = () => {

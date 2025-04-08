@@ -3,7 +3,7 @@ import i18next from "i18next";
 import { initReactI18next } from "react-i18next";
 import type { TFunction } from "react-i18next";
 import { getTimeZone } from "react-native-localize";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import storage from "LLM/storage";
 import { I18nManager } from "react-native";
 import RNRestart from "react-native-restart";
 
@@ -115,11 +115,11 @@ export function useLocale() {
 const lastAskedLanguageAvailable = "2022-09-23";
 // To reset os language proposition, change this date !
 export async function hasAnsweredLanguageAvailable() {
-  const memory = await AsyncStorage.getItem("hasAnsweredLanguageAvailable");
+  const memory = await storage.get("hasAnsweredLanguageAvailable");
   return memory === lastAskedLanguageAvailable;
 }
 export async function answerLanguageAvailable() {
-  return AsyncStorage.setItem("hasAnsweredLanguageAvailable", lastAskedLanguageAvailable);
+  return storage.save("hasAnsweredLanguageAvailable", lastAskedLanguageAvailable);
 }
 export const useLanguageAvailableChecked = () => {
   const [checked, setChecked] = useState(true);

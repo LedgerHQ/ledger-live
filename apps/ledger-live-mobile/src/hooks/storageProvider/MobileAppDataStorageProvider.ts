@@ -5,7 +5,7 @@ import {
   isAppStorageType,
   BackupAppDataError,
 } from "@ledgerhq/live-common/device/use-cases/appDataBackup/types";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import storage from "LLM/storage";
 
 /**
  * The storage provider for LLM that implements the StorageProvider interface.
@@ -20,7 +20,7 @@ export class MobileAppDataStorageProvider implements AppDataStorageProvider<AppS
    * @throws {BackupAppDataError} If the data cannot be parsed or has an invalid data type.
    */
   async getItem(key: AppStorageKey): Promise<AppStorageType | null> {
-    const data: string | null = await AsyncStorage.getItem(key);
+    const data: string | null = (await storage.get(key)) as string | null;
     if (!data) {
       return null;
     }
@@ -46,7 +46,7 @@ export class MobileAppDataStorageProvider implements AppDataStorageProvider<AppS
   async setItem(key: AppStorageKey, value: AppStorageType): Promise<void> {
     try {
       const data = JSON.stringify(value);
-      await AsyncStorage.setItem(key, data);
+      await storage.save(key, data);
     } catch (error: unknown) {
       throw new BackupAppDataError("Cannot stringify the data (TypeError).");
     }
@@ -59,6 +59,6 @@ export class MobileAppDataStorageProvider implements AppDataStorageProvider<AppS
    * @returns A promise that resolves when the value has been successfully removed.
    */
   async removeItem(key: AppStorageKey): Promise<void> {
-    await AsyncStorage.removeItem(key);
+    await storage.delete(key);
   }
 }

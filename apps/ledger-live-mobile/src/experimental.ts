@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import Config from "react-native-config";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import storage from "LLM/storage";
 import { concatMap } from "rxjs/operators";
 import { setEnvUnsafe, isEnvDefault, changes } from "@ledgerhq/live-env";
 import type { EnvName } from "@ledgerhq/live-env";
@@ -152,7 +152,7 @@ const storageKey = "experimentalFlags";
 
 export const getStorageEnv = async () => {
   try {
-    const maybeData = await AsyncStorage.getItem(storageKey);
+    const maybeData = (await storage.get(storageKey)) as string;
     return maybeData ? JSON.parse(maybeData) : {};
   } catch (error) {
     logger.critical(error as Error);
@@ -164,7 +164,7 @@ export const setStorageEnvs = async (key: EnvName, val: string) => {
   try {
     const envs = await getStorageEnv();
     envs[key] = val;
-    await AsyncStorage.setItem(storageKey, JSON.stringify(envs));
+    await storage.save(storageKey, JSON.stringify(envs));
   } catch (error) {
     logger.critical(error as Error);
   }

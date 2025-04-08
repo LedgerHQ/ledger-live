@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { Linking, Platform } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { add, isBefore, parseISO } from "date-fns";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import storage from "LLM/storage";
 import messaging from "@react-native-firebase/messaging";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { accountsWithPositiveBalanceCountSelector } from "~/reducers/accounts";
@@ -67,17 +67,16 @@ export type NotificationCategory = {
 const pushNotificationsDataOfUserAsyncStorageKey = "pushNotificationsDataOfUser";
 
 async function getPushNotificationsDataOfUserFromStorage() {
-  const dataOfUser = await AsyncStorage.getItem(pushNotificationsDataOfUserAsyncStorageKey);
+  const dataOfUser = (await storage.get(pushNotificationsDataOfUserAsyncStorageKey)) as
+    | string
+    | null;
   if (!dataOfUser) return null;
 
   return JSON.parse(dataOfUser);
 }
 
 async function setPushNotificationsDataOfUserInStorage(dataOfUser: DataOfUser) {
-  await AsyncStorage.setItem(
-    pushNotificationsDataOfUserAsyncStorageKey,
-    JSON.stringify(dataOfUser),
-  );
+  await storage.save(pushNotificationsDataOfUserAsyncStorageKey, JSON.stringify(dataOfUser));
 }
 
 const getIsNotifEnabled = async () => {
