@@ -5,7 +5,6 @@ import {
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
 } from "@ledgerhq/errors";
-// import "../../../../ledger-live-common/src/__tests__/test-helpers/setup";
 import TransactionModule from "../bridge/transaction";
 import { CeloAllFundsWarning } from "../errors";
 import type { AccountRaw, CurrenciesData, TransactionStatusCommon } from "@ledgerhq/types-live";

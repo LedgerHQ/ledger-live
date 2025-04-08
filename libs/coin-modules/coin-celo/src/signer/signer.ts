@@ -1,5 +1,4 @@
-import type { CeloTx, RLPEncodedTx } from "@celo/connect";
-import { LegacyEncodedTx } from "@celo/wallet-base";
+import type { CeloTx, RLPEncodedTx, LegacyEncodedTx } from "../types";
 import { EvmSignature, EvmSigner } from "@ledgerhq/coin-evm/lib/types/signer";
 import { LedgerEthTransactionResolution } from "@ledgerhq/hw-app-eth/lib/services/types";
 export interface CeloSigner extends EvmSigner {
