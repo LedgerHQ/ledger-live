@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.73.0-next.2
+
+### Minor Changes
+
+- [#9826](https://github.com/LedgerHQ/ledger-live/pull/9826) [`d63165f`](https://github.com/LedgerHQ/ledger-live/commit/d63165f4aa0f60e8b86af1fdf5e22c8febcff5da) Thanks [@beths-ledger](https://github.com/beths-ledger)! - Add custom partner query params to navigation state so that live apps receive them.
+
 ## 3.73.0-next.1
 
 ### Minor Changes
