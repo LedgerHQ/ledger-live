@@ -157,52 +157,52 @@ export function flattenOperationWithInternalsAndNfts(op: Operation): Operation[]
   return ops;
 }
 
-export const OPERATION_TYPE_IN_FAMILY = ["IN", "REWARD", "REWARD_PAYOUT", "WITHDRAW"];
-export const OPERATION_TYPE_OUT_FAMILY = [
-  "OUT",
-  "REVEAL",
-  "CREATE",
-  "FEES",
-  "DELEGATE",
-  "REDELEGATE",
-  "UNDELEGATE",
-  "OPT_IN",
-  "OPT_OUT",
-  "SLASH",
-  "LOCK",
-  "BURN",
-];
-export const OPERATION_TYPE_STAKE_FAMILY = [
-  "FREEZE",
-  "UNFREEZE",
-  "UNDELEGATE_RESOURCE",
-  "WITHDRAW_EXPIRE_UNFREEZE",
-  "LEGACY_UNFREEZE",
-  "VOTE",
-  "BOND",
-  "UNBOND",
-  "WITHDRAW_UNBONDED",
-  "SET_CONTROLLER",
-  "NOMINATE",
-  "CHILL",
-  "REVOKE",
-  "APPROVE",
-  "ACTIVATE",
-  "UNLOCK",
-  "STAKE",
-  "UNSTAKE",
-  "WITHDRAW_UNSTAKED",
-];
-
 export function getOperationAmountNumber(op: Operation): BigNumber {
-  if (OPERATION_TYPE_IN_FAMILY.includes(op.type)) {
-    return op.value;
-  } else if (OPERATION_TYPE_OUT_FAMILY.includes(op.type)) {
-    return op.value.negated();
-  } else if (OPERATION_TYPE_STAKE_FAMILY.includes(op.type)) {
-    return op.fee.negated();
+  switch (op.type) {
+    case "IN":
+    case "REWARD":
+    case "REWARD_PAYOUT":
+    case "WITHDRAW":
+      return op.value;
+
+    case "OUT":
+    case "REVEAL":
+    case "CREATE":
+    case "FEES":
+    case "DELEGATE":
+    case "REDELEGATE":
+    case "UNDELEGATE":
+    case "OPT_IN":
+    case "OPT_OUT":
+    case "SLASH":
+    case "LOCK":
+    case "BURN":
+      return op.value.negated();
+
+    case "FREEZE":
+    case "UNFREEZE":
+    case "UNDELEGATE_RESOURCE":
+    case "WITHDRAW_EXPIRE_UNFREEZE":
+    case "LEGACY_UNFREEZE":
+    case "VOTE":
+    case "BOND":
+    case "UNBOND":
+    case "WITHDRAW_UNBONDED":
+    case "SET_CONTROLLER":
+    case "NOMINATE":
+    case "CHILL":
+    case "REVOKE":
+    case "APPROVE":
+    case "ACTIVATE":
+    case "UNLOCK":
+    case "STAKE":
+    case "UNSTAKE":
+    case "WITHDRAW_UNSTAKED":
+      return op.fee.negated();
+
+    default:
+      return new BigNumber(0);
   }
-  return new BigNumber(0);
 }
 
 export function getOperationAmountNumberWithInternals(op: Operation): BigNumber {
