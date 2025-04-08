@@ -8,7 +8,7 @@ module.exports = {
     "!src/**/*.spec.ts",
     "!src/test/**/*.ts",
   ],
-  coverageReporters: ["json", ["lcov", { pfile: "tron-lcov.info", rojectRoot: "../" }], "text"],
+  coverageReporters: ["json", ["lcov", { file: "tron-lcov.info", rojectRoot: "../" }], "text"],
   testEnvironment: "node",
   testPathIgnorePatterns: ["lib/", "lib-es/", ".*\\.(integ|integration)\\.test\\.[tj]s"],
   reporters: [

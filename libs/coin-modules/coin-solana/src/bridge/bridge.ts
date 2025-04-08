@@ -20,7 +20,7 @@ import { createTransaction } from "../createTransaction";
 import { buildSignOperation } from "../signOperation";
 import { endpointByCurrencyId } from "../utils";
 import { broadcastWithAPI } from "../broadcast";
-import { ChainAPI, Config } from "../api";
+import { ChainAPI, Config } from "../network";
 import { SolanaSigner } from "../signer";
 import resolver from "../hw-getAddress";
 import {

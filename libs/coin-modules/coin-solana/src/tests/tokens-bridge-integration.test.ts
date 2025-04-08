@@ -18,16 +18,15 @@ import {
   SolanaTokenNonTransferable,
 } from "../errors";
 import { encodeAccountIdWithTokenAccountAddress } from "../logic";
-import { ChainAPI, LAST_VALID_BLOCK_HEIGHT_MOCK } from "../api";
+import { ChainAPI, LAST_VALID_BLOCK_HEIGHT_MOCK, LATEST_BLOCKHASH_MOCK } from "../network";
 import getTransactionStatus from "../getTransactionStatus";
 import { prepareTransaction } from "../prepareTransaction";
 import { encodeAccountId } from "@ledgerhq/coin-framework/lib/account/accountId";
-import { LATEST_BLOCKHASH_MOCK } from "../api";
-import { NonTransferableExt, TransferFeeConfigExt } from "../api/chain/account/tokenExtensions";
+import { NonTransferableExt, TransferFeeConfigExt } from "../network/chain/account/tokenExtensions";
 import { PublicKey } from "@solana/web3.js";
 import { ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import { calculateToken2022TransferFees } from "../helpers/token";
-import { PARSED_PROGRAMS } from "../api/chain/program/constants";
+import { PARSED_PROGRAMS } from "../network/chain/program/constants";
 
 // fake addresses
 const testData = {

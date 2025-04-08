@@ -1,5 +1,5 @@
 import { PublicKey } from "@solana/web3.js";
-import { StakeMeta } from "./api/chain/account/stake";
+import { StakeMeta } from "./network/chain/account/stake";
 import { SolanaStake, StakeAction } from "./types";
 import { assertUnreachable } from "./utils";
 

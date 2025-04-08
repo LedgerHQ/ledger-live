@@ -8,7 +8,7 @@ import {
 } from "@ledgerhq/errors";
 import type { Account } from "@ledgerhq/types-live";
 import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
-import { ChainAPI } from "./api";
+import { ChainAPI } from "./network";
 import {
   getMaybeMintAccount,
   getMaybeTokenAccount,
@@ -18,7 +18,7 @@ import {
   getStakeAccountAddressWithSeed,
   getStakeAccountMinimumBalanceForRentExemption,
   ParsedOnChainMintWithInfo,
-} from "./api/chain/web3";
+} from "./network/chain/web3";
 import {
   SolanaAccountNotFunded,
   SolanaTokenAccountFrozen,
@@ -73,9 +73,9 @@ import type {
 import { assertUnreachable } from "./utils";
 import { updateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { estimateFeeAndSpendable, extimateTokenMaxSpendable } from "./estimateMaxSpendable";
-import { MemoTransferExt, TransferFeeConfigExt } from "./api/chain/account/tokenExtensions";
+import { MemoTransferExt, TransferFeeConfigExt } from "./network/chain/account/tokenExtensions";
 import { calculateToken2022TransferFees } from "./helpers/token";
-import { TokenAccountInfo } from "./api/chain/account/token";
+import { TokenAccountInfo } from "./network/chain/account/token";
 
 async function deriveCommandDescriptor(
   mainAccount: SolanaAccount,

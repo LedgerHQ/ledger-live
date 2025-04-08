@@ -1,5 +1,5 @@
 import type { Account, AccountBridge, Operation, SignedOperation } from "@ledgerhq/types-live";
-import { broadcastTron } from "../network";
+import { broadcast as broadcastLogic } from "../logic/broadcast";
 import type { Transaction } from "../types";
 
 const broadcast: AccountBridge<Transaction>["broadcast"] = async ({
@@ -13,7 +13,7 @@ const broadcast: AccountBridge<Transaction>["broadcast"] = async ({
     txID: operation.hash,
     signature: [signature],
   };
-  await broadcastTron(transaction);
+  await broadcastLogic(transaction);
 
   return operation;
 };
