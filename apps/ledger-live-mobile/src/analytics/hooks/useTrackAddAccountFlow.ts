@@ -2,13 +2,7 @@ import { useEffect, useRef } from "react";
 import { CONNECTION_TYPES, HOOKS_TRACKING_LOCATIONS } from "./variables";
 import { track } from "../segment";
 import { Device } from "@ledgerhq/types-devices";
-import {
-  CantOpenDevice,
-  LockedDeviceError,
-  UserRefusedOnDevice,
-  TransportRaceCondition,
-  TransportError,
-} from "@ledgerhq/errors";
+import { CantOpenDevice, LockedDeviceError, UserRefusedOnDevice } from "@ledgerhq/errors";
 import { LedgerError } from "~/types/error";
 
 export type UseTrackAddAccountFlow = {
@@ -51,16 +45,6 @@ export const useTrackAddAccountFlow = ({
       platform: "LLM",
       page: "Add account",
     };
-
-    if (error instanceof TransportRaceCondition) {
-      // transport race condition
-      track("Transport race condition", defaultPayload);
-    }
-
-    if (error instanceof TransportError) {
-      // transport error during add account flow
-      track("Transport error", defaultPayload);
-    }
 
     if (previousRequestOpenApp.current && !requestOpenApp && error instanceof UserRefusedOnDevice) {
       // user refused to open app

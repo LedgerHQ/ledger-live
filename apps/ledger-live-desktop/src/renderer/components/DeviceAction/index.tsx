@@ -87,7 +87,6 @@ import { useTrackExchangeFlow } from "~/renderer/analytics/hooks/useTrackExchang
 import { useTrackSendFlow } from "~/renderer/analytics/hooks/useTrackSendFlow";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 import { useTrackSyncFlow } from "~/renderer/analytics/hooks/useTrackSyncFlow";
-import { useTrackGenericDAppTransactionSend } from "~/renderer/analytics/hooks/useTrackGenericDAppTransactionSend";
 
 export type LedgerError = InstanceType<LedgerErrorConstructor<{ [key: string]: unknown }>>;
 
@@ -260,7 +259,6 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     device,
     error,
     inWrongDeviceForAccount,
-    isLocked,
     isTrackingEnabled: useSelector(trackingEnabledSelector),
   });
 
@@ -279,8 +277,6 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     device,
     error,
     isTrackingEnabled: useSelector(trackingEnabledSelector),
-    isLocked,
-    inWrongDeviceForAccount,
     isRequestOpenAppExchange: requestOpenApp === "Exchange",
   });
 
@@ -291,29 +287,13 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     allowManagerRequested: hookState.allowManagerRequested,
     requestOpenApp,
     isLedgerSyncAppOpen: appAndVersion?.name === "Ledger Sync",
-    isLocked,
     isTrackingEnabled: useSelector(trackingEnabledSelector),
-    inWrongDeviceForAccount,
   });
 
   useTrackSendFlow({
     location: location === HOOKS_TRACKING_LOCATIONS.sendModal ? location : undefined,
     device,
     error,
-    inWrongDeviceForAccount,
-    isLocked,
-    isTrackingEnabled: useSelector(trackingEnabledSelector),
-  });
-
-  useTrackGenericDAppTransactionSend({
-    location:
-      location === HOOKS_TRACKING_LOCATIONS.genericDAppTransactionSend ? location : undefined,
-    device,
-    error,
-    allowManagerRequested: hookState.allowManagerRequested,
-    requestOpenApp,
-    openedAppName: appAndVersion?.name,
-    isLocked,
     inWrongDeviceForAccount,
     isTrackingEnabled: useSelector(trackingEnabledSelector),
   });

@@ -1,12 +1,5 @@
 import { useRef, useEffect } from "react";
-import {
-  UserRefusedAllowManager,
-  UserRefusedOnDevice,
-  LockedDeviceError,
-  CantOpenDevice,
-  TransportError,
-  TransportRaceCondition,
-} from "@ledgerhq/errors";
+import { UserRefusedAllowManager, UserRefusedOnDevice } from "@ledgerhq/errors";
 import { track } from "../segment";
 import { Device } from "@ledgerhq/types-devices";
 import { LedgerError } from "~/renderer/components/DeviceAction";
@@ -24,13 +17,6 @@ export type UseTrackExchangeFlow = {
     | null;
   isTrackingEnabled: boolean;
   isRequestOpenAppExchange: boolean | null;
-  isLocked: boolean | null | undefined;
-  inWrongDeviceForAccount:
-    | {
-        accountName: string;
-      }
-    | null
-    | undefined;
 };
 
 /**
@@ -42,8 +28,6 @@ export type UseTrackExchangeFlow = {
  * @param error - current error state.
  * @param isTrackingEnabled - flag indicating if tracking is enabled.
  * @param isRequestOpenAppExchange - flag indicating if LLD requested to open the exchange app.
- * @param isLocked - flag indicating if the device is locked.
- * @param inWrongDeviceForAccount - error from verifying address.
  */
 export const useTrackExchangeFlow = ({
   location,
@@ -51,8 +35,6 @@ export const useTrackExchangeFlow = ({
   error,
   isTrackingEnabled,
   isRequestOpenAppExchange,
-  isLocked,
-  inWrongDeviceForAccount,
 }: UseTrackExchangeFlow) => {
   const previousIsRequestOpenAppExchange = useRef<boolean | null>(null);
 
@@ -66,11 +48,6 @@ export const useTrackExchangeFlow = ({
       page: "Exchange",
     };
 
-    if (inWrongDeviceForAccount) {
-      // device used is not associated with the account
-      track("Wrong device association", defaultPayload, isTrackingEnabled);
-    }
-
     if ((error as unknown) instanceof UserRefusedOnDevice) {
       // user refused to open exchange app
       track("Open app denied", defaultPayload, isTrackingEnabled);
@@ -79,39 +56,11 @@ export const useTrackExchangeFlow = ({
       track("Secure Channel denied", defaultPayload, isTrackingEnabled);
     }
 
-    if (error instanceof CantOpenDevice) {
-      // device disconnected during swap
-      track("Connection failed", defaultPayload, isTrackingEnabled);
-    }
-
-    if (error instanceof TransportError) {
-      // transport error during swap
-      track("Transport error", defaultPayload, isTrackingEnabled);
-    }
-
-    if (error instanceof TransportRaceCondition) {
-      // transport race condition
-      track("Transport race condition", defaultPayload, isTrackingEnabled);
-    }
-
-    if (isLocked || error instanceof LockedDeviceError) {
-      // device locked during swap
-      track("Device locked", defaultPayload, isTrackingEnabled);
-    }
-
     if (previousIsRequestOpenAppExchange.current === true && isRequestOpenAppExchange === false) {
       // user opened exchange app
       track("Open app performed", defaultPayload, isTrackingEnabled);
     }
 
     previousIsRequestOpenAppExchange.current = isRequestOpenAppExchange;
-  }, [
-    error,
-    location,
-    isTrackingEnabled,
-    device,
-    isRequestOpenAppExchange,
-    isLocked,
-    inWrongDeviceForAccount,
-  ]);
+  }, [error, location, isTrackingEnabled, device, isRequestOpenAppExchange]);
 };
