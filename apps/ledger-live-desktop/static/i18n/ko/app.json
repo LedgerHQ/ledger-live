@@ -1779,7 +1779,7 @@
     },
     "fullNodeReadyInfo" : "비트코인 풀 노드를 이용하여 계정을 추가할 것입니다.",
     "fullNodeConfigure" : "노드 구성",
-    "tokensTip" : "{{token}} ({{ticker}})(은)는 {{tokenType}} 토큰입니다. {{currency}} 계정으로 직접 토큰을 받을 수 있습니다.",
+    "tokensTip" : "{{token}} ({{ticker}})(은)는 {{tokenType}} 토큰입니다.\n {{currency}} 계정에서 직접 토큰을 수령할 수 있습니다.",
     "accountToImportSubtitle_plural" : "기존 계정 추가",
     "selectAll" : "모든 ({{count}}) 선택",
     "unselectAll" : "모든 ({{count}}) 선택 해제",
@@ -2423,8 +2423,8 @@
     },
     "info" : {
       "needMemoTag" : {
-        "title" : "태그/메모를 사용하지 않으시나요?",
-        "description" : "중앙화된 거래소나 수탁 지갑으로 자산을 보낼 때 태그/메모를 추가하지 않으면 자금이 손실됩니다.",
+        "title" : "Need Tag/Memo?",
+        "description" : "Not adding a Tag/Memo when sending funds to a centralized exchange increases the chances of your funds getting lost.",
         "cta.addTag" : "태그 추가",
         "cta.not.addTag" : "태그 사용 안 함",
         "checkbox.label" : "다시 보지 않기"
