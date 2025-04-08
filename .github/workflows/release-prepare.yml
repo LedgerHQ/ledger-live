@@ -15,9 +15,6 @@ jobs:
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
-      - name: Force fail
-        run: exit 1
-        shell: bash
       - name: generate token
         id: generate-token
         uses: tibdex/github-app-token@v1
@@ -109,7 +106,7 @@ jobs:
           token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
           method: chat.postMessage
           payload: |
-            channel: "C08JFUEC283"
+            channel: "C08JQKWS9KK"
             text: "[Alert] Release Preparation failed"
             blocks: 
               - type: "section"
