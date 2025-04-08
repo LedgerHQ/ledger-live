@@ -172,7 +172,7 @@ export const cosmosConfig: CosmosConfig = {
   config_currency_crypto_org: {
     type: "object",
     default: {
-      lcd: "https://cryptocom-api.polkachu.com",
+      lcd: "https://rest.cosmos.directory/cryptoorgchain",
       minGasPrice: 0.025,
       status: {
         type: "active",
