@@ -1,5 +1,11 @@
 # @ledgerhq/live-dmk
 
+## 0.7.0
+
+### Patch Changes
+
+- [#9664](https://github.com/LedgerHQ/ledger-live/pull/9664) [`61c371a`](https://github.com/LedgerHQ/ledger-live/commit/61c371a6e22750cf341d5667c8b6ddefa9d6af57) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Bump up dmk version and disable dmk refresher
+
 ## 0.7.0-hotfix.0
 
 ### Minor Changes

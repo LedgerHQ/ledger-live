@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/web-tools",
-  "version": "0.16.3-hotfix.1",
+  "version": "0.16.3",
   "private": true,
   "browser": {
     "fs": false,
