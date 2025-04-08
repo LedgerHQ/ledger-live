@@ -1,5 +1,40 @@
 # live-mobile
 
+## 3.73.0-nightly.3
+
+### Minor Changes
+
+- [#9812](https://github.com/LedgerHQ/ledger-live/pull/9812) [`eedbdb0`](https://github.com/LedgerHQ/ledger-live/commit/eedbdb0f136d382d67820dea413e07600aa6815d) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: Remove "Enable Analytics" and "Disable Analytics" event - LLM
+
+- [#9451](https://github.com/LedgerHQ/ledger-live/pull/9451) [`c6cb1bd`](https://github.com/LedgerHQ/ledger-live/commit/c6cb1bd2a0768ccbeeee96342dc8b872a620f3ac) Thanks [@may01](https://github.com/may01)! - Add aptos tokens to cryptoassets
+
+### Patch Changes
+
+- Updated dependencies [[`3f8a531`](https://github.com/LedgerHQ/ledger-live/commit/3f8a53196dfb80d084056e0d896e09869c8ff949), [`b580b04`](https://github.com/LedgerHQ/ledger-live/commit/b580b04e02392a706534c2fceba192ae3b6242ef), [`c6cb1bd`](https://github.com/LedgerHQ/ledger-live/commit/c6cb1bd2a0768ccbeeee96342dc8b872a620f3ac)]:
+  - @ledgerhq/types-live@6.66.0-nightly.1
+  - @ledgerhq/errors@6.20.0-nightly.0
+  - @ledgerhq/coin-framework@2.6.0-nightly.2
+  - @ledgerhq/coin-cosmos@0.12.0-nightly.3
+  - @ledgerhq/coin-evm@2.16.0-nightly.2
+  - @ledgerhq/coin-filecoin@1.8.1-nightly.2
+  - @ledgerhq/coin-multiversx@0.4.0-nightly.2
+  - @ledgerhq/coin-stacks@0.7.1-nightly.2
+  - @ledgerhq/domain-service@1.2.25-nightly.1
+  - @ledgerhq/live-countervalues@0.4.7-nightly.2
+  - @ledgerhq/live-countervalues-react@0.2.29-nightly.2
+  - @ledgerhq/live-nft@0.7.1-nightly.2
+  - @ledgerhq/live-nft-react@0.8.1-nightly.2
+  - @ledgerhq/live-wallet@0.10.3-nightly.2
+  - @ledgerhq/live-dmk-mobile@0.2.0-nightly.3
+  - @ledgerhq/ledger-key-ring-protocol@0.5.6-nightly.1
+  - @ledgerhq/devices@8.4.5-nightly.0
+  - @ledgerhq/hw-transport@6.31.5-nightly.0
+  - @ledgerhq/hw-transport-http@6.30.5-nightly.0
+  - @ledgerhq/react-native-hid@6.32.5-nightly.0
+  - @ledgerhq/react-native-hw-transport-ble@6.34.1-nightly.0
+  - @ledgerhq/live-network@2.0.7-nightly.1
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.3.4-nightly.1
+
 ## 3.73.0-nightly.2
 
 ### Minor Changes

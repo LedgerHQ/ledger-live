@@ -1,5 +1,11 @@
 # @ledgerhq/cryptoassets
 
+## 13.15.0-nightly.2
+
+### Minor Changes
+
+- [#9451](https://github.com/LedgerHQ/ledger-live/pull/9451) [`c6cb1bd`](https://github.com/LedgerHQ/ledger-live/commit/c6cb1bd2a0768ccbeeee96342dc8b872a620f3ac) Thanks [@may01](https://github.com/may01)! - Add aptos tokens to cryptoassets
+
 ## 13.15.0-nightly.1
 
 ### Minor Changes

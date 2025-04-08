@@ -1,5 +1,15 @@
 # @ledgerhq/hw-transport-node-hid
 
+## 6.29.6-nightly.0
+
+### Patch Changes
+
+- Updated dependencies [[`c6cb1bd`](https://github.com/LedgerHQ/ledger-live/commit/c6cb1bd2a0768ccbeeee96342dc8b872a620f3ac)]:
+  - @ledgerhq/errors@6.20.0-nightly.0
+  - @ledgerhq/devices@8.4.5-nightly.0
+  - @ledgerhq/hw-transport@6.31.5-nightly.0
+  - @ledgerhq/hw-transport-node-hid-noevents@6.30.6-nightly.0
+
 ## 6.29.5
 
 ### Patch Changes

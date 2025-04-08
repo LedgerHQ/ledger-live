@@ -1,5 +1,17 @@
 # @ledgerhq/coin-bitcoin
 
+## 0.15.0-nightly.2
+
+### Patch Changes
+
+- Updated dependencies [[`3f8a531`](https://github.com/LedgerHQ/ledger-live/commit/3f8a53196dfb80d084056e0d896e09869c8ff949), [`b580b04`](https://github.com/LedgerHQ/ledger-live/commit/b580b04e02392a706534c2fceba192ae3b6242ef), [`c6cb1bd`](https://github.com/LedgerHQ/ledger-live/commit/c6cb1bd2a0768ccbeeee96342dc8b872a620f3ac)]:
+  - @ledgerhq/types-live@6.66.0-nightly.1
+  - @ledgerhq/cryptoassets@13.15.0-nightly.2
+  - @ledgerhq/errors@6.20.0-nightly.0
+  - @ledgerhq/coin-framework@2.6.0-nightly.2
+  - @ledgerhq/devices@8.4.5-nightly.0
+  - @ledgerhq/live-network@2.0.7-nightly.1
+
 ## 0.15.0-nightly.1
 
 ### Patch Changes

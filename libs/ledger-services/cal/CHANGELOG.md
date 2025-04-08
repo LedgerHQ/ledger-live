@@ -1,5 +1,12 @@
 # @ledgerhq/ledger-cal-service
 
+## 0.4.2-nightly.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-network@2.0.7-nightly.1
+
 ## 0.4.2-nightly.0
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # @ledgerhq/types-live
 
+## 6.66.0-nightly.1
+
+### Minor Changes
+
+- [#9817](https://github.com/LedgerHQ/ledger-live/pull/9817) [`3f8a531`](https://github.com/LedgerHQ/ledger-live/commit/3f8a53196dfb80d084056e0d896e09869c8ff949) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: feature flag for large mover landing page
+
+- [#9828](https://github.com/LedgerHQ/ledger-live/pull/9828) [`b580b04`](https://github.com/LedgerHQ/ledger-live/commit/b580b04e02392a706534c2fceba192ae3b6242ef) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add mmkv migration feature flag
+
 ## 6.66.0-nightly.0
 
 ### Minor Changes
