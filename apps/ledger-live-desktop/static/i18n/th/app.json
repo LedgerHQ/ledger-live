@@ -2423,8 +2423,8 @@
     },
     "info" : {
       "needMemoTag" : {
-        "title" : "ไม่ใช้ Tag/Memo?",
-        "description" : "เงินทุนของคุณจะสูญหายไปหากคุณไม่เพิ่ม Tag/Memo เมื่อส่งไปยัง Exchange ที่มีตัวกลางหรือวอลเล็ตที่มีผู้รับฝากทรัพย์สิน",
+        "title" : "Need Tag/Memo?",
+        "description" : "Not adding a Tag/Memo when sending funds to a centralized exchange increases the chances of your funds getting lost.",
         "cta.addTag" : "เพิ่ม Tag",
         "cta.not.addTag" : "ไม่เพิ่ม Tag",
         "checkbox.label" : "ไม่ต้องแสดงรายการนี้อีก"
