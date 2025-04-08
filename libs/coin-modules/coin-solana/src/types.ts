@@ -228,6 +228,7 @@ export type TransactionModel = { commandDescriptor?: CommandDescriptor } & (
 export type Transaction = TransactionCommon & {
   family: "solana";
   model: TransactionModel;
+  raw?: string;
 };
 
 export type TransactionRaw = TransactionCommonRaw & {

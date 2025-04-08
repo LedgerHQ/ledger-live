@@ -1,6 +1,6 @@
 import { SolanaTransaction as WalletAPISolanaTransaction } from "@ledgerhq/wallet-api-core";
 import { GetWalletAPITransactionSignFlowInfos } from "../../wallet-api/types";
-import { Transaction } from "@ledgerhq/coin-solana/types";
+import { Transaction, TransactionModel } from "@ledgerhq/coin-solana/types";
 
 const CAN_EDIT_FEES = false;
 
@@ -12,7 +12,7 @@ const getWalletAPITransactionSignFlowInfos: GetWalletAPITransactionSignFlowInfos
 > = ({ walletApiTransaction, account }) => {
   const liveTx: Transaction = {
     ...walletApiTransaction,
-    model: { ...walletApiTransaction.model, commandDescriptor: undefined },
+    model: { ...walletApiTransaction.model } as TransactionModel,
   };
 
   if (!liveTx.subAccountId && account.type === "TokenAccount") {

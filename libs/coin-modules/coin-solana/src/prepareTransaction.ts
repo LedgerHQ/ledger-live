@@ -78,6 +78,17 @@ import { estimateFeeAndSpendable, extimateTokenMaxSpendable } from "./estimateMa
 import { MemoTransferExt, TransferFeeConfigExt } from "./network/chain/account/tokenExtensions";
 import { calculateToken2022TransferFees } from "./helpers/token";
 import { TokenAccountInfo } from "./network/chain/account/token";
+import {
+  CompiledInstruction,
+  DecodedTransferInstruction,
+  MessageCompiledInstruction,
+  PublicKey,
+  SystemInstruction,
+  SystemProgram,
+  VersionedMessage,
+  VersionedTransaction,
+} from "@solana/web3.js";
+import BigNumber from "bignumber.js";
 
 async function deriveCommandDescriptor(
   mainAccount: SolanaAccount,
@@ -111,11 +122,103 @@ async function deriveCommandDescriptor(
   }
 }
 
+function fromBigIntToBigNumber(bigInt: bigint): BigNumber {
+  return BigNumber(bigInt.toString());
+}
+
+function toSolanaTransaction(serializedTransaction: string): VersionedTransaction {
+  return VersionedTransaction.deserialize(Buffer.from(serializedTransaction, "base64"));
+}
+
+function findInstruction(
+  compiledInstructions: MessageCompiledInstruction[],
+  staticAccountKeys: PublicKey[],
+): MessageCompiledInstruction | undefined {
+  return compiledInstructions.find(instruction => {
+    return (
+      staticAccountKeys[instruction.programIdIndex].toString() ===
+      SystemProgram.programId.toString()
+    );
+  });
+}
+
+function decodeInstruction(
+  message: VersionedMessage,
+  instruction: MessageCompiledInstruction,
+): DecodedTransferInstruction {
+  return SystemInstruction.decodeTransfer({
+    data: Buffer.from(instruction.data),
+    programId: SystemProgram.programId,
+    keys: instruction.accountKeyIndexes.map(index => {
+      return {
+        pubkey: message.staticAccountKeys[index],
+        isSigner: message.isAccountSigner(index),
+        isWritable: message.isAccountWritable(index),
+      };
+    }),
+  });
+}
+
+function buildTransferTransaction(
+  lamports: bigint,
+  fromPubkey: PublicKey,
+  toPubkey: PublicKey,
+  estimatedFees: number | null,
+): Transaction {
+  return {
+    family: "solana",
+    amount: fromBigIntToBigNumber(lamports),
+    recipient: String(toPubkey),
+    model: {
+      kind: "transfer",
+      uiState: {},
+      commandDescriptor: {
+        command: {
+          kind: "transfer",
+          amount: fromBigIntToBigNumber(lamports).toNumber(),
+          sender: String(fromPubkey),
+          recipient: String(toPubkey),
+        },
+        fee: estimatedFees ?? 0,
+        warnings: {},
+        errors: {},
+      },
+    },
+  };
+}
+
+async function toLiveTransaction(
+  api: ChainAPI,
+  serializedTransaction: string,
+): Promise<Transaction> {
+  const solanaTransaction = toSolanaTransaction(serializedTransaction);
+  const message = solanaTransaction.message;
+  const instruction = findInstruction(message.compiledInstructions, message.staticAccountKeys);
+
+  if (!instruction) {
+    throw new Error("No supported instructions found on Solana transaction");
+  }
+
+  const decodedInstruction = decodeInstruction(message, instruction);
+  const estimatedFees = await api.getFeeForMessage(message);
+
+  return buildTransferTransaction(
+    decodedInstruction.lamports,
+    decodedInstruction.fromPubkey,
+    decodedInstruction.toPubkey,
+    estimatedFees,
+  );
+}
+
 const prepareTransaction = async (
   mainAccount: SolanaAccount,
   tx: Transaction,
   api: ChainAPI,
 ): Promise<Transaction> => {
+  if (tx.raw) {
+    return toLiveTransaction(api, tx.raw);
+  }
+
   const txToDeriveFrom = updateModelIfSubAccountIdPresent(tx);
 
   const commandDescriptor = await deriveCommandDescriptor(mainAccount, txToDeriveFrom, api);
