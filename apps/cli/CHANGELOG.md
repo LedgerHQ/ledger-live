@@ -24,6 +24,13 @@
   - @ledgerhq/cryptoassets@13.14.1-next.0
   - @ledgerhq/live-network@2.0.7-next.0
 
+## 24.15.1
+
+### Patch Changes
+
+- Updated dependencies [[`dbb38d2`](https://github.com/LedgerHQ/ledger-live/commit/dbb38d250d2a4df34c2caa65e9d1174f0f018c63)]:
+  - @ledgerhq/live-common@34.29.0
+
 ## 24.15.0
 
 ### Minor Changes

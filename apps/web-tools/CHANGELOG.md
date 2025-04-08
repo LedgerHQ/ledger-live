@@ -1,6 +1,6 @@
 # web-tools
 
-## 0.16.3-next.0
+## 0.16.4-next.0
 
 ### Patch Changes
 
@@ -15,6 +15,13 @@
   - @ledgerhq/ledger-key-ring-protocol@0.5.6-next.0
   - @ledgerhq/hw-ledger-key-ring-protocol@0.3.4-next.0
   - @ledgerhq/cryptoassets@13.14.1-next.0
+
+## 0.16.3
+
+### Patch Changes
+
+- Updated dependencies [[`dbb38d2`](https://github.com/LedgerHQ/ledger-live/commit/dbb38d250d2a4df34c2caa65e9d1174f0f018c63)]:
+  - @ledgerhq/live-common@34.29.0
 
 ## 0.16.2
 

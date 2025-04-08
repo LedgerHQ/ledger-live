@@ -136,6 +136,7 @@ export const scenarioEthereum: Scenario<EvmTransaction, Account> = {
       spawnAnvil("https://ethereum-rpc.publicnode.com"),
     ]);
 
+    // @ts-expect-error - TODO: fix this
     const signerContext: Parameters<typeof resolver>[0] = (deviceId, fn) => fn(new Eth(transport));
 
     setCoinConfig(() => ({

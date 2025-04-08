@@ -72,6 +72,7 @@ export const scenarioBlast: Scenario<EvmTransaction, Account> = {
     ]);
 
     const provider = new providers.StaticJsonRpcProvider("http://127.0.0.1:8545");
+    // @ts-expect-error - TODO: fix this
     const signerContext: Parameters<typeof resolver>[0] = (deviceId, fn) => fn(new Eth(transport));
 
     const lastBlockNumber = await provider.getBlockNumber();

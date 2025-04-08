@@ -1,6 +1,6 @@
 # @ledgerhq/coin-evm
 
-## 2.16.0-next.0
+## 2.17.0-next.0
 
 ### Minor Changes
 
@@ -19,6 +19,12 @@
   - @ledgerhq/evm-tools@1.6.2-next.0
   - @ledgerhq/cryptoassets@13.14.1-next.0
   - @ledgerhq/live-network@2.0.7-next.0
+
+## 2.16.0
+
+### Patch Changes
+
+- [#9664](https://github.com/LedgerHQ/ledger-live/pull/9664) [`3cf359d`](https://github.com/LedgerHQ/ledger-live/commit/3cf359d6f62d6993975f4ab7e643fabdeed0100e) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Use observable instead of promise for signing
 
 ## 2.15.0
 
