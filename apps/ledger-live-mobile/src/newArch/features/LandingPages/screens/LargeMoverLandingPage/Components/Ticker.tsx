@@ -3,11 +3,11 @@ import { Flex, Text } from "@ledgerhq/native-ui";
 import React from "react";
 import CircleCurrencyIcon from "~/components/CircleCurrencyIcon";
 
-type StickyHeaderProps = {
+type TickerProps = {
   currencyId?: string;
 };
 
-export const Ticker: React.FC<StickyHeaderProps> = ({ currencyId = "bitcoin" }) => {
+export const Ticker: React.FC<TickerProps> = ({ currencyId = "bitcoin" }) => {
   const currency = getCryptoCurrencyById(currencyId);
 
   return (
