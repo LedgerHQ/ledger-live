@@ -13,7 +13,6 @@ import {
 import SelectDevice2 from "~/components/SelectDevice2";
 import { ScreenName } from "~/const";
 import { useStartExchangeDeviceAction } from "~/hooks/deviceActions";
-import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 
 type Props = StackNavigatorProps<
   PlatformExchangeNavigatorParamList,
@@ -59,7 +58,6 @@ export default function PlatformStartExchange({ navigation, route }: Props) {
         onClose={onClose}
         onResult={onResult}
         request={request}
-        location={HOOKS_TRACKING_LOCATIONS.swapFlow}
       />
     </SafeAreaView>
   );

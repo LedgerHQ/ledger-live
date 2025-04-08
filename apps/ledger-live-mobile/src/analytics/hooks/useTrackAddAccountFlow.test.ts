@@ -1,13 +1,7 @@
 import { renderHook } from "@testing-library/react-native";
 import { useTrackAddAccountFlow, UseTrackAddAccountFlow } from "./useTrackAddAccountFlow";
 import { track } from "../segment";
-import {
-  UserRefusedOnDevice,
-  CantOpenDevice,
-  LockedDeviceError,
-  TransportRaceCondition,
-  TransportError,
-} from "@ledgerhq/errors";
+import { UserRefusedOnDevice, CantOpenDevice, LockedDeviceError } from "@ledgerhq/errors";
 import { CONNECTION_TYPES, HOOKS_TRACKING_LOCATIONS } from "./variables";
 
 jest.mock("../segment", () => ({
@@ -155,53 +149,16 @@ describe("useTrackAddAccountFlow", () => {
     expect(track).not.toHaveBeenCalled();
   });
 
-  it('should track "Transport race condition" if error is CantOpenDevice', () => {
+  it("should update the allowOpeningGranted bounded queue without tracking when only state changes without error", () => {
     const { rerender } = renderHook(
       (props: UseTrackAddAccountFlow) => useTrackAddAccountFlow(props),
       {
-        initialProps: { ...defaultArgs, requestOpenApp: "Ethereum" },
+        initialProps: { ...defaultArgs, allowOpeningGranted: false },
       },
     );
 
-    rerender({
-      ...defaultArgs,
-      requestOpenApp: "Ethereum",
-      error: new TransportRaceCondition(),
-    });
+    rerender({ ...defaultArgs, allowOpeningGranted: true, error: null });
 
-    expect(track).toHaveBeenCalledWith(
-      "Transport race condition",
-      expect.objectContaining({
-        deviceType: "Europa",
-        connectionType: CONNECTION_TYPES.BLE,
-        platform: "LLM",
-        page: "Add account",
-      }),
-    );
-  });
-
-  it('should track "Connection failed" if error is CantOpenDevice', () => {
-    const { rerender } = renderHook(
-      (props: UseTrackAddAccountFlow) => useTrackAddAccountFlow(props),
-      {
-        initialProps: { ...defaultArgs, requestOpenApp: "Ethereum" },
-      },
-    );
-
-    rerender({
-      ...defaultArgs,
-      requestOpenApp: "Ethereum",
-      error: new TransportError("test", "test"),
-    });
-
-    expect(track).toHaveBeenCalledWith(
-      "Transport error",
-      expect.objectContaining({
-        deviceType: "Europa",
-        connectionType: CONNECTION_TYPES.BLE,
-        platform: "LLM",
-        page: "Add account",
-      }),
-    );
+    expect(track).not.toHaveBeenCalled();
   });
 });
