@@ -1,5 +1,19 @@
 # @ledgerhq/keyring-eth
 
+## 0.2.27
+
+### Patch Changes
+
+- Updated dependencies [[`3cf359d`](https://github.com/LedgerHQ/ledger-live/commit/3cf359d6f62d6993975f4ab7e643fabdeed0100e)]:
+  - @ledgerhq/coin-evm@2.16.0
+
+## 0.2.27-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`3cf359d`](https://github.com/LedgerHQ/ledger-live/commit/3cf359d6f62d6993975f4ab7e643fabdeed0100e)]:
+  - @ledgerhq/coin-evm@2.16.0-hotfix.0
+
 ## 0.2.26
 
 ### Patch Changes

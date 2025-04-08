@@ -3,6 +3,7 @@ import { Account } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { concat, of } from "rxjs";
 import { Transaction as EvmTransaction } from "../../types";
 import { makeAccount } from "../fixtures/common.fixtures";
 import { buildSignOperation } from "../../signOperation";
@@ -52,11 +53,10 @@ const mockSignerContext: SignerContext<EvmSigner> = <T>(
     setLoadConfig: jest.fn(),
     getAddress: jest.fn(),
     clearSignTransaction: () =>
-      Promise.resolve({
-        r: "123",
-        s: "abc",
-        v: "27",
-      }),
+      concat(
+        of({ type: "signer.evm.signing" }),
+        of({ type: "signer.evm.signed", value: { r: "123", s: "abc", v: "27" } }),
+      ),
     signEIP712HashedMessage: jest.fn(),
     signEIP712Message: jest.fn(),
     signPersonalMessage: jest.fn(),

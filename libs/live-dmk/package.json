@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-dmk",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "Ledger Device Management Kit transport module",
   "private": true,
   "license": "Apache-2.0",
@@ -45,7 +45,7 @@
     }
   },
   "dependencies": {
-    "@ledgerhq/device-management-kit": "0.6.4",
+    "@ledgerhq/device-management-kit": "0.6.5",
     "@ledgerhq/device-transport-kit-web-hid": "1.1.0",
     "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/logs": "^6.12.0",
