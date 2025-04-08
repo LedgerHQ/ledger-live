@@ -19,7 +19,7 @@ type Props = {
   /** whether to show a placeholder in case the percent value is not valid */
   fallbackToPercentPlaceholder?: boolean;
   textProperties?: Partial<BaseTextProps>;
-  isLargeMover?: boolean;
+  isPercentSignDisplayed?: boolean;
 };
 
 function Delta({
@@ -31,7 +31,7 @@ function Delta({
   show0Delta,
   fallbackToPercentPlaceholder,
   textProperties,
-  isLargeMover = false,
+  isPercentSignDisplayed = false,
 }: Props) {
   const { t } = useTranslation();
 
@@ -53,7 +53,7 @@ function Delta({
 
   const [color, ArrowIcon, sign] =
     roundedDelta > 0
-      ? ["success.c50", ArrowEvolutionUpMedium, "+"]
+      ? [isPercentSignDisplayed ? "success.c70" : "success.c50", ArrowEvolutionUpMedium, "+"]
       : roundedDelta < 0
         ? ["error.c50", ArrowEvolutionDownMedium, "-"]
         : ["neutral.c70", () => null, "-"];
@@ -81,15 +81,15 @@ function Delta({
       {percent ? <ArrowIcon size={20} color={color} /> : null}
       <View style={percent ? styles.content : null}>
         <Text
-          fontWeight={isLargeMover ? "bold" : "semiBold"}
+          fontWeight={isPercentSignDisplayed ? undefined : "semiBold"}
           variant={"large"}
           color={color}
           {...textProperties}
         >
           {unit && absDelta !== 0 ? (
             <CurrencyUnitValue
-              before={isLargeMover ? sign : `(${sign}`}
-              after={isLargeMover ? "" : ")"}
+              before={isPercentSignDisplayed ? sign : `(${sign}`}
+              after={isPercentSignDisplayed ? "" : ")"}
               unit={unit}
               value={absDelta}
             />
@@ -97,7 +97,7 @@ function Delta({
             `${absDelta.toFixed(0)}%`
           ) : null}
           {range && ` (${t(`time.${range}`)})`}
-          {isLargeMover ? "%" : ""}
+          {isPercentSignDisplayed ? "%" : ""}
         </Text>
       </View>
     </View>

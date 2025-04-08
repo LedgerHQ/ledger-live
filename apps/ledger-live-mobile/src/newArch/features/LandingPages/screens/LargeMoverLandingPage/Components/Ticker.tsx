@@ -4,7 +4,7 @@ import React from "react";
 import CircleCurrencyIcon from "~/components/CircleCurrencyIcon";
 
 type TickerProps = {
-  currencyId?: string;
+  currencyId: string;
 };
 
 export const Ticker: React.FC<TickerProps> = ({ currencyId = "bitcoin" }) => {

@@ -18,39 +18,41 @@ export const PriceAndVariation: React.FC<PriceAndVariationProps> = ({
   priceChangePercentage,
 }) => {
   const counterValueCurrency: Currency = useSelector(counterValueCurrencySelector);
-  const unit = counterValueCurrency.units[0];
   const totalPriceChange = price * (priceChangePercentage.value / 10000);
 
   const getColor = () => {
-    if (priceChangePercentage.value > 0) return "success.c50";
+    if (priceChangePercentage.value > 0) return "success.c70";
     if (priceChangePercentage.value < 0) return "error.c50";
     return "neutral.c100";
   };
   return (
-    <Flex flexDirection="column">
+    <Flex flexDirection="column" alignItems="center" justifyContent="center">
       <Text
         fontWeight="semiBold"
         fontSize="26px"
-        color={"neutral.c100"}
+        color="neutral.c100"
         numberOfLines={1}
         adjustsFontSizeToFit
       >
-        <CurrencyUnitValue unit={unit} value={price} />
+        <CurrencyUnitValue unit={counterValueCurrency.units[0]} value={price} />
       </Text>
-      <Flex flexDirection="row" alignItems="center" marginTop={4}>
-        <Text marginRight={2}>
-          <Delta unit={unit} valueChange={priceChangePercentage} isLargeMover={true} />
-        </Text>
+      <Flex flexDirection="row" alignItems="center" marginTop={3}>
+        <Flex justifyContent="center" alignItems="center" marginRight={"8px"}>
+          <Delta
+            unit={{ ...counterValueCurrency.units[0], code: "" }}
+            valueChange={priceChangePercentage}
+            isPercentSignDisplayed={true}
+          />
+        </Flex>
         <Flex
           background={theme.colors.success.c100}
           borderRadius={6}
           padding={2}
           alignItems="center"
           justifyContent="center"
-          marginBottom={2}
         >
-          <Text fontSize={14} color={getColor()} fontWeight="bold">
-            <CurrencyUnitValue unit={unit} value={totalPriceChange} />
+          <Text variant="large" color={getColor()}>
+            <CurrencyUnitValue unit={counterValueCurrency.units[0]} value={totalPriceChange} />
           </Text>
         </Flex>
       </Flex>
