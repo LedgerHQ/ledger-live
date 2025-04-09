@@ -593,6 +593,8 @@ export const DEFAULT_FEATURES: Features = {
       send_flow: true,
     },
   },
+  lldNewConnectApp: DEFAULT_FEATURE,
+  llmNewConnectApp: DEFAULT_FEATURE,
 };
 
 // Firebase SDK treat JSON values as strings
