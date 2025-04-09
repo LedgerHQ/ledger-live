@@ -5,7 +5,7 @@ import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { AptosAPI } from "../api";
 import { txsToOps } from "./logic";
 import type { AptosAccount } from "../types";
-import { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
+import { Operation, TokenAccount } from "@ledgerhq/types-live";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   decodeTokenAccountId,
@@ -28,7 +28,7 @@ const updatableSubAccountProperties: { name: string; isOps: boolean }[] = [
  * In charge of smartly merging sub accounts while maintaining references as much as possible
  */
 export const mergeSubAccounts = (
-  initialAccount: Account | undefined,
+  initialAccount: AptosAccount | undefined,
   newSubAccounts: TokenAccount[],
 ): Array<TokenAccount> => {
   const oldSubAccounts: Array<TokenAccount> | undefined = initialAccount?.subAccounts;
@@ -125,7 +125,7 @@ export const getSubAccountShape = async (
  * Getting all token related operations in order to provide TokenAccounts
  */
 export const getSubAccounts = async (
-  infos: AccountShapeInfo<Account>,
+  infos: AccountShapeInfo<AptosAccount>,
   address: string,
   accountId: string,
   lastTokenOperations: Operation[],
@@ -156,7 +156,9 @@ export const getSubAccounts = async (
   return Promise.all(subAccountsPromises);
 };
 
-export const getAccountShape: GetAccountShape = async info => {
+export const getAccountShape: GetAccountShape<AptosAccount> = async (
+  info: AccountShapeInfo<AptosAccount>,
+) => {
   const { address, initialAccount, currency, derivationMode, rest } = info;
 
   const publicKey =

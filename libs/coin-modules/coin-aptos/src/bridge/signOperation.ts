@@ -1,4 +1,4 @@
-import type { AptosAccount, Transaction } from "../types";
+import type { AptosAccount, AptosOperation, Transaction } from "../types";
 import { Observable } from "rxjs";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import buildTransaction from "./buildTransaction";
@@ -50,7 +50,7 @@ const buildSignOperation =
           !!transaction.subAccountId && findSubAccountById(account, transaction.subAccountId);
 
         // build optimistic operation
-        const operation: Operation = {
+        const operation: AptosOperation = {
           id: encodeOperationId(accountId, hash, type),
           hash,
           type,

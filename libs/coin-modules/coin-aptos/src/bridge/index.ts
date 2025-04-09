@@ -7,9 +7,9 @@ import {
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import type { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import resolver from "../signer";
-import type { Transaction, TransactionStatus, AptosSigner } from "../types";
+import type { Transaction, TransactionStatus, AptosSigner, AptosAccount } from "../types";
 import getTransactionStatus from "./getTransactionStatus";
 import estimateMaxSpendable from "./estimateMaxSpendable";
 import prepareTransaction from "./prepareTransaction";
@@ -37,7 +37,7 @@ const sync = makeSync({ getAccountShape });
 
 function buildAccountBridge(
   signerContext: SignerContext<AptosSigner>,
-): AccountBridge<Transaction, Account, TransactionStatus> {
+): AccountBridge<Transaction, AptosAccount, TransactionStatus> {
   const getAddress = resolver(signerContext);
 
   const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));
@@ -54,6 +54,8 @@ function buildAccountBridge(
     receive,
     signOperation,
     broadcast,
+    // fromOperationExtraRaw,
+    // toOperationExtraRaw,
   };
 }
 
