@@ -75,6 +75,8 @@ import {
   TestScreenWithDrawerForcingToBeOpened,
   TestScreenWithDrawerRequestingToBeOpened,
 } from "LLM/components/QueuedDrawer/TestScreens";
+import { LargeMoverLandingPage } from "LLM/features/LandingPages/screens/LargeMoverLandingPage";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 const Stack = createStackNavigator<SettingsNavigatorStackParamList>();
 
@@ -84,7 +86,7 @@ export default function SettingsNavigator() {
   const stackNavConfig = useMemo(() => getStackNavigatorConfig(colors), [colors]);
 
   const noNanoBuyNanoWallScreenOptions = useNoNanoBuyNanoWallScreenOptions();
-
+  const isLargeMoverFeatureEnabled = useFeature("largemoverLandingpage")?.enabled;
   return (
     <Stack.Navigator screenOptions={stackNavConfig}>
       <Stack.Screen
@@ -502,6 +504,15 @@ export default function SettingsNavigator() {
           title: "QueuedDrawers (Auto force open)",
         }}
       />
+      {isLargeMoverFeatureEnabled && (
+        <Stack.Screen
+          name={ScreenName.LargeMoverLandingPage}
+          component={LargeMoverLandingPage}
+          options={{
+            title: "Large Mover",
+          }}
+        />
+      )}
     </Stack.Navigator>
   );
 }

@@ -73,6 +73,8 @@ jobs:
     if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile') && !github.event.pull_request.head.repo.fork}}
     uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-e2e-reusable.yml@develop
     secrets: inherit
+    with:
+      use-performance-pool: true
 
   # Tests
   test-libraries:
