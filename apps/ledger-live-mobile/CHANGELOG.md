@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.73.0-next.3
+
+### Minor Changes
+
+- [#9863](https://github.com/LedgerHQ/ledger-live/pull/9863) [`90e3377`](https://github.com/LedgerHQ/ledger-live/commit/90e33775de03782a3c3f391e7706e18070013818) Thanks [@LucasWerey](https://github.com/LucasWerey)! - IOS Splashscreen fix
+
 ## 3.73.0-next.2
 
 ### Minor Changes
