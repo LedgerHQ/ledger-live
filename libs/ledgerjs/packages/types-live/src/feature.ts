@@ -223,6 +223,7 @@ export type Features = CurrencyFeatures & {
   largemoverLandingpage: DefaultFeature;
   llmMmkvMigration: Feature_LlmMmkvMigration;
   lldModularDrawer: Feature_LldModularDrawer;
+  ldmkConnectApp: DefaultFeature;
 };
 
 /**

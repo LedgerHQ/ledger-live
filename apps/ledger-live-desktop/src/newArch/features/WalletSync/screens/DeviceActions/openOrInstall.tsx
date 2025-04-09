@@ -8,14 +8,17 @@ import { createAction } from "@ledgerhq/live-common/hw/actions/app";
 import { TRUSTCHAIN_APP_NAME } from "@ledgerhq/hw-ledger-key-ring-protocol";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 import { DeviceModelId } from "@ledgerhq/devices";
-
-const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectApp);
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 type Props = {
   goNext: (device: Device) => void;
 };
 
 export default function OpenOrInstallTrustChainApp({ goNext }: Props) {
+  const isLdmkConnectAppEnabled = useFeature("ldmkConnectApp")?.enabled ?? false;
+  const action = createAction(
+    getEnv("MOCK") ? mockedEventEmitter : connectApp({ isLdmkConnectAppEnabled }),
+  );
   const request = { appName: TRUSTCHAIN_APP_NAME };
   return (
     <DeviceAction

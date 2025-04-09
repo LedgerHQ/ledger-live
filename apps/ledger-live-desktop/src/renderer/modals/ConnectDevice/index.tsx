@@ -7,8 +7,7 @@ import DeviceAction from "~/renderer/components/DeviceAction";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import { AppResult } from "@ledgerhq/live-common/hw/actions/app";
-
-const appAction = createAction(getEnv("MOCK") ? mockedEventEmitter : connectApp);
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 export type Data = {
   onCancel?: (reason: string) => void;
@@ -17,11 +16,15 @@ export type Data = {
 };
 
 export default function ConnectDevice({ appName = "BOLOS" }: Data) {
+  const isLdmkConnectAppEnabled = useFeature("ldmkConnectApp")?.enabled ?? false;
   const request = useMemo(() => {
     return {
       appName,
     };
   }, [appName]);
+  const appAction = createAction(
+    getEnv("MOCK") ? mockedEventEmitter : connectApp({ isLdmkConnectAppEnabled }),
+  );
 
   return (
     <Modal
