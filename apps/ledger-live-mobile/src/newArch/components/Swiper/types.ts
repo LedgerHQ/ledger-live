@@ -11,4 +11,13 @@ type SwiperComponentProps<T> = {
   cardContainerStyle?: StyleProp<ViewStyle>;
 };
 
-export type { CardWithId, SwiperComponentProps };
+type SwipeValues = { value: number };
+
+type GestureParams = {
+  swipeX: SwipeValues;
+  swipeY: SwipeValues;
+  velocityX: number;
+  velocityY: number;
+};
+
+export type { CardWithId, SwiperComponentProps, GestureParams, SwipeValues };
