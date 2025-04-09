@@ -9,7 +9,7 @@ export default createStorage();
 /** Creates the global application storage object that implements the {@link Storage} interface. */
 export function createStorage(initializer: StorageInitializer = initStorageState): Storage {
   const state: StorageState = {
-    storageType: "AsyncStorage",
+    storageType: STORAGE_TYPE.ASYNC_STORAGE,
   };
 
   initializer(state);
