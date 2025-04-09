@@ -201,6 +201,9 @@ const extraProperties = async (store: AppStore) => {
   const ldmkTransport = analyticsFeatureFlagMethod
     ? analyticsFeatureFlagMethod("ldmkTransport")
     : { enabled: false };
+  const ldmkConnectApp = analyticsFeatureFlagMethod
+    ? analyticsFeatureFlagMethod("ldmkConnectApp")
+    : { enabled: false };
   const deviceInfo = lastDevice
     ? {
         deviceVersion: lastDevice.deviceInfo?.version,
@@ -323,6 +326,7 @@ const extraProperties = async (store: AppStore) => {
     migrationToMMKV,
     tokenWithFunds,
     isLDMKTransportEnabled: ldmkTransport?.enabled,
+    isLDMKConnectAppEnabled: ldmkConnectApp?.enabled,
     stakingCurrenciesEnabled,
     partnerStakingCurrenciesEnabled,
   };
