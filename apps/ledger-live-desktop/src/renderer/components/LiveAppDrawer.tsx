@@ -36,6 +36,7 @@ import { createCustomErrorClass } from "@ledgerhq/errors";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { HOOKS_TRACKING_LOCATIONS } from "../analytics/hooks/variables";
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 const Divider = styled(Box)`
   border: 1px solid ${p => p.theme.colors.palette.divider};
@@ -72,6 +73,7 @@ export const LiveAppDrawer = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const device = useSelector(getCurrentDevice);
+  const isLdmkConnectAppEnabled = useFeature("ldmkConnectApp")?.enabled ?? false;
 
   // @ts-expect-error how to type payload?
   const {
@@ -111,7 +113,7 @@ export const LiveAppDrawer = () => {
 
     const { type, manifest, data } = payload;
 
-    const action = createAction(connectApp, startExchange);
+    const action = createAction(connectApp({ isLdmkConnectAppEnabled }), startExchange);
     switch (type) {
       case "DAPP_INFO":
         return manifest ? (
@@ -216,6 +218,7 @@ export const LiveAppDrawer = () => {
     }
   }, [
     payload,
+    isLdmkConnectAppEnabled,
     t,
     dismissDisclaimerChecked,
     onContinue,

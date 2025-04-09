@@ -11,7 +11,8 @@ import { StepProps } from "../Body";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import { getEnv } from "@ledgerhq/live-env";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
-const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectApp);
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+
 export default function StepConnectDevice({
   account,
   parentAccount,
@@ -20,6 +21,11 @@ export default function StepConnectDevice({
 }: StepProps) {
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
   const tokenCurrency = (account && account.type === "TokenAccount" && account.token) || token;
+  const isLdmkConnectAppEnabled = useFeature("ldmkConnectApp")?.enabled ?? false;
+  const action = createAction(
+    getEnv("MOCK") ? mockedEventEmitter : connectApp({ isLdmkConnectAppEnabled }),
+  );
+
   const request = useMemo(
     () => ({
       account: mainAccount || undefined,

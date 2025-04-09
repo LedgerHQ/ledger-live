@@ -10,6 +10,7 @@ import {
   StartExchangeErrorResult,
   StartExchangeSuccessResult,
 } from "@ledgerhq/live-common/hw/actions/startExchange";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 export type Data = {
   onCancel?: (error: StartExchangeErrorResult) => void;
@@ -23,9 +24,10 @@ export function isStartExchangeData(data: unknown): data is Data {
   return "exchangeType" in data;
 }
 
-const action = createAction(connectApp, startExchange);
-
 const StartExchange = () => {
+  const isLdmkConnectAppEnabled = useFeature("ldmkConnectApp")?.enabled ?? false;
+  const action = createAction(connectApp({ isLdmkConnectAppEnabled }), startExchange);
+
   return (
     <Modal
       name="MODAL_PLATFORM_EXCHANGE_START"
