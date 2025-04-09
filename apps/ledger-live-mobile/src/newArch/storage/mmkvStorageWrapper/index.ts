@@ -1,9 +1,11 @@
-import { MMKV, Mode } from "react-native-mmkv";
+import { MMKV } from "react-native-mmkv";
 import merge from "lodash/merge";
+import { CONFIG_PARAMS } from "./constants";
 
+/** Singleton instance of MMKV storage */
 const mmkv = new MMKV({
-  id: "ledger-live",
-  mode: Mode.SINGLE_PROCESS,
+  id: CONFIG_PARAMS.ID,
+  mode: CONFIG_PARAMS.MODE,
 });
 
 /** MMKV storage wrapper */
