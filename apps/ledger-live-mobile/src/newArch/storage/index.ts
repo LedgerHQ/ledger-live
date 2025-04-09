@@ -27,7 +27,7 @@ export function createStorage(initializer: StorageInitializer = initStorageState
 
     get(key) {
       try {
-        return state.storageType === "MMKV"
+        return state.storageType === STORAGE_TYPE.MMKV
           ? Promise.resolve(mmkvStorageWrapper.get(key))
           : asyncStorageWrapper.get(key);
       } catch (e) {
@@ -38,7 +38,7 @@ export function createStorage(initializer: StorageInitializer = initStorageState
 
     save(key, value) {
       try {
-        return state.storageType === "MMKV"
+        return state.storageType === STORAGE_TYPE.MMKV
           ? Promise.resolve(mmkvStorageWrapper.save(key, value))
           : asyncStorageWrapper.save(key, value);
       } catch (e) {
@@ -49,7 +49,7 @@ export function createStorage(initializer: StorageInitializer = initStorageState
 
     update(key, value) {
       try {
-        return state.storageType === "MMKV"
+        return state.storageType === STORAGE_TYPE.MMKV
           ? Promise.resolve(mmkvStorageWrapper.update(key, value))
           : asyncStorageWrapper.update(key, value);
       } catch (e) {
@@ -60,7 +60,7 @@ export function createStorage(initializer: StorageInitializer = initStorageState
 
     delete(key) {
       try {
-        return state.storageType === "MMKV"
+        return state.storageType === STORAGE_TYPE.MMKV
           ? Promise.resolve(mmkvStorageWrapper.delete(key))
           : asyncStorageWrapper.delete(key);
       } catch (e) {
@@ -71,7 +71,7 @@ export function createStorage(initializer: StorageInitializer = initStorageState
 
     push(key, value) {
       try {
-        return state.storageType === "MMKV"
+        return state.storageType === STORAGE_TYPE.MMKV
           ? Promise.resolve(mmkvStorageWrapper.push(key, value))
           : asyncStorageWrapper.push(key, value);
       } catch (e) {
