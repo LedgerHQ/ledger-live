@@ -20,6 +20,12 @@ describe("estimateFees", () => {
       balance: BigInt("2000000"),
       revealed: false,
     },
+    {
+      // No xpub provided
+      address: "tz2BLK1LbU1bUEj6v7L97U7ZXM5tZWr6vZEr",
+      balance: BigInt("2000000"),
+      revealed: false,
+    },
   ];
 
   it.each(accounts)("returns correct value", async account => {
