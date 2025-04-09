@@ -1,4 +1,4 @@
-import type { Storage, StorageState } from "./types";
+import type { Storage, StorageInitializer, StorageState } from "./types";
 import asyncStorageWrapper from "./asyncStorageWrapper";
 import mmkvStorageWrapper from "./mmkvStorageWrapper";
 import { STORAGE_TYPE } from "./constants";
@@ -7,7 +7,7 @@ import { STORAGE_TYPE } from "./constants";
 export default createStorage();
 
 /** Creates the global application storage object that implements the {@link Storage} interface. */
-export function createStorage(initializer: Initializer = initStorageState): Storage {
+export function createStorage(initializer: StorageInitializer = initStorageState): Storage {
   const state: StorageState = {
     storageType: "AsyncStorage",
   };
@@ -103,6 +103,3 @@ export function createStorage(initializer: Initializer = initStorageState): Stor
 export function initStorageState(state: StorageState): void {
   state.storageType = STORAGE_TYPE.ASYNC_STORAGE;
 }
-
-/** Initializer callback function for {@link createStorage} state. */
-type Initializer = (state: StorageState) => void;

@@ -72,5 +72,8 @@ export interface StorageState {
   storageType: StorageType;
 }
 
+/** Initializer callback function to initialize {@link StorageState} state. */
+export type StorageInitializer = (state: StorageState) => void;
+
 /** Represents all the available storage types. */
 export type StorageType = "MMKV" | "AsyncStorage";
