@@ -16,7 +16,7 @@ export function createStorage(initializer: StorageInitializer = initStorageState
   return {
     keys() {
       try {
-        return state.storageType === "MMKV"
+        return state.storageType === STORAGE_TYPE.MMKV
           ? Promise.resolve(mmkvStorageWrapper.keys())
           : asyncStorageWrapper.keys();
       } catch (e) {
