@@ -236,6 +236,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
     requestOpenApp,
     inWrongDeviceForAccount,
     error,
+    isLocked,
   });
 
   useTrackSendFlow({
@@ -243,6 +244,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
     device: selectedDevice,
     requestOpenApp,
     error,
+    isLocked,
   });
 
   useTrackAddAccountFlow({
@@ -257,7 +259,9 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
     location: location === HOOKS_TRACKING_LOCATIONS.ledgerSyncFlow ? location : undefined,
     device: selectedDevice,
     allowManagerRequested,
+    inWrongDeviceForAccount,
     requestOpenApp,
+    isLocked,
     error,
   });
 
@@ -265,6 +269,8 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
     location: location === HOOKS_TRACKING_LOCATIONS.swapFlow ? location : undefined,
     device: selectedDevice,
     requestOpenApp,
+    isLocked,
+    inWrongDeviceForAccount,
     error,
   });
 
