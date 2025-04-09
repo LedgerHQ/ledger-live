@@ -20,7 +20,7 @@ describe("storage", () => {
   describe("keys", () => {
     let keysMethod: jest.SpyInstance;
     let result: Awaited<ReturnType<typeof asyncStorageWrapper.keys>>;
-    let expectedValue = ["key1", "key2"];
+    const expectedValue = ["key1", "key2"];
 
     describe("with storage type MMKV", () => {
       beforeEach(async () => {
@@ -71,7 +71,7 @@ describe("storage", () => {
   describe("get", () => {
     let getMethod: jest.SpyInstance;
     let result: Awaited<ReturnType<typeof asyncStorageWrapper.get>>;
-    let expectedValue = { value: 1 };
+    const expectedValue = { value: 1 };
 
     describe("with storage type MMKV", () => {
       beforeEach(async () => {
@@ -124,7 +124,7 @@ describe("storage", () => {
 
   describe("save", () => {
     let saveMethod: jest.SpyInstance;
-    let args = ["key", { value: 1 }] as const;
+    const args = ["key", { value: 1 }] as const;
 
     describe("with storage type MMKV", () => {
       beforeEach(async () => {

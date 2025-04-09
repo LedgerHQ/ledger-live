@@ -169,6 +169,7 @@ describe("MMKVStorageWrapper", () => {
 
   describe("delete", () => {
     let deleteMethod: jest.SpyInstance;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     let containsMethod: jest.SpyInstance;
 
     describe("with a single key", () => {

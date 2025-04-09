@@ -226,6 +226,7 @@ describe("AsyncStorageWrapper", () => {
   });
 
   describe("push", () => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     let getMethod: jest.SpyInstance;
     let saveMethod: jest.SpyInstance;
 
