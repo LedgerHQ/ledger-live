@@ -1,5 +1,31 @@
 # live-mobile
 
+## 3.73.0-nightly.4
+
+### Minor Changes
+
+- [#9819](https://github.com/LedgerHQ/ledger-live/pull/9819) [`6f61972`](https://github.com/LedgerHQ/ledger-live/commit/6f619728e200270a674ffb13b10375765b55ae4b) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: Large mover navigator
+
+- [#9852](https://github.com/LedgerHQ/ledger-live/pull/9852) [`843196c`](https://github.com/LedgerHQ/ledger-live/commit/843196cdab5b277ef8c330a7c101ae1a3b6c7d9b) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Square Cards Small UI issues
+
+### Patch Changes
+
+- Updated dependencies [[`6f61972`](https://github.com/LedgerHQ/ledger-live/commit/6f619728e200270a674ffb13b10375765b55ae4b)]:
+  - @ledgerhq/types-live@6.66.0-nightly.2
+  - @ledgerhq/coin-framework@2.6.0-nightly.3
+  - @ledgerhq/coin-cosmos@0.12.0-nightly.4
+  - @ledgerhq/coin-evm@2.16.0-nightly.3
+  - @ledgerhq/coin-filecoin@1.8.1-nightly.3
+  - @ledgerhq/coin-multiversx@0.4.0-nightly.3
+  - @ledgerhq/coin-stacks@0.7.1-nightly.3
+  - @ledgerhq/domain-service@1.2.25-nightly.2
+  - @ledgerhq/live-countervalues@0.4.7-nightly.3
+  - @ledgerhq/live-countervalues-react@0.2.29-nightly.3
+  - @ledgerhq/live-nft@0.7.1-nightly.3
+  - @ledgerhq/live-nft-react@0.8.1-nightly.3
+  - @ledgerhq/live-wallet@0.10.3-nightly.3
+  - @ledgerhq/live-dmk-mobile@0.2.0-nightly.4
+
 ## 3.73.0-nightly.3
 
 ### Minor Changes

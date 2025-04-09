@@ -1,5 +1,46 @@
 ## 34.25.0
 
+## 34.29.0-nightly.4
+
+### Minor Changes
+
+- [#9819](https://github.com/LedgerHQ/ledger-live/pull/9819) [`6f61972`](https://github.com/LedgerHQ/ledger-live/commit/6f619728e200270a674ffb13b10375765b55ae4b) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: Large mover navigator
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@2.6.0-nightly.3
+  - @ledgerhq/coin-algorand@0.9.0-nightly.3
+  - @ledgerhq/coin-aptos@2.0.0-nightly.3
+  - @ledgerhq/coin-bitcoin@0.15.0-nightly.3
+  - @ledgerhq/coin-cardano@0.7.1-nightly.3
+  - @ledgerhq/coin-casper@1.5.3-nightly.3
+  - @ledgerhq/coin-cosmos@0.12.0-nightly.4
+  - @ledgerhq/coin-evm@2.16.0-nightly.3
+  - @ledgerhq/coin-filecoin@1.8.1-nightly.3
+  - @ledgerhq/coin-hedera@1.5.1-nightly.3
+  - @ledgerhq/coin-icon@0.9.1-nightly.3
+  - @ledgerhq/coin-internet_computer@1.6.1-nightly.3
+  - @ledgerhq/coin-multiversx@0.4.0-nightly.3
+  - @ledgerhq/coin-near@0.10.1-nightly.3
+  - @ledgerhq/coin-polkadot@3.2.0-nightly.3
+  - @ledgerhq/coin-solana@0.18.0-nightly.3
+  - @ledgerhq/coin-stacks@0.7.1-nightly.3
+  - @ledgerhq/coin-stellar@2.2.0-nightly.3
+  - @ledgerhq/coin-sui@0.2.1-nightly.3
+  - @ledgerhq/coin-tezos@2.2.0-nightly.3
+  - @ledgerhq/coin-ton@0.7.1-nightly.3
+  - @ledgerhq/coin-tron@0.8.0-nightly.3
+  - @ledgerhq/coin-vechain@2.6.1-nightly.3
+  - @ledgerhq/coin-xrp@3.2.0-nightly.3
+  - @ledgerhq/device-core@0.4.20-nightly.2
+  - @ledgerhq/hw-app-eth@6.44.1-nightly.2
+  - @ledgerhq/live-countervalues@0.4.7-nightly.3
+  - @ledgerhq/live-countervalues-react@0.2.29-nightly.3
+  - @ledgerhq/live-nft@0.7.1-nightly.3
+  - @ledgerhq/live-signer-evm@0.2.3-nightly.3
+  - @ledgerhq/live-wallet@0.10.3-nightly.3
+
 ## 34.29.0-nightly.3
 
 ### Minor Changes

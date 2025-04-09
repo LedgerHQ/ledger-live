@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.66.0-nightly.2
+
+### Minor Changes
+
+- [#9819](https://github.com/LedgerHQ/ledger-live/pull/9819) [`6f61972`](https://github.com/LedgerHQ/ledger-live/commit/6f619728e200270a674ffb13b10375765b55ae4b) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: Large mover navigator
+
 ## 6.66.0-nightly.1
 
 ### Minor Changes

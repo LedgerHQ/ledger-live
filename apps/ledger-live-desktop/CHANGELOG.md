@@ -1,5 +1,34 @@
 # ledger-live-desktop
 
+## 2.107.0-nightly.4
+
+### Minor Changes
+
+- [#9810](https://github.com/LedgerHQ/ledger-live/pull/9810) [`f341360`](https://github.com/LedgerHQ/ledger-live/commit/f341360bea9fd8c1350a09212d6a88a4458b2e8e) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: LLD - Onboarding update CTA to buy a device
+
+- [#9838](https://github.com/LedgerHQ/ledger-live/pull/9838) [`2633a97`](https://github.com/LedgerHQ/ledger-live/commit/2633a9715dde9846b6507910c82653ef8faa78cf) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - Ledger Sync Default Device Model animation changed from NanoS to Stax
+
+- [#9806](https://github.com/LedgerHQ/ledger-live/pull/9806) [`3731e78`](https://github.com/LedgerHQ/ledger-live/commit/3731e78dade98005be6c9c1c99ea8e28528052dc) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: LLD - Update Fees Copy on Send screen step 2
+
+### Patch Changes
+
+- Updated dependencies [[`6f61972`](https://github.com/LedgerHQ/ledger-live/commit/6f619728e200270a674ffb13b10375765b55ae4b)]:
+  - @ledgerhq/types-live@6.66.0-nightly.2
+  - @ledgerhq/live-common@34.29.0-nightly.4
+  - @ledgerhq/coin-framework@2.6.0-nightly.3
+  - @ledgerhq/coin-aptos@2.0.0-nightly.3
+  - @ledgerhq/coin-bitcoin@0.15.0-nightly.3
+  - @ledgerhq/coin-cosmos@0.12.0-nightly.4
+  - @ledgerhq/coin-evm@2.16.0-nightly.3
+  - @ledgerhq/coin-filecoin@1.8.1-nightly.3
+  - @ledgerhq/domain-service@1.2.25-nightly.2
+  - @ledgerhq/live-countervalues@0.4.7-nightly.3
+  - @ledgerhq/live-countervalues-react@0.2.29-nightly.3
+  - @ledgerhq/live-nft@0.7.1-nightly.3
+  - @ledgerhq/live-nft-react@0.8.1-nightly.3
+  - @ledgerhq/live-wallet@0.10.3-nightly.3
+  - @ledgerhq/live-dmk-desktop@0.2.0-nightly.4
+
 ## 2.107.0-nightly.3
 
 ### Minor Changes
