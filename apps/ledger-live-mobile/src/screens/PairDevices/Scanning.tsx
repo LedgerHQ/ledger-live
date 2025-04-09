@@ -16,7 +16,7 @@ import { TrackScreen } from "~/analytics";
 import DeviceItem from "~/components/SelectDevice/DeviceItem";
 import ScanningHeader from "./ScanningHeader";
 import Config from "react-native-config";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useLdmkFeatureEnabled } from "@ledgerhq/live-dmk-mobile";
 
 type Props = {
   onSelect: (device: TransportBleDevice, deviceMeta?: DeviceMeta) => Promise<void>;
@@ -31,7 +31,7 @@ export default function Scanning({ onTimeout, onError, onSelect, deviceModelIds 
   const knownDevices = useSelector(bleDevicesSelector);
   const [devices, setDevices] = useState<TransportBleDevice[]>([]);
 
-  const isLDMKEnabled = Boolean(useFeature("ldmkTransport")?.enabled);
+  const isLDMKEnabled = useLdmkFeatureEnabled();
 
   const filteredDevices = useMemo(() => {
     if (!deviceModelIds) return devices;
