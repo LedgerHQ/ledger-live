@@ -147,11 +147,19 @@ for (const { swap, xrayTicket } of swaps) {
       async ({ app, electronApp }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-        await performSwapUntilQuoteSelectionStep(app, electronApp, swap);
+        const minAmount = ((await app.swap.getMinimumAmount(swap)) ?? 0).toString();
+
+        await performSwapUntilQuoteSelectionStep(app, electronApp, swap, minAmount);
         const selectedProvider = await app.swap.selectExchange(electronApp);
 
-        await performSwapUntilDeviceVerificationStep(app, electronApp, swap, selectedProvider);
-        await app.speculos.verifyAmountsAndAcceptSwap(swap);
+        await performSwapUntilDeviceVerificationStep(
+          app,
+          electronApp,
+          swap,
+          selectedProvider,
+          minAmount,
+        );
+        await app.speculos.verifyAmountsAndAcceptSwap(swap, minAmount);
         await app.swapDrawer.verifyExchangeCompletedTextContent(swap.accountToCredit.currency.name);
       },
     );
@@ -203,7 +211,10 @@ for (const { swap, xrayTicket, provider } of checkProviders) {
       async ({ app, electronApp }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-        await performSwapUntilQuoteSelectionStep(app, electronApp, swap);
+        const minAmount = ((await app.swap.getMinimumAmount(swap)) ?? 0).toString();
+
+        await performSwapUntilQuoteSelectionStep(app, electronApp, swap, minAmount);
+
         await app.swap.selectSpecificprovider(provider.uiName, electronApp);
         await app.swap.goToProviderLiveApp(electronApp, provider.uiName);
         await app.swap.verifyProviderURL(electronApp, provider.uiName, swap);
@@ -237,7 +248,9 @@ test.describe("Swap - Check Best Offer", () => {
     async ({ app, electronApp }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-      await performSwapUntilQuoteSelectionStep(app, electronApp, swap);
+      const minAmount = ((await app.swap.getMinimumAmount(swap)) ?? 0).toString();
+
+      await performSwapUntilQuoteSelectionStep(app, electronApp, swap, minAmount);
       await app.swap.selectExchange(electronApp);
       await app.swap.checkBestOffer(electronApp);
     },
@@ -281,7 +294,8 @@ test.describe("Swap - Default currency when landing on swap", () => {
     },
     async ({ app, electronApp }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-      await performSwapUntilQuoteSelectionStep(app, electronApp, swap);
+      const minAmount = ((await app.swap.getMinimumAmount(swap)) ?? 0).toString();
+      await performSwapUntilQuoteSelectionStep(app, electronApp, swap, minAmount);
       await app.layout.goToAccounts();
       await app.swap.goAndWaitForSwapToBeReady(
         () => app.layout.goToSwap(),
@@ -317,7 +331,9 @@ test.describe("Swap - Rejected on device", () => {
     async ({ app, electronApp }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-      await performSwapUntilQuoteSelectionStep(app, electronApp, rejectedSwap);
+      const minAmount = ((await app.swap.getMinimumAmount(rejectedSwap)) ?? 0).toString();
+
+      await performSwapUntilQuoteSelectionStep(app, electronApp, rejectedSwap, minAmount);
       const selectedProvider = await app.swap.selectExchange(electronApp);
 
       await performSwapUntilDeviceVerificationStep(
@@ -325,8 +341,9 @@ test.describe("Swap - Rejected on device", () => {
         electronApp,
         rejectedSwap,
         selectedProvider,
+        minAmount,
       );
-      await app.speculos.verifyAmountsAndRejectSwap(rejectedSwap);
+      await app.speculos.verifyAmountsAndRejectSwap(rejectedSwap, minAmount);
       await app.swapDrawer.verifyExchangeErrorTextContent("Operation denied on device");
     },
   );
@@ -356,7 +373,9 @@ test.describe("Swap - Landing page", () => {
     async ({ app, electronApp }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-      await performSwapUntilQuoteSelectionStep(app, electronApp, rejectedSwap);
+      const minAmount = ((await app.swap.getMinimumAmount(rejectedSwap)) ?? 0).toString();
+
+      await performSwapUntilQuoteSelectionStep(app, electronApp, rejectedSwap, minAmount);
       const providerList = await app.swap.getProviderList(electronApp);
       await app.swap.checkQuotesContainerInfos(electronApp, providerList);
       await app.swap.checkBestOffer(electronApp);
@@ -412,7 +431,9 @@ for (const { swap, xrayTicket, userData, errorMessage } of swapWithDifferentSeed
       async ({ app, electronApp }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-        await performSwapUntilQuoteSelectionStep(app, electronApp, swap);
+        const minAmount = ((await app.swap.getMinimumAmount(swap)) ?? 0).toString();
+
+        await performSwapUntilQuoteSelectionStep(app, electronApp, swap, minAmount);
         const selectedProvider = await app.swap.selectExchange(electronApp);
 
         await app.swap.clickExchangeButton(electronApp, selectedProvider);
@@ -492,7 +513,8 @@ for (const swap of tooLowAmountForQuoteSwaps) {
       },
       async ({ app, electronApp }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-        await performSwapUntilQuoteSelectionStep(app, electronApp, swap.swap);
+
+        await performSwapUntilQuoteSelectionStep(app, electronApp, swap.swap, swap.swap.amount);
         if (swap.quotesVisible) {
           await app.swap.checkQuotes(electronApp);
           await app.swap.selectExchange(electronApp);
@@ -643,6 +665,7 @@ async function performSwapUntilQuoteSelectionStep(
   app: Application,
   electronApp: ElectronApplication,
   swap: Swap,
+  minAmount: string,
 ) {
   await app.swap.goAndWaitForSwapToBeReady(() => app.layout.goToSwap());
 
@@ -650,7 +673,7 @@ async function performSwapUntilQuoteSelectionStep(
   await app.swapDrawer.selectAccountByName(swap.accountToDebit);
   await app.swap.selectAssetTo(electronApp, swap.accountToCredit.currency.name);
   await app.swapDrawer.selectAccountByName(swap.accountToCredit);
-  await app.swap.fillInOriginCurrencyAmount(electronApp, swap.amount);
+  await app.swap.fillInOriginCurrencyAmount(electronApp, minAmount);
 }
 
 async function performSwapUntilDeviceVerificationStep(
@@ -658,6 +681,7 @@ async function performSwapUntilDeviceVerificationStep(
   electronApp: ElectronApplication,
   swap: Swap,
   selectedProvider: any,
+  amount: string,
 ) {
   await app.swap.clickExchangeButton(electronApp, selectedProvider);
 
@@ -668,7 +692,7 @@ async function performSwapUntilDeviceVerificationStep(
   swap.setFeesAmount(fees);
 
   await app.swapDrawer.verifyAmountToReceive(amountTo);
-  await app.swapDrawer.verifyAmountSent(swap.amount, swap.accountToDebit.currency.ticker);
+  await app.swapDrawer.verifyAmountSent(amount.toString(), swap.accountToDebit.currency.ticker);
   await app.swapDrawer.verifySourceAccount(swap.accountToDebit.currency.name);
   await app.swapDrawer.verifyTargetCurrency(swap.accountToCredit.currency.name);
   await app.swapDrawer.verifyProvider(selectedProvider);

@@ -20087,8 +20087,8 @@
           "pendingOperations": [],
           "currencyId": "solana",
           "lastSyncDate": "2024-08-01T09:07:02.214Z",
-          "balance": "20000000",
-          "spendableBalance": "11119109120",
+          "balance": "50051000",
+          "spendableBalance": "49160120",
           "balanceHistoryCache": {
             "HOUR": {
               "balances": [

@@ -72,6 +72,7 @@
     "src/exchange/swap/webApp/index.ts",
     "src/e2e/index.ts",
     "src/e2e/speculos.ts",
+    "src/e2e/swap.ts",
     "src/explorer.ts",
     "src/explorers.ts",
     "src/families/algorand/logic.ts",

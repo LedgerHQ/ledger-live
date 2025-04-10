@@ -43,13 +43,13 @@ export class SpeculosPage extends AppPage {
   }
 
   @step("Verify amounts and accept swap")
-  async verifyAmountsAndAcceptSwap(swap: Swap) {
-    await verifyAmountsAndAcceptSwap(swap);
+  async verifyAmountsAndAcceptSwap(swap: Swap, amount: string) {
+    await verifyAmountsAndAcceptSwap(swap, amount);
   }
 
   @step("Verify amounts and reject swap")
-  async verifyAmountsAndRejectSwap(swap: Swap) {
-    await verifyAmountsAndRejectSwap(swap);
+  async verifyAmountsAndRejectSwap(swap: Swap, amount: string) {
+    await verifyAmountsAndRejectSwap(swap, amount);
   }
 
   @step("Activate expert mode")

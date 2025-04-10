@@ -6,9 +6,10 @@ import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { ChooseAssetDrawer } from "./drawer/choose.asset.drawer";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Swap";
 import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
+import fs from "fs/promises";
 import * as path from "path";
 import { FileUtils } from "../utils/fileUtils";
-import fs from "fs/promises";
+import { getMinimumSwapAmount } from "@ledgerhq/live-common/e2e/swap";
 
 export class SwapPage extends AppPage {
   // Swap Amount and Currency components
@@ -419,5 +420,11 @@ export class SwapPage extends AppPage {
     expect(fileContents).toContain(swap.accountToDebit.address);
     expect(fileContents).toContain(swap.accountToCredit.accountName);
     expect(fileContents).toContain(swap.accountToCredit.address);
+  }
+
+  @step("Check minimum amount for swap")
+  async getMinimumAmount(swap: Swap) {
+    const minAmount = await getMinimumSwapAmount(swap);
+    return minAmount;
   }
 }
