@@ -41,11 +41,13 @@ export async function startUntrustedHashTransactionInput(
   additionals: Array<string> = [],
   useTrustedInputForSegwit = false,
 ): Promise<any> {
+  const isZcash = additionals.includes("zcash");
+  const zCashConsensusBranchId = transaction.consensusBranchId || Buffer.alloc(0);
   let data = Buffer.concat([
     transaction.version,
     transaction.timestamp || Buffer.alloc(0),
     transaction.nVersionGroupId || Buffer.alloc(0),
-    transaction.consensusBranchId || Buffer.alloc(0),
+    isZcash ? zCashConsensusBranchId : Buffer.alloc(0),
     createVarint(transaction.inputs.length),
   ]);
   await startUntrustedHashTransactionInputRaw(

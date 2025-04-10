@@ -73,13 +73,17 @@ export async function getTrustedInput(
 
   const processWholeScriptBlock = block => getTrustedInputRaw(transport, block);
 
+  const isZcash = additionals.includes("zcash");
+  // NOTE: this isn't necessary as consensusBranchId is only set when the transaction is a zcash tx
+  // but better safe than sorry
+  const zCashConsensusBranchId = transaction.consensusBranchId || Buffer.alloc(0);
   await getTrustedInputRaw(
     transport,
     Buffer.concat([
       transaction.version,
       transaction.timestamp || Buffer.alloc(0),
       transaction.nVersionGroupId || Buffer.alloc(0),
-      transaction.consensusBranchId || Buffer.alloc(0),
+      isZcash ? zCashConsensusBranchId : Buffer.alloc(0),
       createVarint(inputs.length),
     ]),
     indexLookup,
