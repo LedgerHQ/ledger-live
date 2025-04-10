@@ -4,6 +4,7 @@ on:
   pull_request:
     branches-ignore:
       - 'smartling-content-updated*'
+      - 'smartling-translation-completed*'
 
 concurrency:
   group: ci-integration-${{ github.ref }}
