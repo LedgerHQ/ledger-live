@@ -4,6 +4,8 @@
   },
   "common" : {
     "cancel" : "キャンセル",
+    "copy" : "コピー",
+    "copied" : "コピー済み",
     "apply" : "適用",
     "seeAll" : "すべて表示",
     "seeAllWithNumber" : "すべて表示（{{number}}）",
@@ -100,7 +102,8 @@
       "times" : "x{{ value }}"
     },
     "quote" : "見積もり",
-    "tryAgain" : "再試行"
+    "tryAgain" : "再試行",
+    "ldmkEnabled" : "LDMK transport enabled"
   },
   "errors" : {
     "ReplacementTransactionUnderpriced" : {
@@ -4047,7 +4050,9 @@
       "desc" : "アカウントの追加をキャンセルしますか？",
       "v2" : {
         "title" : "アカウントの追加を取り消しますか？",
-        "desc" : "Ledger Liveにアカウントは追加されません。"
+        "desc" : "Ledger Liveにアカウントは追加されません。",
+        "continue" : "さらに追加する",
+        "cancel" : "キャンセル"
       }
     },
     "imported" : "資産が正常に追加されました",
@@ -4085,7 +4090,7 @@
       "title" : "トークンの追加",
       "createParentCurrencyAccount" : "{{parrentCurrencyName}} アカウントを追加",
       "generic" : {
-        "disclaimer" : "{{token}} ({{ticker}})は{{tokenType}}トークンです。\n {{currency}}アカウントで直接トークンを受け取ることができます。",
+        "disclaimer" : "{{token}} ({{ticker}}) は、{{tokenType}}トークンです。\n{{currency}}アカウントで直接トークンを受け取ることができます。",
         "learnMore" : "{{tokenType}}の詳細"
       }
     },

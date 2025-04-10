@@ -4,6 +4,8 @@
   },
   "common" : {
     "cancel" : "إلغاء",
+    "copy" : "نسخ",
+    "copied" : "تم النسخ",
     "apply" : "تقديم",
     "seeAll" : "رؤية الكل",
     "seeAllWithNumber" : "رؤية الكل ({{number}})",
@@ -100,7 +102,8 @@
       "times" : "x{{ value }}"
     },
     "quote" : "عرض أسعار",
-    "tryAgain" : "إعادة المحاولة"
+    "tryAgain" : "إعادة المحاولة",
+    "ldmkEnabled" : "LDMK transport enabled"
   },
   "errors" : {
     "ReplacementTransactionUnderpriced" : {
@@ -4047,7 +4050,9 @@
       "desc" : "هل أنت متأكد أنك تريد إلغاء إضافة حسابات؟",
       "v2" : {
         "title" : "إلغاء إضافة حساب؟",
-        "desc" : "لن يتم إضافة أي حساب إلى Ledger Live."
+        "desc" : "لن يتم إضافة أي حساب إلى Ledger Live.",
+        "continue" : "متابعة الإضافة",
+        "cancel" : "إلغاء"
       }
     },
     "imported" : "تمت إضافة الأصل بنجاح",
@@ -4085,7 +4090,7 @@
       "title" : "إضافة رمز توكن",
       "createParentCurrencyAccount" : "أضف حساب {{parrentCurrencyName}}",
       "generic" : {
-        "disclaimer" : "{{token}} ({{ticker}}) هو رمز {{tokenType}}.\nيمكنك تلقي رموز التوكن مباشرةً على حساب {{currency}}.",
+        "disclaimer" : "{{token}} ({{ticker}}) هو رمز {{tokenType}}.\nيمكنك تلقي رموز التوكن مباشرةً في حساب {{currency}}.",
         "learnMore" : "تعرف على المزيد عن {{tokenType}}"
       }
     },

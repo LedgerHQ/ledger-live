@@ -2423,8 +2423,8 @@
     },
     "info" : {
       "needMemoTag" : {
-        "title" : "Etiket/Memo eklenmesin mi?",
-        "description" : "Fonlarınızı herhangi bir merkezî borsaya veya custodial cüzdana gönderirken bir Etiket/Memo eklemezseniz fonlarınız kaybolacaktır.",
+        "title" : "Need Tag/Memo?",
+        "description" : "Not adding a Tag/Memo when sending funds to a centralized exchange increases the chances of your funds getting lost.",
         "cta.addTag" : "Etiket ekle",
         "cta.not.addTag" : "Etiket ekleme",
         "checkbox.label" : "Bunu bir daha gösterme."

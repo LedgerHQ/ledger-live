@@ -2423,8 +2423,8 @@
     },
     "info" : {
       "needMemoTag" : {
-        "title" : "Не использовать тег примечания/Memo?",
-        "description" : "Если не указать тег примечания/Memo при отправке криптовалюты на централизованную биржу или кастодиальный кошелёк, монеты будут потеряны.",
+        "title" : "Need Tag/Memo?",
+        "description" : "Not adding a Tag/Memo when sending funds to a centralized exchange increases the chances of your funds getting lost.",
         "cta.addTag" : "Указать Memo",
         "cta.not.addTag" : "Не указывать",
         "checkbox.label" : "Больше не показывать."
