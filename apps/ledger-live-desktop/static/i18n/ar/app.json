@@ -1779,7 +1779,7 @@
     },
     "fullNodeReadyInfo" : "ستتم إضافة الحسابات باستخدام عقدتك الكاملة لبيتكوين.",
     "fullNodeConfigure" : "تكوين العقدة",
-    "tokensTip" : "{{token}} ({{ticker}}) هو رمز {{tokenType}}. يمكنك تلقي رموز التوكن مباشرةً على حساب {{currency}}.",
+    "tokensTip" : "{{token}} ({{ticker}}) هو رمز {{tokenType}}. يمكنك تلقي رموز التوكن مباشرةً في حساب {{currency}}.",
     "accountToImportSubtitle_plural" : "إضافة حسابات موجودة",
     "selectAll" : "اختر الكل ({{count}})",
     "unselectAll" : "إلغاء اختيار الكل ({{count}})",
@@ -2390,7 +2390,7 @@
         "ethereumPriorityFee" : "الحد الأقصى لرسوم الأولوية ({{unitName}})",
         "nextBlock" : "الكتلة التالية",
         "suggested" : "مُقترح",
-        "unitPerByte" : "{{unit}} لكل بايت",
+        "unitVByte" : "{{unit}}/بايت افتراضي (vbyte)",
         "nft" : "NFT",
         "nftQuantity" : "الكمية"
       },
@@ -2423,8 +2423,8 @@
     },
     "info" : {
       "needMemoTag" : {
-        "title" : "لا تستخدم علامة/ملاحظة (تسمية الوجهة)؟",
-        "description" : "أموالك سوف تُفقَد إذا لم تقم بإضافة علامة/ملاحظة (تسمية الوجهة) عند إرسالها إلى أي منصة تداول مركزية أو محفظة وصاية.",
+        "title" : "تحتاج إلى علامة/ملاحظة (تسمية الوجهة)؟",
+        "description" : "عدم إضافة علامة/ملاحظة (تسمية الوجهة) عند إرسال الأموال إلى منصة تداول مركزية يزيد من احتمالات ضياع أموالك.",
         "cta.addTag" : "إضافة علامة",
         "cta.not.addTag" : "لا تضف علامة",
         "checkbox.label" : "لا تظهر هذا مرةً أخرى."
@@ -4834,7 +4834,7 @@
         "description" : "إدارة وشراء وتنمية أصولك المشفرة رموزك غير القابلة للاستبدال بأمان على Ledger Live.",
         "nextButton" : "بدء الاستخدام",
         "noDevice" : "ليس لديك جهاز؟",
-        "buyLink" : "ليس لديك جهاز؟ قم بشراء Ledger Nano X",
+        "buyLink" : "ليس لديك جهاز؟ شراء Ledger",
         "byTapping" : "بالضغط على \"Get Started (بدء الاستخدام)\" أنت توافق على وتقبل",
         "termsAndConditions" : "الشروط والأحكام",
         "and" : "و",

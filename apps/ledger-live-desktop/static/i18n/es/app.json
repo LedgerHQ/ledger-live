@@ -2390,7 +2390,7 @@
         "ethereumPriorityFee" : "Tarifa de prioridad máxima ({{unitName}})",
         "nextBlock" : "Siguiente bloque",
         "suggested" : "Sugerida",
-        "unitPerByte" : "{{unit}} por byte",
+        "unitVByte" : "{{unit}}/vbyte",
         "nft" : "NFT",
         "nftQuantity" : "Cantidad"
       },
@@ -2423,8 +2423,8 @@
     },
     "info" : {
       "needMemoTag" : {
-        "title" : "¿No vas a usar una nota/memo?",
-        "description" : "Tus fondos se perderán si no agregas una etiqueta/memo al enviarlos a un exchange centralizado o una billetera con custodia.",
+        "title" : "¿Necesitas una etiqueta o memo?",
+        "description" : "No incluir una etiqueta o memo cuando envías fondos a un exchange centralizado aumenta las probabilidades de perder tus fondos.",
         "cta.addTag" : "Agregar etiqueta",
         "cta.not.addTag" : "No agregar etiqueta",
         "checkbox.label" : "No mostrar esto de nuevo."
@@ -4834,7 +4834,7 @@
         "description" : "Gestiona, compra y rentabiliza tus cripto y NFTs con seguridad desde Ledger Live",
         "nextButton" : "Comenzar",
         "noDevice" : "¿No tienes un dispositivo?",
-        "buyLink" : "¿No tienes un dispositivo? Compra un Ledger Nano X",
+        "buyLink" : "¿No tienes un dispositivo? Compra un Ledger",
         "byTapping" : "Al tocar “Comenzar”, otorgas tu consentimiento y aceptas nuestros",
         "termsAndConditions" : "Términos y condiciones",
         "and" : "y",
