@@ -2423,8 +2423,8 @@
     },
     "info" : {
       "needMemoTag" : {
-        "title" : "不使用标签/备忘标签？",
-        "description" : "将资金发送到任何中心化交易所或托管钱包时，如果不添加标签/备忘标签，您的资金将会丢失。",
+        "title" : "需要标签/备忘标签？",
+        "description" : "向中心化交易所发送资金时不添加标签/备忘标签会提高资金丢失的可能性。",
         "cta.addTag" : "添加标签",
         "cta.not.addTag" : "不添加标签",
         "checkbox.label" : "不再显示。"
@@ -5862,6 +5862,10 @@
     },
     "NotEnoughBalance" : {
       "title" : "抱歉，资金不足",
+      "description" : "请确保该账户资金充足。"
+    },
+    "NotEnoughBalanceFees" : {
+      "title" : "抱歉，资金不够支付费用",
       "description" : "请确保该账户资金充足。"
     },
     "NotEnoughBalanceSwap" : {

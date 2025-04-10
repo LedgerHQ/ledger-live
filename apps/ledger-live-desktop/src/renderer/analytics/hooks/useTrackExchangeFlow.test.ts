@@ -1,13 +1,7 @@
 import { renderHook } from "tests/testSetup";
 import { useTrackExchangeFlow, UseTrackExchangeFlow } from "./useTrackExchangeFlow";
 import { track } from "../segment";
-import {
-  UserRefusedAllowManager,
-  UserRefusedOnDevice,
-  CantOpenDevice,
-  LockedDeviceError,
-  TransportRaceCondition,
-} from "@ledgerhq/errors";
+import { UserRefusedAllowManager, UserRefusedOnDevice } from "@ledgerhq/errors";
 import { CONNECTION_TYPES, HOOKS_TRACKING_LOCATIONS } from "./variables";
 
 jest.mock("../segment", () => ({
@@ -27,8 +21,6 @@ describe("useTrackExchangeFlow", () => {
     error: null,
     isTrackingEnabled: true,
     isRequestOpenAppExchange: null,
-    isLocked: false,
-    inWrongDeviceForAccount: null,
   };
 
   afterEach(() => {
@@ -117,86 +109,6 @@ describe("useTrackExchangeFlow", () => {
         connectionType: CONNECTION_TYPES.BLE,
         platform: "LLD",
         page: HOOKS_TRACKING_LOCATIONS.exchange,
-      }),
-      true,
-    );
-  });
-
-  it("should track 'Wrong device association' when inWrongDeviceForAccount is provided", () => {
-    renderHook((props: UseTrackExchangeFlow) => useTrackExchangeFlow(props), {
-      initialProps: { ...defaultArgs, inWrongDeviceForAccount: { accountName: "Test Account" } },
-    });
-
-    expect(track).toHaveBeenCalledWith(
-      "Wrong device association",
-      expect.objectContaining({
-        deviceType: "stax",
-        connectionType: CONNECTION_TYPES.USB,
-        platform: "LLD",
-      }),
-      true,
-    );
-  });
-
-  it('should track "Device locked" if isLocked is true', () => {
-    renderHook((props: UseTrackExchangeFlow) => useTrackExchangeFlow(props), {
-      initialProps: { ...defaultArgs, isLocked: true },
-    });
-
-    expect(track).toHaveBeenCalledWith(
-      "Device locked",
-      expect.objectContaining({
-        deviceType: "stax",
-        connectionType: CONNECTION_TYPES.USB,
-        platform: "LLD",
-      }),
-      true,
-    );
-  });
-
-  it('should track "Device locked" if error is LockedDeviceError', () => {
-    renderHook((props: UseTrackExchangeFlow) => useTrackExchangeFlow(props), {
-      initialProps: { ...defaultArgs, error: new LockedDeviceError() },
-    });
-
-    expect(track).toHaveBeenCalledWith(
-      "Device locked",
-      expect.objectContaining({
-        deviceType: "stax",
-        connectionType: CONNECTION_TYPES.USB,
-        platform: "LLD",
-      }),
-      true,
-    );
-  });
-
-  it('should track "Connection failed" if error is CantOpenDevice', () => {
-    renderHook((props: UseTrackExchangeFlow) => useTrackExchangeFlow(props), {
-      initialProps: { ...defaultArgs, error: new CantOpenDevice() },
-    });
-
-    expect(track).toHaveBeenCalledWith(
-      "Connection failed",
-      expect.objectContaining({
-        deviceType: "stax",
-        connectionType: CONNECTION_TYPES.USB,
-        platform: "LLD",
-      }),
-      true,
-    );
-  });
-
-  it('should track "Transport race condition" if error is TransportRaceCondition', () => {
-    renderHook((props: UseTrackExchangeFlow) => useTrackExchangeFlow(props), {
-      initialProps: { ...defaultArgs, error: new TransportRaceCondition() },
-    });
-
-    expect(track).toHaveBeenCalledWith(
-      "Transport race condition",
-      expect.objectContaining({
-        deviceType: "stax",
-        connectionType: CONNECTION_TYPES.USB,
-        platform: "LLD",
       }),
       true,
     );

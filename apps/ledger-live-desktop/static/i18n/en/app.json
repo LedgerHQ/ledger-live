@@ -2390,7 +2390,7 @@
         "ethereumPriorityFee": "Max Priority Fee ({{unitName}})",
         "nextBlock": "Next block",
         "suggested": "Suggested",
-        "unitVByte": "{{unit}}/vbyte",
+        "unitPerByte": "{{unit}} per byte",
         "nft": "NFT",
         "nftQuantity": "Quantity"
       },
@@ -4855,7 +4855,7 @@
         "description": "Securely manage, buy and grow your crypto and NFTs on Ledger Live.",
         "nextButton": "Get started",
         "noDevice": "No device?",
-        "buyLink": "No device? Buy a Ledger",
+        "buyLink": "No device? Buy a Ledger Nano X",
         "byTapping": "By tapping \"Get Started\" you consent and agree to our",
         "termsAndConditions": "Terms and conditions",
         "and": "and",
@@ -5886,6 +5886,10 @@
     },
     "NotEnoughBalance": {
       "title": "Sorry, insufficient funds",
+      "description": "Please make sure the account has enough funds."
+    },
+    "NotEnoughBalanceFees": {
+      "title": "Sorry, insufficient funds to cover fees",
       "description": "Please make sure the account has enough funds."
     },
     "NotEnoughBalanceSwap": {

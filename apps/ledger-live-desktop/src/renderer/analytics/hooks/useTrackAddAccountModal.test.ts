@@ -1,13 +1,7 @@
 import { renderHook } from "@testing-library/react";
 import { UseTrackAddAccountModal, useTrackAddAccountModal } from "./useTrackAddAccountModal";
 import { track } from "../segment";
-import {
-  CantOpenDevice,
-  UserRefusedOnDevice,
-  LockedDeviceError,
-  TransportRaceCondition,
-  TransportError,
-} from "@ledgerhq/errors";
+import { CantOpenDevice, UserRefusedOnDevice, LockedDeviceError } from "@ledgerhq/errors";
 import type { Device } from "@ledgerhq/types-devices";
 import { CONNECTION_TYPES, HOOKS_TRACKING_LOCATIONS } from "./variables";
 
@@ -197,46 +191,6 @@ describe("useTrackAddAccountModal", () => {
       expect.objectContaining({
         deviceType: "europa",
         connectionType: CONNECTION_TYPES.USB,
-        platform: "LLD",
-        page: HOOKS_TRACKING_LOCATIONS.addAccountModal,
-      }),
-      true,
-    );
-  });
-
-  it('should track "Transport race condition" if error is TransportRaceCondition', () => {
-    renderHook(() =>
-      useTrackAddAccountModal({
-        ...defaultArgs,
-        error: new TransportRaceCondition(),
-      }),
-    );
-
-    expect(track).toHaveBeenCalledWith(
-      "Transport race condition",
-      expect.objectContaining({
-        deviceType: "europa",
-        connectionType: CONNECTION_TYPES.BLE,
-        platform: "LLD",
-        page: HOOKS_TRACKING_LOCATIONS.addAccountModal,
-      }),
-      true,
-    );
-  });
-
-  it('should track "Transport error" if error is TransportError', () => {
-    renderHook(() =>
-      useTrackAddAccountModal({
-        ...defaultArgs,
-        error: new TransportError("test", "test"),
-      }),
-    );
-
-    expect(track).toHaveBeenCalledWith(
-      "Transport error",
-      expect.objectContaining({
-        deviceType: "europa",
-        connectionType: CONNECTION_TYPES.BLE,
         platform: "LLD",
         page: HOOKS_TRACKING_LOCATIONS.addAccountModal,
       }),

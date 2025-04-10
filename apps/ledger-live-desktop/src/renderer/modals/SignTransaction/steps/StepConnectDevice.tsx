@@ -18,7 +18,6 @@ export default function StepConnectDevice({
   manifestId,
   manifestName,
   isACRE,
-  location,
 }: StepProps) {
   const connectDependencies = useMemo(() => {
     const appRequests = dependenciesToAppRequests(dependencies);
@@ -47,7 +46,6 @@ export default function StepConnectDevice({
         manifestName={manifestName}
         isACRE={isACRE}
         requireLatestFirmware
-        location={location}
       />
     </>
   );

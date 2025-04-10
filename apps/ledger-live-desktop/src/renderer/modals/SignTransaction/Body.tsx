@@ -25,7 +25,6 @@ import {
   DeviceTransactionField,
   getDeviceTransactionConfig,
 } from "@ledgerhq/live-common/transaction/index";
-import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 
 export type Params = {
   canEditFees: boolean;
@@ -43,7 +42,6 @@ export type Params = {
   manifestId?: string;
   manifestName?: string;
   isACRE?: boolean;
-  location?: HOOKS_TRACKING_LOCATIONS;
 };
 
 type Props = {
@@ -241,7 +239,6 @@ export default function Body({ onChangeStepId, onClose, setError, stepId, params
     warning,
     status,
     bridgePending,
-    location: params.location,
     openModal: handleOpenModal,
     onClose,
     closeModal: handleCloseModal,
