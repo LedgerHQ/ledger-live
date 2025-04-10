@@ -120,7 +120,7 @@
     "addressCopiedSuspicious" : "Différence entre l’adresse copiée et celle dans le presse-papiers.",
     "experimentalFeature" : "Expérimental",
     "featureFlags" : "Feature flag",
-    "ldmkEnabled" : "Transport du LDMK",
+    "ldmkEnabled" : "Transport LDMK",
     "information" : "Informations",
     "search" : "Rechercher...",
     "searchWithoutEllipsis" : "Rechercher",
@@ -1779,7 +1779,7 @@
     },
     "fullNodeReadyInfo" : "Les comptes seront ajoutés en utilisant votre nœud Bitcoin.",
     "fullNodeConfigure" : "Configurer le nœud",
-    "tokensTip" : "{{token}} ({{ticker}}) est un token {{tokenType}}. Vous pouvez recevoir ces tokens directement sur un compte {{currency}}.",
+    "tokensTip" : "{{token}} ({{ticker}}) est un token {{tokenType}}.\n Vous pouvez recevoir ces tokens directement sur un compte {{currency}}.",
     "accountToImportSubtitle_plural" : "Ajouter des comptes existants",
     "selectAll" : "Sélectionner tout ({{count}})",
     "unselectAll" : "Désélectionner tout ({{count}})",
@@ -2370,7 +2370,7 @@
       },
       "details" : {
         "utxoLag" : "Cette transaction peut prendre plus de temps à être vérifiée et signée, car le compte a un nombre élevé de coins.",
-        "subaccountsWarning" : "Vous devez recharger ce compte avec des {{ currency }} afin d’envoyer les tokens de ce compte.",
+        "subaccountsWarning" : "Vous devez approvisionner ce compte avec des {{ currency }} afin d’envoyer les tokens de ce compte.",
         "from" : "De",
         "to" : "À",
         "selectAccountDebit" : "Compte à débiter",
@@ -2390,7 +2390,7 @@
         "ethereumPriorityFee" : "Frais de priorité maximaux ({{unitName}})",
         "nextBlock" : "Bloc suivant",
         "suggested" : "Suggéré",
-        "unitPerByte" : "{{unit}} par byte",
+        "unitVByte" : "{{unit}}/vByte",
         "nft" : "NFT",
         "nftQuantity" : "Nombre"
       },
@@ -2423,8 +2423,8 @@
     },
     "info" : {
       "needMemoTag" : {
-        "title" : "Vous n’utilisez pas de tag/mémo ?",
-        "description" : "Vos actifs seront perdus si vous n’ajoutez pas un tag/mémo lorsque vous les envoyez vers une plateforme d’échange centralisée ou un wallet dépositaire.",
+        "title" : "Besoin d’un tag/mémo ?",
+        "description" : "Ne pas ajouter de tag/mémo lors d’un envoi vers une plateforme centralisée augmente le risque de perte d’actifs.",
         "cta.addTag" : "Ajouter un tag",
         "cta.not.addTag" : "Ne pas ajouter de tag",
         "checkbox.label" : "Ne plus afficher"
@@ -2562,7 +2562,7 @@
       "totalStake" : "Stake total",
       "activeTooltip" : "Les montants délégués génèrent des récompenses.",
       "inactiveTooltip" : "Les montants retirés de la délégation ne génèrent pas de récompenses.",
-      "minSafeWarning" : "Fonds insuffisants. Vous devez avoir au moins 1 EGLD disponible.",
+      "minSafeWarning" : "Solde insuffisant. Vous devez avoir au moins 1 EGLD disponible.",
       "flow" : {
         "title" : "Déléguer",
         "steps" : {
@@ -3166,7 +3166,7 @@
       "estYield" : "rendement estimé",
       "activeTooltip" : "Les montants délégués génèrent des récompenses.",
       "inactiveTooltip" : "Les montants retirés de la délégation ne génèrent pas de récompenses.",
-      "minSafeWarning" : "Fonds insuffisants",
+      "minSafeWarning" : "Solde insuffisant",
       "flow" : {
         "title" : "Déléguer",
         "steps" : {
@@ -3974,7 +3974,7 @@
       "inactiveTooltip" : "Les montants déstakés ne génèrent plus de récompenses.",
       "commission" : "Commission",
       "totalStake" : "Stake total",
-      "minSafeWarning" : "Fonds insuffisants",
+      "minSafeWarning" : "Solde insuffisant",
       "flow" : {
         "title" : "Staker",
         "steps" : {
@@ -4834,7 +4834,7 @@
         "description" : "Gérez, achetez et faites fructifier vos cryptos et NFT en toute sécurité via Ledger Live.",
         "nextButton" : "Commencer",
         "noDevice" : "Pas encore d’appareil ?",
-        "buyLink" : "Pas encore d’appareil ? Achetez un Ledger Nano X.",
+        "buyLink" : "Pas encore d’appareil ? Acheter un wallet",
         "byTapping" : "En appuyant sur Commencer, vous acceptez nos",
         "termsAndConditions" : "Conditions générales",
         "and" : "et",
@@ -5616,7 +5616,7 @@
     },
     "CosmosBroadcastCodeInsufficientFunds" : {
       "title" : "Solde insuffisant",
-      "description" : "Assurez-vous que le compte utilisé a des fonds suffisants et réessayez."
+      "description" : "Assurez-vous que le compte utilisé a un solde suffisant et réessayez."
     },
     "CosmosBroadcastCodeUnknownRequest" : {
       "title" : "Une erreur est survenue (Erreur #6)",
@@ -5636,7 +5636,7 @@
     },
     "CosmosBroadcastCodeInsufficientCoins" : {
       "title" : "Fonds insuffisants",
-      "description" : "Assurez-vous que le compte utilisé a des fonds suffisants et réessayez."
+      "description" : "Assurez-vous que le compte utilisé a un solde suffisant et réessayez."
     },
     "CosmosBroadcastCodeInvalidCoins" : {
       "title" : "Une erreur est survenue (Erreur #11)",
@@ -5862,11 +5862,11 @@
     },
     "NotEnoughBalance" : {
       "title" : "Solde insuffisant",
-      "description" : "Vérifiez que ce compte a des fonds suffisants."
+      "description" : "Vérifiez que ce compte a un solde suffisant."
     },
     "NotEnoughBalanceSwap" : {
       "title" : "Solde insuffisant, frais de réseau inclus. Modifiez le montant ou vérifiez votre solde.",
-      "description" : "Vérifiez que ce compte a des fonds suffisants."
+      "description" : "Vérifiez que ce compte a un solde suffisant."
     },
     "NotEnoughBalanceBecauseDestinationNotCreated" : {
       "title" : "L’adresse du bénéficiaire est inactive. Envoyez au minimum {{minimalAmount}} pour l’activer."
