@@ -9,7 +9,15 @@ export interface Storage {
    * @param key
    * A key or array of keys
    */
-  get<T>(key: string | string[]): Promise<T | (T | undefined)[] | undefined>;
+  get<T>(key: string | string[]): Promise<T | T[] | undefined>;
+
+  /**
+   * Get a value for a key from Storage
+   *
+   * @param key
+   * The key
+   */
+  getString(key: string): Promise<string | null>;
 
   /**
    * Save a key value pair or a series of key value pairs to Storage.
@@ -22,6 +30,17 @@ export interface Storage {
    * this argument is ignored.
    */
   save<T>(key: string | [string, T][], value?: T): Promise<void>;
+
+  /**
+   * Save a string value for a key in Storage.
+   *
+   * @param key
+   * The key
+   *
+   * @param value
+   * The value to be saved
+   */
+  saveString(key: string, value: string): Promise<void>;
 
   /**
    * Updates the value in the store for a given key in application storage.

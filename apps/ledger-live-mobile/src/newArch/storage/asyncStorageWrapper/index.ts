@@ -20,7 +20,7 @@ const deviceStorage = {
    * @param key A
    * key or array of keys
    */
-  async get<T>(key: string | string[]): Promise<T | (T | undefined)[] | undefined> {
+  async get<T>(key: string | string[]): Promise<T | T[] | undefined> {
     if (!Array.isArray(key)) {
       const value = await AsyncStorage.getItem(key);
       return getCompressedValue(key, value);
@@ -30,7 +30,20 @@ const deviceStorage = {
     const data: Promise<T | undefined>[] = values.map(value =>
       getCompressedValue(value[0], value[1]),
     );
-    return Promise.all(data).then(array => array.filter(Boolean));
+    return Promise.all(data).then(array =>
+      array.reduce((acc, value) => {
+        if (value == null) {
+          return acc;
+        }
+        acc.push(value);
+        return acc;
+      }, [] as T[]),
+    );
+  },
+
+  async getString(key: string): Promise<string | null> {
+    const value = await AsyncStorage.getItem(key);
+    return value;
   },
 
   /**
@@ -52,6 +65,10 @@ const deviceStorage = {
     }
 
     return AsyncStorage.multiSet(stringifyPairs(pairs));
+  },
+
+  saveString(key: string, value: string) {
+    return AsyncStorage.setItem(key, value);
   },
 
   /**
