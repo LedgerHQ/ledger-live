@@ -1,8 +1,8 @@
-import React, { useCallback } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
-import { useDispatch } from "react-redux";
 import styled from "styled-components";
-import { openModal } from "~/renderer/actions/modals";
+import { ModularLocation } from "LLD/features/ModularDrawer/enums";
+import { useOpenAssetFlow } from "LLD/features/ModularDrawer/hooks/useOpenAssetFlow";
 import Box from "~/renderer/components/Box";
 import IconPlus from "~/renderer/icons/Plus";
 
@@ -26,14 +26,11 @@ const AddAccountButton = styled(Box)`
   }
 `;
 const Placeholder = () => {
-  const dispatch = useDispatch();
   const { t } = useTranslation();
-  const openAddAccounts = useCallback(() => {
-    dispatch(openModal("MODAL_ADD_ACCOUNTS", undefined));
-  }, [dispatch]);
+  const { openAssetFlow } = useOpenAssetFlow(ModularLocation.ADD_ACCOUNT);
   return (
     <Box mb={5}>
-      <AddAccountButton onClick={openAddAccounts} pb={6}>
+      <AddAccountButton onClick={openAssetFlow} pb={6}>
         <IconPlus size={16} />
         <Box ml={20} ff="Inter|Regular" fontSize={4}>
           {t("addAccounts.cta.add")}

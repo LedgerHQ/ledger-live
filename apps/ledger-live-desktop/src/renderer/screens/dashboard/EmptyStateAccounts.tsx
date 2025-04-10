@@ -1,7 +1,6 @@
 import React, { useCallback } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
-import { useDispatch } from "react-redux";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import NoAccounts from "./NoAccountsImage";
@@ -10,10 +9,10 @@ import LinkHelp from "~/renderer/components/LinkHelp";
 import { openURL } from "~/renderer/linking";
 import { DefaultTheme, withTheme } from "styled-components";
 import FakeLink from "~/renderer/components/FakeLink";
-import { openModal } from "~/renderer/actions/modals";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { urls } from "~/config/urls";
-
+import { useOpenAssetFlow } from "LLD/features/ModularDrawer/hooks/useOpenAssetFlow";
+import { ModularLocation } from "LLD/features/ModularDrawer/enums";
 const EmptyStateAccounts = ({ theme }: { theme: DefaultTheme }) => {
   const { push } = useHistory();
   const { t } = useTranslation();
@@ -23,10 +22,7 @@ const EmptyStateAccounts = ({ theme }: { theme: DefaultTheme }) => {
   const handleInstallApp = useCallback(() => {
     push("/manager");
   }, [push]);
-  const dispatch = useDispatch();
-  const openAddAccounts = useCallback(() => {
-    dispatch(openModal("MODAL_ADD_ACCOUNTS", undefined));
-  }, [dispatch]);
+  const { openAssetFlow } = useOpenAssetFlow(ModularLocation.ADD_ACCOUNT);
   return (
     <Box
       alignItems="center"
@@ -70,7 +66,7 @@ const EmptyStateAccounts = ({ theme }: { theme: DefaultTheme }) => {
         >
           <Button
             primary
-            onClick={openAddAccounts}
+            onClick={openAssetFlow}
             data-testid="portfolio-empty-state-add-account-button"
           >
             {t("emptyState.accounts.buttons.addAccount")}
