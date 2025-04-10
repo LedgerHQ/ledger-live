@@ -221,6 +221,7 @@ export type Features = CurrencyFeatures & {
   llmSolanaNfts: DefaultFeature;
   largemoverLandingpage: DefaultFeature;
   llmMmkvMigration: DefaultFeature;
+  lldModularDrawer: Feature_LldModularDrawer;
 };
 
 /**
@@ -585,6 +586,14 @@ export type Feature_LlCounterValueGranularitiesRates = Feature<{
 
 export type Feature_LlMevProtection = Feature<{
   link: string | null;
+}>;
+
+export type Feature_LldModularDrawer = Feature<{
+  add_account: boolean;
+  earn_flow: boolean;
+  live_app: boolean;
+  receive_flow: boolean;
+  send_flow: boolean;
 }>;
 
 export type Feature_CounterValue = DefaultFeature;

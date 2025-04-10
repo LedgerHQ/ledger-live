@@ -1,6 +1,6 @@
 import { DeviceBusyError, DmkError, OpeningConnectionError } from "@ledgerhq/device-management-kit";
 
-export const isDmkError = (error: any): error is DmkError => error && "_tag" in error;
+export const isDmkError = (error: any): error is DmkError => !!error && "_tag" in error;
 
 export const isiOSPeerRemovedPairingError = (error: any): boolean => {
   return (

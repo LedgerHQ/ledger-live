@@ -7260,7 +7260,7 @@ importers:
         version: 6.6.3
       '@testing-library/react':
         specifier: ^16.1.0
-        version: 16.2.0(@testing-library/dom@9.3.4)(react@18.3.1)
+        version: 16.2.0(@testing-library/dom@9.3.4)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@types/node':
         specifier: 22.10.10
         version: 22.10.10
@@ -7276,6 +7276,9 @@ importers:
       react:
         specifier: ^18.3.1
         version: 18.3.1
+      react-dom:
+        specifier: ^18.3.1
+        version: 18.3.1(react@18.3.1)
       react-native:
         specifier: 0.76.3
         version: 0.76.3(react@18.3.1)
@@ -47167,12 +47170,6 @@ snapshots:
       '@testing-library/dom': 9.3.4
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
-
-  '@testing-library/react@16.2.0(@testing-library/dom@9.3.4)(react@18.3.1)':
-    dependencies:
-      '@babel/runtime': 7.24.1
-      '@testing-library/dom': 9.3.4
-      react: 18.3.1
 
   '@testing-library/user-event@14.5.2(@testing-library/dom@9.3.4)':
     dependencies:

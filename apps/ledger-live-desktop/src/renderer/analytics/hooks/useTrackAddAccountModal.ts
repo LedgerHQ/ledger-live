@@ -1,7 +1,13 @@
 import { useRef, useEffect } from "react";
 import { track } from "../segment";
 import { Device } from "@ledgerhq/types-devices";
-import { UserRefusedOnDevice, LockedDeviceError, CantOpenDevice } from "@ledgerhq/errors";
+import {
+  UserRefusedOnDevice,
+  LockedDeviceError,
+  CantOpenDevice,
+  TransportRaceCondition,
+  TransportError,
+} from "@ledgerhq/errors";
 import { CONNECTION_TYPES, HOOKS_TRACKING_LOCATIONS } from "./variables";
 import { LedgerError } from "~/renderer/components/DeviceAction";
 
@@ -66,8 +72,18 @@ export const useTrackAddAccountModal = ({
       track("Connection failed", defaultPayload, isTrackingEnabled);
     }
 
+    if (error instanceof TransportRaceCondition) {
+      // transport race condition during account creation
+      track("Transport race condition", defaultPayload, isTrackingEnabled);
+    }
+
+    if (error instanceof TransportError) {
+      // transport error during account creation
+      track("Transport error", defaultPayload, isTrackingEnabled);
+    }
+
     if (previousOpenAppRequested.current && error instanceof UserRefusedOnDevice) {
-      // user refused to open app
+      // user refused to open app during account creation
       track("Open app denied", defaultPayload, isTrackingEnabled);
     }
 

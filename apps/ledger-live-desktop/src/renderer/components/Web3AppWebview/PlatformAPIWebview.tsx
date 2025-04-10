@@ -39,6 +39,7 @@ import { useWebviewState } from "./helpers";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 import { mevProtectionSelector } from "~/renderer/reducers/settings";
 import { walletSelector } from "~/renderer/reducers/wallet";
+import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 
 export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
   ({ manifest, inputs = {}, onStateChange }, ref) => {
@@ -154,6 +155,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
                   useApp: params?.useApp,
                   account,
                   parentAccount,
+                  location: HOOKS_TRACKING_LOCATIONS.genericDAppTransactionSend,
                   onResult: (signedOperation: SignedOperation) => {
                     tracking.platformSignTransactionSuccess(manifest);
                     resolve(serializePlatformSignedTransaction(signedOperation));

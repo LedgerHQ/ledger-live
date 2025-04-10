@@ -44,6 +44,7 @@ export class DeviceManagementKitTransport extends Transport {
         subscription.unsubscribe();
       },
     });
+    return subscription;
   };
 
   static async open(): Promise<DeviceManagementKitTransport> {

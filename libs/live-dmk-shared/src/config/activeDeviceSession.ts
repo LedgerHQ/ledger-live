@@ -1,11 +1,11 @@
-import { BehaviorSubject } from "rxjs";
+import { BehaviorSubject, Subscription } from "rxjs";
 import Transport from "@ledgerhq/hw-transport";
 import { DeviceManagementKit } from "@ledgerhq/device-management-kit";
 
-type DMKTransport = Transport & {
+export type DMKTransport = Transport & {
   sessionId: string;
   dmk: DeviceManagementKit;
-  listenToDisconnect: () => void;
+  listenToDisconnect: () => Subscription;
   disconnect: (id?: string) => Promise<void> | void;
 };
 
