@@ -31,6 +31,7 @@ import {
 import { setNeverClickedOnAllowNotificationsButton, setNotifications } from "~/actions/settings";
 import { NotificationsSettings } from "~/reducers/types";
 import Braze from "@braze/react-native-sdk";
+import { getIsNotifEnabled } from "./getNotifPermissions";
 
 export type EventTrigger = {
   timeout: NodeJS.Timeout;
@@ -79,12 +80,6 @@ async function setPushNotificationsDataOfUserInStorage(dataOfUser: DataOfUser) {
     JSON.stringify(dataOfUser),
   );
 }
-
-export const getIsNotifEnabled = async () => {
-  const authStatus = await messaging().hasPermission();
-
-  return authStatus === messaging.AuthorizationStatus.AUTHORIZED;
-};
 
 const useNotifications = () => {
   const pushNotificationsFeature = useFeature("brazePushNotifications");

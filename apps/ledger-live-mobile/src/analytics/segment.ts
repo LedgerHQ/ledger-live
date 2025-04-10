@@ -24,6 +24,7 @@ import {
 } from "@ledgerhq/live-nft";
 import { runOnceWhen } from "@ledgerhq/live-common/utils/runOnceWhen";
 import { getAndroidArchitecture, getAndroidVersionCode } from "../logic/cleanBuildVersion";
+import { getIsNotifEnabled } from "../logic/getNotifPermissions";
 import getOrCreateUser from "../user";
 import {
   analyticsEnabledSelector,
@@ -57,7 +58,6 @@ import { appStartupTime } from "../StartupTimeMarker";
 import { aggregateData, getUniqueModelIdList } from "../logic/modelIdList";
 import { getEnv } from "@ledgerhq/live-env";
 import { getTokensWithFunds } from "LLM/utils/getTokensWithFunds";
-import { getIsNotifEnabled } from "~/logic/notifications";
 
 let sessionId = uuid();
 const appVersion = `${VersionNumber.appVersion || ""} (${VersionNumber.buildVersion || ""})`;
