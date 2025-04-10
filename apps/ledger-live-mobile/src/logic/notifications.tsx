@@ -80,7 +80,7 @@ async function setPushNotificationsDataOfUserInStorage(dataOfUser: DataOfUser) {
   );
 }
 
-const getIsNotifEnabled = async () => {
+export const getIsNotifEnabled = async () => {
   const authStatus = await messaging().hasPermission();
 
   return authStatus === messaging.AuthorizationStatus.AUTHORIZED;

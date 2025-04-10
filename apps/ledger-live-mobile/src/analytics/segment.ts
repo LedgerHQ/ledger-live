@@ -57,6 +57,7 @@ import { appStartupTime } from "../StartupTimeMarker";
 import { aggregateData, getUniqueModelIdList } from "../logic/modelIdList";
 import { getEnv } from "@ledgerhq/live-env";
 import { getTokensWithFunds } from "LLM/utils/getTokensWithFunds";
+import { getIsNotifEnabled } from "~/logic/notifications";
 
 let sessionId = uuid();
 const appVersion = `${VersionNumber.appVersion || ""} (${VersionNumber.buildVersion || ""})`;
@@ -211,11 +212,14 @@ const extraProperties = async (store: AppStore) => {
   const isReborn = isRebornSelector(state);
 
   const notifications = notificationsSelector(state);
+  const hasEnabledOsNotifications = await getIsNotifEnabled();
+
   const notificationsOptedIn = {
     notificationsAllowed: notifications.areNotificationsAllowed,
     optInAnnouncements: notifications.announcementsCategory,
     optInLargeMovers: notifications.largeMoverCategory,
     optInTxAlerts: notifications.transactionsAlertsCategory,
+    hasEnabledOsNotifications,
   };
   const notificationsBlacklisted = Object.entries(notifications)
     .filter(([key, value]) => key !== "areNotificationsAllowed" && value === false)
