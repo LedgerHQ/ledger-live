@@ -4,6 +4,8 @@
   },
   "common" : {
     "cancel" : "ยกเลิก",
+    "copy" : "คัดลอก",
+    "copied" : "คัดลอกแล้ว",
     "apply" : "ใช้",
     "seeAll" : "ดูทั้งหมด",
     "seeAllWithNumber" : "ดูทั้งหมด ({{number}})",
@@ -15,7 +17,7 @@
     "gotit" : "เข้าใจแล้ว",
     "continue" : "ดำเนินการต่อ",
     "retry" : "ลองอีกครั้ง",
-    "backTo" : "กลับไปยัง {{to}}",
+    "backTo" : "กลับไปยัง{{to}}",
     "done" : "เสร็จสิ้น",
     "sortBy" : "เรียงโดย",
     "signOut" : "ออกจากระบบ",
@@ -100,7 +102,8 @@
       "times" : "x{{ value }}"
     },
     "quote" : "โควตราคา",
-    "tryAgain" : "ลองอีกครั้ง"
+    "tryAgain" : "ลองอีกครั้ง",
+    "ldmkEnabled" : "เปิดใช้งาน LDMK Transport แล้ว"
   },
   "errors" : {
     "ReplacementTransactionUnderpriced" : {
@@ -4047,7 +4050,9 @@
       "desc" : "คุณแน่ใจหรือไม่ว่าต้องการยกเลิกการเพิ่มบัญชี?",
       "v2" : {
         "title" : "ยกเลิกการเพิ่มบัญชีหรือไม่?",
-        "desc" : "จะไม่มีการเพิ่มบัญชีลงใน Ledger Live"
+        "desc" : "จะไม่มีการเพิ่มบัญชีลงใน Ledger Live",
+        "continue" : "เพิ่มอีก",
+        "cancel" : "ยกเลิก"
       }
     },
     "imported" : "เพิ่มสินทรัพย์เรียบร้อยแล้ว",
