@@ -545,7 +545,6 @@ export enum ScreenName {
   ScanDeviceAccounts = "ScanDeviceAccounts",
   AddAccountsWarning = "AddAccountsWarning",
   NoAssociatedAccounts = "NoAssociatedAccounts",
-  LargeMoverLandingPage = "LargeMoverLandingPage",
 }
 
 export enum NavigatorName {
@@ -659,7 +658,6 @@ export enum NavigatorName {
   AnalyticsOptInPrompt = "AnalyticsOptInPrompt",
   WalletSyncActivationInit = "WalletSyncActivationInit",
   LandingPages = "LandingPages",
-  largemoverLandingpage = "largemoverLandingpage",
 
   // Web3Hub
   Web3Hub = "Web3Hub",

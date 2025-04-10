@@ -11,7 +11,6 @@ import Animated, {
 
 import getWindowDimensions from "~/logic/getWindowDimensions";
 import CurrencyGradient from "./CurrencyGradient";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const windowsWidth = getWindowDimensions().width;
 
@@ -32,8 +31,6 @@ function CurrencyHeaderLayout({
   leftElement?: React.ReactNode;
   currencyColor: string;
 }) {
-  const insets = useSafeAreaInsets();
-  const headerHeight = insets.top + 50;
   const BeforeScrollAnimation = useAnimatedStyle(() => {
     const opacity =
       currentPositionY.value === 0
@@ -84,15 +81,15 @@ function CurrencyHeaderLayout({
       py={4}
       justifyContent="space-between"
       width={windowsWidth}
-      height={headerHeight}
-      pt={insets.top}
+      height={92}
+      pt={44}
     >
       <Animated.View
         style={[
           {
             position: "absolute",
             width: windowsWidth,
-            height: headerHeight,
+            height: 92,
             overflow: "hidden",
           },
           BackgroundOpacity,
