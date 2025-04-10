@@ -18,9 +18,11 @@ export type AptosTransaction = UserTransactionResponse & {
   };
 };
 
-export type AptosOperation = Operation;
+export type AptosOperation = Operation<AptosOperationExtra>;
 
-export type AptosAccount = Account;
+export type AptosOperationRaw = Operation<AptosOperationExtraRaw>;
+
+export type AptosAccount = Account & { aptosResources: AptosResources };
 
 export type TransactionStatus = TransactionStatusCommon;
 
@@ -85,4 +87,57 @@ export type AptosMoveResourceData = {
 
 export type AptosMoveResource = {
   [key: string]: AptosMoveResourceData;
+};
+
+export type AptosOperationExtra = {
+  stake?: ExtraStakeInfo;
+};
+
+export type ExtraStakeInfo = {
+  address: string;
+  amount: BigNumber;
+};
+
+export type AptosOperationExtraRaw = {
+  stake?: ExtraStakeInfoRaw;
+};
+
+export type ExtraStakeInfoRaw = {
+  address: string;
+  amount: string;
+};
+
+export type AptosStake = {
+  stakeAccAddr: string;
+  hasStakeAuth: boolean;
+  hasWithdrawAuth: boolean;
+  // delegation:
+  //   | {
+  //       stake: number;
+  //       voteAccAddr: string;
+  //     }
+  //   | undefined;
+  stakeAccBalance: number;
+  // rentExemptReserve: number;
+  withdrawable: number;
+  activation: {
+    state: "active" | "inactive" | "activating" | "deactivating";
+    active: number;
+    inactive: number;
+  };
+  reward?:
+    | {
+        amount: number;
+      }
+    | undefined;
+};
+
+export type AptosResources = {
+  stakes: AptosStake[];
+  unstakeReserve: BigNumber;
+};
+
+export type AptosResourcesRaw = {
+  stakes: string;
+  unstakeReserve: string;
 };

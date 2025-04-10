@@ -1,6 +1,6 @@
 import { AccountShapeInfo, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
-import { Account, Operation, SyncConfig, TokenAccount } from "@ledgerhq/types-live";
+import { Operation, SyncConfig, TokenAccount } from "@ledgerhq/types-live";
 import { decodeTokenAccountId } from "@ledgerhq/coin-framework/account";
 import { emptyHistoryCache } from "@ledgerhq/coin-framework/account/index";
 import { AptosAPI } from "../../api";
@@ -14,6 +14,7 @@ import BigNumber from "bignumber.js";
 import { createFixtureAccount } from "../../bridge/bridge.fixture";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { txsToOps } from "../../bridge/logic";
+import { AptosAccount } from "../../types";
 
 jest.mock("@ledgerhq/coin-framework/account", () => {
   const originalModule = jest.requireActual("@ledgerhq/coin-framework/account");
@@ -97,7 +98,7 @@ describe("getAccountShape", () => {
           balanceHistoryCache: {},
           swapHistory: [],
         },
-      } as unknown as AccountShapeInfo<Account>,
+      } as unknown as AccountShapeInfo<AptosAccount>,
       {} as SyncConfig,
     );
 
@@ -150,7 +151,7 @@ describe("getAccountShape", () => {
           balanceHistoryCache: {},
           swapHistory: [],
         },
-      } as unknown as AccountShapeInfo<Account>,
+      } as unknown as AccountShapeInfo<AptosAccount>,
       {} as SyncConfig,
     );
 
@@ -183,7 +184,7 @@ describe("getAccountShape", () => {
         xpub: "address",
         derivationPath: "",
         deviceId: "1",
-      } as unknown as AccountShapeInfo<Account>,
+      } as unknown as AccountShapeInfo<AptosAccount>,
       {} as SyncConfig,
     );
 
@@ -236,7 +237,7 @@ describe("getAccountShape", () => {
           balanceHistoryCache: {},
           swapHistory: [],
         },
-      } as unknown as AccountShapeInfo<Account>,
+      } as unknown as AccountShapeInfo<AptosAccount>,
       {} as SyncConfig,
     );
 
@@ -289,7 +290,7 @@ describe("getAccountShape", () => {
           balanceHistoryCache: {},
           swapHistory: [],
         },
-      } as unknown as AccountShapeInfo<Account>,
+      } as unknown as AccountShapeInfo<AptosAccount>,
       {} as SyncConfig,
     );
 
@@ -343,7 +344,7 @@ describe("getAccountShape", () => {
           swapHistory: [],
         },
         rest: { publicKey: "restPublicKey" },
-      } as unknown as AccountShapeInfo<Account>,
+      } as unknown as AccountShapeInfo<AptosAccount>,
       {} as SyncConfig,
     );
 
@@ -1044,7 +1045,7 @@ describe("getAccountShape", () => {
           },
         ],
       },
-    } as unknown as AccountShapeInfo<Account>;
+    } as unknown as AccountShapeInfo<AptosAccount>;
 
     const result = await getAccountShape(info, {} as SyncConfig);
 
@@ -1377,7 +1378,7 @@ describe("getSubAccounts", () => {
     index: 1,
     derivationPath: "44'/637'/0'",
     derivationMode: "aptos",
-  } as AccountShapeInfo<Account>;
+  } as AccountShapeInfo<AptosAccount>;
   const accountId = "js:2:aptos:3282:aptos";
   const lastTokenOperations = [
     {
