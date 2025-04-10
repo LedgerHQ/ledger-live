@@ -2423,8 +2423,8 @@
     },
     "info" : {
       "needMemoTag" : {
-        "title" : "¿No vas a usar una nota/memo?",
-        "description" : "Tus fondos se perderán si no agregas una etiqueta/memo al enviarlos a un exchange centralizado o una billetera con custodia.",
+        "title" : "¿Necesitas una etiqueta o memo?",
+        "description" : "No incluir una etiqueta o memo cuando envías fondos a un exchange centralizado aumenta las probabilidades de perder tus fondos.",
         "cta.addTag" : "Agregar etiqueta",
         "cta.not.addTag" : "No agregar etiqueta",
         "checkbox.label" : "No mostrar esto de nuevo."
@@ -5862,6 +5862,10 @@
     },
     "NotEnoughBalance" : {
       "title" : "Fondos insuficientes",
+      "description" : "Asegúrate de que la cuenta tenga fondos suficientes."
+    },
+    "NotEnoughBalanceFees" : {
+      "title" : "Fondos insuficientes para cubrir las tarifas",
       "description" : "Asegúrate de que la cuenta tenga fondos suficientes."
     },
     "NotEnoughBalanceSwap" : {
