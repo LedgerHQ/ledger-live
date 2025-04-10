@@ -12,7 +12,6 @@ import {
 import network from "@ledgerhq/live-network";
 import BigNumber from "bignumber.js";
 import { AptosAPI } from "../../api";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 jest.mock("@aptos-labs/ts-sdk");
 jest.mock("@apollo/client");
@@ -84,77 +83,8 @@ describe("Aptos API", () => {
     });
   });
 
-  describe("getBalance", () => {
-    let token: TokenCurrency;
-
-    beforeEach(() => {
-      token = {
-        type: "TokenCurrency",
-        id: "aptos_token",
-        name: "Aptos Token",
-        ticker: "APT",
-        units: [{ name: "APT", code: "APT", magnitude: 6 }],
-        contractAddress: "APTOS_1_ADDRESS",
-        tokenType: "fungible_asset",
-        parentCurrency: {
-          type: "CryptoCurrency",
-          id: "aptos",
-          name: "Aptos",
-          ticker: "APT",
-          units: [{ name: "APT", code: "APT", magnitude: 6 }],
-          color: "#000000",
-          family: "aptos",
-          scheme: "aptos",
-          explorerViews: [],
-          managerAppName: "Aptos",
-          coinType: 637,
-        },
-      };
-    });
-
-    it("get coin balance", async () => {
-      mockedAptos.mockImplementation(() => ({
-        view: jest.fn().mockReturnValue(["1234"]),
-      }));
-
-      token.tokenType = "coin";
-      const api = new AptosAPI("aptos");
-      const balance = await api.getBalance("address", token);
-
-      expect(balance).toEqual(new BigNumber(1234));
-    });
-
-    it("get fungible assets balance", async () => {
-      mockedAptos.mockImplementation(() => ({
-        view: jest.fn().mockReturnValue(["12345"]),
-      }));
-
-      token.tokenType = "fungible_asset";
-
-      const api = new AptosAPI("aptos");
-      const balance = await api.getBalance("address", token);
-
-      expect(balance).toEqual(new BigNumber(12345));
-    });
-
-    it("return 0 balace if could not retrieve proper balance of fungible assets", async () => {
-      mockedAptos.mockImplementation(() => ({
-        view: jest.fn().mockImplementation(() => {
-          throw new Error("error");
-        }),
-      }));
-
-      token.tokenType = "fungible_asset";
-
-      const api = new AptosAPI("aptos");
-      const balance = await api.getBalance("address", token);
-
-      expect(balance).toEqual(new BigNumber(0));
-    });
-  });
-
   describe("getAccountInfo", () => {
-    it("calls getCoinBalance, fetchTransactions and getHeight", async () => {
+    it("calls getBalance, fetchTransactions and getHeight", async () => {
       mockedAptos.mockImplementation(() => ({
         view: jest.fn().mockReturnValue(["123"]),
         getTransactionByVersion: jest.fn().mockReturnValue({
@@ -194,7 +124,7 @@ describe("Aptos API", () => {
       mockedApolloClient.mockImplementation(() => ({
         query: async () => ({
           data: {
-            account_transactions: [{ transaction_version: 1 }],
+            address_version_from_move_resources: [{ transaction_version: "v1" }],
           },
           loading: false,
           networkStatus: 7,
@@ -260,7 +190,7 @@ describe("Aptos API", () => {
       mockedApolloClient.mockImplementation(() => ({
         query: async () => ({
           data: {
-            account_transactions: [{ transaction_version: 1 }],
+            address_version_from_move_resources: [{ transaction_version: "v1" }],
           },
           loading: false,
           networkStatus: 7,
@@ -324,7 +254,7 @@ describe("Aptos API", () => {
       mockedApolloClient.mockImplementation(() => ({
         query: async () => ({
           data: {
-            account_transactions: [{ transaction_version: 1 }],
+            address_version_from_move_resources: [{ transaction_version: "v1" }],
           },
           loading: false,
           networkStatus: 7,
@@ -378,7 +308,7 @@ describe("Aptos API", () => {
       mockedApolloClient.mockImplementation(() => ({
         query: async () => ({
           data: {
-            account_transactions: [{ transaction_version: 1 }],
+            address_version_from_move_resources: [{ transaction_version: "v1" }],
           },
           loading: false,
           networkStatus: 7,
