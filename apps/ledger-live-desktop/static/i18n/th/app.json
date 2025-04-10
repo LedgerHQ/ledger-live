@@ -100,7 +100,7 @@
     "save" : "บันทึก",
     "lock" : "ล็อก",
     "showMore" : "แสดงเพิ่มเติม",
-    "backToMatchingURL" : "กลับไปยัง {{appName}}",
+    "backToMatchingURL" : "กลับไปยัง{{appName}}",
     "back" : "ย้อนกลับ",
     "adjustFees" : "ปรับค่าธรรมเนียม",
     "reset" : "รีเซ็ต",
@@ -2423,8 +2423,8 @@
     },
     "info" : {
       "needMemoTag" : {
-        "title" : "ไม่ใช้ Tag/Memo?",
-        "description" : "เงินทุนของคุณจะสูญหายไปหากคุณไม่เพิ่ม Tag/Memo เมื่อส่งไปยัง Exchange ที่มีตัวกลางหรือวอลเล็ตที่มีผู้รับฝากทรัพย์สิน",
+        "title" : "ต้องการ Tag/Memo?",
+        "description" : "การไม่ระบุ Tag/Memo เมื่อส่งเงินทุนไปที่ Centralized Exchange อาจเพิ่มโอกาสที่เงินทุนของคุณจะสูญหายได้",
         "cta.addTag" : "เพิ่ม Tag",
         "cta.not.addTag" : "ไม่เพิ่ม Tag",
         "checkbox.label" : "ไม่ต้องแสดงรายการนี้อีก"
