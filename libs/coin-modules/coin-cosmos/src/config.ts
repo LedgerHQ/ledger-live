@@ -200,6 +200,16 @@ export const cosmosConfig: CosmosConfig = {
       },
     },
   },
+  config_currency_babylon: {
+    type: "object",
+    default: {
+      lcd: "https://babylon-api.polkachu.com",
+      minGasPrice: 0.002, // source: https://www.mintscan.io/babylon/parameters
+      status: {
+        type: "active",
+      },
+    },
+  },
 };
 
 import buildCoinConfig, { type CurrencyConfig } from "@ledgerhq/coin-framework/config";
