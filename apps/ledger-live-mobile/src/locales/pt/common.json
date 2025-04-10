@@ -4,6 +4,8 @@
   },
   "common" : {
     "cancel" : "Cancelar",
+    "copy" : "Copiar",
+    "copied" : "Copiado",
     "apply" : "Aplicar",
     "seeAll" : "Ver tudo",
     "seeAllWithNumber" : "Ver todos ({{number}})",
@@ -100,7 +102,8 @@
       "times" : "x{{ value }}"
     },
     "quote" : "Cotação",
-    "tryAgain" : "Tente novamente"
+    "tryAgain" : "Tente novamente",
+    "ldmkEnabled" : "LDMK transport enabled"
   },
   "errors" : {
     "ReplacementTransactionUnderpriced" : {
@@ -509,6 +512,10 @@
     "NotEnoughBalance" : {
       "title" : "Fundos Insuficientes",
       "description" : "Certifique-se de que a conta tem fundos suficientes."
+    },
+    "NotEnoughBalanceFees" : {
+      "title" : "Fundos insuficientes para cobrir as taxas",
+      "description" : "Certifique-se de que a conta tenha fundos suficientes."
     },
     "NotEnoughBalanceForUnstaking" : {
       "message" : "Atualmente, seu saldo (fora de staking) disponível é de {{currentBalance}}, que é insuficiente para pagar as taxas de rede necessárias para desaplicar {{assetName}}. ",
@@ -4047,7 +4054,9 @@
       "desc" : "Você tem certeza de que quer cancelar a adição de contas?",
       "v2" : {
         "title" : "Cancelar adição de conta?",
-        "desc" : "Nenhuma conta será adicionada ao Ledger Live."
+        "desc" : "Nenhuma conta será adicionada ao Ledger Live.",
+        "continue" : "Continuar adicionando",
+        "cancel" : "Cancelar"
       }
     },
     "imported" : "Ativos adicionados com sucesso",
