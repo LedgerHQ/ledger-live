@@ -5864,6 +5864,10 @@
       "title" : "Fundos Insuficientes",
       "description" : "Certifique-se de que a conta tem fundos suficientes."
     },
+    "NotEnoughBalanceFees" : {
+      "title" : "Fundos insuficientes para cobrir as taxas",
+      "description" : "Certifique-se de que a conta tenha fundos suficientes."
+    },
     "NotEnoughBalanceSwap" : {
       "title" : "Saldo insuficiente incluindo taxas de rede. Ajuste a quantia ou verifique o saldo.",
       "description" : "Certifique-se de que a conta tenha fundos suficientes."

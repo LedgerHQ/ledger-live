@@ -4,6 +4,8 @@
   },
   "common" : {
     "cancel" : "Отменить",
+    "copy" : "Скопировать",
+    "copied" : "Скопировано",
     "apply" : "Применить",
     "seeAll" : "Просмотреть все",
     "seeAllWithNumber" : "Посмотреть все ({{number}})",
@@ -100,7 +102,8 @@
       "times" : "x{{ value }}"
     },
     "quote" : "Курс",
-    "tryAgain" : "Попробовать ещё раз"
+    "tryAgain" : "Попробовать ещё раз",
+    "ldmkEnabled" : "LDMK transport enabled"
   },
   "errors" : {
     "ReplacementTransactionUnderpriced" : {
@@ -508,6 +511,10 @@
     },
     "NotEnoughBalance" : {
       "title" : "Кажется, у вас недостаточно средств",
+      "description" : "Пожалуйста, убедитесь, что на счёте достаточно средств."
+    },
+    "NotEnoughBalanceFees" : {
+      "title" : "Кажется, у вас недостаточно средств для покрытия комиссии",
       "description" : "Пожалуйста, убедитесь, что на счёте достаточно средств."
     },
     "NotEnoughBalanceForUnstaking" : {
@@ -4047,7 +4054,9 @@
       "desc" : "Уверены, что не хотите добавлять счета?",
       "v2" : {
         "title" : "Отменить добавление счёта?",
-        "desc" : "Новые счета не будут добавлены в Ledger Live."
+        "desc" : "Новые счета не будут добавлены в Ledger Live.",
+        "continue" : "Продолжить",
+        "cancel" : "Отменить"
       }
     },
     "imported" : "Актив успешно добавлен",

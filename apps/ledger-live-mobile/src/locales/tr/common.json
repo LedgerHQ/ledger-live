@@ -4,6 +4,8 @@
   },
   "common" : {
     "cancel" : "İptal et",
+    "copy" : "Kopyala",
+    "copied" : "Kopyalandı",
     "apply" : "Uygula",
     "seeAll" : "Tümünü gör",
     "seeAllWithNumber" : "Tümünü gör ({{number}})",
@@ -100,7 +102,8 @@
       "times" : "x{{ value }}"
     },
     "quote" : "Teklif",
-    "tryAgain" : "Tekrar dene"
+    "tryAgain" : "Tekrar dene",
+    "ldmkEnabled" : "LDMK transport enabled"
   },
   "errors" : {
     "ReplacementTransactionUnderpriced" : {
@@ -508,6 +511,10 @@
     },
     "NotEnoughBalance" : {
       "title" : "Üzgünüz, fon miktarı yetersiz",
+      "description" : "Hesabınızdaki fon miktarının yeterli olduğundan lütfen emin olun."
+    },
+    "NotEnoughBalanceFees" : {
+      "title" : "Üzgünüz, fon miktarı işlem ücretlerini karşılamıyor",
       "description" : "Hesabınızdaki fon miktarının yeterli olduğundan lütfen emin olun."
     },
     "NotEnoughBalanceForUnstaking" : {
@@ -4047,7 +4054,9 @@
       "desc" : "Hesap eklemeyi iptal etmek istediğinizden emin misiniz?",
       "v2" : {
         "title" : "Hesap ekleme işlemi iptal edilsin mi?",
-        "desc" : "Ledger Live'a hiçbir hesap eklenmeyecek."
+        "desc" : "Ledger Live'a hiçbir hesap eklenmeyecek.",
+        "continue" : "Eklemeye devam et",
+        "cancel" : "İptal et"
       }
     },
     "imported" : "Varlık başarıyla eklendi",
@@ -4085,7 +4094,7 @@
       "title" : "Token ekle",
       "createParentCurrencyAccount" : "{{parrentCurrencyName}} hesabı ekle",
       "generic" : {
-        "disclaimer" : "{{token}} ({{ticker}}) bir {{tokenType}} token'ıdır.\n Token'ları doğrudan bir {{currency}} hesabına alabilirsiniz.",
+        "disclaimer" : "{{token}} ({{ticker}}) bir {{tokenType}} token'ıdır.\nToken'ları doğrudan bir {{currency}} hesabına alabilirsiniz.",
         "learnMore" : "{{tokenType}} hakkında daha fazla bilgi edinin"
       }
     },
@@ -7012,7 +7021,7 @@
           "moreOptions" : "Tercihlerinizi yönetin",
           "ctas" : {
             "refuse" : "Tümünü reddet",
-            "accept" : "Tümünü kabul et"
+            "accept" : "Tümünü kabul et"
           },
           "infoText" : {
             "info" : "Onayınızı, dilediğiniz zaman uygulama ayarlarından iptal edebilirsiniz.",

@@ -5864,6 +5864,10 @@
       "title" : "抱歉，资金不足",
       "description" : "请确保该账户资金充足。"
     },
+    "NotEnoughBalanceFees" : {
+      "title" : "抱歉，资金不够支付费用",
+      "description" : "请确保该账户资金充足。"
+    },
     "NotEnoughBalanceSwap" : {
       "title" : "抱歉，余额不足（包括网络费用）。请调整数额或核对余额。",
       "description" : "请确保该账户资金充足。"
