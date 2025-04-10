@@ -132,6 +132,7 @@ export type CurrencyFeatures = {
   currencySonic: DefaultFeature;
   currencySonicBlaze: DefaultFeature;
   currencySui: DefaultFeature;
+  currencyBabylon: DefaultFeature;
 };
 
 /**
