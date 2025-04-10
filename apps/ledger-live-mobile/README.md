@@ -231,3 +231,4 @@ For a smooth and quick integration:
 - Go on [Discord](https://developers.ledger.com/discord-pro/) to chat with developer support and the developer community.
 
 ---
+
