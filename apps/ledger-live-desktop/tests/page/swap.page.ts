@@ -9,6 +9,7 @@ import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
 import fs from "fs/promises";
 import * as path from "path";
 import { FileUtils } from "tests/utils/fileUtils";
+import axios from "axios";
 
 export class SwapPage extends AppPage {
   private currencyByName = (accountName: string) => this.page.getByText(accountName); // TODO: this is rubbish. Changed this
@@ -536,5 +537,44 @@ export class SwapPage extends AppPage {
     expect(fileContents).toContain(swap.accountToDebit.address);
     expect(fileContents).toContain(swap.accountToCredit.accountName);
     expect(fileContents).toContain(swap.accountToCredit.address);
+  }
+
+  @step("Check minimum amount for swap")
+  async getMinimumAmount(swap: Swap) {
+    try {
+      const { data } = await axios({
+        method: "GET",
+        url: `https://swap-stg.ledger-test.com/v5/quote`,
+        params: {
+          from: swap.accountToDebit.currency.id,
+          to: swap.accountToCredit.currency.id,
+          amountFrom: 0.0001,
+          addressFrom: swap.accountToDebit.address,
+          fiatForCounterValue: "USD",
+          slippage: 1,
+          networkFees: 0.001,
+          networkFeesCurrency: swap.accountToDebit.currency.speculosApp.name.toLowerCase(),
+          displayLanguage: "en",
+          theme: "light",
+          "providers-whitelist": "changelly,exodus,thorswap,uniswap",
+          tradeType: "INPUT",
+          uniswapOrderType: "uniswapxv1",
+        },
+        headers: {
+          accept: "application/json",
+        },
+      });
+
+      const minimumAmounts = data.map((item: any) => {
+        return parseFloat(item.parameter.minAmount);
+      });
+
+      const validMinimumAmounts = minimumAmounts.filter((amount: number) => !isNaN(amount));
+
+      const maxMinAmount = Math.max(...validMinimumAmounts);
+      return maxMinAmount;
+    } catch (error) {
+      console.error(error);
+    }
   }
 }
