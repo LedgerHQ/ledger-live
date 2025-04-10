@@ -75,7 +75,14 @@ function useUiHook(manifest: AppManifest, tracking: Record<string, TrackFunction
           },
         );
       },
-      "account.receive": ({ account, parentAccount, accountAddress, onSuccess, onError }) => {
+      "account.receive": ({
+        account,
+        parentAccount,
+        accountAddress,
+        onSuccess,
+        onError,
+        onCancel,
+      }) => {
         ipcRenderer.send("show-app", {});
         dispatch(
           openModal("MODAL_EXCHANGE_CRYPTO_DEVICE", {
@@ -85,6 +92,7 @@ function useUiHook(manifest: AppManifest, tracking: Record<string, TrackFunction
               onSuccess(accountAddress);
             },
             onCancel: onError,
+            onClose: onCancel,
             verifyAddress: true,
           }),
         );
